@@ -1,112 +1,56 @@
-    Installation instructions for Windows platforms.
-    -----------------------------------------------
+    Installation Instructions for HDF4.2r0-post0 on Windows 2000/XP
+========================================================================
 
-Install HDF4.2 Release 0 on Windows Windows 2000 and Windows XP
+The instructions which follow assume that you will be using the HDF4
+source code archive from HDF website (http://hdf.ncsa.uiuc.edu).
 
-The instructions which follow assume that you will be using one of 
-the 'zip' files that we provide, either the binary code release
-(HDF42r0.zip) or the source code release (HDF42r0s.zip).
+In building HDF4 from source code you may select between two build
+environment options ( with Fortran or without Fortran).  
 
-In building HDF from source code you may select between 
-two build environment options ( with Fortran or without Fortran).  
+***************************WARNINGS*************************************
+Please read CAREFULLY about the following preconditions first.
 
-The following sections discuss in details installation procedures. 
+Preconditions
 
-Preconditions:
-
-* Installed GNU ZLIB, JPEG, and SZIP(optional for building from source) 
-  Libraries. You need to download SZIP Library if you use NCSA 
-  prebuild binaries.
-
-  ZLIB, JPEG and SZIP libraries for windows can be found on the HDF FTP
-  server ftp://hdf.ncsa.uiuc.edu/lib-external/gzip/bin/windows
-         ftp://hdf.ncsa.uiuc.edu/lib-external/jpeg/bin/jpeg-6b.exe
-         ftp://hdf.ncsa.uiuc.edu/lib-external/szip/bin/windows
-
-
-Section I. Building from Binary Code Release (HDF42r0.zip)
-===============================================
-         
-To install the HDF and MFHDF libraries and utilities, it is assumed that
-you have done the following:
-      
-   1. Create a directory structure to unpack the library.  For example:
-
-         c:\                           (any drive)
-         MyHDFstuff\                   (any folder name)
-
-   2. Copy the binary archive (HDF42r0.zip)to that directory and unpack
-      it by running WinZip on HDF42r0.zip (the binary archive).  This
-      should create a directory called 'HDF42r0' which contains the
-      following files and directories:
-
-         c:\MyHDFstuff\HDF42r0\lib     (Single-threaded static versions
-                                        of HDF and MFHDF libraries with
-                                        Fortran or no Fortran support)
-         c:\MyHDFstuff\HDF42r0\dll     (Multi-threaded DLL export HDF
-                                        and MFHDF libraries and DLL
-                                        files with Fortran or no
-                                        Fortran support)
-         c:\MyHDFstuff\HDF42r0\include (include files)
-         c:\MyHDFstuff\HDF42r0\bin     (utilities)
-         c:\MyHDFstuff\HDF42r0\release_notes         (release notes)
-         c:\MyHDFstuff\HDF42r0\INSTALL_WINDOWS.txt   (this file)
-
-   3. If you are building an application that uses the HDF libraries
-      the following locations will need to be specified for locating
-      header files and linking in the HDF libraries:
- 
-         c:\MyHDFstuff\HDF42r0\lib or c:\MyHDFstuff\HDF42r0\dll
-         c:\MyHDFstuff\HDF42r0\include
-
-      Also you will need to specify location of the header files and
-      libraries for ZLIB, JPEG, and SZIP.
-
-Note: The ws2_32.lib needs to linked with your executable if using the
-      static mfhdf library.  The ws2_32.lib can be found in your
-      Microsoft Visual C++ directory under the lib folder.
-
-
-Section II. Building from Source Code Release (HDF42r0s.zip)
-================================================
-
-STEP I:  Preconditions
-
-To build the HDF and MFHDF libraries ( single-threaded static or
+To build the HDF4 and MFHDF4 libraries ( single-threaded static or
 multi-threaded DLL) and utilities, it is assumed that you have done
 the following:
       
-   1. Installed MicroSoft Developer Studio, and Visual C++ 6.0.  Visual
-      Fortran 6.0 is needed if you are going to build the full HDF
-      library with Fortran support.  Installed ZLIB, JPEG and SZIP
-      libraries.
+   1. Installed MicroSoft Visual C++ 6.0 or Intel C compiler and WinZip.
 
-   2. Set up a directory structure to unpack the library.  For example: 
+      1.1 Installed Visual Fortran compiler(6.0 or higher version) or
+          Intel Fortran compiler if you want to build the full HDF4
+          library with Fortran support.
+
+   2. Set up a directory structure to unpack the source code archive.
+      For example: 
 
          c:\                             (any drive)
          MyHDFstuff\                     (any folder name)
 
-   3. Copy the source distribution archive to that directory and unpack
-      it using the appropriate archiver options to create a directory
-      hierarchy.
-         
-      Run WinZip on HDF42r0s.zip (the entire source tree).  This should
-      create a directory called 'HDF42r0' which contains several files
-      and directories.
+   3. Download the HDF4.2r0 source code archive HDF4.2r0.tar.gz from
+      ftp://ftp.ncsa.uiuc.edu/HDF/HDF/HDF_Current/src/ and use WinZip
+      to extract HDF4 source code into c:\MyHDFstuff.  This creates a 
+      directory called 'HDF4.2r0' under MyHDFstuff which contains 
+      several files and directories.  Rename "HDF4.2r0" to "HDF42r0".  
 
-   4. HDF4 provide options to do in-memory compress within HDF4 library.
-      Currently, three external compression libraries ZLIB, JPEG, and
-      SZIP can be used with HDF4.
+   4. HDF4 provides options to do in-memory compress within HDF4
+      library.  Currently, three external compression libraries ZLIB,
+      JPEG, and SZIP can be used with HDF4.
 
       4.1 HDF4 uses Zlib version 1.1.4 for compression.  To use Zlib
           library, you have to install your own Zlib library or go to
           ftp://hdf.ncsa.uiuc.edu/lib-external/gzip/bin/windows 
           to download the Zlib library.
+
+          Zlib compression feature inside HDF4 is required.
       
       4.2 HDF4 uses JPEG release 6b for compression.  To use JPEG
           library, you have to install your own JPEG library or go to
-          ftp://hdf.ncsa.uiuc.edu/lib-external/jpeg/bin/jpeg-6b.exe
-          to download the JPEG library.
+          ftp://hdf.ncsa.uiuc.edu/lib-external/jpeg/bin to download
+          the JPEG library archive file jpeg-6b.exe.
+
+          JPEG compression feature inside HDF4 is required.
 
       4.3 HDF4 uses Szip version 1.2 for compression. To use Szip
           library, you can download Szlib source codes and binaries
@@ -135,7 +79,7 @@ the following:
       "System".  On the "Advanced" tab, click "Environment Variables".
       
       If you are logged on as administrator to the local computer AND
-      want to let all other users use these two environment variables,
+      want to let all other users use these three environment variables,
       click "New" under "System Variables" box; otherwise, click "New"
       under "User Variables" box.
       
@@ -144,11 +88,11 @@ the following:
       
       Similarly, you can set:
 
-      HDF4_EXT_SZIP environment variable as libjpeg.lib
+      HDF4_EXT_JPEG environment variable as libjpeg.lib
       HDF4_EXT_SZIP environment variable as szlib.lib
 
-Note: You might have to close and reopen running programs for the new
-      environment variable settings to take effect. 
+      Note: You might have to close and reopen running programs for the
+            new environment variable settings to take effect. 
       
    6. Set up path for external libraries and headers
  
@@ -169,32 +113,48 @@ Note: You might have to close and reopen running programs for the new
           (c:\zlib114\lib, c:\jpeg-6b, c:\szlib\lib) to the library
           directories.
 
-      
-STEP II: Select Installation Type and Build.
+************************************************************************
 
-You may select one of 2 ways to build the HDF libraries and utilities,
+The following sections discuss installation procedures in detail:
+
+   Section I:    Build and Test HDF4 Libraries and Utilities
+   Section II:   Build an Application Using the HDF4 Library
+   Section III:  Some Helpful Pointers
+   Section IV:   Disable Szip Compression Feature inside HDF4
+   Section V:    Build HDF4 in VS 7.0(.NET)
+   Section VI:   Build and Test HDF4 Library on the Command Line
+
+************************************************************************
+
+      
+Section I: Build and Test HDF4 Libraries and Utilities
+======================================================================
+
+Step 1: Select Installation Type
+
+You may select one of 2 ways to build the HDF4 libraries and utilities,
 depending on your environment and application needs.
 
-Option I, (select Win32.nofortran.zip)
-This is the "NOFORTRAN" configuration : It builds debug and release
+Option A, (select Win32.nofortran.zip)
+This is the "NOFORTRAN" configuration: It builds debug and release
 single-threaded and multi-threaded DLL versions of the HDF libraries,
 tests, and utilities.  There is no Fortran support.
 
-Option II, (select Win32.zip)
-This is "WITH FORTRAN support" configuration : it is the same as above
+Option B, (select Win32.zip)
+This is "WITH FORTRAN SUPPORT" configuration: it is the same as above
 but with Fortran support. 
 
 
-STEP III: Building the Libraries, Tests and Utilities.
+Step 2: Build HDF4 Libraries and Utilities
 
-Note that the instructions are the same for both Options I and II. 
+Note that the instructions are the same for both Options A and B. 
 
    1. Unpack Win32.nofortran.zip or Win32.zip in directory HDF42r0\. 
 
       Note: Please select "Yes" or "Yes to All" when you are asked
             to confirm file overwrite by WinZip.
 
-   2. Invoke Microsoft Visial C++ 6.0, go to "File" and select the
+   2. Invoke Microsoft Visual C++ 6.0, go to "File" and select the
       "Open Workspace" option. 
 
       Then open the c:\myHDFstuff\HDF42r0\all.dsw workspace. 
@@ -226,18 +186,18 @@ Note that the instructions are the same for both Options I and II.
 
          c:\MyHDFstuff\HDF42r0\windows\lib\debug\singlethreaded -
 
-            hd420d.lib - HDF static library 
-            hm420d.lib - MFHDF static library
+            hd420d.lib - HDF4 static library 
+            hm420d.lib - MFHDF4 static library
 
          c:\MyHDFstuff\HDF42r0\windows\lib\debug\multithreaded -
 
-            hd420md.lib - HDF multi-threaded DLL export library 
-            hm420md.lib - MFHDF multi-threaded DLL export library 
+            hd420md.lib - HDF4 multi-threaded DLL export library 
+            hm420md.lib - MFHDF4 multi-threaded DLL export library 
 
          c:\MyHDFstuff\HDF42r0\windows\dll\debug
 
-            hd420md.dll - HDF DLL
-            hm420md.dll - MFHDF DLL
+            hd420md.dll - HDF4 DLL
+            hm420md.dll - MFHDF4 DLL
 
          c:\MyHDFstuff\HDF42r0\windows\bin\debug - 
 
@@ -249,18 +209,18 @@ Note that the instructions are the same for both Options I and II.
 
          c:\MyHDFstuff\HDF42r0\windows\lib\release\singlethreaded - 
  
-            hd420.lib - HDF static library 
-            hm420.lib - MFHDF static library
+            hd420.lib - HDF4 static library 
+            hm420.lib - MFHDF4 static library
 
          c:\MyHDFstuff\HDF42r0\windows\lib\release\multithreaded - 
  
-            hd420m.lib - HDF multi-threaded DLL export library 
-            hm420m.lib - MFHDF multi-threaded DLL export library
+            hd420m.lib - HDF4 multi-threaded DLL export library 
+            hm420m.lib - MFHDF4 multi-threaded DLL export library
  
          c:\MyHDFstuff\HDF42r0\windows\dll\release 
 
-            hd420m.dll - HDF DLL
-            hm420m.dll - MFHDF DLL
+            hd420m.dll - HDF4 DLL
+            hm420m.dll - MFHDF4 DLL
  
          c:\MyHDFstuff\HDF42r0\Windows\bin\release - 
  
@@ -272,13 +232,14 @@ Note: The ws2_32.lib needs to be linked with your executable if using
       Microsoft Visual C++ directory under the lib folder.
 
 		
-STEP IV: Testing the Build
+Step 3: Test HDF4 Libraries and Utilities
 
 In a command prompt window run the test batch file which resides in the
-HDF42r0 directory to make sure that the libraries were built correctly.
+HDF42r0 directory to make sure that the HDF4 libraries and utilities
+were built correctly.
 
 DLLs listed below should be placed into the Windows system directory.
-A batch file named install_dll.bat is included in c:\MyHDFstuff\hdf4
+A batch file named install_dll.bat is included in c:\MyHDFstuff\HDF42r0
 directory.  Run this batch file and the following HDF4 DLLs will be
 copied to the system directory.
 
@@ -297,26 +258,24 @@ check the results.  You should not find any FAILED marks in your output
 files.
         
 
-STEP V:  Installation
+Step 4:  Install HDF4 Library
 
 We provide a batch file for users to relocate all HDF4 libraries in one
-folder.  The file is called installhdf4lib.bat under c:\MyHDFstuff\hdf4
-directory.  Run the batch file, you may see a folder called hdf4lib
-under c:\MyHDFstuff\hdf4.  
+folder.  The file is called installhdf4lib.bat under
+c:\MyHDFstuff\HDF42r0 directory.  Run the batch file, you may see a
+folder called hdf4lib under c:\MyHDFstuff\HDF42r0.  
     
 The <release> layout of <hdf4lib> should be:
     
    release\include   --  HDF4 header files
-   release\bin       --  HDF4 static tool executables
+   release\bin       --  HDF4 static utility executables
    release\lib       --  HDF4 static libraries
    release\dll       --  HDF4 multi-threaded libraries and DLLs
        
 You may also find the similar layout for the <debug>.
 
  
-Section III.  
-
-Building an Application Using the HDF4 Library - Some Helpful Pointers
+Section II. Build an Application Using the HDF4 Library or DLLs
 ======================================================================
 
 If you are building an application that uses the HDF4 library, the
@@ -331,10 +290,12 @@ where <top-level HDF directory> may be
 c:\MyHDFstuff\HDF42r0\hdf4lib\release or
 c:\MyHDFstuff\HDF42r0\hdf4lib\debug
 
-Copying DLLs to the directory(for example, Windows system directory)
-where the application can find. 
+if you have installed HDF4 library in Section I, Step 4.
 
-Using Microsoft Visual C++ version 6.x:
+We assume that you will use the Szip compression with HDF4 library.
+
+To specify these locations in the settings for your VC++ project with
+Microsoft Visual C++ 6.0:
 
 Under Tools->Options, select the folder, Directories:
    Under "Show directories for", select "Include files".
@@ -344,7 +305,7 @@ Under Tools->Options, select the folder, Directories:
 Under "Show directories for", select "Library files":
    Add the following directories:
       c:<path to HDF libs>\lib
-      c:<path to HDF libs>\dll        
+      c:<path to HDF libs>\dll
 
 Under Project->Settings, select folder, Link:
    Add the following libraries to the beginning of the list of
@@ -355,8 +316,85 @@ Under Project->Settings, select folder, Link:
       hd420m.lib hm420m.lib (multi-threaded release version)
       hd420md.lib hm420md.lib (multi-threaded debug version)
 
+      HDF4_EXT_ZLIB
+      HDF4_EXT_JPEG
+      HDF4_EXT_SZIP
 
-Section IV. How to Disable Szip Compression
+Note: The above three environment variables should have been defined in
+      the preconditions.  Paths for these external libraries and
+      headers should also have been set up in preconditions.
+
+      Follow the instructions in preconditions to define these three
+      environment variables and set up path for these external libraries
+      and headers if you not find them.
+
+HDF4 DLLs should also be copied to the directory(for example,
+Windows system directory) where the application can find. 
+
+
+Note: You can also follow the above instructions in this section if
+      want to build an application using the HDF42r0 binary
+      distributions available from
+      ftp://ftp.ncsa.uiuc.edu/HDF/HDF/HDF_Current/bin/windows.
+
+      Make sure to download appropriate binary distribution based on
+      your Windows platforms and compilers.
+
+      If you can not find any binary distribution matching with your
+      Windows platforms and compilers, you will have to build HDF4
+      libraries and utilities from the source code.
+
+      Also, these binary distributions were pre-compiled with Szip
+      compression feature inside HDF4 library.  If you do not want
+      to use the Szip compression feature, you will have to build HDF4
+      libraries and utilities from the source code following the
+      instructions in Section IV.
+
+
+Section III: Some Helpful Pointers
+======================================================================
+
+(as described in terms of installing the nofortran configuration)
+
+Here are some notes that may be of help if you are not familiar
+with using the Visual C++ Development Environment.
+
+Project name and location issues: 
+
+   The files in Win32.zip  and Win32.nofortran.zip must end up in the
+   HDF42r0\ directory installed by HDF4.2r0.tar.gz.
+
+   If you must install all.dsw and all.dsp in another directory,
+   relative to HDF42r0\ , you will be asked to locate all sub-project
+   files, when you open the project all.dsw.
+	 
+   If you want to rename all (the entire project), you will need to
+   modify two files all.dsw and all.dsp as text (contrary to the
+   explicit warnings in the files).
+
+   You can also modify all.dsw and all.dsp as text, to allow these 2
+   files to be installed in another directory.
+
+Settings... details:
+   If you create your own project, the necessary settings can be
+   read from the all.dsp file(as text), or from the Project Settings
+   in the Developer Studio project settings dialog.
+
+
+   Project
+      Settings
+         C/C++
+            Category
+               Code Generation
+                  Use run-time Library
+                     These are all set to use Single-Threaded
+                                           or Single-Threaded debug
+                                           or Multi-Threaded DLL
+                                           or Multi-Threaded debug DLL
+
+
+Section IV. Disable Szip Compression Feature inside HDF4
+======================================================================
 
 Warning: When you modify the h4config.h file as described below,
          DO NOT just change the values of these macros from 1 to 0.
@@ -376,18 +414,19 @@ follow the steps below.
    2. Delete HDF4_EXT_SZIP environment variable if you have set it in
       preconditions.
    
-   3. Run-compile HDF4 library according to section II.
+   3. Run-compile HDF4 library according to section I.
 
       When you disable Szip, you may get the following message 
       when building HDF4 libraries:
 
       The following environment variables were not found
-      $(HDF5_EXT_SZIP)
+      $(HDF4_EXT_SZIP)
 
       This message can be ignored.
 
       When you run HDF4 testing batch file Win32debugtst.bat or
-      Win32releasetst.bat, if you get the following failed messages:
+      Win32releasetst.bat, you should get the following failed messages
+      for HDF-SD c interfaces tests:
 
          ============================
          HDF-SD C interfaces tests
@@ -403,16 +442,16 @@ follow the steps below.
          num_err == 0
          *****
 
-      This means that actually the HDF-SD C interfaces tests passed.  It
-      is because that the expected output file HDFOUT.SAV was generated
-      for HDF4 testings with Szip compression feature.  As you choose
-      not to use Szip compression feature in HDF4, SD Szip test should
-      be skipped.
+      This means that actually the HDF-SD C interfaces tests passed.
+      The expected output file HDFOUT.SAV was generated for HDF4
+      testings with Szip compression feature.  As you disabled the
+      Szip compression feature in HDF4, SD Szip test should be skipped.
      
 
-Section V. BUILD HDF in VS 7.0(.NET)    
-============================================
-We just briefly introduce you how to build HDF in VS 7.0(.NET);
+Section V. Build HDF4 in VS 7.0(.NET)    
+======================================================================
+
+We just briefly introduce you how to build HDF4 in VS 7.0(.NET);
 
 1. Open the old dataspace(all.dsw) file with the "Open solution" option,
 .NET will automatically convert the data space file to solution file.
@@ -431,51 +470,92 @@ choose Include and Libraries under the category of
 
 Note: Currently we only build and test .NET on windows XP.
 
-MORE HELPFUL POINTERS
-=====================
-(as described in terms of installing the  nofortran configuration)
 
-Here are some notes that may be of help if you are not familiar
-with using the Visual C++ Development Environment.
+Section VI. Build and Test HDF4 Library on the Command Line    
+======================================================================
 
-Project name and location issues: 
-         The files in Win32.zip  and Win32.nofortran.zip must end up 
-         in the HDF42r0\ directory installed by HDF42r0s.zip
+For Microsoft Visual C++ 6.0 and Visual Fortran 6.0(or higher versions)
+users, we support building HDF4 libraries and utilities from the HDF4
+source code archive on command line.
+      
+For all other Windows development tools, HDF4 should be built in the
+development environment following the instructions in Section I.
 
-         If you must install all.dsw and all.dsp in 
-         another directory, relative to HDF42r0\ , you will be asked to
-	   locate all sub-project files, when you open the
-	   project all.dsw.
-	 
-	   If you want to rename all (the entire project),
-	   you will need to modify two files
-	   all.dsw and all.dsp as text
-	   (contrary to the explicit warnings in the files).
+Step 1. Set path for Microsoft Visual C++ 6.0 and Visual Fortran 6.0:
+   
+   Open "System" in Control Panel.
+   
+   On the "Advanced" tab, click "Environment Variables", click "Path"
+   in the "System variables" box, then click "Edit" and add your Visual
+   C++ 6.0 path (For example, 
+   C:\Program Files\Microsoft Visual Studio\Common\MSDev98\Bin\)
+   and Visual Fortran 6.0 path (For example, 
+   C:\Program Files\Microsoft Visual Studio\Common\MSDev98\Bin\)
+   into "Variable Value" and click "OK".
+  
+Step 2. Unpack Win32.nofortran.zip or Win32.zip
 
-	   You can also modify all.dsw and all.dsp
-	   as text, to allow these 2 files to be installed
-	   in another directory.
+   Unpack Win32.nofortran.zip or Win32.zip with WinZip into HDF42r0\
+   directory. 
+
+   Note: Please select "Yes" or "Yes to All" when you are asked
+         to confirm file overwrite by WinZip.
+
+Step 3. Build and Test
+
+   We provide 2 options for users to build test HDF4 libraries 
+   and utilities.
+      
+   Options A: Build and test in one step 
+      
+      A batch file named hdf4bt.bat in c:\MyHDFstuff\HDF42r0 directory
+      is provided for users to build and test HDF4 library and tools
+      together from the command line.
+
+      Run hdf4bt.bat in a command prompt window.
+
+      Test results are saved in
+
+         c:\MyHDFstuff\HDF42r0\hdf4_results.txt   
+
+
+   Options B: Build and test in two steps 
+
+      We also provide users with the option to build and test HDF4
+      libraries and utilities separately from the command line.
+   
+      Step 1) Build HDF4 Libraries and Utilities
+
+         A batch file named hdf4build.bat in c:\MyHDFstuff\HDF42r0 
+         directory is provided for users to build HDF4 libraries and 
+         utilities from command line.
+
+         Run hdf4build.bat in a command prompt window.
+
+         Compiling outputs are saved in
+
+            c:\MyHDFstuff\HDF42r0\build_results.txt.
+
+         You can check the output file to find out whether there
+         are any compilation errors.
+
+      Step 2) Test HDF4 Libraries and Utilities
+   
+         A batch file named hdf4check.bat in c:\MyHDFstuff\HDF42r0
+         directory is provided for users to test HDF4 libraries and 
+         utilities from command line.
+
+         Run hdf4check.bat in a command prompt window.
+
+         Test results are saved in:
+
+            c:\MyHDFstuff\HDF42r0\check_results.txt.
+
+
+Having built and tested HDF4 libraries and utilities successfully 
+on the command line, you can install HDF4 libraries following the
+instruction in Section I, Step 4.
 
 
 
-  Settings... details:
-  If you create your own project, the necessary settings can be
-  read from the all.dsp file(as text), or from the
-  Project Settings in the Developer Studio project settings 
-  dialog.
-
-    Project
-	  Settings
-	      C/C++
-		  Category
-		     PreProcessor
-			 Code Generation
-			    Use run-time Library
-				   These are all set to use 
-                                      Single-Threaded
-				   or Single-Threaded debug
-                                   or Multi-Threaded DLL 
-                                   or Multi-Threaded debug DLL
-
-
-
+Please send email to hdfhelp@ncsa.uiuc.edu for further assistance.
