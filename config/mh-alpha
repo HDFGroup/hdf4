@@ -44,7 +44,7 @@ RMFLAGS = -f
 
 # Extra libraries to be include like '-lm' for fabs()
 # e.g with naitve HP-ANSI compilier
-#LIBSX = -lm
+LIBSX = -lm
 
 # ------------ Macros for Pablo Instrumentation  --------------------
 # Uncomment the following lines to create a Pablo Instrumentation
@@ -75,8 +75,8 @@ CPP      = $(CC) -E
 
 # for endianess, for little endian byte order need -DSWAP
 # for FreeBSD and Linux(anny x86 UNIX)
-#SWAP          = -DSWAP
-SWAP          = 
+SWAP          = -DSWAP
+#SWAP          = 
 
 # for 32bit 'network long' integer, possible value -DNETLONG=int
 NETLONG       = 
