@@ -492,13 +492,16 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode,
 	 }
 	 aNode->children[t] = (char*)malloc(sizeof(char)*4);
          strcpy(aNode->children[t], "***"); 
-	 aNode->type[t] = (char*)malloc(sizeof(char)*strlen(name));
 	 tempPtr = (char*)HDgettagname((uint16) tag);
-	 tempPtr = &tempPtr[6];
-	 strcpy(aNode->type[t], "~v"); /* here */
+	 if (!tempPtr) {
+	    aNode->type[t] = (char*)malloc(sizeof(char)*15);
+	    strcpy(aNode->type[t], "Unknown Object"); 
+         }
+	 else
+	    aNode->type[t] = tempPtr + 6;
+						/* here */
       }
    } /* for */
-   aNode->children[t] = (char*)malloc(sizeof(char));
    aNode->children[num_entries] = NULL;
    if (!found)
       printf("     None.\n");
