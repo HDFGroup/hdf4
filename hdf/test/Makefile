@@ -129,10 +129,10 @@ FC=f77
 FFLAGS=  -g
 
 # ==> specify your C compiler
-CC=cc
+CC=gcc
 
 # ==> where are your hdf.h, hdfi.h and vg.h files located?
-HDFINC=   ../src
+HDFINC= ../src
 
 CFLAGS=  -g -D${MACHINE}
 
@@ -150,16 +150,26 @@ HDFSRC=../src
 JPEGLIB=../jpeg
 JPEGINC=../jpeg
 
+#Common include
+#COMMINC=-I../common/chipset/src/rbtree
+#COMMLIB=../common/chipset/src/rbtree/librb.a
+
+# all includes
+ALLINC= -I$(JPEGINC) -I$(HDFINC) $(COMMINC) 
+
+# all libs
+ALLLIBS=  $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(COMMLIB)
+
 RM=/bin/rm
 RMFLAGS=-f
 
 SRCS= 	rig.c sdstr.c blocks.c an.c anfile.c extelt.c file.c file1.c vers.c \
 	sdmms.c sdnmms.c slab.c litend.c tvset.c comp.c bitio.c tree.c conv.c \
-	nbit.c vblocks.c testhdf.c
+	nbit.c vblocks.c testhdf.c man.c
 
 CTESTS= rig.o sdstr.o blocks.o an.o anfile.o extelt.o file.o file1.o vers.o \
 	sdmms.o sdnmms.o slab.o litend.o tvset.o comp.o bitio.o tree.o conv.o \
-	nbit.o vblocks.o testhdf.o
+	nbit.o vblocks.o testhdf.o man.o
 
 FSRCS= tr8f.f t24f.f tpf.f tanf.f tanfilef.f tsdstrf.f tsdntf.f tsdnntf.f \
         tsdmmsf.f tsdnmmsf.f tstubsf.f \
@@ -196,21 +206,21 @@ debug: ptesthdf
 #	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
 #
 .c.o: 
-	 $(CC) $(CFLAGS) -c -I$(HDFINC) -I$(JPEGINC) $*.c 
+	 $(CC) $(CFLAGS) -c $(ALLINC) $*.c 
 
 $(CTESTS) $(TESTF) $(FTESTS): $(FRC)
 
 qtesthdf: $(CTESTS) $(HDFLIB)/libdf.a
-	quantify $(CC) $(CFLAGS) -o qtesthdf $(CTESTS) $(HDFSRC)/libdf.a $(JPEGLIB)/libjpeg.a
+	quantify $(CC) $(CFLAGS) -o qtesthdf $(CTESTS) $(ALLLIBS)
 
 ptesthdf: $(CTESTS) $(HDFLIB)/libdf.a
-	purify $(CC) $(CFLAGS) -o ptesthdf $(CTESTS) $(HDFSRC)/libdf.a $(JPEGLIB)/libjpeg.a
+	purify $(CC) $(CFLAGS) -o ptesthdf $(CTESTS) $(ALLLIBS)
 
 testhdf.tc: $(CTESTS) $(HDFLIB)/libdf.a
 	proof $(CC) $(CFLAGS) -o testhdf.tc $(CTESTS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
 
 testhdf: $(CTESTS) $(HDFLIB)/libdf.a
-	$(CC) $(CFLAGS) -o testhdf $(CTESTS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
+	$(CC) $(CFLAGS) -o testhdf $(CTESTS) $(ALLLIBS)
 
 fortest: $(FTESTS) $(HDFLIB)/libdf.a fortest.o
 	$(CC) $(CFLAGS) -o fortest $(TESTF) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
