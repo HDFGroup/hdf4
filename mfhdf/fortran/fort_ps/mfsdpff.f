@@ -1752,4 +1752,34 @@ C
          return 
          end 
   
+C-------------------------------------------------------------------------
+C        Name:      sfchempty
+C        Purpose:   checks whether an SDS is empty ( data has not been written) 
+C        Inputs:    id       - data set ID
+C        Outputs:   flag     - 1 if SDS is empty, 0 otherwise
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scchempty (C stub for SDcheckempty function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function sfchempty(id, flag)
+	     !MS$if defined(BUILD_HDF_DLL)
+	     !MS$attributes dllexport :: sfchempty 
+	     !MS$endif
+C
+         INTEGER id, flag 
+C        INTEGER scchempty 
+C
+
+      INTERFACE 
+        INTEGER FUNCTION  scchempty(id, flag) 
+          !MS$ATTRIBUTES C, reference, alias: '_SCCHEMPTY' :: scchempty
+          integer id, flag
+        END FUNCTION scchempty
+      END INTERFACE 
+         sfchempty = scchempty(id, flag) 
+C
+         return 
+         end
            
+         
