@@ -1,0 +1,151 @@
+.\" $Id$
+.TH VSFPACK 3 "June 1996" "NCSA HDF 4.0"
+.ft B
+#include <hdf.h>
+.TP
+intn 
+.br
+VSfpack(int32 vsid, intn packtype, char *fields_in_buf, 
+.br
+        VOIDP buf, intn bufsz, intn n_records, 
+.br
+        char *fields, VOIDP fldbufpt[])
+.sp
+.I  vsid
+	IN: vdata id, returned from VSattach.
+.I  packtype
+        IN: _HDF_VSPACK(0) -- pack field values into 
+.br
+             vdata buf;
+            _HDF_VSUNPACK(1) -- unpack vdata value into 
+.br
+              field buffers.
+.nf
+.I  fields_in_buf
+        IN: fields in buf to write to or read from 
+.br
+            vdata. NULL stands for all fields in the 
+.br
+            vdata.
+.I  buf
+        IN: buffer for vdata values.
+.I  bufsz
+        IN: buffer size in bytes.
+.I  n_records
+        IN: number of records to pack or unpack.
+.I  fields
+        IN: names of the fields to be packed/unpacked. 
+.br
+            It may be a subset of fields_in_buf. 
+.br
+            NULL stands for all fields in buf.
+.I  fldbufpt
+        IN: array of pointers to field buffers.
+
+.TP
+Purpose
+.br
+VSfpack supplies a convenient way to pack or unpack 
+values of several fields into or from a buffer.
+.TP
+Return value
+Returns SUCCEED (0) if successful, FAIL (-1) otherwise.
+
+.TP
+Description
+
+       The caller should supply the correct number of 
+       field buffers, which should agree with the number 
+       of fields to be packed/unpacked.
+       When specifying _HDF_VSPACK, values of fields are 
+       packed fully interlaced from field buffers into 
+       the vdata buffer (buf); when specifying 
+       _HDF_VSUNPACK, field values are unpacked from 
+       the vdata buffer (buf) to field buffers. 
+.sp 
+       The caller must allocate enough space for 
+       each buffer to hold correspondent
+       data. For example, the vdata buffer should be
+       at least equal to n_records*(total size of 
+       all fields specified in fields_in_buf).
+       Here, field size refers to the size of
+       a field in memory, including order. 
+.sp
+       For packing the calling sequence should be:
+          VSsetfields, VSfpack, and VSwrite;
+       for unpacking it should be:
+          VSsetfields, VSread, and VSfpack.
+.sp
+       When VSfpack is called to pack field values 
+       into buf (the vdata buffer) fields_in_buf 
+       should contain all fields of the vdata. NULL 
+       can be used in C programs for fields_in_buf, 
+       a blank character ' ' in FORTRAN programs. 
+       When VSfpack is called to unpack field values,
+       fields_in_buf may be a subset of all fields 
+       of the vdata. 
+.sp
+       There are two Fortran versions for this routine: 
+       vsfnpak and vsfcpak. Vsfnpak packs/unpacks a 
+       numeric field and vsfcpak, a character type field.
+       Note, vsfcpak() and vsfnpak() packs 1 field at 
+       at time. 
+
+.TP
+C Examples
+       A vdata has 3 fields:"Ident,Temp,Speed" with 
+       data types char, float32, and int16 respectively.  
+       This statement:
+.sp
+       stat = VSfpack(vdata_id, _HDF_VSUNPACK, NULL,
+              vdatabuf, rec_size*NRECORDS, NRECORDS, 
+              NULL, fld_buf_ptrs);
+.sp
+       will unpack NRECORDS of records from vdatabuf 
+       into field buffers, whose addresses are stored 
+       in fld_buf_ptrs. Vdatabuf contains all fields of
+       the vdata and fld_buf_ptrs contains 3 pointers,
+       each pointing to a field buffer.   
+
+.TP
+FORTRAN 
+integer function vsfnpk(vs, packtype, buflds, buf, 
+.br
+                 bufsz, nrecs, pckfld, fldbuf)
+    integer vs, packtype, buf, bufsz, nrecs, fldbuf
+    character*(*) buflds, pckfld
+
+integer function vsfcpk(vs, packtype, buflds, buf, 
+.br
+                 bufsz, nrecs, pckfld, fldbuf)
+     integer vs, packtype, buf, bufsz, nrecs
+     character*(*) buflds, pckfld, fldbuf
+
+.TP
+Fortran Examples
+     Statement:
+
+     ret = vsfnpak(vsid2, HDF_VSPACK,
+     +       ' ', dbuf, 320*4, 5,'f_float32',fdata)
+
+     packs field 'f_float32' into the vdata buffer 
+     dbuf for 5 records. Dbuf contains all fields of 
+     the vdata, set by vsfsfld(). Fdata contains data
+     of field 'f_float32'. Field 'f_float32' is of 
+     numeric data type.
+.sp
+     Statement:
+
+     ret = vsfcpak(vsid2, HDF_VSPACK,
+     +       ' ', dbuf, 320*4, 5,'f_char',cdata)
+
+     packs field 'f_char' into the vdata buffer 
+     dbuf for 5 records. Dbuf contains all fields of 
+     the vdata, set by vsfsfld(). Cdata contains data
+     of field 'f_char'. Field 'f_char' is of character
+     data type.
+
+
+.TP
+See Also
+
