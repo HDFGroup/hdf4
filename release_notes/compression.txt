@@ -7,8 +7,8 @@ users once the data has been compressed initially - further data written
 to an object or read from it are compressed or decompressed internally to
 the library without user intervention.  Currently only two compression
 algorithms are supported: Run-Length Encoding (RLE) and adaptive Huffman.
-Plans for future algorithms include an Lempel/Ziv-77 dictionary coding, an
-Lempel/Ziv-78 dictionary coding and an arithmetic coder.
+Plans for future algorithms include an Lempel/Ziv-78 dictionary coding,
+an arithmetic coder and a faster Huffman algorithm.
     The public interface for this new feature is contained in one new
 user-level function call, HCcreate.  The interface to HCcreate described below:
 
@@ -27,6 +27,7 @@ int32 HCcreate(id,tag,ref,model_type,m_info,coder_type,c_info);
                                     COMP_CODE_NONE - for no compression
                                     COMP_CODE_RLE - for RLE encoding
                                     COMP_CODE_SKPHUFF - for adaptive Huffman
+                                    COMP_CODE_DEFLATE - for gzip 'deflation'
     coder_info *c_info;      IN: Information needed for the encoding type chosen
                                     For COMP_CODE_NONE and COMP_CODE_RLE,
                                     this is unused and can be set to NULL.
@@ -34,6 +35,13 @@ int32 HCcreate(id,tag,ref,model_type,m_info,coder_type,c_info);
                                     in this union needs information about the
                                     size of the data elements in bytes (see
                                     examples below).
+                                    For COMP_CODE_DEFLATE, the structure deflate
+                                    in this union needs information about the
+                                    "effort" to encode data with.  Higher
+                                    values of 'level' member indicate more
+                                    compression effort.  Values may range from
+                                    0 (minimal compression, fastest time) to
+                                    9 (maximum compression, slowest time).
     RETURNS
         Return an AID to the newly created compressed element, FAIL on error.
 
