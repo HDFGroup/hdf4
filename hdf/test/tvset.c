@@ -774,6 +774,12 @@ int32 read_vset_stuff() {
 
     }
 
+    /* verify that VSfind does not mess up the AIDs of attached Vdatas */
+    VSfind(fid, "foo");
+    if(VSseek(vs1, 0) == FAIL) {
+        num_errs++;
+        printf(">>> VSseek failed after VSfind call\n");
+    }
 
     VSdetach(vs1);
 
