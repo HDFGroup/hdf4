@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.1  1992/07/14 16:38:12  mlivin
-Initial revision
+Revision 1.2  1992/07/15 21:48:48  sxu
+No change.
 
+ * Revision 1.1  1992/07/14  16:38:12  mlivin
+ * Initial revision
+ *
 */
 /* Prototypes for hdfed functions */
 int HEalias

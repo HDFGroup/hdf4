@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/07/14 17:50:30  mlivin
-removed Sun pixrect stuff
+Revision 1.3  1992/07/15 21:48:48  sxu
+No change.
 
+ * Revision 1.2  1992/07/14  17:50:30  mlivin
+ * removed Sun pixrect stuff
+ *
  * Revision 1.1  1992/07/06  22:54:16  mlivin
  * Initial revision
  *

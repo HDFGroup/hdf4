@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.2  1992/07/14 16:29:20  mlivin
-fixed include of he_proto.h (for name change to _ not -)
+Revision 1.3  1992/07/15 21:48:48  sxu
+No change.
 
+ * Revision 1.2  1992/07/14  16:29:20  mlivin
+ * fixed include of he_proto.h (for name change to _ not -)
+ *
  * Revision 1.1  1992/07/06  22:54:16  mlivin
  * Initial revision
  *

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#) $Revision$"
 $Header$
 
 $Log$
-Revision 1.1  1992/07/01 20:50:03  mlivin
-Initial revision
+Revision 1.2  1992/07/15 21:48:48  sxu
+No change.
 
+ * Revision 1.1  1992/07/01  20:50:03  mlivin
+ * Initial revision
+ *
  * Revision 3.2  1991/10/22  17:56:10  dilg
  * 5
  * HDF3.1r5
