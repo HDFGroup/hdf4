@@ -553,7 +553,7 @@ extern uint8 *tbuf;
 /*
  * Defaults for linked block operations with Vsets
  */
-#define VDEFAULTBLKSIZE    1024
+#define VDEFAULTBLKSIZE    4096
 #define VDEFAULTNBLKS      32
 
 /* Max order of a field in a Vdata */
