@@ -344,3 +344,216 @@ C----------------------------------------------------------------------
       sfsextf = scsextf(id, fname, offset, len(fname))
       return
       end
+C-------------------------------------------------------------------------
+C        Name:      sfgichnk
+C        Purpose:   get Info on SDS
+C        Inputs:    id       - data set ID
+C        Outputs:   dim_length - chunk dimensions (if any)
+C                   comp_flag: 
+C                               -1 - SDS is non-chunked
+C                                0 - SDS is chunked without compression
+C                                1 - SDS is chunked and compressed with
+C                                    RLE, GZIP or SKPHUFF 
+C                                2 - SDS is chunked and compressed with
+C                                    NBIT
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scgichnk (C stub for SD setchunk function)
+C-------------------------------------------------------------------------
+
+         INTEGER function sfgichnk(id, dim_length, comp_flag)
+
+         INTEGER id, dim_length(*), comp_flag
+         INTEGER scgichnk 
+
+         sfgichnk = scgichnk(id, dim_length, comp_flag)
+         return
+         end
+
+           
+C-------------------------------------------------------------------------
+C        Name:      sfrcchnk
+C        Purpose:   read the specified chunk of CHARACTER data to the SDS 
+C        Inputs:    id       - data set ID
+C                   start    - chunk coordinates 
+C                   char_data - buffer the data will be read into  
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scrcchnk (C stub for SDwriteChunk function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function sfrcchnk(id, start, char_data)
+C
+         INTEGER id, start(*)
+         CHARACTER*(*) char_data(*)
+         INTEGER scrcchnk 
+C
+         sfrcchnk = scrcchnk(id, start, char_data) 
+C
+         return 
+         end
+
+           
+C-------------------------------------------------------------------------
+C        Name:      sfrchnk
+C        Purpose:   read the specified chunk of NUMERIC data to the SDS 
+C        Inputs:    id       - data set ID
+C                   start    - chunk coordinates 
+C                   num_data - buffer the  numeric data will be read into  
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scrchnk (C stub for SDwriteChunk function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function sfrchnk(id, start, num_data)
+C
+         INTEGER id, start(*), num_data(*)
+         INTEGER scrchnk 
+C
+         sfrchnk = scrchnk(id, start, num_data) 
+C
+         return 
+         end
+
+           
+C-------------------------------------------------------------------------
+C        Name:      sfscchnk
+C        Purpose:   set the maximum number of chunks to cache
+C        Inputs:    id       - data set ID
+C                   maxcache - max number of chunks to cache 
+C                   flags    - flags =0, HDF_CACHEALL
+C                              Currently only 0 can be passed.
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scscchnk (C stub for SDsetchunkcache function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function sfscchnk(id, maxcache, flags)
+C
+         INTEGER id, maxcache, flags 
+         INTEGER scscchnk 
+C
+         sfscchnk = scscchnk(id, maxcache, flags) 
+C
+         return 
+         end
+
+           
+
+C-------------------------------------------------------------------------
+C        Name:      sfschnk
+C        Purpose:   make the SDS a chunked SDS
+C        Inputs:    id       - data set ID
+C                   dim_length - chunk dimensions
+C                   comp_type - type of compression    
+C                   supports the following compression types:
+C                            ( see hcomp.h  file) 
+C                            COMP_CODE_NONE = 0
+C                            COMP_CODE_RLE = 1
+C                            COMP_CODE_NBIT = 2 
+C                            COMP_CODE_SKPHUFF = 3
+C                            COMP_CODE_DEFLATE = 4 
+C                   comp_prm  - compression parameters array
+C        For
+C        Adaptive Huffman 
+C                   comp_prm(1) = skphuff_skp_size
+C        GZIP       
+C                   comp_prm(1) = deflate_level
+C        NBIT
+C                   comp_prm(1) = nbit_sign_ext
+C                   comp_prm(2) = nbit_fill_one
+C                   comp_prm(3) = nbit_start_bit
+C                   comp_prm(4) = nbit_bit_len 
+C          
+C        NOTE: IT IS USER's responsibility to pass correct compression
+C              parameters for each type of compression
+C
+C                       
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scschnk (C stub for SD setchunk function)
+C-------------------------------------------------------------------------
+
+         INTEGER function sfschnk(id, dim_length, comp_type,comp_prm)
+
+         INTEGER id, dim_length(*), comp_type, comp_prm(*)
+         INTEGER scschnk 
+
+         sfschnk = scschnk(id, dim_length, comp_type, comp_prm)
+         return
+         end
+
+           
+C-------------------------------------------------------------------------
+C        Name:      sfwcchnk
+C        Purpose:   write the specified chunk of CHARACTER data to the SDS 
+C        Inputs:    id       - data set ID
+C                   start    - chunk coordinates 
+C                   char_data - buffer containing  data to be written  
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scwcchnk (C stub for SDwriteChunk function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function sfwcchnk(id, start, char_data)
+C
+         INTEGER id, start(*) 
+         CHARACTER*(*) char_data(*)
+         INTEGER scwcchnk 
+C
+         sfwcchnk = scwcchnk(id, start, char_data) 
+C
+         return 
+         end
+
+           
+C-------------------------------------------------------------------------
+C        Name:      sfwchnk
+C        Purpose:   write the specified chunk of NUMERIC data to the SDS 
+C        Inputs:    id       - data set ID
+C                   start    - chunk coordinates 
+C                   num_data - buffer containing data to be written  
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scwchnk (C stub for SDwriteChunk function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function sfwchnk(id, start, num_data)
+C
+         INTEGER id, start(*), num_data(*)
+         INTEGER scwchnk 
+C
+         sfwchnk = scwchnk(id, start, num_data) 
+C
+         return 
+         end
+
+           
+C-------------------------------------------------------------------------
+C        Name:      sfscompress
+C        Purpose:   compress SDS 
+C        Inputs:    id       - data set ID
+C                   comp_type - type of compression
+C                   supports the following compression types:
+C                            ( see hcomp.h  file) 
+C                            COMP_CODE_NONE = 0
+C                            COMP_CODE_RLE =1
+C                            COMP_CODE_SKPHUFF = 3
+C                            COMP_CODE_DEFLATE = 4 
+C                   comp_prm - compression parameter array:
+C                   comp_prm(1) = deflate_level for GZIP
+C                   comp_prm(1) = skphuff_skp_size for ADAPTIVE HUFFMAN
+C        NOTE: IT IS USER's responsibility to pass correct compression
+C              parameters for each type of compression
+C
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scscompress (C stub for SD setchunk function)
+C-------------------------------------------------------------------------
+
+         INTEGER function sfscompress(id, comp_type,comp_prm)
+
+         INTEGER id, comp_type, comp_prm(*)
+         INTEGER scscompress 
+         sfscompress = scscompress(id, comp_type, comp_prm)
+         return
+         end
+
+           
