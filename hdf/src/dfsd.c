@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.7  1992/11/12 21:29:12  georgev
-DFSDgetfillvalue has been fixed
+Revision 1.8  1992/12/08 20:47:56  georgev
+Changed order of src/dest for HDmemcpy
 
+ * Revision 1.7  1992/11/12  21:29:12  georgev
+ * DFSDgetfillvalue has been fixed
+ *
  * Revision 1.6  1992/11/10  20:19:42  georgev
  * Added routines DFSDwriteref, DFSDsetfillvalue, DFSDgetfillvalue
  *  DFSDwritefillvalue, DFSDwriteslab for writing hyperslabs
@@ -485,7 +488,7 @@ void *scale;
 
     p1 = (uint8 *)scale;
     p2 = (uint8 *)(Readsdg.dimscales[rdim]);
-    HDmemcpy(p2, p1, dimsize);
+    HDmemcpy(p1, p2, dimsize);
     return(0);
 }
 
@@ -527,10 +530,10 @@ void *pmax, *pmin;
     if (Ismaxmin) {
         p1 = (uint8 *)pmax;
         p2 = (uint8 *)&(Readsdg.max_min[0]);
-        HDmemcpy(p2, p1, localNTsize);
+        HDmemcpy(p1, p2, localNTsize);
         p1 = (uint8 *)pmin;
         p2 = &(Readsdg.max_min[localNTsize]);
-        HDmemcpy(p2, p1, localNTsize);
+        HDmemcpy(p1, p2, localNTsize);
         return(0);
     } else {
         HERROR(DFE_NOVALS); return FAIL;
@@ -937,7 +940,7 @@ void *scale;
              /* copy scale */
     p1 = (uint8 *)scale;
     p2 = (uint8 *)Writesdg.dimscales[rdim];
-    HDmemcpy(p1, p2, bytesize);
+    HDmemcpy(p2, p1, bytesize);
 
     /* Indicate scales modified */
     Ref.scales = 0;
@@ -983,8 +986,8 @@ void *maxi, *mini;
     p1 = (uint8 *)maxi;
     p2 = (uint8 *)mini;
     
-    HDmemcpy(p1, (uint8 *) &(Writesdg.max_min[0]), localNTsize);
-    HDmemcpy(p2, (uint8 *)&(Writesdg.max_min[localNTsize]), localNTsize);
+    HDmemcpy((uint8 *) &(Writesdg.max_min[0]), p1, localNTsize);
+    HDmemcpy((uint8 *)&(Writesdg.max_min[localNTsize]), p2, localNTsize);
 
     Ref.maxmin = 0;
 
@@ -3894,7 +3897,7 @@ DFSDsetfillvalue(fill_value)
  * Returns: 0 on success, FAIL on failure
  * Users:   HDF programmers, other routines and utilities
  * Invokes: HEclear
- * Remarks: Doesn't work yet...
+ * Remarks: 
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
@@ -3922,7 +3925,7 @@ DFSDgetfillvalue(fill_value)
     localNTsize = DFKNTsize(numtype | DFNT_NATIVE);
 
     /* Set return fill value  */
-    HDmemcpy(fill_value, Readsdg.fill_value, localNTsize);
+    HDmemcpy(Readsdg.fill_value, fill_value, localNTsize);
     return SUCCEED;
 }
 
