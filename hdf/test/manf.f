@@ -340,11 +340,13 @@ C**************************************************************
       character*500 indesc, fanndesc
       integer AN_DATA_LABEL, AN_DATA_DESC, AN_FILE_LABEL, AN_FILE_DESC
       integer DFACC_READ
+      integer error_code
       DFACC_READ = 1
       AN_DATA_LABEL = 0
       AN_DATA_DESC  = 1
       AN_FILE_LABEL = 2
       AN_FILE_DESC  = 3
+      error_code = 0
 
 C ***** Test if the file fname is an HDF file
 C
@@ -354,12 +356,17 @@ C
           num_failed = num_failed + 1
           write(*,*) 'HISHDFF function failed'
       endif
-      ret = hestringf(0, error_message)
-       if (ret .ne. 0) then
+      ret = hestringf(error_code, error_message)
+      if (ret .ne. 0) then
+          num_failed = num_failed + 1
+          write(*,*) 'HESTRINGF function failed'
+          goto 1111
+      endif
+      if (error_message(1:len(error_message)) .ne. "No error") then
           num_failed = num_failed + 1
           write(*,*) 'HESTRINGF function failed'
       endif
-
+1111  continue
 C
 C     Call hishdff with  file not being an hdf file. Call should return
 C     0 
