@@ -3893,8 +3893,9 @@ done:
         int32 lutid;        IN: LUT ID from GRgetlutid
 
  RETURNS
-    Valid ref # if a palette exists, or DFREF_WILDCARD (0) if one doesn't
-    SUCCEED/FAIL
+    Valid ref # if a palette exists, or 0 when:
+	- palette doesn't exist, or
+	- unable to get the image from the palette id. - BMR
 
  DESCRIPTION
     Gets the ref # used to store the LUT in the file.
@@ -3908,7 +3909,7 @@ uint16 GRluttoref(int32 lutid)
 {
     CONSTR(FUNC, "GRluttoref");   /* for HERROR */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    uint16 ret_value = SUCCEED;
+    uint16 ret_value = 0;
 
 #ifdef HAVE_PABLO
     TRACE_ON(GR_mask, ID_GRluttoref);
@@ -3918,11 +3919,11 @@ uint16 GRluttoref(int32 lutid)
 
     /* check the validity of the RI ID */
     if (HAatom_group(lutid)!=RIIDGROUP)
-        HGOTO_ERROR(DFE_ARGS, (uint16)FAIL);
+        HGOTO_ERROR(DFE_ARGS, 0);	/* return 0 for invalid ref # - BMR */
     
     /* locate LUT's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(lutid)))
-        HGOTO_ERROR(DFE_NOVS, (uint16)FAIL);
+        HGOTO_ERROR(DFE_NOVS, 0);	/* return 0 for invalid ref # - BMR */
 
     ret_value=ri_ptr->lut_ref;
 
