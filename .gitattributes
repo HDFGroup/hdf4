@@ -1,5 +1,4 @@
 * text=auto !eol
-hdf/test/litend.dat -text svneol=unset#application/octet-stream
 hdf/util/testfiles/head.r24.Z -text
 hdf/util/testfiles/palette.raw -text
 hdf/util/testfiles/storm110.hdf -text
