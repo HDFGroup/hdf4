@@ -1712,7 +1712,7 @@ palette(char *palfile)
     /*
      * extract a palette from an HDF file
      */
-    if (!Hishdf(palfile))
+    if (Hishdf(palfile))
       {
           if (DFPgetpal(palfile, pal))
             {
