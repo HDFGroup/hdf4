@@ -361,11 +361,15 @@ DFPnpals(const char *filename)
   npals = curr_pal;   /* reset the number of palettes we really have */
   for (i = 1; i < curr_pal; i++)
     {     /* go through the palettes looking for duplicates */
-      for (j = 0; j < i; j++)
-        {
-          if (pal_off[i] == pal_off[j])
-            npals--;    /* if duplicate found, decrement the number of palettes */
-        }   /* end for */
+      if(pal_off[i]!=(-1))
+          for (j = 0; j < i; j++)
+            {
+              if (pal_off[i] == pal_off[j])
+                {
+                    npals--;    /* if duplicate found, decrement the number of palettes */
+                    pal_off[j]=(-1); /* mark as used, so we don't count it too... */
+                } /* end if */
+            }   /* end for */
     }     /* end for */
 
   HDfree((VOIDP) pal_off);   /* free offsets */

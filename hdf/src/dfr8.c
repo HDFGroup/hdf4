@@ -1155,7 +1155,10 @@ DFR8nimages(const char *filename)
       for (j = 0; j < i; j++)
         {
           if (img_off[i] == img_off[j])
-            nimages--;  /* if duplicate found, decrement the number of images */
+            {
+                nimages--;  /* if duplicate found, decrement the number of images */
+                img_off[j]=(-1); /* mark as used, so we don't count it too... */
+            } /* end if */
         }   /* end for */
     }     /* end for */
 
