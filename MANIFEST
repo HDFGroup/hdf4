@@ -36,6 +36,7 @@
 ./config/freebsd
 ./config/hpux11.00
 ./config/irix6.x
+./config/linux-gnu
 ./config/mh-aix
 ./config/mh-aix64
 ./config/mh-alpha
