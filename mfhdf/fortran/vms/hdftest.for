@@ -22,18 +22,21 @@ C
       character*50  name, l, u, f, c
       character cdata(6,4), icdata(6,4), cfill, icfill
       character catt(2), icatt(2)
+C Comment out next line for VMS
+C      integer   i32(2), ii32(2)
 
       integer sfstart,  sfcreate,  sfendacc, sfend,    sfsfill
-      integer sfrdata,  sfwdata,   sfsattr,  sfdimid,  sfsdmname
+      integer sfrdata,  sfwdata,   sfdimid,  sfsdmname
       integer sffinfo,  sfn2index, sfsdmstr, sfsdtstr, sfsdscale
       integer sfscal,   sfselect,  sfginfo,  sfgdinfo, sfgainfo
-      integer sffattr,  sfrattr,  sfsrange,  sfgrange, sfgfill
+      integer sffattr,  sfsrange,  sfgrange, sfgfill
       integer sfgcal,   sfgdscale, sfgdtstr, sfgdmstr
       integer sfid2ref, sfref2index, sfsdmvc, sfisdmvc
       integer sfsextf,  hxsdir,    hxscdir
       integer sfwcdata, sfrcdata,  sfscfill, sfgcfill
       integer sfscatt,  sfrcatt,   sfsnatt,  sfrnatt
-
+C Comment out next line for VMS
+      integer sfsattr,  sfrattr
       integer SD_UNLIMITED, SD_DIMVAL_BW_INCOMP, DFNT_INT32
       integer SD_DIMVAL_BW_COMP
       parameter (SD_UNLIMITED = 0,
@@ -43,6 +46,8 @@ C
       DATA cfill/'@'/, icfill/' '/
       DATA catt/'U','S'/, icatt/' ',' '/
       DATA natt/10,20/, inatt/0,0/
+C Comment out next line for VMS
+C      DATA i32/15,25/, ii32/0,0/
 
 C     create a new file
       err = 0
@@ -259,11 +264,21 @@ C     create a new file
       endif
 
       nt = 4
-      stat = sfsattr(fid1, 'Globulator', nt, 12, 'Howdy Sailor')
+      stat = sfscatt(fid1, 'Globulator', nt, 12, 'Howdy Sailor')
       if(stat.ne.0) then
          print *, 'Set attr returned', stat
          err = err + 1
       endif
+C Comment out the sfsattr part for VMS
+C sfsattr declairs input data buffer as character*(*)
+C  which doesn't work on VMS. Use sfscatt or sfsnatt
+C  instead of sfsattr. 
+C      nt = 24
+C      stat = sfsattr(fid1, 'Numeric', nt, 2, i32)
+C      if(stat.ne.0) then
+C         print *, 'Set attr returned', stat
+C         err = err + 1
+C      endif
 
       stat = sfendacc(sds1)
       if(stat.ne.0) then
@@ -440,13 +455,23 @@ C
       print *, 'unit     = ', u
       print *, 'format   = ', f
 
-      stat = sfrattr(fid2, 0, name)
+      stat = sfrcatt(fid2, 0, name)
       if(stat.ne.0) then
          print *, 'Attr read returned', stat
          err = err + 1
       endif
-      
       print *, 'values = ', name
+C Comment out the sfrattr part for VMS
+C      stat = sfrattr(fid2, 1, ii32)
+C      if(stat.ne.0) then
+C         print *, 'Attr read returned', stat
+C         err = err + 1
+C      endif
+C      if ((ii32(1) .ne. 15) .or. (ii32(2) .ne. 25)) then
+C         print *, 'Numeirc attr read erro: '
+C         print *, ' should be 15 25, get ',ii32(1), ii32(2)
+C         err = err + 1
+C      endif
 
 C
 C     Testing External Element functions: sfsextf, hxsdir, hxscdir.
