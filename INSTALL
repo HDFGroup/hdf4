@@ -63,7 +63,14 @@
     The most recent version of the distribution can be obtained from
     the NCSA ftp archive site at:
 
-     ftp://ftp.ncsa.uiuc.edu/HDF/HDF/HDF_Current
+       ftp://ftp.ncsa.uiuc.edu/HDF/HDF/HDF_Current/
+
+    The HDF home page is at:   
+       http://hdf.ncsa.uiuc.edu/ 
+
+    The distribution can be downloaded from the HDF Home page at:
+       http://hdf.ncsa.uiuc.edu/obtain.html
+    
 
 2. Installing HDF	
    ==============
@@ -83,26 +90,25 @@
   Sun4(SunOS 4.1.4)               GCC 2.6.3        f77 SC1.0            
   Sun4(Solaris 2.6)               CC               f77             
   SGI-Indy(IRIX v6.5)             CC 7.2.1         f77 7.2.1
-  SGI-Origin(IRIX64 v6.4-n32)     CC 7.20          f77 7.20     
-  SGI-Origin(IRIX64 v6.4-64)      CC 7.20          f77 7.20    
+  SGI-Origin(IRIX64 v6.5-n32)     CC 7.2.1.2m      f77 7.2.1.2m     
+  SGI-Origin(IRIX64 v6.5-64)      CC 7.2.1.2m      f77 7.2.1.2m    
   HP9000/755(HP-UX B.10.20)       CC A.10.32.03    f77       
   Exemplar(HP-UX A.09.03)         CC 6.5           fc 9.5        
   Cray T90
    CFP  (UNICOS 10.0.0eu u10.49)  CC 6.2.0.1       f90 3.2.0.1  
    IEEE (UNICOS 10.0.0ev d10.161) CC 6.2.0.1       f90 3.2.0.1  
-  Cray C90 (UNICOS 803.2)           -                -        
   Cray J90 (bob.0 10.0.0.3)       CC 6.2.0.1       f90 3.2.0.0
-  IBM SP2 (single node, v4.2.1)   XLC 3.1.4.0      f77 4.1.0.6       
-  DEC Alpha/Digital Unix v4.0     CC               f77              
+  IBM SP (single node, v4.2)      XLC 3.1.4.10     f77 5.1.0.2       
+  DEC Alpha/Digital Unix v4.0     DEC C v5.6-079   Digital Fortran v5.1        
   DEC Alpha/OpenVMS AXP v6.2      DEC C v5.0-003   Digital Fortran 77 X7.1-156  
   DEC Alpha/OpenVMS AXP v7.1      DEC C v5.6-003   Digital Fortran 77 X7.1-156  
   VAX OpenVMS v6.2                DEC C v5.6       DEC Fortran v6.3 
   IBM PC - Intel Pentium
-       Solarisx86 (2.5.1)         GCC 2.7.2.1        -                
+       Solarisx86 (2.5.1)         GCC 2.7.2          -                
        Linux (elf) (2.2.26)       GCC 2.8.1        g77 2.8.1     
-       FreeBSD (2.2.1)            GCC 2.7.2        f77 2.7.2.1
-  PowerPC(Mac-OS-7.6)             MetroWerks
-                                  Codewarrior (CW8)  -              
+       FreeBSD (3.1)              GCC 2.7.2.1      g77 2.7.2.1
+  PowerMac 7600/120 (MacOS 8.0)   MetroWerks         -
+                                  Codewarrior Pro1                 
   68k-far/4i/8d(Mac-OS-7.6)         -                -           
   Windows NT/95                   MSVC++ 5.0       DEC Visual Fortran 5.0
   DEC Alpha NT                    MSVC++ 5.0       DEC Visual Fortran 5.0
@@ -293,7 +299,7 @@
     CPU, vendor, and OS from the full or partial target provided.
 
     If the configure script can't determine your type of computer, give it
-    a general name that the computer is generally refered to as an argument, 
+    a general name that the computer is generally referred to as an argument, 
     for instance './configure sun4'.  You can use the script 'config.sub' 
     to test whether a general name is recognized; if it is, config.sub 
     translates it to a triplet specifying CPU, vendor, and OS.
@@ -345,7 +351,27 @@
 
     2.5.1 Linux v2.2.6 
     ------------------
-    The Fortran tests fail in hdf/test/manf.f.
+    Linux has two incompatible libraries, 'glibc' and 'libc5'.  The
+    HDF library was compiled on Red Hat 2.2.6, with 'glibc'
+    (/lib/libc.so.7).  If you want to use HDF on Linux with 'libc'
+    you may encounter runtime errors (SEGMENTATION VIOLATIONS).
+    If so, you will need to compile the HDF library from source.
+
+    To determine the versions of libc for x86 based Linux, type:
+
+       ls -l /lib/libc.so.*
+
+    What you are looking for are lines of the form
+
+       /lib/libc.so.<num>
+
+    If all you see are lines where <num> is 5, then you have libc5, and
+    may have problems.  If you have a line where <num> is 6, then you have
+    glibc, and you should be OK.  An additional check is to look in /lib
+    for libdl.so.<num>.  If at least one <num> here is 2, then you definitely
+    have a glibc system and you should have no problem.
+
+    In addition, the Fortran tests fail in hdf/test/manf.f.
 
     Comment out the code in hdf/test/manf.f as shown below to 
     workaround this problem:
@@ -397,7 +423,7 @@ C      endif
     2.5.3 Solaris(2.5.1) on INTEL(x86)
     --------------------------------
 
-    The distribution has been compiled/tested with GCC 2.7.2.1 with
+    The distribution has been compiled/tested with GCC 2.7.2 with
     *NO* FORTRAN support.
 
     When compiling your programs on Solaris_x86, you must include the 
@@ -490,9 +516,10 @@ The instructions which follow assume that you will be using one of
 the 'zip' files that we provide, either the binary code release
 (HDF41r3.zip or HDF41r3.NOFORTRAN.zip) or the source code release 
 (HDF41r3s.zip).
+
 In building HDF from source code you may select between 
 two build environment options ( with Fortran or without Fortran support
-depending on your application and environment needs.  
+depending on your application and environment needs ).  
 
 The following sections discuss in details installation procedures. 
 
@@ -1203,27 +1230,28 @@ dialog.
     They can be used as supplemental documentation. These files are also 
     available on the NCSA ftp server (ftp.ncsa.uiuc.edu) in:
  
-         /HDF/HDF_Current/release_notes/.
+         /HDF/HDF/HDF_Current/release_notes/.
 
 5. Documentation
    =============
 
    The HDF documentation can be found on the NCSA ftp server
-   in the directory /HDF/Documentation/.  The
+   in the directory /HDF/HDF/Documentation/.  The
    HDF home page is at:
 
       http://hdf.ncsa.uiuc.edu/
 
 6. FAQ
    ===
-   An FAQ is available on our ftp server, as well as under
-   "Information about HDF" on the home page.
+   An FAQ is available on our ftp server, as well as at:
+      http://hdf.ncsa.uiuc.edu/HDF-FAQ.html 
+   
 
 7. HDF Java Products
    =================
-   The HDF Java Interface and Java HDF Viewer are included as an
-   optional part of the HDF source.  These products are built
-   separately after the library.  See java-hdf/README.
+   The HDF Java Interface and Java HDF Viewer are built 
+   separately after the library.  See:
+      http://hdf.ncsa.uiuc.edu/java-hdf-html/ 
 
 
 8. HELP
