@@ -2856,7 +2856,9 @@ intn  len;
     if(l) {
         attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_LongName);
         if(attr != NULL) {
-            HDstrncpy((char *)l, (*attr)->data->values, len);
+            intn minlen;
+            minlen = (len > (*attr)->data->count)? (*attr)->data->count: len;
+            HDstrncpy((char *)l, (*attr)->data->values, minlen);
             if((*attr)->data->count < len)
                 l[(*attr)->data->count] = '\0';
         } else {
@@ -2866,7 +2868,9 @@ intn  len;
     if(u) {
         attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_Units);
         if(attr != NULL) {
-            HDstrncpy((char *)u, (*attr)->data->values, len);
+            intn minlen;
+            minlen = (len > (*attr)->data->count)? (*attr)->data->count: len;
+            HDstrncpy((char *)u, (*attr)->data->values, minlen);
             if((*attr)->data->count < len)
                 u[(*attr)->data->count] = '\0';
         } else {
@@ -2876,7 +2880,9 @@ intn  len;
     if(f) {
         attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_Format);
         if(attr != NULL) {
-            HDstrncpy((char *)f, (*attr)->data->values, len);
+            intn minlen;
+            minlen = (len > (*attr)->data->count)? (*attr)->data->count: len;
+            HDstrncpy((char *)f, (*attr)->data->values, minlen);
             if((*attr)->data->count < len)
                 f[(*attr)->data->count] = '\0';
         } else {
