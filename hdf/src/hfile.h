@@ -128,6 +128,7 @@ typedef short hdf_file_t;
 #   define OPENERR(f)           (f < 0)
 #endif /* FILELIB == MACIO */
 
+#ifdef NOT_USED     /* Deprecated routines, not supported any more */
 #if (FILELIB == PCIO)
 /* using special PC functions to enable reading/writing large chunks */
 typedef FILE *hdf_file_t;
@@ -185,6 +186,7 @@ typedef HFILE hdf_file_t;
 #   define HI_TELL(f)  (_llseek((f),0l,1))
 #   define OPENERR(f)  ((f) == (HFILE)HFILE_ERROR)
 #endif /* FILELIB == WINNTIO */
+#endif /* NOT_USED */
 
 #if (FILELIB == PAGEBUFIO)
 #include "fmpio.h"
