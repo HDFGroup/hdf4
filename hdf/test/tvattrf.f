@@ -45,7 +45,7 @@ C Output file: tvattrf.hdf
      +          )  
       integer vsffidx, vsfsat, vsfscat, vsfnat
       integer vsffnat, vsffdat, vsfainf, vsfgat
-      integer vsfgcat, vsfisat, vsqnfld
+      integer vsfgcat, vsfisat, vfnflds
       integer vfsatt, vfscatt, vfnatts
       integer vffdatt, vfainfo, vfgatt, vfgcatt
       integer vfgver
@@ -104,7 +104,7 @@ C Open the file
          call MESSAGE(1, 'Vsname1 is not an attr.')
          number_failed = number_failed + 1
       endif
-      ret = vsqnfld(vsid)
+      ret = vfnflds(vsid)
       if (ret .ne. 2) then
          call MESSAGE(1, 'Wrong number of fields of vsname1')
          number_failed = number_failed + 1
