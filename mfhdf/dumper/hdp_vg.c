@@ -563,7 +563,18 @@ print_fields( char *fields,
           count = 0;
    char  *ptr, *tempPtr,
           string[MAXNAMELEN],
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+    /* Lets allocate space for tmpflds */
+          *tempflds = (char *)HDmalloc(VSFIELDMAX * FIELDNAMELENMAX * sizeof(char *));
+          if (tempflds == NULL)
+		   {
+		      fprintf(stderr,"Failure in print_fields: Not enough memory!\n");
+		      exit(1);
+		   }
+#else /* !macintosh */
           tempflds[VSFIELDMAX*FIELDNAMELENMAX];
+#endif /* !macintosh */
+
 
    /* if fields are not defined by VSsetfields and VSfdefine */
    if( fields[0] == '\0' || fields == NULL )
@@ -595,6 +606,15 @@ print_fields( char *fields,
       }  /* end of if skip */
       fprintf(fp, "];\n");
    }  /* there are fields to print */
+   
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+   if(tempflds != NULL)
+   {
+      HDfree(tempflds);
+      tempflds = NULL;
+    } 
+#endif /* macintosh */ 
+
 }  /* end of print_fields */
 
 intn
@@ -617,7 +637,6 @@ vgdumpfull(int32        vg_id,
     int32  nv;
     int32  interlace;
     int32  vsize;
-    char   fields[VSFIELDMAX*FIELDNAMELENMAX];
     char   vsname[MAXNAMELEN];
     char   vsclass[VSNAMELENMAX];
     char   vgname[VGNAMELENMAX];
@@ -626,6 +645,18 @@ vgdumpfull(int32        vg_id,
     int32  i;
     char  *file_name = dumpvg_opts->ifile_name;
     intn   status, ret_value = SUCCEED;
+
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+	/* macintosh cannot handle >32K locals */
+    char *fields = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
+    if (fields == NULL)
+	{
+	   fprintf(stderr,"Failure in vgdumpfull: Not enough memory!\n");
+	   exit(1);
+	 }
+#else /* !macintosh */
+    char   fields[VSFIELDMAX*FIELDNAMELENMAX];
+#endif /* !macintosh */    
 
    /* allocate and init memory for storing children's and type's info */
    aNode->children = alloc_list_of_strings( num_entries );
@@ -839,6 +870,13 @@ done:
             }
       }
     /* Normal cleanup */
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+   if(fields != NULL)
+   {
+      HDfree(fields);
+      fields = NULL;
+    } 
+#endif /* macintosh */ 
     
     return ret_value;
 }	/* vgdumpfull */

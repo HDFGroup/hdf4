@@ -33,8 +33,6 @@ dumpvd(int32       vd,
        int         dumpallfields)
 {
     char        vdname[VSNAMELENMAX];
-    char        fields[VSFIELDMAX*FIELDNAMELENMAX];
-    char        flds[VSFIELDMAX*FIELDNAMELENMAX];
     int32       j, i, t, interlace, nv, vsize;
     uint8      *bb = NULL;
     uint8      *b = NULL;
@@ -59,6 +57,31 @@ dumpvd(int32       vd,
     int32       cnt1, cnt2;
     int32       cn = 0;
     int32       ret_value = SUCCEED;
+
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+	/* macintosh cannot handle >32K locals */
+    char *fields = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
+    char *flds = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
+    if (fields == NULL)
+	{
+	   fprintf(stderr,"Failure in dumpvd: Not enough memory!\n");
+	   exit(1);
+	 }
+    if (flds == NULL)
+	{
+    /* cleanup */
+	   if(fields != NULL)
+	   {
+	      HDfree(fields);
+	      fields = NULL;
+	    } 
+	   fprintf(stderr,"Failure in dumpvd: Not enough memory!\n");
+	   exit(1);
+	 }
+#else /* !macintosh */
+    char        fields[VSFIELDMAX*FIELDNAMELENMAX];
+    char        flds[VSFIELDMAX*FIELDNAMELENMAX];
+#endif /* !macintosh */    
 
     /* inquire about vdata */
     if (FAIL == VSinquire(vd, &nv, &interlace, fields, &vsize, vdname))
@@ -451,6 +474,18 @@ done:
               HDfree((VOIDP)bb);
       }
     /* Normal cleanup */
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+   if(fields != NULL)
+   {
+      HDfree(fields);
+      fields = NULL;
+    } 
+   if(flds != NULL)
+   {
+      HDfree(flds);
+      fields = NULL;
+    } 
+#endif /* macintosh */
     
     return ret_value;
 }	/* dumpvd */
@@ -474,13 +509,36 @@ dumpattr(int32 vid,
     int32         i_count;
     int32         i_size, e_size;
     int32         off;
-    uint8         attrbuf[BUFFER];
     uint8         *buf = NULL;
     uint8         *ptr = NULL;
     intn (*vfmtfn)(VOIDP, file_type_t ft, FILE *);
-    char          name[FIELDNAMELENMAX+1];
     intn          status;
     intn          ret_value = SUCCEED;
+
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+	/* macintosh cannot handle >32K locals */
+    char *name = (char *)HDmalloc((FIELDNAMELENMAX+1) * sizeof(char));
+    uint8 *attrbuf = (uint8 *)HDmalloc((BUFFER) * sizeof(uint8));
+    if (name == NULL)
+	{
+	   fprintf(stderr,"Failure in dumpattr: Not enough memory!\n");
+	   exit(1);
+	 }
+    if (attrbuf == NULL)
+	{
+    /* cleanup */
+	   if(name != NULL)
+	   {
+	      HDfree(name);
+	      name = NULL;
+	    } 
+	   fprintf(stderr,"Failure in dumpvd: Not enough memory!\n");
+	   exit(1);
+	 }
+#else /* !macintosh */
+    char          name[FIELDNAMELENMAX+1];
+    uint8         attrbuf[BUFFER];
+#endif /* !macintosh */    
 
     /* vdata or vgroup? */
     if (isvs) 
@@ -650,6 +708,18 @@ done:
               HDfree(buf);
       }
     /* Normal cleanup */
-    
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+   if(name != NULL)
+   {
+      HDfree(name);
+      name = NULL;
+    } 
+   if(attrbuf != NULL)
+   {
+      HDfree(attrbuf);
+      attrbuf = NULL;
+    } 
+#endif /* macintosh */    
+
     return ret_value;
 }

@@ -439,8 +439,6 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
     int32       vdata_tag;
     char        vdclass[VSNAMELENMAX];
     char        vdname[VSNAMELENMAX];
-    char        fields[VSFIELDMAX*FIELDNAMELENMAX]; 
-    char        tempflds[VSFIELDMAX*FIELDNAMELENMAX];
     char       *tempPtr = NULL;
     char       *ptr = NULL;
     char        string[MAXNAMELEN];
@@ -450,6 +448,30 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
     int32       vd_id = FAIL;
     int32       an_handle   = FAIL;
     intn        status = SUCCEED, ret_value = SUCCEED;
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+	/* macintosh cannot handle >32K locals */
+    char *fields = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
+    char *tempflds = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
+    if (fields == NULL)
+	{
+	   fprintf(stderr,"Failure in dumpvd_ascii: Not enough memory!\n");
+	   exit(1);
+	 }
+    if (tempflds == NULL)
+	{
+    /* cleanup */
+	   if(fields != NULL)
+	   {
+	      HDfree(fields);
+	      fields = NULL;
+	    } 
+	   fprintf(stderr,"Failure in dumpvd_ascii: Not enough memory!\n");
+	   exit(1);
+	 }
+#else /* !macintosh */
+    char   fields[VSFIELDMAX*FIELDNAMELENMAX];
+    char   tempflds[VSFIELDMAX*FIELDNAMELENMAX];
+#endif /* !macintosh */    
 
     /* set output file */
     if (dumpvd_opts->dump_to_file)
@@ -745,6 +767,18 @@ done:
               VSdetach(vd_id);
       }
     /* Normal cleanup */
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+   if(fields != NULL)
+   {
+      HDfree(fields);
+      fields = NULL;
+    } 
+   if(tempflds != NULL)
+   {
+      HDfree(tempflds);
+      fields = NULL;
+    } 
+#endif /* macintosh */
 
     return ret_value;
 } /* dumpvd_ascii() */
@@ -769,8 +803,6 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
     int32       vdata_tag;
     char        vdclass[VSNAMELENMAX];
     char        vdname[VSNAMELENMAX];
-    char        fields[VSFIELDMAX*FIELDNAMELENMAX]; 
-    char        tempflds[VSFIELDMAX*FIELDNAMELENMAX];
     char       *tempPtr = NULL;
     char       *ptr = NULL;
     char        string[MAXNAMELEN];
@@ -779,6 +811,31 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
     file_type_t ft = DBINARY;
     int32       vd_id = FAIL;
     intn        ret_value = SUCCEED;
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+	/* macintosh cannot handle >32K locals */
+    char *fields = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
+    char *tempflds = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
+    if (fields == NULL)
+	{
+	   fprintf(stderr,"Failure in dumpvd_binary: Not enough memory!\n");
+	   exit(1);
+	 }
+    if (tempflds == NULL)
+	{
+    /* cleanup */
+	   if(fields != NULL)
+	   {
+	      HDfree(fields);
+	      fields = NULL;
+	    } 
+	   fprintf(stderr,"Failure in dumpvd_binary: Not enough memory!\n");
+	   exit(1);
+	 }
+#else /* !macintosh */
+    char        fields[VSFIELDMAX*FIELDNAMELENMAX]; 
+    char        tempflds[VSFIELDMAX*FIELDNAMELENMAX];
+#endif /* !macintosh */    
+
 
 
     /* Get output file name.  */
@@ -934,6 +991,18 @@ done:
               VSdetach(vd_id);
       }
     /* Normal cleanup */
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+   if(fields != NULL)
+   {
+      HDfree(fields);
+      fields = NULL;
+    } 
+   if(tempflds != NULL)
+   {
+      HDfree(tempflds);
+      fields = NULL;
+    } 
+#endif /* macintosh */
 
     return ret_value;
 } /* dumpvd_binary */
