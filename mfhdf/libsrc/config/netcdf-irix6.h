@@ -294,7 +294,7 @@ typedef double        ncdouble;
 /* 
  * Variables/attributes of type NC_LONG should use the C type 'nclong'
  */
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
 typedef int     nclong;   
 #else
 typedef long    nclong;         /* default, compatible type */
