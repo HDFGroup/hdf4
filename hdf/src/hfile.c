@@ -4039,7 +4039,7 @@ done:
 #include <Files.h>
 #include <Strings.h>
 #include <stdarg.h> 
-#include "dirent_mac.h" /* Directory scanning stuff by George Talbot */
+#include "dir_mac.h" /* Directory scanning stuff by George Talbot */
 
 PRIVATE int32 hdfc = 1061109567L; /* equal to 4 '?' in a row in ascii */
                                   /* yes, I am deliberately avoiding the trigraph :-) */
