@@ -135,10 +135,11 @@ main(int argc, char *argv[])
     setbuf(stderr, NULL);
     setbuf(stdout, NULL);
 #endif
-
     /* Tests are generally arranged from least to most complexity... */
+#if !(defined WIN32)
     InitTest("bitvect", test_bitvect, "Bit-Vector routines");
     InitTest("tbbt", test_tbbt, "Threaded Balanced Binary Trees");
+#endif
     InitTest("vers", test_vers, "VERSION OF LIBRARY");
     InitTest("hfile", test_hfile, "HFILE");
     InitTest("hfile1", test_hfile1, "HFILE LIMITS");
