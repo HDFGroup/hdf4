@@ -25,6 +25,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define FILE1   "test1.hdf"
 #define FILE2   "test2.hdf"
 #define FILE3   "test3.hdf"
+#define FILE4   "nbittst.hdf"
 #define COMPFILE1 "comptst1.hdf"
 #define COMPFILE2 "comptst2.hdf"
 #define COMPFILE3 "comptst3.hdf"
@@ -211,7 +212,7 @@ char *argv[];
     int32   cflags;              /* chunk flags */
     comp_info cinfo;             /* compression info */
 #endif /* CHUNK_TEST */
-#if defined COMP_TEST & !defined CHUNK_TEST
+#if defined COMP_TEST && !defined CHUNK_TEST
     comp_info cinfo;            /* compression information structure */
 #endif /* COMP_TEST */
     int32 index, ival, sdid;
@@ -2950,30 +2951,35 @@ printf("before SDend\n");
     status = SDendaccess(newsds8);
     CHECK(status, "Chunk Test 7. SDendaccess");
 
+    /* ---------------------------------------------------------------
+     *  Chunking with NBIT Compression 
+     ----------------------------------------------------------------*/
+
     /*
      * Chunking with NBIT
      */
   test8:
 
-#if 0 /* NOT YET */
-    f3 = SDstart(FILE3, DFACC_RDWR);
-    CHECK(f1, "SDstart");
+    /* Create file */
+    f3 = SDstart(FILE4, DFACC_CREATE);
+    CHECK(f1, "Chunk Test 8. SDstart");
 
+    /* Create dataset */
     nt = DFNT_INT32;
     dimsize[0] = 5;
     dimsize[1] = 5;
     newsds = SDcreate(f3, "Chunked_NBitDataSet", nt, 2, dimsize);
     if(newsds == FAIL) {
-        fprintf(stderr, "Failed to create a new chunked, nbit data set \n");
+        fprintf(stderr, "Chunk Test 8. SDcreate Failed to create a new chunked, nbit data set \n");
         num_err++;
+        goto done;
     }
 
     for(i = 0; i < 25; i++)
         idata[i] = i*10;
 
-    /* Create chunked SDS 
-       chunk is 2x2 which will create 9 chunks.
-       Use NBIT compression */
+    /* Create chunked SDS with NBIT compression.
+       chunk is 2x2 which will create 9 chunks.*/
     cdims[0] = chunk_def.nbit.chunk_lengths[0] = 2;
     cdims[1] = chunk_def.nbit.chunk_lengths[1] = 2;
     chunk_def.nbit.start_bit = 6;
@@ -2983,51 +2989,85 @@ printf("before SDend\n");
     status = SDsetchunk(newsds, chunk_def, HDF_CHUNK | HDF_NBIT);
     if(status == FAIL) 
       {
-        fprintf(stderr, "Failed to create new chunked, NBIT data set\n");
+        fprintf(stderr, "Chunk Test 8. SDsetchunk Failed to create new chunked, NBIT data set\n");
         num_err++;
+        goto done;
       }
 
+    /* write out the data */
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
     status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
-    CHECK(status, "SDwritedata");
+    CHECK(status, "Chunk Test 8. SDwritedata");
 
+    /* end access to SDS */
     status = SDendaccess(newsds);
-    CHECK(status, "SDendaccess");
+    CHECK(status, "Chunk Test 8. SDendaccess");
 
     /* need to close to flush n-bit info to file */
     status = SDend(f3);
-    CHECK(status, "SDend");
+    CHECK(status, "Chunk Test 8. SDend");
 
-    /* read the n-bit data back in */
-    f3 = SDstart(FILE3, DFACC_RDWR);
-    CHECK(f1, "SDstart (again)");
+    /* open file again */
+    f3 = SDstart(FILE4, DFACC_RDWR);
+    CHECK(f1, "Chunk Test 8. SDstart (again)");
 
+    /* Select SDS */
     newsds2 = SDselect(f3, 0);
     if(newsds == FAIL) {
-        fprintf(stderr, "Failed to select a data set for n-bit access\n");
+        fprintf(stderr, "Chunk Test 8. Failed to select a data set for n-bit access\n");
         num_err++;
+        goto done;
     }
 
+    /* read the n-bit data back in */
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
     status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
-    CHECK(status, "SDreaddata");
+    CHECK(status, "Chunk Test 8. SDreaddata");
 
+    /* Verify the data */
     for(i = 0; i < 25; i++)
         if((idata[i]&0x7f) != rdata[i]) {
-            fprintf(stderr,"Bogus val in loc %d in n-bit dset want %ld got %ld\n",
+            fprintf(stderr,"Chunk Test 8. Bogus val in loc %d in n-bit dset want %ld got %ld\n",
 		    i, (long)idata[i], (long)rdata[i]);
             num_err++;
         }
 
+    /* Get chunk lengths */
+    status = SDgetchunkinfo(newsds2, &rchunk_def, &cflags);
+    if(status == FAIL) 
+      {
+        fprintf(stderr, "Chunk Test 8. SDgetchunkinfo failed \n");
+        num_err++;
+        goto done;
+      }
 
+    rcdims = rchunk_def.nbit.chunk_lengths;
+
+    /* check chunk lengths and see if SDS is nbit-compressed and chunked */
+    if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] 
+        || cflags != (HDF_CHUNK | HDF_NBIT))
+      {
+        fprintf(stderr, "Chunk Test 8. SDgetchunkinfo returned wrong values\n");
+        fprintf(stderr, "Chunk Test 8. cflags =%d \n",cflags);
+        fprintf(stderr, "Chunk Test 8. cdims[%d] =%d \n", 0, cdims[0]);
+        fprintf(stderr, "Chunk Test 8. cdims[%d] =%d \n", 1, cdims[1]);
+        fprintf(stderr, "Chunk Test 8. rcdims[%d] =%d \n", 0, rcdims[0]);
+        fprintf(stderr, "Chunk Test 8. rcdims[%d] =%d \n", 1, cdims[1]);
+        num_err++;
+        goto done;
+      }
+
+    /* end access to SDS */
     status = SDendaccess(newsds2);
-    CHECK(status, "SDendaccess");
+    CHECK(status, "Chunk Test 8. SDendaccess");
 
+    /* close file */
     status = SDend(f3);
-    CHECK(status, "SDend");
-#endif /* CHUNKING with NBIT */
+    CHECK(status, "Chunk Test 8. SDend");
+
+  done:
 
 #endif /* CHUNK_TEST */
 
