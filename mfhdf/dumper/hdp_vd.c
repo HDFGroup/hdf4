@@ -464,7 +464,7 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
     char        string[MAXNAMELEN];
     FILE       *fp = NULL;
     intn        dumpall = 0;
-    file_type_t ft=0;
+    file_type_t ft = DASCII;
     int32       vd_id = FAIL;
     int32       an_handle   = FAIL;
     intn        ret_value = SUCCEED;
@@ -780,7 +780,7 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
     char        string[MAXNAMELEN];
     FILE       *fp = NULL;
     intn        dumpall = 0;
-    file_type_t ft=0;
+    file_type_t ft = DBINARY;
     int32       vd_id = FAIL;
     intn        ret_value = SUCCEED;
 
