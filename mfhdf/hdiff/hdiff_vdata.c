@@ -15,8 +15,8 @@
 
 int 
 vdata_diff(int32 fid1, int32 fid2, struct fspec specp, 
-											int32 cmp_flag,  /* to control any data comparison */
-											int32 f_flag)    /* to control the print out message */
+           int32 cmp_flag,  /* to control any data comparison */
+           int32 f_flag)    /* to control the print out message */
 {
  int32 vsid1, vsid2;
  int32 vgid1, vgid2;
@@ -33,10 +33,7 @@ vdata_diff(int32 fid1, int32 fid2, struct fspec specp,
  
  Vstart(fid1);
  Vstart(fid2);
- 
- if (0)
- printf ("\n*****     Vdata comparison:     *****\n");
- 
+
  vgid1 = -1;
  
  /* compare vdata inside a vgroup */
@@ -76,7 +73,7 @@ vdata_diff(int32 fid1, int32 fid2, struct fspec specp,
    
    Vinquire(vg2, &n2, vgname2);
    Vgetclass(vg2, vgclass2);
-	
+ 
    if (strcmp(vgname1, vgname2) == 0 && strcmp(vgclass1, vgclass2) == 0)
    {
     gfind = 1;
@@ -142,7 +139,7 @@ vdata_diff(int32 fid1, int32 fid2, struct fspec specp,
       {
        vs1 = VSattach(fid1, vsid1, "r");
        if (specp.verbose)
-							printf("VS Name: %s/%s .... Comparing\n", vgname1, vsname1);
+       printf("VS Name: %s/%s .... Comparing\n", vgname1, vsname1);
        ret=vdata_cmp(vs1, vs2, vgname1, vgclass1, specp.max_err_cnt);
        VSdetach(vs1);
       }
@@ -223,14 +220,14 @@ vdata_diff(int32 fid1, int32 fid2, struct fspec specp,
     vsid1 = lonevs1[i];
     vs1 = VSattach(fid1, vsid1, "r");
     VSgetname(vs1, vsname1);
-				
-				VSgetclass(vs1, vgclass1);
-				/* skip special classes */
-				if (!is_readable(vgclass1))
-				{
-					VSdetach(vs1);
-					continue;
-				}
+    
+    VSgetclass(vs1, vgclass1);
+    /* skip special classes */
+    if (!is_readable(vgclass1))
+    {
+     VSdetach(vs1);
+     continue;
+    }
   
     if (specp.nuvars > 0)   /* if specified vadata is selected */
     {
@@ -267,8 +264,8 @@ vdata_diff(int32 fid1, int32 fid2, struct fspec specp,
     {
      if (cmp_flag == 1)   /* compare the data only requested */
      {
-						if (specp.verbose)
-						printf("VS Name: %s .... Comparing\n", vsname1);
+      if (specp.verbose)
+      printf("VS Name: %s .... Comparing\n", vsname1);
       ret=vdata_cmp(vs1, vs2, "No_Group","No_Class", specp.max_err_cnt);
      }
     }
@@ -308,9 +305,9 @@ vdata_diff(int32 fid1, int32 fid2, struct fspec specp,
 
 int
 vdata_cmp(int32  vs1, int32  vs2, 
-										char   *gname, 
-										char   *cname, 
-										int32  max_err_cnt)
+          char   *gname, 
+          char   *cname, 
+          int32  max_err_cnt)
 {
  int32   i, j, k, iflag, err_cnt;
  int32   nv1, interlace1, vsize1;

@@ -16,6 +16,8 @@
 #include "dumplib.h"
 
 
+
+
 #define MYMAX(A,B) (((A) > (B)) ? (A) : (B))
 #define MYMIN(A,B) (((A) < (B)) ? (A) : (B))
 #define PRINT_FSTATS(T) {\
@@ -34,8 +36,7 @@ d_min_val1, d_max_val1, d_min_val2, d_max_val2); }
 i4_min_val1, i4_max_val1, i4_min_val2, i4_max_val2); }
 
 
-int
-sddata_diff(int32 sdid1, int32 sdid2, struct fspec specp)
+int sddata_diff(int32 sdid1, int32 sdid2, struct fspec specp)
 {
  int32    nvars1;              /* number of variables */
  int32    ngatts1;             /* number of global attributes */
@@ -48,7 +49,6 @@ sddata_diff(int32 sdid1, int32 sdid2, struct fspec specp)
  int      tot_cnt1, tot_cnt2;
  int32    start[MAX_NC_DIMS];
  void     *buf1, *buf2;
- int      array_diff();
  void     *fill1, *fill2;
  int      max_err_cnt, ret=0;
   
@@ -61,10 +61,7 @@ sddata_diff(int32 sdid1, int32 sdid2, struct fspec specp)
   varid1 = SDnametoindex(sdid1, specp.lvars[k]);
   varadd(vlist, varid1);
  }
- 
- if (0)
- printf ("\n*****     SD Data comparison:     *****\n");
- 
+
  iret1 =  SDfileinfo(sdid1, &nvars1, &ngatts1);
  
  for (k = 0; k < nvars1; k++)
@@ -99,7 +96,6 @@ sddata_diff(int32 sdid1, int32 sdid2, struct fspec specp)
   }
   
   if (specp.verbose) {
-  /*printf("\n---------------------------\n");*/
   printf("SD Name: %s .... Comparing\n", var1.name);
   }
   
@@ -160,12 +156,17 @@ sddata_diff(int32 sdid1, int32 sdid2, struct fspec specp)
 }
 
 
+int array_diff(void *buf1, 
+               void *buf2, 
+               int32 tot_cnt, 
+               int32 type, 
+               float err_limit, 
+               int32 max_err_cnt, 
+               int32 statistics,
+               void *fill1, 
+               void *fill2)
 
-int
-array_diff(buf1, buf2, tot_cnt, type, err_limit, max_err_cnt, statistics,fill1,fill2)
-void *buf1, *buf2, *fill1, *fill2;
-int32 type, tot_cnt, max_err_cnt, statistics;
-float err_limit;
+
 {
  int32   i;
  int8    *i1ptr1, *i1ptr2;

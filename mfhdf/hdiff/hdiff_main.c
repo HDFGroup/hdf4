@@ -19,7 +19,7 @@ usage()
  (void) fprintf(stderr,
   "hdiff [-b] [-g] [-s] [-d] [-S] [-v ...] [-e counnt] [-t limit] file1 file2\n");
  fprintf(stderr,"  [-b]              Verbose mode\n");
-	fprintf(stderr,"  [-g]              Compare global attributes only\n");
+ fprintf(stderr,"  [-g]              Compare global attributes only\n");
  fprintf(stderr,"  [-s]              Compare SD local attributes only\n");
  fprintf(stderr,"  [-d]              Compare SD data only\n");
  fprintf(stderr,"  [-D]              Compare Vdata data only\n");
@@ -42,10 +42,11 @@ main(int argc, char *argv[])
  extern char *optarg;
  static struct fspec fspec = /* defaults, overridden on command line */
  {
-		0,    /* verbose mode */
+  0,    /* verbose mode */
   1,    /* compare global attributes */
   1,    /* compare SD local attributes */
   1,    /* compare SD data */
+  1,    /* compare GR data */
   1,    /* compare Vdata */
  -1,    /* no limit on the difference to be printed */
   0.0,  /* exact equal */
@@ -67,8 +68,8 @@ main(int argc, char *argv[])
  while ((c = getopt(argc, argv, "bgsdSDe:t:v:u:")) != EOF)
   switch(c) {
  case 'b':  /* verbose mode */
-		fspec.verbose =1;
-		break;
+  fspec.verbose =1;
+  break;
  case 'g':  /* global attributes only */
   fspec.ga = 1;
   fspec.sa = 0;
@@ -129,7 +130,7 @@ main(int argc, char *argv[])
  
  argv = argv + optind;
 
-	ret=hdiff(argv[0],argv[1],fspec);
+ ret=hdiff(argv[0],argv[1],fspec);
   
  return EXIT_SUCCESS;
 }

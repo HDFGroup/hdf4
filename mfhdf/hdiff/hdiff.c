@@ -13,6 +13,7 @@
 int hdiff(char *fname1, char *fname2, struct fspec fspec)
 {
  int32 sdid1, sdid2;
+	int32 grid1, grid2;
  int32 fid1, fid2;
  int   ret=0;
  
@@ -30,6 +31,7 @@ int hdiff(char *fname1, char *fname2, struct fspec fspec)
   error("SDstart failed on %s", fname2);
   exit(1);
  }
+
  
  if (fspec.ga == 1) 
   ret=gattr_diff(sdid1, sdid2, fspec);
@@ -63,6 +65,29 @@ int hdiff(char *fname1, char *fname2, struct fspec fspec)
   ret=vdata_diff(fid2, fid1, fspec, 0, 1);
   ret=vdata_diff(fid1, fid2, fspec, 1, 0);
  }
+
+	
+	grid1 = GRstart(fid1); 
+ if (grid1 == -1)
+ {
+  error("GRstart failed on %s", fname1);
+  exit(1);
+ }
+ 
+ grid2 = GRstart(fid2);
+ if (grid2 == -1)
+ {
+  GRend(grid1);
+  error("GRstart failed on %s", fname2);
+  exit(1);
+ }
+
+	if (fspec.gr == 1)
+  ret=grdata_diff(grid1, grid2, fspec);
+
+
+	GRend(grid1);
+	GRend(grid2);
  
  Hclose(fid1);
  Hclose(fid2);

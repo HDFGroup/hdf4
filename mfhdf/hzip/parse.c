@@ -101,10 +101,10 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
    if ( c==' ') {      /*one more parameter */
     scomp[k]='\0';     /*cut space */
 
-				/* here we could have 1, 2 or 3 digits (2 and 3 in the JPEG case) */
-				for ( m=0,u=i+1; u<len; u++,m++) {
+    /* here we could have 1, 2 or 3 digits (2 and 3 in the JPEG case) */
+    for ( m=0,u=i+1; u<len; u++,m++) {
      stype[m]=str[u];
-				}
+    }
     stype[m]='\0';
     comp->info=atoi(stype);
    }
@@ -268,10 +268,10 @@ obj_list_t* parse_chunk(char *str, int *n_objs, int32 *chunk_lengths, int *chunk
   sdim[k]=c;
 
   if (!isdigit(c) && c!='x'){
-			if (obj_list) free(obj_list);
-			printf("%s\nError: Invalid chunking definition\n",str);
-			exit(1);
-		}
+   if (obj_list) free(obj_list);
+   printf("%s\nError: Invalid chunking definition\n",str);
+   exit(1);
+  }
 
   if ( c=='x' || i==len-1) 
   {
@@ -308,6 +308,43 @@ obj_list_t* parse_chunk(char *str, int *n_objs, int32 *chunk_lengths, int *chunk
 
  return obj_list;
 }
+
+
+
+/*-------------------------------------------------------------------------
+ * Function: parse_number
+ *
+ * Purpose: read a number from command line argument
+ *
+ * Return: number, -1 for FAIL
+ *
+ * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
+ *
+ * Date: July 31, 2003
+ *
+ *-------------------------------------------------------------------------
+ */
+
+
+int parse_number(char *str)
+{
+ unsigned    i;
+ int         n;
+ char        c;
+ size_t      len=strlen(str);
+  
+ for ( i=0; i<len; i++)
+ {
+  c = str[i];
+  if (!isdigit(c)){
+   return -1;
+  }
+ }
+ str[i]='\0';     
+ n=atoi(str);
+ return n;
+}
+
 
 
 

@@ -936,8 +936,6 @@ int  copy_gr(int32 gr_in,
    path);                                         /*name*/
  }
 
- 
-
 /*-------------------------------------------------------------------------
  * if we are in first trip inspection mode, exit, after printing the info
  *-------------------------------------------------------------------------
@@ -949,15 +947,10 @@ int  copy_gr(int32 gr_in,
   if (path) free(path);
   return 0;
  }
-
-
-
 /*-------------------------------------------------------------------------
  * read gr and create new one
  *-------------------------------------------------------------------------
  */
-
- 
 
  /* alloc */
  if ((buf = (VOIDP) HDmalloc(data_size)) == NULL) {

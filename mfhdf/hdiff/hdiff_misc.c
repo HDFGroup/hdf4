@@ -45,8 +45,7 @@ name_path(char *path)
 
 
 char *
-type_name(type)
-nc_type type;
+type_name(nc_type type)
 {
  switch (type) {
  case DFNT_INT8:

@@ -54,6 +54,7 @@ int main(void)
  fspec.sa = 1;    /* compare SD local attributes */
  fspec.sd = 1;    /* compare SD data */
  fspec.vd = 1;    /* compare Vdata */
+	fspec.gr = 1;    /* compare GR data */
 
 /*-------------------------------------------------------------------------
  * create a file with SDSs, images , groups and vdatas

@@ -19,10 +19,7 @@ gattr_diff(int32 sdid1, int32 sdid2, struct fspec specp)
  struct  ncatt att1, att2;    /* attribute */
  int     ia, ib;              /* attribute number */
  int     iret1, iret2, ret=0;
- 
- if (0)
- printf ("\n*****     Global attributes comparison:     *****\n");
- 
+
  iret1 =  SDfileinfo(sdid1, &nvars1, &ngatts1);
  
  /* get global attributes */

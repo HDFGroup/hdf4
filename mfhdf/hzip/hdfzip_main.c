@@ -57,28 +57,28 @@ int main(int argc, char **argv)
    ++i;
   }
   else if (strcmp(argv[i], "-c") == 0) {       
-			
+   
    /* parse the -c option */
    hzip_addchunk(argv[i+1],&options);
-			
+   
    /* jump to next */
    ++i;
   }
 
-		else if (strcmp(argv[i], "-m") == 0) {       
-			
-   options.threshold = atoi(argv[i+1]);
-			if (options.threshold==0) {
-				printf("Error: Invalid treshold size <%s>\n",argv[i+1]);
-				exit(1);
-			}
+  else if (strcmp(argv[i], "-m") == 0) {       
+   
+   options.threshold = parse_number(argv[i+1]);
+   if (options.threshold==-1) {
+    printf("Error: Invalid treshold size <%s>\n",argv[i+1]);
+    exit(1);
+   }
    ++i;
   }
-		
-		else if (strcmp(argv[i], "-f") == 0) {       
-			read_info(argv[++i],&options);
-		}
-		
+  
+  else if (strcmp(argv[i], "-f") == 0) {       
+   read_info(argv[++i],&options);
+  }
+  
   else if (argv[i][0] == '-') {
    usage();
   }
