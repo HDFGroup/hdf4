@@ -24,7 +24,7 @@
   2.5 Platform-specific Notes
   2.5.1 HPUX(9.03) on PA-RISC
   2.5.2 Solaris(2.5) on Sparc
-  2.5.3 Solaris(2.5) on INTEL(x86)
+  2.5.3 Solaris(2.5.1) on INTEL(x86)
   2.5.4 OpenVMS AXP and OpenVMS VAX
   2.5.5 Windows '95 or Windows NT
   2.5.6 PowerPC/68k(far/4i/8d)- Macintosh OS
@@ -97,7 +97,7 @@
   DEC Alpha/OpenVMS AXP v6.2        -                -  
   VAX OpenVMS v6.2                  -                - 
   IBM PC - Intel Pentium
-       Solarisx86 (2.5)           GCC 2.7.2.1        -                
+       Solarisx86 (2.5.1)         GCC 2.7.2.1        -                
        Linux(a.out) (1.2.4)       GCC              FORTRAN compiler 2.6.2     
                                                    (FORTRAN to C converter)
        FreeBSD (2.2)              GCC 2.6.3        f77             
@@ -355,7 +355,7 @@
          -L/usr/lib -lnsl
 
 
-    2.5.3 Solaris(2.5) on INTEL(x86)
+    2.5.3 Solaris(2.5.1) on INTEL(x86)
     --------------------------------
 
     The distribution has been compiled/tested with GCC 2.7.2.1 with
