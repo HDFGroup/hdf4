@@ -2,9 +2,12 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.2  1992/05/18 22:11:07  sxu
-C modified constants for number types
+C Revision 1.3  1992/05/28 16:43:32  chouck
+C Fixed line continuation characters to make RS/6000 happy
 C
+c Revision 1.2  1992/05/18  22:11:07  sxu
+c modified constants for number types
+c
 c Revision 1.1  1992/03/01  22:29:07  dilg
 c Initial revision
 c
@@ -87,29 +90,29 @@ c	------- open hdf file ------
 
 c	------- store 100 floats as one field in one vdata  ------
 	vs1 = VHFSD (f, 'MP', rdata, 100, REALTYPE,  
-	1					'melting-points', 'test')
+     *					'melting-points', 'test')
 
 c	------- store 120 integers as one field in one vdata  ------
 	vs2 = VHFSD (f, 'AGE', idata, 120, LONGTYPE,
-	1					'age-of-specimens', 'test')
+     *				'age-of-specimens', 'test')
 
 
 c	------- store 100*3 values as one field (of order 3) in one vdata  ------
 	vs3 = VHFSDM (f, 'PLIST', conval, 100, LONGTYPE, 
-	1					'connectivity triplets','test',3)
+     *					'connectivity triplets','test',3)
 
 c	--------- messages  ----------------------
 
 	if (vs1 .eq. -1) then 
 		print *,'error creating melting-point vdata' 
 	else 
-		print *, 'created vdata "melting-points" with 100 elements'		
+		print *, 'created vdata "melting-points" with 100 elements'
 	endif
 
 	if (vs2 .eq. -1) then 
 		print *,'error creating  "age-of-specimens" vdata' 
 	else 
-		print *, 'created vdata "age-of-specimens" with 120 elements'		
+		print *, 'created vdata "age-of-specimens" with 120 elements'
 	endif
 	if (vs3 .eq. -1) then 
 		print *,'error creating  "connectivity triplets" vdata' 
@@ -127,7 +130,7 @@ c ------ make a vgroup that has links to all the above vdatas ----
 	refarray(3) = vs3
 
 	vg = VHFMKGP(f,tagarray,refarray,3,
-	1							'vgroup with 3 vdatas (fortran)', 'test')
+     *			'vgroup with 3 vdatas (fortran)', 'test')
 	if (vg .eq. -1) then 
 		print *,'error creating  vgroup'
 	else 
