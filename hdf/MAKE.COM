@@ -1,3 +1,4 @@
+
 ! ****************************************************************************
 ! * NCSA HDF                                                                 *
 ! * Software Development Group                                               *
@@ -24,12 +25,12 @@
 $ create/dir [.lib]
 $ create/dir [.include]
 $ create/dir [.bin]
-$ define/nolog hdf$src     _$1$dia0:[folk.HDF33.hdf.src]   ! HDF src
-$ define/nolog hdf$util    _$1$dia0:[folk.HDF33.hdf.util]  ! HDF utilities
-$ define/nolog hdf$test    _$1$dia0:[folk.HDF33.hdf.test]  ! HDF test programs
-$ define/nolog hdf$lib     _$1$dia0:[folk.HDF33.hdf.lib]df ! Location and name for lib
-$ define/nolog hdf$include _$1$dia0:[folk.HDF33.hdf.include] ! Where to put includes
-$ define/nolog hdf$bin     _$1$dia0:[folk.HDF33.hdf.bin]   ! Where to put executables
+$ define/nolog hdf$src     mrlxp4$dka300:[folk.HDF33r3.hdf.src]   ! HDF src
+$ define/nolog hdf$util    mrlxp4$dka300:[folk.HDF33r3.hdf.util]  ! HDF utilities
+$ define/nolog hdf$test    mrlxp4$dka300:[folk.HDF33r3.hdf.test]  ! HDF test programs
+$ define/nolog hdf$lib     mrlxp4$dka300:[folk.HDF33r3.hdf.lib]df ! Location and name for lib
+$ define/nolog hdf$include mrlxp4$dka300:[folk.HDF33r3.hdf.include] ! Where to put includes
+$ define/nolog hdf$bin     mrlxp4$dka300:[folk.HDF33r3.hdf.bin]   ! Where to put executables
 $ !
 $ define/nolog sys$clib sys$library:vaxcrtl
 $ !
@@ -38,7 +39,7 @@ $ !
 ! $ ! Make full df lib (with fortran stubs)
 $ type sys$input
   ======== Building HDF 3.3 ========
-! $ !
+! $ !              
 ! $ ! Build the base HDF library
 ! $ !
 $ set def hdf$src
