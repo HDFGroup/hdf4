@@ -972,12 +972,13 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
     CHUNK_REC   *chkptr = NULL;      /* Chunk record */
     int32       *chk_key   = NULL;   /* chunk key */
     int32       npages     = 1;      /* number of chunks */
+    int32       chunks_needed;       /* default chunk cache size  */
     int32       access_aid = FAIL;   /* access id */
     int32       ret_value = SUCCEED;
     char        name[VSNAMELENMAX + 1];  /* Vdata name */
     char        class[VSNAMELENMAX + 1]; /* Vdata class */
     char        v_class[VSNAMELENMAX + 1] = ""; /* Vdata class for comparison */
-    intn        j,k;                     /* loop indicies */
+    intn        i,j,k;                     /* loop indicies */
 
     /* Check args */
     if (access_rec == NULL)
@@ -1376,11 +1377,15 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
 
           /* create chunk cache with 'maxcache' set to the number of chunks
              along the last dimension i.e subscript changes the fastest*/
+	  chunks_needed = 1;
+	  for (i = 1; i < info->ndims; i++) {
+		chunks_needed *= info->ddims[i].num_chunks;
+	  }
           if ((info->chk_cache = 
                mcache_open(&access_rec->file_id,                   /* cache key */
                            access_aid,                             /* object id */
                            (info->chunk_size*info->nt_size),       /* chunk size */
-                           info->ddims[info->ndims -1].num_chunks, /* maxcache */
+                           chunks_needed, /* maxcache */
                            npages,                                 /* num chunks */
                            0                                       /* flags */)) 
               == NULL)
@@ -1524,6 +1529,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     chunkinfo_t *info      = NULL; /* information for the chunked elt */
     uint8       *c_sp_header = NULL; /* special element header */
     int32       npages     = 1;    /* i.e. number of chunks in element */
+    int32       chunks_needed;     /* default size of chunk cache */
     int32       access_aid = FAIL; /* access id */
     uint16      chktbl_ref;        /* the ref of the link structure
                                       chunk table i.e. Vdata */
@@ -1934,12 +1940,16 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     /* register this valid access record for the chunked element */
     access_aid = HAregister_atom(AIDGROUP,access_rec);
 
+    chunks_needed = 1;
+    for (i = 1; i < info->ndims; i++) {
+	chunks_needed *= info->ddims[i].num_chunks;
+    }
     /* create chunk cache */
     if ((info->chk_cache = 
          mcache_open(&access_rec->file_id,                   /* cache key */
                      access_aid,                             /* object id */
                      (info->chunk_size*info->nt_size),       /* chunk size */
-                     info->ddims[info->ndims -1].num_chunks, /* maxcache */
+                     chunks_needed, /* maxcache */
                      npages,                                 /* num chunks */
                      0                                       /* flags */)) 
         == NULL)
