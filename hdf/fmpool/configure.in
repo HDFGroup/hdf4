@@ -116,13 +116,21 @@ case "${host}" in
 esac
 fi
 
-# make sure host specific 'jconfig.h' is there
+# make sure host specific 'fmconf.h' is there
 if [ ! -f ${srcdir}/${files} ]; then
     echo '***' "We are missing host specific ${files}" 1>&2
     echo '***' "Please read the installation docs" 1>&2
     exit 1
 fi
 
+# Now for Mac and PC configurations we want to copy and not use symbolic
+# links
+if [ -d ${srcdir}/config ]; then
+case "${host}" in
+  *-mac-*)             symbolic_link="cp -p" ;;
+  *-win-*)             symbolic_link="cp -p" ;;
+esac
+fi
 
 # post-target:
 
