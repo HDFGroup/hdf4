@@ -27,6 +27,10 @@ static char RcsId[] = "@(#)$Revision$";
 /* Macro to check status value and print error message */
 #define CHECK(status, fail_value, name) {if(status == fail_value) { \
     printf("*** Routine %s FAILED at line %d ***\n", name, __LINE__); num_err++;}}
+/* BMR - 2/21/99: added macro VERIFY to use in testing SDcheckempty */
+#define VERIFY(item, value, test_name) {if(item != value) { \
+    printf("*** UNEXPECTED VALUE from %s is %ld at line %4d in %s\n", test_name, (long)item,(int)__LINE__,__FILE__); num_err++;}}
+
 
 #define UFOFILE   "file.UFO"	/* non-existing file */
 #define FILE1     "test1.hdf"
@@ -1631,6 +1635,7 @@ main(int argc, char *argv[])
     uint8   iuval;
     float32 data[1000], max, min, imax, imin;
     float64 cal, cale, ioff, ioffe;
+    intn emptySDS = FALSE;
     int     num_err = 0;    /* number of errors so far */
 
 
@@ -2167,6 +2172,19 @@ main(int argc, char *argv[])
     status = SDendaccess(newsds3);
     CHECK(status, FAIL, "SDendaccess");
 
+    /* BMR - 2/21/99: added a 2x2 dataset called EmptyDataset to file 
+       'test1.hdf' to later test new routine SDcheckempty.  */
+
+    /* create a 2x2 dataset called EmptyDataset in file test1.hdf */
+    dimsize[0] = 2;
+    dimsize[1] = 2;
+    newsds = SDcreate(f1, "EmptyDataset", DFNT_FLOAT32, 2, dimsize);
+    CHECK(newsds, FAIL, "SDcreate: Failed to create a new data set EmptyDataset ");
+    /* Close down this SDS*/
+    status = SDendaccess(newsds);
+    CHECK(status, FAIL, "Test empty SDS. SDendaccess");
+    /* end BMR */
+
     /* Close access to file 'test1.hdf' */
     status = SDend(f1);
     CHECK(status, FAIL, "SDend");
@@ -2267,6 +2285,24 @@ main(int argc, char *argv[])
     /* end access to data set 'FIXED' */
     status = SDendaccess(sdid);
     CHECK(status, FAIL, "SDendaccess");
+
+    /* BMR - 2/21/99: get index of dataset 'EmptyDataset' */
+    index = SDnametoindex(f1, "EmptyDataset");
+    CHECK(index, FAIL, "SDnametoindex: (EmptyDataset)");
+    
+    /* Select dataset 'EmptyDataset' */
+    sdsid = SDselect(f1, index);
+
+    /* This dataset should be empty, if SDcheckempty returns FAIL or the
+       parameter emptySDS is not TRUE, the test fails */
+    status = SDcheckempty( sdsid, &emptySDS );    
+    CHECK( status, FAIL, "SDcheckempty" );
+    VERIFY( emptySDS, TRUE, "SDcheckempty" );
+
+    /* end access to data set 'EmptyDataset' */
+    status = SDendaccess(sdsid);
+    CHECK(status, FAIL, "SDendaccess");
+    /* end BMR */
 
     /* close file 'test1.hdf' */
     status = SDend(f1);
