@@ -1,3 +1,15 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
@@ -23,7 +35,7 @@ PRIVATE VOID vunpackvs
     PROTO((VDATA *vs, uint8 buf[], int32 *size));
 
 /* External (within Vset routines) variables */
-extern vfile_t vfile[];
+extern vfile_t *vfile;
 
 /* ------------------------------------------------------------------ */
 /*
@@ -46,6 +58,14 @@ uint16 vsid;
     int32 key;
     char * FUNC = "vsinstance";
   
+    /* Check if vfile buffer has been allocated */
+    if (vfile == NULL)
+      {
+        vfile = (vfile_t *)HDgetspace(MAX_VFILE * sizeof(vfile_t));
+        if (vfile == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, NULL);
+      }
+
     if (NULL==(vf = Get_vfile(f)))
         HRETURN_ERROR(DFE_FNF, NULL);
   
@@ -420,6 +440,14 @@ char *  accesstype;
 	vsinstance_t	* w;
 	vfile_t			* vf;
 	char * FUNC = "VSattach";
+
+    /* Check if vfile buffer has been allocated */
+    if (vfile == NULL)
+      {
+        vfile = (vfile_t *)HDgetspace(MAX_VFILE * sizeof(vfile_t));
+        if (vfile == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
 
     if ((f == FAIL)  || (vsid < -1))
         HRETURN_ERROR(DFE_ARGS, FAIL);
@@ -818,6 +846,14 @@ HFILEID f;
     int32 key;
     char * FUNC = "VSgetid";
 
+    /* Check if vfile buffer has been allocated */
+    if (vfile == NULL)
+      {
+        vfile = (vfile_t *)HDgetspace(MAX_VFILE * sizeof(vfile_t));
+        if (vfile == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
+
     if (vsid < -1)
         HRETURN_ERROR(DFE_ARGS, FAIL);
     if (NULL==(vf = Get_vfile(f)))
@@ -1014,6 +1050,14 @@ int32 vsid;
         HERROR(DFE_ARGS);
         return(FAIL);
     } 
+
+    /* Check if vfile buffer has been allocated */
+    if (vfile == NULL)
+      {
+        vfile = (vfile_t *)HDgetspace(MAX_VFILE * sizeof(vfile_t));
+        if (vfile == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
 
     if (NULL==(vf = Get_vfile(f))) {
         HERROR(DFE_FNF);
