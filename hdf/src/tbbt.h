@@ -54,10 +54,17 @@ struct tbbt_node {
     |  ( ( LEFT==(s) ? (c) : LeftCnt(n) ) << TBBT_BITS )                   \
     |  ( (i) ? TBBT_INTERN : 0 )  )
 #else
+#ifdef macintosh /* There is a limit to recursive macro substitution */
+# define  SetFlags(n,s,c,b,i)   (  ( -2<(b) && (b)<2 ? 0 : TBBT_DOUBLE )   \
+    |  ( 0>(b) ? TBBT_HEAVY(s) : (b)>0 ? TBBT_HEAVY( 1 + 2 - (s)) : 0 )    \
+    |  ( ( LEFT==(s) ? (c) : LeftCnt(n) ) << TBBT_BITS )                   \
+    |  ( (i) ? TBBT_INTERN : 0 )  )
+#else /* !macintosh */
 # define  SetFlags(n,s,c,b,i)   (  ( -2<(b) && (b)<2 ? 0 : TBBT_DOUBLE )   \
     |  ( 0>(b) ? TBBT_HEAVY(s) : (b)>0 ? TBBT_HEAVY(Other(s)) : 0 )        \
     |  ( ( LEFT==(s) ? (c) : LeftCnt(n) ) << TBBT_BITS )                   \
     |  ( (i) ? TBBT_INTERN : 0 )  )
+#endif /* !macintosh */
 #endif  /* QAK */
 #endif /* OLD_WAY */
 /* n=node, s=LEFT/RIGHT, c=`s' descendant count, b=balance(s), i=internal */
