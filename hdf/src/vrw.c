@@ -26,35 +26,6 @@ static char RcsId[] = "@(#)$Revision$";
 #include "vg.h"
 #include "hfile.h"
 
-#ifdef DELETE_FOR_40_RELEASE_IF_NOT_USED
-PRIVATE void Knumin
-    PROTO((uint8 *src,uint8 * dst,uint32 n,uint32 sdel,uint32 ddel));
-
-PRIVATE void Knumout
-    PROTO((uint8 *src,uint8 * dst,uint32 n,uint32 sdel,uint32 ddel));
-
-#ifdef PROTOTYPE
-PRIVATE void Knumin (uint8 *src, uint8 *dst, uint32 n, uint32 sdel, uint32 ddel)
-#else
-PRIVATE void Knumin (src, dst, n, sdel, ddel)
-uint8        *src, *dst;
-uint32      n, sdel, ddel;
-#endif
-{
-  (*DFKnumin) (src, dst, n, sdel, ddel);
-}
-
-#ifdef PROTOTYPE
-PRIVATE void Knumout (uint8 *src, uint8 *dst, uint32 n, uint32 sdel, uint32 ddel)
-#else
-PRIVATE void Knumout (src, dst, n, sdel, ddel)
-uint8        *src, *dst;
-uint32      n, sdel, ddel;
-#endif
-{
-  (*DFKnumout) (src, dst, n, sdel, ddel);
-}
-#endif
 
 /* --------------------------- VSseek -------------------------------------- */
 
@@ -213,7 +184,6 @@ uint8    buf[];
         b2 = Vtbuf;
         type = w->type[0];
 
-        /* Errr WORKS */
         DFKsetNT(type);
         DFKnumin (b2, b1, (uint32) w->order[0] * nelt, 0, 0);
 
@@ -234,7 +204,6 @@ uint8    buf[];
             esize = w->esize[i];
             order = w->order[i];
             
-            /* Arrr ? */
             DFKsetNT(type); 
             for(index = 0; index < order; index++) {
                 DFKnumin (b2, b1, (uint32) nelt, (uint32) hsize, (uint32) esize);
@@ -257,7 +226,6 @@ uint8    buf[];
             isize = w->isize[i];
             order = w->order[i];
             
-            /* Brrr ? */
             DFKsetNT(type); 
             for(index = 0; index < order; index++) {
                 DFKnumin (b2, b1, (uint32) nelt, (uint32) isize, (uint32) esize);
@@ -284,13 +252,8 @@ uint8    buf[];
             isize = w->isize[i];
             order = w->order[i];
             
-            /* Crrr ? */
             DFKsetNT(type); 
             for(index = 0; index < order; index++) {
-/*
-printf("C: from : %d  to: %d esize: %d isize: %d order: %d nt: %d\n", 
-       (int) b2, (int) b1, (int) esize, (int) isize, (int) order, (int) type);
-*/
                 DFKnumin (b2, b1, (uint32) nelt, (uint32) hsize, (uint32) uvsize);
                 b1 += (int) esize / order;
                 b2 += (int) isize / order;
@@ -317,7 +280,6 @@ printf("C: from : %d  to: %d esize: %d isize: %d order: %d nt: %d\n",
             esize = w->esize[i];
             order = w->order[i];
             
-            /* Drrr ? */
             DFKsetNT(type); 
             for(index = 0; index < order; index++) {
                 DFKnumin (b2, b1, (uint32) nelt, (uint32) isize, (uint32) uvsize);
@@ -331,28 +293,6 @@ printf("C: from : %d  to: %d esize: %d isize: %d order: %d nt: %d\n",
     return(nv/hsize);
 } /* VSread */
 
-#ifndef WIN3
-/* ------------------------------------------------------------------ */
-/* debugging routine */
-
-#ifdef PROTOTYPE
-void bytedump (char *ss, uint8 buf[], int32 n)
-#else
-void bytedump (ss, buf, n)
-char        *ss;
-uint8        buf[];
-int32   n;
-#endif
-{
-    int32 i;
-
-    printf("uint8DUMP at %ld [%s %ld]: ",buf, ss, n);
-    for(i=0;i<n;i++)
-        printf(" %x", buf[i]);
-    printf("\n");
-    fflush(stdout);
-}
-#endif  /* WIN3 */
 
 /* ------------------------------------------------------------------ */
 /*
@@ -457,7 +397,6 @@ uint8        buf[];
         isize = w->isize[0];
         type  = w->type[0];
         
-	/* Ewww ? */
         DFKsetNT(type); 
         DFKnumout(b1, b2, (uint32) w->order[0] * nelt, (uint32) 0, (uint32) 0);
 
@@ -475,7 +414,6 @@ uint8        buf[];
             isize = w->isize[j];
             order = w->order[j];
             
-            /* Awww ? */
             DFKsetNT(type); 
             for(index = 0; index < order; index++) {
                 DFKnumout (b1, b2, (uint32) nelt, (uint32) esize, (uint32) hsize);
@@ -499,7 +437,6 @@ uint8        buf[];
             isize = w->isize[j];
             order = w->order[j];
             
-            /* Bwww ? works sometimes */
             DFKsetNT(type);  
             for(index = 0; index < order; index++) {
                 DFKnumout (b1, b2, (uint32) nelt, (uint32) esize, (uint32) isize);
@@ -526,7 +463,6 @@ uint8        buf[];
             isize = w->isize[j];
             order = w->order[j];
             
-            /* Cwww WORKS  */
             DFKsetNT(type); 
             for(index = 0; index < order; index++) {
                 DFKnumout (b1, b2, (uint32) nelt, (uint32) uvsize, (uint32) hsize);
@@ -553,7 +489,6 @@ uint8        buf[];
             esize = w->esize[j];
             order = w->order[j];
             
-            /* Dwww ? */
             DFKsetNT(type); 
             for(index = 0; index < order; index++) {
                 DFKnumout (b1, b2, (uint32) nelt, (uint32) uvsize, (uint32) isize);
@@ -568,7 +503,6 @@ uint8        buf[];
     /* ================ start writing ============================== */
     /* ================ start writing ============================== */
     
-#if 1
     if (vs->aid == 0) { /* aid not allocated yet */
         vs->aid = Hstartwrite (vs->f,VSDATATAG, vs->oref, (int32) nelt * hsize);
         if (vs->aid == FAIL) { HERROR(DFE_BADAID); return(FAIL); }
@@ -606,7 +540,6 @@ uint8        buf[];
 
 	vs->marked = 1;
 	return (nelt);
-#endif
 
 } /* VSwrite */
 
