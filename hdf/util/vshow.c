@@ -175,7 +175,7 @@ char**av;
       VSinquire (vs, &nv,&interlace, fields, &vsize, vsname);
       if (DFIstrlen(vsname)==0)  strcat(vsname,"NoName");
       VSgetclass (vs, vsclass);
-      printf("L vs:%d <%d/%d> nv=%d i=%d fld [%s] vsize=%d (%s.%s)\n",
+      printf("L vs:%d <%d/%d> nv=%d i=%d fld [%s] vsize=%d (%s {%s})\n",
               vsid, vs->otag, vs->oref, nv, interlace, fields, vsize, vsname, vsclass);
       if (fulldump && vsno==0) vsdumpfull(vs);
       else if (fulldump && vsno==vs->oref) vsdumpfull(vs);
@@ -315,8 +315,8 @@ int32 vsdumpfull(vs) VDATA * vs;
   b= bb;
   cn=0;
   
-  for(j=0; j < nv; j++) {
-    for(i=0; i < nf; i++) {
+  for(j = 0; j < nv; j++) {
+    for(i = 0; i < nf; i++) {
       for(t=0; t < order[i]; t++) { 
         (fmtfn[i]) (b); 
         b += off[i]; 
@@ -324,11 +324,13 @@ int32 vsdumpfull(vs) VDATA * vs;
         cn++;
       }
       putchar(' ');
+      cn++;
     }
     
     if (condensed) { 
-      if( cn > 70) { 
-        putchar('\n'); cn=0; 
+      if(cn > 65) { 
+        putchar('\n'); 
+        cn=0; 
       } 
     } 
     else putchar('\n');
