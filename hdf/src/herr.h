@@ -51,6 +51,14 @@
 #define HCLOSE_RETURN_ERROR(hfid, err, ret_val) {HERROR(err); Hclose(hfid); \
                                                 return(ret_val);}
 
+/* HGOTO_ERROR macro, used to facilitate error reporting.  Makes
+   same assumptions as HERROR.  IN ADDITION, this macro causes
+   a jump to the label 'done' which should be in every fucntion
+   Also there is an assumption of a variable 'ret_value' */
+
+#define HGOTO_ERROR(err, ret_val) {HERROR(err); ret_value = ret_val; \
+                                   goto done;}
+
 /* For further error reporting */
 #define HE_REPORT(msg) HEreport(msg)
 #ifndef CONVEX
