@@ -130,6 +130,9 @@ o HDF no longer core dumps when reading a NetCDF file.
 o HDF now supports little-endian conversion for VAX and Dec 
   Alpha OpenVMS.
 
+o The problems that occurred on the Cray with HDF 4.1r1 have
+  been corrected.
+
 See the ./release_notes/bugs_fixed.txt file for more information
 on bugs fixed in this release.
 
