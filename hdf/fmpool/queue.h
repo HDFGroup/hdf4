@@ -115,20 +115,20 @@ struct {								\
 		(head)->lh_first->field.le_prev = &(elm)->field.le_next;\
 	(head)->lh_first = (elm);					\
 	(elm)->field.le_prev = &(head)->lh_first;			\
-        (void)fprintf(stderr,"head=%08x\n",(head)); \
-        (void)fprintf(stderr,"head->lh_first=%08x\n",(head)->lh_first); \
-        (void)fprintf(stderr,"elm=%08x\n",(elm)); \
-        (void)fprintf(stderr,"elm->field.le_next=%08x\n",(elm)->field.le_next); \
-        (void)fprintf(stderr,"elm->field.le_prev=%08x\n",(elm)->field.le_prev); \
+        (void)fprintf(stderr,"lhead=%08x\n",(head)); \
+        (void)fprintf(stderr,"lhead->lh_first=%08x\n",(head)->lh_first); \
+        (void)fprintf(stderr,"lelm=%08x\n",(elm)); \
+        (void)fprintf(stderr,"lelm->field.le_next=%08x\n",(elm)->field.le_next); \
+        (void)fprintf(stderr,"lelm->field.le_prev=%08x\n",(elm)->field.le_prev); \
 }
 #define LIST_REMOVE(elm, field) {					\
 	if ((elm)->field.le_next != NULL)				\
 		(elm)->field.le_next->field.le_prev = 			\
 		    (elm)->field.le_prev;				\
 	*(elm)->field.le_prev = (elm)->field.le_next;			\
-        (void)fprintf(stderr,"elm=%08x\n",(elm)); \
-        (void)fprintf(stderr,"elm->field.le_next=%08x\n",(elm)->field.le_next); \
-        (void)fprintf(stderr,"elm->field.le_prev=%08x\n",(elm)->field.le_prev); \
+        (void)fprintf(stderr,"lelm=%08x\n",(elm)); \
+        (void)fprintf(stderr,"lelm->field.le_next=%08x\n",(elm)->field.le_next); \
+        (void)fprintf(stderr,"lelm->field.le_prev=%08x\n",(elm)->field.le_prev); \
 }
 
 #endif /* LIST_DEBUG */
