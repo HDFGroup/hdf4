@@ -97,6 +97,7 @@ static char RcsId[] = "@(#)$Revision$";
  *   HMCcreate()
  *   HMCsetMaxCache()
  *   HMCwriteChunk()
+ *   HMCreadChunk()
  *
  *
  * Author -GeorgeV
@@ -111,16 +112,16 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* Some static data buffers */
 static uint8  outbuf[BUFSIZE],  /* output data buffer */
-    inbuf[BUFSIZE];   /* input data buffer */
+               inbuf[BUFSIZE];   /* input data buffer */
 
 /* used to verify data in Test 2. */
 static uint8  outbuf_2[16] = {0,0,2,3,0,0,6,7,8,9,0,0,12,13,0,0};
 
 /* used to in Tests 1,2 */
-static    uint8      cptr0[4] = {0,1,4,5};
-static    uint8      cptr1[4] = {2,3,6,7};
-static    uint8      cptr2[4] = {8,9,12,13};
 static    uint8      cptr3[4] = {10,11,14,15};
+static    uint8      cptr2[4] = {8,9,12,13};
+static    uint8      cptr1[4] = {2,3,6,7};
+static    uint8      cptr0[4] = {0,1,4,5};
 
 /* for writing/verifying some chunks used in Test 6*/
 static uint8  chunk1[4] = { 0, 1, 2, 3};
@@ -135,32 +136,8 @@ static uint8  chunk5[4] = { 110, 111, 112, 113};
 
 static uint8  chunk6[4] = { 120, 121, 122, 123};
 
-/*   datay layout of arrays in memory */
+/* datay layout of arrays in memory */
 /* for comparison in Test 8 */
-static float32  wf32_data[24] =
-{(float32)0.0, (float32)100.0, (float32)10.0, (float32)110.0, (float32)20.0, (float32)120.0,
- (float32)1.0, (float32)101.0, (float32)11.0, (float32)111.0, (float32)21.0, (float32)121.0,
- (float32)2.0, (float32)102.0, (float32)12.0, (float32)112.0, (float32)22.0, (float32)122.0,
- (float32)3.0, (float32)103.0, (float32)13.0, (float32)113.0, (float32)23.0, (float32)123.0
-};
-
-/* for comparison in Test 7 */
-static uint16  wu16_data[24] =
-{0, 100, 10, 110, 20, 120,
- 1, 101, 11, 111, 21, 121,
- 2, 102, 12, 112, 22, 122,
- 3, 103, 13, 113, 23, 123
-};
-
-/* for comparison in Test 6 */
-static uint8  wu8_data[24] =
-{0, 100, 10, 110, 20, 120, 
- 1, 101, 11, 111, 21, 121,
- 2, 102, 12, 112, 22, 122,
- 3, 103, 13, 113, 23, 123
-};
-
-/* for visual comparison only  */
 static float32  f32_data[2][3][4] =
 {
     {
@@ -172,6 +149,7 @@ static float32  f32_data[2][3][4] =
         {(float32) 110.0, (float32) 111.0, (float32) 112.0, (float32) 113.0},
         {(float32) 120.0, (float32) 121.0, (float32) 122.0, (float32) 123.0}}};
 
+/* for comparison in Test 7 */
 static uint16  u16_data[2][3][4] =
 {
     {
@@ -183,16 +161,17 @@ static uint16  u16_data[2][3][4] =
         { 110, 111, 112, 113},
         { 120, 121, 122, 123}}};
 
+/* for comparison in Test 6 */
 static uint8  u8_data[2][3][4] =
 {
     {
-        {0, 1, 2, 3},
-        {10, 11, 12, 13},
-        {20, 21, 22, 23}},
+        { 0, 1, 2, 3},
+        { 10, 11, 12, 13},
+        { 20, 21, 22, 23}},
     {
-        {100, 101, 102, 103},
-        {110, 111, 112, 113},
-        {120, 121, 122, 123}}};
+        { 100, 101, 102, 103},
+        { 110, 111, 112, 113},
+        { 120, 121, 122, 123}}};
 
 /*
  * main entry point to tests the Special Chunking layer...
@@ -202,24 +181,26 @@ static uint8  u8_data[2][3][4] =
 void
 test_chunks()
 {
-    int32       fid, fid1;
-    int32       aid, aid1, aid2;
+    int32       fid;
+    int32       aid1, aid2;
     int32       fileid, length, offset, posn;
     uint16      tag, ref;
     int16       acc_mode, special;
     register int i, j, k;
+#ifdef BIG_TEST
     int32       x,y;
+    int32      nseek = 0;
+#endif
     int32       ret;
     CHUNK_DEF   chunk[1];       /* Chunk definition, see 'hchunks.h' */
-    CHUNK_DEF  *chkptr = NULL;
     int32       dims[5];
     int32      fill_val_len = 1;
     uint8      fill_val_u8 = 0;      /* test 6 */
     uint16     fill_val_u16 = 0;     /* test 7 */
     float32    fill_val_f32 = (float32)0.0; /* test 8 */
-    int32      nseek = 0;
-    uint16     inbuf_u16[24];        /* input data buffer */
-    float32    inbuf_f32[24];        /* input data buffer */
+    uint8      inbuf_u8[2][3][4];
+    uint16     inbuf_u16[2][3][4];   /* input data buffer */
+    float32    inbuf_f32[2][3][4];   /* input data buffer */
     sp_info_block_t info_block;      /* special info block */
     intn       errors = 0;
 
@@ -239,6 +220,7 @@ test_chunks()
     MESSAGE(5, printf("Creating a file %s\n", TESTFILE_NAME); );
     fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);
     CHECK(fid, FAIL, "Hopen");
+
 
     /*
       1.First test simple writing of 2-D element with no ghost/partial chunks.
@@ -272,6 +254,28 @@ test_chunks()
     /* Create element     tag, ref,  nlevels, fill_len, fill,  chunk array */
     aid1 = HMCcreate(fid, 1020, 2, 1, fill_val_len, &fill_val_u8, (CHUNK_DEF *)chunk);
     CHECK(aid1, FAIL, "HMCcreate");
+
+#if 0
+    /* write 16 bytes out */
+    ret = Hwrite(aid1, 16, outbuf);
+    if (ret != 16)
+      {
+          fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int) ret);
+          errors++;
+          goto done;
+      }
+
+    MESSAGE(5, printf("Wrote first 16 bytes to 2-D, uint8 chunked element to file\n"); );
+    /* end access */
+    ret = Hendaccess(aid1);
+    CHECK(ret, FAIL, "Hendaccess");
+
+    MESSAGE(5, printf("Closing the file\n"););
+
+    ret = Hclose(fid);
+    CHECK(ret, FAIL, "Hclose");
+
+#endif
 
     /* write 12 bytes out */
     ret = Hwrite(aid1, 12, outbuf);
@@ -311,8 +315,8 @@ test_chunks()
     MESSAGE(5, printf("Wrote to 4th chunk(4of4 chunks) in file\n"););
 
     /* Try writing to 2nd to last chunk in the element */
-    dims[0] = 0;
-    dims[1] = 1;
+    dims[0] = 1;
+    dims[1] = 0;
     ret = HMCwriteChunk(aid1, dims, cptr2);
     CHECK(ret, FAIL, "HMCwriteChunk");
 
@@ -421,7 +425,6 @@ test_chunks()
     MESSAGE(5, printf("Closing the file\n"););
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
-
     /* 
        2. Now create a new chunked 2-D element with same parameters
        before but write to 2 chunks of element using whole chunks.
@@ -445,16 +448,16 @@ test_chunks()
     CHECK(aid1, FAIL, "HMCcreate");
 
     /* Try writing to 2 chunk in the element */
-    dims[0] = 0;
-    dims[1] = 1;
+    dims[0] = 1;
+    dims[1] = 0;
     ret = HMCwriteChunk(aid1, dims, cptr2);
     CHECK(ret, FAIL, "HMCwriteChunk");
 
     MESSAGE(5, printf("Wrote to 3 chunk (3of4) in file\n"); );
 
     /* Try writing to 1 chunk in the element */
-    dims[0] = 1;
-    dims[1] = 0;
+    dims[0] = 0;
+    dims[1] = 1;
     ret = HMCwriteChunk(aid1, dims, cptr1);
     CHECK(ret, FAIL, "HMCwriteChunk");
 
@@ -678,7 +681,6 @@ test_chunks()
     /* Open file for writing last odd size chunks now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
     CHECK(fid, FAIL, "Hopen");
-
     MESSAGE(5, printf("Create another new element as a 3-D, uint8 chunked element(192 bytes)\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
                       0,chunk[0].pdims[0].dim_length, 
@@ -813,6 +815,7 @@ test_chunks()
     MESSAGE(5, printf("Closing the file\n"););
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
+
 
     /* 
        5. Now create another 3-D chunked element with partial chunks.
@@ -972,6 +975,7 @@ test_chunks()
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
 
+
     /* 
        6. Now create 3-D chunked element with no partial chunks.
        Write using HMCwriteChunk(). Read data back in first
@@ -1004,7 +1008,6 @@ test_chunks()
     /* Open file for writing last odd size chunks now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
     CHECK(fid, FAIL, "Hopen");
-
     MESSAGE(5, printf("Create another new element as a 3-D, uint8 chunked element(192 bytes)\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
                       0,chunk[0].pdims[0].dim_length, 
@@ -1019,6 +1022,19 @@ test_chunks()
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid1 = HMCcreate(fid, 1020, 12, 1, fill_val_len, &fill_val_u8, (CHUNK_DEF *)chunk);
     CHECK(aid1, FAIL, "HMCcreate");
+
+    /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
+    aid2 = HMCcreate(fid, 1020, 18, 1, fill_val_len, &fill_val_u8, (CHUNK_DEF *)chunk);
+    CHECK(aid1, FAIL, "HMCcreate");
+
+    /* write 24 bytes out */
+    ret = Hwrite(aid2, 24, u8_data);
+    if (ret != 24)
+      {
+          fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int) ret);
+          errors++;
+          goto done;
+      }
 
     /* write data out as chunks */
     MESSAGE(5, printf("Writing to 3-D, uint8 chunked element using HMCwriteChunk\n"); );
@@ -1064,8 +1080,11 @@ test_chunks()
     ret = Hendaccess(aid1);
     CHECK(ret, FAIL, "Hendaccess");
 
-    MESSAGE(5, printf("Closing the files\n");
-            );
+    /* end access */
+    ret = Hendaccess(aid2);
+    CHECK(ret, FAIL, "Hendaccess");
+
+    MESSAGE(5, printf("Closing the files\n"););
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
 
@@ -1076,6 +1095,10 @@ test_chunks()
 
     /* start read access   tag,  ref */
     aid1 = Hstartread(fid, 1020, 12);
+    CHECK(aid1, FAIL, "Hstartread");
+
+    /* start read access   tag,  ref */
+    aid2 = Hstartread(fid, 1020, 18);
     CHECK(aid1, FAIL, "Hstartread");
 
     /* inquire about element */
@@ -1138,7 +1161,7 @@ test_chunks()
 
 
     /* read back in buffer  */
-    ret = Hread(aid1, 24, inbuf);
+    ret = Hread(aid1, 24, inbuf_u8);
     VERIFY(ret, 24, "Hread");
     if (ret != 24)
       {
@@ -1148,23 +1171,32 @@ test_chunks()
       }
 
     /* verify the data */
-    MESSAGE(5, printf("Verifying 24 bytes data\n"); );
-    for (i = 0; i < ret; i++)
+    MESSAGE(5, printf("Verifying 24 bytes data from Hread\n"); );
+    for (i = 0; i < 2; i++)
       {
-          if (inbuf[i] != wu8_data[i])
-            {
-                printf("Wrong data at %d, out %d in %d\n", i, wu8_data[i], inbuf[i]);
-                errors++;
-            }
+        for (j = 0; j < 3; j++)
+          {
+            for (k = 0; k < 4; k++)
+              {
+                  if (inbuf_u8[i][j][k] != u8_data[i][j][k])
+                    {
+                        printf("Wrong data at inbuf_u8[%d][%d][%d], out %d in %d\n", 
+                               i,j,k, u8_data[i][j][k], inbuf_u8[i][j][k]);
+                        errors++;
+                    }
+              }
+          }
       }
+
     if (errors)
         goto done;
 
+    MESSAGE(5, printf("Verifying 24 bytes using HMCreadChunk\n"); );
     /* read data back as chunks */
     dims[0] = 0;
     dims[1] = 0;
     dims[2] = 0;
-    ret = HMCreadChunk(aid1, dims, inbuf);
+    ret = HMCreadChunk(aid2, dims, inbuf);
     CHECK(ret, FAIL, "HMCreadChunk");
     if (ret != 4)
       {
@@ -1186,7 +1218,7 @@ test_chunks()
     dims[0] = 0;
     dims[1] = 1;
     dims[2] = 0;
-    ret = HMCreadChunk(aid1, dims, inbuf);
+    ret = HMCreadChunk(aid2, dims, inbuf);
     CHECK(ret, FAIL, "HMCreadChunk");
     if (ret != 4)
       {
@@ -1208,7 +1240,7 @@ test_chunks()
     dims[0] = 0;
     dims[1] = 2;
     dims[2] = 0;
-    ret = HMCreadChunk(aid1, dims, inbuf);
+    ret = HMCreadChunk(aid2, dims, inbuf);
     CHECK(ret, FAIL, "HMCreadChunk");
     if (ret != 4)
       {
@@ -1230,7 +1262,7 @@ test_chunks()
     dims[0] = 1;
     dims[1] = 0;
     dims[2] = 0;
-    ret = HMCreadChunk(aid1, dims, inbuf);
+    ret = HMCreadChunk(aid2, dims, inbuf);
     CHECK(ret, FAIL, "HMCreadChunk");
     if (ret != 4)
       {
@@ -1252,7 +1284,7 @@ test_chunks()
     dims[0] = 1;
     dims[1] = 1;
     dims[2] = 0;
-    ret = HMCreadChunk(aid1, dims, inbuf);
+    ret = HMCreadChunk(aid2, dims, inbuf);
     CHECK(ret, FAIL, "HMCreadChunk");
     if (ret != 4)
       {
@@ -1274,7 +1306,7 @@ test_chunks()
     dims[0] = 1;
     dims[1] = 2;
     dims[2] = 0;
-    ret = HMCreadChunk(aid1, dims, inbuf);
+    ret = HMCreadChunk(aid2, dims, inbuf);
     CHECK(ret, FAIL, "HMCreadChunk");
     if (ret != 4)
       {
@@ -1297,9 +1329,14 @@ test_chunks()
     ret = Hendaccess(aid1);
     CHECK(ret, FAIL, "Hendaccess");
 
+    /* end access and close file */
+    ret = Hendaccess(aid2);
+    CHECK(ret, FAIL, "Hendaccess");
+
     MESSAGE(5, printf("Closing the file\n"););
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
+
 
     /* 
        7. Now create 3-D chunked element with no partial chunks.
@@ -1346,7 +1383,7 @@ test_chunks()
     CHECK(aid1, FAIL, "HMCcreate");
 
     /* write 48 bytes out */
-    ret = Hwrite(aid1, 48, wu16_data);
+    ret = Hwrite(aid1, 48, u16_data);
     VERIFY(ret, 48, "Hwrite");
     if (ret != 48)
       {
@@ -1387,17 +1424,24 @@ test_chunks()
 
     /* verify the data */
     MESSAGE(5, printf("Verifying 48 bytes data\n"); );
-    for (i = 0; i < 24; i++)
+    for (i = 0; i < 2; i++)
       {
-          if (inbuf_u16[i] != wu16_data[i])
-            {
-                printf("Wrong data at %d, out %d in %d\n", i, wu16_data[i], inbuf_u16[i]);
-                errors++;
-            }
+        for (j = 0; j < 3; j++)
+          {
+            for (k = 0; k < 4; k++)
+              {
+                  if (inbuf_u16[i][j][k] != u16_data[i][j][k])
+                    {
+                        printf("Wrong data at inbuf_u16[%d][%d][%d], out %d in %d\n", 
+                               i,j,k, u16_data[i][j][k], inbuf_u16[i][j][k]);
+                        errors++;
+                    }
+              }
+          }
       }
+
     if (errors)
         goto done;
-
 
     /* end access and close file */
     ret = Hendaccess(aid1);
@@ -1406,6 +1450,7 @@ test_chunks()
     MESSAGE(5, printf("Closing the file\n"););
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
+
 
     /* 
        8. Now create 3-D chunked element with no partial chunks.
@@ -1460,7 +1505,7 @@ test_chunks()
       }
 
     /* write 96 bytes out */
-    ret = Hwrite(aid1, 96, wf32_data);
+    ret = Hwrite(aid1, 96, f32_data);
     VERIFY(ret, 96, "Hwrite");
     if (ret != 96)
       {
@@ -1501,14 +1546,22 @@ test_chunks()
 
     /* verify the data */
     MESSAGE(5, printf("Verifying 96 bytes data\n"); );
-    for (i = 0; i < 24; i++)
+    for (i = 0; i < 2; i++)
       {
-          if (inbuf_f32[i] != wf32_data[i])
-            {
-                printf("Wrong data at %d, out %f in %f\n", i, wf32_data[i], inbuf_f32[i]);
-                errors++;
-            }
+        for (j = 0; j < 3; j++)
+          {
+            for (k = 0; k < 4; k++)
+              {
+                  if (inbuf_f32[i][j][k] != f32_data[i][j][k])
+                    {
+                        printf("Wrong data at inbuf_f32[%d][%d][%d], out %f in %f\n", 
+                               i,j,k, f32_data[i][j][k], inbuf_f32[i][j][k]);
+                        errors++;
+                    }
+              }
+          }
       }
+
     if (errors)
         goto done;
 
@@ -1520,6 +1573,7 @@ test_chunks()
     MESSAGE(5, printf("Closing the file\n"););
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
+
 
     /* 
        9. Create 4-D element with partial chunks.
@@ -1688,8 +1742,7 @@ test_chunks()
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
 
-
-#if 0
+#ifdef BIG_TEST
 
     /* 
        10. The rest of the tests here are commented out
@@ -1762,9 +1815,7 @@ test_chunks()
                   __LINE__);
           errors++;
       }
-#endif
 
-#if 0
     /* verify the data */
     MESSAGE(5, printf("Verifying data\n");
             );
@@ -1800,9 +1851,6 @@ test_chunks()
                 VERIFY(ret, 0, "Hseek");
             }
       }
-#endif
-
-#if 0
 
     /* Mimic read pattern of EOS-DEM test  behaviour */
     x = 1000;
@@ -1850,7 +1898,8 @@ test_chunks()
             );
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
-#endif
+
+#endif /* BIG_TEST */
 
   done:
     /* Don't forget to free dimensions allocate for chunk definition */
