@@ -357,11 +357,47 @@ or
     
     2. When testing 'testhdf' in 'hdf/test' directory make sure
        that a directory called 'testdir' exists in the 'hdf/test'.
-       This directory is used the the external elment test.
+       This directory is used the the external element test.
 
     3. You need at least 8MB of memory to run most of the test programs.
 
-    Codewarrior Projects can be found in the following directories:
+    Configuring the Distribution
+    ****************************
+    A. If you have access to a unix box.
+
+       1. Uncompress and untar the distribution.
+       2. Type './configure mac'. This will build the distribution
+          for the Macintosh. Specifically it will copy the correct
+          files to the correct location. For the Macintosh release
+          the two relevant files are the following: 
+
+          mfhdf/libsrc/config/netcdf-mac.h  -> copied to mfhdf/libsrc/netcdf.h
+          hdf/jpeg/config/jmac.h            -> copied to hdf/jpeg/jconfig.h
+
+       3. Re-tar this newly configured distribution and download it
+          the Macintosh where any utility that understands the tar format
+          can be used to unpack it. If you dont' have acces to such a 
+          utility then you need to copy the files one by one.
+
+    B. Don't have access to a unix box and are using the 'tar.Z' version.
+       1. After you have downloaded the distribution to your Macintosh
+          you need to find a utility to uncompress and an untar the
+          distribution.
+
+       2. You will need to copy the following files to the correct locations
+          with the new names(netcdf.h , jconfig.h).
+
+          mfhdf/libsrc/config/netcdf-mac.h  -> copied to mfhdf/libsrc/netcdf.h
+          hdf/jpeg/config/jmac.h            -> copied to hdf/jpeg/jconfig.h
+
+    C. If you are using the 'sit.hqx' version everything should have
+       been configured already.
+
+    Building the Distribution
+    *************************
+    The distribution needs to be built in the order specifed below.
+    Both PowerPC and 68k Codewarrior Projects can be found in the 
+    following directories:
  
     $(toplevel)/
                 hdf/zlib/zlib.68k-project.hqx
@@ -393,6 +429,29 @@ or
                 mfhdf/nctest/nctest.68k-project.hqx
                              nctest.PPC-project.hqx
 
+    Testing the Distribution
+    ************************
+    Run the tests in the following order
+      
+       1. hdf/test/testhdf
+          Note:
+           When testing 'testhdf' in 'hdf/test' directory make sure
+           that a directory called 'testdir' exists in the 'hdf/test'.
+           This directory is used the the external element test.
+
+       2. mfhdf/xdr/xdrtest
+           After running this test compare the output to that shown in
+           the file mfhdf/xdr/testout.sav
+
+       3. mfhdf/libsrc/hdftest
+           After running this test compare the ouput to that shown in
+           the file mfhdf/libsrc/hdfout.sav
+
+       4. mfhdf/libsrc/cdftest
+           After running this test compare the ouput to that shown in
+           the file mfhdf/libsrc/testout.sav
+
+       5. mfhdf/nctest/nctest
 
 
 2.5 Pablo Instrumentation
