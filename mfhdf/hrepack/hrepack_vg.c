@@ -90,7 +90,7 @@ int copy_vgroup_attrs(int32 vg_in, int32 vg_out, char *path,options_t *options)
  *-------------------------------------------------------------------------
  */
 
-void copy_vg(char* infname,
+int  copy_vg(char* infname,
              char* outfname,
              int32 infile_id,
              int32 outfile_id,
@@ -122,24 +122,28 @@ void copy_vg(char* infname,
  vgroup_id = Vattach (infile_id, ref, "r");
  if (Vgetname (vgroup_id, vgroup_name)==FAIL){
   printf( "Could not get group name\n");
+  return FAIL;
  }
  if (Vgetclass (vgroup_id, vgroup_class)==FAIL){
   printf( "Could not get group class\n");
+  return FAIL;
  }
  
  /* ignore reserved HDF groups/vdatas */
  if( is_reserved(vgroup_class)){
   if (Vdetach (vgroup_id)==FAIL){
    printf( "Could not dettach group\n");
+   return FAIL;
   }
-  return;
+  return SUCCESS;
  }
  if(vgroup_name != NULL) 
   if(strcmp(vgroup_name,GR_NAME)==0) {
    if (Vdetach (vgroup_id)==FAIL){
     printf( "Could not dettach group\n");
+    return FAIL;
    }
-   return;
+   return SUCCESS;
   }
   
  /* initialize path */
@@ -164,14 +168,17 @@ void copy_vg(char* infname,
  vgroup_id_out = Vattach (outfile_id, -1, "w");
  if (Vsetname (vgroup_id_out, vgroup_name)==FAIL){
   printf( "Could not set group name for <%s>\n",path);
+  return FAIL;
  }
  if (Vsetclass (vgroup_id_out, vgroup_class)==FAIL){
   printf( "Could not set group class for <%s>\n",path);
+  return FAIL;
  }
  
  /* insert the created vgroup into its parent */
  if (Vinsert (vgroup_id_out_par, vgroup_id_out)==FAIL){
   printf( "Could not insert group\n");
+  return FAIL;
  }
  
  /* insert objects for this group */
@@ -182,24 +189,30 @@ void copy_vg(char* infname,
   refs = (int32 *) malloc(sizeof(int32) * ntagrefs);
   Vgettagrefs(vgroup_id, tags, refs, ntagrefs);
   /* recurse */
-  vgroup_insert(infname,outfname,infile_id,outfile_id,
+  if (vgroup_insert(infname,outfname,infile_id,outfile_id,
    sd_id,sd_out,gr_id,gr_out,
    vgroup_id_out,
-   path,tags,refs,ntagrefs,table,options);
+   path,tags,refs,ntagrefs,table,options)<0) {
+   free (tags);
+   free (refs);
+   return FAIL;
+  }
   free (tags);
   free (refs);
  }
  if (Vdetach (vgroup_id)==FAIL){
   printf( "Could not detach group\n");
+  return FAIL;
  }
  if (Vdetach (vgroup_id_out)==FAIL){
   printf( "Could not detach group\n");
+  return FAIL;
  }
  
  if (path)
   free(path);
   
- return;
+ return SUCCESS;
 }
 
 

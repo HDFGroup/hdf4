@@ -379,7 +379,8 @@ int main(void)
  hrepack_init (&options,verbose);
  hrepack_addcomp("dset7:HUFF 1",&options);
  hrepack_addchunk("dset7:10x8x6",&options);
- hrepack(FILENAME,FILENAME_OUT,&options);
+ if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
+  goto out;
  hrepack_end (&options);
 	PASSED();
 
@@ -402,7 +403,8 @@ int main(void)
  hrepack_init (&options,verbose);
  hrepack_addcomp("dset4:RLE",&options);
  hrepack_addchunk("dset4:10x8",&options);
- hrepack(FILENAME,FILENAME_OUT,&options);
+ if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
+  goto out;
  hrepack_end (&options);
 	PASSED();
 
@@ -424,7 +426,8 @@ int main(void)
  hrepack_init (&options,verbose);
  hrepack_addcomp("dset4:GZIP 6",&options);
  hrepack_addchunk("dset4:10x8",&options);
- hrepack(FILENAME,FILENAME_OUT,&options);
+ if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
+  goto out;
  hrepack_end (&options);
 	PASSED();
 
@@ -449,7 +452,8 @@ int main(void)
  hrepack_init (&options,verbose);
  hrepack_addcomp("dset4:SZIP 8,EC",&options);
  hrepack_addchunk("dset4:10x8",&options);
- hrepack(FILENAME,FILENAME_OUT,&options);
+ if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
+  goto out;
  hrepack_end (&options);
 	PASSED();
 
@@ -482,7 +486,8 @@ int main(void)
  hrepack_addcomp("dset_chunk:NONE",&options);
  hrepack_addchunk("dset_chunk_comp:NONE",&options);
  hrepack_addchunk("dset_chunk:NONE",&options);
- hrepack(FILENAME,FILENAME_OUT,&options);
+ if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
+  goto out;
  hrepack_end (&options);
 	PASSED();
 
@@ -518,7 +523,8 @@ int main(void)
  hrepack_addchunk("dset4:10x8",&options);
  hrepack_addchunk("dset5:10x8",&options);
  hrepack_addchunk("dset6:10x8",&options);
- hrepack(FILENAME,FILENAME_OUT,&options);
+ if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
+  goto out;
  hrepack_end (&options);
 	PASSED();
 
@@ -561,7 +567,8 @@ int main(void)
    hrepack_addcomp("dset7:SZIP 4,EC",&options);
  }
 #endif
- hrepack(FILENAME,FILENAME_OUT,&options);
+ if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
+  goto out;
  hrepack_end (&options);
 	PASSED();
 
@@ -594,7 +601,8 @@ int main(void)
  hrepack_addcomp("*:GZIP 1",&options);
  hrepack_addchunk("dset_chunk_comp:NONE",&options);
  hrepack_addchunk("dset_chunk:NONE",&options);
- hrepack(FILENAME,FILENAME_OUT,&options);
+ if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
+  goto out;
  hrepack_end (&options);
 	PASSED();
 
@@ -618,7 +626,8 @@ int main(void)
  TESTING("hrepack -c *:10x8");
  hrepack_init (&options,verbose);
  hrepack_addchunk("*:10x8",&options);
- hrepack(FILENAME,FILENAME_OUT,&options);
+ if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
+  goto out;
  hrepack_end (&options);
 	PASSED();
 
@@ -636,13 +645,11 @@ int main(void)
  *-------------------------------------------------------------------------
  */
 
- verbose        =0;
- fspec.verbose  =0;
-
  TESTING("hrepack -t *:GZIP 1");
  hrepack_init (&options,verbose);
  hrepack_addcomp("*:GZIP 1",&options);
- hrepack(FILENAME,FILENAME_OUT,&options);
+ if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
+  goto out;
  hrepack_end (&options);
 	PASSED();
 
@@ -652,7 +659,8 @@ int main(void)
  if ( sds_verifiy_comp_all(COMP_CODE_DEFLATE, 1) == -1) 
   goto out;
  PASSED();
- 
+
+  
 /*-------------------------------------------------------------------------
  * all tests PASSED
  *-------------------------------------------------------------------------

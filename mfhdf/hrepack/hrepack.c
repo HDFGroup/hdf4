@@ -38,26 +38,30 @@ void print_options(options_t *options);
  *
  *-------------------------------------------------------------------------
  */
-void hrepack(const char* infile, 
-             const char* outfile, 
-             options_t *options)
+int hrepack(const char* infile, 
+            const char* outfile, 
+            options_t *options)
 {
  options->trip=0;
-
+ 
  /* also checks input */
  print_options(options);
-
+ 
  /* first check for objects in input that are in the file */
- if (list(infile,outfile,options)==0)
- {
-  /* the real deal now */
-  options->trip=1;
-  
-  if (options->verbose)
-   printf("Making new file %s...\n",outfile);
-  
-  list(infile,outfile,options);
- }
+ if (list(infile,outfile,options)<0)
+  return FAIL;
+ 
+ /* the real deal now */
+ options->trip=1;
+ 
+ if (options->verbose)
+  printf("Making new file %s...\n",outfile);
+ 
+ /* this can fail for different reasons */
+ if (list(infile,outfile,options)<0)
+  return FAIL;
+
+ return SUCCESS;
 }
 
 
@@ -89,8 +93,8 @@ void hrepack_addcomp(const char* str, options_t *options)
   exit(1);
  }
 
-	/* initialize parse struct to FAIL */
-	memset(&comp,FAIL,sizeof(comp_info_t));
+ /* initialize parse struct to FAIL */
+ memset(&comp,FAIL,sizeof(comp_info_t));
 
  /* parse the -t option */
  obj_list=parse_comp(str,&n_objs,&comp);

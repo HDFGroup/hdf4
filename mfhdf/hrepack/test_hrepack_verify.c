@@ -114,7 +114,7 @@ int sds_verifiy_comp_all(int32 in_comp_type,
                dim_sizes[MAX_VAR_DIMS];/* dimensions of an image */
  char          name[MAX_GR_NAME];      /* name of dataset */
  int           info;
-int status;
+ int status;
 
  /* initialize the sd interface */
  sd_id  = SDstart (FILENAME_OUT, DFACC_READ);

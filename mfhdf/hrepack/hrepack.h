@@ -24,6 +24,14 @@
 #define TAG_GRP_IMAGE DFTAG_RIG
 #define TAG_GRP_DSET  DFTAG_NDG
 
+#ifndef SUCCESS
+#define SUCCESS 0
+#endif
+
+#ifndef FAIL
+#define FAIL -1
+#endif
+
 
 #if 0
 #define HZIP_DEBUG
@@ -81,7 +89,7 @@ typedef struct {
 extern "C" {
 #endif
 
-void hrepack         (const char* infname, const char* outfname, options_t *options);
+int  hrepack         (const char* infname, const char* outfname, options_t *options);
 void hrepack_addcomp (const char* str, options_t *options);
 void hrepack_addchunk(const char* str, options_t *options);
 void hrepack_init    (options_t *options, int verbose);

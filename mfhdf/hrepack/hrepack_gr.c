@@ -176,13 +176,13 @@ int  copy_gr(int32 infile_id,
   case COMP_CODE_SZIP:
    info  = c_info_in.szip.pixels_per_block;
 #ifdef H4_HAVE_LIBSZ
-	if (c_info_in.szip.options_mask & SZ_EC_OPTION_MASK) {
-		szip_mode = EC_MODE;
-	} else if (c_info_in.szip.options_mask & SZ_NN_OPTION_MASK) {
-		szip_mode = NN_MODE;
-	}
+ if (c_info_in.szip.options_mask & SZ_EC_OPTION_MASK) {
+  szip_mode = EC_MODE;
+ } else if (c_info_in.szip.options_mask & SZ_NN_OPTION_MASK) {
+  szip_mode = NN_MODE;
+ }
 #else
-		szip_mode = 0; /* irrelevant */
+  szip_mode = 0; /* irrelevant */
 #endif
    break;
   case COMP_CODE_RLE:
@@ -529,12 +529,18 @@ int  copy_gr(int32 infile_id,
  *-------------------------------------------------------------------------
  */ 
  
- copy_an(infile_id,outfile_id,
-         ref,DFTAG_RIG,gr_ref,DFTAG_RIG, 
-         path,options);
- copy_an(infile_id,outfile_id,
-         ref,DFTAG_RI,gr_ref,DFTAG_RI,
-         path,options);
+ if (copy_an(infile_id,outfile_id,
+  ref,DFTAG_RIG,gr_ref,DFTAG_RIG, 
+  path,options)<0) {
+  ret=-1;
+  goto out;
+ }
+ if (copy_an(infile_id,outfile_id,
+  ref,DFTAG_RI,gr_ref,DFTAG_RI,
+  path,options)<0) {
+  ret=-1;
+  goto out;
+ }
 
 out:
  

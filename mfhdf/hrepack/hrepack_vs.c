@@ -274,7 +274,10 @@ int copy_vs( int32 infile_id,
  *-------------------------------------------------------------------------
  */ 
 
- copy_vs_an(infile_id,outfile_id,vdata_id,vdata_out,path,options);
+ if (copy_vs_an(infile_id,outfile_id,vdata_id,vdata_out,path,options)<0) {
+  ret=-1;
+  goto out;
+ }
  
 out:
  /* terminate access to the VSs */

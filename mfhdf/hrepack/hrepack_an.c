@@ -60,11 +60,17 @@ int copy_vg_an(int32 infile_id,
   return-1;
  }
 
- copy_an(infile_id,outfile_id,
-         ref_in,tag_in,ref_out,tag_out, 
-         path,options);
+ if (copy_an(infile_id,
+  outfile_id,
+  ref_in,
+  tag_in,
+  ref_out,
+  tag_out, 
+  path,
+  options)<0)
+   return FAIL;
 
- return 1;
+ return SUCCESS;
 }
 
 
@@ -112,9 +118,15 @@ int copy_vs_an(int32 infile_id,
   return-1;
  }
 
- copy_an(infile_id,outfile_id,
-         ref_in,tag_in,ref_out,tag_out, 
-         path,options);
+ if (copy_an(infile_id,
+  outfile_id,
+  ref_in,
+  tag_in,
+  ref_out,
+  tag_out, 
+  path,
+  options)<0)
+   return FAIL;
 
  return 1;
 }
@@ -260,14 +272,16 @@ int copy_an(int32 infile_id,
             char *path, 
             options_t *options) 
 {
-
- copy_an_data(infile_id,outfile_id,
-              ref_in,tag_in,ref_out,tag_out, 
-              AN_DATA_LABEL,path,options);
- copy_an_data(infile_id,outfile_id,
-              ref_in,tag_in,ref_out,tag_out,
-              AN_DATA_DESC,path,options);
-
- return 1;
+ 
+ if (copy_an_data(infile_id,outfile_id,
+  ref_in,tag_in,ref_out,tag_out, 
+  AN_DATA_LABEL,path,options)<0)
+  return FAIL;
+ if (copy_an_data(infile_id,outfile_id,
+  ref_in,tag_in,ref_out,tag_out,
+  AN_DATA_DESC,path,options)<0)
+  return FAIL;
+ 
+ return SUCCESS;
 }
 

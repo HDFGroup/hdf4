@@ -86,6 +86,8 @@ int copy_sds(int32 sd_in,
  intn             empty_sds;
  int              have_info=0;
 
+ sds_out=FAIL;
+
  sds_index = SDreftoindex(sd_in,ref);
  sds_id    = SDselect(sd_in,sds_index);
  
@@ -127,7 +129,12 @@ int copy_sds(int32 sd_in,
  }
 
  /* get chunk lengths */
- SDgetchunkinfo(sds_id, &chunk_def_in, &chunk_flags_in);
+ stat=SDgetchunkinfo(sds_id, &chunk_def_in, &chunk_flags_in);
+ if (stat==FAIL){
+  printf( "Could not get chunking information for SDS <%s>\n",path);
+  SDendaccess(sds_id);
+  return -1;
+ }
 
  /* retrieve the compress information if so */
  if ( (HDF_CHUNK | HDF_COMP) == chunk_flags_in )
@@ -180,11 +187,11 @@ int copy_sds(int32 sd_in,
   case COMP_CODE_SZIP:
 #ifdef H4_HAVE_LIBSZ
    info      = c_info_in.szip.pixels_per_block;
-	if (c_info_in.szip.options_mask & SZ_EC_OPTION_MASK) {
-		szip_mode = EC_MODE;
-	} else if (c_info_in.szip.options_mask & SZ_NN_OPTION_MASK) {
-		szip_mode = NN_MODE;
-	}
+ if (c_info_in.szip.options_mask & SZ_EC_OPTION_MASK) {
+  szip_mode = EC_MODE;
+ } else if (c_info_in.szip.options_mask & SZ_NN_OPTION_MASK) {
+  szip_mode = NN_MODE;
+ }
 #else
    printf("SZIP compression not supported in this version <%s>\n",path);
 #endif
@@ -346,6 +353,38 @@ int copy_sds(int32 sd_in,
    path);                                         /*name*/
  }
 
+/*-------------------------------------------------------------------------
+ * check if the requested compression is valid
+ * SDSs do not support JPEG
+ *-------------------------------------------------------------------------
+ */
+ 
+ /* check inspection mode */
+ if ( options->trip>0 ) 
+ {
+  switch(comp_type)
+  {
+  case COMP_CODE_NONE:
+  case COMP_CODE_RLE:
+  case COMP_CODE_SKPHUFF:
+  case COMP_CODE_DEFLATE:
+  case COMP_CODE_SZIP:
+  case COMP_CODE_NBIT:
+   break;
+  case COMP_CODE_JPEG:
+   printf("Error: JPEG compression is not available for <%s>\n",path);
+   ret=FAIL;
+   goto out;
+   break;
+  default:
+   printf("Error: Unrecognized compression code %d in <%s>\n",comp_type_in,path);
+   ret=FAIL;
+   goto out;
+  }
+ } /* check inspection mode */
+
+
+
  
 
 /*-------------------------------------------------------------------------
@@ -433,7 +472,7 @@ int copy_sds(int32 sd_in,
    c_info.deflate.level = info;
    break;
   case COMP_CODE_NBIT:
-   comp_type = COMP_CODE_NONE;  /* not supported in thsi version */
+   comp_type = COMP_CODE_NONE;  /* not supported in this version */
    break;
   default:
    printf( "Error: Unrecognized compression code %d\n", comp_type);
@@ -588,16 +627,21 @@ int copy_sds(int32 sd_in,
  *-------------------------------------------------------------------------
  */ 
  
- copy_an(infile_id,outfile_id,
-         ref,tag,sds_ref,tag, 
-         path,options);
+ if (copy_an(infile_id,outfile_id,
+  ref,tag,sds_ref,tag, 
+  path,options)<0) {
+  ret=-1;
+  goto out;
+ }
 
 out:
  /* terminate access to the SDSs */
  if (SDendaccess(sds_id)== FAIL )
   printf( "Failed to close SDS <%s>\n", path);
- if (SDendaccess (sds_out)== FAIL )
-  printf( "Failed to close SDS <%s>\n", path);
+ if (sds_out!=FAIL) {
+  if (SDendaccess (sds_out)== FAIL )
+   printf( "Failed to close SDS <%s>\n", path);
+ }
    
  if (path)
   free(path);

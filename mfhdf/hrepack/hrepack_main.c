@@ -33,6 +33,7 @@ int main(int argc, char **argv)
  char        *outfile = NULL;
  options_t   options;            /*the global options */
  int         i;
+ int         ret;
 
 
  /* initialize options  */
@@ -89,12 +90,17 @@ int main(int argc, char **argv)
   usage();
  
  /* zip it */
- hrepack(infile,outfile,&options);
+ ret=hrepack(infile,outfile,&options);
  
  /* free tables */
  hrepack_end(&options);
 
- return 0;
+ /* unix error return code */
+ if (ret==-1)
+  return 1;
+ else
+  return 0;
+
 }
 
 
@@ -126,7 +132,7 @@ void usage()
  printf("\t\t       RLE, for RLE compression\n");
  printf("\t\t       HUFF, for Huffman\n");
  printf("\t\t       GZIP, for gzip\n");
- printf("\t\t       JPEG, for JPEG\n");
+ printf("\t\t       JPEG, for JPEG (for images only)\n");
  printf("\t\t       SZIP, for szip\n");
  printf("\t\t       NONE, to uncompress\n");
  printf("\t\t     <parameters> is optional compression info\n");
@@ -159,7 +165,7 @@ void usage()
  printf("\n");
  printf("3)$hrepack -v -i file1.hdf -o file2.hdf -t 'A:NONE'\n");
  printf("  uncompresses object A\n");
-	printf("4)$hrepack -v -i file1.hdf -o file2.hdf -t 'A:SZIP 8,NN'\n");
+ printf("4)$hrepack -v -i file1.hdf -o file2.hdf -t 'A:SZIP 8,NN'\n");
  printf("  applies SZIP compression to object A, with parameters 8 and NN\n");
  printf("\n");
  printf("Note: the use of the verbose option -v is recommended\n");

@@ -383,10 +383,9 @@ int  options_get_info(options_t      *options,     /* global options */
  */
 
 int set_szip( int   pixels_per_block, /*in */
-             int   compression_mode, /* in */
-             comp_info *c_info/*out*/)
+              int   compression_mode, /* in */
+              comp_info *c_info/*out*/)
 {
- int   i;
  int   ppb=pixels_per_block;
 
 #ifdef H4_HAVE_LIBSZ
