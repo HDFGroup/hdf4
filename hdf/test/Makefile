@@ -28,17 +28,39 @@ RMFLAGS=-f
 CTESTS= nt_rig.o nt_sdstr.o nt_hblocks.o nt_an.o nt_anfile.o \
         nt_hextelt.o nt_hfile.o nt_hfile1.o nt_vers.o nt_sdmms.o \
         nt_sdnmms.o testhdf.o
+
+FTESTS= tr8f t24f tpf tanf tanfilef tsdstrf tsdntf tsdnntf \
+        tsdmmsf tsdnmmsf tstubsf 
+#        slabwf slab1wf slab2wf slab3wf slab4wf
+TESTF = fortest.o
+FOBJS = tr8f.o t24f.o tpf.o tanf.o tanfilef.o tsdstrf.o tsdntf.o \
+        tsdnntf.o tsdmmsf.o tsdnmmsf.o tstubsf.o fortest.o
+#        slabwf.o slab1wf.o slab2wf.o slab3wf.o slab4wf.o 
 #        tsdmms tsdnmms tsdnnt tsdnt tan \
 #        tanfile tstubs tv1 tv2 tvers egchi
 
+<<<<<<< Makefile
+.c.o: ; $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c
+
+.f: $< $(HDFLIB)/libdf.a
+	$(FC) $(FFLAGS) $< -o $@ $(HDFLIB)/libdf.a
+
+all: testhdf fortest
+=======
 .c.o: ; $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
 
 all: testhdf
+>>>>>>> 1.3
 
 testhdf: $(CTESTS)
 	$(CC) $(CFLAGS) -o testhdf $(CTESTS) $(HDFLIB)/libdf.a
 
-clean: ; -$(RM) $(RMFLAGS) $(CTESTS)
+fortest: ftests fortest.o
+	$(CC) $(CFLAGS) -o fortest $(TESTF) $(HDFLIB)/libdf.a
+
+ftests: $(FTESTS)
+
+clean: ; -$(RM) $(RMFLAGS) $(CTESTS) $(FOBJS)
 
 depend: ; makedepend -I$(HDFINC) *.c
 
@@ -46,6 +68,11 @@ depend: ; makedepend -I$(HDFINC) *.c
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 
+egchi.o: ../src/vg.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
+egchi.o: ../src/hcomp.h ../src/hproto.h ../src/herr.h /usr/include/ctype.h
+egchi.o: ../src/vproto.h
+fortest.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
+fortest.o: ../src/hproto.h tfproto.h tutils.h
 nt_an.o: tproto.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
 nt_an.o: ../src/hcomp.h ../src/hproto.h tutils.h
 nt_anfile.o: tproto.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
@@ -72,5 +99,48 @@ nt_stubs.o: /usr/include/stdio.h ../src/df.h ../src/hdf.h ../src/hdfi.h
 nt_stubs.o: ../src/hcomp.h ../src/hproto.h ../src/herr.h
 nt_vers.o: /usr/include/stdio.h tproto.h ../src/hdf.h ../src/hdfi.h
 nt_vers.o: ../src/hcomp.h ../src/hproto.h tutils.h
+slab1w.o: ../include/hdf.h
+slab2w.o: ../include/hdf.h
+slab3w.o: ../include/hdf.h
+slab4w.o: ../include/hdf.h
+slabw.o: ../include/hdf.h
+tan.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
+tan.o: ../src/hproto.h ../src/dfsd.h
+tanfile.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
+tanfile.o: ../src/hproto.h
+terr.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
+terr.o: ../src/hproto.h
 testhdf.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
 testhdf.o: ../src/hproto.h tproto.h tutils.h
+thblocks.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
+thblocks.o: ../src/hproto.h
+thextelt.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
+thextelt.o: ../src/hproto.h
+thfile.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
+thfile.o: ../src/hproto.h
+thfile1.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
+thfile1.o: ../src/hproto.h
+tlitend.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
+tlitend.o: ../src/hproto.h ../src/dfsd.h
+trig.o: /usr/include/stdlib.h /usr/include/sys/stdtypes.h ../src/hdf.h
+trig.o: ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h ../src/hproto.h
+tsdmms.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
+tsdmms.o: ../src/hproto.h ../src/dfsd.h
+tsdnmms.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
+tsdnmms.o: ../src/hproto.h ../src/dfsd.h
+tsdnnt.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
+tsdnnt.o: ../src/hproto.h ../src/dfsd.h
+tsdnt.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
+tsdnt.o: ../src/hproto.h ../src/dfsd.h
+tsdstr.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
+tsdstr.o: ../src/hproto.h ../src/dfsd.h
+tstubs.o: /usr/include/stdio.h ../src/df.h ../src/hdf.h ../src/hdfi.h
+tstubs.o: ../src/hcomp.h ../src/hproto.h ../src/herr.h
+tv1.o: ../src/vg.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
+tv1.o: ../src/hcomp.h ../src/hproto.h ../src/herr.h /usr/include/ctype.h
+tv1.o: ../src/vproto.h
+tv2.o: ../src/vg.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
+tv2.o: ../src/hcomp.h ../src/hproto.h ../src/herr.h /usr/include/ctype.h
+tv2.o: ../src/vproto.h
+tvers.o: /usr/include/stdio.h ../src/hdf.h ../src/hdfi.h ../src/hcomp.h
+tvers.o: ../src/hproto.h
