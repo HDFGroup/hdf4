@@ -5,12 +5,6 @@ automatically compiled and installed when you run 'make' and
 yet. A file named TEST and a group of .hdf files are included for 
 testing. 
 
-At this moment hdp works on SunOS and LINUX only. It has different
-problems on other platforms. Dumpsds doesn't work on Solaris, HP, 
-and DecAlpha/OSF; dumpvd and dumpvg don't work on IBM RS6000/AIX,
-IRIX5.3, HP, DecAlpha/OSF, DecStation/Ultrix, Convex and 
-IRIX6.0 32bit mode. Those problems will be fixed in next release. 
-
 Please send your bug reports, comments and suggestions to 
 hdfhelp@ncsa.uiuc.edu.
 
