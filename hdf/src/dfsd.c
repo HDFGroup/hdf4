@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.28  1993/04/26 15:08:15  chouck
-Fixes for the convex (doesn't like foo(VOID) prototypes)
-Also added extern "C" { } around prototypes
+Revision 1.29  1993/05/17 15:20:13  georgev
+Took out some unused varibles in DFSDwriteslab.
 
+ * Revision 1.28  1993/04/26  15:08:15  chouck
+ * Fixes for the convex (doesn't like foo(VOID) prototypes)
+ * Also added extern "C" { } around prototypes
+ *
  * Revision 1.27  1993/04/22  23:00:10  koziol
  * Changed DFR8nimages, DFPnpals to report the correct number of images
  * and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
@@ -4627,7 +4630,6 @@ DFSDwriteslab(start, stride, count, data)
                           /*   in the hyperslab */
     int32 datastride;     /* number of floats in one row of data[] */
     int32 machinetype;    /* assigned DF_MT.  used for debugging */
-    int32 file_id;        /* HDF file pointer */
     int32 fileoffset;     /* offset into the current dataset in the file */
     int32 *doffset;       /* array for accessing the next element in data[] */
     int32 *foffset;       /* array for accessing  next element in the file */
@@ -4703,7 +4705,7 @@ DFSDwriteslab(start, stride, count, data)
     startdims = (int32 *) HDgetspace((uint32) 3 * rank * sizeof(int32));
     if (startdims == NULL)
       {
-        Hclose(file_id);
+        Hclose(Sfile_id);
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
     sizedims = startdims + rank;
