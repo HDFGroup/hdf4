@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.9  1993/09/17 14:13:48  koziol
+# Revision 1.10  1993/10/25 17:14:20  georgev
+# Added "src" target to "make tests" and "make utils".
+#
+# Revision 1.9  1993/09/17  14:13:48  koziol
 # Updated the makefiles a little
 #
 # Revision 1.8  1993/05/13  18:44:42  chouck
@@ -159,11 +162,11 @@ libdf:
 
 utilities:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="util" _sub
+          SUBDIRS="src util" _sub
 
 tests:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="test" _sub
+          SUBDIRS="src test" _sub
 
 testnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
