@@ -1873,7 +1873,7 @@ Hishdf(const char *filename)
 {
     CONSTR(FUNC,"Hishdf");
 
-#if defined(VMS) || defined(MAC) || defined(PC)
+#if defined(VMS) || defined(MAC) || (defined(PC) & !defined(UNIX386))
   
     int32 fid;
 
