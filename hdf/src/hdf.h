@@ -599,4 +599,7 @@ typedef int32 HFILEID;
 #define Vstart(f)           Vinitialize((f))
 #define Vend(f)             Vfinish((f))
 
+/* Misc. macros for backward compability */
+#define HDgettagname(tag)   HDgettagdesc(nt)
+
 #endif /* HDF_H */
