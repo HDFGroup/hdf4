@@ -218,10 +218,16 @@ cmextelt.o: cmextelt.cs
 
 .PHONY : all nofortran libnostub clean distclean debug saber lint
 
-#all: libdf.a .installed
-#all: libdf.a 
 
-all::         FORCE
+all::		FORCE
+	@case "$(FC)" in \
+	NONE*|none*) \
+	    $(MAKE) $(MFLAGS) $(HDF_FLAGS) libnofortran ;; \
+	*) \
+	    $(MAKE) $(MFLAGS) $(HDF_FLAGS) rall ; \
+	esac
+
+rall::         FORCE
 	@if test -z "$(FMPOOL_FLAGS)"; then \
 	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) libdf.a; \
 	else		 \
@@ -241,12 +247,6 @@ libdf.a: $(COBJS) $(FOBJS) $(CMOBJS)
 #	$(AR) $(ARFLAGS) libdf.a `lorder '$(COBJS) $(FOBJS)' | tsort `
 	$(AR) $(ARFLAGS) libdf.a $(COBJS) $(FOBJS) $(CMOBJS)
 	$(RANLIB) libdf.a
-
-libdf-inst.a:   $(COBJS) $(FOBJS) $(CMOBJS) $(PCOBJS) $(PFOBJS)
-	-$(RM) $(RMFLAGS) libdf-inst.a libdf.a
-	$(AR) $(ARFLAGS) libdf-inst.a  $(COBJS) $(FOBJS) $(CMOBJS) $(PCOBJS) $(PFOBJS)
-	$(RANLIB) libdf-inst.a
-	ln -s libdf-inst.a libdf.a
 
 nofort-libdf.a: $(COBJS) $(CMOBJS)
 	-$(RM) $(RMFLAGS) libdf.a

@@ -269,15 +269,21 @@ $(FTESTS): $(FSRCS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
 
 $(FTESTS): $(FRC)
 
-#all: testhdf fortest gentest
-all::         FORCE
+all::		FORCE
+	@case "$(FC)" in \
+	NONE*|none*) \
+	    $(MAKE) $(MFLAGS) $(HDF_FLAGS) nofortran ;; \
+	*) \
+	    $(MAKE) $(MFLAGS) $(HDF_FLAGS) rall ; \
+	esac
+
+rall::         FORCE
 	@if test -z "$(FMPOOL_FLAGS)"; then \
 	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) testhdf fortest gentest; \
 	else		 \
 	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" testhdf fortest gentest; \
 	fi
 
-#nofortran: testhdf gentest
 nofortran::         FORCE
 	@if test -z "$(FMPOOL_FLAGS)"; then \
 	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) testhdf gentest; \
@@ -316,7 +322,15 @@ $(ZLIBLIB)/libz.a:
 
 $(CTESTS) $(TESTF) $(FTESTS): $(FRC)
 
-test-hdf: testhdf fortest
+test-hdf::		FORCE
+	@case "$(FC)" in \
+	NONE*|none*) \
+	    $(MAKE) $(MFLAGS) $(HDF_FLAGS) test-hdfnofortran ;; \
+	*) \
+	    $(MAKE) $(MFLAGS) $(HDF_FLAGS) atest-hdf ; \
+	esac
+
+atest-hdf: testhdf fortest
 	 -$(RM) $(RMFLAGS) *.hdf 
 	./testhdf
 	 -$(RM) $(RMFLAGS) *.hdf 
