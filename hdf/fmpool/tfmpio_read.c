@@ -45,6 +45,9 @@ main(int argc, char *argv[])    /* main body of code */
   int sdfid, sdsid;
   int start[2];
   int dims[2];
+  int *pindex;
+  int nindex;
+  int cvalue;
   int status;
   int reclen;
   int numrecs;
@@ -101,6 +104,36 @@ main(int argc, char *argv[])    /* main body of code */
 
   memset(buffer,'\0',reclen);
 
+  if ((pindex = (int *) calloc(numrecs, sizeof(int))) == NULL)
+    printf("unable to allocate pindex[numrecs] of size integer\n");
+
+  for(thisrec = 0; thisrec < numrecs; thisrec++)
+    {
+      pindex[thisrec] = thisrec;
+    }
+
+  /* seed random generator */
+  srand(getpid());
+
+  for(thisrec = 0; thisrec < numrecs; thisrec++)
+    {
+      nindex = rand() % numrecs;
+      cvalue = pindex[thisrec];
+      pindex[thisrec] = pindex[nindex];
+      pindex[nindex] = cvalue;
+#ifdef DEBUG
+      printf("pindex[%d]=%d, pindex[%d]=%d\n",
+             thisrec,pindex[thisrec],nindex,pindex[nindex]);
+#endif
+    }
+
+#ifdef DEBUG
+  for(thisrec = 0; thisrec < numrecs; thisrec++)
+    {
+      printf("pindex[%d]=%d\n",thisrec,pindex[thisrec]);
+    }
+#endif
+
   /* reading time */
   if((fhandle = MPopen(t_filename, DFACC_READ)) == NULL)
     {
@@ -113,6 +146,7 @@ main(int argc, char *argv[])    /* main body of code */
   for(thisrec = 0; thisrec < numrecs; thisrec++)
     {
       memset(buffer,'\0',reclen);
+    cur_seek_pos = pindex[thisrec] * reclen;
     /* Added seeking each time to handle RANDOM_IO case  */
     if (MPseek(fhandle, cur_seek_pos, SEEK_SET) == -1)
       {
@@ -146,7 +180,6 @@ main(int argc, char *argv[])    /* main body of code */
         }
 
       }
-    cur_seek_pos += reclen;
     } /* end for "thisrec" */
 
   /* end access to data set */
