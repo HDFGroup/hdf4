@@ -18,6 +18,10 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "mfhdf.h"
 
+#ifdef macintosh
+    #include <LowMem.h>
+#endif
+
 #ifdef HDF
 
 /* Macro to check status value and print error message */
@@ -224,7 +228,6 @@ test_chunk()
     int32   rdata[100];
     float32 max;
     int     num_err = 0;    /* number of errors so far */
-
 
     /* Create file 'chktst.hdf' */
     fchk = SDstart(CHKFILE, DFACC_CREATE);
@@ -1630,6 +1633,25 @@ main(int argc, char *argv[])
     float64 cal, cale, ioff, ioffe;
     int     num_err = 0;    /* number of errors so far */
 
+
+#ifdef macintosh
+	Ptr	currStackBase, newApplLimit, currApplLimit, currHeapEnd;
+
+
+	//	Expand the stack.  hdf_write_var( ) causes the stack to collide with
+	//	the 68K application heap when only the default stack size is used.
+	currStackBase = LMGetCurStackBase( );
+	newApplLimit = (Ptr) ( (long) currStackBase - 65536L );
+	currApplLimit = GetApplLimit( );
+	if ( newApplLimit > currApplLimit )		//	If we're about to shrink the stack, ...
+		 newApplLimit = currApplLimit;		//	... then don't.
+
+	currHeapEnd = LMGetHeapEnd( );
+	if ( newApplLimit < currHeapEnd )		//	If we're about overlap the stack and heap,
+		 newApplLimit = currHeapEnd;		//	... then don't.
+
+	SetApplLimit( newApplLimit );
+#endif
 
 #if defined __MWERKS__
     argc = ccommand(&argv);
