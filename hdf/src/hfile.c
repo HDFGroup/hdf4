@@ -2370,6 +2370,13 @@ int Hnumber(file_id, tag)
    special.  Add to this table any additional tag/special_tag pairs
    that might be necessary.  */
 
+/*
+  The functionality of these routines is covered by the SPECIALTAG,
+  MKSPECIALTAG and BASETAG macros
+*/
+
+#ifdef SPECIAL_TABLE
+
 typedef struct special_table_t {
     uint16 tag;
     uint16 special_tag;
@@ -2443,6 +2450,8 @@ uint16 HDbase_tag(tag)
 
     return tag;                        /* return itself */
 }
+
+#endif /* SPECIAL_TABLE */
 
 /*--------------------------------------------------------------------------
 **
@@ -2940,7 +2949,6 @@ int HInew_dd_block(file_rec, ndds, FUNC)
 
 /*--------------------------------------------------------------------------
  HIfill_file_rec
-
  Fill in a file record with data from the file, especially
  the data descriptors.
 --------------------------------------------------------------------------*/

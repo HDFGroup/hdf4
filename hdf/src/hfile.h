@@ -325,13 +325,25 @@ typedef struct functab_t {
 
 #define NO_ID     (uint32) 0
 
-/* a tag is special if its tag belongs to a special set.  This test can be
-   just ((t)==SPECIAL1 || (t)==SPECIAL2), or a full blown function.
-   right now, no special tags yet */
+/* The HDF tag space is divided as follows based on the 2 highest bits:
+   00: NCSA reserved ordinary tags
+   01: NCSA reserved special tags
+   10, 11: User tags.
 
+   It is relatively cheap to operate with special tags within the NCSA
+   reserved tags range. For users to specify special tags and their
+   corresponding ordinary tag, the pair has to be added to the
+   special_table in hfile.c and SPECIAL_TABLE must be defined. */
+
+#ifdef SPECIAL_TABLE
 #define BASETAG(t) (HDbase_tag(t))
 #define SPECIALTAG(t) (HDis_special_tag(t))
 #define MKSPECIALTAG(t) (HDmake_special_tag(t))
+#else
+#define BASETAG(t)      ((~(t) & 0x8000) ? ((t) & ~0x4000) : (t))
+#define SPECIALTAG(t)   ((~(t) & 0x8000) && ((t) & 0x4000))
+#define MKSPECIALTAG(t) ((~(t) & 0x8000) ? ((t) | 0x4000) : DFTAG_NULL)
+#endif /*SPECIAL_TABLE */
 
 /* access records array.  defined in hfile.c */
 
