@@ -1,6 +1,5 @@
 #! /bin/sh
 #===========================
-# DO NOT USE THIS COMMAND SCRIPT.
 # This command script is under construction and is not supported.
 # Not all features are working.  Some features may change in the future.
 # Some may even give wrong results.
@@ -49,7 +48,7 @@ STANDARD_OPT=""
 ENABLE_PARALLEL="--enable-parallel"
 CONFIGNAME=$HOSTNAME	# Name used in the SNAPTESTCFG file
 
-# test hosts
+# test hosts default as local host.
 TESTHOST=""
 
 #################################
@@ -135,7 +134,8 @@ PRINT_TRAILER()
 {
     PRINT "*** finished tests in $HOSTNAME ***"
     date; TotalEndTime=`SecOfDay`
-    PRINT Grand total tests time = `ElapsedTime $TotalStartTime $TotalEndTime`
+    PRINT "${HOSTNAME}: Ran $n_test $runtest_type, Grand total test time = " \
+          "`ElapsedTime $TotalStartTime $TotalEndTime`" | tee -a $TIMELOG
     PRINT_BLANK
 }
 
@@ -254,8 +254,9 @@ RUNSNAPTEST()
 {
     SNAPCMD_OPT="$STANDARD_OPT"		# snapshot test option
     SRCDIRNAME=""
-    CC_SAVED="$CC"
-    PATH_SAVED=$PATH
+    # restore CC, PATH in case they were changed in the last test.
+    CC="$CC_SAVED"
+    PATH=$PATH_SAVED
     export PATH			# DEC OSF1 needs to export PATH explicitly
     TEST_TYPE=$*
     retcode=0
@@ -287,6 +288,11 @@ RUNSNAPTEST()
 		# option for configure
 		SNAPCMD_OPT="$SNAPCMD_OPT $1 $2"
 		shift
+		;;
+	    op-snapshot)
+		# option for snapshot
+		shift
+		SNAPCMD_OPT="$SNAPCMD_OPT $1"
 		;;
 	    setenv)
 		# set environment variable
@@ -349,10 +355,6 @@ RUNSNAPTEST()
     [ $retcode -ne 0 ] && errcode=$retcode
 
     date >> $LOGFILE
-
-    # restore CC, PATH
-    CC="$CC_SAVED"
-    PATH=$PATH_SAVED
 }
 
 
@@ -377,8 +379,12 @@ RUNSNAPTEST()
 #    -n32		-n32 mode.  Apply to 64/32 bit OS such as IRIX64.
 #    parallel		parallel mode.
 #    op-configure <option>	configure option
+#    op-snapshot <option>	snapshot option
 #    --*		configure option
 #    setenv <name> <value>	set environment variable <name> to <value>
+#    setenvN) <N> <name> <value> ...
+#		        set environment variable with <N> values
+#		        e.g., setenvN 3 x a b c is same as setenv x="a b c".
 #    skip		skip this test
 SNAPTEST_CONFIG_PARSE()
 {
@@ -431,17 +437,6 @@ SNAPTEST_CONFIG()
 }
 
 
-# Flush the AFS files if applicable.
-# Hopefully the flushing is done when the tests of this
-# host are done rather than when the launching site try
-# to pull them in at the same time.  This way, the afs
-# server updates are spread out.
-FLUSH_FILES()
-{
-    /usr/afsws/bin/fs flush $SNAPYARD
-}
-
-
 # Show usage page
 USAGE()
 {
@@ -480,6 +475,8 @@ EOF
 retcode=0			# error code of individula task
 errcode=0			# error code of the whole test
 skiptest=no			# if test is skipped
+CC_SAVED="$CC"			# CC & PATH maybe changed within a test.
+PATH_SAVED=$PATH		# These save the original values.
 
 
 #################################
@@ -499,26 +496,26 @@ while [ $# -gt 0 ]; do
 	    PRINT "******** DEBUGMODE is $DEBUGMODE ************"
 	    ;;
 	-r*)
-	    # the version string has a leading _ but not for H4DIR name
+	    # the version string has a leading _ but not for H4DIR name.
 	    H4VER="$1"
 	    H4VERSTR=_`echo $H4VER | sed -e s/-r// -e s/\\\./_/g`
 	    H4DIR=$HOME/HDF4/v$H4VERSTR/hdf4
 	    PROGNAME="$PROGNAME $H4VER"
 	    ;;
 	-all)
-	    # Test all hosts
+	    # Test all hosts.
 	    TESTHOST=-all
 	    ;;
 	-nocvs)
-	    # do not do cvs commands
+	    # do not do cvs commands.
 	    NOCVS=nocvs
 	    ;;
 	-nodiff)
-	    # do not do diff commands
+	    # do not do diff commands.
 	    NODIFF=nodiff
 	    ;;
 	-configname)
-	    # use <name> as hostname in the parsing of the snaptest configure file
+	    # use <name> as hostname in the parsing of the snaptest configure file.
 	    shift
 	    CONFIGNAME=$1
 	    ;;
@@ -541,12 +538,14 @@ done
 # Show the real physical path rather than the symbolic path
 SNAPYARD=`cd $HOME/snapshots-hdf4${H4VERSTR} && /bin/pwd`
 # Log file basename
-LOGBASENAME=${SNAPYARD}/log/${HOSTNAME}
-PASSEDLOG=${SNAPYARD}/log/PASSED_LOG_${TODAY}
-FAILEDLOG=${SNAPYARD}/log/FAILED_LOG_${TODAY}
-CVSLOG=${SNAPYARD}/log/CVS_LOG_${TODAY}
-CVSLOG_LOCK=${SNAPYARD}/log/CVS_LOG_LOCK_${TODAY}
-DIFFLOG=${SNAPYARD}/log/DIFF_LOG_${TODAY}
+LOGDIR=${SNAPYARD}/log
+LOGBASENAME=${LOGDIR}/${HOSTNAME}
+PASSEDLOG=${LOGDIR}/PASSED_LOG_${TODAY}
+FAILEDLOG=${LOGDIR}/FAILED_LOG_${TODAY}
+TIMELOG=${LOGDIR}/TIME_LOG_${TODAY}
+CVSLOG=${LOGDIR}/CVS_LOG_${TODAY}
+CVSLOG_LOCK=${LOGDIR}/CVS_LOG_LOCK_${TODAY}
+DIFFLOG=${LOGDIR}/DIFF_LOG_${TODAY}
 # Snap Test Configuration file
 SNAPTESTCFG=${SNAPYARD}/snaptest.cfg
 
@@ -629,7 +628,8 @@ fi
 if [ -z "$NODIFF" ]; then
     $SNAPSHOT diff >> $DIFFLOG 2>&1
     errcode=$?
-    if [ $errcode -eq 0 ]; then
+    # check the errcode only if NOT in DEBUG MODE
+    if [ -z "$DEBUGMODE" -a $errcode -eq 0 ]; then
 	# no need to run test
 	PRINT "NO TEST: no significant differences between current and previous versions" |
 	    tee -a $PASSEDLOG
@@ -648,7 +648,10 @@ if [ -n "$TESTHOST" -a $HOSTNAME != "$TESTHOST" ]; then
     PRINT_BLANK
     TEST_TYPE="launching"
     cd ${SNAPYARD}/log
+    n_test=0
+    runtest_type="hosts"
     for h in $TESTHOST; do
+	n_test=`expr $n_test + 1`
 	TMP_OUTPUT="#$h.out"
 	(PRINT "=============="
 	 PRINT "Testing $h"
@@ -687,7 +690,7 @@ if [ -n "$TESTHOST" -a $HOSTNAME != "$TESTHOST" ]; then
 	TMP_OUTPUT="#$h.out"
 	cat $TMP_OUTPUT
 	# Verify test script did complete by checking the last lines
-	(tail -2 $TMP_OUTPUT | grep -s '^Grand total' > /dev/null 2>&1) ||
+	(tail -2 $TMP_OUTPUT | grep -s 'Grand total' > /dev/null 2>&1) ||
 	    (REPORT_ERR "****FAILED ${h}: snaptest did not complete****" &&
 		PRINT_BLANK)
 	rm $TMP_OUTPUT
@@ -703,9 +706,11 @@ fi
 # If -s is used with the first field, it will suppress completely
 # a $TYPE_TYPES that has no ';' (only 1 tst ).  That results in no
 # test at all.
+# Note that n_test must start as 1.
 # 
 n_test=1
-TEST="`echo $TEST_TYPES | cut -f1 -d';'`"
+runtest_type="tests"
+TEST="`echo $TEST_TYPES | cut -f$n_test -d';'`"
 while [ -n "$TEST" ]; do
     StartTime=`SecOfDay`
     RUNSNAPTEST $TEST
@@ -715,8 +720,8 @@ while [ -n "$TEST" ]; do
     n_test=`expr $n_test + 1`
     TEST="`echo $TEST_TYPES | cut -f$n_test -s -d';'`"
 done
-
-FLUSH_FILES
+# dec n_test to show the actual number of tests ran.
+n_test=`expr $n_test - 1`
 
 PRINT_TRAILER
 
