@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.48  1993/10/04 20:03:04  koziol
-Updated error reporting in H-Layer routines, and added more error codes and
-compression stuff.
+Revision 1.48.2.1  1993/10/10 22:10:32  koziol
+Moved Tag descriptions into a header file.  Updated compression routines.
 
+ * Revision 1.48  1993/10/04  20:03:04  koziol
+ * Updated error reporting in H-Layer routines, and added more error codes and
+ * compression stuff.
+ *
  * Revision 1.47  1993/10/01  20:01:11  koziol
  * Put "extern C" block around function prototypes for C++ compatibility.
  *
@@ -222,6 +225,12 @@ extern int32 Htrunc
 
 extern int32 Hendaccess
   PROTO((int32 access_id));
+
+extern intn HDgetc
+  PROTO((int32 access_id));
+
+extern intn HDputc
+  PROTO((uint8 c,int32 access_id));
 
 extern int32 Hgetelement
   PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE *data));
@@ -1916,3 +1925,4 @@ extern int DFUfptoimage
 #endif /* c_plusplus || __cplusplus */
 
 #endif /* _H_PROTO */
+
