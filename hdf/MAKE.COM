@@ -2,7 +2,10 @@
 ! # $Header$
 ! #
 ! # $Log$
-! # Revision 1.4  1993/05/17 20:42:13  sxu
+! # Revision 1.5  1993/07/22 21:54:38  sxu
+! # Set path name for 3.3b2
+! #
+! # Revision 1.4  1993/05/17  20:42:13  sxu
 ! # Commented out non-command lines
 ! #
 ! # Revision 1.3  1993/01/14  17:26:29  georgev
@@ -27,12 +30,12 @@
 $ create/dir [.lib]
 $ create/dir [.include]
 $ create/dir [.bin]
-$ define/nolog hdf$src     _$1$dia0:[folk.hdf33.hdf.src]   ! HDF src
-$ define/nolog hdf$util    _$1$dia0:[folk.hdf33.hdf.util]  ! HDF utilities
-$ define/nolog hdf$test    _$1$dia0:[folk.hdf33.hdf.test]  ! HDF test programs
-$ define/nolog hdf$lib     _$1$dia0:[folk.hdf33.hdf.lib]df ! Location and name for lib
-$ define/nolog hdf$include _$1$dia0:[folk.hdf33.hdf.include] ! Where to put includes
-$ define/nolog hdf$bin     _$1$dia0:[folk.hdf33.hdf.bin]   ! Where to put executables
+$ define/nolog hdf$src     _$1$dia0:[folk.33b2.hdf.src]   ! HDF src
+$ define/nolog hdf$util    _$1$dia0:[folk.33b2.hdf.util]  ! HDF utilities
+$ define/nolog hdf$test    _$1$dia0:[folk.33b2.hdf.test]  ! HDF test programs
+$ define/nolog hdf$lib     _$1$dia0:[folk.33b2.hdf.lib]df ! Location and name for lib
+$ define/nolog hdf$include _$1$dia0:[folk.33b2.hdf.include] ! Where to put includes
+$ define/nolog hdf$bin     _$1$dia0:[folk.33b2.hdf.bin]   ! Where to put executables
 $ !
 $ define/nolog sys$clib sys$library:vaxcrtl
 $ !
