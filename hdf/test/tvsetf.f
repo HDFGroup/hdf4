@@ -37,14 +37,6 @@ C Output file: tvsetf1.hdf
       character*20 myname
       parameter (myname = 'vsetf')
 
-C these should be in dffunc.inc right?
-      integer hopen,  vfatch,  vfgid,   vfgnxt, vfinsrt
-      integer vfgttrs,vfadtr,  hclose,  vsfatch
-      integer vsffdef,vsffnd,  vsfgid
-      integer vsfinq, vsfsfld
-      integer vfisvs, vsfcpak, vsfnpak, vsfrd
-      integer vsfrdc, vsfwrt,  vsfwrtc, vhfscd, vhfscdm
-
       integer fid1, vgid1, vgid2, vsid1, vsid2
       integer vgref1, vsref1, vsref2, vref
       integer vsize, found

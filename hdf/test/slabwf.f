@@ -27,11 +27,9 @@ C Output files: slabwf.hdf, slab1wf, slab4wf
       character*20 myname
       parameter (myname = 'slab')
 
-      integer dssdims, dssdisc, dssdist, dssfill
-      integer dssslab, dswslab, dseslab, dsrslab
-      integer dsigdim, dswref, dsclear, dfsdrestart
+      integer dsigdim
       integer ret, np, nr,nc, di(3), st(3), sz(3), sr(3)
-      integer rank, DFTAG_SDT, DFO_FORTRAN
+      integer rank
 C
 C FLOAT32 data variables.  FLOAT32 corresponds to real*4.
 C If the fortran compiler does not handle real*4,
@@ -353,7 +351,7 @@ C
 C Get relavant info on SDS
 
       call MESSAGE(5,'Calling dsigdim to get info on SDS')
-      ret = dsigdim(sn2, rank, sz, rank, fnlen)
+      ret = dsgdims(sn2, rank, sz, rank)
       call VRFY(ret,'dsigdim',number_failed)
 
 C      call MESSAGE(5,'Calling dswref to ref o SDS to write to')
