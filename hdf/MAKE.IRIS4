@@ -44,7 +44,7 @@
 # ##################################################################
 #
 #
-# This is the top level Makefile to build HDF 3.3 on Unix based
+# This is the top level Makefile to build HDF 4.0 on Unix based
 #       platforms
 #
 # Possible Machine Types
