@@ -4020,7 +4020,7 @@ int32 flags;
     intn       status = SUCCEED;     /* return value */
 
 #ifdef CHK_DEBUG
-    fprintf(stderr,"SDsetChunk: called  \n");
+    fprintf(stderr,"SDsetchunk: called  \n");
 #endif
     /* Check some args */
 
@@ -4083,20 +4083,20 @@ int32 flags;
       }
 
 #ifdef CHK_DEBUG
-    fprintf(stderr,"SDsetChunk: does data ref exist?  \n");
+    fprintf(stderr,"SDsetchunk: does data ref exist?  \n");
 #endif
     /* Does data exist yet */
     if(!var->data_ref) 
       {   /* doesn't exist */
 #ifdef CHK_DEBUG
-    fprintf(stderr,"SDsetChunk: data ref does not exist  \n");
+    fprintf(stderr,"SDsetchunk: data ref does not exist  \n");
 #endif
           /* element doesn't exist so we need a reference number */
           var->data_ref=Hnewref(handle->hdf_file);
           if(var->data_ref == 0)
             {
 #ifdef CHK_DEBUG
-    fprintf(stderr,"SDsetChunk: failed to get data ref  \n");
+    fprintf(stderr,"SDsetchunk: failed to get data ref  \n");
 #endif
               status = FAIL;
               goto done;
@@ -4111,7 +4111,7 @@ int32 flags;
     /* Now start setting chunk info */
     ndims = var->assoc->count; /* set number of dims i.e. rank */
 #ifdef CHK_DEBUG
-    fprintf(stderr,"SDsetChunk: got data ref, ndims =%d  \n",ndims);
+    fprintf(stderr,"SDsetchunk: got data ref, ndims =%d  \n",ndims);
 #endif
 
     /* allocate space for chunk dimensions */
@@ -4133,7 +4133,7 @@ int32 flags;
           else
             { /* UNLIMITED dimension case */
 #ifdef CHK_DEBUG
-    fprintf(stderr,"SDsetChunk: unlimited dimension case  \n");
+    fprintf(stderr,"SDsetchunk: unlimited dimension case  \n");
     fflush(stderr);
 #endif
                 status = FAIL;
@@ -4141,7 +4141,7 @@ int32 flags;
             }
 
 #ifdef CHK_DEBUG
-    fprintf(stderr,"SDsetChunk: (int32) var->shape[%d]=%d\n",i,(int32) var->shape[i]);
+    fprintf(stderr,"SDsetchunk: (int32) var->shape[%d]=%d\n",i,(int32) var->shape[i]);
     fflush(stderr);
 #endif
           /* set chunk lengths */
@@ -4150,14 +4150,14 @@ int32 flags;
           else
             { /* chunk length is less than 1 */
 #ifdef CHK_DEBUG
-    fprintf(stderr,"SDsetChunk: chunk length less than 1, cdims[%d]=%d \n",i,cdims[i]);
+    fprintf(stderr,"SDsetchunk: chunk length less than 1, cdims[%d]=%d \n",i,cdims[i]);
     fflush(stderr);
 #endif
                 status = FAIL;
                 goto done;
             }
 #ifdef CHK_DEBUG
-    fprintf(stderr,"SDsetChunk: cdims[%d]=%d \n",i,cdims[i]);
+    fprintf(stderr,"SDsetchunk: cdims[%d]=%d \n",i,cdims[i]);
     fflush(stderr);
 #endif          
           /* Data distribution along dimensions 
@@ -4175,7 +4175,7 @@ int32 flags;
     chunk[0].nt_size = var->HDFsize;
 
 #ifdef CHK_DEBUG
-    fprintf(stderr,"SDsetChunk: var->HDFsize=%d\n",var->HDFsize);
+    fprintf(stderr,"SDsetchunk: var->HDFsize=%d\n",var->HDFsize);
     fflush(stderr);
 #endif
     /* allocate space for fill value whose number type is the same as
@@ -4253,7 +4253,7 @@ int32 flags;
       } /* end if */
 
 #ifdef CHK_DEBUG
-    fprintf(stderr,"SDsetChunk: get ready to create, convert=%d\n",convert);
+    fprintf(stderr,"SDsetchunk: get ready to create, convert=%d\n",convert);
 #endif
     if (convert)
       { /* convert fill value */
@@ -4289,7 +4289,7 @@ int32 flags;
       }
 
 #ifdef CHK_DEBUG
-    fprintf(stderr,"SDsetChunk: status =%d \n", status);
+    fprintf(stderr,"SDsetchunk: status =%d \n", status);
 #endif
     /* check return */
     if(status != FAIL) 
@@ -4589,7 +4589,7 @@ const VOID *datap;
                       if(convert) 
                         {
 #ifdef CHK_DEBUG
-        fprintf(stderr,"SDwriteChunk: convert, var->HDFsize=%d, var->HDFtype=%d \n",
+        fprintf(stderr,"SDwritechunk: convert, var->HDFsize=%d, var->HDFtype=%d \n",
                 var->HDFsize, var->HDFtype);
 #endif
                             /* set number type */
@@ -4762,7 +4762,7 @@ VOID *datap;
                       if(convert) 
                         {
 #ifdef CHK_DEBUG
-        fprintf(stderr,"SDreadChunk: convert, var->HDFsize=%d, var->HDFtype=%d \n",
+        fprintf(stderr,"SDreadchunk: convert, var->HDFsize=%d, var->HDFtype=%d \n",
                 var->HDFsize, var->HDFtype);
 #endif
                             /* read it in */

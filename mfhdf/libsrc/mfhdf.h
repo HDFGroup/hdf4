@@ -173,7 +173,7 @@ extern intn SDisdimval_bwcomp
 
 /*====================== Chunking Routines ================================*/
 
-/* Bit - flags used for SDsetChunk() and SDgetChunkInfo() */
+/* Bit - flags used for SDsetchunk() and SDgetChunkInfo() */
 #define HDF_NONE    0x0
 #define HDF_CHUNK   0x1
 #define HDF_COMP    0x3
@@ -439,7 +439,7 @@ DESCRIPTION
      in memory, otherwise pass in zero(0). Currently you can only
      pass in zero.
 
-    See SDsetChunk() for a description of the organization of chunks in an SDS.
+    See SDsetchunk() for a description of the organization of chunks in an SDS.
 
 RETURNS
      Returns the 'maxcache' value for the chunk cache if successful 
