@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.9  1992/09/04 15:20:18  chouck
+# Revision 1.10  1992/09/17 19:51:13  koziol
+# Made changes for ANSI prototypes on the Convex
+#
+# Revision 1.9  1992/09/04  15:20:18  chouck
 # Fixed rules for MISPEL compiler
 #
 # Revision 1.8  1992/08/14  20:11:36  sxu
@@ -61,9 +64,6 @@ HDFBIN = ../bin
 GLLIB = 
 
 CFLAGS = -D$(MACHINE)
-
-# ==> For Convex, specify CFLAGS as follows:
-# CFLAGS=  -g -D$(MACHINE) -D__STDC__
 
 # ==> For IRIS4, specify CFLAGS as follows:
 #CFLAGS=  -g -D$(MACHINE) -cckr
