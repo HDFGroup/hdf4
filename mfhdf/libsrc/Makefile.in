@@ -149,7 +149,7 @@ PROFILEDLIBRARY	= mfhdf_pg
 OBJS		= $(PROGRAM).o
 #LD_XDR		= @LD_XDR@
 LD_NETCDF	= libmfhdf.a
-LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(JPEG_LIB) $(ZLIB_LIB)
+LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(JPEG_LIB) $(LIBSX) $(ZLIB_LIB)
 prefix		= ../../..
 
 #all::		library

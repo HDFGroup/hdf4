@@ -164,7 +164,7 @@ REMOTE_LIBRARY	= $(srcdir)/../libsrc/lib$(LIBNAME).a
 #LD_XDR		= @LD_XDR@
 #LD_NETCDF	= -L../libsrc -lmfhdf
 LD_NETCDF	= $(srcdir)/../libsrc/libmfhdf.a
-LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(JPEG_LIB) $(ZLIB_LIB)
+LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(JPEG_LIB) $(ZLIB_LIB) $(LIBSX)
 prefix		= ../../..
 
 # directory used by extelt test.

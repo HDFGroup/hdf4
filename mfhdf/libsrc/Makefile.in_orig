@@ -31,7 +31,7 @@ PROFILEDLIBRARY	= netcdf_pg
 OBJS		= $(PROGRAM).o
 LD_XDR		= @LD_XDR@
 LD_NETCDF	= libnetcdf.a
-LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(JPEG_LIB)
+LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(JPEG_LIB) $(LIBSX)
 prefix		= ../../..
 
 all::		library

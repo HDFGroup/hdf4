@@ -35,7 +35,7 @@ REMOTE_LIBRARY	= ../libsrc/lib$(LIBNAME).a
 OBJS		= $(PROGRAM).o $(LIBOBJS) 
 LD_XDR		= @LD_XDR@
 LD_NETCDF	= -L../libsrc -lnetcdf
-LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(JPEG_LIB)
+LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(JPEG_LIB) $(LIBSX)
 prefix		= ../../..
 
 all::		FORCE
