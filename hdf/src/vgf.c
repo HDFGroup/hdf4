@@ -165,6 +165,18 @@ nvinqc(intf * vkey, intf * nentries, _fcd vgname)
 
 /* ------------------------------------------------------------------ */
 /*
+   **  delete a vgroup from a file
+   **  related: Vdelete--vdelete--
+ */
+
+FRETVAL(intf)
+nvdelete(intf * f, intf * vkey)
+{
+    return ((intf) Vdelete((int32)*f, (int32)*vkey));
+}   /* nvdelete */
+
+/* ------------------------------------------------------------------ */
+/*
    **  gets the id of the next vgroup in the file
    **  related: Vgetid--vgidc--VFGID
  */
@@ -321,6 +333,42 @@ nvsdtchc(intf * vkey)
 
 /* ------------------------------------------------------------------ */
 /*
+   **  get the ref # of a vdata
+   **  related: VSQueryref--vsqref--
+ */
+
+FRETVAL(intf)
+nvsqref(intf * vkey)
+{
+    return ((intf)VSQueryref((int32)*vkey));
+}
+
+/* ------------------------------------------------------------------ */
+/*
+   **  get the tag # of a vdata
+   **  related: VSQuerytag--vsqtag--
+ */
+
+FRETVAL(intf)
+nvsqtag(intf * vkey)
+{
+    return ((intf)VSQuerytag((int32)*vkey));
+}
+
+/* ------------------------------------------------------------------ */
+/*
+   **  get the version # of a vdata
+   **  related: VSgetversion--vsgver--
+ */
+
+FRETVAL(intf)
+nvsgver(intf * vkey)
+{
+    return ((intf)VSgetversion((int32)*vkey));
+}
+
+/* ------------------------------------------------------------------ */
+/*
    **  seeks to a given element position in a vadata
    **  related: VSseek--vsseekc--VSFSEEK
  */
@@ -435,6 +483,18 @@ nvsdltc(HFILEID * f, intf * vsid)
 
 /* ------------------------------------------------------------------ */
 /*
+   **  make it possible to append unlimitedly to an existing vdata
+   **  related: VSappendable--vsapp--
+ */
+
+FRETVAL(intf)
+nvsapp(intf * vkey, intf *blk)
+{
+    return ((intf) VSappendable((int32)*vkey,(int32)*blk));
+}
+
+/* ------------------------------------------------------------------ */
+/*
    **  sets the name of a vdata
    **  related: VSsetname--vssnamc--VSFSNAM
  */
@@ -523,6 +583,86 @@ nvsfdefc(intf * vkey, _fcd field, intf * localtype, intf * order, intf * fieldle
     HDfree(fld);
     return (ret);
 }
+
+/* ------------------------------------------------------------------ */
+/*
+   **  returns the number of fields in a vdata
+   **  related: VFnfields--vfnflds--
+ */
+
+FRETVAL(intf)
+nvfnflds(intf * vkey)
+{
+    return((intf) VFnfields((int32)*vkey));
+}
+
+/* ------------------------------------------------------------------ */
+/*
+   **  get the name of a given field in a vdata
+   **  related: VFfieldname--vffname--
+ */
+
+FRETVAL(intf)
+nvffname(intf * vkey, intf * index, _fcd fname)
+{
+    char *fieldname;
+
+    if((fieldname=VFfieldname((int32)*vkey,(int32)*index))!=NULL)
+      {
+        HDstrcpy(fname,fieldname);
+        return(SUCCEED);
+      } /* end if */
+    else
+        return(FAIL);
+}   /* vffname */
+
+/* ------------------------------------------------------------------ */
+/*
+   **  get the number-type of a given field in a vdata
+   **  related: VFfieldtype--vfftype--
+ */
+
+FRETVAL(intf)
+nvfftype(intf * vkey, intf * index)
+{
+    return((intf)VFfieldtype((int32)*vkey,(int32)*index));
+}   /* vfftype */
+
+/* ------------------------------------------------------------------ */
+/*
+   **  get the internal (in memory) size of a given field in a vdata
+   **  related: VFfieldisize--vffisiz--
+ */
+
+FRETVAL(intf)
+nvffisiz(intf * vkey, intf * index)
+{
+    return((intf)VFfieldisize((int32)*vkey,(int32)*index));
+}   /* vffisiz */
+
+/* ------------------------------------------------------------------ */
+/*
+   **  get the external (on disk) size of a given field in a vdata
+   **  related: VFfieldesize--vffesiz--
+ */
+
+FRETVAL(intf)
+nvffesiz(intf * vkey, intf * index)
+{
+    return((intf)VFfieldesize((int32)*vkey,(int32)*index));
+}   /* vffesiz */
+
+/* ------------------------------------------------------------------ */
+/*
+   **  get the order of a given field in a vdata
+   **  related: VFfieldorder--vffordr--
+ */
+
+FRETVAL(intf)
+nvffordr(intf * vkey, intf * index)
+{
+    return((intf)VFfieldorder((int32)*vkey,(int32)*index));
+}   /* vffordr */
 
 /* ------------------------------------------------------------------ */
 /*
@@ -643,6 +783,46 @@ nvslonec(HFILEID * f, intf * idarray, intf * asize)
 {
     return (VSlone(*f, (int32 *)idarray, (int32) *asize));
 }
+
+/* ------------------------------------------------------------------ */
+/*
+   **  gets the ref # of a vgroup for a given name
+   **  related: Vfind--vfindc--VFIND
+ */
+
+FRETVAL(intf)
+nvfindc(HFILEID _HUGE * f, _fcd name, intf _HUGE * namelen)
+{
+    char *tmp_name;
+    intf ret;
+
+    tmp_name = HDf2cstring(name, (intn) *namelen);
+
+    ret = (intf) Vfind((int32)*f, tmp_name);
+    HDfree(tmp_name);
+
+    return (ret);
+} /* end nvfindc() */
+
+/* ------------------------------------------------------------------ */
+/*
+   **  gets the ref # of a vgroup for a given class
+   **  related: Vfindclass--vfclassc--VFNDCLS
+ */
+
+FRETVAL(intf)
+nvfndclsc(HFILEID _HUGE * f, _fcd class, intf _HUGE * classlen)
+{
+    char *t_class;
+    intf ret;
+
+    t_class = HDf2cstring(class, (intn) *classlen);
+
+    ret = (intf) Vfindclass((int32)*f, t_class);
+    HDfree(t_class);
+
+    return (ret);
+} /* end nvfndclsc() */
 
 /*
    ** ==================================================================
@@ -766,6 +946,43 @@ nvntrc(intf * vkey)
 {
     return ((intf) Vntagrefs(*vkey));
 }
+
+/* ------------------------------------------------------------------ */
+/*
+   **  Returns the number of tags of a given type in a vgroup
+   **  related: Vnrefs--vnrefs--
+ */
+
+FRETVAL(intf)
+nvnrefs(intf _HUGE * vkey, intf _HUGE *tag)
+{
+    return((intf) Vnrefs((int32)*vkey, (int32)*tag));
+} /* end nvnrefs() */
+
+/* ------------------------------------------------------------------ */
+/*
+   **  Return the ref of this vgroup
+   **  related: VQueryref--vqref--
+ */
+
+FRETVAL(intf)
+nvqref(intf _HUGE * vkey)
+{
+    return((intf) VQueryref((int32)*vkey));
+} /* end nvqref() */
+
+/* ------------------------------------------------------------------ */
+/*
+   **  Return the ref of this vgroup
+   **  related: VQuerytag--vqtag--
+ */
+
+FRETVAL(intf)
+nvqtag(intf _HUGE * vkey)
+{
+    return((intf) VQuerytag((int32)*vkey));
+} /* end nvqtag() */
+
 /* ------------------------------------------------------------------ */
 
 /*

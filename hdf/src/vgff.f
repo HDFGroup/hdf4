@@ -22,18 +22,6 @@ c *
 c **************************************************************************
 
 
-C------------------------------------------------------------------------------
-C Name: dfvopen
-C Purpose:  call dfivopn, open file
-C Inputs:   path: Name of file to be opened
-C           access: DFACC_READ, DFACC_WRITE, DFACC_CREATE,
-C                      or any bitwise-or of the above.
-C           ndds: Number of dds in header block if file needs to be created.
-C Returns: 0 on success, FAIL on failure with error set
-C Users:    Fortran stub routine
-C Invokes: hiopen
-C----------------------------------------------------------------------------*/
-
 c   ============================================================
 c	 VGROUP ROUTINES
 c	============================================================
@@ -468,6 +456,30 @@ c     related: VSlone--vslonec--vsflone
       integer			vslonec
 
       vsflone = vslonec  (f, idarray, asize)
+      end
+
+c     ------------------------------------------------------------
+c     gets the ref # of a vgroup for a given name
+c     related: Vfind--vfindc--VFIND
+
+      integer function vfind(f,name)
+      integer		f
+      character*(*)  name
+      integer vfindc 	
+
+      vfind = vfindc (f, name, len(name))
+      end
+
+c     ------------------------------------------------------------
+c     gets the ref # of a vgroup for a given class
+c     related: Vfindclass--vfndclsc--VFNDCLS
+
+      integer function vfndcls(f,class)
+      integer		f
+      character*(*)  class
+      integer vfndclsc 	
+
+      vfndcls = vfndclsc (f, class, len(class))
       end
 
 c     ------------------------------------------------------------

@@ -35,11 +35,6 @@ extern      "C"
 /*
    ** from vg.c
  */
-#ifdef OLD_WAY
-    extern uint16 vnewref
-                (HFILEID f);
-#endif /* OLD_WAY */
-
     extern int32 VSelts
                 (int32 vkey);
 
@@ -259,14 +254,6 @@ extern      "C"
    ** from vsfld.c
  */
 
-#ifdef OLD_WAY
-    extern int16 VSIZEOF
-                (int16 x);
-
-    extern int16 HDFSIZEOF
-                (int16 x);
-#endif /* OLD_WAY */
-
     extern intn VSsetfields
                 (int32 vkey, const char _HUGE * fields);
 
@@ -318,6 +305,7 @@ extern      "C"
 #   define  nvgnamc  FNAME(VGNAMC)
 #   define  nvgclsc  FNAME(VGCLSC)
 #   define  nvinqc   FNAME(VINQC)
+#   define  nvdelete FNAME(VDELETE)
 #   define  nvgidc   FNAME(VGIDC)
 #   define  nvgnxtc  FNAME(VGNXTC)
 #   define  nvsnamc  FNAME(VSNAMC)
@@ -327,6 +315,9 @@ extern      "C"
 #   define  nvisvsc  FNAME(VISVSC)
 #   define  nvsatchc FNAME(VSATCHC)
 #   define  nvsdtchc FNAME(VSDTCHC)
+#   define  nvsqref  FNAME(VSQREF)
+#   define  nvsqtag  FNAME(VSQTAG)
+#   define  nvsgver  FNAME(VSGVER)
 #   define  nvsseekc FNAME(VSSEEKC)
 #   define  nvsgnamc FNAME(VSGNAMC)
 #   define  nvsgclsc FNAME(VSGCLSC)
@@ -335,11 +326,18 @@ extern      "C"
 #   define  nvsfndc  FNAME(VSFNDC)
 #   define  nvsgidc  FNAME(VSGIDC)
 #   define  nvsdltc  FNAME(VSDLTC)
+#   define  nvsapp   FNAME(VSAPP)
 #   define  nvssnamc FNAME(VSSNAMC)
 #   define  nvssclsc FNAME(VSSCLSC)
 #   define  nvssfldc FNAME(VSSFLDC)
 #   define  nvssintc FNAME(VSSINTC)
 #   define  nvsfdefc FNAME(VSFDEFC)
+#   define  nvfnflds FNAME(VFNFLDS)
+#   define  nvffname FNAME(VFFNAME)
+#   define  nvfftype FNAME(VFFTYPE)
+#   define  nvffisiz FNAME(VFFISIZ)
+#   define  nvffesiz FNAME(VFFESIZ)
+#   define  nvffordr FNAME(VFFORDR)
 #   define  nvsreadc FNAME(VSREADC)
 #   define  nvswritc FNAME(VSWRITC)
 #   define  nvsgintc FNAME(VSGINTC)
@@ -349,13 +347,18 @@ extern      "C"
 #   define  nventsc  FNAME(VENTSC)
 #   define  nvlonec  FNAME(VLONEC)
 #   define  nvslonec FNAME(VSLONEC)
+#   define  nvfindc  FNAME(VFINDC)
+#   define  nvfndclsc FNAME(VFNDCLSC)
 #   define  nvhsdc   FNAME(VHSDC)
 #   define  nvhsdmc  FNAME(VHSDMC)
 #   define  nvhmkgpc FNAME(VHMKGPC)
 #   define  nvflocc  FNAME(VFLOCC)
 #   define  nvinqtrc FNAME(VINQTRC)
 #   define  nvntrc   FNAME(VNTRC)
+#   define  nvnrefs  FNAME(VNREFS)
 #   define  nvgttrsc FNAME(VGTTRSC)
+#   define  nvqref   FNAME(VQREF)
+#   define  nvqtag   FNAME(VQTAG)
 #   define  nvgttrc  FNAME(VGTTRC)
 #   define  nvadtrc  FNAME(VADTRC)
 #   define  nvfstart FNAME(VFSTART)
@@ -373,6 +376,7 @@ extern      "C"
 #   define  nvgnamc  FNAME(vgnamc)
 #   define  nvgclsc  FNAME(vgclsc)
 #   define  nvinqc   FNAME(vinqc)
+#   define  nvdelete FNAME(vdelete)
 #   define  nvgidc   FNAME(vgidc)
 #   define  nvgnxtc  FNAME(vgnxtc)
 #   define  nvsnamc  FNAME(vsnamc)
@@ -382,6 +386,9 @@ extern      "C"
 #   define  nvisvsc  FNAME(visvsc)
 #   define  nvsatchc FNAME(vsatchc)
 #   define  nvsdtchc FNAME(vsdtchc)
+#   define  nvsqref  FNAME(vsqref)
+#   define  nvsqtag  FNAME(vsqtag)
+#   define  nvsgver  FNAME(vsgver)
 #   define  nvsseekc FNAME(vsseekc)
 #   define  nvsgnamc FNAME(vsgnamc)
 #   define  nvsgclsc FNAME(vsgclsc)
@@ -390,11 +397,18 @@ extern      "C"
 #   define  nvsfndc  FNAME(vsfndc)
 #   define  nvsgidc  FNAME(vsgidc)
 #   define  nvsdltc  FNAME(vsdltc)
+#   define  nvsapp   FNAME(vsapp)
 #   define  nvssnamc FNAME(vssnamc)
 #   define  nvssclsc FNAME(vssclsc)
 #   define  nvssfldc FNAME(vssfldc)
 #   define  nvssintc FNAME(vssintc)
 #   define  nvsfdefc FNAME(vsfdefc)
+#   define  nvfnflds FNAME(vfnflds)
+#   define  nvffname FNAME(vffname)
+#   define  nvfftype FNAME(vfftype)
+#   define  nvffisiz FNAME(vffisiz)
+#   define  nvffesiz FNAME(vffesiz)
+#   define  nvffordr FNAME(vffordr)
 #   define  nvsreadc FNAME(vsreadc)
 #   define  nvswritc FNAME(vswritc)
 #   define  nvsgintc FNAME(vsgintc)
@@ -404,13 +418,18 @@ extern      "C"
 #   define  nventsc  FNAME(ventsc)
 #   define  nvlonec  FNAME(vlonec)
 #   define  nvslonec FNAME(vslonec)
+#   define  nvfindc  FNAME(vfindc)
+#   define  nvfndclsc FNAME(vfndclsc)
 #   define  nvhsdc   FNAME(vhsdc)
 #   define  nvhsdmc  FNAME(vhsdmc)
 #   define  nvhmkgpc FNAME(vhmkgpc)
 #   define  nvflocc  FNAME(vflocc)
 #   define  nvinqtrc FNAME(vinqtrc)
 #   define  nvntrc   FNAME(vntrc)
+#   define  nvnrefs  FNAME(vnrefs)
 #   define  nvgttrsc FNAME(vgttrsc)
+#   define  nvqref   FNAME(vqref)
+#   define  nvqtag   FNAME(vqtag)
 #   define  nvgttrc  FNAME(vgttrc)
 #   define  nvadtrc  FNAME(vadtrc)
 #   define  nvfstart FNAME(vfstart)
@@ -444,6 +463,9 @@ extern      "C"
     extern      FRETVAL(intf) nvinqc
                 (intf _HUGE * vkey, intf _HUGE * nentries, _fcd vgname);
 
+    extern      FRETVAL(intf) nvdelete
+                (intf _HUGE *f, intf _HUGE * vkey);
+
     extern      FRETVAL(intf) nvgidc
                 (HFILEID _HUGE * f, intf _HUGE * vgid);
 
@@ -471,6 +493,15 @@ extern      "C"
     extern      FRETVAL(intf) nvsdtchc
                 (intf _HUGE * vkey);
 
+    extern      FRETVAL(intf) nvsqref
+                (intf _HUGE * vkey);
+
+    extern      FRETVAL(intf) nvsqtag
+                (intf _HUGE * vkey);
+
+    extern      FRETVAL(intf) nvsgver
+                (intf _HUGE * vkey);
+
     extern      FRETVAL(intf) nvsseekc
                 (intf _HUGE * vkey, intf _HUGE * eltpos);
 
@@ -496,6 +527,9 @@ extern      "C"
     extern      FRETVAL(intf) nvsdltc
                 (HFILEID _HUGE * f, intf _HUGE * vsref);
 
+    extern      FRETVAL(intf) nvsapp
+                (intf _HUGE * vkey, intf _HUGE *blk);
+
     extern      FRETVAL(intf) nvssnamc
                 (intf _HUGE * vkey, _fcd vsname, intf _HUGE * vsnamelen);
 
@@ -511,6 +545,24 @@ extern      "C"
     extern      FRETVAL(intf) nvsfdefc
                 (intf _HUGE * vkey, _fcd field, intf _HUGE * localtype,
                  intf _HUGE * order, intf _HUGE * fieldlen);
+
+    extern      FRETVAL(intf) nvfnflds
+                (intf _HUGE * vkey);
+
+    extern      FRETVAL(intf) nvffname
+                (intf _HUGE * vkey, intf _HUGE *index, _fcd fname);
+
+    extern      FRETVAL(intf) nvfftype
+                (intf _HUGE * vkey, intf _HUGE *index);
+
+    extern      FRETVAL(intf) nvffisiz
+                (intf _HUGE * vkey, intf _HUGE *index);
+
+    extern      FRETVAL(intf) nvffesiz
+                (intf _HUGE * vkey, intf _HUGE *index);
+
+    extern      FRETVAL(intf) nvffordr
+                (intf _HUGE * vkey, intf _HUGE *index);
 
     extern      FRETVAL(intf) nvsreadc
                 (intf _HUGE * vkey, uint8 _HUGE * buf, intf _HUGE * nelt,
@@ -541,6 +593,12 @@ extern      "C"
     extern      FRETVAL(intf) nvslonec
                 (HFILEID _HUGE * f, intf _HUGE * idarray, intf _HUGE * asize);
 
+    extern      FRETVAL(intf) nvfindc
+                (HFILEID _HUGE * f, _fcd name, intf _HUGE * namelen);
+
+    extern      FRETVAL(intf) nvfndclsc
+                (HFILEID _HUGE * f, _fcd class, intf _HUGE * classlen);
+
     extern      FRETVAL(intf) nvhsdc
                 (HFILEID _HUGE * f, _fcd field, uint8 _HUGE * buf, intf _HUGE * n, intf _HUGE * datatype,
     _fcd vsname, _fcd vsclass, intf _HUGE * fieldlen, intf _HUGE * vsnamelen,
@@ -562,6 +620,15 @@ extern      "C"
                 (intf _HUGE * vkey, intf _HUGE * tag, intf _HUGE * ref);
 
     extern      FRETVAL(intf) nvntrc
+                (intf _HUGE * vkey);
+
+    extern      FRETVAL(intf) nvnrefs
+                (intf _HUGE * vkey, intf _HUGE *tag);
+
+    extern      FRETVAL(intf) nvqref
+                (intf _HUGE * vkey);
+
+    extern      FRETVAL(intf) nvqtag
                 (intf _HUGE * vkey);
 
     extern      FRETVAL(intf) nvgttrsc

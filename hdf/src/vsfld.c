@@ -403,18 +403,6 @@ done:
   return ret_value;
 }	/* VSfdefine */
 
-/* ------------------------------------------------------------------------ */
-/* erstwhile macros - Use these for accessing user-defined fields in a vdata. */
-/*
-   #define VFnfields(vdata)        (vdata->wlist.n)
-   #define VFfieldname(vdata,t)         (vdata->wlist.name[t])
-   #define VFfieldtype(vdata,t)         (vdata->wlist.type[t])
-   #define VFfieldisize(vdata,t)        (vdata->wlist.isize[t])
-   #define VFfieldesize(vdata,t)        (vdata->wlist.esize[t])
-   #define VFfieldorder(vdata,t)        (vdata->wlist.order[t])
- */
-/* ------------------------------------------------------------------------ */
-
 /* ------------------------------ VFnfields ------------------------------- */
 /*
    Return the number of fields in this Vdata
