@@ -131,8 +131,8 @@ typedef struct dim_info {
     int32   xdim,ydim,          /* dimensions of the image */
             ncomps,             /* number of components of each pixel in image */
             nt,                 /* number type of the components */
-            file_nt_subclass,   /* number type subclass of data on disk */
-            il;                 /* interlace of the components */
+            file_nt_subclass;   /* number type subclass of data on disk */
+    gr_interlace_t il;          /* interlace of the components (stored on disk) */
     uint16  nt_tag,nt_ref;      /* tag & ref of the number-type info */
     uint16  comp_tag,comp_ref;  /* tag & ref of the compression info */
 } dim_info_t;
@@ -166,6 +166,10 @@ typedef struct ri_info {
     VOIDP fill_value;           /* pointer to the fill value (NULL means use default fill value of 0) */
     uintn store_fill;           /* whether to add fill value attribute or not */
 } ri_info_t;
+
+/* Useful raster routines for generally private use */
+extern intn GRIil_convert(const VOIDP inbuf,gr_interlace_t inil,VOIDP outbuf,
+        gr_interlace_t outil,int32 dims[2],int32 ncomp,int32 nt);
 
 #endif /* MFGR_MASTER | MFGR_TESTER */
 

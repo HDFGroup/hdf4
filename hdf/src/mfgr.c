@@ -138,6 +138,9 @@ int32 GRfindattr(int32 dimid|riid|grid,char *name)
     - Get the index of an attribute with a given name for an object.
 
 LOCAL ROUTINES
+intn GRIil_convert(const VOIDP inbuf,gr_interlace_t inil,VOIDP outbuf,
+        gr_interlace_t outil,int32 dims[2],int32 ncomp,int32 nt);
+    - Copy a pixel buffer from one interlace to another.
 
 AUTHOR
    Quincey Koziol
@@ -272,7 +275,7 @@ VOID GRIridestroynode(VOIDP n)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-int32 GRIget_empty_tab(int32 hdf_file_id)
+static int32 GRIget_empty_tab(int32 hdf_file_id)
 {
     uintn u;    /* local counting variable */
 
@@ -310,7 +313,7 @@ int32 GRIget_empty_tab(int32 hdf_file_id)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
+static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
 {
     CONSTR(FUNC, "GRIget_image_list");
     uint16      gr_ref;         /* ref # of the Vgroup containing new-style RIs */
@@ -1076,6 +1079,201 @@ done:
 
 /*--------------------------------------------------------------------------
  NAME
+    GRIil_convert
+ PURPOSE
+    Convert a buffer from one interlace to another.
+ USAGE
+    intn GRIil_convert(inbuf,inil,outbuf,outil,dims,ncomp,nt)
+        const VOIDP inbuf;          IN: input buffer
+        gr_interlace_t inil;        IN: input buffer's interlace scheme
+        VOIDP outbuf;               IN: output buffer
+        gr_interlace_t outil;       IN: output buffer's requested interlace scheme
+        int32 dims[2];              IN: dimensions of the buffers
+        int32 ncomp;                IN: both buffer's number of components per pixel
+        int32 nt;                   IN: both buffer's pixel number-type
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+    This routine converts between PIXEL, LINE & COMPONENT interlacing schemes.
+    All data written to the disk is written in PIXEL interlacing and converted
+    to/from the user's buffers.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    This routine does no parameter checking, it's assumed to be done at a
+    higher layer.
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn GRIil_convert(const VOIDP inbuf,gr_interlace_t inil,VOIDP outbuf,
+        gr_interlace_t outil,int32 dims[2],int32 ncomp,int32 nt)
+{
+    CONSTR(FUNC, "GRIil_convert");    /* for HERROR */
+    intn ret_value=SUCCEED;
+    uintn pixel_size=DFKNTsize((nt|DFNT_NATIVE)&(~DFNT_LITEND))*ncomp;
+    uintn comp_size=DFKNTsize((nt|DFNT_NATIVE)&(~DFNT_LITEND));
+    VOIDP *in_comp_ptr=NULL;    /* an array of pointers to each input component */
+    VOIDP *out_comp_ptr=NULL;   /* an array of pointers to each output component */
+    int32 *in_pixel_add=NULL;   /* an array of increments for each input pixel moved */
+    int32 *out_pixel_add=NULL;  /* an array of increments for each output pixel moved */
+    int32 *in_line_add=NULL;    /* an array of increments for each input line moved */
+    int32 *out_line_add=NULL;   /* an array of increments for each output line moved */
+    intn i,j,k;       /* local counting variables */
+
+#ifdef QAK
+printf("%s: inil=%d, outil=%d\n",FUNC,(int)inil,(int)outil);
+printf("%s: dim[XDIM]=%d, dim[YDIM]=%d\n",FUNC,(int)dims[XDIM],(int)dims[YDIM]);
+printf("%s: ncomp=%d, nt=%d\n",FUNC,(int)ncomp,(int)nt);
+printf("%s: pixel_size=%d, comp_size=%d\n",FUNC,(int)pixel_size,(int)comp_size);
+#endif /* QAK */
+    if(inil==outil)     /* check for trivial input=output 'conversion' */
+        HDmemcpy(outbuf,inbuf,dims[XDIM]*dims[YDIM]*pixel_size);
+    else
+      {
+          /* allocate pixel pointer arrays */
+          if((in_comp_ptr=HDmalloc(sizeof(VOIDP)*ncomp))==NULL)
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
+          if((out_comp_ptr=HDmalloc(sizeof(VOIDP)*ncomp))==NULL)
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+          /* allocate pixel increment arrays */
+          if((in_pixel_add=HDmalloc(sizeof(int32)*ncomp))==NULL)
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
+          if((out_pixel_add=HDmalloc(sizeof(int32)*ncomp))==NULL)
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+          /* allocate line increment arrays */
+          if((in_line_add=HDmalloc(sizeof(int32)*ncomp))==NULL)
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
+          if((out_line_add=HDmalloc(sizeof(int32)*ncomp))==NULL)
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+          /* Set up the input buffer pointers and adders */
+          switch(inil)
+            {
+                case MFGR_INTERLACE_PIXEL:
+                    for(i=0; i<ncomp; i++)
+                      {
+                        in_comp_ptr[i]=((uint8 *)inbuf)+i*comp_size;
+                        in_pixel_add[i]=pixel_size;
+                        in_line_add[i]=0;
+                      } /* end for */
+                    break;
+
+                case MFGR_INTERLACE_LINE:
+                    for(i=0; i<ncomp; i++)
+                      {
+                        in_comp_ptr[i]=((uint8 *)inbuf)+i*dims[XDIM]*comp_size;
+                        in_pixel_add[i]=comp_size;
+                        in_line_add[i]=(ncomp-1)*dims[XDIM]*comp_size;
+                      } /* end for */
+                    break;
+
+                case MFGR_INTERLACE_COMPONENT:
+                    for(i=0; i<ncomp; i++)
+                      {
+                        in_comp_ptr[i]=((uint8 *)inbuf)+i*dims[YDIM]*dims[XDIM]*comp_size;
+                        in_pixel_add[i]=comp_size;
+                        in_line_add[i]=0;
+                      } /* end for */
+                    break;
+
+                default:
+                    HGOTO_ERROR(DFE_ARGS, FAIL);
+            } /* end switch */
+
+          /* Set up the output buffer pointers and adders */
+          switch(outil)
+            {
+                case MFGR_INTERLACE_PIXEL:
+                    for(i=0; i<ncomp; i++)
+                      {
+                        out_comp_ptr[i]=((uint8 *)outbuf)+i*comp_size;
+                        out_pixel_add[i]=pixel_size;
+                        out_line_add[i]=0;
+                      } /* end for */
+                    break;
+
+                case MFGR_INTERLACE_LINE:
+                    for(i=0; i<ncomp; i++)
+                      {
+                        out_comp_ptr[i]=((uint8 *)outbuf)+i*dims[XDIM]*comp_size;
+                        out_pixel_add[i]=comp_size;
+                        out_line_add[i]=(ncomp-1)*dims[XDIM]*comp_size;
+                      } /* end for */
+                    break;
+
+                case MFGR_INTERLACE_COMPONENT:
+                    for(i=0; i<ncomp; i++)
+                      {
+                        out_comp_ptr[i]=((uint8 *)outbuf)+i*dims[YDIM]*dims[XDIM]*comp_size;
+                        out_pixel_add[i]=comp_size;
+                        out_line_add[i]=0;
+                      } /* end for */
+                    break;
+
+                default:
+                    HGOTO_ERROR(DFE_ARGS, FAIL);
+            } /* end switch */
+
+#ifdef QAK
+for(i=0; i<ncomp; i++)
+  {
+      printf("%s: in_pixel_add[%d]=%d, in_line_add[%d]=%d\n",FUNC,(int)i,(int)in_pixel_add[i],(int)i,(int)in_line_add[i]);
+      printf("%s: out_pixel_add[%d]=%d, out_line_add[%d]=%d\n",FUNC,(int)i,(int)out_pixel_add[i],(int)i,(int)out_line_add[i]);
+  } /* end for */
+#endif /* QAK */
+        /* now just push pixels from one buffer to another */
+        for(i=0; i<dims[YDIM]; i++)
+          {
+              for(j=0; j<dims[XDIM]; j++)
+                {
+                    for(k=0; k<ncomp; k++)
+                      {
+                          HDmemcpy(out_comp_ptr[k],in_comp_ptr[k],comp_size);
+                          out_comp_ptr[k]=((uint8 *)out_comp_ptr[k])+out_pixel_add[k];
+                          in_comp_ptr[k]=((uint8 *)in_comp_ptr[k])+in_pixel_add[k];
+                      } /* end for */
+                } /* end for */
+
+              /* wrap around the end of the line of pixels */
+              /* (only necessary if one of the buffers is in 'line' interlace) */
+              if(inil==MFGR_INTERLACE_LINE || outil==MFGR_INTERLACE_LINE)
+                  for(k=0; k<ncomp; k++)
+                    {
+                        out_comp_ptr[k]=((uint8 *)out_comp_ptr[k])+out_line_add[k];
+                        in_comp_ptr[k]=((uint8 *)in_comp_ptr[k])+in_line_add[k];
+                    } /* end for */
+          } /* end for */
+      } /* end else */
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+    /* Free arrays allocated during this routine */
+    /* (common for both error and normal returns) */
+    if(in_comp_ptr!=NULL)
+        HDfree(in_comp_ptr);
+    if(out_comp_ptr!=NULL)
+        HDfree(out_comp_ptr);
+    if(in_pixel_add!=NULL)
+        HDfree(in_pixel_add);
+    if(out_pixel_add!=NULL)
+        HDfree(out_pixel_add);
+    if(in_line_add!=NULL)
+        HDfree(in_line_add);
+    if(out_line_add!=NULL)
+        HDfree(out_line_add);
+
+  return ret_value;
+} /* end GRIil_convert() */
+
+/*--------------------------------------------------------------------------
+ NAME
     GRstart
  PURPOSE
     Initialize the GR*() interface for a given HDF file.
@@ -1307,7 +1505,14 @@ intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
     UINT16ENCODE(p, img_ptr->img_dim.nt_tag);
     UINT16ENCODE(p, img_ptr->img_dim.nt_ref);
     INT16ENCODE(p, img_ptr->img_dim.ncomps);
+/* Currently all data is written out in 'pixel' interlace, so force the */
+/* interlace stored on disk to match, instead of the interlacing that the */
+/* user created the image with. -QAK  */
+#ifdef LATER
+    INT16ENCODE(p, (int16)MFGR_INTERLACE_PIXEL);
+#else /* LATER */
     INT16ENCODE(p, img_ptr->img_dim.il);
+#endif /* LATER */
     UINT16ENCODE(p, img_ptr->img_dim.comp_tag);
     UINT16ENCODE(p, img_ptr->img_dim.comp_ref);
     if(img_ptr->img_dim.dim_ref<=DFTAG_NULL)
@@ -2209,9 +2414,10 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
     VOIDP *img_data;            /* pointer to the converted image data to write */
     uintn pixel_mem_size,       /* size of a pixel in memory */
         pixel_disk_size;        /* size of a pixel on disk */
-    intn convert;               /* true if machine NT != NT to be written */
+    intn convert=FALSE;         /* true if machine NT != NT to be written */
     uint8 platnumsubclass;      /* class of this NT for this platform */
     intn new_image=FALSE;       /* whether we are writing a new image out */
+    intn switch_interlace=FALSE;/* whether the memory interlace needs to be switched around */
     intn ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -2281,6 +2487,9 @@ printf("%s: count[XDIM,YDIM]=%ld, %ld\n",FUNC,count[XDIM],count[YDIM]);
     else /* block of data spread out with strides */
           solid_block=FALSE;
 
+    if(ri_ptr->img_dim.il!=MFGR_INTERLACE_PIXEL)
+        switch_interlace=TRUE;
+
 #ifdef QAK
 printf("%s: check 3\n",FUNC);
 #endif /* QAK */
@@ -2290,17 +2499,38 @@ printf("%s: check 3\n",FUNC);
 
     /* Get number-type and conversion information */
     platnumsubclass = DFKgetPNSC(ri_ptr->img_dim.nt & (~DFNT_LITEND), DF_MT);
+#ifdef QAK
+printf("%s: file_nt_subclass=%x, platnumsubclass=%x\n",FUNC,(unsigned)ri_ptr->img_dim.file_nt_subclass,(unsigned)platnumsubclass);
+printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_size,(unsigned)pixel_disk_size);
+#endif /* QAK */
     convert = (ri_ptr->img_dim.file_nt_subclass != platnumsubclass);  /* is conversion necessary? */
 
-    if(convert)
+    if(convert || switch_interlace==TRUE)
       {   /* convert image data to HDF disk format */
           /* Allocate space for the conversion buffer */
           if((img_data=HDmalloc(pixel_disk_size*count[XDIM]*count[YDIM]))==NULL)
               HGOTO_ERROR(DFE_NOSPACE,FAIL);
 
-          /* convert the pixel data into the HDF disk format */
-          DFKconvert(data,img_data,ri_ptr->img_dim.nt,
-              ri_ptr->img_dim.ncomps*count[XDIM]*count[YDIM],DFACC_WRITE,0,0);
+          if(switch_interlace==TRUE)
+            {
+              VOIDP pixel_buf;  /* buffer for the pixel interlaced data */
+
+              /* Allocate space for the conversion buffer */
+              if((pixel_buf=HDmalloc(pixel_mem_size*count[XDIM]*count[YDIM]))==NULL)
+                  HGOTO_ERROR(DFE_NOSPACE,FAIL);
+
+              GRIil_convert(data,ri_ptr->img_dim.il,pixel_buf,MFGR_INTERLACE_PIXEL,
+                  count,ri_ptr->img_dim.ncomps,ri_ptr->img_dim.nt);
+
+              /* convert the pixel data into the HDF disk format */
+              DFKconvert(pixel_buf,img_data,ri_ptr->img_dim.nt,
+                  ri_ptr->img_dim.ncomps*count[XDIM]*count[YDIM],DFACC_WRITE,0,0);
+
+              HDfree(pixel_buf);
+            } /* end if */
+          else /* convert the pixel data into the HDF disk format */
+              DFKconvert(data,img_data,ri_ptr->img_dim.nt,
+                  ri_ptr->img_dim.ncomps*count[XDIM]*count[YDIM],DFACC_WRITE,0,0);
       } /* end if */
     else /* no conversion necessary, just use the user's buffer */
         img_data=data;
@@ -2375,16 +2605,19 @@ printf("%s: check 6, ri_ptr->fill_img=%d, tag=%u, ref=%u\n",FUNC,(int)ri_ptr->fi
                       int32 at_index;   /* attribute index for the fill value */
 
 #ifdef QAK
-printf("%s: check 6.5, creating new image and need to fill it, ri_ptr->fill_value=%p\n",FUNC,ri_ptr->fill_value);
+printf("%s: check 6.5, creating new image and need to fill it, ri_ptr->fill_value=%p, convert=%d\n",FUNC,ri_ptr->fill_value,(int)convert);
 #endif /* QAK */
                       if((fill_pixel=(VOIDP)HDmalloc(pixel_disk_size))==NULL)
                           HGOTO_ERROR(DFE_NOSPACE,FAIL);
 
                       /* create correct disk version of fill pixel */
                       if(ri_ptr->fill_value!=NULL)
-                          DFKconvert(ri_ptr->fill_value,fill_pixel,
+                        {
+                          if(convert)
+                              DFKconvert(ri_ptr->fill_value,fill_pixel,
                                   ri_ptr->img_dim.nt,ri_ptr->img_dim.ncomps,
                                   DFACC_WRITE,0,0);
+                        } /* end if */
                       else  /* create default pixel fill value of all zero components */
                         {
                           /* Try to find a fill value attribute */
@@ -2394,7 +2627,11 @@ printf("%s: check 6.5, creating new image and need to fill it, ri_ptr->fill_valu
                                     HGOTO_ERROR(DFE_NOSPACE,FAIL);
                                 if(GRgetattr(riid,at_index,ri_ptr->fill_value)==FAIL)
                                     HGOTO_ERROR(DFE_BADATTR,FAIL);
-                                DFKconvert(ri_ptr->fill_value,fill_pixel,
+#ifdef QAK
+printf("%s: check 6.6, found a fill value, nt=%d, ncomps=%d\n",FUNC,(int)ri_ptr->img_dim.nt,(int)ri_ptr->img_dim.ncomps);
+#endif /* QAK */
+                                if(convert)
+                                    DFKconvert(ri_ptr->fill_value,fill_pixel,
                                       ri_ptr->img_dim.nt,ri_ptr->img_dim.ncomps,
                                       DFACC_WRITE,0,0);
                             } /* end if */
@@ -2771,6 +3008,7 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOI
     intn whole_image=FALSE;     /* whether we are writing out the whole image */
     VOIDP *img_data;            /* pointer to the converted image data to write */
     uintn pixel_disk_size;      /* size of a pixel on disk */
+    uintn pixel_mem_size;       /* size of a pixel in memory */
     intn convert;               /* true if machine NT != NT to be written */
     uint8 platnumsubclass;      /* class of this NT for this platform */
     intn  ret_value = SUCCEED;
@@ -2832,9 +3070,14 @@ printf("%s: data=%p\n",FUNC,data);
 
     /* Get the size of the pixels in memory and on disk */
     pixel_disk_size=ri_ptr->img_dim.ncomps*DFKNTsize(ri_ptr->img_dim.nt);
+    pixel_mem_size=ri_ptr->img_dim.ncomps*DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND));
 
     /* Get number-type and conversion information */
     platnumsubclass = DFKgetPNSC(ri_ptr->img_dim.nt & (~DFNT_LITEND), DF_MT);
+#ifdef QAK
+printf("%s: file_nt_subclass=%x, platnumsubclass=%x\n",FUNC,(unsigned)ri_ptr->img_dim.file_nt_subclass,(unsigned)platnumsubclass);
+printf("%s: pixel_disk_size=%u\n",FUNC,(unsigned)pixel_disk_size);
+#endif /* QAK */
     convert = (ri_ptr->img_dim.file_nt_subclass != platnumsubclass);  /* is conversion necessary? */
 
 #ifdef QAK
@@ -2967,11 +3210,34 @@ printf("%s: convert=%d\n",FUNC,(int)convert);
 #endif /* QAK */
           if(convert)
             { /* convert the pixel data into the HDF disk format */
-                DFKconvert(img_data,data,ri_ptr->img_dim.nt,
-                    ri_ptr->img_dim.ncomps*count[XDIM]*count[YDIM],DFACC_READ,0,0);
-                HDfree(img_data);
+#ifdef QAK
+printf("%s: check 4\n",FUNC);
+#endif /* QAK */
+              DFKconvert(img_data,data,ri_ptr->img_dim.nt,
+                  ri_ptr->img_dim.ncomps*count[XDIM]*count[YDIM],DFACC_READ,0,0);
+              HDfree(img_data);
             } /* end if */
       } /* end else */
+
+      /* Check whether we need to convert the buffer to the user's */
+      /*    requested interlace scheme. */
+      /* Note: This is implemented in a horribly ugly & slow manner, but I'm */
+      /*        in a bit of a hurry right now - QAK */
+      if(ri_ptr->im_il!=MFGR_INTERLACE_PIXEL)
+        {
+          VOIDP pixel_buf;  /* buffer for the pixel interlaced data */
+
+          /* Allocate space for the conversion buffer */
+          if((pixel_buf=HDmalloc(pixel_mem_size*count[XDIM]*count[YDIM]))==NULL)
+              HGOTO_ERROR(DFE_NOSPACE,FAIL);
+
+          GRIil_convert(data,MFGR_INTERLACE_PIXEL,pixel_buf,ri_ptr->im_il,
+              count,ri_ptr->img_dim.ncomps,ri_ptr->img_dim.nt);
+
+          HDmemcpy(data,pixel_buf,pixel_mem_size*count[XDIM]*count[YDIM]);
+
+          HDfree(pixel_buf);
+        } /* end if */
 
 done:
   if(ret_value == FAIL)   
@@ -4012,8 +4278,8 @@ printf("%s: found existing attribute\n",FUNC);
               HGOTO_ERROR(DFE_ARGS, FAIL);
 
           /* Calc. old & new attr. sizes */
-          new_at_size=count*DFKNTsize(attr_nt);
-          at_size=at_ptr->len*DFKNTsize(at_ptr->nt);
+          new_at_size=count*DFKNTsize((attr_nt | DFNT_NATIVE) & (~DFNT_LITEND));
+          at_size=at_ptr->len*DFKNTsize((at_ptr->nt | DFNT_NATIVE) & (~DFNT_LITEND));
 
           if(new_at_size>gr_ptr->attr_cache)    /* check if data is cacheable */
             {   /* not cacheable, write directly out to disk and throw away old in-memory copy */
@@ -4077,7 +4343,7 @@ printf("%s:1: gr_ptr->gattr_count=%ld\n",FUNC,(long)gr_ptr->gattr_count);
         HDstrcpy(at_ptr->name,name);
 
         /* calc. the attr size to see if it is worth caching */
-        at_size=at_ptr->len*DFKNTsize(at_ptr->nt);
+        at_size=at_ptr->len*DFKNTsize((at_ptr->nt | DFNT_NATIVE) & (~DFNT_LITEND));
         if(at_size<gr_ptr->attr_cache)
           { /* cacheable */
               /* allocate space for the attribute name & copy it */
@@ -4324,7 +4590,7 @@ intn GRgetattr(int32 id,int32 index,VOIDP data)
     at_ptr=(at_info_t *)*t;
 
     /* Calculate the size of the attribute data */
-    at_size=at_ptr->len*DFKNTsize(at_ptr->nt);
+    at_size=at_ptr->len*DFKNTsize((at_ptr->nt | DFNT_NATIVE) & (~DFNT_LITEND));
 
     /* Check if the attribute has been read in yet, and get it if not */
     if(at_ptr->data==NULL)

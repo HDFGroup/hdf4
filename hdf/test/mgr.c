@@ -1714,9 +1714,9 @@ test_mgr_image()
         uint16 ref;     /* RI ref #. */
         int32 index;    /* RI index # */
         TEST_VARTYPE image[TEST_YDIM][TEST_XDIM][TEST_NCOMP]; /* space for the image data */
-        TEST_VARTYPE fill_pixel[TEST_NCOMP]={-3.4,4.5,-0.03,100.4};   /* pixel with fill values */
-        TEST_VARTYPE pixel[TEST_NCOMP]={-20.00,4.8,0.3,1.0};   /* pixel with fill values */
-        TEST_VARTYPE pixel2[TEST_NCOMP]={1.23,1.0,-6500.0,350.0};   /* pixel with fill values */
+        TEST_VARTYPE fill_pixel[TEST_NCOMP]={-3.75,4.5,-0.375,100.125};   /* pixel with fill values */
+        TEST_VARTYPE pixel[TEST_NCOMP]={-20.00,4.875,0.125,1.0};   /* pixel with fill values */
+        TEST_VARTYPE pixel2[TEST_NCOMP]={1.25,1.0,-6500.0,350.0};   /* pixel with fill values */
         TEST_VARTYPE image0[TEST_YDIM][TEST_XDIM][TEST_NCOMP]; /* space for the image data */
         TEST_VARTYPE sub_image[TEST_YDIM][TEST_XDIM][TEST_NCOMP]; /* space for the image data */
         TEST_VARTYPE *sub_ptr;
@@ -2382,86 +2382,10 @@ test_mgr_image()
 void
 test_mgr_index()
 {
-    int32 fid;              /* HDF file ID */
-    int32 grid;             /* GRID for the interface */
-    int32 n_datasets;       /* number of datasets */
-    int32 n_attrs;          /* number of attributes */
-    int32 ret;              /* generic return value */
+    /* output message about test being performed */
+    MESSAGE(6, printf("Testing Multi-File Raster id/ref/index routines\n"););
 
-    /* Output message about test being performed */
-    MESSAGE(6, printf("Testing Multi-file Raster ID/Ref/Index routines\n"););
-
-/* Pick up Here -QAK2 */
-#ifdef QAK
-/* B1a - Read/Write images - with no Data - Default Fill Value */
-    MESSAGE(8, printf("Check out I/O on image with no data, using the default fill value\n"););
-
-    /* Open up the existing datafile and get the image information from it */
-    fid=Hopen(TESTFILE,DFACC_RDWR,0);
-    CHECK(fid,FAIL,"Hopen");
-
-    /* Initialize the GR interface */
-    grid=GRstart(fid);
-    CHECK(grid,FAIL,"GRstart");
-
-    {
-        int32 riid;     /* RI ID for the new image */
-        int32 dims[2]={4,5};    /* dimensions for the empty image */
-        uint16 ref;     /* RI ref #. */
-        int32 index;    /* RI index # */
-        float32 image[5][4][3]; /* space for the image data */
-        float32 image0[5][4][3]; /* space for the image data */
-        int32 start[2]; /* start of image data to grab */
-        int32 stride[2];/* stride of image data to grab */
-
-        /* Create empty image with default fill value */
-        riid=GRcreate(grid,"Empty Image",3,DFNT_FLOAT32,MFGR_INTERLACE_PIXEL,dims);
-        CHECK(riid,FAIL,"GRcreate");
-
-        /* Save the ref. # for later access */
-        ref=GRidtoref(riid);
-        CHECK(ref,(uint16)FAIL,"GRidtoref");
-
-        /* Close the empty image */
-        ret=GRendaccess(riid);
-        CHECK(ret,FAIL,"GRendaccess");
-
-        /* Get the index of the newly created image */
-        index=GRreftoindex(grid,ref);
-        CHECK(index,FAIL,"GRreftoindex");
-
-        /* Select the newly created image */
-        riid=GRselect(grid,index);
-        CHECK(riid,FAIL,"GRselect");
-
-        HDmemset(image,255,dims[0]*dims[1]*3*sizeof(float32));
-        /* '0' is the default fill value */
-        HDmemset(image0,0,dims[0]*dims[1]*3*sizeof(float32));
-
-        start[0]=start[1]=0;
-        stride[0]=stride[1]=1;
-        ret=GRreadimage(riid,start,stride,dims,image);
-        CHECK(ret,FAIL,"GRreadimage");
-
-        if(0!=HDmemcmp(image,image0,sizeof(image0)))
-          {
-              MESSAGE(3, printf("Error reading data for image with default fill value\n"););
-              num_errs++;
-          } /* end if */
-
-        /* Close the empty image */
-        ret=GRendaccess(riid);
-        CHECK(ret,FAIL,"GRendaccess");
-    }
-    
-    /* Shut down the GR interface */
-    ret=GRend(grid);
-    CHECK(ret,FAIL,"GRend");
-
-    /* Close the file */
-    ret=Hclose(fid);
-    CHECK(ret,FAIL,"Hclose");
-#endif
+/* I believe that these are adequately tested in the test_mgr_image routine -QAK */
 }   /* end test_mgr_index() */
 
 /****************************************************************
@@ -2469,15 +2393,112 @@ test_mgr_index()
 **  test_mgr_interlace(): Multi-file Raster Interlace Test Routine
 ** 
 **  IV. Interlace Functions [Need to be implemented]
-**      A. GRreqlutil
+**      A. GRreqlutil - tested in the palette test below.
 **      B. GRreqimageil
 ** 
 ****************************************************************/
 void
 test_mgr_interlace()
 {
+    int32 fid;              /* hdf file id */
+    int32 grid;             /* grid for the interface */
+    int32 n_datasets;       /* number of datasets */
+    int32 n_attrs;          /* number of attributes */
+    int32 ret;              /* generic return value */
+    VOIDP image;            /* image to retrieve */
+
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing Multi-file Raster Interlace routines\n"););
+
+    /* open up the existing datafile and get the image information from it */
+    fid=Hopen(TESTFILE,DFACC_RDWR,0);
+    CHECK(fid,FAIL,"Hopen");
+
+    /* initialize the gr interface */
+    grid=GRstart(fid);
+    CHECK(grid,FAIL,"GRstart");
+
+    {
+        intn i,j;     /* local counting variables */
+        
+        ret=(intn)GRfileinfo(grid,&n_datasets,&n_attrs);
+        CHECK(ret,FAIL,"GRfileinfo");
+
+        for(i=0; i<n_datasets; i++)
+          {
+              int32 riid;               /* RI ID for an image */
+              char name[MAX_IMG_NAME];  /* storage for the image's name */
+              int32 ncomp;              /* number of components */
+              int32 nt;                 /* NT of the components */
+              int32 il;                 /* interlace of the image data */
+              int32 start[2];
+              int32 stride[2];
+              int32 dimsizes[2];        /* dimension sizes of the image */
+              int32 n_attr;             /* number of attributes with each image */
+              VOIDP img_data;           /* buffer for the image data */
+
+              /* Attach to the image */
+              riid=GRselect(grid,i);
+              CHECK(riid,FAIL,"GRselect");
+
+              /* Get the Image information */
+              *name='\0';
+              ret=GRgetiminfo(riid,name,&ncomp,&nt,&il,dimsizes,&n_attr);
+              CHECK(ret,FAIL,"GRgetiminfo");
+
+              image=HDmalloc(dimsizes[XDIM]*dimsizes[YDIM]*ncomp*DFKNTsize(nt|DFNT_NATIVE));
+              CHECK(image,NULL,"HDmalloc");
+
+              start[0]=start[1]=0;
+              stride[0]=stride[1]=1;
+              ret=GRreadimage(riid,start,stride,dimsizes,image);
+
+              /* Check the image data itself */
+              for(j=(intn)MFGR_INTERLACE_PIXEL; j<=(intn)MFGR_INTERLACE_COMPONENT; j++)
+                {
+                    VOIDP pixel_buf;
+
+                    img_data=HDmalloc(dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt|DFNT_NATIVE));
+                    CHECK(img_data,NULL,"HDmalloc");
+
+                    pixel_buf=HDmalloc(dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt|DFNT_NATIVE));
+                    CHECK(pixel_buf,NULL,"HDmalloc");
+
+                    HDmemset(img_data,0,dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt|DFNT_NATIVE));
+
+                    ret=GRreqimageil(riid,j);
+                    CHECK(ret,FAIL,"GRreqimageil");
+
+                    start[0]=start[1]=0;
+                    stride[0]=stride[1]=1;
+                    ret=GRreadimage(riid,start,stride,dimsizes,img_data);
+
+                    GRIil_convert(image,MFGR_INTERLACE_PIXEL,pixel_buf,j,dimsizes,ncomp,nt);
+                    if(0!=HDmemcmp(img_data,pixel_buf,
+                          dimsizes[XDIM]*dimsizes[YDIM]*ncomp*DFKNTsize(nt|DFNT_NATIVE)))
+                      {
+                          MESSAGE(3, printf("Error reading data for image %d, j=%d\n",i,j););
+                          num_errs++;
+                      } /* end if */
+                    HDfree(img_data);
+                    HDfree(pixel_buf);
+                } /* end for */
+
+              HDfree(image);
+
+              /* End access to the image */
+              ret=GRendaccess(riid);
+              CHECK(ret,FAIL,"GRendaccess");
+          } /* end for */
+      } /* end block */
+    
+    /* shut down the gr interface */
+    ret=GRend(grid);
+    CHECK(ret,FAIL,"GRend");
+
+    /* close the file */
+    ret=Hclose(fid);
+    CHECK(ret,FAIL,"Hclose");
 }   /* end test_mgr_interlace() */
 
 /****************************************************************
@@ -2494,8 +2515,109 @@ test_mgr_interlace()
 void
 test_mgr_lut()
 {
+    int32 fid;              /* hdf file id */
+    int32 grid;             /* grid for the interface */
+    int32 n_datasets;       /* number of datasets */
+    int32 n_attrs;          /* number of attributes */
+    int32 ret;              /* generic return value */
+    VOIDP image;            /* image to retrieve */
+
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing Multi-file Raster Palette routines\n"););
+
+    /* open up the existing datafile and get the image information from it */
+    fid=Hopen(TESTFILE,DFACC_RDWR,0);
+    CHECK(fid,FAIL,"Hopen");
+
+    /* initialize the gr interface */
+    grid=GRstart(fid);
+    CHECK(grid,FAIL,"GRstart");
+
+/* pick up here -QAK2 */
+#ifdef QAK
+    {
+        intn i,j;     /* local counting variables */
+        
+        ret=(intn)GRfileinfo(grid,&n_datasets,&n_attrs);
+        CHECK(ret,FAIL,"GRfileinfo");
+
+        for(i=0; i<n_datasets; i++)
+          {
+              int32 riid;               /* RI ID for an image */
+              int32 lutid;               /* RI ID for an image */
+              char name[MAX_IMG_NAME];  /* storage for the image's name */
+              int32 ncomp;              /* number of components */
+              int32 nt;                 /* NT of the components */
+              int32 il;                 /* interlace of the image data */
+              int32 start[2];
+              int32 stride[2];
+              int32 dimsizes[2];        /* dimension sizes of the image */
+              int32 n_attr;             /* number of attributes with each image */
+              VOIDP img_data;           /* buffer for the image data */
+
+              /* Attach to the image */
+              riid=GRselect(grid,i);
+              CHECK(riid,FAIL,"GRselect");
+
+              /* Get the Image information */
+              *name='\0';
+              ret=GRgetiminfo(riid,name,&ncomp,&nt,&il,dimsizes,&n_attr);
+              CHECK(ret,FAIL,"GRgetiminfo");
+
+              image=HDmalloc(dimsizes[XDIM]*dimsizes[YDIM]*ncomp*DFKNTsize(nt|DFNT_NATIVE));
+              CHECK(image,NULL,"HDmalloc");
+
+              start[0]=start[1]=0;
+              stride[0]=stride[1]=1;
+              ret=GRreadimage(riid,start,stride,dimsizes,image);
+
+              /* Check the image data itself */
+              for(j=(intn)MFGR_INTERLACE_PIXEL; j<=(intn)MFGR_INTERLACE_COMPONENT; j++)
+                {
+                    VOIDP pixel_buf;
+
+                    img_data=HDmalloc(dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt|DFNT_NATIVE));
+                    CHECK(img_data,NULL,"HDmalloc");
+
+                    pixel_buf=HDmalloc(dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt|DFNT_NATIVE));
+                    CHECK(pixel_buf,NULL,"HDmalloc");
+
+                    HDmemset(img_data,0,dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt|DFNT_NATIVE));
+
+                    ret=GRreqimageil(riid,j);
+                    CHECK(ret,FAIL,"GRreqimageil");
+
+                    start[0]=start[1]=0;
+                    stride[0]=stride[1]=1;
+                    ret=GRreadimage(riid,start,stride,dimsizes,img_data);
+
+                    GRIil_convert(image,MFGR_INTERLACE_PIXEL,pixel_buf,j,dimsizes,ncomp,nt);
+                    if(0!=HDmemcmp(img_data,pixel_buf,
+                          dimsizes[XDIM]*dimsizes[YDIM]*ncomp*DFKNTsize(nt|DFNT_NATIVE)))
+                      {
+                          MESSAGE(3, printf("Error reading data for image %d, j=%d\n",i,j););
+                          num_errs++;
+                      } /* end if */
+                    HDfree(img_data);
+                    HDfree(pixel_buf);
+                } /* end for */
+
+              HDfree(image);
+
+              /* End access to the image */
+              ret=GRendaccess(riid);
+              CHECK(ret,FAIL,"GRendaccess");
+          } /* end for */
+      } /* end block */
+#endif /* QAK */
+    
+    /* shut down the gr interface */
+    ret=GRend(grid);
+    CHECK(ret,FAIL,"GRend");
+
+    /* close the file */
+    ret=Hclose(fid);
+    CHECK(ret,FAIL,"Hclose");
 }   /* end test_mgr_lut() */
 
 /****************************************************************
