@@ -534,7 +534,14 @@ ANIaddentry(int32 an_id, ann_type type, uint16 ann_ref,
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
-
+        if (ann_key != NULL)
+            HDfree(ann_key);
+        if (ann_id != NULL)
+            HDfree(ann_id);
+        if (ann_entry != NULL)
+            HDfree(ann_entry);
+        if (ann_node != NULL)
+            HDfree(ann_node);
     } /* end if */
 
   /* Normal function cleanup */
@@ -778,7 +785,14 @@ ANIcreate_ann_tree(int32 an_id, ann_type type)
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
-
+        if (ann_key != NULL)
+            HDfree(ann_key);
+        if (ann_id != NULL)
+            HDfree(ann_id);
+        if (ann_entry != NULL)
+            HDfree(ann_entry);
+        if (ann_node != NULL)
+            HDfree(ann_node);
     } /* end if */
 
   /* Normal function cleanup */
@@ -1744,21 +1758,9 @@ ANstart(int32 file_id)
 
   *an_id = file_id;
 
-#if 0
-  /* Open file */
-  *file_id = Hopen(filename, acc_mode, 0);
-  if (*file_id == FAIL)
-    {
-      ret_value = FAIL;
-      goto done;
-    }
-#endif
   /* Intialize file entry */
   if ((file_entry = HDmalloc(sizeof(ANfile))) == NULL)
     HGOTO_ERROR(DFE_NOSPACE, FAIL);
-#if 0
-  file_entry->access_mode = acc_mode;
-#endif
   file_entry->access_mode = 0;
   file_entry->an_tree[AN_DATA_LABEL] = NULL;   /* data label ann tree */
   file_entry->an_tree[AN_DATA_DESC]  = NULL;   /* data description ann tree */
@@ -1769,11 +1771,6 @@ ANstart(int32 file_id)
   file_entry->an_num[AN_FILE_LABEL] = -1;   
   file_entry->an_num[AN_FILE_DESC]  = -1;   
   file_entry->filename = NULL;
-#if 0
-  if ((file_entry->filename = HDmalloc(strlen(filename)+1)) == NULL)
-    HGOTO_ERROR(DFE_NOSPACE, FAIL);
-  HDstrcpy(file_entry->filename,filename);
-#endif
 
 #ifdef HAVE_RBTREE
   /* Add file entry to file RBtree */

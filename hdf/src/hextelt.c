@@ -207,6 +207,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     uint16      special_tag;    /* special version of tag */
     uint8       local_ptbuf[20 + MAX_PATH_LEN];     /* temp working buffer */
     char	   *fname=NULL;    /* filename built from external filename */
+    VOIDP       buf = NULL;      /* temporary buffer */
     int32       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -288,26 +289,14 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
 
     if (data_id!=FAIL && data_len>0)
       {
-          VOIDP       buf;      /* temporary buffer */
-
           if ((buf = (VOIDP) HDmalloc((uint32) data_len)) == NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
           if (Hgetelement(file_id, tag, ref, (VOIDP)buf) == FAIL)
-            {
-                HDfree((VOIDP) buf);
                 HGOTO_ERROR(DFE_READERROR, FAIL);
-            }
           if (HI_SEEK(file_external, offset) == FAIL)
-            {
-                HDfree((VOIDP) buf);
                 HGOTO_ERROR(DFE_SEEKERROR, FAIL);
-            }
           if (HI_WRITE(file_external, buf, data_len) == FAIL)
-            {
-                HDfree((VOIDP) buf);
                 HGOTO_ERROR(DFE_WRITEERROR, FAIL);
-            }
-          HDfree((VOIDP) buf);
           info->length = data_len;
       }
     else
@@ -371,6 +360,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+  if (buf != NULL)
+      HDfree((VOIDP) buf);
+
 #ifdef HAVE_PABLO
     TRACE_OFF(H_mask, ID_HXcreate);
 #endif /* HAVE_PABLO */
@@ -483,9 +475,9 @@ PRIVATE int32
 HXIstaccess(accrec_t * access_rec, int16 acc_mode)
 {
     CONSTR(FUNC, "HXIstaccess");    /* for HERROR */
-    extinfo_t  *info;           /* special element information */
-    filerec_t  *file_rec;       /* file record */
-    int32       data_off;		/* offset of the data we are checking */
+    extinfo_t  *info = NULL;        /* special element information */
+    filerec_t  *file_rec = NULL;    /* file record */
+    int32       data_off;		    /* offset of the data we are checking */
     uint8       local_ptbuf[12];    /* working buffer */
     int32       ret_value = SUCCEED;
 
@@ -549,6 +541,12 @@ done:
     { /* Error condition cleanup */
         if(access_rec!=NULL)
             HDfree(access_rec);
+        if(info !=NULL)
+          {   /* free file name first */
+              if (info->extern_file_name != NULL)
+                  HDfree(info->extern_file_name);
+              HDfree(info);
+          }
     } /* end if */
 
   /* Normal function cleanup */
@@ -1314,8 +1312,8 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
     int	        path_len;		/* string length of prepend pathname */
     static int	firstinvoked = 1;	/* true if invoked the first time */
 
-    char	*finalpath;	/* Final pathname to return */
-    char	*fname;
+    char	*finalpath = NULL;	/* Final pathname to return */
+    char	*fname = NULL;
 #if !(defined (MAC) || defined (macintosh) || defined(__MWERKS__) || defined (SYMANTEC_C))
     struct	stat filestat;	/* for checking pathname existence */
 #endif
@@ -1323,9 +1321,9 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 
     /* initialize HDFEXTDIR and HDFCREATEDIR if invoked the first time */
     if (firstinvoked){
-	firstinvoked = 0;
-	HDFEXTCREATEDIR = HDgetenv("HDFEXTCREATEDIR");
-	HDFEXTDIR = HDgetenv("HDFEXTDIR");
+        firstinvoked = 0;
+        HDFEXTCREATEDIR = HDgetenv("HDFEXTCREATEDIR");
+        HDFEXTDIR = HDgetenv("HDFEXTDIR");
     }
 
     if (!ext_fname)
@@ -1334,166 +1332,158 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 
     /* get the space for the final pathname */
     if (!(finalpath=HDmalloc(MAX_PATH_LEN)))
-	HGOTO_ERROR(DFE_NOSPACE, NULL);
+        HGOTO_ERROR(DFE_NOSPACE, NULL);
 
     fname_len = HDstrlen(fname);
     
     switch (acc_mode){
     case DFACC_CREATE: {			/* Creating a new external element */
-	if ( *fname == DIR_SEPC ) {	/* Absolute Pathname */
-		ret_value = (HDstrcpy(finalpath, fname));
-                goto done;
-	}
-	else {				/* Relative Pathname */
-
-	    /* try function variable */
-	    if (extcreatedir) {
-		path_len = HDstrlen(extcreatedir);
-
-		if (fname_len + 1 + path_len + 1 > MAX_PATH_LEN ){
-		    HDfree(finalpath);
-		    HGOTO_ERROR(DFE_NOSPACE, NULL);
-		}
-		ret_value = (HDstrcpy3(finalpath, extcreatedir, DIR_SEPS, fname));
-                goto done;
-	    }
-
-	    /* try Envrironment Variable */
-	    if (HDFEXTCREATEDIR) {
-		path_len = HDstrlen(HDFEXTCREATEDIR);
-
-		if (fname_len + 1 + path_len + 1 > MAX_PATH_LEN ){
-		    HDfree(finalpath);
-		    HGOTO_ERROR(DFE_NOSPACE, NULL);
-		}
-		ret_value = (HDstrcpy3(finalpath, HDFEXTCREATEDIR, DIR_SEPS, fname));
-                goto done;
-	    }
-
-	    /* try Head File Directory */
-	    /* Don't have Head File information now.  Continue */
-
-	    /* Just return the ext_fname */
-	    ret_value = (HDstrcpy(finalpath, fname));
+        if ( *fname == DIR_SEPC ) {	/* Absolute Pathname */
+            ret_value = (HDstrcpy(finalpath, fname));
             goto done;
-	}
-	/* break; */
+        }
+        else {				/* Relative Pathname */
+
+            /* try function variable */
+            if (extcreatedir) {
+                path_len = HDstrlen(extcreatedir);
+
+                if (fname_len + 1 + path_len + 1 > MAX_PATH_LEN )
+                    HGOTO_ERROR(DFE_NOSPACE, NULL);
+                ret_value = (HDstrcpy3(finalpath, extcreatedir, DIR_SEPS, fname));
+                goto done;
+            }
+
+            /* try Envrironment Variable */
+            if (HDFEXTCREATEDIR) {
+                path_len = HDstrlen(HDFEXTCREATEDIR);
+
+                if (fname_len + 1 + path_len + 1 > MAX_PATH_LEN )
+                    HGOTO_ERROR(DFE_NOSPACE, NULL);
+
+                ret_value = (HDstrcpy3(finalpath, HDFEXTCREATEDIR, DIR_SEPS, fname));
+                goto done;
+            }
+
+            /* try Head File Directory */
+            /* Don't have Head File information now.  Continue */
+
+            /* Just return the ext_fname */
+            ret_value = (HDstrcpy(finalpath, fname));
+            goto done;
+        }
+        /* break; */
     } /*DFACC_CREATE */
     case DFACC_OLD:{			/* Locating an old external element */
-	if ( *fname == DIR_SEPC ) {	/* Absolute Pathname */
-	    if (HDstat(fname, &filestat) == 0){
-		ret_value = (HDstrcpy(finalpath, fname));
+        if ( *fname == DIR_SEPC ) {	/* Absolute Pathname */
+            if (HDstat(fname, &filestat) == 0){
+                ret_value = (HDstrcpy(finalpath, fname));
                 goto done;
-	    }
-	    else if (!extdir && !HDFEXTDIR) {
-		HDfree(finalpath);
-		HGOTO_ERROR(DFE_FNF, NULL);
-	    }
-	    /* stripe the pathname component */
-	    fname = HDstrrchr(fname, DIR_SEPC) + 1;
-	    fname_len = HDstrlen(fname);
+            }
+            else if (!extdir && !HDFEXTDIR) {
+                HGOTO_ERROR(DFE_FNF, NULL);
+            }
+            /* stripe the pathname component */
+            fname = HDstrrchr(fname, DIR_SEPC) + 1;
+            fname_len = HDstrlen(fname);
 
-	    /* continue to Relative Pathname */
-	}
+            /* continue to Relative Pathname */
+        }
 
 
-	/* Relative Pathname */
-	{
-	    char   *dir_pt, *path_pt;	/* temporary pointers */
+        /* Relative Pathname */
+        {
+            char   *dir_pt, *path_pt;	/* temporary pointers */
 
-	    /* try function variable */
-	    if (extdir) {
-		dir_pt = extdir;
-		while (*dir_pt){
-		    /* extract one extdir component to finalpath */
-		    path_len = 0;
-		    path_pt = finalpath;
-		    while (*dir_pt && *dir_pt != DIR_PATH_SEPC){
-			if (path_len >= MAX_PATH_LEN){
-			    HDfree(finalpath);
-			    HGOTO_ERROR(DFE_NOSPACE, NULL);
-			}
-			*path_pt++ = *dir_pt++;
-			path_len++;
-		    }
-		    if (*dir_pt == DIR_PATH_SEPC) dir_pt++;
-		    *path_pt++ = DIR_SEPC;
-		    path_len++;
+            /* try function variable */
+            if (extdir) {
+                dir_pt = extdir;
+                while (*dir_pt){
+                    /* extract one extdir component to finalpath */
+                    path_len = 0;
+                    path_pt = finalpath;
+                    while (*dir_pt && *dir_pt != DIR_PATH_SEPC){
+                        if (path_len >= MAX_PATH_LEN)
+                            HGOTO_ERROR(DFE_NOSPACE, NULL);
 
-		    if (fname_len + path_len + 1 > MAX_PATH_LEN ){
-			HDfree(finalpath);
-			HGOTO_ERROR(DFE_NOSPACE, NULL);
-		    }
-		    HDstrcpy(path_pt, fname);
-		    if (HDstat(finalpath, &filestat) == 0 ){
-			ret_value = finalpath;
+                        *path_pt++ = *dir_pt++;
+                        path_len++;
+                    }
+                    if (*dir_pt == DIR_PATH_SEPC) dir_pt++;
+                    *path_pt++ = DIR_SEPC;
+                    path_len++;
+
+                    if (fname_len + path_len + 1 > MAX_PATH_LEN )
+                        HGOTO_ERROR(DFE_NOSPACE, NULL);
+
+                    HDstrcpy(path_pt, fname);
+                    if (HDstat(finalpath, &filestat) == 0 ){
+                        ret_value = finalpath;
                         goto done;
-		    }
-		}
-	    }
+                    }
+                }
+            }
 
-	    /* try Envrironment Variable */
-	    if (HDFEXTDIR) {
-		dir_pt = HDFEXTDIR;
-		while (*dir_pt){
-		    /* extract one HDFEXTDIR component to finalpath */
-		    path_len = 0;
-		    path_pt = finalpath;
-		    while (*dir_pt && *dir_pt != DIR_PATH_SEPC){
-			if (path_len >= MAX_PATH_LEN){
-			    HDfree(finalpath);
-			    HGOTO_ERROR(DFE_NOSPACE, NULL);
-			}
-			*path_pt++ = *dir_pt++;
-			path_len++;
-		    }
-		    if (*dir_pt == DIR_PATH_SEPC) dir_pt++;
-		    *path_pt++ = DIR_SEPC;
-		    path_len++;
+            /* try Envrironment Variable */
+            if (HDFEXTDIR) {
+                dir_pt = HDFEXTDIR;
+                while (*dir_pt){
+                    /* extract one HDFEXTDIR component to finalpath */
+                    path_len = 0;
+                    path_pt = finalpath;
+                    while (*dir_pt && *dir_pt != DIR_PATH_SEPC){
+                        if (path_len >= MAX_PATH_LEN)
+                            HGOTO_ERROR(DFE_NOSPACE, NULL);
 
-		    if (fname_len + path_len + 1 > MAX_PATH_LEN ){
-			HDfree(finalpath);
-			HGOTO_ERROR(DFE_NOSPACE, NULL);
-		    }
-		    HDstrcpy(path_pt, fname);
-		    if (HDstat(finalpath, &filestat) == 0 ){
-			ret_value = finalpath;
+                        *path_pt++ = *dir_pt++;
+                        path_len++;
+                    }
+                    if (*dir_pt == DIR_PATH_SEPC) dir_pt++;
+                    *path_pt++ = DIR_SEPC;
+                    path_len++;
+
+                    if (fname_len + path_len + 1 > MAX_PATH_LEN )
+                        HGOTO_ERROR(DFE_NOSPACE, NULL);
+
+                    HDstrcpy(path_pt, fname);
+                    if (HDstat(finalpath, &filestat) == 0 ){
+                        ret_value = finalpath;
                         goto done;
-		    }
-		}
-	    }
+                    }
+                }
+            }
 
-	    /* try Head File Directory */
-	    /* Don't have Head File information now.  Continue */
+            /* try Head File Directory */
+            /* Don't have Head File information now.  Continue */
 
-	    /* See if the file exists */
-	    if (HDstat(fname, &filestat) == 0 )
+            /* See if the file exists */
+            if (HDstat(fname, &filestat) == 0 )
               {
                   ret_value = (HDstrcpy(finalpath, fname));
-                goto done;
+                  goto done;
               }
 
-	    /* All have failed */
-	    HDfree(finalpath);
-	    ret_value = NULL;
+            /* All have failed */
+            ret_value = NULL;
             goto done;
-	}
-	/* break; */
+        }
+        /* break; */
     } /* DFACC_OLD */
     default:
-	HDfree(finalpath);
-	HGOTO_ERROR(DFE_ARGS, NULL);
+        HDfree(finalpath);
+        HGOTO_ERROR(DFE_ARGS, NULL);
     }
 
-done:
-  if(ret_value == NULL)   
-    { /* Error condition cleanup */
+  done:
+    if(ret_value == NULL)   
+      { /* Error condition cleanup */
+          if (finalpath != NULL)
+              HDfree(finalpath); /* free this */
+      } /* end if */
 
-    } /* end if */
+    /* Normal function cleanup */
 
-  /* Normal function cleanup */
-
-  return ret_value; 
+    return ret_value; 
 }	/* HXIbuildfilename */
 
 /*------------------------------------------------------------------------ 

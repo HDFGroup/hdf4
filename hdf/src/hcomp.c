@@ -489,6 +489,7 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
     atom_t      data_id=FAIL;   /* dd ID of existing regular element */
     int32       data_len;		/* length of the data we are checking */
     uint16      special_tag;    /* special version of tag */
+    VOIDP       buf = NULL;      /* temporary buffer */
     int32       ret_value=SUCCEED;
 
     /* clear error stack and validate args */
@@ -561,24 +562,15 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
     /* compress the old DD and get rid of it, if there was one */
     if (data_id != FAIL)
       {
-          VOIDP       buf;      /* temporary buffer */
 
           if ((buf = (VOIDP) HDmalloc((uint32) data_len)) == NULL)
-                HGOTO_ERROR(DFE_NOSPACE, FAIL);
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
           if (Hgetelement(file_id, tag, ref, buf) == FAIL)
-            {
-                HDfree((VOIDP) buf);
-                HGOTO_ERROR(DFE_READERROR, FAIL);
-            }   /* end if */
+              HGOTO_ERROR(DFE_READERROR, FAIL);
 
           /* write the data through to the compression layer */
           if (HCPwrite(access_rec, data_len, buf) == FAIL)
-            {
-                HDfree((VOIDP) buf);
-                HGOTO_ERROR(DFE_MODEL, FAIL);
-            }   /* end if */
-
-          HDfree((VOIDP) buf);
+              HGOTO_ERROR(DFE_MODEL, FAIL);
 
           /* seek back to the beginning of the data through to the compression layer */
           if (HCPseek(access_rec, 0, DF_START) == FAIL)
@@ -601,6 +593,9 @@ done:
       } /* end if */
 
     /* Normal function cleanup */
+    if (buf != NULL)
+        HDfree((VOIDP) buf);
+
     return ret_value; 
 }   /* end HCcreate() */
 
