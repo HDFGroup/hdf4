@@ -804,13 +804,13 @@ DFANIopen(const char *filename, intn acc_mode)
   HIstrncpy(Lastfile, filename, DF_MAXFNLEN);
   /* remember filename, so reopen may be used next time if same file */
 
+  ret_value = file_id;
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else
-    ret_value = file_id;
 
   /* Normal function cleanup */
 
@@ -1078,13 +1078,13 @@ DFANIgetannlen(const char *filename, uint16 tag, uint16 ref, int type)
   if (Hclose(file_id) == FAIL)    /* close file */
     ret_value = FAIL;
 
+  ret_value = annlength;
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else
-    ret_value = annlength;
 
   /* Normal function cleanup */
 
@@ -1529,14 +1529,15 @@ DFANIlablist(const char *filename, uint16 tag, uint16 reflist[],
     }     /* nlabs != 0  */
   if (FAIL == Hclose(file_id))    /* close file */
     ret_value = FAIL;
+  else
+    ret_value = nrefs;
 
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else
-    ret_value = nrefs;
+
   /* Normal function cleanup */
 
   return ret_value;
