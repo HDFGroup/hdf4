@@ -44,13 +44,17 @@ Supported Platforms
        Linux(a.out) v1.2.4    GCC         Fortran compiler    X         X
                                              2.6.2
                                  (Fortran to C converter)
-       Free BSD 2.0           GCC 2.6.2   Fortran compiler    X         X
+       FreeBSD 2.0            GCC 2.6.2   Fortran compiler    X         X
                                              2.6.2
                                  (Fortran to C converter)
 
   PowerPC(Mac-OS-7.5)         Codewarrior 8    -              X         X
+<<<<<<< INSTALL
+  Windows NT/95               Visual C++ 4.0   -              X         X  
+=======
   68k-far/4i/8d(Mac-OS-7.5)   Codewarrior 8    -              X         X
   Windows NT/95                -               -               -         - 
+>>>>>>> 1.29
  
 Requirements
 ============
