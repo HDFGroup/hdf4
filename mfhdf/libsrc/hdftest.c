@@ -18,6 +18,7 @@ char *argv[];
 {
     int32 f1, f2, sdsid, nt, dimsize[10], nattr, rank;
     int32 newsds, newsds2, newsds3, dimid, number, offset;
+    int32 index;
     intn status, i;
     char name[90], text[256];
     int32   start[10], end[10], scale[10], stride[10];
@@ -25,6 +26,7 @@ char *argv[];
     int     count, num_err = 0;
     int32   idata[100];
     int16   sdata[100];
+    uint16  ndg_saved_ref;
 
     float32 data[1000], max, min;
     float64 cal, cale, ioff, ioffe;
@@ -48,6 +50,13 @@ char *argv[];
     newsds = SDcreate(f1, "DataSetAlpha", DFNT_FLOAT32, 2, dimsize);
     if(newsds == FAIL) {
         fprintf(stderr, "Failed to create a new data set alpha\n");
+        num_err++;
+    }
+
+    /* save the ref number for the first dataset --- will check at very end */
+    ndg_saved_ref = SDidtoref(newsds);
+    if(ndg_saved_ref == 0) {
+        fprintf(stderr, "Failed to get NDG ref for DataSetAlpha\n");
         num_err++;
     }
 
@@ -340,6 +349,7 @@ char *argv[];
     status = SDendaccess(newsds);
     CHECK(status, "SDendaccess");
 
+    /* need to close to flush external info to file */
     status = SDend(f1);
     CHECK(status, "SDend");
 
@@ -383,6 +393,35 @@ char *argv[];
     
     status = SDend(f1);
     CHECK(status, "SDend");
+
+
+    /* open one last time to check that NDG ref has been constant */
+    f1 = SDstart(FILE1, DFACC_RDWR);
+    CHECK(f1, "SDstart (again)");
+
+    index = SDreftoindex(f1, ndg_saved_ref);
+    if(index == FAIL) {
+        fprintf(stderr, "Failed on SDreftoindex call\n");
+        num_err++;
+    }
+
+    sdsid = SDselect(f1, index);
+    if(index == FAIL) {
+        fprintf(stderr, "Failed on SDselect on index from SDreftoindex\n");
+        num_err++;
+    }
+    
+    if(ndg_saved_ref != SDidtoref(sdsid)) {
+        fprintf(stderr, "Saved NDG ref != to SDindextoref of same\n");
+        num_err++;
+    }
+    
+    status = SDendaccess(sdsid);
+    CHECK(status, "SDendaccess");
+
+    status = SDend(f1);
+    CHECK(status, "SDend");
+
 
     status = SDend(f2);
     CHECK(status, "SDend");

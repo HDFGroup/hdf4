@@ -589,7 +589,8 @@ intn hdf_read_ndgs(handle)
                     vars[current_var]->data_tag = DFTAG_SDS;  /* not normal data */
                     vars[current_var]->data_ref = sRef;
                     vars[current_var]->HDFtype  = scaletypes[dim];
-                    
+                    vars[current_var]->ndg_ref  = Hnewref(handle->hdf_file);
+
                     /*
                      * See if a scales record has been stored and if there have
                      *   been scale values provided
@@ -644,7 +645,8 @@ intn hdf_read_ndgs(handle)
             vars[current_var]->data_tag = DATA_TAG;
             vars[current_var]->data_ref = sdRef;
             vars[current_var]->HDFtype  = HDFtype;
-            
+            vars[current_var]->ndg_ref  = Hnewref(handle->hdf_file);
+
             /*
              * --------------------------------------------
              * Convert HDF meta-data into netCDF attributes

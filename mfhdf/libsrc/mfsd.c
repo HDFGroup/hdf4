@@ -807,6 +807,9 @@ int32 nt, rank, *dimsizes;
     var->HDFtype = nt;
     var->HDFsize = DFKNTsize(nt);
 
+    /* get a new NDG ref for this sucker */
+    var->ndg_ref = Hnewref(handle->hdf_file);
+
     /* add it to the handle */
     if(handle->vars == NULL) { /* first time */
         handle->vars = NC_new_array(NC_VARIABLE,(unsigned)1, (Void *)&var);
@@ -1908,6 +1911,9 @@ int32    id, nt;
     if(var == NULL)
         return FAIL;
     
+    /* get a new NDG ref for this sucker */
+    var->ndg_ref = Hnewref(handle->hdf_file);
+
     /* add it to the handle */
     if(handle->vars->count >= MAX_NC_VARS)
         return FAIL;
@@ -2478,3 +2484,84 @@ char  * attrname;
     return FAIL;
     
 } /* SDfindattr */
+
+/* ----------------------------- SDidtoref ----------------------------- */
+/*
+
+  Given an index return the ref of the associated NDG for inclusion in 
+  Vgroups and annotations
+
+*/
+uint16
+#ifdef PROTOTYPE
+SDidtoref(int32 id)
+#else
+SDidtoref(id)
+int32   id;
+#endif
+{
+
+    NC       * handle;
+    NC_var   * var;
+    intn       status;
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDidtoref: I've been called\n");
+#endif
+    
+    handle = SDIhandle_from_id(id, SDSTYPE);
+    if(handle == NULL || !handle->is_hdf) 
+        return 0;
+
+    if(handle->vars == NULL)
+        return 0;
+
+    var = SDIget_var(handle, id);
+    if(var == NULL)
+        return 0;
+
+    return((uint16) var->ndg_ref);
+
+} /* SDidtoref */
+
+
+/* ----------------------------- SDreftoindex ----------------------------- */
+/*
+
+  Given a ref number return the index of the cooresponding dataset
+
+*/
+int32
+#ifdef PROTOTYPE
+SDreftoindex(int32 fid, uint16 ref)
+#else
+SDreftoindex(fid, ref)
+int32    fid;
+uint16   ref;
+#endif
+{
+
+    NC       * handle;
+    NC_var  ** dp;
+    intn       ii;
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDreftoindex: I've been called\n");
+#endif
+    
+    handle = SDIhandle_from_id(fid, CDFTYPE);
+    if(handle == NULL || !handle->is_hdf) 
+        return FAIL;
+
+    if(handle->vars == NULL)
+        return FAIL;
+
+    dp = (NC_var**) handle->vars->values;
+    for(ii = 0 ; ii < handle->vars->count ; ii++, dp++)
+        if((*dp)->ndg_ref == ref)
+            return(ii) ;
+    
+    return FAIL;
+
+} /* SDreftoindex */
+

@@ -827,12 +827,16 @@ NC_var **var;
   refs[count] = ref;
   count++;
 
+  /* Add a bogus tag so we know this NDG is really a variable */
+  if (DFdiput(GroupID, BOGUS_TAG,(uint16) ref) == FAIL)
+      return FAIL;
+
   /* write out NDG */
-  if (DFdiwrite(handle->hdf_file, GroupID, DFTAG_NDG, ref) < 0)
+  if (DFdiwrite(handle->hdf_file, GroupID, DFTAG_NDG, (*var)->ndg_ref) < 0) 
       return FAIL;
   
   tags[count] = DFTAG_NDG;
-  refs[count] = ref;
+  refs[count] = (*var)->ndg_ref;
   count++;
 
 #endif /* WRITE_NDG */
@@ -945,6 +949,10 @@ NC **handlep;
 
 #if DEBUG
   fprintf(stderr, "About to write top level VG with %d elements\n", count);
+  {
+      int i; 
+      for(i = 0; i < count; i++) fprintf(stderr, "%d :=> %d %d\n", i, tags[i], refs[i]);
+  }
 #endif
 
   /* write out final VGroup thang */
@@ -1186,7 +1194,7 @@ int32  vg;
   uint8 ntstring[4];
   int   data_ref, is_rec_var, vg_size, count;
   int32 data_count, HDFtype, tag, id;
-  int32 n, sub_id, entries;
+  int32 n, sub_id, entries, ndg_ref;
 
   register int     type, t, i;
   register int32   var, sub;
@@ -1263,7 +1271,10 @@ int32  vg;
                       }
                       Vdetach(sub);
                       break;
-                  case DFTAG_VH :   /* ----- V D A T A --------- */
+                  case DFTAG_VH :   /* ----- V D A T A ----- */
+                      break;
+                  case DFTAG_NDG :  /* ----- NDG Tag for HDF 3.2 ----- */
+                      ndg_ref = sub_id;
                       break;
                   case DFTAG_SD :   /* ------- Data Storage ------ */
                       data_ref = sub_id;
@@ -1328,6 +1339,7 @@ int32  vg;
               vp->data_ref = data_ref;
               vp->data_tag = DATA_TAG;
               vp->HDFtype  = HDFtype;
+              vp->ndg_ref  = (uint16) ndg_ref;
               
               if(vp->data_ref) {
                   /*
@@ -1476,7 +1488,6 @@ NC **handlep;
 
 #if DEBUG
   fprintf(stderr, "xdr_cdf i've been called op = %d \n", xdrs->x_op);
-  setjj();
 #endif
 
   switch(xdrs->x_op) {

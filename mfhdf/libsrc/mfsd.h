@@ -108,6 +108,12 @@ extern int32 SDgetdimstrs
 extern int32 SDsetexternalfile
     PROTO((int32 id, char *filename, int32 offset));
 
+extern uint16 SDidtoref
+    PROTO((int32 id));
+
+extern int32 SDreftoindex
+    PROTO((int32 fid, uint16 ref));
+
 /* Define the FORTRAN names */
 
 #ifndef MFSD_FNAMES
@@ -142,6 +148,8 @@ extern int32 SDsetexternalfile
 #   define nscgdimstrs FNAME(SCGDIMSTRS)
 #   define nscsattr     FNAME(SCSATTR)
 #   define nscfattr     FNAME(SCFATTR)
+#   define nsfid2ref  FNAME(SFID2REF)
+#   define nsfref2index FNAME(SFREF2INDEX)
 #else   /* DF_CAPFNAMES */
 #   define nscstart    FNAME(scstart)
 #   define nsfend      FNAME(sfend)
@@ -172,6 +180,8 @@ extern int32 SDsetexternalfile
 #   define nscgdimstrs FNAME(scgdimstrs)
 #   define nscsattr    FNAME(scsattr)
 #   define nscfattr    FNAME(scfattr)
+#   define nsfid2ref   FNAME(sfid2ref)
+#   define nsfref2index FNAME(sfref2index)
 #endif
 #endif
 

@@ -41,12 +41,8 @@
 #define ATTR_TAG  DFTAG_VH
 #define DIM_TAG   DFTAG_VG
 #define VAR_TAG   DFTAG_VG
-
-#ifdef OLD_DATA
-#define DATA_TAG  DFTAG_VH
-#else
 #define DATA_TAG  DFTAG_SD
-#endif
+#define BOGUS_TAG ((uint16) 721)
 
 #define ATTRIBUTE         "Attr0.0"
 #define VARIABLE          "Var0.0"
@@ -122,10 +118,8 @@ typedef struct {
 	int32 vgid;     /* id of the variable's Vgroup */
         uint16 data_ref;  /* ref of the variable's data storage (if exists) */
         uint16 data_tag;  /* tag of the variable's data storage (if exists) */
+        uint16 ndg_ref;   /* ref of ndg for this dataset */
         intn   data_offset; /* non-traditional data may not begin at 0 */
-#ifdef OLD_DATA
-        VDATA *vs;    /* pointer to attached DATA VData */
-#endif
         int numrecs;  /* number of records this has been filled to */
         int32 aid;    /* aid for DFTAG_SD data */
         int32 HDFtype; /* type of this variable as HDF thinks */

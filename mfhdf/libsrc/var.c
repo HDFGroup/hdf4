@@ -45,6 +45,7 @@ const int *dims ;
         ret->data_offset = 0;      /* Assume data starts at beginning */
         ret->numrecs = 0;
         ret->aid = FAIL;
+        ret->ndg_ref = FAIL;
         ret->HDFtype = hdf_map_type(type);
         ret->HDFsize = DFKNTsize(ret->HDFtype);
 #endif
@@ -273,7 +274,10 @@ const int dims[] ;
 	}
 	if( NC_var_shape(*var, handle->dims) != -1)
 	{
-		return(handle->vars->count -1) ;
+#ifdef HDF
+            (*var)->ndg_ref = Hnewref(handle->hdf_file);
+#endif            
+            return(handle->vars->count -1) ;
 	}
 		/* unwind */
 	handle->vars->count-- ;
