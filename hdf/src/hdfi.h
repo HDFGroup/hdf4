@@ -328,11 +328,11 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-#if defined (__64BIT__)
+#ifdef AIX5L64
 typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
-#else /*__64BIT__ */
+#else /*AIX5L64 */
 typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
-#endif /*__64BIT__ */
+#endif /*AIX5L64 */
 #define _fcdtocp(desc) (desc)
 #ifdef  HAVE_FMPOOL
 #define FILELIB PAGEBUFIO  /* enable page buffering */
