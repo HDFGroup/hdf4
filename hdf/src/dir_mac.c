@@ -36,6 +36,7 @@ static char RcsId[] = "@(#)$Revision$";
 #include <pascal.h>
 #endif
 #include <string.h>
+#include <ctype.h>
 #include <Errors.h>
 
 OSErr	dd_errno;				/*	Global errno to check after calls to dirent routines	*/
@@ -236,10 +237,10 @@ hopendir(char *dirname, short vRefNum, long dirID)
 
         /* Make sure the path ends in a ':' */
         if (dirname != nil)             {
-                while ((iswhitespace(dirname[dirname[0]])) && (dirname[0] > 0))
+                while ((isspace(dirname[dirname[0]])) && (dirname[0] > 0))
                         dirname[0]--;
 
-                if ((dirname[dirname[0]] != ':') && (dirname[0]<255)
+                if ((dirname[dirname[0]] != ':') && (dirname[0]<255))
                         dirname[++dirname[0]] = ':';
         }
 
@@ -258,7 +259,7 @@ hopendir(char *dirname, short vRefNum, long dirID)
           else /* Fortner supplied fix 8/26/97 */
             {  /* make vRefNum and dirId valid */
                 vRefNum = pb.ioVRefNum;
-                dirId = pb.ioWDDirID;
+                dirID = pb.ioWDDirID;
             }
       }
 
