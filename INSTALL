@@ -106,7 +106,7 @@
   PowerPC(Mac-OS-7.5)         -               -               -         -
   68k-far/4i/8d(Mac-OS-7.5)   -               -               -         -
   Windows NT/95               Visual C++ 4.2  -               X         X  
-  T3D (v9.0.lai)              CC 4.05         -               X         X 
+  T3D (v9.0.2asC)             CC 5.0.1        -               X         X 
 
 2.2  Third Party Software Requirements:
      ==================================
