@@ -23,6 +23,7 @@
 #
 # C compiler flags (default is `-O'):
 CFLAGS=-O
+FFLAGS=
 #
 # C preprocessor flags 
 # CPPFLAGS=-DNDEBUG
