@@ -1,6 +1,9 @@
 #############################
 Expected output for './hdp dumpvg -c Dim0.0,Var0.0 -d tdata.hdf'
 #############################
+Warning>>> option -d is being removed from dumpvg.
+Please contact hdfhelp@ncsa.uiuc.edu if you would like to keep it.
+
      #0 (Vdata)
 	tag = 1962; reference = 27; 
 	number of records = 2; interlace = 0;
