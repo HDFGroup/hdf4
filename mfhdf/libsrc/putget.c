@@ -791,6 +791,8 @@ NC_var    * vp;
  *  data attach to it now.  Since attaching / detaching is so
  *  slow, stay attached for future reads / writes.  As a result,
  *  we must always attach with write access.
+ *
+ * The calling routine is responsible for calling DFKsetNT() as required.
  */
 static bool_t
 hdf_xdr_NCvdata(handle, vp, where, type, count, values)
@@ -873,9 +875,10 @@ uint32    count;
     }
     
 
-    /* Read or write the data into / from values */
-    DFKsetNT(vp->HDFtype);
+/*    This should be set by the caller */
+/*    DFKsetNT(vp->HDFtype); */
     
+    /* Read or write the data into / from values */
     if(handle->xdrs->x_op == XDR_DECODE) {
         status = Hread(vp->aid, byte_count, (uint8 *) tBuf);
         if(status != byte_count) return FALSE;
@@ -963,6 +966,7 @@ VOIDP     values;
 
 #endif
     
+    DFKsetNT(vp->HDFtype);
     return (hdf_xdr_NCvdata(handle, vp, where, type, 1, values)); 
 
 } /* hdf_xdr_NCv1data */
@@ -1259,10 +1263,11 @@ Void *values ;
 
 #ifdef HDF
         if(handle->is_hdf) {
-          if(!hdf_xdr_NCvdata(handle, vp,
-                          offset, vp->type, 
-                          (uint32)*edges, values))
-            return(-1) ;
+            DFKsetNT(vp->HDFtype);
+            if(!hdf_xdr_NCvdata(handle, vp,
+                                offset, vp->type, 
+                                (uint32)*edges, values))
+                return(-1) ;
         } else 
 #endif
           {
@@ -1319,24 +1324,30 @@ Void *values ;
 	arrayp("edges", vp->assoc->count, edges) ;
 #endif /* VDEBUG */
 
-	if(vp->assoc->count == 0) /* 'scaler' variable */
-	{
-	
 #ifdef HDF
-          if(handle->is_hdf) {
-		return(
-		hdf_xdr_NCv1data(handle, vp, vp->begin, vp->type, values) ?
-		0 : -1 ) ;
-          } else
+        /* set the number type now so we only do it once */
+        if(handle->is_hdf)
+            DFKsetNT(vp->HDFtype);
 #endif
-            {
-		return(
-		xdr_NCv1data(handle->xdrs, vp->begin, vp->type, values) ?
-		0 : -1 ) ;
-            }
 
-	}
-
+	if(vp->assoc->count == 0) {
+            /* 'scaler' variable */
+            
+#ifdef HDF
+            if(handle->is_hdf) {
+                return(
+                       hdf_xdr_NCv1data(handle, vp, vp->begin, vp->type, values) ?
+                       0 : -1 ) ;
+            } else
+#endif
+                {
+                    return(
+                           xdr_NCv1data(handle->xdrs, vp->begin, vp->type, values) ?
+                           0 : -1 ) ;
+                }
+            
+        }
+        
 	if( !NCcoordck(handle, vp, start) )
 		return(-1) ;
 
@@ -1656,6 +1667,7 @@ Void **datap ;
 
 #ifdef HDF
                 if(handle->is_hdf) {
+                    DFKsetNT(rvp[ii]->HDFtype);
                     if(!hdf_xdr_NCvdata(handle, rvp[ii],
                                         offset, rvp[ii]->type, 
                                         (uint32)iocount, datap[ii]))
