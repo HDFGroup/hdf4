@@ -1081,6 +1081,17 @@
 ./mfhdf/fortran/vms/mfsdff.for
 ./mfhdf/fortran/vms/netcdf.inc
 
+./mfhdf/hdfimport/hdfimport.c
+./mfhdf/hdfimport/hdfimport.input1
+./mfhdf/hdfimport/hdfimport.input1-32
+./mfhdf/hdfimport/hdfimport.out1
+./mfhdf/hdfimport/hdfimport.out1-32
+./mfhdf/hdfimport/hdfimport.out2
+./mfhdf/hdfimport/hdfimport.out2-32
+./mfhdf/hdfimport/hdfimporttest.c
+./mfhdf/hdfimport/Makefile.in
+./mfhdf/hdfimport/testutil.sh
+
 ./mfhdf/libsrc/alloc.h
 ./mfhdf/libsrc/array.c
 ./mfhdf/libsrc/attr.c
