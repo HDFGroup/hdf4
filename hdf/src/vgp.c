@@ -88,20 +88,18 @@ PRIVATE intn Load_vfile (HFILEID f)
       }
 
     /* allocate a new vfile_t structure */
-    vf = Get_vfile(f);
-    if(!vf)
+    if((vf = Get_vfile(f))==NULL)
         return FAIL;
 
     /* the file is already loaded (opened twice) do nothing */
-    if(vf->access++) {
+    if(vf->access++) 
         return SUCCEED;
-    }
 
     /* load all the vg's  tag/refs from file */
     vf->vgtabn = 0;
     vf->vgtree = tbbtdmake(vcompare, sizeof(int32));
     if(vf->vgtree == NULL)
-        return(FAIL);
+        HRETURN_ERROR(DFE_NOSPACE,FAIL);
         
     ret = aid = Hstartread(f, DFTAG_VG,  DFREF_WILDCARD);
     while (ret != FAIL) {
@@ -127,7 +125,7 @@ PRIVATE intn Load_vfile (HFILEID f)
     vf->vstree = tbbtdmake(vcompare, sizeof(int32));
     if(vf->vstree==NULL) {
         tbbtdfree(vf->vgtree, vdestroynode, NULL);
-        return(FAIL);
+        HRETURN_ERROR(DFE_NOSPACE,FAIL);
       } /* end if */
 
     ret = aid = Hstartread(f, VSDESCTAG,  DFREF_WILDCARD);
@@ -186,18 +184,17 @@ PRIVATE VOID Remove_vfile (HFILEID f)
       }
 
     /* Figure out what file to work on */
-    vf = Get_vfile(f);
-    
-    if(vf == NULL)
+    if((vf = Get_vfile(f)) == NULL)
         return;
     
     /* someone still has an active pointer to this file */
-    if(--vf->access) {
+    if(--vf->access) 
         return;
-    }
 
     tbbtdfree(vf->vgtree, vdestroynode, NULL);
     tbbtdfree(vf->vstree, vsdestroynode, NULL);
+
+	HDmemset(vf,0,sizeof(vfile_t));	/* reset values of structure */
 }  /* Remove_vfile */
 
 /* ---------------------------- vcompare ------------------------- */
@@ -563,9 +560,10 @@ PUBLIC int32 Vattach (HFILEID f, int32 vgid, const char *accesstype)
         if (NULL == (v= vginstance (f,(uint16)vgid)))
             HRETURN_ERROR(DFE_NOMATCH,FAIL);
           
-          /*
-           * vg already attached.  inc nattach and return existing ptr
-           */
+        /*
+         * vg already attached.  inc nattach and return existing ptr
+         */
+
         if (v->vg != NULL) {
             v->vg->access = MAX(v->vg->access, acc_mode);
             v->nattach++;
@@ -813,7 +811,7 @@ PUBLIC int32 Vflocate (int32 vkey, char *field)
 * RETURNS FALSE if not.
 * 28-MAR-91 Jason Ng NCSA
 */
-PUBLIC int32 Vinqtagref (int32 vkey, int32 tag, int32 ref)
+PUBLIC intn Vinqtagref (int32 vkey, int32 tag, int32 ref)
 {
     register uintn   u;
     register uint16     ttag, rref;
@@ -916,7 +914,7 @@ PUBLIC int32 Vgettagrefs (int32 vkey, int32 tagarray[], int32 refarray[], int32 
 * NOTE: Do not confuse with Vgettagrefs().
 *
 */
-PUBLIC int32 Vgettagref (int32 vkey, int32 which, int32 *tag, int32 *ref)
+PUBLIC intn Vgettagref (int32 vkey, int32 which, int32 *tag, int32 *ref)
 {
     vginstance_t  * v;
     VGROUP *vg;
@@ -1181,7 +1179,7 @@ PUBLIC int32 Vsetclass (int32 vkey, const char *vgclass)
 *	RETURNS FALSE if not, or if error
 *
 */
-PUBLIC int32 Visvg (int32 vkey, int32 id)
+PUBLIC intn Visvg (int32 vkey, int32 id)
 {
     register uintn u;
     register uint16 ID;
@@ -1218,7 +1216,7 @@ PUBLIC int32 Visvg (int32 vkey, int32 id)
 *  RETURNS 0 if not, or if error.
 */
 
-PUBLIC int32 Visvs (int32 vkey, int32 id)
+PUBLIC intn Visvs (int32 vkey, int32 id)
 {
     register intn i;
     vginstance_t  * v;
@@ -1445,7 +1443,7 @@ PUBLIC int32 Vgetclass (int32 vkey, char *vgclass)
 *
 */
 
-PUBLIC int32 Vinquire (int32 vkey, int32 *nentries, char *vgname)
+PUBLIC intn Vinquire (int32 vkey, int32 *nentries, char *vgname)
 {
     vginstance_t  * v;
     VGROUP *vg;
@@ -1507,8 +1505,8 @@ PUBLIC HFILEID Vopen( char *path, intn acc_mode, int16 ndds)
   	f = Hopen(path, acc_mode, ndds);
     if (f==FAIL)
         return(FAIL);
-
-	Vinitialize(f);
+    
+    Vinitialize(f);
     return (f);
 }
 
@@ -1527,8 +1525,6 @@ PUBLIC HFILEID Vopen( char *path, intn acc_mode, int16 ndds)
 * RETURN VALUE:  intn status - result of Hopen().
 *
 * See also Vopen().
-*
-* By: Jason Ng 10 Aug 92
 *
 */
 

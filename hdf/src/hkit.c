@@ -479,3 +479,27 @@ const char _HUGE *HDgettagname(uint16 tag)
 	    return(tag_descriptions[i].desc);
     return(NULL);
 }
+
+/* ----------------------------- HDgettagnum ------------------------------ */
+/*
+
+ NAME
+	HDgettagnum -- return the tag number for a text description of a tag
+ USAGE
+	intn HDgettagnum(tag_name)
+        char *   tag_name;         IN: name of tag to find
+ RETURNS
+        Tag number (>=0) on success or FAIL on failure
+ DESCRIPTION
+        Map a tag name to a statically allocated tag number for it.
+
+--------------------------------------------------------------------------- */
+intn HDgettagnum(const char *tag_name)
+{
+    intn i;
+
+    for(i=0; i<sizeof(tag_descriptions)/sizeof(tag_descript_t); i++)
+	if(0==HDstrcmp(tag_descriptions[i].name,tag_name))
+	    return(tag_descriptions[i].tag);
+    return(FAIL);
+}

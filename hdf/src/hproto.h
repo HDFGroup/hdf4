@@ -144,6 +144,9 @@ extern intn HDvalidfid
 extern const char _HUGE *HDgettagname
     (uint16 tag);
 
+extern intn HDgettagnum
+    (const char *tag_name);
+
 extern intn Hishdf
     (const char _HUGE *filename);
 

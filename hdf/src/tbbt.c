@@ -48,11 +48,15 @@ static TBBT_NODE *tbbt_end(TBBT_NODE *root, intn side)
 
 TBBT_NODE *tbbtfirst(TBBT_NODE *root)
 {
+	if(root==NULL)
+		return(NULL);
     return(  tbbt_end( root, LEFT )  );
 }
 
 TBBT_NODE *tbbtlast(TBBT_NODE *root)
 {
+	if(root==NULL)
+		return(NULL);
     return(  tbbt_end( root, RIGHT )  );
 }
 
@@ -86,12 +90,16 @@ static TBBT_NODE *tbbt_nbr(TBBT_NODE * ptr, intn  side )
 /* Returns pointer to node with previous key value: */
 TBBT_NODE *tbbtnext( TBBT_NODE *node )
 {
+	if(node==NULL)
+		return(NULL);
     return(  tbbt_nbr( node, RIGHT )  );
 }
 
 /* Returns pointer to node with next key value: */
 TBBT_NODE *tbbtprev( TBBT_NODE *node)
 {
+	if(node==NULL)
+		return(NULL);
     return(  tbbt_nbr( node, LEFT )  );
 }
 
@@ -104,6 +112,8 @@ TBBT_NODE *tbbtfind(TBBT_NODE *root,VOIDP key, intn (*compar) (VOIDP,VOIDP,intn)
     TBBT_NODE *parent= NULL;
     intn       cmp= 1;
 
+	if(root==NULL)
+		return(NULL);
     if(ptr) {
         intn side;
 
@@ -124,6 +134,8 @@ TBBT_NODE *tbbtfind(TBBT_NODE *root,VOIDP key, intn (*compar) (VOIDP,VOIDP,intn)
 /* Returns a pointer to the found node (or NULL) */
 TBBT_NODE *tbbtdfind(TBBT_TREE *tree,VOIDP key,TBBT_NODE **pp)
 {
+	if(tree==NULL)
+		return(NULL);
     return(  tbbtfind( tree->root, key, tree->compar, tree->cmparg, pp )  );
 }
 
@@ -226,8 +238,13 @@ printf("swapkid(): check 3, ptr=%p, side=%d, kid=%p\n",ptr,side,kid);
             Cnt(ptr,Other(side)) + 1 + Cnt(kid,Other(side)),
             deep[2]-1-Max(deep[0],deep[1]), HasChild(kid,side) );
 #else
+#if defined macintosh | defined THINK_C /* Macro substitution limit on Mac*/
+    kid->flags= SetFlags( kid, ( 1 + 2 - (side) ),
+            deep[2]-1-Max(deep[0],0), HasChild(kid,side) );
+#else /* !macintosh */
     kid->flags= SetFlags( kid, Other(side),
             deep[2]-1-Max(deep[0],0), HasChild(kid,side) );
+#endif /* !macintosh */
 
     /* update leaf counts */
     if(side==LEFT) { /* kid's left count doesn't change, nor ptr's r-count */
@@ -418,6 +435,8 @@ TBBT_NODE *tbbtins(TBBT_NODE **root,VOIDP item,VOIDP key,intn (*compar)
     intn cmp;
     TBBT_NODE *ptr, *parent;
 
+	if(*root==NULL)
+		return(NULL);
     if(NULL != tbbtfind( *root, (key ? key : item), compar, arg, &parent )
             || NULL == ( ptr= Alloc(1,TBBT_NODE) ) )
         return( NULL );
@@ -452,6 +471,8 @@ TBBT_NODE *tbbtdins(TBBT_TREE *tree,VOIDP item,VOIDP key )
 {
     TBBT_NODE *ret_node; /* the node to return */
 
+	if(tree==NULL)
+		return(NULL);
     ret_node=tbbtins( &(tree->root), item, key, tree->compar, tree->cmparg );
     if(ret_node!=NULL)
 	tree->count++;
@@ -477,7 +498,7 @@ VOIDP tbbtrem(TBBT_NODE **root,TBBT_NODE *node,VOIDP *kp)
   intn  side;       /* `leaf' is `side' child of `par' */
   VOIDP data;       /* Saved pointer to data item of deleted node */
 
-    if(  NULL == node  )
+    if( NULL==root || NULL == node  )
         return( NULL ); /* Argument couldn't find node to delete */
     data= node->data;   /* Save pointer to data item to be returned at end */
     if(  NULL != kp  )
@@ -733,6 +754,8 @@ VOID tbbtfree(TBBT_NODE **root, VOID (*fd) (VOIDP item),VOID (*fk) (VOIDP key))
 
 VOID tbbtprint(TBBT_NODE *node)
 {
+	if(node==NULL)
+		return;
 	printf("node=%p, key=%p, data=%p, flags=%x\n",node,node->key,node->data,(unsigned)node->flags);
 	printf("Lcnt=%d, Rcnt=%d\n",(int)node->lcnt,(int)node->rcnt);
 printf("*key=%d\n",(int)*(int32 *)(node->key));
@@ -774,6 +797,8 @@ VOID tbbt1dump(TBBT_NODE *node,intn method)
 
 VOID tbbtdump(TBBT_TREE *tree,intn method)
 {
+	if(tree==NULL)
+		return;
     if(*(TBBT_NODE **)tree!=NULL) {
         printf("Number of nodes in the tree: %ld\n",tree->count);
 	tbbt1dump(tree->root,method);
@@ -785,6 +810,9 @@ VOID tbbtdump(TBBT_TREE *tree,intn method)
 /* Always returns NULL */
 TBBT_TREE *tbbtdfree(TBBT_TREE *tree,VOID (*fd) (VOIDP item), VOID (*fk) (VOIDP key))
 {
+	if(tree==NULL)
+		return(NULL);
+
     tbbtfree( &tree->root, fd, fk );
     Free( tree );
     return( NULL );
@@ -797,5 +825,5 @@ long tbbtcount(TBBT_TREE *tree)
     if(tree==NULL)
         return(-1);
     else
-	return(tree->count);
+        return(tree->count);
 }

@@ -132,7 +132,7 @@ extern int32 Vinsert
 extern int32 Vflocate
   (int32 vkey, char _HUGE *field);
 
-extern int32 Vinqtagref
+extern intn Vinqtagref
   (int32 vkey, int32 tag, int32 ref);
 
 extern int32 Vntagrefs
@@ -141,7 +141,7 @@ extern int32 Vntagrefs
 extern int32 Vgettagrefs
   (int32 vkey, int32 _HUGE tagarray[], int32 _HUGE refarray[], int32 n);
 
-extern int32 Vgettagref
+extern intn Vgettagref
   (int32 vkey, int32 which, int32 _HUGE *tag, int32 _HUGE *ref);
 
 extern int32 VQueryref
@@ -162,10 +162,10 @@ extern int32 Vsetname
 extern int32 Vsetclass
   (int32 vkey, const char _HUGE *vgclass);
 
-extern int32 Visvg
+extern intn Visvg
   (int32 vkey, int32 id);
 
-extern int32 Visvs
+extern intn Visvs
     (int32 vkey, int32 id);
 
 extern int32 Vgetid
@@ -180,7 +180,7 @@ extern int32 Vgetname
 extern int32 Vgetclass
   (int32 vkey, char _HUGE *vgclass);
 
-extern int32 Vinquire
+extern intn Vinquire
   (int32 vkey, int32 _HUGE *nentries, char _HUGE *vgname);
 
 extern int32 Vdelete
