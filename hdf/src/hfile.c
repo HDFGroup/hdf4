@@ -869,6 +869,7 @@ int32 Hstartwrite(file_id, tag, ref, length)
     access_rec->idx = -1;
     access_rec->appendable=FALSE;   /* start data as non-appendable */
     access_rec->flush=FALSE;        /* start data as not needing flushing */
+    access_rec->special_info = NULL;
     if (HIlookup_dd(file_rec, tag, ref, &access_rec->block, &access_rec->idx)
             == FAIL) {  /* dd not found, so have to create new element */
 
