@@ -7,11 +7,11 @@
 #
 #Using ANSI compilier
 CC=cc
-CFLAGS=-ansi
+CFLAGS=-ansi -O -s
 
 # Fortran compilier
 FC = f77
-FFLAGS =
+FFLAGS = -O -s
 
 # Name of archive randomizer, usually ranlib (use 'true' if non-existant)
 RANLIB = true
