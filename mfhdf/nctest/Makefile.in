@@ -132,7 +132,7 @@ OBJS		= varget.o vargetg.o varput.o varputg.o vardef.o vartests.o \
 		  atttests.o misctest.o add.o error.o emalloc.o val.o slabs.o
 #LD_XDR		= @LD_XDR@
 LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(JPEG_LIB) $(ZLIB_LIB) $(LIBSX)
-GARBAGE		= $(PROGRAM) lint.out *.cdf *.log
+GARBAGE		= $(PROGRAM) lint.out *.nc *.cdf *.log
 
 all::		program
 
