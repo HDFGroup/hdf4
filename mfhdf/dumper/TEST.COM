@@ -14,7 +14,7 @@ $ hdp dumpsds -i 2 swf32.hdf
 $ hdp dumpsds -i 1,3 swf32.hdf
 $ hdp dumpsds -n Time swf32.hdf ! This command should fail with
 $!       error message: "SD with name Time: not found"     
-$ hdp dumpsds -n fakeDim0,Data-Set-2 swf32.hdf
+$ hdp dumpsds -n "fakeDim0", "Data-Set-2" swf32.hdf
 $ hdp dumpsds -r 3,2 swf32.hdf
 $ hdp dumpsds -r 3,2 -d swf32.hdf
 
