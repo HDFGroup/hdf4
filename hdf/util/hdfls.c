@@ -26,10 +26,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.13  1992/05/31 19:16:26  mfolk
-No change.  But Convex doesn't like match of arg types in call to
-qsort on line 220.
+Revision 1.14  1992/06/08 21:59:41  chouck
+Added 'verbose' option for labels/descriptions (-v) and
+option (-t #) to only list info about a given tag
 
+ * Revision 1.13  1992/05/31  19:16:26  mfolk
+ * No change.  But Convex doesn't like match of arg types in call to
+ * qsort on line 220.
+ *
  * Revision 1.12  1992/05/26  21:00:08  koziol
  * Folded Jason's Mac port and Linted code into the main version
  *
@@ -109,14 +113,18 @@ void qsort(void *base, size_t nmemb, size_t size,
         int (*compar) (const void*, const void *));
 #endif
 
-#define MAXBUFF 2000
+#define MAXBUFF 4000
 
 dd_t desc[MAXBUFF];
 
-int
-    debug=0,        /* Debugging is off by default */
-    sort=1,         /* Sorting is on by default */
-    longout=0;      /* short output by default */
+intn
+    debug    = FALSE,        /* Debugging is off by default */
+    sort     = TRUE,         /* Sorting is on by default */
+    longout  = FALSE,        /* short output by default */
+    labels   = FALSE,        /* no label info by default */
+    only_tag = DFTAG_NULL;   /* by default print info about all tags */
+
+char * file_name;    /* name of current file being listed */
 
 int compare
   PROTO((dd_t *a, dd_t *));
@@ -151,88 +159,104 @@ char *argv[];
     int i=1, j, n, status;
     filerec_t *file_rec;    /* file record */
     dd_t desc[MAXBUFF];
-
+    
     while((i < argc) && (argv[i][0]=='-')){
-      switch(argv[i][1]) {
-      case 'o':
-	sort=0;
-	break;
-      case 'd':
-	debug=1;
-	break;
-      case 'l':
-	longout = 1;
-	break;
-      default:    
-	printf("Unknown option : -%c\n", argv[1][1]);
-	break;
-      }
-      i++;
+        switch(argv[i][1]) {
+        case 'o':
+            sort = 0;
+            break;
+        case 'd':
+            debug = TRUE;
+            break;
+        case 'v':
+            labels = TRUE;
+            /* fall through... */
+        case 'l':
+            longout = TRUE;
+            break;
+        case 't' :
+            if(argv[i][2] != '\0') 
+                only_tag = atoi(&(argv[i][2]));
+            else 
+                only_tag = atoi(&(argv[++i][0]));
+            printf("Looking for tag %d\n", only_tag);
+            break;
+        default:    
+            printf("Unknown option : -%c\n", argv[1][1]);
+            break;
+        }
+        i++;
     }
-
+    
     /*
      * If a file name has not been supplied print the usage message
      */
     if(i == argc) {
-      printf("%s,  version: 1.1   date: February 10, 1992\n",argv[0]);
-      printf("hdfls [-o] [-l] [-d] fn ....\n");
-      printf("        This program displays information about the");
-      printf(" data elements in\n");
-      printf("        HDF file.\n");
-      printf("    -d: offset & length info of each element in the file\n");
-      printf("    -o: Ordered - display in reference number order\n");
-      printf("    -l: Long format - display more information\n");
-      exit (1);
+        printf("%s,  version: 1.2   date: June 8, 1992\n",argv[0]);
+        printf("hdfls [-o] [-l] [-d] [-v] [-t #] fn ....\n");
+        printf("        This program displays information about the");
+        printf(" data elements in\n");
+        printf("        HDF file.\n");
+        printf("    -d: offset & length info of each element in the file\n");
+        printf("    -o: Ordered - display in reference number order\n");
+        printf("    -l: Long format - display more information\n");
+        printf("    -v: Verbose format - display text of annotations and labels.\n");
+        printf("        (Verbose format automatically puts you in Long format).\n");
+        printf("    -t #: List only information about a specific type of tag.\n");
+        printf("          For example '%s -t 700 foo.hdf' will list information only\n", argv[0]);
+        printf("          about Scientific Data Groups.\n");
+        exit (1);
     }
     
-    while(i<argc) {
-        fid = Hopen(argv[i], DFACC_READ, -1);
+    while(i < argc) {
+        file_name = argv[i];
+        fid = Hopen(file_name, DFACC_READ, -1);
         printf( "%s:  ", argv[i]);
         if (fid == FAIL) {
-	  printf("\n\tNot an HDF file.\n");
-	  i++;
-	  continue;
+            printf("\n\tNot an HDF file.\n");
+            i++;
+            continue;
 	}
-
+        
 	aid = Hstartread(fid, DFTAG_WILDCARD, DFREF_WILDCARD);
 	if(aid == FAIL) {
-	  HEprint(stderr, 0);
-	  i++;
-	  continue;	  
+            HEprint(stderr, 0);
+            i++;
+            continue;	  
 	}
-
+        
 	status = SUCCEED;
 	for(n = 0; (n < MAXBUFF) && (status != FAIL); n++) {
-	  Hinquire(aid, NULL, &desc[n].tag, &desc[n].ref, &desc[n].length,
-		   &desc[n].offset, NULL, NULL, NULL);
-	  status = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT);
+            Hinquire(aid, NULL, &desc[n].tag, &desc[n].ref, &desc[n].length,
+                     &desc[n].offset, NULL, NULL, NULL);
+            status = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT);
 	}
-
+        
 	if(n == MAXBUFF) {
-	  fprintf(stderr, 
-		  "Warning:  File may have more DD's than hdfls can display\n");
+            fprintf(stderr, 
+                    "Warning:  File may have more DD's than hdfls can display\n");
 	}
-
+        
 	if(debug) {
-	  printf("\n");
-	  for (j=0; j<n; j++) {
-	    printf("%6d) tag %6d ref %6d ", j, desc[j].tag, desc[j].ref);
-	    printf(" offset %10ld length %10ld\n", desc[j].offset, desc[j].length);
-	  }
+            printf("\n");
+            for (j=0; j<n; j++) {
+                printf("%6d) tag %6d ref %6d ", j, desc[j].tag, desc[j].ref);
+                printf(" offset %10ld length %10ld\n", desc[j].offset, desc[j].length);
+            }
 	}
 	
 	if (sort) qsort( (char *) desc, n, sizeof(dd_t), compare);
 	
 	lprint(desc, n);
-
+        
 	if(Hendaccess(aid) == FAIL) {
-	  HEprint(stderr, 0);
+            HEprint(stderr, 0);
 	}
-
+        
         if (Hclose(fid) == FAIL) {
-	  HEprint(stderr, 0);
+            HEprint(stderr, 0);
 	}
-
+        
         i++;
         printf("\n");
     }
@@ -248,15 +272,25 @@ int num;
 #endif /* PROTOTYPE */
 {
   
-  int j=0;
-  int prev=0, empty=0;
-  char *name;
+  intn j = 0, empty = 0, status;
+  uint16 prev = 0;
+  int32 len;
+  char *name, *label_str;
   
   while (j <num) {
-    if (desc[j].tag==DFTAG_NULL) {
+    if (desc[j].tag == DFTAG_NULL) {
       empty++;
       j++;
       continue;               /* don't print anything now */
+    }
+
+    /* 
+     * skip this tag if the user only wants to see some tags and
+     *  this is not one of them 
+     */
+    if(only_tag != DFTAG_NULL && only_tag != desc[j].tag) {
+        j++;
+        continue;
     }
 
     /*
@@ -269,10 +303,37 @@ int num;
     /*
     ** Print out reference number information
     */
-    prev=desc[j].tag;
+    prev = desc[j].tag;
     if(longout) {
-      while (desc[j].tag==(uint16)prev && j<num) {
-	printf("\t\tRef no %6d   %8ld bytes\n", desc[j].ref, desc[j].length);
+      while (desc[j].tag == prev && j < num) {
+	printf("\tRef no %6d\t%8ld bytes\n", desc[j].ref, desc[j].length);
+        if(labels) {
+            /* read in all of the labels */
+            len = DFANgetlablen(file_name, prev, desc[j].ref);
+            if(len != FAIL) {
+                label_str = (char *) HDgetspace((uint32) len + 1);
+                status = DFANgetlabel(file_name, prev, desc[j].ref, label_str, len + 1);
+                label_str[len] = '\0';
+                if(status == FAIL) 
+                    printf("\t  Unable to read label\n");
+                else
+                    printf("\t  Label: %s\n", label_str);
+                HDfreespace(label_str);
+            }
+
+            /* read in all of the annotations */
+            len = DFANgetdesclen(file_name, prev, desc[j].ref);
+            if(len != FAIL) {
+                label_str = (char *) HDgetspace((uint32) len + 1);
+                status = DFANgetdesc(file_name, prev, desc[j].ref, label_str, len + 1);
+                label_str[len] = '\0';
+                if(status == FAIL) 
+                    printf("\t  Unable to read description\n");
+                else
+                    printf("\t  Description: %s\n", label_str);
+                HDfreespace(label_str);
+            }
+        }
 	j++;
       }
     } else {
