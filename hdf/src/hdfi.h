@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.25  1993/05/12 16:40:49  chouck
-Made int8 a 'singed char' because on some platforms (e.g. SGI) char can
-be unisgned by default
+Revision 1.26  1993/05/17 15:23:37  georgev
+HP9000 did not like the 'signed char' for int8.
 
+ * Revision 1.25  1993/05/12  16:40:49  chouck
+ * Made int8 a 'singed char' because on some platforms (e.g. SGI) char can
+ * be unisgned by default
+ *
  * Revision 1.24  1993/05/05  19:47:04  chouck
  * Define PROTOTYPE if using C++
  *
@@ -276,9 +279,9 @@ typedef void              VOID;
 typedef void              *VOIDP;
 typedef char              *_fcd;
 typedef int               bool;
-typedef signed char       char8;
+typedef char              char8;
 typedef unsigned char     uchar8;
-typedef signed char       int8;
+typedef char              int8;
 typedef unsigned char     uint8;
 typedef short int         int16;
 typedef unsigned short int uint16;
