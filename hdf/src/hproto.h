@@ -113,7 +113,7 @@ extern int Hnumber
 
 extern int Hgetlibversion
   PROTO((uint32 _HUGE *majorv, uint32 _HUGE *minorv,
-        uint32 _HUGE *release, char _HUGE *string));
+        uint32 _HUGE *releasev, char _HUGE *string));
 
 extern int Hgetfileversion
   PROTO((int32 file_id, uint32 _HUGE *majorv, uint32 _HUGE *minorv,
