@@ -9,7 +9,7 @@ $! [-.xdr], before executing this procedure.
 $
 $
 $ macro :== macro/nolist
-$ ccc := cc /opt/nodebug/include=([-.xdr])/nolist/define=stdc_includes
+$ ccc := cc /opt/nodebug/include=([-.xdr])/nolist/define=stdc_includes/define=swap
 $ librep := library/replace [-.-.LIB]NETCDF.OLB
 $
 $ define rpc sys$disk:[-.xdr]

@@ -1,4 +1,4 @@
-/*# Generated automatically from netcdf.h.in by configure. */
+/* Generated automatically from netcdf.h.in by configure. */
 /*
  *	Copyright 1993, University Corporation for Atmospheric Research
  *
