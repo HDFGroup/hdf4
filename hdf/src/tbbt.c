@@ -254,7 +254,7 @@ printf("swapkid(): NULL==ptr->Parent\n");
 #endif
         *root= kid;
 	}
-    else if(  ptr->Lchild == ptr->Parent->Lchild  ) {
+    else if(  ptr/*->Lchild*/ == ptr->Parent->Lchild  ) {
 #ifdef QAK
 printf("swapkid(): case b\n");
 #endif
@@ -341,8 +341,10 @@ printf("balance(): root=%p, ptr=%p, side=%d\n",root,ptr,side);
                 }
             } else if(  UnBal(ptr)  ) {     /* Just became balanced: */
                 ptr->flags &= ~TBBT_UNBAL;
-                if(  0 < deeper  )  /* Shorter of legs lengthened */
+                if(  0 < deeper  ) {  /* Shorter of legs lengthened */
+		    ptr->flags|=TBBT_INTERN;  /* Mark as internal node now */
                     deeper= 0;      /* so max length unchanged */
+		  } /* end if */
             } else if(  deeper < 0  ) {     /* Just became unbalanced: */
                 ptr->flags |= TBBT_HEAVY(Other(side));  /* Other side longer */
                 deeper= 0;  /* One of equal legs shortened; max length same */
