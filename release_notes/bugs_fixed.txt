@@ -25,28 +25,28 @@ HDF4.1r5
    define NULL. (bug #448)
 
 7. Giving NULL to the fieldname argument in VSsetfields now returns
-   FAIL instead of causing segnmentation fault. (bug #554)
+   FAIL instead of causing segmentation fault. (bug #554)
 
 8. Giving a NULL to the argument name in several name setting routines
    now returns FAIL instead of causing segnmentation fault. (bug #514)
 
-9. Two routines are added to get compression information for the SD and
+9. Two routines were added to get compression information for the SD and
    GR interfaces, including chunked elements: SDgetcompress/sfgcompress 
    and GRgetcompress/mggcompress. (bug #307)  
    Note: 
    - for a JPEG image, GRgetcompress only returns the compression type, not 
      the compression information (i.e, quantity and force_baseline) because 
-     these information currently are not retrievable.
+     this information currently is not retrievable.
    - getting compression type for JPEG chunked images is not working yet.
 
 10.  Added new fortran function heprntf (HEprint) that takes two
      arguments: file name and level. If file name string has 0 length
-     error messages will be printed to the standart output. 
+     error messages will be printed to the standard output. 
 
 11.  Fix the linking bug of unresolved symbol(error_top) DLL when HEclear 
-     was called by users. Users who want to use hdf DLL should define HDFAPDLL i
-     in their applations. Simply go to project setting and add HDFAPDLL as the 
-     predefined constant should work.
+     was called by users. Users who want to use hdf DLL should define HDFAPDLL 
+     in their applications. Simply going to project setting and adding HDFAPDLL
+     as the predefined constant should work.
 
 HDF4.1r4
 ========
