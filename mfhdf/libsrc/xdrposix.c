@@ -64,18 +64,18 @@ typedef NETLONG     netlong;
 		       * <rpc/xdr.h> */
 #include "mfhdf.h"
 
-#if defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__)
-typedef u_long off_t;
-#endif
-
 #if !(defined DOS_FS || defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__))
 #   if defined VMS
         typedef u_long ncpos_t;  /* size of u_long is 32 for DECC AXP */
 #   else 
-        typedef u_int ncpos_t ;
+        typedef u_int ncpos_t ;  /* all unicies */
 #   endif
 #else
+#if defined DOS_FS
 typedef off_t ncpos_t ;
+#else /* macintosh w/ MWERKS */
+typedef u_long ncpos_t ;
+#endif /* macintosh w/ MWERKS */
 #endif
 
 typedef struct {
