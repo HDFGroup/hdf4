@@ -153,11 +153,6 @@ handle_err (pname, rcode)
     char *pname;		/* procedure name */
     int rcode;			/* error return */
 {
-#ifndef HDF
-    extern void NCadvise();
-#endif /* !HDF */
-    extern char *cdf_routine_name; /* routine name in error messages */
-
     cdf_routine_name = pname;
     NCadvise(rcode, "string won't fit in CHARACTER variable provided");
 }
