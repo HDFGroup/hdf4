@@ -196,6 +196,8 @@ tbbtdless(TBBT_TREE * tree, VOIDP key, TBBT_NODE ** pp)
 
 /* tbbtindx -- Look up the Nth node (in key order) */
 /* Returns a pointer to the `indx'th node (or NULL) */
+/* Added NULL check for 'ptr' in while loop to 
+   prevent endless loop condition */
 TBBT_NODE  *
 tbbtindx(TBBT_NODE * root, int32 indx)
 {
@@ -203,11 +205,13 @@ tbbtindx(TBBT_NODE * root, int32 indx)
 
     if (NULL == ptr || indx < 0)
         return (NULL);
-    while (indx != (int32) LeftCnt(ptr))
+    while (ptr != NULL && indx != (int32) LeftCnt(ptr))
       {
           if (indx < (int32) LeftCnt(ptr))
             {
-                indx -= LeftCnt(ptr);
+#if 0
+                indx -= LeftCnt(ptr);  /* ??....bug */
+#endif
                 ptr = ptr->Lchild;
             }
           else if (HasChild(ptr, RIGHT))
@@ -933,6 +937,79 @@ tbbtdump(TBBT_TREE * tree, intn method)
     else
         printf("Tree is empty\n");
 }   /* end tbbtdump() */
+
+VOID
+tbbt_printNode(TBBT_NODE * node, VOID(*key_dump)(VOID *,VOID *))
+{
+
+    if (node == NULL)
+      {
+        printf("ERROR:  null node pointer\n");
+        return;
+      }
+    printf("node=%08x, flags=%x, Lcnt=%d, Rcnt=%d\n", node, (unsigned)node->flags,
+           node->lcnt, node->rcnt);
+    printf("Lchild=%08x, Rchild=%08x, Parent=%08x\n", node->Lchild, node->Rchild, node->Parent);
+    if (key_dump != NULL)
+      {
+        (*key_dump)(node->key,node->data);
+      }
+    fflush(stdout);
+#if 0
+    printf("Lcnt=%d, Rcnt=%d\n", (int) node->lcnt, (int) node->rcnt);
+    printf("*key=%d\n", (int) *(int32 *) (node->key));
+    printf("Lchild=%p, Rchild=%p, Parent=%p\n", node->Lchild, node->Rchild, node->Parent);
+#endif
+}   /* end tbbt_printNode() */
+
+VOID
+tbbt_dumpNode(TBBT_NODE *node, VOID (*key_dump)(VOID *,VOID *),
+                        intn method)
+{
+    if (node == NULL)
+        return;
+    switch (method)
+      {
+          case -1:      /* Pre-Order Traversal */
+              tbbt_printNode(node, key_dump);
+              if (HasChild(node, LEFT))
+                  tbbt_dumpNode(node->Lchild, key_dump, method);
+              if (HasChild(node, RIGHT))
+                  tbbt_dumpNode(node->Rchild, key_dump, method);
+              break;
+
+          case 1:   /* Post-Order Traversal */
+              if (HasChild(node, LEFT))
+                  tbbt_dumpNode(node->Lchild, key_dump, method);
+              if (HasChild(node, RIGHT))
+                  tbbt_dumpNode(node->Rchild, key_dump, method);
+              tbbt_printNode(node, key_dump);
+              break;
+
+          case 0:   /* In-Order Traversal */
+          default:
+              if (HasChild(node, LEFT))
+                  tbbt_dumpNode(node->Lchild, key_dump, method);
+              tbbt_printNode(node, key_dump);
+              if (HasChild(node, RIGHT))
+                  tbbt_dumpNode(node->Rchild, key_dump, method);
+              break;
+
+      }     /* end switch() */
+}   /* end tbbt_dumpNode() */
+
+VOID
+tbbt_dump(TBBT_TREE *ptree, VOID (*key_dump)(VOID *,VOID *), intn method)
+{
+	TBBT_TREE  *tree;
+
+	tree = (TBBT_TREE *) ptree;
+	printf("TBBT-tree dump  %x:\n\n",(int)ptree);
+	printf("capacity = %d\n",tree->count);
+	printf("\n");
+	tbbt_dumpNode(tree->root,key_dump, method);
+	return;
+}
 
 /* Always returns NULL */
 TBBT_TREE  *
