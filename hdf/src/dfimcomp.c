@@ -1,33 +1,9 @@
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.9  1993/09/02 14:41:47  koziol
-Patches for Watcom/386 Support
+/* $Id$ */
 
- * Revision 1.8  1993/08/27  23:53:09  georgev
- * Added VOIDP cast to HDfreespace()
- *
- * Revision 1.7  1993/08/16  21:45:15  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.5  1993/05/03  21:32:07  koziol
- * First half of fixes to make Purify happy
- *
- * Revision 1.4  1993/04/19  22:47:15  koziol
- * General Code Cleanup to reduce/remove errors on the PC
- *
- * Revision 1.3  1993/01/19  05:54:35  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /************************************************************************/
 /*  Module Name : imcomp                        */
 /*  Exports     : DFCimcomp(), DFCunimcomp()                */

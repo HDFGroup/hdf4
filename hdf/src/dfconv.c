@@ -1,49 +1,8 @@
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.9  1993/05/18 19:43:08  chouck
-Fixed parameter differences in DFKNTsize()
-
- * Revision 1.8  1993/03/29  16:47:18  koziol
- * Updated JPEG code to new JPEG 4 code.
- * Changed VSets to use Threaded-Balanced-Binary Tree for internal
- * 	(in memory) representation.
- * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
- * 	to use 32-bit integer keys instead of pointers.
- * Backed out speedups for Cray, until I get the time to fix them.
- * Fixed a bunch of bugs in the little-endian support in DFSD.
- *
- * Revision 1.7  1993/02/17  21:19:33  koziol
- * Enabled Cray speedups, but left testing code in still
- *
- * Revision 1.6  1993/02/16  18:47:26  koziol
- * Cray Speedups
- *
- * Revision 1.5  1993/01/26  19:42:18  koziol
- * Added support for reading and writing Little-Endian data on all
- * platforms.  This has been tested on: Cray, Sun, and PCs so far.
- *
- * Revision 1.4  1993/01/19  05:54:16  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.3  1993/01/15  23:47:37  sxu
- * bug fixed in DFKvo8f and DFKvi8f
- *
- * Revision 1.2  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
-/************************************************************************/
-/* DFCONV.C                                                             */
-/************************************************************************/
+/* $Id$ */
 
 /*------------------------------------------------------------------
  File:  dfconv.c

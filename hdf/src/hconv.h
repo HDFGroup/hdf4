@@ -1,3 +1,5 @@
+/* $Id$ */
+
 /*-----------------------------------------------------------------------------
  * File:    hconv.h
  * Purpose: header file for data conversion information & structures
