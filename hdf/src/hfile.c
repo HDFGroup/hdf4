@@ -2642,10 +2642,6 @@ Hcache(int32 file_id, intn cache_on)
     CONSTR(FUNC, "Hcache");     /* for HERROR */
     filerec_t  *file_rec;       /* file record */
 
-    /* check validity of file record and get dd ptr */
-    file_rec = FID2REC(file_id);
-    if (BADFREC(file_rec))
-        HRETURN_ERROR(DFE_INTERNAL, FAIL);
 
     if(file_id==CACHE_ALL_FILES) /* check whether to modify the default cache */
       { /* set the default caching for all further files Hopen'ed */
@@ -2653,6 +2649,11 @@ Hcache(int32 file_id, intn cache_on)
       } /* end if */
     else
       {
+        /* check validity of file record and get dd ptr */
+        file_rec = FID2REC(file_id);
+        if (BADFREC(file_rec))
+           HRETURN_ERROR(DFE_INTERNAL, FAIL);
+
         /* check whether to flush the file info */
         if (cache_on == FALSE && (file_rec->cache && file_rec->dirty))
           {
