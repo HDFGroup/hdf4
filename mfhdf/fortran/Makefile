@@ -4,12 +4,12 @@
 # $Id$
 
 PROGRAM		= ftest
-OS		= sunos
+OS		= irix
 FC		= f77
-CPP_NETCDF	= -I../libsrc -I/hdf/home/chouck/hdf/33/include -DSUN
+CPP_NETCDF	= -I../libsrc -I/hdf/home/chouck/hdf/33/include -DIRIS4 -cckr
 CPP_OLD_FILLVALUES	= 
-CPPFLAGS	= $(CPP_NETCDF) $(CPP_OLD_FILLVALUES) -DNDEBUG -DHDF -DNO_HAVE_PROTOTYPES -Dconst= -DNO_STDARG -DNO_STRERROR
-CFLAGS		= -O
+CPPFLAGS	= $(CPP_NETCDF) $(CPP_OLD_FILLVALUES) -DNDEBUG -DHDF -DNO_STRERROR
+CFLAGS		= -g
 FFLAGS		= -O
 HDF_LIB         = /hdf/home/chouck/hdf/33/lib/libdf.a
 GARBAGE		= $(PROGRAM) test.nc copy.nc netcdf.inc jackets.c \
@@ -27,7 +27,7 @@ LIBOBJS		= jackets.o mfsdf.o mfsdff.o
 LIBNAME		= netcdf
 LIBRARY		= ../libsrc/lib$(LIBNAME).a
 OBJS		= $(PROGRAM).o $(LIBOBJS) 
-LD_XDR		= 
+LD_XDR		= -lsun
 LD_NETCDF	= -L../libsrc -lnetcdf
 LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB)
 prefix		= /hdf/home/chouck/hdf
@@ -91,14 +91,14 @@ AR		= ar
 CC		= cc
 CPP		= cc -E
 INCDIR		= $(prefix)/include
-INSTALL		= /bin/install -c
-INSTALL_DATA	= $(INSTALL) -m 664
+INSTALL		= cp
+INSTALL_DATA	= $(INSTALL)
 INSTALL_PROGRAM	= $(INSTALL)
 FC		= f77
 NCDUMP		= @NCDUMP@
 NCGEN		= @NCGEN@
 NEQN		= neqn
-OS		= sunos
+OS		= irix
 SHELL		= /bin/sh
 TBL		= tbl
 

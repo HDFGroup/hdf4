@@ -95,10 +95,19 @@ nsfendacc(id)
 nsffinfo(intf *file_id, intf *datasets, intf *gattr)
 #else
 nsffinfo(file_id, datasets, gattr)
-    intf *file_id;
+     intf *file_id;
+     intf *datasets;
+     intf *gattr;
 #endif /* PROTOTYPE */
 {
-    return(SDfileinfo(*file_id, datasets, gattr));
+  int32 dset, nattr, status;
+
+  status = SDfileinfo((int32) *file_id, &dset, &nattr);
+
+  *datasets = (intf) dset;
+  *gattr    = (intf) nattr;
+
+  return (status);
 }
 
 /*-----------------------------------------------------------------------------
@@ -175,13 +184,12 @@ nscginfo(id, name, rank, dimsizes, nt, nattr, len)
     char *iname;
     int32 status;
     int32 cdims[100], i;
-
-    /* QUESTION:  Should we be transposing the dimensions? */
+    int32 rank32, nt32, nattr32;
 
     iname = NULL;
     if(*len)   iname  = (char *) HDgetspace((uint32)*len + 1);
 
-    status = SDgetinfo(*id, iname, rank, cdims, nt, nattr);
+    status = SDgetinfo((int32) *id, iname, &rank32, cdims, &nt32, &nattr32);
 
     for(i = 0; i < *rank; i++)
         dimsizes[i] = cdims[*rank - i - 1];
@@ -190,6 +198,10 @@ nscginfo(id, name, rank, dimsizes, nt, nattr, len)
 
     if(iname)  HDfreespace(iname);
   
+    *rank  = (intf) rank32;
+    *nt    = (intf) nt32;
+    *nattr = (intf) nattr32;
+
     return(status);
 
 }
@@ -214,7 +226,13 @@ nsfgcal(id, cal, cale, ioff, ioffe, nt)
      intf *nt;
 #endif /* PROTOTYPE */
 {
-    return(SDgetcal(*id, cal, cale, ioff, ioffe, nt));
+  int32 nt32, status;
+  
+  status = SDgetcal((int32) *id, cal, cale, ioff, ioffe, &nt32);
+  
+  *nt = (intf) nt32;
+
+  return (status);
 }
 
 /*-----------------------------------------------------------------------------
@@ -808,20 +826,23 @@ nscgainfo(intf *id, intf *number, char *name, intf *nt, intf *count, intf *len)
 nscgainfo(id, number, name, nt, count, len)
      intf *id, *number;
      char *name;
-     intf *count, *len;
+     intf *count, *len, *nt;
 #endif /* PROTOTYPE */
 {
     char *iname;
     int32 status;
+    int32 nt32;
 
     iname = NULL;
     if(*len)   iname  = (char *) HDgetspace((uint32)*len + 1);
 
-    status = SDattrinfo(*id, *number, iname, nt, count);
+    status = SDattrinfo(*id, *number, iname, &nt32, count);
 
     HDpackFstring(iname,  _fcdtocp(name),  *len);
 
     if(iname)  HDfreespace(iname);
+
+    *nt    = (intf) nt32;
   
     return(status);
 
@@ -845,21 +866,26 @@ nscgdinfo(intf *id, char *name, intf *sz, intf *nt, intf *nattr, intf *len)
 nscgdinfo(id, name, sz, nt, nattr, len)
      intf *id;
      char *name;
-     intf *sz, *nattr, *len;
+     intf *sz, *nattr, *len, *nt;
 #endif /* PROTOTYPE */
 {
     char *iname;
     int32 status;
+    int32 sz32, nt32, nattr32;
 
     iname = NULL;
     if(*len)   iname  = (char *) HDgetspace((uint32)*len + 1);
 
-    status = SDdiminfo(*id, iname, sz, nt, nattr);
+    status = SDdiminfo(*id, iname, &sz32, &nt32, &nattr32);
 
     HDpackFstring(iname,  _fcdtocp(name),  *len);
 
     if(iname)  HDfreespace(iname);
   
+    *nt    = (intf) nt32;
+    *sz    = (intf) sz32;
+    *nattr = (intf) nattr;
+
     return(status);
 
 }
