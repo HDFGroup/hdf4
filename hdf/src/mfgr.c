@@ -544,7 +544,7 @@ printf("%s: nri=%ld, nci=%ld, nri8=%ld, nci8=%ld, nvg=%ld\n",FUNC,(long)nri,(lon
           if ((group_id = DFdiread(file_id, DFTAG_RIG, find_ref)) == FAIL)
               HGOTO_ERROR(DFE_INTERNAL, FAIL);
           elt_tag = elt_ref = 0;    /* initialize bogus tag/ref */
-          while (!DFdiget(group_id, &elt_tag, &elt_ref))
+          while (DFdiget(group_id, &elt_tag, &elt_ref)!=FAIL)
             {   /* get next tag/ref */
                 if (elt_tag == DFTAG_CI || elt_tag == DFTAG_RI)
                   {   
@@ -557,6 +557,9 @@ printf("%s: nri=%ld, nci=%ld, nri8=%ld, nci8=%ld, nvg=%ld\n",FUNC,(long)nri,(lon
                             img_info[curr_image].offset = Hoffset(file_id, elt_tag, elt_ref);     /* store offset */
                             curr_image++;
                         }     /* end if */
+                      /* This next, very weird, while loop is required because the DFgroup interface won't recycle the dfgroup ID's unless the last item is read from the DFgroup -QAK */
+                      while (DFdiget(group_id, &elt_tag, &elt_ref)!=FAIL)
+                          ;
                       break;  /* break out of reading the group */
                   } /* end if */
             } /* end while */
@@ -936,7 +939,7 @@ for (i = 0; i < curr_image; i++)
                           new_image->ri_ref=DFREF_WILDCARD;
                           new_image->rig_ref=img_info[i].grp_ref;
 
-                          while (!DFdiget(GroupID, &elt_tag, &elt_ref))
+                          while (DFdiget(GroupID, &elt_tag, &elt_ref)!=FAIL)
                             {     /* get next tag/ref */
                                 switch (elt_tag)
                                   {   /* process tag/ref */
@@ -4165,7 +4168,6 @@ intn GRsetexternalfile(int32 riid,const char *filename,int32 offset)
 {
     CONSTR(FUNC, "GRsetexternalfile");   /* for HERROR */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     int32 tmp_aid;  /* AID returned from HXcreate() */
     intn  ret_value = SUCCEED;
 

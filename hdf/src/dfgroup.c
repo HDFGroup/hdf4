@@ -69,7 +69,7 @@ setgroupREC(DIlist_ptr list_rec)
     int32       i;
 
     for (i = 0; i < MAX_GROUPS; i++)
-        if (!Group_list[i])
+        if (Group_list[i]==NULL)
           {
               Group_list[i] = list_rec;
               return GSLOT2ID(i);
