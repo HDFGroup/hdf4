@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/09/04 22:05:02  georgev
+Fixed "const" problem for MIPSEL.
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 #ifndef HDFI_H
 #define HDFI_H
@@ -372,6 +375,9 @@ typedef double          float64;
 #define _fcdtocp(desc) (desc)
 #define FNAME_POST_UNDERSCORE
 #define FILELIB UNIXBUFIO
+#ifndef __STDC__
+#define const
+#endif /* __STDC__ */
 #endif /* MIPSEL */
 
 #ifdef MAC
