@@ -5575,6 +5575,12 @@ test_mgr(void)
     test_mgr_pal(0);    /* read in old-style DFP palette tests */
 #endif /* LATER */
     test_mgr_chunkwr();
+
+#ifdef H4_HAVE_SZLIB
     test_mgr_szip();   /* write/read with szip compression */
+#else                  /* skip szip test it and report */
+    printf("         -- ***** GR SZIP test skipped *****\n");
+#endif
+
 }   /* test_mgr() */
 
