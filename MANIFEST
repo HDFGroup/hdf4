@@ -132,22 +132,6 @@
 ./hdf/fmpool/config/mh-t3e
 ./hdf/fmpool/config/mh-unicos
 
-./hdf/pablo/HDFIOTrace.h
-./hdf/pablo/HDFrecord_RT.h
-./hdf/pablo/HDFTrace.h
-./hdf/pablo/Makefile.in
-./hdf/pablo/PabloHDF.c
-./hdf/pablo/PabloHDFff.f
-./hdf/pablo/PabloHDF.inc
-./hdf/pablo/PabloHDF_RT.c
-./hdf/pablo/PabloHDF_SDDF.c
-./hdf/pablo/PabloSedscr
-./hdf/pablo/ProcIDs.h
-./hdf/pablo/ProcTrace.h
-./hdf/pablo/README.Pablo
-./hdf/pablo/depend
-
-
 ./hdf/src/INSTALL
 ./hdf/src/Makefile.am
 ./hdf/src/Makefile.in

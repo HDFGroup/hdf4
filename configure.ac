@@ -623,8 +623,7 @@ AC_CONFIG_FILES([Makefile
                  mfhdf/ncdump/Makefile
                  mfhdf/ncgen/Makefile
                  mfhdf/nctest/Makefile
-                 mfhdf/pablo/Makefile
-                 mfhdf/port/Makefile])
+			 mfhdf/port/Makefile])
 
 dnl If we're building the XDR library, then generate its Makefile.
 if test "X$build_xdr" = "Xyes"; then

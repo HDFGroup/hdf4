@@ -17,7 +17,7 @@ Distribution Layout
    hdf    -- contains the source code for the HDF 'base library', the 
              the multi_file annotation interface, the multi_file raster
              image interface, HDF command line utilities (hdp, the hdf 
-             dumper is in mfhdf/), Pablo instrumentation support, 
+             dumper is in mfhdf/), 
              and a test suite. It also contains the software
              distributions for IJPEG(hdf/jpeg) and ZLIB(hdf/zlib) 
              which are required by the HDF library. 
