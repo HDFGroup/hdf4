@@ -90,6 +90,11 @@ static char RcsId[] = "@(#)$Revision$";
    HDget_special_info -- get information about a special element
    HDset_special_info -- reset information about a special element
 
+   File Memory Pool routines
+   -------------------------
+   Hmpset  -- set pagesize and maximum number of pages to cache on next open/create       
+   Hmpget  -- get last pagesize and max number of pages cached for open/create
+
    Special Tag routines
    -------------------
    HDmake_special_tag --
@@ -5613,6 +5618,96 @@ done:
 
   return ret_value;
 } /* end HPwrite() */
+
+#ifdef HAVE_FMPOOL
+/******************************************************************************
+NAME
+     Hmpset - set pagesize and maximum number of pages to cache on next open/create
+
+DESCRIPTION
+     Set the pagesize and maximum number of pages to cache on the next 
+     open/create of a file. A pagesize that is a power of 2 is recommended.
+
+     The values set here only affect the next open/creation of a file and
+     do not change a particular file's paging behaviour after it has been
+     opened or created. This maybe changed in a later release.
+
+     Use flags arguement of 'MP_PAGEALL' if the whole file is to be cached 
+     in memory otherwise passs in zero.
+
+RETURNS
+     Returns SUCCEED if successful and FAIL otherwise
+
+NOTE
+     This calls the real routine MPset().
+     Currently 'maxcache' has to be greater than 1. Maybe use special 
+     case of 0 to specify you want to turn page buffering off or use
+     the flags arguement. 
+
+******************************************************************************/
+int
+Hmpset(int pagesize, /* IN: pagesize to use for next open/create */
+       int maxcache, /* IN: max number of pages to cache */
+       int flags     /* IN: flags = 0, MP_PAGEALL */
+)
+{
+    int ret_value = SUCCEED;
+
+        /* call the real routine */
+    ret_value =  MPset(pagesize,maxcache,flags);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
+}
+
+/******************************************************************************
+NAME
+     Hmpget - get last pagesize and max number of pages cached for open/create
+
+DESCRIPTION
+     This gets the last pagesize and maximum number of pages cached for 
+     the last open/create of a file.
+
+RETURNS
+     Returns SUCCEED.
+
+NOTES
+     This routine calls the real routine MPget().
+******************************************************************************/
+int
+Hmpget(int *pagesize, /* OUT: pagesize to used in last open/create */
+      int *maxcache, /* OUT: max number of pages cached in last open/create */
+      int flags      /* IN: */
+)
+{
+    int psize = 0;
+    int mcache = 0;
+    int ret_value = SUCCEED;
+
+    /* call the real routine */
+    ret_value =  MPget(&psize,&mcache,flags);
+    *pagesize = psize;
+    *maxcache = mcache;
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
+} /* Hmpget() */
+
+#endif /* HAVE_FMPOOL */
 
 /* -------------------------- MAC Specific Stuff -------------------------- */
 #if defined(MAC) & !defined(SYMANTEC_C)
