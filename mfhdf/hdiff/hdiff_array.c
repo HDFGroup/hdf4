@@ -7,8 +7,7 @@
 #include <math.h>
 #include <limits.h>
 #include <float.h>
-
-
+#include <assert.h>
 #include "hdf.h"
 #include "mfhdf.h"
 #include "hdiff.h"
@@ -32,6 +31,70 @@ d_min_val1, d_max_val1, d_min_val2, d_max_val2); }
 i4_min_val1, i4_max_val1, i4_min_val2, i4_max_val2); }
 
 /*-------------------------------------------------------------------------
+ * printf formatting
+ *-------------------------------------------------------------------------
+ */
+#define SPACES  "          "
+#define FFORMAT "%-15f %-15f %-15f\n"
+#define IFORMAT "%-15d %-15d %-15d\n"
+#define CFORMAT "%-16c %-17c\n"
+#define SFORMAT "%-16s %-17s\n"
+#define UIFORMAT "%-15u %-15u %-15u\n"
+#define LIFORMAT "%-15ld %-15ld %-15ld\n"
+#define ULIFORMAT "%-15lu %-15lu %-15lu\n"
+
+
+/*-------------------------------------------------------------------------
+ * Function: print_pos
+ *
+ * Purpose: convert an array index position to matrix notation
+ *
+ * Return: pos matrix array
+ *
+ * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
+ *
+ * Date: May 9, 2003
+ *
+ *-------------------------------------------------------------------------
+ */
+void print_pos( int        *ph, 
+                uint32     curr_pos, 
+                int32      *acc, 
+                int32      *pos, 
+                int        rank, 
+                const char *obj1, 
+                const char *obj2 )
+{
+ int i;
+
+ /* print header */
+ if ( *ph==1 )
+ {
+  *ph=0;
+  printf("%-15s %-15s %-15s %-20s\n", 
+   "position", 
+   (obj1!=NULL) ? obj1 : " ", 
+   (obj2!=NULL) ? obj2 : " ",
+   "difference");
+  printf("------------------------------------------------------------\n");
+ }
+
+ for ( i = 0; i < rank; i++)
+ {
+  pos[i] = curr_pos/acc[i];
+  curr_pos -= acc[i]*pos[i];
+ }
+ assert( curr_pos == 0 );
+
+ printf("[ " );  
+ for ( i = 0; i < rank; i++)
+ {
+  fprintf(stdout,"%d ", pos[i]  );
+ }
+ printf("]" );
+}
+
+/*-------------------------------------------------------------------------
  * Function: array_diff
  *
  * Purpose: memory compare
@@ -41,7 +104,11 @@ i4_min_val1, i4_max_val1, i4_min_val2, i4_max_val2); }
 
 int array_diff(void *buf1, 
                void *buf2, 
-               int32 tot_cnt, 
+               uint32 tot_cnt, 
+               const char *name1,
+               const char *name2,
+               int rank,
+               int32 *dims,
                int32 type, 
                float32 err_limit, 
                int32 max_err_cnt, 
@@ -51,7 +118,7 @@ int array_diff(void *buf1,
 
 
 {
- int32   i;
+ uint32   i;
  int8    *i1ptr1, *i1ptr2;
  int16   *i2ptr1, *i2ptr2;
  int32   *i4ptr1, *i4ptr2;
@@ -72,6 +139,20 @@ int array_diff(void *buf1,
  int     n_stats = 0;
  char    *debug;
  FILE    *fp=NULL;
+ int32   acc[MAX_VAR_DIMS];   /* accumulator position */
+ int32   pos[MAX_VAR_DIMS];   /* matrix position */
+ int     ph=1;                /* print header  */
+ int     j;
+
+ acc[rank-1]=1;
+ for(j=(rank-2); j>=0; j--)
+ {
+  acc[j]=acc[j+1]*(int)dims[j+1];
+ }
+ for ( j = 0; j < rank; j++)
+  pos[j]=0;
+
+
  debug = getenv("DEBUG");
  if (debug) {
   fp = fopen("hdiff.debug", "w");
@@ -168,8 +249,9 @@ int array_diff(void *buf1,
    {
     n_diff++;
     if (n_diff <= max_err_cnt) {
-     printf("Index: %d,   File1: %d,   File2: %d\n",
-      i, *i1ptr1, *i1ptr2);
+     print_pos(&ph,i,acc,pos,rank,name1,name2);
+     printf(SPACES);
+     printf(IFORMAT,*i1ptr1,*i1ptr2,abs(*i1ptr1-*i1ptr2));
     }
    }                                               
    i1ptr1++;  i1ptr2++;
@@ -216,8 +298,9 @@ int array_diff(void *buf1,
    {
     n_diff++;
     if (n_diff <= max_err_cnt) {
-     printf("Index: %d,   File1: %d,   File2: %d\n",
-      i, *i2ptr1, *i2ptr2);
+     print_pos(&ph,i,acc,pos,rank,name1,name2);
+     printf(SPACES);
+     printf(IFORMAT,*i2ptr1,*i2ptr2,abs(*i2ptr1-*i2ptr2));
     }
    }                                               
    i2ptr1++;  i2ptr2++;
@@ -260,8 +343,9 @@ int array_diff(void *buf1,
    {
     n_diff++;
     if (n_diff <= max_err_cnt) {
-     printf("Index: %d,   File1: %d,   File2: %d\n",
-      i, *i4ptr1, *i4ptr2);
+     print_pos(&ph,i,acc,pos,rank,name1,name2);
+     printf(SPACES);
+     printf(IFORMAT,*i4ptr1,*i4ptr2,abs(*i4ptr1-*i4ptr2));
     }
    }                                               
    i4ptr1++;  i4ptr2++;
@@ -307,8 +391,9 @@ int array_diff(void *buf1,
    {
     n_diff++;
     if (n_diff <= max_err_cnt) {
-     printf("Index: %d,   File1: %#.8g,   File2: %#.8g\n",
-      i, *fptr1, *fptr2);
+     print_pos(&ph,i,acc,pos,rank,name1,name2);
+     printf(SPACES);
+     printf(FFORMAT,*fptr1,*fptr2,abs(*fptr1-*fptr2));
     }
    }                                               
    fptr1++;  fptr2++;
@@ -350,8 +435,9 @@ int array_diff(void *buf1,
    {
     n_diff++;
     if (n_diff <= max_err_cnt) {
-     printf("Index: %d,   File1: %#.16g,   File2: %#.16g\n",
-      i, *dptr1, *dptr2);
+     print_pos(&ph,i,acc,pos,rank,name1,name2);
+     printf(SPACES);
+     printf(FFORMAT,*dptr1,*dptr2,abs(*dptr1-*dptr2));
     }
    }
    dptr1++;  dptr2++;

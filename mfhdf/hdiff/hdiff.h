@@ -125,7 +125,11 @@ void make_vars(char *optarg, diff_opt_t *opt, int option);
 
 int array_diff(void *buf1, 
                void *buf2, 
-               int32 tot_cnt, 
+               uint32 tot_cnt, 
+               const char *name1,
+               const char *name2,
+               int rank,
+               int32 *dims,
                int32 type, 
                float32 err_limit, 
 															int32 max_err_cnt, 

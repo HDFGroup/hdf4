@@ -258,8 +258,20 @@ int diff_gr( int32 file1_id,
   to tot_err_cnt so it doesn't trip  
   */
   max_err_cnt = (opt->max_err_cnt >= 0) ? opt->max_err_cnt : nelms;
-  nfound=array_diff(buf1, buf2, nelms, dtype1, opt->err_limit, 
-   max_err_cnt, opt->statistics, 0, 0);
+  nfound=array_diff(
+   buf1, 
+   buf2, 
+   nelms, 
+   gr1_name,
+   gr2_name,
+   2,
+   dimsizes1,
+   dtype1, 
+   opt->err_limit, 
+   max_err_cnt, 
+   opt->statistics, 
+   0, 
+   0);
  }
   
 /*-------------------------------------------------------------------------
