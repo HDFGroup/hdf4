@@ -24,7 +24,7 @@ extern char *realloc();
 
 #ifndef NO_STDLIB
 #ifdef HDF
-#define Free(ptr)		HDfreespace(ptr)
+#define Free(ptr)		HDfreespace((VOIDP)ptr)
 #else
 #define Free(ptr)		free(ptr)
 #endif
