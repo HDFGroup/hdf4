@@ -934,6 +934,7 @@
 ./mfhdf/libsrc/sharray.c
 ./mfhdf/libsrc/string.c
 ./mfhdf/libsrc/temptySDSs.c
+./mfhdf/libsrc/tidtypes.c
 ./mfhdf/libsrc/test1.nc
 ./mfhdf/libsrc/test_cdf.sav
 ./mfhdf/libsrc/testout.sav
