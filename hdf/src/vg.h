@@ -161,6 +161,8 @@ struct vdata_desc
 #define VGDESCTAG       NEW_VGDESCTAG
 #define VSDESCTAG       NEW_VSDESCTAG
 #define VSDATATAG       NEW_VSDATATAG
+#define _HDF_VSPACK 0
+#define _HDF_VSUNPACK 1
 
 /* .................................................................. */
 /* Private data structures. Unlikely to be of interest to applications */
