@@ -307,7 +307,7 @@ C----------------------------------------------------------------------
       end
 
 C----------------------------------------------------------------------
-C     Name: sdffattr
+C     Name: sffattr
 C     Purpose:  call scfattr, find an attribute
 C     Inputs:   id: Object to look at
 C               name: name of attribute
