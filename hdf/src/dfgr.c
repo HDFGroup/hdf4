@@ -1,3 +1,15 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
@@ -39,33 +51,55 @@ static char RcsId[] = "@(#)$Revision$";
 #include "dfgr.h"
 #include "herr.h"
 
-static char Grlastfile[DF_MAXFNLEN];
-static DFGRrig Grread;         /* information about RIG being read */
-static DFGRrig Grwrite;        /* information about RIG being written */
-static int Grnewdata = 0;      /* does Grread contain fresh data? */
-static int Grcompr = 0;        /* compression scheme to use */
-static comp_info Grcinfo;      /* Compression information for each scheme */
-uint8  *Grlutdata=NULL;        /* points to lut, if in memory */
-static uint16 Grrefset=0;      /* Ref of image to get next */
-static uint16 Grlastref = 0;   /* Last ref read/written */
-static int Grreqil[2]= {0, 0}; /* requested lut/image il */
-static struct {                        /* track refs of set vals written before
- */
-    int lut;                   /* -1: no vals set */
-    int16 dims[2];             /* 0: vals set, not written */
-    int nt;                    /* non-zero: ref of val in file */
+#if 0
+PRIVATE char   Grlastfile[DF_MAXFNLEN] = "";
+#endif
+PRIVATE char  *Grlastfile = NULL;
+PRIVATE uint8 *Grlutdata  = NULL;    /* points to lut, if in memory */
+PRIVATE intn   Grnewdata  = 0;       /* does Grread contain fresh data? */
+PRIVATE intn   Grcompr    = 0;       /* compression scheme to use */
+PRIVATE comp_info Grcinfo;           /* Compression information for each 
+                                        scheme */
+PRIVATE uint16 Grrefset   = 0;       /* Ref of image to get next */
+PRIVATE uint16 Grlastref  = 0;       /* Last ref read/written */
+PRIVATE intn   Grreqil[2] = {0, 0};  /* requested lut/image il */
+PRIVATE struct {                     /* track refs of set vals written before */
+    intn  lut;                       /* -1: no vals set */
+    int16 dims[2];                   /* 0: vals set, not written */
+    intn  nt;                        /* non-zero: ref of val in file */
 } Ref = {-1, {-1, -1}, -1 };
-
-static DFGRrig Grzrig = {      /* empty RIG for initialization */
+PRIVATE DFGRrig Grread = {      /* information about RIG being read */
+    NULL, 0, 0, (float32)0.0, (float32)0.0,
+    {(float32)0.0, (float32)0.0, (float32)0.0},
+    {(float32)0.0, (float32)0.0, (float32)0.0},
+    {(float32)0.0, (float32)0.0, (float32)0.0},
+    {(float32)0.0, (float32)0.0, (float32)0.0},
     { {0, 0}, {0, 0}, {0, 0}, },
-    { {0, 0, {0, 0}, 0, 0, {0, 0}},
-      {0, 0, {0, 0}, 0, 0, {0, 0}},
-      {0, 0, {0, 0}, 0, 0, {0, 0}}, },
-    0, 0, (float32)0.0, (float32)0.0,
+    { {0, 0, 0, 0, {0, 0}, {0, 0}},
+      {0, 0, 0, 0, {0, 0}, {0, 0}},
+      {0, 0, 0, 0, {0, 0}, {0, 0}}, },
+};
+PRIVATE DFGRrig Grwrite = {     /* information about RIG being written */
+    NULL, 0, 0, (float32)0.0, (float32)0.0,
     {(float32)0.0, (float32)0.0, (float32)0.0},
     {(float32)0.0, (float32)0.0, (float32)0.0},
     {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0}, NULL
+    {(float32)0.0, (float32)0.0, (float32)0.0},
+    { {0, 0}, {0, 0}, {0, 0}, },
+    { {0, 0, 0, 0, {0, 0}, {0, 0}},
+      {0, 0, 0, 0, {0, 0}, {0, 0}},
+      {0, 0, 0, 0, {0, 0}, {0, 0}}, },
+};
+PRIVATE DFGRrig Grzrig = {      /* empty RIG for initialization */
+    NULL, 0, 0, (float32)0.0, (float32)0.0,
+    {(float32)0.0, (float32)0.0, (float32)0.0},
+    {(float32)0.0, (float32)0.0, (float32)0.0},
+    {(float32)0.0, (float32)0.0, (float32)0.0},
+    {(float32)0.0, (float32)0.0, (float32)0.0},
+    { {0, 0}, {0, 0}, {0, 0}, },
+    { {0, 0, 0, 0, {0, 0}, {0, 0}},
+      {0, 0, 0, 0, {0, 0}, {0, 0}},
+      {0, 0, 0, 0, {0, 0}, {0, 0}}, },
 };
 
 #define LUT     0
@@ -677,6 +711,14 @@ int32 DFGRIopen(filename, access)
     if (file_id == FAIL)
         HRETURN_ERROR(DFE_BADOPEN,FAIL);
 
+    /* Check if filename buffer has been allocated */
+    if (Grlastfile == NULL)
+      {
+        Grlastfile = (char *)HDgetspace((DF_MAXFNLEN +1) * sizeof(char));
+        if (Grlastfile == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
+
     /* use reopen if same file as last time - more efficient */
     if (HDstrncmp(Grlastfile,filename,DF_MAXFNLEN) || (access==DFACC_CREATE)) {
        /* treat create as different file */
@@ -1129,7 +1171,7 @@ int DFGRIrestart(void)
 int DFGRIrestart()
 #endif
 {
-    Grlastfile[0] = '\0';
+    Grlastfile = NULL;
     Grrefset = 0;
     return SUCCEED;
 }
@@ -1177,6 +1219,14 @@ int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran, newfile)
     uint8 *p;
 
     HEclear();
+
+    /* Check if filename buffer has been allocated */
+    if (Grlastfile == NULL)
+      {
+        Grlastfile = (char *)HDgetspace((DF_MAXFNLEN +1) * sizeof(char));
+        if (Grlastfile == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
 
     if (0 != HDstrcmp(Grlastfile,filename)) {  /* if new file, reset dims */
       Grwrite.datadesc[type].xdim = xdim;

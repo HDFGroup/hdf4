@@ -1,3 +1,15 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
@@ -74,6 +86,9 @@ PRIVATE link_t *HLInewlink
 PRIVATE link_t *HLIgetlink
     PROTO((int32 file_id,uint16 ref,int32 number_blocks));
 
+/* Private buffer */
+PRIVATE uint8 *ptbuf = NULL;
+
 /* the accessing function table for linked blocks */
 funclist_t linked_funcs = {
     HLPstread,
@@ -125,6 +140,15 @@ int32 HLcreate(file_id, tag, ref, block_length, number_blocks)
 
     if (!(file_rec->access & DFACC_WRITE))
        HRETURN_ERROR(DFE_DENIED,FAIL);
+
+
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, NULL);
+      }
 
     /* get empty slot in access records */
     slot = HIget_access_slot();
@@ -213,14 +237,14 @@ int32 HLcreate(file_id, tag, ref, block_length, number_blocks)
 
     {
        uint8 *p;
-       p = tbuf;
+       p = ptbuf;
        UINT16ENCODE(p, SPECIAL_LINKED);
        INT32ENCODE(p, info->length);
        INT32ENCODE(p, block_length);
        INT32ENCODE(p, number_blocks);
        UINT16ENCODE(p, link_ref); /* link_ref */
     }
-    if (HI_WRITE(file_rec->file, tbuf, dd->length) == FAIL) {
+    if (HI_WRITE(file_rec->file, ptbuf, dd->length) == FAIL) {
        access_rec->used = FALSE;
        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
     }
@@ -321,6 +345,15 @@ PRIVATE int32 HLIstaccess(access_rec, access)
     if (!file_rec || file_rec->refcount == 0 || !(file_rec->access & access))
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
+
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, NULL);
+      }
+
     /* set up some data in access record */
     access_rec->special = SPECIAL_LINKED;
     access_rec->posn = 0;
@@ -341,7 +374,7 @@ PRIVATE int32 HLIstaccess(access_rec, access)
     if (HI_SEEK(file_rec->file, dd->offset+2) == FAIL)
        HRETURN_ERROR(DFE_SEEKERROR,FAIL);
 
-    if (HI_READ(file_rec->file, tbuf, 14) == FAIL)
+    if (HI_READ(file_rec->file, ptbuf, 14) == FAIL)
        HRETURN_ERROR(DFE_READERROR,FAIL);
 
     access_rec->special_info = (VOIDP) HDgetspace((uint32)sizeof(linkinfo_t));
@@ -350,7 +383,7 @@ PRIVATE int32 HLIstaccess(access_rec, access)
        HRETURN_ERROR(DFE_NOSPACE,FAIL);
 
     {
-        uint8 *p = tbuf;
+        uint8 *p = ptbuf;
         INT32DECODE(p, info->length);
         INT32DECODE(p, info->block_length);
         INT32DECODE(p, info->number_blocks);
@@ -682,6 +715,15 @@ int32 HLPwrite(access_rec, length, datap)
     if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0)
        HRETURN_ERROR(DFE_INTERNAL,FAIL);
 
+
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, NULL);
+      }
+
     /* determine linked block and position to start writing into */
 
     /* determine where to start.  Setup missing block tables
@@ -723,7 +765,7 @@ int32 HLPwrite(access_rec, length, datap)
                             (uint16)(prev_link!=NULL ?
                                 prev_link->nextref : info->link_ref);
 
-                   uint8 *p = tbuf;   /* temp buf ptr */
+                   uint8 *p = ptbuf;   /* temp buf ptr */
 
                    /* write file the updated portion of current link */
 
@@ -733,7 +775,7 @@ int32 HLPwrite(access_rec, length, datap)
                    if (link_id == FAIL)
                        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
                    UINT16ENCODE(p, link->nextref);
-                   if (Hwrite(link_id, 2, tbuf) == FAIL)
+                   if (Hwrite(link_id, 2, ptbuf) == FAIL)
                        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
                    Hendaccess(link_id);
                }               /* AA */
@@ -799,7 +841,7 @@ int32 HLPwrite(access_rec, length, datap)
                (uint16)(prev_link ? prev_link->nextref : info->link_ref);
 
            uint8 *p =  /* temp buffer ptr */
-               tbuf;
+               ptbuf;
 
            int32 link_id =     /* access record id of the current
                                   link/block table */
@@ -810,7 +852,7 @@ int32 HLPwrite(access_rec, length, datap)
            UINT16ENCODE(p, new_ref);
            if (Hseek(link_id, 2+2*block_idx, DF_START) == FAIL)
                HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-           if (Hwrite(link_id, 2, tbuf) == FAIL)
+           if (Hwrite(link_id, 2, ptbuf) == FAIL)
                HRETURN_ERROR(DFE_WRITEERROR,FAIL);
            Hendaccess(link_id);
 
@@ -848,7 +890,7 @@ int32 HLPwrite(access_rec, length, datap)
                        (uint16)(prev_link ? prev_link->nextref : info->link_ref);
 
                    uint8 *p = /* temp buffer ptr */
-                       tbuf;
+                       ptbuf;
 
                    int32 link_id = /* access record id of
                                       current link/block table */
@@ -858,7 +900,7 @@ int32 HLPwrite(access_rec, length, datap)
                    if (link_id == FAIL)
                        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
                    UINT16ENCODE(p, link->nextref);
-                   if (Hwrite(link_id, 2, tbuf) == FAIL)
+                   if (Hwrite(link_id, 2, ptbuf) == FAIL)
                        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
                    Hendaccess(link_id);
                }               /* BB */
@@ -888,10 +930,10 @@ int32 HLPwrite(access_rec, length, datap)
             info->length = tmp;
     }
     {
-        uint8 *p = tbuf;
+        uint8 *p = ptbuf;
        INT32ENCODE(p, info->length);
     }
-    if (HI_WRITE(file_rec->file, tbuf, 4) == FAIL)
+    if (HI_WRITE(file_rec->file, ptbuf, 4) == FAIL)
         HRETURN_ERROR(DFE_WRITEERROR,FAIL);
 
     access_rec->posn += bytes_written;
