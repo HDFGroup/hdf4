@@ -593,11 +593,11 @@ public Panel createDisplayItems() {
     
     // new CheckboxGroup
     CheckboxGroup  zoomFactorGroup = new CheckboxGroup();
-    Checkbox       zoomFactor100   = new Checkbox("100%", zoomFactorGroup, false);
-    Checkbox       zoomFactor200   = new Checkbox("200%", zoomFactorGroup, true);
-    Checkbox       zoomFactor500   = new Checkbox("500%", zoomFactorGroup, false);
-    Checkbox       zoomFactor800   = new Checkbox("800%", zoomFactorGroup, false);
-    Checkbox       zoomFactor1000   = new Checkbox("1000%", zoomFactorGroup, false);
+    Checkbox       zoomFactor100   = new Checkbox("1x", zoomFactorGroup, false);
+    Checkbox       zoomFactor200   = new Checkbox("2x", zoomFactorGroup, true);
+    Checkbox       zoomFactor500   = new Checkbox("5x", zoomFactorGroup, false);
+    Checkbox       zoomFactor800   = new Checkbox("8x", zoomFactorGroup, false);
+    Checkbox       zoomFactor1000   = new Checkbox("10x", zoomFactorGroup, false);
     
     zoomFactor100.addItemListener(this);
     zoomFactor200.addItemListener(this);
@@ -1143,25 +1143,18 @@ public Panel createDisplayItems() {
 	Checkbox checkBox = (Checkbox)target;
 	String label = checkBox.getLabel();
 	
-	if (label.equals("100%"))
+	if (label.equals("1x"))
 	    zoomFactor = 1.0f;
-	else {
-	    if (label.equals("200%"))
-	       zoomFactor = 2.0f;
-	    else {
-		 if (label.equals("500%"))
-	 	    zoomFactor = 5.0f;
-		 else 
-		    if (label.equals("800%"))
-	    		zoomFactor = 8.0f;
-		    else {
-			if (label.equals("1000%"))
-	    		   zoomFactor = 10.0f;
-		    }
-		}// if (label.equals("200%")) 
-	    }  //if (label.equals("100%"))
+	else if (label.equals("2x"))
+	    zoomFactor = 2.0f;
+	else if (label.equals("5x"))
+	    zoomFactor = 5.0f;
+	else if (label.equals("8x"))
+	    zoomFactor = 8.0f;
+        else if (label.equals("10x"))
+	    zoomFactor = 10.0f;
       } // if(target instanceof Checkbox) {
-    } // if (target instanceof CheckboxMenuItem)  
+    } // if (target instanceof CheckboxMenuItem)
   }
   
 
