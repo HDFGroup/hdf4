@@ -46,6 +46,7 @@ mfhdf/dumper/tdata.hdf -text
 mfhdf/dumper/tdf24.hdf -text
 mfhdf/dumper/tdfr8f.hdf -text
 mfhdf/dumper/test.hdf -text
+mfhdf/dumper/tvattr.hdf -text
 mfhdf/dumper/tvset.hdf -text
 mfhdf/libsrc/test.nc -text
 mfhdf/libsrc/test_cdf.sav -text
