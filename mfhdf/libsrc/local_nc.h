@@ -212,6 +212,11 @@ typedef struct {
         int32   is_ragged; /* BOOLEAN == is a ragged array */
         int32 * rag_list;  /* size of ragged array lines */
         int32   rag_fill;  /* last line in rag_list to be set */
+        intn    is_compressed;  /* BOOLEAN, indicates data to be compressed */
+        comp_model_t model_type;    /* compression model type */
+        model_info * m_info;        /* compression model information */
+        comp_coder_t coder_type;    /* compression coder information */
+        comp_info * c_info;         /* compression coder information */
         vix_t * vixHead;   /* list of VXR records for CDF data storage */
 #endif
 } NC_var ;

@@ -1324,6 +1324,9 @@ Hseek(int32 access_id, int32 offset, intn origin)
   /* clear error stack and check validity of this access id */
   HEclear();
 
+#ifdef QAK
+printf("%s: entering\n",FUNC);
+#endif /* QAK */
   access_rec = HAatom_object(access_id);
   if (access_rec == (accrec_t *) NULL
       || (origin != DF_START && origin != DF_CURRENT && origin != DF_END))
@@ -1332,6 +1335,9 @@ Hseek(int32 access_id, int32 offset, intn origin)
   /* if special elt, use special function */
   if (access_rec->special)
     {
+#ifdef QAK
+printf("%s: access ID is special\n",FUNC);
+#endif /* QAK */
       ret_value = (intn) (*access_rec->special_func->seek) (access_rec, offset, origin);
       goto done;
     }
@@ -1340,19 +1346,28 @@ Hseek(int32 access_id, int32 offset, intn origin)
   if(HTPinquire(access_rec->ddid,NULL,NULL,&data_off,&data_len)==FAIL)
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
       
+#ifdef QAK
+printf("%s: check 1.0, offset=%d, origin=%d, data_len=%d\n",FUNC,(int)offset,(int)origin,(int)data_len);
+#endif /* QAK */
   /* calculate real offset based on the origin */
   if (origin == DF_CURRENT)
     offset += access_rec->posn;
   if (origin == DF_END)
     offset += data_len;
 
+#ifdef QAK
+printf("%s: check 1.5, offset=%d, origin=%d, data_len=%d\n",FUNC,(int)offset,(int)origin,(int)data_len);
+#endif /* QAK */
   /* Check the range */
-  if (offset < 0 || (!access_rec->appendable && offset >= data_len))
+  if (offset < 0 || (!access_rec->appendable && offset > data_len))
     {
       HEreport("Tried to seek to %d (object length:  %d)", offset, data_len);
       HGOTO_ERROR(DFE_BADSEEK, FAIL);
     }
 
+#ifdef QAK
+printf("%s: check 2.0\n",FUNC);
+#endif /* QAK */
   if (access_rec->appendable && offset >= data_len)
     {
       file_rec = HAatom_object(access_rec->file_id);
@@ -1378,6 +1393,9 @@ Hseek(int32 access_id, int32 offset, intn origin)
   access_rec->posn = offset;
 
 done:
+#ifdef QAK
+printf("%s: exiting\n",FUNC);
+#endif /* QAK */
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
@@ -1579,6 +1597,9 @@ printf("%s: length=%ld\n",FUNC,(long)length);
   /* if special elt, call special function */
   if (access_rec->special)
     {
+#ifdef QAK
+printf("%s: access record is special\n",FUNC);
+#endif /* QAK */
       ret_value = (*access_rec->special_func->write) (access_rec, length, data);
       goto done; /* we are done */
     }
@@ -1595,10 +1616,16 @@ printf("%s: length=%ld\n",FUNC,(long)length);
       access_rec->appendable = TRUE;	/* make it appendable */
     }		/* end if */
 
+#ifdef QAK
+printf("%s: before HTPinquire\n",FUNC);
+#endif /* QAK */
   /* get the offset and length of the dataset */
   if(HTPinquire(access_rec->ddid,NULL,NULL,&data_off,&data_len)==FAIL)
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
+#ifdef QAK
+printf("%s: length=%ld, data_len=%ld, access_rec->posn=%ld\n",FUNC,(long)length,(long)data_len,(long)access_rec->posn);
+#endif /* QAK */
   /* check validity of length and write data.
    NOTE: it is an error to attempt write past the end of the elt */
   if (length <= 0 ||

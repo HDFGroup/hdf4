@@ -3124,12 +3124,12 @@ intn SDsetcompress(int32 id, int32 type, comp_info *c_info)
 
     NC       * handle;
     NC_var   * var;
-    intn       status;
+    intn       status=FAIL;
     model_info m_info;  /* modeling information for the HCcreate() call */
 
 #ifdef SDDEBUG
-    fprintf(stderr, "SDsetnbitdataset: I've been called\n");
-#endif
+fprintf(stderr, "SDsetcompress: I've been called\n");
+#endif /* SDDEBUG */
 
     if (type < 0 || type >= COMP_CODE_INVALID)
         return(FAIL);
@@ -3145,13 +3145,14 @@ intn SDsetcompress(int32 id, int32 type, comp_info *c_info)
     if(var==NULL)
         return FAIL;
 
+#ifdef OLD_WAY
 #ifdef SDDEBUG
-printf("SDsetcompress(): nt=%d, sign_ext=%d, fill_one=%d, start_bit=%d, bit_len=%d\n",(intn)c_info.nbit.nt,(intn)c_info.nbit.sign_ext,(intn)c_info.nbit.fill_one,(intn)c_info.nbit.start_bit,(intn)c_info.nbit.bit_len);
-#endif
+printf("SDsetcompress(): var->data_ref=%d\n",(int)var->data_ref);
+#endif /* SDDEBUG */
     if(!var->data_ref) {   /* doesn't exist */
 #ifdef SDDEBUG
 printf("SDsetcompress(): dataset doesn't exist\n");
-#endif
+#endif /* SDDEBUG */
 
         /* element doesn't exist so we need a reference number */
 #ifdef NOT_YET
@@ -3168,13 +3169,49 @@ printf("SDsetcompress(): dataset doesn't exist\n");
 
 #ifdef SDDEBUG
 printf("SDsetcompress(): HCcreate() status=%d\n",(intn)status);
-#endif
+if(status==FAIL)
+    HEprint(stderr,0);
+#endif /* SDDEBUG */
+
     if(status != FAIL) {
         if((var->aid != 0) && (var->aid != FAIL))
             Hendaccess(var->aid);
         var->aid = status;
       } /* end if */
-    return(SUCCEED);
+#else /* OLD_WAY */
+    if(var->aid!=FAIL)
+      {
+        status=(intn)HCcreate(handle->hdf_file,(uint16)DATA_TAG,
+                (uint16) var->data_ref,COMP_MODEL_STDIO,&m_info,
+            (comp_coder_t)type, c_info);
+
+#ifdef SDDEBUG
+printf("SDsetcompress(): HCcreate() status=%d\n",(intn)status);
+if(status==FAIL)
+    HEprint(stderr,0);
+#endif /* SDDEBUG */
+
+        if(status != FAIL) {
+            if((var->aid != 0) && (var->aid != FAIL))
+                Hendaccess(var->aid);
+            var->aid = status;
+          } /* end if */
+      } /* end if */
+    else
+      { /* data doesn't exist yet, wait until later to create compressed element */
+        var->is_compressed=TRUE;
+        var->model_type=COMP_MODEL_STDIO;
+        if((var->m_info=(model_info *)HDcalloc(sizeof(model_info),1))==NULL)
+            return(FAIL);
+        var->coder_type=(comp_coder_t)type;
+        if((var->c_info=(comp_info *)HDmalloc(sizeof(comp_info)))==NULL)
+            return(FAIL);
+        HDmemcpy(var->c_info,c_info,sizeof(comp_info));
+        status=SUCCEED;
+      } /* end else */
+#endif /* OLD_WAY */
+
+    return(status != FAIL ? SUCCEED : FAIL);
 } /* SDsetcompress */
 
 

@@ -727,9 +727,18 @@ NC_var *vp;
 #endif /* NOT_YET */
 #ifdef DEBUG
     fprintf(stderr, "--- Allocating new data storage szof=%d, to_do=%d\n",(int)vp->szof, (int)to_do);
+    fprintf(stderr, "is_compressed=%d\n", (int)vp->is_compressed);
     fprintf(stderr, "byte_count=%d\n", (int)byte_count);
 #endif  
-    vp->aid = Hstartwrite(handle->hdf_file, DATA_TAG, vsid, vp->len);
+    if(vp->is_compressed)   /* create a compressed data object if necessary */
+      {
+        vp->aid = HCcreate(handle->hdf_file, DATA_TAG, vsid, vp->model_type, vp->m_info, vp->coder_type, vp->c_info);
+        vp->is_compressed=FALSE;    /* don't create another compressed AID */
+        HDfree(vp->m_info);
+        HDfree(vp->c_info);
+      } /* end if */
+    else
+        vp->aid = Hstartwrite(handle->hdf_file, DATA_TAG, vsid, vp->len);
 
     if(vp->aid == FAIL) return FALSE;
 
@@ -847,7 +856,17 @@ NC_var    * vp;
     if(handle->hdf_mode == DFACC_RDONLY)
         vp->aid = Hstartread(handle->hdf_file, vp->data_tag, vp->data_ref);
     else
-        vp->aid = Hstartwrite(handle->hdf_file, vp->data_tag, vp->data_ref, 0);
+      {
+        if(vp->is_compressed)   /* create a compressed data object if necessary */
+          {
+            vp->aid = HCcreate(handle->hdf_file, vp->data_tag, vp->data_ref, vp->model_type, vp->m_info, vp->coder_type, vp->c_info);
+            vp->is_compressed=FALSE;    /* don't create another compressed AID */
+            HDfree(vp->m_info);
+            HDfree(vp->c_info);
+          } /* end if */
+        else
+            vp->aid = Hstartwrite(handle->hdf_file, vp->data_tag, vp->data_ref, 0);
+      } /* end else */
     
     if(vp->aid == FAIL)
         return(FALSE);
@@ -892,7 +911,13 @@ uint32    count;
 #endif
 
 #ifdef DEBUG 
+{
+    int16 isspecial;
+
     fprintf(stderr, "Where = %d  count = %d\n", where, count);
+    Hinquire(vp->aid,NULL,NULL,NULL,NULL,NULL,NULL,NULL,&isspecial);
+    fprintf(stderr, "vp->aid = %d  isspecial = %d\n", (int)vp->aid, (int)isspecial);
+}
 #endif
     
     if(vp->aid == FAIL && hdf_get_vp_aid(handle, vp) == FALSE) {
@@ -900,10 +925,12 @@ uint32    count;
          * Fail if there is no data *AND* we were trying to read...
          * Otherwise, we should fill with the fillvalue
          */
+#ifdef DEBUG
+    fprintf(stderr, "hdf_xdr_NCvdata creating new data, check for fill value, vp->data_ref=%d\n",(int)vp->data_ref);
+#endif
         if(vp->data_ref == 0) 
             if(handle->hdf_mode == DFACC_RDONLY) {
-                if(vp->data_tag == DATA_TAG ||
-                   vp->data_tag == DFTAG_SDS) {
+                if(vp->data_tag == DATA_TAG || vp->data_tag == DFTAG_SDS) {
                     NC_attr ** attr;
                     int len;
                     
@@ -932,10 +959,16 @@ uint32    count;
     if(vp->data_offset > 0) 
         where += vp->data_offset;
     
+#ifdef DEBUG
+    fprintf(stderr, "hdf_xdr_NCvdata vp->aid=%d, where=%d\n",(int)vp->aid,(int)where);
+#endif
     /* position ourselves correctly */
     if( Hseek(vp->aid, where, DF_START) == FAIL)
         return(FALSE);
     
+#ifdef DEBUG
+    fprintf(stderr, "hdf_xdr_NCvdata after Hseek()\n");
+#endif
     byte_count = count * vp->HDFsize;
 
     platntsubclass = DFKgetPNSC(vp->HDFtype, DF_MT); 
@@ -962,6 +995,9 @@ uint32    count;
             it here causes a bug on little endian machines when
             data conversion occurs. -GV */
 /*    DFKsetNT(vp->HDFtype); */
+#ifdef DEBUG
+    fprintf(stderr, "hdf_xdr_NCvdata before data conversion\n");
+#endif
     
 #ifdef CM5
 CM_HDFtype = vp->HDFtype;
