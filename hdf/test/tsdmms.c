@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/05/31 15:25:21  mfolk
-Changed declaration of rank and dims[2] to int32 for Convex.
+Revision 1.3  1992/07/08 22:05:20  sxu
+Changed DFSDgetmaxmin() to DFSDgetrange().
+Changed DFSDsetmaxmin() to DFSDsetrange().
 
+ * Revision 1.2  1992/05/31  15:25:21  mfolk
+ * Changed declaration of rank and dims[2] to int32 for Convex.
+ *
  * Revision 1.1  1992/02/26  20:08:43  mfolk
  * Initial revision
  *
@@ -94,7 +98,7 @@ int main()
     printf("Writing arrays to single file...\n");
     DFSDsetNT(DFNT_FLOAT32);
     err3=DFSDsetdimscale(1, (int32)10, (void *)f32scale);
-    err2=DFSDsetmaxmin(&f32max, &f32min);
+    err2=DFSDsetrange(&f32max, &f32min);
     err = DFSDadddata("ntcheck.hdf", rank, dims, f32);
     if (err3==FAIL || err2==FAIL || err==FAIL) 
         number_failed++;
@@ -102,7 +106,7 @@ int main()
 
     DFSDsetNT(DFNT_INT8);
     err3=DFSDsetdimscale(1, (int32)10, (void *)i8scale);
-    err2=DFSDsetmaxmin(&i8max, &i8min);
+    err2=DFSDsetrange(&i8max, &i8min);
     err = DFSDadddata("ntcheck.hdf", rank, dims, i8);
     if (err3==FAIL || err2==FAIL || err==FAIL) 
         number_failed++;
@@ -110,7 +114,7 @@ int main()
 
     DFSDsetNT(DFNT_UINT8);
     err3=DFSDsetdimscale(1, (int32)10, (void *)ui8scale);
-    err2=DFSDsetmaxmin(&ui8max, &ui8min);
+    err2=DFSDsetrange(&ui8max, &ui8min);
     err = DFSDadddata("ntcheck.hdf", rank, dims, ui8);
     if (err3==FAIL || err2==FAIL || err==FAIL) 
         number_failed++;
@@ -118,7 +122,7 @@ int main()
 
     DFSDsetNT(DFNT_INT16);
     err3=DFSDsetdimscale(1, (int32)10, (void *)i16scale);
-    err2=DFSDsetmaxmin(&i16max, &i16min);
+    err2=DFSDsetrange(&i16max, &i16min);
     err = DFSDadddata("ntcheck.hdf", rank, dims, i16);
     if (err3==FAIL || err2==FAIL || err==FAIL) 
         number_failed++;
@@ -126,7 +130,7 @@ int main()
 
     DFSDsetNT(DFNT_UINT16);
     err3=DFSDsetdimscale(1, (int32)10, (void *)ui16scale);
-    err2=DFSDsetmaxmin(&ui16max, &ui16min);
+    err2=DFSDsetrange(&ui16max, &ui16min);
     err = DFSDadddata("ntcheck.hdf", rank, dims, ui16);
     if (err3==FAIL || err2==FAIL || err==FAIL) 
         number_failed++;
@@ -134,7 +138,7 @@ int main()
 
     DFSDsetNT(DFNT_INT32);
     err3=DFSDsetdimscale(1, (int32)10, (void *)i32scale);
-    err2=DFSDsetmaxmin(&i32max, &i32min);
+    err2=DFSDsetrange(&i32max, &i32min);
     err = DFSDadddata("ntcheck.hdf", rank, dims, i32);
     if (err3==FAIL || err2==FAIL || err==FAIL) 
         number_failed++;
@@ -142,7 +146,7 @@ int main()
 
     DFSDsetNT(DFNT_UINT32);
     err3= DFSDsetdimscale(1, (int32)10, (void *)ui32scale);
-    err2=DFSDsetmaxmin(&ui32max, &ui32min);
+    err2=DFSDsetrange(&ui32max, &ui32min);
     err = DFSDadddata("ntcheck.hdf", rank, dims, ui32);
     if (err3==FAIL || err2==FAIL || err==FAIL) 
         number_failed++;
@@ -152,49 +156,49 @@ int main()
 
     err = DFSDgetdata("ntcheck.hdf", rank, dims, tf32);
     err2 = DFSDgetdimscale(1, (int32)10, (void *)tf32scale);
-    err3 = DFSDgetmaxmin(&tf32max, &tf32min);
+    err3 = DFSDgetrange(&tf32max, &tf32min);
     if (err3==FAIL || err2==FAIL || err==FAIL) 
         number_failed++;
     printf("%d, %d, %d\n", err3, err2, err);
 
     err = DFSDgetdata("ntcheck.hdf", rank, dims, ti8);
     err2 = DFSDgetdimscale(1, (int32)10, (void *)ti8scale);
-    err3 = DFSDgetmaxmin(&ti8max, &ti8min);
+    err3 = DFSDgetrange(&ti8max, &ti8min);
     if (err3==FAIL || err2==FAIL || err==FAIL) 
         number_failed++;
     printf("%d, %d, %d\n", err, err2, err3);
 
     err = DFSDgetdata("ntcheck.hdf", rank, dims, tui8);
     err2 = DFSDgetdimscale(1, (int32)10, (void *)tui8scale);
-    err3 = DFSDgetmaxmin(&tui8max, &tui8min);
+    err3 = DFSDgetrange(&tui8max, &tui8min);
     if (err3==FAIL || err2==FAIL || err==FAIL) 
         number_failed++;
     printf("%d, %d, %d\n", err, err2, err3);
 
     err = DFSDgetdata("ntcheck.hdf", rank, dims, ti16);
     err2 = DFSDgetdimscale(1, (int32)10, (void *)ti16scale);
-    err3 = DFSDgetmaxmin(&ti16max, &ti16min);
+    err3 = DFSDgetrange(&ti16max, &ti16min);
     if (err3==FAIL || err2==FAIL || err==FAIL) 
         number_failed++;
     printf("%d, %d, %d\n", err, err2, err3);
 
     err = DFSDgetdata("ntcheck.hdf", rank, dims, tui16);
     err2 = DFSDgetdimscale(1, (int32)10, (void *)tui16scale);
-    err3 = DFSDgetmaxmin(&tui16max, &tui16min);
+    err3 = DFSDgetrange(&tui16max, &tui16min);
     if (err3==FAIL || err2==FAIL || err==FAIL) 
         number_failed++;
     printf("%d, %d, %d\n", err, err2, err3);
 
     err = DFSDgetdata("ntcheck.hdf", rank, dims, ti32);
     err2 = DFSDgetdimscale(1, (int32)10, (void *)ti32scale);
-    err3 = DFSDgetmaxmin(&ti32max, &ti32min);
+    err3 = DFSDgetrange(&ti32max, &ti32min);
     if (err3==FAIL || err2==FAIL || err==FAIL) 
         number_failed++;
     printf("%d, %d, %d\n", err, err2, err3);
 
     err = DFSDgetdata("ntcheck.hdf", rank, dims, tui32);
     err2 = DFSDgetdimscale(1, (int32)10, (void *)tui32scale);
-    err3 = DFSDgetmaxmin(&tui32max, &tui32min);
+    err3 = DFSDgetrange(&tui32max, &tui32min);
     if (err3==FAIL || err2==FAIL || err==FAIL) 
         number_failed++;
     printf("%d, %d, %d\n", err, err2, err3);
