@@ -115,7 +115,9 @@ nssdc_read_cdf(xdrs, handlep)
     int32    dim_sz[MAX_VAR_DIMS];
     NC_dim * dim_rec[MAX_VAR_DIMS];
     NC_var * vars[MAX_NC_VARS];
-    
+    NC_var * var = NULL;    /* shorthand for vars[current_var] */
+    vix_t  * end;
+
     /* interesting stuff in CDR record */
     int32   gdrOffset, vers, release, encoding, flags, inc;
 
@@ -124,11 +126,11 @@ nssdc_read_cdf(xdrs, handlep)
     int32   numDims, numZVars;
 
     /* interesting stuff in VDR record */
-    int32   nt, vMaxRec, VXRhead, VXRtail, vFlags, numElem, num;
+    int32   nt, vMaxRec, vxrNext, VXRtail, vFlags, numElem, num;
     char    name[CDF_VAR_NAME_LEN + 1];
 
     /* interesting stuff in ADR record */
-    int32   scope, aedrNext;
+    int32   scope, aedrNext, aedzNext;
 
     /* interesting stuff in AEDR record */
     int32   count;
@@ -232,10 +234,10 @@ nssdc_read_cdf(xdrs, handlep)
     /* 
      * Loop over Rvariables and read them in
      */
-    for(i = 0; i < numRVars; i++) {
+    while(varNext != 0) {
 
 #ifdef DEBUG
-        fprintf(stderr,"Variable %d seeking to %d\n", i, varNext);
+        fprintf(stderr,"Variable %d seeking to %d\n", current_var, varNext);
 #endif
 
         if (HI_SEEK(fp, varNext) == FAIL)
@@ -255,8 +257,8 @@ nssdc_read_cdf(xdrs, handlep)
         INT32DECODE(b, dummy);      /* record type */
         INT32DECODE(b, varNext);    /* start of next R variable */
         INT32DECODE(b, nt);         /* number type */
-        INT32DECODE(b, vMaxRec);    /* dunno */
-        INT32DECODE(b, VXRhead);    /* ??? */
+        INT32DECODE(b, vMaxRec);    /* number of records for this variable */
+        INT32DECODE(b, vxrNext);    /* start of VXR recrods */
         INT32DECODE(b, VXRtail);    /* ??? */
         INT32DECODE(b, vFlags);     /* variable flags <---- record variance in here */
         INT32DECODE(b, dummy);      /* rfuA */
@@ -264,7 +266,7 @@ nssdc_read_cdf(xdrs, handlep)
         INT32DECODE(b, dummy);      /* rfuC */
         INT32DECODE(b, dummy);      /* rfuF */
         b += VDRzVDR_RFUe_LEN;      /* reserved field */
-        INT32DECODE(b, numElem);    /* */
+        INT32DECODE(b, numElem);    /* == 1 unless string variable */
         INT32DECODE(b, num);        /* */
         INT32DECODE(b, dummy);      /* rfuD */
         INT32DECODE(b, dummy);      /* nextEndRecs */
@@ -277,9 +279,9 @@ nssdc_read_cdf(xdrs, handlep)
         while((name[j] != ' ') && (name[j] != '\0')) j++;
         name[j] = '\0';
 
-        /* MORE STUFF */
 #ifdef DEBUG
         fprintf(stderr,"\tName %s nt %d vMaxRec %d\n", name, nt, vMaxRec);
+        fprintf(stderr,"\tNext var at %d\n", varNext);
 #endif
 
         /*
@@ -312,34 +314,96 @@ nssdc_read_cdf(xdrs, handlep)
                 dims[rank++] = j;
         }
 
-
-        /* what's up with PadValues ??? */
-
-        /*
-         *  Mess with setting up VXR records
-         */
-
         /* map the CDF type into a netCDF type */
         nctype = cdf_unmap_type(nt);
 
         /* define the variable */
-        vars[current_var] = NC_new_var((char *) name, nctype, (int) rank, dims);
-        if(vars[current_var] == NULL)
-            return (FALSE);
+        var = vars[current_var] = NC_new_var((char *) name, nctype, (int) rank, dims);
+        if(var == NULL)
+            HRETURN_ERROR(DFE_NOSPACE, FALSE);
+
+#ifdef DEBUG
+        fprintf(stderr,"Was able to call NC_new_var()\n");
+#endif
         
         /* if it is unsigned at least set the HDFtype to reflect it */
         switch(nt) {
         case CDF_UINT1:
-            vars[current_var]->HDFtype = DFNT_UINT8; 
-            break;
+            var->HDFtype = DFNT_UINT8;    break;
         case CDF_UINT2:
-            vars[current_var]->HDFtype = DFNT_UINT16; 
-            break;  
+            var->HDFtype = DFNT_UINT16;   break;  
         case CDF_UINT4:
-            vars[current_var]->HDFtype = DFNT_UINT32; 
-            break;
+            var->HDFtype = DFNT_UINT32;   break;
         default:
             break;
+        }
+
+        /*
+         *  Read the pad value if applicable
+         */
+        if(bitset(vFlags, rVAR_PADVALUE_BIT)) {
+            /* need to pull the pad value out of the file at current location */
+            /* make into _Fillvalue attribute */
+        }
+        
+        /*
+         *  Mess with setting up VXR records
+         */
+
+        var->vixHead = end = NULL;
+        while(vxrNext != 0) {
+            vix_t * vix;
+
+            vix = HDgetspace(sizeof(vix_t));
+            if(vix == NULL) 
+                HRETURN_ERROR(DFE_NOSPACE,FALSE);
+            
+            /* stick vix at the end of our list and update end pointer */
+            if(end == NULL)
+                var->vixHead = end = vix;
+            else
+                end = end->next = vix;
+
+            vix->next = NULL;
+
+#ifdef DEBUG
+            fprintf(stderr, "Reading a VXR record at %d\n", vxrNext);
+#endif
+            /*
+             * Read the next record out of the file 
+             */
+            if (HI_SEEK(fp, vxrNext) == FAIL)
+                HRETURN_ERROR(DFE_SEEKERROR,FALSE);
+            
+            if (HI_READ(fp, buffer, 4) == FAIL)
+            HRETURN_ERROR(DFE_READERROR,FALSE);
+            
+            b = buffer;
+            INT32DECODE(b, dummy);      /* record size */
+            dummy -= 4;
+            
+            if (HI_READ(fp, buffer, dummy) == FAIL)
+                HRETURN_ERROR(DFE_READERROR,FALSE);
+            
+            b = buffer;
+            INT32DECODE(b, dummy);         /* record type */
+            INT32DECODE(b, vxrNext);       /* next VXR record */
+            INT32DECODE(b, vix->nEntries); /* number of entries */
+            INT32DECODE(b, vix->nUsed);    /* number of used entries */
+
+            for(i = 0; i < vix->nEntries; i++)
+                INT32DECODE(b, vix->firstRec[i]);
+            for(i = 0; i < vix->nEntries; i++)
+                INT32DECODE(b, vix->lastRec[i]);
+            for(i = 0; i < vix->nEntries; i++)
+                INT32DECODE(b, vix->offset[i]);
+
+#ifdef DEBUG
+            for(i = 0; i < vix->nEntries; i++)
+                fprintf(stderr, "\t%d %d %d\n", vix->firstRec[i], vix->lastRec[i], vix->offset[i]);
+            fprintf(stderr, "Next record at %d\n", vxrNext);
+#endif
+
         }
 
         current_var++;
@@ -349,7 +413,7 @@ nssdc_read_cdf(xdrs, handlep)
     /* 
      * Loop over Zvariables and read them in
      */
-    for(i = 0; i < numZVars; i++) {
+    while(zVarNext != 0) {
 
 #ifdef DEBUG
         fprintf(stderr,"zVariable %d seeking to %d\n", i, zVarNext);
@@ -373,7 +437,7 @@ nssdc_read_cdf(xdrs, handlep)
         INT32DECODE(b, zVarNext);    /* start of next R variable */
         INT32DECODE(b, nt);         /* number type */
         INT32DECODE(b, vMaxRec);    /* dunno */
-        INT32DECODE(b, VXRhead);    /* ??? */
+        INT32DECODE(b, vxrNext);    /* start of VXR records */
         INT32DECODE(b, VXRtail);    /* ??? */
         INT32DECODE(b, vFlags);     /* variable flags <---- record variance in here */
         INT32DECODE(b, dummy);      /* rfuA */
@@ -430,33 +494,87 @@ nssdc_read_cdf(xdrs, handlep)
         fprintf(stderr,"\trank %d numDims %d\n", rank, numDims);
 #endif
 
-        /* what's up with PadValues ??? */
-
-        /*
-         *  Mess with setting up VXR records
-         */
-
         /* map the CDF type into a netCDF type */
         nctype = cdf_unmap_type(nt);
 
         /* define the variable */
-        vars[current_var] = NC_new_var((char *) name, nctype, (int) rank, dims);
-        if(vars[current_var] == NULL)
+        var = vars[current_var] = NC_new_var((char *) name, nctype, (int) rank, dims);
+        if(var == NULL)
             return (FALSE);
         
         /* if it is unsigned at least set the HDFtype to reflect it */
         switch(nt) {
         case CDF_UINT1:
-            vars[current_var]->HDFtype = DFNT_UINT8; 
-            break;
+            var->HDFtype = DFNT_UINT8;            break;
         case CDF_UINT2:
-            vars[current_var]->HDFtype = DFNT_UINT16; 
-            break;  
+            var->HDFtype = DFNT_UINT16;           break;  
         case CDF_UINT4:
-            vars[current_var]->HDFtype = DFNT_UINT32; 
-            break;
+            var->HDFtype = DFNT_UINT32;           break;
         default:
             break;
+        } 
+
+
+        /* what's up with PadValues ??? */
+
+
+        /*
+         *  Mess with setting up VXR records
+         */
+        var->vixHead = end = NULL;
+        while(vxrNext != 0) {
+            vix_t * vix;
+
+            vix = HDgetspace(sizeof(vix_t));
+            if(vix == NULL) 
+                HRETURN_ERROR(DFE_NOSPACE,FALSE);
+            
+            /* stick vix at the end of our list and update end pointer */
+            if(end == NULL)
+                var->vixHead = end = vix;
+            else
+                end = end->next = vix;
+
+            vix->next = NULL;
+
+#ifdef DEBUG
+            fprintf(stderr, "Reading a VXR record at %d\n", vxrNext);
+#endif
+            /*
+             * Read the next record out of the file 
+             */
+            if (HI_SEEK(fp, vxrNext) == FAIL)
+                HRETURN_ERROR(DFE_SEEKERROR,FALSE);
+            
+            if (HI_READ(fp, buffer, 4) == FAIL)
+            HRETURN_ERROR(DFE_READERROR,FALSE);
+            
+            b = buffer;
+            INT32DECODE(b, dummy);      /* record size */
+            dummy -= 4;
+            
+            if (HI_READ(fp, buffer, dummy) == FAIL)
+                HRETURN_ERROR(DFE_READERROR,FALSE);
+            
+            b = buffer;
+            INT32DECODE(b, dummy);         /* record type */
+            INT32DECODE(b, vxrNext);       /* next VXR record */
+            INT32DECODE(b, vix->nEntries); /* number of entries */
+            INT32DECODE(b, vix->nUsed);    /* number of used entries */
+
+            for(i = 0; i < vix->nEntries; i++)
+                INT32DECODE(b, vix->firstRec[i]);
+            for(i = 0; i < vix->nEntries; i++)
+                INT32DECODE(b, vix->lastRec[i]);
+            for(i = 0; i < vix->nEntries; i++)
+                INT32DECODE(b, vix->offset[i]);
+
+#ifdef DEBUG
+            for(i = 0; i < vix->nEntries; i++)
+                fprintf(stderr, "\t%d %d %d\n", vix->firstRec[i], vix->lastRec[i], vix->offset[i]);
+            fprintf(stderr, "Next record at %d\n", vxrNext);
+#endif
+
         }
 
         current_var++;
@@ -494,7 +612,7 @@ nssdc_read_cdf(xdrs, handlep)
         INT32DECODE(b, dummy);      /* numR */
         INT32DECODE(b, dummy);      /* maxR */
         INT32DECODE(b, dummy);      /* rfuA */
-        INT32DECODE(b, dummy);      /* AzEDRhread */
+        INT32DECODE(b, aedzNext);   /* AzEDRhread */
         INT32DECODE(b, dummy);      /* NumZ */
         INT32DECODE(b, dummy);      /* MaxZ */
         INT32DECODE(b, dummy);      /* rfuE */
@@ -503,7 +621,9 @@ nssdc_read_cdf(xdrs, handlep)
         name[CDF_ATTR_NAME_LEN] = '\0';
 
 #ifdef DEBUG
-        fprintf(stderr,"\tname %s (%s)\n", name, (scope == 1 ? "global" : "local"));
+        fprintf(stderr,"\tname %s (%s) data at %d\n", name, (scope == 1 ? "global" : "local"), aedrNext);
+        fprintf(stderr,"\taedrNext %d    aedzNext %d\n", aedrNext, aedzNext);
+        
 #endif
 
         /*
@@ -564,6 +684,9 @@ nssdc_read_cdf(xdrs, handlep)
             } else {
                 /* local --- find the appropriate variable */
                 ap = &(vars[num]->attrs);
+#ifdef DEBUG
+        fprintf(stderr,"\tAdding %s (%s) to var %d \n", name, (scope == 1 ? "global" : "local"), num);
+#endif
             }
 
             /* add the attribute to the list */
@@ -577,6 +700,90 @@ nssdc_read_cdf(xdrs, handlep)
                     return (FALSE);
             }
         } /* AEDR loop */
+
+        /*
+         * Read in the AEDZ records now and add them to the appropriate object
+         * It is not clear to me how these are different from aedr records 
+         *   except for that they are for Zvariables rather than Rvariables.
+         *   Any other reasons?????
+         */
+        while(aedzNext != 0) {
+            NC_array ** ap;
+            NC_attr  *  attr[1];
+            char     *  tBuf;
+            int32       bsize;
+
+#ifdef DEBUG
+        fprintf(stderr,"\tReading aedz from %d\n", aedzNext);
+#endif
+
+            if (HI_SEEK(fp, aedzNext) == FAIL)
+                HRETURN_ERROR(DFE_SEEKERROR,FALSE);
+            
+            if (HI_READ(fp, buffer, 4) == FAIL)
+                HRETURN_ERROR(DFE_READERROR,FALSE);
+            
+            b = buffer;
+            INT32DECODE(b, dummy);      /* record size */
+            dummy -= 4;
+            
+            if (HI_READ(fp, buffer, dummy) == FAIL)
+                HRETURN_ERROR(DFE_READERROR,FALSE);
+
+            b = buffer;
+            INT32DECODE(b, dummy);      /* record type */
+            INT32DECODE(b, aedzNext);   /* start of next AEDR record */
+            INT32DECODE(b, num);        /* attr (?) number */
+            INT32DECODE(b, nt);         /* number type */
+            INT32DECODE(b, num);        /* var (?) number */
+            INT32DECODE(b, count);      /* number of elements */
+            INT32DECODE(b, dummy);      /* rfuA */
+            INT32DECODE(b, dummy);      /* rfuB */
+            INT32DECODE(b, dummy);      /* rfuC */
+            INT32DECODE(b, dummy);      /* rfuD */
+            INT32DECODE(b, dummy);      /* rfuE */
+
+            /* map the CDF type into a netCDF type */
+            nctype  = cdf_unmap_type(nt);
+            hdftype = hdf_map_type(nctype);
+
+            bsize = nctypelen(nctype) * count;
+            tBuf = HDgetspace((uint32) bsize);
+
+            /* convert attrbute values and create attr object */
+            DFKconvert((VOIDP) b, (VOIDP) tBuf, hdftype, count, DFACC_READ, 0, 0);
+            attr[0] = NC_new_attr(name, nctype, count, tBuf);
+            HDfreespace(tBuf);
+
+            /* make sure we got a vaild attribute */
+            if(attr[0] == NULL)
+                return (FALSE);
+
+            /* find the appropriate attribute list */
+            if(scope == 1) {
+                /* global attribute */
+                ap = &(handle->attrs);
+            } else {
+                /* local --- find the appropriate variable */
+                ap = &(vars[num]->attrs);
+#ifdef DEBUG
+        fprintf(stderr,"\tAdding %s (%s) to Zvar %d \n", name, (scope == 1 ? "global" : "local"), num);
+#endif
+            }
+
+            /* add the attribute to the list */
+            if(*ap == NULL) { 
+                /* first time */
+                (*ap) = NC_new_array(NC_ATTRIBUTE,(unsigned)1, (Void*)attr);
+                if((*ap) == NULL)
+                    return (FALSE);
+            } else {
+                if(NC_incr_array((*ap), (Void *)attr) == NULL)
+                    return (FALSE);
+            }
+        } /* AEDZ loop */
+
+
     } /* ADR loop */
 
     /*

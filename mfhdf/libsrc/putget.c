@@ -7,8 +7,12 @@
 #include	<string.h>
 #include	"local_nc.h"
 #include	"alloc.h"
+#include        <hfile.h>    /* Ugh!  We need the defs for HI_READ and HI_SEEK */
 
 /* Local function prototypes */
+static bool_t nssdc_xdr_NCvdata
+    PROTO((NC *handle,NC_var *vp,u_long where,nc_type type,uint32 count,
+        VOIDP values));
 static bool_t hdf_xdr_NCvdata
     PROTO((NC *handle,NC_var *vp,u_long where,nc_type type,uint32 count,
         VOIDP values));
@@ -257,38 +261,78 @@ NC *handle ;
 NC_var *vp ; 
 const long *coords ;
 {
-	u_long offset ;
-	const long *ip  ;
-	unsigned long *up ;
-	const long *boundary ;
-
-	if(vp->assoc->count == 0) /* 'scaler' variable */
-		return(vp->begin) ;
-
-	if( IS_RECVAR(vp) )
-		boundary = coords + 1 ;
-	else
-		boundary = coords ;
-	
-	up = vp->dsizes + vp->assoc->count - 1 ;
-	ip = coords + vp->assoc->count - 1 ;
-	for(offset = 0 ; ip >= boundary ; ip--, up--)
-		offset += *up * *ip ;
-
-	if( IS_RECVAR(vp) )
-	{
-            switch(handle->file_type) {
-            case HDF_FILE:
-                return( vp->begin + vp->dsizes[0] * *coords + offset) ;
-                break;
-            case netCDF_FILE:
-                return( vp->begin + handle->recsize * *coords + offset) ;
-                break;
-            }
-	}
-	/* else */
-	return( vp->begin + offset );
-}
+    u_long offset ;
+    const long *ip  ;
+    unsigned long *up ;
+    const long *boundary ;
+    vix_t * vix;
+    intn    i;
+    
+    if(vp->assoc->count == 0) /* 'scaler' variable */
+        return(vp->begin) ;
+    
+    if( IS_RECVAR(vp) )
+        boundary = coords + 1 ;
+    else
+        boundary = coords ;
+    
+    up = vp->dsizes + vp->assoc->count - 1 ;
+    ip = coords + vp->assoc->count - 1 ;
+    for(offset = 0 ; ip >= boundary ; ip--, up--)
+        offset += *up * *ip ;
+    
+    if( IS_RECVAR(vp) ) {
+        switch(handle->file_type) {
+        case HDF_FILE:
+            return( vp->dsizes[0] * *coords + offset) ;
+            break;
+        case netCDF_FILE:
+            return( vp->begin + handle->recsize * *coords + offset) ;
+            break;
+        case CDF_FILE:
+            fprintf(stderr, "Yow!  Don't do CDF records yet\n");
+            return (0);
+            break;
+        }
+    } else {
+        switch(handle->file_type) {
+        case HDF_FILE:
+            return (offset);
+            break;
+        case netCDF_FILE:
+            return (vp->begin + offset);
+            break;
+        case CDF_FILE:
+            if((vix = vp->vixHead) == NULL)
+                return (-1);
+            
+            /* 
+             * Record data is stored in chunks.  the firstRec and lastRec
+             *  fields give the indicies of the first and last records
+             *  stored in a given chunk and the offset gives the offset in
+             *  the file of where that chunk starts.  The local variable
+             *  'offset' gives the offset into the entire variable space
+             *  where we want to read.  To map find the correct location
+             *  we need to find the correct chunk and then get our offset
+             *  within that chunk
+             */
+            while(vix) {
+                for(i = 0; i < vix->nUsed; i++) {
+                    if((vix->firstRec[i] <= *coords) && (vix->lastRec[i] >= *coords)) {
+                        /* found the record we want */
+                        return (offset + vix->offset[i] - vix->firstRec[i] * vp->dsizes[0] + 8);
+                    }
+                } /* loop over user entries in current vix record */
+                vix = vix->next;
+            } /* loop over all vix records */
+            break;
+        }
+    }
+    
+    /* should never get to here */
+    return (0);
+    
+} /* NC_varoffset */
 
 
 /*
@@ -503,8 +547,6 @@ Void *values ;
 	return(FALSE) ;
 }
 
-#ifdef HDF
-
 /*****************************************************************************
 * 
 *			NCSA HDF / netCDF Project
@@ -635,10 +677,8 @@ NC_var *vp;
     if(vp->vgid) {
         /* attach to the variable's Vgroup */
         vg = Vattach(handle->hdf_file, vp->vgid, "w");
-        if(vg == FAIL) {
-            HEprint(stderr, 0);
+        if(vg == FAIL)
             return NULL;
-        }
         
         /* loop through looking for a data storage object */
         n = Vntagrefs(vg);
@@ -781,10 +821,8 @@ NC_var    * vp;
     else
         vp->aid = Hstartwrite(handle->hdf_file, vp->data_tag, vp->data_ref, 0);
     
-    if(vp->aid == FAIL) {
-        HEprint(stderr, 0);
+    if(vp->aid == FAIL)
         return(FALSE);
-    }
 
     return(TRUE);
 
@@ -817,9 +855,6 @@ uint32    count;
 #if DEBUG
     fprintf(stderr, "hdf_xdr_NCvdata I've been called : %s\n", vp->name->values);
 #endif
-
-    /* map to the correct location */
-    where -= vp->begin;
 
 #if DEBUG 
     fprintf(stderr, "Where = %d  count = %d\n", where, count);
@@ -868,10 +903,8 @@ uint32    count;
     
     /* position ourselves correctly */
     status = Hseek(vp->aid, where, DF_START);
-    if(status == FAIL) {
-        HEprint(stderr, 0);
+    if(status == FAIL)
         return(FALSE);
-    }
     
     /* make sure our tmp buffer is big enough to hold everything */
     byte_count = count * vp->HDFsize;
@@ -925,7 +958,7 @@ uint32    count;
     
     return(TRUE);
     
-} /* xdr_NCvdata */
+} /* hdf_xdr_NCvdata */
 
 
 /* ------------------------- hdf_xdr_NCv1data ------------------- */
@@ -979,7 +1012,83 @@ VOIDP     values;
 
 } /* hdf_xdr_NCv1data */
 
+/* -------------------------- nssdc_xdr_NCvdata --------------------------- */
+/*
+ *  Read / write 'count' items of contiguous data of type 'type' at 'where'
+ *    out of a CDF file
+ *
+ * The calling routine is responsible for calling DFKsetNT() as required.
+ */
+static bool_t
+nssdc_xdr_NCvdata(handle, vp, where, type, count, values)
+NC      * handle;
+NC_var  * vp;
+u_long    where;
+nc_type   type;
+VOIDP     values;
+uint32    count;
+{
+    int32 status;
+    int32 byte_count;
+
+#if DEBUG
+    fprintf(stderr, "nssdc_xdr_NCvdata I've been called : %s\n", vp->name->values);
 #endif
+
+#if DEBUG 
+    fprintf(stderr, "Where = %d  count = %d\n", where, count);
+#endif
+
+    fprintf(stderr, "nssdc_xdr_NCvdata I've been called : %s reading %d from %d\n", 
+            vp->name->values, count, where);
+
+    /* position ourselves correctly */
+    status = HI_SEEK(handle->cdf_fp, where);
+    if(status == FAIL)
+        return(FALSE);
+    
+    /* make sure our tmp buffer is big enough to hold everything */
+    byte_count = count * vp->HDFsize;
+    if(tBuf_size < byte_count) {
+        if(tBuf) HDfreespace((VOIDP)tBuf);
+        tBuf_size = byte_count;
+        tBuf = (int8 *) HDgetspace(tBuf_size);
+        if(tBuf == NULL) return FALSE;
+    }
+    
+
+    fprintf(stderr, "\tbyte_count %d   vp->HDFsize %d\n", byte_count, vp->HDFsize);
+
+    /* Read or write the data into / from values */
+    if(handle->xdrs->x_op == XDR_DECODE) {
+        status = HI_READ(handle->cdf_fp, tBuf, byte_count);
+        if(status == FAIL) return FALSE;
+        
+        /* convert tBuf into values */
+        DFKnumin((uint8 *) tBuf, (uint8 *) values, (uint32) count, 0, 0);
+        
+    } else {
+
+#ifdef CDF_WRITE      
+        /*  convert values into tBuf */
+        DFKnumout((uint8 *) values, tBuf, (uint32) count, 0, 0);
+        
+        status = Hwrite(vp->aid, byte_count, (uint8 *) tBuf);
+        if(status != byte_count) return FALSE;
+#endif /* CDF_WRITE */
+
+    }
+    
+
+#ifdef DEBUG
+    fprintf(stderr, " * * * Done with call to nssdc_xdr_NCvdata * * *\n");
+#endif
+    
+    return(TRUE);
+    
+} /* nssdc_xdr_NCvdata */
+
+
 
 static
 NCvar1io(handle, varid, coords, value)
@@ -1284,6 +1393,13 @@ Void *values ;
                                 (uint32)*edges, values))
                 return(-1) ;
             break;
+        case CDF_FILE:
+            DFKsetNT(vp->HDFtype);
+            if(!nssdc_xdr_NCvdata(handle, vp,
+                                offset, vp->type, 
+                                (uint32)*edges, values))
+                return(-1) ;
+            break;
         case netCDF_FILE:
             if(!xdr_NCvdata(handle->xdrs,
                             offset, vp->type, 
@@ -1339,7 +1455,7 @@ Void *values ;
 	arrayp("edges", vp->assoc->count, edges) ;
 #endif /* VDEBUG */
 
-        if(handle->file_type == HDF_FILE)
+        if(handle->file_type != netCDF_FILE)
                 DFKsetNT(vp->HDFtype);
 
 	if(vp->assoc->count == 0) /* 'scaler' variable */
@@ -1385,17 +1501,12 @@ Void *values ;
 	/* now edp = edp0 - 1 */
 
 	{ /* inline */
-	long  *coords, *upper, *cc ;
+        long  coords[MAX_VAR_DIMS], upper[MAX_VAR_DIMS];
+	long  *cc ;
 	const long *mm ;
 	u_long offset ;
 	size_t szof = nctypelen(vp->type) ;
 
-	coords = (long *)HDgetspace(vp->assoc->count * sizeof(long)) ;
-	if(coords == NULL)
-	{
-		nc_serror("") ;
-		return(-1) ;
-	}
 	/* copy in starting indices */
 	cc = coords ;
 	mm = start ;
@@ -1405,12 +1516,6 @@ Void *values ;
 	arrayp("coords", vp->assoc->count, coords) ;
 #endif
 
-	upper = (long *)HDgetspace(vp->assoc->count * sizeof(long)) ;
-	if(upper == NULL)
-	{
-		nc_serror("") ;
-		return(-1) ;
-	}
 	/* set up in maximum indices */
 	cc = upper ;
 	mm = coords ;
@@ -1451,6 +1556,12 @@ Void *values ;
                                 switch(handle->file_type) {
                                 case HDF_FILE:
                                     if(!hdf_xdr_NCvdata(handle, vp,
+                                                        offset, vp->type, 
+                                                        (uint32)iocount, values))
+                                        return(-1) ;
+                                    break;
+                                case CDF_FILE:
+                                    if(!nssdc_xdr_NCvdata(handle, vp,
                                                         offset, vp->type, 
                                                         (uint32)iocount, values))
                                         return(-1) ;
@@ -1498,9 +1609,6 @@ Void *values ;
 			*coords, *upper) ;
 #endif
 	}
-
-	Free(coords) ;
-	Free(upper) ;
 	} /* end inline */
 
 #ifdef VDEBUG
@@ -1677,6 +1785,13 @@ Void **datap ;
                 case HDF_FILE:
                     DFKsetNT(rvp[ii]->HDFtype);
                     if(!hdf_xdr_NCvdata(handle, rvp[ii],
+                                        offset, rvp[ii]->type, 
+                                        (uint32)iocount, datap[ii]))
+                        return(-1) ;
+                    break;
+                case CDF_FILE:
+                    DFKsetNT(rvp[ii]->HDFtype);
+                    if(!nssdc_xdr_NCvdata(handle, rvp[ii],
                                         offset, rvp[ii]->type, 
                                         (uint32)iocount, datap[ii]))
                         return(-1) ;

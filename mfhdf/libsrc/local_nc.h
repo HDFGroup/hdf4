@@ -67,6 +67,22 @@
 
 #endif
 
+/* from cdflib.h CDF 2.3 */
+#ifndef MAX_VXR_ENTRIES
+#define MAX_VXR_ENTRIES                 10
+#endif /* MAX_VXR_ENTRIES */
+
+/* VIX record for CDF variable data storage */
+typedef struct vix_t_def {
+    int32              nEntries;                    /* number of entries in this vix */
+    int32              nUsed;                       /* number of entries containing valid data */
+    int32              firstRec[MAX_VXR_ENTRIES];   /* number of first records */
+    int32              lastRec[MAX_VXR_ENTRIES];    /* number of last records */
+    int32              offset[MAX_VXR_ENTRIES];     /* file offset of records */
+    struct vix_t_def * next;                        /* next one in line */
+} vix_t;
+
+
 /* like, a discriminated union in the sense of xdr */
 typedef struct {
 	nc_type type ;		/* the discriminant */
@@ -137,6 +153,7 @@ typedef struct {
         int32   is_ragged; /* BOOLEAN == is a ragged array */
         int32 * rag_list;  /* size of ragged array lines */
         int32   rag_fill;  /* last line in rag_list to be set */
+        vix_t * vixHead;   /* list of VXR records for CDF data storage */
 #endif
 } NC_var ;
 
