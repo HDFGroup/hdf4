@@ -2,7 +2,11 @@
 # $Header$
 #
 # $Log$
-# Revision 1.12  1993/01/19 06:00:06  koziol
+# Revision 1.13  1993/04/13 17:45:43  koziol
+# Made the installation check for a previous bin directory before trying to
+# re-create it.
+#
+# Revision 1.12  1993/01/19  06:00:06  koziol
 # Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
 # port.  Lots of minor annoyances fixed.
 #
@@ -84,7 +88,7 @@ CFLAGS = -D$(MACHINE)
 	$(CC) -c $(CFLAGS) -I$(HDFINC) $(GLLIB)  $<
 
 all: hdfed utils
-	-mkdir $(HDFBIN)
+	-if( test \! -d $(HDFBIN)) then (mkdir $(HDFBIN)) fi
 	-cp $(UTILS) hdfed $(HDFBIN)
 
 nofortran: all
