@@ -313,18 +313,18 @@ typedef struct sp_info_block_t {
    special data elements of a key could be accessed through the list
    of functions in array pointed to by tab. */
 typedef struct funclist_t {
-    int32 (*stread)  PROTO((accrec_t *rec));
-    int32 (*stwrite) PROTO((accrec_t *rec));
-    int32 (*seek)    PROTO((accrec_t *access_rec, int32 offset, intn origin));
-    int32 (*inquire) PROTO((accrec_t *access_rec, int32 *pfile_id, 
+    int32 (*stread)  HPROTO((accrec_t *rec));
+    int32 (*stwrite) HPROTO((accrec_t *rec));
+    int32 (*seek)    HPROTO((accrec_t *access_rec, int32 offset, intn origin));
+    int32 (*inquire) HPROTO((accrec_t *access_rec, int32 *pfile_id, 
                              uint16 *ptag, uint16 *pref, int32 *plength, 
                              int32 *poffset, int32 *pposn, int16 *paccess, 
                              int16 *pspecial));
-    int32 (*read)    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
-    int32 (*write)   PROTO((accrec_t *access_rec, int32 length, const VOIDP data));
-    int32 (*endaccess) PROTO((accrec_t *access_rec));
-    int32 (*info)    PROTO((accrec_t *access_rec, sp_info_block_t * info));
-    int32 (*reset)   PROTO((accrec_t *access_rec, sp_info_block_t * info));
+    int32 (*read)    HPROTO((accrec_t *access_rec, int32 length, VOIDP data));
+    int32 (*write)   HPROTO((accrec_t *access_rec, int32 length, const VOIDP data));
+    int32 (*endaccess) HPROTO((accrec_t *access_rec));
+    int32 (*info)    HPROTO((accrec_t *access_rec, sp_info_block_t * info));
+    int32 (*reset)   HPROTO((accrec_t *access_rec, sp_info_block_t * info));
 } funclist_t;
 
 typedef struct functab_t {
@@ -447,6 +447,9 @@ extern int32 HPgetdiskblock
 
 extern intn HPfreediskblock
   (filerec_t *file_rec, int32 block_offset, int32 block_size);
+
+extern int32 HDget_special_info
+    (int32 access_id, sp_info_block_t * info_block);
 
 /*
 ** from hblocks.c

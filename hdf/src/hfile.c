@@ -55,6 +55,12 @@ static char RcsId[] = "@(#)$Revision$";
 #undef HMASTER
 #include "hfile.h"
 
+/*
+** Prototypes for local functions
+*/
+static int HIchangedd
+  (dd_t *datadd, ddblock_t *block, int idx, int16 special,
+	 VOIDP special_info, funclist_t *special_func);
 
 /* Array of file records that contains all relevant
    information on an opened HDF file.
@@ -416,7 +422,6 @@ intn Hclose(int32 file_id)
     }
     
     return SUCCEED;
-
 } /* Hclose */
 
 /*--------------------------------------------------------------------------
@@ -571,13 +576,21 @@ intn Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
     access_rec->appendable=FALSE;   /* start data as non-appendable */
     access_rec->flush=FALSE;        /* start data as not needing flushing */
     if (SPECIALTAG(access_rec->block->ddlist[access_rec->idx].tag)) {
+	int32 ret;
 
        /* special element, call special function to handle */
        access_rec->special_func = HIget_function_table(access_rec, FUNC);
        if (!access_rec->special_func)
            HRETURN_ERROR(DFE_INTERNAL,FAIL);
        HIunlock(access_rec->file_id); /* remove old attach to the file_rec */
+#ifdef OLD_WAY
        return (int)(*access_rec->special_func->stread)(access_rec);
+#else
+	if((ret=(*access_rec->special_func->stread)(access_rec))!=FAIL)
+		return(SUCCEED);
+	else
+		return(FAIL);
+#endif
     }
 
     access_rec->special = 0;
@@ -1237,7 +1250,7 @@ printf("Hwrite(): before special element function call\n");
 #endif
     /* if special elt, call special function */
     if (access_rec->special)
-       return (*access_rec->special_func->write)(access_rec, length, data);
+       return (*access_rec->special_func->write)(access_rec, length, (VOIDP)data);
 
     /* check validity of file record and get dd ptr */
     file_rec = FID2REC(access_rec->file_id);
@@ -3108,6 +3121,7 @@ PRIVATE int HIupdate_version(int32 file_id)
     filerec_t *file_rec;
     int ret, i;
     CONSTR(FUNC,"Hupdate_version");
+
 
     HEclear();
 

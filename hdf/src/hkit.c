@@ -527,11 +527,11 @@ intn HDpackFstring(char *src, char *dest, intn len)
 } /* HDpackFstring */
 
 
-/* ----------------------------- HDgettagname ----------------------------- */
+/* ----------------------------- HDgettagdesc ----------------------------- */
 /*
 
  NAME
-	HDgettagname -- return a text description of a tag
+	HDgettagdesc -- return a text description of a tag
  USAGE
 	char * HDgettagname(tag)
         uint16   tag;          IN: tag of element to find
@@ -541,13 +541,37 @@ intn HDpackFstring(char *src, char *dest, intn len)
         Map a tag to a statically allocated text description of it.
 
 --------------------------------------------------------------------------- */
-const char _HUGE *HDgettagname(uint16 tag)
+const char _HUGE *HDgettagdesc(uint16 tag)
 {
     intn i;
 
     for(i=0; i<sizeof(tag_descriptions)/sizeof(tag_descript_t); i++)
 	if(tag_descriptions[i].tag==tag)
 	    return(tag_descriptions[i].desc);
+    return(NULL);
+}
+
+/* ----------------------------- HDgettagname ----------------------------- */
+/*
+
+ NAME
+	HDgettagname -- return a text name of a tag
+ USAGE
+	char * HDgettagname(tag)
+        uint16   tag;          IN: tag of element to find
+ RETURNS
+        Descriptive text or NULL
+ DESCRIPTION
+        Map a tag to a statically allocated text name of it.
+
+--------------------------------------------------------------------------- */
+const char _HUGE *HDgettagname(uint16 tag)
+{
+    intn i;
+
+    for(i=0; i<sizeof(tag_descriptions)/sizeof(tag_descript_t); i++)
+	if(tag_descriptions[i].tag==tag)
+	    return(tag_descriptions[i].name);
     return(NULL);
 }
 
@@ -575,7 +599,7 @@ intn HDgettagnum(const char *tag_name)
     return(FAIL);
 }
 
-/* ----------------------------- HDgetNTname ----------------------------- */
+/* ----------------------------- HDgetNTdesc ----------------------------- */
 /*
 
  NAME
@@ -623,4 +647,31 @@ char _HUGE *HDgetNTdesc(int32 nt)
 	  }	/* end if */
     return(NULL);
 }	/* end HDgetNTdesc() */
+
+/* ------------------------------- HDfidtoname ------------------------------ */
+/*
+
+ NAME
+	HDfidtoname -- return the filename the file ID corresponds to
+ USAGE
+	const char _HUGE * HDfidtoname(fid)
+        int32 fid;            IN: file ID
+ RETURNS
+        SUCCEED - pointer to filename / FAIL - NULL
+ DESCRIPTION
+	Map a file ID to the filename used to get it.  This is useful for 
+	mixing old style single-file interfaces (which take filenames) and
+	newer interfaces which use file IDs.
+
+--------------------------------------------------------------------------- */
+const char _HUGE *HDfidtoname(int32 file_id)
+{
+    CONSTR(FUNC,"HDfidtoname");       /* for HERROR */
+    filerec_t *file_rec;
+    
+    if((file_rec = FID2REC(file_id))==NULL)
+        HRETURN_ERROR(DFE_ARGS,NULL);
+    
+    return(file_rec->path);
+} /* HDfidtoname */
 

@@ -144,6 +144,9 @@ extern int HDerr
 extern intn HDvalidfid
     (int32 file_id);
 
+extern const char _HUGE *HDgettagdesc
+    (uint16 tag);
+
 extern const char _HUGE *HDgettagname
     (uint16 tag);
 
@@ -152,6 +155,9 @@ extern intn HDgettagnum
 
 extern char _HUGE *HDgetNTdesc
     (int32 nt);
+
+extern const char _HUGE *HDfidtoname
+    (int32 fid);
 
 extern intn Hishdf
     (const char _HUGE *filename);

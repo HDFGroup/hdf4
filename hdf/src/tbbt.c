@@ -96,7 +96,7 @@ TBBT_NODE *tbbtprev( TBBT_NODE *node)
 /* tbbtfind -- Look up a node in a tree based on a key value */
 /* Returns a pointer to the found node (or NULL) */
 TBBT_NODE *tbbtfind(TBBT_NODE *root,VOIDP key,
-	intn (*compar) PROTO((VOIDP,VOIDP,intn)),intn arg,TBBT_NODE **pp)
+	intn (*compar) HPROTO((VOIDP,VOIDP,intn)),intn arg,TBBT_NODE **pp)
 {
     TBBT_NODE *ptr= root;
     TBBT_NODE *parent= NULL;
@@ -418,7 +418,7 @@ printf("balance(): check 4, side=%d, lcnt=%d, rcnt=%d\n",side,LeftCnt(ptr),Right
 
 /* Returns pointer to inserted node (or NULL) */
 TBBT_NODE *tbbtins(TBBT_NODE **root,VOIDP item,VOIDP key,intn (*compar)
-        PROTO((VOIDP k1,VOIDP k2,intn arg)),intn arg )
+        HPROTO((VOIDP k1,VOIDP k2,intn arg)),intn arg )
 {
     intn cmp;
     TBBT_NODE *ptr, *parent;
@@ -665,7 +665,7 @@ printf("tbbtrem(): check 7.5, par=%p, par->lcnt=%d, par->rcnt=%d\n",par,par->lcn
 
 /* tbbtdmake - Allocate a new tree description record for an empty tree */
 /* Returns a pointer to the description record */
-TBBT_TREE *tbbtdmake(intn (*cmp) PROTO((VOIDP k1,VOIDP k2,intn arg)), intn arg)
+TBBT_TREE *tbbtdmake(intn (*cmp) HPROTO((VOIDP k1,VOIDP k2,intn arg)), intn arg)
 {
   TBBT_TREE *tree= Alloc( 1, TBBT_TREE );
 
