@@ -49,6 +49,7 @@ Supported Platforms
                                  (Fortran to C converter)
 
   PowerPC(Mac-OS-7.5)         Codewarrior 8    -              X         X
+  68k-far/4i/8d(Mac-OS-7.5)   Codewarrior 8    -              X         X
   Windows NT/95                -               -               -         - 
  
 Requirements
@@ -254,6 +255,54 @@ Platform-specific Notes
     installation instructions in:
 
         $(toplevel)/release_notes/parallel_CM5.txt.
+
+    PowerPC/68k(far/4i/8d)- Macintosh OS
+    ------------------------------------
+    The distribution was compilied/tested with MetroWerks Codewarrior(CW8).
+    Only the base libraries{libdf.a,zlib.a,libjpeg.a,libmfhdf.a,libxdr.a}
+    were compilied and tested on the PowerPC and 68k without Fortran support.
+
+    The 68k version was compilied/tested using 4byte integers, 8byte doubles 
+    and far option.
+
+    *NO* Fortran support is included in this distribution.
+
+    Codewarrior Projects can be found in the following directories. 
+    They have been run through the Macintosh BinHex utility program. 
+    You need to compile the libraries before you can compile the test 
+    programs 'testhdf', 'xdrtest', 'cdftest', 'hdftest' and  'nctest'.
+    Note that the test programs are SOUX applications.
+    You need at least 8MB of memory to run the test programs.
+
+    $(toplevel)/
+                hdf/zlib/zlib.68k-project.hqx
+                         zlib.PPC-project.hqx
+
+                hdf/jpeg/jpeglib.68k-project.hqx
+                         jpeglib.PPC-project.hqx
+
+                hdf/src/hdflib.68k-project.hqx
+                        hdflib.PPC-project.hqx
+
+                hdf/test/testhdf.68k-project.hqx
+                         testhdf.68k-project.hqx
+    
+                mfhdf/xdr/xdrlib.68k-project.hqx
+                          xdrlib.PPC-project.hqx
+                          xdrtest.68k-project.hqx
+                          xdrtest.PPC-project.hqx
+
+                mfhdf/libsrc/mfhdflib.68k-project.hqx
+                             mfhdflib.PPC-project.hqx
+                             cdftest.68k-project.hqx
+                             cdftest.PPC-project.hqx
+                             hdftest.68k-project.hqx
+                             hdftest.PPC-project.hqx
+
+                mfhdf/nctest/nctest.68k-project.hqx
+                             nctest.PPC-project.hqx
+
+
 
 Pablo Instrumentation
 ====================
