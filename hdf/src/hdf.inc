@@ -416,7 +416,18 @@ C	Compression Types
 
       parameter(COMP_NONE       = 0, COMP_RLE        = 11)
       parameter(COMP_IMCOMP     = 12, COMP_JPEG       = 2)
-
+C
+C       Fortran chunking (SD and GR interfaces) and compression routines use
+C       the following compression types:
+C
+      integer COMP_CODE_NONE, COMP_CODE_RLE, COMP_CODE_NBIT
+      integer COMP_CODE_SKPHUFF, COMP_CODE_DEFLATE
+      parameter (COMP_CODE_NONE = 0)
+      parameter (COMP_CODE_RLE  = 1)
+      parameter (COMP_CODE_NBIT = 2)
+      parameter (COMP_CODE_SKPHUFF = 3)
+      parameter (COMP_CODE_DEFLATE = 4)
+C
 C	Interlace Types 
 
       integer	MFGR_INTERLACE_PIXEL, MFGR_INTERLACE_LINE
