@@ -18,9 +18,9 @@ static char RcsId[] = "@(#)$Revision$";
 
 /*
 ** FILE
-**	hdfunpack.c
+**	hdfunpac.c
 ** USAGE
-**	hdfunpack [options] <hdffile>
+**	hdfunpac [options] <hdffile>
 ** DESCRIPTION
 **	This program unpacks an HDF file by exporting the scientific data
 **	elements (DFTAG_SD) to external object elements.
@@ -31,9 +31,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include <stdio.h>
 #include <string.h>
-#ifdef IBM6000
 #include <sys/stat.h>
-#endif /* IBM6000 */
 #include "hdf.h"
 #include "herr.h"
 #include "hfile.h"
