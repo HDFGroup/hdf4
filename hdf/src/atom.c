@@ -110,16 +110,7 @@ assert(sizeof(hdf_pint_t)==sizeof(void *));
 #endif /* ATOMS_CACHE_INLINE */
 
 #ifdef HASH_SIZE_POWER_2
-    /* If anyone knows a faster test for a power of two, please change this silly code -QAK */
-    if(!(hash_size==2 || hash_size==4 || hash_size==8 || hash_size==16
-            || hash_size==32 || hash_size==64 || hash_size==128 || hash_size==256
-            || hash_size==512 || hash_size==1024 || hash_size==2048
-            || hash_size==4096 || hash_size==8192 || hash_size==16374
-            || hash_size==32768 || hash_size==65536 || hash_size==131072
-            || hash_size==262144 || hash_size==524288 || hash_size==1048576
-            || hash_size==2097152 || hash_size==4194304 || hash_size==8388608
-            || hash_size==16777216 || hash_size==33554432 || hash_size==67108864
-            || hash_size==134217728 || hash_size==268435456))
+    if(hash_size & (hash_size-1))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 #endif /* HASH_SIZE_POWER_2 */
 
