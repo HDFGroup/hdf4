@@ -899,7 +899,14 @@ test_nbit10(int32 fid)
 
     for (i = 0; i < NBIT_SIZE10; i++)
       {
-          test_out = (int16) ((outbuf[i] | NBIT_MASK10A) & NBIT_MASK10B);
+/* intel windows c++ compiler has a bug when masking outbuf[i], it extends the
+   signed bit to all bits of higher 16 bit, so don't use MASK for intel windows c++ compiler.
+    Kent Yang 09/02/02 */
+#if defined WIN32 && (defined __INTEL_COMPILER || defined __ICL)
+     test_out = (int16)(outbuf[i] | NBIT_MASK10A);
+#else
+     test_out = (int16) ((outbuf[i] | NBIT_MASK10A) & NBIT_MASK10B);
+#endif
           test_in = (int16) (inbuf[i] & NBIT_MASK10B);
 /* The following ifdef block fixes a compiler bug on the */
 /* HP9000, leave it in! -QAK */
