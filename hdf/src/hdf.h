@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.3  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.4  1992/11/10 20:23:03  georgev
+Added fill value tag DFTAG_FV for hyperslabs
 
+ * Revision 1.3  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.2  1992/08/31  16:16:45  chouck
  * Added definition of calibration tag (731)
  *
@@ -327,6 +330,7 @@ extern uint8 *tbuf;
 #define DFTAG_SDLNK ((uint16)710) /* Links related to the dataset */
 #define DFTAG_NDG   ((uint16)720) /* Numeric Data Group */
 #define DFTAG_CAL   ((uint16)731) /* Calibration information */
+#define DFTAG_FV    ((uint16)732) /* Fill Value information */
 #define DFTAG_BREQ  ((uint16)799) /* Beginning of required tags   */
 #define DFTAG_EREQ  ((uint16)780) /* Current end of the range   */
 
