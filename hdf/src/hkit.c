@@ -496,11 +496,9 @@ intn HDflush(file_id)
 
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-intn
-#ifdef PROTOTYPE
-HDpackFstring(char *src, char *dest, intn len)
+intn HDpackFstring(char *src, char *dest, intn len)
 #else
-HDpackFstring(src, dest, len)
+intn HDpackFstring(src, dest, len)
 char *src, *dest;
 intn len;
 #endif
