@@ -33,6 +33,14 @@ hdf/util/testfiles/storm140.raw -text svneol=unset#application/octet-stream
 hdf/util/testfiles/test.cdf -text
 hdf/util/testfiles/test.hdf -text
 hdf/util/testfiles/tvattr.hdf -text
+java-hdf/samples/anntest.hdf -text
+java-hdf/samples/hdf-ann-ras.hdf -text
+java-hdf/samples/hdfann.hdf -text
+java-hdf/samples/jet-stream.hdf -text
+java-hdf/samples/liver_ca_3D.hdf -text
+java-hdf/samples/ntcheck.hdf -text
+java-hdf/samples/sac96274.hdf -text
+java-hdf/samples/sea-ice-vdata.hdf -text
 mfhdf/dumper/Example6.hdf -text
 mfhdf/dumper/ctxtr2r.hdf -text
 mfhdf/dumper/grtdfi322.hdf -text

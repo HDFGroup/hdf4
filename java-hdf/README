@@ -1,0 +1,107 @@
+               README for HDF Java Interface and JHV
+               --------------------------------------
+
+Contents of this release
+------------------------
+
+This package contains the complete Java interface for the
+HDF 4.1r1 library, and the Java HDF Viewer application.
+
+  Java Interface for HDF:
+
+       The Java interface for HDF consists of two parts:
+            1. Java classes to interface, including 'native methods'
+               and support for Java Exceptions, and data conversion.
+            2. C-library that uses the Java Native Method Interface
+               (JNI) to implement the Java calls to the HDF library.
+
+       Together these provide access to almost all the routines
+       of the HDF library.  This interface may be used by any
+       Java application that wants to use the HDF library.
+
+       Note that this is an interface to the regular HDF library,
+       it is NOT an implementation of HDF written in Java.
+
+       The Java Interface to HDF requires Java JDK 1.1.1 or above.
+       This cannot be used with JDK 1.02.
+
+  Java HDF Viewer (JHV):
+
+       The JHV is a Java application to browse HDF files.  The
+       JHV uses the Java Interface for HDF.  Thd JHV is a standalone
+       application, it cannot be used as a network loadable applet.
+
+       The JHV consists of three parts (plus the Java HDF interface):
+           1.  Java classes for the appliation (windows, controls,
+               and so on.)
+           2.  A java package for 'palette' (look up table) manipulation.
+           3.  A small amount of C-code to support data conversion
+
+
+Obtaining the latest version
+----------------------------
+ The most recent version of the distribution can be obtained from
+ the NCSA ftp archive site at:
+
+     ftp://ftp.ncsa.uiuc.edu/HDF/HDF_Current
+
+Distribution Layout
+-------------------
+ There are eight subdirectories in this directory:
+
+   Config -- contains support for the configure script
+
+
+   bin    -- the jhv invocation script
+   hdficons -- icons used for the jhv browser
+   lib    -- the directory for the compiled classes and native libraries
+   docs   -- the directory for the javadoc documentation pages
+   samples -- some sample hdf files
+
+   java   -- source for the java classes in java package 'java.*'
+             This includes several support classes for the jhv.
+   ncsa   -- source for the java classes in java package 'ncsa.hdf.*'
+             This includes the Java HDF interface (ncsa.hdf.hdflib),
+             palette manipulation classes (ncsa.hdf.palette), and
+             the Java HDF Viewer (JHV) (ncsa.hdf.jhv).
+   native -- source for the native (C) support for the java classes.
+             This includes the Java HDF API (hdflib) and support
+             for the jhv (jhvlib).
+
+Software Requirements:
+----------------------
+
+ This software must be compiled with the HDF 4.1 library.  If
+ HDF is already installed, it is not necessary to install or compile
+ it again.
+
+System Requirements
+-------------------
+ To build the HDF Java API and JHV from source, you need:
+
+   * an ANSI C compiler.
+
+   * Java Development Kit JDK 1.1.x
+     ***This product cannot be compiled with JDK 1.02***
+
+Configuring/Testing/Installing 
+-------------------------------------------------------------
+ See the INSTALL file for instructions on configuring
+ and installing for Unix and non-UNIX systems.
+
+DOCUMENTATION/FAQ/HELP
+----------------------
+ The HDF 4.1r1 documentation can be found on the NCSA ftp server
+ in the directory /HDF/Documentation/HDF4.1r1.  The
+ HDF home page is at:
+
+      http://hdf.ncsa.uiuc.edu/
+
+ An FAQ is available on our ftp server, as well as under
+ "Information about HDF" in the home page.
+
+ If you have any questions or comments, or would like to be
+ added to or removed from our hdfnews email list, contact us
+ at:
+
+      hdfhelp@ncsa.uiuc.edu

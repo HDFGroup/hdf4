@@ -1,0 +1,23 @@
+
+  The following is an HDF test files.
+
+        hdfann.hdf
+           2 raster image plus nice annotation. 
+ 
+        jet-stream.hdf
+           another nice raster image.
+ 
+        polar-snow-ice.hdf
+           This file is for "Ice concentration, polar regions".
+ 
+        sea-ice-vdata.hdf
+           HDF Vdata example for "Sea ice motion vectors".
+
+        liver_ca_3d.hdf
+	   nice 3D SDS HDF file, which  is my favorite demo file. 
+           This demonstrates the 'animation' feature.
+
+	ntcheck.hdf
+	   checks many data types (may reveal portability
+           bugs.)
+	   

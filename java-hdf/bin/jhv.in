@@ -1,0 +1,70 @@
+#!/bin/csh -f
+
+# Set up default variable values if not supplied by the user.
+
+set JHVHOME=@JHVINST@
+
+set JHVICONPATH=@JHVINST@/lib/hdficons
+set LIBPATH=@JHVINST@/lib/@JAVATARG@
+set CPATH=@JHVINST@/lib/classes.zip
+
+if (${?CLASSPATH} == 0) then
+	setenv CLASSPATH ""
+endif
+setenv CLASSPATH $CPATH":"@CLASSPATH@":"$CLASSPATH
+
+setenv PATH `dirname @JAVA@`":"$PATH
+
+
+if ($1 != "") then
+	set JHVPATH=$1
+else
+	set JHVPATH=""
+endif
+
+if (-e /bin/uname) then
+   set machtype=`/bin/uname -m`
+else
+   set machtype=unknown
+endif
+
+set JOPTS=""
+
+if (${?LD_LIBRARY_PATH} == 0) then
+        setenv LD_LIBRARY_PATH ""
+endif
+
+# add the java support libraries?  Probably provided by the java program
+setenv LD_LIBRARY_PATH $LIBPATH":"$LD_LIBRARY_PATH
+
+switch ( $machtype )
+    case sun4*:
+	# set lib
+#	setenv LD_LIBRARY_PATH $JHVHOME/lib/solaris:$LD_LIBRARY_PATH
+
+	breaksw
+    case i86*:
+	# set lib
+# 	setenv LD_LIBRARY_PATH $JHVHOME/lib/i386:/usr/java/lib/i386:$LD_LIBRARY_PATH
+
+	breaksw
+  case i*86:
+        # set lib
+#        setenv LD_LIBRARY_PATH $JHVHOME/lib/linux-elf:$LD_LIBRARY_PATH
+
+        breaksw
+  case IP*:
+        # set lib
+#        setenv LD_LIBRARY_PATH $JHVHOME/lib/irix:$LD_LIBRARY_PATH
+	set JOPTS="-jit"
+
+	breaksw
+#   case 9000/*:
+#
+#        breaksw
+    default:
+	echo "Unknown machine type:  jhv may not work correctly"
+        breaksw
+endsw
+
+@JAVA@ $JOPTS ncsa.hdf.jhv.JHV -jhviconspath $JHVICONPATH $JHVPATH;

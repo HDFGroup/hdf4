@@ -1,0 +1,46 @@
+/*=======================================================================
+UNIVERSITY OF ILLINOIS (UI), NATIONAL CENTER FOR SUPERCOMPUTING
+APPLICATIONS (NCSA), Software Distribution Policy for Public Domain
+Software
+
+NCSA HDF Version 4.1 source code and documentation are in the public
+domain, available without fee for education, research, non-commercial and
+commercial purposes.  Users may distribute the binary or source code to
+third parties provided that this statement appears on all copies and that
+no charge is made for such copies.  
+
+UI MAKES NO REPRESENTATIONS ABOUT THE SUITABILITY OF THE SOFTWARE FOR ANY
+PURPOSE.  IT IS PROVIDED "AS IS" WITHOUT EXPRESS OR IMPLIED WARRANTY.  THE
+UI SHALL NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY THE USER OF THIS
+SOFTWARE.  The software may have been developed under agreements between
+the UI and the Federal Government which entitle the Government to certain
+rights.
+
+We ask, but do not require that the following message be include in all
+derived works:
+
+  Portions developed at the National Center for Supercomputing Applications
+  at the University of Illinois at Urbana-Champaign.
+
+By copying this program, you, the user, agree to abide by the conditions
+and understandings with respect to any software which is marked with a
+public domain notice.
+
+
+Acknowledgements:
+----------------
+Portions of this software were developed by the Unidata Program at the 
+University Corporation for Atmospheric Research, specifically the 
+NETCDF distribution used.
+
+This product also includes software developed by the Independent JPEG
+Group, specifically the IJPEG library libjpeg.a.
+
+This product also includes software developed by Jean-loup Gailly 
+and Mark Adler , specifically the ZLIB library libz.a.
+
+This product includes software developed by the University of
+California, Berkeley and its contributors.
+
+=======================================================================*/
+
