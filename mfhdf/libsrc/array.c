@@ -472,6 +472,8 @@ NC_array *array ;
 	 	case NC_ATTRIBUTE :
 			xlen_funct = NC_xlen_attr ;
 			break ;
+        default:
+            break;
 		}
 		vp = array->values ;
 		for(ii=0 ; ii < array->count ; ii++) 

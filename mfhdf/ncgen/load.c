@@ -48,6 +48,8 @@ load_netcdf(rec_start)	/* write out record from in-memory structure */
       case NC_DOUBLE:
 	doublevalp = (double *) rec_start;
 	break;
+      default:
+        break;
     }
     /* initialize coords to upper left corner (0,0,0,...) */
     if (vars[varnum].dims[0] == rec_dim) {
@@ -81,6 +83,8 @@ load_netcdf(rec_start)	/* write out record from in-memory structure */
       case NC_DOUBLE:
 	istat = ncvarput (ncid,varnum,coords,edges,(void *)doublevalp);
 	break;
+      default:
+        break;
     }
     if (istat == -1)
       derror("error putting value for variable %s",vars[varnum].name);
@@ -209,6 +213,8 @@ gen_load_c(rec_start)
 	      case NC_DOUBLE:
 		doublevalp = (double *) rec_start;
 		break;
+          default:
+            break;
 	    }
             for (ival = 0; ival < var_len-1; ival++) {
 		switch (vars[varnum].type) {
@@ -229,6 +235,8 @@ gen_load_c(rec_start)
                         tztrim(s2);
 			strcat(s2, ", ");
 		    break;
+          default:
+            break;
 		}
 		stmnt_len += strlen(s2);
 		if (stmnt_len < C_MAX_STMNT)
@@ -257,6 +265,8 @@ gen_load_c(rec_start)
  			sprintf(s2, "%#.16g", *doublevalp++);
 			tztrim(s2);
                         break;
+          default:
+            break;
 		}
 		stmnt_len += strlen(s2);
 		if (stmnt_len < C_MAX_STMNT)
@@ -318,6 +328,8 @@ gen_load_c(rec_start)
  	    tztrim(s2);
 	    strcat(stmnt, s2);
 	    break;
+      default:
+        break;
 	}
 	strcat(stmnt,"};");
 	cline(stmnt);
@@ -460,6 +472,8 @@ gen_load_fortran(rec_start)  /* make Fortran to put record */
  	    tztrim(s2);
 	    fstrcat(stmnt, s2, &stmnt_len);
 	    break;
+      default:
+        break;
 	}
 	fstrcat(stmnt, "/", &stmnt_len);
 	fline(stmnt);

@@ -245,17 +245,18 @@ printf("\n\n After cast %d %d\n", (int)a, (int)b);
 		float val, fillval = FILL_FLOAT;
 		if (ncvarget1(cdfid, va_id[iv], where, (void *) &val) != -1) {
 #ifdef HDF
-          if (fabs((double)(val - fillval)) > fabs((double)(fillval*EPS32))) {
+            if (fabs((double)(val - fillval)) > fabs((double)(fillval*EPS32)))
 #else /*!HDF */
-		    if (val != fillval) {
+		    if (val != fillval)
 #endif
-			error("%s: unwritten float not FILL_FLOAT", pname);
-			nerrs++;
-		    }
-		} else {
-		    error("%s: ncvarget1 failure for float", pname);
-		    nerrs++;
-		}
+            {
+                error("%s: unwritten float not FILL_FLOAT", pname);
+                nerrs++;
+                }
+        } else {
+            error("%s: ncvarget1 failure for float", pname);
+            nerrs++;
+        }
 	    }
 	    break;
 	  case NC_DOUBLE:
@@ -263,19 +264,22 @@ printf("\n\n After cast %d %d\n", (int)a, (int)b);
 		double val, fillval = FILL_DOUBLE;
 		if (ncvarget1(cdfid, va_id[iv], where, (void *) &val) != -1) {
 #ifdef HDF
-          if (fabs((double)(val - fillval)) > fabs((double)(fillval*EPS64))) {
+           if (fabs((double)(val - fillval)) > fabs((double)(fillval*EPS64)))
 #else  /* !HDF */
-		    if (val != fillval) {
+		    if (val != fillval)
 #endif /* !HDF */
-			error("%s: unwritten double not FILL_DOUBLE", pname);
-			nerrs++;
-		    }
-		} else {
-		    error("%s: ncvarget1 failure for double", pname);
-		    nerrs++;
-		}
+            {
+            error("%s: unwritten double not FILL_DOUBLE", pname);
+            nerrs++;
+            }
+        } else {
+            error("%s: ncvarget1 failure for double", pname);
+            nerrs++;
+        }
 	    }
 	    break;
+        default:
+            break;
 	}
     }
 

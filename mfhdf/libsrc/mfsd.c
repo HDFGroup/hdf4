@@ -2299,7 +2299,6 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
 
     /* Check if this data is being written out to a newly created dataset */
     {
-        intn ret;
         NC_var *var = SDIget_var(handle, sdsid);
 
         if(var->created) {

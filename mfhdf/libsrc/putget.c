@@ -566,6 +566,8 @@ Void *values ;
 		rem = where%4 ;
 		where -= rem ; /* round down to nearest word */
 		break ;
+    default:
+        break;
 	}
 	if( !xdr_NCsetpos(xdrs, where) )
 		return(FALSE) ;
@@ -589,6 +591,8 @@ Void *values ;
 		return( xdr_float(xdrs, (float *)values) ) ;
 	case NC_DOUBLE : 
 		return( xdr_double(xdrs, (double *)values) ) ;
+    default:
+        break;
 	}
 	return(FALSE) ;
 }
@@ -1841,6 +1845,8 @@ Void *values ;
 		rem = where%4 ;
 		where -= rem ; /* round down to nearest word */
 		break ;
+    default:
+        break;
 	}
 	if( !xdr_NCsetpos(xdrs, where) )
 		return(FALSE) ;

@@ -226,6 +226,8 @@ out :
 			var->len += 4 - var->len%4 ; /* round up */
 	/*		*dsp += 4 - *dsp%4 ; */
 		}
+    default:
+        break;
 	}
 
 #if 0

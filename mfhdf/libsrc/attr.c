@@ -94,6 +94,8 @@ nc_type datatype ;
 	case NC_FLOAT :
 	case NC_DOUBLE :
 		return(TRUE) ;
+    default:
+        break;
 	}
 	NCadvise(NC_EBADTYPE, "Unknown type %d", datatype) ;
 	return(FALSE) ;

@@ -71,6 +71,8 @@ nc_fill(type, num, datp, fill_val)
       case NC_DOUBLE:
 	double_valp = (double *) datp;
 	break;
+      default:
+        break;
     }
     while (num--) {
 	switch (type) {
@@ -90,6 +92,8 @@ nc_fill(type, num, datp, fill_val)
 	  case NC_DOUBLE:
 	    *double_valp++ = fill_val.doublev;
 	    break;
+      default:
+        break;
 	}
     }
 }
