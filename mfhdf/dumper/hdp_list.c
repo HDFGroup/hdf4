@@ -383,7 +383,8 @@ NULL)
                               {
                                   printf("Failure in SDfindattr %s\n", fname);
                                   exit(1);
-                               printf("\t Attr%i: Name = %s\n", (int) attr_index, name);
+                              }
+                            printf("\t Attr%i: Name = %s\n", (int) attr_index, name);
 
                             printf("\t\t Type = %s \n\t\t Count= %i\n",
                                    attr_nt_desc, (int) attr_count);
@@ -394,13 +395,12 @@ NULL)
                             HDfree(attr_nt_desc);
                             HDfree((VOIDP) attr_buf);
 
-                        }       /* end if */
+                        }       /* end if SDattrinfo */
                   }             /* end for */
-            }   /* end if */
-      }         /* end if */
+            }   /* end if  SDfileinfo */
+      }         /* end if  SDstart */
         /* clean up */
-      HDfree(desc);
-    };
+   HDfree(desc);
 }	/* end print_file_desc() */
 
 static void
