@@ -45,6 +45,9 @@ HDP COMMANDS
      hdp dumprig <filename list>
          displays data of RIGs in the listed files.
 
+     hdp dumpgr <filename list>
+         displays the contents of the RIGs(not only 24 bit or 8 bit 
+         RIGs) in the listed files
 
 HDP COMMAND OPTIONS
 
@@ -125,7 +128,7 @@ HDP COMMAND OPTIONS
           Output options
 
              -o \fIfn\fP      specify \fIfn\fP as output file name
-           * -b         binary file
+             -b         binary file
              -t         ascii text file (default)
 
           Note: any combination of an option from each of the three categories
@@ -208,10 +211,35 @@ HDP COMMAND OPTIONS
           Output options
 
              -o \fIfn\fP      specify \fIfn\fP as output file name
-           * -b         binary file
+             -b         binary file
              -t         text ascii file (default)
 
 
+.ul
+    hdp dumpgr [filter ops] [contents ops] [output ops] <filename list>
+         Filter options
+              specify which general RIGs to dump.
+
+             -i <index>   dump RIGs with indices specified in <index>; indices
+                          correspond to the order of the RIGs in the file
+             -r <ref>     dump RIGs with reference numbers specified in <ref>
+             -n <name>    dump RIGs with names specified in <name>
+             -a           dump all RIGs in the file. (default)
+
+          Content options
+
+             -v    display everything including all annotations (default)
+             -h    header only, no annotation for elements or data
+             -d    data only, no tag/ref
+
+          Output options
+             -o \fIfn\fP      specify \fIfn\fP as output file name
+             -b         binary file
+             -x         ascii text file (default)
+
+          Note: any combination of an option from each of the three categories
+                can be used; but no more than one option from one category is
+                allowed.
 
 
 .fi
