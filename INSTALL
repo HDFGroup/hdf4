@@ -99,8 +99,8 @@
        Linux(elf)  1.2.13     GCC 2.7         -               X         X
        FreeBSD 2.2            GCC 2.6.3      f77              X         X
 
-  PowerPC(Mac-OS-7.5)         Codewarrior 8   -               X         X
-  68k-far/4i/8d(Mac-OS-7.5)   Codewarrior 8   -               X         X 
+  PowerPC(Mac-OS-7.5)         -               -               -         -
+  68k-far/4i/8d(Mac-OS-7.5)   -               -               -         -
   Windows NT/95               Visual C++ 4.2  -               X         X  
   T3D (v9.0.lai)              CC 4.05         -               X         X 
 
@@ -429,7 +429,7 @@
 
     2.5.7 PowerPC/68k(far/4i/8d)- Macintosh OS
     ------------------------------------------
-    *** For the Beta Release there is only a PowerPC port. NO 68k. ***
+    *** The Macintosh Relase will be come after the official Release. ***
 
     The distribution was compiled/tested with MetroWerks Codewarrior(CW8).
     Only the base libraries{libdf.a,zlib.a,libjpeg.a,libmfhdf.a,libxdr.a}
