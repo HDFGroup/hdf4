@@ -492,7 +492,7 @@ C
          err = err + 1
       endif
 
-      stat = hxsdir('nosuch:testdir')
+      stat = hxsdir('nosuch|testdir')
       if(stat.ne.0) then
 	 print *, 'HX set dir (hxscdir) returned', stat
 	 err = err + 1
