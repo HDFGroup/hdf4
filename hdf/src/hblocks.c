@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/05/03 21:32:10  koziol
-First half of fixes to make Purify happy
+Revision 1.6  1993/09/02 00:32:07  georgev
+Fixed some VOIDP casts.
 
+ * Revision 1.5  1993/05/03  21:32:10  koziol
+ * First half of fixes to make Purify happy
+ *
  * Revision 1.4  1993/04/19  22:47:55  koziol
  * General Code Cleanup to reduce/remove errors on the PC
  *
@@ -557,7 +560,7 @@ PRIVATE link_t * HLIgetlink(file_id, ref, number_blocks)
     access_id = Hstartread(file_id, tag, ref);
     if (access_id == FAIL ||
        Hread(access_id, 2+2*number_blocks, buffer) == FAIL) {
-       HDfreespace(buffer);
+       HDfreespace((VOIDP)buffer);
        HERROR(DFE_READERROR);
        return (link_t *) NULL;
     }
@@ -571,7 +574,7 @@ PRIVATE link_t * HLIgetlink(file_id, ref, number_blocks)
        UINT16DECODE(p, link->block_list[i].ref);
 }
     Hendaccess(access_id);
-    HDfreespace(buffer);
+    HDfreespace((VOIDP)buffer);
 
     return link;
 }
@@ -1138,13 +1141,13 @@ PRIVATE link_t *HLInewlink(file_id, number_blocks, link_ref, first_block_ref)
     /* write the link */
 
     if (Hwrite(link_id, 2+2*number_blocks, buf) == FAIL) {
-        HDfreespace(buf);
+        HDfreespace((VOIDP)buf);
        HDfreespace((VOIDP) link->block_list);
        HDfreespace((VOIDP) link);
         HERROR(DFE_WRITEERROR);
         return NULL;
     }
-    HDfreespace(buf);
+    HDfreespace((VOIDP)buf);
     Hendaccess(link_id);
 
     return link;
