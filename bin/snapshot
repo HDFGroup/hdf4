@@ -59,6 +59,7 @@ METHODS="gzip bzip2"
 #MAKE=${MAKE:-make}
 # Hard set to gmake because dependences are not set correctly for parallel make
 MAKE=gmake
+export MAKE
 
 #
 # Command options
