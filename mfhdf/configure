@@ -675,18 +675,18 @@ case "${OS}" in
   done
 
                 LD_XDR=;;
-  nextos*)         for arg in -DNEXT; do
+  hpux*)          for arg in -DHP9000; do
     case "$HDF_INC" in
       *$arg*) ;;
       *)      HDF_INC="${HDF_INC-} $arg";;
     esac
   done
 
-                LD_XDR=;;
-  hpux*)          for arg in -DHP9000; do
-    case "$HDF_INC" in
+#                UC_ENSURE(CPPFLAGS, -D_HPUX_SOURCE)
+                  for arg in -Aa; do
+    case "$CPPFLAGS" in
       *$arg*) ;;
-      *)      HDF_INC="${HDF_INC-} $arg";;
+      *)      CPPFLAGS="${CPPFLAGS-} $arg";;
     esac
   done
 
@@ -880,19 +880,17 @@ rm -f conftest*
 echo checking for variadic function support
 cat > conftest.c <<EOF
 #include <stdarg.h>
-main() { exit(0); } 
-t() { ;}
 int foo(int bar, ...) {
     va_list     alist;
     va_start(alist, bar);
     bar = (int)va_arg(alist, int);
     va_end(alist);
     return bar;
- }
+}
+main() { exit(0); } 
+t() {  }
 EOF
 if eval $compile; then
-  :
-else
     for arg in -DNO_STDARG; do
     case "$CPPFLAGS" in
       *$arg*) ;;
