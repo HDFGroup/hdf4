@@ -590,7 +590,9 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
 
                 switch (dumpvd_opts->contents)
                   {
-                  case DVERBOSE:		/* dump all information */
+                  case DVERBOSE: /* dump all information */
+                  case DHEADER:	 /* header only, no attributes, annotations 
+                                    or data */
                       fprintf(fp, "Vdata: %d\n", (int) i);
                       fprintf(fp, "   tag = %d; ", (int) vdata_tag);
                       fprintf(fp, "reference = %d;\n", (int) vdata_ref);
@@ -630,59 +632,63 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
                       fprintf(fp, "   record size (in bytes) = %d;\n", (int)vsize);
                       fprintf(fp, "   name = %s; class = %s;\n", vdname, vdclass);
 
-                      /* dump attributes */
-                      if (FAIL == dumpattr(vd_id, (int32)_HDF_VDATA, 1, ft, fp))
+                      /* check if only printing header */
+                      if (dumpvd_opts->contents != DHEADER)
                         {
-                            fprintf(stderr,"Failed to print vdata attributes for vd_id(%d) in file %s\n",
-                                    (int) vd_id, file_name);
-                            ret_value = FAIL;
-                            goto done;
-                        }
+                            /* dump attributes */
+                            if (FAIL == dumpattr(vd_id, (int32)_HDF_VDATA, 1, ft, fp))
+                              {
+                                  fprintf(stderr,"Failed to print vdata attributes for vd_id(%d) in file %s\n",
+                                          (int) vd_id, file_name);
+                                  ret_value = FAIL;
+                                  goto done;
+                              }
 
-                      /* dump annotations */
-                      /* start Annotation inteface */
-                      if ((an_handle = ANstart(file_id)) == FAIL)
-                        {
-                            fprintf(stderr,"ANstart failed on file_id(%d) for file %s\n", 
-                                    (int)file_id, file_name);
-                            ret_value = FAIL;
-                            goto done;
-                        }
+                            /* dump annotations */
+                            /* start Annotation inteface */
+                            if ((an_handle = ANstart(file_id)) == FAIL)
+                              {
+                                  fprintf(stderr,"ANstart failed on file_id(%d) for file %s\n", 
+                                          (int)file_id, file_name);
+                                  ret_value = FAIL;
+                                  goto done;
+                              }
                                   
-                      /* print labesl of vdata if any */
-                      if (FAIL == print_data_labels(file_name,an_handle,vdata_tag, vdata_ref))
-                        {
-                            fprintf(stderr,"Failed to print data labels for vdata_ref(%d) in file %s\n", 
-                                    (int) vdata_ref, file_name);
-                            ret_value = FAIL;
-                            goto done;
-                        }
+                            /* print labels of vdata if any */
+                            if (FAIL == print_data_labels(file_name,an_handle,vdata_tag, vdata_ref))
+                              {
+                                  fprintf(stderr,"Failed to print data labels for vdata_ref(%d) in file %s\n", 
+                                          (int) vdata_ref, file_name);
+                                  ret_value = FAIL;
+                                  goto done;
+                              }
 
-                      /* print descriptions of vdata if any */
-                      if (FAIL == print_data_descs(file_name,an_handle,vdata_tag, vdata_ref))
-                        {
-                            printf("Failed to print data descriptions for vdata_ref(%d) in file %s\n", 
-                                   (int) vdata_ref, file_name);
-                            ret_value = FAIL;
-                            goto done;
-                        }
+                            /* print descriptions of vdata if any */
+                            if (FAIL == print_data_descs(file_name,an_handle,vdata_tag, vdata_ref))
+                              {
+                                  printf("Failed to print data descriptions for vdata_ref(%d) in file %s\n", 
+                                         (int) vdata_ref, file_name);
+                                  ret_value = FAIL;
+                                  goto done;
+                              }
 
-                      /* close annotation interface */
-                      if (FAIL == ANend(an_handle))
-                        {
-                            fprintf(stderr,"ANend failed for an_handle(%d) for file %s\n",
-                                    (int)an_handle, file_name);
-                            ret_value = FAIL;
-                            goto done;
-                        }
+                            /* close annotation interface */
+                            if (FAIL == ANend(an_handle))
+                              {
+                                  fprintf(stderr,"ANend failed for an_handle(%d) for file %s\n",
+                                          (int)an_handle, file_name);
+                                  ret_value = FAIL;
+                                  goto done;
+                              }
 
-                      an_handle = FAIL; /* reset */
+                            an_handle = FAIL; /* reset */
+                        }
+                      else /* only header, no attributes, annotations or data */
+                        {
+                            break; /* break out and don't fall through */
+                        }
 
                       /* note we fall through */
-                  case DHEADER:	/* header only, no annotations nor data */
-                      if (dumpvd_opts->contents == DHEADER)
-                          break; /* header only we break here */
-
                   case DDATA:	/* data only */
                       if (dumpvd_opts->contents == DDATA)
                         {
