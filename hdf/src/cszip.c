@@ -71,6 +71,7 @@ HCIcszip_init(accrec_t * access_rec)
     compinfo_t *info;           /* special element information */
     comp_coder_szip_info_t *szip_info;    /* ptr to SZIP info */
 
+
     info = (compinfo_t *) access_rec->special_info;
     if (Hseek(info->aid, 0, DF_START) == FAIL)  /* seek to beginning of element */
         HRETURN_ERROR(DFE_SEEKERROR, FAIL);
@@ -117,6 +118,8 @@ HCIcszip_decode(compinfo_t * info, int32 length, uint8 *buf)
 	int32 out_length;
 	int bytes_per_pixel;
 	int32 bytes;
+
+#ifdef H4_HAVE_SZLIB
 
     szip_info = &(info->cinfo.coder_info.szip_info);
 	if (szip_info->szip_state == SZIP_INIT)
@@ -185,6 +188,13 @@ HCIcszip_decode(compinfo_t * info, int32 length, uint8 *buf)
 		HDfree(szip_info->buffer);
 
     return (SUCCEED);
+
+#else /* ifdef H4_HAVE_SZLIB */
+
+    HRETURN_ERROR(DFE_CANTCOMP, FAIL);
+
+#endif /* H4_HAVE_SZLIB */
+
 }   /* end HCIcszip_decode() */
 
 /*--------------------------------------------------------------------------
@@ -219,6 +229,8 @@ HCIcszip_encode(compinfo_t * info, int32 length, const uint8 *buf)
     comp_coder_szip_info_t *szip_info;    /* ptr to SZIP info */
 	int32 buffer_size;
 
+#ifdef H4_HAVE_SZLIB
+
     szip_info = &(info->cinfo.coder_info.szip_info);
 	if (szip_info->szip_state == SZIP_INIT)
 		{
@@ -240,6 +252,13 @@ HCIcszip_encode(compinfo_t * info, int32 length, const uint8 *buf)
 	szip_info->buffer_size -= length;
 
     return (SUCCEED);
+
+#else /* ifdef H4_HAVE_SZLIB */
+
+    HRETURN_ERROR(DFE_CANTDECOMP, FAIL);
+
+#endif /* H4_HAVE_SZLIB */
+
 }   /* end HCIcszip_encode() */
 
 
@@ -272,6 +291,8 @@ HCIcszip_term(compinfo_t * info)
 	int32 out_buffer_size;
 	int bytes_per_pixel;
 	int32 pixels;
+
+#ifdef H4_HAVE_SZLIB
 
     szip_info = &(info->cinfo.coder_info.szip_info);
 	if (szip_info->szip_state != SZIP_RUN)
@@ -308,6 +329,13 @@ HCIcszip_term(compinfo_t * info)
 	HDfree(out_buffer);
 
     return (SUCCEED);
+
+#else /* H4_HAVE_SZLIB */
+
+    HRETURN_ERROR(DFE_CANTCOMP, FAIL);
+
+#endif /* H4_HAVE_SZLIB */
+
 }   /* end HCIcszip_term() */
 
 /*--------------------------------------------------------------------------
@@ -336,6 +364,8 @@ HCIcszip_staccess(accrec_t * access_rec, int16 acc_mode)
     CONSTR(FUNC, "HCIcszip_staccess");
     compinfo_t *info;           /* special element information */
 
+#ifdef H4_HAVE_SZLIB
+
     info = (compinfo_t *) access_rec->special_info;
 
 #ifdef OLD_WAY
@@ -362,6 +392,13 @@ HCIcszip_staccess(accrec_t * access_rec, int16 acc_mode)
         HRETURN_ERROR(DFE_DENIED, FAIL);
 #endif /* OLD_WAY */
     return (HCIcszip_init(access_rec));  /* initialize the SZIP info */
+
+#else /* H4_HAVE_SZLIB */
+
+    HRETURN_ERROR(DFE_DENIED, FAIL);
+
+#endif /* H4_HAVE_SZLIB */
+
 }   /* end HCIcszip_staccess() */
 
 /*--------------------------------------------------------------------------
