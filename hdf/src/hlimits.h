@@ -21,6 +21,20 @@
 #ifndef _HLIMITS_H
 #define _HLIMITS_H
 
+/**************************************************************************
+*  Generally useful macro definitions
+*   (These are copied from hdfi.h and shoudl remain included in both files
+*       because hlimits.h is included from netcdf.h which is used in some
+*       netCDF utilities which don't need or want the rest of the HDF header
+*       files. -QAK - 2/17/99 )
+**************************************************************************/
+#ifndef MIN
+#define MIN(a,b)    (((a)<(b)) ? (a) : (b))
+#endif
+#ifndef MAX
+#define MAX(a,b)    (((a)>(b)) ? (a) : (b))
+#endif
+
 /* ------------------------- General Constants hdf.h  --------------------- */
 /* tbuf used as a temporary buffer for small jobs.  The size is
    preferably > 512 but MUST be > ~256.  It is advised that if an
@@ -46,7 +60,7 @@
    *
  */
 
-#define FIELDNAMELENMAX    128  /* fieldname   : 16 chars max */
+#define FIELDNAMELENMAX    128  /* fieldname   : 128 chars max */
 #define VSFIELDMAX         256  /* max no of fields per vdata */
 #define VSNAMELENMAX        64  /* vdata name  : 64 chars max */
 #define VGNAMELENMAX        64  /* vgroup name : 64 chars max */
@@ -158,7 +172,7 @@
 #define MAX_NC_DIMS 5000	 /* max dimensions per file */
 #define MAX_NC_ATTRS 3000	 /* max global or per variable attributes */
 #define MAX_NC_VARS 5000	 /* max variables per file */
-#define MAX_NC_NAME 256		 /* max length of a name */
+#define MAX_NC_NAME MIN(256,MIN(VSNAMELENMAX,VGNAMELENMAX))		 /* max length of a name */
 #define MAX_VAR_DIMS 32          /* max per variable dimensions */
 
 /* ----------------- Constants for MFGR interface --------------------- */
