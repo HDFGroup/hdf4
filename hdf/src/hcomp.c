@@ -885,8 +885,8 @@ HCgetcompress(int32 file_id,
 {
     CONSTR(FUNC, "HCgetcompress");   /* for HGOTO_ERROR */
     int32   aid=0, status;
-    accrec_t   *access_rec=NULL;/* access element record */
-    compinfo_t *info=NULL;      /* special element information */
+    accrec_t*    access_rec=NULL;/* access element record */
+    compinfo_t*  info=NULL;  /* compressed element information */
     model_info  m_info;         /* modeling information - dummy */
     int32       ret_value=SUCCEED;
 
@@ -919,12 +919,20 @@ HCgetcompress(int32 file_id,
 
     }  /* end if element is compressed */
 
+    /* if the element is chunked, call HMCgetcompress to get the 
+	compression info as appropriate */
+    else if (access_rec->special == SPECIAL_CHUNKED)
+    {
+	status = HMCgetcompress(access_rec, comp_type, c_info);
+        if (status == FAIL) HGOTO_ERROR(DFE_COMPINFO, FAIL);
+    }
+
     /* flag the error when attempting to get compression info on a
        non-compressed element */
     else
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* end access to the aid */
+    /* end access to the aid appropriately */
     if (Hendaccess(aid)== FAIL)
         HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 

@@ -177,6 +177,11 @@ extern      "C"
          HCHUNK_DEF *chk_array /* IN: structure describing chunk distribution
                                  can be an array? but we only handle 1 level */);
 
+    HDFLIBAPI int32 HMCgetcompress
+	(accrec_t* access_rec,    /* IN: access record */
+	 comp_coder_t* comp_type, /* OUT: compression type */
+         comp_info* c_info        /* OUT: retrieved compression info */);
+
     HDFLIBAPI int32 HMCsetMaxcache
         (int32 access_id, /* IN: access aid to mess with */
          int32 maxcache,  /* IN: max number of pages to cache */

@@ -2012,6 +2012,67 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     return ret_value;
 } /* HMCcreate() */
 
+/*--------------------------------------------------------------------------
+NAME
+     HMCgetcompress - get compression information for chunked element
+
+DESCRIPTION
+     Checks if the given element is compressed then get the compression
+     information using HCPdecode_header.
+     This routine is used by HCgetcompress for the chunked element part.
+
+RETURNS
+     Returns SUCCEED/FAIL
+
+REVISION LOG
+     September 2001: Added to fix bug #307 - BMR
+
+-------------------------------------------------------------------------- */
+int32
+HMCgetcompress( accrec_t*    access_rec, /* IN: access record */
+		comp_coder_t* comp_type, /* OUT: compression type */
+		comp_info* c_info)       /* OUT: retrieved compression info */
+{
+    CONSTR(FUNC, "HMCgetcompress");   /* for HERROR */
+    chunkinfo_t *info = NULL;   /* chunked element information record */
+    model_info  m_info;         /* modeling information - dummy */
+    comp_model_t model_type;    /* modeling type - dummy */
+    int32       ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+    TRACE_ON(PABLO_mask,ID_HMCgetcompress);
+#endif /* HAVE_PABLO */
+
+    /* Get the special info from the given record */
+    info = (chunkinfo_t *) access_rec->special_info;
+    if (info == NULL) HGOTO_ERROR(DFE_COMPINFO, FAIL);
+
+    /* If this chunked element is compressed, retrieve its comp info */
+    if (info->flag == SPECIAL_COMP)
+    {
+        /* Decode header from storage */
+        ret_value = HCPdecode_header((uint8 *)info->comp_sp_tag_header,
+                 &model_type, &m_info, /* dummy */ 
+		 comp_type, c_info);
+    }
+    /* It's not compressed */
+    else
+	*comp_type = COMP_CODE_NONE;
+
+  done:
+    if(ret_value == FAIL)
+      { /* Error condition cleanup */
+
+      } /* end if */
+
+    /* Normal function cleanup */
+#ifdef HAVE_PABLO
+        TRACE_OFF(PABLO_mask, ID_HMCgetcompress);
+#endif /* HAVE_PABLO */
+
+    return ret_value;
+} /* HMCgetcompress() */
+
 
 /*--------------------------------------------------------------------------
 NAME
