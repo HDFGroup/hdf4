@@ -134,7 +134,7 @@ void usage()
  printf("\t\t       HUFF, the skip-size\n");
  printf("\t\t       GZIP, the deflation level\n");
  printf("\t\t       JPEG, the quality factor\n");
- printf("\t\t       SZIP, pixels per block\n");
+ printf("\t\t       SZIP, pixels per block, compression mode (NN or EC)\n");
  printf("  [-c 'chunk_info'] Apply chunking. 'chunk_info' is a string with the format\n");
  printf("\t\t     <object list>:<chunk information>\n");
  printf("\t\t       <object list> is a comma separated list of object names\n");
@@ -159,6 +159,8 @@ void usage()
  printf("\n");
  printf("3)$hrepack -v -i file1.hdf -o file2.hdf -t 'A:NONE'\n");
  printf("  uncompresses object A\n");
+	printf("4)$hrepack -v -i file1.hdf -o file2.hdf -t 'A:SZIP 8,NN'\n");
+ printf("  applies SZIP compression to object A, with parameters 8 and NN\n");
  printf("\n");
  printf("Note: the use of the verbose option -v is recommended\n");
  exit(1);

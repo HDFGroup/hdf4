@@ -89,6 +89,9 @@ void hrepack_addcomp(const char* str, options_t *options)
   exit(1);
  }
 
+	/* initialize parse struct to FAIL */
+	memset(&comp,FAIL,sizeof(comp_info_t));
+
  /* parse the -t option */
  obj_list=parse_comp(str,&n_objs,&comp);
 

@@ -18,22 +18,25 @@
 
 /* for SZIP */
 #if !defined (NN_OPTION_MASK)
-#define NN_OPTION_MASK				 32
+#define NN_OPTION_MASK     32
 #endif
 #if !defined (RAW_OPTION_MASK)
-#define RAW_OPTION_MASK				128
+#define RAW_OPTION_MASK    128
 #endif
 #if !defined (MAX_BLOCKS_PER_SCANLINE)
-#define MAX_BLOCKS_PER_SCANLINE		128
+#define MAX_BLOCKS_PER_SCANLINE  128
 #endif
 #if !defined (MAX_PIXELS_PER_BLOCK)
-#define MAX_PIXELS_PER_BLOCK	 	 32
+#define MAX_PIXELS_PER_BLOCK    32
 #endif
 #if !defined (MAX_PIXELS_PER_SCANLINE)
 #define MAX_PIXELS_PER_SCANLINE     (MAX_BLOCKS_PER_SCANLINE)*(MAX_PIXELS_PER_BLOCK)
 #endif
 #if !defined (NN_MODE)
-#define NN_MODE	1
+#define NN_MODE 1
+#endif
+#if !defined (EC_MODE)
+#define EC_MODE 0
 #endif
 
 
@@ -54,8 +57,9 @@ typedef struct {
 
 /* the type of compression and additional parameter */
 typedef struct {
- comp_coder_t type;
- int info;
+ comp_coder_t type; /* compression enum type */
+ int info;          /* numerical parameter for several types of compression */
+ int szip_mode;     /* NN_MODE or EC_MODE */
 } comp_info_t;
 
 /* chunk lengths along each dimension and rank */
@@ -88,7 +92,7 @@ typedef struct {
  chunk_info_t    chunk_g;     /*global chunk INFO for the ALL case */
  int verbose;                 /*verbose mode */
  int trip;                    /*which cycle are we in */
-	int threshold;               /*minimum size to compress, in bytes */
+ int threshold;               /*minimum size to compress, in bytes */
 } options_t;
 
 

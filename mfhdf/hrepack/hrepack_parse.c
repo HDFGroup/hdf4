@@ -45,14 +45,12 @@ obj_list_t* parse_comp(const char *str,
  unsigned    i, u;
  char        c;
  size_t      len=strlen(str);
- int         j, m, n, k, end_obj=-1, no_param=0;
+ int         j, m, n, k, end_obj=-1, no_param=0, l;
  char        obj[MAX_NC_NAME]; 
  char        scomp[10];
  char        stype[5];
+ char        smask[3]; 
  obj_list_t* obj_list=NULL;
-
- /* initialize compression  info */
- memset(comp,0,sizeof(comp_info_t));
 
  /* check for the end of object list and number of objects */
  for ( i=0, n=0; i<len; i++)
@@ -108,26 +106,89 @@ obj_list_t* parse_comp(const char *str,
   scomp[k]=c;
   if ( c==' ' || i==len-1) 
   {
-   if ( c==' ') {      /*one more parameter */
+   if ( c==' ')  /*one more parameter */
+   {     
     scomp[k]='\0';     /*cut space */
-
-    /* here we could have 1, 2 or 3 digits (2 and 3 in the JPEG case) */
-    for ( m=0,u=i+1; u<len; u++,m++) {
-     c = str[u];
-     if (!isdigit(c)){
-      printf("Input Error: Compression parameter not digit in <%s>\n",str);
-      exit(1);
-     }
-     stype[m]=c;
-    }
+   
+   /*
+     SZIP is a special case , it can be
+     SZIP=8,EC
+     SZIP=8,NN
+    */
+    
+    if (strcmp(scomp,"SZIP")==0)
+    {
+     l=-1; /* mask index check */
+     for ( m=0,u=i+1; u<len; u++,m++) 
+     {
+      if (str[u]==',')
+      {
+       stype[m]='\0'; /* end digit of szip */
+       l=0;  /* start EC or NN search */
+       u++;  /* skip ',' */
+      }
+      c = str[u];
+      if (!isdigit(c) && l==-1){
+       if (obj_list) free(obj_list);
+       printf("Input Error: Compression parameter not digit in <%s>\n",str);
+       exit(1);
+      }
+      if (l==-1)
+       stype[m]=c;
+      else 
+      {
+       smask[l]=c;
+       l++;
+       if (l==2)
+       {
+        smask[l]='\0';
+        i=len-1; /* end */
+        (*n_objs)--; /* we counted an extra ',' */
+        if (strcmp(smask,"NN")==0) 
+         comp->szip_mode=NN_MODE;
+        else if (strcmp(smask,"EC")==0)
+         comp->szip_mode=EC_MODE;
+        else
+        {
+         printf("Input Error: szip mask must be 'NN' or 'EC' \n");
+         exit(1);
+        }
+       }
+      }
+     }  /* u */
+    } /* SZIP */
+    
+    else
+     
+    {
+     /* here we could have 1, 2 or 3 digits (2 and 3 in the JPEG case) */
+     for ( m=0,u=i+1; u<len; u++,m++) 
+     {
+      c = str[u];
+      if (!isdigit(c)){
+       printf("Input Error: Compression parameter not digit in <%s>\n",str);
+       exit(1);
+      }
+      stype[m]=c;
+     } /* m */
+     
+    } /* else , no SZIP */
+    
+    
+    /* set return value of the compression parameter */
     stype[m]='\0';
     comp->info=atoi(stype);
     i+=m; /* jump */
-   }
+    
+    
+   } /* if c==' ' */
+
+
    else if (i==len-1) { /*no more parameters */
     scomp[k+1]='\0';
     no_param=1;
    }
+
    if (HDstrcmp(scomp,"NONE")==0)
     comp->type=COMP_CODE_NONE;
    else if (HDstrcmp(scomp,"RLE")==0)
@@ -174,6 +235,11 @@ obj_list_t* parse_comp(const char *str,
      printf("Input Error: Missing compression parameter in <%s>\n",str);
      exit(1);
     }
+				if (comp->szip_mode==FAIL)
+				{
+     printf("Input Error: SZIP compression mode must be NN_MODE or EC_MODE");
+     exit(1);
+				}
    }
    else {
     if (obj_list) free(obj_list);

@@ -25,6 +25,7 @@ int  options_get_info(options_t      *options,     /* global options */
                       int32          *chunk_flags, /* chunk flags OUT */
                       HDF_CHUNK_DEF  *chunk_def,   /* chunk definition OUT */
                       int            *info,        /* compression info OUT */
+                      int            *szip_mode,   /* compression information OUT */
                       comp_coder_t   *comp_type,   /* compression type OUT  */
                       int            rank,         /* rank of object IN */
                       char           *path,        /* path of object IN */
@@ -38,6 +39,7 @@ int set_szip(int32 rank,
              int32 dtype,
              int   ncomps,
              int   pixels_per_block, /*in */
+             int   compression_mode, /* in */
              comp_info *c_info/*out*/);
 
 

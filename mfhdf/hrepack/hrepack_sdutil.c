@@ -30,9 +30,9 @@ int check_szip_params( int bits_per_pixel,
 /*-------------------------------------------------------------------------
  * Function: options_get_info
  *
- * Purpose: get COMP and CHUNK info from options
+ * Purpose: get COMP and CHUNK information from options
  *
- * Return: 0 if no info for this PATH, 1 otherwise
+ * Return: 0 if no information for this PATH, 1 otherwise
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -45,7 +45,8 @@ int check_szip_params( int bits_per_pixel,
 int  options_get_info(options_t      *options,     /* global options */
                       int32          *chunk_flags, /* chunk flags OUT */
                       HDF_CHUNK_DEF  *chunk_def,   /* chunk definition OUT */
-                      int            *info,        /* compression info OUT */
+                      int            *info,        /* compression information OUT */
+                      int            *szip_mode,   /* compression information OUT */
                       comp_coder_t   *comp_type,   /* compression type OUT  */
                       int            rank,         /* rank of object IN */
                       char           *path,        /* path of object IN */
@@ -55,7 +56,7 @@ int  options_get_info(options_t      *options,     /* global options */
                       )
 {
 
- pack_info_t *obj=NULL; /* check if we have info for this object */
+ pack_info_t *obj=NULL; /* check if we have information for this object */
  int         i;
  comp_info   c_info; /* for SZIP default values */
  
@@ -93,11 +94,12 @@ int  options_get_info(options_t      *options,     /* global options */
    /* 0 is the NONE option */
    *comp_type   = obj->comp.type;
    *info        = obj->comp.info;
+   *szip_mode   = obj->comp.szip_mode;
    
    /* chunk and compress */
    if (*chunk_flags == HDF_CHUNK && *comp_type>0 )
    {
-    /* assign the object CHUNK info   */
+    /* assign the object CHUNK information   */
     *chunk_flags              = HDF_CHUNK | HDF_COMP;
     chunk_def->comp.comp_type = obj->comp.type;
     switch (obj->comp.type)
@@ -106,7 +108,7 @@ int  options_get_info(options_t      *options,     /* global options */
      break;
      
     case COMP_CODE_SZIP:
-     if (set_szip (rank,dimsizes,dtype,ncomps,obj->comp.info,&c_info)==FAIL)
+     if (set_szip (rank,dimsizes,dtype,ncomps,obj->comp.info,obj->comp.szip_mode,&c_info)==FAIL)
      {
       return -1;
      }
@@ -153,7 +155,7 @@ int  options_get_info(options_t      *options,     /* global options */
    {
     *chunk_flags = HDF_NONE;
    }
-   /* check if we have CHUNK info inserted for this one  */
+   /* check if we have CHUNK information inserted for this one  */
    else if (obj->chunk.rank>0)
    {
     /*check if the input rank is correct (just here, better later than never) */
@@ -167,11 +169,12 @@ int  options_get_info(options_t      *options,     /* global options */
      chunk_def->chunk_lengths[i] = obj->chunk.chunk_lengths[i];
     
    }
-   /* check if we have COMP info; 0 is the NONE option */
+   /* check if we have COMP information; 0 is the NONE option */
    if (obj->comp.type>=0)
    {
     *comp_type   = obj->comp.type;
     *info        = obj->comp.info;
+    *szip_mode   = obj->comp.szip_mode;
     /* check if we have also CHUNK info  */
     if (obj->chunk.rank>0)
     {
@@ -183,7 +186,7 @@ int  options_get_info(options_t      *options,     /* global options */
       break;
 
      case COMP_CODE_SZIP:
-      if (set_szip (rank,dimsizes,dtype,ncomps,obj->comp.info,&c_info)==FAIL)
+      if (set_szip (rank,dimsizes,dtype,ncomps,obj->comp.info,obj->comp.szip_mode,&c_info)==FAIL)
       {
        return -1;
       }
@@ -228,7 +231,7 @@ int  options_get_info(options_t      *options,     /* global options */
     *chunk_flags = HDF_NONE;
    }
    
-   /* check if we have CHUNK info inserted for this one  */
+   /* check if we have CHUNK information inserted for this one  */
    else if (obj->chunk.rank>0)
    {
     /*check if the input rank is correct (just here, better later than never) */
@@ -243,11 +246,12 @@ int  options_get_info(options_t      *options,     /* global options */
    }
   } /* obj */
   
-  /* we must have COMP info */
+  /* we must have COMP information */
   
   *comp_type   = options->comp_g.type;
   *info        = options->comp_g.info;
-  /* check if we have also CHUNK info  */
+  *szip_mode   = options->comp_g.szip_mode;
+  /* check if we have also CHUNK information  */
   if ( (*chunk_flags==HDF_CHUNK) || (*chunk_flags==(HDF_CHUNK|HDF_COMP)))
   {
    *chunk_flags              = HDF_CHUNK | HDF_COMP;
@@ -258,7 +262,7 @@ int  options_get_info(options_t      *options,     /* global options */
     break;
     
    case COMP_CODE_SZIP:
-    if (set_szip (rank,dimsizes,dtype,ncomps,options->comp_g.info,&c_info)==FAIL)
+    if (set_szip (rank,dimsizes,dtype,ncomps,options->comp_g.info,options->comp_g.szip_mode,&c_info)==FAIL)
     {
      return -1;
     }
@@ -308,9 +312,10 @@ int  options_get_info(options_t      *options,     /* global options */
     chunk_def->chunk_lengths[i] = options->chunk_g.chunk_lengths[i];
   }
   
-  /* we must have COMP info */
+  /* we must have COMP information */
   *comp_type   = options->comp_g.type;
   *info        = options->comp_g.info;
+  *szip_mode   = options->comp_g.szip_mode;
   /* check if we can aplly CHUNK */
   if (options->chunk_g.rank==rank)
   {
@@ -322,7 +327,7 @@ int  options_get_info(options_t      *options,     /* global options */
     break;
     
    case COMP_CODE_SZIP:
-    if (set_szip (rank,dimsizes,dtype,ncomps,options->comp_g.info,&c_info)==FAIL)
+    if (set_szip (rank,dimsizes,dtype,ncomps,options->comp_g.info,options->comp_g.szip_mode,&c_info)==FAIL)
     {
      return -1;
     }
@@ -379,10 +384,18 @@ int set_szip(int32 rank,
              int32 dtype,
              int   ncomps,
              int   pixels_per_block, /*in */
+             int   compression_mode, /* in */
              comp_info *c_info/*out*/)
 {
  int   i;
  int   ppb=pixels_per_block;
+
+ if ( (compression_mode!=NN_MODE) && (compression_mode!=EC_MODE))
+ {
+  printf("SZIP compression mode must be NN_MODE or EC_MODE");
+  return -1;
+ }
+
 
  /*
  pixels_per_scanline = size of the fastest-changing dimension 
@@ -425,7 +438,8 @@ int set_szip(int32 rank,
  
  c_info->szip.options_mask = NN_OPTION_MASK;
  c_info->szip.options_mask |= RAW_OPTION_MASK;
- c_info->szip.compression_mode = NN_MODE;
+ /* NN_MODE (1) or EC_MODE (0) */
+ c_info->szip.compression_mode = compression_mode;
 
  /*
   bits_per_pixel

@@ -73,15 +73,16 @@ int copy_sds(int32 sd_in,
  VOIDP            buf=NULL;
  VOIDP            dim_buf=NULL;
  int              i, j, ret=1,stat;
- int              info;           /* temporary int compression info */
+ int              info;           /* temporary int compression information */
  comp_coder_t     comp_type;      /* compression type requested  */
  comp_coder_t     comp_type_in;   /* compression type original  */
- comp_info        c_info;         /* compression info requested  */
- comp_info        c_info_in;      /* compression info original  */
+ comp_info        c_info;         /* compression information requested  */
+ comp_info        c_info_in;      /* compression information original  */
  HDF_CHUNK_DEF    chunk_def;      /* chunk definition */
  HDF_CHUNK_DEF    chunk_def_in;   /* chunk definition original */
  int32            chunk_flags;    /* chunk flags */ 
  int32            chunk_flags_in; /* chunk flags original*/ 
+ int              szip_mode;      /* szip mode, EC, NN */
  intn             empty_sds;
  int              have_info=0;
 
@@ -90,7 +91,7 @@ int copy_sds(int32 sd_in,
  
  /*obtain name,rank,dimsizes,datatype and num of attributes of sds */
  if (SDgetinfo(sds_id,sds_name,&rank,dimsizes,&dtype,&nattrs)==FAIL){
-  printf( "Could not get info for SDS\n");
+  printf( "Could not get information for SDS\n");
   SDendaccess(sds_id);
   return -1;
  }
@@ -112,15 +113,15 @@ int copy_sds(int32 sd_in,
 #endif
  
 /*-------------------------------------------------------------------------
- * get the original compression/chunk info from the object 
+ * get the original compression/chunk information from the object 
  *-------------------------------------------------------------------------
  */
  
- comp_type_in = COMP_CODE_NONE;  /* reset variables before retrieving info */
+ comp_type_in = COMP_CODE_NONE;  /* reset variables before retrieving information */
  HDmemset(&c_info_in, 0, sizeof(comp_info)) ;
  stat=SDgetcompress(sds_id, &comp_type_in, &c_info_in);
  if (stat==FAIL && comp_type_in>0){
-  printf( "Could not get compression info for SDS <%s>\n",path);
+  printf( "Could not get compression information for SDS <%s>\n",path);
   SDendaccess(sds_id);
   return -1;
  }
@@ -128,7 +129,7 @@ int copy_sds(int32 sd_in,
  /* get chunk lengths */
  SDgetchunkinfo(sds_id, &chunk_def_in, &chunk_flags_in);
 
- /* retrieve the compress info if so */
+ /* retrieve the compress information if so */
  if ( (HDF_CHUNK | HDF_COMP) == chunk_flags_in )
  {
   chunk_def_in.comp.comp_type=comp_type_in;
@@ -171,7 +172,8 @@ int copy_sds(int32 sd_in,
   case COMP_CODE_RLE:
    break;
   case COMP_CODE_SZIP:
-   info  = c_info_in.szip.pixels_per_block;
+   info      = c_info_in.szip.pixels_per_block;
+   szip_mode = c_info_in.szip.compression_mode;
    break;
   case COMP_CODE_SKPHUFF:
    info  = c_info_in.skphuff.skp_size;
@@ -219,8 +221,8 @@ int copy_sds(int32 sd_in,
  }
 
 /*-------------------------------------------------------------------------
- * get the compression/chunk info of this object from the table
- * translate to usable info
+ * get the compression/chunk information of this object from the table
+ * translate to usable information
  * this is done ONLY for the second trip inspection 
  *-------------------------------------------------------------------------
  */
@@ -232,7 +234,8 @@ int copy_sds(int32 sd_in,
   options_get_info(options,      /* global options */
                    &chunk_flags, /* chunk flags OUT */
                    &chunk_def,   /* chunk definition OUT */
-                   &info,        /* compression info OUT */
+                   &info,        /* compression information OUT */
+                   &szip_mode,   /* compression information OUT */
                    &comp_type,   /* compression type OUT  */
                    rank,         /* rank of object IN */
                    path,         /* path of object IN */
@@ -301,7 +304,7 @@ int copy_sds(int32 sd_in,
  }
 
 /*-------------------------------------------------------------------------
- * print the PATH, COMP and CHUNK info
+ * print the PATH, COMP and CHUNK information
  *-------------------------------------------------------------------------
  */ 
  
@@ -320,15 +323,15 @@ int copy_sds(int32 sd_in,
    }
   }
   printf(PFORMAT,
-   (chunk_flags>0)?"chunk":"",                    /*chunk info*/
-   (pr_comp_type>0)?get_scomp(pr_comp_type):"",   /*compression info*/
+   (chunk_flags>0)?"chunk":"",                    /*chunk information*/
+   (pr_comp_type>0)?get_scomp(pr_comp_type):"",   /*compression information*/
    path);                                         /*name*/
  }
 
  
 
 /*-------------------------------------------------------------------------
- * if we are in first trip inspection mode, exit, after printing the info
+ * if we are in first trip inspection mode, exit, after printing the information
  *-------------------------------------------------------------------------
  */ 
  
@@ -387,7 +390,7 @@ int copy_sds(int32 sd_in,
   switch(comp_type) 
   {
   case COMP_CODE_SZIP:
-   if (set_szip (rank,dimsizes,dtype,1,info,&c_info)==FAIL)
+   if (set_szip (rank,dimsizes,dtype,1,info,szip_mode,&c_info)==FAIL)
    {
     comp_type=COMP_CODE_NONE;
    }
@@ -485,7 +488,7 @@ int copy_sds(int32 sd_in,
   }
   /* get dimension information for input dimension */
   if (SDdiminfo(dim_id, dim_name, &dim_size, &dtype, &nattrs) == FAIL) {
-   printf( "Failed to get info for dimension %d of SDS <%s>\n", i, path);
+   printf( "Failed to get information for dimension %d of SDS <%s>\n", i, path);
    ret=-1;
    goto out;
   }
@@ -514,12 +517,12 @@ int copy_sds(int32 sd_in,
     goto out;
    }
    if (SDgetdimscale(dim_id, dim_buf) == FAIL) {
-    printf( "Failed to get scale info for %s\n", dim_name);
+    printf( "Failed to get scale information for %s\n", dim_name);
     ret=-1;
     goto out;
    }
    if (SDsetdimscale(dim_out, dim_size, dtype, dim_buf) == FAIL) {
-    printf( "Failed to set scale info for %s\n", dim_name);
+    printf( "Failed to set scale information for %s\n", dim_name);
     ret=-1;
     goto out;
    }
@@ -608,7 +611,7 @@ int copy_sds_attrs(int32 id_in,
  for (i = 0; i < nattrs; i++) 
  {
   if (SDattrinfo (id_in, i, attr_name, &dtype, &nelms) == FAIL) {
-   printf( "Cannot get info for attribute number %d\n", i);
+   printf( "Cannot get information for attribute number %d\n", i);
    return-1;
   }
   /* compute the number of the bytes for each value. */

@@ -68,11 +68,12 @@ int  copy_gr(int32 infile_id,
                r_interlace_mode; 
  char          gr_name[MAX_GR_NAME]; 
  char          *path=NULL;
- int           info;           /* temporary int compression info */
+ int           info;           /* temporary int compression information */
+ int           szip_mode;      /* szip mode, EC, NN */
  comp_coder_t  comp_type;      /* compression type requested  */
  comp_coder_t  comp_type_in;   /* compression type original  */
- comp_info     c_info;         /* compression info requested  */
- comp_info     c_info_in;      /* compression info original  */
+ comp_info     c_info;         /* compression information requested  */
+ comp_info     c_info_in;      /* compression information original  */
  HDF_CHUNK_DEF chunk_def;      /* chunk definition */
  HDF_CHUNK_DEF chunk_def_in;   /* chunk definition original */
  int32         chunk_flags;    /* chunk flags */ 
@@ -93,7 +94,7 @@ int  copy_gr(int32 infile_id,
  ri_id    = GRselect(gr_in,ri_index);
  
  if (GRgetiminfo(ri_id,gr_name,&n_comps,&dtype,&interlace_mode,dimsizes,&n_attrs)==FAIL){
-  printf( "Could not info for GR\n");
+  printf( "Could not information for GR\n");
   GRendaccess(ri_id);
   return-1;
  }
@@ -109,27 +110,27 @@ int  copy_gr(int32 infile_id,
 #endif
 
 /*-------------------------------------------------------------------------
- * get the original compression/chunk info from the object 
+ * get the original compression/chunk information from the object 
  *-------------------------------------------------------------------------
  */
  
- comp_type_in = COMP_CODE_NONE;  /* reset variables before retrieving info */
+ comp_type_in = COMP_CODE_NONE;  /* reset variables before retrieving information */
  HDmemset(&c_info_in, 0, sizeof(comp_info)) ;
  stat=GRgetcompress(ri_id, &comp_type_in, &c_info_in);
  if (stat==FAIL && comp_type_in>0){
-  printf( "Could not get compress info for GR <%s>\n",path);
+  printf( "Could not get compress information for GR <%s>\n",path);
   GRendaccess(ri_id);
   return-1;
  }
 
  /* get chunk lengths */
  if (GRgetchunkinfo(ri_id, &chunk_def_in, &chunk_flags_in)==FAIL){
-  printf( "Could not get chunk info for GR <%s>\n",path);
+  printf( "Could not get chunk information for GR <%s>\n",path);
   GRendaccess(ri_id);
   return-1;
  }
 
- /* retrieve the compress info if so */
+ /* retrieve the compress information if so */
  if ( (HDF_CHUNK | HDF_COMP) == chunk_flags_in )
  {
   chunk_def_in.comp.comp_type=comp_type_in;
@@ -174,6 +175,7 @@ int  copy_gr(int32 infile_id,
   break;
   case COMP_CODE_SZIP:
    info  = c_info_in.szip.pixels_per_block;
+   szip_mode = c_info_in.szip.compression_mode;
    break;
   case COMP_CODE_RLE:
    break;
@@ -231,8 +233,8 @@ int  copy_gr(int32 infile_id,
 
 
 /*-------------------------------------------------------------------------
- * get the compression/chunk info of this object from the table
- * translate to usable info
+ * get the compression/chunk information of this object from the table
+ * translate to usable information
  * this is done ONLY for the second trip inspection 
  *-------------------------------------------------------------------------
  */
@@ -244,7 +246,8 @@ int  copy_gr(int32 infile_id,
   options_get_info(options,      /* global options */
                    &chunk_flags, /* chunk flags OUT */
                    &chunk_def,   /* chunk definition OUT */
-                   &info,        /* compression info OUT */
+                   &info,        /* compression information OUT */
+                   &szip_mode,   /* compression information OUT */
                    &comp_type,   /* compression type OUT  */
                    rank,         /* rank of object IN */
                    path,         /* path of object IN */
@@ -292,7 +295,7 @@ int  copy_gr(int32 infile_id,
  }
  
 /*-------------------------------------------------------------------------
- * print the PATH, COMP and CHUNK info
+ * print the PATH, COMP and CHUNK information
  *-------------------------------------------------------------------------
  */ 
  
@@ -311,13 +314,13 @@ int  copy_gr(int32 infile_id,
    }
   }
   printf(PFORMAT,
-   (chunk_flags>0)?"chunk":"",                    /*chunk info*/
-   (pr_comp_type>0)?get_scomp(pr_comp_type):"",   /*compression info*/
+   (chunk_flags>0)?"chunk":"",                    /*chunk information*/
+   (pr_comp_type>0)?get_scomp(pr_comp_type):"",   /*compression information*/
    path);                                         /*name*/
  }
 
 /*-------------------------------------------------------------------------
- * if we are in first trip inspection mode, exit, after printing the info
+ * if we are in first trip inspection mode, exit, after printing the information
  *-------------------------------------------------------------------------
  */ 
  
@@ -403,7 +406,7 @@ int  copy_gr(int32 infile_id,
   switch(comp_type) 
   {
    case COMP_CODE_SZIP:
-   if (set_szip (rank,dimsizes,dtype,n_comps,info,&c_info)==FAIL)
+   if (set_szip (rank,dimsizes,dtype,n_comps,info,szip_mode,&c_info)==FAIL)
    {
     comp_type=COMP_CODE_NONE;
    }
@@ -564,7 +567,7 @@ int copy_gr_attrs(int32 ri_id,
  for (i = 0; i < nattrs; i++) 
  {
   if (GRattrinfo (ri_id, i, attr_name, &dtype, &nelms) == FAIL) {
-   printf( "Cannot get info for attribute number %d\n", i);
+   printf( "Cannot get information for attribute number %d\n", i);
    return-1;
   }
   /* compute the number of the bytes for each value. */
