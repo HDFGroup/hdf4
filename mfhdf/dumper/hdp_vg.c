@@ -1,4 +1,4 @@
-/****************************************************************************
+/***************************************************************************e
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
  * National Center for Supercomputing Applications                          *
@@ -26,13 +26,14 @@ static char RcsId[] = "@(#)1.1";
 #include <math.h>
 #include "vg.h"
 
-typedef struct {
+struct node {
    int32 index,displayed;
    char name[MAXNAMELEN];
-   char *children[MAXNAMELEN], *type[MAXNAMELEN];
-} node;
+   char **children, **type;
+}; 
 
-void display (node *ptr, int32 level, node **list, int32 num_nodes, int32 firstchild);
+void display (struct node *ptr, int32 level, struct node **list, 
+	      int32 num_nodes, int32 firstchild);
 
 extern void sort(int32 chosen[100]);
 
@@ -41,7 +42,8 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg, intn argc,
 
 int32 Vref_index(int32 file_id, int32 vg_ref);
 
-void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, node *aNode, int32 skip);
+void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode, 
+		int32 skip);
 
 int32 Vstr_index(int32 file_id, char filter_str[MAXNAMELEN], int name,
 		 int32 *find_ref, int32 *index);
@@ -177,7 +179,7 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
     VOIDP attr_buf;
     char *nt_desc, *attr_nt_desc;
     int x, index_error=0, dumpall=0;
-    node **list, *ptr;
+    struct node **list, *ptr;
     int32 level, y, num_nodes=0;
 
     while (curr_arg < argc)   { /* Examine each file. */
@@ -298,7 +300,7 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
 	   if (HDstrlen(vgname)==0)
 	      HDstrcat(vgname,"");
 	   Vgetclass(vg_id, vgclass);
-	   list[i] = (node*)malloc(sizeof(node));
+	   list[i] = (struct node*)malloc(sizeof(struct node)); /* here */
 	   num_nodes++;
 	   
 	   switch (dumpvg_opts->contents) {
@@ -335,10 +337,11 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
 		    fprintf(fp, "\n");
            } /* switch */
 	   Vdetach(vg_id);
-	   list[i]->index = i;
-	   strcpy(list[i]->name, vgname);
+	   list[i]->index = i; 
+	   strcpy(list[i]->name, vgname); 
 	   list[i]->displayed = FALSE;
          } /* for */
+	
 	 Vend(file_id);
 
 /* TEST */
@@ -358,10 +361,9 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
       
 	 if (dumpvg_opts->contents!=DDATA) {
 	    printf("\n\nGraphical representation of the file:-\n");
-	    printf("(vg#: vgroup;   vd: vdata;   ");
-	    printf("~v: non-vgroup/non-vdata object)\n\n");
-	    for (y=0; y<num_nodes; y++) {
-	       int32 firstchild=FALSE;;
+	    printf("(vg#: vgroup;   vd: vdata)\n\n");
+	    for (y=0; y<num_nodes; y++) {   /* here */
+	     int32 firstchild=FALSE, k;
 	       level = -1;
 	       ptr = list[y];
 	       printf("   ");
@@ -369,16 +371,18 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
 	       printf("\n");
             } /* for */
          }
+	 free(list);
       }      /* while (curr_arg < argc)  */
       return(0);
 }     /* dvg */
 
 
-void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, node *aNode, int32 skip)
+void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode, 
+		int32 skip)
 {
    int32 vgt, vgotag, vgoref;
    int32 t, vsid, vg_tag, ne, tag;
-   int found=0;
+   int found=0, num_entries;
    int32 vs, nv, vsotag, vsoref, interlace, vsize;
    char fields[FIELDNAMELENMAX], vsname[MAXNAMELEN], vsclass[VSNAMELENMAX];
    char vgname[VGNAMELENMAX], vgclass[VGNAMELENMAX];
@@ -386,7 +390,11 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, node *aNode, int32 skip)
    int32 z, lastItem, count=0;
    char *tempPtr, *ptr, string[MAXNAMELEN], tempflds[FIELDNAMELENMAX];
 
-   for (t = 0; t<Vntagrefs(vg_id); t++) {
+   num_entries = Vntagrefs(vg_id);
+   aNode->children = (char**)malloc(sizeof(char*)*num_entries);
+   aNode->type = (char**)malloc(sizeof(char*)*num_entries);
+   
+   for (t = 0; t<num_entries; t++) {
       Vgettagref(vg_id, t, &tag, &vsid);
       found = 1;
       if (tag == DFTAG_VG) {
@@ -408,10 +416,10 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, node *aNode, int32 skip)
 	            (int)vgoref, (int)ne);
             fprintf(fp, "\tname = %s; class = %s\n", vgname, vgclass);
          } 
-	 Vdetach(vgt);
-	 aNode->children[t] = (char*)malloc(sizeof(char)*MAXNAMELEN);
-	 aNode->type[t] = (char*)malloc(sizeof(char)*MAXNAMELEN);
+	 Vdetach(vgt); /* here */
+	 aNode->children[t] = (char*)malloc(sizeof(char)*strlen(vgname));
 	 strcpy(aNode->children[t], vgname);
+	 aNode->type[t] = (char*)malloc(sizeof(char)*3);
 	 strcpy(aNode->type[t], "vg");
       } /* if */
       else if (tag == VSDESCTAG) {
@@ -467,10 +475,11 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, node *aNode, int32 skip)
          }
 
 
-	 VSdetach(vs);
-	 aNode->children[t] = (char*)malloc(sizeof(char)*MAXNAMELEN);
-	 aNode->type[t] = (char*)malloc(sizeof(char)*MAXNAMELEN);
+	 VSdetach(vs); /* here */
+	 aNode->children[t] = (char*)malloc(sizeof(char)*strlen(vsname));
 	 strcpy(aNode->children[t], vsname); 
+	 
+	 aNode->type[t] = (char*)malloc(sizeof(char)*3);
 	 strcpy(aNode->type[t], "vd");
       }
       else {
@@ -481,23 +490,26 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, node *aNode, int32 skip)
 	    fprintf(fp, "     #%d (%s)\n", (int) t, name);
 	    fprintf(fp, "\ttag = %d; reference = %d;\n", (int) tag, (int) vsid);
 	 }
-	 aNode->type[t] = (char*)malloc(sizeof(char)*MAXNAMELEN);
          aNode->children[t] = "***"; 
-	 strcpy(aNode->type[t], "~v");
+	 aNode->type[t] = (char*)malloc(sizeof(char)*strlen(name));
+	 tempPtr = (char*)HDgettagname((uint16) tag);
+	 tempPtr = &tempPtr[6];
+	 strcpy(aNode->type[t], tempPtr);
       }
    } /* for */
-   aNode->children[t] = NULL;
+   aNode->children[num_entries] = NULL;
    if (!found)
       printf("     None.\n");
 } /* vgdumpfull */
 
 
-void display(node *ptr, int32 level, node **list, int32 num_nodes, int32 firstchild)
+void display(struct node *ptr, int32 level, struct node **list, 
+	     int32 num_nodes, int32 firstchild)
 {
    char *name;
    int i, k, x, y, z, num=1, newline=TRUE;
 
-   level++;
+   level++; 
    if (!firstchild)  
       for (k=0; k<level; k++)
          for (z=0; z<num; z++)
@@ -517,13 +529,14 @@ void display(node *ptr, int32 level, node **list, int32 num_nodes, int32 firstch
          else
 	    firstchild = FALSE;
 	 name = ptr->children[i];
-	 if ((strcmp(ptr->type[i], "vd")) && (strcmp(ptr->children[i], "***"))) {
+	 if ((strcmp(ptr->type[i], "vd")) && 
+	     (strcmp(ptr->children[i], "***"))) {
 	    x = 0; 
 	    while (strcmp(name, list[x]->name)) 
 	       x++;
 	    display(list[x], level, list, num_nodes, firstchild);
          } /* if */ 
-	 else {
+	 else {               /* here */
 	    if (i>0) {
 	       for (k=0; k<level+1; k++)
 		  for (z=0; z<num; z++)
