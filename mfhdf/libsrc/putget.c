@@ -983,16 +983,20 @@ hdf_xdr_NCvdata(NC *handle,
                 uint32 count, 
                 void * values)
 {
-    NC_attr **attr = NULL;      /* pointer to the fill-value attribute */
-    int32     status;
-    int32     byte_count;
-    int32     bytes_left;
-    int32     elem_length;
-    int8      platntsubclass;  /* the machine type of the current platform */
-    int8      outntsubclass;   /* the data's machine type */
-    uintn     convert;          /* whether to convert or not */
-    int16     isspecial;
-    intn      ret_value = SUCCEED;
+    NC_attr **attr = NULL;  /* pointer to the fill-value attribute */
+    int32   status;
+    int32  byte_count;	/* total # of bytes of data to be processed */
+    int32  elements_left;/* number of elements still left to be processed */
+    int32  data_size;	/* size of data block being processed in bytes */
+    int32  new_count;	/* computed by dividing number of elements 'count' by 2 since 'count' is too big to allocate temporary buffer */
+    int32  bytes_left;
+    int32  elem_length;	/* length of the element pointed to */
+    int8   platntsubclass;  /* the machine type of the current platform */
+    int8   outntsubclass;   /* the data's machine type */
+    uintn  convert;         /* whether to convert or not */
+    int16  isspecial;
+    intn   ret_value = SUCCEED;
+    int32 alloc_status = FAIL;	/* no successful allocation yet */
 
 #ifdef DEBUG
     fprintf(stderr, "hdf_xdr_NCvdata I've been called : %s\n", vp->name->values);
@@ -1002,6 +1006,7 @@ hdf_xdr_NCvdata(NC *handle,
     fprintf(stderr, "Where = %d  count = %d\n", where, count);
 #endif
     
+
     if(vp->aid == FAIL 
        && hdf_get_vp_aid(handle, vp) == FAIL) 
       {
@@ -1099,16 +1104,10 @@ hdf_xdr_NCvdata(NC *handle,
 #endif
     convert= (uintn)(platntsubclass!=outntsubclass);
 
-    /* make sure our tmp buffer is big enough to hold everything */
-    if(convert 
-       && ((tBuf_size < byte_count) || tBuf_size<where)) 
-      {
-          if(SDIresizebuf((void * *)&tBuf,&tBuf_size,MAX(byte_count,where)) == FAIL)
-            {
-                ret_value = FAIL;
-                goto done;
-            }
-      } /* end if */
+/* BMR - bug#268: removed the block here that attempted to allocation
+large amount of space and failed.  The allocation is not incorporated
+in the reading values, writing values, and writing fill values parts in
+this routine */
 
 #ifdef DEBUG
     fprintf(stderr, "hdf_xdr_NCvdata: tBuf_size=%d, tBuf=%p\n",(int)tBuf_size,tBuf);
@@ -1127,39 +1126,87 @@ hdf_xdr_NCvdata(NC *handle,
     if(vp->data_offset > 0) 
       {
           where += vp->data_offset;
-
+#define QAK
 #ifdef QAK
           /* if the dataset doesn't exist yet, we need to fill in the dimension scale info */
           if(elem_length <= 0 && (handle->flags & NC_NOFILL) == 0)
-            {
-                /* Fill the temporary buffer with the fill-value */
-                if(attr != NULL)
-                    HDmemfill(tBuf,(*attr)->data->values,vp->szof,(vp->data_offset/vp->HDFsize));
-                else 
-                    NC_arrayfill(tBuf, vp->data_offset, vp->type);
+          {
+	  /* BMR: work around for the low memory problem by repeatedly 
+             processing smaller amount blocks of data */
 
-                /* convert the fill-values, if necessary */
-                if(convert) 
-                  {
+             /* compute the data block size and the # of elements*/
+             data_size = MAX( byte_count, where ); 
+             new_count = vp->data_offset/vp->HDFsize; 
+
+	     /* attempt to allocate the entire amount needed first, data_size bytes */
+	     alloc_status = SDIresizebuf((void **)&tBuf, &tBuf_size, data_size );
+
+	     /* if fail to allocate, repeatedly calculate a new amount
+	     and allocate until success or until no more memory available */
+	     while( alloc_status == FAIL )
+		{
+		   new_count = new_count / 2;	/* try smaller number of elements */
+                   if( new_count <= 0 )  /* unable to allocate any memory */
+                   {
+                      ret_value = FAIL;
+                      goto done;
+                   }
+		  /* re-calculate the size of the data block using smaller # of elements */
+		   data_size = new_count * vp->szof;
+		   alloc_status = SDIresizebuf((void **)&tBuf,&tBuf_size, data_size);
+		} /* while trying to allocate */
+
+                /* assume that all elements are to be processed */
+		elements_left = vp->data_offset/vp->HDFsize;
+
+		/* repeatedly read, convert, and store blocks of data_size 
+                   bytes of data into the user's buffer until no more elements 
+                   left */
+		while( elements_left > 0 )
+		{
+                   /* Fill the temporary buffer with the fill-value */
+                   if(attr != NULL)
+                      HDmemfill(tBuf,(*attr)->data->values,vp->szof, new_count);
+                   else 
+                      NC_arrayfill(tBuf, data_size, vp->type);
+
+                   /* convert the fill-values, if necessary */
+                   if(convert) 
+                   {
                       if (FAIL == DFKsetNT(vp->HDFtype)) /* added back here -GV */
                         {
                             ret_value = FAIL;
                             goto done;
                         }
-                      if (FAIL == DFKnumout(tBuf, tBuf, (uint32) (vp->data_offset/vp->HDFsize), 0, 0))
+                      if (FAIL == DFKnumout(tBuf, tBuf, (uint32)new_count, 0, 0))
                         {
                             ret_value = FAIL;
                             goto done;
                         }
-                  } /* end if */
+                   } /* end if convert */
 
-                /* Write the fill-values out */
-                status = Hwrite(vp->aid, vp->data_offset, tBuf);
-                if (FAIL == status)
-                  {
+                   /* Write the fill-values out */
+                   status = Hwrite(vp->aid, data_size, tBuf);
+                   if (data_size == status)
+                   {
                       ret_value = FAIL;
                       goto done;
-                  }                
+                   }
+
+		   /* compute the number of elements left to be processed */
+		   elements_left = elements_left - new_count;
+
+		   /* adjust the # of elements in the final block and
+		      compute that block's size if necessary */
+		   if( elements_left > 0 && elements_left < new_count )
+		   {
+		      new_count = elements_left; 
+		      data_size = new_count * vp->szof;
+		   }
+	        } /* while more elements left to be processed */
+
+	        SDPfreebuf();  /* free tBuf and tValues if any exists */
+	       /* end of BMR part */
             } /* end if */
 #endif /* QAK */
       } /* end if */
@@ -1175,67 +1222,93 @@ hdf_xdr_NCvdata(NC *handle,
             {
                 int32 buf_size = where;
                 int32 chunk_size;
+		int32 tempbuf_size;	/* size to allocate buffer tBuf */
                 uint8 *write_buf = NULL;
-                uint32 fill_count;
+                uint32 fill_count;	/* number of fill values */
 
-                /* Make certain we don't try to write too large of a chunk at a time */
-                chunk_size = MIN(buf_size,MAX_SIZE);
+		/* this block is to work around the failure caused by
+		   allocating a large chunk for the temporary buffers.
+		   First, try to allocate the desired chunk for both
+		   buffers; if any allocation fails, reduce the chunk size
+		   in half and try again until both buffers are
+		   successfully allocated - BMR */ 
 
-		/* How many fill values will cover chunk_size after conversion??? */
-		fill_count = chunk_size/vp->HDFsize;;
+		chunk_size = MIN(buf_size, MAX_SIZE);   /* initial chunk size */
+		alloc_status = FAIL;
 
-                /* make sure our tmp buffer is big enough to hold everything */
-                if(SDIresizebuf((void * *)&tBuf,&tBuf_size,fill_count*vp->szof) == FAIL)
-                  {
+                /* while any allocation fails */
+		while( alloc_status == FAIL )
+		{
+		/* try to allocate the buffer to hold the fill values after conversion */
+		   alloc_status = SDIresizebuf((void * *)&tValues,&tValues_size,chunk_size);
+		   /* then, if successful, try to allocate the temporary
+		   buffer that holds the fill values before conversion */
+                   if( alloc_status != FAIL)
+		   {
+		      /* calculate the size needed to allocate tBuf by
+		         first calculating the number of fill values that
+		         cover the chunk in buffer tValues after conversion... */
+		      fill_count = chunk_size/vp->HDFsize;
+
+		      /* then use that number to compute the size of
+		         the buffer to hold fill_count fill values of type
+		         vp->szof, i.e., before conversion */
+		      tempbuf_size = fill_count * vp->szof;
+		      alloc_status = SDIresizebuf((void **)&tBuf,&tBuf_size, tempbuf_size);
+		   } /* if first allocation successes */
+					
+		   if( alloc_status == FAIL )      /* if any allocations fail */
+		      chunk_size = chunk_size / 2;  /* try smaller chunk size */
+
+                   if( chunk_size <= 0 )  /* unable to allocate any memory */
+                   {
                       ret_value = FAIL;
                       goto done;
-                  }
+                   }
+		} /* while any allocation fails */
 
-                if(SDIresizebuf((void * *)&tValues,&tValues_size,chunk_size) == FAIL)
-                  {
-                      ret_value = FAIL;
-                      goto done;
-                  }
-
-                /* Fill the temporary buffer with the fill-value */
+		/* Fill the temporary buffer tBuf with the fill-value
+		  specified in the attribute if one exists, otherwise,
+		  with the default value */ 
                 if(attr != NULL)
-                    HDmemfill(tBuf,(*attr)->data->values,vp->szof,(chunk_size/vp->HDFsize));
+                    HDmemfill(tBuf,(*attr)->data->values, vp->szof, fill_count);
                 else 
-                    NC_arrayfill(tBuf, fill_count*vp->szof, vp->type);
+                    NC_arrayfill(tBuf, tempbuf_size, vp->type);
 
-                /* convert the fill-values, if necessary */
-                if(convert) 
-                  {
-                      if (FAIL == DFKsetNT(vp->HDFtype)) /* added back here -GV */
-                        {
-                            ret_value = FAIL;
-                            goto done;
-                        }
-
-                      if (FAIL == DFKnumout(tBuf, tValues, fill_count, 0, 0))
-                        {
-                            ret_value = FAIL;
-                            goto done;
-                        }
-
-                      write_buf = (uint8 *)tValues;
-                  } /* end if */
+		/* convert the fill-values, if necessary, and store
+		them in the buffer tValues */
+                if(convert)
+                {
+                   if (FAIL == DFKsetNT(vp->HDFtype)) /* added back here -GV */
+                     {
+                         ret_value = FAIL;
+                         goto done;
+                     }    
+                   if (FAIL == DFKnumout(tBuf, tValues, fill_count, 0, 0))
+                     {
+                         ret_value = FAIL;
+                         goto done;
+                     }    
+                   write_buf=(uint8 *)tValues;
+                } /* end if */
                 else
-                    write_buf = (uint8 *)tBuf;
+                   write_buf=(uint8 *)tBuf;
 
                 do {
                     /* Write the fill-values out */
                     status = Hwrite(vp->aid, chunk_size, write_buf);
-                    if (FAIL == status)
+                    if (status != chunk_size)
                       {
                           ret_value = FAIL;
                           goto done;
                       }    
-                    /* reduce the bytes to write */
-                    buf_size -= chunk_size;
-                    chunk_size = MIN(buf_size,MAX_SIZE);
-                } while (buf_size > 0);
 
+                    /* reduce the bytes to be written */
+                    buf_size -= chunk_size;
+
+		    /* to take care of the last piece of data */
+		    chunk_size = MIN( chunk_size, buf_size );
+                } while (buf_size > 0);
             } /* end if */
           else
             { /* don't write fill values, just seek to the correct location */
@@ -1266,13 +1339,43 @@ hdf_xdr_NCvdata(NC *handle,
 #endif
     
       } /* end else */
+
     /* Read or write the data into / from values */
-    if(handle->xdrs->x_op == XDR_DECODE) 
-      {
-          if(convert) 
-            {
-                status = Hread(vp->aid, byte_count, tBuf);
-                if(status != byte_count) 
+    if(handle->xdrs->x_op == XDR_DECODE)  /* the read case */
+    {
+       if(convert) /* if data need to be converted for this platform */
+       {
+          data_size = byte_count; /* use data_size; preserve the byte count */
+          new_count = count;     /* use new_count; preserve the # of elements */
+
+          /* attempt to allocate the entire amount needed first */
+          alloc_status = SDIresizebuf((void **)&tBuf,&tBuf_size, data_size );
+
+	  /* if fail to allocate, repeatedly calculate a new amount and
+	     allocate until success or until no memory available */
+          while( alloc_status == FAIL )
+          {
+             new_count = new_count / 2;  /* try smaller number of elements */
+             if( new_count <= 0 )  /* unable to allocate any memory */
+             {
+                ret_value = FAIL;
+                goto done;
+             }
+
+             /* re-calculate the size of the data block */
+             data_size = new_count * vp->szof;
+             alloc_status = SDIresizebuf((void **)&tBuf,&tBuf_size, data_size);
+          }
+
+	  /* repeatedly read, convert, and store blocks of data_size
+	     bytes of data into the user's buffer until no more elements
+	     left */
+             elements_left = count;  /* 'count' is number of elements to
+be processed */
+             while( elements_left > 0 )
+             {
+                status = Hread(vp->aid, data_size, tBuf);
+                if(status != data_size)  /* amount read != amount specified */
                   {
                       ret_value = FAIL;
                       goto done;
@@ -1281,14 +1384,29 @@ hdf_xdr_NCvdata(NC *handle,
                   {
                       ret_value = FAIL;
                       goto done;
-                  }    
-                if (FAIL == DFKnumin(tBuf, values, (uint32) count, 0, 0))
+                  }
+                /* convert and store new_count elements in tBuf into 
+                   the buffer values */
+                if (FAIL == DFKnumin(tBuf, values, (uint32) new_count, 0, 0))
                   {
                       ret_value = FAIL;
                       goto done;
-                  }    
-            } /* end if */
-          else 
+                  }
+
+		/* compute the number of elements left to be processed */
+                elements_left = elements_left - new_count;
+
+		/* adjust the # of elements in the final block and
+                   compute that block's size if necessary */
+                if( elements_left > 0 && elements_left < new_count )
+                {
+                   new_count = elements_left; 
+                   data_size = new_count * vp->szof;
+                }
+              } /* while more elements left to be processed */
+              SDPfreebuf();
+            } /* end if convert */
+          else  /* no convert, read directly into the user's buffer */
             {
                 status = Hread(vp->aid, byte_count, values);
                 if(status != byte_count)
@@ -1297,25 +1415,73 @@ hdf_xdr_NCvdata(NC *handle,
                       goto done;
                   }    
             } /* end else */
-      } 
+      } /* end if XDR_DECODE */
     else 
-      {
-          if(convert) 
-            {
-                if (FAIL == DFKsetNT(vp->HDFtype)) /* added back here -GV */
-                  {
-                      ret_value = FAIL;
-                      goto done;
-                  }    
+      {/* XDR_ENCODE */
+          if(convert) /* if data need to be converted for this platform */
+          {
+             data_size = byte_count; /* use data_size; preserve the byte count*/
+             new_count = count;  /* use new_count; preserve the # of elements */
 
-                if (FAIL == DFKnumout(values, tBuf, count, 0, 0))
-                  {
-                      ret_value = FAIL;
-                      goto done;
-                  }    
-                status = Hwrite(vp->aid, byte_count, tBuf);
-            } /* end if */
+             /* attempt to allocate the entire amount needed first */
+             alloc_status = SDIresizebuf((void **)&tBuf,&tBuf_size, data_size);
+
+             /* if fail to allocate, repeatedly calculate a new amount and 
+                allocate until success or no more memory left */
+             while( alloc_status == FAIL )
+             {
+                new_count = new_count / 2;  /* try smaller number of elements */
+                if( new_count <= 0 )  /* unable to allocate any memory */
+                {
+                   ret_value = FAIL;
+                   goto done;
+                }
+
+                /* re-calculate the size of the data block */ 
+                data_size = new_count * vp->HDFsize;
+                alloc_status = SDIresizebuf((void **)&tBuf,&tBuf_size, data_size);
+             }
+
+            /* repeatedly convert, store blocks of data_size bytes of data
+               from the user's buffer into the temporary buffer, and write 
+               out the temporary buffer until no more bytes left */
+            elements_left = count;   /* all elements are left to be processed */
+            while( elements_left > 0 )
+            {
+               if (FAIL == DFKsetNT(vp->HDFtype)) /* added back here -GV */
+               {
+                   ret_value = FAIL;
+                   goto done;
+               }    
+
+               /* convert new_count elements in the user's buffer values and 
+                  write them into the temporary buffer */
+               if (FAIL == DFKnumout(values, tBuf, (uint32) new_count, 0, 0))
+               {
+                   ret_value = FAIL;
+                   goto done;
+               }    
+               status = Hwrite(vp->aid, data_size, tBuf);
+               if(status != data_size) 
+               {
+                   ret_value = FAIL;
+                   goto done;
+               }    
+		/* compute the number of elements left to be processed */
+                elements_left = elements_left - new_count;
+
+		/* adjust the # of elements in the final block and
+                   compute that block's size if necessary */
+                if( elements_left > 0 && elements_left < new_count )
+                {
+                   new_count = elements_left; 
+                   data_size = new_count * vp->szof;
+                }
+              } /* while more elements left to be processed */
+            SDPfreebuf();  /* free tBuf and tValues if any exist */
+            } /* end if convert */
           else 
+          { /* no convert, write directly from the user's buffer */
               status = Hwrite(vp->aid, byte_count, values);
 
 #ifdef DEBUG
@@ -1328,7 +1494,8 @@ hdf_xdr_NCvdata(NC *handle,
                 ret_value = FAIL;
                 goto done;
             }
-      }
+          } /* no convert */
+      } /* XDR_ENCODE */
 
     /* if we get here and the length is 0, we need to finish writing out the fill-values */
     bytes_left = vp->len - (where + byte_count);
@@ -1338,37 +1505,63 @@ hdf_xdr_NCvdata(NC *handle,
     if(elem_length <= 0 && bytes_left > 0)
       {
           if((handle->flags & NC_NOFILL) == 0 || isspecial == SPECIAL_COMP)
-            {
-                int32 buf_size = bytes_left;
-                int32 chunk_size;
-                uint8 *write_buf = NULL;
-                uint32 fill_count;
+          {
+             int32 buf_size = bytes_left;
+             int32 chunk_size;
+             int32 tempbuf_size;    /* num of bytes to allocate buffer tBuf */
+             uint8 *write_buf = NULL;
+             uint32 fill_count;     /* number of fill values */
 
-                /* Make certain we don't try to write too large of a chunk at a time */
-                chunk_size = MIN(buf_size,MAX_SIZE);
+	     /* this block is to work around the failure caused by
+	        allocating a large chunk for the temporary buffers.
+	        First, try to allocate the desired chunk for both buffers;
+	        if any allocation fails, reduce the chunk size in half and
+	        try again until both buffers are successfully allocated - BMR */
 
-		/* How many fill values will cover chunk_size after conversion??? */
-		fill_count = chunk_size/vp->HDFsize;
+		chunk_size = MIN(buf_size, MAX_SIZE); /* initial chunk size */
 
-                /* make sure our tmp buffer is big enough to hold everything */
-                if(SDIresizebuf((void * *)&tBuf,&tBuf_size,fill_count*vp->szof) == FAIL)
-                  {
+		/* while any allocation fails */ 
+		alloc_status = FAIL;
+                while( alloc_status == FAIL ) 
+                {
+                   /* first, try to allocate the buffer to hold the fill 
+                      values after conversion */
+                   alloc_status = SDIresizebuf((void * *)&tValues,&tValues_size,chunk_size);
+
+		   /* then, if successful, try to allocate the temporary
+		      buffer that holds the fill values before conversion */
+		      if( alloc_status != FAIL)
+                   {
+		      /* calculate the size needed to allocate tBuf
+		         by first calculating the number of fill values that
+			 cover the chunk in buffer tValues after conversion...*/
+		      fill_count = chunk_size/vp->HDFsize;
+
+                      /* then use that number to compute the size of the 
+                         buffer to hold fill_count fill values of type 
+			 vp->szof, i.e., before conversion */
+                      tempbuf_size = fill_count * vp->szof;
+                      alloc_status = SDIresizebuf((void **)&tBuf,&tBuf_size, tempbuf_size);
+                   } /* if first allocation successes */
+                                        
+                   if( alloc_status == FAIL ) /* if any allocations fail */
+                      chunk_size = chunk_size / 2; /* try smaller chunk size */
+
+                   if( chunk_size <= 0 )  /* unable to allocate any memory */
+                   {
                       ret_value = FAIL;
                       goto done;
-                  }    
-                if(SDIresizebuf((void * *)&tValues,&tValues_size,chunk_size) == FAIL)
-                  {
-                      ret_value = FAIL;
-                      goto done;
-                  }    
+                   }
 
-                /* Fill the temporary buffer with the fill-value */
+                } /* while any allocation fails */
+
+                /* Fill the temporary buffer tBuf with the fill-value specified                    in the attribute if one exists, otherwise, with the default value */
                 if(attr != NULL)
-                    HDmemfill(tBuf,(*attr)->data->values,vp->szof,(chunk_size/vp->HDFsize));
+                    HDmemfill(tBuf,(*attr)->data->values, vp->szof, fill_count);
                 else 
-                    NC_arrayfill(tBuf, fill_count*vp->szof, vp->type);
+                    NC_arrayfill(tBuf, tempbuf_size, vp->type);
 
-                /* convert the fill-values, if necessary */
+                /* convert the fill-values, if necessary, and store them in the buffer tValues */
                 if(convert) 
                   {
                       if (FAIL == DFKsetNT(vp->HDFtype)) /* added back here -GV */
@@ -1389,15 +1582,17 @@ hdf_xdr_NCvdata(NC *handle,
                 do {
                     /* Write the fill-values out */
                     status = Hwrite(vp->aid, chunk_size, write_buf);
-                    if (FAIL == status)
+                    if (status != chunk_size)
                       {
                           ret_value = FAIL;
                           goto done;
                       }    
 
-                    /* reduce the bytes to write */
+                    /* reduce the bytes still to be written */
                     buf_size -= chunk_size;
-                    chunk_size = MIN(buf_size,MAX_SIZE);
+
+                    /* to take care of the last piece of data */
+                    chunk_size = MIN( chunk_size, buf_size );
                 } while (buf_size > 0);
             } /* end if */
       } /* end if */
