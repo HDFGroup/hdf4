@@ -879,6 +879,9 @@ rm -f conftest*
 
 echo checking for variadic function support
 cat > conftest.c <<EOF
+
+main() { exit(0); } 
+t() { }
 #include <stdarg.h>
 int foo(int bar, ...) {
     va_list     alist;
@@ -886,11 +889,11 @@ int foo(int bar, ...) {
     bar = (int)va_arg(alist, int);
     va_end(alist);
     return bar;
-}
-main() { exit(0); } 
-t() {  }
+ }
 EOF
 if eval $compile; then
+  :
+else
     for arg in -DNO_STDARG; do
     case "$CPPFLAGS" in
       *$arg*) ;;
