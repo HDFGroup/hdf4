@@ -120,25 +120,26 @@ dumpvd(int32       vd,
           /* Display the header of a vdata if the user didn't specify the
              data-only option. */
           if (!data_only)
-            { 
-                if(ft==DASCII)
-                  {
-                      if ((dumpallfields) || (flds_indices[x] == i))
-                        {
-                            fprintf(fp, "- field index %d: [%s], type=%d, order=%d\n",
-                                    (int) i, w->name[i], w->type[i], w->order[i]);
-                            x++;
-                        }
-                  }
-            }	/* if */
-
-          /* display attributes */
-          if (FAIL == dumpattr(vd, i, 1, ft, fp))
-            {
+          { 
+             if(ft==DASCII)
+             {
+                if ((dumpallfields) || (flds_indices[x] == i))
+                {
+                   fprintf(fp, "- field index %d: [%s], type=%d, order=%d\n",
+                          (int) i, w->name[i], w->type[i], w->order[i]);
+                   x++;
+                }
+             }
+             /* display attributes - BMR moved this block inside if(!data_only) 
+		to keep the attributes from being printed - bug #231*/
+             if (FAIL == dumpattr(vd, i, 1, ft, fp))
+             {
                 fprintf(stderr,"dumpvd: dumpattr() failed for vd = %d \n",(int)vd);
                 ret_value = FAIL;
                 goto done;
-            }
+             }
+
+          }	/* if !data_only */
 
           /* Choose a function for displaying a piece of data of a 
              particular type. */
