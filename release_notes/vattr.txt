@@ -1,0 +1,129 @@
+        Vgroup and vdata attributes 
+                   9/8/96
+ 
+Vdata/vgroup version
+--------------------
+Previous (up to HDF4.0r2) vdata and vgroup version is 3, 
+VSET_VERION.  With attributes added, version number will be 4,
+VSET_NEW_VERSION. For backward compatibility, a vdata or 
+a vgroup will still has version number 3 if it has no attribute 
+assigned. 
+
+Attribute
+---------
+An attribute has name, data type, number of values and values. 
+All values of an attribute should be of the same data type,
+for example 10 characters, or 2 32-bit integers.
+
+Any number of ttributes can be assigned to a vgroup, a vdata 
+(entire vdata) or any field of a vdata. An attribute  name 
+should be unique in its domian, e.g. a field attribute name 
+should be unique among all attributes of that field. 
+
+Attributes in HDF files
+-----------------------
+Attributes will be stored in vdatas.  The vdata's name is
+the the attribute name specified by the user. Its class is 
+"Attr0.0", _HDF_ATTRIBUTE.  
+
+All attributes of a vgroup or a vdata will be included in 
+the vgroup, represented by DFTAG_VG,  or the vdata header,
+DFTAG_VH. 
+ 
+Vdata/Vgroup attribute routines (see man pages for more info)
+----------------------------------------------------------
+  intn VSfindex(int32 vsid, char *fieldname, int32 *fldindex)
+       find out the index of a field given the field name.
+  int32 VSQuerynfields(int32 vsid)
+       get number of fields of a vdata. 
+  intn VSsetattr(int32 vsid, int32 findex, char *attrname, 
+                 int32 datatype, int32 count, VOIDP values)
+       set attr for a field of a vdata or for the vdata.
+       if the attr already exists the new values will replace
+          the current ones as far as the datatype and order
+          are not changed.
+  intn VSnattrs(int32 vsid)
+       total number of attr for a vdata and its fields
+  int32 VSfnattrs(int32 vsid, int32 findex) 
+       number of attrs for a vdata or a field of it
+  intn VSfindattr(int32 vsid, int32 findex, char *attrname)
+       get index of an attribute with a given name
+  intn VSattrinfo(int32 vsid, int32 findex, intn attrindex,
+                  char *name, int32 *datatype, int32 *count,
+                    int32 *size);
+       get info about an attribute
+  intn VSgetattr(int32 vsid, int32 findex, intn attrindex, 
+                 VOIDP values)
+       get values of an attribute
+  intn VSisattr(int32 vsid)
+       test if a vdata is an attribute of other object
+  intn Vsetattr(int32 vgid,  char *attrname, int32 datatype,
+                int32 count, VOIDP values) 
+       set attr for a vgroup
+  intn Vnattrs(int32 vgid)
+       number of attrs for a vgroup
+  intn Vfindattr(int32 vgid, char *attrname)
+       get index of an attribute with a given name
+  intn Vattrinfo(int32 vgid, intn attrindex, char *name, 
+                 int32 *datatype, int32 *count, int32 *size)
+       get info about an attribute
+  intn Vgetattr(int32 vgid, intn attrindex, VOIDP values)
+       get values of an attribute
+  int32 Vgetversion(int32 vgid)
+       get vset version of a vgroup
+  ( int32 VSgetversion(int32 vsid) already exists.) 
+
+Changes in the vdata header in HDF files :
+------------------------------------------
+1. If attributes or other new features are assigned:
+     o version number will be VSET_NEW_VERSION (4, 
+         defined in vg.h)
+     o the new DFTAG_VH looks like:
+           
+       interlace  number_records hdf_rec_size n_fields
+         2 bytes        4              2           2
+       datatype_field_n offset_field_n order_field_n fldnmlen_n
+         2*n_fields        2*n_fields     2*n_fields  2*n_fields
+       fldnm_n namelen name classlen class extag exref version
+                 2            2             2     2      2
+       more  flags  < nattrs  field_index attr0_tag/ref 
+        2      4         4         4         2/2        
+       field_index  attr1_tag/ref ...> version  more extra_byte
+             4           2/2          
+ 
+   If no attributes or other new features were assigned, 
+       version number is still VSET_VERSION  and the old 
+       vdata header will be written out.
+
+2. In old implementation the 'version' and 'more' fields
+   follow the 'exref' field. In order to not break existing
+   applications the new implementation keeps the these two
+   fields and adds a duplication of 'version' and 'more'
+   at the end, along with an extra_byte which was not 
+   documented in old documentation. 
+
+3. The field "flags" of  uint32: 
+           bit 0 -- has attr
+           bit 1 -- 15  -- unused.
+     o Fields follow the 'flags' are:
+           total_number_of_attrs this vdata has  (4 bytes)
+           vs_attr_list  (#_attrs * 8 bytes (4+2+2))
+            (field_index, attr_vdata_tag, attr_vdata_ref) 
+       the flags and attribute fields are added after the 
+           first 'more' fields.
+ 
+Changes in the vgroup data in HDF files 
+---------------------------------------
+1. If has attribute(s):
+      o add a flag field, uint16,
+          bit 0 -- has attr
+          bit 1-15  -- unused.
+      o version number will be changed to 4 
+      o fields following the flag are:
+          number_of_attrs 
+          vg_attr_list 
+        the above fields are added preceding the version field
+      o vg_attr_list consists of a list of attribute_tag/ref
+         pairs
+   If no attribute:
+      No changes in vgroup data and version number is still 3
