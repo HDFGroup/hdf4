@@ -5,11 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.7  1993/02/09 17:59:20  chouck
-Added a fix to Vinsert() to increase the size of a Vgroup dynamically.
-Also fixed a problem in vunpackvg() when reading Vgroups with no
-elements.  A couple minor speed improvements here and there too.
+Revision 1.8  1993/03/16 17:37:44  chouck
+Added casts to calls to HDregetspace
 
+ * Revision 1.7  1993/02/09  17:59:20  chouck
+ * Added a fix to Vinsert() to increase the size of a Vgroup dynamically.
+ * Also fixed a problem in vunpackvg() when reading Vgroups with no
+ * elements.  A couple minor speed improvements here and there too.
+ *
  * Revision 1.6  1993/01/19  05:56:22  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -890,8 +893,10 @@ PUBLIC int32 Vinsert (vg, velt)
     
     if(vg->nvelt >= vg->msize) {
         vg->msize *= 2;
-        vg->tag  = (uint16 *) HDregetspace(vg->tag, vg->msize * sizeof(uint16));
-        vg->ref  = (uint16 *) HDregetspace(vg->ref, vg->msize * sizeof(uint16));
+        vg->tag  = (uint16 *) HDregetspace((VOIDP) vg->tag, 
+                                           vg->msize * sizeof(uint16));
+        vg->ref  = (uint16 *) HDregetspace((VOIDP) vg->ref, 
+                                           vg->msize * sizeof(uint16));
         
         if((vg->tag == NULL) || (vg->ref == NULL)) {
             HERROR(DFE_NOSPACE);
@@ -1164,8 +1169,10 @@ int32 vinsertpair ( vg, tag, ref)
 
     if(vg->nvelt >= vg->msize) {
         vg->msize *= 2;
-        vg->tag  = (uint16 *) HDregetspace(vg->tag, vg->msize * sizeof(uint16));
-        vg->ref  = (uint16 *) HDregetspace(vg->ref, vg->msize * sizeof(uint16));
+        vg->tag  = (uint16 *) HDregetspace((VOIDP) vg->tag, 
+                                           vg->msize * sizeof(uint16));
+        vg->ref  = (uint16 *) HDregetspace((VOIDP) vg->ref, 
+                                           vg->msize * sizeof(uint16));
 
         if((vg->tag == NULL) || (vg->ref == NULL)) {
             HERROR(DFE_NOSPACE);
