@@ -23,13 +23,13 @@
 
   2.5 Platform-specific Notes
   2.5.1 HPUX(9.03) on PA-RISC
-  2.5.2 IRIX(5.2) on MIPS
-  2.5.3 Solaris(2.5) on Sparc
-  2.5.4 Solaris(2.4) on INTEL(x86)
-  2.5.5 OpenVMS AXP on DEC Alpha
-  2.5.6 Windows '95 or Windows NT
-  2.5.7 CM5 Parallel I/O Extension
-  2.5.8 PowerPC/68k(far/4i/8d)- Macintosh OS
+  2.5.2 Solaris(2.5) on Sparc
+  2.5.3 Solaris(2.4) on INTEL(x86)
+  2.5.4 OpenVMS AXP on DEC Alpha
+  2.5.5 Windows '95 or Windows NT
+  2.5.6 CM5 Parallel I/O Extension
+  2.5.7 PowerPC/68k(far/4i/8d)- Macintosh OS
+  2.5.8 Exemplar (HP-UX 9.03)
   2.5.9 Fujitsu UXP/M-1800(Unix_System_V-4.0)
 
   2.6 Pablo Instrumentation
@@ -341,33 +341,19 @@ or
     compiler f77 was used. The binary distribution was compiled
     using the native compilers.
 
-    2.5.2 IRIX(5.2) on MIPS
-    -----------------------
-    The distribution has been compiled/tested with the native
-    ANSI-C compiler and the fortran compiler. There is 
-    an ansi prototype clash with the XDR header files on this version 
-    of the OS that has been fixed in IRIX 5.3. It is recommended the 
-    OS be upgraded to IRIX 5.3. Due to the ansi prototype clash, 
-    the netCDF xdr tests will not compile with the -ansi option. To get 
-    around this you can compile this test using the -cckr option and 
-    then compile/run the remainder of the tests using the regular
-    -ansi option. Note that the library compiles fine but that the 
-    xdr netCDF test does not without the above fix. The binary 
-    distribution was compiled using the native compilers.
-
-    2.5.3 Solaris(2.5) on Sparc
+    2.5.2 Solaris(2.5) on Sparc
     ---------------------------
     The distribution has been compiled/tested with the native
     ANSI-C compiler and native fortran compiler. The binary 
     distribution was compiled using the native compilers.
 
-    2.5.4 Solaris(2.4) on INTEL(x86)
+    2.5.3 Solaris(2.4) on INTEL(x86)
     --------------------------------
     The distribution has been compiled/tested with GCC 2.6.3 with
     *NO* fortran support. The binary distribution was compiled
     using GCC 2.6.3.
 
-    2.5.5 OpenVMS AXP on DEC Alpha
+    2.5.4 OpenVMS AXP on DEC Alpha
     ------------------------------
     Make.com files in each subdirectory are available to compile
     the libraries and utilities. The MAKENOF.COM and MAKEFS.COM
@@ -382,21 +368,21 @@ or
     is no such one existing, before running 'testhdf' in [.hdf.test]
     This directory is used for the external element test.
 
-    2.5.6 Windows '95 or Windows NT
+    2.5.5 Windows '95 or Windows NT
     -------------------------------
     To install on a Windows '95 or Windows NT machine, read the separate
     installation instructions for Windows NT:
       
         $(toplevel)/release_notes/install_winNT.txt.
  
-    2.5.7 CM5 Parallel I/O Extension
+    2.5.6 CM5 Parallel I/O Extension
     --------------------------------
     To install the parallel I/O extension for CM5, read the separate 
     installation instructions in:
 
         $(toplevel)/release_notes/parallel_CM5.txt.
 
-    2.5.8 PowerPC/68k(far/4i/8d)- Macintosh OS
+    2.5.7 PowerPC/68k(far/4i/8d)- Macintosh OS
     ------------------------------------------
     The distribution was compiled/tested with MetroWerks Codewarrior(CW8).
     Only the base libraries{libdf.a,zlib.a,libjpeg.a,libmfhdf.a,libxdr.a}
@@ -412,17 +398,7 @@ or
     You need to compile the libraries before you can compile the test 
     programs 'testhdf', 'xdrtest', 'cdftest', 'hdftest' and  'nctest'.
 
-    2.5.9 Exemplar
-    --------------
-    You need to change the compiler in dev/config/mh-hpux to use /bin/cc. 
-    Otherwise, the default will be the CONVEX C compiler.
-
-    The linker on Exemplar does not like relative pathnames, such as '..'.
-    Change 'srcdir' and 'TOP_SRCDIR' in the top Makefile.in, ./hdf/Makefile.in, 
-    and ./mfhdf/Makefile.in to absolute pathnames.
-
-
-    2.5.8.1 Special Notes
+    2.5.7.1 Special Notes
     ********************
     1. The test programs are SIOUX applications.
     
@@ -432,7 +408,7 @@ or
 
     3. You need at least 8MB of memory to run most of the test programs.
 
-    2.5.8.2 Configuring the Distribution
+    2.5.7.2 Configuring the Distribution
     ************************************
     A. If you have access to a unix box.
 
@@ -465,7 +441,7 @@ or
        been configured already. You just need to un-stuff and un-binhex
        the distribution.
 
-    2.5.8.3 Building the Distribution
+    2.5.7.3 Building the Distribution
     *********************************
     The distribution needs to be built in the order specified below.
     Both PowerPC and 68k Codewarrior Projects can be found in the 
@@ -501,7 +477,7 @@ or
                 mfhdf/nctest/nctest.68k-project.hqx
                              nctest.PPC-project.hqx
 
-    2.5.8.4 Testing the Distribution
+    2.5.7.4 Testing the Distribution
     ********************************
     Run the tests in the following order
       
@@ -524,6 +500,16 @@ or
            the file mfhdf/libsrc/testout.sav
 
        5. mfhdf/nctest/nctest
+
+    2.5.8 Exemplar
+    --------------
+    You need to change the compiler in dev/config/mh-hpux to use /bin/cc. 
+    Otherwise, the default will be the CONVEX C compiler.
+
+    The linker on Exemplar does not like relative pathnames, such as '..'.
+    Change 'srcdir' and 'TOP_SRCDIR' in the top Makefile.in, 
+    ./hdf/Makefile.in, and ./mfhdf/Makefile.in to absolute pathnames.
+
 
 
     2.5.9 Fujitsu UXP/M-1800(Unix_System_V-4.0)
