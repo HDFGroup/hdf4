@@ -200,6 +200,8 @@ PRIVATE intn GRIstart(void);
 
 PRIVATE intn GRIgetaid(ri_info_t *img_ptr, intn acc_perm);
 
+PRIVATE intn GRIisspecial_type(int32 file_id, uint16 tag, uint16 ref);
+
 /*--------------------------------------------------------------------------
  NAME
     rigcompare
@@ -332,7 +334,87 @@ Get_grfile(HFILEID f)
     return((gr_info_t *)(t==NULL ? NULL : *t));
 } /* end Get_grfile() */
 
-        
+/*--------------------------------------------------------------------------
+ NAME
+    GRIisspecial_type
+ PURPOSE
+    Returns the special type if the given element is special.
+ USAGE
+    intn GRIisspecial_type(file_id, tag, ref)
+        int32 file_id;		IN: file id
+        uint16 tag;		IN: tag of the element
+        uint16 ref;		IN: ref of the element
+ RETURNS
+    Special type:
+	SPECIAL_LINKED
+	SPECIAL_EXT
+	SPECIAL_COMP
+	SPECIAL_VLINKED
+	SPECIAL_CHUNKED
+	SPECIAL_BUFFERED
+	SPECIAL_COMPRAS
+    or 0 if the element is not special element.
+ DESCRIPTION
+    Called internally by the GRIget_image_list to allow a chunked or 
+    linked-block element to proceed eventhough its offset is 0.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+
+  *** Only called by library routines, should _not_ be called externally ***
+
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+PRIVATE intn
+GRIisspecial_type(int32 file_id, uint16 tag, uint16 ref)
+{
+    CONSTR(FUNC, "GRIisspecial_type");
+    accrec_t* access_rec=NULL;/* access element record */
+    int32     aid;
+    intn      ret_value=0;
+
+    /* clear error stack */
+    HEclear();
+
+    /* start read access on the access record of the data element, which
+       is being inquired for its special information */
+    aid = Hstartread(file_id, tag, ref);
+
+    /* get the access_rec pointer */
+    access_rec = HAatom_object(aid);
+    if (access_rec == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* only return the valid special code, anything else return 0 */
+    switch (access_rec->special)
+    {
+	case SPECIAL_LINKED:
+	case SPECIAL_EXT:
+	case SPECIAL_COMP:
+	case SPECIAL_VLINKED:
+	case SPECIAL_CHUNKED:
+	case SPECIAL_BUFFERED:
+	case SPECIAL_COMPRAS:
+	    ret_value = access_rec->special;
+	    break;
+	default:
+	    ret_value = 0;
+    } /* switch */
+
+    if (Hendaccess(aid)== FAIL)
+        HERROR(DFE_CANTENDACCESS);
+done:
+  if(ret_value == FAIL)
+    { /* Error condition cleanup */
+	/* end access to the aid if it's been accessed */
+	if (aid != 0)
+	    if (Hendaccess(aid)== FAIL)
+		HERROR(DFE_CANTENDACCESS);
+    } /* end if */
+
+  /* Normal function cleanup */
+  return ret_value;
+}   /* GRIisspecial_type */
+
 /* -------------------------- New_grfile ------------------------ */
 /*
    Creates gr_info_t structure and adds it to the tree
@@ -671,9 +753,23 @@ for (i = 0; i < curr_image; i++)
           if(img_info[i].img_tag!=DFTAG_NULL)
               for (j = i+1; j < curr_image; j++)
                 {
+		  /* if their refs are different, they're not duplicate, skip */
+		  if(img_info[i].img_ref == img_info[j].img_ref)
                     if(img_info[j].img_tag!=DFTAG_NULL)
-                        if ((img_info[i].offset!= INVALID_OFFSET && img_info[i].offset!=0)
-                            && img_info[i].offset == img_info[j].offset)
+		      {
+                        /* If the element is special, get its type, to allow
+                           linked block or chunked images to go into the if
+                           statement below in order for the duplicate image be
+                           eliminated - bug #814, BMR Feb, 2005 */
+                        intn special_type = GRIisspecial_type(file_id,img_info[i
+].img_tag,img_info[i].img_ref);
+
+                        if (((img_info[i].offset!= INVALID_OFFSET && img_info[i]
+.offset!=0)
+                                && img_info[i].offset == img_info[j].offset) ||
+                             (img_info[i].offset==0
+                                && (special_type == SPECIAL_LINKED ||
+                                    special_type == SPECIAL_CHUNKED)))
                           {
                               /* eliminate the oldest tag from the match */
                               switch(img_info[i].img_tag) {
@@ -710,6 +806,7 @@ for (i = 0; i < curr_image; i++)
                                 } /* end switch */
                               nimages--;  /* if duplicate found, decrement the number of images */
                           } /* end if */
+                     } /* end if */
                 } /* end for */
       } /* end for */
 #ifdef QAK
