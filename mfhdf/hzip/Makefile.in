@@ -113,9 +113,9 @@ DIFF_FLAGS = -w
 
 
 
-PROGRAM		= hzip
-TESTPROG	= hziptst
-CHECKPROG       = hzipck
+PROGRAM		= hrepack
+TESTPROG	= hrepacktst
+CHECKPROG       = hrepackck
 BINFILES	= $(PROGRAM)
 #HDF_LIB         = @HDF_LIB@
 #HDF_INC         = @HDF_INC@
@@ -147,10 +147,10 @@ all::         FORCE
 	fi
 
 
-hziptst: 
+hrepacktst: 
 	$(CC) $(CFLAGS) -I$(HDF_INC) -I$(NETCDF_INC) -I$(HDIFF_INC) $(TESTFILES) $(LIBS) -o $(TESTPROG)
 
-hzipck:
+hrepackck:
 	$(CC) $(CFLAGS) -I$(HDF_INC) -I$(NETCDF_INC) -I$(HDIFF_INC) $(CHECKFILES) $(LIBS) -o $(CHECKPROG)
 
 
@@ -158,8 +158,8 @@ debug:  $(PROGRAM)  ../libsrc/libmfhdf.a
 	purify $(CC) $(CFLAGS) $(CFLAGS_NETCDF) $(OBJS) $(LIBS) -o phzip
 
 
-test: hziptst hzip
-	sh testhzip.sh
+test: hrepacktst hrepack
+	sh test_hrepack.sh
 
 install::	installed_program installed_manuals
 install-utils::	installed_program

@@ -1,7 +1,7 @@
 #! /bin/sh
-# Tests for the hdiff tool
+# Tests for the hrepack  tool
 
-HZIP=hzip                 # The tool name
+HZIP=hrepack              # The tool name
 HZIP_BIN=`pwd`/$HZIP      # The path of the tool binary
 
 CMP='cmp -s'
@@ -82,9 +82,9 @@ TOOLTEST() {
 ##############################################################################
 
 
-# just run the program hziptst; this has several runs with 
+# just run the program hrepacktst; this has several runs with 
 # different compression and chunking options
-./hziptst 
+./hrepacktst
 
 
 
