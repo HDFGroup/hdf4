@@ -197,8 +197,6 @@ C-------------------------------------------------------------------------
          end
 
            
-C THIS FUNCTION IS COMMENTED OUT. C version does not work
-C                  EIP 12/29/97 
 C-------------------------------------------------------------------------
 C        Name:      mgrcchnk
 C        Purpose:   read the specified chunk of CHARACTER data to the GR 
@@ -209,21 +207,19 @@ C        Returns:   0 on success, -1 on failure
 C        Calls:     mgcrcchnk (C stub for GRreadchunk function)
 C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
-C
-C         INTEGER function mgrcchnk(riid, start, char_data)
-C
-C         INTEGER riid, start(*)
-C         CHARACTER*(*) char_data(*)
-C         INTEGER mgcrcchnk 
-C
-C         mgrcchnk = mgcrcchnk(riid, start, char_data) 
-C
-C         return 
-C         end
-C
-C           
-C THIS FUNCTION IS COMMENTED OUT. C version does not work
-C                  EIP 12/29/97 
+
+         INTEGER function mgrcchnk(riid, start, char_data)
+
+         INTEGER riid, start(*)
+         CHARACTER*(*) char_data(*)
+         INTEGER mgcrcchnk 
+
+         mgrcchnk = mgcrcchnk(riid, start, char_data) 
+
+         return 
+         end
+
+           
 C-------------------------------------------------------------------------
 C        Name:      mgrchnk
 C        Purpose:   read the specified chunk of NUMERIC data to the GR 
@@ -234,18 +230,18 @@ C        Returns:   0 on success, -1 on failure
 C        Calls:     mgcrchnk (C stub for GRreadchunk function)
 C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
-C
-C         INTEGER function mgrchnk(riid, start, num_data)
-C
-C         INTEGER riid, start(*), num_data(*)
-C         INTEGER mgcrchnk 
-C
-C         mgrchnk = mgcrchnk(riid, start, num_data) 
-C
-C         return 
-C         end
-C
-C           
+
+         INTEGER function mgrchnk(riid, start, num_data)
+
+         INTEGER riid, start(*), num_data(*)
+         INTEGER mgcrchnk 
+
+         mgrchnk = mgcrchnk(riid, start, num_data) 
+
+         return 
+         end
+
+           
 C-------------------------------------------------------------------------
 C        Name:      mgscchnk
 C        Purpose:   set the maximum number of chunks to cache
@@ -295,8 +291,6 @@ C-------------------------------------------------------------------------
          end
 
            
-C THIS FUNCTION IS COMMENTED OUT. C version does not work
-C                  EIP 12/29/97 
 C-------------------------------------------------------------------------
 C        Name:      mgwcchnk
 C        Purpose:   write the specified chunk of CHARACTER data to the GR 
@@ -307,20 +301,18 @@ C        Returns:   0 on success, -1 on failure
 C        Calls:     mgcwcchnk (C stub for GRwritechunk function)
 C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
-C
-C         INTEGER function mgwcchnk(riid, start, char_data)
-C
-C         INTEGER riid, start(*) 
-C         CHARACTER*(*) char_data(*)
-C         INTEGER mgcwcchnk 
-C
-C         mgwcchnk = mgcwcchnk(riid, start, char_data) 
-C
-C         return 
-C         end
 
-C THIS FUNCTION IS COMMENTED OUT. C version does not work
-C                  EIP 12/29/97 
+         INTEGER function mgwcchnk(riid, start, char_data)
+
+         INTEGER riid, start(*) 
+         CHARACTER*(*) char_data(*)
+         INTEGER mgcwcchnk 
+
+         mgwcchnk = mgcwcchnk(riid, start, char_data) 
+
+         return 
+         end
+
 C-------------------------------------------------------------------------
 C        Name:      mgwchnk
 C        Purpose:   write the specified chunk of NUMERIC data to the GR 
@@ -331,16 +323,16 @@ C        Returns:   0 on success, -1 on failure
 C        Calls:     mgcwchnk (C stub for GRwritechunk function)
 C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
-C
-C         INTEGER function mgwchnk(riid, start, num_data)
-C
-C         INTEGER riid, start(*), num_data(*)
-C         INTEGER mgcwchnk 
-C
-C         mgwchnk = mgcwchnk(riid, start, num_data) 
-C
-C         return 
-C         end
+
+         INTEGER function mgwchnk(riid, start, num_data)
+
+         INTEGER riid, start(*), num_data(*)
+         INTEGER mgcwchnk 
+
+         mgwchnk = mgcwchnk(riid, start, num_data) 
+
+         return 
+         end
 
            
 C-------------------------------------------------------------------------

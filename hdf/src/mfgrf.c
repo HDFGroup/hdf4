@@ -821,7 +821,6 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
       }
 
 }   
-#if 0 /* Commented out for now  -EIP 12/29/97 */ 
 /*-----------------------------------------------------------------------------
  * Name:     mgcrcchnk
  * Purpose:  read the specified chunk of CHARACTER data to the buffer
@@ -901,7 +900,6 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
 
 } 
 
-#endif /*Commented out for now -EIP 12/29/97 */
 /*-----------------------------------------------------------------------------
  * Name:     mgcscchnk
  * Purpose:  set the maximum number of chunks to cache 
@@ -1036,7 +1034,6 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
     return(ret);
 
 }   
-#if 0 /* Commented out for now  -EIP 12/29/97 */ 
 /*-----------------------------------------------------------------------------
  * Name:     mgcwcchnk
  * Purpose:  write the specified chunk of CHARACTER data to the GR 
@@ -1116,7 +1113,6 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
        return(ret);
 
 } 
-#endif /*Commented out for now -EIP 12/29/97 */
 /*-------------------------------------------------------------------------
  * Name:    mgcscompress
  * Puporse: Call GRsetcompress

@@ -622,6 +622,14 @@ C
       external mgscchnk
       integer  mgschnk
       external mgschnk
+      integer  mgwchnk
+      external mgwchnk
+      integer  mgwcchnk
+      external mgwcchnk
+      integer  mgrchnk
+      external mgrchnk
+      integer  mgrcchnk
+      external mgrcchnk
       integer  mgscompress
       external mgscompress
       integer  mglt2rf
