@@ -438,7 +438,7 @@ oldunpackvs(VDATA * vs, uint8 buf[], int32 *size)
     bb += (HDstrlen(vs->vsname) + 1);
 
     /* **EXTRA**  fill in the machine-dependent size fields */
-    for (i = 0; i < vs->wlist.n; i++)
+    for (i = 0; i < vs->wlist.n; i++) /* FAIL check on VSIZEOF()? */
         vs->wlist.esize[i] = (uint16) (vs->wlist.order[i] * VSIZEOF((int16) vs->wlist.type[i]));
 
 }   /* oldunpackvs */

@@ -303,7 +303,7 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
 {
     char      **av;
     int32       ac;
-    int16       usymid, replacesym;
+    int16       isize, usymid, replacesym;
     intn j;
     vsinstance_t *w;
     VDATA      *vs;
@@ -329,7 +329,8 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
     if (order < 1 || order > MAX_ORDER)
         HGOTO_ERROR(DFE_BADORDER, FAIL);
     /* don't forget to check for field size limit */
-    if ( (DFKNTsize(localtype) * order) > MAX_FIELD_SIZE )
+    isize = DFKNTsize(localtype);
+    if ( (isize == FAIL) || (isize * order) > MAX_FIELD_SIZE )
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
 
     /*
@@ -378,8 +379,8 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
           vs->usym=tmp_sym;
       } /* end else */
 
-    if ((vs->usym[usymid].isize = (uint16) DFKNTsize((int32) localtype)) == FAIL)
-        HGOTO_ERROR(DFE_BADTYPE, FAIL);
+      vs->usym[usymid].isize = (uint16) isize; /* ok, because number
+          type sizes are smaller than max(int16) */
 
     /* Copy the symbol [field] information */
     if ((vs->usym[usymid].name = (char *) HDstrdup(av[0]) ) == NULL)
