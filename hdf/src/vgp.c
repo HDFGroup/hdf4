@@ -626,12 +626,14 @@ char    *accesstype;    /* access mode */
             return(FAIL);
         }
           
-          /*
-           * vg already attached.  inc nattach and return existing ptr
-           */
-        if (v->vg != NULL) {
-            v->nattach++;
+        /*
+         * vg already attached.  inc nattach and return existing ptr
+         */
 
+        if (v->vg != NULL) {
+            if(access > v->vg->access)
+                v->vg->access = access;
+            v->nattach++;
             return(v->key);     /* return key instead of VGROUP ptr */
         }
           
@@ -1858,14 +1860,14 @@ intn 		access;
 int16       ndds;
 #endif
 {
-	char * FUNC = "Vopen";
-	HFILEID  f;
-
-  	f = Hopen(path, access, ndds);
+    char * FUNC = "Vopen";
+    HFILEID  f;
+    
+    f = Hopen(path, access, ndds);
     if (f==FAIL)
         return(FAIL);
-
-	Vinitialize(f);
+    
+    Vinitialize(f);
     return (f);
 }
 
@@ -1885,8 +1887,6 @@ int16       ndds;
 *
 * See also Vopen().
 *
-* By: Jason Ng 10 Aug 92
-* 
 */
 
 #ifdef PROTOTYPE
