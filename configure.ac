@@ -117,6 +117,10 @@ case "$enableval" in
   yes)
     BUILD_FORTRAN="yes"
     AC_PROG_F77
+
+    if test "X$F77" = "X"; then
+      BUILD_FORTRAN="no"
+    fi
     ;;
   no)
     BUILD_FORTRAN="no"
