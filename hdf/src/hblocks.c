@@ -41,10 +41,75 @@ static char RcsId[] = "@(#)$Revision$";
    | this header | next header|                                         |
    ----------------------------------------------------------------------
 
+   File Description of Linked Block Element
+   ****************************************
+   DD for Linked Block pointing to Linked Block Description Record
+   ==============================================================
+   <-  2 bytes -> <- 2 bytes -> <- 4 bytes -> <- 4bytes ->
+   --------------------------------------------------------
+   |extended tag | reference # |  Offset     |  Length    |
+   --------------------------------------------------------
+                                    \______________/
+   __________________________________________|
+   V
+   LINKED BLOCK DESCRIPTION RECORD(LBDR - 22 bytes)
+   ===============================================
+   <-  4 bytes -> <- 4 bytes  -> <-   4 bytes  -> <- 4bytes ->
+   --------------------------------------------------------------
+   |ext_tag_desc | elem_tot_len | blk_first_len  | blk_length |   ... cont'd
+   --------------------------------------------------------------
+    
+   <- 4 bytes -> <- 2 bytes ->
+   --------------------------
+...  num_blk   | link_ref   |
+   --------------------------
+
+   ext_tag_desc   - EXT_LINKED(32 bit constant), identifies this as
+                    a linked block description record
+   elem_tot_len   - Length of the entire element(32 bit field)
+   blk_first_len  - Length of the first data block(32 bit field)
+   blk_length     - Length of successive data blocks(32 bit field)
+   num_blk        - Number of blocks per block table(32 bit field)
+   link_ref       - Reference number of the first block table(16 bit field)
+
+   Linked Block Table(12 + 2 + 2 + 2 + 2 + ... bytes)
+   ===================================================
+   <-  2 bytes -> <- 2 bytes -> <- 4 bytes -> <- 4bytes ->
+   --------------------------------------------------------
+   |link_blk_tag | link_ref    |  Offset     |  Length    |
+   --------------------------------------------------------
+                                    \______________/
+   __________________________________________|
+   V
+   <-  2 bytes -> <- 2 bytes -> <- 2 bytes -> <- 2 bytes -> <-...
+   -----------------------------------------------------------...
+   | next_ref    | block_ref_1 | block_ref_2 | block_ref_3 |  ...
+   -----------------------------------------------------------...
+    
+   link_blk_tag   - DFTAG_LINKED(16 bit)
+   link_ref       - Reference number for this table(16 bit)
+   next_ref       - Reference number for next block table(16 bit)
+                    Zero(0) signifies no more block tables for this element.
+   blk_ref_x      - Reference number for data block X (16 bit). 
+                  e.g. for data block 1
+                  <-  2 bytes ->  <- 2 bytes -> <- 4 bytes -> <- 4bytes ->
+                  --------------------------------------------------------
+                  | DFTAG_LINKED | block_ref_1 |  Offset     |  Length    |
+                  --------------------------------------------------------
+                                                    \______________/
+                  __________________________________________|
+                  V
+                  -----------------------
+                  | Data_block          |
+                  -----------------------
+                  Note: The "Length" here is specified by either 
+                        "elem_first_len" or "blk_length".
+
    For now, HLcreate() has the best description of what the on-disk
    representation of a linked block element looks like.
 
 EXPORTED ROUTINES
+
    HLcreate       -- create a linked block element
    HLconvert      -- convert an AID into a linked block element
    HDinqblockinfo -- return info about linked blocks

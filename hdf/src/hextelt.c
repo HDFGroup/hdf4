@@ -30,6 +30,33 @@ static char RcsId[] = "@(#)$Revision$";
    take an existing file with some data in it and create an HDF file
    which has a pointer to that data.
 
+   File Organization
+  ******************
+   DD for External Element pointing to External Element Description Record
+   =======================================================================
+   <-  2 bytes -> <- 2 bytes -> <- 4 bytes -> <- 4bytes ->
+   --------------------------------------------------------
+   |extended tag | reference # |  Offset     |  Length    |
+   --------------------------------------------------------
+                                    \______________/
+   __________________________________________|
+   V
+   EXTERNAL ELEMENT DESCRIPTION RECORD(EEDR - 12 + file_name_length bytes)
+   ========================================================================
+   <-  4 bytes  -> <- 4 bytes -> <- 4 bytes -> <- variable ->
+   ---------------------------------------------------------
+   | ext_tag_desc |   offset    |  length     | filename   |
+   ---------------------------------------------------------
+
+   ext_tag_desc  - EXT_EXTERN(16 bit constant). Identifies this as an
+                   external element description record.
+   offset        - Location of the element(data) within the external 
+                   file(32 bit field)
+   length        - Length in bytes of the element(data) in the external
+                   file(32 bit field)
+   filename      - Non-null terminated ASCII string naming the external
+                   file(variable length)
+
  LOCAL ROUTINES
    None
  EXPORTED ROUTINES

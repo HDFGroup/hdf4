@@ -17,29 +17,29 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /*
-   FILE
+FILE
    hcomp.c
    HDF compressed data I/O routines
 
-   REMARKS
+REMARKS
    These functions read and write compressed data to HDF data objects.
    The compressed data objects are implemented as "special tags"
    in the HDF file and the "H" layer I/O routines break out to the
    functions in this module to deal with them.
 
-   DESIGN
+DESIGN
    The compression I/O functions are designed as state machines.
    There are two seperate state machines implemented, as layers
-   on top of one another.
-   The top layer is the modeling layer, whose purpose is to
-   send/receive uncompressed bytes between the higher layer
-   (the "H" layer routines) and the lower layer, the coding layer.
+   on top of one another. 
+      The top layer is the modeling layer, 
+   whose purpose is to send/receive uncompressed bytes between the higher 
+   layer (the "H" layer routines) and the lower layer, the coding layer.
    The modeling layer is constrained to look like Standard C
    I/O functions to the upper layer, while sending data in
    potentially unusual orders to the coding layer.  [An unusual
    order of bytes would be a Peano or Hilbert curve instead
    of the raster order more normally used].
-   The lower layer is the coding layer, whose purpose is to
+      The lower layer is the coding layer, whose purpose is to
    send/receive bytes of data to the higher layer (the modeling
    layer) and to send/receive bits/bytes of data to the bit I/O
    functions after encoding them with some compression scheme.
@@ -49,30 +49,31 @@ static char RcsId[] = "@(#)$Revision$";
    state of each layer at certain [convenient] times in order
    to increase performance during random I/O.
 
-   BUGS/LIMITATIONS
+BUGS/LIMITATIONS
    Currently the following design limitations are still in place:
    1 - Cannot compress an existing data element (will be fixed
-   before release)  [ I think this is done, but it needs
-   testing]
+       before release)  [ I think this is done, but it needs
+       testing]
 
    2 - Statistic gathering from several types of compression
-   is not implemented (should be fixed before release)
+       is not implemented (should be fixed before release)
    3 - "State caching" for improved performance in not implemented,
-   although some data-structures allow for it. (should be
-   fixed before release)
+       although some data-structures allow for it. (should be
+       fixed before release)
    4 - Random writing in compressed data is not supported (unlikely
-   to _ever_ be fixed)
+       to _ever_ be fixed)
 
-   EXPORTED ROUTINES
+EXPORTED ROUTINES
    HCcreate - create or modify an existing data element to be compressed
+LOCAL ROUTINES
 
-   AUTHOR
+AUTHOR
    Quincey Koziol
 
-   MODIFICATION HISTORY
-   9/21/93 - Starting writing specs & coding prototype
+MODIFICATION HISTORY
+   9/21/93  - Starting writing specs & coding prototype
    10/09/93 - Finished initial testing.  First version with only stdio
-   modeling and RLE coding done.
+              modeling and RLE coding done.
  */
 
 /* General HDF includes */
@@ -135,16 +136,14 @@ funclist_t  comp_funcs =
 /*--------------------------------------------------------------------------
  NAME
     HCIinit_coder -- Set the coder function pointers
-
  USAGE
     int32 HCIinit_coder(cinfo,coder_type,coder_info)
-        comp_coder_info_t *cinfo;   IN/OUT: pointer to coder information to modify
-        comp_coder_t coder_type;    IN: the type of encoding to use
-        comp_info *coder_info;      IN: setup information for some encoding types
+    comp_coder_info_t *cinfo;   IN/OUT: pointer to coder information to modify
+    comp_coder_t coder_type;    IN: the type of encoding to use
+    comp_info *coder_info;      IN: setup information for some encoding types
 
  RETURNS
     Return SUCCEED or FAIL
-
  DESCRIPTION
     Sets the encoder function pointers and the encoder type for a given
     coder type.
@@ -208,16 +207,14 @@ HCIinit_coder(comp_coder_info_t * cinfo, comp_coder_t coder_type,
 /*--------------------------------------------------------------------------
  NAME
     HCIinit_model -- Set the model function pointers
-
  USAGE
     int32 HCIinit_model(minfo,model_type,m_info)
-        comp_model_info_t *minfo;   IN/OUT: pointer to model information to modify
-        comp_model_t model_type;    IN: the type of encoding to use
-        model_info *m_info;         IN: modeling information
+    comp_model_info_t *minfo;   IN/OUT: pointer to model information to modify
+    comp_model_t model_type;    IN: the type of encoding to use
+    model_info *m_info;         IN: modeling information
 
  RETURNS
     Return SUCCEED or FAIL
-
  DESCRIPTION
     Sets the modeling function pointers and the model type for a given
     model type.
@@ -253,18 +250,16 @@ HCIinit_model(comp_model_info_t * minfo, comp_model_t model_type,
 /*--------------------------------------------------------------------------
  NAME
     HCIwrite_header -- Write the compression header info to a file
-
  USAGE
     int32 HCIwrite_header(file_rec,access_rec,info,dd)
-        filerec_t *file_rec;    IN: ptr to the file record for the HDF file
-        accrec_t *access_rec;   IN: ptr to the access element record
-        compinfo_t *info;       IN: ptr the compression information
-        dd_t *dd;               IN: ptr to the DD info for the element
-        uint16 special_tag,ref; IN: the tag/ref of the compressed element
+    filerec_t *file_rec;    IN: ptr to the file record for the HDF file
+    accrec_t *access_rec;   IN: ptr to the access element record
+    compinfo_t *info;       IN: ptr the compression information
+    dd_t *dd;               IN: ptr to the DD info for the element
+    uint16 special_tag,ref; IN: the tag/ref of the compressed element
 
  RETURNS
     Return SUCCEED or FAIL
-
  DESCRIPTION
     Writes the compression information to a new block in the HDF file.
 
@@ -368,19 +363,16 @@ HCIwrite_header(filerec_t * file_rec, accrec_t * access_rec,
 /*--------------------------------------------------------------------------
  NAME
     HCIread_header -- Read the compression header info from a file
-
  USAGE
     int32 HCIread_header(file_rec,access_rec,info,info_dd,comp_info,model_info)
-        filerec_t *file_rec;    IN: ptr to the file record for the HDF file
-        accrec_t *access_rec;   IN: ptr to the access element record
-        compinfo_t *info;       IN: ptr the compression information
-        dd_t *info_dd;          IN: ptr to the DD info for the element
-        comp_info *comp_info;   IN/OUT: ptr to encoding info
-        model_info *model_info; IN/OUT: ptr to modeling info
-
+    filerec_t *file_rec;    IN: ptr to the file record for the HDF file
+    accrec_t *access_rec;   IN: ptr to the access element record
+    compinfo_t *info;       IN: ptr the compression information
+    dd_t *info_dd;          IN: ptr to the DD info for the element
+    comp_info *comp_info;   IN/OUT: ptr to encoding info
+    model_info *model_info; IN/OUT: ptr to modeling info
  RETURNS
     Return SUCCEED or FAIL
-
  DESCRIPTION
     Parses the compression header from a data element in an HDF file.
 
@@ -491,19 +483,16 @@ HCIread_header(filerec_t * file_rec, accrec_t * access_rec,
 /*--------------------------------------------------------------------------
  NAME
     HCcreate -- Create a compressed data element
-
  USAGE
     int32 HCcreate(id,tag,ref,model_type,coder_type)
-        int32 id;            IN: the file id to create the data in
-        uint16 tag,ref;      IN: the tag/ref pair which is to be compressed
-        comp_model_t model_type;     IN: the type of modeling to use
-    model_info *m_info;  IN: Information needed for the modeling type chosen
-        comp_coder_t coder_type;     IN: the type of encoding to use
-    coder_info *c_info;  IN: Information needed for the encoding type chosen
-
+    int32 id;                IN: the file id to create the data in
+    uint16 tag,ref;          IN: the tag/ref pair which is to be compressed
+    comp_model_t model_type; IN: the type of modeling to use
+    model_info *m_info;      IN: Information needed for the modeling type chosen
+    comp_coder_t coder_type; IN: the type of encoding to use
+    coder_info *c_info;      IN: Information needed for the encoding type chosen
  RETURNS
     Return an AID to the newly created compressed element, FAIL on error.
-
  DESCRIPTION
     Create a compressed data element.  If that data element already
     exists, we will compress that data element if it is currently un-compresed,
@@ -737,15 +726,12 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
 /*--------------------------------------------------------------------------
  NAME
     HCIstaccess -- Start accessing a compressed data element.
-
  USAGE
     int32 HCIstaccess(access_rec, access)
-        accrec_t *access_rec;   IN: the access record of the data element
-        int16 access;           IN: the type of access wanted
-
+    accrec_t *access_rec;   IN: the access record of the data element
+    int16 access;           IN: the type of access wanted
  RETURNS
     Returns an AID or FAIL
-
  DESCRIPTION
     Common code called by HCIstread and HCIstwrite
 
@@ -808,14 +794,11 @@ HCIstaccess(accrec_t * access_rec, int16 acc_mode)
 /*--------------------------------------------------------------------------
  NAME
     HCPstread -- Start read access on a compressed data element.
-
  USAGE
     int32 HCPstread(access_rec)
-        accrec_t *access_rec;   IN: the access record of the data element
-
+    accrec_t *access_rec;   IN: the access record of the data element
  RETURNS
     Returns an AID or FAIL
-
  DESCRIPTION
     Start read access on a compressed data element.
 
@@ -849,14 +832,11 @@ HCPstread(accrec_t * access_rec)
 /*--------------------------------------------------------------------------
  NAME
     HCPstwrite -- Start write access on a compressed data element.
-
  USAGE
     int32 HCPstwrite(access_rec)
-        accrec_t *access_rec;   IN: the access record of the data element
-
+    accrec_t *access_rec;   IN: the access record of the data element
  RETURNS
     Returns an AID or FAIL
-
  DESCRIPTION
     Start write access on a compressed data element.
 
@@ -890,16 +870,13 @@ HCPstwrite(accrec_t * access_rec)
 /*--------------------------------------------------------------------------
  NAME
     HCPseek -- Seek to offset within the data element
-
  USAGE
     int32 HCPseek(access_rec,offset,origin)
-        accrec_t *access_rec;   IN: the access record of the data element
-        int32 offset;       IN: the offset in bytes from the origin specified
-        intn origin;        IN: the origin to seek from
-
+    accrec_t *access_rec;   IN: the access record of the data element
+    int32 offset;       IN: the offset in bytes from the origin specified
+    intn origin;        IN: the origin to seek from
  RETURNS
     Returns SUCCEED or FAIL
-
  DESCRIPTION
     Seek to a position with a compressed data element.
 
@@ -936,16 +913,13 @@ HCPseek(accrec_t * access_rec, int32 offset, intn origin)
 /*--------------------------------------------------------------------------
  NAME
     HCPread -- Read in a portion of data from a compressed data element.
-
  USAGE
     int32 HCPread(access_rec,length,data)
-        accrec_t *access_rec;   IN: the access record of the data element
-        int32 length;           IN: the number of bytes to read
-        VOIDP data;             OUT: the buffer to place the bytes read
-
+    accrec_t *access_rec;   IN: the access record of the data element
+    int32 length;           IN: the number of bytes to read
+    VOIDP data;             OUT: the buffer to place the bytes read
  RETURNS
     Returns the number of bytes read or FAIL
-
  DESCRIPTION
     Read in a number of bytes from a compressed data element.
 
@@ -985,16 +959,13 @@ HCPread(accrec_t * access_rec, int32 length, VOIDP data)
 /*--------------------------------------------------------------------------
  NAME
     HCPwrite -- Write out a portion of data from a compressed data element.
-
  USAGE
     int32 HCPwrite(access_rec,length,data)
-        accrec_t *access_rec;   IN: the access record of the data element
-        int32 length;           IN: the number of bytes to write
-        VOIDP data;             IN: the buffer to retrieve the bytes written
-
+    accrec_t *access_rec;   IN: the access record of the data element
+    int32 length;           IN: the number of bytes to write
+    VOIDP data;             IN: the buffer to retrieve the bytes written
  RETURNS
     Returns the number of bytes written or FAIL
-
  DESCRIPTION
     Write out a number of bytes to a compressed data element.
 
@@ -1061,23 +1032,20 @@ HCPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
 /*--------------------------------------------------------------------------
  NAME
     HCPinquire -- Inquire information about the access record and data element.
-
  USAGE
     int32 HCPinquire(access_rec,pfile_id,ptag,pref,plength,poffset,pposn,
-            paccess,pspecial)
-        accrec_t *access_rec;   IN: the access record of the data element
-        int32 *pfile_id;        OUT: ptr to file id
-        uint16 *ptag;           OUT: ptr to tag of information
-        uint16 *pref;           OUT: ptr to ref of information
-        int32 *plength;         OUT: ptr to length of data element
-        int32 *poffset;         OUT: ptr to offset of data element
-        int32 *pposn;           OUT: ptr to position of access in element
-        int16 *paccess;         OUT: ptr to access mode
-        int16 *pspecial;        OUT: ptr to special code
-
+                     paccess,pspecial)
+    accrec_t *access_rec;   IN: the access record of the data element
+    int32 *pfile_id;        OUT: ptr to file id
+    uint16 *ptag;           OUT: ptr to tag of information
+    uint16 *pref;           OUT: ptr to ref of information
+    int32 *plength;         OUT: ptr to length of data element
+    int32 *poffset;         OUT: ptr to offset of data element
+    int32 *pposn;           OUT: ptr to position of access in element
+    int16 *paccess;         OUT: ptr to access mode
+    int16 *pspecial;        OUT: ptr to special code
  RETURNS
     Returns SUCCEED or FAIL
-
  DESCRIPTION
     Inquire information about the access record and data element.
 
@@ -1120,14 +1088,11 @@ HCPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
 /*--------------------------------------------------------------------------
  NAME
     HCPendaccess -- Close the compressed data element and free the AID
-
  USAGE
     intn HCPendaccess(access_rec)
-        accrec_t *access_rec;   IN: the access record of the data element
-
+    accrec_t *access_rec;   IN: the access record of the data element
  RETURNS
     Returns SUCCEED or FAIL
-
  DESCRIPTION
     Close the compressed data element and free the AID.
 
@@ -1161,14 +1126,11 @@ HCPendaccess(accrec_t * access_rec)
 /*--------------------------------------------------------------------------
  NAME
     HCPcloseAID -- Get rid of the compressed data element data structures
-
  USAGE
     int32 HCPcloseAID(access_rec)
-        accrec_t *access_rec;   IN: the access record of the data element
-
+    accrec_t *access_rec;   IN: the access record of the data element
  RETURNS
     Returns SUCCEED or FAIL
-
  DESCRIPTION
     Get rid of the compressed data element internal data structures
 
@@ -1197,22 +1159,19 @@ HCPcloseAID(accrec_t * access_rec)
 
 /* ------------------------------- HCPinfo -------------------------------- */
 /*
-
-   NAME
+NAME
    HCPinfo -- return info about a compressed element
-   USAGE
+USAGE
    int32 HCPinfo(access_rec, info_block)
-   accrec_t        *  access_rec;
-   IN: access record of access element
-   sp_info_block_t * info_block;
-   OUT: information about the special element
-   RETURNS
+   accrec_t        *  access_rec;   IN: access record of access element
+   sp_info_block_t * info_block;   OUT: information about the special element
+RETURNS
    SUCCEED / FAIL
-   DESCRIPTION
+DESCRIPTION
    Return information about the given compressed element.  Info_block is
    assumed to be non-NULL.
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 int32
 HCPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
 {
@@ -1232,5 +1191,4 @@ HCPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
     info_block->comp_size = Hlength(access_rec->file_id, DFTAG_COMPRESSED, info->comp_ref);
 
     return SUCCEED;
-
 }   /* HCPinfo */
