@@ -1,3 +1,6 @@
+C
+C     Testing the Fortran interface for the multiple SD routines
+C
       program hdftest
 
       implicit none
@@ -20,11 +23,12 @@
 
       integer sfstart,  sfcreate,  sfendacc, sfend,    sfsfill
       integer sfrdata,  sfwdata,   sfsattr,  sfdimid,  sfsdmname
-      integer sffinfo, sfn2index, sfsdmstr, sfsdtstr, sfsdscale
+      integer sffinfo,  sfn2index, sfsdmstr, sfsdtstr, sfsdscale
       integer sfscal,   sfselect,  sfginfo,  sfgdinfo, sfgainfo
       integer sfrattr,  sfsrange,  sfgrange, sfgfill
       integer sfgcal,   sfgdscale, sfgdtstr, sfgdmstr
       integer sfid2ref, sfref2index
+      integer sfsextf,  hxsdir,    hxscdir
 
 C     create a new file
       err = 0
@@ -431,6 +435,88 @@ C
       endif
       
       print *, 'values = ', name
+
+C
+C     Testing External Element functions: sfsextf, hxsdir, hxscdir.
+C     First set the external create directory to "/tmp".
+C     Set dataset sds3 to store in external file.
+C     Try read it back (should fail the first time).
+C     Set locating directory to "nosuch:/tmp".
+C     Read again.  Should succeed this time.
+C
+      stat = hxscdir('/tmp')
+      if(stat.ne.0) then
+	 print *, 'HX set create dir (hxscdir) returned', stat
+	 err = err + 1
+      endif
+
+      stat = sfsextf(sds3, 'testext.hdf', 0)
+      if(stat.ne.0) then
+	 print *, 'set external file (sfsextf) returned', stat
+	 err = err + 1
+      endif
+
+C
+C     Close and reopen sds3 so that data is flushed to the ext. file
+C
+      stat = sfendacc(sds3)
+      if(stat.ne.0) then
+         print *, 'sfendacc returned', stat
+         err = err + 1
+      endif
+
+      sds3 = sfselect(fid2, 0)
+      if(sds3.eq.-1) then
+         print *, 'Select returned', sds3
+         err = err + 1
+      endif
+
+      start(1)  = 1
+      start(2)  = 1
+      stride(1) = 1
+      stride(2) = 1
+      end(1)    = 3
+      end(2)    = 3
+      stat = sfrdata(sds3, start, stride, end, ivals)
+C
+C     Should fail first time.
+C
+      if(stat.ne.-1) then
+         print *, 'Read data (sfrdata) returned', stat
+         err = err + 1
+      endif
+
+      stat = hxsdir('nosuch:/tmp')
+      if(stat.ne.0) then
+	 print *, 'HX set dir (hxscdir) returned', stat
+	 err = err + 1
+      endif
+
+      stat = sfrdata(sds3, start, stride, end, ivals)
+C
+C     Should succeed this time.
+C
+      if(stat.ne.0) then
+         print *, 'Read data (sfrdata) returned', stat
+         err = err + 1
+      endif
+
+      if (ivals(1).ne.5)  then
+         err = err + 1
+         print *, 'was expecting 5 got', ivals(1)
+      endif
+
+      stat = sfendacc(sds3)
+      if(stat.ne.0) then
+         print *, 'sfendacc returned', stat
+         err = err + 1
+      endif
+
+      stat = sfendacc(sds4)
+      if(stat.ne.0) then
+         print *, 'sfendacc returned', stat
+         err = err + 1
+      endif
 
       stat = sfend(fid2)
       if(stat.ne.0) then
