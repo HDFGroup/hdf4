@@ -298,3 +298,4 @@ mfan.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 mfan.o: vproto.h hfile.h mfan.h $(FRC)
 mfanf.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 mfanf.o: vproto.h hfile.h mfan.h $(FRC)
+mfgr.o: hdf.h hdfi.h herr.h hproto.h vproto.h hfile.h mfgr.h $(FRC)
