@@ -670,7 +670,7 @@ intn DFSDsetdims(rank, dimsizes)
                   break;
               }
             if (i == rank) 
-              return SUCCEED; /* Dimensions same as before */
+             goto done; /* Dimensions same as before */
           }   
       }
     
@@ -695,6 +695,7 @@ intn DFSDsetdims(rank, dimsizes)
     *  Added side effect, allows creation of new "ref" whenever called 
     *  before DFSDwriteslab().
     */
+done:
     Ref.new_ndg = 0;
     Writeref    = 0;
 
@@ -4879,8 +4880,7 @@ DFSDendslab()
                 return FAIL;
               }
           }
-
-        Ref.new_ndg = -1;
+        Ref.new_ndg = Writeref;
       }
 
     /* Slab clean up */
