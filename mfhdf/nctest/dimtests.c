@@ -11,6 +11,8 @@
 #include "add.h"		/* functions to update in-memory netcdf */
 #include "error.h"
 #include "tests.h"
+#include "alloc.h"
+#include "emalloc.h"
 
 /* 
  * Test ncdimdef
@@ -279,7 +281,7 @@ test_ncdiminq(path)
 	    nerrs++;
 	}
     }
-    free(dim.name);
+    Free(dim.name);
     if (nerrs > 0)
       (void) fprintf(stderr,"FAILED! ***\n");
     else
@@ -387,7 +389,7 @@ test_ncdimrename(path)
 	error("%s: ncdimrename failed to report bad netcdf handle ", pname);
 	nerrs++;
     }
-    free (dim.name);
+    Free (dim.name);
     if (nerrs > 0)
       (void) fprintf(stderr,"FAILED! ***\n");
     else

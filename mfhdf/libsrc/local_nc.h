@@ -34,9 +34,9 @@
 */
 #ifdef HDF
 
-#include <hdf.h>
-#include <vg.h>
-#include <herr.h>
+#include "hdf.h"
+#include "vg.h"
+#include "herr.h"
 
 #define ATTR_TAG  DFTAG_VH
 #define DIM_TAG   DFTAG_VG
@@ -330,6 +330,12 @@ extern NC_array  *NC_re_array		PROTO((
     unsigned	count,
     const void	*values
 ));
+extern NC_attr  *NC_new_attr        PROTO((
+    const char *name,
+    nc_type type,
+    unsigned count ,
+    const void *values
+));
 extern NC_attr  **NC_findattr		PROTO((
     NC_array	**ap,
     const char	*name
@@ -383,7 +389,87 @@ extern bool_t	NC_dcpy			PROTO((
 	XDR *source,
 	long nbytes
 ));
+extern int NCxdrfile_sync
+    PROTO((XDR *xdrs));
 
+extern int NCxdrfile_create
+    PROTO((XDR *xdrs,const char *path,int ncmode));
+
+#ifdef HDF
+extern int hdf_fill_array
+    PROTO((Void  * storage,int32 len,Void  * value,int32 type));
+
+extern int hdf_get_data
+    PROTO((NC *handle,NC_var *vp,nc_type type));
+
+extern int hdf_map_type
+    PROTO((int ));
+
+extern int hdf_unmap_type
+    PROTO((int ));
+
+extern int hdf_get_ref
+    PROTO((NC *,int ));
+
+extern int hdf_create_dim_vdata
+    PROTO((XDR *,NC *,NC_dim *));
+
+extern int hdf_write_attr
+    PROTO((XDR *,NC *,NC_attr **));
+
+extern int32 hdf_write_dim
+    PROTO((XDR *,NC *,NC_dim **));
+
+extern int32 hdf_write_var
+    PROTO((XDR *,NC *,NC_var **));
+
+extern int hdf_write_xdr_cdf
+    PROTO((XDR *,NC **));
+
+extern int hdf_read_dims
+    PROTO((XDR *,NC *,int32 ));
+
+extern NC_array *hdf_read_attrs
+    PROTO((XDR *,NC *,int32 ));
+
+extern int hdf_read_vars
+    PROTO((XDR *,NC *,int32 ));
+
+extern int hdf_read_xdr_cdf
+    PROTO((XDR *,NC **));
+
+extern int hdf_xdr_cdf
+    PROTO((XDR *,NC **));
+
+extern void hdf_vg_clobber
+    PROTO((NC *,int ));
+
+extern void hdf_cdf_clobber
+    PROTO((NC *));
+
+extern void hdf_close
+    PROTO((NC *));
+
+extern intn hdf_query_seen_sdg
+    PROTO((uint16 ));
+
+extern char hdf_register_seen_sdg
+    PROTO((uint16 ));
+
+extern intn hdf_read_sds_dims
+    PROTO((NC *));
+
+extern int hdf_read_sds_cdf
+    PROTO((XDR *,NC **));
+
+extern int NCgenio
+    PROTO((NC *handle,int varid,const int32 *start,const int32*count,
+        const int32 *stride,const int32 *imap,Void *values));
+
+extern int NC_var_shape
+    PROTO((NC_var *var,NC_array *dims));
+
+#endif /* HDF */
 
 #ifdef __cplusplus
 }

@@ -15,6 +15,9 @@
 extern "C" {
 #endif
 
+extern NC_dim * SDIget_dim
+    PROTO((NC *handle, int32 id));
+
 extern int32 SDstart
     PROTO((char *name, int32 access));
 
@@ -105,6 +108,8 @@ extern int32 SDdiminfo
 extern int32 SDgetdimstrs
     PROTO((int32 id, char *l, char *u, char *f, intn len));
 
+extern int32 SDsetexternalfile
+    PROTO((int32 id, char *filename, int32 offset));
 
 /* Define the FORTRAN names */
 

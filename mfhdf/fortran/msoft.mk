@@ -54,7 +54,7 @@ test:	$(GOAL) FORCE
 	$(GOAL)
 
 $(GOAL): $(OBJS)
-	$(LINK) $(LFLAGS) $(OBJS) , $(GOAL) ,, $(LIBS);
+	$(LINK) $(LFLAGS) $(OBJS) , $(GOAL) ,, @ftest.lnk;
 
 ftest.obj: ftest.for msoft.int netcdf.inc
 	$(F77) $(FFLAGS) $(FPPFLAGS) $?

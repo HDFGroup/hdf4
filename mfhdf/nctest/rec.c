@@ -10,6 +10,8 @@
 #include "val.h"
 #include "error.h"
 #include "tests.h"
+#include "alloc.h"
+#include "emalloc.h"
 
 #define VARS 100
 
@@ -462,8 +464,8 @@ test_ncrecput(path)
 	nerrs++;
     }
     for (iv = 0; iv < nrvars; iv++) {
-	free(datap[iv]);
-	free(datar[iv]);
+	Free(datap[iv]);
+	Free(datar[iv]);
     }
 
     if (nerrs > 0)
@@ -595,8 +597,8 @@ test_ncrecget(path)
 	nerrs++;
     }
     for (iv = 0; iv < nrvars; iv++) {
-	free(datap[iv]);
-	free(datar[iv]);
+	Free(datap[iv]);
+	Free(datar[iv]);
     }
 
     if (nerrs > 0)

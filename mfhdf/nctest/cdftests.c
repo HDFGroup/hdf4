@@ -5,17 +5,20 @@
  *********************************************************************/
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "netcdf.h"
 #include "testcdf.h"		/* defines in-memory test netcdf structure */
 #include "add.h"		/* functions to update in-memory netcdf */
 #include "error.h"
 #include "tests.h"
+#include "alloc.h"
+#include "emalloc.h"
 
 #define LEN_OF(array) ((sizeof array) / (sizeof array[0]))
 
 
-/* 
+/*
  * Test nccreate
  *    create a netcdf with no data, close it, test that it can be opened
  *    try again with NC_CLOBBER mode, check that no errors occurred
@@ -244,7 +247,7 @@ test_ncredef(path)
 	error("%s: ncredef failed to report bad cdf handle", pname);
 	nerrs++;
     }
-    free ((char *)aa.dims);
+    Free ((char *)aa.dims);
     if (nerrs > 0)
       (void) fprintf(stderr,"FAILED! ***\n");
     else
@@ -649,6 +652,7 @@ test_ncsync(path)
 	    error("%s: ncsync after putting data failed", pname);
 	    nerrs++;
 	}
+
 	if ((cdfid1 = ncopen(path, NC_NOWRITE)) == -1) {
 #ifndef vms
 	    error("%s: second ncopen failed", pname);
@@ -692,7 +696,7 @@ test_ncsync(path)
 }
 
 
-/* 
+/*
  * Test ncabort
  *    try in define mode, check that file was deleted
  *    try after writing variable

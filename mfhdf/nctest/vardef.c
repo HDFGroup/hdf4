@@ -11,6 +11,8 @@
 #include "add.h"		/* functions to update in-memory netcdf */
 #include "error.h"
 #include "tests.h"
+#include "alloc.h"
+#include "emalloc.h"
 
 #define LEN_OF(array) ((sizeof array) / (sizeof array[0]))
 
@@ -214,7 +216,8 @@ test_ncvardef(path)
                 fillval = 0;
                 fillval = FILL_LONG;
 		if (ncvarget1(cdfid, va_id[iv], where, (void *) &val) != -1) {
-		    if (val != fillval) {
+		    if ((long) val != (long) fillval) {
+
 
 printf("\n\n Was expecting %d instead got a %d\n", fillval, val);
 printf("\n\n Was expecting %ld instead got a %ld\n", fillval, val);
@@ -263,14 +266,13 @@ printf("\n\n Was expecting %ld instead got a %ld\n", fillval, val);
 	error("%s: ncclose failed", pname);
 	return;
     }
-    free ((char *) tmp.dims);
-    free (tmp.name);
+    Free ((char *) tmp.dims);
+    Free (tmp.name);
     for (iv = 0; iv < nv; iv++)
       if (va[iv].dims)
-	free((char *) va[iv].dims);
+	Free((char *) va[iv].dims);
     if (nerrs > 0)
       (void) fprintf(stderr,"FAILED! ***\n");
     else
       (void) fprintf(stderr,"ok ***\n");
-
 }

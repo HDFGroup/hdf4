@@ -25,10 +25,10 @@ int
 NCgenio(handle, varid, start, count, stride, imap, values)
     NC		*handle;
     int		varid;
-    const long	*start;		/* NULL => first corner */
-    const long	*count;		/* NULL => everything following start[] */
-    const long	*stride;	/* NULL => unity strides */
-    const long	*imap;		/* NULL => same structure as netCDF variable */
+    const int32	*start;		/* NULL => first corner */
+    const int32	*count;		/* NULL => everything following start[] */
+    const int32	*stride;	/* NULL => unity strides */
+    const int32	*imap;		/* NULL => same structure as netCDF variable */
     Void	*values ;
 {
     int		maxidim;	/* maximum dimensional index */

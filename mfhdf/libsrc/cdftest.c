@@ -27,7 +27,11 @@ static char mrcsid[] = "$Id$";
 #define MAXLONG		2147483647
 #define  MAXBYTE	127
 
+#ifdef PC
+#include <errno.h>
+#else
 extern int errno ;
+#endif
 
 #define FNAME		"test.cdf"
 #define	NUM_DIMS 	3
@@ -129,7 +133,7 @@ char *dim_names[] ;
 		assert( ncdiminq(cdfid, ii, cp, &size) >= 0) ;
 		if( size != *sizes)
 			fprintf(stderr, "%d: %ld != %ld\n",
-				ii, size, *sizes) ;
+				(int)ii, (long)size, (long)*sizes) ;
 		assert( size == *sizes) ;
 		assert( strcmp(cp, *dim_names++) == 0) ;
 	}
@@ -233,7 +237,7 @@ long array[] ;
 	fprintf(stdout, "%s", label) ;
 	fputc('\t',stdout) ;	
 	for(; count > 0 ; count--, array++)
-		fprintf(stdout," %d", *array) ;
+		fprintf(stdout," %d", (int)*array) ;
 }
 
 void
@@ -330,7 +334,7 @@ int id ;
 	return ;
 bad_ret :
 	printf("couldn't get a var in check_fill_seq() %d\n",
-		ii) ;
+		(int)ii) ;
 	return ;
 }
 
@@ -462,7 +466,7 @@ main()
 #endif /* SYNCDEBUG */
 
 	ret = ncclose(id) ;
-	printf("ncclose ret = %d\n\n", ret) ;
+	printf("ncclose ret = %d\n\n", (int)ret) ;
 
 
 /*
@@ -475,7 +479,7 @@ main()
 		exit(1) ;
 	}
 	printf("reopen id = %d for filename %s\n",
-		id, fname) ;
+		(int)id, fname) ;
 
 #ifdef NOBUF
 	assert( ncnobuf(id) != 1 ) ;
@@ -487,7 +491,7 @@ main()
 		&(cdesc->num_attrs), &(cdesc->xtendim) ) == id) ;
 	if(cdesc->num_dims != num_dims )
 	{
-		printf(" num_dims  : %d != %d\n", cdesc->num_dims, num_dims ) ; 
+		printf(" num_dims  : %d != %d\n", (int)cdesc->num_dims, (int)num_dims ) ; 
 		exit(1) ;
 	}
 	assert(cdesc->num_vars == NUM_TESTVARS) ;
@@ -533,13 +537,13 @@ main()
 		if(strcmp(tvp->mnem , vdesc->mnem) != 0)
 		{
 			printf("attr %d mnem mismatch %s, %s\n",
-				ii, tvp->mnem, vdesc->mnem) ;
+				(int)ii, tvp->mnem, vdesc->mnem) ;
 			continue ;
 		}
 		if(tvp->type != vdesc->type)
 		{
 			printf("attr %d type mismatch %d, %s\n",
-				ii, tvp->type, vdesc->type) ;
+				(int)ii, tvp->type, vdesc->type) ;
 			continue ;
 		}
 		for(jj = 0 ; jj < vdesc->ndims ; jj++ )
@@ -548,7 +552,7 @@ main()
 			{
 		printf(
 		"inconsistant dim[%d] for variable %d: %d != %d\n",
-		jj, ii, tvp->dims[jj], vdesc->dims[jj] ) ;
+		(int)jj, (int)ii, (int)tvp->dims[jj], (int)vdesc->dims[jj] ) ;
 			continue ;
 			}
 		}
@@ -561,7 +565,7 @@ main()
 			if( strcmp(adesc->mnem, reqattr[jj]) != 0 )
 			{
 				printf("var %d attr %d mismatch %s != %s\n",
-					ii, jj, adesc->mnem, reqattr[jj] ) ;
+					(int)ii, (int)jj, adesc->mnem, reqattr[jj] ) ;
 				break ;
 			}
 		}
@@ -639,10 +643,10 @@ main()
 	printf("got val = %f\n", got.fl[0] ) ;
 
 	assert( ncvarget1(id, Long_id, indices[3], (ncvoid *)&got) != -1) ;
-	printf("got val = %ld\n", got.lng[0] ) ;
+	printf("got val = %ld\n", (long)got.lng[0] ) ;
 
 	assert( ncvarget1(id, Short_id, indices[4], (ncvoid *)&got) != -1) ;
-	printf("got val = %d\n", got.sh[0] ) ;
+	printf("got val = %d\n", (int)got.sh[0] ) ;
 
 	assert( ncvarget1(id, Byte_id, indices[5], (ncvoid *)&got) != -1) ;
 	printf("got val = %c (0x%02x) \n", got.by[0] , got.by[0]) ;
@@ -656,7 +660,7 @@ main()
 	printf("got val = \"%s\"\n", new) ;
 
 	ret = ncclose(id) ;
-	printf("re ncclose ret = %d\n", ret) ;
+	printf("re ncclose ret = %d\n", (int)ret) ;
 
 	return 0;
 }

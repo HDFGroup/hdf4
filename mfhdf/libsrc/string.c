@@ -26,7 +26,7 @@ const char *str ;
 		return NULL ;
 	}
 		
-	ret = (NC_string *)malloc(sizeof(NC_string)) ;
+	ret = (NC_string *)HDgetspace(sizeof(NC_string)) ;
 	if( ret == NULL )
 		goto alloc_err ;
 	ret->count = count ;
@@ -34,7 +34,7 @@ const char *str ;
 	if(count != 0 ) /* allocate */
 	{
 		memlen = count + 1 ;
-		ret->values = (char *)malloc(memlen) ;
+		ret->values = (char *)HDgetspace(memlen) ;
 		if(ret->values == NULL)
 			goto alloc_err ;
 		if(str != NULL)
@@ -49,7 +49,7 @@ const char *str ;
 	return(ret) ;
 alloc_err :
 	nc_serror("NC_new_string") ;
-	if(ret != NULL) free(ret) ;
+	if(ret != NULL) HDfreespace(ret) ;
 	return(NULL) ;
 }
 

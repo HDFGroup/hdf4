@@ -8,6 +8,13 @@
 #include	"local_nc.h"
 #include	"alloc.h"
 
+/* Local function prototypes */
+static bool_t hdf_xdr_NCvdata
+    PROTO((NC *handle,NC_var *vp,u_long where,nc_type type,uint32 count,
+        VOIDP values));
+static bool_t hdf_xdr_NCv1data
+    PROTO((NC *handle,NC_var *vp,u_long where,nc_type type,VOIDP values));
+
 /*
  * If you use ./xdrstdio.c rather than ./xdrposix.c as
  * your bottom layer, the you may need to #define XDRSTDIO
@@ -787,7 +794,7 @@ uint32    count;
          * Fail if there is no data *AND* we were trying to read...
          * Otherwise, we should fill with the fillvalue
          */
-        if(vp->data_ref == NULL) 
+        if(vp->data_ref == 0) 
             if(handle->hdf_mode == DFACC_RDONLY) {
                 if(vp->data_tag == DATA_TAG) {
                     NC_attr ** attr;
@@ -1336,7 +1343,7 @@ Void *values ;
 	u_long offset ;
 	size_t szof = nctypelen(vp->type) ;
 
-	coords = (long *)malloc(vp->assoc->count * sizeof(long)) ;
+	coords = (long *)HDgetspace(vp->assoc->count * sizeof(long)) ;
 	if(coords == NULL)
 	{
 		nc_serror("") ;
@@ -1351,7 +1358,7 @@ Void *values ;
 	arrayp("coords", vp->assoc->count, coords) ;
 #endif
 
-	upper = (long *)malloc(vp->assoc->count * sizeof(long)) ;
+	upper = (long *)HDgetspace(vp->assoc->count * sizeof(long)) ;
 	if(upper == NULL)
 	{
 		nc_serror("") ;

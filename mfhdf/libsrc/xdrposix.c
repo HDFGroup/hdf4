@@ -67,7 +67,15 @@ typedef struct {
 	int cnt ;		/* number of valid bytes in buffer */
 	unsigned char *ptr; 		/* next byte */
 #ifndef CRAY
+#ifdef DOS_FS
+#ifdef QAK
+#define BIOBUFSIZ   4096
+#else
+#define BIOBUFSIZ   512
+#endif
+#else
 #define BIOBUFSIZ	8192
+#endif
 #else
 #define BIOBUFSIZ	196608 /* stat.st_oblksize */
 #endif
@@ -81,7 +89,7 @@ biobuf *abuf;
 {
 	if(abuf == NULL)
 		return;
-	free(abuf) ;
+	HDfreespace(abuf) ;
 }
 
 
@@ -92,7 +100,7 @@ int fmode;
 {
 	biobuf *biop ;
 
-	biop = (biobuf *)malloc(sizeof(biobuf)) ;
+	biop = (biobuf *)HDgetspace(sizeof(biobuf)) ;
 	if(biop == NULL)
 		return NULL ;
 	biop->fd = fd ;
@@ -107,7 +115,7 @@ int fmode;
 	memset(biop->base, 0, ((size_t)(BIOBUFSIZ))) ;
 	biop->ptr = biop->base ;
 
-	return biop ;	
+	return biop ;
 }
 
 
@@ -299,7 +307,11 @@ xdrposix_create(xdrs, fd, fmode, op)
 {
 
 	biobuf *biop = new_biobuf(fd, fmode) ;
-	xdrs->x_op = op;
+#ifdef XDRDEBUG
+fprintf(stderr,"xdrposix_create(): xdrs=%p, fd=%d, fmode=%d, op=%d\n",xdrs,fd,fmode,(int)op);
+fprintf(stderr,"xdrposix_create(): after new_biobuf(), biop=%p\n",biop);
+#endif
+    xdrs->x_op = op;
 	xdrs->x_ops = &xdrposix_ops;
 	xdrs->x_private = (caddr_t) biop ;
 	/* unused */
@@ -313,7 +325,10 @@ xdrposix_create(xdrs, fd, fmode, op)
 			|| (biop->mode & O_CREAT))
 		return 0 ;
 
-	/* else, read the first bufferful */
+#ifdef XDRDEBUG
+fprintf(stderr,"xdrposix_create(): before rdbuf()\n");
+#endif
+    /* else, read the first bufferful */
 	return( rdbuf(biop) ) ;
 }
 
@@ -493,7 +508,6 @@ XDR *xdrs ;
 	return xdrposix_sync(xdrs) ;
 }
 
-
 int
 NCxdrfile_create(xdrs, path, ncmode)
 XDR *xdrs ;
@@ -504,6 +518,9 @@ int ncmode ;
 	int	 fd ;
 	enum xdr_op op ;
 
+#ifdef XDRDEBUG
+fprintf(stderr,"NCxdrfile_create(): XDR=%p, path=%s, ncmode=%d\n",xdrs,path,ncmode);
+#endif
 	switch(ncmode & 0x0f) {
 	case NC_NOCLOBBER :
 		fmode = O_RDWR | O_CREAT | O_EXCL ;
@@ -533,7 +550,10 @@ int ncmode ;
 		_fmode = O_BINARY ;
 #endif
 	fd = open(path, fmode, 0666) ;
-	if( fd == -1 )
+#ifdef XDRDEBUG
+fprintf(stderr,"NCxdrfile_create(): fmode=%d, fd=%d\n",fmode,fd);
+#endif
+    if( fd == -1 )
 	{
 		nc_serror("filename \"%s\"", path) ;
 		return(-1) ;
@@ -546,8 +566,14 @@ int ncmode ;
 		op = XDR_DECODE ;
 	}
 	
-	if(xdrposix_create(xdrs, fd, fmode, op) < 0)
+#ifdef XDRDEBUG
+fprintf(stderr,"NCxdrfile_create(): before xdrposix_create()\n");
+#endif
+    if(xdrposix_create(xdrs, fd, fmode, op) < 0)
 		return -1 ;
 	/* else */
-	return fd ;
+#ifdef XDRDEBUG
+fprintf(stderr,"NCxdrfile_create(): after xdrposix_create()\n");
+#endif
+    return fd ;
 }

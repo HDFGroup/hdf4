@@ -13,15 +13,28 @@ extern char *realloc();
 #endif /* !NO_STDLIB */
 
 
+#ifdef HDF
 #define Alloc(theNum, theType) \
-	(theType *)malloc(sizeof(theType) * (theNum)) 
+	(theType *)HDgetspace(sizeof(theType) * (theNum))
+#else
+#define Alloc(theNum, theType) \
+	(theType *)malloc(sizeof(theType) * (theNum))
+#endif
 
 
 #ifndef NO_STDLIB
+#ifdef HDF
+#define Free(ptr)		HDfreespace(ptr)
+#else
 #define Free(ptr)		free(ptr)
+#endif
 #else
 /* old style free */
+#ifdef HDF
+#define Free(ptr)		(void)HDfreespace((char *)ptr)
+#else
 #define Free(ptr)		(void)free((char *)ptr)
+#endif
 #endif /* !NO_STDLIB */
 
 #define ARRAYLEN(arr) (sizeof(arr)/sizeof(arr[0]))

@@ -5,12 +5,14 @@
  *********************************************************************/
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "netcdf.h"
 #include "testcdf.h"		/* defines in-memory test cdf structure */
 #include "add.h"		/* functions to update in-memory netcdf */
 #include "val.h"
 #include "error.h"
 #include "tests.h"
+#include "alloc.h"
 #include "emalloc.h"
 
 #define max(A, B)	((A) > (B) ? (A) : (B))
@@ -160,8 +162,8 @@ test_varputgetg(cdfid)
 		}
 	    }
 
-	    free ((char *) hc[ie].vals);
-	    free ((char *) tmp.vals);
+	    Free ((char *) hc[ie].vals);
+	    Free ((char *) tmp.vals);
 	}
     }
     return nerrs;

@@ -10,25 +10,29 @@
 
 OS2     = 0
 CC        = cl
-CFLAGS    = /c /AL /Za /DMSDOS
+#CFLAGS    = /c /AL /Za
+#CFLAGS    = /c /AH /DPC /DHDF /Zi
+#CFLAGS    = /c /AH /DPC /DHDF /W4
+CFLAGS    = /c /AH /DPC /DHDF /Ox
 DESTDIR   = C:
-F77	  = fl
-FFLAGS	  = /c /AL
-WANT_FORTRAN_NETCDF = 1
+F77   = fl
+FFLAGS    = /c /AH
+#FFLAGS    = /c /AL
+FORTRAN_NETCDF = 1
 
 # End of anticipated macros
 
 # Macros for recursive make(1)s:
-MY_MFLAGS	= \
-	OS2="$(OS2)" \
-	CC="$(CC)" \
-	CFLAGS="$(CFLAGS)" \
-	DESTDIR="$(DESTDIR)" \
-	F77="$(F77)" \
-	FFLAGS="$(FFLAGS)" \
-	WANT_FORTRAN_NETCDF="$(WANT_FORTRAN_NETCDF)"
+MY_MFLAGS   = \
+    OS2="$(OS2)" \
+    CC="$(CC)" \
+    CFLAGS="$(CFLAGS)" \
+    DESTDIR="$(DESTDIR)" \
+    F77="$(F77)" \
+    FFLAGS="$(FFLAGS)" \
+    FORTRAN_NETCDF="$(FORTRAN_NETCDF)"
 
-!IF $(WANT_FORTRAN_NETCDF)
+!IF $(FORTRAN_NETCDF)
 FORTRANSUB       = fortran
 !ENDIF
 
@@ -36,18 +40,18 @@ INSTSUBS           = xdr libsrc $(FORTRANSUB) ncgen ncdump
 ALLSUBS            = xdr libsrc nctest $(FORTRANSUB) ncgen ncdump
 
 all:
-	@$(MAKE) /F msoft.mk $(MAKEFLAGS) $(MY_MFLAGS) TARG=$@ $(ALLSUBS)
+    @$(MAKE) /V /F msoft.mk $(MAKEFLAGS) $(MY_MFLAGS) TARG=$@ $(ALLSUBS)
 
 test:
-	@$(MAKE) /F msoft.mk $(MAKEFLAGS) $(MY_MFLAGS) TARG=$@ $(ALLSUBS)
+    @$(MAKE) /V /F msoft.mk $(MAKEFLAGS) $(MY_MFLAGS) TARG=$@ $(ALLSUBS)
 
 clean:
-	@$(MAKE) /F msoft.mk $(MAKEFLAGS) $(MY_MFLAGS) TARG=$@ $(ALLSUBS)
+    @$(MAKE) /V /F msoft.mk $(MAKEFLAGS) $(MY_MFLAGS) TARG=$@ $(ALLSUBS)
 
 install: all
-	@$(MAKE) /F msoft.mk $(MAKEFLAGS) $(MY_MFLAGS) TARG=$@ $(INSTSUBS)
+    @$(MAKE) /V /F msoft.mk $(MAKEFLAGS) $(MY_MFLAGS) TARG=$@ $(INSTSUBS)
 
 $(ALLSUBS):	
 	cd $@
-	$(MAKE) /F msoft.mk $(MAKEFLAGS) $(MY_MFLAGS) $(TARG)
+    $(MAKE) /V /F msoft.mk $(MAKEFLAGS) $(MY_MFLAGS) $(TARG)
 	cd ..

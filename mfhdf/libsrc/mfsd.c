@@ -50,6 +50,14 @@ static intn SDTbl[MAX_FILE];
 #define FIDtoSDTbl(i) ((VALIDFID(i) ? &(SDTbl[(uint32)(i) & 0xffff]) : NULL))
 
 
+/* Local function prototypes */
+PRIVATE NC * SDIhandle_from_id PROTO((int32 id, intn typ));
+PRIVATE NC_var * SDIget_var PROTO((NC *handle, int32 sdsid));
+PRIVATE intn SDIputattr PROTO((NC_array **ap, char *name, int32 nt,
+    intn count, VOIDP data));
+PRIVATE int32 SDIgetcoordvar PROTO((NC *handle, NC_dim *dim, int32 id,
+    int32 nt));
+
 /* ---------------------------- SDIhandle_from_id ---------------------------- */
 /*
 
@@ -165,7 +173,8 @@ int32 SDstart(name, HDFmode)
 #endif 
 {
 
-    intn   cdfid, fid;
+    intn   cdfid;
+    int32  fid;
     intn   NCmode;
     NC   * handle;
 
@@ -1043,7 +1052,7 @@ int32   id;
   return FAIL on error else SUCCEED
 
 */
-intn
+PRIVATE intn
 #ifdef PROTOTYPE
 SDIputattr(NC_array **ap, char *name, int32 nt, intn count, VOIDP data)
 #else
@@ -1849,9 +1858,9 @@ int32    *nt;
 
 */
 #ifdef PROTOTYPE
-int32 SDIgetcoordvar(NC *handle, NC_dim *dim, int32 id, int32 nt)
+PRIVATE int32 SDIgetcoordvar(NC *handle, NC_dim *dim, int32 id, int32 nt)
 #else
-int32 SDIgetcoordvar(handle, dim, id, nt)
+PRIVATE int32 SDIgetcoordvar(handle, dim, id, nt)
 NC     * handle;
 NC_dim * dim;
 int32    id, nt;

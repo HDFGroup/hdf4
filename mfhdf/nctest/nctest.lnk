@@ -1,0 +1,1 @@
+llibc7.lib oldnames.lib nctest.lib ..\libsrc\netcdf.lib ..\xdr\xdr.lib  \hdf\hdf\lib\df.lib

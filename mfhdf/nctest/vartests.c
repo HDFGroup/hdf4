@@ -11,6 +11,8 @@
 #include "add.h"		/* functions to update in-memory netcdf */
 #include "error.h"
 #include "tests.h"
+#include "alloc.h"
+#include "emalloc.h"
 
 #define LEN_OF(array) ((sizeof array) / (sizeof array[0]))
 #define min(A, B)	((A) < (B) ? (A) : (B))
@@ -214,8 +216,8 @@ test_ncvarinq(path)
 	    nerrs++;
 	}
     }
-    free((char *) var.dims);
-    free(var.name);
+    Free((char *) var.dims);
+    Free(var.name);
     if (nerrs > 0)
       (void) fprintf(stderr,"FAILED! ***\n");
     else
@@ -652,8 +654,8 @@ test_ncvarrename(path)
 	error("%s: ncvarrename failed to report bad netcdf handle ", pname);
 	nerrs++;
     }
-    free(var.name);
-    free((char *)var.dims);
+    Free(var.name);
+    Free((char *)var.dims);
     if (nerrs > 0)
       (void) fprintf(stderr,"FAILED! ***\n");
     else

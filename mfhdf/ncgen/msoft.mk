@@ -8,7 +8,7 @@
 
 OS2      = 0
 
-WANT_FORTRAN_NETCDF = 1
+FORTRAN_NETCDF = 1
 
 AR        = lib
 ARFLAGS   = 
@@ -16,9 +16,9 @@ ARFLAGS   =
 ASM       = masm
 
 CC	      = cl
-CFLAGS    = /c /AL /Za /DMSDOS
+CFLAGS    = /c /AL /Za
 
-!IF $(WANT_FORTRAN_NETCDF)
+!IF $(FORTRAN_NETCDF)
 F77       = fl
 FFLAGS    = /c /AL
 FORTLIB   = llibfor7.lib
@@ -38,7 +38,8 @@ BINDIR    = $(DESTDIR)\bin
 LIBDIR    = $(DESTDIR)\lib
 NCGENLIB  = ncgen.lib
 NETCDFLIB = ..\libsrc\netcdf.lib
-CLIB      = llibce.lib
+HDFLIB    = \hdf\hdf\lib\df.lib
+CLIB      = llibc7.lib oldnames.lib
 
 !IF $(OS2)
 OS2LIB    = os2.lib
@@ -46,7 +47,7 @@ OS2LIB    = os2.lib
 OS2LIB    = 
 !ENDIF
 XDRLIB    = ..\xdr\xdr.lib
-LIBS      = $(NCGENLIB) $(NETCDFLIB) $(XDRLIB) $(OS2LIB) $(CLIB)
+LIBS      = $(NCGENLIB) $(NETCDFLIB) $(XDRLIB) $(OS2LIB) $(HDFLIB) $(CLIB)
 
 .c.obj:
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) $<
@@ -69,7 +70,7 @@ LOBJS2 = -+getfill.obj -+init.obj -+close.obj -+genlib.obj -+getopt.obj
 all:	$(GOAL)
 
 $(GOAL): $(MAIN) $(NCGENLIB) $(NETCDFLIB)
-	$(LINK) $(LFLAGS) $(MAIN),$(GOAL),,$(LIBS);
+    $(LINK) $(LFLAGS) $(MAIN),$(GOAL),,@ncgen.lnk;
 
 $(NCGENLIB): $(OBJS)
 	$(AR) $@ $(ARFLAGS) $(LOBJS1),LIB.LST;
@@ -89,17 +90,18 @@ FORCE:
 ntest:	ncgen.exe test0.cdl test1.cdl
 	ncgen -b test1.cdl
 	..\ncdump\ncdump test1.nc > test2.cdl
- 	echo N | comp test1.cdl test2.cdl
+ 	diff test1.cdl test2.cdl
 	@echo "*** ncgen -b test successful ***"
 
 # test "-c" option of ncgen
 ctest:	ncgen.exe test0.cdl test1.cdl
 	ncgen -c -o ctest0.nc test0.cdl > test0.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(INCLUDES) test0.c
-	$(LINK) $(LFLAGS) test0,test0.exe,,$(LIBS);
+#	$(LINK) $(LFLAGS) test0,test0.exe,,$(LIBS);
+	$(LINK) $(LFLAGS) test0,test0.exe,,@test0.lnk;
 	test0
 	..\ncdump\ncdump -n test1 ctest0.nc > ctest1.cdl
- 	echo N | comp test1.cdl ctest1.cdl
+ 	diff test1.cdl ctest1.cdl
 	@echo "*** ncgen -c test successful ***"
 
 # test "-f" option of ncgen
@@ -109,8 +111,8 @@ ftest:	ncgen.exe test0.cdl netcdf.inc test1.cdl msoft.int jackets.obj fslen.obj
 	$(LINK) $(LFLAGS) test0 jackets fslen,test0.exe,,$(LIBS) $(FORTLIB);
 	test0
 	..\ncdump\ncdump -n test1 ftest0.nc > ftest1.cdl
- 	echo N | comp test1.cdl ftest1.cdl
-	@echo "*** ncgen -f test successful ***" 
+ 	diff test1.cdl ftest1.cdl
+	@echo "*** ncgen -f test successful ***"
 
 test1.cdl: test0.nc
 	..\ncdump\ncdump -n test1 test0.nc > test1.cdl

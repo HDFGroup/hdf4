@@ -9,6 +9,8 @@
 #include "add.h"		/* functions to update in-memory netcdf */
 #include "error.h"
 #include "tests.h"
+#include "alloc.h"
+#include "emalloc.h"
 
 #define LEN_OF(array) ((sizeof array) / (sizeof array[0]))
 /* dimension sizes */
@@ -50,13 +52,13 @@ val_stuff(type, v, ii, val)	/* v[ii] = val */
 	gp->cp[ii] = (char) val;
 	break;
       case NC_SHORT:
-	gp->sp[ii] = val;
+    gp->sp[ii] = (short)val;
 	break;
       case NC_LONG:
 	gp->lp[ii] = val;
 	break;
       case NC_FLOAT:
-	gp->fp[ii] = val;
+    gp->fp[ii] = (float)val;
 	break;
       case NC_DOUBLE:
 	gp->dp[ii] = val;
@@ -347,7 +349,7 @@ test_slabs(cdfid)
 		}
 	    }
 	}
-	free((char *)v);
+	Free((char *)v);
     }
     return nerrs;
 }

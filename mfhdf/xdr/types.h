@@ -15,7 +15,7 @@
 #	define NULL 0
 #endif
 
-#ifdef __STDC__
+#if defined __STDC__ || defined PC
 #define STDC_INCLUDES
 #ifndef unix
 long ntohl(long);

@@ -7,6 +7,9 @@
 #include	"local_nc.h"
 #include	"alloc.h"
 
+static bool_t NC_xdr_cdf
+    PROTO((XDR *xdrs,NC **handlep));
+
 /*
  * free the stuff that xdr_cdf allocates
  */
@@ -50,7 +53,7 @@ int mode ;
 {
 	NC *cdf ;
 
-	cdf = (NC *)malloc(sizeof(NC)) ;
+	cdf = (NC *)HDgetspace(sizeof(NC)) ;
 	if( cdf == NULL )
 	{
 		nc_serror("NC_new_cdf") ;
@@ -59,7 +62,7 @@ int mode ;
 
 	cdf->flags = mode ;
 
-	cdf->xdrs = (XDR *)malloc(sizeof(XDR)) ;
+	cdf->xdrs = (XDR *)HDgetspace(sizeof(XDR)) ;
 	if( cdf->xdrs == NULL)
 	{
 		nc_serror("NC_new_cdf: xdrs") ;
@@ -150,7 +153,7 @@ NC *old ;
 {
 	NC *cdf ;
 
-	cdf = (NC *)malloc(sizeof(NC)) ;
+	cdf = (NC *)HDgetspace(sizeof(NC)) ;
 	if( cdf == NULL )
 	{
 		nc_serror("NC_dup_cdf") ;
@@ -159,7 +162,7 @@ NC *old ;
 
 	cdf->flags = old->flags | NC_INDEF ;
 
-	cdf->xdrs = (XDR *)malloc(sizeof(XDR)) ;
+	cdf->xdrs = (XDR *)HDgetspace(sizeof(XDR)) ;
 	if( cdf->xdrs == NULL)
 	{
 		nc_serror("NC_dup_cdf: xdrs") ;
@@ -272,12 +275,12 @@ xdr_cdf(xdrs, handlep)
 
 
 #ifdef HDF
-bool_t
+static bool_t
 NC_xdr_cdf(xdrs, handlep)
 	XDR *xdrs;
 	NC **handlep;
 #else
-bool_t
+static bool_t
 xdr_cdf(xdrs, handlep)
 	XDR *xdrs;
 	NC **handlep;
@@ -554,7 +557,7 @@ NC_dim *dim;
           return FAIL;
       }
       
-      free(val);
+      HDfreespace(val);
 
   }
   
@@ -997,7 +1000,7 @@ int32  vg;
   else
     handle->dims = NULL;
 
-  free(dimension);
+  HDfreespace(dimension);
 
 #if DEBUG
  fprintf(stderr, "Created dimension array %d \n", handle->dims);
@@ -1087,7 +1090,7 @@ int32   vg;
   
   if(count) Array = NC_new_array(NC_ATTRIBUTE, count, (Void *) attributes);
 
-  free(attributes);
+  HDfreespace(attributes);
 
 #if DEBUG
   fprintf(stderr, "Created attribute array %d \n", Array);

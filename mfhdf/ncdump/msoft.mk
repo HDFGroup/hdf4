@@ -12,7 +12,7 @@ AR        = lib
 ARFLAGS   =
 
 CC        = cl
-CFLAGS    = /c /AL /Za /DMSDOS
+CFLAGS    = /c /AL /Za
 
 LINK      = link
 LFLAGS    = /st:30000 /nod
@@ -24,18 +24,19 @@ INCLUDES  = /I$(INCDIR1) /I$(INCDIR2)
 DESTDIR   = C:
 
 BINDIR    = $(DESTDIR)\bin
-INCLUDE   = $(DESTDIR)\include
+INCDIR    = $(DESTDIR)\include
 LIBDIR    = $(DESTDIR)\lib
 NCDUMPLIB = ncdump.lib
 NETCDFLIB = ..\libsrc\netcdf.lib
-CLIB      = llibce.lib
+CLIB      = llibc7.lib oldnames.lib
 !IF $(OS2)
 OS2LIB    = os2.lib
 !ELSE
 OS2LIB    = 
 !ENDIF
 XDRLIB    = ..\xdr\xdr.lib
-LIBS      = $(NCDUMPLIB) $(NETCDFLIB) $(XDRLIB) $(OS2LIB) $(CLIB)
+HDFLIB    = \hdf\hdf\lib\df.lib
+LIBS      = $(NCDUMPLIB) $(NETCDFLIB) $(XDRLIB) $(OS2LIB) $(HDFLIB) $(CLIB)
 
 .c.obj:
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) $<
@@ -48,16 +49,19 @@ SRCS =  ncdump.c vardata.c dumplib.c
 
 MAIN = ncdump.obj
 
-OBJS =  vardata.obj dumplib.obj
-LOBJS = -+vardata.obj -+dumplib.obj
+OBJS =  vardata.obj dumplib.obj getopt.obj
+LOBJS = -+vardata.obj -+dumplib.obj -+getopt.obj
 
 all:	$(GOAL)
 
 $(GOAL): $(MAIN) $(NCDUMPLIB) $(NETCDFLIB) $(XDRLIB)
-	$(LINK) $(LFLAGS) $(MAIN),$(GOAL),,$(LIBS);
+    $(LINK) $(LFLAGS) $(MAIN),$(GOAL),,@ncdump.lnk;
 
 $(NCDUMPLIB): $(OBJS)
 	$(AR) $@ $(ARFLAGS) $(LOBJS),LIB.LST;
+
+getopt.obj: ..\util\getopt.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) $?
 
 install: $(GOAL)
 	copy $(GOAL) $(BINDIR)
@@ -68,7 +72,7 @@ test:	ncdump.exe test0.cdl FORCE
 	ncdump test0.cdf > test1.cdl
 	..\ncgen\ncgen -o test1.cdf -n test1.cdl
 	ncdump -n test0 test1.cdf > test2.cdl
-	echo N | comp test1.cdl test2.cdl 
+	diff test1.cdl test2.cdl 
 	@echo "Test successful."
 
 ncdump: ncdump.exe

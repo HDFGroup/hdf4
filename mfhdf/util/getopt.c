@@ -1,6 +1,17 @@
 /*LINTLIBRARY*/
 #define NULL	0
 #define EOF	(-1)
+
+#ifdef HDF
+#define ERR(s, c)	if(opterr){\
+	char errbuf[2];\
+	errbuf[0] = c; errbuf[1] = '\n';\
+	(void) write(2, argv[0], strlen(argv[0]));\
+	(void) write(2, s, strlen(s));\
+	(void) write(2, errbuf, 2);}
+
+#include <string.h>
+#else
 #define ERR(s, c)	if(opterr){\
 	extern int strlen(), write();\
 	char errbuf[2];\
@@ -11,6 +22,7 @@
 
 extern int      strcmp();
 extern char    *strchr();
+#endif
 
 int             opterr = 1;
 int             optind = 1;

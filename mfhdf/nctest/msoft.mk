@@ -12,13 +12,14 @@ AR       = LIB
 ARFLAGS  = 
 
 CC        = cl
-CFLAGS	  = /c /AL /Za /DMSDOS
+CFLAGS	  = /c /AL /Za
 
 LINK      = link
-LFLAGS    = /st:30000 /nod
+LFLAGS    = /st:10000 /nod
 
 INCDIR    =  ..\libsrc
-INCLUDES  = /I$(INCDIR)
+HDFINCDIR =  \hdf\hdf\include
+INCLUDES  = /I$(INCDIR) /I$(HDFINCDIR)
 
 DESTDIR   = C:
 
@@ -26,14 +27,15 @@ BINDIR    = $(DESTDIR)\bin
 LIBDIR    = $(DESTDIR)\lib
 NCTESTLIB = nctest.lib
 NETCDFLIB = ..\libsrc\netcdf.lib
-CLIB      = llibce.lib
+CLIB      = llibc7.lib oldnames.lib
 !IF $(OS2)
 OS2LIB    = os2.lib
 !ELSE
 OS2LIB    =
 !ENDIF
 XDRLIB    = ..\xdr\xdr.lib
-LIBS      = $(NCTESTLIB) $(NETCDFLIB) $(XDRLIB) $(OS2LIB) $(CLIB)
+HDFLIB    = \hdf\hdf\lib\df.lib
+LIBS      = $(NCTESTLIB) $(NETCDFLIB) $(XDRLIB) $(OS2LIB) $(HDFLIB) $(CLIB)
 
 .c.obj:
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) $<
@@ -65,7 +67,8 @@ test:	$(GOAL) FORCE
 FORCE:
 
 $(GOAL): $(MAIN) $(NCTESTLIB) $(NETCDFLIB) $(XDRLIB)
-	$(LINK) $(LFLAGS) $(MAIN),$(GOAL),,$(LIBS);
+    $(LINK) $(LFLAGS) $(MAIN)+(vartests+cdftests+dimtests+atttests+misctest),$(GOAL),,@nctest.lnk;
+#    $(LINK) $(LFLAGS) $(MAIN),$(GOAL),,@nctest.lnk;
 
 $(NCTESTLIB):	$(OBJS)
 	$(AR) $@ $(ARFLAGS) $(LOBJS1),LIB.LST;

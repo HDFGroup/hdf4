@@ -207,7 +207,7 @@ nc_type type ;
 		}
 		break ;
 	default :
-		(void) memset(lo,0xff,hi-lo) ;
+		HDmemset(lo,0xff,hi-lo) ;
 		break ;
 	}
 }
@@ -228,19 +228,28 @@ const void *values ;
 	NC_array *ret ;
 	size_t memlen ;
 
-	ret = (NC_array *)malloc(sizeof(NC_array)) ;
+	ret = (NC_array *)HDgetspace(sizeof(NC_array)) ;
 	if( ret == NULL )
 		goto alloc_err ;
 
 	ret->type = type ;
 	ret->szof = NC_typelen(type) ;
-	ret->count = count ;
+#ifdef DEBUG
+  fprintf(stderr, "NC_new_array(): type=%u, NC_typelen(type)=%u\n",(unsigned)type,(unsigned)ret->szof);
+#endif
+    ret->count = count ;
 	memlen = count * ret->szof ;
 	ret->len = count * NC_xtypelen(type) ;
-	if( count != 0 )
+#ifdef DEBUG
+  fprintf(stderr, "NC_new_array(): count=%u, memlen=%u\n",count,memlen);
+#endif
+    if( count != 0 )
 	{
-		ret->values = (Void*)malloc(memlen) ;
-		if(ret->values == NULL)
+		ret->values = (Void*)HDgetspace(memlen) ;
+#ifdef DEBUG
+  fprintf(stderr, "NC_new_array(): ret->values=%p, values=%p\n",ret->values,values);
+#endif
+        if(ret->values == NULL)
 			goto alloc_err ;
 		if( values == NULL )
 		{
@@ -253,7 +262,10 @@ const void *values ;
 		ret->values = NULL ;
 	}
 		
-	return(ret) ;
+#ifdef DEBUG
+  fprintf(stderr, "NC_new_array(): ret=%p\n",ret);
+#endif
+    return(ret) ;
 alloc_err :
 	nc_serror("NC_new_array") ;
 	return(NULL) ;
@@ -443,7 +455,7 @@ Void *tail ;
 		return(NULL) ;
 	}
 
-	array->values = (Void*)realloc(array->values,
+	array->values = (Void*)HDregetspace(array->values,
 		(array->count +1) * array->szof) ;
 	if(array->values == NULL)
 	{

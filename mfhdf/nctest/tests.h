@@ -114,7 +114,10 @@ extern void	test_ncattdel	PROTO((
 				       ));
 extern void	test_nctypelen	PROTO((
 				       ));
-extern int	test_varputgetg	PROTO((
+extern int test_varputget   PROTO((
+                        int
+                        ));
+extern int  test_varputgetg PROTO((
 				       int
 				       ));
 extern int	test_slabs	PROTO((
