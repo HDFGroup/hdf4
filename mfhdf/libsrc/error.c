@@ -43,7 +43,7 @@ strerror(errnum)
 int errnum ;
 {
     extern int sys_nerr;
-    extern char *sys_errlist[];
+    extern const char * const sys_errlist[];
 
     if(errnum < 0 || errnum >= sys_nerr) return NULL ;
     /* else */

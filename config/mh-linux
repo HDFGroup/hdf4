@@ -21,10 +21,11 @@ VERSION  = 4.0
 # Compiliers:
 # For gcc version
 CC=gcc
-CFLAGS=-ansi 
+CFLAGS=-ansi -D_BSD_SOURCE
 
 # Fortran compilier
-FC = f77
+#FC = f77
+FC = NONE
 FFLAGS =
 
 # Name of achive randomizer, usually ranlib (use 'true' if non-existant)
