@@ -31,11 +31,11 @@ C Users:   HDF users, utilities, other routines
 C Invokes: acstart
 C------------------------------------------------------------------------------
 
-      integer function afstart(fname, accmode)
-      character *(*) fname
-      integer accmode, acstart
+C     integer function afstart(fname, accmode)
+C      character *(*) fname
+C      integer accmode, acstart
 
-      afstart = acstart(fname, accmode, len(fname))
-      return
-      end
+C      afstart = acstart(fname, accmode, len(fname))
+C      return
+C      end
 
