@@ -18,7 +18,7 @@
  * Purpose: header file for the Multi-file Annotation Interface
  * Invokes: 
  * Contents:
- *          Structure definitions: ANnode, ANentry, ANfile
+ *          Structure definitions: ANnode, ANentry
  *          Constant definitions:  AN_DATA_LABEL, AN_DATA_DESC
  *          (-moved to hdf.h)      AN_FILE_LABEL, AN_FILE_DESC
  *
@@ -28,7 +28,6 @@
 #define _MFAN_H
 
 #include "hdf.h"
-#include "tbbt.h" /* Threaded-balanced binary tree stuff */
 
 #if 0
 /* enumerated types of the varous annotation types 
@@ -41,6 +40,11 @@ typedef enum
   AN_FILE_DESC       /* File description */
 } ann_type;
 #endif
+
+#ifdef MFAN_C
+/* WE ARE IN MAIN ANNOTATION SOURCE FILE "mfan.c" */
+
+/* PRIVATE variables and definitions */
 
 /* This sturcture is used to find which file the annotation belongs to
  * and use the subsequent file specific annotation 'key' to find the 
@@ -68,10 +72,6 @@ typedef struct ANentry
   uint16  elmref;      /* ref of data */
 } ANentry;
 
-#ifdef MFAN_C
-/* WE ARE IN MAIN ANNOTATION SOURCE FILE "mfan.c" */
-
-/* PRIVATE variables and definitions */
 
 /* This is the size of the hash tables used for annotation IDs */
 #define ANATOM_HASH_SIZE    64
@@ -80,7 +80,7 @@ typedef struct ANentry
  *  This key is used to add nodes to a corresponding TBBT in 
  *  filrerec_t->an_tree[]. 
  *  ----------------------------
- *  | t(16bits) | r(16bits) |
+ *  | type(16bits) | ref(16bits) |
  *  -----------------------------*/
 #define AN_CREATE_KEY(t,r) ((((int32)t & 0xffff) << 16) | r)
 
@@ -92,12 +92,12 @@ typedef struct ANentry
 
 #else /* !MFAN_C */
 /* WE are NOT in main ANNOTATION source file
- * Nothing EXPORTED  */
+ * Nothing EXPORTED except Public fcns */
 
 
 /******************************************************************************
  NAME
-	ANdestroy -- Un-Initialize Annotation Interface
+    ANdestroy -- Un-Initialize Annotation Interface
 
  DESCRIPTION
     Unallocates global annotaton node list and file list.
@@ -109,27 +109,27 @@ extern intn ANdestroy(void);
 
 /******************************************************************************
  NAME
-      ANstart - open file for annotation handling
+   ANstart - open file for annotation handling
 
  DESCRIPTION
-      Start annotation handling on the file return a annotation ID to the file.
+   Start annotation handling on the file return a annotation ID to the file.
 
  RETURNS
-      A file ID or FAIL.
+   A file ID or FAIL.
 *******************************************************************************/
 extern int32 ANstart(int32 file_id /* IN: file to start annotation access on */);
 
 /******************************************************************************
  NAME
-    ANfileinfo - Report high-level information about the ANxxx interface for a given file.
+   ANfileinfo - Report high-level information about the ANxxx interface for a given file.
 
  DESCRIPTION
-    Reports general information about the number of file and object(i.e. data)
-    annotations in the file. This routine is generally used to find
-    the range of acceptable indices for ANselect calls.
+   Reports general information about the number of file and object(i.e. data)
+   annotations in the file. This routine is generally used to find
+   the range of acceptable indices for ANselect calls.
 
  RETURNS
-    Returns SUCCEED if successful and FAIL othewise
+   Returns SUCCEED if successful and FAIL othewise
 
 *******************************************************************************/
 extern intn  ANfileinfo(int32 an_id,         /* IN:  annotation interface id */
@@ -140,25 +140,25 @@ extern intn  ANfileinfo(int32 an_id,         /* IN:  annotation interface id */
 
 /******************************************************************************
  NAME
-     ANend - End annotation access to file file
+   ANend - End annotation access to file file
 
  DESCRIPTION
-     End annotation access to file.
+   End annotation access to file.
 
  RETURNS
-     SUCCEED if successful and  FAIL otherwise.
+   SUCCEED if successful and  FAIL otherwise.
 *******************************************************************************/
 extern int32 ANend(int32 an_id /* IN: Annotation ID of file to close */);
 
 /******************************************************************************
  NAME
-	ANcreate - create a new element annotation and return a handle(id)
+   ANcreate - create a new element annotation and return a handle(id)
 
  DESCRIPTION
-        Creates a data annotation, returns an 'an_id' to work with the new 
-        annotation which can either be a label or description.
-        Valid annotation types are AN_DATA_LABEL for data labels and 
-        AN_DATA_DESC for data descriptions.
+   Creates a data annotation, returns an 'an_id' to work with the new 
+   annotation which can either be a label or description.
+   Valid annotation types are AN_DATA_LABEL for data labels and 
+   AN_DATA_DESC for data descriptions.
 
  RETURNS
         An ID to an annotation which can either be a label or description.
@@ -174,10 +174,10 @@ extern int32 ANcreate(int32 an_id,     /* IN: annotation interface ID */
 	ANcreatef - create a new file annotation and return a handle(id)
 
  DESCRIPTION
-        Creates a file annotation, returns an 'an_id' to work with the new 
-        file annotation which can either be a label or description.
-        Valid annotation types are AN_FILE_LABEL for file labels and
-        AN_FILE_DESC for file descritpions.
+    Creates a file annotation, returns an 'an_id' to work with the new 
+    file annotation which can either be a label or description.
+    Valid annotation types are AN_FILE_LABEL for file labels and
+    AN_FILE_DESC for file descritpions.
 
  RETURNS
         An ID to an annotation which can either be a file label or description
@@ -190,11 +190,11 @@ extern int32 ANcreatef(int32 an_id,  /* IN: annotation interface ID */
 	ANselect - get an annotation ID from index of 'type'
 
  DESCRIPTION
-        Get an annotation Id from index of 'type'.
-        The position index is ZERO based
+    Get an annotation Id from index of 'type'.
+    The position index is ZERO based
 
  RETURNS
-        An ID to an annotation type which can either be a label or description 
+    An ID to an annotation type which can either be a label or description 
 *******************************************************************************/
 extern int32 ANselect(int32 an_id,  /* IN: annotation interface ID */
                       int32 index,  /* IN: index of annottion to get ID for */
@@ -205,11 +205,12 @@ extern int32 ANselect(int32 an_id,  /* IN: annotation interface ID */
    ANnumann - find number of annotation of 'type' that  match the given element tag/ref 
 
  DESCRIPTION
-       Find number of annotation of 'type' for the given element 
-       tag/ref pair.
+   Find number of annotation of 'type' for the given element 
+   tag/ref pair.Should not be used for File labels and
+   descriptions.
 
  RETURNS
-       number of annotation found if successful and FAIL (-1) otherwise
+   number of annotation found if successful and FAIL (-1) otherwise
 
 *******************************************************************************/
 extern intn  ANnumann(int32 an_id,     /* IN: annotation interface id */
@@ -222,11 +223,12 @@ extern intn  ANnumann(int32 an_id,     /* IN: annotation interface id */
    ANannlist - generate list of annotation ids of 'type' that match the given element tag/ref 
 
  DESCRIPTION
-       Find and generate list of annotation ids of 'type' for the given 
-       element tag/ref pair.
+   Find and generate list of annotation ids of 'type' for the given 
+   element tag/ref pair.Should not be used for File labels and
+   descriptions.
 
  RETURNS
-       number of annotations ids found if successful and FAIL (-1) otherwise
+   number of annotations ids found if successful and FAIL (-1) otherwise
 
 *******************************************************************************/
 extern intn  ANannlist(int32 an_id,     /* IN: annotation interface id */
@@ -237,27 +239,27 @@ extern intn  ANannlist(int32 an_id,     /* IN: annotation interface id */
 
 /******************************************************************************
  NAME
-       ANannlen - get length of annotation givne annotation id
+   ANannlen - get length of annotation givne annotation id
 
  DESCRIPTION
-       Uses the annotation id to find ann_key & file_id
+   Uses the annotation id to find ann_key & file_id
 
  RETURNS
-       length of annotation if successful and FAIL (-1) otherwise
+   length of annotation if successful and FAIL (-1) otherwise
 
 *******************************************************************************/
 extern int32 ANannlen(int32 ann_id /* IN: annotation id */);
 
 /******************************************************************************
  NAME
-       ANwriteann - write annotation given ann_id
+   ANwriteann - write annotation given ann_id
 
  DESCRIPTION
-       Checks for pre-existence of given annotation, replacing old one if it
-       exists. Writes out annotation.
+   Checks for pre-existence of given annotation, replacing old one if it
+   exists. Writes out annotation.
 
  RETURNS
-       SUCCEED (0) if successful and FAIL (-1) otherwise
+   SUCCEED (0) if successful and FAIL (-1) otherwise
 
 *******************************************************************************/
 extern int32 ANwriteann(int32 ann_id,    /* IN: annotation id */
@@ -266,14 +268,14 @@ extern int32 ANwriteann(int32 ann_id,    /* IN: annotation id */
 
 /******************************************************************************
  NAME
-       ANreadann - read annotation given ann_id
+   ANreadann - read annotation given ann_id
 
  DESCRIPTION
-       Gets tag and ref of annotation.  Finds DD for that annotation.
-       Reads the annotation, taking care of NULL terminator, if necessary.
+   Gets tag and ref of annotation.  Finds DD for that annotation.
+   Reads the annotation, taking care of NULL terminator, if necessary.
 
  RETURNS
-       SUCCEED (0) if successful and FAIL (-1) otherwise
+   SUCCEED (0) if successful and FAIL (-1) otherwise
 
 *******************************************************************************/
 extern int32 ANreadann(int32 ann_id, /* IN: annotation id (handle) */
@@ -294,31 +296,32 @@ extern intn  ANendaccess(int32 ann_id /* IN: annotation id */);
 
 /******************************************************************************
  NAME
-	ANget_tagref - get tag/ref pair to annotation ID
+   ANget_tagref - get tag/ref pair for annotation based on type and index
 
  DESCRIPTION
-     The position index is zero based
+   Get the tag/ref of the annotation based on  the type and index of the 
+   annotation. The position index is zero based
 
  RETURNS
-     A tag/ref pairt to an annotation type which can either be a 
-     label or description given the annotation ID
+   A tag/ref pairt to an annotation type which can either be a 
+   label or description.
 
 *******************************************************************************/
 extern int32 ANget_tagref(int32 an_id,    /* IN: annotation interface ID */
-                          int32 index,    /* IN: index of annottion to get tag/ref for*/
+                          int32 index,    /* IN: index of annotation to get tag/ref for*/
                           ann_type type,  /* IN: annotation type */
                           uint16 *ann_tag,/* OUT: Tag for annotation */ 
                           uint16 *ann_ref /* OUT: ref for annotation */);
 
 /******************************************************************************
  NAME
-       ANid2tagref -- get tag/ref given annotation id
+   ANid2tagref -- get tag/ref given annotation id
 
  DESCRIPTION
-       Uses the annotation id to find ann_node entry which contains ann_ref
+   Uses the annotation id to find ann_node entry which contains ann_ref
 
  RETURNS
-       SUCCEED(0) if successful and FAIL (-1) otherwise. 
+   SUCCEED(0) if successful and FAIL (-1) otherwise. 
 *******************************************************************************/
 extern int32 ANid2tagref(int32 ann_id,    /* IN: annotation id */
                          uint16 *ann_tag, /* OUT: Tag for annotation */
@@ -326,14 +329,14 @@ extern int32 ANid2tagref(int32 ann_id,    /* IN: annotation id */
 
 /******************************************************************************
  NAME
-       ANtagref2id -- get annotation id given tag/ref
+   ANtagref2id -- get annotation id given tag/ref
 
  DESCRIPTION
-       Gets the annotation id of the annotation given the tag/ref of
-       the annotation itself and the annotation interface id.
+   Gets the annotation id of the annotation given the tag/ref of
+   the annotation itself and the annotation interface id.
 
  RETURNS
-       Annotation id of annotation if successful and FAIL(-1) otherwise. 
+   Annotation id of annotation if successful and FAIL(-1) otherwise. 
 *******************************************************************************/
 extern int32 ANtagref2id(int32 an_id,    /* IN  Annotation interface id */
                          uint16 ann_tag, /* IN: Tag for annotation */
@@ -341,25 +344,25 @@ extern int32 ANtagref2id(int32 an_id,    /* IN  Annotation interface id */
 
 /******************************************************************************
  NAME
-     ANatype2tag - annotation type to corresponding annotation TAG
+   ANatype2tag - annotation type to corresponding annotation TAG
 
  DESCRIPTION
-     Translate annotation type to corresponding TAG.
+   Translate annotation type to corresponding TAG.
 
  RETURNS
-     Returns TAG corresponding to annotatin type.
+   Returns TAG corresponding to annotatin type.
 *******************************************************************************/
 extern uint16 ANatype2tag(ann_type atype /* IN: Annotation type */);
 
 /******************************************************************************
  NAME
-     ANtag2atype - annotation TAG to corresponding annotation type
+   ANtag2atype - annotation TAG to corresponding annotation type
 
  DESCRIPTION
-     Translate annotation TAG to corresponding atype
+   Translate annotation TAG to corresponding atype
 
  RETURNS
-     Returns type corresponding to annotatin TAG.
+   Returns type corresponding to annotatin TAG.
 *******************************************************************************/
 extern ann_type ANtag2atype(uint16 atag /* IN: annotation tag */);
 

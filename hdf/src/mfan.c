@@ -45,7 +45,6 @@ static char RcsId[] = "@(#)$Revision$";
  *  ANinit      - Intialize the annotation interface
  *  ANdestroy   - Un-intialize the annotation interface
  *
- *  ANIfidcmp    - compare two annotation interface id's (used in file TBBTtree)
  *  ANIanncmp    - compare two annotation handles(ann_id's) 
  *                  (used in annotation TBBTtree)
  *  ANIaddentry:  - add entry to corresponding annotation TBBTtree
@@ -98,12 +97,13 @@ static char RcsId[] = "@(#)$Revision$";
    interface */
 PRIVATE intn library_terminate = FALSE;
 
-/* Function Prototypes */
+/* Function Prototypes for fcns used by TBBT. Can not be PRIVATE. */
 extern VOID ANfreedata(VOIDP data);
 extern VOID ANfreekey(VOIDP key);
 extern VOID dumpentryKey(VOID *key, VOID *data);
-extern intn ANIfidcmp(VOIDP i, VOIDP j, intn value);
 extern intn ANIanncmp(VOIDP i, VOIDP j, intn value);
+
+/* private initialization routine */
 PRIVATE intn ANIstart(void);
 
 /*-----------------------------------------------------------------------------
@@ -125,6 +125,7 @@ ANfreekey(VOIDP key)
     HDfree(key);
 } /* ANfreekey() */
 
+#ifdef AN_DEBUG
 /* The following routine is used for debugging purposes to dump 
  * key/data pairs from the TBBT trees 
  * eg. tbbt_dump(tree, dumpentryKey, 0)*/
@@ -144,51 +145,20 @@ dumpentryKey(VOID *key, VOID *data)
         printf("(NULL)\n");
     return;
 } /* dumpentryKey() */
+#endif /* AN_DEBUG */
 
 /* ------------------------ Private Internal Routines ---------------------*/
-
-/* ------------------------------- ANIfidcmp -------------------------------- 
- NAME
-	ANIfidcmp -- compare two annotation interface id's
-
- DESCRIPTION
-    Compares two annotation interface id's. Used by trees for file id's. 
-
- RETURNS
-    Returns 0 if i=j, -1 if i > j and 1 if i < j
-
- AUTHOR
-    GeorgeV.
-
- NOTE:- these file ID's are now refered to as annotation interface ID's
-
---------------------------------------------------------------------------- */
-intn
-ANIfidcmp(VOIDP i,   /* IN: annotation interfaced id (int32) */
-          VOIDP j,   /* IN: annotation interfaced id (int32) */
-          intn value /* not used */ )
-{
-    /* shut compiler up */
-    value = value;
-
-    if (*(int32 *)i == *(int32 *)j) 
-        return 0;
-    if (*(int32 *)i > *(int32 *)j) 
-        return -1; 
-    else 
-        return 1;
-} /* ANIfidcmp */
 
 /* ------------------------------- ANIanncmp -------------------------------- 
  NAME
 	ANIanncmp -- compare two annotation keys or id's
 
  DESCRIPTION
-        Compares two annotation keys. Used by tree for annotations
-        Also used to compare annotation id's since also 32 bit value.
+    Compares two annotation keys. Used by tree for annotations
+    Also used to compare annotation id's since also 32 bit value.
 
  RETURNS
-        Returns 0 if i=j, -1 if i > j and 1 if i < j
+    Returns 0 if i=j, -1 if i > j and 1 if i < j
 
  AUTHOR
     GeorgeV.
@@ -327,14 +297,14 @@ ANdestroy(void)
 
 /*--------------------------------------------------------------------------
  NAME
-       ANIaddentry -- add entry to corresponding annotation TBBT tree and 
-                      atom group.
+   ANIaddentry -- add entry to corresponding annotation TBBT tree and 
+                  atom group.
 
  DESCRIPTION
-       Adds annotation to correct tree and register with atom group
+   Adds annotation to correct tree and register with atom group
 
  RETURNS
-       annotation ID if successful and FAIL (-1) otherwise
+   annotation ID if successful and FAIL (-1) otherwise
 
  AUTHOR
     GeorgeV.
@@ -467,14 +437,14 @@ ANIaddentry(int32 an_id,    /* IN: annotation interface id */
 
 /*--------------------------------------------------------------------------
  NAME
-     ANIcreate_ann_tree --  create an annotation tree of 'type' for given file 
+   ANIcreate_ann_tree --  create an annotation tree of 'type' for given file 
 
  DESCRIPTION
-     Creates either a label or descritption annotation TBBT tree. 
+   Creates either a label or descritption annotation TBBT tree. 
 
  RETURNS
-     Number of annotations of 'type' in file if successful and 
-     FAIL (-1) otherwise
+   Number of annotations of 'type' in file if successful and 
+   FAIL (-1) otherwise
 
  AUTHOR
     GeorgeV.
@@ -889,13 +859,13 @@ ANIannlist(int32    an_id,    /* IN: annotation interface id */
 
 /*--------------------------------------------------------------------------
  NAME
-       ANIannlen -- get length of annotation givne annotation id
+   ANIannlen -- get length of annotation givne annotation id
 
  DESCRIPTION
-       Uses the annotation id to find ann_key & file_id
+   Uses the annotation id to find ann_key & file_id
 
  RETURNS
-       length of annotation if successful and FAIL (-1) otherwise
+   length of annotation if successful and FAIL (-1) otherwise
 
  AUTHOR
     GeorgeV.
@@ -979,14 +949,14 @@ ANIannlen(int32 ann_id /*  IN: annotation id */)
 
 /*--------------------------------------------------------------------------
  NAME
-       ANIreadann -- read annotation given ann_id
+   ANIreadann -- read annotation given ann_id
 
  DESCRIPTION
-       Gets tag and ref of annotation.  Finds DD for that annotation.
-       Reads the annotation, taking care of NULL terminator, if necessary.
+   Gets tag and ref of annotation.  Finds DD for that annotation.
+   Reads the annotation, taking care of NULL terminator, if necessary.
 
  RETURNS
-       SUCCEED (0) if successful and FAIL (-1) otherwise
+   SUCCEED (0) if successful and FAIL (-1) otherwise
 
  AUTHOR
     GeorgeV.
@@ -1117,14 +1087,14 @@ ANIreadann(int32 ann_id, /* IN: annotation id (handle) */
 
 /*--------------------------------------------------------------------------
  NAME
-       ANIwriteann -- write annotation given ann_id
+   ANIwriteann -- write annotation given ann_id
 
  DESCRIPTION
-       Checks for pre-existence of given annotation, replacing old one if it
-       exists. Writes out annotation.
+   Checks for pre-existence of given annotation, replacing old one if it
+   exists. Writes out annotation.
 
  RETURNS
-       SUCCEED (0) if successful and FAIL (-1) otherwise
+   SUCCEED (0) if successful and FAIL (-1) otherwise
 
  AUTHOR
     GeorgeV.
@@ -1722,17 +1692,19 @@ ANcreatef(int32    an_id,/* IN: annotation interface ID */
       {
       case AN_FILE_LABEL:
           ann_tag = DFTAG_FID;
-          ann_ref = 0; /* fake ref, will be replaced in ANIcreate() */
+          ann_ref = 0; /* initalize with invalid ref, 
+                          will be replaced in ANIcreate() */
           break;
       case AN_FILE_DESC:
           ann_tag = DFTAG_FD;
-          ann_ref = 0; /* fake ref, will be replaced in ANIcreate() */
+          ann_ref = 0; /* initialize with invalid ref, 
+                          will be replaced in ANIcreate() */
           break;
       default:
           HE_REPORT_GOTO("Bad annotation type for this call",FAIL);
       }
 
-    ret_value = (ANIcreate(an_id, ann_tag, ann_ref, type));
+    ret_value = ANIcreate(an_id, ann_tag, ann_ref, type);
 
   done:
     if(ret_value == FAIL)   
@@ -1796,7 +1768,7 @@ ANselect(int32    an_id, /* IN: annotation interface ID */
       }
 
     /* check index and adjust to 1 based for tbbtindx()*/
-    if(index >= 0 && index <= file_rec->an_num[type])
+    if(index >= 0 && index < file_rec->an_num[type])
         index++;
     else
         HE_REPORT_GOTO("bad index", FAIL);
@@ -1831,10 +1803,11 @@ ANselect(int32    an_id, /* IN: annotation interface ID */
 
  DESCRIPTION
    Find number of annotation of 'type' for the given element 
-   tag/ref pair.
+   tag/ref pair. Should not be used for File labels and
+   descriptions.
 
  RETURNS
-   Number of annotation found if successful and FAIL (-1) otherwise
+   Number of annotations found if successful and FAIL (-1) otherwise.
 
  AUTHOR
     GeorgeV.
@@ -1849,16 +1822,26 @@ ANnumann(int32    an_id,    /* IN: annotation interface id */
          uint16   elem_tag, /* IN: tag of item of which this is annotation */
          uint16   elem_ref  /* IN: ref of item of which this is annotation */ )
 {
-#ifdef LATER
     CONSTR(FUNC, "ANnumann");
-#endif /* LATER */
-    intn   ret_value;
+    intn   ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
     TRACE_ON(AN_mask, ID_ANnumann);
 #endif /* HAVE_PABLO */
 
+    /* deal with invalid types */
+    if(type == AN_FILE_LABEL || type == AN_FILE_DESC)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
     ret_value = ANInumann(an_id, type, elem_tag, elem_ref);
+
+  done:
+    if(ret_value == FAIL)   
+      { /* Error condition cleanup */
+
+      } /* end if */
+
+    /* Normal function cleanup */
 
 #ifdef HAVE_PABLO
     TRACE_OFF(AN_mask, ID_ANnumann);
@@ -1870,11 +1853,12 @@ ANnumann(int32    an_id,    /* IN: annotation interface id */
 /*--------------------------------------------------------------------------
  NAME
    ANannlist -- generate list of annotation ids of 'type' that 
-                 match the given element tag/ref 
+                match the given element tag/ref 
 
  DESCRIPTION
    Find and generate list of annotation ids of 'type' for the given 
-   element tag/ref pair
+   element tag/ref pair. Should not be used for File labels and
+   descriptions.
 
  RETURNS
    Number of annotations ids found if successful and FAIL (-1) otherwise
@@ -1893,16 +1877,26 @@ ANannlist(int32    an_id,      /* IN: annotation interface id */
           uint16   elem_ref,   /* IN: ref of item of which this is annotation */
           int32    ann_list[]  /* OUT: array of ann_id's that match criteria. */)
 {
-#ifdef LATER
     CONSTR(FUNC, "ANannlist");
-#endif /* LATER */
-    intn  ret_value;
+    intn  ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
     TRACE_ON(AN_mask, ID_ANannlist);
 #endif /* HAVE_PABLO */
 
+    /* deal with invalid types */
+    if(type == AN_FILE_LABEL || type == AN_FILE_DESC)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
     ret_value = ANIannlist(an_id, type, elem_tag, elem_ref, ann_list);
+
+  done:
+    if(ret_value == FAIL)   
+      { /* Error condition cleanup */
+
+      } /* end if */
+
+    /* Normal function cleanup */
 
 #ifdef HAVE_PABLO
     TRACE_OFF(AN_mask, ID_ANannlist);
@@ -1913,13 +1907,13 @@ ANannlist(int32    an_id,      /* IN: annotation interface id */
 
 /*--------------------------------------------------------------------------
  NAME
-       ANannlen -- get length of annotation givne annotation id
+   ANannlen -- get length of annotation givne annotation id
 
  DESCRIPTION
-       Uses the annotation id to find ann_key & file_id
+   Uses the annotation id to find ann_key & file_id
 
  RETURNS
-       length of annotation if successful and FAIL (-1) otherwise
+   length of annotation if successful and FAIL (-1) otherwise
 
  AUTHOR
     GeorgeV.
@@ -1947,14 +1941,14 @@ ANannlen(int32 ann_id /* IN: annotation id */)
 
 /*--------------------------------------------------------------------------
  NAME
-       ANwriteann -- write annotation given ann_id
+   ANwriteann -- write annotation given ann_id
 
  DESCRIPTION
-       Checks for pre-existence of given annotation, replacing old one if it
-       exists. Writes out annotation.
+   Checks for pre-existence of given annotation, replacing old one if it
+   exists. Writes out annotation.
 
  RETURNS
-       SUCCEED (0) if successful and FAIL (-1) otherwise
+   SUCCEED (0) if successful and FAIL (-1) otherwise
 
  AUTHOR
     GeorgeV.
@@ -1984,14 +1978,14 @@ ANwriteann(int32 ann_id,     /* IN: annotation id */
 
 /*--------------------------------------------------------------------------
  NAME
-       ANreadann -- read annotation given ann_id
+   ANreadann -- read annotation given ann_id
 
  DESCRIPTION
-       Gets tag and ref of annotation.  Finds DD for that annotation.
-       Reads the annotation, taking care of NULL terminator, if necessary.
+   Gets tag and ref of annotation.  Finds DD for that annotation.
+   Reads the annotation, taking care of NULL terminator, if necessary.
 
  RETURNS
-       SUCCEED (0) if successful and FAIL (-1) otherwise
+   SUCCEED (0) if successful and FAIL (-1) otherwise
 
  AUTHOR
     GeorgeV.
@@ -2055,16 +2049,17 @@ ANendaccess(int32 ann_id /* IN: annotation id */)
     return ret_value;
 } /* ANendaccess() */
 
-/* -------------------------------------------------------------- 
+/* ----------------------------------------------------------------------- 
  NAME
-	ANget_tagref - get tag/ref pair to annotation ID
+	ANget_tagref - get tag/ref pair for annotation based on type and index
 
  DESCRIPTION
-    The position index is zero based
+    Get the tag/ref of the annotation based on  the type and index of the 
+    annotation. The position index is zero based
 
  RETURNS
-    A tag/ref pairt to an annotation type which can either be a 
-    label or description given the annotation ID
+    A tag/ref pair for an annotation type which can either be a 
+    label or description.
 
  AUTHOR
     GeorgeV.
@@ -2072,7 +2067,7 @@ ANendaccess(int32 ann_id /* IN: annotation id */)
 --------------------------------------------------------------------------- */
 EXPORT int32
 ANget_tagref(int32    an_id, /* IN: annotation interface ID */
-             int32    index, /* IN: index of annottion to get tag/ref for */
+             int32    index, /* IN: index of annotation to get tag/ref for */
              ann_type type,  /* IN: AN_DATA_LABEL for data labels, 
                                     AN_DATA_DESC for data descriptions,
                                     AN_FILE_LABEL for file labels,
