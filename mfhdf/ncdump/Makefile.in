@@ -86,7 +86,7 @@ PORT_INC   = $(TOP_SRCDIR)/mfhdf/port
 CPP	   = $(CC) -E
 CFLAGS_NETCDF = 
 CPPFLAGS_HDF  = -DNDEBUG -DHDF $(FMPOOL_FLAGS)
-CPP_NETCDF    = -I. -I$(HDF_INC) -I$(FMPOOL_INC) -I$(NETCDF_INC) -I$(PORT_INC)
+CPP_NETCDF    = -I. -I$(HDF_INC) -I$(NETCDF_INC) -I$(PORT_INC)
 CPPFLAGS_LIB	= $(SWAP) $(NETLONG) 
 CPPFLAGS_XDR	= $(CPP_XDR) 
 CPPFLAGS_NETCDF =  $(CPPFLAGS_XDR) $(CPP_NETCDF) $(CPPFLAGS_LIB) $(CPPFLAGS_HDF) 
@@ -132,7 +132,13 @@ LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(JPEG_LIB) -lm
 prefix		= ../../..
 GARBAGE		= $(PROGRAM) test0.nc test1.nc test1.cdl test2.cdl
 
-all::		$(PROGRAM)
+#all::		$(PROGRAM)
+all::         FORCE
+	@if test -z "$(FMPOOL_FLAGS)"; then \
+	  $(MAKE) $(MFLAGS) $(PROGRAM); \
+	else		 \
+	  $(MAKE) $(MFLAGS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" $(PROGRAM); \
+	fi
 
 
 test:		$(PROGRAM) test0.cdl

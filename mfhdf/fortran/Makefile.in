@@ -86,7 +86,7 @@ PORT_INC   = $(TOP_SRCDIR)/mfhdf/port
 CPP	   = $(CC) -E
 CFLAGS_NETCDF = 
 CPPFLAGS_HDF  = -DNDEBUG -DHDF $(FMPOOL_FLAGS)
-CPP_NETCDF    = -I. -I$(HDF_INC) -I$(FMPOOL_INC) -I$(NETCDF_INC) -I$(PORT_INC)
+CPP_NETCDF    = -I. -I$(HDF_INC) -I$(NETCDF_INC) -I$(PORT_INC)
 CPPFLAGS_LIB	= $(SWAP) $(NETLONG) 
 CPPFLAGS_XDR	= $(CPP_XDR) 
 CPPFLAGS_NETCDF =  $(CPPFLAGS_XDR) $(CPP_NETCDF) $(CPPFLAGS_LIB) $(CPPFLAGS_HDF) 
@@ -166,13 +166,22 @@ LD_NETCDF	= $(srcdir)/../libsrc/libmfhdf.a
 LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(JPEG_LIB)
 prefix		= ../../..
 
+
 all::		FORCE
 	@case "$(FC)" in \
 	NONE*|none*) \
 	    echo 1>&2 "\`$@' not made because no FORTRAN compiler";; \
 	*) \
-	    $(MAKE) netcdf.inc $(REMOTE_LIBRARY);; \
+	    $(MAKE) $(MFLAGS) nall ; \
 	esac
+
+
+nall::         FORCE
+	@if test -z "$(FMPOOL_FLAGS)"; then \
+	  $(MAKE) $(MFLAGS) netcdf.inc $(REMOTE_LIBRARY); \
+	else		 \
+	  $(MAKE) $(MFLAGS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" netcdf.inc $(REMOTE_LIBRARY); \
+	fi
 
 test:		FORCE
 	@case "$(FC)" in \

@@ -86,7 +86,7 @@ PORT_INC   = $(TOP_SRCDIR)/mfhdf/port
 CPP	   = $(CC) -E
 CFLAGS_NETCDF = 
 CPPFLAGS_HDF  = -DNDEBUG -DHDF $(FMPOOL_FLAGS)
-CPP_NETCDF    = -I. -I$(HDF_INC) -I$(FMPOOL_INC) -I$(NETCDF_INC) -I$(PORT_INC)
+CPP_NETCDF    = -I. -I$(HDF_INC) -I$(NETCDF_INC) -I$(PORT_INC)
 CPPFLAGS_LIB	= $(SWAP) $(NETLONG) 
 CPPFLAGS_XDR	= $(CPP_XDR) 
 CPPFLAGS_NETCDF =  $(CPPFLAGS_XDR) $(CPP_NETCDF) $(CPPFLAGS_LIB) $(CPPFLAGS_HDF) 
@@ -151,7 +151,13 @@ LD_NETCDF	= libmfhdf.a
 LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(JPEG_LIB)
 prefix		= ../../..
 
-all::		library
+#all::		library
+all::         FORCE
+	@if test -z "$(FMPOOL_FLAGS)"; then \
+	  $(MAKE) $(MFLAGS) library; \
+	else		 \
+	  $(MAKE) $(MFLAGS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" library; \
+	fi
 
 #
 # The formatted file `cdftest_out.new' might differ from the touchstone
@@ -160,7 +166,7 @@ all::		library
 # `$(PROGRAM)' creates the binary-file `test.cdf' which should be byte-for-byte
 # identical with `test_cdf.sav', modulo small rounding errors.
 #
-test:		$(PROGRAM) hdftest
+test:		$(PROGRAM) nhdftest
 	./$(PROGRAM) > cdfout.new
 	@cmd="$(DIFF) $(DIFF_FLAGS) cdfout.new testout.sav"; \
 	    echo $$cmd; \
@@ -183,6 +189,13 @@ test:		$(PROGRAM) hdftest
 install::	installed_library installed_headers
 
 $(PROGRAM):	$(PROGRAM).o library
+
+nhdftest::         FORCE
+	@if test -z "$(FMPOOL_FLAGS)"; then \
+	  $(MAKE) $(MFLAGS) hdftest; \
+	else		 \
+	  $(MAKE) $(MFLAGS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" hdftest; \
+	fi
 
 hdftest:	hdftest.o library        
 	$(CC) $(CFLAGS) $(CFLAGS_NETCDF) hdftest.o $(LIBS) -o $@
