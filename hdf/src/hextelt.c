@@ -300,35 +300,17 @@ int32 HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_na
 /* ------------------------------------------------------------------------ 
 
  NAME
-	HXPsetaccesstype -- create an external element
+	HXPsetaccesstype -- set the access type of the external file
  USAGE
-	intn HXPsetaccesstype(file_id, tag, ref, ext_name, offset, len)
-        int32  file_id;      IN: file ID for HDF file
-        int16  tag;          IN: tag number for external elem
-        int16  ref;          IN: ref number for external elem
-        char * ext_name;     IN: external file name
-        int32  offset;       IN: offset where elem should start in ext file
-        int32  len;          IN: current len of element if already in
-                                 ext file (see desc below)
+	intn HXPsetaccesstype(access_rec)
+	accrec_t *access_rec IN/OUT: access record of the external element
  RETURNS
-        returns AID to external element or FAIL
+        SUCCEED if no error, else FAIL
  DESCRIPTION
-        Create a data element in an external file.  If that 
-        file already exists, we will simply *modify* that file, 
-        not delete it and start over.  Offset and start_len 
-        are for encapsulating data that already exists in a 
-        seperate file so that it can be referenced from the HDF file.
-
-        If the objext we are writing out already exists in an 
-        HDF file and is "promoted" then the start_len is ignored
-        since we already know its current length.  However, offset
-        is still respected
-
-        Return an AID to the newly created external element, FAIL 
-        on error.
+	Open the external file according to the access type specified.
 
 --------------------------------------------------------------------------*/ 
-intn HXPsetaccesstype(accrec_t *access_rec, uintn accesstype)
+intn HXPsetaccesstype(accrec_t *access_rec)
 {
     char *FUNC="HXPsetaccesstype";     /* for HERROR */
     hdf_file_t file_external;   /* external file descriptor */

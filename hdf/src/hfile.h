@@ -518,7 +518,7 @@ extern int32 HXPreset
     (accrec_t *access_rec, sp_info_block_t * info_block);
 
 extern intn HXPsetaccesstype
-    (accrec_t *access_rec, uintn accesstype);
+    (accrec_t *access_rec);
 
 
 /*

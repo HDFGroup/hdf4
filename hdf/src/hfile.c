@@ -2064,7 +2064,7 @@ printf("new access_type is %d\n", accesstype);
 #endif
     /* if special elt, call special function */
     if (access_rec->special)
-    	return(HXPsetaccesstype(access_rec, accesstype));
+    	return(HXPsetaccesstype(access_rec));
     return(SUCCEED);
 }   /* Hsetacceesstype() */
 
