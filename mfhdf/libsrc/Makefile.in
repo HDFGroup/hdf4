@@ -179,7 +179,9 @@ check_PROGRAMS = cdftest hdftest
 cdftest_SOURCES = cdftest.c
 cdftest_LDADD = libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 
-hdftest_SOURCES = hdftest.c tszip.c temptySDSs.c tidtypes.c trank0.c
+hdftest_SOURCES = hdftest.c tszip.c temptySDSs.c tidtypes.c trank0.c \
+		  tsd.c
+
 hdftest_LDADD = libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 
 
@@ -228,7 +230,8 @@ cdftest_OBJECTS = $(am_cdftest_OBJECTS)
 cdftest_DEPENDENCIES = libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 cdftest_LDFLAGS =
 am_hdftest_OBJECTS = hdftest.$(OBJEXT) tszip.$(OBJEXT) \
-	temptySDSs.$(OBJEXT) tidtypes.$(OBJEXT) trank0.$(OBJEXT)
+	temptySDSs.$(OBJEXT) tidtypes.$(OBJEXT) trank0.$(OBJEXT) \
+	tsd.$(OBJEXT)
 hdftest_OBJECTS = $(am_hdftest_OBJECTS)
 hdftest_DEPENDENCIES = libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 hdftest_LDFLAGS =
@@ -247,10 +250,10 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/putgetg.Po ./$(DEPDIR)/sharray.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/string.Po ./$(DEPDIR)/temptySDSs.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/tidtypes.Po ./$(DEPDIR)/trank0.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/tszip.Po ./$(DEPDIR)/var.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/xdr.Po ./$(DEPDIR)/xdrarray.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/xdrfloat.Po ./$(DEPDIR)/xdrposix.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/xdrstdio.Po
+@AMDEP_TRUE@	./$(DEPDIR)/tsd.Po ./$(DEPDIR)/tszip.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/var.Po ./$(DEPDIR)/xdr.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/xdrarray.Po ./$(DEPDIR)/xdrfloat.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/xdrposix.Po ./$(DEPDIR)/xdrstdio.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -347,6 +350,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/temptySDSs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tidtypes.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/trank0.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tsd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tszip.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/var.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdr.Po@am__quote@
