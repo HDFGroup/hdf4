@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.1  1992/08/24 20:56:31  sxu
+# Revision 1.2  1992/08/26 16:25:18  sxu
+# *** empty log message ***
+#
+# Revision 1.1  1992/08/24  20:56:31  sxu
 # Initial revision
 #
 #
