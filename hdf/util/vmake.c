@@ -51,6 +51,8 @@
  int32 savfld (char *,int, int);
  int32 savtype (char *,int, int);
  int32 separate(char *ss, char *, int*);
+ void showfmttypes(void);
+
 
 #endif
 
@@ -93,6 +95,15 @@ main(ac,av) int ac; char**av; {
 
   } /* main */
   
+void showfmttypes() {
+	fprintf(stderr,"\tvalid fmt types: \n");
+	fprintf(stderr,"\t  c - char (text) \n");
+	fprintf(stderr,"\t  b - byte \n"); 
+	fprintf(stderr,"\t  d - integer \n");
+	fprintf(stderr,"\t  l - long (32)\n");
+	fprintf(stderr,"\t  f - float \n");
+	}
+
 int show_help_msg()  {
 
     printf("\nvmake: creates vsets.\n");
@@ -107,7 +118,9 @@ int show_help_msg()  {
 	 printf("  v1,..,vn are refs of vgroups and vdatas\n");
     printf("  format is <field=fmt,field=fmt,..>\n");
     printf("    field is any text string\n");
-    printf("    fmt is one of [dlfcb] optionally preceded by a decimal.\n");
+    printf("    fmt is one of the following optionally preceded by a decimal.\n");
+	 showfmttypes();
+
     printf("\nTo create a vdata, vmake reads ascii data from stdin\n");
 
     printf("EXAMPLES:\n");
@@ -235,19 +248,18 @@ printf("vsadd: ref is %d\n",ref);
   allfields[0] = '\0';
   for (i=0;i<nfld;i++) {
 	  switch (type[i]) {
+		  case 'c': ftype = LOCAL_CHARTYPE;  break;
 		  case 'd': ftype = LOCAL_INTTYPE;   break;
 		  case 'f': ftype = LOCAL_FLOATTYPE; break;
-		  case 'c': ftype = LOCAL_CHARTYPE;  break;
 		  case 'l': ftype = LOCAL_LONGTYPE;  break;
-		  /* case 'b': ftype = LOCAL_BYTETYPE;  break; */
+		  
+		  case 'b': ftype = LOCAL_BYTETYPE;  break; 
+		  case 's': ftype = LOCAL_SHORTTYPE;  break; 
+		  case 'D': ftype = LOCAL_DOUBLETYPE;  break; 
+
 		  default:  fprintf(stderr,"bad type [%c]\n",type[i]); 
-		  				fprintf(stderr,"valid types: \n");
-		  				fprintf(stderr,"\t  d - integer \n");
-		  				fprintf(stderr,"\t  f - float \n");
-		  				fprintf(stderr,"\t  c - char (text) \n");
-		  				fprintf(stderr,"\t  l - long \n");
-		  				/* fprintf(stderr,"\t  b - byte \n"); */
-						exit(-1); 
+						showfmttypes();
+						exit(-1);
 						break;
 		  }
 	  stat = VSfdefine(vs,fields[i],ftype,order[i]);
@@ -298,11 +310,6 @@ static int32 inpfloat(x) float*x; { return(scanf ("%f ",x)); }
 static int32 inpchar (x) char *x; { return(scanf ("%c ",x)); }
 static int32 inplong (x) long *x; { return(scanf ("%ld ",x)); }
 
-/* printf functions */
-static int32 outchar (x) char *x; { putchar(*x);    return (1);   }
-static int32 outint  (x) int  *x; { printf("%d ",*x); return (1);}
-static int32 outfloat(x) float*x; { printf("%f ",*x); return (1);}
-static int32 outlong (x) long *x; { printf("%ld ",*x); return (1);}
 
 
 #define BUFSIZE 40000
@@ -312,24 +319,35 @@ int32 inpdata (bp) unsigned char**bp; {
   unsigned char *b;
   int32 maxrec;
   int32 (*inpfn[MAXVAR])();
-  int32 (*outfn[MAXVAR])();
   int32 inpsiz[MAXVAR];
   unsigned char inpbuffer[BUFSIZE];
 
      for(i=0;i<ntotal;i++) {
 	    switch(fmts[i]) {
-		   case 'd':
-		     outfn[i] = outint; inpfn[i]  = inpint; inpsiz[i] = sizeof(int);
-			  break;
-		   case 'f':
-			  outfn[i] = outfloat; inpfn[i]  = inpfloat; inpsiz[i] = sizeof(float);
-			  break;
+
 		   case 'c':
-			  outfn[i]  = outchar; inpfn[i]  = inpchar; inpsiz[i] = sizeof(char);
+			  inpfn[i]  = inpchar; inpsiz[i] = sizeof(char);
 			  break;
+
+		   case 'b':
+			  inpfn[i]  = inpchar; inpsiz[i] = sizeof(char);
+			  break;
+
+		   case 'd':
+		     inpfn[i]  = inpint; inpsiz[i] = sizeof(int);
+			  break;
+
 		   case 'l':
-			  outfn[i]  = outlong; inpfn[i]  = inplong; inpsiz[i] = sizeof(long);
+			  inpfn[i]  = inplong; inpsiz[i] = sizeof(long);
 			  break;
+
+
+		   case 'f':
+			  inpfn[i] = inpfloat; inpsiz[i] = sizeof(float);
+			  break;
+
+
+			default: printf("inpdata: fmt routine for [%c] not ready\n",fmts[i]);
 		   } 
 	    }
      for (totalsize=0, i=0;i<ntotal;i++) totalsize  += (fords[i]*inpsiz[i]); 
