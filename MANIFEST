@@ -8,6 +8,7 @@
 
 ./COPYING
 ./INSTALL
+./INSTALL-4.2r0-Beta
 ./Makefile.am
 ./Makefile.in
 ./MAKEVMS.COM
