@@ -1,6 +1,6 @@
 .\" WARNING! THIS FILE WAS GENERATED AUTOMATICALLY BY c2man!
 .\" DO NOT EDIT! CHANGES MADE TO THIS FILE WILL BE LOST!
-.TH "mfan" 3 "26 September 1995" "c2man mfan.h"
+.TH "mfan" 3 "2 October 1996" "c2man mfan.h"
 .SH "NAME"
 ANstart,
 ANfileinfo,
@@ -13,7 +13,12 @@ ANannlist,
 ANannlen,
 ANwriteann,
 ANreadann,
-ANendaccess \- Multi-file Annotation Interface
+ANendaccess,
+ANget_tagref,
+ANid2tagref,
+ANtagref2id,
+ANatype2tag,
+ANtag2atype \- Multi-File Annotation Routines
 .SH "SYNOPSIS"
 .ft B
 #include <mfan.h>
@@ -112,7 +117,7 @@ extern int32 ANwriteann
 .br
 	int32 ann_id,
 .br
-	char *ann,
+	const char *ann,
 .br
 	int32 annlen
 .br
@@ -131,6 +136,50 @@ extern int32 ANreadann
 );
 .sp
 extern intn ANendaccess(int32 ann_id);
+.sp
+extern int32 ANget_tagref
+.br
+(
+.br
+	int32 an_id,
+.br
+	int32 index,
+.br
+	ann_type type,
+.br
+	uint16 *ann_tag,
+.br
+	uint16 *ann_ref
+.br
+);
+.sp
+extern int32 ANid2tagref
+.br
+(
+.br
+	int32 ann_id,
+.br
+	uint16 *ann_tag,
+.br
+	uint16 *ann_ref
+.br
+);
+.sp
+extern int32 ANtagref2id
+.br
+(
+.br
+	int32 an_id,
+.br
+	uint16 ann_tag,
+.br
+	uint16 ann_ref
+.br
+);
+.sp
+extern uint16 ANatype2tag(ann_type atype);
+.sp
+extern ann_type ANtag2atype(uint16 atag);
 .ft R
 .SH "PARAMETERS"
 .TP
@@ -174,11 +223,20 @@ Possible values for an \fBann_type\fR are as follows:
 .nr TL \w'AN_DATA_LABEL'u+0.2i
 .ft R
 .TP \n(TLu
+\fBAN_UNDEF\fR
+
+.TP \n(TLu
 \fBAN_DATA_LABEL\fR
 Data label.
 .TP \n(TLu
 \fBAN_DATA_DESC\fR
 Data description.
+.TP \n(TLu
+\fBAN_FILE_LABEL\fR
+File label.
+.TP \n(TLu
+\fBAN_FILE_DESC\fR
+File description.
 .RE
 .PD
 .TP
@@ -192,6 +250,15 @@ Possible values for an \fBann_type\fR are as follows:
 .nr TL \w'AN_DATA_LABEL'u+0.2i
 .ft R
 .TP \n(TLu
+\fBAN_UNDEF\fR
+
+.TP \n(TLu
+\fBAN_DATA_LABEL\fR
+Data label.
+.TP \n(TLu
+\fBAN_DATA_DESC\fR
+Data description.
+.TP \n(TLu
 \fBAN_FILE_LABEL\fR
 File label.
 .TP \n(TLu
@@ -200,7 +267,7 @@ File description.
 .RE
 .PD
 .TP
-.B "int32 index"
+.BR "int32 index" "	(ANselect)"
 IN: index of annottion to get ID for.
 .TP
 .BR "int32 an_id" "	(ANnumann)"
@@ -218,7 +285,7 @@ OUT: array of ann_id's that match criteria.
 .BR "int32 ann_id" "	(ANannlen)"
 IN: annotation id.
 .TP
-.BR "char *ann" "	(ANwriteann)"
+.B "const char *ann"
 IN: annotation to write.
 .TP
 .B "int32 annlen"
@@ -227,11 +294,59 @@ IN: length of annotation.
 .BR "int32 ann_id" "	(ANreadann)"
 IN: annotation id (handle).
 .TP
-.BR "char *ann" "	(ANreadann)"
+.B "char *ann"
 OUT: space to return annotation in.
 .TP
 .B "int32 maxlen"
 IN: size of space to return annotation in.
+.TP
+.BR "int32 index" "	(ANget_tagref)"
+IN: index of annottion to get tag/ref for.
+.TP
+.B "uint16 *ann_tag"
+OUT: Tag for annotation.
+.TP
+.B "uint16 *ann_ref"
+OUT: ref for annotation.
+.TP
+.BR "int32 an_id" "	(ANtagref2id)"
+IN  Annotation interface id.
+.TP
+.B "uint16 ann_tag"
+IN: Tag for annotation.
+.TP
+.B "uint16 ann_ref"
+IN: ref for annotation.
+.TP
+.B "ann_type atype"
+IN: Annotation type.
+.sp
+Possible values for an \fBann_type\fR are as follows:
+.RS 0.75in
+.PD 0
+.ft B
+.nr TL \w'AN_DATA_LABEL'u+0.2i
+.ft R
+.TP \n(TLu
+\fBAN_UNDEF\fR
+
+.TP \n(TLu
+\fBAN_DATA_LABEL\fR
+Data label.
+.TP \n(TLu
+\fBAN_DATA_DESC\fR
+Data description.
+.TP \n(TLu
+\fBAN_FILE_LABEL\fR
+File label.
+.TP \n(TLu
+\fBAN_FILE_DESC\fR
+File description.
+.RE
+.PD
+.TP
+.B "uint16 atag"
+IN: annotation tag.
 .SH "DESCRIPTION"
 .SS "ANstart"
 Start annotation handling on the file return a annotation ID to the file.
@@ -270,6 +385,17 @@ Gets tag and ref of annotation.  Finds DD for that annotation.
 Reads the annotation, taking care of NULL terminator, if necessary.
 .SS "ANendaccess"
 Terminates access to an annotation. For now does nothing.
+.SS "ANget_tagref"
+The position index is zero based.
+.SS "ANid2tagref"
+Uses the annotation id to find ann_node entry which contains ann_ref.
+.SS "ANtagref2id"
+Gets the annotation id of the annotation given the tag/ref of
+the annotation itself and the annotation interface id.
+.SS "ANatype2tag"
+Translate annotation type to corresponding TAG.
+.SS "ANtag2atype"
+Translate annotation TAG to corresponding atype.
 .SH "RETURNS"
 .SS "ANstart"
 A file ID or FAIL.
@@ -294,7 +420,42 @@ SUCCEED (0) if successful and FAIL (-1) otherwise.
 .SS "ANreadann"
 SUCCEED (0) if successful and FAIL (-1) otherwise.
 .SS "ANendaccess"
-SUCCEED or FAIL.
+SUCCEED(0) or FAIL(-1)
+.SS "ANget_tagref"
+A tag/ref pairt to an annotation type which can either be a
+label or description given the annotation ID.
+.SS "ANid2tagref"
+SUCCEED(0) if successful and FAIL (-1) otherwise.
+.SS "ANtagref2id"
+Annotation id of annotation if successful and FAIL(-1) otherwise.
+.SS "ANatype2tag"
+Returns TAG corresponding to annotatin type.
+.SS "ANtag2atype"
+Returns type corresponding to annotatin TAG.
+.sp
+Possible values for an \fBextern ann_type\fR are as follows:
+.RS 0.75in
+.PD 0
+.ft B
+.nr TL \w'AN_DATA_LABEL'u+0.2i
+.ft R
+.TP \n(TLu
+\fBAN_UNDEF\fR
+
+.TP \n(TLu
+\fBAN_DATA_LABEL\fR
+Data label.
+.TP \n(TLu
+\fBAN_DATA_DESC\fR
+Data description.
+.TP \n(TLu
+\fBAN_FILE_LABEL\fR
+File label.
+.TP \n(TLu
+\fBAN_FILE_DESC\fR
+File description.
+.RE
+.PD
 .SH "NAME"
 .SS "ANstart"
 ANstart - open file for annotation handling.
@@ -320,3 +481,13 @@ ANwriteann - write annotation given ann_id.
 ANreadann - read annotation given ann_id.
 .SS "ANendaccess"
 ANendaccess - end access to an annotation given it's id.
+.SS "ANget_tagref"
+ANget_tagref - get tag/ref pair to annotation ID.
+.SS "ANid2tagref"
+ANid2tagref -- get tag/ref given annotation id.
+.SS "ANtagref2id"
+ANtagref2id -- get annotation id given tag/ref.
+.SS "ANatype2tag"
+ANatype2tag - annotation type to corresponding annotation TAG.
+.SS "ANtag2atype"
+ANtag2atype - annotation TAG to corresponding annotation type.
