@@ -319,6 +319,7 @@ extern int32 VSwrite
 #   define  nvsfexc  FNAME(VSFEXC)
 #   define  nvsfndc  FNAME(VSFNDC)
 #   define  nvsgidc  FNAME(VSGIDC)
+#   define  nvsdltc  FNAME(VSDLTC)
 #   define  nvssnamc FNAME(VSSNAMC)
 #   define  nvssclsc FNAME(VSSCLSC)
 #   define  nvssfldc FNAME(VSSFLDC)
@@ -368,6 +369,7 @@ extern int32 VSwrite
 #   define  nvsfexc  FNAME(vsfexc)
 #   define  nvsfndc  FNAME(vsfndc)
 #   define  nvsgidc  FNAME(vsgidc)
+#   define  nvsdltc  FNAME(vsdltc)
 #   define  nvssnamc FNAME(vssnamc)
 #   define  nvssclsc FNAME(vssclsc)
 #   define  nvssfldc FNAME(vssfldc)
@@ -464,6 +466,9 @@ extern FRETVAL(intf) nvsfndc
     (HFILEID _HUGE *f, _fcd name, intf _HUGE *namelen);
 
 extern FRETVAL(intf) nvsgidc
+    (HFILEID _HUGE *f, intf _HUGE *vsid);
+
+extern FRETVAL(intf) nvsdltc
     (HFILEID _HUGE *f, intf _HUGE *vsid);
 
 extern FRETVAL(intf) nvssnamc

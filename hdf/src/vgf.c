@@ -422,6 +422,18 @@ nvsgidc(HFILEID *f, intf *vsid)
 }
 
 /* ------------------------------------------------------------------ */
+/*
+**  removes the vdata with id from the file
+**  related: VSdelete--vsdltc--VSFDLTE
+*/
+
+    FRETVAL(intf)
+nvsdltc(HFILEID *f, intf *vsid)
+{
+    return( (intf) VSdelete(*f, *vsid) );
+}
+
+/* ------------------------------------------------------------------ */
 /* 
 **  sets the name of a vdata
 **  related: VSsetname--vssnamc--VSFSNAM

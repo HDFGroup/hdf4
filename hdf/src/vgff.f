@@ -284,6 +284,17 @@ c     related: VSgetid--vsgidc--vsfgid
       vsfgid = vsgidc (f, vsid)
       end
 
+c  ------------------------------------------------------------
+c     remove the vdata with id from the file
+c     related: VSdelete--vsdltc--vsfdlte
+
+      integer  function vsfdlte (f, vsid)
+      integer     f, vsid
+      integer     vsdltc
+
+      vsfdlte = vsdltc (f, vsid)
+      end
+
 c     ------------------------------------------------------------
 c     sets the name of a vdata
 c     related: VSsetname--vssnamc--vsfsnam
