@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/08/26 19:44:25  chouck
+Moved HDgettagname() into hkit.c and added calibration tag
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*LINTLIBRARY*/
 /*+
@@ -2440,147 +2443,6 @@ int HDerr(file_id)
     return FAIL;
 }
 
-
-/*--------------------------------------------------------------------------
- *  HDgettagname(tag) : map a tag to its corresponding name
- *                      return NULL if tag is unknown.
- *
- *  NOTE: Please keep tag names <= 30 characters - a 
- *        lot of pretty-printing code depends on it.
---------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
-char *HDgettagname(uint16 tag)
-#else
-char *HDgettagname(tag)
-     uint16 tag;
-#endif /* PROTOTYPE */
-{
-
-  char *name;
-
-  switch(tag) {
-    
-    /* Utility Tags */
-  case DFTAG_NULL  :
-    name = "No Data"; break;
-  case DFTAG_VERSION :
-    name = "Version Descriptor"; break;
-  case DFTAG_LINKED :
-    name = "Linked Blocks Indicator"; break;
-  case DFTAG_FID   : 
-    name = "File Identifier"; break;
-  case DFTAG_FD    :   
-    name = "File Description"; break;
-  case DFTAG_TID   :
-    name = "Tag Identifier"; break;
-  case DFTAG_TD    : 
-    name = "Tag Description"; break;
-  case DFTAG_DIL   :
-    name = "Data Id Label"; break;
-  case DFTAG_DIA   :    
-    name = "Data Id Annotation"; break;
-  case DFTAG_NT    :    
-    name = "Number type"; break;
-  case DFTAG_MT    :   
-    name = "Machine type"; break;
-
-    /* raster-8 Tags */
-  case DFTAG_ID8   :   
-    name = "Image Dimensions-8"; break;
-  case DFTAG_IP8   :   
-    name = "Image Palette-8"; break;
-  case DFTAG_RI8   :  
-    name = "Raster Image-8"; break;
-  case DFTAG_CI8   : 
-    name = "RLE Compressed Image-8"; break;
-  case DFTAG_II8   :  
-    name = "Imcomp Image-8"; break;
-
-    /* Raster Image Tags */
-  case DFTAG_ID    :  
-    name = "Image Dimensions"; break;
-  case DFTAG_LUT   :  
-    name = "Image Palette"; break;
-  case DFTAG_RI    : 
-    name = "Raster Image Data"; break;
-  case DFTAG_CI    :  
-    name = "Compressed Image"; break;
-  case DFTAG_RIG   : 
-    name = "Raster Image Group"; break;
-  case DFTAG_LD    : 
-    name = "Palette Dimension"; break;
-  case DFTAG_MD    :
-    name = "Matte Dimension"; break;
-  case DFTAG_MA    :
-    name = "Matte Data"; break;
-  case DFTAG_CCN   :   
-    name = "Color Correction"; break;
-  case DFTAG_CFM   : 
-    name = "Color Format"; break;
-  case DFTAG_AR    :   
-    name = "Aspect Ratio"; break;
-  case DFTAG_DRAW  :
-   name = "Sequenced images"; break;
-  case DFTAG_RUN   :   
-    name = "Runable program / script"; break;
-  case DFTAG_XYP   : 
-   name = "X-Y position"; break;
-  case DFTAG_MTO   :  
-    name = "M/c-Type override"; break;
-
-    /* Tektronix */
-  case DFTAG_T14   :   
-    name = "TEK 4014 Data"; break;
-  case DFTAG_T105  :
-    name = "TEK 4105 data"; break;
-    
-    /* Compression Schemes */
-  case DFTAG_RLE   : 
-    name = "Run Length Encoding"; break;
-  case DFTAG_IMCOMP : 
-    name = "IMCOMP Encoding"; break;
-
-    /* Scientific / Numeric Data Sets */
-  case DFTAG_SDG   : 
-    name = "Scientific Data Group"; break;
-  case DFTAG_NDG   : 
-    name = "Numeric Data Group"; break;
-  case DFTAG_SD    :
-    name = "Scientific Data"; break;
-  case DFTAG_SDD   : 
-    name = "SciData description"; break;
-  case DFTAG_SDL   :   
-    name = "SciData labels"; break;
-  case DFTAG_SDU   : 
-    name = "SciData units"; break;
-  case DFTAG_SDF   :  
-    name = "SciData formats"; break;
-  case DFTAG_SDS   :  
-    name = "SciData scales"; break;
-  case DFTAG_SDM   :  
-    name = "SciData max/min"; break;
-  case DFTAG_SDC   :  
-    name = "SciData coordsys"; break;
-  case DFTAG_SDT   :  
-    name = "Transpose"; break;
-  case DFTAG_SDLNK   :  
-    name = "Links related to the dataset"; break;
-
-    /* V Group Tags */
-  case DFTAG_VG   :  
-    name = "Vgroup"; break;
-  case DFTAG_VH   : 
-    name = "Vdata"; break;
-  case DFTAG_VS   : 
-    name = "Vdata Storage"; break;
-  default:
-    name = (char *) NULL;
-    break;
-  }
-
-  return name;
-
-}
 
 /*==========================================================================
 
