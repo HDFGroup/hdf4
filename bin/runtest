@@ -574,8 +574,7 @@ if [ -z "$NOCVS" -a ! -f $CVSLOG ]; then
 	exit $errcode
     fi
     PRINT Checking MAINFEST file ...
-    echo '*** NO bin/chkmanifest yet ***'
-    #(cd $SNAPYARD/current; bin/chkmanifest)
+    (cd $SNAPYARD/current; bin/chkmanifest)
     errcode=$?
     if [ $errcode -ne 0 ]; then
 	# test failed.
