@@ -107,8 +107,23 @@ AC_PROG_MAKE_SET
 
 AC_PROG_CC
 AC_PROG_CPP
-AC_PROG_F77
 AC_PROG_CXX
+
+AC_ARG_ENABLE([fortran],
+              [AC_HELP_STRING([--with-fortran],
+                              [Build Fortran into library [default=yes]])])
+
+case "$enableval" in
+  yes)
+    BUILD_FORTRAN="yes"
+    AC_PROG_F77
+    ;;
+  no)
+    BUILD_FORTRAN="no"
+    ;;
+esac
+
+AM_CONDITIONAL([HDF_BUILD_FORTRAN], [test "$BUILD_FORTRAN" = "yes"])
 
 AC_PROG_INSTALL
 AM_PROG_LEX
@@ -154,7 +169,7 @@ dnl If the library path is specified then it must be preceded by a comma.
 AC_ARG_WITH([zlib],
             [AC_HELP_STRING([--with-zlib=DIR],
                             [Use zlib library [default=yes]])],,
-            withval=yes)
+            [withval=yes])
 
 case "$withval" in
   yes)
@@ -216,7 +231,7 @@ dnl Is the JPEG library present?
 AC_ARG_WITH([jpeg],
             [AC_HELP_STRING([--with-jpeg=DIR],
                             [Use jpeg library [default=yes]])],,
-            withval=yes)
+            [withval=yes])
 
 case "$withval" in
   yes)
@@ -278,7 +293,7 @@ dnl Is the SZip library present?
 AC_ARG_WITH([szlib],
             [AC_HELP_STRING([--with-szlib=DIR],
                             [Use szlib library [default=yes]])],,
-            withval=no)
+            [withval=no])
 
 case "$withval" in
   yes)
@@ -354,7 +369,7 @@ AC_TRY_LINK([
 #include <rpc/xdr.h>], [xdr_int],
             [AC_MSG_RESULT([yes]); build_xdr="no"],
             [AC_MSG_RESULT([no]); build_xdr="yes"])
-AM_CONDITIONAL(HDF_BUILD_XDR, test "X$build_xdr" = "Xyes")
+AM_CONDITIONAL([HDF_BUILD_XDR], [test "X$build_xdr" = "Xyes"])
 
 dnl For Solaris and Fuji systems, add the -nsl for XDR support
 case "$host" in
@@ -385,8 +400,11 @@ dnl Checks for compiler characteristics
 dnl ======================================================================
 
 AC_PROG_CC_C_O
-AC_PROG_F77_C_O
 AC_PROG_CXXCPP
+
+if test "$BUILD_FORTRAN" = "yes"; then
+  AC_PROG_F77_C_O
+fi
 
 dnl This is a bit of a hack. The AC_CHECK_SIZEOF macro is supposed to
 dnl #define a value in a header file. However, we don't use a generated

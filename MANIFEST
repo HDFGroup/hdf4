@@ -27,6 +27,7 @@
 ./bin/install-sh
 ./bin/missing
 ./bin/mkinstalldirs
+./bin/regenerate.sh
 ./bin/runtest
 ./bin/snapshot
 
