@@ -2258,6 +2258,9 @@ int32    id, nt;
 #endif
                 (*dp)->type = hdf_unmap_type((intn)nt);
                 (*dp)->HDFtype = nt;
+                   /* don't forget to reset the sizes  */
+                (*dp)->szof = NC_typelen((*dp)->type);
+                (*dp)->HDFsize = DFKNTsize(nt);
                 
                 /* recompute all of the shape information */
                 /* BUG: this may be a memory leak ??? */
