@@ -7049,6 +7049,11 @@ _ACEOF
 
 if test $ac_cv_sizeof_intp -ge 8; then
   CPPFLAGS="$CPPFLAGS -DBIG_LONGS"
+
+    case "${host}" in
+    *-ibm-aix*) CPPFLAGS="$CPPFLAGS -DAIX5L64" ;;
+    *)          ;;
+  esac
 fi
 
 echo "$as_me:$LINENO: checking whether byte ordering is bigendian" >&5

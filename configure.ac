@@ -345,6 +345,12 @@ AC_CHECK_SIZEOF([int*])
 
 if test $ac_cv_sizeof_intp -ge 8; then
   CPPFLAGS="$CPPFLAGS -DBIG_LONGS"
+
+  dnl Define super secret special flag for AIX machines in 64-bit mode.
+  case "${host}" in
+    *-ibm-aix*) CPPFLAGS="$CPPFLAGS -DAIX5L64" ;;
+    *)          ;;
+  esac
 fi
 
 AC_C_BIGENDIAN([], [CPPFLAGS="$CPPFLAGS -DSWAP"])
