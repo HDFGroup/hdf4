@@ -38,6 +38,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "tproto.h"
 #include <time.h>
+#include <limits.h>
 
 /* Substitute bogus value if CLOCKS_PER_SEC is unavailable */
 #ifndef CLOCKS_PER_SEC
