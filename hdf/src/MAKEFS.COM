@@ -5,9 +5,11 @@ $!
 $ type sys$input
 	Compiling Fortran stubs
 $ ffiles="df24Ff.f, dfFf.f, dfpFf.f, dfr8Ff.f, dfanFf.f, dfsdFf.f, "+-
-"hfileFf.f, vgFf.f"
-$ fobj="dfFf, dfsdFf, dfr8Ff, df24Ff, dfanFf, dfpFf, vgFf, hfileFf"
-$ cobj="dfF,  dfsdF,  dfr8F,  df24F,  dfanF,  dfpF,  vgF,  hfileF, dfutilF"
+"hfileFf.f, vgFf.f, dfufp2if.f"
+$ fobj="dfFf, dfsdFf, dfr8Ff, df24Ff, dfanFf, dfpFf, vgFf, hfileFf, "+-
+       "dfufp2if"
+$ cobj="dfF,  dfsdF,  dfr8F,  df24F,  dfanF,  dfpF,  vgF,  hfileF, "+-
+       "dfutilF, herrf"
 $ fortran 'ffiles
 $ cc/define=VMS 'cobj
 $ library/insert df 'cobj

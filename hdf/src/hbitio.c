@@ -341,8 +341,8 @@ uint32 *data;            /* Actual bits to output */
               } /* end if */
             bitfile_rec->bytez=n+(bitfile_rec->bytep=bitfile_rec->bytea);
           } /* end if */
-        l=*(bitfile_rec->bytep++);
-        b|=l<<(count-=BITNUM);
+        l = *(bitfile_rec->bytep++);
+        b |= l << (count-=BITNUM);
       } /* end while */
 
     /* split any partial request with the bits buffer */
@@ -357,7 +357,7 @@ uint32 *data;            /* Actual bits to output */
             bitfile_rec->bytez=n+(bitfile_rec->bytep=bitfile_rec->bytea);
           } /* end if */
         bitfile_rec->count=(BITNUM-count);
-        l=bitfile_rec->bits=*(bitfile_rec->bytep++);
+        l=bitfile_rec->bits = *(bitfile_rec->bytep++);
         b|=l>>bitfile_rec->count;
       } /* end if */
     else

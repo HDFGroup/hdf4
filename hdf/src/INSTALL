@@ -13,14 +13,13 @@ to modify certain lines in order to configure the Makefile for your
 particular system.
 
 Make targets available are :
-make            -- compile and install library and utilities
-make all        -- compile and install library and utilities
-make allnostub  -- compile and install library without
-	           Fortran stub routines, and utilities
+make            -- compile and install library 
+make all        -- compile and install library
 make libdf.a    -- compile library
-make libnostub  -- compile library with Fortran stub routines
-make utils      -- compile utilities
-make install    -- install library and utilities
+make nofortran  -- compile and install library, only C interface
+make libnostub  -- same as make nofortran
+make libnofortran  -- compile library and only C interface
+make install_it    -- install library 
 make clean      -- rm intermediate files
 make cleanup    -- rm all make products
 
@@ -53,20 +52,26 @@ Similarly:
 
      ------------ Compiling C programs with HDF ----------------
 
-To use HDF routines in your program, use "#include dfrig.h", "#include dfsd.h"
-etc. at the top of your program, depending on the Sets you are using.
-Call the appropriate HDF routines as described in the documentation. 
-Compile your C program "myprog.c" as follows:
+To use HDF routines in your program, you must have the line
+'#include "hdf.h"' near the beginning of your code.  You may also
+need to include additional header files (eg. dfrig.h or dfsd.h, etc),
+depending on the interfaces you are using.  Call the appropriate
+HDF routines as described in the documentation. 
+Compile a C program called "myprog.c" as follows:
 
     cc myprog.c libdf.a -o myprog
+or
+    cc myprog.c -o myprog -ldf
 
-If the include file "dfrig.h" is in the directory "incdir", and the 
+If the include files are in the directory "incdir", and the 
 library file "libdf.a" is in "libdir", use
 
     cc -Iincdir myprog.c libdir/libdf.a -o myprog
+or
+    cc -Iincdir myprog.c -o myprog -L libdir -ldf
 
 
-           ------------ Testing HDF ----------------
+    ------------ Testing HDF ----------------
 
 A partial test suite should be included in this distribution.
 A Makefile and instructions are included with this test suite.
