@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.4  1992/08/12 22:30:23  dilg
+# Revision 1.5  1992/08/26 16:25:18  sxu
+# Added SHELL
+#
+# Revision 1.4  1992/08/12  22:30:23  dilg
 # Reincarnated all machine-specific Makefiles from generic Makefile.
 #
 # Revision 1.4  1992/08/05  21:47:57  chouck
@@ -64,7 +67,8 @@
 #   SUN, IBM6000, HP9000, MIPSEL (Dec Mips based machines), ...
 #
 
-
+# Define your sh shell
+SHELL=/bin/sh
 
 # Define your machine type
 MACHINE=CONVEX
