@@ -21,7 +21,10 @@
 #include "hrepack_parse.h"
 #include "hrepack_opttable.h"
 
-
+int check_szip_params( int bits_per_pixel, 
+                       int pixels_per_block, 
+                       int pixels_per_scanline, 
+                       long image_pixels);
 
 
 /*-------------------------------------------------------------------------
@@ -46,6 +49,7 @@ int  options_get_info(options_t      *options,     /* global options */
                       comp_coder_t   *comp_type,   /* compression type OUT  */
                       int            rank,         /* rank of object IN */
                       char           *path,        /* path of object IN */
+                      int            ncomps,       /* number of GR image planes (for SZIP), IN */
                       int32          *dimsizes,    /* dimensions (for SZIP), IN */
                       int32          dtype         /* numeric type (for SZIP), IN */
                       )
@@ -102,7 +106,7 @@ int  options_get_info(options_t      *options,     /* global options */
      break;
      
     case COMP_CODE_SZIP:
-     if (set_szip (rank,dimsizes,dtype,&c_info)==FAIL)
+     if (set_szip (rank,dimsizes,dtype,ncomps,&c_info)==FAIL)
      {
       printf( "Error: Failed to get SZIP compression for <%s>\n", path);
       return -1;
@@ -180,7 +184,7 @@ int  options_get_info(options_t      *options,     /* global options */
       break;
 
      case COMP_CODE_SZIP:
-      if (set_szip (rank,dimsizes,dtype,&c_info)==FAIL)
+      if (set_szip (rank,dimsizes,dtype,ncomps,&c_info)==FAIL)
       {
        printf( "Error: Failed to get SZIP compression for <%s>\n", path);
        return -1;
@@ -256,7 +260,7 @@ int  options_get_info(options_t      *options,     /* global options */
     break;
     
    case COMP_CODE_SZIP:
-    if (set_szip (rank,dimsizes,dtype,&c_info)==FAIL)
+    if (set_szip (rank,dimsizes,dtype,ncomps,&c_info)==FAIL)
     {
      printf( "Error: Failed to get SZIP compression for <%s>\n", path);
      return -1;
@@ -321,7 +325,7 @@ int  options_get_info(options_t      *options,     /* global options */
     break;
     
    case COMP_CODE_SZIP:
-    if (set_szip (rank,dimsizes,dtype,&c_info)==FAIL)
+    if (set_szip (rank,dimsizes,dtype,ncomps,&c_info)==FAIL)
     {
      printf( "Error: Failed to get SZIP compression for <%s>\n", path);
      return -1;
@@ -367,25 +371,33 @@ int  options_get_info(options_t      *options,     /* global options */
  *-------------------------------------------------------------------------
  */
 
-int set_szip(int32 rank, int32 *dim_sizes, int32 dtype, comp_info *c_info)
+int set_szip(int32 rank, 
+             int32 *dim_sizes, 
+             int32 dtype,
+             int   ncomps,
+             comp_info *c_info)
 {
- int32	pixels_per_scanline;
  int   i;
 
- pixels_per_scanline               = dim_sizes[rank-1];
+ c_info->szip.pixels_per_scanline  = dim_sizes[rank-1]*ncomps;
  c_info->szip.pixels               = 1;
  for ( i = 0; i < rank; i++)
  {
   c_info->szip.pixels             *= dim_sizes[i];
  }
- c_info->szip.pixels_per_block     = 2;
- if(pixels_per_scanline >=2048)
-  c_info->szip.pixels_per_scanline = 512;
- else
-  c_info->szip.pixels_per_scanline = dim_sizes[rank-1];
+ c_info->szip.pixels              *= ncomps;
  
+ /* 
+  Contions to meet 
+  1) pixels must be an integer multiple of pixels per scanline (set by definition of PPS)
+  2) pixels_per_block must be an even number, and <= pixels_per_scanline 
+     and <= MAX_PIXELS_PER_BLOCK
+  */
+
+ c_info->szip.pixels_per_block=2;
  c_info->szip.options_mask = NN_OPTION_MASK;
  c_info->szip.options_mask |= RAW_OPTION_MASK;
+ c_info->szip.compression_mode = NN_MODE;
  
  switch(dtype) 
  {
@@ -413,11 +425,111 @@ int set_szip(int32 rank, int32 *dim_sizes, int32 dtype, comp_info *c_info)
   return -1;
  }
 
- return 0;
+
+ return check_szip_params( c_info->szip.bits_per_pixel, 
+                           c_info->szip.pixels_per_block, 
+                           c_info->szip.pixels_per_scanline, 
+                           c_info->szip.pixels);
+
+}
+
+/*-------------------------------------------------------------------------
+ * Function: check_szip_params
+ *
+ * Purpose: Adapted from rice.c. Checks the SZIP parameters
+ *
+ * Return: 0 for OK, -1 otherwise
+ *
+ *-------------------------------------------------------------------------
+ */
+
+int check_szip_params( int bits_per_pixel, 
+                       int pixels_per_block, 
+                       int pixels_per_scanline, 
+                       long image_pixels)
+{
+ 
+ if (pixels_per_block & 1)
+ {
+		printf("Pixels per block must be even.\n");
+		return -1;
+ }
+ 
+	if (pixels_per_block > pixels_per_scanline)
+ {
+		printf("Pixels per block is greater than pixels per scanline.\n");
+		return -1;
+ }
+ 
+	if (bits_per_pixel >= 1 && bits_per_pixel <= 24)
+		;
+	else if (bits_per_pixel == 32 || bits_per_pixel == 64)
+		;
+	else
+ {
+		printf("bits per pixel must be in range 1..24,32,64");
+		return -1;
+ }
+ 
+	if (pixels_per_block > MAX_PIXELS_PER_BLOCK)	
+ {
+		printf("maximum pixels per block exceeded");
+		return -1;
+ }
+ 
+	if (pixels_per_block & 1)	
+ {
+		printf("pixels per block must be even");
+		return -1;
+ }
+ 
+	if (pixels_per_block > pixels_per_scanline)
+ {
+	 printf("pixels per block > pixels per scanline");
+		return -1;
+ }
+ 
+	if (pixels_per_scanline > MAX_PIXELS_PER_SCANLINE)
+ {
+		printf("maximum pixels per scanline exceeded");
+		return -1;
+ }
+ 
+	if (image_pixels < pixels_per_scanline)
+ {
+		printf("image pixels less than pixels per scanline");
+		return -1;
+ }
+ 
+ if (image_pixels % pixels_per_scanline)
+ {
+		fprintf(stderr, "Pixels (%d) must be integer multiple of pixels per scanline (%d)\n", 
+   image_pixels,pixels_per_scanline);
+		return -1;
+ }
+ 
+#if 0
+	if (pixels_per_scanline % pixels_per_block)
+ {
+		fprintf(stderr, "Pixels per scanline (%d) must be an integer multiple of pixels per block (%d)\n", 
+   pixels_per_scanline, pixels_per_block);
+		return -1;
+ }
+#endif
+
+
+ 
+	return 0;
 }
 
 
-
+/*-------------------------------------------------------------------------
+ * Function: cache
+ *
+ * Purpose: Checks chunk size
+ *
+ *-------------------------------------------------------------------------
+ */
 
 int cache(
 HDF_CHUNK_DEF    chunk_def,

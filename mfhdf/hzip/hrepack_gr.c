@@ -234,9 +234,12 @@ int  copy_gr(int32 infile_id,
                    &comp_type,   /* compression type OUT  */
                    rank,         /* rank of object IN */
                    path,         /* path of object IN */
+                   n_comps,      /* number of GR image planes (for SZIP), IN */
                    dimsizes,     /* dimensions (for SZIP), IN */
                    dtype         /* numeric type ( for SZIP), IN */
                    );
+  if (have_info==FAIL)
+   comp_type=COMP_CODE_NONE;
  } /* check inspection mode */
 
 
@@ -383,7 +386,7 @@ int  copy_gr(int32 infile_id,
   switch(comp_type) 
   {
    case COMP_CODE_SZIP:
-   if (set_szip (rank,dimsizes,dtype,&c_info)==FAIL)
+   if (set_szip (rank,dimsizes,dtype,n_comps,&c_info)==FAIL)
    {
     printf( "Error: Failed to set SZIP compression for <%s>\n", path);
     ret=-1;
@@ -500,52 +503,13 @@ int  copy_gr(int32 infile_id,
          ref,DFTAG_RI,gr_ref,DFTAG_RI,
          path,options);
 
-#if 1
- {
-  VOIDP buf1=NULL;
-  int32 interlace_mode2;
-  int   cmp;
-
-  status_n = GRgetiminfo(ri_out,gr_name,&n_comps,&dtype,&interlace_mode2,dimsizes,&n_attrs);
-
-  
-  /* alloc */
-  if ((buf1 = (VOIDP) HDmalloc(data_size)) == NULL) {
-   printf( "Failed to allocate %d elements of size %d\n", nelms, eltsz);
-   GRendaccess(ri_id);
-   if (path) free(path);
-   return-1;
-  }
-  
-  
-  /* set the interlace for reading  */
-  if ( GRreqimageil(ri_out, interlace_mode2) == FAIL ){
-   printf( "Could not set interlace for GR <%s>\n", path);
-   GRendaccess(ri_id);
-   if (path) free(path);
-   return-1;
-  }
-  
-  /* read data */
-  if (GRreadimage (ri_out, start, NULL, edges, buf1) == FAIL) {
-   printf( "Could not read GR <%s>\n", path);
-   GRendaccess(ri_id);
-   if (path) free(path);
-   return-1;
-  }
-  
-   cmp = HDmemcmp(buf1,buf,data_size);
-   free(buf1);
- }
- 
-#endif
- 
-
 out:
  
  /* terminate access to the GRs */
- status_n = GRendaccess(ri_id);
- status_n = GRendaccess(ri_out);
+ if (GRendaccess(ri_id)== FAIL )
+  printf( "Failed to close SDS <%s>\n", path);
+ if (GRendaccess(ri_out)== FAIL )
+  printf( "Failed to close SDS <%s>\n", path);
     
  if (path)
   free(path);

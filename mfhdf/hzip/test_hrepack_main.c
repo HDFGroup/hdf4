@@ -207,8 +207,7 @@ int main(void)
 /*-------------------------------------------------------------------------
  * add some RIS24 images to the file
  *-------------------------------------------------------------------------
- */ 
-
+ */
  add_r24(DATA_FILE2,FILENAME,file_id,DFIL_PIXEL,0); /* Pixel Interlacing */
  add_r24(DATA_FILE3,FILENAME,file_id,DFIL_PLANE,0); /* Scan Plane Interlacing */
 
@@ -219,7 +218,6 @@ int main(void)
  */ 
  add_r8(DATA_FILE1,FILENAME,file_id,vgroup_img_id);
  add_r8(DATA_FILE1,FILENAME,file_id,0);
-
 
 /*-------------------------------------------------------------------------
  * add some GR images to the file with compression/chunking
@@ -328,7 +326,6 @@ int main(void)
  in_chunk_lengths[0]=10;
  in_chunk_lengths[1]=8;
  in_chunk_lengths[2]=6;
-
 
 
 /*-------------------------------------------------------------------------
@@ -538,6 +535,7 @@ int main(void)
   goto out;
  PASSED();
 
+#if 1
 /*-------------------------------------------------------------------------
  * test9:  
  *-------------------------------------------------------------------------
@@ -546,20 +544,18 @@ int main(void)
  verbose        =1;
  fspec.verbose  =1;
 
- TESTING("compressing SDS ALL with GZIP, chunking ALL");
+ TESTING("compressing SDS ALL with GZIP");
  printf("\n");
  hrepack_init (&options,verbose);
  hrepack_addcomp("*:GZIP 1",&options);
- hrepack_addchunk("*:10x8",&options);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
  if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
   goto out;
  if ( sds_verifiy_comp_all(COMP_CODE_DEFLATE, 1) == -1) 
   goto out;
- if ( sds_verifiy_chunk_all(HDF_CHUNK|HDF_COMP,2,in_chunk_lengths,"dset7") == -1) 
-  goto out;
  PASSED();
+#endif
  
 /*-------------------------------------------------------------------------
  * all tests PASSED

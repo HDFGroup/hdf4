@@ -23,6 +23,20 @@
 #if !defined (RAW_OPTION_MASK)
 #define RAW_OPTION_MASK				128
 #endif
+#if !defined (MAX_BLOCKS_PER_SCANLINE)
+#define MAX_BLOCKS_PER_SCANLINE		128
+#endif
+#if !defined (MAX_PIXELS_PER_BLOCK)
+#define MAX_PIXELS_PER_BLOCK	 	 32
+#endif
+#if !defined (MAX_PIXELS_PER_SCANLINE)
+#define MAX_PIXELS_PER_SCANLINE     (MAX_BLOCKS_PER_SCANLINE)*(MAX_PIXELS_PER_BLOCK)
+#endif
+#if !defined (NN_MODE)
+#define NN_MODE	1
+#endif
+
+
 
 #define TAG_GRP_IMAGE DFTAG_RIG
 #define TAG_GRP_DSET  DFTAG_NDG

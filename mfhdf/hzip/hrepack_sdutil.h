@@ -28,11 +28,16 @@ int  options_get_info(options_t      *options,     /* global options */
                       comp_coder_t   *comp_type,   /* compression type OUT  */
                       int            rank,         /* rank of object IN */
                       char           *path,        /* path of object IN */
+                      int            ncomps,       /* number of GR image planes (for SZIP), IN */
                       int32          *dimsizes,    /* dimensions (for SZIP), IN */
                       int32          dtype         /* numeric type (for SZIP), IN */
                       );
 
-int  set_szip(int32 rank, int32 *dimsizes, int32 dtype, comp_info *c_info);
+int set_szip(int32 rank, 
+             int32 *dim_sizes, 
+             int32 dtype,
+             int   ncomps,
+             comp_info *c_info);
 
 
 #ifdef __cplusplus

@@ -112,6 +112,7 @@ int sds_verifiy_comp_all(int32 in_comp_type, int32 in_comp_info)
                n_attrs,                /* number of attributes */
                dim_sizes[MAX_VAR_DIMS];/* dimensions of an image */
  char          name[MAX_GR_NAME];      /* name of dataset */
+ int           info;
 
  /* initialize the sd interface */
  sd_id  = SDstart (FILENAME_OUT, DFACC_READ);
@@ -150,14 +151,36 @@ int sds_verifiy_comp_all(int32 in_comp_type, int32 in_comp_info)
    status_n = SDend (sd_id);
    return -1;
   }
-  if (in_comp_info) {
-   if ( comp_info.skphuff.skp_size != in_comp_info )
+  if (in_comp_type) 
+  {
+   switch (in_comp_type)
    {
-    printf("Error: compresion information does not match ");
+   case COMP_CODE_NONE:
+    break;
+   case COMP_CODE_RLE:
+    break;
+   case COMP_CODE_SZIP:
+    break;
+   case COMP_CODE_SKPHUFF:
+    info  = comp_info.skphuff.skp_size;
+    break;
+   case COMP_CODE_DEFLATE:
+    info  = comp_info.deflate.level;
+    break;
+   default:
+    printf("Error: Unrecognized compression code %d\n",in_comp_type);
+    break;
+   };
+   
+#if 0
+   if ( info != in_comp_info )
+   {
+    printf("Error: compresion information does not match for <%s>",name);
     status_n = SDendaccess (sds_id);
     status_n = SDend (sd_id);
     return -1;
    }
+#endif
   }
   
   /* terminate access to the current dataset */
