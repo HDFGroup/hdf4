@@ -127,7 +127,7 @@ case $F77_BASENAME in
     ;;
 
   *)
-    FFLAGS="$FFLAGS -ansi"
+    FFLAGS="$FFLAGS"
     DEBUG_FFLAGS="-g"
     PROD_FFLAGS="-O"
     PROFILE_FFLAGS="-pg"
