@@ -343,6 +343,8 @@
 ./hdf/src/crle.h
 ./hdf/src/cskphuff.c
 ./hdf/src/cskphuff.h
+./hdf/src/cszip.c
+./hdf/src/cszip.h
 ./hdf/src/df24.c
 ./hdf/src/df24f.c
 ./hdf/src/df24ff.f
