@@ -1072,20 +1072,16 @@ public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
         // System.out.println(rect);
         int x = rect.x;
         int y = rect.y;
-
         int w = imageWidth;
-            int h = imageHeight; 
-        
+        int h = imageHeight;
         double[] rArray = new double[rect.width];
-
-        int firstPos = 0;
-        
-        for (int i=x; i<x+rect.width; i++) {
-                double retDat = (double)getData(i, y);
-                rArray[i-x] = retDat;
-        }
-
         double[][] pArray = new double[2][rect.width];
+        int firstPos = 0;
+
+        for (int i=x; i<x+rect.width; i++) {
+            double retDat = (double)getData(i, y);
+            rArray[i-x] = retDat;
+        }
 
         for (int k =0; k<rect.width; k++) {
             pArray[1][k] = (double)rArray[k];
@@ -1101,38 +1097,38 @@ public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
 
         if (aPlot==null)  {
            aPlot= new XYPlot(new Frame(), "Radial Plot", pArray);
-        new Dialog(imageFrame, "what");
-
-           // aPlot= new XYPlot((Frame)imageFrame, "Radial Plot",  pArray);
+           new Dialog(imageFrame, "what");
         }
         else {
            aPlot.setData(pArray);
-              aPlot.show();
+           aPlot.show();
         }
 
-        // set title
-        // aPlot.setTitle("Radial Plot of an Image");
         aPlot.setXAxisTag(xStr);
-        aPlot.setYAxisTag("Pixel Value");
+        aPlot.setYAxisTag("No Value");
+        aPlot.setYAxisRange(0,0);
 
-        if (dispImageDataMode != JHVImageFrame.DIGIT_VALUE)
-           // image mode and pixel value is at (0,255)
+        if (dispImageDataMode == JHVImageFrame.PIXEL_VALUE)
+        {
+           aPlot.setYAxisTag("Pixel Value");
            aPlot.setYAxisRange(0,255);
-        else
-           if (dataRangeFlag)
+        }
+        else if (dispImageDataMode == JHVImageFrame.DIGIT_VALUE)
+        {
+            aPlot.setYAxisTag("Digital Value");
+            if (dataRangeFlag)
                 aPlot.setYAxisRange(min,max);
-           else {
-
-                double yMin, yMax;
+            else {
+                double yMin, yMax, tmp;
                 yMin = yMax = rArray[0];
                 for (int i=0; i<rArray.length; i++) {
-                            double tmp = rArray[i];
-
-                            yMin = Math.min(tmp, yMin);
-                            yMax = Math.max(tmp, yMax);
+                    tmp = rArray[i];
+                    yMin = Math.min(tmp, yMin);
+                    yMax = Math.max(tmp, yMax);
                 }
                 aPlot.setYAxisRange(yMin, yMax);
             }
+        }
        } catch (HDFException e) {};
     }
 
@@ -1206,18 +1202,19 @@ public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
            hPlot.show();
         }
 
-        if (dispImageDataMode == JHVImageFrame.DIGIT_VALUE)  
+        if (dispImageDataMode == JHVImageFrame.DIGIT_VALUE)
+        {
            hPlot.setXAxisRange(minVal,maxVal);
+           hPlot.setXAxisTag("Digital Value");
+        }
         else
+        {
            hPlot.setXAxisRange(0,255);
+           hPlot.setXAxisTag("Pixel Value");
+        }
 
-        // set title
-        // hPlot.setTitle("Histogram of an Image");
-        hPlot.setXAxisTag("Pixel Value");
-        hPlot.setYAxisTag("Pixel Number");
-
-        // hPlot.setPlotMode(hPlot.plotPane.HISTOGRAM);
-         hPlot.setPlotMode(XYPlotPane.HISTOGRAM);
+        hPlot.setYAxisTag("Number of Pixels");
+        hPlot.setPlotMode(XYPlotPane.HISTOGRAM);
 
      }
 
