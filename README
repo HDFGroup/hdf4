@@ -33,7 +33,7 @@ Distribution Layout
                     release. Files in this sub-directory can be used 
                     as supplemental documentation for HDF4.1. These files 
                     are also available on the NCSA ftp server, 
-                    in /HDF/Documentation/HDF4.1/release_notes/.
+                    in /HDF/HDF_Current/release_notes.
 
 Third Party Software Requirements:
 ---------------------------------
