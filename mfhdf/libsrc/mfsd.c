@@ -4214,7 +4214,7 @@ int32 flags;
     /* make sure our tmp buffer is big enough to hold fill value */
     if(convert && tBuf_size < fill_val_len) 
       {
-          if(tBuf == NULL) 
+          if(tBuf != NULL) 
               HDfree((VOIDP)tBuf);
           tBuf_size = fill_val_len;
           tBuf      = (VOID *) HDmalloc(tBuf_size);
