@@ -145,7 +145,7 @@ dumpfileKey(VOID *key, VOID *data)
   return;
 }
 
-/* ------------------------ Private Internal Routines ---------------------*
+/* ------------------------ Private Internal Routines ---------------------*/
 
 /* ------------------------------- ANIfidcmp -------------------------------- 
  NAME
