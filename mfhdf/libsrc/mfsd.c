@@ -773,7 +773,7 @@ int32 nt, rank, *dimsizes;
         return(FAIL);
 
     /* fudge the name since its optional */
-    if(name == NULL)
+    if((name == NULL) || (name[0] == ' ') || (name[0] == '\0'))
         name = "DataSet";
 
     /* make fake dimensions which may or may not be over-ridden later */
