@@ -46,6 +46,11 @@ static char RcsId[] = "@(#)$Revision$";
 #include "tproto.h"
 #include "hfile.h"
 
+/* Substitute bogus value if CLOCKS_PER_SEC is unavailable */
+#ifndef CLOCKS_PER_SEC
+#define CLOCKS_PER_SEC -1
+#endif
+
 #define TESTFILE_NAME "tbuffer.hdf"
 #define EXTFILE_NAME "tbuffer.dat"
 
