@@ -154,6 +154,9 @@ OS_convex
 #ifdef masscomp
 OS_rtu
 #endif
+#ifdef __uxpm__
+OS_uxpm
+#endif
 CAT_EOF
 OS=`cc -E conftest.c | sed -n '/^OS_/ {
   s///p
@@ -399,7 +402,7 @@ test -z "$FC" && FC=""
 test -n "$FC" && break
 done
 ;;
-  *)     for p in f77 cf77 fc
+  *)     for p in f77 cf77 fc frt
 do
 if test -z "$FC"; then
   echo checking for $p
@@ -627,6 +630,14 @@ case "${OS}" in
 
                 LD_XDR=;;
   convex*)        for arg in -DCONVEX; do
+    case "$HDF_INC" in
+      *$arg*) ;;
+      *)      HDF_INC="${HDF_INC-} $arg";;
+    esac
+  done
+
+                LD_XDR=;;
+  uxpm*)           for arg in -DVP; do
     case "$HDF_INC" in
       *$arg*) ;;
       *)      HDF_INC="${HDF_INC-} $arg";;
