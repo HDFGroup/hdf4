@@ -66,7 +66,7 @@
 
 /* Only include the library header if the VSET_INTERFACE macro is defined */
 #ifdef VSET_INTERFACE
-#include <vgint.h>          /* Library VSet information header */
+#include "vgint.h"          /* Library VSet information header */
 #endif /* VSET_INTERFACE */
 
 #endif                          /* _VG_H */
