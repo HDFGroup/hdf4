@@ -122,7 +122,8 @@ TBL	= tbl
 # which(1)
 WHICH	= which
 # lex(1)
-LEX	= lex    # GNU flex?
+#LEX	= lex    # GNU flex?
+LEX	= flex    # GNU flex?
 # yacc(1)
 YACC	= yacc   # GNU bison?
 
