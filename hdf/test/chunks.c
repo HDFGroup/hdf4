@@ -71,6 +71,7 @@ static char RcsId[] = "@(#)$Revision$";
  *   Hstartwrite()        -> HMCPstwrite()
  *   Hread()              -> HMCPread()
  *   Hwrite()             -> HMCPwrite()
+ *   Hseek()              -> HMCPseek()
  *   Hendaccess()         -> HMCPendaccess()
  *   Hinquire()           -> HMCPinquire()
  *   HDget_special_info() -> HMCPinfo()
@@ -89,11 +90,22 @@ static char RcsId[] = "@(#)$Revision$";
 #include "hchunks.h"
 
 #define TESTFILE_NAME "tchunks.hdf"
-#define BUFSIZE 12288
+#define BUFSIZE       12288
 
-/* Some static buffers */
-static uint8  outbuf[BUFSIZE],  inbuf[BUFSIZE];
-static uint8  outbuf_1[16] = {0,0,2,3,0,0,6,7,8,9,0,0,12,13,0,0};
+/* Some static data buffers */
+static uint8  outbuf[BUFSIZE],  /* output data buffer */
+              inbuf[BUFSIZE];   /* input data buffer */
+
+/* used to verify data in Test 2. */
+static uint8  outbuf_2[16] = {0,0,2,3,0,0,6,7,8,9,0,0,12,13,0,0};
+
+/* used to in Tests 1,2 */
+static    uint8      cptr0[4] = {0,1,4,5};
+static    uint8      cptr1[4] = {2,3,6,7};
+static    uint8      cptr2[4] = {8,9,12,13};
+static    uint8      cptr3[4] = {10,11,14,15};
+
+/* Not used yet */
 static uint8  ui8data[2][3][4] =
 {
     {
@@ -105,14 +117,10 @@ static uint8  ui8data[2][3][4] =
         {110, 111, 112, 113},
         {120, 121, 122, 123}}};
 
-static    uint8      cptr0[4] = {0,1,4,5};
-static    uint8      cptr1[4] = {2,3,6,7};
-static    uint8      cptr2[4] = {8,9,12,13};
-static    uint8      cptr3[4] = {10,11,14,15};
-
 /*
  * main entry point to tests the Special Chunking layer...
- * -GV
+ *
+ * -GeorgeV
  */
 void
 test_chunks()
@@ -125,7 +133,7 @@ test_chunks()
     register int i, j, k;
     int32       x,y;
     int32       ret;
-    CHUNK_DEF   chunk[1];
+    CHUNK_DEF   chunk[1];       /* Chunk definition, see 'hchunks.h' */
     CHUNK_DEF  *chkptr = NULL;
     int32       dim[5];
     int32      fill_val_len = 1;
@@ -134,7 +142,7 @@ test_chunks()
     sp_info_block_t info_block;      /* special info block */
     intn       errors = 0;
 
-    /* intialize outbufer */
+    /* intialize out buffer */
     for (i = 0; i < BUFSIZE; i++)
         outbuf[i] = (char) (i % 256);
 
@@ -142,7 +150,8 @@ test_chunks()
     if ((chunk[0].pdims = (DIM_DEF *)HDmalloc(5*sizeof(DIM_DEF))) == NULL)
       {
           printf("test_chunks: error allocatin space for chunk dims\n");
-          return;
+          errors++;
+          goto done;
       }
 
     /* Create file first */
@@ -150,9 +159,6 @@ test_chunks()
     fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);
     CHECK(fid, FAIL, "Hopen");
 
-#if 0
-
-#endif
     /*
       1.First test simple writing of 2-D element with no ghost/partial chunks.
         Set dimension to 4x4 array with 4 chunks 
@@ -191,6 +197,7 @@ test_chunks()
       {
           fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int) ret);
           errors++;
+          goto done;
       }
 
     MESSAGE(5, printf("Wrote first 12 bytes to 2-D chunked element to file\n"); );
@@ -255,6 +262,7 @@ test_chunks()
           fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
                   __LINE__);
           errors++;
+          goto done;
       }
     /* Check values from Hinquire */
     if (ref != 2 || length != 16)
@@ -262,6 +270,7 @@ test_chunks()
           fprintf(stderr, "ERROR: Hinquire does not return the correct values \n");
           fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,length);
           errors++;
+          goto done;
       }
 
     MESSAGE(5, printf("Get/Check special info data\n"); );
@@ -274,6 +283,8 @@ test_chunks()
     if (info_block.ndims != chunk[0].num_dims /* 2-D */)
       {
           fprintf(stderr, "ERROR: HDget_specail_info does not return the correct values \n");
+          errors++;
+          goto done;
       }
 
     /* check chunk_lengths */
@@ -282,6 +293,8 @@ test_chunks()
           if ((info_block.cdims[0] != 2) || (info_block.cdims[1] != 2))
             {
                 fprintf(stderr, "ERROR: HDget_specail_info does not return the correct values \n");
+                errors++;
+                goto done;
             }
 
           /* free allocated space by routine */
@@ -290,6 +303,8 @@ test_chunks()
     else
       {
           fprintf(stderr, "ERROR: HDget_specail_info does not return the correct values \n");
+          errors++;
+          goto done;
       }
 
 
@@ -300,6 +315,7 @@ test_chunks()
       {
           fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);
           errors++;
+          goto done;
       }
 
     /* verify the data */
@@ -311,7 +327,10 @@ test_chunks()
                 printf("Wrong data at %d, out %d in %d\n", i, outbuf[i], inbuf[i]);
                 errors++;
             }
+
       }
+    if (errors)
+        goto done;
 
     /* end access and close file */
     ret = Hendaccess(aid1);
@@ -387,6 +406,7 @@ test_chunks()
           fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
                   __LINE__);
           errors++;
+          goto done;
       }
 
     /* Check values from Hinquire */
@@ -395,6 +415,7 @@ test_chunks()
           fprintf(stderr, "ERROR: Hinquire does not return the correct values \n");
           fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,length);
           errors++;
+          goto done;
       }
 
     /* read back in buffer  */
@@ -404,19 +425,22 @@ test_chunks()
       {
           fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);
           errors++;
+          goto done;
       }
 
-    /* verify the data, check against 'outbuf_1'  
+    /* verify the data, check against 'outbuf_2'  
        some of the data should be filled with fill value of 0 */
     MESSAGE(5, printf("Verifying 16 bytes of data, there will be some fill values\n"); );
     for (i = 0; i < ret; i++)
       {
-          if (inbuf[i] != outbuf_1[i])
+          if (inbuf[i] != outbuf_2[i])
             {
-                printf("Wrong data at %d, out %d in %d\n", i, outbuf_1[i], inbuf[i]);
+                printf("Wrong data at %d, out %d in %d\n", i, outbuf_2[i], inbuf[i]);
                 errors++;
             }
       }
+    if (errors)
+        goto done;
 
     /* end access and close file */
     ret = Hendaccess(aid1);
@@ -468,6 +492,7 @@ test_chunks()
       {
           fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int) ret);
           errors++;
+          goto done;
       }
 
     MESSAGE(5, printf("Wrote to 4of4 chunks (16 bytes) in file\n"););
@@ -499,6 +524,7 @@ test_chunks()
           fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
                   __LINE__);
           errors++;
+          goto done;
       }
 
     /* Check values from Hinquire */
@@ -507,6 +533,7 @@ test_chunks()
           fprintf(stderr, "ERROR: Hinquire does not return the correct values \n");
           fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,length);
           errors++;
+          goto done;
       }
 
     /* read back in buffer  */
@@ -516,6 +543,7 @@ test_chunks()
       {
           fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);
           errors++;
+          goto done;
       }
 
     /* verify the data */
@@ -529,6 +557,8 @@ test_chunks()
             }
           inbuf[i] = '\0';
       }
+    if (errors)
+        goto done;
 
     /* end access and close file */
     ret = Hendaccess(aid1);
@@ -586,6 +616,7 @@ test_chunks()
       {
           fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int) ret);
           errors++;
+          goto done;
       }
 
     MESSAGE(5, printf("Wrote 112of192 bytes to 3-D chunked element \n"); );
@@ -617,6 +648,7 @@ test_chunks()
           fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
                   __LINE__);
           errors++;
+          goto done;
       }
 
     /* Check values from Hinquire */
@@ -625,6 +657,7 @@ test_chunks()
           fprintf(stderr, "ERROR: Hinquire does not return the correct values \n");
           fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,length);
           errors++;
+          goto done;
       }
 
     MESSAGE(5, printf("Get/Check special info data\n"); );
@@ -637,6 +670,8 @@ test_chunks()
     if (info_block.ndims != chunk[0].num_dims /* 2-D */)
       {
           fprintf(stderr, "ERROR: HDget_specail_info does not return the correct values \n");
+          errors++;
+          goto done;
       }
 
     /* check chunk_lengths */
@@ -647,6 +682,8 @@ test_chunks()
               || (info_block.cdims[2] != 4))
             {
                 fprintf(stderr, "ERROR: HDget_specail_info does not return the correct values \n");
+                errors++;
+                goto done;
             }
 
           /* free allocated space by routine */
@@ -655,6 +692,8 @@ test_chunks()
     else
       {
           fprintf(stderr, "ERROR: HDget_specail_info does not return the correct values \n");
+          errors++;
+          goto done;
       }
 
 
@@ -665,6 +704,7 @@ test_chunks()
       {
           fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);
           errors++;
+          goto done;
       }
 
     /* verify the data */
@@ -678,6 +718,8 @@ test_chunks()
             }
           inbuf[i] = '\0';
       }
+    if (errors)
+        goto done;
 
     /* end access and close file */
     ret = Hendaccess(aid1);
@@ -743,6 +785,7 @@ test_chunks()
       {
           fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int) ret);
           errors++;
+          goto done;
       }
 
     MESSAGE(5, printf("Wrote 112of192 bytes to 3-D chunked element \n"); );
@@ -774,6 +817,7 @@ test_chunks()
           fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
                   __LINE__);
           errors++;
+          goto done;
       }
 
     /* Check values from Hinquire */
@@ -782,6 +826,7 @@ test_chunks()
           fprintf(stderr, "ERROR: Hinquire does not return the correct values \n");
           fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,length);
           errors++;
+          goto done;
       }
 
     /* read back in buffer  */
@@ -791,6 +836,7 @@ test_chunks()
       {
           fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);
           errors++;
+          goto done;
       }
 
     /* verify the data */
@@ -804,6 +850,8 @@ test_chunks()
             }
           inbuf[i] = '\0';
       }
+    if (errors)
+        goto done;
 
     /* read back 20 bytes now, they should be filled with fill values */
     MESSAGE(5, printf("reading some more data\n"););
@@ -813,6 +861,7 @@ test_chunks()
       {
           fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);
           errors++;
+          goto done;
       }
 
     /* verify the data */
@@ -825,6 +874,8 @@ test_chunks()
                 errors++;
             }
       }
+    if (errors)
+        goto done;
 
     /* end access and close file */
     ret = Hendaccess(aid1);
@@ -890,6 +941,7 @@ test_chunks()
       {
           fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int) ret);
           errors++;
+          goto done;
       }
 
     MESSAGE(5, printf("Wrote 5000of10000 bytes to 4-D chunked element \n"); );
@@ -921,6 +973,7 @@ test_chunks()
           fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
                   __LINE__);
           errors++;
+          goto done;
       }
 
     /* Check values from Hinquire */
@@ -929,6 +982,7 @@ test_chunks()
           fprintf(stderr, "ERROR: Hinquire does not return the correct values \n");
           fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,length);
           errors++;
+          goto done;
       }
 
     /* verify the data */
@@ -941,6 +995,7 @@ test_chunks()
       {
           fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);
           errors++;
+          goto done;
       }
 
     for (i = 0; i < ret; i++)
@@ -951,6 +1006,8 @@ test_chunks()
                 errors++;
             }
       }
+    if (errors)
+        goto done;
 
     /* verify some more data */
     MESSAGE(5, printf("seek to 7000 bytes in element and read 1000 bytes \n"); );
@@ -966,6 +1023,7 @@ test_chunks()
       {
           fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);
           errors++;
+          goto done;
       }
 
     /* verify the data, should be fill values */
@@ -979,6 +1037,8 @@ test_chunks()
                 errors++;
             }
       }
+    if (errors)
+        goto done;
 
     /* end access and close file */
     ret = Hendaccess(aid1);
@@ -987,10 +1047,6 @@ test_chunks()
     MESSAGE(5, printf("Closing the file\n"););
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
-
-#if 0
-
-#endif
 
 #if 0
 
@@ -1154,8 +1210,10 @@ test_chunks()
     CHECK(ret, FAIL, "Hclose");
 #endif
 
+done:
+    /* Don't forget to free dimensions allocate for chunk definition */
     if (chunk[0].pdims != NULL)
         HDfree(chunk[0].pdims);
 
     num_errs += errors;     /* increment global error count */
-}
+} /* test_chunks() */
