@@ -72,10 +72,14 @@ comp_model_t test_models[] =
 comp_coder_t test_coders[] =
 {
     COMP_CODE_NONE,
-    COMP_CODE_RLE,
+    COMP_CODE_RLE
     /*,COMP_CODE_NBIT *//* n-bit testing is done in it's own module, nbit.c */
-    COMP_CODE_SKPHUFF,
-    COMP_CODE_DEFLATE
+#ifndef UNICOS
+    ,COMP_CODE_SKPHUFF
+#endif /* UNICOS */
+#if !(defined(UNICOS) | defined(DEC_ALPHA) | (_MIPS_SZLONG == 64))
+    ,COMP_CODE_DEFLATE
+#endif /* 64-bit machines */
 };
 
 int32       test_ntypes[] =
