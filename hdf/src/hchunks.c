@@ -940,7 +940,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
     int32       dd_aid;              /* AID for writing the special info */
     uint16      data_tag, data_ref;  /* Tag/ref of the data in the file */
     uint8       local_ptbuf[4];      /* 4 bytes for special header length */
-    uint8       *c_sp_header = NULL;   /* special element header */
+    VOID       *c_sp_header = NULL;   /* special element header */
     int32       nfields;             /* fields in Vdata */
     int32       interlace;           /* type of interlace */
     int32       vdata_size;          /* size of Vdata */
@@ -1081,7 +1081,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
               HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
           /* Allocate buffer space for rest of special header */
-          if (( c_sp_header = (uint8 *) HDcalloc(info->sp_tag_header_len,1))==NULL)
+          if (( c_sp_header = (VOID *) HDcalloc(info->sp_tag_header_len,1))==NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
           /* first read special header in */
