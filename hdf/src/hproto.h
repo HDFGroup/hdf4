@@ -303,12 +303,32 @@ intn Hfind(int32 file_id,       /* IN: file ID to search in */
 );
 
 
+/******************************************************************************
+ NAME
+     HDcheck_tagref - Checks to see if tag/ref is in DD list i.e. created already
+
+ DESCRIPTION
+     Routine checks to see if tag/ref exists in the DD list i.e. has
+     been created.
+
+ RETURNS
+     0-> tag/ref does not exist
+     1-> tag/ref exists
+    -1-> function failed
+
+*******************************************************************************/
+intn 
+HDcheck_tagref(int32  file_id, /* IN: id of file */
+               uint16 tag,     /* IN: Tag to check */
+               uint16 ref      /* IN: ref to check */);
+
 /************************************************************************
 NAME
    HDreuse_tagref -- reuse a data descriptor preserving tag/ref
 
 DESCRIPTION
    Reuses the data descriptor of tag/ref in the dd list of the file.
+   The tag/ref must already exist in the DD list.
    This routine is unsafe and may leave a file in a condition that is
    not usable by some routines.  Use with care. Not valid for
    special elments right now. Used for allowing the data to change

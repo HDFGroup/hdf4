@@ -47,6 +47,11 @@ EXPORTED ROUTINES
     Htagnewref  - Returns a ref that is unique in the file for a given tag
     Hfind       - Locate the next object of a search in an HDF file
     Hdeldd      - Delete a data descriptor
+
+  Developer-level routines
+    HDcheck_tagref - Checks to see if tag/ref is in DD list i.e. created already
+    HDreuse_tagref - reuse a data descriptor preserving tag/refw(assumes DD exists)
+
   Tag/ref functions:
     HTPcreate   - Create (& attach to) a tag/ref pair (inserts into DD list also)
     HTPselect   - Attach to an existing DD in the DD list
@@ -1243,12 +1248,75 @@ done:
     return ret_value;
 }	/* end Hfind() */
 
+/******************************************************************************
+ NAME
+     HDcheck_tagref - Checks to see if tag/ref is in DD list i.e. created already
+
+ DESCRIPTION
+     Routine checks to see if tag/ref exists in the DD list i.e. has
+     been created.
+
+ RETURNS
+     0-> tag/ref does not exist
+     1-> tag/ref exists
+    -1-> function failed
+
+*******************************************************************************/
+intn 
+HDcheck_tagref(int32  file_id, /* IN: id of file */
+               uint16 tag,     /* IN: Tag to check */
+               uint16 ref      /* IN: ref to check */)
+{
+    CONSTR(FUNC, "HDcheck_tagref");  /* for HERROR */
+    filerec_t *file_rec = NULL;  /* file record */
+    dd_t      *dd_ptr = NULL;    /* ptr to the DD info for the tag/ref */
+    tag_info **tip_ptr = NULL;   /* ptr to the ptr to the info for a tag */
+    tag_info  *tinfo_ptr = NULL; /* pointer to the info for a tag */
+    uint16     base_tag;         /* corresponding base tag (if the tag is special) */
+    intn       ret_value = 1;  /* default tag/ref exists  */
+
+    /* clear error stack */
+    HEclear();
+
+    /* check args */
+    file_rec = HAatom_object(file_id);
+    if(file_rec == NULL 
+       || (tag == DFTAG_NULL || tag==DFTAG_WILDCARD) 
+       ||  ref == DFREF_WILDCARD)
+        HGOTO_ERROR(DFE_ARGS, -1);
+
+    base_tag = BASETAG(tag);
+        
+    /* Try to find the regular tag in the tag info tree */
+    if((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree,
+                                         (VOIDP)&base_tag,NULL)) == NULL)
+        HGOTO_DONE(0); /* Not an error, we just didn't find the object */
+
+    tinfo_ptr = *tip_ptr; /* get the pointer to the tag info */
+    if((dd_ptr = DAget_elem(tinfo_ptr->d,(intn)ref)) == NULL)
+        HGOTO_DONE(0); /* Not an error, we just didn't find the object */
+
+    /* found if we reach here*/
+    ret_value = 1;
+
+done:
+  if(ret_value == -1)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
+}   /* HDcheck_tagref() */
+
 /************************************************************************
 NAME
-   HDreuse_tagref -- reuse a data descriptor preserving tag/ref
+   HDreuse_tagref -- reuse a data descriptor preserving tag/ref(assumes DD exists)
 
 DESCRIPTION
    Reuses the data descriptor of tag/ref in the dd list of the file.
+   The tag/ref must already exist in the DD list.
    This routine is unsafe and may leave a file in a condition that is
    not usable by some routines.  Use with care. Not valid for
    special elments right now. Used for allowing the data to change
