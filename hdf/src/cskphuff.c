@@ -54,7 +54,7 @@ static char RcsId[] = "@(#)$Revision$";
  */
 
 /* declaration of the functions provided in this module */
-PRIVATE int32 HCIcskphuff_init(accrec_t * access_rec);
+PRIVATE int32 HCIcskphuff_init(accrec_t * access_rec, uintn alloc_buf);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -126,6 +126,7 @@ HCIcskphuff_splay(comp_coder_skphuff_info_t * skphuff_info, uint8 plain)
  USAGE
     int32 HCIcskphuff_init(access_rec)
     accrec_t *access_rec;   IN: the access record of the data element
+    uintn alloc_buf;        IN: whether to allocate the buffers or not
 
  RETURNS
     Returns SUCCEED or FAIL
@@ -139,7 +140,7 @@ HCIcskphuff_splay(comp_coder_skphuff_info_t * skphuff_info, uint8 plain)
  REVISION LOG
 --------------------------------------------------------------------------*/
 PRIVATE int32
-HCIcskphuff_init(accrec_t * access_rec)
+HCIcskphuff_init(accrec_t * access_rec, uintn alloc_buf)
 {
     CONSTR(FUNC, "HCIcskphuff_init");
     compinfo_t *info;           /* special element information */
@@ -163,27 +164,30 @@ HCIcskphuff_init(accrec_t * access_rec)
     skphuff_info->skip_pos = 0;     /* start in first byte */
     skphuff_info->offset = 0;   /* start at the beginning of the data */
 
-    /* allocate pointers to the compression buffers */
-    if ((skphuff_info->left = (uintn **) HDmalloc(sizeof(uintn *) * skphuff_info->skip_size)) == NULL)
-                    HRETURN_ERROR(DFE_NOSPACE, FAIL);
-    if ((skphuff_info->right = (uintn **) HDmalloc(sizeof(uintn *) * skphuff_info->skip_size)) == NULL)
-                    HRETURN_ERROR(DFE_NOSPACE, FAIL);
-    if ((skphuff_info->up = (uint8 **) HDmalloc(sizeof(uint8 *) * skphuff_info->skip_size)) == NULL)
-                    HRETURN_ERROR(DFE_NOSPACE, FAIL);
+    if(alloc_buf==TRUE)
+      {
+        /* allocate pointers to the compression buffers */
+        if ((skphuff_info->left = (uintn **) HDmalloc(sizeof(uintn *) * skphuff_info->skip_size)) == NULL)
+                        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        if ((skphuff_info->right = (uintn **) HDmalloc(sizeof(uintn *) * skphuff_info->skip_size)) == NULL)
+                        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        if ((skphuff_info->up = (uint8 **) HDmalloc(sizeof(uint8 *) * skphuff_info->skip_size)) == NULL)
+                        HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
 #ifdef TESTING
-    printf("HCIcskphuff_init(): halfway through allocating space\n");
+        printf("HCIcskphuff_init(): halfway through allocating space\n");
 #endif /* TESTING */
-    /* allocate compression buffer for each skipping byte */
-    for (i = 0; i < skphuff_info->skip_size; i++)
-      {
-          if ((skphuff_info->left[i] = (uintn *) HDmalloc(sizeof(uintn) * SUCCMAX)) == NULL)
-                          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-          if ((skphuff_info->right[i] = (uintn *) HDmalloc(sizeof(uintn) * SUCCMAX)) == NULL)
-                          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-          if ((skphuff_info->up[i] = (uint8 *) HDmalloc(sizeof(uint8) * TWICEMAX)) == NULL)
-                          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }     /* end for */
+        /* allocate compression buffer for each skipping byte */
+        for (i = 0; i < skphuff_info->skip_size; i++)
+          {
+              if ((skphuff_info->left[i] = (uintn *) HDmalloc(sizeof(uintn) * SUCCMAX)) == NULL)
+                              HRETURN_ERROR(DFE_NOSPACE, FAIL);
+              if ((skphuff_info->right[i] = (uintn *) HDmalloc(sizeof(uintn) * SUCCMAX)) == NULL)
+                              HRETURN_ERROR(DFE_NOSPACE, FAIL);
+              if ((skphuff_info->up[i] = (uint8 *) HDmalloc(sizeof(uint8) * TWICEMAX)) == NULL)
+                              HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          }     /* end for */
+      } /* end if */
 
 #ifdef TESTING
     printf("HCIcskphuff_init(): after allocating space\n");
@@ -434,7 +438,7 @@ HCIcskphuff_staccess(accrec_t * access_rec, int16 acc_mode)
         HRETURN_ERROR(DFE_DENIED, FAIL);
     if ((acc_mode&DFACC_WRITE) && Hbitappendable(info->aid) == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
-    return (HCIcskphuff_init(access_rec));  /* initialize the skip-Huffman info */
+    return (HCIcskphuff_init(access_rec, TRUE));  /* initialize the skip-Huffman info */
 }   /* end HCIcskphuff_staccess() */
 
 /*--------------------------------------------------------------------------
@@ -545,7 +549,7 @@ HCPcskphuff_seek(accrec_t * access_rec, int32 offset, int origin)
 
     if (offset < skphuff_info->offset)
       {     /* need to seek from the beginning */
-          if (HCIcskphuff_init(access_rec) == FAIL)
+          if (HCIcskphuff_init(access_rec, FALSE) == FAIL)
               HRETURN_ERROR(DFE_CINIT, FAIL);
       }     /* end if */
 
@@ -639,7 +643,7 @@ HCPcskphuff_write(accrec_t * access_rec, int32 length, const VOIDP data)
     /*  1 - append onto the end */
     /*  2 - start at the beginning and rewrite (at least) the whole dataset */
     if ((info->length != skphuff_info->offset)
-        && (skphuff_info->offset != 0 || length < info->length))
+        && (skphuff_info->offset != 0 && length <= info->length))
         HRETURN_ERROR(DFE_UNSUPPORTED, FAIL);
 
     if (HCIcskphuff_encode(info, length, data) == FAIL)
