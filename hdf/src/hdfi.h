@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.20  1993/04/22 23:00:18  koziol
-Changed DFR8nimages, DFPnpals to report the correct number of images
-and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
+Revision 1.21  1993/04/24 18:29:03  koziol
+Added some preprocessor macros to the Cray section to get JPEG working.
 
+ * Revision 1.20  1993/04/22  23:00:18  koziol
+ * Changed DFR8nimages, DFPnpals to report the correct number of images
+ * and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
+ *
  * Revision 1.19  1993/04/21  16:20:11  chouck
  * Changed ALPHA -> DEC_ALPHA to avoid conflict with GL libraries
  *
@@ -382,6 +385,7 @@ typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 /*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
 /*  what each does */
 #define JMEMSYS         MEM_ANSI
+#define RIGHT_SHIFT_IS_UNSIGNED
 
 #endif /* UNICOS */
 
