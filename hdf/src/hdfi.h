@@ -494,6 +494,7 @@ Please check your Makefile.
 #endif  /* PROTOTYPE */
 
 #endif /* OLD_WAY */
+#include <limits.h>
 
 /* For Convex machines with native format floats */
 #ifdef CONVEXNATIVE
