@@ -526,5 +526,5 @@ int32_compare(const void *a, const void *b)
 void 
 sort(int32 *chosen, int32 choices)
 {
-	qsort((void *) chosen, sizeof(int32), MAXCHOICES, int32_compare);
+	qsort((void *) chosen, choices, sizeof(int32), int32_compare);
 }
