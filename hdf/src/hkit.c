@@ -438,6 +438,8 @@ char _HUGE *HDgettagname(tag)
       name = "Version Descriptor"; break;
   case DFTAG_LINKED :
       name = "Linked Blocks Indicator"; break;
+  case DFTAG_COMPRESSED:
+      name = "Compressed Special Element"; break;
   case DFTAG_FID   : 
       name = "File Identifier"; break;
   case DFTAG_FD    :   
@@ -542,6 +544,8 @@ char _HUGE *HDgettagname(tag)
       name = "Links related to the dataset"; break;
   case DFTAG_CAL   :  
       name = "Calibration information"; break;
+  case DFTAG_FV    :
+      name = "Fill Value information"; break;
       
       /* V Group Tags */
   case DFTAG_VG   :  
