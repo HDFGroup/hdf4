@@ -37,12 +37,12 @@ test_hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_cmp.c hrepack_gr.c    \
                        hrepack_pal.c hrepack_parse.c hrepack_sds.c          \
                        hrepack_sdutil.c hrepack_utils.c hrepack_vg.c        \
                        hrepack_vs.c test_hrepack_add.c test_hrepack_main.c  \
-                       test_hrepack_verify.c ../hdiff/dumplib.c             \
-                       ../hdiff/hdiff.c ../hdiff/hdiff_array.c              \
-                       ../hdiff/hdiff_gattr.c ../hdiff/hdiff_gr.c           \
-                       ../hdiff/hdiff_list.c ../hdiff/hdiff_mattbl.c        \
-                       ../hdiff/hdiff_misc.c ../hdiff/hdiff_sds.c           \
-                       ../hdiff/hdiff_table.c ../hdiff/hdiff_vs.c
+                       test_hrepack_verify.c ../hdiff/hdiff.c               \
+                       ../hdiff/hdiff_array.c ../hdiff/hdiff_gattr.c        \
+                       ../hdiff/hdiff_gr.c ../hdiff/hdiff_list.c            \
+                       ../hdiff/hdiff_mattbl.c ../hdiff/hdiff_misc.c        \
+                       ../hdiff/hdiff_sds.c ../hdiff/hdiff_table.c          \
+                       ../hdiff/hdiff_vs.c
 test_hrepack_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 test_hrepack_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
@@ -51,7 +51,7 @@ hrepack_check_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 hrepack_check_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 check: test_hrepack
-	@$(SHELL) $(srcdir)/test_hrepack.sh
+	@srcdir="$(srcdir)" $(SHELL) $(srcdir)/test_hrepack.sh
 
 #############################################################################
 ##                          And the cleanup                                ##
