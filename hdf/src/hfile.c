@@ -283,8 +283,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
 
     file_rec = &(file_records[slot]);
     if (file_rec->refcount)
-      {
-          /* File is already opened, check that permission is okay. */
+      {   /* File is already opened, check that permission is okay. */
 
           /* If this request is to create a new file and file is still
            * in use, return error. */
@@ -323,15 +322,12 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
       }
     else
       {
-
           /* Flag to see if file is new and needs to be set up. */
           intn        new_file = FALSE;
 
           /* Open the file, fill in the blanks and all the good stuff. */
           if (acc_mode != DFACC_CREATE)
-            {
-                /* try to open existing file */
-
+            {   /* try to open existing file */
                 file_rec->file = HI_OPEN(file_rec->path, acc_mode);
                 if (OPENERR(file_rec->file))
                   {
@@ -342,10 +338,14 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
                         }
                       else
                           HRETURN_ERROR(DFE_BADOPEN, FAIL);
-
                   }
                 else
                   {
+#ifdef STDIO_BUF
+                      /* Testing stdio buffered i/o */
+    if (setvbuf(file_rec->file, my_stdio_buf,_IOFBF ,MY_STDIO_BUF_SIZE) != 0)
+                      HRETURN_ERROR(DFE_BADOPEN, FAIL);                 
+#endif /* STDIO_BUF */
                       /* Open existing file successfully. */
                       file_rec->access = acc_mode | DFACC_READ;
 
@@ -367,8 +367,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
           /* do *not* use else here */
 
           if (acc_mode == DFACC_CREATE || new_file)
-            {
-                /* create the file */
+            {   /* create the file */
 
                 /* make user we get a version tag */
                 vtag = 1;
@@ -376,7 +375,11 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
                 file_rec->file = HI_CREATE(path);
                 if (OPENERR(file_rec->file))
                     HRETURN_ERROR(DFE_BADOPEN, FAIL);
-
+#ifdef STDIO_BUF
+                 /* Testing stdio buffered i/o */
+    if (setvbuf(file_rec->file, my_stdio_buf,_IOFBF ,MY_STDIO_BUF_SIZE) != 0)
+                      HRETURN_ERROR(DFE_BADOPEN, FAIL);                 
+#endif /* STDIO_BUF */
                 /* set up the newly created (and empty) file with
                    the magic cookie and initial data descriptor records */
                 if (HI_WRITE(file_rec->file, HDFMAGIC, MAGICLEN) == FAIL)
@@ -456,7 +459,6 @@ Hclose(int32 file_id)
 
           /* if file reference count is zero but there are still attached
              access elts, reject this close. */
-
           if (file_rec->attach > 0)
             {
                 file_rec->refcount++;
@@ -467,7 +469,6 @@ Hclose(int32 file_id)
           /* before closing file, check whether to flush file info */
           if (file_rec->cache && file_rec->dirty)
             {
-
                 /* flush DD blocks if necessary */
                 if (file_rec->dirty & DDLIST_DIRTY)
                     if (HIflush_dds(file_rec) == FAIL)
@@ -490,7 +491,6 @@ Hclose(int32 file_id)
 
           /* free the ddblock linked list of this file record, the path name;
              and reset some variables */
-
           for (bl = file_rec->ddhead; bl; bl = next)
             {
                 next = bl->next;
@@ -565,11 +565,11 @@ Hstartread(int32 file_id, uint16 tag, uint16 ref)
     tag = BASETAG(tag);
 
     /* search for the data element in the dd lists of the file */
-    access_rec->file_id = file_id;
-    access_rec->block = file_rec->ddhead;
-    access_rec->idx = -1;
-    access_rec->appendable = FALSE;     /* start data as non-appendable */
-    access_rec->flush = FALSE;  /* start data as not needing flushing */
+    access_rec->file_id    = file_id;
+    access_rec->block      = file_rec->ddhead;
+    access_rec->idx        = -1;
+    access_rec->appendable = FALSE;  /* start data as non-appendable */
+    access_rec->flush      = FALSE;  /* start data as not needing flushing */
     if (HIlookup_dd(file_rec, tag, ref, &access_rec->block, &access_rec->idx) == FAIL)
       {
           access_rec->used = FALSE;
@@ -590,17 +590,15 @@ Hstartread(int32 file_id, uint16 tag, uint16 ref)
       }
 
     /* reset the data element and update file record */
-    access_rec->posn = 0;
-    access_rec->access = DFACC_READ;
+    access_rec->posn    = 0;
+    access_rec->access  = DFACC_READ;
     access_rec->special = 0;
     file_rec->attach++;
 
     return ASLOT2ID(slot);
-
 }   /* Hstartread() */
 
 /*--------------------------------------------------------------------------
-
  NAME
        Hnextread -- locate and position a read access elt on tag/ref.
  USAGE
@@ -629,8 +627,8 @@ Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
     CONSTR(FUNC, "Hnextread");  /* for HERROR */
     filerec_t  *file_rec;       /* file record */
     accrec_t   *access_rec;     /* access record */
-    ddblock_t  *block;
-    int32       idx;
+    ddblock_t  *block;          /* DDB containing DD of  element */
+    int32       idx;            /* index into DDB i.e. DD of element */
 
     /* clear error stack and check validity of the access id */
     HEclear();
@@ -656,18 +654,15 @@ Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
       }
 
     if (origin == DF_START)
-      {
-          /* set up variables to start searching from beginning of file */
+      {   /* set up variables to start searching from beginning of file */
           block = file_rec->ddhead;
-          idx = -1;
-
+          idx   = -1;
       }
     else
-      {     /* origin == CURRENT */
-          /* set up variables to start searching from the current position */
-
+      {   /* origin == CURRENT 
+           * set up variables to start searching from the current position */
           block = access_rec->block;
-          idx = access_rec->idx;
+          idx   = access_rec->idx;
       }
 
     /* go look for the dd */
@@ -675,10 +670,12 @@ Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
         HRETURN_ERROR(DFE_NOMATCH, FAIL);
 
     /* found, so update the access record */
-    access_rec->block = block;
-    access_rec->idx = idx;
-    access_rec->appendable = FALSE;     /* start data as non-appendable */
-    access_rec->flush = FALSE;  /* start data as not needing flushing */
+    access_rec->block      = block;
+    access_rec->idx        = idx;
+    access_rec->appendable = FALSE;  /* start data as non-appendable */
+    access_rec->flush      = FALSE;  /* start data as not needing flushing */
+
+    /* If special element act upon it accordingly */
     if (SPECIALTAG(access_rec->block->ddlist[access_rec->idx].tag))
       {
           int32       ret;
@@ -687,7 +684,8 @@ Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
           access_rec->special_func = HIget_function_table(access_rec, FUNC);
           if (!access_rec->special_func)
               HRETURN_ERROR(DFE_INTERNAL, FAIL);
-          HIunlock(access_rec->file_id);    /* remove old attach to the file_rec */
+          /* decrement "attach" to the file_rec */
+          HIunlock(access_rec->file_id);    
 #ifdef OLD_WAY
           return (int) (*access_rec->special_func->stread) (access_rec);
 #else
@@ -702,7 +700,6 @@ Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
     access_rec->posn = 0;
 
     return SUCCEED;
-
 }   /* end Hnextread() */
 
 /*--------------------------------------------------------------------------
@@ -1031,6 +1028,15 @@ Hstartwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
                 HRETURN_ERROR(DFE_SEEKERROR, FAIL);
             }
 
+#ifdef BLOCK_MULTIPLEX
+       /* For large data elements we want to start at the begining of 
+          a file block(blocked data sets). */
+       if (file_rec->fblk_size > 0 
+           && length / file_rec->fblk_size > BLOCK_TRIGGER_SZ) 
+           offset = (offset/file_rec->fblk_size + 1) * file_rec->fblk_size;
+
+#endif /* BLOCK_MULTIPLEX */
+
           /* fill in dd record */
           access_rec->block->ddlist[access_rec->idx].tag = tag;
           access_rec->block->ddlist[access_rec->idx].ref = ref;
@@ -1115,16 +1121,16 @@ Happendable(int32 aid)
     CONSTR(FUNC, "Happendable");    /* for HERROR */
     filerec_t  *file_rec;       /* file record */
     accrec_t   *access_rec;     /* access record */
+#ifdef OLD_WAY
     int32       file_off;       /* offset in the file we are at currently */
+#endif
     int32       data_len;       /* length of the data we are checking */
     int32       data_off;       /* offset of the data we are checking */
 
     /* clear error stack and check validity of file id */
     HEclear();
-
-    if ((access_rec = AID2REC(aid)) == NULL)    /* get the access_rec pointer */
+    if ((access_rec = AID2REC(aid)) == NULL)   /* get the access_rec pointer */
         HRETURN_ERROR(DFE_ARGS, FAIL);
-
     file_rec = FID2REC(access_rec->file_id);
     if (BADFREC(file_rec))
         HRETURN_ERROR(DFE_ARGS, FAIL);
@@ -1132,21 +1138,31 @@ Happendable(int32 aid)
     /* get the offset and length of the dataset */
     data_len = access_rec->block->ddlist[access_rec->idx].length;
     data_off = access_rec->block->ddlist[access_rec->idx].offset;
-
+#ifdef OLD_WAY
     file_off = HI_TELL(file_rec->file);     /* get the current offset */
     HI_SEEKEND(file_rec->file);
-    if (data_len + data_off == HI_TELL(file_rec->file))     /* dataset at end? */
+    if (data_len + data_off == HI_TELL(file_rec->file))  /* dataset at end? */
         access_rec->appendable = TRUE;
     else
         access_rec->appendable = FALSE;
 
     HI_SEEK(file_rec->file, file_off);  /* restore the previous position */
-
+#ifdef TESTING
+    printf("Happendable: file_off=%d\n",file_off);
+#endif
+#else /* !OLD_WAY */
+#ifdef TESTING
+    printf("Happendable: file_rec->f_end_off=%d\n",file_rec->f_end_off);
+#endif
+    if (data_len + data_off == file_rec->f_end_off)  /* dataset at end? */
+        access_rec->appendable = TRUE;
+    else
+        access_rec->appendable = FALSE;
+#endif /* !OLD_WAY */
     if (access_rec->appendable)     /* return an appropriate status */
         return (SUCCEED);
     else
         return (FAIL);
-
 }   /* end Happendable */
 
 /*--------------------------------------------------------------------------
@@ -1217,11 +1233,20 @@ Hseek(int32 access_id, int32 offset, intn origin)
           data_off = access_rec->block->ddlist[access_rec->idx].offset;
 
           file_rec = FID2REC(access_rec->file_id);
+#ifdef OLD_WAY
           file_off = HI_TELL(file_rec->file);   /* get the current offset */
           HI_SEEKEND(file_rec->file);
           file_end = HI_TELL(file_rec->file);
           HI_SEEK(file_rec->file, file_off);    /* restore the previous position */
+#else /* !OLD_WAY */
+#ifdef TESTING
+    printf("Hseek: file_rec->f_end_off=%d\n",file_rec->f_end_off);
+#endif
+          if (data_len + data_off != file_rec->f_end_off)
+#endif /* !OLD_WAY */
+#ifdef OLD_WAY
           if (data_len + data_off != file_end)
+#endif
             {   /* dataset at end? */
                 access_rec->appendable = FALSE;
                 HEreport("Tried to seek to %d (object length:  %d)", offset,
@@ -1327,6 +1352,10 @@ Hwrite(int32 access_id, int32 length, const VOIDP data)
     filerec_t  *file_rec;       /* file record */
     accrec_t   *access_rec;     /* access record */
     dd_t       *dd;             /* ptr to dd of current elt */
+    int32       file_off;       /* offset in the file we are at currently */
+    int32       file_end;       /* length of the file */
+    int32       data_len;       /* length of the data we are checking */
+    int32       data_off;       /* offset of the data we are checking */
 
     /* clear error stack and check validity of access id */
 #ifdef TESTING
@@ -1362,10 +1391,6 @@ Hwrite(int32 access_id, int32 length, const VOIDP data)
 #endif
     if (access_rec->appendable && length + access_rec->posn > dd->length)
       {
-          int32       file_off; /* offset in the file we are at currently */
-          int32       file_end; /* length of the file */
-          int32       data_len; /* length of the data we are checking */
-          int32       data_off; /* offset of the data we are checking */
 
 #ifdef TESTING
           printf("Hwrite(): appending to a dataset posn=%d, dd->length=%d\n", access_rec->posn, dd->length);
@@ -1373,12 +1398,20 @@ Hwrite(int32 access_id, int32 length, const VOIDP data)
           /* get the offset and length of the dataset */
           data_len = access_rec->block->ddlist[access_rec->idx].length;
           data_off = access_rec->block->ddlist[access_rec->idx].offset;
-
+#ifdef OLD_WAY
           file_off = HI_TELL(file_rec->file);   /* get the current offset */
           HI_SEEKEND(file_rec->file);
           file_end = HI_TELL(file_rec->file);
           HI_SEEK(file_rec->file, file_off);    /* restore the previous position */
+#else /* !OLD_WAY */
+#ifdef TESTING
+    printf("Hwritee: file_rec->f_end_off=%d\n",file_rec->f_end_off);
+#endif
+          if (data_len + data_off != file_rec->f_end_off)
+#endif /* !OLD_WAY */
+#ifdef OLD_WAY
           if (data_len + data_off != file_end)
+#endif
             {   /* dataset at end? */
                 access_rec->appendable = FALSE;
                 HRETURN_ERROR(DFE_BADSEEK, FAIL);
@@ -1394,11 +1427,20 @@ Hwrite(int32 access_id, int32 length, const VOIDP data)
           printf("Hwrite(): appending to a dataset, ok to append\n");
 #endif
       }     /* end if */
-
+    /* seek and write data */
     if (HI_SEEK(file_rec->file, access_rec->posn + dd->offset) == FAIL)
         HRETURN_ERROR(DFE_SEEKERROR, FAIL);
     if (HI_WRITE(file_rec->file, data, length) == FAIL)
         HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+
+    /* update end of file pointer? */
+    file_off = HI_TELL(file_rec->file);
+#ifdef TESTING
+    printf("Hwrite: file_rec->f_end_off=%d\n",file_rec->f_end_off);
+    printf("Hwrite: file_off=%d\n",file_off);
+#endif
+    if (file_off > file_rec->f_end_off)
+      file_rec->f_end_off = file_off;
 
     /* update position of access in elt */
     access_rec->posn += length;
@@ -1406,7 +1448,7 @@ Hwrite(int32 access_id, int32 length, const VOIDP data)
 #ifdef TESTING
     printf("Hwrite(): successful I/O\n");
 #endif
-    return length;
+    return length;   /* return number of bytes written */
 }   /* end Hwrite */
 
 /*--------------------------------------------------------------------------
@@ -2519,8 +2561,10 @@ HIextend_file(filerec_t * file_rec)
 PRIVATE funclist_t *
 HIget_function_table(accrec_t * access_rec, char *FUNC)
 {
-    dd_t       *dd;             /* ptr to current dd */
-    filerec_t  *file_rec;       /* file record */
+    dd_t         *dd;             /* ptr to current dd */
+    filerec_t    *file_rec;       /* file record */
+    uint8        *p;              /* tmp buf */
+    register int i;               /* loop index */
 
 #ifdef OLD_WAY
     /* Check if temproray buffer has been allocated */
@@ -2541,18 +2585,13 @@ HIget_function_table(accrec_t * access_rec, char *FUNC)
         HRETURN_ERROR(DFE_READERROR, NULL);
 
     /* using special code, look up function table in associative table */
-    {
-        register int i;
-        uint8      *p;
-
-        p = ptbuf;
-        INT16DECODE(p, access_rec->special);
-        for (i = 0; functab[i].key != 0; i++)
-          {
-              if (access_rec->special == functab[i].key)
-                  return functab[i].tab;
-          }
-    }
+    p = ptbuf;
+    INT16DECODE(p, access_rec->special);
+    for (i = 0; functab[i].key != 0; i++)
+      {
+        if (access_rec->special == functab[i].key)
+           return functab[i].tab;
+      }
 
     return NULL;
 }   /* HIget_function_table */
@@ -3114,7 +3153,6 @@ HIget_access_slot(void)
 
     /* access records not allocated yet.
        Allocate dynamically and initialize */
-
     if (!access_records)
       {
           access_records = (accrec_t *) HDgetspace(MAX_ACC * sizeof(accrec_t));
@@ -3128,13 +3166,11 @@ HIget_access_slot(void)
 #endif /* OLD_WAY */
 
           /* use the first record */
-
           access_records[0].used = TRUE;
           return 0;
       }
 
     /* return the first unused record */
-
     for (i = 0; i < MAX_ACC; i++)
         if (!access_records[i].used)
           {
@@ -3143,7 +3179,6 @@ HIget_access_slot(void)
           }
 
     return FAIL;
-
 }   /* HIget_access_slot */
 
 /*--------------------------------------------------------------------------
@@ -3614,7 +3649,7 @@ HPgetdiskblock(filerec_t * file_rec, int32 block_size, intn moveto)
               if (HI_SEEK(file_rec->file, ret) == FAIL)
                   HRETURN_ERROR(DFE_SEEKERROR, FAIL);
       }     /* end if */
-#else
+#else /* !OLD_WAY */
     /* get the offset of the end of the file */
     ret = file_rec->f_end_off;
 
@@ -3634,8 +3669,10 @@ HPgetdiskblock(filerec_t * file_rec, int32 block_size, intn moveto)
     if (moveto == TRUE)     /* move back to the beginning of the element */
         if (HI_SEEK(file_rec->file, ret) == FAIL)
             HRETURN_ERROR(DFE_SEEKERROR, FAIL);
-    file_rec->f_end_off = ret + block_size;     /* incr. offset of end of file */
-#endif
+
+    /* incr. offset of end of file */
+    file_rec->f_end_off = ret + block_size;     
+#endif /* !OLD_WAY */
     return (ret);
 }   /* HPgetdiskblock() */
 

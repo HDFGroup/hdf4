@@ -981,6 +981,12 @@ HCPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
     compinfo_t *info;           /* information on the special element */
     int32       ret;
     uint8       local_ptbuf[4];
+    uint8       *p = local_ptbuf;  /* temp buffer ptr */
+    dd_t        *info_dd =      /* dd of infromation element */
+                          &access_rec->block->ddlist[access_rec->idx];
+    filerec_t   *file_rec =     /* file record */
+                           FID2REC(access_rec->file_id);  
+    int32       file_off;       /* offset in the file we are at currently */
 
 #ifdef TESTING
     printf("HCPwrite(): entering\n");
@@ -988,16 +994,6 @@ HCPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
     /* validate length */
     if (length < 0)
         HRETURN_ERROR(DFE_RANGE, FAIL);
-
-#ifdef OLD_WAY
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
-          ptbuf = (uint8 *) HDgetspace(TBUF_SZ * sizeof(uint8));
-          if (ptbuf == NULL)
-              HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
-#endif
 
 #ifdef TESTING
     printf("HCPwrite(): before func ptr call\n");
@@ -1013,20 +1009,25 @@ HCPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
     access_rec->posn += length;
     if (access_rec->posn > info->length)
       {
-          uint8      *p = local_ptbuf;  /* temp buffer ptr */
-          dd_t       *info_dd = /* dd of infromation element */
-          &access_rec->block->ddlist[access_rec->idx];
-          filerec_t  *file_rec = FID2REC(access_rec->file_id);  /* file record */
-
           info->length = access_rec->posn;
           INT32ENCODE(p, info->length);
           if (HI_SEEK(file_rec->file, info_dd->offset + 4) == FAIL)
               HRETURN_ERROR(DFE_SEEKERROR, FAIL);
-          if (HI_WRITE(file_rec->file, local_ptbuf, 4) == FAIL)     /* re-write un-comp. len */
+          /* re-write un-comp. len */
+          if (HI_WRITE(file_rec->file, local_ptbuf, 4) == FAIL)     
               HRETURN_ERROR(DFE_WRITEERROR, FAIL);
       }     /* end if */
 
-    return (length);
+    /* update end of file offset? */
+    file_off = HI_TELL(file_rec->file);
+#ifdef TESTING
+    printf("HCPwrite: file_rec->f_end_off=%d\n",file_rec->f_end_off);
+    printf("HCPwrite: file_off=%d\n",file_off);
+#endif
+    if (file_off > file_rec->f_end_off)
+      file_rec->f_end_off = file_off;
+
+    return (length);  /* return length of bytes written */
 }   /* end HCPwrite() */
 
 /*--------------------------------------------------------------------------
