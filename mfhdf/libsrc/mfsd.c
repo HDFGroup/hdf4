@@ -314,6 +314,9 @@ int32 id;
             if(handle->flags & NC_NDIRTY) {
                 if(!xdr_numrecs(handle->xdrs, handle) )
                     return FAIL;
+#ifdef HDF
+                if (handle->file_type != HDF_FILE)
+#endif
                 handle->flags &= ~(NC_NDIRTY);
             }
 	}
