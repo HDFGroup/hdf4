@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/05/07 16:37:55  dilg
-Changed output file name frm "o1" to "tstubs.hdf"
+Revision 1.5  1992/06/01 19:41:48  dilg
+Added explicit test for dangling aids.
 
+ * Revision 1.4  1992/05/07  16:37:55  dilg
+ * Changed output file name frm "o1" to "tstubs.hdf"
+ *
  * Revision 1.3  1992/04/28  19:36:55  dilg
  * Some minor cosmetic changes.
  *
@@ -311,7 +314,7 @@ main()
     }
 
     printf("\nTesting DFsetfind...\n");
-    ret = DFsetfind(dfile, (uint16)255, (uint16)3);
+    ret = DFsetfind(dfile, (uint16)254, (uint16)0);
     if (ret == -1) {
 	printf(">>>DFsetfind failed at line %d.\n", __LINE__ - 2);
 	printf("   DFerror = %d\n", DFerror);
@@ -320,19 +323,30 @@ main()
 	printf("Success!\n");
 
     printf("\nTesting DFfind...\n");
+    ret = DFdup(dfile, (uint16)254, (uint16)4, (uint16)255, (uint16)3);
+    if (ret != 0)
+        printf(">>>DFdup 1 failed.\n");
+    ret = DFdup(dfile, (uint16)254, (uint16)5, (uint16)255, (uint16)3);
+    if (ret != 0)
+        printf(">>>DFdup 2 failed.\n");
+    ret = DFdup(dfile, (uint16)254, (uint16)6, (uint16)255, (uint16)3);
+    if (ret != 0)
+        printf(">>>DFdup 3 failed.\n");
+    for (i=4; i<7; i++) {
     ret = DFfind(dfile, dlist);
     if (ret == -1) {
 	printf(">>>DFfind failed at line %d.\n", __LINE__ - 2);
 	printf("   DFerror = %d\n", DFerror);
 	nerrors++;
     } else
-	if ((dlist[0].tag != 255) || (dlist[0].ref != 3) ||
+	if ((dlist[0].tag != 254) || (dlist[0].ref != i) ||
 	    (dlist[0].length != a1size)) {
 	    printf(">>>DFfind failed at line %d.  ", __LINE__ - 8);
 	    printf("Descriptor has unexpected values\n");
 	    nerrors++;
         } else
 	    printf("Success!\n");
+    } /* for i */
 
     printf("\nTesting appending...\n");
     ret = DFputelement(dfile, (uint16)255, (uint16)7, ar2, a2size);
@@ -385,6 +399,14 @@ main()
 		}
 	    }
 	}
+    }
+
+    ret = DFclose(dfile);
+    if (ret != 0) {
+	printf(">>>Failure:  DFclose failed (probably due to open aids)\n");
+	printf("   DFerror = %d\n", DFerror);
+	HEprint(stderr, 0);
+	nerrors++;
     }
 
     printf("\n\nTest Summary:\n");
