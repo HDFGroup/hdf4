@@ -27,11 +27,12 @@ VERSION  = 4.0
 CC=cc
 # turn off some incorrect or harmless warnings.
 # 1429 -- about long long as non-standard.  It is in the new C standard.
-warn=-woff 1429
+# 1521 -- about #ident not standard.  SGI puts them in their system header files
+warn=-woff 1429,1521
 CFLAGS=-ansi -64 -O -s $(warn)
 
 # Fortran compilier
-FC = f77
+FC = f90
 FFLAGS =-64 -O -s
 
 # Name of archive randomizer, usually ranlib (use 'true' if non-existant)
