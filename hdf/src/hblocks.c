@@ -239,6 +239,9 @@ HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length,
   TRACE_ON(H_mask, ID_HLcreate);
 #endif /* HAVE_PABLO */
 
+#ifdef QAK
+printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_blocks);
+#endif /* QAK */
     /* clear error stack and validate file record id */
     HEclear();
     file_rec = HAatom_object(file_id);
@@ -422,6 +425,9 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
   TRACE_ON(H_mask, ID_HLconvert);
 #endif /* HAVE_PABLO */
 
+#ifdef QAK
+printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_blocks);
+#endif /* QAK */
     /* clear error stack */
     HEclear();
 
@@ -477,6 +483,9 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
     info = (linkinfo_t *) access_rec->special_info;
     info->attached = 1;
     info->length = data_len;
+#ifdef QAK
+printf("%s: data_len=%ld, block_length=%ld, number_blocks=%ld\n",FUNC,data_len,block_length,number_blocks);
+#endif /* QAK */
     info->first_length = data_len;
     info->block_length = block_length;
     info->number_blocks = number_blocks;
@@ -1339,6 +1348,9 @@ printf("%s: (b) block_idx=%d\n",FUNC,(int)block_idx);
     /* return SUCCEED; */
     /* if wrong # bytes written, FAIL has already been returned */
     ret_value = bytes_written;
+#ifdef QAK
+printf("%s: ret_value=%ld\n",FUNC,(long)bytes_written);
+#endif /* QAK */
 
 done:
   if(ret_value == FAIL)   

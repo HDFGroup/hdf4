@@ -399,7 +399,6 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
     uint8 *src, *dest, *Src;
 
     int32       j, type, offset;
-    int16       special;
     int32       position, new_size;
     int32       status;
     int32       total_bytes;    /* total number of bytes that need to be written out */
@@ -452,9 +451,13 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
     /* make sure we have a valid AID */
     if (vs->aid == 0)
       {
+#ifdef OLD_WAY
           vs->aid = Hstartwrite(vs->f, DFTAG_VS, vs->oref, total_bytes);
           if (vs->aid == FAIL)
               HGOTO_ERROR(DFE_BADAID, FAIL);
+#else /* OLD_WAY */
+          HGOTO_ERROR(DFE_BADAID, FAIL);
+#endif /* OLD_WAY */
       }
 
     /*
@@ -464,8 +467,11 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
     HQueryposition(vs->aid, &position);
     new_size = (position / vs->wlist.ivsize) + nelt;
 
+#ifdef OLD_WAY
     if ((vs->nvertices > 0) && (new_size > vs->nvertices))
       {
+          int16       special;
+
           HQueryspecial(vs->aid, &special);
           if (!special)
             {
@@ -482,6 +488,7 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
                 j = Hseek(vs->aid, position, DF_START);
             }
       }
+#endif /* OLD_WAY */
 
     /* this should really be cached in the Vdata structure */
     for (int_size = 0, j = 0; j < w->n; j++)

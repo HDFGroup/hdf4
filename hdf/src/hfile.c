@@ -1594,7 +1594,7 @@ Hwrite(int32 access_id, int32 length, const VOIDP data)
             }		/* end if */
             /* successfully converted the element into a linked block */
             /* now loop back and actually write the data out */
-          if (Hwrite(access_id, length, data) == FAIL)
+          if ((ret_value=Hwrite(access_id, length, data)) == FAIL)
             HGOTO_ERROR(DFE_WRITEERROR, FAIL);
           goto done;    /* we're finished, wrap things up */
         }	/* end if */
