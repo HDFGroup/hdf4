@@ -309,7 +309,7 @@ vsdumpfull(int32 vs)
     char        vsname[100], fields[VSFIELDMAX*FIELDNAMELENMAX];
     int32       j, i, t, interlace, nv, vsize;
     uint8      *bb, *b;
-    VWRITELIST *w;
+    DYN_VWRITELIST *w;
     int32       (*fmtfn[60]) ();
     int32       off[60];
     int32       order[60];
