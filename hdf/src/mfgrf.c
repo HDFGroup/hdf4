@@ -60,7 +60,6 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
-#include "mfgr.h"
 
 /* Local pre-processor macros */
 #define XDIM    0

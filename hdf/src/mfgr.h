@@ -26,30 +26,19 @@
 #ifndef __MFGR_H
 #define __MFGR_H
 
-#include "hdf.h"
-#include "hfile.h"
-#include "tbbt.h"       /* Get tbbt routines */
-
 /* Interlace types available */
 typedef int16 gr_interlace_t;
 #define MFGR_INTERLACE_PIXEL		0    /* pixel interlacing scheme */
-#define MFGR_INTERLACE_LINE		1    /* line interlacing scheme */
+#define MFGR_INTERLACE_LINE		    1    /* line interlacing scheme */
 #define MFGR_INTERLACE_COMPONENT 	2    /* component interlacing scheme */
 
 #if defined MFGR_MASTER | defined MFGR_TESTER
 
+#include "hfile.h"
+#include "tbbt.h"       /* Get tbbt routines */
+
 /* This is the size of the hash tables used for GR & RI IDs */
 #define GRATOM_HASH_SIZE    32
-
-#if 0  /* moved to hlimits.h */
-/* The names of the Vgroups created by the GR interface */
-#define GR_NAME "RIG0.0"    /* name of the Vgroup containing all the images */
-#define RI_NAME "RI0.0"     /* name of a Vgroup containing information about one image */
-#define RIGATTRNAME  "RIATTR0.0N"  /* name of a Vdata containing an attribute */
-#define RIGATTRCLASS "RIATTR0.0C"  /* class of a Vdata containing an attribute */
-
-#define FILL_ATTR    "FillValue"   /* name of an attribute containing the fill value */
-#endif
 
 /* The tag of the attribute data */
 #define RI_TAG      DFTAG_VG    /* Current RI groups are stored in Vgroups */
@@ -58,34 +47,6 @@ typedef int16 gr_interlace_t;
 /* The default threshhold for attributes which will be cached */
 #define GR_ATTR_THRESHHOLD  2048    
 
-#ifdef OLD_WAY
-/*
- * NOTE:  People at large should not use this macro as they do not
- *        have access to gr_tab[]
- */
-#define Get_grfile(f) (f>=0 ? (gr_tab[(f & 0xffff)]) : NULL)
-
-#define GRIDTYPE  11    /* for GR access (also defined in hfile.h) */
-#define RIIDTYPE  12    /* for RI access (also defined in hfile.h) */
-
-/* GRID and RIID's are composed of the following fields:    */
-/*      Top 8 Bits:GRID/RIID constant (for identification) */
-/*      Next 8 Bits: File ID (can be used for Get_vfile)     */
-/*      Bottom 16 Bits: ID for the individual GR group/RI image */
-
-#define GRSLOT2ID(f,s) ( (((uint32)f & 0xff) << 16) | \
-                    (((uint32)GRIDTYPE & 0xff) << 24) | ((s) & 0xffff) )
-#define VALIDGRID(i) (((((uint32)(i) >> 24) & 0xff) == GRIDTYPE) && \
-                    ((((uint32)(i) >> 16)  & 0xff) < MAX_GR_FILES))
-#define GRID2SLOT(i) (VALIDGRID(i) ? (uint32)(i) & 0xffff : -1)
-#define GRID2VFILE(i) (VALIDGRID(i) ? ((uint32)(i) >> 16) & 0xff : -1)
-
-#define RISLOT2ID(g,s) ( (((uint32)g & 0xff) << 16) | \
-                    (((uint32)RIIDTYPE & 0xff) << 24) | ((s) & 0xffff) )
-#define VALIDRIID(i) ((((uint32)(i) >> 24) & 0xff) == RIIDTYPE)
-#define RIID2SLOT(i) (VALIDRIID(i) ? (uint32)(i) & 0xffff : -1)
-#define RIID2GRID(i) (VALIDRIID(i) ? ((uint32)(i) >> 16) & 0xff : -1)
-#endif /* OLD_WAY */
 #define VALIDRIINDEX(i,gp) ((i)>=0 && (i)<(gp)->gr_count)
 
 /*

@@ -160,7 +160,7 @@ MODIFICATION HISTORY
  */
 
 #define MFGR_MASTER
-#include "mfgr.h"       /* Multi-file raster information */
+#include "hdf.h"
 
 /* Local pre-processor macros */
 #define XDIM    0
