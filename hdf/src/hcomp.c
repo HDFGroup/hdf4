@@ -1,3 +1,15 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
@@ -97,6 +109,9 @@ PRIVATE int32 HCIwrite_header
 PRIVATE int32 HCIinit_model
     PROTO((comp_model_info_t *minfo,comp_model_t model_type,
             model_info *m_info));
+
+/* Private buffer */
+PRIVATE uint8 *ptbuf = NULL;
 
 /* comp_funcs -- struct of accessing functions for the compressed
    data element function modules.  The position of each function in
@@ -258,8 +273,16 @@ PRIVATE int32 HCIwrite_header(file_rec,access_rec,info,dd,special_tag,ref)
     char *FUNC="HCIwrite_header";  /* for HERROR */
     uint8 *p;       /* pointer to the temporary buffer */
 
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, NULL);
+      }
+
     /* write special element info to the file */
-    p=tbuf;
+    p = ptbuf;
     INT16ENCODE(p, SPECIAL_COMP);           /* specify special tag type */
     UINT16ENCODE(p, COMP_HEADER_VERSION);   /* specify header version */
     INT32ENCODE(p, info->length);           /* write length of un-comp. data */
@@ -299,10 +322,10 @@ PRIVATE int32 HCIwrite_header(file_rec,access_rec,info,dd,special_tag,ref)
 
     /* write compressed special element data to the file */
     dd->offset=HI_TELL(file_rec->file);
-    dd->length=p-tbuf;      /* not a constant length */
+    dd->length=p - ptbuf;      /* not a constant length */
     dd->tag=special_tag;
     dd->ref=ref;
-    if(HI_WRITE(file_rec->file, tbuf, dd->length)==FAIL) {
+    if(HI_WRITE(file_rec->file, ptbuf, dd->length)==FAIL) {
         access_rec->used=FALSE;
         HRETURN_ERROR(DFE_WRITEERROR,FAIL);
       } /* end if */
@@ -364,12 +387,21 @@ PRIVATE int32 HCIread_header(file_rec,access_rec,info,info_dd,c_info,m_info)
     uint16 mtype,ctype;         /* temporary variables for model and coder type */
     uint8 *p;       /* pointer to the temporary buffer */
 
+
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, NULL);
+      }
+
     if(HI_SEEK(file_rec->file, info_dd->offset+2)==FAIL)
         HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-    if(HI_READ(file_rec->file, tbuf, (COMP_HEADER_LENGTH-2))==FAIL)
+    if(HI_READ(file_rec->file, ptbuf, (COMP_HEADER_LENGTH-2))==FAIL)
         HRETURN_ERROR(DFE_READERROR,FAIL);
 
-    p=tbuf;
+    p = ptbuf;
     UINT16DECODE(p, header_version);    /* get header length */
     INT32DECODE(p, info->length);   /* get _uncompressed_ data length */
     UINT16DECODE(p, info->comp_ref);    /* get ref # of comp. data */
@@ -479,6 +511,15 @@ int32 HCcreate(file_id, tag, ref, model_type, m_info, coder_type, c_info)
             || (special_tag=MKSPECIALTAG(tag))==DFTAG_NULL)
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
+
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, NULL);
+      }
+
     /* chech for access permission */
     if(!(file_rec->access & DFACC_WRITE))
        HRETURN_ERROR(DFE_DENIED,FAIL);
@@ -541,7 +582,7 @@ int32 HCcreate(file_id, tag, ref, model_type, m_info, coder_type, c_info)
 
 #ifdef OLD_WAY
     /* write special element info to the file */
-    p=tbuf;
+    p = ptbuf;
     INT16ENCODE(p, SPECIAL_COMP);           /* specify special tag type */
     UINT16ENCODE(p, COMP_HEADER_VERSION);   /* specify header version */
     INT32ENCODE(p, info->length);           /* write length of un-comp. data */
@@ -560,7 +601,7 @@ int32 HCcreate(file_id, tag, ref, model_type, m_info, coder_type, c_info)
     dd->length=COMP_HEADER_LENGTH;
     dd->tag=special_tag;
     dd->ref=ref;
-    if(HI_WRITE(file_rec->file, tbuf, dd->length)==FAIL) {
+    if(HI_WRITE(file_rec->file, ptbuf, dd->length)==FAIL) {
         access_rec->used=FALSE;
         HRETURN_ERROR(DFE_WRITEERROR,FAIL);
       } /* end if */
@@ -697,6 +738,14 @@ PRIVATE int32 HCIstaccess(access_rec, access)
     if(!file_rec || file_rec->refcount==0 || !(file_rec->access & access))
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, NULL);
+      }
+
     /* intialize the access record */
     access_rec->special=SPECIAL_COMP;
     access_rec->posn=0;
@@ -720,7 +769,7 @@ PRIVATE int32 HCIstaccess(access_rec, access)
             access_rec->used=FALSE;
             HRETURN_ERROR(DFE_SEEKERROR,FAIL);
         }
-        if((ret=HI_READ(file_rec->file, tbuf, (COMP_HEADER_LENGTH-2)))==FAIL) {
+        if((ret=HI_READ(file_rec->file, ptbuf, (COMP_HEADER_LENGTH-2)))==FAIL) {
             access_rec->used=FALSE;
             HRETURN_ERROR(DFE_READERROR,FAIL);
         }
@@ -731,7 +780,7 @@ PRIVATE int32 HCIstaccess(access_rec, access)
            HRETURN_ERROR(DFE_NOSPACE,FAIL);
         }
         {
-            uint8 *p=tbuf;
+            uint8 *p = ptbuf;
             UINT16DECODE(p, header_version);    /* get header length */
             INT32DECODE(p, info->length);   /* get _uncompressed_ data length */
             UINT16DECODE(p, info->comp_ref);    /* get ref # of comp. data */
@@ -1007,6 +1056,15 @@ int32 HCPwrite(access_rec, length, data)
     if(length<0)
        HRETURN_ERROR(DFE_RANGE,FAIL);
 
+
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, NULL);
+      }
+
     info=(compinfo_t *)access_rec->special_info;
     if((ret=(*(info->minfo.model_funcs.write))(access_rec,length,data))==FAIL)
         HRETURN_ERROR(DFE_MODEL,FAIL);
@@ -1014,7 +1072,7 @@ int32 HCPwrite(access_rec, length, data)
     /* update access record, and information about special element */
     access_rec->posn+=length;
     if(access_rec->posn>info->length) {
-        uint8 *p=tbuf;           /* temp buffer ptr */
+        uint8 *p = ptbuf;           /* temp buffer ptr */
         dd_t *info_dd=           /* dd of infromation element */
             &access_rec->block->ddlist[access_rec->idx];
         filerec_t *file_rec=FID2REC(access_rec->file_id);    /* file record */
@@ -1023,7 +1081,7 @@ int32 HCPwrite(access_rec, length, data)
         INT32ENCODE(p, info->length);
         if(HI_SEEK(file_rec->file, info_dd->offset+4)==FAIL)
             HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-        if(HI_WRITE(file_rec->file, tbuf, 4)==FAIL) /* re-write un-comp. len */
+        if(HI_WRITE(file_rec->file, ptbuf, 4)==FAIL) /* re-write un-comp. len */
             HRETURN_ERROR(DFE_WRITEERROR,FAIL);
       } /* end if */
 

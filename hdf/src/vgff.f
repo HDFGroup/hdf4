@@ -1,16 +1,26 @@
+C****************************************************************************
+C* NCSA HDF                                                                 *
+C* Software Development Group                                               *
+C* National Center for Supercomputing Applications                          *
+C* University of Illinois at Urbana-Champaign                               *
+C* 605 E. Springfield, Champaign IL 61820                                   *
+C*                                                                          *
+C* For conditions of distribution and use, see the accompanying             *
+C* hdf/COPYRIGHT file.                                                      *
+C*                                                                          *
+C****************************************************************************
 C
 C $Id$ 
 C
 C     
-c	**************************************************************************
-c	* Likkai Ng May 1991 NCSA
-c	*
-c	* vgFf.f
-c	* Part of the HDF VSet interface.
-c	*
-c	* Contains fortran routines callable from fortran programs.
-c	*
-c	**************************************************************************
+c *************************************************************************
+c *
+c * vgFf.f
+c * Part of the HDF VSet interface.
+c *
+c * Contains fortran routines callable from fortran programs.
+c *
+c **************************************************************************
 
 
 C------------------------------------------------------------------------------
@@ -127,7 +137,7 @@ c	related: Vsetclass--vsclsc--VFSCLS
       integer function vfscls (vg, vgclass)
       integer			vg
       character*(*)	vgclass
-      ineteger      vsclsc
+      integer      vsclsc
 
       vfscls = vsclsc  (vg, vgclass, len(vgclass))
       end

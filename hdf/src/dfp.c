@@ -1,3 +1,15 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
@@ -24,12 +36,12 @@ static char RcsId[] = "@(#)$Revision$";
 #include "herr.h"
 #include "hfile.h"
 
-static uint16 Readref=0;
-static uint16 Writeref=0;
-static uint16 Refset=0;                /* Ref of palette to get next */
-static uint16 Lastref = 0;     /* Last ref read/written */
+PRIVATE uint16 Readref = 0;
+PRIVATE uint16 Writeref = 0;
+PRIVATE uint16 Refset = 0;                /* Ref of palette to get next */
+PRIVATE uint16 Lastref = 0;     /* Last ref read/written */
 
-static char Lastfile[DF_MAXFNLEN]; /* last file opened */
+PRIVATE char Lastfile[DF_MAXFNLEN] = ""; /* last file opened */
 
 #ifdef VMS
 int32 _DFPIopen();
