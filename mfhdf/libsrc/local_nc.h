@@ -192,14 +192,17 @@ extern char *cdf_routine_name ; /* defined in lerror.c */
                        /*  C D L 1 */
 #define	NCLINKMAGIC	0x43444c01
 
-#ifndef HDF /* HDF has already worked out if we have prototypes */
+/* #ifndef HDF *//* HDF has already worked out if we have prototypes */
+#ifdef HDF
+#define PROTOTYPE
+#endif
 #undef PROTO
 #ifndef NO_HAVE_PROTOTYPES 
 #   define	PROTO(x)	x
 #else
 #   define	PROTO(x)	()
 #endif
-#endif /* HDF */
+/* #endif */ /* HDF */
 
 #ifdef __cplusplus
 extern "C" {

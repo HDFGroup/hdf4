@@ -6,12 +6,12 @@
 #ifndef _NC_ERROR_
 #define _NC_ERROR_
 
-#ifdef __STDC__
+#ifndef NO_STDARG
 void nc_serror(char *fmt, ...) ;
 void NCadvise(int err, char *fmt,...) ;
 #else
 void nc_serror() ;
 void NCadvise() ;
-#endif /* __STDC__ */
+#endif /* NO_STDARG */
 
 #endif /* _NC_ERROR_ */
