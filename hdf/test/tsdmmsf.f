@@ -103,8 +103,8 @@ C      i8max = 127
       i8max = char(127)
 C NOTE: If you get a compile error on the "char(-128)" line, substitute
 C       the "char(0)" line.  Its not quite as thorough a test, but...
-C      i8min = char(0)
-      i8min = char(-128)
+      i8min = char(0)
+C      i8min = char(-128)
       i16max = 1200
       i16min = -1200
       i32max = 99999999
