@@ -11,12 +11,16 @@ static char rcsid[] = "$Id$" ;
  *  'xdr_vector' is not used by the netCDF, it is used here for convenience.
  */
 #include <stdio.h>
-#ifndef VMS
-#   include <sys/types.h>	/* for <netinet/in.h> on some systems */
-#   ifndef MSDOS
-#       include <netinet/in.h>	/* for htonl() */
-#   endif
-#endif
+#ifdef macintosh
+#	include "types.h"
+#else /* not macintosh */
+#       ifndef VMS
+#   	include <sys/types.h>	/* for <netinet/in.h> on some systems */
+#   	ifndef MSDOS 
+#          include <netinet/in.h>	/* for htonl() */
+#   	endif
+#	endif
+#endif /* not macintosh */
 
 /*
  * The following is necessary because the assert() macro *must* be defined
