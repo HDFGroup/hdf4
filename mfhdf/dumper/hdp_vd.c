@@ -428,12 +428,6 @@ void printHeader(
 		char* fields,
 		vd_info_t* curr_vd )
 { 
-/*   int32 lastItem;
-   int32 count = 0;
-   char  *tempPtr = NULL;
-   char  *ptr = NULL;
-   int32 i;
-*/
    fprintf(fp, "Vdata: %d\n", (int) curr_vd->index );
    if( curr_vd->tag == FAIL )	/* print vdata tag */
       fprintf(fp, "   tag = <Undefined>; ");
@@ -654,11 +648,15 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
 	 ERROR_CONT_END( "in %s: VSinquire failed for vdata with ref#=%d", 
                         "dumpvd_ascii", (int) vdata_ref, vd_id );
 
-      /* Get the size of the specified fields of the vdata */
-      vsize = VShdfsize( vd_id, fields );
-      if (vsize == FAIL)
-         ERROR_CONT_END( "in %s: VShdfsize failed for vdata with ref#=%d", 
- 			"dumpvd_ascii", (int) vdata_ref, vd_id );
+      /* Get the size of the specified fields of the vdata only if there
+         are fields defined by VSsetfields and VSfdefine in the vdata */
+      if( fields != NULL && fields[0] != '\0' )
+      {
+          vsize = VShdfsize( vd_id, fields );
+          if (vsize == FAIL)
+             ERROR_CONT_END( "in %s: VShdfsize failed for vdata with ref#=%d",
+			 "dumpvd_ascii", (int) vdata_ref, vd_id );
+      }
 
       if (FAIL == (vdata_tag = VSQuerytag(vd_id)))
          ERROR_CONT_END( "in %s: VSQuerytag failed for vdata with ref#=%d", 
@@ -717,7 +715,10 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
                    /* BMR - 6/30/98 to fix bug #236: if no fields are defined or 
 		      no data is written, break out and don't fall through */
                    if ( fields[0] == '\0' || nvf == 0 )
-                      ERROR_BREAK_0( "<No data written>\n\n", SUCCEED );
+                   {
+                      fprintf(fp, "   No data written\n\n");
+                      break;
+                   }
                 }
                 else /* only header, no attributes, annotations or data */
                     break; /* break out and don't fall through */
@@ -1004,7 +1005,7 @@ dvd(dump_info_t * dumpvd_opts,
           status = dumpvd_ascii(dumpvd_opts, file_id, file_name, fp,
                    num_vd_chosen, flds_chosen, vd_chosen, dumpallfields);
           if( FAIL == status )
-             ERROR_BREAK_0( "in dvd", FAIL );
+             ERROR_BREAK_0( "in dvd: dumpvd_ascii returned failure", FAIL );
           break;
        case DBINARY:   /*  binary file, not fully tested yet  */
 
@@ -1015,7 +1016,7 @@ dvd(dump_info_t * dumpvd_opts,
           status = dumpvd_binary(dumpvd_opts, file_id, file_name, fp,
                    num_vd_chosen, flds_chosen, vd_chosen, dumpallfields);
           if( FAIL == status )
-             ERROR_BREAK_0( "in dvd", FAIL );
+             ERROR_BREAK_0( "in dvd: dumpvd_binary returned failure", FAIL );
 
           break;
        default:
