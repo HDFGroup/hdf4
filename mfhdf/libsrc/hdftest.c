@@ -104,6 +104,27 @@ char *argv[];
     CHECK(status, "SDsetdimname");
 
 
+    status = SDsetattr(dimid, "DimensionAttribute", DFNT_CHAR8, 
+                       4, "TRUE");
+    CHECK(status, "SDsetdimname");
+    
+    status = SDfindattr(dimid, "DimensionAttribute");
+    if(status != 0) {
+        fprintf(stderr, "Bad index for SDfindattr on Dimension Attribute %d\n",
+                status);
+        num_err++;
+    }
+
+    status = SDattrinfo(dimid, (int32) 0, name, &nt, &count);
+    CHECK(status, "SDattrinfo");
+
+    status = SDreadattr(dimid, 0, text);
+    CHECK(status, "SDreadattr");
+    
+    if(HDstrncmp(text, "TRUE", count)) {
+        fprintf(stderr, "Invalid dimension attribute read <%s>\n", text);
+        num_err++;
+    }
 
     dimid = SDgetdimid(newsds, 0);
     if(dimid == FAIL) {
@@ -144,7 +165,7 @@ char *argv[];
     CHECK(status, "SDsetattr");
 
     /* lets make sure we can read it too */
-    status = SDattrinfo(dimid, 2, name, &nt, &count);
+    status = SDattrinfo(dimid, 3, name, &nt, &count);
     CHECK(status, "SDattrinfo");
 
     if(nt != DFNT_FLOAT32) {
@@ -278,7 +299,7 @@ char *argv[];
     CHECK(status, "SDsetattr");
 
     status = SDattrinfo(f1, (int32) 0, name, &nt, &count);
-    CHECK(status, "SDinqattr");
+    CHECK(status, "SDattrinfo");
 
     status = SDreadattr(f1, 0, text);
     CHECK(status, "SDreadattr");

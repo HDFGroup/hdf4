@@ -35,7 +35,7 @@ fid    = SDstart(file name, access);
         --- get the number of data-sets in the file ---
 num    = SDnumber(fid);
         
-sdsid  = SDselect(fid, i, ...);    --- 0 <= i < num ---
+sdsid  = SDselect(fid, i, ...);   0 <= i < num
 
         --- return the name, rank, dimsizes, #of attr, datatype ---
 status = SDgetinfo(sdsid, ...); 
@@ -659,9 +659,7 @@ VOIDP data;
         There can be multiple data sets with the same name.  In 
         such a case we only ever return the index of the first
         such dataset.
-
         Wildcards are not supported
-
 --------------------------------------------------------------------------- */
 int32
 #ifdef PROTOTYPE
@@ -727,7 +725,6 @@ char  *name;
         back the max and min values.  This is not the case with 
         netCDF.  This routine will only work if they are already 
         the same number types.
-
 --------------------------------------------------------------------------- */
 intn
 #ifdef PROTOTYPE
@@ -841,12 +838,9 @@ status  = SDendaccess(sdsid);
         create the fake dimensions now and when optional 
         information comes in (i.e.  name, tying to other 
         dimensions) we'll go in and modify the structure in place.
-
         This is gonna be heinous.  Please do not attempt this at home
-
         See SDselect() for a discussion on how SDS IDs are set
         up.
-
 --------------------------------------------------------------------------- */
 int32
 #ifdef PROTOTYPE
@@ -1454,7 +1448,6 @@ NC_array *** app;
         Given an ID and an attribute defintion attach the atrribute 
         to the thing represented by the ID.  For starters, the valid 
         IDs could be variable, file or dimesnion IDs
-
 --------------------------------------------------------------------------- */
 intn
 #ifdef PROTOTYPE
@@ -2142,6 +2135,7 @@ intn len;
         Retreive calibration information.  What is the formula?
 
 --------------------------------------------------------------------------- */
+
 #ifdef PROTOTYPE
 intn SDgetcal(int32 sdsid, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, int32 *nt)
 #else
@@ -2791,8 +2785,8 @@ intn  len;
 
         IMPORTANT:  This will only work on datasets stored in HDF files.
 
-
 --------------------------------------------------------------------------- */
+
 intn
 #ifdef PROTOTYPE
 SDsetexternalfile(int32 id, char *filename, int32 offset)
@@ -2889,26 +2883,17 @@ char  * attrname;
 {
 
     NC_array *  ap;
+    NC_array ** app;
     NC_attr  ** attr;
     NC_var   *  var;
     NC       *  handle;
     int32       attrid, len;
 
-    /* determine what type of ID we've been given */
-    handle = NULL;
-    handle = SDIhandle_from_id(id, SDSTYPE);
-    if(handle != NULL) { /* was a variable ID */
-        var = SDIget_var(handle, id);
-        if(var == NULL)
-            return FAIL;
-        ap = var->attrs;
-    } else {
-        /* see if its a fidle ID */
-        handle = SDIhandle_from_id(id, CDFTYPE);
-        if(handle == NULL)
-            return FAIL;
-        ap = handle->attrs;
-    }
+     /* determine what type of ID we've been given */
+    if(SDIapfromid(id, &handle, &app) == FAIL)
+        return FAIL;
+
+    ap = (*app);
 
     if(ap == NULL)
         return FAIL;
@@ -3253,3 +3238,4 @@ int32 *sizes;
 
 */
 #endif /* 0 */
+
