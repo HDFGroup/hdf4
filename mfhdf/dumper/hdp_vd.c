@@ -846,7 +846,14 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
                 goto done;
             }
 
-          if (FAIL == (vdata_tag = VSQuerytag(vd_id)))
+	  /* BMR - 7/1/98 realized while fixing bug #236.
+	     Skip binary printing if the vdata is empty */
+	  if (fields[0] == '\0' || nvf == 0 )
+	      fprintf(stderr,"Vdata with ref_num(%d) in file %s is empty.\n",
+                        (int) vdata_ref,file_name);
+	  else /* vdata is not empty */
+	  {
+            if (FAIL == (vdata_tag = VSQuerytag(vd_id)))
             {
                 fprintf(stderr,"VSQuerytag failed on vd_id(%d) in file %s\n", 
                         (int) vdata_ref, file_name);
@@ -854,7 +861,7 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
                 goto done;
             }
 
-          if (FAIL == VSgetclass(vd_id, vdclass))
+            if (FAIL == VSgetclass(vd_id, vdclass))
             {
                 fprintf(stderr,"VSgetclass failed on vd_id(%d) in file %s\n", 
                         (int) vdata_ref, file_name);
@@ -863,12 +870,12 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
             }
 
 
-          /* If one or more fields were specified by the user, then find out
-             what they were, determine their corresponding indices in 
-             "fields", and store these indices in the array "flds_indices" so
-             that they can be used to determine whether a field should be
-             dumped later on. */
-          if (flds_chosen[0] != NULL)
+            /* If one or more fields were specified by the user, then find out
+               what they were, determine their corresponding indices in 
+               "fields", and store these indices in the array "flds_indices" so
+               that they can be used to determine whether a field should be
+               dumped later on. */
+            if (flds_chosen[0] != NULL)
             {
                 HDstrcpy(tempflds, fields);
                 ptr = tempflds;
@@ -903,11 +910,11 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
                   }	/* for (j...) */
             }		/* if  */
 
-          /* If no fields were chosen, all fields are to be dumped out, and
-             so all fileds match. */
-          if (flds_chosen[0] == NULL)
-              flds_match = 1;
-          if (flds_match)
+            /* If no fields were chosen, all fields are to be dumped out, and
+               so all fileds match. */
+            if (flds_chosen[0] == NULL)
+                flds_match = 1;
+            if (flds_match)
             {
                 if (dumpvd_opts->contents == DDATA)
                   {
@@ -929,6 +936,7 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
                       goto done;
                   }
             }
+	  } /* end of if (fields[0] == '\0' || nvf == 0 ) */
                       
           if (FAIL == VSdetach(vd_id))
             {
