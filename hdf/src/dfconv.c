@@ -113,7 +113,6 @@ static char RcsId[] = "@(#)$Revision$";
 /*****************************************************************************/
 
 #include <ctype.h>
-#define DFKMASTER   /* Define this for the prototypes for DFKnumin/out */
 #include "hdf.h"
 #include "hconv.h"
 
@@ -137,10 +136,10 @@ extern int DFconvert(uint8 *source, uint8 *dest, int ntype, int sourcetype,
 /*
    **  Conversion Routine Pointer Definitions
  */
-HDFPUBLIC int	(*DFKnumin)
+static int	(*DFKnumin)
             (VOIDP source, VOIDP dest, uint32 num_elm,
                     uint32 source_stride, uint32 dest_stride) = DFKInoset;
-HDFPUBLIC int	(*DFKnumout)
+static int	(*DFKnumout)
             (VOIDP source, VOIDP dest, uint32 num_elm,
                     uint32 source_stride, uint32 dest_stride) = DFKInoset;
 

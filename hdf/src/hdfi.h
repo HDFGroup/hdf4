@@ -1257,16 +1257,6 @@ correctly.
 #   define NBYTEDECODE(s, d, n) \
 {   HDmemcpy(d,s,n); p+=n }
 
-/**************************************************************************
-*                   Conversion Routine Pointers
-***************************************************************************/
-#    ifndef DFKMASTER
-HDFLIBAPI int (*DFKnumin)(const void * source, void * dest, uint32 num_elm,
-            uint32 source_stride,uint32 dest_stride);
-HDFLIBAPI int (*DFKnumout)(const void * source, void * dest, uint32 num_elm,
-            uint32 source_stride,uint32 dest_stride);
-#     endif /* DFKMASTER */
-
 /*----------------------------------------------------------------
 ** MACRO FCALLKEYW for any special fortran-C stub keyword
 **
