@@ -3621,7 +3621,7 @@ static void test_mgr_compress_a(int flag)
 
     {
         int32 riid;     /* RI ID for the new image */
-        int32 comp_type;            /* Compression method */
+        comp_coder_t comp_type;            /* Compression method */
         comp_info cinfo;            /* Compression parameters */
         int32 dims[2]={10,10};    /* dimensions for the empty image */
         uint8 image[10][10]; /* space for the image data */
@@ -3760,7 +3760,7 @@ static void test_mgr_compress_b(int flag)
 
     {
         int32 riid;     /* RI ID for the new image */
-        int32 comp_type;            /* Compression method */
+        comp_coder_t comp_type;            /* Compression method */
         comp_info cinfo;            /* Compression parameters */
         int32 dims[2]={10,10};    /* dimensions for the empty image */
         int32 dims_out[2];          /* Buffer for retrieving dimensions */
@@ -4071,7 +4071,7 @@ static void test_mgr_compress_c(int flag)
 intn make_comp_image( 
 		int32 grid,
 		char* img_name,
-		int32 comp_type,    /* Compression method */
+		comp_coder_t comp_type,    /* Compression method */
 		comp_info* cinfo)    /* Compression parameters */
 {
     int32 riid;         /* RI ID of the working image */
@@ -4113,7 +4113,7 @@ static void test_get_compress(int flag)
     int32 fid;          /* HDF file ID */
     int32 grid;         /* GRID for the interface */
     int32 riid;     	/* RI ID of the working image */
-    int32 comp_type;    /* Compression method */
+    comp_coder_t comp_type;    /* Compression method */
     comp_info cinfo;    /* Compression parameters - union */
     intn status;        /* generic return value */
 
@@ -4204,6 +4204,7 @@ static void test_get_compress(int flag)
     riid = GRselect(grid, 1);
     CHECK(riid, FAIL, "GRselect");
 
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = GRgetcompress(riid, &comp_type, &cinfo);
     CHECK(status, FAIL, "GRsetcompress");
@@ -4224,6 +4225,7 @@ static void test_get_compress(int flag)
     riid = GRselect(grid, 2);
     CHECK(riid, FAIL, "GRselect");
 
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = GRgetcompress(riid, &comp_type, &cinfo);
     CHECK(status, FAIL, "GRsetcompress");
@@ -4241,6 +4243,7 @@ static void test_get_compress(int flag)
     /* get the compression info of the second image, but only check 
        the compression type value against that being set earlier 
        ('quality' and 'force_baseline' are currently not retrievable) */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = GRgetcompress(riid, &comp_type, &cinfo);
     CHECK(status, FAIL, "GRgetcompress");
