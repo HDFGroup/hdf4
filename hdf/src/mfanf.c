@@ -27,13 +27,14 @@ static char RcsId[] = "@(#)$Revision$";
  *         They are AN_FILE_LABEL, AN_FILE_DESC, AN_DATA_LABEL, AN_DATA_DESC
  *         THE tag/ref refers to data tag/ref
  *
- *  C-stub for corresponding Fortran call
+ *  C-stub for corresponding Fortran call(OBSOLETE)
  *  -------------------------------------
  *    acstart    - start annotation access on file and return file handle
  *               - called by afstart() in "mfanff.f"
  *
  *  C-stubs directly callable by Fortran Users
  *  ------------------------------------------
+ *    afstart    - start annotation access on file and return annotaton id
  *    affileinfo - get number of file/data annotations in file. 
  *                 Indices returned are used in afselect() calls.
  *    afend      - end access to annotation handling on file
@@ -69,10 +70,11 @@ static char RcsId[] = "@(#)$Revision$";
 
 -----------------------------------------------------------------------------*/
 
+#if 0
 /*-----------------------------------------------------------------------------
  * Name:    acstart
  * Purpose: C-stub for afstart()
- * Inputs:  filename: name of HDF file
+ * Inputs:  file_id: id of HDF file
  *          acc_mode: File access mode 
  *          namelen:  length of filename
  * Returns: file handle on SUCCEED and FAIL otherwise
@@ -80,7 +82,7 @@ static char RcsId[] = "@(#)$Revision$";
  * Invokes: ANstart()
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nacstart(_fcd filename, intf *acc_mode, intf *namelen)
+nacstart(intf *file_id, intf *acc_mode, intf *namelen)
 {
   char *fn;
   intf ret;
@@ -89,16 +91,36 @@ nacstart(_fcd filename, intf *acc_mode, intf *namelen)
   if ((fn = HDf2cstring(filename, (intn) *namelen)) == NULL)
     return FAIL;
 
-  ret = ANstart(fn, (int32) *acc_mode);
+  ret = ANstart((int32)file_id, (int32) *acc_mode);
+
   HDfree((VOIDP) fn);
 
   return (ret);
 } /* nacstart() */
+#endif
+
+/*-----------------------------------------------------------------------------
+ * Name:    afstart
+ * Purpose: Open file for annoation handling
+ * Inputs:  file_id: id of HDF file
+ * Returns: annotation interface handle on SUCCEED and FAIL otherwise
+ * Users:   
+ * Invokes: ANstart()
+ *---------------------------------------------------------------------------*/
+FRETVAL(intf)
+nafstart(intf *file_id)
+{
+  intf ret;
+
+  ret = ANstart((int32)*file_id);
+
+  return (ret);
+} /* nafstart() */
 
 /*-----------------------------------------------------------------------------
  * Name:    affileinfo
  * Purpose: Get number of file/data annotations in file. 
- * Inputs:  IN file_id:     file handle
+ * Inputs:  IN an_id:     annotation interface handle
  *          OUT num_flabel: number of file labels in file
  *          OUT num_fdesc:  number of file descriptions in file
  *          OUT num_olabel: number of data labels in file
@@ -108,7 +130,7 @@ nacstart(_fcd filename, intf *acc_mode, intf *namelen)
  * Invokes: ANfileinfo()
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-naffileinfo(intf *file_id, intf *num_flabel, intf *num_fdesc, intf *num_olabel,
+naffileinfo(intf *an_id, intf *num_flabel, intf *num_fdesc, intf *num_olabel,
             intf *num_odesc)
 {
 #ifdef LATER
@@ -117,7 +139,7 @@ naffileinfo(intf *file_id, intf *num_flabel, intf *num_fdesc, intf *num_olabel,
   intf  ret;
   int32 nflabel, nfdesc, nolabel, nodesc; 
 
-  ret = ANfileinfo((int32)*file_id, &nflabel, &nfdesc, &nolabel, &nodesc);
+  ret = ANfileinfo((int32)*an_id, &nflabel, &nfdesc, &nolabel, &nodesc);
 
   /* fill in values to return */
   *num_flabel = nflabel;
@@ -137,19 +159,19 @@ naffileinfo(intf *file_id, intf *num_flabel, intf *num_fdesc, intf *num_olabel,
  * Invokes: ANend()
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nafend(intf *file_id)
+nafend(intf *an_id)
 {
 #ifdef LATER
   CONSTR(FUNC, "afend");
 #endif /* LATER */
 
-  return (intf)ANend((int32) *file_id);
+  return (intf)ANend((int32) *an_id);
 } /* nafend() */
 
 /*-----------------------------------------------------------------------------
  * Name:    afcreate
  * Purpose: Create a new data annotation and return an annotation handle 
- * Inputs:  file_id: file handle
+ * Inputs:  an_id: annotation interface handle
  *          etag:    tag of data to annotate
  *          eref:    ref of data to annotate
  *          atype:   annotation type AN_DATA_LABEL, AN_DATA_DESC
@@ -158,32 +180,32 @@ nafend(intf *file_id)
  * Invokes: ANcreate()
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nafcreate(intf *file_id, intf *etag, intf *eref, intf *atype)
+nafcreate(intf *an_id, intf *etag, intf *eref, intf *atype)
 {
 #ifdef LATER
   CONSTR(FUNC, "afcreate");
 #endif /* LATER */
 
-  return (intf)ANcreate((int32)*file_id,(uint16)*etag,(uint16)*eref,(ann_type)*atype);
+  return (intf)ANcreate((int32)*an_id,(uint16)*etag,(uint16)*eref,(ann_type)*atype);
 } /* nafcreate() */
 
 /*-----------------------------------------------------------------------------
  * Name:    affcreate
  * Purpose: Create a new file annotation and return an annotation handle
- * Inputs:  file_id: file handle
+ * Inputs:  an_id: annottion inteface handle
  *          atype:   annotation type AN_FILE_LABEL, AN_DATA_DESC
  * Returns: see ANcreatef()
  * Users:   Fortran Users
  * Invokes: ANcreatf()
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-naffcreate(intf *file_id, intf *atype)
+naffcreate(intf *an_id, intf *atype)
 {
 #ifdef LATER
   CONSTR(FUNC, "affcreate");
 #endif /* LATER */
 
-  return (intf)ANcreatef((int32)*file_id,(ann_type)*atype);
+  return (intf)ANcreatef((int32)*an_id,(ann_type)*atype);
 } /* naffcreate() */
 
 /*-----------------------------------------------------------------------------
@@ -191,7 +213,7 @@ naffcreate(intf *file_id, intf *atype)
  * Purpose: returns an annotation handle(ann_id) from index for 
  *          a particular annotation TYPE. This handle is then used for
  *          calls like afwriteann(), afreadann(), afannlen(),..etc
- * Inputs:  file_id: file handle
+ * Inputs:  an_id: annotation interface handle
  *          index:   index for particular annoation type. Usually based on
  *                   number of a particular type obtained from affileinfo()call.
  *                   ZERO based.
@@ -202,19 +224,19 @@ naffcreate(intf *file_id, intf *atype)
  * Invokes: ANselect()
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nafselect(intf *file_id, intf *index, intf *atype)
+nafselect(intf *an_id, intf *index, intf *atype)
 {
 #ifdef LATER
   CONSTR(FUNC, "afselect");
 #endif /* LATER */
 
-  return (intf)ANselect((int32)*file_id,(int32)*index, (ann_type)*atype);
+  return (intf)ANselect((int32)*an_id,(int32)*index, (ann_type)*atype);
 } /* nafselect() */
 
 /*-----------------------------------------------------------------------------
  * Name:    afnumann
  * Purpose: Return number of annotations that match TYPE/tag/ref
- * Inputs:  file_id: file handle
+ * Inputs:  an_id: annotation interface handle
  *          atype:   annotation type AN_DATA_LABEL, AN_DATA_DESC
  *          etag:    data tag to match
  *          eref:    data ref to match
@@ -223,19 +245,19 @@ nafselect(intf *file_id, intf *index, intf *atype)
  * Invokes: ANnumann()
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nafnumann(intf *file_id, intf *atype, intf *etag, intf *eref)
+nafnumann(intf *an_id, intf *atype, intf *etag, intf *eref)
 {
 #ifdef LATER
   CONSTR(FUNC, "afnumann");
 #endif /* LATER */
 
-  return (intf)ANnumann((int32)*file_id,(ann_type)*atype,(uint16)*etag,(uint16)*eref);
+  return (intf)ANnumann((int32)*an_id,(ann_type)*atype,(uint16)*etag,(uint16)*eref);
 } /* nafnumann() */
 
 /*-----------------------------------------------------------------------------
  * Name:    afannlist
  * Purpose: Return list of handles that match TYPE/tag/ref
- * Inputs:  IN  file_id: file handle
+ * Inputs:  IN an_id: annotation inteface handle
  *          IN atype:   annotation type AN_DATA_LABEL, AN_DATA_DESC
  *          IN etag:    data tag to match
  *          IN eref:    data ref to match
@@ -245,7 +267,7 @@ nafnumann(intf *file_id, intf *atype, intf *etag, intf *eref)
  * Invokes: ANnumann(), ANannlist()
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nafannlist(intf *file_id, intf *atype, intf *etag, intf *eref, intf alist[])
+nafannlist(intf *an_id, intf *atype, intf *etag, intf *eref, intf alist[])
 {
   CONSTR(FUNC, "afannlist");
   intf  ret;
@@ -254,7 +276,7 @@ nafannlist(intf *file_id, intf *atype, intf *etag, intf *eref, intf alist[])
   intn  i;
 
   /* Get number of annotations that match tag/ref pair */
-  nanns =ANnumann((int32)*file_id,(ann_type)*atype,(uint16)*etag,(uint16)*eref);
+  nanns =ANnumann((int32)*an_id,(ann_type)*atype,(uint16)*etag,(uint16)*eref);
   if (nanns < 0)
     HE_REPORT_RETURN("ANnumann: failed to any annotations", FAIL);
 
@@ -264,7 +286,7 @@ nafannlist(intf *file_id, intf *atype, intf *etag, intf *eref, intf alist[])
     HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
   /* Get list of annoation handles to return */
-  ret = ANannlist((int32)*file_id,(ann_type)*atype,(uint16)*etag,(uint16)*eref,
+  ret = ANannlist((int32)*an_id,(ann_type)*atype,(uint16)*etag,(uint16)*eref,
                   tempanlist);
   if (ret < 0)
     HE_REPORT_RETURN("ANannlist:failed to any annotations", FAIL);
@@ -299,7 +321,7 @@ nafannlen(intf *an_id)
 /*-----------------------------------------------------------------------------
  * Name:    afwriteann
  * Purpose: Write annotation given handle
- * Inputs:  an_id: annotation handle
+ * Inputs:  ann_id: annotation handle
  *          ann:   annotation to write out
  *          annlen:length of annotation
  * Returns: see ANwriteann()
@@ -307,19 +329,19 @@ nafannlen(intf *an_id)
  * Invokes: ANwriteann()
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nafwriteann(intf *an_id,_fcd ann, intf *annlen)
+nafwriteann(intf *ann_id,_fcd ann, intf *annlen)
 {
 #ifdef LATER
   CONSTR(FUNC, "afwriteann");
 #endif /* LATER */
 
 #ifdef OLD_WAY
-  return (intf)ANwriteann((int32)*an_id,(char *) _fcdtocp(ann), (int32) *annlen);
+  return (intf)ANwriteann((int32)*ann_id,(char *) _fcdtocp(ann), (int32) *annlen);
 #else /* OLD_WAY */
     char       *iann = HDf2cstring(ann, (intn) *annlen);
     intf        status;
 
-    status = ANwriteann((int32)*an_id, iann, (int32)*annlen);
+    status = ANwriteann((int32)*ann_id, iann, (int32)*annlen);
 
     HDfree(iann);
 
@@ -330,7 +352,7 @@ nafwriteann(intf *an_id,_fcd ann, intf *annlen)
 /*-----------------------------------------------------------------------------
  * Name:    afreadann
  * Purpose: Read annotation given handle
- * Inputs:  an_id:  annotation handle
+ * Inputs:  ann_id:  annotation handle
  *          ann:    annotation read
  *          maxlen: maximum space allocted for "ann"
  * Returns: see ANreadann()
@@ -338,7 +360,7 @@ nafwriteann(intf *an_id,_fcd ann, intf *annlen)
  * Invokes: ANreadann()
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nafreadann(intf *an_id,_fcd ann, intf *maxlen)
+nafreadann(intf *ann_id,_fcd ann, intf *maxlen)
 {
 #ifdef LATER
   CONSTR(FUNC, "afreadann");
@@ -353,7 +375,7 @@ nafreadann(intf *an_id,_fcd ann, intf *maxlen)
     if (*maxlen)
         iann = (char *) HDmalloc((uint32) *maxlen + 1);
 
-    status = ANreadann((int32)*an_id, iann, (int32)*maxlen);
+    status = ANreadann((int32)*ann_id, iann, (int32)*maxlen);
 
     HDpackFstring(iann, _fcdtocp(ann), (intn) *maxlen);
 
@@ -367,19 +389,19 @@ nafreadann(intf *an_id,_fcd ann, intf *maxlen)
 /*-----------------------------------------------------------------------------
  * Name:    afendaccess
  * Purpose: End access to annotation using handle
- * Inputs:  an_id:annotation handle
+ * Inputs:  ann_id:annotation handle
  * Returns: see ANendaccess()
  * Users:   Fortran Users
  * Invokes: ANendaccess()
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nafendaccess(intf *an_id)
+nafendaccess(intf *ann_id)
 {
 #ifdef LATER
   CONSTR(FUNC, "afendaccess");
 #endif /* LATER */
 
-  return (intf)ANendaccess((int32)*an_id);
+  return (intf)ANendaccess((int32)*ann_id);
 } /* nafendaccess() */
 
 

@@ -1901,7 +1901,7 @@ extern FRETVAL(intf) nhnumber(int32 file_id, uint16 tag);
 #ifndef MFAN_FNAMES
 #   define  MFAN_FNAMES
 #ifdef DF_CAPFNAMES
-#  define nacstart      FNAME(ACSTART)
+#  define nafstart      FNAME(AFSTART)
 #  define naffileinfo   FNAME(AFFILEINFO)
 #  define nafend        FNAME(AFEND)
 #  define nafcreate     FNAME(AFCREATE)
@@ -1914,7 +1914,7 @@ extern FRETVAL(intf) nhnumber(int32 file_id, uint16 tag);
 #  define nafreadann    FNAME(AFREADANN)
 #  define nafendaccess  FNAME(AFENDACCESS)
 #else  /* !DF_CAPFNAMES */
-#  define nacstart      FNAME(acstart)
+#  define nafstart      FNAME(afstart)
 #  define naffileinfo   FNAME(affileinfo)
 #  define nafend        FNAME(afend)
 #  define nafcreate     FNAME(afcreate)
@@ -1930,62 +1930,63 @@ extern FRETVAL(intf) nhnumber(int32 file_id, uint16 tag);
 #endif /* MFAN_FNAMES */
 
 /* Multi-file Annotation C-stubs for fortan interface found in mfanf.c */
-extern FRETVAL(intf)
-nacstart(_fcd filename, intf *acc_mode, intf *namelen);
 
 extern FRETVAL(intf)
-naffileinfo(intf *file_id, intf *num_flabel, intf *num_fdesc, intf *num_olabel,
+nafstart(intf *file_id);
+
+extern FRETVAL(intf)
+naffileinfo(intf *an_id, intf *num_flabel, intf *num_fdesc, intf *num_olabel,
             intf *num_odesc);
 
 extern FRETVAL(intf)
-nafend(intf *file_id);
+nafend(intf *an_id);
 
 extern FRETVAL(intf)
-nafcreate(intf *file_id, intf *etag, intf *eref, intf *atype);
+nafcreate(intf *an_id, intf *etag, intf *eref, intf *atype);
 
 extern FRETVAL(intf)
-naffcreate(intf *file_id, intf *atype);
+naffcreate(intf *an_id, intf *atype);
 
 extern FRETVAL(intf)
-nafselect(intf *file_id, intf *index, intf *atype);
+nafselect(intf *an_id, intf *index, intf *atype);
 
 extern FRETVAL(intf)
-nafnumann(intf *file_id, intf *atype, intf *etag, intf *eref);
+nafnumann(intf *an_id, intf *atype, intf *etag, intf *eref);
 
 extern FRETVAL(intf)
-nafannlist(intf *file_id, intf *atype, intf *etag, intf *eref, intf alist[]);
+nafannlist(intf *an_id, intf *atype, intf *etag, intf *eref, intf alist[]);
 
 extern FRETVAL(intf)
-nafannlen(intf *an_id);
+nafannlen(intf *ann_id);
 
 extern FRETVAL(intf)
-nafwriteann(intf *an_id,_fcd ann, intf *annlen);
+nafwriteann(intf *ann_id,_fcd ann, intf *annlen);
 
 extern FRETVAL(intf)
-nafreadann(intf *an_id,_fcd ann, intf *maxlen);
+nafreadann(intf *ann_id,_fcd ann, intf *maxlen);
 
 extern FRETVAL(intf)
-nafendaccess(intf *an_id);
+nafendaccess(intf *ann_id);
 
 /* Multi-file Annotation C-routines found in mfan.c */
-extern int32 ANstart(const char *filename, int32 acc_mode);
+extern int32 ANstart(int32 file_id);
 
-extern intn  ANfileinfo(int32 file_id, int32 *n_file_label, int32 *n_file_desc,
+extern intn  ANfileinfo(int32 an_id, int32 *n_file_label, int32 *n_file_desc,
                         int32 *n_obj_label, int32 *n_obj_desc);
 
-extern int32 ANend(int32 file_id);
+extern int32 ANend(int32 an_id);
 
-extern int32 ANcreate(int32 file_id, uint16 elem_tag, uint16 elem_ref, 
+extern int32 ANcreate(int32 an_id, uint16 elem_tag, uint16 elem_ref, 
                       ann_type type);
 
-extern int32 ANcreatef(int32 file_id, ann_type type);
+extern int32 ANcreatef(int32 an_id, ann_type type);
 
-extern int32 ANselect(int32 file_id, int32 index, ann_type type);
+extern int32 ANselect(int32 an_id, int32 index, ann_type type);
 
-extern intn  ANnumann(int32 file_id, ann_type type, uint16 elem_tag, 
+extern intn  ANnumann(int32 an_id, ann_type type, uint16 elem_tag, 
                       uint16 elem_ref);
 
-extern intn  ANannlist(int32 file_id, ann_type type, uint16 elem_tag, 
+extern intn  ANannlist(int32 an_id, ann_type type, uint16 elem_tag, 
                        uint16 elem_ref, int32 ann_list[]);
 
 extern int32 ANannlen(int32 ann_id);
@@ -1994,9 +1995,9 @@ extern int32 ANwriteann(int32 ann_id, char *ann, int32 annlen);
 
 extern int32 ANreadann(int32 ann_id, char *ann, int32 maxlen);
 
-extern intn  ANendaccess(int32 an_id);
+extern intn  ANendaccess(int32 ann_id);
 
-extern int32 ANget_tagref(int32 file_id, int32 index, ann_type type,
+extern int32 ANget_tagref(int32 an_id, int32 index, ann_type type,
                           uint16 *ann_tag, uint16 *ann_ref);
 
 extern uint16 atype2tag(ann_type atype);
