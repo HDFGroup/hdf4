@@ -93,12 +93,6 @@
 #include <limits.h>
 #include <string.h>
 
-/* PABLO support files */
-#ifdef HAVE_PABLO
-#define HDFIOTRACE
-#include "HDFIOTrace.h"
-#endif  /* HAVE_PABLO */
-
 /**
  * Provide the macros to adapt the HDF public functions to
  * dll entry points.

@@ -48,19 +48,6 @@ RMFLAGS = -f
 # e.g with naitve HP-ANSI compilier
 LIBSX = -lm
 
-# ------------ Macros for Pablo Instrumentation  --------------------
-# Uncomment the following lines to create a Pablo Instrumentation
-# version of the HDF core library called 'libdf-inst.a'
-# See the documentation in the directory 'hdf/pablo' for further 
-# information about Pablo and what platforms it is supported on
-# before enabling. 
-# You need to set 'PABLO_INCDIR' to the Pablo distribution 
-# include directory to get to files 'IOTrace.h', 'IOTrace_SD.h' and others.
-
-#PABLO_FLAGS  = -DHAVE_PABLO
-#PABLO_INCDIR = /usr/local/include/pablo-5.1
-#PABLO_INCLUDE = -I$(PABLO_INCDIR)
-
 # ------------ Macros for File Cache(fmpool) ------
 # Uncomment the following lines to enable shared memory file buffer pool
 # version of the HDF core library libdf.a. Please read the

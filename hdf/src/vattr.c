@@ -15,9 +15,6 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 /* $Id$ */
-#ifdef HAVE_PABLO
-#define PABLO_mask ID_vattr_c
-#endif
 
 /**************************************************************
 *
@@ -209,10 +206,6 @@ intn VSfindex(int32 vsid, const char *fieldname, int32 *findex)
      int32 ret_value = SUCCEED;
      intn i, found = 0;
 
-#ifdef PABLO
-     TRACE_ON(PABLO_mask,ID_VSfindex);
-#endif
-     
      HEclear();
      if (HAatom_group(vsid) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -249,10 +242,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask,ID_VSfindex);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }       /* VSfindex */
 
@@ -294,10 +283,6 @@ intn VSsetattr(int32 vsid, int32 findex, const char *attrname,
      intn i;
      int32 nattrs, ret_value = SUCCEED;
      int32 attr_vs_ref, fid, attr_vsid;
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_VSsetattr);
-#endif /* HAVE_PABLO */
 
      HEclear();
 
@@ -389,10 +374,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_VSsetattr);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }  /* VSsetattr */
 /* ------------------------------------------------ 
@@ -417,10 +398,6 @@ intn VSnattrs(int32 vsid)
     VDATA *vs;
     int32 ret_value = SUCCEED;
     
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_VSnattrs);
-#endif /* HAVE_PABLO */
-
      HEclear();
      if (HAatom_group(vsid) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -438,10 +415,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-       TRACE_OFF(PABLO_mask, ID_VSnattrs);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }  /* VSnattrs */
 
@@ -470,10 +443,6 @@ intn VSfnattrs(int32 vsid, int32 findex)
     vs_attr_t *vs_alist;
     intn i, nattrs, t_attrs;
  
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_VSfnattrs);
-#endif /* HAVE_PABLO */
-
      HEclear();
      if (HAatom_group(vsid) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -502,10 +471,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_VSfnattrs);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }  /* VSfattrs */
               
@@ -535,10 +500,6 @@ intn VSfindattr(int32 vsid, int32 findex, const char *attrname)
      int32 fid, attr_vsid;
      int32 ret_value = FAIL;
      intn i, nattrs, a_index, found;
-
-#ifdef HAVE_PABLO
-     TRACE_ON(PABLO_mask,ID_VSfindattr);
-#endif /* HAVE_PABLO */
 
      HEclear();
      /* check if id is valid vdata */
@@ -605,10 +566,6 @@ done:
 
   /* Normal function cleanup */
 
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_VSfindattr);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* VSfindattr */
 
@@ -645,10 +602,6 @@ intn VSattrinfo(int32 vsid, int32 findex, intn attrindex,
      intn i, nattrs, a_index, found;
      DYN_VWRITELIST *w;
      char *fldname;
-
-#ifdef HAVE_PABLO
-     TRACE_ON(PABLO_mask,ID_VSattrinfo);
-#endif /* HAVE_PABLO */
 
      HEclear();
      if (HAatom_group(vsid) != VSIDGROUP)
@@ -713,10 +666,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-            TRACE_OFF(PABLO_mask, ID_VSattrinfo);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }  /* VSattrinfo */
 
@@ -747,10 +696,6 @@ intn VSgetattr(int32 vsid, int32 findex, intn attrindex,
      intn i, nattrs, a_index, found;
      int32 n_recs, il;
      char fields[FIELDNAMELENMAX+1];
-
-#ifdef HAVE_PABLO
-     TRACE_ON(PABLO_mask,ID_VSgetattr);
-#endif /* HAVE_PABLO */
 
      HEclear();
      if (HAatom_group(vsid) != VSIDGROUP)
@@ -814,10 +759,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-             TRACE_OFF(PABLO_mask, ID_VSgetattr);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }  /* VSgetattr */
 
@@ -841,10 +782,6 @@ intn VSisattr(int32 vsid)
      VDATA    *vs;
      int32  ret_value = FALSE;
 
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_VSisattr);
-#endif /* HAVE_PABLO */
-
      HEclear();
      if (HAatom_group(vsid) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FALSE);
@@ -862,10 +799,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-            TRACE_OFF(PABLO_mask, ID_VSisattr);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }  /* VSisattr */
 
@@ -904,10 +837,6 @@ intn Vsetattr(int32 vgid, const char *attrname, int32 datatype,
     int32 ret_value = SUCCEED;
     int32 attr_vs_ref,fid, vsid;
     intn i;
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_Vsetattr);
-#endif /* HAVE_PABLO */
 
     HEclear();
 
@@ -994,10 +923,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_Vsetattr);
-#endif /* HAVE_PABLO */
-  
   return ret_value;
 }  /* Vsetattr */
 
@@ -1026,10 +951,6 @@ int32 Vgetversion(int32 vgid)
     int16 vg_version;
     int32 ret_value = FAIL;
 
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_Vgetversion);
-#endif /* HAVE_PABLO */
-
     HEclear();
     if (HAatom_group(vgid)!=VGIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -1051,10 +972,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-            TRACE_OFF(PABLO_mask, ID_Vgetversion);
-#endif /* HAVE_PABLO */
-  
   return ret_value;
 }  /* Vgetversion */
 
@@ -1075,10 +992,6 @@ intn Vnattrs(int32 vgid)
     VGROUP *vg;
     vginstance_t *v;
     int32 ret_value = SUCCEED;
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_Vnattrs);
-#endif  /* HAVE_PABLO */
 
     HEclear();
     if (HAatom_group(vgid) != VGIDGROUP)
@@ -1101,10 +1014,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-            TRACE_OFF(PABLO_mask, ID_Vnattrs);
-#endif /* HAVE_PABLO */
-  
   return ret_value;
 }  /* Vnattrs */
 
@@ -1131,10 +1040,6 @@ intn Vfindattr(int32 vgid, const char *attrname)
     int32 fid, vsid;
     int32 ret_value = FAIL;
     intn i, found;
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_Vfindattr);
-#endif /* HAVE_PABLO */
 
     HEclear();
 
@@ -1185,10 +1090,6 @@ done:
 
   /* Normal function cleanup */
 
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_Vfindattr);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* Vfindattr */
         
@@ -1225,10 +1126,6 @@ intn Vattrinfo(int32 vgid, intn attrindex, char *name,
     vsinstance_t *vs_inst;
     int32 fid, vsid;
     int32 ret_value = SUCCEED;
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_Vattrinfo);
-#endif /* HAVE_PABLO */
 
     HEclear();
     if (HAatom_group(vgid) != VGIDGROUP)
@@ -1280,10 +1177,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-            TRACE_OFF(PABLO_mask, ID_Vattrinfo);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }  /* Vattrinfo */
 
@@ -1313,10 +1206,6 @@ intn Vgetattr(int32 vgid, intn attrindex, void * values)
     int32 n_recs, il;
     int32 ret_value = SUCCEED;
     
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_Vgetattr);
-#endif /* HAVE_PABLO */
-
     HEclear();
     if (HAatom_group(vgid) != VGIDGROUP)
        HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -1363,10 +1252,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-            TRACE_OFF(PABLO_mask, ID_Vgetattr);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }  /* Vgetattr */
 

@@ -16,10 +16,6 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
-#ifdef HAVE_PABLO
-#define PABLO_mask ID_linklist_c
-#endif
-
 /*
 FILE
     linklist.c - Internal storage routines for handling generic linked lists
@@ -87,10 +83,6 @@ list_head_t *HULcreate_list(HULfind_func_t find_func    /* IN: object comparison
     CONSTR(FUNC, "HULcreate_list");	/* for HERROR */
     list_head_t *ret_value=NULL;     /* ptr to the linked list "head" node */
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HULcreate_list);
-#endif /* HAVE_PABLO */
-
     HEclear();
 
     /* Allocate the head information */
@@ -114,10 +106,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask,ID_HULcreate_list);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* end HULcreate_list() */
 
@@ -143,10 +131,6 @@ intn HULdestroy_list(list_head_t *lst    /* IN: list to destroy */
         *next_node;                 /* next node in the list */
     intn ret_value=SUCCEED;         /* return value */
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HULdestroy_list);
-#endif /* HAVE_PABLO */
-
     HEclear();
     if(lst==NULL)
         HGOTO_ERROR(DFE_ARGS,FAIL);
@@ -170,10 +154,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask,ID_HULdestroy_list);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* end HULdestroy_list() */
 
@@ -197,10 +177,6 @@ intn HULadd_node(list_head_t *lst,  /* IN: list to modify */
     CONSTR(FUNC, "HULadd_node");	/* for HERROR */
     node_info_t *new_node;          /* new node to insert into the list */
     intn ret_value=SUCCEED;         /* return value */
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HULadd_node);
-#endif /* HAVE_PABLO */
 
     HEclear();
     if(lst==NULL || obj==NULL)
@@ -252,10 +228,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask,ID_HULadd_node);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* end HULadd_node() */
 
@@ -279,10 +251,6 @@ VOIDP HULsearch_node(list_head_t *lst,  /* IN: list to search */
     node_info_t *curr_node;         /* current node we are on */
     VOIDP ret_value=NULL;           /* default return value */
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HULsearch_node);
-#endif /* HAVE_PABLO */
-
     HEclear();
     if(lst==NULL || srch_func==NULL || key==NULL)
         HGOTO_ERROR(DFE_ARGS,NULL);
@@ -301,10 +269,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask,ID_HULsearch_node);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* end HULsearch_node() */
 
@@ -326,10 +290,6 @@ VOIDP HULfirst_node(list_head_t *lst   /* IN: list to search */
     CONSTR(FUNC, "HULfirst_node");	/* for HERROR */
     VOIDP ret_value=NULL;           /* default return value */
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HULfirst_node);
-#endif /* HAVE_PABLO */
-
     HEclear();
     if(lst==NULL)
         HGOTO_ERROR(DFE_ARGS,NULL);
@@ -347,10 +307,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask,ID_HULfirst_node);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* end HULfirst_node() */
 
@@ -371,10 +327,6 @@ VOIDP HULnext_node(list_head_t *lst   /* IN: list to search */
     CONSTR(FUNC, "HULnext_node");	/* for HERROR */
     VOIDP ret_value=NULL;           /* default return value */
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HULnext_node);
-#endif /* HAVE_PABLO */
-
     HEclear();
     if(lst==NULL)
         HGOTO_ERROR(DFE_ARGS,NULL);
@@ -393,10 +345,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask,ID_HULnext_node);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* end HULnext_node() */
 
@@ -421,10 +369,6 @@ VOIDP HULremove_node(list_head_t *lst,  /* IN: list to modify */
     node_info_t *curr_node,         /* current node we are on */
         *prev_node;                 /* previous node we looked at */
     VOIDP ret_value=NULL;           /* default return value */
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HULremove_node);
-#endif /* HAVE_PABLO */
 
     HEclear();
     if(lst==NULL || srch_func==NULL || key==NULL)
@@ -453,10 +397,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask,ID_HULremove_node);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* end HULremove_node() */
 

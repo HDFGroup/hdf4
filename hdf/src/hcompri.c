@@ -15,10 +15,6 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 /* $Id$ */
-#ifdef HAVE_PABLO
-#define PABLO_mask ID_hcompri_c
-#endif
-
 /*LINTLIBRARY */
 /* ------------------------------ hcompri.c -------------------------------
 
@@ -120,10 +116,6 @@ HRPconvert(int32 fid, uint16 tag, uint16 ref, int32 xdim, int32 ydim,int16 schem
     crinfo_t  *info;                /* information for the compressed raster element */
     int32      ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HRPconvert);
-#endif /* HAVE_PABLO */
-    /* clear error stack and validate args */
     HEclear();
 
 #ifdef QAK
@@ -184,9 +176,6 @@ done:
     { /* Error condition cleanup */
     } /* end if */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask,ID_HRPconvert);
-#endif /* HAVE_PABLO */
   return ret_value; 
 } /* HRPconvert */
 

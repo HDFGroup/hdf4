@@ -140,8 +140,8 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-@HDF_BUILD_FORTRAN_TRUE@SUBDIRS = port fortran libsrc ncdump ncgen dumper hdfimport hdiff hrepack pablo nctest
-@HDF_BUILD_FORTRAN_FALSE@SUBDIRS = port libsrc ncdump ncgen dumper hdfimport hdiff hrepack pablo nctest
+@HDF_BUILD_FORTRAN_TRUE@SUBDIRS = port fortran libsrc ncdump ncgen dumper hdfimport hdiff hrepack nctest
+@HDF_BUILD_FORTRAN_FALSE@SUBDIRS = port libsrc ncdump ncgen dumper hdfimport hdiff hrepack nctest
 subdir = mfhdf
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
@@ -156,7 +156,7 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive pdf-recursive \
 	check-recursive installcheck-recursive
 DIST_COMMON = README $(srcdir)/Makefile.in INSTALL Makefile.am THANKS
 DIST_SUBDIRS = port fortran libsrc ncdump ncgen dumper hdfimport hdiff \
-	hrepack pablo nctest
+	hrepack nctest
 all: all-recursive
 
 .SUFFIXES:

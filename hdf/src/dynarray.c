@@ -16,10 +16,6 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
-#ifdef HAVE_PABLO
-#define PABLO_mask ID_dynarray_c
-#endif
-
 /*
 FILE
     dynarray.c - Internal storage routines for handling "dynamic arrays"
@@ -89,10 +85,6 @@ dynarr_p DAcreate_array(intn start_size,      /* IN: Initial array size */
     dynarr_t   *new_arr=NULL;       /* ptr to the new dynarray */
     dynarr_p    ret_value=NULL;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_DAcreate_array);
-#endif /* HAVE_PABLO */
-
     HEclear();
     if(start_size<0 || incr_mult<=0)
         HGOTO_ERROR(DFE_ARGS, NULL);
@@ -124,10 +116,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_DAcreate_array);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* end DAcreate_array() */
 
@@ -151,10 +139,6 @@ intn DAdestroy_array(dynarr_p arr,  /* IN: Array to destroy */
     dynarr_t   *dest_arr;               /* ptr to the dynarray destroy*/
     intn i;
     intn    ret_value=SUCCEED;
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_DAdestroy_array);
-#endif /* HAVE_PABLO */
 
     HEclear();
     dest_arr=(dynarr_t *)arr;
@@ -180,10 +164,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_DAdestroy_array);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* end DAdestroy_array() */
 
@@ -205,10 +185,6 @@ intn DAsize_array(dynarr_p arr   /* IN: Array to get size of */
     dynarr_t   *arr_ptr;            /* ptr to the dynarray destroy*/
     intn    ret_value=SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_DAsize_array);
-#endif /* HAVE_PABLO */
-
     HEclear();
     arr_ptr=(dynarr_t *)arr;
     if(arr_ptr==NULL)
@@ -223,10 +199,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_DAsize_array);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* end DAsize_array() */
 
@@ -251,10 +223,6 @@ VOIDP DAget_elem(dynarr_p arr_ptr, /* IN: Array to access */
     dynarr_t   *arr;                /* ptr to the dynarray */
     VOIDP    ret_value=NULL;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_DAget_elem);
-#endif /* HAVE_PABLO */
-
     HEclear();
     arr=(dynarr_t *)arr_ptr;
     if(elem<0 || arr==NULL)
@@ -272,10 +240,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_DAget_elem);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* end DAget_elem() */
 
@@ -301,10 +265,6 @@ intn DAset_elem(dynarr_p arr_ptr,  /* IN: Array to access */
     CONSTR(FUNC, "DAset_elem");     /* for HERROR */
     dynarr_t   *arr;                /* ptr to the dynarray */
     intn        ret_value=SUCCEED;
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_DAset_elem);
-#endif /* HAVE_PABLO */
 
     HEclear();
     arr=(dynarr_t *)arr_ptr;
@@ -343,10 +303,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_DAset_elem);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* end DAset_elem() */
 
@@ -371,10 +327,6 @@ VOIDP DAdel_elem(dynarr_p arr_ptr, /* IN: Array to access */
     dynarr_t   *arr;                /* ptr to the dynarray */
     VOIDP    ret_value=NULL;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_DAdel_elem);
-#endif /* HAVE_PABLO */
-
     HEclear();
     arr=(dynarr_t *)arr_ptr;
     if(elem<0 || arr==NULL)
@@ -395,10 +347,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_DAdel_elem);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* end DAdel_elem() */
 

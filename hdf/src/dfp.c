@@ -33,12 +33,6 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
-/*****************************************************************************/
-/* Define Pablo Hooks                                                        */
-/*****************************************************************************/
-#ifdef HAVE_PABLO
-#define PABLO_mask ID_dfp_c
-#endif
 
 /* remember that '0' is invalid ref number */
 PRIVATE uint16 Readref = 0;
@@ -76,10 +70,6 @@ DFPgetpal(const char *filename, void * palette)
   int32       aid;
   int32       length;
   intn        ret_value = SUCCEED;
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_DFPgetpal);
-#endif /* HAVE_PABLO */
 
   HEclear();
 
@@ -154,10 +144,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_DFPgetpal);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* end DFPgetpal() */
 
@@ -189,10 +175,6 @@ DFPputpal(const char *filename, const void * palette, intn overwrite, const char
   CONSTR(FUNC, "DFPputpal");
   int32       file_id;
   intn        ret_value = SUCCEED;
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_DFPputpal);
-#endif /* HAVE_PABLO */
 
   HEclear();
 
@@ -236,10 +218,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_DFPputpal);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* end DFPputpal() */
 
@@ -264,15 +242,7 @@ DFPaddpal(const char *filename, const void * palette)
 {
   intn ret_value;
 
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_DFPaddpal);
-#endif /* HAVE_PABLO */
-
   ret_value = (DFPputpal(filename, palette, 0, "a"));
-
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_DFPaddpal);
-#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DFPaddpal() */
@@ -305,10 +275,6 @@ DFPnpals(const char *filename)
   int32      *pal_off;        /* storage for an array of palette offsets */
   intn        i, j;           /* local counting variable */
   intn        ret_value = SUCCEED;
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_DFPnpals);
-#endif /* HAVE_PABLO */
 
   HEclear();
 
@@ -393,10 +359,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_DFPnpals);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* end DFPnpals() */
 
@@ -424,10 +386,6 @@ DFPreadref(const char *filename, uint16 ref)
   int32       file_id;
   int32       aid;
   intn        ret_value = SUCCEED;
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_DFPreadref);
-#endif /* HAVE_PABLO */
 
   HEclear();
 
@@ -457,10 +415,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_DFPreadref);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* end DFPreadref() */
 
@@ -486,17 +440,9 @@ DFPwriteref(const char *filename, uint16 ref)
 {
   intn ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_DFPwriteref);
-#endif /* HAVE_PABLO */
-
   /* shut compiler up */
   filename = filename;
   Writeref = ref;
-
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_DFPwriteref);
-#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DFPwriteref() */
@@ -521,15 +467,7 @@ DFPrestart(void)
 {
   intn ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_DFPrestart);
-#endif /* HAVE_PABLO */
-
   Lastfile[0] = '\0';
-
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_DFPrestart);
-#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DFPrestart() */
@@ -554,15 +492,7 @@ DFPlastref(void)
 {
   uint16 ret_value;
 
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_DFPlastref);
-#endif /* HAVE_PABLO */
-
   ret_value = Lastref;
-
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_DFPlastref);
-#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DFPlastref() */

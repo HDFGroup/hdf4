@@ -15,10 +15,6 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 /* vg.c,v 1.15.4.1 1993/10/26 19:25:07 georgev Exp */
 
-#ifdef HAVE_PABLO
-#define PABLO_mask ID_vg_c
-#endif
-
 /*
 FILE  
      vg.c
@@ -119,10 +115,6 @@ VSelts(int32 vkey /* IN: vdata key */)
     int32        ret_value = SUCCEED;
     CONSTR(FUNC, "VSelts");
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_VSelts);
-#endif /* HAVE_PABLO */
-
     /* make sure vdata key is part of vdata group */
     if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -146,10 +138,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask,ID_VSelts);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* VSelts */
 
@@ -171,10 +159,6 @@ VSgetinterlace(int32 vkey /* IN: vdata key */)
     VDATA        *vs = NULL;
     int32        ret_value = SUCCEED;
     CONSTR(FUNC, "VSgetinterlace");
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_VSgetinterlace);
-#endif /* HAVE_PABLO */
 
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
@@ -199,10 +183,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask,ID_VSgetinterlace);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* VSgetinterlace */
 
@@ -225,10 +205,6 @@ VSsetinterlace(int32 vkey,     /* IN: vdata key */
     VDATA        *vs = NULL;
     intn         ret_value = SUCCEED;
     CONSTR(FUNC, "VSsetinterlace");
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_VSsetinterlace);
-#endif /* HAVE_PABLO */
 
     /* check key is valid vdata */
     if (HAatom_group(vkey)!=VSIDGROUP)
@@ -268,10 +244,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask,ID_VSsetinterlace);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* VSsetinterlace */
 
@@ -296,10 +268,6 @@ VSgetfields(int32 vkey,   /* IN: vdata key */
     VDATA        *vs = NULL;
     int32        ret_value = SUCCEED;
     CONSTR(FUNC, "VSgetfields");
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_VSgetfields);
-#endif /* HAVE_PABLO */
 
     /* check if a NULL field list is passed in, then return with
        error (found while fixing bug #554) - BMR 4/30/01 */
@@ -339,10 +307,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_VSgetfields);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* VSgetfields */
 
@@ -372,10 +336,6 @@ VSfexist(int32 vkey,  /* IN: vdata key */
     int32         found;
     intn          ret_value = SUCCEED;
     CONSTR(FUNC, "VSfexist");
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_VSfexist);
-#endif /* HAVE_PABLO */
 
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
@@ -431,10 +391,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_VSfexist);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }	/* VSfexist */
 
@@ -462,10 +418,6 @@ VSsizeof(int32 vkey,   /* IN vdata key */
     VDATA        *vs = NULL;
     int32        ret_value = SUCCEED;
     CONSTR(FUNC, "VSsizeof");
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_VSsizeof);
-#endif /* HAVE_PABLO */
 
     /* check key is valid vdata */
     if (HAatom_group(vkey)!=VSIDGROUP)
@@ -516,10 +468,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_VSsizeof);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* VSsizeof */
 
@@ -563,10 +511,6 @@ VSsetname(int32 vkey,        /* IN: Vdata key */
     int32       ret_value = SUCCEED;
     CONSTR(FUNC, "VSsetname");
 
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_VSsetname);
-#endif /* HAVE_PABLO */
-
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -608,10 +552,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_VSsetname);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* VSsetname */
 
@@ -638,10 +578,6 @@ VSsetclass(int32 vkey,         /* IN: vdata key */
     int32       slen;
     int32       ret_value = SUCCEED;
     CONSTR(FUNC, "VSsetclass");
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_VSsetclass);
-#endif /* HAVE_PABLO */
 
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
@@ -684,10 +620,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_VSsetclass);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* VSsetclass */
 
@@ -710,10 +642,6 @@ VSgetname(int32 vkey,   /* IN: vdata key */
     VDATA        *vs = NULL;
     int32        ret_value = SUCCEED;
     CONSTR(FUNC, "VSgetname");
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_VSgetname);
-#endif /* HAVE_PABLO */
 
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
@@ -742,10 +670,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_VSgetname);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* VSgetname */
 
@@ -768,10 +692,6 @@ VSgetclass(int32 vkey,    /* IN: vdata key */
     VDATA        *vs = NULL;
     int32     ret_value = SUCCEED;
     CONSTR(FUNC, "VSgetclass");
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_VSgetclass);
-#endif /* HAVE_PABLO */
 
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
@@ -800,10 +720,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_VSgetclass);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* VSgetclass */
 
@@ -830,10 +746,6 @@ VSinquire(int32 vkey,       /* IN: vdata key */
   intn ret_value = SUCCEED;
   intn status;
   CONSTR(FUNC, "VSinquire");
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_VSinquire);
-#endif /* HAVE_PABLO */
 
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
@@ -874,10 +786,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_VSinquire);
-#endif /* HAVE_PABLO */
-
     return ret_value;   /* ok */
 
 }   /* VSinquire */
@@ -908,10 +816,6 @@ VSlone(HFILEID f,     /* IN: file id */
     int32   nlone;             /* total number of lone vdatas */
     int32   ret_value = SUCCEED;
     CONSTR(FUNC, "VSlone");
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_VSlone);
-#endif /* HAVE_PABLO */
 
     /* -- allocate local space for vdata refs, init to zeros -- */
     if (NULL == (lonevdata = (uint8 *) HDcalloc(MAX_REF , sizeof(uint8))))
@@ -961,10 +865,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_VSlone);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* VSlone */
 
@@ -994,10 +894,6 @@ Vlone(HFILEID f,      /* IN: file id */
     int32       nlone;          /* total number of lone vgroups */
     int32       ret_value = SUCCEED;
     CONSTR(FUNC, "Vlone");
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_Vlone);
-#endif /* HAVE_PABLO */
 
     /* -- allocate space for vgroup refs, init to zeroes -- */
     if (NULL == (lonevg = (uint8 *) HDcalloc(MAX_REF , sizeof(uint8))))
@@ -1048,10 +944,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF( PABLO_mask, ID_Vlone );
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* Vlone */
 
@@ -1077,10 +969,6 @@ Vfind(HFILEID f,          /* IN: file id */
     VGROUP       *vg = NULL;
     int32       ret_value = 0;
     CONSTR(FUNC, "Vfind");
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_Vfind);
-#endif /* HAVE_PABLO */
 
     /* check for null vgroup name */
     if (vgname == NULL)
@@ -1109,10 +997,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF( PABLO_mask, ID_Vfind );
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }	/* Vfind */
 
@@ -1138,10 +1022,6 @@ VSfind(HFILEID f,          /* IN: file id */
     VDATA        *vs = NULL;
     int32 ret_value = 0;
     CONSTR(FUNC, "VSfind");
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_VSfind);
-#endif /* HAVE_PABLO */
 
     /* check for null vdata name */
     if (vsname == NULL)
@@ -1170,10 +1050,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_VSfind);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* VSfind */
 
@@ -1199,10 +1075,6 @@ Vfindclass(HFILEID f,           /* IN: file id */
     VGROUP       *vg = NULL;
     int32       ret_value = 0;
     CONSTR(FUNC, "Vfindclass");
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_Vfindclass);
-#endif /* HAVE_PABLO */
 
     /* check for null vgroup class */
     if (vgclass == NULL)
@@ -1231,10 +1103,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF( PABLO_mask, ID_Vfindclass);
-#endif /* HAVE_PABLO */
-
   return ret_value;    
 }	/* Vfindclass */
 
@@ -1260,10 +1128,6 @@ VSfindclass(HFILEID f,           /* IN: file id */
     VDATA        *vs = NULL;
     int32        ret_value = 0;
     CONSTR(FUNC, "VSfindclass");
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_VSfindclass);
-#endif /* HAVE_PABLO */
 
     /* check for null vdata class */
     if (vsclass == NULL)
@@ -1292,10 +1156,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_VSfindclass);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* VSfindclass */
 
@@ -1331,10 +1191,6 @@ VSsetblocksize(	int32 vkey, /* IN: vdata key */
     intn        ret_value = SUCCEED;
     CONSTR(FUNC, "VSsetblocksize");
 
-#ifdef HAVE_PABLO
-        TRACE_ON(PABLO_mask, ID_VSsetblocksize);
-#endif /* HAVE_PABLO */
-
     /* clear error stack */
     HEclear();
 
@@ -1362,10 +1218,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_VSsetblocksize);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }       /* VSsetblocksize */
 
@@ -1402,10 +1254,6 @@ VSsetnumblocks( int32 vkey, /* IN: vdata key */
     intn        ret_value = SUCCEED;
     CONSTR(FUNC, "VSsetnumblocks");
 
-#ifdef HAVE_PABLO
-        TRACE_ON(PABLO_mask, ID_VSsetnumblocks);
-#endif /* HAVE_PABLO */
-
     /* clear error stack */
     HEclear();
 
@@ -1433,10 +1281,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_VSsetnumblocks);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }       /* VSsetnumblocks */
 
@@ -1473,10 +1317,6 @@ VSgetblockinfo(int32 vkey, /* IN: vdata id */
     intn        ret_value = SUCCEED;
     CONSTR(FUNC, "VSgetblockinfo");
 
-#ifdef HAVE_PABLO
-        TRACE_ON(PABLO_mask, ID_VSgetblockinfo);
-#endif /* HAVE_PABLO */
-
     /* clear error stack */
     HEclear();
 
@@ -1504,10 +1344,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_VSgetblockinfo);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }       /* VSgetblockinfo */
 

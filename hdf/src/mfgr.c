@@ -15,9 +15,6 @@ static char RcsId[] = "$Revision$";
 #endif
 
 /* $Id$ */
-#ifdef HAVE_PABLO
-#define PABLO_mask ID_mfgr_c
-#endif
 
 /*
 FILE
@@ -1504,9 +1501,6 @@ int32 GRstart(int32 hdf_file_id)
     gr_info_t *gr_ptr;          /* ptr to the new GR information for a file */
     int32  ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRstart);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of file id */
     HEclear();
 
@@ -1579,9 +1573,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRstart);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRstart() */
 
@@ -1612,9 +1603,6 @@ intn GRfileinfo(int32 grid,int32 *n_datasets,int32 *n_attrs)
     gr_info_t *gr_ptr;          /* ptr to the GR information for a file */
     intn  ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRfileinfo);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of file id */
     HEclear();
 
@@ -1639,9 +1627,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRfileinfo);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRfileinfo() */
 
@@ -2086,9 +2071,6 @@ intn GRend(int32 grid)
                                 that may return a ref or a FAIL - BMR */
 
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRend);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of file id */
     HEclear();
 
@@ -2326,9 +2308,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRend);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRend() */
 
@@ -2362,9 +2341,6 @@ int32 GRselect(int32 grid,int32 index)
     void * *t;                   /* temp. ptr to the image found */
     int32  ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRselect);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of file id */
     HEclear();
 
@@ -2395,9 +2371,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRselect);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRselect() */
 
@@ -2440,9 +2413,6 @@ int32 GRcreate(int32 grid,const char *name,int32 ncomp,int32 nt,int32 il,int32 d
     int32 temp_ref;     /* used to hold the returned value from a function
                                 that may return a ref or a FAIL - BMR */
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRcreate);
-#endif /* HAVE_PABLO */
     /* clear error stack */
     HEclear();
 
@@ -2533,9 +2503,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRcreate);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRcreate() */
 
@@ -2568,9 +2535,6 @@ int32 GRnametoindex(int32 grid,const char *name)
     void * *t;                   /* temp. ptr to the image found */
     int32   ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-	TRACE_ON(PABLO_mask,ID_GRnametoindex);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of file id */
     HEclear();
 
@@ -2599,9 +2563,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRnametoindex);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRnametoindex() */
 
@@ -2642,9 +2603,6 @@ intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     intn  ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRgetiminfo);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -2690,9 +2648,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRgetiminfo);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRgetiminfo() */
 
@@ -2726,9 +2681,6 @@ intn GRgetnluts(int32 riid)
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     intn  ret_value = FAIL;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRgetnluts);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -2752,9 +2704,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_GRgetnluts);
-#endif /* HAVE_PABLO */
     return ret_value;
 } /* end GRgetnluts() */
 
@@ -2817,9 +2766,6 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],vo
     intn switch_interlace=FALSE;/* whether the memory interlace needs to be switched around */
     intn ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRwriteimage);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -3342,9 +3288,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRwriteimage);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRwriteimage() */
 
@@ -3405,9 +3348,6 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],voi
     intn status;
     intn  ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRreadimage);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -3690,9 +3630,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRreadimage);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRreadimage() */
 
@@ -3725,9 +3662,6 @@ intn GRendaccess(int32 riid)
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     intn  ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRendaccess);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -3782,9 +3716,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRendaccess);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRendaccess() */
 
@@ -3816,9 +3747,6 @@ uint16 GRidtoref(int32 riid)
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     uint16  ret_value = 0; /* FAIL? */
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRidtoref);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -3855,9 +3783,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRidtoref);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRidtoref() */
 
@@ -3892,9 +3817,6 @@ int32 GRreftoindex(int32 grid,uint16 ref)
     void * *t;                   /* temp. ptr to the image found */
     int32   ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRreftoindex);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -3923,9 +3845,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRreftoindex);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRreftoindex() */
 
@@ -3962,9 +3881,6 @@ intn GRreqlutil(int32 riid,intn il)
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     intn  ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRreqlutil);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -3987,9 +3903,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRreqlutil);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRreqlutil() */
 
@@ -4026,9 +3939,6 @@ intn GRreqimageil(int32 riid,intn il)
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     intn  ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-     TRACE_ON(PABLO_mask,ID_GRreqimageil);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -4051,9 +3961,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRreqimageil);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRreqimageil() */
 
@@ -4087,9 +3994,6 @@ int32 GRgetlutid(int32 riid,int32 lut_index)
     CONSTR(FUNC, "GRgetlutid");   /* for HERROR */
     int32  ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRgetlutid);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -4106,9 +4010,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRgetlutid);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRgetlutid() */
 
@@ -4142,9 +4043,6 @@ uint16 GRluttoref(int32 lutid)
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     uint16 ret_value = 0;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRluttoref);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -4165,9 +4063,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-       TRACE_OFF(PABLO_mask, ID_GRluttoref);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRluttoref() */
 
@@ -4203,9 +4098,6 @@ intn GRgetlutinfo(int32 lutid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     intn  ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRgetlutinfo);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -4246,9 +4138,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_GRgetlutinfo);
-#endif /* HAVE_PABLO */
     return ret_value;
 } /* end GRgetlutinfo() */
 
@@ -4286,9 +4175,6 @@ intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,void *
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     intn  ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRwritelut);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -4348,9 +4234,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRwritelut);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRwritelut() */
 
@@ -4384,9 +4267,6 @@ intn GRreadlut(int32 lutid,void * data)
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     intn  ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRreadlut);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -4435,9 +4315,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRreadlut);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRreadlut() */
 
@@ -4472,9 +4349,6 @@ intn GRsetexternalfile(int32 riid,const char *filename,int32 offset)
     int32 tmp_aid;  /* AID returned from HXcreate() */
     intn  ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRsetexternalfile);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -4523,9 +4397,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-   TRACE_OFF(PABLO_mask, ID_GRsetexternalfile);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRsetexternalfile() */
 
@@ -4561,9 +4432,6 @@ intn GRsetaccesstype(int32 riid,uintn accesstype)
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     intn  ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRsetaccesstype);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -4587,9 +4455,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRsetaccesstype);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRsetaccesstype() */
 
@@ -4679,9 +4544,6 @@ intn GRsetcompress(int32 riid,comp_coder_t comp_type,comp_info *cinfo)
     uint32 comp_config;
     intn  ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRsetcompress);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -4771,9 +4633,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRsetcompress);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRsetcompress() */
 
@@ -4817,9 +4676,6 @@ intn GRgetcompress(int32 riid, comp_coder_t* comp_type, comp_info* cinfo)
     uint16 scheme;	/* compression scheme used for JPEG images */
     intn  ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRgetcompress);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -4864,9 +4720,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRgetcompress);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRgetcompress() */
 
@@ -4914,9 +4767,6 @@ intn GRsetattr(int32 id,const char *name,int32 attr_nt,int32 count,const void * 
     intn is_riid=FALSE;         /* whether we had a RIID */
     intn ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRsetattr);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -5150,9 +5000,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRsetattr);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRsetattr() */
 
@@ -5192,9 +5039,6 @@ intn GRattrinfo(int32 id,int32 index,char *name,int32 *attr_nt,int32 *count)
     at_info_t *at_ptr;          /* ptr to the attribute to work with */
     intn   ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRattrinfo);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -5250,9 +5094,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRattrinfo);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRattrinfo() */
 
@@ -5292,9 +5133,6 @@ intn GRgetattr(int32 id,int32 index,void * data)
     int32 at_size;              /* size in bytes of the attribute data */
     intn  ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRgetattr);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -5375,9 +5213,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRgetattr);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRgetattr() */
 
@@ -5414,9 +5249,6 @@ int32 GRfindattr(int32 id,const char *name)
     at_info_t *at_ptr;          /* ptr to the attribute to work with */
     int32 ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRfindattr);
-#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -5460,9 +5292,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRfindattr);
-#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRfindattr() */
 
@@ -5825,9 +5654,6 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
     gr_info_t *gr_ptr;               /* ptr to the file GR information for this image */
     intn       ret_value = SUCCEED;  /* return value */
 
-#ifdef HAVE_PABLO
-	TRACE_ON(PABLO_mask,ID_GRsetchunk);
-#endif /* HAVE_PABLO */
 
 #ifdef CHK_DEBUG
     fprintf(stderr,"GRsetchunk: called  \n");
@@ -6100,9 +5926,6 @@ done:
     if (chunk[0].pdims != NULL)
         HDfree(chunk[0].pdims);
 
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask,ID_GRsetchunk);
-#endif /* HAVE_PABLO */
     return ret_value;
 } /* GRsetchunk */
 
@@ -6147,9 +5970,6 @@ GRgetchunkinfo(int32 riid,               /* IN: sds access id */
     intn            i;                    /* loop variable */
     intn            ret_value = SUCCEED;  /* return value */
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRgetchunkinfo);
-#endif /* HAVE_PABLO */
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -6228,9 +6048,6 @@ GRgetchunkinfo(int32 riid,               /* IN: sds access id */
 
       }
     /* Normal cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask,ID_GRgetchunkinfo);
-#endif /* HAVE_PABLO */
     return ret_value;
 } /* GRgetchunkinfo() */
 
@@ -6286,9 +6103,6 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
     intn       switch_interlace = FALSE;/* whether the memory interlace needs to be switched around */
     intn       ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRwritechunk);
-#endif /* HAVE_PABLO */
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -6452,9 +6266,6 @@ printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_si
     if (img_data != NULL)
         HDfree(img_data);
 
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask,ID_GRwritechunk);
-#endif /* HAVE_PABLO */
     return ret_value;
 } /* GRwritechunk() */
 
@@ -6509,9 +6320,6 @@ GRreadchunk(int32 riid,    /* IN: access aid to GR */
     intn       switch_interlace = FALSE;/* whether the memory interlace needs to be switched around */
     intn       ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRreadchunk);
-#endif /* HAVE_PABLO */
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -6681,9 +6489,6 @@ printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_si
     if (img_data != NULL)
         HDfree(img_data);
 
-#ifdef HAVE_PABLO
-	TRACE_OFF(PABLO_mask,ID_GRreadchunk);
-#endif /* HAVE_PABLO */
     return ret_value;
 } /* GRreadchunk() */
 
@@ -6748,9 +6553,6 @@ GRsetchunkcache(int32 riid,     /* IN: access aid to mess with */
     int16      special;              /* Special code */
     intn       ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_GRsetchunkcache);
-#endif /* HAVE_PABLO */
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -6806,9 +6608,6 @@ GRsetchunkcache(int32 riid,     /* IN: access aid to mess with */
 
       }
     /* Normal cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask,ID_GRsetchunkcache);
-#endif /* HAVE_PABLO */
     return ret_value;
 } /* GRsetchunkcache() */
 

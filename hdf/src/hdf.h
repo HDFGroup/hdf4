@@ -147,12 +147,6 @@ typedef intn (*hdf_termfunc_t)(void);   /* termination function typedef */
 #include "vg.h"         /* Add the Vgroup/Vdata header so the users don't have to */
 #include "mfgr.h"       /* Add the GR header so the users don't have to */
 
-/* For Pablo Instrumentation */
-#ifdef HAVE_PABLO
-#include "ProcIDs.h"
-#include "trace.h"
-#endif /* PABLO */
-
 /* these may eventaully evolve into real-life functions but not yet */
 #define HDFopen(f,a,d)      Hopen((f), (a), (d))
 #define HDFclose(f)         Hclose((f))

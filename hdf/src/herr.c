@@ -16,10 +16,6 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
-#ifdef HAVE_PABLO
-#define PABLO_mask ID_herr_c
-#endif
-
 /*LINTLIBRARY */
 /* -------------------------------- herr.c -------------------------------- */
 /*
@@ -90,23 +86,14 @@ const char *
 HEstring(hdf_err_code_t error_code)
 {
     int         i;              /* temp int index */
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HEstring);
-#endif /* HAVE_PABLO */
 
     /* look for the error_code in error message table */
     for (i = 0; i < (int)ERRMESG_SZ; i++)
         if (error_messages[i].error_code == error_code)
           {
-#ifdef HAVE_PABLO
-            TRACE_OFF(PABLO_mask, ID_HEstring);
-#endif /* HAVE_PABLO */
             return error_messages[i].str;
           }
 
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_HEstring);
-#endif /* HAVE_PABLO */
     /* otherwise, return default message */
     return DEFAULT_MESG;
 } /* HEstring */
@@ -125,9 +112,6 @@ DESCRIPTION
 VOID
 HEPclear(void)
 {
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_HEclear);
-#endif /* HAVE_PABLO */
     if (!error_top)
         goto done;
 
@@ -143,9 +127,6 @@ HEPclear(void)
       }
 
 done:
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_HEclear);
-#endif /* HAVE_PABLO */
   return;
 } /* HEPclear */
 
@@ -173,9 +154,6 @@ VOID
 HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_name, intn line)
 {
     intn        i;
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HEpush);
-#endif /* HAVE_PABLO */
 
     /* if the stack is not allocated, then do it */
     if (!error_stack)
@@ -206,9 +184,6 @@ HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_na
             }
           error_top++;
       }
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_HEpush);
-#endif /* HAVE_PABLO */
 }   /* HEpush */
 
 /*-------------------------------------------------------------------------
@@ -232,10 +207,6 @@ HEreport(const char *format,...)
     char       *tmp;
     CONSTR(FUNC, "HEreport");   /* name of function if HIalloc fails */
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HEreport);
-#endif /* HAVE_PABLO */
-
     va_start(arg_ptr, format);
 
     if ((error_top < ERR_STACK_SZ + 1) && (error_top > 0))
@@ -255,9 +226,6 @@ HEreport(const char *format,...)
     va_end(arg_ptr);
 
 done:
-#ifdef HAVE_PABLO
-     TRACE_OFF(PABLO_mask, ID_HEreport);
-#endif /* HAVE_PABLO */
     return;
 } /* HEreport */
 
@@ -279,9 +247,6 @@ DESCRIPTION
 VOID
 HEprint(FILE * stream, int32 print_levels)
 {
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_HEprint);
-#endif /* HAVE_PABLO */
     if (print_levels == 0 || print_levels > error_top)  /* print all errors */
         print_levels = error_top;
 
@@ -297,9 +262,6 @@ HEprint(FILE * stream, int32 print_levels)
           if (error_stack[print_levels].desc)
               fprintf(stream, "\t%s\n", error_stack[print_levels].desc);
       }
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_HEprint);
-#endif /* HAVE_PABLO */
 } /* HEprint */
 
 /* ------------------------------- HEvalue -------------------------------- */

@@ -15,10 +15,6 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 /* $Id$ */
-#ifdef HAVE_PABLO
-#define PABLO_mask ID_vhi_c
-#endif
-
 /*
    * File
    *       vhi.c
@@ -68,14 +64,8 @@ VHstoredata(HFILEID f, const char *field, const uint8 *buf, int32 n, int32 datat
     int32       order = 1;
     int32       ret_value;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_VHstoredata);
-#endif /* HAVE_PABLO */
     ret_value = ((int32)VHstoredatam(f, field, buf, n, datatype, vsname, vsclass, order));
 
-#ifdef HAVE_PABLO
-        TRACE_OFF( PABLO_mask, ID_VHstoredata );
-#endif /* HAVE_PABLO */
     return ret_value;
 } /* end VHstoredata */
 
@@ -112,9 +102,6 @@ VHstoredatam(HFILEID f, const char *field, const uint8 *buf, int32 n, int32 data
     int32       vs;
     int32       ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_VHstoredatam);
-#endif /* HAVE_PABLO */
 
     if ((vs = VSattach(f, -1, "w")) == FAIL)
         HGOTO_ERROR(DFE_CANTATTACH,FAIL);
@@ -147,9 +134,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_VHstoredatam );
-#endif /* HAVE_PABLO */
   return ret_value;
 }   /* VHstoredatam */
 
@@ -188,9 +172,6 @@ VHmakegroup(HFILEID f, int32 tagarray[], int32 refarray[], int32 n, const char *
     int32       ret_value = SUCCEED;
     CONSTR(FUNC, "VHmakegroup");
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_VHmakegroup);
-#endif /* HAVE_PABLO */
 
     if (( vg = Vattach(f, -1, "w"))== FAIL)
         HGOTO_ERROR(DFE_CANTATTACH,FAIL);
@@ -222,9 +203,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_VHmakegroup );
-#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* VHmakegroup */

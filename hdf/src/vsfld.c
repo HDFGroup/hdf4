@@ -16,10 +16,6 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
-#ifdef HAVE_PABLO
-#define PABLO_mask ID_vsfld_c
-#endif
-
 /*****************************************************************************
 * vsetf.c
 * Part of the HDF VSet interface.
@@ -94,10 +90,6 @@ VSsetfields(int32 vkey, const char *fields)
     VDATA      *vs;
     intn       ret_value = FAIL;
     CONSTR(FUNC, "VSsetfields");
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_VSsetfields);
-#endif /* HAVE_PABLO */
 
     /* check if a NULL field list is passed in, then return with
        error (bug #554) - BMR 4/30/01 */
@@ -279,10 +271,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_VSsetfields);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* VSsetfields */
 
@@ -304,10 +292,6 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
     VDATA      *vs;
     intn       ret_value = SUCCEED;
     CONSTR(FUNC, "VSfdefine");
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_VSfdefine);
-#endif /* HAVE_PABLO */
 
     if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -394,10 +378,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_VSfdefine);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }	/* VSfdefine */
 
@@ -413,10 +393,6 @@ VFnfields(int32 vkey)
     VDATA      *vs;
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VFnfields");
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_VFnfields);
-#endif /* HAVE_PABLO */
 
     if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS,FAIL);
@@ -438,10 +414,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_VFnfields);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }	/* VFnfields */
 
@@ -460,10 +432,6 @@ VFfieldname(int32 vkey, int32 index)
     VDATA      *vs;
     char       *ret_value = NULL; /* FAIL */
     CONSTR(FUNC, "VFfieldname");
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_VFfieldname);
-#endif /* HAVE_PABLO */
 
     if (HAatom_group(vkey)!=VSIDGROUP)
       HGOTO_ERROR(DFE_ARGS,NULL);
@@ -488,10 +456,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-  TRACE_OFF(PABLO_mask, ID_VFfieldname);;
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* VFfieldname */
 
@@ -508,10 +472,6 @@ VFfieldtype(int32 vkey, int32 index)
     VDATA      *vs;
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VFfeildtype");
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_VFfieldtype);
-#endif /* HAVE_PABLO */
 
     if (HAatom_group(vkey)!=VSIDGROUP)
       HGOTO_ERROR(DFE_ARGS,FAIL);
@@ -536,10 +496,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-      TRACE_OFF(PABLO_mask, ID_VFfieldtype);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* VFfieldtype */
 
@@ -557,10 +513,6 @@ VFfieldisize(int32 vkey, int32 index)
     VDATA      *vs;
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VFfieldisize");
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_VFfieldisize);
-#endif /* HAVE_PABLO */
 
     if (HAatom_group(vkey)!=VSIDGROUP)
       HGOTO_ERROR(DFE_ARGS,FAIL);
@@ -585,10 +537,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-     TRACE_OFF(PABLO_mask, ID_VFfieldisize);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* VFfieldisize */
 
@@ -606,10 +554,6 @@ VFfieldesize(int32 vkey, int32 index)
     VDATA      *vs;
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VFfieldesize");
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_VFfieldesize);
-#endif /* HAVE_PABLO */
 
     if (HAatom_group(vkey)!=VSIDGROUP)
       HGOTO_ERROR(DFE_ARGS,FAIL);
@@ -634,10 +578,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-  TRACE_OFF(PABLO_mask, ID_VFfieldesize);
-
-#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* VFfieldesize */
@@ -655,10 +595,6 @@ VFfieldorder(int32 vkey, int32 index)
     VDATA      *vs;
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VFfieldorder");
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_VFfieldorder);
-#endif /* HAVE_PABLO */
 
     if (HAatom_group(vkey)!=VSIDGROUP)
       HGOTO_ERROR(DFE_ARGS,FAIL);
@@ -683,10 +619,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_VFfieldorder);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }	/* VFfieldorder */
 
@@ -829,10 +761,6 @@ intn VSfpack(int32 vsid, intn packtype, const char *fields_in_buf,
        int32 *idx;  /* index of buf fields in vdata */
        int32 *offs; /* offset of buf fields in buf */
     }  blist;
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_VSfpack);
-#endif /* HAVE_PABLO */
 
     if (HAatom_group(vsid)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -987,10 +915,6 @@ done:
        HDfree(foffs);
     if (fbufps != NULL)
        HDfree(fbufps);
-
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_VSfpack);
-#endif /* HAVE_PABLO */
 
   return ret_value;
 }       /* VSfpack */

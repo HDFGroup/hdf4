@@ -14,10 +14,6 @@
 static char RcsId[] = "@(#)$Revision$";
 #endif
 
-#ifdef HAVE_PABLO
-#define PABLO_mask ID_hblocks_c
-#endif
-
 /* $Id$ */
 
 /*LINTLIBRARY */
@@ -245,10 +241,6 @@ HLcreate(int32  file_id,
     uint8       local_ptbuf[16];
     int32       ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_HLcreate);
-#endif /* HAVE_PABLO */
-
 #ifdef QAK
 printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_blocks);
 #endif /* QAK */
@@ -392,10 +384,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-  TRACE_OFF(PABLO_mask,ID_HLcreate);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 } /* HLcreate() */
 
@@ -457,10 +445,6 @@ HLconvert(int32 aid,
     uint8       local_ptbuf[16];
     int32       old_posn;       /* position in the access element */
     intn        ret_value = SUCCEED;
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_HLconvert);
-#endif /* HAVE_PABLO */
 
 #ifdef QAK
 printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_blocks);
@@ -596,10 +580,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-  TRACE_OFF(PABLO_mask,ID_HLconvert);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* end HLconvert() */
 
@@ -1842,10 +1822,6 @@ HLsetblockinfo(int32 aid,	/* access record id */
     accrec_t   *access_rec;               /* access record */
     intn	ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HLsetblockinfo);
-#endif /* HAVE_PABLO */
-
     /* clear error stack */
     HEclear();
 
@@ -1879,10 +1855,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_HLsetblockinfo);
-#endif /* HAVE_PABLO */
-
     return ret_value;
 }       /* end HLsetblockinfo */
 
@@ -1921,10 +1893,6 @@ HLgetblockinfo(int32 aid,	/* access record id */
     accrec_t   *access_rec;               /* access record */
     intn	ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HLgetblockinfo);
-#endif /* HAVE_PABLO */
-
     /* clear error stack */
     HEclear();
 
@@ -1945,10 +1913,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_HLgetblockinfo);
-#endif /* HAVE_PABLO */
-
     return ret_value;
 }       /* end HLgetblockinfo */
 

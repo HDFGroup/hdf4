@@ -221,12 +221,6 @@ VShdfsize(int32 vkey,   /* IN vdata key */
     int32        ret_value = SUCCEED;
     CONSTR(FUNC, "VShdfsize");
 
-#ifdef HAVE_PABLO
-/*
-  TRACE_ON(VS_mask, ID_VShdfsize);
-*/
-#endif /* HAVE_PABLO */
-
     /* check key is valid vdata */
     if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -276,12 +270,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-/*
-  TRACE_OFF(VS_mask, ID_VShdfsize);
-*/
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* VShdfsize */
 
@@ -312,12 +300,6 @@ intn VSattrhdfsize(int32 vsid, int32 findex, intn attrindex, int32 *size)
      int32 ret_value = SUCCEED;
      intn i, nattrs, a_index, found;
      DYN_VWRITELIST *w;
-
-#ifdef HAVE_PABLO
-/*
-     TRACE_ON(V_mask, ID_VSattrhdfsize);
-*/
-#endif /* HAVE_PABLO */
 
      HEclear();
      if (HAatom_group(vsid) != VSIDGROUP)
@@ -373,11 +355,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-/*
-      TRACE_OFF(V_mask, ID_VSattrhdfsize);
-*/
-#endif /* HAVE_PABLO */
 
   return ret_value;
 }  /* VSattrhdfsize */
@@ -407,12 +384,6 @@ intn Vattrhdfsize(int32 vgid, intn attrindex, int32 *size)
     vsinstance_t *vs_inst;
     int32 fid, vsid;
     int32 ret_value = SUCCEED;
-
-#ifdef HAVE_PABLO
-/*
-    TRACE_ON(V_mask, ID_Vattrhdfsize);
-*/
-#endif /* HAVE_PABLO */
 
     HEclear();
     if (HAatom_group(vgid) != VGIDGROUP)
@@ -455,11 +426,5 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-/*
-      TRACE_OFF(V_mask, ID_Vattrhdfsize);
-*/
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }  /* Vattrhdfsize */

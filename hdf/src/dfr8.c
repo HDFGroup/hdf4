@@ -14,10 +14,6 @@
 static char RcsId[] = "@(#)$Revision$";
 #endif
 
-#ifdef HAVE_PABLO
-#define PABLO_mask ID_dfr8_c
-#endif
-
 /* $Id$ */
 
 /*-----------------------------------------------------------------------------
@@ -185,10 +181,6 @@ DFR8setcompress(int32 type, comp_info * cinfo)
   CONSTR(FUNC, "DFR8setcompress");
   intn   ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
- TRACE_ON(PABLO_mask,ID_DFR8setcompress); 
-#endif /* HAVE_PABLO */
-
   /* Perform global, one-time initialization */
   if (library_terminate == FALSE)
       if(DFR8Istart()==FAIL)
@@ -219,10 +211,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
- 	TRACE_OFF(PABLO_mask, ID_DFR8setcompress);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* end DFR8setcompress() */
 
@@ -255,10 +243,6 @@ DFR8getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pispal)
   int32       file_id=(-1);
   intn        ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
- 	TRACE_ON(PABLO_mask,ID_DFR8getdims);
-#endif /* HAVE_PABLO */
-
   HEclear();
 
   if (!filename || !*filename || !pxdim || !pydim)
@@ -290,10 +274,6 @@ done:
   /* Normal function cleanup */
   if(file_id!=(-1))
       Hclose(file_id);
-
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_DFR8getdims);
-#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DFR8getdims() */
@@ -332,10 +312,6 @@ DFR8getimage(const char *filename, uint8 *image, int32 xdim, int32 ydim, uint8 *
   CONSTR(FUNC, "DFR8getimage");
   int32       file_id=(-1);
   intn        ret_value = SUCCEED;
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_DFR8getimage);
-#endif /* HAVE_PABLO */
 
   HEclear();
 
@@ -409,10 +385,6 @@ done:
 
   /* Normal function cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_DFR8getimage);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* end DFR8getimage() */
 
@@ -441,10 +413,6 @@ DFR8setpalette(uint8 *pal)
 {
   CONSTR(FUNC, "DFR8setpalette");
   intn     ret_value = SUCCEED;
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_DFR8setpalette);
-#endif /* HAVE_PABLO */
 
   /* Perform global, one-time initialization */
   if (library_terminate == FALSE)
@@ -480,10 +448,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_DFR8setpalette);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* end DFR8setpalette() */
 
@@ -698,10 +662,6 @@ DFR8putimage(const char *filename, const void * image, int32 xdim, int32 ydim,
     CONSTR(FUNC, "DFR8putimage");    /* for HERROR */
     intn ret_value;
 
-#ifdef HAVE_PABLO
-   TRACE_ON(PABLO_mask,ID_DFR8putimage);
-#endif /* HAVE_PABLO */
-
   /* Perform global, one-time initialization */
   if (library_terminate == FALSE)
       if(DFR8Istart()==FAIL)
@@ -716,10 +676,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_DFR8putimage);
-#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DFR8putimage() */
@@ -754,10 +710,6 @@ DFR8addimage(const char *filename, const void * image, int32 xdim, int32 ydim,
     CONSTR(FUNC, "DFR8addimage");    /* for HERROR */
     intn ret_value;
 
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_DFR8addimage);
-#endif /* HAVE_PABLO */
-
   /* Perform global, one-time initialization */
   if (library_terminate == FALSE)
       if(DFR8Istart()==FAIL)
@@ -772,10 +724,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_DFR8addimage);
-#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DFR8addimage() */
@@ -1053,10 +1001,6 @@ DFR8nimages(const char *filename)
   intn        i, j;           /* local counting variable */
   intn        ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_DFR8nimages);
-#endif /* HAVE_PABLO */
-
   HEclear();
 
   /* Perform global, one-time initialization */
@@ -1193,10 +1137,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_DFR8nimages);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* end DFR8nimages() */
 
@@ -1225,10 +1165,6 @@ DFR8readref(const char *filename, uint16 ref)
   int32       file_id=(-1);
   int32       aid;
   intn        ret_value = SUCCEED;
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_DFR8readref);
-#endif /* HAVE_PABLO */
 
   HEclear();
 
@@ -1259,10 +1195,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_DFR8readref);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* end DFR8readref() */
 
@@ -1289,10 +1221,6 @@ DFR8writeref(const char *filename, uint16 ref)
     CONSTR(FUNC, "DFR8writeref");    /* for HERROR */
   intn  ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_DFR8writeref);
-#endif /* HAVE_PABLO */
-
   HEclear();
 
   /* Perform global, one-time initialization */
@@ -1311,10 +1239,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_DFR8writeref);
-#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DFR8writeref() */
@@ -1340,10 +1264,6 @@ DFR8restart(void)
     CONSTR(FUNC, "DFR8restart");    /* for HERROR */
     intn ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_DFR8restart);
-#endif /* HAVE_PABLO */
-
   /* Perform global, one-time initialization */
   if (library_terminate == FALSE)
       if(DFR8Istart()==FAIL)
@@ -1358,10 +1278,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_DFR8restart);
-#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DFR8restart() */
@@ -1387,10 +1303,6 @@ DFR8lastref(void)
     CONSTR(FUNC, "DFR8lastref");    /* for HERROR */
     uint16 ret_value;
 
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_DFR8lastref);
-#endif /* HAVE_PABLO */
-
   /* Perform global, one-time initialization */
   if (library_terminate == FALSE)
       if(DFR8Istart()==FAIL)
@@ -1405,10 +1317,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_DFR8lastref);
-#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DFR8lastref() */
@@ -1729,10 +1637,6 @@ PRIVATE intn DFR8Istart(void)
     CONSTR(FUNC, "DFR8Istart");    /* for HERROR */
     intn        ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_DFR8Istart);
-#endif /* HAVE_PABLO */
-
     /* Don't call this routine again... */
     library_terminate = TRUE;
 
@@ -1747,10 +1651,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_DFR8Istart);
-#endif /* HAVE_PABLO */
-
     return(ret_value);
 } /* end DFR8Istart() */
 

@@ -16,10 +16,6 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
-#ifdef HAVE_PABLO
-#define PABLO_mask ID_hchunks_c
-#endif
-
 /*LINTLIBRARY */
 /* ------------------------------ HMCxxx -------------------------------
    Routines to implement chunked elements via a Vdatas for
@@ -1542,10 +1538,6 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     char        v_class[VSNAMELENMAX + 1] = ""; /* Vdata class */
     intn        i;                 /* loop index */
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HMCcreate);
-#endif /* HAVE_PABLO */
-
     /* shut compiler up */
     nlevels=nlevels;
 
@@ -2016,10 +2008,6 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     if (c_sp_header != NULL)
         HDfree(c_sp_header);
 
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_HMCcreate);
-#endif /* HAVE_PABLO */
-
     return ret_value;
 } /* HMCcreate() */
 
@@ -2050,10 +2038,6 @@ HMCgetcompress( accrec_t*    access_rec, /* IN: access record */
     comp_model_t model_type;    /* modeling type - dummy */
     int32       ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HMCgetcompress);
-#endif /* HAVE_PABLO */
-
     /* Get the special info from the given record */
     info = (chunkinfo_t *) access_rec->special_info;
     if (info == NULL) HGOTO_ERROR(DFE_COMPINFO, FAIL);
@@ -2077,10 +2061,6 @@ HMCgetcompress( accrec_t*    access_rec, /* IN: access record */
       } /* end if */
 
     /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_HMCgetcompress);
-#endif /* HAVE_PABLO */
-
     return ret_value;
 } /* HMCgetcompress() */
 
@@ -2127,10 +2107,6 @@ HMCsetMaxcache(int32 access_id, /* IN: access aid to mess with */
     chunkinfo_t *info       = NULL;   /* chunked element information record */
     int32       ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HMCsetMaxcache);
-#endif /* HAVE_PABLO */
-
     /* shut compiler up */
     flags=flags;
 
@@ -2168,10 +2144,6 @@ HMCsetMaxcache(int32 access_id, /* IN: access aid to mess with */
       } /* end if */
 
     /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_HMCsetMaxcache);
-#endif /* HAVE_PABLO */
-
     return ret_value;
 } /* HMCsetMaxcache() */
 
@@ -2193,15 +2165,7 @@ HMCPstread(accrec_t * access_rec /* IN: access record to fill in */)
 {
     int32 ret_value;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HMCPstread);
-#endif /* HAVE_PABLO */
-
     ret_value = HMCIstaccess(access_rec, DFACC_READ);
-
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_HMCPstread);
-#endif /* HAVE_PABLO */
 
     return ret_value;
 }   /* HMCPstread */
@@ -2224,15 +2188,7 @@ HMCPstwrite(accrec_t * access_rec /* IN: access record to fill in */)
 {
     int32  ret_value;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HMCPstwrite);
-#endif /* HAVE_PABLO */
-
     ret_value = HMCIstaccess(access_rec, DFACC_WRITE);
-
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_HMCPstwrite);
-#endif /* HAVE_PABLO */
 
     return ret_value;
 }   /* HMCPstwrite */
@@ -2258,10 +2214,6 @@ HMCPseek(accrec_t * access_rec,  /* IN: access record to mess with */
     CONSTR(FUNC, "HMCPseek");    /* for HERROR */
     chunkinfo_t *info = NULL;    /* information for the chunked elt */
     int32   ret_value = SUCCEED;
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HMCPseek);
-#endif /* HAVE_PABLO */
 
 #ifdef CHK_DEBUG_3
     printf("HMCPseek called with offset %d \n",offset);
@@ -2307,10 +2259,6 @@ HMCPseek(accrec_t * access_rec,  /* IN: access record to mess with */
       } /* end if */
 
     /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_HMCPseek);
-#endif /* HAVE_PABLO */
-
     return ret_value;
 }   /* HMCPseek */
 
@@ -2345,10 +2293,6 @@ HMCPchunkread(void  *cookie,    /* IN: access record to mess with */
     int32       read_len = 0;      /* length of bytes to read */
     int32       nitems = 1;        /* used in HDmemfill(), */
     int32       ret_value = SUCCEED;
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HMCPchunkread);
-#endif /* HAVE_PABLO */
 
     /* Check args */
     if (access_rec == NULL)
@@ -2428,9 +2372,6 @@ HMCPchunkread(void  *cookie,    /* IN: access record to mess with */
       } /* end if */
 
     /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_HMCPchunkread);
-#endif /* HAVE_PABLO */
 #ifdef CHK_DEBUG_3
     printf("HMCPchunkread exit with ret_value= %d \n",ret_value);
 #endif
@@ -2475,9 +2416,6 @@ HMCreadChunk(int32 access_id,  /* IN: access aid to mess with */
     int32       ret_value = SUCCEED;
     intn        i;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HMCreadChunk);
-#endif /* HAVE_PABLO */
 #ifdef CHK_DEBUG_5
     printf("HMCreadChunk: entered \n");
 #endif
@@ -2601,9 +2539,6 @@ HMCreadChunk(int32 access_id,  /* IN: access aid to mess with */
 
     /* Normal function cleanup */
 
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_HMCreadChunk);
-#endif /* HAVE_PABLO */
 #ifdef CHK_DEBUG_5
     printf("HMCreadChunk: exited, ret=%d \n",ret_value);
 #endif
@@ -2648,10 +2583,6 @@ HMCPread(accrec_t * access_rec, /* IN: access record to mess with */
     int         i;
 #endif
     int32       ret_value = SUCCEED;
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HMCPread);
-#endif /* HAVE_PABLO */
 
 #ifdef CHK_DEBUG_3
     printf("HMCPread called with length %d \n",length);
@@ -2802,10 +2733,6 @@ HMCPread(accrec_t * access_rec, /* IN: access record to mess with */
       } /* end if */
 
     /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_HMCPread);
-#endif /* HAVE_PABLO */
-
     return ret_value;
 }   /* HMCPread  */
 
@@ -2846,10 +2773,6 @@ HMCPchunkwrite(void  *cookie,    /* IN: access record to mess with */
     int32       write_len = 0;     /* nbytes to write next */
     int32       ret_value = SUCCEED;
     intn        k;                 /* loop index */
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HMCPchunkwrite);
-#endif /* HAVE_PABLO */
 
     /* Check args */
     if (access_rec == NULL)
@@ -2974,9 +2897,6 @@ HMCPchunkwrite(void  *cookie,    /* IN: access record to mess with */
     if (v_data != NULL)
         HDfree(v_data);
 
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_HMCPchunkwrite);
-#endif /* HAVE_PABLO */
 #ifdef CHK_DEBUG_4
     printf("HMCPchunkwrite exited with ret_value %d \n",ret_value);
 #endif
@@ -3027,9 +2947,6 @@ HMCwriteChunk(int32 access_id,  /* IN: access aid to mess with */
     intn        i;
 
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HMCwriteChunk);
-#endif /* HAVE_PABLO */
 #ifdef CHK_DEBUG_4
     printf("HMCwriteChunk: entered \n");
 #endif
@@ -3223,9 +3140,6 @@ HMCwriteChunk(int32 access_id,  /* IN: access aid to mess with */
 
     /* Normal function cleanup */
 
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_HMCwriteChunk);
-#endif /* HAVE_PABLO */
 #ifdef CHK_DEBUG_4
     printf("HMCwriteChunk: exited, ret=%d \n",ret_value);
 #endif
@@ -3278,10 +3192,6 @@ HMCPwrite(accrec_t * access_rec, /* IN: access record to mess with */
 #ifdef CHK_DEBUG_4
     intn         i;
 #endif
-
-#ifdef HAVE_PABLO_4
-    TRACE_ON(PABLO_mask,ID_HMCPwrite);
-#endif /* HAVE_PABLO */
 
 #ifdef CHK_DEBUG_4
     printf("HMCPwrite called with length %d \n",length);
@@ -3485,9 +3395,6 @@ HMCPwrite(accrec_t * access_rec, /* IN: access record to mess with */
 
     /* Normal function cleanup */
 
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_HMCPwrite);
-#endif /* HAVE_PABLO */
 #ifdef CHK_DEBUG_4
     printf("HMCPwrite: exited, ret=%d \n",ret_value);
 #endif
@@ -3627,10 +3534,6 @@ HMCPendaccess(accrec_t * access_rec /* IN:  access record to close */)
     filerec_t   *file_rec = NULL;    /* file record */
     intn        ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HMCPendaccess);
-#endif /* HAVE_PABLO */
-
     /* validate arguments first */
     if (access_rec == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);        
@@ -3668,10 +3571,6 @@ HMCPendaccess(accrec_t * access_rec /* IN:  access record to close */)
       } /* end if */
 
     /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_HMCPendaccess);
-#endif /* HAVE_PABLO */
-
     return ret_value;
 }   /* HMCPendaccess */
 
@@ -3696,10 +3595,6 @@ HMCPinfo(accrec_t *access_rec,       /* IN: access record of access elemement */
     chunkinfo_t *info     = NULL;   /* special information record */
     int32       ret_value = SUCCEED;
     intn        i;                  /* loop variable */
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HMCPinfo);
-#endif /* HAVE_PABLO */
 
     /* Check args */
     if (access_rec == NULL)
@@ -3744,10 +3639,6 @@ HMCPinfo(accrec_t *access_rec,       /* IN: access record of access elemement */
 
     /* Normal function cleanup */
 
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_HMCPinfo);
-#endif /* HAVE_PABLO */
-
     return ret_value;
 }   /* HMCPinfo */
 
@@ -3780,10 +3671,6 @@ HMCPinquire(accrec_t *access_rec,  /* IN:  access record to return info about */
     uint16      data_tag, data_ref; /* Tag/ref of the data in the file */
     chunkinfo_t *info = NULL;       /* special information record */
     int32       ret_value = SUCCEED;
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HMCPinquire);
-#endif /* HAVE_PABLO */
 
     /* Check args */
     if (access_rec == NULL)
@@ -3821,10 +3708,6 @@ HMCPinquire(accrec_t *access_rec,  /* IN:  access record to return info about */
       } /* end if */
 
     /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_HMCPinquire);
-#endif /* HAVE_PABLO */
-
     return ret_value;
 }   /* HMCPinquire */
 
@@ -3848,10 +3731,6 @@ HMCPgetnumrecs(accrec_t* access_rec,	/* access record */
     chunkinfo_t *chunk_info = NULL;	/* chunked element information record */
     int32       ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HMCPgetnumrecs);
-#endif /* HAVE_PABLO */
-
     /* Check args */
     if (access_rec == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -3872,10 +3751,6 @@ HMCPgetnumrecs(accrec_t* access_rec,	/* access record */
       } /* end if */
 
     /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_HMCPgetnumrecs);
-#endif /* HAVE_PABLO */
-
     return ret_value;
 }   /* HMCPgetnumrecs */
 

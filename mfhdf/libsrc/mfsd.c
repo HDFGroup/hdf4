@@ -15,10 +15,6 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 /* $Id$ */
-#ifdef HAVE_PABLO
-#define PABLO_mask ID_mfsd_c
-#include "ProcIDs.h"
-#endif
 
 /******************************************************************************
 file - mfsd.c
@@ -302,9 +298,6 @@ SDstart(const char *name,   /* IN: file name to open */
     fprintf(stderr, "SDstart: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON (PABLO_mask,ID_SDstart );
-#endif
     /* turn off annoying crash on error stuff */
     ncopts = 0;
 
@@ -352,9 +345,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDstart );
-#endif
 
     return ret_value;
 } /* SDstart */
@@ -382,9 +372,6 @@ SDend(int32 id /* IN: file ID of file to close */)
     fprintf(stderr, "SDend: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDend );
-#endif
 
     /* get id? */
     cdfid = (intn)id & 0xffff;
@@ -446,9 +433,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDend );
-#endif
 
     return ret_value;
 } /* SDend */
@@ -480,9 +464,6 @@ SDfileinfo(int32  fid,     /* IN:  file ID */
     fprintf(stderr, "SDnumber: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDfileinfo );
-#endif
 
     /* check that fid is valid and get file structure */
     handle = SDIhandle_from_id(fid, CDFTYPE);
@@ -508,9 +489,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDfileinfo );
-#endif
 
     return ret_value;
 } /* SDfileinfo */
@@ -554,9 +532,6 @@ SDselect(int32 fid,  /* IN: file ID */
     fprintf(stderr, "SDselect: I've been called (index: %d) \n", index);
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDselect );
-#endif
 
     /* check that fid is valid */
     handle = SDIhandle_from_id(fid, CDFTYPE);
@@ -591,9 +566,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDselect );
-#endif
 
     return ret_value;
 } /* SDselect */
@@ -633,9 +605,6 @@ SDgetinfo(int32  sdsid,   /* IN:  dataset ID */
     fprintf(stderr, "SDgetinfo: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDgetinfo );
-#endif
 
     if( rank == NULL || dimsizes == NULL || nt == NULL || nattr == NULL)
 	HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -699,9 +668,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDgetinfo );
-#endif
 
     return ret_value;
 } /* SDgetinfo */
@@ -749,9 +715,6 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
     fprintf(stderr, "SDreaddata: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDreaddata );
-#endif
     
     if((start == NULL) || (end == NULL) || (data == NULL))
       {
@@ -866,9 +829,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask,  ID_SDreaddata );
-#endif
 
     return ret_value;
 } /* SDreaddata */
@@ -905,9 +865,6 @@ SDnametoindex(int32 fid,  /* IN: file ID */
     fprintf(stderr, "SDnametoindex: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDnametoindex );
-#endif
 
     /* check that fid is valid */
     handle = SDIhandle_from_id(fid, CDFTYPE);
@@ -943,9 +900,6 @@ done:
 
       }
     /* Normal cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDnametoindex);
-#endif
 
     return ret_value;    
 } /* SDnametoindex */
@@ -989,9 +943,6 @@ SDgetrange(int32 sdsid, /* IN:  dataset ID */
     fprintf(stderr, "SDgetrange: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDgetrange );
-#endif
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
@@ -1050,9 +1001,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDgetrange);
-#endif
 
     return ret_value;
 } /* SDgetrange */
@@ -1132,9 +1080,6 @@ SDcreate(int32  fid,      /* IN: file ID */
     fprintf(stderr, "SDcreate: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDcreate );
-#endif
 
     /* check that fid is valid */
     handle = SDIhandle_from_id(fid, CDFTYPE);
@@ -1312,9 +1257,6 @@ done:
 
       }
     /* Normal cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDcreate);
-#endif
 
     return ret_value;
 } /* SDcreate */
@@ -1356,9 +1298,6 @@ SDgetdimid(int32 sdsid,  /* IN: dataset ID */
     fprintf(stderr, "SDgetdimid: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDgetdimid );
-#endif
 
     /* get the handle */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
@@ -1397,9 +1336,6 @@ done:
 
       }
     /* Normal cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDgetdimid);
-#endif
 
     return ret_value;
 } /* SDgetdimid */
@@ -1438,9 +1374,6 @@ SDsetdimname(int32  id,   /* IN: dataset ID */
     fprintf(stderr, "SDsetdimname: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDsetdimname );
-#endif
 
     /* get the handle */
     handle = SDIhandle_from_id(id, DIMTYPE);
@@ -1508,9 +1441,6 @@ done:
 
       }
     /* Normal cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDsetdimname);
-#endif
 
     return ret_value;
 } /* SDsetdimname */
@@ -1541,9 +1471,6 @@ SDendaccess(int32 id /* IN: dataset ID */)
     fprintf(stderr, "SDendaccess: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDendaccess );
-#endif
 
     /* get the handle */
     handle = SDIhandle_from_id(id, SDSTYPE);
@@ -1601,9 +1528,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDendaccess);
-#endif
 
     return ret_value;    
 } /* SDendaccess */
@@ -1747,9 +1671,6 @@ SDsetrange(int32 sdsid, /* IN: dataset ID */
     fprintf(stderr, "SDsetrange: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDsetrange );
-#endif
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
@@ -1798,9 +1719,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDsetrange);
-#endif
 
     return ret_value;    
 } /* SDsetrange */
@@ -1929,9 +1847,6 @@ SDsetattr(int32 id,    /* IN: object ID */
     fprintf(stderr, "SDsetattr: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDsetattr );
-#endif
 
     /* sanity check args */
     if(name == NULL) 
@@ -1994,9 +1909,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDsetattr);
-#endif
 
     return ret_value;        
 } /* SDsetattr */
@@ -2034,9 +1946,6 @@ SDattrinfo(int32  id,    /* IN:  object ID */
     fprintf(stderr, "SDattrinfo: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDattrinfo );
-#endif
 
     /* sanity check args */
     if((name == NULL) || (nt == NULL) || (count == NULL))
@@ -2087,9 +1996,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDattrinfo);
-#endif
 
     return ret_value;    
 } /* SDattrinfo */
@@ -2124,9 +2030,6 @@ SDreadattr(int32 id,    /* IN:  object ID */
     fprintf(stderr, "SDreadattr: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDreadattr );
-#endif
 
     /* sanity check args */
     if(buf == NULL)
@@ -2167,9 +2070,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDreadattr);
-#endif
 
     return ret_value;    
 } /* SDreadattr */
@@ -2220,9 +2120,6 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
     fprintf(stderr, "SDwritedata: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDwritedata );
-#endif
 
     if((start == NULL) || (end == NULL) || (data == NULL))
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -2377,9 +2274,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDwritedata);
-#endif
 
     return ret_value;    
 } /* SDwritedata */
@@ -2414,9 +2308,6 @@ SDsetdatastrs(int32 sdsid, /* IN: dataset ID */
     fprintf(stderr, "SDsetdatastrs: I've been called\n");
 #endif
     
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDsetdatastrs );
-#endif
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
@@ -2489,9 +2380,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDsetdatastrs);
-#endif
 
     return ret_value;    
 } /* SDsetdatastrs */
@@ -2524,9 +2412,6 @@ SDsetcal(int32   sdsid,/* IN: dataset ID */
     fprintf(stderr, "SDsetcal: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDsetcal );
-#endif
     
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
@@ -2593,9 +2478,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDsetcal);
-#endif
 
     return ret_value;    
 } /* SDsetcal */
@@ -2625,9 +2507,6 @@ SDsetfillvalue(int32 sdsid, /* IN: dataset ID */
     fprintf(stderr, "SDsetfillvalue: I've been called\n");
 #endif
     
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDsetfillvalue );
-#endif
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
@@ -2666,9 +2545,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDsetfillvalue);
-#endif
 
     return ret_value;    
 } /* SDsetfillvalue */
@@ -2701,9 +2577,6 @@ SDgetfillvalue(int32 sdsid, /* IN:  dataset ID */
     fprintf(stderr, "SDgetfillvalue: I've been called\n");
 #endif
     
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDgetfillvalue );
-#endif
 
     /* sanity check args */
     if(val == NULL)
@@ -2745,9 +2618,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDgetfillvalue);
-#endif
 
     return ret_value;    
 } /* SDgetfillvalue */
@@ -2784,9 +2654,6 @@ SDgetdatastrs(int32 sdsid, /* IN:  dataset ID */
     fprintf(stderr, "SDgetdatastrs: I've been called\n");
 #endif
     
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDgetdatastrs );
-#endif
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
@@ -2885,9 +2752,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDgetdatastrs);
-#endif
 
     return ret_value;    
 } /* SDgetdatastrs */
@@ -2921,9 +2785,6 @@ SDgetcal(int32    sdsid, /* IN:  dataset ID */
     fprintf(stderr, "SDgetcal: I've been called\n");
 #endif
     
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDgetcal );
-#endif
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
@@ -2992,9 +2853,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDgetcal);
-#endif
 
     return ret_value;    
 } /* SDgetcal */
@@ -3178,9 +3036,6 @@ SDsetdimstrs(int32 id, /* IN: dimension ID */
     fprintf(stderr, "SDsetdimstrs: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDsetdimstrs );
-#endif
 
     /* get the handle */
     handle = SDIhandle_from_id(id, DIMTYPE);
@@ -3255,9 +3110,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDsetdimstrs);
-#endif
 
     return ret_value;    
 } /* SDsetdimstrs */
@@ -3351,9 +3203,6 @@ SDsetdimscale(int32 id,    /* IN: dimension ID */
     fprintf(stderr, "SDsetdimscales: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDsetdimscale );
-#endif
 
     /* get the handle */
     handle = SDIhandle_from_id(id, DIMTYPE);
@@ -3415,9 +3264,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDsetdimscale);
-#endif
 
     return ret_value;    
 } /* SDsetdimsacle */
@@ -3453,9 +3299,6 @@ SDgetdimscale(int32 id,   /* IN:  dimension ID */
     fprintf(stderr, "SDgetdimscale: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDgetdimscale );
-#endif
 
     /* sanity check args */
     if(data == NULL)
@@ -3533,9 +3376,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDgetdimscale);
-#endif
 
     return ret_value;    
 } /* SDsetdimsacle */
@@ -3574,9 +3414,6 @@ SDdiminfo(int32  id,    /* IN:  dimension ID */
     fprintf(stderr, "SDdiminfo: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDdiminfo );
-#endif
 
     handle = SDIhandle_from_id(id, DIMTYPE);
     if(handle == NULL)
@@ -3643,9 +3480,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDdiminfo);
-#endif
 
     return ret_value;    
 } /* SDdiminfo */
@@ -3685,9 +3519,6 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
     fprintf(stderr, "SDgetdimstrs: I've been called\n");
 #endif
     
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDgetdimstrs );
-#endif
 
     handle = SDIhandle_from_id(id, DIMTYPE);
     if(handle == NULL) 
@@ -3784,9 +3615,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDgetdimstrs);
-#endif
 
     return ret_value;    
 } /* SDgetdimstrs */
@@ -3836,9 +3664,6 @@ SDsetexternalfile(int32 id,       /* IN: dataset ID */
     fprintf(stderr, "SDsetexternalfile: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDsetexternalfile );
-#endif
 
     if(NULL == filename || offset < 0)
       {
@@ -3925,9 +3750,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDsetexternalfile);
-#endif
 
     return ret_value;    
 } /* SDsetexternalfile */
@@ -3984,9 +3806,6 @@ SDsetnbitdataset(int32 id,       /* IN: dataset ID */
     fprintf(stderr, "SDsetnbitdataset: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDsetnbitdataset );
-#endif
 
     if(start_bit < 0 || bit_len <= 0)
       {
@@ -4073,9 +3892,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDsetnbitdataset);
-#endif
 
     return ret_value;    
 } /* SDsetnbitdataset */
@@ -4175,9 +3991,6 @@ SDsetcompress(int32 id,                /* IN: dataset ID */
     fprintf(stderr, "SDsetcompress: I've been called\n");
 #endif /* SDDEBUG */
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDsetcompress );
-#endif
 
     if (comp_type < COMP_CODE_NONE || comp_type >= COMP_CODE_INVALID)
       {
@@ -4337,9 +4150,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDsetcompress);
-#endif
 
     return ret_value;    
 } /* SDsetcompress */
@@ -4375,9 +4185,6 @@ SDgetcompress(int32     id,     /* IN: dataset ID */
     fprintf(stderr, "SDgetcompress: I've been called\n");
 #endif /* SDDEBUG */
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDgetcompress );
-#endif
 
     /* clear error stack */
     HEclear();
@@ -4412,9 +4219,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDgetcompress);
-#endif
     return ret_value;    
 } /* SDgetcompress */
 
@@ -4443,9 +4247,6 @@ SDfindattr(int32 id,       /* IN: object ID */
     int32      len;
     int32      ret_value = FAIL;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDfindattr );
-#endif
 
     /* determine what type of ID we've been given */
     if(SDIapfromid(id, &handle, &app) == FAIL)
@@ -4486,9 +4287,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDfindattr);
-#endif
 
     return ret_value;        
 } /* SDfindattr */
@@ -4517,9 +4315,6 @@ SDidtoref(int32 id /* IN: dataset ID */)
     fprintf(stderr, "SDidtoref: I've been called\n");
 #endif
     
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDidtoref );
-#endif
 
     handle = SDIhandle_from_id(id, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE) 
@@ -4550,9 +4345,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDidtoref);
-#endif
 
     return ret_value;    
 } /* SDidtoref */
@@ -4582,9 +4374,6 @@ SDreftoindex(int32 fid, /* IN: file ID */
     fprintf(stderr, "SDreftoindex: I've been called\n");
 #endif
     
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDreftoindex );
-#endif
 
     handle = SDIhandle_from_id(fid, CDFTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE) 
@@ -4618,9 +4407,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDreftoindex);
-#endif
 
     return ret_value;    
 } /* SDreftoindex */
@@ -4649,9 +4435,6 @@ SDisrecord(int32 id /* IN: dataset ID */)
     fprintf(stderr, "SDisrecord: I've been called\n");
 #endif
     
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDisrecord );
-#endif
 
     handle = SDIhandle_from_id(id, SDSTYPE);
     if(handle == NULL)
@@ -4685,9 +4468,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-   TRACE_OFF (PABLO_mask, ID_SDisrecord);
-#endif
 
     return ret_value;    
 } /* SDisrecord */
@@ -4717,9 +4497,6 @@ SDiscoordvar(int32 id /* IN: dataset ID */)
     fprintf(stderr, "SDiscoordvar: I've been called\n");
 #endif
     
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDiscoordvar );
-#endif
 
     handle = SDIhandle_from_id(id, SDSTYPE);
     if(handle == NULL)
@@ -4777,9 +4554,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDiscoordvar);
-#endif
 
     return ret_value;    
 } /* SDiscoordvar */
@@ -4843,9 +4617,6 @@ SDsetrag(int32 sdsid,
     fprintf(stderr, "SDsetrag: I've been called\n");
 #endif
     
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDsetrag );
-#endif
 
     /* get the variable */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
@@ -4901,9 +4672,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDsetrag);
-#endif
 
     return ret_value;    
 } /* SDsetrag */
@@ -4937,9 +4705,6 @@ SDsetaccesstype(int32 id,         /* IN: dataset ID */
     fprintf(stderr, "SDsetaccesstype: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDsetaccesstype );
-#endif
 
     switch (accesstype)
       {
@@ -4986,9 +4751,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDsetaccesstype);
-#endif
 
     return ret_value;    
 } /* SDsetaccesstype */
@@ -5020,9 +4782,6 @@ SDsetblocksize(int32 sdsid,      /* IN: dataset ID */
     fprintf(stderr, "SDsetblocksize: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDsetblocksize );
-#endif
 
     /* get the handle */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
@@ -5050,9 +4809,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask,  ID_SDsetblocksize);
-#endif
 
     return ret_value;    
 } /* SDsetblocksize */
@@ -5082,9 +4838,6 @@ SDsetfillmode(int32 sd_id,  /* IN: HDF file ID, returned from SDstart */
     fprintf(stderr, "SDsetfillmode: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDsetfillmode );
-#endif
 
     /* get the handle */
     handle = SDIhandle_from_id(sd_id, CDFTYPE);
@@ -5104,9 +4857,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDsetfillmode);
-#endif
 
     return ret_value;    
 } /* SDsetfillmode() */
@@ -5136,9 +4886,6 @@ SDsetdimval_comp(int32 dimid,    /* IN: dimension ID, returned from SDgetdimid *
     fprintf(stderr, "SDsetdimval_comp: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDsetdimval_comp );
-#endif
 
     /* get the handle */
     handle = SDIhandle_from_id(dimid, DIMTYPE);
@@ -5174,9 +4921,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDsetdimval_comp);
-#endif
 
     return ret_value;    
 } /* SDsetdimval_comp */
@@ -5204,9 +4948,6 @@ SDisdimval_bwcomp(int32 dimid /* IN: dimension ID, returned from SDgetdimid */)
     fprintf(stderr, "SDisdimval_bwcomp: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDisdimval_bwcomp );
-#endif
 
     /* get the handle */
     handle = SDIhandle_from_id(dimid, DIMTYPE);
@@ -5238,9 +4979,6 @@ done:
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDisdimval_bwcomp);
-#endif
 
     return ret_value;    
 } /* SDisdimval_bwcomp */
@@ -5388,9 +5126,6 @@ uint32 comp_config;
     fprintf(stderr,"SDsetchunk: called  \n");
 #endif
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDsetchunk );
-#endif
 
      /* make sure this is cleared */
      memset(chunk,0,sizeof(chunk[0]));
@@ -5749,9 +5484,6 @@ done:
     if (chunk[0].pdims != NULL)
         HDfree(chunk[0].pdims);
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDsetchunk);
-#endif
 
     return ret_value;
 } /* SDsetchunk */
@@ -5798,9 +5530,6 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
     intn      i;                   /* loop variable */
     intn      ret_value = SUCCEED; /* return value */
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDgetchunkinfo );
-#endif
 
     /* Check args */
 
@@ -5881,9 +5610,6 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDgetchunkinfo);
-#endif
 
     return ret_value;
 } /* SDgetchunkinfo() */
@@ -5939,9 +5665,6 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
     static void  *tBuf = NULL;   /* static buffer used for conversion */
     intn       ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDwritechunk );
-#endif
 
     info_block.cdims = NULL;
 
@@ -6101,9 +5824,6 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
     if (info_block.cdims != NULL)
         HDfree(info_block.cdims);
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDwritechunk);
-#endif
 
     return ret_value;
 } /* SDwritechunk() */
@@ -6158,9 +5878,6 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
     static void  *tBuf = NULL; /* static buffer used for conversion */
     intn       ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_SDreadchunk );
-#endif
 
     info_block.cdims = NULL;
 
@@ -6318,9 +6035,6 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
     if (info_block.cdims != NULL)
         HDfree(info_block.cdims);
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDreadchunk);
-#endif
 
     return ret_value;
 } /* SDreadchunk() */
@@ -6385,9 +6099,6 @@ SDsetchunkcache(int32 sdsid,     /* IN: access aid to mess with */
     int16     special;              /* Special code */
     intn      ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_SDsetchunkcache );
-#endif
 
     /* Check args */
     if (maxcache < 1 )
@@ -6443,10 +6154,6 @@ SDsetchunkcache(int32 sdsid,     /* IN: access aid to mess with */
       }
     /* Normal cleanup */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDsetchunkcache);
-#endif
-
     return ret_value;
 } /* SDsetchunkcache() */
 
@@ -6487,12 +6194,6 @@ SDcheckempty(int32 sdsid,  /* IN: dataset ID */
     fprintf(stderr, "SDcheckempty: I've been called\n");
 #endif
 
-#ifdef HAVE_PABLO
-#ifndef ID_SDcheckempty
-#define ID_SDcheckempty DUMMY_HDF
-#endif
-    TRACE_ON(PABLO_mask,ID_SDcheckempty );
-#endif
     /* get the handle */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
@@ -6533,10 +6234,6 @@ done:
 
       }
     /* Normal cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF (PABLO_mask, ID_SDcheckempty);
-#endif
-
     return ret_value;
 } /* SDcheckempty */
 

@@ -15,10 +15,6 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 /* $Id$ */
-#ifdef HAVE_PABLO
-#define PABLO_mask ID_hbuffer_c
-#endif
-
 /*LINTLIBRARY */
 /* ------------------------------ hbuffer.c -------------------------------
 
@@ -125,10 +121,6 @@ HBconvert(int32 aid)
     int32       data_len;		/* length of the data we are checking */
     intn        ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HBconvert);
-#endif /* HAVE_PABLO */
-    /* clear error stack and validate args */
     HEclear();
     if ((access_rec = HAatom_object(aid)) == NULL)	/* get the access_rec pointer */
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -219,10 +211,6 @@ done:
     { /* Error condition cleanup */
     } /* end if */
 
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask,ID_HBconvert);
-#endif /* HAVE_PABLO */
-  return ret_value; 
 } /* HBconvert */
 
 /* ------------------------------ HBPstread ------------------------------- */

@@ -74,10 +74,6 @@ PRIVATE intn vunpackvs
 PRIVATE uint32 Vhbufsize = 0;
 PRIVATE uint8 *Vhbuf = NULL;
 
-#ifdef HAVE_PABLO
-#define PABLO_mask ID_vio_c
-#endif
-
 /* Pointers to the VDATA & vsinstance node free lists */
 static VDATA *vdata_free_list=NULL;
 static vsinstance_t *vsinstance_free_list=NULL;
@@ -419,10 +415,6 @@ vpackvs(VDATA * vs,  /* IN/OUT: */
     uint8 *bb = NULL;
     intn  ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-         TRACE_ON(PABLO_mask, ID_vpackvs);
-#endif /* HAVE_PABLO */
-
     /* clear error stack */
     HEclear();
 
@@ -527,10 +519,6 @@ done:
 #endif /* LATER */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_vpackvs);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* vpackvs */
 
@@ -557,10 +545,6 @@ vunpackvs(VDATA * vs, /* IN/OUT: */
     uint16      uint16var;
     int32       ret_value = SUCCEED;
     CONSTR(FUNC, "vunpackvs");
-
-#ifdef HAVE_PABLO
-      TRACE_ON(PABLO_mask, ID_vunpackvs);
-#endif /* HAVE_PABLO */
 
     /* clear error stack */
     HEclear();
@@ -714,10 +698,6 @@ done:
     } /* end if */
 
 	  /* Normal function cleanup */
-	#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_vunpackvs);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* vunpackvs */
 
@@ -909,9 +889,6 @@ VSattach(HFILEID f,             /* IN: file handle */
     int32      ret_value = FAIL;
     CONSTR(FUNC, "VSattach");
 
-#ifdef HAVE_PABLO
-        TRACE_ON(PABLO_mask, ID_VSattach);
-#endif /* HAVE_PABLO */
     /* clear error stack */
     HEclear();
 
@@ -1056,9 +1033,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_VSattach);
-#endif /* HAVE_PABLO */
 
   return ret_value;
 }	/* VSattach */
@@ -1097,10 +1071,6 @@ VSdetach(int32 vkey /* IN: vdata key? */)
     VDATA        *vs = NULL;
     int32        ret_value = SUCCEED;
     CONSTR(FUNC, "VSdetach");
-
-#ifdef HAVE_PABLO
-        TRACE_ON(PABLO_mask, ID_VSdetach);
-#endif /* HAVE_PABLO */
 
     /* clear error stack */
     HEclear();
@@ -1219,10 +1189,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_VSdetach);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }	/* VSdetach */
 
@@ -1244,10 +1210,6 @@ VSappendable(int32 vkey, /* IN: vdata key */
     VDATA        *vs = NULL;
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VSappendable");
-
-#ifdef HAVE_PABLO
-        TRACE_ON(PABLO_mask, ID_VSappendable);
-#endif /* HAVE_PABLO */
 
     /* clear error stack */
     HEclear();
@@ -1280,10 +1242,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_VSappendable);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* VSappendable */
 
@@ -1310,10 +1268,6 @@ VSgetid(HFILEID f,  /* IN: file handle */
     int32        key;
     int32        ret_value = SUCCEED;
     CONSTR(FUNC, "VSgetid");
-
-#ifdef HAVE_PABLO
-        TRACE_ON(PABLO_mask, ID_VSgetid);
-#endif /* HAVE_PABLO */
 
     /* clear error stack */
     HEclear();
@@ -1363,10 +1317,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_VSgetid);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* VSgetid */
 
@@ -1594,10 +1544,6 @@ VSdelete(int32 f,    /* IN: file handle */
     int32       ret_value = SUCCEED;
     CONSTR(FUNC, "VSdelete");
 
-#ifdef HAVE_PABLO
-        TRACE_ON(PABLO_mask, ID_VSdelete);
-#endif /* HAVE_PABLO */
-
     /* clear error stack */
     HEclear();
 
@@ -1635,9 +1581,5 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_VSdelete);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }	/* VSdelete */

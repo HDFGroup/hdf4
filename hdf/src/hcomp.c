@@ -952,10 +952,6 @@ HCPgetcompress(int32 file_id,
     model_info  m_info;         /* modeling information - dummy */
     int32       ret_value=SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HCPgetcompress);
-#endif /* HAVE_PABLO */
-
     /* clear error stack */
     HEclear();
 
@@ -1016,10 +1012,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-  TRACE_OFF(PABLO_mask,ID_HCPgetcompress);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 } /* HCgetcompress */
 

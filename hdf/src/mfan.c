@@ -16,10 +16,6 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
-#ifdef HAVE_PABLO
-#define PABLO_mask ID_mfan_c
-#endif
-
 /*-----------------------------------------------------------------------------
  * File:     mfan.c
  * Author:   GeorgeV
@@ -1356,10 +1352,6 @@ ANstart(int32 file_id /* IN: file to start annotation access on*/)
     filerec_t  *file_rec = NULL;		/* file record pointer */
     int32       ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_ANstart);
-#endif /* HAVE_PABLO */
-
     /* Clear error stack */
     HEclear();
 
@@ -1380,10 +1372,6 @@ ANstart(int32 file_id /* IN: file to start annotation access on*/)
       } /* end if */
 
     /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_ANstart);
-#endif /* HAVE_PABLO */
-
     return ret_value;
 } /* ANstart() */
 
@@ -1414,10 +1402,6 @@ ANfileinfo(int32  an_id,        /* IN:  annotation interface id */
     CONSTR(FUNC, "ANfileinfo");    /* for HERROR */
     filerec_t  *file_rec  = NULL;  /* file record pointer */
     intn        ret_value = SUCCEED;
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_ANfileinfo);
-#endif /* HAVE_PABLO */
 
     /* Clear error stack */
     HEclear();
@@ -1470,10 +1454,6 @@ ANfileinfo(int32  an_id,        /* IN:  annotation interface id */
       } /* end if */
 
     /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_ANfileinfo);
-#endif /* HAVE_PABLO */
-
     return ret_value;
 } /* ANfileinfo() */
 
@@ -1497,10 +1477,6 @@ ANend(int32 an_id /* IN: Annotation ID of file to close */)
     ANnode    *ann_node  = NULL;
     int32      ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_ANend);
-#endif /* HAVE_PABLO */
-  
     /* Clear error stack */
     HEclear();
 
@@ -1613,10 +1589,6 @@ ANend(int32 an_id /* IN: Annotation ID of file to close */)
       } /* end if */
 
     /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_ANend);
-#endif /* HAVE_PABLO */
-
     return ret_value;
 } /* ANend() */
 
@@ -1647,15 +1619,7 @@ ANcreate(int32    an_id,    /* IN: annotation interface ID */
 #endif /* LATER */
     int32    ret_value;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_ANcreate);
-#endif /* HAVE_PABLO */
-
     ret_value = (ANIcreate(an_id, elem_tag, elem_ref, type));
-
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_ANcreate);
-#endif /* HAVE_PABLO */
 
     return ret_value;
 } /* ANcreate() */
@@ -1687,10 +1651,6 @@ ANcreatef(int32    an_id,/* IN: annotation interface ID */
     uint16 ann_ref;
     int32  ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_ANcreatef);
-#endif /* HAVE_PABLO */
-
     /* deal with type */
     switch((ann_type)type)
       {
@@ -1717,10 +1677,6 @@ ANcreatef(int32    an_id,/* IN: annotation interface ID */
       } /* end if */
 
     /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_ANcreatef);
-#endif /* HAVE_PABLO */
-
     return ret_value;
 } /* ANcreateann() */
 
@@ -1751,10 +1707,6 @@ ANselect(int32    an_id, /* IN: annotation interface ID */
     TBBT_NODE *entry    = NULL;
     ANentry   *ann_entry = NULL;
     int32      ret_value = SUCCEED;
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_ANselect);
-#endif /* HAVE_PABLO */
 
     /* Clear error stack */
     HEclear();
@@ -1793,10 +1745,6 @@ ANselect(int32    an_id, /* IN: annotation interface ID */
       } /* end if */
 
     /* Normal function cleanup */
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_ANselect);
-#endif /* HAVE_PABLO */
-
     return ret_value;
 } /* ANselect() */
 
@@ -1829,10 +1777,6 @@ ANnumann(int32    an_id,    /* IN: annotation interface id */
     CONSTR(FUNC, "ANnumann");
     intn   ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_ANnumann);
-#endif /* HAVE_PABLO */
-
     /* deal with invalid types */
     if(type == AN_FILE_LABEL || type == AN_FILE_DESC)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -1846,10 +1790,6 @@ ANnumann(int32    an_id,    /* IN: annotation interface id */
       } /* end if */
 
     /* Normal function cleanup */
-
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_ANnumann);
-#endif /* HAVE_PABLO */
 
     return ret_value;
 } /* ANnumann() */
@@ -1884,10 +1824,6 @@ ANannlist(int32    an_id,      /* IN: annotation interface id */
     CONSTR(FUNC, "ANannlist");
     intn  ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_ANannlist);
-#endif /* HAVE_PABLO */
-
     /* deal with invalid types */
     if(type == AN_FILE_LABEL || type == AN_FILE_DESC)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -1901,10 +1837,6 @@ ANannlist(int32    an_id,      /* IN: annotation interface id */
       } /* end if */
 
     /* Normal function cleanup */
-
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_ANannlist);
-#endif /* HAVE_PABLO */
 
     return ret_value;
 } /* ANannlist() */
@@ -1931,15 +1863,7 @@ ANannlen(int32 ann_id /* IN: annotation id */)
 #endif /* LATER */
     int32  ret_value;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_ANannlen);
-#endif /* HAVE_PABLO */
-
     ret_value =  ANIannlen(ann_id);
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_ANannlen);
-#endif /* HAVE_PABLO */
-
     return ret_value;
 } /* ANannlen() */
 
@@ -1968,15 +1892,7 @@ ANwriteann(int32 ann_id,     /* IN: annotation id */
 #endif /* LATER */
     int32  ret_value;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_ANwriteann);
-#endif /* HAVE_PABLO */
-
     ret_value = ANIwriteann(ann_id, ann, annlen);
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_ANwriteann);
-#endif /* HAVE_PABLO */
-
     return ret_value;
 } /* ANwriteann() */
 
@@ -2005,15 +1921,7 @@ ANreadann(int32 ann_id,  /* IN: annotation id (handle) */
 #endif /* LATER */
     int32   ret_value;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_ANreadann);
-#endif /* HAVE_PABLO */
-
     ret_value = ANIreadann(ann_id, ann, maxlen);
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_ANreadann);
-#endif /* HAVE_PABLO */
-
     return ret_value;
 } /* ANreadann() */
 
@@ -2038,17 +1946,8 @@ ANendaccess(int32 ann_id /* IN: annotation id */)
     CONSTR(FUNC, "ANendaccess");    /* for HERROR */
 #endif /* LATER */
     intn  ret_value = SUCCEED;
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_ANendaccess);
-#endif /* HAVE_PABLO */
-
     /* shut compiler up */
     ann_id=ann_id;
-
-#ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_ANendaccess);
-#endif /* HAVE_PABLO */
-
 
     return ret_value;
 } /* ANendaccess() */

@@ -64,9 +64,6 @@ MODIFICATION HISTORY
 #include "atom.h"
 #include <assert.h>
 
-#ifdef HAVE_PABLO
-#define PABLO_mask ID_atom_c
-#endif
 /* Private function prototypes */
 static atom_info_t *HAIfind_atom(atom_t atm);
 
@@ -95,10 +92,6 @@ intn HAinit_group(group_t grp,      /* IN: Group to initialize */
     CONSTR(FUNC, "HAinit_group");	/* for HERROR */
     atom_group_t *grp_ptr=NULL;     /* ptr to the atomic group */
     intn ret_value=SUCCEED;
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_HAinit_group);
-#endif /* HAVE_PABLO */
 
     HEclear();
     if((grp<=BADGROUP || grp>=MAXGROUP) && hash_size>0)
@@ -151,9 +144,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_HAinit_group);
-#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end HAinit_group() */
@@ -178,10 +168,6 @@ intn HAdestroy_group(group_t grp       /* IN: Group to destroy */
     CONSTR(FUNC, "HAdestroy_group");	/* for HERROR */
     atom_group_t *grp_ptr=NULL;     /* ptr to the atomic group */
     intn ret_value=SUCCEED;
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_HAdestroy_group);
-#endif /* HAVE_PABLO */
 
     HEclear();
     if(grp<=BADGROUP || grp>=MAXGROUP)
@@ -219,9 +205,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_HAdestroy_group);
-#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end HAdestroy_group() */
@@ -252,10 +235,6 @@ atom_t HAregister_atom(group_t grp,     /* IN: Group to register the object in *
     atom_t atm_id;                  /* new atom ID */
     uintn hash_loc;                 /* new item's hash table location */
     atom_t ret_value=SUCCEED;
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_HAregister_atom);
-#endif /* HAVE_PABLO */
 
     HEclear();
     if(grp<=BADGROUP || grp>=MAXGROUP)
@@ -293,9 +272,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_HAregister_atom);
-#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end HAregister_atom() */
@@ -327,10 +303,6 @@ VOIDP HAatom_object(atom_t atm   /* IN: Atom to retrieve object for */
 #endif /* ATOMS_CACHE_INLINE */
     atom_info_t *atm_ptr=NULL;      /* ptr to the new atom */
     VOIDP ret_value=NULL;
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_HAatom_object);
-#endif /* HAVE_PABLO */
 
     HEclear();
 
@@ -371,9 +343,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_HAatom_object);
-#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end HAatom_object() */
@@ -395,10 +364,6 @@ group_t HAatom_group(atom_t atm   /* IN: Atom to retrieve group for */
     CONSTR(FUNC, "HAatom_group");	/* for HERROR */
     group_t ret_value=BADGROUP;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_HAatom_group);
-#endif /* HAVE_PABLO */
-
     HEclear();
     ret_value=ATOM_TO_GROUP(atm);
     if(ret_value<=BADGROUP || ret_value>=MAXGROUP)
@@ -411,9 +376,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_HAatom_group);
-#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end HAatom_group() */
@@ -442,10 +404,6 @@ VOIDP HAremove_atom(atom_t atm   /* IN: Atom to remove */
     uintn i;                        /* local counting variable */
 #endif /* ATOMS_ARE_CACHED */
     VOIDP ret_value=NULL;
-
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_HAremove_atom);
-#endif /* HAVE_PABLO */
 
     HEclear();
     grp=ATOM_TO_GROUP(atm);
@@ -504,9 +462,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_HAremove_atom);
-#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end HAremove_atom() */
@@ -536,10 +491,6 @@ void * HAsearch_atom(group_t grp,        /* IN: Group to search for the object i
     intn i;                         /* local counting variable */
     void * ret_value=NULL;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask, ID_HAsearch_atom);
-#endif /* HAVE_PABLO */
-
     HEclear();
     if(grp<=BADGROUP || grp>=MAXGROUP)
         HGOTO_ERROR(DFE_ARGS, NULL);
@@ -567,9 +518,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_HAsearch_atom);
-#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end HAsearch_atom() */

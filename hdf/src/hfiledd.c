@@ -16,10 +16,6 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
-#ifdef HAVE_PABLO
-#define PABLO_mask ID_filedd_c
-#endif
-
 /*
 FILE
     hfiledd.c - DD & DD block management routines.
@@ -952,10 +948,6 @@ intn Hdupdd(int32 file_id,      /* IN: File ID the tag/refs are in */
     int32       old_off;        /* The offset of the old DD */
     intn ret_value=SUCCEED;
 
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_Hdupdd);
-#endif /* HAVE_PABLO */
-
     /* clear error stack and check validity of file id */
     HEclear();
     file_rec = HAatom_object(file_id);
@@ -991,10 +983,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_Hdupdd);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* Hdupdd() */
 
@@ -1026,10 +1014,6 @@ int32 Hnumber(int32 file_id,    /* IN: File ID the tag/refs are in */
     /* convert file id to file record */
     file_rec = HAatom_object(file_id);
 
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_Hnumber);
-#endif /* HAVE_PABLO */
-
     HEclear();
     if (BADFREC(file_rec))
       HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -1047,10 +1031,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_Hnumber);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* Hnumber() */
 
@@ -1076,10 +1056,6 @@ Hnewref(int32 file_id /* IN: File ID the tag/refs are in */)
     uint16      ref;		   /* the new ref */
     uint16      ret_value = DFREF_NONE;
     uint32      i_ref;        /* index for FOR loop */
-
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_Hnewref);
-#endif /* HAVE_PABLO */
 
     /* clear error stack and check validity of file record id */
     HEclear();
@@ -1114,10 +1090,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_Hnewref);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* Hnewref() */
 
@@ -1146,10 +1118,6 @@ Htagnewref(int32 file_id,/* IN: File ID the tag/refs are in */
     uint16      base_tag = BASETAG(tag); /* corresponding base tag (if the tag is special) */
     uint16      ret_value = DFREF_NONE;
 
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_Htagnewref);
-#endif /* HAVE_PABLO */
-
     /* clear error stack and check validity of file record id */
     HEclear();
     file_rec = HAatom_object(file_id);
@@ -1172,10 +1140,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_Htagnewref);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }   /* Htagnewref() */
 
@@ -1215,10 +1179,6 @@ intn Hfind(int32 file_id,       /* IN: file ID to search in */
     dd_t       *dd_ptr;		   /* ptr to current ddlist searched */
     intn    ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_Hfind);
-#endif /* HAVE_PABLO */
-
     /* clear error stack and check validity of the access id */
     HEclear();
     if (file_id == FAIL || /* search_ref > MAX_REF || */ find_tag == NULL
@@ -1254,10 +1214,6 @@ done:
       } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-     TRACE_OFF(PABLO_mask, ID_Hfind);
-#endif /* HAVE_PABLO */
-
     return ret_value;
 }	/* end Hfind() */
 
@@ -1355,10 +1311,6 @@ HDreuse_tagref(int32 file_id, /* IN: id of file */
   atom_t      ddid;            /* ID for the DD */
   intn        ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_HDreuse_tagref);
-#endif /* HAVE_PABLO */
-
   /* clear error stack and check validity of file record id */
   HEclear();
 
@@ -1397,10 +1349,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-  TRACE_OFF(PABLO_mask, ID_HDreuse_tagref);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }	/* end HDreuse_tagref */
 
@@ -1429,10 +1377,6 @@ intn Hdeldd(int32 file_id, uint16 tag, uint16 ref)
   atom_t      ddid;         /* ID for the DD */
   intn        ret_value = SUCCEED;
 
-#ifdef HAVE_PABLO
-  TRACE_ON(PABLO_mask,ID_Hdeldd);
-#endif /* HAVE_PABLO */
-
   /* clear error stack and check validity of file record id */
   HEclear();
   file_rec = HAatom_object(file_id);
@@ -1454,10 +1398,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-#ifdef HAVE_PABLO
-  TRACE_OFF(PABLO_mask, ID_Hdeldd);
-#endif /* HAVE_PABLO */
-
   return ret_value;
 }	/* end Hdeldd */
 

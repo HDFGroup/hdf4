@@ -114,7 +114,6 @@ TOBJECTS= test_fmpio.o
 HDFINC= $(srcdir)/../src
 HDFLIB= $(srcdir)/../src
 HDFBIN= $(srcdir)/../bin
-PABLO_DIR= $(srcdir)/../pablo
 
 #### makefile fragment from 'config/' goes here ##############
 ## ------------------------ end of makefile fragments--------------------
@@ -152,13 +151,6 @@ all::         FORCE
 	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) pall; \
 	fi
 
-pall::         FORCE
-	@if test -z "$(PABLO_FLAGS)"; then \
-	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) libfmpool.a; \
-	else		 \
-	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) libfmpool.a pablolib; \
-	fi
-
 libfmpool.a: $(LIBOBJECTS) $(HDFLIB)/libdf.a
 	$(RM) $(RMFLAGS) libfmpool.a
 	$(AR) $(ARFLAGS) libfmpool.a  $(LIBOBJECTS)
@@ -172,12 +164,6 @@ libfmpool: $(LIBOBJECTS)
 	$(RM) $(RMFLAGS) libfmpool.a
 	$(AR) $(ARFLAGS) libfmpool.a  $(LIBOBJECTS)
 	$(AR2) libfmpool.a
-
-pablolib: $(LIBOBJECTS) $(PABLO_DIR)/libdf-inst.a
-	if test -f $(PABLO_DIR)/libdf-inst.a ; then \
-	  $(AR) rcuv $(PABLO_DIR)/libdf-inst.a $(LIBOBJECTS); \
-	  $(RANLIB) $(PABLO_DIR)/libdf-inst.a ; \
-	fi
 
 tfmp: ${INCLUDES} fmpconf.h test_fmpio.c libfmpool.a
 	${CC} $(CFLAGS)  ${AUXFLAGS} -I. -c test_fmpio.c 

@@ -3030,28 +3030,6 @@ HDFLIBAPI intn GRsetchunkcache
      int32 flags      /* IN: flags = 0, HDF_CACHEALL */);
 
 
-/* For Pablo wrapper functions */
-
-#if defined HAVE_PABLO || defined PABLO
-HDFLIBAPI int HDFinitIOTrace(char *traceFileName, intn detail, intn lifetime,
-                          intn timeWindow, float64 timeWindowSize,
-                          intn regionTrace, intn regionSize,
-                          uint16 procTraceMask );
-HDFLIBAPI int HDFendIOTrace(void);
-
-#ifndef PABLO_FNAMES
-#   define PABLO_FNAMES
-#ifdef DF_CAPFNAMES
-#   define nihinitiotrace FNAME(IHINITIOTRACE)
-#   define nhendiotrace   FNAME(HENDIOTRACE)
-#else  /* !DF_CAPFNAMES */
-#   define nihinitiotrace FNAME(ihinitiotrace)
-#   define nhendiotrace   FNAME(hendiotrace)
-#endif /* DF_CAPFNAMES */
-#endif /* PABLO_FNAMES */
-
-#endif /* HAVE_PABLO || PABLO*/
-
 #ifdef HAVE_FMPOOL
 /******************************************************************************
 NAME
