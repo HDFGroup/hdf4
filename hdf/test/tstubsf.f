@@ -2,10 +2,13 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.9  1993/02/09 21:24:32  briand
-C I modified tstubsf.f so that it does not require the user to press
-C return before performing the test.
+C Revision 1.10  1993/05/19 20:06:14  chouck
+C Added a diagnositc to know which DFfindnextref() failed on
 C
+c Revision 1.9  1993/02/09  21:24:32  briand
+c I modified tstubsf.f so that it does not require the user to press
+c return before performing the test.
+c
 c Revision 1.8  1993/01/19  05:59:21  koziol
 c Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
 c port.  Lots of minor annoyances fixed.
@@ -417,7 +420,7 @@ C
          ret = dffind(dfile, tag, ref, length)
          dfenum = dferrno()
          if (ret .eq. -1) then
-            print *, '>>>Failure:'
+            print *, '>>>Failure on find #', i
             print *, '   DFerror = ', dfenum
             nerrors = nerrors + 1
          else
