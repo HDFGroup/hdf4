@@ -17,9 +17,14 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /*
-
-   A more portably useful Vset testing package
-
+ *
+ * Vset tests 
+ *
+ *
+ * This file needs another pass at making sure all the return
+ * values from function calls are checked in addtion to
+ * verifying that the proper tests are performed on all Vxx fcns - GV 9/5/97
+ *
  */
 #include "hdf.h"
 #include "hfile.h"
@@ -35,6 +40,12 @@ static char RcsId[] = "@(#)$Revision$";
 #define FIELD1       "FIELD_name_HERE"
 #define FIELD1_UPPER "FIELD_NAME_HERE"
 #define FIELD2       "DIFFERENT_FIELD_NAME"
+
+
+#define ST "STATION_NAME"
+#define VL "VALUES"
+#define FL "FLOATS"
+#define MX "STATION_NAME,VALUES,FLOATS"
 
 static int32 write_vset_stuff(void);
 static int32 read_vset_stuff(void);
@@ -100,10 +111,13 @@ write_vset_stuff(void)
           printf(">>> Failed creating initial Vgroup\n");
       }
 
-    Vsetname(vg1, "Simple Vgroup");
-    Vsetclass(vg1, "Test object");
-    MESSAGE(5, printf("created Vgroup %s (empty)\n", "Simple Vgroup");
-        );
+    status = Vsetname(vg1, "Simple Vgroup");
+    CHECK(status,FAIL,"Vsetname:vg1");
+
+    status = Vsetclass(vg1, "Test object");
+    CHECK(status,FAIL,"Vsetclass:vg1");
+
+    MESSAGE(5, printf("created Vgroup %s (empty)\n", "Simple Vgroup"););
 
     /*
      * Lets do some more complex ones now
@@ -145,7 +159,9 @@ write_vset_stuff(void)
           num_errs++;
           printf(">>> Hstartwrite failed\n");
       }
-    Hendaccess(aid);
+
+    status = Hendaccess(aid);
+    CHECK(status,FAIL,"Hendaccess:aid");
 
     /* add an existing HDF element */
     status = Vaddtagref(vg2, (int32) 123, (int32) 1234);
@@ -189,13 +205,20 @@ write_vset_stuff(void)
           printf(">>> Vinqtagref found a bogus element\n");
       }
 
-    Vsetname(vg2, "Second Vgroup");
-    Vsetclass(vg2, "Test object");
+    status = Vsetname(vg2, "Second Vgroup");
+    CHECK(status,FAIL,"Vsetname:for vg2");
 
-    Vdetach(vg1);
-    Vdetach(vg2);
-    MESSAGE(5, printf("created Vgroup %s with %d elements\n", "Second Vgroup", (int) num);
-        );
+    Vsetclass(vg2, "Test object");
+    CHECK(status,FAIL,"Vsetclass: for vg2");
+
+    status = Vdetach(vg1);
+    CHECK(status,FAIL,"Vdetach:vg1");
+
+    status = Vdetach(vg2);
+    CHECK(status,FAIL,"Vdetach:vg2");
+
+    MESSAGE(5, printf("created Vgroup %s with %d elements\n", "Second Vgroup", 
+                      (int) num););
 
     /*
 
@@ -229,17 +252,28 @@ write_vset_stuff(void)
         fbuf[i] = (float32) i;
 
     /* store it */
-    VSwrite(vs1, (unsigned char *) fbuf, count, FULL_INTERLACE);
-    VSdetach(vs1);
-    MESSAGE(5, printf("created VDATA %s with %d elements\n", name, (int) count);
-        );
+    status = VSwrite(vs1, (unsigned char *) fbuf, count, FULL_INTERLACE);
+    CHECK(status,FAIL,"VSwrite:vs1");
+
+    status = VSdetach(vs1);
+    CHECK(status,FAIL,"Vdetach:vs1");
+    
+    MESSAGE(5, printf("created VDATA %s with %d elements\n", name, (int) count););
 
     /* Int32 Vdata */
     vs1 = VSattach(fid, -1, "w");
+    CHECK(vs1,FAIL,"VSattach:vs1");
+
     name = "Integer Vdata";
-    VSsetname(vs1, name);
-    VSsetclass(vs1, "Test object");
-    VSfdefine(vs1, FIELD2, DFNT_INT32, 2);
+    status = VSsetname(vs1, name);
+    CHECK(status,FAIL,"VSsetname:vs1");
+
+    status = VSsetclass(vs1, "Test object");
+    CHECK(status,FAIL,"VSsetclass:vs1");
+
+    status = VSfdefine(vs1, FIELD2, DFNT_INT32, 2);
+    CHECK(status,FAIL,"VSfdefine:vs1");
+
     status = VSsetfields(vs1, FIELD2);
     if (status == FAIL)
       {
@@ -259,18 +293,32 @@ write_vset_stuff(void)
         ibuf[i] = i;
 
     /* store it */
-    VSwrite(vs1, (unsigned char *) ibuf, count, FULL_INTERLACE);
-    VSdetach(vs1);
-    MESSAGE(5, printf("created VDATA %s with %d elements\n", name, (int) count);
-        );
+    status = VSwrite(vs1, (unsigned char *) ibuf, count, FULL_INTERLACE);
+    CHECK(status,FAIL,"VSwrite:vs1");
+
+    status = VSdetach(vs1);
+    CHECK(status,FAIL,"VSdetach:vs1");
+
+    MESSAGE(5, printf("created VDATA %s with %d elements\n", 
+                      name, (int) count); );
 
     /* Int32 and Float32 Vdata */
     vs1 = VSattach(fid, -1, "w");
+    CHECK(vs1,FAIL,"VSattach:vs1");
+
     name = "Mixed Vdata";
-    VSsetname(vs1, name);
-    VSsetclass(vs1, "No class specified");
-    VSfdefine(vs1, "A", DFNT_FLOAT32, 1);
-    VSfdefine(vs1, "B", DFNT_INT32, 1);
+    status = VSsetname(vs1, name);
+    CHECK(status,FAIL,"VSsetname:vs1");
+
+    status = VSsetclass(vs1, "No class specified");
+    CHECK(status,FAIL,"VSsetclass:vs1");
+
+    status = VSfdefine(vs1, "A", DFNT_FLOAT32, 1);
+    CHECK(status,FAIL,"VSfdefine:vs1");
+
+    status = VSfdefine(vs1, "B", DFNT_INT32, 1);
+    CHECK(status,FAIL,"VSfdefine:vs1");
+
     status = VSsetfields(vs1, "A, B");
     if (status == FAIL)
       {
@@ -290,24 +338,35 @@ write_vset_stuff(void)
       }
 
     /* store it */
-    VSwrite(vs1, (unsigned char *) gbuf, count, FULL_INTERLACE);
-    VSdetach(vs1);
-    MESSAGE(5, printf("created VDATA %s with %d elements\n", name, (int) count);
-        );
+    status = VSwrite(vs1, (unsigned char *) gbuf, count, FULL_INTERLACE);
+    CHECK(status,FAIL,"VSwrite:vs1");
 
-#define ST "STATION_NAME"
-#define VL "VALUES"
-#define FL "FLOATS"
-#define MX "STATION_NAME,VALUES,FLOATS"
+    status = VSdetach(vs1);
+    CHECK(status,FAIL,"VSdetach:vs1");
+
+    MESSAGE(5, printf("created VDATA %s with %d elements\n", 
+                      name, (int) count););
 
     /* mixed order Vdata */
     vs1 = VSattach(fid, -1, "w");
+    CHECK(vs1,FAIL,"VSattach:vs1");
+
     name = "Multi-Order Vdata";
-    VSsetname(vs1, name);
-    VSsetclass(vs1, "No class specified");
-    VSfdefine(vs1, ST, DFNT_CHAR8, 2);
-    VSfdefine(vs1, VL, DFNT_INT32, 3);
-    VSfdefine(vs1, FL, DFNT_FLOAT32, 1);
+    status = VSsetname(vs1, name);
+    CHECK(status,FAIL,"VSsetname:vs1");
+
+    status = VSsetclass(vs1, "No class specified");
+    CHECK(status,FAIL,"VSsetclass:vs1");
+
+    status = VSfdefine(vs1, ST, DFNT_CHAR8, 2);
+    CHECK(status,FAIL,"VSfdefine:vs1");
+
+    status = VSfdefine(vs1, VL, DFNT_INT32, 3);
+    CHECK(status,FAIL,"VSfdefine:vs1");
+
+    status = VSfdefine(vs1, FL, DFNT_FLOAT32, 1);
+    CHECK(status,FAIL,"VSfdefine:vs1");
+
     status = VSsetfields(vs1, MX);
     if (status == FAIL)
       {
@@ -343,16 +402,26 @@ write_vset_stuff(void)
       }
 
     /* store it */
-    VSwrite(vs1, (unsigned char *) gbuf, count, FULL_INTERLACE);
-    VSdetach(vs1);
-    MESSAGE(5, printf("created VDATA %s with %d elements\n", name, (int) count);
-        );
+    status = VSwrite(vs1, (unsigned char *) gbuf, count, FULL_INTERLACE);
+    CHECK(status,FAIL,"VSwrite:vs1");
+
+    status = VSdetach(vs1);
+    CHECK(status,FAIL,"VSdetach:vs1");
+
+    MESSAGE(5, printf("created VDATA %s with %d elements\n", 
+                      name, (int) count););
 
     /* test MAX_ORDER and MAX_FIELD_SIZE */
     vs1 = VSattach(fid, -1, "w");
+    CHECK(vs1,FAIL,"VSattach:vs1");
+
     name = "Max_Order Vdata";
-    VSsetname(vs1, name);
-    VSfdefine(vs1, "max_order", DFNT_UINT8, MAX_ORDER);
+    status = VSsetname(vs1, name);
+    CHECK(status,FAIL,"VSsetname:vs1");
+
+    status = VSfdefine(vs1, "max_order", DFNT_UINT8, MAX_ORDER);
+    CHECK(status,FAIL,"VSfdefine:vs1");
+
     status = VSsetfields(vs1, "max_order");
     if (status == FAIL)
       {
@@ -363,17 +432,27 @@ write_vset_stuff(void)
     /* create some bogus data */
     for (i = 0; i < MAX_ORDER; i++)
          gbuf1[i] = (uint8)(i % 256);
-    VSwrite(vs1, (unsigned char *) gbuf1, 1, FULL_INTERLACE);
-    VSdetach(vs1);
-    MESSAGE(5, printf("created VDATA %s with %d order\n", name, (int)
- MAX_ORDER);
-        );
 
-   vs1 = VSattach(fid, -1, "w");
+    status = VSwrite(vs1, (unsigned char *) gbuf1, 1, FULL_INTERLACE);
+    CHECK(status,FAIL,"VSwrite:vs1");
+
+    status = VSdetach(vs1);
+    CHECK(status,FAIL,"VSdetach:vs1");
+
+    MESSAGE(5, printf("created VDATA %s with %d order\n", 
+                      name, (int)MAX_ORDER););
+
+    vs1 = VSattach(fid, -1, "w");
+    CHECK(vs1,FAIL,"VSattach:vs1");
+
     name = "Max_Fldsize Vdata";
-    VSsetname(vs1, name);
+    status = VSsetname(vs1, name);
+    CHECK(status,FAIL,"VSsetname:vs1");
+
     max_order = MAX_FIELD_SIZE/SIZE_FLOAT32;
-    VSfdefine(vs1, "max_fldsize", DFNT_FLOAT32, max_order);
+    status = VSfdefine(vs1, "max_fldsize", DFNT_FLOAT32, max_order);
+    CHECK(status,FAIL,"VSfdefine:vs1");
+
     status = VSsetfields(vs1, "max_fldsize");
     if (status == FAIL)
       {
@@ -384,16 +463,24 @@ write_vset_stuff(void)
     /* create some bogus data */
     for (i = 0; i < max_order; i++)
          gbuf2[i] = (float32)i * (float32)0.11; 
-    VSwrite(vs1, (unsigned char *) gbuf2, 1, FULL_INTERLACE);
-    VSdetach(vs1);
-    MESSAGE(5, printf("created VDATA %s with %d order\n", name, (int)
- max_order);
-        );
+
+    status = VSwrite(vs1, (unsigned char *) gbuf2, 1, FULL_INTERLACE);
+    CHECK(status,FAIL,"VSwrite:vs1");
+
+    status = VSdetach(vs1);
+    CHECK(status,FAIL,"VSdetach:vs1");
+
+    MESSAGE(5, printf("created VDATA %s with %d order\n", 
+                      name, (int)max_order););
 
     /* create vdata exceeding MAX_FIELD_SIZE, should fail */
     vs1 = VSattach(fid, -1, "w");
+    CHECK(vs1,FAIL,"VSattach:vs1");
+
     name = "Bad_Fldsize Vdata";
-    VSsetname(vs1, name);
+    status = VSsetname(vs1, name);
+    CHECK(status,FAIL,"VSsetname:vs1");
+
     max_order = MAX_FIELD_SIZE/SIZE_FLOAT32 + 1;
     status = VSfdefine(vs1, "bad_fldsize", DFNT_FLOAT32, max_order);
     if (status != FAIL)
@@ -408,7 +495,10 @@ write_vset_stuff(void)
           num_errs++;
           printf(">>> Vsetfields failed for %s\n", name);
       }
-    VSdetach(vs1);
+
+    status = VSdetach(vs1);
+    CHECK(status,FAIL,"VSdetach:vs1");
+
     /* create a whole bunch of Vdatas to check for memory leakage */
     for (i = 0; i < VDATA_COUNT; i++)
       {
@@ -421,7 +511,9 @@ write_vset_stuff(void)
                 continue;
             }
           sprintf(name2, "VdataLoop-%d", (int) i);
-          VSsetname(vs1, name2);
+          status = VSsetname(vs1, name2);
+          CHECK(status,FAIL,"VSsetname:vs1");
+
           status = VSfdefine(vs1, "A", DFNT_CHAR8, 1);
           if (status == FAIL)
             {
@@ -436,14 +528,22 @@ write_vset_stuff(void)
                 printf(">>> VSsetfields failed on loop %d\n", (int) i);
                 continue;
             }
-          VSwrite(vs1, (unsigned char *) name2, 1, FULL_INTERLACE);
-          VSdetach(vs1);
+          status = VSwrite(vs1, (unsigned char *) name2, 1, FULL_INTERLACE);
+          CHECK(status,FAIL,"VSwrite:vs1");
+
+          status = VSdetach(vs1);
+          CHECK(status,FAIL,"VSdetach:vs1");
       }
 
-    Vend(fid);
-    Hclose(fid);
+    status = Vend(fid);
+    CHECK(status,FAIL,"Vend:fid");
+
+    status = Hclose(fid);
+    CHECK(status,FAIL,"Hclose:vs1");
+
     HDfree(gbuf1);
     HDfree(gbuf2);
+
     return SUCCEED;
 
 }   /* write_vset_stuff */
@@ -475,7 +575,8 @@ read_vset_stuff(void)
           return FAIL;
       }
 
-    Vstart(fid);
+    status = Vstart(fid);
+    CHECK(status,FAIL,"Vstart:fid");
 
     /*
 
@@ -500,8 +601,11 @@ read_vset_stuff(void)
           printf(">>> Was not able to attach (r) Vgroup %d\n", (int) list[0]);
       }
 
-    Vgetname(vg1, name);
-    Vgetclass(vg1, class);
+    status = Vgetname(vg1, name);
+    CHECK(status,FAIL,"Vgetname:vg1");
+
+    status = Vgetclass(vg1, class);
+    CHECK(status,FAIL,"Vgetclass:vg1");
 
     if (HDstrcmp(name, "Second Vgroup"))
       {
@@ -545,8 +649,9 @@ read_vset_stuff(void)
             }
 
       }
-    ret = Vdetach(vg1);
-    RESULT("Vdetach");
+
+    status = Vdetach(vg1);
+    CHECK(status,FAIL,"Vdetach:vg1");
 
     /* test Vgetid */
     ref = Vgetid(fid, -1);
@@ -579,9 +684,13 @@ read_vset_stuff(void)
 
     /* read in the first data and verify metadata and contents */
     vs1 = VSattach(fid, ref, "r");
+    CHECK(vs1,FAIL,"VSattach:vs1");
 
-    VSgetname(vs1, name);
-    VSgetclass(vs1, class);
+    status = VSgetname(vs1, name);
+    CHECK(status,FAIL,"VSgetname:vs1");
+
+    status = VSgetclass(vs1, class);
+    CHECK(status,FAIL,"VSgetclass:vs1");
 
     if (HDstrcmp(name, "Float Vdata"))
       {
@@ -635,10 +744,14 @@ read_vset_stuff(void)
 #endif /* VDATA_FIELDS_ALL_UPPER */
 
     /* read it */
-    VSsetfields(vs1, fields);
+    status = VSsetfields(vs1, fields);
+    CHECK(status,FAIL,"VSsetfields:vs1");
+
     for (i = 0; i < count; i++)
         fbuf[i] = (float32)0.0;
-    VSread(vs1, (unsigned char *) fbuf, count, FULL_INTERLACE);
+
+    status = VSread(vs1, (unsigned char *) fbuf, count, FULL_INTERLACE);
+    CHECK(status,FAIL,"VSread:vs1");
 
     /* verify */
     for (i = 0; i < count; i++)
@@ -650,8 +763,8 @@ read_vset_stuff(void)
             }
       }
 
-    ret=VSdetach(vs1);
-    RESULT("VSdetach");
+    status = VSdetach(vs1);
+    CHECK(status,FAIL,"VSdetach:vs1");
 
     /* Move to the next one (integers) */
     ref = VSgetid(fid, ref);
@@ -663,9 +776,13 @@ read_vset_stuff(void)
 
     /* read in the first data and verify metadata and contents */
     vs1 = VSattach(fid, ref, "r");
+    CHECK(vs1,FAIL,"VSattach:vs1");
 
-    VSgetname(vs1, name);
-    VSgetclass(vs1, class);
+    status = VSgetname(vs1, name);
+    CHECK(status,FAIL,"VSgetname:vs1");
+
+    status = VSgetclass(vs1, class);
+    CHECK(status,FAIL,"VSgetclass:vs1");
 
     if (HDstrcmp(name, "Integer Vdata"))
       {
@@ -711,10 +828,14 @@ read_vset_stuff(void)
       }
 
     /* read it */
-    VSsetfields(vs1, fields);
+    status = VSsetfields(vs1, fields);
+    CHECK(status,FAIL,"VSsetfields:vs1");
+
     for (i = 0; i < 2 * count; i++)
         ibuf[i] = 0;
-    VSread(vs1, (unsigned char *) ibuf, count, FULL_INTERLACE);
+
+    status = VSread(vs1, (unsigned char *) ibuf, count, FULL_INTERLACE);
+    CHECK(status,FAIL,"VSread:vs1");
 
     /* verify */
     for (i = 0; i < 2 * count; i++)
@@ -726,8 +847,8 @@ read_vset_stuff(void)
             }
       }
 
-    ret=VSdetach(vs1);
-    RESULT("VSdetach");
+    status = VSdetach(vs1);
+    CHECK(status,FAIL,"VSdetach:vs1");
 
 #ifndef HAVE_FMPOOL 
 /* Commented out this test when using the file caching.This is beacause this 
@@ -741,40 +862,45 @@ read_vset_stuff(void)
     /* testing VSsetexternalfile by reading the external file directly */
     {   hdf_file_t fd;
         int j;
-	int32 ival;
+        int32 ival;
 
+        /* low level open of external file */
+        fd = HI_OPEN(EXTFNM, DFACC_RDONLY);
+        if (OPENERR(fd))
+          {
+              num_errs++;
+              printf(">>> Reopen External file %s failed\n", EXTFNM);
+          }
+        else
+          {
+              status = HI_READ(fd, gbuf, (2*count*DFKNTsize(DFNT_INT32)));
+              if (status == FAIL)
+                {
+                    num_errs++;
+                    printf(">>> Reading External file data failed\n");
+                }
+              else
+                {
 
-	fd = HI_OPEN(EXTFNM, DFACC_RDONLY);
-	if (OPENERR(fd)){
-	    num_errs++;
-	    printf(">>> Reopen External file %s failed\n", EXTFNM);
-	}
-	else{
-	    status = HI_READ(fd, gbuf, (2*count*DFKNTsize(DFNT_INT32)));
-	    if (status == FAIL){
-		num_errs++;
-		printf(">>> Reading External file data failed\n");
-	    }
-	    else{
-
-		j = 0;
-		for (i = 0; i < 2 * count; i++)
-		{
-		    ival = 0xff & gbuf[j++];
-		    ival = ival<<8 | (0xff & gbuf[j++]);
-		    ival = ival<<8 | (0xff & gbuf[j++]);
-		    ival = ival<<8 | (0xff & gbuf[j++]);
-
-		    if (ival != i)
-		    {
-			num_errs++;
-			printf(">>> External value %d was expecting %d got %d\n",
-			    (int) i, (int) i, (int) ival);
-		    }
-		}
-	    }
-	    HI_CLOSE(fd);
-	}
+                    j = 0;
+                    for (i = 0; i < 2 * count; i++)
+                      {
+                          ival = 0xff & gbuf[j++];
+                          ival = ival<<8 | (0xff & gbuf[j++]);
+                          ival = ival<<8 | (0xff & gbuf[j++]);
+                          ival = ival<<8 | (0xff & gbuf[j++]);
+                          
+                          if (ival != i)
+                            {
+                                num_errs++;
+                                printf(">>> External value %d was expecting %d got %d\n",
+                                       (int) i, (int) i, (int) ival);
+                            }
+                      }
+                }
+              /* low level close of external file */
+              HI_CLOSE(fd);
+          }
     }
 #endif /* HAVE_FMPOOL */
 
@@ -788,9 +914,13 @@ read_vset_stuff(void)
 
     /* read in the first data and verify metadata and contents */
     vs1 = VSattach(fid, ref, "r");
+    CHECK(vs1,FAIL,"VSattach:vs1");
 
-    VSgetname(vs1, name);
-    VSgetclass(vs1, class);
+    status = VSgetname(vs1, name);
+    CHECK(status,FAIL,"VSgetname:vs1");
+
+    status = VSgetclass(vs1, class);
+    CHECK(status,FAIL,"VSgetclass:vs1");
 
     if (HDstrcmp(name, "Mixed Vdata"))
       {
@@ -836,10 +966,14 @@ read_vset_stuff(void)
       }
 
     /* read it */
-    VSsetfields(vs1, fields);
+    status = VSsetfields(vs1, fields);
+    CHECK(status,FAIL,"VSsetfields:vs1");
+
     for (i = 0; i < 1000; i++)
         gbuf[i] = 0;
-    VSread(vs1, (unsigned char *) gbuf, count, FULL_INTERLACE);
+
+    status = VSread(vs1, (unsigned char *) gbuf, count, FULL_INTERLACE);
+    CHECK(status,FAIL,"VSread:vs1");
 
     /* verify */
     p = gbuf;
@@ -866,8 +1000,8 @@ read_vset_stuff(void)
             }
       }
 
-    ret=VSdetach(vs1);
-    RESULT("VSdetach");
+    status = VSdetach(vs1);
+    CHECK(status,FAIL,"VSdetach:vs1");
 
     /* Move to the next one (multi-order) */
     ref = VSgetid(fid, ref);
@@ -879,9 +1013,13 @@ read_vset_stuff(void)
 
     /* read in the first data and verify metadata and contents */
     vs1 = VSattach(fid, ref, "r");
+    CHECK(vs1,FAIL,"VSattach:vs1");
 
-    VSgetname(vs1, name);
-    VSgetclass(vs1, class);
+    status = VSgetname(vs1, name);
+    CHECK(status,FAIL,"VSgetname:vs1");
+
+    status = VSgetclass(vs1, class);
+    CHECK(status,FAIL,"VSgetclass:vs1");
 
     if (HDstrcmp(name, "Multi-Order Vdata"))
       {
@@ -919,10 +1057,14 @@ read_vset_stuff(void)
      */
 
     /* read it */
-    VSsetfields(vs1, fields);
+    status = VSsetfields(vs1, fields);
+    CHECK(status,FAIL,"VSsetfields:vs1");
+
     for (i = 0; i < 1000; i++)
         gbuf[i] = 0;
-    VSread(vs1, (unsigned char *) gbuf, count, FULL_INTERLACE);
+
+    status = VSread(vs1, (unsigned char *) gbuf, count, FULL_INTERLACE);
+    CHECK(status,FAIL,"VSread:vs1");
 
     p = gbuf;
     fl_expected = (float32) 15.5;
@@ -1003,11 +1145,17 @@ read_vset_stuff(void)
      */
 
     /* read it */
-    VSseek(vs1, 0);
-    VSsetfields(vs1, ST);
+    status = VSseek(vs1, 0);
+    CHECK(status,FAIL,"VSseek:vs1");
+
+    status = VSsetfields(vs1, ST);
+    CHECK(status,FAIL,"VSsetfields:vs1");
+
     for (i = 0; i < 1000; i++)
         gbuf[i] = 0;
-    VSread(vs1, (unsigned char *) gbuf, count, FULL_INTERLACE);
+
+    status = VSread(vs1, (unsigned char *) gbuf, count, FULL_INTERLACE);
+    CHECK(status,FAIL,"VSread:vs1");
 
     p = gbuf;
     c_expected = 'a';
@@ -1044,11 +1192,17 @@ read_vset_stuff(void)
      */
 
     /* read it */
-    VSseek(vs1, 0);
-    VSsetfields(vs1, ST);
+    status = VSseek(vs1, 0);
+    CHECK(status,FAIL,"VSseek:vs1");
+
+    status = VSsetfields(vs1, ST);
+    CHECK(status,FAIL,"VSsetfields:vs1");
+
     for (i = 0; i < 1000; i++)
         gbuf[i] = 0;
-    VSread(vs1, (unsigned char *) gbuf, count, NO_INTERLACE);
+
+    status = VSread(vs1, (unsigned char *) gbuf, count, NO_INTERLACE);
+    CHECK(status,FAIL,"VSread:vs1");
 
     p = gbuf;
     c_expected = 'a';
@@ -1081,22 +1235,25 @@ read_vset_stuff(void)
       }
 
     /* verify that VSfind does not mess up the AIDs of attached Vdatas */
-    VSfind(fid, "foo");
+    status = VSfind(fid, "foo");
+    CHECK(status,FAIL,"VSfind:fid");
+
     if (VSseek(vs1, 0) == FAIL)
       {
           num_errs++;
           printf(">>> VSseek failed after VSfind call\n");
       }
 
-    ret=VSdetach(vs1);
-    RESULT("VSdetach");
+    status = VSdetach(vs1);
+    CHECK(status,FAIL,"VSdetach:vs1");
 
-    ret=Vend(fid);
-    RESULT("Vend");
+    status = Vend(fid);
+    CHECK(status,FAIL,"Vend:fid");
 
-    Hclose(fid);
+    status = Hclose(fid);
+    CHECK(status,FAIL,"Hclose:fid");
+
     return SUCCEED;
-
 }   /* read_vset_stuff */
 
 /* main test driver */
