@@ -588,14 +588,6 @@
 ./mfhdf/c++/netcdf.cc
 ./mfhdf/c++/netcdf.hh
 
-./mfhdf/doc/Makefile.in
-./mfhdf/doc/README
-./mfhdf/doc/guide.ps
-./mfhdf/doc/guide.txn
-./mfhdf/doc/texindex.c
-./mfhdf/doc/texinfo.tex
-./mfhdf/doc/udunits.dat
-
 ./mfhdf/dumper/Makefile.am
 ./mfhdf/dumper/Makefile.in
 ./mfhdf/dumper/README
