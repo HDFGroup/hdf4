@@ -138,6 +138,7 @@ printf("%s: check 1.0\n",FUNC);
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* fill in special info struct */
+    info->attached= 1;
     info->fid     = fid;
     info->tag     = tag;
     info->ref     = ref;
