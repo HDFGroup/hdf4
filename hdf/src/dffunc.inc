@@ -562,6 +562,8 @@ C
       external hgfilver
       integer  hishdf
       external hishdf
+      integer  hestring
+      external hestring
       
 
 C

@@ -53,3 +53,41 @@ nheprnt(intf * print_levels)
 {
     HEprint(stderr, *print_levels);
 }
+/*-----------------------------------------------------------------------------
+ * Name: hestringc
+ * Purpose:  Calls HEstring
+ * Inputs:   error_code - HDF error code
+ * Outputs: error_message - error message assocoated with the error code
+ * Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
+ *----------------------------------------------------------------------------*/
+ 
+ 
+ FRETVAL(intf)
+#ifdef PROTOTYPE
+nhestringc(intf *error_code,
+            _fcd error_message, intf *len)
+#else
+nhestringc(error_code, error_message, len)
+           intf *error_code;
+           _fcd  error_message;
+           intf  *len;
+#endif /* PROTOTYPE */
+{
+   char *cstring;
+   intn   status;
+ 
+   cstring = NULL;
+   status = -1;
+   if (*len) cstring = (char *) HDmalloc((uint32)*len + 1);
+   cstring = (char *)HEstring((hdf_err_code_t) *error_code);
+   if (cstring) status = 0;
+ 
+   HDpackFstring(cstring,  _fcdtocp(error_message),  *len);
+ 
+   if(cstring)  HDfree((VOIDP)cstring);
+ 
+ 
+   return((intf)status);
+ 
+ 
+}

@@ -137,3 +137,20 @@ C----------------------------------------------------------------------------*/
       hishdf = hiishdf(filename, len(filename))
       return
       end
+C-----------------------------------------------------------------------------
+C Name: hestring
+C Purpose: retrieves the error message associated with the specified error code 
+C Inputs:  error_code 
+C Outputs: error_message - string associated with the error code 
+C Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
+C-----------------------------------------------------------------------------*/
+
+      integer function hestring(error_code, error_message)
+
+      integer error_code 
+      character*(*) error_message 
+      integer hestringc 
+
+      hestring = hestringc(error_code, error_message,len(error_message))
+      return
+      end
