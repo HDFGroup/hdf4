@@ -2,12 +2,12 @@
 # $Header$
 #
 # $Log$
-# Revision 1.22  1992/07/16 17:15:35  sxu
-# no change
+# Revision 1.23  1992/07/16 17:17:59  chouck
+# Yet another minor fix
+#
 #
 # Revision 1.21  1992/07/16  17:11:55  chouck
 # Fixed a couple of minor problems
-# ,
 #
 # Revision 1.20  1992/07/15  19:36:13  chouck
 # Modified to conform to having a top level Makefile
@@ -184,7 +184,7 @@ FFLAGS=  -g
 CC=cc
 
 # ==> where are your hdf.h, hdfi.h and vg.h files located?
-HDFINC=   -I../include -I.
+HDFINC=   ../include
 
 CFLAGS=  -g -D${MACHINE}
 
@@ -235,49 +235,49 @@ ftests: $(FTESTS)
 htests: $(HTESTS)
 	
 tr8:  tr8.c 
-	$(CC) $(CFLAGS) $(HDFINC)  tr8.c $(HDFLIB)/libdf.a -o tr8
+	$(CC) $(CFLAGS) -I$(HDFINC)  tr8.c $(HDFLIB)/libdf.a -o tr8
 
 t24:  t24.c 
-	$(CC) $(CFLAGS) $(HDFINC)  t24.c $(HDFLIB)/libdf.a -o t24
+	$(CC) $(CFLAGS) -I$(HDFINC)  t24.c $(HDFLIB)/libdf.a -o t24
 
 tp:   tp.c 
-	$(CC) $(CFLAGS) $(HDFINC)  tp.c $(HDFLIB)/libdf.a -o tp
+	$(CC) $(CFLAGS) -I$(HDFINC)  tp.c $(HDFLIB)/libdf.a -o tp
 
 tsdstr:    tsdstr.c
-	$(CC) $(CFLAGS) $(HDFINC)  tsdstr.c $(HDFLIB)/libdf.a -o tsdstr
+	$(CC) $(CFLAGS) -I$(HDFINC)  tsdstr.c $(HDFLIB)/libdf.a -o tsdstr
 
 tsdnt:    tsdnt.c 
-	$(CC) $(CFLAGS) $(HDFINC)  tsdnt.c $(HDFLIB)/libdf.a -o tsdnt
+	$(CC) $(CFLAGS) -I$(HDFINC)  tsdnt.c $(HDFLIB)/libdf.a -o tsdnt
 
 tsdmms:    tsdmms.c 
-	$(CC) $(CFLAGS) $(HDFINC)  tsdmms.c $(HDFLIB)/libdf.a -o tsdmms
+	$(CC) $(CFLAGS) -I$(HDFINC)  tsdmms.c $(HDFLIB)/libdf.a -o tsdmms
 
 tsdnnt:    tsdnnt.c 
-	$(CC) $(CFLAGS) $(HDFINC)  tsdnnt.c $(HDFLIB)/libdf.a -o tsdnnt
+	$(CC) $(CFLAGS) -I$(HDFINC)  tsdnnt.c $(HDFLIB)/libdf.a -o tsdnnt
 
 tsdnmms:    tsdnmms.c 
-	$(CC) $(CFLAGS) $(HDFINC)  tsdnmms.c $(HDFLIB)/libdf.a -o tsdnmms
+	$(CC) $(CFLAGS) -I$(HDFINC)  tsdnmms.c $(HDFLIB)/libdf.a -o tsdnmms
 
 tan:  tan.c 
-	$(CC) $(CFLAGS) $(HDFINC)  tan.c $(HDFLIB)/libdf.a -o tan
+	$(CC) $(CFLAGS) -I$(HDFINC)  tan.c $(HDFLIB)/libdf.a -o tan
 
 tanfile:     tanfile.c 
-	$(CC) $(CFLAGS) $(HDFINC)  tanfile.c $(HDFLIB)/libdf.a -o tanfile
+	$(CC) $(CFLAGS) -I$(HDFINC)  tanfile.c $(HDFLIB)/libdf.a -o tanfile
 
 tstubs:     tstubs.c 
-	$(CC) $(CFLAGS) $(HDFINC)  tstubs.c $(HDFLIB)/libdf.a -o tstubs
+	$(CC) $(CFLAGS) -I$(HDFINC)  tstubs.c $(HDFLIB)/libdf.a -o tstubs
 
 tv1:	    tv1.c
-	$(CC) $(CFLAGS) $(HDFINC)  tv1.c $(HDFLIB)/libdf.a -o tv1
+	$(CC) $(CFLAGS) -I$(HDFINC)  tv1.c $(HDFLIB)/libdf.a -o tv1
 
 tv2:	    tv2.c
-	$(CC) $(CFLAGS) $(HDFINC)  tv2.c $(HDFLIB)/libdf.a -o tv2
+	$(CC) $(CFLAGS) -I$(HDFINC)  tv2.c $(HDFLIB)/libdf.a -o tv2
 
 tvers:	    tvers.c
-	$(CC) $(CFLAGS) $(HDFINC)  tvers.c $(HDFLIB)/libdf.a -o tvers
+	$(CC) $(CFLAGS) -I$(HDFINC)  tvers.c $(HDFLIB)/libdf.a -o tvers
 
 egchi:	    egchi.c
-	$(CC) $(CFLAGS) $(HDFINC)  egchi.c $(HDFLIB)/libdf.a -o egchi
+	$(CC) $(CFLAGS) -I$(HDFINC)  egchi.c $(HDFLIB)/libdf.a -o egchi
 
 tr8F:	       tr8F.f
 	$(FC) $(FFLAGS) tr8F.f $(HDFLIB)/libdf.a -o tr8F 
@@ -316,22 +316,22 @@ egfhi:	   egfhi.f
 	$(FC) $(FFLAGS)  egfhi.f $(HDFLIB)/libdf.a -o egfhi
 
 thfile:     thfile.c 
-	$(CC) $(CFLAGS) $(HDFINC)  thfile.c $(HDFLIB)/libdf.a -o thfile
+	$(CC) $(CFLAGS) -I$(HDFINC)  thfile.c $(HDFLIB)/libdf.a -o thfile
 
 thfile1:     thfile1.c 
-	$(CC) $(CFLAGS) $(HDFINC)  thfile1.c $(HDFLIB)/libdf.a -o thfile1
+	$(CC) $(CFLAGS) -I$(HDFINC)  thfile1.c $(HDFLIB)/libdf.a -o thfile1
 
 terr:     terr.c 
-	$(CC) $(CFLAGS) $(HDFINC)  terr.c $(HDFLIB)/libdf.a -o terr
+	$(CC) $(CFLAGS) -I$(HDFINC)  terr.c $(HDFLIB)/libdf.a -o terr
 
 thblocks:     thblocks.c 
-	$(CC) $(CFLAGS) $(HDFINC)  thblocks.c $(HDFLIB)/libdf.a -o thblocks
+	$(CC) $(CFLAGS) -I$(HDFINC)  thblocks.c $(HDFLIB)/libdf.a -o thblocks
 
 thextelt:     thextelt.c
-	$(CC) $(CFLAGS) $(HDFINC)  thextelt.c $(HDFLIB)/libdf.a -o thextelt
+	$(CC) $(CFLAGS) -I$(HDFINC)  thextelt.c $(HDFLIB)/libdf.a -o thextelt
 
 tlinkage:     tlinkage.c
-	$(CC) $(CFLAGS) $(HDFINC)  tlinkage.c $(HDFLIB)/libdf.a -o tlinkage
+	$(CC) $(CFLAGS) -I$(HDFINC)  tlinkage.c $(HDFLIB)/libdf.a -o tlinkage
 
 clean:
 	-$(RM) $(RMFLAGS) *.hdf $(CTESTS) $(HTESTS) $(FTESTS)
