@@ -64,7 +64,7 @@ PRIVATE int HIget_bitfile_slot
     PROTO((VOID));
 #endif
 
-PRIVATE intn HIbitflush PROTO((bitrec_t *bitfile_rec,intn flushbit));
+PRIVATE intn HIbitflush PROTO((bitrec_t *bitfile_rec,intn flushbit,bool writeout));
 
 /* #define TESTING */
 /* Actual Function Definitions */
@@ -336,13 +336,16 @@ printf("Hbitwrite(): bitid=%d count=%d, data=%x, bitfile_rec->count=%d\n",bitid,
     *(bitfile_rec->bytep)=bitfile_rec->bits|data>>(count-=bitfile_rec->count);
     bitfile_rec->byte_offset++;
     if(++bitfile_rec->bytep==bitfile_rec->bytez) {
+	int32 write_size;
+
 #ifdef TESTING
 printf("Hbitwrite(): past end of buffer on first chunk\n");
 #endif
+        write_size=bitfile_rec->bytez-bitfile_rec->bytea;
         bitfile_rec->bytep=bitfile_rec->bytea;
-        if(Hwrite(bitfile_rec->acc_id,BITBUF_SIZE,bitfile_rec->bytea)==FAIL)
+        if(Hwrite(bitfile_rec->acc_id,write_size,bitfile_rec->bytea)==FAIL)
             HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-        bitfile_rec->block_offset+=BITBUF_SIZE;
+        bitfile_rec->block_offset+=write_size;
         if(bitfile_rec->byte_offset>bitfile_rec->max_offset)
             bitfile_rec->max_offset=bitfile_rec->byte_offset;
 
@@ -371,13 +374,16 @@ printf("Hbitwrite(): pre-reading a block\n");
         *(bitfile_rec->bytep)=data>>(count-=BITNUM);
         bitfile_rec->byte_offset++;
         if(++bitfile_rec->bytep==bitfile_rec->bytez) {
+            int32 write_size;
+
 #ifdef TESTING
 printf("Hbitwrite(): past end of buffer in loop\n");
 #endif
+            write_size=bitfile_rec->bytez-bitfile_rec->bytea;
             bitfile_rec->bytep=bitfile_rec->bytea;
-            if(Hwrite(bitfile_rec->acc_id,BITBUF_SIZE,bitfile_rec->bytea)==FAIL)
+            if(Hwrite(bitfile_rec->acc_id,write_size,bitfile_rec->bytea)==FAIL)
                 HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-            bitfile_rec->block_offset+=BITBUF_SIZE;
+            bitfile_rec->block_offset+=write_size;
             if(bitfile_rec->byte_offset>bitfile_rec->max_offset)
                 bitfile_rec->max_offset=bitfile_rec->byte_offset;
 
@@ -485,7 +491,7 @@ printf("Hbitread(): bitid=%d, data=%p\n",bitid,data);
     while(count>=BITNUM) {
         if(bitfile_rec->bytep==bitfile_rec->bytez) {
 #ifdef TESTING
-printf("Hbitread(): reading next chunk in loop\n");
+printf("Hbitread(): reading next chunk in loop, bytep=%p, bytez=%p\n",bitfile_rec->bytep,bitfile_rec->bytez);
 #endif
             n=Hread(bitfile_rec->acc_id,BITBUF_SIZE,bitfile_rec->bytea);
             if(n==FAIL) {       /* EOF */
@@ -496,6 +502,7 @@ printf("Hbitread(): !!!Error (a), fell off end of data\n");
 #endif
                 return(orig_count-count);   /* break out now */
               } /* end if */
+            bitfile_rec->block_offset+=bitfile_rec->buf_read;    /* keep track of the number of bytes in buffer */
             bitfile_rec->bytez=n+(bitfile_rec->bytep=bitfile_rec->bytea);
             bitfile_rec->buf_read=n;    /* keep track of the number of bytes in buffer */
           } /* end if */
@@ -515,6 +522,9 @@ printf("Hbitread(): count=%d, l=%d, b=%d, max_offset=%d, byte_offset=%d\n",count
 printf("Hbitread(): splitting partial request for bits\n");
 #endif
         if(bitfile_rec->bytep==bitfile_rec->bytez) {
+#ifdef TESTING
+printf("Hbitread(): reading next chunk, bytep=%p, bytez=%p\n",bitfile_rec->bytep,bitfile_rec->bytez);
+#endif
             n=Hread(bitfile_rec->acc_id,BITBUF_SIZE,bitfile_rec->bytea);
             if(n==FAIL) {          /* EOF */
 #ifdef TESTING
@@ -524,8 +534,12 @@ printf("Hbitread(): !!!Error (b), fell off end of data\n");
                 *data=b;         /* assign the bits read in */
                 return(orig_count-count);      /* return now */
               } /* end if */
+            bitfile_rec->block_offset+=bitfile_rec->buf_read;    /* keep track of the number of bytes in buffer */
             bitfile_rec->bytez=n+(bitfile_rec->bytep=bitfile_rec->bytea);
             bitfile_rec->buf_read=n;    /* keep track of the number of bytes in buffer */
+#ifdef TESTING
+printf("Hbitread(): after reading next chunk, n=%d, block_offset=%d\n",n,bitfile_rec->block_offset);
+#endif
           } /* end if */
         bitfile_rec->count=(BITNUM-count);
         l=bitfile_rec->bits = *bitfile_rec->bytep++;
@@ -569,11 +583,11 @@ printf("Hbitread(): max_offset=%d, byte_offset=%d\n",bitfile_rec->max_offset,bit
      REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn Hbitseek(int32 bitid, intn byte_offset, intn bit_offset)
+intn Hbitseek(int32 bitid, int32 byte_offset, intn bit_offset)
 #else
 intn Hbitseek(bitid, byte_offset, bit_offset)
 int32 bitid; 
-intn byte_offset; 
+int32 byte_offset; 
 intn bit_offset;
 #endif
 {
@@ -582,6 +596,7 @@ intn bit_offset;
     intn seek_pos;          /* position of block to seek to */
     int32 read_size;        /* number of bytes to read into buffer */
     int32 n;                /* number of bytes actually read */
+    bool new_block;         /* whether to move to another block in the dataset */
 
     /* clear error stack and check validity of file id */
     HEclear();
@@ -589,43 +604,81 @@ intn bit_offset;
 #ifdef TESTING
 printf("Hbitseek(): bitid=%d byte_offset=%d, bit_offset=%d\n",bitid,byte_offset,bit_offset);
 #endif
-    if((bitfile_rec = BITID2REC(bitid)) == NULL)
+    if(byte_offset<0 || bit_offset<0 || bit_offset>(BITNUM-1)
+            || (bitfile_rec = BITID2REC(bitid))==NULL 
+            || byte_offset>bitfile_rec->max_offset)
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
     if(byte_offset < 0 || bit_offset < 0 || byte_offset > bitfile_rec->max_offset
             || bit_offset>(BITNUM-1))
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
+    /* determine whether we need to seek to another block in the file */
+    new_block=(byte_offset<bitfile_rec->block_offset 
+		|| byte_offset>=bitfile_rec->block_offset+BITBUF_SIZE) 
+		? TRUE : FALSE;
+#ifdef TESTING
+printf("Hbitseek(): new_block=%s, block_offset=%d\n",(new_block ? "TRUE" : "FALSE"),bitfile_rec->block_offset);
+#endif
     if(bitfile_rec->mode=='w')
-        if(HIbitflush(bitfile_rec,-1)==FAIL) /* flush, but merge */
+        if(HIbitflush(bitfile_rec,-1,new_block)==FAIL) /* flush, but merge */
             HRETURN_ERROR(DFE_WRITEERROR,FAIL);
 
-    seek_pos=(byte_offset%BITBUF_SIZE)*BITBUF_SIZE;
-    if(Hseek(bitfile_rec->acc_id,seek_pos,DF_START)==FAIL)
-        HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-    bitfile_rec->block_offset=bitfile_rec->byte_offset=seek_pos;
-
-    read_size=MIN((bitfile_rec->max_offset-bitfile_rec->byte_offset),BITBUF_SIZE);
-    if((n=Hread(bitfile_rec->acc_id,read_size,bitfile_rec->bytea))==FAIL)
-        HRETURN_ERROR(DFE_READERROR,FAIL);   /* EOF? somebody pulled the rug out from under us! */
-    bitfile_rec->buf_read=n;    /* keep track of the number of bytes in buffer */
-    if(bitfile_rec->mode=='w')  /* if writing, return the file offset to it's original position */
+    if(new_block==TRUE) {
+        seek_pos=(byte_offset/BITBUF_SIZE)*BITBUF_SIZE;
+#ifdef TESTING
+printf("Hbitseek(): seek_pos=%d\n",seek_pos);
+#endif
         if(Hseek(bitfile_rec->acc_id,seek_pos,DF_START)==FAIL)
             HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+
+        read_size=MIN((bitfile_rec->max_offset-seek_pos),BITBUF_SIZE);
+#ifdef TESTING
+printf("Hbitseek(): read_size=%d\n",read_size);
+#endif
+        if((n=Hread(bitfile_rec->acc_id,read_size,bitfile_rec->bytea))==FAIL)
+            HRETURN_ERROR(DFE_READERROR,FAIL);   /* EOF? somebody pulled the rug out from under us! */
+        bitfile_rec->bytez=n+(bitfile_rec->bytep=bitfile_rec->bytea);
+        bitfile_rec->buf_read=n;    /* keep track of the number of bytes in buffer */
+        bitfile_rec->block_offset=seek_pos;
+#ifdef TESTING
+printf("Hbitseek(): bytez=%p, bytea=%p, bytep=%p, buf_read=%d, block_offset=%d\n",bitfile_rec->bytez,bitfile_rec->bytea,bitfile_rec->bytep,bitfile_rec->buf_read,bitfile_rec->block_offset);
+#endif
+        if(bitfile_rec->mode=='w')  /* if writing, return the file offset to it's original position */
+            if(Hseek(bitfile_rec->acc_id,seek_pos,DF_START)==FAIL)
+                HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+      } /* end if */
+
+    bitfile_rec->byte_offset=byte_offset;
 
     /* set to the correct position in the buffer */
     bitfile_rec->bytep=bitfile_rec->bytea+(byte_offset-bitfile_rec->block_offset);
     if(bit_offset>0) {
         bitfile_rec->count=BITNUM-bit_offset;
-        bitfile_rec->bits=*(bitfile_rec->bytep);
-        if(bitfile_rec->mode=='w')  /* if writing, mask off bits not yet written */
+        if(bitfile_rec->mode=='w') {  /* if writing, mask off bits not yet written */
+            bitfile_rec->bits=*(bitfile_rec->bytep);
             bitfile_rec->bits&=maskc[bit_offset]<<bitfile_rec->count;
+	  } /* end if */
+	else {
+            bitfile_rec->bits = *bitfile_rec->bytep++;
+	  } /* end else */
       } /* end if */
     else {
-        bitfile_rec->count=BITNUM;
-        bitfile_rec->bits=0;
+        if(bitfile_rec->mode=='w') { /* if writing, mask off bits not yet written */
+            bitfile_rec->count=BITNUM;
+            bitfile_rec->bits=0;
+	  } /* end if */
+	else {
+            bitfile_rec->count=0;
+#ifdef QAK
+            bitfile_rec->bits = *bitfile_rec->bytep++;
+#endif
+	  } /* end else */
       } /* end else */
 
+#ifdef TESTING
+printf("Hbitseek(): offset=%d, count=%d\n",(bitfile_rec->bytep-bitfile_rec->bytea),bitfile_rec->count);
+#endif
     return(SUCCEED);
 }   /* end Hbitseek() */
 
@@ -671,7 +724,7 @@ intn flushbit;              /* how to flush the bits */
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
     if(bitfile_rec->mode=='w')
-        if(HIbitflush(bitfile_rec,flushbit)==FAIL)
+        if(HIbitflush(bitfile_rec,flushbit,TRUE)==FAIL)
             HERROR(DFE_WRITEERROR);
     HDfreespace((VOIDP)bitfile_rec->bytea);    /* free the space for the buffer */
     bitfile_rec->used = FALSE;
@@ -710,11 +763,12 @@ intn flushbit;              /* how to flush the bits */
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-PRIVATE intn HIbitflush(bitrec_t *bitfile_rec,intn flushbit)
+PRIVATE intn HIbitflush(bitrec_t *bitfile_rec,intn flushbit,bool writeout)
 #else
-PRIVATE intn HIbitflush(bitfile_rec,flushbit)
+PRIVATE intn HIbitflush(bitfile_rec,flushbit,writeout)
 bitrec_t *bitfile_rec;
 intn flushbit;
+bool writeout;
 #endif
 {
     char *FUNC="HIbitflush";
@@ -737,10 +791,10 @@ printf("HIbitflush(): longer than max_offset data\n");
           } /* end if */
         else {  /* we are in the middle of a dataset and need to integrate */
 #ifdef TESTING
-printf("HIbitflush(): integrating change\n");
+printf("HIbitflush(): integrating change count=%d, bits=%d\n",bitfile_rec->count,bitfile_rec->bits);
 #endif
             /* mask off a place for the new bits */
-            *(bitfile_rec->bytep)&=(maskc[BITNUM-bitfile_rec->count]<<bitfile_rec->count);
+            *(bitfile_rec->bytep)&=~(maskc[BITNUM-bitfile_rec->count]<<bitfile_rec->count);
 
             /* merge in new bits */
             *(bitfile_rec->bytep)|=bitfile_rec->bits;
@@ -749,17 +803,15 @@ printf("HIbitflush(): integrating change\n");
             bitfile_rec->count=BITNUM;  /* reset count */
           } /* end else */
       } /* end if */
-#ifdef OLD_WAY
-    write_size=MIN(bitfile_rec->buf_read,bitfile_rec->bytep-bitfile_rec->bytea);
-#else
-    write_size=bitfile_rec->bytep-bitfile_rec->bytea;
-#endif
+    if(writeout==TRUE) {     /* only write data out if necessary */
+        write_size=bitfile_rec->bytez-bitfile_rec->bytea;
 #ifdef TESTING
 printf("HIbitflush(): write_size=%d\n",write_size);
 #endif
-    if(write_size>0)
-        if(Hwrite(bitfile_rec->acc_id,write_size,bitfile_rec->bytea)==FAIL)
-            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+        if(write_size>0)
+            if(Hwrite(bitfile_rec->acc_id,write_size,bitfile_rec->bytea)==FAIL)
+                HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+      } /* end if */
 
     return(SUCCEED);
 } /* HIbitflush */

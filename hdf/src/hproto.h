@@ -293,6 +293,9 @@ extern intn Hbitwrite
 extern intn Hbitread
     PROTO((int32 bitid, intn count, uint32 *data));
 
+extern intn Hbitseek
+    PROTO((int32 bitid, int32 byte_offset, intn bit_offset));
+
 extern int32 Hendbitaccess
     PROTO((int32 bitfile_id,intn flushbit));
 
