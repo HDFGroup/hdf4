@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.14  1993/04/22 20:24:19  koziol
-Added new Hfind() routine to hfile.c which duplicates older DFsetfind/DFfind
-utility...
+Revision 1.15  1993/06/23 19:05:54  chouck
+Updated Version string and fixed a VSinquire macro
 
+ * Revision 1.14  1993/04/22  20:24:19  koziol
+ * Added new Hfind() routine to hfile.c which duplicates older DFsetfind/DFfind
+ * utility...
+ *
  * Revision 1.12  1993/04/05  22:35:48  koziol
  * Fixed goofups made in haste when patching code.
  *
@@ -78,7 +81,7 @@ utility...
 #define LIBVER_MAJOR	3
 #define LIBVER_MINOR    3
 #define LIBVER_RELEASE	0
-#define LIBVER_STRING   "NCSA HDF Version 3.3 Alpha Release 7 Apr 6, 1993"
+#define LIBVER_STRING   "NCSA HDF Version 3.3 Beta Release 2 June, 1993"
 #define LIBVER_LEN	92	/* 4+4+4+80 = 92 */
 /* end of version tags */
 

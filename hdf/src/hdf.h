@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.12  1993/06/16 17:17:56  chouck
-Fixed comments and increased some buffer sizes
+Revision 1.13  1993/06/23 19:05:52  chouck
+Updated Version string and fixed a VSinquire macro
 
+ * Revision 1.12  1993/06/16  17:17:56  chouck
+ * Fixed comments and increased some buffer sizes
+ *
  * Revision 1.11  1993/05/19  20:05:03  chouck
  * Moved general interest VSet info out of vg.h and into hdf.h
  * Removed OLD_WAY parts of vproto.h
@@ -545,7 +548,7 @@ typedef int32           HFILEID;
         (VSinquire (vs, (int32 *) NULL, (int32*) NULL, (char*) NULL, (int32*) size, (char*) NULL))
 
 #define VSQueryname(vs, name) \
-        (VSinquire (vs, (int32 *) NULL, (int32*) NULL, (char*) NULL, (int32*) size, (char*) name))
+        (VSinquire (vs, (int32 *) NULL, (int32*) NULL, (char*) NULL, (int32*) NULL, (char*) name))
 
 /* .................................................................. */
 
