@@ -1,46 +1,48 @@
 /*=======================================================================
-UNIVERSITY OF ILLINOIS (UI), NATIONAL CENTER FOR SUPERCOMPUTING
-APPLICATIONS (NCSA), Software Distribution Policy for Public Domain
-Software
 
-NCSA HDF Version 4.1 source code and documentation are in the public
-domain, available without fee for education, research, non-commercial and
-commercial purposes.  Users may distribute the binary or source code to
-third parties provided that this statement appears on all copies and that
-no charge is made for such copies.  
-
-UI MAKES NO REPRESENTATIONS ABOUT THE SUITABILITY OF THE SOFTWARE FOR ANY
-PURPOSE.  IT IS PROVIDED "AS IS" WITHOUT EXPRESS OR IMPLIED WARRANTY.  THE
-UI SHALL NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY THE USER OF THIS
-SOFTWARE.  The software may have been developed under agreements between
-the UI and the Federal Government which entitle the Government to certain
-rights.
-
-We ask, but do not require that the following message be include in all
-derived works:
-
-  Portions developed at the National Center for Supercomputing Applications
-  at the University of Illinois at Urbana-Champaign.
-
-By copying this program, you, the user, agree to abide by the conditions
-and understandings with respect to any software which is marked with a
-public domain notice.
+Copyright Notice and Statement for
+NCSA Hierarchical Data Format (HDF) Software Library and Utilities 
 
 
-Acknowledgements:
-----------------
-Portions of this software were developed by the Unidata Program at the 
-University Corporation for Atmospheric Research, specifically the 
-NETCDF distribution used.
+NCSA Hierarchical Data Format (HDF) Software Library and Utilities
+Copyright   1988-1998   The Board of Trustees of the University of Illinois
+All rights reserved.
 
-This product also includes software developed by the Independent JPEG
-Group, specifically the IJPEG library libjpeg.a.
+Contributors:   National Center for Supercomputing Applications (NCSA) at
+the University of Illinois, Fortner Software (Windows and Mac), Unidata
+Program Center (netCDF), The Independent JPEG Group (JPEG), Jean-loup
+Gailly and Mark Adler (gzip)
 
-This product also includes software developed by Jean-loup Gailly 
-and Mark Adler , specifically the ZLIB library libz.a.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted for any purpose (including commercial purposes)
+provided that the following conditions are met:
 
-This product includes software developed by the University of
-California, Berkeley and its contributors.
+1.	Redistributions of source code must retain the above copyright notice,
+this list of conditions and the following disclaimer.
+
+2.	Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or materials provided with the distribution.
+
+3.	In addition, redistributions of modified forms of the source or binary
+code must carry prominent notices stating that the original code was
+changed and the date of the change.
+
+4.	All publications or advertising materials mentioning features or use of
+this software must acknowledge that it was developed by the National Center
+for Supercomputing Applications at the University of Illinois, and credit
+the Contributors.
+
+5.	Neither the name of the University nor the names of the Contributors may
+be used to endorse or promote products derived from this software without
+specific prior written permission from the University or the Contributors.
+
+6.	THIS SOFTWARE IS PROVIDED BY THE UNIVERSITY AND THE CONTRIBUTORS "AS IS"
+WITH NO WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED.  In no event
+shall the University or the Contributors be liable for any damages suffered
+by the users arising out of the use of this software, even if advised of
+the possibility of such damage.
+
 
 =======================================================================*/
 
