@@ -32,6 +32,7 @@ C      integer       scstart
       INTERFACE
         INTEGER FUNCTION scstart(filename,access, nmlen)
           !MS$ATTRIBUTES C, reference, alias: '_SCSTART' :: scstart
+	    !DEC$ ATTRIBUTES reference :: filename
           integer access, nmlen
           character*(*) filename
         END FUNCTION scstart
@@ -278,6 +279,7 @@ C      integer       scscfill
       INTERFACE
         INTEGER FUNCTION scscfill(id, val)
           !MS$ATTRIBUTES C, reference, alias: '_SCSCFILL' :: scscfill
+	    !DEC$ ATTRIBUTES reference :: val
           integer id
           character*1 val
         END FUNCTION scscfill
@@ -304,6 +306,7 @@ C      integer       scgcfill
       INTERFACE
         INTEGER FUNCTION scgcfill(id, val)
           !MS$ATTRIBUTES C, reference, alias: '_SCGCFILL' :: scgcfill
+	    !DEC$ ATTRIBUTES reference :: val
           integer id
           character*1 val
         END FUNCTION scgcfill
@@ -426,6 +429,7 @@ c      integer       scn2index
       INTERFACE
         INTEGER FUNCTION scn2index(id, name, nmlen)
           !MS$ATTRIBUTES C, reference, alias: '_SCN2INDEX' :: scn2index
+	    !DEC$ ATTRIBUTES reference :: name
           integer id, nmlen
           character*(*) name
         END FUNCTION scn2index
@@ -457,6 +461,7 @@ C      integer       sccreate
       INTERFACE
         INTEGER FUNCTION sccreate(id,name,nt,rank,dims,nmlen)
           !MS$ATTRIBUTES C, reference, alias: '_SCCREATE' :: sccreate
+	    !DEC$ ATTRIBUTES reference :: name
           integer id, nt, rank, dims(*), nmlen
           character*(*) name
         END FUNCTION sccreate
@@ -485,6 +490,7 @@ C      integer scsdimstr
         INTEGER FUNCTION scsdimstr(id, label, unit, format,
      +                       llen,ulen, flen)
           !MS$ATTRIBUTES C, reference, alias: '_SCSDIMSTR' :: scsdimstr
+	    !DEC$ ATTRIBUTES reference :: label, unit, format
           integer id, llen, ulen, flen
           character*(*) label, unit, format
         END FUNCTION scsdimstr
@@ -513,6 +519,7 @@ C      integer scsdimname
       INTERFACE
         INTEGER FUNCTION scsdimname(id, name, nmlen)
           !MS$ATTRIBUTES C,reference,alias:'_SCSDIMNAME' :: scsdimname
+	    !DEC$ ATTRIBUTES reference :: name
           integer id, nmlen
           character*(*) name
         END FUNCTION scsdimname
@@ -542,6 +549,7 @@ C      integer scsdatstr
         INTEGER FUNCTION scsdatstr(id, l, u, f, c, llen, 
      +                         ulen, flen, clen)
           !MS$ATTRIBUTES C,reference,alias:'_SCSDATSTR' :: scsdatstr
+	    !DEC$ ATTRIBUTES reference :: l,u,f,c
           integer id, llen, ulen, flen, clen
 	    character*(*) l,u,f,c
         END FUNCTION scsdatstr
@@ -572,6 +580,7 @@ C       integer scgdatstrs
         INTEGER FUNCTION scgdatstrs(id,label,unit,format,coord,
      +                               llen,ulen,flen, clen,mlen)
           !MS$ATTRIBUTES C,reference,alias:'_SCGDATSTRS' :: scgdatstrs
+	    !DEC$ ATTRIBUTES reference :: label, unit, format, coord
           integer id, llen, ulen, flen, clen, mlen
           character*(*) label, unit, format, coord
         END FUNCTION scgdatstrs
@@ -601,6 +610,7 @@ C      integer scgdimstrs
         INTEGER FUNCTION scgdimstrs(id,label,unit,format,
      + 	  llen,ulen,flen,mlen)
           !MS$ATTRIBUTES C,reference,alias:'_SCGDIMSTRS' :: scgdimstrs
+	    !DEC$ ATTRIBUTES reference :: label, unit, format
           integer id, llen, ulen, flen, mlen
           character*(*) label, unit, format
         END FUNCTION scgdimstrs
@@ -631,6 +641,7 @@ c      integer scginfo
       INTERFACE
         INTEGER FUNCTION scginfo(id,name,rank,dims,nt,nattr,nmlen)
           !MS$ATTRIBUTES C, reference, alias: '_SCGINFO' :: scginfo
+	    !DEC$ ATTRIBUTES reference :: name
           integer id,rank,dims(*),nt,nattr,nmlen
           character*(*) name
         END FUNCTION scginfo
@@ -659,6 +670,7 @@ c      integer scrcatt
       INTERFACE
         INTEGER FUNCTION scrcatt(id, index, buf)
           !MS$ATTRIBUTES C, reference, alias: '_SCRCATT' :: scrcatt
+	    !DEC$ ATTRIBUTES reference :: buf
           integer id, index
           character   buf(*)
         END FUNCTION scrcatt
@@ -713,6 +725,7 @@ c      integer scrattr
       INTERFACE
         INTEGER FUNCTION scrattr(id, index, buf)
           !MS$ATTRIBUTES C, reference, alias: '_SCRATTR' :: scrattr
+	    !DEC$ ATTRIBUTES reference :: buf
           integer id, index
           character*(*) buf
         END FUNCTION scrattr
@@ -799,6 +812,7 @@ c      integer scrcdata
       INTERFACE
         INTEGER FUNCTION scrcdata(id,start, stride, end, values) 
           !MS$ATTRIBUTES C, reference, alias: '_SCRCDATA' :: scrcdata
+	    !DEC$ ATTRIBUTES reference :: values
           integer id, start(*), stride(*), end(*)
           character *(*) values
         END FUNCTION scrcdata
@@ -829,6 +843,7 @@ c      integer scwcdata
       INTERFACE
         INTEGER FUNCTION scwcdata(id,start, stride, end, values) 
           !MS$ATTRIBUTES C, reference, alias: '_SCWCDATA' :: scwcdata
+	    !DEC$ ATTRIBUTES reference :: values
           integer id, start(*), stride(*), end(*)
           character*(*) values
         END FUNCTION scwcdata
@@ -858,6 +873,7 @@ C      integer scgainfo
       INTERFACE
         INTEGER FUNCTION scgainfo(id, number, name,nt, count,nmlen)
           !MS$ATTRIBUTES C, reference, alias: '_SCGAINFO' :: scgainfo
+	    !DEC$ ATTRIBUTES reference :: name
           integer id, number, nt, count, nmlen
           character*(*) name
         END FUNCTION scgainfo
@@ -885,6 +901,7 @@ C      integer scgdinfo
       INTERFACE
         INTEGER FUNCTION scgdinfo(id,name, sz, nt, nattr,nmlen)
           !MS$ATTRIBUTES C, reference, alias: '_SCGDINFO' :: scgdinfo
+	    !DEC$ ATTRIBUTES reference :: name
           integer id, sz, nt, nattr, nmlen
           character*(*) name
         END FUNCTION scgdinfo
@@ -913,6 +930,7 @@ C      integer scscatt
       INTERFACE
         INTEGER FUNCTION scscatt(id,name, nt, count,data, nmlen)
           !MS$ATTRIBUTES C, reference, alias: '_SCSCATT' :: scscatt
+	    !DEC$ ATTRIBUTES reference :: name,data
           integer id, nt, count, nmlen
           character*(*) name
           character     data(*)
@@ -941,6 +959,7 @@ C      integer scsnatt
       INTERFACE
         INTEGER FUNCTION scsnatt(id,name, nt, count,data, nmlen)
           !MS$ATTRIBUTES C, reference, alias: '_SCSNATT' :: scsnatt
+	    !DEC$ ATTRIBUTES reference :: name
           integer id, nt, count, data, nmlen
           character*(*) name
         END FUNCTION scsnatt
@@ -970,6 +989,7 @@ C      integer scsattr
       INTERFACE
         INTEGER FUNCTION scsattr(id,name, nt, count,data, nmlen)
           !MS$ATTRIBUTES C, reference, alias: '_SCSATTR' :: scsattr
+	    !DEC$ ATTRIBUTES reference :: name,data
           integer id, nt, count, nmlen
           character*(*) name, data
         END FUNCTION scsattr
@@ -997,6 +1017,7 @@ C      integer       scfattr
       INTERFACE
         INTEGER FUNCTION scfattr(id,name, nmlen)
           !MS$ATTRIBUTES C, reference, alias: '_SCFATTR' :: scfattr
+	    !DEC$ ATTRIBUTES reference :: name
           integer id, nmlen
           character*(*) name
         END FUNCTION scfattr
@@ -1010,8 +1031,7 @@ C----------------------------------------------------------------------
 C     Name: sfid2ref
 C     Purpose:  call scid2ref, map an id to ref
 C     Inputs:   id: variable id
-C     Returns: refernce number on success, FAIL on failure with errors
-C              set
+C     Returns: refernce number on success, FAIL on failure with error set
 C     Users:    Fortran stub routine
 C----------------------------------------------------------------------
 
@@ -1096,6 +1116,7 @@ C     integer       scsextf
       INTERFACE
         INTEGER FUNCTION scsextf(id, fname, offset, nmlen)
           !MS$ATTRIBUTES C, reference, alias: '_SCSEXTF' :: scsextf
+	    !DEC$ ATTRIBUTES reference :: fname
           integer id, offset, nmlen
           character*(*) fname
         END FUNCTION scsextf
@@ -1234,3 +1255,333 @@ C      integer       scsflmd
       end
 
 
+C-------------------------------------------------------------------------
+C        Name:      sfgichnk
+C        Purpose:   get Info on SDS
+C        Inputs:    id       - data set ID
+C        Outputs:   dim_length - chunk dimensions (if any)
+C                   comp_flag: 
+C                               -1 - SDS is non-chunked
+C                                0 - SDS is chunked without compression
+C                                1 - SDS is chunked and compressed with
+C                                    RLE, GZIP or SKPHUFF 
+C                                2 - SDS is chunked and compressed with
+C                                    NBIT
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scgichnk (C stub for SD setchunk function)
+C-------------------------------------------------------------------------
+
+         INTEGER function sfgichnk(id, dim_length, comp_flag)
+
+         INTEGER id, dim_length(*), comp_flag
+C         INTEGER scgichnk 
+
+      INTERFACE
+        INTEGER FUNCTION scgichnk(id, dim_length, comp_flag)
+          !MS$ATTRIBUTES C, reference, alias: '_SCGICHNK' :: scgichnk 
+          integer id, dim_length(*), comp_flag 
+        END FUNCTION scgichnk 
+      END INTERFACE
+
+         sfgichnk = scgichnk(id, dim_length, comp_flag)
+         return
+         end
+
+           
+C-------------------------------------------------------------------------
+C        Name:      sfrcchnk
+C        Purpose:   read the specified chunk of CHARACTER data to the SDS 
+C        Inputs:    id       - data set ID
+C                   start    - chunk coordinates 
+C                   char_data - buffer the data will be read into  
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scrcchnk (C stub for SDwriteChunk function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function sfrcchnk(id, start, char_data)
+C
+         INTEGER id, start(*)
+         CHARACTER*(*) char_data(*)
+C         INTEGER scrcchnk 
+
+      INTERFACE
+        INTEGER FUNCTION  scrcchnk(id, start, char_data)
+          !MS$ATTRIBUTES C, reference, alias: '_SCRCCHNK' :: scrcchnk 
+            !DEC$ ATTRIBUTES reference :: char_data
+          integer id, start(*)
+          character*(*) char_data(*) 
+        END FUNCTION scrcchnk 
+      END INTERFACE
+C
+         sfrcchnk = scrcchnk(id, start, char_data) 
+C
+         return 
+         end
+
+           
+C-------------------------------------------------------------------------
+C        Name:      sfrchnk
+C        Purpose:   read the specified chunk of NUMERIC data to the SDS 
+C        Inputs:    id       - data set ID
+C                   start    - chunk coordinates 
+C                   num_data - buffer the  numeric data will be read into  
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scrchnk (C stub for SDwriteChunk function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function sfrchnk(id, start, num_data)
+C
+         INTEGER id, start(*), num_data(*)
+C         INTEGER scrchnk 
+
+      INTERFACE
+        INTEGER FUNCTION  scrchnk(id, start, num_data)
+          !MS$ATTRIBUTES C, reference, alias: '_SCRCHNK' :: scrchnk 
+          integer id, start(*), num_data(*)
+        END FUNCTION scrchnk 
+      END INTERFACE
+C
+         sfrchnk = scrchnk(id, start, num_data) 
+C
+         return 
+         end
+
+           
+C-------------------------------------------------------------------------
+C        Name:      sfscchnk
+C        Purpose:   set the maximum number of chunks to cache
+C        Inputs:    id       - data set ID
+C                   maxcache - max number of chunks to cache 
+C                   flags    - flags =0, HDF_CACHEALL
+C                              Currently only 0 can be passed.
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scscchnk (C stub for SDsetchunkcache function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function sfscchnk(id, maxcache, flags)
+C
+         INTEGER id, maxcache, flags 
+C         INTEGER scscchnk 
+
+      INTERFACE
+        INTEGER FUNCTION scscchnk(id, maxcache, flags) 
+          !MS$ATTRIBUTES C, reference, alias: '_SCSCCHNK' :: scscchnk 
+          integer id, maxcache, flags 
+        END FUNCTION scscchnk 
+      END INTERFACE
+C
+         sfscchnk = scscchnk(id, maxcache, flags) 
+C
+         return 
+         end
+
+           
+
+C-------------------------------------------------------------------------
+C        Name:      sfschnk
+C        Purpose:   make the SDS a chunked SDS
+C        Inputs:    id       - data set ID
+C                   dim_length - chunk dimensions
+C                   comp_type - type of compression    
+C                   supports the following compression types:
+C                            ( see hcomp.h  file) 
+C                            COMP_CODE_NONE = 0
+C                            COMP_CODE_RLE = 1
+C                            COMP_CODE_NBIT = 2 
+C                            COMP_CODE_SKPHUFF = 3
+C                            COMP_CODE_DEFLATE = 4 
+C                   comp_prm  - compression parameters array
+C        For
+C        Adaptive Huffman 
+C                   comp_prm(1) = skphuff_skp_size
+C        GZIP       
+C                   comp_prm(1) = deflate_level
+C        NBIT
+C                   comp_prm(1) = nbit_sign_ext
+C                   comp_prm(2) = nbit_fill_one
+C                   comp_prm(3) = nbit_start_bit
+C                   comp_prm(4) = nbit_bit_len 
+C          
+C        NOTE: IT IS USER's responsibility to pass correct compression
+C              parameters for each type of compression
+C
+C                       
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scschnk (C stub for SD setchunk function)
+C-------------------------------------------------------------------------
+
+         INTEGER function sfschnk(id, dim_length, comp_type,comp_prm)
+
+         INTEGER id, dim_length(*), comp_type, comp_prm(*)
+C         INTEGER scschnk 
+
+      INTERFACE
+        INTEGER FUNCTION scschnk(id, dim_length, comp_type, comp_prm) 
+          !MS$ATTRIBUTES C, reference, alias: '_SCSCHNK' :: scschnk 
+          integer id, dim_length(*), comp_type, comp_prm(*) 
+        END FUNCTION scschnk 
+      END INTERFACE
+
+         sfschnk = scschnk(id, dim_length, comp_type, comp_prm)
+         return
+         end
+
+           
+C-------------------------------------------------------------------------
+C        Name:      sfwcchnk
+C        Purpose:   write the specified chunk of CHARACTER data to the SDS 
+C        Inputs:    id       - data set ID
+C                   start    - chunk coordinates 
+C                   char_data - buffer containing  data to be written  
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scwcchnk (C stub for SDwriteChunk function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function sfwcchnk(id, start, char_data)
+C
+         INTEGER id, start(*) 
+         CHARACTER*(*) char_data(*)
+C         INTEGER scwcchnk 
+
+      INTERFACE
+        INTEGER FUNCTION  scwcchnk(id, start, char_data)
+          !MS$ATTRIBUTES C, reference, alias: '_SCWCCHNK' :: scWcchnk 
+            !DEC$ ATTRIBUTES reference :: char_data
+          integer id, start(*)
+          character*(*) char_data(*) 
+        END FUNCTION scwcchnk 
+      END INTERFACE
+
+C
+         sfwcchnk = scwcchnk(id, start, char_data) 
+C
+         return 
+         end
+
+           
+C-------------------------------------------------------------------------
+C        Name:      sfwchnk
+C        Purpose:   write the specified chunk of NUMERIC data to the SDS 
+C        Inputs:    id       - data set ID
+C                   start    - chunk coordinates 
+C                   num_data - buffer containing data to be written  
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scwchnk (C stub for SDwriteChunk function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function sfwchnk(id, start, num_data)
+C
+         INTEGER id, start(*), num_data(*)
+C         INTEGER scwchnk 
+
+      INTERFACE
+        INTEGER FUNCTION  scwchnk(id, start, num_data)
+          !MS$ATTRIBUTES C, reference, alias: '_SCWCHNK' :: scwchnk 
+          integer id, start(*), num_data(*)
+        END FUNCTION scwchnk 
+      END INTERFACE
+
+C
+         sfwchnk = scwchnk(id, start, num_data) 
+C
+         return 
+         end
+
+           
+C-------------------------------------------------------------------------
+C        Name:      sfscompress
+C        Purpose:   compress SDS 
+C        Inputs:    id       - data set ID
+C                   comp_type - type of compression
+C                   supports the following compression types:
+C                            ( see hcomp.h  file) 
+C                            COMP_CODE_NONE = 0
+C                            COMP_CODE_RLE =1
+C                            COMP_CODE_SKPHUFF = 3
+C                            COMP_CODE_DEFLATE = 4 
+C                   comp_prm - compression parameter array:
+C                   comp_prm(1) = deflate_level for GZIP
+C                   comp_prm(1) = skphuff_skp_size for ADAPTIVE HUFFMAN
+C        NOTE: IT IS USER's responsibility to pass correct compression
+C              parameters for each type of compression
+C
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scscompress (C stub for SD setchunk function)
+C-------------------------------------------------------------------------
+
+         INTEGER function sfscompress(id, comp_type,comp_prm)
+
+         INTEGER id, comp_type, comp_prm(*)
+C         INTEGER scscompress 
+
+      INTERFACE
+        INTEGER FUNCTION scscompress(id, comp_type, comp_prm) 
+      !MS$ATTRIBUTES C, reference, alias: '_SCSCOMPRESS' :: scscompress 
+          integer id, comp_type, comp_prm(*) 
+        END FUNCTION sc scompress
+      END INTERFACE
+
+         sfscompress = scscompress(id, comp_type, comp_prm)
+         return
+         end
+
+C-------------------------------------------------------------------------
+C        Name:      sfisrcrd
+C        Purpose:   checkes if SDS is appendable ,i.e, has unlimited 
+C                   dimension 
+C        Inputs:    id       - data set ID
+C        Returns:   1 if true,  0 otherwise
+C        Calls:     scisrcrd (C stub for SDisrecord function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+ 
+         INTEGER function sfisrcrd(id)
+C
+         INTEGER id
+ 
+      INTERFACE
+        INTEGER FUNCTION  scisrcrd(id)
+          !MS$ATTRIBUTES C, reference, alias: '_SCISRCRD' :: scisrcrd
+          integer id
+        END FUNCTION scisrcrd
+      END INTERFACE
+ 
+C
+         sfisrcrd = scisrcrd(id)
+C
+         return
+         end
+ 
+C------------------------------------------------------------------------- 
+C        Name:      sfsblsz
+C        Purpose:   sets block size for writing unlimited SDS  
+C        Inputs:    id       - data set ID  
+C                   block_size - block size in bytes
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scsblsz (C stub for SDsetblocksize function)
+C        Users:     HDF Fortran programmers 
+C------------------------------------------------------------------------- 
+                                                                            
+         INTEGER function sfsblsz(id, block_size) 
+C 
+         INTEGER id, block_size
+  
+      INTERFACE 
+        INTEGER FUNCTION  scsblsz(id, block_size) 
+          !MS$ATTRIBUTES C, reference, alias: '_SCSBLSZ' :: scsblsz
+          integer id, block_size
+        END FUNCTION scsblsz
+      END INTERFACE 
+  
+C 
+         sfsblsz = scsblsz(id, block_size) 
+C 
+         return 
+         end 
+  
+           
