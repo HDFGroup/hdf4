@@ -259,11 +259,13 @@ extern      "C"
    ** from vsfld.c
  */
 
+#ifdef OLD_WAY
     extern int16 VSIZEOF
                 (int16 x);
 
     extern int16 HDFSIZEOF
                 (int16 x);
+#endif /* OLD_WAY */
 
     extern intn VSsetfields
                 (int32 vkey, const char _HUGE * fields);

@@ -109,10 +109,6 @@ PRIVATE void vunpackvg
    * --------------------------------------------------------------------
  */
 
-#if 0
-vfile_t vfile[MAX_VFILE] =
-{0};
-#endif
 vfile_t *vfile = NULL;
 
 /* -------------------------- Load_vfile ------------------------ */
@@ -173,11 +169,7 @@ Load_vfile(HFILEID f)
           vf->vgtabn++;
           v->key = (int32) VGSLOT2ID(f, ref);   /* set the key for the node */
           v->ref = (intn) ref;
-#ifdef OLD_WAY
-          v->vg = (VGROUP *) NULL;  /* ie not attached yet */
-#else
           v->vg = VPgetinfo(f,ref);  /* get the header information */
-#endif /* OLD_WAY */
           v->nattach = 0;
           v->nentries = 0;
           tbbtdins(vf->vgtree, (VOIDP) v, NULL);    /* insert the vg instance in B-tree */
@@ -208,11 +200,7 @@ Load_vfile(HFILEID f)
           vf->vstabn++;
           w->key = (int32) VSSLOT2ID(f, ref);   /* set the key for the node */
           w->ref = (intn) ref;
-#ifdef OLD_WAY
-          w->vs = (VGROUP *) NULL;  /* ie not attached yet */
-#else
           w->vs = VSPgetinfo(f,ref);  /* get the header information */
-#endif /* OLD_WAY */
           w->nattach = 0;
           w->nvertices = 0;
           tbbtdins(vf->vstree, (VOIDP) w, NULL);    /* insert the vg instance in B-tree */
@@ -564,12 +552,6 @@ vunpackvg(VGROUP * vg, uint8 buf[], uintn len)
           UINT16DECODE(bb, vg->extag);  /* retrieve the vg's expansion tag */
           UINT16DECODE(bb, vg->exref);  /* retrieve the vg's expansion ref */
       }     /* end if */
-
-#ifdef OLD_WAY
-    UINT16DECODE(bb, vg->version);  /* retrieve the vg's version field */
-
-    UINT16DECODE(bb, vg->more);     /* retrieve the vg's more field */
-#endif
 }   /* vunpackvg */
 
 /*--------------------------------------------------------------------------
@@ -652,9 +634,6 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
 {
     VGROUP     *vg;
     int16       acc_mode;
-#ifdef OLD_WAY
-    uint8      *vgpack;
-#endif /* OLD_WAY */
     vginstance_t *v;
     vfile_t    *vf;
     filerec_t  *file_rec;       /* file record */
@@ -715,12 +694,8 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
 
           vg->access = acc_mode;
 
-#ifdef OLD_WAY
-          vg->marked = 0;
-#else
           vg->marked = 1;
           vg->new_vg = 1;
-#endif
           vg->vgclass[0] = '\0';
           vg->extag = 0;
           vg->exref = 0;
@@ -744,10 +719,6 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
     else
       {
 /******* access an EXISTING vg *********/
-#ifdef OLD_WAY
-          uint32      len;
-#endif /* OLD_WAY */
-
           if (NULL == (v = vginstance(f, (uint16) vgid)))
               HRETURN_ERROR(DFE_NOMATCH, FAIL);
 
@@ -762,41 +733,11 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
                 return (v->key);    /* return key instead of VGROUP ptr */
             }
 
-#ifdef OLD_WAY
-          /* else vg not attached, must fetch vg from file */
-
-          len = Hlength(f, DFTAG_VG, (uint16) vgid);
-          if (len == FAIL)
-              return (FAIL);
-
-          vgpack = (uint8 *) HDmalloc(len);
-          if (vgpack == NULL)
-              return (FAIL);
-
-          if (Hgetelement(f, DFTAG_VG, (uint16) vgid, vgpack) == (int32) FAIL)
-              HRETURN_ERROR(DFE_NOMATCH, FAIL);
-
-          /* allocate space for vg, & zero it out */
-
-          if (NULL == (vg = (VGROUP *) HDmalloc(sizeof(VGROUP))))
-              HRETURN_ERROR(DFE_NOSPACE, FAIL);
-
-          /* unpack vgpack into structure vg, and init  */
-          vunpackvg(vg, vgpack, len);
-          vg->f = f;
-          vg->oref = (uint16) vgid;
-          vg->otag = DFTAG_VG;
-          HDfree((VOIDP) vgpack);
-#else
           vg=v->vg;
-#endif /* OLD_WAY */
           vg->access = acc_mode;
           vg->marked = 0;
 
           /* attach vg to file's vgtab at the vg instance v */
-#ifdef OLD_WAY
-          v->vg = vg;
-#endif /* OLD_WAY */
           v->nattach = 1;
           v->nentries = vg->nvelt;
 
@@ -840,31 +781,6 @@ Vdetach(int32 vkey)
     if ((vg == NULL) || (vg->otag != DFTAG_VG))
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
-#ifdef OLD_WAY
-    /* update vgroup to file if it has write-access */
-    /* if its marked flag is 1 */
-    /* - OR - */
-    /* if that vgroup is empty */
-    if (vg->access == 'w')
-      {
-          if ((vg->nvelt == 0) || (vg->marked == 1))
-            {
-                vgpack = (uint8 *) HDmalloc((uint32) sizeof(VGROUP) + vg->nvelt * 4);
-                vpackvg(vg, vgpack, &vgpacksize);
-
-                /*
-                 *  For now attempt to blow away the old one.  This is a total HACK
-                 *    but the H-level needs to stabilize first
-                 */
-                Hdeldd(vg->f, DFTAG_VG, vg->oref);
-
-                if (Hputelement(vg->f, DFTAG_VG, vg->oref, vgpack, vgpacksize) == FAIL)
-                    HERROR(DFE_WRITEERROR);
-                HDfree((VOIDP) vgpack);
-                vg->marked = 0;
-            }
-      }
-#else
       /* Now, only update the Vgroup if it has actually changed. */
       /* Since only Vgroups with write-access are allowed to change, there is */
       /* no reason to check for access... (I hope) -QAK */
@@ -886,7 +802,6 @@ Vdetach(int32 vkey)
             vg->marked = 0;
             vg->new_vg = 0;
         }
-#endif /* OLD_WAY */
     v->nattach--;
     return (SUCCEED);
 }   /* Vdetach */
@@ -1342,41 +1257,15 @@ vinsertpair(VGROUP * vg, uint16 tag, uint16 ref)
 int32
 Ventries(HFILEID f, int32 vgid)
 {
-#ifdef OLD_WAY
-    uint8      *vgpack;
-    VGROUP      vg;
-    int32       len;
-#else
     vginstance_t *v;
-#endif /* OLD_WAY */
     CONSTR(FUNC, "Ventries");
 
     if (vgid < 1)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
-#ifdef OLD_WAY
-    len = Hlength(f, DFTAG_VG, (uint16) vgid);
-    if (len == FAIL)
-        HRETURN_ERROR(DFE_NOSUCHTAG, FAIL);
-
-    vgpack = (uint8 *) HDmalloc(len);
-    if (vgpack == NULL)
-        HRETURN_ERROR(DFE_NOSPACE, FAIL);
-
-    if (Hgetelement(f, DFTAG_VG, (uint16) vgid, vgpack) == FAIL)
-        HRETURN_ERROR(DFE_NOVS, FAIL);
-
-    vunpackvg(&vg, vgpack, len);
-
-    HDfree((VOIDP) vg.tag);
-    HDfree((VOIDP) vg.ref);
-
-    return ((int32) vg.nvelt);
-#else
     if((v=vginstance(f,(uint16)vgid))==NULL)
         HRETURN_ERROR(DFE_NOMATCH,FAIL);          /* error */
     return(v->vg->nvelt);
-#endif /* OLD_WAY */
 }   /* Ventries */
 
 /* ==================================================================== */

@@ -29,8 +29,6 @@ static char RcsId[] = "@(#)$Revision$";
 LOCAL ROUTINES
  None
 EXPORTED ROUTINES
- map_from_old_types -- Convert an old type (i.e. LOCAL_INT to DFNT_ based types)
-
  vinstance     -- Looks thru vstab for vsid and return the addr of the vdata 
                    instance where vsid is found.
  vexistvs      -- Tests if a vdata with id vsid is in the file's vstab.
@@ -229,40 +227,6 @@ vpackvs(VDATA * vs, uint8 buf[], int32 *size)
     *size = (int32) (bb - buf) + 1;
 }   /* vpackvs */
 
-/* ----------------------- map_from_old_types ------------------------------- */
-/*
-   Convert an old type (i.e. LOCAL_INT to DFNT_ based types
- */
-PRIVATE
-int16
-map_from_old_types(intn type)
-{
-    switch (type)
-      {
-          case LOCAL_CHARTYPE:
-              return DFNT_CHAR;
-
-          case LOCAL_BYTETYPE:
-              return DFNT_INT8;
-
-          case LOCAL_SHORTTYPE:
-          case LOCAL_INTTYPE:
-              return DFNT_INT16;
-
-          case LOCAL_LONGTYPE:
-              return DFNT_INT32;
-
-          case LOCAL_FLOATTYPE:
-              return DFNT_FLOAT32;
-
-          case LOCAL_DOUBLETYPE:
-              return DFNT_FLOAT32;
-
-          default:
-              return (int16) type;
-      }
-}   /* map_from_old_types */
-
 /* ----------------------------- vunpackvs ------------------------------------- */
 /*
    Convert a packed form(from HDF file)  to a VDATA structure.
@@ -441,8 +405,11 @@ VDATA _HUGE *VSPgetinfo(HFILEID f,uint16 ref)
     vs->f   = f;
     vs->marked  = 0;
     vs->nusym   = 0;
+    vs->usym=NULL;
  
+#ifdef QAK
     vs->vm      = (VMBLOCK*) NULL; /* always NULL for "r" */
+#endif /* QAK */
  
     HDfree((VOIDP)vspack);
  
@@ -504,9 +471,6 @@ int32
 VSattach(HFILEID f, int32 vsid, const char *accesstype)
 {
     VDATA      *vs;             /* new vdata to be returned */
-#ifdef OLD_WAY
-    uint8      *vspack;
-#endif /* OLD_WAY */
     int32       acc_mode;
     vsinstance_t *w;
     vfile_t    *vf;
@@ -547,6 +511,7 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
           vs->rlist.item=NULL;
           vs->islinked = FALSE;
           vs->nusym = 0;
+          vs->usym=NULL;
 
           vs->otag = DFTAG_VH;
           vs->oref = Htagnewref(f,vs->otag);
@@ -569,7 +534,9 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
           vs->more = 0;
           vs->version = VSET_VERSION;
 
+#ifdef QAK
           vs->vm = (VMBLOCK *) NULL;
+#endif /* QAK */
 
           vs->aid = 0;
 
@@ -604,43 +571,7 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
 		return (w->key);
 	    }
 
-#ifdef OLD_WAY
-	  if (w->vs)
-	    {	/* use existing vs record */
-#endif /* OLD_WAY */
 		vs = w->vs;
-#ifdef OLD_WAY
-	    }
-	  else
-	    {   /* allocate space for vs,  & zero it out  */
-		if ((vs = (VDATA *) HDmalloc(sizeof(VDATA))) == NULL)
-		    HRETURN_ERROR(DFE_NOSPACE, FAIL);
-	    }
-
-	  /* need to fetch from file */
-	  if ((vspack = (uint8 *) HDmalloc(sizeof(VWRITELIST))) == NULL)
-	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
-	  if (Hgetelement(f, DFTAG_VH, (uint16) vsid, vspack) == FAIL)
-	    {
-		HDfree((VOIDP) vspack);
-		HRETURN_ERROR(DFE_NOVS, FAIL);
-	    }	
-
-	  vs->wlist.n = vs->rlist.n = 0;
-      vs->rlist.item=NULL;
-
-	  /* unpack the vs, then init all other fields in it */
-	  vunpackvs(vs, vspack);
-	  vs->otag = DFTAG_VH;
-	  vs->oref = (uint16) vsid;
-	  vs->f = f;
-	  vs->marked = 0;
-	  vs->nusym = 0;
-
-	  vs->vm = (VMBLOCK *) NULL;	/* always NULL for "r" */
-
-	  HDfree((VOIDP) vspack);
-#endif /* OLD_WAY */
 
 	  vs->access = 'r';
 	  vs->aid = Hstartread(vs->f, VSDATATAG, vs->oref);
@@ -650,9 +581,6 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
 	  vs->instance = w;
 
 	  /* attach vs to vsdir  at the vdata instance w */
-#ifdef OLD_WAY
-	  w->vs = vs;
-#endif /* OLD_WAY */
 	  w->nattach = 1;
 	  w->nvertices = vs->nvertices;
 
@@ -668,43 +596,7 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
 	  if (w->nattach)	/* vdata previously attached before */
 	      HRETURN_ERROR(DFE_BADATTACH, FAIL);
 
-#ifdef OLD_WAY 
-	  /* free old record (should reuse....) */
-	  if (w->vs)
-	    {
-#endif /* OLD_WAY */
 		vs = w->vs;
-#ifdef OLD_WAY 
-	    }
-	  else
-	    {   /* allocate space */
-		if ((vs = (VDATA *) HDmalloc(sizeof(VDATA))) == NULL)
-		    HRETURN_ERROR(DFE_NOSPACE, FAIL);
-	    }
-
-	  /* need to fetch from file */
-	  if ((vspack = (uint8 *) HDmalloc(sizeof(VWRITELIST))) == NULL)
-	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
-	  if (Hgetelement(f, DFTAG_VH, (uint16) vsid, vspack) == FAIL)
-	    {
-		HDfree((VOIDP) vspack);
-		HRETURN_ERROR(DFE_NOMATCH, FAIL);
-	    }	/* end if */
-
-	  vs->wlist.n = vs->rlist.n = 0;
-      vs->rlist.item=NULL;
-	  vs->nusym = 0;
-
-	  /* unpack the vs, then init all other fields in it */
-	  vunpackvs(vs, vspack);
-	  vs->otag = DFTAG_VH;
-	  vs->oref = (uint16) vsid;
-	  vs->f = f;
-	  vs->marked = 0;
-	  vs->vm = (VMBLOCK *) NULL;
-
-      HDfree((VOIDP) vspack);
-#endif /* OLD_WAY */
 
 	  vs->access = 'w';
 	  vs->aid = Hstartwrite(vs->f, VSDATATAG, vs->oref, 0);
@@ -714,9 +606,6 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
 	  vs->instance = w;
 
 	  /* attach vs to vsdir  at the vdata instance w */
-#ifdef OLD_WAY
-	  w->vs = vs;
-#endif /* OLD_WAY */
 	  w->nattach = 1;
 	  w->nvertices = vs->nvertices;
 
@@ -776,13 +665,7 @@ VSdetach(int32 vkey)
       {
 	  if (w->nattach == 0)
 	    {
-#ifdef OLD_WAY
-		w->vs = NULL;	/* detach vs from vsdir */
-#endif /* OLD_WAY */
 		Hendaccess(vs->aid);
-#ifdef OLD_WAY
-		HDfree((VOIDP) vs);
-#endif /* OLD_WAY */
 /*
    not needed if we free all the time
    vs->aid = NO_ID;
@@ -810,13 +693,12 @@ VSdetach(int32 vkey)
     /* remove all defined symbols */
     for (i = 0; i < vs->nusym; i++)
         HDfree((VOIDP) vs->usym[i].name);
+    if(vs->usym!=NULL)
+        HDfree(vs->usym);   /* free the actual array */
     vs->nusym = 0;
+    vs->usym=NULL;
 
     Hendaccess(vs->aid);
-#ifdef OLD_WAY
-    w->vs = NULL;   /* detach vs from vsdir */
-    HDfree((VOIDP) vs);
-#endif /* OLD_WAY */
 
     return (SUCCEED);
 }	/* VSdetach */

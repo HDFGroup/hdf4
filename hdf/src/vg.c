@@ -53,33 +53,6 @@ PRIVATE int32 matchnocase
             (char *strx, char *stry);
 #endif /* VDATA_FIELDS_ALL_UPPER */
 
-#ifdef OLD_WAY
-/*------------------------------------------------------------------
-NAME 
-   Vnewref --  utility routine. returns a unique reference number.
-USAGE
-   uint16 vnewref(f)
-   HFILEID f;      IN: file id
-RETURNS
-   On success returns a unique ref (+ve unsigned 16-bit integer) ,
-   returns 0 if error
-DESCRIPTION
-   Utility routine. Undocumented
------------------------------------------------------------------------*/
-uint16 
-vnewref(HFILEID f)
-{
-    uint16      r;
-    CONSTR(FUNC, "vnewref");
-
-    r = (uint16) Hnewref(f);
-    if (r == 0)
-        HERROR(DFE_NOFREEDD);
-
-    return (r);
-}   /* vnewref */
-#endif /* OLD_WAY */
-
 #ifdef VDATA_FIELDS_ALL_UPPER
 /*-----------------------------------------------------------------
 NAME
@@ -774,42 +747,19 @@ int32
 Vfind(HFILEID f, const char *vgname)
 {
     int32       vgid = -1;
-#ifdef OLD_WAY
-    int32       ret_ref;
-    int32       vkey;
-    char        name[512];
-#else
     vginstance_t    * v;
-#endif /* OLD_WAY */
 #ifdef LATER
     CONSTR(FUNC, "Vfind");
 #endif
 
     while (-1L != (vgid = Vgetid(f, vgid)))
       {
-#ifdef OLD_WAY
-	  vkey = Vattach(f, vgid, "r");
-	  if (vkey == FAIL)
-	      return (0);	/* error */
-
-	  Vgetname(vkey, name);
-	  if (!HDstrcmp(vgname, name))
-	    {
-		ret_ref = VQueryref(vkey);
-		Vdetach(vkey);
-		return (ret_ref);	/* found the vgroup */
-	    }	/* else */
-
-	  Vdetach(vkey);
-#else
         if((v=vginstance(f,(uint16)vgid))==NULL)
             return(0);          /* error */
         if (!HDstrcmp(vgname, v->vg->vgname)) 
             return((int32)(v->vg->oref));  /* found the vdata */
-#endif /* OLD_WAY */
       }
     return (0);		/* not found */
-
 }	/* Vfind */
 
 /*------------------------------------------------------------------
@@ -828,37 +778,17 @@ int32
 VSfind(HFILEID f, const char *vsname)
 {
     int32       vsid = -1;
-#ifdef OLD_WAY
-    int32       ret_ref;
-    int32       vkey;
-    char        name[512];
-#else
     vsinstance_t    * v;
-#endif /* OLD_WAY */
 #ifdef LATER
     CONSTR(FUNC, "VSfind");
 #endif
 
     while (-1L != (vsid = VSgetid(f, vsid)))
       {
-#ifdef OLD_WAY
-          vkey = VSattach(f, vsid, "r");
-          if (vkey == FAIL)
-              return (0);   /* error */
-          VSgetname(vkey, name);
-          if (!HDstrcmp(vsname, name))
-            {
-                ret_ref = VSQueryref(vkey);
-                VSdetach(vkey);
-                return (ret_ref);   /* found the vdata */
-            }   /* end if */
-          VSdetach(vkey);
-#else
         if((v=vsinstance(f,(uint16)vsid))==NULL)
             return(0);          /* error */
         if (!HDstrcmp(vsname, v->vs->vsname)) 
             return((int32)(v->vs->oref));  /* found the vdata */
-#endif /* OLD_WAY */
       }
     return (0);     /* not found */
 }   /* VSfind */

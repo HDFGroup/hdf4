@@ -22,6 +22,8 @@ static char RcsId[] = "@(#)$Revision$";
    *    movebytes ()
    *    oldunpackvg ()
    *    oldunpackvs ()
+ map_from_old_types -- Convert an old type (i.e. LOCAL_INT to DFNT_ based types)
+
  */
 
 /*
@@ -31,6 +33,74 @@ static char RcsId[] = "@(#)$Revision$";
  */
 
 #include "vg.h"
+
+/*
+   ** ==================================================================
+   ** PRIVATE data areas and routines
+   ** ==================================================================
+   * */
+
+/*
+   * types used in defining a new field via a call to VSfdefine
+ */
+
+#define LOCAL_NOTYPE        0
+#define LOCAL_CHARTYPE      1   /* 8-bit ascii text stream */
+#define LOCAL_INTTYPE       2   /* 32-bit integers - don't use */
+#define LOCAL_FLOATTYPE     3   /* as opposed to DOUBLE */
+#define LOCAL_LONGTYPE      4   /* 32-bit integers */
+#define LOCAL_BYTETYPE      5   /* 8-bit byte stream - unsupported */
+#define LOCAL_SHORTTYPE     6   /* 16-bit integers - unsupported */
+#define LOCAL_DOUBLETYPE    7   /* as opposed to FLOAT - unsupported */
+
+/*
+   * actual LOCAL MACHINE sizes of the above types
+ */
+
+#define LOCAL_UNTYPEDSIZE  0
+#define LOCAL_CHARSIZE      sizeof(char)
+#define LOCAL_INTSIZE       sizeof(int)
+#define LOCAL_FLOATSIZE     sizeof(float)
+#define LOCAL_LONGSIZE      sizeof(long)
+#define LOCAL_BYTESIZE      sizeof(unsigned char)
+#define LOCAL_SHORTSIZE     sizeof(short)
+#define LOCAL_DOUBLESIZE    sizeof(double)
+
+/*
+   stores sizes of local machine's known types
+ */
+
+PRIVATE int16 local_sizetab[] =
+{
+    LOCAL_UNTYPEDSIZE,
+    LOCAL_CHARSIZE,
+    LOCAL_INTSIZE,
+    LOCAL_FLOATSIZE,
+    LOCAL_LONGSIZE,
+    LOCAL_BYTESIZE,
+    LOCAL_SHORTSIZE,
+    LOCAL_DOUBLESIZE
+};
+
+#define LOCALSIZETAB_SIZE sizeof(local_sizetab)/sizeof(int)
+
+/*
+ ** returns the machine size of a field type
+ ** returns FAIL if error
+ */
+PRIVATE int16
+VSIZEOF(int16 x)
+{
+    if (x < 0 || x > LOCALSIZETAB_SIZE - 1)
+      {
+          return (FAIL);
+      }
+    else
+      {
+          return (local_sizetab[x]);
+      }
+}   /* VSIZEOF */
+
 
 /* $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ */
 /* $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ */
@@ -368,5 +438,38 @@ oldunpackvs(VDATA * vs, uint8 buf[], int32 *size)
         vs->wlist.esize[i] = (int16) (vs->wlist.order[i] * VSIZEOF((int16) vs->wlist.type[i]));
 
 }   /* oldunpackvs */
+
+/* ----------------------- map_from_old_types ------------------------------- */
+/*
+   Convert an old type (i.e. LOCAL_INT) to DFNT_ based types
+ */
+int16
+map_from_old_types(intn type)
+{
+    switch (type)
+      {
+          case LOCAL_CHARTYPE:
+              return DFNT_CHAR;
+
+          case LOCAL_BYTETYPE:
+              return DFNT_INT8;
+
+          case LOCAL_SHORTTYPE:
+          case LOCAL_INTTYPE:
+              return DFNT_INT16;
+
+          case LOCAL_LONGTYPE:
+              return DFNT_INT32;
+
+          case LOCAL_FLOATTYPE:
+              return DFNT_FLOAT32;
+
+          case LOCAL_DOUBLETYPE:
+              return DFNT_FLOAT32;
+
+          default:
+              return (int16) type;
+      }
+}   /* map_from_old_types */
 
 /* ------------------------------------------------------------------ */
