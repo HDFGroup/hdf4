@@ -36,6 +36,7 @@ static char RcsId[] = "@(#)$Revision$";
    10/21/93 - Started coding.
  */
 
+#include <time.h>
 #include "tproto.h"
 #include "tbbt.h"
 

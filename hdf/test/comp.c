@@ -40,6 +40,7 @@
 static char RcsId[] = "@(#)$Revision$";
 #endif
 
+#include <time.h>
 #include "tproto.h"
 #include "hfile.h"
 

@@ -39,22 +39,22 @@ static char RcsId[] = "@(#)$Revision$";
 #define REPS           3   /* number of data sets to write to file */
 
 /* File labels/desriptions to write */
-static uint8 *file_lab[2] = {"File label #1: aaa", "File label #2: bbbbbb"};
-static uint8 *file_desc[2]= {"File Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 13"
+static char8 *file_lab[2] = {"File label #1: aaa", "File label #2: bbbbbb"};
+static char8 *file_desc[2]= {"File Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 13"
                            "\n        14 15 16 17 18 19 20 **END FILE DESCR**\n",
                            "File Descr #2: A B C D E F G H I J K L \n"
                            "               M N O  **END FILE DESCR**\n"};
 
 /* Data labels /descriptions to write */
-static uint8 *labsds[2] = {"Object label #1:  sds", 
+static char8 *labsds[2] = {"Object label #1:  sds", 
                           "Object label #1.1:sds"};
-static uint8 *labris[2] = {"Object label #2:  image", 
+static char8 *labris[2] = {"Object label #2:  image", 
                           "Object label #2.1:image"};
-static uint8 *descsds[2]={"Object Descr #1:   1  2  3  4  5  6  7  8  9 10 11 12 "
+static char8 *descsds[2]={"Object Descr #1:   1  2  3  4  5  6  7  8  9 10 11 12 "
                          "\n       13 14 15 16 17 18 19 20 **END SDS DESCR**\n",
                          "Object Descr #1.1: 1  2  3  4  5  6  7  8  9 10 11 12 "
                          "\n       13 14 15 16 17 18 19 20 **END SDS DESCR**\n"};
-static uint8 *descris[2] = {"Object Descr #2:   A B C D E F G H I J K L \n"
+static char8 *descris[2] = {"Object Descr #2:   A B C D E F G H I J K L \n"
                            "                 M N O **END IMAGE DESCR **\n",
                            "Object Descr #2.1: A B C D E F G H I J K L \n"
                            "                 M N O **END IMAGE DESCR **\n"};
@@ -66,7 +66,7 @@ static VOID
 genimage (int height, int width, float *data, uint8 *image);
 
 static VOID 
-check_lab_desc (char *fname, uint16 tag, uint16 ref,uint8*label[],uint8 *desc[]);
+check_lab_desc (char *fname, uint16 tag, uint16 ref,char8* label[],char8 *desc[]);
 
 static VOID
 check_fann(char *fname);
@@ -84,8 +84,8 @@ check_fann(char *fname)
   int32 ann_handle;
   int32 nflabs, nfdescs, nolabs, nodescs;
   int32 ann_len;
-  uint8 *ann_label = NULL;
-  uint8 *ann_desc = NULL;
+  char8 *ann_label = NULL;
+  char8 *ann_desc = NULL;
   intn  i;
   intn indx;
 
@@ -123,7 +123,7 @@ check_fann(char *fname)
       /* allocate space for label */
       if (ann_label == NULL)
         {
-          if ((ann_label = (uint8 *)HDmalloc((ann_len+1)*sizeof(uint8))) 
+          if ((ann_label = (char8 *)HDmalloc((ann_len+1)*sizeof(char8))) 
               == NULL)
             {
               printf("Error: failed to allocate space to hold file label \n");
@@ -174,7 +174,7 @@ check_fann(char *fname)
       /* allocate space for desc */
       if (ann_desc == NULL)
         {
-          if ((ann_desc = (uint8 *)HDmalloc((ann_len+1)*sizeof(uint8))) 
+          if ((ann_desc = (char8 *)HDmalloc((ann_len+1)*sizeof(char8))) 
               == NULL)
             {
               printf("Error: failed to allocate space to hold file desc  \n");
@@ -267,7 +267,7 @@ genimage(int height, int width, float *data, uint8 *image)
 **
 ****************************************************************/
 static      VOID
-check_lab_desc(char *fname, uint16 tag, uint16 ref, uint8 *label[], uint8 *desc[])
+check_lab_desc(char *fname, uint16 tag, uint16 ref, char8 *label[], char8 *desc[])
 {
   int32 ret;
   int32 file_handle;
@@ -275,8 +275,8 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, uint8 *label[], uint8 *desc[
   intn  num_dlabels, num_ddescs;
   int32  *dlabels, *ddescs;
   int32 ann_len;
-  uint8  *ann_label = NULL;
-  uint8  *ann_desc = NULL;
+  char8  *ann_label = NULL;
+  char8  *ann_desc = NULL;
   int i;
 
   /* open file again */
@@ -364,7 +364,7 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, uint8 *label[], uint8 *desc[
       /* allocate space for label */
       if (ann_label == NULL)
         {
-          if ((ann_label = (uint8 *)HDmalloc((ann_len+1)*sizeof(uint8))) 
+          if ((ann_label = (char8 *)HDmalloc((ann_len+1)*sizeof(char8))) 
               == NULL)
             {
               printf("Error: failed to allocate space to hold data label \n");
@@ -411,7 +411,7 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, uint8 *label[], uint8 *desc[
       /* allocate space for descritpion */
       if (ann_desc == NULL)
         {
-          if ((ann_desc = (uint8 *)HDmalloc((ann_len+1)*sizeof(uint8))) 
+          if ((ann_desc = (char8 *)HDmalloc((ann_len+1)*sizeof(char8))) 
               == NULL)
             {
               printf("Error: failed to allocate space to hold data desc \n");
