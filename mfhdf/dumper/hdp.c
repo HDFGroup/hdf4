@@ -15,6 +15,9 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 /* $Id$ */
+#if defined __MWERKS__
+#include <console.h>
+#endif
 
 #define HDP_MASTER
 #include "hdp.h"
@@ -42,6 +45,10 @@ main(int argc, char *argv[])
     intn        curr_arg;		/* current cmd line argument */
     dump_opt_t  glob_opts;		/* global options for all commands */
     intn        j;				/* local counting variables */
+
+#if defined __MWERKS__
+    argc = ccommand(&argv);
+#endif
 
     HDmemset(&glob_opts, 0, sizeof(dump_opt_t));
 
