@@ -17,11 +17,20 @@ CPPFLAGS=$(INCLUDES) $(DEFINES) @CPPFLAGS@
 lib_LIBRARIES = libmfhdf.a
 
 ## Information for building the "libmfhdf.a" library
+if HDF_BUILD_XDR
+libmfhdf_a_SOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c         \
+                     iarray.c error.c globdef.c mfsd.c nssdc.c putget.c \
+                     putgetg.c sharray.c string.c var.c xdrposix.c      \
+                     ../fortran/jackets.c ../fortran/mfsdf.c            \
+                     ../fortran/mfsdff.f ../xdr/xdr.c ../xdr/xdrfloat.c \
+                     ../xdr/xdrstdio.c ../xdr/xdrarray.c
+else
 libmfhdf_a_SOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c         \
                      iarray.c error.c globdef.c mfsd.c nssdc.c putget.c \
                      putgetg.c sharray.c string.c var.c xdrposix.c      \
                      ../fortran/jackets.c ../fortran/mfsdf.c            \
                      ../fortran/mfsdff.f
+endif
 include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h 
 
 #############################################################################

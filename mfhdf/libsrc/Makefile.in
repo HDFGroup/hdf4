@@ -150,12 +150,19 @@ DEFINES = -DNDEBUG -DHDF
 #############################################################################
 #############################################################################
 lib_LIBRARIES = libmfhdf.a
+@HDF_BUILD_XDR_FALSE@libmfhdf_a_SOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c         \
+@HDF_BUILD_XDR_FALSE@                     iarray.c error.c globdef.c mfsd.c nssdc.c putget.c \
+@HDF_BUILD_XDR_FALSE@                     putgetg.c sharray.c string.c var.c xdrposix.c      \
+@HDF_BUILD_XDR_FALSE@                     ../fortran/jackets.c ../fortran/mfsdf.c            \
+@HDF_BUILD_XDR_FALSE@                     ../fortran/mfsdff.f
 
-libmfhdf_a_SOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c         \
-                     iarray.c error.c globdef.c mfsd.c nssdc.c putget.c \
-                     putgetg.c sharray.c string.c var.c xdrposix.c      \
-                     ../fortran/jackets.c ../fortran/mfsdf.c            \
-                     ../fortran/mfsdff.f
+
+@HDF_BUILD_XDR_TRUE@libmfhdf_a_SOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c         \
+@HDF_BUILD_XDR_TRUE@                     iarray.c error.c globdef.c mfsd.c nssdc.c putget.c \
+@HDF_BUILD_XDR_TRUE@                     putgetg.c sharray.c string.c var.c xdrposix.c      \
+@HDF_BUILD_XDR_TRUE@                     ../fortran/jackets.c ../fortran/mfsdf.c            \
+@HDF_BUILD_XDR_TRUE@                     ../fortran/mfsdff.f ../xdr/xdr.c ../xdr/xdrfloat.c \
+@HDF_BUILD_XDR_TRUE@                     ../xdr/xdrstdio.c ../xdr/xdrarray.c
 
 include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h 
 
@@ -177,13 +184,33 @@ LIBRARIES = $(lib_LIBRARIES)
 
 libmfhdf_a_AR = $(AR) cru
 libmfhdf_a_LIBADD =
-am_libmfhdf_a_OBJECTS = array.$(OBJEXT) attr.$(OBJEXT) cdf.$(OBJEXT) \
-	dim.$(OBJEXT) file.$(OBJEXT) hdfsds.$(OBJEXT) iarray.$(OBJEXT) \
-	error.$(OBJEXT) globdef.$(OBJEXT) mfsd.$(OBJEXT) \
-	nssdc.$(OBJEXT) putget.$(OBJEXT) putgetg.$(OBJEXT) \
-	sharray.$(OBJEXT) string.$(OBJEXT) var.$(OBJEXT) \
-	xdrposix.$(OBJEXT) jackets.$(OBJEXT) mfsdf.$(OBJEXT) \
-	mfsdff.$(OBJEXT)
+am__libmfhdf_a_SOURCES_DIST = array.c attr.c cdf.c dim.c file.c hdfsds.c \
+	iarray.c error.c globdef.c mfsd.c nssdc.c putget.c putgetg.c \
+	sharray.c string.c var.c xdrposix.c ../fortran/jackets.c \
+	../fortran/mfsdf.c ../fortran/mfsdff.f ../xdr/xdr.c \
+	../xdr/xdrfloat.c ../xdr/xdrstdio.c ../xdr/xdrarray.c
+@HDF_BUILD_XDR_TRUE@am_libmfhdf_a_OBJECTS = array.$(OBJEXT) \
+@HDF_BUILD_XDR_TRUE@	attr.$(OBJEXT) cdf.$(OBJEXT) dim.$(OBJEXT) \
+@HDF_BUILD_XDR_TRUE@	file.$(OBJEXT) hdfsds.$(OBJEXT) \
+@HDF_BUILD_XDR_TRUE@	iarray.$(OBJEXT) error.$(OBJEXT) \
+@HDF_BUILD_XDR_TRUE@	globdef.$(OBJEXT) mfsd.$(OBJEXT) \
+@HDF_BUILD_XDR_TRUE@	nssdc.$(OBJEXT) putget.$(OBJEXT) \
+@HDF_BUILD_XDR_TRUE@	putgetg.$(OBJEXT) sharray.$(OBJEXT) \
+@HDF_BUILD_XDR_TRUE@	string.$(OBJEXT) var.$(OBJEXT) \
+@HDF_BUILD_XDR_TRUE@	xdrposix.$(OBJEXT) jackets.$(OBJEXT) \
+@HDF_BUILD_XDR_TRUE@	mfsdf.$(OBJEXT) mfsdff.$(OBJEXT) \
+@HDF_BUILD_XDR_TRUE@	xdr.$(OBJEXT) xdrfloat.$(OBJEXT) \
+@HDF_BUILD_XDR_TRUE@	xdrstdio.$(OBJEXT) xdrarray.$(OBJEXT)
+@HDF_BUILD_XDR_FALSE@am_libmfhdf_a_OBJECTS = array.$(OBJEXT) \
+@HDF_BUILD_XDR_FALSE@	attr.$(OBJEXT) cdf.$(OBJEXT) dim.$(OBJEXT) \
+@HDF_BUILD_XDR_FALSE@	file.$(OBJEXT) hdfsds.$(OBJEXT) \
+@HDF_BUILD_XDR_FALSE@	iarray.$(OBJEXT) error.$(OBJEXT) \
+@HDF_BUILD_XDR_FALSE@	globdef.$(OBJEXT) mfsd.$(OBJEXT) \
+@HDF_BUILD_XDR_FALSE@	nssdc.$(OBJEXT) putget.$(OBJEXT) \
+@HDF_BUILD_XDR_FALSE@	putgetg.$(OBJEXT) sharray.$(OBJEXT) \
+@HDF_BUILD_XDR_FALSE@	string.$(OBJEXT) var.$(OBJEXT) \
+@HDF_BUILD_XDR_FALSE@	xdrposix.$(OBJEXT) jackets.$(OBJEXT) \
+@HDF_BUILD_XDR_FALSE@	mfsdf.$(OBJEXT) mfsdff.$(OBJEXT)
 libmfhdf_a_OBJECTS = $(am_libmfhdf_a_OBJECTS)
 check_PROGRAMS = cdftest$(EXEEXT) hdftest$(EXEEXT)
 am_cdftest_OBJECTS = cdftest.$(OBJEXT)
@@ -208,7 +235,9 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/nssdc.Po ./$(DEPDIR)/putget.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/putgetg.Po ./$(DEPDIR)/sharray.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/string.Po ./$(DEPDIR)/tszip.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/var.Po ./$(DEPDIR)/xdrposix.Po
+@AMDEP_TRUE@	./$(DEPDIR)/var.Po ./$(DEPDIR)/xdr.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/xdrarray.Po ./$(DEPDIR)/xdrfloat.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/xdrposix.Po ./$(DEPDIR)/xdrstdio.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -216,7 +245,7 @@ LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 F77COMPILE = $(F77) $(AM_FFLAGS) $(FFLAGS)
 F77LD = $(F77)
 F77LINK = $(F77LD) $(AM_FFLAGS) $(FFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = $(libmfhdf_a_SOURCES) $(cdftest_SOURCES) \
+DIST_SOURCES = $(am__libmfhdf_a_SOURCES_DIST) $(cdftest_SOURCES) \
 	$(hdftest_SOURCES)
 HEADERS = $(include_HEADERS)
 
@@ -303,7 +332,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/string.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tszip.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/var.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdr.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdrarray.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdrfloat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdrposix.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdrstdio.Po@am__quote@
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
@@ -373,6 +406,94 @@ mfsdf.obj: ../fortran/mfsdf.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/mfsdf.Po' tmpdepfile='$(DEPDIR)/mfsdf.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mfsdf.obj `if test -f '../fortran/mfsdf.c'; then $(CYGPATH_W) '../fortran/mfsdf.c'; else $(CYGPATH_W) '$(srcdir)/../fortran/mfsdf.c'; fi`
+
+xdr.o: ../xdr/xdr.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdr.o -MD -MP -MF "$(DEPDIR)/xdr.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o xdr.o `test -f '../xdr/xdr.c' || echo '$(srcdir)/'`../xdr/xdr.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/xdr.Tpo" "$(DEPDIR)/xdr.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/xdr.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../xdr/xdr.c' object='xdr.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/xdr.Po' tmpdepfile='$(DEPDIR)/xdr.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdr.o `test -f '../xdr/xdr.c' || echo '$(srcdir)/'`../xdr/xdr.c
+
+xdr.obj: ../xdr/xdr.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdr.obj -MD -MP -MF "$(DEPDIR)/xdr.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o xdr.obj `if test -f '../xdr/xdr.c'; then $(CYGPATH_W) '../xdr/xdr.c'; else $(CYGPATH_W) '$(srcdir)/../xdr/xdr.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/xdr.Tpo" "$(DEPDIR)/xdr.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/xdr.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../xdr/xdr.c' object='xdr.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/xdr.Po' tmpdepfile='$(DEPDIR)/xdr.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdr.obj `if test -f '../xdr/xdr.c'; then $(CYGPATH_W) '../xdr/xdr.c'; else $(CYGPATH_W) '$(srcdir)/../xdr/xdr.c'; fi`
+
+xdrfloat.o: ../xdr/xdrfloat.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdrfloat.o -MD -MP -MF "$(DEPDIR)/xdrfloat.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o xdrfloat.o `test -f '../xdr/xdrfloat.c' || echo '$(srcdir)/'`../xdr/xdrfloat.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/xdrfloat.Tpo" "$(DEPDIR)/xdrfloat.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/xdrfloat.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../xdr/xdrfloat.c' object='xdrfloat.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/xdrfloat.Po' tmpdepfile='$(DEPDIR)/xdrfloat.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdrfloat.o `test -f '../xdr/xdrfloat.c' || echo '$(srcdir)/'`../xdr/xdrfloat.c
+
+xdrfloat.obj: ../xdr/xdrfloat.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdrfloat.obj -MD -MP -MF "$(DEPDIR)/xdrfloat.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o xdrfloat.obj `if test -f '../xdr/xdrfloat.c'; then $(CYGPATH_W) '../xdr/xdrfloat.c'; else $(CYGPATH_W) '$(srcdir)/../xdr/xdrfloat.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/xdrfloat.Tpo" "$(DEPDIR)/xdrfloat.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/xdrfloat.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../xdr/xdrfloat.c' object='xdrfloat.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/xdrfloat.Po' tmpdepfile='$(DEPDIR)/xdrfloat.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdrfloat.obj `if test -f '../xdr/xdrfloat.c'; then $(CYGPATH_W) '../xdr/xdrfloat.c'; else $(CYGPATH_W) '$(srcdir)/../xdr/xdrfloat.c'; fi`
+
+xdrstdio.o: ../xdr/xdrstdio.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdrstdio.o -MD -MP -MF "$(DEPDIR)/xdrstdio.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o xdrstdio.o `test -f '../xdr/xdrstdio.c' || echo '$(srcdir)/'`../xdr/xdrstdio.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/xdrstdio.Tpo" "$(DEPDIR)/xdrstdio.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/xdrstdio.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../xdr/xdrstdio.c' object='xdrstdio.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/xdrstdio.Po' tmpdepfile='$(DEPDIR)/xdrstdio.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdrstdio.o `test -f '../xdr/xdrstdio.c' || echo '$(srcdir)/'`../xdr/xdrstdio.c
+
+xdrstdio.obj: ../xdr/xdrstdio.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdrstdio.obj -MD -MP -MF "$(DEPDIR)/xdrstdio.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o xdrstdio.obj `if test -f '../xdr/xdrstdio.c'; then $(CYGPATH_W) '../xdr/xdrstdio.c'; else $(CYGPATH_W) '$(srcdir)/../xdr/xdrstdio.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/xdrstdio.Tpo" "$(DEPDIR)/xdrstdio.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/xdrstdio.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../xdr/xdrstdio.c' object='xdrstdio.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/xdrstdio.Po' tmpdepfile='$(DEPDIR)/xdrstdio.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdrstdio.obj `if test -f '../xdr/xdrstdio.c'; then $(CYGPATH_W) '../xdr/xdrstdio.c'; else $(CYGPATH_W) '$(srcdir)/../xdr/xdrstdio.c'; fi`
+
+xdrarray.o: ../xdr/xdrarray.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdrarray.o -MD -MP -MF "$(DEPDIR)/xdrarray.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o xdrarray.o `test -f '../xdr/xdrarray.c' || echo '$(srcdir)/'`../xdr/xdrarray.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/xdrarray.Tpo" "$(DEPDIR)/xdrarray.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/xdrarray.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../xdr/xdrarray.c' object='xdrarray.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/xdrarray.Po' tmpdepfile='$(DEPDIR)/xdrarray.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdrarray.o `test -f '../xdr/xdrarray.c' || echo '$(srcdir)/'`../xdr/xdrarray.c
+
+xdrarray.obj: ../xdr/xdrarray.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdrarray.obj -MD -MP -MF "$(DEPDIR)/xdrarray.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o xdrarray.obj `if test -f '../xdr/xdrarray.c'; then $(CYGPATH_W) '../xdr/xdrarray.c'; else $(CYGPATH_W) '$(srcdir)/../xdr/xdrarray.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/xdrarray.Tpo" "$(DEPDIR)/xdrarray.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/xdrarray.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../xdr/xdrarray.c' object='xdrarray.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/xdrarray.Po' tmpdepfile='$(DEPDIR)/xdrarray.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdrarray.obj `if test -f '../xdr/xdrarray.c'; then $(CYGPATH_W) '../xdr/xdrarray.c'; else $(CYGPATH_W) '$(srcdir)/../xdr/xdrarray.c'; fi`
 
 .f.o:
 	$(F77COMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
