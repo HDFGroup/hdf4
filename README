@@ -1,5 +1,5 @@
-               README for HDF/netCDF 4.1 Distribution
-               --------------------------------------
+               README for HDF 4.1 Distribution
+               -------------------------------
 
 Obtaining the latest version
 ----------------------------
@@ -63,15 +63,14 @@ System Requirements
      configuration and installation.
 
 Configuring/Testing/Installing 
--------------------------------------------------------------
+------------------------------
  See the INSTALL file for instructions on configuring,
  testing and installing for Unix and non-UNIX systems.
 
 DOCUMENTATION/FAQ/HELP
 ----------------------
- The HDF 4.1r1 documentation can be found on the NCSA ftp server
- in the directory /HDF/Documentation/HDF4.1r1.  The
- HDF home page is at:
+ The HDF documentation can be found on the NCSA ftp server
+ in the directory /HDF/Documentation.  The HDF home page is at:
 
       http://hdf.ncsa.uiuc.edu/
 
