@@ -16,7 +16,14 @@ static char sccsid[] = "@(#)xdr_stdio.c 1.16 87/08/11 Copyr 1984 Sun Micro";
 #include <stdio.h>
 #include "types.h"
 #ifndef MSDOS
+#ifndef macintosh
 #include <netinet/in.h>		/* for htonl() */
+#else /* Macintosh equivalent */
+#define ntohl(x) x
+#define ntohs(x) x
+#define htonl(x) x
+#define htons(x) x
+#endif /* Macintosh */
 #else
 extern long ntohl(long i_in);
 extern long htonl(long i_in);

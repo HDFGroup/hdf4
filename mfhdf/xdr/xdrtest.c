@@ -11,8 +11,12 @@ static char rcsid[] = "$Id$" ;
  *  'xdr_vector' is not used by the netCDF, it is used here for convenience.
  */
 #include <stdio.h>
+#ifdef macintosh
+#include "types.h"
+#else /* !Macintosh */
 #include <sys/types.h>		/* for <netinet/in.h> on some systems */
-#ifndef MSDOS
+#endif /* !Macintosh */
+#if !(defined MSDOS | defined macintosh)
 #   include <netinet/in.h>	/* for htonl() */
 #endif
 
