@@ -6900,7 +6900,7 @@ cat >>conftest.$ac_ext <<_ACEOF
 int
 main ()
 {
-fabs(-37.927)
+sqrt(37.927)
   ;
   return 0;
 }
