@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.5  1992/04/27 18:41:22  sxu
+# Revision 1.6  1992/05/04 14:48:23  sxu
+# added tdfsd_nmms and tdfsd_nnt
+#
+# Revision 1.5  1992/04/27  18:41:22  sxu
 # No change
 #
 # Revision 1.4  1992/04/27  17:05:57  sxu
@@ -131,12 +134,13 @@ RM=/bin/rm
 RMFLAGS=-f
 
 CTESTS= tdfr8 tdf24 tdfsd_mms tdfsd_nmms tdfsd_nnt tdfsd_nt tdfan \
-        tdfanfile tdfp tdfstubs 
+        tdfanfile tdfp tdfstubs
+
 CHDRS = df.h dfi.h dfsd.h vg.h df.h dfi.h dfstubs.h
 CTSRCS= tdfr8.c tdf24.c tdfsd_mms.c tdfsd_nmms.c tdfsd_nnt.c \
         tdfsd_nt.c tdfan.c tdfanfile.c tdfp.c tdfstubs.c 
 CTOBJS= tdfr8.o tdf24.o tdfsd_mms.o tdfsd_nt.o tdfan.o tdfanfile.o \
-        tdfp.o tdfstubs.o 
+        tdfp.o tdfstubs.o tdfsd_nmms.o tdfsd_nnt.o	
 
 HTESTS= thfile thfile1 terr thblocks thextelt 
 HHDRS = hfile.h hdf.h hdfi.h herr.h hproto.h 
