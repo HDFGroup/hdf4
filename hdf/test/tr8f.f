@@ -34,7 +34,8 @@ C
 
       integer x, y, ret, num_images, number_failed
       integer d1, d2, ispal, FALSE, TRUE
-      integer ref1, ref2, ref3
+      integer*2 ref1, ref2
+      integer  ref3
 
       DFTAG_RLE = 11
       DFTAG_IMCOMP = 12
