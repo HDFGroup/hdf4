@@ -217,7 +217,6 @@ drig(dump_info_t *dumprig_opts,
     int         ncomps;
     int         il;
     int         rig;
-    intn        count;
     file_type_t ft;
     intn        ret_value = SUCCEED;
 

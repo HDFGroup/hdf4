@@ -456,6 +456,7 @@ intn print_annots_in_file( int32 an_id, char* fname, int32 n_annotations, ann_ty
 */
 intn print_all_file_descs(const char *fname, list_info_t* list_opts, /* for print_SDattrs */ int32 an_id);
 intn print_data_labels( const char *fname, int32 an_id, uint16 tag, uint16 ref);
+intn print_data_descs( const char *fname, int32 an_id, uint16 tag, uint16 ref);
 
 /* hdp_sds.c */
 extern intn do_dumpsds(intn curr_arg, intn argc, char *argv[], intn help);
@@ -467,11 +468,11 @@ extern intn do_dumprig(intn curr_arg, intn argc, char *argv[], intn help);
 extern intn do_dumpvg(intn curr_arg, intn argc, char *argv[], intn help);
 extern intn print_data_annots(int32 file_id, char *file_name, int32 tag, int32 ref);
 extern intn print_file_annotations( int32 file_id, char *file_name );
+void print_fields( char *fields, char *field_title, FILE *fp );
 
 /* hdp_vd.c */
 extern intn do_dumpvd(intn curr_arg, intn argc, char *argv[], intn help);
-extern intn parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn argc,
-              char *argv[], char *flds_chosen[MAXCHOICES], int *dumpallfields);
+extern intn parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn argc, char *argv[], char *flds_chosen[MAXCHOICES], int *dumpallfields);
 
 /* hdp_gr.c */
 extern intn do_dumpgr(intn curr_arg, intn argc, char *argv[], intn help);

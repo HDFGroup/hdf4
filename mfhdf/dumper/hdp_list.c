@@ -677,16 +677,10 @@ print_all_file_descs(const char *fname,
     int32       n_file_desc;
     int32       n_data_label;
     int32       n_data_desc;
-    file_type_t ft = DASCII;
     /* SDS */
     int32       sd_fid = FAIL;
     int32       ndsets, nattrs;
-    char        name[MAXNAMELEN];
-    int32       attr_nt;
-    int32       attr_count;
-    int32       attr_index;
     char       *attr_nt_desc = NULL;
-    int32       attr_buf_size;
     VOIDP       attr_buf = NULL;
     intn        ret_value = SUCCEED;
 
@@ -755,8 +749,7 @@ print_all_file_descs(const char *fname,
 	  {
 	     /* BMR: installed input file name to opts for dumpfull 
                 in print_SDattrs to use - 6/16/2000 */
-	     /*remove when done strcpy( list_opts->ifile_name, fname );
-               print_SDattrs( sd_fid, stdout, nattrs, list_opts );
+             print_SDattrs( sd_fid, stdout, nattrs, DASCII, FALSE );
                /* temporary use stdout until fixing hdp_list to print
                   to a FILE *fp */
 	  }
@@ -806,15 +799,6 @@ print_file_descs(const char *f_name,
     int32       n_file_desc;
     int32       n_data_label;
     int32       n_data_desc;
-    file_type_t ft = DASCII;
-    /* SDS */
-    int32       sd_fid = FAIL;
-    int32       ndsets, nattrs;
-    char        name[MAXNAMELEN];
-    int32       attr_nt;
-    int32       attr_count;
-    int32       attr_index;
-    int32       attr_buf_size;
     intn        ret_value = SUCCEED;
 
     /* find out how many file labels/descs and data labels/descs in file */

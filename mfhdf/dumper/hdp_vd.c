@@ -50,8 +50,8 @@ parse_dumpvd_opts(dump_info_t *dumpvd_opts,
                   char *flds_chosen[MAXCHOICES],
                   int  *dumpallfields)
 {
-    int32       i, lastItem, numItems;
-    char       *tempPtr, *ptr;
+   int32       i, lastItem;
+   char       *tempPtr, *ptr;
 
    /* traverse the command and process each option */
 #if defined(WIN386) || defined(DOS386)
@@ -240,26 +240,26 @@ VSstr_index(int32 file_id,
       vdata_id = VSattach(file_id, *find_ref, "r");
       if (FAIL == vdata_id)
 	 ERROR_GOTO_2( "in %s: VSattach failed for vdata with ref#=%d",
-		"VSstr_index", *find_ref );
+		"VSstr_index", (int)*find_ref );
 
       /* if the string searched is a vdata's name */
       if (is_name)
       {
          if (FAIL == VSgetname(vdata_id, vdata_name))
 	    ERROR_GOTO_2( "in %s: VSgetname failed for vdata with ref#=%d",
-		"VSstr_index", *find_ref );
+		"VSstr_index", (int)*find_ref );
       }
       /* or the string searched is a vdata's class */
       else
       {
          if (FAIL == VSgetclass(vdata_id, vdata_name))
 	 ERROR_GOTO_2( "in %s: VSgetclass failed for vdata with ref#=%d",
-		"VSstr_index", *find_ref );
+		"VSstr_index", (int)*find_ref );
       }
 
       if (FAIL == VSdetach(vdata_id))
 	 ERROR_GOTO_2( "in %s: VSdetach failed for vdata with ref#=%d",
-		"VSstr_index", *find_ref );
+		"VSstr_index", (int)*find_ref );
 
       /* if the vd's name or vd's class is the given string, return the
          index of the vdata found */
@@ -301,7 +301,6 @@ choose_vd(dump_info_t * dumpvd_opts,
           int *index_error)
 {
    int32  i,
-          k = 0,
           index,
           find_ref,
           number,
@@ -343,7 +342,7 @@ choose_vd(dump_info_t * dumpvd_opts,
          if (index == FAIL)
          {
             printf("Vdata with reference number %d: not found\n", 
-                                   dumpvd_opts->by_ref.num_list[i]);
+                                   (int)dumpvd_opts->by_ref.num_list[i]);
             *index_error = TRUE; /* index error */
          }
          else
@@ -423,7 +422,7 @@ done:
     return ret_value;
 }	/* choose_vd */
 
-intn printHeader( 
+void printHeader( 
 		FILE* fp,
 		char* fldstring,
 		char* fields,
@@ -552,13 +551,8 @@ intn getFieldIndices(
          }
       }		/* for (i...) */
    }	/* for (fld_name_idx...) */
-   ret_value = flds_match;
 
-done:
-    if (ret_value == FAIL)
-      { /* Failure cleanup */
-      }
-    /* Normal cleanup */
+/* free dynamic space if on MAC */
 #if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
    if(tempflds != NULL)
    {
@@ -566,6 +560,9 @@ done:
       tempflds = NULL;
    } 
 #endif /* macintosh */
+
+   /* return the flag indicating whether any given fields exist */
+   ret_value = flds_match;
 
    return ret_value;
 } /* end of getFieldIndices */
@@ -639,8 +636,8 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
 	i++)
    {
       intn  data_only;	    /* indicates whether to print data only */
-      intn  flds_match = 0;  /* indicates whether any requested fields exist
-		/* or if no field requested, set to 1 means dump all fields */
+      intn  flds_match = 0;  /* indicates whether any requested fields exist,
+		or if no field requested, set to 1 means dump all fields */
       char sep[2];	    /* the character that is used to separate 2 fields */
 
       /* Only dump the info of the chosen VDs or all of the VDs if none
@@ -759,7 +756,7 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
 
       if (FAIL == VSdetach(vd_id))
          fprintf(stderr,"in %s: VSdetach failed on vdata with ref#=%d", 
-                        (int) vdata_ref );
+                        "dumpvd_ascii", (int) vdata_ref );
       /* just simply goes to the next vdata */
 
       vd_id = FAIL; /* reset */
@@ -798,18 +795,14 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
               int dumpallfields)
 {
    int32       flds_indices[MAXCHOICES];
-   int32       i, j, k, m, vd_chosen_idx;
+   int32       i, vd_chosen_idx;
    int32       nvf;
    int32       interlace;
    int32       vsize;
-   int32       lastItem;
    int32       vdata_ref = -1;
    int32       vdata_tag;
    char        vdclass[VSNAMELENMAX];
    char        vdname[VSNAMELENMAX];
-   char       *tempPtr = NULL;
-   char       *ptr = NULL;
-   char        fldstring[MAXNAMELEN];
    FILE       *fp = NULL;
    intn        dumpall = 0;
    file_type_t ft = DBINARY;
@@ -875,8 +868,8 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
       /* BMR - 7/1/98 realized while fixing bug #236.
          Skip binary printing if the vdata is empty */
       if (fields[0] == '\0' || nvf == 0 )
-	 fprintf(stderr,"in %s: Vdata with ref#=%d) is empty.\n",
-                        "dumpvd_binary", (int) vdata_ref,file_name);
+	 fprintf(stderr,"in %s: Vdata with ref#=%d is empty.\n",
+                        "dumpvd_binary", (int) vdata_ref );
 
       else /* vdata is not empty */
       {
@@ -917,19 +910,13 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
                       
       if (FAIL == VSdetach(vd_id))
          fprintf(stderr,"in %s: VSdetach failed on vdata with ref#=%d", 
-                        "dumpvd_binary", (int) vdata_ref, vd_id );
+                        "dumpvd_binary", (int) vdata_ref );
 
       vd_id = FAIL; /* reset */
 
    }	/* for each vdata */
 
-done:
-    if (ret_value == FAIL)
-      { /* Failure cleanup */
-          if (vd_id != FAIL)
-              VSdetach(vd_id);
-      }
-    /* Normal cleanup */
+   /* Normal cleanup */
 #if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
    if(fields != NULL)
    {
@@ -938,7 +925,7 @@ done:
     } 
 #endif /* macintosh */
 
-    return ret_value;
+   return( ret_value );
 } /* dumpvd_binary */
 
 /* closeVD combines the processes of Vend, Hclose, freeing the list
@@ -980,7 +967,6 @@ dvd(dump_info_t * dumpvd_opts,
     char *flds_chosen[MAXCHOICES], 
     int dumpallfields)
 {
-    int32       k;
     int32       file_id = FAIL;
     char        file_name[MAXFNLEN];
     int32      *vd_chosen = NULL;
