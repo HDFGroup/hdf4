@@ -1173,10 +1173,8 @@ VSdetach(int32 vkey /* IN: vdata key? */)
                             break;
                         case -1: /* error */
                             HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                            break;
                         default: /* should never get here */
                             HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                            break;
                         }
                   }
 

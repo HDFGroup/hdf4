@@ -5371,7 +5371,6 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
       case (HDF_CHUNK | HDF_NBIT): /* don't support NBIT for GRs */
           ret_value = FAIL;
           goto done;
-          break;
       default:
           ret_value = FAIL;
           goto done;

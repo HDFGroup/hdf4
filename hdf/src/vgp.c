@@ -1409,10 +1409,8 @@ Vdetach(int32 vkey /* IN: vgroup key */)
                       break;
                   case -1: /* error */
                       HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                      break;
                   default: /* should never get here */
                       HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                      break;
                   } 
             }
 
