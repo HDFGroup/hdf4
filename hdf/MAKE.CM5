@@ -149,10 +149,6 @@ testnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
           SUBDIRS="src test" _sub message 
 
-hdp:
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="src dumper" _sub
-
 #install:      $(INSTALL_DIRS)
 #	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
 #          SUBDIRS="src util test" _sub
@@ -167,7 +163,7 @@ saber:
 
 clean:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
-          SUBDIRS="src util test dumper" _sub
+          SUBDIRS="src util test" _sub
 	$(RM) $(RMFLAGS) core *.log
 
 distclean:
@@ -186,13 +182,6 @@ message:
 	@echo ""
 	@echo "***********************************************************"
 	@echo " HDF 4.0 library successfully created."
-	@echo ""
-	@echo "If you have any old vset files (v 1.0) you must use vcompat"
-	@echo "to make them compatible with Vset 2.0 applications"
-	@echo ""
-	@echo "User programs can be created as follows:"
-	@echo ""
-	@echo "   cc -D${MACHINE} program.c libdf.a -o program"
 	@echo ""
 	@echo "***********************************************************"
 	@echo ""
