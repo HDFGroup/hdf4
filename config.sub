@@ -214,7 +214,7 @@ case $basic_machine in
 		basic_machine=c90-cray
 		os=-unicos
 		;;
-	cray-t3d | t3d)
+	cray-t3d | t3d | t3d-cray)
 		basic_machine=t3d-cray
 		os=-craympp
 		;;
