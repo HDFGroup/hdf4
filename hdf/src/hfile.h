@@ -72,9 +72,15 @@ typedef FILE *hdf_file_t;
                                 fopen((p), "r", "mbc=64"))
 #   define HI_CREATE(p)        (fopen((p), "w+", "mbc=64"))
 #else  /*  !VMS  */
+#if defined SUN && define (__GNUC__)
+#   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
+                                fopen((p), "r+") : fopen((p), "r"))
+#   define HI_CREATE(p)        (fopen((p), "w+"))
+#else /* !SUN w/ GNU CC */
 #   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
                                 fopen((p), "rb+") : fopen((p), "rb"))
 #   define HI_CREATE(p)        (fopen((p), "wb+"))
+#endif /* !SUN w/ GNU CC */
 #endif /* VMS */
 #   define HI_READ(f, b, n)    (((n) == fread((b), 1, (size_t)(n), (f))) ? \
                                 SUCCEED : FAIL)
