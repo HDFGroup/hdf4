@@ -4,12 +4,17 @@
  *   /hdf/src/master/mfhdf/ncdump/ncdump.h,v 1.1 1993/04/21 21:51:19 chouck Exp
  *********************************************************************/
 
+
+
+
+#ifndef HDIFF_H__
+#define HDIFF_H__
+
+
 #include "hdf.h"
 #include "mfhdf.h"
 #include "dumplib.h"
 #include "hdiff_table.h"
-
-
 
 #define  Printf  (void) printf
 
@@ -103,8 +108,8 @@ int  array_diff(void *buf1, void *buf2, int32 tot_cnt, int32 type, float err_lim
 														 	void *fill1, void *fill2);
 
 
-int match( char *fname1, int nobjects1, table_t *list1,
-           char *fname2, int nobjects2, table_t *list2, 
+int match( char *fname1, int nobjects1, dtable_t *list1,
+           char *fname2, int nobjects2, dtable_t *list2, 
            struct fspec fspec );
 
 
@@ -120,23 +125,8 @@ int diff( char *fname1,
           int32 ref2,
           struct fspec fspec );
 
-int diff_sds(char  *fname1, 
-             char  *fname2, 
-             int32 ref1,
-             int32 ref2,
-             struct fspec fspec);
+void print_dims( int r, int32 *d );
 
-int diff_vs( int32 file1_id,
-             int32 file2_id,
-             int32 ref1,              
-             int32 ref2,
-             struct fspec fspec);
-
-int diff_gr( int32 file1_id,
-             int32 file2_id,
-             int32 ref1,              
-             int32 ref2,
-             struct fspec specp);
 
 
 
@@ -144,4 +134,6 @@ int diff_gr( int32 file1_id,
 }
 #endif
 
+
+#endif
 

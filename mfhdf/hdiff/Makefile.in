@@ -151,9 +151,9 @@ DEFINES = -DNDEBUG -DHDF
 #############################################################################
 bin_PROGRAMS = hdiff
 
-hdiff_SOURCES = dumplib.c hdiff.c hdiff_array.c hdiff_list.c hdiff_main.c   \
-                hdiff_mattbl.c hdiff_gattr.c hdiff_misc.c hdiff_sdattr.c    \
-                hdiff_table.c
+hdiff_SOURCES = dumplib.c hdiff.c hdiff_array.c hdiff_gr.c hdiff_list.c     \
+                hdiff_main.c hdiff_mattbl.c hdiff_gattr.c hdiff_misc.c      \
+                hdiff_sds.c hdiff_table.c hdiff_vs.c
 
 hdiff_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 hdiff_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
@@ -175,10 +175,10 @@ check_PROGRAMS = hdifftst$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
 am_hdiff_OBJECTS = dumplib.$(OBJEXT) hdiff.$(OBJEXT) \
-	hdiff_array.$(OBJEXT) hdiff_list.$(OBJEXT) hdiff_main.$(OBJEXT) \
-	hdiff_mattbl.$(OBJEXT) hdiff_gattr.$(OBJEXT) \
-	hdiff_misc.$(OBJEXT) hdiff_sdattr.$(OBJEXT) \
-	hdiff_table.$(OBJEXT)
+	hdiff_array.$(OBJEXT) hdiff_gr.$(OBJEXT) hdiff_list.$(OBJEXT) \
+	hdiff_main.$(OBJEXT) hdiff_mattbl.$(OBJEXT) \
+	hdiff_gattr.$(OBJEXT) hdiff_misc.$(OBJEXT) hdiff_sds.$(OBJEXT) \
+	hdiff_table.$(OBJEXT) hdiff_vs.$(OBJEXT)
 hdiff_OBJECTS = $(am_hdiff_OBJECTS)
 hdiff_DEPENDENCIES = ../libsrc/libmfhdf.a \
 	$(top_builddir)/hdf/src/libdf.a
@@ -194,12 +194,12 @@ depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/dumplib.Po ./$(DEPDIR)/hdiff.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/hdiff_array.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hdiff_gattr.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hdiff_gattr.Po ./$(DEPDIR)/hdiff_gr.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/hdiff_list.Po ./$(DEPDIR)/hdiff_main.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/hdiff_mattbl.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hdiff_misc.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hdiff_sdattr.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hdiff_table.Po ./$(DEPDIR)/hdifftst.Po
+@AMDEP_TRUE@	./$(DEPDIR)/hdiff_misc.Po ./$(DEPDIR)/hdiff_sds.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hdiff_table.Po ./$(DEPDIR)/hdiff_vs.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hdifftst.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -261,12 +261,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_array.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_gattr.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_gr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_list.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_mattbl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_misc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_sdattr.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_sds.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_table.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_vs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdifftst.Po@am__quote@
 
 distclean-depend:

@@ -11,8 +11,8 @@
  ****************************************************************************/
 
 
-#ifndef HDF_ZIP_TABLE_H__
-#define HDF_ZIP_TABLE_H__
+#ifndef HDIFF_TABLE_H__
+#define HDIFF_TABLE_H__
 
 
 #include "hdf.h"
@@ -28,7 +28,7 @@ extern "C" {
 
 /*struct to store the tag/ref and path of an object 
  the pair tag/ref uniquely identifies an HDF object */
-typedef struct obj_info_t {
+typedef struct dobj_info_t {
  int   tag;
  int   ref;
  char  obj_name[MAX_NC_NAME];
@@ -38,23 +38,23 @@ typedef struct obj_info_t {
    object exists in file = 1
    does not exist        = 0
  */
-} obj_info_t;
+} dobj_info_t;
 
 /*struct that stores all objects */
-typedef struct table_t {
+typedef struct dtable_t {
  int        size;
  int        nobjs;
- obj_info_t *objs;
-} table_t;
+ dobj_info_t *objs;
+} dtable_t;
 
 
 /* table methods */
-void  dtable_init(table_t **table);
-void  dtable_free(table_t *table);
-int   dtable_search(table_t *table, int tag, int ref );
-void  dtable_add(table_t *table, int tag, int ref, char* obj_name);
-char* dtable_check(table_t *table, char*obj_name);
-void  dtable_print(table_t *table);
+void  dtable_init(dtable_t **table);
+void  dtable_free(dtable_t *table);
+int   dtable_search(dtable_t *table, int tag, int ref );
+void  dtable_add(dtable_t *table, int tag, int ref, char* obj_name);
+char* dtable_check(dtable_t *table, char*obj_name);
+void  dtable_print(dtable_t *table);
 
 
 
@@ -63,4 +63,4 @@ void  dtable_print(table_t *table);
 #endif
 
 
-#endif  /* HDF_ZIP_TABLE_H__ */
+#endif  /* HDIFF_TABLE_H__ */

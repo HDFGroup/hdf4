@@ -17,9 +17,9 @@ CPPFLAGS=@CPPFLAGS@ $(INCLUDES) $(DEFINES)
 bin_PROGRAMS = hdiff
 
 ## Information for building the "hdiff" program
-hdiff_SOURCES = dumplib.c hdiff.c hdiff_array.c hdiff_list.c hdiff_main.c   \
-                hdiff_mattbl.c hdiff_gattr.c hdiff_misc.c hdiff_sdattr.c    \
-                hdiff_table.c
+hdiff_SOURCES = dumplib.c hdiff.c hdiff_array.c hdiff_gr.c hdiff_list.c     \
+                hdiff_main.c hdiff_mattbl.c hdiff_gattr.c hdiff_misc.c      \
+                hdiff_sds.c hdiff_table.c hdiff_vs.c
 hdiff_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 hdiff_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
