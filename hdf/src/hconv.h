@@ -149,11 +149,11 @@
 #       define UI8_IN     DFKnb1b    /* Big-Endian IEEE support */
 #       define UI8_OUT    DFKnb1b
 #       define SI16_IN    DFKui2s
-#       define SI16_OUT   DFKuo2i
+#       define SI16_OUT   DFKuo2s
 #       define UI16_IN    DFKui2i
 #       define UI16_OUT   DFKuo2i
 #       define SI32_IN    DFKui4s
-#       define SI32_OUT   DFKuo4i
+#       define SI32_OUT   DFKuo4s
 #       define UI32_IN    DFKui4i
 #       define UI32_OUT   DFKuo4i
 #       define F32_IN     DFKui4f
@@ -164,11 +164,11 @@
 #       define LUI8_IN    DFKnb1b    /* Little-endian IEEE support */
 #       define LUI8_OUT   DFKnb1b
 #       define LSI16_IN   DFKlui2s
-#       define LSI16_OUT  DFKluo2i
+#       define LSI16_OUT  DFKluo2s
 #       define LUI16_IN   DFKlui2i
 #       define LUI16_OUT  DFKluo2i
 #       define LSI32_IN   DFKlui4s
-#       define LSI32_OUT  DFKluo4i
+#       define LSI32_OUT  DFKluo4s
 #       define LUI32_IN   DFKlui4i
 #       define LUI32_OUT  DFKluo4i
 #       define LF32_IN    DFKlui4f
