@@ -36,8 +36,10 @@ $    define/nolog  sys$clib sys$library:vaxcrtl
 $    ccopt = "/define=VMS/include='hdfinc"
 $ endif
 $ cc 'ccopt  'utils
-$ link/exe=hdfed he_main,he_cntrl,he_disp,he_file,'hdflib, -
-   sys$clib/lib, helink.opt/option
+$! link/exe=hdfed he_main,he_cntrl,he_disp,he_file,'hdflib, -
+ !  sys$clib/lib, helink.opt/option
+$ link/exe=hdfed he_main,he_cntrl,he_disp,he_file,helink.opt/option, 'hdflib, -
+   sys$clib/lib
 $ link hdfls,     'hdflib, sys$clib/lib
 $! link hdfrseq,   'hdflib, sys$clib/lib
 $ link r8tohdf,   'hdflib, sys$clib/lib
