@@ -19,7 +19,6 @@ FILE
      vg.c
      HDF vdata routines and some vgroup routines
 EXPORTED ROUTINES
-     vnewref        -- returns a unique reference number
      VSelts         -- number of elements in a vdata
      VSgetinterlace -- returns the interlace type of the vdata
      VSsetinterlace -- sets the vdata's interlace to full or none
@@ -36,8 +35,11 @@ EXPORTED ROUTINES
      Vlone          -- returns an array of refs of all lone vgroups in the file
      Vfind          -- looks in the file for a vgroup with a given name 
      VSfind         -- looks in the file for a vdata with a given name
+     Vfindclass     -- looks in the file and returns the ref of 
+                       the vgroup with the specified class
+     VSfindclass    -- looks in the file and returns the ref of the vdata 
+                       with specified class
      Vsetzap        -- maintaind for back compatibility
-     VSgetclass     -- gets the vdata's class name
 PRIVATE FUNCTIONS
      matchnocase    -- compares to strings, ignoring case
 
@@ -57,27 +59,32 @@ PRIVATE int32 matchnocase
 /*-----------------------------------------------------------------
 NAME
    matchnocase -  (PRIVATE) compares 2 strings, ignoring case 
-USAGE
-   int32 matchnocase(strx, stry)
-   char *strx, *stry;   IN: strings to be compared.
-RETURNS
-   TRUE if match, else FALSE
+
 DESCRIPTION
    Private routine. 
+
+RETURNS
+   if strings match return TRUE, 
+   else FALSE
 --------------------------------------------------------------------*/
 PRIVATE int32 
-matchnocase(char *strx, char *stry)
+matchnocase(char *strx, /* IN: first string to be compared */
+            char *stry  /* IN: second string to be compared */)
 {
-    int32       i, nx, ny;
+    int32  i;
+    int32  nx, ny; /* length of strings */
 
     nx = HDstrlen(strx);
     ny = HDstrlen(stry);
+
     if (nx != ny)
         return (FALSE);     /* different lengths */
 
     for (i = 0; i < nx; i++, strx++, stry++)
+      {
         if (toupper(*strx) != toupper(*stry))
-            return (FALSE);
+            return (FALSE); /* not identical */
+      }
 
     return (TRUE);
 }   /* matchnocase */
@@ -86,37 +93,40 @@ matchnocase(char *strx, char *stry)
 /* ------------------------------------------------------------------
 NAME
    VSelts -- get number of elements in a vdata
-USAGE
-   int32 VSelts(vkey)
-   int32 vkey;      IN: vdata key
+
+DESCRIPTION
+   Gets the number of elements in the specified vdata
+
 RETURNS
    On success returns the number of elements in the VDATA vkey; 
    returns FAIL  on error.
-DESCRIPTION
 --------------------------------------------------------------------- */
 int32 
-VSelts(int32 vkey)
+VSelts(int32 vkey /* IN: vdata key */)
 {
-    vsinstance_t *w;
-    VDATA      *vs;
-    int32      ret_value = SUCCEED;
+    vsinstance_t *w = NULL;
+    VDATA        *vs = NULL;
+    int32        ret_value = SUCCEED;
     CONSTR(FUNC, "VSelts");
 
 #ifdef HAVE_PABLO
-  TRACE_ON(VS_mask, ID_VSelts);
+    TRACE_ON(VS_mask, ID_VSelts);
 #endif /* HAVE_PABLO */
 
-    if (HAatom_group(vkey)!=VSIDGROUP)
+    /* make sure vdata key is part of vdata group */
+    if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* locate vg's index in vgtab */
+    /* get vdata instance */
     if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
+    /* get vdata itself and check it */
     vs = w->vs;
     if ((vs == NULL) || (vs->otag != DFTAG_VH))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
+    /* return number of elements in vdata */
     ret_value = (vs->nvertices);
 
 done:
@@ -136,37 +146,40 @@ done:
 /* ------------------------------------------------------------------
 NAME
    VSgetinterlace -- gets interlace of the vdata vkey.
-USAGE
-   int32 VSgetinterlace(vkey)
-   int32 vkey;     IN: vdata key
-RETURNS
-   On success returns the interlace (in the file) of the vdata vkey.
-   returns FAIL on error.
+
 DESCRIPTION
+   Gets the interlace scheme for the specified vdata.
+
+RETURNS
+   On success returns the interlace scheme used in the fil) of the 
+   specified vdata vkey.   returns FAIL on error.
 ----------------------------------------------------------------------- */
 int32 
-VSgetinterlace(int32 vkey)
+VSgetinterlace(int32 vkey /* IN: vdata key */)
 {
-    vsinstance_t *w;
-    VDATA      *vs;
-    int32      ret_value = SUCCEED;
+    vsinstance_t *w = NULL;
+    VDATA        *vs = NULL;
+    int32        ret_value = SUCCEED;
     CONSTR(FUNC, "VSgetinterlace");
 
 #ifdef HAVE_PABLO
-  TRACE_ON(VS_mask, ID_VSgetinterlace);
+    TRACE_ON(VS_mask, ID_VSgetinterlace);
 #endif /* HAVE_PABLO */
 
-    if (HAatom_group(vkey)!=VSIDGROUP)
+    /* check key is valid vdata */
+    if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* locate vg's index in vgtab */
+    /* get vdata instance */
     if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
+    /* get vdata itself and check it */
     vs = w->vs;
     if (vs == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
+    /* return interlace of vdata */
     ret_value = ((int32) (vs->interlace));
 
 done:
@@ -186,44 +199,50 @@ done:
 /*------------------------------------------------------------------
 NAME
    VSsetinterlace --  sets the vdata's interlace to full or none.
-USAGE
-   int32 VSsetinterlace(vkey, interlace)
-   int32 vkey;       IN: vdata key
-   int32 interlace;  IN: interlace for storing data in an HDF file.
+
+DESCRIPTION
+   Sets the interlace scheme for the vdata to one of
+   FULL_INTERLACE or NO_INTERLACE.
+
 RETURNS
    SUCCEED/FAIL
-DESCRIPTION
-   The interlace may be one of FULL_INTERLACE or NO_INTERLACE.
 --------------------------------------------------------------------*/
 intn 
-VSsetinterlace(int32 vkey, int32 interlace)
+VSsetinterlace(int32 vkey,     /* IN: vdata key */
+               int32 interlace /* IN: interlace for storing records */ )
 {
-    vsinstance_t *w;
-    VDATA      *vs;
-    intn       ret_value = SUCCEED;
+    vsinstance_t *w = NULL;
+    VDATA        *vs = NULL;
+    intn         ret_value = SUCCEED;
     CONSTR(FUNC, "VSsetinterlace");
 
 #ifdef HAVE_PABLO
   TRACE_ON(VS_mask, ID_VSsetinterlace);
 #endif /* HAVE_PABLO */
 
+    /* check key is valid vdata */
     if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* locate vg's index in vgtab */
+    /* get vdata instance */
     if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
+    /* get vdata itself and check it */
     vs = w->vs;
     if (vs == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
+    /* check if only read access, this is a failure */
     if (vs->access == 'r')
         HGOTO_ERROR(DFE_RDONLY, FAIL);
+
+    /* check if records have already been written out,
+       cannot reset interlace in this case */
     if (vs->nvertices > 0)
         HGOTO_ERROR(DFE_NORESET, FAIL);
 
-    /* currently only 2 kinds allowed */
+    /* currently only 2 kinds of interlaced schemes allowed. */
     if (interlace == FULL_INTERLACE || interlace == NO_INTERLACE)
       {
           vs->interlace = (int16) interlace;
@@ -249,47 +268,53 @@ done:
 /*------------------------------------------------------------------
 NAME
    VSgetfields -- returns the name (if any) of all the fields in the vdata
-USAGE 
-   int32 VSgetfields(vkey, fields)
-   int32 vkey;      IN: vdata key
-   char *fields;    OUT: storage for field names
-RETURNS
-   Returns -1 on error, else the no of fields in the vdata.
+
 DESCRIPTION
-   The fields are returned as a comma-separated string (e.g., "PX,PY").
+   Returns the names of all the fields in comma seperated string in
+   the argument 'fields'. (e.g., "PX,PY").
+
+RETURNS
+   Returns FAIL on error, 
+   else the number of fields in the vdata.
 ----------------------------------------------------------------------*/
 int32 
-VSgetfields(int32 vkey, char *fields)
+VSgetfields(int32 vkey,   /* IN: vdata key */
+            char *fields  /* OUT: comman seperated field name list */)
 {
-    int32       i;
-    vsinstance_t *w;
-    VDATA      *vs;
-    int32      ret_value = SUCCEED;
+    int32        i;
+    vsinstance_t *w = NULL;
+    VDATA        *vs = NULL;
+    int32        ret_value = SUCCEED;
     CONSTR(FUNC, "VSgetfields");
 
 #ifdef HAVE_PABLO
   TRACE_ON(VS_mask, ID_VSgetfields);
 #endif /* HAVE_PABLO */
 
-    if (HAatom_group(vkey)!=VSIDGROUP)
+    /* check key is valid vdata */
+    if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* locate vg's index in vgtab */
+    /* get vdata instance */
     if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
+    /* get vdata itself and check it */
     vs = w->vs;
     if (vs == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
+    /* Got through Vdata and build the comman seperated string of 
+       field names */
     fields[0] = '\0';
     for (i = 0; i < vs->wlist.n; i++)
-      {     /* build the comma-separated string */
+      {   /* build the comma-separated string */
           HDstrcat(fields, vs->wlist.name[i]);
           if (i < vs->wlist.n - 1)
               HDstrcat(fields, ",");
       }
 
+    /* return number of fields */
     ret_value = ((int32) vs->wlist.n);
 
 done:
@@ -309,48 +334,53 @@ done:
 /*------------------------------------------------------------------
 NAME
    VSfexist -- tests for existence of 1 or more fields in a vdata.
-USAGE
-   int32 VSfexist(vkey, fields)
-   int32 vkey;    IN: vdata key
-   char *fields;  IN: Names of the fields to check for
-RETURNS 
-   RETURNS 1 if all fields exist; otherwise -1 is returned.
+
 DESCRIPTION
    The argument 'fields' is a string of comma-separated fieldnames 
-   (e.g. "PX,PY,PZ").
+   (e.g. "PX,PY,PZ") to check for in vdata.
+
+RETURNS 
+   Returns SUCCEED if all fields exist 
+   else otherwise FAIL is returned.
 --------------------------------------------------------------------*/
 intn 
-VSfexist(int32 vkey, char *fields)
+VSfexist(int32 vkey,  /* IN: vdata key */
+         char *fields /* IN: names of fields to check for */)
 {
-    char      **av, *s;
-    int32       ac, i, j, found;
-    DYN_VWRITELIST *w;
-    vsinstance_t *wi;
-    VDATA      *vs;
-    intn       ret_value = SUCCEED;
+    char          **av = NULL;
+    char           *s = NULL;
+    DYN_VWRITELIST *w = NULL;
+    vsinstance_t   *wi = NULL;
+    VDATA          *vs = NULL;
+    int32         ac;
+    int32         i, j;
+    int32         found;
+    intn          ret_value = SUCCEED;
     CONSTR(FUNC, "VSfexist");
 
 #ifdef HAVE_PABLO
   TRACE_ON(VS_mask, ID_VSfexist);
 #endif /* HAVE_PABLO */
 
-    if (HAatom_group(vkey)!=VSIDGROUP)
+    /* check key is valid vdata */
+    if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* locate vg's index in vgtab */
+    /* get vdata instance */
     if (NULL == (wi = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-
-    vs = wi->vs;
 
     /* call scanattrs to parse the string */
     if (scanattrs(fields, &ac, &av) < 0)
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
 
+    /* get vdata itself and check it 
+       check also that more than one field in 'fields' */    
+    vs = wi->vs;
     if ((vs == NULL) || (ac < 1))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* now check in vs's field table */
+    /* now check in vdata's field table for these field names */
     w = &vs->wlist;
     for (i = 0; i < ac; i++)
       {
@@ -395,52 +425,56 @@ done:
 /* -----------------------------------------------------------------
 NAME
    VSsizeof - computes the byte size of the field(s) of a vdata.
-USAGE
-   int32 VSsizeof(vkey, fields)
-   int32 vkey;   IN: vdata key.
-   char *fields; IN: Name(s) of the fields to check.
+
+DESCRIPTION
+   The size is the actual size for the local architecture
+
 RETURNS
    The byte size of the field(s), positive integer, on success; 
    otherwise, returns FAIL.
-DESCRIPTION
-   The size is the actual size for the local machine.
-
 ----------------------------------------------------------------- */
 int32 
-VSsizeof(int32 vkey, char *fields)
+VSsizeof(int32 vkey,   /* IN vdata key */
+         char *fields  /* IN: Name(s) of the fields to check size of */ )
 {
-    int32       totalsize, ac, i, j, found;
-    char      **av;
-    vsinstance_t *w;
-    VDATA      *vs;
-    int32      ret_value = SUCCEED;
+    int32       totalsize;
+    int32       i, j;
+    int32       found;
+    int32       ac;
+    char        **av = NULL;
+    vsinstance_t *w  = NULL;
+    VDATA        *vs = NULL;
+    int32        ret_value = SUCCEED;
     CONSTR(FUNC, "VSsizeof");
 
 #ifdef HAVE_PABLO
   TRACE_ON(VS_mask, ID_VSsizeof);
 #endif /* HAVE_PABLO */
 
+    /* check key is valid vdata */
     if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* locate vg's index in vgtab */
+    /* get vdata instance */
     if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
+    /* get vdata itself and check it */
     vs = w->vs;
     if (vs == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     totalsize = 0;
-    if (fields == NULL)
-      {   /* count fieldsizes in vs */
+    if (fields == NULL) /* default case? */
+      {   /* count all field sizes in vdata */
         for (j = 0; j < vs->wlist.n; j++)	
             totalsize += vs->wlist.esize[j];
       }		
     else
-      {
+      {  /* parse field string */
         if ((scanattrs(fields, &ac, &av) < 0) || (ac < 1))
             HGOTO_ERROR(DFE_ARGS, FAIL);
+
         for (i = 0; i < ac; i++)
           {   /* check fields in vs */
             for (found = 0, j = 0; j < vs->wlist.n; j++)	
@@ -455,7 +489,9 @@ VSsizeof(int32 vkey, char *fields)
                 HGOTO_ERROR(DFE_ARGS, FAIL);
           }	/* end for */
       }		/* end else */
-    ret_value = (totalsize);
+
+    /* return total size of vdata fields specified */
+    ret_value = totalsize;
 
 done:
   if(ret_value == FAIL)   
@@ -474,14 +510,15 @@ done:
 /*----------------------------------------------------------------- 
 NAME
    VSdump - prints contents of a vdata (for debugging) 
-USAGE
-   VOID VSdump(vkey)
-   int32 vkey;   IN: vdata key.
+
+DESCRIPTION
+    Prints contents of a vdata (for debugging) 
+
 RETURNS
    No return codes.
 -------------------------------------------------------------------*/
 VOID 
-VSdump(int32 vkey)
+VSdump(int32 vkey /* IN: vdata key */)
 {
     vkey = vkey;    /* suppress warning */
 }   /* VSdump */
@@ -489,53 +526,60 @@ VSdump(int32 vkey)
 /*-------------------------------------------------------
 NAME
    VSsetname - give a name to a vdata.
-USAGE
-   int32 VSsetname(vkey, vsname)
-   int32 vkey;    IN: vdata key.
-   char *vsname;  IN: name for the vdata.
-RETURNS
-   SUCCEED/FAIL
+
 DESCRIPTION
    Truncates name to max length of VSNAMELENMAX
    If new name is longer than the current name set new_h_sz,
       so that VSdetach will delete the original vdata header
       and write a new header. 
+
+RETURNS
+   SUCCEED/FAIL
 ----------------------------------------------------------*/
 int32 
-VSsetname(int32 vkey, const char *vsname)
+VSsetname(int32 vkey,        /* IN: Vdata key */
+          const char *vsname /* IN: name to set for vdata*/)
 {
-    vsinstance_t *w;
-    VDATA      *vs;
-    CONSTR(FUNC, "VSsetname");
-    int         curr_len, slen;
+    vsinstance_t *w = NULL;
+    VDATA        *vs = NULL;
+    int32       curr_len;
+    int32       slen;
     int32       ret_value = SUCCEED;
+    CONSTR(FUNC, "VSsetname");
 
 #ifdef HAVE_PABLO
   TRACE_ON(VS_mask, ID_VSsetname);
 #endif /* HAVE_PABLO */
 
-    if (HAatom_group(vkey)!=VSIDGROUP)
+    /* check key is valid vdata */
+    if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* locate vg's index in vgtab */
+    /* get vdata instance */
     if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
+    /* get vdata itself and check it */
     vs = w->vs;
     if (vs == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
-    curr_len = (intn)HDstrlen(vs->vsname);
 
-    if ((slen = (intn)HDstrlen(vsname)) > VSNAMELENMAX)
-      {
+    /* get current length of vdata name */
+    curr_len = HDstrlen(vs->vsname);
+
+    /* check length of new name against MAX length */
+    if ((slen = HDstrlen(vsname)) > VSNAMELENMAX)
+      { /* truncate name */
           HDstrncpy(vs->vsname, vsname, VSNAMELENMAX);
           vs->vsname[VSNAMELENMAX] = '\0';
       }
-    else
+    else /* copy whole name */
         HDstrcpy(vs->vsname, vsname);
-    vs->marked = TRUE;
+
+    vs->marked = TRUE; /* mark vdata as being modified */
+
     if (curr_len < slen) 
-        vs->new_h_sz = TRUE;
+        vs->new_h_sz = TRUE; /* mark vdata header size being changed */
 
 done:
   if(ret_value == FAIL)   
@@ -554,42 +598,48 @@ done:
 /* ------------------------------------------------------
 NAME
    VSsetclass - give a class name to a vdata.
-USAGE
-   int32 VSsetclass(vkey, vsclass)
-   int32 vkey;    IN: vdata key.
-   char *vsclass;  IN: class name for the vdata.
-RETURNS
-   SUCCEED/FAIL
+
 DESCRIPTION
    Truncates class name to max length of VSNAMELENMAX
    If new class is longer than the current class set new_h_sz,
-      so that VSdetach will delete the original vdata header
-      and write a new header.
+   so that VSdetach will delete the original vdata header
+   and write a new header.
+
+RETURNS
+   SUCCEED/FAIL
 ----------------------------------------------------------*/
 int32 
-VSsetclass(int32 vkey, const char *vsclass)
+VSsetclass(int32 vkey,         /* IN: vdata key */
+           const char *vsclass /* IN: class name to set for vdata */)
 {
-    vsinstance_t *w;
-    VDATA      *vs;
-    CONSTR(FUNC, "VSsetclass");
-    int         curr_len, slen;
+    vsinstance_t *w = NULL;
+    VDATA       *vs = NULL;
+    int32       curr_len;
+    int32       slen;
     int32       ret_value = SUCCEED;
+    CONSTR(FUNC, "VSsetclass");
 
 #ifdef HAVE_PABLO
   TRACE_ON(VS_mask, ID_VSsetclass);
 #endif /* HAVE_PABLO */
 
-    if (HAatom_group(vkey)!=VSIDGROUP)
+    /* check key is valid vdata */
+    if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* locate vg's index in vgtab */
+    /* get vdata instance */
     if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
+    /* get vdata itself and check it */
     vs = w->vs;
     if (vs == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
+
+    /* get current length of vdata class name */
     curr_len = (intn)HDstrlen(vs->vsclass);
+
+    /* check length of new class name against MAX length */
     if ((slen = (intn)HDstrlen(vsclass)) > VSNAMELENMAX)
       {
           HDstrncpy(vs->vsclass, vsclass, VSNAMELENMAX);
@@ -597,9 +647,11 @@ VSsetclass(int32 vkey, const char *vsclass)
       }
     else
         HDstrcpy(vs->vsclass, vsclass);
-    vs->marked = TRUE;
+
+    vs->marked = TRUE; /* mark vdata as being modified */
+
     if (curr_len < slen)
-        vs->new_h_sz = TRUE;
+        vs->new_h_sz = TRUE; /* mark vdata header size being changed */
 
 done:
   if(ret_value == FAIL)   
@@ -618,37 +670,45 @@ done:
 /*------------------------------------------------------ 
 NAME
    VSgetname - gets the vdata's name. 
-USAGE
-   int32 VSgetname(vkey, vsname)
-   int32 vkey;    IN: vdata key.
-   char *vsname;  OUT: storage for vdata name. 
+
+DESCRIPTION
+   Get vdata's name and comy it to 'vsname'. Space for
+   'vsname' must be allocated by user.
+
 RETURNS
    SUCCEED/FAIL
-DESCRIPTION
 ----------------------------------------------------------*/
 int32 
-VSgetname(int32 vkey, char *vsname)
+VSgetname(int32 vkey,   /* IN: vdata key */
+          char *vsname  /* OUT: vdata name (allocated by user)*/)
 {
-    vsinstance_t *w;
-    VDATA      *vs;
-    int32      ret_value = SUCCEED;
+    vsinstance_t *w = NULL;
+    VDATA        *vs = NULL;
+    int32        ret_value = SUCCEED;
     CONSTR(FUNC, "VSgetname");
 
 #ifdef HAVE_PABLO
   TRACE_ON(VS_mask, ID_VSgetname);
 #endif /* HAVE_PABLO */
 
-    if (HAatom_group(vkey)!=VSIDGROUP)
+    /* check key is valid vdata */
+    if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* locate vg's index in vgtab */
+    /* check user allocated space */
+    if (vsname == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* get vdata instance */
     if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
+    /* get vdata itself and check it */
     vs = w->vs;
     if (vs == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
+    /* copy vdata name over */
     HDstrcpy(vsname, vs->vsname);
 
 done:
@@ -668,19 +728,20 @@ done:
 /*------------------------------------------------------ 
 NAME
    VSgetclass - gets the vdata's class name.
-USAGE
-   int32 VSgetclass(vkey, vsclass)
-   int32 vkey;      IN: vdata key.
-   char *vsclass;  OUT: class name for the vdata.
+
+DESCRIPTION
+   Get vdata class name and copy over to 'vsclass'. Space
+   for 'vsclass' must be allocated by user.
+
 RETURNS
    SUCCEED/FAIL
-DESCRIPTION
 ---------------------------------------------------------- */
 int32 
-VSgetclass(int32 vkey, char *vsclass)
+VSgetclass(int32 vkey,    /* IN: vdata key */
+           char *vsclass  /* OUT: class name for vdata (allocated by user) */ )
 {
-    vsinstance_t *w;
-    VDATA      *vs;
+    vsinstance_t *w = NULL;
+    VDATA        *vs = NULL;
     int32     ret_value = SUCCEED;
     CONSTR(FUNC, "VSgetclass");
 
@@ -688,17 +749,20 @@ VSgetclass(int32 vkey, char *vsclass)
   TRACE_ON(VS_mask, ID_VSgetclass);
 #endif /* HAVE_PABLO */
 
-    if (HAatom_group(vkey)!=VSIDGROUP)
+    /* check key is valid vdata */
+    if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* locate vg's index in vgtab */
+    /* get vdata instance */
     if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
+    /* get vdata itself and check it */
     vs = w->vs;
     if (vs == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
+    /* copy class name over */
     HDstrcpy(vsclass, vs->vsclass);
 
 done:
@@ -718,55 +782,70 @@ done:
 /* ------------------------------------------------------------------ 
 NAME
    VSinquire - gets info about a vdata vkey:
-USAGE
-   int32 VSinquire(vkey, nelt, interlace, fields,eltsize, vsname)
-   int32 vkey;         IN: vdata key.
-   int32 *nelt;       OUT: number of vertices in the vdata.
-   int32 *interlace;  OUT: interlace of the vdata.
-   char  *fields;     OUT: field(s) name.
-   int32 *eltsize;    OUT: byte size of elements (all fields) on local
-                           machine. 
-   char *vsname;      OUT: vdata's name.
+
+DESCRIPTION
+   Get information about Vdata. Space for 'fields' and 'vsname'
+   must be allocated by user.
+
 RETURNS
    SUCCEED/FAIL
 
 ------------------------------------------------------------------------*/
 intn 
-VSinquire(int32 vkey, int32 *nelt, int32 *interlace,
-          char *fields, int32 *eltsize, char *vsname)
+VSinquire(int32 vkey,       /* IN: vdata key */
+          int32 *nelt,      /* OUT: number of elements in vdata */
+          int32 *interlace, /* OUT: interlace scheme of vdata */
+          char *fields,     /* OUT: comma seperated string of field names */
+          int32 *eltsize,   /* OUT: total size of all fields in bytes */
+          char *vsname      /* OUT: name of vdata */)
 {
   intn ret_value = SUCCEED;
   intn status;
-
-#ifdef LATER
-    CONSTR(FUNC, "VSinquire");
-#endif
+  CONSTR(FUNC, "VSinquire");
 
 #ifdef HAVE_PABLO
   TRACE_ON(VS_mask, ID_VSinquire);
 #endif /* HAVE_PABLO */
 
-    if (fields) {
+    /* check key is valid vdata */
+    if (HAatom_group(vkey) != VSIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* hmm....we seem to make an attempt for each value
+       and continute to next even in the case of failure? */
+    if (fields) 
+      { /* we assume 'fields' space has been pre-allocated by user? */
         status = VSgetfields(vkey, fields);
         ret_value = (status == FAIL)? FAIL: ret_value;
-    }
-    if (nelt)   {
+      }
+    if (nelt)   
+      {
         *nelt = VSelts(vkey);
         ret_value = (*nelt == FAIL)? FAIL: ret_value;
-    }
-    if (interlace)  {
+      }
+    if (interlace)  
+      {
         *interlace = VSgetinterlace(vkey);
         ret_value = (*interlace == FAIL)? FAIL: ret_value;
-    }
-    if (eltsize) {
+      }
+    if (eltsize) 
+      {
         *eltsize = VSsizeof(vkey, fields);
         ret_value = (*eltsize == FAIL)? FAIL: ret_value;
-    }
-    if (vsname)  {
+      }
+    if (vsname)  
+      { /* we assume 'vsname' space as been pre-allocated by user? */
         status = VSgetname(vkey, vsname);
         ret_value = (status == FAIL)? FAIL: ret_value;
-    }
+      }
 
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
 #ifdef HAVE_PABLO
   TRACE_OFF(VS_mask, ID_VSinquire);
 #endif /* HAVE_PABLO */
@@ -777,33 +856,35 @@ VSinquire(int32 vkey, int32 *nelt, int32 *interlace,
 /*-----------------------------------------------------------------
 NAME
    VSlone - returns an array of refs of all lone vdatas in the file.
-USAGE
-   int32 VSlone(f, idarray, asize)
-   HFILEID f;        IN: file id.
-   int32 *idarray;   IN: array to contain the refs.
-   int32 asize;      IN: size of idarray.
-RETURNS
-   Returns -1 if error; otherwise returns the total number of lone 
-   vdatas in the file
+
 DESCRIPTION
-   If idarray is too small, routine will only fill idarray with up
-   to asize worth of refs.
+   If 'idarray' is too small, routine will only fill 'idarray' with up
+   to 'asize' worth of refs.
+
+RETURNS
+   Returns FAIL if error else returns the total number of lone 
+   vdatas in the file.
 ---------------------------------------------------------------------*/
 int32 
-VSlone(HFILEID f, int32 *idarray, int32 asize)
+VSlone(HFILEID f,     /* IN: file id */
+       int32 *idarray,/* OUT: array to return refs of lone vdatas? */
+       int32 asize    /* IN: size of 'idarray' */)
 {
-    uint8      *lonevdata;      /* lcl wrk area: stores flags of vdatas */
-    int32       i, vgid, vsid, vstag;
-    int32       vkey;
-    int32       nlone;          /* total number of lone vdatas */
-    int32       ret_value = SUCCEED;
+    int32   i;
+    int32   vgid;
+    int32   vsid;
+    int32   vstag;
+    int32   vkey;
+    uint8  *lonevdata = NULL;  /* lcl wrk area: stores flags of vdatas */
+    int32   nlone;             /* total number of lone vdatas */
+    int32   ret_value = SUCCEED;
     CONSTR(FUNC, "VSlone");
 
 #ifdef HAVE_PABLO
   TRACE_ON(VS_mask, ID_VSlone);
 #endif /* HAVE_PABLO */
 
-    /* -- allocate space for vdata refs, init to zeroes -- */
+    /* -- allocate local space for vdata refs, init to zeros -- */
     if (NULL == (lonevdata = (uint8 *) HDcalloc(MAX_REF , sizeof(uint8))))
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -812,19 +893,19 @@ VSlone(HFILEID f, int32 *idarray, int32 asize)
     while (FAIL != (vsid = VSgetid(f, vsid)))    /* until no more vdatas */
         lonevdata[vsid] = 1;
 
-    /* -- Look through all vgs, searching for vdatas -- */
+    /* -- Look through all vgroups, searching for vdatas -- */
     /* -- increment its index in lonevdata if found -- */
     vgid = -1;
     while (FAIL != (vgid = Vgetid(f, vgid)))
       {     /* until no more vgroups */
-        vkey = Vattach(f, vgid, "r");
+        vkey = Vattach(f, vgid, "r"); /* attach to vgroup */
         for (i = 0; i < Vntagrefs(vkey); i++)
           {
-            Vgettagref(vkey, i, &vstag, &vsid);
+            Vgettagref(vkey, i, &vstag, &vsid); /* get tag/ref of element in vg */
             if (vstag == (int32) DFTAG_VH)
-                lonevdata[vsid] = 0;
+                lonevdata[vsid] = 0; /* set vdata as not lone vdata */
           }
-        Vdetach(vkey);
+        Vdetach(vkey); /* detach from vgroup */
       }
 
     /* -- check in lonevdata: it's a lone vdata if its flag is still 1 -- */
@@ -832,15 +913,17 @@ VSlone(HFILEID f, int32 *idarray, int32 asize)
     for (i = 0; i < (int32)MAX_REF; i++)
       {
         if (lonevdata[i])
-          {
-            if (nlone < asize)  /* insert into idarray up till asize */
-                idarray[nlone] = i;
+          { /* insert into idarray up till asize */
+            if (nlone < asize)  
+                idarray[nlone] = i; /* insert ref of vdata into idarray */
             nlone++;
           }
       }
+
+    /* free up locally allocated space */
     HDfree((VOIDP) lonevdata);
 
-    ret_value = nlone;     /* return the TOTAL # of lone vdatas */
+    ret_value = nlone; /* return the TOTAL # of lone vdatas */
 
 done:
   if(ret_value == FAIL)   
@@ -859,25 +942,26 @@ done:
 /*----------------------------------------------------------------- 
 NAME
    Vlone  - returns an array of refs of all lone vgroups in the file.
-USAGE
-   int32 Vlone(f, idarray, asize)
-   HFILEID f;        IN: file id.
-   int32 *idarray;   IN: array to contain the refs.
-   int32 asize;      IN: size of idarray.
-RETURNS
-   Returns -1 if error; otherwise returns the total number of lone
-   vgroups in the file
+
 DESCRIPTION
-   If idarray is too small, routine will only fill idarray with up
-   to asize worth of refs.
+   If 'idarray' is too small, routine will only fill 'idarray' with up
+   to 'asize' worth of refs.
+
+RETURNS
+   Returns FAIL if error else returns the total number of lone
+   vgroups in the file
 ---------------------------------------------------------------------*/
 int32 
-Vlone(HFILEID f, int32 *idarray, int32 asize)
+Vlone(HFILEID f,      /* IN: file id */
+      int32 *idarray, /* OUT: array to return refs of lone vgroups? */
+      int32 asize     /* IN: size of 'idarray' */)
 {
-    uint8      *lonevg;         /* local wrk area: stores flags of vgroups */
     int32       i;
-    int32       vgid, vstag, id;
+    int32       vgid;
+    int32       vstag;
+    int32       id;
     int32       vkey;
+    uint8      *lonevg = NULL;  /* local wrk area: stores flags of vgroups */
     int32       nlone;          /* total number of lone vgroups */
     int32       ret_value = SUCCEED;
     CONSTR(FUNC, "Vlone");
@@ -900,15 +984,15 @@ Vlone(HFILEID f, int32 *idarray, int32 asize)
     vgid = -1;
     while (FAIL != (vgid = Vgetid(f, vgid)))
       {     /* until no more vgroups */
-        vkey = Vattach(f, vgid, "r");
+        vkey = Vattach(f, vgid, "r"); /* attach to vgroup */
         id = -1;
         for (i = 0; i < Vntagrefs(vkey); i++)
           {
-            Vgettagref(vkey, i, &vstag, &id);
+            Vgettagref(vkey, i, &vstag, &id); /* get tag/ref of element in vg */
             if (vstag == DFTAG_VG)
-                lonevg[id] = 0;
+                lonevg[id] = 0; /* set vgroup as not lone vgroup */
           }
-        Vdetach(vkey);
+        Vdetach(vkey); /* detach from vgroup */
       }
 
     /* -- check in lonevg: it's a lone vgroup if its flag is still 1 -- */
@@ -916,15 +1000,17 @@ Vlone(HFILEID f, int32 *idarray, int32 asize)
     for (i = 0; i < (int32)MAX_REF; i++)
       {
         if (lonevg[i])
-          {
-            if (nlone < asize)  /* insert into idarray up till asize */
-                idarray[nlone] = i;
+          { /* insert into idarray up till asize */
+            if (nlone < asize)  
+                idarray[nlone] = i; /* insert ref of vgroup into idarray */
             nlone++;
           }
       }
+
+    /* free up locally allocated space */
     HDfree((VOIDP) lonevg);
 
-    ret_value = nlone;     /* return the TOTAL # of lone vgroups */
+    ret_value = nlone; /* return the TOTAL # of lone vgroups */
 
 done:
   if(ret_value == FAIL)   
@@ -944,19 +1030,22 @@ done:
 NAME
    Vfind -- looks in the file and returns the ref of 
             the vgroup with name vgname 
-USAGE
-   int32 Vfind(f, vgname)
-   HFILEID  f;    IN: file id.
-   char *vgname;  IN: name of the vgroup.
+
+DESCRIPTION
+   Finds the vgroup with the specified name and returns the ref of
+   the vgroup if successful.
+
 RETURNS
-   Returns 0 if not found, or error. Otherwise, returns the 
+   Returns 0 if not found or on error. Otherwise, returns the 
    vgroup's ref (a positive integer).
 -----------------------------------------------------------------------*/
 int32 
-Vfind(HFILEID f, const char *vgname)
+Vfind(HFILEID f,          /* IN: file id */
+      const char *vgname  /* IN: name of vgroup to find */)
 {
-    int32       vgid = -1;
-    vginstance_t    * v;
+    int32        vgid = -1;
+    vginstance_t *v = NULL;
+    VGROUP       *vg = NULL;
     int32       ret_value = 0;
 #ifdef LATER
     CONSTR(FUNC, "Vfind");
@@ -966,12 +1055,20 @@ Vfind(HFILEID f, const char *vgname)
   TRACE_ON(V_mask, ID_Vfind);
 #endif /* HAVE_PABLO */
 
+    /* process through Vgroups in file */
     while (FAIL != (vgid = Vgetid(f, vgid)))
-      {
-        if((v=vginst(f,(uint16)vgid))==NULL)
+      { /* get instance of vgroup */
+        if((v = vginst(f,(uint16)vgid)) == NULL)
             HGOTO_DONE(0);
-        if (!HDstrcmp(vgname, v->vg->vgname)) 
-            HGOTO_DONE((int32)(v->vg->oref));  /* found the vdata */
+
+        /* get vgroup itself and check it */
+        vg = v->vg;
+        if (vg == NULL)
+            HGOTO_DONE(0);
+
+        /* compare vgroup name to 'vgname' */
+        if (!HDstrcmp(vgname, vg->vgname)) 
+            HGOTO_DONE((int32)(vg->oref));  /* found the vgroup */
       }
 
 done:
@@ -992,19 +1089,22 @@ done:
 NAME
    VSfind -- looks in the file and returns the ref of the vdata 
              with name vsname 
-USAGE
-   int32 VSfine(f, vsname)
-   HFILEID  f;      IN: file id.
-   char *vsname;    IN: name of the vdata.
+
+DESCRIPTION
+   Finds the vdata with the specified name and returns the ref of
+   the vdata if successfull.
+
 RETURNS
-   Returns 0 if not found, or error. Otherwise, returns the vdata's 
+   Returns 0 if not found, or on error. Otherwise, returns the vdata's 
    ref (a positive integer).
 ---------------------------------------------------------------------*/
 int32 
-VSfind(HFILEID f, const char *vsname)
+VSfind(HFILEID f,          /* IN: file id */
+       const char *vsname  /* IN: name of vdata to find */)
 {
-    int32       vsid = -1;
-    vsinstance_t    * v;
+    int32        vsid = -1;
+    vsinstance_t *v = NULL;
+    VDATA        *vs = NULL;
     int32 ret_value = 0;
 #ifdef LATER
     CONSTR(FUNC, "VSfind");
@@ -1014,12 +1114,20 @@ VSfind(HFILEID f, const char *vsname)
   TRACE_ON(VS_mask, ID_VSfind);
 #endif /* HAVE_PABLO */
 
+    /* process through Vdatas in file */
     while (FAIL != (vsid = VSgetid(f, vsid)))
-      {
-        if((v=vsinst(f,(uint16)vsid))==NULL)
+      { /* get instance of vdata */
+        if((v = vsinst(f,(uint16)vsid)) == NULL)
             HGOTO_DONE(0);
-        if (!HDstrcmp(vsname, v->vs->vsname)) 
-            HGOTO_DONE((int32)(v->vs->oref));  /* found the vdata */
+
+        /* get vdata itself and check it */
+        vs = v->vs;
+        if (vs == NULL)
+            HGOTO_DONE(0);
+
+        /* compare vdata name to 'vsname' */
+        if (!HDstrcmp(vsname, vs->vsname)) 
+            HGOTO_DONE((int32)(vs->oref));  /* found the vdata */
       }
 
 done:
@@ -1039,33 +1147,44 @@ done:
 /* ----------------------------------------------------------------- 
 NAME
    Vfindclass -- looks in the file and returns the ref of 
-            the vgroup with class vgclass 
-USAGE
-   int32 Vfind(f, vgclass)
-   HFILEID  f;    IN: file id.
-   char *vgclass;  IN: class of the vgroup.
+                 the vgroup with class vgclass 
+
+DESCRIPTION
+   Finds the vgroup with the specified class and returns the ref
+   of the vgroup if successful.
+
 RETURNS
    Returns 0 if not found, or error. Otherwise, returns the 
    vgroup's ref (a positive integer).
 -----------------------------------------------------------------------*/
 int32 
-Vfindclass(HFILEID f, const char *vgclass)
+Vfindclass(HFILEID f,           /* IN: file id */
+           const char *vgclass  /* IN: class of vgroup to find */)
 {
-    int32       vgid = -1;
-    vginstance_t    * v;
+    int32        vgid = -1;
+    vginstance_t *v = NULL;
+    VGROUP       *vg = NULL;
     int32       ret_value = 0;
 #ifdef LATER
-    CONSTR(FUNC, "Vfind");
+    CONSTR(FUNC, "Vfindclass");
 #endif
 
 #ifdef HAVE_PABLO
   TRACE_ON(V_mask, ID_Vfindclass);
 #endif /* HAVE_PABLO */
 
+    /* process through Vgroups in file */
     while (FAIL != (vgid = Vgetid(f, vgid)))
-      {
-        if((v=vginst(f,(uint16)vgid))==NULL)
+      { /* get instance of vgroup */
+        if((v = vginst(f,(uint16)vgid)) == NULL)
             HGOTO_DONE(0);
+
+        /* get vgroup itself and check it */
+        vg = v->vg;
+        if (vg == NULL)
+            HGOTO_DONE(0);
+
+        /* compare vgroup class to 'vgclass' */
         if (!HDstrcmp(vgclass, v->vg->vgclass)) 
             HGOTO_DONE((int32)(v->vg->oref));  /* found the vgroup */
       }
@@ -1087,32 +1206,44 @@ done:
 /*------------------------------------------------------------------
 NAME
    VSfindclass -- looks in the file and returns the ref of the vdata 
-             with class vsclass 
-USAGE
-   int32 VSfine(f, vsclass)
-   HFILEID  f;      IN: file id.
-   char *vsclass;    IN: class of the vdata.
+                  with class vsclass 
+
+DESCRIPTION
+   Finds the vdata with the specified class and returns the ref of 
+   the vdata if successful.
+
 RETURNS
    Returns 0 if not found, or error. Otherwise, returns the vdata's 
    ref (a positive integer).
 ---------------------------------------------------------------------*/
 int32 
-VSfindclass(HFILEID f, const char *vsclass)
+VSfindclass(HFILEID f,           /* IN: file id */
+            const char *vsclass  /* IN: class of vdata to find */)
 {
-    int32       vsid = -1;
-    vsinstance_t    * v;
-    int32       ret_value = 0;
+    int32        vsid = -1;
+    vsinstance_t *v = NULL;
+    VDATA        *vs = NULL;
+    int32        ret_value = 0;
 #ifdef LATER
     CONSTR(FUNC, "VSfind");
 #endif
+
 #ifdef HAVE_PABLO
   TRACE_ON(VS_mask, ID_VSfindclass);
 #endif /* HAVE_PABLO */
 
+    /* process through Vdatas in file */
     while (FAIL != (vsid = VSgetid(f, vsid)))
-      {
-        if((v=vsinst(f,(uint16)vsid))==NULL)
+      { /* get instance of vdata */
+        if((v = vsinst(f,(uint16)vsid)) == NULL)
             HGOTO_DONE(0);          /* error */
+
+        /* get vdata itself and check it */
+        vs = v->vs;
+        if (vs == NULL)
+            HGOTO_DONE(0);
+
+        /* compare vdata class to 'vsclass' */
         if (!HDstrcmp(vsclass, v->vs->vsclass)) 
             HGOTO_DONE((int32)(v->vs->oref));  /* found the vdata */
       }

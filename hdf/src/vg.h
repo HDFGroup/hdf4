@@ -36,58 +36,56 @@
 #include "tbbt.h"
 
 /*
-   * definition of the 2 data elements of the vset.
+ * typedefs for VGROUP, VDATA and VSUBGROUP
  */
-
 typedef struct vgroup_desc VGROUP;
 typedef struct vdata_desc VDATA;
-
 typedef VDATA VSUBGROUP;
 
 /*
-   * -----------------------------------------------------------------
-   * structures that are part of the VDATA structure
-   * -----------------------------------------------------------------
+ * -----------------------------------------------------------------
+ * structures that are part of the VDATA structure
+ * -----------------------------------------------------------------
  */
 
 typedef struct symdef_struct
   {
-      char       *name;         /* symbol name */
-      int16       type;         /* whether int, char, float etc */
-      uint16      isize;        /* field size as stored in vdata */
-      uint16      order;        /* order of field */
+      char    *name;         /* symbol name */
+      int16    type;         /* whether int, char, float etc */
+      uint16   isize;        /* field size as stored in vdata */
+      uint16   order;        /* order of field */
   }
 SYMDEF;
 
 typedef struct write_struct
   {
-      intn        n;            /* S actual # fields in element */
-      uint16      ivsize;       /* S size of element as stored in vdata */
+      intn     n;            /* S actual # fields in element */
+      uint16   ivsize;       /* S size of element as stored in vdata */
 
-      char        name[VSFIELDMAX][FIELDNAMELENMAX + 1];    /* S name of each field */
+      char     name[VSFIELDMAX][FIELDNAMELENMAX + 1]; /* S name of each field */
 
-      int16       len[VSFIELDMAX];  /* S length of each fieldname */
-      int16       type[VSFIELDMAX];     /* S field type */
-      uint16      off[VSFIELDMAX];  /* S field offset in element in vdata */
-      uint16      isize[VSFIELDMAX];    /* S internal (HDF) size [incl order] */
-      uint16      order[VSFIELDMAX];    /* S order of field */
-      uint16      esize[VSFIELDMAX];    /*  external (local machine) size [incl order] */
+      int16    len[VSFIELDMAX];   /* S length of each fieldname */
+      int16    type[VSFIELDMAX];  /* S field type */
+      uint16   off[VSFIELDMAX];   /* S field offset in element in vdata */
+      uint16   isize[VSFIELDMAX]; /* S internal (HDF) size [incl order] */
+      uint16   order[VSFIELDMAX]; /* S order of field */
+      uint16   esize[VSFIELDMAX]; /*  external (local machine) size [incl order] */
   }
 VWRITELIST;
 
 typedef struct dyn_write_struct
   {
-      intn        n;        /* S actual # fields in element */
-      uint16      ivsize;   /* S size of element as stored in vdata */
-      char        **name;   /* S name of each field */
+      intn     n;      /* S actual # fields in element */
+      uint16   ivsize; /* S size of element as stored in vdata */
+      char     **name; /* S name of each field */
 #ifndef OLD_WAY
-      uint16      *bptr;    /* Pointer to hold the beginning of the buffer */
+      uint16   *bptr;  /* Pointer to hold the beginning of the buffer */
 #endif /* OLD_WAY */
-      int16       *type;    /* S field type (into bptr buffer) */
-      uint16      *off;     /* S field offset in element in vdata (into bptr buffer) */
-      uint16      *isize;   /* S internal (HDF) size [incl order] (into bptr buffer) */
-      uint16      *order;   /* S order of field (into bptr buffer) */
-      uint16      *esize;   /*  external (local machine) size [incl order] (into bptr buffer) */
+      int16    *type;  /* S field type (into bptr buffer) */
+      uint16   *off;   /* S field offset in element in vdata (into bptr buffer) */
+      uint16   *isize; /* S internal (HDF) size [incl order] (into bptr buffer) */
+      uint16   *order; /* S order of field (into bptr buffer) */
+      uint16   *esize; /* external (local machine) size [incl order] (into bptr buffer) */
   }
 DYN_VWRITELIST;
 
@@ -96,26 +94,26 @@ DYN_VWRITELIST;
    array of attr lists, each list contains attrs for 1 field.
  */ 
 typedef struct dyn_vsattr_struct
-   {
-      int32       findex;   /* which field this attr belongs to */
-      uint16      atag, aref; /* tag/ref pair of the attr     */
-   } vs_attr_t;
+{
+      int32    findex;     /* which field this attr belongs to */
+      uint16   atag, aref; /* tag/ref pair of the attr     */
+} vs_attr_t;
+
 typedef struct dyn_vgattr_struct
-   {
-      uint16      atag, aref; /* tag/ref pair of the attr     */
-   } vg_attr_t;
+{
+      uint16   atag, aref; /* tag/ref pair of the attr     */
+} vg_attr_t;
 
 typedef struct dyn_read_struct
-  {
-      intn        n;            /* # fields to read */
-      intn        *item;        /* index into vftable_struct */
-  }
-DYN_VREADLIST;
+{
+      intn      n;         /* # fields to read */
+      intn      *item;     /* index into vftable_struct */
+} DYN_VREADLIST;
 
 /*
-   *  -----------------------------------------------
-   V G R O U P     definition
-   *  -----------------------------------------------
+ *  -----------------------------------------------
+ *         V G R O U P     definition
+ *  -----------------------------------------------
  */
 
 struct vgroup_desc
@@ -136,15 +134,15 @@ struct vgroup_desc
                                    be written to the file */
       int32       nattrs;       /* number of attributes */
       vg_attr_t  *alist;        /* index of attributes */
-      int16       version, more;    /* version and "more" field */
+      int16       version, more; /* version and "more" field */
       struct vgroup_desc *next; /* pointer to next node (for free list only) */
   };
 /* VGROUP */
 
 /*
-   *  -----------------------------------------------
-   *         V D A T A      definition
-   *  -----------------------------------------------
+ *  -----------------------------------------------
+ *         V D A T A      definition
+ *  -----------------------------------------------
  */
 
 struct vdata_desc
@@ -198,6 +196,7 @@ struct vdata_desc
                            findex to represent the entire vdata  */
 #define _HDF_ENTIRE_VDATA _HDF_VDATA /* if users have already  used
                             _HDF_ENTIRE_VDATA since 4.1b1 was out */
+
 /* .................................................................. */
 /* Private data structures. Unlikely to be of interest to applications */
 /*
@@ -239,8 +238,7 @@ typedef struct vs_instance_struct
 vsinstance_t;
 
 /* each vfile_t maintains 2 linked lists: one of vgs and one of vdatas
-   * that already exist or are just created for a given file.  */
-
+ * that already exist or are just created for a given file.  */
 typedef struct vfiledir_struct
   {
       int32            f;       /* HDF File ID */
