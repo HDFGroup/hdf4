@@ -434,11 +434,8 @@ char *  accesstype;
         HRETURN_ERROR(DFE_BADACC, FAIL);
 
 	if (vsid == -1) {  /* ---------- VSID IS -1 ----------------------- */
-        if (access == 'r') {
-            HERROR(DFE_BADACC);
-            HEreport("VSattach: may not read vsid of -1");
-            return(FAIL);
-          }
+        if (access == 'r')
+            HRETURN_ERROR(DFE_BADACC,FAIL);
 
           /* otherwise 'w' */
           /* allocate space for vs,  & zero it out  */
@@ -631,9 +628,9 @@ char *  accesstype;
    *************************************************************** */
 
 #ifdef PROTOTYPE
-PUBLIC void VSdetach (int32 vkey)
+PUBLIC int32 VSdetach (int32 vkey)
 #else
-PUBLIC void VSdetach (vkey)
+PUBLIC int32 VSdetach (vkey)
 int32 vkey;
 #endif
 {
@@ -643,25 +640,16 @@ int32 vkey;
     VDATA           *vs;
     char * FUNC = "VSdetach";
 
-    if (!VALIDVSID(vkey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return;
-    }
+    if (!VALIDVSID(vkey))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
   /* locate vg's index in vgtab */
-    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return;
-    }
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) 
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vs=w->vs;
-    if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
-          HERROR(DFE_ARGS);
-          HEprint(stderr,0);
-          return;
-        }
+    if ((vs == NULL) || (vs->otag != VSDESCTAG))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
 	w->nattach--;
 
@@ -675,30 +663,24 @@ int32 vkey;
 #endif
           Hendaccess (vs->aid);
           vs->aid = NO_ID;
-          return;
+          return(SUCCEED);
 	}
 
 	/* --- case where access was 'w' --- */
-	if (w->nattach != 0) {
-        HERROR(DFE_CANTDETACH);
-        return;
-    }
+	if (w->nattach != 0)
+        HRETURN_ERROR(DFE_CANTDETACH,FAIL);
 
 	if (vs->marked)  { /* if marked , write out vdata's VSDESC to file */
         if(vs->nvertices==0) {
             /* sprintf(sjs,"VSdetach: Empty vdata detached\n"); zj; */
         }
-        if ( (vspack= (uint8 *) HDgetspace (sizeof(VWRITELIST))) == NULL) {
-            HERROR(DFE_NOSPACE);
-            return;
-          } /* end if */
+        if ( (vspack= (uint8 *) HDgetspace (sizeof(VWRITELIST))) == NULL)
+            HRETURN_ERROR(DFE_NOSPACE,FAIL);
         vpackvs(vs,vspack,&vspacksize);
         stat = Hputelement (vs->f,VSDESCTAG,vs->oref,vspack,vspacksize);
         HDfreespace((VOIDP)vspack);
-        if (stat == FAIL) {
-            HERROR(DFE_WRITEERROR);
-            return;
-        }
+        if (stat == FAIL)
+            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
         vs->marked = 0;
     }
 
@@ -712,7 +694,7 @@ int32 vkey;
                   VMBLOCK * t, *p;
                   int32 aid, stat, cursize, totalsize = 0;
                   uint8 * vwhole;
-                  
+
                   /* count total byte size */
                   t = vs->vm;
                   while (t != NULL) {
@@ -747,6 +729,7 @@ int32 vkey;
 #endif
 
     Hendaccess (vs->aid);
+    return(SUCCEED);
 } /* VSdetach */
 
 /* -------------------------- VSappendable -------------------------------- */
@@ -773,26 +756,17 @@ int32 blk;
     VDATA           *vs;
     char * FUNC = "VSappendable";
 
-    if (!VALIDVSID(vkey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
+    if (!VALIDVSID(vkey))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
   
     /* locate vs's index in vstab */
-    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey))))
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vs=w->vs;
-    if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
-          HERROR(DFE_ARGS);
-          HEprint(stderr,0);
-          return(FAIL);
-    }
-  
+    if ((vs == NULL) || (vs->otag != VSDESCTAG))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
+
     curr_size = vs->nvertices * vs->wlist.ivsize;
 
 #ifdef OLD_WAY
@@ -968,25 +942,16 @@ int32 vkey;
     VDATA           *vs;
     char * FUNC = "VSgetversion";
 
-    if (!VALIDVSID(vkey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(NULL);
-    }
-  
+    if (!VALIDVSID(vkey))
+        HRETURN_ERROR(DFE_ARGS,NULL);
+
   /* locate vs's index in vstab */
-    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(NULL);
-    }
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey))))
+        HRETURN_ERROR(DFE_NOVS,NULL);
 
     vs=w->vs;
-    if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
-          HERROR(DFE_ARGS);
-          HEprint(stderr,0);
-          return(NULL);
-    }
+    if ((vs == NULL) || (vs->otag != VSDESCTAG))
+          HRETURN_ERROR(DFE_ARGS,NULL);
 
     return (&(vs->wlist));
 }   /* end vswritelist() */
@@ -1005,26 +970,17 @@ int32 vkey;
     VDATA           *vs;
     char * FUNC = "VSgetversion";
 
-    if (!VALIDVSID(vkey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(0);
-    }
-  
+    if (!VALIDVSID(vkey))
+        HRETURN_ERROR(DFE_ARGS,0);
+
   /* locate vs's index in vstab */
-    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(0);
-    }
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey))))
+        HRETURN_ERROR(DFE_NOVS,0);
 
     vs=w->vs;
-    if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
-          HERROR(DFE_ARGS);
-          HEprint(stderr,0);
-          return(0);
-    }
-  
+    if ((vs == NULL) || (vs->otag != VSDESCTAG))
+        HRETURN_ERROR(DFE_ARGS,0);
+
     return (vs->version);
 }   /* end VSgetversion() */
 
