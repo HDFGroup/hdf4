@@ -218,6 +218,8 @@ int add_gr(const char* gr_name,     /* gr name */
   break;
   
  case COMP_CODE_SZIP:
+#ifdef H4_GR_SZIP
+/* not supported for GR */
 #ifdef H4_HAVE_LIBSZ
   if (SZ_encoder_enabled()) {
   comp_info->szip.pixels_per_block = 2;
@@ -232,6 +234,8 @@ int add_gr(const char* gr_name,     /* gr name */
 #else
   printf("Warning: SZIP compression not available\n");
 #endif
+#endif
+  printf("Warning: SZIP compression not available for GR\n");
   break;
  }
  
@@ -273,6 +277,7 @@ int add_gr(const char* gr_name,     /* gr name */
    break;
    
   case COMP_CODE_SZIP:
+#ifdef H4_GR_SZIP
 #ifdef H4_HAVE_LIBSZ
   if (SZ_encoder_enabled()) {
    chunk_def.comp.cinfo.szip.pixels_per_block = 2;
@@ -287,6 +292,8 @@ int add_gr(const char* gr_name,     /* gr name */
 #else
   printf("Warning: SZIP compression not available\n");
 #endif
+#endif
+  printf("Warning: SZIP compression not available for GR\n");
    break;
   }
   if(GRsetchunk (ri_id, chunk_def, chunk_flags)==FAIL)

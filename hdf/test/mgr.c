@@ -5576,11 +5576,14 @@ test_mgr(void)
 #endif /* LATER */
     test_mgr_chunkwr();
 
+#ifdef H4_GR_SZIP
+/* szip not supported for GR */
 #ifdef H4_HAVE_LIBSZ
 
     test_mgr_szip();   /* write/read with szip compression */
 #else                  /* skip szip test it and report */
     printf("         -- ***** GR SZIP test skipped *****\n");
+#endif
 #endif
 
 }   /* test_mgr() */

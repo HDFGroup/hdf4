@@ -10,11 +10,16 @@
  *                                                                          *
  ****************************************************************************/
 
+/*
+ *  SZIP support eliminated for HDF4.2R1
+ */
+#ifdef H4_GR_SZIP
 #include <hdf.h>
 #ifdef H4_HAVE_LIBSZ
 #include "szlib.h"
 #endif
 #include "tutils.h"
+
 
 /*
  *  NOTE: these tests should be elaborated:
@@ -1147,3 +1152,4 @@ test_mgr_szip()
     MESSAGE(6, printf("Skipping GR szip compression WRITE/READ\n"););
 #endif
 } 
+#endif

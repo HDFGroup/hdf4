@@ -446,7 +446,7 @@ HCPencode_header(uint8 *p, comp_model_t model_type, model_info * m_info,
           case COMP_CODE_SZIP:  /* Szip coding ...? */
               UINT32ENCODE(p, (uint32) c_info->szip.pixels);
               UINT32ENCODE(p, (uint32) c_info->szip.pixels_per_scanline);
-              UINT32ENCODE(p, (uint32) c_info->szip.options_mask);
+              UINT32ENCODE(p, (uint32) (c_info->szip.options_mask | SZ_H4_REV_2));
               *p++ = (uint8) c_info->szip.bits_per_pixel;
               *p++ = (uint8) c_info->szip.pixels_per_block;
               break;

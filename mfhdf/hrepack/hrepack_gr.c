@@ -139,8 +139,12 @@ int  copy_gr(int32 infile_id,
    case COMP_CODE_NONE:
    break;
   case COMP_CODE_SZIP:
+#ifdef H4_GR_SZIP
    chunk_def_in.comp.comp_type              = COMP_CODE_SZIP;
    chunk_def_in.comp.cinfo.szip             = c_info_in.szip;
+#endif
+   chunk_def_in.comp.comp_type              = COMP_CODE_NONE;
+   printf("Warning: SZIP compression not supported for GR\n");
    break;
   case COMP_CODE_RLE:
    chunk_def_in.comp.comp_type              = COMP_CODE_RLE;
@@ -174,6 +178,7 @@ int  copy_gr(int32 infile_id,
  default:
   break;
   case COMP_CODE_SZIP:
+#ifdef H4_GR_SZIP
    info  = c_info_in.szip.pixels_per_block;
 #ifdef H4_HAVE_LIBSZ
  if (c_info_in.szip.options_mask & SZ_EC_OPTION_MASK) {
@@ -184,6 +189,8 @@ int  copy_gr(int32 infile_id,
 #else
   szip_mode = 0; /* irrelevant */
 #endif
+#endif
+  szip_mode = 0; /* irrelevant */
    break;
   case COMP_CODE_RLE:
    break;
@@ -215,8 +222,12 @@ int  copy_gr(int32 infile_id,
    case COMP_CODE_NONE:
    break;
   case COMP_CODE_SZIP:
+#ifdef H4_GR_SZIP
    chunk_def.comp.comp_type              = COMP_CODE_SZIP;
    chunk_def.comp.cinfo.szip             = c_info_in.szip;
+#endif
+   chunk_def.comp.comp_type              = COMP_CODE_NONE;
+   printf("Warning: SZIP not supported for GR\n");
    break;
   case COMP_CODE_RLE:
    chunk_def.comp.comp_type              = COMP_CODE_RLE;
@@ -423,10 +434,14 @@ int  copy_gr(int32 infile_id,
   switch(comp_type) 
   {
    case COMP_CODE_SZIP:
+#ifdef H4_GR_SZIP
+/* not supported */
    if (set_szip (info,szip_mode,&c_info)==FAIL)
    {
     comp_type=COMP_CODE_NONE;
    }
+#endif
+   printf("Warning: SZIP not supported for GR\n");
    break;
   case COMP_CODE_RLE:         
    break;

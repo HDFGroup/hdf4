@@ -90,6 +90,8 @@ typedef struct
 }
 comp_coder_szip_info_t;
 
+#define SZ_H4_REV_2 0x10000   /* special bit to signal revised format */
+
 #ifndef CSZIP_MASTER
 extern funclist_t cszip_funcs;   /* functions to perform szip encoding */
 #else

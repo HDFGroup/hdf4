@@ -132,6 +132,7 @@ HCIcszip_decode(compinfo_t * info, int32 length, uint8 *buf)
     size_t size_out;
     uint8 *cp;
     int32 good_bytes;
+    int32 old_way;
 #ifdef H4_HAVE_LIBSZ
     SZ_com_t sz_param;
 #endif
@@ -148,6 +149,10 @@ HCIcszip_decode(compinfo_t * info, int32 length, uint8 *buf)
 	/* Discover how much data must be read */
 	if(HTPinquire(access_rec->ddid,&tag,&ref,NULL,&in_length)==FAIL)
 		HRETURN_ERROR(DFE_INTERNAL, FAIL);
+
+        if (in_length == -1)
+		HRETURN_ERROR(DFE_INTERNAL, FAIL);
+
         if (tag & 0x4000) {
 	    /* this is linked list -- get the length of the data */
             aid = Hstartread(access_rec->file_id, tag, ref);
@@ -159,9 +164,24 @@ HCIcszip_decode(compinfo_t * info, int32 length, uint8 *buf)
 	    Hendaccess(aid);
         }
 
-        /* Allocate memory to read the compressed data */
-	if ((in_buffer = (uint8 *) HDmalloc(in_length)) == NULL)
-    	    HRETURN_ERROR(DFE_NOSPACE, FAIL);
+	old_way = (int)(szip_info->options_mask & SZ_H4_REV_2);
+	if (old_way == 0) {
+		/* special case: read data encoded in V4.2r0 */
+		old_way = 1;
+		good_bytes = in_length;
+                in_length = in_length+5;
+	        if ((in_buffer = (uint8 *) HDmalloc(in_length)) == NULL)
+    	           HRETURN_ERROR(DFE_NOSPACE, FAIL);
+		cp = in_buffer;
+		*cp = 0;
+		cp++;
+		INT32ENCODE(cp, good_bytes);
+	} else {
+		/*  V4.2r1: in_length is correct */
+		old_way = 0;
+	        if ((in_buffer = (uint8 *) HDmalloc(in_length)) == NULL)
+    	           HRETURN_ERROR(DFE_NOSPACE, FAIL);
+	}
 
         /* Allocate memory for the uncompressed data */
 	bytes_per_pixel = (szip_info->bits_per_pixel + 7) >> 3;
@@ -173,17 +193,35 @@ HCIcszip_decode(compinfo_t * info, int32 length, uint8 *buf)
 		HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
 	/* Read the unompressed data */
-	if ((rbytes = Hread(info->aid, in_length, in_buffer)) == FAIL)
-        {
-		HDfree(out_buffer);
-		HDfree(in_buffer);
-		HRETURN_ERROR(DFE_READERROR, FAIL);
-        }
-	if (rbytes == 0 || rbytes != in_length) {
-		/* is this possible? */
-		HDfree(out_buffer);
-		HDfree(in_buffer);
-		HRETURN_ERROR(DFE_READERROR, FAIL);
+	if (old_way == 1) {
+		/* this is encoded in V4.2r0 */
+		/* the preamble isn't in the file, so read only the data */
+		if ((rbytes = Hread(info->aid, in_length-5, in_buffer+5)) == FAIL)
+		{
+			HDfree(out_buffer);
+			HDfree(in_buffer);
+			HRETURN_ERROR(DFE_READERROR, FAIL);
+		}
+		if (rbytes == 0 || rbytes != (in_length - 5)) {
+			/* is this possible? */
+			HDfree(out_buffer);
+			HDfree(in_buffer);
+			HRETURN_ERROR(DFE_READERROR, FAIL);
+		}
+	} else {
+		/* HDF4.2R1: read the data plus preamble */
+		if ((rbytes = Hread(info->aid, in_length, in_buffer)) == FAIL)
+		{
+			HDfree(out_buffer);
+			HDfree(in_buffer);
+			HRETURN_ERROR(DFE_READERROR, FAIL);
+		}
+		if (rbytes == 0 || rbytes != in_length) {
+			/* is this possible? */
+			HDfree(out_buffer);
+			HDfree(in_buffer);
+			HRETURN_ERROR(DFE_READERROR, FAIL);
+		}
 	}
         cp = in_buffer;
         cp++;
@@ -218,7 +256,7 @@ HCIcszip_decode(compinfo_t * info, int32 length, uint8 *buf)
 	/* Decompress the data */
      
         /* set up the parameters */
-	sz_param.options_mask = szip_info->options_mask;
+	sz_param.options_mask = (szip_info->options_mask & ~SZ_H4_REV_2);
 	sz_param.bits_per_pixel = szip_info->bits_per_pixel;
 	sz_param.pixels_per_block = szip_info->pixels_per_block;
 	sz_param.pixels_per_scanline = szip_info->pixels_per_scanline;

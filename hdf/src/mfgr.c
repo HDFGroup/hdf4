@@ -170,8 +170,11 @@ MODIFICATION HISTORY
 #include "hdf.h"
 #include "hlimits.h"
 
+#ifdef  H4_GR_SZIP
+/* not supported for GR */
 #ifdef H4_HAVE_LIBSZ          /* we have the library */
 #include "szlib.h"
+#endif
 #endif
 
 /* Local pre-processor macros */
@@ -3456,7 +3459,7 @@ fprintf(stderr,"%s: data=%p\n",FUNC,data);
                         ri_ptr->img_tag, ri_ptr->img_ref,
                         &comp_type, &cinfo);
     }
-    if (comp_type != COMP_CODE_NONE) {
+    if (status != FAIL && comp_type != COMP_CODE_NONE) {
 	    /* Check that the compression encoder is available */
 	    HCget_config_info(comp_type, &comp_config);
 	    if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
@@ -4591,6 +4594,8 @@ done:
 } /* end GRsetaccesstype() */
 
 
+#ifdef H4_GR_SZIP
+/* not supported */
 #ifdef H4_HAVE_LIBSZ          /* we have the library */
 /*--------------------------------------------------------------------------
  NAME
@@ -4638,6 +4643,7 @@ int32 xdims[MAX_VAR_DIMS];
 done:
 	return(ret_value);
 }
+#endif
 #endif
 
 /*--------------------------------------------------------------------------
@@ -4707,9 +4713,13 @@ intn GRsetcompress(int32 riid,comp_coder_t comp_type,comp_info *cinfo)
 	/* encoder not present?? */
 	    HGOTO_ERROR(DFE_NOENCODER, FAIL);
     }
-    /*  EIP 09/12/03
-       Quit if SZIP Library is not available but SZIP compression was requested 
-    */ 
+
+    /* SZIP is not supported for GR */
+    if (comp_type==COMP_CODE_SZIP) 
+        HGOTO_ERROR(DFE_CANTMOD, FAIL);
+
+#ifdef  H4_GR_SZIP
+/* not supported */
 #ifndef H4_HAVE_LIBSZ
     /* probably covered by above */
     if (comp_type==COMP_CODE_SZIP) 
@@ -4721,6 +4731,7 @@ intn GRsetcompress(int32 riid,comp_coder_t comp_type,comp_info *cinfo)
 	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
 	}
     }
+#endif
 #endif
 
     /* Mark the image as being compressed and cache args */
@@ -5892,7 +5903,9 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
           chunk[0].minfo = &minfo; /* dummy */
        }
        else /* requested compression is SZIP */
-
+	 /* SZIP not supported for GR */
+		HGOTO_ERROR(DFE_CANTMOD, FAIL);
+#ifdef H4_GR_SZIP
 #ifdef H4_HAVE_LIBSZ          /* we have the library */
           {
             cdims = cdef->comp.chunk_lengths;
@@ -5911,6 +5924,7 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
 		HGOTO_ERROR(DFE_CANTMOD, FAIL);
           }
 #endif /* H4_HAVE_LIBSZ */
+#endif
 
           break;
       case (HDF_CHUNK | HDF_NBIT): /* don't support NBIT for GRs */
@@ -6325,7 +6339,7 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
                         ri_ptr->img_tag, ri_ptr->img_ref,
                         &comp_type, &cinfo);
     }
-    if (comp_type != COMP_CODE_NONE) {
+    if (status != FAIL && comp_type != COMP_CODE_NONE) {
 	    /* Check that the compression encoder is available */
 	    HCget_config_info(comp_type, &comp_config);
 	    if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
@@ -6549,7 +6563,7 @@ GRreadchunk(int32 riid,    /* IN: access aid to GR */
                         ri_ptr->img_tag, ri_ptr->img_ref,
                         &comp_type, &cinfo);
     }
-    if (comp_type != COMP_CODE_NONE) {
+    if (status != FAIL && comp_type != COMP_CODE_NONE) {
 	    /* Check that the compression encoder is available */
 	    HCget_config_info(comp_type, &comp_config);
 	    if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {

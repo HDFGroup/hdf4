@@ -620,6 +620,7 @@ mcache_get(
                 if (((mp->pgin)(mp->pgcookie, pgno-1, bp->page)) == FAIL)
                   {
                       HEreport("mcache_get: error reading chunk=%d\n",(intn)pgno-1);
+                      lp = NULL; /* don't clobber the cache! */
                       ret_value = RET_ERROR;
                       goto done;
                   }
@@ -627,6 +628,7 @@ mcache_get(
           else
             {
                 HEreport("mcache_get: reading fcn not set,chunk=%d\n",(intn)pgno-1);
+                lp = NULL;
                 ret_value = RET_ERROR;
                 goto done;
             }
