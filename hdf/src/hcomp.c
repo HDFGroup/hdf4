@@ -155,6 +155,11 @@ PRIVATE int32 HCIinit_coder(comp_coder_info_t *cinfo,comp_coder_t coder_type,
     CONSTR(FUNC,"HCIinit_coder");  /* for HERROR */
 
     switch(coder_type) {    /* determin the type of encoding */
+        case COMP_CODE_NONE:            /* "none" (i.e. no) encoding */
+            cinfo->coder_type=COMP_CODE_NONE;   /* set coding type */
+            cinfo->coder_funcs=cnone_funcs;     /* set the "none" func. ptrs */
+            break;
+
         case COMP_CODE_RLE:           /* Run-length encoding */
             cinfo->coder_type=COMP_CODE_RLE;    /* set coding type */
             cinfo->coder_funcs=crle_funcs;      /* set the RLE func. ptrs */
@@ -257,13 +262,10 @@ PRIVATE int32 HCIwrite_header(filerec_t *file_rec,accrec_t *access_rec,
     CONSTR(FUNC,"HCIwrite_header");  /* for HERROR */
     uint8 *p;       /* pointer to the temporary buffer */
 
-    /* Check if temproray buffer has been allocated */
+    /* Check if temporary buffer has been allocated */
     if (ptbuf == NULL)
-      {
-        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
-        if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
+        if((ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8))) == NULL)
+            HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     /* write special element info to the file */
     p = ptbuf;

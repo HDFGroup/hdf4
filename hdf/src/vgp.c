@@ -30,7 +30,7 @@ static char RcsId[] = "@(#)$Revision$";
 PRIVATE intn Load_vfile
     (HFILEID f);
 
-PRIVATE VOID Remove_vfile
+PRIVATE intn Remove_vfile
     (HFILEID f);
 
 PRIVATE vginstance_t *vginstance
@@ -78,18 +78,18 @@ PRIVATE intn Load_vfile (HFILEID f)
     CONSTR(FUNC,"Load_vfile");
 
     /* Check if vfile buffer has been allocated */
-    if (vfile == NULL)
-      {
+    if (vfile == NULL) {
         vfile = (vfile_t *)HDgetspace(MAX_VFILE * sizeof(vfile_t));
         if (vfile == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+            HRETURN_ERROR(DFE_NOSPACE, FAIL);
+
         /* zero the space */
-        vfile = (vfile_t *)HDmemset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+        HDmemset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
       }
 
     /* allocate a new vfile_t structure */
     if((vf = Get_vfile(f))==NULL)
-        return FAIL;
+        HRETURN_ERROR(DFE_FNF,FAIL);
 
     /* the file is already loaded (opened twice) do nothing */
     if(vf->access++) 
@@ -168,33 +168,30 @@ PRIVATE intn Load_vfile (HFILEID f)
   removes the file ptr from the vfile[] table. 
   *** Only called by Vfinish() ***
 */
-PRIVATE VOID Remove_vfile (HFILEID f)
+PRIVATE intn Remove_vfile (HFILEID f)
 {
     vfile_t      *vf=NULL;
     CONSTR(FUNC,"Remove_vfile");
     
     /* Check if vfile buffer has been allocated */
-    if (vfile == NULL)
-      {
-        vfile = (vfile_t *)HDgetspace(MAX_VFILE * sizeof(vfile_t));
-        if (vfile == NULL)
-          HERROR(DFE_NOSPACE);
-        /* zero the space */
-        vfile = (vfile_t *)HDmemset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
-      }
+    if (vfile == NULL) 
+	HRETURN_ERROR(DFE_INTERNAL,FAIL);
 
     /* Figure out what file to work on */
     if((vf = Get_vfile(f)) == NULL)
-        return;
+        HRETURN_ERROR(DFE_FNF,FAIL);
     
     /* someone still has an active pointer to this file */
     if(--vf->access) 
-        return;
+        return(SUCCEED);
 
+    /* clear out the tbbt's */
     tbbtdfree(vf->vgtree, vdestroynode, NULL);
     tbbtdfree(vf->vstree, vsdestroynode, NULL);
 
-	HDmemset(vf,0,sizeof(vfile_t));	/* reset values of structure */
+    HDmemset(vf,0,sizeof(vfile_t));	/* reset values of structure */
+
+    return(SUCCEED);
 }  /* Remove_vfile */
 
 /* ---------------------------- vcompare ------------------------- */
@@ -260,22 +257,29 @@ PUBLIC VOID vtfreekey(VOIDP k)
 
 PUBLIC intn Vinitialize(HFILEID f)
 {
-#ifdef LATER
     CONSTR(FUNC,"Vinitialize");
-#endif
 
-    return(Load_vfile (f));
+    if(!VALIDFID(f))
+	HRETURN_ERROR(DFE_ARGS,FAIL);
+
+    if(Load_vfile(f)==FAIL)
+	HRETURN_ERROR(DFE_INTERNAL,FAIL);
+
+    return(SUCCEED);
 }
 
 /* ---------------------------- Vfinish ------------------------- */
 
 PUBLIC intn Vfinish (HFILEID f)
 {
-#ifdef LATER
     CONSTR(FUNC,"Vfinish");
-#endif
     
-    Remove_vfile (f);
+    if(!VALIDFID(f))
+	HRETURN_ERROR(DFE_ARGS,FAIL);
+
+    if(Remove_vfile(f)==FAIL)
+	HRETURN_ERROR(DFE_INTERNAL,FAIL);
+
     return(SUCCEED);
 }
 

@@ -150,7 +150,10 @@ typedef enum {
     DFE_GROUPSETUP,     /* Error from DFdisetup in opening a group */
     DFE_PUTGROUP,       /* Error when putting a tag/ref into a group */
     DFE_CANTCOMP,       /* Can't compress an object */
-    DFE_CANTDECOMP      /* Can't de-compress an object */
+    DFE_CANTDECOMP,     /* Can't de-compress an object */
+    DFE_UNINIT,         /* Interface was not initialized correctly */
+    DFE_CANTINIT,       /* Can't initialize an interface we depend on */
+    DFE_CANTSHUTDOWN    /* Can't shut down an interface we depend on */
 } hdf_err_code_t;
 
 #ifdef _H_ERR_MASTER_
@@ -254,7 +257,10 @@ PRIVATE const struct error_messages_t error_messages[] =
 { DFE_GROUPSETUP,   "Error from DFdisetup in opening a group"},
 { DFE_PUTGROUP,     "Error when putting a tag/ref into a group"},
 { DFE_CANTCOMP,     "Can't compress an object"},
-{ DFE_CANTDECOMP,   "Can't de-compress an object"}
+{ DFE_CANTDECOMP,   "Can't de-compress an object"},
+{ DFE_UNINIT,       "Interface was not initialized correctly"},
+{ DFE_CANTINIT,     "Can't initialize an interface we depend on"},
+{ DFE_CANTSHUTDOWN, "Can't shut down an interface we depend on"}
 };
 #endif /* _H_ERR_MASTER_ */
 

@@ -35,7 +35,8 @@ typedef enum {
 typedef enum {
     COMP_CODE_NONE=0,       /* don't encode at all, just store */
     COMP_CODE_RLE,          /* for simple RLE encoding */
-    COMP_CODE_NBIT          /* for N-bit encoding */
+    COMP_CODE_NBIT,         /* for N-bit encoding */
+    COMP_CODE_SKPHUFF       /* for Skipping huffman encoding */
 } comp_coder_t;
 
 /* Compression types available */
