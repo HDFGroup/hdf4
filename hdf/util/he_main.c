@@ -70,10 +70,10 @@ static char RcsId[] = "@(#)$Revision$";
 #include <console.h>
 #endif
 
+#include "he.h"
+
 #include <stdio.h>
 #include <unistd.h>
-
-#include "he.h"
 
 /* the return status of last command executed */
 int         he_status = HE_OK;
