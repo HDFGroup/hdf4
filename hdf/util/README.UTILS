@@ -49,3 +49,65 @@ hdfpack:
        test.cdf - 11795
        test.pck - 6747
        test.blk - 8111
+
+
+hdftopal/paltohdf
+
+   Copy the file palette.raw from the examples/files directory.
+
+   Execute:
+        paltohdf palette.raw palette.hdf
+        hdftopal palette.hdf palette.raw.new
+
+   Use hdfls with the '-l' option to examine the HDF palette file.
+        It should have an 'Image Palette-8' and an 'Image Palette,'
+        both with length 768 bytes.  They should also have the same
+        reference number.
+   Use the Unix utility 'cmp' or something similar to do a byte-for-byte
+        comparison of palette.raw and palette.raw.new.  They should be
+        identical.
+
+
+r8tohdf/hdftor8
+
+   Copy the files storm*.raw and palette.raw from the examples/files directory.
+
+   Execute:
+        r8tohdf 57 57 storm.hdf storm*.raw
+        r8tohdf 57 57 storm.hdf -p palette.raw -i storm110.raw
+        hdftor8 storm.hdf
+
+   Use hdfls with the '-l' option to examine the HDF file.  It should
+        contain five raster image sets, one of which will be compressed
+        under IMCOMP compression.  (If you do not put the '-p' in the
+        second r8tohdf command above, you should get an error message.)
+        The non-compressed rasters images should be the same length as
+        the raw raster files.  The compressed will be about 25% of that
+        size.
+   Use the Unix utility 'cmp' or something similar to do byte-for-byte
+        comparisons on the produced raw raster files by hdftor8.  There
+        should be one more than you had at the start.  Two of them will
+        compare exactly with storm110.raw (or whatever you gave in the
+        second r8tohdf command), and the rest will compare with one of
+        the other raw rasters.  There is no guarantee about the order
+        of the produced raw rasters, but it is likely they will be produced
+        in the order in which they went into the file, which would be
+        increasing numerical order, with the compressed image last.
+
+
+hdfcomp
+
+   Copy the files storm*.hdf from the examples/files directory.
+
+   Execute:
+        hdfcomp allstorms.hdf storm*.hdf
+        hdfcomp allcomp.hdf -c storm*.hdf
+
+   Use hdfls with the '-l' option to examine the two HDF files.  The first,
+        allstorms.hdf, should simply hold the raster together in one file,
+        with no compression.  You can use hdfls to check the original files.
+        The second file, allcomp.hdf, should hold all the rasters in a
+        compress format.  Run-Length Encoding (RLE) compression will result
+        in modest savings - about 10% to 15% for these files.
+
+
