@@ -30,7 +30,7 @@ CC='cc -ansi'
 # CPPFLAGS=-DNDEBUG
 #
 # Location of the HDF home.  Must be an absolute path.
-HDF_HOME=/usr6/koziol/hdf/HDF4.0
+HDF_HOME=`pwd`/..
 # Location of HDF include files.  Must be an absolute path.
 HDF_INC=-I${HDF_HOME}/hdf/include
 #
