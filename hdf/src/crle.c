@@ -1,3 +1,9 @@
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
+/* $Id$ */
+
 /*
  FILE
        crle.c
@@ -19,29 +25,6 @@
     10/09/93    Finished testing.  First version done.
 */
 
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-/*
-$Header$
-
-$Log$
-Revision 1.2.2.2  1993/10/19 17:36:34  koziol
-Tons of changes and updates.  Fixed the 0 length problem in Hstartwrite(),
-made all the 'void' returning routines in the Vsets return a succeed or
-fail.  Added N-Bit files (which aren't working yet...)
-
- * Revision 1.2.2.1  1993/10/10  22:09:59  koziol
- * Moved Tag descriptions into a header file.  Updated compression routines.
- *
- * Revision 1.2  1993/10/06  20:27:20  koziol
- * More compression fixed, and folded Doug's suggested change into VSappendable.
- *
- * Revision 1.1  1993/09/30  19:04:41  koziol
- * Added basic compressing functionality for special tags.
- *
- *
- */
 
 /* General HDF includes */
 #include "hdf.h"
