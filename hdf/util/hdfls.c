@@ -25,9 +25,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/02/21 21:06:29  mfolk
-no change
+Revision 1.4  1992/02/26 17:46:31  likkai
+added descriptions for Vset elements.
 
+ * Revision 1.3  1992/02/21  21:06:29  mfolk
+ * no change
+ *
  * Revision 1.2  1992/02/11  17:16:24  chouck
  * Cosmetic changes.
  * Added new tag values
@@ -131,13 +134,11 @@ struct des {
         {DFTAG_IMC,     "IMCOMP compression (Compression)"},
         {DFTAG_IMCOMP, "IMCOMP compression (Compression)"},
 
-#ifdef VSDATATAG
-        {VGDESCTAG,  "Vset Group Desc     (Vset)"},
-        {VSDESCTAG,  "Vset Set Desc       (Vset)"},
-        {VSDATATAG,  "Vset Data           (Vset)"},
-#endif
+        {DFTAG_VG,  	"Vgroup              (Vset)"},
+        {DFTAG_VH,  	"Vdata Header        (Vset)"},
+        {DFTAG_VS,  	"Vdata Storage Area  (Vset)"},
 
-	{-1,         "Unknown Tag                     "}
+	     {-1,         "Unknown Tag                     "}
     };
 
 int compare
