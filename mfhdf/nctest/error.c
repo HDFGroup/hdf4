@@ -20,7 +20,7 @@ int	error_count = 0;
 /*
  * Use for logging error conditions.
  */
-#if !defined(NO_STDARG) && defined(PROTOTYPE)
+#ifndef(NO_STDARG)
 void
 error(char *fmt, ...)
 #else

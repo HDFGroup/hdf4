@@ -486,7 +486,11 @@ Void *values ;
 	case NC_SHORT :
 		return( xdr_NCvshort(xdrs, (unsigned)rem/2, (short *)values) ) ;
 	case NC_LONG :
-		return( xdr_long(xdrs, (long *)values) ) ;
+#ifdef __alpha
+		return( xdr_int(xdrs, (nclong *)values) ) ;
+#else
+		return( xdr_long(xdrs, (nclong *)values) ) ;
+#endif
 	case NC_FLOAT :
 		return( xdr_float(xdrs, (float *)values) ) ;
 	case NC_DOUBLE : 
@@ -920,7 +924,7 @@ uint32    count;
 } /* xdr_NCvdata */
 
 
-/* ------------------------- xdr_NCv1data ------------------- */
+/* ------------------------- hdf_xdr_NCv1data ------------------- */
 /*
  * read / write a single datum of type 'type' at 'where'
  * This is designed to replace the xdr based routine of the
@@ -1152,8 +1156,12 @@ Void *values ;
 		} /* else */
 		return(TRUE) ;
 	case NC_LONG :
+#ifdef __alpha
+		xdr_NC_fnct = xdr_int ;
+#else
 		xdr_NC_fnct = xdr_long ;
-		szof = sizeof(long) ;
+#endif
+		szof = sizeof(nclong) ;
 		break ;
 	case NC_FLOAT :
 		xdr_NC_fnct = xdr_float ;
@@ -1330,9 +1338,7 @@ Void *values ;
             DFKsetNT(vp->HDFtype);
 #endif
 
-	if(vp->assoc->count == 0) {
-            /* 'scaler' variable */
-            
+	if(vp->assoc->count == 0) {   /* 'scaler' variable */
 #ifdef HDF
             if(handle->is_hdf) {
                 return(

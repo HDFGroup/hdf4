@@ -464,8 +464,8 @@ extern int hdf_read_sds_cdf
     PROTO((XDR *,NC **));
 
 extern int NCgenio
-    PROTO((NC *handle,int varid,const int32 *start,const int32*count,
-        const int32 *stride,const int32 *imap,Void *values));
+    PROTO((NC *handle, int varid, const long *start, const long *count,
+        const long *stride, const long *imap,Void *values));
 
 extern int NC_var_shape
     PROTO((NC_var *var,NC_array *dims));

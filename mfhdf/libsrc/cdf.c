@@ -1883,7 +1883,11 @@ NC_var *vp ;
 			break ;
 		case NC_LONG :
 			alen /= 4 ;
+#ifdef __alpha
+			xdr_NC_fnct = xdr_int ;
+#else
 			xdr_NC_fnct = xdr_long ;
+#endif
 			break ;	
 		case NC_FLOAT :
 			alen /= 4 ;
