@@ -126,6 +126,7 @@ funclist_t  comp_funcs =
     HCPwrite,
     HCPendaccess,
     HCPinfo,
+    NULL         /* no routine registerd */
 };
 
 /* #define TESTING */

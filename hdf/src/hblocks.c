@@ -185,7 +185,8 @@ funclist_t  linked_funcs =
     HLPread,
     HLPwrite,
     HLPendaccess,
-    HLPinfo
+    HLPinfo,
+    NULL         /* no routine registerd */
 };
 
 /* ------------------------------------------------------------------------

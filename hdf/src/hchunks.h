@@ -269,7 +269,8 @@ funclist_t  chunked_funcs =
     HMCPread,
     HMCPwrite,
     HMCPendaccess,
-    HMCPinfo
+    HMCPinfo,
+    NULL         /* no routine registerd */
 };
 
 #endif
