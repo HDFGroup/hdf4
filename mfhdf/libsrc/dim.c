@@ -28,7 +28,7 @@ long size ;
 #ifdef HDF
         ret->count = 1;
 /*        ret->dim00_compat = (size == NC_UNLIMITED)? 0 : 1;  */
-        ret->dim00_compat = 1;
+        ret->dim00_compat = 0;
 #endif /* HDF */
 	return(ret) ;
 alloc_err :

@@ -4530,8 +4530,10 @@ SDsetdimval_comp(int32 dimid,    /* IN: dimension ID, returned from SDgetdimid *
           goto done;
       }
 
-    if (dim->size != SD_UNLIMITED  
+/*    if (dim->size != SD_UNLIMITED  
         && dim->dim00_compat != comp_mode )  
+*/
+    if (dim->dim00_compat != comp_mode)
       {
         dim->dim00_compat = comp_mode;
 
@@ -4588,10 +4590,12 @@ SDisdimval_bwcomp(int32 dimid /* IN: dimension ID, returned from SDgetdimid */)
           goto done;
       }
 
+/* Default is incompatible. Return dim->dim00_compat.
     if (dim->size == SD_UNLIMITED) 
         ret_value = SD_DIMVAL_BW_COMP;
     else 
-        ret_value = dim->dim00_compat; 
+*/
+    ret_value = dim->dim00_compat; 
 
 done:
     if (ret_value == FAIL)

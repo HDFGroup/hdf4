@@ -2518,22 +2518,23 @@ main(int argc, char *argv[])
     CHECK(f1, FAIL, "SDstart (file1)");
 
     /* set first dimension to be UNLIMITED.
-       Create data set 'dimval_non_compat' */
+       Create data set 'dimval_1_compat' */
     dimsize[0]=SD_UNLIMITED;
     dimsize[1]=6;
-    sdid = SDcreate(f1, "dimval_non_compat", DFNT_INT32, 2, dimsize);
-    CHECK(sdid,FAIL,"SDcreate:Failed to create data set 'dimval_non_compat' in file 'test1.hdf'");
+    sdid = SDcreate(f1, "dimval_1_compat", DFNT_INT32, 2, dimsize);
+    CHECK(sdid,FAIL,"SDcreate:Failed to create data set 'dimval_1_compat' in file 'test1.hdf'");
 
-    /* get handle for first dimension of data set 'dimval_non_compat' */
+    /* get handle for first dimension of data set 'dimval_1_compat' */
     dimid=SDgetdimid(sdid, 0);
     CHECK(dimid, FAIL, "SDgetdimid");
 
-    /* get handle for second dimension of data set 'dimval_non_compat' */
+    /* get handle for second dimension of data set 'dimval_1_compat' */
     dimid1=SDgetdimid(sdid, 1);
     CHECK(dimid1, FAIL, "SDgetdimid");
 
-    /* set second dimension as not being backward compatible? */
-    status = SDsetdimval_comp(dimid1, SD_DIMVAL_BW_INCOMP);
+    /* set second dimension as being backward compatible, default is
+       non-compatible  */
+    status = SDsetdimval_comp(dimid1, SD_DIMVAL_BW_COMP);
     CHECK(status, FAIL, "SDsetdimval_comp");
 
     for (i=0; i<6; i++)
@@ -2546,7 +2547,7 @@ main(int argc, char *argv[])
     for (i=0; i<24; i++)
         idata[i] = i;
 
-    /* write data to data set 'dimval_non_compat' in file 'test1.hdf' */
+    /* write data to data set 'dimval_1_compat' in file 'test1.hdf' */
     start[0]=0;
     start[1]=0;
     end[0]=4;
@@ -2554,7 +2555,7 @@ main(int argc, char *argv[])
     status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
     CHECK(status, FAIL, "SDwritedata");
 
-    /* end access to data set 'dimval_non_compat' */
+    /* end access to data set 'dimval_1_compat' */
     status = SDendaccess(sdid);
     CHECK(status, FAIL, "SDendaccess");
 
@@ -2568,15 +2569,15 @@ main(int argc, char *argv[])
     f1 = SDstart(FILE1, DFACC_RDWR);
     CHECK(f1, FAIL, "SDstart: (again2)");
 
-    /* get index of data set 'dimval_non_compat' in file 'test1.hdf' */
-    index = SDnametoindex(f1, "dimval_non_compat");
+    /* get index of data set 'dimval_1_compat' in file 'test1.hdf' */
+    index = SDnametoindex(f1, "dimval_1_compat");
     CHECK(index,FAIL,"SDnametoindex: failed to get index for data set 'dimval_non_compat' in file 'test1.hdf'");
 
-    /* select data set 'dimval_non_compat' based on it's index in file */
+    /* select data set 'dimval_1_compat' based on it's index in file */
     sdid = SDselect(f1, index);
-    CHECK(sdid,FAIL,"SDselect:Failed to select data set 'dimval_non_compat' in file 'test1.hdf'");
+    CHECK(sdid,FAIL,"SDselect:Failed to select data set 'dimval_1_compat' in file 'test1.hdf'");
 
-    /* info on data set 'dimval_non_compat' */
+    /* info on data set 'dimval_1_compat' */
     status = SDgetinfo(sdid, name, (int32 *)&rank, dimsize, &nt, (int32 *)&nattrs);
     CHECK(status, FAIL, "SDgetinfo");
 
@@ -2587,7 +2588,7 @@ main(int argc, char *argv[])
           num_err++;
       }
 
-    /* get handle for first dimension of data set 'dimval_non_compat' */
+    /* get handle for first dimension of data set 'dimval_1_compat' */
     dimid=SDgetdimid(sdid,0);
     CHECK(dimid, FAIL, "SDgetdimid");
 
@@ -2601,8 +2602,18 @@ main(int argc, char *argv[])
           fprintf(stderr, "SDdiminfo returned wrong values\n");
           num_err++;
       }
+    /* is it backward non-compatible? */
+    status = SDisdimval_bwcomp(dimid);
+    if (status != SD_DIMVAL_BW_INCOMP)
+       { 
+           fprintf(stderr, "SDisdimvalcomp returned wrong value for dimension.\n");
+            num_err++;
+       }
+    /* re-set first dimension as backward compatible */
+    status = SDsetdimval_comp(dimid, SD_DIMVAL_BW_COMP);
+    CHECK(status, FAIL, "SDsetdimval_comp");
 
-    /* get handle for second dimension of data set 'dimval_non_compat' */
+    /* get handle for second dimension of data set 'dimval_1_compat' */
     dimid1=SDgetdimid(sdid,1);
     CHECK(dimid1, FAIL, "SDgetdimid");
 
@@ -2617,7 +2628,7 @@ main(int argc, char *argv[])
           num_err++;
       }
 
-    /* read data back from data set 'dimval_non_compat' */
+    /* read data back from data set 'dimval_1_compat' */
     status = SDreaddata(sdid, start, NULL, end, (VOIDP)idata);
     CHECK(status, FAIL, "SDwritedata");
 
@@ -2632,20 +2643,20 @@ main(int argc, char *argv[])
           }
       }
 
-    /* see if second dimensionis backward compatible. 
-       should be incompatible? */
+    /* see if second dimension is backward compatible. 
+       should be compatible */
     status = SDisdimval_bwcomp(dimid1);
-    if (status != SD_DIMVAL_BW_INCOMP)  
+    if (status != SD_DIMVAL_BW_COMP)  
       {
           fprintf(stderr, "SDisdimvalcomp returned wrong value for dimension\n");
           num_err++;
       }
 
-    /* re-set second dimension as backward compatible? */
-    status = SDsetdimval_comp(dimid1, SD_DIMVAL_BW_COMP);
+    /* re-set second dimension as backward non-compatible */
+    status = SDsetdimval_comp(dimid1, SD_DIMVAL_BW_INCOMP);
     CHECK(status, FAIL, "SDsetdimval_comp");
 
-    /* end access to data set 'dimval_non_compat' */
+    /* end access to data set 'dimval_1_compat' */
     status = SDendaccess(sdid);
     CHECK(status, FAIL, "SDendaccess");
 
@@ -2660,15 +2671,15 @@ main(int argc, char *argv[])
     f1 = SDstart(FILE1, DFACC_RDWR);
     CHECK(f1, FAIL, "SDstart (again3)");
 
-    /* get index of data set 'dimval_non_compat' in file 'test1.hdf' */
-    index = SDnametoindex(f1, "dimval_non_compat");
-    CHECK(index,FAIL,"SDnametoindex: failed to get index for data set 'dimval_non_compat' in file 'test1.hdf'");
+    /* get index of data set 'dimval_1_compat' in file 'test1.hdf' */
+    index = SDnametoindex(f1, "dimval_1_compat");
+    CHECK(index,FAIL,"SDnametoindex: failed to get index for data set 'dimval_1_compat' in file 'test1.hdf'");
 
-    /* select data set 'dimval_non_compat' based on it's index in file */
+    /* select data set 'dimval_1_compat' based on it's index in file */
     sdid = SDselect(f1, index);
-    CHECK(sdid,FAIL,"SDselect:Failed to select data set 'dimval_non_compat' in file 'test1.hdf'");
+    CHECK(sdid,FAIL,"SDselect:Failed to select data set 'dimval_1_compat' in file 'test1.hdf'");
 
-    /* info on data set 'dimval_non_compat' */
+    /* info on data set 'dimval_1_compat' */
     status = SDgetinfo(sdid, name, (int32 *)&rank, dimsize, &nt, (int32 *)&nattrs);
     CHECK(status, FAIL, "SDgetinfo");
 
@@ -2679,7 +2690,7 @@ main(int argc, char *argv[])
           num_err++;
       }
 
-    /* get handle for second dimension of data set 'dimval_non_compat' */
+    /* get handle for second dimension of data set 'dimval_1_compat' */
     dimid1=SDgetdimid(sdid,1);
     CHECK(dimid1, FAIL, "SDgetdimid");
 
@@ -2695,15 +2706,17 @@ main(int argc, char *argv[])
       }
 
     /* see if second dimensionis backward compatible. 
-       should be backward compatible? */
+       should be backward non-compatible */
     status = SDisdimval_bwcomp(dimid1);
-    if (status != SD_DIMVAL_BW_COMP)  
+    if (status != SD_DIMVAL_BW_INCOMP)  
       {
           fprintf(stderr, "SDisdimvalcomp returned wrong value\n");
           num_err++;
       }
-
-    /* end access to data set 'dimval_non_compat' */
+    /* re-set second dimension as backward compatible */
+    status = SDsetdimval_comp(dimid1, SD_DIMVAL_BW_COMP);
+    CHECK(status, FAIL, "SDsetdimval_comp");
+    /* end access to data set 'dimval_1_compat' */
     status = SDendaccess(sdid);
     CHECK(status, FAIL, "SDendaccess");
 
