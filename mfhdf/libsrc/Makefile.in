@@ -44,7 +44,7 @@ all::		library
 #
 test:		$(PROGRAM) hdftest
 	./$(PROGRAM) > cdfout.new
-	@cmd="diff -w cdfout.new testout.sav"; \
+	@cmd="diff cdfout.new testout.sav"; \
 	    echo $$cmd; \
 	    if $$cmd; then \
 		echo "*** netCDF passes formatted test ***"; \
@@ -69,7 +69,7 @@ $(PROGRAM):	$(PROGRAM).o library
 hdftest:	hdftest.o library        
 	$(CC) $(CFLAGS) hdftest.o $(LIBS) -o $@
 	./hdftest > hdfout.new
-	@cmd="diff -w hdfout.new hdfout.sav"; \
+	@cmd="diff hdfout.new hdfout.sav"; \
 	    echo $$cmd; \
 	    if $$cmd; then \
 		echo "*** HDF passes formatted test ***"; \
