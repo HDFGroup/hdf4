@@ -257,6 +257,7 @@ print_file_desc(const char *fname, int32 fid)
     int32       len, old_len;
     intn        num = 0;
     char       *desc = NULL;
+    file_type_t ft;
 
     old_len = len = DFANgetfdslen(fid, 1);
 
@@ -341,7 +342,7 @@ print_file_desc(const char *fname, int32 fid)
                             printf("\t\t Type = %s \n\t\t Count= %i\n",
                                    attr_nt_desc, (int) attr_count);
                             printf("\t\t Value = ");
-                            ret = dumpfull(attr_nt, attr_count, attr_buf, 20, stdout);
+                            ret = dumpfull(attr_nt, ft, attr_count, attr_buf, 20, stdout);
                             printf("\n");
                                 /* clean up */
                             HDfree(attr_nt_desc);

@@ -232,8 +232,7 @@ do_dumpsds(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts)
 }	/* end do_dumpsds() */
 
 int32 
-sdsdumpfull(int32 sds_id, int32 rank, int32 dimsizes[], int32 nt,
-            intn indent, FILE * fp)
+sdsdumpfull(int32 sds_id, file_type_t ft, int32 rank, int32 dimsizes[], int32 nt           , intn indent, FILE * fp)
 {
 	/* "rank" is the number of dimensions and 
 	   "dimsizes[i]" is size of dimension "i". */
@@ -291,7 +290,7 @@ sdsdumpfull(int32 sds_id, int32 rank, int32 dimsizes[], int32 nt,
       {		/* If there is only one dimension, then dump the data
                    and the job is done. */
           ret = SDreaddata(sds_id, start, NULL, edge, buf);
-          ret = dumpfull(numtype, read_nelts, buf, indent, fp);
+          ret = dumpfull(numtype, ft, read_nelts, buf, indent, fp);
       }
     else if (rank > 1)
       {
@@ -299,10 +298,12 @@ sdsdumpfull(int32 sds_id, int32 rank, int32 dimsizes[], int32 nt,
           while (!done)
             {	/* In each iteration, a row in dumped and "left[]" is modified accordingly. */
                 ret = SDreaddata(sds_id, start, NULL, edge, buf);
-                ret = dumpfull(numtype, read_nelts, buf, indent, fp);
+                ret = dumpfull(numtype, ft, read_nelts, buf, indent, fp);
+                if(ft==DASCII)
+                {
                 for (count = 0; count < indent; count++)
                     putc(' ', fp);
-
+                }
                     /* Modify the values for "start[]" and "left[]" that are to be used
                        for dumping the next row. */
 
@@ -335,12 +336,15 @@ sdsdumpfull(int32 sds_id, int32 rank, int32 dimsizes[], int32 nt,
                             start[j] = 0;
                             if (j == 0)
                                 done = 1;
+                            if(ft==DASCII)
+                            {
                             if (j == rank - 2)
                               {
                                   fprintf(fp, "\n");
                                   for (count = 0; count < indent; count++)
                                       putc(' ', fp);
                               }
+                            }
                         }
                   }		/* for j */
             }	/* while   */
@@ -349,6 +353,7 @@ sdsdumpfull(int32 sds_id, int32 rank, int32 dimsizes[], int32 nt,
     HDfree((VOIDP) start);
     HDfree((VOIDP) left);
     HDfree((VOIDP) buf);
+    if(ft==DASCII)
     fprintf(fp, "\n");
     return (0);
 }	/* sdsdumpfull */
@@ -370,6 +375,7 @@ dsd(dump_info_t * dumpsds_opts, intn curr_arg, intn argc, char *argv[])
     char       *nt_desc, *attr_nt_desc;
     int         index_error=0, x, dumpall = 0;
     int32       sd_ref;
+    file_type_t    ft;
 
     while (curr_arg < argc)
       {		/* Examine each file. */
@@ -465,6 +471,12 @@ dsd(dump_info_t * dumpsds_opts, intn curr_arg, intn argc, char *argv[])
                 continue;
             } /* end if */
           num_sd_chosen=k;  /* update actual count of items chosen */
+
+          ft=dumpsds_opts->file_type;
+         
+          switch(ft)
+          {
+           case DASCII:       /* ASCII file */
 
               /* get output file name  */
           if (dumpsds_opts->dump_to_file)
@@ -594,7 +606,7 @@ dsd(dump_info_t * dumpsds_opts, intn curr_arg, intn argc, char *argv[])
                             fprintf(fp, "\t\t Type = %s \n\t\t Count= %d\n", attr_nt_desc, (int) attr_count);
                             HDfree(attr_nt_desc);
                             fprintf(fp, "\t\t Value = ");
-                            ret = dumpfull(attr_nt, attr_count, attr_buf, 20, fp);
+                            ret = dumpfull(attr_nt, ft, attr_count, attr_buf, 20, fp);
                             HDfree((VOIDP) attr_buf);
                         }
 
@@ -614,13 +626,79 @@ dsd(dump_info_t * dumpsds_opts, intn curr_arg, intn argc, char *argv[])
 
                             for (count = 0; count < 16; count++)
                                 fprintf(fp, " ");
-                            ret = sdsdumpfull(sds_id, rank, dimsizes, nt, 16, fp);
+                            ret = sdsdumpfull(sds_id, ft, rank, dimsizes, nt, 16, fp);
                         }
 
                       break;
                   }		/* switch  */
                 SDendaccess(sds_id);
             }	/* for ndsets  */
+          break;
+
+       case DBINARY:       /* binary file */
+         /* get output file name  */
+          if (dumpsds_opts->dump_to_file)
+              fp = fopen(dumpsds_opts->file_name, "w");
+          else
+              fp = stdout;
+
+       /*   if (dumpsds_opts->contents != DDATA)
+              fprintf(fp, "File name: %s \n", file_name);     */
+
+          ret = SDfileinfo(sdf_id, &ndsets, &nglb_attr);
+          if (ret == FAIL)
+            {
+                printf("Failure in SDfileinfo %s\n", file_name);
+                exit(1);
+            }
+
+          x = 0;
+          if (num_sd_chosen == (-1))
+              dumpall = 1;
+          else
+              sort(sd_chosen, num_sd_chosen);
+
+          for (i = 0; i < ndsets && (dumpall!=0 || x<dumpsds_opts->num_chosen);
+i++)
+            {   /* Examine each SD. */
+                if ((!dumpall) && (i != sd_chosen[x]))
+                    continue;
+                x++;
+
+                    /* Reset variables. */
+                HDmemset(dimsizes, 0, sizeof(int32) * MAXRANK);
+                HDmemset(dimNT, 0, sizeof(int32) * MAXRANK);
+                HDmemset(dimnattr, 0, sizeof(int32) * MAXRANK);
+
+                sds_id = SDselect(sdf_id, i);
+                if (sds_id == FAIL)
+                  {
+                      printf("Failure in selecting %s\n", file_name);
+                      exit(1);
+                  }
+                if ((sd_ref = SDidtoref(sds_id)) == FAIL)
+                 {
+                      printf("Failure in determining reference no.\n");
+                      exit(1);
+                  }
+                isdimvar = (SDiscoordvar(sds_id)) ? 1 : 0;
+                ret = SDgetinfo(sds_id, name, &rank, dimsizes, &nt, &nattr);
+
+          /*   output data to binary file   */
+
+            if (rank > 0 && dimsizes[0] != 0)
+                        {
+                            intn        count;
+
+                            ret = sdsdumpfull(sds_id, ft, rank, dimsizes, nt, 16
+, fp);
+                        }
+            SDendaccess(sds_id);
+             }        /* for ndsets */
+            break;
+        } /* switch for output file */
+                       
+
           SDend(sdf_id);
           if (sd_chosen!=NULL)
             {

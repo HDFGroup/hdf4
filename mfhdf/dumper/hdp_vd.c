@@ -25,7 +25,7 @@ static intn dvd(dump_info_t * dumpvd_opts, intn curr_arg, intn argc,
 				char *argv[], char *flds_chosen[MAXCHOICES],
 				int dumpallfields);
 
-int32       dumpvd(int32 vd_id, int data_only, FILE * fp, char sep[2],
+int32       dumpvd(int32 vd_id, file_type_t ft, int data_only, FILE * fp, char sep[2],
 				   int32 flds_indices[MAXCHOICES], int dumpallfields);
 
 int32       VSref_index(int32 file_id, int32 vd_ref);
@@ -397,6 +397,7 @@ dvd(dump_info_t * dumpvd_opts, intn curr_arg,
     char        file_name[MAXFNLEN];
     FILE       *fp;
     int         index_error = 0, dumpall = 0;
+    file_type_t  ft;
 
     while (curr_arg < argc)
       {		/* Loop until all specified files have been 
@@ -440,6 +441,11 @@ dvd(dump_info_t * dumpvd_opts, intn curr_arg,
                 Hclose(file_id);
                 continue;
             } /* end if */
+
+          ft=dumpvd_opts->file_type;
+          switch(ft)
+           {
+           case DASCII:  /*    ASCII file   */
 
               /* Get output file name.  */
           if (dumpvd_opts->dump_to_file)
@@ -607,11 +613,122 @@ dvd(dump_info_t * dumpvd_opts, intn curr_arg,
                                   HDstrcpy(sep, ";");
                               }
                                 /* Only the chosen or all fields will be dumped out. */
-                            dumpvd(vd_id, data_only, fp, sep, flds_indices, dumpallfields);
+                            dumpvd(vd_id, ft, data_only, fp, sep, flds_indices, dumpallfields);
                         }	/* switch */
                   }
                 VSdetach(vd_id);
             }	/* for */
+            break;
+            case DBINARY:   /*  binary file, not fully tested yet  */
+ 
+             /* Get output file name.  */
+          if (dumpvd_opts->dump_to_file)
+              fp = fopen(dumpvd_opts->file_name, "w");
+          else
+              fp = stdout;
+
+          
+          x = 0;	/* "x" is used to index the array of "vd_chosen". */
+
+              /* Determine if all VDs are to be dumped out. */
+          if (num_vd_chosen<=0)	/* If so, set the corresponding flag. */
+              dumpall = 1;
+          else
+                  /* Otherwise, sort the indices of the chosen VDs in increasing 
+                     order so that they will be dumped out in such order. */
+              sort(vd_chosen,num_vd_chosen);
+
+              /* Examine each VD. */
+          for (i = 0; (vdata_ref = VSgetid(file_id, vdata_ref)) != -1 && (dumpall!=0 || x<dumpvd_opts->num_chosen); i++)
+            {
+                int         data_only, flds_match = 0;
+                char        sep[2];
+
+                    /* Only dump the info of the chosen VDs or all of the VDs if none
+                       has been selected. */
+                if ((!dumpall) && (i != vd_chosen[x]))
+                    continue;
+
+                x++;	/* One vdata has been located; so go to the next one in 
+                           the array. */
+                vd_id = VSattach(file_id, vdata_ref, "r");
+                if (vd_id == FAIL)
+                  {
+                      printf("Cannot open vd id=%d\n", (int) vdata_ref);
+                      continue;
+                  }
+
+                VSinquire(vd_id, &nvf, &interlace, fields, &vsize, vdname);
+                vdata_tag = VSQuerytag(vd_id);
+                VSgetclass(vd_id, vdclass);
+
+                    /* If one or more fields were specified by the user, then find out
+                       what they were, determine their corresponding indices in 
+                       "fields", and store these indices in the array "flds_indices" so
+                       that they can be used to determine whether a field should be
+                       dumped later on. */
+                if (flds_chosen[0] != NULL)
+                  {
+                      HDstrcpy(tempflds, fields);
+                      ptr = tempflds;
+
+                      j=(-1);
+                      HDmemfill(flds_indices, &j, sizeof(int32), MAXCHOICES);
+
+                      m = 0;
+                      lastItem = 0;
+                          /* Extract each field name from the list of fields of the 
+                             current record. */
+                      for (j = 0; !lastItem; j++)
+                        {
+                            tempPtr = HDstrchr(ptr, ',');
+                            if (tempPtr == NULL)
+                                lastItem = 1;
+                            else
+                                *tempPtr = '\0';
+                            HDstrcpy(string, ptr);
+                            ptr = tempPtr + 1;
+                                /* Compare the extracted field name with each of the names
+                                   of the fields having been chosen. */
+                            for (k = 0; flds_chosen[k] != NULL; k++)
+                              {
+                                  if (!HDstrcmp(flds_chosen[k], string))
+                                    {
+                                        flds_indices[m] = j;
+                                        m++;
+                                        flds_match = 1;
+                                    }
+                              }		/* for (k...) */
+                        }	/* for (j...) */
+                  }		/* if  */
+
+                    /* If no fields were chosen, all fields are to be dumped out, and
+                       so all fileds match. */
+                if (flds_chosen[0] == NULL)
+                    flds_match = 1;
+                if (flds_match)
+                  {
+                      int32       z, lastItem, count = 0;
+                      
+
+                      if (dumpvd_opts->contents == DDATA)
+                              {
+                                  data_only = 1;
+                                  HDstrcpy(sep, "");
+                              }
+                            else
+                              {
+                                  data_only = 0;
+                                  HDstrcpy(sep, ";");
+                              }
+                                /* Only the chosen or all fields will be dumped out. */
+                            dumpvd(vd_id, ft, data_only, fp, sep, flds_indices, dumpallfields);
+                  }
+                VSdetach(vd_id);
+            }	/* for */
+            break;
+      }    /* switch for output file   */
+
           Vend(file_id);
           if(vd_chosen!=NULL)
             {
@@ -622,6 +739,7 @@ dvd(dump_info_t * dumpvd_opts, intn curr_arg,
               fclose(fp);
           Hclose(file_id);
       }		/* while (curr_arg < argc)  */
+
     return (0);
 }	/* dvd */
 

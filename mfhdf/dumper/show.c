@@ -24,7 +24,7 @@ static char *RcsId[] = "@(#)$Revision$";
 /* ------------------------------------------------ */
 
 int32
-dumpvd(int32 vd, int data_only, FILE * fp, char separater[2],
+dumpvd(int32 vd, file_type_t ft, int data_only, FILE * fp, char separater[2],
        int flds_indices[VSFIELDMAX], int dumpallfields)
 {
     char        vdname[VSNAMELENMAX];
@@ -33,7 +33,7 @@ dumpvd(int32 vd, int data_only, FILE * fp, char separater[2],
     int32       j, i, t, interlace, nv, vsize;
     uint8      *bb, *b;
     DYN_VWRITELIST *w;
-    intn       (*vfmtfn[VSFIELDMAX]) (VOIDP , FILE *);
+    intn       (*vfmtfn[VSFIELDMAX]) (VOIDP ,  file_type_t ft,  FILE *);
     int32       off[VSFIELDMAX];
     int32       order[VSFIELDMAX];
 
@@ -88,13 +88,15 @@ dumpvd(int32 vd, int data_only, FILE * fp, char separater[2],
               /* Display the header of a vdata if the user didn't specify the
                  data-only option. */
           if (!data_only)
-            {
+            { if(ft==DASCII)
+	      {
                 if ((dumpallfields) || (flds_indices[x] == i))
                   {
                       fprintf(fp, "- field index %d: [%s], type=%d, order=%d\n",
                               (int) i, w->name[i], w->type[i], w->order[i]);
                       x++;
                   }
+	      }
             }	/* if */
 
               /* Choose a function for displaying a piece of data of a 
@@ -145,6 +147,9 @@ dumpvd(int32 vd, int data_only, FILE * fp, char separater[2],
       }		/* for */
     cn = 0;
     done = count = 0;
+    
+    if(ft==DASCII)
+      { 
 
 	/* If not just the data will be dumped out, then put an address-type
 	   column on the left so that the user can recognize which record 
@@ -222,7 +227,7 @@ dumpvd(int32 vd, int data_only, FILE * fp, char separater[2],
                       for (t = 0; t < order[i]; t++)
                         {
                             if(display)
-                                cn+=(vfmtfn[i]) (b, fp);
+                                cn+=(vfmtfn[i]) (b, ft, fp);
                             b += off[i];
                             if (display)
                               {
@@ -239,6 +244,7 @@ dumpvd(int32 vd, int data_only, FILE * fp, char separater[2],
                         }
                   }		/* for i to nf-1 */
 
+	   
                 if (cnt2 > 0)
                   {
                       address++;
@@ -295,6 +301,76 @@ dumpvd(int32 vd, int data_only, FILE * fp, char separater[2],
 
     HDfree((VOIDP) bb);
     fprintf(fp, "\n\n");
+      }  /*  for DASCII  */
+
+    else
+      {       /*  binary file  */
+      num_flds = vsize / VSgetfields(vd, flds);
+
+      cnt1 = 0;
+      cnt2 = 0; 
+      while (done != nv)
+      {
+              /* Determine the amount of data to be read this time. */
+          if ((nv - done) > chunk)
+              count = chunk;
+          else
+              count = nv - done;
+
+              /* read and update bookkeeping */
+          VSread(vd, bb, count, interlace);
+          done += count;
+          b = bb;
+
+              /* Display the data. */
+          for (j = 0; j < count; j++)	/* each iteration causes one record 
+                                           to be printed */
+            {
+                cnt1++;
+                x = 0;
+                for (i = 0; i < nf; i++)	/* display all fields in one record */
+                  {
+                      if ((!dumpallfields) && (flds_indices[x] != i))
+                          display = 0;
+                      else
+                        {
+                            display = 1;
+                            x++;
+                        }
+
+                      for (t = 0; t < order[i]; t++)
+                        {
+                            if(display)
+                                cn+=(vfmtfn[i]) (b, ft, fp);
+                            b += off[i];
+                            if (display)
+                              {
+                           
+                                  cn++;
+                                  cnt2++;
+                              }
+                        }
+                      if (display)
+                        {
+                           
+                            cn++;
+                            cnt2++;
+                        }
+                  }		/* for i to nf-1 */      
+                  if (cnt2 > 0)
+                  {
+                      address++;
+                          /* "separator" is the symbol used for separating
+                             different records. */
+                  }
+
+            }	/* for (j=0; j<count; j++) */
+      }		/* while (done != nv) */
+
+	/* ============================================ */
+
+    HDfree((VOIDP) bb);     
+      }   /* binary file */
 
     return (1);
 }	/* dumpvd */

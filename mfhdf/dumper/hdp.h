@@ -206,20 +206,20 @@ extern intn parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn ar
               char *argv[], char *flds_chosen[MAXCHOICES], int *dumpallfields);
 
 /* hdp_dump.c */
-extern intn fmtchar(VOIDP x, FILE * ofp);
-extern intn fmtuchar8(VOIDP x, FILE * ofp);
-extern intn fmtbyte(unsigned char *x, FILE * ofp);
-extern intn fmtint(VOIDP x, FILE * ofp);
-extern intn fmtshort(VOIDP x, FILE * ofp);
-extern intn fmtint8(VOIDP x, FILE * ofp);
-extern intn fmtuint8(VOIDP x, FILE * ofp);
-extern intn fmtint16(VOIDP x, FILE * ofp);
-extern intn fmtuint16(VOIDP x, FILE * ofp);
-extern intn fmtint32(VOIDP x, FILE * ofp);
-extern intn fmtuint32(VOIDP x, FILE * ofp);
-extern intn fmtfloat32(VOIDP x, FILE * ofp);
-extern intn fmtfloat64(VOIDP x, FILE * ofp);
-extern int32 dumpfull(int32 nt, int32 cnt, VOIDP databuf, intn indent, FILE * ofp);
+extern intn fmtchar(VOIDP x, file_type_t ft, FILE * ofp);
+extern intn fmtuchar8(VOIDP x, file_type_t ft, FILE * ofp);
+extern intn fmtbyte(unsigned char *x, file_type_t ft, FILE * ofp);
+extern intn fmtint(VOIDP x, file_type_t ft, FILE * ofp);
+extern intn fmtshort(VOIDP x, file_type_t ft, FILE * ofp);
+extern intn fmtint8(VOIDP x, file_type_t ft, FILE * ofp);
+extern intn fmtuint8(VOIDP x, file_type_t ft, FILE * ofp);
+extern intn fmtint16(VOIDP x, file_type_t ft, FILE * ofp);
+extern intn fmtuint16(VOIDP x, file_type_t ft, FILE * ofp);
+extern intn fmtint32(VOIDP x, file_type_t ft, FILE * ofp);
+extern intn fmtuint32(VOIDP x, file_type_t ft, FILE * ofp);
+extern intn fmtfloat32(VOIDP x, file_type_t ft, FILE * ofp);
+extern intn fmtfloat64(VOIDP x, file_type_t ft, FILE * ofp);
+extern int32 dumpfull(int32 nt, file_type_t ft, int32 cnt, VOIDP databuf, intn indent, FILE * ofp);
 
 /* hdp_util.c */
 	/* misc. functions */

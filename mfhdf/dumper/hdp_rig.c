@@ -211,6 +211,7 @@ drig(dump_info_t * dumprig_opts, intn curr_arg, intn argc,
     VOIDP       image;
     int         dumpall = 0, ncomps, il, rig;
     intn        count;
+    file_type_t ft;
 
     while (curr_arg < argc)
       {		/* Examine all files. */
@@ -237,6 +238,11 @@ drig(dump_info_t * dumprig_opts, intn curr_arg, intn argc,
                     rig_chosen[i] = dumprig_opts->filter_num[i];
                 sort(rig_chosen, num_rig_chosen);  /* DREFNUM doesn't need this */ 
             }	/* end if */
+
+      ft=dumprig_opts->file_type;
+      switch(ft)
+        {
+        case DASCII:   /*  ASCII  file   */
 
               /* Get the name of the output file. */
           if (dumprig_opts->dump_to_file)
@@ -273,8 +279,9 @@ drig(dump_info_t * dumprig_opts, intn curr_arg, intn argc,
           printf("ndsets=%d, dumpall=%d, num_chosen=%d\n",(int)ndsets,(int)dumpall,(int)dumprig_opts->num_chosen);
 
           for(i=0; i<dumprig_opts->num_chosen; i++)
-             { if((rig_chosen[i] >= ndsets)||(rig_chosen[i]<0))
-                printf("\nThe index %d is out of range\n",(int)rig_chosen[i]);
+             {
+                if((dumprig_opts->filter_num[i] > ndsets)||(dumprig_opts->filter_num[i]<0))
+                printf("\nThe index or reference number %d is out of range\n",dumprig_opts->filter_num[i]);
              }
 
           for (i = 0; i < ndsets && (dumpall!=0 || x<dumprig_opts->num_chosen); i++)
@@ -286,9 +293,10 @@ drig(dump_info_t * dumprig_opts, intn curr_arg, intn argc,
 
                 rig = DFGRgetimdims(file_name, &width, &height, &ncomps, &il);
 
+
                     /* Determine the size of each element; "ncomps" is 1 for an
                        8-bit image or 3 for a 24-bit image. */
-                eltsz = DFKNTsize(DFNT_INT8 | DFNT_NATIVE) * ncomps;
+                eltsz = DFKNTsize(DFNT_UINT8 | DFNT_NATIVE) * ncomps;
                 read_nelts = width * height;	/* Number of elements to be read in. */
                 if ((image = (VOIDP) HDmalloc(read_nelts * eltsz)) == NULL)
                   {
@@ -378,7 +386,7 @@ drig(dump_info_t * dumprig_opts, intn curr_arg, intn argc,
                           fprintf(fp, "\tData : \n");
                       for (count = 0; count < indent; count++)
                           putc(' ', fp);
-                      dumpfull(DFNT_INT8, read_nelts, image, indent, fp);
+                      dumpfull(DFNT_UINT8, ft, read_nelts*eltsz, image, indent, fp);
                       HDfree((VOIDP) image);
                       break;
                   }		/* switch  */
@@ -387,6 +395,119 @@ drig(dump_info_t * dumprig_opts, intn curr_arg, intn argc,
             x++;
 
             }	/* for ndsets  */
+          break;
+
+          case DBINARY:       /* binary  file  */
+               /* Get the name of the output file. */
+          if (dumprig_opts->dump_to_file)
+              fp = fopen(dumprig_opts->file_name, "w");
+          else
+              fp = stdout;
+
+              /* Determine the number of images in a file. */
+          if (model == 8)
+            {
+                if ((ndsets = DFR8nimages(file_name)) == -1)
+                    ndsets = 0;
+            }
+          else if (model == 24)
+            {
+                if ((ndsets = DF24nimages(file_name)) == -1)
+                    ndsets = 0;
+            }
+          else
+            {
+                if ((temp = DFR8nimages(file_name)) == -1)
+                    temp = 0;
+                if ((ndsets = DF24nimages(file_name)) == -1)
+                    ndsets = 0;
+                ndsets += temp;
+            }
+
+          if (num_rig_chosen == -1)		/* If all RIGs will be dumped, set the flat. */
+              dumpall = 1;
+
+          x = 0;	/* Used as the index of the array of "rig_chosen[x]". */
+          printf("ndsets=%d, dumpall=%d, num_chosen=%d\n",(int)ndsets,(int)dumpall,(int)dumprig_opts->num_chosen);
+
+          for(i=0; i<dumprig_opts->num_chosen; i++)
+             { if((rig_chosen[i] > ndsets)||(rig_chosen[i]<0))
+                printf("\nThe index %d is out of range\n",(int)rig_chosen[i]);
+             }
+
+          for (i = 0; i < ndsets && (dumpall!=0 || x<dumprig_opts->num_chosen); i++)
+            {	/* Examine all RIGs. */
+                int         indent = 5, compressed, has_pal;
+                int32       ret;
+                int32       eltsz, read_nelts;
+                uint16      rig_ref, compr_type;
+
+                rig = DFGRgetimdims(file_name, &width, &height, &ncomps, &il);
+
+                    /* Determine the size of each element; "ncomps" is 1 for an
+                       8-bit image or 3 for a 24-bit image. */
+                eltsz = DFKNTsize(DFNT_UINT8 | DFNT_NATIVE) * ncomps;
+                read_nelts = width * height;	/* Number of elements to be read in. */
+                if ((image = (VOIDP) HDmalloc(read_nelts * eltsz)) == NULL)
+                  {
+                      printf("Not enough memory!\n");
+                      exit(-1);
+                  }
+                if ((ret = DFGRIgetimlut((const char *) file_name, image, width,
+                                         height, IMAGE, 0, &compressed, &compr_type, &has_pal)) == -1)
+                  {
+                      printf("Read error!\n");
+                      exit(1);
+                  }
+
+                rig_ref = DFGRIlastref();	/* Determine the reference of the image just read. */
+
+                    /* If the user has specificed the reference option, then 
+                       something has to be done. 
+                       Note: the reason why the following part was not done  
+                       inside the above "switch" statement is that the reference 
+                       number of a raster image cannot be appropriately retrieved
+                       before actually reading in a raster image. */
+                if (dumprig_opts->filter == DREFNUM)
+                  {
+                      int         ref_found = 0, m;
+
+                          /* Determine if the image just read has the reference specified by the user. */
+                      for (m = 0; m < dumprig_opts->num_chosen; m++)
+                          if (dumprig_opts->filter_num[m] == rig_ref)
+                              ref_found = 1;
+                      if (!ref_found)
+                        {	/* If no match, then the current image is
+                                   not what the user wants and so skip it. */
+                            HDfree((VOIDP) image);
+                            continue;
+                        }
+                  }
+
+                    /* If not all images are to be dumped out and the current image
+                       is not what the user wants or if the user has specified a 
+                       model and the model of the current image is not that one, then
+                       skip the current image. */
+                if (((dumprig_opts->filter == DINDEX) && (i != rig_chosen[x])) || 
+                    (((ncomps * 8) != model) && (model != 0)))
+                  {
+                      HDfree((VOIDP) image);
+                      continue;
+                  }
+
+                
+               
+                                 
+                      dumpfull(DFNT_UINT8, ft, read_nelts*ncomps, image, indent, fp);
+                      HDfree((VOIDP) image);
+                 
+          if(dumpall!=1 && i == rig_chosen[x])
+            x++;
+
+            }	/* for ndsets  */
+            break;
+	}   /* switch for output file   */
+
           if (rig_chosen!=NULL)
             {
                 HDfree(rig_chosen);
@@ -397,3 +518,10 @@ drig(dump_info_t * dumprig_opts, intn curr_arg, intn argc,
       }		/* while argc  */
     return (0);
 }	/* drig */
+
+
+
+
+
+
+
