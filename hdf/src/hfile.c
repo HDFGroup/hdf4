@@ -5,8 +5,9 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.12  1993/04/19 22:48:03  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.13  1993/04/22 20:24:13  koziol
+Added new Hfind() routine to hfile.c which duplicates older DFsetfind/DFfind
+utility...
 
  * Revision 1.11  1993/04/14  21:39:18  georgev
  * Had to add some VOIDP casts to some functions to make the compiler happy.
@@ -764,6 +765,113 @@ intn Hnextread(access_id, tag, ref, origin)
 /*--------------------------------------------------------------------------
 
  NAME
+       Hfind -- locate the next object of a search in an HDF file
+ USAGE
+       intn Hfind(file_id ,search_tag, search_ref, find_tag, find_ref,
+            find_offset, find_length, position)
+       int32 file_id;           IN: file ID to search in
+       uint16 search_tag;       IN: the tag to search for
+                                    (can be DFTAG_WILDCARD)
+       uint16 search_ref;       IN: ref to search for
+                                    (can be DFREF_WILDCARD)
+       uint16 *find_tag;        IN: if (*find_tag==0) and (*find_ref==0)
+                                    then start search
+                                OUT: tag matching the search tag
+       uint16 *find_ref;        IN: if (*find_tag==0) and (*find_ref==0)
+                                    then start search
+                                OUT: ref matching the search ref
+       int32 *find_offset;      OUT: offset of the data element found
+       int32 *find_length;      OUT: length of the data element found
+       intn direction;          IN: Direction to search in - DF_FORWARD
+                                    searches forward from the current location,
+                                    DF_BACKWARD searches backward from the
+                                    current location.
+ RETURNS
+       returns SUCCEED (0) if successful and FAIL (-1) otherwise
+ DESCRIPTION
+       Searches for the `next' DD that fits the search tag/ref.  Wildcards
+       apply.  If origin is DF_FORWARD, search from current position forwards
+       in the file, otherwise DF_BACKWARD searches backward from the current
+       position in the file.  If *find_tag and *find_ref are both set to
+       0, this indicates the beginning of a search, and the search will
+       start from the beginning of the file if the direction is DF_FORWARD
+       and from the and of the file if the direction is DF_BACKWARD.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+intn Hfind(int32 file_id, uint16 search_tag, uint16 search_ref,
+    uint16 *find_tag,uint16 *find_ref,int32 *find_offset,int32 *find_length,
+    intn direction)
+#else
+intn Hfind(file_id, search_tag, search_ref, find_tag, find_ref, find_offset,
+    find_length, direction)
+int32 file_id;
+uint16 search_tag, search_ref;
+uint16 *find_tag,*find_ref;
+int32 *find_offset,*find_length;
+intn direction;
+#endif
+{
+    char *FUNC="Hfind";         /* for HERROR */
+    filerec_t *file_rec;        /* file record */
+    ddblock_t *block;
+    int32 idx;
+    dd_t *list;                 /* ptr to current ddlist searched */
+
+    /* clear error stack and check validity of the access id */
+    HEclear();
+    if(file_id == FAIL || search_ref>MAX_REF || find_tag==NULL ||
+            find_ref==NULL || find_offset==NULL || find_length==NULL ||
+            (direction != DF_FORWARD && direction != DF_BACKWARD)) {
+        HERROR(DFE_ARGS);
+        return(FAIL);
+      } /* end if */
+
+    file_rec = FID2REC(file_id);
+    if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0) {
+        HERROR(DFE_INTERNAL);
+        return(FAIL);
+      } /* end if */
+
+    if(*find_ref==0 && *find_tag==0) {  /* starting search */
+        if(direction==DF_FORWARD) {     /* start at beginning of the DD list */
+            block = file_rec->ddhead;
+            idx = -1;
+          } /* end if */
+        else {      /* start the very end of the DD list */
+            block = file_rec->ddlast;
+            idx = block->ndds;
+          } /* end else */
+      } /* end if */
+    else {      /* continue a search */
+        /* get the block and index of the last tag/ref found, to continue */
+        if(HIlookup_dd(file_rec, *find_tag, *find_ref, &block, &idx)==FAIL) {
+            HERROR(DFE_NOMATCH);
+            return(FAIL);
+          } /* end if */
+      } /* end else */
+
+    /* Go get the next match in the given direction */
+    if(HIfind_dd(search_tag,search_ref,&block,&idx,direction)==FAIL) {
+        HERROR(DFE_NOMATCH);
+        return(FAIL);
+      } /* end if */
+
+    list=block->ddlist;         /* get a pointer to the DD list to look in */
+    *find_tag=list[idx].tag;
+    *find_ref=list[idx].ref;
+    *find_offset=list[idx].offset;
+    *find_length=list[idx].length;
+
+    return(SUCCEED);
+}   /* end Hfind() */
+
+/*--------------------------------------------------------------------------
+
+ NAME
        Hinquire -- inquire stats of an access elt
  USAGE
        intn Hinquire(access_id, pfile_id, ptag, pref, plength,
@@ -925,7 +1033,7 @@ int32 Hstartwrite(file_id, tag, ref, length)
 
         /* look for empty dd slot */
         if (HIfind_dd((uint16)DFTAG_NULL, (uint16)DFREF_WILDCARD,
-                     &file_rec->null_block, &file_rec->null_idx) != FAIL) {
+                &file_rec->null_block, &file_rec->null_idx, DF_FORWARD) != FAIL) {
             access_rec->block = file_rec->null_block;
             access_rec->idx   = file_rec->null_idx;
         } else {     /* cannot find empty dd slot, so create new dd block */
@@ -1983,7 +2091,7 @@ uint16 Hnewref(file_id)
        int32 idx;
        bl = file_rec->ddhead;
        idx = -1;
-       if (HIfind_dd((uint16)DFTAG_WILDCARD, ref, &bl, &idx) == FAIL)
+       if (HIfind_dd((uint16)DFTAG_WILDCARD, ref, &bl, &idx, DF_FORWARD) == FAIL)
            return ref;
     }
 
@@ -2358,9 +2466,13 @@ PRIVATE int HIinit_file_dds(file_rec, ndds, FUNC)
 
     file_rec->maxref = 0;
 
+#ifdef OLD_WAY
     /* blank out the hash table */
     for(i = 0; i < HASH_MASK + 1; i++) 
       file_rec->hash[i] = NULL;
+#else
+    HDmemset(file_rec->hash,0,sizeof(tag_ref_list_ptr)*(HASH_MASK+1));
+#endif
 
     return SUCCEED;
 }
@@ -2528,8 +2640,9 @@ int Hnumber(file_id, tag)
     block = file_rec->ddhead;
     idx = -1;
     for (;;) {
-       if (HIfind_dd(tag, DFREF_WILDCARD, &block, &idx) == FAIL) break;
-       n++;
+        if (HIfind_dd(tag, DFREF_WILDCARD, &block, &idx, DF_FORWARD) == FAIL)
+            break;
+        n++;
     }
     return n;
 }
@@ -3184,9 +3297,13 @@ PRIVATE int HIfill_file_rec(file_rec, FUNC)
     return FAIL;
   }
   
+#ifdef OLD_WAY
   /* Blank out hash table */
   for(i = 0; i < HASH_MASK + 1; i++)
       file_rec->hash[i] = NULL;
+#else
+    HDmemset(file_rec->hash,0,sizeof(tag_ref_list_ptr)*(HASH_MASK+1));
+#endif
 
   /* Read in the dd's one at a time and determine the max ref in the file
      at the same time. */
@@ -3274,7 +3391,8 @@ PRIVATE int HIfill_file_rec(file_rec, FUNC)
       /* number of remaining dd's in this ddblock */
       
       ndds -= (intn)n;
-      if (n > ndds) n = ndds;
+      if (n > ndds)
+        n = ndds;
     }
     
     if (file_rec->ddlast->nextoffset != 0) {

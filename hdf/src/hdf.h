@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.9  1993/04/22 16:05:50  chouck
-Minor Vset fixes
+Revision 1.10  1993/04/22 20:24:02  koziol
+Added new Hfind() routine to hfile.c which duplicates older DFsetfind/DFfind
+utility...
 
+ * Revision 1.9  1993/04/22  16:05:50  chouck
+ * Minor Vset fixes
+ *
  * Revision 1.8  1993/04/13  17:44:19  koziol
  * Added patches for Fujitsu VP machines and fixed Cray fast conversion
  * routines.
@@ -68,6 +72,12 @@ typedef struct {
 #define DF_START 0
 #define DF_CURRENT 1
 #define DF_END 2
+
+/* Used by Hfind to determine the direction to search for tag/ref's in the */
+/* file. */
+
+#define DF_FORWARD  1
+#define DF_BACKWARD 2
 
 /* return code - since some unix/c routines use 0 and -1 as their return
    code, and some assumption had been made in the code about that, it is

@@ -2,8 +2,9 @@
 $Header$
 
 $Log$
-Revision 1.13  1993/04/19 22:48:08  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.14  1993/04/22 20:24:19  koziol
+Added new Hfind() routine to hfile.c which duplicates older DFsetfind/DFfind
+utility...
 
  * Revision 1.12  1993/04/05  22:35:48  koziol
  * Fixed goofups made in haste when patching code.
@@ -377,7 +378,8 @@ extern int HIget_access_slot
   PROTO((void));
 
 extern int HIfind_dd
-  PROTO((uint16 look_tag, uint16 look_ref, ddblock_t **pblock, int32 *pidx));
+  PROTO((uint16 look_tag, uint16 look_ref, ddblock_t **pblock, int32 *pidx,
+        intn direction));
 
 extern int HInew_dd_block
   PROTO((filerec_t *file_rec, int16 ndds, char *FUNC));

@@ -2,8 +2,9 @@
 $Header$
 
 $Log$
-Revision 1.25  1993/04/19 22:48:17  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.26  1993/04/22 20:24:26  koziol
+Added new Hfind() routine to hfile.c which duplicates older DFsetfind/DFfind
+utility...
 
  * Revision 1.24  1993/04/13  21:45:24  georgev
  * Fixed preproccessor error on HPUX with #elif.
@@ -105,6 +106,11 @@ extern int32 Hstartread
 
 extern intn Hnextread
   PROTO((int32 access_id, uint16 tag, uint16 ref, int origin));
+
+extern intn Hfind
+    PROTO((int32 file_id, uint16 search_tag, uint16 search_ref,
+        uint16 *find_tag,uint16 *find_ref,int32 *find_offset,
+        int32 *find_length,intn direction));
 
 extern intn Hinquire
   PROTO((int32 access_id, int32 _HUGE *pfile_id, uint16 _HUGE *ptag,

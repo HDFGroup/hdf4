@@ -5,8 +5,9 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.10  1993/04/19 22:48:13  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.11  1993/04/22 20:24:22  koziol
+Added new Hfind() routine to hfile.c which duplicates older DFsetfind/DFfind
+utility...
 
  * Revision 1.9  1993/04/14  21:39:22  georgev
  * Had to add some VOIDP casts to some functions to make the compiler happy.
@@ -700,7 +701,7 @@ int HIlookup_dd(file_rec, look_tag, look_ref, pblock, pidx)
   register tag_ref_list_ptr p;
 
   if(look_tag == DFTAG_WILDCARD || look_ref == DFREF_WILDCARD)
-    return (HIfind_dd(look_tag, look_ref, pblock, pidx));
+    return (HIfind_dd(look_tag, look_ref, pblock, pidx, DF_FORWARD));
 
   tag = (intn) look_tag;
   ref = (intn) look_ref;
@@ -754,28 +755,28 @@ int HIadd_hash_dd(file_rec, look_tag, look_ref, pblock, pidx)
      int32 pidx;                /* index into ddlist where dd is */
 #endif
 {
-  char *FUNC="HIadd_hash_dd";       /* for HERROR */
-  register intn tag, ref, key;
-  register tag_ref_list_ptr p;
+    char *FUNC="HIadd_hash_dd";       /* for HERROR */
+    register intn tag, ref, key;
+    register tag_ref_list_ptr p;
 
-  if(look_tag == DFTAG_NULL) return SUCCEED;
+    if(look_tag == DFTAG_NULL)
+        return SUCCEED;
 
-  tag = (intn) look_tag;
-  ref = (intn) look_ref;
-  key = tag + ref;
+    tag = (intn) look_tag;
+    ref = (intn) look_ref;
+    key = tag + ref;
 
-  if((p = (tag_ref_list_ptr) HDgetspace((uint32)sizeof(tag_ref_list)))==NULL)
-    HRETURN_ERROR(DFE_NOSPACE, FAIL);
+    if((p = (tag_ref_list_ptr) HDgetspace((uint32)sizeof(tag_ref_list)))==NULL)
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
   
-  p->pblock = pblock;
-  p->pidx   = pidx;
-  p->tag    = tag;
-  p->ref    = ref;
-  p->next   = file_rec->hash[key & HASH_MASK];        
-  file_rec->hash[key & HASH_MASK] = p;
+    p->pblock = pblock;
+    p->pidx   = pidx;
+    p->tag    = tag;
+    p->ref    = ref;
+    p->next   = file_rec->hash[key & HASH_MASK];
+    file_rec->hash[key & HASH_MASK] = p;
   
-  return SUCCEED;
-
+    return SUCCEED;
 } /* HIadd_hash_dd */
 
 
@@ -830,11 +831,13 @@ int HIdel_hash_dd(file_rec, look_tag, look_ref)
 
  find the dd with tag and ref, by returning the block where the dd resides
  and the index of the dd in the ddblock ddlist.
+ Revised to go either forward or backward through the DD list. (4/21/93 QAK)
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int HIfind_dd(uint16 look_tag, uint16 look_ref, ddblock_t **pblock, int32 *pidx)
+int HIfind_dd(uint16 look_tag, uint16 look_ref, ddblock_t **pblock, int32 *pidx,
+    intn direction)
 #else
-int HIfind_dd(look_tag, look_ref, pblock, pidx)
+int HIfind_dd(look_tag, look_ref, pblock, pidx, direction)
     uint16 look_tag;           /* tag of dd to look for */
     uint16 look_ref;           /* ref of dd to look for */
     ddblock_t **pblock;        /* IN: ddblock to start looking for the dd */
@@ -842,11 +845,12 @@ int HIfind_dd(look_tag, look_ref, pblock, pidx)
     int32 *pidx;               /* IN: index before place in ddlist
                                   to start searching */
                                /* OUT: index into ddlist where dd is found */
+    intn direction;            /* IN : Direction to search the DD list in */
 #endif
 {
-    register int32 idx;             /* index into ddlist of current dd searched */
-    register ddblock_t *block;      /* ptr to current ddblock searched */
-    register dd_t *list;            /* ptr to current ddlist searched */
+    register intn idx;          /* index into ddlist of current dd searched */
+    register ddblock_t *block;  /* ptr to current ddblock searched */
+    register dd_t *list;        /* ptr to current ddlist searched */
 
 #ifndef oldspecial
     uint16 special_tag;                /* corresponding special tag */
@@ -856,40 +860,74 @@ int HIfind_dd(look_tag, look_ref, pblock, pidx)
     special_tag = MKSPECIALTAG(look_tag);
 #endif
 
-    /* start searching on the next dd */
-    idx = *pidx + 1;
-    for (block = *pblock; block; block = block->next) {
+    if(direction==DF_FORWARD) {     /* search forward through the DD list */
+        /* start searching on the next dd */
+        idx = *pidx + 1;
+        for (block = *pblock; block; block = block->next) {
 
-       list = block->ddlist;
-       for (; idx < block->ndds; idx++) {
+            list = block->ddlist;
+            for (; idx < block->ndds; idx++) {
 
-           /* skip the empty dd's */
+               /* skip the empty dd's */
+                if (list[idx].tag == DFTAG_NULL && look_tag != DFTAG_NULL)
+                    continue;
 
-           if (list[idx].tag == DFTAG_NULL && look_tag != DFTAG_NULL)
-               continue;
-
-           if(((look_tag == DFTAG_WILDCARD || list[idx].tag == look_tag)
+                if(((look_tag == DFTAG_WILDCARD || list[idx].tag == look_tag)
 #ifndef oldspecial
-                || (special_tag != DFTAG_NULL && list[idx].tag == special_tag)
+                        || (special_tag != DFTAG_NULL &&
+                        list[idx].tag == special_tag)
 #endif
-              ) && (look_ref == DFREF_WILDCARD || list[idx].ref == look_ref)) {
+                        ) && (look_ref == DFREF_WILDCARD ||
+                        list[idx].ref == look_ref)) {
 
-               /* we have a match !! */
+                    /* we have a match !! */
+                    *pblock = block;
+                    *pidx = idx;
+                    return(SUCCEED);
+                 }  /* end if */
+              } /* end for */
 
-               *pblock = block;
-               *pidx = idx;
-               return SUCCEED;
-           }
-       }
+            /* start from beginning of the next dd list */
+            idx = 0;
+          } /* end for */
+      } /* end if */
+    else if(direction==DF_BACKWARD) {   /* search backward through the DD list */
+        /* start searching on the previous dd */
+        idx = *pidx - 1;
+        for (block = *pblock; block; ) {
 
-       /* start from beginning of the next dd list */
+            list = block->ddlist;
+            for (; idx >= 0; idx--) {
 
-       idx = 0;
-    }
+               /* skip the empty dd's */
+                if (list[idx].tag == DFTAG_NULL && look_tag != DFTAG_NULL)
+                    continue;
 
-    /* nothing found */
+                if(((look_tag == DFTAG_WILDCARD || list[idx].tag == look_tag)
+#ifndef oldspecial
+                        || (special_tag != DFTAG_NULL &&
+                        list[idx].tag == special_tag)
+#endif
+                        ) && (look_ref == DFREF_WILDCARD ||
+                        list[idx].ref == look_ref)) {
 
-    return FAIL;
+                    /* we have a match !! */
+                    *pblock = block;
+                    *pidx = idx;
+                    return(SUCCEED);
+                 }  /* end if */
+              } /* end for */
+
+            /* start from beginning of the next dd list */
+            block = block->prev;
+            if(block!=NULL)
+                idx = block->ndds -1;
+          } /* end for */
+      } /* end if */
+
+    /* nothing found or bad direction */
+
+    return(FAIL);
 } /* HIfind_dd */
 
 /* ------------------------------- HDflush -------------------------------- */
