@@ -36,6 +36,9 @@ C Invokes: hiopen
 C-------------------------------------------------------------------
 
       integer function hopen(filename, access, defdds)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: hopen
+	!MS$endif
 
       character*(*) filename
       integer       access, defdds
@@ -63,6 +66,9 @@ C Invokes: hiclose
 C-------------------------------------------------------------------
 
       integer function hclose(fid)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: hclose
+	!MS$endif
 
       integer       fid
 C      integer       hiclose
@@ -88,6 +94,9 @@ C Invokes: hinumbr
 C-------------------------------------------------------------------
 
       integer function hnumber(fid, tag)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: hnumber
+	!MS$endif
 
       integer       fid, tag
 C      integer       hinumbr
@@ -112,6 +121,9 @@ C Invokes: hxisdir
 C------------------------------------------------------------------
 
       integer function hxsdir(dir)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: hxsdir
+	!MS$endif
 
       character*(*) dir
 C      integer       hxisdir
@@ -138,6 +150,9 @@ C Invokes: hxiscdir
 C--------------------------------------------------------------*/
 
       integer function hxscdir(dir)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: hxscdir
+	!MS$endif
 
       character*(*) dir
 C      integer       hxiscdir
@@ -165,6 +180,9 @@ C Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
 C-----------------------------------------------------------------------------*/
 
       integer function hglibver(major_v, minor_v, release, string)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: hglibver
+	!MS$endif
 
       integer major_v, minor_v, release
       character*(*) string
@@ -196,6 +214,9 @@ C-----------------------------------------------------------------------------*/
 
       integer function hgfilver(file_id, major_v, minor_v, release,
      .                          string)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: hgfilver
+	!MS$endif
 
       integer file_id, major_v, minor_v, release
       character*(*) string

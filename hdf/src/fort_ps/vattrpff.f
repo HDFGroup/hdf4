@@ -33,6 +33,9 @@ C    vsffidx -- find index of a named field in a vdata
 C    VSfindex -- vsfcfdx -- vsffidx
 C
        integer function vsffidx(vsid, fldnm, findex) 
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsffidx
+	!MS$endif
        integer vsid
        character*(*) fldnm
        integer findex
@@ -56,6 +59,9 @@ C    VSsetattr -- vsfcsat -- vsfsnat
 C
        integer function vsfsnat(vsid, findex,attrnm,dtype,
      +                        count, values)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfsnat
+	!MS$endif
        integer vsid, findex, dtype, count
        character*(*) attrnm
        integer  values
@@ -80,6 +86,9 @@ C    VSsetattr -- vsfcsca -- vsfscat
 C
        integer function vsfscat(vsid, findex,attrnm,dtype,
      +                      count, values)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfscat
+	!MS$endif
        integer vsid, findex, dtype, count
        character*(*) attrnm
        character*(*) values
@@ -102,6 +111,9 @@ C             its fields
 C     VSnattrs -- vsfcnats -- vsfnats
 C
        integer function vsfnats(vsid)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfnats
+	!MS$endif
        integer vsid
 C       integer vsfcnats
        INTERFACE 
@@ -119,6 +131,9 @@ C             its fields
 C     VSnattrs -- vsfcfnas -- vsffnas
 C
        integer function vsffnas(vsid, findex)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsffnas
+	!MS$endif
        integer vsid, findex
 C       integer vsfcfnas
        INTERFACE
@@ -137,6 +152,9 @@ C               of the vdata
 C    VSfindattr -- vsfcfda -- vsffdat
 C
        integer function vsffdat(vsid, findex, attrnm)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsffdat
+	!MS$endif
        integer vsid, findex
        character*(*) attrnm
 C       integer vsfcfda
@@ -159,6 +177,9 @@ C    VSattrinfo -- vsfcainf -- vsfainf
 C
        integer function vsfainf(vsid, findex, aindex, attrnm,
      +                   dtype,count,size)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfainf
+	!MS$endif
        integer vsid, findex, aindex, dtype, count, size
        character*(*) attrnm
 C       integer vsfcainf
@@ -181,6 +202,9 @@ C    vsfgnat -- get values of a numeric attribute
 C    VSgetattr -- vsfcgna -- vsfgnat
 C
        integer function vsfgnat(vsid, findex, aindex, values)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfgnat
+	!MS$endif
        integer vsid, findex, aindex, values(*)
 C       integer vsfcgna
        INTERFACE
@@ -198,6 +222,9 @@ C    vsfgcat -- get values of a character type attribute
 C    VSgetattr -- vsfcgca -- vsfgcat
 C
        integer function vsfgcat(vsid, findex, aindex, values)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfgcat
+	!MS$endif
        integer vsid, findex, aindex
        character*(*) values
 C       integer vsfcgca
@@ -218,6 +245,9 @@ C    vsfisat --  test if a vdata is an attribute of other object
 C    VSisattr -- vsfcisa -- vsfisat
 C
        integer function vsfisat(vsid)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfisat
+	!MS$endif
        integer vsid
 C       integer vsfcisa
        INTERFACE
@@ -236,6 +266,9 @@ C    Vsetattr -- vfcsatt -- vfsnatt
 C
        integer function vfsnatt(vgid, attrnm, dtype, 
      +                        count, values)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfsnatt
+	!MS$endif
        integer vgid, dtype, count, values
        character*(*) attrnm
 C       integer vfcsatt
@@ -258,6 +291,9 @@ C    Vsetattr -- vfcscat -- vfscatt
 C
        integer function vfscatt(vgid, attrnm, dtype,
      +                        count, values)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfscatt
+	!MS$endif
        integer vgid, dtype, count
        character*(*) attrnm, values
 c       integer vfcscat
@@ -280,6 +316,9 @@ C     vfnatts -- get total number of attributes of a vgroup
 C     Vnattrs -- vfcnats -- vfnatts
 C
        integer function vfnatts(vgid)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfnatts
+	!MS$endif
        integer vgid
 C       integer vfcnats
        INTERFACE 
@@ -297,6 +336,9 @@ C    vffdatt -- find an attribute of a vgroup
 C    Vfindattr -- vfcfdat -- vffdatt
 C
        integer function vffdatt(vg, attrnm)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vffdatt
+	!MS$endif
        integer vg
        character*(*)   attrnm
 C       integer vfcfdat
@@ -317,6 +359,9 @@ C    Vattrinfo -- vfcainf -- vfainfo
 C
        integer function vfainfo(vgid, aindex, attrnm,
      +                   dtype,count,size)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfainfo
+	!MS$endif
        integer vgid, aindex, dtype, count, size
        character*(*) attrnm
 C       integer vfcainf
@@ -339,6 +384,9 @@ C    vfgnatt -- get values of a numeric attribute
 C    Vgetattr -- vfcgnat -- vfgnatt
 C
        integer function vfgnatt(vgid, aindex, values)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfgnatt
+	!MS$endif
        integer vgid, aindex, values
 C       integer vfcgnat
        INTERFACE
@@ -356,6 +404,9 @@ C    vfgcatt -- get values of a character type attribute
 C    Vgetattr -- vfcgcat -- vfgcatt
 C
        integer function vfgcatt(vgid, aindex, values)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfgcatt
+	!MS$endif
        integer vgid, aindex
        character*(*) values
 C       integer vfcgcat
@@ -376,6 +427,9 @@ C    vfgver -- get version number of a vgroup
 C    Vgetversion -- vfcgver -- vfgver
 C
        integer function vfgver(vgid)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfgver
+	!MS$endif
        integer vgid
 C       integer vfcgver
        INTERFACE

@@ -34,6 +34,9 @@ C Invokes: mgicreat
 C------------------------------------------------------------------------------
 
       integer function mgcreat(grid, name, ncomp, nt, il, dimsizes)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgcreat 
+	!MS$endif
       character*(*) name
       integer grid, ncomp, nt, il, dimsizes
 C     integer  mgicreat
@@ -64,6 +67,9 @@ C Invokes: mgin2ndx
 C------------------------------------------------------------------------------
 
       integer function mgn2ndx(grid, name)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgn2ndx
+	!MS$endif
       character*(*) name
       integer grid
 C     integer mgin2ndx
@@ -93,6 +99,9 @@ C Invokes: mgisxfil
 C-------------------------------------------------------------
 
       integer function mgsxfil(riid, filename, offset)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgsxfil
+	!MS$endif
       character*(*) filename
       integer riid, offset
 C      integer mgisxfil
@@ -124,6 +133,9 @@ C Invokes: mgiscatt
 C-------------------------------------------------------------
 
       integer function mgscatt(riid, name, nt, count, data)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgscatt
+	!MS$endif
       character*(*) name
       character*(*) data
       integer riid, nt, count
@@ -157,6 +169,9 @@ C Invokes: mgisattr
 C-------------------------------------------------------------
 
       integer function mgsnatt(riid, name, nt, count, data)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgsnatt
+	!MS$endif
       character*(*) name
       integer data
       integer riid, nt, count
@@ -190,6 +205,9 @@ C Invokes: mgisattr
 C-------------------------------------------------------------
 
 C      integer function mgsattr(riid, name, nt, count, data)
+C	!MS$if defined(BUILD_HDF_DLL)
+C	!MS$attributes dllexport :: mgsattr
+C	!MS$endif
 C      character*(*) name
 C      character*(*) data
 C      integer riid, nt, count
@@ -219,6 +237,9 @@ C Invokes: mgifndat
 C----------------------------------------------------------------
 
       integer function mgfndat(riid, name)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgfndat
+	!MS$endif
       character*(*) name
       integer riid
 C      integer mgifndat
@@ -248,6 +269,9 @@ C        Calls:     mgcgichnk (C stub for GRgetchunkinfo function)
 C-------------------------------------------------------------------------
 
          INTEGER function mggichnk(riid, dim_length, comp_type)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mggichnk
+	!MS$endif
 
          INTEGER riid, dim_length(*), comp_type
 C         INTEGER mgcgichnk 
@@ -276,6 +300,9 @@ C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
 
          INTEGER function mgscchnk(riid, maxcache, flags)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgscchnk
+	!MS$endif
 C
          INTEGER riid, maxcache, flags 
 C         INTEGER mgcscchnk 
@@ -309,6 +336,9 @@ C-------------------------------------------------------------------------
 
          INTEGER function mgschnk(riid, dim_length, comp_type,
      .                            comp_prm)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgschnk
+	!MS$endif
 
          INTEGER riid, dim_length(*), comp_type, comp_prm(*)
 C         INTEGER mgcschnk 
@@ -326,6 +356,9 @@ C         INTEGER mgcschnk
 
 C---------------------------------------------------------------
       integer function mgstart(fid)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgstart
+	!MS$endif
         integer fid
 C        integer mgistrt
       INTERFACE
@@ -341,6 +374,9 @@ C        integer mgistrt
 C------------------------------------------------------------------
      
       integer function mgfinfo(grid,datasets,attrs)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgfinfo
+	!MS$endif
         integer grid, datasets,attrs
 C        integer mgifinf
       INTERFACE
@@ -356,6 +392,9 @@ C        integer mgifinf
 C------------------------------------------------------------------
      
       integer function mgend(grid)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgend
+	!MS$endif
         integer grid
 C        integer mgiend
       INTERFACE
@@ -371,6 +410,9 @@ C        integer mgiend
 C------------------------------------------------------------------
      
       integer function mgselct(grid,index)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgselct
+	!MS$endif
         integer grid, index
 C        integer mgislct
       INTERFACE
@@ -386,6 +428,9 @@ C        integer mgislct
 C------------------------------------------------------------------
      
       integer function mggiinf(riid,name,ncomp,nt,il,dimsizes,attrs)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mggiinf
+	!MS$endif
         integer riid, ncomp,nt,il,dimsizes,attrs
         character*(*) name
 C        integer mgigiinf
@@ -405,6 +450,9 @@ C        integer mgigiinf
 C------------------------------------------------------------------
     
       integer function mgwcimg(riid,start,stride,count,cdata)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgwcimg
+	!MS$endif
         integer riid, start,stride,count
         character*(*) cdata
 C        integer mgiwcim
@@ -424,6 +472,9 @@ C        integer mgiwcim
 C------------------------------------------------------------------
     
       integer function mgwrimg(riid,start,stride,count,data)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgwrimg
+	!MS$endif
         integer riid, start,stride,count,data
 C        integer mgiwimg
       INTERFACE
@@ -441,6 +492,9 @@ C        integer mgiwimg
 C------------------------------------------------------------------
     
       integer function mgrcimg(riid,start,stride,count,cdata)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgrcimg 
+	!MS$endif
         integer riid, start,stride,count
         character*(*) cdata
 C        integer mgircim
@@ -460,6 +514,9 @@ C        integer mgircim
 C------------------------------------------------------------------
     
       integer function mgrdimg(riid,start,stride,count,data)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgrdimg
+	!MS$endif
         integer riid, start,stride,count,data
 C        integer mgirimg
       INTERFACE
@@ -477,6 +534,9 @@ C        integer mgirimg
 C------------------------------------------------------------------
     
       integer function mgendac(riid)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgendac
+	!MS$endif
         integer riid
 C        integer mgiendac
       INTERFACE
@@ -492,6 +552,9 @@ C        integer mgiendac
 C------------------------------------------------------------------
    
       integer function mgid2rf(riid)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgid2rf
+	!MS$endif
         integer riid
 C        integer mgiid2r
       INTERFACE
@@ -507,6 +570,9 @@ C        integer mgiid2r
 C------------------------------------------------------------------
    
       integer function mgr2idx(grid, ref)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgr2idx
+	!MS$endif
         integer grid, ref
 C        integer mgir2dx
       INTERFACE
@@ -522,6 +588,9 @@ C        integer mgir2dx
 C------------------------------------------------------------------
    
       integer function mgrltil(riid, il)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgrltil
+	!MS$endif
         integer riid, il
 C        integer mgiltil
       INTERFACE
@@ -537,6 +606,9 @@ C        integer mgiltil
 C------------------------------------------------------------------
    
       integer function mgrimil(riid, il)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgrimil
+	!MS$endif
         integer riid, il
 C        integer mgiimil
       INTERFACE
@@ -552,6 +624,9 @@ C        integer mgiimil
 C------------------------------------------------------------------
    
       integer function mggltid(riid, lut_index)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mggltid
+	!MS$endif
         integer riid, lut_index
 C        integer mgiglid
       INTERFACE
@@ -567,6 +642,9 @@ C        integer mgiglid
 C------------------------------------------------------------------
    
       integer function mgglinf(lutid,ncomp,nt,il,nentries)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgglinf
+	!MS$endif
         integer lutid,ncomp,nt,il,nentries
 C        integer mgiglinf
       INTERFACE
@@ -582,6 +660,9 @@ C        integer mgiglinf
 C------------------------------------------------------------------
    
       integer function mgwclut(lutid,ncomp,nt,il,nentries,cdata)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgwclut
+	!MS$endif
         integer lutid,ncomp,nt,il,nentries
         character*(*) cdata
 C        integer mgiwclt
@@ -600,6 +681,9 @@ C        integer mgiwclt
 C------------------------------------------------------------------
    
       integer function mgwrlut(lutid,ncomp,nt,il,nentries,data)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgwrlut
+	!MS$endif
         integer lutid,ncomp,nt,il,nentries, data
 C        integer mgiwrlt
       INTERFACE
@@ -615,6 +699,9 @@ C        integer mgiwrlt
 C------------------------------------------------------------------
    
       integer function mgrclut(lutid,cdata)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgrclut
+	!MS$endif
         integer lutid
         character*(*) cdata
 C        integer mgirclt
@@ -633,6 +720,9 @@ C        integer mgirclt
 C------------------------------------------------------------------
    
       integer function mgrdlut(lutid,data)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgrdlut
+	!MS$endif
         integer lutid, data
 C        integer mgirdlt
       INTERFACE
@@ -648,6 +738,9 @@ C        integer mgirdlt
 C------------------------------------------------------------------
    
       integer function mgsactp(riid,acctype)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgsactp
+	!MS$endif
         integer riid, acctype
 C        integer mgiactp
       INTERFACE
@@ -663,6 +756,9 @@ C        integer mgiactp
 C------------------------------------------------------------------
 
       integer function mgatinf(riid,index,name,nt,count)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgatinf
+	!MS$endif
         integer riid, index,nt,count
         character*(*) name
 C        integer mgiainf
@@ -692,6 +788,9 @@ C Invokes: mgigcat
 C-------------------------------------------------------------
 
       integer function mggcatt(riid, index, cdata)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mggcatt
+	!MS$endif
       integer riid, index
       character*(*) cdata
 C      integer mgigcat
@@ -721,6 +820,9 @@ C Invokes: mgignat
 C-------------------------------------------------------------
 
       integer function mggnatt(riid, index, data)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mggnatt
+	!MS$endif
       integer data
       integer riid, index
 C      integer mgignat
@@ -747,6 +849,9 @@ C Users:    HDF Fortran programmers
 C Invokes: mgisattr
 C-------------------------------------------------------------
       integer function mggattr(riid, index, data)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mggattr
+	!MS$endif
       integer data
       integer riid, index
 C      integer mgigatt
@@ -781,6 +886,9 @@ C        Calls:     mgcscompress (C stub for GRsetcompress function)
 C-------------------------------------------------------------------------
 
          INTEGER function mgscompress(riid, comp_type, comp_prm)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgscompress
+	!MS$endif
 
          INTEGER riid, comp_type, comp_prm
 C         INTEGER mgcscompress 

@@ -49,6 +49,9 @@ C Invokes:  afistart
 C----------------------------------------------------------------
 
       integer function afstart(file_id)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: afstart
+	!MS$endif
       integer file_id
 C     integer  afistart
       INTERFACE
@@ -76,6 +79,9 @@ C----------------------------------------------------------------
 
       integer function affileinfo(an_id, num_flabel, num_fdesc,
      +                 num_olabel, num_odesc)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: affileinfo
+	!MS$endif
       integer an_id,num_flabel,num_fdesc,num_olabel,num_odesc
 C     integer  afifinf
       INTERFACE
@@ -100,6 +106,9 @@ C Invokes: afiend()
 C----------------------------------------------------------------
 
       integer function afend(an_id)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: afend
+	!MS$endif
       integer an_id
 C     integer  afiend
       INTERFACE
@@ -126,6 +135,9 @@ C Invokes: aficreat()
 C----------------------------------------------------------------
 
       integer function afcreate(an_id, etag, eref, atype)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: afcreate
+	!MS$endif
       integer an_id, etag, eref, atype
 C     integer  aficreat
       INTERFACE
@@ -149,6 +161,9 @@ C Invokes: afifcreat()
 C----------------------------------------------------------------
 
       integer function affcreate(an_id,  atype)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: affcreate
+	!MS$endif
       integer an_id, atype
 C     integer  afifcreat
       INTERFACE
@@ -179,6 +194,9 @@ C Invokes: afiselct()
 C----------------------------------------------------------------
 
       integer function afselect(an_id, index, atype)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: afselect
+	!MS$endif
       integer an_id, index, atype
 C     integer  afiselct
       INTERFACE
@@ -204,6 +222,9 @@ C Users:   Fortran Users
 C Invokes: afinann()
 C-------------------------------------------------------------
       integer function afnumann(an_id, atype, etag, eref)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: afnumann
+	!MS$endif
       integer an_id, atype, etag, eref
 C      integer afinann
       INTERFACE
@@ -232,6 +253,9 @@ C Users:   Fortran Users
 C Invokes: anialst
 C-------------------------------------------------------------
       integer function afannlist(an_id,atype,etag,eref,alist)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: afannlist
+	!MS$endif
       integer an_id, atype, etag, eref, alist(*)
 C      integer afialst
       INTERFACE
@@ -252,6 +276,9 @@ C Users:   Fortran Users
 C Invokes: afialen()
 C---------------------------------------------------------------------
       integer function afannlen(ann_id)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: afannlen
+	!MS$endif
       integer ann_id
 C      integer afialen
       INTERFACE
@@ -274,6 +301,9 @@ C Users:   Fortran Users
 C Invokes: aniwann()
 C--------------------------------------------------------------
       integer function afwriteann(ann_id,ann,annlen)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: afwriteann
+	!MS$endif
       integer ann_id, annlen
       character*(*) ann
 C      integer afiwann
@@ -300,6 +330,9 @@ C Users:   Fortran Users
 C Invokes: anirann()
 C--------------------------------------------------------------
       integer function afreadann(ann_id,ann,maxlen)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: afreadann
+	!MS$endif
       integer ann_id, maxlen
       character*(*) ann
 C      integer afirann
@@ -323,6 +356,9 @@ C Users:   Fortran Users
 C Invokes: aniendac()
 C------------------------------------------------------------
       integer function afendaccess(ann_id)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: afendaccess
+	!MS$endif
       integer ann_id
 C      integer afiendac
       INTERFACE
@@ -351,6 +387,9 @@ C Users:   Fortran Users
 C Invokes: afigtr
 C-----------------------------------------------------------
       integer function afgettagref(an_id,index,type,tag,ref)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: afgettagref
+	!MS$endif
       integer an_id,index,type,tag,ref
 C      integer afigtr
       INTERFACE
@@ -374,6 +413,9 @@ C Users:   Fortran Users
 C Invokes: afiid2tr()
 C------------------------------------------------------------
       integer function afidtagref(ann_id,tag,ref)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: afidtagref
+	!MS$endif
       integer ann_id,tag,ref
 C      integer afiid2tr
       INTERFACE
@@ -397,6 +439,9 @@ C Users:   Fortran Users
 C Invokes: afitr2id()
 C------------------------------------------------------------
       integer function aftagrefid(an_id,tag,ref)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: aftagrefid
+	!MS$endif
       integer an_id,tag,ref
 C      integer afitr2id
       INTERFACE
@@ -418,6 +463,9 @@ C Users:   Fortran Users
 C Invokes: afitp2tg()
 C------------------------------------------------------------
       integer function afatypetag(atype)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: afatypetag
+	!MS$endif
       integer atype
 C      integer afitp2tg
       INTERFACE
@@ -439,6 +487,9 @@ C Users:   Fortran Users
 C Invokes: afitg2tp()
 C------------------------------------------------------------
       integer function aftagatype(tag)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: aftagatype
+	!MS$endif
       integer tag
 C      integer afitg2tp
       INTERFACE

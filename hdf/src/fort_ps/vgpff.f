@@ -30,6 +30,9 @@ c	attachs to a vgroup
 c	related: Vattach--vatchc--VFATCH
 
       integer function vfatch(f, vgref, accesstype)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfatch
+	!MS$endif
       integer     f, vgref
       character*1 accesstype
 C      integer     vatchc
@@ -50,6 +53,9 @@ c	detaches from a vgroup
 c	related: Vdetach--vdtchc--VFDTCH
 
       integer function vfdtch (vgid)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfdtch
+	!MS$endif
       integer     vgid
 c      integer   vdtchc
       INTERFACE
@@ -67,6 +73,9 @@ c	general inquiry on a vgroup
 c	related: Vgetname--vgnamc--VFGNAM
 
       integer function vfgnam (vg, vgname)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfgnam 
+	!MS$endif
       integer         vg
       character*(*)   vgname
 c      integer         vgnamc
@@ -86,6 +95,9 @@ c	get the class name of a vgroup
 c	related: Vgetclass--vgclsc--VFGCLS
 
       integer function vfgcls (vg, vgclass)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfgcls
+	!MS$endif
 
       integer			vg
       character*(*)	vgclass
@@ -106,6 +118,9 @@ c	general inquiry on a vgroup
 c	related: Vinquire--vinqc--VFINQ
 
       integer   function    vfinq (vg, nentries, vgname)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfinq
+	!MS$endif
       integer			vg, nentries
       character*(*)	vgname
 c      integer			vinqc
@@ -126,6 +141,9 @@ c	gets the id of the next vgroup in the file
 c	related: Vgetid--vgidc--VFGID
 
       integer   function    vfgid (f, vgref)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfgid
+	!MS$endif
       integer		f, vgref
 c      integer		vgidc
       INTERFACE
@@ -143,6 +161,9 @@ c	gets the ref of the next vgroup or vdata entry in the vgroup
 c	related: Vgetnext--vgnxtc--VFGNXT
 
       integer   function    vfgnxt (vg, vref)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfgnxt
+	!MS$endif
       integer		vg, vref
 c      integer		vgnxtc
       INTERFACE
@@ -160,6 +181,9 @@ c	sets the name of the vgroup
 c	related: Vsetname--vsnamc--VFSNAM
 
       integer function vfsnam (vg, vgname)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfsnam
+	!MS$endif
       integer			vg
       character*(*)	vgname
 c      integer       vsnamc
@@ -179,6 +203,9 @@ c	sets the class name of the vgroup
 c	related: Vsetclass--vsclsc--VFSCLS
 
       integer function vfscls (vg, vgclass)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfscls
+	!MS$endif
       integer			vg
       character*(*)	vgclass
 c      integer      vsclsc
@@ -199,6 +226,9 @@ c	inserts a vset entity (ie vgroup or vdata) into the given vgroup
 c	related: Vinsert--vinsrtc--VFINSRT
 
       integer   function vfinsrt (vg, vid)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfinsrt
+	!MS$endif
       integer		vg, vid
 c      integer		vinsrtc
       INTERFACE
@@ -216,6 +246,9 @@ c     tests if an id in a vgroup is a vgroup
 c     related: Visvg--visvgc--vfisvg
 
       integer	function	vfisvg (vg, id) 									
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfisvg
+	!MS$endif
       integer		vg, id
 c      integer		visvgc
       INTERFACE
@@ -233,6 +266,9 @@ c     tests if an id in a vgroup is a vdata
 c     related: Visvs--visvsc--vfisvs
 
       integer	function	vfisvs (vg, id)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfisvs
+	!MS$endif
       integer		vg, id
 c      integer		visvsc
       INTERFACE
@@ -250,6 +286,9 @@ c     start Vset interface
 C     related:  Vstart -- vfistart -- vfstart
 
       integer function vfstart(file_id)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfstart
+	!MS$endif
       integer file_id
 C      integer vfistart
       INTERFACE 
@@ -267,6 +306,9 @@ c     end Vset interface
 C     related:  Vend -- vfiend -- vfend
 
       integer function vfend(file_id)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfend
+	!MS$endif
       integer file_id
 C      integer vfiend
       INTERFACE 
@@ -287,6 +329,9 @@ c     attach to a vdata
 c     related: VSattach--vsatchc--vfatch
 
       integer	function	vsfatch (f, vsid, accesstype)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfatch
+	!MS$endif
       integer		f, vsid
       character*1	accesstype
 c      integer		vsatchc
@@ -307,6 +352,9 @@ c     detach from a vdata
 c     related: VSdetach--vsdtchc--vfdtch
 
       integer function vsfdtch (vs)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfdtch
+	!MS$endif
       integer		vs
 c      integer       vsdtchc
       INTERFACE
@@ -324,6 +372,9 @@ c     get the ref # of a vdata
 c     related: VSQueryref -- vsiqref -- vsqref
 
       integer function vsqref(vsid)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsqref
+	!MS$endif
       integer vsid
 C     integer vsiqref
       INTERFACE
@@ -340,6 +391,9 @@ c     get the tag of a vdata
 c     related: VSQuerytag -- vsiqtag -- vsqtag
 
       integer function vsqtag(vsid)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsqtag
+	!MS$endif
       integer vsid
 C     integer vsiqtag
       INTERFACE
@@ -357,6 +411,9 @@ c     get the ver # of a vdata
 c     related: VSgetversion -- vsigver -- vsgver
 
       integer function vsgver(vsid)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsgver
+	!MS$endif
       integer vsid
 C     integer vsigver
       INTERFACE
@@ -373,6 +430,9 @@ c     seeks to a given element position in a vadata
 c     related: VSseek--vsseekc--vsfseek
 
       integer	function	vsfseek (vs, eltpos )
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfseek
+	!MS$endif
       integer		vs, eltpos
 c      integer		vsseekc
       INTERFACE
@@ -390,6 +450,9 @@ c     gets the name of a vdata
 c     related: VSgetname--vsgnamc--vsfgnam
 
       integer function vsfgnam (vs, vsname)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfgnam
+	!MS$endif
       integer			vs
       character*(*)	vsname
 c      integer       vsgnamc
@@ -410,6 +473,9 @@ c     get the class name of a vdata
 c     related: VSgetclass--vsgclsc--vsfgcls
 
       integer function vsfgcls (vs, vsclass)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfgcls
+	!MS$endif
       integer			vs
       character*(*)	vsclass
 c      integer       vsgclsc
@@ -430,6 +496,9 @@ c     general inquiry on a vdata
 c     related: VSinquire--vsinqc--vsfinq
 
       integer function vsfinq (vs,nvs,ilace,fields,vsize,vsname) 
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfinq
+	!MS$endif
       integer			vs, nvs, ilace, vsize
       character*(*)	fields, vsname
 c      integer			vsinqc
@@ -452,6 +521,9 @@ c     tests if given fields exist in the vdata
 c     related: VSfexist--vsfexc--vsfex
 
       integer	function vsfex (vs, fields)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfex
+	!MS$endif
       integer			vs
       character*(*)	fields
 c      integer			vsfexc
@@ -472,6 +544,9 @@ c     looks for a Vdata with a given name
 c     related: VSfind--vsfind--vsffnd
 
       integer	function vsffnd (vs, name)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsffnd
+	!MS$endif
       integer			vs
       character*(*)	name
 c      integer vsfndc
@@ -492,6 +567,9 @@ c     gets the id of the next vdata from the file
 c     related: VSgetid--vsgidc--vsfgid
 
       integer  function vsfgid (f, vsid)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfgid
+	!MS$endif
       integer     f, vsid
 c      integer     vsgidc
       INTERFACE
@@ -509,6 +587,9 @@ c     remove the vdata with id from the file
 c     related: VSdelete--vsdltc--vsfdlte
 
       integer  function vsfdlte (f, vsid)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfdlte
+	!MS$endif
       integer     f, vsid
 c      integer     vsdltc
       INTERFACE
@@ -526,6 +607,9 @@ c     sets the name of a vdata
 c     related: VSsetname--vssnamc--vsfsnam
 
       integer function vsfsnam (vs, vsname)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfsnam
+	!MS$endif
       integer			vs
       character*(*)	vsname
 c       integer       vssnamc
@@ -546,6 +630,9 @@ c     set the class name of a vdata
 c     related: VSsetclass--vssclsc--vsfscls
 
       integer function vsfscls (vs, vsclass)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfscls
+	!MS$endif
       integer			vs
       character*(*)	vsclass
 c      integer vssclsc
@@ -566,6 +653,9 @@ c     sets the fields in a vdata for reading or writing
 c     related: VSsetfields--vssfldc--vsfsfld
 
       integer	function	vsfsfld (vs, fields)		
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfsfld
+	!MS$endif
       integer			vs
       character*(*)	fields
 c      integer		vssfldc
@@ -586,6 +676,9 @@ c     sets the file interlace of a vdata
 c     related: VSsetinterlace--vssintc--vsfsint
 
       integer 	function vsfsint (vs, interlace)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfsint
+	!MS$endif
       integer 		vs, interlace
 c      integer		vssintc
       INTERFACE
@@ -603,6 +696,9 @@ c     defines a new field to be used in the vdata
 c     related: VSfdefine--vsfdefc--vsffdef
 
       integer	function	vsffdef (vs, field, localtype, order)	
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsffdef
+	!MS$endif
 
       integer			vs, localtype, order
       character*(*)	field
@@ -626,6 +722,9 @@ c     reads from a vdata
 c     related: VSread--vsreadc--vsfread
 
       integer	function	vsfread (vs, buf, nelts , interlace)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfread
+	!MS$endif
       integer			vs, nelts , interlace
       character*(*)	buf
 c      integer			vsreadc
@@ -646,6 +745,9 @@ c     reads records from a vdata into a char buffer
 c     related: VSread -- vsfirdc -- vsfrdc
 
       integer   function        vsfrdc (vsid, buf, nelts , interlace)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfrdc
+	!MS$endif
       integer                   vsid, nelts , interlace
       character*(*)     buf
 c      integer          vsfirdc
@@ -666,6 +768,9 @@ c     reads records from a vdata into a numeric buffer
 c     related: VSread--vsfird--vsfrd
 
       integer   function        vsfrd (vsid, buf, nelts , interlace)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfrd
+	!MS$endif
       integer                   vsid, nelts , interlace
       integer     buf(*)
 C      integer                   vsfird
@@ -685,6 +790,9 @@ c     writes records to a vdata from a char buffer
 c     related: VSwrite -- vsfiwrc -- vsfwrtc
 
       integer   function        vsfwrtc(vsid, buf, nelts, interlace)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfwrtc
+	!MS$endif
       integer                   vsid, nelts , interlace
       character*(*)     buf
 c      integer          vsfiwrc
@@ -705,6 +813,9 @@ c     writes records to a vdata from a numeric buffer
 c     related: VSwrite -- vsfiwr -- vsfwrt
 
       integer   function        vsfwrt(vsid, buf, nelts, interlace)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfwrt
+	!MS$endif
       integer         vsid, nelts , interlace, buf(*)
 c      integer          vsfiwr
       INTERFACE
@@ -723,6 +834,9 @@ c     writes to a vdata
 c     related: VSwrite--vswritc--vsfwrit
 
       integer	function	vsfwrit (vs, buf, nelts, interlace)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfwrit
+	!MS$endif
 
       integer			vs, nelts, interlace
       character*(*)		buf	
@@ -752,6 +866,9 @@ C     Related:  VSsetexternalfile--vssextfc--vsfsextf
 C----------------------------------------------------------------------
 
       integer function vsfsextf(vid, fname, offset)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfsextf
+	!MS$endif
 
       character*(*) fname
 
@@ -778,6 +895,9 @@ C     vfnflds -- number of fields in a vdata
 C     related: VFnfields -- vfinflds -- vfnflds
 
       integer function vfnflds(vsid)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfnflds
+	!MS$endif
       integer vsid
 C      integer vfinflds
       INTERFACE 
@@ -795,6 +915,9 @@ C     vffname -- name of a field in a vdata
 C     related: VFfieldname -- vfifnm -- vffname
 
       integer function vffname(vsid, findex, fname)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vffname
+	!MS$endif
       integer vsid, findex
       character*(*) fname
 C      integer vfifnm
@@ -815,6 +938,9 @@ C     vfftype -- type of a field in a vdata
 C     related: VFfieldtype -- vfiftp -- vfftype
 
       integer function vfftype(vsid, findex)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfftype
+	!MS$endif
       integer vsid, findex
 C      integer vfifnm
       INTERFACE 
@@ -832,6 +958,9 @@ C     vffisiz -- HDF size of a field in a vdata
 C     related: VFfieldisize -- vfifisz -- vffisiz
 
       integer function vffisiz(vsid, findex)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vffisiz
+	!MS$endif
       integer vsid, findex
 C      integer vfifisz
       INTERFACE 
@@ -849,6 +978,9 @@ C     vffesiz -- memory size of a field in a vdata
 C     related: VFfieldesize -- vfifesz -- vffesiz
 
       integer function vffesiz(vsid, findex)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vffesiz
+	!MS$endif
       integer vsid, findex
 C      integer vfifesz
       INTERFACE 
@@ -866,6 +998,9 @@ C     vffordr -- order of a field in a vdata
 C     related: VFfieldorder -- vfifodr -- vffordr
 
       integer function vffordr(vsid, findex)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vffordr
+	!MS$endif
       integer vsid, findex
 C      integer vfifodr
       INTERFACE 
@@ -889,6 +1024,9 @@ c     gets the interlace of a vdata
 c     related: VSgetinterlace--vsgintc--vsfgint
 
       integer 	function vsfgint (vs)					
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfgint
+	!MS$endif
       integer 		vs
 c      integer		vsgintc
       INTERFACE
@@ -906,6 +1044,9 @@ c     gets the number of elements in a vdata
 c     related: VSelts--vseltsc--vsfelts
 
       integer 	function vsfelts (vs)			
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfelts
+	!MS$endif
       integer  vs	
 c      integer	vseltsc
       INTERFACE
@@ -923,6 +1064,9 @@ c     gets the fields in the vdata
 c     related: VSgetfields--vsgfldc--vsfgfld
 
       integer	function vsfgfld (vs, fields)	
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfgfld
+	!MS$endif
       integer			vs
       character*(*) 	fields
 c      integer			vsgfldc
@@ -943,6 +1087,9 @@ c 	determines the (machine) size of the given fields
 c     related: VSsizeof--vssizc--vsfsiz
 
       integer	function vsfsiz (vs, fields)		
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfsiz 
+	!MS$endif
       integer			vs
       character*(*) 	fields
 c      integer			vssizc
@@ -963,6 +1110,9 @@ c     determines the no of entries in a vgroup
 c     related: Ventries--ventsc--vfents
 
       integer 	function	vfents (f, vgid)		
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfents
+	!MS$endif
       integer	f, vgid
 c      integer	ventsc 
       INTERFACE
@@ -980,6 +1130,9 @@ c     gets the refs of all lone vgroups in the file
 c     related: Vlone--vlonec--vflone
 
       integer function vflone (f, idarray, asize)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vflone 
+	!MS$endif
       integer	f, asize
       integer	idarray(*) 
 c      integer	vlonec
@@ -998,6 +1151,9 @@ c     gets the refs of all lone vdatas in the file
 c     related: VSlone--vslonec--vsflone
 
       integer function vsflone (f, idarray, asize)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsflone
+	!MS$endif
       integer   f, asize
       integer   idarray(*)
 c      integer	vslonec
@@ -1016,6 +1172,9 @@ c     gets the ref # of a vgroup for a given name
 c     related: Vfind--vfindc--VFIND
 
       integer function vfind(f,name)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfind
+	!MS$endif
       integer		f
       character*(*)  name
 C      integer vfindc 	
@@ -1036,6 +1195,9 @@ c     gets the ref # of a vgroup for a given class
 c     related: Vfindclass--vfndclsc--VFNDCLS
 
       integer function vfndcls(f,class)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfndcls
+	!MS$endif
       integer		f
       character*(*)  class
 c      integer vfndclsc 	
@@ -1056,6 +1218,9 @@ c     store a simple dataset in a vdata
 c     related: VHstoredata--vhsdc--vhfsd
 
       integer function vhfsd(f,field,buf,n,dtype,vsname,vsclass)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vhfsd
+	!MS$endif
       integer		f
       character*(*)  field
       integer		buf(*)	
@@ -1081,6 +1246,9 @@ c     store an aggregate dataset in a vadata
 c     related: VHstoredatam--vhsdmc--vhfsdm
 
       integer function vhfsdm (f,field,buf,n,dtype,vsname,vsclass,order)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vhfsdm
+	!MS$endif
       integer			f
       character*(*)  field
       integer			buf(*)	
@@ -1106,6 +1274,9 @@ c     store a simple char dataset in a vdata
 c     related: VHstoredata--vhscdc--vhfscd
 
       integer function vhfscd(f,field,cbuf,n,dtype,vsname,vsclass)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vhfscd
+	!MS$endif
       integer           f
       character*(*)  field
       character      cbuf(*)
@@ -1133,6 +1304,9 @@ c     related: VHstoredatam--vhscdmc--vhfscdm
 
       integer function vhfscdm (f,field,cbuf,n,dtype,vsname,
      1            vsclass,order)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vhfscdm
+	!MS$endif
       integer                   f
       character*(*)  field
       character              cbuf(*)
@@ -1160,6 +1334,9 @@ c     make a new vgroup given several tag/ref pairs
 c     related: VHmakegroup--vhmkgpc--vhfmkgp
 
       integer function vhfmkgp(f,tagarray,refarray,n,vgname,vgclass)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vhfmkgp
+	!MS$endif
       integer		f, n
       integer		tagarray(*), refarray(*)
       character*(*)  vgname, vgclass
@@ -1185,6 +1362,9 @@ c     locate a field in a vdata that belongs to this VGROUP
 c     related: Vflocate--vflocc--vffloc
 
       integer function vffloc  (vg, field)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vffloc
+	!MS$endif
       integer			vg
       character*(*)	field
 c      integer 			vflocc
@@ -1205,6 +1385,9 @@ c     tests if a tag/ref pair is in a vgroup.
 c     related: Vinqtagref--vinqtrc--vfinqtr
 
       integer function vfinqtr  (vg, tag, ref)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfinqtr
+	!MS$endif
       integer		vg, tag, ref
 c      integer		vinqtrc
       INTERFACE
@@ -1222,6 +1405,9 @@ c     gets the number of tag/refs stored in a vgroup
 c     related: Vntagrefs -- vntrc -- vfntr
 
       integer function vfntr (vg)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfntr
+	!MS$endif
       integer		vg
 c      integer vntrc 
       INTERFACE
@@ -1238,6 +1424,9 @@ c     gets the number of tags of a given type in a vgroup
 c     related: Vnrefs -- vfirefs -- vnrefs
 
       integer function vnrefs(vgid, tag)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vnrefs
+	!MS$endif
       integer           vgid, tag
 C      integer vfirefs
       INTERFACE
@@ -1255,6 +1444,9 @@ c     gets the reference number of this vgroup
 c     related: VQueryref -- vfiqref -- vqref
 
       integer function vqref(vgid)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vqref
+	!MS$endif
       integer           vgid
 C      integer vfiqref
       INTERFACE
@@ -1272,6 +1464,9 @@ c     gets the tag of this vgroup
 c     related: VQuerytag -- vfiqtag -- vqtag
 
       integer function vqtag(vgid)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vqtag
+	!MS$endif
       integer           vgid
 C      integer vfiqtag
       INTERFACE
@@ -1290,6 +1485,9 @@ c     returns all the tag/ref pairs in a vgroup
 c     related: Vgettagrefs--vgttrsc--vfgttrs
 
       integer function vfgttrs (vg, tagarray, refarray, n)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfgttrs
+	!MS$endif
       integer		vg, n
       integer		tagarray(*), refarray(*)
 c      integer		vgttrsc
@@ -1307,6 +1505,9 @@ c     returns a specified tag/ref pair in a vgroup
 c     related: Vgettagref--vgttrc--vfgttr
 
       integer function vfgttr (vg, which, tag, ref)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfgttr
+	!MS$endif
       integer		vg, which
       integer		tag, ref
 c      integer		vgttrc
@@ -1325,6 +1526,9 @@ c     add a tag/ref pair to a vgroup
 c     related: Vaddtagref--vadtrc--vfadtr
 
       integer function vfadtr	( vg, tag, ref)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfadtr
+	!MS$endif
       integer		vg, tag, ref
 c      integer vadtrc				
       INTERFACE
@@ -1342,6 +1546,9 @@ c     specific inquiry on a vdata, gets number of records
 c     related: VSQuerycount -- vsiqnelt -- vsqfnelt
 
       integer function vsqfnelt(vsid, nelts)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsqfnelt
+	!MS$endif
       integer                   vsid, nelts
 c      integer                   vsiqnelt
       INTERFACE 
@@ -1358,6 +1565,9 @@ c     specific inquiry on a vdata, gets interlace
 c     related: VSQueryinterlace -- vsiqintr -- vsqfintr
 
       integer function vsqfintr(vsid,interlace)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsqfintr
+	!MS$endif
       integer                   vsid, interlace
 c      integer                   vsiqintr
       INTERFACE
@@ -1375,6 +1585,9 @@ c     specific inquiry on a vdata, gets record size on local machine
 c     related: VSQueryvsize -- vsiqvsz -- vsqfvsiz 
 
       integer function vsqfvsiz(vsid,size)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsqfvsiz
+	!MS$endif
       integer                   vsid, size
 c      integer                   vsiqvsz
       INTERFACE 
@@ -1392,6 +1605,9 @@ c     specific inquiry on a vdata, gets fields
 c     related: VSQueryfields--vsqfldsc--vsqfflds
 
       integer function vsqfflds (vs,fields) 
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsqfflds
+	!MS$endif
       integer			vs
       character*(*)	fields
 c      integer			vsqfldsc
@@ -1412,6 +1628,9 @@ c     specific inquiry on a vdata, gets vdata name
 c     related: VSQueryname--vsqnamec--vsqfname
 
       integer function vsqfname (vs,name) 
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsqfname
+	!MS$endif
       integer			vs
       character*(*)	name
 c      integer			vsqnamec
@@ -1437,6 +1656,9 @@ c                          HDF_VSUNPACK(1) for unpacking
 
       integer function vsfnpak(vs,packtype,buflds,buf,bufsz,
      +                        nrecs,pckfld,fldbuf)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfnpak
+	!MS$endif
       integer vs, bufsz, nrecs, packtype
       integer buf, fldbuf
       character*(*) buflds, pckfld
@@ -1466,6 +1688,9 @@ c                          HDF_VSUNPACK(1) for unpacking
 
       integer function vsfcpak(vs,packtype,buflds,buf,bufsz,
      +                        nrecs,pckfld,fldbuf)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsfcpak
+	!MS$endif
       integer vs, packtype, bufsz, nrecs
       integer buf
       character*(*) buflds, pckfld, fldbuf
@@ -1490,6 +1715,9 @@ c     Delete a tag/ref pair in a vgroup.
 c     related: vfdtr()-->vdtrc()-->Vdeletetagref()
 
       integer function vfdtr	( vg, tag, ref)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vfdtr
+	!MS$endif
       integer		vg, tag, ref
 C      integer vdtrc				
       INTERFACE
@@ -1515,6 +1743,9 @@ C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
 
          INTEGER function vsffcls(id, vdclass)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vsffcls
+	!MS$endif
 C
          INTEGER id
          CHARACTER*(*) vdclass
@@ -1535,7 +1766,7 @@ C
          end
 C-------------------------------------------------------------------------
 C        Name:      vdelete
-C        Purpose:   deletes vgroup from the file 
+C        Purpose:   deletes vgroup from the file
 C        Inputs:    id       -  file ID
 C                   vgid     -  vgroup identifier
 C        Returns:   returns 0 if successfull, -1 on error
@@ -1543,19 +1774,23 @@ C        Calls:     vdeletec (C stub for Vdelete function)
 C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
          INTEGER function vdelete(id, vgid)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: vdelete
+	!MS$endif
 C
          INTEGER id, vgid
-
+ 
       INTERFACE
         INTEGER FUNCTION vdeletec(id, vgid)
           !MS$ATTRIBUTES C,reference,alias:'_VDELETEC' :: vdeletec
           integer id, vgid
-        END FUNCTION vdeletec 
+        END FUNCTION vdeletec
       END INTERFACE
 C
          vdelete = vdeletec(id, vgid)
-
+ 
 C
-         return 
+         return
          end
+ 
 
