@@ -17,16 +17,16 @@
 #define MYMAX(A,B) (((A) > (B)) ? (A) : (B))
 #define MYMIN(A,B) (((A) < (B)) ? (A) : (B))
 #define PRINT_FSTATS(T) {\
- printf("Type: %s  Npts: %d  Ndiff: %d (%lf%%)\n", \
+ printf("Type: %s  Npts: %d  Ndiff: %d (%f%%)\n", \
  T, tot_cnt, n_diff, 100.*(float64)n_diff/(float64)tot_cnt); \
  printf("Avg Diff: %.3le  Max Diff: %.3le\n",  \
  d_avg_diff/tot_cnt, d_max_diff); \
- printf("Range File1: %lf/%lf  File2: %lf/%lf\n", \
+ printf("Range File1: %f/%f  File2: %f/%f\n", \
 d_min_val1, d_max_val1, d_min_val2, d_max_val2); }
 #define PRINT_ISTATS(T) {\
- printf("Type: %s  Npts: %d  Ndiff: %d (%lf%%)\n", \
+ printf("Type: %s  Npts: %d  Ndiff: %d (%f%%)\n", \
  T, tot_cnt,n_diff, 100.*(float64)n_diff/(float64)tot_cnt); \
- printf("Avg Diff: %le   Max. Diff: %d\n",  \
+ printf("Avg Diff: %e   Max. Diff: %d\n",  \
  (d_avg_diff / tot_cnt), i4_max_diff); \
  printf("Range File1: %d/%d  File2: %d/%d\n", \
 i4_min_val1, i4_max_val1, i4_min_val2, i4_max_val2); }
@@ -58,20 +58,20 @@ int array_diff(void *buf1,
  float32 *fptr1, *fptr2;
  float64 *dptr1, *dptr2;
  float64 d_diff, d_avg_diff = 0., d_max_diff = 0.;
- float64 d_max_val1, d_min_val1, d_max_val2, d_min_val2;
+ float64 d_max_val1=0, d_min_val1=0, d_max_val2=0, d_min_val2=0;
  float64 d_val1, d_val2;
  float64 d_sumx = 0., d_sumy = 0., d_sumx2 = 0., d_sumy2 = 0., d_sumxy=0.;
  float64 slope, intercept, correlation;
  float32 f_diff;
  int32   i4_diff, i4_max_diff = 0;
- int32   i4_max_val1, i4_min_val1, i4_max_val2, i4_min_val2;
+ int32   i4_max_val1=0, i4_min_val1=0, i4_max_val2=0, i4_min_val2=0;
  int16   i2_diff;
  int8    c_diff;
  int     n_diff = 0;
  int     is_fill1, is_fill2;
  int     n_stats = 0;
  char    *debug;
- FILE    *fp;
+ FILE    *fp=NULL;
  debug = getenv("DEBUG");
  if (debug) {
   fp = fopen("hdiff.debug", "w");
@@ -373,7 +373,7 @@ int array_diff(void *buf1,
     sqrt_arg = ((float64)n_stats*d_sumx2 - d_sumx*d_sumx) /
      ((float64)n_stats * d_sumy2 - d_sumy * d_sumy);
     correlation = slope * sqrt(sqrt_arg);
-    printf("Regression  N: %d  Slope: %le  Intercept: %le  R: %le\n",
+    printf("Regression  N: %d  Slope: %e  Intercept: %e  R: %e\n",
      n_stats, slope, intercept, correlation);
    }
    else {
@@ -524,7 +524,7 @@ vdata_cmp(int32  vs1, int32  vs2,
  {
   for (i=0; i<nv1; i++)
   {
-   if (memcmp(b1, b2, vsize1) == 0)
+   if (memcmp(b1, b2, (size_t)vsize1) == 0)
    {
     b1 += vsize1;   
     b2 += vsize2;

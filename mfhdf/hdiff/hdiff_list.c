@@ -21,6 +21,12 @@ static
 int is_reserved(char*vgroup_class);
 static
 char *get_path(char*path_name, char*obj_name);
+static 
+int insert_an_data(int32 file_id,
+                   int32 ref_in, 
+                   int32 tag_in,
+                   ann_type type, 
+                   char *path);
 
 
 
@@ -66,7 +72,7 @@ int Hgetlist (char* fname, dtable_t *table)
  int      n_objs=0;
 
  /* open the file for read */
- if ((file_id  = Hopen (fname,DFACC_READ,0))==FAIL)
+ if ((file_id  = Hopen (fname,DFACC_READ,(int16)0))==FAIL)
  {
   printf("Cannot open file <%s>\n",fname);
   return FAIL;
@@ -804,6 +810,7 @@ int insert_vs_an(int32 file_id,
  *-------------------------------------------------------------------------
  */
 
+static
 int insert_an_data(int32 file_id,
                    int32 ref_in, 
                    int32 tag_in,
