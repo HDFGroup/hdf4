@@ -57,10 +57,10 @@
 #define UNIXUNBUFIO 1
 #define UNIXBUFIO   2
 #define MACIO       3
-#define PCIO        4    /* 16-bit MS-DOS File I/O */
-#define WINIO       5    /* 16-bit Windows File I/O */
+#define PCIO        4    /* 16-bit MS-DOS File I/O (deprecated) */
+#define WINIO       5    /* 16-bit Windows File I/O (deprecated) */
 #define PAGEBUFIO   6    /* page buffering - fmpool */
-#define WINNTIO     7    /* 32-bit Windows File I/O */
+#define WINNTIO     7    /* 32-bit Windows File I/O (deprecated, WinNT now uses UNIXBUFIO) */ 
 
 /* IBM RS6000 AIX hack */
 #if defined(IBM6000) || defined(_AIX)
@@ -784,15 +784,11 @@ typedef long              intf;     /* size of INTEGERs in Fortran compiler */
 #endif
 #define _fcdtocp(desc) (desc)
 
-#if defined WIN386
-#define FILELIB WINNTIO
-#else
 #ifdef  HAVE_FMPOOL
 #define FILELIB PAGEBUFIO  /* enable page buffering */
 #else
 #define FILELIB UNIXBUFIO
 #endif
-#endif /* WIN386 */
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
