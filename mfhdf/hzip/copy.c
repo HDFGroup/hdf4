@@ -265,6 +265,28 @@ int copy_sds(int32 sd_in,
   start[j] = 0;
  }
 
+/*-------------------------------------------------------------------------
+ * check for maximum number of chunks treshold
+ *-------------------------------------------------------------------------
+ */
+ if ( options->trip>0 ) 
+ {
+  int count=1, nchunks;
+  int maxchunk=USHRT_MAX;
+  if ( (chunk_flags == HDF_CHUNK) || (chunk_flags == (HDF_CHUNK | HDF_COMP)) )
+  {
+   for (j = 0; j < rank; j++) {
+    count   *= chunk_def.chunk_lengths[j];
+   }
+   nchunks=nelms/count;
+   if (nchunks>maxchunk){
+    printf("Warning: number of chunks is %d (greater than %d). Not chunking <%s>\n",
+    nchunks,maxchunk,path);
+    chunk_flags=HDF_NONE;
+   }
+  }
+ }
+
 
 /*-------------------------------------------------------------------------
  * check for objects too small
@@ -801,7 +823,7 @@ int  copy_gr(int32 gr_in,
  printf ("\t%s %d\n", path, ref); 
 #endif
 
- /*-------------------------------------------------------------------------
+/*-------------------------------------------------------------------------
  * get the original compression/chunk info from the object 
  *-------------------------------------------------------------------------
  */
@@ -1077,7 +1099,13 @@ int  copy_gr(int32 gr_in,
   /* setup compression factors */
   switch(comp_type) 
   {
-  case COMP_CODE_SZIP:         
+   case COMP_CODE_SZIP:
+   if (set_szip (rank,dimsizes,dtype,&c_info)==FAIL)
+   {
+    printf( "Error: Failed to set SZIP compression for <%s>\n", path);
+    ret=-1;
+    goto out;
+   }
    break;
   case COMP_CODE_RLE:         
    break;
@@ -2069,5 +2097,37 @@ int get_chunk(options_t *options, char* path, int32 *chunk_lengths)
 #endif
 
 
+
+int cache(
+HDF_CHUNK_DEF    chunk_def,
+int32 eltsz,
+int32 rank,
+int32 *dimsize)
+{
+int32 targetbytes;
+int32 chunkrow;
+int32 chunkcnt;
+int32 chunksizes[32];
+int i;
+int32 cntr;
+
+	for (i = 0; i < rank; i++) {
+		chunkcnt = 1;
+		targetbytes = dimsize[i] * eltsz;
+		chunkrow = eltsz * chunk_def.chunk_lengths[i];
+		cntr = chunkrow;
+		while( cntr < targetbytes) {
+			cntr += chunkrow;
+			chunkcnt++;
+		}
+		chunksizes[i] = chunkcnt;
+	}
+	chunkcnt = 1;
+	for (i = 0; i < rank; i++) {
+		chunkcnt *= chunksizes[i];
+	}
+	printf("total chunks is %d\n",chunkcnt);
+ return 0;
+}
 
 

@@ -36,7 +36,7 @@ extern "C" {
 /* write data */
 void add_an (int32 file_id);
 void add_glb_attrs(char *fname,int32 file_id);
-void add_gr (char* name_file,char* gr_name,int32 file_id,int32 vgroup_id);
+void add_gr_ffile (char* name_file,char* gr_name,int32 file_id,int32 vgroup_id);
 void add_r8 (char *fname,char* name_file,int32 vgroup_id);
 void add_r24(char *fname,char* name_file,int32 vgroup_id);
 void add_vs (char* vs_name,int32 file_id,int32 vgroup_id);
@@ -54,6 +54,12 @@ void add_sd3d(char *fname,
              int32 comp_type,         /* compression flag */
              comp_info *c_info        /* compression structure */ );
 
+void add_gr(char* gr_name,           /* gr name */
+            int32 file_id,            /* file ID */
+            int32 vgroup_id,         /* group ID */
+            int32 chunk_flags,       /* chunk flags */
+            int32 comp_type,         /* compression flag */
+            comp_info *comp_info     /* compression structure */ );
 
 /* read image data */
 int  read_data(char* file_name);
