@@ -22,17 +22,18 @@ CFLAGS=  -g -D${MACHINE}
 
 # ==> where is your HDF library (libdf.a) located?
 HDFLIB=../lib
+HDFSRC=../src
 
 RM=/bin/rm
 RMFLAGS=-f
 
 SRCS= 	rig.c sdstr.c blocks.c an.c anfile.c \
         extelt.c file.c file1.c vers.c sdmms.c \
-        sdnmms.c slab.c litend.c testhdf.c tvset.c
+        sdnmms.c slab.c litend.c testhdf.c tvset.c comp.c
 
 CTESTS= rig.o sdstr.o blocks.o an.o anfile.o \
         extelt.o file.o file1.o vers.o sdmms.o \
-        sdnmms.o slab.o litend.o tvset.o testhdf.o
+        sdnmms.o slab.o litend.o tvset.o comp.o testhdf.o
 
 FTESTS= tr8f t24f tpf tanf tanfilef tsdstrf tsdntf tsdnntf \
         tsdmmsf tsdnmmsf tstubsf \
@@ -56,7 +57,7 @@ nofortran: testhdf
 	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
 
 dbgtesthdf: $(CTESTS) $(HDFLIB)/libdf.a
-	purify $(CC) $(CFLAGS) -o dbgtesthdf $(CTESTS) $(HDFLIB)/libdf.a
+	purify $(CC) $(CFLAGS) -o dbgtesthdf $(CTESTS) $(HDFSRC)/libdf.a
 
 testhdf.tc: $(CTESTS) $(HDFLIB)/libdf.a
 	proof $(CC) $(CFLAGS) -o testhdf.tc $(CTESTS) $(HDFLIB)/libdf.a
