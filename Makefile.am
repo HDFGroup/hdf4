@@ -1,1 +1,1 @@
-SUBDIRS=hdf mfhdf
+SUBDIRS=hdf mfhdf man

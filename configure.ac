@@ -4,7 +4,6 @@ dnl Copyright by the Board of Trustees of the University of Illinois.
 dnl All rights reserved.
 dnl
 AC_REVISION($Id$)
-AC_PREREQ([2.57])   dnl We need autoconf version 2.57 or greater
 
 dnl ----------------------------------------------------------------------
 dnl Initialize configure.
@@ -160,9 +159,6 @@ case $withval in
       zlib_lib=""
     fi
 
-    saved_CPPFLAGS="$CPPFLAGS"
-    saved_LDFLAGS="$LDFLAGS"
-
     if test -n "$zlib_inc"; then
       CPPFLAGS="$CPPFLAGS -I$zlib_inc"
     fi
@@ -224,9 +220,6 @@ case $withval in
       jpeg_lib=""
     fi
 
-    saved_CPPFLAGS="$CPPFLAGS"
-    saved_LDFLAGS="$LDFLAGS"
-
     if test -n "$jpeg_inc"; then
       CPPFLAGS="$CPPFLAGS -I$jpeg_inc"
     fi
@@ -245,6 +238,68 @@ case $withval in
     ;;
 esac
 
+dnl Is the SZip library present?
+AC_ARG_WITH([szlib],
+            [AC_HELP_STRING([--with-szlib=DIR],
+                            [Use szlib library [default=yes]])],,
+            withval=yes)
+
+case $withval in
+  yes)
+    HAVE_SZIP="yes"
+    AC_CHECK_HEADERS([szlib.h],, [unset HAVE_SZIP])
+    AC_CHECK_LIB([sz], [SZ_BufftoBuffCompress],, [unset HAVE_SZIP])
+
+    if test -z "$HAVE_SZIP"; then
+      AC_MSG_ERROR([couldn't find szlib library])
+    fi
+    ;;
+  no)
+    AC_MSG_ERROR([szlib library required to build HDF4])
+    ;;
+  *)
+    HAVE_SZIP="yes"
+    case "$withval" in
+      *,*)
+        szip_inc="`echo $withval |cut -f1 -d,`"
+        szip_lib="`echo $withval |cut -f2 -d, -s`"
+        ;;
+      *)
+        if test -n "$withval"; then
+          szip_inc="$withval/include"
+          szip_lib="$withval/lib"
+        fi
+        ;;
+    esac
+
+    dnl Trying to include -I/usr/include and -L/usr/lib is redundant and
+    dnl can mess some compilers up.
+    if test "X$szip_inc" = "X/usr/include"; then
+      szip_inc=""
+    fi
+    if test "X$szip_lib" = "X/usr/lib"; then
+      szip_lib=""
+    fi
+
+    if test -n "$szip_inc"; then
+      CPPFLAGS="$CPPFLAGS -I$szip_inc"
+    fi
+
+    AC_CHECK_HEADERS([szlib.h],, [unset HAVE_SZIP])
+
+    if test -n "$szip_lib"; then
+      LDFLAGS="$LDFLAGS -L$szip_lib"
+    fi
+
+    AC_CHECK_LIB([sz], [SZ_BufftoBuffCompress],, [unset HAVE_SZIP])
+
+    if test -z "$HAVE_SZIP"; then
+      AC_MSG_ERROR([couldn't find szlib library])
+    fi
+    ;;
+esac
+
+dnl Is XDR support present?
 AC_MSG_CHECKING([for xdr library support])
 
 AC_TRY_LINK([#include <rpc/xdr.h>], [xdr_int],
@@ -365,9 +420,11 @@ AC_CONFIG_FILES([Makefile
                  hdf/src/Makefile
                  hdf/test/Makefile
                  hdf/util/Makefile
+                 man/Makefile
                  mfhdf/Makefile
                  mfhdf/dumper/Makefile
                  mfhdf/dumper/testhdp.sh
+                 mfhdf/fortran/Makefile
                  mfhdf/hdfimport/Makefile
                  mfhdf/hdfimport/testutil.sh
                  mfhdf/hdiff/Makefile
