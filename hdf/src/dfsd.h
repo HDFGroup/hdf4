@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.4  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.5  1992/11/10 20:21:32  georgev
+Added fill value to DFSsdg struct, Added prototypes for
+ hyperslab routines
 
+ * Revision 1.4  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.3  1992/08/31  16:14:52  chouck
  * Added Fortran support for calibration tags
  *
@@ -54,6 +58,7 @@ typedef struct DFSsdg {
     float64 cal, cal_err;       /* calibration multiplier stuff          */
     float64 ioff, ioff_err;     /* calibration offset stuff              */
     int32   cal_type;           /* number type of data after calibration */
+    uint8   *fill_value;       /* fill value if any specified  */
 } DFSsdg;
 
 /* DFnsdgle is the internal structure which stores SDG or NDS and   */
@@ -171,5 +176,17 @@ extern int DFSDsetcal
 extern int DFSDgetcal
     PROTO((float64 HUGE *pcal, float64 HUGE *pcal_err, float64 HUGE *pioff,
                float64 HUGE *pioff_err, int32 HUGE *cal_nt));
+
+extern int DFSDwriteref
+    PROTO((char *filename, uint16 ref));
+extern int DFSDsetfillvalue
+    PROTO((void *fill_value));
+extern int DFSDgetfillvalue
+    PROTO((void *fill_value));
+extern int DFSDwritefillvalue
+    PROTO((char *filename, uint16 ref));
+extern int DFSDwriteslab
+    PROTO((char *filename, int32 start[], stride[],
+           int32count[], void *data));
 
 #endif /*DFSDG*/
