@@ -41,14 +41,37 @@ C
 	character*(*) cmd, test
 	integer retcode
 
+	character*120 inline
+	integer linelen, i
+
 	retcode = 0
 
-	read(*,*,END=100,err=100) cmd, test
+	read(*,11,END=100,err=100) inline
+C	print *, "inline=", inline
+	linelen = len(inline)
+	i = index(inline, ' ')
+	if (i .le. 0) i = linelen+1
+	cmd = inline(1 : i - 1)
+
+	do while (i .le. linelen)
+	    if (inline(i:i) .eq. ' ') then
+		i = i + 1
+	    else
+		goto 50
+	    endif
+	end do
+
+50	test = inline(i:linelen)
+
+C	print * , "cmd=", cmd, ", test=", test
+
 	retcode = 0
 	return
 
 100	retcode =1
 	return
+C
+11	format(A120)
 	end
 	    
 
