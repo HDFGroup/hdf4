@@ -32,7 +32,7 @@ FC = f77
 FFLAGS = -O
 
 # Name of achive randomizer, usually ranlib (use 'true' if non-existant)
-RANLIB = ranlib
+RANLIB = true
 
 # Name of library archiver and flags to send, default 'AR=ar', 'ARFLAGS=r'
 AR = ar
