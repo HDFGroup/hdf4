@@ -16,7 +16,6 @@
  *
  */
 /* "$Id$" */
-/* netcdf.h for Cray T3D using CRAYMPP OS. */
 
 #ifndef _NETCDF_
 #define _NETCDF_
@@ -172,15 +171,6 @@
 
 #endif	/* NC_OLD_FILLVALUES above */
 
-/*
- * Added feature. The above values are defaults.
- * If you wish a variable to use a different value than the above
- * defaults, create an attribute with the same type as the variable
- * and the following reserved name. The value you give the attribute
- * will be used as the fill value for that variable.
- */
-#define _FillValue	"_FillValue"
-
 
 /*
  *  masks for the struct NC flags field; passed in as 'mode' arg to
@@ -236,6 +226,15 @@
 #define MAX_NC_NAME 256		 /* max length of a name */
 #define MAX_VAR_DIMS 32          /* max per variable dimensions */
 
+/*
+ * Added feature. 
+ * If you wish a variable to use a different value than the above
+ * defaults, create an attribute with the same type as the variable
+ * and the following reserved name. The value you give the attribute
+ * will be used as the fill value for that variable.
+ */
+#define _FillValue	"_FillValue"
+
 #else /* HDF */
 
 #include "hlimits.h"  /* Hard coded constants for HDF library */
@@ -284,13 +283,6 @@ typedef int nc_type ;
 /*
  * C data types corresponding to netCDF data types:
  */
-/* T3D (CRAYMPP) native number sizes:
-	Char = 8 bits, unsigned
-	Short=32 int=64 long=64 float=32 double=64 bits
-	Long double=64 bits
-	Char pointers = 64 bits
-	Int pointers = 64 bits
-*/
 /* Don't use these or the C++ interface gets confused
 typedef char  ncchar;
 typedef char  ncbyte;
@@ -302,8 +294,10 @@ typedef double        ncdouble;
 /* 
  * Variables/attributes of type NC_LONG should use the C type 'nclong'
  */
-#ifdef _CRAYMPP
-typedef short     nclong;   
+#if defined _CRAYMPP
+typedef short	nclong;
+#elif defined __alpha || (_MIPS_SZLONG == 64)
+typedef int     nclong;   
 #else
 typedef long    nclong;         /* default, compatible type */
 #endif
@@ -368,6 +362,8 @@ extern int ncopts ;	/* default is (NC_FATAL | NC_VERBOSE) */
 #else
 #   define	PROTO(x)	()
 #endif
+
+#include "hdf2netcdf.h"
 
 #ifdef __cplusplus
 extern "C" {
