@@ -24,6 +24,12 @@ use the script ``config.sub'' to test whether a name is recognized; if
 it is, config.sub translates it to a triplet specifying CPU, vendor,
 and OS.(e.g hppa1.1-hp-hpux9.03 for an HP900/735 running HPUX9.03).
 
+`configure' is a Bourne-shell (`/bin/sh') script; if your system
+does not recognize this automatically when you run a different shell,
+you may need to run `sh' on it explicitly:
+
+        sh ./configure -v --prefix=/usr/local/hdf
+
 To compile the library and utiltites type:
 
         ./make 
