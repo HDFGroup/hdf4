@@ -73,6 +73,7 @@ C
 	integer DFANgetfdslen,		dagfdsl
 	integer DFANgetfds,		dagfds
 	integer DFANlastref,		dalref
+        integer daclear
 C
 C	Declarations of return values for HDF Raster Image functions
 C

@@ -632,6 +632,12 @@ extern      "C"
                 (const char _HUGE * filename, uint16 tag, uint16 _HUGE reflist[],
          char _HUGE * labellist, intn listsize, intn maxlen, intn startpos);
 
+    extern intn DFANclear
+                (void);
+
+    extern intn DFANIclear
+                (void);
+
     extern uint16 DFANIlocate
                 (int32 file_id, int type, uint16 tag, uint16 ref);
 
@@ -1010,6 +1016,7 @@ extern      "C"
 #   define ndaipann  FNAME(DAIPANN)
 #   define ndailist  FNAME(DAILIST)
 #   define ndalref   FNAME(DALREF)
+#   define ndaclear  FNAME(DACLEAR)
 #   define ndfanlastref     FNAME(DFANLASTREF)
 
 #   define ndfanaddfds      FNAME(DFANADDFDS)
@@ -1029,6 +1036,7 @@ extern      "C"
 #   define ndaipann  FNAME(daipann)
 #   define ndailist  FNAME(dailist)
 #   define ndalref   FNAME(dalref)
+#   define ndaclear  FNAME(daclear)
 #   define ndfanlastref     FNAME(dfanlastref)
 
 #   define ndfanaddfds      FNAME(dfanaddfds)
@@ -1063,6 +1071,9 @@ extern      "C"
                  intf _HUGE * fnlen);
 
     extern      FRETVAL(intf) ndalref
+                (void);
+
+    extern      FRETVAL(intf) ndaclear
                 (void);
 
     extern      FRETVAL(intf) ndfanlastref
@@ -1958,9 +1969,9 @@ extern intn  ANannlist(int32 file_id, ann_type type, uint16 elem_tag,
 
 extern int32 ANannlen(int32 ann_id);
 
-extern int32 ANwriteann(int32 ann_id, char *ann, int32 annlen);
+extern int32 ANwriteann(int32 ann_id, char8 *ann, int32 annlen);
 
-extern int32 ANreadann(int32 ann_id, char *ann, int32 maxlen);
+extern int32 ANreadann(int32 ann_id, char8 *ann, int32 maxlen);
 
 extern intn  ANendaccess(int32 an_id);
 

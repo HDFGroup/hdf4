@@ -21,7 +21,9 @@
 #define DFANIlablist    _DFANIlablist
 #define DFANIlocate     _DFANIlocate
 #define DFANIopen       _DFANIopen
+#define DFANIclear      _DFANIclear
 #define DFANIputann     _DFANIputann
+#define DFANclear       _DFANclear
 #define DFANgetdesc     _DFANgetdesc
 #define DFANgetdesclen  _DFANgetdesclen
 #define DFANgetlabel    _DFANgetlabel

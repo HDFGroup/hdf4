@@ -27,6 +27,7 @@ static char RcsId[] = "@(#)$Revision$";
  *  daipann_     : put annotation of tag/ref
  *  dailist_     : get list of refs and labels for a given tag
  *  dalref_      : return last ref written or read
+ *  daclear_     : reset annotation internal structures
  *  dfanlastref_ : return last ref written or read
  *
  *  dfanaddfds_    : add file description
@@ -54,6 +55,7 @@ static char RcsId[] = "@(#)$Revision$";
 #   define ndaipann  FNAME(DAIPANN)
 #   define ndailist  FNAME(DAILIST)
 #   define ndalref   FNAME(DALREF)
+#   define ndaclear  FNAME(DACLEAR)
 #   define ndfanlastref  FNAME(DFANLASTREF)
 
 #   define ndfanaddfds      FNAME(DFANADDFDS)
@@ -73,6 +75,7 @@ static char RcsId[] = "@(#)$Revision$";
 #   define ndaipann  FNAME(daipann)
 #   define ndailist  FNAME(dailist)
 #   define ndalref   FNAME(dalref)
+#   define ndaclear  FNAME(daclear)
 #   define ndfanlastref  FNAME(dfanlastref)
 
 #   define ndfanaddfds      FNAME(dfanaddfds)
@@ -108,6 +111,20 @@ static char RcsId[] = "@(#)$Revision$";
 /*---------------------------------------------------------------------------
 ** Routines for handling tag/ref (not file) annotations
  *-------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------
+ * Name:    daclear
+ * Purpose: Call DFANIclear to clear Lastref and DFANdir[i]
+ * Inputs:  none
+ * Returns: 0 on success, -1 on failure with DFerror set
+ * Users:   HDF Fortran programmers
+ * Invokes: DFSDIclear
+ *-------------------------------------------------------------------------*/
+
+FRETVAL(intf)
+ndaclear(void)
+{
+    return(DFANIclear());
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    daiganl

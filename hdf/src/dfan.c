@@ -22,6 +22,7 @@ static char RcsId[] = "@(#)$Revision$";
  * Invokes:  df.c
  * Contents:
  *
+ *  DFANclear:      - reset DFAN interface
  *  DFANgetlablen:  - get length of label of tag/ref
  *  DFANgetlabel:   - get label of tag/ref
  *  DFANgetdesclen: - get length of description of tag/ref
@@ -41,6 +42,7 @@ static char RcsId[] = "@(#)$Revision$";
  *  DFANlastref:    - return ref of last annotation read or written
  *  DFANlablist:    - get list of labels for a particular tag
  *
+ *  DFANIclear:     - clear Lastref, label/desc entries and directories
  *  DFANIopen:      - open/reopen file
  *  DFANIlocate:    - return ref of label/desc of tag/ref
  *  DFANIaddentry:  - add entry in annotation directory
@@ -500,9 +502,72 @@ DFANlablist(const char *filename, uint16 tag, uint16 reflist[], char *labellist,
                          listsize, maxlen, startpos, 0));
 }
 
+/*-------------------------------------------------------------------
+ Name
+        DFANclear --  Clear DFAN interface
+ Usage
+        intn DFANclear()
+ Returns
+        SUCCEED if ok; FAIL otherwise.
+ DESCRIPTION
+        Invokes DFANIclear.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+        When a file is re-created in a single run by other
+          interface, such as DFSDputdata(), user should
+          call DFANclear to reset DFAN interface structures.
+ EXAMPLES
+ REVISION LOG
+ *------------------------------------------------------------------*/
+
+intn DFANclear(void)
+{
+    return(DFANIclear());
+}
+
 /******************************************************************************/
 /*----------------------- Internal routines ---------------------------------*/
 /******************************************************************************/
+
+/*---------------------------------------------------------------------------
+ Name
+       DFANIclear -- Clear label/desc entries and directories
+          Reset DFANdir[i] and Lastref
+ USAGE
+       intn DFANIclear()
+ Returns
+       SUCCEED if ok; FAIL otherwise.
+ DESCRIPTION
+       Reset DFANdir[i] and Lastref
+ GLOBAL VARIABLES
+        Lastref, DFANdir
+ COMMENTS, BUGS, ASSUMPTIONS
+
+ EXAMPLES
+ REVISION LOG
+
+ *-------------------------------------------------------------------------*/
+
+intn
+DFANIclear(void)
+{
+
+    DFANdirhead *p, *q;
+
+        for (p=DFANdir[0]; p!=NULL; p=q) {  /* free linked list space */
+            q = p->next;
+            HDfreespace((VOIDP) p);
+        }
+        for (p=DFANdir[1]; p!=NULL; p=q) {
+            q = p->next;
+            HDfreespace((VOIDP) p);
+        }
+        DFANdir[0] = DFANdir[1] = NULL;
+
+        Lastref = 0;
+
+    return SUCCEED;
+}
 
 /*--------------------------------------------------------------------------
  NAME
