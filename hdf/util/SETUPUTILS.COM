@@ -16,7 +16,7 @@
 !$ ! set up utilities
 !$ ! change below to the hdf bin directory
 !$ ! 
-$ define/nolog hdf$bin    _$1$dia0:[folk.33b2.hdf.bin]
+$ define/nolog hdf$bin    _$1$dia0:[folk.hdf33.hdf.bin]
 $ !
 $ hdfls     :== $ hdf$bin:hdfls
 $ hdfrseq   :== $ hdf$bin:hdfrseq
