@@ -1177,7 +1177,7 @@ DESCRIPTION
 int32
 HCPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
 {
-    char       *FUNC = "HXPinfo";   /* for HERROR */
+    char       *FUNC = "HCPinfo";   /* for HERROR */
     compinfo_t *info =          /* special information record */
     (compinfo_t *) access_rec->special_info;
 
