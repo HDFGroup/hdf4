@@ -2659,7 +2659,6 @@ int32 *nt, *nattr, *size;
                          *nt = ((*dp)->numrecs ? (*dp)->HDFtype : 0);
                     else *nt = (*dp)->HDFtype;
 
-                    *nt = (*dp)->HDFtype;
                     *nattr = ((*dp)->attrs ? (*dp)->attrs->count : 0);
                     return SUCCEED;
                 }
