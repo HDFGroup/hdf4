@@ -50,6 +50,14 @@ typedef hdf_destination_mgr * hdf_dest_ptr;
 
 #define OUTPUT_BUF_SIZE     4096    /* size of JPEG output buffer */
 
+/* Prototypes */
+extern void    hdf_init_destination(struct jpeg_compress_struct *cinfo_ptr);
+extern boolean hdf_empty_output_buffer(struct jpeg_compress_struct *cinfo_ptr);
+extern void    hdf_term_destination(struct jpeg_compress_struct *cinfo_ptr);
+extern intn    jpeg_HDF_dest(struct jpeg_compress_struct *cinfo_ptr, int32 file_id, uint16 tag,
+                             uint16 ref, VOIDP image, int32 xdim, int32 ydim, int16 scheme);
+extern intn    jpeg_HDF_dest_term(struct jpeg_compress_struct *cinfo_ptr);
+
 /*-----------------------------------------------------------------------------
  * Name:    hdf_init_destination
  * Purpose: Initialize the destination mgr for the JPEG image
@@ -118,7 +126,12 @@ void
 hdf_term_destination(struct jpeg_compress_struct *cinfo_ptr)
 {
     hdf_dest_ptr dest=(hdf_dest_ptr)cinfo_ptr->dest;
+#ifdef OLD_WAY
     size_t datacount = OUTPUT_BUF_SIZE - dest->pub.free_in_buffer;
+#else
+    /* note that 'free_in_buffer' is size_t in the jpeg library */
+    int32 datacount = OUTPUT_BUF_SIZE - dest->pub.free_in_buffer;
+#endif
 
     /* Write any data remaining in the buffer */
     if (datacount > 0) {

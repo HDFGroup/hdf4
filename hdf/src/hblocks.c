@@ -1057,7 +1057,7 @@ HLPread(accrec_t * access_rec, int32 length, VOIDP datap)
                 for (i = 0; i < remaining; i++)
                     data[i] = '\0';
 #else  /* OLD_WAY */
-                HDmemset(data, 0, remaining);
+                HDmemset(data, 0, (size_t)remaining);
 #endif /* OLD_WAY */
                 bytes_read += nbytes;
             }

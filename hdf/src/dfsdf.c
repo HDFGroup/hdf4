@@ -76,6 +76,12 @@ static char RcsId[] = "@(#)$Revision$";
 #include "hdf.h"
 #include "dfsd.h"
 
+/* Prototypes */
+extern FRETVAL(intf) ndsiwref(_fcd filename, intf * fnlen, intf * ref);
+extern FRETVAL(intf) ndsisslab(_fcd filename, intf * fnlen);
+extern FRETVAL(intf) ndsirslab(_fcd filename, intf * fnlen, intf start[], intf slab_size[],
+                               intf stride[], VOIDP buffer, intf buffer_size[]);
+
 /*-----------------------------------------------------------------------------
  * Name:    dsgdisc
  * Purpose: Call DFSDgetdimscale to get scale for a dimension

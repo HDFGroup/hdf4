@@ -87,8 +87,8 @@ PRIVATE int indx(unsigned char r, unsigned char g, unsigned char b);
 PRIVATE VOID map(int blocks);
 PRIVATE int nearest_color(uint8 r, uint8 g, uint8 b);
 PRIVATE uint32 sqr(int16 x);
-PRIVATE VOID sel_palette(int blocks, int distinct, struct rgb *color_pt);
-PRIVATE VOID init(int blocks, int distinct, struct rgb *color_pt);
+PRIVATE VOID sel_palette(int blocks, int distinct, struct rgb *my_color_pt);
+PRIVATE VOID init(int blocks, int distinct, struct rgb *my_color_pt);
 PRIVATE VOID sort(int l, int r, int dim, int rank[]);
 PRIVATE int partition(int l, int r, int dim, int rank[]);
 PRIVATE struct box *find_box(void);
@@ -598,13 +598,13 @@ DFCIunimcomp(int32 xdim, int32 ydim, uint8 in[], uint8 out[])
 /************************************************************************/
 
 PRIVATE     VOID
-sel_palette(int blocks, int distinct, struct rgb *color_pt)
+sel_palette(int blocks, int distinct, struct rgb *my_color_pt)
 {
     int         boxes;
     /*  int i, j; */
     struct box *ptr;
 
-    init(blocks, distinct, color_pt);
+    init(blocks, distinct, my_color_pt);
 
     /* split box into smaller boxes with about equal number of points */
     for (boxes = 1; boxes < PALSIZE; boxes++)
@@ -639,14 +639,14 @@ sel_palette(int blocks, int distinct, struct rgb *color_pt)
 /*  Parameter   :                           */
 /*    blocks     - number of pixel blocks               */
 /*    distinct   - number of distinct colors                */
-/*    color_pt   - contains the lo hi colors for each pixel block       */
+/*    my_color_pt   - contains the lo hi colors for each pixel block       */
 /*  Returns     : none                          */
 /*  Called by   : sel_palette()                     */
 /*  Calls       : none                          */
 /************************************************************************/
 
 PRIVATE     VOID
-init(int blocks, int distinct, struct rgb *color_pt)
+init(int blocks, int distinct, struct rgb *my_color_pt)
 {
     int         i, j, k, l;
     int         temp[MAXCOLOR];
@@ -672,15 +672,15 @@ init(int blocks, int distinct, struct rgb *color_pt)
     k = 0;
     for (i = 0; i < (2 * blocks); i++)
       {
-          j = ((int) color_pt[i].c[RED] << 10) | (color_pt[i].c[GREEN] << 5) |
-              color_pt[i].c[BLUE];
+          j = ((int) my_color_pt[i].c[RED] << 10) | (my_color_pt[i].c[GREEN] << 5) |
+              my_color_pt[i].c[BLUE];
 
           if (temp[j] == -1)
             {
                 /* new pt */
                 temp[j] = k;
                 for (l = RED; l <= BLUE; l++)
-                    distinct_pt[k].c[l] = color_pt[i].c[l];
+                    distinct_pt[k].c[l] = my_color_pt[i].c[l];
                 k++;
             }
 

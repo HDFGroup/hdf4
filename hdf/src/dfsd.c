@@ -195,6 +195,12 @@ PRIVATE DFdi lastnsdg;          /* last read nsdg in nsdg_t */
 /* Private buffer */
 PRIVATE uint8 *ptbuf = NULL;
 
+/* Prototypes */
+extern intn DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr);
+extern intn DFSDInextnsdg(DFnsdg_t_hdr * l_nsdghdr, DFdi * nsdg);
+extern intn DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg);
+extern intn DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg);
+
 /*--------------------------------------------------------------------------
  NAME
        DFSDgetdims
@@ -778,7 +784,7 @@ DFSDIsetdatastrs(const char *label, const char *unit, const char *format, const 
           /* copy string */
           if (lufp)
             {
-                Writesdg.dataluf[luf] = (char *) HDstrdup((char *) lufp);
+                Writesdg.dataluf[luf] = (char *) HDstrdup(lufp);
                 if (Writesdg.dataluf[luf] == NULL)
                     return FAIL;
             }
@@ -788,7 +794,7 @@ DFSDIsetdatastrs(const char *label, const char *unit, const char *format, const 
 
     if (coordsys)
       {
-          Writesdg.coordsys = (char *) HDstrdup((char *) coordsys);
+          Writesdg.coordsys = (char *) HDstrdup(coordsys);
           if (Writesdg.coordsys == NULL)
               return FAIL;
       }
@@ -890,7 +896,7 @@ DFSDIsetdimstrs(intn dim, const char *label, const char *unit, const char *forma
           /* copy string */
           if (lufp)
             {
-                Writesdg.dimluf[luf][rdim] = (char *) HDstrdup((char *) lufp);
+                Writesdg.dimluf[luf][rdim] = (char *) HDstrdup(lufp);
                 if (Writesdg.dimluf[luf][rdim] == NULL)
                     return FAIL;
             }
@@ -1990,7 +1996,6 @@ DFSDInextnsdg(DFnsdg_t_hdr * l_nsdghdr, DFdi * nsdg)
  *          previously allocated space.
  * Remarks: This accepts non-float32 data
  *---------------------------------------------------------------------------*/
-
 intn
 DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
 {
@@ -2546,7 +2551,6 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
  *          DFwrite
  * Remarks: Writes out NTs
  *---------------------------------------------------------------------------*/
-
 intn
 DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
 {
@@ -4530,7 +4534,7 @@ DFSDstartslab(const char *filename)
 
           /* Intialize buffer to fill value */
           for (i = 0; i < fill_bufsize; i = i + localNTsize)
-              HDmemcpy((uint8 *) &(fill_buf[i]), Writesdg.fill_value, localNTsize);
+              HDmemcpy(&(fill_buf[i]), Writesdg.fill_value, localNTsize);
 
           if (sdg_size <= fill_bufsize)
               odd_size = sdg_size;

@@ -415,6 +415,14 @@ extern      "C"
 #endif                          /* DF_CAPFNAMES */
 #endif                          /* VG_FNAMES */
 
+extern FRETVAL(intf) nvfstart(HFILEID * f);
+extern FRETVAL(intf) nvfend(HFILEID * f);
+extern FRETVAL(intf) nvsqfnelt(intf * vkey, intf * nelt);
+extern FRETVAL(intf) nvsqfintr(intf * vkey, intf * interlace);
+extern FRETVAL(intf) nvsqfldsc(intf * vkey, _fcd fields);
+extern FRETVAL(intf) nvsqfvsiz(intf * vkey, intf * size);
+extern FRETVAL(intf) nvsqnamec(intf * vkey, _fcd name);
+
     extern      FRETVAL(intf) ndfivopn
                 (_fcd filename, intf _HUGE * acc_mode, intf _HUGE * defdds, intf _HUGE * namelen);
 

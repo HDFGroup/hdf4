@@ -277,6 +277,7 @@ Please check your Makefile.
 #   define BSD
 #include <limits.h>
 #include <string.h>
+#include <ctype.h>
 #ifndef __GNUC__
 #include <memory.h>
 #endif /* __GNUC__ */
@@ -1230,10 +1231,10 @@ extern uint8 FAR *DFtbuf;
 *  Allocation functions defined differently for PC's under MS-DOS and Windows
 **************************************************************************/
 #if !(defined PC & !defined PC386) & !defined MALLOC_CHECK
-#  define HDmalloc(s)      (malloc(s))
-#  define HDcalloc(a,b)    (calloc(a,b))
-#  define HDfree(p)        (free(p))
-#  define HDrealloc(p,s)   (realloc(p,s))
+#  define HDmalloc(s)      (malloc((size_t)s))
+#  define HDcalloc(a,b)    (calloc((size_t)a,(size_t)b))
+#  define HDfree(p)        (free((void*)p))
+#  define HDrealloc(p,s)   (realloc((void*)p,(size_t)s))
 #endif /* PC & !defined PC386 */
 /* Macro to free space and clear pointer to NULL */
 #define HDfreenclear(p) { if((p)!=NULL) HDfree(p); p=NULL; }
@@ -1260,7 +1261,7 @@ extern uint8 FAR *DFtbuf;
 #  define HDstrchr(s,c)    (strchr((s),(c)))
 /* Can't use on PCs. strdup() uses malloc() and HDmalloc uses halloc() */
 #if !(defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MIPSEL | defined NEXT | defined CONVEX)
-#  define HDstrdup(s)      (strdup((s)))
+#  define HDstrdup(s)      (strdup((const char *)(s)))
 #endif /* !(VMS | PC) */
 #endif /* WIN3 */
 
@@ -1280,9 +1281,9 @@ extern uint8 FAR *DFtbuf;
 #       define HDmemcmp(dst,src,n)   (memcmp_big((dst),(src),(n)))
 #   endif   /* WIN3 */
 #else   /* !WIN & !PC */
-# define HDmemcpy(dst,src,n)   (memcpy((dst),(src),(n)))
-# define HDmemset(dst,c,n)     (memset((dst),(c),(n)))
-# define HDmemcmp(dst,src,n)   (memcmp((dst),(src),(n)))
+# define HDmemcpy(dst,src,n)   (memcpy((void *)(dst),(const void *)(src),(size_t)(n)))
+# define HDmemset(dst,c,n)     (memset((void *)(dst),(intn)(c),(size_t)(n)))
+# define HDmemcmp(dst,src,n)   (memcmp((const void *)(dst),(const void *)(src),(size_t)(n)))
 #endif /* WIN3 | PC */
 
 /* Compatibility #define for V3.3, should be taken out by v4.0 - QAK */

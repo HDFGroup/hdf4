@@ -49,11 +49,23 @@ typedef struct bitrec_t
       int32       acc_id;       /* Access ID for H layer I/O routines */
       int32       bit_id;       /* Bitfile ID for internal use */
       intn        used;         /* whether this record is in use */
+#ifdef OLD_WAY
       uint32      block_offset, /* offset of the current buffered block in the dataset */
                   max_offset,   /* offset of the last byte written to the dataset */
                   byte_offset;  /* offset of the current byte in the dataset */
+
       uintn       count,        /* bit count to next boundary */
                   buf_read;     /* number of bytes read into buffer (necessary for random I/O) */
+#else /* !OLD_WAY */
+  /* Note that since HDF has signed 32bit offset limit we need to change this to signed
+     since the get passed to Hxxx calls which take signed 32bit arguments */
+      int32      block_offset, /* offset of the current buffered block in the dataset */
+                 max_offset,   /* offset of the last byte written to the dataset */
+                 byte_offset;  /* offset of the current byte in the dataset */
+
+      intn       count,        /* bit count to next boundary */
+                 buf_read;     /* number of bytes read into buffer (necessary for random I/O) */
+#endif /* !OLD_WAY */
       uint8       access;       /* What the access on this file is ('r', 'w', etc..) */
       uint8       mode;         /* how are we interacting with the data now ('r', 'w', etc) */
       uint8       bits;         /* extra bit buffer, 0..BITNUM-1 bits */

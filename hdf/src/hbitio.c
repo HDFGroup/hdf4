@@ -925,7 +925,7 @@ HIread2write(bitrec_t * bitfile_rec)
 
     bitfile_rec->block_offset = INT_MIN;    /* set to bogus value */
     bitfile_rec->mode = 'w';    /* change to write mode */
-    if (Hbitseek(bitfile_rec->bit_id, bitfile_rec->byte_offset, (BITNUM - bitfile_rec->count)) == FAIL)
+    if (Hbitseek(bitfile_rec->bit_id, bitfile_rec->byte_offset, (intn)(BITNUM - bitfile_rec->count)) == FAIL)
         HRETURN_ERROR(DFE_INTERNAL, FAIL);
     return (SUCCEED);
 }   /* HIread2write */
@@ -959,7 +959,7 @@ HIwrite2read(bitrec_t * bitfile_rec)
 
     bitfile_rec->block_offset = INT_MIN;    /* set to bogus value */
     bitfile_rec->mode = 'r';    /* change to read mode */
-    if (Hbitseek(bitfile_rec->bit_id, prev_offset, (BITNUM - prev_count)) == FAIL)
+    if (Hbitseek(bitfile_rec->bit_id, (int32)prev_offset, (intn)(BITNUM - prev_count)) == FAIL)
         HRETURN_ERROR(DFE_INTERNAL, FAIL);
     return (SUCCEED);
 }   /* HIwrite2read */

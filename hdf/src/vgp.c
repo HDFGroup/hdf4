@@ -81,8 +81,12 @@ EXPORTED ROUTINES
                   as well as from the file.
 *************************************************************************/
 
+#include <ctype.h>  /* for tolower() */
 #include "vg.h"
 #include "hfile.h"
+
+/* Prototypes */
+extern VOID vprint(VOIDP k1);
 
 PRIVATE intn Load_vfile
             (HFILEID f);

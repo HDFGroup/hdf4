@@ -88,6 +88,16 @@ static char RcsId[] = "@(#)$Revision$";
 #include "hfile.h"
 #include "mfan.h"
 
+/* Function Prototypes */
+extern VOID ANfreedata(VOIDP data);
+extern VOID ANfreekey(VOIDP key);
+extern VOID dumpnodeKey(VOID *key, VOID *data);
+extern VOID dumpentryKey(VOID *key, VOID *data);
+extern VOID dumpfileKey(VOID *key, VOID *data);
+extern intn ANIfidcmp(VOIDP i, VOIDP j, intn value);
+extern intn ANIanncmp(VOIDP i, VOIDP j, intn value);
+extern int32 ANdestroy(void);
+
 /*-----------------------------------------------------------------------------
  *                          Internal Routines
  *---------------------------------------------------------------------------*/
@@ -422,7 +432,7 @@ ANIaddentry(int32 file_id, ann_type type, uint16 ann_ref,
 #endif /* use tbbt */
 
     /* Which type of annotation file/data label or desc? */
-    switch(type)
+    switch((ann_type)type)
       {
       case AN_DATA_LABEL:
         ann_tag = DFTAG_DIL;
@@ -597,7 +607,7 @@ ANIcreate_ann_tree(int32 file_id, ann_type type)
 #endif /* use tbbt */
 
     /* Which type of annotation data/file label or desc? */
-    switch(type)
+    switch((ann_type)type)
       {
       case AN_DATA_LABEL:
         ann_tag = DFTAG_DIL;
@@ -729,6 +739,7 @@ ANIcreate_ann_tree(int32 file_id, ann_type type)
     return  file_entry->an_num[type];  
 } /* ANIcreate_ann_tree */
 
+#if NOT_USED_YET
 /*--------------------------------------------------------------------------
  NAME
      ANIfind -- find annotation id for given annotation type and ref number
@@ -833,6 +844,7 @@ ANIfind(int32 file_id, ann_type type, uint16 ann_ref)
     /* return annotation id */
     return ann_entry->ann_id;
 } /* ANIfind */
+#endif /* NOT_USED_YET */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -1098,7 +1110,7 @@ ANIannlen(int32 ann_id)
       HE_REPORT_RETURN("bad file_id", FAIL);
 
    /* set type annotation tag */
-    switch(type)
+    switch((int32)type)
       {
       case AN_DATA_LABEL:
         ann_tag = DFTAG_DIL;
@@ -1138,7 +1150,7 @@ ANIannlen(int32 ann_id)
  USAGE
        intn ANIgetann(ann_id, ann, maxlen)
        int32 ann_id;   IN: annotation id (handle)
-       uint8 *ann;     OUT: space to return annotation in
+       char8 *ann;     OUT: space to return annotation in
        int32 maxlen;   IN: size of space to return annotation in
  RETURNS
        SUCCEED (0) if successful and FAIL (-1) otherwise
@@ -1152,7 +1164,7 @@ ANIannlen(int32 ann_id)
  REVISION LOG
  *------------------------------------------------------------------------*/
 PRIVATE intn
-ANIreadann(int32 ann_id, uint8 *ann, int32 maxlen)
+ANIreadann(int32 ann_id, char8 *ann, int32 maxlen)
 {
     CONSTR(FUNC, "ANIreadann");
 #ifdef HAVE_RBTREE
@@ -1205,7 +1217,7 @@ ANIreadann(int32 ann_id, uint8 *ann, int32 maxlen)
         HRETURN_ERROR(DFE_BADCALL, FAIL);
 
    /* set type tag */
-    switch(type)
+    switch((int32)type)
       {
       case AN_DATA_LABEL:
         ann_tag = DFTAG_DIL;
@@ -1294,7 +1306,7 @@ ANIreadann(int32 ann_id, uint8 *ann, int32 maxlen)
  USAGE
        intn ANIwriteann(ann_id, ann, ann_len)
        char *ann_id;   IN: annotation id
-       uint8 *ann;     IN: annotation to write
+       char8 *ann;     IN: annotation to write
        int32 ann_len;  IN: length of annotation
 
  RETURNS
@@ -1309,7 +1321,7 @@ ANIreadann(int32 ann_id, uint8 *ann, int32 maxlen)
  REVISION LOG
  *------------------------------------------------------------------------*/
 PRIVATE intn
-ANIwriteann(int32 ann_id, uint8 *ann, int32 ann_len)
+ANIwriteann(int32 ann_id, char8 *ann, int32 ann_len)
 {
     CONSTR(FUNC, "ANIwriteann");
 #ifdef HAVE_RBTREE
@@ -1370,7 +1382,7 @@ ANIwriteann(int32 ann_id, uint8 *ann, int32 ann_len)
         HRETURN_ERROR(DFE_BADCALL, FAIL);
 
    /* set type tag */
-    switch(type)
+    switch((int32)type)
       {
       case AN_DATA_LABEL:
         ann_tag = DFTAG_DIL;
@@ -1422,13 +1434,7 @@ ANIwriteann(int32 ann_id, uint8 *ann, int32 ann_len)
     * Note that for file labels and descriptions the tag/ref contain
     * DFTAG_XXX and annotation reference number */
     if ((entry = tbbtdfind(file_entry->an_tree[type], &ann_key, NULL)) == NULL)
-      {
-        printf("dumping node tree \n");
-        tbbt_dump(ANnodelist, dumpnodeKey, 0);
-        printf("dumping file entry tree \n");
-        tbbt_dump(file_entry->an_tree[type], dumpentryKey, 0);
         HE_REPORT_RETURN("failed to retrieve annotation of 'type' tree", FAIL);
-      }
 
     ann_entry = (ANentry *) entry->data;
 #endif /* use tbbt */
@@ -1537,7 +1543,7 @@ ANIcreate(int32 file_id, uint16 elem_tag, uint16 elem_ref, ann_type type )
     HE_REPORT_RETURN("Failed create new ref for annotation",FAIL);
 
   /* deal with type */
-  switch(type)
+  switch((ann_type)type)
     {
     case AN_DATA_LABEL:
       ann_tag = DFTAG_DIL;
@@ -1773,10 +1779,6 @@ ANend(int32 file_id)
   ANnode  *ann_node   = NULL;
   VOID    *ann_key = NULL;
   VOID    *kp = NULL;
-
-#ifdef ANDEBUG
-    fprintf(stderr, "ANend: I've been called\n");
-#endif
   
   /* Clear error stack */
   HEclear();
@@ -2136,7 +2138,7 @@ ANcreatef(int32 file_id, ann_type type)
   uint16 ann_ref;
 
   /* deal with type */
-  switch(type)
+  switch((ann_type)type)
     {
     case AN_FILE_LABEL:
       ann_tag = DFTAG_FID;
@@ -2347,7 +2349,7 @@ ANannlen(int32 ann_id)
  USAGE
        intn ANwriteann(ann_id, ann, ann_len)
        char *ann_id;   IN: annotation id
-       uint8 *ann;     IN: annotation to write
+       char8 *ann;     IN: annotation to write
        int32 ann_len;  IN: length of annotation
 
  RETURNS
@@ -2362,7 +2364,7 @@ ANannlen(int32 ann_id)
  REVISION LOG
  *------------------------------------------------------------------------*/
 EXPORT int32
-ANwriteann(int32 ann_id, uint8 *ann, int32 annlen)
+ANwriteann(int32 ann_id, char8 *ann, int32 annlen)
 {
 #ifdef LATER
   CONSTR(FUNC, "ANwriteann");    /* for HERROR */
@@ -2377,7 +2379,7 @@ ANwriteann(int32 ann_id, uint8 *ann, int32 annlen)
  USAGE
        intn ANreadann(ann_id, ann, maxlen)
        int32 ann_id;   IN: annotation id (handle)
-       uint8 *ann;     OUT: space to return annotation in
+       char8 *ann;     OUT: space to return annotation in
        int32 maxlen;   IN: size of space to return annotation in
  RETURNS
        SUCCEED (0) if successful and FAIL (-1) otherwise
@@ -2391,7 +2393,7 @@ ANwriteann(int32 ann_id, uint8 *ann, int32 annlen)
  REVISION LOG
  *------------------------------------------------------------------------*/
 EXPORT int32
-ANreadann(int32 ann_id, uint8 *ann, int32 maxlen)
+ANreadann(int32 ann_id, char8 *ann, int32 maxlen)
 {
 #ifdef LATER
   CONSTR(FUNC, "ANreadann");    /* for HERROR */
@@ -2509,7 +2511,7 @@ ANget_tagref(int32 file_id, int32 index, ann_type type, uint16 *tag, uint16 *ref
 #endif /* use tbbt */
 
   *ref = ann_entry->annref;
-  switch(type)
+  switch((int32)type)
     {
     case AN_DATA_LABEL:
       *tag = DFTAG_DIL;
@@ -2546,16 +2548,18 @@ atype2tag(ann_type)
 ann_type atype;         /* annotation type */
 #endif
 {   /* Switch on annotation type "atype" */
+#ifdef LATER
   CONSTR(FUNC, "atype2tag");    /* for HERROR */
+#endif /* LATER */
   uint16 ann_tag;
 
-  switch(atype) 
+  switch((ann_type)atype) 
     {
     case AN_FILE_LABEL: ann_tag = DFTAG_FID; break;
     case AN_FILE_DESC:  ann_tag = DFTAG_FD;  break;
     case AN_DATA_LABEL: ann_tag = DFTAG_DIL; break;
     case AN_DATA_DESC:  ann_tag = DFTAG_DIA; break;
-    default: ann_tag = -1;
+    default: ann_tag = 5;
     } /* switch */
   return ann_tag;
 } /* atype2tag */
@@ -2576,10 +2580,12 @@ tag2atype(atag)
 uint16 atag;         /* annotation tag */
 #endif
 {   /* Switch on annotation tag */
+#ifdef LATER
   CONSTR(FUNC, "tag2atype");    /* for HERROR */
+#endif /* LATER */
   ann_type atype;
 
-  switch(atag) 
+  switch((uint16)atag) 
     {
     case DFTAG_FID: atype = AN_FILE_LABEL; break;
     case DFTAG_FD:  atype = AN_FILE_DESC;  break;

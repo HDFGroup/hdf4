@@ -289,7 +289,7 @@ HCIcnbit_decode(compinfo_t * info, int32 length, uint8 *buf)
                 rbuf = (uint8 *) nbit_info->buffer;     /* get a ptr to the buffer */
 
                 /* get initial copy of the mask */
-                HDmemfill(rbuf, nbit_info->mask_buf, nbit_info->nt_size, buf_items);
+                HDmemfill(rbuf, (const VOIDP)nbit_info->mask_buf, (uint32)nbit_info->nt_size, (uint32)buf_items);
 
                 for (i = 0; i < buf_items; i++)
                   {

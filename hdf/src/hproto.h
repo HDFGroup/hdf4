@@ -122,6 +122,9 @@ extern      "C"
                 (int32 file_id, uint32 _HUGE * majorv, uint32 _HUGE * minorv,
                  uint32 _HUGE * release, char _HUGE * string);
 
+    extern intn Hsetaccesstype(int32 access_id, uintn accesstype);
+
+
 #if defined WIN3
     extern int32 HDfreadbig
                 (VOIDP buffer, int32 size, HFILE fp);
@@ -1830,6 +1833,8 @@ extern      "C"
     extern      FRETVAL(intf) nhclose
                 (intf _HUGE * file_id);
 
+extern FRETVAL(intf) nhnumber(int32 file_id, uint16 tag);
+
 /*
    ** from dfufp2im.c
  */
@@ -1953,9 +1958,9 @@ extern intn  ANannlist(int32 file_id, ann_type type, uint16 elem_tag,
 
 extern int32 ANannlen(int32 ann_id);
 
-extern int32 ANwriteann(int32 ann_id, uint8 *ann, int32 annlen);
+extern int32 ANwriteann(int32 ann_id, char8 *ann, int32 annlen);
 
-extern int32 ANreadann(int32 ann_id, uint8 *ann, int32 maxlen);
+extern int32 ANreadann(int32 ann_id, char8 *ann, int32 maxlen);
 
 extern intn  ANendaccess(int32 an_id);
 

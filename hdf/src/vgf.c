@@ -28,6 +28,9 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "vg.h"
 
+/* Prototypes */
+extern void trimendblanks(char *ss);
+
 /*
    **  remove trailing blanks from a string. input argument is a  string
    **  and *MUST* be a variable and not a constant!! For internal use only!!

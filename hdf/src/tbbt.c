@@ -33,6 +33,13 @@ static char RcsId[] = "@(#)$Revision$";
 VOID        tbbt1dump
             (TBBT_NODE * node, intn method);
 
+/* Function Prototypes */
+extern VOID tbbt_printNode(TBBT_NODE * node, VOID(*key_dump)(VOID *,VOID *));
+extern VOID tbbt_dumpNode(TBBT_NODE *node, VOID (*key_dump)(VOID *,VOID *),
+                          intn method);
+extern VOID tbbt_dump(TBBT_TREE *ptree, VOID (*key_dump)(VOID *,VOID *), 
+                      intn method);
+
 /* #define TESTING */
 
 /* Returns pointer to end-most (to LEFT or RIGHT) node of tree: */

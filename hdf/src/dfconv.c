@@ -124,6 +124,16 @@ PRIVATE int DFKInoset
             (VOIDP source, VOIDP dest, uint32 num_elm, uint32 source_stride,
              uint32 dest_stride);
 
+/* Prototypes */
+extern int32 DFKqueryNT(void);
+extern int DFKsetcustom(
+  int (*DFKcustin) HPROTO((VOIDP source, VOIDP dest, uint32 num_elm,
+                           uint32 source_stride, uint32 dest_stride)),
+  int  (*DFKcustout) HPROTO((VOIDP source, VOIDP dest, uint32 num_elm,
+                             uint32 source_stride, uint32 dest_stride)));
+extern int DFconvert(uint8 *source, uint8 *dest, int ntype, int sourcetype, 
+                     int desttype, int32 size);
+
 /*
    **  Conversion Routine Pointer Definitions
  */
@@ -591,19 +601,17 @@ DFKgetPNSC(int32 numbertype, int32 machinetype)
 * Users:   DFSDgetsdg, DFSDputsdg, DFSDIgetslice, DFSDIgetslice
 * Method:  Calls DFKsetNT, then call DFnumin or DFnumout
 *---------------------------------------------------------------------------*/
-
 int32
 DFKconvert(VOIDP source, VOIDP dest, int32 ntype, int32 num_elm,
            int16 acc_mode, int32 source_stride, int32 dest_stride)
-
 {
     int         ret;
 
     DFKsetNT(ntype);
     if (acc_mode == DFACC_READ)
-        ret = DFKnumin(source, dest, num_elm, source_stride, dest_stride);
+        ret = DFKnumin(source, dest, (uint32)num_elm, (uint32)source_stride, (uint32)dest_stride);
     else
-        ret = DFKnumout(source, dest, num_elm, source_stride, dest_stride);
+        ret = DFKnumout(source, dest, (uint32)num_elm, (uint32)source_stride, (uint32)dest_stride);
     return (ret);
 }
 

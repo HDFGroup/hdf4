@@ -74,6 +74,7 @@ static char RcsId[] = "@(#)$Revision$";
    HXPreset         -- replace the current external info with new info
 ------------------------------------------------------------------------- */
 
+#include <string.h>
 #include "hdf.h"
 #include "hfile.h"
 
@@ -302,7 +303,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     info->file_open        = TRUE;
     info->file_external    = file_external;
     info->extern_offset    = offset;
-    info->extern_file_name = (char *) HDstrdup((char *) extern_file_name);
+    info->extern_file_name = (char *) HDstrdup(extern_file_name);
     if (!info->extern_file_name)
       {
           access_rec->used = FALSE;

@@ -57,6 +57,15 @@ typedef hdf_source_mgr * hdf_src_ptr;
 
 #define INPUT_BUF_SIZE     4096    /* size of JPEG input buffer */
 
+/* Prototypes */
+extern void    hdf_init_source(struct jpeg_decompress_struct *cinfo_ptr);
+extern boolean hdf_fill_input_buffer(struct jpeg_decompress_struct *cinfo_ptr);
+extern void    hdf_skip_input_data(struct jpeg_decompress_struct *cinfo_ptr,long num_bytes);
+extern void    hdf_term_source(struct jpeg_decompress_struct *cinfo_ptr);
+extern intn    jpeg_HDF_src(struct jpeg_decompress_struct *cinfo_ptr, int32 file_id, uint16 tag,
+                            uint16 ref, VOIDP image, int32 xdim, int32 ydim, int16 scheme);
+extern intn    jpeg_HDF_src_term(struct jpeg_decompress_struct *cinfo_ptr);
+
 /*-----------------------------------------------------------------------------
  * Name:    hdf_init_source
  * Purpose: Initialize the source mgr for the JPEG image

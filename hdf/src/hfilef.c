@@ -80,7 +80,7 @@ nhclose(intf * file_id)
 
 /*-----------------------------------------------------------------------------
  * Name:    hnumber
- * Purpose: Call DFclose to close HDF file
+ * Purpose: Get numer of elements with tag
  * Inputs:  file_id: handle to HDF file to close
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
