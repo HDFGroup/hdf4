@@ -317,7 +317,7 @@ distcleancheck_listfiles = find . -type f -print
 distdir: $(DISTFILES)
 	$(am__remove_distdir)
 	mkdir $(distdir)
-	$(mkinstalldirs) $(distdir)/bin $(distdir)/mfhdf/dumper $(distdir)/mfhdf/hdfimport
+	$(mkinstalldirs) $(distdir)/bin $(distdir)/hdf/util $(distdir)/mfhdf/dumper $(distdir)/mfhdf/hdfimport
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

@@ -6092,6 +6092,7 @@ esac
 echo "$as_me:$LINENO: checking for xdr library support" >&5
 echo $ECHO_N "checking for xdr library support... $ECHO_C" >&6
 
+CPPFLAGS="$CPPFLAGS -I/usr/include/rpc"
 cat >conftest.$ac_ext <<_ACEOF
 #line $LINENO "configure"
 /* confdefs.h.  */
@@ -6099,7 +6100,7 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include <rpc/xdr.h>
+#include <xdr.h>
 int
 main ()
 {
@@ -7423,7 +7424,7 @@ for config_file in $src_files; do
   fi
 done
 
-                                                                                                                                                                                                                  ac_config_files="$ac_config_files Makefile hdf/Makefile hdf/src/Makefile hdf/test/Makefile hdf/util/Makefile man/Makefile mfhdf/Makefile mfhdf/dumper/Makefile mfhdf/dumper/testhdp.sh mfhdf/fortran/Makefile mfhdf/hdfimport/Makefile mfhdf/hdfimport/testutil.sh mfhdf/hdiff/Makefile mfhdf/hzip/Makefile mfhdf/libsrc/Makefile mfhdf/ncdump/Makefile mfhdf/ncgen/Makefile mfhdf/nctest/Makefile mfhdf/pablo/Makefile mfhdf/port/Makefile mfhdf/xdr/Makefile"
+                                                                                                                                                                                                                            ac_config_files="$ac_config_files Makefile hdf/Makefile hdf/src/Makefile hdf/test/Makefile hdf/util/Makefile hdf/util/testutil.sh man/Makefile mfhdf/Makefile mfhdf/dumper/Makefile mfhdf/dumper/testhdp.sh mfhdf/fortran/Makefile mfhdf/hdfimport/Makefile mfhdf/hdfimport/testutil.sh mfhdf/hdiff/Makefile mfhdf/hzip/Makefile mfhdf/libsrc/Makefile mfhdf/ncdump/Makefile mfhdf/ncgen/Makefile mfhdf/nctest/Makefile mfhdf/pablo/Makefile mfhdf/port/Makefile mfhdf/xdr/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -8018,6 +8019,7 @@ do
   "hdf/src/Makefile" ) CONFIG_FILES="$CONFIG_FILES hdf/src/Makefile" ;;
   "hdf/test/Makefile" ) CONFIG_FILES="$CONFIG_FILES hdf/test/Makefile" ;;
   "hdf/util/Makefile" ) CONFIG_FILES="$CONFIG_FILES hdf/util/Makefile" ;;
+  "hdf/util/testutil.sh" ) CONFIG_FILES="$CONFIG_FILES hdf/util/testutil.sh" ;;
   "man/Makefile" ) CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
   "mfhdf/Makefile" ) CONFIG_FILES="$CONFIG_FILES mfhdf/Makefile" ;;
   "mfhdf/dumper/Makefile" ) CONFIG_FILES="$CONFIG_FILES mfhdf/dumper/Makefile" ;;

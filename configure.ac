@@ -303,7 +303,8 @@ esac
 dnl Is XDR support present?
 AC_MSG_CHECKING([for xdr library support])
 
-AC_TRY_LINK([#include <rpc/xdr.h>], [xdr_int],
+CPPFLAGS="$CPPFLAGS -I/usr/include/rpc"
+AC_TRY_LINK([#include <xdr.h>], [xdr_int],
             [AC_MSG_RESULT([yes]); build_xdr="no"],
             [AC_MSG_RESULT([no]); build_xdr="yes"])
 AM_CONDITIONAL(HDF_BUILD_XDR, test "X$build_xdr" = "Xyes")
@@ -494,6 +495,7 @@ AC_CONFIG_FILES([Makefile
                  hdf/src/Makefile
                  hdf/test/Makefile
                  hdf/util/Makefile
+                 hdf/util/testutil.sh
                  man/Makefile
                  mfhdf/Makefile
                  mfhdf/dumper/Makefile

@@ -488,7 +488,7 @@
 ./hdf/util/ristosds.input1
 ./hdf/util/ristosds.mak
 ./hdf/util/ristosds.out1
-./hdf/util/testutil.sh
+./hdf/util/testutil.sh.in
 ./hdf/util/vcompat.c
 ./hdf/util/vcompat.mak
 ./hdf/util/vmake.c
