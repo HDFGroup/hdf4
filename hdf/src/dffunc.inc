@@ -270,6 +270,10 @@ C
       external sfgdinfo
       integer  sfsattr
       external sfsattr
+      integer  sfsnatt
+      integer  sfsnatt
+      external sfscatt
+      external sfscatt
       integer  sffattr
       external sffattr
       integer  sfend
@@ -300,6 +304,10 @@ C
       external sfsrange
       integer  sfrattr
       external sfrattr
+      integer  sfrnatt
+      integer  sfrnatt
+      external sfrcatt
+      external sfrcatt
       integer  sfrdata
       external sfrdata
       integer  sfwdata
