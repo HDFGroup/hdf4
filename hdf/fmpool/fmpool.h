@@ -57,63 +57,60 @@
  * (Inactive pages are threaded on a free chain?).  Each reference to a memory
  * pool is handed an opaque MPOOL cookie which stores all of this information.
  */
+
+/* Current Hash table size. Page numbers start with 0 */
 #define	HASHSIZE	128
 #define	HASHKEY(pgno)	(pgno % HASHSIZE)
-#if 0
-#define	HASHKEY(pgno)	((pgno - 1) % HASHSIZE)
-#endif
 
 /* Default pagesize and max # of pages to cache */
 #define DEF_PAGESIZE   8192
-#define DEF_MAXCACHE   128
+#define DEF_MAXCACHE   1
 
 /* The BKT structures are the elements of the queues. */
 typedef struct _bkt 
 {
-  CIRCLEQ_ENTRY(_bkt) hq;		/* hash queue */
-  CIRCLEQ_ENTRY(_bkt) q;		/* lru queue */
-  void    *page;			/* page */
-  pgno_t   pgno;			/* page number */
+  CIRCLEQ_ENTRY(_bkt) hq;	/* hash queue */
+  CIRCLEQ_ENTRY(_bkt) q;	/* lru queue */
+  void    *page;		/* page */
+  pgno_t   pgno;		/* page number */
 
-#define	MPOOL_DIRTY	0x01		/* page needs to be written */
-#define	MPOOL_PINNED	0x02		/* page is pinned into memory */
-  u_int8_t flags;			/* flags */
+#define	MPOOL_DIRTY	0x01	/* page needs to be written */
+#define	MPOOL_PINNED	0x02	/* page is pinned into memory */
+  u_int8_t flags;		/* flags */
 } BKT;
 
 /* The element structure for every page referenced(read/written) in file */
 typedef struct _lelem
 {
-  CIRCLEQ_ENTRY(_lelem) hl;		/* hash list */
-  pgno_t pgno;                          /* page number */
+  CIRCLEQ_ENTRY(_lelem) hl;	/* hash list */
+  pgno_t        pgno;           /* page number */
 #ifdef STATISTICS
-  u_int32_t	elemhit;                /* # of hits on page */
+  u_int32_t	elemhit;        /* # of hits on page */
 #endif
-#define ELEM_READ    0x01
-#define ELEM_WRITTEN 0x02
-#define ELEM_SYNC    0x03
-  u_int8_t eflags;                      /* 0, 1= read, 2=written */
+#define ELEM_READ       0x01
+#define ELEM_WRITTEN    0x02
+#define ELEM_SYNC       0x03
+  u_int8_t      eflags;         /* 0, 1= read, 2=written */
 } L_ELEM;
 
-#define	MPOOL_EXTEND	0x10		/* increase number of pages 
-                                           i.e extend file */
+#define	MPOOL_EXTEND    0x10	/* increase number of pages 
+                                   i.e extend file */
+
 /* Memory pool */
 typedef struct MPOOL 
 {
-  CIRCLEQ_HEAD(_lqh, _bkt) lqh;	/* lru queue head */
-                                /* hash queue array */
-  CIRCLEQ_HEAD(_hqh, _bkt) hqh[HASHSIZE];
-  CIRCLEQ_HEAD(_lhqh, _lelem)  lhqh[HASHSIZE];
-  pgno_t	curcache;		/* current number of cached pages */
-  pgno_t	maxcache;		/* max number of cached pages */
-  pgno_t	npages;			/* number of pages in the file */
-  u_int32_t	        lastpagesize;		/* page size of last page */
-  u_int32_t	        pagesize;		/* file page size */
-  fmp_file_t    fd;			/* file descriptor */
-                                /* page in conversion routine */
-  void    (*pgin) __P((void *, pgno_t, void *));
-                                /* page out conversion routine */
-  void    (*pgout) __P((void *, pgno_t, void *));
-  void	*pgcookie;		/* cookie for page in/out routines */
+  CIRCLEQ_HEAD(_lqh, _bkt)    lqh;	      /* lru queue head */
+  CIRCLEQ_HEAD(_hqh, _bkt)    hqh[HASHSIZE];  /* hash queue array */
+  CIRCLEQ_HEAD(_lhqh, _lelem) lhqh[HASHSIZE]; /* hash of all elements */
+  pgno_t	curcache;		      /* current number of cached pages */
+  pgno_t	maxcache;		      /* max number of cached pages */
+  pgno_t	npages;			      /* number of pages in the file */
+  u_int32_t	lastpagesize;	              /* page size of last page */
+  u_int32_t	pagesize;		      /* file page size */
+  fmp_file_t    fd;			      /* file handle */
+  void (*pgin) __P((void *, pgno_t, void *)); /* page in conversion routine */
+  void (*pgout) __P((void *, pgno_t, void *));/* page out conversion routine */
+  void	*pgcookie;                            /* cookie for page in/out routines */
 #ifdef STATISTICS
   u_int32_t	listhit;                /* # of list hits */
   u_int32_t	listalloc;              /* # of list elems allocated */

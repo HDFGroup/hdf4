@@ -46,14 +46,8 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
-#include <sys/param.h>
-#include <sys/stat.h>
-
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#define	__FMPOOLINTERFACE_PRIVATE
+#include "fmpool.h"
 
 #if defined(hpux) || defined(__hpux) || defined(__hpux__)
 #include <sys/resource.h>
@@ -61,8 +55,6 @@ static char RcsId[] = "@(#)$Revision$";
 #define getrusage(a, b)  syscall(SYS_GETRUSAGE, a, b)
 #endif /* hpux */
 
-#define	__FMPOOLINTERFACE_PRIVATE
-#include "fmpool.h"
 
 /* Private routines */
 #ifndef USE_INLINE
@@ -100,21 +92,22 @@ DESCRIPTION
 ---------------------------------------------------------------------------- */
 MPOOL *
 mpool_open(key, fd, pagesize, maxcache)
-  void *key;        /* byte string used as handle to share buffers */
-  fmp_file_t fd;    /* seekable file handle */
-  pgno_t pagesize;  /* size in bytes of the pages to break the file up into */
-  pgno_t maxcache;  /* maximum number of pages to cache at any time */
+  void       *key;     /* byte string used as handle to share buffers */
+  fmp_file_t fd;       /* seekable file handle */
+  pgno_t     pagesize; /* size in bytes of the pages to break the file up into */
+  pgno_t     maxcache; /* maximum number of pages to cache at any time */
 {
 #ifdef _POSIX_SOURCE
   struct stat sb; /* file status info */
 #endif
-  MPOOL *mp = NULL; /* MPOOL cookie */
   struct _lhqh *lhead = NULL; /* head of an entry in list hash chain */
-  L_ELEM      *lp   = NULL;
-  int   len = 0;    /* file length */
-  int   entry;      /* index into hash table */
-  pgno_t pageno;
-  int   ret = RET_SUCCESS;
+  MPOOL        *mp    = NULL; /* MPOOL cookie */
+  L_ELEM       *lp    = NULL;
+  int          len    = 0;    /* file length */
+  int          ret    = RET_SUCCESS;
+  int          entry;         /* index into hash table */
+  pgno_t       pageno;
+
 
   /*
    * Get information about the file.
@@ -137,7 +130,7 @@ mpool_open(key, fd, pagesize, maxcache)
     pagesize = (pgno_t)sb.st_blksize;
   if (maxcache == 0)
     maxcache = (pgno_t)DEF_MAXCACHE;
-#ifdef POSIX_DEBUG
+#ifdef STAT_DEBUG
     (void)fprintf(stderr,"mpool_open: sb.st_blksize=%d\n",sb.st_blksize);
 #endif
 #else  /* !_POSIX_SOURCE */
@@ -158,7 +151,7 @@ mpool_open(key, fd, pagesize, maxcache)
     pagesize = (pgno_t)DEF_PAGESIZE;
   if (maxcache == 0)
       maxcache = (pgno_t)DEF_MAXCACHE;
-#ifdef POSIX_DEBUG
+#ifdef STAT_DEBUG
     (void)fprintf(stderr,"mpool_open: no fstat(),pagesize=%u\n",pagesize);
 #endif
 #endif /* !_POSIX_SOURCE */
@@ -212,24 +205,14 @@ mpool_open(key, fd, pagesize, maxcache)
     (void)fprintf(stderr,"mpool_open: pageno=%d, lhead=%08x\n",pageno,lhead);
 #endif
       CIRCLEQ_INSERT_HEAD(lhead, lp, hl); /* add to list */
-#ifdef LIST_DEBUG
-        (void)fprintf(stderr,"lhead=%08x\n",lhead); 
-        (void)fprintf(stderr,"lhead->cqh_first=%08x\n",lhead->cqh_first); 
-        (void)fprintf(stderr,"lp=%08x\n",lp); 
-        (void)fprintf(stderr,"lp->pgno=%u\n",lp->pgno); 
-        (void)fprintf(stderr,"lp->eflags=%d\n",lp->eflags); 
-        (void)fprintf(stderr,"lp->field.cqe_next=%08x\n",lp->hl.cqe_next); 
-        (void)fprintf(stderr,"lp->field.cqe_prev=%08x\n",lp->hl.cqe_prev); 
-#endif
-
-    }
+    } /* end for pageno */
 
   /* initialize input/output filters and cookie to NULL */
-  mp->pgin = NULL;
-  mp->pgout = NULL;        
+  mp->pgin     = NULL;
+  mp->pgout    = NULL;        
   mp->pgcookie = NULL;        
 #ifdef STATISTICS
-  mp->listhit   = 0;
+  mp->listhit    = 0;
   mp->cachehit   = 0;
   mp->cachemiss  = 0;
   mp->pagealloc  = 0;
@@ -254,12 +237,12 @@ done:
               CIRCLEQ_REMOVE(&mp->lhqh[entry], mp->lhqh[entry].cqh_first, hl);
               free(lp);
             }
-        }
+        } /* end for entry */
 #ifdef MPOOL_DEBUG
     (void)fprintf(stderr,"mpool_open: ERROR \n");
 #endif      
       mp = NULL; /* return value */
-    }
+    } /* end error cleanup */
   /* Normal cleanup */
 #ifdef MPOOL_DEBUG
     (void)fprintf(stderr,"mpool_open: mp->pagesize=%lu\n",mp->pagesize);
@@ -333,15 +316,15 @@ DESCRIPTION
 ---------------------------------------------------------------------------- */	
 void *
 mpool_new(mp, pgnoaddr, pagesize, flags)
-  MPOOL *mp;        /* MPOOL cookie */
-  pgno_t *pgnoaddr; /* address of newly create page */
-  pgno_t pagesize;  /* page size for last page*/
-  u_int32_t flags;      /* MPOOL_EXTEND or 0 */
+  MPOOL     *mp;       /* MPOOL cookie */
+  pgno_t    *pgnoaddr; /* address of newly create page */
+  pgno_t    pagesize;  /* page size for last page*/
+  u_int32_t flags;     /* MPOOL_EXTEND or 0 */
 {
-  struct _hqh  *head = NULL;  /* head of an entry in hash chain */
+  struct _hqh  *head  = NULL; /* head of an entry in hash chain */
   struct _lhqh *lhead = NULL; /* head of an entry in list hash chain */
-  BKT         *bp   = NULL; /* bucket element */
-  L_ELEM      *lp   = NULL;
+  BKT          *bp   = NULL;  /* bucket element */
+  L_ELEM       *lp   = NULL;
   int          ret = RET_SUCCESS;
 
   /* check inputs */
@@ -413,7 +396,7 @@ mpool_new(mp, pgnoaddr, pagesize, flags)
 #endif
         ret = RET_SUCCESS;
         goto done;
-      }
+      } /* end if lp->pgno */
 
   /* NO hit, new list element */
   if ((lp = (L_ELEM *)malloc(sizeof(L_ELEM))) == NULL)
@@ -424,19 +407,10 @@ mpool_new(mp, pgnoaddr, pagesize, flags)
   lp->pgno   = bp->pgno;
   lp->eflags = 0;
 #ifdef STATISTICS
-  lp->elemhit =1;
+  lp->elemhit = 0;
   ++mp->listalloc;
 #endif
   CIRCLEQ_INSERT_HEAD(lhead, lp, hl); /* add to list */
-#ifdef LIST_DEBUG
-        (void)fprintf(stderr,"lhead=%08x\n",lhead); 
-        (void)fprintf(stderr,"lhead->cqh_first=%08x\n",lhead->cqh_first); 
-        (void)fprintf(stderr,"lp=%08x\n",lp); 
-        (void)fprintf(stderr,"lp->pgno=%d\n",lp->pgno); 
-        (void)fprintf(stderr,"lp->eflags=%d\n",lp->eflags); 
-        (void)fprintf(stderr,"lp->field.cqe_next=%08x\n",lp->hl.cqe_next); 
-        (void)fprintf(stderr,"lp->field.cqe_prev=%08x\n",lp->hl.cqe_prev); 
-#endif
 
 #ifdef MPOOL_DEBUG
 #ifdef STATISTICS
@@ -477,19 +451,19 @@ DESCRIPTION
 ---------------------------------------------------------------------------- */
 void *
 mpool_get(mp, pgno, flags)
-  MPOOL *mp;      /* MPOOL cookie */
-  pgno_t pgno;    /* page number */
-  u_int32_t flags;	  /* XXX not used? */
+  MPOOL     *mp;    /* MPOOL cookie */
+  pgno_t    pgno;   /* page number */
+  u_int32_t flags;  /* XXX not used? */
 {
-  struct _hqh *head = NULL; /* head of lru queue */
+  struct _hqh  *head  = NULL; /* head of lru queue */
   struct _lhqh *lhead = NULL; /* head of an entry in list hash chain */
-  BKT         *bp   = NULL; /* bucket element */
+  BKT          *bp   = NULL;  /* bucket element */
   L_ELEM       *lp   = NULL;
-  off_t       off;         /* file offset? */
-  int         nr;          /* number of bytes read for page */
-  int         rpagesize;   /* pagesize to read */
-  int         list_hit;
-  int         ret = RET_SUCCESS;
+  int          ret   = RET_SUCCESS;
+  off_t        off;         /* file offset? */
+  pgno_t       nr;          /* number of bytes read for page */
+  pgno_t       rpagesize;   /* pagesize to read */
+  int          list_hit;    /* hit flag */
 
 #ifdef MPOOL_DEBUG
     (void)fprintf(stderr,"mpool_get: entering \n");
@@ -543,15 +517,7 @@ mpool_get(mp, pgno, flags)
 #endif   
       /* update this page reference */
       lhead = &mp->lhqh[HASHKEY(bp->pgno)];
-#ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_get: lhead=%08x\n",lhead);
-#endif
       for (lp = lhead->cqh_first; lp != (void *)lhead; lp = lp->hl.cqe_next)
-        {
-#ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_get: checking ref against page=%d\n",lp->pgno);
-    (void)fprintf(stderr,"mpool_get: where page-eflgas=%d\n",lp->eflags);
-#endif   
         if (lp->pgno == bp->pgno)
           { /* hit */
 #ifdef STATISTICS
@@ -559,13 +525,15 @@ mpool_get(mp, pgno, flags)
             ++lp->elemhit;
 #endif
             break;
-          }
-        }
+          } /* end if lp->pgno */
 
       ret = RET_SUCCESS;
       goto done;
     } /* end if bp */
 
+#ifdef MPOOL_DEBUG
+    (void)fprintf(stderr,"mpool_get: NOT cached page\n");
+#endif
   /* Page not cached so
    * Get a page from the cache to use or create one. */
   if ((bp = mpool_bkt(mp)) == NULL)
@@ -577,31 +545,21 @@ mpool_get(mp, pgno, flags)
   /* Check to see if this page has ever been referenced */
   list_hit = 0;
   lhead = &mp->lhqh[HASHKEY(pgno)];
-#ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_get: NOT cached page, lhead=%08x\n",lhead);
-#endif
   for (lp = lhead->cqh_first; lp != (void *)lhead; lp = lp->hl.cqe_next)
-    {
-#ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_get: checking against lp->pgno=%d\n",lp->pgno);
-#endif
     if (lp->pgno == pgno)
       { /* hit */
 #ifdef STATISTICS
         ++mp->listhit;
         ++lp->elemhit;
-#ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_get: mp->listhit=%d\n",mp->listhit);
-#endif
 #endif
         list_hit = 1;
         break;
-      }
-    }
+      } /* end if lp->pgno */
 
+  /* If there is no hit then we allocate a new element 
+  *  and insert into hash table */
   if (!list_hit)
-    {
-      /* NO hit, new list element */
+    { /* NO hit, new list element */
       if ((lp = (L_ELEM *)malloc(sizeof(L_ELEM))) == NULL)
         {
           ret = RET_ERROR;
@@ -612,27 +570,16 @@ mpool_get(mp, pgno, flags)
 #ifdef STATISTICS
       ++mp->listalloc;
       lp->elemhit =1;
-#ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_get: mp->listalloc=%d\n",mp->listalloc);
-#endif
 #endif
       CIRCLEQ_INSERT_HEAD(lhead, lp, hl); /* add to list */
-#ifdef LIST_DEBUG
-        (void)fprintf(stderr,"lhead=%08x\n",lhead); 
-        (void)fprintf(stderr,"lhead->cqh_first=%08x\n",lhead->cqh_first); 
-        (void)fprintf(stderr,"lp=%08x\n",lp); 
-        (void)fprintf(stderr,"lp->pgno=%d\n",lp->pgno); 
-        (void)fprintf(stderr,"lp->eflags=%d\n",lp->eflags); 
-        (void)fprintf(stderr,"lp->field.cqe_next=%08x\n",lp->hl.cqe_next); 
-        (void)fprintf(stderr,"lp->field.cqe_prev=%08x\n",lp->hl.cqe_prev); 
-#endif
 #ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_get: skiping reading in page=%d\n",pgno);
+    (void)fprintf(stderr,"mpool_get: skiping reading in page=%u\n",pgno);
 #endif
       goto skip_read;  /* no need to read this page from disk */
     }
 
-  lp->eflags = ELEM_READ; /* we are reading this page */
+  /* Indiate we are reading this page */
+  lp->eflags = ELEM_READ; 
 
 #ifdef STATISTICS
   ++mp->pageread;
@@ -731,14 +678,14 @@ DESCRIPTION
 ---------------------------------------------------------------------------- */
 int
 mpool_put(mp, page, flags)
-  MPOOL *mp;    /* MPOOL cookie */
-  void *page;   /* page to put */
+  MPOOL     *mp;    /* MPOOL cookie */
+  void      *page;   /* page to put */
   u_int32_t flags;  /* flags = 0, MPOOL_DIRTY */
 {
   struct _lhqh *lhead = NULL; /* head of an entry in list hash chain */
-  L_ELEM       *lp   = NULL;
-  BKT *bp = NULL; /* bucket element ptr */
-  int ret = RET_SUCCESS;
+  L_ELEM       *lp    = NULL;
+  BKT          *bp = NULL;    /* bucket element ptr */
+  int          ret = RET_SUCCESS;
 
   /* check inputs */
   if (mp == NULL || page == NULL)
@@ -775,12 +722,9 @@ mpool_put(mp, page, flags)
             ++mp->listhit;
             ++lp->elemhit;
 #endif
-#ifdef MPOOL_DEBUG
-  (void)fprintf(stderr,"mpool_put: markign page=%d as written \n",bp->pgno);
-#endif
             lp->eflags = ELEM_WRITTEN;
             break;
-          }
+          } /* end if lp->pgno */
     }
 
 done:
@@ -809,11 +753,11 @@ int
 mpool_close(mp)
   MPOOL *mp; /* MPOOL cookie */
 {
-  L_ELEM       *lp   = NULL;
-  BKT *bp = NULL;   /* bucket element */
-  int   entry;      /* index into hash table */
-  int   nelem = 0;
-  int  ret = RET_SUCCESS;
+  L_ELEM  *lp = NULL;
+  BKT     *bp = NULL;   /* bucket element */
+  int     nelem = 0;
+  int     ret   = RET_SUCCESS;
+  int     entry;      /* index into hash table */
 
 #ifdef MPOOL_DEBUG
     (void)fprintf(stderr,"mpool_close: entered \n");
@@ -837,23 +781,12 @@ mpool_close(mp)
     {
       while ((lp = mp->lhqh[entry].cqh_first) != (void *)&mp->lhqh[entry]) 
         {
-#ifdef LIST_DEBUG
-        (void)fprintf(stderr,"lhead[%d]=%08x\n",entry,lhead); 
-        (void)fprintf(stderr,"lhead->cqh_first=%08x\n",lhead->cqh_first); 
-        (void)fprintf(stderr,"lp=%08x\n",lp); 
-        (void)fprintf(stderr,"lp->pgno=%d\n",lp->pgno); 
-        (void)fprintf(stderr,"lp->eflags=%d\n",lp->eflags); 
-        (void)fprintf(stderr,"lp->field.cqe_next=%08x\n",lp->hl.cqe_next); 
-        (void)fprintf(stderr,"lp->field.cqe_prev=%08x\n",lp->hl.cqe_prev); 
-#endif
           CIRCLEQ_REMOVE(&mp->lhqh[entry], mp->lhqh[entry].cqh_first, hl);
           free(lp);
           nelem++;
         }
-    }
-#ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_close: freed %d list elements\n\n",nelem);
-#endif
+    } /* end for entry */
+
 done:
   if(ret == RET_ERROR)
     { /* error cleanup */
@@ -863,6 +796,10 @@ done:
 
   /* Free the MPOOL cookie. */
   free(mp);
+
+#ifdef MPOOL_DEBUG
+    (void)fprintf(stderr,"mpool_close: freed %d list elements\n\n",nelem);
+#endif
   return (RET_SUCCESS);
 } /* mpool_close() */
 
@@ -895,24 +832,15 @@ mpool_sync(mp)
     }
 
   /* Walk the lru chain, flushing any dirty pages to disk. */
-#ifdef MPOOL_DEBUG
-        (void)fprintf(stderr,"&mp->lqh=%08x\n",&mp->lqh); 
-#endif
   for (bp = mp->lqh.cqh_first; bp != (void *)&mp->lqh; bp = bp->q.cqe_next)
     {
-#ifdef LIST_DEBUG
-        (void)fprintf(stderr,"bp=%08x\n",bp); 
-        (void)fprintf(stderr,"bp->pgno=%d\n",bp->pgno); 
-        (void)fprintf(stderr,"bp->field.cqe_next=%08x\n",bp->q.cqe_next); 
-        (void)fprintf(stderr,"bp->field.cqe_prev=%08x\n",bp->q.cqe_prev); 
-#endif
       if (bp->flags & MPOOL_DIRTY 
           && mpool_write(mp, bp) == RET_ERROR)
         {
           ret = RET_ERROR;
           goto done;
         }
-    }
+    } /* end for bp */
 
 done:
   if(ret == RET_ERROR)
@@ -950,16 +878,17 @@ DESCRIPTION
 ---------------------------------------------------------------------------- */
 int
 mpool_page_sync(mp, pgno, flags)
-  MPOOL *mp;     /* MPOOL cookie */
-  pgno_t pgno;    /* page number */
+  MPOOL     *mp;     /* MPOOL cookie */
+  pgno_t    pgno;    /* page number */
   u_int32_t flags;	  /* XXX not used? */
 {
   struct _lhqh *lhead = NULL; /* head of an entry in list hash chain */
-  L_ELEM       *lp   = NULL;
-  BKT   *bp  = NULL;       /* bucket element */
-  off_t off;               /* offset into the file */
-  int   wpagesize;         /* page size to write */
-  int   ret = RET_SUCCESS;
+  L_ELEM       *lp    = NULL;
+  BKT          *bp    = NULL; /* bucket element */
+  int          ret = RET_SUCCESS;
+  off_t        off;               /* offset into the file */
+  pgno_t       wpagesize;         /* page size to write */
+
 
 #ifdef MPOOL_DEBUG
           (void)fprintf(stderr,"mpool_page_sync: entering\n");
@@ -987,7 +916,7 @@ mpool_page_sync(mp, pgno, flags)
       if (bp->flags & MPOOL_PINNED) 
         {
           (void)fprintf(stderr,
-                        "mpool_page_sync: page %d already pinned\n", bp->pgno);
+                        "mpool_page_sync: page %u already pinned\n", bp->pgno);
           abort();
         }
 #endif
@@ -1021,7 +950,7 @@ mpool_page_sync(mp, pgno, flags)
         (mp->pgout)(mp->pgcookie, bp->pgno, bp->page);
 
 #ifdef MPOOL_DEBUG
-      (void)fprintf(stderr,"mpool_page_sync: npages=%d\n",mp->npages);
+      (void)fprintf(stderr,"mpool_page_sync: npages=%u\n",mp->npages);
 #endif
 
       /* Check to see if we are writing last page */
@@ -1029,15 +958,15 @@ mpool_page_sync(mp, pgno, flags)
         {
           wpagesize = mp->pagesize;
 #ifdef MPOOL_DEBUG
-          (void)fprintf(stderr,"mpool_page_sync: writing page=%d\n",bp->pgno);
+          (void)fprintf(stderr,"mpool_page_sync: writing page=%u\n",bp->pgno);
 #endif  
         }
       else 
         { /* writing last page */
           wpagesize = mp->lastpagesize;
 #ifdef MPOOL_DEBUG
-          (void)fprintf(stderr,"mpool_page_sync: writing last page=%d\n",bp->pgno);
-          (void)fprintf(stderr,"mpool_page_sync: lastpagesize=%d\n",mp->lastpagesize);
+          (void)fprintf(stderr,"mpool_page_sync: writing last page=%u\n",bp->pgno);
+          (void)fprintf(stderr,"mpool_page_sync: lastpagesize=%u\n",mp->lastpagesize);
 #endif  
 
         }
@@ -1068,9 +997,9 @@ mpool_page_sync(mp, pgno, flags)
         {
 #ifdef MPOOL_DEBUG
           perror("mpool_page_sync");
-          (void)fprintf(stderr,"mpool_page_sync: fd=%d,lseek =%d, wpagesize=%d\n",
+          (void)fprintf(stderr,"mpool_page_sync: fd=%d,lseek =%d, wpagesize=%u\n",
                         mp->fd,off,wpagesize);
-          (void)fprintf(stderr,"mpool_page_sync: write error for page=%d\n",bp->pgno);
+          (void)fprintf(stderr,"mpool_page_sync: write error for page=%u\n",bp->pgno);
 #endif
           ret = RET_ERROR;
           goto done;
@@ -1078,6 +1007,7 @@ mpool_page_sync(mp, pgno, flags)
 
       /* mark page as clean */
       bp->flags &= ~MPOOL_DIRTY;
+
     } /* end if cached page */
   else /* not a cached page!...we shouldn't encounter this */
     ret = RET_ERROR;
@@ -1122,7 +1052,7 @@ mpool_bkt(mp)
 {
   struct _hqh *head = NULL;  /* head of hash chain */
   BKT         *bp   = NULL;  /* bucket element */
-  int          ret = RET_SUCCESS;
+  int          ret  = RET_SUCCESS;
 
   /* check inputs */
   if (mp == NULL)
@@ -1218,9 +1148,10 @@ mpool_write(mp, bp)
 {
   struct _lhqh *lhead = NULL; /* head of an entry in list hash chain */
   L_ELEM       *lp   = NULL;
-  off_t off;      /* offset into the file */
-  int wpagesize;  /* page size to write */
-  int ret = RET_SUCCESS;
+  int          ret = RET_SUCCESS;
+  off_t        off;      /* offset into the file */
+  pgno_t       wpagesize;  /* page size to write */
+
 
 #ifdef MPOOL_DEBUG
       (void)fprintf(stderr,"mpool_write: entering \n");
@@ -1254,7 +1185,7 @@ mpool_write(mp, bp)
     (mp->pgout)(mp->pgcookie, bp->pgno, bp->page);
 
 #ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_write: npages=%d\n",mp->npages);
+    (void)fprintf(stderr,"mpool_write: npages=%u\n",mp->npages);
 #endif
 
   /* Check to see if we are writing last page */
@@ -1262,15 +1193,15 @@ mpool_write(mp, bp)
     {
       wpagesize = mp->pagesize;
 #ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_write: writing page=%d\n",bp->pgno);
+    (void)fprintf(stderr,"mpool_write: writing page=%u\n",bp->pgno);
 #endif  
     }
   else 
     { /* writing last page */
       wpagesize = mp->lastpagesize;
 #ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_write: writing last page=%d\n",bp->pgno);
-    (void)fprintf(stderr,"mpool_write: lastpagesize=%d\n",mp->lastpagesize);
+    (void)fprintf(stderr,"mpool_write: writing last page=%u\n",bp->pgno);
+    (void)fprintf(stderr,"mpool_write: lastpagesize=%u\n",mp->lastpagesize);
 #endif  
 
     }
@@ -1366,7 +1297,7 @@ mpool_look(mp, pgno)
       goto done;
     }
 
-  /* search through has chain */
+  /* search through hash chain */
   head = &mp->hqh[HASHKEY(pgno)];
   for (bp = head->cqh_first; bp != (void *)head; bp = bp->hq.cqe_next)
     if (bp->pgno == pgno) 
@@ -1442,12 +1373,13 @@ void
 mpool_stat(mp)
   MPOOL *mp; /* MPOOL cookie */
 {
-  BKT *bp   = NULL;   /* bucket element */
-  char *sep = NULL;
   struct _lhqh *lhead = NULL; /* head of an entry in list hash chain */
-  L_ELEM      *lp   = NULL;
-  int   entry;      /* index into hash table */
-  int cnt;
+  BKT          *bp    = NULL; /* bucket element */
+  L_ELEM       *lp    = NULL;
+  char         *sep   = NULL;
+  int          entry;         /* index into hash table */
+  int          cnt;
+  int          hitcnt; 
 
 #ifdef HAVE_GETRUSAGE
   myrusage();
@@ -1499,6 +1431,7 @@ mpool_stat(mp)
       (void)fprintf(stderr, "Element hits\n");
       sep = "";
       cnt = 0;
+      hitcnt = 0;
       for (entry = 0; entry < HASHSIZE; ++entry)
         {
           lhead = &mp->lhqh[entry];
@@ -1506,6 +1439,7 @@ mpool_stat(mp)
             {
               cnt++;
               (void)fprintf(stderr, "%s%u(%u)", sep, lp->pgno, lp->elemhit);
+              hitcnt += lp->elemhit;
               if (cnt >= 8) 
                 {
                   sep = "\n";
@@ -1521,6 +1455,7 @@ mpool_stat(mp)
             } 
         }
       (void)fprintf(stderr, "\n");
+      (void)fprintf(stderr, "Total num of elemhits=%d\n",hitcnt);
     } /* end if mp */
 }
 #endif /* STATISTICS */
