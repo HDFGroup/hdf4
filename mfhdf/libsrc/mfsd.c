@@ -951,7 +951,15 @@ int32 nt, rank, *dimsizes;
     }
 
     /* create the actual variable */
-    nctype = hdf_unmap_type((int)nt);
+    if ((nctype = hdf_unmap_type((int)nt)) == FAIL)
+      {
+#ifdef SDDEBUG
+          /* replace it with NCAdvice or HERROR? */
+          fprintf(stderr "SDcreate: hdf_unmap_type failed for %d\n", nt);
+#endif
+          return FAIL;
+      }
+
     var = (NC_var *) NC_new_var(name, nctype, (int)rank, dims);
     if(var == NULL)
         return FAIL;
@@ -1280,7 +1288,15 @@ VOIDP    data;
     fprintf(stderr, "SDIputattr: I've been called\n");
 #endif
     
-    type = hdf_unmap_type(nt);
+    if ((type = hdf_unmap_type((int)nt)) == FAIL)
+      {
+#ifdef SDDEBUG
+          /* replace it with NCAdvice or HERROR? */
+          fprintf(stderr "SDIputattr: hdf_unmap_type failed for %d\n", nt);
+#endif
+          return FAIL;
+      }
+
     if(*ap == NULL ) { /* first time */
         attr = (NC_attr *) NC_new_attr(name,type,(unsigned)count,data) ;
         if(attr == NULL)
@@ -2322,7 +2338,15 @@ int32    id, nt;
 #ifdef SDDEBUG
                 fprintf(stderr, "SDIgetcoordvar redefining type\n");
 #endif
-                (*dp)->type = hdf_unmap_type((intn)nt);
+                if (((*dp)->type = hdf_unmap_type((int)nt)) == FAIL)
+                  {
+#ifdef SDDEBUG
+                      /* replace it with NCAdvice or HERROR? */
+                      fprintf(stderr "SDIgetcoordvar: hdf_unmap_type failed for %d\n", nt);
+#endif
+                      return FAIL;
+                  }
+
                 (*dp)->HDFtype = nt;
                 (*dp)->cdf = handle;
                    /* don't forget to reset the sizes  */
@@ -2341,7 +2365,15 @@ int32    id, nt;
     /* create a new var with this dim as only coord */
     if(nt == 0) nt = DFNT_FLOAT32;
 
-    nctype = hdf_unmap_type((intn)nt);
+    if ((nctype = hdf_unmap_type((int)nt)) == FAIL)
+      {
+#ifdef SDDEBUG
+          /* replace it with NCAdvice or HERROR? */
+          fprintf(stderr "SDIgetcoordvar: hdf_unmap_type failed for %d\n", nt);
+#endif
+          return FAIL;
+      }
+
     dimindex = (intn)id;
     var = (NC_var *) NC_new_var(name->values, nctype, (unsigned)1, &dimindex);
     if(var == NULL)
@@ -4297,9 +4329,7 @@ int32 *flags;
                       This space was allocated by the library */
                    HDfree(info_block.cdims);
 
-                   /* Need to check to see if compressed 
-                      but for now just set 'HDF_CHUNK'.
-                    */
+                   /* Check to see if compressed */
                    switch(info_block.comp_type)
                      {
                      case COMP_CODE_NONE:
@@ -4316,7 +4346,7 @@ int32 *flags;
             }
           else /* not special chunked element */
             {
-              *flags = 0; /* regular SDS */
+              *flags = HDF_NONE; /* regular SDS */
             }
       }
 

@@ -313,7 +313,15 @@ PRIVATE intn hdf_read_ndgs(handle)
                         return FALSE;
                     
                     HDFtype = ntstring[1];
-                    type = hdf_unmap_type(HDFtype);
+                    if ((type = hdf_unmap_type(HDFtype)) == FAIL)
+                      {
+#ifdef DEBUG
+                          /* replace it with NCAdvice or HERROR? */
+                          fprintf(stderr "hdf_read_ndgs: hdf_unmap_type failed for %d\n", HDFtype);
+#endif
+                          return FALSE;
+                      }
+
                     
                     /* read in scale NTs */
                     for(i = 0; i < rank; i++) {
@@ -694,8 +702,17 @@ PRIVATE intn hdf_read_ndgs(handle)
                  *   stored with it.  
                  */
                 if(new_dim || (scalebuf && scalebuf[dim])) {
+                    if ((type = hdf_unmap_type(scaletypes[dim])) == FAIL)
+                      {
+#ifdef DEBUG
+                          /* replace it with NCAdvice or HERROR? */
+                          fprintf(stderr "hdf_read_ndgs: hdf_unmap_type failed for %d\n", scaletypes[dim]);
+#endif
+                          return FALSE;
+                      }
+
                     vars[current_var] = NC_new_var(tmpname, 
-                                                   hdf_unmap_type(scaletypes[dim]),
+                                                   type,
                                                    1, 
                                                    &this_dim);
                     vars[current_var]->data_tag = DFTAG_SDS;  /* not normal data */

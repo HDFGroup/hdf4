@@ -1428,7 +1428,14 @@ int32   vg;
           if(!HDstrcmp(class, _HDF_ATTRIBUTE)) {
               VSinquire(vs, &attr_size, NULL, fields, &vsize, vsname);
               nt = VFfieldtype(vs, 0);
-              type = hdf_unmap_type(nt);
+              if ((type = hdf_unmap_type(nt)) == FAIL)
+                {
+#ifdef DEBUG
+                    /* replace it with NCAdvice or HERROR? */
+                    fprintf(stderr "hdf_read_attrs: hdf_unmap_type failed for %d\n", nt);
+#endif
+                    return NULL;
+                }
               values = (char *) HDmalloc(vsize * attr_size + 1);
               VSsetfields(vs, fields);
               VSread(vs, (uint8 *) values, attr_size, FULL_INTERLACE);
@@ -1600,7 +1607,14 @@ int32  vg;
                       if(Hgetelement(handle->hdf_file, tag, sub_id, ntstring) == FAIL)
                           return FAIL;
                       HDFtype = ntstring[1];
-                      type = hdf_unmap_type(HDFtype);
+                      if ((type = hdf_unmap_type(HDFtype)) == FAIL)
+                        {
+#ifdef DEBUG
+                            /* replace it with NCAdvice or HERROR? */
+                            fprintf(stderr "hdf_read_vars: hdf_unmap_type failed for %d\n", HDFtype);
+#endif
+                            return FAIL;
+                        }
 
                       /*
                        * Check if data was stored in native format
