@@ -1,8 +1,27 @@
+# ****************************************************************************
+# * NCSA HDF                                                                 *
+# * Software Development Group                                               *
+# * National Center for Supercomputing Applications                          *
+# * University of Illinois at Urbana-Champaign                               *
+# * 605 E. Springfield, Champaign IL 61820                                   *
+# *                                                                          *
+# * For conditions of distribution and use, see the accompanying             *
+# * hdf/COPYING file.                                                        *
+# *                                                                          *
+# ***************************************************************************
 #
+<<<<<<< makewin.msc
 # $Header$
+=======
+# $Id$
+>>>>>>> 1.1.4.1
 #
+<<<<<<< makewin.msc
 # $Log$
-# Revision 1.1  1993/08/16 21:46:23  koziol
+# Revision 1.2  1993/11/03 20:01:18  koziol
+# Fixed cvs update -j booboo.
+#
+# Revision 1.1  1993/08/16  21:46:23  koziol
 # Wrapped in changes for final, working version on the PC.
 #
 # Revision 1.4  1993/03/29  16:50:23  koziol
@@ -26,10 +45,10 @@
 # Initial revision
 #
 #
-# ##################################################################
+=======
 #
-#                   NCSA HDF Version 3.3 beta 1
-#                         January 1993
+>>>>>>> 1.1.4.1
+# ##################################################################
 #
 #           MAKEFILE for creating the HDF library, libdf.a,
 #

@@ -6,17 +6,16 @@
  * 605 E. Springfield, Champaign IL 61820                                   *
  *                                                                          *
  * For conditions of distribution and use, see the accompanying             *
- * hdf/COPYING file.                                                      *
+ * hdf/COPYING file.                                                        *
  *                                                                          *
  ****************************************************************************/
 
 /* $Id$ */
 
-/* 
-** herr.h
-** -header file for using error routines to be included by all ".c" files
->>>>>>> 1.11.2.4
-*/
+/*+ herr.h
+***  header file for using error routines
+*** to be included by all ".c" files
++*/
 
 #ifndef __HERR_H
 

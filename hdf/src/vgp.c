@@ -6,7 +6,7 @@
  * 605 E. Springfield, Champaign IL 61820                                   *
  *                                                                          *
  * For conditions of distribution and use, see the accompanying             *
- * hdf/COPYING file.                                                      *
+ * hdf/COPYING file.                                                        *
  *                                                                          *
  ****************************************************************************/
 
@@ -801,6 +801,11 @@ int32 insertkey;          /* (VGROUP*) or (VDATA*), doesn't matter */
 
     if (vg->otag != DFTAG_VG)
         HRETURN_ERROR(DFE_ARGS,FAIL);
+    
+    if (vg->otag != DFTAG_VG) {
+        HERROR(DFE_ARGS);
+        return(FAIL);
+    }
     
     newfid = FAIL;
     if (VALIDVSID(insertkey)) {

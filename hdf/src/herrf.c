@@ -6,7 +6,7 @@
  * 605 E. Springfield, Champaign IL 61820                                   *
  *                                                                          *
  * For conditions of distribution and use, see the accompanying             *
- * hdf/COPYING file.                                                      *
+ * hdf/COPYING file.                                                        *
  *                                                                          *
  ****************************************************************************/
 
@@ -17,7 +17,7 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /*-----------------------------------------------------------------------------
- * File:    herrF.c
+ * File:    herrf.c
  * Purpose: C stubs for error-handling Fortran routines
  * Invokes: herr.c.
  * Contents: 

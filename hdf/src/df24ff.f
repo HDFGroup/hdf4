@@ -6,11 +6,12 @@ C* University of Illinois at Urbana-Champaign                               *
 C* 605 E. Springfield, Champaign IL 61820                                   *
 C*                                                                          *
 C* For conditions of distribution and use, see the accompanying             *
-C* hdf/COPYING file.                                                      *
+C* hdf/COPYING file.                                                        *
 C*                                                                          *
 C****************************************************************************
 C
 C $Id$
+C
 C------------------------------------------------------------------------------
 C File:     df24Ff.f
 C Purpose:  read and write 24-bit raster images

@@ -1,3 +1,4 @@
+/*$Id$ */
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -6,11 +7,9 @@
  * 605 E. Springfield, Champaign IL 61820                                   *
  *                                                                          *
  * For conditions of distribution and use, see the accompanying             *
- * hdf/COPYING file.                                                      *
+ * hdf/COPYING file.                                                        *
  *                                                                          *
  ****************************************************************************/
-
-/*$Id$ */
 
 /*------------------------------------------------------------------------------
  * File:    dfan.h

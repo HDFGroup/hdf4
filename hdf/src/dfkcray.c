@@ -6,7 +6,7 @@
  * 605 E. Springfield, Champaign IL 61820                                   *
  *                                                                          *
  * For conditions of distribution and use, see the accompanying             *
- * hdf/COPYING file.                                                      *
+ * hdf/COPYING file.                                                        *
  *                                                                          *
  ****************************************************************************/
 
@@ -96,6 +96,114 @@ static char RcsId[] = "@(#)$Revision$";
 
 #if defined(UNICOS)
 
+#define NOCRAY2IEG
+
+PRIVATE VOID DFKswap
+    PROTO((VOIDP s, VOIDP d, uintn elem_size, uintn num_elem));
+
+#define SWAP_MASKA  0xffffffff00000000
+#define SWAP_MASKB  0x00000000ffffffff
+#define SWAP_MASKC  0xffff0000ffff0000
+#define SWAP_MASKD  0x0000ffff0000ffff
+#define SWAP_MASKE  0xff00ff00ff00ff00
+#define SWAP_MASKF  0x00ff00ff00ff00ff
+
+/************************************************************/
+/* DFKswap()                                                */
+/* -->Swap groups of 'n' bytes                              */
+/*  !NOTE!: This routine does not handle overlapping memory */
+/*              blocks properly, but that condition should  */
+/*              be caught by the converion routines...      */
+/*          Also, there in no provision for source or       */
+/*          destination strides other than 1.               */
+/************************************************************/
+#ifdef PROTOTYPE
+PRIVATE VOID DFKswap(VOIDP s, VOIDP d, uintn elem_size, uintn num_elem)
+#else
+PRIVATE VOID DFKswap(source, dest, elem_size, num_elem)
+uint8 * source, * dest;
+uintn elem_size, num_elem;
+#endif /* PROTOTYPE */
+{
+    register uintn i;
+#ifdef PROTOTYPE
+    uint8 * source = (uint8*)s;
+    uint8 * dest = (uint8*)d;
+#endif /* PROTOTYPE */
+    unsigned long *lp_dest,*lp_src;
+    intn odd_man_out;
+    uintn n;
+    char *FUNC="DFKswap";
+
+    switch(elem_size) {
+        case 2:     /* 2 byte elements */
+            odd_man_out=num_elem%4;         /* check for odd number of elem. */
+            n=num_elem/4;
+            for(i=0,lp_src=(unsigned long *)source,lp_dest=(unsigned long *)dest; i<n; i++,lp_dest++,lp_src++) {
+                *lp_dest=((*lp_src&SWAP_MASKE)>>8)|
+                        ((*lp_src&SWAP_MASKF)<<8);
+              } /* end for */
+            if(odd_man_out) {
+                source=(uint8 *)lp_src;
+                dest=(uint8 *)lp_dest;
+                switch(odd_man_out) {
+                    case 3:
+                        dest[0]=source[5];
+                        dest[1]=source[4];
+                        dest[2]=source[3];
+                        dest[3]=source[2];
+                        dest[4]=source[1];
+                        dest[5]=source[0];
+                        break;
+
+                    case 2:
+                        dest[0]=source[3];
+                        dest[1]=source[2];
+                        dest[2]=source[1];
+                        dest[3]=source[0];
+                        break;
+
+                    case 1:
+                        dest[0]=source[1];
+                        dest[1]=source[0];
+                        break;
+
+                  } /* end switch */
+              } /* end if */
+            break;
+
+        case 4:     /* 4 byte elements */
+            odd_man_out=num_elem%2;         /* check for odd number of elem. */
+            n=num_elem/2;
+            for(i=0,lp_src=(unsigned long *)source,lp_dest=(unsigned long *)dest; i<n; i++,lp_dest++,lp_src++) {
+                *lp_dest=((*lp_src&SWAP_MASKC)>>16)|
+                        ((*lp_src&SWAP_MASKD)<<16);
+                *lp_dest=((*lp_dest&SWAP_MASKE)>>8)|
+                        ((*lp_dest&SWAP_MASKF)<<8);
+              } /* end for */
+            if(odd_man_out) {
+                source=(uint8 *)lp_src;
+                dest=(uint8 *)lp_dest;
+                dest[0]=source[3];
+                dest[1]=source[2];
+                dest[2]=source[1];
+                dest[3]=source[0];
+              } /* end if */
+            break;
+
+        case 8:     /* 8 byte elements */
+            for(i=0,lp_src=(unsigned long *)source,lp_dest=(unsigned long *)dest; i<num_elem; i++,lp_dest++,lp_src++) {
+                *lp_dest=((*lp_src&SWAP_MASKA)>>32)|
+                        ((*lp_src&SWAP_MASKB)<<32);
+                *lp_dest=((*lp_dest&SWAP_MASKC)>>16)|
+                        ((*lp_dest&SWAP_MASKD)<<16);
+                *lp_dest=((*lp_dest&SWAP_MASKE)>>8)|
+                        ((*lp_dest&SWAP_MASKF)<<8);
+              } /* end for */
+            break;
+      } /* end switch */
+}   /* end DFKswap() */
+
 #define UI2I_MASKA  0xffff000000000000
 #define UI2I_MASKB  0x0000ffff00000000
 #define UI2I_MASKC  0x00000000ffff0000
@@ -103,7 +211,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 /************************************************************/
 /* DFKui2i()                                                */
-/* -->Unicos routine for importing 2 byte data items        */ 
+/* -->Unicos routine for importing 2 byte data items        */
 /* (**) This routine converts two byte IEEE to eight byte   */
 /*      Cray big endian integer.                            */
 /************************************************************/
@@ -135,10 +243,11 @@ uint32 num_elm, source_stride, dest_stride;
   }
 
   /* Find out if it is OK to use faster array processing */
-  if(source_stride == 0 && dest_stride == 0) 
-      fast_processing = 1;            
+  if(source_stride == 0 && dest_stride == 0)
+      fast_processing = 1;
 
     if(fast_processing) {
+#ifdef NOCRAY2IEG
 #ifndef DUFF_ui2i
 #if defined TEST2_ui2i
         int odd_man_out;        /* By default there are even num_elm */
@@ -375,6 +484,15 @@ uint32 num_elm, source_stride, dest_stride;
                 break;
           } /* end switch */
 #endif  /* DUFF_ui2i */
+#else /* NOCRAY2IEG */
+	int ierr;       /* error from IEG2CRAY */
+	int type=7;     /* type of conversion to perform 7=short integer */
+	int bitoff=0;   /* bit offset in the IEEE stream */
+
+    ierr=IEG2CRAY(&type,&num_elm,source,&bitoff,dest);
+	if(ierr!=0)
+            HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#endif /* NOCRAY2IEG */
   }
   else { /* Generic stride processing */
     for(i = 0; i < num_elm; i++) {
@@ -437,10 +555,11 @@ uint32 num_elm, source_stride, dest_stride;
   }
 
   /* Find out if it is OK to use faster array processing */
-  if(source_stride == 0 && dest_stride == 0) 
-      fast_processing = 1;            
+  if(source_stride == 0 && dest_stride == 0)
+      fast_processing = 1;
 
   if(fast_processing) {
+#ifdef NOCRAY2IEG
 #ifndef DUFF_ui2s
 #if defined TEST2_ui2s
         int odd_man_out;        /* By default there are even num_elm */
@@ -842,6 +961,15 @@ uint32 num_elm, source_stride, dest_stride;
                 break;
           } /* end switch */
 #endif  /* DUFF_ui2s */
+#else /* NOCRAY2IEG */
+	int ierr;       /* error from IEG2CRAY */
+	int type=7;     /* type of conversion to perform 7=short integer */
+	int bitoff=0;   /* bit offset in the IEEE stream */
+
+    ierr=IEG2CRAY(&type,&num_elm,source,&bitoff,dest);
+	if(ierr!=0)
+        HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#endif /* NOCRAY2IEG */
   }
   else { /* Generic stride processing */
     for(i = 0; i < num_elm; i++) {
@@ -907,6 +1035,7 @@ uint32 num_elm, source_stride, dest_stride;
       fast_processing = 1;            
 
   if(fast_processing) {
+#ifdef NOCRAY2IEG
 #ifndef DUFF_uo2i
 #if defined TEST1_uo2i
     int odd_man_out;        /* By default there are even num_elm */
@@ -1086,6 +1215,15 @@ uint32 num_elm, source_stride, dest_stride;
                 break;
           } /* end switch */
 #endif  /* DUFF_uo2i */
+#else /* NOCRAY2IEG */
+	int ierr;       /* error from IEG2CRAY */
+	int type=7;     /* type of conversion to perform 7=short integer */
+	int bitoff=0;   /* bit offset in the IEEE stream */
+
+        ierr=CRAY2IEG(&type,&num_elm,dest,&bitoff,source);
+	if(ierr!=0)
+            HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#endif /* NOCRAY2IEG */
   }
   else { /* Generic Stride processing */
     for(i = 0; i < num_elm; i++){
@@ -1136,6 +1274,7 @@ uint32 num_elm, source_stride, dest_stride;
         fast_processing = 1;
   
     if(fast_processing) {
+#ifdef NOCRAY2IEG
 #ifndef DUFF_ui4i
 #if defined TEST2_ui4i
         int odd_man_out;        /* By default there are even num_elm */
@@ -1287,6 +1426,15 @@ uint32 num_elm, source_stride, dest_stride;
         if(odd_man_out)
             *lp_dest=(lp_src[0]&UI4I_MASKA)>>32;
 #endif  /* DUFF_ui4i */
+#else /* NOCRAY2IEG */
+	int ierr;       /* error from IEG2CRAY */
+	int type=1;     /* type of conversion to perform 1=short integer */
+	int bitoff=0;   /* bit offset in the IEEE stream */
+
+        ierr=IEG2CRAY(&type,&num_elm,source,&bitoff,dest);
+	if(ierr!=0)
+            HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#endif /* NOCRAY2IEG */
       } /* end if */
     else {
         for(i = 0; i < num_elm; i++) {
@@ -1344,8 +1492,9 @@ uint32 num_elm, source_stride, dest_stride;
 
   if(source_stride == 0 && dest_stride == 0)
     fast_processing = 1;
-  
+
     if(fast_processing) {
+#ifdef NOCRAY2IEG
 #ifndef DUFF_ui4s
 #if defined TEST2_ui4s
         int odd_man_out;        /* By default there are even num_elm */
@@ -1581,6 +1730,15 @@ uint32 num_elm, source_stride, dest_stride;
             lp_dest[0]|=(lp_src[0]&UI4S_MASKA)>>32;
           } /* end if */
 #endif  /* DUFF_ui4s */
+#else /* NOCRAY2IEG */
+	int ierr;       /* error from IEG2CRAY */
+	int type=1;     /* type of conversion to perform 1=short integer */
+	int bitoff=0;   /* bit offset in the IEEE stream */
+
+        ierr=IEG2CRAY(&type,&num_elm,source,&bitoff,dest);
+	if(ierr!=0)
+            HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#endif /* NOCRAY2IEG */
       } /* end if */
   else 
     for(i = 0; i < num_elm; i++) {
@@ -1644,7 +1802,7 @@ uint32 num_elm, source_stride, dest_stride;
   }
   
   if(fast_processing) {
-
+#ifdef NOCRAY2IEG
 #ifndef DUFF_uo4i
 #if defined TEST1_uo4i
     int odd_man_out;        /* By default there are even num_elm */
@@ -1742,6 +1900,15 @@ uint32 num_elm, source_stride, dest_stride;
             *lp_dest++=(lp_src[0]&UO4I_MASK)<<32;
 
 #endif  /* DUFF_uo4i */
+#else /* NOCRAY2IEG */
+	int ierr;       /* error from IEG2CRAY */
+	int type=1;     /* type of conversion to perform 7=short integer */
+	int bitoff=0;   /* bit offset in the IEEE stream */
+
+        ierr=CRAY2IEG(&type,&num_elm,dest,&bitoff,source);
+	if(ierr!=0)
+            HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#endif /* NOCRAY2IEG */
   }
   else 
     for(i = 0; i < num_elm; i++) {
@@ -1823,6 +1990,7 @@ uint32 dest_stride;
       fast_processing = 1;
 
     if(fast_processing) {
+#ifdef NOCRAY2IEG
 #ifndef DUFF_ui4f
 #if defined TEST1_ui4f
         odd_man_out = num_elm%2 ;
@@ -2155,6 +2323,15 @@ uint32 dest_stride;
                 lptr_dest[0]=0;
           } /* end if */
 #endif  /* DUFF_ui4f */
+#else /* NOCRAY2IEG */
+	int ierr;       /* error from IEG2CRAY */
+	int type=2;     /* type of conversion to perform 2=32-bit float */
+	int bitoff=0;   /* bit offset in the IEEE stream */
+
+    ierr=IEG2CRAY(&type,&num_elm,source,&bitoff,dest);
+	if(ierr!=0)
+        HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#endif /* NOCRAY2IEG */
       } /* end if */
     else { /* We end up here if we are doing stride based processing */
         buf1 = 0;
@@ -2252,6 +2429,7 @@ uint32 num_elm, source_stride, dest_stride;
       fast_processing = 1;            
 
     if(fast_processing) {
+#ifdef NOCRAY2IEG
 #ifndef DUFF_uo4f
 #if defined TEST1_uo4f
         odd_man_out = num_elm%2;
@@ -2732,6 +2910,15 @@ uint32 num_elm, source_stride, dest_stride;
             else                    /* both zero */
                 lptr_dest[0]=0;
 #endif  /* DUFF_uo4f */
+#else /* NOCRAY2IEG */
+	int ierr;       /* error from IEG2CRAY */
+	int type=2;     /* type of conversion to perform 2=32-bit float */
+	int bitoff=0;   /* bit offset in the IEEE stream */
+
+        ierr=CRAY2IEG(&type,&num_elm,dest,&bitoff,source);
+	if(ierr!=0)
+            HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#endif /* NOCRAY2IEG */
       } /* end if */
     else { /* We end up here if we are doing stride based processing */
         buf1 = 0;
@@ -2806,10 +2993,11 @@ uint32 num_elm, source_stride, dest_stride;
   }
 
   /* Find out if it is OK to use faster array processing */
-  if(source_stride == 0 && dest_stride == 0) 
-    fast_processing = 1;            
+  if(source_stride == 0 && dest_stride == 0)
+    fast_processing = 1;
 
     if(fast_processing) {
+#ifdef NOCRAY2IEG
 #ifndef DUFF_ui8f
 #if defined TEST2_ui8f
         n=num_elm;
@@ -3024,6 +3212,15 @@ uint32 num_elm, source_stride, dest_stride;
                 } while(--n>0);
 		}
 #endif  /* DUFF_ui8f */
+#else /* NOCRAY2IEG */
+	int ierr;       /* error from IEG2CRAY */
+	int type=8;     /* type of conversion to perform 8=64-bit float */
+	int bitoff=0;   /* bit offset in the IEEE stream */
+
+    ierr=IEG2CRAY(&type,&num_elm,source,&bitoff,dest);
+	if(ierr!=0)
+        HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#endif /* NOCRAY2IEG */
       } /* end if */
     else
         for(i = 0; i < num_elm; i ++) {
@@ -3106,6 +3303,7 @@ uint32 num_elm, source_stride, dest_stride;
       fast_processing = 1;            
 
     if(fast_processing) {
+#ifdef NOCRAY2IEG
 #ifndef DUFF_uo8f
 #if defined TEST1_uo8f
         n=num_elm;
@@ -3284,6 +3482,15 @@ uint32 num_elm, source_stride, dest_stride;
                 } while(--n>0);
 		}
 #endif  /* DUFF_uo8f */
+#else /* NOCRAY2IEG */
+	int ierr;       /* error from IEG2CRAY */
+	int type=8;     /* type of conversion to perform 8=64-bit float */
+	int bitoff=0;   /* bit offset in the IEEE stream */
+
+    ierr=CRAY2IEG(&type,&num_elm,dest,&bitoff,source);
+	if(ierr!=0)
+        HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#endif /* NOCRAY2IEG */
       } /* end if */
     else
         for(i = 0; i < num_elm; i ++) {
@@ -3363,10 +3570,11 @@ uint32 num_elm, source_stride, dest_stride;
   }
 
   /* Find out if it is OK to use faster array processing */
-  if(source_stride == 0 && dest_stride == 0) 
-      fast_processing = 1;            
+  if(source_stride == 0 && dest_stride == 0)
+      fast_processing = 1;
 
   if(fast_processing) {
+#ifdef NOCRAY2IEG
 #ifndef DUFF_lui2i
 #if defined TEST2_lui2i
         int odd_man_out;        /* By default there are even num_elm */
@@ -3693,6 +3901,19 @@ uint32 num_elm, source_stride, dest_stride;
                 break;
           } /* end switch */
 #endif  /* DUFF_lui2i */
+#else /* NOCRAY2IEG */
+	int ierr;       /* error from IEG2CRAY */
+	int type=7;     /* type of conversion to perform 7=short integer */
+	int bitoff=0;   /* bit offset in the IEEE stream */
+    uint8 *tmp_dst; /* temporary buffer to hold byte swapped values */
+
+    tmp_dst=(uint8 *)HDgetspace(2*num_elm);
+    DFKswap(source,tmp_dst,2,num_elm);
+    ierr=IEG2CRAY(&type,&num_elm,tmp_dst,&bitoff,dest);
+    HDfreespace(tmp_dst);
+	if(ierr!=0)
+        HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#endif /* NOCRAY2IEG */
   }
   else { /* Generic stride processing */
     for(i = 0; i < num_elm; i++) {
@@ -3759,10 +3980,11 @@ uint32 num_elm, source_stride, dest_stride;
   }
 
   /* Find out if it is OK to use faster array processing */
-  if(source_stride == 0 && dest_stride == 0) 
-      fast_processing = 1;            
+  if(source_stride == 0 && dest_stride == 0)
+      fast_processing = 1;
 
   if(fast_processing) {
+#ifdef NOCRAY2IEG
 #ifndef DUFF_lui2s
 #if defined TEST2_lui2s
         int odd_man_out;        /* By default there are even num_elm */
@@ -4322,6 +4544,19 @@ uint32 num_elm, source_stride, dest_stride;
                 break;
           } /* end switch */
 #endif  /* DUFF_lui2s */
+#else /* NOCRAY2IEG */
+	int ierr;       /* error from IEG2CRAY */
+	int type=7;     /* type of conversion to perform 7=short integer */
+	int bitoff=0;   /* bit offset in the IEEE stream */
+    uint8 *tmp_dst; /* temporary buffer to hold byte swapped values */
+
+    tmp_dst=(uint8 *)HDgetspace(2*num_elm);
+    DFKswap(source,tmp_dst,2,num_elm);
+    ierr=IEG2CRAY(&type,&num_elm,tmp_dst,&bitoff,dest);
+    HDfreespace(tmp_dst);
+	if(ierr!=0)
+        HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#endif /* NOCRAY2IEG */
   }
   else { /* Generic stride processing */
     for(i = 0; i < num_elm; i++) {
@@ -4386,9 +4621,10 @@ uint32 num_elm, source_stride, dest_stride;
 
   /* Find out if it is OK to use faster array processing */
   if(source_stride == 0 && dest_stride == 0)
-      fast_processing = 1;            
+      fast_processing = 1;
 
   if(fast_processing) {
+#ifdef NOCRAY2IEG
 #ifndef DUFF_luo2i
 #if defined TEST1_luo2i
     int odd_man_out;        /* By default there are even num_elm */
@@ -4647,6 +4883,22 @@ uint32 num_elm, source_stride, dest_stride;
                 break;
           } /* end switch */
 #endif  /* DUFF_luo2i */
+#else /* NOCRAY2IEG */
+	int ierr;       /* error from IEG2CRAY */
+	int type=7;     /* type of conversion to perform 7=short integer */
+	int bitoff=0;   /* bit offset in the IEEE stream */
+    uint8 *tmp_dst; /* temporary buffer to hold byte swapped values */
+
+    tmp_dst=(uint8 *)HDgetspace(2*num_elm);
+
+    ierr=CRAY2IEG(&type,&num_elm,tmp_dst,&bitoff,source);
+	if(ierr!=0) {
+        HDfreespace(tmp_dst);
+        HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+      } /* end if */
+    DFKswap(tmp_dst,dest,2,num_elm);
+    HDfreespace(tmp_dst);
+#endif /* NOCRAY2IEG */
   }
   else { /* Generic Stride processing */
     for(i = 0; i < num_elm; i++){
@@ -4703,8 +4955,9 @@ uint32 num_elm, source_stride, dest_stride;
   if(source_stride == 0 && dest_stride == 0) {
     fast_processing = 1;
   }
-  
+
     if(fast_processing) {
+#ifdef NOCRAY2IEG
 #ifndef DUFF_lui4i
 #if defined TEST2_lui4i
         int odd_man_out;        /* By default there are even num_elm */
@@ -4973,8 +5226,21 @@ uint32 num_elm, source_stride, dest_stride;
                         (lp_src[0]&LUI4I_MASKC)>>24 |
                         (lp_src[0]&LUI4I_MASKD)>>8;
 #endif  /* DUFF_lui4i */
+#else /* NOCRAY2IEG */
+	int ierr;       /* error from IEG2CRAY */
+	int type=1;     /* type of conversion to perform 1=integer */
+	int bitoff=0;   /* bit offset in the IEEE stream */
+    uint8 *tmp_dst; /* temporary buffer to hold byte swapped values */
+
+    tmp_dst=(uint8 *)HDgetspace(4*num_elm);
+    DFKswap(source,tmp_dst,4,num_elm);
+    ierr=IEG2CRAY(&type,&num_elm,tmp_dst,&bitoff,dest);
+    HDfreespace(tmp_dst);
+	if(ierr!=0)
+        HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#endif /* NOCRAY2IEG */
       } /* end if */
-  else 
+  else
     for(i = 0; i < num_elm; i++) {
       dest[0] = 0;
       dest[1] = 0;
@@ -5036,8 +5302,9 @@ uint32 num_elm, source_stride, dest_stride;
   if(source_stride == 0 && dest_stride == 0) {
     fast_processing = 1;
   }
-  
+
   if(fast_processing) {
+#ifdef NOCRAY2IEG
 #ifndef DUFF_lui4s
 #if defined TEST2_lui4s
         int odd_man_out;        /* By default there are even num_elm */
@@ -5498,6 +5765,19 @@ uint32 num_elm, source_stride, dest_stride;
                         (lp_src[0]&LUI4S_MASKD)>>8;
           } /* end if */
 #endif  /* DUFF_lui4s */
+#else /* NOCRAY2IEG */
+	int ierr;       /* error from IEG2CRAY */
+	int type=1;     /* type of conversion to perform 1=integer */
+	int bitoff=0;   /* bit offset in the IEEE stream */
+    uint8 *tmp_dst; /* temporary buffer to hold byte swapped values */
+
+    tmp_dst=(uint8 *)HDgetspace(4*num_elm);
+    DFKswap(source,tmp_dst,4,num_elm);
+    ierr=IEG2CRAY(&type,&num_elm,tmp_dst,&bitoff,dest);
+    HDfreespace(tmp_dst);
+	if(ierr!=0)
+        HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#endif /* NOCRAY2IEG */
       } /* end if */
   else 
     for(i = 0; i < num_elm; i++) {
@@ -5562,8 +5842,9 @@ uint32 num_elm, source_stride, dest_stride;
   if(source_stride == 0 && dest_stride == 0) {
     fast_processing = 1;
   }
-  
+
   if(fast_processing) {
+#ifdef NOCRAY2IEG
 #ifndef DUFF_luo4i
 #if defined TEST2_luo4i
     int odd_man_out = 0;        /* By default there are even num_elm */
@@ -5766,6 +6047,21 @@ uint32 num_elm, source_stride, dest_stride;
                     ((*lp_dest&LUO4I_MASKD)<<16);
           } /* end if */
 #endif  /* DUFF_luo4i */
+#else /* NOCRAY2IEG */
+	int ierr;       /* error from IEG2CRAY */
+	int type=1;     /* type of conversion to perform 1=integer */
+	int bitoff=0;   /* bit offset in the IEEE stream */
+    uint8 *tmp_dst; /* temporary buffer to hold byte swapped values */
+
+    tmp_dst=(uint8 *)HDgetspace(4*num_elm);
+    ierr=CRAY2IEG(&type,&num_elm,tmp_dst,&bitoff,source);
+	if(ierr!=0) {
+        HDfreespace(tmp_dst);
+        HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+      } /* end if */
+    DFKswap(tmp_dst,dest,4,num_elm);
+    HDfreespace(tmp_dst);
+#endif /* NOCRAY2IEG */
   }
   else 
     for(i = 0; i < num_elm; i++) {
@@ -5854,6 +6150,7 @@ uint32 dest_stride;
         fast_processing = 1;
 
     if(fast_processing) {
+#ifdef NOCRAY2IEG
 #ifndef DUFF_lui4f
 #if defined TEST1_lui4f
         odd_man_out = num_elm%2;
@@ -6341,6 +6638,19 @@ uint32 dest_stride;
             else
                 lptr_dest[0]=0;
 #endif  /* DUFF_lui4f */
+#else /* NOCRAY2IEG */
+	int ierr;       /* error from IEG2CRAY */
+	int type=2;     /* type of conversion to perform 2=32-bit float */
+	int bitoff=0;   /* bit offset in the IEEE stream */
+    uint8 *tmp_dst; /* temporary buffer to hold byte swapped values */
+
+    tmp_dst=(uint8 *)HDgetspace(4*num_elm);
+    DFKswap(source,tmp_dst,4,num_elm);
+    ierr=IEG2CRAY(&type,&num_elm,tmp_dst,&bitoff,dest);
+    HDfreespace(tmp_dst);
+	if(ierr!=0)
+        HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#endif /* NOCRAY2IEG */
     }
     else { /* We end up here if we are doing stride based processing */
         buf1 = 0;
@@ -6438,9 +6748,10 @@ uint32 num_elm, source_stride, dest_stride;
 
   /* Find out if it is OK to use faster array processing */
   if(source_stride == 0 && dest_stride == 0)
-      fast_processing = 1;            
+      fast_processing = 1;
 
     if(fast_processing) {
+#ifdef NOCRAY2IEG
 #ifndef DUFF_luo4f
 #if defined TEST1_luo4f
         odd_man_out = num_elm%2;
@@ -6973,6 +7284,21 @@ uint32 num_elm, source_stride, dest_stride;
             lptr_dest[0] = ((buf1 & LUO4F_MASKG)>>16) | ((buf1 & LUO4F_MASKH)<<16);
         }
 #endif  /* DUFF_luo4f */
+#else /* NOCRAY2IEG */
+	int ierr;       /* error from IEG2CRAY */
+	int type=2;     /* type of conversion to perform 2=32-bit float */
+	int bitoff=0;   /* bit offset in the IEEE stream */
+    uint8 *tmp_dst; /* temporary buffer to hold byte swapped values */
+
+    tmp_dst=(uint8 *)HDgetspace(4*num_elm);
+    ierr=CRAY2IEG(&type,&num_elm,tmp_dst,&bitoff,source);
+	if(ierr!=0) {
+        HDfreespace(tmp_dst);
+        HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+      } /* end if */
+    DFKswap(tmp_dst,dest,4,num_elm);
+    HDfreespace(tmp_dst);
+#endif /* NOCRAY2IEG */
     }
     else { /* We end up here if we are doing stride based processing */
         buf1 = 0;
@@ -6985,7 +7311,7 @@ uint32 num_elm, source_stride, dest_stride;
             dud1[5] = source[5];
             dud1[6] = source[6];
             dud1[7] = source[7];
-      
+
             if((float)buf1 != 0)
                 buf2 = (((buf1 & LUO4F_MASKA) |
                         ((((buf1 & LUO4F_MASKB) >> 48) -16258) << 55)) +
@@ -7064,6 +7390,7 @@ uint32 num_elm, source_stride, dest_stride;
         fast_processing = 1;
 
     if(fast_processing) {
+#ifdef NOCRAY2IEG
 #ifndef DUFF_lui8f
 #if defined TEST1_lui8f
         n=num_elm;
@@ -7390,6 +7717,19 @@ uint32 num_elm, source_stride, dest_stride;
                 } while(--n>0);
         }
 #endif  /* DUFF_lui8f */
+#else /* NOCRAY2IEG */
+	int ierr;       /* error from IEG2CRAY */
+	int type=8;     /* type of conversion to perform 8=64-bit float */
+	int bitoff=0;   /* bit offset in the IEEE stream */
+    uint8 *tmp_dst; /* temporary buffer to hold byte swapped values */
+
+    tmp_dst=(uint8 *)HDgetspace(8*num_elm);
+    DFKswap(source,tmp_dst,8,num_elm);
+    ierr=IEG2CRAY(&type,&num_elm,tmp_dst,&bitoff,dest);
+    HDfreespace(tmp_dst);
+	if(ierr!=0)
+        HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#endif /* NOCRAY2IEG */
       } /* end if */
     else
         for(i = 0; i < num_elm; i ++) {
@@ -7478,6 +7818,7 @@ uint32 num_elm, source_stride, dest_stride;
         fast_processing = 1;
 
     if(fast_processing) {
+#ifdef NOCRAY2IEG
 #ifndef DUFF_luo8f
 #if defined TEST1_luo8f
         n=num_elm;
@@ -7716,6 +8057,21 @@ uint32 num_elm, source_stride, dest_stride;
                 } while(--n>0);
 		}
 #endif  /* DUFF_luo8f */
+#else /* NOCRAY2IEG */
+	int ierr;       /* error from IEG2CRAY */
+	int type=8;     /* type of conversion to perform 8=64-bit float */
+	int bitoff=0;   /* bit offset in the IEEE stream */
+    uint8 *tmp_dst; /* temporary buffer to hold byte swapped values */
+
+    tmp_dst=(uint8 *)HDgetspace(8*num_elm);
+    ierr=CRAY2IEG(&type,&num_elm,tmp_dst,&bitoff,source);
+	if(ierr!=0) {
+        HDfreespace(tmp_dst);
+        HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+      } /* end if */
+    DFKswap(tmp_dst,dest,8,num_elm);
+    HDfreespace(tmp_dst);
+#endif /* NOCRAY2IEG */
       } /* end if */
     else
         for(i = 0; i < num_elm; i ++) {
@@ -7756,4 +8112,3 @@ uint32 num_elm, source_stride, dest_stride;
 int cray_dummy; /* prevent empty symbol table messages */
 
 #endif /* UNICOS */
-

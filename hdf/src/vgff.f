@@ -6,21 +6,20 @@ C* University of Illinois at Urbana-Champaign                               *
 C* 605 E. Springfield, Champaign IL 61820                                   *
 C*                                                                          *
 C* For conditions of distribution and use, see the accompanying             *
-C* hdf/COPYING file.                                                      *
+C* hdf/COPYING file.                                                        *
 C*                                                                          *
 C****************************************************************************
 C
 C $Id$ 
-C
 C     
-C *************************************************************************
-C *
-C * vgFf.f
-C * Part of the HDF VSet interface.
-C *
-C * Contains fortran routines callable from fortran programs.
-C *
-C **************************************************************************
+c **************************************************************************
+c *
+c * vgFf.f
+c * Part of the HDF VSet interface.
+c *
+c * Contains fortran routines callable from fortran programs.
+c *
+c **************************************************************************
 
 
 C------------------------------------------------------------------------------

@@ -6,7 +6,7 @@
  * 605 E. Springfield, Champaign IL 61820                                   *
  *                                                                          *
  * For conditions of distribution and use, see the accompanying             *
- * hdf/COPYING file.                                                      *
+ * hdf/COPYING file.                                                        *
  *                                                                          *
  ****************************************************************************/
 
@@ -17,14 +17,14 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /************************************************************************/
-/*  Module Name : imcomp                        */
-/*  Exports     : DFCimcomp(), DFCunimcomp()                */
-/*  Purpose     : Compresses color images               */
-/*  Author  : Eng-Kiat Koh                      */
-/*  Date    : June 30th, 1988                   */
+/*  Module Name : imcomp                                                */
+/*  Exports     : DFCimcomp(), DFCunimcomp()                            */
+/*  Purpose     : Compresses color images                               */
+/*  Author  : Eng-Kiat Koh                                              */
+/*  Date    : June 30th, 1988                                           */
 /*  Functions   : DFCimcomp(), compress(), init_global(), cnt_color()   */
-/*        set_palette(), fillin_color(), map(), nearest_color() */
-/*        DFCunimcomp(), sqr()                                  */
+/*        set_palette(), fillin_color(), map(), nearest_color()         */
+/*        DFCunimcomp(), sqr()                                          */
 /************************************************************************/
 
 

@@ -6,7 +6,7 @@
  * 605 E. Springfield, Champaign IL 61820                                   *
  *                                                                          *
  * For conditions of distribution and use, see the accompanying             *
- * hdf/COPYING file.                                                      *
+ * hdf/COPYING file.                                                        *
  *                                                                          *
  ****************************************************************************/
 
@@ -15,7 +15,6 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 /* $Id$ */
-
 
 #include <ctype.h>
 #ifdef MALDEBUG
@@ -331,7 +330,7 @@ VOIDP ptr;
 
 #endif /* !PC | PC386 */
 
-#if defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MIPSEL
+#if defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MIPSEL | defined NEXT
 /* HDstrdup replacement for strdup() on VMS and PCs under MS-DOS and Windows. */
 /* Also added for Macintosh */
 /* This is needed because of the way memory is allocated */

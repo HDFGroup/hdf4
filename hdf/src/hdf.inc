@@ -6,7 +6,7 @@ C* University of Illinois at Urbana-Champaign                               *
 C* 605 E. Springfield, Champaign IL 61820                                   *
 C*                                                                          *
 C* For conditions of distribution and use, see the accompanying             *
-C* hdf/COPYRIGHT file.                                                      *
+C* hdf/COPYING file.                                                        *
 C*                                                                          *
 C****************************************************************************
 C

@@ -6,7 +6,7 @@
  * 605 E. Springfield, Champaign IL 61820                                   *
  *                                                                          *
  * For conditions of distribution and use, see the accompanying             *
- * hdf/COPYING file.                                                      *
+ * hdf/COPYING file.                                                        *
  *                                                                          *
  ****************************************************************************/
 
@@ -18,7 +18,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 /*
 *
-* vgF.c
+* vgf.c
 * Part of the HDF VSet interface.
 *
 * C routines (short names) to be called from fortran 

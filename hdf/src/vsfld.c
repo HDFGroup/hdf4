@@ -6,7 +6,7 @@
  * 605 E. Springfield, Champaign IL 61820                                   *
  *                                                                          *
  * For conditions of distribution and use, see the accompanying             *
- * hdf/COPYING file.                                                      *
+ * hdf/COPYING file.                                                        *
  *                                                                          *
  ****************************************************************************/
 
@@ -17,9 +17,6 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /*****************************************************************************
-* Likkai Ng NCSA Feb 92 - update to use H-routines
-* Likkai Ng May 1991  NCSA 
-*
 * vsetf.c
 * Part of the HDF VSet interface.
 *

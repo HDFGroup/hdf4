@@ -1,38 +1,18 @@
+# ****************************************************************************
+# * NCSA HDF                                                                 *
+# * Software Development Group                                               *
+# * National Center for Supercomputing Applications                          *
+# * University of Illinois at Urbana-Champaign                               *
+# * 605 E. Springfield, Champaign IL 61820                                   *
+# *                                                                          *
+# * For conditions of distribution and use, see the accompanying             *
+# * hdf/COPYING file.                                                        *
+# *                                                                          *
+# ****************************************************************************
 #
-# $Header$
-#
-# $Log$
-# Revision 1.1  1993/08/16 21:46:21  koziol
-# Wrapped in changes for final, working version on the PC.
-#
-# Revision 1.5  1993/04/19  22:48:21  koziol
-# General Code Cleanup to reduce/remove errors on the PC
-#
-# Revision 1.4  1993/03/29  16:50:23  koziol
-# Updated JPEG code to new JPEG 4 code.
-# Changed VSets to use Threaded-Balanced-Binary Tree for internal
-# 	(in memory) representation.
-# Changed VGROUP * and VDATA * returns/parameters for all VSet functions
-# 	to use 32-bit integer keys instead of pointers.
-# Backed out speedups for Cray, until I get the time to fix them.
-# Fixed a bunch of bugs in the little-endian support in DFSD.
-#
-# Revision 1.3  1993/01/26  19:42:55  koziol
-# Added support for reading and writing Little-Endian data on all
-# platforms.  This has been tested on: Cray, Sun, and PCs so far.
-#
-# Revision 1.2  1993/01/19  05:56:08  koziol
-# Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-# port.  Lots of minor annoyances fixed.
-#
-# Revision 1.1  1992/08/25  21:40:44  koziol
-# Initial revision
-#
+# $Id$
 #
 # ##################################################################
-#
-#                   NCSA HDF Version 3.3 beta 1
-#                         January 1993
 #
 #           MAKEFILE for creating the HDF library, libdf.a,
 #

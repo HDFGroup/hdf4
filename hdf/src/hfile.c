@@ -6,7 +6,7 @@
  * 605 E. Springfield, Champaign IL 61820                                   *
  *                                                                          *
  * For conditions of distribution and use, see the accompanying             *
- * hdf/COPYING file.                                                      *
+ * hdf/COPYING file.                                                        *
  *                                                                          *
  ****************************************************************************/
 
@@ -99,17 +99,11 @@ extern funclist_t linked_funcs;
 
 extern funclist_t ext_funcs;
 
-/* Functions for accessing compressed special data elements.
-   For definition of the compressed data element, see hcomp.c. */
-
-extern funclist_t comp_funcs;
-
 /* Table of these function tables for accessing special elements.  The first
    member of each record is the speical code for that type of data element. */
 functab_t functab[] = {
     {SPECIAL_LINKED, &linked_funcs},
     {SPECIAL_EXT, &ext_funcs},
-    {SPECIAL_COMP, &comp_funcs},
     {0, NULL}                  /* terminating record; add new record */
                                /* before this line */
 };
@@ -572,15 +566,6 @@ intn Hnextread(access_id, tag, ref, origin)
      */
     if(access_rec->special == SPECIAL_EXT) {
         if(HXPcloseAID(access_rec) == FAIL)
-            HRETURN_ERROR(DFE_CANTCLOSE,FAIL);
-    }
-
-    /*
-     * if access record used to point to an compressed element we
-     * need to free the internal data structures before moving on
-     */
-    if(access_rec->special == SPECIAL_COMP) {
-        if(HCPcloseAID(access_rec) == FAIL)
             HRETURN_ERROR(DFE_CANTCLOSE,FAIL);
     }
 
