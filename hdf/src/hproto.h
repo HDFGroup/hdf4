@@ -2244,6 +2244,13 @@ nmgin2ndx(intf * grid, _fcd name, intf *nlen);
 extern FRETVAL(intf)
 nmggiinf(intf * riid, _fcd name, intf *ncomp, intf *nt, intf *il, intf *dimsizes, intf *nattr);
 
+
+extern FRETVAL(intf)
+nmgwcimg(intf * riid, intf *start, intf *stride, intf *count, _fcd data);
+
+extern FRETVAL(intf)
+nmgrcimg(intf * riid, intf *start, intf *stride, intf *count, _fcd data);
+
 extern FRETVAL(intf)
 nmgwrimg(intf * riid, intf *start, intf *stride, intf *count, VOIDP data);
 
