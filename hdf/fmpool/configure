@@ -869,7 +869,7 @@ EOF
             rm -f ${Makefile}
             cat > ${Makefile} <<EOF
 # ${NO_EDIT}
-VPATH = ${makesrcdir}
+#VPATH = ${makesrcdir}
 links = ${configlinks}
 host_alias = ${host_alias}
 host_cpu = ${host_cpu}
