@@ -6,6 +6,8 @@
 #define FILE2   "test2.hdf"
 #define EXTFILE "exttest.hdf"
 
+#define EXTERNAL_TEST
+
 #ifdef PROTOTYPE
 main(int argc, char *argv[])
 #else
@@ -300,6 +302,7 @@ char *argv[];
     status = SDendaccess(newsds3);
     CHECK(status, "SDendaccess");
 
+#ifdef EXTERNAL_TEST
 
     /* 
      * Test the External File storage stuff 
@@ -375,6 +378,8 @@ char *argv[];
     
     status = SDendaccess(newsds2);
     CHECK(status, "SDendaccess");
+
+#endif /* EXTERNAL_TEST */
     
     status = SDend(f1);
     CHECK(status, "SDend");

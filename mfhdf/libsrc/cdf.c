@@ -10,6 +10,8 @@
 static bool_t NC_xdr_cdf
     PROTO((XDR *xdrs,NC **handlep));
 
+#define WRITE_NDG 1
+
 /*
  * free the stuff that xdr_cdf allocates
  */
@@ -688,12 +690,16 @@ XDR *xdrs;
 NC *handle;
 NC_var **var;
 {
-  NC_array *attrs;
-  NC_iarray *assoc;
-  uint8 ntstring[4];
-  uint16 ref;
-  int8 outNT;
-  int32 tags[MAX_NC_ATTRS + MAX_VAR_DIMS + 2], refs[MAX_NC_ATTRS + MAX_VAR_DIMS + 2];
+  NC_array  *  attrs;
+  NC_iarray *  assoc;
+  NC_dim    ** dp;
+  uint8        ntstring[4];
+  uint16       ref;
+  int8         outNT;
+  int32 tags[MAX_NC_ATTRS + MAX_VAR_DIMS + 2], refs[MAX_NC_ATTRS + MAX_VAR_DIMS + 10];
+  uint16       nt_ref, rank;
+  int32     *  ip, GroupID, val;
+  uint8     *  bufp;
 
   register int  i, count;
   register Void *attribute;
@@ -773,8 +779,64 @@ NC_var **var;
       return FAIL;
   tags[count] = DFTAG_NT;
   refs[count] = ref;
+  nt_ref = (uint16) ref;
   count++;
   
+#ifdef WRITE_NDG
+
+  /* prepare to start writing ndg   */
+  if ((GroupID = DFdisetup(10)) < 0)
+      return FAIL;
+  
+  /* write SD record */
+  if((*var)->data_ref)
+      if (DFdiput(GroupID, DFTAG_SD, (uint16) (*var)->data_ref) == FAIL)
+          return FAIL;
+  
+  /* write NT tag/ref */
+  if (DFdiput(GroupID, DFTAG_NT, (uint16) ref) == FAIL)
+      return FAIL;
+
+  /* put rank & dimensions in buffer */
+  bufp = DFtbuf;
+  rank = assoc->count;
+  UINT16ENCODE(bufp, rank);
+  ip = assoc->values;
+  for(i = 0; i < rank; i++) {
+      dp = (NC_dim **)handle->dims->values + *ip ;
+      val = (*dp)->size ;
+      INT32ENCODE(bufp, val);
+      ip++;
+  }
+  
+  /* "<=" used to put 1 data NT + rank scale NTs in buffer */
+  for (i = 0; i <= rank; i++) 
+      {  /* scale NTs written even if no scale!*/
+          UINT16ENCODE(bufp, DFTAG_NT);
+          UINT16ENCODE(bufp, nt_ref);
+      }   
+  /* write out NDD record */
+  if(Hputelement(handle->hdf_file, DFTAG_SDD, ref, DFtbuf, (int32) (bufp-DFtbuf)) == FAIL)
+      return FAIL;
+  
+  /* write dimension record tag/ref */
+  if (DFdiput(GroupID, DFTAG_SDD,(uint16) ref) == FAIL)
+      return FAIL;
+
+  tags[count] = DFTAG_SDD;
+  refs[count] = ref;
+  count++;
+
+  /* write out NDG */
+  if (DFdiwrite(handle->hdf_file, GroupID, DFTAG_NDG, ref) < 0)
+      return FAIL;
+  
+  tags[count] = DFTAG_NDG;
+  refs[count] = ref;
+  count++;
+
+#endif /* WRITE_NDG */
+
   (*var)->vgid = VHmakegroup(handle->hdf_file, tags, refs, count, 
                              (*var)->name->values, VARIABLE);
   if((*var)->vgid == FAIL)
