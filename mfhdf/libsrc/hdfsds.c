@@ -168,7 +168,6 @@ PRIVATE intn hdf_read_ndgs(handle)
     /* random book-keeping */
     intn   i, status, tag_index;
     uint8  *p, tBuf[128];
-    char   *q;
 
     intn scale_offset;   /* current offset into the scales record for the
                             current dimension's values */
@@ -623,7 +622,6 @@ PRIVATE intn hdf_read_ndgs(handle)
             
             for (dim = 0; dim < rank; dim++) {
                 intn this_dim     = FAIL;
-                char *unitname    = NULL;
                 char *labelvalue  = NULL, *unitvalue = NULL, *formatvalue = NULL;
 
                 /* now loop though each dimension

@@ -996,7 +996,7 @@ test_mgr_image()
         TEST_VARTYPE image0[TEST_YDIM][TEST_XDIM][TEST_NCOMP]; /* space for the image data */
         int32 start[2]; /* start of image data to grab */
         int32 stride[2];/* stride of image data to grab */
-        intn i,j,k;     /* local counting variables */
+        intn i,j;       /* local counting variables */
 
         /* fill the memory-only with the default pixel fill-value */
         for(i=0; i<TEST_YDIM; i++)

@@ -89,7 +89,7 @@ do_dumpvg(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts)
 	  }		/* end if */
 
 	init_dumpvg_opts(&dumpvg_opts);
-	if (parse_dumpvd_opts(&dumpvg_opts, &curr_arg, argc, argv, dummy1, dummy2) == FAIL)
+	if (parse_dumpvd_opts(&dumpvg_opts, &curr_arg, argc, argv, dummy1, &dummy2) == FAIL)
 	  {
 		  dumpvg_usage(argc, argv);
 		  return;

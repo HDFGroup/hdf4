@@ -18,6 +18,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "mfhdf.h"
 #include "hdp.h"
+#include <ctype.h>
 
 #define NUM_FIELD_WIDTH 5
 #define TAGNAME_FIELD_WIDTH 20

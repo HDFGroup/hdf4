@@ -763,9 +763,7 @@ nscgdimstrs(dim, label, unit, format, llabel, lunit, lformat, mlen)
 #endif /* PROTOTYPE */
 {
     char *ilabel, *iunit, *iformat;
-    intn rank, cdim;
     intf ret;
-    intn isndg, status;
 
     iunit = ilabel = iformat = NULL;
 
@@ -773,7 +771,7 @@ nscgdimstrs(dim, label, unit, format, llabel, lunit, lformat, mlen)
     if(*lunit)   iunit   = (char *) HDmalloc((uint32)*lunit + 1);
     if(*lformat) iformat = (char *) HDmalloc((uint32)*lformat + 1);
 
-    status = SDgetdimstrs(*dim, ilabel, iunit, iformat, *mlen);
+    ret = (intf)SDgetdimstrs(*dim, ilabel, iunit, iformat, *mlen);
 
     HDpackFstring(ilabel,  _fcdtocp(label),  *llabel);
     HDpackFstring(iunit,   _fcdtocp(unit),   *lunit);
@@ -783,7 +781,7 @@ nscgdimstrs(dim, label, unit, format, llabel, lunit, lformat, mlen)
     if(iunit)   HDfree((VOIDP)iunit);
     if(iformat) HDfree((VOIDP)iformat);
 
-    return status;
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -807,9 +805,7 @@ nscgdatstrs(id, label, unit, format, coord, llabel, lunit, lformat, lcoord, len)
 #endif /* PROTOTYPE */
 {
     char *ilabel, *iunit, *iformat, *icoord;
-    intn rank, cdim;
     intf ret;
-    intn isndg, status;
 
     iunit = ilabel = iformat = NULL;
 
@@ -818,7 +814,7 @@ nscgdatstrs(id, label, unit, format, coord, llabel, lunit, lformat, lcoord, len)
     if(*lformat) iformat = (char *) HDmalloc((uint32)*lformat + 1);
     if(*lcoord)  icoord  = (char *) HDmalloc((uint32)*lcoord + 1);
 
-    status = SDgetdatastrs(*id, ilabel, iunit, iformat, icoord, *len);
+    ret = (intf)SDgetdatastrs(*id, ilabel, iunit, iformat, icoord, *len);
 
     HDpackFstring(ilabel,  _fcdtocp(label),  *llabel);
     HDpackFstring(iunit,   _fcdtocp(unit),   *lunit);
@@ -830,7 +826,7 @@ nscgdatstrs(id, label, unit, format, coord, llabel, lunit, lformat, lcoord, len)
     if(iformat) HDfree((VOIDP)iformat);
     if(icoord)  HDfree((VOIDP)icoord);
 
-    return status;
+    return ret;
 }
 
 

@@ -796,7 +796,7 @@ int32 cnt;
       class = DIMENSION;
   
   if(HDstrncmp((*dim)->name->values, "fakeDim", 7) == 0)
-      sprintf(name, "fakeDim%d", cnt);
+      sprintf(name, "fakeDim%d", (int)cnt);
   else
       HDstrcpy(name, (*dim)->name->values);
 
@@ -826,13 +826,12 @@ NC_var **var;
 {
   NC_array  *  attrs;
   NC_iarray *  assoc;
-  NC_dim    ** dp;
   uint8        ntstring[4];
   uint16       ref;
   int8         outNT;
   int32 tags[MAX_NC_ATTRS + MAX_VAR_DIMS + 2], refs[MAX_NC_ATTRS + MAX_VAR_DIMS + 10];
   uint16       nt_ref, rank;
-  int32     *  ip, GroupID, val;
+  int32     GroupID, val;
   uint8     *  bufp;
   char      *FUNC = "hdf_write_var";
 
@@ -1491,7 +1490,7 @@ int32  vg;
                           (ntstring[3] != DFNTF_IEEE))) {
                           
                           /* check if in native mode for a different type of machine */
-                          if(ntstring[3] != DFKgetPNSC(HDFtype, DF_MT)) {
+                          if(ntstring[3] != (uint8)DFKgetPNSC(HDFtype, DF_MT)) {
                               /* 
                                * OK, we have a problem here --- is in native mode
                                * for a different machine.  PUNT

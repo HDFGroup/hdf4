@@ -3024,7 +3024,7 @@ intn SDsetcompress(int32 id, int32 type, comp_info *c_info)
     fprintf(stderr, "SDsetnbitdataset: I've been called\n");
 #endif
 
-    if (type < 0 || type > COMP_MAX_COMP || compress_map[type] == 0)
+    if (type < 0 || type >= COMP_CODE_INVALID)
         return(FAIL);
 
     handle = SDIhandle_from_id(id, SDSTYPE);
@@ -3097,7 +3097,6 @@ char  * attrname;
     NC_array *  ap;
     NC_array ** app;
     NC_attr  ** attr;
-    NC_var   *  var;
     NC       *  handle;
     int32       attrid, len;
 
@@ -3480,7 +3479,6 @@ intn SDsetaccesstype(int32 id, uintn accesstype)
 
     NC       * handle;
     NC_var   * var;
-    intn       status;
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDsetaccesstype: I've been called\n");
@@ -3496,7 +3494,7 @@ if (CM_DEBUG > 0)
         case DFACC_SERIAL:
         case DFACC_PARALLEL:
             break;
-        otherwise:
+        default:
             return (FAIL);
     }
 

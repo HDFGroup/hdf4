@@ -202,6 +202,8 @@ extern void do_dumpvg(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_
 
 /* hdp_vd.c */
 extern void do_dumpvd(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts);
+extern intn parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn argc,
+              char *argv[], char *flds_chosen[MAXCHOICES], int *dumpallfields);
 
 /* hdp_dump.c */
 extern intn fmtchar(VOIDP x, FILE * ofp);

@@ -275,7 +275,7 @@ do_dumpvd(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts)
 	  }
 }	/* end do_dumpvd() */
 
-int 
+void 
 choose_vd(dump_info_t * dumpvd_opts, int32 vd_chosen[MAXCHOICES],
         int32 *num_vd_chosen, int32 file_id, int *index_error)
 {

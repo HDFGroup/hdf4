@@ -29,14 +29,14 @@ static char RcsId[] = "@(#)$Revision$";
 #define NBIT_TEST
 
 #ifdef PROTOTYPE
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 #else
-main(argc, argv)
+int main(argc, argv)
 int argc;
 char *argv[];
 #endif
 {
-    int32 f1, f2, f3, sdsid, nt, dimsize[10], nattr, rank;
+    int32 f1, f2, f3, sdsid, nt, dimsize[10], nattr;
     int32 newsds, newsds2, newsds3, dimid, dimid2, number, offset;
     int32 index, ival;
     intn status, i;
@@ -156,8 +156,8 @@ char *argv[];
 
     for(i = 0; i < 4; i++) {
         if(idata[i] != scale[i]) {
-            fprintf(stderr, "SDreaddata() returned %d not %d in location %d\n", 
-                    idata[i], scale[i], i);
+            fprintf(stderr, "SDreaddata() returned %ld not %ld in location %d\n", 
+                    (long)idata[i], (long)scale[i], i);
             num_err++;
         }
     }
@@ -530,14 +530,14 @@ char *argv[];
 
     for(i = 0; i < 8; i++)
         if(idata[i] != (i + 2) * 10) {
-            fprintf(stderr, "Bogus val in loc %d in wrapper dset want %d  got %d\n", 
-		    i, (i + 2) * 10, idata[i]);
+            fprintf(stderr, "Bogus val in loc %d in wrapper dset want %d  got %ld\n", 
+		    i, (i + 2) * 10, (long)idata[i]);
             num_err++;
         }
 
     if(idata[8] != 10) {
-        fprintf(stderr, "Bogus val in last loc in wrapper dset want 10  got %d\n",
-		idata[8]);
+        fprintf(stderr, "Bogus val in last loc in wrapper dset want 10  got %ld\n",
+		(long)idata[8]);
         num_err++;
     }
 
@@ -565,9 +565,7 @@ char *argv[];
     }
 
     for(i = 0; i < 25; i++)
-        idata[i] = i;
-    for(i = 0; i < 10; i++)
-        idata[i] = i * 10;
+        idata[i] = i*10;
 
     status = SDsetnbitdataset(newsds,6,7,FALSE,FALSE);
     CHECK(status, "SDsetnbitdataset");
@@ -577,11 +575,6 @@ char *argv[];
     status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
     CHECK(status, "SDwritedata");
 
-#ifdef QAK
-    status = SDsetnbitdataset(newsds,0,7,FALSE,FALSE);
-    CHECK(status, "SDsetnbitdataset");
-
-#endif
     status = SDendaccess(newsds);
     CHECK(status, "SDendaccess");
 
@@ -603,12 +596,11 @@ char *argv[];
     end[0]   = end[1]   = 5;
     status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
     CHECK(status, "SDreaddata");
-HEprint(stdout,0);
 
     for(i = 0; i < 25; i++)
-        if(idata[i] != rdata[i]) {
-            fprintf(stderr,"Bogus val in loc %d in n-bit dset want %d got %d\n",
-		    i, idata[i], rdata[i]);
+        if((idata[i]&0x7f) != rdata[i]) {
+            fprintf(stderr,"Bogus val in loc %d in n-bit dset want %ld got %ld\n",
+		    i, (long)idata[i], (long)rdata[i]);
             num_err++;
         }
 
