@@ -1,0 +1,37 @@
+
+Pablo Instrumentation of HDF
+===========================
+    This version of the distribution has support to create an instrumented 
+    version of the HDF library(libdf-inst.a). This library along
+    the Pablo performance data capture libraries can be used to gather data
+    about I/O behaviour and procedure execution times.  
+
+    More detailed documentation on how to use the instrumented version of
+    the HDF library with Pablo can be found in the Pablo directory 
+    '$(toplevel)/hdf/pablo'. See the provided '$(toplevel)/hdf/pablo/README.Pablo'
+     and the Postscript file '$(toplevel)/hdf/pablo/Pablo.ps'.
+
+    At this time only an instrumented version of the core HDF library libdf.a 
+    can be created. Future versions will have support for the SDxx interface
+    found in libmfhdf.a. Current interfaces supported are ANxx, GRxx, DFSDxx,
+    DFANxx, DFPxx, DFR8xx, DF24xx, Hxx, Vxx, and VSxx.
+
+    To enable the creation of an instrumented library the following section
+    in the makefile fragment($(toplevel)/config/mh-<os>) must be uncommented 
+    and set.
+
+    # ------------ Macros for Pablo Instrumentation  --------------------
+    # Uncomment the following lines to create a Pablo Instrumentation
+    # version of the HDF core library called 'libdf-inst.a'
+    # See the documentation in the directory 'hdf/pablo' for further 
+    # information about Pablo and what platforms it is supported on
+    # before enabling. 
+    # You need to set 'PABLO_INCLUDE' to the Pablo distribution 
+    # include directory to get the files 'IOTrace.h' and 'IOTrace_SD.h'.
+    #PABLO_FLAGS  = -DHAVE_PABLO
+    #PABLO_INCLUDE = -I/hdf2/Pablo/Instrument.HP/include
+
+    After setting these values you must re-run  the top-level 'configure' script. 
+    Details on running configure can be found in the section
+    'General Configuration/Installation - Unix' found in the top-level 
+    installation file '$(toplevel)/INSTALL'.
