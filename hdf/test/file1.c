@@ -25,7 +25,13 @@ static char RcsId[] = "@(#)$Revision$";
 #define BIG 600
 #define TESTFILE_NAME "thf"
 #define TESTREF_NAME "tref.hdf"
-
+/* Change the define below for Maximum 'refs' tested on 
+   the Macintosh if the 'hfile1' tests starts to croak */
+#if defined macintosh || defined MAC || defined __MWERKS__ || defined SYMANTEC_C
+#define     MAX_REF_TESTED 5000
+#else
+#define     MAX_REF_TESTED MAX_REF
+#endif
 static int32 FAR files[BIG];
 static int32 FAR accs[BIG];
 
@@ -132,6 +138,7 @@ test_ref_limits()
 {
     int32 i;                /* local counting variable */
     int32 fid;              /* file ID */
+    int32 iloop;
     const uint16 tag1=1000, /* tags to create objects with */
         tag2=1001;
 
@@ -143,7 +150,8 @@ test_ref_limits()
 
     if(fid!=FAIL)
       {
-          for(i=1; i<=(MAX_REF/2)+5; i++)
+          iloop = MAX_REF_TESTED;
+          for(i=1; i<=(iloop/2)+5; i++)
             {
                 int32 aid;
                 uint16 ref;
@@ -161,6 +169,10 @@ test_ref_limits()
                 ret=Hendaccess(aid);
                 CHECK(ret, FAIL, "Hendaccess");
 
+                /* lets be a little smatter here */
+                if (ret == FAIL)
+                    break;
+
                 /* Write out data to tag2 */
                 ref=Htagnewref(fid,tag2);
                 CHECK(ref, 0, "Htagnewref");
@@ -171,6 +183,10 @@ test_ref_limits()
                 CHECK(ret, FAIL, "Hwrite");
                 ret=Hendaccess(aid);
                 CHECK(ret, FAIL, "Hendaccess");
+                /* lets be a little smatter here */
+                if (ret == FAIL)
+                    break;
+
             } /* end for */
           Hclose(fid);
       } /* end if */
