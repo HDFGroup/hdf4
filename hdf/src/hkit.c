@@ -55,7 +55,7 @@ HDc2fstr(char *str, intn len)
 {
     int         i;
 
-    i=(int)HDstrlen(str)+1;
+    i=(int)HDstrlen(str);
     for (; i < len; i++)
         str[i] = ' ';
     return SUCCEED;
