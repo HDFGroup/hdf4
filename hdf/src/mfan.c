@@ -1101,8 +1101,9 @@ ANIannlen(int32 ann_id)
 
     if (ann_tag == DFTAG_DIL || ann_tag == DFTAG_DIA)
       {  /* 4=length of data tag/ref for data label or description */
-        if ((ann_length = Hlength(file_id, ann_tag, ann_ref) - 4) == FAIL) 
+        if ((ann_length = Hlength(file_id, ann_tag, ann_ref)) == FAIL) 
           HE_REPORT_RETURN("Failed to find annotation length", FAIL);
+        ann_length -= 4;
       }
     else if (ann_tag == DFTAG_FID || ann_tag == DFTAG_FD)
       {  /* not data tag/ref for file label or description */
