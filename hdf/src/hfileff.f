@@ -56,6 +56,7 @@ C----------------------------------------------------------------------------*/
       integer function hxsdir(dir)
 
       character*(*) dir
+      integer       hxisdir
 
       hxsdir = hxisdir(dir, len(dir))
       return
@@ -73,6 +74,7 @@ C----------------------------------------------------------------------------*/
       integer function hxscdir(dir)
 
       character*(*) dir
+      integer       hxiscdir
 
       hxscdir = hxiscdir(dir, len(dir))
       return
