@@ -24,15 +24,14 @@ VERSION  = 4.0
 #CFLAGS=-ansi 
 #
 #Using ANSI compilier
-#T3D installation need to set $TARGET to CRAY-T3D.
 CC=cc
-CFLAGS=-X 1 -s
+CFLAGS=-X m -s
 
 # Fortran compilier
 # the -Wl"-Dpermok=yes" is for cld to permit execution mode on even if
 # warnings are encountered.
 FC = f90
-FFLAGS =-X 1 -Wl"-Dpermok=yes" -Wl"-s"
+FFLAGS =-X m -Wl"-Dpermok=yes" -Wl"-s"
 
 # Name of achive randomizer, usually ranlib (use 'true' if non-existant)
 RANLIB = true
