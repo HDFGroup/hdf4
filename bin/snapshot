@@ -1,0 +1,263 @@
+#!/bin/sh
+# snaptest: Snap shot testing command script for HDF4.
+# This script should be run nightly from cron.  It checks out hdf4
+# from the CVS source tree and compares it against the previous
+# snapshot.  If anything significant changed, it is build and tested.
+# After the test passes and if snapshot release is desired, a new snapshot
+# is created, the minor version number is incremented, and the change is
+# checked back into the CVS repository.
+
+echo "====================================="
+echo "$0 $*"
+echo "====================================="
+set -x
+date
+uname -a
+
+# The path isn't properly initialized on hawkwind -- /usr/local/bin is
+# either missing or is after /usr/bin when it should be before.
+PATH="/usr/local/bin:$PATH"
+
+# Where are the snapshots stored?
+ARCHIVES_default=/afs/ncsa/ftp/HDF/pub/outgoing/hdf4/snapshots
+ARCHIVES=$ARCHIVES_default
+
+# What compression methods to use?
+METHODS="gzip bzip2"
+
+# Use User's MAKE if set.  Else use generic make.
+MAKE=${MAKE:-make}
+
+# Make sure cvs would work
+if [ -z "$CVSROOT" ]; then
+    echo "Where is the CVS repository?" 1>&2
+    exit 1
+fi
+
+#
+# Command options
+cmd="all"
+test_opt=""
+errcode=0
+while [ $# -gt 0 ] ; do
+    case "$1" in
+	all)	
+	    cmd="all"
+	    ;;
+	checkout)
+	    cmdcheckout="checkout"
+	    cmd=""
+	    ;;
+	test)
+	    cmdtest="test"
+	    cmd=""
+	    ;;
+	release)
+	    cmdrel="release"
+	    cmd=""
+	    ;;
+	clean | distclean)
+	    cmdclean="$1"
+	    cmd=""
+	    ;;
+	help)
+	    cmd="help"
+	    break
+	    ;;
+	archive)
+	    shift
+	    if [ $# -lt 1 ]; then
+		echo "Archive pathname missing"
+		errcode=1
+		cmd="help"
+		break
+	    fi
+	    ARCHIVES="$1"
+	    ;;
+	--*)
+	    OP_CONFIGURE="$OP_CONFIGURE $1"
+	    ;;
+	op-configure)
+	    shift
+	    if [ $# -lt 1 ]; then
+		echo "op-configure option missing"
+		errcode=1
+		cmd="help"
+		break
+	    fi
+	    OP_CONFIGURE="$OP_CONFIGURE $1"
+	    ;;
+	*)
+	    echo "Unkown option $1"
+	    errcode=1
+	    cmd="help"
+	    break
+	    ;;
+    esac
+    shift
+done
+
+if [ "$cmd" = help ]; then
+    set -
+    cat <<EOF
+Usage: $0 [all] [checkout] [test] [release] [help]
+          [archive <arch_path>] [dir <dir>]
+	  [op-configure <option>] [--<option>]
+    all:      Run all commands (checkout, test & release)
+              [Default is all]
+    checkout: Run cvs checkout
+    test:     Run test
+    release:  Run release
+    clean:    Run make clean
+    distclean:Run make distclean
+    help:     Print this message
+    archive <arch_path>:
+              Use <arch_path> as the release ARCHIVE area
+              [Default is $ARCHIVES_default]
+    op-configure <option>:
+              Pass <option> to the configure command
+              E.g., "snapshot op-configure --enable-parallel"
+                  configures for parallel mode
+    --<option>:
+              Pass --<option> to the configure command
+              E.g., "snapshot --enable-parallel"
+                  configures for parallel mode
+EOF
+    exit $errcode
+fi
+
+CONFIGURE="./configure $OP_CONFIGURE"
+
+# Execute the requests
+snapshot=yes
+
+H4VERSION=hdf4
+BASEDIR=${HOME}/snapshots-${H4VERSION}
+CURRENT=${BASEDIR}/current
+PREVIOUS=${BASEDIR}/previous
+HOSTNAME=`hostname | cut -f1 -d.`	# no domain part
+if [ $H4VERSION != hdf4 ]; then
+    CVSVERSION="-r $H4VERSION"
+else
+    CVSVERSION=				# use the default (main) version
+fi
+
+# Try finding a version of diff that supports the -I option too.
+DIFF=diff
+for d in `echo $PATH | sed -e 's/:/ /g'` ; do
+    test -x $d/diff && $d/diff -I XYZ /dev/null /dev/null > /dev/null 2>&1 &&
+	DIFF=$d/diff && break
+done
+
+#=============================
+# Run CVS checkout
+#=============================
+if [ "$cmd" = "all" -o -n "$cmdcheckout" ]; then
+    # Create a working directory.  Hopefully one is left over from last
+    # time that still has the contents of the previous release.  But if
+    # not, just create one and assume that a snapshot is necessary.
+    test -d ${BASEDIR} || mkdir -p ${BASEDIR} || exit 1
+
+    # Check out the current version from CVS
+    cvs -Q co -d ${CURRENT} ${CVSVERSION} hdf4 || exit 1
+fi # Do CVS checkout
+
+
+#=============================
+# Run Test the HDF4 library
+#=============================
+if [ "$cmd" = "all" -o -n "$cmdtest" ]; then
+    TESTDIR=${CURRENT}
+    INSTALLDIR=${TESTDIR}/installdir
+    test -d $INSTALLDIR || mkdir $INSTALLDIR
+    # Make sure current version exists and is clean
+    if [ -d ${TESTDIR} ]; then
+	(cd ${TESTDIR} && ${MAKE} distclean)
+    else
+	errcode=$?
+        snapshot=no
+        exit $errcode
+    fi
+
+    # Compare it with the previous version.  Compare only files listed in
+    # the MANIFEST plus the MANIFEST itself.
+    if [ -d ${PREVIOUS} ]; then
+	if (${DIFF} -c ${PREVIOUS}/MANIFEST ${CURRENT}/MANIFEST); then
+	    snapshot=no
+	    for src in `grep '^\.' ${CURRENT}/MANIFEST|expand|cut -f1 -d' '`; do
+		if ${DIFF} -I H5_VERS_RELEASE -I " released on " \
+		    -I " currently under development" \
+		    ${PREVIOUS}/$src ${CURRENT}/$src
+		then
+		    :	#continue
+		else
+		    snapshot=yes
+		    break
+		fi
+	    done
+	fi
+    fi
+
+    # Make sure all the tests work.
+    if [ "$snapshot" = "yes" ]; then
+	if (cd ${TESTDIR} && \
+	    ${CURRENT}/${CONFIGURE} --prefix=$INSTALLDIR && \
+	    ${MAKE} && \
+	    ${MAKE} test && \
+	    ${MAKE} install && \
+	    ${MAKE} uninstall ); then
+	    :
+	else
+	    errcode=$?
+	    snapshot=no
+	    exit $errcode
+	fi
+    fi
+fi # Test the HDF4 library
+
+
+#=============================
+# Run Release snapshot, update version, and commit to cvs and tag
+#=============================
+if [ "$cmd" = "all" -o -n "$cmdrel" ]; then
+    if [ "$snapshot" = "yes" ]; then
+	(cd ${CURRENT} && ${MAKE} distclean)
+	(
+	    # Turn on exit on error in the sub-shell so that it does not
+	    # cvs commit if errors encounter here.
+	    set -e
+	    cd ${CURRENT}
+	    bin/release -d $ARCHIVES $METHODS
+	    RELEASE_VERSION="`perl bin/h4vers -v`"
+	    perl bin/h4vers -i
+	    echo "***CVS commit SKIPPED***"
+	    echo cvs -Q commit -m "Snapshot $RELEASE_VERSION"
+	)
+	errcode=$?
+    fi
+
+    # Replace the previous version with the current version.
+    # Should check if the errcode of the release process but there
+    # are other failures after release was done (e.g. h4vers or cvs failures)
+    # that should allow the replacement to occure.
+    rm -rf ${PREVIOUS}
+    mv ${CURRENT} ${PREVIOUS}
+fi #Release snapshot
+
+
+#=============================
+# Clean the test area.  Default is no clean.
+#=============================
+if [ -n "$cmdclean" ]; then
+    TESTDIR=${CURRENT}
+    # Make sure current version exists and is clean
+    if [ -d ${TESTDIR} ]; then
+	(cd ${TESTDIR} && ${MAKE} $cmdclean )
+    else
+	errcode=$?
+        snapshot=no
+        exit $errcode
+    fi
+fi # Clean the Test directory
+
+exit $errcode
