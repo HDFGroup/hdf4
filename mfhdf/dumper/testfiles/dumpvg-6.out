@@ -9,7 +9,7 @@ Vgroup:1
      tag = 1965; reference = 30;
      name = bands; class = Dim0.0;
      number of entries = 1;
-   0 attributes. 
+   number of attributes = 0 
 Entries:-
      #0 (Vdata)
 	tag = 1962; reference = 29; 
@@ -25,23 +25,23 @@ Vgroup:3
      tag = 1965; reference = 34;
      name = a; class = Var0.0;
      number of entries = 7;
-   0 attributes. 
+   number of attributes = 0 
 Entries:-
      #0 (Vgroup)
 	tag = 1965;reference = 32;
 	number of entries = 1;
 	name = rec; class = UDim0.0
-   0 attributes. 
+   number of attributes = 0 
      #1 (Vgroup)
 	tag = 1965;reference = 28;
 	number of entries = 1;
 	name = nsamp; class = Dim0.0
-   0 attributes. 
+   number of attributes = 0 
      #2 (Vgroup)
 	tag = 1965;reference = 30;
 	number of entries = 1;
 	name = bands; class = Dim0.0
-   0 attributes. 
+   number of attributes = 0 
      #3 (Scientific Data)
 	tag = 702; reference = 18;
      #4 (Number type)
@@ -56,13 +56,13 @@ Vgroup:5
      tag = 1965; reference = 38;
      name = c; class = Var0.0;
      number of entries = 5;
-   0 attributes. 
+   number of attributes = 0 
 Entries:-
      #0 (Vgroup)
 	tag = 1965;reference = 32;
 	number of entries = 1;
 	name = rec; class = UDim0.0
-   0 attributes. 
+   number of attributes = 0 
      #1 (Scientific Data)
 	tag = 702; reference = 24;
      #2 (Number type)

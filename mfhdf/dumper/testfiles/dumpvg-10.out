@@ -8,7 +8,7 @@ Vgroup:0
      tag = 1965; reference = 28;
      name = nsamp; class = Dim0.0;
      number of entries = 1;
-   0 attributes. 
+   number of attributes = 0 
 Entries:-
      #0 (Vdata)
 	tag = 1962; reference = 27; 

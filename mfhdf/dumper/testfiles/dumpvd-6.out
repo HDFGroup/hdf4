@@ -9,9 +9,9 @@ Vdata: 0
    fields = [FIELD_name_HERE];
    record size (in bytes) = 4;
    name = Float Vdata; class = Test object;
-   0 attributes. 
-- field index 0: [FIELD_name_HERE], type=5, order=1, nattrs=0
-   0 attributes. 
+   number of attributes = 0 
+- field index 0: [FIELD_name_HERE], type=5, order=1
+   number of attributes = 0 
 Loc.     Data
 00       0.000000  ; 1.000000  ; 2.000000  ; 3.000000  ; 
 04       4.000000  ; 5.000000  ; 6.000000  ; 7.000000  ; 

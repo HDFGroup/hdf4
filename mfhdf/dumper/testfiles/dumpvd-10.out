@@ -9,21 +9,21 @@ Vdata: 0
    fields = [fldname1, fldname2];
    record size (in bytes) = 2;
    name = vsname1; class = ;
-   2 attributes. 
+   number of attributes = 2 
     attr0: name=attname3 type=4 count=3 size=3
 	m N p 
     attr1: name=attname4 type=5 count=1 size=4
 	32.000999 
-- field index 0: [fldname1], type=4, order=1, nattrs=3
-   3 attributes. 
+- field index 0: [fldname1], type=4, order=1
+   number of attributes = 3 
     attr0: name=attname4 type=5 count=1 size=4
 	32.000999 
     attr1: name=attname5 type=6 count=1 size=8
 	-64.123450 
     attr2: name=vsname1 type=6 count=1 size=8
 	64.123450 
-- field index 1: [fldname2], type=4, order=1, nattrs=1
-   1 attributes. 
+- field index 1: [fldname2], type=4, order=1
+   number of attributes = 1 
     attr0: name=attname5 type=5 count=1 size=4
 	32.000999 
 Loc.     Data
@@ -36,9 +36,9 @@ Vdata: 1
    fields = [VALUES];
    record size (in bytes) = 8;
    name = attname1; class = Attr0.0;
-   0 attributes. 
-- field index 0: [VALUES], type=25, order=2, nattrs=0
-   0 attributes. 
+   number of attributes = 0 
+- field index 0: [VALUES], type=25, order=2
+   number of attributes = 0 
 Loc.     Data
 0        10032 10064  ; 
 
@@ -48,9 +48,9 @@ Vdata: 2
    fields = [VALUES];
    record size (in bytes) = 4;
    name = attname2; class = Attr0.0;
-   0 attributes. 
-- field index 0: [VALUES], type=23, order=2, nattrs=0
-   0 attributes. 
+   number of attributes = 0 
+- field index 0: [VALUES], type=23, order=2
+   number of attributes = 0 
 Loc.     Data
 0        16 32  ; 
 
@@ -60,9 +60,9 @@ Vdata: 3
    fields = [VALUES];
    record size (in bytes) = 3;
    name = attname3; class = Attr0.0;
-   0 attributes. 
-- field index 0: [VALUES], type=4, order=3, nattrs=0
-   0 attributes. 
+   number of attributes = 0 
+- field index 0: [VALUES], type=4, order=3
+   number of attributes = 0 
 Loc.     Data
 0        m N p  ; 
 
@@ -72,9 +72,9 @@ Vdata: 4
    fields = [VALUES];
    record size (in bytes) = 4;
    name = attname4; class = Attr0.0;
-   0 attributes. 
-- field index 0: [VALUES], type=5, order=1, nattrs=0
-   0 attributes. 
+   number of attributes = 0 
+- field index 0: [VALUES], type=5, order=1
+   number of attributes = 0 
 Loc.     Data
 0        32.000999  ; 
 
@@ -84,9 +84,9 @@ Vdata: 5
    fields = [VALUES];
    record size (in bytes) = 4;
    name = attname5; class = Attr0.0;
-   0 attributes. 
-- field index 0: [VALUES], type=5, order=1, nattrs=0
-   0 attributes. 
+   number of attributes = 0 
+- field index 0: [VALUES], type=5, order=1
+   number of attributes = 0 
 Loc.     Data
 0        32.000999  ; 
 
@@ -96,9 +96,9 @@ Vdata: 6
    fields = [VALUES];
    record size (in bytes) = 4;
    name = attname4; class = Attr0.0;
-   0 attributes. 
-- field index 0: [VALUES], type=5, order=1, nattrs=0
-   0 attributes. 
+   number of attributes = 0 
+- field index 0: [VALUES], type=5, order=1
+   number of attributes = 0 
 Loc.     Data
 0        32.000999  ; 
 
@@ -108,9 +108,9 @@ Vdata: 7
    fields = [VALUES];
    record size (in bytes) = 8;
    name = attname5; class = Attr0.0;
-   0 attributes. 
-- field index 0: [VALUES], type=6, order=1, nattrs=0
-   0 attributes. 
+   number of attributes = 0 
+- field index 0: [VALUES], type=6, order=1
+   number of attributes = 0 
 Loc.     Data
 0        -64.123450  ; 
 
@@ -120,9 +120,9 @@ Vdata: 8
    fields = [VALUES];
    record size (in bytes) = 8;
    name = vsname1; class = Attr0.0;
-   0 attributes. 
-- field index 0: [VALUES], type=6, order=1, nattrs=0
-   0 attributes. 
+   number of attributes = 0 
+- field index 0: [VALUES], type=6, order=1
+   number of attributes = 0 
 Loc.     Data
 0        64.123450  ; 
 
@@ -132,19 +132,19 @@ Vdata: 9
    fields = [fldname0, fldname1];
    record size (in bytes) = 8;
    name = vsname0; class = vsclass0;
-   1 attributes. 
+   number of attributes = 1 
     attr0: name=attname7 type=4 count=3 size=3
 	m N p 
-- field index 0: [fldname0], type=24, order=1, nattrs=3
-   3 attributes. 
+- field index 0: [fldname0], type=24, order=1
+   number of attributes = 3 
     attr0: name=attname6 type=5 count=1 size=4
 	32.000999 
     attr1: name=attname8 type=5 count=1 size=4
 	32.000999 
     attr2: name=attname9 type=4 count=5 size=5
 	m N p S t 
-- field index 1: [fldname1], type=24, order=1, nattrs=1
-   1 attributes. 
+- field index 1: [fldname1], type=24, order=1
+   number of attributes = 1 
     attr0: name=attname8 type=5 count=1 size=4
 	-34.001999 
 Loc.     Data
@@ -157,9 +157,9 @@ Vdata: 10
    fields = [VALUES];
    record size (in bytes) = 4;
    name = attname6; class = Attr0.0;
-   0 attributes. 
-- field index 0: [VALUES], type=5, order=1, nattrs=0
-   0 attributes. 
+   number of attributes = 0 
+- field index 0: [VALUES], type=5, order=1
+   number of attributes = 0 
 Loc.     Data
 0        32.000999  ; 
 
@@ -169,9 +169,9 @@ Vdata: 11
    fields = [VALUES];
    record size (in bytes) = 3;
    name = attname7; class = Attr0.0;
-   0 attributes. 
-- field index 0: [VALUES], type=4, order=3, nattrs=0
-   0 attributes. 
+   number of attributes = 0 
+- field index 0: [VALUES], type=4, order=3
+   number of attributes = 0 
 Loc.     Data
 0        m N p  ; 
 
@@ -181,9 +181,9 @@ Vdata: 12
    fields = [VALUES];
    record size (in bytes) = 4;
    name = attname8; class = Attr0.0;
-   0 attributes. 
-- field index 0: [VALUES], type=5, order=1, nattrs=0
-   0 attributes. 
+   number of attributes = 0 
+- field index 0: [VALUES], type=5, order=1
+   number of attributes = 0 
 Loc.     Data
 0        32.000999  ; 
 
@@ -193,9 +193,9 @@ Vdata: 13
    fields = [VALUES];
    record size (in bytes) = 4;
    name = attname8; class = Attr0.0;
-   0 attributes. 
-- field index 0: [VALUES], type=5, order=1, nattrs=0
-   0 attributes. 
+   number of attributes = 0 
+- field index 0: [VALUES], type=5, order=1
+   number of attributes = 0 
 Loc.     Data
 0        -34.001999  ; 
 
@@ -205,9 +205,9 @@ Vdata: 14
    fields = [VALUES];
    record size (in bytes) = 5;
    name = attname9; class = Attr0.0;
-   0 attributes. 
-- field index 0: [VALUES], type=4, order=5, nattrs=0
-   0 attributes. 
+   number of attributes = 0 
+- field index 0: [VALUES], type=4, order=5
+   number of attributes = 0 
 Loc.     Data
 0        m N p S t  ; 
 
@@ -217,9 +217,9 @@ Vdata: 15
    fields = [VALUES];
    record size (in bytes) = 4;
    name = attname9; class = Attr0.0;
-   0 attributes. 
-- field index 0: [VALUES], type=25, order=1, nattrs=0
-   0 attributes. 
+   number of attributes = 0 
+- field index 0: [VALUES], type=25, order=1
+   number of attributes = 0 
 Loc.     Data
 0        100  ; 
 
@@ -229,9 +229,9 @@ Vdata: 16
    fields = [VALUES];
    record size (in bytes) = 4;
    name = attname10; class = Attr0.0;
-   0 attributes. 
-- field index 0: [VALUES], type=23, order=2, nattrs=0
-   0 attributes. 
+   number of attributes = 0 
+- field index 0: [VALUES], type=23, order=2
+   number of attributes = 0 
 Loc.     Data
 0        16 32  ; 
 

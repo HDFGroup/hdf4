@@ -9,10 +9,10 @@ Vdata: 2
    fields = [A, B];
    record size (in bytes) = 8;
    name = Mixed Vdata; class = No class specified;
-   0 attributes. 
-   0 attributes. 
-- field index 1: [B], type=24, order=1, nattrs=0
-   0 attributes. 
+   number of attributes = 0 
+   number of attributes = 0 
+- field index 1: [B], type=24, order=1
+   number of attributes = 0 
 Loc.     Data
 00       0  ; 1  ; 2  ; 3  ; 
 04       4  ; 5  ; 6  ; 7  ; 

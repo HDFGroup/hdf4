@@ -9,9 +9,9 @@ Vdata: 1
    fields = [DIFFERENT_FIELD_NAME];
    record size (in bytes) = 8;
    name = Integer Vdata; class = Test object;
-   0 attributes. 
-- field index 0: [DIFFERENT_FIELD_NAME], type=24, order=2, nattrs=0
-   0 attributes. 
+   number of attributes = 0 
+- field index 0: [DIFFERENT_FIELD_NAME], type=24, order=2
+   number of attributes = 0 
 Loc.     Data
 00       0 1  ; 2 3  ; 4 5  ; 6 7  ; 
 04       8 9  ; 10 11  ; 12 13  ; 14 15  ; 
@@ -46,11 +46,11 @@ Vdata: 2
    fields = [A, B];
    record size (in bytes) = 8;
    name = Mixed Vdata; class = No class specified;
-   0 attributes. 
-- field index 0: [A], type=5, order=1, nattrs=0
-   0 attributes. 
-- field index 1: [B], type=24, order=1, nattrs=0
-   0 attributes. 
+   number of attributes = 0 
+- field index 0: [A], type=5, order=1
+   number of attributes = 0 
+- field index 1: [B], type=24, order=1
+   number of attributes = 0 
 Loc.     Data
 00       0.000000  0  ; 2.000000  1  ; 4.000000  2  ; 
 03       6.000000  3  ; 8.000000  4  ; 10.000000  5  ; 

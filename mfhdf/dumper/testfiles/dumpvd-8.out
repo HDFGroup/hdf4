@@ -9,12 +9,12 @@ Vdata: 3
    fields = [STATION_NAME, VALUES, FLOATS];
    record size (in bytes) = 18;
    name = Multi-Order Vdata; class = No class specified;
-   0 attributes. 
-- field index 0: [STATION_NAME], type=4, order=2, nattrs=0
-   0 attributes. 
-   0 attributes. 
-- field index 2: [FLOATS], type=5, order=1, nattrs=0
-   0 attributes. 
+   number of attributes = 0 
+- field index 0: [STATION_NAME], type=4, order=2
+   number of attributes = 0 
+   number of attributes = 0 
+- field index 2: [FLOATS], type=5, order=1
+   number of attributes = 0 
 Loc.     Data
 0        a b  15.500000  ; c d  16.000000  ; e f  16.500000  ; 
 3        g h  17.000000  ; i j  17.500000  ; k l  18.000000  ; 
