@@ -53,9 +53,10 @@
 INCDIR=..\include
 LIBDIR=..\lib
 BINDIR=..\bin
+JPEGDIR=..\jpeg
 
 # ==> where are your hdf.h, hdfi.h and vg.h files located?
-IFLAGS=   /i=$(INCDIR) /i=.
+IFLAGS=   /i=$(INCDIR) /i=. /i=$(JPEGDIR)
 
 # ==> specify your FORTRAN compiler
 #FC=fl
