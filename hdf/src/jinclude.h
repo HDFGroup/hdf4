@@ -37,8 +37,9 @@
 #endif
 #endif
 
-#if defined macintosh | defined VMS
-#define INCLUDES_ARE_ANSI	/* Added for Mac, MPW does not define __STDC__ */
+#if defined macintosh | defined VMS | defined THINK_C
+#define INCLUDES_ARE_ANSI	/* Added for Mac, MPW does not define __STDC__ 
+                               Doesn't work with THINK_C(ANSI) yet */
 #endif /* macintosh, MPW */
 
 /*
