@@ -1,3 +1,23 @@
+HDF4.1r6
+========
+1. "hdp dumpgr" and "hdp dumpsds" have two new options:
+        -g to suppress the data of global (or file) attributes
+        -l to suppress the data of local attributes
+
+2. The problem where hdp failed on very long file name has been
+   fixed. (bug #693)
+
+3. The problem where VSinquire failed when being called on a vdata
+   that has no fields defined, has been fixed. (bug #626)
+
+4. A user attempted to change the values of VGNAMELENMAX and VSNAMELENMAX
+   to 256 for her own use, but the hdp output showed that the change was
+   not in effect.  This problem is now fixed. (bug #606)
+
+5. hdp dumpvg failed sometimes when reading a file that has a vgroup 
+   being inserted into another.  This has been fixed. (bug #477)
+
+
 HDF4.1r5
 ========
 1. The following VS routines are added as requested (bug #267):
