@@ -314,6 +314,11 @@ intn VSsetattr(int32 vsid, int32 findex, const char *attrname,
         HGOTO_ERROR(DFE_NOVS, FAIL);
      if (NULL == (vs = vs_inst->vs))
         HGOTO_ERROR(DFE_NOVS, FAIL);
+
+     /* check for read access */
+     if (vs->access == 'r')
+        HGOTO_ERROR(DFE_BADATTACH, FAIL);
+
      w = &(vs->wlist);
      /* check field index */
      if ((findex >= w->n || findex < 0) && (findex != _HDF_VDATA))
