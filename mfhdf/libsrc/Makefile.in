@@ -78,13 +78,14 @@ infodir = $(prefix)/info
 INCDIR	 = $(prefix)/include
 HDF_LIB  = $(TOP_SRCDIR)/hdf/src/libdf.a
 HDF_INC  = $(TOP_SRCDIR)/hdf/src/
+PABLO_HINC = $(TOP_SRCDIR)/hdf/pablo
 JPEG_LIB = $(TOP_SRCDIR)/hdf/jpeg/libjpeg.a
 NETCDF_INC = $(TOP_SRCDIR)/mfhdf/libsrc
 PORT_INC   = $(TOP_SRCDIR)/mfhdf/port
 CPP	   = $(CC) -E
 CFLAGS_NETCDF = 
 CPPFLAGS_HDF  = -DNDEBUG -DHDF
-CPP_NETCDF    = -I. -I$(HDF_INC) -I$(NETCDF_INC) -I$(PORT_INC) 
+CPP_NETCDF    = -I. -I$(HDF_INC) -I$(NETCDF_INC) -I$(PORT_INC)
 CPPFLAGS_LIB	= $(SWAP) $(NETLONG) 
 CPPFLAGS_XDR	= $(CPP_XDR) 
 CPPFLAGS_NETCDF =  $(CPPFLAGS_XDR) $(CPP_NETCDF) $(CPPFLAGS_LIB) $(CPPFLAGS_HDF) 
@@ -634,7 +635,7 @@ clean::
 realclean::	distclean
 distclean::
 	rm -f $(GARBAGE) $(PROGRAM) a.out core *.o *.a *.so.* *.sa.* *.so \
-	    *.log Makefile config.status cc_id tags
+	    *.log Makefile config.status cc_id tags netcdf.h
 
 
 # ###########################################################################
