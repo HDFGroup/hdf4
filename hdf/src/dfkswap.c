@@ -147,8 +147,10 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 * dest = (uint8*)d;
 #endif /* PROTOTYPE */
   char *FUNC="DFKsb4b";
+#ifdef TEST3_sb4b
   uint32 *lp_dest;
   uint32 *lp_src;
+#endif
 
   HEclear();
 

@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.25  1993/04/08 20:08:40  georgev
-Somehow(?) fill values got broken in hyperslabs. Fixed it. Minor cosmetic
- changes also.
+Revision 1.26  1993/04/19 22:47:35  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.25  1993/04/08  20:08:40  georgev
+ * Somehow(?) fill values got broken in hyperslabs. Fixed it. Minor cosmetic
+ *  changes also.
+ *
  * Revision 1.24  1993/04/06  17:23:33  chouck
  * Added Vset macros
  *
@@ -1292,12 +1295,12 @@ intn DFSDclear()
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDlastref(void)
+uint16 DFSDlastref(void)
 #else
-intn DFSDlastref()
+uint16 DFSDlastref()
 #endif /* PROTOTYPE */
 {
-    return ((intn) Lastref);
+    return ((uint16) Lastref);
 }
 
 /*-----------------------------------------------------------------------------
@@ -2677,7 +2680,8 @@ intn DFSDIputndg(file_id, ref, sdg)
     /* write out label/unit/format */
     for (luf = LABEL; luf <= FORMAT; luf++) 
       {
-        luftag = (luf==LABEL) ? DFTAG_SDL : (luf==UNIT) ? DFTAG_SDU : DFTAG_SDF;
+        luftag = (uint16)((luf==LABEL) ? DFTAG_SDL :
+                (luf==UNIT) ? DFTAG_SDU : DFTAG_SDF);
         bufp   = DFtbuf;
         /* this block of code checks if luf is NULL, else writes it */
         if (!Ref.luf[luf]) 
@@ -2749,14 +2753,12 @@ intn DFSDIputndg(file_id, ref, sdg)
           }
       }
 
-    if (!Ref.scales) 
-      {      /* write out scales */
+    if (!Ref.scales) {      /* write out scales */
         /* compute space needed for scales */
         len = 0;
-        for (i = 0; i < sdg->rank; i++)  
-          {
+        for (i = 0; i < sdg->rank; i++) {
             if (Isscales[i] == 1)
-                len += sdg->dimsizes[i]*scaleNTsize;
+                len += (intn)(sdg->dimsizes[i]*scaleNTsize);
           }
         len += sdg->rank;
         
@@ -3355,7 +3357,7 @@ intn DFSDIisndg(isndg)
      intn *isndg;
 #endif /* PROTOTYPE */
 {
-    *isndg = Readsdg.isndg;
+    *isndg = (intn)Readsdg.isndg;
     return (SUCCEED);
 }
 
@@ -4898,7 +4900,6 @@ intn
 DFSDendslab()
 #endif /* PROTOTYPE */
 {
-    intn i;
     intn ret;
     char *FUNC="DFSDendslab";
 

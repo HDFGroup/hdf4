@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1993/01/19 05:55:30  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.3  1993/04/19 22:47:51  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.2  1993/01/19  05:55:30  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -66,18 +69,18 @@ uint16 DFfindnextref(file_id, tag, lref)
 
     if (!HDvalidfid(file_id)) {
         HERROR(DFE_ARGS);
-        return FAIL;
+        return (uint16)FAIL;
     }
 
     aid = Hstartread(file_id, tag, lref);
     if (aid == FAIL) 
-        return FAIL;
+        return (uint16)FAIL;
 
     if (Hnextread(aid, tag, DFREF_WILDCARD, DF_CURRENT) == FAIL) 
-        return FAIL;
+        return (uint16)FAIL;
 
     if (HQuerytagref(aid, &newtag, &newref) == FAIL)
-        return FAIL;
+        return (uint16)FAIL;
 
     return (newref);
 }

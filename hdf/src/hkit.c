@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.9  1993/04/14 21:39:22  georgev
-Had to add some VOIDP casts to some functions to make the compiler happy.
+Revision 1.10  1993/04/19 22:48:13  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.9  1993/04/14  21:39:22  georgev
+ * Had to add some VOIDP casts to some functions to make the compiler happy.
+ *
  * Revision 1.8  1993/04/05  22:35:51  koziol
  * Fixed goofups made in haste when patching code.
  *
@@ -624,21 +627,23 @@ VOIDP s2;
 uint32 len;
 #endif
 {
+    uint8 *t1=(uint8 *)s1,
+        *t2=(uint8 *)s2;
     intn ret_val;
 
     if(len<=UINT_MAX)   /* if the size is small enough copy all at once */
-        return(memcmp(s1,s2,(size_t)len));
+        return(memcmp(t1,t2,(size_t)len));
     else {  /* number of bytes to read */
         while(len>UINT_MAX) {
-            ret_val=memcmp(s1,s2,UINT_MAX);
+            ret_val=memcmp(t1,t2,UINT_MAX);
             if(ret_val!=0)
                 return(ret_val);
-            (uint8 *)s1+=UINT_MAX;
-            (uint8 *)s2+=UINT_MAX;
+            t1+=UINT_MAX;
+            t2+=UINT_MAX;
             len-=UINT_MAX;
           } /* end while */
         if(len>0)
-            return(memcmp(s1,s2,(size_t)len));
+            return(memcmp(t1,t2,(size_t)len));
       } /* end else */
     return(0);
 }   /* end memcmp_big() */

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/04/14 21:39:04  georgev
-Had to add some VOIDP casts to some functions to make the compiler happy.
+Revision 1.6  1993/04/19 22:47:09  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.5  1993/04/14  21:39:04  georgev
+ * Had to add some VOIDP casts to some functions to make the compiler happy.
+ *
  * Revision 1.4  1993/04/06  17:23:29  chouck
  * Added Vset macros
  *
@@ -127,7 +130,7 @@ ndfiopen(name, access, defdds, namelen)
     char *fn;
     intf ret;
     
-    fn = DFIf2cstring(name, *namelen);
+    fn = DFIf2cstring(name, (intn)*namelen);
     ret = (int32) DFopen(fn, (intn)*access, (intn)*defdds);
     HDfreespace((VOIDP)fn);
     return(ret);
@@ -270,7 +273,7 @@ ndfiaccess(dfile, tag, ref, access, acclen)
     char *acc;
     intf ret;
 
-    acc = DFIf2cstring(access, *acclen);
+    acc = DFIf2cstring(access, (intn)*acclen);
     ret = (int32)DFaccess((DF *) *dfile, (uint16)*tag, (uint16)*ref, acc);
     HDfreespace((VOIDP)acc);
     return(ret);
@@ -613,7 +616,7 @@ ndfiishdf(name, namelen)
     char *fn;
     intf ret;
 
-    fn = DFIf2cstring(name, *namelen);
+    fn = DFIf2cstring(name, (intn)*namelen);
     ret = DFishdf(fn);
     HDfreespace((VOIDP)fn);
     return(ret);

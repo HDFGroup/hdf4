@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.9  1993/04/14 21:38:58  georgev
-Had to add some VOIDP casts to some functions to make the compiler happy.
+Revision 1.10  1993/04/19 22:47:01  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.9  1993/04/14  21:38:58  georgev
+ * Had to add some VOIDP casts to some functions to make the compiler happy.
+ *
  * Revision 1.8  1993/04/05  22:34:58  koziol
  * Fixed goofups made in haste when patching code.
  *
@@ -148,7 +151,7 @@ nd2igdim(filename, pxdim, pydim, pil, fnlen)
     char *fn;
     intf ret;
 
-    fn = HDf2cstring(filename, *fnlen);
+    fn = HDf2cstring(filename, (intn)*fnlen);
     ret =  DF24getdims(fn, (int32 *)pxdim, (int32 *)pydim, (intn *)pil);
     HDfreespace((VOIDP)fn);
     return(ret);
@@ -182,7 +185,7 @@ nd2igimg(filename, image, xdim, ydim, fnlen)
     char *fn;
     intf ret;
 
-    fn = HDf2cstring(filename, *fnlen);
+    fn = HDf2cstring(filename, (intn)*fnlen);
     ret =  DF24getimage(fn, (VOIDP)_fcdtocp(image), *xdim, *ydim);
     HDfreespace((VOIDP)fn);
     return(ret);
@@ -222,7 +225,7 @@ nd2iaimg(filename, image, xdim, ydim, fnlen, newfile)
 
     fn = HDf2cstring(filename, (intn)*fnlen);
     ret = DFGRIaddimlut(fn, (VOIDP)_fcdtocp(image), *xdim, *ydim,
-            IMAGE, 1, *newfile);
+            IMAGE, 1, (intn)*newfile);
     HDfreespace((VOIDP)fn);
     return(ret);
 }
@@ -246,7 +249,7 @@ nd2setil(il)
     intf *il;
 #endif /* PROTOTYPE */
 {
-    return (DFGRIsetil(*il, IMAGE));
+    return (DFGRIsetil((intn)*il, IMAGE));
 }
 
 /*-----------------------------------------------------------------------------
@@ -365,7 +368,7 @@ ndf24reqil(il)
     intf *il;
 #endif /* PROTOTYPE */
 {
-    return(DFGRIreqil(*il, IMAGE));
+    return(DFGRIreqil((intn)*il, IMAGE));
 }
 
 /*-----------------------------------------------------------------------------
@@ -409,7 +412,7 @@ ndf24setil(il)
     intf *il;
 #endif /* PROTOTYPE */
 {
-    return (DFGRIsetil(*il, IMAGE));
+    return (DFGRIsetil((intn)*il, IMAGE));
 }
 
 /*-----------------------------------------------------------------------------
@@ -515,7 +518,7 @@ nd2irref(filename, ref, fnlen)
     char *fn;
     intf ret;
 
-    fn = HDf2cstring(filename, *fnlen);
+    fn = HDf2cstring(filename, (intn)*fnlen);
     ret = DFGRreadref(fn, (uint16)*ref);
     HDfreespace((VOIDP)fn);
     return(ret);

@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.24  1993/04/13 21:45:24  georgev
-Fixed preproccessor error on HPUX with #elif.
+Revision 1.25  1993/04/19 22:48:17  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.24  1993/04/13  21:45:24  georgev
+ * Fixed preproccessor error on HPUX with #elif.
+ *
  * Revision 1.23  1993/04/05  22:35:56  koziol
  * Fixed goofups made in haste when patching code.
  *
@@ -253,12 +256,19 @@ extern char _HUGE *HDf2cstring
 extern intn HDflush
     PROTO((int32 file_id));
 
+extern intn HDpackFstring
+    PROTO((char _HUGE *src, char _HUGE *dest, intn len));
+
 /* 
 ** from hblocks.c 
 */
 extern int32 HLcreate
   PROTO((int32 file_id, uint16 tag, uint16 ref, int32 block_length, 
-	 int32 number_blocks));
+        int32 number_blocks));
+
+extern int HDinqblockinfo
+    PROTO((int32 aid, int32 *length, int32 *first_length, int32 *block_length,
+        int32 *number_blocks));
 
 /*
 ** from hextelt.c 
@@ -613,9 +623,124 @@ extern int32 DFANIgetfann
   PROTO((int32 file_id, char _HUGE *ann, int32 maxlen, int type, int isfirst));
 
 /*
-** from dfsd.c (actually contained in dfsd.h because of use of private data
-**              types in the prototypes)
+** from dfsd.c
 */
+
+extern int DFSDgetdims
+    PROTO((char _HUGE *filename, intn _HUGE *prank, int32 _HUGE sizes[], intn maxrank));
+
+extern int DFSDgetdatastrs
+    PROTO((char _HUGE *label, char _HUGE *unit, char _HUGE *format,char _HUGE *coordsys));
+
+extern int DFSDgetdimstrs
+    PROTO((int dim, char _HUGE *label, char _HUGE *unit, char _HUGE *format));
+
+extern int DFSDgetdatalen
+    PROTO((int _HUGE *llabel, int _HUGE *lunit, int _HUGE *lformat,int _HUGE *lcoordsys));
+
+extern int DFSDgetdimlen
+    PROTO((int dim, int _HUGE *llabel, int _HUGE *lunit, int _HUGE *lformat));
+
+extern int DFSDgetdimscale
+    PROTO((int dim, int32 maxsize, VOIDP scale));
+
+extern int DFSDgetrange
+    PROTO((VOIDP pmax, VOIDP pmin));
+
+extern int DFSDgetdata
+    PROTO((char _HUGE *filename, intn rank, int32 _HUGE maxsizes[], VOIDP data));
+
+extern int DFSDsetlengths
+    PROTO((int maxlen_label, int maxlen_unit, int maxlen_format,
+                int maxlen_coordsys));
+
+extern int DFSDsetdims
+    PROTO((intn rank, int32 _HUGE dimsizes[]));
+
+extern int DFSDsetdatastrs
+    PROTO((char _HUGE *label, char _HUGE *unit, char _HUGE *format,char _HUGE *coordsys));
+
+extern int DFSDsetdimstrs
+    PROTO((int dim, char _HUGE *label, char _HUGE *unit, char _HUGE *format));
+
+extern int DFSDsetdimscale
+    PROTO((int dim, int32 dimsize, VOIDP scale));
+
+extern int DFSDsetrange
+    PROTO((VOIDP maxi, VOIDP mini));
+
+extern int DFSDputdata
+    PROTO((char _HUGE *filename, intn rank, int32 _HUGE dimsizes[], VOIDP data));
+
+extern int DFSDadddata
+    PROTO((char _HUGE *filename, intn rank, int32 _HUGE dimsizes[], VOIDP data));
+
+extern int DFSDrestart
+    PROTO((void));
+
+extern int32 DFSDnumber
+    PROTO((char _HUGE *filename));
+
+extern int DFSDclear
+    PROTO((void));
+
+extern uint16 DFSDlastref
+    PROTO((void));
+
+extern int DFSDreadref
+    PROTO((char _HUGE *filename, uint16 ref));
+
+extern int DFSDgetslice
+    PROTO((char _HUGE *filename, int32 _HUGE winst[], int32 _HUGE windims[],VOIDP data,
+                int32 _HUGE dims[]));
+
+extern int DFSDstartslice
+    PROTO((char _HUGE *filename));
+
+extern int DFSDputslice
+    PROTO((int32 _HUGE winend[], VOIDP data, int32 _HUGE dims[]));
+
+extern int DFSDendslice
+    PROTO((void));
+
+extern int DFSDsetNT
+    PROTO((int32 numbertype));
+
+extern int DFSDsetorder
+    PROTO((int arrayorder));
+
+extern int DFSDgetNT
+    PROTO((int32 _HUGE *pnumbertype));
+
+extern intn DFSDpre32sdg
+    PROTO((char _HUGE *filename,uint16 ref, intn _HUGE *ispre32));
+
+extern int DFSDsetcal
+    PROTO((float64 cal, float64 cal_err, float64 ioff, 
+           float64 ioff_err, int32 cal_nt));
+
+extern int DFSDgetcal
+    PROTO((float64 _HUGE *pcal, float64 _HUGE *pcal_err, float64 _HUGE *pioff,
+            float64 _HUGE *pioff_err, int32 _HUGE *cal_nt));
+
+extern int DFSDwriteref
+    PROTO((char _HUGE *filename, uint16 ref));
+
+extern int DFSDsetfillvalue
+    PROTO((VOIDP fill_value));
+
+extern int DFSDgetfillvalue
+    PROTO((VOIDP fill_value));
+
+extern int DFSDstartslab
+    PROTO((char _HUGE *filename));
+
+extern int DFSDwriteslab
+    PROTO((int32 _HUGE start[], int32 _HUGE stride[], int32 _HUGE count[],
+        VOIDP data));
+
+extern int DFSDendslab
+    PROTO((void));
 
 /*
 ** from dfconv.c
@@ -1123,19 +1248,19 @@ extern FRETVAL(intf) ndfr8setjpeg
 #endif  /* DFSD_FNAMES */
 
 extern FRETVAL(intf) ndsgdisc
-    PROTO((intf _HUGE *dim, intf _HUGE *maxsize, void _HUGE *scale));
+    PROTO((intf _HUGE *dim, intf _HUGE *maxsize, VOIDP scale));
 
 extern FRETVAL(intf) ndsgrang
-    PROTO((void _HUGE *pmax, void _HUGE *pmin));
+    PROTO((VOIDP pmax, VOIDP pmin));
 
 extern FRETVAL(intf) ndssdims
     PROTO((intf _HUGE *rank, intf _HUGE dimsizes[]));
 
 extern FRETVAL(intf) ndssdisc
-    PROTO((intf _HUGE *dim, intf _HUGE *dimsize, void _HUGE *scale));
+    PROTO((intf _HUGE *dim, intf _HUGE *dimsize, VOIDP scale));
 
 extern FRETVAL(intf) ndssrang
-    PROTO((void _HUGE *max, void _HUGE *min));
+    PROTO((VOIDP max, VOIDP min));
 
 extern FRETVAL(intf) ndsclear
     PROTO((void));
@@ -1156,7 +1281,7 @@ extern FRETVAL(intf) ndsfirst
     PROTO((void));
 
 extern FRETVAL(intf) ndspslc
-    PROTO((intf _HUGE windims[], void _HUGE *data, intf _HUGE dims[]));
+    PROTO((intf _HUGE windims[], VOIDP data, intf _HUGE dims[]));
 
 extern FRETVAL(intf) ndseslc
     PROTO((void));
@@ -1173,19 +1298,19 @@ extern FRETVAL(intf) ndsigdim
 
 extern FRETVAL(intf) ndsigdat
     PROTO((_fcd filename, intf _HUGE *rank, intf _HUGE maxsizes[],
-            void _HUGE *data, intf _HUGE *fnlen));
+            VOIDP data, intf _HUGE *fnlen));
 
 extern FRETVAL(intf) ndsipdat
     PROTO((_fcd filename, intf _HUGE *rank, intf _HUGE dimsizes[],
-            void _HUGE *data, intf _HUGE *fnlen));
+            VOIDP data, intf _HUGE *fnlen));
 
 extern FRETVAL(intf) ndsiadat
     PROTO((_fcd filename, intf _HUGE *rank, intf _HUGE dimsizes[],
-            void _HUGE *data, intf _HUGE *fnlen));
+            VOIDP data, intf _HUGE *fnlen));
 
 extern FRETVAL(intf) ndsigslc
     PROTO((_fcd filename, intf _HUGE winst[], intf _HUGE windims[],
-            void _HUGE *data, intf _HUGE dims[], intf _HUGE *fnlen));
+            VOIDP data, intf _HUGE dims[], intf _HUGE *fnlen));
 
 extern FRETVAL(intf) ndsisslc
     PROTO((_fcd filename, intf _HUGE *fnlen));
@@ -1209,19 +1334,19 @@ extern FRETVAL(intf) ndfsdgetdimstrs
     PROTO((intf _HUGE *dim, _fcd label, _fcd unit, _fcd format));
 
 extern FRETVAL(intf) ndfsdgetdimscale
-    PROTO((intf _HUGE *dim, intf _HUGE *maxsize, void _HUGE *scale));
+    PROTO((intf _HUGE *dim, intf _HUGE *maxsize, VOIDP scale));
 
 extern FRETVAL(intf) ndfsdgetrange
-    PROTO((void _HUGE *pmax, void _HUGE *pmin));
+    PROTO((VOIDP pmax, VOIDP pmin));
 
 extern FRETVAL(intf) ndfsdsetdims
     PROTO((intf _HUGE *rank, intf _HUGE dimsizes[]));
 
 extern FRETVAL(intf) ndfsdsetdimscale
-    PROTO((intf _HUGE *dim, intf _HUGE *dimsize, void _HUGE *scale));
+    PROTO((intf _HUGE *dim, intf _HUGE *dimsize, VOIDP scale));
 
 extern FRETVAL(intf) ndfsdsetrange
-    PROTO((void _HUGE *max, void _HUGE *min));
+    PROTO((VOIDP max, VOIDP min));
 
 extern FRETVAL(intf) ndfsdclear
     PROTO((void));
@@ -1242,7 +1367,7 @@ extern FRETVAL(intf) ndfsdrestart
     PROTO((void));
 
 extern FRETVAL(intf) ndfsdputslice
-    PROTO((intf _HUGE windims[], void _HUGE *data, intf _HUGE dims[]));
+    PROTO((intf _HUGE windims[], VOIDP data, intf _HUGE dims[]));
 
 extern FRETVAL(intf) ndfsdendslice
     PROTO((void));
@@ -1285,17 +1410,17 @@ extern FRETVAL(intf) ndfsdwriteref
      PROTO((_fcd filename, intf _HUGE *fnlen, intf _HUGE *ref));
 
 extern FRETVAL(intf) ndfsdsetfill
-     PROTO((void _HUGE *fill_value));
+     PROTO((VOIDP fill_value));
 
 extern FRETVAL(intf) ndfsdgetfill
-     PROTO((void _HUGE *fill_value));
+     PROTO((VOIDP fill_value));
 
 extern FRETVAL(intf) ndfsdstartslab
      PROTO((_fcd filename, intf _HUGE *fnlen));
 
 extern FRETVAL(intf) ndfsdwriteslab
      PROTO((intf _HUGE start[], intf _HUGE stride[],
-            intf _HUGE cont[], void _HUGE *data));
+            intf _HUGE cont[], VOIDP data));
 
 extern FRETVAL(intf) ndfsdendslab
      PROTO((void));

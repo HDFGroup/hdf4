@@ -5,15 +5,18 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.7  1993/03/29 16:47:32  koziol
-Updated JPEG code to new JPEG 4 code.
-Changed VSets to use Threaded-Balanced-Binary Tree for internal
-	(in memory) representation.
-Changed VGROUP * and VDATA * returns/parameters for all VSet functions
-	to use 32-bit integer keys instead of pointers.
-Backed out speedups for Cray, until I get the time to fix them.
-Fixed a bunch of bugs in the little-endian support in DFSD.
+Revision 1.8  1993/04/19 22:47:27  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.7  1993/03/29  16:47:32  koziol
+ * Updated JPEG code to new JPEG 4 code.
+ * Changed VSets to use Threaded-Balanced-Binary Tree for internal
+ * 	(in memory) representation.
+ * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+ * 	to use 32-bit integer keys instead of pointers.
+ * Backed out speedups for Cray, until I get the time to fix them.
+ * Fixed a bunch of bugs in the little-endian support in DFSD.
+ *
  * Revision 1.5  1993/01/19  05:54:54  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -78,14 +81,6 @@ static bool CompressSet=FALSE;  /* Whether the compression parameters have */
 static int32 CompType=COMP_NONE;/* What compression to use for the next image */
 static comp_info CompInfo;      /* Params for compression to perform */
 static uint8 Palette[768];      /* to store palette for 8-bit images */
-#ifdef QAK
-static bool OverridePal=FALSE;  /* indicate that the ReadPalette should be */
-                                /* used instead of the palette stored in the */
-                                /* file.  This ugly, nasty hack was brought */
-                                /* to you by QAK, in the interest of making */
-                                /* JPEG stored 8-it images look almost normal */
-static uint8 *ReadPalette;      /* to store to read palette for 8-bit images */
-#endif
 static uint16 Refset=0;         /* Ref of image to get next */
 static uint16 Lastref = 0;      /* Last ref read/written */
 static DFRrig Zrig = {          /* empty RIG for initialization */
@@ -117,7 +112,9 @@ PRIVATE int32 DFR8Iopen
 PRIVATE int DFR8Iriginfo
     PROTO((int32 file_id));
 
+#ifdef QAK
 uint8 R8tbuf[512];
+#endif
 
 /*-----------------------------------------------------------------------------
  * Name:    DFR8setcompress
@@ -421,7 +418,7 @@ PRIVATE intn DFR8Iputimage(filename, image, xdim, ydim, compress, op)
     /* write out image */
     if (compress || CompressSet) {
         /* if a compression type has been set, check if it's the same */
-        if(CompressSet==FALSE || (compress>1 && compress!=CompType &&
+        if(CompressSet==FALSE || (compress>1 && (int32)compress!=CompType &&
                 !(compress==COMP_JPEG && CompType==DFTAG_GREYJPEG))) {
             if(compress<0 || compress>COMP_MAX_COMP || compress_map[compress]==0)
                 HRETURN_ERROR(DFE_BADSCHEME, FAIL);
@@ -436,7 +433,7 @@ PRIVATE intn DFR8Iputimage(filename, image, xdim, ydim, compress, op)
                 CompType=compress_map[compress];
           } /* end else */
         if (DFputcomp(file_id, DFTAG_CI, Writeref, (uint8*)image, xdim, ydim,
-                     pal, (uint8*)newpal, CompType, &CompInfo) == FAIL)
+                     pal, (uint8*)newpal, (int16)CompType, &CompInfo) == FAIL)
             return(HDerr(file_id));
         Writerig.image.tag = DFTAG_CI;
         if (CompType==DFTAG_IMC) {
@@ -455,8 +452,8 @@ PRIVATE intn DFR8Iputimage(filename, image, xdim, ydim, compress, op)
 
     /* Write out Raster-8 tags for those who want it */
     if(CompType!=DFTAG_GREYJPEG) {
-        r8tag = CompType ?
-           ((CompType==DFTAG_RLE) ? DFTAG_CI8 : DFTAG_II8) : DFTAG_RI8;
+        r8tag = (uint16)(CompType ?
+           ((CompType==DFTAG_RLE) ? DFTAG_CI8 : DFTAG_II8) : DFTAG_RI8);
         if(Hdupdd(file_id,r8tag,Writeref,Writerig.image.tag,Writeref) == FAIL)
             return(HDerr(file_id));
       } /* end if */
@@ -485,13 +482,13 @@ PRIVATE intn DFR8Iputimage(filename, image, xdim, ydim, compress, op)
 
     /* Write out RIG */
     if ((Writerig.descimage.xdim==xdim) && (Writerig.descimage.ydim==ydim) &&
-            (Writerig.descimage.compr.tag==CompType))
+            (Writerig.descimage.compr.tag==(uint16)CompType))
         wdim = 0;
     else {
         wdim = 1;
         Writerig.descimage.xdim = xdim;
         Writerig.descimage.ydim = ydim;
-        Writerig.descimage.compr.tag = CompType;
+        Writerig.descimage.compr.tag = (uint16)CompType;
         Writerig.descimage.compr.ref = Writeref;
     }
 
@@ -596,6 +593,7 @@ PRIVATE int DFR8getrig(file_id, ref, rig)
     uint16 elt_ref;
     uint8 ntstring[4];
     int32 GroupID;
+    uint8 R8tbuf[64];
 
     HEclear();
 
@@ -686,6 +684,7 @@ PRIVATE int DFR8putrig(file_id, ref, rig, wdim)
     R8dim im8dim;
     uint8 ntstring[4];
     int32 GroupID;
+    uint8 R8tbuf[64];
 
     HEclear();
 
@@ -721,7 +720,7 @@ PRIVATE int DFR8putrig(file_id, ref, rig, wdim)
         UINT16ENCODE(p, rig->descimage.compr.tag);
         UINT16ENCODE(p, rig->descimage.compr.ref);
         if (Hputelement(file_id, DFTAG_ID, ref, R8tbuf,(int32)(p-R8tbuf))
-           == FAIL)
+                == FAIL)
             return FAIL;
        /* write out ID8 */
         p = R8tbuf;
@@ -991,6 +990,7 @@ PRIVATE int DFR8Iriginfo(file_id)
     uint16 riref=0, ciref=0;
     int32 aid=FAIL;
     uint16 ref;
+    uint8 R8tbuf[64];
 
     HEclear();
     /* find next rig */
@@ -1004,8 +1004,7 @@ PRIVATE int DFR8Iriginfo(file_id)
                if (!Readrig.image.ref) {
                    aid = Hstartread(file_id, DFTAG_RIG, DFREF_WILDCARD);
                } else {
-                   if (aid != FAIL
-                       && Hnextread(aid, DFTAG_RIG, DFREF_WILDCARD,
+                   if (aid != FAIL && Hnextread(aid, DFTAG_RIG, DFREF_WILDCARD,
                                     DF_CURRENT) == FAIL) {
                        Hendaccess(aid);
                        aid = FAIL;
@@ -1106,8 +1105,9 @@ PRIVATE int DFR8Iriginfo(file_id)
         }
 
         if (Hgetelement(file_id, DFTAG_ID8, Readrig.image.ref, R8tbuf)
-           != FAIL) {
+                != FAIL) {
             uint8 *p;
+
             p = R8tbuf;
             UINT16DECODE(p, Readrig.descimage.xdim);
             UINT16DECODE(p, Readrig.descimage.ydim);
@@ -1115,7 +1115,7 @@ PRIVATE int DFR8Iriginfo(file_id)
            return FAIL;
 
         if ((aid = Hstartread(file_id, DFTAG_IP8, Readrig.image.ref))
-           != FAIL) {
+                != FAIL) {
             Readrig.lut.tag = DFTAG_IP8;
             Readrig.lut.ref = Readrig.image.ref;
 

@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.17  1993/04/13 17:44:23  koziol
-Added patches for Fujitsu VP machines and fixed Cray fast conversion
-routines.
+Revision 1.18  1993/04/19 22:47:58  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.17  1993/04/13  17:44:23  koziol
+ * Added patches for Fujitsu VP machines and fixed Cray fast conversion
+ * routines.
+ *
  * Revision 1.16  1993/04/05  22:35:37  koziol
  * Fixed goofups made in haste when patching code.
  *
@@ -885,7 +888,8 @@ correctly.
         *(p) = (uint8)((i) & 0xff); (p)++; }
 
 #   define INT16DECODE(p, i) \
-{ (i) = (*(p) & 0xff) << 8; (p)++; (i) |= (*(p) & 0xff); (p)++; }
+{ (i) = (int16)((*(p) & 0xff) << 8); (p)++; \
+        (i) |= (int16)((*(p) & 0xff)); (p)++; }
 
 #   define UINT16DECODE(p, i) \
 { (i) = (uint16)((*(p) & 0xff) << 8); (p)++; \

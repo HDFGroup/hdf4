@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.9  1993/04/05 22:35:02  koziol
-Fixed goofups made in haste when patching code.
+Revision 1.10  1993/04/19 22:47:04  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.9  1993/04/05  22:35:02  koziol
+ * Fixed goofups made in haste when patching code.
+ *
  * Revision 1.8  1993/03/29  18:38:12  chouck
  * Cleaned up a bunch of casting problems
  *
@@ -605,7 +608,7 @@ uint16 tag, ref;
     
     HEclear();
 
-    anntag = (type==DFAN_LABEL) ? DFTAG_DIL : DFTAG_DIA;
+    anntag = (uint16)((type==DFAN_LABEL) ? DFTAG_DIL : DFTAG_DIA);
 
         /* if no directory for this type of annotation, make one */
     if (DFANdir[type]==NULL) { 
@@ -756,7 +759,7 @@ int type;
     if (annref==0) {
         Hclose(file_id); return FAIL;
     }
-    anntag = (type==DFAN_LABEL) ? DFTAG_DIL : DFTAG_DIA;    /* set type tag */
+    anntag=(uint16)((type==DFAN_LABEL) ? DFTAG_DIL : DFTAG_DIA);  /* set type tag */
 
     annlength = Hlength(file_id,anntag,annref) - 4;  /* 4=len of data tag/ref */
     if (annlength == FAIL) { 
@@ -814,7 +817,7 @@ int type;
     if (annref==0) {
         Hclose(file_id); return FAIL;
     }
-    anntag = (type==DFAN_LABEL) ? DFTAG_DIL : DFTAG_DIA;
+    anntag = (uint16)((type==DFAN_LABEL) ? DFTAG_DIL : DFTAG_DIA);
 
         /* find DD for that annotation */
     aid = Hstartread(file_id, anntag, annref);
@@ -893,7 +896,7 @@ int type;
     file_id = DFANIopen(filename, DFACC_RDWR);
     if (file_id == 0) return FAIL;
 
-    anntag = (type==DFAN_LABEL) ? DFTAG_DIL : DFTAG_DIA;
+    anntag = (uint16)((type==DFAN_LABEL) ? DFTAG_DIL : DFTAG_DIA);
 
         /* check if this tag/ref already has this type of annotation */
     annref = DFANIlocate(file_id, type, tag, ref);
@@ -1110,7 +1113,7 @@ int DFANIaddfann(file_id, ann, annlen, type)
     HEclear();
     if (!ann) { HERROR(DFE_BADPTR);  return FAIL; }
 
-    anntag = (type==DFAN_LABEL) ? DFTAG_FID : DFTAG_FD;
+    anntag = (uint16)((type==DFAN_LABEL) ? DFTAG_FID : DFTAG_FD);
 
     annref = Hnewref(file_id);
     if (annref==0) return FAIL;
@@ -1154,10 +1157,10 @@ int isfirst;
     /* Identify tag for this "type" of access; determine which ref to key on. */
     if (type == DFAN_LABEL) {
         anntag = DFTAG_FID;
-        annref = (isfirst == 1) ? DFREF_WILDCARD : Next_label_ref;
+        annref = (uint16)((isfirst == 1) ? DFREF_WILDCARD : Next_label_ref);
     } else {
         anntag = DFTAG_FD;
-        annref = (isfirst == 1) ? DFREF_WILDCARD : Next_desc_ref;
+        annref = (uint16)((isfirst == 1) ? DFREF_WILDCARD : Next_desc_ref);
     }
     aid = Hstartread(file_id, anntag, annref);
     if (aid == FAIL) {
@@ -1224,10 +1227,10 @@ int isfirst;
     /* Identify tag for this "type" of access; determine which ref to key on. */
     if (type == DFAN_LABEL) {
         anntag = DFTAG_FID;
-        annref = (isfirst == 1) ? DFREF_WILDCARD : Next_label_ref;
+        annref = (uint16)((isfirst == 1) ? DFREF_WILDCARD : Next_label_ref);
     } else {
         anntag = DFTAG_FD;
-        annref = (isfirst == 1) ? DFREF_WILDCARD : Next_desc_ref;
+        annref = (uint16)((isfirst == 1) ? DFREF_WILDCARD : Next_desc_ref);
     }
 
     aid = Hstartread(file_id, anntag, annref);

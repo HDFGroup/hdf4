@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1993/04/14 21:39:00  georgev
-Had to add some VOIDP casts to some functions to make the compiler happy.
+Revision 1.5  1993/04/19 22:47:07  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.4  1993/04/14  21:39:00  georgev
+ * Had to add some VOIDP casts to some functions to make the compiler happy.
+ *
  * Revision 1.3  1993/01/19  05:54:09  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -143,8 +146,8 @@ ndaiganl(filename, tag, ref, type, fnlen)
     char *fn;
     intf ret;
 
-    fn = HDf2cstring(filename, *fnlen);
-    ret = DFANIgetannlen(fn, (uint16) *tag, (uint16) *ref, *type);
+    fn = HDf2cstring(filename, (intn)*fnlen);
+    ret = DFANIgetannlen(fn, (uint16) *tag, (uint16) *ref, (intn)*type);
     HDfreespace((VOIDP)fn);
 
     return(ret);
@@ -180,9 +183,9 @@ ndaigann(filename, tag, ref, annotation, maxlen, type, fnlen)
     char *fn;
     intf ret;
 
-    fn = HDf2cstring(filename, *fnlen);
+    fn = HDf2cstring(filename, (intn)*fnlen);
     ret = DFANIgetann(fn, (uint16) *tag, (uint16) *ref, 
-                      (uint8*)_fcdtocp(annotation), *maxlen, *type);
+                (uint8*)_fcdtocp(annotation), (int32)*maxlen, (intn)*type);
     HDfreespace((VOIDP)fn);
 
     return(ret);
@@ -218,9 +221,9 @@ ndaipann(filename, tag, ref, annotation, annlen, type, fnlen)
     char *fn;
     intf ret;
 
-    fn = HDf2cstring(filename, *fnlen);
+    fn = HDf2cstring(filename, (intn)*fnlen);
     ret = DFANIputann(fn, (uint16) *tag, (uint16) *ref, 
-                      (uint8*)_fcdtocp(annotation), *annlen, *type);
+                (uint8*)_fcdtocp(annotation), (int32)*annlen, (intn)*type);
     HDfreespace((VOIDP)fn);
     return(ret);
 }
@@ -264,7 +267,7 @@ ndailist(filename, tag, reflist, labellist,listsize, maxlen,startpos,fnlen)
     intf nrefs;
     uint16 *tempreflist;
 
-    fn = HDf2cstring(filename, *fnlen);
+    fn = HDf2cstring(filename, (intn)*fnlen);
 
     /* create reflist with true uint16s to maintain compatibility
     ** with machines that allocate more than 16 bits per uint16.
@@ -380,7 +383,7 @@ ndfangetfidlen(dfile, isfirst)
     intf *isfirst;
 #endif /* PROTOTYPE */
 {
-     return ( DFANIgetfannlen( *dfile, DFAN_LABEL, *isfirst) );
+     return ( DFANIgetfannlen( *dfile, DFAN_LABEL, (intn)*isfirst) );
 }
 
 
@@ -403,7 +406,7 @@ ndfangetfdslen(dfile, isfirst)
     intf *isfirst;
 #endif /* PROTOTYPE */
 {
-     return ( DFANIgetfannlen( *dfile, DFAN_DESC, *isfirst) );
+     return ( DFANIgetfannlen( *dfile, DFAN_DESC, (intn)*isfirst) );
 }
 
 
@@ -429,7 +432,8 @@ ndfangetfid(dfile, id, maxlen, isfirst)
     intf *isfirst;
 #endif /* PROTOTYPE */
 {
-    return( DFANIgetfann( *dfile, _fcdtocp(id), *maxlen, DFAN_LABEL, *isfirst));
+    return( DFANIgetfann( *dfile, _fcdtocp(id), *maxlen,
+            DFAN_LABEL, (intn)*isfirst));
 }
 
 
@@ -455,7 +459,8 @@ ndfangetfds(dfile, id, maxlen, isfirst)
     intf *isfirst;
 #endif /* PROTOTYPE */
 {
-    return( DFANIgetfann( *dfile, _fcdtocp(id), *maxlen, DFAN_DESC, *isfirst));
+    return( DFANIgetfann( *dfile, _fcdtocp(id), *maxlen,
+            DFAN_DESC, (intn)*isfirst));
 }
 
 /*-----------------------------------------------------------------------------
@@ -506,7 +511,7 @@ ndagfidl(dfile, isfirst)
     intf *isfirst;
 #endif /* PROTOTYPE */
 {
-     return ( DFANIgetfannlen( *dfile, DFAN_LABEL, *isfirst) );
+     return ( DFANIgetfannlen( *dfile, DFAN_LABEL, (intn)*isfirst) );
 }
 
 
@@ -529,7 +534,7 @@ ndagfdsl(dfile, isfirst)
     intf *isfirst;
 #endif /* PROTOTYPE */
 {
-     return ( DFANIgetfannlen( *dfile, DFAN_DESC, *isfirst) );
+     return ( DFANIgetfannlen( *dfile, DFAN_DESC, (intn)*isfirst) );
 }
 
 
@@ -555,7 +560,8 @@ ndagfid(dfile, id, maxlen, isfirst)
     intf *isfirst;
 #endif /* PROTOTYPE */
 {
-    return( DFANIgetfann( *dfile, _fcdtocp(id), *maxlen, DFAN_LABEL, *isfirst));
+    return( DFANIgetfann( *dfile, _fcdtocp(id), *maxlen,
+            DFAN_LABEL, (intn)*isfirst));
 }
 
 
@@ -582,7 +588,8 @@ ndagfds(dfile, id, maxlen, isfirst)
     intf *isfirst;
 #endif /* PROTOTYPE */
 {
-    return( DFANIgetfann( *dfile, _fcdtocp(id), *maxlen, DFAN_DESC, *isfirst));
+    return( DFANIgetfann( *dfile, _fcdtocp(id), *maxlen,
+            DFAN_DESC, (intn)*isfirst));
 }
 
 

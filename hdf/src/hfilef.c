@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1993/02/18 04:34:52  georgev
-Minor syntax fix.
+Revision 1.7  1993/04/19 22:48:11  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.6  1993/02/18  04:34:52  georgev
+ * Minor syntax fix.
+ *
  * Revision 1.5  1993/02/17  20:49:00  briand
  * added FORTRAN stub for Hnumber.
  *
@@ -77,8 +80,8 @@ nhiopen(name, access, defdds, namelen)
     char *fn;
     intf ret;
     
-    fn = HDf2cstring(name, *namelen);
-    ret = (intf) Hopen(fn, *access, *defdds);
+    fn = HDf2cstring(name, (intn)*namelen);
+    ret = (intf) Hopen(fn, (intn)*access, (int16)*defdds);
     HDfreespace(fn);
     return(ret);
 }

@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.12  1993/04/05 22:35:48  koziol
-Fixed goofups made in haste when patching code.
+Revision 1.13  1993/04/19 22:48:08  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.12  1993/04/05  22:35:48  koziol
+ * Fixed goofups made in haste when patching code.
+ *
  * Revision 1.11  1993/03/29  16:48:03  koziol
  * Updated JPEG code to new JPEG 4 code.
  * Changed VSets to use Threaded-Balanced-Binary Tree for internal
@@ -50,7 +53,11 @@ Fixed goofups made in haste when patching code.
 /* maximum number of files (number of slots for file records) */
 
 #ifndef MAX_FILE
+#ifdef PC
+#   define MAX_FILE 8
+#else
 #   define MAX_FILE 16
+#endif
 #endif
 
 /* maximum number of access elements */

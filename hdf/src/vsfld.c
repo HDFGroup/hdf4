@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1993/04/06 17:23:50  chouck
-Added Vset macros
+Revision 1.7  1993/04/19 22:48:42  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.6  1993/04/06  17:23:50  chouck
+ * Added Vset macros
+ *
  * Revision 1.5  1993/03/29  16:50:54  koziol
  * Updated JPEG code to new JPEG 4 code.
  * Changed VSets to use Threaded-Balanced-Binary Tree for internal
@@ -205,9 +208,9 @@ char    *fields;
                     order = rstab[j].order;
                     wlist.type[wlist.n]  =  rstab[j].type;
                     wlist.order[wlist.n] =  order;
-                    wlist.esize[wlist.n] =  order * DFKNTsize(rstab[j].type | DFNT_NATIVE);
+                    wlist.esize[wlist.n] =  (int16)(order * DFKNTsize(rstab[j].type | DFNT_NATIVE));
                     wlist.isize[wlist.n] =  order * rstab[j].isize;
-                    wlist.ivsize  += wlist.isize[wlist.n];
+                    wlist.ivsize  += (int16)(wlist.isize[wlist.n]);
                     wlist.n++;
                     break;
                 }
@@ -222,9 +225,9 @@ char    *fields;
                         order = vs->usym[j].order;
                         wlist.type[wlist.n]  = vs->usym[j].type;
                         wlist.order[wlist.n] = order;
-                        wlist.esize[wlist.n] = order * DFKNTsize(vs->usym[j].type | DFNT_NATIVE);
+                        wlist.esize[wlist.n] = (int16)(order * DFKNTsize(vs->usym[j].type | DFNT_NATIVE));
                         wlist.isize[wlist.n] = order * vs->usym[j].isize;
-                        wlist.ivsize+= wlist.isize[wlist.n];
+                        wlist.ivsize+= (int16)(wlist.isize[wlist.n]);
                         wlist.n++;
                         break;
                     }
@@ -242,7 +245,7 @@ char    *fields;
     
     /* compute and save the fields' offsets */
         for (j=0,i=0; i<wlist.n; i++) {
-            wlist.off[i] =j;
+            wlist.off[i] =(int16)j;
             j += wlist.isize[i];
         }
     
@@ -347,7 +350,7 @@ int32   localtype, order;
         }
   
     if (replacesym)
-        usymid = j; /* new definition will replace old at this index */
+        usymid = (int16)j; /* new definition will replace old at this index */
     else
         usymid = vs->nusym;
   

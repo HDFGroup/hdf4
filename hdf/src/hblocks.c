@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/01/19 05:55:34  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.4  1993/04/19 22:47:55  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.3  1993/01/19  05:55:34  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.2  1992/12/18  15:46:32  mfolk
  * added the line "access_rec->posn += bytes_read", because the linked
  * block read routine did not update the read pointer properly.  This
@@ -288,9 +291,9 @@ int32 HLcreate(file_id, tag, ref, block_length, number_blocks)
     /* allocate info structure and file it in */
     info->link = HLInewlink(file_id, number_blocks, link_ref,
 #ifndef oldspecial
-                           data_dd ? data_dd->ref : 0
+                           (uint16)(data_dd ? data_dd->ref : 0)
 #else
-                           0
+                           (uint16)0
 #endif
                            );
     if (!info->link) {
@@ -834,7 +837,8 @@ PRIVATE int32 HLIwrite(access_rec, length, data)
 
                    uint16 link_tag = DFTAG_LINKED;
                    uint16 link_ref = /* ref of current link */
-                       prev_link!=NULL ? prev_link->nextref : info->link_ref;
+                            (uint16)(prev_link!=NULL ?
+                                prev_link->nextref : info->link_ref);
 
                    uint8 *p = tbuf;   /* temp buf ptr */
 
@@ -934,7 +938,7 @@ PRIVATE int32 HLIwrite(access_rec, length, data)
 
            uint16 link_tag = DFTAG_LINKED;
            uint16 link_ref =   /* ref of the current link/block table */
-               prev_link ? prev_link->nextref : info->link_ref;
+               (uint16)(prev_link ? prev_link->nextref : info->link_ref);
 
            uint8 *p =  /* temp buffer ptr */
                tbuf;
@@ -989,7 +993,7 @@ PRIVATE int32 HLIwrite(access_rec, length, data)
                {               /* BB */
                    uint16 link_tag = DFTAG_LINKED;
                    uint16 link_ref = /* ref of current link/block table */
-                       prev_link ? prev_link->nextref : info->link_ref;
+                       (uint16)(prev_link ? prev_link->nextref : info->link_ref);
 
                    uint8 *p = /* temp buffer ptr */
                        tbuf;

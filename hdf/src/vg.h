@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.8  1993/04/08 18:33:52  chouck
-Various Vset modifications (additions of Vdelete and VSdelete)
+Revision 1.9  1993/04/19 22:48:28  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.8  1993/04/08  18:33:52  chouck
+ * Various Vset modifications (additions of Vdelete and VSdelete)
+ *
  * Revision 1.7  1993/04/06  17:23:41  chouck
  * Added Vset macros
  *
@@ -118,7 +121,6 @@ typedef struct vdata_memory_struct
   struct vdata_memory_struct * next;
 } VMBLOCK;
 
-
 typedef struct write_struct	
 {
   intn  n;                  /* S actual # fields in element */
@@ -153,16 +155,16 @@ struct vgroup_desc
 { 
   uint16  otag, oref;	   	/* tag-ref of this vgroup */
   HFILEID f;	 	    	/* HDF file id  */
-  uint16  nvelt; 		/* S no of objects */
-  intn	  access;		/* 'r' or 'w' */
-  uint16  *tag;                 /* S tag of objects */
-  uint16  *ref;	                /* S ref of objects */
-  char	  vgname[VGNAMELENMAX+1];/* S name of this vgroup */
-  char	  vgclass[VGNAMELENMAX+1];/* S class name of this vgroup */
-  intn	  marked;		/* =1 if new info has been added to vgroup */
-  uint16  extag, exref;	        /* expansion tag-ref */
+  uint16  nvelt;            /* S no of objects */
+  intn    access;           /* 'r' or 'w' */
+  uint16  *tag;             /* S tag of objects */
+  uint16  *ref;             /* S ref of objects */
+  char    vgname[VGNAMELENMAX+1];   /* S name of this vgroup */
+  char    vgclass[VGNAMELENMAX+1];  /* S class name of this vgroup */
+  intn    marked;           /* =1 if new info has been added to vgroup */
+  uint16  extag, exref;     /* expansion tag-ref */
   int16	  version, more;	/* version and "more" field */	
-  intn    msize;                /* max size of storage arrays */
+  intn    msize;            /* max size of storage arrays */
 };      
 /* VGROUP */
 
@@ -176,12 +178,12 @@ struct vgroup_desc
 
 struct vdata_desc { 
   uint16	otag, oref; 		/* tag,ref of this vdata */
-  HFILEID	f; 	  		/* HDF file id */
-  intn		access;			/* 'r' or 'w' */
-  char		vsname[VSNAMELENMAX+1]; /* S name of this vdata */
+  HFILEID   f;                  /* HDF file id */
+  intn      access;             /* 'r' or 'w' */
+  char      vsname[VSNAMELENMAX+1]; /* S name of this vdata */
   char		vsclass[VSNAMELENMAX+1];/* S class name of this vdata */
-  int16		interlace;		/* S  interlace as in file */
-  int32		nvertices;		/* S  #vertices in this vdata */
+  int16     interlace;          /* S  interlace as in file */
+  int32     nvertices;          /* S  #vertices in this vdata */
   VWRITELIST	wlist;
   VREADLIST	rlist;
   int16  	nusym;
@@ -257,8 +259,6 @@ struct vdata_desc {
 #define LOCAL_SHORTSIZE  	sizeof(short)
 #define LOCAL_DOUBLESIZE  	sizeof(double)
 
-/* kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk */
-
 /* need to tune these to vertex boundary later.  Jason Ng 6-APR-92 */
 #define VDEFAULTBLKSIZE    1024
 #define VDEFAULTNBLKS      32
@@ -282,11 +282,8 @@ typedef struct vg_instance_struct {
     uintn    ref;           /* ref # of this vgroup in the file */
                             /* needs to be second in the structure */
     intn    nattach;        /* # of current attachs to this vgroup */
-    int32 	nentries;	/* # of entries in that vgroup initially */
+    int32   nentries;       /* # of entries in that vgroup initially */
     VGROUP 	*vg;			/* points to the vg when it is attached */
-#ifdef OLD_WAY
-	struct vg_instance_struct * next;
-#endif
 } vginstance_t; 
 
 /* this is a memory copy of a vs tag/ref found in the file */
@@ -298,9 +295,6 @@ typedef struct vs_instance_struct {
     intn    nattach;        /* # of current attachs to this vdata */
     int32   nvertices;      /* # of elements in that vdata initially */
 	VDATA	*vs; 			/* points to the vdata when it is attached */
-#ifdef OLD_WAY
-	struct vs_instance_struct * next;
-#endif
 }	vsinstance_t; 
 
 /* each vfile_t maintains 2 linked lists: one of vgs and one of vdatas
@@ -309,22 +303,12 @@ typedef struct vs_instance_struct {
 typedef int32 treekey;          /* type of keys for */
 
 typedef struct vfiledir_struct {
-  int32         vgtabn;         /* # of vg entries in vgtab so far */
-#ifdef OLD_WAY
-  vginstance_t	vgtab;			/* start of vg linked list */
-  vginstance_t	*vgtabtail;	 	/* its tail end */
-#else
-    TBBT_TREE   *vgtree;         /* Root of VGroup B-Tree */
-#endif
+    int32       vgtabn;         /* # of vg entries in vgtab so far */
+    TBBT_TREE   *vgtree;        /* Root of VGroup B-Tree */
   
-  int32         vstabn;         /* # of vs entries in vstab so far */
-#ifdef OLD_WAY
-  vsinstance_t  vstab;          /* start of vs linked list */
-  vsinstance_t	*vstabtail;		/* its tail end */
-#else
+    int32       vstabn;         /* # of vs entries in vstab so far */
     TBBT_TREE   *vstree;         /* Root of VSet B-Tree */
-#endif
-  intn     access;  /* the number of active pointers to this file's Vstuff */
+    intn        access;     /* the number of active pointers to this file's Vstuff */
 } vfile_t;
 
 /*
@@ -358,8 +342,6 @@ typedef struct vfiledir_struct {
 /* .................................................................. */
 #define VSET_VERSION   3     /* DO NOT CHANGE!! */
 #define VSET_OLD_TYPES 2     /* All version <= 2 use old type mappings */
-
-#include <ctype.h>
 
 /* .................................................................. */
 
@@ -407,7 +389,6 @@ typedef struct vfiledir_struct {
 #define DFvsetopen(x,y,z)  Vopen((x),(y),(z))
 #define DFvsetclose(x)     Vclose((x))
 #endif /* OLD_MACROS */
-
 
 #endif /* _VG_H */
 

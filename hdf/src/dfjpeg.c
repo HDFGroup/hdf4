@@ -39,7 +39,8 @@ PRIVATE intn img_scheme;    /* What type of image comp. are we doing? 24 or 8 bi
 #ifdef OLD_WAY
 #define emit_byte(cinfo,x)  putc((x), cinfo->output_file)
 #else
-#define emit_byte(aid,x)    do {uint8 c=x; Hwrite(aid,1,&c); byte_count++;} while(0)
+#define emit_byte(aid,x)    do {uint8 c=(uint8)x; Hwrite((int32)aid,(int32)1,&c); \
+    byte_count++;} while(0)
 #endif
 
 #ifdef OLD_WAY

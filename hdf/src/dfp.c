@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/01/19 05:54:47  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.4  1993/04/19 22:47:22  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.3  1993/01/19  05:54:47  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.2  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -179,7 +182,7 @@ intn DFPputpal(filename, palette, overwrite, filemode)
             Writeref is set, we use that ref.  If not we get a fresh ref. The
             ref to write is placed in Lastref */
 
-    if (!overwrite) Lastref = Writeref ? Writeref : Hnewref(file_id);
+    if (!overwrite) Lastref = (uint16)(Writeref ? Writeref : Hnewref(file_id));
     if (Lastref == 0) return FAIL;
 
     Writeref = 0;           /* don't know ref to write after this */

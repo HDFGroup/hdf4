@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1993/04/14 21:39:11  georgev
-Had to add some VOIDP casts to some functions to make the compiler happy.
+Revision 1.5  1993/04/19 22:47:24  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.4  1993/04/14  21:39:11  georgev
+ * Had to add some VOIDP casts to some functions to make the compiler happy.
+ *
  * Revision 1.3  1993/01/19  05:54:50  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -89,7 +92,7 @@ ndpigpal(filename, pal, fnlen)
     char *fn;
     intf ret;
 
-    fn = HDf2cstring(filename, *fnlen);
+    fn = HDf2cstring(filename, (intn)*fnlen);
     ret =  DFPgetpal(fn, (VOIDP)_fcdtocp(pal));
     HDfreespace((VOIDP)fn);
     return(ret);
@@ -128,8 +131,8 @@ ndpippal(filename, pal, overwrite, filemode, fnlen)
     char *fn;
     intf ret;
 
-    fn = HDf2cstring(filename, *fnlen);
-    ret =  DFPputpal(fn, (VOIDP)_fcdtocp(pal), *overwrite,
+    fn = HDf2cstring(filename, (intn)*fnlen);
+    ret =  DFPputpal(fn, (VOIDP)_fcdtocp(pal), (intn)*overwrite,
             (char*)_fcdtocp(filemode));
     HDfreespace((VOIDP)fn);
     return(ret);
@@ -157,7 +160,7 @@ ndpinpal(filename, fnlen)
     char *fn;
     intf ret;
 
-    fn = HDf2cstring(filename, *fnlen);
+    fn = HDf2cstring(filename, (intn)*fnlen);
     ret =  DFPnpals(fn);
     HDfreespace((VOIDP)fn);
     return(ret);
@@ -188,7 +191,7 @@ ndpirref(filename, ref, fnlen)
     char *fn;
     intf ret;
 
-    fn = HDf2cstring(filename, *fnlen);
+    fn = HDf2cstring(filename, (intn)*fnlen);
     ret =  DFPreadref(fn, *ref);
     HDfreespace((VOIDP)fn);
     return(ret);
@@ -221,7 +224,7 @@ ndpiwref(filename, ref, fnlen)
     char *fn;
     intf ret;
 
-    fn = HDf2cstring(filename, *fnlen);
+    fn = HDf2cstring(filename, (intn)*fnlen);
     ret =  DFPreadref(fn, *ref);
     HDfreespace((VOIDP)fn);
     return(ret);

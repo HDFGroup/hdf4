@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.4  1993/03/29 16:50:23  koziol
+# Revision 1.5  1993/04/19 22:48:21  koziol
+# General Code Cleanup to reduce/remove errors on the PC
+#
+# Revision 1.4  1993/03/29  16:50:23  koziol
 # Updated JPEG code to new JPEG 4 code.
 # Changed VSets to use Threaded-Balanced-Binary Tree for internal
 # 	(in memory) representation.
@@ -62,31 +65,31 @@
 # You must modify the lines marked "# ==>".
 #
 
-#.SUFFIXES : .f
+.SUFFIXES : .f
 
 # ==> specify your machine
 MACHINE=PC
 
-INCDIR=../include
-LIBDIR=../lib
-BINDIR=../bin
+INCDIR=..\include
+LIBDIR=..\lib
+BINDIR=..\bin
 
 # ==> where are your hdf.h, hdfi.h and vg.h files located?
-IFLAGS=   /I../include /I.
+IFLAGS=   /I$(INCDIR) /I.
 
 # ==> specify your FORTRAN compiler
 FC=fl
-FFLAGS= /AH /4I4 $(IFLAGS) /W2 /Od /Tf
+FFLAGS= /Gt64 /AH /4I4 $(IFLAGS) /W2 /Od /Tf
 
 # ==> specify your C compiler
 CC=cl
-#CFLAGS=  /D$(MACHINE) /AH /W4 /Ox $(IFLAGS) /Zp1
-CFLAGS=  /D$(MACHINE) /AH /W4 /Od $(IFLAGS) /Zi /Zp1
-#CFLAGS=  /D$(MACHINE) /AH /W4 /Od $(IFLAGS) /C /P
-#CFLAGS=  /D$(MACHINE) /AH /W4 /Od $(IFLAGS) /Zg
+#CFLAGS=  /D$(MACHINE) /Gt64 /AH /W4 /Ox $(IFLAGS) /Zp1
+CFLAGS=  /D$(MACHINE) /Gt64 /AH /W4 /Od $(IFLAGS) /Zi /Zp1
+#CFLAGS=  /D$(MACHINE) /Gt64 /AH /W4 /Od $(IFLAGS) /C /P
+#CFLAGS=  /D$(MACHINE) /Gt64 /AH /W4 /Od $(IFLAGS) /Zg
 
 # ==> where is your HDF library (df.lib) located?
-LIBS= ../lib/df.lib
+LIBS= $(LIBDIR)\df.lib
 
 # ==> specify your archiver
 AR=lib
@@ -461,9 +464,9 @@ jmemdosa.obj : jmemdosa.asm
 
 install:
 	-mkdir $(INCDIR)
-    -cp *.h $(INCDIR)
+    -copy *.h $(INCDIR)
 	-mkdir $(LIBDIR)
-    -cp df.lib $(LIBDIR)
+    -copy df.lib $(LIBDIR)
 
 clean:
     -$(RM) $(RMFLAGS) *.obj

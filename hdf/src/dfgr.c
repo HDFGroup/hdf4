@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1993/04/05 22:35:06  koziol
-Fixed goofups made in haste when patching code.
+Revision 1.9  1993/04/19 22:47:12  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.8  1993/04/05  22:35:06  koziol
+ * Fixed goofups made in haste when patching code.
+ *
  * Revision 1.7  1993/03/29  18:38:16  chouck
  * Cleaned up a bunch of casting problems
  *
@@ -1267,7 +1270,7 @@ int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran, newfile)
             (Grcompr!=DFTAG_GREYJPEG && Grcompr!=DFTAG_JPEG));
 #endif
 
-    wtag = (type==LUT) ? DFTAG_LUT : (Grcompr ? DFTAG_CI : DFTAG_RI);
+    wtag = (uint16)((type==LUT) ? DFTAG_LUT : (Grcompr ? DFTAG_CI : DFTAG_RI));
     Grwrite.data[type].tag = wtag;
 
 
@@ -1283,7 +1286,7 @@ int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran, newfile)
             newlut = (uint8 *) HDgetspace((uint32)lutsize);
         }
         if (DFputcomp(file_id, wtag, wref, (uint8*)imlut, xdim, ydim,
-                     (uint8*)Grlutdata, (uint8*)newlut, Grcompr, &Grcinfo)
+                    (uint8*)Grlutdata, (uint8*)newlut, (int16)Grcompr, &Grcinfo)
                      == FAIL)
             return(HDerr(file_id));
     } else {                   /* image need not be compressed */
@@ -1296,16 +1299,16 @@ int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran, newfile)
 
     /* Write out Raster-8 tags for those who want it */
     if (is8bit) {
-        wtag = (type==LUT) ? DFTAG_IP8 : Grcompr ?
+        wtag = (uint16)((type==LUT) ? DFTAG_IP8 : Grcompr ?
             ((Grcompr==DFTAG_RLE) ? DFTAG_CI8 :
-                    DFTAG_II8) : DFTAG_RI8;
+                    DFTAG_II8) : DFTAG_RI8);
 
         if(Hdupdd(file_id, wtag, wref, Grwrite.data[type].tag, wref) == FAIL)
             return(HDerr(file_id));
       } /* end if */
 
     if (type==IMAGE)
-       Grwrite.datadesc[IMAGE].compr.tag = Grcompr;
+       Grwrite.datadesc[IMAGE].compr.tag = (uint16)Grcompr;
 
     if (Grcompr==DFTAG_IMC) {
         if (Hputelement(file_id, DFTAG_LUT, wref, newlut, lutsize) == FAIL)

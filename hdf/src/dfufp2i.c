@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/01/19 05:55:24  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.4  1993/04/19 22:47:48  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.3  1993/01/19  05:55:24  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.2  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -277,7 +280,7 @@ struct Output *out;
 /*    printoutput(out);*/   /* for debugging */
 
     ret = DFR8addimage(out->outfile, (char *)out->image,
-                             out->hres,out->vres,out->compress);
+                             out->hres,out->vres,(int16)out->compress);
     if (ret < 0) return ret;
     /*
     *  free allocated space
@@ -683,7 +686,7 @@ int32 *offsets;
     midpt = (float32 *) HDgetspace((uint32)sizeof(float32)*dim);
 
     for (i=0; i < dim-1; i++) {                  /* compute all midpoints */
-        midpt[i] = (scale[i] + scale[i+1])/2.0;
+        midpt[i] = (scale[i] + scale[i+1])/(float32)2.0;
 /*        printf("midpt[%d]=%8.1f\tscale[%d]=%8.1f\n",i,midpt[i],i,scale[i]);*/
     }
     midpt[i] = scale[i] + scale[i] - midpt[i-1]; /* tack one onto end */

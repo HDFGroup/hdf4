@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.9  1993/04/08 18:34:01  chouck
-Various Vset modifications (additions of Vdelete and VSdelete)
+Revision 1.10  1993/04/19 22:48:39  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.9  1993/04/08  18:34:01  chouck
+ * Various Vset modifications (additions of Vdelete and VSdelete)
+ *
  * Revision 1.8  1993/04/05  22:36:00  koziol
  * Fixed goofups made in haste when patching code.
  *
@@ -298,11 +301,11 @@ extern int32 Vgettagref
   PROTO((int32 vkey, int32 which, int32 _HUGE *tag, int32 _HUGE *ref));
 #endif
 
-extern int32 Vgetotag
-  PROTO((int32 vkey, int32 _HUGE *tag));
+extern int32 VQueryref
+  PROTO((int32 vkey));
 
-extern int32 Vgetoref
-  PROTO((int32 vkey, int32 _HUGE *ref));
+extern int32 VQuerytag
+  PROTO((int32 vkey));
 
 #ifdef OLD_WAY
 extern int32 Vaddtagref
@@ -454,11 +457,11 @@ extern void VSdetach
     PROTO((int32 vkey));
 #endif
 
-extern int32 VSgetotag
-  PROTO((int32 vkey, int32 _HUGE *tag));
+extern int32 VSQuerytag
+  PROTO((int32 vkey));
 
-extern int32 VSgetoref
-  PROTO((int32 vkey, int32 _HUGE *ref));
+extern int32 VSQueryref
+  PROTO((int32 vkey));
 
 extern int32 VSgetid
     PROTO((HFILEID f, int32 vsid));

@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/01/19 05:55:32  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.4  1993/04/19 22:47:52  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.3  1993/01/19  05:55:32  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.2  1992/09/11  14:15:04  koziol
  * Changed Fortran stubs' parameter passing to use a new typedef, intf,
  * which should be typed to the size of an INTEGER*4 in whatever Fortran
@@ -61,7 +64,7 @@ ndfindnr(dfile, tag, lref)
      intf *tag, *lref;
 #endif /* PROTOTYPE */
 {
-    return(DFfindnextref(*dfile, *tag, *lref));
+    return(DFfindnextref(*dfile, (uint16)*tag, (uint16)*lref));
 }
 
 /*
@@ -89,5 +92,5 @@ ndffindnextref(dfile, tag, lref)
      intf *tag, *lref;
 #endif /* PROTOTYPE */
 {
-    return(DFfindnextref(*dfile, *tag, *lref));
+    return(DFfindnextref(*dfile, (uint16)*tag, (uint16)*lref));
 }

@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/01/19 05:54:35  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.4  1993/04/19 22:47:15  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.3  1993/01/19  05:54:35  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -56,7 +59,7 @@ struct rgb
 
 struct box
 {
-    float bnd[3][2];
+    float32 bnd[3][2];
     int *pts;
     int nmbr_pts;
     int nmbr_distinct;
@@ -240,7 +243,7 @@ PRIVATE VOID compress(raster, block)
        /*    printf("compress: y[%d] is %f\n",i,y[i]);*/
        y_av = y_av + y[i];
     }
-    y_av = y_av / 16.0;
+    y_av /= (float32)16.0;
     /*  printf("y_av is %f\n",y_av); */
 
     /* initialize c_hi and c_lo */
@@ -262,7 +265,7 @@ PRIVATE VOID compress(raster, block)
        {
            if (y[j] > y_av)
            {
-               image[k] = image[k] | bit;
+               image[k] |= bit;
                high++;
                for (l=RED; l<= BLUE; l++)
                    c_hi[l] = c_hi[l] + (int)raster[3*j+l];
@@ -538,9 +541,6 @@ s[k]*3
     }
 } /* end of map */
 
-
-
-
 /************************************************************************/
 /*  Function    : nearest_color                     */
 /*  Purpose : Finds the nearest palette color           */
@@ -552,7 +552,7 @@ s[k]*3
 /************************************************************************/
 
 #ifdef PROTOTYPE
-PRIVATE int nearest_color(unsigned char r, unsigned char g, unsigned char b)
+PRIVATE int nearest_color(uint8 r, uint8 g, uint8 b)
 #else
 PRIVATE int nearest_color(r, g, b)
     uint8 r, g, b;
@@ -561,14 +561,13 @@ PRIVATE int nearest_color(r, g, b)
     int i, nearest;
     long int min, error;
 
-    min = sqr(r-new_pal[0]) + sqr(g-new_pal[1]) + sqr(b-new_pal[2]);
+    min = sqr((int16)(r-new_pal[0])) + sqr((int16)(g-new_pal[1])) +
+            sqr((int16)(b-new_pal[2]));
     nearest = 0;
-    for (i=1; i<PALSIZE; i++)
-    {
-       error = sqr(r-new_pal[3*i]) + sqr(g-new_pal[3*i+1]) +
-           sqr(b-new_pal[3*i+2]);
-       if (error < min)
-       {
+    for (i=1; i<PALSIZE; i++) {
+       error = sqr((int16)(r-new_pal[3*i])) + sqr((int16)(g-new_pal[3*i+1])) +
+            sqr((int16)(b-new_pal[3*i+2]));
+       if (error < min) {
            min = error;
            nearest = i;
        }
@@ -792,8 +791,7 @@ PRIVATE VOID init(blocks, distinct, color_pt)
 
     /* set up first box */
     first = (struct box *) HDgetspace(sizeof(struct box));
-    for (i=RED; i<=BLUE; i++)
-    {
+    for (i=RED; i<=BLUE; i++) {
        first->bnd[i][LO] = (float32)999.9;
        first->bnd[i][HI] = (float32)-999.9;
 
@@ -806,8 +804,8 @@ PRIVATE VOID init(blocks, distinct, color_pt)
                first->bnd[i][HI] = (float)distinct_pt[j].c[i];
        } /* end of for j */
 
-       first->bnd[i][LO] = first->bnd[i][LO] - EPSILON;
-       first->bnd[i][HI] = first->bnd[i][HI] + EPSILON;
+       first->bnd[i][LO] = first->bnd[i][LO] - (float32)EPSILON;
+       first->bnd[i][HI] = first->bnd[i][HI] + (float32)EPSILON;
     } /* end of for i */
 
     first->pts = (int *)HDgetspace((unsigned)distinct * sizeof(int));
@@ -1093,10 +1091,6 @@ PRIVATE VOID assign_color()
     } /* end of for entry */
 }
 
-
-
-
-
 /************************************************************************/
 /*  Function    : select_dim                        */
 /*  Purpose : Selects the dimension with the largest spread         */
@@ -1106,7 +1100,6 @@ PRIVATE VOID assign_color()
 /*  Called by   : split_box()                       */
 /*  Calls       : none                          */
 /************************************************************************/
-
 #ifdef PROTOTYPE
 PRIVATE int select_dim(struct box *ptr)
 #else
@@ -1118,37 +1111,29 @@ PRIVATE int select_dim(ptr)
     uint8 low[3], high[3];
     uint8 max;
 
-
-    for (j=RED; j<=BLUE; j++)
-    {
+    for (j=RED; j<=BLUE; j++) {
        low[j] = distinct_pt[ptr->pts[0]].c[j];
        high[j] = distinct_pt[ptr->pts[0]].c[j];
     }
 
     for (i=1; i<ptr->nmbr_distinct; i++)
-       for (j=RED; j<=BLUE; j++)
-       {
+       for (j=RED; j<=BLUE; j++) {
            if (low[j] > distinct_pt[ptr->pts[i]].c[j])
                low[j] = distinct_pt[ptr->pts[i]].c[j];
            if (high[j] < distinct_pt[ptr->pts[i]].c[j])
                high[j] = distinct_pt[ptr->pts[i]].c[j];
        }
 
-    max = high[RED] - low[RED];
+    max = (uint8)(high[RED] - low[RED]);
     i = RED;
     for (j=GREEN; j<=BLUE; j++)
-       if (max < (high[j] - low[j]))
-       {
-           max = high[j] - low[j];
+       if (max < (uint8)(high[j] - low[j])) {
+           max = (uint8)(high[j] - low[j]);
            i = j;
        }
 
     return i;
 } /* end of select_dim */
-
-
-
-
 
 /************************************************************************/
 /*  Function    : find_med                      */
@@ -1173,7 +1158,7 @@ PRIVATE float find_med(ptr,dim)
 {
     int i, j, count, next, prev;
     int *rank;
-    float median;
+    float32 median;
 
     rank = (int *)HDgetspace((unsigned)ptr->nmbr_distinct * sizeof(int));
     for (i=0; i<ptr->nmbr_distinct; i++)
@@ -1201,10 +1186,10 @@ PRIVATE float find_med(ptr,dim)
     if (prev == 0)
     {
        /* the first distinct point overshot the median */
-       median = (float)distinct_pt[rank[prev]].c[dim] + EPSILON;
+       median = (float32)distinct_pt[rank[prev]].c[dim] + (float32)EPSILON;
     }
     else
-       median = (float)distinct_pt[rank[prev-1]].c[dim] + EPSILON;
+       median = (float32)distinct_pt[rank[prev-1]].c[dim] + (float32)EPSILON;
 
     HDfreespace((VOIDP) rank);
     return median;

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.7  1993/04/14 21:39:13  georgev
-Had to add some VOIDP casts to some functions to make the compiler happy.
+Revision 1.8  1993/04/19 22:47:30  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.7  1993/04/14  21:39:13  georgev
+ * Had to add some VOIDP casts to some functions to make the compiler happy.
+ *
  * Revision 1.6  1993/03/29  16:47:35  koziol
  * Updated JPEG code to new JPEG 4 code.
  * Changed VSets to use Threaded-Balanced-Binary Tree for internal
@@ -155,7 +158,7 @@ nd8igdim(filename, xdim, ydim, ispal, lenfn)
     char *fn;
     intf ret;
 
-    fn = HDf2cstring(filename, *lenfn);
+    fn = HDf2cstring(filename, (intn)*lenfn);
     ret =  DFR8getdims(fn, (int32 *)xdim, (int32 *)ydim, (intn *)ispal);
     HDfreespace((VOIDP)fn);
     return(ret);
@@ -188,7 +191,7 @@ nd8igimg(filename, image, xdim, ydim, pal, lenfn)
     char *fn;
     intf ret;
 
-    fn = HDf2cstring(filename, *lenfn);
+    fn = HDf2cstring(filename, (intn)*lenfn);
     ret =  DFR8getimage(fn, (uint8 *)_fcdtocp(image), *xdim, *ydim,
             (uint8 *)_fcdtocp(pal));
     HDfreespace((VOIDP)fn);
@@ -223,8 +226,9 @@ nd8ipimg(filename, image, xdim, ydim, compress, lenfn)
     char *fn;
     intf ret;
 
-    fn = HDf2cstring(filename, *lenfn);
-    ret = DFR8putimage(fn, (VOIDP)_fcdtocp(image), *xdim, *ydim, *compress);
+    fn = HDf2cstring(filename, (intn)*lenfn);
+    ret = (intf)DFR8putimage(fn, (VOIDP)_fcdtocp(image),
+            (int32)*xdim, (int32)*ydim, (uint16)*compress);
     HDfreespace((VOIDP)fn);
     return(ret);
 }
@@ -257,8 +261,9 @@ nd8iaimg(filename, image, xdim, ydim, compress, lenfn)
     char *fn;
     intf ret;
 
-    fn = HDf2cstring(filename, *lenfn);
-    ret = DFR8addimage(fn, (VOIDP)_fcdtocp(image), *xdim, *ydim, *compress);
+    fn = HDf2cstring(filename, (intn)*lenfn);
+    ret = (intf)DFR8addimage(fn, (VOIDP)_fcdtocp(image),
+            (int32)*xdim, (int32)*ydim, (uint16)*compress);
     HDfreespace((VOIDP)fn);
     return(ret);
 }
@@ -290,7 +295,7 @@ nd8irref(filename, ref, fnlen)
     
     Ref = (uint16) *ref;
 
-    fn = HDf2cstring(filename, *fnlen);
+    fn = HDf2cstring(filename, (intn)*fnlen);
     if (!fn) return -1;
     ret = DFR8readref(fn, Ref);
     HDfreespace((VOIDP)fn);
@@ -325,7 +330,7 @@ nd8iwref(filename, ref, fnlen)
 
     Ref = (uint16) *ref;
 
-    fn = HDf2cstring(filename, *fnlen);
+    fn = HDf2cstring(filename, (intn)*fnlen);
     ret = DFR8writeref(fn, Ref);
     HDfreespace((VOIDP)fn);
     return (ret);
@@ -355,7 +360,7 @@ nd8inims(filename, fnlen)
     char *fn;
     intf ret;
 
-    fn = HDf2cstring(filename, *fnlen);
+    fn = HDf2cstring(filename, (intn)*fnlen);
     ret = DFR8nimages(fn);
     HDfreespace((VOIDP)fn);
     return (ret);

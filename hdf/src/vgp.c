@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.17  1993/04/15 19:18:45  koziol
-Fixed bug introduced into the tbbt routines with the last bugfix (sigh)
+Revision 1.18  1993/04/19 22:48:32  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.17  1993/04/15  19:18:45  koziol
+ * Fixed bug introduced into the tbbt routines with the last bugfix (sigh)
+ *
  * Revision 1.16  1993/04/14  21:39:29  georgev
  * Had to add some VOIDP casts to some functions to make the compiler happy.
  *
@@ -336,9 +339,9 @@ printf("vcompare: *k1=%d, *k2=%d\n",*(int32 *)k1,*(int32 *)k2);
   *** Only called by B-tree routines, should _not_ be called externally ***
 */
 #ifdef PROTOTYPE
-PUBLIC intn vprint(VOIDP k1)
+PUBLIC VOID vprint(VOIDP k1)
 #else
-PUBLIC intn vprint(k1)
+PUBLIC VOID vprint(k1)
 VOIDP k1;
 #endif
 {

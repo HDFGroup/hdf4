@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.12  1993/04/15 19:18:48  koziol
-Fixed bug introduced into the tbbt routines with the last bugfix (sigh)
+Revision 1.13  1993/04/19 22:48:36  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.12  1993/04/15  19:18:48  koziol
+ * Fixed bug introduced into the tbbt routines with the last bugfix (sigh)
+ *
  * Revision 1.11  1993/04/14  23:09:59  koziol
  * Added counts to the tbbt trees and fixed a bug in VSdelete()
  *
@@ -327,10 +330,10 @@ Convert an old type (i.e. LOCAL_INT to DFNT_ based types
 */
 PRIVATE
 #ifdef PROTOTYPE
-int16 map_from_old_types(int16 type)
+intn map_from_old_types(intn type)
 #else
-int16 map_from_old_types(type)
-int16 type;
+intn map_from_old_types(type)
+intn type;
 #endif
 {
     switch(type) {
@@ -443,7 +446,8 @@ int32   *size;  /* UNUSED, but retained for compatibility with vpackvs */
         
 	/* --- EXTRA --- fill in the machine-dependent size fields */
     for (i = 0; i < vs->wlist.n; i++)
-          vs->wlist.esize[i] = vs->wlist.order[i] * DFKNTsize(vs->wlist.type[i] | DFNT_NATIVE);
+          vs->wlist.esize[i] = (int16)(vs->wlist.order[i] *
+                DFKNTsize(vs->wlist.type[i] | DFNT_NATIVE));
         
 } /* vunpackvs */
 

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.11  1993/04/14 21:39:18  georgev
-Had to add some VOIDP casts to some functions to make the compiler happy.
+Revision 1.12  1993/04/19 22:48:03  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.11  1993/04/14  21:39:18  georgev
+ * Had to add some VOIDP casts to some functions to make the compiler happy.
+ *
  * Revision 1.10  1993/01/19  05:55:52  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -2164,9 +2167,8 @@ int Hsync(file_id)
             return FAIL;
           } /* end if */
       } /* end if */
-
-    return SUCCEED;
 #endif
+    return SUCCEED;
 }
 
 
@@ -2572,7 +2574,7 @@ uint16 HDmake_special_tag(tag)
     register int i;
 
     if (~tag & 0x8000)
-       return (tag | 0x4000);
+       return ((uint16)(tag | 0x4000));
 
     for (i=0; i<SP_TAB_SZ; i++)
        if (special_table[i].tag == tag)
@@ -2614,7 +2616,7 @@ uint16 HDbase_tag(tag)
     register int i;
 
     if (~tag & 0x8000)
-       return (tag & ~0x4000);
+       return ((uint16)(tag & ~0x4000));
 
     for (i=0; i<SP_TAB_SZ; i++)
        if (special_table[i].special_tag == tag)
@@ -2938,9 +2940,10 @@ PRIVATE int HIget_file_slot(path, FUNC)
 
     }
 
-    if (slot == FAIL)
-        /* No matching or free slot. */
+    if (slot == FAIL) {     /* No matching or free slot. */
+        HERROR(DFE_FNF);
         return FAIL;
+      } /* end if */
 
     /* Fill empty slot with data. */
 
@@ -3270,7 +3273,7 @@ PRIVATE int HIfill_file_rec(file_rec, FUNC)
       
       /* number of remaining dd's in this ddblock */
       
-      ndds -= n;
+      ndds -= (intn)n;
       if (n > ndds) n = ndds;
     }
     

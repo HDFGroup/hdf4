@@ -5,15 +5,18 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1993/03/29 16:50:25  koziol
-Updated JPEG code to new JPEG 4 code.
-Changed VSets to use Threaded-Balanced-Binary Tree for internal
-	(in memory) representation.
-Changed VGROUP * and VDATA * returns/parameters for all VSet functions
-	to use 32-bit integer keys instead of pointers.
-Backed out speedups for Cray, until I get the time to fix them.
-Fixed a bunch of bugs in the little-endian support in DFSD.
+Revision 1.5  1993/04/19 22:48:23  koziol
+General Code Cleanup to reduce/remove errors on the PC
 
+ * Revision 1.4  1993/03/29  16:50:25  koziol
+ * Updated JPEG code to new JPEG 4 code.
+ * Changed VSets to use Threaded-Balanced-Binary Tree for internal
+ * 	(in memory) representation.
+ * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+ * 	to use 32-bit integer keys instead of pointers.
+ * Backed out speedups for Cray, until I get the time to fix them.
+ * Fixed a bunch of bugs in the little-endian support in DFSD.
+ *
  * Revision 1.3  1993/01/19  05:56:10  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -50,9 +53,6 @@ Fixed a bunch of bugs in the little-endian support in DFSD.
 /* $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ */
 /* $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ */
 
-#define INT16SIZE 2
-#define INT32SIZE 4
-
 /* ------------------------------------------------------------------ */
 
 /*
@@ -69,8 +69,7 @@ int32 vicheckcompat(f)
 HFILEID f;
 #endif
 {
-
-	int16		foundold, foundnew;
+    int16   foundold, foundnew;
 	int32 	aid;	
 
 	foundold = 0;
@@ -301,8 +300,7 @@ uint8            buf[];  /* must contain a VGDESCTAG data object from file */
 int32*      size;   /* ignored, but included to look like packvg() */
 #endif
 {
-
-    uint8            *bb;
+    uint8       *bb;
     uint32       i;
 	char * FUNC = "oldunpackvg";
 
@@ -376,7 +374,7 @@ uint8        buf[];
 
 	/* **EXTRA**  fill in the machine-dependent size fields */
     for (i=0;i<vs->wlist.n;i++)
-		vs->wlist.esize[i] = vs->wlist.order[i] * SIZEOF(vs->wlist.type[i]);
+        vs->wlist.esize[i]=(int16)(vs->wlist.order[i]*SIZEOF((int16)vs->wlist.type[i]));
 } /* oldunpackvs */
 
 /* ------------------------------------------------------------------ */
