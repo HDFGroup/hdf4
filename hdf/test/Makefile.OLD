@@ -2,6 +2,9 @@
 # $Header$
 #
 # $Log$
+# Revision 1.3  1995/09/15 17:56:45  koziol
+# Removed for consistencies sake...
+#
 # Revision 1.2  1993/04/13 17:45:06  koziol
 # Updated the ExtElt test for the new HXcreate format and added the little-
 # endian test to the old makefile.
