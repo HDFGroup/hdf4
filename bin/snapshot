@@ -228,7 +228,7 @@ if [ "$cmd" = "all" -o -n "$cmdtest" -o -n "$cmddiff" ]; then
 	if (cd ${TESTDIR} && \
 	    ${CURRENT}/${CONFIGURE} --prefix=$INSTALLDIR && \
 	    ${MAKE} && \
-	    ${MAKE} test && \
+	    ${MAKE} check && \
 	    ${MAKE} install && \
 	    rm -rf $INSTALLDIR ); then
 	    :
