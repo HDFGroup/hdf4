@@ -135,6 +135,9 @@ extern intn SDsetbigexternalfile
 extern intn SDsetnbitdataset
     (int32 id, intn start_bit, intn bit_len, intn sign_ext, intn fill_one);
 
+extern intn SDsetcompress
+    (int32 id, int32 type, comp_info *c_info);
+
 extern int32 SDfindattr
     (int32 id, char *attrname);
 

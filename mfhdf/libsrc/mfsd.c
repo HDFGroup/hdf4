@@ -3053,6 +3053,84 @@ printf("SDsetnbitdata(): HCcreate() status=%d\n",(intn)status);
     return(status);
 } /* SDsetnbitdataset */
 
+/* -------------------------- SDsetcompress ---------------------------- */
+/*
+
+ NAME
+	SDsetcompress -- Create/convert a dataset to compressed representation
+ USAGE
+	intn SDsetcompress(id, type, cinfo)
+        int32   id;                  IN: dataset ID
+        int32 type;             IN: the type of compression to perform on the
+                                    next image
+        comp_info *cinfo;       IN: ptr to compression information structure
+ RETURNS
+        Return SUCCEED or FAIL
+
+ DESCRIPTION
+        Specify a compression scheme for an SD dataset.
+
+        Valid compression types available for this interface are listed in
+        hcomp.h as COMP_nnnn.
+
+        IMPORTANT:  This will only work on datasets stored in HDF files.
+
+--------------------------------------------------------------------------- */
+
+intn SDsetcompress(int32 id, int32 type, comp_info *c_info)
+{
+
+    NC       * handle;
+    NC_var   * var;
+    intn       status;
+    model_info m_info;  /* modeling information for the HCcreate() call */
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDsetnbitdataset: I've been called\n");
+#endif
+
+    if (type < 0 || type > COMP_MAX_COMP || compress_map[type] == 0)
+        return(FAIL);
+
+    handle = SDIhandle_from_id(id, SDSTYPE);
+    if(handle == NULL || handle->file_type != HDF_FILE)
+        return FAIL;
+
+    if(handle->vars == NULL)
+        return FAIL;
+
+    var=SDIget_var(handle, id);
+    if(var==NULL)
+        return FAIL;
+
+#ifdef SDDEBUG
+printf("SDsetnbitdata(): nt=%d, sign_ext=%d, fill_one=%d, start_bit=%d, bit_len=%d\n",(intn)c_info.nbit.nt,(intn)c_info.nbit.sign_ext,(intn)c_info.nbit.fill_one,(intn)c_info.nbit.start_bit,(intn)c_info.nbit.bit_len);
+#endif
+    if(!var->data_ref) {   /* doesn't exist */
+#ifdef SDDEBUG
+printf("SDsetnbitdata(): dataset doesn't exist\n");
+#endif
+
+        /* element doesn't exist so we need a reference number */
+        var->data_ref=Hnewref(handle->hdf_file);
+        if(var->data_ref == 0)
+            return FAIL;
+      } /* end if */
+    status=(intn)HCcreate(handle->hdf_file,(uint16)DATA_TAG,
+            (uint16) var->data_ref,COMP_MODEL_STDIO,&m_info,type,
+             c_info);
+
+#ifdef SDDEBUG
+printf("SDsetnbitdata(): HCcreate() status=%d\n",(intn)status);
+#endif
+    if(status != FAIL) {
+        if((var->aid != 0) && (var->aid != FAIL))
+            Hendaccess(var->aid);
+        var->aid = status;
+      } /* end if */
+    return(status);
+} /* SDsetcompress */
+
 
 /* ------------------------------ SDfindattr ------------------------------ */
 /*
