@@ -2,11 +2,14 @@
 $Header$
 
 $Log$
-Revision 1.11  1993/05/19 20:05:09  chouck
-Moved general interest VSet info out of vg.h and into hdf.h
-Removed OLD_WAY parts of vproto.h
-Fixed a problem in DFfindnextref()
+Revision 1.12  1993/07/13 20:45:04  chouck
+Fixed a few memory leaks
 
+ * Revision 1.11  1993/05/19  20:05:09  chouck
+ * Moved general interest VSet info out of vg.h and into hdf.h
+ * Removed OLD_WAY parts of vproto.h
+ * Fixed a problem in DFfindnextref()
+ *
  * Revision 1.10  1993/04/22  16:05:52  chouck
  * Minor Vset fixes
  *
@@ -110,8 +113,6 @@ typedef struct write_struct
   intn  isize[VSFIELDMAX];   /* S internal (HDF) size [incl order] */
   intn  order[VSFIELDMAX];   /* S order of field */
   int16	esize[VSFIELDMAX];   /*  external (local machine) size [incl order] */
-  int32	(*toIEEEfn  [VSFIELDMAX] )();
-  int32	(*fromIEEEfn[VSFIELDMAX] )();
 } VWRITELIST;
 
 typedef struct read_struct

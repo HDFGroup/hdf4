@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/01/19 05:55:43  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.4  1993/07/13 20:45:00  chouck
+Fixed a few memory leaks
 
+ * Revision 1.3  1993/01/19  05:55:43  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.2  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -100,7 +103,6 @@ char _HUGE *HEstring(error_code)
     return DEFAULT_MESG;
 }
 
-#if 0 /* macro-izing to save time cjh 8-may-92 */
 /*- HEclear
 *** clears the error stack
 -*/
@@ -110,11 +112,18 @@ VOID HEclear(void)
 VOID HEclear()
 #endif
 {
-    /* error_top == 0 means no error in stack */
 
-    error_top = 0;
+    if(!error_top) return;
+
+    /* error_top == 0 means no error in stack */    
+    /* clean out old descriptions if they exist */
+    for (error_top; error_top; error_top--) {
+        if(error_stack[error_top - 1].desc) {
+            HDfreespace(error_stack[error_top - 1].desc);
+            error_stack[error_top - 1].desc = NULL;
+        }
+    }
 }
-#endif
 
 /*- HEpush
 *** push a new error onto stack.  If stack is full, error is ignored.
@@ -158,8 +167,8 @@ VOID HEpush(error_code, function_name, file_name, line)
        error_stack[error_top].line = line;
        error_stack[error_top].error_code = error_code;
        if(error_stack[error_top].desc) {
-        HDfreespace(error_stack[error_top].desc);
-        error_stack[error_top].desc = NULL;
+           HDfreespace(error_stack[error_top].desc);
+           error_stack[error_top].desc = NULL;
        }
        error_top++;
     }
@@ -183,6 +192,8 @@ VOID HEreport(char *format, ...) {
       return;
     }
     vsprintf(tmp, format, arg_ptr);
+    if(error_stack[error_top - 1].desc)
+        HDfreespace(error_stack[error_top - 1].desc);
     error_stack[error_top - 1].desc = tmp;
   }
   
@@ -225,6 +236,8 @@ va_dcl
 *           exit(8);     
 *    }
 */
+    if(error_stack[error_top - 1].desc)
+        HDfreespace(error_stack[error_top - 1].desc);
     error_stack[error_top - 1].desc = tmp;
 
   }
@@ -247,20 +260,21 @@ VOID HEprint(stream, print_levels)
 #endif
 {
     if (print_levels == 0 || print_levels > error_top)
-       /* print all errors */
-       print_levels = error_top;
-
+        /* print all errors */
+        print_levels = error_top;
+    
     /* print the errors starting from most recent */
-
+    
     for (print_levels--; print_levels >= 0; print_levels--) {
-       fprintf(stream, "HDF error: <%s>\n\tDetected in %s() [%s line %d]\n",
-               HEstring(error_stack[print_levels].error_code),
-               error_stack[print_levels].function_name,
-               error_stack[print_levels].file_name,
-               error_stack[print_levels].line);
-       if(error_stack[print_levels].desc)
-        fprintf(stream, "\t%s\n", error_stack[print_levels].desc);
-     }
+        fprintf(stream, "HDF error: <%s>\n\tDetected in %s() [%s line %d]\n",
+                HEstring(error_stack[print_levels].error_code),
+                error_stack[print_levels].function_name,
+                error_stack[print_levels].file_name,
+                error_stack[print_levels].line);
+        if(error_stack[print_levels].desc) {
+            fprintf(stream, "\t%s\n", error_stack[print_levels].desc);
+        }
+    }
 }
 
 /*- HEvalue

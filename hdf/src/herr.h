@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.5  1993/04/06 17:23:37  chouck
-Added Vset macros
+Revision 1.6  1993/07/13 20:45:02  chouck
+Fixed a few memory leaks
 
+ * Revision 1.5  1993/04/06  17:23:37  chouck
+ * Added Vset macros
+ *
  * Revision 1.4  1993/03/29  16:47:57  koziol
  * Updated JPEG code to new JPEG 4 code.
  * Changed VSets to use Threaded-Balanced-Binary Tree for internal
@@ -62,9 +65,11 @@ Added Vset macros
 
 #define HCLOSE_RETURN_ERROR(hfid, err, ret_val) {HERROR(err); Hclose(hfid); return(ret_val);}
 
+#if 0
 /* Clear the error stack */
 extern int32 error_top;
 #define HEclear() { error_top = (int32)0; }
+#endif
 
 /*
 ======================================================================
