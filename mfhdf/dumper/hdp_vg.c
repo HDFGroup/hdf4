@@ -215,6 +215,7 @@ dvg(dump_info_t * dumpvg_opts, intn curr_arg, intn argc, char *argv[])
 					break;
 
 				case DALL:
+                    k= -1;
 					break;
 
 				default:

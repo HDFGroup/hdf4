@@ -356,6 +356,7 @@ choose_vd(dump_info_t * dumpvd_opts, int32 vd_chosen[MAXCHOICES],
 			  break;
 
 		  case DALL:
+              k= -1;
 			  break;
 
 		  default:
