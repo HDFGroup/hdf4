@@ -54,15 +54,5 @@ VSdelete             vsfdlte                  deletes a vdata
 
 Vdelete              vdelete                  deletes a vgroup
 
-------------------------------------------------------------
-Elena Pourmal, HDF QA, Maintenance and Support Team Leader
-NCSA University of Illinois at Urbana-Champaign
-605 E. Springfield Ave.
-Champaign, IL 61820
-
-epourmal@ncsa.uiuc.edu
-(217)333-0238 (office)
-(217)244-1987 (fax)
-------------------------------------------------------------
 
 
