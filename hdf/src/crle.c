@@ -149,6 +149,9 @@ HCIcrle_decode(compinfo_t * info, int32 length, uint8 *buf)
             {   /* need to figure out RUN or MIX state */
                 if ((c = HDgetc(info->aid)) == FAIL)
                     HRETURN_ERROR(DFE_READERROR, FAIL);
+#ifdef QAK
+printf("%s: c=%u\n",FUNC,(unsigned)c);
+#endif /* QAK */
                 if (c & RUN_MASK)
                   {     /* run byte */
                       rle_info->rle_state = RLE_RUN;    /* set to run state */
@@ -225,12 +228,15 @@ HCIcrle_encode(compinfo_t * info, int32 length, uint8 *buf)
     orig_length = length;   /* save this for later */
     while (length > 0)
       {     /* encode until we stored all the bytes */
-#ifdef TESTING
-printf("length=%ld, state=%d\n",(long)length, (int)rle_info->rle_state);
-#endif /* TESTING */
+#ifdef QAK
+printf("length=%ld, state=%d, *buf=%u\n",(long)length, (int)rle_info->rle_state,(unsigned)*buf);
+#endif /* QAK */
           switch (rle_info->rle_state)
             {
                 case RLE_INIT:      /* initial encoding state */
+#ifdef QAK
+printf("%s: RLE_INIT state\n",FUNC);
+#endif /* QAK */
                     rle_info->rle_state = RLE_MIX;  /* shift to MIX state */
                     rle_info->last_byte = rle_info->buffer[0] = *buf;
                     rle_info->buf_length = 1;
@@ -240,6 +246,9 @@ printf("length=%ld, state=%d\n",(long)length, (int)rle_info->rle_state);
                     break;
 
                 case RLE_RUN:
+#ifdef QAK
+printf("%s: RLE_RUN state\n",FUNC);
+#endif /* QAK */
                     /* check for end of run */
                     if (*buf != rle_info->last_byte)
                       {
@@ -273,6 +282,9 @@ printf("length=%ld, state=%d\n",(long)length, (int)rle_info->rle_state);
 
                 case RLE_MIX:   /* mixed bunch of bytes */
                     /* check for run */
+#ifdef QAK
+printf("%s: RLE_MIX state\n",FUNC);
+#endif /* QAK */
                     if (*buf == rle_info->last_byte && *buf == rle_info->second_byte)
                       {
                           rle_info->rle_state = RLE_RUN;    /* shift to RUN state */
@@ -306,6 +318,9 @@ printf("length=%ld, state=%d\n",(long)length, (int)rle_info->rle_state);
                     break;
 
                 default:
+#ifdef QAK
+printf("%s: bad state!\n",FUNC);
+#endif /* QAK */
                     HRETURN_ERROR(DFE_INTERNAL, FAIL);
             }   /* end switch */
       }     /* end while */
@@ -345,6 +360,9 @@ HCIcrle_term(compinfo_t * info)
     switch (rle_info->rle_state)
       {
           case RLE_RUN:
+#ifdef QAK
+printf("%s: RLE_RUN state\n",FUNC);
+#endif /* QAK */
               c = RUN_MASK | (rle_info->buf_length - RLE_MIN_RUN);
               if (HDputc((uint8) c, info->aid) == FAIL)
                   HRETURN_ERROR(DFE_WRITEERROR, FAIL);
@@ -353,10 +371,19 @@ HCIcrle_term(compinfo_t * info)
               break;
 
           case RLE_MIX: /* mixed bunch of bytes */
+#ifdef QAK
+printf("%s: RLE_MIX state\n",FUNC);
+#endif /* QAK */
               if (HDputc((uint8) ((rle_info->buf_length - RLE_MIN_MIX)), info->aid) == FAIL)
                   HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+#ifdef QAK
+printf("%s: check 0\n",FUNC);
+#endif /* QAK */
               if (Hwrite(info->aid, rle_info->buf_length, rle_info->buffer) == FAIL)
                   HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+#ifdef QAK
+printf("%s: check 1\n",FUNC);
+#endif /* QAK */
               break;
 
           default:
@@ -581,6 +608,9 @@ HCPcrle_read(accrec_t * access_rec, int32 length, VOIDP data)
     if (HCIcrle_decode(info, length, data) == FAIL)
         HRETURN_ERROR(DFE_CDECODE, FAIL);
 
+#ifdef QAK
+printf("%s: *data=%u\n",FUNC,*(uint8 *)data);
+#endif /* QAK */
     return (length);
 }   /* HCPcrle_read() */
 

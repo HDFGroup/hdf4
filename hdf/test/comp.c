@@ -71,20 +71,17 @@ comp_model_t test_models[] =
 /* different compression layers to test */
 comp_coder_t test_coders[] =
 {
-    COMP_CODE_NONE,
-    COMP_CODE_RLE
+    COMP_CODE_NONE
+    ,COMP_CODE_RLE
     /*,COMP_CODE_NBIT *//* n-bit testing is done in it's own module, nbit.c */
-#ifndef UNICOS
     ,COMP_CODE_SKPHUFF
-#endif /* UNICOS */
-#if !(defined(UNICOS) | defined(DEC_ALPHA) | (_MIPS_SZLONG == 64))
     ,COMP_CODE_DEFLATE
-#endif /* 64-bit machines */
 };
 
 int32       test_ntypes[] =
 {
-    DFNT_INT8, DFNT_UINT8, DFNT_INT16, DFNT_UINT16, DFNT_INT32, DFNT_UINT32};
+    DFNT_INT8, DFNT_UINT8, DFNT_INT16, DFNT_UINT16, DFNT_INT32, DFNT_UINT32
+    };
 
 #define NUM_OUTBUFS 4   /* the number of different output buffers to test */
 /* outbuf #1 is all zeros (very easy to compress) */

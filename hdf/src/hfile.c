@@ -1554,6 +1554,9 @@ Hwrite(int32 access_id, int32 length, const VOIDP data)
         || data == NULL)
     HGOTO_ERROR(DFE_ARGS, FAIL);
 
+#ifdef QAK
+printf("%s: length=%ld\n",FUNC,(long)length);
+#endif /* QAK */
   /* if special elt, call special function */
   if (access_rec->special)
     {
@@ -1605,6 +1608,9 @@ Hwrite(int32 access_id, int32 length, const VOIDP data)
     }		/* end if */
 
   /* seek and write data */
+#ifdef QAK
+printf("%s: offset=%ld\n",FUNC,(long)(access_rec->posn+data_off));
+#endif /* QAK */
   if (HPseek(file_rec, access_rec->posn + data_off) == FAIL)
     HGOTO_ERROR(DFE_SEEKERROR, FAIL);
 
@@ -1694,6 +1700,9 @@ HDputc(uint8 c, int32 access_id)
   CONSTR(FUNC, "HDputc");		/* for HERROR */
   intn ret_value = SUCCEED;
 
+#ifdef QAK
+printf("%s: c=%u\n",FUNC,(unsigned)c);
+#endif /* QAK */
   if (Hwrite(access_id, 1, (VOIDP) &c) == FAIL)
     HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 

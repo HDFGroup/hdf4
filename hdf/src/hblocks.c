@@ -430,7 +430,6 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
     int32       file_id;        /* file ID for the access record */
     uint8       local_ptbuf[16];
     int32       old_posn;       /* position in the access element */
-    intn        no_data;        /* boolean to record whether there actually was data in the current tag/ref */
     intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -473,16 +472,18 @@ printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_bloc
     if ((special_tag = MKSPECIALTAG(data_tag)) == DFTAG_NULL)
         HGOTO_ERROR(DFE_BADDDLIST, FAIL);
 
-    if(data_off!=INVALID_OFFSET && data_len!=INVALID_LENGTH)
-      {
-        new_data_tag=DFTAG_LINKED;
-        new_data_ref=Htagnewref(file_id,new_data_tag);
-        if(Hdupdd(file_id, new_data_tag, new_data_ref, data_tag, data_ref)==FAIL)
-            HGOTO_ERROR(DFE_CANTUPDATE, FAIL);
-        no_data=FALSE;
+    if(data_off==INVALID_OFFSET && data_len==INVALID_LENGTH)
+      { /* catch the case where the data doesn't exist yet */
+        if(Hsetlength(aid,0)==FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+        if(HTPinquire(access_rec->ddid,&data_tag,&data_ref,&data_off,&data_len)==FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
       } /* end if */
-    else
-        no_data=TRUE;
+      
+    new_data_tag=DFTAG_LINKED;
+    new_data_ref=Htagnewref(file_id,new_data_tag);
+    if(Hdupdd(file_id, new_data_tag, new_data_ref, data_tag, data_ref)==FAIL)
+        HGOTO_ERROR(DFE_CANTUPDATE, FAIL);
 
     /* Delete the old data ID */
     if(HTPdelete(access_rec->ddid)==FAIL)
@@ -500,8 +501,8 @@ printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_bloc
 
     info = (linkinfo_t *) access_rec->special_info;
     info->attached = 1;
-    info->length = (no_data ? 0 : data_len);
-    info->first_length = (no_data ? 0 : data_len);
+    info->length = data_len;
+    info->first_length = data_len;
     info->block_length = block_length;
     info->number_blocks = number_blocks;
     info->link_ref = link_ref;
@@ -527,7 +528,7 @@ printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_bloc
         HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
     /* allocate info structure and file it in */
-    if ((info->link = HLInewlink(file_id, number_blocks, link_ref, (uint16)(no_data ? 0 : new_data_ref))) ==NULL)
+    if ((info->link = HLInewlink(file_id, number_blocks, link_ref, (uint16)new_data_ref)) ==NULL)
         HGOTO_ERROR(DFE_CANTLINK, FAIL);
 
     /* update access record and file record */
@@ -996,32 +997,42 @@ HLPread(accrec_t * access_rec, int32 length, VOIDP datap)
 
     /* validate length */
 #ifdef QAK
-if(length==0)
-    printf("%s: length==0, info->length=%d, access_rec->posn=%d\n",FUNC,(int)info->length,(int)access_rec->posn);
+printf("%s: length=%ld, info->length=%d, access_rec->posn=%d\n",FUNC,(long)length,(int)info->length,(int)access_rec->posn);
 #endif /* QAK */
     if (length == 0)
         length = info->length - access_rec->posn;
     else
-/*      if (length < 0 || access_rec->posn + length > info->length) { */
-    if (length < 0)
-        HGOTO_ERROR(DFE_RANGE, FAIL);
+        if (length < 0)
+            HGOTO_ERROR(DFE_RANGE, FAIL);
 
     if (access_rec->posn + length > info->length)
         length = info->length - access_rec->posn;
 
+#ifdef QAK
+printf("%s: check 0\n",FUNC);
+#endif /* QAK */
     /* search for linked block to start reading from */
     if (relative_posn < info->first_length)
       {
+#ifdef QAK
+printf("%s: check 1\n",FUNC);
+#endif /* QAK */
           block_idx = 0;
           current_length = info->first_length;
       }
     else
       {
+#ifdef QAK
+printf("%s: check 2\n",FUNC);
+#endif /* QAK */
           relative_posn -= info->first_length;
           block_idx = relative_posn / info->block_length + 1;
           relative_posn %= info->block_length;
           current_length = info->block_length;
       }
+#ifdef QAK
+printf("%s: check 3\n",FUNC);
+#endif /* QAK */
 
     {
         int32 i;
@@ -1035,21 +1046,30 @@ if(length==0)
     }
     block_idx %= info->number_blocks;
 
+#ifdef QAK
+printf("%s: check 4, block_idx=%d\n",FUNC,block_idx);
+#endif /* QAK */
     /* found the starting block, now read in the data */
     do
       {
           int32 remaining =    /* remaining data in current block */
-          current_length - relative_posn;
+              current_length - relative_posn;
 
           /* read in the data in this block */
           if (remaining > length)
               remaining = length;
+#ifdef QAK
+printf("%s: check 5, remaining=%d\n",FUNC,remaining);
+#endif /* QAK */
           if (t_link->block_list[block_idx].ref != 0)
             {
                 int32       access_id;  /* access record id for this block */
                 block_t    *current_block =     /* record on the current block */
-                &(t_link->block_list[block_idx]);
+                    &(t_link->block_list[block_idx]);
 
+#ifdef QAK
+printf("%s: check 6\n",FUNC);
+#endif /* QAK */
                 access_id = Hstartread(access_rec->file_id, DFTAG_LINKED,
                                        current_block->ref);
                 if (access_id == (int32) FAIL
@@ -1063,10 +1083,16 @@ if(length==0)
             }
           else
             {   /*if block is missing, fill this part of buffer with zero's */
+#ifdef QAK
+printf("%s: check 7\n",FUNC);
+#endif /* QAK */
                 HDmemset(data, 0, (size_t)remaining);
                 bytes_read += nbytes;
             }
 
+#ifdef QAK
+printf("%s: check 7.2\n",FUNC);
+#endif /* QAK */
           /* move variables for the next block */
           data += remaining;
           length -= remaining;
@@ -1082,6 +1108,9 @@ if(length==0)
       }
     while (length > 0);     /* if still somemore to read in, repeat */
 
+#ifdef QAK
+printf("%s: check 8, bytes_read=%d\n",FUNC,bytes_read);
+#endif /* QAK */
     access_rec->posn += bytes_read;
     ret_value = bytes_read;
 
@@ -1188,10 +1217,7 @@ printf("%s: num_links=%d\n",FUNC,num_links);
                     t_link->next = HLInewlink(access_rec->file_id,
                                    info->number_blocks, t_link->nextref, 0);
                     if (!t_link->next)
-                      {
-                        ret_value = FAIL;
-                        goto done;
-                      }
+                        HGOTO_ERROR(DFE_NOSPACE,FAIL);
                     {   /* AA */
                         /* update previous link with information about new link */
 
@@ -1232,13 +1258,16 @@ printf("%s: (b) block_idx=%d\n",FUNC,(int)block_idx);
       {
           int32       access_id;    /* access record id */
           int32       remaining =   /* remaining data length in this block */
-          current_length - relative_posn;
+              current_length - relative_posn;
           uint16      new_ref = 0;  /* ref of newly created block */
 
           /* determine length and write this block */
           if (remaining > length)
               remaining = length;
 
+#ifdef QAK
+printf("%s: remaining=%d\n",FUNC,(int)remaining);
+#endif /* QAK */
           /* this block already exist, so just set up access to it */
           if (t_link->block_list[block_idx].ref != 0)
             {
