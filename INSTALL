@@ -49,9 +49,7 @@ Supported Platforms
                                  (Fortran to C converter)
 
   MacQuadra950(Mac-OS-7.5)     -               -               -         -
-  VAX/VMS                      (See 'DEC Alpha/OpenVMS' above )
   Windows NT/95                -               -               -         - 
-  LINUX(ELF)                   -               -               -         -
  
 Requirements
 ============
