@@ -31,7 +31,7 @@ int32 HCcreate(id,tag,ref,model_type,m_info,coder_type,c_info);
                                     COMP_CODE_RLE - for RLE encoding
                                     COMP_CODE_SKPHUFF - for adaptive Huffman
                                     COMP_CODE_DEFLATE - for gzip 'deflation'
-    coder_info *c_info;      IN: Information needed for the encoding type chosen
+    comp_info *c_info;       IN: Information needed for the encoding type chosen
                                     For COMP_CODE_NONE and COMP_CODE_RLE,
                                     this is unused and can be set to NULL.
                                     For COMP_CODE_SKPHUFF, the structure skphuff
@@ -62,7 +62,7 @@ The following example shows how to compress a scientific dataset data object
 adaptive Huffman encoding:
     {
         int32 aid;
-        coder_info c_info;
+        comp_info c_info;
 
         c_info.skphuff.skp_size=sizeof(int32);
         aid=HCcreate(file_id, DFTAG_SD, ref, COMP_MODEL_STDIO, NULL, 
