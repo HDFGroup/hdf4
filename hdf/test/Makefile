@@ -27,12 +27,11 @@ RMFLAGS=-f
 
 SRCS= 	rig.c sdstr.c hblocks.c an.c anfile.c \
         hextelt.c hfile.c hfile1.c vers.c sdmms.c \
-        sdnmms.c slab.c litend.c testhdf.c egchi.c \
-        tv1.c tv2.c
+        sdnmms.c slab.c litend.c testhdf.c tvset.c
 
-CTESTS= egchi.o rig.o sdstr.o hblocks.o an.o anfile.o \
+CTESTS= rig.o sdstr.o hblocks.o an.o anfile.o \
         hextelt.o hfile.o hfile1.o vers.o sdmms.o \
-        sdnmms.o slab.o litend.o tv1.o tv2.o testhdf.o 
+        sdnmms.o slab.o litend.o tvset.o testhdf.o 
 
 FTESTS= tr8f t24f tpf tanf tanfilef tsdstrf tsdntf tsdnntf \
         tsdmmsf tsdnmmsf tstubsf \
@@ -75,9 +74,6 @@ saber:	$(SRCS)
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 
-egchi.o: ../src/vg.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
-egchi.o: ../src/hcomp.h ../src/hproto.h ../src/herr.h /usr/include/ctype.h
-egchi.o: ../src/vproto.h
 fortest.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
 fortest.o: ../src/hproto.h tproto.h tutils.h
 an.o: tproto.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
@@ -147,11 +143,8 @@ tsdstr.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
 tsdstr.o: ../src/hproto.h ../src/dfsd.h
 tstubs.o: /usr/include/stdio.h ../src/df.h ../src/hdf.h ../src/hdfi.h
 tstubs.o: ../src/hcomp.h ../src/hproto.h ../src/herr.h
-tv1.o: ../src/vg.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
-tv1.o: ../src/hcomp.h ../src/hproto.h ../src/herr.h /usr/include/ctype.h
-tv1.o: ../src/vproto.h
-tv2.o: ../src/vg.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
-tv2.o: ../src/hcomp.h ../src/hproto.h ../src/herr.h /usr/include/ctype.h
-tv2.o: ../src/vproto.h
+tvset.o: ../src/vg.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
+tvset.o: ../src/hcomp.h ../src/hproto.h ../src/herr.h /usr/include/ctype.h
+tvset.o: ../src/vproto.h
 tvers.o: /usr/include/stdio.h ../src/hdf.h ../src/hdfi.h ../src/hcomp.h
 tvers.o: ../src/hproto.h
