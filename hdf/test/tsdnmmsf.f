@@ -1,58 +1,6 @@
 C
-C $Header$
+C $Id$
 C
-C $Log$
-C Revision 1.10  1993/04/05 22:38:03  koziol
-C Fixed goofups made in haste when patching code.
-C
-c Revision 1.9  1993/03/29  16:52:29  koziol
-c Finished  DEC ALPHA port.
-c Updated JPEG code to new JPEG 4 code.
-c Changed VSets to use Threaded-Balanced-Binary Tree for internal
-c 	(in memory) representation.
-c Changed VGROUP * and VDATA * returns/parameters for all VSet functions
-c 	to use 32-bit integer keys instead of pointers.
-c Backed out speedups for Cray, until I get the time to fix them.
-c Fixed a bunch of bugs in the little-endian support in DFSD.
-c
-c Revision 1.8  1993/01/19  05:59:05  koziol
-c Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-c port.  Lots of minor annoyances fixed.
-c
-c Revision 1.7  1992/07/08  22:05:20  sxu
-c Changed dsgmaxm() to dsgrang(), and dssmaxm() to dssrang().
-c
-c Revision 1.6  1992/07/07  21:51:03  chouck
-c Minor error reporting fix
-c
-c Revision 1.5  1992/07/07  20:56:29  chouck
-c Set things up so VMS users will use byte data types instead of characters.
-c
-c Revision 1.4  1992/06/29  15:44:30  chouck
-c Changed the OR() to an addition.  Removed bitwise assignment
-c to make VMS happy.
-c
-c Revision 1.3  1992/06/01  14:47:19  mfolk
-c OR function doesn't work on Convex.  Need to use JIOR instead.  So
-c I put in the following comment lines:
-c  C Some Fortrans do not have the 'OR' function.  If this
-c  C causes an error, try substituting 'JIOR'.
-c
-c Revision 1.2  1992/05/07  16:48:07  dilg
-c Put in comment explaining the choice between using "char(-128)" and
-c "char(0)"
-c
-c Revision 1.1  1992/04/27  17:17:46  sxu
-c Initial revision
-c
-c Revision 1.2  1992/03/24  20:42:04  sxu
-c Changed output file names
-c
-c Revision 1.1  1992/02/29  22:53:38  mfolk
-c Initial revision
-c
-C
-
       program tdfsd_nmmsF
 C
 C
