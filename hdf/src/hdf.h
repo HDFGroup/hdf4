@@ -54,6 +54,10 @@ typedef enum
 			   /* location in the DD list (useful for continued */
 			   /* searching ala findfirst/findnext) */
 
+/* External Element File access mode */
+/* #define DFACC_CREATE 4	is for creating new external element file */
+#define DFACC_OLD	1	/* for accessing existing ext. element file */
+
 /* The magic cookie for Hcache to cache all files */
 #define CACHE_ALL_FILES (-2)
 

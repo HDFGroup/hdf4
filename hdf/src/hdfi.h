@@ -1253,6 +1253,7 @@ extern uint8 FAR *DFtbuf;
 #  define HDstrncmp(s1,s2,n)    (_fstrncmp((s1),(s2),(n)))
 #  define HDstrncpy(s1,s2,n)    (_fstrncpy((s1),(s2),(n)))
 #  define HDstrchr(s,c)    (_fstrchr((s),(c)))
+#  define HDstrrchr(s,c)    (_fstrrchr((s),(c)))
 #else
 #  define HDstrcat(s1,s2)   (strcat((s1),(s2)))
 #  define HDstrcmp(s,t)     (strcmp((s),(t)))
@@ -1261,6 +1262,7 @@ extern uint8 FAR *DFtbuf;
 #  define HDstrncmp(s1,s2,n)    (strncmp((s1),(s2),(n)))
 #  define HDstrncpy(s1,s2,n)    (strncpy((s1),(s2),(n)))
 #  define HDstrchr(s,c)    (strchr((s),(c)))
+#  define HDstrrchr(s,c)    (strrchr((s),(c)))
 /* Can't use on PCs. strdup() uses malloc() and HDmalloc uses halloc() */
 #if !(defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MIPSEL | defined NEXT | defined CONVEX)
 #  define HDstrdup(s)      ((char *)strdup((const char *)(s)))
@@ -1287,6 +1289,12 @@ extern uint8 FAR *DFtbuf;
 # define HDmemset(dst,c,n)     (memset((void *)(dst),(intn)(c),(size_t)(n)))
 # define HDmemcmp(dst,src,n)   (memcmp((const void *)(dst),(const void *)(src),(size_t)(n)))
 #endif /* WIN3 | PC */
+
+
+/**************************************************************************
+*  Misc. functions
+**************************************************************************/
+#define HDgetenv(s1)	    (getenv(s1))
 
 /* Compatibility #define for V3.3, should be taken out by v4.0 - QAK */
 #define DFSDnumber DFSDndatasets

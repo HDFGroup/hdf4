@@ -74,7 +74,6 @@ static char RcsId[] = "@(#)$Revision$";
    HXPreset         -- replace the current external info with new info
 ------------------------------------------------------------------------- */
 
-#include <string.h>
 #include "hdf.h"
 #include "hfile.h"
 
@@ -1101,3 +1100,263 @@ HXPreset(accrec_t * access_rec, sp_info_block_t * info_block)
     return SUCCEED;
 }	/* HXPreset */
 
+static	char*	extcreatedir = NULL;
+static	char*	HDFEXTCREATEDIR = NULL;
+static	char*	extdir = NULL;
+static	char*	HDFEXTDIR = NULL;
+
+/*------------------------------------------------------------------------ 
+NAME
+   HXsetcreatedir -- set the directory variable for creating external file
+USAGE
+   intn HXsetcreatedir(dir)
+   char *dir		IN: directory for creating external file
+RETURNS
+   SUCCEED if no error, else FAIL
+DESCRIPTION
+   Set up the directory variable for creating external file.
+   The directory content is copied into HXsetcreatedir area.
+   If error encountered during setup, previous value of createdir
+   is not changed.
+
+--------------------------------------------------------------------------*/
+intn
+HXsetcreatedir(char *dir)
+{
+    char       *FUNC = "HXsetcreatedir";  /* for HERROR */
+    char	*pt;
+
+    if (!dir)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if (!(pt = HDstrdup(dir)))
+	HRETURN_ERROR(DFE_NOSPACE, FAIL);
+
+    if (extcreatedir)
+	HDfree(extcreatedir);
+    
+    extcreatedir = pt;
+    return(SUCCEED);
+}	/* HXsetcreatedir */
+
+/*------------------------------------------------------------------------ 
+NAME
+   HXsetdir -- set the directory variable for creating external file
+USAGE
+   intn HXsetdir(dir)
+   char *dir		IN: directory for creating external file
+RETURNS
+   SUCCEED if no error, else FAIL
+DESCRIPTION
+   Set up the directory variable for creating external file.
+   The directory content is copied into HXsetdir area.
+   If error encountered during setup, previous value of extdir
+   is not changed.
+
+--------------------------------------------------------------------------*/
+intn
+HXsetdir(char *dir)
+{
+    char       *FUNC = "HXsetdir";  /* for HERROR */
+    char	*pt;
+
+    if (!dir)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if (!(pt = HDstrdup(dir)))
+	HRETURN_ERROR(DFE_NOSPACE, FAIL);
+
+    if (extdir)
+	HDfree(extdir);
+    
+    extdir = pt;
+    return(SUCCEED);
+}	/* HXsetdir */
+
+/* ------------------------------- HXPbuildfilename ------------------------------- */
+/*
+NAME
+    HXPbuildfilename -- Build the Filename for the External Element
+USAGE
+    char* HXPbuildfilename(char *ext_fname, const intn acc_mode)
+    char            * ext_fname;	IN: external filename as stored
+    intn 	      acc_mode;		IN: access mode
+RETURNS
+    finalpath / NULL
+DESCRIPTION
+    Compose the external object file name.
+    [More detail later.]
+
+---------------------------------------------------------------------------*/
+/* the following can be sped up by doing my own copying instead of scanning */
+/* for end-of-line two extra times, or even use memcpy since the string lengths */
+/* are calculated already.  For now, it works. */
+#define HDstrcpy3(s1, s2, s3, s4)	(HDstrcat(HDstrcat(HDstrcpy(s1, s2),s3),s4))
+#include <sys/stat.h>
+
+/* PRIVATE */
+char *
+HXPbuildfilename(char *ext_fname, const intn acc_mode)
+{
+    char       *FUNC = "HXPbuildfilename";  /* for HERROR */
+    int	        fname_len;		/* string length of the ext_fname */
+    int	        path_len;		/* string length of prepend pathname */
+    static	firstinvoked = 1;	/* true if invoked the first time */
+
+    char	*finalpath;	/* Final pathname to return */
+    char	*fname;
+    struct	stat filestat;	/* for checking pathname existence */
+
+    /* initialize HDFEXTDIR and HDFCREATEDIR if invoked the first time */
+    if (firstinvoked){
+	firstinvoked = 0;
+	HDFEXTCREATEDIR = HDgetenv("HDFEXTCREATEDIR");
+	HDFEXTDIR = HDgetenv("HDFEXTDIR");
+    }
+
+    if (!ext_fname)
+        HRETURN_ERROR(DFE_ARGS, NULL);
+    fname = ext_fname;
+
+    /* get the space for the final pathname */
+    if (!(finalpath=HDmalloc(MAX_PATH_LEN)))
+	HRETURN_ERROR(DFE_NOSPACE, NULL);
+
+    fname_len = HDstrlen(fname);
+    
+    switch (acc_mode){
+    case DFACC_CREATE: {			/* Creating a new external element */
+	if ( *fname == '/' ) {	/* Absolute Pathname */
+		return (HDstrcpy(finalpath, fname));
+	}
+	else {				/* Relative Pathname */
+
+	    /* try function variable */
+	    if (extcreatedir) {
+		path_len = HDstrlen(extcreatedir);
+
+		if (fname_len + 1 + path_len + 1 > MAX_PATH_LEN ){
+		    HDfree(finalpath);
+		    HRETURN_ERROR(DFE_NOSPACE, NULL);
+		}
+		return(HDstrcpy3(finalpath, extcreatedir, "/", fname));
+	    }
+
+	    /* try Envrironment Variable */
+	    if (HDFEXTCREATEDIR) {
+		path_len = HDstrlen(HDFEXTCREATEDIR);
+
+		if (fname_len + 1 + path_len + 1 > MAX_PATH_LEN ){
+		    HDfree(finalpath);
+		    HRETURN_ERROR(DFE_NOSPACE, NULL);
+		}
+		return(HDstrcpy3(finalpath, HDFEXTCREATEDIR, "/", fname));
+	    }
+
+	    /* try Head File Directory */
+	    /* Don't have Head File information now.  Continue */
+
+	    /* Just return the ext_fname */
+	    return(HDstrcpy(finalpath, fname));
+	}
+	break;
+    }
+    case DFACC_OLD:{			/* Locating an old external element */
+	if ( *fname == '/' ) {	/* Absolute Pathname */
+	    if (stat(fname, &filestat) == 0){
+		return (HDstrcpy(finalpath, fname));
+	    }
+	    else if (!extdir && !HDFEXTDIR) {
+		HDfree(finalpath);
+		HRETURN_ERROR(DFE_FNF, NULL);
+	    }
+	    /* stripe the pathname component */
+	    fname = HDstrrchr(fname, '/') + 1;
+	    fname_len = HDstrlen(fname);
+
+	    /* continue to Relative Pathname */
+	}
+
+
+	/* Relative Pathname */
+	{
+	    char   *dir_pt, *path_pt;	/* temporary pointers */
+
+	    /* try function variable */
+	    if (extdir) {
+		dir_pt = extdir;
+		while (*dir_pt){
+		    /* extract one extdir component to finalpath */
+		    path_len = 0;
+		    path_pt = finalpath;
+		    while (*dir_pt && *dir_pt != ':'){
+			if (path_len >= MAX_PATH_LEN){
+			    HDfree(finalpath);
+			    HRETURN_ERROR(DFE_NOSPACE, NULL);
+			}
+			*path_pt++ = *dir_pt++;
+			path_len++;
+		    }
+		    if (*dir_pt == ':') dir_pt++;
+		    *path_pt++ = '/';
+		    path_len++;
+
+		    if (fname_len + path_len + 1 > MAX_PATH_LEN ){
+			HDfree(finalpath);
+			HRETURN_ERROR(DFE_NOSPACE, NULL);
+		    }
+		    HDstrcpy(path_pt, fname);
+		    if (stat(finalpath, &filestat) == 0 ){
+			return(finalpath);
+		    }
+		}
+	    }
+
+	    /* try Envrironment Variable */
+	    if (HDFEXTDIR) {
+		dir_pt = HDFEXTDIR;
+		while (*dir_pt){
+		    /* extract one HDFEXTDIR component to finalpath */
+		    path_len = 0;
+		    path_pt = finalpath;
+		    while (*dir_pt && *dir_pt != ':'){
+			if (path_len >= MAX_PATH_LEN){
+			    HDfree(finalpath);
+			    HRETURN_ERROR(DFE_NOSPACE, NULL);
+			}
+			*path_pt++ = *dir_pt++;
+			path_len++;
+		    }
+		    if (*dir_pt == ':') dir_pt++;
+		    *path_pt++ = '/';
+		    path_len++;
+
+		    if (fname_len + path_len + 1 > MAX_PATH_LEN ){
+			HDfree(finalpath);
+			HRETURN_ERROR(DFE_NOSPACE, NULL);
+		    }
+		    HDstrcpy(path_pt, fname);
+		    if (stat(finalpath, &filestat) == 0 ){
+			return(finalpath);
+		    }
+		}
+	    }
+
+	    /* try Head File Directory */
+	    /* Don't have Head File information now.  Continue */
+
+	    /* See if the file exists */
+	    if (stat(fname, &filestat) == 0 )
+		return(HDstrcpy(finalpath, fname));
+
+	    /* All have failed */
+	    HDfree(finalpath);
+	    return(NULL);
+	}
+	break;
+    }
+    default:
+	HDfree(finalpath);
+	HRETURN_ERROR(DFE_ARGS, NULL);
+    }
+}	/* HXPbuildfilename */
