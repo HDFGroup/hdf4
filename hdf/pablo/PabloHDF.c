@@ -75,23 +75,28 @@
 //========================================================================*/
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <fcntl.h>
+#include <stdarg.h>
+#ifndef fileno
+int fileno ( FILE * );
+#endif
 /* on ipsc/860 don't include this or you'll get multiply defined SEEK_* */
 #ifndef __NX
 #include <unistd.h>
 #endif
 
-/*#include "Assert_TrLib.h"*/
-#include "SDDFparam.h"
+
+#define HDFtrace3OPEN__
+int HDFtrace3OPEN( const char *, int, mode_t );
+
+#include "SDDFparam.h" 
 #include "TraceParam.h"
 
 #include "SystemDepend.h"
 #include "Trace.h"
 
 #include "IO_TraceParams.h"
-/*#include "IO_Descriptors.h"*/
-/*#include "IO_Summaries.h"*/
-/*#include "IO_SDroutines.h"*/
 #include "HDFIOTrace.h"
 
 #ifndef TRUE
@@ -107,74 +112,189 @@
 typedef unsigned int mode_t;
 #endif
 
-int OUTPUT_SWITCH;
-extern void preInitIOTrace(); 
-void traceIOEvent( );
+int OUTPUT_SWITCH = 1;
+int *procTrace;
+extern void preInitIOTrace( void ); 
 
 #include "ProcIDs.h"
 #include "HDFTrace.h"
 #include "IOTrace.h"
-#define NO_OUTPUT 0
-#define SDDF_OUTPUT 1
-#define RT_OUTPUT 2
-void HDFinitTrace ( char *, unsigned int , int );
-void HDFinitTrace_RT ( char *, unsigned int );
-void HDFinitTrace_SDDF ( char *, unsigned int );
-void hinittracex_ ( char [], int *, unsigned *, int * );
-void hdfendtrace_ ( void ) ;
-void HDFendTrace (void);
-void HDFendTrace_RT (void);
-void HDFendTrace_SDDF(void);
+
+#define	ID_HDFprocName		9996
+#define	ID_malloc		9997
+#define	ID_free			9998
+#define	ID_timeStamp		9999
+#define	DUMMY_HDF		10000
+
+#ifdef HAVE_PARALLEL
+#include "mpio.h"
+#endif /* HAVE_PARALLEL*/
+
+void HDFinitTrace_RT ( const char *, int );
+void HDFinitTrace_SDDF ( const char *, int );
+void hinittracex_ ( int [], int *, int[], int *,unsigned * );
+void hdfendtracef_ ( void ) ;
+void HDFendTrace_RT (int);
+void HDFendTrace_SDDF(int);
+void HDFfinalTimeStamp( void );
 void startHDFtraceEvent (int );
+int computeProcMask (int eventID);
+int computePacketTag(int eventID);
 void endHDFtraceEvent (int , int , char *, int );
-void traceEvent ( int , HDFsetInfo *, unsigned );
-void traceEvent_RT ( int , HDFsetInfo *, unsigned );
-uint procTrace;
+void traceEvent ( int , char *, unsigned );
+void HDFtraceEvent_RT ( int , HDFsetInfo *, unsigned );
+void HDFtraceIOEvent( int , void *, unsigned );
 extern int IOtracingEnabled;
+char *hdfRecordPointer;
+double WriteTotals = 0.0;
+double ReadTotals = 0.0;
 /*======================================================================*
 // NAME									*
 //     HDFinitTrace -- initialize HDF tracing				*
 // USAGE								*
-//     VOID HDFinitTrace( traceFileName, procTraceMask, out_sw )	*
+//     VOID HDFinitTrace( traceFileName, out_sw )			*
 //     char    *traceFileName;	IN: name of the generated trace output  *
 //				    file				*
-//     uint32  procTraceMask;	IN: families of procedures to trace	*
-//     int     out_sw		IN: indicates whether to produce SDDF	*
-//				    file or Final Summary		*
+//     int     ...   		IN: indicates which routines to trace	*
+//				    The list is terminated by the 	*
+//				    OUTPUT_SWITCH value indicating	*
+//				    whether to do RunTime or Summary	*
+//				    tracing.				*
 // RETURNS								*
 //     None.								*
 //======================================================================*/
 /*======================================================================*
-// fortran to C interface     	                                        *
+// fortran to C interface.  To insure portability, the character array  *
+// passed in Fortran is converted to an integer array using the ICHAR	*
+// function.  This program converts it from integer to char, then 	*
+// passes it to the C initialization routine.				*
 //======================================================================*/
-void hinittracex_( char file[], int *len, unsigned *procMask, int *out_sw )
+void hdfinittracef_( int *file, int *len, int flags[], int *nflags,
+                                                       unsigned *out_sw )
 {
-        char *fileName;
-        int i;
-        fileName = (char *)malloc(*len+1);
-        for ( i = 0; i < *len; ++i ) {
-           fileName[i] = file[i];
-        }
-        fileName[*len] = '\0';
-        HDFinitTrace ( fileName, *procMask, *out_sw );
-}
-void HDFinitTrace( char *traceFileName, unsigned  procTraceMask, int out_sw )
-{
-	if ( out_sw == SDDF_OUTPUT ) {
-	   HDFinitTrace_SDDF( traceFileName, procTraceMask );
-	} else if ( out_sw == RT_OUTPUT ) {
-	   HDFinitTrace_RT( traceFileName, procTraceMask );
-	} else if ( out_sw == NO_OUTPUT ) {
-	   procTrace = 0;
+        char *traceFileName;
+	int i;
+	traceFileName = (char *)malloc(*len+1);
+	for ( i = 0; i < *len; ++i ) {
+	   traceFileName[i] = file[i];
+	}
+	traceFileName[*len+1] = 0;
+	/*==============================================================*
+	// Allocate space for trace indicators.				*
+	//==============================================================*/
+        procTrace = ( int * ) malloc( NUM_HDF_IDS*sizeof(int) );
+        if ( procTrace == NULL ) {
+           fprintf(stderr,">> Error: Unable to allocate procTrace ");
+           fprintf(stderr,"array in program HDFinitTrace. <<<\n");
+           fprintf(stderr,">>> Exiting program! <<<\n");
+           exit (-1);
+	}
+	/*==============================================================*
+	// Initialize to 0.						*
+	//==============================================================*/
+	for ( i = 0; i <= NUM_HDF_IDS; ++i ) {
+	   procTrace[i] = 0;      
+	}
+	/*==============================================================*
+	// Read in the flags indicating which procedures to trace.	*
+	// The last parameter passed is an indicator of the type of 	*
+	// tracing to do.  This indicator has a value larger than any   *
+	// of the flags.						*
+	//==============================================================*/
+	for ( i = 0; i < *nflags; ++i ) {
+	   procTrace[flags[i]] = 1;
+	}
+	OUTPUT_SWITCH = *out_sw;
+	/*==============================================================*
+	// if no flags were passed, the default is to trace all of the  *
+	// procedures.							*
+	//==============================================================*/
+	if ( *nflags == 0 || procTrace[ID_ALLHDF] ) {
+	   for ( i = ID_HDF_Last_Entry + 1; i < NUM_HDF_IDS; ++i ) {
+	      procTrace[i] = 1;      
+	   }
+   	}
+	if ( OUTPUT_SWITCH == RUNTIME_TRACE 
+	                     || OUTPUT_SWITCH == MPI_RUNTIME_TRACE ) {
+	   HDFinitTrace_SDDF( traceFileName, OUTPUT_SWITCH );
+	   IOtracingEnabled = 1;
+	} else if ( OUTPUT_SWITCH == SUMMARY_TRACE 
+	                     || OUTPUT_SWITCH == MPI_SUMMARY_TRACE ) {
+	   HDFinitTrace_RT( traceFileName, OUTPUT_SWITCH );
+	   IOtracingEnabled = 1;
+	} else if ( OUTPUT_SWITCH == NO_TRACE ) {
+	   IOtracingEnabled = 0;
 	} else {
 	   fprintf(stderr,">> Error in HDFinitTrace: the third argument ");
-           fprintf(stderr,"must have the value 0, 1, <<<\n");
-	   fprintf(stderr,">> or 2.  The value received was %d.", out_sw);
-	   fprintf(stderr," Exiting program.                  <<<\n");
+           fprintf(stderr,"must have a value between %4d<<\n",RUNTIME_TRACE);
+	   fprintf(stderr,">> and %4d, inclusive.",NO_TRACE);
+	   fprintf(stderr,"  The value received was %4u.", OUTPUT_SWITCH);
+	   fprintf(stderr," Exiting Program.     <<\n");
 	   exit (-1);
 	}
-	IOtracingEnabled = 1;
-	OUTPUT_SWITCH = out_sw;
+}
+void HDFinitTrace( const char *traceFileName, int id_flag, ... )
+{
+	int i, nIDs;
+	va_list ap;
+
+	/*==============================================================*
+	// Allocate space for trace indicators.				*
+	//==============================================================*/
+        procTrace = ( int * ) malloc( NUM_HDF_IDS*sizeof(int) );
+        if ( procTrace == NULL ) {
+           fprintf(stderr,">> Error: Unable to allocate procTrace ");
+           fprintf(stderr,"array in program HDFinitTrace. <<<\n");
+           fprintf(stderr,">>> Exiting program! <<<\n");
+           exit (-1);
+	}
+	/*==============================================================*
+	// Initialize to 0.						*
+	//==============================================================*/
+	for ( i = 0; i < NUM_HDF_IDS; ++i ) {
+	   procTrace[i] = 0;      
+	}
+	/*==============================================================*
+	// Read in the flags indicating which procedures to trace.	*
+	// The last parameter passed is an indicator of the type of 	*
+	// tracing to do.  This indicator has a value larger than any   *
+	// of the flags.						*
+	//==============================================================*/
+	nIDs = 0;
+	va_start( ap, id_flag );
+	while ( id_flag > NO_TRACE ) {
+	   procTrace[id_flag] = 1;
+	   ++nIDs;
+           id_flag = va_arg ( ap, int );
+	}
+	OUTPUT_SWITCH = id_flag;
+	/*==============================================================*
+	// if no flags were passed, the default is to trace all of the  *
+	// procedures.							*
+	//==============================================================*/
+	if ( nIDs == 0 || procTrace[ID_ALLHDF] ) {
+	   for ( i = ID_HDF_Last_Entry + 1; i < NUM_HDF_IDS; ++i ) {
+	      procTrace[i] = 1;      
+	   }
+   	}
+	if ( OUTPUT_SWITCH == RUNTIME_TRACE 
+	                     || OUTPUT_SWITCH == MPI_RUNTIME_TRACE ) {
+	   HDFinitTrace_SDDF( traceFileName, OUTPUT_SWITCH );
+	   IOtracingEnabled = 1;
+	} else if ( OUTPUT_SWITCH == SUMMARY_TRACE 
+	                     || OUTPUT_SWITCH == MPI_SUMMARY_TRACE ) {
+	   HDFinitTrace_RT( traceFileName, OUTPUT_SWITCH );
+	   IOtracingEnabled = 1;
+        } else if ( OUTPUT_SWITCH == NO_TRACE ) {
+           IOtracingEnabled = 0;
+        } else {
+           fprintf(stderr,">> Error in HDFinitTrace: the third argument ");
+           fprintf(stderr,"must have a value between %4d<<\n",RUNTIME_TRACE);
+           fprintf(stderr,">> and %4d, inclusive.",NO_TRACE);
+           fprintf(stderr,"  The value received was %4u.", OUTPUT_SWITCH);
+           fprintf(stderr," Exiting Program.     <<\n");
+           exit (-1);
+        }
 }
 /*======================================================================*
 // NAME									*
@@ -184,25 +304,27 @@ void HDFinitTrace( char *traceFileName, unsigned  procTraceMask, int out_sw )
 // RETURNS								*
 //     None.								*
 //======================================================================*/
-void hdfendtrace_( void ) 
+void hdfendtracef_( void ) 
 {
 	HDFendTrace ();
 }
 void HDFendTrace(void)
 {
-	if ( OUTPUT_SWITCH == SDDF_OUTPUT ) {
-	   HDFendTrace_SDDF( );
-	} else if ( OUTPUT_SWITCH == RT_OUTPUT ) {
-	   HDFendTrace_RT( );
+	if ( OUTPUT_SWITCH == RUNTIME_TRACE 
+	                     || OUTPUT_SWITCH == MPI_RUNTIME_TRACE ) {
+	   HDFendTrace_SDDF( OUTPUT_SWITCH );
+	} else if ( OUTPUT_SWITCH == SUMMARY_TRACE 
+	                     || OUTPUT_SWITCH == MPI_SUMMARY_TRACE ) {
+	   HDFendTrace_RT( OUTPUT_SWITCH );
 	}
-	procTrace = 0;
 }
 void startHDFtraceEvent(int eventID)
 {
-	if ( OUTPUT_SWITCH == SDDF_OUTPUT ) {
+	if ( OUTPUT_SWITCH == RUNTIME_TRACE 
+	                     || OUTPUT_SWITCH == MPI_RUNTIME_TRACE ) {
 	   traceEvent( eventID, NULL, 0 ) ;
 	} else {
-	   traceEvent_RT( eventID, NULL, 0 ) ;
+	   HDFtraceEvent_RT( eventID, NULL, 0 ) ;
 	} 
 }
 void endHDFtraceEvent(int eventID, int setID, char *setName, int IDtype )
@@ -210,10 +332,16 @@ void endHDFtraceEvent(int eventID, int setID, char *setName, int IDtype )
 	HDFsetInfo info;
 	info.setID = setID;
 	info.setName = setName;
-	if ( OUTPUT_SWITCH == SDDF_OUTPUT ) {
-	   traceEvent( eventID, &info, 0 ) ;
-	} else {
-	   traceEvent_RT( eventID, &info, 0 ) ;
+	if ( OUTPUT_SWITCH == RUNTIME_TRACE 
+	                     || OUTPUT_SWITCH == MPI_RUNTIME_TRACE ) {
+	   traceEvent( eventID, (char *)&info, 0 ) ;
+	} else if ( OUTPUT_SWITCH == SUMMARY_TRACE 
+	                     || OUTPUT_SWITCH == MPI_SUMMARY_TRACE ) {
+	   HDFtraceEvent_RT( eventID, &info, 0 ) ;
+	} else if ( OUTPUT_SWITCH != NO_TRACE ) {
+	   fprintf(stderr,"endHDFtraceEvent: ");
+	   fprintf(stderr,"invalid OUTPUT_SWITCH %d, IDtype = %d\n",
+                                                  OUTPUT_SWITCH, IDtype ) ;
 	}
 }
 /******************************************************************************/
@@ -221,22 +349,19 @@ void endHDFtraceEvent(int eventID, int setID, char *setName, int IDtype )
 /*+	Open routines      			                             +*/
 /*+     -------------            				             +*/
 /*+	                                                                     +*/
-
-/*+	Routine:  FILE *HDFtraceFOPEN( char *filename, char *type )          +*/
+/*+ Routine:  FILE *HDFtraceFOPEN( const char *filename, const char *type )  +*/
 /*+		  substitute for fopen()                                     +*/
 /*+     	  generates fopenBeginID, fopenEndID		             +*/
 /*+		  record Open (fopenBegin)                                   +*/
 /*+			Mode = -1                                            +*/
 /*+									     +*/
-FILE *HDFtraceFOPEN( filename, type )
-char *filename; 
-char *type;
+FILE *HDFtraceFOPEN( const char *filename, const char *type )
 {
     FILE *fp;
     int fd, id;
     int flags = 0;
     struct open_args openArgs;
-    int typeLen;
+    size_t typeLen;
 	
     if ( IOtracingEnabled ) {
         strcpy( openArgs.filename, filename );
@@ -275,7 +400,7 @@ char *type;
         openArgs.flags = flags;
         openArgs.mode= -1;
 
-        traceIOEvent( fopenBeginID, &openArgs, sizeof(openArgs) );
+        HDFtraceIOEvent( fopenBeginID, (void *)&openArgs, sizeof(openArgs) );
     }
 
     fp = fopen( filename, type );
@@ -287,51 +412,18 @@ char *type;
     }
 
     if ( IOtracingEnabled ) {
-        traceIOEvent( fopenEndID, (char *) &id, int_SIZE );   
+        HDFtraceIOEvent( fopenEndID, (void *) &id, int_SIZE );   
     }
 
     return( fp );
 }
-/*+	Routine:  int HDFtrace3OPEN( char *path, int flags, mode_t mode )    +*/
-/*+		  substitute for open() when called with 3 arguments         +*/
-/*+     	  generates openBeginID, openEndID		             +*/
-/*+		  record Open (openBeginID)                                  +*/
-/*+									     +*/
-int HDFtrace3OPEN( path, flags, mode ) 
-char   *path;
-int    flags;
-mode_t mode;     
-{
-    struct open_args openArgs;
-    int fd;
-    int id;
 
-    if ( IOtracingEnabled ) {
-        strcpy( openArgs.filename, path );
-        openArgs.flags = flags;
-        openArgs.mode = (int) mode;
-
-        traceIOEvent( openBeginID, &openArgs, sizeof(openArgs) );
-    }
-
-    fd = open( path, flags, mode );
-    id = set_c_mappedID( fd );
-
-    if ( IOtracingEnabled ) {
-        traceIOEvent( openEndID, (char *) &id, int_SIZE );
-    }
-
-    return( fd );
-}
-
-/*+	Routine:  int HDFtraceCREAT( char *path, mode_t mode )                  +*/
+/*+	Routine:  int HDFtraceCREAT( const char *path, mode_t mode )         +*/
 /*+		  substitute for creat()                                     +*/
 /*+     	  generates openBeginID, openEndID		             +*/
 /*+		  record Open (openBeginID)                                  +*/
 /*+									     +*/
-int HDFtraceCREAT( path, mode )
-char   *path;
-mode_t mode;
+int HDFtraceCREAT( const char *path, mode_t mode )
 {
     struct open_args openArgs;
     int fd;
@@ -342,14 +434,14 @@ mode_t mode;
         openArgs.flags = O_WRONLY | O_CREAT | O_TRUNC;
         openArgs.mode = (int) mode;
 
-        traceIOEvent( openBeginID, &openArgs, sizeof(openArgs) );
+        HDFtraceIOEvent( openBeginID, (void *)&openArgs, sizeof(openArgs) );
     }
 
     fd = creat( path, mode );
     id = set_c_mappedID( fd );
 
     if ( IOtracingEnabled ) {
-        traceIOEvent( openEndID, (char *) &id, int_SIZE );
+        HDFtraceIOEvent( openEndID, (void *) &id, int_SIZE );
     }
 
     return( fd );
@@ -360,7 +452,6 @@ mode_t mode;
 /*+	Flush routines				                             +*/
 /*+     --------------				                             +*/
 /*+	                                                                     +*/
-
 /*+	Routine:  int HDFtraceFFLUSH( FILE *stream )                         +*/
 /*+		  substitute for fflush()                                    +*/
 /*+               generates fflushBeginID, fflushEndID                       +*/
@@ -384,14 +475,14 @@ int HDFtraceFFLUSH( FILE *stream )
         } else {
             fd = fileno( stream );
 	    id = c_mappedID( fd );
-            traceIOEvent( fflushBeginID, (char *) 0, int_SIZE );
+            HDFtraceIOEvent( fflushBeginID, (void *) 0, int_SIZE );
         }
     }
 
     ret = fflush( stream );
 
     if ( IOtracingEnabled ) {
-        traceIOEvent( fflushEndID, (char *) &id, 0 );
+        HDFtraceIOEvent( fflushEndID, (void *) &id, 0 );
     }
 
     /* 
@@ -404,11 +495,9 @@ int HDFtraceFFLUSH( FILE *stream )
 }
 
 /******************************************************************************/
-
 /*+	Close routines				                             +*/
 /*+     --------------				                             +*/
 /*+	                                                                     +*/
-
 /*+	Routine:  int HDFtraceFCLOSE( FILE *stream )                         +*/
 /*+		  substitute for fclose()                                    +*/
 /*+               generates fcloseBeginID, fcloseEndID                       +*/
@@ -422,16 +511,45 @@ int HDFtraceFCLOSE( FILE *stream )
 
     if ( IOtracingEnabled ) {
 	id = c_mappedID( fd );
-        traceIOEvent( fcloseBeginID, (char *) &id, int_SIZE );
+        HDFtraceIOEvent( fcloseBeginID, (void *) &id, int_SIZE );
     }
 
     ret = fclose( stream );
 
     if ( IOtracingEnabled ) {
-        traceIOEvent( fcloseEndID, (char *) 0, 0 );
+        HDFtraceIOEvent( fcloseEndID, (void *) 0, 0 );
     }
 
     return( ret );
+}
+
+/*+     Routine:  int HDFtrace3OPEN( char *path, int flags, mode_t mode )    +*/
+/*+               substitute for open() when called with 3 arguments         +*/
+/*+               generates openBeginID, openEndID                           +*/
+/*+               record Open (openBeginID)                                  +*/
+/*+                                                                          +*/
+int HDFtrace3OPEN( const char *path, int flags, mode_t mode )
+{
+    struct open_args openArgs;
+    int fd;
+    int id;
+
+    if ( IOtracingEnabled ) {
+        strcpy( openArgs.filename, path );
+        openArgs.flags = flags;
+        openArgs.mode = (int) mode;
+
+        HDFtraceIOEvent( openBeginID, (char *)&openArgs, sizeof(openArgs) );
+    }
+
+    fd = open( path, flags, mode );
+    id = set_c_mappedID( fd );
+
+    if ( IOtracingEnabled ) {
+        HDFtraceIOEvent( openEndID, (char *) &id, int_SIZE );
+    }
+
+    return( fd );
 }
 
 /*+	Routine:  int HDFtraceCLOSE( int fd )	                             +*/
@@ -446,24 +564,22 @@ int HDFtraceCLOSE( int fd )
 
     if ( IOtracingEnabled ) {
 	id = c_mappedID( fd );
-        traceIOEvent( closeBeginID, (char *) &id, int_SIZE );
+        HDFtraceIOEvent( closeBeginID, (void *) &id, int_SIZE );
     }
 
     ret = close( fd );
 
     if ( IOtracingEnabled ) {
-        traceIOEvent( closeEndID, (char *) 0, 0 );
+        HDFtraceIOEvent( closeEndID, (void *) 0, 0 );
     }
 
     return( ret );
 }
 
 /******************************************************************************/
-
 /*+	Read routines	            			                     +*/
 /*+     -------------			            	                     +*/
 /*+	                                                                     +*/
-
 /*+	Routine:  int HDFtraceREAD( int fd, char *buf, int nbyte )           +*/
 /*+		  substitute for read()                                      +*/
 /*+               generates readBeginID, readEndID                           +*/
@@ -471,23 +587,34 @@ int HDFtraceCLOSE( int fd )
 /*+                      Number Variables = 1                                +*/
 /*+			 Cause = -1                                          +*/
 /*+									     +*/
-int HDFtraceREAD( int fd, char *buf, int nbyte )
+ssize_t HDFtraceREAD( int fd, void *buf, size_t nbyte )
 {
     struct read_write_args readArgs;  
-    int ret;
+    ssize_t ret;
+    int bytes;
+    CLOCK t1, t2, incDur;
 
     if ( IOtracingEnabled ) {
         readArgs.fileID = c_mappedID( fd );
         readArgs.numVariables = 1;
         readArgs.cause = -1;   
 
-        traceIOEvent( readBeginID, (char *) &readArgs, sizeof(readArgs) );
+        HDFtraceIOEvent( readBeginID, (void *) &readArgs, sizeof(readArgs) );
     }
 
+    t1 = getClock();
     ret = read( fd, buf, nbyte );
+    t2 = getClock();
+    incDur = clockSubtract(t2,t1);
+    ReadTotals += clockToSeconds( incDur );
 
     if ( IOtracingEnabled ) {
-        traceIOEvent( readEndID, (char *) &ret, int_SIZE );
+        if ( ret > 0 ) {
+           bytes = (int)ret;
+	} else { 
+           bytes = 0;
+	} 
+        HDFtraceIOEvent( readEndID, (void *) &bytes, int_SIZE );
     }
 
     return( ret );
@@ -501,144 +628,44 @@ int HDFtraceREAD( int fd, char *buf, int nbyte )
 /*+                      Number Variables = nitems                           +*/
 /*+			 Cause = -1                                          +*/
 /*+									     +*/
-int HDFtraceFREAD( char *ptr, int size, int nitems, FILE *stream )
+size_t HDFtraceFREAD( void *ptr, size_t size, size_t nitems, FILE *stream )
 {
     struct read_write_args readArgs;  
-    int ret, nbytes;
+    size_t ret;
+    int nbytes;
     int fd = fileno( stream );
+	CLOCK t1, t2, incDur;
 
     if ( IOtracingEnabled ) {
         readArgs.fileID = c_mappedID( fd );
         readArgs.numVariables = nitems;
         readArgs.cause = -1;
-        traceIOEvent( freadBeginID, (char *) &readArgs, sizeof(readArgs) );
+        HDFtraceIOEvent( freadBeginID, (void *) &readArgs, sizeof(readArgs) );
     }
 
+    t1 = getClock();
     ret = fread( ptr, size, nitems, stream );
+    t2 = getClock();
+    incDur = clockSubtract(t2,t1);
+    ReadTotals += clockToSeconds( incDur );
 
     if ( IOtracingEnabled ) {
-        nbytes = ret * size;
-        traceIOEvent( freadEndID, (char *) &nbytes, int_SIZE );
+        if ( ret > 0 ) {
+           nbytes = (int)(ret * size) ;
+	} else {
+           nbytes = 0;
+	}
+        HDFtraceIOEvent( freadEndID, (void *) &nbytes, int_SIZE );
     }
 
     return( ret );
 }
 
-/*+	Routine:  int HDFtraceFGETC( FILE *stream )                          +*/
-/*+		  substitute for fgetc()                                     +*/
-/*+               generates freadBeginID, freadEndID                         +*/
-/*+	          record Read (freadBeginID)                                 +*/
-/*+                      Number Variables = 1                                +*/
-/*+			 Cause = -1                                          +*/
-/*+									     +*/
-/*int HDFtraceFGETC( FILE *stream )
-{
-    struct read_write_args readArgs;  
-    int ret; 
-    int nbytes = char_SIZE;
-    int fd = fileno( stream );
-
-    if ( IOtracingEnabled ) {
-        readArgs.fileID = c_mappedID( fd );
-        readArgs.numVariables = 1;
-        readArgs.cause = -1;
-
-        traceIOEvent( freadBeginID, (char *) &readArgs, sizeof(readArgs) );
-    }
-
-    ret = fgetc( stream );
-
-    if ( IOtracingEnabled ) {
-	if ( ret == EOF ) {
-	    nbytes = 0;
-	}
-        traceIOEvent( freadEndID, (char *) &nbytes, int_SIZE );
-    }
-
-    return( ret );
-} *
-       
-/*+	Routine:  int HDFtraceFGETS( char *s, int n, FILE *stream )          +*/
-/*+		  substitute for fgets()                                     +*/
-/*+               generates freadBeginID, freadEndID                         +*/
-/*+	          record Read (freadBeginID)                                 +*/
-/*+                      Number Variables = 1                                +*/
-/*+			 Cause = -1                                          +*/
-/*+									     +*/
-/* char *HDFtraceFGETS( s, n, stream )
-char *s;
-int  n;
-FILE *stream;
-{
-    struct read_write_args readArgs;  
-    char *ret;
-    int nbytes;
-    int fd = fileno( stream );
-
-    if ( IOtracingEnabled ) {
-        readArgs.fileID = c_mappedID( fd );
-        readArgs.numVariables = 1;
-        readArgs.cause = -1;
-
-        traceIOEvent( freadBeginID, (char *) &readArgs, sizeof(readArgs) );
-    }
-
-    ret = fgets( s, n, stream );
-
-    if ( IOtracingEnabled ) {
-	if ( ret == NULL ) {
-	    nbytes = 0;
-	} else {
-            nbytes = strlen( ret );
-	}
-        traceIOEvent( freadEndID, (char *) &nbytes, int_SIZE );
-    }
-
-    return( ret );
-}
- */
-/*+	Routine:  int HDFtraceGETS( char *s )                                +*/
-/*+		  substitute for gets()                                      +*/
-/*+               generates freadBeginID, freadEndID                         +*/
-/*+	          record Read (freadBeginID)                                 +*/
-/*+                      Number Variables = 1                                +*/
-/*+			 Cause = -1                                          +*/
-/*+									     +*/
-/* char *HDFtraceGETS( char *s )
-{
-    struct read_write_args readArgs;  
-    char *ret;
-    int nbytes;
-    int fd = fileno( stdin );
-
-    if ( IOtracingEnabled ) {
-        readArgs.fileID = c_mappedID( fd );
-        readArgs.numVariables = 1;
-        readArgs.cause = -1;
-
-        traceIOEvent( freadBeginID, (char *) &readArgs, sizeof(readArgs) );
-    }
-
-    ret = gets( s );
-
-    if ( IOtracingEnabled ) {
-	if ( ret == NULL ) {
-	    nbytes = 0;
-	} else {
-	    nbytes = strlen( ret ) + 1;
-	}
-        traceIOEvent( freadEndID, (char *) &nbytes, int_SIZE );
-    }
-
-    return( ret );
-} */
        
 /******************************************************************************/
-
 /*+	Seek routines            			                     +*/
 /*+     -------------			            	                     +*/
 /*+	                                                                     +*/
-
 /*+	Routine:  off_t HDFtraceLSEEK( int fd, off_t offset, int whence )    +*/
 /*+		  substitute for lseek()                                     +*/
 /*+               generates lseekBeginID, lseekEndID                         +*/
@@ -655,14 +682,14 @@ off_t HDFtraceLSEEK( int fd, off_t offset, int whence )
         seekArgs.offset = (int) offset;
         seekArgs.whence = whence;
 
-        traceIOEvent( lseekBeginID, (char *) &seekArgs, sizeof(seekArgs) );
+        HDFtraceIOEvent( lseekBeginID, (void *) &seekArgs, sizeof(seekArgs) );
     }
 
     ret = lseek( fd, offset, whence );
 
     if ( IOtracingEnabled ) {
 	arg = (long) ret;
-        traceIOEvent( lseekEndID, (char *)&arg, long_SIZE );
+        HDFtraceIOEvent( lseekEndID, (void *)&arg, long_SIZE );
     }
 
     return( ret );
@@ -685,14 +712,14 @@ int HDFtraceFSEEK( FILE *stream, long offset, int whence )
         seekArgs.offset = (int) offset;
         seekArgs.whence = whence;
 
-        traceIOEvent( fseekBeginID, (char *) &seekArgs, sizeof(seekArgs) );
+        HDFtraceIOEvent( fseekBeginID, (void *) &seekArgs, sizeof(seekArgs) );
     }
 
     ret = fseek( stream, offset, whence );
 
     if ( IOtracingEnabled ) {
 	arg = ftell( stream );
-        traceIOEvent( fseekEndID, (char *)&arg, long_SIZE );
+        HDFtraceIOEvent( fseekEndID, (void *)&arg, long_SIZE );
     }
 
     return( ret );
@@ -716,14 +743,14 @@ int HDFtraceFSETPOS( FILE stream, const fpos_t *position )
         seekArgs.offset = (int) *position;
         seekArgs.whence = SEEK_SET;
 
-        traceIOEvent( fsetposBeginID, (char *) &seekArgs, sizeof(seekArgs) );
+        HDFtraceIOEvent( fsetposBeginID, (void *) &seekArgs, sizeof(seekArgs) );
     }
 
     ret = fsetpos( stream, position );
 
     if ( IOtracingEnabled ) {
 	arg = (long) *position;
-        traceIOEvent( fsetposEndID, (char *)&arg, long_SIZE );
+        HDFtraceIOEvent( fsetposEndID, (void *)&arg, long_SIZE );
     }
 
     return( ret );
@@ -748,25 +775,23 @@ void HDFtraceREWIND( FILE *stream )
         seekArgs.offset = 0;
         seekArgs.whence = SEEK_SET;
 
-        traceIOEvent( rewindBeginID, (char *) &seekArgs, sizeof(seekArgs) );
+        HDFtraceIOEvent( rewindBeginID, (void *) &seekArgs, sizeof(seekArgs) );
     }
 
     rewind( stream );
 
     if ( IOtracingEnabled ) {
 	arg = 0;
-        traceIOEvent( rewindEndID, (char *)&arg, long_SIZE );
+        HDFtraceIOEvent( rewindEndID, (void *)&arg, long_SIZE );
     }
 
     return;
 }
 
 /******************************************************************************/
-
 /*+	Write routines            			                     +*/
 /*+     --------------			            	                     +*/
 /*+	                                                                     +*/
-
 /*+  Routine:  int HDFtraceWRITE( int fd, char *buf, int nbyte )             +*/
 /*+		  substitute for write()                                     +*/
 /*+               generates writeBeginID, writeEndID                         +*/
@@ -774,29 +799,39 @@ void HDFtraceREWIND( FILE *stream )
 /*+                    	 Number Variables = 1                                +*/
 /*+			 Cause = -1                                          +*/
 /*+									     +*/
-int HDFtraceWRITE( int fd, char *buf, int nbyte )
+ssize_t HDFtraceWRITE( int fd, const void *buf, size_t nbyte )
 {
     struct read_write_args writeArgs;
-    int ret;
+    ssize_t ret;
+    int bytes;
+    CLOCK t1, t2, incDur;
 
     if ( IOtracingEnabled ) {
         writeArgs.fileID = c_mappedID( fd );
         writeArgs.numVariables = 1;
         writeArgs.cause = -1;
 
-        traceIOEvent( writeBeginID, (char *) &writeArgs, sizeof(writeArgs) );
+        HDFtraceIOEvent( writeBeginID, (void *) &writeArgs, sizeof(writeArgs) );
     }
 
+    t1 = getClock();
     ret = write( fd, buf, nbyte );
+    t2 = getClock();
+    incDur = clockSubtract(t2,t1);
+    WriteTotals += clockToSeconds( incDur );
 
     if ( IOtracingEnabled ) {
-        traceIOEvent( writeEndID, (char *) &ret, int_SIZE );
+        if ( ret > 0 ) {
+           bytes =  (int)ret;
+	} else {
+	   bytes = 0;
+	}
+        HDFtraceIOEvent( writeEndID, (void *) &bytes, int_SIZE );
     }
-
     return( ret );
 }  
 
-/*+  Routine:  int HDFtraceFWRITE( char *ptr, int size, int nitems,          +*/
+/*+  Routine:  size_t HDFtraceFWRITE( const char *ptr, int size, int nitems, +*/
 /*+                                FILE *stream )                            +*/
 /*+		  substitute for fwrite()                                    +*/
 /*+               generates fwriteBeginID, fwriteEndID                       +*/
@@ -804,25 +839,37 @@ int HDFtraceWRITE( int fd, char *buf, int nbyte )
 /*+                    	 Number Variables = nitems                           +*/
 /*+			 Cause = -1                                          +*/
 /*+									     +*/
-int HDFtraceFWRITE( char *ptr, int size, int nitems, FILE *stream )
+size_t HDFtraceFWRITE(const void *ptr,size_t size,size_t nitems,FILE *stream )
+
 {
     struct read_write_args writeArgs;
-    int ret, nbytes;
+    size_t ret;
+    int nbytes;
     int fd = fileno( stream );
+    CLOCK t1, t2, incDur;
 
     if ( IOtracingEnabled ) {
         writeArgs.fileID = c_mappedID( fd );
         writeArgs.numVariables = nitems;
         writeArgs.cause = -1;
 
-      traceIOEvent( fwriteBeginID, (char *) &writeArgs, sizeof(writeArgs) );
+      HDFtraceIOEvent( fwriteBeginID, (void *) &writeArgs, sizeof(writeArgs) );
     }
 
+    t1 = getClock();
     ret = fwrite( ptr, size, nitems, stream );
+    t2 = getClock();
+    incDur = clockSubtract(t2,t1);
+    WriteTotals += clockToSeconds( incDur );
+
 
     if ( IOtracingEnabled ) {
-        nbytes = ret * size;
-        traceIOEvent( fwriteEndID, (char *) &nbytes, int_SIZE );
+        if ( ret > 0 ) {
+           nbytes = (int)(ret * size) ;
+	} else {
+           nbytes = 0;
+	} 
+        HDFtraceIOEvent( fwriteEndID, (void *) &nbytes, int_SIZE );
     }
 
     return( ret );
@@ -846,13 +893,13 @@ int HDFtracePUTS( char *s )
         writeArgs.numVariables = 1;
         writeArgs.cause = -1;
 
-        traceIOEvent( fwriteBeginID, (char *) &writeArgs, sizeof(writeArgs) );
+        HDFtraceIOEvent( fwriteBeginID, (void *) &writeArgs, sizeof(writeArgs) );
     }
 
     ret = puts( s );
 
     if ( IOtracingEnabled ) {
-        traceIOEvent( fwriteEndID, (char *) &ret, int_SIZE );
+        HDFtraceIOEvent( fwriteEndID, (void *) &ret, int_SIZE );
     }
 
     return( ret );
@@ -877,7 +924,7 @@ int HDFtraceFPUTC( int c, FILE *stream )
         writeArgs.numVariables = 1;
         writeArgs.cause = -1;
 
-        traceIOEvent( fwriteBeginID, (char *) &writeArgs, sizeof(writeArgs) );
+        HDFtraceIOEvent( fwriteBeginID, (void *) &writeArgs, sizeof(writeArgs) );
     }
 
     ret = fputc( c, stream );
@@ -885,7 +932,7 @@ int HDFtraceFPUTC( int c, FILE *stream )
     if ( IOtracingEnabled ) {
 	if ( ret == EOF ) {
 	    nbytes = 0;
-            traceIOEvent( fwriteEndID, (char *) &nbytes, int_SIZE );
+            HDFtraceIOEvent( fwriteEndID, (void *) &nbytes, int_SIZE );
 	}
     }
 
@@ -898,9 +945,7 @@ int HDFtraceFPUTC( int c, FILE *stream )
 /*+                    	 Number Variables = 1                                +*/
 /*+			 Cause = -1                                          +*/
 /*+									     +*/
-int HDFtraceFPUTS( s, stream )
-char *s;
-FILE *stream;
+int HDFtraceFPUTS( const char *s, FILE *stream )
 {
     struct read_write_args writeArgs;
     int ret;
@@ -911,23 +956,790 @@ FILE *stream;
         writeArgs.numVariables = 1;
         writeArgs.cause = -1;
 
-        traceIOEvent( fwriteBeginID, (char *) &writeArgs, sizeof(writeArgs) );
+        HDFtraceIOEvent(fwriteBeginID, (void *)&writeArgs, sizeof(writeArgs));
     }
 
     ret = fputs( s, stream );
 
     if ( IOtracingEnabled ) {
-        traceIOEvent( fwriteEndID, (char *) &ret, int_SIZE );
+        HDFtraceIOEvent( fwriteEndID, (void *) &ret, int_SIZE );
     }
 
     return( ret );
 }
-
-void traceIOEvent( int eventType, char *dataPtr, unsigned dataLen )
+void *HDFtraceMALLOC(size_t bytes )
 {
-        if ( OUTPUT_SWITCH == 1 ) {
-           traceEvent( eventType, (HDFsetInfo *)dataPtr, dataLen );
+	void *ptr;
+	int byte_req;
+	byte_req = (int)bytes;
+	if ( IOtracingEnabled ) {
+	   HDFtraceIOEvent ( ID_malloc, NULL, 0 );
+	}
+	
+	ptr = malloc( bytes );
+
+	if ( IOtracingEnabled ) {
+	   HDFtraceIOEvent ( -ID_malloc, &byte_req, sizeof(int) );
+	}
+	
+	return ptr ;
+
+}
+	
+void HDFtraceIOEvent( int eventType, void *dataPtr, unsigned dataLen )
+{
+	if ( OUTPUT_SWITCH == RUNTIME_TRACE 
+	                     || OUTPUT_SWITCH == MPI_RUNTIME_TRACE ) {
+           traceEvent( eventType, dataPtr, dataLen );
         } else {
-           traceEvent_RT( eventType, (HDFsetInfo *)dataPtr, dataLen );
+           HDFtraceEvent_RT( eventType, (HDFsetInfo *)dataPtr, dataLen );
         }
 }
+/*======================================================================*
+// record the final time stamp                                          *
+//======================================================================*/
+void HDFfinalTimeStamp( void )
+{
+        CLOCK   currentTime;
+        double  seconds;
+        struct {
+                int packetLength,
+                    packetType,
+                    packetTag,
+                    timeDim;
+                double Seconds;
+                int eventID,
+                    node,
+                    dataLen;
+        } Packet;
+
+        currentTime = getClock();
+        seconds = clockToSeconds( currentTime );
+
+        Packet.packetLength = sizeof(Packet);
+        Packet.packetType   = PKT_DATA;
+        Packet.packetTag    = FAMILY_EXTERNAL | RECORD_TRACE;
+        Packet.timeDim      = 0;        /* use fp time stamp only */
+        Packet.Seconds      = seconds;  /* fp time stamp          */
+        Packet.eventID      = ID_timeStamp;
+        Packet.node         = TRgetNode();
+        Packet.dataLen      = 0;
+        putBytes( (void *)&Packet , sizeof(Packet) );
+}
+/*======================================================================*
+// This Program is called to specify which routines are to be traced.	*
+// On first entry, the program allocates storage for and initializes a  *
+// global array procTrace.  The array has one element for each possible *
+// HDF procedure and HDF library file.  If a procedure or all of the  *
+// procedure in an HDF file are to be traced, then the elemen in the 	*
+// array corresponding to the procedure or file is turned on.  This is  *
+// used by the macros TRACE_ON and TRACE_OFF to enable tracing.  If     *
+// this procedure is not called prior to initialization, then all of    *
+// the elements of procTrace corresponding to HDF files will be 	*
+// turned on, in which case all HDF procedures will be traced.	*
+//======================================================================*/
+void PabloHDFTrace( int ID ) 
+{
+	int i;
+	if ( procTrace == NULL ) {
+	   procTrace = ( int * ) malloc( NUM_HDF_IDS*sizeof(int) );
+	   if ( procTrace == NULL ) {
+              fprintf(stderr,">> Error: Unable to allocate procTrace ");
+              fprintf(stderr,"array in program PabloHDFTrace. <<<\n");
+              fprintf(stderr," Exiting program.                  <<<\n");
+              exit (-1);
+	   }
+	   for ( i = 0; i < NUM_HDF_IDS; ++i ) {
+	       procTrace[i] = 0;      
+	   }
+	}
+	if ( ID >= 0 && ID < NUM_HDF_IDS ) {
+	   procTrace[ID] = 1;      
+	} else {
+           fprintf(stderr,">> Error: Value passed to PabloHDFTrace, ");
+           fprintf(stderr,"%d, is out of range. <<<\n",ID);
+           fprintf(stderr," Exiting program.                  <<<\n");
+           exit (-1);
+	}
+}
+#ifdef HAVE_PARALLEL
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_open( MPI_Comm comm, char *filename, int amode, 
+                                    MPI_Info info, MPI_File *fh )
+{
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+   
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+           returnVal = MPI_File_open( comm, filename, amode, info, fh );
+        } else {
+	   dataLen = sizeof( HDFsetInfo );
+	   dataPtr.setID = (long)fh;
+	   dataPtr.setName = (char *)malloc( strlen(filename) + 1);
+	   strcpy( dataPtr.setName , filename );
+           HDFtraceEvent_RT( HDFmpiOpenID, &dataPtr, dataLen );
+           returnVal = PMPI_File_open( comm, filename, amode, info, fh );
+           HDFtraceEvent_RT( -HDFmpiOpenID, &dataPtr, dataLen );
+        }
+   	return returnVal;
+}
+
+   
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_close( MPI_File *fh )
+{
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+   
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+           returnVal = MPI_File_close( fh );
+        } else {
+	   dataLen = sizeof( HDFsetInfo );
+	   dataPtr.setID = (long)fh;
+	   dataPtr.setName = NULL;
+           HDFtraceEvent_RT( HDFmpiCloseID, &dataPtr, dataLen );
+           returnVal = PMPI_File_close( fh );
+           HDFtraceEvent_RT( -HDFmpiCloseID, &dataPtr, dataLen );
+	   free( dataPtr.setName );
+        }
+   	return returnVal;
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_delete( char *filename, MPI_Info info )
+{
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+   
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+   	   returnVal = MPI_File_delete( filename, info );
+        } else {
+	   dataLen = sizeof( HDFsetInfo );
+	   dataPtr.setID = 0;
+	   dataPtr.setName = (char *)malloc( sizeof(filename) );
+	   strcpy( dataPtr.setName , filename );
+           HDFtraceEvent_RT( HDFmpiDeleteID, &dataPtr, dataLen );
+   	   returnVal = PMPI_File_delete( filename, info );
+           HDFtraceEvent_RT( -HDFmpiDeleteID, &dataPtr, dataLen );
+	   free( dataPtr.setName );
+        }
+   	return returnVal;
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_set_size( MPI_File fh, MPI_Offset size )
+{
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+   
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+   	   returnVal = MPI_File_set_size( fh, size );
+        } else {
+	   dataLen = 0;
+           HDFtraceEvent_RT( HDFmpiSetSizeID,&dataPtr,dataLen );
+   	   returnVal = PMPI_File_set_size( fh, size );
+           HDFtraceEvent_RT( -HDFmpiSetSizeID, &dataPtr, dataLen );
+        }
+   	return returnVal;
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_preallocate( MPI_File fh, MPI_Offset size)
+{
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+   
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+   	   returnVal = MPI_File_preallocate( fh, size);
+        } else {
+	   dataLen = 0;
+           HDFtraceEvent_RT( HDFmpiPreallocateID,
+                             &dataPtr,dataLen );
+   	   returnVal = PMPI_File_preallocate( fh, size);
+           HDFtraceEvent_RT( -HDFmpiPreallocateID, 
+                             &dataPtr, dataLen );
+        }
+   	return returnVal;
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_get_size( MPI_File fh, MPI_Offset *size )
+{
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+           returnVal = MPI_File_get_size( fh, size);
+	} else {
+	   dataLen = 0;
+           HDFtraceEvent_RT( HDFmpiGetSizeID,
+                             &dataPtr,dataLen );
+           returnVal = PMPI_File_get_size( fh, size);
+           HDFtraceEvent_RT( -HDFmpiGetSizeID,
+                             &dataPtr,dataLen );
+	}
+   	return returnVal;
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_get_group( MPI_File fh, MPI_Group *group )
+{
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+   
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+   	   returnVal = MPI_File_get_group( fh, group);
+	} else {
+	   dataLen = 0;
+           HDFtraceEvent_RT( HDFmpiGetGroupID,
+                             &dataPtr,dataLen );
+   	   returnVal = PMPI_File_get_group( fh, group);
+           HDFtraceEvent_RT( -HDFmpiGetGroupID,
+                             &dataPtr,dataLen );
+	}
+   	return returnVal;
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_get_amode( MPI_File fh, int *amode )
+{
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+   	   returnVal = MPI_File_get_amode( fh, amode);
+	} else {
+	   dataLen = 0;
+           HDFtraceEvent_RT( HDFmpiGetAmodeID,
+                             &dataPtr,dataLen );
+   	   returnVal = PMPI_File_get_amode( fh, amode);
+           HDFtraceEvent_RT( -HDFmpiGetAmodeID,
+                             &dataPtr,dataLen );
+	}
+   	return returnVal;
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_set_view( MPI_File fh, MPI_Offset disp, MPI_Datatype etype, 
+                           MPI_Datatype filetype, char *datarep, MPI_Info info )
+{
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+   	   returnVal = MPI_File_set_view( fh, disp, etype, filetype, 
+                                                      datarep, info );
+	} else {
+	   dataLen = 0;
+           HDFtraceEvent_RT( HDFmpiSetViewID,
+                             &dataPtr,dataLen );
+   	   returnVal = PMPI_File_set_view( fh, disp, etype, filetype, 
+                                                      datarep, info );
+           HDFtraceEvent_RT( -HDFmpiSetViewID,
+                             &dataPtr,dataLen );
+	}
+   	return returnVal;
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_get_view( MPI_File fh, MPI_Offset *disp, MPI_Datatype *etype, 
+                           MPI_Datatype *filetype, char *datarep )
+{
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+   	   returnVal = MPI_File_get_view(fh, disp, etype, filetype, datarep);
+	} else {
+	   dataLen = 0;
+           HDFtraceEvent_RT( HDFmpiSetViewID,
+                             &dataPtr,dataLen );
+   	   returnVal = PMPI_File_get_view(fh, disp, etype, filetype, datarep);
+           HDFtraceEvent_RT( -HDFmpiSetViewID,
+                             &dataPtr,dataLen );
+     	   returnVal = PMPI_File_get_view(fh, disp, etype, filetype, datarep);
+
+	}
+   	return returnVal;
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_read_at( MPI_File fh, MPI_Offset offset, void *buf,
+		         int count, MPI_Datatype datatype, MPI_Status *status )
+{
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+   	   returnVal = MPI_File_read_at( fh, offset, buf, count, datatype, 
+	                                                            status );
+	} else {
+	   dataLen = 0;
+           HDFtraceEvent_RT( HDFmpiReadAtID,
+                             &dataPtr,dataLen );
+   	   returnVal = PMPI_File_read_at( fh, offset, buf, count, datatype, 
+	                                                            status );
+           HDFtraceEvent_RT( -HDFmpiReadAtID,
+                             &dataPtr,dataLen );
+	}
+   	return returnVal;
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_read_at_all( MPI_File fh, MPI_Offset offset, void *buf,
+   			int count, MPI_Datatype datatype, MPI_Status *status )
+{
+   
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+   	   returnVal = MPI_File_read_at_all( fh, offset, buf, 
+				      count, datatype, status );
+	} else {
+	   dataLen = 0;
+           HDFtraceEvent_RT( HDFmpiReadAtAllID,
+                             &dataPtr,dataLen );
+   	   returnVal = PMPI_File_read_at_all( fh, offset, buf, 
+				      count, datatype, status );
+           HDFtraceEvent_RT( -HDFmpiReadAtAllID,
+                             &dataPtr,dataLen );
+	}
+   	return returnVal;
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_write_at( MPI_File fh, MPI_Offset offset, void *buf,
+                      int count, MPI_Datatype datatype, MPI_Status *status )
+{
+   
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+   	   returnVal = MPI_File_write_at( fh, offset, buf, count, datatype, 
+	                                                           status );
+	} else {
+	   dataLen = 0;
+           HDFtraceEvent_RT( HDFmpiWriteAtID,
+                             &dataPtr,dataLen );
+   	   returnVal = PMPI_File_write_at( fh, offset, buf, count, datatype, 
+	                                                            status );
+           HDFtraceEvent_RT( -HDFmpiWriteAtID,
+                             &dataPtr,dataLen );
+	}
+   	return returnVal;
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_write_at_all( MPI_File fh, MPI_Offset offset, void *buf,
+                  int count, MPI_Datatype datatype, MPI_Status *status )
+{
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+   	   returnVal = MPI_File_write_at_all( fh, offset, buf, 
+	 	 	       		count, datatype, status );
+	} else {
+	   dataLen = 0;
+           HDFtraceEvent_RT( HDFmpiWriteAtAllID,
+                             &dataPtr,dataLen );
+   	   returnVal = PMPI_File_write_at_all( fh, offset, buf, 
+	 			       count, datatype, status );
+           HDFtraceEvent_RT( -HDFmpiWriteAtAllID,
+                             &dataPtr,dataLen );
+	}
+   	return returnVal;
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_iread_at( MPI_File fh, MPI_Offset offset, void *buf,
+   int count, MPI_Datatype datatype, MPIO_Request *request )
+{
+   return MPI_File_iread_at( fh, offset, buf, count, datatype, request );
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_iwrite_at( MPI_File fh, MPI_Offset offset, void *buf, 
+		int count, MPI_Datatype datatype, MPIO_Request *request)
+{
+   return MPI_File_iwrite_at( fh, offset, buf, count, datatype, request );
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_read( MPI_File fh, void *buf, int count, 
+                       MPI_Datatype datatype, MPI_Status *status)
+{
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+   	   returnVal = MPI_File_read( fh, buf, count, datatype, status );
+	} else {
+	   dataLen = 0;
+           HDFtraceEvent_RT( HDFmpiReadID,
+                             &dataPtr,dataLen );
+   	   returnVal = PMPI_File_read( fh, buf, count, datatype, status );
+           HDFtraceEvent_RT( -HDFmpiReadID,
+                             &dataPtr,dataLen );
+	}
+   	return returnVal;
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_read_all( MPI_File fh, void *buf, int count, 
+                           MPI_Datatype datatype, MPI_Status *status)
+{
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+   	   returnVal = MPI_File_read_all( fh, buf, count, datatype, status );
+	} else {
+	   dataLen = 0;
+           HDFtraceEvent_RT( HDFmpiReadAllID,
+                             &dataPtr,dataLen );
+   	   returnVal = PMPI_File_read_all( fh, buf, count, datatype, status );
+           HDFtraceEvent_RT( -HDFmpiReadAllID,
+                             &dataPtr,dataLen );
+	}
+   	return returnVal;
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_write( MPI_File fh, void *buf, int count, 
+                        MPI_Datatype datatype, MPI_Status *status )
+{
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+           returnVal = MPI_File_write( fh, buf, count, datatype, status );
+	} else {
+	   dataLen = 0;
+           HDFtraceEvent_RT( HDFmpiWriteID,
+                             &dataPtr,dataLen );
+           returnVal = PMPI_File_write( fh, buf, count, datatype, status );
+           HDFtraceEvent_RT( -HDFmpiWriteID,
+                             &dataPtr,dataLen );
+	}
+   	return returnVal;
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_write_all( MPI_File fh, void *buf, int count, 
+                            MPI_Datatype datatype, MPI_Status *status )
+{
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+   	   returnVal =MPI_File_write_all( fh, buf, count, datatype, status );
+	} else {
+	   dataLen = 0;
+           HDFtraceEvent_RT( HDFmpiWriteAllID,
+                             &dataPtr,dataLen );
+   	   returnVal = PMPI_File_write_all( fh, buf, count, datatype, status );
+           HDFtraceEvent_RT( -HDFmpiWriteAllID,
+                             &dataPtr,dataLen );
+	}
+   	return returnVal;
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_iread( MPI_File fh, void *buf, int count, 
+                        MPI_Datatype datatype, MPIO_Request *request )
+{
+	return MPI_File_iread( fh, buf, count, datatype, request );
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_iwrite( MPI_File fh, void *buf, int count, 
+	                 MPI_Datatype datatype, MPIO_Request *request )
+{
+   return MPI_File_iwrite( fh, buf, count, datatype, request );
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_seek( MPI_File fh, MPI_Offset offset, int whence )
+{
+   
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+   	   returnVal = MPI_File_seek( fh, offset, whence );
+	} else {
+	   dataLen = 0;
+           HDFtraceEvent_RT( HDFmpiSeekID,
+                             &dataPtr,dataLen );
+   	   returnVal = PMPI_File_seek( fh, offset, whence );
+           HDFtraceEvent_RT( -HDFmpiSeekID,
+                             &dataPtr,dataLen );
+	}
+   	return returnVal;
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_get_position( MPI_File fh, MPI_Offset *offset )
+{
+   
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+   	   returnVal = MPI_File_get_position( fh, offset );
+	} else {
+	   dataLen = 0;
+           HDFtraceEvent_RT( HDFmpiGetPositionID,
+                             &dataPtr,dataLen );
+   	   returnVal = PMPI_File_get_position( fh, offset );
+           HDFtraceEvent_RT( -HDFmpiGetPositionID,
+                             &dataPtr,dataLen );
+	}
+   	return returnVal;
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_get_byte_offset( MPI_File fh, MPI_Offset offset, 
+                                             MPI_Offset *disp )
+{
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+   	   returnVal = MPI_File_get_byte_offset( fh, offset, disp );
+	} else {
+	   dataLen = 0;
+           HDFtraceEvent_RT( HDFmpiGetByteOffsetID,
+                             &dataPtr,dataLen );
+   	   returnVal = PMPI_File_get_byte_offset( fh, offset, disp );
+           HDFtraceEvent_RT( -HDFmpiGetByteOffsetID,
+                             &dataPtr,dataLen );
+	}
+   	return returnVal;
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_get_type_extent( MPI_File fh, MPI_Datatype datatype, 
+                                               MPI_Aint *extent )
+{
+   
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+   	   returnVal = MPI_File_get_type_extent( fh, datatype, extent );
+	} else {
+	   dataLen = 0;
+           HDFtraceEvent_RT( HDFmpiGetTypeExtentID,
+                             &dataPtr,dataLen );
+   	   returnVal = PMPI_File_get_type_extent( fh, datatype, extent );
+           HDFtraceEvent_RT( -HDFmpiGetTypeExtentID,
+                             &dataPtr,dataLen );
+	}
+   	return returnVal;
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_set_atomicity( MPI_File fh, int flag )
+{
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+   	   returnVal = MPI_File_set_atomicity( fh, flag );
+	} else {
+	   dataLen = 0;
+           HDFtraceEvent_RT( HDFmpiSetAtomicityID,
+                             &dataPtr,dataLen );
+   	   returnVal = PMPI_File_set_atomicity( fh, flag );
+           HDFtraceEvent_RT( -HDFmpiSetAtomicityID,
+                             &dataPtr,dataLen );
+	}
+   	return returnVal;
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_get_atomicity( MPI_File fh, int *flag )
+{
+   
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) {
+   	   returnVal = MPI_File_get_atomicity( fh, flag );
+	} else {
+	   dataLen = 0;
+           HDFtraceEvent_RT( HDFmpiGetAtomicityID,
+                             &dataPtr,dataLen );
+   	   returnVal = PMPI_File_get_atomicity( fh, flag );
+           HDFtraceEvent_RT( -HDFmpiGetAtomicityID,
+                             &dataPtr,dataLen );
+	}
+   	return returnVal;
+}
+
+/*======================================================================* 
+// Pass call through to regular MPIO entry except in case of Real Time	* 
+// tracing.  								* 
+// Note: The regular MPIO entry may or may not be instrumented.		*
+//======================================================================*/
+int HDF_MPI_File_sync( MPI_File fh )
+{
+   	int returnVal;
+   	HDFsetInfo dataPtr;
+   	int dataLen;
+
+        if ( OUTPUT_SWITCH != MPI_SUMMARY_TRACE ) { 
+   	   returnVal = MPI_File_sync ( fh );
+	} else {
+	   dataLen = 0;
+           HDFtraceEvent_RT( HDFmpiSyncID,
+                             &dataPtr,dataLen );
+   	   returnVal = PMPI_File_sync ( fh );
+           HDFtraceEvent_RT( -HDFmpiSyncID,
+                             &dataPtr,dataLen );
+	} 
+   	return returnVal;
+}
+
+#endif /* HAVE_PARALLEL */

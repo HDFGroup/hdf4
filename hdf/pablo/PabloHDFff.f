@@ -46,11 +46,16 @@ C Users:
 C Invokes: ihinitiotrace
 C-----------------------------------------------------------------------------
 
-      integer function hdfinittrace(tracefn,proctmask,out_sw)
+      subroutine hdfinittracef(tracefn,traceids,nids,out_sw)
 
       character*(*) tracefn
-      integer       proctmask, out_sw
+      integer       traceids(*), out_sw, nids
+      integer filename(1024), i, length
 
-      call  hinittracex( tracefn, len(tracefn), proctmask, out_sw )
+      length = len(tracefn)
+      do i = 1, length
+	 filename(i) = ichar( tracefn(i:i) )
+      end do
+      call  hinittracex(filename,length,traceids,nids,out_sw)
       return
       end

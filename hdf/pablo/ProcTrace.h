@@ -72,68 +72,32 @@
 // program and grants NSF CDA 94-01124 and ASC 97-20202, and by the 
 // Department of Energy under contracts DOE B-341494, W-7405-ENG-48, and 
 // 1-B-333164.
-//======================================================================*/
-#ifndef HDFTRACE_H
-#define HDFTRACE_H
-/************************************************************************/
-/* A shared char * pointer (defined in HDF_Descriptors.c) and Macro 	*/
-/* definitions								*/
-/************************************************************************/
-extern char *hdfRecordPointer;
-/************************************************************************/
-/* The following are used in tagging HDF packets.  Avoid using FAMILY   */
-/* tags in the range 0100000 to 0200000					*/
-/************************************************************************/
-#define HDF_FAMILY 	 	0100000
-#define HDF_SUMMARY_FAMILY  	0140000
-/************************************************************************/
-/* Number of fields in the packets.					*/
-/************************************************************************/
-#define NUM_FIELDS	17
-/* 
- * "WRITE_HDF_ATTR" macro to output an attribute pair. 
- */
-#ifndef WRITE_HDF_ATTR
-#define WRITE_HDF_ATTR( attrKey, attrValue ) \
-    sddfWriteString( &hdfRecordPointer, attrKey ); \
-    sddfWriteString( &hdfRecordPointer, attrValue ); 
-#endif /* WRITE_HDF_ATTR */
+//-------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------
+ * File:  ProcTrace.h
+ * Purpose: define entities for tracing HDF procedures
+ *-------------------------------------------------------------------------*/
 
-/* 
- * "WRITE_HDF_FIELD" macro to output a field with a single attribute pair. 
- */
-#ifndef WRITE_HDF_FIELD
-#define WRITE_HDF_FIELD( name, attrKey, attrValue, type, dimension ) \
-    sddfWriteString( &hdfRecordPointer, name ); \
-    sddfWriteInteger( &hdfRecordPointer, 1 ); \
-    sddfWriteString( &hdfRecordPointer, attrKey ); \
-    sddfWriteString( &hdfRecordPointer, attrValue ); \
-    sddfWriteInteger( &hdfRecordPointer, type ); \
-    sddfWriteInteger( &hdfRecordPointer, dimension ); 
-#endif /* WRITE_HDF_FIELD */
+#ifndef PROCTRACE_H		/* avoid re-inclusion */
+#define PROCTRACE_H
+#include <stdarg.h>
+/*======================================================================*/
+/* Assign HDF identifier routine tags					*/
+/*======================================================================*/
+#ifdef RUNTIME_TRACE
+#undef RUNTIME_TRACE
+#endif
+enum HDF_IDS {
+RUNTIME_TRACE,
+SUMMARY_TRACE,
+MPI_RUNTIME_TRACE,
+MPI_SUMMARY_TRACE,
+NO_TRACE,
+#include "HDFidList.h"
+NUM_HDF_IDS
+} ;
 
-/* 
- * "WRITE_HDF_FIELD2" to output a field with two attribute pairs. 
- */
-#ifndef WRITE_HDF_FIELD2
-#define WRITE_HDF_FIELD2( name, aKey1, aValue1, aKey2, aValue2, type, dimension ) \
-    sddfWriteString( &hdfRecordPointer, name ); \
-    sddfWriteInteger( &hdfRecordPointer, 2 ); \
-    sddfWriteString( &hdfRecordPointer, aKey1 ); \
-    sddfWriteString( &hdfRecordPointer, aValue1 ); \
-    sddfWriteString( &hdfRecordPointer, aKey2 ); \
-    sddfWriteString( &hdfRecordPointer, aValue2 ); \
-    sddfWriteInteger( &hdfRecordPointer, type ); \
-    sddfWriteInteger( &hdfRecordPointer, dimension ); 
-#endif /* WRITE_HDF_FIELD2*/
-
-#define FAMILY_NAME         	0260            /* Data Set Name Record */
-#define FAMILY_MISC      	0270
-#define FAMILY_HDFPROCNAME     	0300
-
-typedef struct {
-        long setID;
-        char *setName;
-} HDFsetInfo ;
-
-#endif /* HDFTRACE_H */
+#define ID_HDF_Last_Entry ID_ALLHDF
+void HDFinitTrace( const char *, int trace_id, ... ); 
+void HDFendTrace( void ); 
+#endif /* PROCTRACE_H */
