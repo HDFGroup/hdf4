@@ -2484,11 +2484,8 @@ ANtagref2id(int32 an_id,    /* IN  Annotation interface id */
     /* Check for empty annotation tree of 'type'? */   
     if (file_entry->an_num[type] == -1)
       {
-          if ((file_entry->an_tree[type] = 
-               (TBBT_TREE *) tbbtdmake(ANIanncmp,sizeof(int32))) == NULL)
-              HE_REPORT_GOTO("failed to create annotation tree", FAIL);
-
-          file_entry->an_num[type] = 0; /* intialize after allocation */
+          if (ANIcreate_ann_tree(an_id, type) == FAIL)
+              HGOTO_ERROR(DFE_BADCALL, FAIL);
       }
 
     /* Create key from type/ref pair 
