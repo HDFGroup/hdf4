@@ -94,8 +94,8 @@
   Cray J90 (bob.0 10.0.0.3)       CC 6.2.0.1       f90 3.2.0.0
   IBM SP2 (single node, v4.2.1)   XLC 3.1.4.0      f77 4.1.0.6       
   DEC Alpha/Digital Unix v4.0     CC               f77              
-  DEC Alpha/OpenVMS AXP v6.2        -                -  
-  DEC Alpha/OpenVMS AXP v7.1      DEC C v5.6-003   DEC Fortran77x7.1-156  
+  DEC Alpha/OpenVMS AXP v6.2      DEC C v5.0-003   Digital Fortran 77 X7.1-156  
+  DEC Alpha/OpenVMS AXP v7.1      DEC C v5.6-003   Digital Fortran 77 X7.1-156  
   VAX OpenVMS v6.2                DEC C v5.6       DEC Fortran v6.3 
   IBM PC - Intel Pentium
        Solarisx86 (2.5.1)         GCC 2.7.2.1        -                
