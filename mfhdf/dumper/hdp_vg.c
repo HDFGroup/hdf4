@@ -401,11 +401,11 @@ vgdumpfull(int32 vg_id, int32 file_id, FILE * fp, struct node *aNode, int32 skip
     int32       t, vsid, ne, tag;
     int         found = 0, num_entries;
     int32       vs, nv, vsotag, vsoref, interlace, vsize;
-    char        fields[FIELDNAMELENMAX], vsname[MAXNAMELEN], vsclass[VSNAMELENMAX];
+    char        fields[VSFIELDMAX*FIELDNAMELENMAX], vsname[MAXNAMELEN], vsclass[VSNAMELENMAX];
     char        vgname[VGNAMELENMAX], vgclass[VGNAMELENMAX];
     char       *name;
     int32       z, lastItem, count = 0;
-    char       *tempPtr, *ptr, string[MAXNAMELEN], tempflds[FIELDNAMELENMAX];
+    char       *tempPtr, *ptr, string[MAXNAMELEN], tempflds[VSFIELDMAX*FIELDNAMELENMAX];
 
     num_entries = Vntagrefs(vg_id);
     aNode->children = (char **) HDmalloc(sizeof(char *) * (num_entries+1));
