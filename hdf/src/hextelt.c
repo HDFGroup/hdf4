@@ -1506,7 +1506,6 @@ HXPshutdown(void)
       } /* end if */
     if(HDFEXTCREATEDIR!=NULL)
       {
-          HDfree(HDFEXTCREATEDIR);
           HDFEXTCREATEDIR=NULL;
       } /* end if */
     if(extdir!=NULL)
@@ -1516,7 +1515,6 @@ HXPshutdown(void)
       } /* end if */
     if(HDFEXTDIR!=NULL)
       {
-          HDfree(HDFEXTDIR);
           HDFEXTDIR=NULL;
       } /* end if */
     return(SUCCEED);
