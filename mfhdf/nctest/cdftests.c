@@ -140,11 +140,15 @@ test_ncopen(path)
 	ncclose(cdfid0); return;
     }
     if ((cdfid1 = ncopen(path, NC_WRITE)) == -1) {
-#ifndef vms
+#if !(defined(vms) | defined(macintosh))
 	error("%s: second ncopen failed", pname);
 	nerrs++;
 #else
+#ifdef macintosh
+	fprintf(stderr,"Doesn't support shared access on Macintosh\n") ;
+#else /* !macintosh */
 	fprintf(stderr,"Doesn't support shared access on vms\n") ;
+#endif /* !macintosh */
 #endif
     }
     else
