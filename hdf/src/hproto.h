@@ -2286,7 +2286,7 @@ extern FRETVAL(intf)
 nmgwrlut(intf * lutid, intf *ncomp, intf *nt, intf *il, intf *nentries, VOIDP data);
 
 extern FRETVAL(intf)
-nmgwrlut(intf * lutid, intf *ncomp, intf *nt, intf *il, intf *nentries, _fcd data);
+nmgwclut(intf * lutid, intf *ncomp, intf *nt, intf *il, intf *nentries, _fcd data);
 
 extern FRETVAL(intf)
 nmgrdlut(intf * lutid, VOIDP data);
