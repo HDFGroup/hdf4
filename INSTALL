@@ -926,7 +926,9 @@ dialog.
        $(toplevel)/hdf/pablo 
 
     See the provided '$(toplevel)/hdf/pablo/README.Pablo' and the PostScript 
-    file '$(toplevel)/hdf/pablo/Pablo.ps'.  
+    file '$(toplevel)/hdf/pablo/Pablo.ps' or Microsoft Word Document file
+    '$(toplevel)/hdf/pablo/Pablo.doc' or the PDF document file
+    /$(toplevel)/hdf/pablo/Pablo.pdf'.  
 
     In this version both an instrumented version of the core HDF library 
     libdf.a and the library libmfhdf.a can be created.  Current interfaces 
