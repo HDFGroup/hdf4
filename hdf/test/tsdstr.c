@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/07/13 20:18:13  mfolk
-Added header to explain what it does.
+Revision 1.3  1992/08/11 15:35:38  chouck
+Changed adddata() to putdata()
 
+ * Revision 1.2  1992/07/13  20:18:13  mfolk
+ * Added header to explain what it does.
+ *
  * Revision 1.1  1992/07/08  22:07:42  sxu
  * Initial revision
  *
@@ -77,7 +80,7 @@ in_coordsys[256];
     err = DFSDsetdimstrs(1, dimlabels[0], dimunits[0], dimfmts[0]);
     err = DFSDsetdimstrs(2, dimlabels[1], dimunits[1], dimfmts[1]);
 
-    err = DFSDadddata("sdstrings.hdf", rank, dims, f32);
+    err = DFSDputdata("sdstrings.hdf", rank, dims, f32);
 
     err = DFSDgetdata("sdstrings.hdf", rank, dims, tf32);
 
