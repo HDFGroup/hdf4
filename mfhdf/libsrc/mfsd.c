@@ -230,7 +230,9 @@ int32 SDstart(name, HDFmode)
     int32  fid;
     intn   NCmode;
     NC   * handle;
+#if !(defined (MAC) || defined (macintosh) || defined(__MWERKS__) || defined (SYMANTEC_C))
     struct stat tmp_stat;
+#endif
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDstart: I've been called\n");
