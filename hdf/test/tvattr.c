@@ -384,6 +384,24 @@ static intn write_vattrs(void)
          num_errs++;
          return FAIL;
   }
+  /* attach again with "r" access to test VSsetattr on "r" access vdata 
+     BMR - Nov 4, 2004 */
+  if (FAIL == (vsref = VSfind(fid, VSNAME0)))  {
+         num_errs++;
+         return FAIL;
+      }
+  if (FAIL == (vsid = VSattach(fid, vsref, "r")))  {
+         num_errs++;
+         return FAIL;
+      }
+  if (FAIL != VSsetattr(vsid, 1, "NO ATTRIBUTE", DFNT_FLOAT32,1, &attr4[1])) {
+         num_errs++;
+         printf(">>> VSsetattr did not fail on read access vdata.\n");
+      }
+  if (FAIL == VSdetach(vsid)) {
+         num_errs++;
+         return FAIL;
+  }
    /* create vgroup and add attrs */
    if (FAIL == (vgid = (Vattach(fid, -1, "w"))))   {
          num_errs++;
