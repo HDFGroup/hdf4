@@ -70,9 +70,10 @@ $ cc 'ccopt   gentest
 $ cc 'ccopt   tvsfpack
 $ cc 'ccopt   tvattr
 $ cc 'ccopt   chunks
+$ cc 'ccopt   macros
 $ link/nodebug testhdf,rig,sdmms,sdnmms,an,anfile,sdstr, -
   slab,litend, file,file1,blocks,extelt,vers,tvset,conv,tree, -
-  bitio,comp,man,mgr.obj,nbit,tbv,tvsfpack,tvattr,chunks, -
+  bitio,comp,man,mgr.obj,nbit,tbv,tvsfpack,tvattr,chunks, macros, -
   'hdflib, sys$clib/lib
 $!  'hdflib, sys$library:deccrtl/lib
 $! link gentest, 'hdflib, sys$library:deccrtl/lib
@@ -127,4 +128,4 @@ $ link fortestF, forsupff,forsupf,tr8f,t24f,tpf,tsdmmsf, -
   slabwf,manf,mgrf,tvsetf,tvattrf, -
   'hdflib, sys$clib/lib
 $! delete *.obj;*
-$!
+$ exit
