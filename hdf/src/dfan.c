@@ -1403,7 +1403,10 @@ DFANIgetfann(int32 file_id, char *ann, int32 maxlen, int type,
     length = (length > maxlen) ? maxlen : length;   /* truncate if too long */
 
     if ((int32) FAIL == Hread(aid, length, (uint8 *) ann))  /* get the annotation */
+      {
+        Hendaccess(aid);
         return FAIL;
+      }
 
     if (length > maxlen - 1)
         length = maxlen - 1;
