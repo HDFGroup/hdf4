@@ -3,6 +3,12 @@ Expected output for './hdp dumpgr grtdfi322.hdf'
 #############################
 File name: grtdfi322.hdf 
 
+    File attributes:
+	 Attr0: Name = File contents
+		 Type = 8-bit signed char 
+		 Count= 16
+		 Value =  image data \000\000\000\000
+
 	 Image  Name = Raster Image #0
 	 Index = 0
 	 Type= 8-bit unsigned char
