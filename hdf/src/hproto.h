@@ -1959,7 +1959,7 @@ extern int32 ANreadann(int32 ann_id, uint8 *ann, int32 maxlen);
 
 extern intn  ANendaccess(int32 an_id);
 
-extern int32 ANget_tagref(int32 file_id, int32 index, ann_type type
+extern int32 ANget_tagref(int32 file_id, int32 index, ann_type type,
                           uint16 *ann_tag, uint16 *ann_ref);
 
 /* Multi-file Raster C-routines found in mfgr.c */
