@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.15  1992/06/09 20:19:24  dilg
+# Revision 1.16  1992/07/08 15:36:04  sxu
+# Eliminate doubled -D$machine for C programs.
+#
+# Revision 1.15  1992/06/09  20:19:24  dilg
 # Changed CFLAGS for IRIS4 from -cckr to -ansi
 #
 # Revision 1.14  1992/06/04  18:59:26  dilg
@@ -207,46 +210,46 @@ ftests: $(FTESTS)
 htests: $(HTESTS)
 	
 tr8:  tr8.c 
-	$(CC) $(CFLAGS) -D$(MACHINE) tr8.c $(LIBS) -o tr8
+	$(CC) $(CFLAGS)  tr8.c $(LIBS) -o tr8
 
 t24:  t24.c 
-	$(CC) $(CFLAGS) -D$(MACHINE) t24.c $(LIBS) -o t24
+	$(CC) $(CFLAGS)  t24.c $(LIBS) -o t24
 
 tp:   tp.c 
-	$(CC) $(CFLAGS) -D$(MACHINE) tp.c $(LIBS) -o tp
+	$(CC) $(CFLAGS)  tp.c $(LIBS) -o tp
 
 tsdnt:    tsdnt.c 
-	$(CC) $(CFLAGS) -D$(MACHINE) tsdnt.c $(LIBS) -o tsdnt
+	$(CC) $(CFLAGS)  tsdnt.c $(LIBS) -o tsdnt
 
 tsdmms:    tsdmms.c 
-	$(CC) $(CFLAGS) -D$(MACHINE) tsdmms.c $(LIBS) -o tsdmms
+	$(CC) $(CFLAGS)  tsdmms.c $(LIBS) -o tsdmms
 
 tsdnnt:    tsdnnt.c 
-	$(CC) $(CFLAGS) -D$(MACHINE) tsdnnt.c $(LIBS) -o tsdnnt
+	$(CC) $(CFLAGS)  tsdnnt.c $(LIBS) -o tsdnnt
 
 tsdnmms:    tsdnmms.c 
-	$(CC) $(CFLAGS) -D$(MACHINE) tsdnmms.c $(LIBS) -o tsdnmms
+	$(CC) $(CFLAGS)  tsdnmms.c $(LIBS) -o tsdnmms
 
 tan:  tan.c 
-	$(CC) $(CFLAGS) -D$(MACHINE) tan.c $(LIBS) -o tan
+	$(CC) $(CFLAGS)  tan.c $(LIBS) -o tan
 
 tanfile:     tanfile.c 
-	$(CC) $(CFLAGS) -D$(MACHINE) tanfile.c $(LIBS) -o tanfile
+	$(CC) $(CFLAGS)  tanfile.c $(LIBS) -o tanfile
 
 tstubs:     tstubs.c 
-	$(CC) $(CFLAGS) -D$(MACHINE) tstubs.c $(LIBS) -o tstubs
+	$(CC) $(CFLAGS)  tstubs.c $(LIBS) -o tstubs
 
 tv1:	    tv1.c
-	$(CC) $(CFLAGS) -D$(MACHINE) tv1.c $(LIBS) -o tv1
+	$(CC) $(CFLAGS)  tv1.c $(LIBS) -o tv1
 
 tv2:	    tv2.c
-	$(CC) $(CFLAGS) -D$(MACHINE) tv2.c $(LIBS) -o tv2
+	$(CC) $(CFLAGS)  tv2.c $(LIBS) -o tv2
 
 tvers:	    tvers.c
-	$(CC) $(CFLAGS) -D$(MACHINE) tvers.c $(LIBS) -o tvers
+	$(CC) $(CFLAGS)  tvers.c $(LIBS) -o tvers
 
 egchi:	    egchi.c
-	$(CC) $(CFLAGS) -D$(MACHINE) egchi.c $(LIBS) -o egchi
+	$(CC) $(CFLAGS)  egchi.c $(LIBS) -o egchi
 
 tr8F:	       tr8F.f
 	$(FC) $(FFLAGS) tr8F.f $(LIBS) -o tr8F 
@@ -282,22 +285,22 @@ egfhi:	   egfhi.f
 	$(FC) $(FFLAGS)  egfhi.f $(LIBS) -o egfhi
 
 thfile:     thfile.c 
-	$(CC) $(CFLAGS) -D$(MACHINE) thfile.c $(LIBS) -o thfile
+	$(CC) $(CFLAGS)  thfile.c $(LIBS) -o thfile
 
 thfile1:     thfile1.c 
-	$(CC) $(CFLAGS) -D$(MACHINE) thfile1.c $(LIBS) -o thfile1
+	$(CC) $(CFLAGS)  thfile1.c $(LIBS) -o thfile1
 
 terr:     terr.c 
-	$(CC) $(CFLAGS) -D$(MACHINE) terr.c $(LIBS) -o terr
+	$(CC) $(CFLAGS)  terr.c $(LIBS) -o terr
 
 thblocks:     thblocks.c 
-	$(CC) $(CFLAGS) -D$(MACHINE) thblocks.c $(LIBS) -o thblocks
+	$(CC) $(CFLAGS)  thblocks.c $(LIBS) -o thblocks
 
 thextelt:     thextelt.c
-	$(CC) $(CFLAGS) -D$(MACHINE) thextelt.c $(LIBS) -o thextelt
+	$(CC) $(CFLAGS)  thextelt.c $(LIBS) -o thextelt
 
 tlinkage:     tlinkage.c
-	$(CC) $(CFLAGS) -D$(MACHINE) tlinkage.c $(LIBS) -o tlinkage
+	$(CC) $(CFLAGS)  tlinkage.c $(LIBS) -o tlinkage
 
 
 clean:
