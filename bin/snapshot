@@ -13,12 +13,30 @@
 # is created, the minor version number is incremented, and the change is
 # checked back into the CVS repository.
 
+# function definitions
+TIMESTAMP()
+{
+    echo "=====" "$1": "`date`" "====="
+}
+
+EXIT_BANNER()
+{
+TIMESTAMP "Exit $PROGNAME with status=$?"
+}
+
+# MAIN
+# SGI /bin/sh replaces $0 as function name if used in a function.
+# Set the name here to avoid that ambiguity and better style too.
+PROGNAME=$0
+
 echo "====================================="
-echo "$0 $*"
+echo "$PROGNAME $*"
 echo "====================================="
-set -x
-date
+TIMESTAMP MAIN
 uname -a
+
+# setup exit banner message
+trap EXIT_BANNER 0
 
 # The path isn't properly initialized on hawkwind -- /usr/local/bin is
 # either missing or is after /usr/bin when it should be before.
@@ -33,14 +51,8 @@ METHODS="gzip bzip2"
 
 # Use User's MAKE if set.  Else use generic make.
 #MAKE=${MAKE:-make}
-# Hard set to make because dependences are not set correctly for parallel make
-MAKE=make
-
-# Make sure cvs would work
-if [ -z "$CVSROOT" ]; then
-    echo "Where is the CVS repository?" 1>&2
-    exit 1
-fi
+# Hard set to gmake because dependences are not set correctly for parallel make
+MAKE=gmake
 
 #
 # Command options
@@ -90,6 +102,10 @@ while [ $# -gt 0 ] ; do
 	    cmd="help"
 	    break
 	    ;;
+	echo)
+	    set -x
+	    break
+	    ;;
 	archive)
 	    shift
 	    if [ $# -lt 1 ]; then
@@ -126,7 +142,7 @@ done
 if [ "$cmd" = help ]; then
     set -
     cat <<EOF
-Usage: $0 [all] [checkout] [diff] [test] [srcdir] [release] [help]
+Usage: $PROGNAME [all] [checkout] [diff] [test] [srcdir] [release] [help]
           [archive <arch_path>] [dir <dir>]
 	  [op-configure <option>] [--<option>]
     all:      Run all commands (checkout, test & release)
@@ -147,6 +163,7 @@ Usage: $0 [all] [checkout] [diff] [test] [srcdir] [release] [help]
               E.g., "snapshot srcdir srcdirname -xx" uses hostname-xx
               [Default is hostname]
     help:     Print this message
+    echo:     Turn on shell echo
     archive <arch_path>:
               Use <arch_path> as the release ARCHIVE area
               [Default is $ARCHIVES_default]
@@ -189,6 +206,7 @@ done
 # Run CVS checkout
 #=============================
 if [ "$cmd" = "all" -o -n "$cmdcheckout" ]; then
+    TIMESTAMP "checkout"
     # Create a working directory.  Hopefully one is left over from last
     # time that still has the contents of the previous release.  But if
     # not, just create one and assume that a snapshot is necessary.
@@ -204,8 +222,13 @@ if [ "$cmd" = "all" -o -n "$cmdcheckout" ]; then
     # regardless of the return code of distclean.
     ( cd ${CURRENT}; test -f Makefile && ${MAKE} distclean)
 
+    # verify proper cvs setting
+    if [ -z "$CVSROOT" ]; then
+	echo "CVSROOT not defined!" 1>&2
+	exit 1
+    fi
     # Check out the current version from CVS
-    cvs -Q co -d ${CURRENT} ${CVSVERSION} hdf4 || exit 1
+    (cd $BASEDIR; cvs -Q co -dP current ${CVSVERSION} hdf4 ) || exit 1
 fi # Do CVS checkout
 
 
@@ -213,6 +236,7 @@ fi # Do CVS checkout
 # Run Test the HDF4 library
 #=============================
 if [ "$cmd" = "all" -o -n "$cmdtest" -o -n "$cmddiff" ]; then
+    TIMESTAMP "diff"
     # setup if srcdir is used.
     if [ -z "$srcdir" ]; then
 	TESTDIR=${CURRENT}
@@ -273,10 +297,15 @@ if [ "$cmd" = "all" -o -n "$cmdtest" -o -n "$cmddiff" ]; then
     # No uninstall target.  Use "rm -rf ..." for now.
     if [ "$snapshot" = "yes" ]; then
 	if (cd ${TESTDIR} && \
+	    TIMESTAMP "configure" && \
 	    ${srcdir:+${CURRENT}/}${CONFIGURE} --prefix=$INSTALLDIR && \
+	    TIMESTAMP "make" && \
 	    ${MAKE} && \
+	    TIMESTAMP "check" && \
 	    ${MAKE} check && \
+	    TIMESTAMP "install" && \
 	    ${MAKE} install && \
+	    TIMESTAMP "uninstall" && \
 	    rm -rf $INSTALLDIR ); then
 	    :
 	else
@@ -294,6 +323,7 @@ fi # Test the HDF4 library
 if [ "$cmd" = "all" -o -n "$cmdrel" ]; then
   if [ -n "$needmorework" ]; then
     if [ "$snapshot" = "yes" ]; then
+	TIMESTAMP "release"
 	(cd ${CURRENT} && ${MAKE} distclean)
 	(
 	    # Turn on exit on error in the sub-shell so that it does not
@@ -326,6 +356,7 @@ fi #Release snapshot
 # Clean the test area.  Default is no clean.
 #=============================
 if [ -n "$cmdclean" ]; then
+    TIMESTAMP "clean"
     # setup if srcdir is used.
     if [ -z "$srcdir" ]; then
 	TESTDIR=${CURRENT}
