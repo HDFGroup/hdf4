@@ -1,23 +1,5 @@
-/*
-$Header$
+/*$Id$ */
 
-$Log$
-Revision 1.4  1993/10/01 20:00:35  koziol
-Put "extern C" block around function prototypes for C++ compatibility.
-
- * Revision 1.3  1993/01/19  05:54:07  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.2  1992/12/18  15:45:00  mfolk
- * Added defines for default label blocksize and default description
- * blocksize, for when annotations get converted to linked block
- * storage.
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*------------------------------------------------------------------------------
  * File:    dfan.h
  * Purpose: header file for the Annotations set

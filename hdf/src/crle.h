@@ -1,3 +1,6 @@
+
+/* $Id$ */
+
 /*-----------------------------------------------------------------------------
  * File:    crle.h
  * Purpose: Header file for run-length encoding information.
@@ -8,31 +11,6 @@
  * Structure definitions:
  * Constant definitions:
  *---------------------------------------------------------------------------*/
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-/*
-$Header$
-
-$Log$
-Revision 1.4.2.1  1993/10/10 22:10:03  koziol
-Moved Tag descriptions into a header file.  Updated compression routines.
-
- * Revision 1.4  1993/10/06  20:27:22  koziol
- * More compression fixed, and folded Doug's suggested change into VSappendable.
- *
- * Revision 1.3  1993/10/04  20:02:36  koziol
- * Updated error reporting in H-Layer routines, and added more error codes and
- * compression stuff.
- *
- * Revision 1.2  1993/10/01  20:00:28  koziol
- * Put "extern C" block around function prototypes for C++ compatibility.
- *
- * Revision 1.1  1993/09/30  19:04:43  koziol
- * Added basic compressing functionality for special tags.
- *
- *
- */
 
 /* avoid re-inclusion */
 #ifndef __CRLE_H

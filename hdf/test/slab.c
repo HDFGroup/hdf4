@@ -1,51 +1,15 @@
+#ifdef RCSID
+static char RcsId[] = "$Id$";
+#endif
+
+/* $Id */
+
 /***************************************************************************
 *
 * Slab test routines slabw(), slabwf64(), slabwui16(), slabwui8(),
 *  slab1w(), slab2w(), slab3w(), slab4w()
 *
 ***************************************************************************/
-
-#ifdef RCSID
-static char RcsId[] = "$Id$";
-#endif
-/*-------------------------------------------------------------------------
- *
- * $Header$
- *
- * $Log$
- * Revision 1.4  1993/08/16 21:58:23  koziol
- * Fixed access list for these files, and the actual changes I made to the
- * files are for PC compatibility.
- *
- * Revision 1.2  1993/04/19  23:04:07  koziol
- * General Code Cleanup to reduce/remove compilation warnings on PC
- *
- * Revision 1.1  1993/04/15  20:00:37  koziol
- * Re-named the new tests for MS-DOS compatibility
- *
- * Revision 1.9  1993/04/14  21:37:37  georgev
- * Had to change how headers were included.
- *
- * Revision 1.8  1993/04/06  18:59:12  koziol
- * Minor changes for num_err wierdness.
- *
- * Revision 1.7  1993/04/05  22:37:49  koziol
- * Fixed goofups made in haste when patching code.
- *
- * Revision 1.4  1993/03/17  16:42:55  georgev
- * Added a few more data types.
- *
- * Revision 1.3  1993/03/11  19:45:26  georgev
- * Added tests for different number types.
- *
- * Revision 1.2  1993/02/25  22:36:17  georgev
- * Minor changes .
- *
- * Revision 1.1  1993/02/19  17:48:40  georgev
- * Added slab tests.
- *
- *
- *------------------------------------------------------------------------*/
 
 #include "hdf.h"
 #include "tutils.h"
@@ -110,6 +74,7 @@ static uint8 FAR fillui8   = 1;
 static int32 FAR size_dims[3]  = {2, 3, 4}; /* size of slab dims */
 static int32 FAR start_dims[3] = {1, 1, 1}; /* starting dims  */
 static int32 FAR stride[3]     = {0, 0, 0};
+static int32 FAR d_dims[3]     = {0, 0, 0};
 
 /* luf for planes, rows and cols  */
 static char FAR *lpln = "Time";
@@ -459,9 +424,9 @@ slabwf32()
     /* Verify correctness of slab written */
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
-    stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swf32, start_dims, size_dims, (VOIDP)sdata, stride);
-    CHECK(ret, FAIL, "DFSDgetslice");
+    d_dims[0] = 2; d_dims[1] = 3; d_dims[2] = 4;
+    ret = DFSDreadslab(swf32, start_dims, size_dims, stride, (VOIDP)sdata, d_dims);
+    CHECK(ret, FAIL, "DFSDreadslab");
 
     /* Get fill value */
     ret = DFSDgetfillvalue((VOIDP)&lfill);
@@ -475,9 +440,9 @@ slabwf32()
 
     MESSAGE(10,printf("\n  Verifying data  \n"););
     MESSAGE(10,printf("sdata = "););
-     for (i = 0; i < stride[0]; i++)
-       for (j = 0; j < stride[1]; j++)
-       	for (k = 0; k < stride[2]; k++)
+     for (i = 0; i < d_dims[0]; i++)
+       for (j = 0; j < d_dims[1]; j++)
+       	for (k = 0; k < d_dims[2]; k++)
           {
             if (sdata[i][j][k] != fdata[i][j][k])
                num_err ++;
@@ -582,9 +547,9 @@ slabwf64()
     /* Verify correctness of slab written */
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
-    stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swf64, start_dims, size_dims, (VOIDP)sdata, stride);
-    CHECK(ret, FAIL, "DFSDgetslice");
+    d_dims[0] = 2; d_dims[1] = 3; d_dims[2] = 4;
+    ret = DFSDreadslab(swf64, start_dims, size_dims, stride, (VOIDP)sdata, d_dims);
+    CHECK(ret, FAIL, "DFSDreadslab");
 
     /* Get fill value */
     ret = DFSDgetfillvalue((VOIDP)&lfill);
@@ -598,9 +563,9 @@ slabwf64()
 
     MESSAGE(10,printf("\n  Verifying data  \n"););
     MESSAGE(10,printf("sdata = "););
-     for (i = 0; i < stride[0]; i++)
-       for (j = 0; j < stride[1]; j++)
-       	for (k = 0; k < stride[2]; k++)
+     for (i = 0; i < d_dims[0]; i++)
+       for (j = 0; j < d_dims[1]; j++)
+       	for (k = 0; k < d_dims[2]; k++)
           {
             if (sdata[i][j][k] != f64data[i][j][k])
                num_err ++;
@@ -707,9 +672,9 @@ slabwin()
     /* Verify correctness of slab written */
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
-    stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swin, start_dims, size_dims, (VOIDP)sdata, stride);
-    CHECK(ret, FAIL, "DFSDgetslice");
+    d_dims[0] = 2; d_dims[1] = 3; d_dims[2] = 4;
+    ret = DFSDreadslab(swin, start_dims, size_dims, stride, (VOIDP)sdata, d_dims);
+    CHECK(ret, FAIL, "DFSDreadslab");
 
     /* Get fill value */
     ret = DFSDgetfillvalue((VOIDP)&lfill);
@@ -723,9 +688,9 @@ slabwin()
 
     MESSAGE(10,printf("\n  Verifying data  \n"););
     MESSAGE(10,printf("sdata = "););
-     for (i = 0; i < stride[0]; i++)
-       for (j = 0; j < stride[1]; j++)
-       	for (k = 0; k < stride[2]; k++)
+     for (i = 0; i < d_dims[0]; i++)
+       for (j = 0; j < d_dims[1]; j++)
+       	for (k = 0; k < d_dims[2]; k++)
           {
             if (sdata[i][j][k] != indata[i][j][k])
                num_err ++;
@@ -831,9 +796,9 @@ slabwuin()
     /* Verify correctness of slab written */
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
-    stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swuin, start_dims, size_dims, (VOIDP)sdata, stride);
-    CHECK(ret, FAIL, "DFSDgetslice");
+    d_dims[0] = 2; d_dims[1] = 3; d_dims[2] = 4;
+    ret = DFSDreadslab(swuin, start_dims, size_dims, stride, (VOIDP)sdata, d_dims);
+    CHECK(ret, FAIL, "DFSDreadslab");
 
     /* Get fill value */
     ret = DFSDgetfillvalue((VOIDP)&lfill);
@@ -847,9 +812,9 @@ slabwuin()
 
     MESSAGE(10,printf("\n  Verifying data  \n"););
     MESSAGE(10,printf("sdata = "););
-     for (i = 0; i < stride[0]; i++)
-       for (j = 0; j < stride[1]; j++)
-       	for (k = 0; k < stride[2]; k++)
+     for (i = 0; i < d_dims[0]; i++)
+       for (j = 0; j < d_dims[1]; j++)
+       	for (k = 0; k < d_dims[2]; k++)
           {
             if (sdata[i][j][k] != uindata[i][j][k])
                num_err ++;
@@ -956,9 +921,9 @@ slabwi32()
     /* Verify correctness of slab written */
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
-    stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swi32, start_dims, size_dims, (VOIDP)sdata, stride);
-    CHECK(ret, FAIL, "DFSDgetslice");
+    d_dims[0] = 2; d_dims[1] = 3; d_dims[2] = 4;
+    ret = DFSDreadslab(swi32, start_dims, size_dims, stride, (VOIDP)sdata, d_dims);
+    CHECK(ret, FAIL, "DFSDreadslab");
 
     /* Get fill value */
     ret = DFSDgetfillvalue((VOIDP)&lfill);
@@ -972,9 +937,9 @@ slabwi32()
 
     MESSAGE(10,printf("\n  Verifying data  \n"););
     MESSAGE(10,printf("sdata = "););
-     for (i = 0; i < stride[0]; i++)
-       for (j = 0; j < stride[1]; j++)
-       	for (k = 0; k < stride[2]; k++)
+     for (i = 0; i < d_dims[0]; i++)
+       for (j = 0; j < d_dims[1]; j++)
+       	for (k = 0; k < d_dims[2]; k++)
           {
             if (sdata[i][j][k] != i32data[i][j][k])
                num_err ++;
@@ -1080,9 +1045,9 @@ slabwui32()
     /* Verify correctness of slab written */
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
-    stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swui32, start_dims, size_dims, (VOIDP)sdata, stride);
-    CHECK(ret, FAIL, "DFSDgetslice");
+    d_dims[0] = 2; d_dims[1] = 3; d_dims[2] = 4;
+    ret = DFSDreadslab(swui32, start_dims, size_dims, stride, (VOIDP)sdata, d_dims);
+    CHECK(ret, FAIL, "DFSDreadslab");
 
     /* Get fill value */
     ret = DFSDgetfillvalue((VOIDP)&lfill);
@@ -1096,9 +1061,9 @@ slabwui32()
 
     MESSAGE(10,printf("\n  Verifying data  \n"););
     MESSAGE(10,printf("sdata = "););
-     for (i = 0; i < stride[0]; i++)
-       for (j = 0; j < stride[1]; j++)
-       	for (k = 0; k < stride[2]; k++)
+     for (i = 0; i < d_dims[0]; i++)
+       for (j = 0; j < d_dims[1]; j++)
+       	for (k = 0; k < d_dims[2]; k++)
           {
             if (sdata[i][j][k] != ui32data[i][j][k])
                num_err ++;
@@ -1204,9 +1169,9 @@ slabwi16()
     /* Verify correctness of slab written */
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
-    stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swi16, start_dims, size_dims, (VOIDP)sdata, stride);
-    CHECK(ret, FAIL, "DFSDgetslice");
+    d_dims[0] = 2; d_dims[1] = 3; d_dims[2] = 4;
+    ret = DFSDreadslab(swi16, start_dims, size_dims, stride, (VOIDP)sdata, d_dims);
+    CHECK(ret, FAIL, "DFSDreadslab");
 
     /* Get fill value */
     ret = DFSDgetfillvalue((VOIDP)&lfill);
@@ -1220,9 +1185,9 @@ slabwi16()
 
     MESSAGE(10,printf("\n  Verifying data  \n"););
     MESSAGE(10,printf("sdata = "););
-     for (i = 0; i < stride[0]; i++)
-       for (j = 0; j < stride[1]; j++)
-       	for (k = 0; k < stride[2]; k++)
+     for (i = 0; i < d_dims[0]; i++)
+       for (j = 0; j < d_dims[1]; j++)
+       	for (k = 0; k < d_dims[2]; k++)
           {
             if (sdata[i][j][k] != i16data[i][j][k])
                num_err ++;
@@ -1327,9 +1292,9 @@ slabwui16()
     /* Verify correctness of slab written */
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
-    stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swui16, start_dims, size_dims, (VOIDP)sdata, stride);
-    CHECK(ret, FAIL, "DFSDgetslice");
+    d_dims[0] = 2; d_dims[1] = 3; d_dims[2] = 4;
+    ret = DFSDreadslab(swui16, start_dims, size_dims, stride,(VOIDP)sdata, d_dims);
+    CHECK(ret, FAIL, "DFSDreadslab");
 
     /* Get fill value */
     ret = DFSDgetfillvalue((VOIDP)&lfill);
@@ -1343,9 +1308,9 @@ slabwui16()
 
     MESSAGE(10,printf("\n  Verifying data  \n"););
     MESSAGE(10,printf("sdata = "););
-     for (i = 0; i < stride[0]; i++)
-       for (j = 0; j < stride[1]; j++)
-       	for (k = 0; k < stride[2]; k++)
+     for (i = 0; i < d_dims[0]; i++)
+       for (j = 0; j < d_dims[1]; j++)
+       	for (k = 0; k < d_dims[2]; k++)
           {
             if (sdata[i][j][k] != ui16data[i][j][k])
                num_err ++;
@@ -1450,9 +1415,9 @@ slabwi8()
     /* Verify correctness of slab written */
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
-    stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swi8, start_dims, size_dims, (VOIDP)sdata, stride);
-    CHECK(ret, FAIL, "DFSDgetslice");
+    d_dims[0] = 2; d_dims[1] = 3; d_dims[2] = 4;
+    ret = DFSDreadslab(swi8, start_dims, size_dims, stride, (VOIDP)sdata, d_dims);
+    CHECK(ret, FAIL, "DFSDreadslab");
 
     /* Get fill value */
     ret = DFSDgetfillvalue((VOIDP)&lfill);
@@ -1466,9 +1431,9 @@ slabwi8()
 
     MESSAGE(10,printf("\n  Verifying data  \n"););
     MESSAGE(10,printf("sdata = "););
-     for (i = 0; i < stride[0]; i++)
-       for (j = 0; j < stride[1]; j++)
-       	for (k = 0; k < stride[2]; k++)
+     for (i = 0; i < d_dims[0]; i++)
+       for (j = 0; j < d_dims[1]; j++)
+       	for (k = 0; k < d_dims[2]; k++)
           {
             if (sdata[i][j][k] != i8data[i][j][k])
                num_err ++;
@@ -1573,9 +1538,9 @@ slabwui8()
     /* Verify correctness of slab written */
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
-    stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swui8, start_dims, size_dims, (VOIDP)sdata, stride);
-    CHECK(ret, FAIL, "DFSDgetslice");
+    d_dims[0] = 2; d_dims[1] = 3; d_dims[2] = 4;
+    ret = DFSDreadslab(swui8, start_dims, size_dims, stride, (VOIDP)sdata, d_dims);
+    CHECK(ret, FAIL, "DFSDreadslab");
 
     /* Get fill value */
     ret = DFSDgetfillvalue((VOIDP)&lfill);
@@ -1590,9 +1555,9 @@ slabwui8()
     MESSAGE(10,printf("\n  Verifying data  \n"););
     MESSAGE(10,printf("sdata = "););
     num_err = 0;
-     for (i = 0; i < stride[0]; i++)
-       for (j = 0; j < stride[1]; j++)
-       	for (k = 0; k < stride[2]; k++)
+     for (i = 0; i < d_dims[0]; i++)
+       for (j = 0; j < d_dims[1]; j++)
+       	for (k = 0; k < d_dims[2]; k++)
           {
             if (sdata[i][j][k] != ui8data[i][j][k])
                num_err += 1;
@@ -1735,17 +1700,17 @@ slab2w()
     /* Verify correctness of slab written */
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0]  = 2; size_dims[1]  = 3; size_dims[2]  = 4;
-    stride[0]     = 2; stride[1]     = 3; stride[2]     = 4;
-    ret = DFSDgetslice(sw1, start_dims, size_dims, (VOIDP)sdata, stride);
-    CHECK(ret, FAIL, "DFSDgetslice");
+    d_dims[0]     = 2; d_dims[1]     = 3; d_dims[2]     = 4;
+    ret = DFSDreadslab(sw1, start_dims, size_dims, stride, (VOIDP)sdata, d_dims);
+    CHECK(ret, FAIL, "DFSDreadslab");
 
     if (num_err != 0)
       MESSAGE(10,printf("\n        slab2w:  %d failures.  \n", (int)num_err););
 
     MESSAGE(10,printf("\n         Verifying data \n"););
-     for (i = 0; i < stride[0]; i++)
-       for (j = 0; j < stride[1]; j++)
-        for (k = 0; k < stride[2]; k++)
+     for (i = 0; i < d_dims[0]; i++)
+       for (j = 0; j < d_dims[1]; j++)
+        for (k = 0; k < d_dims[2]; k++)
           {
             if (sdata[i][j][k] != fdata[i][j][k])
                num_err ++;
@@ -1934,18 +1899,18 @@ slab3w()
     /* Verify correctness of slab written */
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
-    stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(sw3, start_dims, size_dims, (VOIDP)adata, stride);
-    CHECK(ret, FAIL, "DFSDgetslice");
+    d_dims[0] = 2; d_dims[1] = 3; d_dims[2] = 4;
+    ret = DFSDreadslab(sw3, start_dims, size_dims, stride, (VOIDP)adata, d_dims);
+    CHECK(ret, FAIL, "DFSDreadslab");
 
     if (num_err != 0)
       MESSAGE(10,printf("\n        slab3w:  %d failures.  \n", (int)num_err););
 
     MESSAGE(10,printf("\n        Verifying data  \n"););
     MESSAGE(10,printf("adata = "););
-     for (i = 0; i < stride[0]; i++)
-       for (j = 0; j < stride[1]; j++)
-        for (k = 0; k < stride[2]; k++)
+     for (i = 0; i < d_dims[0]; i++)
+       for (j = 0; j < d_dims[1]; j++)
+        for (k = 0; k < d_dims[2]; k++)
           {
             if (adata[i][j][k] != fdata[i][j][k])
                num_err ++;
@@ -2016,18 +1981,18 @@ slab4w()
     /* Verify correctness of slab written */
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
-    stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(sw4, start_dims, size_dims, (VOIDP)bdata, stride);
-    CHECK(ret, FAIL, "DFSDgetslice");
+    d_dims[0] = 2; d_dims[1] = 3; d_dims[2] = 4;
+    ret = DFSDreadslab(sw4, start_dims, size_dims, stride, (VOIDP)bdata, d_dims);
+    CHECK(ret, FAIL, "DFSDreadslab");
 
     if (num_err != 0)
         MESSAGE(10,printf("\n        slab4w:  %d failures.  \n", (int)num_err););
 
    MESSAGE(10,printf("\n          Verifying data  \n"););
 
-     for (i = 0; i < stride[0]; i++)
-       for (j = 0; j < stride[1]; j++)
-        for (k = 0; k < stride[2]; k++)
+     for (i = 0; i < d_dims[0]; i++)
+       for (j = 0; j < d_dims[1]; j++)
+        for (k = 0; k < d_dims[2]; k++)
           {
             if (bdata[i][j][k] != fdata[i][j][k])
                num_err ++;
