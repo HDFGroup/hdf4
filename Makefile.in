@@ -244,7 +244,7 @@ hdf-debug:
 libs: 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(HDFDIR)" subd
-	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG="all" \
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG="libmfhdf" \
           SUBDIRS="$(NETCDFDIR)" subdn
 
 hdf-libs: 
@@ -262,6 +262,10 @@ libjpeg:
 libz: 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(HDFDIR)" subd
+
+libmfhdf:
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(NETCDFDIR)" subdn
 
 install:	
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
@@ -368,11 +372,12 @@ help:
 	@echo "                         excluding fortran support"
 	@echo "make hdf-test          - makes HDF library and tests" 
 	@echo "make hdf-utilities     - makes HDF library and utilities"
-	@echo "make libs              - makes HDF, IJG JPEG and netCDF libraries only"
+	@echo "make libs              - makes HDF, IJG JPEG and mfhdf libraries only"
 	@echo "make hdf-libs          - makes HDF and IJG JPEG libraries only"
 	@echo "make libdf             - makes HDF library"
 	@echo "make libjpeg           - makes IJG JPEG library"
 	@echo "make libz              - makes GZIP deflate library"
+	@echo "make libmfhdf          - makes mfhdf library"
 	@echo "make test              - run both HDF and NETCDF tests"
 	@echo "make testnofortran     - run HDF tests except the fortran test" 
 	@echo "                         and NETCDF tests"

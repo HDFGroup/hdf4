@@ -130,6 +130,7 @@ SUBDIR_TARGETS	= \
 
 all::		port/all xdr/all libsrc/all fortran/all ncdump/all \
 		ncgen/all nctest/all doc/all dumper/all
+libmfhdf::	port/all xdr/all libsrc/all fortran/all
 test::		xdr/test libsrc/test nctest/test fortran/test ncdump/test \
 		ncgen/test
 install::	xdr/install fortran/install libsrc/install ncdump/install \
