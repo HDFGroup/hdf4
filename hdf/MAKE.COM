@@ -54,6 +54,8 @@ $ @MAKEFS
 ! $ !
 $ copy df.olb hdf$lib
 $ copy *.h    hdf$include
+$ delete *.obj;*
+$ delete df.olb;*
 ! $ !
 ! $ ! Build the HDF utility programs
 ! $ !
@@ -63,6 +65,8 @@ $ @MAKEUTIL
 ! $ ! Move the HDF utilities to where they belong
 ! $ !
 $ copy *.exe hdf$bin
+$ delete *.exe;*
+$ delete *.obj;*
 ! $ !
 $ @setuputils
 ! $ !
@@ -70,6 +74,9 @@ $ @setuputils
 ! $ !
 $ set default hdf$test
 $ @MAKE
+$ run testhdf.exe
+$ run fortest.exe
+$ delete *.obj;*
 $ set default hdf$src
 $ !
 $ type sys$input
