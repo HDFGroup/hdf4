@@ -880,6 +880,9 @@ NC **handlep;
   if(status == FAIL)
       HEprint(stdout, 0);
 
+  HDfreespace(tags);
+  HDfreespace(refs);
+
 #ifdef DEBUG
   fprintf(stderr, "======= Have finished writing top level VGroup #%d\n", status);
 #endif
@@ -1066,6 +1069,7 @@ int32   vg;
               fprintf(stderr, "Attribute <%s> has type %d and size %d\n", 
                       vsname, type, attr_size);
 #endif
+              HDfreespace(values);
               count++;
               
           }
@@ -1305,7 +1309,8 @@ bad_number_type:
   else
       handle->vars = NULL;
 
-  free(variables);
+  HDfreespace(variables);
+  HDfreespace(dims);
   
 #if DEBUG
   fprintf(stderr, "Created variable array %d \n", handle->vars);

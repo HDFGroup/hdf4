@@ -824,9 +824,11 @@ int cdfid ;
         }
 #endif
 
+/*
 #ifdef HDF
         if(!handle->is_hdf)
 #endif
+*/
           NC_free_cdf(handle) ; /* calls fclose */
 
 	_cdfs[cdfid] = NULL ;

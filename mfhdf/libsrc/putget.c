@@ -703,6 +703,7 @@ NC_var *vp;
     fprintf(stderr, "Done with the DATA Vdata returning id %d\n", vsid);
 #endif
 
+    HDfreespace(values);
     vp->aid = FAIL;
             
     return vsid;
