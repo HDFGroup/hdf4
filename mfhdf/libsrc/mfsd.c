@@ -3797,32 +3797,43 @@ int32 dimid;
       SDsetChunk   -- create chunked SDS
 
  DESCRIPTION
-      This routine creates a chunked SDS with the specified chunk
-      lengths for each dimension according to the structure passed in. 
+      This routine creates a chunked SDS according to the structure passed 
+      in for the chunk defintion. 
 
       The simplist structure is the array(int32) specifiying chunk 
-      lengths with the 'flags' argument set to 'SD_CHUNK_LENGTHS';
+      lengths for each dimension where the 'flags' argument set to 
+      'SD_CHUNK_LENGTHS';
 
       The dataset currently cannot be special already.  i.e. NBIT,
-      COMPRESSION, or EXTERNAL.
+      COMPRESSED, or EXTERNAL.
 
       COMPRESSION is set by using the 'SD_CHUNK_DEF' structure to set the
-      appropriate compression information. The information is the same as 
+      appropriate compression information along with the required chunk lengths
+      for each dimension. The compression information is the same as 
       that set in 'SDsetcompress()'.
 
       The relevant fields of SD_CHUNK_DEF structure are:
 
-      int32     *chunk_lengths;  Chunk lengths along each dimension
-      int32      comp_type;      Compression type
-      comp_info  *cinfo;         Compression info struct
+        int32     *chunk_lengths;  Chunk lengths along each dimension
+        int32      comp_type;      Compression type
+        comp_info *cinfo;          Compression info struct
 
       The 'flags' argument' is set to 'SD_CHUNK_COMP'.
 
-      See example in pseudo-C below for further usage.
+      See the example in pseudo-C below for further usage.
 
       The maximum number of Chunks in an HDF file is 65,535.
 
       The dataset currently cannot have an UNLIMITED dimension.
+
+      The performance of the SDxxx interface with chunking is greatly
+      affected by the users access pattern over the dataset and by
+      the maximum number of chunks set in the chunk cache. See the
+      routine SDsetmaxcache() for further info on how to set the chunk
+      cache. The number chunks that can be set in the cache is process 
+      memory limited. It is a good idea to always set the maximum number
+      of chunks in the cache as the default heuristic does not take
+      into account the memory available for the application.
 
         e.g. 4x4 array with 2x2 chunks. The array shows the layout of
              chunks in the chunk array.
@@ -4700,6 +4711,15 @@ NAME
 
 DESCRIPTION
      Set the maximum number of chunks to cache.
+
+     The performance of the SDxxx interface with chunking is greatly
+     affected by the users access pattern over the dataset and by
+     the maximum number of chunks set in the chunk cache. The number chunks 
+     that can be set in the cache is process memory limited. It is a good 
+     idea to always set the maximum number of chunks in the cache as the 
+     default heuristic does not take into account the memory available for 
+     the application.
+
      By default when the SDS is promoted to a chunked element the 
      maximum number of chunks in the cache is set to the number of
      chunks along the last dimension.
@@ -4732,11 +4752,11 @@ AUTHOR
 intn
 #ifdef PROTOTYPE
 SDsetChunkCache(int32 sdsid,     /* IN: access aid to mess with */
-                int32 maxcache,  /* IN: max number of pages to cache */
+                int32 maxcache,  /* IN: max number of chunks to cache */
                 int32 flags      /* IN: flags = 0, HDF_PAGEALL */)
 #else
 SDsetChunkCache(sdsid,     /* IN: access aid to mess with */
-                maxcache,  /* IN: max number of pages to cache */
+                maxcache,  /* IN: max number of chunks to cache */
                 flags      /* IN: flags = 0, HDF_PAGEALL */)
 int32 sdsid;
 int32 maxcache;
