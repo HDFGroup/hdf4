@@ -25,16 +25,15 @@
   2.5 Platform-specific Notes
   2.5.1 Solaris on Sparc
   2.5.1a Solaris on 64-bit Sparc
-  2.5.2 Solaris on INTEL(x86)
-  2.5.3 OpenVMS AXP on DEC Alpha
-  2.5.4 Windows 98/NT/2000
-  2.5.5 Macintosh OS - Power PC    ** Not Supported **
-  2.5.6 Exemplar 
-  2.5.7 SP2 Single node
-  2.5.8 T3E Single node
-  2.5.9a SGI IRIX 6.x
-  2.5.9b SGI IRIX64
-  2.5.10 DEC Alpha
+  2.5.2 OpenVMS AXP on DEC Alpha
+  2.5.3 Windows 98/NT/2000
+  2.5.4 Macintosh OS - Power PC    ** Not Supported **
+  2.5.5 Exemplar  ** Not Supported **
+  2.5.6 SP2 Single node
+  2.5.7 T3E Single node
+  2.5.8a SGI IRIX 6.x
+  2.5.8b SGI IRIX64
+  2.5.9 DEC Alpha
 
   2.6 Pablo Instrumentation
   2.7 File Cache(Beta release)
@@ -86,27 +85,26 @@
 
   Platform(OS)                    C-Compiler       Fortran-Compiler   
   ------------                    ----------       ---------------- 
-  Sun4(Solaris 2.8)               Sun WorkShop 6   -
-                                  Compilers C 5.2  
+  Sun4(Solaris 2.8)               WorkShop         WorkShop
+                                  Compilers C 5.0  FORTRAN 77 5.0  
   Sun4(Solaris 2.7)               WorkShop         WorkShop Compilers 5.0
                                   Compilers C 5.0  FORTRAN 77 5.0         
-  Sun4(Solaris 2.6)               WorkShop         WorkShop Compilers 5.0
-                                  Compilers C 5.0  FORTRAN 77 5.0             
   SGI-Indy(IRIX v6.5)             CC 7.30          f77 7.30
-  SGI-Origin(IRIX64 v6.5-n32)     CC 7.3.1m        f77 7.3.1m 
-  SGI-Origin(IRIX64 v6.5-64)      CC 7.3.1m        f77 7.3.1m    
-  HP9000/755(HP-UX B.11.00)       CC A.11.00.13    f77 B.11.00.01
-  Exemplar(HP-UX B.10.01)         CC V2.0          f77 V1.2.6
-  Cray J90 (bob.1 10.0.0.7)       CC 6.3.0.2       Cray Fortran 3.4.0.1.0 
-  IBM SP (single node, v4.3)      XLC 5.0.1.0      f77 07.01.0000.0002 
-  DEC Alpha/Digital Unix v4.0     DEC C v5.2-040   Digital Fortran v4.1-92 
-  DEC Alpha/OpenVMS AXP v7.1      DEC C v5.6-003   Digital Fortran 77 X7.1-156  
+  SGI-Origin(IRIX64 v6.5-n32)     CC 7.3.1.2m      f77 7.3.1.2m 
+  SGI-Origin(IRIX64 v6.5-64)      CC 7.3.1.2m        f77 7.3.1.2m    
+  HP9000/755(HP-UX B.11.00)       CC A.11.01.20    f77 B.11.00.01
+  Cray SV1 10.0.0.8               Cray Standard C  Cray Fortran
+                                  Version 6.5.0.1  Version 3.5.0.2
+  IBM SP (single node, v4.3)      xlc 5.0.2.0      xlf 7.1.0.2
+  Compaq Tru64 UNIX V5.1          Compaq C         Compaq Fortran
+  (OSF1 V5.1)                     V6.3-028         V5.4-1283
+  DEC Alpha/OpenVMS AXP v7.2-1    DEC C v5.6-003   Digital Fortran 77 
+                                                   V7.3-1155-44A8I 
   IBM PC - Intel Pentium
-       Solarisx86 (2.5.1)         GCC 2.7.2          -                
-       Linux      (2.2.16)        GCC 2.95.2       g77  0.5.25    
-       FreeBSD    (4.1.1)         GCC 2.95.2       GNU f77 V0.5.25
+       Linux      (2.2.18smp)     GCC 2.95.2       g77  0.5.25    
+       FreeBSD    (4.4)           GCC 2.95.3       GNU f77 V0.5.25
   Windows NT/98/2000              MSVC++ 6.0       DEC Visual Fortran 6.0
-  T3E (sn6711 2.0.539b)           Cray CC 6.3.0.2  Cray Fortran 3.4.0.1.0
+  T3E (sn6711 2.0.5.55)           Cray CC 6.5.0.1  Cray Fortran 3.5.0.2
 
 
   NOTE:  Platforms listed with compiler information entered, are 
@@ -368,22 +366,7 @@
     To change compiler flags, etc. the config/mh-solaris64 configuration
     file must be modified, instead of the normal config/mh-solaris file.
 
-    2.5.2 Solaris on INTEL(x86)
-    ---------------------------
-
-    The distribution has been compiled/tested with GCC 2.7.2 with
-    *NO* FORTRAN support.
-
-    When compiling your programs on Solaris_x86, you must include the 
-    the nsl library, to resolve calls to the xdr* routines.
-    For example,
-
-       gcc -ansi -O -o <your program> <your program>.c \
-           -I<path for hdf include directory> \
-           -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz  \
-           -L/usr/lib -lnsl
-
-    2.5.3 OpenVMS AXP on DEC Alpha
+    2.5.2 OpenVMS AXP on DEC Alpha
     ------------------------------
    
    To build the HDF Library on Alpha OpenVMS systems use
@@ -448,7 +431,7 @@
              which start with 'For VMS', in these files.
 
 
-    2.5.4 Windows 98/NT/2000
+    2.5.3 Windows 98/NT/2000
     ------------------------
 
       Install HDF4.1 Release 5 on Windows NT, Windows 2000 and Windows 98
@@ -781,7 +764,7 @@ dialog.
 
 
 
-    2.5.5 Macintosh OS - Power PC - 
+    2.5.4 Macintosh OS - Power PC - 
     -------------------------------
     **** NOT SUPPORTED WITH HDF 4.1r5 ****
 
@@ -797,7 +780,7 @@ dialog.
     You need to compile the libraries before you can compile the test 
     programs 'testhdf', 'xdrtest', 'cdftest', 'hdftest' and  'nctest'.
 
-    2.5.5.1 Special Notes
+    2.5.4.1 Special Notes
     *********************
     1. The test programs are SIOUX applications.
     
@@ -810,7 +793,7 @@ dialog.
     4. Distribution also contains projects files to build utilities,
        but utilities were not tested.
 
-    2.5.5.2 Building the Distribution
+    2.5.4.2 Building the Distribution
     *********************************
     The distribution  and tests need to be built in the order specified below.
     Codewarrior Projects with the targets for Power PC and 68K can be 
@@ -838,7 +821,7 @@ dialog.
 
     Note that only the PPC version of the libraries and tests are supported.
 
-    2.5.5.3 Testing the Distribution
+    2.5.4.3 Testing the Distribution
     ********************************
     Run the tests in the following order:
       
@@ -862,7 +845,7 @@ dialog.
 
        5. mfhdf/nctest/nctest
 
-    2.5.5.4 Building utilities  
+    2.5.4.4 Building utilities  
     ********************************
 
     Codewarrior Projects for utilities can be found in the following
@@ -886,8 +869,10 @@ dialog.
                          R8ToHDF/R8ToHDF.project.hqx 
                          RISToHDF/RISToHDF.project.hqx
 
-    2.5.6 Exemplar
+    2.5.5 Exemplar
     --------------
+    **** NOT SUPPORTED WITH HDF 4.1r5 ****
+
     HP Exemplar (Convex) machines running version 10.x of HP-UX are now only
     able to be configured for HP-UX.  If you are running an Exemplar with an
     earlier version of the software, you must configure the machine as
@@ -898,7 +883,7 @@ dialog.
     Otherwise, the machine will be configured for HP-UX.
         
 
-    2.5.7 SP2 Single node
+    2.5.6 SP2 Single node
     ----------------------
     HDF has been compiled and tested to run in a single node of the
     SP2 system.  You can make the library the same way you would on an
@@ -907,7 +892,7 @@ dialog.
     since HDF code does not support concurrent access to the same file.
 
 
-    2.5.8 T3E Single node
+    2.5.7 T3E Single node
     ---------------------
     HDF has been compiled and tested to run in a single node of the
     T3E system.  It is compiled with the '-X m' to produce malleable
@@ -931,7 +916,7 @@ dialog.
     the testing.
 
 
-    2.5.9a SGI IRIX 6.x
+    2.5.8a SGI IRIX 6.x
     -------------------
     IRIX is the traditional SGI 32-bit OS.  Starting in version 6.x,
     it supports two classes of 32 bit compilers, the old 32 (-o32)
@@ -943,7 +928,7 @@ dialog.
     of "General Configuration/Installation" for more information.
 
 
-    2.5.9b SGI IRIX64
+    2.5.8b SGI IRIX64
     -----------------
     IRIX64 supports multiple combinations of ABI (-64, -n32, -o32) and
     instruction sets (-mips2, -mips3, -mips4).  Previous HDF
@@ -965,7 +950,7 @@ dialog.
     of "General Configuration/Installation" for more information.
 
 
-    2.5.10 DEC Alpha
+    2.5.9 DEC Alpha
     ----------------
     The distribution has been compiled/tested with the native Digital 
     Unix C and FORTRAN compilers.
