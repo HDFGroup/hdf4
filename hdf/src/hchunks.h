@@ -36,8 +36,9 @@
 #include "tbbt.h"   /* TBBT stuff */
 #include "mcache.h" /* caching routines */
 
-/* Define class and name(partial) for chunk table */
+/* Define class, class version and name(partial) for chunk table i.e. Vdata */
 #define _HDF_CHK_TBL_CLASS "_HDF_CHK_TBL_" /* 13 bytes */
+#define _HDF_CHK_TBL_CLASS_VER  0          /* zero version number for class */
 #define _HDF_CHK_TBL_NAME  "_HDF_CHK_TBL_" /* 13 bytes */
 
 /* Define field name for each chunk record i.e. Vdata record */
@@ -47,7 +48,7 @@
 #define _HDF_CHK_FIELD_NAMES   "origin,chk_tag,chk_ref" /* 22 bytes */
 
 /* Define version number for chunked header format */
-#define _HDF_CHK_HDR_VER   1
+#define _HDF_CHK_HDR_VER   0  /* zero version for format header */
 
 #endif /* _HCHUNKS_MAIN_ */
 
@@ -114,7 +115,7 @@ typedef struct chunkinfo_t
     uint16      chktbl_ref;   /* ref of the first chunk table structure(VDATA) */
     uint16      sp_tag;       /* For future use.. */
     uint16      sp_ref;       /* For future use.. */
-    uint8       ndims;        /* number of dimensions of chunk */
+    int32       ndims;        /* number of dimensions of chunk */
     DIM_REC     *ddims;       /* array of dimension records */
     int32       fill_val_len; /* fill value number of bytes */
     VOID        *fill_val;    /* fill value */
@@ -173,15 +174,15 @@ extern      "C"
 #ifdef _HCHUNKS_MAIN_
 /* Private to 'hchunks.c' */
     extern int32 HMCPstread
-        (accrec_t * access_rec  /* IN: access record to fill in */);
+        (accrec_t *access_rec  /* IN: access record to fill in */);
 
     extern int32 HMCPstwrite
-        (accrec_t * access_rec  /* IN: access record to fill in */);
+        (accrec_t *access_rec  /* IN: access record to fill in */);
 
     extern int32 HMCPseek
-        (accrec_t * access_rec, /* IN: access record to mess with */
-         int32 offset,          /* IN: seek offset */
-         int origin             /* IN: where we should calc the offset from */);
+        (accrec_t *access_rec, /* IN: access record to mess with */
+         int32 offset,         /* IN: seek offset */
+         int   origin          /* IN: where we should calc the offset from */);
 
     extern int32 HMCPchunkread
         (VOID  *cookie,    /* IN: access record to mess with */
@@ -199,16 +200,16 @@ extern      "C"
          const VOID *datap /* IN: buffer for data */);
 
     extern int32 HMCPwrite
-        (accrec_t * access_rec, /* IN: access record to mess with */
-         int32 length,          /* IN: number of bytes to write */
-         const VOIDP data       /* IN: buffer for data */);
+        (accrec_t *access_rec, /* IN: access record to mess with */
+         int32 length,         /* IN: number of bytes to write */
+         const VOIDP data      /* IN: buffer for data */);
 
     extern intn HMCPendaccess
-        (accrec_t * access_rec /* IN:  access record to close */);
+        (accrec_t *access_rec /* IN:  access record to close */);
 
     extern int32 HMCPinfo
-        (accrec_t * access_rec,       /* IN: access record of access elemement */
-         sp_info_block_t * info_block /* OUT: information about the special element */);
+        (accrec_t *access_rec,       /* IN: access record of access elemement */
+         sp_info_block_t *info_chunk /* OUT: information about the special element */);
 
     extern int32 HMCPinquire
         (accrec_t * access_rec, /* IN:  access record to return info about */

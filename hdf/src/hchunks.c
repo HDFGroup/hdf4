@@ -32,7 +32,6 @@ static char RcsId[] = "@(#)$Revision$";
    NOTE: GeorgeV's standard Disclaimer <here>. 
          I was coerced to do it this way....
 
-
    Description of file format headers for chunked element
    ------------------------------------------------------
    A chunked element is a special element.
@@ -50,9 +49,10 @@ static char RcsId[] = "@(#)$Revision$";
    File Description of Chunked Element
    ****************************************
 
-   NOTE: I know some of the fields could be 1 byte but instead of 4 bytes
+   NOTE: I know some of the fields could be 1 byte instead of 4 bytes
          but I decided to make them 4 to allow the fields to change
          their behaviour in the future.....i.e some could hold tag/refs..
+         yes this is *sick*....but then I have a creative mind :-)
 
    DD for Chunked Element pointing to Chunked Description Record(12 byes )
    =======================================================================
@@ -63,8 +63,8 @@ static char RcsId[] = "@(#)$Revision$";
                                     \______________/
    __________________________________________|
    V
-   CHUNKED DESCRIPTION RECORD(6 + 9 + 12 + 5 + 12 x ndims + 4 + fill_val_len + 
-                              'specialness' bytes) > 49 bytes
+   CHUNKED DESCRIPTION RECORD(6 + 9 + 12 + 8 + 12 x ndims + 4 + fill_val_len + 
+                              'specialness' bytes) > 52 bytes
    ============================================================================
    <-  2 bytes -> <-  4 bytes  -> (6 bytes)
    --------------------------------
@@ -81,7 +81,7 @@ static char RcsId[] = "@(#)$Revision$";
 ...| chunk_size  |  nt_size     | chk_tbl_tag | chk_tbl_ref | ...cont'd
    ---------------------------------------------------------
 
-   <- 2 bytes -> <- 2 bytes -> <- 1 byte -> (5 bytes)
+   <- 2 bytes -> <- 2 bytes -> <- 4 bytes -> (8 bytes)
    ----------------------------------------
 ...| sp_tag     | sp_ref      |  ndims   |  ...cont'd
    ----------------------------------------
@@ -108,26 +108,26 @@ static char RcsId[] = "@(#)$Revision$";
    ------
    sp_tag_desc   - SPECIAL_CHUNKED(16 bit constant), identifies this as
                    a chunked element description record
-   sp_tag_head_len - length of this special element header only.
+   sp_tag_head_len - length of this special element header only.(4 bytes)
                      Does not include length of header with additional 
                      'specialness' headers.
                      This is include to make this header layout similiar to the 
                      multiple 'specialiness' layout.
    version        - version info (8 bit field)
    flag           - bit field to set additional specialness  (32 bit field)
-   elem_tot_len   - Valid Length of the entire element(32 bit field)
+   elem_tot_len   - Valid Length of the entire element(4 bytes)
                     The actual physical length used for storage can be
                     greater than the dataset size due to ghost areas in
                     chunks. Partial chunks are not distinguished from
                     regular chunks.
-   chunk_size     - Size of data chunks(32 bit field)
-   nt_size        - Number type size i.e size of data type 
-   chk_tbl_tag    - Tag of chunk table i.e. Vdata (16 bit field)
+   chunk_size     - Size of data chunks(4 bytes)
+   nt_size        - Number type size i.e size of data type (4 bytes)
+   chk_tbl_tag    - Tag of chunk table i.e. Vdata (2 bytes)
    chk_tbl_ref    - Reference number of the chunk table
-                    i.e. Vdata (16 bit field)
-   sp_tag         - For future use i.e. special table for 'ghost' chunks
-   sp_ref         - For fture use
-   ndims          - number of dimensions for the chunked element.(8 bit field)
+                    i.e. Vdata (2 bytes)
+   sp_tag         - For future use i.e. special table for 'ghost' chunks(2 bytes)
+   sp_ref         - For future use(2 bytes)
+   ndims          - number of dimensions for the chunked element.(4 bytes)
    file_val_num_bytes - number of bytes in fill value (32 bit field)
    fill value         - fill value (variable bytes)
 
@@ -136,14 +136,14 @@ static char RcsId[] = "@(#)$Revision$";
    distrib_type   - type of data distribution along this dimension (32 bit field)
                     1 - Block
                     Currently only block distribution is supported.
-   dim_length     - length of this dimension. (32 bit field)
-   chunk_length   - length of the chunk along this dimension  (32 bit field)
+   dim_length     - length of this dimension. (4 bytes)
+   chunk_length   - length of the chunk along this dimension (4 bytes)
 
    Fields for each additional 'specialness' (Optional)
    -------------------------------------------
    sp_tag_desc    - SPECIAL_xxx(16 bit constant), identifies this as
                     a 'xxx' element description record .(16 bit field)
-   sp_tag_header_len - length of special element header(32 bit field)
+   sp_tag_header_len - length of special element header(4 bytes)
    sp_tag_header     - special header.(variable bytes)
 
 
@@ -215,15 +215,15 @@ LOCAL ROUTINES
 ==============
    Chunking helper routines
    ------------------------
-   create_dim_recs
-   update_chunk_indices_seek
-   update_chunk_indices
-   calculate_chunk_seek      -- not used
+   create_dim_recs           -- create the appropriate arrays
+   update_chunk_indices_seek -- translate seek pos to chunk and pos in chunk
+   calculate_chunk_seek      -- translate chunk coordiantes to seek postion
+   update_chunk_indices      -- not used
    compute_array_to_chunk    -- not used
    calculate_num_to_chunk    -- not used
-   calculate_seek_in_chunk
-   calculate_chunk_num
-   calculate_chunk_for_chunk
+   calculate_seek_in_chunk   -- translate pos in chunk to seek pos in chunk
+   calculate_chunk_num       -- translate chunk coordinates to a number
+   calculate_chunk_for_chunk -- calculate number of bytes to operate on chunk
 
    Common Routine
    -------------
@@ -234,14 +234,21 @@ LOCAL ROUTINES
    -GeorgeV
 */
 
-/* for debugging */
+/* For debugging */
 /*
 #define CHK_DEBUG_1
 #define CHK_DEBUG_2
 #define CHK_DEBUG_3
 #define CHK_DEBUG_4
 */
-#define  _HCHUNKS_MAIN_
+
+/* For Statistics from the chunk cache.
+   Note thate 'mache.c' must be compilied with -DSTATISTICS */
+/*
+#define STATISTICS 
+*/
+
+#define  _HCHUNKS_MAIN_  /* Master chunk handling file */
 #include "hdf.h"
 #include "hfile.h"
 #include "mcache.h" /* cache */
@@ -254,7 +261,7 @@ HMCIstaccess(accrec_t * access_rec,  /* IN: access record to fill in */
 
 /* -------------------------------------------------------------------------
 NAME
-   create_dim_recs
+   create_dim_recs -- create the appropriate arrays
 DESCRIPTION
   Given number of dimensions create the following 3 arrays.
   1. Dimension record array contains a record for each dimension.
@@ -315,7 +322,7 @@ create_dim_recs(DIM_REC **dptr, /* OUT: dimension record pointers */
 
 /* -------------------------------------------------------------------------
 NAME
-    update_chunk_indicies_seek
+    update_chunk_indicies_seek -- translate seek pos to chunk and pos in chunk
 DESCRIPTION
     Give seek location within an element, calculate which chunk in
     chunk array and position within chunk.
@@ -357,7 +364,7 @@ update_chunk_indicies_seek(int32 sloc,    /* IN: physical Seek loc in element */
 
 /* -------------------------------------------------------------------------
 NAME
-    calculate_chunk_seek
+    calculate_chunk_seek -- translate chunk coordiantes to seek postion
 DESCRIPTION
     Calculate new seek postion given seek chunk array and seek postion
     within that chunk array. 
@@ -527,7 +534,7 @@ calculate_num_to_chunk(int32 chunk_num, /* IN: chunk number within element */
 
 /* -------------------------------------------------------------------------
 NAME
-    calculate_seek_in_chunk
+    calculate_seek_in_chunk -- translate pos in chunk to seek pos in chunk
 DESCRIPTION
     Calculate seek postion within chunk
 RETURNS
@@ -558,7 +565,7 @@ calculate_seek_in_chunk(int32 *chunk_seek,/* OUT: new physical seek pos in eleme
 
 /* -------------------------------------------------------------------------
 NAME
-    calculate_chunk_num
+    calculate_chunk_num - translate chunk coordinates to a number
 DESCRIPTION
     Calculate new chunk number given seek chunk array and seek postion
     within that chunk array. 
@@ -586,7 +593,7 @@ calculate_chunk_num(int32 *chunk_num, /* OUT: new chunk number within element */
 
 /* -------------------------------------------------------------------------
 NAME
-    calculate_chunk_for_chunk
+    calculate_chunk_for_chunk - calculate number of bytes to operate on chunk
 DESCRIPTION
   Given the length of bytes to operate on and the size of bytes
   already operated on, calculate how big of chunk can be written
@@ -707,8 +714,8 @@ RETURNS
    The AID of the access record on success FAIL on error.
 ----------------------------------------------------------------------------*/
 PRIVATE int32
-HMCIstaccess(accrec_t * access_rec, /* IN: access record to fill in */
-             int16 acc_mode         /* IN: access mode */)
+HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
+             int16 acc_mode        /* IN: access mode */)
 {
     CONSTR(FUNC, "HMCIstaccess");    /* for HERROR */
     filerec_t  *file_rec = NULL;     /* file record */
@@ -729,6 +736,7 @@ HMCIstaccess(accrec_t * access_rec, /* IN: access record to fill in */
     int32       ret_value = SUCCEED;
     char        name[VSNAMELENMAX + 1];  /* Vdata name */
     char        class[VSNAMELENMAX + 1]; /* Vdata class */
+    char        v_class[VSNAMELENMAX + 1] = ""; /* Vdata class for comparison */
     intn        j,k;                     /* loop indicies */
 
     /* Check args */
@@ -870,9 +878,8 @@ HMCIstaccess(accrec_t * access_rec, /* IN: access record to fill in */
               UINT16DECODE(p, info->chktbl_ref);  /* 2 bytes */
               UINT16DECODE(p, info->sp_tag);      /* 2 bytes */
               UINT16DECODE(p, info->sp_ref);      /* 2 bytes */
-              HDmemcpy(&info->ndims,p, 1);        /* 1 bytes */
-              p = p + 1;
-              /* = 26 bytes */
+              INT32DECODE(p, info->ndims);        /* 4 bytes */
+                                                  /* = 29 bytes */
 
               /* create dimension, seek_block and seek_pos arrays 
                  given number of dims */
@@ -952,6 +959,17 @@ HMCIstaccess(accrec_t * access_rec, /* IN: access record to fill in */
           if ((VSgetclass(info->aid, class)) == FAIL)
               HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
+          /* verify class and version */
+          sprintf(v_class,"%s%d",_HDF_CHK_TBL_CLASS,_HDF_CHK_TBL_CLASS_VER);
+          if (HDstrncmp(class,v_class,HDstrlen(v_class)) != 0 )
+            {
+#ifdef CHK_DEBUG_2
+                fprintf(stderr," error, wrong class=%s, %d \n",class,HDstrlen(class));
+                fprintf(stderr,"            v_class=%s, %d \n",v_class,HDstrlen(v_class));
+#endif
+              HGOTO_ERROR(DFE_INTERNAL, FAIL);
+            }
+
           /* Get number of fields in Vdata */
           if ((nfields = VFnfields(info->aid)) == FAIL)
               HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -968,8 +986,9 @@ HMCIstaccess(accrec_t * access_rec, /* IN: access record to fill in */
              NOTE: Should change this to a single VSread() but then
              would have to store all the v_data rec's somewhere
              before inserting them into the TBBT tree...
-             ....for somone to do later if performance of VSread()
-             is bad.......*/
+             ....for somone to do later if performance of VSread() is bad
+             Note that chunk tag DTAG_CHUNK is not verified here.
+             It is checked in HMCPchunkread() before the chunk is read. */
           for (j = 0; j < num_recs; j++)
             {
                 uint8 *pntr = NULL;
@@ -1002,7 +1021,12 @@ HMCIstaccess(accrec_t * access_rec, /* IN: access record to fill in */
 #endif
                   }
 
-                /* Copy tag next */
+                /* Copy tag next. 
+                   Note: Verification of tag as DTAG_CHUNK is done in
+                         HMCPchunkread() before the chunk object is read.
+                         In the future the tag/ref pair could point to
+                         another chunk table...etc.
+                 */
                 HDmemcpy(&chkptr->chk_tag,pntr,sizeof(uint16));
                 pntr += sizeof(uint16);
 #ifdef CHK_DEBUG_2
@@ -1048,15 +1072,12 @@ HMCIstaccess(accrec_t * access_rec, /* IN: access record to fill in */
           access_rec->special_info = (chunkinfo_t *) info;
       } /* end else need to get special info */
 
-    /* access to data elments is done on a per chunk basis whihc
-       can only be done in the read/write routines */    
+    /* access to data elments is done on a per chunk basis which
+       can only be done in the read/write routines 
+       i.e. the cache pagin/pageout routines....*/    
 
     ret_value = access_aid;
 
-#if 0
-    /* set return value */
-    ret_value = HAregister_atom(AIDGROUP,access_rec);
-#endif
   done:
     if(ret_value == FAIL)   
       { /* Error condition cleanup */
@@ -1116,14 +1137,14 @@ NAME
 DESCRIPTION
    This routine takes an HDF element and promotes it into a 
    chunked element.  Basically, the element becomes a chunked element
-   allowing easy appending where the chunk records are storead in
-   a Vdata.  If the element already exists, 
-   this is an error currently otherwise a new element is created.
+   allowing easy appending where the chunk records are stored in
+   a Vdata.  If the element already exists, this is an error currently 
+   otherwise a new element is created.
 
    All of the pieces of the chunked element are the same size from
    the stand point of the element. If compression is used then
    each chunk is compressed and the compression layer takes
-   care it as the chunk layers sees each chunks as a seperate
+   care of it as the chunk layers sees each chunks as a seperate
    HDF object(DFTAG_CHUNK). The proper compression special header
    needs to be passed to the compression layer.
 
@@ -1159,7 +1180,8 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     int32       sp_tag_header_len = 0; /* length of special header */
     int32       data_len   = 1;        /* logical length of element */
     int32       ret_value  = SUCCEED;
-    char        v_name[30] = "";   /* name of vdata i.e. chunk table */
+    char        v_name[VSNAMELENMAX + 1] = "";/* name of vdata i.e. chunk table */
+    char        v_class[VSNAMELENMAX + 1] = ""; /* Vdata class */
     intn        i;                 /* loop index */
 
 #ifdef HAVE_PABLO
@@ -1253,10 +1275,6 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     if((info->aid = VSattach(file_id, -1, "w")) == FAIL)
         HGOTO_ERROR(DFE_CANTATTACH, FAIL);
 
-    /* Make it appendable with linked block table size of 128 */
-    if (VSappendable(info->aid, 128) == FAIL)
-        HGOTO_ERROR(DFE_INTERNAL, FAIL);
-
     /* get ref of Vdata */
     chktbl_ref = VSQueryref(info->aid);
 
@@ -1283,14 +1301,16 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     if(VSfdefine(info->aid,_HDF_CHK_FIELD_3, DFNT_UINT16,1) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-    /* Set Vdata name based on tag and ref of element.
-       ...sort of a back pointer...*/
-    sprintf(v_name,"%s%d_%d",_HDF_CHK_TBL_NAME,tag, ref);
+    /* Set Vdata name based on tag and ref of element and of tag/ref of Vdata.
+       ...sort of a back pointer...so sue me...*/
+    sprintf(v_name,"%s%d_%d_%d_%d",_HDF_CHK_TBL_NAME,tag, ref,
+            info->chktbl_tag, info->chktbl_ref);
     if(VSsetname(info->aid,v_name) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-    /* Set Vdata class */
-    if(VSsetclass(info->aid,_HDF_CHK_TBL_CLASS) == FAIL)
+    /* Set Vdata class and version */
+    sprintf(v_class,"%s%d",_HDF_CHK_TBL_CLASS,_HDF_CHK_TBL_CLASS_VER);
+    if(VSsetclass(info->aid,v_class) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* Set the fields to write */
@@ -1324,7 +1344,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
               info->ddims[i].last_chunk_length = info->ddims[i].chunk_length; /*  */	    
 
 
-          /* calcualte number of chunks/pages in element */
+          /* calculate number of chunks/pages in element */
           npages = npages * info->ddims[i].num_chunks;
 
           /* compute logical element length */
@@ -1340,6 +1360,25 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     printf("\n");
 #endif
 
+    /* Make Vdata appendable with linked block table size of 'npages'
+       if less than 128 and greater than 16.
+       Not the best heuristic but for now it should be okay...*/
+    if (npages > 16 && npages < 128)
+      {
+          if (VSappendable(info->aid, npages) == FAIL)
+              HGOTO_ERROR(DFE_INTERNAL, FAIL);
+      }
+    else if (npages < 16 )
+      { /* 16 is default */
+          if (VSappendable(info->aid, 16) == FAIL)
+              HGOTO_ERROR(DFE_INTERNAL, FAIL);
+      }
+    else /* use 128 for large chunk tables for now */
+      {
+          if (VSappendable(info->aid, 128) == FAIL)
+              HGOTO_ERROR(DFE_INTERNAL, FAIL);
+      }
+
     /* Set logical length of element */
     info->length = data_len;              /* logical size of element */
 
@@ -1347,7 +1386,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
        including the fields for 'sp_tag_desc' and 'sp_tag_head_len'.
        See description of format header at top of file for more
        info on fields */
-    sp_tag_header_len = 6 + 9 + 12 + 5 +(12*info->ndims) + 4 + info->fill_val_len;
+    sp_tag_header_len = 6 + 9 + 12 + 8 +(12*info->ndims) + 4 + info->fill_val_len;
 
     /* Allocate buffer space for header */
     if (( sp_header = (uint8 *) HDcalloc(sp_tag_header_len,1))==NULL)
@@ -1377,9 +1416,8 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
         UINT16ENCODE(p, info->chktbl_ref);  /* 2 bytes */
         UINT16ENCODE(p, info->sp_tag);      /* 2 bytes */
         UINT16ENCODE(p, info->sp_ref);      /* 2 bytes */
-        HDmemcpy(p, &info->ndims,1);        /* 1 bytes */
-        p = p + 1;
-        /* = 32 bytes*/
+        INT32ENCODE(p, info->ndims);        /* 4 bytes */
+                                            /* = 35 bytes*/
         for (j = 0; j < info->ndims; j++)
           {
               INT32ENCODE(p,(info->ddims[j].distrib_type)); /* 4 bytes */
@@ -1388,7 +1426,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
           }                                               /* = 12 x ndims bytes */
 
         /* now for fill value */
-        INT32ENCODE(p,(info->fill_val_len)); /* 4 bytes */
+        INT32ENCODE(p,(info->fill_val_len));            /* 4 bytes */
         HDmemcpy(p,info->fill_val,info->fill_val_len); /* fill_val_len bytes */
         p = p + fill_val_len;
 
@@ -1443,9 +1481,13 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
                                        (info->chunk_size*info->nt_size), 
                                        info->ddims[0].num_chunks, 
                                        npages,0)) == NULL)
-        HE_REPORT_GOTO("failed to find initialize chunk cache", FAIL);
+        HE_REPORT_GOTO("failed to initialize chunk cache", FAIL);
 
-    /* set up chunk read/write routines */
+    /* 
+      set up chunk read/write routines
+      These routine are the actual routines that read/write
+      whole chunks at a time.i.e. page-in/page-out routines
+     */
     mcache_filter(info->chk_cache, HMCPchunkread, HMCPchunkwrite, 
                   access_rec);
 
@@ -1501,6 +1543,77 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
 
     return ret_value;
 } /* HMCcreate() */
+
+
+/*--------------------------------------------------------------------------
+NAME
+     HMCsetMaxcache - maximum number of chunks to cache 
+
+DESCRIPTION
+     Set the maximum number of chunks to cache.
+
+     The values set here affects the current object's caching behaviour.
+     The cache only grows up if the cache is max'd out, otherwise
+     it will be set the value 'maxcache' if the current number of chunks
+     cached is less than 'maxcache'.
+
+     Use flags arguement of 'HMC_PAGEALL' if the whole object is to be cached 
+     in memory otherwise passs in zero.
+
+RETURNS
+     Returns number of 'maxcache' if successful and FAIL otherwise
+
+NOTE
+     This calls the real routine mcache_set_maxcache().
+     Currently 'maxcache' has to be greater than 1. 
+
+-------------------------------------------------------------------------- */
+int32
+HMCsetMaxcache(int32 access_id, /* IN: access aid to mess with */
+               int32 maxcache,  /* IN: max number of pages to cache */
+               int32 flags      /* IN: flags = 0, HMC_PAGEALL */)
+{
+    CONSTR(FUNC, "HMCsetMaxcache");   /* for HERROR */
+    accrec_t    *access_rec = NULL;   /* access record */
+    chunkinfo_t *info       = NULL;   /* chunked element information record */
+    int32       ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+    TRACE_ON(H_mask, ID_HMCsetMaxcache);
+#endif /* HAVE_PABLO */
+
+    /* Check args */
+    access_rec = HAatom_object(access_id);
+    if (access_rec == NULL || maxcache < 1)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* since this routine can be called by the user,
+       need to check if this access id is special CHUNKED */
+    if (access_rec->special == SPECIAL_CHUNKED)
+      {
+          info     = (chunkinfo_t *) (access_rec->special_info);
+
+          if (info != NULL)
+              ret_value =  mcache_set_maxcache(info->chk_cache,maxcache);
+          else 
+              ret_value = FAIL;
+      }
+    else /* not special */
+        ret_value = FAIL;
+
+  done:
+    if(ret_value == FAIL)   
+      { /* Error condition cleanup */
+
+      } /* end if */
+
+    /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(H_mask, ID_HMCsetMaxcache);
+#endif /* HAVE_PABLO */
+
+    return ret_value;
+} /* HMCsetMaxcache() */
 
 /* ------------------------------ HMCPstread -------------------------------
 NAME
@@ -1636,11 +1749,10 @@ NAME
    HMCPchunkread - read a chunk
 
 DESCRIPTION
-   Read in some data from a chunked element.  If length
-   is zero read until the end of the element.  It is assumed
-   that the data buffer is big enough to store the data.
-   If length would take us off the end of the element only
-   read what has been written.
+   Read in a whole chunk from a chunked element given the chunk number.  
+
+   This is used as the 'page-in-chunk' routine for the cache.
+   Only the cache should call this routine.
 
 RETURNS
    The number of bytes read or FAIL on error
@@ -1697,7 +1809,7 @@ HMCPchunkread(VOID  *cookie,    /* IN: access record to mess with */
           chk_rec = (CHUNK_REC *) entry->data; 
 
           /* check to see if has been written to */
-          if (chk_rec->chk_tag != DFTAG_NULL)
+          if (chk_rec->chk_tag != DFTAG_NULL && chk_rec->chk_tag == DFTAG_CHUNK)
             { /* valid chunk in file */
                 /* Start read on chunk */
                 if ((chk_id = Hstartread(access_rec->file_id, chk_rec->chk_tag,
@@ -1718,14 +1830,22 @@ HMCPchunkread(VOID  *cookie,    /* IN: access record to mess with */
                     HE_REPORT_GOTO("Hendaccess failed to end access to chunk", FAIL);
               
             }
-          else /* chunk has not been written, so return fill value buffer */
-            {  /* calculate number of fill value items to fill buffer with */
+          else if (chk_rec->chk_tag == DFTAG_NULL) 
+            {/* chunk has not been written, so return fill value buffer */
+                /* calculate number of fill value items to fill buffer with */
                 nitems = (info->chunk_size * info->nt_size) / info->fill_val_len;
 
                 /* copy fill values into buffer and return */
                 if (HDmemfill(datap,info->fill_val, info->fill_val_len,nitems) == NULL)
                     HE_REPORT_GOTO("HDmemfill failed to fill read chunk", FAIL);
             }
+          else /* not a valid chunk ref for now */
+            {  
+                /* For now DFTAG_CHUNK is the only allowed value.
+                   In the future this could be another Chunk table. */
+                HE_REPORT_GOTO("Not a valid Chunk object, wrong tag for chunk", FAIL);
+            }
+
       } /* end else exists in TBBT tree */
 
     ret_value = bytes_read; /* number of bytes read */
@@ -1752,9 +1872,11 @@ NAME
    HMCreadChunk -- read a whole chunk
 
 DESCRIPTION
-   Read out some data from a chunked element.  
-   This can be used by users to read whole chunks to the file
-   based on chunk origin for now.
+   Read a whole chunk from a chunked element.  
+
+   This can be used by users to read whole chunks from the file
+   based on chunk origin for now i.e postion of chunk in overall
+.  chunk array.
 
 RETURNS
    The number of bytes read or FAIL on error
@@ -1827,7 +1949,7 @@ HMCreadChunk(int32 access_id,  /* IN: access aid to mess with */
 
           /* put chunk back to cache */
           if (mcache_put(info->chk_cache, chk_data, 0) == FAIL)
-              HE_REPORT_GOTO("HMCreadChunk failed to put chunk back in cache", FAIL);
+              HE_REPORT_GOTO("failed to put chunk back in cache", FAIL);
 
           /* adjust number of bytes already read */
           bytes_read = read_len; 
@@ -1871,11 +1993,10 @@ NAME
    HMCPread - read data from a chunked element
 
 DESCRIPTION
-   Read in some data from a chunked element.  If length
-   is zero read until the end of the element.  It is assumed
-   that the data buffer is big enough to store the data.
-   If length would take us off the end of the element only
-   read what has been written.
+   Read in some data from a chunked element. 
+
+   Data is obtained from the cache which takes care of reading
+   in the proper chunks to satisfy the request.
 
 RETURNS
    The number of bytes read or FAIL on error
@@ -1993,7 +2114,7 @@ HMCPread(accrec_t * access_rec, /* IN: access record to mess with */
 #endif
           /* put chunk back to cache */
           if (mcache_put(info->chk_cache, chk_data, 0) == FAIL)
-              HE_REPORT_GOTO("HMCPread failed to put chunk back in cache", FAIL);
+              HE_REPORT_GOTO("failed to put chunk back in cache", FAIL);
 
           /* increment buffer pointer */
           bptr += chunk_size;
@@ -2046,9 +2167,10 @@ NAME
    HMCPchunkwrite -- write out chunk
 
 DESCRIPTION
-   Write out some data from a chunked element.  If we write
-   passed the end of the existing element new chunks are created
-   as needed.
+   Write a whole chunk to a chunked element given the chunk number.  
+
+   This is used as the 'page-out-chunk' routine for the cache.
+   Only the cache should call this routine.
 
 RETURNS
    The number of bytes written or FAIL on error
@@ -2076,7 +2198,7 @@ HMCPchunkwrite(VOID  *cookie,    /* IN: access record to mess with */
     intn        k;                 /* loop index */
 
 #ifdef HAVE_PABLO
-    TRACE_ON(H_mask, ID_HMCPwrite);
+    TRACE_ON(H_mask, ID_HMCPchunkwrite);
 #endif /* HAVE_PABLO */
 
     /* Check args */
@@ -2182,76 +2304,13 @@ HMCPchunkwrite(VOID  *cookie,    /* IN: access record to mess with */
         HDfree(v_data);
 
 #ifdef HAVE_PABLO
-    TRACE_OFF(H_mask, ID_HMCPwrite);
+    TRACE_OFF(H_mask, ID_HMCPchunkwrite);
 #endif /* HAVE_PABLO */
 #ifdef CHK_DEBUG_4
     printf("HMCPchunkwrite exited with ret_value %d \n",ret_value);
 #endif
     return ret_value;
-} /* HMCPwritechunk() */
-
-/******************************************************************************
-NAME
-     HMCsetMaxcache - maximum number of chunks to cache 
-
-DESCRIPTION
-     Set the maximum number of chunks to cache.
-
-     The values set here affects the current object's caching behaviour.
-     The cache only only grow up if the cache is max'd out and otherwise
-     it will be set the value 'maxcache' if the current number of chunks
-     cached is less than 'maxcache'.
-
-     Use flags arguement of 'HMC_PAGEALL' if the whole object is to be cached 
-     in memory otherwise passs in zero.
-
-RETURNS
-     Returns number of 'maxcache' if successful and FAIL otherwise
-
-NOTE
-     This calls the real routine mcache_set_maxcache().
-     Currently 'maxcache' has to be greater than 1. 
-
-******************************************************************************/
-int32
-HMCsetMaxcache(int32 access_id, /* IN: access aid to mess with */
-               int32 maxcache,  /* IN: max number of pages to cache */
-               int32 flags      /* IN: flags = 0, HMC_PAGEALL */)
-{
-    CONSTR(FUNC, "HMCsetMaxcache");   /* for HERROR */
-    accrec_t    *access_rec = NULL;   /* access record */
-    chunkinfo_t *info       = NULL;   /* chunked element information record */
-    int32       ret_value = SUCCEED;
-
-    /* Check args */
-    access_rec = HAatom_object(access_id);
-    if (access_rec == NULL || maxcache < 1)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    /* since this routine can be called by the user,
-       need to check if this access id is special CHUNKED */
-    if (access_rec->special == SPECIAL_CHUNKED)
-      {
-          info     = (chunkinfo_t *) (access_rec->special_info);
-
-          if (info != NULL)
-              ret_value =  mcache_set_maxcache(info->chk_cache,maxcache);
-          else 
-              ret_value = FAIL;
-      }
-    else /* not special */
-        ret_value = FAIL;
-
-  done:
-    if(ret_value == FAIL)   
-      { /* Error condition cleanup */
-
-      } /* end if */
-
-    /* Normal function cleanup */
-
-    return ret_value;
-} /* HMCsetMaxcache() */
+} /* HMCPchunkwrite() */
 
 /* ------------------------------- HMCwriteChunk ---------------------------
 NAME
@@ -2259,8 +2318,10 @@ NAME
 
 DESCRIPTION
    Write out some data from a chunked element.  
+
    This can be used by users to write whole chunks to the file
-   based on chunk origin for now.
+   based on chunk origin for now i.e position of chunk in overall
+   chunk array.
 
 RETURNS
    The number of bytes written or FAIL on error
@@ -2402,7 +2463,7 @@ HMCwriteChunk(int32 access_id,  /* IN: access aid to mess with */
 
           /* put chunk back to cache */
           if (mcache_put(info->chk_cache, chk_data, MCACHE_DIRTY) == FAIL)
-              HE_REPORT_GOTO("HMCPwrite: failed to put chunk back in cache", FAIL);
+              HE_REPORT_GOTO("failed to put chunk back in cache", FAIL);
 
           bytes_written = write_len;
 
@@ -2450,9 +2511,12 @@ NAME
    HMCPwrite -- write out some data to a chunked element
 
 DESCRIPTION
-   Write out some data from a chunked element.  If we write
-   passed the end of the existing element new chunks are created
-   as needed.
+   Write out some data to a chunked element.  
+
+   Data is obtained from the cache which takes care of obtaining
+   the proper chunks to write to satisfy the request.
+
+   The chunks are marked as dirty before being returned to the cache.
 
 RETURNS
    The number of bytes written or FAIL on error
@@ -2627,9 +2691,9 @@ HMCPwrite(accrec_t * access_rec, /* IN: access record to mess with */
 #ifdef CHK_DEBUG_4
           fprintf(stderr,"  chk_dptr = %d\n", (uint8)*chk_dptr);
 #endif
-          /* put chunk back to cache */
+          /* put chunk back to cache as DIRTY */
           if (mcache_put(info->chk_cache, chk_data, MCACHE_DIRTY) == FAIL)
-              HE_REPORT_GOTO("HMCPwrite: failed to put chunk back in cache", FAIL);
+              HE_REPORT_GOTO("failed to put chunk back in cache", FAIL);
 
           /* increment buffer pointer */
           bptr += chunk_size;
@@ -2687,8 +2751,10 @@ NAME
    HMCPcloseAID -- close file but keep AID active
 
 DESCRIPTION
-   close the file currently being pointed to by this AID but 
+   Close the file currently being pointed to by this AID but 
    do *NOT* free the AID.
+
+   This will flush the chunk cache and free up the special info struct.
 
    This is called by Hnextread() which reuses an AID to point to
    the 'next' object as requested.  If the current object was an
@@ -2721,15 +2787,13 @@ HMCPcloseAID(accrec_t *access_rec /* IN:  access record of file to close */)
             {
                 /* Sync chunk cache */
                 mcache_sync(info->chk_cache);
-/*
-  #define STATISTICS 
-  */
 #ifdef STATISTICS
+                /* cache statistics if 'mcache.c' complied with -DSTATISTICS */
                 mcache_stat(info->chk_cache);
 #endif
                 /* close chunk cache */
                 mcache_close(info->chk_cache);
-            }
+            } /* cache not empty */
 
           /* clean up chunk table lists and info record here */
           /* Use Vxxx interface to end access to Vdata info */
@@ -2744,11 +2808,7 @@ HMCPcloseAID(accrec_t *access_rec /* IN:  access record of file to close */)
           if (Vend(access_rec->file_id) == FAIL)
               HGOTO_ERROR(DFE_CANTFLUSH, FAIL);
 
-          /* clean up chunk tree 
-             note that currently the 'chkdestroynode' fcn
-             also does Hendaccess() on each open chunk id.
-             This is probably not a good place to do this as
-             any errors would be ignored. */
+          /* clean up chunk tree */
           tbbtdfree(info->chk_tree, chkdestroynode, chkfreekey);
 
           /* free up stuff in special info */
@@ -2782,9 +2842,8 @@ NAME
 
 DESCRIPTION
    Free up all of the space used to store information about a
-   chunked element.  Information is flushed to disk as
-   it is created so this routine does NOT have to write anything
-   out.
+   chunked element. All relevant info will be flushed.
+   Update proper records i.e. access_rec, file_rec..etc
 
 RETURNS
    SUCCEED / FAIL
@@ -2842,18 +2901,18 @@ HMCPendaccess(accrec_t * access_rec /* IN:  access record to close */)
 
 /* ------------------------------- HMCPinfo --------------------------------
 NAME
-   HMCPinfo -- return info about a chunk element
+   HMCPinfo -- return info about a chunked element
 
 DESCRIPTION
-   Return information about the given chunk element.  Info_chunk is
-   assumed to be non-NULL.
+   Return information about the given chunked element.  
+   'info_chunk' is assumed to be non-NULL.
    
 RETURNS
    SUCCEED / FAIL
 --------------------------------------------------------------------------- */
 int32
-HMCPinfo(accrec_t * access_rec,       /* IN: access record of access elemement */
-         sp_info_block_t * info_block /* OUT: information about the special element */)
+HMCPinfo(accrec_t *access_rec,       /* IN: access record of access elemement */
+         sp_info_block_t *info_chunk /* OUT: information about the special element */)
 {
     CONSTR(FUNC, "HMCPinfo");       /* for HERROR */
     chunkinfo_t *info     = NULL;   /* special information record */
@@ -2874,25 +2933,25 @@ HMCPinfo(accrec_t * access_rec,       /* IN: access record of access elemement *
 
     /* fill in the info_chunk */
     info =  (chunkinfo_t *) access_rec->special_info;
-    info_block->key = SPECIAL_CHUNKED;
-    info_block->chunk_size = (info->chunk_size * info->nt_size); 
-    info_block->ndims      = info->ndims; 
+    info_chunk->key        = SPECIAL_CHUNKED;
+    info_chunk->chunk_size = (info->chunk_size * info->nt_size); /* phsyical size */
+    info_chunk->ndims      = info->ndims; 
 
     /* allocate space for chunk lengths */
-    if (( info_block->cdims = (int32 *) HDmalloc(info->ndims*sizeof(int32)))==NULL)
+    if (( info_chunk->cdims = (int32 *) HDmalloc(info->ndims*sizeof(int32)))==NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* copy info over */
     for (i = 0; i < info->ndims; i++)
       {
-          info_block->cdims[i] = info->ddims[i].chunk_length; 
+          info_chunk->cdims[i] = info->ddims[i].chunk_length; 
       }
 
   done:
     if(ret_value == FAIL)   
       { /* Error condition cleanup */
-          if (info_block->cdims != NULL)
-              HDfree(info_block->cdims);
+          if (info_chunk->cdims != NULL)
+              HDfree(info_chunk->cdims);
       } /* end if */
 
     /* Normal function cleanup */
@@ -2906,15 +2965,15 @@ HMCPinfo(accrec_t * access_rec,       /* IN: access record of access elemement *
 
 /* ------------------------------ HMCPinquire ----------------------------- 
 NAME
-   HMCPinquire -- Hinquire for chunks
+   HMCPinquire -- Hinquire for chunked elements
 
 DESCRIPTION
-   Return interesting information about a chunk element.
+   Return interesting information about a chunked element.
    NULL can be passed for any of the OUT parameters if their
    value is not needed.
 
 RETURNS
-   SUCCEED
+   SUCCEED/FAIL
 --------------------------------------------------------------------------- */
 int32
 HMCPinquire(accrec_t *access_rec,  /* IN:  access record to return info about */
