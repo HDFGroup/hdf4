@@ -2316,7 +2316,9 @@ int32 *nt, *nattr, *size;
             if( len == (*dp)->name->len &&
                HDstrncmp(name, (*dp)->name->values, (*dp)->name->len) == 0)
                 {
-                    *nt = (*dp)->HDFtype;
+                    if (handle->is_hdf) 
+                         *nt = ((*dp)->numrecs ? (*dp)->HDFtype : 0);
+                    else *nt = (*dp)->HDFtype;
                     *nattr = ((*dp)->attrs ? (*dp)->attrs->count : 0);
                     return SUCCEED;
                 }
