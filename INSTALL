@@ -45,7 +45,7 @@
 3. UNIX and MacOSX configuration and build
    =======================================
 
-   0)  The HDF4r2.0 Library was tested on the following platforms
+   0)  The HDF4.2r0 Library was tested on the following platforms
 
        AIX 5.1 (32 and 64-bit versions)
        SunOs 5.7 (32 and 64-bit versions) 
@@ -55,7 +55,7 @@
        IRIX64-6.5 (32 and 64-bit versions)
        MacOSX
        Crays SV1 and T3E
-       True64
+       True64 (OSF1 V5.1)
        Windows 2000 and XP
        FeeBSD
        IA32 and IA64
@@ -69,12 +69,12 @@
    1)  Make sure that the ZLIB and JPEG Libraries are installed on your
        system.
    2)  Optional: install the SZIP Library. 
-   3)  Extract the source from the hdf4r2.0.tar file and change
-       directory to hdf4r2.0
+   3)  Extract the source from the hdf4.2r0.tar file and change
+       directory to hdf4.2r0
 
    To Configure:
 
-   4)  Use the configure command in the top level HDF4 directory hdf4r2.0
+   4)  Use the configure command in the top level HDF4 directory hdf4.2r0
 
        ./configure --with-zlib=/path_to_ZLIB_install_directory 
                    --with-jpeg=/path_to_JPEG_install_directory 
@@ -87,16 +87,19 @@
          system library directory (such as /use/lib), configure will
          automatically find the library. In this case, the corresponding
          configure flag may be ommitted.
+       * Note that --prefix defines where the installation path is.
+         This version has the default set as /usr/local which is different
+	 from previous versions.
 
     To Build and test:
 
     5)  To build the library
 
-        gmake >&gmake.out&
+        gmake >& gmake.out
 
     6)  To build and run the tests
 
-        gmake check >&check.out&
+        gmake check >& check.out
 
     To install:
 
@@ -115,11 +118,11 @@
         environment variables that have an affect on building the
         library.
 
-    9)  You may build hdf4 in a directory other than hdf4r2.0 by
+    9)  You may build hdf4 in a directory other than hdf4.2r0 by
         using the "srcdir" option. Simply create a build directory and
         type:
 
-        <path_to_hdf4r2.0>/configure ...
+        <path_to_hdf4.2r0>/configure ...
 
         where "..." are your configuration options.
  
