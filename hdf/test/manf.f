@@ -118,48 +118,48 @@ C  *** generate float array and image ***
       call genimage(ROWS, COLS, data, image)
 
       ret = dssdims(rank,dimsizes)
-      call VERIFY(ret,'dssdims',number_failed)
+      call VRFY(ret,'dssdims',number_failed)
 
 C  *** start annotation on file ***
       fhandle = hopen(TESTFILE,DFACC_CREATE, 0)
       ret = fhandle
-      call VERIFY(ret,'fhanlde',number_failed)
+      call VRFY(ret,'fhanlde',number_failed)
       ahandle = afstart(fhandle)
       ret = ahandle
-      call VERIFY(ret,'afstart',number_failed)
+      call VRFY(ret,'afstart',number_failed)
 
 C  *** write file 2 labels/ 2 descriptions ***
       anhandle = affcreate(ahandle, AN_FILE_LABEL)
       ret = anhandle
-      call VERIFY(ret, 'affcreate', number_failed)
+      call VRFY(ret, 'affcreate', number_failed)
       ret = afwriteann(anhandle,lab2,len(lab2))
-      call VERIFY(ret, 'afwriteann', number_failed)
+      call VRFY(ret, 'afwriteann', number_failed)
       ret = afendaccess(anhandle)
-      call VERIFY(ret, 'afendaccess', number_failed)
+      call VRFY(ret, 'afendaccess', number_failed)
 
       anhandle = affcreate(ahandle, AN_FILE_LABEL)
       ret = anhandle
-      call VERIFY(ret, 'affcreate', number_failed)
+      call VRFY(ret, 'affcreate', number_failed)
       ret = afwriteann(anhandle,lab1,len(lab1))
-      call VERIFY(ret, 'afwriteann', number_failed)
+      call VRFY(ret, 'afwriteann', number_failed)
       ret = afendaccess(anhandle)
-      call VERIFY(ret, 'afendaccess', number_failed)
+      call VRFY(ret, 'afendaccess', number_failed)
 
       anhandle = affcreate(ahandle, AN_FILE_DESC)
       ret = anhandle
-      call VERIFY(ret, 'affcreate', number_failed)
+      call VRFY(ret, 'affcreate', number_failed)
       ret = afwriteann(anhandle,desc2,len(desc2))
-      call VERIFY(ret, 'afwriteann', number_failed)
+      call VRFY(ret, 'afwriteann', number_failed)
       ret = afendaccess(anhandle)
-      call VERIFY(ret, 'afendaccess', number_failed)
+      call VRFY(ret, 'afendaccess', number_failed)
 
       anhandle = affcreate(ahandle, AN_FILE_DESC)
       ret = anhandle
-      call VERIFY(ret, 'affcreate', number_failed)
+      call VRFY(ret, 'affcreate', number_failed)
       ret = afwriteann(anhandle,desc1,len(desc1))
-      call VERIFY(ret, 'afwriteann', number_failed)
+      call VRFY(ret, 'afwriteann', number_failed)
       ret = afendaccess(anhandle)
-      call VERIFY(ret, 'afendaccess', number_failed)
+      call VRFY(ret, 'afendaccess', number_failed)
 
 C  ***  Write data labels and descriptions ***
 
@@ -169,7 +169,7 @@ C  ***  Write data labels and descriptions ***
       do 100 j=1,REPS
 C  ***  write out scientific data set 
          ret = dsadata(TESTFILE, rank,dimsizes, data)
-         call VERIFY(ret, 'dsadata', number_failed)
+         call VRFY(ret, 'dsadata', number_failed)
 
 C ****    write out annotations for 2 out of every 3 
          if (mod(j,3) .ne. 0) then 
@@ -178,84 +178,84 @@ C ****    write out annotations for 2 out of every 3
 C ********** Write out 2 labels for each SDS *****************
             anhandle = afcreate(ahandle,DFTAG_SDG,refnum,AN_DATA_LABEL)
             ret = anhandle
-            call VERIFY(ret, 'afcreate', number_failed)
+            call VRFY(ret, 'afcreate', number_failed)
             ret = afwriteann(anhandle,labsds2,len(labsds2))
-            call VERIFY(ret, 'afwriteann', number_failed)
+            call VRFY(ret, 'afwriteann', number_failed)
             ret = afendaccess(anhandle)
-            call VERIFY(ret, 'afendaccess', number_failed)
+            call VRFY(ret, 'afendaccess', number_failed)
 
             anhandle = afcreate(ahandle,DFTAG_SDG,refnum,AN_DATA_LABEL)
             ret = anhandle
-            call VERIFY(ret, 'afcreate', number_failed)
+            call VRFY(ret, 'afcreate', number_failed)
             ret = afwriteann(anhandle,labsds,len(labsds))
-            call VERIFY(ret, 'afwriteann', number_failed)
+            call VRFY(ret, 'afwriteann', number_failed)
             ret = afendaccess(anhandle)
-            call VERIFY(ret, 'afendaccess', number_failed)
+            call VRFY(ret, 'afendaccess', number_failed)
 
 C *********** Write out 2 descritptions for each SDS ***********
             anhandle = afcreate(ahandle,DFTAG_SDG,refnum,AN_DATA_DESC)
             ret = anhandle
-            call VERIFY(ret, 'afcreate', number_failed)
+            call VRFY(ret, 'afcreate', number_failed)
             ret = afwriteann(anhandle,descsds2,len(descsds2))
-            call VERIFY(ret, 'afwriteann', number_failed)
+            call VRFY(ret, 'afwriteann', number_failed)
             ret = afendaccess(anhandle)
-            call VERIFY(ret, 'afendaccess', number_failed)
+            call VRFY(ret, 'afendaccess', number_failed)
 
             anhandle = afcreate(ahandle,DFTAG_SDG,refnum,AN_DATA_DESC)
             ret = anhandle
-            call VERIFY(ret, 'afcreate', number_failed)
+            call VRFY(ret, 'afcreate', number_failed)
             ret = afwriteann(anhandle,descsds,len(descsds))
-            call VERIFY(ret, 'afwriteann', number_failed)
+            call VRFY(ret, 'afwriteann', number_failed)
             ret = afendaccess(anhandle)
-            call VERIFY(ret, 'afendaccess', number_failed)
+            call VRFY(ret, 'afendaccess', number_failed)
 
          endif
 
          ret = d8aimg(TESTFILE, image, COLS, ROWS, 0)
-         call VERIFY(ret, 'd8aimg', number_failed)
+         call VRFY(ret, 'd8aimg', number_failed)
          refnum = DFR8lastref()
 
 C ********** Write out 2 labels for each Image *****************
           anhandle = afcreate(ahandle, DFTAG_RIG, refnum, AN_DATA_LABEL)
           ret = anhandle
-          call VERIFY(ret, 'afcreate', number_failed)
+          call VRFY(ret, 'afcreate', number_failed)
           ret = afwriteann(anhandle,labris2,len(labris2))
-          call VERIFY(ret, 'afwriteann', number_failed)
+          call VRFY(ret, 'afwriteann', number_failed)
           ret = afendaccess(anhandle)
-          call VERIFY(ret, 'afendaccess', number_failed)
+          call VRFY(ret, 'afendaccess', number_failed)
 
           anhandle = afcreate(ahandle, DFTAG_RIG, refnum, AN_DATA_LABEL)
           ret = anhandle
-          call VERIFY(ret, 'afcreate', number_failed)
+          call VRFY(ret, 'afcreate', number_failed)
           ret = afwriteann(anhandle,labris,len(labris))
-          call VERIFY(ret, 'afwriteann', number_failed)
+          call VRFY(ret, 'afwriteann', number_failed)
           ret = afendaccess(anhandle)
-          call VERIFY(ret, 'afendaccess', number_failed)
+          call VRFY(ret, 'afendaccess', number_failed)
 
 C *********** Write out 2 descritptions for each Image ***********
           anhandle = afcreate(ahandle, DFTAG_RIG, refnum, AN_DATA_DESC)
           ret = anhandle
-          call VERIFY(ret, 'afcreate', number_failed)
+          call VRFY(ret, 'afcreate', number_failed)
           ret = afwriteann(anhandle,descris2,len(descris2))
-          call VERIFY(ret, 'afwriteann', number_failed)
+          call VRFY(ret, 'afwriteann', number_failed)
           ret = afendaccess(anhandle)
-          call VERIFY(ret, 'afendaccess', number_failed)
+          call VRFY(ret, 'afendaccess', number_failed)
 
           anhandle = afcreate(ahandle, DFTAG_RIG, refnum, AN_DATA_DESC)
           ret = anhandle
-          call VERIFY(ret, 'afcreate', number_failed)
+          call VRFY(ret, 'afcreate', number_failed)
           ret = afwriteann(anhandle,descris,len(descris))
-          call VERIFY(ret, 'afwriteann', number_failed)
+          call VRFY(ret, 'afwriteann', number_failed)
           ret = afendaccess(anhandle)
-          call VERIFY(ret, 'afendaccess', number_failed)
+          call VRFY(ret, 'afendaccess', number_failed)
 
   100 continue
 
 C ******* End writing annotatons **********
       ret = afend(ahandle)
-      call VERIFY(ret, 'afend', number_failed)
+      call VRFY(ret, 'afend', number_failed)
       ret = hclose(fhandle)
-      call VERIFY(ret, 'hclose', number_failed)
+      call VRFY(ret, 'hclose', number_failed)
 
 
 C********  Read data labels and descriptions *********
@@ -264,7 +264,7 @@ C********  Read data labels and descriptions *********
 
       do 200 j=1,REPS
           ret = dsgdims(TESTFILE, rank,dimsizes,3)
-          call VERIFY(ret, 'dsgdims', number_failed)
+          call VRFY(ret, 'dsgdims', number_failed)
           refnum = dslref()
 
 C ******  read in annotations for 2 out of every 3 
@@ -278,7 +278,7 @@ C ******  read in annotations for 2 out of every 3
 
 C ****    read annotations for images
           ret = d8gimg(TESTFILE, newimage, COLS, ROWS, pal)
-          call VERIFY(ret, 'd8gimg', number_failed)
+          call VRFY(ret, 'd8gimg', number_failed)
           refnum = DFR8lastref()
           call man_check_lab_desc(TESTFILE, DFTAG_RIG, refnum, 
      *                        labris, descris, numberfailed)
@@ -347,25 +347,25 @@ C**************************************************************
 C *****start annotation access on file *****
       fileh = hopen(fname, DFACC_READ,0)
       ret = fileh
-      call VERIFY(ret, 'hopen', num_failed)
+      call VRFY(ret, 'hopen', num_failed)
       anh = afstart(fileh)
       ret = anh
-      call VERIFY(ret, 'afstart', num_failed)
+      call VRFY(ret, 'afstart', num_failed)
 
       ret = affileinfo(anh,nflabs,nfdescs,nolabs,nodescs)
-      call VERIFY(ret, 'affileinfo', num_failed)
+      call VRFY(ret, 'affileinfo', num_failed)
 
       numdlabels = afnumann(anh, AN_DATA_LABEL, tag, ref)
-      call VERIFY(numdlabels, 'afnumann', num_failed)
+      call VRFY(numdlabels, 'afnumann', num_failed)
 
       numddescs = afnumann(anh, AN_DATA_DESC, tag, ref)
-      call VERIFY(numddescs, 'afnumann', num_failed)
+      call VRFY(numddescs, 'afnumann', num_failed)
 
       ret = afannlist(anh, AN_DATA_LABEL, tag, ref, dlabels)
-      call VERIFY(ret, 'afannlist', num_failed)
+      call VRFY(ret, 'afannlist', num_failed)
 
       ret = afannlist(anh, AN_DATA_DESC, tag, ref, ddescs)
-      call VERIFY(ret, 'afannlist', num_failed)
+      call VRFY(ret, 'afannlist', num_failed)
 
 C ***** Look for label in list ******
       found = 0
@@ -373,12 +373,12 @@ C ***** Look for label in list ******
       fannlabel = ' '
       do 300 j=1, numdlabels
          annlen = afannlen(dlabels(j))
-         call VERIFY(annlen, 'afannlen', num_failed)
+         call VRFY(annlen, 'afannlen', num_failed)
 
          ret = afreadann(dlabels(j), inlabel, MAXLENLAB)
-         call VERIFY(ret, 'afreadann', num_failed)
+         call VRFY(ret, 'afreadann', num_failed)
          ret = afendaccess(dlabels(j))
-         call VERIFY(ret, 'afendaccess', num_failed)
+         call VRFY(ret, 'afendaccess', num_failed)
 
          if (inlabel .eq. label) then
             found = 1
@@ -409,12 +409,12 @@ C ***** look for description in list
       fanndesc = ' '
       do 400 j=1, numddescs
          annlen = afannlen(ddescs(j))
-         call VERIFY(annlen, 'afannlen', num_failed)
+         call VRFY(annlen, 'afannlen', num_failed)
 
          ret = afreadann(ddescs(j), indesc, MAXLEN_DESC)
-         call VERIFY(ret, 'afreadann', num_failed)
+         call VRFY(ret, 'afreadann', num_failed)
          ret = afendaccess(ddescs(j))
-         call VERIFY(ret, 'afendaccess', num_failed)
+         call VRFY(ret, 'afendaccess', num_failed)
 
          if (indesc .eq. desc) then
             found = 1
@@ -440,9 +440,9 @@ C ***** look for description in list
 
 C ****** close file *******
       ret = afend(anh)
-      call VERIFY(ret, 'afend', num_failed)
+      call VRFY(ret, 'afend', num_failed)
       ret = hclose(fileh)
-      call VERIFY(ret, 'hclose', num_failed)
+      call VRFY(ret, 'hclose', num_failed)
 
 
       return
@@ -485,25 +485,25 @@ C************************************************************
 C **** We check both file label/description
       fileh = hopen(fname, DFACC_READ,0)
       ret = fileh
-      call VERIFY(ret, 'hopen', num_failed)
+      call VRFY(ret, 'hopen', num_failed)
       anh = afstart(fileh)
       ret = anh
-      call VERIFY(ret, 'afstart', num_failed)
+      call VRFY(ret, 'afstart', num_failed)
 
       ret = affileinfo(anh,nflabs,nfdescs,nolabs,nodescs)
-      call VERIFY(ret, 'affileinfo', num_failed)
+      call VRFY(ret, 'affileinfo', num_failed)
 
 C ***** Read file label **********
       annh = afselect(anh, index, AN_FILE_LABEL)
-      call VERIFY(ret, 'afselect', num_failed)
+      call VRFY(ret, 'afselect', num_failed)
 
       fannlen = afannlen(annh)
-      call VERIFY(fannlen, 'afannlen', num_failed)
+      call VRFY(fannlen, 'afannlen', num_failed)
 
       ret = afreadann(annh, flabel, fannlen)
-      call VERIFY(ret, 'afreadann', num_failed)
+      call VRFY(ret, 'afreadann', num_failed)
       ret = afendaccess(annh)
-      call VERIFY(ret, 'afendaccess', num_failed)
+      call VRFY(ret, 'afendaccess', num_failed)
 
       if (fannlen .ne. len(label)) then
          print *,'   >>>BAD LABEL LENGTH.'
@@ -521,15 +521,15 @@ C ***** Read file label **********
 
 C **** Read file description *****
       annh = afselect(anh, index, AN_FILE_DESC)
-      call VERIFY(ret, 'afselect', num_failed)
+      call VRFY(ret, 'afselect', num_failed)
 
       fannlen = afannlen(annh)
-      call VERIFY(fannlen, 'afannlen', num_failed)
+      call VRFY(fannlen, 'afannlen', num_failed)
 
       ret = afreadann(annh, fdesc, fannlen)
-      call VERIFY(ret, 'afreadann', num_failed)
+      call VRFY(ret, 'afreadann', num_failed)
       ret = afendaccess(annh)
-      call VERIFY(ret, 'afendaccess', num_failed)
+      call VRFY(ret, 'afendaccess', num_failed)
 
       if (fannlen .ne. len(desc)) then
           print *,'   >>>BAD DESCRIPTION LENGTH.' 
@@ -547,9 +547,9 @@ C **** Read file description *****
 
 C ****** close file *******
       ret = afend(anh)
-      call VERIFY(ret, 'afend', num_failed)
+      call VRFY(ret, 'afend', num_failed)
       ret = hclose(fileh)
-      call VERIFY(ret, 'hclose', num_failed)
+      call VRFY(ret, 'hclose', num_failed)
 
       return
       end

@@ -85,11 +85,11 @@ C  individual files
       call MESSAGE(5, 'Testing arrays in individual files...')
   
       err = dssnt(DFNT_FLOAT64)
-      call VERIFY(err, 'dssnt (float64)', number_failed)
+      call VRFY(err, 'dssnt (float64)', number_failed)
       err = dspdata('o1.hdf', rank, dims, f64)
-      call VERIFY(err, 'dspdata (float64)', number_failed)
+      call VRFY(err, 'dspdata (float64)', number_failed)
       err = dsgdata('o1.hdf', rank, dims, tf64)
-      call VERIFY(err, 'dsgdata (float64)', number_failed)
+      call VRFY(err, 'dsgdata (float64)', number_failed)
       err = 0
       do 160 i=1,10
           do 150 j=1,10
@@ -101,11 +101,11 @@ C  individual files
       call err_check(err, number_failed, 'float64')
 
       err = dssnt(DFNT_FLOAT32)
-      call VERIFY(err, 'dssnt (float32)', number_failed)
+      call VRFY(err, 'dssnt (float32)', number_failed)
       err = dspdata('o2.hdf', rank, dims, f32)
-      call VERIFY(err, 'dspdata (float32)', number_failed)
+      call VRFY(err, 'dspdata (float32)', number_failed)
       err = dsgdata('o2.hdf', rank, dims, tf32)
-      call VERIFY(err, 'dsgdata (float32)', number_failed)
+      call VRFY(err, 'dsgdata (float32)', number_failed)
       err = 0
       do 210 i=1,10
           do 200 j=1,10
@@ -117,11 +117,11 @@ C  individual files
       call err_check(err, number_failed, 'float32')
 
       err = dssnt(DFNT_INT8)
-      call VERIFY(err, 'dssnt (int8)', number_failed)
+      call VRFY(err, 'dssnt (int8)', number_failed)
       err = dspdata('o3.hdf', rank, dims, i8)
-      call VERIFY(err, 'dspdata (int8)', number_failed)
+      call VRFY(err, 'dspdata (int8)', number_failed)
       err = dsgdata('o3.hdf', rank, dims, ti8)
-      call VERIFY(err, 'dsgdata (int8)', number_failed)
+      call VRFY(err, 'dsgdata (int8)', number_failed)
       err = 0
       do 310 i=1,10
           do 300 j=1,10
@@ -135,11 +135,11 @@ C           ti8(i,j) = 0
       call err_check(err, number_failed, 'int8')
 
       err = dssnt(DFNT_INT16)
-      call VERIFY(err, 'dssnt (int16)', number_failed)
+      call VRFY(err, 'dssnt (int16)', number_failed)
       err = dspdata('o4.hdf', rank, dims, i16)
-      call VERIFY(err, 'dspdata (int16)', number_failed)
+      call VRFY(err, 'dspdata (int16)', number_failed)
       err = dsgdata('o4.hdf', rank, dims, ti16)
-      call VERIFY(err, 'dsgdata (int16)', number_failed)
+      call VRFY(err, 'dsgdata (int16)', number_failed)
       err = 0
       do 410 i=1,10
           do 400 j=1,10
@@ -151,11 +151,11 @@ C           ti8(i,j) = 0
       call err_check(err, number_failed, 'int16')
 
       err = dssnt(DFNT_INT32)
-      call VERIFY(err, 'dssnt (int32)', number_failed)
+      call VRFY(err, 'dssnt (int32)', number_failed)
       err = dspdata('o5.hdf', rank, dims, i32)
-      call VERIFY(err, 'dspdata (int32)', number_failed)
+      call VRFY(err, 'dspdata (int32)', number_failed)
       err = dsgdata('o5.hdf', rank, dims, ti32)
-      call VERIFY(err, 'dsgdata (int32)', number_failed)
+      call VRFY(err, 'dsgdata (int32)', number_failed)
       err = 0
       do 510 i=1,10
           do 500 j=1,10
@@ -172,37 +172,37 @@ C
 C
       err = dssnt(DFNT_FLOAT64)
       err = dsadata('ntf.hdf', rank, dims, f64)
-      call VERIFY(err, 'dsadata (f64)', number_failed)
+      call VRFY(err, 'dsadata (f64)', number_failed)
        
       err = dssnt(DFNT_FLOAT32)
       err = dsadata('ntf.hdf', rank, dims, f32)
-      call VERIFY(err, 'dsadata (f32)', number_failed)
+      call VRFY(err, 'dsadata (f32)', number_failed)
        
       err = dssnt(DFNT_INT8)
       err = dsadata('ntf.hdf', rank, dims, i8)
-      call VERIFY(err, 'dsadata (i8)', number_failed)
+      call VRFY(err, 'dsadata (i8)', number_failed)
        
       err = dssnt(DFNT_INT16)
       err = dsadata('ntf.hdf', rank, dims, i16)
-      call VERIFY(err, 'dsadata (i16)', number_failed)
+      call VRFY(err, 'dsadata (i16)', number_failed)
        
       err = dssnt(DFNT_INT32)
       err = dsadata('ntf.hdf', rank, dims, i32)
-      call VERIFY(err, 'dsadata (i32)', number_failed)
+      call VRFY(err, 'dsadata (i32)', number_failed)
        
 C 
       call MESSAGE(5, 'Reading arrays from single file... ')
 C
       err = dsgdata('ntf.hdf', rank, dims, tf64)
-      call VERIFY(err, 'dsgdata (tf64)', number_failed)
+      call VRFY(err, 'dsgdata (tf64)', number_failed)
       err = dsgdata('ntf.hdf', rank, dims, tf32)
-      call VERIFY(err, 'dsgdata (tf32)', number_failed)
+      call VRFY(err, 'dsgdata (tf32)', number_failed)
       err = dsgdata('ntf.hdf', rank, dims, ti8)
-      call VERIFY(err, 'dsgdata (ti8)', number_failed)
+      call VRFY(err, 'dsgdata (ti8)', number_failed)
       err = dsgdata('ntf.hdf', rank, dims, ti16)
-      call VERIFY(err, 'dsgdata (ti16)', number_failed)
+      call VRFY(err, 'dsgdata (ti16)', number_failed)
       err = dsgdata('ntf.hdf', rank, dims, ti32)
-      call VERIFY(err, 'dsgdata (ti32)', number_failed)
+      call VRFY(err, 'dsgdata (ti32)', number_failed)
        
 C 
       call MESSAGE(5, 'Checking arrays from single file...\n\n')

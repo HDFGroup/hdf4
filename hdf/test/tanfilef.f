@@ -64,74 +64,74 @@ C
 
       call MESSAGE(VERBO_HI, '****** Write file labels *******')
       fid = hopen(TESTFILE, DFACC_CREATE, 0)
-      call VERIFY(fid, 'hopen', number_failed)
+      call VRFY(fid, 'hopen', number_failed)
       ret = daafid(fid, lab1)
-      call VERIFY(ret, 'daafid', number_failed)
+      call VRFY(ret, 'daafid', number_failed)
 
       ret = daafid(fid, lab2)
-      call VERIFY(ret, 'daafid', number_failed)
+      call VRFY(ret, 'daafid', number_failed)
 
       call MESSAGE(VERBO_HI, '****** Write file descriptions *******')
       ret = daafds(fid, desc1, len(desc1))
-      call VERIFY(ret, 'daafds', number_failed)
+      call VRFY(ret, 'daafds', number_failed)
 
       ret = daafds(fid, desc2, len(desc2))
-      call VERIFY(ret, 'daafds', number_failed)
+      call VRFY(ret, 'daafds', number_failed)
 
       ret = hclose(fid)
-      call VERIFY(ret, 'hclose', number_failed)
+      call VRFY(ret, 'hclose', number_failed)
 
       call MESSAGE(VERBO_HI,
      +    '****** Read length of the first file label ****')
       fid = hopen(TESTFILE, DFACC_READ, 0)
-      call VERIFY(fid, 'hopen-read', number_failed)
+      call VRFY(fid, 'hopen-read', number_failed)
       ret = dagfidl(fid, ISFIRST)
-      call VERIFY(ret, 'dagfidl', number_failed)
+      call VRFY(ret, 'dagfidl', number_failed)
       call checklen(ret, lab1,  'label'  )
 
       call MESSAGE(VERBO_HI, '******...followed by the label *****')
       ret = dagfid(fid, templab, MAXLEN_LAB, ISFIRST)
 
-      call VERIFY(ret, 'dagfid', number_failed)
+      call VRFY(ret, 'dagfid', number_failed)
       call checklab(lab1, templab, ret, 'label')
 
       call MESSAGE(VERBO_HI,
      +    '****** Read length of the second file label ****')
       ret = dagfidl(fid, NOFIRST)
-      call VERIFY(ret, 'dagfidl', number_failed)
+      call VRFY(ret, 'dagfidl', number_failed)
       call checklen(ret, lab2, 'label')
 
       call MESSAGE(VERBO_HI, '******...followed by the label *****')
       ret = dagfid(fid, templab, MAXLEN_LAB, NOFIRST)
-      call VERIFY(ret, 'dagfid', number_failed)
+      call VRFY(ret, 'dagfid', number_failed)
       call checklab(lab2, templab, ret, 'label')
 
       call MESSAGE(VERBO_HI,
      +    '****** Read length of the first file description ****')
       ret = dagfdsl(fid, ISFIRST)
-      call VERIFY(ret, 'dagfdsl', number_failed)
+      call VRFY(ret, 'dagfdsl', number_failed)
       call checklen(ret, desc1, 'description' )
 
       call MESSAGE(VERBO_HI,
      +    '******...followed by the description *****')
       ret = dagfds(fid, tempstr, MAXLEN_DESC, ISFIRST)
-      call VERIFY(ret, 'dagfds', number_failed)
+      call VRFY(ret, 'dagfds', number_failed)
       call checkann(desc1, tempstr, ret, 'description')
 
       call MESSAGE(VERBO_HI,
      +    '****** Read length of the second file description ****')
       ret = dagfdsl(fid, NOFIRST)
-      call VERIFY(ret, 'dagfdsl', number_failed)
+      call VRFY(ret, 'dagfdsl', number_failed)
       call checklen(ret, desc2, 'description' )
 
       call MESSAGE(VERBO_HI,
      +    '******...followed by the description *****')
       ret = dagfds(fid, tempstr, MAXLEN_DESC, NOFIRST)
-      call VERIFY(ret, 'dagfds', number_failed)
+      call VRFY(ret, 'dagfds', number_failed)
       call checkann(desc2, tempstr, ret, 'description')
 
       ret = hclose(fid)
-      call VERIFY(ret, 'hclose', number_failed)
+      call VRFY(ret, 'hclose', number_failed)
 
       if (number_failed .eq. 0) then
          call MESSAGE(VERBO_HI,

@@ -55,7 +55,7 @@ C     include '[-.src]hdf.inc'
       end
 
 C------------------------------------------------------------------------------
-C Name: VERIFY
+C Name: VRFY
 C Purpose:  Report on success of HDF routines, using verbosity
 C Inputs:   
 C       errval: value to check for error
@@ -65,7 +65,7 @@ C Returns: none
 C Users:    HDF Fortran programmers
 C Invokes: none
 C------------------------------------------------------------------------------
-      subroutine VERIFY(errval, routine, num_failed)
+      subroutine VRFY(errval, routine, num_failed)
       implicit none
 C For VMS uncomment next line and comment out the line after next
 C     include '[-.src]hdf.inc'

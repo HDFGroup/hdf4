@@ -58,34 +58,34 @@ C
 150   continue
       call MESSAGE(VERBO_HI, 'Setting il to 0')
       ret = d2setil(0)
-      call VERIFY(ret, 'd2setil',number_failed)
+      call VRFY(ret, 'd2setil',number_failed)
       call MESSAGE(VERBO_HI, ' Putting buffer 1')
       ret = d2pimg(TESTFILE, buf, 2, 2)
-      call VERIFY(ret, 'd2pimg',number_failed)
+      call VRFY(ret, 'd2pimg',number_failed)
       call MESSAGE(VERBO_HI, 'Setting il to 1')
       ret = d2setil(1)
-      call VERIFY(ret, 'd2setil',number_failed)
+      call VRFY(ret, 'd2setil',number_failed)
       call MESSAGE(VERBO_HI, 'Adding buf1')
       ret = d2aimg(TESTFILE, buf1, 2, 2)
-      call VERIFY(ret, 'd2aimg',number_failed)
+      call VRFY(ret, 'd2aimg',number_failed)
       call MESSAGE(VERBO_HI, 'Setting il to 2')
       ret = d2setil(2)
-      call VERIFY(ret, 'd2setil',number_failed)
+      call VRFY(ret, 'd2setil',number_failed)
       call MESSAGE(VERBO_HI, 'Adding buf2')
       ret = d2aimg(TESTFILE, buf2, 2, 2)
-      call VERIFY(ret, 'd2aimg',number_failed)
+      call VRFY(ret, 'd2aimg',number_failed)
       call MESSAGE(VERBO_HI, 'Restarting file')
       ret = d2first()
-      call VERIFY(ret, 'd2first',number_failed)
+      call VRFY(ret, 'd2first',number_failed)
       call MESSAGE(VERBO_HI, 'Req il 0')
       ret = d2reqil(0)
-      call VERIFY(ret, 'd2reqil',number_failed)
+      call VRFY(ret, 'd2reqil',number_failed)
       call MESSAGE(VERBO_HI, 'Getting dims')
       ret = d2gdims(TESTFILE, d1, d2, il)
-      call VERIFY(ret, 'd2gdims',number_failed)
+      call VRFY(ret, 'd2gdims',number_failed)
       call MESSAGE(VERBO_HI, 'Getting image')
       ret = d2gimg(TESTFILE, in, 2, 2)
-      call VERIFY(ret, 'd2gimg',number_failed)
+      call VRFY(ret, 'd2gimg',number_failed)
       do 200 i=1, 2
           do 180 j=1, 2
               do 160 k=1,3
@@ -98,10 +98,10 @@ C
   
       call MESSAGE(VERBO_HI, 'Getting dimensions')
       ret = d2gdims(TESTFILE, d1, d2, il)
-      call VERIFY(ret, 'd2gdims',number_failed)
+      call VRFY(ret, 'd2gdims',number_failed)
       call MESSAGE(VERBO_HI, 'Getting image')
       ret = d2gimg(TESTFILE,  in, 2, 2)
-      call VERIFY(ret, 'd2gimg',number_failed)
+      call VRFY(ret, 'd2gimg',number_failed)
       do 250 i=1, 2
           do 220 j=1, 2
               do 210 k = 1, 3
@@ -114,10 +114,10 @@ C
 
       call MESSAGE(VERBO_HI, 'Getting dimensions')
       ret = d2gdims(TESTFILE, d1, d2, il)
-      call VERIFY(ret, 'd2gdims',number_failed)
+      call VRFY(ret, 'd2gdims',number_failed)
       call MESSAGE(VERBO_HI, 'Getting image')
       ret = d2gimg(TESTFILE,  in, 2, 2)
-      call VERIFY(ret, 'd2gimg',number_failed)
+      call VRFY(ret, 'd2gimg',number_failed)
       do 300 i=1, 2
           do 280 j=1, 2
               do 260 k = 1, 3
@@ -130,16 +130,16 @@ C
 
       call MESSAGE(VERBO_HI, 'Restarting file')
       ret = d2first()
-      call VERIFY(ret, 'd2first',number_failed)
+      call VRFY(ret, 'd2first',number_failed)
       call MESSAGE(VERBO_HI, 'Req il 1')
       ret = d2reqil(1)
-      call VERIFY(ret, 'd2reqil',number_failed)
+      call VRFY(ret, 'd2reqil',number_failed)
       call MESSAGE(VERBO_HI, 'Getting dimensions')
       ret = d2gdims(TESTFILE, d1, d2, il)
-      call VERIFY(ret, 'd2gdims',number_failed)
+      call VRFY(ret, 'd2gdims',number_failed)
       call MESSAGE(VERBO_HI, 'Getting image')
       ret = d2gimg(TESTFILE,  in1, 2, 2)
-      call VERIFY(ret, 'd2gimg',number_failed)
+      call VRFY(ret, 'd2gimg',number_failed)
       do 350 i=1, 2
           do 320 j=1, 2
               do 310 k=1,3
@@ -152,10 +152,10 @@ C
 
       call MESSAGE(VERBO_HI, 'Getting dimensions')
       ret = d2gdims(TESTFILE, d1, d2, il)
-      call VERIFY(ret, 'd2gdims',number_failed)
+      call VRFY(ret, 'd2gdims',number_failed)
       call MESSAGE(VERBO_HI, 'Getting image')
       ret = d2gimg(TESTFILE,  in1, 2, 2)
-      call VERIFY(ret, 'd2gimg',number_failed)
+      call VRFY(ret, 'd2gimg',number_failed)
       do 400 i=1, 2
           do 380 j=1, 2
               do 360 k = 1, 3
@@ -168,10 +168,10 @@ C
 
       call MESSAGE(VERBO_HI, 'Getting dimensions')
       ret = d2gdims(TESTFILE, d1, d2, il)
-      call VERIFY(ret, 'd2gdims',number_failed)
+      call VRFY(ret, 'd2gdims',number_failed)
       call MESSAGE(VERBO_HI, 'Getting image')
       ret = d2gimg(TESTFILE,  in1, 2, 2)
-      call VERIFY(ret, 'd2gimg',number_failed)
+      call VRFY(ret, 'd2gimg',number_failed)
       do 450 i=1, 2
           do 420 j=1, 2
               do 410 k =1, 3  
@@ -184,16 +184,16 @@ C
 
       call MESSAGE(VERBO_HI, 'Restarting file')
       ret = d2first()
-      call VERIFY(ret, 'd2first',number_failed)
+      call VRFY(ret, 'd2first',number_failed)
       call MESSAGE(VERBO_HI, 'Req il 2')
       ret = d2reqil(2)
-      call VERIFY(ret, 'd2reqil',number_failed)
+      call VRFY(ret, 'd2reqil',number_failed)
       call MESSAGE(VERBO_HI, 'Getting dimensions')
       ret = d2gdims(TESTFILE, d1, d2, il)
-      call VERIFY(ret, 'd2gdims',number_failed)
+      call VRFY(ret, 'd2gdims',number_failed)
       call MESSAGE(VERBO_HI, 'Getting image')
       ret = d2gimg(TESTFILE,  in2, 2, 2)
-      call VERIFY(ret, 'd2gimg',number_failed)
+      call VRFY(ret, 'd2gimg',number_failed)
       do 500 i=1, 2
           do 480 j=1, 2
               do 460 k=1, 3
@@ -206,10 +206,10 @@ C
 
       call MESSAGE(VERBO_HI, 'Getting dimensions')
       ret = d2gdims(TESTFILE, d1, d2, il)
-      call VERIFY(ret, 'd2gdims',number_failed)
+      call VRFY(ret, 'd2gdims',number_failed)
       call MESSAGE(VERBO_HI, 'Getting image')
       ret = d2gimg(TESTFILE,  in2, 2, 2)
-      call VERIFY(ret, 'd2gimg',number_failed)
+      call VRFY(ret, 'd2gimg',number_failed)
       do 550 i=1, 2
           do 520 j=1, 2
               do 510 k = 1,3
@@ -222,10 +222,10 @@ C
 
       call MESSAGE(VERBO_HI, 'Getting dimensions')
       ret = d2gdims(TESTFILE, d1, d2, il)
-      call VERIFY(ret, 'd2gdims',number_failed)
+      call VRFY(ret, 'd2gdims',number_failed)
       call MESSAGE(VERBO_HI, 'Getting image')
       ret = d2gimg(TESTFILE,  in2, 2, 2)
-      call VERIFY(ret, 'd2gimg',number_failed)
+      call VRFY(ret, 'd2gimg',number_failed)
       do 600 i=1, 2
           do 580 j=1, 2
               do 560 k = 1, 3

@@ -94,7 +94,7 @@ C  *** generate float array and image ***
       call genimage(ROWS, COLS, data, image)
 
       ret = dssdims(rank,dimsizes)
-      call VERIFY(ret, 'dssdims', number_failed)
+      call VRFY(ret, 'dssdims', number_failed)
 
 C  ***  Write labels and descriptions ***
 
@@ -104,26 +104,26 @@ C  ***  Write labels and descriptions ***
       do 100 j=1,REPS
 C         write out scientific data set 
           ret = dsadata(TESTFILE, rank,dimsizes, data)
-          call VERIFY(ret, 'dsadata', number_failed)
+          call VRFY(ret, 'dsadata', number_failed)
 
 C         write out annotations for 2 out of every 3 
           if (mod(j,3) .ne. 0) then 
               refnum = dslref()
               ret = daplab(TESTFILE, DFTAG_SDG, refnum, labsds)
-              call VERIFY(ret, 'daplab', number_failed)
+              call VRFY(ret, 'daplab', number_failed)
               ret = dapdesc(TESTFILE, DFTAG_SDG, refnum, 
      *                                     descsds, len(descsds))
-              call VERIFY(ret, 'dapdesc', number_failed)
+              call VRFY(ret, 'dapdesc', number_failed)
           endif
 
           ret = d8aimg(TESTFILE, image, COLS, ROWS, 0)
-          call VERIFY(ret, 'd8aimg', number_failed)
+          call VRFY(ret, 'd8aimg', number_failed)
           refnum = DFR8lastref()
           ret = daplab(TESTFILE, DFTAG_RIG, refnum, labris)
-          call VERIFY(ret, 'daplab', number_failed)
+          call VRFY(ret, 'daplab', number_failed)
           ret = dapdesc(TESTFILE,DFTAG_RIG,refnum, descris, 
      *                                                 len(descris))
-          call VERIFY(ret, 'dapdesc', number_failed)
+          call VRFY(ret, 'dapdesc', number_failed)
   100 continue
 
 
@@ -135,7 +135,7 @@ C********  Read labels and descriptions *********
       do 200 j=1,REPS
 
           ret = dsgdims(TESTFILE, rank,dimsizes,3)
-          call VERIFY(ret, 'dsgdims', number_failed)
+          call VRFY(ret, 'dsgdims', number_failed)
           refnum = dslref()
 
 C         read in annotations for 2 out of every 3 
@@ -145,7 +145,7 @@ C         read in annotations for 2 out of every 3
           endif
 
           ret = d8gimg(TESTFILE, newimage, COLS, ROWS, pal)
-          call VERIFY(ret, 'd8gimg', number_failed)
+          call VRFY(ret, 'd8gimg', number_failed)
           refnum = DFR8lastref()
           call an_check_lab_desc(TESTFILE, DFTAG_RIG, refnum, 
      *                                labris, descris, number_failed)
@@ -187,7 +187,7 @@ C**************************************************************
       character*500 indesc
 
       inlablen =  dagllen(filename, tag, ref)
-      call VERIFY(inlablen, 'dagllen', number_failed)
+      call VRFY(inlablen, 'dagllen', number_failed)
 
       if (inlablen .ne. len(label)) then
           print *,'   >>>BAD LABEL LENGTH.'
@@ -197,7 +197,7 @@ C**************************************************************
       endif
 
       ret = daglab(filename, tag, ref, inlabel, MAXLEN_LAB+1)
-      call VERIFY(ret, 'daglab', number_failed)
+      call VRFY(ret, 'daglab', number_failed)
       if (inlabel .ne. label) then
           print *,'   >>>BAD LABEL.'
           print *,'                        IS: ', inlabel
@@ -206,7 +206,7 @@ C**************************************************************
       endif
 
       indesclen = dagdlen(filename, tag, ref)
-      call VERIFY(indesclen, 'dagdlen', number_failed)
+      call VRFY(indesclen, 'dagdlen', number_failed)
       if (indesclen .ne. len(desc)) then
           print *,'   >>>BAD DESCRIPTION LENGTH.' 
           print *,'                        IS: ', indesclen 
@@ -214,7 +214,7 @@ C**************************************************************
           number_failed = number_failed + 1 
       else 
           ret = dagdesc(filename, tag, ref, indesc, MAXLEN_DESC)
-          call VERIFY(ret, 'dagdesc', number_failed)
+          call VRFY(ret, 'dagdesc', number_failed)
           if (indesc .ne. desc) then
               print *,'   >>>BAD DESCRIPTION.' 
               print *,'                        IS: ', indesc 

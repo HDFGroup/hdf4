@@ -95,13 +95,13 @@ C iattrg, GATTR1 are for float64 values
 C      number_failed = 0
 C Open the file 
       fid1 = hopen(ifn, DFACC_RDWR, 0)
-      call VERIFY(fid1, 'hopen', number_failed)
+      call VRFY(fid1, 'hopen', number_failed)
       ret = vfstart(fid1)
-      call VERIFY(ret, 'vfstart', number_failed)
+      call VRFY(ret, 'vfstart', number_failed)
       vsref = vsffnd(fid1, 'vsname1')
-      call VERIFY(vsref, 'vsffnd', number_failed)
+      call VRFY(vsref, 'vsffnd', number_failed)
       vsid = vsfatch(fid1, vsref, 'r')
-      call VERIFY(vsid, 'vsfatch', number_failed)
+      call VRFY(vsid, 'vsfatch', number_failed)
       vsver = vsgver(vsid)
       if (vsver .ne. VSET_NEW_VERSION) then
          call MESSAGE(1, 'Wrong version number of vsname1')
@@ -131,17 +131,17 @@ C get the 0th attr
       aindex = 0
       findex = HDF_VDATA
       ret = vsffdat(vsid, findex, 'attname3') 
-      call VERIFY(ret, 'vsffdat', number_failed)
+      call VRFY(ret, 'vsffdat', number_failed)
       ret = vsfainf(vsid, findex, aindex, iattrnm,
      + itype, icount, imsize)
-      call VERIFY(ret, 'vsfainf', number_failed)
+      call VRFY(ret, 'vsfainf', number_failed)
       if ((itype .ne. DFNT_CHAR) .or. (icount .ne. 3)) then
          call MESSAGE(1, 'Wrong info of char attr for vsname1')
          number_failed = number_failed + 1
       endif
       iattrc = '          '
       ret = vsfgcat(vsid, findex, aindex, iattrc)
-      call VERIFY(ret, 'vsfgcat', number_failed)
+      call VRFY(ret, 'vsfgcat', number_failed)
 C      if ((iattrc(1) .ne. 'm') .or. (iattrc(2) .ne. 'N') 
 C    +    .or. (iattrc(3) .ne. 'p'))  then
       if (iattrc .ne. 'mNp') then
@@ -152,13 +152,13 @@ C get the 1st attr of fld 0
       aindex = 1
       findex = 0
       ret = vsffidx(vsid, 'fldname1', findex)
-      call VERIFY(ret, 'vsffidx', number_failed)
+      call VRFY(ret, 'vsffidx', number_failed)
       if (findex .ne. 0) then
          call MESSAGE(1, 'Wrong findex of fldname1 of  vsname1')
          number_failed = number_failed + 1
       endif
       ret = vsfgnat(vsid, findex, aindex, iattrg)
-      call VERIFY(ret, 'vsfgnatt1', number_failed)
+      call VRFY(ret, 'vsfgnatt1', number_failed)
       if (dabs(iattrg(1)-GATTR1) .gt. dabs(geps * GATTR1)) 
      +          then
          call MESSAGE(1, 'Wrong double attr for vsname1')
@@ -166,25 +166,25 @@ C get the 1st attr of fld 0
       print *, 'should be: ',GATTR1,' get: ',iattrg(1)
       endif
       ret = vsfdtch(vsid)
-      call VERIFY(ret, 'vsfdtch', number_failed)
+      call VRFY(ret, 'vsfdtch', number_failed)
 C get next vdata and test vsfisat 
       vsref = vsffnd(fid1, 'attname1')
       vsid = vsfatch(fid1, vsref, 'r')
-      call VERIFY(ret, 'vsfatch', number_failed)
+      call VRFY(ret, 'vsfatch', number_failed)
       ret = vsfisat(vsid)
       if (ret .ne. TRUE) then
          call MESSAGE(1, 'vsfisat failed.   ')
          number_failed = number_failed + 1
       endif
       ret = vsfdtch(vsid)
-      call VERIFY(ret, 'vsfdtch', number_failed)
+      call VRFY(ret, 'vsfdtch', number_failed)
 C test vgroup routines
       vgref = vfgid(fid1, -1)
-      call VERIFY(vgref, 'vfgid',number_failed)
+      call VRFY(vgref, 'vfgid',number_failed)
       vgid = vfatch(fid1, vgref, 'r')
-      call VERIFY(vgid, 'vfatch',number_failed)
+      call VRFY(vgid, 'vfatch',number_failed)
       ret = vfgver(vgid)
-      call VERIFY(ret, 'vfgver',number_failed)
+      call VRFY(ret, 'vfgver',number_failed)
       if (ret .ne. VSET_NEW_VERSION) then
          call MESSAGE(1, 'vfgver failed.   ')
          number_failed = number_failed + 1
@@ -195,9 +195,9 @@ C test vgroup routines
          number_failed = number_failed + 1
       endif
       ret = vfainfo(vgid,0,iattrnm,itype,icount,imsize)
-      call VERIFY(ret, 'vfainfo',number_failed)
+      call VRFY(ret, 'vfainfo',number_failed)
       ret = vfgnatt(vgid, 0, iattri)
-      call VERIFY(ret, 'vfgnatt',number_failed)
+      call VRFY(ret, 'vfgnatt',number_failed)
       if (iattri(1) .ne. 10032 .or. iattri(2) .ne. 10064)
      +      then
          call MESSAGE(1, 'vfgnatt failed.   ')
@@ -205,9 +205,9 @@ C test vgroup routines
       endif
 C get attname2
       ret = vffdatt(vgid, 'attname2')
-      call VERIFY(ret, 'vffdatt',number_failed)
+      call VRFY(ret, 'vffdatt',number_failed)
       ret = vfgnatt(vgid, ret, iattrs)
-      call VERIFY(ret, 'vfgnatt',number_failed)
+      call VRFY(ret, 'vfgnatt',number_failed)
       if (iattrs(1) .ne. 16 .or. iattrs(2) .ne. 32)
      +       then
          call MESSAGE(1, 'vfgnatt failed.   ')
@@ -215,56 +215,56 @@ C get attname2
       endif
 C finish reading existing attrs
       ret = vfdtch(vgid)
-      call VERIFY(ret, 'vfdtch',number_failed)
+      call VRFY(ret, 'vfdtch',number_failed)
       ret = vfend(fid1)
-      call VERIFY(ret, 'vfend',number_failed)
+      call VRFY(ret, 'vfend',number_failed)
       ret = hclose(fid1)
-      call VERIFY(ret, 'hclose1',number_failed)
+      call VRFY(ret, 'hclose1',number_failed)
 C write attributes
       fid1 = hopen(ofn, DFACC_CREATE, 0)
-      call VERIFY(fid1, 'hopen',number_failed)
+      call VRFY(fid1, 'hopen',number_failed)
       ret =  vfstart(fid1)
-      call VERIFY(ret, 'vfstart', number_failed)
+      call VRFY(ret, 'vfstart', number_failed)
 C vgroup attrs
       vgid = vfatch(fid1, -1, 'w')
-      call VERIFY(ret, 'vfatch', number_failed)
+      call VRFY(ret, 'vfatch', number_failed)
       ret = vfscatt(vgid, 'vgcattr0', DFNT_CHAR, 4, 'cat0')
-      call VERIFY(ret, 'vfscatt', number_failed)
+      call VRFY(ret, 'vfscatt', number_failed)
       ret = vfsnatt(vgid,'vgattr1',DFNT_FLOAT32,1,RATTR1)
-      call VERIFY(ret, 'vfsnatt', number_failed)
+      call VRFY(ret, 'vfsnatt', number_failed)
       ret = vfdtch(vgid)
-      call VERIFY(ret, 'vfdtch', number_failed)
+      call VRFY(ret, 'vfdtch', number_failed)
 C vdata attrs
       vsref = vhfsd(fid1, 'vsfld0', vsbuf, 1, DFNT_INT32,
      +              'vs0', 'test_vdata')
-      call VERIFY(ret, 'vhfsd', number_failed)
+      call VRFY(ret, 'vhfsd', number_failed)
       vsid = vsfatch(fid1, vsref, 'w')
-      call VERIFY(ret, 'vsfatch', number_failed)
+      call VRFY(ret, 'vsfatch', number_failed)
       ret = vsfscat(vsid, HDF_VDATA, 'vscattr0', DFNT_CHAR, 3,
      +              'at2')
-      call VERIFY(ret, 'vfscatt', number_failed)
+      call VRFY(ret, 'vfscatt', number_failed)
       ret = vsfsnat(vsid, 0, 'vsattr1', DFNT_FLOAT32, 1, 
      +             RATTR1)
-      call VERIFY(ret, 'vsfsnat', number_failed)
+      call VRFY(ret, 'vsfsnat', number_failed)
       ret = vsfdtch(vsid) 
-      call VERIFY(ret, 'vsfdtch', number_failed)
+      call VRFY(ret, 'vsfdtch', number_failed)
       ret = vfend(fid1)
-      call VERIFY(ret, 'vfend',number_failed)
+      call VRFY(ret, 'vfend',number_failed)
       ret = hclose(fid1)
-      call VERIFY(ret, 'hclose2',number_failed)
+      call VRFY(ret, 'hclose2',number_failed)
 C read the new attrs back
       fid1 = hopen(ofn, DFACC_RDWR, 0)
-      call VERIFY(fid1, 'hopen',number_failed)
+      call VRFY(fid1, 'hopen',number_failed)
       ret =  vfstart(fid1)
-      call VERIFY(ret, 'vfstart', number_failed)
+      call VRFY(ret, 'vfstart', number_failed)
 C vgroup attrs
       vgref = vfgid(fid1, -1)
-      call VERIFY(ret, 'vfgid', number_failed)
+      call VRFY(ret, 'vfgid', number_failed)
       vgid = vfatch(fid1, vgref, 'w')
-      call VERIFY(ret, 'vfatch', number_failed)
+      call VRFY(ret, 'vfatch', number_failed)
       iattrc = '          '
       ret = vfgcatt(vgid, 0, iattrc)
-      call VERIFY(ret, 'vfgcatt', number_failed)
+      call VRFY(ret, 'vfgcatt', number_failed)
 C      if (iattrc(1) .ne. 'a' .or. iattrc(2) .ne. 't'
 C     +     .or. iattrc(3) .ne. '0') then
       if (iattrc .ne. 'cat0') then
@@ -272,22 +272,22 @@ C     +     .or. iattrc(3) .ne. '0') then
          number_failed = number_failed + 1
       endif
       ret = vfgnatt(vgid, 1, iattrr)
-      call VERIFY(ret, 'vfgnatt', number_failed)
+      call VRFY(ret, 'vfgnatt', number_failed)
       if (abs(iattrr(1)-RATTR1) .gt. abs(RATTR1*feps)) 
      +          then
          call MESSAGE(1, 'Wrong values of real attr for vg')
          number_failed = number_failed + 1
       endif
       ret = vfdtch(vgid)
-      call VERIFY(ret, 'vfdtch', number_failed)
+      call VRFY(ret, 'vfdtch', number_failed)
 C vdata attrs
       vsref = vsffnd(fid1, 'vs0')
-      call VERIFY(ret, 'vsffnd', number_failed)
+      call VRFY(ret, 'vsffnd', number_failed)
       vsid = vsfatch(fid1, vsref, 'w')
-      call VERIFY(ret, 'vsfatch', number_failed)
+      call VRFY(ret, 'vsfatch', number_failed)
       iattrc = '          '
       ret = vsfgcat(vsid, HDF_VDATA, 0, iattrc)
-      call VERIFY(ret, 'vsfgcat', number_failed)
+      call VRFY(ret, 'vsfgcat', number_failed)
 C      if (iattrc(1) .ne. 'a' .or. iattrc(2) .ne. 't'
 C     +     .or. iattrc(3) .ne. '2') then
       if (iattrc .ne. 'at2') then
@@ -296,18 +296,18 @@ C     +     .or. iattrc(3) .ne. '2') then
          print *, iattrc, 'at2'
       endif
       ret = vsfgnat(vsid, 0, 0, iattrr)
-      call VERIFY(ret, 'vsfgnatt2', number_failed)
+      call VRFY(ret, 'vsfgnatt2', number_failed)
       if (abs(iattrr(1)-RATTR1) .gt. abs(RATTR1*feps)) 
      +          then
          call MESSAGE(1, 'Wrong values of real attr for vs')
          number_failed = number_failed + 1
       endif
       ret = vsfdtch(vsid)
-      call VERIFY(ret, 'vsfdtch', number_failed)
+      call VRFY(ret, 'vsfdtch', number_failed)
       ret = vfend(fid1)
-      call VERIFY(ret, 'vfend',number_failed)
+      call VRFY(ret, 'vfend',number_failed)
       ret = hclose(fid1)
-      call VERIFY(ret, 'hclose3',number_failed)
+      call VRFY(ret, 'hclose3',number_failed)
       return
       end
 

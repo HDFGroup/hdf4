@@ -82,148 +82,148 @@ C these should be in dffunc.inc right?
 
 C Open the file
       fid1 = hopen(fn1, DFACC_CREATE, 0)
-      call VERIFY(fid1,'hopen',number_failed)
+      call VRFY(fid1,'hopen',number_failed)
       ret = vfstart(fid1)
-      call VERIFY(ret,'vfstart',number_failed)
+      call VRFY(ret,'vfstart',number_failed)
 C Create a vgroup
       call MESSAGE(5,'Creating a vgroup')
       vgid1 = vfatch(fid1, -1, 'w')
-      call VERIFY(vgid1, 'vfatch', number_failed)
+      call VRFY(vgid1, 'vfatch', number_failed)
       ret = vfsnam(vgid1, 'Top Vgroup')
-      call VERIFY(ret,'vfsnam',number_failed)
+      call VRFY(ret,'vfsnam',number_failed)
       ret = vfscls(vgid1, 'Test Object')
-      call VERIFY(ret,'vfscls',number_failed)
+      call VRFY(ret,'vfscls',number_failed)
 
 C Add a vgroup to it
       call MESSAGE(5,'Add a vgroup to the Top vgroup')
       vgid2 = vfatch(fid1, -1, 'w')
-      call VERIFY(vgid2, 'vfatch', number_failed)
+      call VRFY(vgid2, 'vfatch', number_failed)
       ret = vfinsrt(vgid1, vgid2)
-      call VERIFY(ret, 'vfinsrt', number_failed)
+      call VRFY(ret, 'vfinsrt', number_failed)
 
       ret = vfdtch(vgid1)
-      call VERIFY(ret,'vfdtch',number_failed)
+      call VRFY(ret,'vfdtch',number_failed)
       ret = vfdtch(vgid2)
-      call VERIFY(ret,'vfdtch',number_failed)
+      call VRFY(ret,'vfdtch',number_failed)
 
       ret = vfend(fid1)
-      call VERIFY(ret,'vfend',number_failed)
+      call VRFY(ret,'vfend',number_failed)
       ret = hclose(fid1)
-      call VERIFY(ret,'hclose',number_failed)
+      call VRFY(ret,'hclose',number_failed)
 
 C      add a vdatas in vgroup1
       call MESSAGE(5,'Creating a char vdata')
       fid1 =  hopen(fn1, DFACC_RDWR, 0)
-      call VERIFY(fid1,'hopen',number_failed)
+      call VRFY(fid1,'hopen',number_failed)
       ret = vfstart(fid1)
-      call VERIFY(ret,'vfstart',number_failed)
+      call VRFY(ret,'vfstart',number_failed)
       vgref1 = vfgid(fid1, -1)
-      call VERIFY(vgref1,'vfgid',number_failed)
+      call VRFY(vgref1,'vfgid',number_failed)
       vgid1 = vfatch(fid1, vgref1, 'w')
-      call VERIFY(vgid1,'vfatch',number_failed)
+      call VRFY(vgid1,'vfatch',number_failed)
 C      create a single field (char) vdata
       vsid1 = vsfatch(fid1, -1, 'w')
-      call VERIFY(vsid1,'vsfatch',number_failed)
+      call VRFY(vsid1,'vsfatch',number_failed)
       ret = vsffdef(vsid1, 'char type', DFNT_CHAR, 5)
-      call VERIFY(ret,'vsffdef',number_failed)
+      call VRFY(ret,'vsffdef',number_failed)
       ret = vsfsfld(vsid1, 'char type')
-      call VERIFY(ret,'vsfsfld',number_failed)
+      call VRFY(ret,'vsfsfld',number_failed)
 C      Use vsfwrtc to write the values
       ret = vsfwrtc(vsid1, cdata, 3, FULL_INTERLACE)
-      call VERIFY(ret,'vsfwrtc',number_failed)
+      call VRFY(ret,'vsfwrtc',number_failed)
       ret = vsfdtch(vsid1)
-      call VERIFY(ret,'vsfdtch',number_failed)
+      call VRFY(ret,'vsfdtch',number_failed)
 C      create a single field int16 vdata
       call MESSAGE(5,'Creating an int16 vdata')
       vsid1 = vsfatch(fid1, -1, 'w')
-      call VERIFY(vsid1,'vsfatch',number_failed)
+      call VRFY(vsid1,'vsfatch',number_failed)
       ret = vsffdef(vsid1, 'int16 type', DFNT_INT16, 2)
-      call VERIFY(ret,'vsffdef',number_failed)
+      call VRFY(ret,'vsffdef',number_failed)
       ret = vsfsfld(vsid1, 'int16 type')
-      call VERIFY(ret,'vsfsfld',number_failed)
+      call VRFY(ret,'vsfsfld',number_failed)
 C      Use vsfwrt to write the values
       ret = vsfwrt(vsid1, ddata1, 5, FULL_INTERLACE)
-      call VERIFY(ret,'vsfwrt',number_failed)
+      call VRFY(ret,'vsfwrt',number_failed)
       ret = vsfdtch(vsid1)
-      call VERIFY(ret,'vsfdtch',number_failed)
+      call VRFY(ret,'vsfdtch',number_failed)
 C      use vhfscd and vhfscdm to create char vdata
       call MESSAGE(5,'Using vhfscd/vsfscdm to create vdatas')
       ret = vhfscd(fid1,'char1',cdata,5,DFNT_CHAR,'c1','c')
-      call VERIFY(ret,'vhfscd',number_failed)
+      call VRFY(ret,'vhfscd',number_failed)
       ret = vhfscdm(fid1,'char3',cdata,5,DFNT_CHAR,'c3','s',3)
-      call VERIFY(ret,'vhfscdm',number_failed)
+      call VRFY(ret,'vhfscdm',number_failed)
 
 C      create a five-field vdata, 2*int32,2*double,2*float32,
 C             2*int16 and 3*char type 
       call MESSAGE(5,'Creating a five_field vdata')
       vsid2 = vsfatch(fid1, -1, 'w')
-      call VERIFY(vsid2,'vsfatch',number_failed)
+      call VRFY(vsid2,'vsfatch',number_failed)
       ret = vsfsnam(vsid2, 'mixed type')
-      call VERIFY(ret,'vsfsnam',number_failed)
+      call VRFY(ret,'vsfsnam',number_failed)
       ret = vsfscls(vsid2, 'test NT')
-      call VERIFY(ret,'vsfscls',number_failed)
+      call VRFY(ret,'vsfscls',number_failed)
       ret = vsffdef(vsid2, 'int32', DFNT_INT32, 2)
-      call VERIFY(ret,'vsffdef',number_failed)
+      call VRFY(ret,'vsffdef',number_failed)
       ret = vsffdef(vsid2, 'double', DFNT_FLOAT64, 2)
-      call VERIFY(ret,'vsffdef',number_failed)
+      call VRFY(ret,'vsffdef',number_failed)
       ret = vsffdef(vsid2, 'float32', DFNT_FLOAT32, 2)
-      call VERIFY(ret,'vsffdef',number_failed)
+      call VRFY(ret,'vsffdef',number_failed)
       ret = vsffdef(vsid2, 'int16', DFNT_INT16, 2)
-      call VERIFY(ret,'vsffdef',number_failed)
+      call VRFY(ret,'vsffdef',number_failed)
       ret = vsffdef(vsid2, 'char', DFNT_CHAR, 3)
-      call VERIFY(ret,'vsffdef',number_failed)
+      call VRFY(ret,'vsffdef',number_failed)
       ret = vsfsfld(vsid2, 'int32,double,float32,int16,char')
-      call VERIFY(ret,'vsfsfld',number_failed)
+      call VRFY(ret,'vsfsfld',number_failed)
 C     pack the fields into data buf
       ret = vsfnpak(vsid2, HDF_VSPACK,
      +             'int32,double,float32,int16,char', dbuf,
      +             320*4,5,'int32',ddata4)
-      call VERIFY(ret,'vsfnpak',number_failed)
+      call VRFY(ret,'vsfnpak',number_failed)
       ret = vsfnpak(vsid2, HDF_VSPACK,
      +             ' ', dbuf, 320*4, 5,'double',gdata1)
-      call VERIFY(ret,'vsfnpak',number_failed)
+      call VRFY(ret,'vsfnpak',number_failed)
       ret = vsfnpak(vsid2, HDF_VSPACK,
      +             ' ', dbuf, 320*4, 5,'float32',fdata)
-      call VERIFY(ret,'vsfnpak',number_failed)
+      call VRFY(ret,'vsfnpak',number_failed)
       ret = vsfnpak(vsid2, HDF_VSPACK,
      +             ' ', dbuf, 320*4,5,'int16',ddata2)
-      call VERIFY(ret,'vsfnpak',number_failed)
+      call VRFY(ret,'vsfnpak',number_failed)
       ret = vsfcpak(vsid2, HDF_VSPACK,
 C    +             'int32,double,float32,int16,char', dbuf,
      +             ' ', dbuf, 320*4, 5,'char',cdata)
-      call VERIFY(ret,'vsfcpak',number_failed)
+      call VRFY(ret,'vsfcpak',number_failed)
       ret = vsfwrt(vsid2, dbuf, 5, FULL_INTERLACE)
-      call VERIFY(ret,'vsfwrt',number_failed)
+      call VRFY(ret,'vsfwrt',number_failed)
       ret = vsfdtch(vsid2)
-      call VERIFY(ret,'vsfdtch',number_failed)
+      call VRFY(ret,'vsfdtch',number_failed)
 
 C     insert vdata1 into vgroup1
       call MESSAGE(5,'Inserting vdata1 into top vgroup')
       vsref1 = vsfgid(fid1, -1)
-      call VERIFY(vsref1, 'vsfgid', number_failed)
+      call VRFY(vsref1, 'vsfgid', number_failed)
       vsref2  = vsffnd(fid1, 'mixed type')
-      call VERIFY(vsref2, 'vsffnd', number_failed)
+      call VRFY(vsref2, 'vsffnd', number_failed)
       ret = vfadtr(vgid1, DFTAG_VH, vsref1)
-      call VERIFY(ret, 'vfadtr', number_failed)
+      call VRFY(ret, 'vfadtr', number_failed)
       ret = vfdtch(vgid1)
-      call VERIFY(ret,'vfdtch',number_failed)
+      call VRFY(ret,'vfdtch',number_failed)
       ret = vfend(fid1)
-      call VERIFY(ret,'vfend',number_failed)
+      call VRFY(ret,'vfend',number_failed)
       ret = hclose(fid1)
-      call VERIFY(ret,'hclose',number_failed)
+      call VRFY(ret,'hclose',number_failed)
 
 C     read data back
       call MESSAGE(5,'Readng data back')
       fid1 = hopen(fn1, DFACC_RDWR, 0)
-      call VERIFY(fid1,'hopen',number_failed)
+      call VRFY(fid1,'hopen',number_failed)
       ret = vfstart(fid1)
-      call VERIFY(ret,'vfstart',number_failed)
+      call VRFY(ret,'vfstart',number_failed)
       vgref1 = vfgid(fid1, -1)
-      call VERIFY(vgref1, 'vfgid', number_failed)
+      call VRFY(vgref1, 'vfgid', number_failed)
       vgid1 = vfatch(fid1, vgref1,'w')
-      call VERIFY(vgid1, 'vfatch', number_failed)
+      call VRFY(vgid1, 'vfatch', number_failed)
       ntrs = vfgttrs(vgid1, tags, refs, 10)
-      call VERIFY(ntrs, 'vfgttrs', number_failed)
+      call VRFY(ntrs, 'vfgttrs', number_failed)
       if (ntrs .ne. 2) then
          number_failed = number_failed + 1
          call MESSAGE(3,'Wrong number of tag/refs. ')
@@ -234,15 +234,15 @@ C     look for the first vdata
       do 20 i = 1, ntrs
          if (found .eq. FALSE) then
              vref = vfgnxt(vgid1,vref)
-             call VERIFY(vref, 'vref', number_failed)
+             call VRFY(vref, 'vref', number_failed)
              found = vfisvs(vgid1, vref)
          endif
 20    continue
       if (found .eq. TRUE) then
          vsid1 = vsfatch(fid1, vref, 'w')
-         call VERIFY(vsid1,'vsfatch',number_failed)
+         call VRFY(vsid1,'vsfatch',number_failed)
          ret = vsfinq(vsid1, nelts,il,fields1,vsize,vname)
-         call VERIFY(ret,'vsfinq',number_failed)
+         call VRFY(ret,'vsfinq',number_failed)
          if (nelts .ne. 3) then
              number_failed = number_failed + 1
              call MESSAGE(3,'Wrong number of records. ') 
@@ -260,15 +260,15 @@ C     look for the first vdata
              call MESSAGE(3,'Wrong vsize. ')
          endif
          ret = vsfsfld(vsid1, 'char type')
-         call VERIFY(ret,'vsfsfld',number_failed)
+         call VRFY(ret,'vsfsfld',number_failed)
          ret = vsfrdc(vsid1, icdata, 3, FULL_INTERLACE)
-         call VERIFY(ret,'vsfrdc',number_failed)
+         call VRFY(ret,'vsfrdc',number_failed)
          if (icdata .ne. 'abcdebcdefcdefg') then
              number_failed = number_failed + 1
              call MESSAGE(3,'Wrong icdata. Correct: abcdebcdefcdefg')
          endif
          ret = vsfdtch(vsid1)
-         call VERIFY(ret,'vsfdtch',number_failed)
+         call VRFY(ret,'vsfdtch',number_failed)
 C     not found, print error message
       else
          call MESSAGE(3,'Not found char type vdata. ')
@@ -277,11 +277,11 @@ C     not found, print error message
 C     read the second vdata
       call MESSAGE(5,'Reading the int16 vdata')
       vsref1 = vsfgid(fid1, vref)
-      call VERIFY(vsref1, 'vsfgid', number_failed)
+      call VRFY(vsref1, 'vsfgid', number_failed)
       vsid1 = vsfatch(fid1, vsref1, 'w')
-      call VERIFY(vsid1,'vsfatch',number_failed)
+      call VRFY(vsid1,'vsfatch',number_failed)
       ret = vsfinq(vsid1, nelts,il, fields2,vsize,vname)
-      call VERIFY(ret,'vsfinq',number_failed)
+      call VRFY(ret,'vsfinq',number_failed)
       if (nelts .ne. 5) then
           number_failed = number_failed + 1
           call MESSAGE(3,'Wrong number of records. ')
@@ -295,9 +295,9 @@ C     read the second vdata
           call MESSAGE(3,'Wrong fields. ')
       endif
       ret = vsfsfld(vsid1, 'int16 type')
-      call VERIFY(ret,'vsfsfld',number_failed)
+      call VRFY(ret,'vsfsfld',number_failed)
       ret = vsfrd(vsid1, iddata1, 5, FULL_INTERLACE)
-      call VERIFY(ret,'vsfrd',number_failed)
+      call VRFY(ret,'vsfrd',number_failed)
       do 40 i=1,10 
           if (iddata1(i) .ne. (9+i)) then
              number_failed = number_failed + 1
@@ -305,53 +305,53 @@ C     read the second vdata
           endif
 40    continue
       ret = vsfdtch(vsid1)
-      call VERIFY(ret,'vsfdtch',number_failed)
+      call VRFY(ret,'vsfdtch',number_failed)
 C     read the 'c1' vdata
       vsref1 = vsffnd(fid1, 'c1')
-      call VERIFY(vsref1, 'vsffnd', number_failed)
+      call VRFY(vsref1, 'vsffnd', number_failed)
       vsid1 = vsfatch(fid1, vsref1, 'w')
-      call VERIFY(vsid1, 'vsfatch', number_failed)
+      call VRFY(vsid1, 'vsfatch', number_failed)
       ret = vsfsfld(vsid1, 'char1')
-      call VERIFY(ret, 'vsfsfld', number_failed)
+      call VRFY(ret, 'vsfsfld', number_failed)
       ret = vsfrd(vsid1, idbuf, 5,FULL_INTERLACE)
-      call VERIFY(ret, 'vsfrd', number_failed)
+      call VRFY(ret, 'vsfrd', number_failed)
       icdata = '               '
       ret = vsfcpak(vsid1,HDF_VSUNPACK,' ',idbuf,320*4,
      +        5, ' ', icdata)
-      call VERIFY(ret, 'vsfcpak', number_failed)
+      call VRFY(ret, 'vsfcpak', number_failed)
       if (icdata .ne. 'abcde          ')  then
           number_failed = number_failed + 1
           call MESSAGE(3,'Wrong icdata. ')
       endif
       ret = vsfdtch(vsid1)
-      call VERIFY(ret,'vsfdtch',number_failed)
+      call VRFY(ret,'vsfdtch',number_failed)
 C     read the 'c3' vdata
       vsref1 = vsffnd(fid1, 'c3')
-      call VERIFY(vsref1, 'vsffnd', number_failed)
+      call VRFY(vsref1, 'vsffnd', number_failed)
       vsid1 = vsfatch(fid1, vsref1, 'w')
-      call VERIFY(vsid1, 'vsfatch', number_failed)
+      call VRFY(vsid1, 'vsfatch', number_failed)
       ret = vsfsfld(vsid1, 'char3') 
-      call VERIFY(ret, 'vsfsfld', number_failed)
+      call VRFY(ret, 'vsfsfld', number_failed)
       ret = vsfrd(vsid1, idbuf, 5,FULL_INTERLACE)
-      call VERIFY(ret, 'vsfrd', number_failed)
+      call VRFY(ret, 'vsfrd', number_failed)
       icdata = '               '
       ret = vsfcpak(vsid1,HDF_VSUNPACK,' ',idbuf,320*4,
      +        5, ' ', icdata)
-      call VERIFY(ret, 'vsfcpak', number_failed)
+      call VRFY(ret, 'vsfcpak', number_failed)
       if (icdata .ne. 'abcdebcdefcdefg')  then
           number_failed = number_failed + 1
           call MESSAGE(3,'Wrong data. ')
       endif 
       ret = vsfdtch(vsid1)
-      call VERIFY(ret,'vsfdtch',number_failed)
+      call VRFY(ret,'vsfdtch',number_failed)
  
 C     read the 'mixed type' vdata
       vsref2 = vsffnd(fid1, 'mixed type')
-      call VERIFY(vsref2, 'vsffnd', number_failed)
+      call VRFY(vsref2, 'vsffnd', number_failed)
       vsid2 = vsfatch(fid1, vsref2, 'w')
-      call VERIFY(vsid2, 'vsfatch', number_failed)
+      call VRFY(vsid2, 'vsfatch', number_failed)
       ret = vsfinq(vsid2, nelts,il, fields3,vsize,vname)
-      call VERIFY(ret, 'vsfinq', number_failed)
+      call VRFY(ret, 'vsfinq', number_failed)
       if (nelts .ne. 5) then
           number_failed = number_failed + 1
           call MESSAGE(3,'Wrong number of records. ')
@@ -365,26 +365,26 @@ C     read the 'mixed type' vdata
           call MESSAGE(3,'Wrong fields. ')
       endif
       ret = vsfsfld(vsid2, 'int32,double,float32,int16,char')
-      call VERIFY(ret, 'vsfsfld', number_failed)
+      call VRFY(ret, 'vsfsfld', number_failed)
       ret = vsfrd(vsid2, idbuf, 3, FULL_INTERLACE)
-      call VERIFY(ret, 'vsfrd', number_failed)
+      call VRFY(ret, 'vsfrd', number_failed)
       ret = vsfnpak(vsid2, HDF_VSUNPACK,
      +             ' ', idbuf, 320*4,3,'int32',iddata4)
-      call VERIFY(ret, 'vsfnpak', number_failed)
+      call VRFY(ret, 'vsfnpak', number_failed)
       ret = vsfnpak(vsid2, HDF_VSUNPACK,
      +             ' ', idbuf, 320*4,3,'double',igdata1)
-      call VERIFY(ret, 'vsfnpak', number_failed)
+      call VRFY(ret, 'vsfnpak', number_failed)
       ret = vsfnpak(vsid2, HDF_VSUNPACK,
      +             ' ', idbuf, 320*4,3,'float32',ifdata)
-      call VERIFY(ret, 'vsfnpak', number_failed)
+      call VRFY(ret, 'vsfnpak', number_failed)
       ret = vsfnpak(vsid2, HDF_VSUNPACK,
      +             ' ', idbuf, 320*4,3,'int16',iddata2)
-      call VERIFY(ret, 'vsfnpak', number_failed)
+      call VRFY(ret, 'vsfnpak', number_failed)
       icdata = '               '
       ret = vsfcpak(vsid2, HDF_VSUNPACK,
      +             'int32,double,float32,int16,char', idbuf,
      +             320*4,3,'char',icdata)
-      call VERIFY(ret, 'vsfcpak', number_failed)
+      call VRFY(ret, 'vsfcpak', number_failed)
 
       do 45 i=1,3
          if (iddata4(i) .ne. (39+i)) then
@@ -414,26 +414,26 @@ C     read the 'mixed type' vdata
       endif
 C     read field 'char' only, test pckfld ' '
       ret = vsfsfld(vsid2, 'char')
-      call VERIFY(ret, 'vsfsfld', number_failed)
+      call VRFY(ret, 'vsfsfld', number_failed)
       ret = vsfrd(vsid2, idbuf, 2, FULL_INTERLACE)
-      call VERIFY(ret, 'vsfrd', number_failed)
+      call VRFY(ret, 'vsfrd', number_failed)
       icdata = '               '
       ret = vsfcpak(vsid2, HDF_VSUNPACK,
      +             'char', idbuf, 320*4,2,' ',icdata)
-      call VERIFY(ret, 'vsfcpak', number_failed)
+      call VRFY(ret, 'vsfcpak', number_failed)
       if (icdata .ne. 'fcdefg         ') then
           number_failed = number_failed + 1
           call MESSAGE(3,'Wrong data. ')
       endif
 
       ret = vsfdtch(vsid2)
-      call VERIFY(ret,'vsfdtch',number_failed)
+      call VRFY(ret,'vsfdtch',number_failed)
       ret = vfdtch(vgid1)
-      call VERIFY(ret,'vsfdtch',number_failed)
+      call VRFY(ret,'vsfdtch',number_failed)
       ret = vfend(fid1)
-      call VERIFY(ret,'vfend',number_failed)
+      call VRFY(ret,'vfend',number_failed)
       ret = hclose(fid1)
-      call VERIFY(ret, 'hclose', number_failed)
+      call VRFY(ret, 'hclose', number_failed)
 C
 C     Testing deleting a tag/ref pair from Vgroups using vfdtr()
 C     Not as extensive as the C-version of the similar test because
@@ -441,40 +441,40 @@ C     for now some the fortran versions of Vgroup routines are missing.
 C
 C Open the file for writing
       fid1 = hopen(fn1, DFACC_RDWR, 0)
-      call VERIFY(fid1,'hopen',number_failed)
+      call VRFY(fid1,'hopen',number_failed)
       ret = vfstart(fid1)
-      call VERIFY(ret,'vfstart',number_failed)
+      call VRFY(ret,'vfstart',number_failed)
 
 C Create a vgroup to add a bogus element to.
       call MESSAGE(5,'Creating a vgroup')
       vgid1 = vfatch(fid1, -1, 'w')
-      call VERIFY(vgid1, 'vfatch', number_failed)
+      call VRFY(vgid1, 'vfatch', number_failed)
       ret = vfsnam(vgid1, 'Vgroup to delete from')
-      call VERIFY(ret,'vfsnam',number_failed)
+      call VRFY(ret,'vfsnam',number_failed)
       ret = vfscls(vgid1, 'Vgroup to delete from')
-      call VERIFY(ret,'vfscls',number_failed)
+      call VRFY(ret,'vfscls',number_failed)
 
 C     Add a bogus element to the vgroup
       ret = vfadtr(vgid1, 5000, 1234)
-      call VERIFY(ret, 'vfadtr', number_failed)
+      call VRFY(ret, 'vfadtr', number_failed)
 
 C     Now delete it again just make sure the call does not fail
 C     The C-version of the tests does a better job overall.
 
       ret = vfdtr(vgid1, 5000, 1234)
-      call VERIFY(ret, 'vfdtr', number_failed)
+      call VRFY(ret, 'vfdtr', number_failed)
 
 C     Detach from vgroup
       ret = vfdtch(vgid1)
-      call VERIFY(ret,'vfdtch',number_failed)
+      call VRFY(ret,'vfdtch',number_failed)
 
 C     Close Vxxx interface down
       ret = vfend(fid1)
-      call VERIFY(ret,'vfend',number_failed)
+      call VRFY(ret,'vfend',number_failed)
 
 C     Close file
       ret = hclose(fid1)
-      call VERIFY(ret,'hclose',number_failed)
+      call VRFY(ret,'hclose',number_failed)
 
       return
       end

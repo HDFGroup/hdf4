@@ -67,35 +67,35 @@ C Write out pal1, then pal2.
 C Keep their ref number in ref1 and ref2.
       call MESSAGE(VERBO_HI, 'Putting pal1 in new file.')
       ret = dpppal(TESTFILE, pal1, 0, 'w')
-      call VERIFY(ret, 'dpppal', number_failed)
+      call VRFY(ret, 'dpppal', number_failed)
 
       call MESSAGE(VERBO_HI, 'Getting ref1')
       ref1 = dplref()
       ref = ref1*1
-      call VERIFY(ref, 'dplref', number_failed)
-C VERIFY expects an integer, but ref1 is only integer*2.  The
+      call VRFY(ref, 'dplref', number_failed)
+C VRFY expects an integer, but ref1 is only integer*2.  The
 C expression promotes it to an integer expression.
 
       call MESSAGE(VERBO_HI, 'Putting pal2 in file')
       ret = dpapal(TESTFILE, pal2)
-      call VERIFY(ret, 'dpapal', number_failed)
+      call VRFY(ret, 'dpapal', number_failed)
 
       call MESSAGE(VERBO_HI, 'Getting ref2')
       ref2 = dplref()
       ref = ref2*1
-      call VERIFY(ref, 'dplref', number_failed)
+      call VRFY(ref, 'dplref', number_failed)
      
 C
 C Reset the palettes for reading
       call MESSAGE(VERBO_HI, 'Restarting palette interface')
       ret = dprest()
-      call VERIFY(ret, 'dprest', number_failed)
+      call VRFY(ret, 'dprest', number_failed)
 
 C
 C Get palette 1 and match it with pal1
       call MESSAGE(VERBO_HI, 'Reading pal1')
       ret = dpgpal(TESTFILE, ipal)
-      call VERIFY(ret, 'dpgpal', number_failed)
+      call VRFY(ret, 'dpgpal', number_failed)
       do 200 i=1, 768
           if (ipal(i) .ne. pal1(i))  then
               print *, 'Error at ', i, ', ipal:', ipal(i), 
@@ -116,7 +116,7 @@ C
 C Get palette 2 and match it with pal2
       call MESSAGE(VERBO_HI, 'Reading pal2.')
       ret = dpgpal(TESTFILE, ipal)
-      call VERIFY(ret, 'dpgpal', number_failed)
+      call VRFY(ret, 'dpgpal', number_failed)
       do 300 i=1, 768
           if (ipal(i) .ne. pal2(i)) then
               print *, 'Error at ', i, ', ipal:', ipal(i),
@@ -146,11 +146,11 @@ C
 C Explicitly set to palette of ref2 for reading
       call MESSAGE(VERBO_HI, 'Setting read ref to ref2.')
       ret = dprref(TESTFILE, ref2)
-      call VERIFY(ret, 'dprref', number_failed)
+      call VRFY(ret, 'dprref', number_failed)
       
       call MESSAGE(VERBO_HI, 'Reading pal2')
       ret = dpgpal(TESTFILE, ipal)
-      call VERIFY(ret, 'dpgpal', number_failed)
+      call VRFY(ret, 'dpgpal', number_failed)
 
       newref2 =  dplref()
       if (newref2 .ne. ref2) then
@@ -171,11 +171,11 @@ C
 C Explicitly set to palette of ref1 for reading
       call MESSAGE(VERBO_HI, 'Setting read ref to ref1.')
       ret = dprref(TESTFILE, ref1)
-      call VERIFY(ret, 'dprref', number_failed)
+      call VRFY(ret, 'dprref', number_failed)
 
       call MESSAGE(VERBO_HI, 'Reading pal1')
       ret = dpgpal(TESTFILE, ipal)
-      call VERIFY(ret, 'dpgpal', number_failed)
+      call VRFY(ret, 'dpgpal', number_failed)
 
       newref1 =  dplref()
       if (newref1 .ne. ref1) then
@@ -201,18 +201,18 @@ C Modify the middle chunk of pal1 and replace its file copy.
 
       call MESSAGE(VERBO_HI, 'Setting write ref to ref1')
       ret = dpwref(TESTFILE, ref1)
-      call VERIFY(ret, 'dpwref', number_failed)
+      call VRFY(ret, 'dpwref', number_failed)
       call MESSAGE(VERBO_HI, 'Writing pal1')
       ret = dpppal(TESTFILE, pal1, 1, 'a')
-      call VERIFY(ret, 'dpppal', number_failed)
+      call VRFY(ret, 'dpppal', number_failed)
       ret=dplref()
 C     print *,'last ref is: ', ret
       call MESSAGE(VERBO_HI, 'setting read ref to ref1')
       ret = dprref(TESTFILE, ref1)
-      call VERIFY(ret, 'dprref', number_failed)
+      call VRFY(ret, 'dprref', number_failed)
       call MESSAGE(VERBO_HI, 'Reading pal1')
       ret = dpgpal(TESTFILE, ipal)
-      call VERIFY(ret, 'dpgpal', number_failed)
+      call VRFY(ret, 'dpgpal', number_failed)
       do 700 i=1, 768
           if (ipal(i) .ne. pal1(i)) then
               print *,  'Error at ', i, ', ipal:', ipal(i),
