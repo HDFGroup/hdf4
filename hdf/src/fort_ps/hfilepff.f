@@ -43,6 +43,7 @@ C      integer       hiopen
       INTERFACE 
         INTEGER FUNCTION hiopen(filename,access, defdds, nmlen)
           !MS$ATTRIBUTES C, reference, alias: '_HIOPEN' :: hiopen
+	    !DEC$ ATTRIBUTES reference :: filename
           integer access, defdds, nmlen
           character*(*) filename
         END FUNCTION hiopen
@@ -117,6 +118,7 @@ C      integer       hxisdir
       INTERFACE
         INTEGER FUNCTION hxisdir(dir, dirlen)
           !MS$ATTRIBUTES C, reference, alias: '_HXISDIR' :: hxisdir
+	    !DEC$ ATTRIBUTES reference :: dir
           character*(*) dir
           integer dirlen
         END FUNCTION hxisdir
@@ -142,6 +144,7 @@ C      integer       hxiscdir
       INTERFACE
         INTEGER FUNCTION hxiscdir(dir, dirlen)
           !MS$ATTRIBUTES C, reference, alias: '_HXISCDIR' :: hxiscdir
+	    !DEC$ ATTRIBUTES reference :: dir
           character*(*) dir
           integer dirlen
         END FUNCTION hxiscdir
@@ -151,3 +154,63 @@ C      integer       hxiscdir
       return
       end
 
+C-----------------------------------------------------------------------------
+C Name: hglibver
+C Purpose: retrieves the version information for the current HDF library
+C Outputs: major_v - major version number
+C          minor_v - minor version number
+C          release - release number
+C          string  - version number test string
+C Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
+C-----------------------------------------------------------------------------*/
+
+      integer function hglibver(major_v, minor_v, release, string)
+
+      integer major_v, minor_v, release
+      character*(*) string
+C      integer hglibverc 
+      INTERFACE
+        INTEGER FUNCTION hglibverc(major_v, minor_v, release, string,
+     +	   stringlen)
+          !MS$ATTRIBUTES C, reference, alias: '_HGLIBVERC' :: hglibverc
+	    !DEC$ ATTRIBUTES reference :: string
+          integer major_v, minor_v, release, stringlen
+          character*(*) string
+        END FUNCTION hglibverc
+      END INTERFACE
+
+      hglibver = hglibverc(major_v, minor_v, release, string,
+     .                     len(string))
+      return
+      end
+C-----------------------------------------------------------------------------
+C Name: hgfilver
+C Purpose: retrieves the version information for the current HDF library
+C Inputs:  file_id - file identifier
+C Outputs: major_v - major version number
+C          minor_v - minor version number
+C          release - release number
+C          string  - version number test string
+C Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
+C-----------------------------------------------------------------------------*/
+
+      integer function hgfilver(file_id, major_v, minor_v, release,
+     .                          string)
+
+      integer file_id, major_v, minor_v, release
+      character*(*) string
+C      integer hgfilverc 
+      INTERFACE
+        INTEGER FUNCTION hgfilverc(file_id, major_v, minor_v, release,
+     +	                             string, stringlen)
+          !MS$ATTRIBUTES C, reference, alias: '_HGFILVERC' :: hgfilverc
+	    !DEC$ ATTRIBUTES reference :: string
+          integer file_id, major_v, minor_v, release, stringlen
+          character*(*) string
+        END FUNCTION hgfilverc
+      END INTERFACE
+
+      hgfilver = hgfilverc(file_id, major_v, minor_v, release, string,
+     .                     len(string))
+      return
+      end
