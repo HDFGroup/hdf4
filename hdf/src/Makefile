@@ -131,31 +131,31 @@ FOBJS=hfilef.o herrf.o hfileff.o dfanf.o dfr8f.o dfpf.o df24f.o dfsdf.o \
 #JFSRCS= jdmain.c jcmain.c jrdjfif.c jrdgif.c jrdppm.c jrdrle.c jrdtarga.c \
 #        jwrjfif.c jwrgif.c jwrppm.c jwrrle.c jwrtarga.c
 #
-#JCSRCS= jbsmooth.c jcarith.c jccolor.c jcdeflts.c jcexpand.c jchuff.c \
-#        jcmaster.c jcmcu.c jcpipe.c jcsample.c jdarith.c jdcolor.c \
-#        jddeflts.c jdhuff.c jdmaster.c jdmcu.c jdpipe.c jdsample.c \
-#        jerror.c jquant1.c jquant2.c jfwddct.c jrevdct.c jutils.c jmemmgr.c \
-#        jmemsys.c
-#
-#JINCS= jinclude.h jconfig.h jpegdata.h jversion.h jmemsys.h 
+JCSRCS= jbsmooth.c jcarith.c jccolor.c jcdeflts.c jcexpand.c jchuff.c \
+        jcmaster.c jcmcu.c jcpipe.c jcsample.c jdarith.c jdcolor.c \
+        jddeflts.c jdhuff.c jdmaster.c jdmcu.c jdpipe.c jdsample.c \
+        jerror.c jquant1.c jquant2.c jfwddct.c jrevdct.c jutils.c jmemmgr.c \
+        jmemsys.c
+
+JINCS= jinclude.h jconfig.h jpegdata.h jversion.h jmemsys.h 
 
 # objectfiles common to both JPEG compression and decompression
-#COMOBJECTS= jutils.o jerror.o jmemmgr.o jmemsys.o 
+COMOBJECTS= jutils.o jerror.o jmemmgr.o jmemsys.o 
 # compression objectfiles
-#CLIBOBJECTS= jcmaster.o jcdeflts.o jcarith.o jccolor.o jcexpand.o \
-#        jchuff.o jcmcu.o jcpipe.o jcsample.o jfwddct.o
+CLIBOBJECTS= jcmaster.o jcdeflts.o jcarith.o jccolor.o jcexpand.o \
+        jchuff.o jcmcu.o jcpipe.o jcsample.o jfwddct.o
         
-#CFILEOBJECTS=jwrjfif.o jrdgif.o jrdppm.o jrdrle.o jrdtarga.o
+CFILEOBJECTS=jwrjfif.o jrdgif.o jrdppm.o jrdrle.o jrdtarga.o
 
 # decompression objectfiles
-#DLIBOBJECTS= jdmaster.o jddeflts.o jbsmooth.o jdarith.o jdcolor.o \
-#        jdhuff.o jdmcu.o jdpipe.o jdsample.o jquant1.o \
-#        jquant2.o jrevdct.o
+DLIBOBJECTS= jdmaster.o jddeflts.o jbsmooth.o jdarith.o jdcolor.o \
+        jdhuff.o jdmcu.o jdpipe.o jdsample.o jquant1.o \
+        jquant2.o jrevdct.o
 
-#DFILEOBJECTS=jrdjfif.o jwrgif.o jwrppm.o jwrrle.o jwrtarga.o
+DFILEOBJECTS=jrdjfif.o jwrgif.o jwrppm.o jwrrle.o jwrtarga.o
 
 # These objectfiles are included in libjpeg.lib
-#JOBJS= $(CLIBOBJECTS) $(DLIBOBJECTS) $(COMOBJECTS)
+JOBJS= $(CLIBOBJECTS) $(DLIBOBJECTS) $(COMOBJECTS)
 
 .c.o:
 	$(CC) $(CFLAGS) -c $<
