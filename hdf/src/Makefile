@@ -177,7 +177,7 @@ libnofortran: $(COBJS) $(JOBJS)
 	$(AR) $(ARFLAGS) libdf.a `lorder $(COBJS) $(JOBJS) | tsort `
 	$(RANLIB) libdf.a
 
-nofortran: libnofortran 
+nofortran: libnofortran .finstalled
 
 libnostub: nofortran
 
@@ -193,6 +193,14 @@ saber:
 	-cp libdf.a $(HDFLIB)
 	-$(RANLIB) $(HDFLIB)/libdf.a
 	touch .installed
+
+.finstalled: libnofortran
+	-if (test \! -d $(HDFINC)) then (mkdir $(HDFINC) ) fi
+	-cp $(HDRS) $(JINCS) $(HDFINC)
+	-if (test \! -d $(HDFLIB)) then (mkdir $(HDFLIB) ) fi
+	-cp libdf.a $(HDFLIB)
+	-$(RANLIB) $(HDFLIB)/libdf.a
+	touch .finstalled
 
 depend:
 	makedepend -fMakefile -- $(JCSRCS) $(CSRCS)
