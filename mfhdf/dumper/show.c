@@ -93,8 +93,8 @@ dumpvd(int32 vd, file_type_t ft, int data_only, FILE * fp, char separater[2],
 	      {
                 if ((dumpallfields) || (flds_indices[x] == i))
                   {
-                      fprintf(fp, "- field index %d: [%s], type=%d, order=%d, nattrs=%d\n",
-                              (int) i, w->name[i], w->type[i], w->order[i], nattrs[i]);
+                      fprintf(fp, "- field index %d: [%s], type=%d, order=%d\n",
+                              (int) i, w->name[i], w->type[i], w->order[i]);
                       x++;
                   }
 	      }
@@ -397,9 +397,7 @@ intn dumpattr(int32 vid, int32 findex, intn isvs,
       nattrs = VSfnattrs(vid, findex);
    else
       nattrs = Vnattrs(vid);
-   fprintf(fp, "   %d attributes. \n", nattrs);
-   if (nattrs == 0) 
-       return SUCCEED; /* no attrs */
+   fprintf(fp, "   number of attributes = %d \n", nattrs);
    for (i=0; i<nattrs; i++) {
        if (isvs)
           ret = VSattrinfo(vid, findex, i, name, &i_type, &i_count, &i_size);
