@@ -927,7 +927,7 @@ HDGLcopy_list(Generic_list list)
       }
 
 done:    
-    if (ret_value = FAIL)
+    if (ret_value == FAIL)
       { /* need to remove all elements from copy */
           if (list_copy.info != NULL)
             {
@@ -1138,7 +1138,7 @@ HDGLall_such_that(Generic_list list,
       }
     
 done:    
-    if (ret_value = FAIL)
+    if (ret_value == FAIL)
       {
           if (list_copy.info != NULL)
             {
