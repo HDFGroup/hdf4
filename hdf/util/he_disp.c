@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1993/01/19 06:24:16  koziol
-Updated for better portability and fixed minor compiler warnings
+Revision 1.9  1993/05/20 15:57:05  chouck
+Had to add casts to rleIt() call
 
+ * Revision 1.8  1993/01/19  06:24:16  koziol
+ * Updated for better portability and fixed minor compiler warnings
+ *
  * Revision 1.7  1992/09/11  18:32:51  chouck
  * Assorted MAC mungings
  *
@@ -286,7 +289,7 @@ int rImage(usepal)
     thisline = (int8 *) wheresmall;
 
     for (i = 0; i < ydim; i++) {
-        newxsize = rleIt(thisline,space,xdim);
+        newxsize = rleIt((char *) thisline, (char *) space, (int) xdim);
 	thisline += xdim;	/* increment to next line */
 
         (void)printf("\033^R;0;%d;%d;%d;rseq^",i*factor,factor,newxsize); 
