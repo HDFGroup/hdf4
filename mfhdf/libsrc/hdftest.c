@@ -1738,6 +1738,7 @@ test_dimensions()
     uint8  scale0 [] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,255};
     int16  scale1 [] = {0,1,2,3,4,5,6,7,8,9};
     char8  scale2 [] = {'d','i','m','2'}, scale2_out[4];
+    float32 scalef[] = {1., 2., 3., 4.};
     int32  size, dim_data_type, dim_num_attrs;
     int    num_errs = 0;    /* number of errors so far */
 
@@ -1924,7 +1925,7 @@ test_dimensions()
 
     /* Verify that when 0 is passed into SDsetdimscale for number type,
        then the dimension scale will be set to DFNT_FLOAT32 */
-    status = SDsetdimscale (dim0_id, dims[0], 0, scale2);
+    status = SDsetdimscale (dim0_id, dims[0], 0, scalef); 
     CHECK(status, FAIL, "SDsetdimscale");
 
     status = SDdiminfo(dim0_id, dim_name, &size, &dim_data_type, &dim_num_attrs);
