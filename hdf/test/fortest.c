@@ -52,24 +52,6 @@ InitTest(const char *TheName, const char *TheCall, const char *TheDescr)
     return(Index);
 }
 
-void
-CallFortranTest(char *TheCall)
-{
-#ifdef VMS
-    static char TheProc[25];
-
-    HDstrcpy(TheProc, "run []");
-    HDstrcat(TheProc, TheCall);
-    system(TheProc);
-#else
-    char TheLocalCall[80];
-
-    HDstrcpy(TheLocalCall, "./");
-    HDstrcat(TheLocalCall, TheCall);
-    system(TheLocalCall);
-#endif
-}
-
 int
 main(int argc, char *argv[])
 {
@@ -86,12 +68,6 @@ main(int argc, char *argv[])
     FILE	*cmdfile, *fopen();
     char	*cmdfilename="fortest.arg";
 
-#ifdef NO
-    ret = Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
-    printf("\nFORTEST V%s Built on: %s \n", VERSION, BUILDDATE);
-    printf("HDF Library Version: %u.%ur%u, %s\n\n",
-        (unsigned) lmajor, (unsigned) lminor, (unsigned) lrelease, lstring);
-#endif
 
     num_tests=InitTest("slab", "slabwf", "");
     num_tests=InitTest("r24", "t24f", "");
@@ -112,6 +88,7 @@ main(int argc, char *argv[])
 #else
     printf("   Skipping stubs\n");
 #endif
+
     if ((cmdfile = fopen(cmdfilename, "w")) == NULL){
 	printf("***Can't write to cmdfile(%s)***\n", cmdfilename);
 	return(-1);
@@ -224,48 +201,20 @@ main(int argc, char *argv[])
             }
       }
 
-    /*  printf("The Verbosity is %d \n",Verbosity); */
-/*
-    HDstrcpy(verb_env,FOR_VERB);
-    HDstrcat(verb_env,"=");
-    sprintf(verb_tmp,"%d",Verbosity);
-    HDstrcat(verb_env,verb_tmp);
-#ifndef vms
-    HDputenv(verb_env);
-#endif
-*/
     for (Loop = 0; Loop < num_tests; Loop++)
       {
           if (Test[Loop].SkipFlag)
             {
 		fprintf(cmdfile, "%s %s\n", SKIP_STR, Test[Loop].Name);
-#ifdef NO
-                MESSAGE(2, printf("Skipping -- %s (%s) \n",
-                                  Test[Loop].Description, Test[Loop].Name);
-                    );
-#endif
             }
           else
             {
 		fprintf(cmdfile, "%s %s\n", TEST_STR, Test[Loop].Name);
-#ifdef NO
-                MESSAGE(2, printf("Testing  -- %s (%s) \n",
-                                  Test[Loop].Description, Test[Loop].Name);
-                    );
-                MESSAGE(5, printf("===============================================\n");
-                    );
-                Test[Loop].NumErrors = num_errs;
-                CallFortranTest(Test[Loop].Call);
-                Test[Loop].NumErrors = num_errs - Test[Loop].NumErrors;
-                MESSAGE(5, printf("===============================================\n");
-                    );
-                MESSAGE(5, printf("There were %d errors detected.\n\n", Test[Loop].NumErrors);
-                    );
-#endif
             }
       }
 
     fclose(cmdfile);
+
 #ifdef VMS
     {
         char *comprocfile="fortest.com";
@@ -287,52 +236,5 @@ main(int argc, char *argv[])
 	HDstrcat(fortrancmd, cmdfilename);
 	return(system(fortrancmd));
     }
-#endif
-#ifdef NO
-    MESSAGE(2, printf("\n\n");
-        )
-        if (num_errs)
-      {
-          fprintf(stderr, "!!! %d Error(s) were detected !!!\n\n", num_errs);
-      }
-    else
-      {
-          fprintf(stderr, "All tests were successful. \n\n");
-      }
-
-    if (Summary)
-      {
-/*    printf("\n\n"); */
-/*    printf("==========================================================\n"); */
-          printf("Summary of Test Results:\n");
-/*    printf("==========================================================\n\n"); */
-          printf("Name of Test     Errors Description of Test\n");
-          printf("---------------- ------ --------------------------------------\n");
-
-          for (Loop = 0; Loop < num_tests; Loop++)
-            {
-                if (Test[Loop].NumErrors == -1)
-                    printf("%16s %6s %s\n", Test[Loop].Name, "N/A",
-                           Test[Loop].Description);
-                else
-                    printf("%16s %6d %s\n", Test[Loop].Name, Test[Loop].NumErrors,
-                           Test[Loop].Description);
-            }
-          printf("\n\n");
-/*    printf("==========================================================\n\n");
- */
-      }
-
-    if (CleanUp)
-      {
-          MESSAGE(2, printf("\nCleaning Up...\n\n");
-              );
-#ifndef VMS
-          system("rm -f *.hdf");
-#else
-          system("delete *.hdf;*");
-#endif
-      }
-    return (0);
 #endif
 }
