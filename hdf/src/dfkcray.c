@@ -947,7 +947,6 @@ uint32 num_elm, source_stride, dest_stride;
         n=(num_elm+7)/8;
         lp_dest=(long *)dest;
         lp_src=(long *)source;
-printf("DFKuo8f(): n=%d, num_elm=%d, orig_num_elm=%d, odd_man_out=%d\n",(int)n,(int)num_elm,(int)orig_num_elm,(int)odd_man_out);
 		if(orig_num_elm>3)
         switch(num_elm%8) {
             case 0:
