@@ -5489,6 +5489,7 @@ test_mgr(void)
 	XII. DFP Compatibility tests     - test_mgr_pal
         XIII.  Chunking write/read test
             with enabled compression     - test_mgr_chunkwr
+	XIV. Szip Compression test       - test_mgr_szip
 
     */
 
@@ -5511,5 +5512,6 @@ test_mgr(void)
     test_mgr_pal(0);    /* read in old-style DFP palette tests */
 #endif /* LATER */
     test_mgr_chunkwr();
+    test_mgr_szip();   /* write/read with szip compression */
 }   /* test_mgr() */
 
