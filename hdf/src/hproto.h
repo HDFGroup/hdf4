@@ -1,10 +1,36 @@
+/***************************************************************************
+*
+*
+*                         NCSA HDF version 3.2r3
+*                            December 1, 1992
+*
+* NCSA HDF Version 3.2 source code and documentation are in the public
+* domain.  Specifically, we give to the public domain all rights for future
+* licensing of the source code, all resale rights, and all publishing rights.
+*
+* We ask, but do not require, that the following message be included in all
+* derived works:
+*
+* Portions developed at the National Center for Supercomputing Applications at
+* the University of Illinois at Urbana-Champaign, in collaboration with the
+* Information Technology Institute of Singapore.
+*
+* THE UNIVERSITY OF ILLINOIS GIVES NO WARRANTY, EXPRESSED OR IMPLIED, FOR THE
+* SOFTWARE AND/OR DOCUMENTATION PROVIDED, INCLUDING, WITHOUT LIMITATION,
+* WARRANTY OF MERCHANTABILITY AND WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE
+*
+****************************************************************************
+*/
 /*
 $Header$
 
 $Log$
-Revision 1.10  1992/11/05 18:59:26  chouck
-Added (unix) wrapper to realloc()
+Revision 1.11  1993/01/04 18:17:58  sxu
+change dspre32 to dsip32s (for dfsdpre32sdg)
 
+ * Revision 1.10  1992/11/05  18:59:26  chouck
+ * Added (unix) wrapper to realloc()
+ *
  * Revision 1.9  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -735,7 +761,6 @@ extern  FRETVAL(intf) ndfr8restart
 #   define ndspslc   FNAME(DSPSLC)
 #   define ndseslc   FNAME(DSESLC)
 #   define ndsgnt    FNAME(DSGNT)
-#   define ndspre32  FNAME(DSPRE32)
 #   define ndssnt    FNAME(DSSNT)
 #   define ndsigdim  FNAME(DSIGDIM)
 #   define ndsigdat  FNAME(DSIGDAT)
@@ -750,6 +775,7 @@ extern  FRETVAL(intf) ndfr8restart
 #   define ndsirref  FNAME(DSIRREF)
 #   define ndslref   FNAME(DSLREF)
 #   define ndsinum   FNAME(DSINUM)
+#   define ndsip32s  FNAME(DSIP32S)	
 #   define ndsscal   FNAME(DSSCAL)
 #   define ndsgcal   FNAME(DSGCAL)
 #   define ndfsdgetdatastrs  FNAME(DFSDGETDATASTRS)
@@ -765,7 +791,6 @@ extern  FRETVAL(intf) ndfr8restart
 #   define ndfsdrestart      FNAME(DFSDRESTART)
 #   define ndfsdputslice     FNAME(DFSDPUTSLICE)
 #   define ndfsdendslice     FNAME(DFSDENDSLICE)
-#   define ndfsdpre32        FNAME(DFSDPRE32)
 #   define ndfsdsetnt        FNAME(DFSDSETNT)
 #   define ndfsdgetnt        FNAME(DFSDGETNT)
 #   define ndfsdlastref      FNAME(DFSDLASTREF)
@@ -784,7 +809,6 @@ extern  FRETVAL(intf) ndfr8restart
 #   define ndspslc   FNAME(dspslc)
 #   define ndseslc   FNAME(dseslc)
 #   define ndsgnt    FNAME(dsgnt)
-#   define ndspre32  FNAME(dspre32)
 #   define ndssnt    FNAME(dssnt)
 #   define ndsigdim  FNAME(dsigdim)
 #   define ndsigdat  FNAME(dsigdat)
@@ -799,6 +823,7 @@ extern  FRETVAL(intf) ndfr8restart
 #   define ndsirref  FNAME(dsirref)
 #   define ndslref   FNAME(dslref)
 #   define ndsinum   FNAME(dsinum)
+#   define ndsip32s  FNAME(dsip32s)
 #   define ndsscal   FNAME(dsscal)
 #   define ndsgcal   FNAME(dsgcal)
 #   define ndfsdgetdatastrs  FNAME(dfsdgetdatastrs)
@@ -814,7 +839,6 @@ extern  FRETVAL(intf) ndfr8restart
 #   define ndfsdrestart      FNAME(dfsdrestart)
 #   define ndfsdputslice     FNAME(dfsdputslice)
 #   define ndfsdendslice     FNAME(dfsdendslice)
-#   define ndfsdpre32        FNAME(dfsdpre32)
 #   define ndfsdsetnt        FNAME(dfsdsetnt)
 #   define ndfsdgetnt        FNAME(dfsdgetnt)
 #   define ndfsdlastref      FNAME(dfsdlastref)
@@ -860,9 +884,6 @@ extern FRETVAL(intf) ndspslc
 extern FRETVAL(intf) ndseslc
     PROTO((void));
 
-extern FRETVAL(intf) ndspre32
-    PROTO((void));
-
 extern FRETVAL(intf) ndssnt
     PROTO((intf HUGE *numbertype));
 
@@ -900,6 +921,9 @@ extern FRETVAL(intf) ndslref
 
 extern FRETVAL(intf) ndsinum
     PROTO((_fcd filename, intf HUGE *len));
+
+extern FRETVAL(intf) ndsip32s
+    PROTO((_fcd filename, intf HUGE *ref, intf HUGE *ispre32, intf HUGE *len));
 
 extern FRETVAL(intf) ndfsdgetdatastrs
     PROTO((_fcd label, _fcd unit, _fcd format, _fcd coordsys));
