@@ -1,4 +1,5 @@
 #!/bin/sh
+# $Id$
 #
 # install - install a program, script, or datafile
 # This comes from X11R5.
@@ -41,6 +42,10 @@ mvcmd="$mvprog"
 src=""
 dst=""
 dir_arg=""
+
+# HDF specific change to set umask so that files are created others
+# accessible.
+umask 022
 
 while [ x"$1" != x ]; do
     case $1 in
