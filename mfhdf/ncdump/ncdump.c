@@ -584,7 +584,11 @@ char *argv[];
 	  make_lvars (optarg, &fspec);
 	  break;
 	case 'd':		/* specify precision for floats */
+#ifdef OLD_WAY
 	  set_sigdigs(optarg, &fspec);
+#else /* OLD_WAY */
+	  set_sigdigs(optarg);
+#endif /* OLD_WAY */
 	  break;
 	case '?':
 	  usage();
