@@ -34,8 +34,6 @@ Vdata/Vgroup attribute routines (see man pages for more info)
 ----------------------------------------------------------
   intn VSfindex(int32 vsid, char *fieldname, int32 *fldindex)
        find out the index of a field given the field name.
-  int32 VSQuerynfields(int32 vsid)
-       get number of fields of a vdata. 
   intn VSsetattr(int32 vsid, int32 findex, char *attrname, 
                  int32 datatype, int32 count, VOIDP values)
        set attr for a field of a vdata or for the vdata.
