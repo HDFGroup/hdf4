@@ -351,6 +351,27 @@ main(int argc, char *argv[])
                                       merge_blocks(&dlist[i], infile, outfile);
                                   }
                                 break;
+                            case SPECIAL_COMP:  /* This code assumes that you'd like to leave the compressed data that way and not expand it */
+                                {
+                                    int32 aid, len;
+                                    VOIDP *buf;
+
+                                    /* Read in old compressed data description */
+                                    if((aid=Hstartaccess(infile,dlist[i].tag,dlist[i].ref,DFACC_READ))==FAIL)
+                                        continue;
+                                    HQuerylength(aid,&len);
+                                    buf=HDmalloc(len);
+                                    Hread(aid,len,buf);
+                                    Hendaccess(aid);
+
+                                    /* Write compressed data description into new file */
+                                    if((aid=Hstartaccess(outfile,dlist[i].tag,dlist[i].ref,DFACC_WRITE))==FAIL)
+                                        continue;
+                                    Hwrite(aid,len,buf);
+                                    Hendaccess(aid);
+                                    HDfree(buf);
+                                }
+                                break;
                             default:
                                 merge_blocks(&dlist[i], infile, outfile);
                                 break;
