@@ -50,6 +50,5 @@ mfhdf/dumper/tdfr8f.hdf -text
 mfhdf/dumper/test.hdf -text
 mfhdf/dumper/tvattr.hdf -text
 mfhdf/dumper/tvset.hdf -text
-mfhdf/libsrc/test.nc -text
 mfhdf/libsrc/test_cdf.sav -text
 mfhdf/xdr/test_xdr.sav svneol=native#unset
