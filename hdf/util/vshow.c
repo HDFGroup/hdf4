@@ -170,6 +170,7 @@ char**av;
       vsid = lonevs[i];
       if( NULL == ( vs = (VDATA *) VSattach(f,lonevs[i],"r"))) {
         printf("cannot open vs id=%d\n",vsid);
+        continue;
       }
       VSinquire (vs, &nv,&interlace, fields, &vsize, vsname);
       if (strlen(vsname)==0)  strcat(vsname,"NoName");
@@ -202,7 +203,7 @@ int32 fmtint(x)
      char* x;
 {	
   int aint;
-  movebytes(x, (unsigned char *)&aint, sizeof(int)); 
+  memcpy((unsigned char *)&aint, x, sizeof(int)); 
   cn += printf("%d",aint); 
   return(1);  
 }
@@ -211,7 +212,7 @@ int32 fmtfloat(x)
      char* x;
 {
   float afloat;
-  movebytes(x, (unsigned char *) &afloat, sizeof(float)); 
+  memcpy((unsigned char *) &afloat, x, sizeof(float)); 
   cn += printf("%f",afloat); 
   return(1);  
 }
@@ -220,7 +221,7 @@ int32 fmtlong(x)
      char* x;   
 {	
   long along;
-  movebytes(x, (unsigned char *) &along, sizeof(long)); 
+  memcpy((unsigned char *) &along, x, sizeof(long)); 
   cn += printf("%ld",along); 
   return(1);  
 }
@@ -229,7 +230,7 @@ int32 fmtshort(x)
      char* x;   
 {	
   short ashort;
-  movebytes(x, (unsigned char *) &ashort, sizeof(short)); 
+  memcpy((unsigned char *) &ashort, x, sizeof(short)); 
   cn += printf("%d",ashort); 
   return(1);  
 }
@@ -237,7 +238,7 @@ int32 fmtshort(x)
 int32 fmtdouble(x) char*x;
 {	
   double adouble;
-  movebytes(x, (unsigned char *) &adouble, sizeof(double)); 
+  memcpy((unsigned char *) &adouble, x, sizeof(double)); 
   cn += printf("%f",adouble); 
   return(1);  
 }
