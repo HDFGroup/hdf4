@@ -1050,7 +1050,7 @@ uint32    count;
             /* convert the fill-values, if necessary */
             if(convert) {
                 DFKsetNT(vp->HDFtype); /* added back here -GV */
-                DFKnumout((uint8 *) tValues, tBuf, (uint32) (chunk_size/vp->HDFsize), 0, 0);
+                DFKnumout((uint8 *)tBuf, tValues, (uint32) (chunk_size/vp->HDFsize), 0, 0);
                 write_buf=(uint8 *)tValues;
               } /* end if */
             else
@@ -1152,7 +1152,7 @@ CM_HDFtype = vp->HDFtype;
             /* convert the fill-values, if necessary */
             if(convert) {
                 DFKsetNT(vp->HDFtype); /* added back here -GV */
-                DFKnumout((uint8 *) tValues, tBuf, (uint32) (chunk_size/vp->HDFsize), 0, 0);
+                DFKnumout((uint8 *) tBuf, tValues, (uint32) (chunk_size/vp->HDFsize), 0, 0);
                 write_buf=(uint8 *)tValues;
               } /* end if */
             else
