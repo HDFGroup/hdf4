@@ -107,11 +107,11 @@ char**av;
   
 void showfmttypes() {
 	fprintf(stderr,"\tvalid fmt types: \n");
-	fprintf(stderr,"\t  c - char (text) \n");
-	fprintf(stderr,"\t  b - byte \n"); 
-	fprintf(stderr,"\t  d - integer \n");
-	fprintf(stderr,"\t  l - long (32)\n");
-	fprintf(stderr,"\t  f - float \n");
+	fprintf(stderr,"\t  c - char    (char in HDF file)    \n");
+	fprintf(stderr,"\t  b - byte    (int8 in HDF file)    \n"); 
+	fprintf(stderr,"\t  s - short   (int16 in HDF file)   \n");
+	fprintf(stderr,"\t  l - long    (int32 in HDF file)   \n");
+	fprintf(stderr,"\t  f - float   (float32 in HDF file) \n");
 	}
 
 #if defined ( PROTOTYPE ) && ! defined ( CONVEX )
@@ -139,7 +139,7 @@ int show_help_msg()
   printf("\nTo create a vdata, vmake reads ascii data from stdin\n");
   
   printf("EXAMPLES:\n");
-  printf("\t cat dat.txt | vmake hh.hdf \"triangles\" \"PLIST3=3d\"\n");
+  printf("\t cat dat.txt | vmake hh.hdf \"triangles\" \"PLIST3=3l\"\n");
   printf("\t vmake abc.hdf \"xyvals\" \"X=d,Y=f\" < abc.dat\n");
   printf("\n");
   
@@ -167,9 +167,9 @@ int32 vgid, n, ids[];
 	if (f == FAIL) {
 	  fprintf(stderr,"cannot open %s.  \n",hfile); exit(0); 
 	  }
-
+        Vinitialize(f);
   vgmain = Vattach(f,vgid,"w");
-  if(vgmain==FAIL) { fprintf(stderr, "0\n"); Hclose(f); exit(-1);}
+  if(vgmain==FAIL) { fprintf(stderr, "0\n"); Vfinish(f); Hclose(f); exit(-1);}
 
     for(i=0;i<n;i++) {
         if( -1 != vexistvg(f,(uint16)ids[i])) {
@@ -197,6 +197,7 @@ int32 vgid, n, ids[];
     }
 
   Vdetach(vgmain);
+  Vfinish(f);
   Hclose(f);
 
   if (err) exit(-1); 
@@ -225,13 +226,13 @@ char * vgname;
   if (f==FAIL) {
 	  fprintf(stderr,"cannot open %s. \n",hfile); exit(0); 
 	  }
-
+  Vinitialize(f);
   vg = Vattach(f,-1,"w");
   if (vg==FAIL) { fprintf(stderr,"cannot attach vg\n"); exit(0); }
   ref = VQueryref(vg);
   Vsetname(vg,vgname);
   Vdetach(vg);
-
+  Vfinish(f);
   Hclose(f);
   fprintf(stderr,"%d\n",ref);
   return(1);
@@ -268,7 +269,7 @@ char * format;
   if ( (f=Hopen(hfile,DFACC_ALL,0))==FAIL) {
 	  fprintf(stderr,"cannot open %s.  \n",hfile); exit(-1); 
 	  }
-
+  Vinitialize(f);
   vs = VSattach(f,-1,"w");
   ref = VSQueryref(vs);
 
@@ -277,14 +278,12 @@ printf("vsadd: ref is %d\n",ref);
   allfields[0] = '\0';
   for (i=0;i<nfld;i++) {
 	  switch (type[i]) {
-		  case 'c': ftype = LOCAL_CHARTYPE;  break;
-		  case 'd': ftype = LOCAL_INTTYPE;   break;
-		  case 'f': ftype = LOCAL_FLOATTYPE; break;
-		  case 'l': ftype = LOCAL_LONGTYPE;  break;
-		  
-		  case 'b': ftype = LOCAL_BYTETYPE;  break; 
-		  case 's': ftype = LOCAL_SHORTTYPE;  break; 
-		  case 'D': ftype = LOCAL_DOUBLETYPE;  break; 
+		  case 'c': ftype = DFNT_CHAR;       break;
+		  case 's': ftype = DFNT_INT16;      break;
+		  case 'f': ftype = DFNT_FLOAT32;    break;
+		  case 'l': ftype = DFNT_INT32;      break;
+		  case 'b': ftype = DFNT_INT8;       break; 
+		  case 'D': ftype = DFNT_DOUBLE;     break; 
 
 		  default:  fprintf(stderr,"bad type [%c]\n",type[i]); 
 						showfmttypes();
@@ -305,12 +304,12 @@ printf("vsadd: ref is %d\n",ref);
   while( (n = inpdata(&buf)) > 0) {
 	 /*  printf("inpdata rets n=%d .. ",n); */
     stat = VSwrite(vs,buf,n,FULL_INTERLACE);
-     printf("+%d",stat); 
+     printf("+%d  \n",stat); 
 	 nwritten +=n;
 	 if (stat < 1) fprintf(stderr,"Vswrite stat=%d\n",stat);
 	 }
   VSdetach(vs);
-
+  Vfinish(f);
   Hclose(f);
   fprintf(stderr,"%d\n",ref,nwritten);
   return;
@@ -335,23 +334,61 @@ static int  ntotal = 0;
 
 /* scanf functions */
 #ifdef PROTOTYPE
-static int32 inpint  (int *x)
+static int32 inplong  (int32 *x)
 #else
-static int32 inpint  (x)
-int  *x;
+static int32 inplong  (x)
+int32  *x;
 #endif
 {
-    return(scanf ("%d ",x));
+int val, ret;
+
+    ret = scanf ("%ld ",&val);
+    *x = (int32)val;
+    return(ret);
 }
 
 #ifdef PROTOTYPE
-static int32 inpfloat(float *x)
+static int32 inpshort  (int16 *x)
 #else
-static int32 inpfloat(x)
-float*x;
+static int32 inpshort  (x)
+short  *x;
 #endif
 {
-    return(scanf ("%f ",x));
+int ret, val;
+
+    ret = scanf ("%d ", &val);
+    *x = (int16)val;
+    return(ret);
+}
+
+#ifdef PROTOTYPE
+static int32 inpbyte  (int8 *x)
+#else
+static int32 inpbyte  (x)
+int8  *x;
+#endif
+{
+int ret;
+int val;
+
+    ret = scanf ("%d ", &val);
+    *x = (int8)val;
+    return(ret);
+}
+
+#ifdef PROTOTYPE
+static int32 inpfloat(float32 *x)
+#else
+static int32 inpfloat(x)
+float32 *x;
+#endif
+{
+int ret;
+float val;
+
+    ret = scanf ("%f ", &val);
+    *x = (float32)val;
+    return(ret);
 }
 
 #ifdef PROTOTYPE
@@ -364,15 +401,6 @@ char *x;
     return(scanf ("%c ",x));
 }
 
-#ifdef PROTOTYPE
-static int32 inplong (long *x)
-#else
-static int32 inplong (x)
-long *x;
-#endif
-{
-    return(scanf ("%ld ",x));
-}
 
 #define BUFSIZE 40000
 unsigned char inpbuffer[BUFSIZE];
@@ -398,11 +426,11 @@ int32 inpdata (bp)
 			  break;
 
 		   case 'b':
-			  inpfn[i]  = inpchar; inpsiz[i] = sizeof(char);
+			  inpfn[i]  = inpbyte; inpsiz[i] = sizeof(int8);
 			  break;
 
-		   case 'd':
-		     inpfn[i]  = inpint; inpsiz[i] = sizeof(int);
+		   case 's':
+		          inpfn[i]  = inpshort; inpsiz[i] = sizeof(short);
 			  break;
 
 		   case 'l':
