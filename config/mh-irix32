@@ -2,6 +2,9 @@
 #
 # Machine/OS: SGI/IRIX 6.0 (32-bit mode)
 #
+# If you prefer other 32 bit option like -n32, replace '-32' in
+# the following CFLAGS and FFLAGS.
+#
 # You can override the following variables here
 #
 # Compiliers:
@@ -9,7 +12,7 @@
 #CC=gcc
 #CFLAGS=-ansi 
 #
-#Using ANSI compilier for 32-bit mode
+# Using ANSI compilier for 32-bit mode
 CC=cc
 CFLAGS=-ansi -32
 
