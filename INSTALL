@@ -1,3 +1,10 @@
+Obtaining the latest version
+----------------------------
+    The most recent version of the distribution can be obtained from
+the NCSA ftp archive site at:
+
+     ftp://ftp.ncsa.uiuc.edu/HDF/HDF4.0.beta
+
 Installing HDF/netCDF	
 =====================
 
@@ -6,6 +13,10 @@ Installing HDF/netCDF
 
 Supported Platforms
 ===================
+
+  For PLATFORM specific NOTES see the section below called
+  'Platform-specific Notes'.
+
 
   Platform(OS)            C-Compilier  Fortran-Compilier   libdf.a   libmfhdf.a
   ------------            -----------  -----------------   -------   -----------
@@ -24,7 +35,10 @@ Supported Platforms
   DEC Alpha/OSF1/1 v3.0       CC 3.11         -               X         X
   DecStation/MIPSEL           CC              -
   IBM PC - Intel Pentium
-       Linux
+       Solarisx86             GCC 2.6.3       -               X         X
+       Linux                  GCC         Fortran compilier   X         X
+                                             2.6.2
+                                 (Fortran to C converter)
        Windows NT/95        Visual C++ 2.0    -               X         X(C only)
        Free BSD 2.0         GCC 2.6.2     Fortran compiler    X         X
                                              2.6.2
@@ -47,16 +61,16 @@ Requirements
 
       * Fortran 77 compilier if you want fortran support. See above
         table for platforms where fortran is supported. You can
-        compile 'libdf.a'(HDF library) without fortran support by using the
-        make target 'allnofortran' e.g. 'make allnofortran'. If there is no
-        fortran compilier the 'configure' script on the netCDF side of the  
-        distribution(mfhdf) should detect that absence and configure the
-        package accordingly. See below for further details of
-        configuration and installation.
+        compile both libraries without fortran support by setting 
+        the fortran compilier variable 'FC = NONE' in the respective
+        makefile fragment(mh-<os>) found in the toplevel 'config'
+        directory(config/mh-<os>).
+
+        See below for further details of configuration and installation.
         
 
-Configuration/Installation - Unix
-=================================
+General Configuration/Installation - Unix
+=========================================
 
     Overview
     --------        
@@ -158,9 +172,44 @@ Configuration/Installation - Unix
 
         make install
 
-Configuration/Installation - Windows '95 or Windows NT
-======================================================
+Platform-specific Notes
+========================
+    HPUX(9.03) on PA-RISC
+    ---------------------
+    The distribution has been compilied/tested with both the native
+    ANSI-C compilier and GCC 2.6.3. In both cases the native fortran
+    compilier f77 was used. The binary distribution was compilied
+    using the native compiliers.
 
+    IRIX(5.2) on MIPS
+    -----------------
+    The distribution has been compilied/tested with the native
+    ANSI-C compilier and the fortran compilier. There is 
+    a ansi prototype clash with the XDR header files on this version 
+    of the OS that as been fixed in IRIX 5.3. It is recommended the 
+    OS be upgraded to IRIX 5.3. Due to the ansi prototype clash, 
+    the netCDF xdr tests will not compile with the -ansi option. To get 
+    around this you can compile this test using the -cckr option and 
+    then compile/run the remainder of the tests using the regular
+    -ansi option. Note that the library compilies fine but that the 
+    xdr netCDF test does not without the above fix. The binary 
+    distribution was compilied using the native compiliers.
+
+    Solaris(2.3) on Sparc
+    ---------------------
+    The distribution has been compilied/tested with the native
+    ANSI-C compilier and native fortran compilier. The binary 
+    distribution was compilied using the native compiliers.
+
+    Solaris(2.4) on INTEL(x86)
+    ---------------------------
+    The distribution has been compilied/tested with GCC 2.6.3 with
+    NO fortran support. The binary distribution was compilied
+    using GCC 2.6.3.
+
+
+    Windows '95 or Windows NT
+    -------------------------
     To install on a Windows '95 or Windows NT machine, read the seperate
     installation instructions for Windows NT:
       
