@@ -6167,10 +6167,10 @@ SDsetchunkcache(int32 sdsid,     /* IN: access aid to mess with */
     SDS has not been written with data, and FALSE, otherwise. 
 
  RETURNS
-	SUCCEED/FAIL
+    SUCCEED/FAIL
 
  AUTHOR
-	bmribler - 9-01-98
+    bmribler - 9-01-98
         
  MODIFICATION
     bmribler - 9/29/2004
@@ -6236,5 +6236,69 @@ done:
     /* Normal cleanup */
     return ret_value;
 } /* SDcheckempty */
+
+/******************************************************************************
+ NAME
+	SDidtype -- returns the type of an id
+
+ DESCRIPTION
+    Given an id, return its type, which is either an SD id, an SDS id, or
+    a dimension id, or indicate that it is not a valid SD API id.
+
+ RETURNS
+    A value of type id_type_t, which can be either of the following:
+    SD_ID, SDS_ID, DIM_ID, NOT_SDAPI_ID.
+
+ AUTHOR
+    bmribler - 1-19-2005
+        
+ MODIFICATION
+
+******************************************************************************/
+id_type_t SDidtype(int32 an_id)
+{
+    CONSTR(FUNC, "SDidtype");	/* for HGOTO_ERROR */
+    NC     *handle = NULL;	/* file record struct */
+    id_type_t ret_value = NOT_SDAPI_ID;
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDidtype: I've been called\n");
+#endif
+
+    /* Assuming that the id is an SD id, get and check the handle */
+    handle = SDIhandle_from_id(an_id, CDFTYPE);
+
+    /* If it is, indicate so */
+    if(handle != NULL)
+	ret_value = SD_ID;
+
+    /* otherwise, check further... */
+    else
+    {
+	/* Assuming that it is an SDS id, get and check the handle */
+	handle = SDIhandle_from_id(an_id, SDSTYPE);
+
+	/* If it is, indicate so */
+	if(handle != NULL)
+            ret_value = SDS_ID;
+
+	/* otherwise, check if it is a dimension id, or just not valid */
+	else
+	{
+            handle = SDIhandle_from_id(an_id, DIMTYPE);
+            if(handle != NULL)
+		ret_value = DIM_ID;
+	    else
+		ret_value = NOT_SDAPI_ID;
+        }
+    }
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+    return ret_value;
+} /* SDidtype */
 
 #endif /* HDF */

@@ -56,6 +56,15 @@
 #define SD_DIMVAL_BW_INCOMP  0
 #define SD_RAGGED    -1  /* marker for ragged dimension */
 
+/* enumerated types for various types of ids in SD interface */
+typedef enum
+{
+    NOT_SDAPI_ID = -1,	/* not an SD API id */
+    SD_ID = 0,		/* SD id */
+    SDS_ID,		/* SDS id */
+    DIM_ID		/* Dimension id */
+} id_type_t;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -198,6 +207,9 @@ HDFLIBAPI intn SDisdimval_bwcomp
 
 HDFLIBAPI int32 SDcheckempty
     (int32 sdsid, intn *emptySDS);
+
+HDFLIBAPI id_type_t SDidtype
+    (int32 an_id);
 
 /*====================== Chunking Routines ================================*/
 
