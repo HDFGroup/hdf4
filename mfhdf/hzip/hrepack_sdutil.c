@@ -385,7 +385,6 @@ int set_szip(int32 rank,
              comp_info *c_info)
 {
  int   i;
- int32 pixels_per_block;
 
  /*
  pixels_per_scanline = size of the fastest-changing dimension 
@@ -410,19 +409,7 @@ int set_szip(int32 rank,
   pixels_per_block must be an even number, and <= pixels_per_scanline 
   and <= MAX_PIXELS_PER_BLOCK
   */
-
- pixels_per_block=16;
- if (pixels_per_block > c_info->szip.pixels_per_scanline)
- {
-  do {
-   pixels_per_block-=2;
-   if (pixels_per_block==2)
-    break;
-  }
-   while (pixels_per_block > c_info->szip.pixels_per_scanline);
- }
-
- c_info->szip.pixels_per_block=pixels_per_block;
+ c_info->szip.pixels_per_block=2;
 
  if (c_info->szip.pixels_per_block > c_info->szip.pixels_per_scanline)
  {

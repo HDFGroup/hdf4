@@ -66,6 +66,11 @@ void add_gr(char* gr_name,           /* gr name */
 
 void add_pal(char* fname);
 
+void add_sd_szip_all(char *fname,             /* file name */
+                     int32 file_id,           /* file ID */
+                     int32 vgroup_id          /* group ID */
+                     );
+
 
 /* read image data */
 int  read_data(char* file_name);

@@ -28,6 +28,13 @@ unsigned char *image_data = 0;
 
 
 
+static void set_chunk_def( int32 comp_type, 
+                           int32 *dim,
+                           int32 ncomps,
+                           int32 bits_per_pixel, /* for szip */
+                           HDF_CHUNK_DEF *chunk_def );
+
+
 /*-------------------------------------------------------------------------
  * Function: add_gr_ffile
  *
@@ -557,9 +564,7 @@ void add_sd(char *fname,             /* file name */
             comp_info *comp_info     /* compression structure */ )
 
 {
- intn   status_n;     /* returned status_n for functions returning an intn  */
- int32  status_32,    /* returned status_n for functions returning an int32 */
-        sd_id,        /* SD interface identifier */
+ int32  sd_id,        /* SD interface identifier */
         sds_id,       /* data set identifier */
         sds_ref,      /* reference number of the data set */
         dim_sds[2],   /* dimension of the data set */
@@ -570,13 +575,13 @@ void add_sd(char *fname,             /* file name */
         start[2],     /* write start */
         edges[2],     /* write edges */
         fill_value=2, /* fill value */
-        data[Y_DIM][X_DIM];
+        data[Y_DIM][X_DIM],
+        bits_per_pixel=32;
  float32 sds_values[2] = {2., 10.}; /* values of the SDS attribute  */
  int16   data_X[X_DIM];             /* X dimension dimension scale */
  float64 data_Y[Y_DIM];             /* Y dimension dimension scale */
  int     i, j;
  HDF_CHUNK_DEF chunk_def;           /* Chunking definitions */ 
- int32         pixels_per_scanline;
 
  /* set the size of the SDS's dimension */
  dim_sds[0] = Y_DIM;
@@ -597,30 +602,15 @@ void add_sd(char *fname,             /* file name */
   break;
   
  case COMP_CODE_SZIP:
-  pixels_per_scanline = dim_sds[1];
+  comp_info->szip.pixels_per_scanline = dim_sds[1];
   comp_info->szip.pixels = dim_sds[0]*dim_sds[1];
   comp_info->szip.pixels_per_block = 2;
-  if(pixels_per_scanline >=2048)
-   comp_info->szip.pixels_per_scanline = 512;
-  else
-   comp_info->szip.pixels_per_scanline = dim_sds[1];
   comp_info->szip.options_mask = NN_OPTION_MASK;
   comp_info->szip.options_mask |= RAW_OPTION_MASK;
   comp_info->szip.bits_per_pixel = 32;
   break;
  }
  
- /* Define chunk's dimensions */
- chunk_def.chunk_lengths[0] = Y_DIM/2;
- chunk_def.chunk_lengths[1] = X_DIM/2;
- /* To use chunking with RLE, Skipping Huffman, and GZIP compression */
- chunk_def.comp.chunk_lengths[0] = Y_DIM/2;
- chunk_def.comp.chunk_lengths[1] = X_DIM/2;
- 
- /* GZIP compression, set compression type, flag and deflate level*/
- chunk_def.comp.comp_type = COMP_CODE_DEFLATE;
- chunk_def.comp.cinfo.deflate.level = 6;             
-
  /* data set data initialization */
  for (j = 0; j < Y_DIM; j++) {
   for (i = 0; i < X_DIM; i++)
@@ -638,15 +628,33 @@ void add_sd(char *fname,             /* file name */
 
  /* set chunk */
  if ( (chunk_flags == HDF_CHUNK) || (chunk_flags == (HDF_CHUNK | HDF_COMP)) )
-  status_n = SDsetchunk (sds_id, chunk_def, chunk_flags);
+ {
+  set_chunk_def(comp_type, 
+                dim_sds,
+                1,
+                bits_per_pixel,
+                &chunk_def);
+  if (SDsetchunk (sds_id, chunk_def, chunk_flags)==FAIL)  {
+   printf( "Failed to set chunk for SDS <%s>\n", sds_name);
+   goto fail;
+  }
+ }
  
  /* use compress without chunk-in */
- else if ( (chunk_flags==HDF_NONE || chunk_flags==HDF_CHUNK) && 
-            comp_type>COMP_CODE_NONE && comp_type<COMP_CODE_INVALID)
-  status_n = SDsetcompress (sds_id, comp_type, comp_info); 
+ else if ( chunk_flags==HDF_NONE && 
+           comp_type>COMP_CODE_NONE && comp_type<COMP_CODE_INVALID)
+ {
+  if(SDsetcompress (sds_id, comp_type, comp_info)==FAIL){
+   printf( "Failed to set compress for SDS <%s>\n", sds_name);
+   goto fail;
+  } 
+ }
 
  /* set a fill value */
- status_n = SDsetfillvalue (sds_id, (VOIDP)&fill_value);
+ if (SDsetfillvalue (sds_id, (VOIDP)&fill_value)==FAIL){
+   printf( "Failed to set compress for SDS <%s>\n", sds_name);
+   goto fail;
+  } 
   
  /* define the location and size of the data to be written to the data set */
  start[0] = 0;
@@ -655,11 +663,17 @@ void add_sd(char *fname,             /* file name */
  edges[1] = X_DIM;
  
  /* write the stored data to the data set */
- status_n = SDwritedata (sds_id, start, NULL, edges, (VOIDP)data);
+ if (SDwritedata (sds_id, start, NULL, edges, (VOIDP)data)==FAIL){
+   printf( "Failed to set write for SDS <%s>\n", sds_name);
+   goto fail;
+  } 
 
 /* assign an attribute to the SDS */
  n_values = 2;
- status_n = SDsetattr (sds_id, "Valid_range", DFNT_FLOAT32, n_values, (VOIDP)sds_values);
+ if (SDsetattr(sds_id,"Valid_range",DFNT_FLOAT32,n_values,(VOIDP)sds_values)==FAIL){
+   printf( "Failed to set attr for SDS <%s>\n", sds_name);
+   goto fail;
+  } 
    
 /*  For each dimension of the data set specified in SDS_NAME,
  *  get its dimension identifier and set dimension name
@@ -676,16 +690,36 @@ void add_sd(char *fname,             /* file name */
   switch (dim_index)
   {
   case 0: 
-   status_n = SDsetdimname (dim_id, "Y_Axis");
    n_values = Y_DIM;
-   status_n = SDsetdimscale (dim_id,n_values,DFNT_FLOAT64,(VOIDP)data_Y);  
-   status_n = SDsetattr (dim_id, "info", DFNT_CHAR8, 7,"meters");
+   
+   if (SDsetdimname (dim_id, "Y_Axis")==FAIL){
+    printf( "Failed to set dims for SDS <%s>\n", sds_name);
+    goto fail;
+   } 
+   if (SDsetdimscale (dim_id,n_values,DFNT_FLOAT64,(VOIDP)data_Y)==FAIL){
+    printf( "Failed to set dims for SDS <%s>\n", sds_name);
+    goto fail;
+   }   
+   if (SDsetattr (dim_id, "info", DFNT_CHAR8, 7,"meters")==FAIL){
+    printf( "Failed to set dims for SDS <%s>\n", sds_name);
+    goto fail;
+   } 
    break;
   case 1: 
-   status_n = SDsetdimname (dim_id, "X_Axis");
    n_values = X_DIM; 
-   status_n = SDsetdimscale (dim_id,n_values,DFNT_INT16,(VOIDP)data_X);
-   status_n = SDsetattr (dim_id, "info", DFNT_CHAR8, 5,"feet");
+
+   if (SDsetdimname (dim_id, "X_Axis")==FAIL){
+    printf( "Failed to set dims for SDS <%s>\n", sds_name);
+    goto fail;
+   } 
+   if (SDsetdimscale (dim_id,n_values,DFNT_INT16,(VOIDP)data_X)==FAIL){
+    printf( "Failed to set dims for SDS <%s>\n", sds_name);
+    goto fail;
+   } 
+   if (SDsetattr (dim_id, "info", DFNT_CHAR8, 5,"feet")==FAIL){
+    printf( "Failed to set dims for SDS <%s>\n", sds_name);
+    goto fail;
+   } 
    break;
   default: 
    break;
@@ -701,16 +735,32 @@ void add_sd(char *fname,             /* file name */
  
  /* add the SDS to the vgroup. the tag DFTAG_NDG is used */
  if (vgroup_id)
-  status_32 = Vaddtagref (vgroup_id, TAG_GRP_DSET, sds_ref);
+  if (Vaddtagref (vgroup_id, TAG_GRP_DSET, sds_ref)==FAIL){
+    printf( "Failed to add ref for SDS <%s>\n", sds_name);
+    goto fail;
+   } 
  
  /* add an annotation and label to the object */
  add_an(file_id, TAG_GRP_DSET, sds_ref);
- 
+
  /* terminate access to the SDS */
- status_n = SDendaccess (sds_id);
+ if (SDendaccess (sds_id)==FAIL){
+  printf( "Failed to end SDS <%s>\n", sds_name);
+  goto fail;
+ } 
  
  /* terminate access to the SD interface */
- status_n = SDend (sd_id);
+ if (SDend (sd_id)==FAIL){
+  printf( "Failed to end SD <%s>\n", sds_name);
+  exit(1);
+ } 
+
+ return;
+
+fail:
+ SDendaccess (sds_id);
+ SDend (sd_id);
+ exit(1);
 }
 
 
@@ -741,9 +791,7 @@ void add_sd3d(char *fname,             /* file name */
               comp_info *comp_info     /* compression structure */ )
 
 {
- intn   status_n;     /* returned status_n for functions returning an intn  */
- int32  status_32,    /* returned status_n for functions returning an int32 */
-        sd_id,        /* SD interface identifier */
+ int32  sd_id,        /* SD interface identifier */
         sds_id,       /* data set identifier */
         sds_ref,      /* reference number of the data set */
         dim_sds[3],   /* dimension of the data set */
@@ -788,15 +836,28 @@ void add_sd3d(char *fname,             /* file name */
 
  /* set chunk */
  if ( (chunk_flags == HDF_CHUNK) || (chunk_flags == (HDF_CHUNK | HDF_COMP)) )
-  status_n = SDsetchunk (sds_id, chunk_def, chunk_flags);
+ {
+  if (SDsetchunk (sds_id, chunk_def, chunk_flags)==FAIL){
+   printf( "Failed to set chunk for SDS <%s>\n", sds_name);
+   goto fail;
+  } 
+ }
  
  /* use compress without chunk-in */
- else if ( (chunk_flags==HDF_NONE || chunk_flags==HDF_CHUNK) && 
+ else if ( (chunk_flags==HDF_NONE) && 
             comp_type>COMP_CODE_NONE && comp_type<COMP_CODE_INVALID)
-  status_n = SDsetcompress (sds_id, comp_type, comp_info); 
+ {
+  if (SDsetcompress (sds_id, comp_type, comp_info)==FAIL){
+   printf( "Failed to set compress for SDS <%s>\n", sds_name);
+   goto fail;
+  }  
+ }
 
  /* set a fill value */
- status_n = SDsetfillvalue (sds_id, (VOIDP)&fill_value);
+ if (SDsetfillvalue (sds_id, (VOIDP)&fill_value)==FAIL){
+  printf( "Failed to set fill for SDS <%s>\n", sds_name);
+  goto fail;
+ } 
   
  /* define the location and size of the data to be written to the data set */
  start[0] = 0;
@@ -804,7 +865,10 @@ void add_sd3d(char *fname,             /* file name */
  start[2] = 0;
  
  /* write the stored data to the data set */
- status_n = SDwritedata (sds_id, start, NULL, dim_sds, (VOIDP)data);
+ if (SDwritedata (sds_id, start, NULL, dim_sds, (VOIDP)data)==FAIL){
+  printf( "Failed to write SDS <%s>\n", sds_name);
+  goto fail;
+ } 
 
  /* obtain the reference number of the SDS using its identifier */
  sds_ref = SDidtoref (sds_id);
@@ -815,16 +879,32 @@ void add_sd3d(char *fname,             /* file name */
  
  /* add the SDS to the vgroup. the tag DFTAG_NDG is used */
  if (vgroup_id)
-  status_32 = Vaddtagref (vgroup_id, TAG_GRP_DSET, sds_ref);
+  if (Vaddtagref (vgroup_id, TAG_GRP_DSET, sds_ref)==FAIL){
+  printf( "Failed to set ref for SDS <%s>\n", sds_name);
+  goto fail;
+ } 
 
  /* add an annotation and label to the object */
  add_an(file_id, TAG_GRP_DSET, sds_ref);
  
  /* terminate access to the SDS */
- status_n = SDendaccess (sds_id);
+ if (SDendaccess (sds_id)==FAIL){
+  printf( "Failed to end SDS <%s>\n", sds_name);
+  goto fail;
+ } 
  
  /* terminate access to the SD interface */
- status_n = SDend (sd_id);
+ if (SDend (sd_id)==FAIL){
+  printf( "Failed to end SD <%s>\n", sds_name);
+  exit(1);
+ } 
+
+ return;
+
+fail:
+ SDendaccess (sds_id);
+ SDend (sd_id);
+ exit(1);
 }
 
 
@@ -1120,13 +1200,6 @@ void add_pal(char* fname)
 }
 
 
-
-
-
-
-
-
-
 /*-------------------------------------------------------------------------
  * read_data
  * utility function to read ASCII image data
@@ -1188,6 +1261,225 @@ int read_data(char* file_name)
  fclose(f);
 
  return 1;
+
+}
+
+
+
+
+/*-------------------------------------------------------------------------
+ * Function: add_sd_szip
+ *
+ * Purpose: utility function to write with SZIPed SDSs
+ *  SD - Multifile Scientific Data Interface,
+ *
+ * Return: void
+ *
+ * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
+ *
+ * Date: September 15, 2003
+ *
+ *-------------------------------------------------------------------------
+ */
+
+void add_sd_szip(char *fname,             /* file name */
+                 int32 file_id,           /* file ID */
+                 char* sds_name,          /* sds name */
+                 int32 vgroup_id,         /* group ID */
+                 int32 chunk_flags,       /* chunk flags */
+                 int32 nt,                /* number type */
+                 int32 bits_per_pixel,    /* szip parameter */
+                 int32 *dim,              /* dimension of the data set */
+                 void *data
+                 )
+
+{
+ int32  sd_id,        /* SD interface identifier */
+        sds_id,       /* data set identifier */
+        sds_ref,      /* reference number of the data set */
+        rank = 2;     /* rank of the data set array */
+ int32          comp_type;        /* compression flag */
+ comp_info      comp_info;        /* compression structure */
+ HDF_CHUNK_DEF  chunk_def;        /* chunking definitions */ 
+ int32 edges[2],        /* write edges */
+       start[2]={0,0};  /* write start */
+
+ edges[0]=dim[0]; edges[1]=dim[1];
+
+ comp_type = COMP_CODE_SZIP;
+ comp_info.szip.pixels_per_scanline = dim[1];
+ comp_info.szip.pixels = dim[0]*dim[1];
+ comp_info.szip.pixels_per_block = 2;
+ comp_info.szip.options_mask = NN_OPTION_MASK;
+ comp_info.szip.options_mask |= RAW_OPTION_MASK;
+ comp_info.szip.bits_per_pixel = bits_per_pixel;
+
+ /* initialize the SD interface */
+ sd_id = SDstart (fname, DFACC_WRITE);
+ 
+ /* create the SDS */
+ sds_id = SDcreate (sd_id, sds_name, nt, rank, dim);
+
+ /* set chunk */
+ if ( (chunk_flags == HDF_CHUNK) || (chunk_flags == (HDF_CHUNK | HDF_COMP)) )
+ {
+  set_chunk_def(comp_type, 
+                dim,
+                1,
+                bits_per_pixel,
+                &chunk_def);
+  if (SDsetchunk (sds_id, chunk_def, chunk_flags)==FAIL) {
+   printf( "Failed to set chunk for SDS <%s>\n",sds_name);
+   goto fail;
+  }
+ }
+ 
+ /* use compress without chunk-in */
+ else if ( chunk_flags==HDF_NONE && 
+           comp_type>COMP_CODE_NONE && comp_type<COMP_CODE_INVALID)
+ {
+  if (SDsetcompress (sds_id, comp_type, &comp_info)==FAIL) {
+   printf( "Failed to set compress for SDS <%s>\n",sds_name);
+   goto fail;
+  } 
+ }
+ 
+ /* write the stored data to the data set */
+ if (SDwritedata (sds_id, start, NULL, edges, (VOIDP)data)==FAIL) {
+   printf( "Failed to writer SDS <%s>\n",sds_name);
+   goto fail;
+  }
+
+ /* obtain the reference number of the SDS using its identifier */
+ sds_ref = SDidtoref (sds_id);
+ 
+#if defined( HZIP_DEBUG)
+ printf("add_sd %d\n",sds_ref); 
+#endif
+ 
+ /* add the SDS to the vgroup. the tag DFTAG_NDG is used */
+ if (vgroup_id) {
+  if (Vaddtagref (vgroup_id, TAG_GRP_DSET, sds_ref)==FAIL) {
+   printf( "Failed to set ref for SDS <%s>\n",sds_name);
+   goto fail;
+  }
+ }
+ 
+ /* terminate access to the SDS */
+ if (SDendaccess (sds_id)==FAIL) {
+  printf( "Failed to end SDS <%s>\n",sds_name);
+  goto fail;
+ }
+ 
+ /* terminate access to the SD interface */
+ if (SDend (sd_id)==FAIL) {
+  printf( "Failed to set chunk for SDS <%s>\n",sds_name);
+  exit(1);
+ }
+
+ return;
+
+fail:
+ SDendaccess (sds_id);
+ SDend (sd_id);
+ exit(1);
+}
+
+
+/*-------------------------------------------------------------------------
+ * Function: add_sd_szip_all
+ *
+ * Purpose: utility function to write several SZIPed SDSs
+ *  SD - Multifile Scientific Data Interface,
+ *
+ * Return: void
+ *
+ * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
+ *
+ * Date: September 15, 2003
+ *
+ *-------------------------------------------------------------------------
+ */
+
+/* dimensions */
+#define XD1     6
+#define YD1     4
+
+void add_sd_szip_all(char *fname,             /* file name */
+                     int32 file_id,           /* file ID */
+                     int32 vgroup_id          /* group ID */
+                     )
+{
+ int i, j;
+ {
+  int32 buf[YD1][XD1];
+  int32 dim[2]={YD1,XD1};
+  int32 bpp=32;
+  for (j = 0; j < YD1; j++) {
+   for (i = 0; i < XD1; i++)
+    buf[j][i] = (int32) (i + j) + 1;
+  }
+  add_sd_szip(fname,file_id,"dset32szip",vgroup_id,HDF_NONE,DFNT_INT32,bpp,dim,buf);
+ }
+
+}
+
+/*-------------------------------------------------------------------------
+ * Function: set_chunk_def
+ *
+ * Purpose: set chunk parameters. used by GR and SDS
+ *
+ * Return: void
+ *
+ * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
+ *
+ * Date: September 15, 2003
+ *
+ *-------------------------------------------------------------------------
+ */
+
+
+static void set_chunk_def( int32 comp_type, 
+                           int32 *dim,
+                           int32 ncomps,
+                           int32 bits_per_pixel, /* for szip */
+                           HDF_CHUNK_DEF *chunk_def )
+{
+ 
+ /* Define chunk's dimensions */
+chunk_def->chunk_lengths[0] = dim[0]/2;
+chunk_def->chunk_lengths[1] = dim[1]/2;
+ /* To use chunking with RLE, Skipping Huffman, GZIP, SZIP compression */
+chunk_def->comp.chunk_lengths[0] = dim[0]/2;
+chunk_def->comp.chunk_lengths[1] = dim[1]/2;
+ 
+ /*define some compression specific parameters */
+ switch(comp_type)
+ {
+ case COMP_CODE_RLE:
+ chunk_def->comp.comp_type = COMP_CODE_RLE;
+  break;
+  
+ case COMP_CODE_SKPHUFF:
+ chunk_def->comp.comp_type = COMP_CODE_SKPHUFF;
+ chunk_def->comp.cinfo.skphuff.skp_size = 1;
+  break;
+  
+ case COMP_CODE_DEFLATE:
+  /* GZIP compression, set compression type, flag and deflate level*/
+ chunk_def->comp.comp_type = COMP_CODE_DEFLATE;
+ chunk_def->comp.cinfo.deflate.level = 6;
+  break;
+  
+ case COMP_CODE_SZIP:
+ chunk_def->comp.cinfo.szip.pixels = dim[0]*dim[1]*ncomps;
+ chunk_def->comp.cinfo.szip.pixels_per_block = 2;
+ chunk_def->comp.cinfo.szip.pixels_per_scanline = dim[1];
+ chunk_def->comp.cinfo.szip.options_mask = NN_OPTION_MASK;
+ chunk_def->comp.cinfo.szip.options_mask |= RAW_OPTION_MASK;
+ chunk_def->comp.cinfo.szip.bits_per_pixel = bits_per_pixel;
+  break;
+ }
 
 }
 
