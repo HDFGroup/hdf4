@@ -18,13 +18,15 @@
 static int condensed;
 
 int32 vsdumpfull
-  PROTO((VDATA * vs)); 
+  PROTO((int32 vs)); 
 
 main(ac,av) int ac; 
 char**av;
 {
-  VGROUP	   *vg, *vgt;
-  VDATA  		*vs;
+  int32	vg, vgt;
+  int32 vgotag,vgoref;
+  int32 vs;
+  int32 vsotag,vsoref;
   HFILEID		f;
   int32 vgid = -1;
   int32 vsid = -1;
@@ -66,22 +68,24 @@ char**av;
   
   nvg=0;
   while( (vgid = Vgetid(f,vgid)) != -1) {
-    vg = (VGROUP*) Vattach(f,vgid,"r");
+    vg = Vattach(f,vgid,"r");
     if(vg==NULL) {
       printf("cannot open vg id=%d\n",vgid);
     }
     Vinquire(vg,&n, vgname);
+    Vgetotag(vg,&vgotag);
+    Vgetoref(vg,&vgoref);
     Vgetclass(vg, vgclass); 
     if (HDstrlen(vgname)==0)  HDstrcat(vgname,"NoName");
     printf("\nvg:%d <%d/%d> (%s {%s}) has %d entries:\n",
-           nvg, vg->otag, vg->oref, vgname, vgclass,n);
+           nvg, vgotag, vgoref, vgname, vgclass,n);
     
     for (t=0; t< Vntagrefs(vg); t++) {
       Vgettagref(vg, t, &vstag, &vsid);
       
       /* ------ V D A T A ---------- */
       if (vstag==VSDESCTAG)  {  
-        vs = (VDATA *) VSattach(f,vsid,"r");
+        vs = VSattach(f,vsid,"r");
 
         if(vs==NULL) {
           printf("cannot open vs id=%d\n",vsid);
@@ -89,20 +93,22 @@ char**av;
         }
 
         VSinquire(vs, &nv,&interlace, fields, &vsize, vsname);
+	VSgetotag(vs, &vsotag);
+	VSgetoref(vs, &vsoref);
         if (HDstrlen(vsname)==0)  HDstrcat(vsname,"NoName");
         VSgetclass(vs,vsclass); 
         printf("  vs:%d <%d/%d> nv=%d i=%d fld [%s] vsize=%d (%s {%s})\n",
-                t, vs->otag, vs->oref, nv, interlace, fields, vsize, vsname, vsclass);
+                t, vsotag, vsoref, nv, interlace, fields, vsize, vsname, vsclass);
         
         if(fulldump && vsno==0) vsdumpfull(vs);
-        else if(fulldump && vsno==vs->oref) vsdumpfull(vs);
+        else if(fulldump && vsno==vsoref) vsdumpfull(vs);
         
         VSdetach(vs);
       }
       else 
         if (vstag==VGDESCTAG)  {  
           /* ------ V G R O U P ----- */
-          vgt = (VGROUP*) Vattach(f,vsid,"r");
+          vgt = Vattach(f,vsid,"r");
           
           if(vgt==NULL) {
             printf("cannot open vg id=%d\n",vsid);
@@ -111,9 +117,11 @@ char**av;
           
           Vinquire(vgt, &ne, vgname);
           if (HDstrlen(vgname)==0)  HDstrcat(vgname,"NoName");
+	  Vgetotag(vgt,&vgotag);
+	  Vgetoref(vgt,&vgoref);
           Vgetclass(vgt, vgclass);
           printf("  vg:%d <%d/%d> ne=%d (%s {%s})\n",
-                 t, vgt->otag, vgt->oref, ne,  vgname, vgclass );
+                 t, vgotag, vgoref, ne,  vgname, vgclass );
           Vdetach(vgt);
         }
         else { 
@@ -145,17 +153,19 @@ char**av;
     VSlone(f,lonevs, nlone);
     for(i=0; i<nlone;i++) {
       vsid = lonevs[i];
-      if( NULL == ( vs = (VDATA *) VSattach(f,lonevs[i],"r"))) {
+      if( FAIL == ( vs = VSattach(f,lonevs[i],"r"))) {
         printf("cannot open vs id=%d\n",vsid);
         continue;
       }
       VSinquire (vs, &nv,&interlace, fields, &vsize, vsname);
       if (HDstrlen(vsname)==0)  HDstrcat(vsname,"NoName");
+      VSgetotag(vs, &vsotag);
+      VSgetoref(vs, &vsoref);
       VSgetclass (vs, vsclass);
       printf("L vs:%d <%d/%d> nv=%d i=%d fld [%s] vsize=%d (%s {%s})\n",
-              vsid, vs->otag, vs->oref, nv, interlace, fields, vsize, vsname, vsclass);
+              vsid, vsotag, vsoref, nv, interlace, fields, vsize, vsname, vsclass);
       if (fulldump && vsno==0) vsdumpfull(vs);
-      else if (fulldump && vsno==vs->oref) vsdumpfull(vs);
+      else if (fulldump && vsno==vsoref) vsdumpfull(vs);
       VSdetach(vs);
     }
     HDfreespace(lonevs);
@@ -180,54 +190,54 @@ int32 fmtchar(x) char*x;
 int32 fmtint(x) 
      char* x;
 {	
-  int i = 0;
-  HDmemcpy(&i, x, 4);
-  cn += printf("%d", i); 
+  int *i;
+  i = (int *) x;
+  cn += printf("%d", *i); 
   return(1);  
 }
 
 int32 fmtfloat(x) 
      char* x;
 {
-  float f = 0;
-  HDmemcpy(&f, x, 4);
-  cn += printf("%f", f); 
-  return(1); 
+  float *f;
+  f = (float *) x;
+  cn += printf("%f", *f); 
+  return(1);  
 }
 
 int32 fmtlong(x) 
      char* x;   
 {	
-  long l = 0;
-  HDmemcpy(&l, x, 4);
-  cn += printf("%ld", l);
+  int32 *l;
+  l = (int32 *) x;
+  cn += printf("%d", *l);
   return(1);  
 }
 
 int32 fmtshort(x) 
      char* x;   
 {	
-  short s = 0;
-  HDmemcpy(&s, x, 2);
-  cn += printf("%d", s);
+  int16 *s;
+  s = (int16 *) x;
+  cn += printf("%d", *s);
   return(1);  
 }
 
 int32 fmtdouble(x) char*x;
 {	
-  double d = 0;
-  HDmemcpy(&d, x, 8);
-  cn += printf("%f", d);
+  double *d;
+  d = (double *) x;
+  cn += printf("%f", *d); 
   return(1);  
 }
 
 /* ------------------------------------------------ */
 
-int32 vsdumpfull(vs) VDATA * vs; 
+int32 vsdumpfull(vs) int32 vs; 
 {
   char vsname[100], fields[100];
   int32 j,i,t,interlace, nv, vsize;
-  BYTE *bb, *b;
+  uint8 *bb, *b;
   VWRITELIST* w;
   int32 (*fmtfn[60])();
   int32 off[60];
@@ -236,7 +246,7 @@ int32 vsdumpfull(vs) VDATA * vs;
   int32 nf;
   
   VSinquire(vs, &nv,&interlace, fields, &vsize, vsname);
-  bb = (BYTE *) HDgetspace(nv*vsize);
+  bb = (uint8 *) HDgetspace(nv*vsize);
   if(bb==NULL) { 
     printf("vsdumpfull malloc error\n");
     return(0); 
@@ -245,7 +255,7 @@ int32 vsdumpfull(vs) VDATA * vs;
   VSsetfields(vs,fields);
   VSread(vs,bb,nv,interlace);
   
-  w = &(vs->wlist);
+  w = vswritelist(vs);
   
   nf = w->n;
   for (i=0; i < w->n; i++) {

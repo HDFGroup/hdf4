@@ -5,10 +5,20 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/01/19 05:59:23  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.6  1993/03/29 16:52:32  koziol
+Finished  DEC ALPHA port.
+Updated JPEG code to new JPEG 4 code.
+Changed VSets to use Threaded-Balanced-Binary Tree for internal
+	(in memory) representation.
+Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+	to use 32-bit integer keys instead of pointers.
+Backed out speedups for Cray, until I get the time to fix them.
+Fixed a bunch of bugs in the little-endian support in DFSD.
 
+ * Revision 1.5  1993/01/19  05:59:23  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.4  1992/11/30  22:01:15  chouck
  * Added fix for Vstart() and Vend()
  *
@@ -56,8 +66,8 @@ char**av;
 createm(fs,n) char*fs;
      int n;
 {
-    VGROUP * vg;
-    VDATA * vs;
+    int32 vg;
+    int32 vs;
     HFILEID f;
     char ss[30];
     int i,ne=0;
@@ -71,7 +81,7 @@ createm(fs,n) char*fs;
     Vstart(f);
 
     for(i=0;i<n;i++) {
-        vg = (VGROUP*) Vattach(f,-1,"w");
+        vg = Vattach(f,-1,"w");
         sprintf(ss,"test_vgroup#%d",i);
         Vsetname(vg,ss);
         Vdetach(vg);
@@ -80,7 +90,7 @@ createm(fs,n) char*fs;
     
     for(i=0;i<n;i++) {
         ne +=5;
-        vs = (VDATA*) VSattach(f,-1,"w");
+        vs = VSattach(f,-1,"w");
         sprintf(ss,"vdata#%d",i);
         VSsetname(vs,ss);
         VSfdefine(vs,"PRESS",DFNT_FLOAT32,1);

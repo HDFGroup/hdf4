@@ -26,8 +26,15 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.21  1993/02/22 17:24:48  georgev
-Fixed a bug in PROTOTTYPE definition of "qsort" for the SGI's.
+Revision 1.22  1993/03/29 16:52:48  koziol
+Finished  DEC ALPHA port.
+Updated JPEG code to new JPEG 4 code.
+Changed VSets to use Threaded-Balanced-Binary Tree for internal
+	(in memory) representation.
+Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+	to use 32-bit integer keys instead of pointers.
+Backed out speedups for Cray, until I get the time to fix them.
+Fixed a bunch of bugs in the little-endian support in DFSD.
 
  * Revision 1.20  1993/01/19  06:00:14  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
@@ -151,23 +158,23 @@ intn
 char * file_name;    /* name of current file being listed */
 
 int compare
-  PROTO((const void *a, const void *));
+  PROTO((dd_t *a, dd_t *));
 int main
   PROTO((int, char **));
 int lprint
   PROTO((dd_t *, int));
 
 #ifdef PROTOTYPE
-int compare(const void *a, const void *b)
+int compare(dd_t *a, dd_t *b)
 #else
 int compare(a, b)
-VOID *a,*b;
+dd_t *a,*b;
 #endif /* PROTOTYPE */
 {
-    if (((dd_t *)a)->tag > ((dd_t *)b)->tag) return(1);
-    if (((dd_t *)a)->tag < ((dd_t *)b)->tag) return(-1);
-    if (((dd_t *)a)->ref > ((dd_t *)b)->ref) return(1);
-    if (((dd_t *)a)->ref < ((dd_t *)b)->ref) return(-1);
+    if (a->tag>b->tag) return(1);
+    if (a->tag<b->tag) return(-1);
+    if (a->ref>b->ref) return(1);
+    if (a->ref<b->ref) return(-1);
     return(0);
 }
 

@@ -1,5 +1,234 @@
+#
+# $Header$
+#
+# $Log$
+# Revision 1.10  1993/03/29 16:51:51  koziol
+# Finished  DEC ALPHA port.
+# Updated JPEG code to new JPEG 4 code.
+# Changed VSets to use Threaded-Balanced-Binary Tree for internal
+# 	(in memory) representation.
+# Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+# 	to use 32-bit integer keys instead of pointers.
+# Backed out speedups for Cray, until I get the time to fix them.
+# Fixed a bunch of bugs in the little-endian support in DFSD.
+#
+# Revision 1.32  1993/01/26  19:45:03  koziol
+# Added new test files for checking little-endian support
+#
+# Revision 1.31  1993/01/19  05:58:16  koziol
+# Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+# port.  Lots of minor annoyances fixed.
+#
+# Revision 1.30  1993/01/14  17:28:10  georgev
+# Upated headers in Makefiles to reflect HDF3.3.
+# Updated Makefile headers to reflect HDF3.3
+# Updated Makefile header to reflect HDF3.3
+#
+# Revision 1.29  1993/01/07  20:48:43  georgev
+# Added Hyperslab C and Fortran test programs.
+#
+# Revision 1.28  1992/11/19  17:14:47  chouck
+# Made rules cleaner.  Fixed Fortran capitalizations
+#
+# Revision 1.27  1992/10/01  03:27:34  chouck
+# Added tests in tp.c into trig.c
+#
+# Revision 1.26  1992/10/01  02:53:23  chouck
+# Consolidated 8-bit and 24-bit raster image tests
+#
+# Revision 1.25  1992/09/17  19:50:15  koziol
+# Made changes for ANSI prototypes for the Convex
+#
+# Revision 1.24  1992/08/14  20:16:57  sxu
+# *** empty log message ***
+#
+# Revision 1.23  1992/07/16  17:17:59  chouck
+# Yet another minor fix
+#
+#
+# Revision 1.21  1992/07/16  17:11:55  chouck
+# Fixed a couple of minor problems
+#
+# Revision 1.20  1992/07/15  19:36:13  chouck
+# Modified to conform to having a top level Makefile
+#
+# Revision 1.19  1992/07/14  01:57:10  mfolk
+# Added these two lines and deleted corresponding lines:
+#   # ==> For Convex, specify CFLAGS as follows:
+#   #CFLAGS=  -g -D${MACHINE} $(IFLAGS) -D__STDC__
+#
+# Also moved these lines to occur after normal CFLAGS specification.
+#
+# Revision 1.18  1992/07/13  21:46:30  sxu
+# Modified CFLAGS for IRIS4.
+#
+# Revision 1.17  1992/07/08  22:18:22  sxu
+# Added tsdstr.c and tsdstrF.f
+#
+# Revision 1.16  1992/07/08  15:36:04  sxu
+# Eliminate doubled -D$machine for C programs.
+#
+# Revision 1.15  1992/06/09  20:19:24  dilg
+# Changed CFLAGS for IRIS4 from -cckr to -ansi
+#
+# Revision 1.14  1992/06/04  18:59:26  dilg
+# Changes back to generic SUN from IBM6000
+#
+# Revision 1.13  1992/06/04  04:47:15  sxu
+# add -cckr for IRIS4
+#
+# Revision 1.12  1992/06/01  13:23:15  mfolk
+# Added some comments to help people compile on Convex.
+#
+# Revision 1.11  1992/05/29  19:25:32  chouck
+# Added rules for tlinkage
+#
+# Revision 1.10  1992/05/28  17:33:57  chouck
+# Make clean wipes out all *.hdf* files
+#
+# Revision 1.9  1992/05/27  21:55:34  chouck
+# Added 'make clean'
+#
+# Revision 1.8  1992/05/18  22:11:07  sxu
+# added vset test programs
+#
+# Revision 1.7  1992/05/08  20:54:15  sxu
+# Change filenames from tdf* to t*
+#
+# Revision 1.6  1992/05/04  14:48:23  sxu
+# added tdfsd_nmms and tdfsd_nnt
+#
+# Revision 1.5  1992/04/27  18:41:22  sxu
+# No change
+#
+# Revision 1.4  1992/04/27  17:05:57  sxu
+# Fixed a typo
+#
+# Revision 1.3  1992/04/27  17:01:33  sxu
+# Added Fortran test  programs: tdfr8F, tdf24F, tdfpF, tdfsd_ntF
+#      tdfsd_nntF, tdfsd_mmsF, tdfsd_nmmsF, tdfanF, tdfanfileF
+#      and tdfstubsF
+#
+# Revision 1.2  1992/03/24  20:40:09  sxu
+# Bugs fixed in lib and include directories
+#
+# Revision 1.1  1992/03/01  23:39:01  mfolk
+# Initial revision
+#
+#
+
+# ##################################################################
+#
+#                   NCSA HDF Version 3.3 release Beta 1
+#                               January 1993
+#                  MAKEFILE for testing HDF Version 3.3
+#
+#                          ABOUT THIS MAKEFILE
+#
+# This makefile creates HDF test programs.  There are three categories
+# of test programs: 
+#
+#              application layer C test programs 
+#              application layer FORTRAN test programs 
+#              lower level C test programs 
+#
+# The application layer C test programs are:
+#
+#              trig    (8-bit, 24-bit raster image sets and palette interface)
+#              tsdnt  (scientific data sets, data only)
+#              tsdnnt (same as tdfsd_nt with native number types)
+#              tsdmms (scientific data sets, data, max/min and scales)
+#              tsdnmms(same as tdfsd_mms with native number types)
+#              tsdstr (data and dimension strings: label, unit, format and coordsys)
+#              tan     (annotations for HDF objects)
+#              tanfile (annotations for HDF files)
+#              tstubs  (emulation of old lower level i/o routines)
+#              tlitend (Tests Little-endian support)
+#
+# The application layer FORTRAN test programs are:
+#
+#              tr8F     (8-bit raster image sets)
+#              t24F     (24-bit raster image sets)
+#              tpF      (Palettes)
+#              tsdntF   (scientific data sets, data only)
+#              tsdnntF  (same as tdfsd_nntF except all data types are native 
+#                           machine number types)
+#              tsdmmsF  (scientific data sets, data, max/min and scales)
+#	       tsdnmmsF (same as tdfsd_mmsF with native number types)
+#              tsdstrF  (data and dimenstrings: label, unit, format and coordsys)
+#              tanF     (annotations for HDF objects)
+#              tanfileF (annotations for HDF files)
+#              tstubsF  (emulation of old lower level i/o routines)
+#
+# Vset test programs:
+#
+#	       egchi.c  (high level VSET write routines)
+#	       tv1.c    (the basic vgroup and vdata creation routines)
+#	       tv2.c    (creates vsets in 2 files simultaneously)
+#	       tvers.c  (get version string from an HDF file)
+# 	       egfhi.f  (Fortran version of egchi.c)
+#
+# The lower level C test programs are:
+#
+#              thfile     (basic i/o)
+#              terr       (error handling)
+#              thblocks   (linked blocks)
+#              thextelt   (i/o involving external files)
+#              tvers      (storing and retrieving version strings)
+#              thlinkage  (linkage of functions)
+#
+# Hyperslab C test programs
+#              slabw      (write data as 5 slabs )
+#              slab1w     (write data as first 3 of 5 slabs )
+#              slab2w     (write data as last 2 of 5 slabs )
+#              slab3w     (write data as 24 slabs i.e. each element )
+#              slab4w     (write data as 1 slab )
+#              slabwf     (write data as 5 slabs )
+#
+# Hyperslab Fortran test programs
+#              slabw      (write data as 5 slabs )
+#              slab1wf    (write data as first 3 of 5 slabs )
+#              slab2wf    (write data as last 2 of 5 slabs )
+#              slab3wf    (write data as 24 slabs i.e. each element )
+#              slab4wf    (write data as 1 slab )
+#
+# ##################################################################
+#
+#                      HOW TO USE THIS MAKEFILE
+#
+# You need libdf.a to compile any of these test programs.  You will
+# also need selected header files as described below.
+#
+# To compile the application layer C test programs, enter "make ctests".  
+# If there are test programs that you do not want to compile, do this 
+# by removing them from the lines "COBJS=" and "CSRCS=" below.
+# You need access to the header files indicated in the "CHDRS=" line
+# below to compile these programs. 
+#
+# To compile the application layer FORTRAN test programs, enter 
+# "make ftests".  You need access to the header files indicated in 
+# the "FHDRS=" line below to compile these programs. 
+# If there are test programs that you do not want to compile, do this 
+# by removing them from the lines "FOBJS=" and "FSRCS=" below.
+#
+# To compile the lower level C test programs, enter "make htests". 
+# You need access to the header files indicated in the "HHDRS=" line
+# below to compile these programs.  If there are test programs that 
+# you do not want to compile, do this by removing them from the lines 
+# "HOBJS=" and "HSRCS=" below.
+#
+# To remove all object files created by this makefile, enter "make clean"
+#
+# ##################################################################
+#
+#                       PORTING INSTRUCTIONS
+#
+# You must modify the lines containing the symbol "==>" to make
+# this makefile compatible with your platform.
+#
+# ##################################################################
+
 # ==> specify your machine
-#MACHINE=IBM6000
 MACHINE=SUN
 # ==> specify your fortran compiler  (Convex: fc)
 FC=f77 
@@ -9,141 +238,70 @@ FFLAGS=  -g
 CC=cc
 
 # ==> where are your hdf.h, hdfi.h and vg.h files located?
-HDFINC=   ../src
+HDFINC=   ../include
 
 CFLAGS=  -g -D${MACHINE}
 
 # ==> For Convex, specify CFLAGS as follows:
 #CFLAGS=  -g -D${MACHINE} $(IFLAGS)
 
+# ==> For ALPHA, specify CFLAGS as follows: 
+#CFLAGS=  -g -DALPHA $(IFLAGS) -std1
+
 # ==> For IRIS4, specify CFLAGS as follows: 
 #CFLAGS=  -g -D${MACHINE} $(IFLAGS) -ansi
 
 # ==> where is your HDF library (libdf.a) located?
-HDFLIB=../../develop/lib
+HDFLIB= ../lib
 
 RM=/bin/rm
 RMFLAGS=-f
 
-SRCS= 	nt_rig.c nt_sdstr.c nt_hblocks.c nt_an.c nt_anfile.c \
-        nt_hextelt.c nt_hfile.c nt_hfile1.c nt_vers.c nt_sdmms.c \
-        nt_sdnmms.c nt_slab.c testhdf.c
+CTESTS= trig tsdstr tsdmms tsdnmms tsdnnt tsdnt tan \
+        tanfile tstubs tv1 tv2 tvers egchi \
+        slabw slab1w slab2w slab3w slab4w tlitend
 
-CTESTS= nt_rig.o nt_sdstr.o nt_hblocks.o nt_an.o nt_anfile.o \
-        nt_hextelt.o nt_hfile.o nt_hfile1.o nt_vers.o nt_sdmms.o \
-        nt_sdnmms.o nt_slab.o testhdf.o
+CHDRS = df.h dfi.h dfsd.h vg.h df.h dfi.h dfstubs.h \
+        vproto.h
+CTSRCS= trig.c tsdstr.c tsdmms.c tsdnmms.c tsdnnt.c \
+        tsdnt.c tan.c tanfile.c tstubs.c \
+        tv1.c tv2.c tvers.c egchi.c \
+        slabw.c slab1w.c slab2w.c slab3w.c slab4w.c tlitend.c
+CTOBJS= trig.o tsdstr.o tsdmms.o tsdnt.o tan.o tanfile.o \
+        tstubs.o tsdnmms.o tsdnnt.o tv1.o tv2.o \
+        tvers.o egchi.o \
+        slabw.o slab1w.o slab2w.o slab3w.o slab4w.o tlitend.o
+
+HTESTS= thfile thfile1 terr thblocks thextelt tlinkage
+HHDRS = hfile.h hdf.h hdfi.h herr.h hproto.h 
+HTSRCS= thfile.c thfile1.c terr.c thblocks.c thextelt.c tlinkage.c 
+HTOBJS= thfile.o thfile1.o terr.o thblocks.o thextelt.o tlinkage.o
 
 FTESTS= tr8f t24f tpf tanf tanfilef tsdstrf tsdntf tsdnntf \
-        tsdmmsf tsdnmmsf tstubsf \
+        tsdmmsf tsdnmmsf tstubsf egfhi \
         slabwf slab1wf slab2wf slab3wf slab4wf
-TESTF = fortest.o
+FSRCS = tr8f.f t24f.f tpf.f tanf.f tanfilef.f tsdstrf.f tsdntf.f \
+        tsdnntf.f tsdmmsf.f  tsdnmmsf.f tstubsf.f egfhi.f \
+        slabwf.f slab1wf.f slab2wf.f slab3wf.f slab4wf.f
 FOBJS = tr8f.o t24f.o tpf.o tanf.o tanfilef.o tsdstrf.o tsdntf.o \
-        tsdnntf.o tsdmmsf.o tsdnmmsf.o tstubsf.o fortest.o \
-        slabwf.o slab1wf.o slab2wf.o slab3wf.o slab4wf.o 
+        tsdnntf.o tsdmmsf.o tsdnmmsf.o tstubsf.o egfhi.o \
+        slabwf.o slab1wf.o slab2wf.o slab3wf.o slab4wf.o
+
+all: htests ctests ftests
+
+nofortran: htests ctests
+
+ctests: $(CTESTS)
+
+ftests: $(FTESTS)
+
+htests: $(HTESTS)
+	
+.c: $< $(HDFLIB)/libdf.a
+	$(CC) $(CFLAGS) -I$(HDFINC) $< -o $@ $(HDFLIB)/libdf.a
 
 .f: $< $(HDFLIB)/libdf.a
 	$(FC) $(FFLAGS) $< -o $@ $(HDFLIB)/libdf.a
 
-all: testhdf fortest 
-
-.c.o: 
-	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
-
-all: testhdf
-
-testhdf: $(CTESTS)
-	$(CC) $(CFLAGS) -o testhdf $(CTESTS) $(HDFLIB)/libdf.a
-
-fortest: $(FTESTS) fortest.o
-	$(CC) $(CFLAGS) -o fortest $(TESTF) $(HDFLIB)/libdf.a
-
-ftests: $(FTESTS)
-
-clean: 
-	 -$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) fortest
-
-depend: 
-	 makedepend -I$(HDFINC) *.c
-
-saber:	$(SRCS)
-	 #load $(SRCS) -I../include -D$(MACHINE) 
-
-
-# DO NOT DELETE THIS LINE -- make depend depends on it.
-
-egchi.o: ../src/vg.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
-egchi.o: ../src/hcomp.h ../src/hproto.h ../src/herr.h /usr/include/ctype.h
-egchi.o: ../src/vproto.h
-fortest.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
-fortest.o: ../src/hproto.h tproto.h tutils.h
-nt_an.o: tproto.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
-nt_an.o: ../src/hcomp.h ../src/hproto.h tutils.h
-nt_anfile.o: tproto.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
-nt_anfile.o: ../src/hcomp.h ../src/hproto.h tutils.h
-nt_err.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
-nt_err.o: ../src/hproto.h
-nt_hblocks.o: tproto.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
-nt_hblocks.o: ../src/hcomp.h ../src/hproto.h tutils.h
-nt_hextelt.o: tproto.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
-nt_hextelt.o: ../src/hcomp.h ../src/hproto.h tutils.h
-nt_hfile.o: tproto.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
-nt_hfile.o: ../src/hcomp.h ../src/hproto.h tutils.h
-nt_hfile1.o: tproto.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
-nt_hfile1.o: ../src/hcomp.h ../src/hproto.h tutils.h
-nt_rig.o: tproto.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
-nt_rig.o: ../src/hcomp.h ../src/hproto.h tutils.h
-nt_sdmms.o: tproto.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
-nt_sdmms.o: ../src/hcomp.h ../src/hproto.h tutils.h ../src/dfsd.h
-nt_sdnmms.o: tproto.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
-nt_sdnmms.o: ../src/hcomp.h ../src/hproto.h tutils.h ../src/dfsd.h
-nt_sdstr.o: tproto.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
-nt_sdstr.o: ../src/hcomp.h ../src/hproto.h tutils.h ../src/dfsd.h
-nt_stubs.o: /usr/include/stdio.h ../src/df.h ../src/hdf.h ../src/hdfi.h
-nt_stubs.o: ../src/hcomp.h ../src/hproto.h ../src/herr.h
-nt_vers.o: /usr/include/stdio.h tproto.h ../src/hdf.h ../src/hdfi.h
-nt_vers.o: ../src/hcomp.h ../src/hproto.h tutils.h
-slab1w.o: ../include/hdf.h
-slab2w.o: ../include/hdf.h
-slab3w.o: ../include/hdf.h
-slab4w.o: ../include/hdf.h
-slabw.o: ../include/hdf.h
-tan.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
-tan.o: ../src/hproto.h ../src/dfsd.h
-tanfile.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
-tanfile.o: ../src/hproto.h
-terr.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
-terr.o: ../src/hproto.h
-testhdf.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
-testhdf.o: ../src/hproto.h tproto.h tutils.h
-thblocks.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
-thblocks.o: ../src/hproto.h
-thextelt.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
-thextelt.o: ../src/hproto.h
-thfile.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
-thfile.o: ../src/hproto.h
-thfile1.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
-thfile1.o: ../src/hproto.h
-tlitend.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
-tlitend.o: ../src/hproto.h ../src/dfsd.h
-trig.o: /usr/include/stdlib.h /usr/include/sys/stdtypes.h ../src/hdf.h
-trig.o: ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h ../src/hproto.h
-tsdmms.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
-tsdmms.o: ../src/hproto.h ../src/dfsd.h
-tsdnmms.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
-tsdnmms.o: ../src/hproto.h ../src/dfsd.h
-tsdnnt.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
-tsdnnt.o: ../src/hproto.h ../src/dfsd.h
-tsdnt.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
-tsdnt.o: ../src/hproto.h ../src/dfsd.h
-tsdstr.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
-tsdstr.o: ../src/hproto.h ../src/dfsd.h
-tstubs.o: /usr/include/stdio.h ../src/df.h ../src/hdf.h ../src/hdfi.h
-tstubs.o: ../src/hcomp.h ../src/hproto.h ../src/herr.h
-tv1.o: ../src/vg.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
-tv1.o: ../src/hcomp.h ../src/hproto.h ../src/herr.h /usr/include/ctype.h
-tv1.o: ../src/vproto.h
-tv2.o: ../src/vg.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
-tv2.o: ../src/hcomp.h ../src/hproto.h ../src/herr.h /usr/include/ctype.h
-tv2.o: ../src/vproto.h
-tvers.o: /usr/include/stdio.h ../src/hdf.h ../src/hdfi.h ../src/hcomp.h
-tvers.o: ../src/hproto.h
+clean:
+	-$(RM) $(RMFLAGS) *.hdf $(CTESTS) $(HTESTS) $(FTESTS) core

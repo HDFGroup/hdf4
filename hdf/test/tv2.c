@@ -5,10 +5,20 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/01/19 05:59:25  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.6  1993/03/29 16:52:34  koziol
+Finished  DEC ALPHA port.
+Updated JPEG code to new JPEG 4 code.
+Changed VSets to use Threaded-Balanced-Binary Tree for internal
+	(in memory) representation.
+Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+	to use 32-bit integer keys instead of pointers.
+Backed out speedups for Cray, until I get the time to fix them.
+Fixed a bunch of bugs in the little-endian support in DFSD.
 
+ * Revision 1.5  1993/01/19  05:59:25  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.4  1992/11/30  22:01:15  chouck
  * Added fix for Vstart() and Vend()
  *
@@ -60,8 +70,8 @@ main (ac,av) int ac; char**av;
 
 doit() {
     HFILEID 	f, g;
-    VGROUP * vg1, * vg2;
-    VDATA  * vs1, * vs2;
+    int32  vg1,  vg2;
+    int32  vs1,  vs2;
     
     char* vgname1 = "ALASKA";
     char* vgname2 = "MISSISSIPPI";
@@ -83,8 +93,8 @@ doit() {
     Vstart(f);
     Vstart(g);
     
-    vg1 = (VGROUP*) Vattach(f,-1,"w"); 
-    vg2 = (VGROUP*) Vattach(g,-1,"w"); 
+    vg1 = Vattach(f,-1,"w"); 
+    vg2 = Vattach(g,-1,"w"); 
     
     Vsetname(vg1,vgname1); Vsetclass (vg1,CLASS);
     Vsetname(vg2,vgname2); Vsetclass (vg2,CLASS);
@@ -94,8 +104,8 @@ doit() {
     
     for(i=0;i<NVDATAS;i++) {
         
-        vs1 = (VDATA*) VSattach(f,-1,"w");
-        vs2 = (VDATA*) VSattach(g,-1,"w");
+        vs1 = VSattach(f,-1,"w");
+        vs2 = VSattach(g,-1,"w");
         
         VSsetname (vs1,vdatanames[i]); VSsetclass(vs1, CLASS);
         VSsetname (vs2,vdatanames[i]); VSsetclass(vs2, CLASS);

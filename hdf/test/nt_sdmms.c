@@ -5,8 +5,15 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/02/25 22:35:32  chouck
-Second DFSDgetcal() is *supposed* to return FAIL
+Revision 1.4  1993/03/29 16:51:57  koziol
+Finished  DEC ALPHA port.
+Updated JPEG code to new JPEG 4 code.
+Changed VSets to use Threaded-Balanced-Binary Tree for internal
+	(in memory) representation.
+Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+	to use 32-bit integer keys instead of pointers.
+Backed out speedups for Cray, until I get the time to fix them.
+Fixed a bunch of bugs in the little-endian support in DFSD.
 
  * Revision 1.2  1993/01/27  22:41:30  briand
  * Fixed problem with compiling on RS6000.
@@ -126,7 +133,7 @@ void test_sdmms()
     RESULT("DFSDsetNT");
 
     ret=DFSDsetdimscale(1, (int32)10, (void *)f32scale);
-    RESULT("DFSDsetdimscale");
+    RESULT(DFSDsetdimscale);
     ret=DFSDsetrange(&f32max, &f32min);
     RESULT("DFSDsetrange");
     ret=DFSDsetcal(cal1, cal2, cal3, cal4, cal5);
@@ -205,13 +212,9 @@ void test_sdmms()
     RESULT("DFSDgetdimscale");
     ret = DFSDgetrange(&ti8max, &ti8min);
     RESULT("DFSDgetrange");
-
-    /* this test should return FAIL so that we can verify that 
-       when we don't store calibration info we don't get any 
-       info returned */
     ret = DFSDgetcal(&ical1,&ical2, &ical3, &ical4, &ical5);
-    CHECK(ret, SUCCEED, "DFSDgetcal"); 
-   
+    RESULT("DFSDgetcal");
+
     ret = DFSDgetdata("ntcheck.hdf", rank, dims, tui8);
     RESULT("DFSDgetdata");
     ret = DFSDgetdimscale(1, (int32)10, (void *)tui8scale);

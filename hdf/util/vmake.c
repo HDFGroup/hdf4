@@ -140,8 +140,8 @@ int32 vgid, n, ids[];
 #endif
 {
   HFILEID f;
-  VGROUP * vgmain, *vg;
-  VDATA * vs;
+  int32 vgmain, vg;
+  int32 vs;
   int32 err=0;
   int32 i;
 
@@ -150,13 +150,13 @@ int32 vgid, n, ids[];
 	  fprintf(stderr,"cannot open %s.  \n",hfile); exit(0); 
 	  }
 
-  vgmain = (VGROUP*) Vattach(f,vgid,"w");
-  if(vgmain==NULL) { fprintf(stderr, "0\n"); Hclose(f); exit(-1);}
+  vgmain = Vattach(f,vgid,"w");
+  if(vgmain==FAIL) { fprintf(stderr, "0\n"); Hclose(f); exit(-1);}
 
   for(i=0;i<n;i++) {
 	  if     ( -1 != vexistvg(f,ids[i])) {
-			if ((vg=(VGROUP*) Vattach(f,ids[i],"r")) != NULL)  {
-	         if (Vinsert(vgmain,(VDATA*) vg)  == -1)  { /*  is really VGROUP* */
+			if ((vg=Vattach(f,ids[i],"r")) != FAIL)  {
+	         if (Vinsert(vgmain,vg)  == -1)  { /*  is really VGROUP* */
 					err = 1; 
 				   fprintf(stderr,"insert a vg (%d)fails!!\n",ids[i]);	
 					}
@@ -164,8 +164,8 @@ int32 vgid, n, ids[];
 		      }
 		 }
      else if ( -1 != vexistvs(f,ids[i])) {
-	       if ((vs= (VDATA*) VSattach(f,ids[i],"r")) != NULL) { 
-	         if (Vinsert(vgmain,(VDATA*) vs) == -1) { 
+	       if ((vs= VSattach(f,ids[i],"r")) != FAIL) { 
+	         if (Vinsert(vgmain,vs) == FAIL) { 
 					err = 1;
 				   fprintf(stderr,"insert a vs (%d)fails!!\n",ids[i]);	
 					}
@@ -198,16 +198,16 @@ char * vgname;
 {
   HFILEID f;
   int32 ref; 
-  VGROUP * vg;
+  int32 vg;
 
   f=Hopen(hfile,DFACC_ALL,0);
   if (f==FAIL) {
 	  fprintf(stderr,"cannot open %s. \n",hfile); exit(0); 
 	  }
 
-  vg = (VGROUP*) Vattach(f,-1,"w");
-  if (vg==NULL) { fprintf(stderr,"cannot attach vg\n"); exit(0); }
-  ref = vg->oref;
+  vg = Vattach(f,-1,"w");
+  if (vg==FAIL) { fprintf(stderr,"cannot attach vg\n"); exit(0); }
+  Vgetoref(vg,&ref);
   Vsetname(vg,vgname);
   Vdetach(vg);
 
@@ -238,7 +238,7 @@ char * format;
   int32 *type, *order, nfld;
   char allfields[100];
   HFILEID	f;
-  VDATA *vs;
+  int32 vs;
   int32 ref,ftype;
 
   nfld = scanit(format,&fields,&type,&order);
@@ -248,8 +248,8 @@ char * format;
 	  fprintf(stderr,"cannot open %s.  \n",hfile); exit(-1); 
 	  }
 
-  vs = (VDATA*) VSattach(f,-1,"w");
-  ref = vs->oref;
+  vs = VSattach(f,-1,"w");
+  VSgetoref(vs,&ref);
 
 printf("vsadd: ref is %d\n",ref);
 

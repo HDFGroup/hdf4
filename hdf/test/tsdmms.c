@@ -5,10 +5,20 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/01/19 05:58:59  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.6  1993/03/29 16:52:22  koziol
+Finished  DEC ALPHA port.
+Updated JPEG code to new JPEG 4 code.
+Changed VSets to use Threaded-Balanced-Binary Tree for internal
+	(in memory) representation.
+Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+	to use 32-bit integer keys instead of pointers.
+Backed out speedups for Cray, until I get the time to fix them.
+Fixed a bunch of bugs in the little-endian support in DFSD.
 
+ * Revision 1.5  1993/01/19  05:58:59  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.4  1992/08/27  22:19:29  chouck
  * Added test for calibration tags
  *
@@ -116,10 +126,15 @@ int main()
 
     printf("Writing arrays to single file...\n");
     DFSDsetNT(DFNT_FLOAT32);
+printf("after DFSDsetNT()\n");
     err3=DFSDsetdimscale(1, (int32)10, (void *)f32scale);
+printf("after DFSDsetrange()\n");
     err2=DFSDsetrange(&f32max, &f32min);
+printf("after DFSDsetrange()\n");
     err4=DFSDsetcal(cal1, cal2, cal3, cal4, cal5);
+printf("after DFSDsetcal()\n");
     err = DFSDputdata("ntcheck.hdf", rank, dims, f32);
+printf("after DFSDputdata()\n");
     if (err3==FAIL || err2==FAIL || err==FAIL || err4==FAIL) 
         number_failed++;
     printf("%d, %d, %d, %d\n", err3, err2, err, err4);

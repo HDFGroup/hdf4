@@ -2,10 +2,20 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.8  1993/01/19 05:59:05  koziol
-C Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-C port.  Lots of minor annoyances fixed.
+C Revision 1.9  1993/03/29 16:52:29  koziol
+C Finished  DEC ALPHA port.
+C Updated JPEG code to new JPEG 4 code.
+C Changed VSets to use Threaded-Balanced-Binary Tree for internal
+C 	(in memory) representation.
+C Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+C 	to use 32-bit integer keys instead of pointers.
+C Backed out speedups for Cray, until I get the time to fix them.
+C Fixed a bunch of bugs in the little-endian support in DFSD.
 C
+c Revision 1.8  1993/01/19  05:59:05  koziol
+c Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+c port.  Lots of minor annoyances fixed.
+c
 c Revision 1.7  1992/07/08  22:05:20  sxu
 c Changed dsgmaxm() to dsgrang(), and dssmaxm() to dssrang().
 c
@@ -104,8 +114,8 @@ C      i8max = 127
       i8max = char(127)
 C NOTE: If you get a compile error on the "char(-128)" line, substitute
 C       the "char(0)" line.  Its not quite as thorough a test, but...
-C      i8min = char(0)
-      i8min = char(-128)
+      i8min = char(0)
+C      i8min = char(-128)
       i16max = 1200
       i16min = -1200
       i32max = 99999999
