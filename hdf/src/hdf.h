@@ -43,6 +43,14 @@ typedef struct {
 #define DFACC_RDWR 3
 #define DFACC_CLOBBER 4
 
+/* File access modes */
+/* 001--007 for different serial modes */
+/* 011--017 for different parallel modes */
+
+#define DFACC_DEFAULT	000
+#define DFACC_SERIAL	001
+#define DFACC_PARALLEL	011
+
 /* used by Hnextread to determine where to start searching for the
    next tag/ref to read */
 
