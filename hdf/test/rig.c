@@ -1545,12 +1545,7 @@ void test_pal()
         num_errs++;
     }
 
-    /*
-     * this is 4 instead of 2 since they are 8-bit pals and thus
-     * list twice and generic pals 
-     */
-
-    if(DFPnpals(TESTFILE) != 4) {
+    if(DFPnpals(TESTFILE) != 2) {
         fprintf(stderr,"  >>> DFPnpals() gives wrong number <<<\n");
         num_errs++;
     }
