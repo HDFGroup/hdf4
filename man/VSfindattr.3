@@ -28,7 +28,7 @@ IN: access id of the vdata.
 .B "int32 findex"
 IN: index of the field starting from 0;
 .br
-_HDF_ENTIRE_VDATA for the vdata.
+_HDF_VDATA for the vdata.
 .TP
 .B "char *attrname"
 IN: name of the attr.
@@ -45,7 +45,8 @@ integer vsid, findex
 .br
 character*(*) attrnm.
 .br
-Use -1 (for findex) to find an attribute of the entire vdata.
+Use -1 or HDF_VDATA (defined in hdf.inc) as findex 
+to get index of an attribute of the vdata.
 .SH "SEE ALSO"
 VSfindex(3),
 VSsetattr(3),

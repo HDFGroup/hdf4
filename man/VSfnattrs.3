@@ -25,20 +25,21 @@ IN: access id of the vdata.
 .TP
 .B "int32 findex"
 IN: index of the field, 0 based.
-Use _HDF_ENTIRE_VDATA for the vdata itself.
+Use _HDF_VDATA for the vdata itself.
 .SH "DESCRIPTION"
 Use VSnattrs to get total number of attributes for all
 fields and the vdata ifself.
 .SH "RETURNS"
 Returns the number of attributes assigned to
-the specified field (_HDF_ENTIRE_VDATA for the vdata itself)
+the specified field (_HDF_VDATA for the vdata itself)
 when successful, FAIL otherwise.
 .SH "FORTRAN"
 Integer function vsffnas(vsid, findex)
 .br
 integer vsid, findex.
 .br
-Use -1 (for findex) to get number of attributes of the vdata.
+Use -1 or HDF_VDATA (defined in hdf.inc) as findex 
+to get the number of attributes of the vdata.
 .SH "SEE ALSO"
 VSfindex(3),
 VSsetattr(3),

@@ -33,7 +33,7 @@ extern intn VSattrinfo
 IN: vdata id.
 .TP
 .B "int32 findex"
-IN: field index. _HDF_ENTIRE_VDATA for the vdata.
+IN: field index. _HDF_VDATA for the vdata.
 .TP
 .B "intn attrindex"
 IN: which attr of the field/vdata
@@ -63,8 +63,8 @@ integer vsid,findex,aindex,dtype,count, size
 .br
 character*(*) attrname.
 .br
-Use -1 (as findex) to get information about an attribute 
-of the vdata.
+Use -1 or HDF_VDATA (defined in hdf.inc) as findex 
+to get information about an attribute of the vdata.
 .SH "SEE ALSO"
 VSfindex(3),
 VSsetattr(3),

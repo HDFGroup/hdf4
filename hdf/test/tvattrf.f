@@ -65,7 +65,7 @@ C Output file: tvattrf.hdf
       integer DFACC_CREATE, DFACC_RDWR, DFNT_CHAR
       integer DFNT_INT32, DFNT_FLOAT32 
       integer VSET_VERSION, VSET_NEW_VERSION
-      integer ENTIRE_VDATA
+      integer HDF_VDATA
 
       parameter (DFACC_CREATE = 4,
      +           DFACC_RDWR = 3,
@@ -74,7 +74,7 @@ C Output file: tvattrf.hdf
      +           DFNT_FLOAT32 = 5,
      +           VSET_VERSION = 3,
      +           VSET_NEW_VERSION = 4,
-     +           ENTIRE_VDATA = -1,
+     +           HDF_VDATA = -1,
      +           GATTR1 = -64.123450D0,
      +           RATTR1 = 32.0099,
      +           feps = 1.0E-5,
@@ -115,14 +115,14 @@ C Open the file
          call MESSAGE(1, 'Wrong number of total attrs for vsname1')
          number_failed = number_failed + 1
       endif
-      nattrs = vsffnas(vsid, ENTIRE_VDATA)
+      nattrs = vsffnas(vsid, HDF_VDATA)
       if (nattrs .ne. 2) then
          call MESSAGE(1, 'Wrong number of attrs for vsname1')
          number_failed = number_failed + 1
       endif
 C get the 0th attr 
       aindex = 0
-      findex = ENTIRE_VDATA
+      findex = HDF_VDATA
       ret = vsffdat(vsid, findex, 'attname3') 
       call VERIFY(ret, 'vsffdat', number_failed)
       ret = vsfainf(vsid, findex, aindex, iattrnm,
@@ -233,7 +233,7 @@ C vdata attrs
       call VERIFY(ret, 'vhfsd', number_failed)
       vsid = vsfatch(fid1, vsref, 'w')
       call VERIFY(ret, 'vsfatch', number_failed)
-      ret = vsfscat(vsid, ENTIRE_VDATA, 'vscattr0', DFNT_CHAR, 3,
+      ret = vsfscat(vsid, HDF_VDATA, 'vscattr0', DFNT_CHAR, 3,
      +              'at2')
       call VERIFY(ret, 'vfscatt', number_failed)
       ret = vsfsnat(vsid, 0, 'vsattr1', DFNT_FLOAT32, 1, 
@@ -279,7 +279,7 @@ C vdata attrs
       vsid = vsfatch(fid1, vsref, 'w')
       call VERIFY(ret, 'vsfatch', number_failed)
       iattrc = '          '
-      ret = vsfgcat(vsid, ENTIRE_VDATA, 0, iattrc)
+      ret = vsfgcat(vsid, HDF_VDATA, 0, iattrc)
       call VERIFY(ret, 'vsfgcat', number_failed)
 C      if (iattrc(1) .ne. 'a' .or. iattrc(2) .ne. 't'
 C     +     .or. iattrc(3) .ne. '2') then

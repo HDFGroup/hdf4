@@ -27,7 +27,7 @@ extern intn VSgetattr
 IN: vdata access id.
 .TP
 .B "int32 findex"
-IN: field index; _HDF_ENTIRE_VDATA for vdata.
+IN: field index; _HDF_VDATA for vdata.
 .TP
 .B "intn attrindex"
 IN: attribute index.
@@ -47,7 +47,8 @@ Integer function vsfgnat(vsid,findex,aindex,values) --
 .br
   integer values(*)
 .br
- Use -1 (for findex) to get an attribute of the vdata.
+Use -1 or HDF_VDATA (defined in hdf.inc) as findex 
+to get an attribute of the vdata.
 .br
 integer function vsfgcat((vsid,findex,aindex,values) --
 .br
@@ -57,7 +58,8 @@ integer function vsfgcat((vsid,findex,aindex,values) --
 .br
   character*(*) values.
 .br
- Use -1 (for findex) to get an attribute of the vdata.
+Use -1 or HDF_VDATA (defined in hdf.inc) as findex 
+to get an attribute of the vdata.
 .SH "SEE ALSO"
 VSfindex(3),
 VSsetattr(3),
