@@ -358,10 +358,14 @@ int diff_sds_attrs(int32 sds1_id,int32 nattrs1,int32 sds2_id,int32 nattrs2,char*
  
   if (SDreadattr(sds1_id, i, attr1_buf)==FAIL ) {
    printf( "Could not read attribute number %d\n", i);
+   if (attr1_buf) free(attr1_buf);
+   if (attr2_buf) free(attr2_buf);
    continue;
   }
   if (SDreadattr(sds2_id, i, attr2_buf)==FAIL ) {
    printf( "Could not read attribute number %d\n", i);
+   if (attr1_buf) free(attr1_buf);
+   if (attr2_buf) free(attr2_buf);
    continue;
   }
 
@@ -379,6 +383,9 @@ int diff_sds_attrs(int32 sds1_id,int32 nattrs1,int32 sds2_id,int32 nattrs2,char*
    printf (" ;\n");
 
   }
+
+  if (attr1_buf) free(attr1_buf);
+  if (attr2_buf) free(attr2_buf);
  
  }
 
