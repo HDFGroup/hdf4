@@ -52,7 +52,15 @@ static char RcsId[] = "@(#)$Revision$";
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
+#if defined PROTOTYPE
 VOIDP HDmemfill(VOIDP dest,const VOIDP src,uint32 item_size,uint32 num_items)
+#else
+VOIDP HDmemfill(dest, src, item_size, num_items)
+     VOIDP       dest;
+     const VOIDP src;
+     uint32      item_size;
+     uint32      num_items;
+#endif
 {
     uint32 copy_size;   /* size of the buffer to copy */
     uint32 copy_items;  /* number of items currently copying */
