@@ -879,9 +879,9 @@ c
 c     arrays of data values to be read
       integer barray(times), byval(times)
       integer sarray(times), shval(times)
-      integer larray(lats)
-      real farray(levels, lats, lons, times)
-      real darray(levels, lats, lons, times)
+      integer*4 larray(lats)
+      real*4 farray(levels, lats, lons, times)
+      real*8 darray(levels, lats, lons, times)
 c     character array of data values to be read
       character*31 string
       character*31 varnam
@@ -1005,9 +1005,9 @@ c
 
       integer bvalue
       integer svalue
-      integer lvalue
-      real fvalue
-      real dvalue
+      integer*4 lvalue
+      real*4 fvalue
+      real*8 dvalue
       character*1 c
       real epsilon
       real onethird
@@ -1093,9 +1093,9 @@ c     will be written
 c     arrays of data values to be written
       integer barray(times)
       integer sarray(times)
-      integer larray(lats)
-      real farray(levels, lats, lons, times)
-      real darray(levels, lats, lons, times)
+      integer*4 larray(lats)
+      real*4 farray(levels, lats, lons, times)
+      real*8 darray(levels, lats, lons, times)
       character*31 string
 
       data start/1,1,1,1, 28*0/, count/levels, lats, lons, times, 28*0/
@@ -1176,16 +1176,18 @@ c
 
       integer bindx, sindx, lindx, findx(4), dindx(4), cindx
 
-      integer lvalue
+      integer*4 lvalue
       integer svalue
       integer bvalue
-      real onethird
+      real*4 pi
+      real*8 onethird
       integer bid, sid, lid, fid, did, cid, chid
       common /vars/bid, sid, lid, fid, did, cid, chid
       data lindx/1/, bindx/1/, sindx/1/, findx/1,1,1,1/
      +dindx/1,1,1,1/, cindx/1/
       data lvalue /1000/
       data svalue/10/
+      data pi/3.14159/
       data onethird/0.3333333333D0/
 
       bvalue = ichar('z')
@@ -1206,7 +1208,7 @@ c
 c
 c     test ncvpt1 for float
 c
-      call ncvpt1 (ncid, fid, findx, 3.14159, iret)
+      call ncvpt1 (ncid, fid, findx, pi, iret)
 c
 c     test ncvpt1 for double
 c
