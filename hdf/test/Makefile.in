@@ -135,8 +135,8 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-TESTS = testhdf fortest fortestF
-check_PROGRAMS = testhdf fortest fortestF
+TESTS = testhdf fortest
+check_PROGRAMS = testhdf fortest
 
 testhdf_SOURCES = an.c anfile.c bitio.c blocks.c buffer.c chunks.c comp.c   \
                   conv.c extelt.c file.c file1.c litend.c macros.c man.c    \
@@ -144,7 +144,7 @@ testhdf_SOURCES = an.c anfile.c bitio.c blocks.c buffer.c chunks.c comp.c   \
                   testhdf.c tree.c tvattr.c tvset.c tvsfpack.c vers.c
 
 testhdf_CPPFLAGS = -I${top_srcdir}/hdf/src
-testhdf_LDADD = ../src/libdf.a @LIBS@
+testhdf_LDADD = ../src/libdf.a
 testhdf_DEPENDENCIES = testdir ../src/libdf.a
 
 fortest_SOURCES = forsupf.c forsupff.f fortest.c fortestF.f manf.f mgrf.f   \
@@ -153,22 +153,13 @@ fortest_SOURCES = forsupf.c forsupff.f fortest.c fortestF.f manf.f mgrf.f   \
                   tvsetf.f tvattrf.f
 
 fortest_CPPFLAGS = -I${top_srcdir}/hdf/src
-fortest_LDADD = ../src/libdf.a @LIBS@
+fortest_LDADD = ../src/libdf.a
 fortest_DEPENDENCIES = testdir ../src/libdf.a
-
-fortestF_SOURCES = forsupf.c forsupff.f fortestF.f manf.f mgrf.f slabwf.f   \
-                   t24f.f tanf.f tanfilef.f tpf.f tr8f.f tsdmmsf.f          \
-                   tsdnmmsf.f tsdnntf.f tsdntf.f tsdstrf.f tstubsf.f        \
-                   tvattrf.f tvsetf.f
-
-fortestF_CPPFLAGS = -I${top_srcdir}/hdf/src
-fortestF_LDADD = ../src/libdf.a @LIBS@
-fortestF_DEPENDENCIES = testdir ../src/libdf.a
 subdir = hdf/test
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
 CONFIG_CLEAN_FILES =
-check_PROGRAMS = testhdf$(EXEEXT) fortest$(EXEEXT) fortestF$(EXEEXT)
+check_PROGRAMS = testhdf$(EXEEXT) fortest$(EXEEXT)
 am_fortest_OBJECTS = fortest-forsupf.$(OBJEXT) forsupff.$(OBJEXT) \
 	fortest-fortest.$(OBJEXT) fortestF.$(OBJEXT) manf.$(OBJEXT) \
 	mgrf.$(OBJEXT) slabwf.$(OBJEXT) t24f.$(OBJEXT) tanf.$(OBJEXT) \
@@ -178,15 +169,6 @@ am_fortest_OBJECTS = fortest-forsupf.$(OBJEXT) forsupff.$(OBJEXT) \
 	tvsetf.$(OBJEXT) tvattrf.$(OBJEXT)
 fortest_OBJECTS = $(am_fortest_OBJECTS)
 fortest_LDFLAGS =
-am_fortestF_OBJECTS = fortestF-forsupf.$(OBJEXT) forsupff.$(OBJEXT) \
-	fortestF.$(OBJEXT) manf.$(OBJEXT) mgrf.$(OBJEXT) \
-	slabwf.$(OBJEXT) t24f.$(OBJEXT) tanf.$(OBJEXT) \
-	tanfilef.$(OBJEXT) tpf.$(OBJEXT) tr8f.$(OBJEXT) \
-	tsdmmsf.$(OBJEXT) tsdnmmsf.$(OBJEXT) tsdnntf.$(OBJEXT) \
-	tsdntf.$(OBJEXT) tsdstrf.$(OBJEXT) tstubsf.$(OBJEXT) \
-	tvattrf.$(OBJEXT) tvsetf.$(OBJEXT)
-fortestF_OBJECTS = $(am_fortestF_OBJECTS)
-fortestF_LDFLAGS =
 am_testhdf_OBJECTS = testhdf-an.$(OBJEXT) testhdf-anfile.$(OBJEXT) \
 	testhdf-bitio.$(OBJEXT) testhdf-blocks.$(OBJEXT) \
 	testhdf-buffer.$(OBJEXT) testhdf-chunks.$(OBJEXT) \
@@ -209,7 +191,6 @@ depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/fortest-forsupf.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/fortest-fortest.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/fortestF-forsupf.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/testhdf-an.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/testhdf-anfile.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/testhdf-bitio.Po \
@@ -245,9 +226,9 @@ LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 F77COMPILE = $(F77) $(AM_FFLAGS) $(FFLAGS)
 F77LD = $(F77)
 F77LINK = $(F77LD) $(AM_FFLAGS) $(FFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = $(fortest_SOURCES) $(fortestF_SOURCES) $(testhdf_SOURCES)
+DIST_SOURCES = $(fortest_SOURCES) $(testhdf_SOURCES)
 DIST_COMMON = README Makefile.am Makefile.in
-SOURCES = $(fortest_SOURCES) $(fortestF_SOURCES) $(testhdf_SOURCES)
+SOURCES = $(fortest_SOURCES) $(testhdf_SOURCES)
 
 all: all-am
 
@@ -264,9 +245,6 @@ clean-checkPROGRAMS:
 fortest$(EXEEXT): $(fortest_OBJECTS) $(fortest_DEPENDENCIES) 
 	@rm -f fortest$(EXEEXT)
 	$(F77LINK) $(fortest_LDFLAGS) $(fortest_OBJECTS) $(fortest_LDADD) $(LIBS)
-fortestF$(EXEEXT): $(fortestF_OBJECTS) $(fortestF_DEPENDENCIES) 
-	@rm -f fortestF$(EXEEXT)
-	$(F77LINK) $(fortestF_LDFLAGS) $(fortestF_OBJECTS) $(fortestF_LDADD) $(LIBS)
 testhdf$(EXEEXT): $(testhdf_OBJECTS) $(testhdf_DEPENDENCIES) 
 	@rm -f testhdf$(EXEEXT)
 	$(LINK) $(testhdf_LDFLAGS) $(testhdf_OBJECTS) $(testhdf_LDADD) $(LIBS)
@@ -279,7 +257,6 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fortest-forsupf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fortest-fortest.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fortestF-forsupf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testhdf-an.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testhdf-anfile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testhdf-bitio.Po@am__quote@
@@ -377,28 +354,6 @@ fortest-fortest.obj: fortest.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/fortest-fortest.Po' tmpdepfile='$(DEPDIR)/fortest-fortest.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(fortest_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o fortest-fortest.obj `if test -f 'fortest.c'; then $(CYGPATH_W) 'fortest.c'; else $(CYGPATH_W) '$(srcdir)/fortest.c'; fi`
-
-fortestF-forsupf.o: forsupf.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(fortestF_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT fortestF-forsupf.o -MD -MP -MF "$(DEPDIR)/fortestF-forsupf.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o fortestF-forsupf.o `test -f 'forsupf.c' || echo '$(srcdir)/'`forsupf.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/fortestF-forsupf.Tpo" "$(DEPDIR)/fortestF-forsupf.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/fortestF-forsupf.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='forsupf.c' object='fortestF-forsupf.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/fortestF-forsupf.Po' tmpdepfile='$(DEPDIR)/fortestF-forsupf.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(fortestF_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o fortestF-forsupf.o `test -f 'forsupf.c' || echo '$(srcdir)/'`forsupf.c
-
-fortestF-forsupf.obj: forsupf.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(fortestF_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT fortestF-forsupf.obj -MD -MP -MF "$(DEPDIR)/fortestF-forsupf.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o fortestF-forsupf.obj `if test -f 'forsupf.c'; then $(CYGPATH_W) 'forsupf.c'; else $(CYGPATH_W) '$(srcdir)/forsupf.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/fortestF-forsupf.Tpo" "$(DEPDIR)/fortestF-forsupf.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/fortestF-forsupf.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='forsupf.c' object='fortestF-forsupf.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/fortestF-forsupf.Po' tmpdepfile='$(DEPDIR)/fortestF-forsupf.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(fortestF_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o fortestF-forsupf.obj `if test -f 'forsupf.c'; then $(CYGPATH_W) 'forsupf.c'; else $(CYGPATH_W) '$(srcdir)/forsupf.c'; fi`
 
 testhdf-an.o: an.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testhdf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT testhdf-an.o -MD -MP -MF "$(DEPDIR)/testhdf-an.Tpo" \
