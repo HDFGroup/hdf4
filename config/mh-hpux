@@ -25,11 +25,11 @@ VERSION  = 4.0
 #
 #Using HP-ANSI compilier also needs LIBSX = -lm(see below)
 CC=cc
-CFLAGS=-Ae -O
+CFLAGS=-Ae -s
 
 # Fortran compilier, possible values fort77, f77, cf77 and fc
 FC = f77
-FFLAGS = -O
+FFLAGS = -s
 
 # Name of achive randomizer, usually ranlib (use 'true' if non-existant)
 RANLIB = true
