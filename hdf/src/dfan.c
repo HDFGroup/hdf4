@@ -968,13 +968,13 @@ int listsize, maxlen, startpos, isfortran;
     
     HEclear();
 
-    if (!reflist || !labellist)  { 
-        HERROR(DFE_BADPTR); return FAIL; }
-    if (!tag) { 
-        HERROR(DFE_BADTAG); return FAIL; }
+    if (!reflist || !labellist)   
+        HRETURN_ERROR(DFE_BADPTR,FAIL);
+    if (!tag)  
+        HRETURN_ERROR(DFE_BADTAG,FAIL); 
 
     file_id = DFANIopen(filename, DFACC_READ);
-    if (file_id == 0) return FAIL;
+    if (file_id == FAIL) return FAIL;
 
     /* clear labellist.  pad with blanks for Fortran; add null for C  */
     if (isfortran)
