@@ -507,6 +507,7 @@ int copy_sds(int32 sd_in,
     ret=-1;
     goto out;
    }
+   free(dim_buf);
   }
  }
 
