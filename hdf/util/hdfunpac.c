@@ -29,17 +29,11 @@ static char RcsId[] = "@(#)$Revision$";
    **              Default is "DataFile".
  */
 
-#ifdef IBM6000
-#ifndef _POSIX_SOURCE
-#define _POSIX_SOURCE
-#endif /* Posix already defined */
-#endif /* on IBM */
-
+#include "hdf.h"
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include "hdf.h"
 
 #define DefaultDatafile "DataFile"
 

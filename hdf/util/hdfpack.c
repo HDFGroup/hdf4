@@ -38,11 +38,11 @@ static char RcsId[] = "@(#)$Revision$";
    **   You must have enough additional disk space for the compacted file.
  */
 
-#include <stdio.h>
-#include <string.h>
 #include "hdf.h"
 #include "herr.h"
 #include "hfile.h"
+#include <stdio.h>
+#include <string.h>
 
 typedef struct mydd_t
   {

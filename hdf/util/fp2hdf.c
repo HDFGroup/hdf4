@@ -152,11 +152,11 @@
  *
  */
 
+#include "hdf.h"
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
-#include "hdf.h"
 
 /*
  * functions with non-integer return types
