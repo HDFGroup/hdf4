@@ -62,7 +62,7 @@ static char RcsId[] = "@(#)$Revision$";
  *  ANIcreate     - create a new file/label annotation 
  *                  and return a handle(ann_id)
  *
- *  High-Level routines:
+ *  Public API routines:
  *  --------------------
  *  ANstart     - open file for annotation handling, returns an_id
  *  ANfileinfo  - get number of file/data annotations in file. Indices returned
@@ -80,13 +80,13 @@ static char RcsId[] = "@(#)$Revision$";
  *  ANwriteann: - write annotation given handle(ann_id)
  *  ANendaccess - end access to annotation using handle(ann_id)
  *
- *  Miscellaneous Routines
- *  ----------------------
+ *  Public Miscellaneous API Routines
+ *  ---------------------------------
  *  ANget_tagref - get tag/ref pair to annotation type and index
  *  ANid2tagref  - get tag/ref pair to annotation ID
  *  ANtagref2id  - get annotation id given tag/ref
- *  atype2tag - annotation type to corresponding annotation TAG
- *  tag2atype - annotation TAG to corresponding annotation type
+ *  ANatype2tag - annotation type to corresponding annotation TAG
+ *  ANtag2atype - annotation TAG to corresponding annotation type
  *
  *---------------------------------------------------------------------------*/
 
