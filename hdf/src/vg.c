@@ -368,6 +368,7 @@ char *fields;
 /*
 *	VSsizeof - computes the byte size of the field(s) of a vdata.
 *	         - Note that the size is the actual size for the local machine.
+*            - if fields==NULL, count total size of all fields in vdata.
 *
 *		 - RETURNS FAIL on error, else the field(s) size (+ve integer).
 */
@@ -386,40 +387,40 @@ char  *fields;
     VDATA           *vs;
     char * FUNC = "VSsizeof";
     
-    if (!VALIDVSID(vkey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
+    if (!VALIDVSID(vkey)) 
+        HRETURN_ERROR(DFE_ARGS,FAIL);
     
     /* locate vg's index in vgtab */
-    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) 
+        HRETURN_ERROR(DFE_NOVS,FAIL);
     
     vs=w->vs;
-    if((vs==NULL) || (scanattrs(fields,&ac,&av) < 0) || (ac<1)) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-    }
+    if(vs==NULL) 
+        HRETURN_ERROR(DFE_ARGS,FAIL);
     
-    totalsize=0;
-    for (i=0;i<ac;i++) {
-        for (found=0,j=0;j<vs->wlist.n;j++) /* check fields in vs */
-            if (!HDstrcmp(av[i], vs->wlist.name[j])) {
-                totalsize += vs->wlist.esize[j];
-                found=1;
-                break;
-            }
+	if(fields==NULL) {
+        for(totalsize=0,j=0; j<vs->wlist.n; j++) /* count fieldsizes in vs */
+            totalsize += vs->wlist.esize[j];
+	  } /* end if */
+	else {
+        if((scanattrs(fields,&ac,&av) < 0) || (ac<1)) 
+            HRETURN_ERROR(DFE_ARGS,FAIL);
+        totalsize=0;
+        for (i=0; i<ac; i++) {
+            for (found=0,j=0; j<vs->wlist.n; j++) /* check fields in vs */
+                if (!HDstrcmp(av[i], vs->wlist.name[j])) {
+                    totalsize += vs->wlist.esize[j];
+                    found=1;
+                    break;
+                }
         
-        if (!found) {
-            HERROR(DFE_ARGS);
-            HEreport("VSsizeof:[%s] not in vs", av[i]);
-            return(FAIL);
+            if (!found) {
+                HERROR(DFE_ARGS);
+                HEreport("VSsizeof:[%s] not in vs", av[i]);
+                return(FAIL);
+            }
         }
-    }
+	  } /* end else */
     return(totalsize);
 } /* VSsizeof */
 
@@ -673,15 +674,15 @@ int32   *nelt, *interlace, *eltsize;
 {
     char * FUNC = "VSinquire";
 
-	if(fields)
+    if(fields)
         VSgetfields(vkey,fields);
-	if(nelt) 
+    if(nelt) 
         *nelt=VSelts(vkey);
-	if(interlace)
+    if(interlace)
         *interlace=VSgetinterlace(vkey);
-	if(eltsize && fields)
+    if(eltsize)
         *eltsize=VSsizeof(vkey,fields);
-	if(vsname)
+    if(vsname)
         VSgetname(vkey,vsname);
 
 	return (SUCCEED); /* ok */
