@@ -67,34 +67,24 @@ int32      eltpos;
     VDATA           *vs;
     char *  FUNC = "VSseek";
 
-    if (!VALIDVSID(vkey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
-  
+    if (!VALIDVSID(vkey))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
+
   /* locate vs's index in vstab */
-    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey))))
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vs=w->vs;
-    if ((vs==NULL) || (eltpos < 0)) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-    }
+    if ((vs==NULL) || (eltpos < 0))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
 	offset  = eltpos * vs->wlist.ivsize;
 
     stat = Hseek (vs->aid, offset, DF_START);
-	if (stat==FAIL) {
-        HERROR(DFE_BADSEEK);
-        return(FAIL);
-    }
+	if (stat==FAIL)
+        HRETURN_ERROR(DFE_BADSEEK,FAIL);
 
-	return(eltpos); 
+	return(eltpos);
 } /* Vseek */
 
 /* ------------------------------------------------------------------------ */
@@ -131,57 +121,39 @@ uint8    buf[];
     VDATA           *vs;
     char *  FUNC = "VSread";
 
-    if (!VALIDVSID(vkey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
-  
+    if (!VALIDVSID(vkey))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
+
     /* locate vs's index in vstab */
-    if(NULL==(wi=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
+    if(NULL==(wi=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey))))
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vs=wi->vs;
-    if(vs == NULL) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-    }
-    if(vs->aid == NO_ID) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-    }
+    if(vs == NULL)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
+    if(vs->aid == NO_ID)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
-    if(vs->nvertices == 0)  {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-    }
+    if(vs->nvertices == 0)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
-    if(vexistvs(vs->f,vs->oref) == FAIL) {
-        HERROR(DFE_NOVS);
-        return(FAIL);
-    }
+    if(vexistvs(vs->f,vs->oref) == FAIL)
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
-    if(interlace != FULL_INTERLACE  && interlace != NO_INTERLACE) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-    }
+    if(interlace != FULL_INTERLACE  && interlace != NO_INTERLACE)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     w = &(vs->wlist);
     r = &(vs->rlist);
     hsize = vs->wlist.ivsize; 		/* size as stored in HDF */
-    
+
     /* alloc space (Vtbuf) for reading in the raw data from vdata */
     if(Vtbufsize < nelt * hsize) {
         Vtbufsize = nelt * hsize;
         if(Vtbuf)
             HDfreespace((VOIDP)Vtbuf);
-        if((Vtbuf = (uint8 *) HDgetspace ( Vtbufsize )) == NULL) {
-            HERROR(DFE_NOSPACE);
-            return(FAIL);
-        }
+        if((Vtbuf = (uint8 *) HDgetspace ( Vtbufsize )) == NULL)
+            HRETURN_ERROR(DFE_NOSPACE,FAIL);
     }
 
     /* ================ start reading ============================== */
@@ -189,55 +161,51 @@ uint8    buf[];
     
     nv = Hread (vs->aid, nelt * hsize, (uint8*) Vtbuf);
     
-    if ( nv != nelt * hsize ) {
-        HERROR(DFE_READERROR);
-        HEreport("Tried to read %d, only read %d", nelt * hsize, nv);
-        return FAIL;
-    }
-    
+    if ( nv != nelt * hsize )
+        HRETURN_ERROR(DFE_READERROR,FAIL);
+
     /* ================ done reading =============================== */
     /* ================ done reading =============================== */
-    
-    
-    /* 
-      Now, convert and repack field(s) from Vtbuf into buf.    
-      
+
+
+    /*
+      Now, convert and repack field(s) from Vtbuf into buf.
+
       This section of the code deals with interlacing. In all cases
-      the items for each of the fields are converted and shuffled 
-      around from the internal buffer "Vtbuf" to the user's buffer 
-      "buf".  
-      
+      the items for each of the fields are converted and shuffled
+      around from the internal buffer "Vtbuf" to the user's buffer
+      "buf".
+
       There are 5 cases :
-      (A) user=NO_INTERLACE   & vdata=FULL_INTERLACE) 
-      (B) user=NO_INTERLACE   & vdata=NO_INTERLACE) 
-      (C) user=FULL_INTERLACE & vdata=FULL_INTERLACE) 
-      (D) user=FULL_INTERLACE & vadat=NO_INTERLACE) 
-      (E) SPECIAL CASE when field has order>1. 
-      
+      (A) user=NO_INTERLACE   & vdata=FULL_INTERLACE)
+      (B) user=NO_INTERLACE   & vdata=NO_INTERLACE)
+      (C) user=FULL_INTERLACE & vdata=FULL_INTERLACE)
+      (D) user=FULL_INTERLACE & vadat=NO_INTERLACE)
+      (E) SPECIAL CASE when field has order>1.
+
       Cases (A)-(D) handles multiple fields.
-      Case (E) handles reading from a Vdata with a single field.      
+      Case (E) handles reading from a Vdata with a single field.
       */
-    
+
     /* ----------------------------------------------------------------- */
     /* CASE  (E): Only a single field in the Vdata */
-    
+
     if (w->n == 1) {
         b1 = buf;
         b2 = Vtbuf;
         type = w->type[0];
-        
+
         /* Errr WORKS */
-        DFKsetNT(type); 
+        DFKsetNT(type);
         DFKnumin (b2, b1, (uint32) w->order[0] * nelt, 0, 0);
 
         return(nelt);
-
     } /* case (e) */
 
-    
+
     /* ----------------------------------------------------------------- */
     /* CASE  (A):  user=none, vdata=full */
-    
+
     if (interlace==NO_INTERLACE && vs->interlace==FULL_INTERLACE) {
         b1 = buf;
         for(j = 0; j < r->n; j++) {
@@ -258,7 +226,7 @@ uint8    buf[];
             b1 += ((nelt - 1) * esize);
         }
     } /* case (a) */
-    
+
     /* ----------------------------------------------------------------- */
     /* CASE  (B):  user=none, vdata=none */
     else if (interlace==NO_INTERLACE && vs->interlace==NO_INTERLACE) {
@@ -343,7 +311,6 @@ printf("C: from : %d  to: %d esize: %d isize: %d order: %d nt: %d\n",
 
     /* HDfreespace ((VOIDP)tbuf); */
     return(nv/hsize);
-
 } /* VSread */
 
 #ifndef WIN3
@@ -374,7 +341,7 @@ int32   n;
 	VSwrite
 	Writes a specified number of elements' worth of data to a vdata.
 	You must specify how your data in your buffer is interlaced.
-	
+
 	RETURNS -1 if error
 	RETURNS the number of elements written (0 or a +ve integer).
 
@@ -409,41 +376,24 @@ uint8        buf[];
     VDATA           *vs;
     char *  FUNC = "VSwrite";
 
-    if (!VALIDVSID(vkey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
-  
+    if (!VALIDVSID(vkey))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
+
   /* locate vs's index in vstab */
-    if(NULL==(wi=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
+    if(NULL==(wi=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey))))
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vs=wi->vs;
-    if ((nelt <= 0) || (vs == NULL)) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-    }
-    if (vs->access != 'w') {
-        HERROR(DFE_BADACC);
-        return(FAIL);
-    }
-    if ( -1L == vexistvs(vs->f,vs->oref) ) {
-        HERROR(DFE_NOVS);
-        return(FAIL);
-    }
-    if (vs->wlist.ivsize == 0) {
-        HERROR(DFE_NOVS);
-        HEreport("w: vsize 0. fields not set for write!");
-        return(FAIL);
-    }
-    if (interlace != NO_INTERLACE && interlace != FULL_INTERLACE ) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-    }
+    if ((nelt <= 0) || (vs == NULL))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
+    if (vs->access != 'w')
+        HRETURN_ERROR(DFE_BADACC,FAIL);
+    if ( -1L == vexistvs(vs->f,vs->oref) )
+        HRETURN_ERROR(DFE_NOVS,FAIL);
+    if (vs->wlist.ivsize == 0)
+        HRETURN_ERROR(DFE_NOVS,FAIL);
+    if (interlace != NO_INTERLACE && interlace != FULL_INTERLACE )
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
 	w = (VWRITELIST*) &vs->wlist;
 	hsize = w->ivsize; 		/* as stored in HDF file */

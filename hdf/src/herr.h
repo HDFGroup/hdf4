@@ -47,7 +47,7 @@
    same assumptions as HRETURN_ERROR.  IN ADDITION, this macro causes
    the file specified by the id "fid" to be closed */
 
-#define HCLOSE_RETURN_ERROR(hfid, err, ret_val) {HERROR(err); Hclose(hfid); return(ret_val);} 
+#define HCLOSE_RETURN_ERROR(hfid, err, ret_val) {HERROR(err); Hclose(hfid); return(ret_val);}
 
 #if 0
 /* Clear the error stack */
@@ -143,6 +143,8 @@ extern int32 error_top;
 #define DFE_CENCODE     -77 /* Error in encoding compressed data */
 #define DFE_CTERM       -78 /* Error in encoding termination */
 #define DFE_MINIT       -79 /* Error in modeling initialization */
+#define DFE_COMPINFO    -80 /* Invalid compression header */
+#define DFE_BADRIG      -81 /* error processing a RIG */
 
 #ifdef _H_ERR_MASTER_
 
@@ -235,7 +237,9 @@ PRIVATE const struct error_messages_t error_messages[] =
 { DFE_CDECODE,      "Error in decoding compressed data"},
 { DFE_CENCODE,      "Error in encoding compressed data"},
 { DFE_CTERM,        "Error in encoding termination"},
-{ DFE_MINIT,        "Error in modeling initialization"}
+{ DFE_MINIT,        "Error in modeling initialization"},
+{ DFE_COMPINFO,     "Invalid compression header"},
+{ DFE_BADRIG,       "Error processing a RIG"}
 };
 #endif /* _H_ERR_MASTER_ */
 
