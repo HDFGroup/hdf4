@@ -32,7 +32,9 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* Private Function Prototypes */
 PRIVATE VOID vunpackvs
-    PROTO((VDATA *vs, uint8 buf[], int32 *size));
+    PROTO((VDATA *vs, uint8 buf[]));
+
+/* vpackvs is prototyped in vg.h since vconv.c needs to call it */
 
 /* External (within Vset routines) variables */
 extern vfile_t *vfile;
@@ -94,8 +96,6 @@ HFILEID f;
 uint16 vsid;
 #endif
 {
-    char * FUNC = "vexistvs";
-  
     if (NULL== vsinstance(f,vsid))
         return(FAIL);
     else
@@ -158,7 +158,6 @@ uint8        buf[];
 {
     register int32      i;
     register uint8      *bb;
-	char * FUNC = "vpackvs";
 
 	bb = &buf[0];
 
@@ -267,22 +266,18 @@ This routine will also initalize the VDATA structure as much as it can.
 */
 
 #ifdef PROTOTYPE
-PRIVATE VOID vunpackvs (VDATA *vs, uint8 buf[], int32 *size)
+PRIVATE VOID vunpackvs (VDATA *vs, uint8 buf[])
 #else
-PRIVATE VOID vunpackvs (vs, buf, size)
+PRIVATE VOID vunpackvs (vs, buf)
 VDATA   *vs;
 uint8   buf[];
-int32   *size;  /* UNUSED, but retained for compatibility with vpackvs */
 #endif
 {
     uint8   *bb;
     int32   i;
     int16   int16var;
-	char * FUNC = "vunpackvs";
 
-	i = *size; /* dum */
-
-	bb = &buf[0];
+    bb = &buf[0];
 
 	/* retrieve interlace */
     INT16DECODE(bb,vs->interlace);
@@ -549,7 +544,7 @@ char *  accesstype;
         vs->wlist.n = vs->rlist.n = 0;
         
         /* unpack the vs, then init all other fields in it */
-        vunpackvs (vs,vspack,&vspacksize);
+        vunpackvs (vs,vspack);
         vs->otag    = DFTAG_VH;
         vs->oref    = (uint16)vsid;
         vs->access  = 'r';
@@ -607,7 +602,7 @@ char *  accesstype;
         vs->nusym = 0;
         
         /* unpack the vs, then init all other fields in it */
-        vunpackvs (vs,vspack,&vspacksize);
+        vunpackvs (vs,vspack);
         vs->otag  = DFTAG_VH;
         vs->oref    = (uint16)vsid;
         vs->access    = 'w';
@@ -704,13 +699,10 @@ int32 vkey;
         HRETURN_ERROR(DFE_CANTDETACH,FAIL);
     
     if (vs->marked)  { /* if marked , write out vdata's VSDESC to file */
-        if(vs->nvertices==0) {
-            /* sprintf(sjs,"VSdetach: Empty vdata detached\n"); zj; */
-        }
         if ( (vspack= (uint8 *) HDgetspace (sizeof(VWRITELIST))) == NULL)
             HRETURN_ERROR(DFE_NOSPACE,FAIL);
-        vpackvs(vs,vspack,&vspacksize);
-        stat = Hputelement (vs->f,VSDESCTAG,vs->oref,vspack,vspacksize);
+        vpackvs(vs, vspack, &vspacksize);
+        stat = Hputelement(vs->f, VSDESCTAG, vs->oref, vspack, vspacksize);
         HDfreespace((VOIDP)vspack);
         if (stat == FAIL)
             HRETURN_ERROR(DFE_WRITEERROR,FAIL);
@@ -1075,3 +1067,4 @@ int32 vsid;
     return SUCCEED;
        
 } /* VSdelete */
+

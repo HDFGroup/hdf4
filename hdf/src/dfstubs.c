@@ -85,8 +85,6 @@ PRIVATE unsigned char *DFreflist=NULL; /* list of refs in use */
 PRIVATE char patterns[] = {0x80, 0x40, 0x20, 0x10, 0x08,
                                        0x04, 0x02, 0x01};
 #endif /* PERM_OUT */
-/* Private buffer */
-PRIVATE uint8 *ptbuf = NULL;
 
 /*
 ** NAME
@@ -1193,103 +1191,6 @@ DFerrno()
 {
     return(DFerror);
 }
-
-#ifdef PERM_OUT
-/*-----------------------------------------------------------------------------
- * Name:    DFIseedDDs
- * Purpose: read DDs in file into memory
- * Inputs:  dfile: pointer to open DF file
- * Returns: 0 on success, -1 on failure with DFerror set
- * Users:   HDF systems programmers, DFopen
- *---------------------------------------------------------------------------*/
-
-int DFIseedDDs(dfile)
-DF *dfile;
-{
-    DFdle *list;
-    DFddh ddh;
-    int i,n;                        /* n = no. of DDs in block */
-
-    DFerror = DFE_NONE;
-
-    if (dfile->list) {
-        DFerror = DFE_SEEDTWICE;    /* ### NOTE: Internal error! */
-        return(-1);
-    }
-
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
-        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
-        if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, NULL);
-      }
-
-    dfile->list= (DFdle *) DFIgetspace(sizeof(DFdle));
-    /* includes one DD - unused */
-    CKMALLOC( dfile->list, -1);
-
-    list=dfile->list;
-    list->next=NULL;                /* No other lists (yet) */
-    list->ddh.next= (int32)4L;      /* next is at 4 in file */
-    list->ddh.dds= -1;              /* flag so this is not written */
-
-    DFmaxref = 0;                   /* largest ref found till now is 0 */
-
-    while (list->ddh.next) {        /* while more headers to read */
-        CKSEEK( dfile->file, list->ddh.next, 0, -1);
-
-                            /* read headers */
-#ifdef DF_STRUCTOK
-        CKREAD( &ddh, sizeof(DFddh), 1, dfile->file, -1);
-#else /*DF_STRUCTOK*/
-        {
-            register  char *p;
-            p = ptbuf;
-            CKREAD( ptbuf, 6, 1, dfile->file, -1);     /* 6 = size of header */
-            INT16READ( p, ddh.dds);
-            INT32READ( p, ddh.next);
-        }
-#endif /*DF_STRUCTOK*/
-        n   =ddh.dds;
-
-        /* read in DDs */
-        list->next= (DFdle *)
-            DFIgetspace((unsigned)
-                        (sizeof(DFdle)+ (n-1)* sizeof(DFdd)));
-                                /* note space for 1 DD included in DLE */
-        CKMALLOC( list->next, -1);
-        list=list->next;
-        list->next=NULL;
-
-        HDmemcpy((char*)&(list->ddh), (char*)&ddh, sizeof(DFddh) ); /* Copy ddh */
-
-        if (n) {
-#ifdef DF_STRUCTOK
-            CKREAD( &list->dd[0], sizeof(DFdd), n, dfile->file, -1);
-            /* load DD's */
-#else /*DF_STRUCTOK*/
-            {
-                register  char *p;
-                p = ptbuf;
-                CKREAD( ptbuf, n*12, 1, dfile->file, -1);  /* 12=size of DD */
-                for (i=0; i<n; i++) {
-                    UINT16READ( p, list->dd[i].tag);
-                    UINT16READ( p, list->dd[i].ref);
-                    INT32READ( p, list->dd[i].offset);
-                    INT32READ( p, list->dd[i].length);
-                }
-            }
-#endif /*DF_STRUCTOK*/
-        }
-                /* Remember highest ref found - ignore MTs */
-        for (i=0; i<n; i++)
-            if ((list->dd[i].ref > DFmaxref) && (list->dd[i].tag != DFTAG_MT))
-                                     DFmaxref = list->dd[i].ref;
-    }
-    return(0);
-}
-#endif /* PERM_OUT */
 
 /*-----------------------------------------------------------------------------
  * Name:    DFIcheck
