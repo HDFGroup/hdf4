@@ -29,10 +29,10 @@ $ cc/define=VMS/include=hdf$include   testhdf
 $ type sys$input
   **    Making H level test programs **
 $!
-$ cc/define=VMS/include=hdf$include   hfile
-$ cc/define=VMS/include=hdf$include   hfile1
-$ cc/define=VMS/include=hdf$include   hblocks
-$ cc/define=VMS/include=hdf$include   hextelt
+$ cc/define=VMS/include=hdf$include   file
+$ cc/define=VMS/include=hdf$include   file1
+$ cc/define=VMS/include=hdf$include   blocks
+$ cc/define=VMS/include=hdf$include   extelt
 $ cc/define=VMS/include=hdf$include   vers
 $ type sys$input
   **  Making C interface test programs **
@@ -46,8 +46,11 @@ $ cc/define=VMS/include=hdf$include   slab
 $ cc/define=VMS/include=hdf$include   sdstr
 $ cc/define=VMS/include=hdf$include   litend
 $ cc/define=VMS/include=hdf$include   tvset
+$ cc/define=VMS/include=hdf$include   conv
+$ cc/define=VMS/include=hdf$include   tree
+
 $ link testhdf,rig,sdmms,sdnmms,an,anfile,sdstr,slab,litend, -
-  hfile, hfile1,hblocks,hextelt,vers,tvset, -
+  file,file1,blocks,extelt,vers,tvset, conv, tree, -
   hdf$lib/lib,sys$clib/lib
 $ type sys$input 
   **  Making Fortran interface test programs **
