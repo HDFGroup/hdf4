@@ -2,9 +2,12 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.2  1992/05/28 17:31:32  chouck
-C Changed output file names
+C Revision 1.3  1992/06/26 20:37:01  chouck
+C Changed output names
 C
+c Revision 1.2  1992/05/28  17:31:32  chouck
+c Changed output file names
+c
 c Revision 1.1  1992/04/27  17:28:04  sxu
 c Initial revision
 c
@@ -64,8 +67,8 @@ C  individual files
       print *,'Testing arrays in individual files...'
   
       err = dssnt(DFNT_FLOAT64)
-      err1 = dspdata('o.hdf.1', rank, dims, f64)
-      err2 = dsgdata('o.hdf.1', rank, dims, tf64)
+      err1 = dspdata('o1.hdf', rank, dims, f64)
+      err2 = dsgdata('o1.hdf', rank, dims, tf64)
       print *,'Write: ', err1, '    Read: ', err2
       err = 0
       do 160 i=1,10
@@ -78,8 +81,8 @@ C  individual files
       call err_check(err, number_failed, 'float64')
 
       err = dssnt(DFNT_FLOAT32)
-      err1 = dspdata('o.hdf.2', rank, dims, f32)
-      err2 = dsgdata('o.hdf.2', rank, dims, tf32)
+      err1 = dspdata('o2.hdf', rank, dims, f32)
+      err2 = dsgdata('o2.hdf', rank, dims, tf32)
       print *,'Write: ', err1, '    Read: ', err2
       err = 0
       do 210 i=1,10
@@ -92,8 +95,8 @@ C  individual files
       call err_check(err, number_failed, 'float32')
 
       err = dssnt(DFNT_INT8)
-      err1 = dspdata('o.hdf.3', rank, dims, i8)
-      err2 = dsgdata('o.hdf.3', rank, dims, ti8)
+      err1 = dspdata('o3.hdf', rank, dims, i8)
+      err2 = dsgdata('o3.hdf', rank, dims, ti8)
       print *,'Write: ', err1, '    Read: ', err2
       err = 0
       do 310 i=1,10
@@ -106,8 +109,8 @@ C  individual files
       call err_check(err, number_failed, 'int8')
 
       err = dssnt(DFNT_INT16)
-      err1 = dspdata('o.hdf.4', rank, dims, i16)
-      err2 = dsgdata('o.hdf.4', rank, dims, ti16)
+      err1 = dspdata('o4.hdf', rank, dims, i16)
+      err2 = dsgdata('o4.hdf', rank, dims, ti16)
       print *,'Write: ', err1, '    Read: ', err2
       err = 0
       do 410 i=1,10
@@ -120,8 +123,8 @@ C  individual files
       call err_check(err, number_failed, 'int16')
 
       err = dssnt(DFNT_INT32)
-      err1 = dspdata('o.hdf.5', rank, dims, i32)
-      err2 = dsgdata('o.hdf.5', rank, dims, ti32)
+      err1 = dspdata('o5.hdf', rank, dims, i32)
+      err2 = dsgdata('o5.hdf', rank, dims, ti32)
       print *,'Write: ', err1, '    Read: ', err2
       err = 0
       do 510 i=1,10
@@ -139,29 +142,29 @@ C
       print *, 'Error values: '
 C
       err = dssnt(DFNT_FLOAT64)
-      print *,'Add float64 returns: ',dsadata('o.hdf',rank,dims,f64)
+      print *,'Add float64 returns: ',dsadata('tsdntf.hdf',rank,dims,f64)
 
       err = dssnt(DFNT_FLOAT32)
-      print *,'Add float32 returns: ',dsadata('o.hdf',rank,dims,f32)
+      print *,'Add float32 returns: ',dsadata('tsdntf.hdf',rank,dims,f32)
 
       err = dssnt(DFNT_INT8)
-      print *, 'Add int8 returns: ', dsadata('o.hdf', rank, dims, i8)
+      print *, 'Add int8 returns: ', dsadata('tsdntf.hdf', rank, dims, i8)
 
       err = dssnt(DFNT_INT16)
-      print *, 'Add int16 returns: ', dsadata('o.hdf', rank, dims, i16)
+      print *, 'Add int16 returns: ', dsadata('tsdntf.hdf', rank, dims, i16)
 
       err = dssnt(DFNT_INT32)
-      print *, 'Add int32 returns: ', dsadata('o.hdf', rank, dims, i32)
+      print *, 'Add int32 returns: ', dsadata('tsdntf.hdf', rank, dims, i32)
 
 C 
       print *, 'Reading arrays from single file... '
       print *, 'Error values: '
 C
-      print *, 'Get f64 returns: ', dsgdata('o.hdf', rank, dims, tf64)
-      print *, 'Get f32 returns: ', dsgdata('o.hdf', rank, dims, tf32)
-      print *, 'Get int8 returns: ', dsgdata('o.hdf', rank, dims, ti8)
-      print *, 'Get int16 returns: ', dsgdata('o.hdf', rank, dims, ti16)
-      print *, 'Get int32 returns: ', dsgdata('o.hdf', rank, dims, ti32)
+      print *, 'Get f64 returns: ', dsgdata('tsdntf.hdf', rank, dims, tf64)
+      print *, 'Get f32 returns: ', dsgdata('tsdntf.hdf', rank, dims, tf32)
+      print *, 'Get int8 returns: ', dsgdata('tsdntf.hdf', rank, dims, ti8)
+      print *, 'Get int16 returns: ', dsgdata('tsdntf.hdf', rank, dims, ti16)
+      print *, 'Get int32 returns: ', dsgdata('tsdntf.hdf', rank, dims, ti32)
 
 C 
       print *, 'Checking arrays from single file...\n\n'

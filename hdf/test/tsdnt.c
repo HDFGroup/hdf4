@@ -5,8 +5,8 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1992/06/25 17:32:35  chouck
-Changed output file names
+Revision 1.6  1992/06/26 20:35:06  chouck
+Changed output names
 
  * Revision 1.4  1992/05/31  15:32:37  mfolk
  * Change type of rank and dims[2] from int to int32 for Convex.
@@ -23,6 +23,8 @@ Changed output file names
 */
 #include "hdf.h"
 #include "dfsd.h"
+
+#define FILENAME "tsdnt.hdf"
 
 float32 f32[10][10], tf32[10][10];
 int8 i8[10][10], ti8[10][10];
@@ -205,48 +207,48 @@ int main()
 
     printf("Writing arrays to single file... ");
     DFSDsetNT(DFNT_FLOAT32);
-    err = DFSDadddata("co.hdf", rank, dims, f32);
+    err = DFSDadddata(FILENAME, rank, dims, f32);
     printf("%d  ", err);
     DFSDsetNT(DFNT_INT8);
-    err = DFSDadddata("co.hdf", rank, dims, i8);
+    err = DFSDadddata(FILENAME, rank, dims, i8);
     printf("%d  ", err);
     DFSDsetNT(DFNT_UINT8);
-    err = DFSDadddata("co.hdf", rank, dims, ui8);
+    err = DFSDadddata(FILENAME, rank, dims, ui8);
     printf("%d  ", err);
     DFSDsetNT(DFNT_INT16);
-    err = DFSDadddata("co.hdf", rank, dims, i16);
+    err = DFSDadddata(FILENAME, rank, dims, i16);
     printf("%d  ", err);
     DFSDsetNT(DFNT_UINT16);
-    err = DFSDadddata("co.hdf", rank, dims, ui16);
+    err = DFSDadddata(FILENAME, rank, dims, ui16);
     printf("%d  ", err);
     DFSDsetNT(DFNT_INT32);
-    err = DFSDadddata("co.hdf", rank, dims, i32);
+    err = DFSDadddata(FILENAME, rank, dims, i32);
     printf("%d  ", err);
     DFSDsetNT(DFNT_UINT32);
-    err = DFSDadddata("co.hdf", rank, dims, ui32);
+    err = DFSDadddata(FILENAME, rank, dims, ui32);
     printf("%d\n\n", err);
 
     printf("Reading arrays from single file... ");
     DFSDsetNT(DFNT_FLOAT32);
-    err = DFSDgetdata("co.hdf", rank, dims, tf32);
+    err = DFSDgetdata(FILENAME, rank, dims, tf32);
     printf("%d  ", err);
     DFSDsetNT(DFNT_INT8);
-    err = DFSDgetdata("co.hdf", rank, dims, ti8);
+    err = DFSDgetdata(FILENAME, rank, dims, ti8);
     printf("%d  ", err);
     DFSDsetNT(DFNT_UINT8);
-    err = DFSDgetdata("co.hdf", rank, dims, tui8);
+    err = DFSDgetdata(FILENAME, rank, dims, tui8);
     printf("%d  ", err);
     DFSDsetNT(DFNT_INT16);
-    err = DFSDgetdata("co.hdf", rank, dims, ti16);
+    err = DFSDgetdata(FILENAME, rank, dims, ti16);
     printf("%d  ", err);
     DFSDsetNT(DFNT_UINT16);
-    err = DFSDgetdata("co.hdf", rank, dims, tui16);
+    err = DFSDgetdata(FILENAME, rank, dims, tui16);
     printf("%d  ", err);
     DFSDsetNT(DFNT_INT32);
-    err = DFSDgetdata("co.hdf", rank, dims, ti32);
+    err = DFSDgetdata(FILENAME, rank, dims, ti32);
     printf("%d  ", err);
     DFSDsetNT(DFNT_UINT32);
-    err = DFSDgetdata("co.hdf", rank, dims, tui32);
+    err = DFSDgetdata(FILENAME, rank, dims, tui32);
     printf("%d\n", err);
 
     printf("Checking arrays from single file...\n\n");
