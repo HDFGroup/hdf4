@@ -8,12 +8,10 @@ File attributes:
 		Type = 8-bit signed char 
 		Count= 37
 		Value = For testing dumpsds SD file attribute
-
 	 Attr1: Name = File contents
 		Type = 8-bit signed char 
 		Count= 14
 		Value = Some data sets
-
 
 Dimension Variable Name = fakeDim0
 	 Index = 0
