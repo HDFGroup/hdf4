@@ -96,9 +96,9 @@ EXPORTED ROUTINES
 #define DIR_SEPS  "\\"
 #else 
 #if defined VMS
-/* VMS */
-#define DIR_SEPC  46  /* Integer value of '.' */
-#define DIR_SEPS  "."
+/* VMS -made it the same as POSIX for now eventhought it should be '.' */
+#define DIR_SEPC  47  /* Integer value of '/' */
+#define DIR_SEPS  "/"
 #else
 /* Unix - POSIX */
 #define DIR_SEPC  47  /* Integer value of '/' */
