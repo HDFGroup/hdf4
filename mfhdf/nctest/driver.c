@@ -112,6 +112,8 @@ char *argv[];
 
     test_ncvarget(testfile);
 
+    test_ncvarget_unlim("test_unlim.nc");
+
     test_ncvarputg(testfile);
 
     test_ncvargetg(testfile);
