@@ -477,7 +477,8 @@ vpackvg(VGROUP * vg, uint8 buf[], int32 *size)
     UINT16ENCODE(bb, vg->more);
 
     /* returns the size of total fields saved */
-    *size = (int32) (bb - buf) + 1;     /* NOTE: the '+1' part shouldn't be there */
+    *size = (int32) (bb - buf) + 1;     
+    *bb = 0;       /* NOTE: the '+1' part shouldn't be there */
     /* but since files have been created with */
     /* it there (and the size calc. wrong) it */
     /* has to be left alone -QAK */
@@ -786,7 +787,7 @@ Vdetach(int32 vkey)
       /* no reason to check for access... (I hope) -QAK */
       if (vg->marked == 1)
         {
-            vgpack = (uint8 *) HDmalloc((uint32) sizeof(VGROUP) + vg->nvelt * 4);
+            vgpack = (uint8 *) HDmalloc((uint32) sizeof(VGROUP) + vg->nvelt * 4 + 1);
             vpackvg(vg, vgpack, &vgpacksize);
 
             /*

@@ -225,6 +225,7 @@ vpackvs(VDATA * vs, uint8 buf[], int32 *size)
     INT16ENCODE(bb, vs->more);
 
     *size = (int32) (bb - buf) + 1;
+    *bb = 0;
 }   /* vpackvs */
 
 /* ----------------------------- vunpackvs ------------------------------------- */
@@ -680,7 +681,7 @@ VSdetach(int32 vkey)
 
     if (vs->marked)
       {	  /* if marked , write out vdata's VSDESC to file */
-	  if ((vspack = (uint8 *) HDmalloc(sizeof(VWRITELIST))) == NULL)
+	  if ((vspack = (uint8 *) HDmalloc(sizeof(VWRITELIST) + 1)) == NULL)
 	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
 	  vpackvs(vs, vspack, &vspacksize);
 	  ret = Hputelement(vs->f, VSDESCTAG, vs->oref, vspack, vspacksize);
