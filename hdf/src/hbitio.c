@@ -415,7 +415,7 @@ intn flushbit;              /* how to flush the bits */
             Hbitwrite(bitfile_id,bitfile_rec->count,(uint32)(flushbit ? 0xFF : 0));
         Hwrite(bitfile_rec->acc_id,bitfile_rec->bytep-bitfile_rec->bytea,bitfile_rec->bytea);
       } /* end if */
-    HDfreespace(bitfile_rec->bytea);    /* free the space for the buffer */
+    HDfreespace((VOIDP)bitfile_rec->bytea);    /* free the space for the buffer */
     bitfile_rec->used = FALSE;
 
     return(Hendaccess(bitfile_rec->acc_id));
