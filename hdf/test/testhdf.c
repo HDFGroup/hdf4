@@ -1,3 +1,9 @@
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
+/* $Id$ */
+
 #define MAXNUMOFTESTS 20
 
 /* Exportable variables */

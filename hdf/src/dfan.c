@@ -1,92 +1,45 @@
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.13  1993/10/01 20:00:32  koziol
-Put "extern C" block around function prototypes for C++ compatibility.
+/* $Id$ */
 
- * Revision 1.12  1993/09/30  19:04:45  koziol
- * Added basic compressing functionality for special tags.
- *
- * Revision 1.11  1993/09/28  18:04:04  koziol
- * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
- * tag handling.  Added new compression special tag type.
- *
- * Revision 1.10  1993/04/19  22:47:04  koziol
- * General Code Cleanup to reduce/remove errors on the PC
- *
- * Revision 1.9  1993/04/05  22:35:02  koziol
- * Fixed goofups made in haste when patching code.
- *
- * Revision 1.8  1993/03/29  18:38:12  chouck
- * Cleaned up a bunch of casting problems
- *
- * Revision 1.7  1993/01/19  05:54:05  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.6  1992/12/21  23:27:49  mfolk
- * Changed DFANIputann so that when you rewrite an annotation it
- * deletes the old one and writes the new one to the end of the
- * file.
- *
- * Revision 1.5  1992/12/18  15:41:48  mfolk
- * Added code in DFANIputann to promote annotation storage to linked
- * block if the annotation already exists in the file, is not
- * a linked block, AND we are increasing its size.
- *
- * Revision 1.4  1992/11/28  18:35:27  chouck
- * Improved speed of initialization for DFANlablist()
- *
- * Revision 1.3  1992/11/07  20:12:48  sxu
- * added nlabs in DFANIlablist.
- *
- * Revision 1.2  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*-----------------------------------------------------------------------------
- * File:    dfan.c
- * Purpose: read and write annotations: labels and descriptions of data items
- * Invokes: df.c
+ * File:     dfan.c
+ * Purpose:  read and write annotations: labels and descriptions of data items
+ * Invokes:  df.c
  * Contents: 
  *
- *  DFANgetlablen: get length of label of tag/ref
- *  DFANgetlabel:  get label of tag/ref
- *  DFANgetdesclen: get length of description of tag/ref
- *  DFANgetdesc:   get description of tag/ref
+ *  DFANgetlablen:  - get length of label of tag/ref
+ *  DFANgetlabel:   - get label of tag/ref
+ *  DFANgetdesclen: - get length of description of tag/ref
+ *  DFANgetdesc:    - get description of tag/ref
  *
- *  DFANgetfidlen: get length of file ID
- *  DFANgetfid:    get file ID
- *  DFANgetfdslen: get length of file description
- *  DFANgetfds:    get file description
+ *  DFANgetfidlen:  - get length of file ID
+ *  DFANgetfid:     - get file ID
+ *  DFANgetfdslen:  - get length of file description
+ *  DFANgetfds:     - get file description
  *
- *  DFANputlabel:  put label of tag/ref
- *  DFANputdesc:   put description of tag/ref
+ *  DFANputlabel:   - put label of tag/ref
+ *  DFANputdesc:    - put description of tag/ref
  *
- *  DFANaddfid:    add file ID
- *  DFANaddfds:    add file description
+ *  DFANaddfid:     - add file ID
+ *  DFANaddfds:     - add file description
  *
- *  DFANlastref:   return ref of last annotation read or written
- *  DFANlablist:   get list of labels for a particular tag
+ *  DFANlastref:    - return ref of last annotation read or written
+ *  DFANlablist:    - get list of labels for a particular tag
  *
- *  DFANIopen:     open/reopen file
- *  DFANIlocate:   return ref of label/desc of tag/ref
- *  DFANIaddentry: add entry in annotation directory
- *  DFANIgetannlen: get length of annotation of tag/ref
- *  DFANIgetann:   get annotation of tag/ref
- *  DFANIputann:   put annotation of tag/ref
- *  DFANIlablist:  get list of labels for a particular tag
+ *  DFANIopen:      - open/reopen file
+ *  DFANIlocate:    - return ref of label/desc of tag/ref
+ *  DFANIaddentry:  - add entry in annotation directory
+ *  DFANIgetannlen: - get length of annotation of tag/ref
+ *  DFANIgetann:    - get annotation of tag/ref
+ *  DFANIputann:    - put annotation of tag/ref
+ *  DFANIlablist:   - get list of labels for a particular tag
  *
- *  DFANIaddfann:  add file annotation (ID or description)
- *  DFANIgetfannlen: get length of file annotation
- *  DFANIgetfann:  get file annotation
+ *  DFANIaddfann:   - add file annotation (ID or description)
+ *  DFANIgetfannlen: - get length of file annotation
+ *  DFANIgetfann:    - get file annotation
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
