@@ -3,31 +3,31 @@
  
 Vdata/vgroup version
 --------------------
-Previous (up to HDF4.0r2) vdata and vgroup version is 3, 
-VSET_VERION.  With attributes added, version number will be 4,
-VSET_NEW_VERSION. For backward compatibility, a vdata or 
-a vgroup will still has version number 3 if it has no attribute 
+Previously (up to HDF4.0r2), the vdata and vgroup version was 3, 
+VSET_VERSION.  With attributes added, the version number has been 
+changed to 4, VSET_NEW_VERSION. For backward compatibility, a vdata 
+or a vgroup will still have version number 3 if it has no attribute(s) 
 assigned. 
 
 Attribute
 ---------
-An attribute has name, data type, number of values and values. 
-All values of an attribute should be of the same data type,
-for example 10 characters, or 2 32-bit integers.
+An attribute has a name, data type, a number of values and the 
+values.  All values of an attribute should be of the same data type.
+For example, 10 characters, or 2 32-bit integers.
 
-Any number of ttributes can be assigned to a vgroup, a vdata 
-(entire vdata) or any field of a vdata. An attribute  name 
-should be unique in its domian, e.g. a field attribute name 
+Any number of attributes can be assigned to a vgroup, a vdata 
+(entire vdata) or any field of a vdata.  An attribute name should be 
+unique in its domain.  For example, a field attribute name 
 should be unique among all attributes of that field. 
 
 Attributes in HDF files
 -----------------------
 Attributes will be stored in vdatas.  The vdata's name is
-the the attribute name specified by the user. Its class is 
+the attribute name specified by the user. Its class is 
 "Attr0.0", _HDF_ATTRIBUTE.  
 
 All attributes of a vgroup or a vdata will be included in 
-the vgroup, represented by DFTAG_VG,  or the vdata header,
+the vgroup represented by DFTAG_VG,  or the vdata header,
 DFTAG_VH. 
  
 Vdata/Vgroup attribute routines (see man pages for more info)
@@ -40,8 +40,8 @@ Vdata/Vgroup attribute routines (see man pages for more info)
                  int32 datatype, int32 count, VOIDP values)
        set attr for a field of a vdata or for the vdata.
        if the attr already exists the new values will replace
-          the current ones as far as the datatype and order
-          are not changed.
+          the current ones, provided the datatype and order
+          have not been changed.
   intn VSnattrs(int32 vsid)
        total number of attr for a vdata and its fields
   int32 VSfnattrs(int32 vsid, int32 findex) 
@@ -92,15 +92,15 @@ Changes in the vdata header in HDF files :
              4           2/2          
  
    If no attributes or other new features were assigned, 
-       version number is still VSET_VERSION  and the old 
+       version number is still VSET_VERSION and the old 
        vdata header will be written out.
 
-2. In old implementation the 'version' and 'more' fields
+2. In the old implementation the 'version' and 'more' fields
    follow the 'exref' field. In order to not break existing
-   applications the new implementation keeps the these two
+   applications the new implementation keeps these two
    fields and adds a duplication of 'version' and 'more'
-   at the end, along with an extra_byte which was not 
-   documented in old documentation. 
+   at the end, along with an extra byte which was not 
+   documented in the old documentation. 
 
 3. The field "flags" of  uint32: 
            bit 0 -- has attr
