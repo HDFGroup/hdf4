@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.10  1992/11/06 20:11:55  chouck
-Added some changes for Absoft Fortran on the Mac
+Revision 1.11  1992/11/06 21:52:30  chouck
+Added HDmemset() function.
 
+ * Revision 1.10  1992/11/06  20:11:55  chouck
+ * Added some changes for Absoft Fortran on the Mac
+ *
  * Revision 1.9  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -795,8 +798,10 @@ extern uint8 *DFtbuf;
 
 #ifdef WIN3
 #  define HDmemcpy(dst,src,n) (_fmemcpy((dst),(src),(n)))
+#  define HDmemset(s,c,n)     (_fmemset((s),(c),(n)))
 #else
 #  define HDmemcpy(dst,src,n) (memcpy((dst),(src),(n)))
+#  define HDmemset(s,c,n)     (memset((s),(c),(n)))
 #endif /* WIN3 */
 
 
