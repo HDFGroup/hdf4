@@ -2,10 +2,14 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.4  1992/05/07 16:37:55  dilg
-C Fixed problem with "Hit <return> to continue"
-C Changed output file name from "o2" to "tstubsF.hdf"
+C Revision 1.5  1992/06/02 16:04:38  dilg
+C Added more thorough test of dffind() and fixed error in expected return code
+C from dfput().
 C
+c Revision 1.4  1992/05/07  16:37:55  dilg
+c Fixed problem with "Hit <return> to continue"
+c Changed output file name from "o2" to "tstubsF.hdf"
+c
 c Revision 1.3  1992/04/29  17:00:06  dilg
 c Changed VAX FORTRAN initialization statements to standard FORTRAN 'data'
 c statements.
@@ -17,7 +21,7 @@ c Revision 1.1  1992/03/26  21:51:22  dilg
 c Initial revision
 c
 C
-      program tdfstubsF
+      program tstubsF
 
       character ar0*10
       character ar1*9
@@ -148,7 +152,7 @@ C
       print *, 'Testing dfput...'
       ret = dfput(dfile, t255, r1, ar0, a0size)
       dfenum = dferrno()
-      if (ret .ne. 0) then
+      if (ret .ne. a0size) then
 	print *, '>>>Failure:  DFerror = ', dfenum
 	nerrors = nerrors + 1
       else
@@ -371,7 +375,7 @@ C
 
       print *, ' '
       print *, 'Testing dfsfind...'
-      ret = dfsfind(dfile, t255, r3)
+      ret = dfsfind(dfile, 254, 0)
       dfenum = dferrno()
       if (ret .eq. -1) then
 	print *, '>>>Failure:'
@@ -383,6 +387,19 @@ C
 
       print *, ' '
       print *, 'Testing dffind...'
+      ret = dfdup(dfile, 254, 4, 255, 3)
+      if (ret .ne. 0) then
+        print *, '>>>DFdup 1 failed.'
+      endif
+      ret = dfdup(dfile, 254, 5, 255, 3)
+      if (ret .ne. 0) then
+        print *, '>>>DFdup 2 failed.'
+      endif
+      ret = dfdup(dfile, 254, 6, 255, 3)
+      if (ret .ne. 0) then
+        print *, '>>>DFdup 3 failed.'
+      endif
+      do 200 i=4,6
       ret = dffind(dfile, tag, ref, length)
       dfenum = dferrno()
       if (ret .eq. -1) then
@@ -390,11 +407,11 @@ C
         print *, '   DFerror = ', dfenum
 	nerrors = nerrors + 1
       else
-	if ((tag .ne. t255) .or. (ref .ne. r3) .or. (length .ne. a1size)) then
+	if ((tag .ne. 254) .or. (ref .ne. i) .or. (length .ne. a1size)) then
 	  print *, '>>>Failure:  tag/ref found is not correct.'
 	  print *, '   Looking for:'
-	  print *, '      tag:    ', t255
-	  print *, '      ref:    ', r3
+	  print *, '      tag:      254'
+	  print *, '      ref:    ', i
 	  print *, '      length: ', a1size
 	  print *, '   Found:'
 	  print *, '      tag:    ', tag
@@ -404,6 +421,15 @@ C
 	else
           print *, 'Success!'
 	endif
+      endif
+ 200  continue
+
+      ret = dfclose(dfile)
+      dfenum = dferrno()
+      if (ret .ne. 0) then
+	print *, '>>>Failure:  dfclose failed (probably due to open aids)'
+        print *, '   DFerror = ', dfenum
+	nerrors = nerrors + 1
       endif
 
 
