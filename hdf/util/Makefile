@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.13  1993/04/13 17:45:43  koziol
+# Revision 1.14  1993/04/23 21:58:58  koziol
+# Cleaned up some more warnings on the Cray
+#
+# Revision 1.13  1993/04/13  17:45:43  koziol
 # Made the installation check for a previous bin directory before trying to
 # re-create it.
 #
@@ -42,7 +45,7 @@
 #
 #
 UTILS = hdf24to8 hdfcomp hdfls hdfpack hdfrseq hdftopal hdftor8 paltohdf \
-        r8tohdf ristosds vcompat vmake vshow make24 hdf2jpeg jpeg2hdf
+        r8tohdf ristosds vcompat vmake vshow make24 hdf2jpeg jpeg2hdf 
 
 HEOBJ = he_main.o he_cntrl.o he_disp.o he_file.o
 

@@ -201,7 +201,7 @@ char *argv[];
 
     if(argv[1][0]=='-' || argv[1][0]=='/') {    /* check command line */
         if((argv[1][1]!='s' && argv[1][1]!='j') || argc<4)
-            usage;
+            usage();
 
         while(argv[file][0]=='-' || argv[file][0]=='/') {
             switch(argv[file][1]) {
@@ -223,7 +223,7 @@ char *argv[];
                     break;
 
                 default:
-                    usage;
+                    usage();
 
               } /* end switch */
             file++;
