@@ -138,7 +138,7 @@ typedef double            float64;
 #define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
-#define FILELIB PAGEBUFIO
+#define FILELIB UNIXBUFIO
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -192,7 +192,7 @@ typedef double            float64;
 #define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
-#define FILELIB PAGEBUFIO
+#define FILELIB UNIXBUFIO
 #ifndef __STDC__
 #define const
 #endif
