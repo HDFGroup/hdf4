@@ -1123,7 +1123,7 @@ nsfsacct(id, type)
  * Name:    sfsdmvc
  * Purpose: Call SDsetdimval_comp to set the dim value backward 
  *            compatibility type
- * Inputs:  id: sds id
+ * Inputs:  id: dim id
  *          compmode: backward compatibility:
  *                    SD_DIMVAL_BW_COMP -- compatible (in mfhdf.h)
  *                    SD_DIMVAL_BW_INCOMP -- incompatible.
@@ -1148,7 +1148,7 @@ nsfsdmvc(id, compmode)
  * Name:    sfisdmvc
  * Purpose: Call SDisdimval_bwcomp to get the dim value backward 
  *            compatibility 
- * Inputs:  id: sds id
+ * Inputs:  id: dim id
  *
  * Returns: SD_DIMVAL_BW_COMP (1) if dimval is backward compatible;
             SD_DIMVAL_BW_INCOMP (0) for not compatible; (in mfhdf.h)
