@@ -130,6 +130,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define HMASTER
 #include "hdf.h"
 #undef HMASTER
+#define HFILE_MASTER
 #include "hfile.h"
 #include <string.h>
 
@@ -2273,8 +2274,8 @@ Hwrite(int32 access_id, int32 length, const VOIDP data)
 
   /* clear error stack and check validity of access id */
 #ifdef TESTING
-  printf("Hwrite(): entering\n");
-#endif
+printf("Hwrite(): entering\n");
+#endif /* TESTING */
   HEclear();
   access_rec = AID2REC(access_id);
   if (access_rec == (accrec_t *) NULL || !access_rec->used
@@ -2311,43 +2312,43 @@ Hwrite(int32 access_id, int32 length, const VOIDP data)
     HGOTO_ERROR(DFE_BADSEEK, FAIL);
 
 #ifdef TESTING
-  printf("Hwrite(): access_id=%d, length=%d, data=%p\n", access_id, length, data);
-#endif
+printf("Hwrite(): access_id=%d, length=%d, data=%p\n", access_id, length, data);
+#endif /* TESTING */
   if (access_rec->appendable && length + access_rec->posn > dd->length)
     {
 
 #ifdef TESTING
-      printf("Hwrite(): appending to a dataset posn=%d, dd->length=%d\n", access_rec->posn, dd->length);
-#endif
+printf("Hwrite(): appending to a dataset posn=%d, dd->length=%d\n", access_rec->posn, dd->length);
+#endif /* TESTING */
       /* get the offset and length of the dataset */
       data_len = dd->length;
       data_off = dd->offset;
 #ifdef TESTING
-      printf("Hwritee: file_rec->f_end_off=%d\n", file_rec->f_end_off);
-#endif
+printf("%s: file_rec->f_end_off=%d\n", FUNC,file_rec->f_end_off);
+#endif /* TESTING */
       if ((uint32) data_len + (uint32) data_off != file_rec->f_end_off)
         {	/* dataset at end? */
+#ifdef TESTING
+printf("%s: converting to a linked block\n", FUNC);
+#endif /* TESTING */
           if (HLconvert(access_id, HDF_APPENDABLE_BLOCK_LEN, HDF_APPENDABLE_BLOCK_NUM) == FAIL)
             {
               access_rec->appendable = FALSE;
               HGOTO_ERROR(DFE_BADSEEK, FAIL);
             }		/* end if */
-          else
-                                /* successfully converted the element into a linked block */
-                                /* now loop back and actually write the data out */
-            {
-              if (Hwrite(access_id, length, data) == FAIL)
-                HGOTO_ERROR(DFE_WRITEERROR, FAIL);
-            }		/* end else */
+            /* successfully converted the element into a linked block */
+            /* now loop back and actually write the data out */
+          if (Hwrite(access_id, length, data) == FAIL)
+            HGOTO_ERROR(DFE_WRITEERROR, FAIL);
+          goto done;    /* we're finished, wrap things up */
         }	/* end if */
       dd->length = access_rec->posn + length;	/* update the DD length */
       if (HIupdate_dd(file_rec, access_rec->block, access_rec->idx, FUNC) == FAIL)
         HGOTO_ERROR(DFE_CANTFLUSH, FAIL);
 #ifdef TESTING
-      printf("Hwrite(): appending to a dataset, ok to append\n");
+printf("Hwrite(): appending to a dataset, ok to append\n");
 #endif
     }		/* end if */
-
   /* seek and write data */
   if (HPseek(file_rec, access_rec->posn + dd->offset) == FAIL)
     HGOTO_ERROR(DFE_SEEKERROR, FAIL);
@@ -2357,8 +2358,8 @@ Hwrite(int32 access_id, int32 length, const VOIDP data)
 
   /* update end of file pointer? */
 #ifdef TESTING
-  printf("%s: file_rec->f_end_off=%ld\n", FUNC,(long)file_rec->f_end_off);
-  printf("%s: file_rec->f_cur_off=%ld\n", FUNC,(long)file_rec->f_cur_off);
+printf("%s: file_rec->f_end_off=%ld\n", FUNC,(long)file_rec->f_end_off);
+printf("%s: file_rec->f_cur_off=%ld\n", FUNC,(long)file_rec->f_cur_off);
 #endif
   if (file_rec->f_cur_off > file_rec->f_end_off)
     file_rec->f_end_off = file_rec->f_cur_off;
@@ -2366,7 +2367,7 @@ Hwrite(int32 access_id, int32 length, const VOIDP data)
   /* update position of access in elt */
   access_rec->posn += length;
 #ifdef TESTING
-  printf("%s: access_rec->posn=%ld\n",FUNC,(long)access_rec->posn);
+printf("%s: access_rec->posn=%ld\n",FUNC,(long)access_rec->posn);
 #endif
 
   ret_value = length;
@@ -2568,6 +2569,9 @@ Hgetelement(int32 file_id, uint16 tag, uint16 ref, uint8 *data)
 
   /* get the access record, get the length of the elt, read in data,
    and dispose of access record */
+#ifdef QAK
+printf("%s: tag=%d, ref=%d\n",FUNC,tag,ref);
+#endif /* QAK */
   access_id = Hstartread(file_id, tag, ref);
   if (access_id == FAIL)
     HGOTO_ERROR(DFE_NOMATCH, FAIL);
@@ -5182,39 +5186,60 @@ HPgetdiskblock(filerec_t * file_rec, int32 block_size, intn moveto)
 {
   CONSTR(FUNC, "HPgetdiskblock");
   uint8       temp;
-  int32       ret;
   int32       ret_value = SUCCEED;
 
   /* check for valid arguments */
   if (file_rec == NULL || block_size < 0)
     HGOTO_ERROR(DFE_ARGS, FAIL);
 
-  /* get the offset of the end of the file */
-  ret = file_rec->f_end_off;
+
+#ifdef DISKBLOCK_DEBUG
+  block_size+=(DISKBLOCK_HSIZE+DISKBLOCK_TSIZE);
+  /* get the offset of the allocated block */
+  ret_value = file_rec->f_end_off+DISKBLOCK_HSIZE;
+#else /* DISKBLOCK_DEBUG */
+  /* get the offset of the allocated block */
+  ret_value = file_rec->f_end_off;
+#endif /* DISKBLOCK_DEBUG */
 
   /* reserve the space by marking the end of the element */
   if (block_size > 0)
     {
+#ifdef DISKBLOCK_DEBUG
       if (file_rec->cache)
         file_rec->dirty |= FILE_END_DIRTY;
       else
         {
-          if (HPseek(file_rec, ret + block_size - 1) == FAIL)
+          /* Write the debugging head & tail to the file block allocated */
+          if (HPseek(file_rec, file_rec->f_end_off) == FAIL)
+            HGOTO_ERROR(DFE_SEEKERROR, FAIL);
+          if (HPwrite(file_rec, diskblock_header, DISKBLOCK_HSIZE) == FAIL)
+            HGOTO_ERROR(DFE_WRITEERROR, FAIL);
+          if (HPseek(file_rec, file_rec->f_end_off+block_size-DISKBLOCK_TSIZE) == FAIL)
+            HGOTO_ERROR(DFE_SEEKERROR, FAIL);
+          if (HPwrite(file_rec, diskblock_tail, DISKBLOCK_TSIZE) == FAIL)
+            HGOTO_ERROR(DFE_WRITEERROR, FAIL);
+        }	/* end else */
+#else /* DISKBLOCK_DEBUG */
+      if (file_rec->cache)
+        file_rec->dirty |= FILE_END_DIRTY;
+      else
+        {
+          if (HPseek(file_rec, ret_value + block_size - 1) == FAIL)
             HGOTO_ERROR(DFE_SEEKERROR, FAIL);
           if (HPwrite(file_rec, &temp, 1) == FAIL)
             HGOTO_ERROR(DFE_WRITEERROR, FAIL);
         }	/* end else */
+#endif /* DISKBLOCK_DEBUG */
     }		/* end if */
   if (moveto == TRUE)		/* move back to the beginning of the element */
     {
-      if (HPseek(file_rec, ret) == FAIL)
+      if (HPseek(file_rec, ret_value) == FAIL)
         HGOTO_ERROR(DFE_SEEKERROR, FAIL);
     } /* end if */
 
   /* incr. offset of end of file */
-  file_rec->f_end_off = ret + block_size;
-
-  ret_value = ret;
+  file_rec->f_end_off +=block_size;
 
 done:
   if(ret_value == FAIL)   
@@ -5547,7 +5572,7 @@ HPwrite(filerec_t *file_rec,const VOIDP buf,int32 bytes)
   intn    ret_value = SUCCEED;
 
 #ifdef QAK
-  printf("%s: a) f_cur_off=%ld, bytes=%ld, last_op=%d\n",FUNC,(long)file_rec->f_cur_off,(long)bytes,(int)file_rec->last_op);
+printf("%s: a) f_cur_off=%ld, bytes=%ld, last_op=%d\n",FUNC,(long)file_rec->f_cur_off,(long)bytes,(int)file_rec->last_op);
 #endif /* QAK */
   /* Check for switching file access operations */
   if(file_rec->last_op==OP_READ || file_rec->last_op==OP_UNKNOWN)
@@ -5565,7 +5590,7 @@ HPwrite(filerec_t *file_rec,const VOIDP buf,int32 bytes)
   file_rec->f_cur_off+=bytes;
   file_rec->last_op=OP_WRITE;
 #ifdef QAK
-  printf("%s: b) f_cur_off=%ld, ftell=%ld, last_op=%d\n",FUNC,(long)file_rec->f_cur_off,(long)ftell(file_rec->file),(int)file_rec->last_op);
+printf("%s: b) f_cur_off=%ld, ftell=%ld, last_op=%d\n",FUNC,(long)file_rec->f_cur_off,(long)ftell(file_rec->file),(int)file_rec->last_op);
 #endif /* QAK */
 
 done:

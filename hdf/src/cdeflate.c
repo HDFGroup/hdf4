@@ -446,9 +446,11 @@ HCPcdeflate_seek(accrec_t * access_rec, int32 offset, int origin)
     info = (compinfo_t *) access_rec->special_info;
     deflate_info = &(info->cinfo.coder_info.deflate_info);
 
+#ifdef QAK
     /* Don't allow seeks when writing (currently) -QAK */
     if (access_rec->access&DFACC_WRITE)
         HRETURN_ERROR(DFE_UNSUPPORTED, FAIL);
+#endif /* QAK */
 
     if (offset < deflate_info->offset)
       {     /* need to seek from the beginning */

@@ -818,4 +818,30 @@ extern      "C"
 #else /* QAK */
 #define CHECKQAK(file_rec) {}
 #endif /* QAK */
+
+#define DISKBLOCK_DEBUG
+#ifdef DISKBLOCK_DEBUG
+
+#ifndef HFILE_MASTER
+extern
+#endif /* HFILE_MASTER */
+const uint8 diskblock_header[4]
+#ifdef HFILE_MASTER
+={0xde, 0xad, 0xbe, 0xef}
+#endif /* HFILE_MASTER */
+;
+
+#ifndef HFILE_MASTER
+extern
+#endif /* HFILE_MASTER */
+const uint8 diskblock_tail[4]
+#ifdef HFILE_MASTER
+={0xfe, 0xeb, 0xda, 0xed}
+#endif /* HFILE_MASTER */
+;
+#define DISKBLOCK_HSIZE sizeof(diskblock_header)
+#define DISKBLOCK_TSIZE sizeof(diskblock_tail)
+
+#endif /* DISKBLOCK_DEBUG */
+
 #endif                          /* HFILE_H */

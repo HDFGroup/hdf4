@@ -255,8 +255,34 @@ C
       integer hxscdir
       integer hxsdir
 
+C
+C       Decls of MGxxx functions for Fortran multi-file GR interface
+C
+
+      integer mgstart
+      integer mgfinfo
+      integer mgend       
+      integer mgcreat    
+      integer mgselct     
+      integer mgn2ndx    
+      integer mggiinf     
+      integer mgwrimg     
+      integer mgrdimg     
+      integer mgendac     
+      integer mgid2rf     
+      integer mgr2idx     
+      integer mgrltil     
+      integer mgrimil     
+      integer mggltid     
+      integer mgglinf     
+      integer mgwrlut     
+      integer mgrdlut     
+      integer mgsxfil    
+      integer mgssctp     
+      integer mgsattr    
+      integer mgatinf     
+      integer mggattr     
+      integer mgfndat    
+
 C End of declarations
-
-
-
 

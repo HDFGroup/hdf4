@@ -676,11 +676,11 @@ VGROUP _HUGE *VPgetinfo(HFILEID f,uint16 ref)
         HGOTO_ERROR(DFE_NOSPACE,NULL);
        
     /* unpack vgpack into structure vg, and init  */
-    vunpackvg(vg,vgpack,len);
     vg->f             = f;
     vg->new_vg        = 0;
     vg->oref          = ref;
     vg->otag          = DFTAG_VG;
+    vunpackvg(vg,vgpack,len);
       
     HDfree((VOIDP)vgpack);
 

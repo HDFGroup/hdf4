@@ -419,13 +419,13 @@ VDATA _HUGE *VSPgetinfo(HFILEID f,uint16 ref)
     vs->rlist.item=NULL;
  
     /* unpack the vs, then init all other fields in it */
-    vunpackvs (vs,vspack);
     vs->otag    = DFTAG_VH;
     vs->oref    = ref;
     vs->f   = f;
     vs->marked  = 0;
     vs->nusym   = 0;
     vs->usym=NULL;
+    vunpackvs (vs,vspack);
  
 #ifdef QAK
     vs->vm      = (VMBLOCK*) NULL; /* always NULL for "r" */

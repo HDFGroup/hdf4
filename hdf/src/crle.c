@@ -165,27 +165,26 @@ HCIcrle_decode(compinfo_t * info, int32 length, uint8 *buf)
                       rle_info->buf_pos = 0;
                   }     /* end else */
             }   /* end if */
-          else
-            {   /* RUN or MIX states */
-                if (length > rle_info->buf_length)  /* still need more data */
-                    dec_len = rle_info->buf_length;
-                else    /* only grab "length" bytes */
-                    dec_len = (uintn) length;
 
-                if (rle_info->rle_state == RLE_RUN)
-                    HDmemset(buf, rle_info->last_byte, dec_len);    /* copy the run */
-                else
-                  {
-                      HDmemcpy(buf, &(rle_info->buffer[rle_info->buf_pos]), dec_len);
-                      rle_info->buf_pos += dec_len;
-                  }     /* end else */
+            /* RUN or MIX states */
+            if (length > rle_info->buf_length)  /* still need more data */
+                dec_len = rle_info->buf_length;
+            else    /* only grab "length" bytes */
+                dec_len = (uintn) length;
 
-                rle_info->buf_length -= dec_len;
-                if (rle_info->buf_length <= 0)  /* check for running out of bytes */
-                    rle_info->rle_state = RLE_INIT;     /* get the next status byte */
-                length -= dec_len;  /* decrement the bytes to get */
-                buf += dec_len;     /* in case we need more bytes */
-            }   /* end else */
+            if (rle_info->rle_state == RLE_RUN)
+                HDmemset(buf, rle_info->last_byte, dec_len);    /* copy the run */
+            else
+              {
+                  HDmemcpy(buf, &(rle_info->buffer[rle_info->buf_pos]), dec_len);
+                  rle_info->buf_pos += dec_len;
+              }     /* end else */
+
+            rle_info->buf_length -= dec_len;
+            if (rle_info->buf_length <= 0)  /* check for running out of bytes */
+                rle_info->rle_state = RLE_INIT;     /* get the next status byte */
+            length -= dec_len;  /* decrement the bytes to get */
+            buf += dec_len;     /* in case we need more bytes */
       }     /* end while */
 
     rle_info->offset += orig_length;    /* incr. abs. offset into the file */

@@ -240,6 +240,9 @@ HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length,
 
     /* clear error stack and validate file record id */
     HEclear();
+#ifdef QAK
+printf("%s: I've been called\n",FUNC);
+#endif /* QAK */
     file_rec = FID2REC(file_id);
     if (BADFREC(file_rec) || block_length < 0 || number_blocks < 0
         || SPECIALTAG(tag)
@@ -475,6 +478,9 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
     /* clear error stack */
     HEclear();
 
+#ifdef QAK
+printf("%s: I've been called\n",FUNC);
+#endif /* QAK */
     /* start checking the func. args */
     if (!VALIDAID(aid) || block_length < 0 || number_blocks < 0)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -500,6 +506,10 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
 
     /* Save previous position in data element so that we can come back to it */
     old_posn=access_rec->posn;
+#ifdef QAK
+printf("%s: old_posn=%d\n",FUNC,old_posn);
+printf("%s: DD to convert: tag=%d, ref=%d\n",FUNC,(int)data_dd->tag,(int)data_dd->ref);
+#endif /* QAK */
 
     if ((special_tag = MKSPECIALTAG(data_dd->tag)) == DFTAG_NULL)
         HGOTO_ERROR(DFE_BADDDLIST, FAIL);
@@ -545,11 +555,17 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
     link_ref = Htagnewref(file_id,DFTAG_LINKED);
     dd->length = 16;
 
+#ifdef QAK
+printf("%s: old offset=%d\n",FUNC,(int)dd->offset);
+#endif /* QAK */
     if ((dd->offset = HPgetdiskblock(file_rec, dd->length, TRUE)) == FAIL)
       {
           access_rec->used = FALSE;
           HGOTO_ERROR(DFE_INTERNAL, FAIL);
       }     
+#ifdef QAK
+printf("%s: new offset=%d\n",FUNC,(int)dd->offset);
+#endif /* QAK */
 
     access_rec->special_info = (VOIDP) HDmalloc((uint32) sizeof(linkinfo_t));
     if (!access_rec->special_info)
@@ -564,6 +580,12 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
     info->first_length = data_dd ? data_dd->length : block_length;
     info->block_length = block_length;
     info->number_blocks = number_blocks;
+#ifdef QAK
+printf("%s: info->length=%d\n",FUNC,(int)info->length);
+printf("%s: info->first_length=%d\n",FUNC,(int)info->first_length);
+printf("%s: info->block_length=%d\n",FUNC,(int)info->block_length);
+printf("%s: info->number_blocks=%d\n",FUNC,(int)info->number_blocks);
+#endif /* QAK */
 
     {
         uint8      *p;
@@ -619,11 +641,11 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
     /* check whether we should seek out to the proper position */
     if(old_posn>0)
       {
-	if(Hseek(aid,old_posn,DF_START)==FAIL)
-	  {
+        if(Hseek(aid,old_posn,DF_START)==FAIL)
+          {
               access_rec->used = FALSE;
               HGOTO_ERROR(DFE_BADSEEK, FAIL);
-	  } /* end if */
+          } /* end if */
       } /* end if */
 
 done:
@@ -811,6 +833,9 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
       {
           info->first_length = Hlength(access_rec->file_id, DFTAG_LINKED,
                                        info->link->block_list[0].ref);
+#ifdef QAK
+printf("%s: converting existing element, info->first_length=%d\n",FUNC,(int)info->first_length);
+#endif /* QAK */
           if (info->first_length == FAIL)
             {
                 HDfree((VOIDP) info->link);
@@ -819,7 +844,15 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
             }
       }
     else
+      {
         info->first_length = info->block_length;
+#ifdef QAK
+printf("%s: creating element, info->first_length=%d\n",FUNC,(int)info->first_length);
+#endif /* QAK */
+      } /* end else */
+#ifdef QAK
+printf("%s: info->block_length=%d\n",FUNC,info->block_length);
+#endif /* QAK */
 
     info->last_link = info->link;
     while (info->last_link->nextref != 0)
@@ -1078,6 +1111,10 @@ HLPread(accrec_t * access_rec, int32 length, VOIDP datap)
     int32       ret_value = SUCCEED;
 
     /* validate length */
+#ifdef QAK
+if(length==0)
+    printf("%s: length==0, info->length=%d, access_rec->posn=%d\n",FUNC,(int)info->length,(int)access_rec->posn);
+#endif /* QAK */
     if (length == 0)
         length = info->length - access_rec->posn;
     else
@@ -1148,6 +1185,9 @@ HLPread(accrec_t * access_rec, int32 length, VOIDP datap)
                 for (i = 0; i < remaining; i++)
                     data[i] = '\0';
 #else  /* OLD_WAY */
+#ifdef QAK
+printf("%s: remaining=%d, length=%d, current_length=%d, relative_posn=%d\n",FUNC,(int)remaining,(int)length,(int)current_length,(int)relative_posn);
+#endif /* QAK */
                 HDmemset(data, 0, (size_t)remaining);
 #endif /* OLD_WAY */
                 bytes_read += nbytes;
@@ -1224,6 +1264,14 @@ HLPwrite(accrec_t * access_rec, int32 length, const VOIDP datap)
     uint8       local_ptbuf[4];
     int32       ret_value = SUCCEED;
 
+#ifdef QAK
+printf("%s: length=%d\n",FUNC,(int)length);
+printf("%s: info->first_length=%d\n",FUNC,(int)info->first_length);
+printf("%s: info->block_length=%d\n",FUNC,(int)info->block_length);
+printf("%s: info->number_blocks=%d\n",FUNC,(int)info->number_blocks);
+printf("%s: info->length=%d\n",FUNC,(int)info->length);
+printf("%s: access_rec->posn=%d\n",FUNC,(int)access_rec->posn);
+#endif /* QAK */
     /* validate length and file records */
     if (length <= 0)
         HGOTO_ERROR(DFE_RANGE, FAIL);
@@ -1245,6 +1293,11 @@ HLPwrite(accrec_t * access_rec, int32 length, const VOIDP datap)
           relative_posn %= info->block_length;
           current_length = info->block_length;
       }
+#ifdef QAK
+printf("%s: relative_posn=%d\n",FUNC,(int)relative_posn);
+printf("%s: current_length=%d\n",FUNC,(int)current_length);
+printf("%s: (a) block_idx=%d\n",FUNC,(int)block_idx);
+#endif /* QAK */
     {
         /* follow the links of block tables and create missing
            block tables along the way */
@@ -1252,6 +1305,9 @@ HLPwrite(accrec_t * access_rec, int32 length, const VOIDP datap)
 
         for (num_links = block_idx / info->number_blocks; num_links > 0; num_links--)
           {
+#ifdef QAK
+printf("%s: num_links=%d\n",FUNC,num_links);
+#endif /* QAK */
               if (!t_link->next)
                 {   /* create missing link (block table) */
                     t_link->nextref = Htagnewref(access_rec->file_id,DFTAG_LINKED);
@@ -1293,6 +1349,9 @@ HLPwrite(accrec_t * access_rec, int32 length, const VOIDP datap)
     }   /* end block statement(bad) */
 
     block_idx %= info->number_blocks;
+#ifdef QAK
+printf("%s: (b) block_idx=%d\n",FUNC,(int)block_idx);
+#endif /* QAK */
 
     /* start writing in that block */
     do
@@ -1617,6 +1676,10 @@ HLPendaccess(accrec_t * access_rec)
     FID2REC(access_rec->file_id);
     intn      ret_value = SUCCEED;
 
+#ifdef QAK
+printf("%s: info->length=%d\n","HLPendaccess",info->length);
+printf("%s: access_rec->posn=%d\n","HLPendaccess",access_rec->posn);
+#endif /* QAK */
     /* detach the special information record.
        If no more references to that, free the record */
     if (--(info->attached) == 0)
@@ -1628,6 +1691,17 @@ HLPendaccess(accrec_t * access_rec)
           for (t_link = info->link; t_link; t_link = next)
             {
                 next = t_link->next;
+#ifdef QAK
+{
+        intn i;
+
+        printf("t_link->nextref=%d\n",(int)t_link->nextref);
+        for(i=0; i<info->number_blocks; i++)
+          {
+              printf("[%d] ref=%d\n",i,(int)t_link->block_list[i].ref);
+          } /* end for */
+}
+#endif /* QAK */
                 HDfree((VOIDP) t_link->block_list);
                 HDfree((VOIDP) t_link);
             }

@@ -443,5 +443,14 @@ c	Compression Types
      *		COMP_IMCOMP	= 12,
      * 		COMP_JPEG	= 2)
 
+c	Interlace Types 
+
+      integer	MFGR_INTERLACE_PIXEL, MFGR_INTERLACE_LINE,
+     *      MFGR_INTERLACE_COMPONENT
+
+      parameter(MFGR_INTERLACE_PIXEL	= 0,
+     *		MFGR_INTERLACE_LINE	= 1,
+     * 		MFGR_INTERLACE_COMPONENT	= 2)
+
 
 c******************End of hdf.inc***************************

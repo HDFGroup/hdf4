@@ -3143,14 +3143,23 @@ printf("%s: convert=%d\n",FUNC,(int)convert);
           VOIDP fill_pixel;         /* converted value for the filled pixel */
           int32 at_index;
 
+#ifdef QAK
+printf("%s: faking an image for the user\n",FUNC);
+#endif /* QAK */
           if((fill_pixel=(VOIDP)HDmalloc(pixel_mem_size))==NULL)
               HGOTO_ERROR(DFE_NOSPACE,FAIL);
 
           /* Try to find a fill value attribute */
           if((at_index=GRfindattr(riid,FILL_ATTR))!=FAIL)
             { /* Found a fill value attribute */
+#ifdef QAK
+printf("%s: going after a fill value\n",FUNC);
+#endif /* QAK */
                 if(GRgetattr(riid,at_index,fill_pixel)==FAIL)
                     HGOTO_ERROR(DFE_BADATTR,FAIL);
+#ifdef QAK
+printf("%s: got the fill value\n",FUNC);
+#endif /* QAK */
             } /* end if */
           else /* no fill value attribute */
               HDmemset(fill_pixel,0,pixel_mem_size);

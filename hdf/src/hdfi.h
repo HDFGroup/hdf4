@@ -1244,8 +1244,9 @@ extern uint8 FAR *DFtbuf;
 #  define HDstrlen(s)       (_fstrlen(s))
 #  define HDstrncmp(s1,s2,n)    (_fstrncmp((s1),(s2),(n)))
 #  define HDstrncpy(s1,s2,n)    (_fstrncpy((s1),(s2),(n)))
-#  define HDstrchr(s,c)    (_fstrchr((s),(c)))
+#  define HDstrchr(s,c)     (_fstrchr((s),(c)))
 #  define HDstrrchr(s,c)    (_fstrrchr((s),(c)))
+#  define HDstrtol(s,e,b)   (_fstrtol((s),(e),(b)))
 #else
 #  define HDstrcat(s1,s2)   (strcat((s1),(s2)))
 #  define HDstrcmp(s,t)     (strcmp((s),(t)))
@@ -1253,8 +1254,9 @@ extern uint8 FAR *DFtbuf;
 #  define HDstrlen(s)       (strlen((const char *)(s)))
 #  define HDstrncmp(s1,s2,n)    (strncmp((s1),(s2),(n)))
 #  define HDstrncpy(s1,s2,n)    (strncpy((s1),(s2),(n)))
-#  define HDstrchr(s,c)    (strchr((s),(c)))
-#  define HDstrrchr(s,c)    (strrchr((s),(c)))
+#  define HDstrchr(s,c)         (strchr((s),(c)))
+#  define HDstrrchr(s,c)        (strrchr((s),(c)))
+#  define HDstrtol(s,e,b)       (strtol((s),(e),(b)))
 /* Can't use on PCs. strdup() uses malloc() and HDmalloc uses halloc() */
 #if !(defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MIPSEL | defined NEXT | defined CONVEX)
 #  define HDstrdup(s)      ((char *)strdup((const char *)(s)))
@@ -1287,8 +1289,10 @@ extern uint8 FAR *DFtbuf;
 *  Misc. functions
 **************************************************************************/
 #include <sys/stat.h>
-#define HDstat(path, result)	(stat(path, result))
-#define HDgetenv(s1)	    (getenv(s1))
+#define HDstat(path, result)    (stat(path, result))
+#define HDgetenv(s1)            (getenv(s1))
+#define HDputenv(s1)            (putenv(s1))
+#define HDltoa(v)               (ltoa(v))
 
 /* Compatibility #define for V3.3, should be taken out by v4.0 - QAK */
 #define DFSDnumber DFSDndatasets

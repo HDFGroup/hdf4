@@ -2031,6 +2031,136 @@ extern ann_type tag2atype(uint16 atag);
 
 extern int32 ANdestroy(void);
 
+/* for Multi-file fortran GR interface */
+#ifndef MFGR_FNAMES
+#   define  MFGR_FNAMES
+#ifdef DF_CAPFNAMES
+#  define nmgstart      FNAME(MGSTART)
+#  define nmgfinfo      FNAME(MGFINFO)
+#  define nmgend        FNAME(MGEND)
+#  define nmgicreat     FNAME(MGICREAT)
+#  define nmgselct      FNAME(MGSELCT)
+#  define nmgin2ndx     FNAME(MGIN2NDX)
+#  define nmggiinf      FNAME(MGGIINF)
+#  define nmgwrimg      FNAME(MGWRIMG)
+#  define nmgrdimg      FNAME(MGRDIMG)
+#  define nmgendac      FNAME(MGENDAC)
+#  define nmgid2rf      FNAME(MGID2RF)
+#  define nmgr2idx      FNAME(MGR2IDX)
+#  define nmgrltil      FNAME(MGRLTIL)
+#  define nmgrimil      FNAME(MGRIMIL)
+#  define nmggltid      FNAME(MGGLTID)
+#  define nmgglinf      FNAME(MGGLINF)
+#  define nmgwrlut      FNAME(MGWRLUT)
+#  define nmgrdlut      FNAME(MGRDLUT)
+#  define nmgisxfil     FNAME(MGISXFIL)
+#  define nmgssctp      FNAME(MGSACTP)
+#  define nmgisattr     FNAME(MGISATTR)
+#  define nmgatinf      FNAME(MGATINF)
+#  define nmggattr      FNAME(MGGATTR)
+#  define nmgifndat     FNAME(MGIFNDAT)
+#else  /* !DF_CAPFNAMES */
+#  define nmgstart      FNAME(mgstart)
+#  define nmgfinfo      FNAME(mgfinfo)
+#  define nmgend        FNAME(mgend)
+#  define nmgicreat     FNAME(mgicreat)
+#  define nmgselct      FNAME(mgselct)
+#  define nmgin2ndx     FNAME(mgin2ndx)
+#  define nmggiinf      FNAME(mggiinf)
+#  define nmgwrimg      FNAME(mgwrimg)
+#  define nmgrdimg      FNAME(mgrdimg)
+#  define nmgendac      FNAME(mgendac)
+#  define nmgid2rf      FNAME(mgid2rf)
+#  define nmgr2idx      FNAME(mgr2idx)
+#  define nmgrltil      FNAME(mgrltil)
+#  define nmgrimil      FNAME(mgrimil)
+#  define nmggltid      FNAME(mggltid)
+#  define nmgglinf      FNAME(mgglinf)
+#  define nmgwrlut      FNAME(mgwrlut)
+#  define nmgrdlut      FNAME(mgrdlut)
+#  define nmgisxfil     FNAME(mgisxfil)
+#  define nmgssctp      FNAME(mgsactp)
+#  define nmgisattr     FNAME(mgisattr)
+#  define nmgatinf      FNAME(mgatinf)
+#  define nmggattr      FNAME(mggattr)
+#  define nmgifndat     FNAME(mgifndat)
+#endif /* DF_CAPFNAMES */
+#endif /* MFGR_FNAMES */
+
+/* Multi-file GR C-stubs for FORTRAN interface found in mfgrf.c */
+
+extern FRETVAL(intf)
+nmgstart(intf * fid);
+
+extern FRETVAL(intf)
+nmgfinfo(intf * grid,intf *n_datasets,intf *n_attrs);
+
+extern FRETVAL(intf)
+nmgend(intf * grid);
+
+extern FRETVAL(intf)
+nmgicreat(intf * grid, _fcd name, intf *ncomp, intf *nt, intf *il, intf dimsizes[2], intf *nlen);
+
+extern FRETVAL(intf)
+nmgselct(intf * grid, intf *index);
+
+extern FRETVAL(intf)
+nmgin2ndx(intf * grid, _fcd name, intf *nlen);
+
+extern FRETVAL(intf)
+nmggiinf(intf * riid, _fcd name, intf *ncomp, intf *nt, intf *il, intf *dimsizes, intf *nattr);
+
+extern FRETVAL(intf)
+nmgwrimg(intf * riid, intf *start, intf *stride, intf *count, VOIDP data);
+
+extern FRETVAL(intf)
+nmgrdimg(intf * riid, intf *start, intf *stride, intf *count, VOIDP data);
+
+extern FRETVAL(intf)
+nmgendac(intf * riid);
+
+extern FRETVAL(intf)
+nmgid2rf(intf * riid);
+
+extern FRETVAL(intf)
+nmgr2idx(intf * grid, intf *ref);
+
+extern FRETVAL(intf)
+nmgrltil(intf * riid, intf *il);
+
+extern FRETVAL(intf)
+nmgrimil(intf * riid, intf *il);
+
+extern FRETVAL(intf)
+nmggltid(intf * riid, intf *lut_index);
+
+extern FRETVAL(intf)
+nmgglinf(intf * lutid, intf *ncomp, intf *nt, intf *il, intf *nentries);
+
+extern FRETVAL(intf)
+nmgwrlut(intf * lutid, intf *ncomp, intf *nt, intf *il, intf *nentries, VOIDP data);
+
+extern FRETVAL(intf)
+nmgrdlut(intf * lutid, VOIDP data);
+
+extern FRETVAL(intf)
+nmgisxfil(intf * riid, _fcd filename, intf *offset, intf *nlen);
+
+extern FRETVAL(intf)
+nmgsactp(intf * riid, intf *accesstype);
+
+extern FRETVAL(intf)
+nmgisattr(intf * riid, _fcd name, intf *nt, intf *count, VOIDP data, intf *nlen);
+
+extern FRETVAL(intf)
+nmgatinf(intf * riid, intf *index, _fcd name, intf *nt, intf *count);
+
+extern FRETVAL(intf)
+nmggattr(intf * riid, intf *index, VOIDP data);
+
+extern FRETVAL(intf)
+nmgifndat(intf * riid, _fcd name, intf *nlen);
+
 /* Multi-file Raster C-routines found in mfgr.c */
 extern int32 GRstart(int32 hdf_file_id);
 

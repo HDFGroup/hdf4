@@ -195,4 +195,7 @@
 #define MAX_NC_NAME 256		 /* max length of a name */
 #define MAX_VAR_DIMS 32          /* max per variable dimensions */
 
+/* ----------------- Constants for MFGR interface --------------------- */
+#define MAX_GR_NAME 256		 /* max length of a name */
+
 #endif /* _HLIMITS_H */

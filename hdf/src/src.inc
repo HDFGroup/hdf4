@@ -79,7 +79,7 @@ FCSRCS=hfilef.c herrf.c dfanf.c dfr8f.c dfpf.c df24f.c dfsdf.c \
       vgf.c dff.c dfutilf.c mfanf.c mfgrf.c
 
 FFSRCS=hfileff.f dfanff.f df24ff.f dfpff.f dfr8ff.f dfsdff.f vgff.f dfff.f \
-      dfufp2if.f
+      dfufp2if.f mfgrff.f
 
 #FOBJS=hfilef.o herrf.o hfileff.o dfanf.o dfr8f.o dfpf.o df24f.o dfsdf.o\
 #      vgf.o dff.o dfanff.o df24ff.o dfpff.o dfr8ff.o dfsdff.o vgff.o dfff.o\
@@ -90,7 +90,7 @@ FCOBJS=hfilef.o herrf.o dfanf.o dfr8f.o dfpf.o df24f.o dfsdf.o \
        vgf.o dff.o dfutilf.o mfanf.o mfgrf.o
 
 FFOBJS=hfileff.o dfanff.o df24ff.o dfpff.o dfr8ff.o dfsdff.o vgff.o dfff.o \
-      dfufp2if.o
+      dfufp2if.o mfgrff.o
 
 FINCS=dffunc.inc hdf.inc
 
