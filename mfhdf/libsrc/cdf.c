@@ -49,6 +49,11 @@ NC *handle ;
 }
 
 
+#ifdef HDF
+
+
+#endif /* HDF */
+
 NC *
 NC_new_cdf(name, mode)
 const char *name ;
@@ -71,15 +76,36 @@ int mode ;
 		nc_serror("NC_new_cdf: xdrs") ;
 		Free(cdf) ;
 		return(NULL) ;
-	} /* else */	
-
-	if( NCxdrfile_create( cdf->xdrs, name, mode ) < 0) 
-        {
-                Free(cdf->xdrs) ;
-		Free(cdf) ;
-		return(NULL) ;
-	} /* else */	
-
+	} /* else */
+	
+#ifdef HDF
+        /*
+         * See what type of file we are looking at.
+         * If we are creating a new file it will be an HDF file
+         */
+        if(mode & NC_CREAT)
+            cdf->is_hdf = TRUE;
+        else
+            cdf->is_hdf = (int) Hishdf((char *) name);
+        
+        /*
+         * If we are dealing with an HDF file just set the op
+         *   (bad layering).  Do NOT call NCxdrfile_create() 
+         *   in this case cuz then we will have two open file
+         *   pointers to the same file and the Mac and VMS will
+         *   complain
+         */
+	if(cdf->is_hdf) 
+            hdf_xdrfile_create(cdf->xdrs, mode);
+        else
+#endif /* HDF */
+            if( NCxdrfile_create( cdf->xdrs, name, mode ) < 0) 
+                {
+                    Free(cdf->xdrs) ;
+                    Free(cdf) ;
+                    return(NULL) ;
+                } /* else */	
+        
 	cdf->dims = NULL ;
 	cdf->attrs = NULL ;
 	cdf->vars = NULL ;
@@ -90,11 +116,6 @@ int mode ;
 
 #ifdef HDF 
 
-        if(mode & NC_CREAT)
-            cdf->is_hdf = TRUE;
-        else
-            cdf->is_hdf = (int) Hishdf((char *) name);
-        
         if(cdf->is_hdf) {
             int32 hdf_mode;
             
@@ -102,6 +123,10 @@ int mode ;
             case NC_CLOBBER   :
                 hdf_mode = DFACC_CLOBBER; break;
             case NC_NOCLOBBER :
+                /* see if the file exists */
+                if((int) Hishdf((char *) name))
+                    return(NULL);
+                hdf_mode = DFACC_RDWR;    break;
             case NC_WRITE     :
 		hdf_mode = DFACC_RDWR;    break;
             case NC_NOWRITE   :
