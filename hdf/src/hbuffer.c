@@ -390,7 +390,6 @@ HBPwrite(accrec_t * access_rec, int32 length, const void * data)
     bufinfo_t  *info =          /* information on the special element */
                     (bufinfo_t *) (access_rec->special_info);
     int32 new_len;              /* new length of object */
-    uint8 *temp_buf;            /* temporary buffer pointer in case realloc fails */
     int32      ret_value = SUCCEED;
 
     /* validate length */
@@ -403,11 +402,19 @@ HBPwrite(accrec_t * access_rec, int32 length, const void * data)
         new_len=access_rec->posn+length;
 
         /* Resize buffer in safe manner */
-        temp_buf=info->buf;
-        if((info->buf = HDrealloc(info->buf, (uint32)new_len))==NULL) {
-            info->buf=temp_buf;
-            HGOTO_ERROR(DFE_NOSPACE, FAIL);
-        } /* end if */
+        /* Realloc should handle this, but the Sun is whining about it... -QAK */
+        if(info->buf==NULL) {
+            if((info->buf = HDmalloc((uint32)new_len))==NULL)
+                HGOTO_ERROR(DFE_NOSPACE, FAIL);
+        }
+        else {
+            uint8 *temp_buf=info->buf;  /* temporary buffer pointer in case realloc fails */
+
+            if((info->buf = HDrealloc(info->buf, (uint32)new_len))==NULL) {
+                info->buf=temp_buf;
+                HGOTO_ERROR(DFE_NOSPACE, FAIL);
+            } /* end if */
+        }
 
         /* update length */
         info->length=new_len;
