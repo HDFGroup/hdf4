@@ -1602,7 +1602,7 @@ Vsetname(int32 vkey, const char *vgname)
   TRACE_ON(V_mask, ID_Vsetname);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVGID(vkey))
+    if (!VALIDVGID(vkey) || vgname==NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
