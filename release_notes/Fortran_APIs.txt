@@ -1,0 +1,221 @@
+Problem:
+========
+
+In HDF4.0r1 and previous versions of HDF several Fortran 
+routines declared a formal parameter as character*(*) or 
+integer while the actual parameter was a character or 
+a numeric type. This caused problems on some systems, 
+such as VMS and T3D. 
+
+In HDF4.0r2 each of these routines is either replaced 
+by 2 routines, one for character type parameters and 
+another for numeric type parameters; or, a new routine 
+is added for char type parameters and the old routine is 
+used for numeric type parameters only. Those routines
+that were replaced by two routines should be phased out
+in the future. However, in order to not break currently 
+working applications they are still supported in 
+HDF4.0r2. New applications should use the new routines. 
+
+Routines and parameters affected:
+================================
+1. Write vdata
+
+Old:
+    vsfwrit(vsid, databuf, n_rec, interlace)
+        character*(*) databuf
+
+HDF4.0r2:
+    
+    Write to a vdata from a character buffer:
+      vsfwrtc(vsid, cbuf, n_rec, interlace) 
+           character*(*) cbuf
+    Write to a vdata from an integer buffer (for numeric values):
+      vsfwrt(vsid, buf, n_rec, interlace)  
+           integer  buf
+
+2. Read vdata
+ 
+Old:
+    vsfread(vsid, buf, n_recs, interlace)
+         character*(*) buf
+HDF4.0r2:
+    Read records into a character buffer:
+      vsfrdc(vsid, cbuf, n_recs, interlace)
+          character*(*) cbuf
+    Read records into an integer buffer (for numeric values):
+      vsfrd(vsid, buf, n_recs, interlace)
+          integer buf
+
+3. High level function for creating a single field single
+   component vdata
+ 
+Old:
+    vhfsd(f, field, buf, n, dtype, vsname, vsclass)
+         integer buf
+HDF4.0r2:
+    Store a simple character dataset in a vdata:
+      vhfscd(f,field,cbuf,n,dtype,vsname,vsclass)
+         character*(*) cbuf
+    Store a simple numeric dataset in a vdata
+      vhfsd(f, field, buf, n, dtype, vsname, vsclass)
+         integer buf
+
+4. High level function for creating a single field multi-
+   component vdata
+Old:
+    vhfsdm (f,field,buf,n,dtype,vsname,vsclass,order)
+         integer buf
+HDF4.0r2:
+    Store an aggregate char dataset in a vadata:      
+      vhfscdm (f,field,cbuf,n,dtype,vsname,vsclass,order)
+         character*(*) cbuf
+    Store a simple numeric dataset in a vdata
+      vhfsdm(f,field,buf,n,dtype,vsname,vsclass,order)
+         integer buf
+
+5. Write GR image
+Old:
+    mgwrimg(riid, start,stride,count,data)
+      <valid numeric type> data
+HDF4.0r2:
+    Write character type image data
+     mgwcimg(riid, start, stride, count, cdata)
+         character*(*)  cdata
+    Write numeric type image data
+      mgwrimg(riid, start,stride,count,data)
+      <valid numeric type> data
+
+6. Read GR image
+Old:
+    mgrdimg(riid,start,stride,count,data)
+      integer data
+HDF4.0r2:
+    Read character type image data
+      mgrcimg(riid,start,stride,count,cdata)
+          character*(*) cdata
+    Read numeric type image data
+      mgrdimg(riid,start,stride,count,data)
+          <valid numeric type> data
+
+7. Write LUT
+Old:
+    mgwrlut(lutid,ncomp,data_type,interlace,nentries,data)
+      <valid numeric type> data
+HDF4.0r2:
+    Write character type palette:
+      mgwclut(lutid,ncomp,data_type,interlace,nentries,cdata)
+          character*(*) cdata
+    Write numeric type palette:
+      mgwrlut(lutid,ncomp,data_type,interlace,nentries,data)
+          <valid numeric type> data
+
+8. Read LUT
+Old:
+    mgrdlut(lutid, data)
+      <valid numeric type> data
+HDF4.0r2:
+    Read char type palette:
+      mgrclut(lutid,cdata)
+        character*(*) cdata
+    Read numeric type palette:
+      mgrdlut(lutid, data) 
+        <valid numeric type> data
+
+9. Set GR attribute
+Old:
+    mgsattr(riid, name, nt, count, data)
+      character*(*) data
+HDF4.0r2:
+    Add char type attribute to a raster image
+      mgscatt(riid, name, nt, count, cdata)
+        character*(*) cdata
+    Add a numeric attribute to a raster image
+      mgsnatt(riid, name, nt, count, data)
+        integer data
+
+10. Get GR attribute
+Old:
+    mggattr(riid, index, data)
+      <valid numeric type> data
+HDF4.0r2:
+    Get a char type attribute:
+      mggcatt(riid, index, cdata)
+        character*(*) cdata
+    Get a numeric type attribute:
+      mggnatt(riid, index, data)
+        integer data
+
+11. Write SDS data
+Old:
+    sfwdata(sdsid,start,stride,end,values)
+      <valid numeric type> values
+HDF4.0r2
+    Write char type SDS data
+      sfwcdata(sdsid,start,stride,end,cvalues)
+        character*(*) cvalues
+    Write numeric type SDS data
+      sfwdata(sdsid,start,stride,end,values)
+        <valid numeric type> values
+
+12. Read SDS data
+Old:
+    sfrdata(sdsid,start,stride,end,values)
+      <valid numeric type> values
+HDF4.0r2
+    Read char type SDS data
+      sfrcdata(sdsid,start,stride,end,cvalues)
+        character*(*) cvalues
+    Read numeric type SDS data
+      sfrdata(sdsid,start,stride,end,values)
+        <valid numeric type> values
+
+13. Add an attribute to an object in SD interface
+Old:
+    sfsattr(id, name, nt, count, data)
+      character*(*) data
+HDF4.0r2
+    Add a char type attribute to an object
+      sfscatt(id, name, nt, count, cdata)
+        character*(*) cdata
+    Add a numeric type attribute to an object
+      sfsnatt(id, name,nt, count,data)
+        integer data
+
+14. Get contents of an attribute
+Old:
+    sfrattr(id, index, buf)
+      <valid numeric type> buf
+HDF4.0r2:
+    Get a char type attribute
+      sfrcatt(id, index, cbuf)
+        character*(*) cbuf
+    Get a numeric type attribute
+      sfrnatt(id, index, buf)
+        <valid numeric type> buf   
+
+15. Set fill value
+Old:
+    sfsfill(id, val)
+      <valid numeric type> val
+HDF4.0r2
+    Set a char type fill value
+      sfscfill(id, cval)
+        character cval
+    Set a numeric type fill value
+      sfsfill(id, val)
+        <valid numeric type> val
+
+16. Get fill value
+Old:
+    sfgfill(id, val)
+      <valid numeric type> val
+HDF4.0r2
+    Get char type fill value
+      sfgcfill(id, cval)
+        character cval
+    Get numeric type fill value
+      sfgfill(id, val)
+        <valid numeric type> val
+
+
