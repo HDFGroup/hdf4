@@ -69,7 +69,7 @@ echo checking XDR library
 AC_REQUIRE([UC_OS])dnl
 AC_PROVIDE([$0])dnl
 case "${OS}" in
-  irix*)	LD_XDR=-lsun
+  irix*)	LD_XDR=
                 UC_ENSURE(HDF_INC, -DIRIS4)
                 UC_ENSURE(HDF_INC, -cckr);;
   ultrix*)	LD_XDR=
