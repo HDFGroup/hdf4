@@ -68,7 +68,7 @@ fpack(void)
          /* test error checks  */ 
         if (i==0) {
                 /* test not enough vdata buffer size */
-            istat = VSfpack(vdata_id,_HDF_VSPACK, pntr, 1,
+            istat = VSfpack(vdata_id,_HDF_VSPACK, NULL, pntr, 1,
                    1, NULL, &source[i].ident, &source[i].temp,
                    &source[i].speed, &source[i].height);
             if (istat != FAIL)  {
@@ -77,7 +77,7 @@ fpack(void)
             }
             pntr = databuf;
                 /* test wrong field name */
-            istat = VSfpack(vdata_id,_HDF_VSPACK, pntr, rec_size,
+            istat = VSfpack(vdata_id,_HDF_VSPACK, NULL, pntr, rec_size,
                  1,"Idents,Temp,Speed,Height" , &source[i].ident, 
                  &source[i].temp, &source[i].speed, &source[i].height);
             if (istat != FAIL)  {
@@ -87,7 +87,7 @@ fpack(void)
             pntr = databuf;
         }
           /* normal test */
-        istat = VSfpack(vdata_id,_HDF_VSPACK, pntr, rec_size,
+        istat = VSfpack(vdata_id,_HDF_VSPACK, NULL, pntr, rec_size,
                    1, NULL, &source[i].ident, &source[i].temp,
                    &source[i].speed, &source[i].height);
         if (istat == FAIL)  {
@@ -111,25 +111,25 @@ fpack(void)
         source[i].height = 4.44 * (i+1);
         source[i].speed = 2*i;
         source[i].ident = 'a' + i;
-        istat = VSfpack(vdata_id,_HDF_VSPACK, pntr,rec_size,
+        istat = VSfpack(vdata_id,_HDF_VSPACK,NULL, pntr,rec_size,
                    1, FIELD_3, &source[i].speed);
         if (istat == FAIL)  {
             num_errs++;
             printf(">>> VSfpack failed in packing speed.\n");
         }
-        istat = VSfpack(vdata_id,_HDF_VSPACK, pntr,rec_size,
+        istat = VSfpack(vdata_id,_HDF_VSPACK, NULL,pntr,rec_size,
                    1, FIELD_1, &source[i].ident);
         if (istat == FAIL)  {
             num_errs++;
             printf(">>> VSfpack failed in packing ident.\n");
         }
-        istat = VSfpack(vdata_id,_HDF_VSPACK, pntr,rec_size,
+        istat = VSfpack(vdata_id,_HDF_VSPACK, NULL, pntr,rec_size,
                    1, FIELD_2, &source[i].temp);
         if (istat == FAIL)  {
             num_errs++;
             printf(">>> VSfpack failed in packing temp.\n");
         }
-        istat = VSfpack(vdata_id,_HDF_VSPACK, pntr,rec_size,
+        istat = VSfpack(vdata_id,_HDF_VSPACK, NULL,pntr,rec_size,
                    1, FIELD_4, &source[i].height);
         if (istat == FAIL)  {
             num_errs++;
@@ -187,7 +187,7 @@ funpack(void)
      istat = VSsetfields(vdata_id, ifields);
      istat = VSread(vdata_id, databuf, NRECORDS, iil);
      pntr = databuf;
-     istat = VSfpack(vdata_id, _HDF_VSUNPACK, pntr, rec_size*NRECORDS, 
+     istat = VSfpack(vdata_id,_HDF_VSUNPACK,NULL,pntr,rec_size*NRECORDS,
                      NRECORDS, NULL, iident, itemp, ispeed, iheight);
      if (istat == FAIL)  {
          num_errs++;
@@ -198,19 +198,21 @@ funpack(void)
          if ((iident[i] != 'A'+i) || (abs(itemp[i] - 1.11*(i+1)) > EPS) ||
             (ispeed[i] != i) || (abs(iheight[i] - 2.22*(i+1)) > EPS))  {
             num_errs++;
-            printf(">>> Wrong data after VSfpack.\n");
+            printf(">>> Wrong data1 after VSfpack.\n");
         }
      /* check the second set of records */
      istat = VSread(vdata_id, databuf, NRECORDS, iil);
      pntr = databuf;
-     istat = VSfpack(vdata_id, _HDF_VSUNPACK, pntr, rec_size*NRECORDS,
-                     NRECORDS, "Temp,Ident", itemp, iident);
+     istat = VSfpack(vdata_id, _HDF_VSUNPACK, NULL, pntr, 
+                     rec_size*NRECORDS, NRECORDS, "Temp,Ident", 
+                     itemp, iident);
      if (istat == FAIL)  {
          num_errs++;
          printf(">>> VSfpack failed in unpacking temp & ident.\n");
      }
-     istat = VSfpack(vdata_id, _HDF_VSUNPACK, pntr, rec_size*NRECORDS,
-                     NRECORDS, "Height,Speed", iheight, ispeed);
+     istat = VSfpack(vdata_id, _HDF_VSUNPACK, NULL, pntr, 
+                     rec_size*NRECORDS, NRECORDS, "Height,Speed", 
+                     iheight, ispeed);
      if (istat == FAIL)  {
          num_errs++;
          printf(">>> VSfpack failed in unpacking height & speed.\n");
@@ -220,12 +222,56 @@ funpack(void)
          if ((iident[i] != 'a'+i) || (abs(itemp[i] - 3.33*(i+1)) > EPS) ||
             (ispeed[i] != 2*i) || (abs(iheight[i] - 4.44*(i+1)) > EPS))  {
             num_errs++;
-            printf(">>> Wrong data after VSfpack.\n");
+            printf(">>> Wrong data2 after VSfpack.\n");
         }
          /*
      * Terminate access to the Vdata, the Vset interface
      * and the HDF file.
      */
+     VSdetach(vdata_id);
+/* buf contains only subset of vdata fields  */
+     vdata_id = VSattach(file_id, vdata_ref, "w");
+     istat = VSsetfields(vdata_id, "Height,Speed,Ident");
+     if (istat == FAIL) {
+            num_errs++;
+            printf(">>> VSsetfields failed in set 3 flds.\n");
+     }
+     istat = VSread(vdata_id, databuf, NRECORDS, FULL_INTERLACE);
+     if (istat == FAIL) {
+            num_errs++;
+            printf(">>> VSread failed in reading 3 flds.\n");
+     }
+     pntr = databuf;
+     istat = VSfpack(vdata_id, _HDF_VSUNPACK, "Height,Speed,Ident",
+                pntr, rec_size*NRECORDS, NRECORDS, NULL, iheight,
+                ispeed, iident);
+     if (istat == FAIL)  {
+         num_errs++;
+         printf(">>> VSfpack failed in unpacking 1st subset.\n");
+     }
+     for (i=0; i<NRECORDS; i++)
+         if ((iident[i] != 'A'+i) || (ispeed[i] != i) || 
+              (abs(iheight[i] - 2.22*(i+1)) > EPS))  {
+            num_errs++;
+            printf(">>> Wrong subset data1 after VSfpack.\n");
+        }
+     /* check the second subset of records */
+     istat = VSread(vdata_id, databuf, NRECORDS, FULL_INTERLACE);
+     pntr = databuf;
+     istat = VSfpack(vdata_id, _HDF_VSUNPACK, "Height,Speed,Ident",
+               pntr, rec_size*NRECORDS, NRECORDS, "Ident,Speed,Height",
+               iident, ispeed,iheight);
+     if (istat == FAIL)  {
+         num_errs++;
+         printf(">>> VSfpack failed in unpacking 2nd subset\n");
+     }
+     for (i=0; i<NRECORDS; i++)
+         if ((iident[i] != 'a'+i) || (ispeed[i] != 2*i) || 
+              (abs(iheight[i] - 4.44*(i+1)) > EPS)) {
+            num_errs++;
+            printf(">>> Wrong subset data2 after VSfpack.\n");
+        }
+ 
      VSdetach(vdata_id);
      Vend(file_id);
      Hclose(file_id);
