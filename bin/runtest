@@ -103,7 +103,11 @@ REPORT_ERR()
 REPORT_RESULT()
 {
     if [ $retcode -eq 0 ]; then
-	PRINT "PASSED ${HOSTNAME}: $TEST_TYPE" | tee -a $PASSEDLOG
+	if [ $skiptest = yes ]; then
+	    PRINT "SKIPPED ${HOSTNAME}: $TEST_TYPE" | tee -a $PASSEDLOG
+	else
+	    PRINT "PASSED ${HOSTNAME}: $TEST_TYPE" | tee -a $PASSEDLOG
+	fi
     else
 	# test failed.
 	REPORT_ERR "****FAILED ${HOSTNAME}: $TEST_TYPE****"
@@ -254,6 +258,7 @@ RUNSNAPTEST()
     export PATH			# DEC OSF1 needs to export PATH explicitly
     TEST_TYPE=$*
     retcode=0
+    skiptest=no
     date
     PRINT "*** starting $TEST_TYPE tests in $HOSTNAME ***"
     PRINT "Uname -a: `uname -a`"
@@ -289,6 +294,28 @@ RUNSNAPTEST()
 		export $1
 		shift
 		;;
+	    setenvN)
+		# set environment variable with $1 values
+		# e.g., setenvN 3 x a b c is same as setenv x="a b c".
+		# a kludge now--the extra single quotes are needed
+		# else eval complains.
+		shift
+		envN=$1
+		shift
+		envname=$1
+		envalue=
+		while test $envN -gt 0; do
+		    shift
+		    envalue="$envalue $1"
+		    envN=`expr $envN - 1`
+		done
+		eval $envname="'$envalue'"
+		export $envname
+		;;
+	    skip)
+		# skip this test
+		skiptest=yes
+		;;
 	    *) # unknown test
 		PRINT "$0: unknown type of test ($1)"
 		retcode=1
@@ -296,7 +323,11 @@ RUNSNAPTEST()
 	esac
 	shift
     done
-    [ $retcode -ne 0 ] && errcode=$retcode && return $retcode
+
+    if [ $retcode -ne 0 -o $skiptest = yes ]; then
+	errcode=$retcode 
+	return $retcode
+    fi
 
     if [ -n "${SRCDIRNAME}" ]; then
 	SNAPCMD_OPT="$SNAPCMD_OPT srcdirname ${SRCDIRNAME}"
@@ -346,6 +377,7 @@ RUNSNAPTEST()
 #    op-configure <option>	configure option
 #    --*		configure option
 #    setenv <name> <value>	set environment variable <name> to <value>
+#    skip		skip this test
 SNAPTEST_CONFIG_PARSE()
 {
     while read x y ; do
@@ -443,6 +475,7 @@ EOF
 #################################
 retcode=0			# error code of individula task
 errcode=0			# error code of the whole test
+skiptest=no			# if test is skipped
 
 
 #################################
