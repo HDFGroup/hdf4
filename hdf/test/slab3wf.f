@@ -2,9 +2,13 @@ C---------------------------------------------------------------------------
 C $Header$
 C
 C $Log$
-C Revision 1.3  1993/02/01 23:23:23  georgev
-C Changed hyperslab test files to reflect new interface
+C Revision 1.4  1993/04/27 21:02:04  georgev
+C Changed fortran stubs interface for hyperslabs, made them different
+C than the C names.
 C
+c Revision 1.3  1993/02/01  23:23:23  georgev
+c Changed hyperslab test files to reflect new interface
+c
 c Revision 1.2  1993/01/15  16:54:59  georgev
 c Cleaned out unused variables.
 c
@@ -23,7 +27,7 @@ C Output file: slab3wf.hdf
 
 
       integer dssdims, dssdisc, dssdist
-      integer dfsdstartslab, dfsdwriteslab, dfsdendslab, dsigslc
+      integer dfsdsslab, dfsdwslab, dfsdeslab, dsigslc
       integer ret, np, nr,nc, di(3), st(3), sz(3), sr(3)
       integer rank, DFTAG_SDT, DFO_FORTRAN
       real    scpln(2), scrow(3), sccol(4), da(4,3,2)
@@ -134,7 +138,7 @@ C
       ret = dssdims(rank, di)
       num_err = num_err + ret
 
-      ret = dfsdstartslab(sn, fnlen)
+      ret = dfsdsslab(sn, fnlen)
       num_err = num_err + ret
       st(1) = 4
       st(2) = 2
@@ -142,7 +146,7 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz,slab20)
+      ret = dfsdwslab(st, sr, sz,slab20)
       num_err = num_err + ret
       st(1) = 1
       st(2) = 3
@@ -150,7 +154,7 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz, slab21)
+      ret = dfsdwslab(st, sr, sz, slab21)
       num_err = num_err + ret
       st(1) = 2
       st(2) = 3
@@ -158,7 +162,7 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz, slab22)
+      ret = dfsdwslab(st, sr, sz, slab22)
       num_err = num_err + ret
       st(1) = 3
       st(2) = 3
@@ -166,7 +170,7 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz,slab23)
+      ret = dfsdwslab(st, sr, sz,slab23)
       num_err = num_err + ret
       st(1) = 4
       st(2) = 3
@@ -174,7 +178,7 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz, slab24)
+      ret = dfsdwslab(st, sr, sz, slab24)
       num_err = num_err + ret
 
       st(1) = 2
@@ -183,7 +187,7 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz,slab6)
+      ret = dfsdwslab(st, sr, sz,slab6)
       num_err = num_err + ret
       st(1) = 3
       st(2) = 2
@@ -191,7 +195,7 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz, slab7)
+      ret = dfsdwslab(st, sr, sz, slab7)
       num_err = num_err + ret
       st(1) = 4
       st(2) = 2
@@ -199,7 +203,7 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz, slab8)
+      ret = dfsdwslab(st, sr, sz, slab8)
       num_err = num_err + ret
       st(1) = 1
       st(2) = 3
@@ -207,7 +211,7 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz,slab9)
+      ret = dfsdwslab(st, sr, sz,slab9)
       num_err = num_err + ret
       st(1) = 2
       st(2) = 3
@@ -215,7 +219,7 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz, slab10)
+      ret = dfsdwslab(st, sr, sz, slab10)
       num_err = num_err + ret
 
       st(1) = 4
@@ -224,7 +228,7 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz,slab16)
+      ret = dfsdwslab(st, sr, sz,slab16)
       num_err = num_err + ret
       st(1) = 1
       st(2) = 2
@@ -232,7 +236,7 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz, slab17)
+      ret = dfsdwslab(st, sr, sz, slab17)
       num_err = num_err + ret
       st(1) = 2
       st(2) = 2
@@ -240,7 +244,7 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz, slab18)
+      ret = dfsdwslab(st, sr, sz, slab18)
       num_err = num_err + ret
       st(1) = 3
       st(2) = 2
@@ -248,7 +252,7 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz,slab19)
+      ret = dfsdwslab(st, sr, sz,slab19)
       num_err = num_err + ret
       st(1) = 3
       st(2) = 3
@@ -256,7 +260,7 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz, slab11)
+      ret = dfsdwslab(st, sr, sz, slab11)
       num_err = num_err + ret
 
       st(1) = 4
@@ -265,7 +269,7 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz,slab12)
+      ret = dfsdwslab(st, sr, sz,slab12)
       num_err = num_err + ret
       st(1) = 1
       st(2) = 1
@@ -273,7 +277,7 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz, slab13)
+      ret = dfsdwslab(st, sr, sz, slab13)
       num_err = num_err + ret
       st(1) = 2
       st(2) = 1
@@ -281,7 +285,7 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz, slab14)
+      ret = dfsdwslab(st, sr, sz, slab14)
       num_err = num_err + ret
       st(1) = 3
       st(2) = 1
@@ -289,7 +293,7 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz,slab15)
+      ret = dfsdwslab(st, sr, sz,slab15)
       num_err = num_err + ret
       st(1) = 1
       st(2) = 1
@@ -297,7 +301,7 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz, slab1)
+      ret = dfsdwslab(st, sr, sz, slab1)
       num_err = num_err + ret
 
       st(1) = 2
@@ -306,7 +310,7 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz,slab2)
+      ret = dfsdwslab(st, sr, sz,slab2)
       num_err = num_err + ret
       st(1) = 3
       st(2) = 1
@@ -314,7 +318,7 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz, slab3)
+      ret = dfsdwslab(st, sr, sz, slab3)
       num_err = num_err + ret
       st(1) = 4
       st(2) = 1
@@ -322,7 +326,7 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz, slab4)
+      ret = dfsdwslab(st, sr, sz, slab4)
       num_err = num_err + ret
       st(1) = 1
       st(2) = 2
@@ -330,10 +334,10 @@ C
       sz(1) = 1
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwriteslab(st, sr, sz,slab5)
+      ret = dfsdwslab(st, sr, sz,slab5)
       num_err = num_err + ret
         
-      ret = dfsdendslab()
+      ret = dfsdeslab()
       num_err = num_err + ret
 C
 C Retrieve slab for verification

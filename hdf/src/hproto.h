@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.30  1993/04/26 22:43:08  koziol
-shortened the DF24setcompress and DFR8setcompress calls to make the Vax happy
+Revision 1.31  1993/04/27 21:01:00  georgev
+Changed fortran stubs interface for hyperslabs, made them different
+than the C names.
 
+ * Revision 1.30  1993/04/26  22:43:08  koziol
+ * shortened the DF24setcompress and DFR8setcompress calls to make the Vax happy
+ *
  * Revision 1.29  1993/04/26  22:40:32  koziol
  * Shortened the long form of the DFR8setcompress and DF24setcompress calls to
  * make the Vax happy...
@@ -1212,12 +1216,12 @@ extern FRETVAL(intf) ndfr8sjpeg
 #   define ndfsdsetnt        FNAME(DFSDSETNT)
 #   define ndfsdgetnt        FNAME(DFSDGETNT)
 #   define ndfsdlastref      FNAME(DFSDLASTREF)
-#   define ndfsdwriteref     FNAME(DFSDWRITEREF)
-#   define ndfsdsetfill      FNAME(DFSDSETFILL)
-#   define ndfsdgetfill      FNAME(DFSDGETFILL)
-#   define ndfsdstartslab    FNAME(DFSDSTARTSLAB)
-#   define ndfsdwriteslab    FNAME(DFSDWRITESLAB)
-#   define ndfsdendslab      FNAME(DFSDENDSLAB)
+#   define ndfsdwref         FNAME(DFSDWREF)
+#   define ndfsdsfill        FNAME(DFSDSFILL)
+#   define ndfsdgfill        FNAME(DFSDGFILL)
+#   define ndfsdsslab        FNAME(DFSDSSLAB)
+#   define ndfsdweslab       FNAME(DFSDWSLAB)
+#   define ndfsdeslab        FNAME(DFSDESLAB)
 #else
 #   define ndsgdast  FNAME(dsgdast)
 #   define ndsgdisc  FNAME(dsgdisc)
@@ -1266,12 +1270,12 @@ extern FRETVAL(intf) ndfr8sjpeg
 #   define ndfsdsetnt        FNAME(dfsdsetnt)
 #   define ndfsdgetnt        FNAME(dfsdgetnt)
 #   define ndfsdlastref      FNAME(dfsdlastref)
-#   define ndfsdwriteref     FNAME(dfsdwriteref)
-#   define ndfsdsetfill      FNAME(dfsdsetfill)
-#   define ndfsdgetfill      FNAME(dfsdgetfill)
-#   define ndfsdstartslab    FNAME(dfsdstartslab)
-#   define ndfsdwriteslab    FNAME(dfsdwriteslab)
-#   define ndfsdendslab      FNAME(dfsdendslab)
+#   define ndfsdwref         FNAME(dfsdwref)
+#   define ndfsdsfill        FNAME(dfsdsfill)
+#   define ndfsdgfill        FNAME(dfsdgfill)
+#   define ndfsdsslab        FNAME(dfsdsslab)
+#   define ndfsdwslab        FNAME(dfsdwslab)
+#   define ndfsdeslab        FNAME(dfsdeslab)
 #endif /* DF_CAPFNAMES */
 #endif  /* DFSD_FNAMES */
 

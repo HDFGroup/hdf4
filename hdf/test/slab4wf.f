@@ -2,9 +2,13 @@ C---------------------------------------------------------------------------
 C $Header$
 C
 C $Log$
-C Revision 1.2  1993/02/01 23:23:27  georgev
-C Changed hyperslab test files to reflect new interface
+C Revision 1.3  1993/04/27 21:02:09  georgev
+C Changed fortran stubs interface for hyperslabs, made them different
+C than the C names.
 C
+c Revision 1.2  1993/02/01  23:23:27  georgev
+c Changed hyperslab test files to reflect new interface
+c
 c Revision 1.1  1993/01/07  20:56:22  georgev
 c Added Hyperslab C and Fortran test programs.
 c
@@ -20,7 +24,7 @@ C
 
 
       integer dssdims,  dssdisc, dssdist
-      integer dfsdstartslab, dfsdwriteslab, dfsdendslab, dsigslc
+      integer dfsdsslab, dfsdwslab, dfsdeslab, dsigslc
       integer ret, np, nr,nc, di(3), st(3), sz(3), sr(3)
       integer rank, DFTAG_SDT, DFO_FORTRAN
       real    scpln(2), scrow(3), sccol(4), da(4,3,2)
@@ -92,7 +96,7 @@ C
 C Write it as one slab    
 C 
 
-      ret = dfsdstartslab(sn, fnlen)
+      ret = dfsdsslab(sn, fnlen)
       num_err = num_err + ret
       st(1) = 1
       st(2) = 1
@@ -100,10 +104,10 @@ C
       sz(1) = 4
       sz(2) = 3
       sz(3) = 2
-      ret = dfsdwriteslab(st, sr, sz, da)
+      ret = dfsdwslab(st, sr, sz, da)
       num_err = num_err + ret
 
-      ret = dfsdendslab()
+      ret = dfsdeslab()
       num_err = num_err + ret
  
 C
