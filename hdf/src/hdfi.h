@@ -2,10 +2,14 @@
 $Header$
 
 $Log$
-Revision 1.33  1993/09/11 18:07:55  koziol
-Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
-cleaned up some goofy string manipulations in various places.
+Revision 1.34  1993/09/11 21:00:25  koziol
+Defined alternate HDstrdup routine for VMS and fixed a couple of HDstrdup
+mistakes.
 
+ * Revision 1.33  1993/09/11  18:07:55  koziol
+ * Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
+ * cleaned up some goofy string manipulations in various places.
+ *
  * Revision 1.32  1993/09/08  20:54:53  georgev
  * Fixed problem with #elif directive on HP9000.
  * Deleted NewPtr, DisposPtr references for Mac.
@@ -1154,9 +1158,9 @@ extern uint8 FAR *DFtbuf;
 #  define HDstrncpy(s1,s2,n)    (strncpy((s1),(s2),(n)))
 #  define HDstrchr(s,c)    (strchr((s),(c)))
 /* Can't use on PCs. strdup() uses malloc() and HDgetspace uses halloc() */
-#if !defined PC | defined PC386
+#if !(defined VMS | (defined PC & !defined PC386))
 #  define HDstrdup(s)      (strdup((s)))
-#endif /* PC */
+#endif /* !(VMS | PC) */
 #endif /* WIN3 */
 
 

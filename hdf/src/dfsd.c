@@ -5,10 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.35  1993/09/11 18:07:46  koziol
-Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
-cleaned up some goofy string manipulations in various places.
+Revision 1.36  1993/09/11 21:00:18  koziol
+Defined alternate HDstrdup routine for VMS and fixed a couple of HDstrdup
+mistakes.
 
+ * Revision 1.35  1993/09/11  18:07:46  koziol
+ * Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
+ * cleaned up some goofy string manipulations in various places.
+ *
  * Revision 1.34  1993/09/03  15:16:47  chouck
  * Fixed a casting problem for the SGI
  *
@@ -886,10 +890,9 @@ intn DFSDIsetdatastrs(label, unit, format, coordsys)
 	/* copy string */
         if (lufp) 
           {
-            Writesdg.dataluf[luf] = HDgetspace((uint32) HDstrlen(lufp) + 1);
+            Writesdg.dataluf[luf] = HDstrdup(lufp);
             if (Writesdg.dataluf[luf] == NULL) 
               return FAIL;
-            HDstrcpy(Writesdg.dataluf[luf], lufp);
           }
       }
 
@@ -897,10 +900,9 @@ intn DFSDIsetdatastrs(label, unit, format, coordsys)
 
     if (coordsys) 
       {
-        Writesdg.coordsys = HDgetspace((uint32) HDstrlen(coordsys) + 1);
+        Writesdg.coordsys = HDstrdup(coordsys);
         if (Writesdg.coordsys == NULL) 
           return FAIL;
-        HDstrcpy(Writesdg.coordsys, coordsys);
       }
 
     /* indicate that label, unit, format and coordsys info modified */
@@ -2716,7 +2718,7 @@ intn DFSDIputndg(file_id, ref, sdg)
             if (sdg->dataluf[luf] && sdg->dataluf[luf][0])
               {
                 HDstrcpy( (char *)bufp, sdg->dataluf[luf]);
-                bufp += len;
+                bufp += HDstrlen(bufp)+1;
               }
             else
               {  /* dataluf NULL */
@@ -2730,7 +2732,7 @@ intn DFSDIputndg(file_id, ref, sdg)
                     && sdg->dimluf[luf][i][0] )
                   {   /* dimluf not NULL */
                         HDstrcpy( (char *)bufp, sdg->dimluf[luf][i]);
-                        bufp += len;
+                        bufp += HDstrlen(bufp)+1;
                   }
                 else
                   {  /* dimluf NULL */

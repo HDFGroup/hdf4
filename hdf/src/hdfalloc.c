@@ -267,18 +267,6 @@ printf("HDfreespace(): hfree() called\n");
 
 #endif /* WIN3 */
 
-/* HDstrdup replacement for strdup() on PCs under MS-DOS and Windows. */
-/* This is needed because of the way memory is allocated on the PC */
-char *HDstrdup(const char *s)
-{
-    char *ret;
-
-    ret=HDgetspace((uint32)HDstrlen(s)+1);
-    if(ret==NULL)
-        return(NULL);
-    HDstrcpy(ret,s);
-    return(ret);
-} /* end HDstrdup() */
 #else /* !PC | PC386 */
 
 
@@ -333,6 +321,21 @@ VOIDP ptr;
 }
 
 #endif /* !PC | PC386 */
+
+#if defined VMS | (defined PC & !defined PC386)
+/* HDstrdup replacement for strdup() on VMS and PCs under MS-DOS and Windows. */
+/* This is needed because of the way memory is allocated */
+char *HDstrdup(const char *s)
+{
+    char *ret;
+
+    ret=HDgetspace((uint32)HDstrlen(s)+1);
+    if(ret==NULL)
+        return(NULL);
+    HDstrcpy(ret,s);
+    return(ret);
+} /* end HDstrdup() */
+#endif /* VMS & (PC & !PC386) */
 
 #if defined WIN3 || defined PC
 #ifdef WIN3

@@ -2,10 +2,14 @@
 $Header$
 
 $Log$
-Revision 1.41  1993/09/11 18:08:06  koziol
-Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
-cleaned up some goofy string manipulations in various places.
+Revision 1.42  1993/09/11 21:00:29  koziol
+Defined alternate HDstrdup routine for VMS and fixed a couple of HDstrdup
+mistakes.
 
+ * Revision 1.41  1993/09/11  18:08:06  koziol
+ * Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
+ * cleaned up some goofy string manipulations in various places.
+ *
  * Revision 1.40  1993/09/09  20:52:31  chouck
  * Pexky Convex doesn't like extern foo(VOID); prototypes
  *
@@ -313,10 +317,13 @@ extern VOIDP memset_big
 extern intn memcmp_big
   PROTO((VOIDP s1, VOIDP s2, uint32 len));
 
+#endif  /* WIN3 | PC */
+
+#if defined VMS | (defined PC & !defined PC386)
 extern char *HDstrdup
   PROTO((const char *s));
 
-#endif  /* WIN3 | PC */
+#endif
 
 extern intn HDc2fstr
   PROTO((char _HUGE *str, intn len));

@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.7  1993/08/16 21:45:12  koziol
-Wrapped in changes for final, working version on the PC.
+Revision 1.8  1993/09/11 21:00:12  koziol
+Defined alternate HDstrdup routine for VMS and fixed a couple of HDstrdup
+mistakes.
 
+ * Revision 1.7  1993/08/16  21:45:12  koziol
+ * Wrapped in changes for final, working version on the PC.
+ *
  * Revision 1.6  1993/04/14  21:39:06  georgev
  * Had to add some VOIDP casts to some functions to make the compiler happy.
  *
@@ -88,7 +92,7 @@ setgroupREC(list_rec)
         if (!Group_list)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-#ifdef OLD_WAY
+#ifndef OLD_WAY
         for (i = 0; i < MAX_GROUPS; i++)
             Group_list[i] = NULL;
 #else
@@ -151,7 +155,7 @@ int32 DFdiread(file_id, tag, ref)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
     }
 
-    new_list->num = length / sizeof(DFdi);
+    new_list->num = length / 4;
     new_list->current = 0;           /* no DIs returned so far */
 
     /* read in group */
