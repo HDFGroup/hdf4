@@ -27,6 +27,7 @@ C Input file: none
 C Output file: tvsetf1.hdf
 
       integer number_failed,vfstart,hopen,vfatch,vfgid,vfgnxt
+      integer Verbosity, getverb
       integer vfgttrs,vfadtr, hclose, vsfatch
       integer vsffdef,vsffnd,vsfgid
       integer vsfinq,vsfsfld
@@ -71,7 +72,7 @@ C Output file: tvsetf1.hdf
      +           HDF_VSPACK = 0,
      +           HDF_VSUNPACK = 1,
      +           feps = 0.00001,
-     +           geps = 0.00000001
+     +           geps = 0.000000001
      +          )
 
       DATA ddata1/10,11,12,13,14,15,16,17,18,19/
@@ -82,6 +83,8 @@ C Output file: tvsetf1.hdf
 
       cdata = 'abcdebcdefcdefg'
       fn1 = 'tvsetf1.hdf'
+      Verbosity = getverb()
+
 C Open the file
       fid1 = hopen(fn1, DFACC_CREATE, 0)
       call VERIFY(file_id,'hopen',number_failed,Verbosity)
