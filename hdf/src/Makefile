@@ -1,70 +1,5 @@
 #
-# $Header$
-#
-# $Log$
-# Revision 1.17.2.1  1993/10/10 22:09:57  koziol
-# Moved Tag descriptions into a header file.  Updated compression routines.
-#
-# Revision 1.17  1993/09/30  19:04:39  koziol
-# Added basic compressing functionality for special tags.
-#
-# Revision 1.16  1993/09/28  18:04:02  koziol
-# Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
-# tag handling.  Added new compression special tag type.
-#
-# Revision 1.15  1993/08/16  22:30:04  koziol
-# Updated for new files
-#
-# Revision 1.14  1993/05/03  21:38:39  chouck
-# Removed purify directive
-#
-# Revision 1.13  1993/05/03  21:32:01  koziol
-# First half of fixes to make Purify happy
-#
-# Revision 1.12  1993/04/12  13:26:59  koziol
-# Changed Macros for the JPEG stuff so the unused sources don't get
-# included into Codecenter and have to be removed.  Also, added
-# smarter "mkdir" lines so the installation won't try to re-create
-# the directories if they exist already.
-#
-# Revision 1.11  1993/04/08  20:42:43  koziol
-# Minor Cray tweaks
-#
-# Revision 1.10  1993/03/29  16:47:10  koziol
-# Updated JPEG code to new JPEG 4 code.
-# Changed VSets to use Threaded-Balanced-Binary Tree for internal
-# 	(in memory) representation.
-# Changed VGROUP * and VDATA * returns/parameters for all VSet functions
-# 	to use 32-bit integer keys instead of pointers.
-# Backed out speedups for Cray, until I get the time to fix them.
-# Fixed a bunch of bugs in the little-endian support in DFSD.
-#
-# Revision 1.9  1993/02/16  19:19:37  koziol
-# Deleted obsolete JPEG file from JINCS line
-#
-# Revision 1.8  1993/02/16  18:26:17  chouck
-# Added JPeg files to 'make saber' option
-#
-# Revision 1.7  1993/01/26  19:42:14  koziol
-# Added support for reading and writing Little-Endian data on all
-# platforms.  This has been tested on: Cray, Sun, and PCs so far.
-#
-# Revision 1.6  1993/01/19  05:53:51  koziol
-# Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-# port.  Lots of minor annoyances fixed.
-#
-# Revision 1.4  1992/11/02  18:07:57  chouck
-# Added hcomp.h into the list of include files to move
-#
-# Revision 1.3  1992/11/02  16:35:41  koziol
-# Updates from 3.2r2 -> 3.3
-#
-# Revision 1.2  1992/09/17  19:49:16  koziol
-# Made changes for ANSI compilation on the Convex
-#
-# Revision 1.1  1992/08/25  21:40:44  koziol
-# Initial revision
-#
+# $Id$
 #
 # ##################################################################
 #
@@ -124,7 +59,7 @@ FC=f77
 FFLAGS= -g
 
 # ==> specify your C compiler
-CC= cc
+CC=cc
 CFLAGS=  -g -D${MACHINE}
 
 # ==> For the ALPHA, uncomment the following line
@@ -222,12 +157,12 @@ all: libdf.a install_it
 
 libdf.a: $(COBJS) $(FOBJS) $(JOBJS)
 	-$(RM) libdf.a
-	$(AR) $(ARFLAGS) libdf.a $(COBJS) $(FOBJS) $(JOBJS)
+	$(AR) $(ARFLAGS) libdf.a `lorder '$(COBJS) $(FOBJS) $(JOBJS)' | tsort `
 	$(RANLIB) libdf.a
 
 libnofortran: $(COBJS) $(JOBJS)
 	-$(RM) libdf.a
-	$(AR) $(ARFLAGS) libdf.a $(COBJS) $(JOBJS)
+	$(AR) $(ARFLAGS) libdf.a `lorder $(COBJS) $(JOBJS) | tsort `
 	$(RANLIB) libdf.a
 
 nofortran: libnofortran install_it
