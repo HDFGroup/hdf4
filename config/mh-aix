@@ -1,0 +1,25 @@
+# You can override the following variables here
+#
+# Compiliers:
+# For gcc version
+#CC=gcc
+#CFLAGS=-ansi 
+#
+#Using ANSI compilier
+CC= xlc
+CFLAGS=
+
+# Fortran compilier
+FC = xlf
+FCFLAGS =
+
+# Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
+RANLIB = ranlib
+
+# Name of library archiver and flags to send, default 'AR=ar', 'ARFLAGS=r'
+AR = ar
+ARFLAGS = ru
+
+# Name of remove utility, default 'RM=/bin/rm', 'RMFLAGS=-f'
+RM = /bin/rm
+RMFLAGS = -f
