@@ -25,7 +25,7 @@ C  Input file:   none
 C  Output files: manf.hdf
 C
       integer afstart, afend, afcreate, affcreate
-      integer afwriteann, afendaccess
+      integer afwriteann, afendaccess, hopen, hclose
 
       integer dssdims, dsadata, dslref, dsgdims
       integer d8aimg, DFR8lastref, d8gimg
@@ -48,7 +48,7 @@ C
       integer ret
       integer rank
       integer j, dimsizes(2)
-      integer fhandle, anhandle
+      integer fhandle, anhandle, ahandle
       integer  DFACC_CREATE, DFACC_READ
       integer AN_DATA_LABEL, AN_DATA_DESC, AN_FILE_LABEL, AN_FILE_DESC
 
@@ -111,12 +111,15 @@ C  *** generate float array and image ***
       call RESULT(ret, 'dssdims')
 
 C  *** start annotation on file ***
-      fhandle = afstart(TESTFILE,DFACC_CREATE)
+      fhandle = hopen(TESTFILE,DFACC_CREATE, 0)
       ret = fhandle
+      call RESULT(ret, 'hopen')
+      ahandle = afstart(fhandle)
+      ret = ahandle
       call RESULT(ret, 'afstart')
 
 C  *** write file 2 labels/ 2 descriptions ***
-      anhandle = affcreate(fhandle, AN_FILE_LABEL)
+      anhandle = affcreate(ahandle, AN_FILE_LABEL)
       ret = anhandle
       call RESULT(ret, 'affcreate')
       ret = afwriteann(anhandle,lab2,len(lab2))
@@ -124,7 +127,7 @@ C  *** write file 2 labels/ 2 descriptions ***
       ret = afendaccess(anhandle)
       call RESULT(ret, 'afendaccess')
 
-      anhandle = affcreate(fhandle, AN_FILE_LABEL)
+      anhandle = affcreate(ahandle, AN_FILE_LABEL)
       ret = anhandle
       call RESULT(ret, 'affcreate')
       ret = afwriteann(anhandle,lab1,len(lab1))
@@ -132,7 +135,7 @@ C  *** write file 2 labels/ 2 descriptions ***
       ret = afendaccess(anhandle)
       call RESULT(ret, 'afendaccess')
 
-      anhandle = affcreate(fhandle, AN_FILE_DESC)
+      anhandle = affcreate(ahandle, AN_FILE_DESC)
       ret = anhandle
       call RESULT(ret, 'affcreate')
       ret = afwriteann(anhandle,desc2,len(desc2))
@@ -140,7 +143,7 @@ C  *** write file 2 labels/ 2 descriptions ***
       ret = afendaccess(anhandle)
       call RESULT(ret, 'afendaccess')
 
-      anhandle = affcreate(fhandle, AN_FILE_DESC)
+      anhandle = affcreate(ahandle, AN_FILE_DESC)
       ret = anhandle
       call RESULT(ret, 'affcreate')
       ret = afwriteann(anhandle,desc1,len(desc1))
@@ -162,7 +165,7 @@ C ****    write out annotations for 2 out of every 3
             refnum = dslref()
 
 C ********** Write out 2 labels for each SDS *****************
-            anhandle = afcreate(fhandle,DFTAG_SDG,refnum,AN_DATA_LABEL)
+            anhandle = afcreate(ahandle,DFTAG_SDG,refnum,AN_DATA_LABEL)
             ret = anhandle
             call RESULT(ret, 'afcreate')
             ret = afwriteann(anhandle,labsds2,len(labsds2))
@@ -170,7 +173,7 @@ C ********** Write out 2 labels for each SDS *****************
             ret = afendaccess(anhandle)
             call RESULT(ret, 'afendaccess')
 
-            anhandle = afcreate(fhandle,DFTAG_SDG,refnum,AN_DATA_LABEL)
+            anhandle = afcreate(ahandle,DFTAG_SDG,refnum,AN_DATA_LABEL)
             ret = anhandle
             call RESULT(ret, 'afcreate')
             ret = afwriteann(anhandle,labsds,len(labsds))
@@ -179,7 +182,7 @@ C ********** Write out 2 labels for each SDS *****************
             call RESULT(ret, 'afendaccess')
 
 C *********** Write out 2 descritptions for each SDS ***********
-            anhandle = afcreate(fhandle,DFTAG_SDG,refnum,AN_DATA_DESC)
+            anhandle = afcreate(ahandle,DFTAG_SDG,refnum,AN_DATA_DESC)
             ret = anhandle
             call RESULT(ret, 'afcreate')
             ret = afwriteann(anhandle,descsds2,len(descsds2))
@@ -187,7 +190,7 @@ C *********** Write out 2 descritptions for each SDS ***********
             ret = afendaccess(anhandle)
             call RESULT(ret, 'afendaccess')
 
-            anhandle = afcreate(fhandle,DFTAG_SDG,refnum,AN_DATA_DESC)
+            anhandle = afcreate(ahandle,DFTAG_SDG,refnum,AN_DATA_DESC)
             ret = anhandle
             call RESULT(ret, 'afcreate')
             ret = afwriteann(anhandle,descsds,len(descsds))
@@ -202,7 +205,7 @@ C *********** Write out 2 descritptions for each SDS ***********
          refnum = DFR8lastref()
 
 C ********** Write out 2 labels for each Image *****************
-          anhandle = afcreate(fhandle, DFTAG_RIG, refnum, AN_DATA_LABEL)
+          anhandle = afcreate(ahandle, DFTAG_RIG, refnum, AN_DATA_LABEL)
           ret = anhandle
           call RESULT(ret, 'afcreate')
           ret = afwriteann(anhandle,labris2,len(labris2))
@@ -210,7 +213,7 @@ C ********** Write out 2 labels for each Image *****************
           ret = afendaccess(anhandle)
           call RESULT(ret, 'afendaccess')
 
-          anhandle = afcreate(fhandle, DFTAG_RIG, refnum, AN_DATA_LABEL)
+          anhandle = afcreate(ahandle, DFTAG_RIG, refnum, AN_DATA_LABEL)
           ret = anhandle
           call RESULT(ret, 'afcreate')
           ret = afwriteann(anhandle,labris,len(labris))
@@ -219,7 +222,7 @@ C ********** Write out 2 labels for each Image *****************
           call RESULT(ret, 'afendaccess')
 
 C *********** Write out 2 descritptions for each Image ***********
-          anhandle = afcreate(fhandle, DFTAG_RIG, refnum, AN_DATA_DESC)
+          anhandle = afcreate(ahandle, DFTAG_RIG, refnum, AN_DATA_DESC)
           ret = anhandle
           call RESULT(ret, 'afcreate')
           ret = afwriteann(anhandle,descris2,len(descris2))
@@ -227,7 +230,7 @@ C *********** Write out 2 descritptions for each Image ***********
           ret = afendaccess(anhandle)
           call RESULT(ret, 'afendaccess')
 
-          anhandle = afcreate(fhandle, DFTAG_RIG, refnum, AN_DATA_DESC)
+          anhandle = afcreate(ahandle, DFTAG_RIG, refnum, AN_DATA_DESC)
           ret = anhandle
           call RESULT(ret, 'afcreate')
           ret = afwriteann(anhandle,descris,len(descris))
@@ -238,8 +241,11 @@ C *********** Write out 2 descritptions for each Image ***********
   100 continue
 
 C ******* End writing annotatons **********
-      ret = afend(fhandle)
+      ret = afend(ahandle)
       call RESULT(ret, 'afend')
+      ret = hclose(fhandle)
+      call RESULT(ret, 'hclose')
+
 
 C********  Read data labels and descriptions *********
       print *, CR, CR
@@ -361,9 +367,9 @@ C**************************************************************
       integer  inlablen, indesclen, ret
 
       integer affileinfo, afnumann, afannlist, afannlen
-      integer afreadann, afstart, afend, afendaccess
+      integer afreadann, afstart, afend, afendaccess, hopen, hclose
 
-      integer fileh
+      integer fileh, anh
       integer nflabs, nfdescs, nolabs, nodescs
       integer numdlabels, numddescs
       integer annlen, j, found, fannlen
@@ -379,23 +385,26 @@ C**************************************************************
       AN_FILE_DESC  = 3
 
 C *****start annotation access on file *****
-      fileh = afstart(fname, DFACC_READ)
+      fileh = hopen(fname, DFACC_READ,0)
       ret = fileh
+      call RESULT(ret, 'hopen')
+      anh = afstart(fileh)
+      ret = anh
       call RESULT(ret, 'afstart')
 
-      ret = affileinfo(fileh,nflabs,nfdescs,nolabs,nodescs)
+      ret = affileinfo(anh,nflabs,nfdescs,nolabs,nodescs)
       call RESULT(ret, 'affileinfo')
 
-      numdlabels = afnumann(fileh, AN_DATA_LABEL, tag, ref)
+      numdlabels = afnumann(anh, AN_DATA_LABEL, tag, ref)
       call RESULT(numdlabels, 'afnumann')
 
-      numddescs = afnumann(fileh, AN_DATA_DESC, tag, ref)
+      numddescs = afnumann(anh, AN_DATA_DESC, tag, ref)
       call RESULT(numddescs, 'afnumann')
 
-      ret = afannlist(fileh, AN_DATA_LABEL, tag, ref, dlabels)
+      ret = afannlist(anh, AN_DATA_LABEL, tag, ref, dlabels)
       call RESULT(ret, 'afannlist')
 
-      ret = afannlist(fileh, AN_DATA_DESC, tag, ref, ddescs)
+      ret = afannlist(anh, AN_DATA_DESC, tag, ref, ddescs)
       call RESULT(ret, 'afannlist')
 
 C ***** Look for label in list ******
@@ -470,8 +479,11 @@ C ***** look for description in list
        endif
 
 C ****** close file *******
-      ret = afend(fileh)
+      ret = afend(anh)
       call RESULT(ret, 'afend')
+      ret = hclose(fileh)
+      call RESULT(ret, 'hclose')
+
 
       return
       end
@@ -490,10 +502,10 @@ C************************************************************
      *            MAXLEN_FDESC =  100 )
 
       integer affileinfo, afselect, afannlen, afreadann
-      integer afstart, afend, afendaccess
+      integer afstart, afend, afendaccess, hopen, hclose
 
       integer ret
-      integer fileh, annh
+      integer fileh, annh, anh
       integer nflabs, nfdescs, nolabs, nodescs
       integer fannlen
       character*35 flabel
@@ -507,16 +519,18 @@ C************************************************************
       AN_FILE_DESC  = 3
 
 C **** We check both file label/description
-
-      fileh = afstart(fname, DFACC_READ)
+      fileh = hopen(fname, DFACC_READ,0)
       ret = fileh
+      call RESULT(ret, 'hopen')
+      anh = afstart(fileh)
+      ret = anh
       call RESULT(ret, 'afstart')
 
-      ret = affileinfo(fileh,nflabs,nfdescs,nolabs,nodescs)
+      ret = affileinfo(anh,nflabs,nfdescs,nolabs,nodescs)
       call RESULT(ret, 'affileinfo')
 
 C ***** Read file label **********
-      annh = afselect(fileh, index, AN_FILE_LABEL)
+      annh = afselect(anh, index, AN_FILE_LABEL)
       call RESULT(ret, 'afselect')
 
       fannlen = afannlen(annh)
@@ -542,7 +556,7 @@ C ***** Read file label **********
       endif
 
 C **** Read file description *****
-      annh = afselect(fileh, index, AN_FILE_DESC)
+      annh = afselect(anh, index, AN_FILE_DESC)
       call RESULT(ret, 'afselect')
 
       fannlen = afannlen(annh)
@@ -568,8 +582,10 @@ C **** Read file description *****
        endif
 
 C ****** close file *******
-      ret = afend(fileh)
+      ret = afend(anh)
       call RESULT(ret, 'afend')
+      ret = hclose(fileh)
+      call RESULT(ret, 'hclose')
 
       return
       end

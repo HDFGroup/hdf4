@@ -81,6 +81,7 @@ check_fann(char *fname)
 {
   int32 ret;
   int32 file_handle;
+  int32 an_handle;
   int32 ann_handle;
   int32 nflabs, nfdescs, nolabs, nodescs;
   int32 ann_len;
@@ -90,11 +91,13 @@ check_fann(char *fname)
   intn indx;
 
   /* open file again */
-  ret = file_handle = ANstart(fname, DFACC_READ);
+  ret = file_handle = Hopen(fname, DFACC_READ,0);
+  RESULT("Hopen");
+  ret = an_handle = ANstart(file_handle);
   RESULT("ANstart");
 
   /* Get Info On Annotations In File */
-  ret = ANfileinfo(file_handle, &nflabs, &nfdescs, &nolabs, &nodescs);
+  ret = ANfileinfo(an_handle, &nflabs, &nfdescs, &nolabs, &nodescs);
   RESULT("Anfileinfo");
 #ifdef AN_DEBUG
   printf("There Are Nflabs=%d, Nfdescs=%d, Nolabs=%d, Nodescs=%d \n",nflabs,
@@ -105,7 +108,7 @@ check_fann(char *fname)
   for (i = 0; i < nflabs; i++)
     { /* select file label */
       indx = i;
-      ann_handle = ret = ANselect(file_handle, indx, AN_FILE_LABEL);
+      ann_handle = ret = ANselect(an_handle, indx, AN_FILE_LABEL);
       RESULT("ANselect");
 
       /* get file label length */
@@ -156,7 +159,7 @@ check_fann(char *fname)
   for (i = 0; i < nfdescs; i++)
     { /* select file label */
       indx = i;
-      ann_handle = ret = ANselect(file_handle, indx, AN_FILE_DESC);
+      ann_handle = ret = ANselect(an_handle, indx, AN_FILE_DESC);
       RESULT("ANselect");
 
       /* get file label length */
@@ -210,7 +213,9 @@ check_fann(char *fname)
     HDfree(ann_desc);
 
   /* close file */
-  ANend(file_handle);
+  ANend(an_handle);
+  Hclose(file_handle);
+
 } /* check_fann() */
 
 /****************************************************************
@@ -271,6 +276,7 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label[], char *desc[])
 {
   int32 ret;
   int32 file_handle;
+  int32 an_handle;
   int32 nflabs, nfdescs, nolabs, nodescs;
   intn  num_dlabels, num_ddescs;
   int32  *dlabels, *ddescs;
@@ -280,24 +286,26 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label[], char *desc[])
   int i;
 
   /* open file again */
-  ret = file_handle = ANstart(fname, DFACC_READ);
+  ret = file_handle = Hopen(fname, DFACC_READ, 0);
+  RESULT("Hopen");
+  ret = an_handle = ANstart(file_handle);
   RESULT("ANstart");
 
   /* Get Info On Annotations In File */
-  ret = ANfileinfo(file_handle, &nflabs, &nfdescs, &nolabs, &nodescs);
+  ret = ANfileinfo(an_handle, &nflabs, &nfdescs, &nolabs, &nodescs);
   RESULT("Anfileinfo");
 #ifdef AN_DEBUG
   printf("There Are Nflabs=%d, Nfdescs=%d, Nolabs=%d, Nodescs=%d \n",nflabs,
          nfdescs, nolabs, nodescs);
 #endif
   /* Get number of annotations with this tag/ref */
-  num_dlabels = ret = ANnumann(file_handle, AN_DATA_LABEL, tag, ref);
+  num_dlabels = ret = ANnumann(an_handle, AN_DATA_LABEL, tag, ref);
   RESULT("ANnumann");
 #ifdef AN_DEBUG
   printf("there are %d data labels for tag=%d, ref=%d \n", num_dlabels, 
          tag, ref);
 #endif
-  num_ddescs = ret = ANnumann(file_handle, AN_DATA_DESC, tag, ref);
+  num_ddescs = ret = ANnumann(an_handle, AN_DATA_DESC, tag, ref);
   RESULT("ANnumann"); 
 #ifdef AN_DEBUG
   printf("There Are %d Data Descriptions For Tag=%d, Ref=%d \n", 
@@ -334,14 +342,14 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label[], char *desc[])
     }
 
   /* get list of label annotations id's with this tag/ref */
-  ret = ANannlist(file_handle, AN_DATA_LABEL, tag, ref, dlabels);
+  ret = ANannlist(an_handle, AN_DATA_LABEL, tag, ref, dlabels);
   RESULT("ANannlist");
   if (ret != num_dlabels)
     printf("Error:ret!=nlabels there are %d data labels for tag=%d,ref=%d \n", 
            num_dlabels, tag, ref);
 
   /* get list of description annotations id's with this tag/ref */
-  ret = ANannlist(file_handle, AN_DATA_DESC, tag, ref, ddescs);
+  ret = ANannlist(an_handle, AN_DATA_DESC, tag, ref, ddescs);
   RESULT("ANannlist");
   if (ret != num_ddescs)
     printf("Error:ret!=ndescs there are %d data descss for tag=%d,ref=%d \n", 
@@ -449,6 +457,7 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label[], char *desc[])
     HDfree(ann_desc);
 
   /* close file */
+  ANend(an_handle);
   ANend(file_handle);
 } /* check_lab_desc() */
 
@@ -472,6 +481,7 @@ test_man()
   int32  dimsizes[2];
   float  *data;
   int32   file_handle; /* file handle */
+  int32   an_handle;  /* annotation interface handle */
   int32   ann_handle;  /* annotation handle */
 
   /***** generate float array and image *****/
@@ -490,7 +500,9 @@ test_man()
   RESULT("DFSDsetdims");
     
   /* Start annotation Interface on file */
-  ret = file_handle = ANstart(TESTFILE, DFACC_CREATE);
+  ret = file_handle = Hopen(TESTFILE, DFACC_CREATE,0);
+  RESULT("Hopen");
+  ret = an_handle = ANstart(file_handle);
   RESULT("ANstart");
 
   /********  Write file labels and descriptions *********/
@@ -499,7 +511,7 @@ test_man()
   /* create and write file labels */
   for (i = 1; i >= 0; i--)
     {
-      ret = ann_handle = ANcreatef(file_handle, AN_FILE_LABEL);
+      ret = ann_handle = ANcreatef(an_handle, AN_FILE_LABEL);
       RESULT("ANcreatef");
       ret = ANwriteann(ann_handle, file_lab[i], HDstrlen(file_lab[i]));
       RESULT("ANwriteann");
@@ -510,7 +522,7 @@ test_man()
   /* create and write file descriptions */
   for (i = 1; i >= 0; i--)
     {
-      ret = ann_handle = ANcreatef(file_handle, AN_FILE_DESC);
+      ret = ann_handle = ANcreatef(an_handle, AN_FILE_DESC);
       RESULT("ANcreatef");
       ret = ANwriteann(ann_handle, file_desc[i], HDstrlen(file_desc[i]));
       RESULT("ANwriteann");
@@ -533,7 +545,7 @@ test_man()
           /* create and write data label */
           for (i = 1; i >=0; i--)
             {
-              ret = ann_handle = ANcreate(file_handle, DFTAG_SDG, refnum, 
+              ret = ann_handle = ANcreate(an_handle, DFTAG_SDG, refnum, 
                                           AN_DATA_LABEL);
               RESULT("ANcreate");
               ret = ANwriteann(ann_handle, labsds[i], HDstrlen(labsds[i]));
@@ -545,7 +557,7 @@ test_man()
           /* create and write data description */
           for (i = 1; i >=0; i--)
             {
-              ret = ann_handle = ANcreate(file_handle, DFTAG_SDG, refnum, 
+              ret = ann_handle = ANcreate(an_handle, DFTAG_SDG, refnum, 
                                           AN_DATA_DESC);
               RESULT("ANcreate");
               ret = ANwriteann(ann_handle, descsds[i], HDstrlen(descsds[i]));
@@ -562,7 +574,7 @@ test_man()
       /* create and write image label */
       for (i = 1; i >=0; i--)
         {
-          ret = ann_handle = ANcreate(file_handle, DFTAG_RIG, refnum, 
+          ret = ann_handle = ANcreate(an_handle, DFTAG_RIG, refnum, 
                                       AN_DATA_LABEL);
           RESULT("ANcreate");
           ret = ANwriteann(ann_handle, labris[i], HDstrlen(labris[i]));
@@ -574,7 +586,7 @@ test_man()
       /* create and write image description */
       for (i = 1; i >=0; i--)
         {
-          ret = ann_handle = ANcreate(file_handle, DFTAG_RIG, refnum, 
+          ret = ann_handle = ANcreate(an_handle, DFTAG_RIG, refnum, 
                                       AN_DATA_DESC);
           RESULT("ANcreate");
           ret = ANwriteann(ann_handle, descris[i], HDstrlen(descris[i]));
@@ -585,7 +597,8 @@ test_man()
     } /* end for j */
 
   /* End writing annotations */
-  ANend(file_handle);
+  ANend(an_handle);
+  Hclose(file_handle);
   
   /********  Read labels and descriptions *********/
   MESSAGE(5, printf("*** Reading labels and descriptions for SDS and RIS ***\n"););
