@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.39  1993/09/01 23:53:31  georgev
-Fixed some errors in prototypes for DFSD calls.
+Revision 1.40  1993/09/09 20:52:31  chouck
+Pexky Convex doesn't like extern foo(VOID); prototypes
 
+ * Revision 1.39  1993/09/01  23:53:31  georgev
+ * Fixed some errors in prototypes for DFSD calls.
+ *
  * Revision 1.38  1993/08/28  01:37:50  georgev
  * Fixed a slab fortran name.
  *
@@ -125,6 +128,20 @@ Fixed some errors in prototypes for DFSD calls.
  * Initial revision
  *
 */
+
+/* --------------------------------------------------------------------- */
+/*                           !!!! NOTE !!!!
+ *  The Convex does not like prototypes of the form:
+ *
+ *  extern foo PROTO((VOID));
+ *
+ *  If the only parameter is of type VOID you *MUST* declare the function
+ *  as:
+ *
+ *  extern foo PROTO((void));
+ */
+/* --------------------------------------------------------------------- */
+
 #ifndef _H_PROTO
 #define _H_PROTO
 
@@ -262,11 +279,7 @@ extern char _HUGE *HIstrncpy
   PROTO((register char _HUGE *dest, register char _HUGE *source, int32 len));
 
 extern int32 HDspaceleft
-#ifdef CONVEX
-  PROTO(());
-#else
-  PROTO((VOID));
-#endif
+  PROTO((void));
 
 extern VOIDP HDgetspace
   PROTO((uint32 qty));
@@ -348,7 +361,8 @@ extern int16 HEvalue
   PROTO((int32 level));
 
 extern VOID HEclear
-    PROTO((void));
+  PROTO((void));
+
 /*
 ** from dfcomp.c
 */
@@ -795,7 +809,7 @@ extern int DFSDwriteslab
         VOIDP data));
 
 extern int DFSDendslab
-    PROTO((VOID));
+    PROTO((void));
 
 /*
 ** from dfconv.c
