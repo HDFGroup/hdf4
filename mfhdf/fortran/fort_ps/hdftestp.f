@@ -6,10 +6,10 @@ C
       implicit none
 
       integer fid1, fid2
-	integer fid_empty
+      integer fid_empty
 
       integer sds1, sds2, sds3, sds4
-	integer sds_empty, index_empty, flag_empty
+      integer sds_empty, index_empty, flag_empty
 
       integer dim1, dim2
 
@@ -39,7 +39,7 @@ C
       integer sfsextf,  hxsdir,    hxscdir
       integer sfwcdata, sfrcdata,  sfscfill, sfgcfill
       integer sfscatt,  sfrcatt,   sfsnatt,  sfrnatt
-	integer sfchempty
+      integer sfchempty
       integer SD_UNLIMITED, SD_DIMVAL_BW_INCOMP, DFNT_INT32
       integer DFNT_FLOAT32, DFNT_CHAR8
       integer SD_DIMVAL_BW_COMP, SD_FILL, SD_NOFILL
@@ -55,6 +55,8 @@ C
       DATA catt/'U','S'/, icatt/' ',' '/
       DATA natt/10,20/, inatt/0,0/
       DATA i32/15,25/, ii32/0,0/
+
+      err=0
 
 C
 C--- Create a file with an empty SDS
@@ -87,7 +89,6 @@ C
          print *, 'SDend returned', stat
          err = err + 1
       endif
-
 
 C     create a new file
       err = 0
@@ -328,7 +329,6 @@ C     why 16?  16 is not a legal HDF NType value.
          err = err + 1
       endif
 
-
 C
 C     OK, let's open it back up and take a look at what we've done
 C
@@ -368,11 +368,11 @@ C
       endif
  
       sds3 = sfselect(fid2, 0)
-      if(sds3.eq.-1) then
+      if(sds3.eq. -1) then
          print *, 'Select returned', sds3
          err = err + 1
       endif
-	stat = sfchempty(sds3, flag_empty)
+      stat = sfchempty(sds3, flag_empty)
       if(stat.ne. 0 .or. flag_empty. ne. 0) then
         print*, 'sfchempty returned wrong flag, should be 0)'
         err = err +1
@@ -441,13 +441,13 @@ C
       endif
 
       sds4 = sfselect(fid2, 1)
-      if(sds4.eq.-1) then
+      if(sds4.eq. -1) then
          print *, 'Select #4  returned', sds4
          err = err + 1
       endif
 
       dim2 = sfdimid(sds4, 1)
-      if(dim2.eq.-1) then
+      if(dim2.eq. -1) then
          print *, 'Get dim id #2 returned', dim2
          err = err + 1
       endif
@@ -2221,8 +2221,8 @@ C
          integer   sd_id(N_COMP_TYPES),
      .             sds_id(N_COMP_TYPES),
      .             sds_index(N_COMP_TYPES)
-         integer   RANK, comp_type
-         integer   comp_arg(N_COMP_ARG)
+         integer   RANK, comp_type, comp_type_out
+         integer   comp_arg(N_COMP_ARG), comp_prm_out(N_COMP_ARG)
          integer   d_dims(2)
          integer   start(2), stride(2), edges(2)
          integer   status, fill_value
@@ -2242,7 +2242,7 @@ C
          integer   sfstart, sfcreate, sfendacc, sfend,
      .             sfn2index, sfselect,
      .             sfsfill, sfrdata,
-     .             sfwdata, sfscompress
+     .             sfwdata, sfscompress, sfgcompress
 C
 C  Initial data declarations( change if you which to test larger arrays )
 C
@@ -2317,7 +2317,7 @@ C  will be passed to SFSCHUNK function via comp_arg parameter)
 C
          integer deflate_level,
      .           skphuff_skp_size
-          parameter ( deflate_level    = 1,
+          parameter ( deflate_level    = 6,
      .                skphuff_skp_size = 2 )
 
 
@@ -2474,6 +2474,46 @@ C
             if( sds_id(i) .eq. -1 ) then
                 print *, 'sfselect failed for', i, ' -th dataset'
                 err_compress = err_compress + 1
+            endif
+C
+C  Find out type of compression used and compression parameters.
+C
+            status = sfgcompress(sds_id(i), comp_type_out, comp_prm_out)
+	    if (status .eq. -1) then
+            print *, 'sfgcompress failed for', i, ' -th dataset'
+                err_compress = err_compress + 1
+            endif
+            if (name(i) .eq. 'Nocomp_data') then
+                if (comp_type_out .ne. COMP_CODE_NONE) then
+            print *, 'wrong compression type for Nocomp_data dataset'
+                err_compress = err_compress + 1
+                endif
+            endif
+            if (name(i) .eq. 'Rlcomp_data') then
+                if (comp_type_out .ne. COMP_CODE_RLE) then
+            print *, 'wrong compression type for Rlcomp_data dataset'
+                err_compress = err_compress + 1
+                endif
+            endif
+            if (name(i) .eq. 'Hucomp_data') then
+                if (comp_type_out .ne. COMP_CODE_SKPHUFF) then
+            print *, 'wrong compression type for Hucomp_data dataset'
+                err_compress = err_compress + 1
+                endif
+                if (comp_prm_out(1). ne. skphuff_skp_size) then
+         print *, 'wrong compression parameter for Hucomp_data dataset'
+                err_compress = err_compress + 1
+                endif
+
+            endif
+            if (name(i) .eq. 'Gzcomp_data') then
+                if (comp_type_out .ne. COMP_CODE_DEFLATE) then
+          print *, 'wrong compression type for Gzcomp_data dataset'
+                endif
+                if (comp_prm_out(1). ne. deflate_level) then
+          print *, 'wrong compression parameter for Gzcomp_data dataset'
+                err_compress = err_compress + 1
+                endif
             endif
 
 

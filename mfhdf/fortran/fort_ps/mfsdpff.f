@@ -1685,12 +1685,50 @@ C         INTEGER scscompress
         INTEGER FUNCTION scscompress(id, comp_type, comp_prm) 
       !MS$ATTRIBUTES C, reference, alias: '_SCSCOMPRESS' :: scscompress 
           integer id, comp_type, comp_prm(*) 
-        END FUNCTION sc scompress
+        END FUNCTION scscompress
       END INTERFACE
 
          sfscompress = scscompress(id, comp_type, comp_prm)
          return
          end
+
+C-------------------------------------------------------------------------
+C        Name:      sfgcompress
+C        Purpose:   get compression information about  SDS 
+C        Inputs:    id       - data set ID
+C        Output:    comp_type - type of compression
+C                   supports the following compression types:
+C                            ( see hcomp.h  file) 
+C                            COMP_CODE_NONE = 0
+C                            COMP_CODE_RLE =1
+C                            COMP_CODE_SKPHUFF = 3
+C                            COMP_CODE_DEFLATE = 4 
+C                   comp_prm - compression parameter array:
+C                   comp_prm(1) = deflate_level for GZIP
+C                   comp_prm(1) = skphuff_skp_size for ADAPTIVE HUFFMAN
+C        NOTE: IT IS USER's responsibility to pass correct compression
+C              parameters for each type of compression
+C
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scgcompress (C stub for SDsetcompress function)
+C-------------------------------------------------------------------------
+
+         INTEGER function sfgcompress(id, comp_type,comp_prm)
+	     !MS$if defined(BUILD_HDF_DLL)
+	     !MS$attributes dllexport :: sfgcompress 
+	     !MS$endif
+
+         INTEGER id, comp_type, comp_prm(*)
+      INTERFACE
+        INTEGER FUNCTION scgcompress(id, comp_type, comp_prm) 
+      !MS$ATTRIBUTES C, reference, alias: '_SCGCOMPRESS' :: scgcompress 
+          integer id, comp_type, comp_prm(*) 
+        END FUNCTION scgcompress
+      END INTERFACE
+         sfgcompress = scgcompress(id, comp_type, comp_prm)
+         return
+         end
+
 
 C-------------------------------------------------------------------------
 C        Name:      sfisrcrd
