@@ -1,7 +1,6 @@
 * text=auto !eol
 /Win32.nofortran.zip -text
 /Win32.zip -text
-hdf/jpeg/jpeglib.project -text
 hdf/jpeg/testimg.bmp -text
 hdf/jpeg/testimg.gif -text
 hdf/jpeg/testimg.jpg -text
