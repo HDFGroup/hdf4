@@ -434,6 +434,7 @@ write_vset_stuff(void)
 int32
 read_vset_stuff(void)
 {
+    int32       ret;            /* generic return value */
     int32       ibuf[2000];     /* integer buffer */
     float32     fbuf[2000];     /* floating point buffer */
     char        gbuf[2000];     /* generic buffer */
@@ -526,6 +527,8 @@ read_vset_stuff(void)
             }
 
       }
+    ret = Vdetach(vg1);
+    RESULT("Vdetach");
 
     /* test Vgetid */
     ref = Vgetid(fid, -1);
@@ -629,7 +632,8 @@ read_vset_stuff(void)
             }
       }
 
-    VSdetach(vs1);
+    ret=VSdetach(vs1);
+    RESULT("VSdetach");
 
     /* Move to the next one (integers) */
     ref = VSgetid(fid, ref);
@@ -704,7 +708,8 @@ read_vset_stuff(void)
             }
       }
 
-    VSdetach(vs1);
+    ret=VSdetach(vs1);
+    RESULT("VSdetach");
 
     /* testing VSsetexternalfile by reading the external file directly */
     {   hdf_file_t fd;
@@ -835,7 +840,8 @@ read_vset_stuff(void)
             }
       }
 
-    VSdetach(vs1);
+    ret=VSdetach(vs1);
+    RESULT("VSdetach");
 
     /* Move to the next one (multi-order) */
     ref = VSgetid(fid, ref);
@@ -1056,9 +1062,12 @@ read_vset_stuff(void)
           printf(">>> VSseek failed after VSfind call\n");
       }
 
-    VSdetach(vs1);
+    ret=VSdetach(vs1);
+    RESULT("VSdetach");
 
-    Vend(fid);
+    ret=Vend(fid);
+    RESULT("Vend");
+
     Hclose(fid);
     return SUCCEED;
 
