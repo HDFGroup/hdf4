@@ -133,10 +133,6 @@ printf("%s: check 1.0\n",FUNC);
     if (BADFREC(file_rec) || SPECIALTAG(tag))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* Check if the tag/ref pair exists */
-    if(Hexist(fid,tag,ref)<0)
-        HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
-
     /* allocate special info struct for buffered element */
     if ((info = HDmalloc((uint32) sizeof(crinfo_t)))==NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -159,8 +155,19 @@ printf("%s: check 1.0\n",FUNC);
     /* set up the information in the access record */
     access_rec->special_info = info;
 
-    if((access_rec->ddid=HTPselect(file_rec,tag,ref))==FAIL)
-        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    /* Check if the tag/ref pair exists */
+    if(Hexist(fid,tag,ref)<0) {
+#ifdef QAK
+printf("%s: check 2.0\n",FUNC);
+#endif /* QAK */
+        access_rec->new_elem=TRUE;
+        if((access_rec->ddid=HTPcreate(file_rec,tag,ref))==FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+      } /* end if */
+    else {
+        if((access_rec->ddid=HTPselect(file_rec,tag,ref))==FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+      } /* end else */
     access_rec->special_func = &cr_funcs;
     access_rec->special      = SPECIAL_COMPRAS;
     access_rec->posn         = 0;
@@ -414,7 +421,7 @@ HRPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
     if (pref)
         *pref = data_ref;
     if (plength)
-        *plength = info->image_size;
+        *plength = (access_rec->new_elem ? -1 : info->image_size);
     if (poffset)
         *poffset = data_off;
     if (pposn)

@@ -560,7 +560,7 @@ printf("%s: nri=%ld, nci=%ld, nri8=%ld, nci8=%ld, nvg=%ld\n",FUNC,(long)nri,(lon
             {   /* get next tag/ref */
                 if (elt_tag == DFTAG_CI || elt_tag == DFTAG_RI)
                   {   
-                      if (elt_tag != DFTAG_NULL && elt_ref != DFTAG_NULL) /* make certain we found an image */
+                      if (elt_tag != DFTAG_NULL && elt_ref != DFREF_NONE) /* make certain we found an image */
                         {     /* store the information about the image */
                             img_info[curr_image].grp_tag=DFTAG_RIG;
                             img_info[curr_image].grp_ref=find_ref;
@@ -569,10 +569,6 @@ printf("%s: nri=%ld, nci=%ld, nri8=%ld, nci8=%ld, nvg=%ld\n",FUNC,(long)nri,(lon
                             img_info[curr_image].offset = Hoffset(file_id, elt_tag, elt_ref);     /* store offset */
                             curr_image++;
                         }     /* end if */
-                      /* This next, very weird, while loop is required because the DFgroup interface won't recycle the dfgroup ID's unless the last item is read from the DFgroup -QAK */
-                      while (DFdiget(group_id, &elt_tag, &elt_ref)!=FAIL)
-                          ;
-                      break;  /* break out of reading the group */
                   } /* end if */
             } /* end while */
       } /* end while */
@@ -619,7 +615,7 @@ printf("%s: nri=%ld, nci=%ld, nri8=%ld, nci8=%ld, nvg=%ld\n",FUNC,(long)nri,(lon
 
     nimages = curr_image;   /* reset the number of images we really have */
 #ifdef QAK
-printf("before duplicate elimination\n");
+printf("before duplicate elimination, curr_image=%d\n",curr_image);
 for (i = 0; i < curr_image; i++)
   {
     printf("%d: tag=%u, ref=%u, offset=%ld\n",(int)i,(unsigned)img_info[i].img_tag,(unsigned)img_info[i].img_ref,(long)img_info[i].offset);
@@ -4405,7 +4401,7 @@ intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
     /* Check the validity of the compression type */
-    if (comp_type < 0 || comp_type >= COMP_CODE_INVALID)
+    if ((comp_type < 0 || comp_type >= COMP_CODE_INVALID) && comp_type!=COMP_CODE_JPEG)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate RI's object in hash table */
@@ -4417,15 +4413,33 @@ intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo)
         HGOTO_ERROR(DFE_CANTMOD, FAIL);
 
     /* Mark the image as being compressed and cache args */
-    ri_ptr->comp_img=TRUE;
-    ri_ptr->comp_type=comp_type;
+    if(comp_type==COMP_CODE_JPEG)
+      {
+        if(ri_ptr->img_dim.ncomps==1)
+            ri_ptr->img_dim.comp_tag=DFTAG_GREYJPEG5;
+        else if(ri_ptr->img_dim.ncomps==3)
+            ri_ptr->img_dim.comp_tag=DFTAG_JPEG5;
+        else
+            HGOTO_ERROR(DFE_CANTMOD, FAIL);
+        ri_ptr->use_cr_drvr=TRUE;
+      } /* end if */
+    else
+      {
+        ri_ptr->comp_img=TRUE;
+        ri_ptr->comp_type=comp_type;
+      } /* end else */
+
+    /* Store compression parameters */
     HDmemcpy(&(ri_ptr->cinfo),cinfo,sizeof(comp_info));
 
     /* Mark the image as needing to be a buffered special element */
     ri_ptr->use_buf_drvr=1;
 
+#ifdef QAK
+printf("%s: check 1.0, acc_perm=%d\n",FUNC,ri_ptr->acc_perm);
+#endif /* QAK */
     /* Make certain the image gets created */
-    if(GRIgetaid(ri_ptr, ri_ptr->acc_perm)==FAIL)
+    if(GRIgetaid(ri_ptr, DFACC_WRITE)==FAIL)
         HGOTO_ERROR(DFE_INTERNAL,FAIL);
 
 done:
@@ -5105,6 +5119,7 @@ PRIVATE intn GRIgetaid(ri_info_t *ri_ptr, intn acc_perm)
     CONSTR(FUNC, "GRIgetaid");  /* for HERROR */
     int32 hdf_file_id;          /* HDF file ID */
     gr_info_t *gr_ptr;          /* ptr to the file GR information for this image */
+    model_info minfo;           /* Dummy modeling information structure */
     intn  ret_value = SUCCEED;
 
     HEclear();
@@ -5134,6 +5149,9 @@ printf("%s: check 2.0\n",FUNC);
     /* Check if we need to increase the access permissions asked for */
     if(ri_ptr->comp_img || (ri_ptr->img_aid!=0 && (acc_perm&DFACC_WRITE)!=0 && (ri_ptr->acc_perm&DFACC_WRITE)==0))
       {
+#ifdef QAK
+printf("%s: check 2.5\n",FUNC);
+#endif /* QAK */
         /* Close the old AID (which only had read permission) */
         Hendaccess(ri_ptr->img_aid);
         ri_ptr->img_aid=0;
@@ -5154,7 +5172,7 @@ printf("%s: check 4.0\n",FUNC);
 #ifdef QAK
 printf("%s: check 5.0\n",FUNC);
 #endif /* QAK */
-            if((ri_ptr->img_aid=HCcreate(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,COMP_MODEL_STDIO,NULL,ri_ptr->comp_type,&(ri_ptr->cinfo)))==FAIL)
+            if((ri_ptr->img_aid=HCcreate(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,COMP_MODEL_STDIO,&minfo,ri_ptr->comp_type,&(ri_ptr->cinfo)))==FAIL)
                 HGOTO_ERROR(DFE_BADAID,FAIL);
             ri_ptr->comp_img=0;     /* reset the compression flag */
           } /* end if */
@@ -5167,6 +5185,7 @@ printf("%s: check 5.0\n",FUNC);
 #ifdef QAK
 printf("%s: check 6.0\n",FUNC);
 #endif /* QAK */
+
                 pixel_size=(uintn)(ri_ptr->img_dim.ncomps*DFKNTsize(ri_ptr->img_dim.nt));
                 if((ri_ptr->img_aid=HRPconvert(hdf_file_id,ri_ptr->img_tag,
                     ri_ptr->img_ref,ri_ptr->img_dim.xdim,ri_ptr->img_dim.ydim,

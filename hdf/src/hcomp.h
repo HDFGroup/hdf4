@@ -41,7 +41,8 @@ typedef enum
       COMP_CODE_NBIT,           /* for N-bit encoding */
       COMP_CODE_SKPHUFF,        /* for Skipping huffman encoding */
       COMP_CODE_DEFLATE,        /* for gzip 'deflate' encoding */
-      COMP_CODE_INVALID         /* invalid last code, for range checking */
+      COMP_CODE_INVALID,        /* invalid last code, for range checking */
+      COMP_CODE_JPEG            /* _Ugly_ hack to allow JPEG images to be created with GRsetcompress */
   }
 comp_coder_t;
 

@@ -146,6 +146,9 @@ printf("%s: check 1.0\n",FUNC);
         if(HTPinquire(access_rec->ddid,&data_tag,&data_ref,&data_off,&data_len)==FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
+#ifdef QAK
+printf("%s: check 2.0, data_off=%d, data_len=%d\n",FUNC,(int)data_off,(int)data_len);
+#endif /* QAK */
     /* is data defined but does not exist in the file? */
     if(data_off==INVALID_OFFSET && data_len==INVALID_LENGTH)
       { /* catch the case where the data doesn't exist yet */
