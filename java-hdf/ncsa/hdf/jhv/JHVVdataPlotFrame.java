@@ -694,8 +694,7 @@ public class JHVVdataPlotFrame extends Frame implements ItemListener, ActionList
    /** Default new constructor */
    public JHVVdataPlotFrame() {
      plotModeChoice.addItemListener(this);
-     addWindowListener(new WindowClosedProcess());
-
+     addWindowListener(new WindowClosedProcess((Frame)this));
     }
 
  
@@ -855,18 +854,19 @@ public class JHVVdataPlotFrame extends Frame implements ItemListener, ActionList
   {
     String arg = e.getActionCommand();
 
-    if ("Dismiss".equals(arg)) {
-      
+    if ("Dismiss".equals(arg))
+      dispose();
+  }
+
+  public void dispose() {
       // set frame unavailable ?
       vdataCanvas.plotFrame = null;
       vdataCanvas.plotFrameDisplayed = false;
       vdataCanvas.selectedColnumVector.removeAllElements();
-      
+
       vdataCanvas.repaint();
       
-      // close the window
-      dispose();
-    }
-    
+      super.dispose();
   }
+    
 }

@@ -432,6 +432,8 @@ public class JHVCanvas extends Canvas implements MouseListener,
     */
   public void mouseReleased(MouseEvent me)
   {
+    if ( !imgRange.contains(me.getX(),me.getY()) ) return;
+
     if ((node != null) && (currentImage != null)) {
       
       // set cursor type to "WAIT_CURSOR"

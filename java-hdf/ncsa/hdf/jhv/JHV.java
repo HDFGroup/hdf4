@@ -196,7 +196,7 @@ int fid;
   {
     String arg = e.getActionCommand();
 
-     if (arg.equals("Open")) {
+     if (arg.equals("Open") || arg.equals("Load File")) {
 	
 	// an HDF file source 
 	openFileOnLocal();
@@ -209,33 +209,32 @@ int fid;
 	
       }
       
-      if (arg.equals("Exit")) {
+      else if (arg.equals("Exit")) {
 	System.exit(0);
       }
 
-    if (arg.equals("Clean")) {
+    else if (arg.equals("Clean")) {
       
       infoText.setText("");
       infoText.select(0,0);
     }
-    
+
+    else return;
+
+    /** taken out by Peter Cao on 8-7-97    
     // open file
     if (arg.equals("Load File")) {
-      
       hdfFile = new String(hdfFileText.getText());
-      
-      // an HDF file source 
-      if (hdfFile.indexOf("://") !=  -1) {
-	// supported by URL
-// This feature is not supported yet
-//
-	this.isLocal = false;
-      }
-      else  {
-	this.isLocal = true;
-	if (!isFile(hdfFile)) 
-	  openFileOnLocal();
-      }
+    // an HDF file source 
+       if (hdfFile.indexOf("://") !=  -1) {
+    // supported by URL, This feature is not supported yet
+         this.isLocal = false;
+       }
+       else  {
+           this.isLocal = true;
+           if (!isFile(hdfFile)) 
+           openFileOnLocal();
+       }
       
       setup(hdfFile);
       if (!isLocal) {
@@ -246,9 +245,9 @@ int fid;
       // clean up the hdfCanvas
       hdfCanvas.setImage(null);
       hdfCanvas.repaint();		
-      
-      
     }
+    */
+
   }
   
   /**
@@ -515,7 +514,8 @@ int fid;
 	try {
 	    fid = hdf.Hopen(this.hdfFile);   
 	} catch (Exception e) {
-		infoText.setText("Exception opening file: "+this.hdfFile);
+		infoText.setText("Exception opening file: "+this.hdfFile+
+                                 "\nPlease check if the file is an hdf file");
 	    //System.out.println("Exception opening file: "+this.hdfFile);
 	}
     }
@@ -862,7 +862,8 @@ int fid;
    
     this.isLocal = true;
 				
-    FileDialog fd = new FileDialog(getFrame(), "HDF File");		
+    FileDialog fd = new FileDialog(getFrame(), "HDF File");
+    fd.setDirectory(jhvDir);		
     fd.show();
 		
     hdfFile = null;

@@ -400,8 +400,10 @@ public class JHVImageBCControl  extends Frame implements ActionListener, ItemLis
 	
 		// set filter mode
 		setFilterMode(BRIGHTNESS);
+		int ty = brightRangeValue/2 - brightScrollbar.getValue();
 
-		int ty = brightScrollbar.getValue() - brightRangeValue/2;
+                // update scrollbar value
+                brightScrollbar.setValue(brightScrollbar.getValue());
 		
 		// set the value in related textField
 		brightTextField.setText(Integer.toString(ty));
@@ -416,9 +418,12 @@ public class JHVImageBCControl  extends Frame implements ActionListener, ItemLis
 		setFilterMode(CONTRAST);
 
 		int ty = contrastScrollbar.getValue();
-		contrastValue = ty;
+		contrastValue = contrastScrollbar.getMaximum()-ty;
 
-		ty -= contrastRangeValue/2 ;
+		ty = contrastRangeValue/2 - ty;
+ 
+                // update scrollbar value
+                contrastScrollbar.setValue(contrastScrollbar.getValue());
 		
 		// set the value in related textField
 		contrastTextField.setText(Integer.toString(ty));

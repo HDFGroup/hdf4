@@ -282,7 +282,7 @@ public class JHVDataFrame extends Frame implements AdjustmentListener,
     } 
 	
     if ("Make Image" .equals(arg)) {
-         setCursor(Cursor.WAIT_CURSOR);
+         setCursor(new Cursor(Cursor.WAIT_CURSOR));
 	 if (imageStyle.getState()) {
 	   // create interpolate image 
 	   dataCanvas.displayInterpolateImage();
@@ -291,13 +291,13 @@ public class JHVDataFrame extends Frame implements AdjustmentListener,
 	   // create the sample image
 	    dataCanvas.displaySampleImage();
          }
-         setCursor(Cursor.DEFAULT_CURSOR);
+         setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
     
 
   }
 
-  public void setCursor(int cursor) {
+  public void setCursor(Cursor cursor) {
 
     super.setCursor(cursor);
 

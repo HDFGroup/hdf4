@@ -15,14 +15,24 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class WindowClosedProcess extends WindowAdapter {
+  Frame frame = null;
 
   WindowClosedProcess()
   {
     super();
   }
+
+  WindowClosedProcess(Frame frame)
+  {
+    super();
+    this.frame = frame;
+  }
   
   public void windowClosing(WindowEvent we)
   {
-    we.getWindow().dispose();
+    if (frame != null)
+       frame.dispose();
+    else
+       we.getWindow().dispose();
   }
 }
