@@ -35,9 +35,3 @@ hdifftst_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 check: hdifftst
 	sh $(srcdir)/testhdiff.sh
-
-#############################################################################
-##                          And the cleanup                                ##
-#############################################################################
-
-DISTCLEANFILES=testfiles/*
