@@ -1,6 +1,6 @@
 This directory contains the HDF/netCDF part of HDF3.3r4
 and Unidata netCDF v2.3.2. The hdf-related programs are
-in libsrc/.
+in libsrc/ and fortran/.
 
 To install HDF/netCDF, you need to edit the file CUSTOMIZE 
 to point at the correct locations for the HDF include files 
@@ -15,6 +15,19 @@ platforms including the HP and Cray.
 
 For CONVEX, you need to setenv for MACHINE (just type: 
 setenv MACHINE C3 ) before running ./configure. 
+
+For SGI R8000 running IRIX_6.0, currently we support 32-bit mode only.
+You need to add -32 option in CFLAGS and FFLAGS in CUSTOMIZE file.
+
+Change:
+
+    CFLAGS=-O 
+    FFLAGS=-O
+
+to:
+
+    CFLAGS="-O -32"
+    FFLAGS="-O -32"
 
 For SOLARIS 5.2, you need to run ./configure and then edit
 the Makefile in the fortran/ subdirectory so that FFLAG = -xl.
