@@ -1666,7 +1666,7 @@ DFSDlastref(void)
   ret_value = ((uint16) Lastref);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == (uint16)FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3220,7 +3220,6 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
   int32       localNTsize;    /* size of this NT on as it is on this machine */
   int32       fileNTsize;     /* size of this NT as it will be in the file */
   int32       scaleNTsize;    /* size of scale NT as it will be in the file */
-  int32       ret;
   int32       aid;
   DFdi        nt;
   intn        ret_value = SUCCEED;

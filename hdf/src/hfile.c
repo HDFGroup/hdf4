@@ -2659,7 +2659,7 @@ void HPend(void)
     DFGRPshutdown();
     DFSDPshutdown();
     GRPshutdown();
-    VSPfreebuf();
+    VSPshutdown();
     VPshutdown();
     ANdestroy();
     DFANPshutdown();

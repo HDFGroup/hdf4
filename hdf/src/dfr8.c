@@ -248,7 +248,7 @@ intn
 DFR8getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pispal)
 {
   CONSTR(FUNC, "DFR8getdims");
-  int32       file_id;
+  int32       file_id=(-1);
   intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -284,7 +284,8 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-  Hclose(file_id);
+  if(file_id!=(-1))
+      Hclose(file_id);
 
 #ifdef HAVE_PABLO
   TRACE_OFF(DFR8_mask, ID_DFR8getdims);
