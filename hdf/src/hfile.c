@@ -118,6 +118,7 @@ static char RcsId[] = "@(#)$Revision$";
 #undef HMASTER
 #define HFILE_MASTER
 #include "hfile.h"
+#include "glist.h" /* for double-linked lists, stacks and queues */
 
 /*--------------------- Locally defined Globals -----------------------------*/
 
@@ -126,7 +127,11 @@ PRIVATE intn default_cache = TRUE;
 
 /* Whether we've installed the library termination function yet for this interface */
 PRIVATE intn library_terminate = FALSE;
+#ifdef OLD_WAY
 PRIVATE list_head_t *cleanup_list = NULL;
+#else
+PRIVATE Generic_list *cleanup_list = NULL;
+#endif
 
 /*--------------------- Externally defined Globals --------------------------*/
 /* Function tables declarations.  These function tables contain pointers
@@ -2551,8 +2556,21 @@ PRIVATE intn HIstart(void)
     if(HAinit_group(AIDGROUP,256)==FAIL)
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
+#ifdef OLD_WAY
     if((cleanup_list=HULcreate_list(NULL))==NULL)
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
+#else
+    if(cleanup_list == NULL)
+      {
+          /* allocate list to hold terminateion fcns */
+          if ((cleanup_list = HDmalloc(sizeof(Generic_list))) == NULL)
+              HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+          /* initialize list */
+          if (HDGLinitialize_list(cleanup_list) == FAIL)
+              HGOTO_ERROR(DFE_INTERNAL, FAIL);
+      }
+#endif
 
 done:
   if(ret_value == FAIL)   
@@ -2600,8 +2618,13 @@ intn HPregister_term_func(hdf_termfunc_t term_func)
         if(HIstart()==FAIL)
             HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
+#ifdef OLD_WAY
     if(HULadd_node(cleanup_list,(VOIDP)term_func)==FAIL)
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
+#else
+    if(HDGLadd_to_list(*cleanup_list,(VOIDP)term_func)==FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+#endif
 
 done:
   if(ret_value == FAIL)   
@@ -2648,11 +2671,11 @@ void HPend(void)
     /* Shutdown the access ID atom group */
     HAdestroy_group(AIDGROUP);
 
-    if((term_func=(hdf_termfunc_t)HULfirst_node(cleanup_list))!=NULL)
+    if((term_func=(hdf_termfunc_t)HDGLfirst_in_list(*cleanup_list))!=NULL)
       {
         do {
             (*term_func)();
-          } while((term_func=(hdf_termfunc_t)HULnext_node(cleanup_list))!=NULL);
+          } while((term_func=(hdf_termfunc_t)HDGLnext_in_list(*cleanup_list))!=NULL);
       } /* end if */
 #ifdef OLD_WAY
     DFR8Pshutdown();
@@ -2666,14 +2689,16 @@ void HPend(void)
 #endif /* OLD_WAY */
 
     /* can't issue errors if you're free'ing the error stack. */
-    HULdestroy_list(cleanup_list);    /* clear the list of interface cleanup routines */
+    HDGLdestroy_list(cleanup_list);    /* clear the list of interface cleanup routines */
 
     HPbitshutdown();
     HXPshutdown();
     Hshutdown();
     HEshutdown();
     HAshutdown();
+#ifdef OLD_WAY
     HULshutdown();
+#endif
     tbbt_shutdown();
 } /* end HPend() */
 

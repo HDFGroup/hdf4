@@ -27,12 +27,13 @@ HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h dfan.h dfrig.h dfgr.h dfsd.h \
      vg.h df.h dfi.h dfstubs.h dfufp2i.h hcomp.h hconv.h hbitio.h \
      tbbt.h crle.h cnbit.h mstdio.h cnone.h cskphuff.h cdeflate.h mfgr.h \
      mfan.h hlimits.h hntdefs.h htags.h hkit.h hcompi.h bitvect.h atom.h \
-     dynarray.h linklist.h
+     dynarray.h linklist.h glist.h
 
 CSRCS = $(HCSRCS) $(VCSRCS) $(DFCSRCS) $(MFCSRCS)
 HCSRCS=hfile.c herr.c hblocks.c hextelt.c hkit.c hdfalloc.c hcomp.c \
     hbitio.c tbbt.c hdfalloc.c hcomp.c crle.c cnbit.c mstdio.c cnone.c \
-    cskphuff.c cdeflate.c bitvect.c atom.c hfiledd.c dynarray.c linklist.c
+    cskphuff.c cdeflate.c bitvect.c atom.c hfiledd.c dynarray.c linklist.c \
+    glist.c
 
 VCSRCS=vg.c vrw.c vio.c vparse.c vconv.c vsfld.c vgp.c vhi.c 
 
@@ -45,7 +46,7 @@ MFCSRCS= mfan.c mfgr.c
 COBJS = $(HCOBJS) $(VCOBJS) $(DFCOBJS) $(MFCOBJS)
 HCOBJS=hfile.o herr.o hblocks.o hextelt.o hkit.o hdfalloc.o hcomp.o \
     hbitio.o tbbt.o crle.o cnbit.o mstdio.o cnone.o cskphuff.o cdeflate.o \
-    bitvect.o atom.o hfiledd.o dynarray.o linklist.o
+    bitvect.o atom.o hfiledd.o dynarray.o linklist.o glist.o
 
 VCOBJS=vg.o vrw.o vio.o vparse.o vconv.o vsfld.o vgp.o vhi.o 
 
