@@ -2,12 +2,16 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.3  1992/06/01 14:47:19  mfolk
-C OR function doesn't work on Convex.  Need to use JIOR instead.  So
-C I put in the following comment lines:
-C  C Some Fortrans do not have the 'OR' function.  If this
-C  C causes an error, try substituting 'JIOR'.
+C Revision 1.4  1992/06/29 15:44:30  chouck
+C Changed the OR() to an addition.  Removed bitwise assignment
+C to make VMS happy.
 C
+c Revision 1.3  1992/06/01  14:47:19  mfolk
+c OR function doesn't work on Convex.  Need to use JIOR instead.  So
+c I put in the following comment lines:
+c  C Some Fortrans do not have the 'OR' function.  If this
+c  C causes an error, try substituting 'JIOR'.
+c
 c Revision 1.2  1992/05/07  16:48:07  dilg
 c Put in comment explaining the choice between using "char(-128)" and
 c "char(0)"
@@ -87,16 +91,16 @@ C      i8min = char(0)
       DFNT_INT8 = 20
       DFNT_INT16 = 22
       DFNT_INT32 = 24
-      DFNT_NATIVE = x'00001000'
+      DFNT_NATIVE = 4096
 
-C Some Fortrans do not have the 'OR' function.  If this
-C causes an error, try substituting 'JIOR'.
+C These should really use a logical OR to compute these values
+C However, OR() is not really that portable
 
-      DFNT_NFLOAT64 = OR(DFNT_NATIVE, DFNT_FLOAT64)
-      DFNT_NFLOAT32 = OR(DFNT_NATIVE, DFNT_FLOAT32)
-      DFNT_NINT8 = OR(DFNT_NATIVE, DFNT_INT8)
-      DFNT_NINT16 = OR(DFNT_NATIVE, DFNT_INT16)
-      DFNT_NINT32 = OR(DFNT_NATIVE, DFNT_INT32)
+      DFNT_NFLOAT64 = DFNT_NATIVE + DFNT_FLOAT64
+      DFNT_NFLOAT32 = DFNT_NATIVE + DFNT_FLOAT32
+      DFNT_NINT8 =    DFNT_NATIVE + DFNT_INT8
+      DFNT_NINT16 =   DFNT_NATIVE + DFNT_INT16
+      DFNT_NINT32 =   DFNT_NATIVE + DFNT_INT32
       
       print *, 'Creating arrays...'
       

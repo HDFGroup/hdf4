@@ -2,13 +2,17 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.3  1992/06/01 14:53:26  mfolk
-C Convex Fortran doesn't have the 'OR' function.  You have to
-C use 'JIOR' instead.  So I added these comments right before
-C the 'OR' is called:
-C   C Some Fortrans do not have the 'OR' function.  If this
-C   C causes an error, try substituting 'JIOR'.
+C Revision 1.4  1992/06/29 15:41:39  chouck
+C Changed the OR() to an addition.  Removed bitwise assignment
+C to make VMS happy.
 C
+c Revision 1.3  1992/06/01  14:53:26  mfolk
+c Convex Fortran doesn't have the 'OR' function.  You have to
+c use 'JIOR' instead.  So I added these comments right before
+c the 'OR' is called:
+c   C Some Fortrans do not have the 'OR' function.  If this
+c   C causes an error, try substituting 'JIOR'.
+c
 c Revision 1.2  1992/05/29  18:54:51  chouck
 c Changed output file names
 c
@@ -47,16 +51,16 @@ C
       DFNT_INT8 = 20
       DFNT_INT16 = 22
       DFNT_INT32 = 24
-      DFNT_NATIVE = x'00001000'
+      DFNT_NATIVE = 4096
 
-C Some Fortrans do not have the 'OR' function.  If this
-C causes an error, try substituting 'JIOR'.
+C These should really use a logical OR to compute these values
+C However, OR() is not really that portable
 
-      DFNT_NFLOAT64 = OR(DFNT_NATIVE, DFNT_FLOAT64)
-      DFNT_NFLOAT32 = OR(DFNT_NATIVE, DFNT_FLOAT32)
-      DFNT_NINT8 = OR(DFNT_NATIVE, DFNT_INT8)
-      DFNT_NINT16 = OR(DFNT_NATIVE, DFNT_INT16)
-      DFNT_NINT32 = OR(DFNT_NATIVE, DFNT_INT32)
+      DFNT_NFLOAT64 = DFNT_NATIVE + DFNT_FLOAT64
+      DFNT_NFLOAT32 = DFNT_NATIVE + DFNT_FLOAT32
+      DFNT_NINT8 =    DFNT_NATIVE + DFNT_INT8
+      DFNT_NINT16 =   DFNT_NATIVE + DFNT_INT16
+      DFNT_NINT32 =   DFNT_NATIVE + DFNT_INT32
 
       rank = 2
       dims(1) = 10
@@ -81,8 +85,8 @@ C  individual files
       print *,'Testing arrays in individual files...'
   
       err = dssnt(DFNT_NFLOAT64)
-      err1 = dspdata('fo.hdf.1', rank, dims, f64)
-      err2 = dsgdata('fo.hdf.1', rank, dims, tf64)
+      err1 = dspdata('fo1.hdf', rank, dims, f64)
+      err2 = dsgdata('fo1.hdf', rank, dims, tf64)
       print *,'Write: ', err1, '    Read: ', err2
       err = 0
       do 160 i=1,10
@@ -95,8 +99,8 @@ C  individual files
       call err_check(err, number_failed, 'float64')
 
       err = dssnt(DFNT_NFLOAT32)
-      err1 = dspdata('fo.hdf.2', rank, dims, f32)
-      err2 = dsgdata('fo.hdf.2', rank, dims, tf32)
+      err1 = dspdata('fo2.hdf', rank, dims, f32)
+      err2 = dsgdata('fo2.hdf', rank, dims, tf32)
       print *,'Write: ', err1, '    Read: ', err2
       err = 0
       do 210 i=1,10
@@ -109,8 +113,8 @@ C  individual files
       call err_check(err, number_failed, 'float32')
 
       err = dssnt(DFNT_NINT8)
-      err1 = dspdata('fo.hdf.3', rank, dims, i8)
-      err2 = dsgdata('fo.hdf.3', rank, dims, ti8)
+      err1 = dspdata('fo3.hdf', rank, dims, i8)
+      err2 = dsgdata('fo3.hdf', rank, dims, ti8)
       print *,'Write: ', err1, '    Read: ', err2
       err = 0
       do 310 i=1,10
@@ -123,8 +127,8 @@ C  individual files
       call err_check(err, number_failed, 'int8')
 
       err = dssnt(DFNT_NINT16)
-      err1 = dspdata('fo.hdf.4', rank, dims, i16)
-      err2 = dsgdata('fo.hdf.4', rank, dims, ti16)
+      err1 = dspdata('fo4.hdf', rank, dims, i16)
+      err2 = dsgdata('fo4.hdf', rank, dims, ti16)
       print *,'Write: ', err1, '    Read: ', err2
       err = 0
       do 410 i=1,10
@@ -137,8 +141,8 @@ C  individual files
       call err_check(err, number_failed, 'int16')
 
       err = dssnt(DFNT_NINT32)
-      err1 = dspdata('fo.hdf.5', rank, dims, i32)
-      err2 = dsgdata('fo.hdf.5', rank, dims, ti32)
+      err1 = dspdata('fo5.hdf', rank, dims, i32)
+      err2 = dsgdata('fo5.hdf', rank, dims, ti32)
       print *,'Write: ', err1, '    Read: ', err2
       err = 0
       do 510 i=1,10
