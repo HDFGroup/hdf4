@@ -106,8 +106,8 @@ VERSION_NETCDF	= 2.3.2
 CPP_XDR		= -I/usr/include/rpc
 
 # If XDR library not present then you need
-#XDR_LIBOBJS    = xdr.o xdrfloat.o xdrstdio.o xdrarray.o
-XDR_LIBOBJS     =
+XDR_LIBOBJS    = xdr.o xdrfloat.o xdrstdio.o xdrarray.o
+#XDR_LIBOBJS     =
 
 # location of library, sometimes the sunos requires -lsun
 LD_XDR		= 
