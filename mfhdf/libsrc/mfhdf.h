@@ -173,44 +173,8 @@ extern intn SDisdimval_bwcomp
 
 /*====================== Chunking Routines ================================*/
 
-#if 0 /* moved to hproto.h */
-
-/* Bit - flags used for SDsetchunk() and SDgetChunkInfo() */
-#define HDF_NONE    0x0
-#define HDF_CHUNK   0x1
-#define HDF_COMP    0x3
-#define HDF_NBIT    0x5
-
-/* Cache flags */
-#define HDF_CACHEALL 0x1
-
-/* Chunk Defintion */
-typedef union hdf_chunk_def_u
-{
-    /* Chunk Lengths only */
-    int32   chunk_lengths[MAX_VAR_DIMS]; /* chunk lengths along each dimension */
-
-    struct 
-    {   /* For Compression info */
-        int32      chunk_lengths[MAX_VAR_DIMS]; /* chunk lengths along each dimension */
-        int32      comp_type;    /* Compression type */
-        int32      model_type;   /* Compression model type */
-        comp_info  cinfo;        /* Compression info struct */
-        model_info minfo;        /* Compression model info struct */
-    }comp;
-        
-    struct 
-    { /* For NBIT */
-        int32 chunk_lengths[MAX_VAR_DIMS]; /* chunk lengths along each dimension */
-        intn  start_bit;
-        intn  bit_len;
-        intn  sign_ext;
-        intn  fill_one;
-    } nbit;
-
-} HDF_CHUNK_DEF;
-
-#endif
+/* For defintion of HDF_CHUNK_DEF union see hproto.h since 
+   this defintion is also used by GRs. */
 
 /******************************************************************************
  NAME
