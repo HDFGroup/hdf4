@@ -41,6 +41,11 @@ static char RcsId[] = "@(#)$Revision$";
 #define TESTFILE_NAME "tbitio.hdf"
 #define DATAFILE_NAME "bitio.dat"
 
+/* Last ditch attempt to define this value... */
+#ifndef UINT_MAX
+#define UINT_MAX (unsigned)(-1)
+#endif
+
 #ifndef RAND_MAX
 #define RAND_MAX (UINT_MAX)
 #endif
