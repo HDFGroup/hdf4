@@ -1,3 +1,16 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
+/* $Id$ */
 
 #ifndef _MFSD_H_
 #define _MFSD_H_
@@ -9,7 +22,11 @@
 #include "hdf.h"
 #include "netcdf.h"
 
+/* use this as marker for unlimited dimension */
 #define SD_UNLIMITED NC_UNLIMITED
+
+/* marker for ragged dimension */
+#define SD_RAGGED    -1
 
 #ifdef __cplusplus
 extern "C" {
@@ -33,6 +50,9 @@ extern int32 SDgetinfo
 
 extern int32 SDreaddata
     PROTO((int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data));
+
+extern uint16 SDgerefnumber
+    PROTO((int32 sdsid));
 
 extern int32 SDnametoindex
     PROTO((int32 fid, char *name));
@@ -117,6 +137,9 @@ extern int32 SDreftoindex
 extern int32 SDisrecord
     PROTO((int32 id));
 
+extern int32 SDiscoordvar
+    PROTO((int32 id));
+
 /* Define the FORTRAN names */
 
 #ifndef MFSD_FNAMES
@@ -153,6 +176,7 @@ extern int32 SDisrecord
 #   define nscfattr     FNAME(SCFATTR)
 #   define nsfid2ref  FNAME(SFID2REF)
 #   define nsfref2index FNAME(SFREF2INDEX)
+#   define nsfiscvar   FNAME(SFISCVAR)
 #else   /* DF_CAPFNAMES */
 #   define nscstart    FNAME(scstart)
 #   define nsfend      FNAME(sfend)
@@ -185,6 +209,7 @@ extern int32 SDisrecord
 #   define nscfattr    FNAME(scfattr)
 #   define nsfid2ref   FNAME(sfid2ref)
 #   define nsfref2index FNAME(sfref2index)
+#   define nsfiscvar   FNAME(sfiscvar)
 #endif
 #endif
 

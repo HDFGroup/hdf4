@@ -48,6 +48,7 @@ const int *dims ;
         ret->ndg_ref = FAIL;
         ret->HDFtype = hdf_map_type(type);
         ret->HDFsize = DFKNTsize(ret->HDFtype);
+        ret->is_ragged = FALSE;
 #endif
 
 	return(ret) ;
@@ -812,6 +813,7 @@ xdr_NC_var(xdrs, vpp)
             (*vpp)->HDFtype = hdf_map_type((*vpp)->type);
             (*vpp)->HDFsize = DFKNTsize((*vpp)->HDFtype);
             (*vpp)->aid = FAIL;
+            (*vpp)->is_ragged = FALSE;
                 
         }
 

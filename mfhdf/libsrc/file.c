@@ -213,7 +213,7 @@ int cdfid ;
 	char path[FILENAME_MAX + 1] ;
 	unsigned flags ;
 #ifdef HDF
-        intn   is_hdf;
+        intn   file_type;
 #endif
 
 	cdf_routine_name = "ncabort" ;
@@ -256,28 +256,36 @@ int cdfid ;
 
 
 #ifdef HDF
-        is_hdf = handle->is_hdf;
+        file_type = handle->file_type;
 #endif
 
 	NC_free_cdf(handle) ; /* calls fclose */
 
 
 #ifdef HDF
-        if(!is_hdf) {
-#endif
+        switch(file_type) {
+
+        case netCDF_FILE:
           if(flags & (NC_INDEF | NC_CREAT))
             {
               if( remove(path) != 0 )
                 nc_serror("couldn't remove filename \"%s\"", path) ;
             }
-#ifdef HDF
-        } else {
+          break;
+      case HDF_FILE:
           if(flags & NC_CREAT)
             {
                 if( remove(path) != 0 )
                     nc_serror("couldn't remove filename \"%s\"", path) ;
             }
-        }
+          break;
+      }
+#else
+          if(flags & (NC_INDEF | NC_CREAT))
+            {
+              if( remove(path) != 0 )
+                nc_serror("couldn't remove filename \"%s\"", path) ;
+            }
 #endif
 
 	_cdfs[cdfid] = NULL ;
@@ -425,7 +433,7 @@ int cdfid ;
 
 
 #ifdef HDF
-        if(handle->is_hdf) {
+        if(handle->file_type == HDF_FILE) {
             handle->flags |= NC_INDEF ;
             handle->redefid = TRUE;
             return(0);
@@ -644,7 +652,7 @@ NC *handle ;
 	NC *stash = STASH(cdfid) ; /* faster rvalue */
 
 #ifdef HDF
-        if(!handle->is_hdf)
+        if(handle->file_type != HDF_FILE)
 #endif	
             NC_begins(handle) ;
 
@@ -658,7 +666,7 @@ NC *handle ;
 	}
 
 #ifdef HDF
-        if(handle->is_hdf) {
+        if(handle->file_type == HDF_FILE) {
             handle->flags &= ~(NC_CREAT | NC_INDEF | NC_NDIRTY | NC_HDIRTY) ;
             return(0) ;
         }
@@ -819,7 +827,7 @@ int cdfid ;
 	}
 
 #ifdef HDF
-        if(handle->is_hdf) hdf_close(handle);
+        if(handle->file_type == HDF_FILE) hdf_close(handle);
 #endif
 
         NC_free_cdf(handle) ; /* calls fclose */

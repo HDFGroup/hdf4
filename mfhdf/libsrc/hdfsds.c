@@ -1,3 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
+/* $Id$ */
+
 /***************************************************************************
  *
  * This file contains the code to read old SDS objects out of HDF files
@@ -634,7 +652,7 @@ intn hdf_read_ndgs(handle)
              * Convert spaces in the name to underscores (yuck) otherwise
              *    ncgen will barf on ncdumped files
              */
-            if(namebuf) {
+            if(namebuf && (namebuf[0] != '\0')) {
                 char *c;
                 for(c = (char *)namebuf; *c; c++)
                     if((*c) == ' ') (*c) = '_';
@@ -652,7 +670,6 @@ intn hdf_read_ndgs(handle)
             vars[current_var]->data_tag = DATA_TAG;
             vars[current_var]->data_ref = sdRef;
             vars[current_var]->HDFtype  = HDFtype;
-
             /*
              * NOTE:  If the user changes the file and saves setting this
              *   to ndgRef will blow away the old ndgs (but they will get
@@ -785,7 +802,7 @@ intn hdf_read_ndgs(handle)
         if(current_var)
             handle->vars = NC_new_array(NC_VARIABLE, current_var, (Void *) vars);
         else
-        handle->vars = NULL;
+            handle->vars = NULL;
         
     } /* outermost for loop to loop between NDGs and SDGs */
     
