@@ -956,6 +956,8 @@ HXPendaccess(accrec_t * access_rec)
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
+	if(access_rec!=NULL)
+		access_rec->used=FALSE;
 
     } /* end if */
 

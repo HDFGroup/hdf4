@@ -82,7 +82,11 @@ typedef FILE *hdf_file_t;
 #ifdef PC386
 #   define HI_CREATE(p)        (fopen((p), "wb+"))
 #else  /* PC386 */
+#ifdef VMS
+#   define HI_CREATE(p)        (fopen((p), "w+", "mbc=64"))
+#else
 #   define HI_CREATE(p)        (fopen((p), "w+"))
+#endif /* VMS */
 #endif /* PC386 */
 #   define HI_READ(f, b, n)    (((n) == fread((b), 1, (size_t)(n), (f))) ? \
                                 SUCCEED : FAIL)

@@ -456,6 +456,8 @@ Please check your Makefile.
 #define GOT_MACHINE 1
 #include <file.h>               /* for unbuffered i/o stuff */
 #include <limits.h>
+#include <stdlib.h>
+#include <string.h> 
 #include <sys/stat.h>
 #define DF_MT              DFMT_VAX
 typedef void               VOID;
@@ -924,7 +926,7 @@ typedef double            float64;
 
 #endif /* MOTOROLA */
 
-#if defined DEC_ALPHA || (defined __alpha && defined __unix)
+#if defined DEC_ALPHA || (defined __alpha && defined __unix__)
 
 #ifndef DEC_ALPHA
 #define DEC_ALPHA

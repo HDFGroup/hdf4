@@ -1800,7 +1800,8 @@ Hendaccess(int32 access_id)
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
-
+	if(access_rec!=NULL)
+	  access_rec->used = FALSE;
     } /* end if */
 
   /* Normal function cleanup */
@@ -2675,11 +2676,12 @@ HIgetspinfo(accrec_t * access_rec)
   for (i = 0; i < MAX_ACC; i++)
     {
       /* get the info for the dataset */
+      if(access_records[i].used)
+        {
       if(HTPinquire(access_records[i].ddid,&data_tag,&data_ref,NULL,NULL)==FAIL)
           HGOTO_ERROR(DFE_INTERNAL, NULL);
 
       if (&access_records[i]!= access_rec
-          && access_records[i].used
           && access_records[i].file_id == access_rec->file_id
           && data_tag == tag
           && data_ref == ref)
@@ -2687,6 +2689,7 @@ HIgetspinfo(accrec_t * access_rec)
           ret_value =  (VOIDP) access_records[i].special_info;
           break; /* break out of loop */
         }
+       }
     }
 
 done:

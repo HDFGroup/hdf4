@@ -1,20 +1,20 @@
-! ****************************************************************************
-! * NCSA HDF                                                                 *
-! * Software Development Group                                               *
-! * National Center for Supercomputing Applications                          *
-! * University of Illinois at Urbana-Champaign                               *
-! * 605 E. Springfield, Champaign IL 61820                                   *
-! *                                                                          *
-! * For conditions of distribution and use, see the accompanying             *
-! * hdf/COPYING file.                                                        *
-! *                                                                          *
-! ***************************************************************************
-!
-! $Id$
-!$ ! Makefile for VAX/VMX systems.
-!$ !
-!$ ! Make a no-fortran-stub HDF library
-!$ !
+$! ****************************************************************************
+$! * NCSA HDF                                                                 *
+$! * Software Development Group                                               *
+$! * National Center for Supercomputing Applications                          *
+$! * University of Illinois at Urbana-Champaign                               *
+$! * 605 E. Springfield, Champaign IL 61820                                   *
+$! *                                                                          *
+$! * For conditions of distribution and use, see the accompanying             *
+$! * hdf/COPYING file.                                                        *
+$! *                                                                          *
+$! ***************************************************************************
+$!
+$! $Id$
+$! Makefile for VAX/VMX systems.
+$!
+$! Make a no-fortran-stub HDF library
+$!
 $ ccc := cc/noopt/debug/include=([-.jpeg],[-.zlib])/define=VMS
 $ type sys$input
 	Creating base HDF library
@@ -24,10 +24,10 @@ $ cobj="df24, dfan, dfcomp, dfgr, dfgroup, dfimcomp, dfp, dfr8, dfsd, "+-
 "vio, vparse, vrw, vsfld, dfconv, vconv, dfrle, dfjpeg, dfunjpeg, "+-
 "dfufp2i, dfknat, dfkswap, dfkcray, dfkvms, dfkconv, dfkfuji, hbitio, "+-
 "tbbt, hdfalloc, mfgr, cdeflate, cnbit, cnone, crle, cskphuff, hcomp, mfan," +-
-"mstdio, hvblocks"
+"mstdio,atom, bitvect, dynarray, hfiledd "
 
 $ ccc 'cobj 
 $ library/create df  'cobj
 $ type sys$input
 	Created base HDF library
-$ !
+$!
