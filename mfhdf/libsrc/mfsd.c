@@ -5282,7 +5282,6 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
           }
 #else                         /* we do not have the SZIP library */
           {
-          cdef  = (HDF_CHUNK_DEF *)&chunk_def;
           cdims = cdef->comp.chunk_lengths;
           chunk[0].chunk_flag = 0;
           chunk[0].comp_type = COMP_CODE_NONE;
