@@ -34,11 +34,13 @@ static char RcsId[] = "@(#)$Revision$";
 #   define nhclose   FNAME(HCLOSE)
 #   define nhxisdir  FNAME(HXISDIR)
 #   define nhxiscdir FNAME(HXISCDIR)
+#   define nhddontatexit FNAME(HDDONTATEXIT)
 #else
 #   define nhiopen   FNAME(hiopen)
 #   define nhclose   FNAME(hclose)
 #   define nhxisdir  FNAME(hxisdir)
 #   define nhxiscdir FNAME(hxiscdir)
+#   define nhddontatexit FNAME(hddontatexit)
 #endif /* DF_CAPFNAMES */
 #endif /* HFILE_FNAMES */
 
@@ -147,3 +149,17 @@ nhxiscdir(_fcd dir, intf * dirlen)
     return (ret);
 }
 
+/*-----------------------------------------------------------------------------
+ * Name:    hddontatexit
+ * Purpose: Call HDdont_atexit
+ * Inputs:  
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ * Invokes: HDdont_atexit 
+ *---------------------------------------------------------------------------*/
+
+FRETVAL(intf)
+nhddontatexit(void)
+{
+   return((intf)(HDdont_atexit()));
+}
