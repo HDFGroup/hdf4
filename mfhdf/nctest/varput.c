@@ -40,7 +40,6 @@ test_ncvarput(path)
 	long edg[MAX_VAR_DIMS];	/* netcdf edge lengths to upper corner */
 	void *vals;		/* pointer to block of values */
     } hc;			/* test hypercube */
-    extern void *emalloc();	/* error-checking allocator */
     int tmp;
     int id;			/* dimension id */
 

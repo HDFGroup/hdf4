@@ -40,7 +40,6 @@ test_ncvargetg(path)
 	long edg[MAX_VAR_DIMS];	/* netcdf edge lengths to upper corner */
 	void *vals;		/* pointer to block of values */
     } hc;			/* test hypercube */
-    extern void *emalloc();	/* error-checking allocator */
     long strides[MAX_VAR_DIMS];	/* external, I/O strides */
 
     (void) fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
