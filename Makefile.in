@@ -263,6 +263,14 @@ install-hdf:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install \
           SUBDIRS="$(HDFDIR)" subd
 
+install-hdf-libs:	
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install-libs \
+          SUBDIRS="$(HDFDIR)" subd
+
+install-hdf-utils:	
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install-utils \
+          SUBDIRS="$(HDFDIR)" subd
+
 install-mfhdf:	
 	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=install \
           SUBDIRS="$(NETCDFDIR)" subd
@@ -324,6 +332,8 @@ help:
 	@echo "make install           - install HDF,netCDF libraries,"
 	@echo "                         utilites, and includes" 
 	@echo "make install-hdf       - install HDF library, utilities and includes"
+	@echo "make install-hdf-libs  - install HDF library and includes"
+	@echo "make install-hdf-utils - install utilities"
 	@echo "make install-mfhdf     - install netCDF library, utilities and includes"
 	@echo "make clean        - cleans up HDF and NETCDF packages(*.o,libdf.a,..)"
 	@echo "make distclean    - cleans up HDF and NETCDF packages including"
