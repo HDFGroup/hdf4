@@ -5,9 +5,12 @@ static char RcsId[] = "@(#) $Revision$"
 $Header$
 
 $Log$
-Revision 1.4  1993/04/19 23:04:42  koziol
-General Code Cleanup to reduce/remove compilation warnings on PC
+Revision 1.5  1993/05/24 15:09:50  sxu
+Wrapped changes in HDF3.2 into 3.3.
 
+ * Revision 1.4  1993/04/19  23:04:42  koziol
+ * General Code Cleanup to reduce/remove compilation warnings on PC
+ *
  * Revision 1.3  1993/01/19  06:24:23  koziol
  * Updated for better portability and fixed minor compiler warnings
  *
@@ -129,7 +132,7 @@ char *palfile, *outfile;
         *p++ = blues[j];
     }
 
-    ret = DFPaddpal(outfile, palspace);
+    ret = DFPaddpal(outfile, (VOIDP)palspace);
     if (ret < 0) {
         printf(" Error: %d, in writing palette %s\n", ret, palfile);
         exit(1);

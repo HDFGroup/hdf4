@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.9  1993/01/19 06:24:11  koziol
-Updated for better portability and fixed minor compiler warnings
+Revision 1.10  1993/05/24 15:09:47  sxu
+Wrapped changes in HDF3.2 into 3.3.
 
+ * Revision 1.9  1993/01/19  06:24:11  koziol
+ * Updated for better portability and fixed minor compiler warnings
+ *
  * Revision 1.8  1993/01/16  04:13:57  georgev
  * Fixed bug in hdfed
  *
@@ -52,7 +55,7 @@ Updated for better portability and fixed minor compiler warnings
 #endif /* DEBUG */
 
 #define HE_ARG_SZ 30
-#define HE_DESC_SZ 512
+#define HE_DESC_SZ 8192
 
 #define HE_COLOR_SZ 256
 #define HE_PALETTE_SZ 768
