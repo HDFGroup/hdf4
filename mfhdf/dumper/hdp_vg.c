@@ -548,27 +548,34 @@ void print_fields( char *fields,
    else
    { /* there are fields to print */
       fprintf(fp, "%s[", field_title );
-      HDstrcpy(tempflds, fields);
-      ptr = tempflds;
+      HDstrcpy(tempflds, fields);	/* tempflds can be manipulated */
+      ptr = tempflds;			/* traverse tempflds with ptr */
+
+      /* traverse the temporary fieldname list to obtain and print each
+       * field name; use ',' to locate individual field names, and each 
+       * line should not exceed 50 characters beside the alignment */
       for (i = 0; !lastItem; i++)
       {
-         tempPtr = HDstrchr(ptr, ',');
+         tempPtr = HDstrchr(ptr, ',');  /* locate next separator */
          if (tempPtr == NULL)
-            lastItem = 1;
+            lastItem = 1;	/* set flag for end of list */
          else
-            *tempPtr = '\0';
-         HDstrcpy(fldname, ptr);
-         count += HDstrlen(fldname);
+            *tempPtr = '\0';	/* change ',' to null to obtain field name */
+         HDstrcpy(fldname, ptr);	/* obtain current field name */
+         count += HDstrlen(fldname);	/* increment current # of chars on line */
          if (count > 50)
          {
-            fprintf(fp, "%s", field_title );
-            count = 0;
+	    /* print alignment for the subsequent lines */
+            fprintf(fp, "\n\t          ");
+
+	    /* include the skipped field from previous line */
+            count = HDstrlen(fldname);  
          }
-         fprintf(fp, "%s", fldname);
+         fprintf(fp, "%s", fldname);  /* print the current field name */
          if (!lastItem)
-            fprintf(fp, ", ");
-         ptr = tempPtr + 1;
-      }  /* end of if skip */
+            fprintf(fp, ", ");	/* print a comma if it's not the last field name */
+         ptr = tempPtr + 1;	/* move ptr beyond last field name */
+      }  /* end of for loop */
       fprintf(fp, "];\n");
    }  /* there are fields to print */
    
