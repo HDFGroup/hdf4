@@ -2730,3 +2730,54 @@ int32   id;
     return TRUE;
 
 } /* SDisrecord */
+
+/* ----------------------------- SDsetblocksize ----------------------------- */
+/*
+
+ NAME
+	SDsetblocksize -- set the size of the linked blocks created.
+ USAGE
+	intn SDsetblocksize(sdsid, block_size)
+        int32 sdsid;             IN: dataset ID
+        int32 block_size;        IN: size of the block in bytes
+ RETURNS
+        SUCCEED/FAIL
+ DESCRIPTION
+        Set the size of the blocks used for storing the data for unlimited
+	dimension datasets.  This is used when creating new datasets only,
+	it does not have any affect on existing datasets.  The block_size 
+	should probably be set to a multiple of the "slice" size.
+
+--------------------------------------------------------------------------- */
+intn
+#ifdef PROTOTYPE
+SDsetblocksize(int32 sdsid, int32 block_size)
+#else
+SDsetblocksize(sdsid, block_size)
+int32 sdsid;
+int32  block_size;
+#endif
+{
+    NC      * handle;
+    NC_var  * var;
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDsetblocksize: I've been called\n");
+#endif
+
+    /* get the handle */
+    handle = SDIhandle_from_id(sdsid, SDSTYPE);
+    if(handle == NULL) 
+        return FAIL;
+
+    /* get the variable */
+    var = SDIget_var(handle, sdsid);
+    if(var == NULL)
+        return FAIL;
+
+    /* set the block size */
+    var->block_size=block_size;
+
+    return(SUCCEED);
+} /* SDsetblocksize */
+

@@ -722,8 +722,34 @@ NC_var *vp;
 
     /* if it is a record var might as well make it linked blocks now */
     if(IS_RECVAR(vp)) {
+#ifdef OLD_WAY
         vp->aid = HLcreate(handle->hdf_file, DATA_TAG, vsid, 
                            vp->len * BLOCK_SIZE, BLOCK_COUNT);
+#else /* OLD_WAY */
+        int32 block_size; /* the size of the linked blocks to use */
+
+/* The block size is calculated according to the following heuristic: */
+/*   First, the block size the user set is used, if set. */
+/*   Second, the block size is calculated according to the size being */
+/*           written times the BLOCK_MULT value, in order to make */
+/*           bigger blocks if the slices are very small. */
+/*   Third, the calculated size is check if it is bigger than the */
+/*           MAX_BLOCK_SIZE value so that huge empty blocks are not */
+/*           created.  If the calculated size is greater than */
+/*           MAX_BLOCK_SIZE, then MAX_BLOCK_SIZE is used */
+/* These are very vague heuristics, but hopefully they should avoid */
+/* some of the past problems... -QAK */
+        if(vp->block_size!=(-1)) /* use value the user provided, if available */
+            block_size=vp->block_size;
+        else { /* try figuring out a good value using some heuristics */
+            block_size=vp->len*BLOCK_MULT;
+            if(block_size>MAX_BLOCK_SIZE)
+                block_size=MAX_BLOCK_SIZE;
+          } /* end else */
+
+        vp->aid = HLcreate(handle->hdf_file, DATA_TAG, vsid, block_size,
+		BLOCK_COUNT);
+#endif /* OLD_WAY */
         if(vp->aid == FAIL) return 0;
         if(Hendaccess(vp->aid) == FAIL) return 0;
     }
