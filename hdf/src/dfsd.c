@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1992/12/08 20:47:56  georgev
-Changed order of src/dest for HDmemcpy
+Revision 1.9  1992/12/21 16:56:55  chouck
+Fixed problem reading old float32 calibration tags
 
+ * Revision 1.8  1992/12/08  20:47:56  georgev
+ * Changed order of src/dest for HDmemcpy
+ *
  * Revision 1.7  1992/11/12  21:29:12  georgev
  * DFSDgetfillvalue has been fixed
  *
@@ -2104,11 +2107,11 @@ DFSsdg *sdg;
                 } else {
 
                     /* element is old float based type */
-                    char *buf2;
+                    float32 buf2[4];
 
-                    /* allocate input buffer */
-                    buf2 = HDgetspace((uint32) 4 * sizeof(float32));
-                    if(buf == NULL) return FAIL;
+                    /* element is old, float based type */
+                    if (Hgetelement(file_id, elmt.tag, elmt.ref, (unsigned char*) buf2)<0)
+                        return(-1);
 
                     /* move 'em over */
                     sdg->ioff     = (float64) buf2[0];
@@ -2117,7 +2120,6 @@ DFSsdg *sdg;
                     sdg->cal_err  = (float64) buf2[3];
                     sdg->cal_type = DFNT_INT16;
 
-                    HDfreespace(buf2);
                 }
             }
             else {
@@ -2153,11 +2155,7 @@ DFSsdg *sdg;
                 } else {
 
                     /* element is old float based type */
-                    uint8 *buf2;
-
-                    /* allocate translation buffer */
-                    buf2 = HDgetspace((uint32) 4 * sizeof(float32));
-                    if(buf == NULL) return FAIL;
+                    float32 buf2[4];
 
                     /* convert calibration factors */
                     DFKconvert(buf, buf2, DFNT_FLOAT32, 4,
@@ -2169,8 +2167,6 @@ DFSsdg *sdg;
                     sdg->cal      = (float64) buf2[2];
                     sdg->cal_err  = (float64) buf2[3];
                     sdg->cal_type = DFNT_INT16;
-
-                    HDfreespace(buf2);
 
                 }
 
