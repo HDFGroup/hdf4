@@ -304,6 +304,7 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
 	   num_nodes++;
 	   
 	   switch (dumpvg_opts->contents) {
+	    int k;
 	      case DVERBOSE: /* dump all information */
 		 fprintf(fp, "\n");
 	         fprintf(fp, "\nVgroup:%d\n", (int) i);
@@ -371,7 +372,6 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
 	       printf("\n");
             } /* for */
          }
-	 free(list);
       }      /* while (curr_arg < argc)  */
       return(0);
 }     /* dvg */
@@ -490,13 +490,15 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode,
 	    fprintf(fp, "     #%d (%s)\n", (int) t, name);
 	    fprintf(fp, "\ttag = %d; reference = %d;\n", (int) tag, (int) vsid);
 	 }
-         aNode->children[t] = "***"; 
+	 aNode->children[t] = (char*)malloc(sizeof(char)*4);
+         strcpy(aNode->children[t], "***"); 
 	 aNode->type[t] = (char*)malloc(sizeof(char)*strlen(name));
 	 tempPtr = (char*)HDgettagname((uint16) tag);
 	 tempPtr = &tempPtr[6];
-	 strcpy(aNode->type[t], tempPtr);
+	 strcpy(aNode->type[t], "~v"); /* here */
       }
    } /* for */
+   aNode->children[t] = (char*)malloc(sizeof(char));
    aNode->children[num_entries] = NULL;
    if (!found)
       printf("     None.\n");
