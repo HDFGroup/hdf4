@@ -300,7 +300,7 @@ if (!path || ((acc_mode & DFACC_ALL) != acc_mode))
 	HRETURN_ERROR(DFE_ARGS, FAIL);
 
 /* This routine depends on having ANSI C support */
-#ifdef __STDC__
+#if defined(__STDC__) && !defined(SUN)
 if(atexit_installed==FALSE)
   {
       atexit_installed=TRUE;
