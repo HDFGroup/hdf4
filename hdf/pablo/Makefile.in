@@ -240,6 +240,13 @@ install::  FORCE
 
 install-lib:: install
 
+install-includes:: FORCE
+	@if test -z "$(PABLO_FLAGS)"; then \
+	  : true; \
+	else		 \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) pinstall-headers; \
+	fi
+
 pinstall-lib: pinstall-headers
 	$(INSTALL_DATA) $(TARGETLIB) $(libdir)/$(TARGETLIB).n
 	( cd $(libdir) ; $(RANLIB) $(libdir)/$(TARGETLIB).n )

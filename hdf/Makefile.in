@@ -234,6 +234,10 @@ install-libs:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install-lib \
           SUBDIRS="src jpeg zlib pablo fmpool" subd
 
+install-includes:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install-includes \
+          SUBDIRS="src jpeg zlib pablo fmpool" subd
+
 install-utils:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install \
           SUBDIRS="util" subd
@@ -334,6 +338,7 @@ help:
 	@echo "make install           - install HDF library, "
 	@echo "                         utilites, and includes " 
 	@echo "make install-libs      - install HDF library and includes " 
+	@echo "make install-includes  - install HDF includes " 
 	@echo "make install-utils     - install HDF utilities " 
 	@echo "make clean     - cleans up HDF packages(*.o,libdf.a,..)"
 	@echo "make distclean - cleans up HDF packages including"

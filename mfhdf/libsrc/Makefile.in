@@ -189,6 +189,8 @@ test:		$(PROGRAM) nhdftest
 
 install::	installed_library installed_headers
 
+install-includes::	installed_headers
+
 $(PROGRAM):	$(PROGRAM).o library
 
 nhdftest::         FORCE
@@ -346,6 +348,7 @@ library::		$(LIB_A)
 $(LIB_A):		$(LIBOBJS) FORCE
 	$(AR) rcuv $@ $(LIBOBJS)
 	$(RANLIB) $@
+#	$(LD) -b -o libmfhdf.sl $(LIBOBJS)
 
 # The following rule is for those makefiles needing to install object
 # modules in a library in another directory.  They need only define 

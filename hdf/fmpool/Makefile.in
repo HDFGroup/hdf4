@@ -208,6 +208,13 @@ install::  FORCE
 
 install-lib:: install
 
+install-includes::  FORCE
+	@if test -z "$(FMPOOL_FLAGS)"; then \
+	  : true; \
+	else		 \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) fmpinstall-headers; \
+	fi
+
 fmpinstall-lib: libfmpool.a install-headers
 	$(INSTALL_DATA) libfmpool.a $(libdir)/$(binprefix)libfmpool.a
 

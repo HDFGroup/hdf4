@@ -247,6 +247,7 @@ libdf.a: $(COBJS) $(FOBJS) $(CMOBJS)
 #	$(AR) $(ARFLAGS) libdf.a `lorder '$(COBJS) $(FOBJS)' | tsort `
 	$(AR) $(ARFLAGS) libdf.a $(COBJS) $(FOBJS) $(CMOBJS)
 	$(RANLIB) libdf.a
+#	$(LD) -b -o libdf.sl $(COBJS) $(FOBJS) $(CMOBJS)
 
 nofort-libdf.a: $(COBJS) $(CMOBJS)
 	-$(RM) $(RMFLAGS) libdf.a
@@ -282,6 +283,8 @@ saber:
 	#load -D$(MACHINE) $(CSRCS) $(TSRCS) -lc
 
 install: install-lib install-headers
+
+install-includes: install-headers
 
 install-lib: install-headers
 	$(INSTALL_DATA) $(TARGETLIB) $(libdir)/$(TARGETLIB).n
@@ -360,6 +363,7 @@ help:
 	@echo "                        fortran support "
 	@echo "make install          - install HDF library, "
 	@echo "                        and includes " 
+	@echo "make install-includes - install HDF includes "
 	@echo "make clean     - cleans up HDF library(*.o,libdf.a,..)"
 	@echo "make distclean - cleans up HDF library including"
 	@echo "                 configuration(Makefiles,config.status,..)"

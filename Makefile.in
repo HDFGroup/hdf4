@@ -293,6 +293,12 @@ install-libs:
 	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=$@ \
           SUBDIRS="$(NETCDFDIR)" subd
 
+install-includes:	
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(HDFDIR)" subd
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(NETCDFDIR)" subd
+
 install-utils:	
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(HDFDIR)" subd
@@ -401,6 +407,7 @@ help:
 	@echo "make install           - install HDF,netCDF libraries,"
 	@echo "                         utilites, and includes" 
 	@echo "make install-libs      - install HDF,netCDF libraries and includes"
+	@echo "make install-includes  - install HDF,netCDF includes"
 	@echo "make install-utils     - install HDF,netCDF utilities"
 	@echo "make install-man       - install HDF and netCDF man pages"
 	@echo "make install-hdf       - install HDF library, utilities and includes"

@@ -171,6 +171,8 @@ test:		$(PROGRAM)
 
 install::
 
+install-includes::
+
 # This is the master.mk.in makefile.  It contains general rules.
 #
 

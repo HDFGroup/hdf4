@@ -188,6 +188,8 @@ install-lib: libjpeg.a install-headers
 	$(INSTALL_DATA) libjpeg.a $(libdir)/$(binprefix)libjpeg.a
 	$(RANLIB) $(libdir)/$(binprefix)libjpeg.a
 
+install-includes:: install-headers
+
 install-headers: jconfig.h
 	$(INSTALL_DATA) jconfig.h $(includedir)/jconfig.h
 	$(INSTALL_DATA) $(srcdir)/jpeglib.h $(includedir)/jpeglib.h

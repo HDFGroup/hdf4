@@ -196,6 +196,8 @@ test:		FORCE
 	    $(MAKE) $(MFLAGS) $(LOCAL_MACROS) hdftest;; \
 	esac
 
+install-includes:: install
+
 install::	FORCE
 	@case "$(FC)" in \
 	NONE*|none*) \
@@ -330,6 +332,7 @@ library::		$(LIB_A)
 $(LIB_A):		$(LIBOBJS) FORCE
 	$(AR) rcuv $@ $(LIBOBJS)
 	$(RANLIB) $@
+#	$(LD) -b -o libmfhdf.sl $(LIBOBJS)
 
 # The following rule is for those makefiles needing to install object
 # modules in a library in another directory.  They need only define 
@@ -339,6 +342,7 @@ $(LIB_A):		$(LIBOBJS) FORCE
 lib_dummy $(REMOTE_LIBRARY):	$(LIBOBJS) FORCE
 	$(AR) rcuv $@ $(LIBOBJS)
 	$(RANLIB) $@
+#	$(LD) -b -o ../libsrc/libmfhdf.sl $(LIBOBJS)
 
 installed_libfiles:	FORCE
 	@if [ -n "$(LIBFILES)" ]; then \

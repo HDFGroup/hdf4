@@ -115,6 +115,11 @@ test: all
 
 install-lib: install
 
+install-includes:
+	-@mkdir $(prefix)/include
+	cp zlib.h zconf.h $(prefix)/include
+	chmod 644 $(prefix)/include/zlib.h $(prefix)/include/zconf.h
+
 install: libz.a
 	-@mkdir $(prefix)/include
 	-@mkdir $(prefix)/lib
@@ -127,6 +132,7 @@ install: libz.a
 libz.a: $(OBJS)
 	ar rc $@ $(OBJS)
 	$(RANLIB) $@
+#	$(LD) -b -o libz.sl $(OBJS)
 
 example: example.o libz.a
 	$(CC) $(CFLAGS) -o $@ example.o $(LDFLAGS)
