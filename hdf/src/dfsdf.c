@@ -5,10 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.10  1993/01/19 05:55:14  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.11  1993/02/02 00:11:51  georgev
+Changed Hyperslab interface. Added DFSDstartslab(), DFSDendslab().
+Removed DFSDwritefillvalue().
 
+ * Revision 1.10  1993/01/19  05:55:14  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.9  1993/01/15  16:51:37  georgev
  * dswfv() works now. i.e. DFSDwritefillvalue()
  *
@@ -88,11 +92,12 @@ port.  Lots of minor annoyances fixed.
  *  dfsdsetnt_:     Call DFSDsetNT to set number type
  *  dfsdgetnt_:	    Call DFSDgetNT to get number type
  *  dfsdlastref_:   Call DFSDlastref to get ref of last SDS accessed
- *  dswref:         Call DFSDwriteref to set up next ref to write
- *  dssfv:          Call DFSDsetfillvalue to set fill value for SDS
- *  dsgfv:          Call DFSDgetfillvalue to get fill value from SDS
- *  dswfv:          Call DFSDwritefillvalue to write fill value to SDS
- *  dswslab:        Call DFSDwriteslab to write slab to file
+ *  dfsdwriteref_:  Call DFSDwriteref to set up next ref to write
+ *  dfsdsetfill_:   Call DFSDsetfillvalue to set fill value for SDS
+ *  dfsdgetfill_:   Call DFSDgetfillvalue to get fill value from SDS
+ *  dfsdstartslab_: Call DFSDstartslab to set up write to SDS
+ *  dfsdwriteslab_: Call DFSDwriteslab to write slab to file
+ *  dfsdendslab_:   Call DFSDendslab to end slab writes, write NDG to file
  * Remarks: no C stubs needed for the put string routines, only Fortran stubs
  *---------------------------------------------------------------------------*/
 
@@ -1595,7 +1600,7 @@ ndsgcal(cal, cal_err, ioff, ioff_err, cal_type)
 } /* ndsgcal */
 
 /*-----------------------------------------------------------------------------
- * Name:    dswref
+ * Name:    dfsdwriteref
  * Purpose: Call DFSDwriteref to set up next ref to write
  * Inputs:  filename: name of HDF file
  *          fnlen: length of filename
@@ -1607,9 +1612,9 @@ ndsgcal(cal, cal_err, ioff, ioff_err, cal_type)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndswref(_fcd filename, intf *fnlen, intf *ref)
+ndfsdwriteref(_fcd filename, intf *fnlen, intf *ref)
 #else
-ndswref(filename, fnlen, ref)
+ndfsdwriteref(filename, fnlen, ref)
     _fcd filename;
     intf *fnlen;
     intf *ref;
@@ -1625,7 +1630,7 @@ ndswref(filename, fnlen, ref)
 }
 
 /*-----------------------------------------------------------------------------
- * Name:    dssfv
+ * Name:    dfsdsetfill
  * Purpose: Call DFSDsetfillvalue to set fill value for SDS
  * Inputs:  fill_value: fill value for SDS
  * Returns: 0 on success, -1 on failure with DFerror set
@@ -1635,17 +1640,17 @@ ndswref(filename, fnlen, ref)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndssfv(void *fill_value)
+ndfsdsetfill(void *fill_value)
 #else
-ndssfv(fill_value)
+ndfsdsetfill(fill_value)
     void *fill_value;
 #endif /* PROTOTYPE */
 {
-    return(DFSDsetfillvalue(fill_value));
+    return DFSDsetfillvalue(fill_value);
 }
 
 /*-----------------------------------------------------------------------------
- * Name:    dsgfv
+ * Name:    dfsdgetfill
  * Purpose: Call DFSDgetfillvalue to get fill value for SDS
  * Inputs:  fill_value: fill value of SDS
  * Returns: 0 on success, -1 on failure with DFerror set
@@ -1655,35 +1660,33 @@ ndssfv(fill_value)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndsgfv(void *fill_value)
+ndfsdgetfill(void *fill_value)
 #else
-ndsgfv(fill_value)
+ndfsdgetfill(fill_value)
     void *fill_value;
 #endif /* PROTOTYPE */
 {
-    return(DFSDgetfillvalue(fill_value));
+    return DFSDgetfillvalue(fill_value);
 }
 
 /*-----------------------------------------------------------------------------
- * Name:    dswfv
- * Purpose: Write fill value to SDS
+ * Name:    dfsdstartslab
+ * Purpose: Set up slab writes to SDS
  * Inputs:  filename: file to which this applies
  *          fnlen: file name length
- *          fill_value: fill value
  * Returns: 0 on success, FAIL on failure
  * Users:   HDF programmers, other routines and utilities
- * Invokes: DFSDwritefillvalue
+ * Invokes: DFSDstartslab
  * Remarks:
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndswfv(_fcd filename, intf *fnlen, void *fill_value)
+ndfsdstartslab(_fcd filename, intf *fnlen )
 #else
-ndswfv(filename, fnlen, fill_value)
+ndfsdstartslab(filename, fnlen)
     _fcd filename;
     intf *fnlen;
-    void *fill_value;
 #endif /* PROTOTYPE */
 {
     char *fn;
@@ -1692,17 +1695,15 @@ ndswfv(filename, fnlen, fill_value)
     fn = HDf2cstring(filename, *fnlen);
     if (fn == NULL)
       return FAIL;
-    ret = DFSDwritefillvalue(fn, fill_value);
+    ret = DFSDstartslab(fn);
     HDfreespace(fn);
-    return(ret);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
- * Name:    dswslab
+ * Name:    dfsdwriteslab
  * Purpose: Call DFSDwriteslab to write slab to file
- * Inputs:  filename: name of HDF file to use
- *          fnlen: file name length
- *          start: array of size = rank of data, containing start of slab
+ * Inputs:  start: array of size = rank of data, containing start of slab
  *          stride: array for subsampling
  *          count: array of size rank, containing size of slab
  *          data: array of data to be written
@@ -1713,26 +1714,19 @@ ndswfv(filename, fnlen, fill_value)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndswslab(_fcd filename, intf *fnlen, intf start[], intf stride[],
+ndfsdwriteslab(intf start[], intf stride[],
          intf count[], void *data)
 #else
-ndswslab(filename, fnlen, start, stride, count, data)
-    _fcd filename;
-    intf *fnlen;
+ndfsdwriteslab(start, stride, count, data)
     intf start[];
     intf stride[];
     intf count[];
     void  *data;
 #endif /* PROTOTYPE */
 {
-    char *fn;
     int32 *lstart, *lstride, *lcount, *aptr, *bptr, *cptr;
     intn i, rank;
     intf ret;
-
-    fn = HDf2cstring(filename, *fnlen);
-    if (fn == NULL)
-      return FAIL;
 
     /*
     ** Lets reverse the order for the arrays since we
@@ -1760,15 +1754,33 @@ ndswslab(filename, fnlen, start, stride, count, data)
         cptr++;
       }
 
-    ret = DFSDwriteslab(fn, lstart, lstride, lcount, data);
+    ret = DFSDwriteslab(lstart, lstride, lcount, data);
 
     /* Free up space */
     lstart = HDfreespace((int32 *)lstart);
     if (lstart != NULL)
       return FAIL;
 
-    HDfreespace(fn);
-    return(ret);
+    return ret;
 }
 
+/*-----------------------------------------------------------------------------
+ * Name:    dfsdendslab
+ * Purpose: End slab writes to SDS, Write out NDG
+ * Inputs:  None
+ * Returns: 0 on success, FAIL on failure
+ * Users:   HDF programmers, other routines and utilities
+ * Invokes: DFSDendslab
+ * Remarks:
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+ndfsdendslab()
+#else
+ndfsdendslab()
+#endif /* PROTOTYPE */
+{
+    return DFSDendslab();
+}
 
