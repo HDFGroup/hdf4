@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/07/06 22:54:16  mlivin
-Initial revision
+Revision 1.2  1992/07/14 17:50:30  mlivin
+updated prompt with correct name
 
+ * Revision 1.1  1992/07/06  22:54:16  mlivin
+ * Initial revision
+ *
 */
 /* ------ he-cntrl.c ------  
    This file contains much of the contol mechanisms for HDFed
@@ -32,7 +35,7 @@ int HEif(cmd)
 
     if (cmd->argc == 2 && !strcmp(cmd->argv[1],"-help"))
     {
-	puts("if [<prediactes>]");
+	puts("if [<predicates>]");
 	puts("  <commands>*");
 	puts("end");
 	puts("\tExecutes commands if predicates are satisfied by element");
@@ -80,7 +83,7 @@ int HEselect(cmd)
 	puts("  <commands>*");
 	puts("end");
 	puts("\tSteps through all elements in the file that satisfies the");
-	puts("\tprediactes and execute the commands on them.");
+	puts("\tpredicates and execute the commands on them.");
 	return HE_OK;
     }
 
@@ -128,7 +131,7 @@ int HEnext(cmd)
 
     if (cmd->argc == 2 && !strcmp(cmd->argv[1],"-help"))
     {
-	puts("next [<prediactes>]");
+	puts("next [<predicates>]");
 	puts("\tMove to the next element that satisfies the predicate");
 	return HE_OK;
     }
@@ -184,7 +187,7 @@ int HEprev(cmd)
 
     if (cmd->argc == 2 && !strcmp(cmd->argv[1],"-help"))
     {
-	puts("prev [<prediactes>]");
+	puts("prev [<predicates>]");
 	puts("\tMove to the next element that satisfies the predicate");
 	return HE_OK;
     }
@@ -759,12 +762,12 @@ void prompt()
 #endif
 {
     if (!he_nestLevel)
-	printf("he%s ", he_prompt);
+	printf("hdfed%s ", he_prompt);
     else
     {
 	register int i;
 
-	printf("  %s", he_prompt);
+	printf("     %s ", he_prompt);
 	for (i = he_nestLevel; i; i--) putchar(he_nestChar);
 	putchar(' ');
     }
