@@ -1,5 +1,5 @@
-						ABOUT HDF 4.1 Release 2
-                            March 31, 1998
+                        ABOUT HDF 4.1 Release 2 
+                            March 16, 1998
 
 INTRODUCTION
 
@@ -10,17 +10,17 @@ The release notes provide more in-depth information concerning
 the topics discussed here.  The HDF 4.1r2 documentation can be
 found on the NCSA ftp server (ftp.ncsa.uiuc.edu) in the directory:
 
-         /HDF/Documentation/HDF4.1r2
+     /HDF/Documentation/HDF4.1r2
 
 First-time HDF users are encouraged to read the FAQ in this
 release for more information about HDF.  Users can also look
 at the home page for HDF at:
 
-         http://hdf.ncsa.uiuc.edu/
+     http://hdf.ncsa.uiuc.edu/
 
 If you have any questions or comments, please send them to:
 
-         hdfhelp@ncsa.uiuc.edu
+     hdfhelp@ncsa.uiuc.edu
 
 CONTENTS
 
@@ -35,13 +35,20 @@ New Features and Changes:
 
 o Data chunking is now supported with the GR interface.  New routines
   for creating and manipulating chunked GR images have been added.  Please
-  refer to the HDF User's Guide for information on using chunked GRs.
+  refer to the ./release_notes/new_functions.txt file and HDF Reference 
+  Manual for information on using chunked GRs.
 
 o In previous releases, many C routines existed for which there were  
   no Fortran counterparts.  With HDF 4.1r2, we have added a Fortran 
-  routine for every C routine.  Please check the 
+  routine for most C routines.  Please check the 
   ./release_notes/new_functions.txt file for a list of the new 
   functions added to HDF.
+
+o This is the first release in which the Java Products (the Java-based
+  HDF Viewer (JHV) and the Java HDF interface (JHI)) are incorporated in 
+  the HDF release itself.  For information on the Java Products, please
+  refer to the HDF home page under Information about HDF
+  (http://hdf.ncsa.uiuc.edu/about.html).
 
 o In the SD interface, HDF now defaults to ONLY storing the new version 
   of the dimension representation added in HDF 4.0r1. 
@@ -69,22 +76,36 @@ o In the SD interface, HDF now defaults to ONLY storing the new version
     of <dimension size> and that the vdata's class is "DimVal0.1",  to
     distinguish it from the old version.
 
+o Platforms dropped with this release:  Cray Y-MP, T3D, and Linux (a.out)  
+
+o Extensive changes have been made to the Reference Manual and User's
+  Guide.  The updated Reference Manual is available with this release.  The
+  updated User's Guide will be available in the near future.
+
+
 Platforms Tested:
 ================
 
 HDF 4.1 Release 2 has been tested on the following platforms:
 
-   Cray T90 CFP 9.0.2ez            IRIX 6.2 (-n32, -64)
-   Cray T90 IEEE 10.0.0br          IRIX 6.4 (-n32, -64)
-   Cray T3E 1.6.2.60               Linux RedHat 4.2
-   DEC Alpha/Digital Unix 4.08     Macintosh 8.0
-   DEC Alpha OpenVMS 6.2 and 7.1   Solaris 2.5
-   Exemplar                        Solaris x86 2.5.1
-   FreeBSD 2.2                     SunOS 4.1.4
-   HP-UX 9.03                      VAX OpenVMS 7.1
-   HP-UX 10.2                      Windows NT/95
-   IRIX 5.3		                   
+   Cray T90 (CFP, IEEE)            IRIX 6.2 
+   Cray T3E                        IRIX64 6.4 (-n32, -64)
+   DEC Alpha/Digital Unix          Linux RedHat 
+   Exemplar                        Solaris  
+   FreeBSD                         Solaris x86 
+   HP-UX 9.03                      SP2 
+   HP-UX 10.2                      SunOS 
+   IRIX 5.3                   
 
+** The Windows NT/95, Macintosh, Dec Alpha OpenVMS and VAX OpenVMS 
+   releases are not available with this release of HDF4.1r2.  Separate 
+   releases for these platforms will be available in the near future. 
+
+For more information on the platforms that were tested on and for
+which we provide pre-compiled binaries, please refer to the following
+web page (accessible from the HDF home page):
+
+     http://hdf.ncsa.uiuc.edu/platforms.html
 
 Known Problems:
 ==============
@@ -97,8 +118,10 @@ information on known problems in this release.
 Important Fixes:
 ===============
 
-o On VMS, HDF now supports little-endian G_FLOAT representation
-  for double precision values.
+o HDF no longer core dumps when reading a NetCDF file.
+
+o HDF now supports little-endian conversion for VAX and Dec 
+  Alpha OpenVMS.
 
 See the ./release_notes/bugs_fixed.txt file for more information
 on bugs fixed in this release.
@@ -107,6 +130,6 @@ Acknowledgements:
 ================
 
 Fortner Software LLC ("Fortner") created the reference implementations
-for Macintosh and Windows NT/95 of the HDF 4.1r2 library.  For 
-more information, please refer to the macintosh.txt and windows.txt 
-files in the ./release_notes/ directory. 
+for Macintosh and Windows NT/95 of the HDF 4.1r2 library, which will
+be available in the near future.  For more information, please refer to 
+the macintosh.txt and windows.txt files in the ./release_notes/ directory. 
