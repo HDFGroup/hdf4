@@ -191,6 +191,8 @@ struct vdata_desc
 #define VS_ATTR_SET 0x00000001  /* this vdata has attribute(s) */
 #define _HDF_VDATA 0xffffffff /* used in vdata attr interface
                            findex to represent the entire vdata  */
+#define _HDF_ENTIRE_VDATA _HDF_VDATA /* if users have already  used
+                            _HDF_ENTIRE_VDATA since 4.1b1 was out */
 /* .................................................................. */
 /* Private data structures. Unlikely to be of interest to applications */
 /*
