@@ -2602,7 +2602,7 @@ FILE *fp;
 
     if(size<=UINT_MAX)   /* if the size is small enough read it in all at once */
 #ifdef WIN3
-            bytes_read+=_lread(fp,b,UINT_MAX);
+        bytes_read=_lread(fp,buffer,(uint16)size);
 #else
         bytes_read=fread(buffer,1,(uint16)size,fp);
 #endif
@@ -2611,7 +2611,7 @@ FILE *fp;
         b=buffer;
         while(size>UINT_MAX) {
 #ifdef WIN3
-        bytes_read=_lread(fp,buffer,(uint16)size);
+            bytes_read+=_lread(fp,b,UINT_MAX);
 #else
             bytes_read+=fread(b,1,UINT_MAX,fp);
 #endif
