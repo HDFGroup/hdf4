@@ -675,13 +675,17 @@ nsfrdata(id, start, stride, end, values)
     for(i = 0; i < rank; i++) {
         cstart[i] = start[rank - i - 1];
         cend[i]   = end[rank - i - 1];
-        if((cstride[i] = stride[rank - i - 1]) != 1) nostride = FALSE;
+        if((cstride[i] = stride[rank - i - 1]) != 0) nostride = FALSE;
     }
     
+#ifdef CM5
+    ret = (intf) CMreaddata(*id, cstart, (nostride? NULL : cstride), cend, values);
+#else
     if(nostride)
         ret = (intf) SDreaddata(*id, cstart, NULL, cend, values);
     else
         ret = (intf) SDreaddata(*id, cstart, cstride, cend, values);
+#endif
   
     return(ret);
 }
@@ -723,13 +727,17 @@ nsfwdata(id, start, stride, end, values)
     for(i = 0; i < rank; i++) {
         cstart[i] = start[rank - i - 1];
         cend[i]   = end[rank - i - 1];
-        if((cstride[i] = stride[rank - i - 1]) != 1) nostride = FALSE;
+        if((cstride[i] = stride[rank - i - 1]) != 0) nostride = FALSE;
     }
     
+#ifdef CM5
+    ret = (intf) CMwritedata(*id, cstart, (nostride? NULL : cstride), cend, values);
+#else
     if(nostride)
         ret = (intf) SDwritedata(*id, cstart, NULL, cend, values);
     else
         ret = (intf) SDwritedata(*id, cstart, cstride, cend, values);
+#endif
         
     return(ret);
 }
@@ -1034,4 +1042,56 @@ nsfiscvarindex(id)
 #endif /* PROTOTYPE */
 {
     return((intf) SDiscoordvar(*id));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    sdcsextf
+ * Purpose: store data in an external file
+ * Inputs:  id: sds id
+ *          name: name of external file
+ *          offset: Number of bytes from the beginning of the
+ *                    external file to where the data starts
+ *          namelen: length of name
+ * Returns: 0 on success, -1 on failure with error set
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nscsextf(intf *id, _fcd name, intf *offset, intf *namelen)
+#else
+nscsextf(id, name, offset, namelen)
+     intf *id;
+     _fcd name;
+     intf *offset;
+     intf *namelen;
+#endif /* PROTOTYPE */
+{
+    char   *fn;
+    intf    ret;
+    
+    fn = HDf2cstring(name, *namelen);
+    ret = (intf) SDsetexternalfile(*id, fn, *offset);
+    HDfreespace((VOIDP)fn);
+    return(ret);
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    sdfsacct
+ * Purpose: Call SDsetaccesstype to set the access type
+ * Inputs:  id: sds id
+ *          type: the access type
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nsfsacct(intf *id, intf *type)
+#else
+nsfsacct(id, type)
+     intf *id;
+     intf *type;
+#endif /* PROTOTYPE */
+{
+    return((intf) SDsetaccesstype(*id, *type));
 }
