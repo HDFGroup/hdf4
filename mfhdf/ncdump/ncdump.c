@@ -76,7 +76,6 @@ name_path(path)
     return new;
 }
 
-
 static const char *
 type_name(type)
      nc_type type;
@@ -129,7 +128,6 @@ tztrim(ss)
     *cp = '\0';
     return;
 }
- 
  
 /*
  * Print list of attribute values.  Attribute values must be printed with
@@ -242,196 +240,305 @@ pr_att_vals(type, len, vals)
     }
 }
 
+/*
+ * fixstr
+ *
+ * 	If the string contains characters other than alpha-numerics,
+ * 	an underscore, or a hyphen, convert it to an underscore.
+ */
+static char *fixstr(char *str)
+{
+	char *new_str, *ptr;
+
+	if (!str)
+		return NULL;
+
+	ptr = new_str = strdup(str);
+
+	if (!ptr) {
+		error("Out of memory!");
+		return NULL;
+	}
+
+	for (; *ptr; ptr++)
+		if (!isalnum(*ptr) && *ptr != '_' && *ptr != '-')
+			*ptr = '_';
+
+	return new_str;
+}
 
 static void
 do_ncdump(path, specp)
      char *path;
      struct fspec* specp;
 {
-    int ndims;			/* number of dimensions */
-    int nvars;			/* number of variables */
-    int ngatts;			/* number of global attributes */
-    int xdimid;			/* id of unlimited dimension */
-    int dimid;			/* dimension id */
-    int varid;			/* variable id */
-    struct ncdim dims[MAX_NC_DIMS]; /* dimensions */
-    long vdims[MAX_NC_DIMS];	/* dimension sizes for a single variable */
-    struct ncvar var;		/* variable */
-    struct ncatt att;		/* attribute */
-    int id;			/* dimension number per variable */
-    int ia;			/* attribute number */
-    int iv;			/* variable number */
-    int is_coord;		/* true if variable is a coordinate variable */
-    int isempty = 0;         /* true if an old hdf dim has no scale values */
+	int ndims;			/* number of dimensions */
+	int nvars;			/* number of variables */
+	int ngatts;			/* number of global attributes */
+	int xdimid;			/* id of unlimited dimension */
+	int dimid;			/* dimension id */
+	int varid;			/* variable id */
+	struct ncdim dims[MAX_NC_DIMS]; /* dimensions */
+	long vdims[MAX_NC_DIMS];	/* dimension sizes for a single variable */
+	struct ncvar var;		/* variable */
+	struct ncatt att;		/* attribute */
+	int id;				/* dimension number per variable */
+	int ia;				/* attribute number */
+	int iv;				/* variable number */
+	int is_coord;			/* true if variable is a coordinate variable */
+	int isempty = 0;		/* true if an old hdf dim has no scale values */
 
-    int ncid = ncopen(path, NC_NOWRITE); /* netCDF id */
-    vnode* vlist = newvlist();	/* list for vars specified with -v option */
+	int ncid = ncopen(path, NC_NOWRITE); /* netCDF id */
+	vnode* vlist = newvlist();	/* list for vars specified with -v option */
 
-    /* don't crash on error */
-    ncopts = 0;
+	/* don't crash on error */
+	ncopts = 0;
 
-    if (ncid == -1) { 
-        error("ncopen failed on %s", path);
-        return;
-    }
-    /*
-     * If any vars were specified with -v option, get list of associated
-     * variable ids
-     */
-    for (iv=0; iv < specp->nlvars; iv++) {
-	varid = ncvarid(ncid, specp->lvars[iv]);
-	varadd(vlist, varid);
-    }
-
-    /* if name not specified, derive it from path */
-    if (specp->name == (char *)0) {
-	specp->name = name_path (path);
-    }
-
-    Printf ("netcdf %s {\n", specp->name);
-    /*
-     * get number of dimensions, number of variables, number of global
-     * atts, and dimension id of unlimited dimension, if any
-     */
-    (void) ncinquire(ncid, &ndims, &nvars, &ngatts, &xdimid);
-
-    /* get dimension info */
-    if (ndims > 0)
-      Printf ("dimensions:\n");
-    for (dimid = 0; dimid < ndims; dimid++) {
-	(void) ncdiminq(ncid, dimid, dims[dimid].name, &dims[dimid].size);
-	if (dimid == xdimid)
-	  Printf ("\t%s = %s ; // (%d currently)\n",dims[dimid].name,
-		  "UNLIMITED", (int)dims[dimid].size);
-	else
-	  Printf ("\t%s = %ld ;\n",dims[dimid].name, dims[dimid].size);
-    }
-
-    Printf ("\nvariables:\n");
-    /* get variable info, with variable attributes */
-    for (varid = 0; varid < nvars; varid++) {
-	(void) ncvarinq(ncid, varid, var.name, &var.type, &var.ndims, var.dims,
-			&var.natts);
-	Printf ("\t%s %s", type_name(var.type), var.name);
-	if (var.ndims > 0)
-	  Printf ("(");
-	for (id = 0; id < var.ndims; id++) {
-	    Printf ("%s%s",
-		    dims[var.dims[id]].name,
-		    id < var.ndims-1 ? ", " : ")");
-	}
-	Printf (" ;\n");
-	/* get variable attributes */
-	for (ia = 0; ia < var.natts; ia++) {
-	    (void) ncattname(ncid, varid, ia, att.name);
-	    
-	    Printf ("\t\t%s:%s = ", var.name, att.name);
-
-	    (void) ncattinq(ncid, varid, att.name, &att.type, &att.len);
-
-	    att.val = (void *) malloc((unsigned)att.len*nctypelen(att.type));
-	    if (!att.val) {
-		error("Out of memory!");
-		(void) ncclose(ncid);
+	if (ncid == -1) { 
+		error("ncopen failed on %s", path);
 		return;
-	    }
-	    (void) ncattget(ncid, varid, att.name, att.val);
-	    pr_att_vals(att.type, att.len, att.val);
-	    Printf (" ;\n");
-	    free ((char *) att.val);
 	}
-    }
 
-    /* get global attributes */
-    if (ngatts > 0)
-      Printf ("\n// global attributes:\n");
-    for (ia = 0; ia < ngatts; ia++) {
-	(void) ncattname(ncid, NC_GLOBAL, ia, att.name);
-	
-	Printf ("\t\t:%s = ", att.name);
-	
-	(void) ncattinq(ncid, NC_GLOBAL, att.name, &att.type, &att.len);
-	att.val = (void *) malloc((unsigned) (att.len*nctypelen(att.type)));
-	if (!att.val) {
-	    error("Out of memory!");
-	    (void) ncclose(ncid);
-	    return;
+	/*
+	 * If any vars were specified with -v option, get list of associated
+	 * variable ids
+	 */
+	for (iv = 0; iv < specp->nlvars; iv++) {
+		varid = ncvarid(ncid, specp->lvars[iv]);
+		varadd(vlist, varid);
 	}
-	(void) ncattget(ncid, NC_GLOBAL, att.name, att.val);
 
-	pr_att_vals(att.type, att.len, att.val);
-	Printf (" ;\n");
-	free ((char *) att.val);
-    }
-    
-    if (! specp->header_only) {
-	if (nvars > 0)
-	  Printf ("\ndata:\n");
-	/* output variable data */
-	for (varid = 0; varid < nvars; varid++) {
-	    /* if var list specified, test for membership */
-	    if (specp->nlvars > 0 && ! varmember(vlist, varid))
-	      continue;
-	    (void) ncvarinq(ncid, varid, var.name, &var.type, &var.ndims,
-			    var.dims, &var.natts);
-	    if (specp->coord_vals) {
-		/* Find out if this is a coordinate variable */
-		is_coord = 0;
+	/* if name not specified, derive it from path */
+	if (specp->name == NULL)
+		specp->name = name_path (path);
+
+	Printf ("netcdf %s {\n", specp->name);
+
+	/*
+	 * get number of dimensions, number of variables, number of global
+	 * atts, and dimension id of unlimited dimension, if any
+	 */
+	(void)ncinquire(ncid, &ndims, &nvars, &ngatts, &xdimid);
+
+	/* get dimension info */
+	if (ndims > 0) {
+		Printf ("dimensions:\n");
+
 		for (dimid = 0; dimid < ndims; dimid++) {
-		    if (strcmp(dims[dimid].name, var.name) == 0 &&
-			var.ndims == 1) {
-			is_coord = 1;
-			break;
-		    }
+			char *fixed_str;
+
+			(void)ncdiminq(ncid, dimid, dims[dimid].name,
+				       &dims[dimid].size);
+			fixed_str = fixstr(dims[dimid].name);
+
+			if (!fixed_str && dims[dimid].name) {
+				/* strdup(3) failed */
+				(void) ncclose(ncid);
+				return;
+			}
+
+			if (dimid == xdimid)
+				Printf ("\t%s = %s ; // (%d currently)\n",
+					fixed_str, "UNLIMITED",
+					(int)dims[dimid].size);
+			else
+				Printf ("\t%s = %ld ;\n",
+					fixed_str, dims[dimid].size);
+
+			free(fixed_str);
 		}
-		if (! is_coord)	/* don't get data for non-coordinate vars */
-		  continue;
-	    }
-	    /*
-	     * Only get data for variable if it is not a record variable,
-	     * or if it is a record variable and at least one record has
-	     * been written.
-	     */
+	}
+
+	Printf ("\nvariables:\n");
+
+	/* get variable info, with variable attributes */
+	for (varid = 0; varid < nvars; varid++) {
+		char *fixed_var;
+
+		(void) ncvarinq(ncid, varid, var.name, &var.type, &var.ndims,
+				var.dims, &var.natts);
+		fixed_var = fixstr(var.name);
+
+		if (!fixed_var && var.name) {
+			/* strdup(3) failed */
+			(void) ncclose(ncid);
+			return;
+		}
+
+		Printf ("\t%s %s", type_name(var.type), fixed_var);
+
+		if (var.ndims > 0)
+			Printf ("(");
+
+		for (id = 0; id < var.ndims; id++) {
+			char *fixed_dim = fixstr(dims[var.dims[id]].name);
+
+			if (!fixed_dim && dims[var.dims[id]].name) {
+				/* strdup(3) failed */
+			 	(void) ncclose(ncid);
+				free(fixed_var);
+				return;
+			}
+
+			Printf ("%s%s", fixed_dim,
+				id < var.ndims - 1 ? ", " : ")");
+			free(fixed_dim);
+		}
+
+		Printf (" ;\n");
+
+		/* get variable attributes */
+		for (ia = 0; ia < var.natts; ia++) {
+			char *fixed_att;
+
+			(void) ncattname(ncid, varid, ia, att.name);
+			fixed_att = fixstr(att.name);
+
+			if (!fixed_att) {
+				(void) ncclose(ncid);
+				free(fixed_var);
+				return;
+			}
+
+			Printf ("\t\t%s:%s = ", fixed_var, fixed_att);
+			(void) ncattinq(ncid, varid, att.name,
+					&att.type, &att.len);
+			att.val = (void *) malloc((unsigned)att.len * nctypelen(att.type));
+
+			if (!att.val) {
+				error("Out of memory!");
+				(void) ncclose(ncid);
+				free(fixed_att);
+				free(fixed_var);
+				return;
+			}
+
+			(void) ncattget(ncid, varid, att.name, att.val);
+			pr_att_vals(att.type, att.len, att.val);
+			Printf (" ;\n");
+			free(att.val);
+			free(fixed_att);
+		}
+
+		free(fixed_var);
+	}
+
+	/* get global attributes */
+	if (ngatts > 0)
+		Printf ("\n// global attributes:\n");
+
+	for (ia = 0; ia < ngatts; ia++) {
+		char *fixed_att;
+
+		(void) ncattname(ncid, NC_GLOBAL, ia, att.name);
+		fixed_att = fixstr(att.name);
+
+		if (!fixed_att) {
+			(void) ncclose(ncid);
+			return;
+		}
+
+		Printf ("\t\t:%s = ", fixed_att);
+
+		(void) ncattinq(ncid, NC_GLOBAL, att.name,
+				&att.type, &att.len);
+		att.val = malloc((unsigned)(att.len * nctypelen(att.type)));
+
+		if (!att.val) {
+			error("Out of memory!");
+			(void) ncclose(ncid);
+			free(fixed_att);
+			return;
+		}
+
+		(void) ncattget(ncid, NC_GLOBAL, att.name, att.val);
+		pr_att_vals(att.type, att.len, att.val);
+		Printf (" ;\n");
+		free(att.val);
+		free(fixed_att);
+	}
+
+	if (! specp->header_only) {
+		if (nvars > 0)
+			Printf ("\ndata:\n");
+
+		/* output variable data */
+		for (varid = 0; varid < nvars; varid++) {
+			/* if var list specified, test for membership */
+			if (specp->nlvars > 0 && ! varmember(vlist, varid))
+				continue;
+
+			(void) ncvarinq(ncid, varid, var.name, &var.type,
+					&var.ndims, var.dims, &var.natts);
+
+			if (specp->coord_vals) {
+				/* Find out if this is a coordinate variable */
+				is_coord = 0;
+
+				for (dimid = 0; dimid < ndims; dimid++) {
+					if (strcmp(dims[dimid].name, var.name) == 0 &&
+						var.ndims == 1) {
+						is_coord = 1;
+						break;
+					}
+				}
+
+				if (! is_coord)
+					/* don't get data for non-coordinate vars */
+					continue;
+			}
+
+			/*
+			 * Only get data for variable if it is not a record variable,
+			 * or if it is a record variable and at least one record has
+			 * been written.
+			 */
 #ifdef HDF
-            /* skip the dimension vars which have dim strings only.  */
-{
-      NC *handle ;
-      NC_var *vp;
+			/* skip the dimension vars which have dim strings only.  */
+			{
+				NC *handle ;
+				NC_var *vp;
 #ifdef OLD_WAY
-      NC_var *NC_hlookupvar() ;          
+				NC_var *NC_hlookupvar() ;          
 #endif /* OLD_WAY */
 
-            isempty = 0;
-            handle = NC_check_id(ncid);
-            if (handle->file_type == HDF_FILE)  {
-                 vp = NC_hlookupvar(handle, varid) ;
-		/* This is set up to take care of cases where an array has been defined but no data */
-		/* has yet been added.								    */
-                 if ((vp->data_tag == DFTAG_SDS || vp->data_tag == DFTAG_SD) && (vp->data_ref == 0))  
-                 isempty = 1;  
-            }
-}
+				isempty = 0;
+				handle = NC_check_id(ncid);
 
-#endif            
-            if (isempty) continue;
-	    if (var.ndims == 0
-		|| var.dims[0] != xdimid
-		|| dims[xdimid].size != 0) {
-		/* Collect variable's dim sizes */
-		for (id = 0; id < var.ndims; id++)
-		  vdims[id] = dims[var.dims[id]].size;
-		if (vardata(&var, vdims, ncid, varid, specp) == -1) {
-		    error("can't output data for variable %s", var.name);
-		    (void) ncclose(ncid); return;
+				if (handle->file_type == HDF_FILE)  {
+					vp = NC_hlookupvar(handle, varid) ;
+					/* This is set up to take care of
+					 * cases where an array has been
+					 * defined but no data */
+					/* has yet been added. */
+					if ((vp->data_tag == DFTAG_SDS ||
+						vp->data_tag == DFTAG_SD) &&
+						(vp->data_ref == 0))  
+						isempty = 1;  
+				}
+			}
+
+#endif /* HDF */
+			if (isempty)
+				continue;
+
+			if (var.ndims == 0 || var.dims[0] != xdimid || dims[xdimid].size != 0) {
+				/* Collect variable's dim sizes */
+				for (id = 0; id < var.ndims; id++)
+					vdims[id] = dims[var.dims[id]].size;
+
+				if (vardata(&var, vdims, ncid, varid, specp) == -1) {
+					error("can't output data for variable %s", var.name);
+					(void) ncclose(ncid);
+					return;
+				}
+			}
 		}
-	    }
 	}
-    }
 
-    Printf ("}\n");
-    (void) ncclose(ncid);
+	Printf ("}\n");
+	(void) ncclose(ncid);
 }
-
 
 static void
 make_lvars(optarg, fspecp)
