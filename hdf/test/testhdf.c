@@ -1,12 +1,16 @@
 #include "hdf.h"
 
 
-#define NUMOFTESTS 14
+#define MAXNUMOFTESTS 20
 #define VERSION "0.8beta"
 #define BUILDDATE "Wed Jan 27 1993"
 
+/* Exportable variables */
 int num_errs = 0;
 int Verbocity = 0;
+
+/* Internal Variables */
+int Index=0;
 
 #include "tproto.h"
 
@@ -15,18 +19,21 @@ struct TestStruct {
   char Description[64];
   int  SkipFlag;
   char Name[16];
-  void (*Call)();
-} Test[NUMOFTESTS] ;
+  VOID (*Call)();
+} Test[MAXNUMOFTESTS] ;
 
 void InitTest (TheName, TheCall, TheDescr)
 const char* TheName;
-const VOIDP TheCall;
+VOID (*TheCall)();
 const char* TheDescr;
 {
-  static int Index=0;
+  if(Index>=MAXNUMOFTESTS) {
+      printf("Uh-oh, too many tests added, increase MAXNUMOFTEST!\n");
+      exit(0);
+    } /* end if */
   HDstrcpy(Test[Index].Description,TheDescr);
   HDstrcpy(Test[Index].Name,TheName);
-  Test[Index].Call = (VOIDP) TheCall;
+  Test[Index].Call = TheCall;
   Test[Index].NumErrors = -1;
   Test[Index].SkipFlag = 0;
   Index++;
@@ -59,6 +66,7 @@ main (argc, argv)
   InitTest("sdmms",test_sdmms,"SDMMS");
   InitTest("sdnmms",test_sdnmms,"SDNMMS");
   InitTest("slabs",test_slab,"HYPERSLAB INTERFACE");
+  InitTest("litend",test_litend,"LITTLE-ENDIAN INTERFACE");
 
   Verbocity = 4; /* Default Verbocity is Low */
   ret = Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
@@ -100,7 +108,7 @@ main (argc, argv)
       printf("This program currently tests the following: \n\n");
       printf("%16s %s\n","Name","Description");
       printf("%16s %s\n","----","-----------");
-      for (Loop = 0; Loop < NUMOFTESTS; Loop++) {
+      for (Loop = 0; Loop < Index; Loop++) {
           printf("%16s %s\n",Test[Loop].Name,Test[Loop].Description);
       }
       printf("\n\n");
@@ -114,7 +122,7 @@ main (argc, argv)
         (HDstrcmp(argv[CLLoop],"-x")==0)) {
       Loop = CLLoop+1;
       while ((Loop < argc) && (argv[Loop][0] != '-')) {
-        for (Loop1 = 0; Loop1 < NUMOFTESTS; Loop1++) {
+        for (Loop1 = 0; Loop1 < Index; Loop1++) {
           if (HDstrcmp(argv[Loop],Test[Loop1].Name) == 0)  
               Test[Loop1].SkipFlag = 1;
         }
@@ -125,23 +133,23 @@ main (argc, argv)
         (HDstrcmp(argv[CLLoop],"-b")==0)) {
       Loop = CLLoop+1;
       while ((Loop < argc) && (argv[Loop][0] != '-')) {
-        for (Loop1 = 0; Loop1 < NUMOFTESTS; Loop1++) {
+        for (Loop1 = 0; Loop1 < Index; Loop1++) {
           if (HDstrcmp(argv[Loop],Test[Loop1].Name) != 0)  
               Test[Loop1].SkipFlag = 1;
           if (HDstrcmp(argv[Loop],Test[Loop1].Name) == 0)
-            Loop1 = NUMOFTESTS;
+            Loop1 = Index;
         }
         Loop++;
       }
     }
     if ((argc > CLLoop+1) && (HDstrcmp(argv[CLLoop],"-only") ==0) ||
         (HDstrcmp(argv[CLLoop],"-o")==0)) {
-      for (Loop = 0; Loop < NUMOFTESTS; Loop++) {
+      for (Loop = 0; Loop < Index; Loop++) {
         Test[Loop].SkipFlag = 1;
       }
       Loop = CLLoop+1;
       while ((Loop < argc) && (argv[Loop][0] != '-')) {
-        for (Loop1 = 0; Loop1 < NUMOFTESTS; Loop1++) {
+        for (Loop1 = 0; Loop1 < Index; Loop1++) {
           if (HDstrcmp(argv[Loop],Test[Loop1].Name) == 0)  
               Test[Loop1].SkipFlag = 0;
         }
@@ -153,7 +161,7 @@ main (argc, argv)
 
   /*  printf("The Verbocity is %d \n",Verbocity); */
 
-  for (Loop = 0; Loop < NUMOFTESTS; Loop++) {
+  for (Loop = 0; Loop < Index; Loop++) {
     if (Test[Loop].SkipFlag) {
       MESSAGE(4,printf("Skipping -- %s \n",Test[Loop].Description););
     }
@@ -185,7 +193,7 @@ main (argc, argv)
     printf("Name of Test     Errors Description of Test\n");
     printf("---------------- ------ --------------------------------------\n");
 
-    for (Loop = 0; Loop < NUMOFTESTS; Loop++) {
+    for (Loop = 0; Loop < Index; Loop++) {
       if (Test[Loop].NumErrors == -1)
         printf("%16s %6s %s\n",Test[Loop].Name,"N/A",
                Test[Loop].Description);

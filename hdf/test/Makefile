@@ -20,18 +20,18 @@ CFLAGS=  -g -D${MACHINE}
 #CFLAGS=  -g -D${MACHINE} $(IFLAGS) -ansi
 
 # ==> where is your HDF library (libdf.a) located?
-HDFLIB=../../develop/lib
+HDFLIB=../lib
 
 RM=/bin/rm
 RMFLAGS=-f
 
 SRCS= 	nt_rig.c nt_sdstr.c nt_hblocks.c nt_an.c nt_anfile.c \
         nt_hextelt.c nt_hfile.c nt_hfile1.c nt_vers.c nt_sdmms.c \
-        nt_sdnmms.c nt_slab.c testhdf.c
+        nt_sdnmms.c nt_slab.c nt_lend.c testhdf.c
 
 CTESTS= nt_rig.o nt_sdstr.o nt_hblocks.o nt_an.o nt_anfile.o \
         nt_hextelt.o nt_hfile.o nt_hfile1.o nt_vers.o nt_sdmms.o \
-        nt_sdnmms.o nt_slab.o testhdf.o
+        nt_sdnmms.o nt_slab.o nt_lend.o testhdf.o
 
 FTESTS= tr8f t24f tpf tanf tanfilef tsdstrf tsdntf tsdnntf \
         tsdmmsf tsdnmmsf tstubsf \
@@ -51,10 +51,10 @@ all: testhdf fortest
 
 all: testhdf
 
-testhdf: $(CTESTS)
+testhdf: $(CTESTS) $(HDFLIB)/libdf.a
 	$(CC) $(CFLAGS) -o testhdf $(CTESTS) $(HDFLIB)/libdf.a
 
-fortest: $(FTESTS) fortest.o
+fortest: $(FTESTS) $(HDFLIB)/libdf.a fortest.o
 	$(CC) $(CFLAGS) -o fortest $(TESTF) $(HDFLIB)/libdf.a
 
 ftests: $(FTESTS)
@@ -90,6 +90,8 @@ nt_hfile.o: tproto.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
 nt_hfile.o: ../src/hcomp.h ../src/hproto.h tutils.h
 nt_hfile1.o: tproto.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
 nt_hfile1.o: ../src/hcomp.h ../src/hproto.h tutils.h
+nt_lend.o: tproto.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
+nt_lend.o: ../src/hcomp.h ../src/hproto.h tutils.h
 nt_rig.o: tproto.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
 nt_rig.o: ../src/hcomp.h ../src/hproto.h tutils.h
 nt_sdmms.o: tproto.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
@@ -98,6 +100,8 @@ nt_sdnmms.o: tproto.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
 nt_sdnmms.o: ../src/hcomp.h ../src/hproto.h tutils.h ../src/dfsd.h
 nt_sdstr.o: tproto.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
 nt_sdstr.o: ../src/hcomp.h ../src/hproto.h tutils.h ../src/dfsd.h
+nt_slab.o: tproto.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
+nt_slab.o: ../src/hcomp.h ../src/hproto.h tutils.h ../src/dfsd.h
 nt_stubs.o: /usr/include/stdio.h ../src/df.h ../src/hdf.h ../src/hdfi.h
 nt_stubs.o: ../src/hcomp.h ../src/hproto.h ../src/herr.h
 nt_vers.o: /usr/include/stdio.h tproto.h ../src/hdf.h ../src/hdfi.h
