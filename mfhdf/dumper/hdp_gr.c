@@ -933,14 +933,14 @@ done:
 } /* end of printGR_BINARY */
 
 /* 
-shutdown combines the process of GRend, Hclose, and resetting the
+closeGR combines the process of GRend, Hclose, and resetting the
    file id and the interface id after validating the ids first.
-   When either GRend or Hclose fails, shutdown returns
+   When either GRend or Hclose fails, closeGR returns
    FAIL which will be used by the calling routine to goto done with its
    ret_value=FAIL and without a message since the message is printed
-   here.  In addition, shutdown deallocates some allocated space - BMR */
+   here.  In addition, closeGR deallocates some allocated space - BMR */
 int32
-shutdown(
+closeGR(
     int32 grf_id,
     int32 gr_id )
 {
@@ -963,7 +963,7 @@ shutdown(
       }
       grf_id = FAIL; /* reset */
    }
-} /* end of shutdown */
+} /* end of closeGR */
 
 intn 
 dgr(dump_info_t *dumpgr_opts, 
@@ -1025,7 +1025,7 @@ dgr(dump_info_t *dumpgr_opts,
         {
             fprintf(stderr,"GRstart failed for file %s\n", file_name);
             /* only need to Hclose the file before going to the next */
-            shutdown( grf_id, FAIL ); 
+            closeGR( grf_id, FAIL ); 
             continue; /* to the next file */
         }
 
@@ -1061,7 +1061,7 @@ interface and the input file, and move on to the next file */
          } /* end if */
 
          /* shutting down the current interface and file */
-         shutdown( grf_id, gr_id );
+         closeGR( grf_id, gr_id );
          continue;
       } /* end if */
 
@@ -1138,7 +1138,7 @@ interface and the input file, and move on to the next file */
       } /* end if */
 
       /* shutting down the current interface and file */
-      shutdown( grf_id, gr_id ); 
+      closeGR( grf_id, gr_id ); 
    }  /* while more files to process */
 
 done:

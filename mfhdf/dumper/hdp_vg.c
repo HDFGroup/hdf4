@@ -373,7 +373,7 @@ print_data_annots( int32 file_id,
    }
 
 done:
-   if( ret_value = FAIL )
+   if( ret_value == FAIL )
    {
       if (an_id != FAIL)
          ANend(an_id);
@@ -888,7 +888,7 @@ print_file_annotations( int32 file_id,
    }
 
 done:
-   if( ret_value = FAIL )
+   if( ret_value == FAIL )
    {
       if (an_id != FAIL)
          ANend(an_id);
