@@ -91,9 +91,9 @@ MKFILES= configure Makefile.in
 CONFIGFILES= 
 OTHERFILES= 
 TESTFILES= test_fmpio.c tfmpio_read.c tfmpio_write.c
-        
+
 DISTFILES= $(DOCS) $(MKFILES) $(CONFIGFILES) $(SOURCES) $(INCLUDES) \
-        $(OTHERFILES) $(TESTFILES)
+	$(OTHERFILES) $(TESTFILES)
 
 LIBOBJECTS= fmpool.o fmpio.o
 
