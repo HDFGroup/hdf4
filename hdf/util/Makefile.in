@@ -173,17 +173,17 @@ PROGS = $(UTILS) hdfed
 #all: hdfed utils fp2hdf fptest
 all::         FORCE
 	@if test -z "$(FMPOOL_FLAGS)"; then \
-	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) hdfed utils fp2hdf fptest; \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) hdfed utils fp2hdf fptest ; \
 	else		 \
-	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" hdfed utils fp2hdf fptest; \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" hdfed utils fp2hdf fptest ; \
 	fi
 
 #nofortran: hdfed utils fp2hdf fptest
 nofortran::         FORCE
 	@if test -z "$(FMPOOL_FLAGS)"; then \
-	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) hdfed utils fp2hdf fptest; \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) hdfed utils fp2hdf fptest ; \
 	else		 \
-	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" hdfed utils fp2hdf fptest; \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" hdfed utils fp2hdf fptest ; \
 	fi
 
 rebuild:
@@ -221,11 +221,9 @@ install-prog: all
 hdfed: he.h he_proto.h $(HEOBJ) $(HDFLIB)/libdf.a $(FRC)
 	$(CC) $(ALL_CFLAGS) $(HEOBJ) $(HDFLIB)/libdf.a -o hdfed $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
 
-utils: $(UTILS) $(HDFLIB)/libdf.a
+utils: $(UTILS) $(HDFLIB)/libdf.a $(FRC)
 
 $(HEOBJ): $(FRC)
-
-$(UTILS): $(FRC)
 
 $(HDFLIB)/libdf.a:
 
