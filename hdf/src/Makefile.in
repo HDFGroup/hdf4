@@ -299,13 +299,13 @@ install-headers: FORCE
 	    $(MAKE) $(MFLAGS) $(HDF_FLAGS) install-headers-all; \
 	esac
 
-install-headers-all:
+install-headers-all: $(HDRS) $(FINCS)
 	for p in $(HDRS) $(FINCS); do \
 	    $(INSTALL_DATA) \
 		`pwd`/$$p $(includedir)/$$p; \
 	done
 
-install-headers-nofort:
+install-headers-nofort: $(HDRS)
 	for p in $(HDRS); do \
 	    $(INSTALL_DATA) \
 		`pwd`/$$p $(includedir)/$$p; \
