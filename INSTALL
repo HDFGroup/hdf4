@@ -62,9 +62,10 @@ Configuration/Installation
     scripts. One is the Cygnus 'configure' script and the other is the
     'configure' script created by the GNU autconf package. The Cygnus
     'configure' script is used at the top level to configure the overall
-    distribution and the HDF library. The GNU 'configure' script is used by 
-    the netCDF distribution to configure itself. 
-
+    distribution and the HDF/MFHDF library. The GNU 'configure' script
+    is used by the netCDF distribution to configure itself. This
+    gnu configure script is not used in configure this distribution.
+ 
     The Cygnus 'configure' script attempts to guess the correct
     platfrom you are configuring the distribution for by calling the shell
     script 'config.guess'. It outputs a unique string based on information
@@ -72,7 +73,9 @@ Configuration/Installation
     e.g. 'hppa1.1-hp-hpux9.03' for an  HP9000/735 running HPUX-9.03.
 
     The following shows the layout of the files used in the configuration.
-
+    NOTE: The mfhdf/CUSTOMIZE and mfhdf/configure(autoconf) files are no
+          longer used in the configuration
+  
     $(toplevel)/Makefile.in
                 config.guess
                 config.sub
@@ -81,8 +84,10 @@ Configuration/Installation
                 config/mh-hpux, mh-sun,.....
                       /custom_hpux, mh-sun,...
 
-                mfhdf/CUSTOMIZE
-                      configure(autconf)
+                mfhdf/libsrc/config/netcdf-aix.h, netcdf-alpha.h,...
+                mfhdf/fortran/config/ftest-aix.f,...
+                mfhdf/fortran/config/jackets-aix.c,..
+                mfhdf/fortran/config/netcdf-aix.inc,..
 
                 hdf/Makefile.in
                 hdf/src/Makefile.in
