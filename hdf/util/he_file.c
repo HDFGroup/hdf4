@@ -145,6 +145,17 @@ annotate(char *editor, int ann)
           if (editor == NULL)
               editor = "/usr/bin/ex";
       }
+#ifdef CRAYMPP
+    {	char	cmd[256];
+	if (HDstrlen(editor) > 100) {
+	    fprintf(stderr, "Environment variable EDITOR too big\n");
+	}
+	else {
+	    sprintf(cmd, "%s %s", editor, file);
+	    system(cmd);
+	}
+    }
+#else
     if (fork() == 0)
       {
           /* this is the child */
@@ -155,6 +166,10 @@ annotate(char *editor, int ann)
            */
           exit(0);
       }
+
+    /* the parent waits for the child to die */
+    wait(0);
+#endif
 #else  /* VMS  */
     if (vfork() == 0)
         /* this is the child */
@@ -167,10 +182,10 @@ annotate(char *editor, int ann)
           fprintf(stderr, "TPU$EDIT return status: %d. \n", ret_status);
           exit(0);
       }
-#endif
 
     /* the parent waits for the child to die */
     wait(0);
+#endif
 
     /* read in edited annotation
      */
