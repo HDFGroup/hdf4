@@ -153,7 +153,7 @@ test_ref_limits()
                 /* Write out data to tag1 */
                 ref=Htagnewref(fid,tag1);
                 CHECK(ref, 0, "Htagnewref");
-                aid=Hstartwrite(fid,tag1,ref,4);
+                aid=Hstartwrite(fid,tag1,ref,sizeof(int32));
                 CHECK(aid, FAIL, "Hstartwrite");
                 data=ref;
                 ret=Hwrite(aid,sizeof(int32),&data);
@@ -164,7 +164,7 @@ test_ref_limits()
                 /* Write out data to tag2 */
                 ref=Htagnewref(fid,tag2);
                 CHECK(ref, 0, "Htagnewref");
-                aid=Hstartwrite(fid,tag2,ref,4);
+                aid=Hstartwrite(fid,tag2,ref,sizeof(int32));
                 CHECK(aid, FAIL, "Hstartwrite");
                 data=ref<<16;
                 ret=Hwrite(aid,sizeof(int32),&data);
