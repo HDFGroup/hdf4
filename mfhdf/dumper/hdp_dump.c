@@ -481,7 +481,7 @@ dumpclean(int32       nt,
    }  /* space char. criteria */
 
    /* for each character in the buffer, print it accordingly */
-   for (i = 0; i < cnt && bufptr != NULL; i++)
+   for (i = 0; i < cnt; i++)
    {
       /* if number of characters printed on the current line reaches
          the max defined and the data buffer doesn't contain any LF or
@@ -557,6 +557,9 @@ dumpclean(int32       nt,
       /* advance the buffer pointer */
       bufptr = (char *) bufptr + off;
 
+       /* Move here to avoid internal compiler error on Cray J90 -QAK */
+       if(bufptr==NULL)
+           break;
    }	/* end for every item in buffer */
 
    putc('\n', ofp); /* newline */
