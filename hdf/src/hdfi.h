@@ -102,7 +102,7 @@
  * In addition it provides error lines if the configuration is incorrect.
  **/
 
-#ifndef WIN32
+#ifdef WIN32
 /**
  * Under WIN32 we have single threaded static libraries, or
  * mutli-threaded DLLs using the multithreaded runtime DLLs.
