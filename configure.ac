@@ -527,6 +527,7 @@ case "$host" in
   t3*-cray-craympp)     BAR="t3e"         ;;
   S370-fujitsu-sysv*)   BAR="fujivp"      ;;
   *-mac-*)              BAR="mac"         ;;
+  *-apple*)             BAR="apple"       ;;
   *)                    echo "*** unknown host $host!"; exit 1 ;;
 esac
 
