@@ -71,7 +71,6 @@ Support for new platforms and compilers
      * PGI C and Fortran compilers are supported on Linux 2.4 
      * Intel C and Fortran compilers are supported on Linux 2.4
      * Cray TS IEEE is supported.
-     * Altix SGI is supported
 
 
 Bugs fixed since HDF4.2r0
@@ -166,7 +165,7 @@ HDF 4.2 Release 1 has been tested on the following platforms:
     Windows 2000 (NT5.0)          MSVC++ 6.0
                                   DEC Visual Fortran 6.0
                                   Intel C and F90 compilers version 7.1
-    Windows XP                    MSVC++.NET, Intel Fortran 8.1 (static librraies only)
+    Windows XP                    MSVC++.NET, Intel Fortran 8.1 (static libraries only)
     MAC OS X Darwin 7.7           gcc  3.3
                                   IBM Fortran xlf 8.1
                                   Absoft Fortran 8.2
