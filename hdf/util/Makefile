@@ -14,7 +14,7 @@
 #
 UTILS = hdf24to8 hdfcomp hdfls hdfpack hdfrseq hdftopal hdftor8 paltohdf \
         r8tohdf ristosds vcompat vmake vshow hdf8to24 hdf2jpeg jpeg2hdf fp2hdf \
-	hdfunpack
+	hdfunpac
 
 HEOBJ = he_main.o he_cntrl.o he_disp.o he_file.o
 
