@@ -142,7 +142,7 @@ HDF 4.2 Release 0 has been tested on the following platforms:
                                   HP F90 v2.4
                                   HP ANSI C++ B3910B A.03.13
     IRIX64 6.5 (64 & n32)         MIPSpro cc 7.3.1.3m
-                                  F90 MIPSpro 7.3.1.3m (64 only)
+                                  F90 MIPSpro 7.3.1.3m 
     Linux 2.4.20-20.7 (RH8)       gcc 3.3.1
                                   Intel(R) C++ Version 7.1
                                   Intel(R) Fortran Compiler Version 7.1
