@@ -608,7 +608,7 @@ NC_attr **attr;
       order = 1;
   }
       
-  status = VHstoredatam(handle->hdf_file, "Values", 
+  status = VHstoredatam(handle->hdf_file, ATTR_FIELD_NAME, 
                         (unsigned char *) values, size, 
                         type, name, ATTRIBUTE, order);
 

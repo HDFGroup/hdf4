@@ -48,13 +48,14 @@
 #define DATA_TAG  DFTAG_SD
 #endif
 
-#define ATTRIBUTE  "Attr0.0"
-#define VARIABLE   "Var0.0"
-#define DIMENSION  "Dim0.0"
-#define UDIMENSION "UDim0.0"
-#define DIM_VALS   "DimVal0.0" 
-#define CDF        "CDF0.0"
-#define DATA       "Data0.0"
+#define ATTRIBUTE         "Attr0.0"
+#define VARIABLE          "Var0.0"
+#define DIMENSION         "Dim0.0"
+#define UDIMENSION        "UDim0.0"
+#define DIM_VALS          "DimVal0.0" 
+#define CDF               "CDF0.0"
+#define DATA              "Data0.0"
+#define ATTR_FIELD_NAME   "Values"
 
 #define BLOCK_SIZE  64    /* multiplier for bytes in linked blocks */
 #define BLOCK_COUNT 128   /* size of linked block pointer objects  */
