@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/07/07 21:39:36  chouck
-Changed main() to be of type int and added PROTO() stuff
+Revision 1.4  1992/07/15 21:48:48  sxu
+ Added changes for CONVEX
 
+ * Revision 1.3  1992/07/07  21:39:36  chouck
+ * Changed main() to be of type int and added PROTO() stuff
+ *
  * Revision 1.2  1992/07/01  20:14:53  mlivin
  * cleaned up some little things
  *
@@ -77,9 +80,9 @@ int main
     PROTO((int argc, char *argv[]));
 void putRaster
     PROTO((char *template, int32 xdim, int32 ydim, int imageNumber,
-           char *image));
+           uint8 *image));
 void putPalette
-    PROTO((char *template, int imageNumber, char *palette));
+    PROTO((char *template, int imageNumber, uint8 *palette));
 void convert
     PROTO((char *template, int imageNumber, int32 xdim, int32 ydim,
            char *stringOut));
@@ -101,7 +104,8 @@ int main(argc, argv)
 {
     int i, imageNumber, ispal, err_val;
     int32 xdim, ydim;
-    char *hdfFile, *image, palette[PALETTE_SIZE];
+    char *hdfFile;
+    uint8 *image, palette[PALETTE_SIZE];
     char *rasterTemplate = NULL, *paletteTemplate = NULL;
 
     if (argc < 2) {
@@ -156,7 +160,7 @@ int main(argc, argv)
         paletteTemplate = D_PALETTE_TEM;
 
     for(imageNumber = 1;!DFR8getdims(hdfFile, &xdim, &ydim, &ispal);) {
-        image = (char *)newSpace(xdim * ydim);
+        image = (uint8 *)newSpace(xdim * ydim);
         if (verbose) {
             if (ispal)
                 printf("Getting image and palette %d.\n", imageNumber);
@@ -193,7 +197,7 @@ int main(argc, argv)
  */
 #ifdef PROTOTYPE
 void putRaster(char *template, int32 xdim, int32 ydim, int imageNumber,
-	       char *image)
+	       uint8 *image)
 #else
 void putRaster(template, xdim, ydim, imageNumber, image)
     char *template, *image;
@@ -245,7 +249,7 @@ void putRaster(template, xdim, ydim, imageNumber, image)
  *        palette : pointer to the palette array
  */
 #ifdef PROTOTYPE
-void putPalette(char *template, int imageNumber, char *palette)
+void putPalette(char *template, int imageNumber, uint8 *palette)
 #else
 void putPalette(template, imageNumber, palette)
     char *template, *palette;

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/07/01 20:14:53  mlivin
-cleaned up some little things
+Revision 1.3  1992/07/15 21:48:48  sxu
+ Added changes for CONVEX
 
+ * Revision 1.2  1992/07/01  20:14:53  mlivin
+ * cleaned up some little things
+ *
  * Revision 1.1  1992/06/30  20:43:55  mlivin
  * Initial revision
  *
@@ -158,8 +161,8 @@ palconv(palfile)
 char *palfile;
 #endif /* PROTOTYPE */
 {
-    char palspace[1024], reds[256], greens[256], blues[256];
-    char *p;
+    uint8 palspace[1024], reds[256], greens[256], blues[256];
+    uint8 *p;
     FILE *fp;
     int j,ret;
 

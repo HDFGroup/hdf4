@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/06/09 17:36:25  mfolk
-Initial revision
+Revision 1.2  1992/07/15 21:48:48  sxu
+ Added changes for CONVEX
 
+ * Revision 1.1  1992/06/09  17:36:25  mfolk
+ * Initial revision
+ *
 */
 /*****************************************************************************
 *
@@ -50,7 +53,7 @@ Initial revision
 int main
   PROTO((int, char **));
 int cntimage
-  PROTO((char *filename, int *p_w, int *p_h, int *n_images));
+  PROTO((char *filename, int32 *p_w, int32 *p_h, int *n_images));
 
 
 #ifdef PROTOTYPE
@@ -59,14 +62,15 @@ main(int argc, char *argv[])
 main(argc, argv)
     int argc;
     char *argv[];
-#endif PROTOTYPE
+#endif /* PROTOTYPE */
 {
 
     int i,j;
-    int nimg, nimg0, w, h;  /* nimg, nimg0 -- number of images	*/
-			    /* w, h -- width and height of images */
+    int nimg, nimg0;  /* nimg, nimg0 -- number of images	*/
+    int32 w,h;        /* w, h -- width and height of images */
     int  ret, n_infile, getoutfile, ispal, dimsizes[3];
-    char *infile, *outfile, **argv_infile, *indata0, *indata, palette[768];
+    char *infile, *outfile, **argv_infile;
+    uint8 *indata, *indata0, palette[768];
     float32 *outdata, *outdata0;
 
 
@@ -114,14 +118,14 @@ main(argc, argv)
     /* read in images from all input files.  	*/
 
     outdata0 = outdata = (float32 *)malloc(nimg*w*h*(sizeof(float32)));
-    indata0 = indata = (char *)malloc(w*h*sizeof(char));
+    indata0 = indata = (uint8 *)malloc(w*h*sizeof(char));
     infile = *argv_infile;
     ret = DFR8getdims(infile, &w, &h, &ispal);
     if (ispal) {
-	DFPgetpal(infile, palette);
+	DFPgetpal(infile, (char *) palette);
  	DFR8restart();		/* in case the palette is not at the  */
 				/* beginning of the first input file  */
-   	DFPputpal(outfile,palette, 0, "a");
+   	DFPputpal(outfile, (char *)palette, 0, "a");
     }
     while (nimg > 0)	{
 	indata = indata0;	/* Restart from the beginning of the buf */
@@ -164,14 +168,16 @@ int finishing()
 /* count # of images  */
  	    
 #ifdef PROTOTYPE
-int cntimage(char *filename, int *p_w, int *p_h, int *n_images);
+int cntimage(char *filename, int32 *p_w, int32 *p_h, int *n_images)
 #else
 int cntimage(filename, p_w, p_h, n_images)  
     char *filename;		
-    int *p_w, *p_h, *n_images;  /* p_w -- pointer to width   */
-#endif PROTOTYPE
+    int32 *p_w, *p_h; /* p_w -- pointer to width   */
+    int *n_images;  
+#endif /* PROTOTYPE */
 
-{     int ret, width, height, ispal, dimerror;
+{     int32 ret, width, height;
+      int ispal, dimerror;
 
 	dimerror = 0;
 
