@@ -26,9 +26,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.9  1992/03/25 22:51:35  chouck
-Fixed stupid bugs relating to unknown tags
+Revision 1.10  1992/03/27 15:39:28  chouck
+Can now handle multiple command line options
 
+ * Revision 1.9  1992/03/25  22:51:35  chouck
+ * Fixed stupid bugs relating to unknown tags
+ *
  * Revision 1.8  1992/03/23  17:21:52  likkai
  * Put in description of "-d" option in "usage" message.
  * and redo the format for the output of that option.
@@ -131,37 +134,41 @@ char *argv[];
     filerec_t *file_rec;    /* file record */
     dd_t desc[MAXBUFF];
 
-    if (argc <2) {
-        printf("%s,  version: 1.1   date: February 10, 1992\n",argv[0]);
-        printf("hdfls [-o][-l] fn ....\n");
-        printf("        This program displays information about the");
-        printf(" data elements in\n");
-        printf("        HDF file.\n");
-        printf("    -d: offset & length info of each element in the file\n");
-        printf("    -o: Ordered - display in reference number order\n");
-        printf("    -l: Long format - display more information\n");
-        exit (1);
-        }
+    while((i < argc) && (argv[i][0]=='-')){
+      switch(argv[i][1]) {
+      case 'o':
+	sort=0;
+	break;
+      case 'd':
+	debug=1;
+	break;
+      case 'l':
+	longout = 1;
+	break;
+      default:    
+	printf("Unknown option : -%c\n", argv[1][1]);
+	break;
+      }
+      i++;
+    }
+
+    /*
+     * If a file name has not been supplied print the usage message
+     */
+    if(i == argc) {
+      printf("%s,  version: 1.1   date: February 10, 1992\n",argv[0]);
+      printf("hdfls [-o] [-l] [-d] fn ....\n");
+      printf("        This program displays information about the");
+      printf(" data elements in\n");
+      printf("        HDF file.\n");
+      printf("    -d: offset & length info of each element in the file\n");
+      printf("    -o: Ordered - display in reference number order\n");
+      printf("    -l: Long format - display more information\n");
+      exit (1);
+    }
     
-    if (argv[1][0]=='-') {
-        switch( argv[1][1]) {
-            case 'o':
-                sort=0;
-                break;
-            case 'd':
-                debug=1;
-                break;
-            case 'l':
-                longout = 1;
-                break;
-            default:    
-                printf("Unknown option :%c\n", argv[1][1]);
-                break;
-            }
-        i++;
-        }
-    while (i<argc) {
-        fid=Hopen( argv[i], DFACC_READ, -1);
+    while(i<argc) {
+        fid = Hopen(argv[i], DFACC_READ, -1);
         printf( "%s:  ", argv[i]);
         if (fid == FAIL) {
 	  printf("\n\tNot an HDF file.\n");
