@@ -31,7 +31,7 @@ CFLAGS=-ansi -Wall -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wmi
 
 # Fortran compilier
 FC = f77
-FFLAGS = -O
+FFLAGS = -O -Nn802
 #FFLAGS = -g
 
 # Name of achive randomizer, usually ranlib (use 'true' if non-existant)
