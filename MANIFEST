@@ -837,7 +837,6 @@
 ./mfhdf/hdiff/hdiff.c
 ./mfhdf/hdiff/hdiff.h
 ./mfhdf/hdiff/hdiff_array.c
-./mfhdf/hdiff/hdiff_array.h
 ./mfhdf/hdiff/hdiff_gattr.c
 ./mfhdf/hdiff/hdiff_gr.c
 ./mfhdf/hdiff/hdiff_list.c
