@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.29  1993/08/16 21:45:43  koziol
-Wrapped in changes for final, working version on the PC.
+Revision 1.30  1993/08/18 16:04:09  chouck
+Restored changes blown away in version 1.28 (addition of HDstrdup())
+(grumble grumble)
 
+ * Revision 1.29  1993/08/16  21:45:43  koziol
+ * Wrapped in changes for final, working version on the PC.
+ *
  * Revision 1.27  1993/06/15  18:22:00  chouck
  * Made a little smarter at guessing machine types
  *
@@ -1126,6 +1130,7 @@ extern uint8 FAR *DFtbuf;
 #  define HDstrncmp(s1,s2,n)    (_fstrncmp((s1),(s2),(n)))
 #  define HDstrncpy(s1,s2,n)    (_fstrncpy((s1),(s2),(n)))
 #  define HDstrchr(s,c)    (_fstrchr((s),(c)))
+#  define HDstrdup(s)      (_fstrdup((s)))
 #else
 #  define HDstrcat(s1,s2)   (strcat((s1),(s2)))
 #  define HDstrcmp(s,t)     (strcmp((s),(t)))
@@ -1134,6 +1139,7 @@ extern uint8 FAR *DFtbuf;
 #  define HDstrncmp(s1,s2,n)    (strncmp((s1),(s2),(n)))
 #  define HDstrncpy(s1,s2,n)    (strncpy((s1),(s2),(n)))
 #  define HDstrchr(s,c)    (strchr((s),(c)))
+#  define HDstrdup(s)      (strdup((s)))
 #endif /* WIN3 */
 
 
