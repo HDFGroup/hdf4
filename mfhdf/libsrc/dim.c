@@ -79,7 +79,7 @@ done:
 }
 
 
-ncdimdef(cdfid, name, size)
+int ncdimdef(cdfid, name, size)
 int cdfid ;
 const char *name ;
 long size ;
@@ -149,7 +149,7 @@ long size ;
 	return(handle->dims->count -1) ;
 }
 
-NC_dimid( handle, name)
+int NC_dimid( handle, name)
 NC *handle;
 char *name;
 {
@@ -169,7 +169,7 @@ char *name;
   return(-1) ;
 }
 
-ncdimid( cdfid, name)
+int ncdimid( cdfid, name)
 int cdfid ;
 const char *name ;
 {
@@ -198,7 +198,7 @@ const char *name ;
 }
 
 
-ncdiminq( cdfid, dimid, name, sizep)
+int ncdiminq( cdfid, dimid, name, sizep)
 int cdfid ;
 int dimid ;
 char *name ;
@@ -242,7 +242,7 @@ long *sizep ;
 }
 
 
-ncdimrename(cdfid, dimid, newname)
+int ncdimrename(cdfid, dimid, newname)
 int cdfid ;
 int dimid ; 
 const char *newname ;
@@ -344,7 +344,7 @@ xdr_NC_dim(xdrs, dpp)
 /*
  * How much space will the xdr'd dim take.
  */
-NC_xlen_dim(dpp)
+int NC_xlen_dim(dpp)
 NC_dim **dpp ;
 {
 	int len = 4 ;

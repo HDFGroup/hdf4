@@ -21,7 +21,7 @@ static char RcsId[] = "@(#)$Revision$";
 #include <math.h>
 #endif /* MIPSEL */
 
-void 
+static void 
 dumpvd_usage(intn argc, 
              char *argv[])
 {
@@ -41,7 +41,7 @@ dumpvd_usage(intn argc,
 	printf("\t-x\tAscii text format of output (default)\n");
 }	/* end list_usage() */
 
-void 
+static void 
 init_dumpvd_opts(dump_info_t *dumpvd_opts)
 {
 	dumpvd_opts->filter = DALL;		   /* default dump all Vdatas */
@@ -465,7 +465,7 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
     char        string[MAXNAMELEN];
     FILE       *fp = NULL;
     intn        dumpall = 0;
-    file_type_t ft;
+    file_type_t ft=0;
     int32       vd_id = FAIL;
     int32       an_handle   = FAIL;
     intn        ret_value = SUCCEED;
@@ -773,7 +773,7 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
     char        string[MAXNAMELEN];
     FILE       *fp = NULL;
     intn        dumpall = 0;
-    file_type_t ft;
+    file_type_t ft=0;
     int32       vd_id = FAIL;
     intn        ret_value = SUCCEED;
 

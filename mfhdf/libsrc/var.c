@@ -8,6 +8,9 @@
 #include	"local_nc.h"
 #include	"alloc.h"
 
+#ifdef NOT_USED
+static int ncvarcpy(int, int, int);
+#endif /* NOT_USED */
 
 NC_var *
 NC_new_var(name,type,ndims,dims)
@@ -113,7 +116,7 @@ done:
 #ifndef HDF
 static 
 #endif
-NC_var_shape(var, dims)
+int NC_var_shape(var, dims)
 NC_var *var ;
 NC_array *dims;
 {
@@ -233,7 +236,7 @@ out :
 }
 
 
-ncvardef(cdfid, name, type, ndims, dims)
+int ncvardef(cdfid, name, type, ndims, dims)
 int cdfid ;
 const char *name ;
 nc_type type ;
@@ -334,7 +337,7 @@ const int dims[] ;
  * Sets handle->begin_rec to start of first record variable
  * returns -1 on error
  */
-NC_computeshapes( handle )
+int NC_computeshapes( handle )
 NC *handle ;
 {
 	NC_var **vbase, **vpp ;
@@ -376,7 +379,7 @@ NC *handle ;
 }
 
 
-ncvarid( cdfid, name)
+int ncvarid( cdfid, name)
 int cdfid ;
 const char *name ;
 {
@@ -452,7 +455,7 @@ int varid ;
 }
 
 
-ncvarinq( cdfid, varid, name, typep, ndimsp, dims, nattrsp)  
+int ncvarinq( cdfid, varid, name, typep, ndimsp, dims, nattrsp)  
 int cdfid ;
 int varid ;
 char *name ;
@@ -507,7 +510,7 @@ int *nattrsp ;
 }
 
 
-ncvarrename(cdfid, varid, newname)
+int ncvarrename(cdfid, varid, newname)
 int cdfid ;
 int varid ; 
 const char *newname ;
@@ -579,6 +582,7 @@ const char *newname ;
 }
 
 
+#ifdef NOT_USED 
 /*
  * Given valid handle, name string, and length of the name, get a var.
  *  else NULL on error
@@ -615,7 +619,7 @@ int namelen ;
  * is not documented. We plan to supercede it with something more
  * general in a future release.
  */
-int
+static int
 ncvarcpy(incdf, varid, outcdf)
 int             incdf;
 int             varid;
@@ -801,6 +805,7 @@ int             outcdf;
 	}
 	return 0 ;
 }
+#endif /* NOT_USED */
 
 
 bool_t
@@ -877,7 +882,7 @@ xdr_NC_var(xdrs, vpp)
  * How much space will the xdr'd var take.
  *
  */
-NC_xlen_var(vpp)
+int NC_xlen_var(vpp)
 NC_var **vpp ;
 {
 	int len ;

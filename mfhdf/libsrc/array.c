@@ -427,12 +427,12 @@ done:
 /*
  * How much space will the xdr'd array take.
  */
-NC_xlen_array(array)
+int NC_xlen_array(array)
 NC_array *array ;
 {
 	int len = 8 ;
 	int rem ;
-	int (*xlen_funct)() ;
+	int (*xlen_funct)() =NULL;
 	Void *vp ;
 	int ii ;
 
@@ -532,8 +532,8 @@ xdr_NC_array(xdrs, app)
 	NC_array **app;
 {
 	bool_t (*xdr_NC_fnct)() ;
-	u_long count , *countp ;
-	nc_type type , *typep ;
+	u_long count , *countp=NULL ;
+	nc_type type , *typep=NULL ;
 	bool_t stat ;
 	Void *vp ;
 

@@ -470,20 +470,20 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
     extern const char *HEstring
                 (hdf_err_code_t error_code);
 
-    extern VOID HEpush
+    extern void HEpush
                 (hdf_err_code_t error_code, const char * function_name,
                  const char * file_name, intn line);
 
-    extern VOID HEreport
+    extern void HEreport
                 (const char *,...);
 
-    extern VOID HEprint
+    extern void HEprint
                 (FILE * stream, int32 print_level);
 
     extern int16 HEvalue
                 (int32 level);
 
-    extern VOID HEPclear
+    extern void HEPclear
                 (void);
 
  	extern intn HEshutdown(void);
@@ -541,11 +541,11 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 /*
    ** from dfimcomp.c
  */
-    extern VOID DFCIimcomp
+    extern void DFCIimcomp
                 (int32 xdim, int32 ydim, const uint8 *in, uint8 out[],
                  uint8 in_pal[], uint8 out_pal[], int mode);
 
-    extern VOID DFCIunimcomp
+    extern void DFCIunimcomp
                 (int32 xdim, int32 ydim, uint8 in[], uint8 out[]);
 
 /*
@@ -630,10 +630,10 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (uint8 * pal);
 
     extern intn DFR8putimage
-                (const char * filename, void * image, int32 xdim, int32 ydim, uint16 compress);
+                (const char * filename, const void * image, int32 xdim, int32 ydim, uint16 compress);
 
     extern intn DFR8addimage
-                (const char * filename, void * image, int32 xdim, int32 ydim, uint16 compress);
+                (const char * filename, const void * image, int32 xdim, int32 ydim, uint16 compress);
 
     extern intn DFR8nimages
                 (const char * filename);
@@ -2036,7 +2036,7 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #endif                          /* DF_CAPFNAMES */
 #endif                          /* HERR_FNAMES */
 
-    extern      FRETVAL(VOID) nheprnt
+    extern      FRETVAL(void) nheprnt
                 (intf  * print_levels);
 
 /*
@@ -2671,7 +2671,7 @@ extern intn GRgetchunkinfo
 extern intn GRwritechunk
     (int32 riid,      /* IN: raster access id */
      int32 *origin,    /* IN: origin of chunk to write */
-     const VOID *datap /* IN: buffer for data */);
+     const void *datap /* IN: buffer for data */);
 
 /******************************************************************************
  NAME
@@ -2696,7 +2696,7 @@ extern intn GRwritechunk
 extern intn GRreadchunk
     (int32 riid,      /* IN: raster access id */
      int32 *origin,    /* IN: origin of chunk to read */
-     VOID  *datap      /* IN/OUT: buffer for data */);
+     void  *datap      /* IN/OUT: buffer for data */);
 
 #endif /* commented out for now -GV */
 
@@ -2757,7 +2757,7 @@ extern int HDFinitIOTrace(char *traceFileName, intn detail, intn lifetime,
                           intn timeWindow, float64 timeWindowSize,
                           intn regionTrace, intn regionSize,
                           uint16 procTraceMask );
-extern int HDFendIOTrace(VOID);
+extern int HDFendIOTrace(void);
 
 #ifndef PABLO_FNAMES
 #   define PABLO_FNAMES
@@ -2848,12 +2848,12 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
    ** from vattr.c
  */
    extern intn Vsetattr
-                (int32 vgid,  char *attrname, int32 datatype,
-                 int32 count, void * values);
+                (int32 vgid,  const char *attrname, int32 datatype,
+                 int32 count, const void * values);
    extern intn Vnattrs
                 (int32 vgid);
    extern intn Vfindattr
-                (int32 vgid, char *attrname);
+                (int32 vgid, const char *attrname);
    extern intn Vattrinfo
                 (int32 vgid, intn attrindex, char *name, 
                  int32 *datatype, int32 *count, int32 *size);
@@ -2862,16 +2862,16 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
    extern int32 Vgetversion
                 (int32 vgid);
    extern intn VSfindex
-                 (int32 vsid, char *fieldname, int32 *fldindex);
+                 (int32 vsid, const char *fieldname, int32 *fldindex);
    extern intn VSsetattr
-                (int32 vsid, int32 findex, char *attrname,
-                 int32 datatype, int32 count, void * values);
+                (int32 vsid, int32 findex, const char *attrname,
+                 int32 datatype, int32 count, const void * values);
    extern intn VSnattrs
                 (int32 vsid);
    extern intn VSfnattrs
                 (int32 vsid, int32 findex);
    extern intn VSfindattr
-                (int32 vsid, int32 findex, char *attrname);
+                (int32 vsid, int32 findex, const char *attrname);
    extern intn VSattrinfo
                 (int32 vsid, int32 findex, intn attrindex,
                  char *name, int32 *datatype, int32 *count, 
@@ -2917,7 +2917,7 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
     extern int32 VSsizeof
                 (int32 vkey, char  * fields);
 
-    extern VOID VSdump
+    extern void VSdump
                 (int32 vkey);
 
     extern int32 VSsetname
@@ -2954,7 +2954,7 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
     extern int32 VSfindclass
                 (HFILEID f, const char  * vsclass);
 
-    extern VOID Vsetzap
+    extern void Vsetzap
                 (void);
 
 /*
@@ -2966,10 +2966,10 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
     extern intn vcompareref
                 (void * k1, void * k2, intn cmparg);
 
-    extern VOID vdestroynode
+    extern void vdestroynode
                 (void * n);
 
-    extern VOID vtfreekey
+    extern void vtfreekey
                 (void * k);
 
     extern intn Vinitialize
@@ -3088,7 +3088,7 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
    ** from vhi.c
  */
     extern int32 VHstoredata
-                (HFILEID f, char  * field, const uint8  *buf, int32 n, int32 datatype,
+                (HFILEID f, const char  * field, const uint8  *buf, int32 n, int32 datatype,
                  const char  * vsname, const char  * vsclass);
 
     extern int32 VHstoredatam
@@ -3096,8 +3096,8 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
                  const char  * vsname, const char  * vsclass, int32 order);
 
     extern int32 VHmakegroup
-                (HFILEID f, int32  tagarray[], int32  refarray[], int32 n, char  * vgname,
-                 char  * vgclass);
+                (HFILEID f, int32  tagarray[], int32  refarray[], int32 n,
+                    const char * vgname, const char  * vgclass);
 
 /*
    ** from vio.c
@@ -3108,10 +3108,10 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
     extern int32 vexistvs
                 (HFILEID f, uint16 vsref);
 
-    extern VOID vsdestroynode
+    extern void vsdestroynode
                 (void * n);
 
-    extern VOID vfdestroynode
+    extern void vfdestroynode
                 (void * n);
 
     extern int32 VSattach

@@ -22,12 +22,12 @@
  */
 #ifndef NO_STDARG
 void
-error(char *fmt, ...)
+error(const char *fmt, ...)
 #else
 /*VARARGS1*/
 void
 error(fmt, va_alist)
-     char *fmt ;
+     const char *fmt ;
      va_dcl
 #endif
 {
@@ -70,7 +70,7 @@ set_max_len(len)
 
 void
 lput(cp)
-     char *cp;
+     const char *cp;
 {
     int nn = strlen(cp);
 
@@ -84,7 +84,7 @@ lput(cp)
 }
 
 
-static char *formats[] =
+static const char *formats[] =
 {
     "%d",			/* bytes, shorts */
     "%s",			/* char arrays as strings */
@@ -139,7 +139,7 @@ has_c_format_att(ncid, varid)
  * Determine print format to use for each value for this variable.  Use value
  * of attribute C_format if it exists, otherwise a sensible default.
  */
-char *
+const char *
 get_fmt(ncid, varid, type)
      int ncid;			/* netcdf id */
      int varid;			/* variable id */
@@ -167,6 +167,7 @@ get_fmt(ncid, varid, type)
 	return formats[4];
       default:
 	error("pr_vals: bad type");
+    return NULL;
     }
 }
 

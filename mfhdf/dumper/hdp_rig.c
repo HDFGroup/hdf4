@@ -25,7 +25,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #define IMAGE 1
 
-void 
+static void 
 dumprig_usage(intn argc, 
               char *argv[])
 {
@@ -49,7 +49,7 @@ dumprig_usage(intn argc,
     printf("\t-x\tAscii text format of output (default)\n");
 }	/* end list_usage() */
 
-void 
+static void 
 init_dumprig_opts(dump_info_t * dumprig_opts)
 {
     dumprig_opts->filter = DALL;	/* default dump all RIGs */
@@ -62,7 +62,7 @@ init_dumprig_opts(dump_info_t * dumprig_opts)
     HDstrcpy(dumprig_opts->file_name, "\0");
 }	/* end init_list_opts() */
 
-intn 
+static intn 
 parse_dumprig_opts(dump_info_t *dumprig_opts, 
                    intn        *curr_arg,
                    intn         argc, 

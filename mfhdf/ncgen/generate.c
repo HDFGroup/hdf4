@@ -13,14 +13,9 @@
 
 extern char *netcdf_name; /* output netCDF filename, if on command line. */
 
-char *ncctype();
-static char *ncftype();
-char *nctype();
-char *ftypename();
-char *cstring();
-char *fstring();
-char *cstrstr();
-char *fstrstr();
+static const char *ncftype(nc_type);
+static const char *ftypename(nc_type);
+static char *cstring(nc_type, void *, int);
 
 extern int netcdf_flag;
 extern int c_flag;
@@ -82,7 +77,7 @@ gen_netcdf(filename)
  */
 void
 cline(stmnt)
-     char *stmnt;
+     const char *stmnt;
 {
     FILE *cout = stdout;
     
@@ -92,7 +87,7 @@ cline(stmnt)
 
 
 /* generate C code for creating netCDF from in-memory structure */
-void
+static void
 gen_c(filename)
      char *filename;
 {
@@ -102,7 +97,7 @@ gen_c(filename)
     char stmnt[C_MAX_STMNT];
     char s2[MAX_NC_NAME + 2];
 
-    static char *ctypes[] = {"char","short","nclong","float","double"};
+    const static char *ctypes[] = {"char","short","nclong","float","double"};
     int ntypes = (sizeof ctypes) / (sizeof ctypes[0]);
 
     /* wrap in main program */
@@ -243,7 +238,7 @@ gen_c(filename)
 	  sprintf(stmnt,
 		  "   %s_dim = ncdimdef(ncid, \"%s\", %dL);",
 		  dims[idim].name,dims[idim].name,
-		  dims[idim].size);
+		  (int)dims[idim].size);
 	cline(stmnt);
     }
 
@@ -352,7 +347,7 @@ gen_c(filename)
  */
 void
 fline(stmnt)
-     char *stmnt;
+     const char *stmnt;
 {
     FILE *fout = stdout;
     int len = strlen(stmnt);
@@ -380,7 +375,7 @@ fline(stmnt)
 
 
 /* generate FORTRAN code for creating netCDF from in-memory structure */
-void
+static void
 gen_fortran(filename)
      char *filename;
 {
@@ -393,7 +388,7 @@ gen_fortran(filename)
      * for each type of attribute. */
     int ntypes = 6;		/* number of netCDF types, NC_BYTE, ... */
     nc_type types[6];		/* at least ntypes */
-    char *ftypes[NC_DOUBLE + 1];
+    const char *ftypes[NC_DOUBLE + 1];
     int max_atts[NC_DOUBLE + 1];
 
     types[0] = NC_BYTE;
@@ -495,13 +490,13 @@ gen_fortran(filename)
 			    vars[ivar].name);
 		    /* reverse dimensions for FORTRAN */
 		    for (idim = vars[ivar].ndims-1; idim > 0; idim--) {
-			sprintf(s2, "%d,", dims[vars[ivar].dims[idim]].size);
+			sprintf(s2, "%d,", (int)dims[vars[ivar].dims[idim]].size);
 			strcat(stmnt, s2);
 		    }
 		    if (vars[ivar].dims[0] == rec_dim)
 		      sprintf(s2, "%d)", 1);
 		    else
-		      sprintf(s2, "%d)", dims[vars[ivar].dims[0]].size);
+		      sprintf(s2, "%d)", (int)dims[vars[ivar].dims[0]].size);
 		    strcat(stmnt, s2);
 		    fline(stmnt);
 		}
@@ -558,7 +553,7 @@ gen_fortran(filename)
 		  dims[idim].name,dims[idim].name);
 	else
 	  sprintf(stmnt, "%sdim = ncddef(ncid, \'%s\', %d, iret)",
-		  dims[idim].name,dims[idim].name,dims[idim].size);
+		  dims[idim].name,dims[idim].name,(int)dims[idim].size);
 	fline(stmnt);
     }
 	  
@@ -636,7 +631,7 @@ gen_fortran(filename)
 
 
 /* return C name for netCDF type, given type code */
-char *
+const char *
 nctype(type)
      nc_type type;			/* netCDF type code */
 {
@@ -655,13 +650,13 @@ nctype(type)
 	return "NC_DOUBLE";
       default:
 	derror("nctype: bad type code");
-	return 0;
+	return NULL;
     }
 }
 
 
 /* return FORTRAN name for netCDF type, given type code */
-char *
+static const char *
 ftypename(type)
      nc_type type;			/* netCDF type code */
 {
@@ -680,14 +675,14 @@ ftypename(type)
 	return "NCDOUBLE";
       default:
 	derror("ftypename: bad type code");
-	return 0;
+	return NULL;
     }
 }
 
 
 /* return C type name for netCDF type, given type code */
 
-char *
+const char *
 ncctype(type)
      nc_type type;			/* netCDF type code */
 {
@@ -706,14 +701,14 @@ ncctype(type)
 	return "double";
       default:
 	derror("ncctype: bad type code");
-	return 0;
+	return NULL;
     }
 }
 
 
 /* return Fortran type name for netCDF type, given type code */
 
-static char *
+static const char *
 ncftype(type)
      nc_type type;		/* netCDF type code */
 {
@@ -751,7 +746,7 @@ ncftype(type)
 #endif	
       default:
 	derror("ncctype: bad type code");
-	return 0;
+	return NULL;
 
     }
 }
@@ -763,7 +758,7 @@ ncftype(type)
  * malloced string representing the value in C.
  */
 
-char *
+static char *
 cstring(type,valp, num)
      nc_type type;			/* netCDF type code */
      void *valp;		/* pointer to vector of values */

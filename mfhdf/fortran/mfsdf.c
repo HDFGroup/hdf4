@@ -957,7 +957,7 @@ nscgdatstrs(id, label, unit, format, coord, llabel, lunit, lformat, lcoord, len)
      intf *len;
 #endif /* PROTOTYPE */
 {
-    char *ilabel, *iunit, *iformat, *icoord;
+    char *ilabel, *iunit, *iformat, *icoord=NULL;
     intf ret;
 
     iunit = ilabel = iformat = NULL;

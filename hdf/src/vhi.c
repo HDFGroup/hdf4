@@ -54,7 +54,7 @@ static char RcsId[] = "@(#)$Revision$";
    ------------------------------------------------------------------------- */
 
 int32
-VHstoredata(HFILEID f, char *field, const uint8 *buf, int32 n, int32 datatype,
+VHstoredata(HFILEID f, const char *field, const uint8 *buf, int32 n, int32 datatype,
             const char *vsname, const char *vsclass)
 
 {
@@ -177,7 +177,7 @@ done:
    --------------------------------------------------------------------------- */
 
 int32
-VHmakegroup(HFILEID f, int32 tagarray[], int32 refarray[], int32 n, char *vgname, char *vgclass)
+VHmakegroup(HFILEID f, int32 tagarray[], int32 refarray[], int32 n, const char *vgname, const char *vgclass)
 {
     int32       ref, i;
     int32       vg;

@@ -446,8 +446,8 @@ free_obj_list(objlist_t * o_list)
 int 
 sort_obj_list_by_tag(const void *p1, const void *p2)
 {
-    const objinfo_t *a = (const objinfo_t *) *((void **) p1);
-    const objinfo_t *b = (const objinfo_t *) *((void **) p2);
+    const objinfo_t *a = (const objinfo_t *) *((const void **) p1);
+    const objinfo_t *b = (const objinfo_t *) *((const void **) p2);
 
     if (a->tag > b->tag)
         return (1);

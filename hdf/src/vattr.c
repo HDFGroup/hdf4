@@ -122,7 +122,7 @@ static char RcsId[] = "@(#)$Revision$";
 *   intn VSfindex(int32 vsid, char *fieldname, int32 *findex)
 *        find out the index of a field given the field name.
 *   intn VSsetattr(int32 vsid, int32 findex, char *attrname, 
-*                  int32 datatype, int32 count, VOIDP values)
+*                  int32 datatype, int32 count, void * values)
 *        set attr for a field of a vdata or for the vdata.
 *        if the attr already exists the new values will replace
 *           the current ones as far as the datatype and order
@@ -138,14 +138,14 @@ static char RcsId[] = "@(#)$Revision$";
                     int32 *size);
 *        get info about an attribute
 *   intn VSgetattr(int32 vsid, int32 findex, intn attrindex, 
-*                  VOIDP values)
+*                  void * values)
 *        get values of an attribute
 *   intn VSisattr(int32 vsid)
 *        test if a vdata is an attribute of other object
 *   < int32 VSgetversion(int32 vsid) already defined in vio.c >
 *   <    get vset version of a vdata  >
 *   intn Vsetattr(int32 vgid,  char *attrname, int32 datatype,
-*                 int32 count, VOIDP values) 
+*                 int32 count, void * values) 
 *        set attr for a vgroup
 *   intn Vnattrs(int32 vgid)
 *        number of attrs for a vgroup
@@ -154,7 +154,7 @@ static char RcsId[] = "@(#)$Revision$";
 *   intn Vattrinfo(int32 vgid, intn attrindex, char *name, 
 *                  int32 *datatype, int32 *count, int32 *size)
 *        get info about an attribute
-*   intn Vgetattr(int32 vgid, intn attrindex, VOIDP values)
+*   intn Vgetattr(int32 vgid, intn attrindex, void * values)
 *        get values of an attribute
 *   int32 Vgetversion(int32 vgid)
 *        get vset version of a vgroup
@@ -177,14 +177,16 @@ static char RcsId[] = "@(#)$Revision$";
 * First draft on 7/31/96, modified on 8/6/96, 8/15/96
 *************************************************************/
 
-#include "vattr.h"
+#include "hdf.h"
+#include "vg.h"
+
 /* -----------------  VSfindex ---------------------
 NAME
       VSfindex -- find index of a named field in a vdata
 USAGE
       intn VSfindex(int32 vsid, char *fieldname, int32 *findex)
       int32 vsid;    IN: vdata id which contains this field
-      char *fieldname; IN: field name
+      const char *fieldname; IN: field name
       int32 *findex; OUT: field index
 RETURNS
       Returns SUCCEED if successful;
@@ -194,7 +196,7 @@ DESCRIPTION
       search the vdata name.  Use VSinquire() or VSgetname()
       to find vdata name. 
 ---------------------------------------------------- */
-intn VSfindex(int32 vsid, char *fieldname, int32 *findex)
+intn VSfindex(int32 vsid, const char *fieldname, int32 *findex)
 {
      CONSTR(FUNC, "VSfindex");
      vsinstance_t *vs_inst;
@@ -257,15 +259,15 @@ NAME
                      vdata
 USAGE
      intn VSsetattr(int32 vsid, int32 findex, char *attrname,
-                 int32 datatype, int32 count, VOIDP values)
+                 int32 datatype, int32 count, void * values)
      int32 vsid;     IN: vdata access id
      int32 findex; IN: number determined by assinging each field 
                        in a record a number starting with 0; 
                        _HDF_VDATA (0xffffffff) represents the entire vdata. 
-     char *attrname;   IN: name of the attribute
+     const char *attrname;   IN: name of the attribute
      int32 datatype;   IN: data type of the attribute
      int32 count;      IN: number of values the attribute has
-     VOIDP values;     IN: a buffer which contains the values of 
+     const void * values;     IN: a buffer which contains the values of 
                            the attribute
 RETURNS
      Returns SUCCEED if successful, FAIL otherwise.
@@ -279,8 +281,8 @@ DESCRIPTION
         No limit on max number of attributes. (int32 is the final
            limit.
 -----------------------------------------------------------  */
-intn VSsetattr(int32 vsid, int32 findex, char *attrname,
-                 int32 datatype, int32 count, VOIDP values)
+intn VSsetattr(int32 vsid, int32 findex, const char *attrname,
+                 int32 datatype, int32 count, const void * values)
 {
      CONSTR(FUNC, "VSsetattr");
      vsinstance_t *vs_inst, *attr_inst;
@@ -330,8 +332,7 @@ intn VSsetattr(int32 vsid, int32 findex, char *attrname,
                          HGOTO_ERROR(DFE_BADATTR, FAIL);
                     }  /* type or order changed */
                    /* replace the values  */
-                   if (1 != VSwrite(attr_vsid, (unsigned char *)values,
-                            1, FULL_INTERLACE)) {
+                   if (1 != VSwrite(attr_vsid, values, 1, FULL_INTERLACE)) {
                        VSdetach(attr_vsid);
                        HGOTO_ERROR(DFE_VSWRITE, FAIL);
                    }
@@ -355,7 +356,7 @@ intn VSsetattr(int32 vsid, int32 findex, char *attrname,
         vs->alist=(vs_attr_t *)HDmalloc(sizeof(vs_attr_t));
      }
      else  
-        vs->alist = HDrealloc((VOIDP)vs->alist,(vs->nattrs+1) * sizeof(vs_attr_t));
+        vs->alist = HDrealloc(vs->alist,(vs->nattrs+1) * sizeof(vs_attr_t));
      if (vs->alist == NULL)  
            HGOTO_ERROR(DFE_NOSPACE, FAIL);
      vs->alist[vs->nattrs].findex = findex;
@@ -511,7 +512,7 @@ done:
 
 ------------------------------------------------------------  */
 
-intn VSfindattr(int32 vsid, int32 findex, char *attrname)
+intn VSfindattr(int32 vsid, int32 findex, const char *attrname)
 {
      CONSTR(FUNC, "VSfindattr");
      VDATA *vs, *attr_vs;
@@ -704,18 +705,18 @@ NAME
        VSgetattr -- get values of a specified attribute
 USAGE
        intn VSgetattr(int32 vsid, int32 findex, intn attrindex,
-                  VOIDP values)
+                  void * values)
        int32 vsid;     IN: vdata access id
        int32 findex;   IN: field index; _HDF_VDATA (0xffffffff) for vdata
        intn attrindex; IN: attribute index
-       VOIDP values;   OUT: buffer holding attribute values.
+       void * values;   OUT: buffer holding attribute values.
 RETURNS
        Returns SUCCEED if successful, FAIL otherwise
 DESCRIPTION
 
 --------------------------------------------------------- */
 intn VSgetattr(int32 vsid, int32 findex, intn attrindex,
-               VOIDP values)
+               void * values)
 {
      CONSTR(FUNC, "VSgetattr");
      VDATA *vs, *attr_vs;
@@ -853,12 +854,12 @@ done:
         Vsetattr -- set an attribute for a vgroup
  USAGE 
         intn Vsetattr(int32 vgid,  char *attrname, int32 datatype,
-             int32 count, VOIDP values) 
+             int32 count, void * values) 
         int32 vgid;        IN: access id of the vgroup
         char *attrname;    IN: name of the attr
         int32 datatype;    IN: datatype of the attr
         int32 count;       IN: number of values the attr has
-        VOIDP values;      IN: values of the attr
+        void * values;      IN: values of the attr
  RETURNS
         Returns SUCCEED when successful, FAIL otherwise.
  DESCRIPTION
@@ -871,8 +872,8 @@ done:
            limit. 
 ------------------------------------------------------------  */
   
-intn Vsetattr(int32 vgid, char *attrname, int32 datatype,
-              int32 count, VOIDP values)
+intn Vsetattr(int32 vgid, const char *attrname, int32 datatype,
+              int32 count, const void * values)
 {
     CONSTR(FUNC, "Vsetattr");
     VGROUP *vg; 
@@ -929,8 +930,7 @@ intn Vsetattr(int32 vgid, char *attrname, int32 datatype,
                         HGOTO_ERROR(DFE_BADATTR, FAIL);
                }  /* type or order changed */
                /* replace the values  */
-               if (1 != VSwrite(vsid, (unsigned char *)values,
-                        1, FULL_INTERLACE)) {
+               if (1 != VSwrite(vsid, values, 1, FULL_INTERLACE)) {
                    VSdetach(vsid);
                    HGOTO_ERROR(DFE_VSWRITE, FAIL);
                }
@@ -952,7 +952,7 @@ intn Vsetattr(int32 vgid, char *attrname, int32 datatype,
        vg->alist = (vg_attr_t *)HDmalloc(sizeof(vg_attr_t));
     else 
        /* not exist */
-       vg->alist = HDrealloc((VOIDP)vg->alist, (vg->nattrs + 1) * sizeof(vg_attr_t));
+       vg->alist = HDrealloc(vg->alist, (vg->nattrs + 1) * sizeof(vg_attr_t));
     if (vg->alist == NULL)
        HGOTO_ERROR(DFE_NOSPACE, FAIL);
     vg->nattrs++;
@@ -1087,14 +1087,14 @@ done:
  USAGE
         intn Vfindattr(int32 vgid, char *attrname)
         int32 vgid;        IN: access id of the vgroup
-        char *attrname;    IN: name of the attr
+        const char *attrname;    IN: name of the attr
  RETURNS
         Returns the index of the attr when successful, 
         FAIL otherwise. 
  DESCRIPTION
 ------------------------------------------------------------  */
 
-intn Vfindattr(int32 vgid, char *attrname)
+intn Vfindattr(int32 vgid, const char *attrname)
 {
     CONSTR(FUNC, "Vfindattr");
     VGROUP *vg;
@@ -1257,17 +1257,17 @@ done:
 NAME
       Vgetattr -- read values of a vgroup attribute
 USAGE
-      intn Vgetattr(int32 vgid, intn attrindex, VOIDP values)
+      intn Vgetattr(int32 vgid, intn attrindex, void * values)
       int32 vgid;      IN: vgroup id
       intn attrindex;  IN: index of the attribute
-      VOIDP values;    OUT: where the values go.      
+      void * values;    OUT: where the values go.      
 RETURNS
       Returns SUCCEED when successful, FAIL otherwise
 DESCRIPTION
 
 ------------------------------------------------- */
 
-intn Vgetattr(int32 vgid, intn attrindex, VOIDP values)
+intn Vgetattr(int32 vgid, intn attrindex, void * values)
 {
     CONSTR(FUNC, "Vgetattr");
     VGROUP *vg;

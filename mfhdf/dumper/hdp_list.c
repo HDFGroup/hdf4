@@ -1050,7 +1050,7 @@ print_list_obj(const char *fname,
 
 
 /* print the library version of the file */
-void 
+static void 
 printfilever(int32 file_id)
 {
     uint32 major, minor, release;

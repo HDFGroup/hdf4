@@ -11,51 +11,23 @@
 #include "ncgen.h"
 #include "genlib.h"
 
-extern void fline();
-extern void cline();
-
 extern int netcdf_flag;
 extern int c_flag;
 extern int fortran_flag;
-
-/* invoke netcdf calls (or generate C or Fortran code) to load netcdf variable
- * from in-memory data.  Assumes following global variables set from yacc
- * parser:
- * int varnum        - number of variable to be loaded.
- * struct vars[varnum] - structure containing info on variable, specifically
- *                     name, type, ndims, dims, fill_value, has_data
- * int rec_dim       - id of record dimension, or -1 if none
- * struct dims[]     - structure containing name and size of dimensions.
- * int netcdf_record_number - number of current record for this variable.
- */
-void
-put_variable(rec_start)
-     void *rec_start;		/* points to data to be loaded  */
-{
-    void load_netcdf(), gen_load_c(), gen_load_fortran();
-
-    if (netcdf_flag)
-      load_netcdf(rec_start);	/* put variable values (one record's worth) */
-    if (c_flag)		/* create C code to put values */
-      gen_load_c(rec_start);
-    if (fortran_flag)		/* create Fortran code to put values */
-      gen_load_fortran(rec_start);
-}
-
 
 void
 load_netcdf(rec_start)	/* write out record from in-memory structure */
      void *rec_start;
 {
     int idim;
-    int istat;
+    int istat=0;
     long coords[MAX_VAR_DIMS];
     long edges[MAX_VAR_DIMS];
-    char *charvalp;
-    short *shortvalp;
-    nclong *longvalp;
-    float *floatvalp;
-    double *doublevalp;
+    char *charvalp=NULL;
+    short *shortvalp=NULL;
+    nclong *longvalp=NULL;
+    float *floatvalp=NULL;
+    double *doublevalp=NULL;
 
     /* load values into variable */
 
@@ -149,18 +121,17 @@ char *ss;			/* returned string representing dd */
 
 
 /* generate C to put netCDF record from in-memory data */
-void
+static void
 gen_load_c(rec_start)
      void *rec_start;
 {
     int idim, ival;
     char *val_string;
-    char *charvalp;
-    short *shortvalp;
-    nclong *longvalp;
-    float *floatvalp;
-    double *doublevalp;
-    extern char *cstrstr(), *ncctype();
+    char *charvalp=NULL;
+    short *shortvalp=NULL;
+    nclong *longvalp=NULL;
+    float *floatvalp=NULL;
+    double *doublevalp=NULL;
     char stmnt[C_MAX_STMNT];
     int stmnt_len;
     char s2[MAX_NC_NAME + 2];
@@ -358,7 +329,6 @@ gen_load_c(rec_start)
 	cline("   }");
     }
 }
-    
 
 /*
  * Add to a partial Fortran statement, checking if it's too long.  If it is too
@@ -367,7 +337,7 @@ gen_load_c(rec_start)
  * This will cause a Fortran compiler error, but at least all the information
  * will be available.
  */
-void
+static void
 fstrcat(s, t, slenp)
      char *s;			/* source string of stement being built */
      char *t;			/* string to be appended to source */
@@ -385,7 +355,7 @@ fstrcat(s, t, slenp)
 }
 
 
-void
+static void
 gen_load_fortran(rec_start)  /* make Fortran to put record */
      void *rec_start;
 {
@@ -396,7 +366,6 @@ gen_load_fortran(rec_start)  /* make Fortran to put record */
     nclong *longvalp;
     float *floatvalp;
     double *doublevalp;
-    extern char *fstring(), *ncctype(), *fstrstr();
     char stmnt[FORT_MAX_STMNT];
     long stmnt_len;
     char s2[MAX_NC_NAME + 2];
@@ -411,7 +380,7 @@ gen_load_fortran(rec_start)  /* make Fortran to put record */
 	    fline(stmnt);
 	}
 	if (vars[varnum].dims[0] == rec_dim) {
-	    sprintf(stmnt, "corner(%d) = %d", idim, netcdf_record_number+1);
+	    sprintf(stmnt, "corner(%d) = %d", idim, (int)(netcdf_record_number+1));
 	    fline(stmnt);
 	} else {
 	    sprintf(stmnt, "corner(%d) = 1", idim);
@@ -419,7 +388,7 @@ gen_load_fortran(rec_start)  /* make Fortran to put record */
 	}
 	for (idim = vars[varnum].ndims-1; idim > 0; idim--) {
 	    sprintf(stmnt, "edges(%d) = %d", vars[varnum].ndims - idim,
-		    dims[vars[varnum].dims[idim]].size);
+		    (int)dims[vars[varnum].dims[idim]].size);
 	    fline(stmnt);
 	}
 	if (vars[varnum].dims[0] == rec_dim) {
@@ -427,7 +396,7 @@ gen_load_fortran(rec_start)  /* make Fortran to put record */
 	    fline(stmnt);
 	} else {
 	    sprintf(stmnt, "edges(%d) = %d", vars[varnum].ndims - idim,
-		    dims[vars[varnum].dims[0]].size);
+		    (int)dims[vars[varnum].dims[0]].size);
 	    fline(stmnt);
 	}
     } else {			/* scalar variables */
@@ -516,3 +485,27 @@ gen_load_fortran(rec_start)  /* make Fortran to put record */
     }
     fline(stmnt);
 }
+
+
+/* invoke netcdf calls (or generate C or Fortran code) to load netcdf variable
+ * from in-memory data.  Assumes following global variables set from yacc
+ * parser:
+ * int varnum        - number of variable to be loaded.
+ * struct vars[varnum] - structure containing info on variable, specifically
+ *                     name, type, ndims, dims, fill_value, has_data
+ * int rec_dim       - id of record dimension, or -1 if none
+ * struct dims[]     - structure containing name and size of dimensions.
+ * int netcdf_record_number - number of current record for this variable.
+ */
+void
+put_variable(rec_start)
+     void *rec_start;		/* points to data to be loaded  */
+{
+    if (netcdf_flag)
+      load_netcdf(rec_start);	/* put variable values (one record's worth) */
+    if (c_flag)		/* create C code to put values */
+      gen_load_c(rec_start);
+    if (fortran_flag)		/* create Fortran code to put values */
+      gen_load_fortran(rec_start);
+}
+

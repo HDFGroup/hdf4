@@ -30,7 +30,7 @@ extern "C" {
 /* Print error message to stderr, don't exit */
 #ifndef MIPSEL /* punt */
 #ifndef NO_STDARG
-extern void error(char *fmt, ...);
+extern void error(const char *fmt, ...);
 #else
 extern void error();
 #endif
@@ -55,7 +55,7 @@ extern void	set_max_len	PROTO((
 
 /* splits lines to keep them short */
 extern void	lput		PROTO((
-				       char *string
+				       const char *string
 				       ));
 
 /* In case different formats specified with -d option, set them here. */
@@ -65,7 +65,7 @@ extern void	set_formats	PROTO((
 				       ));
 
 /* Determine print format to use for each value for this variable. */
-char *		get_fmt		PROTO((
+const char *		get_fmt		PROTO((
 				       int ncid,
 				       int varid,
 				       nc_type type

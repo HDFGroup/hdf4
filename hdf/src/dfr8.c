@@ -134,7 +134,7 @@ PRIVATE intn library_terminate = FALSE;
 
 /* private functions */
 PRIVATE intn DFR8Iputimage
-            (const char *filename, VOIDP image, int32 xdim, int32 ydim, uint16 compress,
+            (const char *filename, const void * image, int32 xdim, int32 ydim, uint16 compress,
              intn append);
 
 PRIVATE int32 DFR8Iopen
@@ -489,7 +489,7 @@ done:
  USAGE
     intn DFR8Iputimage(filename, image, xdim, ydim, compress, append)
         char *filename;         IN: name of HDF file
-        VOIDP image;            IN: ptr to buffer image is stored in
+        const void * image;            IN: ptr to buffer image is stored in
         int32 xdim,ydim;        IN: dims of space allocated by user for image
         uint16 compress;        IN: type of compression to store image with
         intn append;            IN: whether to (0) overwrite existing file, or
@@ -511,7 +511,7 @@ done:
  REVISION LOG
 --------------------------------------------------------------------------*/
 PRIVATE intn
-DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
+DFR8Iputimage(const char *filename, const void * image, int32 xdim, int32 ydim,
               uint16 compress, intn append)
 {
   CONSTR(FUNC, "DFR8Iputimage");
@@ -571,8 +571,8 @@ DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
         if ((Writeref = Hnewref(file_id)) == 0)
           HGOTO_ERROR(DFE_NOREF, FAIL);
 
-      if (DFputcomp(file_id, DFTAG_CI, Writeref, (uint8 *) image, xdim, ydim,
-                    pal, (uint8 *) newpal, (int16) CompType, &CompInfo) == FAIL)
+      if (DFputcomp(file_id, DFTAG_CI, Writeref, image, xdim, ydim,
+                    pal, newpal, (int16) CompType, &CompInfo) == FAIL)
         HGOTO_ERROR(DFE_WRITEERROR, FAIL);
       Writerig.image.tag = DFTAG_CI;
       if (CompType == DFTAG_IMC)
@@ -587,7 +587,7 @@ DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
         if ((Writeref = Hnewref(file_id)) == 0)
           HGOTO_ERROR(DFE_NOREF, FAIL);
 
-      if (Hputelement(file_id, DFTAG_RI, Writeref, (uint8 *) image, xdim * ydim) == FAIL)
+      if (Hputelement(file_id, DFTAG_RI, Writeref, image, xdim * ydim) == FAIL)
         HGOTO_ERROR(DFE_PUTELEM, FAIL);
       Writerig.image.tag = DFTAG_RI;
     }     /* end else */
@@ -671,7 +671,7 @@ done:
  USAGE
     intn DFR8putimage(filename, image, xdim, ydim, compress)
         char *filename;         IN: name of HDF file
-        VOIDP image;            IN: ptr to buffer to store image in
+        const void * image;            IN: ptr to buffer to store image in
         int32 xdim,ydim;        IN: dims of space allocated by user for image
         uint16 compress;        IN: type of compression to store image with
  RETURNS
@@ -688,7 +688,7 @@ done:
  REVISION LOG
 --------------------------------------------------------------------------*/
 intn
-DFR8putimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
+DFR8putimage(const char *filename, const void * image, int32 xdim, int32 ydim,
              uint16 compress)
 {
     CONSTR(FUNC, "DFR8putimage");    /* for HERROR */
@@ -726,7 +726,7 @@ done:
  USAGE
     intn DFR8putimage(filename, image, xdim, ydim, compress)
         char *filename;         IN: name of HDF file
-        VOIDP image;            IN: ptr to buffer to store image in
+        const void * image;            IN: ptr to buffer to store image in
         int32 xdim,ydim;        IN: dims of space allocated by user for image
         uint16 compress;        IN: type of compression to store image with
  RETURNS
@@ -744,7 +744,7 @@ done:
  REVISION LOG
 --------------------------------------------------------------------------*/
 intn
-DFR8addimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
+DFR8addimage(const char *filename, const void * image, int32 xdim, int32 ydim,
              uint16 compress)
 {
     CONSTR(FUNC, "DFR8addimage");    /* for HERROR */
@@ -1163,7 +1163,7 @@ DFR8nimages(const char *filename)
         }   /* end for */
     }     /* end for */
 
-  HDfree((VOIDP) img_off);   /* free offsets */
+  HDfree(img_off);   /* free offsets */
   if (Hclose(file_id) == FAIL)
     HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
 

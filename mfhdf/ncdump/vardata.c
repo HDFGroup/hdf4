@@ -239,14 +239,14 @@ annotate(vp, fsp, cor, iel)
       case LANG_C:
 	/* C variable indices */
 	for (id = 0; id < vrank-1; id++)
-	  Printf("%d,", cor[id]);
-	Printf("%d", cor[id] + iel);
+	  Printf("%d,", (int)cor[id]);
+	Printf("%d", (int)(cor[id] + iel));
 	break;
       case LANG_F:
 	/* Fortran variable indices */
-	Printf("%d", cor[vrank-1] + iel + 1);
+	Printf("%d", (int)(cor[vrank-1] + iel + 1));
 	for (id = vrank-2; id >=0 ; id--) {
-	    Printf(",%d", 1 + cor[id]);
+	    Printf(",%d", (int)(1 + cor[id]));
 	}
 	break;
     }
@@ -483,7 +483,7 @@ vardata(vp, vdims, ncid, varid, fsp)
     int vrank = vp->ndims;
 
     /* printf format used to print each value */
-    char *fmt = get_fmt(ncid, varid, vp->type);
+    const char *fmt = get_fmt(ncid, varid, vp->type);
 
     nels = 1;
     for (id = 0; id < vrank; id++) {
@@ -518,7 +518,7 @@ vardata(vp, vdims, ncid, varid, fsp)
 	 * the capacity of MSDOS platforms, for example), we break each row
 	 * into smaller chunks, if necessary.
 	 */
-	long corsav;
+	long corsav=0;
 	long left = ncols;
 	bool lastrow;
 
@@ -532,20 +532,20 @@ vardata(vp, vdims, ncid, varid, fsp)
 		  case LANG_C:
 		    /* print brief comment with C variable indices */
 		    for (id = 0; id < vrank-1; id++)
-		      Printf("%d,", cor[id]);
+		      Printf("%d,", (int)cor[id]);
 		    if (vdims[vrank-1] == 1)
 		      Printf("0");
 		    else
-		      Printf(" 0-%d", vdims[vrank-1]-1);
+		      Printf(" 0-%d", (int)vdims[vrank-1]-1);
 		    break;
 		  case LANG_F:
 		    /* print brief comment with Fortran variable indices */
 		    if (vdims[vrank-1] == 1)
 		      Printf("1");
 		    else
-		      Printf("1-%d ",vdims[vrank-1]);
+		      Printf("1-%d ",(int)vdims[vrank-1]);
 		    for (id = vrank-2; id >=0 ; id--) {
-			Printf(",%d", 1 + cor[id]);
+			Printf(",%d", (int)(1 + cor[id]));
 		    }
 		    break;
 		}

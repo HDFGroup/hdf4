@@ -173,7 +173,7 @@ errvar(cdfp, varp)
      struct netcdf *cdfp;
      struct cdfvar *varp;
 {
-    char *types;
+    const char *types;
     int id;
 
     switch (varp->type) {
@@ -204,7 +204,7 @@ errvar(cdfp, varp)
 		   varp->name, types);
     for (id = 0; id < varp->ndims; id++)
       (void) fprintf(stderr, "%d%s",
-		     cdfp->dims[varp->dims[id]].size,
+		     (int)cdfp->dims[varp->dims[id]].size,
 		     id < varp->ndims - 1 ? ", " : "");
     (void) fprintf(stderr, ")\n");
 }

@@ -26,7 +26,7 @@ void define_netcdf();		/* generates all define mode stuff */
 void load_netcdf();		/* generates variable puts */
 void close_netcdf();		/* generates close */
 
-void derror();			/* varargs message emitter */
+void derror(const char *);			/* varargs message emitter */
 void *emalloc(), *erealloc();	/* malloc that checks for memory exhausted */
 void clearout();		/* initializes symbol table */
 void nc_getfill();		/* to get fill value for various types */
@@ -136,7 +136,7 @@ static int yymaxdepth = YYMAXDEPTH;
 void derror();
 
 yyerror(s)	/* called for yacc syntax error */
-     char *s;
+    const char *s;
 {
 	derror(s);
 }

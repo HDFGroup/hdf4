@@ -24,7 +24,7 @@ static char RcsId[] = "@(#)Revision";
 #include <math.h>
 #endif /* MIPSEL */
 
-void 
+static void 
 dumpgr_usage(intn  argc, 
              char *argv[])
 {
@@ -42,7 +42,7 @@ dumpgr_usage(intn  argc,
     printf("\t-x\tAscii text format of output (default)\n");
 }	/* end list_usage() */
 
-void 
+static void 
 init_dumpgr_opts(dump_info_t * dumpgr_opts)
 {
     dumpgr_opts->filter = DALL;	/* default dump all GRs */
@@ -55,7 +55,7 @@ init_dumpgr_opts(dump_info_t * dumpgr_opts)
     HDstrcpy(dumpgr_opts->file_name, "\0");
 }	/* end init_list_opts() */
 
-intn 
+static intn 
 parse_dumpgr_opts(dump_info_t *dumpgr_opts, 
                   intn        *curr_arg, 
                   intn         argc, 
@@ -210,7 +210,7 @@ parse_dumpgr_opts(dump_info_t *dumpgr_opts,
 }	/* end parse_dumpgr_opts */
 
 
-int32 
+static int32 
 grdumpfull(dump_info_t *dumpgr_opts, 
            int32        ri_id, 
            file_type_t  ft, 
@@ -343,7 +343,7 @@ dgr(dump_info_t *dumpgr_opts,
     int32       dimnattr[MAXRANK];
     FILE       *fp = NULL;
     int32       index;
-    VOIDP       attr_buf;
+    VOIDP       attr_buf=NULL;
     char       *nt_desc = NULL;
     char       *attr_nt_desc = NULL;
     int         index_error=0;
@@ -765,8 +765,8 @@ dgr(dump_info_t *dumpgr_opts,
                         {
                           if (FAIL == grdumpfull(dumpgr_opts, ri_id, ft, ncomp, dimsizes, nt, 16, fp))
                             {
-                                fprintf(stderr,"dumpfull() failed for %d'th attribute of %d'th GR in file %s\n",
-                                        j,i, file_name);
+                                fprintf(stderr,"grdumpfull() failed for %d'th GR in file %s\n",
+                                        i, file_name);
                                 ret_value = FAIL;
                                 goto done;
                             }

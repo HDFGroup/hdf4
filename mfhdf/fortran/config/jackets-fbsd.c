@@ -148,11 +148,6 @@ handle_err (pname, rcode)
     char *pname;		/* procedure name */
     int rcode;			/* error return */
 {
-#ifndef HDF
-    extern void NCadvise();
-#endif /* !HDF */
-    extern char *cdf_routine_name; /* routine name in error messages */
-
     cdf_routine_name = pname;
     NCadvise(rcode, "string won't fit in CHARACTER variable provided");
 }
@@ -872,9 +867,6 @@ ncvpt1_(cdfid, varid, indices, value, rcode)
     int datatype, ndims, natts, i;
     long nindices[MAX_VAR_DIMS];
     int dimid[MAX_VAR_DIMS];
-#ifdef HDF
-    NC *handle=NC_check_id(*cdfid);
-#endif /* HDF */
 
     if (ncvarinq (*cdfid, *varid - 1, (char *) 0,
 		  (nc_type *) & datatype, &ndims, dimid, &natts) == -1) {
@@ -904,25 +896,6 @@ ncvpt1_(cdfid, varid, indices, value, rcode)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#if defined __alpha || (_MIPS_SZLONG == 64)
-#ifdef HDF
-    if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
-	long          longs = *(int *)value;
-	if (ncvarput1(*cdfid, *varid - 1, nindices, (ncvoid *) &longs) == -1) {
-	    *rcode = ncerr;
-	}
-	return;
-    }				/* else */
-#else /* HDF */
-    if ((nc_type) datatype == NC_LONG) {
-	long          longs = *(int *)value;
-	if (ncvarput1(*cdfid, *varid - 1, nindices, (ncvoid *) &longs) == -1) {
-	    *rcode = ncerr;
-	}
-	return;
-    }				/* else */
-#endif /* HDF */
-#endif
     if (ncvarput1 (*cdfid, *varid - 1, nindices, value) == -1) {
 	*rcode = ncerr;
     }
@@ -971,9 +944,6 @@ ncvpt_(cdfid, varid, start, count, value, rcode)
 {
     long ncount[MAX_VAR_DIMS], nstart[MAX_VAR_DIMS], i;
     int ndims, datatype, dimarray[MAX_VAR_DIMS], natts;
-#ifdef HDF
-    NC *handle=NC_check_id(*cdfid);
-#endif /* HDF */
 
     if (ncvarinq (*cdfid, *varid - 1, (char *) 0, (nc_type *) & datatype,
 		  &ndims, dimarray, &natts) == -1) {
@@ -1018,37 +988,6 @@ ncvpt_(cdfid, varid, start, count, value, rcode)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#if defined __alpha || (_MIPS_SZLONG == 64)
-#ifdef HDF
-    if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
-	long *longs = itol (value, ncount, ndims);
-	if (longs == NULL) {
-	    *rcode = NC_SYSERR;
-	    return;
-	    }
-	if (ncvarput (*cdfid, *varid - 1, nstart, ncount,
-	              (ncvoid *) longs) == -1) {
-	    *rcode = ncerr;
-	}
-	free (longs);
-	return;
-    }				/* else */
-#else /* HDF */
-    if ((nc_type) datatype == NC_LONG) {
-	long *longs = itol (value, ncount, ndims);
-	if (longs == NULL) {
-	    *rcode = NC_SYSERR;
-	    return;
-	    }
-	if (ncvarput (*cdfid, *varid - 1, nstart, ncount,
-	              (ncvoid *) longs) == -1) {
-	    *rcode = ncerr;
-	}
-	free (longs);
-	return;
-    }				/* else */
-#endif /* HDF */
-#endif
     if (ncvarput (*cdfid, *varid - 1, nstart, ncount, value) == -1) {
 	*rcode = ncerr;
     }
@@ -1110,9 +1049,6 @@ ncvptg_(cdfid, varid, start, count, stride, basis, value, rcode)
     long nstride[MAX_VAR_DIMS], nbasis[MAX_VAR_DIMS];
     long tmpbasis;
     int ndims, datatype, dimarray[MAX_VAR_DIMS], natts;
-#ifdef HDF
-    NC *handle=NC_check_id(*cdfid);
-#endif /* HDF */
 
     if (ncvarinq (*cdfid, *varid - 1, (char *) 0, (nc_type *) & datatype,
 		  &ndims, dimarray, &natts) == -1) {
@@ -1186,37 +1122,6 @@ ncvptg_(cdfid, varid, start, count, stride, basis, value, rcode)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#if defined __alpha || (_MIPS_SZLONG == 64)
-#ifdef HDF
-    if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
-	long *longs = itolg (value, ncount, nbasis, ndims);
-	if (longs == NULL) {
-	    *rcode = NC_SYSERR;
-	    return;
-	    }
-	if (ncvarputg (*cdfid, *varid - 1, nstart, ncount, nstride,
-		      (long*)NULL, (ncvoid *) longs) == -1) {
-	    *rcode = ncerr;
-	}
-	free (longs);
-	return;
-    }				/* else */
-#else /* HDF */
-    if ((nc_type) datatype == NC_LONG) {
-	long *longs = itolg (value, ncount, nbasis, ndims);
-	if (longs == NULL) {
-	    *rcode = NC_SYSERR;
-	    return;
-	    }
-	if (ncvarputg (*cdfid, *varid - 1, nstart, ncount, nstride,
-		      (long*)NULL, (ncvoid *) longs) == -1) {
-	    *rcode = ncerr;
-	}
-	free (longs);
-	return;
-    }				/* else */
-#endif /* HDF */
-#endif
     if (ncvarputg (*cdfid, *varid - 1, nstart, ncount, nstride, nbasis,
 		   value) == -1) {
 	*rcode = ncerr;
@@ -1280,9 +1185,6 @@ ncvgt1_(cdfid, varid, indices, value, rcode)
 {
     long nindices[MAX_VAR_DIMS], i;
     int datatype, ndims, dimarray[MAX_VAR_DIMS], natts;
-#ifdef HDF
-    NC *handle=NC_check_id(*cdfid);
-#endif /* HDF */
 
     if (ncvarinq (*cdfid, *varid - 1, (char *) 0, (nc_type *) & datatype,
 		  &ndims, dimarray, &natts) == -1) {
@@ -1322,33 +1224,6 @@ ncvgt1_(cdfid, varid, indices, value, rcode)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#if defined __alpha || (_MIPS_SZLONG == 64)
-#ifdef HDF
-    if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
-	long          longs;
-	int           *ip = (int *) value;
-
-	if (ncvarget1(*cdfid, *varid - 1, nindices, (ncvoid *) &longs) == -1) {
-	    *rcode = ncerr;
-	    return;
-	}
-	*ip = longs;
-	return;
-    }				/* else */
-#else /* HDF */
-    if ((nc_type) datatype == NC_LONG) {
-	long          longs;
-	int           *ip = (int *) value;
-
-	if (ncvarget1(*cdfid, *varid - 1, nindices, (ncvoid *) &longs) == -1) {
-	    *rcode = ncerr;
-	    return;
-	}
-	*ip = longs;
-	return;
-    }				/* else */
-#endif /* HDF */
-#endif
     if (ncvarget1 (*cdfid, *varid - 1, nindices, value) == -1) {
 	*rcode = ncerr;
     }
@@ -1401,9 +1276,6 @@ ncvgt_(cdfid, varid, start, count, value, rcode)
 {
     long ncount[MAX_VAR_DIMS], nstart[MAX_VAR_DIMS];
     int i, ndims, datatype, dimarray[MAX_VAR_DIMS], natts;
-#ifdef HDF
-    NC *handle=NC_check_id(*cdfid);
-#endif /* HDF */
 
     if (ncvarinq (*cdfid, *varid - 1, (char *) 0, (nc_type *) & datatype,
 		  &ndims, dimarray, &natts) == -1) {
@@ -1464,53 +1336,6 @@ ncvgt_(cdfid, varid, start, count, value, rcode)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#if defined __alpha || (_MIPS_SZLONG == 64)
-#ifdef HDF
-    if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
-	long iocount = dimprod (ncount, ndims);	/* product of dimensions */
-	long *longs = (long *) malloc (iocount * sizeof (long));
-	int *ip;
-	long *lp = longs;
-
-	if (longs == NULL) {
-	    *rcode = NC_SYSERR;
-	    return;
-	}
-	if (ncvarget (*cdfid, *varid - 1, nstart, ncount,
-		      (ncvoid *) longs) == -1) {
-	    *rcode = ncerr;
-	    free (longs);
-	    return;
-	}
-	for (ip = (int *) value; iocount > 0; iocount--)
-	    *ip++ = *lp++;
-	free (longs);
-	return;
-    }				/* else */
-#else /* HDF */
-    if ((nc_type) datatype == NC_LONG) {
-	long iocount = dimprod (ncount, ndims);	/* product of dimensions */
-	long *longs = (long *) malloc (iocount * sizeof (long));
-	int *ip;
-	long *lp = longs;
-
-	if (longs == NULL) {
-	    *rcode = NC_SYSERR;
-	    return;
-	}
-	if (ncvarget (*cdfid, *varid - 1, nstart, ncount,
-		      (ncvoid *) longs) == -1) {
-	    *rcode = ncerr;
-	    free (longs);
-	    return;
-	}
-	for (ip = (int *) value; iocount > 0; iocount--)
-	    *ip++ = *lp++;
-	free (longs);
-	return;
-    }				/* else */
-#endif /* HDF */
-#endif
     if (ncvarget (*cdfid, *varid - 1, nstart, ncount, value) == -1) {
 	*rcode = ncerr;
     }
@@ -1578,9 +1403,6 @@ ncvgtg_(cdfid, varid, start, count, stride, basis, value, rcode)
     long nstride[MAX_VAR_DIMS], nbasis[MAX_VAR_DIMS];
     long tmpbasis;
     int i, ndims, datatype, dimarray[MAX_VAR_DIMS], natts;
-#ifdef HDF
-    NC *handle=NC_check_id(*cdfid);
-#endif /* HDF */
 
     if (ncvarinq (*cdfid, *varid - 1, (char *) 0, (nc_type *) & datatype,
 		  &ndims, dimarray, &natts) == -1) {
@@ -1668,47 +1490,6 @@ ncvgtg_(cdfid, varid, start, count, stride, basis, value, rcode)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#if defined __alpha || (_MIPS_SZLONG == 64)
-#ifdef HDF
-    if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
-	long iocount = dimprod (ncount, ndims);	/* product of dimensions */
-	long *longs = (long *) malloc (iocount * sizeof (long));
-
-	if (longs == NULL) {
-	    *rcode = NC_SYSERR;
-	    return;
-	}
-	if (ncvargetg (*cdfid, *varid - 1, nstart, ncount, nstride, 
-		       (long*)NULL, (ncvoid *) longs) == -1) {
-	    *rcode = ncerr;
-	    free (longs);
-	    return;
-	}
-	ltoig(longs, (int*)value, ncount, nbasis, ndims);
-	free (longs);
-	return;
-    }				/* else */
-#else /* HDF */
-    if ((nc_type) datatype == NC_LONG) {
-	long iocount = dimprod (ncount, ndims);	/* product of dimensions */
-	long *longs = (long *) malloc (iocount * sizeof (long));
-
-	if (longs == NULL) {
-	    *rcode = NC_SYSERR;
-	    return;
-	}
-	if (ncvargetg (*cdfid, *varid - 1, nstart, ncount, nstride, 
-		       (long*)NULL, (ncvoid *) longs) == -1) {
-	    *rcode = ncerr;
-	    free (longs);
-	    return;
-	}
-	ltoig(longs, (int*)value, ncount, nbasis, ndims);
-	free (longs);
-	return;
-    }				/* else */
-#endif /* HDF */
-#endif
     if (ncvargetg (*cdfid, *varid - 1, nstart, ncount, nstride,
 		   nbasis, value) == -1) {
 	*rcode = ncerr;
@@ -1795,9 +1576,6 @@ ncapt_(cdfid, varid, attname, datatype, attlen, value, rcode, attnamelen)
     int		*rcode;	
 {
     char name[MAX_NC_NAME + 1];
-#ifdef HDF
-    NC *handle=NC_check_id(*cdfid);
-#endif /* HDF */
 
     nstrncpy (name, attname, attnamelen);
 
@@ -1834,39 +1612,6 @@ ncapt_(cdfid, varid, attname, datatype, attlen, value, rcode, attnamelen)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#if defined __alpha || (_MIPS_SZLONG == 64)
-#ifdef HDF
-    if ((nc_type) *datatype == NC_LONG && handle->file_type!=HDF_FILE) {
-	long *longs = itol (value, attlen, 1);
-
-	if (longs == NULL) {
-	    *rcode = NC_SYSERR;
-	    return;
-	}
-	if (ncattput (*cdfid, *varid - 1, name, (nc_type) *datatype, *attlen,
-		      (ncvoid *) longs) == -1) {
-	    *rcode = ncerr;
-	}
-	free (longs);
-	return;
-    }				/* else */
-#else /* HDF */
-    if ((nc_type) *datatype == NC_LONG) {
-	long *longs = itol (value, attlen, 1);
-
-	if (longs == NULL) {
-	    *rcode = NC_SYSERR;
-	    return;
-	}
-	if (ncattput (*cdfid, *varid - 1, name, (nc_type) *datatype, *attlen,
-		      (ncvoid *) longs) == -1) {
-	    *rcode = ncerr;
-	}
-	free (longs);
-	return;
-    }				/* else */
-#endif /* HDF */
-#endif
     if (ncattput (*cdfid, *varid - 1, name, (nc_type) *datatype, *attlen,
 		  value) == -1) {
 	*rcode = ncerr;
@@ -1946,9 +1691,6 @@ ncagt_(cdfid, varid, attname, value, rcode, attnamelen)
     char name[MAX_NC_NAME + 1];
     int datatype;
     int attlen;
-#ifdef HDF
-    NC *handle=NC_check_id(*cdfid);
-#endif /* HDF */
 
     nstrncpy (name, attname, attnamelen);
     *rcode = 0;
@@ -1999,49 +1741,6 @@ ncagt_(cdfid, varid, attname, value, rcode, attnamelen)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#if defined __alpha || (_MIPS_SZLONG == 64)
-#ifdef HDF
-    if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
-	long *longs = (long *) malloc (attlen * sizeof (long));
-	int *ip;
-	long *lp = longs;
-
-	if (longs == NULL) {
-	    *rcode = NC_SYSERR;
-	    return;
-	}
-	if (ncattget (*cdfid, *varid - 1, name, (ncvoid *) longs) == -1) {
-	    *rcode = ncerr;
-	    free (longs);
-	    return;
-	}
-	for (ip = (int *) value; attlen > 0; attlen--)
-	    *ip++ = *lp++;
-	free (longs);
-	return;
-    }				/* else */
-#else /* HDF */
-    if ((nc_type) datatype == NC_LONG) {
-	long *longs = (long *) malloc (attlen * sizeof (long));
-	int *ip;
-	long *lp = longs;
-
-	if (longs == NULL) {
-	    *rcode = NC_SYSERR;
-	    return;
-	}
-	if (ncattget (*cdfid, *varid - 1, name, (ncvoid *) longs) == -1) {
-	    *rcode = ncerr;
-	    free (longs);
-	    return;
-	}
-	for (ip = (int *) value; attlen > 0; attlen--)
-	    *ip++ = *lp++;
-	free (longs);
-	return;
-    }				/* else */
-#endif /* HDF */
-#endif
     if (ncattget (*cdfid, *varid - 1, name, value) == -1) {
 	*rcode = ncerr;
     }

@@ -20,7 +20,7 @@ extern "C" {
 
 #ifndef MIPSEL /* punt */
 #ifndef NO_STDARG
-extern void derror(char *fmt, ...);
+extern void derror(const char *fmt, ...);
 #else
 extern void derror();
 #endif
@@ -62,6 +62,30 @@ extern int      getopt          PROTO((
                                        char *opts
                                        ))
 #endif
+
+/* generate.c */
+void cline(const char *stmnt);
+void fline(const char *stmnt);
+const char *nctype(nc_type);
+const char *ncctype(nc_type);
+char *cstrstr(char *, long);
+char *fstrstr(char *, long);
+char *fstring(nc_type, void *, int);
+void define_netcdf(char *netcdfname);
+
+/* load.c */
+void load_netcdf(void *rec_start);
+
+/* getfill.c */
+void nc_fill(nc_type , long , void *, union generic );
+void nc_getfill(nc_type , union generic *);
+void nc_putfill(nc_type , void *, union generic *);
+
+/* init.c */
+void init_netcdf(void);
+
+/* close.c */
+void close_netcdf(void);
 
 #ifdef __cplusplus
 }

@@ -40,14 +40,14 @@ static char sccsid[] = "@(#)xdr_stdio.c 1.16 87/08/11 Copyr 1984 Sun Micro";
 #endif
 #include "xdr.h"
 
-static bool_t   xdrstdio_getlong();
-static bool_t   xdrstdio_putlong();
-static bool_t   xdrstdio_getbytes();
-static bool_t   xdrstdio_putbytes();
-static u_long   xdrstdio_getpos();
-static bool_t   xdrstdio_setpos();
-static long *   xdrstdio_inline();
-static void xdrstdio_destroy();
+static bool_t   xdrstdio_getlong(XDR *, long *);
+static bool_t   xdrstdio_putlong(XDR *, long *);
+static bool_t   xdrstdio_getbytes(XDR *, caddr_t, u_int );
+static bool_t   xdrstdio_putbytes(XDR *, caddr_t, u_int );
+static u_long   xdrstdio_getpos(XDR *);
+static bool_t   xdrstdio_setpos(XDR *, u_long);
+static long *   xdrstdio_inline(XDR *, u_int);
+static void xdrstdio_destroy(XDR *);
 
 /*
  * Ops vector for stdio type XDR

@@ -109,7 +109,7 @@ xdr_NC_iarray(xdrs, ipp)
 /*
  * How much space will the xdr'd iarray take.
  */
-NC_xlen_iarray(iarray)
+int NC_xlen_iarray(iarray)
 NC_iarray *iarray ;
 {
 	int len = 4 ;

@@ -15,6 +15,8 @@
 #include "dumplib.h"
 #include "vardata.h"
 
+static const char * type_name(nc_type type);
+
 char *progname;
 
 static void
@@ -75,7 +77,7 @@ name_path(path)
 }
 
 
-static char *
+static const char *
 type_name(type)
      nc_type type;
 {
@@ -300,7 +302,7 @@ do_ncdump(path, specp)
 	(void) ncdiminq(ncid, dimid, dims[dimid].name, &dims[dimid].size);
 	if (dimid == xdimid)
 	  Printf ("\t%s = %s ; // (%d currently)\n",dims[dimid].name,
-		  "UNLIMITED", dims[dimid].size);
+		  "UNLIMITED", (int)dims[dimid].size);
 	else
 	  Printf ("\t%s = %ld ;\n",dims[dimid].name, dims[dimid].size);
     }
@@ -498,8 +500,8 @@ set_sigdigs(optarg)
 	      dbl_digits);
 	exit(EXIT_FAILURE);
     }
-    (void) sprintf(flt_fmt, "%%.%dg", flt_digits);
-    (void) sprintf(dbl_fmt, "%%.%dg", dbl_digits);
+    (void) sprintf(flt_fmt, "%%.%dg", (int)flt_digits);
+    (void) sprintf(dbl_fmt, "%%.%dg", (int)dbl_digits);
     set_formats(flt_fmt, dbl_fmt);
 }
 
@@ -509,9 +511,6 @@ main(argc, argv)
 int argc;
 char *argv[];
 {
-    extern int optind;
-    extern int opterr;
-    extern char *optarg;
     static struct fspec fspec =	/* defaults, overridden on command line */
       {
 	  0,			/* construct netcdf name from file name */

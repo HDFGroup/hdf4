@@ -121,7 +121,7 @@ int mode ;
 }
 
 
-nccreate(path, cmode)
+int nccreate(path, cmode)
 const char	*path ;	/* file name */
 int 		cmode ;
 {
@@ -136,7 +136,7 @@ int 		cmode ;
 }
 
 
-ncopen(path,mode)
+int ncopen(path,mode)
 const char	*path ;	/* file name */
 int 		mode ;
 {
@@ -150,7 +150,7 @@ int 		mode ;
 }
 
 
-ncsync(id)
+int ncsync(id)
 int id ;
 {
 	NC *handle ;
@@ -215,7 +215,7 @@ int id ;
  * In define mode, restore previous definition ;
  * In create, remove the file ;
  */
-ncabort(cdfid)
+int ncabort(cdfid)
 int cdfid ;
 {
 	NC *handle ;
@@ -310,7 +310,7 @@ int cdfid ;
 /* 
  * Deprecated function ;
  */
-ncnobuf(cdfid)
+int ncnobuf(cdfid)
 int cdfid ;
 {
 	NC *handle ;
@@ -415,7 +415,7 @@ const char *proto ;
 }
 
 
-ncredef(cdfid)
+int ncredef(cdfid)
 int cdfid ;
 {
 	NC *handle ;
@@ -652,7 +652,7 @@ int recnum ;
  *  Common code for ncendef, ncclose(endef)
  */
 static
-NC_endef( cdfid, handle )
+int NC_endef( cdfid, handle )
 int cdfid ;
 NC *handle ;
 {
@@ -791,7 +791,7 @@ done:
 }
 
 
-ncendef( cdfid )
+int ncendef( cdfid )
 int cdfid ;
 {
 	NC *handle ;
@@ -809,7 +809,7 @@ int cdfid ;
 /*
  * This routine is called by SDend()? -GV
  */
-ncclose( cdfid )
+int ncclose( cdfid )
 int cdfid ;
 {
 	NC *handle ;

@@ -504,8 +504,8 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
    vs_attr_t *vs_alist;
    vg_attr_t *v_alist;
    int32 i_type, i_count, i_size, off;
-   uint8 attrbuf[BUFFER], *buf, *ptr;
-   int32 (*fmtfn)(char *);
+   uint8 attrbuf[BUFFER], *buf=NULL, *ptr;
+   int32 (*fmtfn)(char *) =NULL;
    char name[FIELDNAMELENMAX+1];
 
    if (isvs)  {
@@ -563,14 +563,14 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
                      continue;
                   }
                   alloc_flag = 1;
-                  if ( ret = VSgetattr(vid, temp, i, buf)) {
+                  if ( FAIL==VSgetattr(vid, temp, i, buf)) {
                      printf(">>>dympattr: failed in VSgetattr.\n");
                      continue;
                   }
               }
               else 
               {
-                 if ( ret = VSgetattr(vid, temp, i, attrbuf)) {
+                 if ( FAIL==VSgetattr(vid, temp, i, attrbuf)) {
                      printf(">>>dympattr: failed in VSgetattr.\n");
                      continue;
                   }
@@ -668,14 +668,14 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
                  continue;
               }
               alloc_flag = 1;
-              if ( ret = Vgetattr(vid, i, buf)) {
+              if ( FAIL == Vgetattr(vid, i, buf)) {
                  printf(">>>dympattr: failed in Vgetattr.\n");
                  continue;
               }
           }
           else 
           {
-             if ( ret = Vgetattr(vid, i, attrbuf)) {
+             if ( FAIL == Vgetattr(vid, i, attrbuf)) {
                  printf(">>>dympattr: failed in Vgetattr.\n");
                  continue;
               }

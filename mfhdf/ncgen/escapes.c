@@ -4,6 +4,7 @@
  *   $Id$
  *********************************************************************/
 
+#include <stdlib.h>
 
 /*
  * "Expands" valid escape sequences in yystring (read by lex) into the
@@ -19,7 +20,6 @@ expand_escapes(termstring, yytext, yyleng)
      int yyleng;
 {
     char *s, *t, *endp;
-    extern long strtol();
     
     yytext[yyleng-1]='\0';	/* don't copy quotes */
     /* expand "\" escapes, e.g. "\t" to tab character  */

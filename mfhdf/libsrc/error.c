@@ -116,11 +116,11 @@ vfprintf(stream, fmt, va_alist)
  */
 void
 #ifndef NO_STDARG
-nc_serror(char *fmt, ...)
+nc_serror(const char *fmt, ...)
 #else
 /*VARARGS1*/
 nc_serror(fmt, va_alist)
-     char *fmt ;
+     const char *fmt ;
      va_dcl
 #endif /* !NO_STDARG */
 {
@@ -184,13 +184,13 @@ nc_serror(fmt, va_alist)
  */
 #ifndef NO_STDARG
 void
-NCadvise(int err, char *fmt,...)
+NCadvise(int err, const char *fmt,...)
 #else
 /*VARARGS1*/
 void
 NCadvise(err, fmt, va_alist)
      int err ;
-     char *fmt ;
+     const char *fmt ;
      va_dcl
 #endif /* !NO_STDARG */
 {

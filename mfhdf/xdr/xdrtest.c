@@ -2,9 +2,6 @@
  * 	Copyright 1988, University Corporation for Atmospheric Research
  *		Not for Resale. All copies to include this notice.
  */
-#ifndef lint	/* SUPPRESS 592 */
-static char rcsid[] = "$Id$" ;
-#endif
 
 /*
  * This program tests only the xdr library functionality required by netCDF.
@@ -68,12 +65,12 @@ static char rcsid[] = "$Id$" ;
 #include <console.h>
 #endif
 
-main(ac,av)
+int main(ac,av)
 int ac ;
 char *av[] ;
 {
 	int ii ;
-	char *fname ;
+	const char *fname ;
 	FILE *F ;
 	XDR xdrs[1] ;
 	u_int count ;

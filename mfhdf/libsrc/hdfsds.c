@@ -191,7 +191,7 @@ done:
 PRIVATE intn 
 hdf_read_ndgs(NC *handle)
 {
-    static char *FUNC = "hdf_read_ndg_dims";
+    static const char *FUNC = "hdf_read_ndg_dims";
     char     tmpname[80] = "";
     uint8    ntstring[4] = "";
     intn     dimcount;
@@ -210,7 +210,7 @@ hdf_read_ndgs(NC *handle)
     uint16   sdRef;
     uint16   tmpTag;
     uint16   tmpRef;
-    int16    rank;
+    int16    rank=0;
     nc_type  type;
     int32   *dimsizes = NULL;
     int32   *scaletypes = NULL;

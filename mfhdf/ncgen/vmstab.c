@@ -31,7 +31,6 @@ void *emalloc(), *erealloc();	/* malloc that checks for memory exhausted */
 void clearout();		/* initializes symbol table */
 void nc_getfill();		/* to get fill value for various types */
 void nc_putfill();		/* to get fill value for various types */
-char *nctype();		/* returns type name from number */
 void nc_fill();		/* fills a generic array with a value */
 
 extern int derror_count;	/* counts errors in netcdf definition */

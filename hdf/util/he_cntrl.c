@@ -898,7 +898,7 @@ int         he_batch = NO;
 int         he_nestLevel = 0;
 
 /* prompt is actually "he"<he_prompt><space> */
-char       *he_prompt = ">";
+const char  *he_prompt = ">";
 #define he_nestChar '>'
 
 /* table to associate command to the function --

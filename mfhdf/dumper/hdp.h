@@ -240,6 +240,8 @@ extern intn dumpattr(int32 vid, int32 findex, intn isvs, file_type_t ft, FILE *f
 extern char *tagnum_to_name(intn num);
 extern intn tagname_to_num(const char *name);
 extern void sort(int32 *chosen, int32 choices);
+int sort_obj_list_by_tag(const void *, const void *);
+int int32_compare(const void *, const void *);
 	/* filename list functions */
 extern filelist_t *make_file_list(intn curr_arg, intn argc, char *argv[]);
 extern char *get_next_file(filelist_t * f_list, intn advance);

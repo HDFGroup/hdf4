@@ -293,7 +293,7 @@ vsinstance_t *
 vsinst(HFILEID f,  /* IN: File handle */
        uint16 vsid /* IN: vdata id i.e. ref */)
 {
-    VOIDP      *t = NULL;
+    void *      *t = NULL;
     vfile_t    *vf = NULL;
     int32       key;
     vsinstance_t *ret_value = NULL; /* FAIL */
@@ -308,7 +308,7 @@ vsinst(HFILEID f,  /* IN: File handle */
 
     /* tbbtdfind returns a pointer to the vsinstance_t pointer */
     key = (int32)vsid;
-    if (( t = (VOIDP *) tbbtdfind(vf->vstree, (VOIDP) &key, NULL))== NULL)
+    if (( t = (void * *) tbbtdfind(vf->vstree, &key, NULL))== NULL)
         HGOTO_ERROR(DFE_NOMATCH,NULL);
 
     /* return the actual vsinstance_t ptr */
@@ -709,8 +709,8 @@ RETURNS
    Nothing
 
 *******************************************************************************/
-VOID
-vsdestroynode(VOIDP n /* IN: Node in TBBT-tree */)
+void
+vsdestroynode(void * n /* IN: Node in TBBT-tree */)
 {
     VDATA  *vs = NULL;
     intn   i;
@@ -781,7 +781,7 @@ VSPgetinfo(HFILEID f, /* IN: file handle */
         Vhbufsize = vh_length;
 
         if (Vhbuf != NULL)
-            HDfree((VOIDP) Vhbuf);
+            HDfree(Vhbuf);
 
         if ((Vhbuf = (uint8 *) HDmalloc(Vhbufsize)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
@@ -946,7 +946,7 @@ VSattach(HFILEID f,             /* IN: file handle */
           w->nvertices = 0;
 
           /* insert the vs instance in B-tree */
-          tbbtdins(vf->vstree, (VOIDP) w, NULL);    
+          tbbtdins(vf->vstree, w, NULL);    
 
           vs->instance = w;
       }     /* end of case where vsid is -1 */
@@ -1127,9 +1127,9 @@ VSdetach(int32 vkey /* IN: vdata key? */)
                   {
                       Vhbufsize = need;
                       if (Vhbuf)
-                          HDfree((VOIDP) Vhbuf);
+                          HDfree(Vhbuf);
 
-                      if ((Vhbuf = (uint8 *) HDmalloc(Vhbufsize)) == NULL)
+                      if ((Vhbuf = HDmalloc(Vhbufsize)) == NULL)
                           HGOTO_ERROR(DFE_NOSPACE, FAIL);
                   } /* end if */
 
@@ -1170,7 +1170,7 @@ VSdetach(int32 vkey /* IN: vdata key? */)
 
           /* remove all defined symbols */
           for (i = 0; i < vs->nusym; i++)
-              HDfree((VOIDP) vs->usym[i].name);
+              HDfree(vs->usym[i].name);
 
           if(vs->usym!=NULL)
               HDfree(vs->usym);   /* free the actual array */
@@ -1282,7 +1282,7 @@ VSgetid(HFILEID f,  /* IN: file handle */
 {
     vsinstance_t *w = NULL;
     vfile_t      *vf = NULL;
-    VOIDP        *t = NULL;
+    void *        *t = NULL;
     int32        key;
     int32        ret_value = SUCCEED;
     CONSTR(FUNC, "VSgetid");
@@ -1308,7 +1308,7 @@ VSgetid(HFILEID f,  /* IN: file handle */
         if (vf->vstree==NULL) 
             HGOTO_DONE(FAIL);
 
-        if ((t = (VOIDP *)tbbtfirst((TBBT_NODE *) * (vf->vstree))) == NULL)
+        if ((t = (void **)tbbtfirst((TBBT_NODE *) * (vf->vstree))) == NULL)
             HGOTO_DONE(FAIL);
 
         /* we assume 't' is valid at this point */
@@ -1319,11 +1319,11 @@ VSgetid(HFILEID f,  /* IN: file handle */
       {
           /* tbbtdfind returns a pointer to the vsinstance_t pointer */
           key = (int32)vsid;
-          t = (VOIDP *) tbbtdfind(vf->vstree, (VOIDP) &key, NULL);
+          t = (void * *) tbbtdfind(vf->vstree, &key, NULL);
 
           if (t == NULL)  /* couldn't find the old vsid */
               ret_value = (FAIL);
-          else if (NULL == (t = (VOIDP *) tbbtnext((TBBT_NODE *) t)))  /* get the next node in the tree */
+          else if (NULL == (t = (void * *) tbbtnext((TBBT_NODE *) t)))  /* get the next node in the tree */
               ret_value = (FAIL);
           else
             {
@@ -1563,9 +1563,9 @@ int32
 VSdelete(int32 f,    /* IN: file handle */
          int32 vsid  /* IN: vdata id i.e. ref */)
 {
-    VOIDP       v;
+    void *       v;
     vfile_t    *vf = NULL;
-    VOIDP      *t = NULL;
+    void *      *t = NULL;
     int32       key;
     int32       ret_value = SUCCEED;
     CONSTR(FUNC, "VSdelete");
@@ -1587,7 +1587,7 @@ VSdelete(int32 f,    /* IN: file handle */
 
     /* find vdata in TBBT using it's ref */
     key = vsid;
-    if (( t = (VOIDP *) tbbtdfind(vf->vstree, (VOIDP) &key, NULL))== NULL)
+    if (( t = (void * *) tbbtdfind(vf->vstree, &key, NULL))== NULL)
         HGOTO_DONE(FAIL);
 
     /* remove vdata from TBBT */
@@ -1595,7 +1595,7 @@ VSdelete(int32 f,    /* IN: file handle */
 
     /* destroy vdata node itself*/
     if (v != NULL)
-        vsdestroynode((VOIDP) v);
+        vsdestroynode(v);
 
     /* delete vdata header and data from file */
     if (Hdeldd(f, DFTAG_VS, (uint16) vsid) == FAIL)

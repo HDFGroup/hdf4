@@ -67,6 +67,7 @@ static int32  cdims[3]      = {1, 2, 3};  /* chunk lengths */
 
 /* Chunk teseting - arrays for chunk writes */
 /* float32 arrays */
+#ifdef NOT_USED
 static float32  chunk1_f32[4] =
         {(float32) 0.0, (float32) 1.0, (float32) 2.0, (float32) 3.0};
 
@@ -97,6 +98,7 @@ static uint16  chunk4_u16[4] =        { 100, 101, 102, 103};
 static uint16  chunk5_u16[4] =        { 110, 111, 112, 113};
 
 static uint16  chunk6_u16[4] =        { 120, 121, 122, 123};
+#endif /* NOT_USED */
 
 /* uint16 chunk arrays used in example 1 */
 static uint16  chunk1_2u16[6] = {11, 21, 
@@ -195,7 +197,7 @@ static uint8  u8_data[2][3][4] =
         { 110, 111, 112, 113},
         { 120, 121, 122, 123}}};
 
-intn
+static intn
 test_chunk()
 {
     int32 fchk; /* File handles */
@@ -217,10 +219,10 @@ test_chunk()
     int32   index;       /* Index of dataset in file */
     intn    status;      /* status flag */
     intn    i,j,k;       /* loop variables */
-    int32   start[10], end[10], stride[10]; /* start, end, stride arrays */
+    int32   start[10], end[10]; /* start, end, stride arrays */
     int32   idata[100];
     int32   rdata[100];
-    float32 max, min;
+    float32 max;
     int     num_err = 0;    /* number of errors so far */
 
 
@@ -1472,11 +1474,11 @@ test_chunk()
         || cflags != (HDF_CHUNK | HDF_NBIT))
       {
         fprintf(stderr, "Chunk Test 8. SDgetchunkinfo returned wrong values\n");
-        fprintf(stderr, "Chunk Test 8. cflags =%d \n",cflags);
-        fprintf(stderr, "Chunk Test 8. cdims[%d] =%d \n", 0, cdims[0]);
-        fprintf(stderr, "Chunk Test 8. cdims[%d] =%d \n", 1, cdims[1]);
-        fprintf(stderr, "Chunk Test 8. rcdims[%d] =%d \n", 0, rcdims[0]);
-        fprintf(stderr, "Chunk Test 8. rcdims[%d] =%d \n", 1, cdims[1]);
+        fprintf(stderr, "Chunk Test 8. cflags =%d \n",(int)cflags);
+        fprintf(stderr, "Chunk Test 8. cdims[%d] =%d \n", 0, (int)cdims[0]);
+        fprintf(stderr, "Chunk Test 8. cdims[%d] =%d \n", 1, (int)cdims[1]);
+        fprintf(stderr, "Chunk Test 8. rcdims[%d] =%d \n", 0, (int)rcdims[0]);
+        fprintf(stderr, "Chunk Test 8. rcdims[%d] =%d \n", 1, (int)cdims[1]);
         num_err++;
         goto done;
       }
@@ -1502,7 +1504,7 @@ static int16  netcdf_u16[2][3] = {{1, 2, 3},
 /* Tests reading of netCDF file 'test1.nc' using the SDxxx inteface.
    Note not all features of reading SDS from netCDF files are tested here.
    Hopefully more tests will be added over time as needed/required. */
-intn
+static intn
 test_netcdf_reading()
 {
 	int32 sd_id;
@@ -1610,7 +1612,7 @@ main(int argc, char *argv[])
     int32 sdid;        /* another SDS handle */
     int32 rank;        /* rank of SDS */
     intn  status;      /* status flag */
-    intn  i,j,k;       /* loop variables */
+    intn  i;           /* loop variables */
     intn  nattrs;      /* Number of attributes again? */
     char name[90];
     char text[256];
@@ -2313,7 +2315,7 @@ main(int argc, char *argv[])
             (idata[i+12] != 100 + (i-12))) 
           {
            fprintf(stderr, "wrong value: should be %d, got %d %d\n",
-                           100 + i-12, idata[i], idata[i+12]);
+                           100 + i-12, (int)idata[i], (int)idata[i+12]);
            num_err++;
           }
       }
@@ -2323,7 +2325,7 @@ main(int argc, char *argv[])
         if (idata[i] ==fillval) 
           {
            fprintf(stderr, "wrong value: should not be %d, got %d\n",
-                           fillval, idata[i]);
+                           (int)fillval, (int)idata[i]);
            num_err++;
           }
       }
@@ -2356,7 +2358,7 @@ main(int argc, char *argv[])
         if (idata[i] != (100 + (i-12)))  
           {
            fprintf(stderr, "wrong value: should be %d, got %d \n",
-                           100 + i-12, idata[i]);
+                           100 + i-12, (int)idata[i]);
            num_err++;
           }
       }
@@ -2366,7 +2368,7 @@ main(int argc, char *argv[])
         if (idata[i] != fillval) 
           {
            fprintf(stderr, "wrong value: should be %d, got %d\n",
-                           fillval, idata[i]);
+                           (int)fillval, (int)idata[i]);
            num_err++;
           }
       }
@@ -2484,7 +2486,7 @@ main(int argc, char *argv[])
         if ((idata[i] != (i-12)) || (idata[i+12] != (i-12))) 
           {
            fprintf(stderr, "wrong value for %d: should be %d, got %d\n",
-                           i-12, idata[i], idata[i+12]);
+                           i-12, (int)idata[i], (int)idata[i+12]);
            num_err++;
           }
       }
@@ -2494,7 +2496,7 @@ main(int argc, char *argv[])
         if (idata[i] !=fillval) 
           {
            fprintf(stderr, "wrong value: should be %d, got %d\n",
-                           fillval, idata[i]);
+                           (int)fillval, (int)idata[i]);
            num_err++;
           }
       }
@@ -2625,7 +2627,7 @@ main(int argc, char *argv[])
         if (idata[i] != i) 
           {
            fprintf(stderr, "wrong value: should be %d, got %d\n",
-                           i, idata[i]);
+                           i, (int)idata[i]);
            num_err++;
           }
       }

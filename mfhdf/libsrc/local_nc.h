@@ -230,7 +230,7 @@ typedef struct {
 #define HDF_FILE     1
 #define CDF_FILE     2
 
-extern char *cdf_routine_name ; /* defined in lerror.c */
+extern const char *cdf_routine_name ; /* defined in lerror.c */
 
                /*  C D F 1 */
 #define	NCMAGIC	0x43444601
@@ -315,18 +315,16 @@ extern "C" {
 #ifdef HDF
 #define NCgenio          HNAME(NCgenio)      /* from putgetg.c */
 #define NC_var_shape     HNAME(NC_var_shape) /* from var.c */
-#define NCvcmaxcontig    HNAME(NCvcmaxcontig)/* from putget.c */
-#define ncvarcpy         HNAME(ncvarcpy)     /* from var.c */
 #endif
 #endif /* HAVE_NETCDF ie. NOT USING HDF version of netCDF ncxxx API */
 
 extern void		nc_serror			PROTO((
-	char *fmt,
+	const char *fmt,
 	...
 )) ;
 extern void		NCadvise			PROTO((
 	int err,
-	char *fmt,
+	const char *fmt,
 	...
 )) ;
 
@@ -522,7 +520,7 @@ extern int	NCvario			PROTO((
 	int varid,
 	const long *start,
 	const long *edges,
-	Void *values
+	void *values
 ));
 extern bool_t	NCcoordck	PROTO((
 	NC *handle,
@@ -623,7 +621,7 @@ extern intn SDPfreebuf PROTO((void));
 
 extern intn NCgenio
     PROTO((NC *handle, int varid, const long *start, const long *count,
-        const long *stride, const long *imap,Void *values));
+        const long *stride, const long *imap, const void *values));
 
 extern intn NC_var_shape
     PROTO((NC_var *var,NC_array *dims));

@@ -39,7 +39,7 @@ static char RcsId[] = "$Revision$";
 
 /* Local Data to verify image information in datafile */
 const struct {
-    char *name;
+    const char *name;
     int32 ncomp;
     int32 nt;
     int32 il;

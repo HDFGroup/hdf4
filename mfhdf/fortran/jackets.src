@@ -195,11 +195,6 @@ handle_err (pname, rcode)
     char *pname;		/* procedure name */
     int rcode;			/* error return */
 {
-#ifndef HDF
-    extern void NCadvise();
-#endif /* !HDF */
-    extern char *cdf_routine_name; /* routine name in error messages */
-
     cdf_routine_name = pname;
     NCadvise(rcode, "string won't fit in CHARACTER variable provided");
 }
@@ -929,9 +924,11 @@ ltoig(longs, ints, dims, imap, ndims)
     int datatype, ndims, natts, i;
     long nindices[MAX_VAR_DIMS];
     int dimid[MAX_VAR_DIMS];
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     NC *handle=NC_check_id(*cdfid);
 #endif /* HDF */
+#endif
 
     if (ncvarinq (*cdfid, *varid - 1, (char *) 0,
 		  (nc_type *) & datatype, &ndims, dimid, &natts) == -1) {
@@ -1029,9 +1026,11 @@ ltoig(longs, ints, dims, imap, ndims)
 % {
     long ncount[MAX_VAR_DIMS], nstart[MAX_VAR_DIMS], i;
     int ndims, datatype, dimarray[MAX_VAR_DIMS], natts;
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     NC *handle=NC_check_id(*cdfid);
 #endif /* HDF */
+#endif
 
     if (ncvarinq (*cdfid, *varid - 1, (char *) 0, (nc_type *) & datatype,
 		  &ndims, dimarray, &natts) == -1) {
@@ -1169,9 +1168,11 @@ ltoig(longs, ints, dims, imap, ndims)
     long nstride[MAX_VAR_DIMS], nbasis[MAX_VAR_DIMS];
     long tmpbasis;
     int ndims, datatype, dimarray[MAX_VAR_DIMS], natts;
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     NC *handle=NC_check_id(*cdfid);
 #endif /* HDF */
+#endif
 
     if (ncvarinq (*cdfid, *varid - 1, (char *) 0, (nc_type *) & datatype,
 		  &ndims, dimarray, &natts) == -1) {
@@ -1340,9 +1341,11 @@ ltoig(longs, ints, dims, imap, ndims)
 % {
     long nindices[MAX_VAR_DIMS], i;
     int datatype, ndims, dimarray[MAX_VAR_DIMS], natts;
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     NC *handle=NC_check_id(*cdfid);
 #endif /* HDF */
+#endif
 
     if (ncvarinq (*cdfid, *varid - 1, (char *) 0, (nc_type *) & datatype,
 		  &ndims, dimarray, &natts) == -1) {
@@ -1462,9 +1465,11 @@ ltoig(longs, ints, dims, imap, ndims)
 % {
     long ncount[MAX_VAR_DIMS], nstart[MAX_VAR_DIMS];
     int i, ndims, datatype, dimarray[MAX_VAR_DIMS], natts;
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     NC *handle=NC_check_id(*cdfid);
 #endif /* HDF */
+#endif
 
     if (ncvarinq (*cdfid, *varid - 1, (char *) 0, (nc_type *) & datatype,
 		  &ndims, dimarray, &natts) == -1) {
@@ -1640,9 +1645,11 @@ ltoig(longs, ints, dims, imap, ndims)
     long nstride[MAX_VAR_DIMS], nbasis[MAX_VAR_DIMS];
     long tmpbasis;
     int i, ndims, datatype, dimarray[MAX_VAR_DIMS], natts;
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     NC *handle=NC_check_id(*cdfid);
 #endif /* HDF */
+#endif
 
     if (ncvarinq (*cdfid, *varid - 1, (char *) 0, (nc_type *) & datatype,
 		  &ndims, dimarray, &natts) == -1) {
@@ -1857,9 +1864,11 @@ ltoig(longs, ints, dims, imap, ndims)
 %     )
 % {
     char name[MAX_NC_NAME + 1];
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     NC *handle=NC_check_id(*cdfid);
 #endif /* HDF */
+#endif
 
     nstrncpy (name, attname, attnamelen);
 
@@ -2007,9 +2016,11 @@ ltoig(longs, ints, dims, imap, ndims)
     char name[MAX_NC_NAME + 1];
     int datatype;
     int attlen;
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     NC *handle=NC_check_id(*cdfid);
 #endif /* HDF */
+#endif
 
     nstrncpy (name, attname, attnamelen);
     *rcode = 0;

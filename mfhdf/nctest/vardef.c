@@ -226,7 +226,6 @@ test_ncvardef(path)
 		    if ((nclong) val != (nclong) fillval) {
                         nclong a, b;
 
-printf("\n\n Was expecting %d instead got a %d\n", fillval, val);
 printf("\n\n Was expecting %ld instead got a %ld\n", fillval, val);
                         a = (nclong) val;
                         b = (nclong) fillval;

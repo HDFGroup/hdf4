@@ -247,7 +247,7 @@ struct cdfelm {			/* coordinates and generic value */
  *    for each existing variable, put values of its type at each point
  *    get values and compare with put values
  */
-int
+static int
 test_varputget1(cdfid)
      int cdfid;			/* handle of netcdf open and in data mode */
 {
@@ -257,8 +257,8 @@ test_varputget1(cdfid)
     int ne = 3;			/* number of test points */
     struct cdfelm elm[3];	/* coordinates and values of test points */
     static long edges[] = {1};
-    void *voidp;
-    void *tmpp;
+    void *voidp=NULL;
+    void *tmpp=NULL;
     char chval;
     short shval;
     nclong loval;

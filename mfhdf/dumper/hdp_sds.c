@@ -23,7 +23,7 @@ static char RcsId[] = "@(#)Revision";
 #include <math.h>
 #endif /* MIPSEL */
 
-void 
+static void 
 dumpsds_usage(intn argc, 
               char *argv[])
 {
@@ -41,7 +41,7 @@ dumpsds_usage(intn argc,
     printf("\t-x\tAscii text format of output (default)\n");
 }	/* end list_usage() */
 
-void 
+static void 
 init_dumpsds_opts(dump_info_t * dumpsds_opts)
 {
     dumpsds_opts->filter = DALL;	/* default dump all SDSs */
@@ -54,7 +54,7 @@ init_dumpsds_opts(dump_info_t * dumpsds_opts)
     HDstrcpy(dumpsds_opts->file_name, "\0");
 }	/* end init_list_opts() */
 
-intn 
+static intn 
 parse_dumpsds_opts(dump_info_t *dumpsds_opts, 
                    intn *curr_arg, 
                    intn argc, char *argv[])

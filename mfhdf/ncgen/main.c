@@ -12,6 +12,7 @@
 #include <locale.h>
 #endif
     
+#include "ncgen.h"
 #include "genlib.h"
 
 char *progname;			/* for error messages */
@@ -36,11 +37,8 @@ main(argc, argv)
 int argc;
 char *argv[];
 {
-    extern int optind;
-    extern int opterr;
-    extern char *optarg;
     int c;
-    FILE *fp, *efopen();
+    FILE *fp;
 
     yyin=stdin;
     yyout=stdout;
@@ -81,7 +79,7 @@ char *argv[];
 	      derror ("%s: out of memory", progname);
 	      exit(1);
 	  }
-	  (void)strcpy(netcdf_name,optarg);
+	  strcpy(netcdf_name,optarg);
 	  break;
 	case '?':
 	  usage();

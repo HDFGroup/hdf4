@@ -80,7 +80,7 @@ PRIVATE NC_var *SDIget_var
     (NC *handle, int32 sdsid);
 
 PRIVATE intn SDIputattr 
-    (NC_array **ap, char *name, int32 nt, intn count, VOIDP data);
+    (NC_array **ap, const char *name, int32 nt, intn count, const void * data);
 
 PRIVATE int32 SDIgetcoordvar 
     (NC *handle, NC_dim *dim, int32 id, int32 nt);
@@ -634,7 +634,7 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
            int32 *start,  /* IN:  coords of starting point */
            int32 *stride, /* IN:  stride along each dimension */
            int32 *end,    /* IN:  number of values to read per dimension */
-           VOIDP  data    /* OUT: data buffer */)
+           void *  data    /* OUT: data buffer */)
 {
     NC     *handle = NULL;
     NC_dim *dim = NULL;
@@ -769,7 +769,7 @@ done:
 ******************************************************************************/
 int32
 SDnametoindex(int32 fid,  /* IN: file ID */
-              char *name  /* IN: name of dataset to search for */)
+              const char *name  /* IN: name of dataset to search for */)
 {
     intn     ii;
     intn     len;
@@ -843,8 +843,8 @@ done:
 ******************************************************************************/
 intn
 SDgetrange(int32 sdsid, /* IN:  dataset ID */
-           VOIDP pmax,  /* OUT: valid max */
-           VOIDP pmin   /* OUT: valid min */)
+           void * pmax,  /* OUT: valid max */
+           void * pmin   /* OUT: valid min */)
 {
     NC       *handle = NULL;
     NC_var   *var = NULL;
@@ -972,7 +972,7 @@ status  = SDsetdimval_comp(dimid, compt_mode);
 ******************************************************************************/
 int32
 SDcreate(int32  fid,      /* IN: file ID */
-         char  *name,     /* IN: dataset name */
+         const char  *name, /* IN: dataset name */
          int32  nt,       /* IN: dataset number type */
          int32  rank,     /* IN: rank of dataset */
          int32 *dimsizes  /* IN: array of dimension sizes */)
@@ -1155,7 +1155,7 @@ SDcreate(int32  fid,      /* IN: file ID */
     handle->flags |= NC_HDIRTY;
 
     /* free dims */
-    HDfree((VOIDP)dims);
+    HDfree(dims);
 
     ret_value = sdsid;
 
@@ -1265,7 +1265,7 @@ done:
 ******************************************************************************/
 intn
 SDsetdimname(int32  id,   /* IN: dataset ID */
-             char  *name  /* IN: dimension name */)
+             const char  *name  /* IN: dimension name */)
 {
     NC         *handle = NULL;
     NC_dim     *dim = NULL;
@@ -1451,10 +1451,10 @@ done:
 ******************************************************************************/
 PRIVATE intn
 SDIputattr(NC_array **ap,   /* IN/OUT: attribute list */
-           char      *name, /* IN:     attribute name */
+           const char *name, /* IN:     attribute name */
            int32      nt,   /* IN:     attribute number type */
            intn       count,/* IN:     number of attribute values */
-           VOIDP      data  /* IN:     attribute values */)
+           const void *      data  /* IN:     attribute values */)
 {
     NC_attr *attr = NULL;
     NC_attr **atp = NULL;
@@ -1563,8 +1563,8 @@ done:
 ******************************************************************************/
 intn
 SDsetrange(int32 sdsid, /* IN: dataset ID */
-           VOIDP pmax,  /* IN: valid max */
-           VOIDP pmin   /* IN: valid min */)
+           void * pmax,  /* IN: valid max */
+           void * pmin   /* IN: valid min */)
 {
     NC      *handle = NULL;
     NC_var  *var = NULL;
@@ -1607,8 +1607,7 @@ SDsetrange(int32 sdsid, /* IN: dataset ID */
     HDmemcpy(data + sz, pmax, sz);
 
     /* call common code */
-    if(SDIputattr(&var->attrs, _HDF_ValidRange, var->HDFtype, (intn) 2, 
-                  (VOIDP) data) == FAIL)
+    if(SDIputattr(&var->attrs, _HDF_ValidRange, var->HDFtype, (intn) 2, data) == FAIL)
       {
           ret_value = FAIL;
           goto done;
@@ -1737,10 +1736,10 @@ done:
 ******************************************************************************/
 intn
 SDsetattr(int32 id,    /* IN: object ID */
-          char *name,  /* IN: attribute name */
+          const char *name,  /* IN: attribute name */
           int32 nt,    /* IN: attribute number type */
           int32 count, /* IN: number of attribute values */
-          VOIDP data   /* IN: attribute values */)
+          const void * data   /* IN: attribute values */)
 {
     NC_array **ap = NULL;
     NC        *handle = NULL;
@@ -1919,7 +1918,7 @@ done:
 intn
 SDreadattr(int32 id,    /* IN:  object ID */
            int32 index, /* IN:  attribute index */
-           VOIDP buf    /* OUT: data buffer  */)
+           void * buf    /* OUT: data buffer  */)
 {
 
     NC_array  *ap = NULL;
@@ -1996,7 +1995,7 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
             int32 *start,  /* IN: coords of starting point */
             int32 *stride, /* IN: stride along each dimension */
             int32 *end,    /* IN: number of values to write per dimension */
-            VOIDP  data    /* IN: data buffer */)
+            void *  data    /* IN: data buffer */)
 {
     intn    varid;
     int32   status;
@@ -2119,7 +2118,7 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
     if(stride == NULL || no_strides==1)
         status = NCvario(handle, varid, Start, End, (Void *)data);
     else
-        status = NCgenio(handle, varid, Start, End, Stride, NULL, (VOID *)data);
+        status = NCgenio(handle, varid, Start, End, Stride, NULL, data);
 
     if(status == -1)
         ret_value = FAIL;
@@ -2153,10 +2152,10 @@ done:
 ******************************************************************************/
 intn
 SDsetdatastrs(int32 sdsid, /* IN: dataset ID */
-              char *l,     /* IN: label string ("long_name") */
-              char *u,     /* IN: units string ("units") */
-              char *f,     /* IN: format string ("format") */
-              char *c      /* IN: coordsys string ("coordsys") */)
+              const char *l,     /* IN: label string ("long_name") */
+              const char *u,     /* IN: units string ("units") */
+              const char *f,     /* IN: format string ("format") */
+              const char *c      /* IN: coordsys string ("coordsys") */)
 {
     NC     *handle = NULL;
     NC_var *var = NULL;
@@ -2289,35 +2288,35 @@ SDsetcal(int32   sdsid,/* IN: dataset ID */
       }
 
     if(SDIputattr(&var->attrs, _HDF_ScaleFactor, DFNT_FLOAT64, 
-                  (intn) 1, (VOIDP) &cal) == FAIL)
+                  (intn) 1, &cal) == FAIL)
       {
           ret_value = FAIL;
           goto done;
       }
 
     if(SDIputattr(&var->attrs, _HDF_ScaleFactorErr, DFNT_FLOAT64, 
-                  (intn) 1, (VOIDP) &cale) == FAIL)
+                  (intn) 1, &cale) == FAIL)
       {
           ret_value = FAIL;
           goto done;
       }
 
     if(SDIputattr(&var->attrs, _HDF_AddOffset, DFNT_FLOAT64, 
-                  (intn) 1, (VOIDP) &ioff) == FAIL)
+                  (intn) 1, &ioff) == FAIL)
       {
           ret_value = FAIL;
           goto done;
       }
 
     if(SDIputattr(&var->attrs, _HDF_AddOffsetErr, DFNT_FLOAT64, 
-                  (intn) 1, (VOIDP) &ioffe) == FAIL)
+                  (intn) 1, &ioffe) == FAIL)
       {
           ret_value = FAIL;
           goto done;
       }
 
     if(SDIputattr(&var->attrs, _HDF_CalibratedNt, DFNT_INT32, 
-                  (intn) 1, (VOIDP) &nt) == FAIL)
+                  (intn) 1, &nt) == FAIL)
       {
           ret_value = FAIL;
           goto done;
@@ -2351,7 +2350,7 @@ done:
 ******************************************************************************/
 intn
 SDsetfillvalue(int32 sdsid, /* IN: dataset ID */
-               VOIDP val    /* IN: fillvalue */)
+               void * val    /* IN: fillvalue */)
 {
     NC     *handle = NULL;
     NC_var *var = NULL;
@@ -2417,7 +2416,7 @@ done:
 ******************************************************************************/
 intn
 SDgetfillvalue(int32 sdsid, /* IN:  dataset ID */
-               VOIDP val    /* OUT: fillvalue */)
+               void * val    /* OUT: fillvalue */)
 {
     NC       *handle = NULL;
     NC_var   *var = NULL;
@@ -2859,9 +2858,9 @@ done:
 ******************************************************************************/ 
 intn
 SDsetdimstrs(int32 id, /* IN: dimension ID */
-             char *l,  /* IN: label string ("long_name") */
-             char *u,  /* IN: units string ("units") */
-             char *f   /* IN: format string ("format") */)
+             const char *l,  /* IN: label string ("long_name") */
+             const char *u,  /* IN: units string ("units") */
+             const char *f   /* IN: format string ("format") */)
 {
     intn       varid;
     NC        *handle = NULL;
@@ -3024,7 +3023,7 @@ intn
 SDsetdimscale(int32 id,    /* IN: dimension ID */
               int32 count, /* IN: number of values */
               int32 nt,    /* IN: number type of data */
-              VOIDP data   /* IN: scale values */)
+              void * data   /* IN: scale values */)
 {
     NC        *handle = NULL;
     NC_dim    *dim = NULL;
@@ -3117,7 +3116,7 @@ done:
 ******************************************************************************/ 
 intn 
 SDgetdimscale(int32 id,   /* IN:  dimension ID */
-              VOIDP data  /* OUT: scale values */)
+              void * data  /* OUT: scale values */)
 {
     NC        *handle = NULL;
     NC_dim    *dim = NULL;
@@ -3446,7 +3445,7 @@ done:
  USAGE
 	int32 SDsetexternalfile(id, filename, offset)
         int32   id;                  
-        char  * filename;            
+        const char  * filename;            
         int32   offset;              
 
  DESCRIPTION
@@ -3472,7 +3471,7 @@ done:
 ******************************************************************************/ 
 intn 
 SDsetexternalfile(int32 id,       /* IN: dataset ID */
-                  char *filename, /* IN: name of external file */
+                  const char *filename, /* IN: name of external file */
                   int32 offset    /* IN: offset in external file */)
 {
     NC       *handle = NULL;
@@ -3876,7 +3875,7 @@ done:
 ******************************************************************************/ 
 int32
 SDfindattr(int32 id,       /* IN: object ID */
-           char *attrname  /* IN: attribute name */)
+           const char *attrname  /* IN: attribute name */)
 {
     NC_array  *ap = NULL;
     NC_array **app = NULL;
@@ -4737,7 +4736,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     int8       outntsubclass;      /* the data's machine type */
     uintn      convert;            /* whether to convert or not */
     static     int32 tBuf_size = 0;/* statc conversion buffer size */
-    static     VOID  *tBuf = NULL; /* static buffer used for conversion */
+    static     void  *tBuf = NULL; /* static buffer used for conversion */
     intn       i;                  /* loop variable */
     intn       ret_value = SUCCEED;   /* return value */
 
@@ -4976,9 +4975,9 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     if(convert && tBuf_size < fill_val_len) 
       {
           if(tBuf != NULL) 
-              HDfree((VOIDP)tBuf);
+              HDfree(tBuf);
           tBuf_size = fill_val_len;
-          tBuf      = (VOID *) HDmalloc(tBuf_size);
+          tBuf      = HDmalloc(tBuf_size);
           if(tBuf == NULL) 
             {
                 tBuf_size = 0;
@@ -4999,7 +4998,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
                 goto done;
             } 
 
-          if (FAIL == DFKnumout((VOID *)fill_val, tBuf, 
+          if (FAIL == DFKnumout(fill_val, tBuf, 
                                 (uint32) (fill_val_len/var->HDFsize), 0, 0))
             {
                 ret_value    = FAIL;
@@ -5015,7 +5014,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
                            (uint16) var->data_ref, /* Data ref */
                            nlevels,                /* nlevels */
                            fill_val_len,           /* fill value length */
-                           (VOID *)tBuf,           /* fill value */
+                           tBuf,           /* fill value */
                            (HCHUNK_DEF *)chunk      /* chunk definition */);
       }
     else /* no need to convert fill value */
@@ -5029,7 +5028,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
                              (uint16) var->data_ref, /* Data ref */
                              nlevels,                /* nlevels */
                              fill_val_len,           /* fill value length */
-                             (VOID *)fill_val,       /* fill value */
+                             fill_val,       /* fill value */
                              (HCHUNK_DEF *)chunk      /* chunk definition */);
       }
 
@@ -5226,7 +5225,7 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
 intn 
 SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
              int32      *origin,/* IN: origin of chunk to write */
-             const VOID *datap  /* IN: buffer for data */)
+             const void *datap  /* IN: buffer for data */)
 {
     NC        *handle = NULL;   /* file handle */
     NC_var    *var    = NULL;   /* SDS variable */
@@ -5239,7 +5238,7 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
     intn       i;
     sp_info_block_t info_block; /* special info block */
     static uint32 tBuf_size = 0; /* statc conversion buffer size */
-    static VOID  *tBuf = NULL;   /* static buffer used for conversion */
+    static void  *tBuf = NULL;   /* static buffer used for conversion */
     intn       ret_value = SUCCEED;
 
     info_block.cdims = NULL;
@@ -5324,9 +5323,9 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
                       if(convert && tBuf_size < byte_count) 
                         {
                             if(tBuf != NULL) 
-                                HDfree((VOIDP)tBuf);
+                                HDfree(tBuf);
                             tBuf_size = byte_count;
-                            tBuf      = (VOID *)HDmalloc(tBuf_size);
+                            tBuf      = HDmalloc(tBuf_size);
                             if(tBuf == NULL) 
                               {
                                   tBuf_size = 0;
@@ -5350,7 +5349,7 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
                               } 
 
                             /* convert it */
-                            if (FAIL == DFKnumout((VOID *)datap, tBuf, 
+                            if (FAIL == DFKnumout(datap, tBuf, 
                                                   (byte_count/var->HDFsize), 0, 0))
                               {
                                   ret_value    = FAIL;
@@ -5425,7 +5424,7 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
 intn 
 SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
             int32 *origin, /* IN: origin of chunk to write */
-            VOID  *datap   /* IN/OUT: buffer for data */)
+            void  *datap   /* IN/OUT: buffer for data */)
 {
     NC        *handle = NULL;   /* file handle */
     NC_var    *var    = NULL;   /* SDS variable */
@@ -5438,7 +5437,7 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
     intn       i;
     sp_info_block_t info_block; /* special info block */
     static uint32 tBuf_size = 0; /* statc conversion buffer size */
-    static VOID  *tBuf = NULL; /* static buffer used for conversion */
+    static void  *tBuf = NULL; /* static buffer used for conversion */
     intn       ret_value = SUCCEED;
 
     info_block.cdims = NULL;
@@ -5522,9 +5521,9 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
                       if(convert && tBuf_size < byte_count) 
                         {
                             if(tBuf != NULL) 
-                                HDfree((VOIDP)tBuf);
+                                HDfree(tBuf);
                             tBuf_size = byte_count;
-                            tBuf      = (VOID *) HDmalloc(tBuf_size);
+                            tBuf      = HDmalloc(tBuf_size);
                             if(tBuf == NULL) 
                               {
                                   tBuf_size = 0;

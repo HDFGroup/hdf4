@@ -34,8 +34,6 @@ int argc;
 char *argv[];
 #endif
 {
-    extern int ncopts;		/* netCDF error options */
-
     static char testfile[] = "test.nc";
 
 #if defined __MWERKS__

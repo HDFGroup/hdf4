@@ -40,7 +40,7 @@ int
 HEannotate(HE_CMD * cmd)
 {
     int i;
-    char       *editor = NULL;
+    const char       *editor = NULL;
     int         ann = HE_LABEL;
 
     for (i = 1; i < cmd->argc; i++)
@@ -85,7 +85,7 @@ HEannotate(HE_CMD * cmd)
 /* Edit annontations (labels and descriptions) for the
  * current data element */
 int
-annotate(char *editor, int ann)
+annotate(const char *editor, int ann)
 {
 
 #if !defined MAC && !defined WIN386 && !defined(__MWERKS__)
@@ -108,17 +108,6 @@ annotate(char *editor, int ann)
      */
     len = getAnn(ann, currTag, he_desc[he_currDesc].ref, &buf);
 
-    /* make sure some editor will be used
-     * defaults to /usr/bin/ex
-     * but should be made a compile time option
-     */
-/*    if (editor == NULL)
-   {
-   char *getenv();
-   editor = getenv("EDITOR");
-   if (editor == NULL) editor = "/usr/bin/ex";
-   }
- */
     (void) getTmpName(&file);
 
     /* if there is prior annotation, put it into the tmp file
@@ -144,7 +133,7 @@ annotate(char *editor, int ann)
       {
           editor = (char *) getenv("EDITOR");
           if (editor == NULL)
-              editor = (const char *)"/usr/bin/ex";
+              editor = "/usr/bin/ex";
       }
 #ifdef CRAYMPP
     {	char	cmd[256];
@@ -513,7 +502,7 @@ HEput(HE_CMD * cmd)
 {
     int i;
     int         verbose = NO;
-    char       *template = "elt#.@";
+    char       *template = (char *)"elt#.@";
 
     for (i = 1; i < cmd->argc; i++)
         if (cmd->argv[i][0] == '-')

@@ -57,6 +57,9 @@ static char RcsId[] = "@(#)$Revision$";
 #define NBIT_SIZE1  4096
 #define NBIT_BITS1  6
 
+static int gen_bitio_test(void);
+static int gen_nbit_test(void);
+
 /*--------------------------------------------------------------------------
 
  NAME
@@ -73,8 +76,7 @@ static char RcsId[] = "@(#)$Revision$";
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-int
-gen_bitio_test(void)
+static int gen_bitio_test(void)
 {
     int32       fid;            /* file ID of bitio HDF file */
     uint8      *bit_data;       /* pointer to the data to store in the datafile */
@@ -123,8 +125,7 @@ gen_bitio_test(void)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-int
-gen_nbit_test(void)
+static int gen_nbit_test(void)
 {
     int32       fid;            /* file ID of n-bit HDF file */
     uint8      *nbit_data;      /* pointer to the initial data */

@@ -53,7 +53,7 @@ xdr_free(proc, objp)
  * XDR nothing
  */
 bool_t
-xdr_void(/* xdrs, addr */)
+xdr_void(void /* xdrs, addr */)
 	/* XDR *xdrs; */
 	/* caddr_t addr; */
 {

@@ -17,10 +17,15 @@ intn hdf_cdf_clobber(NC *handle);
 
 intn hdf_close(NC *handle);
 
+static intn
+hdf_num_attrs(NC *handle,/* IN: handle to SDS */
+              int32 vg   /* IN: ref of top Vgroup */);
+
 #endif /* HDF */
 
-static bool_t NC_xdr_cdf
-    PROTO((XDR *xdrs,NC **handlep));
+static bool_t NC_xdr_cdf(XDR *xdrs, NC **handlep);
+
+static int NC_free_xcdf(NC *);
 
 /* hmm we write the NDG out always for now */
 #define WRITE_NDG 1
@@ -40,7 +45,7 @@ static bool_t NC_xdr_cdf
  * NOTE: Modified to return SUCCEED / FAIL and to catch errors
  *       -GV 9/16/97
  */
-int
+static int
 NC_free_xcdf(handle)
 NC *handle ;
 {
@@ -147,7 +152,7 @@ Hiscdf(filename)
 const char * filename;
 {
     
-    char *FUNC = "Hiscdf";
+    static const char *FUNC = "Hiscdf";
     hdf_file_t fp;
     uint8      b[4];
     uint8    * bb = NULL;
@@ -211,7 +216,7 @@ Hisnetcdf(filename)
 const char * filename;
 {
     
-    char *FUNC = "Hisnetcdf";
+    static const char *FUNC = "Hisnetcdf";
     hdf_file_t fp;
     uint8      b[4];
     uint8    * bb = NULL;
@@ -271,7 +276,7 @@ int mode ;
     int32 hdf_mode =  DFACC_RDWR; /* default */
 #endif
 	NC   *cdf = NULL;
-    char *FUNC = "NC_new_cdf";
+    static const char *FUNC = "NC_new_cdf";
     NC   *ret_value = NULL;
 
     /* allocate an NC struct */
@@ -304,11 +309,11 @@ int mode ;
       } 
     else 
       {
-          if(Hishdf((char *) name))
+          if(Hishdf(name))
               cdf->file_type = HDF_FILE;
-          else if(Hiscdf((char *) name))
+          else if(Hiscdf(name))
               cdf->file_type = CDF_FILE;
-          else if(Hisnetcdf((char *) name))
+          else if(Hisnetcdf(name))
               cdf->file_type = netCDF_FILE;
           else
             {
@@ -390,7 +395,7 @@ int mode ;
           /* see if the file exists */
           if(mode == NC_NOCLOBBER) 
             {
-                if((int) Hishdf((char *) name))
+                if((int) Hishdf(name))
                   { /* Need to free allocated structures.
                        This will happen on failure cleanup. */
                       xdr_destroy(cdf->xdrs) ; /* destroy xdr struct first */
@@ -401,7 +406,7 @@ int mode ;
             }
 
           /* open the file */
-          cdf->hdf_file = (int32) Hopen((char *) name, hdf_mode, 200);
+          cdf->hdf_file = (int32) Hopen(name, hdf_mode, 200);
           if(cdf->hdf_file == FAIL) 
             {
                 ret_value = NULL;
@@ -565,7 +570,7 @@ done:
 }
 
 
-ncinquire(cdfid, ndimsp, nvarsp, nattrsp, xtendimp)
+int ncinquire(cdfid, ndimsp, nvarsp, nattrsp, xtendimp)
 int cdfid ;
 int *ndimsp ;
 int *nvarsp ;
@@ -853,9 +858,11 @@ XDR *xdrs;
 NC *handle;
 NC_dim *dim;
 {
-  char *FUNC = "hdf_create_dim_vdata";
+#ifdef LATER
+    CONSTR(FUNC,"hdf_create_dim_vdata"); 
+#endif /* LATER */
   int   found = FALSE;
-  int   ii, ref;
+  int   ref;
   int32 val;
   long  dsize;
   int   ret_value = FAIL;
@@ -891,7 +898,7 @@ NC_dim *dim;
     {
         dsize = 1;
         val = (dim->size != NC_UNLIMITED) ? dim->size : (int32)handle->numrecs;
-        ref = VHstoredata(handle->hdf_file, "Values", (void *)&val, dsize,
+        ref = VHstoredata(handle->hdf_file, "Values", (const uint8 *)&val, dsize,
                           DFNT_INT32, dim->name->values, DIM_VALS01);
       
         if(ref == FAIL) 
@@ -935,8 +942,7 @@ hdf_create_compat_dim_vdata(XDR *xdrs,
                             NC_dim *dim, 
                             int32 dimval_ver)
 {
-    char  *FUNC = "hdf_create_compat_dim_vdata";
-    int    found = FALSE;
+    static const char  *FUNC = "hdf_create_compat_dim_vdata";
     int    i;
     int    ref;
     long   dsize;
@@ -984,7 +990,7 @@ hdf_create_compat_dim_vdata(XDR *xdrs,
           for(i = 0; i < dsize; i++) val[i] = i;
       }
 
-    ref = VHstoredata(handle->hdf_file, "Values", (void *)val,
+    ref = VHstoredata(handle->hdf_file, "Values", (const uint8 *)val,
                       dsize, DFNT_INT32, dim->name->values, DIM_VALS);
     if(ref == FAIL) 
       {
@@ -1009,7 +1015,7 @@ done:
       }
      /* Normal cleanup */
     if (val != NULL)
-        HDfree((VOIDP)val);
+        HDfree(val);
 
     return ret_value;
 } /* hdf_create_compat_dim_vdata */
@@ -1073,12 +1079,14 @@ NC_attr **attr;
     fprintf(stderr, "hdf_write_attr returning %d\n", ret_value);
 #endif
 
+#ifdef LATER
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
 
       }
      /* Normal cleanup */
+#endif /* LATER */
 
     return ret_value;
 } /* hdf_write_attr */
@@ -1089,11 +1097,10 @@ done:
 int32
 hdf_write_dim(XDR *xdrs, NC *handle, NC_dim **dim, int32 cnt)
 {
-    int32 status;
     int32 tags[100];
     int32 refs[100];
     int32 count;
-    char  *class = NULL;
+    const char  *class = NULL;
     char  name[MAX_NC_NAME] = "";
     int32 ret_value = SUCCEED;
 
@@ -1179,7 +1186,9 @@ NC_var **var;
     uint16       nt_ref, rank;
     int32     GroupID, val;
     uint8     *bufp = NULL;
-    char      *FUNC = "hdf_write_var";
+#ifdef LATER
+    CONSTR(FUNC,"hdf_write_var"); 
+#endif /* LATER */
     int32      ret_value = SUCCEED;
     register int  i, count;
     register Void *attribute = NULL;
@@ -1606,9 +1615,9 @@ done:
     if (dim_hash_array != NULL)
         HDfree(dim_hash_array);
     if (tags != NULL)
-        HDfree((VOIDP)tags);
+        HDfree(tags);
     if (refs != NULL)
-        HDfree((VOIDP)refs);
+        HDfree(refs);
 
     return ret_value;
 } /* hdf_write_xdr_cdf */
@@ -1629,8 +1638,9 @@ NC **handlep;
     uint8     *scalebuf = NULL;
     uint8     *datap = NULL;
     intn    ret_value = SUCCEED;
-   
+#ifdef LATER
     CONSTR(FUNC, "hdf_conv_scales");
+#endif /* LATER */
 
     if ((*handlep)->vars) 
       {
@@ -1927,7 +1937,7 @@ done:
       }
      /* Normal cleanup */
     if (dimension != NULL)
-        HDfree((VOIDP)dimension);
+        HDfree(dimension);
 
     return ret_value;
 } /* hdf_read_dims */
@@ -1943,7 +1953,7 @@ done:
    returns number of attributes in vgroup if successful and FAIL
    otherwise.
 *******************************************************************************/
-intn
+static intn
 hdf_num_attrs(NC *handle,/* IN: handle to SDS */
               int32 vg   /* IN: ref of top Vgroup */)
 {
@@ -2174,7 +2184,7 @@ hdf_read_attrs(XDR *xdrs, NC *handle, int32 vg)
                               vsname, type, attr_size);
 #endif
                       /* free values and reset to NULL */
-                      HDfree((VOIDP)values);
+                      HDfree(values);
                       values = NULL;
                       count++;
                   } /* end if attribute ? */
@@ -2205,9 +2215,9 @@ done:
       }
      /* Normal cleanup */
     if (values != NULL)
-        HDfree((VOIDP)values);
+        HDfree(values);
     if (attributes != NULL)
-        HDfree((VOIDP)attributes);
+        HDfree(attributes);
 
     return ret_value;
 } /* hdf_read_attrs */
@@ -2248,7 +2258,9 @@ hdf_read_vars(XDR *xdrs,
     register nc_type type;
     register int32   var, sub;
     intn     ret_value = SUCCEED;
-    char    *FUNC = "hdf_read_vars";
+#ifdef LATER
+    CONSTR(FUNC,"hdf_read_vars"); 
+#endif /* LATER */
 
     count = 0;
     id = -1;
@@ -2579,9 +2591,9 @@ hdf_read_vars(XDR *xdrs,
                                    *  at a higher level later
                                    */
                                   if(vp->shape != NULL)
-                                      HDfree((VOIDP)vp->shape);
+                                      HDfree(vp->shape);
                                   if(vp->dsizes != NULL)
-                                      HDfree((VOIDP)vp->dsizes);
+                                      HDfree(vp->dsizes);
                       
                               } 
                             else 
@@ -2633,9 +2645,9 @@ done:
       }
      /* Normal cleanup */
     if (variables != NULL)
-        HDfree((VOIDP)variables);
+        HDfree(variables);
     if (dims != NULL)
-        HDfree((VOIDP)dims);
+        HDfree(dims);
 
     return ret_value;
 } /* hdf_read_vars */
@@ -2865,7 +2877,7 @@ int id;
 {
     int   t, n;
     int32 vg, tag, ref;
-    int32 vs, status;
+    int32 status;
     intn  ret_value = SUCCEED;
 
 #ifdef HDF_VG_CLOBBER
@@ -3193,7 +3205,9 @@ hdf_close(handle)
     int32      vs;
     char       class[128] = "";
     intn       ret_value = SUCCEED;
+#ifdef LATER
     CONSTR(FUNC,"hdf_close"); 
+#endif /* LATER */
 
 #ifdef HDF_CLOSE
     fprintf(stderr,"hdf_close: I've been called\n");
@@ -3403,7 +3417,7 @@ done:
  * How much space will the xdr'd NC description take.
  *
  */
-NC_xlen_cdf(cdf)
+int NC_xlen_cdf(cdf)
 NC *cdf ;
 {
 	int len = 8 ;

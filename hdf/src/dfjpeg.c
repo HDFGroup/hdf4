@@ -180,7 +180,7 @@ jpeg_HDF_dest(struct jpeg_compress_struct *cinfo_ptr, int32 file_id, uint16 tag,
     dest->file_id = file_id;
     dest->tag = tag;
     dest->ref = ref;
-    dest->image = (void *)image;
+    dest->image = image;
     dest->xdim = xdim;
     dest->ydim = ydim;
     dest->scheme = scheme;

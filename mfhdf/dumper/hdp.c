@@ -23,7 +23,7 @@ static char RcsId[] = "@(#)$Revision$";
 #include "hdp.h"
 
 /* Print the usage message about this utility */
-void 
+static void 
 usage(intn argc, char *argv[])
 {
     printf("%s, version: 1.0, April 6, 1994\n\n", argv[0]);

@@ -191,7 +191,7 @@ bool_t verbose ;
 /*
  * Common code for attput and attcopy
  */
-static
+static int
 NC_aput(cdfid, ap, name, datatype, count, values)
 int cdfid ;
 NC_array **ap ;
@@ -280,7 +280,7 @@ const void *values ;
 }
 
 
-ncattput(cdfid, varid, name, datatype, count, values)
+int ncattput(cdfid, varid, name, datatype, count, values)
 int cdfid ;
 int varid ;
 const char *name ;
@@ -310,7 +310,7 @@ const ncvoid *values ;
 }
 
 
-ncattname( cdfid, varid, attnum, name)
+int ncattname( cdfid, varid, attnum, name)
 int cdfid ;
 int varid ;
 int attnum ;
@@ -344,7 +344,7 @@ char *name ;
 }
 
 
-ncattinq( cdfid, varid, name, datatypep, countp)  
+int ncattinq( cdfid, varid, name, datatypep, countp)  
 int cdfid ;
 int varid ;
 const char *name ; /* input, attribute name */
@@ -367,7 +367,7 @@ int *countp ;
 }
 
 
-ncattrename(cdfid, varid, name, newname)
+int ncattrename(cdfid, varid, name, newname)
 int cdfid ;
 int varid ; 
 const char *name ;
@@ -419,7 +419,7 @@ const char *newname ;
 }
 
 
-ncattcopy( incdf, invar, name, outcdf, outname)
+int ncattcopy( incdf, invar, name, outcdf, outname)
 int incdf ;
 int invar ;
 const char *name ;
@@ -445,7 +445,7 @@ int outname ;
 }
 
 
-ncattdel(cdfid, varid, name)
+int ncattdel(cdfid, varid, name)
 int cdfid ;
 int varid ; 
 const char *name ;
@@ -498,7 +498,7 @@ const char *name ;
 }
 
 
-ncattget(cdfid, varid, name, values)
+int ncattget(cdfid, varid, name, values)
 int cdfid ;
 int varid ; 
 const char *name ;
@@ -555,7 +555,7 @@ xdr_NC_attr(xdrs, app)
 /*
  * How much space will the xdr'd attr take.
  */
-NC_xlen_attr(app)
+int NC_xlen_attr(app)
 NC_attr **app ;
 {
 	int len ;

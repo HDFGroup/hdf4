@@ -1264,7 +1264,7 @@ test_r24(void)
     cinfo.jpeg.quality = 80;
     cinfo.jpeg.force_baseline = TRUE;
     DF24setcompress(COMP_JPEG, &cinfo);
-    ret = DF24putimage(JPEGFILE, jpeg_24bit_orig, JPEGX, JPEGY);
+    ret = DF24putimage((const char *)JPEGFILE, jpeg_24bit_orig, JPEGX, JPEGY);
     RESULT("DF24putimage");
 
     MESSAGE(6, printf("Storing second image with JPEG quality 30\n");
@@ -1272,7 +1272,7 @@ test_r24(void)
     cinfo.jpeg.quality = 30;
     cinfo.jpeg.force_baseline = TRUE;
     DF24setcompress(COMP_JPEG, &cinfo);
-    ret = DF24addimage(JPEGFILE, jpeg_24bit_orig, JPEGX, JPEGY);
+    ret = DF24addimage((const char *)JPEGFILE, jpeg_24bit_orig, JPEGX, JPEGY);
     RESULT("DF24addimage");
 
     MESSAGE(6, printf("Storing third image with JPEG default quality of 75\n");
@@ -1280,7 +1280,7 @@ test_r24(void)
     cinfo.jpeg.quality = 75;
     cinfo.jpeg.force_baseline = TRUE;
     DF24setcompress(COMP_JPEG, &cinfo);
-    ret = DF24addimage(JPEGFILE, jpeg_24bit_orig, JPEGX, JPEGY);
+    ret = DF24addimage((const char *)JPEGFILE, jpeg_24bit_orig, JPEGX, JPEGY);
     RESULT("DF24addimage");
 
     if (DF24nimages(JPEGFILE) != 3)

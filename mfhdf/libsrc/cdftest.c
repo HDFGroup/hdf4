@@ -77,7 +77,7 @@ union getret
     double          dbl;
 } ;
 
-void
+static void
 chkgot(type, got, check)
 nc_type type ;
 union getret got ;
@@ -102,14 +102,14 @@ double check ;
 	}
 }
 
-char *fname = FILENAME ;
+const char *fname = FILENAME ;
 
 
 int num_dims = NUM_DIMS ;
 long sizes[] = { NC_UNLIMITED, SIZE_1 , SIZE_2 } ;
-char *dim_names[] = { "record", "ixx", "iyy"} ;
+const char *dim_names[] = { "record", "ixx", "iyy"} ;
 
-void
+static void
 createtestdims(cdfid, num_dims, sizes, dim_names)
 int cdfid ;
 int num_dims ;
@@ -124,7 +124,7 @@ char *dim_names[] ;
 
 }
 
-void
+static void
 testdims(cdfid, num_dims, sizes, dim_names)
 int cdfid ;
 int num_dims ;
@@ -148,7 +148,7 @@ char *dim_names[] ;
 
 
 
-char *reqattr[] = {
+const char *reqattr[] = {
 	"UNITS",
 	"VALIDMIN",
 	"VALIDMAX",
@@ -160,14 +160,14 @@ char *reqattr[] = {
 #define NUM_RATTRS	6
 
 struct tcdfvar {
-	char *mnem;
+	const char *mnem;
 	nc_type type;
-	char *fieldnam;
+	const char *fieldnam;
 	double validmin;
 	double validmax;
 	double scalemin;
 	double scalemax;
-	char *units;
+	const char *units;
 	int ndims ;
 	int dims[NUM_DIMS];
 } testvars[]  = {
@@ -194,7 +194,7 @@ struct tcdfvar {
 } ;
 #define	NUM_TESTVARS	5
 
-void
+static void
 createtestvars(id, testvars, count )
 int id ;
 struct tcdfvar *testvars ;
@@ -208,8 +208,7 @@ int count ;
 		assert(ncvardef(id, vp->mnem, vp->type, vp->ndims, vp->dims) == ii ) ; 
 
 	 	assert(
-			ncattput(id,ii,reqattr[0],NC_CHAR,strlen(vp->units),
-				(ncvoid*)vp->units)
+			ncattput(id,ii,reqattr[0],NC_CHAR,strlen(vp->units), vp->units)
 			== 0) ; 
 	 	assert(
 			ncattput(id,ii,reqattr[1],NC_DOUBLE,1,
@@ -228,13 +227,12 @@ int count ;
 				(ncvoid*)&(vp->scalemax))
 			== 4) ; 
 	 	assert(
-			ncattput(id,ii,reqattr[5],NC_CHAR,strlen(vp->fieldnam),
-				(ncvoid*)vp->fieldnam)
+			ncattput(id,ii,reqattr[5],NC_CHAR,strlen(vp->fieldnam), vp->fieldnam)
 			== 5) ; 
 	}
 }
 
-void
+static void
 parray(label, count, array)
 char *label ;
 unsigned count ;
@@ -246,7 +244,7 @@ long array[] ;
 		fprintf(stdout," %d", (int)*array) ;
 }
 
-void
+static void
 fill_seq(id)
 int id ;
 {
@@ -292,7 +290,7 @@ int id ;
 	}
 }
 
-void
+static void
 check_fill_seq(id)
 int id ;
 {
@@ -421,12 +419,12 @@ char *argv[];
 #endif /* NOBUF */
 	
 	assert( ncattput(id, NC_GLOBAL,
-		"TITLE", NC_CHAR, 12, (ncvoid*)"another name") != -1) ;
+		"TITLE", NC_CHAR, 12, "another name") != -1) ;
 	assert( ncattget(id, NC_GLOBAL,
 		"TITLE", (ncvoid*)new) != -1) ;
 /*	printf("title 1 \"%s\"\n", new) ; */
 	assert( ncattput(id, NC_GLOBAL,
-		"TITLE", NC_CHAR, strlen(fname), (ncvoid*)fname) != -1) ;
+		"TITLE", NC_CHAR, strlen(fname), fname) != -1) ;
 	assert( ncattget(id, NC_GLOBAL,
 		"TITLE", (ncvoid*)new) != -1) ;
 	new[strlen(fname)] = 0 ;
@@ -571,8 +569,8 @@ char *argv[];
 		}
 		if(tvp->type != vdesc->type)
 		{
-			printf("attr %d type mismatch %d, %s\n",
-				(int)ii, tvp->type, vdesc->type) ;
+			printf("attr %d type mismatch %d, %d\n",
+				(int)ii, tvp->type, (int)vdesc->type) ;
 			continue ;
 		}
 		for(jj = 0 ; jj < vdesc->ndims ; jj++ )

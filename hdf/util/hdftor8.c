@@ -58,8 +58,8 @@ void        fillStr
             (const char **template, char **stringOut, char *string, char specialChar);
 char       *newSpace
             (int32 size);
-char       *getTemplate
-            (char *type, int imageNumber);
+const char       *getTemplate
+            (const char *type, int imageNumber);
 
 int
 main(int argc, char *argv[])
@@ -181,7 +181,7 @@ putRaster(const char *template, int32 xdim, int32 ydim, int imageNumber,
     char        fileName[DF_MAXFNLEN];
 
     if (!template)  /* can assume interactive (see main) */
-        template = (const char *) getTemplate("image", imageNumber);
+        template = getTemplate("image", imageNumber);
 
     convert(template, imageNumber, xdim, ydim, fileName);
 
@@ -224,7 +224,7 @@ putPalette(const char *template, int imageNumber, uint8 *palette)
     char        greens[COLOR_SIZE], blues[COLOR_SIZE];
 
     if (!template)  /* can assume interactive (see main) */
-        template = (const char *) getTemplate("palette", imageNumber);
+        template = getTemplate("palette", imageNumber);
 
     convert(template, imageNumber, (int32) 1, (int32) 768, fileName);
 
@@ -392,8 +392,8 @@ newSpace(int32 size)
  *        a second call cannot be made while the template is still
  *        in use (somewhere else).
  */
-char       *
-getTemplate(char *type, int imageNumber)
+const char       *
+getTemplate(const char *type, int imageNumber)
 {
     static char template[DF_MAXFNLEN];
 

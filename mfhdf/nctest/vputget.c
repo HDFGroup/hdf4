@@ -93,12 +93,12 @@ test_varputget(cdfid)
 		    errvar(&test, &test.vars[iv]);
 		    (void)fprintf(stderr,"  corner = (");
 		    for (id = 0 ; id < test.vars[iv].ndims; id++)
-		      (void)fprintf(stderr,"%d%s",hc[ie].cor[id],
+		      (void)fprintf(stderr,"%d%s",(int)hc[ie].cor[id],
 				    (id < test.vars[iv].ndims-1) ? ", " : "");
 		    (void)fprintf(stderr,")\n");
 		    (void)fprintf(stderr,"  edge = (");
 		    for (id = 0 ; id < test.vars[iv].ndims; id++)
-		      (void)fprintf(stderr,"%d%s",hc[ie].edg[id],
+		      (void)fprintf(stderr,"%d%s",(int)hc[ie].edg[id],
 				    (id < test.vars[iv].ndims-1) ? ", " : "");
 		    (void)fprintf(stderr,")\n");
 		}

@@ -13,19 +13,23 @@
 /* Local function prototypes */
 static bool_t nssdc_xdr_NCvdata
        (NC *handle,NC_var *vp,u_long where,nc_type type,uint32 count,
-        VOIDP values);
+        void * values);
 
 static intn hdf_xdr_NCvdata
     (NC *handle,NC_var *vp,u_long where,nc_type type,uint32 count,
-        VOIDP values);
+        void * values);
 
 static intn hdf_xdr_NCv1data
-    (NC *handle,NC_var *vp,u_long where,nc_type type,VOIDP values);
+    (NC *handle,NC_var *vp,u_long where,nc_type type,void * values);
 
 int32 hdf_get_vp_aid
     (NC *handle, NC_var *vp);
 
+static intn SDIresizebuf(void * *buf,int32 *buf_size,int32 size_wanted);
+
 #endif /* HDF */
+
+static const long *NCvcmaxcontig(NC *, NC_var *, const long *, const long *);
 
 /*
  * If you use ./xdrstdio.c rather than ./xdrposix.c as
@@ -45,7 +49,7 @@ int32 hdf_get_vp_aid
 /*
  * Print the values of an array of longs
  */
-arrayp(label, count, array)
+int arrayp(label, count, array)
 const char *label ;
 unsigned count ;
 const long array[] ;
@@ -130,8 +134,8 @@ const long *coords ;
 #ifdef HDF
     if(handle->file_type == HDF_FILE && IS_RECVAR(vp)) 
       {
-          VOID     *strg = NULL;
-          VOID     *strg1 = NULL;
+          void     *strg = NULL;
+          void     *strg1 = NULL;
           NC_attr **attr = NULL;
           int count, byte_count;
           int len;
@@ -209,8 +213,8 @@ const long *coords ;
                 fprintf(stderr, "WROTE %d values at location %d (numrecs = %d)\n",
                         count, *ip * count, vp->numrecs);
 #endif
-                HDfree((VOIDP)strg);
-                HDfree((VOIDP)strg1);
+                HDfree(strg);
+                HDfree(strg1);
             } /* !SD_NOFILL  */
 
         vp->numrecs = MAX(vp->numrecs, (*ip + 1));    /* if NOFILL  */
@@ -386,7 +390,7 @@ unsigned count ;
 char *values ;
 {
 	char buf[4] ;
-	u_long origin ;
+	u_long origin=0 ;
     enum xdr_op  x_op = xdrs->x_op ; /* save state */
 
 	if(x_op == XDR_ENCODE)
@@ -475,7 +479,7 @@ unsigned which ;
 short *values ;
 {
     unsigned char buf[4] ; /* unsigned is important here */
-    u_long origin ;
+    u_long origin=0;
     enum xdr_op  x_op = xdrs->x_op ; /* save state */
 
     if(x_op == XDR_ENCODE)
@@ -552,7 +556,7 @@ u_long where ;
 nc_type type ;
 Void *values ;
 {
-	u_long rem ;
+	u_long rem=0 ;
 
 	switch(type){
 	case NC_BYTE :
@@ -644,12 +648,14 @@ SDPfreebuf()
           tValues_size = 0;
       } /* end if */
 
+#ifdef LATER
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
 
       }
      /* Normal cleanup */
+#endif /* LATER */
 
     return ret_value;
 }
@@ -658,17 +664,17 @@ done:
 /*
     Resize a temporary buffer to the proper size
 */
-intn 
-SDIresizebuf(VOIDP *buf,int32 *buf_size,int32 size_wanted)
+static intn 
+SDIresizebuf(void * *buf,int32 *buf_size,int32 size_wanted)
 {
     intn ret_value = SUCCEED;
 
     if(*buf_size < size_wanted)
       {
         if(*buf)
-            HDfree((VOIDP)*buf);
+            HDfree(*buf);
         *buf_size = size_wanted;
-        *buf = (VOIDP)HDmalloc(size_wanted);
+        *buf = HDmalloc(size_wanted);
         if (*buf == NULL) 
           {
             *buf_size=0;
@@ -704,12 +710,9 @@ hdf_get_data(handle, vp)
 NC *handle;
 NC_var *vp;
 {
-    NC_attr **attr = NULL;
     int32     vg = FAIL;
     int32     vsid = FAIL;
-    int32     nvalues, status, tag, t, n;
-    int32     byte_count, len;
-    int32     to_do, done, chunk_size;
+    int32     tag, t, n;
     int       ret_value = FAIL;
     
 #ifdef DEBUG 
@@ -978,7 +981,7 @@ hdf_xdr_NCvdata(NC *handle,
                 u_long where, 
                 nc_type type, 
                 uint32 count, 
-                VOIDP values)
+                void * values)
 {
     NC_attr **attr = NULL;      /* pointer to the fill-value attribute */
     int32     status;
@@ -1100,7 +1103,7 @@ hdf_xdr_NCvdata(NC *handle,
     if(convert 
        && ((tBuf_size < byte_count) || tBuf_size<where)) 
       {
-          if(SDIresizebuf((VOIDP *)&tBuf,&tBuf_size,MAX(byte_count,where)) == FAIL)
+          if(SDIresizebuf((void * *)&tBuf,&tBuf_size,MAX(byte_count,where)) == FAIL)
             {
                 ret_value = FAIL;
                 goto done;
@@ -1133,7 +1136,7 @@ hdf_xdr_NCvdata(NC *handle,
                 if(attr != NULL)
                     HDmemfill(tBuf,(*attr)->data->values,vp->szof,(vp->data_offset/vp->HDFsize));
                 else 
-                    NC_arrayfill((VOIDP)tBuf, vp->data_offset, vp->type);
+                    NC_arrayfill(tBuf, vp->data_offset, vp->type);
 
                 /* convert the fill-values, if necessary */
                 if(convert) 
@@ -1143,7 +1146,7 @@ hdf_xdr_NCvdata(NC *handle,
                             ret_value = FAIL;
                             goto done;
                         }
-                      if (FAIL == DFKnumout((uint8 *) tBuf, tBuf, (uint32) (vp->data_offset/vp->HDFsize), 0, 0))
+                      if (FAIL == DFKnumout(tBuf, tBuf, (uint32) (vp->data_offset/vp->HDFsize), 0, 0))
                         {
                             ret_value = FAIL;
                             goto done;
@@ -1151,7 +1154,7 @@ hdf_xdr_NCvdata(NC *handle,
                   } /* end if */
 
                 /* Write the fill-values out */
-                status = Hwrite(vp->aid, vp->data_offset, (uint8 *) tBuf);
+                status = Hwrite(vp->aid, vp->data_offset, tBuf);
                 if (FAIL == status)
                   {
                       ret_value = FAIL;
@@ -1178,13 +1181,13 @@ hdf_xdr_NCvdata(NC *handle,
                 chunk_size = MIN(buf_size,MAX_SIZE);
 
                 /* make sure our tmp buffer is big enough to hold everything */
-                if(SDIresizebuf((VOIDP *)&tBuf,&tBuf_size,chunk_size) == FAIL)
+                if(SDIresizebuf((void * *)&tBuf,&tBuf_size,chunk_size) == FAIL)
                   {
                       ret_value = FAIL;
                       goto done;
                   }
 
-                if(SDIresizebuf((VOIDP *)&tValues,&tValues_size,chunk_size) == FAIL)
+                if(SDIresizebuf((void * *)&tValues,&tValues_size,chunk_size) == FAIL)
                   {
                       ret_value = FAIL;
                       goto done;
@@ -1194,7 +1197,7 @@ hdf_xdr_NCvdata(NC *handle,
                 if(attr != NULL)
                     HDmemfill(tBuf,(*attr)->data->values,vp->szof,(chunk_size/vp->HDFsize));
                 else 
-                    NC_arrayfill((VOIDP)tBuf, chunk_size, vp->type);
+                    NC_arrayfill(tBuf, chunk_size, vp->type);
 
                 /* convert the fill-values, if necessary */
                 if(convert) 
@@ -1205,7 +1208,7 @@ hdf_xdr_NCvdata(NC *handle,
                             goto done;
                         }
 
-                      if (FAIL == DFKnumout((uint8 *)tBuf, tValues, (uint32) (chunk_size/vp->HDFsize), 0, 0))
+                      if (FAIL == DFKnumout(tBuf, tValues, (uint32) (chunk_size/vp->HDFsize), 0, 0))
                         {
                             ret_value = FAIL;
                             goto done;
@@ -1266,7 +1269,7 @@ hdf_xdr_NCvdata(NC *handle,
       {
           if(convert) 
             {
-                status = Hread(vp->aid, byte_count, (uint8 *) tBuf);
+                status = Hread(vp->aid, byte_count, tBuf);
                 if(status != byte_count) 
                   {
                       ret_value = FAIL;
@@ -1277,7 +1280,7 @@ hdf_xdr_NCvdata(NC *handle,
                       ret_value = FAIL;
                       goto done;
                   }    
-                if (FAIL == DFKnumin((uint8 *) tBuf, (uint8 *) values, (uint32) count, 0, 0))
+                if (FAIL == DFKnumin(tBuf, values, (uint32) count, 0, 0))
                   {
                       ret_value = FAIL;
                       goto done;
@@ -1285,7 +1288,7 @@ hdf_xdr_NCvdata(NC *handle,
             } /* end if */
           else 
             {
-                status = Hread(vp->aid, byte_count, (uint8 *) values);
+                status = Hread(vp->aid, byte_count, values);
                 if(status != byte_count)
                   {
                       ret_value = FAIL;
@@ -1302,15 +1305,15 @@ hdf_xdr_NCvdata(NC *handle,
                       ret_value = FAIL;
                       goto done;
                   }    
-                if (FAIL == DFKnumout((uint8 *) values, tBuf, (uint32) count, 0, 0))
+                if (FAIL == DFKnumout(values, tBuf, (uint32) count, 0, 0))
                   {
                       ret_value = FAIL;
                       goto done;
                   }    
-                status = Hwrite(vp->aid, byte_count, (uint8 *) tBuf);
+                status = Hwrite(vp->aid, byte_count, tBuf);
             } /* end if */
           else 
-              status = Hwrite(vp->aid, byte_count, (uint8 *) values);
+              status = Hwrite(vp->aid, byte_count, values);
 
 #ifdef DEBUG
           fprintf(stderr, "hdf_xdr_NCvdata: status=%d\n",(int)status);
@@ -1341,12 +1344,12 @@ hdf_xdr_NCvdata(NC *handle,
                 chunk_size = MIN(buf_size,MAX_SIZE);
 
                 /* make sure our tmp buffer is big enough to hold everything */
-                if(SDIresizebuf((VOIDP *)&tBuf,&tBuf_size,chunk_size) == FAIL)
+                if(SDIresizebuf((void * *)&tBuf,&tBuf_size,chunk_size) == FAIL)
                   {
                       ret_value = FAIL;
                       goto done;
                   }    
-                if(SDIresizebuf((VOIDP *)&tValues,&tValues_size,chunk_size) == FAIL)
+                if(SDIresizebuf((void * *)&tValues,&tValues_size,chunk_size) == FAIL)
                   {
                       ret_value = FAIL;
                       goto done;
@@ -1356,7 +1359,7 @@ hdf_xdr_NCvdata(NC *handle,
                 if(attr != NULL)
                     HDmemfill(tBuf,(*attr)->data->values,vp->szof,(chunk_size/vp->HDFsize));
                 else 
-                    NC_arrayfill((VOIDP)tBuf, chunk_size, vp->type);
+                    NC_arrayfill(tBuf, chunk_size, vp->type);
 
                 /* convert the fill-values, if necessary */
                 if(convert) 
@@ -1366,7 +1369,7 @@ hdf_xdr_NCvdata(NC *handle,
                             ret_value = FAIL;
                             goto done;
                         }    
-                      if (FAIL == DFKnumout((uint8 *) tBuf, tValues, (uint32) (chunk_size/vp->HDFsize), 0, 0))
+                      if (FAIL == DFKnumout(tBuf, tValues, (uint32) (chunk_size/vp->HDFsize), 0, 0))
                         {
                             ret_value = FAIL;
                             goto done;
@@ -1419,7 +1422,7 @@ NC      * handle;
 NC_var  * vp;
 u_long    where;
 nc_type   type;
-VOIDP     values;
+void *values;
 {
 
     intn ret_value = SUCCEED;
@@ -1458,7 +1461,7 @@ nssdc_xdr_NCvdata(NC *handle,
                   u_long where, 
                   nc_type type, 
                   uint32 count, 
-                  VOIDP values)
+                  void * values)
 {
     int32 status;
     int32 byte_count;
@@ -1477,7 +1480,7 @@ nssdc_xdr_NCvdata(NC *handle,
     
     /* make sure our tmp buffer is big enough to hold everything */
     byte_count = count * vp->HDFsize;
-    if(SDIresizebuf((VOIDP *)&tBuf,&tBuf_size,byte_count)==FAIL)
+    if(SDIresizebuf((void * *)&tBuf,&tBuf_size,byte_count)==FAIL)
         return(FALSE);
 
 #ifdef DEBUG
@@ -1490,15 +1493,15 @@ nssdc_xdr_NCvdata(NC *handle,
         if(status == FAIL) return FALSE;
         
         /* convert tBuf into values */
-        DFKnumin((uint8 *) tBuf, (uint8 *) values, (uint32) count, 0, 0);
+        DFKnumin(tBuf, values, (uint32) count, 0, 0);
         
     } else {
 
 #ifdef CDF_WRITE      
         /*  convert values into tBuf */
-        DFKnumout((uint8 *) values, tBuf, (uint32) count, 0, 0);
+        DFKnumout(values, tBuf, (uint32) count, 0, 0);
         
-        status = Hwrite(vp->aid, byte_count, (uint8 *) tBuf);
+        status = Hwrite(vp->aid, byte_count, tBuf);
         if(status != byte_count) return FALSE;
 #endif /* CDF_WRITE */
 
@@ -1518,7 +1521,7 @@ nssdc_xdr_NCvdata(NC *handle,
 
 
 static
-NCvar1io(handle, varid, coords, value)
+int NCvar1io(handle, varid, coords, value)
 NC *handle ;
 int varid ;
 const long *coords ;
@@ -1590,7 +1593,7 @@ Void *value ;
 }
 
 
-ncvarput1(cdfid, varid, coords, value)
+int ncvarput1(cdfid, varid, coords, value)
 int cdfid ;
 int varid ;
 const long *coords ;
@@ -1611,11 +1614,11 @@ const ncvoid *value ;
       }
 	handle->xdrs->x_op = XDR_ENCODE ;
 
-	return( NCvar1io(handle, varid, coords, (Void *)value) ) ;
+	return( NCvar1io(handle, varid, coords, value) ) ;
 }
 
 
-ncvarget1(cdfid, varid, coords, value)
+int ncvarget1(cdfid, varid, coords, value)
 int cdfid ;
 int varid ;
 const long *coords ;
@@ -1740,7 +1743,7 @@ Void *values ;
 /*
  *  For a "hypercube" put/get, compute the largest contiguous block
  */
-const long *
+static const long *
 NCvcmaxcontig(handle, vp, origin, edges)
 NC *handle ;
 NC_var *vp ;
@@ -1784,7 +1787,7 @@ const long *edges ;
 
 
 static
-NCsimplerecio(handle, vp, start, edges, values)
+int NCsimplerecio(handle, vp, start, edges, values)
 NC *handle ;
 NC_var *vp ;
 const long *start ;
@@ -1872,12 +1875,12 @@ Void *values ;
  * The following routine is not `static' because it is used by the `putgetg'
  * module for generalized hyperslab access.
  */
-NCvario(handle, varid, start, edges, values)
+int NCvario(handle, varid, start, edges, values)
 NC *handle ;
 int varid ;
 const long *start ;
 const long *edges ;
-Void *values ;
+void *values ;
 {
 
 	NC_var *vp ;
@@ -2039,7 +2042,7 @@ Void *values ;
                               return(-1) ;
 #endif /* !HDF */
                                 
-                          values += iocount * szof ;
+                          values = (const void *)((const uint8 *)values + iocount * szof);
                           (*cc) += (edp0 == edges ? iocount : 1) ;
 #ifdef VDEBUG
                           fprintf(stderr, "\t\t *cc %ld, *mm %ld  continue\n",
@@ -2083,7 +2086,7 @@ Void *values ;
 }
 
 
-ncvarput(cdfid, varid, start, edges, values)
+int ncvarput(cdfid, varid, start, edges, values)
 int cdfid ;
 int varid ;
 const long *start ;
@@ -2105,11 +2108,11 @@ const ncvoid *values ;
       }
 	handle->xdrs->x_op = XDR_ENCODE ;
 
-	return( NCvario(handle, varid, start, edges, (Void *)values) ) ;
+	return( NCvario(handle, varid, start, edges, values) ) ;
 }
 
 
-ncvarget(cdfid, varid, start, edges, values)
+int ncvarget(cdfid, varid, start, edges, values)
 int cdfid ;
 int varid ;
 const long *start ;
@@ -2340,7 +2343,7 @@ ncvoid * const *datap ;
 
 	handle->xdrs->x_op = XDR_ENCODE ;
 
-	return( NCrecio(handle, recnum, (Void **)datap) ) ;
+	return( NCrecio(handle, recnum, datap) ) ;
 }
 
 

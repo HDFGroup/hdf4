@@ -56,59 +56,59 @@ extern intn SDgetinfo
 
 #ifndef __CSTAR__
 extern intn SDreaddata
-    (int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data);
+    (int32 sdsid, int32 *start, int32 *stride, int32 *end, void * data);
 #endif
 
 extern uint16 SDgerefnumber
     (int32 sdsid);
 
 extern int32 SDnametoindex
-    (int32 fid, char *name);
+    (int32 fid, const char *name);
 
 extern intn SDgetrange
-    (int32 sdsid, VOIDP pmax, VOIDP pmin);
+    (int32 sdsid, void * pmax, void * pmin);
 
 extern int32 SDcreate
-    (int32 fid, char *name, int32 nt, int32 rank, int32 *dimsizes);
+    (int32 fid, const char *name, int32 nt, int32 rank, int32 *dimsizes);
 
 extern int32 SDgetdimid
     (int32 sdsid, intn number);
 
 extern intn SDsetdimname
-    (int32 id, char *name);
+    (int32 id, const char *name);
 
 extern intn SDendaccess
     (int32 id);
 
 extern intn SDsetrange
-    (int32 sdsid, VOIDP pmax, VOIDP pmin);
+    (int32 sdsid, void * pmax, void * pmin);
 
 extern intn SDsetattr
-    (int32 id, char *name, int32 nt, int32 count, VOIDP data);
+    (int32 id, const char *name, int32 nt, int32 count, const void * data);
 
 extern intn SDattrinfo
     (int32 id, int32 index, char *name, int32 *nt, int32 *count);
 
 extern intn SDreadattr
-    (int32 id, int32 index, VOIDP buf);
+    (int32 id, int32 index, void * buf);
 
 #ifndef __CSTAR__
 extern intn SDwritedata
-    (int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data);
+    (int32 sdsid, int32 *start, int32 *stride, int32 *end, void * data);
 #endif
 
 extern intn SDsetdatastrs
-    (int32 sdsid, char *l, char *u, char *f, char *c);
+    (int32 sdsid, const char *l, const char *u, const char *f, const char *c);
 
 extern intn SDsetcal
     (int32 sdsid, float64 cal, float64 cale, float64 ioff,
                float64 ioffe, int32 nt);
 
 extern intn SDsetfillvalue
-    (int32 sdsid, VOIDP val);
+    (int32 sdsid, void * val);
 
 extern intn SDgetfillvalue
-    (int32 sdsid, VOIDP val);
+    (int32 sdsid, void * val);
 
 extern intn SDsetfillmode
     (int32 id, intn fillmode);
@@ -121,13 +121,13 @@ extern intn SDgetcal
                float64 *ioffe, int32 *nt);
 
 extern intn SDsetdimstrs
-    (int32 id, char *l, char *u, char *f);
+    (int32 id, const char *l, const char *u, const char *f);
 
 extern intn SDsetdimscale
-    (int32 id, int32 count, int32 nt, VOIDP data);
+    (int32 id, int32 count, int32 nt, void * data);
 
 extern intn SDgetdimscale
-    (int32 id, VOIDP data);
+    (int32 id, void * data);
 
 extern intn SDdiminfo
     (int32 id, char *name, int32 *size, int32 *nt, int32 *nattr);
@@ -136,7 +136,7 @@ extern intn SDgetdimstrs
     (int32 id, char *l, char *u, char *f, intn len);
 
 extern intn SDsetexternalfile
-    (int32 id, char *filename, int32 offset);
+    (int32 id, const char *filename, int32 offset);
 
 extern intn SDsetnbitdataset
     (int32 id, intn start_bit, intn bit_len, intn sign_ext, intn fill_one);
@@ -145,7 +145,7 @@ extern intn SDsetcompress
     (int32 id, int32 type, comp_info *c_info);
 
 extern int32 SDfindattr
-    (int32 id, char *attrname);
+    (int32 id, const char *attrname);
 
 extern int32 SDidtoref
     (int32 id);
@@ -342,7 +342,7 @@ extern intn SDgetchunkinfo
 extern intn SDwritechunk
     (int32 sdsid,      /* IN: sds access id */
      int32 *origin,    /* IN: origin of chunk to write */
-     const VOID *datap /* IN: buffer for data */);
+     const void *datap /* IN: buffer for data */);
 
 /******************************************************************************
  NAME
@@ -367,7 +367,7 @@ extern intn SDwritechunk
 extern intn SDreadchunk
     (int32 sdsid,      /* IN: sds access id */
      int32 *origin,    /* IN: origin of chunk to read */
-     VOID  *datap      /* IN/OUT: buffer for data */);
+     void  *datap      /* IN/OUT: buffer for data */);
 
 /******************************************************************************
 NAME

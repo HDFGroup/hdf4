@@ -1,23 +1,14 @@
 /*******************************************************************
- * NCSA HDF
-    *
- * Software Development Group
-    *
- * National Center for Supercomputing Applications
-    *
- * University of Illinois at Urbana-Champaign
-    *
- * 605 E. Springfield, Champaign IL 61820
-    *
- *
-    *
- * For conditions of distribution and use, see the accompanying
-    *
- * hdf/COPYING file.
-    *
- *
-    *
- *****************************************************************/
+ * NCSA HDF                                                        *
+ * Software Development Group                                      *
+ * National Center for Supercomputing Applications                 *
+ * University of Illinois at Urbana-Champaign                      *
+ * 605 E. Springfield, Champaign IL 61820                          *
+ *                                                                 *
+ * For conditions of distribution and use, see the accompanying    *
+ * hdf/COPYING file.                                               *
+ *                                                                 *
+ *******************************************************************/
 
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
@@ -81,9 +72,13 @@ char   attr3[6] = {'m','N','p', 'S', 't', '\0'}, iattr3[6];
 float32 attr4[2] = {(float32)32.001, (float32)-34.002}, iattr4[2];
 float64 attr5[2] = {64.12345, -64.12345}, iattr5[2];
 
+static intn write_vset_stuff(void);
+static intn write_vattrs(void);
+static intn read_vattrs(void);
+
 /* create vdatas and vgroups */
 
-intn write_vset_stuff(void)
+static intn write_vset_stuff(void)
 {
    int32 fid, vgid, vsid;
 
@@ -166,7 +161,7 @@ intn write_vset_stuff(void)
 } /* write_vset_stuff */
 
 /* test attribute routines */
-intn write_vattrs(void)
+static intn write_vattrs(void)
 {
    int32 fid, vgid, vsid;
    int32 vsref, vgref;
@@ -230,8 +225,7 @@ intn write_vattrs(void)
       }
    if (VSET_VERSION != (vsversion = VSgetversion(vsid))) {
          num_errs++;
-         printf(">>> Wrong version, should be 3, got %d \n",
-                     vsversion);
+         printf(">>> Wrong version, should be 3, got %d \n", (int)vsversion);
       }
    /* check number of fields */
    if (2 != (n_flds = VFnfields(vsid)))  {
@@ -240,7 +234,7 @@ intn write_vattrs(void)
                       n_flds);
       }
    /* search for non-existing field  */
-   if (FAIL != VSfindex(vsid, (char *)FLDNAME0, &fldindex)) {
+   if (FAIL != VSfindex(vsid, FLDNAME0, &fldindex)) {
          num_errs++;
          printf(">>> Search for non-existing field, should fail.\n");
       }
@@ -291,8 +285,7 @@ intn write_vattrs(void)
       }
    if (VSET_NEW_VERSION != (vsversion = VSgetversion(vsid))) {
          num_errs++;
-         printf(">>> Wrong version, should be 4, got %d \n",
-                     vsversion);
+         printf(">>> Wrong version, should be 4, got %d \n", (int)vsversion);
       }
    /* change datatype of existing attr, should fail */
    if (FAIL != VSsetattr(vsid, 0, ATTNAME5, DFNT_FLOAT32,1, attr4)) {
@@ -451,7 +444,7 @@ intn write_vattrs(void)
 }  /* write_vattr */
 
 /*  Test reading routines */
-intn read_vattrs(void)
+static intn read_vattrs(void)
 {
    int32 fid, vgid, vsid, vgref, vsref;
    intn n_vgattrs, n_vsattrs, n_fldattrs;
@@ -479,7 +472,7 @@ intn read_vattrs(void)
    if ((iversion = Vgetversion(vgid)) < VSET_NEW_VERSION) {
          num_errs++;
          printf(">>> Wrong Vgroup version, should be %d, got %d.\n", 
-                      VSET_NEW_VERSION, iversion); 
+                      VSET_NEW_VERSION, (int)iversion); 
       }
    if (FAIL == (n_vgattrs = Vnattrs(vgid)) || n_vgattrs != 2) {
          num_errs++;
@@ -497,14 +490,14 @@ intn read_vattrs(void)
        i_size != i_count * DFKNTsize(DFNT_UINT32 | DFNT_NATIVE))   {
          num_errs++;
          printf(">>> Wrong attrinfo for attname1 of vgname0; \
-             got %s %d %d %d.\n", iattrname, i_type,i_count,i_size);
+             got %s %d %d %d.\n", iattrname, (int)i_type,(int)i_count,(int)i_size);
       }
    if (FAIL == Vgetattr(vgid, 0, iattr1) ||
        iattr1[0] != attr1[2] || iattr1[1] != attr1[3])  {
          num_errs++;
          printf(">>> Wrong values for attname1 of vgname0; ");
-         printf("got %u %u, should be %u %u.\n",
-                     iattr1[0], iattr1[1], attr1[2], attr1[3]);
+         printf("got %u %u, should be %u %u.\n", (unsigned)iattr1[0],
+             (unsigned)iattr1[1], (unsigned)attr1[2], (unsigned)attr1[3]);
       }
 
    if (FAIL == Vattrinfo(vgid,1,iattrname,&i_type,&i_count,&i_size) ||
@@ -513,7 +506,7 @@ intn read_vattrs(void)
        i_size != i_count * DFKNTsize(DFNT_UINT16 | DFNT_NATIVE))   {
          num_errs++;
          printf(">>> Wrong attrinfo for attname2 of vgname0; \
-            got %s %d %d %d.\n", iattrname, i_type,i_count,i_size);
+            got %s %d %d %d.\n", iattrname, (int)i_type,(int)i_count,(int)i_size);
       }
    if (FAIL == Vgetattr(vgid, 1, iattr2) ||
        iattr2[0] != attr2[0] || iattr2[1] != attr2[1])  {
@@ -538,12 +531,12 @@ intn read_vattrs(void)
    if ((iversion = Vgetversion(vgid)) != VSET_VERSION) {
          num_errs++;
          printf(">>> Wrong Vgroup version, should be %d, got %d.\n",
-                      VSET_VERSION, iversion);
+                      VSET_VERSION, (int)iversion);
       }
    if (FAIL == (n_vgattrs = Vnattrs(vgid)) || n_vgattrs != 0) {
          num_errs++;
-         printf(">>> Wrong num of Vgroup1 attrs, should be %d, ");
-         printf("got %d.\n", 0, n_vgattrs);
+         printf(">>> Wrong num of Vgroup1 attrs, should be %d, got %d.\n",
+             0, n_vgattrs);
    }
    if (FAIL == Vdetach(vgid))  {
          num_errs++;
@@ -561,7 +554,7 @@ intn read_vattrs(void)
    if ((iversion = VSgetversion(vsid)) != VSET_NEW_VERSION) {
        num_errs++;
        printf(">>> Wrong Vdata version, should be %d, got %d.\n",
-                      VSET_NEW_VERSION, iversion);
+                      VSET_NEW_VERSION, (int)iversion);
       }
    if (FAIL == (n_vsattrs = VSnattrs(vsid)) || n_vsattrs != 5) {
        num_errs++;
@@ -582,8 +575,8 @@ intn read_vattrs(void)
                (i_count != 5) || (i_size != 5)) {
         num_errs++;
         printf(">>> Wrong attrinfo for attname9 of vsname0 fld0; ");
-        printf(" got  %s %d %d %d.\n", iattrname, i_type,
-                 i_count, i_size);
+        printf(" got  %s %d %d %d.\n", iattrname, (int)i_type,
+                 (int)i_count, (int)i_size);
    }
    if (FAIL == VSgetattr(vsid, 0, 2, iattr3) ||
        iattr3[0] != attr3[0] || iattr3[1] != attr3[1] ||
@@ -591,7 +584,7 @@ intn read_vattrs(void)
        iattr3[4] != attr3[4] )  {
          num_errs++;
          printf(">>> Wrong values for attname9  of vsname0; \
-                     got %5c, should be %5c.\n",
+                     got %5s, should be %5s.\n",
                      iattr3, attr3);
    }
    if (FAIL == VSdetach(vsid))  {
@@ -610,12 +603,12 @@ intn read_vattrs(void)
    if ((iversion = VSgetversion(vsid)) != VSET_NEW_VERSION) {
          num_errs++;
          printf(">>> Wrong Vdata version, should be %d, got %d.\n",
-                      VSET_NEW_VERSION, iversion);
+                      VSET_NEW_VERSION, (int)iversion);
       }
    if (FAIL == (n_vsattrs = VSnattrs(vsid)) || n_vsattrs != 6) {
          num_errs++;
-         printf(">>> Wrong num of Vsname1 attrs, should be %d, ");
-         printf("got %d.\n", 6, n_vsattrs);
+         printf(">>> Wrong num of Vsname1 attrs, should be %d, ",6);
+         printf("got %d.\n", n_vsattrs);
    }
    if (FAIL == (n_fldattrs = VSfnattrs(vsid, (int32)_HDF_VDATA)) || n_fldattrs != 2) {
         num_errs++;
@@ -670,7 +663,7 @@ intn read_vattrs(void)
                (i_size != DFKNTsize(DFNT_FLOAT | DFNT_NATIVE))) {
         num_errs++;
         printf(">>> Wrong attrinfo for attname4 of vdata vsname1; ");
-        printf(" got  %s %d %d.\n", iattrname, i_type,i_count);
+        printf(" got  %s %d %d.\n", iattrname, (int)i_type,(int)i_count);
    }
    if (FAIL == VSgetattr(vsid, (int32)_HDF_VDATA, 1, iattr4) ||
        (fabs((double)(iattr4[0] - attr4[0])) > fabs((double)(attr4[0]*EPS32))))  {
@@ -697,7 +690,7 @@ intn read_vattrs(void)
                (i_size != DFKNTsize(DFNT_FLOAT64 | DFNT_NATIVE))) {
         num_errs++;
         printf(">>> Wrong attrinfo for VSNAME1 of fld 0 of vdata vsname1; ");
-        printf(" got  %s %d %d.\n", iattrname, i_type,i_count);
+        printf(" got  %s %d %d.\n", iattrname, (int)i_type,(int)i_count);
    }
    if (FAIL == VSgetattr(vsid, 0, 2, iattr5) ||
        (fabs((double)(iattr5[0] - attr5[0])) > fabs((double)(attr5[0]*EPS64))) )  {
@@ -726,7 +719,7 @@ intn read_vattrs(void)
    if (VSET_VERSION != (iversion = VSgetversion(vsid)))  {
         num_errs++;
         printf(">>> Wrong vdata version. ATTNAME10 should be of ");
-        printf(" %d, got %d\n", VSET_VERSION, iversion);
+        printf(" %d, got %d\n", VSET_VERSION, (int)iversion);
    }
    ret = VSdetach(vsid);
    CHECK(ret, FAIL, "VSdetach");

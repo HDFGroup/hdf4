@@ -77,7 +77,7 @@ int         HEwrite
             (HE_CMD * cmd);
 
 int         annotate
-            (char *editor, int ann);
+            (const char *editor, int ann);
 
 int         backupFile
             (char *file);

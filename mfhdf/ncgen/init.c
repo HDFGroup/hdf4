@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include "ncgen.h"
+#include "genlib.h"
 
 extern int netcdf_flag;
 extern int c_flag;

@@ -9,7 +9,7 @@
 
 */
 
-#define DEBUG 1
+/* #define DEBUG 1 */
 #include "local_nc.h"
 #ifdef HDF
 #include "hfile.h"
@@ -123,7 +123,7 @@ nssdc_read_cdf(xdrs, handlep)
     uint8    buffer[1000];
     uint8  * b;
     int32    dummy;
-    char   * FUNC = "nssdc_read_cdf";
+    static const char   * FUNC = "nssdc_read_cdf";
     hdf_file_t fp;
     intn     i, j;
     int32    rank, current_var, current_dim, hdftype;
@@ -241,9 +241,9 @@ nssdc_read_cdf(xdrs, handlep)
        HRETURN_ERROR(DFE_READERROR,FALSE);
 
 #ifdef DEBUG
-    fprintf(stderr,"File version %d.%d\n", vers, release);
-    fprintf(stderr," rVars %d, Attrs %d, zVars %d\n", numRVars, numAttrs, numZVars);
-    fprintf(stderr," Dims %d, maxRec %d\n", numDims, maxRec);
+    fprintf(stderr,"File version %d.%d\n", (int)vers, (int)release);
+    fprintf(stderr," rVars %d, Attrs %d, zVars %d\n", (int)numRVars, (int)numAttrs, (int)numZVars);
+    fprintf(stderr," Dims %d, maxRec %d\n", (int)numDims, (int)maxRec);
 #endif
 
     /*
@@ -254,7 +254,7 @@ nssdc_read_cdf(xdrs, handlep)
     for(i = 0; i < numDims; i++) {
         char tmpname[80];
         INT32DECODE(b, dim_sz[i]);
-        sprintf(tmpname, "CDFdim%d_%d", i, dim_sz[i]);
+        sprintf(tmpname, "CDFdim%d_%d", i, (int)dim_sz[i]);
         dim_rec[current_dim++] = NC_new_dim(tmpname, dim_sz[i]);
 
 #ifdef DEBUG
@@ -268,7 +268,7 @@ nssdc_read_cdf(xdrs, handlep)
     while(varNext != 0) {
 
 #ifdef DEBUG
-        fprintf(stderr,"Variable %d seeking to %d\n", current_var, varNext);
+        fprintf(stderr,"Variable %d seeking to %d\n", (int)current_var, (int)varNext);
 #endif
 
         if (HI_SEEK(fp, varNext) == FAIL)
@@ -311,8 +311,8 @@ nssdc_read_cdf(xdrs, handlep)
         name[j] = '\0';
 
 #ifdef DEBUG
-        fprintf(stderr,"\tName %s nt %d vMaxRec %d\n", name, nt, vMaxRec);
-        fprintf(stderr,"\tNext var at %d\n", varNext);
+        fprintf(stderr,"\tName %s nt %d vMaxRec %d\n", name, (int)nt, (int)vMaxRec);
+        fprintf(stderr,"\tNext var at %d\n", (int)varNext);
 #endif
 
         /*
@@ -398,7 +398,7 @@ nssdc_read_cdf(xdrs, handlep)
             vix->next = NULL;
 
 #ifdef DEBUG
-            fprintf(stderr, "Reading a VXR record at %d\n", vxrNext);
+            fprintf(stderr, "Reading a VXR record at %d\n", (int)vxrNext);
 #endif
             /*
              * Read the next record out of the file 
@@ -431,8 +431,8 @@ nssdc_read_cdf(xdrs, handlep)
 
 #ifdef DEBUG
             for(i = 0; i < vix->nEntries; i++)
-                fprintf(stderr, "\t%d %d %d\n", vix->firstRec[i], vix->lastRec[i], vix->offset[i]);
-            fprintf(stderr, "Next record at %d\n", vxrNext);
+                fprintf(stderr, "\t%d %d %d\n", (int)vix->firstRec[i], (int)vix->lastRec[i], (int)vix->offset[i]);
+            fprintf(stderr, "Next record at %d\n", (int)vxrNext);
 #endif
 
         }
@@ -447,7 +447,7 @@ nssdc_read_cdf(xdrs, handlep)
     while(zVarNext != 0) {
 
 #ifdef DEBUG
-        fprintf(stderr,"zVariable %d seeking to %d\n", i, zVarNext);
+        fprintf(stderr,"zVariable %d seeking to %d\n", i, (int)zVarNext);
 #endif
 
         if (HI_SEEK(fp, zVarNext) == FAIL)
@@ -491,7 +491,7 @@ nssdc_read_cdf(xdrs, handlep)
 
         /* MORE STUFF */
 #ifdef DEBUG
-        fprintf(stderr,"\tName %s nt %d vMaxRec %d\n", name, nt, vMaxRec);
+        fprintf(stderr,"\tName %s nt %d vMaxRec %d\n", name, (int)nt, (int)vMaxRec);
 #endif
 
         /*
@@ -515,14 +515,14 @@ nssdc_read_cdf(xdrs, handlep)
             INT32DECODE(b, dummy);
             if(dummy) {
                 char dimname[1000];
-                sprintf(dimname, "%s%d_%d", name, rank, dim_sz[j]);
+                sprintf(dimname, "%s%d_%d", name, (int)rank, (int)dim_sz[j]);
                 dim_rec[current_dim] = NC_new_dim(dimname, dim_sz[j]);
                 dims[rank++] = current_dim++;
             }
         }
 
 #ifdef DEBUG
-        fprintf(stderr,"\trank %d numDims %d\n", rank, numDims);
+        fprintf(stderr,"\trank %d numDims %d\n", (int)rank, (int)numDims);
 #endif
 
         /* map the CDF type into a netCDF type */
@@ -569,7 +569,7 @@ nssdc_read_cdf(xdrs, handlep)
             vix->next = NULL;
 
 #ifdef DEBUG
-            fprintf(stderr, "Reading a VXR record at %d\n", vxrNext);
+            fprintf(stderr, "Reading a VXR record at %d\n", (int)vxrNext);
 #endif
             /*
              * Read the next record out of the file 
@@ -602,8 +602,8 @@ nssdc_read_cdf(xdrs, handlep)
 
 #ifdef DEBUG
             for(i = 0; i < vix->nEntries; i++)
-                fprintf(stderr, "\t%d %d %d\n", vix->firstRec[i], vix->lastRec[i], vix->offset[i]);
-            fprintf(stderr, "Next record at %d\n", vxrNext);
+                fprintf(stderr, "\t%d %d %d\n", (int)vix->firstRec[i], (int)vix->lastRec[i], (int)vix->offset[i]);
+            fprintf(stderr, "Next record at %d\n", (int)vxrNext);
 #endif
 
         }
@@ -618,7 +618,7 @@ nssdc_read_cdf(xdrs, handlep)
     for(i = 0; i < numAttrs; i++) {
 
 #ifdef DEBUG
-        fprintf(stderr,"Attribute %d seeking to %d\n", i, adrNext);
+        fprintf(stderr,"Attribute %d seeking to %d\n", i, (int)adrNext);
 #endif
         
         if (HI_SEEK(fp, adrNext) == FAIL)
@@ -652,8 +652,8 @@ nssdc_read_cdf(xdrs, handlep)
         name[CDF_ATTR_NAME_LEN] = '\0';
 
 #ifdef DEBUG
-        fprintf(stderr,"\tname %s (%s) data at %d\n", name, (scope == 1 ? "global" : "local"), aedrNext);
-        fprintf(stderr,"\taedrNext %d    aedzNext %d\n", aedrNext, aedzNext);
+        fprintf(stderr,"\tname %s (%s) data at %d\n", name, (scope == 1 ? "global" : "local"), (int)aedrNext);
+        fprintf(stderr,"\taedrNext %d    aedzNext %d\n", (int)aedrNext, (int)aedzNext);
         
 #endif
 
@@ -716,7 +716,7 @@ nssdc_read_cdf(xdrs, handlep)
                 /* local --- find the appropriate variable */
                 ap = &(vars[num]->attrs);
 #ifdef DEBUG
-        fprintf(stderr,"\tAdding %s (%s) to var %d \n", name, (scope == 1 ? "global" : "local"), num);
+        fprintf(stderr,"\tAdding %s (%s) to var %d \n", name, (scope == 1 ? "global" : "local"), (int)num);
 #endif
             }
 
@@ -745,7 +745,7 @@ nssdc_read_cdf(xdrs, handlep)
             int32       bsize;
 
 #ifdef DEBUG
-        fprintf(stderr,"\tReading aedz from %d\n", aedzNext);
+        fprintf(stderr,"\tReading aedz from %d\n", (int)aedzNext);
 #endif
 
             if (HI_SEEK(fp, aedzNext) == FAIL)
@@ -798,7 +798,7 @@ nssdc_read_cdf(xdrs, handlep)
                 /* local --- find the appropriate variable */
                 ap = &(vars[num]->attrs);
 #ifdef DEBUG
-        fprintf(stderr,"\tAdding %s (%s) to Zvar %d \n", name, (scope == 1 ? "global" : "local"), num);
+        fprintf(stderr,"\tAdding %s (%s) to Zvar %d \n", name, (scope == 1 ? "global" : "local"), (int)num);
 #endif
             }
 

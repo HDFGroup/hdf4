@@ -26,8 +26,10 @@ static char RcsId[] = "@(#)$Revision$";
 #include <string.h>
 #endif
 #define NUMOFTESTS 20
-#define VERSION "4.0beta"
-#define BUILDDATE "Wed Nov 22 1995"
+#define VERSION "4.1r2"
+#define BUILDDATE "Tue Nov 04 1997"
+
+static int InitTest(const char *TheName, const char *TheCall, const char *TheDescr);
 
 struct TestStruct
   {
@@ -39,7 +41,7 @@ struct TestStruct
   }
 Test[NUMOFTESTS];
 
-int
+static int
 InitTest(const char *TheName, const char *TheCall, const char *TheDescr)
 {
     static int  Index = 0;
@@ -68,7 +70,7 @@ main(int argc, char *argv[])
     int         CleanUp = 1;
     int         num_tests=0;
     FILE	*cmdfile;
-    char	*cmdfilename="fortest.arg";
+    const char	*cmdfilename="fortest.arg";
 
 
     printf(" ===========================================\n");

@@ -34,7 +34,7 @@ struct node
 };
 
 
-void 
+static void 
 dumpvg_usage(intn argc, 
              char *argv[])
 {
@@ -52,7 +52,7 @@ dumpvg_usage(intn argc,
     printf("\t-x\tAscii text format of output (default)\n");
 }	/* end list_usage() */
 
-void 
+static void 
 init_dumpvg_opts(dump_info_t *dumpvg_opts)
 {
     dumpvg_opts->filter = DALL;		/* default dump all VGs */
@@ -558,31 +558,9 @@ vgdumpfull(int32        vg_id,
             }
           else /* else something else */
             {
-                char *cptr = NULL;
-                int  slen;
-                int  found = 1;
-
-                cptr = HDgettagsname((uint16) tag);
-                if (!cptr)
-                  {
-                      slen = HDstrlen("Unknown Tag")+1;
-                      cptr = "Unknown Tag";
-                      found = 0;
-                  }
-                else
-                    slen = HDstrlen(cptr)+1;
-
-                /* note that the 'name' is kept around so don't free it here */
-                if ((name = (char *)HDmalloc(sizeof(char) * (HDstrlen(cptr)+1))) == NULL)
-                  {
-                      fprintf(stderr,"Not enough memory!\n");
-                      ret_value = FAIL;
-                      goto done;
-                  }
-
-                HDstrcpy(name,cptr);
-                if (found)
-                    HDfree(cptr);
+                name = HDgettagsname((uint16) tag);
+                if (!name)
+                    name = HDstrdup("Unknown Tag");
 
                 if (!skip)
                   {
@@ -665,7 +643,7 @@ dvg(dump_info_t *dumpvg_opts,
     int32       vg_tag;
     int32       level;
     int32       num_nodes = 0;
-    int32       max_vgs;
+    int32       max_vgs=0;
     int32       num_vgs;
     int         index_error = 0;
     int         dumpall = 0;

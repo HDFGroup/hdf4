@@ -21,19 +21,19 @@ extern "C" {
 
 /* Print error message to stderr, don't exit */
 #ifndef NO_STRARG
-extern void derror(char *fmt, ...);
+extern void derror(const char *fmt, ...);
 #else
 extern void derror();
 #endif
 
 #ifndef NO_STDARG
 extern void	error		PROTO((
-				       char *fmt,
+				       const char *fmt,
 				       ...
 				       ));
 #else  /* VARARGS1 */
 extern void     error           PROTO((
-                                       char *fmt,
+                                       const char *fmt,
                                        va_dcl
                                        ));
 #endif

@@ -13,6 +13,7 @@
 #include	<varargs.h>
 #endif /* !NO_STDARG */
 
+#include "ncgen.h"
 #include "genlib.h"
 
 int	lineno = 1;
@@ -24,12 +25,12 @@ int	derror_count = 0;
  */
 #ifndef NO_STDARG
 void
-derror(char *fmt, ...)
+derror(const char *fmt, ...)
 #else
 /*VARARGS1*/
 void
 derror(fmt, va_alist)
-     char *fmt ;		/* error-message printf-style format */
+     const char *fmt ;		/* error-message printf-style format */
      va_dcl			/* variable number of error args, if any */
 #endif /* !NO_STDARG */
 {

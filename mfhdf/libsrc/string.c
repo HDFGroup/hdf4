@@ -22,7 +22,7 @@ compute_hash(unsigned count,
 
     while(count > sizeof(uint32))
       {
-          HDmemcpy((VOIDP)&temp,(const VOIDP)str,sizeof(uint32));
+          HDmemcpy(&temp,str,sizeof(uint32));
           ret   += temp;
           str   += sizeof(uint32);
           count -= sizeof(uint32);
@@ -31,7 +31,7 @@ compute_hash(unsigned count,
     if(count > 0)
       {
           temp=0;
-          HDmemcpy((VOIDP)&temp,(const VOIDP)str,count);
+          HDmemcpy(&temp,str,count);
           ret+=temp;
       } /* end if */
     return(ret);
@@ -86,11 +86,7 @@ const char *str ;
 	return(ret) ;
     alloc_err :
         nc_serror("NC_new_string") ;
-#ifdef HDF
-	if(ret != NULL) HDfree((VOIDP)ret) ;
-#else
 	if(ret != NULL) HDfree(ret) ;
-#endif
 	return(NULL) ;
 }
 
@@ -114,12 +110,14 @@ NC_string *cdfstr ;
           Free(cdfstr) ;
       }
 
+#ifdef LATER
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
 
       }
      /* Normal cleanup */
+#endif /* LATER */
 
     return ret_value;
 }
@@ -208,7 +206,7 @@ xdr_NC_string(xdrs, spp)
  * How much space will the xdr'd string take.
  *
  */
-NC_xlen_string(cdfstr)
+int NC_xlen_string(cdfstr)
 NC_string *cdfstr ;
 {
 	int len = 4 ;

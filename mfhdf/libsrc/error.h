@@ -7,8 +7,8 @@
 #define _NC_ERROR_
 
 #ifndef NO_STDARG
-void nc_serror(char *fmt, ...) ;
-void NCadvise(int err, char *fmt,...) ;
+void nc_serror(const char *fmt, ...) ;
+void NCadvise(int err, const char *fmt,...) ;
 #else
 void nc_serror() ;
 void NCadvise() ;

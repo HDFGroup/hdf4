@@ -29,7 +29,7 @@ NCgenio(handle, varid, start, count, stride, imap, values)
     const long	*count;		/* NULL => everything following start[] */
     const long	*stride;	/* NULL => unity strides */
     const long	*imap;		/* NULL => same structure as netCDF variable */
-    Void	*values ;
+    const void	*values ;
 {
     int		maxidim;	/* maximum dimensional index */
     NC_var	*vp	= NC_hlookupvar( handle, varid );
@@ -51,7 +51,7 @@ NCgenio(handle, varid, start, count, stride, imap, values)
 	 * The variable is an array.
 	 */
 	int	idim;
-	char	*valp	= (char*)values;
+	char	*valp	= values;
 	long	mycount[MAX_VAR_DIMS];
 	long	mystart[MAX_VAR_DIMS];
 	long	mystride[MAX_VAR_DIMS];
@@ -167,8 +167,7 @@ const ncvoid *values ;
 	}
 	handle->xdrs->x_op = XDR_ENCODE ;
 
-	return NCgenio(handle, varid, start, count, 
-		       stride, imap, (Void*)values);
+	return NCgenio(handle, varid, start, count, stride, imap, values);
 }
 
 
@@ -227,8 +226,7 @@ const ncvoid *values ;
 	}
 	handle->xdrs->x_op = XDR_ENCODE ;
 
-	return NCgenio(handle, varid, start, count, 
-		       stride, (long*)0, (Void*)values);
+	return NCgenio(handle, varid, start, count, stride, NULL, values);
 }
 
 

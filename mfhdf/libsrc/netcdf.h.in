@@ -398,6 +398,9 @@ extern int ncsync	PROTO((
 extern int ncabort	PROTO((
     int		cdfid
 ));
+extern int ncnobuf	PROTO((
+    int		cdfid
+));
 extern int ncdimdef	PROTO((
     int		cdfid,
     const char*	name,
