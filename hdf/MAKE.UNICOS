@@ -2,7 +2,11 @@
 # $Header$
 #
 # $Log$
-# Revision 1.1  1992/07/15 20:12:40  chouck
+# Revision 1.2  1992/07/22 19:25:34  dilg
+# Changed definitions of HDFINC and HDFLIB to be `pwd`/include and `pwd`/lib,
+# respectively.
+#
+# Revision 1.1  1992/07/15  20:12:40  chouck
 # Initial revision
 #
 #
@@ -29,10 +33,10 @@ FC= cf77
 FFLAGS=
 
 # Location where the HDF include files are to be installed
-HDFINC= /hdf/home/chouck/hdf/32sun/include
+HDFINC= `pwd`/include
 
 # Location where the HDF library is to be installed
-HDFLIB= /hdf/home/chouck/hdf/32sun/lib
+HDFLIB= `pwd`/lib
 
 # Name of library archiver and flags to send
 AR= bld
