@@ -1778,7 +1778,7 @@ host_os=`echo $ac_cv_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 
 
 
-case $host_os in
+case "$host_os" in
   aix4.*)       host_os_novers="aix4.x"     ;;
   aix5.*)       host_os_novers="aix5.x"     ;;
   freebsd*)     host_os_novers="freebsd"    ;;
@@ -4407,7 +4407,7 @@ else
   withval=yes
 fi;
 
-case $withval in
+case "$withval" in
   yes)
     HAVE_ZLIB="yes"
 
@@ -5130,7 +5130,7 @@ else
   withval=yes
 fi;
 
-case $withval in
+case "$withval" in
   yes)
     HAVE_JPEG="yes"
 
@@ -5614,7 +5614,7 @@ else
   withval=yes
 fi;
 
-case $withval in
+case "$withval" in
   yes)
     HAVE_SZIP="yes"
 
@@ -6091,8 +6091,6 @@ esac
 
 echo "$as_me:$LINENO: checking for xdr library support" >&5
 echo $ECHO_N "checking for xdr library support... $ECHO_C" >&6
-
-CPPFLAGS="$CPPFLAGS -I/usr/include/rpc"
 cat >conftest.$ac_ext <<_ACEOF
 #line $LINENO "configure"
 /* confdefs.h.  */
@@ -6100,7 +6098,18 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include <xdr.h>
+
+#ifdef VMS
+#define STDC_INCLUDES
+#endif
+#ifdef __ultrix
+#define GCC_FIX
+#endif
+#include <rpc/types.h>
+#ifdef __ultrix
+#undef GCC_FIX
+#endif
+#include <rpc/xdr.h>
 int
 main ()
 {
@@ -6142,7 +6151,7 @@ else
 fi
 
 
-case "${host}" in
+case "$host" in
   *-solaris*|*-hp-hpux*|S370-fujitsu-sysv*)
     LIBS="$LIBS -lnsl"  ;;
   *) ;;
@@ -7362,7 +7371,7 @@ fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
 
 
-case "${host}" in
+case "$host" in
   alpha-*-*)            BAR="alpha"       ;;
   mips*-dec-ultrix*)    BAR="dec"         ;;
   mips*-sgi-irix6.*)    BAR="irix6"       ;;
