@@ -303,13 +303,14 @@ Please check your Makefile.
 typedef void              VOID;
 typedef void              *VOIDP;
 typedef char              *_fcd;
+/*  AIX 4.3 defines int8, int16, int32 in /usr/include/intypes.h file.
+    Compilation fails with complains about redefinition.
+    Use of predefined macro helped.  EIP 7/15/99 */
+#ifndef _ALL_SOURCE                                                              typedef char              int8;                                                  typedef short int         int16;                                                 typedef long int          int32;                                                 #endif  
 typedef char              char8;
 typedef unsigned char     uchar8;
-typedef char              int8;
 typedef unsigned char     uint8;
-typedef short int         int16;
 typedef unsigned short int uint16;
-typedef long int          int32;
 typedef unsigned long int uint32;
 typedef int               intn;
 typedef unsigned int      uintn;
