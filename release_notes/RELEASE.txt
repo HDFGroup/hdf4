@@ -147,8 +147,8 @@ HDF 4.2 Release 1 has been tested on the following platforms:
                                   HP Fortran Compiler X5.5A-4085-48E1K
 
     SunOS 5.7(32 and 64 bit)      WorkShop Compilers 5.0 98/12/15 C 5.0
-     (Solaris 2.7)                WorkShop Compilers 5.0 98/10/25 
-                                  FORTRAN 77 5.0
+     (Solaris 2.7)                
+                                  WorkShop Compilers 5.0 99/09/16 FORTRAN 77 5.0 patch 107596-03
                                   gcc 3.2.2
                                   g77 GNU Fortran (GCC 3.2.2) 3.2.2 
     SunOS 5.8(32 and 64 bit)      Sun WorkShop 6 update 2 C 5.3
