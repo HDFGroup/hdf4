@@ -640,6 +640,7 @@ int32 cnt;
   count = 0;
   tags[count] = DFTAG_VH;
   refs[count] = hdf_create_dim_vdata(xdrs, handle, (*dim));
+  if(refs[count] == FAIL) return FAIL;
   count++;
   
   if((*dim)->size == NC_UNLIMITED) 
@@ -834,6 +835,7 @@ NC **handlep;
           if(!done) {
               tags[count] = (int32) DIM_TAG;
               refs[count] = (int32) hdf_write_dim(xdrs, (*handlep), dims, count);
+              if(refs[count] == FAIL) return FALSE;
               count++;
           }
           dims++;
