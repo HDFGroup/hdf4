@@ -960,7 +960,7 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 
 #endif /* MOTOROLA */
 
-#if defined DEC_ALPHA || (defined __alpha && defined __unix__)
+#if defined DEC_ALPHA || (defined __alpha && (defined __unix__ || defined unix))
 
 #ifndef DEC_ALPHA
 #define DEC_ALPHA

@@ -32,7 +32,7 @@ appdirs=""
 host_makefile_frag=""
 if [ -d ${srcdir}/config ]; then
 case "${host}" in
-  alpha-dec-osf*)         host_makefile_frag=config/mh-alpha ;;
+  alpha-*-*)              host_makefile_frag=config/mh-alpha ;;
   mips*-dec-ultrix*)      host_makefile_frag=config/mh-decstation ;;
   mips*-sgi-irix6.*)      host_makefile_frag=config/mh-irix6 ;;
   mips*-sgi-irix6_32*)    host_makefile_frag=config/mh-irix32 ;;
@@ -102,7 +102,7 @@ files=
 links=jconfig.h
 if [ -d ${srcdir}/config ]; then
 case "${host}" in
-  alpha-dec-osf*)         files=config/jalpha.h ;;
+  alpha-*-*)              files=config/jalpha.h ;;
   mips*-dec-ultrix*)      files=config/jdec.h ;;
   mips*-sgi-irix6.*)      files=config/jirix6.h ;;
   mips*-sgi-irix6_32*)    files=config/jirix32.h ;;

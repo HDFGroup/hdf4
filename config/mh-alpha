@@ -12,6 +12,8 @@
 # 4.2 libsrc Macros for NETCDF
 # 4.3 Port Macros for NETCDF
 #
+# This file is used for both the DEC Unix and Linux operating systems, running
+#    on DEC Alpha CPUs
 
 # ------------ General Macros for HDF --------------------
 # Version of the library
@@ -20,12 +22,12 @@ VERSION  = 4.0
 #
 # Compiliers:
 # For gcc version
-#CC=gcc
-#CFLAGS=-ansi 
+CC=gcc
+CFLAGS=-ansi 
 #
 #Using ANSI compilier
-CC=cc
-CFLAGS= -Olimit 2048 -std1
+#CC=cc
+#CFLAGS= -Olimit 2048 -std1
 
 # Fortran compilier
 FC = f77
@@ -98,7 +100,7 @@ CFLAGS_NETCDF =
 # CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DBIG_SHORTS -DBIG_LONGS
 #
 # for OSF(dec alpha) 
-CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DBIG_LONGS -std1
+CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DBIG_LONGS -D_GNU_SOURCE
 #
 # for IRIX6(64-bit) 
 # CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DBIG_LONGS#

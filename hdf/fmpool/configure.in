@@ -32,7 +32,7 @@ appdirs=""
 host_makefile_frag=""
 if [ -d ${srcdir}/config ]; then
 case "${host}" in
-  alpha-dec-osf*)         host_makefile_frag=config/mh-alpha ;;
+  alpha-*-*)              host_makefile_frag=config/mh-alpha ;;
   mips*-dec-ultrix*)      host_makefile_frag=config/mh-decstation ;;
   mips*-sgi-irix6.*)      host_makefile_frag=config/mh-irix6 ;;
   mips*-sgi-irix6_32*)    host_makefile_frag=config/mh-irix32 ;;
@@ -102,7 +102,7 @@ files=
 links=fmpconf.h
 if [ -d ${srcdir}/config ]; then
 case "${host}" in
-  alpha-dec-osf*)         files=config/fmpalpha.h ;;
+  alpha-*-*)              files=config/fmpalpha.h ;;
   mips*-dec-ultrix*)      files=config/fmpdec.h ;;
   mips*-sgi-irix6.*)      files=config/fmpirix6.h ;;
   mips*-sgi-irix6_32*)    files=config/fmpirix32.h ;;
