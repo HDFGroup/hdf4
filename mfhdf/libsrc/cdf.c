@@ -614,15 +614,17 @@ NC_attr **attr;
 ** Write out a group representing a dimension
 */
 int32
-  hdf_write_dim(xdrs, handle, dim)
+  hdf_write_dim(xdrs, handle, dim, cnt)
 XDR *xdrs;
 NC *handle;
 NC_dim **dim;
+int32 cnt;
 {
   int32 status;
   int32 tags[100], refs[100];
   int32 count;
   char  *class;
+  char  name[MAX_NC_NAME];
 
 #if DEBUG
  fprintf(stderr, "hdf_write_dim I've been called\n");
@@ -643,8 +645,13 @@ NC_dim **dim;
   else
       class = DIMENSION;
   
+  if(HDstrncmp((*dim)->name->values, "fakeDim", 7) == 0)
+      sprintf(name, "fakeDim%d", cnt);
+  else
+      HDstrcpy(name, (*dim)->name->values);
+
   status = VHmakegroup(handle->hdf_file, tags, refs, count, 
-		       (*dim)->name->values, class);
+		       name, class);
 
   if(status == FAIL)
       HEprint(stdout, 0);
@@ -815,7 +822,7 @@ NC **handlep;
 
           if(!done) {
               tags[count] = (int32) DIM_TAG;
-              refs[count] = (int32) hdf_write_dim(xdrs, (*handlep), dims);
+              refs[count] = (int32) hdf_write_dim(xdrs, (*handlep), dims, count);
               count++;
           }
           dims++;

@@ -2330,6 +2330,12 @@ int32   offset;
 
     }
 
+    if(status != FAIL) {
+        if((var->aid != NULL) && (var->aid != FAIL))
+            Hendaccess(var->aid);
+        var->aid = status;
+    }
+
     return(status);
 
 } /* SDsetexternalfile */

@@ -2,8 +2,9 @@
 
 #include "mfsd.h"
 
-#define FILE1 "test1.hdf"
-#define FILE2 "test2.hdf"
+#define FILE1   "test1.hdf"
+#define FILE2   "test2.hdf"
+#define EXTFILE "exttest.hdf"
 
 #ifdef PROTOTYPE
 main(int argc, char *argv[])
@@ -18,11 +19,13 @@ char *argv[];
     intn status, i;
     char name[90], text[256];
     int32   start[10], end[10], scale[10], stride[10];
-    float32 data[1000], max, min;
-    float64 cal, cale, ioff, ioffe;
     char    l[80], u[80], fmt[80], c[80];
     int     count, num_err = 0;
+    int32   idata[100];
     int16   sdata[100];
+
+    float32 data[1000], max, min;
+    float64 cal, cale, ioff, ioffe;
 
     ncopts = NC_VERBOSE;
 
@@ -297,6 +300,78 @@ char *argv[];
     status = SDendaccess(newsds3);
     CHECK(status, "SDendaccess");
 
+
+    /* 
+     * Test the External File storage stuff 
+     */
+
+    dimsize[0] = 5;
+    dimsize[1] = 5;
+    newsds = SDcreate(f1, "ExternalDataSet", DFNT_INT32, 2, dimsize);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to create a new data set for external promotion\n");
+        num_err++;
+    }
+
+    for(i = 0; i < 25; i++)
+        idata[i] = i;
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
+    CHECK(status, "SDwritedata");
+
+    status = SDsetexternalfile(newsds, EXTFILE, 0);
+    CHECK(status, "SDsetexternalfile");
+
+    for(i = 0; i < 10; i++)
+        idata[i] = i * 10;
+
+    start[0] = start[1] = 0;
+    end[0]   = 2;
+    end[1]   = 5;
+    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
+    CHECK(status, "SDwritedata");
+
+    status = SDendaccess(newsds);
+    CHECK(status, "SDendaccess");
+
+    status = SDend(f1);
+    CHECK(status, "SDend");
+
+    f1 = SDstart(FILE1, DFACC_RDWR);
+    CHECK(f1, "SDstart (again)");
+
+    dimsize[0] = 3;
+    dimsize[1] = 3;
+    newsds2 = SDcreate(f1, "WrapperDataSet", DFNT_INT32, 2, dimsize);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to create a new data set for external wrapping\n");
+        num_err++;
+    }
+
+    status = SDsetexternalfile(newsds2, EXTFILE, 8);
+    CHECK(status, "SDsetexternalfile");
+ 
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 3;
+    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) idata);
+    CHECK(status, "SDreaddata");
+
+    for(i = 0; i < 8; i++)
+        if(idata[i] != (i + 2) * 10) {
+            fprintf(stderr, "Incorrect value returned in location %d in wrapper dataset\n", i);
+            num_err++;
+        }
+
+    if(idata[8] != 10) {
+        fprintf(stderr, "Incorrect value returned in last location in wrapper dataset\n");
+        num_err++;
+    }
+    
+    status = SDendaccess(newsds2);
+    CHECK(status, "SDendaccess");
+    
     status = SDend(f1);
     CHECK(status, "SDend");
 
