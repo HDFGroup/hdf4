@@ -4573,6 +4573,14 @@ intn GRsetcompress(int32 riid,comp_coder_t comp_type,comp_info *cinfo)
     if (ri_ptr->use_buf_drvr)
         HGOTO_ERROR(DFE_CANTMOD, FAIL);
 
+    /*  EIP 09/12/03
+       Quit if SZIP Library is not available but SZIP compression was requested 
+    */ 
+#ifndef H4_HAVE_LIBSZ
+    if (comp_type==COMP_CODE_SZIP) 
+        HGOTO_ERROR(DFE_CANTMOD, FAIL);
+#endif
+
     /* Mark the image as being compressed and cache args */
     if(comp_type==COMP_CODE_JPEG)
       {
