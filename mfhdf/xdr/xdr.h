@@ -43,12 +43,12 @@
  * because all the hard work is done in the component type routines.
  * decode as a series of calls on the nested data types.
  */
-
+/*
 #ifdef vms
 #include <in.h>
 typedef unsigned int    u_int;
 #endif
-
+*/
 /*
  * Xdr operations.  XDR_ENCODE causes the type to be encoded into the
  * stream.  XDR_DECODE causes the type to be extracted from the stream.
