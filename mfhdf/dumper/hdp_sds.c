@@ -439,7 +439,8 @@ dsd(dump_info_t * dumpsds_opts, intn curr_arg, intn argc, char *argv[])
 					exit(1);
 
 				case DALL:
-					break;
+					k = -1;
+                                        break;
 
 				default:
 					printf("Unknown filter option\n");
