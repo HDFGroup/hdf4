@@ -2,9 +2,12 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.1  1992/04/27 17:07:49  sxu
-C Initial revision
+C Revision 1.2  1992/04/27 20:49:14  koziol
+C Changed hopen and hclose calls to hiopen and hiclose stub routine calls
 C
+c Revision 1.1  1992/04/27  17:07:49  sxu
+c Initial revision
+c
 C
       program tdfanfileF
 C
@@ -22,7 +25,7 @@ C                 may be due to a bug in dfan.c in DFANIgetann().
 C
 
       integer daafid, daafds,dagfidl,dagfid
-      integer dagfdsl, dagfds, hopen, hclose
+      integer dagfdsl, dagfds, hiopen, hiclose
       integer ret, number_failed
       integer ISFIRST, NOFIRST, MAXLEN_LAB, MAXLEN_DESC
       integer fid, DFACC_CREATE, DFACC_READ
@@ -51,8 +54,8 @@ C
       desc2 = 'File descr #2: One more test ...'
 
       print *, '****** Write file labels *******'
-      fid = hopen(TESTFILE, DFACC_CREATE, 0)
-      call RESULT(fid, 'hopen')
+      fid = hiopen(TESTFILE, DFACC_CREATE, 0)
+      call RESULT(fid, 'hiopen')
       ret = daafid(fid, lab1)
       call RESULT(ret, 'daafid')
 
@@ -66,12 +69,12 @@ C
       ret = daafds(fid, desc2, len(desc2))
       call RESULT(ret, 'daafds')
 
-      ret = hclose(fid)
-      call RESULT(ret, 'hclose')
+      ret = hiclose(fid)
+      call RESULT(ret, 'hiclose')
 
       print *, '****** Read length of the first file label ****'
-      ret = hopen(TESTFILE, DFACC_READ, 0)
-      call RESULT(ret, 'hopen-read')
+      ret = hiopen(TESTFILE, DFACC_READ, 0)
+      call RESULT(ret, 'hiopen-read')
       ret = dagfidl(fid, ISFIRST)
       call RESULT(ret, 'dagfidl')
       call checklen(ret, lab1,  'label'  )
