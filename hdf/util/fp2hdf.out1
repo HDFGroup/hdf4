@@ -1,6 +1,4 @@
 ctxtr2.hdf:
-File library version: Major= 4, Minor=0, Release=1
-NCSA HDF Version 4.0 Release 1, Post patch01 1996/05/13
 
 Version Descriptor            : (tag 30)
 	Ref no      1	      92 bytes
@@ -30,8 +28,6 @@ Numeric Data Group            : (tag 720)
 	Ref no      2	      20 bytes
 
 ctxtr3.hdf:
-File library version: Major= 4, Minor=0, Release=1
-NCSA HDF Version 4.0 Release 1, Post patch01 1996/05/13
 
 Version Descriptor            : (tag 30)
 	Ref no      1	      92 bytes
@@ -61,8 +57,6 @@ Numeric Data Group            : (tag 720)
 	Ref no      2	      20 bytes
 
 cb32r2.hdf:
-File library version: Major= 4, Minor=0, Release=1
-NCSA HDF Version 4.0 Release 1, Post patch01 1996/05/13
 
 Version Descriptor            : (tag 30)
 	Ref no      1	      92 bytes
@@ -92,8 +86,6 @@ Numeric Data Group            : (tag 720)
 	Ref no      2	      20 bytes
 
 cb32r3.hdf:
-File library version: Major= 4, Minor=0, Release=1
-NCSA HDF Version 4.0 Release 1, Post patch01 1996/05/13
 
 Version Descriptor            : (tag 30)
 	Ref no      1	      92 bytes
@@ -123,8 +115,6 @@ Numeric Data Group            : (tag 720)
 	Ref no      2	      20 bytes
 
 cb64r2.hdf:
-File library version: Major= 4, Minor=0, Release=1
-NCSA HDF Version 4.0 Release 1, Post patch01 1996/05/13
 
 Version Descriptor            : (tag 30)
 	Ref no      1	      92 bytes
@@ -154,8 +144,6 @@ Numeric Data Group            : (tag 720)
 	Ref no      2	      20 bytes
 
 cb64r3.hdf:
-File library version: Major= 4, Minor=0, Release=1
-NCSA HDF Version 4.0 Release 1, Post patch01 1996/05/13
 
 Version Descriptor            : (tag 30)
 	Ref no      1	      92 bytes
@@ -185,8 +173,6 @@ Numeric Data Group            : (tag 720)
 	Ref no      2	      20 bytes
 
 ctxtr2_ris.hdf:
-File library version: Major= 4, Minor=0, Release=1
-NCSA HDF Version 4.0 Release 1, Post patch01 1996/05/13
 
 Version Descriptor            : (tag 30)
 	Ref no      1	      92 bytes
@@ -210,8 +196,6 @@ Raster Image Group            : (tag 306)
 	Ref no      2	       8 bytes
 
 cb64r2_ris.hdf:
-File library version: Major= 4, Minor=0, Release=1
-NCSA HDF Version 4.0 Release 1, Post patch01 1996/05/13
 
 Version Descriptor            : (tag 30)
 	Ref no      1	      92 bytes

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh 
 #
 # Testing HDF utilities
 
@@ -9,6 +9,7 @@ haserr=0
 # setup hdfed command which is used often
 HDFED='./hdfed'
 HDFEDCMD="$HDFED -batch"		# use -batch mode for no prompt
+SED="sed -e /library/,/String/d"  # filter out the library version
 
 echo ""
 echo "======================="
@@ -116,8 +117,8 @@ echo "** Testing hdfpack  ***"
 cp testfiles/test.hdf .
 ./hdfpack test.hdf test.pck
 ./hdfpack -b test.hdf test.blk
-./hdfls test.hdf > hdfls.tmp1 2>&1
-./hdfls test.pck >> hdfls.tmp1 2>&1
+(./hdfls test.hdf | $SED ) > hdfls.tmp1 2>&1
+(./hdfls test.pck | $SED ) >> hdfls.tmp1 2>&1
 diff  hdfls.tmp1 hdfpack.out1 || errors=1
 /bin/rm -f test.hdf test.blk test.pck hdfls.tmp1
 else
@@ -136,8 +137,8 @@ if [ $errors -eq 1 ]; then
     echo " cp testfiles/test.hdf . "
     echo "./hdfpack test.hdf test.pck "
     echo "./hdfpack -b test.hdf test.blk "
-    echo "./hdfls test.hdf >& hdfls.tmp1 "
-    echo "./hdfls test.pck >>& hdfls.tmp1 "
+    echo "(./hdfls test.hdf | $SED ) >& hdfls.tmp1"
+    echo "(./hdfls test.pck | $SED ) >>& hdfls.tmp1"
     echo " diff hdfls.tmp1 hdfpack.out1 "
   echo " ******* END NOTE *************"
   echo ""
@@ -183,7 +184,7 @@ cp testfiles/storm*.raw testfiles/palette.raw .
 ./r8tohdf 57 57 storm.hdf storm*.raw
 ./r8tohdf 57 57 storm.hdf -p palette.raw -i storm110.raw
 ./hdftor8 storm.hdf
-./hdfls -l storm.hdf > hdfls.tmp2 2>&1
+(./hdfls -l storm.hdf | $SED) > hdfls.tmp2 2>&1
 diff  hdfls.tmp2 hdftor8.out1 || errors=1
 cmp img001-057.057  storm110.raw || errors=1
 cmp img002-057.057  storm120.raw || errors=1
@@ -207,7 +208,7 @@ if [ $errors -eq 1 ]; then
     echo "./r8tohdf 57 57 storm.hdf storm*.raw "
     echo "./r8tohdf 57 57 storm.hdf -p palette.raw -i storm110.raw "
     echo "./hdftor8 storm.hdf "
-    echo " ./hdfls -l storm.hdf >& hdfls.tmp2 "
+    echo "(./hdfls -l storm.hdf | $SED) >& hdfls.tmp2 "
     echo " diff hdfls.tmp2 hdftor8.out1 "
     echo "cmp img001-057.057  storm110.raw "
     echo "cmp img002-057.057  storm120.raw "
@@ -225,8 +226,8 @@ echo "** Testing hdfcomp  ***"
 cp testfiles/storm*.hdf .
 ./hdfcomp allstorms.hdf storm*.hdf
 ./hdfcomp allcomp.hdf -c storm*.hdf
-./hdfls -l allstorms.hdf > hdfls.tmp3 2>&1
-./hdfls -l allcomp.hdf >> hdfls.tmp3 2>&1
+(./hdfls -l allstorms.hdf | $SED) > hdfls.tmp3 2>&1
+(./hdfls -l allcomp.hdf | $SED) >> hdfls.tmp3 2>&1
 diff  hdfls.tmp3 hdfcomp.out1 || errors=1
 /bin/rm -f storm*.hdf all*.hdf hdfls.tmp3
 else
@@ -245,8 +246,8 @@ if [ $errors -eq 1 ]; then
     echo "cp testfiles/storm*.hdf . "
     echo "./hdfcomp allstorms.hdf storm*.hdf "
     echo "./hdfcomp allcomp.hdf -c storm*.hdf "
-    echo "./hdfls -l allstorms.hdf >& hdfls.tmp3 "
-    echo "./hdfls -l allcomp.hdf >>& hdfls.tmp3 "
+    echo "(./hdfls -l allstorms.hdf | $SED) >& hdfls.tmp3 "
+    echo "(./hdfls -l allcomp.hdf | $SED) >>& hdfls.tmp3 "
     echo "diff hdfls.tmp3 hdfcomp.out1 "
   echo " ******* END NOTE *************"
   echo ""
@@ -260,7 +261,7 @@ echo "** Testing jpeg2hdf/hdf2jpeg  ***"
 cp testfiles/jpeg_img.jpg .
 ./jpeg2hdf jpeg_img.jpg jpeg.hdf
 ./hdf2jpeg jpeg.hdf jpeg2.jpg
-./hdfls -l jpeg.hdf > hdfls.tmp4 2>&1
+(./hdfls -l jpeg.hdf | $SED) > hdfls.tmp4 2>&1
 diff  hdfls.tmp4 jpeg2hdf.out1 || errors=1
 cmp jpeg_img.jpg jpeg2.jpg || errors=1
 /bin/rm -f jpeg.hdf jpeg_img.jpg jpeg2.jpg hdfls.tmp4
@@ -280,7 +281,7 @@ if [ $errors -eq 1 ]; then
     echo "cp testfiles/jpeg_img.jpg . "
     echo "./jpeg2hdf jpeg_img.jpg jpeg.hdf "
     echo "./hdf2jpeg jpeg.hdf jpeg2.jpg "
-    echo "./hdfls -l jpeg.hdf >& hdfls.tmp4 "
+    echo "(./hdfls -l jpeg.hdf | $SED) >& hdfls.tmp4 "
     echo "diff hdfls.tmp4 jpeg2hdf.out1 "
     echo "cmp jpeg_img.jpg jpeg2.jpg "
   echo " ******* END NOTE *************"
@@ -301,14 +302,14 @@ echo "** Testing fp2hdf  ***"
 ./fp2hdf cb64r3 -o cb64r3.hdf
 ./fp2hdf ctxtr2 -o ctxtr2_ris.hdf -raster -e 50 50
 ./fp2hdf cb64r2 -o cb64r2_ris.hdf -raster -i 50 50 -f
-./hdfls -l ctxtr2.hdf > hdfls.tmp5 2>&1
-./hdfls -l ctxtr3.hdf >> hdfls.tmp5 2>&1
-./hdfls -l cb32r2.hdf >> hdfls.tmp5 2>&1
-./hdfls -l cb32r3.hdf >> hdfls.tmp5 2>&1
-./hdfls -l cb64r2.hdf >> hdfls.tmp5 2>&1
-./hdfls -l cb64r3.hdf >> hdfls.tmp5 2>&1
-./hdfls -l ctxtr2_ris.hdf >> hdfls.tmp5 2>&1
-./hdfls -l cb64r2_ris.hdf >> hdfls.tmp5 2>&1
+(./hdfls -l ctxtr2.hdf | $SED) > hdfls.tmp5 2>&1
+(./hdfls -l ctxtr3.hdf | $SED) >> hdfls.tmp5 2>&1
+(./hdfls -l cb32r2.hdf | $SED) >> hdfls.tmp5 2>&1
+(./hdfls -l cb32r3.hdf | $SED) >> hdfls.tmp5 2>&1
+(./hdfls -l cb64r2.hdf | $SED) >> hdfls.tmp5 2>&1
+(./hdfls -l cb64r3.hdf | $SED) >> hdfls.tmp5 2>&1
+(./hdfls -l ctxtr2_ris.hdf | $SED) >> hdfls.tmp5 2>&1
+(./hdfls -l cb64r2_ris.hdf | $SED) >> hdfls.tmp5 2>&1
 diff  hdfls.tmp5 fp2hdf.out1 || errors=1
 $HDFEDCMD < fp2hdf.input1 > hdfed.tmp6 2>&1
 diff  hdfed.tmp6 fp2hdf.out2 || errors=1
@@ -335,14 +336,14 @@ if [ $errors -eq 1 ]; then
   echo " ./fp2hdf cb64r3 -o cb64r3.hdf "
   echo " ./fp2hdf ctxtr2 -o ctxtr2_ris.hdf -raster -e 50 50 "
   echo " ./fp2hdf cb64r2 -o cb64r2_ris.hdf -raster -i 50 50 -f "
-  echo " ./hdfls -l ctxtr2.hdf >&  hdfls.tmp5 "
-  echo " ./hdfls -l ctxtr3.hdf >>& hdfls.tmp5 "
-  echo " ./hdfls -l cb32r2.hdf >>& hdfls.tmp5 "
-  echo " ./hdfls -l cb32r3.hdf >>& hdfls.tmp5 "
-  echo " ./hdfls -l cb64r2.hdf >>& hdfls.tmp5 "
-  echo " ./hdfls -l cb64r3.hdf >>& hdfls.tmp5 "
-  echo " ./hdfls -l ctxtr2_ris.hdf >>& hdfls.tmp5 "
-  echo " ./hdfls -l cb64r2_ris.hdf >>& hdfls.tmp5 "
+  echo "( ./hdfls -l ctxtr2.hdf | $SED) >&  hdfls.tmp5 "
+  echo "( ./hdfls -l ctxtr3.hdf | $SED) >>& hdfls.tmp5 "
+  echo "( ./hdfls -l cb32r2.hdf | $SED) >>& hdfls.tmp5 "
+  echo "( ./hdfls -l cb32r3.hdf | $SED) >>& hdfls.tmp5 "
+  echo "( ./hdfls -l cb64r2.hdf | $SED) >>& hdfls.tmp5 "
+  echo "( ./hdfls -l cb64r3.hdf | $SED) >>& hdfls.tmp5 "
+  echo "( ./hdfls -l ctxtr2_ris.hdf | $SED) >>& hdfls.tmp5 "
+  echo "( ./hdfls -l cb64r2_ris.hdf | $SED) >>& hdfls.tmp5 "
   echo " diff hdfls.tmp5 fp2hdf.out1 "
   echo " $HDFEDCMD < fp2hdf.input1 >& hdfed.tmp6 "
   echo " diff hdfed.tmp6 fp2hdf.out2 "

@@ -310,7 +310,8 @@ void printfilever(int32 file_id)
       {
         string[LIBVSTR_LEN] = '\0';		/* make it a null terminated string */
         printf("File library version: ");
-        printf("Major= %u, Minor=%u, Release=%u\n%s\n", (unsigned)major, (unsigned)minor, (unsigned)release, string);
+        printf("Major= %u, Minor=%u, Release=%u\nString=%s\n",
+	    (unsigned)major, (unsigned)minor, (unsigned)release, string);
       }
     else
         printf("(Does not have libraray version information)\n");
