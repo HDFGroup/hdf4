@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.8  1992/08/14 20:11:36  sxu
+# Revision 1.9  1992/09/04 15:20:18  chouck
+# Fixed rules for MISPEL compiler
+#
+# Revision 1.8  1992/08/14  20:11:36  sxu
 # Added -lgl_s and -cckr (or -ansi) for SGI
 #
 # Revision 1.7  1992/08/12  15:58:11  sxu
@@ -57,7 +60,7 @@ HDFBIN = ../bin
 #GLLIB = -lgl_s
 GLLIB = 
 
-CFLAGS = -D$(MACHINE) -I$(HDFINC) 
+CFLAGS = -D$(MACHINE)
 
 # ==> For Convex, specify CFLAGS as follows:
 # CFLAGS=  -g -D$(MACHINE) -D__STDC__
@@ -66,7 +69,8 @@ CFLAGS = -D$(MACHINE) -I$(HDFINC)
 #CFLAGS=  -g -D$(MACHINE) -cckr
 
 .c.o: he.h he_proto.h
-	$(CC) -c $(CFLAGS) -I$(HDFINC) $(HDFLIB)/libdf.a $(GLLAB)  $<
+#	$(CC) -c $(CFLAGS) -I$(HDFINC) $(HDFLIB)/libdf.a $(GLLAB)  $<
+	$(CC) -c $(CFLAGS) -I$(HDFINC) $(GLLIB)  $<
 
 all: hdfed utils
 	-mkdir $(HDFBIN)
