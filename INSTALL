@@ -6,8 +6,25 @@
   2. Installing HDF/netCDF
   2.1 Supported Platforms
   2.2 Requirements
+
   2.3 General Configuration/Installation - Unix
+  2.3.1 Overview
+  2.3.2 Layout of configuration files
+  2.3.3 Changing default values(CC,CFLAGS,..)
+  2.3.4 Running configure
+  2.3.5 Dealing with Configure Problems
+  2.3.6 Compiling, Testing and Installing
+
   2.4 Platform-specific Notes
+  2.4.1 HPUX(9.03) on PA-RISC
+  2.4.2 IRIX(5.2) on MIPS
+  2.4.3 Solaris(2.5) on Sparc
+  2.4.4 Solaris(2.4) on INTEL(x86)
+  2.4.5 OpenVMS AXP on DEC Alpha
+  2.4.6 Windows '95 or Windows NT
+  2.4.7 CM5 Parallel I/O Extension
+  2.4.8 PowerPC/68k(far/4i/8d)- Macintosh OS
+
   2.5 Pablo Instrumentation
   2.6 File Cache(Beta release)
   2.7 Installation Location
@@ -105,8 +122,8 @@ or
 2.3 General Configuration/Installation - Unix
     =========================================
 
-    Overview
-    --------        
+    2.3.1 Overview
+    --------------        
     In this distribution there are two types of 'configure'
     scripts. One is the Cygnus 'configure' script and the other is the
     'configure' script created by the GNU autoconf package. The Cygnus
@@ -121,8 +138,8 @@ or
     obtained from the UNIX command 'uname' consisting of CPU-VENDOR-OS
     e.g. 'hppa1.1-hp-hpux9.03' for an  HP9000/735 running HPUX-9.03.
 
-    Layout of configuration files
-    -----------------------------
+    2.3.2 Layout of configuration files
+    -----------------------------------
     The following shows the layout of the files used in the configuration
     of the HDF/MFHDF distribution..
 
@@ -164,21 +181,23 @@ or
                 hdf/fmpool/config/mh-hpux, mh-sun,...(host makefile fragments)
                 hdf/fmpool/config/fmpsolaris.h,...    -> linked to fmpconf.h
 
-    Changing default values(CC,CFLAGS,..)
-    -------------------------------------
+    2.3.3 Changing default values(CC,CFLAGS,..)
+    -------------------------------------------
     To change any of the default values for CC, FC, CFLAGS, FFLAGS,..etc
     edit the makefile fragment: 
 
              $(toplevel)/config/mh-<os>
 
     for your particular operating system. After changing the values you must 
-    re-run the top-level 'configure' script. 
+    re-run the top-level 'configure' script.Make sure you start from
+    a clean distribution if you are rebuilding after a previous make
+   (i.e. 'make distclean') before re-running 'configure'.
 
     It is also a good idea to look at the other variables to make sure 
     they are set correctly for your system.
 
-    Running configure
-    -----------------
+    2.3.4 Running configure
+    -----------------------
     To build both of the libraries contained in this directory,
     run the ``configure'' script int $(toplevel), e.g.:
 
@@ -201,8 +220,8 @@ or
     Configure Problems' below. Otherwise send an email to 
     'hdfhelp@ncsa.uiuc.edu' for further help. 
 
-    Dealing with Configure Problems
-    *******************************
+    2.3.5 Dealing with Configure Problems
+    *************************************
     If you want to be adventurous you can try the following.
 
     Configure basically calls either of the two shell scripts 'config.guess' 
@@ -239,8 +258,8 @@ or
     There are currently NO instructions for Porting the distribution to a 
     new platform.
 
-    Compiling, Testing and Installing
-    ---------------------------------
+    2.3.6 Compiling, Testing and Installing
+    ---------------------------------------
     To compile the library and utilities type:
 
         make 
@@ -266,15 +285,15 @@ or
 2.4 Platform-specific Notes
     ========================
 
-    HPUX(9.03) on PA-RISC
-    ---------------------
+    2.4.1 HPUX(9.03) on PA-RISC
+    ---------------------------
     The distribution has been compiled/tested with both the native
     ANSI-C compiler and GCC 2.7.2. In both cases the native fortran
     compiler f77 was used. The binary distribution was compiled
     using the native compilers.
 
-    IRIX(5.2) on MIPS
-    -----------------
+    2.4.2 IRIX(5.2) on MIPS
+    -----------------------
     The distribution has been compiled/tested with the native
     ANSI-C compiler and the fortran compiler. There is 
     a ansi prototype clash with the XDR header files on this version 
@@ -287,20 +306,20 @@ or
     xdr netCDF test does not without the above fix. The binary 
     distribution was compiled using the native compilers.
 
-    Solaris(2.5) on Sparc
-    ---------------------
+    2.4.3 Solaris(2.5) on Sparc
+    ---------------------------
     The distribution has been compiled/tested with the native
     ANSI-C compiler and native fortran compiler. The binary 
     distribution was compiled using the native compilers.
 
-    Solaris(2.4) on INTEL(x86)
-    ---------------------------
+    2.4.4 Solaris(2.4) on INTEL(x86)
+    --------------------------------
     The distribution has been compiled/tested with GCC 2.7.0 with
     *NO* fortran support. The binary distribution was compiled
     using GCC 2.7.0.
 
-    OpenVMS AXP on DEC Alpha
-    ------------------------
+    2.4.5 OpenVMS AXP on DEC Alpha
+    ------------------------------
     This is the first port of HDF4.0 to OpenVMS on DEC ALPHA. 
     Make.com files in each subdirectory are available to compile
     the libraries and utilites. The MAKENOF.COM and MAKEFS.COM
@@ -315,22 +334,22 @@ or
     is no such one existing, before running 'testhdf' in [.hdf.test]
     This directory is used for the external element test.
 
-    Windows '95 or Windows NT
-    -------------------------
+    2.4.6 Windows '95 or Windows NT
+    -------------------------------
     To install on a Windows '95 or Windows NT machine, read the seperate
     installation instructions for Windows NT:
       
         $(toplevel)/release_notes/install_winNT.txt.
  
-    CM5 Parallel I/O Extension
-    --------------------------
+    2.4.7 CM5 Parallel I/O Extension
+    --------------------------------
     To install the parallel I/O extension for CM5, read the seperate 
     installation instructions in:
 
         $(toplevel)/release_notes/parallel_CM5.txt.
 
-    PowerPC/68k(far/4i/8d)- Macintosh OS
-    ------------------------------------
+    2.4.8 PowerPC/68k(far/4i/8d)- Macintosh OS
+    ------------------------------------------
     The distribution was compilied/tested with MetroWerks Codewarrior(CW8).
     Only the base libraries{libdf.a,zlib.a,libjpeg.a,libmfhdf.a,libxdr.a}
     were compilied and tested on the PowerPC and 68k without Fortran support.
@@ -345,18 +364,18 @@ or
     You need to compile the libraries before you can compile the test 
     programs 'testhdf', 'xdrtest', 'cdftest', 'hdftest' and  'nctest'.
 
-    Special Notes
-    *************
+    2.4.8.1 Special Notes
+    ********************
     1. The test programs are SIOUX applications.
     
     2. When testing 'testhdf' in 'hdf/test' directory make sure
        that a directory called 'testdir' exists in the 'hdf/test'.
-       This directory is used the the external element test.
+       This directory is used in the external element test.
 
     3. You need at least 8MB of memory to run most of the test programs.
 
-    Configuring the Distribution
-    ****************************
+    2.4.8.2 Configuring the Distribution
+    ************************************
     A. If you have access to a unix box.
 
        1. Uncompress and untar the distribution.
@@ -373,7 +392,7 @@ or
           can be used to unpack it. If you dont' have acces to such a 
           utility then you need to copy the files one by one.
 
-    B. Don't have access to a unix box and are using the 'tar.Z' version.
+    B. Don't have access to a unix box and are using the 'tar.Z'/'tar.gz' version.
        1. After you have downloaded the distribution to your Macintosh
           you need to find a utility to uncompress and an untar the
           distribution.
@@ -385,10 +404,11 @@ or
           hdf/jpeg/config/jmac.h            -> copied to hdf/jpeg/jconfig.h
 
     C. If you are using the 'sit.hqx' version everything should have
-       been configured already.
+       been configured already. You just need to un-stuff and un-binhex
+       the distribution.
 
-    Building the Distribution
-    *************************
+    2.4.8.3 Building the Distribution
+    *********************************
     The distribution needs to be built in the order specifed below.
     Both PowerPC and 68k Codewarrior Projects can be found in the 
     following directories:
@@ -423,8 +443,8 @@ or
                 mfhdf/nctest/nctest.68k-project.hqx
                              nctest.PPC-project.hqx
 
-    Testing the Distribution
-    ************************
+    2.4.8.4 Testing the Distribution
+    ********************************
     Run the tests in the following order
       
        1. hdf/test/testhdf
