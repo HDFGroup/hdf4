@@ -1427,7 +1427,7 @@ Void  *data;
 
     Start  = start;
     End    = end;
-    Stride = Stride;
+    Stride = stride;
 
 #endif
 
