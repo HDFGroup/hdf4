@@ -2,10 +2,13 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.3  1992/07/07 21:04:17  chouck
-C Changed 'character' to 'byte' for VMS systems.  Fixed error
-C reporting.
+C Revision 1.4  1992/07/07 21:51:03  chouck
+C Minor error reporting fix
 C
+c Revision 1.3  1992/07/07  21:04:17  chouck
+c Changed 'character' to 'byte' for VMS systems.  Fixed error
+c reporting.
+c
 c Revision 1.2  1992/05/07  16:48:07  dilg
 c Put in comment explaining the choice between using "char(-128)" and
 c "char(0)"
@@ -229,7 +232,7 @@ C  int8
       err3 = 0
       do 1110 i=1,10
          do 1100 j=1,10
-           if (i8(i,j) .ne. ti8(i,j)) err = 1
+           if (i8(i,j) .ne. ti8(i,j)) err1 = 1
  1100    continue
          if (i8scale(i) .ne. ti8scale(i)) err2 = 1
  1110 continue
@@ -243,7 +246,7 @@ C  int16
       err3 = 0
        do 1210 i=1,10
          do 1200 j=1,10
-           if (i16(i,j) .ne. ti16(i,j)) err = 1
+           if (i16(i,j) .ne. ti16(i,j)) err1 = 1
  1200    continue
          if (i16scale(i) .ne. ti16scale(i)) err2 = 1
  1210 continue
@@ -257,7 +260,7 @@ C  int32
       err3 = 0
        do 1310 i=1,10
          do 1300 j=1,10
-           if (i32(i,j) .ne. ti32(i,j)) err = 1
+           if (i32(i,j) .ne. ti32(i,j)) err1 = 1
  1300    continue
       	 if (i32scale(i) .ne. ti32scale(i)) err2 = 1
  1310 continue
