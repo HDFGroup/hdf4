@@ -113,6 +113,10 @@ typedef struct {
 typedef struct {
 	NC_string	*name ;
 	NC_array	*data ;
+#ifdef HDF
+        int32           HDFtype; /* it should be in NC_array *data. However, */
+                                 /* NC.dims and NC.vars are NC_array too. */
+#endif
 } NC_attr ;
 
 typedef struct {

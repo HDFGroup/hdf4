@@ -695,8 +695,8 @@ VOIDP pmax, pmin;
             return FAIL;
         }
 
-        if(((*attr1)->data->type != var->type) || 
-           ((*attr2)->data->type != var->type)) {
+        if(((*attr1)->HDFtype != var->HDFtype) || 
+           ((*attr2)->HDFtype != var->HDFtype)) {
 #ifdef SDDEBUG
             fprintf(stderr, "No dice on range info (wrong types)\n");
 #endif   
@@ -1094,44 +1094,47 @@ VOIDP    data;
     
     NC_attr *attr;
     NC_attr **atp, *old;
+    nc_type  type;   /* unmap -- HDF type to NC type */
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDIputattr: I've been called\n");
 #endif
-
+    type = hdf_unmap_type(nt);
     if(*ap == NULL ) { /* first time */
-        attr = (NC_attr *) NC_new_attr(name,(nc_type)nt,(unsigned)count,data) ;
+        attr = (NC_attr *) NC_new_attr(name,type,(unsigned)count,data) ;
         if(attr == NULL)
             return FAIL;
         *ap = NC_new_array(NC_ATTRIBUTE,(unsigned)1, (Void*)&attr) ;
         if(*ap == NULL)
             return FAIL;
-        return SUCCEED;
     }
-
-    if((atp = NC_findattr(ap, name)) != NULL) { /* name in use */
-        old = *atp ;
-        *atp = (NC_attr *) NC_new_attr(name,(nc_type)nt,(unsigned)count,data);
-        if(*atp == NULL) {
-            *atp = old;
-            return FAIL;
+    else    {
+        if((atp = NC_findattr(ap, name)) != NULL) { /* name in use */
+            old = *atp ;
+            *atp = (NC_attr *) NC_new_attr(name,type,(unsigned)count,data);
+            if(*atp == NULL) {
+                *atp = old;
+                return FAIL;
+            }
+            NC_free_attr(old);
         }
-        NC_free_attr(old);
-        return SUCCEED;
+        else    {
+            if((*ap)->count >= MAX_NC_ATTRS) {  /* Too many */
+            return FAIL;
+            }
+            /* just add it */
+            attr = (NC_attr *) NC_new_attr(name,type,(unsigned)count,data);
+            if (attr == NULL)
+                return FAIL;
+            if(NC_incr_array((*ap), (Void *)&attr) == NULL)
+                return FAIL;
+        }
     }
-
-    if((*ap)->count >= MAX_NC_ATTRS) {  /* Too many */
-        return FAIL;
-    }
-
-    /* just add it */
-    attr = (NC_attr *) NC_new_attr(name,(nc_type)nt,(unsigned)count,data);
-    if(attr == NULL)
-        return FAIL;
-    if(NC_incr_array((*ap), (Void *)&attr) == NULL)
-        return FAIL;
+    /* succeeded. Add HDFtype  */
+    if (attr != NULL)
+        attr->HDFtype = nt;
     return SUCCEED;
-    
+ 
 } /* SDIputattr */
 
 
@@ -1181,7 +1184,7 @@ VOIDP pmax, pmin;
     HDmemcpy(data + sz, pmax, sz);
 
     /* call common code */
-    if(SDIputattr(&var->attrs, "valid_range", var->type, (intn) 2, 
+    if(SDIputattr(&var->attrs, "valid_range", var->HDFtype, (intn) 2, 
                   (VOIDP) data) == FAIL)
         return FAIL;
     
@@ -1320,7 +1323,7 @@ VOIDP data;
         return FAIL;
     
     /* hand over to SDIputattr */
-    if(SDIputattr(ap, name, hdf_unmap_type((int)nt), count, data) == FAIL)
+    if(SDIputattr(ap, name, nt, count, data) == FAIL)
         return FAIL;
     
     /* make sure it gets reflected in the file */
@@ -1393,7 +1396,7 @@ int32  *count;
     }
 
     *count = (*atp)->data->count;
-    *nt    = hdf_map_type((*atp)->data->type);
+    *nt    = (*atp)->HDFtype;
 
     return SUCCEED;
 
@@ -1588,22 +1591,22 @@ char  *l, *u, *f, *c;
         return FAIL;
     
     if(l && l[0] != '\0') 
-        if(SDIputattr(&var->attrs, "long_name", NC_CHAR, 
+        if(SDIputattr(&var->attrs, "long_name", DFNT_CHAR, 
                       (intn) HDstrlen(l), l) == FAIL)
             return FAIL;
 
     if(u && u[0] != '\0') 
-        if(SDIputattr(&var->attrs, "units", NC_CHAR, 
+        if(SDIputattr(&var->attrs, "units", DFNT_CHAR, 
                       (intn) HDstrlen(u), u) == FAIL)
             return FAIL;
 
     if(f && f[0] != '\0') 
-        if(SDIputattr(&var->attrs, "format", NC_CHAR, 
+        if(SDIputattr(&var->attrs, "format", DFNT_CHAR, 
                       (intn) HDstrlen(f), f) == FAIL)
             return FAIL;
     
     if(c && c[0] !='\0') 
-        if(SDIputattr(&var->attrs, "cordsys", NC_CHAR, 
+        if(SDIputattr(&var->attrs, "cordsys", DFNT_CHAR, 
                       (intn) HDstrlen(c), c) == FAIL)
             return FAIL;
     
@@ -1651,19 +1654,19 @@ int32 nt;
     if(var == NULL)
         return FAIL;
     
-    if(SDIputattr(&var->attrs, "scale_factor", NC_DOUBLE, 
+    if(SDIputattr(&var->attrs, "scale_factor", DFNT_FLOAT64, 
                   (intn) 1, (VOIDP) &cal) == FAIL)
         return FAIL;
-    if(SDIputattr(&var->attrs, "scale_factor_err", NC_DOUBLE, 
+    if(SDIputattr(&var->attrs, "scale_factor_err", DFNT_FLOAT64, 
                   (intn) 1, (VOIDP) &cale) == FAIL)
         return FAIL;
-    if(SDIputattr(&var->attrs, "add_offset", NC_DOUBLE, 
+    if(SDIputattr(&var->attrs, "add_offset", DFNT_FLOAT64, 
                   (intn) 1, (VOIDP) &ioff) == FAIL)
         return FAIL;
-    if(SDIputattr(&var->attrs, "add_offset_err", NC_DOUBLE, 
+    if(SDIputattr(&var->attrs, "add_offset_err", DFNT_FLOAT64, 
                   (intn) 1, (VOIDP) &ioffe) == FAIL)
         return FAIL;
-    if(SDIputattr(&var->attrs, "calibrated_nt", NC_LONG, 
+    if(SDIputattr(&var->attrs, "calibrated_nt", DFNT_INT32, 
                   (intn) 1, (VOIDP) &nt) == FAIL)
         return FAIL;
     
@@ -1711,7 +1714,7 @@ VOIDP val;
     if(var == NULL)
         return FAIL;
     
-    if(SDIputattr(&var->attrs, _FillValue, var->type, 
+    if(SDIputattr(&var->attrs, _FillValue, var->HDFtype, 
                   (intn) 1, val) == FAIL)
         return FAIL;
     
@@ -1968,6 +1971,10 @@ int32    id, nt;
                 (*dp)->type = hdf_unmap_type((intn)nt);
                 (*dp)->HDFtype = nt;
                 (*dp)->cdf = handle; 
+                     /* don't forget to reset the sizes */
+                (*dp)->szof = NC_typelen((*dp)->type);
+                (*dp)->HDFsize = DFKNTsize(nt);
+
                 /* recompute all of the shape information */
                 /* BUG: this may be a memory leak ??? */
                 if(NC_var_shape((*dp), handle->dims) == -1)
@@ -2054,17 +2061,17 @@ char  *l, *u, *f;
 
     /* set the attributes */
     if(l && l[0] != '\0')
-        if(SDIputattr(&var->attrs, "long_name", NC_CHAR,
+        if(SDIputattr(&var->attrs, "long_name", DFNT_CHAR,
                       (intn) HDstrlen(l), l) == FAIL)
             return FAIL;
 
     if(u && u[0] != '\0')
-        if(SDIputattr(&var->attrs, "units", NC_CHAR,
+        if(SDIputattr(&var->attrs, "units", DFNT_CHAR,
                       (intn) HDstrlen(u), u) == FAIL)
             return FAIL;
 
     if(f && f[0] != '\0')
-        if(SDIputattr(&var->attrs, "format", NC_CHAR,
+        if(SDIputattr(&var->attrs, "format", DFNT_CHAR,
                       (intn) HDstrlen(f), f) == FAIL)
             return FAIL;
 

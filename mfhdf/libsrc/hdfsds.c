@@ -346,9 +346,10 @@ intn hdf_read_ndgs(handle)
                               return FALSE;
                           coordbuf[len] = '\0';
                           if (coordbuf[0] != '\0')  {
-                              attrs[current_attr++] =
+                              attrs[current_attr] =
                                   (NC_attr *) NC_new_attr("cordsys",
                                       NC_CHAR, HDstrlen(coordbuf), coordbuf);
+                              attrs[current_attr++]->HDFtype = DFNT_CHAR;
                           }
                           HDfreespace((VOIDP)coordbuf);
                      }
@@ -377,40 +378,41 @@ intn hdf_read_ndgs(handle)
                                    (VOIDP) tBuf, 
                                    DFNT_FLOAT64, 4, DFACC_READ, 0, 0);
                         
-                        attrs[current_attr++] = 
+                        attrs[current_attr] = 
                             (NC_attr *) NC_new_attr("scale_factor", 
                                                     NC_DOUBLE, 
                                                     1, 
                                                     (Void *) &(tBuf[0]));
-                        
-                        attrs[current_attr++] = 
+                        attrs[current_attr++]->HDFtype = DFNT_FLOAT64; 
+                        attrs[current_attr] = 
                             (NC_attr *) NC_new_attr("scale_factor_err", 
                                                     NC_DOUBLE, 
                                                     1, 
                                                     (Void *) &(tBuf[8]));    
-                        
-                        attrs[current_attr++] = 
+                        attrs[current_attr++]->HDFtype = DFNT_FLOAT64;
+                        attrs[current_attr] = 
                             (NC_attr *) NC_new_attr("add_offset", 
                                                     NC_DOUBLE, 
                                                     1, 
                                                     (Void *) &(tBuf[16]));
-                        
-                        attrs[current_attr++] = 
+                        attrs[current_attr++]->HDFtype = DFNT_FLOAT64;
+                        attrs[current_attr] = 
                             (NC_attr *) NC_new_attr("add_offset_err", 
                                                     NC_DOUBLE, 
                                                     1, 
                                                     (Void *) &(tBuf[24]));
-
+                        attrs[current_attr++]->HDFtype = DFNT_FLOAT64;
                         /* don't forget number_type  */
                         DFKconvert((VOIDP)(DFtbuf + 32),
                                    (VOIDP) tBuf,
                                    DFNT_INT32, 1, DFACC_READ, 0,0);
 
-                        attrs[current_attr++] =
+                        attrs[current_attr] =
                             (NC_attr *) NC_new_attr("calibrated_nt", 
                                                     NC_LONG,
                                                     1,
                                                     (Void *) &(tBuf[0])); 
+                        attrs[current_attr++]->HDFtype = DFNT_INT32;
                     } else {
                         /* DFNT_FLOAT32 based calibration */
 
@@ -418,40 +420,41 @@ intn hdf_read_ndgs(handle)
                                    (VOIDP)tBuf, 
                                    DFNT_FLOAT32, 4, DFACC_READ, 0, 0);
                         
-                        attrs[current_attr++] = 
+                        attrs[current_attr] = 
                             (NC_attr *) NC_new_attr("scale_factor", 
                                                     NC_FLOAT, 
                                                     1, 
                                                     (Void *) &(tBuf[0]));
-                        
-                        attrs[current_attr++] = 
+                        attrs[current_attr++]->HDFtype = DFNT_FLOAT32;
+                        attrs[current_attr] = 
                             (NC_attr *) NC_new_attr("scale_factor_err", 
                                                     NC_FLOAT, 
                                                     1, 
                                                     (Void *) &(tBuf[4]));    
-                        
-                        attrs[current_attr++] = 
+                        attrs[current_attr++]->HDFtype = DFNT_FLOAT32;
+                        attrs[current_attr] = 
                             (NC_attr *) NC_new_attr("add_offset", 
                                                     NC_FLOAT, 
                                                     1, 
                                                     (Void *) &(tBuf[8]));
-                        
-                        attrs[current_attr++] = 
+                        attrs[current_attr++]->HDFtype = DFNT_FLOAT32;
+                        attrs[current_attr] = 
                             (NC_attr *) NC_new_attr("add_offset_err", 
                                                     NC_FLOAT, 
                                                     1, 
                                                     (Void *) &(tBuf[12]));
-
+                        attrs[current_attr++]->HDFtype = DFNT_FLOAT32;
                        /* don't forget number_type  */
                         DFKconvert((VOIDP)(DFtbuf + 16),
                                    (VOIDP) tBuf,
                                    DFNT_INT16, 1, DFACC_READ, 0,0);
 
-                        attrs[current_attr++] =
+                        attrs[current_attr] =
                             (NC_attr *) NC_new_attr("calibrated_nt", 
                                                     NC_SHORT,
                                                     1,
                                                     (Void *) &(tBuf[0]));
+                        attrs[current_attr++]->HDFtype = DFNT_INT16;
                     }
                     
                     break;
@@ -465,17 +468,19 @@ intn hdf_read_ndgs(handle)
                                (VOIDP)tBuf, 
                                HDFtype, 2, DFACC_READ, 0, 0);
                     
-                    attrs[current_attr++] = 
+                    attrs[current_attr] = 
                         (NC_attr *) NC_new_attr("valid_max", 
                                                 type, 
                                                 1, 
                                                 (Void *) tBuf);
+                    attrs[current_attr++]->HDFtype = HDFtype;
                     
-                    attrs[current_attr++] = 
+                    attrs[current_attr] = 
                         (NC_attr *) NC_new_attr("valid_min", 
                                                 type, 
                                                 1, 
                                                 (Void *) &(tBuf[DFKNTsize(HDFtype)]));
+                    attrs[current_attr++]->HDFtype = HDFtype;
                     
                     break;
 
@@ -698,26 +703,29 @@ intn hdf_read_ndgs(handle)
                     /* label => "long_name"  */
                     dimattrcnt = 0;
                     if (labelvalue && HDstrlen((char *)labelvalue)>0) {
-                        dimattrs[dimattrcnt++] =
+                        dimattrs[dimattrcnt] =
                            (NC_attr *) NC_new_attr("long_name", NC_CHAR,
                                                     HDstrlen((char *)labelvalue),
                                                       (Void *) labelvalue);
+                        dimattrs[dimattrcnt++]->HDFtype = DFNT_CHAR;
                     }
 
                     /* Units => 'units' */
                     if(unitvalue && HDstrlen((char *)unitvalue)>0) {
-                         dimattrs[dimattrcnt++] =
+                         dimattrs[dimattrcnt] =
                              (NC_attr *) NC_new_attr("units", NC_CHAR,
                                            HDstrlen((char *)unitvalue),
                                            (Void *) unitvalue);
+                         dimattrs[dimattrcnt++]->HDFtype = DFNT_CHAR;
                     }
 
                     /* Fomrat => 'format' */
                     if(formatvalue && HDstrlen((char *)formatvalue)>0) {
-                         dimattrs[dimattrcnt++] =
+                         dimattrs[dimattrcnt] =
                              (NC_attr *) NC_new_attr("format", NC_CHAR,
                                            HDstrlen((char *)formatvalue),
                                            (Void *) formatvalue);
+                         dimattrs[dimattrcnt++]->HDFtype = DFNT_CHAR;
                     }
 
                     /*
@@ -807,12 +815,12 @@ intn hdf_read_ndgs(handle)
                         status = DFANgetdesc(handle->path, ndgTag, ndgRef, tBuf, len);
                         if((status != FAIL) && (tBuf[0] != '\0')){
                             
-                            attrs[current_attr++] = 
+                            attrs[current_attr] = 
                                 (NC_attr *) NC_new_attr("remarks", 
                                                         NC_CHAR, 
                                                         len, 
                                                         tBuf);
-                            
+                             attrs[current_attr++]->HDFtype = DFNT_CHAR;
                         }
                         
                         HDfreespace((VOIDP)tBuf);
@@ -830,12 +838,12 @@ intn hdf_read_ndgs(handle)
                 status = DFANgetlabel(handle->path, ndgTag, ndgRef, label, 250);
                 if((status != FAIL) && (label[0] != '\0')){
                     
-                    attrs[current_attr++] = 
+                    attrs[current_attr] = 
                         (NC_attr *) NC_new_attr("anno_label", 
                                                 NC_CHAR, 
                                                 HDstrlen(label), 
                                                 label);
-                    
+                     attrs[current_attr++]->HDFtype = DFNT_CHAR;
                 }
             }
             
@@ -855,11 +863,12 @@ intn hdf_read_ndgs(handle)
              * Units => 'units'
              */
             if(unitbuf && (unitbuf[0] != '\0')) {
-                attrs[current_attr++] = 
+                attrs[current_attr] = 
                     (NC_attr *) NC_new_attr("units", 
                                             NC_CHAR, 
                                             HDstrlen((char *)unitbuf), 
                                             (Void *) unitbuf);
+                 attrs[current_attr++]->HDFtype = DFNT_CHAR;
                 
             }
             
@@ -870,12 +879,12 @@ intn hdf_read_ndgs(handle)
              * Format => 'format'
              */
             if(formatbuf && (formatbuf[0] != '\0')) {
-                attrs[current_attr++] =
+                attrs[current_attr] =
                     (NC_attr *) NC_new_attr("format",
                                             NC_CHAR,
                                             HDstrlen((char *)formatbuf),
                                             (Void *) formatbuf);
-
+                 attrs[current_attr++]->HDFtype = DFNT_CHAR;
             }
 
             

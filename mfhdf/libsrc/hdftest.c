@@ -36,7 +36,7 @@ char *argv[];
 {
     int32 f1, f2, sdsid, nt, dimsize[10], nattr, rank;
     int32 newsds, newsds2, newsds3, dimid, number, offset;
-    int32 index;
+    int32 index, attr_index;
     intn status, i;
     char name[90], text[256];
     int32   start[10], end[10], scale[10], stride[10];
@@ -46,7 +46,7 @@ char *argv[];
     int32   idata[100];
     int16   sdata[100];
     int32  ndg_saved_ref;
-
+    uint8  iuval;
     float32 data[1000], max, min;
     float64 cal, cale, ioff, ioffe;
 
@@ -71,78 +71,95 @@ char *argv[];
         fprintf(stderr, "Failed to create a new data set alpha\n");
         num_err++;
     }
-
     /* save the ref number for the first dataset --- will check at very end */
     ndg_saved_ref = SDidtoref(newsds);
     if(ndg_saved_ref == 0) {
         fprintf(stderr, "Failed to get NDG ref for DataSetAlpha\n");
         num_err++;
     }
-
     newsds3 = SDcreate(f1, "DataSetGamma", DFNT_FLOAT64, 1, dimsize);
     if(newsds3 == FAIL) {
         fprintf(stderr, "Failed to create a new data set gamma\n");
         num_err++;
     }
-
     status = SDfileinfo(f1, &number, &nattr);
     if(number != 2) {
         fprintf(stderr, "Wrong number of datasets in file 1\n");
         num_err++;
     }
-
-
-
     dimid = SDgetdimid(newsds3, 0);
     if(dimid == FAIL) {
         fprintf(stderr, "Failed to get dimension id\n");
         num_err++;
     }
-
     status = SDsetdimname(dimid, "MyDim");
     CHECK(status, "SDsetdimname");
-
-
     status = SDsetattr(dimid, "DimensionAttribute", DFNT_CHAR8, 
                        4, "TRUE");
-    CHECK(status, "SDsetdimname");
-    
+    CHECK(status, "SDsetattr");
     status = SDfindattr(dimid, "DimensionAttribute");
     if(status != 0) {
         fprintf(stderr, "Bad index for SDfindattr on Dimnesion Attribute %d\n",
                 status);
         num_err++;
     }
-
     status = SDattrinfo(dimid, (int32) 0, name, &nt, &count);
     CHECK(status, "SDattrinfo");
-
     status = SDreadattr(dimid, 0, text);
     CHECK(status, "SDreadattr");
-    
     if(HDstrncmp(text, "TRUE", count)) {
         fprintf(stderr, "Invalid dimension attribute read <%s>\n", text);
         num_err++;
     }
-
     dimid = SDgetdimid(newsds, 0);
     if(dimid == FAIL) {
         fprintf(stderr, "Failed to get dimension id\n");
         num_err++;
     }
-
     status = SDsetdimname(dimid, "MyDim");
     CHECK(status, "SDsetdimname");
-
     scale[0] = 1;
     scale[1] = 5;
     scale[2] = 7;
     scale[3] = 24;
     status = SDsetdimscale(dimid, 4, DFNT_INT32, (VOIDP) scale);
     CHECK(status, "SDsetdimscale");
-
     status = SDsetdimstrs(dimid, "DimLabel", NULL, "TheFormat");
     CHECK(status, "SDsetdimstrs");
+    /* add an unsigned integer  attribute */
+    iuval = 253;
+    status = SDsetattr(dimid, "UnsignedInteger",DFNT_UINT8, 1,(VOIDP) &iuval);
+    CHECK(status, "SDsetattr");
+
+    /* lets make sure we can read it too */
+    attr_index = SDfindattr(dimid, "UnsignedInteger");
+    if (attr_index == FAIL) {
+        fprintf(stderr, "Failed to find UnsignedInteger\n");
+        num_err++;
+    }
+    status = SDattrinfo(dimid, attr_index, name, &nt, &count);
+    CHECK(status, "SDattrinfo");
+
+    if(nt != DFNT_UINT8) {
+        fprintf(stderr, "Wrong number type for SDattrinfo(dim)\n");
+        num_err++;
+    }
+    if(count != 1) {
+        fprintf(stderr, "Wrong count for SDattrinfo(dim)\n");
+        num_err++;
+    }
+    if(strcmp(name, "UnsignedInteger")) {
+        fprintf(stderr, "Wrong name for SDattrinfo(dim)\n");
+        num_err++;
+    }
+    iuval = 0;
+    status = SDreadattr(dimid, attr_index, (VOIDP) &iuval);
+    CHECK(status, "SDreatattr");
+    
+    if(iuval != 253) {
+        fprintf(stderr, "Wrong value for SDreadattr(dim)\n");
+        num_err++;
+    }
 
     status = SDnametoindex(f1, "DataSetAlpha");
     if(status != 0) {
