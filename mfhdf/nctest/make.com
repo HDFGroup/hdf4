@@ -3,8 +3,17 @@ $! For making NCTEST.EXE on VMS if you don't have MMS.
 $! --------------------------------------------------------------------------
 $!
 $! $Id$
-$
-$ ccc := cc /opt/nodebug/include=([--.hdf.src],[--.hdf.jpeg], -
+$!
+$ if f$getsyi("arch_name") .eqs. "VAX"
+$ then 
+$ ccopt = "/DECC/STANDARD=VAXC"
+$ define/nolog sys$clib sys$library:deccrtl
+$ else
+$ ccopt = ""
+$ define/nolog sys$clib sys$library:vaxcrtl
+$ endif
+$ ccc := cc 'ccopt /opt/nodebug -
+          /include=([--.hdf.src],[--.hdf.jpeg], -
           [--.hdf.zlib],[-.libsrc])/nolist  -
             /define=(NO_SYS_XDR_INC,swap,HDF.VMS)
 
@@ -52,7 +61,7 @@ $ link/nodebug/traceback/exe=NCTEST.exe -
     [--.lib]mfhdf/lib, [--.hdf.src]df/lib,[--.hdf.jpeg]libjpeg.olb/lib, -
     [--.hdf.zlib]libz.olb/lib, -
     sys$input/opt
-	sys$library:vaxcrtl/lib
+	sys$clib/lib
 $
 $ run nctest
 $
