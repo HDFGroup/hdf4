@@ -24,8 +24,9 @@
 #define DATA_FILE3       "image24plane.txt"
 char    *progname;   
 
+/* for old branch compability */
 #if 1
-#define ENABLE_SZIP
+#define H4_HAVE_LIBSZ
 #endif
   
 
@@ -214,7 +215,7 @@ int main(void)
  comp_type   = COMP_CODE_SKPHUFF;
  add_sd(FILENAME,file_id,"dset_huff",0,chunk_flags,comp_type,&comp_info);
 
-#if defined (ENABLE_SZIP)
+#if defined (H4_HAVE_LIBSZ)
 /*-------------------------------------------------------------------------
  * SZIP
  *-------------------------------------------------------------------------
@@ -270,7 +271,7 @@ int main(void)
  *-------------------------------------------------------------------------
  */ 
 
-#if defined (ENABLE_SZIP)
+#if defined (H4_HAVE_LIBSZ)
 
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_SZIP;
@@ -428,7 +429,7 @@ int main(void)
   goto out;
  PASSED();
 
-#if defined (ENABLE_SZIP)
+#if defined (H4_HAVE_LIBSZ)
 
 /*-------------------------------------------------------------------------
  * test4:  
@@ -474,7 +475,7 @@ int main(void)
   goto out;
  PASSED();
 
-#if defined (ENABLE_SZIP)
+#if defined (H4_HAVE_LIBSZ)
 
 /*-------------------------------------------------------------------------
  * test5:  
