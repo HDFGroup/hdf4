@@ -117,9 +117,8 @@ LIBOBJECTS= $(CLIBOBJECTS) $(DLIBOBJECTS) $(COMOBJECTS)
 COBJECTS= cjpeg.o rdppm.o rdgif.o rdtarga.o rdrle.o rdbmp.o
 DOBJECTS= djpeg.o wrppm.o wrgif.o wrtarga.o wrrle.o wrbmp.o rdcolmap.o
 
-
 #### makefile fragment from 'config/' goes here - inclues ansi2knr section
-## ------------------ end of fragments----------------
+## ------------------------ end of makefile fragments--------------------
 
 cjpeg: $(COBJECTS) libjpeg.a
 	$(LN) $(LDFLAGS) -o cjpeg $(COBJECTS) libjpeg.a $(LDLIBS)
@@ -158,12 +157,12 @@ install-headers: jconfig.h
 	$(INSTALL_DATA) $(srcdir)/jerror.h $(includedir)/jerror.h
 
 clean:
-	$(RM) $(RMFLAGS) *.o cjpeg djpeg libjpeg.a rdjpgcom wrjpgcom ansi2knr
-	$(RM) $(RMFLAGS) core testout.* config.log config.status jconfig.h
+	-$(RM) $(RMFLAGS) *.o cjpeg djpeg libjpeg.a rdjpgcom wrjpgcom ansi2knr
+	-$(RM) $(RMFLAGS) core testout.* config.log config.status jconfig.h
 
 distclean:
-	$(RM) $(RMFLAGS) *.o cjpeg djpeg libjpeg.a rdjpgcom wrjpgcom ansi2knr
-	$(RM) $(RMFLAGS) core testout.* config.log config.status jconfig.h
+	-$(RM) $(RMFLAGS) *.o cjpeg djpeg libjpeg.a rdjpgcom wrjpgcom ansi2knr
+	-$(RM) $(RMFLAGS) core testout.* config.log config.status jconfig.h
 
 distribute:
 	$(RM) $(RMFLAGS) jpegsrc.tar*

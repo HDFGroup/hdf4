@@ -185,10 +185,10 @@ libdir = $(prefix)/lib
 # Directory in which to install documentation info files.
 infodir = $(prefix)/info
 
-#### host and target specific makefile fragments come in here.
-###
+#### ----- host and target specific makefile fragments come in here.-------
+### ------------------- end of makefile fragments -------------------------
 
-### End of system configuration section. ####
+# ############# End of system configuration section. ###############
 
 # ==> where is your HDF library (libdf.a) located?
 # ==> where are your hdf.h, hdfi.h and vg.h files located?

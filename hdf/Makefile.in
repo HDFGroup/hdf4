@@ -67,10 +67,10 @@ libdir = $(prefix)/lib
 # Directory in which to install documentation info files.
 infodir = $(prefix)/info
 
-#### host and target specific makefile fragments come in here.
-###
+#### ----- host and target specific makefile fragments come in here.-------
+### ------------------- end of makefile fragments -------------------------
 
-### End of system configuration section. ####
+# ############# End of system configuration section. ###############
 
 PACKAGE	 = HDF
 VERSION  = 4.0
@@ -112,16 +112,22 @@ all:
           SUBDIRS="src jpeg util test" subd message 
 
 allnofortran:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
+          SUBDIRS="jpeg" subd  
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
-          SUBDIRS="src jpeg util test" subd message 
+          SUBDIRS="src util test" subd message 
 
 rebuild rebuildnofortran:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
+          SUBDIRS="jpeg" subd 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="src jpeg util test" subd message 
+          SUBDIRS="src util test" subd message 
 
 libnofortran:
+	@$(MAKE) $(MYFLAGS) $(HDF_FLAGS) TARG=all \
+	  SUBDIRS="jpeg" subd 
 	@$(MAKE) $(MYFLAGS) $(HDF_FLAGS) TARG=nofortran \
-	  SUBDIRS="src jpeg" subd message
+	  SUBDIRS="src" subd message
 
 libnostub: libnofortran
 
@@ -144,8 +150,10 @@ tests:
           SUBDIRS="src jpeg test" subd
 
 testnofortran:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
+          SUBDIRS="jpeg" subd 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
-          SUBDIRS="src jpeg test" subd message 
+          SUBDIRS="src test" subd message 
 
 perfs:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
@@ -156,8 +164,10 @@ perfs:
 #          SUBDIRS="src util test" subd
 
 debug:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
+          SUBDIRS="jpeg" subd 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=debug \
-          SUBDIRS="src jpeg test" subd message 
+          SUBDIRS="src test" subd message 
 
 saber:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=saber \
@@ -166,13 +176,13 @@ saber:
 clean:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
           SUBDIRS="src jpeg util test" subd
-	$(RM) $(RMFLAGS) core *.log
+	-$(RM) $(RMFLAGS) core *.log
 
 distclean:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
           SUBDIRS="src jpeg util test" subd
-	$(RM) $(RMFLAGS) core *.log
-	$(RM) -rf bin lib include config.status Makefile
+	-$(RM) $(RMFLAGS) core *.log
+	-$(RM) -rf bin lib include config.status Makefile
 
 # for recusive make in subdirs
 subd:
@@ -208,9 +218,6 @@ message:
 	@echo ""
 	@echo "***********************************************************"
 	@echo " HDF 4.0 library successfully created."
-	@echo ""
-	@echo "If you have any old vset files (v 1.0) you must use vcompat"
-	@echo "to make them compatible with Vset 2.0 applications"
 	@echo ""
 	@echo "***********************************************************"
 	@echo ""

@@ -119,13 +119,10 @@ libdir = $(prefix)/lib
 # Directory in which to install documentation info files.
 infodir = $(prefix)/info
 
-#### host and target specific makefile fragments come in here.
-###
+#### ----- host and target specific makefile fragments come in here.-------
+### ------------------- end of makefile fragments -------------------------
 
-### End of system configuration section. ##############
-
-# ==> specify your machine
-#MACHINE=SUN
+# ############# End of system configuration section. ###############
 
 # ==> specify directories where to find inludes and library
 #     HDF library, and HDF utilities
