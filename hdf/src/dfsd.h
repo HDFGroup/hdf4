@@ -2,10 +2,14 @@
 $Header$
 
 $Log$
-Revision 1.7  1993/01/19 05:55:12  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.8  1993/01/26 19:42:40  koziol
+Added support for reading and writing Little-Endian data on all
+platforms.  This has been tested on: Cray, Sun, and PCs so far.
 
+ * Revision 1.7  1993/01/19  05:55:12  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.6  1993/01/04  18:03:39  sxu
  * change dfsdpre32 to dfsdpre32sdg
  *
@@ -176,6 +180,11 @@ extern int DFSDIgetrrank
     PROTO((intn _HUGE *rank));
 extern int DFSDIgetwrank
     PROTO((intn _HUGE *rank));
+extern int DFSDIsetdimstrs
+    PROTO((int dim, char _HUGE *label, char _HUGE *unit, char _HUGE *format));
+extern int DFSDIsetdatastrs
+    PROTO((char _HUGE *label, char _HUGE *unit, char _HUGE *format,
+            char _HUGE *coordsys));
 
 extern int DFSDsetcal
     PROTO((float64 cal, float64 cal_err, float64 ioff, 

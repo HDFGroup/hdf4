@@ -2,10 +2,14 @@
 $Header$
 
 $Log$
-Revision 1.12  1993/01/19 05:55:40  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.13  1993/01/26 19:42:45  koziol
+Added support for reading and writing Little-Endian data on all
+platforms.  This has been tested on: Cray, Sun, and PCs so far.
 
+ * Revision 1.12  1993/01/19  05:55:40  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.11  1992/11/06  21:52:30  chouck
  * Added HDmemset() function.
  *
@@ -892,14 +896,20 @@ extern uint8 *DFtbuf;
 *  Memory functions defined differently under MS Windows
 **************************************************************************/
 
-#ifdef WIN3
-#  define HDmemcpy(dst,src,n)   (_fmemcpy((dst),(src),(n)))
-#  define HDmemset(dst,c,n)     (_fmemset((dst),(c),(n)))
-#  define HDmemcmp(dst,src,n)   (_fmemcmp((dst),(src),(n)))
-#else
-#  define HDmemcpy(dst,src,n)   (memcpy((dst),(src),(n)))
-#  define HDmemset(dst,c,n)     (memset((dst),(c),(n)))
-#  define HDmemcmp(dst,src,n)   (memcmp((dst),(src),(n)))
-#endif /* WIN3 */
+#if defined WIN3 || defined PC
+#   ifdef WIN3
+#       define HDmemcpy(dst,src,n)   (fmemcpy_big((dst),(src),(n)))
+#       define HDmemset(dst,c,n)     (fmemset_big((dst),(c),(n)))
+#       define HDmemcmp(dst,src,n)   (fmemcmp_big((dst),(src),(n)))
+#   else    /* !WIN3 */
+#       define HDmemcpy(dst,src,n)   (memcpy_big((dst),(src),(n)))
+#       define HDmemset(dst,c,n)     (memset_big((dst),(c),(n)))
+#       define HDmemcmp(dst,src,n)   (memcmp_big((dst),(src),(n)))
+#   endif   /* WIN3 */
+#else   /* !WIN & !PC */
+# define HDmemcpy(dst,src,n)   (memcpy((dst),(src),(n)))
+# define HDmemset(dst,c,n)     (memset((dst),(c),(n)))
+# define HDmemcmp(dst,src,n)   (memcmp((dst),(src),(n)))
+#endif /* WIN3 | PC */
 
 #endif /* HDFI_H */

@@ -5,10 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.16  1993/01/19 05:55:07  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.17  1993/01/26 19:42:35  koziol
+Added support for reading and writing Little-Endian data on all
+platforms.  This has been tested on: Cray, Sun, and PCs so far.
 
+ * Revision 1.16  1993/01/19  05:55:07  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.15  1993/01/15  22:46:57  georgev
  * Added flag to allow multiple SDS when using hyperslabs.
  *
@@ -137,7 +141,6 @@ Fortran stub functions:
 #include "herr.h"
 #include "dfsd.h"
 #include "hfile.h"
-#include "dfconvrt.h"
 
 /* MMM: make this definition correct and move to hfile.h, or wherever. */
 #define DF_NOFILE 0
@@ -547,7 +550,8 @@ void *pmax, *pmin;
     HEclear();
     
     if (Newdata<0) {
-        HERROR(DFE_BADCALL); return FAIL;
+        HERROR(DFE_BADCALL);
+        return FAIL;
     }
     /* get number type and copy data  */
     if (Readsdg.numbertype == DFNT_NONE)
@@ -1399,7 +1403,7 @@ int32 numbertype;
     HEclear();
 
     outNT = (int8)(DFKisnativeNT(numbertype)? DFKgetPNSC(numbertype, DF_MT) :
-				DFNTF_HDFDEFAULT);
+                (DFKislitendNT(numbertype) ? DFNTF_PC : DFNTF_HDFDEFAULT));
     if ((numbertype == Writesdg.numbertype) &&
             (outNT == Writesdg.filenumsubclass))
         return(0);
@@ -1957,18 +1961,23 @@ DFSsdg *sdg;
             fileNT = ntstring[3];
             platnumsubclass = DFKgetPNSC(numtype, DF_MT);
             if ((fileNT != DFNTF_HDFDEFAULT) &&
-                (fileNT != platnumsubclass))    {
+                    (fileNT != DFNTF_PC) &&
+                    (fileNT != platnumsubclass))    {
                 Hendaccess(aid);
                 HERROR(DFE_BADCALL); return FAIL;
             }
-            if (fileNT != DFNTF_HDFDEFAULT) /* if native */
-                numtype = numtype | DFNT_NATIVE;
+            if (fileNT != DFNTF_HDFDEFAULT) { /* if native or little endian */
+                if(fileNT != DFNTF_PC)   /* native */
+                    numtype |= DFNT_NATIVE;
+                else                    /* little endian */
+                    numtype |= DFNT_LITEND;
+              } /* end if */
             sdg->filenumsubclass = ntstring[3];
             sdg->numbertype = numtype;
             
             /* set size of NT    */
             fileNTsize = DFKNTsize(numtype);
-            localNTsize = DFKNTsize(numtype | DFNT_NATIVE);
+            localNTsize = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
 
             /* read and check all scale NTs */
             for (i=0; i < sdg->rank; i++) {
@@ -2191,7 +2200,7 @@ DFSsdg *sdg;
             if (fileNT == platnumsubclass) {       /* no conversion */
 
                 /* get size of element */
-                intn eltSize = Hlength(file_id, elmt.tag, elmt.ref);
+                intn eltSize = (intn)Hlength(file_id, elmt.tag, elmt.ref);
                 if(eltSize == FAIL) return FAIL; 
                 
                 if(eltSize == 36) {
@@ -2222,7 +2231,7 @@ DFSsdg *sdg;
                 intn eltSize;
 
                 /* get size of element */
-                eltSize = Hlength(file_id, elmt.tag, elmt.ref);
+                eltSize = (intn)Hlength(file_id, elmt.tag, elmt.ref);
                 if(eltSize == FAIL) return FAIL;
 
                 /* allocate buffer */
@@ -2276,7 +2285,7 @@ DFSsdg *sdg;
         case DFTAG_FV:
             if (fileNT == platnumsubclass) {       /* no conversion */
                 /* get size of element */
-                intn eltSize = Hlength(file_id, elmt.tag, elmt.ref);
+                intn eltSize = (intn)Hlength(file_id, elmt.tag, elmt.ref);
                 if(eltSize == FAIL) return FAIL;
 
                 /* Allocate space for fill value */
@@ -2291,7 +2300,7 @@ DFSsdg *sdg;
                 intn eltSize;
  
                 /* get size of element  */
-                eltSize = Hlength(file_id, elmt.tag, elmt.ref);
+                eltSize = (intn)Hlength(file_id, elmt.tag, elmt.ref);
                 if(eltSize == FAIL) return FAIL;
 
                 /* Allocate space for fill value  */
@@ -2410,7 +2419,7 @@ DFSsdg *sdg;
         
         /* put data NT and scale NTs  in buffer */
         nt.tag = DFTAG_NT;
-        nt.ref = Ref.nt;           /* same NT for scales too */
+        nt.ref = (uint16)Ref.nt;           /* same NT for scales too */
         
         /* "<=" used to put 1 data NT + rank scale NTs in buffer */
         for (i=0; i<=sdg->rank; i++) {  /* scale NTs written even if no scale!*/
@@ -3377,8 +3386,8 @@ int DFSDIgetslice(filename, winst, windims, data, dims, isfortran)
     numtype = Readsdg.numbertype;
     isnative = DFNT_NATIVE;
     machinetype = DF_MT;
-    platnumsubclass = DFKgetPNSC(numtype, DF_MT);
-    localNTsize = DFKNTsize(numtype | isnative);
+    platnumsubclass = DFKgetPNSC(numtype & (~DFNT_LITEND), DF_MT);
+    localNTsize = DFKNTsize((numtype | isnative) & (~DFNT_LITEND));
     fileNTsize = DFKNTsize(numtype);
     fileNT = Readsdg.filenumsubclass;
     issdg = Readsdg.isndg? 0: 1;
@@ -3640,8 +3649,7 @@ int DFSDIgetslice(filename, winst, windims, data, dims, isfortran)
 int DFSDIputslice(int32 windims[], void *data, int32 dims[], int isfortran)
 #else
 int DFSDIputslice(windims, data, dims, isfortran)
-
-    int32	windims[];	/* array containing dimensions of the slice */
+    int32   windims[];  /* array containing dimensions of the slice */
     int32	dims[];		/* array containing the dimensions of data[] */
     void	*data;		/* array of the floating point data to write */
     int		isfortran;	/* true if called from Fortran */
@@ -3656,6 +3664,7 @@ int DFSDIputslice(windims, data, dims, isfortran)
     	numtype,       /* current number type */
         platnumsubclass, /* class of this NT for this platform */
         fileNTsize,    /* size of this NT as it will be in the file */
+	fileNT,        /* class of NT for the data to write */
         isnative,
         localNTsize;   /* size of this NT as it occurs in theis machine */
     int32
@@ -3673,10 +3682,12 @@ int DFSDIputslice(windims, data, dims, isfortran)
     HEclear();
 
     if (!data) {
-        HERROR(DFE_BADPTR); return FAIL;
+        HERROR(DFE_BADPTR);
+        return FAIL;
     }
     if (Sfile_id == DF_NOFILE) {
-        HERROR(DFE_BADCALL); return FAIL;
+        HERROR(DFE_BADCALL);
+        return FAIL;
     }
 
     rank = Writesdg.rank;
@@ -3684,12 +3695,14 @@ int DFSDIputslice(windims, data, dims, isfortran)
     for (i=0; i < (int32)rank; i++) {
     	/* check validity for the dimension ranges */
         if ((windims[i]<=0) || (windims[i]>Writesdg.dimsizes[i])) {
-            HERROR(DFE_BADDIM); return FAIL;
+            HERROR(DFE_BADDIM);
+            return FAIL;
         }
-	/* check if space allocated is sufficient */
-	if (dims[i] < windims[i]) {
-	    HERROR(DFE_NOTENOUGH); return FAIL;
-	}
+        /* check if space allocated is sufficient */
+        if (dims[i] < windims[i]) {
+            HERROR(DFE_NOTENOUGH);
+            return FAIL;
+        }
     }
 
     /* check to see if the slices fit together */
@@ -3700,7 +3713,8 @@ int DFSDIputslice(windims, data, dims, isfortran)
         /* check that all 'lesser' dims match */
     for (j=i+1; j<(int32)rank; j++)
         if (Writesdg.dimsizes[j] != windims[j]) {
-            HERROR(DFE_BADDIM); return FAIL;
+            HERROR(DFE_BADDIM);
+            return FAIL;
         }
         /* update Sddims to reflect new write */
     Sddims[i] += windims[i];
@@ -3712,13 +3726,13 @@ int DFSDIputslice(windims, data, dims, isfortran)
 
     leastsig =  (int32)rank-1; /* which is least sig dim */
     numtype = Writesdg.numbertype;
-    platnumsubclass = DFKgetPNSC(numtype, DF_MT);
+    platnumsubclass = DFKgetPNSC(numtype & (~DFNT_LITEND), DF_MT);
 		/* get class of this num type for this platform */
     fileNTsize = DFKNTsize(numtype);
+    fileNT = Writesdg.filenumsubclass;
     isnative = DFNT_NATIVE;
-    localNTsize = DFKNTsize(numtype | isnative);
-    convert = ( (platnumsubclass != DFNTF_HDFDEFAULT) && /* need conversion? */
-		(!DFKisnativeNT(numtype)) );
+    localNTsize = DFKNTsize((numtype | isnative) & (~DFNT_LITEND));
+    convert = (platnumsubclass != fileNT);
 
     contiguous = 1;
     for (i=0; contiguous && i<(int32)rank; i++) {
@@ -3953,7 +3967,6 @@ DFSDsetfillvalue(fill_value)
     void *fill_value;
 #endif /* PROTOTYPE */
 {
-    int32 file_id, aid;
     int32 numtype;      /* current number type  */
     int32 localNTsize;  /* size of this NT on as it is on this machine  */
     int32 fileNTsize;   /* size of this NT as it will be in the file  */
@@ -4089,7 +4102,7 @@ DFSDwritefillvalue(filename, fill_value)
 
     /* Intialize buffer to fill value */
     for (i = 0; i < dataset_size; i = i + localNTsize)
-        HDmemcpy((uint8 *)&(buf[i]), fill_value, localNTsize);
+        HDmemcpy(&(buf[i]), fill_value, localNTsize);
    
     /* Write fill values using a slab */
     return DFSDwriteslab(filename, start_dims, stride, size_dims, buf);
@@ -4127,7 +4140,7 @@ DFSDwriteslab(filename, start, stride, count, data)
 #endif /* PROTOTYPE */
 {
     intn  rank;           /* number of dimensions in data[] */
-    intn  i, j;           /* temporary loop index */
+    int32 i;              /* temporary loop index */
 
     int32 leastsig;       /* fastest varying subscript in the array */
     int32 convert;        /* true if machine NT != NT to be read */
@@ -4155,16 +4168,12 @@ DFSDwriteslab(filename, start, stride, count, data)
                           /*   used by DFconvert macro */
     int32 isnative;
     int32 aid;
-    int32 sdg_rank;
-    int32 *dim_sizes;
 
     uint8 platnumsubclass; /* class of this NT for this platform */
     uint8 fileNT;          /* file number subclass  */
-    uint8 *dp;             /* ptr into data[] at an element of current row*/
     uint8 *buf;            /* buffer containing the converted current row */
     uint8 *datap;          /* ptr into data[] at starting offset */
                            /*   of current block */
-    int   func_ret;
 
     char *FUNC="DFSDwriteslab";
 
@@ -4233,8 +4242,8 @@ DFSDwriteslab(filename, start, stride, count, data)
     numtype         = Writesdg.numbertype;
     isnative        = DFNT_NATIVE;
     machinetype     = DF_MT;
-    platnumsubclass = DFKgetPNSC(numtype, DF_MT);
-    localNTsize     = DFKNTsize(numtype | isnative);
+    platnumsubclass = DFKgetPNSC(numtype & (~DFNT_LITEND), DF_MT);
+    localNTsize     = DFKNTsize((numtype | isnative) & (~DFNT_LITEND));
     fileNTsize      = DFKNTsize(numtype);
     fileNT          = Writesdg.filenumsubclass;
     issdg           = Writesdg.isndg? 0: 1;

@@ -5,10 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/01/19 05:56:03  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.6  1993/01/26 19:42:48  koziol
+Added support for reading and writing Little-Endian data on all
+platforms.  This has been tested on: Cray, Sun, and PCs so far.
 
+ * Revision 1.5  1993/01/19  05:56:03  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.4  1992/11/05  18:59:26  chouck
  * Added (unix) wrapper to realloc()
  *
@@ -339,6 +343,299 @@ intn len;
     for(; i<len; i++) str[i] = ' ';
     return 0;
 }
+
+#if defined WIN3 || defined PC
+#ifdef WIN3
+/*--------------------------------------------------------------------------
+**
+** NAME
+**  fmemcpy_big -- function specific to the PC to copy 32-bits of data
+** USAGE
+**  VOIDP fmemcpy_big (dst,src,len)
+**  VOIDP dst;          IN: the buffer to put bytes into
+**  VOIDP src;          IN: the source buffer to copy from
+**  uint32 len;         IN: the number of bytes to copy
+** RETURNS
+**  returns the original pointer to dst
+** DESCRIPTION
+**  Because the IBM PC compilers use 16-bit number for memcpy, this function
+**  blocks that up into 64kb blocks to copy at a time.
+** GLOBAL VARIABLES
+**  None
+** COMMENTS, BUGS, ASSUMPTIONS
+** EXAMPLES
+** REVISION LOG
+--------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+VOIDP fmemcpy_big(VOIDP dst,VOIDP src,uint32 len)
+#else
+VOIDP fmemcpy_big(dst,src,len)
+VOIDP dst;
+VOIDP src;
+uint32 len;
+#endif
+{
+    uint8 *s,d;             /* alias for the buffers */
+
+    if(len<=UINT_MAX)   /* if the size is small enough copy all at once */
+        return(_fmemcpy(dst,src,(size_t)len));
+    else {  /* number of bytes to read */
+        s=(uint8 *)src;
+        d=(uint8 *)dst;
+        while(len>UINT_MAX) {
+            _fmemcpy(d,s,UINT_MAX);
+            s+=UINT_MAX;
+            d+=UINT_MAX;
+            len-=UINT_MAX;
+          } /* end while */
+        if(len>0)
+            _fmemcpy(d,s,(size_t)len);
+      } /* end else */
+    return(dst);
+}   /* end fmemcpy_big() */
+
+/*--------------------------------------------------------------------------
+**
+** NAME
+**  fmemset_big -- function specific to the PC to set 32-bits of data
+** USAGE
+**  VOIDP fmemset_big (src, c, len)
+**  VOIDP src;          IN: the buffer to set to a value
+**  intn c;             IN: the value to use to set
+**  uint32 len;         IN: the number of bytes to set
+** RETURNS
+**  returns the original pointer to s
+** DESCRIPTION
+**  Because the IBM PC compilers use 16-bit number for memcpy, this function
+**  blocks that up into 64kb blocks to set at a time.
+** GLOBAL VARIABLES
+**  None
+** COMMENTS, BUGS, ASSUMPTIONS
+** EXAMPLES
+** REVISION LOG
+--------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+VOIDP fmemset_big(VOIDP src,intn c,uint32 len)
+#else
+VOIDP fmemset_big(src,c,len)
+VOIDP src;
+intn c;
+uint32 len;
+#endif
+{
+    uint8 *s;               /* alias for the buffers */
+
+    if(len<=UINT_MAX)   /* if the size is small enough copy all at once */
+        return(_fmemset(src,c,(size_t)len));
+    else {  /* number of bytes to read */
+        s=(uint8 *)src;
+        while(len>UINT_MAX) {
+            _fmemset(s,c,UINT_MAX);
+            s+=UINT_MAX;
+            len-=UINT_MAX;
+          } /* end while */
+        if(len>0)
+            _fmemset(s,c,(size_t)len);
+      } /* end else */
+    return(src);
+}   /* end fmemset_big() */
+
+/*--------------------------------------------------------------------------
+**
+** NAME
+**  fmemcmp_big -- function specific to the PC to compare 32-bits of data
+** USAGE
+**  VOIDP fmemcmp_big (s1,s2,len)
+**  VOIDP s1;           IN: the first buffer
+**  VOIDP s2;           IN: the second buffer
+**  uint32 len;         IN: the number of bytes to copy
+** RETURNS
+**  returns a value less than, equal to, or greater than 0 indicating
+**      that the object pointed to by s1 is less than, equal to, or greater
+**      than the object pointed to by s2
+** DESCRIPTION
+**  Because the IBM PC compilers use 16-bit number for memcpy, this function
+**  blocks that up into 64kb blocks to compare at a time.
+** GLOBAL VARIABLES
+**  None
+** COMMENTS, BUGS, ASSUMPTIONS
+** EXAMPLES
+** REVISION LOG
+--------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+intn fmemcmp_big(VOIDP s1,VOIDP s2,uint32 len)
+#else
+intn fmemcmp_big(s1,s2,len)
+VOIDP s1;
+VOIDP s2;
+uint32 len;
+#endif
+{
+    intn ret_val;
+
+    if(len<=UINT_MAX)   /* if the size is small enough copy all at once */
+        return(_fmemcmp(s1,s2,(size_t)len));
+    else {  /* number of bytes to read */
+        while(len>UINT_MAX) {
+            ret_val=_fmemcmp(s1,s2,UINT_MAX);
+            if(ret_val!=0)
+                return(ret_val);
+            s1+=UINT_MAX;
+            s2+=UINT_MAX;
+            len-=UINT_MAX;
+          } /* end while */
+        if(len>0)
+            return(_fmemcmp(s1,s2,(size_t)len));
+      } /* end else */
+    return(0);
+}   /* end fmemcmp_big() */
+#else   /* !WIN3 */
+/*--------------------------------------------------------------------------
+**
+** NAME
+**  memcpy_big -- function specific to the PC to copy 32-bits of data
+** USAGE
+**  VOIDP memcpy_big (dst,src,len)
+**  VOIDP dst;          IN: the buffer to put bytes into
+**  VOIDP src;          IN: the source buffer to copy from
+**  uint32 len;         IN: the number of bytes to copy
+** RETURNS
+**  returns the original pointer to dst
+** DESCRIPTION
+**  Because the IBM PC compilers use 16-bit number for memcpy, this function
+**  blocks that up into 64kb blocks to copy at a time.
+** GLOBAL VARIABLES
+**  None
+** COMMENTS, BUGS, ASSUMPTIONS
+** EXAMPLES
+** REVISION LOG
+--------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+VOIDP memcpy_big(VOIDP dst,VOIDP src,uint32 len)
+#else
+VOIDP memcpy_big(dst,src,len)
+VOIDP dst;
+VOIDP src;
+uint32 len;
+#endif
+{
+    uint8 *s,*d;             /* alias for the buffers */
+
+    if(len<=UINT_MAX)   /* if the size is small enough copy all at once */
+        return(memcpy(dst,src,(size_t)len));
+    else {  /* number of bytes to read */
+        s=(uint8 *)src;
+        d=(uint8 *)dst;
+        while(len>UINT_MAX) {
+            memcpy(d,s,UINT_MAX);
+            s+=UINT_MAX;
+            d+=UINT_MAX;
+            len-=UINT_MAX;
+          } /* end while */
+        if(len>0)
+            memcpy(d,s,(size_t)len);
+      } /* end else */
+    return(dst);
+}   /* end memcpy_big() */
+
+/*--------------------------------------------------------------------------
+**
+** NAME
+**  memset_big -- function specific to the PC to set 32-bits of data
+** USAGE
+**  VOIDP memset_big (src, c, len)
+**  VOIDP src;          IN: the buffer to set to a value
+**  intn c;             IN: the value to use to set
+**  uint32 len;         IN: the number of bytes to set
+** RETURNS
+**  returns the original pointer to s
+** DESCRIPTION
+**  Because the IBM PC compilers use 16-bit number for memcpy, this function
+**  blocks that up into 64kb blocks to set at a time.
+** GLOBAL VARIABLES
+**  None
+** COMMENTS, BUGS, ASSUMPTIONS
+** EXAMPLES
+** REVISION LOG
+--------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+VOIDP memset_big(VOIDP src,intn c,uint32 len)
+#else
+VOIDP memset_big(src,c,len)
+VOIDP src;
+intn c;
+uint32 len;
+#endif
+{
+    uint8 *s;               /* alias for the buffers */
+
+    if(len<=UINT_MAX)   /* if the size is small enough copy all at once */
+        return(memset(src,c,(size_t)len));
+    else {  /* number of bytes to read */
+        s=(uint8 *)src;
+        while(len>UINT_MAX) {
+            memset(s,c,UINT_MAX);
+            s+=UINT_MAX;
+            len-=UINT_MAX;
+          } /* end while */
+        if(len>0)
+            memset(s,c,(size_t)len);
+      } /* end else */
+    return(src);
+}   /* end memset_big() */
+
+/*--------------------------------------------------------------------------
+**
+** NAME
+**  memcmp_big -- function specific to the PC to compare 32-bits of data
+** USAGE
+**  VOIDP memcmp_big (s1,s2,len)
+**  VOIDP s1;           IN: the first buffer
+**  VOIDP s2;           IN: the second buffer
+**  uint32 len;         IN: the number of bytes to copy
+** RETURNS
+**  returns a value less than, equal to, or greater than 0 indicating
+**      that the object pointed to by s1 is less than, equal to, or greater
+**      than the object pointed to by s2
+** DESCRIPTION
+**  Because the IBM PC compilers use 16-bit number for memcpy, this function
+**  blocks that up into 64kb blocks to compare at a time.
+** GLOBAL VARIABLES
+**  None
+** COMMENTS, BUGS, ASSUMPTIONS
+** EXAMPLES
+** REVISION LOG
+--------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+intn memcmp_big(VOIDP s1,VOIDP s2,uint32 len)
+#else
+intn memcmp_big(s1,s2,len)
+VOIDP s1;
+VOIDP s2;
+uint32 len;
+#endif
+{
+    intn ret_val;
+
+    if(len<=UINT_MAX)   /* if the size is small enough copy all at once */
+        return(memcmp(s1,s2,(size_t)len));
+    else {  /* number of bytes to read */
+        while(len>UINT_MAX) {
+            ret_val=memcmp(s1,s2,UINT_MAX);
+            if(ret_val!=0)
+                return(ret_val);
+            (uint8 *)s1+=UINT_MAX;
+            (uint8 *)s2+=UINT_MAX;
+            len-=UINT_MAX;
+          } /* end while */
+        if(len>0)
+            return(memcmp(s1,s2,(size_t)len));
+      } /* end else */
+    return(0);
+}   /* end memcmp_big() */
+#endif  /* WIN3 */
+
+#endif  /* WIN3 | PC */
 
 #if defined PROTOTYPE
 char _HUGE *HDf2cstring(_fcd fdesc, intn len)

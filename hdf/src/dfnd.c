@@ -5,10 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1993/01/19 05:54:41  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.3  1993/01/26 19:42:27  koziol
+Added support for reading and writing Little-Endian data on all
+platforms.  This has been tested on: Cray, Sun, and PCs so far.
 
+ * Revision 1.2  1993/01/19  05:54:41  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.1  1992/09/04  21:25:52  chouck
  * Initial revision
  *
@@ -81,7 +85,6 @@ port.  Lots of minor annoyances fixed.
 #include "herr.h"
 #include "dfnd.h"
 #include "hfile.h"
-#include "dfconvrt.h"
 #include "dfgroup.h"
 #ifdef WIN3
 #include "c:\windev\include\malloc.h"

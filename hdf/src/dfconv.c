@@ -5,10 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1993/01/19 05:54:16  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.5  1993/01/26 19:42:18  koziol
+Added support for reading and writing Little-Endian data on all
+platforms.  This has been tested on: Cray, Sun, and PCs so far.
 
+ * Revision 1.4  1993/01/19  05:54:16  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.3  1993/01/15  23:47:37  sxu
  * bug fixed in DFKvo8f and DFKvi8f
  *
@@ -32,7 +36,7 @@ port.  Lots of minor annoyances fixed.
  Invokes:
     
  PRIVATE conversion functions:
-    DFKnb1b - -  Native mode for 8 bit integers
+    DFKnb1b -  Native mode for 8 bit integers
     DFKnb2b -  Native mode for 16 bit integers
     DFKnb4b -  Native mode for 32 bit integers and floats 
     DFKnb8b -  Native mode for 64 bit floats 
@@ -41,18 +45,40 @@ port.  Lots of minor annoyances fixed.
     DFKsb8b -  Byte swapping for 64 bit floats 
     DFKui2i -  Unicos routine for importing 16 bit unsigned integers
     DFKui2s -  Unicos routine for importing 16 bit signed integers
-    DFKuo2i -  Unicos routine for exporting 16 bit integers
+    DFKuo2i -  Unicos routine for exporting 16 bit integers (both)
     DFKui4i -  Unicos routine for importing unsigned 32bit integers
     DFKui4s -  Unicos routine for importing signed 32bit integers
     DFKuo4i -  Unicos routine for exporting 4 byte integers (both)
     DFKui4f -  Unicos routine for importing 32 bit floats   
     DFKuo4f -  Unicos routine for exporting 32 bit floats  
     DFKui8f -  Unicos routine for importing 64 bit floats 
-    DFKuo64f - Unicos routine for exporting 64 bit floats
+    DFKuo64f-  Unicos routine for exporting 64 bit floats
+    DFKlui2i-  Unicos routine for importing little-endian 16 bit unsigned ints
+    DFKlui2s-  Unicos routine for importing little-endian 16 bit signed ints
+    DFKluo2i-  Unicos routine for exporting little-endian 16 bit ints (both)
+    DFKlui4i-  Unicos routine for importing little-endian unsigned 32bit ints
+    DFKlui4s-  Unicos routine for importing little-endian signed 32bit ints
+    DFKluo4i-  Unicos routine for exporting little-endian 4 byte ints (both)
+    DFKlui4f-  Unicos routine for importing little-endian 32 bit floats
+    DFKluo4f-  Unicos routine for exporting little-endian 32 bit floats
+    DFKlui8f-  Unicos routine for importing little-endian 64 bit floats
+    DFKluo8f-  Unicos routine for exporting little-endian 64 bit floats
     DFKvi4f -  VMS routine for importing 32 bit floats
     DFKvo4f -  VMS routine for exporting 32 bit floats
     DFKvi8f -  VMS routine for importing 64 bit floats
     DFKvo8f -  VMS routine for exporting 64 bit floats
+    DFKlvi4f-  VMS routine for importing little-endian 32 bit floats
+    DFKlvo4f-  VMS routine for exporting little-endian 32 bit floats
+    DFKlvi8f-  VMS routine for importing little-endian 64 bit floats
+    DFKlvo8f-  VMS routine for exporting little-endian 64 bit floats
+    DFKci4f -  Convex routine for importing 32 bit floats
+    DFKco4f -  Convex routine for exporting 32 bit floats
+    DFKci8f -  Convex routine for importing 64 bit floats
+    DFKco8f -  Convex routine for exporting 64 bit floats
+    DFKlci4f-  Convex routine for importing little-endian 32 bit floats
+    DFKlco4f-  Convex routine for exporting little-endian 32 bit floats
+    DFKlci8f-  Convex routine for importing little-endian 64 bit floats
+    DFKlco8f-  Convex routine for exporting little-endian 64 bit floats
 
  Other PUBLIC functions:
     DFKmachineNTsize - Determine size in machine, given number type
@@ -61,6 +87,7 @@ port.  Lots of minor annoyances fixed.
     DFKsetcustom    - Template for user to setup custom conversion 
                       routines
     DFKisnative     - Checks whether number type is native mode
+    DFKislitend     - Checks whether number type is little-endian mode
     DFconvert       - provide compatibility with 3.0 routines
 
  Private functions:
@@ -70,9 +97,11 @@ port.  Lots of minor annoyances fixed.
 
  *------------------------------------------------------------------*/
 
+#ifdef QAK
 #if defined(__STDC__) && !defined(PROTOTYPE)
 #define PROTOTYPE
 #endif /* Assert prototype defined */
+#endif
 
 /*****************************************************************************/
 /*                                                                           */
@@ -95,140 +124,7 @@ port.  Lots of minor annoyances fixed.
 #define DFKMASTER  /* Define this for the prototypes for DFKnumin/out */
 #include "hdf.h"
 #include "herr.h"
-
-/*****************************************************************************/
-/* CONSTANT DEFINITIONS                                                      */
-/* These will eventually be incorporated into dfi.h                          */
-/*****************************************************************************/
-#if !defined(VMS) && !defined(PC) && !defined(MIPSEL) && !defined(CONVEXNATIVE)
-#     if !defined(UNICOS)
-#          define UI8_IN     DFKnb1b    /* Unsigned Integer, 8 bits */
-#          define UI8_OUT    DFKnb1b
-#          define SI16_IN    DFKnb2b    /* S = Signed */
-#          define SI16_OUT   DFKnb2b  
-#          define UI16_IN    DFKnb2b
-#          define UI16_OUT   DFKnb2b
-#          define SI32_IN    DFKnb4b
-#          define SI32_OUT   DFKnb4b
-#          define UI32_IN    DFKnb4b
-#          define UI32_OUT   DFKnb4b
-#          define F32_IN     DFKnb4b    /* Float, 32 bits */
-#          define F32_OUT    DFKnb4b
-#          define F64_IN     DFKnb8b
-#          define F64_OUT    DFKnb8b
-#          define NUI8_IN    DFKnb1b    /* Native Unsigned Integer, 8 bits */
-#          define NUI8_OUT   DFKnb1b
-#          define NSI16_IN   DFKnb2b
-#          define NSI16_OUT  DFKnb2b
-#          define NUI16_IN   DFKnb2b
-#          define NUI16_OUT  DFKnb2b
-#          define NSI32_IN   DFKnb4b
-#          define NSI32_OUT  DFKnb4b
-#          define NUI32_IN   DFKnb4b
-#          define NUI32_OUT  DFKnb4b
-#          define NF32_IN    DFKnb4b
-#          define NF32_OUT   DFKnb4b
-#          define NF64_IN    DFKnb8b
-#          define NF64_OUT   DFKnb8b
-#     else
-#          define UI8_IN     DFKnb1b
-#          define UI8_OUT    DFKnb1b
-#          define SI16_IN    DFKui2s
-#          define SI16_OUT   DFKuo2i
-#          define UI16_IN    DFKui2i
-#          define UI16_OUT   DFKuo2i
-#          define SI32_IN    DFKui4s
-#          define SI32_OUT   DFKuo4i
-#          define UI32_IN    DFKui4i
-#          define UI32_OUT   DFKuo4i
-#          define F32_IN     DFKui4f
-#          define F32_OUT    DFKuo4f
-#          define F64_IN     DFKui8f
-#          define F64_OUT    DFKuo8f
-#          define NUI8_IN    DFKnb1b
-#          define NUI8_OUT   DFKnb1b
-#          define NSI16_OUT  DFKnb8b
-#          define NSI16_IN   DFKnb8b
-#          define NUI16_IN   DFKnb8b
-#          define NUI16_OUT  DFKnb8b
-#          define NSI32_IN   DFKnb8b
-#          define NSI32_OUT  DFKnb8b
-#          define NUI32_IN   DFKnb8b
-#          define NUI32_OUT  DFKnb8b
-#          define NF32_IN    DFKnb8b
-#          define NF32_OUT   DFKnb8b
-#          define NF64_IN    DFKnb8b
-#          define NF64_OUT   DFKnb8b
-#     endif /* !UNICOS */
-#else /* must be VMS || PC || MIPSEL || CONVEXNATIVE */
-#     define UI8_IN     DFKnb1b
-#     define UI8_OUT    DFKnb1b
-#   if !defined(CONVEXNATIVE)
-#     define SI16_IN    DFKsb2b  /* The s in DFKsb2b is for swap */
-#     define SI16_OUT   DFKsb2b
-#     define UI16_IN    DFKsb2b
-#     define UI16_OUT   DFKsb2b
-#     define SI32_IN    DFKsb4b
-#     define SI32_OUT   DFKsb4b
-#     define UI32_IN    DFKsb4b
-#     define UI32_OUT   DFKsb4b
-#     if defined(VMS)
-#          define F32_IN     DFKvi4f
-#          define F32_OUT    DFKvo4f
-#          define F64_IN     DFKvi8f
-#          define F64_OUT    DFKvo8f
-#     else  /* !VMS */
-#          define F32_IN     DFKsb4b
-#          define F32_OUT    DFKsb4b
-#          define F64_IN     DFKsb8b
-#          define F64_OUT    DFKsb8b
-#     endif /* VMS */
-#  else /* CONVEXNATIVE */
-#     define SI16_IN	DFKnb2b
-#     define SI16_OUT   DFKnb2b
-#     define UI16_IN    DFKnb2b
-#     define UI16_OUT   DFKnb2b
-#     define SI32_IN    DFKnb4b
-#     define SI32_OUT   DFKnb4b
-#     define UI32_IN    DFKnb4b
-#     define UI32_OUT   DFKnb4b
-#     define F32_IN     DFKci4f	/* CONVEX stuff */
-#     define F32_OUT    DFKco4f
-#     define F64_IN     DFKci8f
-#     define F64_OUT    DFKco8f
-#  endif /* !CONVEXNATIVE */
-#     define NUI8_IN    DFKnb1b
-#     define NUI8_OUT   DFKnb1b
-#     define NSI16_IN   DFKnb2b
-#     define NSI16_OUT  DFKnb2b
-#     define NUI16_IN   DFKnb2b
-#     define NUI16_OUT  DFKnb2b
-#     define NSI32_IN   DFKnb4b
-#     define NSI32_OUT  DFKnb4b
-#     define NUI32_IN   DFKnb4b
-#     define NUI32_OUT  DFKnb4b
-#     define NF32_IN    DFKnb4b
-#     define NF32_OUT   DFKnb4b
-#     define NF64_IN    DFKnb8b
-#     define NF64_OUT   DFKnb8b
-#     define BYTE_SWAPPER
-#endif /* !VMS && !PC && !MIPS && !CONVEXNATIVE */
-
-
-/*****************************************************************************/
-/* STRUCTURE DEFINTIONS                                                      */
-/*****************************************************************************/
-union fpx
-{
-     float f;
-     long  l;
-};
-
-union float_uint_uchar {
-    float32 f;
-    int32 i;
-    unsigned char c[4];
-};
+#include "hconv.h"
 
 /*
 **  Static function prototypes
@@ -542,8 +438,6 @@ uint32 num_elm, source_stride, dest_stride;
 /* NUMBER CONVERSION ROUTINES FOR BYTE SWAPPING                              */
 /*****************************************************************************/
 
-#ifdef BYTE_SWAPPER
-
 /************************************************************/
 /* DFKsb2b()                                                */
 /* -->Byte swapping for 2 byte data items                   */
@@ -832,8 +726,6 @@ uint32 num_elm, source_stride, dest_stride;
 
   return 0;
 }
-
-#endif /* BYTE_SWAPPER */
 
 /*****************************************************************************/
 /* NUMBER CONVERSION ROUTINES FOR THE UNICOS OPERATING SYSTEM                */
@@ -1680,6 +1572,887 @@ uint32 num_elm, source_stride, dest_stride;
   return;
 }
 
+/* QAK */
+/************************************************************/
+/* DFKlui2i()                                                */
+/* -->Unicos routine for importing 2 byte data items        */ 
+/* (**) This routine converts two byte little-endian IEEE   */
+/*      to eight byte Cray little endian integer.           */
+/************************************************************/
+#ifdef PROTOTYPE
+PRIVATE int DFKlui2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+PRIVATE int DFKlui2i(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+  register uint32 i;
+  int fast_processing=0;
+#ifdef PROTOTYPE
+  uint8 * source = (uint8*)s;
+  uint8 * dest = (uint8*)d;
+#endif /* PROTOTYPE */
+  long * lptr_dest = (long*)dest;
+  char *FUNC="DFKui2i";
+
+  HEclear();
+
+  if(source == dest || num_elm == 0) {  /* Inplace conversions not permitted */
+    HERROR(DFE_BADCONV);                /* No elements is an error */
+    return FAIL;
+  }
+
+  /* Find out if it is OK to use faster array processing */
+  if(source_stride == 0 && dest_stride == 0) 
+      fast_processing = 1;            
+
+  if(fast_processing) {
+    for(i = 0; i < num_elm; i++) {
+      lptr_dest[0] = 0x0000000000000000;
+      dest[6] = source[1];
+      dest[7] = source[0];
+      source += 2;
+      lptr_dest++;
+      dest = (uint8*)lptr_dest;
+    }
+  }
+  else { /* Generic stride processing */
+    for(i = 0; i < num_elm; i++) {
+      dest[0] = 0x00;
+      dest[1] = 0x00;
+      dest[2] = 0x00;
+      dest[3] = 0x00;
+      dest[4] = 0x00;
+      dest[5] = 0x00;
+      dest[6] = source[1];
+      dest[7] = source[0];
+      source += source_stride;
+      dest += dest_stride;
+    }
+  }
+  return 0;
+}
+
+/************************************************************/
+/* DFKlui2s()                                                */
+/* -->Unicos routine for importing 2 byte signed ints       */
+/* (**) This routine converts two byte IEEE to eight byte   */
+/*      Cray.                                               */
+/************************************************************/
+#ifdef PROTOTYPE
+PRIVATE int DFKlui2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+PRIVATE int DFKlui2s(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+  register uint32 i;
+  int fast_processing=0;
+#ifdef PROTOTYPE
+  uint8 * source = (uint8*)s;
+  uint8 * dest = (uint8*)d;
+#endif /* PROTOTYPE */
+  long * lptr_dest = (long*)dest;
+  char *FUNC="DFKui2s";
+
+  HEclear();
+
+  if(source == dest || num_elm == 0) {  /* Inplace conversions  not permitted */
+    HERROR(DFE_BADCONV);                /* No elements to convert is an error */
+    return FAIL;
+  }
+
+  /* Find out if it is OK to use faster array processing */
+  if(source_stride == 0 && dest_stride == 0) 
+      fast_processing = 1;            
+
+  if(fast_processing) {
+    for(i = 0; i < num_elm; i++) {
+      if((source[1] & 0x80))           /* Can't forget to extend sign */
+	lptr_dest[0] = 0xffffffffffffffff;
+      else
+	lptr_dest[0] = 0x0000000000000000;
+      dest[6] = source[1];
+      dest[7] = source[0];
+      source += 2;
+      lptr_dest++;
+      dest = (uint8*)lptr_dest;
+    }
+  }
+  else { /* Generic stride processing */
+    for(i = 0; i < num_elm; i++) {
+      if((source[1] & 0x80)) {          /* Can't forget to extend sign */
+	dest[0] = 0xff;
+	dest[1] = 0xff;
+	dest[2] = 0xff;
+	dest[3] = 0xff;
+	dest[4] = 0xff;
+	dest[5] = 0xff;
+      }
+      else {
+	dest[0] = 0x00;
+	dest[1] = 0x00;
+	dest[2] = 0x00;
+	dest[3] = 0x00;
+	dest[4] = 0x00;
+	dest[5] = 0x00;
+      }
+      dest[6] = source[1];
+      dest[7] = source[0];
+      source += source_stride;
+      dest += dest_stride;
+    }
+  }
+  return 0;
+}
+
+/************************************************************/
+/* DFKuo2i()                                                */
+/* -->Unicos routine for exporting 2 byte data items        */ 
+/************************************************************/
+#ifdef PROTOTYPE
+PRIVATE int DFKluo2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+PRIVATE int DFKluo2i(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+  register uint32 i;
+  int fast_processing=0;
+#ifdef PROTOTYPE
+  uint8 * source = (uint8*)s;
+  uint8 * dest = (uint8*)d;
+#endif /* PROTOTYPE */
+    char *FUNC="DFKuo2i";
+
+    HEclear();
+
+  if(source == dest || num_elm == 0) {  /* Inplace conversions  not permitted */
+    HERROR(DFE_BADCONV);                /* No elements to convert is an error */
+    return FAIL;
+  }
+
+  /* Find out if it is OK to use faster array processing */
+  if(source_stride == 0 && dest_stride == 0)
+      fast_processing = 1;            
+
+  if(fast_processing) {
+    for(i = 0; i < num_elm; i++) {
+      dest[0] = source[7];
+      dest[1] = source[6];
+      dest += 2;
+      source += 8;
+    }
+  }
+  else { /* Generic Stride processing */
+    for(i = 0; i < num_elm; i++){
+      dest[0] = source[7];
+      dest[1] = source[6];
+      source += source_stride;
+      dest += dest_stride;
+    }
+  }
+  return 0;
+}
+
+/************************************************************/
+/* DFKlui4i()                                                */
+/* -->Unicos routine for importing 4 byte unsigned ints     */
+/************************************************************/
+#ifdef PROTOTYPE
+PRIVATE int DFKlui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+PRIVATE int DFKlui4i(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+  int fast_processing=0;
+  register uint32 i;
+#ifdef PROTOTYPE
+  uint8 * source = (uint8*)s;
+  uint8 * dest = (uint8*)d;
+#endif /* PROTOTYPE */
+  long * lptr_dest = (long*)dest;
+  char *FUNC="DFKui4i";
+
+  HEclear();
+
+  if(source == dest || num_elm == 0) {  /* Inplace conversions  not permitted */
+    HERROR(DFE_BADCONV);                /* No elements to convert is an error */
+    return FAIL;
+  }
+
+  if(source_stride == 0 && dest_stride == 0) {
+    fast_processing = 1;
+  }
+  
+  if(fast_processing)
+    for(i = 0; i < num_elm; i++) {
+      lptr_dest[0] = 0;
+      dest[4] = source[3];
+      dest[5] = source[2];
+      dest[6] = source[1];
+      dest[7] = source[0];
+      source += 4;
+      lptr_dest ++;
+      dest = (uint8 *)lptr_dest;
+    }
+  else 
+    for(i = 0; i < num_elm; i++) {
+      dest[0] = 0;
+      dest[1] = 0;
+      dest[2] = 0;
+      dest[3] = 0;
+      dest[4] = source[3];
+      dest[5] = source[2];
+      dest[6] = source[1];
+      dest[7] = source[0];
+      dest += dest_stride;
+      source += source_stride;
+    }
+  return 0;
+}
+
+/************************************************************/
+/* DFKlui4s()                                                */
+/* -->Unicos routine for importing 4 signed ints            */ 
+/************************************************************/
+#ifdef PROTOTYPE
+PRIVATE int DFKlui4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+PRIVATE int DFKlui4s(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+  int fast_processing=0;
+  register uint32 i;
+#ifdef PROTOTYPE
+  uint8 * source = (uint8*)s;
+  uint8 * dest = (uint8*)d;
+#endif /* PROTOTYPE */
+  long * lptr_dest = (long*)dest;
+  char *FUNC="DFKui4s";
+
+  HEclear();
+
+  if(source == dest || num_elm == 0) {  /* Inplace conversions  not permitted */
+    HERROR(DFE_BADCONV);                /* No elements to convert is an error */
+    return FAIL;
+  }
+
+  if(source_stride == 0 && dest_stride == 0) {
+    fast_processing = 1;
+  }
+  
+  if(fast_processing)
+    for(i = 0; i < num_elm; i++) {
+      if((source[3] & 0x80))            /* Can't forget to sign extend */
+	lptr_dest[0] = 0xffffffffffffffff;
+      else
+	lptr_dest[0] = 0x0000000000000000;
+      dest[4] = source[3];
+      dest[5] = source[2];
+      dest[6] = source[1];
+      dest[7] = source[0];
+      source += 4;
+      lptr_dest ++;
+      dest = (uint8 *)lptr_dest;
+    }
+  else 
+    for(i = 0; i < num_elm; i++) {
+      if((source[3] & 0x80)) {          /* Can't forget to sign extend */
+	dest[0] = 0xff;
+	dest[1] = 0xff;
+	dest[2] = 0xff;
+	dest[3] = 0xff;
+      }
+      else {
+	dest[0] = 0;
+	dest[1] = 0;
+	dest[2] = 0;
+	dest[3] = 0;
+      }
+      dest[4] = source[3];
+      dest[5] = source[2];
+      dest[6] = source[1];
+      dest[7] = source[0];
+      dest += dest_stride;
+      source += source_stride;
+    }
+  return 0;
+}
+
+/************************************************************/
+/* DFKluo4i()                                                */
+/* -->Unicos routine for exporting 4 byte data items        */ 
+/************************************************************/
+
+#ifdef PROTOTYPE
+PRIVATE int DFKluo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+PRIVATE int DFKluo4i(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+  int fast_processing=0;
+  register uint32 i;
+#ifdef PROTOTYPE
+  uint8 * source = (uint8*)s;
+  uint8 * dest = (uint8*)d;
+#endif /* PROTOTYPE */
+  char *FUNC="DFKuo4i";
+
+  HEclear();
+
+  if(source == dest || num_elm == 0) {  /* Inplace conversions  not permitted */
+    HERROR(DFE_BADCONV);                /* No elements to convert is an error */
+    return FAIL;
+  }
+
+  if(source_stride == 0 && dest_stride == 0) {
+    fast_processing = 1;
+  }
+  
+  if(fast_processing)
+    for(i = 0; i < num_elm; i++) {
+      dest[0] = source[7];
+      dest[1] = source[6];
+      dest[2] = source[5];
+      dest[3] = source[4];
+      dest += 4;
+      source += 8;
+    }
+  else 
+    for(i = 0; i < num_elm; i++) {
+      dest[0] = source[7];
+      dest[1] = source[6];
+      dest[2] = source[5];
+      dest[3] = source[4];
+      dest += dest_stride;
+      source += source_stride;
+    }
+  return 0;
+}
+
+#ifdef OLD_WAY
+#define UI4_MASKA 0x8000000000000000
+#define UI4_MASKB 0x7f80000000000000
+#define UI4_MASKC 0x007fffff00000000
+#define UI4_MASKD 0x0000800000000000
+#else
+#define LUI4_MASKA  0x0000008000000000
+#define LUI4_MASKB1 0x0000007f00000000
+#define LUI4_MASKB2 0x0000800000000000
+#define LUI4_MASKC1 0x00007f0000000000
+#define LUI4_MASKC2 0x00ff000000000000
+#define LUI4_MASKC3 0xff00000000000000
+#define LUI4_MASKD  0x0000800000000000
+#endif
+
+/************************************************************/
+/* DFKlui4f()                                                */
+/* -->Unicos routine for importing 32 bit floats            */
+/************************************************************/
+
+/************************************************************
+
+                     <<<< WARNING >>>>
+
+    The nature of converting between 64 bit floating point
+  numbers and 32 bit floating point numbers LOSES PRECISION.
+  Taking a number in 64bit cray format, converting to IEEE
+  (internal HDF format) and back will round the number at
+  about the 7th decimal place.
+
+ ************************************************************/
+
+#ifdef PROTOTYPE
+PRIVATE int DFKlui4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+PRIVATE int DFKlui4f(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source;
+uint8 * dest;
+uint32 num_elm;
+uint32 source_stride;
+uint32 dest_stride;
+#endif /* PROTOTYPE */
+{
+  int fast_processing = 0;              /* By default not array processed */
+  int odd_man_out = 0;                  /* By default there are even num_elm */
+  register int i,j;
+  long buf1;                            /* This is a temporary stride buf */
+  long buf2;                            /* This is a temporary stride buf */
+  uint8 * dud1 = (uint8*)&buf1;         /* Dummy pointer to buf1 for strides */
+  uint8 * dud2 = (uint8*)&buf2;         /* Dummy pointer to buf2 for strides */
+#ifdef PROTOTYPE
+  uint8 * source = (uint8*)s;            /* Cray does not like certain   */
+  uint8 * dest = (uint8*)d;              /* void and void* constructions */
+#endif /* PROTOTYPE */
+  long * lptr_src = (long*)source;
+  long * lptr_dest = (long*)dest;
+  char *FUNC="DFKui4f";
+
+    HEclear();
+
+    /* Check for conversion errors */
+    if(source == dest || num_elm == 0) { /* Inplace conversions not permitted */
+        HERROR(DFE_BADCONV);             /* under UNICOS */
+        return FAIL;                     /* No elements convert is an error   */
+    }
+
+    /* Find out if it is OK to use faster array processing */
+    if(source_stride == 0 && dest_stride == 0) {
+        fast_processing = 1;
+        if((num_elm % 2))           /* If this is true, we have odd num */
+            odd_man_out = 1;
+    }
+
+    if(fast_processing) {
+        num_elm = num_elm / 2;
+        for(i = 0; i < num_elm; i++) {
+            if(*(float*)lptr_src != 0) {
+                if(((*lptr_src & 0xffffffff00000000) << 1)== 0)
+                    *lptr_dest = 0;
+                else 
+                    *lptr_dest = (((*lptr_src & LUI4_MASKA)<<24) |/* Sign bit */
+                            (((*lptr_src & LUI4_MASKB1) << 17) |  /* Exp. */
+                            ((*lptr_src & LUI4_MASKB2) << 1)) +
+                            (16258 << 48)) |
+                            (((*lptr_src & LUI4_MASKC1) |         /* Mantissa */
+                             ((*lptr_src & LUI4_MASKC2) >>16) |
+                             ((*lptr_src & LUI4_MASKC3) >>32)) | LUI4_MASKD);
+            }
+            else
+                *lptr_dest = *lptr_src;
+            lptr_dest++;
+            if(*(float*)lptr_src != 0) {
+                if(((*lptr_src & 0x00000000ffffffff) << 33)== 0)
+                    *lptr_dest = 0;
+                else
+                    *lptr_dest = ((((*lptr_src << 32) & LUI4_MASKA)<<24) |/* Sign bit */
+                            ((((*lptr_src << 32) & LUI4_MASKB1) << 17) |  /* Exp. */
+                            (((*lptr_src <<32 ) & LUI4_MASKB2) << 1)) +
+                            (16258 << 48)) |
+                            ((((*lptr_src << 32) & LUI4_MASKC1) |         /* Mantissa */
+                             (((*lptr_src << 32) & LUI4_MASKC2) >>16) |
+                             (((*lptr_src << 32) & LUI4_MASKC3) >>32)) | LUI4_MASKD);
+            }
+            else
+                *lptr_dest = *lptr_src;
+            lptr_src++;
+            lptr_dest++;
+        }
+        if(odd_man_out) {
+            if(((float*)lptr_src)[0] != 0) {
+                if(((lptr_src[0] & 0xffffffff00000000) << 1)== 0)
+                    lptr_dest[0] = 0;
+                else
+                    lptr_dest[0] = (((lptr_src[0] & LUI4_MASKA)<<24) |/* Sign bit */
+                            (((lptr_src[0] & LUI4_MASKB1) << 17) |  /* Exp. */
+                            ((lptr_src[0] & LUI4_MASKB2) << 1)) +
+                            (16258 << 48)) |
+                            (((lptr_src[0] & LUI4_MASKC1) |         /* Mantissa */
+                             ((lptr_src[0] & LUI4_MASKC2) >>16) |
+                             ((lptr_src[0] & LUI4_MASKC3) >>32)) | LUI4_MASKD);
+            }
+            else
+                *lptr_dest = *lptr_src;
+        }
+    }
+    else { /* We end up here if we are doing stride based processing */
+        buf1 = 0;
+        for(i = 0; i < num_elm; i++) {
+            dud1[0] = source[3];        /* Loop would be less efficient */
+            dud1[1] = source[2];
+            dud1[2] = source[1];
+            dud1[3] = source[0];
+
+            if((float)buf1 != 0) {
+                buf2 = (((buf1 & UI4_MASKA) |
+                        ((buf1 & UI4_MASKB) >> 7) +
+                        (16258 << 48)) |
+                        (((buf1 & UI4_MASKC) >> 8) | (UI4_MASKD)));
+                if((buf1 << 1)== 0)
+                    buf2 = 0;
+            }
+            else
+                buf2 = buf1;
+
+            dest[0] = dud2[0];            /* Loop would be less efficient */
+            dest[1] = dud2[1];
+            dest[2] = dud2[2];
+            dest[3] = dud2[3];
+            dest[4] = dud2[4];
+            dest[5] = dud2[5];
+            dest[6] = dud2[6];
+            dest[7] = dud2[7];
+
+            source += source_stride;
+            dest += dest_stride;
+        }
+    }
+  return;
+}
+
+
+/************************************************************/
+/* DFKluo4f()                                                */
+/* -->Unicos routine for exporting 32 bit floats            */
+/************************************************************/
+
+/************************************************************
+
+                     <<<< WARNING >>>>
+
+    The nature of converting between 64 bit floating point
+  numbers and 32 bit floating point numbers LOSES PRECISION.
+  Taking a number in 64bit cray format, converting to IEEE
+  (internal HDF format) and back will round the number at
+  about the 7th decimal place.
+
+ ************************************************************/
+
+#ifdef PROTOTYPE
+PRIVATE int DFKluo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+PRIVATE int DFKluo4f(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+  int fast_processing = 0;              /* By default not array processed */
+  int odd_man_out = 0;                  /* By default there are even num_elm */
+  register int i,j;
+  long buf1;                            /* This is a temporary stride buf */
+  long buf2;                            /* This is a temporary stride buf */
+  uint8 * dud1 = (uint8*)&buf1;         /* Dummy pointer to buf1 for strides */
+  uint8 * dud2 = (uint8*)&buf2;         /* Dummy pointer to buf2 for strides */
+#ifdef PROTOTYPE
+  uint8 * source = (uint8*)s;           /* Cray does not like certain   */
+  uint8 * dest = (uint8*)d;             /* void and void* constructions */
+#endif /* PROTOTYPE */
+  long * lptr_src = (long*)source;
+  long * lptr_dest = (long*)dest;
+  char *FUNC="DFKuo4f";
+
+  HEclear();
+
+  /* Check for conversion errors */
+  if(source == dest || num_elm == 0) { /* Inplace conversions not permitted */
+    HERROR(DFE_BADCONV);               /* under UNICOS */
+    return FAIL;                       /* No elements convert is an error   */
+  }
+
+  /* Find out if it is OK to use faster array processing */
+  if(source_stride == 0 && dest_stride == 0) {
+      fast_processing = 1;            
+    if((num_elm % 2))                   /* If this is true, we have odd num */
+      odd_man_out = 1;
+  }
+
+    if(fast_processing) {
+        for(i = 0; i < (int)(num_elm/2); i++) {
+            buf1 = lptr_src[0];
+            buf2 = lptr_src[1];
+            if(buf1 != 0)
+                buf1 = (((buf1 & UO4_MASKA) |
+                        ((((buf1 & UO4_MASKB) >> 48) - 16258) << 55)) +
+                        (((buf1 & UO4_MASKC) +
+                        ((buf1 & UO4_MASKD) << 1)) << 8));
+            else
+                buf1 = 0;
+            if(buf2 != 0)
+                buf2 = ((((buf2 & UO4_MASKA) |
+                        ((((buf2 & UO4_MASKB) >> 48) - 16258) << 55)) +
+                        (((buf2 & UO4_MASKC) +
+                        ((buf2 & UO4_MASKD) << 1)) << 8)) >> 32);
+            else
+                buf2 = 0;
+            lptr_dest[0] = (((buf1 & 0xff00000000000000) >>24) |
+                            ((buf1 & 0x00ff000000000000) >>8) |
+                            ((buf1 & 0x0000ff0000000000) <<8) |
+                            ((buf1 & 0x000000ff00000000) <<24) ) |
+                           (((buf2 & 0x00000000000000ff) <<24) |
+                            ((buf2 & 0x000000000000ff00) <<8) |
+                            ((buf2 & 0x0000000000ff0000) >>8) |
+                            ((buf2 & 0x00000000ff000000) >>24));
+            lptr_src ++;
+            lptr_src ++;
+            lptr_dest ++;
+        }
+        if(odd_man_out) {
+            buf1 = lptr_src[0];
+            if(buf1 != 0) {
+                buf1 = ((buf1 & UO4_MASKA) |
+                        ((((buf1 & UO4_MASKB) >> 48) - 16258) << 55)) +
+                        (((buf1 & UO4_MASKC) +
+                        ((buf1 & UO4_MASKD) << 1)) << 8);
+                lptr_dest[0] = ((buf1 & 0xff00000000000000) >>24) |
+                               ((buf1 & 0x00ff000000000000) >>8) |
+                               ((buf1 & 0x0000ff0000000000) <<8) |
+                               ((buf1 & 0x000000ff00000000) <<24) ;
+              } /* end if */
+            else
+                lptr_dest[0] = 0;
+        }
+    }
+    else { /* We end up here if we are doing stride based processing */
+        buf1 = 0;
+        for(i = 0; i < num_elm; i++) {
+            dud1[0] = source[0];        /* Loop would be less efficient */
+            dud1[1] = source[1];
+            dud1[2] = source[2];
+            dud1[3] = source[3];
+            dud1[4] = source[4];
+            dud1[5] = source[5];
+            dud1[6] = source[6];
+            dud1[7] = source[7];
+      
+            if((float)buf1 != 0)
+                buf2 = (((buf1 & UO4_MASKA) |
+                        ((((buf1 & UO4_MASKB) >> 48) -16258) << 55)) +
+                        (((buf1 & UO4_MASKC) + ((buf1 & UO4_MASKD) << 1)) << 8));
+            else
+                buf2 = buf1;
+
+            dest[3] = dud2[0];            /* Loop would be less efficient */
+            dest[2] = dud2[1];
+            dest[1] = dud2[2];
+            dest[0] = dud2[3];
+
+            source += source_stride;
+            dest += dest_stride;
+        }
+    }
+    return;
+}
+
+#ifdef OLD_WAY
+#define UI8_MASKA 0x8000000000000000
+#define UI8_MASKB 0x7ff0000000000000
+#define UI8_MASKC 0x000fffffffffffff
+#define UI8_MASKD 0x0000000000000008
+#define UI8_MASKE 0x0000800000000000
+#else
+#define LUI8_MASKA  0x0000000000000080
+#define LUI8_MASKB1 0x000000000000007f
+#define LUI8_MASKB2 0x000000000000f000
+#define LUI8_MASKC1 0x0000000000000f00
+#define LUI8_MASKC2 0x0000000000ff0000
+#define LUI8_MASKC3 0x00000000ff000000
+#define LUI8_MASKC4 0x000000ff00000000
+#define LUI8_MASKC5 0x0000ff0000000000
+#define LUI8_MASKC6 0x00ff000000000000
+#define LUI8_MASKC7 0xff00000000000000
+#define LUI8_MASKD  0x0800000000000000
+#define LUI8_MASKE  0x0000800000000000
+#endif
+
+/************************************************************/
+/* DFKlui8f()                                                */
+/* -->Unicos routine for importing 64 bit floats            */
+/************************************************************/
+
+#ifdef PROTOTYPE
+PRIVATE int DFKlui8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+PRIVATE int DFKlui8f(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+  int fast_processing = 0;              /* By default not array processed */
+  register int i,j;
+  long buf;                             /* This is a temporary stride buf */
+  uint8 * dud = (uint8*)&buf;           /* Dummy pointer to buf1 for strides */
+#ifdef PROTOTYPE
+  uint8 * source = (uint8*)s;           /* Cray does not like certain   */
+  uint8 * dest = (uint8*)d;             /* void and void* constructions */
+#endif /* PROTOTYPE*/
+  long * lptr_src = (long*)source;
+  long * lptr_dest = (long*)dest;
+  char *FUNC="DFKui8f";
+
+  HEclear();
+
+  /* Check for conversion errors */
+  if(source == dest || num_elm == 0) { /* Inplace conversions not permitted */
+    HERROR(DFE_BADCONV);               /* under UNICOS */
+    return FAIL;                       /* No elements convert is an error   */
+  }
+
+  /* Find out if it is OK to use faster array processing */
+    if(source_stride == 0 && dest_stride == 0)
+        fast_processing = 1;
+
+    if(fast_processing)
+        for(i = 0; i < num_elm; i ++) {
+            if (lptr_src[0] != 0) {
+                if ((lptr_src[0] & (~LUI8_MASKA)) == 0)
+                    lptr_dest[0] = 0;
+                else
+                    lptr_dest[0] = (((lptr_src[0] & LUI8_MASKA) << 56) | /* Sign */
+                            (((lptr_src[0] & LUI8_MASKB1) << 52) |   /* Exp. */
+                            ((lptr_src[0] & LUI8_MASKB2) << 36)) + (15362 << 48)) |
+                            ((((((lptr_src[0] & LUI8_MASKC1) << 40) | /* Mantissa */
+                                ((lptr_src[0] & LUI8_MASKC2) << 24) |
+                                ((lptr_src[0] & LUI8_MASKC3) << 8) |
+                                ((lptr_src[0] & LUI8_MASKC4) >> 8) |
+                                ((lptr_src[0] & LUI8_MASKC5) >> 24) |
+                                ((lptr_src[0] & LUI8_MASKC6) >> 40) |
+                                ((lptr_src[0] & LUI8_MASKC7) >> 56)) +
+                            ((lptr_src[0] & LUI8_MASKD) >> 55)) >>5) | LUI8_MASKE);
+            }
+            else
+                lptr_dest[0] = 0;
+            lptr_src++;
+            lptr_dest++;
+        }
+    else
+        for(i = 0; i < num_elm; i ++) {
+            dud[0] = source[7];
+            dud[1] = source[6];
+            dud[2] = source[5];
+            dud[3] = source[4];
+            dud[4] = source[3];
+            dud[5] = source[2];
+            dud[6] = source[1];
+            dud[7] = source[0];
+
+            if (buf != 0) {
+                buf = (((buf & UI8_MASKA) | ((buf & UI8_MASKB) >> 4) +
+                        (15362 << 48)) |
+                        ((((buf & UI8_MASKC) + ((buf & UI8_MASKD) << 1)) >> 5) |
+                        (UI8_MASKE)) );
+                if ((buf << 1) == 0)
+                    buf = 0;
+            }
+            else
+                buf = 0;
+
+            dest[0] = dud[0];
+            dest[1] = dud[1];
+            dest[2] = dud[2];
+            dest[3] = dud[3];
+            dest[4] = dud[4];
+            dest[5] = dud[5];
+            dest[6] = dud[6];
+            dest[7] = dud[7];
+
+            source += source_stride;
+            dest += dest_stride;
+        }
+  return;
+}
+
+/************************************************************/
+/* DFKluo8f()                                               */
+/* -->Unicos routine for exporting 64 bit floats            */
+/************************************************************/
+
+#ifdef PROTOTYPE
+PRIVATE int DFKluo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+PRIVATE int DFKluo8f(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+  int fast_processing = 0;              /* By default not array processed */
+  int odd_man_out = 0;                  /* By default there are even num_elm */
+  register int i,j;
+  long buf;                             /* This is a temporary stride buf */
+  uint8 * dud = (uint8*)&buf;           /* Dummy pointer to buf1 for strides */
+#ifdef PROTOTYPE
+  uint8 * source = (uint8*)s;           /* Cray does not like certain   */
+  uint8 * dest = (uint8*)d;             /* void and void* constructions */
+#endif /* PROTOTYPE */
+  long * lptr_src = (long*)source;
+  long * lptr_dest = (long*)dest;
+  char *FUNC="DFKuo8f";
+
+  HEclear();
+
+  /* Check for conversion errors */
+  if(source == dest || num_elm == 0) { /* Inplace conversions not permitted */
+    HERROR(DFE_BADCONV);               /* under UNICOS */
+    return FAIL;                       /* No elements convert is an error   */
+  }
+
+  /* Find out if it is OK to use faster array processing */
+    if(source_stride == 0 && dest_stride == 0)
+        fast_processing = 1;
+
+    if(fast_processing)
+        for(i = 0; i < num_elm; i ++) {
+            if (lptr_src[0] != 0) {
+                buf = (((lptr_src[0] & UO8_MASKA) |
+                        (((((lptr_src[0] & UO8_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                        ((lptr_src[0] & UO8_MASKC) << 5));
+                lptr_dest[0] = ((buf & 0xff00000000000000) >>56) |
+                               ((buf & 0x00ff000000000000) >>40) |
+                               ((buf & 0x0000ff0000000000) >>24) |
+                               ((buf & 0x000000ff00000000) >>8) |
+                               ((buf & 0x00000000ff000000) <<8) |
+                               ((buf & 0x0000000000ff0000) <<24) |
+                               ((buf & 0x000000000000ff00) <<40) |
+                               ((buf & 0x00000000000000ff) <<56);
+              } /* end if */
+            else
+                lptr_dest[0] = 0;
+            lptr_src++;
+            lptr_dest++;
+        }
+    else
+        for(i = 0; i < num_elm; i ++) {
+            dud[0] = source[0];
+            dud[1] = source[1];
+            dud[2] = source[2];
+            dud[3] = source[3];
+            dud[4] = source[4];
+            dud[5] = source[5];
+            dud[6] = source[6];
+            dud[7] = source[7];
+
+            if (buf != 0) {
+                buf = (((buf & UO8_MASKA) |             /* sign bit */
+                        (((((buf & UO8_MASKB) >> 48) - 15362) << 53) >> 1)) |/* exp */
+                        ((buf & UO8_MASKC) << 5));      /* mantissa */
+            }
+            else
+                buf = 0;
+
+            dest[7] = dud[0];
+            dest[6] = dud[1];
+            dest[5] = dud[2];
+            dest[4] = dud[3];
+            dest[3] = dud[4];
+            dest[2] = dud[5];
+            dest[1] = dud[6];
+            dest[0] = dud[7];
+
+            source += source_stride;
+            dest += dest_stride;
+        }
+  return;
+}
+
 #endif /* UNICOS */
 
 #if defined(VMS)
@@ -2188,6 +2961,477 @@ shipit:  /* In VAX the bytes in a word are counted from right to left */
 
   return 0;
 }
+
+/************************************************************/
+/* DFKlvi4f()                                                */
+/* --> Import routine for 4 byte VAX floats                 */
+/************************************************************/
+#ifdef PROTOTYPE
+PRIVATE int DFKlvi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+PRIVATE int DFKlvi4f(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+  int in_place = 0;                     /* Inplace must be detected */
+  register uint32 i;            
+  uint8 buf[4];                          /* Inplace processing buffer */
+#ifdef PROTOTYPE
+  uint8 * source = (uint8*)s;
+  uint8 * dest = (uint8*)d;
+#endif /* PROTOTYPE */
+  char *FUNC="DFKvi4f";
+  uint8 exp;
+
+  HEclear();
+
+  if(source == dest)
+      in_place = TRUE;
+
+  if(num_elm == 0 || in_place){   /* No elements is an error as is in place. */
+    HERROR(DFE_BADCONV);
+    return FAIL;
+  }
+
+  if(source_stride == 0 && dest_stride == 0)
+      source_stride = dest_stride = 4;
+
+  for(i = 0; i < num_elm; i++) {
+
+      /* extract exponent */
+      exp = (source[3] << 1) | (source[2] >> 7);
+      if (exp) {       
+          /* 
+           * non-zero exponent 
+           */
+
+          /* copy mantissa, last bit of exponent */
+          dest[0] = source[2];
+          dest[2] = source[0];
+          dest[3] = source[1];
+          if (exp < 254) 
+              /* normal value */
+              dest[1] = source[3] + (uint8)1;   /* actually adds two to exp */
+          else {                              
+              /* infinity or NaN */
+              if (exp == 254)                      /* unrepresentable - OFL */
+                  /* set mant = 0 for overflow */
+                  dest[0] = dest[1] = dest[2] = dest[3] = 0;
+              dest[0] &= 0x7f;              /* set last bit of exp to 0 */
+              dest[1] = 0x80;               /* sign=1 exp=0 -> OFL or NaN */
+          }
+      }
+      else if (source[2] & 0x60) {               /* denormalized value */
+          register int shft;
+          
+          shft = (source[2] & 0x40) ? 1 : 2;  /* shift needed to normalize */
+          /* shift mantissa */
+          /* note last bit of exp set to 1 implicitly */
+          dest[0] = (uint8)(source[2] << shft) | (uint8)(source[1] >> (8-shft));
+          dest[3] = (uint8)(source[1] << shft) | (uint8)(source[0] >> (8-shft));
+          dest[2] = (uint8)(source[0] << shft);
+          dest[1] = (uint8)(source[3] & 0x80);    /* sign */
+          if (shft==1) {                          /* set exp to 2 */
+            dest[1] |= 0x01;
+            dest[0] &= 0x7f;                  /* set LSB of exp to 0 */
+          }
+      }
+      else dest[0] = dest[1] = dest[2] = dest[3] = 0;
+      
+      source += source_stride;
+      dest   += dest_stride;
+  }
+
+
+  return 0;
+
+#ifdef DFKIT
+    for (i=0; i<size; i++)
+      {
+          /* extract exponent */
+          exp = (uint8)(in[i].c[0] << 1) | (uint8)(in[i].c[1] >> 7); 
+          if (exp) {                                  /* non-zero exponent */
+              /* copy mantissa, last bit of exponent */
+              out[i].c[0] = in[i].c[1];
+              out[i].c[2] = in[i].c[3];
+              out[i].c[3] = in[i].c[2];
+              if (exp<254)                        /* normal value */
+                  out[i].c[1] = in[i].c[0] + (uint8)1;   /* adds two to exp */
+              else {                           /* infinity or NaN */
+                  if (exp==254)                /* unrepresentable - OFL */
+                      out[i].i = 0;            /* set mant=0 for overflow */
+                  out[i].c[0] &= 0x7f;         /* set last bit of exp to 0 */
+                  out[i].c[1] = 0x80;          /* sign=1 exp=0 -> OFL or NaN */
+              }
+          }
+          else if (in[i].c[1] & 0x60) {        /* denormalized value */
+              register int shft;
+    
+              /* shift needed to normalize */
+              shft = (in[i].c[1] & 0x40) ? 1 : 2;  
+
+              /* shift mantissa */
+              /* note last bit of exp set to 1 implicitly */
+              out[i].c[0] = (uint8)(in[i].c[1] << shft) 
+                  | (uint8)(in[i].c[2] >> (8-shft));
+              out[i].c[3] = (uint8)(in[i].c[2] << shft) 
+                  | (uint8)(in[i].c[3] >> (8-shft));
+              out[i].c[2] = (uint8)(in[i].c[3] << shft);
+              out[i].c[1] = (uint8)(in[i].c[0] & 0x80);          /* sign */
+              if (shft==1) {                        /* set exp to 2 */
+                  out[i].c[1] |= 0x01;
+                  out[i].c[0] &= 0x7f;              /* set LSB of exp to 0 */
+              }
+          }
+          else out[i].i = 0;                        /* zero */
+      }
+    return(0);
+#endif /* DFKIT */
+
+}
+
+/************************************************************/
+/* DFKlvo4f()                                                */
+/* --> Export routine for 4 byte VAX floats                 */
+/************************************************************/
+#ifdef PROTOTYPE 
+PRIVATE int DFKlvo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+PRIVATE int DFKlvo4f(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+  int in_place = 0;                     /* Inplace must be detected */
+  register uint32 i;            
+  uint8 buf[4];                          /* Inplace processing buffer */
+#ifdef PROTOTYPE
+  uint8 * source = (uint8*)s;
+  uint8 * dest = (uint8*)d;
+#endif /* PROTOTYPE */
+  char *FUNC="DFKvo4f";
+  intn  exp;
+
+  HEclear();
+
+  if(source == dest) 
+      in_place = TRUE;
+
+  if(num_elm == 0 || in_place){  /* No elements is an error as is in place*/
+    HERROR(DFE_BADCONV);
+    return FAIL;
+  }
+
+  if(source_stride == 0 && dest_stride == 0)
+      source_stride = dest_stride = 4;
+
+  for(i = 0; i < num_elm; i++) {
+      
+      /* extract exponent */
+      exp = (source[2] << 1) | (source[3] >> 7);
+
+      if(!exp && !source[2]) {
+          /* 
+           * zero value 
+           */
+          dest[0] = dest[1] = dest[2] = dest[3] = 0;
+      }
+      else if(exp > 2) {
+          /*
+           * Normal value
+           */
+
+          dest[0] = source[2] - (uint8)1; /* subtracts 2 from exponent */
+          /* copy mantissa, LSB of exponent */
+          dest[1] = source[3];
+          dest[2] = source[0];
+          dest[3] = source[1];
+
+      }
+      else if(exp) {
+          register intn shft;
+          /* 
+           * denormalized number 
+           */
+
+          /* keep sign, zero exponent */
+          dest[0] = source[2] & 0x80;
+
+          shft = 3 - exp;
+
+          /* shift original mant by 1 or 2 to get denormalized mant */
+          /* prefix mantissa with '1'b or '01'b as appropriate */
+          dest[1] = (uint8)((source[3] & 0x7f) >> shft)
+                    | (uint8)(0x10 << exp);
+          dest[2] = (uint8)(source[3] << (8-shft))
+                    | (uint8)(source[0] >> shft);
+          dest[3] = (uint8)(source[0] << (8-shft))
+                    | (uint8)(source[1] >> shft);
+      }
+      else {
+          /* 
+           * sign=1 -> infinity or NaN 
+           */
+          
+          dest[0] = 0xff;                /* set exp to 255 */
+          /* copy mantissa */
+          dest[1] = source[3] | (uint8)0x80;  /* LSB of exp = 1 */
+          dest[2] = source[0];
+          dest[3] = source[1];
+      }
+      
+      source += source_stride;
+      dest   += dest_stride;
+  }
+  
+  return 0;
+
+#ifdef DFKIT
+   uint8 exp;
+    int i;
+
+    for (i=0; i<size; i++) {
+        /* extract exponent */
+        exp = (uint8)(in[i].c[1] << 1) | (uint8)(in[i].c[0] >> 7);  
+        if (!exp && !in[i].c[1]) out[i].i = 0;        /* zero value */
+        else if (exp>2) {                               /* normal value */
+            out[i].c[0] = in[i].c[1] - (uint8)1; /* subtracts 2 from expent */
+            /* copy mantissa, LSB of exponent */
+            out[i].c[1] = in[i].c[0];
+            out[i].c[2] = in[i].c[3];
+            out[i].c[3] = in[i].c[2];
+        }
+        else if (exp) {                          /* denormalized number */
+            register int shft;
+
+            /* keep sign, zero exponent */
+            out[i].c[0] = in[i].c[1] & (uint8)0x80; 
+            shft = 3 - exp;
+            /* shift original mant by 1 or 2 to get denormalized mant */
+            /* prefix mantissa with '1'b or '01'b as appropriate */
+            out[i].c[1] = (uint8)((in[i].c[0] & 0x7f) >> shft) 
+                | (uint8)(0x10 << exp);
+            out[i].c[2] = (uint8)(in[i].c[0] << (8-shft)) 
+                | (uint8)(in[i].c[3] >> shft);
+            out[i].c[3] = (uint8)(in[i].c[3] << (8-shft)) 
+                | (uint8)(in[i].c[2] >> shft);
+        }
+        else {                                 /* sign=1 -> infinity or NaN */
+            out[i].c[0] = 0xff;                /* set exp to 255 */
+                /* copy mantissa */
+            out[i].c[1] = in[i].c[0] | (uint8)0x80;  /* LSB of exp = 1 */
+            out[i].c[2] = in[i].c[3];
+            out[i].c[3] = in[i].c[2];
+        }
+    }
+    return(0);
+
+#endif /* DFKIT */
+
+}
+
+/*
+ * Define structures to encode and decode Vax numbers
+ * The following code is based on the methods of reading / writing
+ *  doubles from Vaxen developed by Sun Microsystems as part of
+ *  the XDR library.
+ */
+
+/* How an IEEE double looks */
+struct  ieee_double {
+    unsigned int   mantissa1 : 20;
+    unsigned int   exp       : 11;
+    unsigned int   sign      : 1;
+    unsigned int   mantissa2 : 32;
+};
+
+/* How a Vax double looks */
+struct  vax_double {
+    unsigned int    mantissa1 : 7;
+    unsigned int    exp       : 8;
+    unsigned int    sign      : 1;
+    unsigned int    mantissa2 : 16;
+    unsigned int    mantissa3 : 16;
+    unsigned int    mantissa4 : 16;
+};
+
+#define VAX_DBL_BIAS   0x81
+#define IEEE_DBL_BIAS  0x3ff
+#define MASK(nbits)    ((1 << nbits) - 1)
+
+struct dbl_limits {
+    struct vax_double  vaxx;
+    struct ieee_double ieee;
+};
+
+static struct dbl_limits dbl_lim[2] = {
+    {{ 0x7f,  0xff, 0x0, 0xffff, 0xffff, 0xfff},  /* Max Vax */
+     { 0x0,  0x7ff, 0x0, 0x0 }},                  /* Max IEEE */
+    {{ 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},             /* Min Vax */
+     { 0x0, 0x0, 0x0, 0x0 }}                      /* Min IEEE */
+};
+
+/************************************************************/
+/* DFKlvi8f()                                                */
+/* --> Import routine for 8 byte VAX floats                 */
+/************************************************************/
+#ifdef PROTOTYPE
+PRIVATE int DFKlvi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+PRIVATE int DFKlvi8f(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+  int in_place = 0;                     /* Inplace must be detected */
+  register uint32 i;            
+  uint8 buf[4];                          /* Inplace processing buffer */
+#ifdef PROTOTYPE
+  uint8 * source = (uint8*)s;
+  uint8 * dest = (uint8*)d;
+#endif /* PROTOTYPE */
+  char *FUNC="DFKvi8f";
+  intn exp;
+
+  struct dbl_limits *lim;
+  struct ieee_double id;
+  struct vax_double  *vd;
+  intn found, j;
+
+  HEclear();
+
+  if(source == dest)
+      in_place = TRUE;
+
+  if(num_elm == 0 || in_place){   /* No elements is an error as is in place. */
+    HERROR(DFE_BADCONV);
+    return FAIL;
+  }
+  
+    if(source_stride == 0 && dest_stride == 0)
+        source_stride = dest_stride = 8;
+
+    for(i = 0; i < num_elm; i++) {
+        HDmemcpy(&(id),&source[4],4);   /* swap the two 4-byte words */
+        HDmemcpy(((uint8 *)&(id))+4,source,4);
+
+        vd = (struct vax_double *)  dest;
+      
+        found = FALSE;
+      
+        for(j = 0, lim = dbl_lim;
+                j < sizeof(dbl_lim)/sizeof(struct dbl_limits); j++, lim++) {
+            if((id.mantissa2 == lim->ieee.mantissa2) &&
+                    (id.mantissa1 == lim->ieee.mantissa1) &&
+                    (id.exp == lim->vaxx.exp)) {
+                *vd = lim->vaxx;
+                found = TRUE;
+                break;
+            }
+        }
+
+        if(!found) {
+            vd->exp = id.exp - IEEE_DBL_BIAS + VAX_DBL_BIAS;
+            vd->mantissa1 = id.mantissa1 >> 13;
+            vd->mantissa2 = ((id.mantissa1 & MASK(13)) << 3) |
+                    (id.mantissa2 >> 29);
+            vd->mantissa3 = id.mantissa2 >> 13;
+            vd->mantissa4 = id.mantissa2 << 3;
+        }
+
+        vd->sign = id.sign;
+
+        source += source_stride;
+        dest   += dest_stride;
+    }
+
+  return 0;
+}
+
+/************************************************************/
+/* DFKlvo8f()                                                */
+/* --> Export routine for 8 byte VAX floats                 */
+/************************************************************/
+#ifdef PROTOTYPE
+PRIVATE int DFKlvo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+PRIVATE int DFKlvo8f(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+  int in_place = 0;                     /* Inplace must be detected */
+  register intn i;
+  uint8 buf[4];                          /* Inplace processing buffer */
+#ifdef PROTOTYPE
+  uint8 * source = (uint8*)s;
+  uint8 * dest = (uint8*)d;
+#endif /* PROTOTYPE */
+  char *FUNC="DFKvo8f";
+  intn exp;
+
+  struct dbl_limits *lim;
+  struct ieee_double id;
+  struct vax_double  vd;
+  intn found, j;
+
+    HEclear();
+
+    if(source == dest)
+        in_place = TRUE;
+
+    if(num_elm == 0 || in_place) { /* No elements is an error as is in place. */
+        HERROR(DFE_BADCONV);
+        return FAIL;
+    }
+
+    if(source_stride == 0 && dest_stride == 0)
+        source_stride = dest_stride = 8;
+
+    for(i = 0; i < num_elm; i++) {
+
+        vd = *((struct vax_double *)  source);
+      
+        found = FALSE;
+
+        for(j = 0, lim=dbl_lim;
+                j< sizeof(dbl_lim)/sizeof(struct dbl_limits);
+                j++, lim++) {
+            if((vd.mantissa4 == lim->vaxx.mantissa4) &&
+                    (vd.mantissa3 == lim->vaxx.mantissa3) &&
+                    (vd.mantissa2 == lim->vaxx.mantissa2) &&
+                    (vd.mantissa1 == lim->vaxx.mantissa1) &&
+                    (vd.exp == lim->vaxx.exp)) {
+                id = lim->ieee;
+                found = TRUE;
+                break;
+            }
+        }
+
+        if(!found) {
+            id.exp = vd.exp - VAX_DBL_BIAS + IEEE_DBL_BIAS;
+            id.mantissa1 = (vd.mantissa1 << 13) | (vd.mantissa2 >> 3);
+            id.mantissa2 = ((vd.mantissa2 & MASK(3)) << 29) |
+                    (vd.mantissa3 << 13) |
+                    ((vd.mantissa4>> 3) & MASK(13));
+        }
+      
+        id.sign = vd.sign;
+
+        HDmemcpy(dest,((uint8 *)&(id))+4,4);   /* swap the two 4-byte words */
+        HDmemcpy(&dest[4],&(id),4);
+
+        source += source_stride;
+        dest   += dest_stride;
+    }
+
+    return 0;
+}
 #endif /* VMS */
 
 #ifdef CONVEXNATIVE
@@ -2591,7 +3835,398 @@ uint32 num_elm, source_stride, dest_stride;
   return 0;
 
 }
+
+/************************************************************/
+/* DFKlci4f()                                                */
+/* --> Import routine for 4 byte CONVEX floats              */
+/************************************************************/
+#ifdef PROTOTYPE
+PRIVATE int DFKlci4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+PRIVATE int DFKlci4f(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+  int in_place = 0;                     /* Inplace must be detected */
+  register uint32 i;            
+  uint8 buf[4];                          /* Inplace processing buffer */
+#ifdef PROTOTYPE
+  uint8 * source = (uint8*)s;
+  uint8 * dest = (uint8*)d;
+#endif /* PROTOTYPE */
+  char *FUNC="DFKci4f";
+  uint8 exp;
+
+  HEclear();
+
+  if(source == dest)
+      in_place = TRUE;
+
+  if(num_elm == 0 || in_place){   /* No elements is an error as is in place. */
+    HERROR(DFE_BADCONV);
+    return FAIL;
+  }
+
+  if(source_stride == 0 && dest_stride == 0)
+      source_stride = dest_stride = 4;
+
+  for(i = 0; i < num_elm; i++) {
+
+      /* extract exponent */
+      exp = (uint8)(source[4] << 1) | (uint8)(source[3] >> 7);
+      if (exp) {       
+          /* 
+           * non-zero exponent 
+           */
+
+          /* copy mantissa, last bit of exponent */
+          dest[1] = source[2];
+          dest[3] = source[0];
+          dest[2] = source[1];
+          if (exp < 254) 
+              /* normal value */
+              dest[0] = source[3] + (uint8)1;   /* actually adds two to exp */
+          else {                              
+              /* infinity or NaN */
+              if (exp == 254)                      /* unrepresentable - OFL */
+                  /* set mant = 0 for overflow */
+                  dest[0] = dest[1] = dest[2] = dest[3] = 0;
+              dest[1] &= 0x7f;              /* set last bit of exp to 0 */
+              dest[0] = 0x80;               /* sign=1 exp=0 -> OFL or NaN */
+          }
+      }
+      else if (source[2] & 0x60) {               /* denormalized value */
+          register int shft;
+          
+          shft = (source[2] & 0x40) ? 1 : 2;  /* shift needed to normalize */
+          /* shift mantissa */
+          /* note last bit of exp set to 1 implicitly */
+          dest[1] = (uint8)(source[2] << shft) | (uint8)(source[1] >> (8-shft));
+          dest[2] = (uint8)(source[1] << shft) | (uint8)(source[0] >> (8-shft));
+          dest[3] = (uint8)(source[0] << shft);
+          dest[0] = (uint8)(source[3] & 0x80);    /* sign */
+          if (shft==1) {                          /* set exp to 2 */
+            dest[0] |= 0x01;
+            dest[1] &= 0x7f;                  /* set LSB of exp to 0 */
+          }
+      }
+      else dest[0] = dest[1] = dest[2] = dest[3] = 0;
+      
+      source += source_stride;
+      dest   += dest_stride;
+  }
+
+  return 0;
+
+}
+
+/************************************************************/
+/* DFKlco4f()                                                */
+/* --> Export routine for 4 byte CONVEX floats              */
+/************************************************************/
+#ifdef PROTOTYPE 
+PRIVATE int DFKlco4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+PRIVATE int DFKlco4f(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+  int in_place = 0;                     /* Inplace must be detected */
+  register uint32 i;            
+  uint8 buf[4];                          /* Inplace processing buffer */
+#ifdef PROTOTYPE
+  uint8 * source = (uint8*)s;
+  uint8 * dest = (uint8*)d;
+#endif /* PROTOTYPE */
+  char *FUNC="DFKco4f";
+  intn  exp;
+
+  HEclear();
+
+  if(source == dest) 
+      in_place = TRUE;
+
+  if(num_elm == 0 || in_place){  /* No elements is an error as is in place*/
+    HERROR(DFE_BADCONV);
+    return FAIL;
+  }
+
+  if(source_stride == 0 && dest_stride == 0)
+      source_stride = dest_stride = 4;
+
+  for(i = 0; i < num_elm; i++) {
+      
+      /* extract exponent */
+      exp = (source[3] << 1) | (source[2] >> 7);
+
+      if(!exp && !source[3]) {
+          /* 
+           * zero value 
+           */
+          dest[0] = dest[1] = dest[2] = dest[3] = 0;
+      }
+      else if(exp > 2) {
+          /*
+           * Normal value
+           */
+
+          dest[0] = source[3] - (uint8)1; /* subtracts 2 from exponent */
+          /* copy mantissa, LSB of exponent */
+          dest[1] = source[2];
+          dest[2] = source[1];
+          dest[3] = source[0];
+
+      }
+      else if(exp) {
+          register intn shft;
+          /* 
+           * denormalized number 
+           */
+
+          /* keep sign, zero exponent */
+          dest[0] = source[3] & 0x80;
+
+          shft = 3 - exp;
+
+          /* shift original mant by 1 or 2 to get denormalized mant */
+          /* prefix mantissa with '1'b or '01'b as appropriate */
+          dest[1] = (uint8)((source[2] & 0x7f) >> shft) | (uint8)(0x10 << exp);
+          dest[2] = (uint8)(source[2] << (8-shft)) | (uint8)(source[1] >> shft);
+          dest[3] = (uint8)(source[1] << (8-shft)) | (uint8)(source[0] >> shft);
+      }
+      else {
+          /* 
+           * sign=1 -> infinity or NaN 
+           */
+          
+          dest[0] = 0xff;                /* set exp to 255 */
+          /* copy mantissa */
+          dest[1] = source[2] | (uint8)0x80;  /* LSB of exp = 1 */
+          dest[2] = source[1];
+          dest[3] = source[0];
+      }
+      
+      source += source_stride;
+      dest   += dest_stride;
+  }
+  
+  return 0;
+
+}
+
+/************************************************************/
+/* DFKlci8f()                                                */
+/* --> Import routine for 8 byte CONVEX floats              */
+/************************************************************/
+#ifdef PROTOTYPE
+PRIVATE int DFKlci8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+PRIVATE int DFKlci8f(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+  int in_place = 0;                     /* Inplace must be detected */
+  register uint32 i;            
+  uint8 buf[8];                          /* Inplace processing buffer */
+#ifdef PROTOTYPE
+  uint8 * source = (uint8*)s;
+  uint8 * dest = (uint8*)d;
+#endif /* PROTOTYPE */
+  char *FUNC="DFKci8f";
+  intn exp;
+
+  HEclear();
+
+  if(source == dest)
+      in_place = TRUE;
+
+  if(num_elm == 0 || in_place){   /* No elements is an error as is in place. */
+    HERROR(DFE_BADCONV);
+    return FAIL;
+  }
+
+  if(source_stride == 0 && dest_stride == 0)
+      source_stride = dest_stride = 8;
+
+  for(i = 0; i < num_elm; i++) {
+
+      /* extract exponent */
+      exp = (source[7] << 1) | (source[6] >> 4);
+      if (exp) {       
+          /* 
+           * non-zero exponent 
+           */
+
+          /* copy mantissa, sign and first bits of exponent */
+          dest[2] = source[5];
+          dest[3] = source[4];
+          dest[4] = source[3];
+          dest[5] = source[2];
+          dest[6] = source[1];
+          dest[7] = source[0];
+          dest[0] = source[7];
+          if (exp < 2046) {
+              /* normal value */
+          dest[1] = source[6] + 0x20;   /* add two to exp */
+	      if (dest[1] < 0x20) dest[0] += 1;	/* carry */
+	  }
+          else {                              
+              /* infinity or NaN */
+              if (exp == 2046)                      /* unrepresentable - OFL */
+                  /* set mant = 0 for overflow */
+                  dest[0] = dest[1] = dest[2] = dest[3] = 0;
+              dest[0] = 0x80;               /* sign=1 exp=0 -> OFL or NaN */
+              dest[1] &= 0x0f;              /* set last bit of exp to 0 */
+          }
+      }
+      else if (source[6] & 0x0C) {               /* denormalized value */
+          register int shft;
+          
+          shft = (source[6] & 0x08) ? 1 : 2;  /* shift needed to normalize */
+          /* shift mantissa */
+          /* note last bit of exp set to 1 implicitly */
+          dest[1] = (uint8)(source[6] << shft) | (uint8)(source[5] >> (8-shft));
+          dest[2] = (uint8)(source[5] << shft) | (uint8)(source[4] >> (8-shft));
+          dest[3] = (uint8)(source[4] << shft) | (uint8)(source[3] >> (8-shft));
+          dest[4] = (uint8)(source[3] << shft) | (uint8)(source[2] >> (8-shft));
+          dest[5] = (uint8)(source[2] << shft) | (uint8)(source[1] >> (8-shft));
+          dest[6] = (uint8)(source[1] << shft) | (uint8)(source[0] >> (8-shft));
+          dest[7] = (uint8)(source[0] << shft);
+          dest[0] = (uint8)(source[7] & 0x80);    /* sign */
+          if (shft==1) {                          /* set exp to 2 */
+            dest[1] |= 0x20;                  /* set LSB of exp to 0 */
+          }
+      }
+      else {
+      	dest[0] = dest[1] = dest[2] = dest[3] = 0;
+      	dest[4] = dest[5] = dest[6] = dest[7] = 0;
+      }
+      
+      source += source_stride;
+      dest   += dest_stride;
+  }
+
+
+  return 0;
+
+}
+
+/************************************************************/
+/* DFKlco8f()                                                */
+/* --> Export routine for 8 byte CONVEX floats              */
+/************************************************************/
+#ifdef PROTOTYPE 
+PRIVATE int DFKlco8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+PRIVATE int DFKlco8f(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+  int in_place = 0;                     /* Inplace must be detected */
+  register uint32 i;            
+  uint8 buf[8];                          /* Inplace processing buffer */
+#ifdef PROTOTYPE
+  uint8 * source = (uint8*)s;
+  uint8 * dest = (uint8*)d;
+#endif /* PROTOTYPE */
+  char *FUNC="DFKco8f";
+  intn  exp;
+
+  HEclear();
+
+  if(source == dest) 
+      in_place = TRUE;
+
+  if(num_elm == 0 || in_place){  /* No elements is an error as is in place*/
+    HERROR(DFE_BADCONV);
+    return FAIL;
+  }
+
+  if(source_stride == 0 && dest_stride == 0)
+      source_stride = dest_stride = 8;
+
+  for(i = 0; i < num_elm; i++) {
+      
+      /* extract exponent */
+      exp = (source[7] << 1) | (source[6] >> 4);
+
+      if(!exp && !source[7]) {
+          /* 
+           * zero value 
+           */
+          dest[0] = dest[1] = dest[2] = dest[3] = 0;
+          dest[4] = dest[5] = dest[6] = dest[7] = 0;
+      }
+      else if(exp > 2) {
+          /*
+           * Normal value
+           */
+          /* copy sign, MSBs of exponent */
+          dest[0] = source[7];
+          dest[1] = source[6] - 0x20;   /* subtracts 2 from exponent */
+          /* copy mantissa */
+          dest[2] = source[5];
+          dest[3] = source[4];
+          dest[4] = source[3];
+          dest[5] = source[2];
+          dest[6] = source[1];
+          dest[7] = source[0];
+      }
+      else if(exp) {
+          register intn shft;
+          /* 
+           * denormalized number 
+           */
+
+          /* keep sign, zero exponent */
+          dest[0] = source[7] & 0x80;
+
+          shft = 3 - exp;
+
+          /* shift original mant by 1 or 2 to get denormalized mant */
+          /* prefix mantissa with '1'b or '01'b as appropriate */
+          dest[1] = (uint8)((source[6] & 0x0f) >> shft) | (uint8)(0x02 << exp);
+          dest[2] = (uint8)(source[6] << (8-shft)) | (uint8)(source[5] >> shft);
+          dest[3] = (uint8)(source[5] << (8-shft)) | (uint8)(source[4] >> shft);
+          dest[4] = (uint8)(source[4] << (8-shft)) | (uint8)(source[3] >> shft);
+          dest[5] = (uint8)(source[3] << (8-shft)) | (uint8)(source[2] >> shft);
+          dest[6] = (uint8)(source[2] << (8-shft)) | (uint8)(source[1] >> shft);
+          dest[7] = (uint8)(source[1] << (8-shft)) | (uint8)(source[0] >> shft);
+      }
+      else {
+          /* 
+           * sign=1 -> infinity or NaN 
+           */
+          
+          dest[0] = 0xff;                /* set exp to 255 */
+          /* copy mantissa */
+          dest[1] = source[6] | (uint8)0xF0;  /* LSBs of exp = 1 */
+          dest[2] = source[5];
+          dest[3] = source[4];
+          dest[4] = source[3];
+          dest[5] = source[2];
+          dest[6] = source[1];
+          dest[7] = source[0];
+      }
+      
+      source += source_stride;
+      dest   += dest_stride;
+  }
+  
+  return 0;
+
+}
 #endif  /* CONVEXNATIVE */
+
+/* End of Actual Conversion routines, start of Interface functions */
 
 /************************************************************
  * If the programmer forgot to call DFKsetntype, then let
@@ -2675,7 +4310,22 @@ int number_type;
 
             case DFNT_NFLOAT64: return(SIZE_NFLOAT64);
 
-    	    case DFNT_UCHAR:	return(SIZE_UCHAR);
+            case DFNT_LUCHAR:   return(SIZE_LUCHAR);
+            case DFNT_LCHAR:    return(SIZE_LCHAR);
+            case DFNT_LINT8:    return(SIZE_LINT8);
+            case DFNT_LUINT8:   return(SIZE_LUINT8);
+
+            case DFNT_LINT16:   return(SIZE_LINT16);
+            case DFNT_LUINT16:  return(SIZE_LUINT16);
+
+            case DFNT_LINT32:   return(SIZE_LINT32);
+            case DFNT_LUINT32:  return(SIZE_LUINT32);
+
+            case DFNT_LFLOAT32: return(SIZE_LFLOAT32);
+
+            case DFNT_LFLOAT64: return(SIZE_LFLOAT64);
+
+            case DFNT_UCHAR:    return(SIZE_UCHAR);
             case DFNT_CHAR:     return(SIZE_CHAR);
             case DFNT_INT8:     return(SIZE_INT8);
             case DFNT_UINT8:    return(SIZE_UINT8);
@@ -2768,6 +4418,34 @@ int32 ntype;
                         DFKnumout = NF64_OUT;
                         return 0;
 
+    /*
+     * Little Endian Conversions
+     */
+    case DFNT_LCHAR:
+    case DFNT_LINT8:
+    case DFNT_LUCHAR:
+    case DFNT_LUINT8:   DFKnumin  = LUI8_IN;
+                        DFKnumout = LUI8_OUT;
+                        return 0;
+    case DFNT_LINT16:   DFKnumin  = LSI16_IN;
+                        DFKnumout = LSI16_OUT;
+                        return 0;
+    case DFNT_LUINT16:  DFKnumin  = LUI16_IN;
+                        DFKnumout = LUI16_OUT;
+                        return 0;
+    case DFNT_LINT32:   DFKnumin  = LSI32_IN;
+                        DFKnumout = LSI32_OUT;
+                        return 0;
+    case DFNT_LUINT32:  DFKnumin  = LUI32_IN;
+                        DFKnumout = LUI32_OUT;
+                        return 0;
+    case DFNT_LFLOAT32: DFKnumin  = LF32_IN;
+                        DFKnumout = LF32_OUT;
+                        return 0;
+    case DFNT_LFLOAT64: DFKnumin  = LF64_IN;
+                        DFKnumout = LF64_OUT;
+                        return 0;
+
 /* No conversion routines are specified for DFNT_custom.  User must provide. */
 /* Users should call DFCV_SetCustomIn() and DFCV_SetCustomOut() if they      */
 /* choose to use DFNT_CUSTOM.  Users should provide their own method to      */
@@ -2825,6 +4503,26 @@ int32 numbertype;
 #endif /* PROTOTYPE */
 {
     return ((DFNT_NATIVE & numbertype)>0 ? 1 : 0 );
+}
+
+/*------------------------------------------------------------------
+ * Name:    DFKislitendNT
+ * Purpose: Determine whether number type is little-endian mode
+ * Inputs:  numbertype: number type
+ * Returns: 1 if true, 0 if false
+ * Users:   DFSDgetslice
+ * Method:  Checks to see if the "native mode" bit is set
+ * Remarks:
+ *------------------------------------------------------------------*/
+
+#if defined PROTOTYPE
+int32 DFKislitendNT(int32 numbertype)
+#else
+int32 DFKislitendNT(numbertype)
+int32 numbertype;
+#endif /* PROTOTYPE */
+{
+    return ((DFNT_LITEND & numbertype)>0 ? 1 : 0 );
 }
 
 /************************************************************

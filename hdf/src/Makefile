@@ -2,7 +2,11 @@
 # $Header$
 #
 # $Log$
-# Revision 1.6  1993/01/19 05:53:51  koziol
+# Revision 1.7  1993/01/26 19:42:14  koziol
+# Added support for reading and writing Little-Endian data on all
+# platforms.  This has been tested on: Cray, Sun, and PCs so far.
+#
+# Revision 1.6  1993/01/19  05:53:51  koziol
 # Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
 # port.  Lots of minor annoyances fixed.
 #
@@ -113,7 +117,7 @@ SHAR=shar
 ARCHIVE=hdf.shar
 
 HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h dfan.h dfrig.h dfgr.h dfsd.h \
-     dfconvrt.h vg.h df.h dfi.h dfstubs.h dfufp2i.h vproto.h hcomp.h
+     vg.h df.h dfi.h dfstubs.h dfufp2i.h vproto.h hcomp.h hconv.h
 
 CSRCS=hfile.c herr.c hblocks.c hextelt.c hkit.c dfan.c dfr8.c dfcomp.c \
       dfrle.c dfimcomp.c dfjpeg.c dfunjpeg.c dfp.c dfgr.c df24.c dfsd.c \
@@ -223,13 +227,13 @@ df24.o: hdf.h herr.h dfgr.h hdfi.h
 
 df24f.o: hdf.h herr.h dfgr.h hdfi.h
 
-dfsd.o: hdf.h herr.h dfsd.h hdfi.h dfconvrt.h hfile.h
+dfsd.o: hdf.h herr.h dfsd.h hdfi.h hfile.h
 
 dfsdf.o: hdf.h herr.h dfsd.h hdfi.h
 
 dfgroup.o: hdf.h herr.h hfile.h hdfi.h
 
-dfconv.o: hdf.h herr.h hdfi.h
+dfconv.o: hdf.h herr.h hdfi.h hconv.h
 
 dfutil.o: hdf.h herr.h hdfi.h
 

@@ -2,10 +2,14 @@
 $Header$
 
 $Log$
-Revision 1.15  1993/01/19 05:56:05  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.16  1993/01/26 19:42:51  koziol
+Added support for reading and writing Little-Endian data on all
+platforms.  This has been tested on: Cray, Sun, and PCs so far.
 
+ * Revision 1.15  1993/01/19  05:56:05  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.14  1993/01/15  16:52:32  georgev
  * Wrong declaration for dswfv()
  *
@@ -189,6 +193,26 @@ extern void _HUGE *HDregetspace
 
 extern void _HUGE *HDfreespace
   PROTO((void _HUGE *ptr));
+
+#if defined WIN3 | defined PC
+extern VOIDP fmemcpy_big
+  PROTO((VOIDP dest, VOIDP source, uint32 len));
+
+extern VOIDP fmemset_big
+  PROTO((VOIDP dest, intn c, uint32 len));
+
+extern intn fmemcmp_big
+  PROTO((VOIDP s1, VOIDP s2, uint32 len));
+
+extern VOIDP memcpy_big
+  PROTO((VOIDP dest, VOIDP source, uint32 len));
+
+extern VOIDP memset_big
+  PROTO((VOIDP dest, intn c, uint32 len));
+
+extern intn memcmp_big
+  PROTO((VOIDP s1, VOIDP s2, uint32 len));
+#endif  /* WIN3 | PC */
 
 extern intn HDc2fstr
   PROTO((char _HUGE *str, intn len));
@@ -571,6 +595,9 @@ extern int DFKNTsize
     PROTO((int32 number_type));
 
 extern int32 DFKisnativeNT
+    PROTO((int32 numbertype));
+
+extern int32 DFKislitendNT
     PROTO((int32 numbertype));
 
 extern int8 DFKgetPNSC

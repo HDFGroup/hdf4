@@ -2,10 +2,14 @@
 $Header$
 
 $Log$
-Revision 1.5  1993/01/19 05:55:38  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.6  1993/01/26 19:42:42  koziol
+Added support for reading and writing Little-Endian data on all
+platforms.  This has been tested on: Cray, Sun, and PCs so far.
 
+ * Revision 1.5  1993/01/19  05:55:38  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.4  1992/11/10  20:23:03  georgev
  * Added fill value tag DFTAG_FV for hyperslabs
  *
@@ -97,10 +101,10 @@ typedef struct {
 
 
 /* masks for types */
-
-#define DFNT_HDF      0x00000000    /* standard HDF format */
-#define DFNT_NATIVE   0x00001000    /* native format       */
-#define DFNT_CUSTOM   0x00002000    /* custom format       */
+#define DFNT_HDF      0x00000000    /* standard HDF format  */
+#define DFNT_NATIVE   0x00001000    /* native format        */
+#define DFNT_CUSTOM   0x00002000    /* custom format        */
+#define DFNT_LITEND   0x00004000    /* Little Endian format */
 
 /* type info codes */
 
@@ -133,6 +137,7 @@ typedef struct {
 #define DFNT_CHAR16     42     /* No current plans for support */
 #define DFNT_UCHAR16    43     /* No current plans for support */
 
+/* Type info codes for Native Mode datasets */
 #define DFNT_NFLOAT32   (DFNT_NATIVE | DFNT_FLOAT32)
 #define DFNT_NFLOAT64   (DFNT_NATIVE | DFNT_FLOAT64)
 #define DFNT_NFLOAT128  (DFNT_NATIVE | DFNT_FLOAT128)  /* Unsupported */
@@ -154,6 +159,29 @@ typedef struct {
 #define DFNT_NUCHAR     (DFNT_NATIVE | DFNT_UCHAR8) /* backward compat */
 #define DFNT_NCHAR16    (DFNT_NATIVE | DFNT_CHAR16)   /* Unsupported */
 #define DFNT_NUCHAR16   (DFNT_NATIVE | DFNT_UCHAR16)   /* Unsupported */
+
+/* Type info codes for Little Endian data */
+#define DFNT_LFLOAT32   (DFNT_LITEND | DFNT_FLOAT32)
+#define DFNT_LFLOAT64   (DFNT_LITEND | DFNT_FLOAT64)
+#define DFNT_LFLOAT128  (DFNT_LITEND | DFNT_FLOAT128)   /* Unsupported */
+
+#define DFNT_LINT8      (DFNT_LITEND | DFNT_INT8)
+#define DFNT_LUINT8     (DFNT_LITEND | DFNT_UINT8)
+#define DFNT_LINT16     (DFNT_LITEND | DFNT_INT16)
+#define DFNT_LUINT16    (DFNT_LITEND | DFNT_UINT16)
+#define DFNT_LINT32     (DFNT_LITEND | DFNT_INT32)
+#define DFNT_LUINT32    (DFNT_LITEND | DFNT_UINT32)
+#define DFNT_LINT64     (DFNT_LITEND | DFNT_INT64)
+#define DFNT_LUINT64    (DFNT_LITEND | DFNT_UINT64)
+#define DFNT_LINT128    (DFNT_LITEND | DFNT_INT128)     /* Unsupported */
+#define DFNT_LUINT128   (DFNT_LITEND | DFNT_UINT128)    /* Unsupported */
+
+#define DFNT_LCHAR8     (DFNT_LITEND | DFNT_CHAR8)
+#define DFNT_LCHAR      (DFNT_LITEND | DFNT_CHAR8)      /* backward compat */
+#define DFNT_LUCHAR8    (DFNT_LITEND | DFNT_UCHAR8)
+#define DFNT_LUCHAR     (DFNT_LITEND | DFNT_UCHAR8)     /* backward compat */
+#define DFNT_LCHAR16    (DFNT_LITEND | DFNT_CHAR16)     /* Unsupported */
+#define DFNT_LUCHAR16   (DFNT_LITEND | DFNT_UCHAR16)    /* Unsupported */
 
 /* class info codes for int */
 #define        DFNTI_MBO       1       /* Motorola byte order 2's compl */
@@ -254,6 +282,29 @@ typedef struct {
 #    define SIZE_NUCHAR16    2    /* No current plans for support */
 #endif /* UNICOS */
 
+/* then the sizes of little-endian number types */
+#    define SIZE_LFLOAT32    4
+#    define SIZE_LFLOAT64    8
+#    define SIZE_LFLOAT128  16    /* No current plans for support */
+
+#    define SIZE_LINT8       1
+#    define SIZE_LUINT8      1
+#    define SIZE_LINT16      2
+#    define SIZE_LUINT16     2
+#    define SIZE_LINT32      4
+#    define SIZE_LUINT32     4
+#    define SIZE_LINT64      8
+#    define SIZE_LUINT64     8
+#    define SIZE_LINT128    16   /* No current plans for support */
+#    define SIZE_LUINT128   16   /* No current plans for support */
+
+#    define SIZE_LCHAR8      1
+#    define SIZE_LCHAR       1    /* For backward compat char8 == char */
+#    define SIZE_LUCHAR8     1
+#    define SIZE_LUCHAR      1    /* For backward compat uchar8 == uchar */
+#    define SIZE_LCHAR16     2    /* No current plans for support */
+#    define SIZE_LUCHAR16    2    /* No current plans for support */
+
           /* sizes of different number types */
 #          define MACHINE_I8_SIZE     1
 #          define MACHINE_I16_SIZE    2
@@ -295,7 +346,6 @@ extern uint8 *tbuf;
 #define DFTAG_RI8   ((uint16)202) /* Raster-8 image */
 #define DFTAG_CI8   ((uint16)203) /* RLE compressed 8-bit image */
 #define DFTAG_II8   ((uint16)204) /* IMCOMP compressed 8-bit image */
-#define DFTAG_JI8   ((uint16)205) /* JPEG Compressed 8-bit image */
 
 /* Raster Image set */
 #define DFTAG_ID    ((uint16)300) /* Image DimRec */
