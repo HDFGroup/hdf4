@@ -416,7 +416,14 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 
-#   define BSD
+/*
+ * BSD was originally defined with no value.  But some newer SGI system
+ * header files (e.g., resolv.h) assume it has a value and evaluate it
+ * in expressions, thus causing compiling errors.  SGI suggested a
+ * work around of setting it to 1 since they could not provide a list
+ * of the semantics of BSD values.
+ */
+#   define BSD 1
 #ifndef __GNUC__
 #include <memory.h>
 #endif /* __GNUC__ */
