@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/01/19 06:00:11  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.4  1993/04/14 21:42:06  georgev
+Had to add some VOIDP casts to some functions to make the compiler happy
 
+ * Revision 1.3  1993/01/19  06:00:11  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.2  1992/07/15  21:48:48  sxu
  * Added changes for CONVEX
  *
@@ -162,7 +165,7 @@ main(argc,argv)
                 ret = DFR8readref(argv[i], prevref);
                 ret = DFR8getdims(argv[i], &xdim, &ydim, &ispal);
 
-                HDfreespace(space);
+                HDfreespace((VOIDP)space);
             }
         }
     }

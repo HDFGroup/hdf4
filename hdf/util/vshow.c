@@ -168,7 +168,7 @@ char**av;
       else if (fulldump && vsno==vsoref) vsdumpfull(vs);
       VSdetach(vs);
     }
-    HDfreespace(lonevs);
+    HDfreespace((VOIDP)lonevs);
   }
 
   Vend(f);
@@ -326,7 +326,7 @@ int32 vsdumpfull(vs) int32 vs;
   
   /* ============================================ */
   
-  HDfreespace(bb);
+  HDfreespace((VOIDP)bb);
   printf("\n\n");
   
   return(1);

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.12  1993/01/19 06:24:13  koziol
-Updated for better portability and fixed minor compiler warnings
+Revision 1.13  1993/04/14 21:42:07  georgev
+Had to add some VOIDP casts to some functions to make the compiler happy
 
+ * Revision 1.12  1993/01/19  06:24:13  koziol
+ * Updated for better portability and fixed minor compiler warnings
+ *
  * Revision 1.11  1993/01/16  04:13:59  georgev
  * Fixed bug in hdfed
  *
@@ -419,7 +422,7 @@ int dump(length, offset, format, raw_flag)
                 if(++len > 4) {len = 0; printf("\n%8d: ", (offset + (i + 1) * 4));} 
             }  
             printf("\n");
-            HDfreespace(idata);
+            HDfreespace((VOIDP)idata);
         }
         break;
 
@@ -436,7 +439,7 @@ int dump(length, offset, format, raw_flag)
                 if(++len > 4) {len = 0; printf("\n%8d: ", (offset + (i + 1) * 4));}
             }
             printf("\n");
-            HDfreespace(idata);
+            HDfreespace((VOIDP)idata);
         }
         break;
     case 'j':
@@ -452,7 +455,7 @@ int dump(length, offset, format, raw_flag)
                 if(++len > 5) {len = 0; printf("\n%8d: ", (offset + (i + 1) * 2));}
             }
             printf("\n");
-            HDfreespace(sdata);
+            HDfreespace((VOIDP)sdata);
         }
         break;
 
@@ -469,7 +472,7 @@ int dump(length, offset, format, raw_flag)
                 if(++len > 5) {len = 0; printf("\n%8d: ", (offset + (i + 1) * 2));} 
             } 
             printf("\n");
-            HDfreespace(sdata);
+            HDfreespace((VOIDP)sdata);
         }
         break;
 
@@ -486,7 +489,7 @@ int dump(length, offset, format, raw_flag)
                 if(++len > 7) {len = 0; printf("\n%8d: ", (offset + (i + 1)));} 
             }
             printf("\n");
-            HDfreespace(bdata);
+            HDfreespace((VOIDP)bdata);
         }
         break;
         
@@ -502,7 +505,7 @@ int dump(length, offset, format, raw_flag)
                 if(++len > 5) {len = 0; printf("\n%8d: ", (offset + (i + 1) * sizeintn));} 
             }
             printf("\n"); 
-            HDfreespace(idata);
+            HDfreespace((VOIDP)idata);
         }
         break;
 
@@ -518,7 +521,7 @@ int dump(length, offset, format, raw_flag)
                 if(++len > 4) {len = 0; printf("\n%8d: ", (offset + (i + 1) * sizeintn));} 
             }
             printf("\n");
-            HDfreespace(idata);
+            HDfreespace((VOIDP)idata);
         }
         break;
 
@@ -549,7 +552,7 @@ int dump(length, offset, format, raw_flag)
                 if(++len > 3) {len = 0; printf("\n%8d: ", (offset + (i + 1) * 4));}
             }
             printf("\n");
-            HDfreespace(fdata);
+            HDfreespace((VOIDP)fdata);
         }
         break;
 
@@ -567,7 +570,7 @@ int dump(length, offset, format, raw_flag)
                 if(++len > 1) {len = 0; printf("\n%8d: ", (offset + (i + 1) * 8));}
             }
             printf("\n"); 
-            HDfreespace(fdata);
+            HDfreespace((VOIDP)fdata);
         }
         break;
 

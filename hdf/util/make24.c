@@ -113,7 +113,7 @@ int32 from_x0,from_y0,from_x1,from_y1,
     return(TRUE);
 
 YCoorFailed:    /* Failed to allocate memory for the Y coor. lookup table */
-    HDfreespace(x_coor);
+    HDfreespace((VOIDP)x_coor);
 XCoorFailed:    /* Failed to allocate memory for the X coor. lookup table */
     return(FALSE);
 }   /* end magnify() */
@@ -271,7 +271,7 @@ char *argv[];
             printf("Error scaling image, out of memory or bad dimensions\n");
             return(1);
           } /* end if */
-        HDfreespace(img_buf);       /* free the old image */
+        HDfreespace((VOIDP)img_buf);       /* free the old image */
 
         img_buf=scaled_image;       /* use the new image for further processing */
         xdim=new_xdim;
