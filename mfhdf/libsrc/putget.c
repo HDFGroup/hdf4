@@ -591,6 +591,8 @@ int32   type;
     
 } /* hdf_fill_array */
 
+#define MAX_SIZE 10
+
 /* ------------------------- hdf_get_data ------------------- */
 /*
  * Given a variable vgid return the id of a valid data storage
@@ -607,6 +609,7 @@ NC_var *vp;
     int32 vsid, nvalues, status, tag, t, n;
     register Void *values;
     int32 byte_count, len;
+    int32 to_do, done, chunk_size;
     
 #if DEBUG 
     fprintf(stderr, "hdf_get_data I've been called\n");
@@ -650,13 +653,22 @@ NC_var *vp;
 #endif  
     
     /* look up fill value (if it exists) */
-    len = (vp->len / vp->HDFsize) * vp->szof;
-    values = (Void *) HDgetspace(len);
     attr = NC_findattr(&(vp->attrs), _FillValue);
 
-    byte_count = vp->len;
-    nvalues = vp->len / vp->HDFsize;
+
+    /* compute the various size parameters */
+    if(vp->len > MAX_SIZE)
+        chunk_size = MAX_SIZE;
+    else
+        chunk_size = vp->len;
+
+    nvalues = vp->len / vp->HDFsize;        /* total number of values */
+    to_do   = chunk_size / vp->HDFsize;     /* number of values in a chunk */
     
+    len = to_do * vp->szof;                 /* size of buffer for fill values */
+    values = (Void *) HDgetspace(len);      /* buffer to hold unconv fill vals */
+    byte_count = to_do * vp->HDFsize;       /* external buffer size */
+
     if(!attr) {
         NC_arrayfill(values, len, vp->type);
     } else {
@@ -686,16 +698,28 @@ NC_var *vp;
      * Do numerical conversions
      */
     DFKsetNT(vp->HDFtype);
-    DFKnumout((uint8 *) values, tBuf, (uint32) nvalues, 0, 0);
+    DFKnumout((uint8 *) values, tBuf, (uint32) to_do, 0, 0);
 
-    status = Hwrite(vp->aid, byte_count, (uint8 *) tBuf);
-    if(status != byte_count) return NULL;
+    /*
+     * Write out the values
+     */
+    done = 0;
+    while(done != nvalues) {
+        status = Hwrite(vp->aid, byte_count, (uint8 *) tBuf);
+        if(status != byte_count) return NULL;
+        done += to_do;
+        if(nvalues - done < to_do) {
+            to_do = nvalues - done;
+            byte_count = to_do * vp->HDFsize;
+        }
+    }
+
     if(Hendaccess(vp->aid) == FAIL) return NULL;
 
     /* if it is a record var might as well make it linked blocks now */
     if(IS_RECVAR(vp)) {
         vp->aid = HLcreate(handle->hdf_file, DATA_TAG, vsid, 
-                           byte_count * BLOCK_SIZE, BLOCK_COUNT);
+                           vp->len * BLOCK_SIZE, BLOCK_COUNT);
         if(vp->aid == FAIL) return NULL;
         if(Hendaccess(vp->aid) == FAIL) return NULL;
     }
