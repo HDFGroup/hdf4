@@ -111,11 +111,14 @@ HDP COMMAND OPTIONS
          Filter options
               specify which SDS to dump.
 
-             -i <index>   dump SDS's with indices specified in <index>; indices
-			  correspond to the order of the SDS in the file
-             -r <ref>     dump SDS's with reference numbers specified in <ref>
-             -n <name>    dump SDS's with names specified in <name>
+             -i <index> dump SDS's with indices specified in <index>; 
+			  indices correspond to the order of the SDS in the file
+             -r <ref>    dump SDS's with reference numbers specified in <ref>
+             -n <name>   dump SDS's with names specified in <name>
              -a           dump all SDS's in the file. (default)
+
+	     Options -i, -r, and -n can be used inclusively to specify
+	     different SDS's.
 
           Content options
 
@@ -123,15 +126,27 @@ HDP COMMAND OPTIONS
              -h    header only, no annotation for elements or data
              -d    data only, no tag/ref 
 
+	     These options are exclusive.
+
           Output options
 
-             -o <fn>    specify fn as output file name
-             -b         binary file
-             -t         ascii text file (default)
+             -o <filename> specify <filename> as output file name
+             -b            binary output
+             -x            ascii text output (default)
 
-          Note: any combination of an option from each of the three categories
-		can be used; but no more than one option from one category is 
-		allowed.
+	     Options -b and -x are exclusive, but each can be used with
+	     option -o.
+
+	  Format options
+	     -c    print space characters as they are, not \digit
+	     -g    do not print data of file (global) attributes
+	     -l    do not print data of local attributes
+	     -s    do not add carriage return to a long line - dump as a stream
+
+	     Options in this category can be used inclusively.
+
+	  Note: Any combination of an option from each of the categories can
+		be used as long as the criteria of that category are met.
 
     hdp dumpvd [filter ops] [contents ops] [output ops] <filename list>
     --------------------------------------------------------------------
