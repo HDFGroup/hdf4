@@ -99,7 +99,7 @@
   VAX OpenVMS v6.2                  -                - 
   IBM PC - Intel Pentium
        Solarisx86 (2.5.1)         GCC 2.7.2.1        -                
-       Linux (elf) (2.0.30)       GCC 2.7.2.1      fort77 (f2c) 2.7.2.1     
+       Linux (elf) (2.0.30)       GCC 2.8.1        g77 2.8.1     
        FreeBSD (2.2.1)            GCC 2.7.2        f77 2.7.2.1
   PowerPC(Mac-OS-7.6)             MetroWerks
                                   Codewarrior (CW8)  -              
