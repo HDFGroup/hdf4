@@ -1540,6 +1540,37 @@ done:
 }   /* end DFR8Iriginfo() */
 
 /*--------------------------------------------------------------------------
+ * NAME
+ *   DFR8getpalref - get the reference number of the palette
+ * DESCRIPTION
+ *   Convience function to get reference number of the palette of 
+ *   last image. Must come after DFR8getdims() since it relies on
+ *   this call to fill the Readrig structure
+ * RETURNS
+ *   SUCCEED.
+--------------------------------------------------------------------------*/
+intn
+DFR8getpalref(uint16 *pal_ref)
+{
+  CONSTR(FUNC, "DFR8getpalref");
+  intn        ret_value = SUCCEED;
+
+  HEclear();
+
+  *pal_ref = Readrig.lut.ref; /* ref of palette */
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
+}   /* end DFR8getpalref() */
+
+/*--------------------------------------------------------------------------
  NAME
     DFR8Pshutdown
  PURPOSE

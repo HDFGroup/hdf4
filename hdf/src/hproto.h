@@ -640,6 +640,8 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
     extern uint16 DFR8lastref
                 (void);
 
+    extern intn DFR8getpalref(uint16 *pal_ref);
+
     extern intn DFR8Pshutdown(void);
 
 /*
