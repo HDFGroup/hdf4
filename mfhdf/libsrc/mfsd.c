@@ -3068,11 +3068,11 @@ intn SDsetcompress(int32 id, int32 type, comp_info *c_info)
         return FAIL;
 
 #ifdef SDDEBUG
-printf("SDsetnbitdata(): nt=%d, sign_ext=%d, fill_one=%d, start_bit=%d, bit_len=%d\n",(intn)c_info.nbit.nt,(intn)c_info.nbit.sign_ext,(intn)c_info.nbit.fill_one,(intn)c_info.nbit.start_bit,(intn)c_info.nbit.bit_len);
+printf("SDsetcompress(): nt=%d, sign_ext=%d, fill_one=%d, start_bit=%d, bit_len=%d\n",(intn)c_info.nbit.nt,(intn)c_info.nbit.sign_ext,(intn)c_info.nbit.fill_one,(intn)c_info.nbit.start_bit,(intn)c_info.nbit.bit_len);
 #endif
     if(!var->data_ref) {   /* doesn't exist */
 #ifdef SDDEBUG
-printf("SDsetnbitdata(): dataset doesn't exist\n");
+printf("SDsetcompress(): dataset doesn't exist\n");
 #endif
 
         /* element doesn't exist so we need a reference number */
@@ -3089,7 +3089,7 @@ printf("SDsetnbitdata(): dataset doesn't exist\n");
              c_info);
 
 #ifdef SDDEBUG
-printf("SDsetnbitdata(): HCcreate() status=%d\n",(intn)status);
+printf("SDsetcompress(): HCcreate() status=%d\n",(intn)status);
 #endif
     if(status != FAIL) {
         if((var->aid != 0) && (var->aid != FAIL))
