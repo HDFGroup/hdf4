@@ -16,19 +16,39 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
+/*+
+   File Memory pool level stdio I/O routines
+
+   Routines
+   --------
+   MPopen   - open/create the file and create a memory pool for file
+   MPclose  - close the file, sync the file memory pool to disk and close it.
+   MPflush  - flush file memory pool to disk 
+   MPseek   - seek to the specified file offset in the memory pool
+   MPread   - read data from file memory pool into user's buffer
+   MPwrite  - write data from user's buffer to file memory pool 
+
+ +*/
+
 #include <errno.h>
 #include <string.h>
 #include "fmpio.h"
 
 /*-----------------------------------------------------------------------------
 NAME
-
+      MPopen - open/create the file and create a memory pool for file
 USAGE
-
+      MPFILE *MPopen(path, flags)
+      const char *path:   IN: filename
+      int        flags:   IN: DFACC_CREATE, DFACC_READ, DFACC_WRITE,
+                              DFACC_RDWR, DFACC_ALL
 RETURNS
-
+      Pointer to MPFILE struct if successful and NULL otherwise
 DESCRIPTION
-
+      Open/Create the file for reading/writing and create a memory pool for
+      the file. Currently we let the library decide whether to use the 
+      default PAGESIZE for creating pages and MAXCACHE for number of pages 
+      to cache in the pool.
 ---------------------------------------------------------------------------- */
 MPFILE * 
 MPopen(const char * path, int flags)
@@ -53,7 +73,7 @@ MPopen(const char * path, int flags)
   switch(flags)
     {
     case DFACC_CREATE:
-      if ((mpfs->fd = FMPI_CREATE(path)) == FMPI_FAIL)
+      if ((mpfs->fd = FMPI_CREATE(path)) == FMPI_OPEN_FAIL)
         {
           ret = FAIL;
           goto done;
@@ -64,7 +84,7 @@ MPopen(const char * path, int flags)
     case DFACC_RDWR:
     case DFACC_ALL:
     default:
-      if ((mpfs->fd = FMPI_OPEN(path,flags)) == FMPI_FAIL)
+      if ((mpfs->fd = FMPI_OPEN(path,flags)) == FMPI_OPEN_FAIL)
         {
           ret = FAIL;
           goto done;
@@ -107,13 +127,15 @@ MPopen(const char * path, int flags)
 
 /*-----------------------------------------------------------------------------
 NAME
-
+    MPclose - close the file, sync the file memory pool to disk and close it.
 USAGE
-
+    int MPclose(mpfs)
+    MPFILE *mfps:    IN: File Memory pool handle
 RETURNS
-
+    Returns SUCCEED on success and FAIL otherwise.
 DESCRIPTION
-
+    First sync the file memory pool to disk. Next close the file memory pool.
+    Finally close the file
 ---------------------------------------------------------------------------- */
 int
 MPclose(MPFILE *mpfs)
@@ -148,7 +170,10 @@ MPclose(MPFILE *mpfs)
     }
 
   /* Close the file */
-  FMPI_CLOSE(mpfs->fd);
+  if (FMPI_CLOSE(mpfs->fd) != FMPI_CLOSE_SUCCEED)
+    {
+      ret = FAIL;
+    }
 
   done:
   if(ret == FAIL)
@@ -165,13 +190,14 @@ MPclose(MPFILE *mpfs)
 
 /*-----------------------------------------------------------------------------
 NAME
-
+     MPflush - flush file memory pool to disk 
 USAGE
-
+     int MPflush(mpfs)
+     MPFILE *mpfs:  IN: File Memory pool handle
 RETURNS
-
+     Returns SUCCEED on success and FAIL otherwise
 DESCRIPTION
-
+     Flushes the file memory pool to disk.
 ---------------------------------------------------------------------------- */
 int
 MPflush(MPFILE *mpfs)
@@ -208,13 +234,25 @@ MPflush(MPFILE *mpfs)
 
 /*-----------------------------------------------------------------------------
 NAME
-
+     MPseek - seek to the specified file offset in the memory pool
 USAGE
-
+     int MPseek(mpfs, offset, whence)
+     MPFILE  *mpfs:    IN: File Memory pool handle
+     off_t   offset:   IN: Offset into the file
+     int     whence:   IN: SEEK_CUR, SEEK_SET, SEEK_END
 RETURNS
-
+     Returns offset into the file on success and FAIL otherwise.
 DESCRIPTION
+     Seeks to the correct page in the file depending upon the offset and the
+     flag 'whence'. Similiar to the stdio routine. Assumes the flags values
+     for SEEK_SET, SEEK_CUR and SEEK_END are universal. May not be true
+     for non-Unix OS's.
 
+COMMENTS
+     Note that it returns an 'int' as opposed to 'off_t'. This is 
+     because the HDF library still deals with file offsets in terms of
+     signed integers....*sigh*...hopefully this will be changed in a future
+     release.
 ---------------------------------------------------------------------------- */
 int 
 MPseek(MPFILE *mpfs, off_t offset, int whence )
@@ -281,42 +319,38 @@ MPseek(MPFILE *mpfs, off_t offset, int whence )
 #endif
 
   /* Check to see if this page is the current page */
-  if (mpfs->curp != 0 && new_pgno == mpfs->curp)
-    {
-      ret = SUCCEED;
-      goto skip_sget; /* we don't need to get it */
-    }
-
-  /* Check to see if page exists */
-  if ((mypage = fmpool_get(mpfs->mp, new_pgno, 0)) == NULL)
-    { /* need to extend file and set lastpagesize*/
+  if (!(mpfs->curp != 0 && new_pgno == mpfs->curp))
+    { /* we need to get it */
+      /* Check to see if page exists */
+      if ((mypage = fmpool_get(mpfs->mp, new_pgno, 0)) == NULL)
+        { /* need to extend file and set lastpagesize*/
 #ifdef MP_DEBUG
-      fprintf(stderr,"MPseek: page =%u does not exist\n",new_pgno);
-      fprintf(stderr,"MPseek: oddpagesize=%u \n",oddpagesize);
+          fprintf(stderr,"MPseek: page =%u does not exist\n",new_pgno);
+          fprintf(stderr,"MPseek: oddpagesize=%u \n",oddpagesize);
 #endif
-      if ((mypage = fmpool_new(mpfs->mp, &new_pgno, oddpagesize, MPOOL_EXTEND)) 
-          == NULL)
+          if ((mypage = fmpool_new(mpfs->mp, &new_pgno, oddpagesize, MPOOL_EXTEND)) 
+              == NULL)
+            {
+              ret = FAIL;
+              goto done;
+            }
+          flags = MPOOL_DIRTY; /* mark page as dirty */
+        }
+      else
+        flags = 0;
+
+#ifdef MP_DEBUG
+      fprintf(stderr,"MPseek: put page back \n");
+#endif
+
+      /* put page back */
+      if (fmpool_put(mpfs->mp, mypage, flags) == RET_ERROR)
         {
           ret = FAIL;
           goto done;
         }
-      flags = MPOOL_DIRTY; /* mark page as dirty */
-    }
-  else
-    flags = 0;
+    } /* end if need to get page */
 
-#ifdef MP_DEBUG
-  fprintf(stderr,"MPseek: put page back \n");
-#endif
-
-  /* put page back */
-  if (fmpool_put(mpfs->mp, mypage, flags) == RET_ERROR)
-    {
-      ret = FAIL;
-      goto done;
-    }
-
-  skip_sget:
   mpfs->curp = new_pgno;    /* current page */
   mpfs->poff = oddpagesize; /* offset into current page */
   mpfs->foff = cur_off;     /* file offset */
@@ -357,13 +391,22 @@ MPseek(MPFILE *mpfs, off_t offset, int whence )
 
 /*-----------------------------------------------------------------------------
 NAME
-
+     MPread  - read 'nbytes' from file memory pool into 'buf'
 USAGE
-
+     int MPread(mpfs, buf, nbytes)
+     MPFILE  *mpfs:   IN: File Memory pool handle
+     void    *buf:    IN: User buffer to read data into
+     size_t  nbytes:  IN: number of bytes to read in 
 RETURNS
-
+     Returns number of bytes read if successful and FAIL otherwise
 DESCRIPTION
+     This routine handles getting the correct pages to read to satisfy 
+     the request. The data is then copied from the memory pool into 
+     the user's buffer.
 
+COMMENT
+     The memcpy from the buffer pool to the users buffer is an expensive
+     operation.
 ---------------------------------------------------------------------------- */
 int 
 MPread(MPFILE *mpfs, void *buf, size_t nbytes )
@@ -412,20 +455,19 @@ MPread(MPFILE *mpfs, void *buf, size_t nbytes )
 
   /* Check to see if this page is the last page read */
   if (mpfs->curpr != 0 && mpfs->curp == mpfs->curpr )
-    {
+    {/* we don't need to get it */
       mypage = mpfs->rpage;
       skip_first_put = 1;
-      goto skip_rget; /* we don't need to get it */
+    }
+  else
+    { /* we need to get it copy First page */
+      if ((mypage = fmpool_get(mpfs->mp, mpfs->curp, 0)) == NULL)
+        {
+          ret = FAIL;
+          goto done;
+        }
     }
 
-  /* copy First page */
-  if ((mypage = fmpool_get(mpfs->mp, mpfs->curp, 0)) == NULL)
-    {
-      ret = FAIL;
-      goto done;
-    }
-
-skip_rget:
   cptr = (char *)mypage + mpfs->poff; /* adjust into current page */
 
   /* set number of bytes read */
@@ -512,13 +554,22 @@ skip_rget:
 
 /*-----------------------------------------------------------------------------
 NAME
-
+     MPwrite - write 'nbytes' form 'buf' to the file memory pool
 USAGE
-
+     int MPwrite(mpfs, buf, nbytes)
+     MPFILE  *mpfs:   IN: File Memory pool handle
+     void    *buf:    IN: User buffer to write data from
+     size_t  nbytes:  IN: number of bytes to write out
 RETURNS
-
+     Returns number of bytes written if successful and FAIL otherwise
 DESCRIPTION
+     This routine handles getting the correct pages to write to satisfy 
+     the request. The data is then copied from the user's buffer to
+     the memory pool.
 
+COMMENT
+     The memcpy from the the users buffer to the memory pool is an expensive
+     operation.
 ---------------------------------------------------------------------------- */
 int 
 MPwrite(MPFILE *mpfs, void *buf, size_t nbytes )
