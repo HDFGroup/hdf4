@@ -321,6 +321,11 @@ C
       integer afwriteann
       integer afreadann
       integer afendacess
+      integer afgettagref
+      integer afidtagref
+      integer aftagrefid
+      integer afatypetag
+      integer aftagatype
 
 C End of declarations
 
