@@ -32,8 +32,7 @@ vms-stuff:	ncgentab.h ncgentab.c ncgenyy.c
 
 NCDUMP=../ncdump/ncdump
 
-#####check: ncgen ${srcdir}/test0.cdl b-check c-check f-check
-check: ncgen ${srcdir}/test0.cdl b-check c-check
+check: ncgen ${srcdir}/test0.cdl b-check c-check f-check
 
 #
 # Test the "-b" option of ncgen

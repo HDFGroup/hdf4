@@ -652,8 +652,7 @@ vms-stuff:	ncgentab.h ncgentab.c ncgenyy.c
 	cp ${srcdir}/ncgentab.c vmstab.c
 	cp ${srcdir}/ncgenyy.c vms_yy.c
 
-#####check: ncgen ${srcdir}/test0.cdl b-check c-check f-check
-check: ncgen ${srcdir}/test0.cdl b-check c-check
+check: ncgen ${srcdir}/test0.cdl b-check c-check f-check
 
 #
 # Test the "-b" option of ncgen

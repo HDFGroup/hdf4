@@ -146,7 +146,8 @@ lib_LIBRARIES = libmfhdf.a
 libmfhdf_a_SOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c         \
                      iarray.c error.c globdef.c mfsd.c nssdc.c putget.c \
                      putgetg.c sharray.c string.c var.c xdrposix.c      \
-                     xdrstdio.c
+                     xdrstdio.c ../fortran/jackets.c ../fortran/mfsdf.c \
+                     ../fortran/mfsdff.f
 
 libmfhdf_a_CPPFLAGS = ${INCLUDES} ${DEFINES} @CPPFLAGS@
 include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h 
@@ -167,7 +168,8 @@ am_libmfhdf_a_OBJECTS = libmfhdf_a-array.$(OBJEXT) \
 	libmfhdf_a-putget.$(OBJEXT) libmfhdf_a-putgetg.$(OBJEXT) \
 	libmfhdf_a-sharray.$(OBJEXT) libmfhdf_a-string.$(OBJEXT) \
 	libmfhdf_a-var.$(OBJEXT) libmfhdf_a-xdrposix.$(OBJEXT) \
-	libmfhdf_a-xdrstdio.$(OBJEXT)
+	libmfhdf_a-xdrstdio.$(OBJEXT) libmfhdf_a-jackets.$(OBJEXT) \
+	libmfhdf_a-mfsdf.$(OBJEXT) mfsdff.$(OBJEXT)
 libmfhdf_a_OBJECTS = $(am_libmfhdf_a_OBJECTS)
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir)
@@ -182,7 +184,9 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/libmfhdf_a-globdef.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/libmfhdf_a-hdfsds.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/libmfhdf_a-iarray.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/libmfhdf_a-jackets.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/libmfhdf_a-mfsd.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/libmfhdf_a-mfsdf.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/libmfhdf_a-nssdc.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/libmfhdf_a-putget.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/libmfhdf_a-putgetg.Po \
@@ -195,6 +199,9 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+F77COMPILE = $(F77) $(AM_FFLAGS) $(FFLAGS)
+F77LD = $(F77)
+F77LINK = $(F77LD) $(AM_FFLAGS) $(FFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES = $(libmfhdf_a_SOURCES)
 HEADERS = $(include_HEADERS)
 
@@ -204,7 +211,7 @@ SOURCES = $(libmfhdf_a_SOURCES)
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .o .obj
+.SUFFIXES: .c .f .o .obj
 $(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.ac $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --foreign  mfhdf/libsrc/Makefile
@@ -260,7 +267,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmfhdf_a-globdef.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmfhdf_a-hdfsds.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmfhdf_a-iarray.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmfhdf_a-jackets.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmfhdf_a-mfsd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmfhdf_a-mfsdf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmfhdf_a-nssdc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmfhdf_a-putget.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmfhdf_a-putgetg.Po@am__quote@
@@ -690,6 +699,62 @@ libmfhdf_a-xdrstdio.obj: xdrstdio.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/libmfhdf_a-xdrstdio.Po' tmpdepfile='$(DEPDIR)/libmfhdf_a-xdrstdio.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfhdf_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmfhdf_a-xdrstdio.obj `if test -f 'xdrstdio.c'; then $(CYGPATH_W) 'xdrstdio.c'; else $(CYGPATH_W) '$(srcdir)/xdrstdio.c'; fi`
+
+libmfhdf_a-jackets.o: ../fortran/jackets.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfhdf_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmfhdf_a-jackets.o -MD -MP -MF "$(DEPDIR)/libmfhdf_a-jackets.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o libmfhdf_a-jackets.o `test -f '../fortran/jackets.c' || echo '$(srcdir)/'`../fortran/jackets.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libmfhdf_a-jackets.Tpo" "$(DEPDIR)/libmfhdf_a-jackets.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/libmfhdf_a-jackets.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../fortran/jackets.c' object='libmfhdf_a-jackets.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/libmfhdf_a-jackets.Po' tmpdepfile='$(DEPDIR)/libmfhdf_a-jackets.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfhdf_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmfhdf_a-jackets.o `test -f '../fortran/jackets.c' || echo '$(srcdir)/'`../fortran/jackets.c
+
+libmfhdf_a-jackets.obj: ../fortran/jackets.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfhdf_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmfhdf_a-jackets.obj -MD -MP -MF "$(DEPDIR)/libmfhdf_a-jackets.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o libmfhdf_a-jackets.obj `if test -f '../fortran/jackets.c'; then $(CYGPATH_W) '../fortran/jackets.c'; else $(CYGPATH_W) '$(srcdir)/../fortran/jackets.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libmfhdf_a-jackets.Tpo" "$(DEPDIR)/libmfhdf_a-jackets.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/libmfhdf_a-jackets.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../fortran/jackets.c' object='libmfhdf_a-jackets.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/libmfhdf_a-jackets.Po' tmpdepfile='$(DEPDIR)/libmfhdf_a-jackets.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfhdf_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmfhdf_a-jackets.obj `if test -f '../fortran/jackets.c'; then $(CYGPATH_W) '../fortran/jackets.c'; else $(CYGPATH_W) '$(srcdir)/../fortran/jackets.c'; fi`
+
+libmfhdf_a-mfsdf.o: ../fortran/mfsdf.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfhdf_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmfhdf_a-mfsdf.o -MD -MP -MF "$(DEPDIR)/libmfhdf_a-mfsdf.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o libmfhdf_a-mfsdf.o `test -f '../fortran/mfsdf.c' || echo '$(srcdir)/'`../fortran/mfsdf.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libmfhdf_a-mfsdf.Tpo" "$(DEPDIR)/libmfhdf_a-mfsdf.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/libmfhdf_a-mfsdf.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../fortran/mfsdf.c' object='libmfhdf_a-mfsdf.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/libmfhdf_a-mfsdf.Po' tmpdepfile='$(DEPDIR)/libmfhdf_a-mfsdf.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfhdf_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmfhdf_a-mfsdf.o `test -f '../fortran/mfsdf.c' || echo '$(srcdir)/'`../fortran/mfsdf.c
+
+libmfhdf_a-mfsdf.obj: ../fortran/mfsdf.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfhdf_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmfhdf_a-mfsdf.obj -MD -MP -MF "$(DEPDIR)/libmfhdf_a-mfsdf.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o libmfhdf_a-mfsdf.obj `if test -f '../fortran/mfsdf.c'; then $(CYGPATH_W) '../fortran/mfsdf.c'; else $(CYGPATH_W) '$(srcdir)/../fortran/mfsdf.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libmfhdf_a-mfsdf.Tpo" "$(DEPDIR)/libmfhdf_a-mfsdf.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/libmfhdf_a-mfsdf.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../fortran/mfsdf.c' object='libmfhdf_a-mfsdf.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/libmfhdf_a-mfsdf.Po' tmpdepfile='$(DEPDIR)/libmfhdf_a-mfsdf.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfhdf_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmfhdf_a-mfsdf.obj `if test -f '../fortran/mfsdf.c'; then $(CYGPATH_W) '../fortran/mfsdf.c'; else $(CYGPATH_W) '$(srcdir)/../fortran/mfsdf.c'; fi`
+
+.f.o:
+	$(F77COMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
+
+.f.obj:
+	$(F77COMPILE) -c -o $@ `if test -f '$<'; then $(CYGPATH_W) '$<'; else $(CYGPATH_W) '$(srcdir)/$<'; fi`
+
+mfsdff.o: ../fortran/mfsdff.f
+	$(F77) $(AM_FFLAGS) $(FFLAGS) -c -o mfsdff.o `test -f '../fortran/mfsdff.f' || echo '$(srcdir)/'`../fortran/mfsdff.f
+
+mfsdff.obj: ../fortran/mfsdff.f
+	$(F77) $(AM_FFLAGS) $(FFLAGS) -c -o mfsdff.obj `if test -f '../fortran/mfsdff.f'; then $(CYGPATH_W) '../fortran/mfsdff.f'; else $(CYGPATH_W) '$(srcdir)/../fortran/mfsdff.f'; fi`
 uninstall-info-am:
 includeHEADERS_INSTALL = $(INSTALL_HEADER)
 install-includeHEADERS: $(include_HEADERS)

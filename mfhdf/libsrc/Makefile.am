@@ -7,6 +7,7 @@ lib_LIBRARIES = libmfhdf.a
 libmfhdf_a_SOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c         \
                      iarray.c error.c globdef.c mfsd.c nssdc.c putget.c \
                      putgetg.c sharray.c string.c var.c xdrposix.c      \
-                     xdrstdio.c
+                     xdrstdio.c ../fortran/jackets.c ../fortran/mfsdf.c \
+                     ../fortran/mfsdff.f
 libmfhdf_a_CPPFLAGS = ${INCLUDES} ${DEFINES} @CPPFLAGS@
 include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h 
