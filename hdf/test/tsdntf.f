@@ -2,8 +2,8 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.3  1992/06/26 20:37:01  chouck
-C Changed output names
+C Revision 1.4  1992/06/26 20:44:33  chouck
+C Oops, filename change made lines too long
 C
 c Revision 1.2  1992/05/28  17:31:32  chouck
 c Changed output file names
@@ -115,7 +115,7 @@ C  individual files
       err = 0
       do 410 i=1,10
           do 400 j=1,10
-  	    if (i16(i,j).ne.ti16(i,j)) err = 1
+   	    if (i16(i,j).ne.ti16(i,j)) err = 1
   	    ti16(i,j) = 0
   400     continue
   410 continue
@@ -142,29 +142,29 @@ C
       print *, 'Error values: '
 C
       err = dssnt(DFNT_FLOAT64)
-      print *,'Add float64 returns: ',dsadata('tsdntf.hdf',rank,dims,f64)
+      print *,'Add float64 ret: ',dsadata('ntf.hdf',rank,dims,f64)
 
       err = dssnt(DFNT_FLOAT32)
-      print *,'Add float32 returns: ',dsadata('tsdntf.hdf',rank,dims,f32)
+      print *,'Add float32 ret: ',dsadata('ntf.hdf',rank,dims,f32)
 
       err = dssnt(DFNT_INT8)
-      print *, 'Add int8 returns: ', dsadata('tsdntf.hdf', rank, dims, i8)
+      print *, 'Add int8 ret: ', dsadata('ntf.hdf', rank, dims, i8)
 
       err = dssnt(DFNT_INT16)
-      print *, 'Add int16 returns: ', dsadata('tsdntf.hdf', rank, dims, i16)
+      print *, 'Add int16 ret: ', dsadata('ntf.hdf', rank, dims, i16)
 
       err = dssnt(DFNT_INT32)
-      print *, 'Add int32 returns: ', dsadata('tsdntf.hdf', rank, dims, i32)
+      print *, 'Add int32 ret: ', dsadata('ntf.hdf', rank, dims, i32)
 
 C 
       print *, 'Reading arrays from single file... '
       print *, 'Error values: '
 C
-      print *, 'Get f64 returns: ', dsgdata('tsdntf.hdf', rank, dims, tf64)
-      print *, 'Get f32 returns: ', dsgdata('tsdntf.hdf', rank, dims, tf32)
-      print *, 'Get int8 returns: ', dsgdata('tsdntf.hdf', rank, dims, ti8)
-      print *, 'Get int16 returns: ', dsgdata('tsdntf.hdf', rank, dims, ti16)
-      print *, 'Get int32 returns: ', dsgdata('tsdntf.hdf', rank, dims, ti32)
+      print *, 'Get f64 ret: ', dsgdata('ntf.hdf', rank, dims, tf64)
+      print *, 'Get f32 ret: ', dsgdata('ntf.hdf', rank, dims, tf32)
+      print *, 'Get int8 ret: ', dsgdata('ntf.hdf', rank, dims, ti8)
+      print *, 'Get int16 ret: ', dsgdata('ntf.hdf', rank, dims, ti16)
+      print *, 'Get int32 ret: ', dsgdata('ntf.hdf', rank, dims, ti32)
 
 C 
       print *, 'Checking arrays from single file...\n\n'
