@@ -14,7 +14,7 @@ fortest_SOURCES = fortest.c
 fortest_LDADD = ../src/libdf.a
 fortest_DEPENDENCIES = testdir fortestF ../src/libdf.a
 
-fortestF_SOURCES = forsubff.f forsupf.c fortestF.f manf.f mgrf.f slabwf.f   \
+fortestF_SOURCES = forsupff.f forsupf.c fortestF.f manf.f mgrf.f slabwf.f   \
                    t24f.f tanf.f tanfilef.f tpf.f tr8f.f tsdmmsf.f          \
                    tsdnmmsf.f tsdnntf.f tsdntf.f tsdstrf.f tstubsf.f        \
                    tvattrf.f tvsetf.f
