@@ -17,6 +17,9 @@
 #endif
 
 #ifndef       NO_SYS_XDR_INC
+#ifdef VMS
+#    define  STDC_INCLUDES
+#endif   /* VMS */
 #include	<rpc/types.h>
 #include	<rpc/xdr.h>
 #else
