@@ -424,14 +424,38 @@ PRIVATE int32 HLIstaccess(access_rec, access)
     access_rec->access = access;
     dd = &access_rec->block->ddlist[access_rec->idx];
 
-    /* if the special information are already in some other acc elt,
-       copy it */
+    /* 
+     * Lets free old special info first,if one exists, 
+     * before copying a new one
+     */
+    if (access_rec->special_info != NULL) 
+      { /* special information record */
+        linkinfo_t *info = (linkinfo_t *)access_rec->special_info;
 
+        if (--(info->attached) == 0) 
+          {
+           link_t *link;           /* current link to free */
+           link_t *next;           /* next link to free */
+
+           /* free the linked list of links/block tables */
+           for (link = info->link; link; link = next) 
+             {
+               next = link->next;
+               HDfreespace((VOIDP) link->block_list);
+               HDfreespace((VOIDP) link);
+             }
+           HDfreespace((VOIDP) info);
+           access_rec->special_info = NULL;
+         }
+      }
+
+    /* if the special information are already in some other acc elt,
+       point to it */
     access_rec->special_info = HIgetspinfo(access_rec, dd->tag, dd->ref);
     if (access_rec->special_info) {
         ((linkinfo_t *)access_rec->special_info)->attached++;
         file_rec->attach++;
-        return ASLOT2ID(access_rec-access_records);
+        return ASLOT2ID(access_rec - access_records);
     }
 
     /* read in the information from file */
@@ -867,7 +891,7 @@ int32 HLPwrite(access_rec, length, datap)
 
     /* validate length and file records */
 
-    if (length < 0)
+    if (length <= 0)
        HRETURN_ERROR(DFE_RANGE,FAIL);
     if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0)
        HRETURN_ERROR(DFE_INTERNAL,FAIL);
@@ -1308,6 +1332,7 @@ int32 HLPendaccess(access_rec)
        }
 
        HDfreespace((VOIDP) info);
+       access_rec->special_info = NULL;
     }
 
     /* detach from the file */

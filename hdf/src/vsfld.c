@@ -222,6 +222,7 @@ char    *fields;
         return(SUCCEED); /* ok */
     } /* writing to empty vdata */
     
+
     /*
      *   No matter the access mode, if there are elements in the VData
      *      we should set the read list

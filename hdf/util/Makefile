@@ -74,3 +74,6 @@ utils: $(UTILS) $(HDFLIB)/libdf.a
 
 clean:
 	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed
+
+distclean:
+	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed

@@ -687,6 +687,7 @@ int32 vkey;
             HDfreespace((VOIDP)vs);
         }
 #endif
+
         if(w->nattach == 0) {
             Hendaccess (vs->aid);
             vs->aid = NO_ID;

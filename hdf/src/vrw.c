@@ -314,6 +314,7 @@ printf("C: from : %d  to: %d esize: %d isize: %d order: %d nt: %d\n",
             b2    = Vtbuf + w->off[i] * nelt;
             type  = w->type[i];
             isize = w->isize[i];
+            esize = w->esize[i];
             order = w->order[i];
             
             /* Drrr ? */
@@ -471,6 +472,7 @@ uint8        buf[];
             b2    = Vtbuf + w->off[j];
             type  = w->type[j];
             esize = w->esize[j];
+            isize = w->isize[j];
             order = w->order[j];
             
             /* Awww ? */

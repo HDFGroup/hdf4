@@ -138,7 +138,7 @@ main(argc, argv)
     dimsizes[0] = nimg0;
     dimsizes[1] = w;
     dimsizes[2] = h;
-    ret = DFSDadddata(outfile, 3, dimsizes, outdata0);
+    ret = DFSDadddata(outfile, 3, dimsizes, (VOIDP)outdata0);
     if (ret != 0)
         finishing();
     return(0);

@@ -39,6 +39,7 @@ static char RcsId[] = "@(#)$Revision$";
 #include <stdio.h>
 #include <string.h>
 #include "hdf.h"
+#include "herr.h"
 #include "hfile.h"
 
 typedef struct mydd_t {

@@ -196,7 +196,7 @@ uint16 compress;
         exit(1);
     }
 
-    if (fread(space, (int) xdim, (int) ydim, fp) <= 0) {
+    if ((ret = fread(space, (int) xdim, (int) ydim, fp))<=0) {
         printf("Cannot read image file\n");
         fclose(fp);
         exit(1);

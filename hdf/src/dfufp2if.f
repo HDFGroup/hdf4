@@ -31,7 +31,7 @@ C      hscale,vscale: optional horizontal and vertical scales
 C      data:       input data
 C      palette:    optional palette to be stored with the image
 C      outfile:n   name of hdf file to store image in
-C      ct_method:  color transform method: 1=EXPAND; 2=INTERP
+C      ctmethod:  color transform method: 1=EXPAND; 2=INTERP
 C      hres, vres: resolutions desired for output image
 C      compress:   compression flag: 0=don't; 1=do
 C  Returns: 0 on success, -1 on failure with DFerror set
@@ -42,16 +42,16 @@ C----------------------------------------------------------------------------
 
 
       integer function duf2im(hdim,vdim,max,min,hscale,vscale,data,
-     *                palette,outfile,ct_method,hres,vres,compress)
+     *                palette,outfile,ctmethod,hres,vres,compress)
 
       integer       hdim, vdim
       real          max, min, hscale, vscale, data
       character*(*) palette
       character*(*) outfile
-      integer       ct_method, hres, vres, compress
+      integer       ctmethod, hres, vres, compress
 
       duf2im = duif2i(hdim,vdim,max,min,hscale,vscale,data,palette,
-     *              outfile,ct_method,hres,vres,compress, len(outfile))        
+     *              outfile,ctmethod,hres,vres,compress, len(outfile))        
       return
       end
 
@@ -67,7 +67,7 @@ C      hscale,vscale: optional horizontal and vertical scales
 C      data:       input data
 C      palette:    optional palette to be stored with the image
 C      outfile:n   name of hdf file to store image in
-C      ct_method:  color transform method: 1=EXPAND; 2=INTERP
+C      ctmethod:  color transform method: 1=EXPAND; 2=INTERP
 C      hres, vres: resolutions desired for output image
 C      compress:   compression flag: 0=don't; 1=do
 C  Returns: 0 on success, -1 on failure with DFerror set
@@ -78,17 +78,17 @@ C----------------------------------------------------------------------------
 
 
       integer function dfufptoimage(hdim,vdim,max,min,hscale,vscale,
-     *           data, palette,outfile,ct_method,hres,vres,compress)
+     *           data, palette,outfile,ctmethod,hres,vres,compress)
 
       integer       hdim, vdim
       real          max, min, hscale, vscale, data
       character*(*) palette
       character*(*) outfile
-      integer       ct_method, hres, vres, compress
+      integer       ctmethod, hres, vres, compress
 
       dfufptoimage = 
      *             duif2i(hdim,vdim,max,min,hscale,vscale,data,palette,
-     *              outfile,ct_method,hres,vres,compress, len(outfile))        
+     *              outfile,ctmethod,hres,vres,compress, len(outfile))        
       return
       end
 

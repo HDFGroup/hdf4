@@ -61,7 +61,7 @@ MACHINE=HP9000
 
 # Define your C compiler and flags
 CC= cc
-CFLAGS= -Aa -D_HPUX_SOURCE -D${MACHINE} -O
+CFLAGS= -Aa -D_HPUX_SOURCE -D${MACHINE}  -O
 
 # Define your FORTRAN compiler
 FC= f77
@@ -155,6 +155,12 @@ clean:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
           SUBDIRS="src util test" _sub
 	$(RM) $(RMFLAGS) core *.log
+
+distclean:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
+          SUBDIRS="src util test" _sub
+	$(RM) $(RMFLAGS) core *.log
+	$(RM) -rf bin lib include
 
 _sub:
 	@for dir in $(SUBDIRS); do \

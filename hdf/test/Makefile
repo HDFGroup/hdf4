@@ -122,8 +122,6 @@
 #
 # ##################################################################
 # ==> specify your machine
-#MACHINE=IBM6000
-#MACHINE=HP9000
 MACHINE=SUN
 
 # ==> specify your fortran compiler  (Convex: fc)
@@ -131,7 +129,6 @@ FC=f77
 FFLAGS=  -g
 
 # ==> specify your C compiler
-#CC=gct -test-dir ../src
 CC=cc
 
 # ==> where are your hdf.h, hdfi.h and vg.h files located?
@@ -175,6 +172,8 @@ all: testhdf fortest #gentest
 
 nofortran: testhdf
 
+debug: ptesthdf
+
 #.c.o: 
 #	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
 #
@@ -203,7 +202,10 @@ ftests: $(FTESTS)
 
 clean: 
 	 -$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) fortest core \
-	qtesthdf ptesthdf gentest
+	ptesthdf qtesthdf gentest
+
+distclean: 
+	 -$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) fortest core *.hdf
 
 depend: 
 	 makedepend -I$(HDFINC) *.c

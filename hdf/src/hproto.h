@@ -547,48 +547,48 @@ extern uint16 DF24lastref
 extern int32 DFANgetlablen
     PROTO((char _HUGE *filename, uint16 tag, uint16 ref));
 
-extern int DFANgetlabel
+extern intn DFANgetlabel
     PROTO((char _HUGE *filename, uint16 tag, uint16 ref, char _HUGE *label,
             int32 maxlen));
 
 extern int32 DFANgetdesclen
     PROTO((char _HUGE *filename, uint16 tag, uint16 ref));
 
-extern int DFANgetdesc
+extern intn DFANgetdesc
     PROTO((char _HUGE *filename, uint16 tag, uint16 ref, char _HUGE *desc,
             int32 maxlen));
 
 extern int32 DFANgetfidlen
-    PROTO((int32 file_id, int isfirst));
+    PROTO((int32 file_id, intn isfirst));
 
 extern int32 DFANgetfid
-    PROTO((int32 file_id, char _HUGE *id, int32 maxlen, int isfirst));
+    PROTO((int32 file_id, char _HUGE *id, int32 maxlen, intn isfirst));
 
 extern int32 DFANgetfdslen
-    PROTO((int32 file_id, int isfirst));
+    PROTO((int32 file_id, intn isfirst));
 
 extern int32 DFANgetfds
-    PROTO((int32 file_id, char _HUGE *desc, int32 maxlen, int isfirst));
+    PROTO((int32 file_id, char _HUGE *desc, int32 maxlen, intn isfirst));
 
-extern int DFANputlabel
+extern intn DFANputlabel
     PROTO((char _HUGE *filename, uint16 tag, uint16 ref, char _HUGE *label));
 
-extern int DFANputdesc
+extern intn DFANputdesc
     PROTO((char _HUGE *filename, uint16 tag, uint16 ref, char _HUGE *desc,
             int32 desclen));
 
-extern int DFANaddfid
+extern intn DFANaddfid
     PROTO((int32 file_id, char _HUGE *id));
 
-extern int DFANaddfds
+extern intn DFANaddfds
     PROTO((int32 file_id, char _HUGE *desc, int32 desclen));
 
 extern uint16 DFANlastref
     PROTO((void));
 
-extern int DFANlablist
+extern intn DFANlablist
     PROTO((char _HUGE *filename, uint16 tag, uint16 _HUGE reflist[],
-            char _HUGE *labellist, int listsize, int maxlen, int startpos));
+            char _HUGE *labellist, intn listsize, intn maxlen, intn startpos));
 
 extern uint16 DFANIlocate
   PROTO((int32 file_id, int type, uint16 tag, uint16 ref));
@@ -744,7 +744,6 @@ extern int DFSDendslab
 extern int DFSDreadslab
     PROTO((char *filename, int32 _HUGE start[], int32 _HUGE slab_size[], 
            int32 _HUGE stride[], VOIDP buffer, int32 _HUGE buffer_size[]));
-
 
 /*
 ** from dfconv.c
@@ -1218,6 +1217,7 @@ extern FRETVAL(intf) ndfr8sjpeg
 #   define ndsisslab         FNAME(DSISSLAB)
 #   define ndswslab          FNAME(DSWSLAB)
 #   define ndseslab          FNAME(DSESLAB)
+#   define ndsirslab         FNAME(DSIRSLAB)
 #else
 #   define ndsgdast  FNAME(dsgdast)
 #   define ndsgdisc  FNAME(dsgdisc)
@@ -1272,6 +1272,7 @@ extern FRETVAL(intf) ndfr8sjpeg
 #   define ndsisslab         FNAME(dsisslab)
 #   define ndswslab          FNAME(dswslab)
 #   define ndseslab          FNAME(dseslab)
+#   define ndsirslab         FNAME(dsirslab)
 #endif /* DF_CAPFNAMES */
 #endif  /* DFSD_FNAMES */
 
@@ -1528,7 +1529,7 @@ extern FRETVAL(intf) ndfplastref
 #   define nd2igimg  FNAME(D2IGIMG)
 #   define nd2iaimg  FNAME(D2IAIMG)
 #   define nd2irref  FNAME(D2IRREF)
-#   define nd24lref  FNAME(D24LREF)
+#   define nd2lref   FNAME(D2LREF)
 #   define nd2scomp  FNAME(D2SCOMP)
 #   define ndf24scompress FNAME(DF24SCOMPRESS)
 #   define nd2sjpeg  FNAME(D2SJPEG)
@@ -1546,7 +1547,7 @@ extern FRETVAL(intf) ndfplastref
 #   define nd2igimg  FNAME(d2igimg)
 #   define nd2iaimg  FNAME(d2iaimg)
 #   define nd2irref  FNAME(d2irref)
-#   define nd24lref  FNAME(d24lref)
+#   define nd2lref   FNAME(d2lref)
 #   define nd2scomp  FNAME(d2scomp)
 #   define ndf24scompress FNAME(df24scompress)
 #   define nd2sjpeg  FNAME(d2sjpeg)
@@ -1593,7 +1594,7 @@ extern FRETVAL(intf) ndf24restart
 extern FRETVAL(intf) nd2irref
     PROTO((_fcd filename, intf _HUGE *ref, intf _HUGE *fnlen));
 
-extern FRETVAL(intf) nd24lref
+extern FRETVAL(intf) nd2lref
     PROTO((void));
 
 extern FRETVAL(intf) nd2scomp

@@ -108,7 +108,6 @@ extern funclist_t comp_funcs;
 functab_t functab[] = {
     {SPECIAL_LINKED, &linked_funcs},
     {SPECIAL_EXT, &ext_funcs},
-    {SPECIAL_COMP, &comp_funcs},
     {0, NULL}                  /* terminating record; add new record */
                                /* before this line */
 };
@@ -897,6 +896,7 @@ int32 Hstartwrite(file_id, tag, ref, length)
     access_rec->idx = -1;
     access_rec->appendable=FALSE;   /* start data as non-appendable */
     access_rec->flush=FALSE;        /* start data as not needing flushing */
+    access_rec->special_info = NULL;
     if (HIlookup_dd(file_rec, tag, ref, &access_rec->block, &access_rec->idx)
             == FAIL) {  /* dd not found, so have to create new element */
 
@@ -1218,7 +1218,7 @@ int32 Hread(access_id, length, data)
     
     /* special elt, so call special function */
     if (access_rec->special)
-        return (*access_rec->special_func->read)(access_rec, length, (VOIDP) data);
+      return (*access_rec->special_func->read)(access_rec, length, (VOIDP) data);
 
     /* check validity of file record */
     file_rec = FID2REC(access_rec->file_id);
@@ -3194,7 +3194,6 @@ int HInew_dd_block(file_rec, ndds, FUNC)
  DESCRIPTION
         Fill in a file record with data from the file, especially
         the data descriptors.
-
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
 PRIVATE int HIfill_file_rec(filerec_t *file_rec, char *FUNC)
