@@ -8,7 +8,7 @@ FULL DUMP
 
 FILE: egfhi.hdf
 
-vg:0 <1965/5> (vgroup with 3 vdatas (fortran)<Ð {test}) has 3 entries:
+vg:0 <1965/5> (vgroup with 3 vdatas (fortran) {test}) has 3 entries:
   vs:0 <1962/2> nv=100 i=0 fld [MP] vsize=4 (melting-points {test})
 0: fld [MP], type=5, order=1
 501.001007  502.002014  503.002991  504.003998  505.005005  506.006012  
