@@ -199,23 +199,28 @@ fmtfloat64(VOIDP x, file_type_t ft, FILE * ofp)
 }
 
 int32 
-dumpfull(int32 nt, file_type_t ft, int32 cnt, VOIDP databuf, intn indent, FILE * ofp)
+dumpfull(int32 nt, 
+         file_type_t ft, 
+         int32 cnt, 
+         VOIDP databuf, 
+         intn indent, 
+         FILE * ofp)
 {
-    intn        i;
-    VOIDP       b;
-    intn        (*fmtfunct) (VOIDP, file_type_t, FILE *) = NULL;
-    int32       off;
-    intn        cn;
-   
+    intn    i;
+    VOIDP   b = NULL;
+    intn    (*fmtfunct) (VOIDP, file_type_t, FILE *) = NULL;
+    int32   off;
+    intn    cn;
+    intn    ret_value = SUCCEED;
 
     switch (nt & 0xff )
       {
       case DFNT_CHAR:
-        /*  if(ft==DASCII)   */
+          /*  if(ft==DASCII)   */
           fmtfunct = fmtchar;
           break;
       case DFNT_UCHAR:
-      /*  if(ft==DASCII)   */
+          /*  if(ft==DASCII)   */
           fmtfunct = fmtuchar8;
           break;
       case DFNT_UINT8:
@@ -244,56 +249,65 @@ dumpfull(int32 nt, file_type_t ft, int32 cnt, VOIDP databuf, intn indent, FILE *
           break;
       default:
           fprintf(ofp, "HDP does not support type [%d] \n", (int) nt);
+          ret_value = FAIL;
+          goto done;
           break;
       }		/* end switch */
+
     b = databuf;
     off = DFKNTsize(nt | DFNT_NATIVE);
     cn = indent;
 
-    if(ft==DASCII)
-     {
-    if (nt != DFNT_CHAR)
+    if(ft == DASCII)
       {
-          for (i = 0; i < cnt; i++)
+          if (nt != DFNT_CHAR)
             {
-                cn += fmtfunct(b, ft, ofp);
-                b = (char *) b + off;
-                putc(' ', ofp);
-                cn++;
-                if (cn > 65)
+                for (i = 0; i < cnt; i++)
                   {
-                      putc('\n', ofp);
-                      for (cn = 0; cn < indent; cn++)
-                          putc(' ', ofp);
-                  }		/* end if */
-            }	/* end for */
-      }		/* end if */
-    else
-            /* DFNT_CHAR */
-      {
-          for (i = 0; i < cnt; i++)
+                      cn += fmtfunct(b, ft, ofp);
+                      b = (char *) b + off;
+                      putc(' ', ofp);
+                      cn++;
+                      if (cn > 65)
+                        {
+                            putc('\n', ofp);
+                            for (cn = 0; cn < indent; cn++)
+                                putc(' ', ofp);
+                        }		/* end if */
+                  }	/* end for */
+            }		/* end if */
+          else
+              /* DFNT_CHAR */
             {
-                cn += fmtfunct(b, ft, ofp);
-                b = (char *) b + off;
-                if (cn > 65)
+                for (i = 0; i < cnt; i++)
                   {
-                      putc('\n', ofp);
-                      for (cn = 0; cn < indent; cn++)
-                          putc(' ', ofp);
-                  }		/* end if */
-            }	/* end for */
-      }		/* end else */
-    putc('\n', ofp);
-     }       /* end DASCII  */
+                      cn += fmtfunct(b, ft, ofp);
+                      b = (char *) b + off;
+                      if (cn > 65)
+                        {
+                            putc('\n', ofp);
+                            for (cn = 0; cn < indent; cn++)
+                                putc(' ', ofp);
+                        }		/* end if */
+                  }	/* end for */
+            }		/* end else */
+          putc('\n', ofp);
+      }       /* end DASCII  */
     else         /*  binary   */
-     {
-         for (i = 0; i < cnt; i++)
+      {
+          for (i = 0; i < cnt; i++)
             {
                 cn += fmtfunct(b, ft, ofp);
                 b = (char *) b + off;
                 cn++;
             }
-     }
+      }
 
-    return (0);
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+      }
+    /* Normal cleanup */
+
+    return ret_value;
 }

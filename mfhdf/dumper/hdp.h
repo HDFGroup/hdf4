@@ -189,19 +189,23 @@ typedef struct
 objlist_t;
 
 /* hdp_list.c */
-extern void do_list(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts);
+extern intn print_data_labels(const char *fname, int32 an_id, uint16 tag, uint16 ref);
+extern intn print_data_descs(const char *fname, int32 an_id, uint16 tag, uint16 ref);
+extern intn print_all_data_labels(const char *fname, int32 an_id);
+extern intn print_all_data_descs(const char *fname, int32 an_id);
+extern intn do_list(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts);
 
 /* hdp_sds.c */
-extern void do_dumpsds(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts);
+extern intn do_dumpsds(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts);
 
 /* hdp_rig.c */
 extern void do_dumprig(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts);
 
 /* hdp_vg.c */
-extern void do_dumpvg(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts);
+extern intn do_dumpvg(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts);
 
 /* hdp_vd.c */
-extern void do_dumpvd(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts);
+extern intn do_dumpvd(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts);
 extern intn parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn argc,
               char *argv[], char *flds_chosen[MAXCHOICES], int *dumpallfields);
 
@@ -226,6 +230,9 @@ extern intn fmtfloat64(VOIDP x, file_type_t ft, FILE * ofp);
 extern int32 dumpfull(int32 nt, file_type_t ft, int32 cnt, VOIDP databuf, intn indent, FILE * ofp);
 
 /* show.c */
+extern int32 dumpvd(int32 vd, file_type_t ft, int data_only, FILE *fp, 
+                    char separater[2],int32 flds_indices[VSFIELDMAX], 
+                    int dumpallfields);
 extern intn dumpattr(int32 vid, int32 findex, intn isvs, file_type_t ft, FILE *fp);
 
 /* hdp_util.c */

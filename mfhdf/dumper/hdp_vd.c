@@ -21,20 +21,9 @@ static char RcsId[] = "@(#)$Revision$";
 #include <math.h>
 #endif /* MIPSEL */
 
-static intn dvd(dump_info_t * dumpvd_opts, intn curr_arg, intn argc,
-				char *argv[], char *flds_chosen[],
-				int dumpallfields);
-
-int32       dumpvd(int32 vd_id, file_type_t ft, int data_only, FILE * fp, char sep[2],
-				   int32 flds_indices[MAXCHOICES], int dumpallfields);
-
-int32       VSref_index(int32 file_id, int32 vd_ref);
-
-int32       VSstr_index(int32 file_id, char *filter_str,
-						int name, int32 *find_ref, int32 *index);
-
 void 
-dumpvd_usage(intn argc, char *argv[])
+dumpvd_usage(intn argc, 
+             char *argv[])
 {
 	printf("Usage:\n");
 	printf("%s dumpvd [-a|-i <index>|-n <name>|-r <ref>] [-dhv] [-o <filename> [-bx]] <filelist>\n", argv[0]);
@@ -51,7 +40,7 @@ dumpvd_usage(intn argc, char *argv[])
 }	/* end list_usage() */
 
 void 
-init_dumpvd_opts(dump_info_t * dumpvd_opts)
+init_dumpvd_opts(dump_info_t *dumpvd_opts)
 {
 	dumpvd_opts->filter = DALL;		   /* default dump all Vdatas */
 	dumpvd_opts->filter_num=NULL;      /* not by reference nor by index */
@@ -63,10 +52,14 @@ init_dumpvd_opts(dump_info_t * dumpvd_opts)
 	HDstrcpy(dumpvd_opts->file_name, "\0");
 }	/* end init_list_opts() */
 
+/* exported */
 intn 
-parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn argc,
-                  char *argv[], char *flds_chosen[MAXCHOICES],
-                  int *dumpallfields)
+parse_dumpvd_opts(dump_info_t *dumpvd_opts, 
+                  intn *curr_arg, 
+                  intn  argc,
+                  char *argv[], 
+                  char *flds_chosen[MAXCHOICES],
+                  int  *dumpallfields)
 {
     int32       i, lastItem, numItems;
     char       *tempPtr, *ptr;
@@ -104,8 +97,8 @@ parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn argc,
                 dumpvd_opts->filter_num = (int *) HDmalloc(sizeof(intn) * numItems);
                 if (dumpvd_opts->filter_num == NULL)
                   {
-                      printf("Not enough memory!\n");
-                      exit(-1);
+                      fprintf(stderr,"Not enough memory!\n");
+                      return FAIL;
                   }
                 ptr = argv[*curr_arg];
                 i = 0;
@@ -143,8 +136,8 @@ parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn argc,
                     /* allocate space for the array */
                 if ((dumpvd_opts->filter_str = (char **) HDmalloc(sizeof(char *) * (numItems+1))) == NULL)
                   {
-                      printf("Not enough memory!\n");
-                      exit(-1);
+                      fprintf(stderr,"Not enough memory!\n");
+                      return FAIL;
                   }
                 dumpvd_opts->filter_str[numItems] = NULL;
 
@@ -155,8 +148,8 @@ parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn argc,
                       *tempPtr = '\0';
                       if ((dumpvd_opts->filter_str[i] = (char *) HDmalloc(sizeof(char) * (HDstrlen(ptr) + 1))) == NULL)
                         {
-                            printf("Not enough memory!\n");
-                            exit(-1);
+                            fprintf(stderr,"Not enough memory!\n");
+                            return FAIL;
                         }
                       HDstrcpy(dumpvd_opts->filter_str[i], ptr);
                       ptr = tempPtr + 1;
@@ -166,8 +159,8 @@ parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn argc,
                     /* Get the last string */
                 if ((dumpvd_opts->filter_str[i] = (char *) HDmalloc(sizeof(char) * (HDstrlen(ptr) + 1))) == NULL)
                   {
-                      printf("Not enough memory!\n");
-                      exit(-1);
+                      fprintf(stderr,"Not enough memory!\n");
+                      return FAIL;
                   }
                 HDstrcpy(dumpvd_opts->filter_str[i], ptr);
                 dumpvd_opts->num_chosen = numItems;	/* save the number of items */
@@ -195,8 +188,8 @@ parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn argc,
                             flds_chosen[i] = (char *) HDmalloc(sizeof(char) * (HDstrlen(ptr)+1));
                             if (flds_chosen[i] == NULL)
                               {
-                                  printf("Not enough memory!\n");
-                                  exit(-1);
+                                  fprintf(stderr,"Not enough memory!\n");
+                                  return FAIL;
                               }
                             HDstrcpy(flds_chosen[i], ptr);
                             ptr = tempPtr + 1;
@@ -247,46 +240,97 @@ parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn argc,
     return (SUCCEED);
 }	/* end parse_dumpvd_opts */
 
-void 
-do_dumpvd(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts)
+
+static int32 
+VSref_index(int32 file_id, 
+            int32 vd_ref)
 {
-    dump_info_t dumpvd_opts;	/* dumpvd options */
-    char       *flds_chosen[MAXCHOICES];
-    int         dumpallfields;
+    int32  find_ref = -1;
+    int    index    = 0; /* index is zero based? */
+    int32  ret_value = FAIL;   
 
-    flds_chosen[0] = NULL;
-    dumpallfields = 1;
-    if (glob_opts->help == TRUE)
+    while ((find_ref = VSgetid(file_id, find_ref)) != FAIL)
       {
-          dumpvd_usage(argc, argv);
-          return;
-      }		/* end if */
+          if (find_ref == vd_ref)
+            {
+              ret_value = index;
+              goto done; /* found, done */
+            }
+          index++;
+      }
 
-    init_dumpvd_opts(&dumpvd_opts);
-    if (parse_dumpvd_opts(&dumpvd_opts, &curr_arg, argc, argv, flds_chosen, &dumpallfields) == FAIL)
-      {
-          dumpvd_usage(argc, argv);
-          return;
-      }		/* end if */
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+      }
+    /* Normal cleanup */
+    
+    return ret_value;
+}	/* VSref_index */
 
-    if (dvd(&dumpvd_opts, curr_arg, argc, argv, flds_chosen, dumpallfields) == FAIL)
-      {
-          printf("Failure in dumping Vdata data\n");
-          exit(1);
-      } 
-
-	if(dumpvd_opts.filter_num != NULL)
-	  HDfree(dumpvd_opts.filter_num);
-
-}	/* end do_dumpvd() */
-
-void 
-choose_vd(dump_info_t * dumpvd_opts, int32 **vd_chosen,
-          int32 *num_vd_chosen, int32 file_id, int *index_error)
+static int32 
+VSstr_index(int32 file_id, 
+            char *filter_str,
+            int   name, 
+            int32 *find_ref, 
+            int32 *index)
 {
-    int32       i;
-    int32 k = 0;
-    int32 index, find_ref, number;
+    int32  vdata_id = FAIL;
+    char   vdata_name[MAXNAMELEN];
+    int32  ret_value = FAIL;
+
+    while ((*find_ref = VSgetid(file_id, *find_ref)) != FAIL)
+      {
+          vdata_id = VSattach(file_id, *find_ref, "r");
+          if (FAIL == vdata_id)
+              goto done; /* FAIL */
+
+          if (name)
+            {
+              if (FAIL == VSgetname(vdata_id, vdata_name))
+                  goto done; /* FAIL */
+            }
+          else
+            {
+              if (FAIL == VSgetclass(vdata_id, vdata_name))
+                  goto done; /* FAIL */
+            }
+
+          if (FAIL == VSdetach(vdata_id))
+              goto done; /* FAIL */
+
+          if (HDstrcmp(vdata_name, filter_str) == 0)
+            {
+              ret_value = (*index);
+              goto done; /* succeeded */
+            }
+
+          (*index)++;
+      } /* end while getting vdatas */
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+      }
+    /* Normal cleanup */
+    
+    return ret_value;
+} /* VSstr_index() */
+
+
+static intn
+choose_vd(dump_info_t * dumpvd_opts, 
+          int32 **vd_chosen,
+          int32 *num_vd_chosen, 
+          int32 file_id, 
+          int *index_error)
+{
+    int32  i;
+    int32  k = 0;
+    int32  index;
+    int32  find_ref;
+    int32  number;
+    intn   ret_value = SUCCEED;
 
     switch (dumpvd_opts->filter)
       {		/* Determine which VDs have been chosen. */
@@ -302,10 +346,10 @@ choose_vd(dump_info_t * dumpvd_opts, int32 **vd_chosen,
           for (i = 0; i<dumpvd_opts->num_chosen; i++)
             {
                 index = VSref_index(file_id, dumpvd_opts->filter_num[i]);
-                if (index == -1)
+                if (index == FAIL)
                   {
                       printf("Vdata with reference number %d: not found\n", dumpvd_opts->filter_num[i]);
-                      *index_error = 1;
+                      *index_error = 1; /* index error */
                   }
                 else
                   {
@@ -321,7 +365,7 @@ choose_vd(dump_info_t * dumpvd_opts, int32 **vd_chosen,
                 find_ref = -1;
                 number = 0;
                 index = VSstr_index(file_id, dumpvd_opts->filter_str[i], 1, &find_ref, &number);
-                if (index == -1)
+                if (index == FAIL)
                   {
                       printf("Vdata with name %s: not found\n", dumpvd_opts->filter_str[i]);
                       *index_error = 1;
@@ -342,7 +386,7 @@ choose_vd(dump_info_t * dumpvd_opts, int32 **vd_chosen,
                 find_ref = -1;
                 number = 0;
                 while ((index = VSstr_index(file_id, dumpvd_opts->filter_str[i], 0,
-                                            &find_ref, &number)) != -1)
+                                            &find_ref, &number)) != FAIL)
                   {
                       if (k < (int32)(*num_vd_chosen))
                           (*vd_chosen)[k] = index;
@@ -350,8 +394,9 @@ choose_vd(dump_info_t * dumpvd_opts, int32 **vd_chosen,
                         {
                             if ((*vd_chosen = (int32 *) HDrealloc(*vd_chosen,sizeof(int32) * (*num_vd_chosen+1))) == NULL)
                               {
-                                  printf("Memory re-allocation error\n");
-                                  exit(1);
+                                  fprintf(stderr,"Memory re-allocation error\n");
+                                  ret_value = FAIL;
+                                  goto done;
                               }		/* end if */
                             (*vd_chosen)[k] = index;
                             (*num_vd_chosen)++;
@@ -362,7 +407,7 @@ choose_vd(dump_info_t * dumpvd_opts, int32 **vd_chosen,
                 if (!found)
                   {
                       printf("Vdata with class %s: not found\n", dumpvd_opts->filter_str[i]);
-                      *index_error = 1;
+                      *index_error = 1; /* index error */
                   }
             }	/* for */
           break;
@@ -371,45 +416,553 @@ choose_vd(dump_info_t * dumpvd_opts, int32 **vd_chosen,
           break;
 
       case DALL:
-          k= -1;
+          k = -1;
           break;
 
       default:
           printf("Unknown filter option\n");
-          exit(1);
+          ret_value = FAIL;
+          goto done;
+          break;
       }		/* switch */
-    *num_vd_chosen=k;
+
+    *num_vd_chosen = k;
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+      }
+    /* Normal cleanup */
+
+    return ret_value;
 }	/* choose_vd */
 
-static intn 
-dvd(dump_info_t * dumpvd_opts, intn curr_arg,
-    intn argc, char *argv[], char *flds_chosen[MAXCHOICES], int dumpallfields)
+static intn
+dumpvd_ascii(dump_info_t * dumpvd_opts, 
+             int32 file_id,
+             char  *file_name,
+             int32 num_vd_chosen, 
+             char *flds_chosen[MAXCHOICES],
+             int32 *vd_chosen,
+             int dumpallfields)
 {
-    int32       file_id, vd_id, *vd_chosen=NULL, flds_indices[MAXCHOICES];
-    int32       num_vd_chosen;
+    int32       flds_indices[MAXCHOICES];
     int32       i, j, k, m, x;
-    int32       nvf, interlace, vsize, len, lastItem;
-    int32       vdata_ref = -1, vdata_tag, status;
-    char       *label_str;
-    char        vdclass[VSNAMELENMAX], vdname[VSNAMELENMAX];
+    int32       nvf;
+    int32       interlace;
+    int32       vsize;
+    int32       lastItem;
+    int32       vdata_ref = -1;
+    int32       vdata_tag;
+    char        vdclass[VSNAMELENMAX];
+    char        vdname[VSNAMELENMAX];
     char        fields[VSFIELDMAX*FIELDNAMELENMAX]; 
     char        tempflds[VSFIELDMAX*FIELDNAMELENMAX];
-    char       *tempPtr, *ptr, string[MAXNAMELEN];
+    char       *tempPtr = NULL;
+    char       *ptr = NULL;
+    char        string[MAXNAMELEN];
+    FILE       *fp = NULL;
+    intn        dumpall = 0;
+    file_type_t ft;
+    int32       vd_id = FAIL;
+    int32       an_handle   = FAIL;
+    intn        ret_value = SUCCEED;
+
+    /* set output file */
+    if (dumpvd_opts->dump_to_file)
+        fp = fopen(dumpvd_opts->file_name, "w");
+    else
+        fp = stdout;
+
+    if (dumpvd_opts->contents != DDATA)
+        fprintf(fp, "File name: %s \n\n", file_name);
+
+    x = 0;	/* "x" is used to index the array of "vd_chosen". */
+
+    /* Determine if all VDs are to be dumped out. */
+    if (num_vd_chosen <= 0)	/* If so, set the corresponding flag. */
+        dumpall = 1;
+    else
+      {
+          /* Otherwise, sort the indices of the chosen VDs in increasing 
+             order so that they will be dumped out in such order. */
+          sort(vd_chosen,num_vd_chosen);
+      }
+
+    /* Examine each VD. */
+    for (i = 0; (vdata_ref = VSgetid(file_id, vdata_ref)) != -1 && (dumpall!=0 || x<dumpvd_opts->num_chosen); i++)
+      {
+          int  data_only;
+          int  flds_match = 0;
+          char sep[2];
+
+          /* Only dump the info of the chosen VDs or all of the VDs if none
+             has been selected. */
+          if ((!dumpall) && (i != vd_chosen[x]))
+              continue; /* skip */
+
+          x++;	/* One vdata has been located; so go to the next one in 
+                   the array. */
+          vd_id = VSattach(file_id, vdata_ref, "r");
+          if (vd_id == FAIL)
+            {
+                fprintf(stderr,"VSattach failed for vdata_ref(%d) in file %s\n", 
+                        (int) vdata_ref, file_name);
+                ret_value = FAIL;
+                goto done;
+            }
+
+          if (FAIL == VSinquire(vd_id, &nvf, &interlace, fields, &vsize, vdname))
+            {
+                fprintf(stderr,"VSinqure failed on vdid(%d) in file %s\n", 
+                        (int) vdata_ref, file_name);
+                ret_value = FAIL;
+                goto done;
+            }
+
+          if (FAIL == (vdata_tag = VSQuerytag(vd_id)))
+            {
+                fprintf(stderr,"VSQuerytag failed on vd_id(%d) in file %s\n", 
+                        (int) vdata_ref, file_name);
+                ret_value = FAIL;
+                goto done;
+            }
+
+          if (FAIL == VSgetclass(vd_id, vdclass))
+            {
+                fprintf(stderr,"VSgetclass failed on vd_id(%d) in file %s\n", 
+                        (int) vdata_ref, file_name);
+                ret_value = FAIL;
+                goto done;
+            }
+
+
+          /* If one or more fields were specified by the user, then find out
+             what they were, determine their corresponding indices in 
+             "fields", and store these indices in the array "flds_indices" so
+             that they can be used to determine whether a field should be
+             dumped later on. */
+          if (flds_chosen[0] != NULL)
+            {
+                HDstrcpy(tempflds, fields);
+                ptr = tempflds;
+
+                j=(-1);
+                HDmemfill(flds_indices, &j, sizeof(int32), MAXCHOICES);
+
+                m = 0;
+                lastItem = 0;
+                /* Extract each field name from the list of fields of the 
+                   current record. */
+                for (j = 0; !lastItem; j++)
+                  {
+                      tempPtr = HDstrchr(ptr, ',');
+                      if (tempPtr == NULL)
+                          lastItem = 1;
+                      else
+                          *tempPtr = '\0';
+                      HDstrcpy(string, ptr);
+                      ptr = tempPtr + 1;
+                      /* Compare the extracted field name with each of the names
+                         of the fields having been chosen. */
+                      for (k = 0; flds_chosen[k] != NULL; k++)
+                        {
+                            if (!HDstrcmp(flds_chosen[k], string))
+                              {
+                                  flds_indices[m] = j;
+                                  m++;
+                                  flds_match = 1;
+                              }
+                        }		/* for (k...) */
+                  }	/* for (j...) */
+            }		/* if  */
+
+          /* If no fields were chosen, all fields are to be dumped out, and
+             so all fileds match. */
+          if (flds_chosen[0] == NULL)
+              flds_match = 1;
+
+          if (flds_match)
+            {
+                int32 z;
+                int32 lastItem;
+                int32 count = 0;
+
+                switch (dumpvd_opts->contents)
+                  {
+                  case DVERBOSE:		/* dump all information */
+                      fprintf(fp, "Vdata: %d\n", (int) i);
+                      fprintf(fp, "   tag = %d; ", (int) vdata_tag);
+                      fprintf(fp, "reference = %d;\n", (int) vdata_ref);
+                      fprintf(fp, "   number of records = %d; ", (int) nvf);
+                      fprintf(fp, "interlace = %d;\n", (int) interlace);
+                      fprintf(fp, "   fields = [");
+
+                      /* The list of field names can be very long and would 
+                         look very messy when being displayed if it were to
+                         be dumped out at once. The following block of 
+                         operations is to display a list in a nice way even
+                         if the list is long. */
+                      lastItem = 0;
+                      HDstrcpy(tempflds, fields);
+                      ptr = tempflds;
+                      for (z = 0; !lastItem; z++)
+                        {
+                            tempPtr = HDstrchr(ptr, ',');
+                            if (tempPtr == NULL)
+                                lastItem = 1;
+                            else
+                                *tempPtr = '\0';
+                            HDstrcpy(string, ptr);
+                            count += HDstrlen(string);
+                            if (count > 50)
+                              {
+                                  fprintf(fp, "\n               ");
+                                  count = 0;
+                              }
+                            fprintf(fp, "%s", string);
+                            if (!lastItem)
+                                fprintf(fp, ", ");
+                            ptr = tempPtr + 1;
+                        }
+                      fprintf(fp, "];\n");
+
+                      fprintf(fp, "   record size (in bytes) = %d;\n", (int)vsize);
+                      fprintf(fp, "   name = %s; class = %s;\n", vdname, vdclass);
+
+                      /* dump attributes */
+                      if (FAIL == dumpattr(vd_id, (int32)_HDF_VDATA, 1, ft, fp))
+                        {
+                            fprintf(stderr,"Failed to print vdata attributes for vd_id(%d) in file %s\n",
+                                    (int) vd_id, file_name);
+                            ret_value = FAIL;
+                            goto done;
+                        }
+
+                      /* dump annotations */
+                      /* start Annotation inteface */
+                      if ((an_handle = ANstart(file_id)) == FAIL)
+                        {
+                            fprintf(stderr,"ANstart failed on file_id(%d) for file %s\n", 
+                                    (int)file_id, file_name);
+                            ret_value = FAIL;
+                            goto done;
+                        }
+                                  
+                      /* print labesl of vdata if any */
+                      if (FAIL == print_data_labels(file_name,an_handle,vdata_tag, vdata_ref))
+                        {
+                            fprintf(stderr,"Failed to print data labels for vdata_ref(%d) in file %s\n", 
+                                    (int) vdata_ref, file_name);
+                            ret_value = FAIL;
+                            goto done;
+                        }
+
+                      /* print descriptions of vdata if any */
+                      if (FAIL == print_data_descs(file_name,an_handle,vdata_tag, vdata_ref))
+                        {
+                            printf("Failed to print data descriptions for vdata_ref(%d) in file %s\n", 
+                                   (int) vdata_ref, file_name);
+                            ret_value = FAIL;
+                            goto done;
+                        }
+
+                      /* close annotation interface */
+                      if (FAIL == ANend(an_handle))
+                        {
+                            fprintf(stderr,"ANend failed for an_handle(%d) for file %s\n",
+                                    (int)an_handle, file_name);
+                            ret_value = FAIL;
+                            goto done;
+                        }
+
+                      an_handle = FAIL; /* reset */
+
+                      /* note we fall through */
+                  case DHEADER:	/* header only, no annotations nor data */
+                      if (dumpvd_opts->contents == DHEADER)
+                          break; /* header only we break here */
+
+                  case DDATA:	/* data only */
+                      if (dumpvd_opts->contents == DDATA)
+                        {
+                            data_only = 1;
+                            HDstrcpy(sep, "");
+                        }
+                      else
+                        {
+                            data_only = 0;
+                            HDstrcpy(sep, ";");
+                        }
+
+                      /* Only the chosen or all fields will be dumped out. */
+                      if (FAIL == dumpvd(vd_id, ft, data_only, fp, sep, flds_indices, dumpallfields))
+                        {
+                            fprintf(stderr,"Failed to dump vdata data for vd_id(%d) in file %s\n", 
+                                    (int) vdata_ref, file_name);
+                            ret_value = FAIL;
+                            goto done;
+                        }
+                      break;
+                  default:
+                      printf("dumping vdata in file %s, unknown option \n",file_name);
+                      ret_value = FAIL;
+                      goto done;
+                      break;
+                  }	/* switch */
+            }
+
+          if (FAIL == VSdetach(vd_id))
+            {
+                fprintf(stderr,"VSdetach failed on vd_id(%d) in file %s\n", 
+                        (int) vd_id, file_name);
+                ret_value = FAIL;
+                goto done;
+            }
+
+          vd_id = FAIL; /* reset */
+
+      }	/* for each vdata */
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+          if (an_handle != FAIL)
+              ANend(an_handle);
+
+          if (vd_id != FAIL)
+              VSdetach(vd_id);
+      }
+    /* Normal cleanup */
+
+    return ret_value;
+} /* dumpvd_ascii() */
+
+
+static intn
+dumpvd_binary(dump_info_t * dumpvd_opts, 
+              int32 file_id,
+              char  *file_name,
+              int32 num_vd_chosen, 
+              char *flds_chosen[MAXCHOICES],
+              int32 *vd_chosen,
+              int dumpallfields)
+{
+    int32       flds_indices[MAXCHOICES];
+    int32       i, j, k, m, x;
+    int32       nvf;
+    int32       interlace;
+    int32       vsize;
+    int32       lastItem;
+    int32       vdata_ref = -1;
+    int32       vdata_tag;
+    char        vdclass[VSNAMELENMAX];
+    char        vdname[VSNAMELENMAX];
+    char        fields[VSFIELDMAX*FIELDNAMELENMAX]; 
+    char        tempflds[VSFIELDMAX*FIELDNAMELENMAX];
+    char       *tempPtr = NULL;
+    char       *ptr = NULL;
+    char        string[MAXNAMELEN];
+    FILE       *fp = NULL;
+    intn        dumpall = 0;
+    file_type_t ft;
+    int32       vd_id = FAIL;
+    intn        ret_value = SUCCEED;
+
+
+    /* Get output file name.  */
+    if (dumpvd_opts->dump_to_file)
+        fp = fopen(dumpvd_opts->file_name, "w");
+    else
+        fp = stdout;
+
+    x = 0;	/* "x" is used to index the array of "vd_chosen". */
+
+    /* Determine if all VDs are to be dumped out. */
+    if (num_vd_chosen <= 0)	/* If so, set the corresponding flag. */
+        dumpall = 1;
+    else
+      {
+        /* Otherwise, sort the indices of the chosen VDs in increasing 
+                       order so that they will be dumped out in such order. */
+        sort(vd_chosen,num_vd_chosen);
+      }
+
+    /* Examine each VD. */
+    for (i = 0; 
+         (vdata_ref = VSgetid(file_id, vdata_ref)) != -1 
+             && (dumpall != 0 || x < dumpvd_opts->num_chosen); 
+         i++)
+      {
+          int         data_only, flds_match = 0;
+          char        sep[2];
+
+          /* Only dump the info of the chosen VDs or all of the VDs if none
+             has been selected. */
+          if ((!dumpall) && (i != vd_chosen[x]))
+              continue; /* skip */
+
+          x++;	/* One vdata has been located; so go to the next one in 
+                   the array. */
+
+          vd_id = VSattach(file_id, vdata_ref, "r");
+          if (vd_id == FAIL)
+            {
+                fprintf(stderr,"VSattach failed for vdata_ref(%d) in file %s\n", 
+                        (int) vdata_ref, file_name);
+                ret_value = FAIL;
+                goto done;
+            }
+
+          if (FAIL == VSinquire(vd_id, &nvf, &interlace, fields, &vsize, vdname))
+            {
+                fprintf(stderr,"VSinqure failed on vd_id(%d) in file %s\n", 
+                        (int) vdata_ref,file_name);
+                ret_value = FAIL;
+                goto done;
+            }
+
+          if (FAIL == (vdata_tag = VSQuerytag(vd_id)))
+            {
+                fprintf(stderr,"VSQuerytag failed on vd_id(%d) in file %s\n", 
+                        (int) vdata_ref, file_name);
+                ret_value = FAIL;
+                goto done;
+            }
+
+          if (FAIL == VSgetclass(vd_id, vdclass))
+            {
+                fprintf(stderr,"VSgetclass failed on vd_id(%d) in file %s\n", 
+                        (int) vdata_ref, file_name);
+                ret_value = FAIL;
+                goto done;
+            }
+
+
+          /* If one or more fields were specified by the user, then find out
+             what they were, determine their corresponding indices in 
+             "fields", and store these indices in the array "flds_indices" so
+             that they can be used to determine whether a field should be
+             dumped later on. */
+          if (flds_chosen[0] != NULL)
+            {
+                HDstrcpy(tempflds, fields);
+                ptr = tempflds;
+
+                j=(-1);
+                HDmemfill(flds_indices, &j, sizeof(int32), MAXCHOICES);
+
+                m = 0;
+                lastItem = 0;
+                /* Extract each field name from the list of fields of the 
+                   current record. */
+                for (j = 0; !lastItem; j++)
+                  {
+                      tempPtr = HDstrchr(ptr, ',');
+                      if (tempPtr == NULL)
+                          lastItem = 1;
+                      else
+                          *tempPtr = '\0';
+                      HDstrcpy(string, ptr);
+                      ptr = tempPtr + 1;
+                      /* Compare the extracted field name with each of the names
+                         of the fields having been chosen. */
+                      for (k = 0; flds_chosen[k] != NULL; k++)
+                        {
+                            if (!HDstrcmp(flds_chosen[k], string))
+                              {
+                                  flds_indices[m] = j;
+                                  m++;
+                                  flds_match = 1;
+                              }
+                        }		/* for (k...) */
+                  }	/* for (j...) */
+            }		/* if  */
+
+          /* If no fields were chosen, all fields are to be dumped out, and
+             so all fileds match. */
+          if (flds_chosen[0] == NULL)
+              flds_match = 1;
+          if (flds_match)
+            {
+                if (dumpvd_opts->contents == DDATA)
+                  {
+                      data_only = 1;
+                      HDstrcpy(sep, "");
+                  }
+                else
+                  {
+                      data_only = 0;
+                      HDstrcpy(sep, ";");
+                  }
+
+                /* Only the chosen or all fields will be dumped out. */
+                if (FAIL == dumpvd(vd_id, ft, data_only, fp, sep, flds_indices, dumpallfields))
+                  {
+                      fprintf(stderr,"Failed to dump vdata data for vdid(%d) in file %s\n", 
+                              (int) vd_id, file_name);
+                      ret_value = FAIL;
+                      goto done;
+                  }
+            }
+                      
+          if (FAIL == VSdetach(vd_id))
+            {
+                fprintf(stderr,"VSdetach failed on vd_id(%d) in file %s\n", 
+                        (int) vd_id, file_name);
+                ret_value = FAIL;
+                goto done;
+            }
+
+          vd_id = FAIL; /* reset */
+
+      }	/* for each vdata */
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+          if (vd_id != FAIL)
+              VSdetach(vd_id);
+      }
+    /* Normal cleanup */
+
+    return ret_value;
+} /* dumpvd_binary */
+
+
+static intn 
+dvd(dump_info_t * dumpvd_opts, 
+    intn curr_arg,
+    intn argc, 
+    char *argv[], 
+    char *flds_chosen[MAXCHOICES], 
+    int dumpallfields)
+{
+    int32       k;
+    int32       file_id = FAIL;
     char        file_name[MAXFNLEN];
-    FILE       *fp=NULL;
-    intn         index_error = 0, dumpall = 0, ret;
-    file_type_t  ft;
+    int32      *vd_chosen = NULL;
+    FILE       *fp = NULL;
+    int32       num_vd_chosen;
+    intn        index_error = 0;
+    file_type_t ft;
+    intn        ret_value = SUCCEED;
 
     while (curr_arg < argc)
-      {		/* Loop until all specified files have been 
-                   processed */
+      {	/* Loop until all specified files have been 
+           processed */
+
+          /* get file name */
           HDstrcpy(file_name, argv[curr_arg]);
           curr_arg++;
+
+          /* try opening file */
           file_id = Hopen(file_name, DFACC_READ, 0);
           if (file_id == FAIL)
             {
-                printf("Failure in open %s\n", file_name);
-                exit(1);
+                fprintf(stderr,"Failure in Hopen on file %s\n", file_name);
+                ret_value = FAIL;
+                goto done;
             }
 
           num_vd_chosen = dumpvd_opts->num_chosen;
@@ -417,548 +970,171 @@ dvd(dump_info_t * dumpvd_opts, intn curr_arg,
             {
                 if ((vd_chosen = (int32 *) HDmalloc(sizeof(int32) * num_vd_chosen)) == NULL)
                   {
-                      printf("Memory allocation error\n");
-                      exit(1);
+                      fprintf(stderr,"Memory allocation error\n");
+                      ret_value = FAIL;
+                      goto done;
                   }		/* end if */
 
                 k = (-1);
                 HDmemfill(vd_chosen, &k, sizeof(int32), num_vd_chosen);
             }	/* end if */
 
-          Vstart(file_id);
+          if (FAIL == Vstart(file_id))
+            {
+                fprintf(stderr,"Vstart failed for file %s\n", file_name);
+                ret_value = FAIL;
+                goto done;
+            }
 
-              /* Find out which VDs have been chosen. */
-          choose_vd(dumpvd_opts, &vd_chosen, &num_vd_chosen, file_id, &index_error);
+          /* Find out which VDs have been chosen. */
+          if (FAIL == choose_vd(dumpvd_opts, &vd_chosen, &num_vd_chosen, file_id, &index_error))
+            {
+                fprintf(stderr,"failed to choose vdata in file %s\n", file_name);
+                ret_value = FAIL;
+                goto done;
+            }
 
-              /* In case of index error, skip the current file. */
+          /* In case of index error, skip the current file. 
+             Isn't this bad anyway? */
           if (index_error && num_vd_chosen==0)
             {
-                if(vd_chosen!=NULL)
+                if(vd_chosen != NULL)
                   {
                       HDfree(vd_chosen);
-                      vd_chosen=NULL;
+                      vd_chosen = NULL;
                   } /* end if */
+
                 Vend(file_id);
                 Hclose(file_id);
                 continue;
             } /* end if */
 
-          ft=dumpvd_opts->file_type;
+          /* output file? */
+          ft = dumpvd_opts->file_type;
+
           switch(ft)
-           {
-           case DASCII:  /*    ASCII file   */
-
-              /* Get output file name.  */
-          if (dumpvd_opts->dump_to_file)
-              fp = fopen(dumpvd_opts->file_name, "w");
-          else
-              fp = stdout;
-
-          if (dumpvd_opts->contents != DDATA)
-              fprintf(fp, "File name: %s \n\n", file_name);
-          x = 0;	/* "x" is used to index the array of "vd_chosen". */
-
-              /* Determine if all VDs are to be dumped out. */
-          if (num_vd_chosen<=0)	/* If so, set the corresponding flag. */
-              dumpall = 1;
-          else
-                  /* Otherwise, sort the indices of the chosen VDs in increasing 
-                     order so that they will be dumped out in such order. */
-              sort(vd_chosen,num_vd_chosen);
-
-              /* Examine each VD. */
-          for (i = 0; (vdata_ref = VSgetid(file_id, vdata_ref)) != -1 && (dumpall!=0 || x<dumpvd_opts->num_chosen); i++)
             {
-                int         data_only, flds_match = 0;
-                char        sep[2];
+            case DASCII:  /*    ASCII file   */
 
-                    /* Only dump the info of the chosen VDs or all of the VDs if none
-                       has been selected. */
-                if ((!dumpall) && (i != vd_chosen[x]))
-                    continue;
-
-                x++;	/* One vdata has been located; so go to the next one in 
-                           the array. */
-                vd_id = VSattach(file_id, vdata_ref, "r");
-                if (vd_id == FAIL)
+                if (FAIL == dumpvd_ascii(dumpvd_opts, file_id, file_name,
+                                         num_vd_chosen, flds_chosen, 
+                                         vd_chosen, dumpallfields))
                   {
-                      printf("Cannot open vd id=%d\n", (int) vdata_ref);
-                      continue;
+                     ret_value = FAIL;
+                     goto done;
                   }
-
-                VSinquire(vd_id, &nvf, &interlace, fields, &vsize, vdname);
-                vdata_tag = VSQuerytag(vd_id);
-                VSgetclass(vd_id, vdclass);
-
-                    /* If one or more fields were specified by the user, then find out
-                       what they were, determine their corresponding indices in 
-                       "fields", and store these indices in the array "flds_indices" so
-                       that they can be used to determine whether a field should be
-                       dumped later on. */
-                if (flds_chosen[0] != NULL)
-                  {
-                      HDstrcpy(tempflds, fields);
-                      ptr = tempflds;
-
-                      j=(-1);
-                      HDmemfill(flds_indices, &j, sizeof(int32), MAXCHOICES);
-
-                      m = 0;
-                      lastItem = 0;
-                          /* Extract each field name from the list of fields of the 
-                             current record. */
-                      for (j = 0; !lastItem; j++)
-                        {
-                            tempPtr = HDstrchr(ptr, ',');
-                            if (tempPtr == NULL)
-                                lastItem = 1;
-                            else
-                                *tempPtr = '\0';
-                            HDstrcpy(string, ptr);
-                            ptr = tempPtr + 1;
-                                /* Compare the extracted field name with each of the names
-                                   of the fields having been chosen. */
-                            for (k = 0; flds_chosen[k] != NULL; k++)
-                              {
-                                  if (!HDstrcmp(flds_chosen[k], string))
-                                    {
-                                        flds_indices[m] = j;
-                                        m++;
-                                        flds_match = 1;
-                                    }
-                              }		/* for (k...) */
-                        }	/* for (j...) */
-                  }		/* if  */
-
-                    /* If no fields were chosen, all fields are to be dumped out, and
-                       so all fileds match. */
-                if (flds_chosen[0] == NULL)
-                    flds_match = 1;
-                if (flds_match)
-                  {
-                      int32       z, lastItem, count = 0;
-                      switch (dumpvd_opts->contents)
-                        {
-                        case DVERBOSE:		/* dump all information */
-                            fprintf(fp, "Vdata: %d\n", (int) i);
-                            fprintf(fp, "   tag = %d; ", (int) vdata_tag);
-                            fprintf(fp, "reference = %d;\n", (int) vdata_ref);
-                            fprintf(fp, "   number of records = %d; ", (int) nvf);
-                            fprintf(fp, "interlace = %d;\n", (int) interlace);
-                            fprintf(fp, "   fields = [");
-
-                                /* The list of field names can be very long and would 
-                                   look very messy when being displayed if it were to
-                                   be dumped out at once. The following block of 
-                                   operations is to display a list in a nice way even
-                                   if the list is long. */
-                            lastItem = 0;
-                            HDstrcpy(tempflds, fields);
-                            ptr = tempflds;
-                            for (z = 0; !lastItem; z++)
-                              {
-                                  tempPtr = HDstrchr(ptr, ',');
-                                  if (tempPtr == NULL)
-                                      lastItem = 1;
-                                  else
-                                      *tempPtr = '\0';
-                                  HDstrcpy(string, ptr);
-                                  count += HDstrlen(string);
-                                  if (count > 50)
-                                    {
-                                        fprintf(fp, "\n               ");
-                                        count = 0;
-                                    }
-                                  fprintf(fp, "%s", string);
-                                  if (!lastItem)
-                                      fprintf(fp, ", ");
-                                  ptr = tempPtr + 1;
-                              }
-                            fprintf(fp, "];\n");
-
-                            fprintf(fp, "   record size (in bytes) = %d;\n", (int)vsize);
-                            fprintf(fp, "   name = %s; class = %s;\n", vdname, vdclass);
-                            ret = dumpattr(vd_id, (int32)_HDF_VDATA, 1, ft, fp);     
-                                /* read in all of the annotations */
-                            {
-                                /* Re-vamped label annotation handling to use new ANxxx interface 
-                                 *  -georgev 6/11/97 */
-                                int32  file_handle = FAIL;
-                                int32  an_handle   = FAIL;
-                                int32  *dlabels    = NULL;
-                                char   *ann_label  = NULL;
-                                int32  ann_len;
-                                intn   num_dlabels;
-                                uint16 atag;
-                                uint16 aref;
-
-                                /* start Annotation inteface */
-                                if ((an_handle = ANstart(file_id)) == FAIL)
-                                  {
-                                      /* continue */
-                                      goto done_alabel;
-                                  }
-
-                                /* Get number of data labels with this tag/ref */
-                                num_dlabels = ANnumann(an_handle, AN_DATA_LABEL, vdata_tag, vdata_ref);
-#ifdef AN_DEBUG
-                                fprintf(stderr,"VD has %d labels \n", num_dlabels);
-#endif
-
-                                if (num_dlabels != 0)
-                                  {
-                                      /* allocate space for list of label annotation id's with this tag/ref */
-                                      if ((dlabels = (int32 *)HDmalloc(num_dlabels * sizeof(int32))) == NULL)
-                                        {
-#ifdef AN_DEBUG
-                                            fprintf(stderr,"failed to allocate space for %d labels \n", num_dlabels);
-#endif
-                                            goto done_alabel;
-                                        }
-
-                                      /* get list of label annotations id's with this tag/ref */
-                                      if (ANannlist(an_handle, AN_DATA_LABEL, vdata_tag, vdata_ref, dlabels) != num_dlabels)
-                                        {
-#ifdef AN_DEBUG
-                                            fprintf(stderr,"failed to get %d label list \n", num_dlabels);
-#endif
-                                            goto done_alabel;
-                                        }
-
-                                      /* loop through label list */
-                                      for (i = 0; i < num_dlabels; i++)
-                                        {
-                                            if ((ann_len = ANannlen(dlabels[i])) == FAIL)
-                                              {
-#ifdef AN_DEBUG
-                                                  fprintf(stderr,"failed to get %d label  length \n", i);
-#endif
-                                                  continue;
-                                              }
-        
-                                            /* allocate space for label */
-                                            if (ann_label == NULL)
-                                              {
-                                                  if ((ann_label = (char *)HDmalloc((ann_len+1)*sizeof(char))) == NULL)
-                                                    {
-#ifdef AN_DEBUG
-                                                        fprintf(stderr,"failed to allocate space for label %d \n", i);
-#endif
-                                                        continue;
-                                                    }
-                                                  HDmemset(ann_label,'\0', ann_len+1);
-                                              }
-      
-                                            /* read label */
-                                            if (ANreadann(dlabels[i], ann_label, ann_len+1) == FAIL)
-                                              {
-#ifdef AN_DEBUG
-                                                  fprintf(stderr,"failed to read %d label \n", i);
-#endif
-                                                  continue;
-                                              }
-
-                                            printf("\t  label: %s\n", ann_label);
-
-                                            /* end access */
-                                            ANendaccess(dlabels[i]);
-
-                                            /* free buffer */
-                                            if(ann_label != NULL)
-                                              {
-                                                  HDfree(ann_label);
-                                                  ann_label = NULL;
-                                              }
-                                        }
-
-                                  } /* end if labels */
-
-                              done_alabel:
-                                if(dlabels != NULL)
-                                    HDfree(dlabels);
-
-                                if(an_handle != FAIL)
-                                    ANend(an_handle);
-
-                            }
-
-                            {
-                                /* Re-vamped desc annotation handling to use new ANxxx interface 
-                                 *  -georgev 6/11/97 */
-                                int32  file_handle = FAIL;
-                                int32  an_handle   = FAIL;
-                                int32  *ddescs    = NULL;
-                                char   *ann_desc  = NULL;
-                                int32  ann_len;
-                                intn   num_ddescs;
-                                uint16 atag;
-                                uint16 aref;
-                                char   hremark[30] = "";
-
-                                /* start Annotation inteface */
-                                if ((an_handle = ANstart(file_id)) == FAIL)
-                                  {
-                                      goto done_adesc;
-                                  }
-                                /* Get number of data descs with this tag/ref */
-                                num_ddescs = ANnumann(an_handle, AN_DATA_DESC, vdata_tag, vdata_ref);
-#ifdef AN_DEBUG
-                                fprintf(stderr,"VD has %d descs \n", num_ddescs);
-#endif
-                                if (num_ddescs != 0)
-                                  {
-                                      /* allocate space for list of desc annotation id's with this tag/ref */
-                                      if ((ddescs = (int32 *)HDmalloc(num_ddescs * sizeof(int32))) == NULL)
-                                        {
-#ifdef AN_DEBUG
-                                            fprintf(stderr,"failed to allocate space for %d descs \n", num_ddescs);
-#endif
-                                            goto done_adesc;
-                                        }
-
-                                      /* get list of desc annotations id's with this tag/ref */
-                                      if (ANannlist(an_handle, AN_DATA_DESC, vdata_tag, vdata_ref, ddescs) != num_ddescs)
-                                        {
-#ifdef AN_DEBUG
-                                            fprintf(stderr,"failed to get %d descs list \n", num_ddescs);
-#endif
-                                            goto done_adesc;
-                                        }
-
-                                      /* loop through desc list */
-                                      for (i = 0; i < num_ddescs; i++)
-                                        {
-                                            if ((ann_len = ANannlen(ddescs[i])) == FAIL)
-                                              {
-#ifdef AN_DEBUG
-                                                  fprintf(stderr,"failed to get %d desc  length \n", i);
-#endif
-                                                  continue;
-                                              }
-        
-                                            /* allocate space for desc */
-                                            if (ann_desc == NULL)
-                                              {
-                                                  if ((ann_desc = (char *)HDmalloc((ann_len+1)*sizeof(char))) == NULL)
-                                                    {
-#ifdef AN_DEBUG
-                                                        fprintf(stderr,"failed to allocate space for desc %d \n", i);
-#endif
-                                                        continue;
-                                                    }
-                                                  HDmemset(ann_desc,'\0', ann_len+1);
-                                              }
-      
-                                            /* read desc */
-                                            if (ANreadann(ddescs[i], ann_desc, ann_len+1) == FAIL)
-                                              {
-#ifdef AN_DEBUG
-                                                  fprintf(stderr,"failed to read %d desc \n", i);
-#endif
-                                                  continue;
-                                              }
-
-                                            printf("\t  Description: %s\n", ann_desc);
-
-                                            /* end access */
-                                            ANendaccess(ddescs[i]);
-
-                                            /* free buffer */
-                                            if(ann_desc != NULL)
-                                              {
-                                                  HDfree(ann_desc);
-                                                  ann_desc = NULL;
-                                              }
-                                        }
-
-                                  } /* end if descs */
-
-                              done_adesc:
-                                if(ddescs != NULL)
-                                    HDfree(ddescs);
-
-                                if(an_handle != FAIL)
-                                    ANend(an_handle);
-
-                            }
-
-
-                        case DHEADER:	/* header only, no annotations nor data */
-                            if (dumpvd_opts->contents == DHEADER)
-                                break;
-
-                        case DDATA:	/* data only */
-                            if (dumpvd_opts->contents == DDATA)
-                              {
-                                  data_only = 1;
-                                  HDstrcpy(sep, "");
-                              }
-                            else
-                              {
-                                  data_only = 0;
-                                  HDstrcpy(sep, ";");
-                              }
-                                /* Only the chosen or all fields will be dumped out. */
-                            dumpvd(vd_id, ft, data_only, fp, sep, flds_indices, dumpallfields);
-                        }	/* switch */
-                  }
-                VSdetach(vd_id);
-            }	/* for */
-            break;
+                break;
             case DBINARY:   /*  binary file, not fully tested yet  */
- 
-             /* Get output file name.  */
-          if (dumpvd_opts->dump_to_file)
-              fp = fopen(dumpvd_opts->file_name, "w");
-          else
-              fp = stdout;
 
-          
-          x = 0;	/* "x" is used to index the array of "vd_chosen". */
-
-              /* Determine if all VDs are to be dumped out. */
-          if (num_vd_chosen<=0)	/* If so, set the corresponding flag. */
-              dumpall = 1;
-          else
-                  /* Otherwise, sort the indices of the chosen VDs in increasing 
-                     order so that they will be dumped out in such order. */
-              sort(vd_chosen,num_vd_chosen);
-
-              /* Examine each VD. */
-          for (i = 0; (vdata_ref = VSgetid(file_id, vdata_ref)) != -1 && (dumpall!=0 || x<dumpvd_opts->num_chosen); i++)
-            {
-                int         data_only, flds_match = 0;
-                char        sep[2];
-
-                    /* Only dump the info of the chosen VDs or all of the VDs if none
-                       has been selected. */
-                if ((!dumpall) && (i != vd_chosen[x]))
-                    continue;
-
-                x++;	/* One vdata has been located; so go to the next one in 
-                           the array. */
-                vd_id = VSattach(file_id, vdata_ref, "r");
-                if (vd_id == FAIL)
+                if (FAIL == dumpvd_binary(dumpvd_opts, file_id, file_name,
+                                         num_vd_chosen, flds_chosen, 
+                                         vd_chosen, dumpallfields))
                   {
-                      printf("Cannot open vd id=%d\n", (int) vdata_ref);
-                      continue;
+                     ret_value = FAIL;
+                     goto done;
                   }
 
-                VSinquire(vd_id, &nvf, &interlace, fields, &vsize, vdname);
-                vdata_tag = VSQuerytag(vd_id);
-                VSgetclass(vd_id, vdclass);
+                break;
+            default:
+                printf("dumping vdata, unknown ouput file option \n");
+                ret_value = FAIL;
+                goto done;
+                break;
+            }    /* switch for output file   */
 
-                    /* If one or more fields were specified by the user, then find out
-                       what they were, determine their corresponding indices in 
-                       "fields", and store these indices in the array "flds_indices" so
-                       that they can be used to determine whether a field should be
-                       dumped later on. */
-                if (flds_chosen[0] != NULL)
-                  {
-                      HDstrcpy(tempflds, fields);
-                      ptr = tempflds;
-
-                      j=(-1);
-                      HDmemfill(flds_indices, &j, sizeof(int32), MAXCHOICES);
-
-                      m = 0;
-                      lastItem = 0;
-                          /* Extract each field name from the list of fields of the 
-                             current record. */
-                      for (j = 0; !lastItem; j++)
-                        {
-                            tempPtr = HDstrchr(ptr, ',');
-                            if (tempPtr == NULL)
-                                lastItem = 1;
-                            else
-                                *tempPtr = '\0';
-                            HDstrcpy(string, ptr);
-                            ptr = tempPtr + 1;
-                                /* Compare the extracted field name with each of the names
-                                   of the fields having been chosen. */
-                            for (k = 0; flds_chosen[k] != NULL; k++)
-                              {
-                                  if (!HDstrcmp(flds_chosen[k], string))
-                                    {
-                                        flds_indices[m] = j;
-                                        m++;
-                                        flds_match = 1;
-                                    }
-                              }		/* for (k...) */
-                        }	/* for (j...) */
-                  }		/* if  */
-
-                    /* If no fields were chosen, all fields are to be dumped out, and
-                       so all fileds match. */
-                if (flds_chosen[0] == NULL)
-                    flds_match = 1;
-                if (flds_match)
-                  {
-                      if (dumpvd_opts->contents == DDATA)
-                              {
-                                  data_only = 1;
-                                  HDstrcpy(sep, "");
-                              }
-                            else
-                              {
-                                  data_only = 0;
-                                  HDstrcpy(sep, ";");
-                              }
-                                /* Only the chosen or all fields will be dumped out. */
-                            dumpvd(vd_id, ft, data_only, fp, sep, flds_indices, dumpallfields);
-                  }
-                VSdetach(vd_id);
-            }	/* for */
-            break;
-      }    /* switch for output file   */
-
-          Vend(file_id);
-          if(vd_chosen!=NULL)
+          if(vd_chosen != NULL)
             {
                 HDfree(vd_chosen);
-                vd_chosen=NULL;
-            } /* end if */
+                vd_chosen = NULL;
+            } 
+
           if (dumpvd_opts->dump_to_file)
               fclose(fp);
-          Hclose(file_id);
-      }		/* while (curr_arg < argc)  */
 
-    return (0);
+          if (FAIL == Vend(file_id))
+            {
+              fprintf(stderr,"Vend failed on file %s\n", file_name);
+              ret_value = FAIL;
+              goto done;
+            }
+
+          if (FAIL == Hclose(file_id))
+            {
+              fprintf(stderr,"Hclose failed on file %s\n", file_name);
+              ret_value = FAIL;
+              goto done;
+            }
+
+          file_id = FAIL; /* reset */
+
+      }	/* while processing files  */
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+          if (file_id != FAIL)
+            {
+                Vend(file_id);
+                Hclose(file_id);
+            }
+
+          if(vd_chosen != NULL)
+            {
+                HDfree(vd_chosen);
+                vd_chosen = NULL;
+            } 
+      }
+    /* Normal cleanup */
+    
+    return ret_value;
 }	/* dvd */
 
-int32 
-VSref_index(int32 file_id, int32 vd_ref)
+/* exported */
+intn
+do_dumpvd(intn curr_arg, 
+          intn argc, 
+          char *argv[], 
+          dump_opt_t *glob_opts)
 {
-    int32       find_ref = -1;
-    int         index = 0;
+    dump_info_t dumpvd_opts;	/* dumpvd options */
+    char       *flds_chosen[MAXCHOICES];
+    int         dumpallfields;
+    intn        ret_value = SUCCEED;
 
-    while ((find_ref = VSgetid(file_id, find_ref)) != -1)
+    flds_chosen[0] = NULL;
+    dumpallfields = 1;
+
+    if (glob_opts->help == TRUE)
       {
-          if (find_ref == vd_ref)
-              return(index);
-          index++;
-      }
-    return (-1);
-}	/* VSref_index */
+          dumpvd_usage(argc, argv);
+          goto done;
+      }		
 
-int32 
-VSstr_index(int32 file_id, char *filter_str,
-            int name, int32 *find_ref, int32 *index)
-{
-    int32       vdata_id;
-    char        vdata_name[MAXNAMELEN];
+    init_dumpvd_opts(&dumpvd_opts);
 
-    while ((*find_ref = VSgetid(file_id, *find_ref)) != -1)
+    if (parse_dumpvd_opts(&dumpvd_opts, &curr_arg, argc, argv, flds_chosen, &dumpallfields) == FAIL)
       {
-          vdata_id = VSattach(file_id, *find_ref, "r");
-          if (name)
-              VSgetname(vdata_id, vdata_name);
-          else
-              VSgetclass(vdata_id, vdata_name);
-          VSdetach(vdata_id);
-          if (HDstrcmp(vdata_name, filter_str) == 0)
-              return (*index);
-          (*index)++;
+          printf("Failure in parsing options to dump Vdata data \n");
+          dumpvd_usage(argc, argv);
+          ret_value = FAIL;
+          goto done;
+      }		
+
+    if (dvd(&dumpvd_opts, curr_arg, argc, argv, flds_chosen, dumpallfields) == FAIL)
+      {
+          fprintf(stderr,"Failure in dumping Vdata data \n");
+          ret_value = FAIL;
+          goto done;
+      } 
+
+  done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
       }
-    return (-1);
-}
+    /* Normal cleanup */
+	if(dumpvd_opts.filter_num != NULL)
+	  HDfree(dumpvd_opts.filter_num);
+
+    return ret_value;
+}	/* end do_dumpvd() */
+

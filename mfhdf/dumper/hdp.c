@@ -81,11 +81,13 @@ main(int argc, char *argv[])
             }	/* end switch */
           curr_arg++;
       }		/* end while */
+
     for (j = 0, cmd = HELP; j < (sizeof(commands) / sizeof(const char *)); j++, cmd++)
       {
           if (HDstrcmp(argv[curr_arg], commands[j]) == 0)
               break;
       }		/* end for */
+
 /* printf("cmd=%d\n",(int)cmd);
    printf("command=%s\n",argv[curr_arg]);
    */
@@ -95,11 +97,13 @@ main(int argc, char *argv[])
     switch (cmd)
       {
       case LIST:
-          do_list(curr_arg, argc, argv, &glob_opts);
+          if (FAIL == do_list(curr_arg, argc, argv, &glob_opts))
+              exit(1);
           break;
 
       case DUMPSDS:
-          do_dumpsds(curr_arg, argc, argv, &glob_opts);
+          if (FAIL == do_dumpsds(curr_arg, argc, argv, &glob_opts))
+              exit(1);
           break;
 
       case DUMPRIG:
@@ -107,11 +111,13 @@ main(int argc, char *argv[])
           break;
 
       case DUMPVG:
-          do_dumpvg(curr_arg, argc, argv, &glob_opts);
+          if (FAIL == do_dumpvg(curr_arg, argc, argv, &glob_opts))
+              exit(1);
           break;
 
       case DUMPVD:
-          do_dumpvd(curr_arg, argc, argv, &glob_opts);
+          if (FAIL == do_dumpvd(curr_arg, argc, argv, &glob_opts))
+              exit(1);
           break;
 
       case DUMPGR:
