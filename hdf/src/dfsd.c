@@ -5,9 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.9  1992/12/21 16:56:55  chouck
-Fixed problem reading old float32 calibration tags
+Revision 1.10  1992/12/30 16:09:50  sxu
+replaced dfsdpre32() with dfsdpre32sdg()
+ A bug is fixed in DFSDIputndg.LUF: writes out null strings
+when datastrs are set and dimstrs are not.
 
+ * Revision 1.9  1992/12/21  16:56:55  chouck
+ * Fixed problem reading old float32 calibration tags
+ *
  * Revision 1.8  1992/12/08  20:47:56  georgev
  * Changed order of src/dest for HDmemcpy
  *
@@ -53,7 +58,8 @@ Fixed problem reading old float32 calibration tags
     DFSDgetrange - get max and min of data
     DFSDgetdata - get data values
     DFSDgetNT - get file number type for reading
-    DFSDpre32 - is the current SDS written with HDF versions previous to 3.2?
+    DFSDpre32sdg - tests, without calling DFSDsdginfo,  whether or 
+             not the SDG/ref written with 3.1
     DFSDsetlengths - set lengths of label, unit, format strings on gets
     DFSDsetdims - set rank and dim sizes
     DFSDsetdatastrs - set data label, unit, format and coord system
@@ -1453,32 +1459,63 @@ int32 *pnumbertype;
     return(0);
 }
     
-/*--------------------------------------------------------------------
-*
-* Name:	        DFSDpre32
-* Purpose:	Is the current SDS written by HDF previous to 3.2r1
-* Inputs: 	None
-* return:   TRUE (!0) if the SDS was written by 3.1,
-*               FALSE (0) otherwise.
-* Method:   invokes DFSDIisndg, testing isndg in sdg struct
-* Remark:
-*------------------------------------------------------------------- */
 
+/* ------------------------------------------------------------------
+* Name:    DFSDpre32sdg
+* Purpose: tests if the SDG with given ref is HDF3.1 object 
+* Inputs:  filename: the file where the SDG/ref resides in
+*          ref: ref of the SDG
+* Outputs: ispre32: set to TRUE--1 if it is 3.1 SDG; 
+*                       to FALSE--0 otherwise
+* Returns: SUCCEED--0 on sucess; FAIL (-1) otherwise 
+*            with error code set
+* Remarks: 
+* -------------------------------------------------------------------*/
 #if defined PROTOTYPE
-intn DFSDpre32(void)
+int DFSDpre32sdg(char *filename, uint16 ref, intn *ispre32)
 #else
-intn DFSDpre32()
-#endif
+int DFSDpre32sdg(filename, ref,ispre32)
+char *filename;
+uint16 ref;
+intn *ispre32;
+#endif /* PROTOTYPE*/
+
 {
-    intn isndg;
-    char *FUNC="DFSDpre32";
-    
-    DFSDIisndg(&isndg);
-    if (isndg == 1)
-        return (FALSE);
-    else return (TRUE);
-}
-    
+    uint32 num;
+    int32 file_id;
+    intn found=0;
+    DFnsdgle *ptr;
+    char *FUNC="DFSDpre32sdg";
+   
+    file_id = DFSDIopen(filename, DFACC_READ);
+    if (file_id== FAIL) return FAIL; 
+    ptr = nsdghdr->nsdg_t;
+    num = nsdghdr->size;
+
+    while ((num>0) && (ptr != NULL) && !found) {
+        if ((ptr->nsdg.tag == DFTAG_SDG) && 
+            (ptr->nsdg.ref == ref))  { /* pure SDG  */
+            found = 1;
+            *ispre32 = TRUE;
+        } else 
+        if  ((ptr->sdg.tag == DFTAG_SDG) &&
+             (ptr->sdg.ref == ref))  { /* NDGSDG   */
+            found = 1;
+            *ispre32 = FALSE;
+        } else {
+    	    ptr = ptr->next;
+            num--;
+        }
+    } /* while  */
+    if(((num == 0) && (ptr != NULL)) || 
+       ((num != 0) && (ptr == NULL)) ||
+       !found)  {
+        HERROR(DFE_BADTABLE); 
+        Hclose(file_id);  return FAIL;
+    }
+    if (Hclose(file_id)<0) return FAIL;
+    return SUCCEED;
+}   /* end of DFSDpre32sdg   */
 /******************************************************************************/
 /*--------------------- Lower level routines --------------------------------*/
 /******************************************************************************/
@@ -2350,19 +2387,18 @@ DFSsdg *sdg;
             }
 
             /* for each dimluf, if non-NULL, set up to write */
-            if (sdg->dimluf[luf]) {
-                for (i=0; i<sdg->rank; i++) {
-                    if ( sdg->dimluf[luf][i] &&     
-                         sdg->dimluf[luf][i][0] ) {   /* dimluf not NULL */
-                            len = HDstrlen(sdg->dimluf[luf][i])+1;
-                            HIstrncpy( (char *)bufp, sdg->dimluf[luf][i], len);
-                            bufp += len;
-                    } else {                        /* dimluf NULL */
-                        HIstrncpy( (char *)bufp, "", (int32) 1 );
-                        bufp ++;
-                    }
-                }	/* i loop 	*/
-            }	/* dimluf is non-NULL */
+            for (i=0; i<sdg->rank; i++) {
+                if ( sdg->dimluf[luf] && sdg->dimluf[luf][i] &&     
+                     sdg->dimluf[luf][i][0] ) {   /* dimluf not NULL */
+                         len = HDstrlen(sdg->dimluf[luf][i])+1;
+                         HIstrncpy( (char *)bufp, sdg->dimluf[luf][i], len);
+                         bufp += len;
+                } else {                        /* dimluf NULL */
+                     HIstrncpy( (char *)bufp, "", (int32) 1 );
+                     bufp ++;
+                }
+            }	/* i loop 	*/
+
             Ref.luf[luf] = ref; /* remember ref */
             ret = Hputelement(file_id, luftag, (uint16)Ref.luf[luf],
                               DFtbuf, (int32) (bufp-DFtbuf));
