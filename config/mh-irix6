@@ -5,13 +5,13 @@
 #CC=gcc
 #CFLAGS=-ansi 
 #
-#Using ANSI compilier for 32-bit mode
+#Using ANSI compilier
 CC=cc
-CFLAGS=-ansi -32
+CFLAGS=-ansi
 
-# Fortran compilier for 32-bit mode
+# Fortran compilier
 FC = f77
-FFLAGS = -32
+FFLAGS =
 
 # Name of archive randomizer, usually ranlib (use 'true' if non-existant)
 RANLIB = true
