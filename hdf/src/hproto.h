@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.38  1993/08/28 01:37:50  georgev
-Fixed a slab fortran name.
+Revision 1.39  1993/09/01 23:53:31  georgev
+Fixed some errors in prototypes for DFSD calls.
 
+ * Revision 1.38  1993/08/28  01:37:50  georgev
+ * Fixed a slab fortran name.
+ *
  * Revision 1.37  1993/08/28  00:49:46  georgev
  * Changed slab long fortran names to short ones.
  *
@@ -694,7 +697,7 @@ extern int DFSDgetdimlen
     PROTO((int dim, int _HUGE *llabel, int _HUGE *lunit, int _HUGE *lformat));
 
 extern int DFSDgetdimscale
-    PROTO((int dim, int32 maxsize, VOIDP scale));
+    PROTO((intn dim, int32 maxsize, VOIDP scale));
 
 extern int DFSDgetrange
     PROTO((VOIDP pmax, VOIDP pmin));
@@ -716,7 +719,7 @@ extern int DFSDsetdimstrs
     PROTO((int dim, char _HUGE *label, char _HUGE *unit, char _HUGE *format));
 
 extern int DFSDsetdimscale
-    PROTO((int dim, int32 dimsize, VOIDP scale));
+    PROTO((intn dim, int32 dimsize, VOIDP scale));
 
 extern int DFSDsetrange
     PROTO((VOIDP maxi, VOIDP mini));
@@ -792,7 +795,7 @@ extern int DFSDwriteslab
         VOIDP data));
 
 extern int DFSDendslab
-    PROTO((void));
+    PROTO((VOID));
 
 /*
 ** from dfconv.c

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.30  1993/08/16 21:45:23  koziol
-Wrapped in changes for final, working version on the PC.
+Revision 1.31  1993/09/01 23:53:38  georgev
+Fixed some errors in prototypes for DFSD calls.
 
+ * Revision 1.30  1993/08/16  21:45:23  koziol
+ * Wrapped in changes for final, working version on the PC.
+ *
  * Revision 1.29  1993/05/17  15:20:13  georgev
  * Took out some unused varibles in DFSDwriteslab.
  *
@@ -549,7 +552,7 @@ intn DFSDgetdimlen(dim, llabel, lunit, lformat)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDgetdimscale(intn dim, int32 maxsize, VOID *scale)
+intn DFSDgetdimscale(intn dim, int32 maxsize, VOIDP scale)
 #else
 intn DFSDgetdimscale(dim, maxsize, scale)
      int dim;
@@ -611,7 +614,7 @@ intn DFSDgetdimscale(dim, maxsize, scale)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFSDgetrange(VOID *pmax, VOID *pmin)
+int DFSDgetrange(VOIDP pmax, VOIDP pmin)
 #else
 int DFSDgetrange(pmax, pmin)
      VOID *pmax;
@@ -669,7 +672,7 @@ int DFSDgetrange(pmax, pmin)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDgetdata(char *filename, intn rank, int32 maxsizes[], VOID *data)
+intn DFSDgetdata(char *filename, intn rank, int32 maxsizes[], VOIDP data)
 #else
 intn DFSDgetdata(filename, rank, maxsizes, data)
      char *filename;
@@ -1020,7 +1023,7 @@ intn DFSDIsetdimstrs(dim, label, unit, format)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDsetdimscale(intn dim, int32 dimsize, void *scale)
+intn DFSDsetdimscale(intn dim, int32 dimsize, VOIDP scale)
 #else
 intn DFSDsetdimscale(dim, dimsize, scale)
      intn dim;
@@ -1120,7 +1123,7 @@ intn DFSDsetdimscale(dim, dimsize, scale)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDsetrange(VOID *maxi, VOID *mini)
+intn DFSDsetrange(VOIDP maxi, VOIDP mini)
 #else
 intn DFSDsetrange(maxi, mini)
      VOID *maxi;
@@ -1170,7 +1173,7 @@ intn DFSDsetrange(maxi, mini)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDputdata(char *filename, intn rank, int32 dimsizes[], VOID *data)
+intn DFSDputdata(char *filename, intn rank, int32 dimsizes[], VOIDP data)
 #else
 intn DFSDputdata(filename, rank, dimsizes, data)
      char *filename;
@@ -1198,7 +1201,7 @@ intn DFSDputdata(filename, rank, dimsizes, data)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDadddata(char *filename, intn rank, int32 dimsizes[], VOID *data)
+intn DFSDadddata(char *filename, intn rank, int32 dimsizes[], VOIDP data)
 #else
 intn DFSDadddata(filename, rank, dimsizes, data)
      char *filename;
@@ -1382,7 +1385,7 @@ intn DFSDreadref(filename, ref)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDgetslice(char *filename, int32 winst[], int32 windims[], VOID *data,
+intn DFSDgetslice(char *filename, int32 winst[], int32 windims[], VOIDP data,
 		  int32 dims[])
 #else
 intn DFSDgetslice(filename, winst, windims, data, dims)
@@ -1482,7 +1485,7 @@ intn DFSDstartslice(filename)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDputslice(int32 winend[], VOID *data, int32 dims[])
+intn DFSDputslice(int32 winend[], VOIDP *data, int32 dims[])
 #else
 intn DFSDputslice(winend, data, dims)
      int32 winend[];
@@ -3504,7 +3507,7 @@ intn DFSDIclear(sdg)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDIgetdata(char *filename, intn rank, int32 maxsizes[], VOID *data,
+intn DFSDIgetdata(char *filename, intn rank, int32 maxsizes[], VOIDP data,
 	          intn isfortran)
 #else
 int DFSDIgetdata(filename, rank, maxsizes, data, isfortran)
@@ -3581,7 +3584,7 @@ int DFSDIgetdata(filename, rank, maxsizes, data, isfortran)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDIputdata(char *filename, intn rank, int32 *dimsizes, VOID *data,
+intn DFSDIputdata(char *filename, intn rank, int32 *dimsizes, VOIDP data,
 	          intn accmode, intn isfortran)
 #else
 intn DFSDIputdata(filename, rank, dimsizes, data, accmode, isfortran)
@@ -3667,7 +3670,7 @@ intn DFSDIputdata(filename, rank, dimsizes, data, accmode, isfortran)
 
 #ifdef PROTOTYPE
 intn DFSDIgetslice(char *filename, int32 winst[], int32 windims[],
-	           VOID *data, int32 dims[], intn isfortran)
+	           VOIDP data, int32 dims[], intn isfortran)
 #else
 intn DFSDIgetslice(filename, winst, windims, data, dims, isfortran)
     char    *filename;  /* HDF file containing the dataset */
@@ -4028,7 +4031,7 @@ intn DFSDIgetslice(filename, winst, windims, data, dims, isfortran)
  *--------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDIputslice(int32 windims[], VOID *data, int32 dims[], intn isfortran)
+intn DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
 #else
 intn DFSDIputslice(windims, data, dims, isfortran)
     int32 windims[];  /* array containing dimensions of the slice */
@@ -4362,7 +4365,7 @@ DFSDwriteref(filename, ref)
 
 #ifdef PROTOTYPE
 intn
-DFSDsetfillvalue(VOID *fill_value)
+DFSDsetfillvalue(VOIDP fill_value)
 #else
 intn
 DFSDsetfillvalue(fill_value)
@@ -4406,7 +4409,7 @@ DFSDsetfillvalue(fill_value)
 
 #ifdef PROTOTYPE
 intn
-DFSDgetfillvalue(VOID *fill_value)
+DFSDgetfillvalue(VOIDP fill_value)
 #else
 intn
 DFSDgetfillvalue(fill_value)
@@ -4434,6 +4437,43 @@ DFSDgetfillvalue(fill_value)
     else
       return FAIL;
 }
+
+/*-----------------------------------------------------------------------------
+ * Name:    DFSDgetslab
+ * Purpose: Get slab of data from SDG.  Will sequence to next SDG if
+ *          DFSDgetdims, DFSDgetdata or DFSDgetslab not called earlier.
+ * Inputs:  filename: name of HDF file to use
+ *          start: array of size = rank of data, containing start of slice
+ *          slab_size: array of size rank, containing end of slice
+ *          stride:
+ *          buffer: array for returning slice
+ *          buffer_size: dimensions of array data
+ * Returns: 0 on success, FAIL on failure with error set
+ * Outputs: slab of data in data
+ * Users:   
+ * Invokes: DFSDgetslice
+ * Method:  call DFSDgetslice
+ * Remarks: buffer may be larger than size of slab.  In that event, the actual
+ *          data may not be contiguous in the array "buffer".
+ *          User sets buffer_size before call.
+ *---------------------------------------------------------------------------*/
+
+#ifdef PROTOTYPE
+intn DFSDgetslab(char *filename, int32 start[], int32 slab_size[], 
+                 int32 stride[], VOIDP buffer, int32 buffer_size[])
+#else
+intn DFSDgetslab(filename, start, slab_size, stride, buffer, buffer_size)
+     char *filename;
+     int32 start[];
+     int32 slab_size[];
+     int32 stride[];
+     VOID *buffer;
+     int32 buffer_size[];
+#endif /* PROTOTYPE */
+{
+    return (DFSDgetslice(filename, start, slab_size, buffer, buffer_size));
+}
+
 
 /*-----------------------------------------------------------------------------
  * Name:    DFSDstartslab
@@ -4587,7 +4627,7 @@ DFSDstartslab(filename)
 #ifdef PROTOTYPE
 intn
 DFSDwriteslab(int32 start[], int32 stride[],
-              int32 count[], VOID *data)
+              int32 count[], VOIDP data)
 #else
 intn
 DFSDwriteslab(start, stride, count, data)
