@@ -328,6 +328,7 @@ C**************************************************************
 
       integer affileinfo, afnumann, afannlist, afannlen
       integer afreadann, afstart, afend, afendaccess, hopen, hclose
+      integer hishdf
 
       integer fileh, anh
       integer nflabs, nfdescs, nolabs, nodescs
@@ -344,7 +345,28 @@ C**************************************************************
       AN_FILE_LABEL = 2
       AN_FILE_DESC  = 3
 
+C ***** Test if the file fname is an HDF file
+C
+C
+      ret = hishdf(fname)
+      if (ret .ne. 1) then
+          num_failed = num_failed + 1
+          write(*,*) "HISHDF function failed"
+      endif
+C
+C     Call hishdf with  file not being an hdf file. Call should return
+C     0 
+C
+      ret = hishdf("manf.f")
+      if (ret .ne. 0) then
+          num_failed = num_failed + 1
+          write(*,*) "HISHDF function failed"
+      endif
+C
+C *****  end of hishdf test
+C
 C *****start annotation access on file *****
+
       fileh = hopen(fname, DFACC_READ,0)
       ret = fileh
       call VRFY(ret, 'hopen', num_failed)
