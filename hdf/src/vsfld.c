@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.14  1993/08/28 23:03:19  georgev
-Again some cast fixes.
+Revision 1.15  1993/08/28 23:07:07  georgev
+Arggh...more cast fixes..
 
+ * Revision 1.14  1993/08/28  23:03:19  georgev
+ * Again some cast fixes.
+ *
  * Revision 1.13  1993/08/20  22:38:40  koziol
  * Reduced the static memory of a couple of functions to make the PC happier...
  *
@@ -272,7 +275,7 @@ char    *fields;
     /* copy from wlist (temp) into vdata */
         HDmemcpy((VOIDP) &(vs->wlist), (VOIDP) wlist, sizeof(VWRITELIST));
 
-        HDfreespace(wlist);     /* free up the writelist */
+        HDfreespace((VOIDP)wlist);     /* free up the writelist */
         return(SUCCEED); /* ok */
   } /* writing to empty vdata */
 
@@ -300,7 +303,7 @@ char    *fields;
         
         /* copy from rlist (temp) into vdata */
         HDmemcpy((VOIDP) &(vs->rlist), (VOIDP) rlist, sizeof(VREADLIST));
-        HDfreespace(rlist);     /* free the readlist */
+        HDfreespace((VOIDP)rlist);     /* free the readlist */
         
         return(SUCCEED);
         
