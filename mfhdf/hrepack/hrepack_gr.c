@@ -259,6 +259,7 @@ int  copy_gr(int32 infile_id,
  */
  
  /* check inspection mode */
+ have_info = 0;
  if ( options->trip>0 ) 
  {
   have_info = 
