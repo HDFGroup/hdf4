@@ -459,6 +459,11 @@ c	Interlace Types
      *		MFGR_INTERLACE_LINE	= 1,
      * 		MFGR_INTERLACE_COMPONENT	= 2)
 
+      integer	FULL_INTERLACE, NO_INTERLACE
+
+      parameter(FULL_INTERLACE	= 0,
+     *		NO_INTERLACE	= 1)
+
 c       Vdata fields packing types
       integer   HDF_VSPACK, HDF_VSUNPACK
       parameter (HDF_VSPACK   = 0,
