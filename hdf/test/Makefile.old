@@ -2,7 +2,14 @@
 # $Header$
 #
 # $Log$
-# Revision 1.18  1992/07/13 21:46:30  sxu
+# Revision 1.19  1992/07/14 01:57:10  mfolk
+# Added these two lines and deleted corresponding lines:
+#   # ==> For Convex, specify CFLAGS as follows:
+#   #CFLAGS=  -g -D${MACHINE} $(IFLAGS) -D__STDC__
+#
+# Also moved these lines to occur after normal CFLAGS specification.
+#
+# Revision 1.18  1992/07/13  21:46:30  sxu
 # Modified CFLAGS for IRIS4.
 #
 # Revision 1.17  1992/07/08  22:18:22  sxu
@@ -159,7 +166,7 @@
 
 # ==> specify your machine
 MACHINE=SUN
-# ==> specify your fortran compiler 
+# ==> specify your fortran compiler  (Convex: fc)
 FC=f77 
 FFLAGS=  -g
 
@@ -169,15 +176,13 @@ CC=cc
 # ==> where are your hdf.h, hdfi.h and vg.h files located?
 IFLAGS=   -I../include -I.
 
-# ==> For Convex, specify CFLAGS as follows:
-#    STDFLAG = __STDC__
-#    CFLAGS=  -g -D${MACHINE} $(IFLAGS) -D${STDFLAG}
+CFLAGS=  -g -D${MACHINE} $(IFLAGS)
 
+# ==> For Convex, specify CFLAGS as follows:
+#CFLAGS=  -g -D${MACHINE} $(IFLAGS) -D__STDC__
 
 # ==> For IRIS4, specify CFLAGS as follows: 
 #CFLAGS=  -g -D${MACHINE} $(IFLAGS) -ansi
-
-CFLAGS=  -g -D${MACHINE} $(IFLAGS)
 
 # ==> where is your HDF library (libdf.a) located?
 LIBS= ../lib/libdf.a
