@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/07/31 21:10:24  chouck
-Use in-house print routines rather than fork() a call to od
+Revision 1.5  1992/08/24 22:00:44  sxu
+Use vfork() and delete() for VMS
 
+ * Revision 1.4  1992/07/31  21:10:24  chouck
+ * Use in-house print routines rather than fork() a call to od
+ *
  * Revision 1.3  1992/07/15  21:48:48  sxu
  * No change.
  *
@@ -208,6 +211,8 @@ int32 getElement(desc, pdata)
     return length;
 }
 
+/* The function is not called.
+
 #ifdef PROTOTYPE
 int od(char *format, char *file)
 #else
@@ -216,24 +221,30 @@ int od(format, file)
     char *file;
 #endif
 {
-    /* fork a child and let the child run od */
+     fork a child and let the child run od. Use vfork for VMS.
+
     if (fork() == 0)
+
     {
-	/* this is the child */
+	   this is the child 
+
 	if (execl("/bin/od", "od", format, file, 0) == -1)
 	    fprintf(stderr, "Error while executing od.\n");
 
-	/* return control to the parent */
+	   return control to the parent 
 	exit(0);
     }
 
-    /* the parent waits for the child to die */
+      the parent waits for the child to die 
+
     wait(0);
 
-    /* this is a bug because it always returns OK, will expand this as
-       soon as the status return mechanism from wait is understood */
+      this is a bug because it always returns OK, will expand this as
+       soon as the status return mechanism from wait is understood 
     return HE_OK;
+
 }
+*/
 
 /* the tmp directory, currently set for unix */
 #define TDIR "/tmp/"
@@ -294,7 +305,11 @@ int removeFile(file)
     char *file;
 #endif
 {
+#ifndef VMS
     return unlink(file);
+#else
+    return remove((const char *)file);
+#endif
 }
 
 /* is a file currently opened */
