@@ -211,6 +211,7 @@ done:
     { /* Error condition cleanup */
     } /* end if */
 
+  return ret_value;
 } /* HBconvert */
 
 /* ------------------------------ HBPstread ------------------------------- */
