@@ -645,7 +645,7 @@ C
            print *, 'sfrdata returned', stat
            err = err + 1
       endif
-      do 180 i=0, 24
+      do 180 i=1, 24
           if (ivals(i) .ne. i)  then
               print *,  'wrong value: should be ',i,'  got ',ivals(i)
               err = err + 1
