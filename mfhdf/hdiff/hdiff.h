@@ -63,7 +63,7 @@ typedef struct {			/* selection for comparison  */
     int vd;			/*
 				 * if true, compare Vdata only 
 				 */
-    int max_err_cnt;            /*
+    int32 max_err_cnt;            /*
                                  * max. no of difference to be printed
                                  */
     float32 err_limit;		/*
@@ -102,7 +102,7 @@ typedef struct {			/* selection for comparison  */
 extern "C" {
 #endif
 
-int  hdiff(char *fname1, char *fname2, diff_opt_t *fspec);
+int  hdiff(char *fname1, char *fname2, diff_opt_t *opt);
 
 #ifdef __cplusplus
 }
@@ -116,12 +116,12 @@ int  hdiff(char *fname1, char *fname2, diff_opt_t *fspec);
  *-------------------------------------------------------------------------
  */
 
-int  gattr_diff(int32 sdid1, int32 sdid2, diff_opt_t *specp);
-int  sdattr_diff(int32 sdid1, int32 sdid2, diff_opt_t *specp);
+int  gattr_diff(int32 sdid1, int32 sdid2, diff_opt_t *opt);
+int  sdattr_diff(int32 sdid1, int32 sdid2, diff_opt_t *opt);
 void pr_att_vals(nc_type type, int len, void *vals);
 int  vdata_cmp(int32 vs1, int32 vs2, char *gname, char*cname, int32 max_err_cnt);
 void fmt_print(uint8 *x, int32 type);
-void make_vars(char *optarg, diff_opt_t *fspec, int option);
+void make_vars(char *optarg, diff_opt_t *opt, int option);
 
 
 int array_diff(void *buf1, 
@@ -137,7 +137,7 @@ int array_diff(void *buf1,
 
 int match( char *fname1, int nobjects1, dtable_t *list1,
            char *fname2, int nobjects2, dtable_t *list2, 
-           diff_opt_t *fspec );
+           diff_opt_t *opt );
 
 
 int diff( char *fname1,
@@ -150,7 +150,7 @@ int diff( char *fname1,
           int32 ref1,
           int32 tag2,
           int32 ref2,
-          diff_opt_t *fspec );
+          diff_opt_t *opt );
 
 void print_dims( int r, int32 *d );
 
@@ -159,21 +159,21 @@ int diff_vs( int32 file1_id,
              int32 file2_id,
              int32 ref1,              
              int32 ref2,
-             diff_opt_t * fspec);
+             diff_opt_t * opt);
 
 
 int diff_gr( int32 file1_id,
              int32 file2_id,
              int32 ref1,              
              int32 ref2,
-             diff_opt_t * specp);
+             diff_opt_t * opt);
 
 
 int diff_sds(char  *fname1, 
              char  *fname2, 
              int32 ref1,
              int32 ref2,
-             diff_opt_t *fspec);
+             diff_opt_t *opt);
 
 
 

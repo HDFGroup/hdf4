@@ -15,12 +15,6 @@
 #include "hdiff_list.h"
 #include "hdiff_mattbl.h"
 
-/*
-#include "hdiff_sds.h"
-#include "hdiff_gr.h"
-#include "hdiff_vs.h"
-*/
-
 
 
 /*-------------------------------------------------------------------------
@@ -38,15 +32,17 @@
  */
 
 
-int hdiff(char *fname1, char *fname2, diff_opt_t *fspec)
+int hdiff(char *fname1, 
+          char *fname2, 
+          diff_opt_t *opt)
 {
  dtable_t  *list1;
  dtable_t  *list2;
- int      nobjects1;
- int      nobjects2;
- int      nfound;
- int32    sd1_id,                 
-          sd2_id;
+ int       nobjects1;
+ int       nobjects2;
+ int       nfound;
+ int32     sd1_id,                 
+           sd2_id;
 
  /* init tables */
  dtable_init(&list1);
@@ -62,13 +58,13 @@ int hdiff(char *fname1, char *fname2, diff_opt_t *fspec)
  if ((nobjects2=Hgetlist(fname2, list2))<=0)
   return FAIL;
 
- if (fspec->verbose) {
+ if (opt->verbose) {
   dtable_print(list1);
   dtable_print(list2);
  }
 
  nfound=match(fname1,nobjects1,list1,
-              fname2,nobjects2,list2,fspec);
+              fname2,nobjects2,list2,opt);
  
  /* free tables */
  dtable_free(list1);
@@ -88,8 +84,8 @@ int hdiff(char *fname1, char *fname2, diff_opt_t *fspec)
   exit(1);
  }
  
- if (fspec->ga == 1) 
-  nfound+=gattr_diff(sd1_id, sd2_id, fspec);
+ if (opt->ga == 1) 
+  nfound+=gattr_diff(sd1_id, sd2_id, opt);
  
  SDend(sd1_id);
  SDend(sd2_id);
@@ -112,15 +108,15 @@ int hdiff(char *fname1, char *fname2, diff_opt_t *fspec)
  *
  * Date: August 22, 2003
  *
- * Comments:
- *
- * Modifications:
- *
  *-------------------------------------------------------------------------
  */
-int match( char *fname1, int nobjects1, dtable_t *list1,
-           char *fname2, int nobjects2, dtable_t *list2, 
-           diff_opt_t *fspec )
+int match( char *fname1, 
+           int nobjects1, 
+           dtable_t *list1,
+           char *fname2, 
+           int nobjects2, 
+           dtable_t *list2, 
+           diff_opt_t *opt )
 {
  int32 file1_id,
        file2_id;
@@ -128,7 +124,7 @@ int match( char *fname1, int nobjects1, dtable_t *list1,
  int   more_names_exist = (nobjects1>0 && nobjects2>0) ? 1 : 0;
  int   curr1=0;
  int   curr2=0;
- int   nfound=0;
+ int   nfound=-1;
  /*build a common list */
  match_table_t *mattbl=NULL;
  unsigned infile[2]; 
@@ -222,7 +218,7 @@ int match( char *fname1, int nobjects1, dtable_t *list1,
  *-------------------------------------------------------------------------
  */
 
- if (fspec->verbose) {
+ if (opt->verbose) {
   printf("---------------------------------------\n");
   printf("file1     file2\n");
   printf("---------------------------------------\n");
@@ -244,13 +240,13 @@ int match( char *fname1, int nobjects1, dtable_t *list1,
  if ((file1_id = Hopen(fname1, DFACC_READ, 0))==FAIL)
  {
   printf("Exiting: Hopen failed on <%s>", fname1);
-  exit(1);
+  goto out;
  }
  
  if ((file2_id = Hopen(fname2, DFACC_READ, 0))==FAIL)
  {
   printf("Exiting: Hopen failed on <%s>", fname2);
-  exit(1);
+  goto out;
  }
  
  
@@ -273,7 +269,7 @@ int match( char *fname1, int nobjects1, dtable_t *list1,
                  mattbl->objs[i].ref1,
                  mattbl->objs[i].tag2,
                  mattbl->objs[i].ref2,
-                 fspec );
+                 opt );
  }
 
 /*-------------------------------------------------------------------------
@@ -288,6 +284,7 @@ int match( char *fname1, int nobjects1, dtable_t *list1,
   printf("Error: Hclose failed on <%s>", fname2);
  }
 
+out:
  /* free table */
  match_table_free(mattbl);
  return nfound;
@@ -317,7 +314,7 @@ int diff( char *fname1,
           int32 ref1,
           int32 tag2,
           int32 ref2,
-          diff_opt_t *fspec )
+          diff_opt_t *opt )
 {
  int nfound=0;
 
@@ -326,7 +323,7 @@ int diff( char *fname1,
   case DFTAG_SD:  /* Scientific Data */
   case DFTAG_SDG: /* Scientific Data Group */
   case DFTAG_NDG: /* Numeric Data Group */
-   nfound=diff_sds(fname1,fname2,ref1,ref2,fspec);
+   nfound=diff_sds(fname1,fname2,ref1,ref2,opt);
   break;
 
   case DFTAG_VG: 
@@ -339,13 +336,13 @@ int diff( char *fname1,
   case DFTAG_RI8: /* Raster-8 image */
   case DFTAG_CI8: /* RLE compressed 8-bit image */
   case DFTAG_II8: /* IMCOMP compressed 8-bit image */
-   if (fspec->gr == 1)
-   nfound=diff_gr(file1_id,file2_id,ref1,ref2,fspec);
+   if (opt->gr == 1)
+   nfound=diff_gr(file1_id,file2_id,ref1,ref2,opt);
    break;
    
   case DFTAG_VH: 
-   if (fspec->vd == 1)
-   nfound=diff_vs(file1_id,file2_id,ref1,ref2,fspec);
+   if (opt->vd == 1)
+   nfound=diff_vs(file1_id,file2_id,ref1,ref2,opt);
    break;
   
   default:

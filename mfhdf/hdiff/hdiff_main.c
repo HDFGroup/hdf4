@@ -77,7 +77,7 @@ main(int argc, char *argv[])
  extern int optind;
  extern int opterr;
  extern char *optarg;
- static diff_opt_t fspec = /* defaults, overridden on command line */
+ static diff_opt_t opt = /* defaults, overridden on command line */
  {
   0,    /* verbose mode */
   1,    /* compare global attributes */
@@ -105,48 +105,48 @@ main(int argc, char *argv[])
  while ((c = getopt(argc, argv, "bgsdSDe:t:v:u:")) != EOF)
   switch(c) {
  case 'b':  /* verbose mode */
-  fspec.verbose =1;
+  opt.verbose =1;
   break;
  case 'g':  /* global attributes only */
-  fspec.ga = 1;
-  fspec.sa = 0;
-  fspec.sd = 0;
-  fspec.vd = 0;
+  opt.ga = 1;
+  opt.sa = 0;
+  opt.sd = 0;
+  opt.vd = 0;
   break;
  case 's':  /* SD local attributes only */
-  fspec.ga = 0;
-  fspec.sa = 1;
-  fspec.sd = 0;
-  fspec.vd = 0;
+  opt.ga = 0;
+  opt.sa = 1;
+  opt.sd = 0;
+  opt.vd = 0;
   break;
  case 'd':  /* SD data only */
-  fspec.ga = 0;
-  fspec.sa = 0;
-  fspec.sd = 1;
-  fspec.vd = 0;
+  opt.ga = 0;
+  opt.sa = 0;
+  opt.sd = 1;
+  opt.vd = 0;
   break;
  case 'D':  /* SD data only */
-  fspec.ga = 0;
-  fspec.sa = 0;
-  fspec.sd = 0;
-  fspec.vd = 1;
+  opt.ga = 0;
+  opt.sa = 0;
+  opt.sd = 0;
+  opt.vd = 1;
   break;
  case 'e':  /* max no. of difference to be printed */
-  fspec.max_err_cnt = atoi(optarg);
+  opt.max_err_cnt = atoi(optarg);
   break;
  case 't':  /* range of difference to be printed */
-  fspec.err_limit = (float32)atof(optarg);
+  opt.err_limit = (float32)atof(optarg);
   break;
  case 'v':  /* variable names */
   /* make list of names of variables specified */
-  make_vars (optarg, &fspec, 1);
+  make_vars (optarg, &opt, 1);
   break;
  case 'u':  /* variable names */
   /* make list of names of variables specified */
-  make_vars (optarg, &fspec, 2);
+  make_vars (optarg, &opt, 2);
   break;
  case 'S':
-  fspec.statistics = 1;
+  opt.statistics = 1;
   break;
  case '?':
   usage();
@@ -167,7 +167,7 @@ main(int argc, char *argv[])
  
  argv = argv + optind;
 
- ret=hdiff(argv[0],argv[1],&fspec);
+ ret=hdiff(argv[0],argv[1],&opt);
   
  return EXIT_SUCCESS;
 }

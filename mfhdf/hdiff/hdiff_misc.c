@@ -210,7 +210,7 @@ pr_att_vals(nc_type type, int len, void *vals)
 
 
 void
-make_vars(char *optarg, diff_opt_t *fspecp, int option)
+make_vars(char *optarg, diff_opt_t *opt, int option)
 {
  char *cp = optarg;
  int nvars = 1;
@@ -218,9 +218,9 @@ make_vars(char *optarg, diff_opt_t *fspecp, int option)
  
  /* compute number of variable names in comma-delimited list */
  if (option == 1)
-  fspecp->nlvars = 1;
+  opt->nlvars = 1;
  else
-  fspecp->nuvars = 1;
+  opt->nuvars = 1;
  
  while (*cp++)
   if (*cp == ',')
@@ -228,21 +228,21 @@ make_vars(char *optarg, diff_opt_t *fspecp, int option)
   
   if (option == 1)
   {
-   fspecp->lvars = (char **) malloc(nvars * sizeof(char*));
-   if (!fspecp->lvars) {
+   opt->lvars = (char **) malloc(nvars * sizeof(char*));
+   if (!opt->lvars) {
     error("out of memory");
     exit(EXIT_FAILURE);
    }
-   cpp = fspecp->lvars;
+   cpp = opt->lvars;
   }
   else
   {
-   fspecp->uvars = (char **) malloc(nvars * sizeof(char*));
-   if (!fspecp->uvars) {
+   opt->uvars = (char **) malloc(nvars * sizeof(char*));
+   if (!opt->uvars) {
     error("out of memory");
     exit(EXIT_FAILURE);
    }
-   cpp = fspecp->uvars;
+   cpp = opt->uvars;
   }
   
   /* copy variable names into list */
@@ -259,9 +259,9 @@ make_vars(char *optarg, diff_opt_t *fspecp, int option)
    cpp++;
   }
   if (option == 1)
-   fspecp->nlvars = nvars;
+   opt->nlvars = nvars;
   else
-   fspecp->nuvars = nvars;
+   opt->nuvars = nvars;
 }
 
 

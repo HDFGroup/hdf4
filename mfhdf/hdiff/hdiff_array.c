@@ -14,9 +14,6 @@
 #include "hdiff.h"
 #include "vgint.h"
 
-
-
-
 #define MYMAX(A,B) (((A) > (B)) ? (A) : (B))
 #define MYMIN(A,B) (((A) < (B)) ? (A) : (B))
 #define PRINT_FSTATS(T) {\

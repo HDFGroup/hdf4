@@ -15,7 +15,6 @@
 #include "hdiff_list.h"
 #include "hdiff_mattbl.h"
 
-/*#include "hdiff_gr.h"*/
 
 /*-------------------------------------------------------------------------
  * Function: diff_gr
@@ -35,7 +34,7 @@ int diff_gr( int32 file1_id,
              int32 file2_id,
              int32 ref1,              
              int32 ref2,
-             diff_opt_t *specp)  
+             diff_opt_t *opt)  
 {
  intn  status_n;               /* returned status_n for functions returning an intn  */
  int32 gr1_id,                 /* GR identifier */
@@ -66,8 +65,8 @@ int diff_gr( int32 file1_id,
  int   dim_diff=0;             /* dimensions are different */
  VOIDP buf1=NULL;
  VOIDP buf2=NULL;
- unsigned int max_err_cnt;
- int    i, cmp;
+ int32 max_err_cnt;
+ int   i, cmp;
 
 
 /*-------------------------------------------------------------------------
@@ -169,7 +168,7 @@ int diff_gr( int32 file1_id,
  */
  if ( interlace_mode1 != interlace_mode2 )
  {
-  if (specp->verbose)
+  if (opt->verbose)
   printf("Warning: different interlace mode: <%d> and <%d>\n", 
    interlace_mode1,interlace_mode2);
   interlace_mode1=interlace_mode2;
@@ -248,7 +247,7 @@ int diff_gr( int32 file1_id,
  */
  
 
- if (specp->verbose)
+ if (opt->verbose)
  printf("Comparing <%s>\n",gr1_name); 
 
  cmp = HDmemcmp(buf1,buf2,data_size);
@@ -259,9 +258,9 @@ int diff_gr( int32 file1_id,
   If max_err_cnt is set (i.e. not its default -1), use it otherwise set it
   to tot_err_cnt so it doesn't trip  
   */
-  max_err_cnt = (specp->max_err_cnt >= 0) ? specp->max_err_cnt : nelms;
-  nfound=array_diff(buf1, buf2, nelms, dtype1, specp->err_limit, 
-   max_err_cnt, specp->statistics, 0, 0);
+  max_err_cnt = (opt->max_err_cnt >= 0) ? opt->max_err_cnt : nelms;
+  nfound=array_diff(buf1, buf2, nelms, dtype1, opt->err_limit, 
+   max_err_cnt, opt->statistics, 0, 0);
  }
   
 /*-------------------------------------------------------------------------
