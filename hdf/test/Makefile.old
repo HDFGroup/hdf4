@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.16  1992/07/08 15:36:04  sxu
+# Revision 1.17  1992/07/08 22:18:22  sxu
+# Added tsdstr.c and tsdstrF.f
+#
+# Revision 1.16  1992/07/08  15:36:04  sxu
 # Eliminate doubled -D$machine for C programs.
 #
 # Revision 1.15  1992/06/09  20:19:24  dilg
@@ -78,6 +81,7 @@
 #              tsdnnt (same as tdfsd_nt with native number types)
 #              tsdmms (scientific data sets, data, max/min and scales)
 #              tsdnmms(same as tdfsd_mms with native number types)
+#              tsdstr (data and dimension strings: label, unit, format and coordsys)
 #              tan     (annotations for HDF objects)
 #              tanfile (annotations for HDF files)
 #              tstubs  (emulation of old lower level i/o routines)
@@ -92,6 +96,7 @@
 #                           machine number types)
 #              tsdmmsF  (scientific data sets, data, max/min and scales)
 #	       tsdnmmsF (same as tdfsd_mmsF with native number types)
+#              tsdstrF  (data and dimenstrings: label, unit, format and coordsys)
 #              tanF     (annotations for HDF objects)
 #              tanfileF (annotations for HDF files)
 #              tstubsF  (emulation of old lower level i/o routines)
@@ -177,15 +182,15 @@ LIBS= ../lib/libdf.a
 RM=/bin/rm
 RMFLAGS=-f
 
-CTESTS= tr8 t24 tsdmms tsdnmms tsdnnt tsdnt tan \
+CTESTS= tr8 t24 tsdstr tsdmms tsdnmms tsdnnt tsdnt tan \
         tanfile tp tstubs tv1 tv2 tvers egchi
 
 CHDRS = df.h dfi.h dfsd.h vg.h df.h dfi.h dfstubs.h \
 	vproto.h 
-CTSRCS= tr8.c t24.c tsdmms.c tsdnmms.c tsdnnt.c \
+CTSRCS= tr8.c t24.c tsdstr.c tsdmms.c tsdnmms.c tsdnnt.c \
         tsdnt.c tan.c tanfile.c tp.c tstubs.c \
 	tv1.c tv2.c tvers.c egchi.c
-CTOBJS= tr8.o t24.o tsdmms.o tsdnt.o tan.o tanfile.o \
+CTOBJS= tr8.o t24.o tsdstr.o tsdmms.o tsdnt.o tan.o tanfile.o \
         tp.o tstubs.o tsdnmms.o tsdnnt.o tv1.o tv2.o \
 	tvers.o egchi.o
 
@@ -194,11 +199,11 @@ HHDRS = hfile.h hdf.h hdfi.h herr.h hproto.h
 HTSRCS= thfile.c thfile1.c terr.c thblocks.c thextelt.c tlinkage.c 
 HTOBJS= thfile.o thfile1.o terr.o thblocks.o thextelt.o tlinkage.o
 
-FTESTS= tr8F t24F tpF tanF tanfileF tsdntF tsdnntF \
+FTESTS= tr8F t24F tpF tanF tanfileF tsdstrF tsdntF tsdnntF \
         tsdmmsF tsdnmmsF tstubsF egfhi
-FSRCS = tr8F.f t24F.f tpF.f tanF.f tanfileF.f tsdntF.f \
+FSRCS = tr8F.f t24F.f tpF.f tanF.f tanfileF.f tsdstrF.f tsdntF.f \
         tsdnntF.f tsdmmsF.f  tsdnmmsF.f tstubsF.f egfhi.f
-FOBJS = tr8F.o t24F.o tpF.o tanF.o tanfileF.o tsdntF.o \
+FOBJS = tr8F.o t24F.o tpF.o tanF.o tanfileF.o tsdstrF.o tsdntF.o \
         tsdnntF.o tsdmmsF.o tsdnmmsF.o tstubsF.o egfhi.o
 
 all: ctests ftests htests
@@ -217,6 +222,9 @@ t24:  t24.c
 
 tp:   tp.c 
 	$(CC) $(CFLAGS)  tp.c $(LIBS) -o tp
+
+tsdstr:    tsdstr.c
+	$(CC) $(CFLAGS)  tsdstr.c $(LIBS) -o tsdstr
 
 tsdnt:    tsdnt.c 
 	$(CC) $(CFLAGS)  tsdnt.c $(LIBS) -o tsdnt
@@ -268,6 +276,9 @@ tpF:   tpF.f
 
 tstubsF:   tstubsF.f
 	$(FC) $(FFLAGS) tstubsF.f $(LIBS)  -o tstubsF
+
+tsdstrF:   tsdstrF.f
+	$(FC) $(FFLAGS) tsdstrF.f $(LIBS)  -o tsdstrF
 
 tsdntF:   tsdntF.f
 	$(FC) $(FFLAGS) tsdntF.f $(LIBS)  -o tsdntF 
