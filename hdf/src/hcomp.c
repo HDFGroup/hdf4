@@ -545,7 +545,6 @@ HCIwrite_header(atom_t file_id, compinfo_t * info, uint16 special_tag, uint16 re
     int32       dd_aid;         /* AID for writing the special info */
     uint8      *p;              /* pointer to the temporary buffer */
     uint8       local_ptbuf[32];
-    uint8      *header_buf;     /* buffer to store the header info */
     int32       header_len;     /* how many bytes the header is */
     int32       ret_value=SUCCEED;
 
@@ -596,14 +595,10 @@ HCIwrite_header(atom_t file_id, compinfo_t * info, uint16 special_tag, uint16 re
     if((header_len=HCPquery_encode_header(info->minfo.model_type,
             m_info,info->cinfo.coder_type,c_info))==FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
-    if((header_buf=HDmalloc(header_len))==NULL)
-        HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    if(HCPencode_header(header_buf,info->minfo.model_type,m_info,
+    if(HCPencode_header(p,info->minfo.model_type,m_info,
             info->cinfo.coder_type,c_info)==FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
-    HDmemcpy(p,header_buf,header_len);
     p+=header_len;
-    HDfree(header_buf);
 #endif /* OLD_WAY */
     
     /* write the special info structure to fill */
@@ -764,6 +759,15 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
                     HGOTO_ERROR(DFE_CANTFLUSH, FAIL);
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
             } /* end if */
+
+          if ((buf = (VOIDP) HDmalloc((uint32) data_len)) == NULL)
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
+          if (Hgetelement(file_id, tag, ref, buf) == FAIL)
+              HGOTO_ERROR(DFE_READERROR, FAIL);
+          /* Delete the old DD from the file and memory hash table */
+          if (FAIL == HTPdelete(data_id))
+              HGOTO_ERROR(DFE_CANTDELDD, FAIL);
+
       } /* end if */
 
     /* set up the special element information and write it to file */
@@ -802,11 +806,6 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
     if (data_id != FAIL)
       {
 
-          if ((buf = (VOIDP) HDmalloc((uint32) data_len)) == NULL)
-              HGOTO_ERROR(DFE_NOSPACE, FAIL);
-          if (Hgetelement(file_id, tag, ref, buf) == FAIL)
-              HGOTO_ERROR(DFE_READERROR, FAIL);
-
           /* write the data through to the compression layer */
           if (HCPwrite(access_rec, data_len, buf) == FAIL)
               HGOTO_ERROR(DFE_MODEL, FAIL);
@@ -814,10 +813,6 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
           /* seek back to the beginning of the data through to the compression layer */
           if (HCPseek(access_rec, 0, DF_START) == FAIL)
               HGOTO_ERROR(DFE_MODEL, FAIL);
-
-          /* Delete the old DD from the file and memory hash table */
-          if (FAIL == HTPdelete(data_id))
-              HGOTO_ERROR(DFE_CANTDELDD, FAIL);
       }     /* end if */
 
     ret_value=HAregister_atom(AIDGROUP,access_rec);
