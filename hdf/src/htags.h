@@ -19,9 +19,12 @@
 #ifndef _HTAGS_H
 #define _HTAGS_H
 
-/* tags and refs */
+/* wild-card tags and refs. Should only be used in interface calls
+   and never stored in the file i.e. in DD's. */
 #define DFREF_WILDCARD      0
 #define DFTAG_WILDCARD      0
+
+/* tags and refs */
 #define DFTAG_NULL          1
 #define DFTAG_LINKED        20  /* linked-block special element */
 #define DFTAG_VERSION       30
