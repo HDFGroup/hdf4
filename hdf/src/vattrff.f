@@ -53,7 +53,7 @@ C
        integer  values
        integer vsfcsat
      
-       vsfsat = vsfcsat(vsid, findex, attrnm, dtype,
+       vsfsnat = vsfcsat(vsid, findex, attrnm, dtype,
      +                count, values, len(attrnm))
        end
 C --------------- vsfscat -------------------------

@@ -71,7 +71,7 @@ RETURNS
      Returns SUCCEED if successful, FAIL otherwise.
 
 FORTRAN
-     integer function vsfsat(vsid,findex,attrnm,dtype,count,values) --
+     integer function vsfsnat(vsid,findex,attrnm,dtype,count,values) --
             set a numeric attribute
        integer vsid, findex, dtype, count
        character*(*) attrnm
@@ -205,7 +205,7 @@ RETURNS
        Returns SUCCEED if successful, FAIL otherwise
 
 FORTRAN
-       integer function vsfgat(vsid,findex,aindex,values) --
+       integer function vsfgnat(vsid,findex,aindex,values) --
               get values of a numeric attribute
          integer vsid, findex, aindex
          integer values(*)
@@ -258,7 +258,7 @@ RETURNS
         Returns SUCCEED when successful, FAIL otherwise.
 
 FORTRAN
-       integer function vfsatt(vgid,attrnm,dtype,count,values) --
+       integer function vfsnatt(vgid,attrnm,dtype,count,values) --
            set numeric attributes
          integer vgid, dtype, count
          integer values(*)
@@ -376,7 +376,7 @@ RETURNS
       Returns SUCCEED when successful, FAIL otherwise
 
 FORTRAN 
-       integer function vfgatt(vgid,aindex,values) --
+       integer function vfgnatt(vgid,aindex,values) --
               get values of a numeric attribute
          integer vgid, aindex
          integer values(*)

@@ -49,7 +49,7 @@ nvsfcfdx(intf *vsid, _fcd fldnm, intf *findex,
 /* -------------------------------------------------
  * vsfcsat -- set a numeric attr for a vdata or a field
  *            of a vdata
- * VSsetattr -- vsfcsat -- vsfsat
+ * VSsetattr -- vsfcsat -- vsfsnat
  */
 
 FRETVAL(intf)
