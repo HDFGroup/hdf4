@@ -2464,7 +2464,7 @@ uint16 HDbase_tag(tag)
 ** REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int Hgetlibversion(uint32 *majorv, uint32 *minorv, uint32 *release, char string[])
+int Hgetlibversion(uint32 *majorv, uint32 *minorv, uint32 *releasev, char string[])
 #else
 int Hgetlibversion(majorv, minorv, releasev, string)
 uint32 *majorv, *minorv, *releasev;
