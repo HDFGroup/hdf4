@@ -85,6 +85,11 @@ extern int Verbocity;
 static int32 test_type[]={0,DFNT_LITEND,DFNT_NATIVE};
 static char *test_name[]={"Big-Endian","Little-Endian","Native"};
 
+/* for those machines with imprecise IEEE<-> conversions, this should be */
+/* close enough */
+#define FLOAT64_FUDGE  ((float64)0.00000001)
+#define FLOAT32_FUDGE  ((float32)0.00001)
+
 void test_conv()
 {
     clock_t c1,c2,c3,c4;
@@ -590,7 +595,8 @@ void test_conv()
 
 /* This amazing hack is because of the way the Cray converts numbers. */
 /*  The converted number are going to have to be checked by hand... */
-#ifdef UNICOS
+#if defined UNICOS | defined VP
+#ifdef OLD_WAY
         if(Verbocity>9) {
             intn i;
             uint8 *u8_s=(uint8 *)src_float32,
@@ -608,9 +614,19 @@ void test_conv()
               printf("%.2x ",u8_d2[i]);
             printf("\n");
         }
+#endif /* OLD_WAY */
+	for(i=0; i<TEST_SIZE; i++) {
+	    if(dst2_float32[i]<(src_float32[i]-FLOAT32_FUDGE)
+		|| dst2_float32[i]>(src_float32[i]+FLOAT32_FUDGE)) {
+              printf("Error converting %s float32 values!\n",test_name[t]);
+printf("src[%d]=%lf, dst[%d]=%lf, dst2[%d]=%lf\n",i,src_float32[i],i,dst_float32[i],i,dst2_float32[i]);
+              HEprint(stdout,0);
+              num_errs++;
+            } /* end if */
+	  } /* end for */
 #else
         if(HDmemcmp(src_float32,dst2_float32,TEST_SIZE*sizeof(float32))) {
-            printf("Error converting float32 values!\n");
+            printf("Error converting %s float32 values!\n",test_name[t]);
             HEprint(stdout,0);
             num_errs++;
           } /* end if */
@@ -644,7 +660,8 @@ void test_conv()
 
 /* This amazing hack is because of the way the Cray converts numbers. */
 /*  The converted number are going to have to be checked by hand... */
-#ifdef UNICOS
+#if defined UNICOS | defined VP
+#ifdef OLD_WAY
         if(Verbocity>9) {
             intn i;
             uint8 *u8_s=(uint8 *)src_float32,
@@ -662,6 +679,15 @@ void test_conv()
               printf("%.2x ",u8_d2[i]);
             printf("\n");
         }
+#endif /* OLD_WAY */
+	for(i=0; i<(TEST_SIZE/2); i++) {
+	    if(dst2_float32[i]<(src_float32[i]-FLOAT32_FUDGE)
+		|| dst2_float32[i]>(src_float32[i]+FLOAT32_FUDGE)) {
+              printf("Error converting %s float32 values!\n",test_name[t]);
+              HEprint(stdout,0);
+              num_errs++;
+            } /* end if */
+	  } /* end for */
 #else
         if(HDmemcmp(src_float32,dst2_float32,(TEST_SIZE/2)*sizeof(float32))) {
             printf("Error converting %s float32 values with strides!\n",test_name[t]);
@@ -714,7 +740,8 @@ void test_conv()
         MESSAGE(6,printf("%d/%d seconds to convert %d %s float64 values\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t]););
 /* This amazing hack is because of the way the VMS converts numbers. */
 /*  The converted number are going to have to be checked by hand... */
-#ifdef VMS
+#if defined VP | defined VMS
+#ifdef OLD_WAY
         if(Verbocity>9) {
             intn i;
             uint8 *u8_s=(uint8 *)src_float64,
@@ -732,9 +759,18 @@ void test_conv()
               printf("%.2x ",u8_d2[i]);
             printf("\n");
         }
+#endif /* OLD_WAY */
+	for(i=0; i<TEST_SIZE; i++) {
+	    if(dst2_float64[i]<(src_float64[i]-FLOAT64_FUDGE)
+		|| dst2_float64[i]>(src_float64[i]+FLOAT64_FUDGE)) {
+              printf("Error converting %s float64 values!\n",test_name[t]);
+              HEprint(stdout,0);
+              num_errs++;
+            } /* end if */
+	  } /* end for */
 #else
         if(HDmemcmp(src_float64,dst2_float64,TEST_SIZE*sizeof(float64))) {
-            printf("Error converting float64 values!\n");
+            printf("Error converting %s float64 values!\n",test_name[t]);
             HEprint(stdout,0);
             num_errs++;
           } /* end if */
@@ -767,7 +803,8 @@ void test_conv()
         MESSAGE(6,printf("%d/%d seconds to convert %d %s float64 values with %d/%d stride\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t],DEST_STRIDE,SOURCE_STRIDE););
 /* This amazing hack is because of the way the VMS converts numbers. */
 /*  The converted number are going to have to be checked by hand... */
-#ifdef VMS
+#if defined VP | defined VMS
+#ifdef OLD_WAY
         if(Verbocity>9) {
             intn i;
             uint8 *u8_s=(uint8 *)src_float64,
@@ -785,6 +822,15 @@ void test_conv()
               printf("%.2x ",u8_d2[i]);
             printf("\n");
         }
+#endif /* OLD_WAY */
+	for(i=0; i<(TEST_SIZE/2); i++) {
+	    if(dst2_float64[i]<(src_float64[i]-FLOAT64_FUDGE)
+		|| dst2_float64[i]>(src_float64[i]+FLOAT64_FUDGE)) {
+              printf("Error converting %s float64 values!\n",test_name[t]);
+              HEprint(stdout,0);
+              num_errs++;
+            } /* end if */
+	  } /* end for */
 #else
         if(HDmemcmp(src_float64,dst2_float64,(TEST_SIZE/2)*sizeof(float64))) {
             printf("Error converting %s float64 values with strides!\n",test_name[t]);
