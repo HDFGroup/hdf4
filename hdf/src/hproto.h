@@ -228,7 +228,7 @@ extern int HDinqblockinfo
 */
 extern int32 HXcreate
     PROTO((int32 file_id, uint16 tag, uint16 ref, char _HUGE *extern_file_name,
-	    int32 f_offset, int32 start_len));
+	    int32 offset, int32 start_len));
 
 /*
 ** from herr.c
