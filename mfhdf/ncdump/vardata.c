@@ -13,7 +13,9 @@
 #include "dumplib.h"
 #include "vardata.h"
 
+#ifndef STREQ
 #define	STREQ(a, b)	(*(a) == *(b) && strcmp((a), (b)) == 0)
+#endif
 
 /*
  * Print a row of variable values.  Makes sure output lines aren't too long
