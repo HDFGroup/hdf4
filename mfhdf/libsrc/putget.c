@@ -705,6 +705,9 @@ NC_var *vp;
 
     HDfreespace(values);
     vp->aid = FAIL;
+
+    /* added a new object -- make sure we flush the header */
+    handle->flags |= NC_HDIRTY;
             
     return vsid;
 
