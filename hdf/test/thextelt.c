@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1992/06/22 23:04:42  chouck
-Removed calls to fork()
+Revision 1.6  1992/06/25 18:27:39  chouck
+Changed output file names
 
+ * Revision 1.5  1992/06/22  23:04:42  chouck
+ * Removed calls to fork()
+ *
  * Revision 1.4  1992/06/01  18:57:55  chouck
  * Cleaned up output so its clear what is going on
  *
@@ -61,7 +64,7 @@ int main(argc, argv)
     CHECK(ret, FAIL, "Hputelement");
 
     printf("Promoting above object to external element in file #1\n\n");
-    aid1 = HXcreate(fid, 1000, 1, "t.hdf1");
+    aid1 = HXcreate(fid, 1000, 1, "t1.hdf");
     CHECK(aid1, FAIL, "HXcreate");
 
     ret = Hseek(aid1, strlen("element 1000 1") + 1, DF_START);
@@ -78,7 +81,7 @@ int main(argc, argv)
     CHECK(ret, FAIL, "Hendaccess");
 
     printf("Creating an external element in file #2\n");
-    aid1 = HXcreate(fid, 1000, 4, "t.hdf2");
+    aid1 = HXcreate(fid, 1000, 4, "t2.hdf");
     CHECK(aid1, FAIL, "HXcreate");
 
     printf("Writing 2000 bytes to file #2\n\n");
@@ -92,7 +95,7 @@ int main(argc, argv)
     CHECK(ret, FAIL, "Hnewref");
 
     printf("Creating an external element in file #3\n");
-    aid1 = HXcreate(fid, 1000, 2, "t.hdf3");
+    aid1 = HXcreate(fid, 1000, 2, "t3.hdf");
     CHECK(aid1, FAIL, "HXcreate");
 
     printf("Writing string 'element 1000 2' to file #3\n\n");
@@ -124,7 +127,7 @@ int main(argc, argv)
     }
 
     printf("\nCreating an external element in file #4\n");
-    aid1 = HXcreate(fid, 1020, 2, "t.hdf4");
+    aid1 = HXcreate(fid, 1020, 2, "t4.hdf");
     CHECK(aid1, FAIL, "HXcreate");
 
     printf("Writing 4096 bytes to file #4\n\n");
