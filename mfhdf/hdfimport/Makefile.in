@@ -1,6 +1,7 @@
-# $Id$
+# Makefile for HDFIMPORT and HDFIMPORTTEST.
 #
-#          Makefile to build netcdf library and utilities
+# Modified Last by Pankaj Kamat (pkamat) Dec 6th 1:30 pm
+# Makefile.in,v 1.2 1994/05/19 20:18:53 sxu Exp
 # NOTE: This Makefile.in is used by the Cygnus 'configure' script to
 #       generate the top level Makefile.
 
@@ -8,7 +9,7 @@
 
 # 'srcdir' Gets set to directory this Makefile is found in
 srcdir = .
-TOP_SRCDIR = ..
+TOP_SRCDIR = ../..
 
 prefix = $(TOP_SRCDIR)/NewHDF
 
@@ -66,7 +67,7 @@ TEXI2DVI = texi2dvi
 bindir = $(exec_prefix)/bin
 
 # Directory in which to install header files.
-includedir = $(prefix)/include
+includedir = $(prefex)/include
 
 # Directory in which to install library files.
 libdir = $(prefix)/lib
@@ -74,19 +75,20 @@ libdir = $(prefix)/lib
 # Directory in which to install documentation info files.
 infodir = $(prefix)/info
 
-# ------------ General Default Macros for NETCDF --------------------
+# ------------ General Macros for NETCDF --------------------
 INCDIR	 = $(prefix)/include
 HDF_LIB  = $(TOP_SRCDIR)/hdf/src/libdf.a
 HDF_INC  = $(TOP_SRCDIR)/hdf/src/
 PABLO_HINC = $(TOP_SRCDIR)/hdf/pablo
 FMPOOL_INC = $(TOP_SRCDIR)/hdf/fmpool
 JPEG_LIB = $(TOP_SRCDIR)/hdf/jpeg/libjpeg.a
+ZLIB_LIB = $(TOP_SRCDIR)/hdf/zlib/libz.a
 NETCDF_INC = $(TOP_SRCDIR)/mfhdf/libsrc
 PORT_INC   = $(TOP_SRCDIR)/mfhdf/port
 CPP	   = $(CC) -E
 CFLAGS_NETCDF = 
 CPPFLAGS_HDF  = -DNDEBUG -DHDF $(FMPOOL_FLAGS)
-CPP_NETCDF    = -I. -I$(HDF_INC) -I$(FMPOOL_INC) -I$(NETCDF_INC) -I$(PORT_INC)
+CPP_NETCDF    = -I. -I$(HDF_INC) -I$(NETCDF_INC) -I$(PORT_INC)
 CPPFLAGS_LIB	= $(SWAP) $(NETLONG) 
 CPPFLAGS_XDR	= $(CPP_XDR) 
 CPPFLAGS_NETCDF =  $(CPPFLAGS_XDR) $(CPP_NETCDF) $(CPPFLAGS_LIB) $(CPPFLAGS_HDF) 
@@ -104,49 +106,54 @@ YACC	= yacc
 DIFF    = diff
 DIFF_FLAGS = -w
 
+
 #### ----- host and target specific makefile fragments come in here.-------
 ### ------------------- end of makefile fragments -------------------------
 # ############# End of system configuration section. ###############
 
-#PACKAGE		= netcdf
+PROGRAM		= hdfimport
+TESTPROG	= hdfimporttest
+BINFILES	= $(PROGRAM)
+#HDF_LIB         = @HDF_LIB@
+#HDF_INC         = @HDF_INC@
+#JPEG_LIB        = @JPEG_LIB@
+#CPP_NETCDF	= -I../libsrc -I../port $(HDF_INC)
+#CPPFLAGS	= $(CPPFLAGS_HDP)
+#CFLAGS		= @CFLAGS@
+#FFLAGS		= @FFLAGS@
 MANIFEST = $(DISTFILES)
-DISTFILES	= CHANGES COPYRIGHT CUSTOMIZE FAQ INSTALL  \
-		  Makefile.in ORIGIN README THANKS VERSION configure \
-		  configure.in aclocal.m4 msoft.mk
-SUBDIRS		= port doc fortran ncdump ncgen nctest libsrc xdr c++ dumper hdfimport\
-		  pablo
-SUBDIR_TARGETS	= \
-    port/all	                             port/clean   port/distclean \
-    doc/all                  doc/install     doc/clean     doc/distclean \
-    fortran/all fortran/test fortran/install fortran/clean fortran/distclean \
-    ncdump/all  ncdump/test  ncdump/install  ncdump/clean  ncdump/distclean \
-    ncgen/all   ncgen/test   ncgen/install   ncgen/clean   ncgen/distclean \
-    nctest/all  nctest/test                  nctest/clean  nctest/distclean \
-    libsrc/all  libsrc/test  libsrc/install  libsrc/clean  libsrc/distclean \
-    xdr/all     xdr/test     xdr/install     xdr/clean     xdr/distclean \
-    c++/all                                  c++/clean    c++/distclean \
-    pablo/all                pablo/install   pablo/clean  pablo/distclean \
-    dumper/all  dumper/test  dumper/install  dumper/clean dumper/distclean \
-    hdfimport/all hdfimport/test hdfimport/install hdfimport/clean hdfimport/distclean hdfimport/install-utils \
-    ncdump/install-utils  ncgen/install-utils dumper/install-utils \
-    ncdump/install-man    ncgen/install-man   \
-    xdr/install-includes fortran/install-includes libsrc/install-includes
+DISTFILES	= Makefile.in hdfimport.c
+MANUALS		= 
+LIBNAME		= mfhdf
+LD_NETCDF	= ../libsrc/libmfhdf.a
+OBJS		= hdfimport.o
+#LD_XDR		= @LD_XDR@
+LD_NETCDF	= -L../libsrc -lmfhdf
+LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(LIBSX) $(JPEG_LIB) $(ZLIB_LIB)
+prefix		= ../../..
+GARBAGE		= $(PROGRAM) $(TESTPROG) *.o
 
-all::		port/all xdr/all libsrc/all fortran/all ncdump/all \
-		ncgen/all nctest/all doc/all dumper/all pablo/all hdfimport/all
-libmfhdf::	port/all xdr/all libsrc/all fortran/all 
-libmfhdf-inst::	port/all xdr/all libsrc/all fortran/all pablo/all
-test::		xdr/test libsrc/test nctest/test fortran/test ncdump/test \
-		ncgen/test dumper/test hdfimport/test
-install::	xdr/install fortran/install libsrc/install ncdump/install \
-		ncgen/install doc/install dumper/install pablo/install hdfimport/install
-install-libs::	xdr/install fortran/install libsrc/install  pablo/install
-install-includes::	xdr/install-includes fortran/install-includes libsrc/install-includes 
-install-utils:: ncdump/install-utils ncgen/install-utils dumper/install-utils hdfimport/install-utils
-install-man::   doc/install ncdump/install-man ncgen/install-man 
-clean::		port/clean xdr/clean libsrc/clean fortran/clean ncdump/clean \
-		ncgen/clean nctest/clean doc/clean dumper/clean pablo/clean hdfimport/clean
-	rm -f netcdf*.tar.Z
+#all::		$(PROGRAM)
+all::         FORCE
+	@if test -z "$(FMPOOL_FLAGS)"; then \
+	  $(MAKE) $(MFLAGS) $(LOCAL_MACROS) $(PROGRAM) ; \
+	else		 \
+	  $(MAKE) $(MFLAGS) $(LOCAL_MACROS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" $(PROGRAM) ; \
+	fi
+
+hdfimporttest:
+	$(CC) $(CFLAGS) -I$(HDF_INC) $(TESTPROG).c -o $(TESTPROG)
+
+debug:  $(PROGRAM)  ../libsrc/libmfhdf.a
+	purify $(CC) $(CFLAGS) $(CFLAGS_NETCDF) $(OBJS) $(LIBS) -o pfp2hdf
+
+
+test: hdfimporttest hdfimport
+	sh testutil.sh
+
+install::	installed_program installed_manuals
+install-utils::	installed_program
+install-man::	installed_manuals
 
 # This is the master.mk.in makefile.  It contains general rules.
 #
@@ -171,15 +178,17 @@ clean::		port/clean xdr/clean libsrc/clean fortran/clean ncdump/clean \
 SUBDIR_MACROS = CC="$(CC)" \
 	CFLAGS="$(CFLAGS)" \
 	CPP="$(CPP)" \
+	exec_prefix="$(exec_prefix)" \
 	FC="$(FC)" \
-    FFLAGS="$(FFLAGS)" 
+	prefix="$(prefix)"
 
 LOCAL_MACROS  = CC="$(CC)" \
 	CFLAGS="$(CFLAGS)" \
 	CPP="$(CPP)" \
 	CPPFLAGS="$(CPPFLAGS)" \
+	exec_prefix="$(exec_prefix)" \
 	FC="$(FC)" \
-    FFLAGS="$(FFLAGS)" 
+	prefix="$(prefix)"
 
 # ###########################################################################
 # Recursive make(1)s in Subdirectories:
@@ -376,7 +385,7 @@ dummy_prog $(PROGRAM):	$(OBJS)
 	@if [ -r $@.f -o -r $@.F ]; then \
 	    ld='$(FC) $(FFLAGS)'; \
 	else \
-	    ld='$(CC) $(CFLAGS) $(CFLAGS_NETCDF)'; \
+	    ld='$(CC) $(CFLAGS) $(CFLAGS_NETCDF) '; \
 	fi; \
 	cmd="$$ld $(OBJS) $(LIBS) -o $@"; \
 	echo $$cmd; \
@@ -468,7 +477,6 @@ $(ETCDIR)/$(ETCFILE):	$(ETCDIR) $(ETCFILE)
 	-mkdir -p $(ETCDIR)
 	-chmod u+rwx,g+rws,o=rx $(ETCDIR)
 	$(INSTALL_DATA) $(ETCFILE) $@
-
 
 # ###########################################################################
 # Manual Pages:
@@ -638,7 +646,8 @@ disabled_depend:		FORCE
 		} \
 	    }' > $@
 	tag='### DO NOT DELETE THIS LINE.  make depend DEPENDS ON IT ###'; \
-	    sed -e "/^$$tag$$/r depend" \
+	   # sed -e "/^$$tag$$/r depend" \
+	    sed  \
 		-e "/^$$tag$$/q" Makefile > Makefile.new
 	mv Makefile.new Makefile
 
@@ -695,17 +704,12 @@ ensure_manifest:	$(MANIFEST)
 
 # for distribution creation
 distdir = $(TOP_SRCDIR)/$(PACKAGE)-$(VERSION)/$(curdir)
-curdir = mfhdf
+curdir = mfhdf/dumper
 dist: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  ln $(srcdir)/$$file $(distdir)/$$file 2> /dev/null \
 	    || { echo copying $$file instead; \
 	    cp -p $(srcdir)/$$file $(distdir)/$$file;}; \
-	done
-	for subdir in $(SUBDIRS); do \
-	  echo making $@ in $$subdir; \
-	  mkdir $(distdir)/$$subdir || exit 1; \
-	  (cd $$subdir && $(MAKE) $@) || exit 1; \
 	done
 
 # ###########################################################################
@@ -717,19 +721,14 @@ dist: $(DISTFILES)
 #
 FORCE:
 
-
-# The `distclean' target appears after the master makefile to prevent
-# making `distclean' in the subdirectories before making `clean'.
+# Override the default definition for ncgen(1) in the master makefile.
 #
-distclean::	port/distclean  \
-		doc/distclean \
-		fortran/distclean \
-		ncdump/distclean \
-		dumper/distclean \
-		ncgen/distclean \
-		nctest/distclean \
-		libsrc/distclean \
-		xdr/distclean \
-		c++/distclean \
-		pablo/distclean \
-                hdfimport/distclean
+NCGEN		= ../ncgen/ncgen
+
+### Everything after the following line might be overwritten ###
+### DO NOT DELETE THIS LINE.  make depend DEPENDS ON IT ###
+
+
+
+
+
