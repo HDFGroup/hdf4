@@ -2325,7 +2325,7 @@ extern int32 GRcreate(int32 grid,const char *name,int32 ncomp,int32 nt,int32 il,
 
 extern int32 GRselect(int32 grid,int32 index);
 
-extern int32 GRnametoindex(int32 grid,char *name);
+extern int32 GRnametoindex(int32 grid,const char *name);
 
 extern intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
     int32 dimsizes[2],int32 *n_attr);
@@ -2358,7 +2358,7 @@ extern intn GRwritelut(int32 riid,int32 ncomps,int32 nt,
 
 extern intn GRreadlut(int32 lutid,VOIDP data);
 
-extern intn GRsetexternalfile(int32 riid,char *filename,int32 offset);
+extern intn GRsetexternalfile(int32 riid,const char *filename,int32 offset);
 
 extern intn GRsetaccesstype(int32 riid,uintn accesstype);
 

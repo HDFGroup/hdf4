@@ -2400,7 +2400,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-int32 GRnametoindex(int32 grid,char *name)
+int32 GRnametoindex(int32 grid,const char *name)
 {
     CONSTR(FUNC, "GRnametoindex");   /* for HERROR */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
@@ -4161,7 +4161,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn GRsetexternalfile(int32 riid,char *filename,int32 offset)
+intn GRsetexternalfile(int32 riid,const char *filename,int32 offset)
 {
     CONSTR(FUNC, "GRsetexternalfile");   /* for HERROR */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
