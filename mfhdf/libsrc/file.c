@@ -11,6 +11,11 @@
 #include	<string.h>
 #include	"local_nc.h"
 #include	"alloc.h"
+#ifdef vms
+#   include <unixio.h>
+#   include <unixlib.h>
+#   include <file.h>
+#endif
 
 static int _ncdf = 0 ; /*  high water mark on open cdf's */
 static NC *_cdfs[MAX_NC_OPEN] ;

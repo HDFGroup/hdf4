@@ -30,7 +30,8 @@ static char mrcsid[] = "Id: cdftest.c,v 1.11 1994/01/10 23:07:27 chouck Exp ";
 #define MAXLONG		2147483647
 #define  MAXBYTE	127
 
-#ifdef PC
+/*   #ifdef PC  */
+#if defined PC || (defined VMS)
 #include <errno.h>
 #else
 extern int errno ;

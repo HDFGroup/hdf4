@@ -16,18 +16,21 @@
  */
 
 /* LINTLIBRARY */
+#ifdef HDF
+#include        "local_nc.h"
+#else
 #include	"netcdf.h"
+#endif
 #include	<ctype.h>
 #include        <string.h>
 #include	<stdio.h>
+#include        <stdlib.h>
+#include        <descrip.h>
 
-#include descrip
-
-
-
-
+/*
 extern char *
 malloc ();
+*/
 
 /*
  * global integer used for suppressing error messages and determining
@@ -191,8 +194,7 @@ itos(ints, dims, ndims)
 /* ------------ VMS FORTRAN jackets for netCDF Functions ------------ */
 
 /* used to set the C global variable ncopts from Fortran */
-int
-ncpopt(val)
+void ncpopt(val)
     int		*val;	
 {
     ncopts = *val;
@@ -200,8 +202,7 @@ ncpopt(val)
 
 
 /* used to get the C global variable ncopts from Fortran */
-int
-ncgopt(val)
+void ncgopt(val)
     int		*val;	
 {
     *val = ncopts;

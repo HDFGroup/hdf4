@@ -14,11 +14,16 @@ static char rcsid[] = "$Id$" ;
 #ifdef macintosh
 #	include "types.h"
 #else /* not macintosh */
-#       ifndef VMS
-#   	include <sys/types.h>	/* for <netinet/in.h> on some systems */
-#   	if !defined MSDOS & !defined WIN32
-#          include <netinet/in.h>	/* for htonl() */
-#   	endif
+#       ifdef vms
+#         include <in.h>
+#         include <libdef.h>
+#         include <lib$routines.h>
+#         include <string.h>
+#       else
+#   	  include <sys/types.h>	/* for <netinet/in.h> on some systems */
+#   	  if !defined MSDOS & !defined WIN32
+#            include <netinet/in.h>	/* for htonl() */
+#   	  endif
 #	endif
 #endif /* not macintosh */
 
@@ -42,7 +47,11 @@ static char rcsid[] = "$Id$" ;
 #endif
 
 #include <types.h>
+#ifndef    NO_SYS_XDR_INC
 #include <xdr.h>
+#else
+#include "xdr.h"
+#endif
 
 #define TESTFILE "test.xdr"
 /* if this is NOT defined, then the program just reads the file */

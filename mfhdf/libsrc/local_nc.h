@@ -308,6 +308,10 @@ extern Void      *NC_incr_array		PROTO((
     Void	*tail
 ));
 
+extern int       NC_dimid               PROTO((
+    NC          *handle,
+    char        *name
+));
 extern bool_t     NCcktype		PROTO((
     nc_type	datatype
 ));
@@ -450,11 +454,17 @@ extern int NCxdrfile_create
     PROTO((XDR *xdrs,const char *path,int ncmode));
 
 #ifdef HDF
+extern void hdf_xdrfile_create
+    PROTO(( XDR *xdrs, int ncop));
+
 extern int hdf_fill_array
     PROTO((Void  * storage,int32 len,Void  * value,int32 type));
 
 extern int hdf_get_data
     PROTO((NC *handle,NC_var *vp));
+
+extern int32 hdf_get_vp_aid
+    PROTO((NC *handle, NC_var *vp));
 
 extern int hdf_map_type
     PROTO((int ));
@@ -518,6 +528,15 @@ extern int NCgenio
 
 extern int NC_var_shape
     PROTO((NC_var *var,NC_array *dims));
+
+extern bool_t nssdc_read_cdf
+    PROTO((XDR *xdrs, NC **handlep));
+
+extern bool_t nssdc_write_cdf
+   PROTO((XDR *xdrs, NC **handlep));
+
+extern bool_t nssdc_xdr_cdf
+    PROTO((XDR *xdrs, NC **handlep));
 
 #endif /* HDF */
 

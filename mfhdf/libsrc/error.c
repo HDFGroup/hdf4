@@ -29,9 +29,16 @@
 int errno = 0;
 #else
 #include <errno.h>
-#ifdef ERRNO_MISSING
+/*
+#if defined ERRNO_MISSING | defined vms
+*/
+#if defined ERRNO_MISSING
 extern int errno;
 #endif
+#endif
+
+#ifdef VMS
+#include <ssdef.h>
 #endif
 
 #ifndef NO_STRERROR

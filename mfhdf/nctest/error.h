@@ -26,12 +26,17 @@ extern void derror(char *fmt, ...);
 extern void derror();
 #endif
 
-/*
+#ifndef NO_STDARG
 extern void	error		PROTO((
 				       char *fmt,
 				       ...
 				       ));
-*/
+#else  /* VARARGS1 */
+extern void     error           PROTO((
+                                       char *fmt,
+                                       va_dcl
+                                       ));
+#endif
 
 /*
  * Turn off netCDF library handling of errors.  Caller must check all error

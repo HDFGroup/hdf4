@@ -22,8 +22,8 @@ static char RcsId[] = "@(#)$Revision$";
 #include "tutils.h"
 #include "fortest.h"
 #ifdef VMS
-#include processes
-#include string
+#include <processes.h>
+#include <string.h>
 #endif
 #define NUMOFTESTS 20
 #define VERSION "4.0beta"
@@ -58,10 +58,14 @@ CallFortranTest(char *TheCall)
 #ifdef VMS
     static char TheProc[25];
 
-    HDstrcpy(TheProc, "run ");
+    HDstrcpy(TheProc, "run []");
     HDstrcat(TheProc, TheCall);
     system(TheProc);
 #else
+    char TheLocalCall[25];
+
+    HDstrcpy(TheLocalCall, "./");
+    HDstrcat(TheLocalCall, TheCall);
     system(TheCall);
 #endif
 }
@@ -80,25 +84,25 @@ main(int argc, char *argv[])
     char        verb_env[81];
     char        verb_tmp[81];
 
-    num_tests=InitTest("slab1", "./slab1wf", "");
-    num_tests=InitTest("slab2", "./slab2wf", "");
-    num_tests=InitTest("slab3", "./slab3wf", "");
-    num_tests=InitTest("slab4", "./slab4wf", "");
-    num_tests=InitTest("slab", "./slabwf", "");
-    num_tests=InitTest("r24", "./t24f", "");
-    num_tests=InitTest("an", "./tanf", "");
-    num_tests=InitTest("anfile", "./tanfilef", "");
-    num_tests=InitTest("manf", "./manf", "");
-    num_tests=InitTest("mgrf", "./mgrf", "");
-    num_tests=InitTest("p", "./tpf", "");
-    num_tests=InitTest("r8", "./tr8f", "");
-    num_tests=InitTest("sdmms", "./tsdmmsf", "");
-    num_tests=InitTest("sdnmms", "./tsdnmmsf", "");
-    num_tests=InitTest("sdnnt", "./tsdnntf", "");
-    num_tests=InitTest("sdnt", "./tsdntf", "");
-    num_tests=InitTest("sdstr", "./tsdstrf", "");
+    num_tests=InitTest("slab1", "slab1wf", "");
+    num_tests=InitTest("slab2", "slab2wf", "");
+    num_tests=InitTest("slab3", "slab3wf", "");
+    num_tests=InitTest("slab4", "slab4wf", "");
+    num_tests=InitTest("slab", "slabwf", "");
+    num_tests=InitTest("r24", "t24f", "");
+    num_tests=InitTest("an", "tanf", "");
+    num_tests=InitTest("anfile", "tanfilef", "");
+    num_tests=InitTest("manf", "manf", "");
+    num_tests=InitTest("mgrf", "mgrf", "");
+    num_tests=InitTest("p", "tpf", "");
+    num_tests=InitTest("r8", "tr8f", "");
+    num_tests=InitTest("sdmms", "tsdmmsf", "");
+    num_tests=InitTest("sdnmms", "tsdnmmsf", "");
+    num_tests=InitTest("sdnnt", "tsdnntf", "");
+    num_tests=InitTest("sdnt", "tsdntf", "");
+    num_tests=InitTest("sdstr", "tsdstrf", "");
 #ifndef DEC_ALPHA
-    num_tests=InitTest("stubs", "./tstubsf", "");
+    num_tests=InitTest("stubs", "tstubsf", "");
 #endif
 
     Verbosity = 4;  /* Default Verbosity is Low */
@@ -213,7 +217,9 @@ main(int argc, char *argv[])
     HDstrcat(verb_env,"=");
     sprintf(verb_tmp,"%d",Verbosity);
     HDstrcat(verb_env,verb_tmp);
+#ifndef vms
     HDputenv(verb_env);
+#endif
     for (Loop = 0; Loop < num_tests; Loop++)
       {
           if (Test[Loop].SkipFlag)

@@ -600,7 +600,7 @@ test_conv()
 
 /* This amazing hack is because of the way the Cray converts numbers. */
 /*  The converted number are going to have to be checked by hand... */
-#if defined UNICOS | defined VP
+#if defined UNICOS | defined VP | (defined __alpha & !defined (__unix))
 #ifdef OLD_WAY
         if(Verbocity>9) {
             intn i;

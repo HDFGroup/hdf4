@@ -8,11 +8,12 @@ $! You must create the netcdf library, NETCDF.OLB, from the XDR directory,
 $! [-.xdr], before executing this procedure.
 $
 $
-$ macro :== macro/nolist
-$ ccc := cc /opt/nodebug/include=([-.xdr],[-.-.hdf.include])/nolist  -
-            /define=stdc_includes/define=swap/define=VMS/define=HDF
+$ macro :== macro/migration/nolist
 
-$ librep := library/replace [-.-.-.LIB]NETCDF.OLB
+$ librep := library/replace [--.LIB]mfhdf.OLB
+
+$ ccc := cc /noopt/debug/include=([-.xdr],[--.hdf.src],[--.hdf.jpeg], -
+ [--.hdf.zlib])/define=(NO_SYS_XDR_INC, swap, HDF, VMS)
 $
 $ define rpc sys$disk:[-.xdr]
 $ define sys sys$library
@@ -20,11 +21,13 @@ $
 $ ccc ARRAY.C
 $ ccc ATTR.C
 $ ccc CDF.C
-$ ccc CDFTEST.C
+$ ccc CDFTEST.C 
 $ ccc DIM.C
 $ ccc ERROR.C
 $ ccc FILE.C
+$ ccc globdef.c
 $ ccc IARRAY.C
+$ ccc nssdc.c
 $ ccc PUTGET.C
 $ ccc PUTGETG.C
 $ ccc SHARRAY.C
@@ -35,28 +38,32 @@ $ ccc XDRPOSIX.C
 $ ccc HDFSDS.C
 $ ccc MFSD.C
 $ ccc hdftest.c
-$ macro HTONS.MAR
-$ macro NTOHS.MAR
+!$ macro HTONS.MAR
+!$ macro NTOHS.MAR
 $
-$ librep ARRAY, ATTR, CDF, DIM, FILE, IARRAY, ERROR, -
-    PUTGET, PUTGETG, SHARRAY, STRING, VAR, HTONS, NTOHS, -
+$ librep ARRAY, ATTR, CDF, DIM, FILE, globdef, IARRAY, ERROR, -
+    nssdc, PUTGET, PUTGETG, SHARRAY, STRING, VAR, -
     HDFSDS, MFSD, XDRPOSIX
-$ library/list=netcdf.list/name [-.-.-.lib]netcdf.olb
-$ link/nodebug/exec=CDFTEST.exe -
+$ library/list=netcdf.list/name [--.lib]mfhdf.olb
+$ link/nodebug/exec=CDFTEST.exe/syslib -
     cdftest.obj, -
-    [-.-.-.lib]netcdf/library, -
-    [-.-.hdf.lib]df/library, -
-    sys$input/opt
-	sys$library:vaxcrtl.exe/share
+    [--.lib]mfhdf/library, -
+    [--.hdf.src]df/library, -
+    [--.hdf.jpeg]libjpeg/library, -
+    [--.hdf.zlib]libz/library,  -
+    sys$input/opt 
+ 	sys$library:vaxcrtl/lib
 $
-$ create/dir [-.-.-.include]
+$ create/dir [-.-.include]
 $
-$ copy netcdf.h [-.-.-.include]
+$ copy netcdf.h [-.-.include]
 $
-$ link/nodebug/exec=hdftest.exe -
+$ link/nodebug/exec=hdftest.exe/syslib -
     hdftest.obj, -
-    [-.-.-.lib]netcdf/library, -
-    [-.-.hdf.lib]df/library, -
-        sys$input/opt
-        sys$library:vaxcrtl.exe/share
+    [--.lib]mfhdf/library, -
+    [--.hdf.src]df/library, -
+    [--.hdf.jpeg]libjpeg/library, -
+    [--.hdf.zlib]libz/library, -
+    sys$input/opt 
+        sys$library:vaxcrtl/lib
 $

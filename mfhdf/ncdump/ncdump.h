@@ -73,3 +73,10 @@ struct fspec {			/* specification for how to format dump */
 				 * option on command line
 				 */
 };
+
+extern int getopt               PROTO((
+                                       int argc,
+                                       char **argv,
+                                       char *opts
+                                ));
+

@@ -61,8 +61,12 @@ typedef NETLONG     netlong;
 typedef long off_t;
 #endif
 
-#ifndef DOS_FS
-typedef u_int ncpos_t ;
+#ifndef DOS_FS  
+#   if defined VMS
+        typedef u_long ncpos_t;  /* size of u_long is 32 for DECC AXP */
+#   else 
+        typedef u_int ncpos_t ;
+#   endif
 #else
 typedef off_t ncpos_t ;
 #endif

@@ -4,8 +4,9 @@ $! --------------------------------------------------------------------------
 $!
 $! $Id$
 $
-$ ccc := cc /opt/nodebug/include=([-.-.hdf.include],[-.libsrc])/nolist  -
-            /define=stdc_includes/define=swap/define=VMS/define=HDF
+$ ccc := cc /noopt/debug/include=([--.hdf.src],[--.hdf.jpeg], -
+          [--.hdf.zlib],[-.libsrc])/nolist  -
+            /define=(NO_SYS_XDR_INC,swap,HDF.VMS)
 
 $
 $ ccc ADD.C
@@ -28,7 +29,7 @@ $ ccc VARPUTG.C
 $ ccc VPUTGETG.C
 $ ccc VARTESTS.C
 $
-$ link/nodebug/notraceback/exe=NCTEST.exe -
+$ link/debug/traceback/exe=NCTEST.exe -
     add.obj, -
     atttests.obj, -
     cdftests.obj, -
@@ -48,9 +49,10 @@ $ link/nodebug/notraceback/exe=NCTEST.exe -
     varputg.obj, -
     vputgetg.obj, -
     vartests.obj, -
-    [-.-.-.lib]netcdf/library, [-.-.hdf.lib]df/library, -
+    [--.lib]mfhdf/lib, [--.hdf.src]df/lib,[--.hdf.jpeg]libjpeg.olb/lib, -
+    [--.hdf.zlib]libz.olb/lib, -
     sys$input/opt
-	sys$library:vaxcrtl.exe/share
+	sys$library:vaxcrtl/lib
 $
 $ run nctest
 $

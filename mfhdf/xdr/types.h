@@ -23,10 +23,14 @@
 
 #if defined __STDC__ || defined PC || defined _WINDOWS || defined WIN32
 #define STDC_INCLUDES
-#if !(defined UNIX386 || defined WINNT || defined WIN32 || defined __ultrix || (defined __sun__ && defined __i386__))
+#if !(defined vms || defined UNIX386 || defined WINNT || defined WIN32 || defined __ultrix || (defined __sun__ && defined __i386__))
 long ntohl(long);
 long htonl(long);
 #endif /* !unix */
+#ifdef vms
+#define ntohl decc$ntohl
+#define htonl decc$htonl
+#endif
 #endif
 
 #ifdef STDC_INCLUDES
@@ -38,7 +42,7 @@ extern char *malloc();
 #define mem_alloc(bsize)    malloc(bsize)
 #define mem_free(ptr, bsize)    free(ptr)
 
-#if defined unix | defined __unix
+#if defined unix | defined __unix | defined vms
 #ifndef makedev /* ie, we haven't already included it */
 #include <sys/types.h>
 #endif
