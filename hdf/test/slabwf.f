@@ -2,9 +2,12 @@ C---------------------------------------------------------------------------
 C $Header$
 C
 C $Log$
-C Revision 1.2  1993/01/15 16:55:00  georgev
-C Cleaned out unused variables.
+C Revision 1.3  1993/02/01 23:23:31  georgev
+C Changed hyperslab test files to reflect new interface
 C
+c Revision 1.2  1993/01/15  16:55:00  georgev
+c Cleaned out unused variables.
+c
 c Revision 1.1  1993/01/07  20:56:25  georgev
 c Added Hyperslab C and Fortran test programs.
 c
@@ -19,7 +22,7 @@ C Output file: slabwf.hdf
 
 
       integer dssdims, dssdisc, dssdist
-      integer dswslab, dsigslc
+      integer dfsdstartslab, dfsdwriteslab, dfsdendslab, dsigslc
       integer ret, np, nr,nc, di(3), st(3), sz(3), sr(3)
       integer rank, DFTAG_SDT, DFO_FORTRAN
       real    scpln(2), scrow(3), sccol(4), da(4,3,2)
@@ -126,13 +129,16 @@ C
       sr(3) = 0
       ret = dssdims(rank, di)
       num_err = num_err + ret
+
+      ret = dfsdstartslab(sn, fnlen)
+      num_err = num_err + ret
       st(1) = 1
       st(2) = 2
       st(3) = 2
       sz(1) = 3
       sz(2) = 1
       sz(3) = 1
-      ret = dswslab(sn, fnlen, st, sr, sz,slab1)
+      ret = dfsdwriteslab(st, sr, sz,slab1)
       num_err = num_err + ret
       st(1) = 1
       st(2) = 3
@@ -140,7 +146,7 @@ C
       sz(1) = 3
       sz(2) = 1
       sz(3) = 2
-      ret = dswslab(sn, fnlen, st, sr, sz, slab2)
+      ret = dfsdwriteslab(st, sr, sz, slab2)
       num_err = num_err + ret
       st(1) = 1
       st(2) = 1
@@ -148,7 +154,7 @@ C
       sz(1) = 3
       sz(2) = 2
       sz(3) = 1
-      ret = dswslab(sn, fnlen, st, sr, sz, slab3)
+      ret = dfsdwriteslab(st, sr, sz, slab3)
       num_err = num_err + ret
       st(1) = 1
       st(2) = 1
@@ -156,7 +162,7 @@ C
       sz(1) = 3
       sz(2) = 1
       sz(3) = 1
-      ret = dswslab(sn, fnlen, st, sr, sz, slab4)
+      ret = dfsdwriteslab(st, sr, sz, slab4)
       num_err = num_err + ret
       st(1) = 4
       st(2) = 1
@@ -164,7 +170,10 @@ C
       sz(1) = 1
       sz(2) = 3
       sz(3) = 2
-      ret = dswslab(sn, fnlen, st, sr, sz, slab5)
+      ret = dfsdwriteslab(st, sr, sz, slab5)
+      num_err = num_err + ret
+
+      ret = dfsdendslab()
       num_err = num_err + ret
 C
 C Retrieve slab for verification

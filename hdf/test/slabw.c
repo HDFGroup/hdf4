@@ -12,7 +12,10 @@ static char RcsId[] = "$Id$";
  * $Header$
  *
  * $Log$
- * Revision 1.3  1993/01/19 05:58:29  koziol
+ * Revision 1.4  1993/02/01 23:23:29  georgev
+ * Changed hyperslab test files to reflect new interface
+ *
+ * Revision 1.3  1993/01/19  05:58:29  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
  *
@@ -119,29 +122,35 @@ main()
     ret = DFSDsetfillvalue(&fill);
     no_err += ret;
 
+    ret = DFSDstartslab(sn);
+    no_err += ret;
+
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab1);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab1);
     no_err += ret;
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab2);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab2);
     no_err += ret;
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab3);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab3);
     no_err += ret;
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab4);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab4);
     no_err += ret;
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab5);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab5);
+    no_err += ret;
+
+    ret = DFSDendslab();
     no_err += ret;
 
     /* Verify correctness of slab written */

@@ -12,7 +12,10 @@ static char RcsId[] = "$Id$";
  * $Header$
  *
  * $Log$
- * Revision 1.3  1993/01/19 05:58:27  koziol
+ * Revision 1.4  1993/02/01 23:23:25  georgev
+ * Changed hyperslab test files to reflect new interface
+ *
+ * Revision 1.3  1993/01/19  05:58:27  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
  *
@@ -99,10 +102,16 @@ main()
     ret = DFSDsetrange(&maxi, &mini);
     no_err += ret;
 
+    ret = DFSDstartslab(sn);
+    no_err += ret;
+
     /* write out all the data to hdf file */
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, fdata);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, fdata);
+    no_err += ret;
+
+    ret = DFSDendslab();
     no_err += ret;
 
     /* Verify correctness of slab written */

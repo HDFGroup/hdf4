@@ -13,7 +13,10 @@ static char RcsId[] = "$Id$";
  * $Header$
  *
  * $Log$
- * Revision 1.3  1993/01/19 05:58:25  koziol
+ * Revision 1.4  1993/02/01 23:23:21  georgev
+ * Changed hyperslab test files to reflect new interface
+ *
+ * Revision 1.3  1993/01/19  05:58:25  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
  *
@@ -131,12 +134,6 @@ main()
     ret = DFSDsetrange(&maxi, &mini);
     no_err += ret;
 
-	/* write out all the data to hdf file */
-#if 0
-    ret = DFSDputdata(fn, (int16)rank, size_dims, fdata);
-    no_err += ret;
-#endif
-
 	/* 
 	** write each element in different order 
 	*/
@@ -145,124 +142,130 @@ main()
     ret = DFSDsetrange(&maxi, &mini);
     no_err += ret;
 
+    ret = DFSDstartslab(sn);
+    no_err += ret;
+
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab20);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab20);
     no_err += ret;
 
     start_dims[0] = 2; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab21);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab21);
     no_err += ret;
 
     start_dims[0] = 2; start_dims[1] = 3; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab22);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab22);
     no_err += ret;
 
     start_dims[0] = 2; start_dims[1] = 3; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab23);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab23);
     no_err += ret;
 
     start_dims[0] = 2; start_dims[1] = 3; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab24);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab24);
     no_err += ret;
 
     start_dims[0] = 1; start_dims[1] = 2; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab6);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab6);
     no_err += ret;
 
     start_dims[0] = 1; start_dims[1] = 2; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab7);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab7);
     no_err += ret;
 
     start_dims[0] = 1; start_dims[1] = 2; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab8);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab8);
     no_err += ret;
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab9);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab9);
     no_err += ret;
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab10);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab10);
     no_err += ret;
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab16);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab16);
     no_err += ret;
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab17);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab17);
     no_err += ret;
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab18);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab18);
     no_err += ret;
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab19);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab19);
     no_err += ret;
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab11);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab11);
     no_err += ret;
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab12);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab12);
     no_err += ret;
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab13);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab13);
     no_err += ret;
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab14);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab14);
     no_err += ret;
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab15);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab15);
     no_err += ret;
     
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab1);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab1);
     no_err += ret;
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab2);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab2);
     no_err += ret;
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab3);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab3);
     no_err += ret;
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab4);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab4);
     no_err += ret;
 
     start_dims[0] = 1; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(sn, start_dims, stride, size_dims, slab5);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, slab5);
+    no_err += ret;
+
+    ret = DFSDendslab();
     no_err += ret;
 
     /* Verify correctness of slab written */
