@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.6  1993/08/16 21:46:19  koziol
+# Revision 1.7  1993/10/06 20:27:50  koziol
+# More compression fixed, and folded Doug's suggested change into VSappendable.
+#
+# Revision 1.6  1993/08/16  21:46:19  koziol
 # Wrapped in changes for final, working version on the PC.
 #
 # Revision 1.5  1993/04/19  22:48:21  koziol
@@ -110,20 +113,23 @@ RMFLAGS=
 LINTFLAGS=
 
 HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h dfan.h dfrig.h dfgr.h dfsd.h \
-     dfgroup.h vg.h df.h dfi.h dfstubs.h dfutil.h hconv.h tbbt.h
+     dfgroup.h vg.h df.h dfi.h dfstubs.h dfutil.h hconv.h tbbt.h hcompi.h \
+     mstdio.h crle.h
 
 CSRCS=hfile.c herr.c hblocks.c hextelt.c hkit.c dfan.c dfr8.c dfcomp.c \
       dfrle.c dfimcomp.c dfjpeg.c dfunjpeg.c dfp.c dfgr.c df24.c dfsd.c \
       dfgroup.c dfconv.c dfufp2i.c vg.c vrw.c vio.c vparse.c vconv.c vsfld.c \
       vgp.c vhi.c dfutil.c dfstubs.c dfknat.c dfkswap.c dfkcray.c dfkvms.c \
-      dfkconv.c dfkfuji.c tbbt.c hdfalloc.c maldebug.c
+      dfkconv.c dfkfuji.c tbbt.c hdfalloc.c maldebug.c hcomp.c mstdio.c \
+      crle.c
 
 COBJS=hfile.obj herr.obj hblocks.obj hextelt.obj hkit.obj dfan.obj dfr8.obj \
         dfcomp.obj dfrle.obj dfimcomp.obj dfjpeg.obj dfunjpeg.obj dfp.obj \
         dfgr.obj df24.obj dfsd.obj dfgroup.obj dfconv.obj dfufp2i.obj vg.obj \
         vrw.obj vio.obj vparse.obj vconv.obj vsfld.obj vgp.obj vhi.obj \
         dfutil.obj dfstubs.obj dfknat.obj dfkswap.obj dfkcray.obj dfkvms.obj \
-        dfkconv.obj dfkfuji.obj tbbt.obj hdfalloc.obj maldebug.obj
+        dfkconv.obj dfkfuji.obj tbbt.obj hdfalloc.obj maldebug.obj hcomp.obj \
+        mstdio.obj crle.obj
 
 FSRCS=hfilef.c herrf.c dfanf.c dfr8f.c dfpf.c df24f.c dfsdf.c vgf.c dff.c \
       dfutilf.c hfileff.f dfanff.f df24ff.f dfpff.f dfr8ff.f dfsdff.f vgff.f \
@@ -194,6 +200,9 @@ note:
 	@echo "***********************************************************"
 	@echo ""
 
+hdf.h : hdfi.h
+
+hcompi.h : mstdio.h crle.h
 
 hfile.obj: hfile.c hfile.h hdf.h herr.h hdfi.h
     $(CC) /c $(CFLAGS) %s
@@ -316,6 +325,15 @@ tbbt.obj: tbbt.c tbbt.h hdfi.h
     $(CC) /c $(CFLAGS) %s
 
 maldebug.obj : maldebug.c maldebug.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
+
+hcomp.obj : hcomp.c hdfi.h hcompi.h
+    $(CC) /c $(CFLAGS) %s
+
+mstdio.obj : mstdio.c hdfi.h hcompi.h mstdio.h
+    $(CC) /c $(CFLAGS) %s
+
+crle.obj : crle.c hdfi.h hcompi.h crle.h
     $(CC) /c $(CFLAGS) %s
 
 dfstubs.obj: dfstubs.c hdf.h herr.h dfstubs.h df.h dfi.h hdfi.h

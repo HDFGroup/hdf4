@@ -23,9 +23,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1993/09/30 19:04:41  koziol
-Added basic compressing functionality for special tags.
+Revision 1.2  1993/10/06 20:27:20  koziol
+More compression fixed, and folded Doug's suggested change into VSappendable.
 
+ * Revision 1.1  1993/09/30  19:04:41  koziol
+ * Added basic compressing functionality for special tags.
+ *
  *
  */
 
@@ -35,19 +38,33 @@ Added basic compressing functionality for special tags.
 #include "herr.h"
 
 #define CRLE_MASTER
+#define CODER_CLIENT
 /* HDF compression includes */
 #include "hcompi.h"         /* Internal definitions for compression */
-#include "crle.h"           /* run-length encoding header */
+
+/* internal defines */
+#define TMP_BUF_SIZE    8192    /* size of throw-away buffer */
+
+/* declaration of the functions provided in this module */
+PRIVATE int32 HCIcrle_staccess
+    PROTO((accrec_t *access_rec, int16 access));
+
+PRIVATE int32 HCIcrle_init
+    PROTO((accrec_t *access_rec));
 
 /*--------------------------------------------------------------------------
  NAME
-    HCPclre_stread --
+    HCIcrle_init -- Initialize a RLE compressed data element.
 
  USAGE
+    int32 HCIcrle_init(access_rec)
+    accrec_t *access_rec;   IN: the access record of the data element
 
  RETURNS
+    Returns SUCCEED or FAIL
 
  DESCRIPTION
+    Common code called by HCIcrle_staccess and HCIcrle_seek
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
@@ -55,23 +72,159 @@ Added basic compressing functionality for special tags.
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int32 HCPcrle_stread(accrec_t *rec)
+PRIVATE int32 HCIcrle_init(accrec_t *access_rec)
 #else
-int32 HCPcrle_stread(rec)
-    accrec_t *rec;
+PRIVATE int32 HCIcrle_init(access_rec)
+    accrec_t *access_rec;   /* access record */
 #endif
 {
+    char *FUNC="HCIcrle_init";          /* for HERROR */
+    compinfo_t *info;                   /* special element information */
+    comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
+
+    info=(compinfo_t *)access_rec->special_info;
+    rle_info=&(info->cinfo.coder_info.rle_info);
+
+    /* Initialize RLE state information */
+    rle_info->rle_state=MIX;        /* start in mixed state */
+    rle_info->buf_pos=0;            /* start at the beginning of the buffer */
+    rle_info->last_byte=RLE_NIL;    /* start with no code in the last byte */
+    rle_info->second_byte=RLE_NIL;  /* start with no code here too */
+    rle_info->offset=0;             /* offset into the file */
+
+    return(SUCCEED);
+}   /* end HCIcrle_init() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    HCIcrle_decode -- Decode RLE compressed data into a buffer.
+
+ USAGE
+    int32 HCIcrle_decode(info,length,buf)
+    compinfo_t *info;   IN: the info about the compressed element
+    uint32 length;      IN: number of bytes to read into the buffer
+    uint8 *buf;         OUT: buffer to store the bytes read
+
+ RETURNS
+    Returns SUCCEED or FAIL
+
+ DESCRIPTION
+    Common code called to decode RLE data from the file.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+PRIVATE int32 HCIcrle_decode(compinfo_t *info,uint32 length,uint8 *buf)
+#else
+PRIVATE int32 HCIcrle_decode(info,length,buf)
+    compinfo_t *info;       /* compression info */
+    uint32 length;          /* number of bytes to read in */
+    uint8 *buf;             /* buffer to read data into */
+#endif
+{
+    char *FUNC="HCIcrle_decode";        /* for HERROR */
+    comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
+
+    rle_info=&(info->cinfo.coder_info.rle_info);
+
+    return(SUCCEED);
+}   /* end HCIcrle_decode() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    HCIcrle_staccess -- Start accessing a RLE compressed data element.
+
+ USAGE
+    int32 HCIcrle_staccess(access_rec, access)
+    accrec_t *access_rec;   IN: the access record of the data element
+    int16 access;           IN: the type of access wanted
+
+ RETURNS
+    Returns SUCCEED or FAIL
+
+ DESCRIPTION
+    Common code called by HCIcrle_stread and HCIcrle_stwrite
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+PRIVATE int32 HCIcrle_staccess(accrec_t *access_rec, int16 access)
+#else
+PRIVATE int32 HCIcrle_staccess(access_rec, access)
+    accrec_t *access_rec;   /* access record */
+    int16 access;           /* access mode */
+#endif
+{
+    char *FUNC="HCIcrle_staccess";      /* for HERROR */
+    compinfo_t *info;                   /* special element information */
+
+    info=(compinfo_t *)access_rec->special_info;
+
+    if(access==DFACC_READ)
+        info->aid=Hstartread(access_rec->file_id,DFTAG_COMPRESSED,
+                info->comp_ref);
+    else
+        info->aid=Hstartwrite(access_rec->file_id,DFTAG_COMPRESSED,
+                info->comp_ref,info->length);
+
+    if(info->aid==FAIL)
+        HRETURN_ERROR(DFE_DENIED,FAIL);
+    return(HCIcrle_init(access_rec));   /* initialize the RLE info */
+}   /* end HCIcrle_staccess() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    HCPclre_stread -- start read access for compressed file
+
+ USAGE
+    int32 HCPmstdio_stread(access_rec)
+    accrec_t *access_rec;   IN: the access record of the data element
+
+ RETURNS
+    Returns SUCCEED or FAIL
+
+ DESCRIPTION
+    Start read access on a compressed data element using a simple RLE scheme.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+int32 HCPcrle_stread(accrec_t *access_rec)
+#else
+int32 HCPcrle_stread(access_rec)
+    accrec_t *access_rec;
+#endif
+{
+    char *FUNC="HCPcrle_stread";     /* for HERROR */
+    int32 ret;
+
+    if((ret=HCIcrle_staccess(access_rec, DFACC_READ))==FAIL)
+        HRETURN_ERROR(DFE_CINIT,FAIL);
+    return(ret);
 }   /* HCPcrle_stread() */
 
 /*--------------------------------------------------------------------------
  NAME
-    HCPclre_stwrite --
+    HCPclre_stwrite -- start write access for compressed file
 
  USAGE
+    int32 HCPmstdio_stwrite(access_rec)
+    accrec_t *access_rec;   IN: the access record of the data element
 
  RETURNS
+    Returns SUCCEED or FAIL
 
  DESCRIPTION
+    Start write access on a compressed data element using a simple RLE scheme.
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
@@ -79,23 +232,38 @@ int32 HCPcrle_stread(rec)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int32 HCPcrle_stwrite(accrec_t *rec)
+int32 HCPcrle_stwrite(accrec_t *access_rec)
 #else
-int32 HCPcrle_stwrite(rec)
-    accrec_t *rec;
+int32 HCPcrle_stwrite(access_rec)
+    accrec_t *access_rec;
 #endif
 {
+    char *FUNC="HCPcrle_stwrite";     /* for HERROR */
+    int32 ret;
+
+    if((ret=HCIcrle_staccess(access_rec, DFACC_WRITE))==FAIL)
+        HRETURN_ERROR(DFE_CINIT,FAIL);
+    return(ret);
 }   /* HCPcrle_stwrite() */
 
 /*--------------------------------------------------------------------------
  NAME
-    HCPclre_seek --
+    HCPclre_seek -- Seek to offset within the data element
 
  USAGE
+    int32 HCPcrle_seek(access_rec,offset,origin)
+    accrec_t *access_rec;   IN: the access record of the data element
+    int32 offset;       IN: the offset in bytes from the origin specified
+    intn origin;        IN: the origin to seek from [UNUSED!]
 
  RETURNS
+    Returns SUCCEED or FAIL
 
  DESCRIPTION
+    Seek to a position with a compressed data element.  The 'origin'
+    calculations have been taken care of at a higher level, it is an
+    un-used parameter.  The 'offset' is used as an absolute offset
+    because of this.
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
@@ -112,24 +280,32 @@ int32 HCPcrle_seek(access_rec, offset, origin)
 #endif
 {
     char *FUNC="HCPcrle_seek";      /* for HERROR */
+    compinfo_t *info;                   /* special element information */
+    comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
+    uint8 *tmp_buf;                 /* pointer to throw-away buffer */
 
-#ifdef QAK
-    /* Adjust offset according to origin.
-       there is no upper bound to posn */
+    info=(compinfo_t *)access_rec->special_info;
+    rle_info=&(info->cinfo.coder_info.rle_info);
 
-    if(origin==DF_CURRENT) offset += access_rec->posn;
-    if(origin==DF_END)
-       offset += ((extinfo_t *)(access_rec->special_info))->length;
-    if(offset < 0) {
-       HERROR(DFE_RANGE);
-       return FAIL;
-    }
+    if(offset<rle_info->offset)    /* need to seek from the beginning */
+        HCIcrle_init(access_rec);
 
-    /* set the offset */
+    if((tmp_buf=(uint8 *)HDgetspace(TMP_BUF_SIZE))==NULL)   /* get tmp buffer */
+        HRETURN_ERROR(DFE_NOSPACE,FAIL);
 
-    access_rec->posn=offset;
+    while(rle_info->offset+TMP_BUF_SIZE<offset)     /* grab chunks */
+        if(HCIcrle_decode(info,TMP_BUF_SIZE,tmp_buf)==FAIL) {
+            HDfreespace(tmp_buf);
+            HRETURN_ERROR(DFE_CDECODE,FAIL);
+          } /* end if */
+    if(rle_info->offset<offset)             /* grab the last chunk */
+        if(HCIcrle_decode(info,offset-rle_info->offset,tmp_buf)==FAIL) {
+            HDfreespace(tmp_buf);
+            HRETURN_ERROR(DFE_CDECODE,FAIL);
+          } /* end if */
+
+    HDfreespace(tmp_buf);
     return SUCCEED;
-#endif
 }   /* HCPcrle_seek() */
 
 /*--------------------------------------------------------------------------

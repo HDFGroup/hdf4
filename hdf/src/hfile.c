@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.26  1993/10/04 20:02:56  koziol
-Updated error reporting in H-Layer routines, and added more error codes and
-compression stuff.
+Revision 1.27  1993/10/06 20:27:45  koziol
+More compression fixed, and folded Doug's suggested change into VSappendable.
 
+ * Revision 1.26  1993/10/04  20:02:56  koziol
+ * Updated error reporting in H-Layer routines, and added more error codes and
+ * compression stuff.
+ *
  * Revision 1.25  1993/09/28  18:44:19  koziol
  * Fixed various things the Sun's pre-processor didn't like.
  *
@@ -1281,11 +1284,11 @@ int32 Hread(access_id, length, data)
 
     HEclear();
     access_rec = AID2REC(access_id);
-    if (access_rec == (accrec_t *) NULL || !access_rec->used ||
+    if (access_rec == (accrec_t *) NULL || !access_rec->used
 /*
-       access_rec->access != DFACC_READ ||
+       || access_rec->access != DFACC_READ
 */
-        !data)
+        || data==NULL)
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* special elt, so call special function */
@@ -1362,7 +1365,7 @@ int32 Hwrite(access_id, length, data)
     HEclear();
     access_rec = AID2REC(access_id);
     if (access_rec == (accrec_t *) NULL || !access_rec->used
-            || access_rec->access != DFACC_WRITE || !data)
+            || access_rec->access != DFACC_WRITE || data==NULL)
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* if special elt, call special function */

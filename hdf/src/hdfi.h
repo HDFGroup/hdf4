@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.40  1993/10/01 20:01:02  koziol
-Put "extern C" block around function prototypes for C++ compatibility.
+Revision 1.41  1993/10/06 20:27:38  koziol
+More compression fixed, and folded Doug's suggested change into VSappendable.
 
+ * Revision 1.40  1993/10/01  20:01:02  koziol
+ * Put "extern C" block around function prototypes for C++ compatibility.
+ *
  * Revision 1.39  1993/09/30  19:05:08  koziol
  * Added basic compressing functionality for special tags.
  *
@@ -779,7 +782,7 @@ typedef long              intf;     /* size of INTEGERs in Fortran compiler */
 #ifdef WIN3
 #define FILELIB WINIO
 #else /* ! WIN3 */
-#ifdef defined PC386 /* !WIN3 */
+#ifdef PC386 /* !WIN3 */
 #define FILELIB UNIXBUFIO
 #else /* must be plain PC */
 #define FILELIB PCIO

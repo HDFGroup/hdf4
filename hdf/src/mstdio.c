@@ -4,8 +4,10 @@
        HDF stdio-like modeling I/O routines
 
  REMARKS
+    Basically a NOP interface, it just calls the encoding layer.
 
  DESIGN
+    Just pass the data to the encoding layer, reporting errors.
 
  EXPORTED ROUTINES
 
@@ -23,9 +25,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1993/09/30 19:05:21  koziol
-Added basic compressing functionality for special tags.
+Revision 1.2  1993/10/06 20:27:53  koziol
+More compression fixed, and folded Doug's suggested change into VSappendable.
 
+ * Revision 1.1  1993/09/30  19:05:21  koziol
+ * Added basic compressing functionality for special tags.
+ *
  *
  */
 
@@ -35,19 +40,24 @@ Added basic compressing functionality for special tags.
 #include "herr.h"
 
 #define MSTDIO_MASTER
+#define MODEL_CLIENT
 /* HDF compression includes */
 #include "hcompi.h"         /* Internal definitions for compression */
-#include "mstdio.h"         /* stdio modeling header */
 
 /*--------------------------------------------------------------------------
  NAME
-    HCPmstdio_stread --
+    HCPmstdio_stread -- start read access for compressed file
 
  USAGE
+    int32 HCPmstdio_stread(access_rec)
+    accrec_t *access_rec;   IN: the access record of the data element
 
  RETURNS
+    Returns SUCCEED or FAIL
 
  DESCRIPTION
+    Start read access on a compressed data element using the stdio modeling
+    scheme.
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
@@ -55,23 +65,40 @@ Added basic compressing functionality for special tags.
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int32 HCPmstdio_stread(accrec_t *rec)
+int32 HCPmstdio_stread(accrec_t *access_rec)
 #else
-int32 HCPmstdio_stread(rec)
-    accrec_t *rec;
+int32 HCPmstdio_stread(access_rec)
+    accrec_t *access_rec;
 #endif
 {
+    char *FUNC="HCPmstdio_stread";  /* for HERROR */
+    compinfo_t *info;               /* information on the special element */
+    int32 ret;
+
+    info=(compinfo_t *)access_rec->special_info;
+
+    /* set the offset */
+    info->minfo.model_info.stdio_info.pos=0;
+
+    if((ret=(*(info->cinfo.coder_funcs.stread))(access_rec))==FAIL)
+        HRETURN_ERROR(DFE_CODER,FAIL);
+    return(SUCCEED);
 }   /* HCPmstdio_stread() */
 
 /*--------------------------------------------------------------------------
  NAME
-    HCPmstdio_stwrite --
+    HCPmstdio_stwrite -- start write access for compressed file
 
  USAGE
+    int32 HCPmstdio_stwrite(access_rec)
+    accrec_t *access_rec;   IN: the access record of the data element
 
  RETURNS
+    Returns SUCCEED or FAIL
 
  DESCRIPTION
+    Start write access on a compressed data element using the stdio modeling
+    scheme.
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
@@ -79,23 +106,44 @@ int32 HCPmstdio_stread(rec)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int32 HCPmstdio_stwrite(accrec_t *rec)
+int32 HCPmstdio_stwrite(accrec_t *access_rec)
 #else
-int32 HCPmstdio_stwrite(rec)
-    accrec_t *rec;
+int32 HCPmstdio_stwrite(access_rec)
+    accrec_t *access_rec;
 #endif
 {
+    char *FUNC="HCPmstdio_stwrite";  /* for HERROR */
+    compinfo_t *info;               /* information on the special element */
+    int32 ret;
+
+    info=(compinfo_t *)access_rec->special_info;
+
+    /* set the offset */
+    info->minfo.model_info.stdio_info.pos=0;
+
+    if((ret=(*(info->cinfo.coder_funcs.stwrite))(access_rec))==FAIL)
+        HRETURN_ERROR(DFE_CODER,FAIL);
+    return(SUCCEED);
 }   /* HCPmstdio_stwrite() */
 
 /*--------------------------------------------------------------------------
  NAME
-    HCPmstdio_seek --
+    HCPmstdio_seek -- Seek to offset within the data element
 
  USAGE
+    int32 HCPmstdio_seek(access_rec,offset,origin)
+    accrec_t *access_rec;   IN: the access record of the data element
+    int32 offset;       IN: the offset in bytes from the origin specified
+    intn origin;        IN: the origin to seek from [UNUSED!]
 
  RETURNS
+    Returns SUCCEED or FAIL
 
  DESCRIPTION
+    Seek to a position with a compressed data element.  The 'origin'
+    calculations have been taken care of at a higher level, it is an
+    un-used parameter.  The 'offset' is used as an absolute offset
+    because of this.
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
@@ -111,36 +159,36 @@ int32 HCPmstdio_seek(access_rec, offset, origin)
     int origin;
 #endif
 {
-    char *FUNC="HCPmstdio_seek";      /* for HERROR */
+    char *FUNC="HCPmstdio_seek";    /* for HERROR */
+    compinfo_t *info;               /* information on the special element */
+    int32 ret;
 
-#ifdef QAK
-    /* Adjust offset according to origin.
-       there is no upper bound to posn */
-
-    if(origin==DF_CURRENT) offset += access_rec->posn;
-    if(origin==DF_END)
-       offset += ((extinfo_t *)(access_rec->special_info))->length;
-    if(offset < 0) {
-       HERROR(DFE_RANGE);
-       return FAIL;
-    }
+    info=(compinfo_t *)access_rec->special_info;
 
     /* set the offset */
+    info->minfo.model_info.stdio_info.pos=offset;
 
-    access_rec->posn=offset;
-    return SUCCEED;
-#endif
+    if((ret=(*(info->cinfo.coder_funcs.seek))(access_rec,offset,origin))==FAIL)
+        HRETURN_ERROR(DFE_CODER,FAIL);
+    return(ret);
 }   /* HCPmstdio_seek() */
 
 /*--------------------------------------------------------------------------
  NAME
-    HCPmstdio_read --
+    HCPmstdio_read -- Read in a portion of data from a compressed data element.
 
  USAGE
+    int32 HCPmstdio_read(access_rec,length,data)
+    accrec_t *access_rec;   IN: the access record of the data element
+    int32 length;           IN: the number of bytes to read
+    VOIDP data;             OUT: the buffer to place the bytes read
 
  RETURNS
+    Returns the number of bytes read or FAIL
 
  DESCRIPTION
+    Read in a number of bytes from a compressed data element, using
+    stdio functionality.
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
@@ -157,55 +205,34 @@ int32 HCPmstdio_read(access_rec, length, data)
 #endif
 {
     char *FUNC="HCPmstdio_read";      /* for HERROR */
-#ifdef QAK
-    extinfo_t *info=         /* information on the special element */
-       (extinfo_t *)access_rec->special_info;
+    compinfo_t *info;       /* information on the special element */
+    int32 ret;
 
-    /* validate length */
-    if(length < 0) {
-       HERROR(DFE_RANGE);
-       return FAIL;
-    }
+    info=(compinfo_t *)access_rec->special_info;
 
-    /* adjust length if it falls off the end of the element */
+    /* adjust model position */
+    info->minfo.model_info.stdio_info.pos+=length;
 
-
-    if(length==0) length=info->length - access_rec->posn;
-    else
-        if(length < 0 || access_rec->posn + length > info->length) {
-           HERROR(DFE_RANGE);
-           return FAIL;
-        }
-
-    /* read it in from the file */
-
-    if(HI_SEEK(info->file_external, 
-	       access_rec->posn + info->extern_offset)==FAIL) {
-       HERROR(DFE_SEEKERROR);
-       return FAIL;
-    }
-    if(HI_READ(info->file_external, data, length)==FAIL) {
-       HERROR(DFE_READERROR);
-       return FAIL;
-    }
-
-    /* adjust access position */
-
-    access_rec->posn += length;
-
-    return length;
-#endif
+    if((ret=(*(info->cinfo.coder_funcs.read))(access_rec,length,data))==FAIL)
+        HRETURN_ERROR(DFE_CODER,FAIL);
+    return(ret);
 }   /* HCPmstdio_read() */
 
 /*--------------------------------------------------------------------------
  NAME
-    HCPmstdio_write --
+    HCPmstdio_write -- Write out a portion of data from a compressed data element.
 
  USAGE
+    int32 HCPwrite(access_rec,length,data)
+    accrec_t *access_rec;   IN: the access record of the data element
+    int32 length;           IN: the number of bytes to write
+    VOIDP data;             IN: the buffer to retrieve the bytes written
 
  RETURNS
+    Returns the number of bytes written or FAIL
 
  DESCRIPTION
+    Write out a number of bytes to a compressed data element.
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
@@ -216,86 +243,48 @@ int32 HCPmstdio_read(access_rec, length, data)
 int32 HCPmstdio_write(accrec_t *access_rec, int32 length, VOIDP data)
 #else
 int32 HCPmstdio_write(access_rec, length, data)
-    accrec_t *access_rec;      /* access record */
-    int32 length;              /* length of data to write */
-    VOIDP data;                        /* data buffer */
+    accrec_t *access_rec;   /* access record */
+    int32 length;           /* length of data to write */
+    VOIDP data;             /* data buffer */
 #endif
 {
     char *FUNC="HCPmstdio_write";     /* for HERROR */
-#ifdef QAK
-    extinfo_t *info=         /* information on the special element */
-       (extinfo_t*)(access_rec->special_info);
+    compinfo_t *info;       /* information on the special element */
+    int32 ret;
 
-    /* validate length */
+    info=(compinfo_t *)access_rec->special_info;
 
-    if(length < 0) {
-       HERROR(DFE_RANGE);
-       return FAIL;
-    }
+    /* adjust model position */
+    info->minfo.model_info.stdio_info.pos+=length;
 
-    /* write the data onto file */
-
-    if(HI_SEEK(info->file_external, 
-		access_rec->posn + info->extern_offset)==FAIL) {
-       HERROR(DFE_SEEKERROR);
-       return FAIL;
-    }
-    if(HI_WRITE(info->file_external, data, length)==FAIL) {
-
-       /* this external file might not be opened with write permission,
-          reopen the file and try again */
-
-       hdf_file_t f=HI_OPEN(info->extern_file_name, DFACC_WRITE);
-       if(OPENERR(f) || HI_SEEK(f, 
-		   access_rec->posn + info->extern_offset)==FAIL ||
-           HI_WRITE(f, data, length)==FAIL) {
-           HERROR(DFE_DENIED);
-           HI_CLOSE(f);
-           return FAIL;
-       }
-       HI_CLOSE(info->file_external);
-
-       /* if okay, substitute the file descriptor */
-
-       info->file_external=f;
-    }
-
-    /* update access record, and information about special elelemt */
-
-    access_rec->posn += length;
-    if(access_rec->posn > info->length) {
-       uint8 *p=     /* temp buffer ptr */
-           tbuf;
-       dd_t *info_dd=        /* dd of infromation element */
-           &access_rec->block->ddlist[access_rec->idx];
-       filerec_t *file_rec=  /* file record */
-           FID2REC(access_rec->file_id);
-
-       info->length=access_rec->posn;
-       INT32ENCODE(p, info->length);
-       if(HI_SEEK(file_rec->file, info_dd->offset+2)==FAIL) {
-           HERROR(DFE_SEEKERROR);
-           return FAIL;
-       }
-       if(HI_WRITE(file_rec->file, tbuf, 4)==FAIL) {
-           HERROR(DFE_WRITEERROR);
-           return FAIL;
-       }
-    }
-
-    return length;
-#endif
+    if((ret=(*(info->cinfo.coder_funcs.write))(access_rec,length,data))==FAIL)
+        HRETURN_ERROR(DFE_CODER,FAIL);
+    return(ret);
 }   /* HCPmstdio_write() */
 
 /*--------------------------------------------------------------------------
  NAME
-    HCPmstdio_inquire --
+    HCPmstdio_inquire -- Inquire information about the access record and data element.
 
  USAGE
+    int32 HCPinquire(access_rec,pfile_id,ptag,pref,plength,poffset,pposn,
+            paccess,pspecial)
+    accrec_t *access_rec;   IN: the access record of the data element
+    int32 *pfile_id;        OUT: ptr to file id
+    uint16 *ptag;           OUT: ptr to tag of information
+    uint16 *pref;           OUT: ptr to ref of information
+    int32 *plength;         OUT: ptr to length of data element
+    int32 *poffset;         OUT: ptr to offset of data element
+    int32 *pposn;           OUT: ptr to position of access in element
+    int16 *paccess;         OUT: ptr to access mode
+    int16 *pspecial;        OUT: ptr to special code
 
  RETURNS
+    Returns SUCCEED or FAIL
 
  DESCRIPTION
+    Inquire information about the access record and data element.
+    [Currently a NOP].
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
@@ -304,11 +293,11 @@ int32 HCPmstdio_write(access_rec, length, data)
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
 int32 HCPmstdio_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
-                        uint16 *pref, int32 *plength, int32 *poffset,
-                        int32 *pposn, int16 *paccess, int16 *pspecial)
+    uint16 *pref, int32 *plength, int32 *poffset,int32 *pposn, int16 *paccess,
+    int16 *pspecial)
 #else
 int32 HCPmstdio_inquire(access_rec, pfile_id, ptag, pref, plength, poffset,
-                        pposn, paccess, pspecial)
+            pposn, paccess, pspecial)
      accrec_t *access_rec;     /* access record */
      int32 *pfile_id;          /* ptr to file id, OUT */
      uint16 *ptag;             /* ptr to tag of information, OUT */
@@ -320,36 +309,30 @@ int32 HCPmstdio_inquire(access_rec, pfile_id, ptag, pref, plength, poffset,
      int16 *pspecial;          /* ptr to special code */
 #endif
 {
-#ifdef QAK
-    dd_t *info_dd=           /* dd of special information */
-       &(access_rec->block->ddlist[access_rec->idx]);
-    extinfo_t *info=         /* special information record */
-       (extinfo_t *)access_rec->special_info;
+    char *FUNC="HCPmstdio_inquire";     /* for HERROR */
+    compinfo_t *info;       /* information on the special element */
+    int32 ret;
 
-    /* fill in the variables if they are present */
-
-    if(pfile_id) *pfile_id=access_rec->file_id;
-    if(ptag) *ptag=info_dd->tag;
-    if(pref) *pref=info_dd->ref;
-    if(plength) *plength=info->length;
-    if(poffset) *poffset=0; /* meaningless */
-    if(pposn) *pposn=access_rec->posn;
-    if(paccess) *paccess=access_rec->access;
-    if(pspecial) *pspecial=access_rec->special;
-
-    return SUCCEED;
-#endif
+    info=(compinfo_t *)access_rec->special_info;
+    if((ret=(*(info->cinfo.coder_funcs.inquire))(access_rec,pfile_id,ptag,pref,
+            plength, poffset,pposn, paccess, pspecial))==FAIL)
+        HRETURN_ERROR(DFE_CODER,FAIL);
+    return(ret);
 }   /* HCPmstdio_inquire() */
 
 /*--------------------------------------------------------------------------
  NAME
-    HCPmstdio_endaccess --
+    HCPmstdio_endaccess -- Close the compressed data element
 
  USAGE
+    int32 HCPendaccess(access_rec)
+    accrec_t *access_rec;   IN: the access record of the data element
 
  RETURNS
+    Returns SUCCEED or FAIL
 
  DESCRIPTION
+    Close the compressed data element and free modelling info.
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
@@ -364,28 +347,11 @@ int32 HCPmstdio_endaccess(access_rec)
 #endif
 {
     char *FUNC="HCPmstdio_endaccess"; /* for HERROR */
-#ifdef QAK
-    filerec_t *file_rec=     /* file record */
-       FID2REC(access_rec->file_id);
+    compinfo_t *info;       /* information on the special element */
+    int32 ret;
 
-    /* close the file pointed to by this access rec */
-    HXIcloseAID(access_rec);
-
-    /* validate file record */
-
-    if(file_rec==(filerec_t *) NULL || file_rec->refcount==0) {
-       HERROR(DFE_INTERNAL);
-       return FAIL;
-    }
-
-    /* detach from the file */
-
-    file_rec->attach--;
-
-    /* free the access record */
-
-    access_rec->used=FALSE;
-
-    return SUCCEED;
-#endif
+    info=(compinfo_t *)access_rec->special_info;
+    if((ret=(*(info->cinfo.coder_funcs.endaccess))(access_rec))==FAIL)
+        HRETURN_ERROR(DFE_CODER,FAIL);
+    return(ret);
 }   /* HCPmstdio_endaccess() */

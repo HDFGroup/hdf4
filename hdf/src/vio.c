@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.24  1993/09/30 19:05:35  koziol
-Added basic compressing functionality for special tags.
+Revision 1.25  1993/10/06 20:27:57  koziol
+More compression fixed, and folded Doug's suggested change into VSappendable.
 
+ * Revision 1.24  1993/09/30  19:05:35  koziol
+ * Added basic compressing functionality for special tags.
+ *
  * Revision 1.23  1993/09/28  18:05:04  koziol
  * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
  * tag handling.  Added new compression special tag type.
@@ -878,12 +881,22 @@ int32 blk;
   
     curr_size = vs->nvertices * vs->wlist.ivsize;
 
+#ifdef OLD_WAY
     if(vs->nvertices && (curr_size > VDEFAULTBLKSIZE))
         blksize = curr_size;
     else
         blksize = VDEFAULTBLKSIZE;
 
     if(blk && blk > blksize) blksize = blk;
+#else
+    if(blk>0)
+	blksize=blk;
+    else
+        if(vs->nvertices && (curr_size > VDEFAULTBLKSIZE))
+            blksize = curr_size;
+        else
+            blksize = VDEFAULTBLKSIZE;
+#endif
 
     Hendaccess(vs->aid);
 

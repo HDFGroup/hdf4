@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.13  1993/10/04 20:02:39  koziol
-Updated error reporting in H-Layer routines, and added more error codes and
-compression stuff.
+Revision 1.14  1993/10/06 20:27:27  koziol
+More compression fixed, and folded Doug's suggested change into VSappendable.
 
+ * Revision 1.13  1993/10/04  20:02:39  koziol
+ * Updated error reporting in H-Layer routines, and added more error codes and
+ * compression stuff.
+ *
  * Revision 1.12  1993/09/30  19:04:58  koziol
  * Added basic compressing functionality for special tags.
  *
@@ -88,43 +91,41 @@ compression stuff.
 
 /* block_t - record of a linked block. contains the tag and ref of the
    data elt that forms the linked block */
-
 typedef struct block_t {
     uint16 ref;                        /* ref of the linked block */
 } block_t;
 
 /* link_t - a linked list block table.
    Very similar to the dd block structure */
-
 typedef struct link_t {
-    uint16 nextref;            /* ref of the next block table */
-    struct link_t *next;       /* ptr to the next block table */
+    uint16 nextref;             /* ref of the next block table */
+    struct link_t *next;        /* ptr to the next block table */
     struct block_t *block_list;     /* ptr to the block list for this table */
 } link_t;
 
 /* information on this special linked block data elt */
-
 typedef struct linkinfo_t {
-    int attached;               /* how many access records refer to this elt */
-    int32 length;               /* the actual length of the data elt */
-    int32 first_length;         /* length of first block */
-    int32 block_length;         /* the length of the remaining blocks */
-    int32 number_blocks;        /* total number of blocks in each link/block
-                                  table */
-    uint16 link_ref;            /* ref of the first block table structure */
-    link_t *link;               /* pointer to the first block table */
-    link_t *last_link;          /* pointer to the last block table */
+    int attached;           /* how many access records refer to this elt */
+    int32 length;           /* the actual length of the data elt */
+    int32 first_length;     /* length of first block */
+    int32 block_length;     /* the length of the remaining blocks */
+    int32 number_blocks;    /* total number of blocks in each link/block table */
+    uint16 link_ref;        /* ref of the first block table structure */
+    link_t *link;           /* pointer to the first block table */
+    link_t *last_link;      /* pointer to the last block table */
 } linkinfo_t;
 
 /* private functions */
-PRIVATE int32 HLIstaccess PROTO((accrec_t *access_rec, int16 access));
-PRIVATE link_t *HLInewlink PROTO((int32 file_id, int32 number_blocks,
-                          uint16 link_ref, uint16 first_block_ref));
-PRIVATE link_t *HLIgetlink PROTO((int32 file_id, uint16 ref, \
-                        int32 number_blocks));
+PRIVATE int32 HLIstaccess
+    PROTO((accrec_t *access_rec, int16 access));
+
+PRIVATE link_t *HLInewlink
+    PROTO((int32 file_id, int32 number_blocks, uint16 link_ref, uint16 first_block_ref));
+
+PRIVATE link_t *HLIgetlink
+    PROTO((int32 file_id,uint16 ref,int32 number_blocks));
 
 /* the accessing function table for linked blocks */
-
 funclist_t linked_funcs = {
     HLPstread,
     HLPstwrite,
@@ -501,45 +502,43 @@ PRIVATE link_t * HLIgetlink(file_id, ref, number_blocks)
     uint16 tag = DFTAG_LINKED;
 
     /* allocate necessary memory for block table */
-
     link_t *link = (link_t *) HDgetspace((uint32)sizeof(link_t));
-    if (!link)
+    if (link==NULL)
        HRETURN_ERROR(DFE_NOSPACE,NULL);
 
     link->block_list = (block_t*) HDgetspace((uint32)number_blocks
                                         * sizeof(block_t));
-    if (!link->block_list) {
+    if (link->block_list==NULL) {
        HDfreespace((VOIDP) link);
        HRETURN_ERROR(DFE_NOSPACE,NULL);
     }
     link->next = (link_t *) NULL;
 
     /* read block table into buffer */
-
     buffer = (uint8 *) HDgetspace((uint32)(2 + 2*number_blocks));
-    if (!buffer) {
-       HDfreespace((VOIDP) link->block_list);
-       HDfreespace((VOIDP) link);
-       HRETURN_ERROR(DFE_NOSPACE,NULL);
+    if (buffer==NULL) {
+        HDfreespace((VOIDP) link->block_list);
+        HDfreespace((VOIDP) link);
+        HRETURN_ERROR(DFE_NOSPACE,NULL);
       } /* end if */
 
     access_id = Hstartread(file_id, tag, ref);
     if (access_id == FAIL ||
-       Hread(access_id, 2+2*number_blocks, buffer) == FAIL) {
-       HDfreespace((VOIDP)buffer);
-       HDfreespace((VOIDP) link->block_list);
-       HDfreespace((VOIDP) link);
-       HRETURN_ERROR(DFE_READERROR,NULL);
+            Hread(access_id, 2+2*number_blocks, buffer) == FAIL) {
+        HDfreespace((VOIDP)buffer);
+        HDfreespace((VOIDP) link->block_list);
+        HDfreespace((VOIDP) link);
+        HRETURN_ERROR(DFE_READERROR,NULL);
     }
 
-{
-    register int32 i;
-    uint8 *p = buffer;
+    {
+        register int32 i;
+        uint8 *p = buffer;
 
-    UINT16DECODE(p, link->nextref);
-    for (i=0; i<number_blocks; i++)
-       UINT16DECODE(p, link->block_list[i].ref);
-}
+        UINT16DECODE(p, link->nextref);
+        for (i=0; i<number_blocks; i++)
+           UINT16DECODE(p, link->block_list[i].ref);
+    }
     Hendaccess(access_id);
     HDfreespace((VOIDP)buffer);
 
@@ -561,19 +560,18 @@ int32 HLPseek(access_rec, offset, origin)
     char *FUNC="HLPseek";      /* for HERROR */
 
     /* validate access record */
-
     if (access_rec->special != SPECIAL_LINKED)
        HRETURN_ERROR(DFE_INTERNAL,FAIL);
 
     /* adjust the offset according to origin and validate */
 
     /* there is no upper bound to posn */
-
-    if (origin == DF_CURRENT) offset += access_rec->posn;
+    if (origin == DF_CURRENT)
+        offset += access_rec->posn;
     if (origin == DF_END)
-       offset += ((linkinfo_t *)(access_rec->special_info))->length;
+        offset += ((linkinfo_t *)(access_rec->special_info))->length;
     if (offset < 0)
-       HRETURN_ERROR(DFE_RANGE,FAIL);
+        HRETURN_ERROR(DFE_RANGE,FAIL);
 
     /* set position */
     access_rec->posn = offset;
@@ -597,15 +595,12 @@ int32 HLPread(access_rec, length, datap)
     uint8 *data=(uint8 *)datap;
 
     /* information record for this special data elt */
-
     linkinfo_t *info = (linkinfo_t*)(access_rec->special_info);
 
     /* block table record */
-
     link_t *link = info->link;
 
     /* relative position in linked block of data elt */
-
     int32 relative_posn = access_rec->posn;
 
     int32 block_idx;             /* block table index of current block */
@@ -615,7 +610,8 @@ int32 HLPread(access_rec, length, datap)
 
     /* validate length */
 
-    if (length == 0) length = info->length - access_rec->posn;
+    if (length == 0)
+        length = info->length - access_rec->posn;
     else
 /*      if (length < 0 || access_rec->posn + length > info->length) {*/
         if (length < 0)
@@ -625,7 +621,6 @@ int32 HLPread(access_rec, length, datap)
         length = info->length - access_rec->posn;
 
     /* search for linked block to start reading from */
-
     if (relative_posn < info->first_length) {
        block_idx = 0;
        current_length = info->first_length;
@@ -638,8 +633,9 @@ int32 HLPread(access_rec, length, datap)
 
     {
         register int32 i;
-       for (i=0; i<block_idx/info->number_blocks; i++) {
-           if (!link)
+
+        for (i=0; i<block_idx/info->number_blocks; i++) {
+           if (link==NULL)
                HRETURN_ERROR(DFE_INTERNAL,FAIL);
            link = link->next;
        }
@@ -649,51 +645,49 @@ int32 HLPread(access_rec, length, datap)
     /* found the starting block, now read in the data */
 
     do {
-       register int32 remaining = /* remaining data in current block */
+        register int32 remaining = /* remaining data in current block */
            current_length - relative_posn;
 
        /* read in the data in this block */
 
-       if (remaining > length) remaining = length;
-       if (link->block_list[block_idx].ref != 0) {
-           int32 access_id;    /* access record id for this block */
-           block_t *current_block = /* record on the current block */
-               &(link->block_list[block_idx]);
+        if (remaining > length)
+            remaining = length;
+        if (link->block_list[block_idx].ref != 0) {
+            int32 access_id;    /* access record id for this block */
+            block_t *current_block = /* record on the current block */
+                &(link->block_list[block_idx]);
 
-           access_id = Hstartread(access_rec->file_id,
-                                  DFTAG_LINKED,
-                                  current_block->ref);
-           if (access_id == (int32) FAIL ||
-                   (relative_posn &&
-                   (int32)FAIL == Hseek(access_id, relative_posn, DF_START)) ||
-                   (int32)FAIL == (nbytes = Hread(access_id, remaining, data)))
+            access_id = Hstartread(access_rec->file_id,DFTAG_LINKED,
+                    current_block->ref);
+            if (access_id == (int32) FAIL
+                    || (relative_posn
+                    && (int32)FAIL == Hseek(access_id,relative_posn,DF_START))
+                    || (int32)FAIL == (nbytes=Hread(access_id,remaining,data)))
                HRETURN_ERROR(DFE_READERROR,FAIL);
 
-           bytes_read += nbytes;
-           Hendaccess(access_id);
-
+            bytes_read += nbytes;
+            Hendaccess(access_id);
        } else {
 
            /*if block is missing, fill this part of buffer with zero's */
-
             register int32 i;
-           for (i=0; i<remaining; i++)
-               data[i] = '\0';
+
+            for (i=0; i<remaining; i++)
+                data[i] = '\0';
             bytes_read += nbytes;
        }
 
-       /* move variables for the next block */
-
-       data +=remaining;
-       length -= remaining;
-       if (length > 0 && ++block_idx >= info->number_blocks) {
-           block_idx = 0;
-           link = link->next;
-           if (!link)
-               HRETURN_ERROR(DFE_INTERNAL,FAIL);
-       }
-       relative_posn = 0;
-       current_length = info->block_length;
+        /* move variables for the next block */
+        data +=remaining;
+        length -= remaining;
+        if (length > 0 && ++block_idx >= info->number_blocks) {
+            block_idx = 0;
+            link = link->next;
+            if (link==NULL)
+                HRETURN_ERROR(DFE_INTERNAL,FAIL);
+        }
+        relative_posn = 0;
+        current_length = info->block_length;
     } while (length > 0);      /* if still somemore to read in, repeat */
 
     access_rec->posn += bytes_read;

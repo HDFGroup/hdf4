@@ -48,10 +48,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/10/04 20:02:43  koziol
-Updated error reporting in H-Layer routines, and added more error codes and
-compression stuff.
+Revision 1.6  1993/10/06 20:27:30  koziol
+More compression fixed, and folded Doug's suggested change into VSappendable.
 
+ * Revision 1.5  1993/10/04  20:02:43  koziol
+ * Updated error reporting in H-Layer routines, and added more error codes and
+ * compression stuff.
+ *
  * Revision 1.4  1993/10/01  20:00:54  koziol
  * Put "extern C" block around function prototypes for C++ compatibility.
  *
@@ -76,60 +79,10 @@ compression stuff.
 
 /* HDF compression includes */
 #include "hcompi.h"         /* Internal definitions for compression */
-#include "crle.h"           /* run-length encoding header */
-#include "mstdio.h"         /* stdio modeling header */
 
 /* Local defines */
 #define COMP_HEADER_VERSION 0
-#define COMP_HEADER_LENGTH  8
-
-/* Modeling information */
-
-/* structure for storing modeling information */
-typedef struct {
-    comp_model_t model_type;  /* model this stream is using */
-    union {     /* union of all the different types of model information */
-        comp_model_stdio_info_t stdio_info;     /* stdio model info */
-    } model_info;
-    funclist_t model_funcs;     /* functions to perform modeling */
- } comp_model_info_t;
-
-
-/* Coding information */
-
-/* structure for storing modeling information */
-typedef struct {
-    comp_coder_t coder_type;    /* coding scheme this stream is using */
-    union {     /* union of all the different types of coding information */
-        comp_coder_rle_info_t rle_info;      /* RLE coding info */
-    } coder_info;
-    funclist_t coder_funcs;     /* functions to perform encoding */
- } comp_coder_info_t;
-
-/* structure for storing a state */
-typedef struct {
-    uint32 offset;              /* the offset in bytes of the state */
-    comp_model_info_t minfo;    /* modeling information */
-    comp_coder_info_t cinfo;     /* coding information */
- } comp_stateinfo_t;
-
-/* structure for storing state caching information */
-typedef struct {
-    intn num_states;            /* the number of states cached */
-    comp_stateinfo_t **comp_state;   /* pointer to an array of pointers to
-                                    compression states */
- } comp_state_cache_t;
-
-/* compinfo_t -- compressed element information structure */
-typedef struct {
-    intn attached;              /* number of access records attached
-                                  to this information structure */
-    int32 length;               /* the actual length of the data elt */
-    comp_model_info_t minfo;    /* modeling information */
-    comp_coder_info_t cinfo;    /* coding information */
-    bool caching;               /* whether caching is turned on */
-    comp_state_cache_t sinfo;   /* state information for caching */
-} compinfo_t;
+#define COMP_HEADER_LENGTH  14
 
 /* declaration of the functions provided in this module */
 PRIVATE int32 HCIstaccess
@@ -298,8 +251,8 @@ int32 HCcreate(file_id, tag, ref, model_type, coder_type)
     /* clear error stack and validate args */
     HEclear();
     file_rec=FID2REC(file_id);
-    if(!file_rec || file_rec->refcount==0 || SPECIALTAG(tag) ||
-            (special_tag=MKSPECIALTAG(tag))==DFTAG_NULL)
+    if(file_rec==NULL || file_rec->refcount==0 || SPECIALTAG(tag)
+            || (special_tag=MKSPECIALTAG(tag))==DFTAG_NULL)
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* chech for access permission */
@@ -386,8 +339,8 @@ int32 HCcreate(file_id, tag, ref, model_type, coder_type)
            return FAIL;
        }
        HDfreespace((VOIDP)buf);
-       info->length=data_dd->length;
 #endif
+       info->length=data_dd->length;
       } /* end if */
     else {  /* start new compressed data element */
         info->length=0;
@@ -395,6 +348,7 @@ int32 HCcreate(file_id, tag, ref, model_type, coder_type)
 
     /* set up compressed special info structure */
     info->attached=1;
+    info->comp_ref=Hnewref(file_id);         /* get the new reference # */
     HCIinit_model(&(info->minfo),model_type);
     HCIinit_coder(&(info->cinfo),coder_type);
 
@@ -402,6 +356,8 @@ int32 HCcreate(file_id, tag, ref, model_type, coder_type)
     p=tbuf;
     INT16ENCODE(p, SPECIAL_COMP);        /* specify special tag type */
     UINT16ENCODE(p, COMP_HEADER_VERSION);   /* specify header version */
+    INT32ENCODE(p, info->length);           /* write length of data */
+    UINT16ENCODE(p, (uint16)info->comp_ref);/* specify ref # of comp. data */
     UINT16ENCODE(p, (uint16)model_type);    /* specify model type stored */
     UINT16ENCODE(p, (uint16)coder_type);    /* specify coder type stored */
     if(HI_SEEKEND(file_rec->file)==FAIL) {
@@ -458,7 +414,6 @@ int32 HCcreate(file_id, tag, ref, model_type, coder_type)
 
     return(ASLOT2ID(slot));
 }   /* end HCcreate() */
-
 
 /*--------------------------------------------------------------------------
  NAME
@@ -532,9 +487,11 @@ PRIVATE int32 HCIstaccess(access_rec, access)
         }
         {
             uint8 *p=tbuf;
-            UINT16DECODE(p, header_version);
-            UINT16DECODE(p, model_type);
-            UINT16DECODE(p, coder_type);
+            UINT16DECODE(p, header_version);    /* get header length */
+            INT32DECODE(p, info->length);   /* get _uncompressed_ data length */
+            UINT16DECODE(p, info->comp_ref);    /* get ref # of comp. data */
+            UINT16DECODE(p, model_type);    /* get model type */
+            UINT16DECODE(p, coder_type);    /* get encoding type */
         }
         info->attached=1;
         HCIinit_model(&(info->minfo),model_type);
@@ -658,12 +615,20 @@ int32 HCPseek(access_rec, offset, origin)
     compinfo_t *info;       /* information on the special element */
     int32 ret;
 
+    /* Adjust offset according to origin.  There is no upper bound to posn */
+    if(origin==DF_CURRENT)
+        offset+=access_rec->posn;
+    if(origin==DF_END)
+        offset+=((compinfo_t *)(access_rec->special_info))->length;
+    if(offset<0)
+       HRETURN_ERROR(DFE_RANGE,FAIL);
+
     info=(compinfo_t *)access_rec->special_info;
     if((ret=(*(info->minfo.model_funcs.seek))(access_rec,offset,origin))==FAIL)
         HRETURN_ERROR(DFE_MODEL,FAIL);
 
     /* set the offset */
-    access_rec->posn = offset;
+    access_rec->posn=offset;
 
     return(ret);
 }   /* end HCPseek() */
@@ -702,19 +667,31 @@ int32 HCPread(access_rec, length, data)
     compinfo_t *info;       /* information on the special element */
     int32 ret;
 
+    /* validate length */
+    if(length<0)
+       HRETURN_ERROR(DFE_RANGE,FAIL);
+
     info=(compinfo_t *)access_rec->special_info;
+
+    /* adjust length if it falls off the end of the element */
+    if(length==0)
+        length=info->length-access_rec->posn;
+    else
+        if(length<0 || access_rec->posn+length>info->length)
+           HRETURN_ERROR(DFE_RANGE,FAIL);
+
     if((ret=(*(info->minfo.model_funcs.read))(access_rec,length,data))==FAIL)
         HRETURN_ERROR(DFE_MODEL,FAIL);
 
     /* adjust access position */
-    access_rec->posn += length;
+    access_rec->posn+=length;
 
     return(length);
 }   /* end HCPread() */
 
 /*--------------------------------------------------------------------------
  NAME
-    HCPwrite -- Write in a portion of data from a compressed data element.
+    HCPwrite -- Write out a portion of data from a compressed data element.
 
  USAGE
     int32 HCPwrite(access_rec,length,data)
@@ -746,12 +723,29 @@ int32 HCPwrite(access_rec, length, data)
     compinfo_t *info;       /* information on the special element */
     int32 ret;
 
+    /* validate length */
+    if(length<0)
+       HRETURN_ERROR(DFE_RANGE,FAIL);
+
     info=(compinfo_t *)access_rec->special_info;
     if((ret=(*(info->minfo.model_funcs.write))(access_rec,length,data))==FAIL)
         HRETURN_ERROR(DFE_MODEL,FAIL);
 
-    /* update access record */
-    access_rec->posn += length;
+    /* update access record, and information about special element */
+    access_rec->posn+=length;
+    if(access_rec->posn>info->length) {
+        uint8 *p=tbuf;           /* temp buffer ptr */
+        dd_t *info_dd=           /* dd of infromation element */
+            &access_rec->block->ddlist[access_rec->idx];
+        filerec_t *file_rec=FID2REC(access_rec->file_id);    /* file record */
+
+        info->length=access_rec->posn;
+        INT32ENCODE(p, info->length);
+        if(HI_SEEK(file_rec->file, info_dd->offset+4)==FAIL)
+            HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+        if(HI_WRITE(file_rec->file, tbuf, 4)==FAIL)
+            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+      } /* end if */
 
     return(length);
 }   /* end HCPwrite() */
@@ -854,9 +848,8 @@ int32 HCPendaccess(access_rec)
     accrec_t *access_rec;      /* access record to dispose of */
 #endif
 {
-    char *FUNC="HCPendaccess"; /* for HERROR */
-    filerec_t *file_rec=     /* file record */
-       FID2REC(access_rec->file_id);
+    char *FUNC="HCPendaccess";      /* for HERROR */
+    filerec_t *file_rec=FID2REC(access_rec->file_id);   /* file record */
 
     /* validate file record */
     if(file_rec==(filerec_t *) NULL || file_rec->refcount==0)
