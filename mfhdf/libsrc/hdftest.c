@@ -4070,8 +4070,12 @@ main(int argc, char *argv[])
     status = test_dimensions();
     num_errs = num_errs + status;
 
+#ifdef H4_HAVE_SZLIB
     status = test_szip_compression();  /* defined in tszip.c */
     num_errs = num_errs + status;
+#else
+    printf("****** SD Szip test skipped *****\n");
+#endif /* H4_HAVE_SZLIB */
 
     printf("num_err == %d\n", num_errs);
 
