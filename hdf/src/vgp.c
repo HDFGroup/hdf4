@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.30  1993/09/11 18:08:10  koziol
-Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
-cleaned up some goofy string manipulations in various places.
+Revision 1.31  1993/09/16 17:19:48  chouck
+Allow duplicates in Vgroups unless NO_DUPLICATES is defined
 
+ * Revision 1.30  1993/09/11  18:08:10  koziol
+ * Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
+ * cleaned up some goofy string manipulations in various places.
+ *
  * Revision 1.29  1993/08/18  15:58:03  chouck
  * Restored version 1.26 changes that had gotten blown away (grumble grumble)
  *
@@ -1460,12 +1463,14 @@ int32  tag, ref;
         return(FAIL);
     }
 
+#ifdef NO_DUPLICATES
     /* make sure doesn't already exist in the Vgroup */
     ttag = (uint16) tag;
     rref = (uint16) ref;
     for (i = 0; i < vg->nvelt; i++)
         if ((ttag == vg->tag[i]) && (rref == vg->ref[i]))
             return(FAIL); /* exists */
+#endif /* NO_DUPLICATES */
 
     n = vinsertpair(vg, (uint16) tag, (uint16) ref);
 
