@@ -854,7 +854,8 @@ uint32    count;
          */
         if(vp->data_ref == 0) 
             if(handle->hdf_mode == DFACC_RDONLY) {
-                if(vp->data_tag == DATA_TAG) {
+                if(vp->data_tag == DATA_TAG ||
+                   vp->data_tag == DFTAG_SDS) {
                     NC_attr ** attr;
                     int len;
                     
@@ -862,7 +863,7 @@ uint32    count;
 /* fill the buffer, use 'count' instead of 'vp->len' to calculate len   */
 /*                    len = (vp->len / vp->HDFsize) * vp->szof;       */
 
-                    len = (count / vp->HDFsize) * vp->szof;
+                    len = count * vp->szof;
                     if(attr != NULL)
                         hdf_fill_array(values, len, (*attr)->data->values, vp->type);
                     else 

@@ -586,67 +586,51 @@ intn hdf_read_ndgs(handle)
                    - get the size from dimsize[i]
                    - lref will give the ref of the label descriptor to see if 
                    has a real name else fake one based on the label of the NDG
-                   - look at uref for units information and fref for formating info
-                   store both of these as attributes of the coordinate variable
+                   - look at uref for units information and fref for formating 
+                     info store both of these as attributes of the coordinate 
+                     variable
+                   - Promote the dimension to a variable if any of the LUF or
+                     scales is assigned to this dimentsion. 
+                   - The dimension variable name is the same as the dimension 
+                     record name, Dim-<dim count>.
                    */
-                
+               
+                new_dim = FALSE; 
                 tmpname[0] = '\0';
                 
                 if(lRef) {
                     labelvalue = (char *) labelbuf;
                     for(i = 0; i < dim + 1; i++) labelvalue += HDstrlen(labelvalue) + 1;
-/*                    sprintf(tmpname, "%s", q);    */
+                    if (labelvalue[0] != '\0') new_dim = TRUE;
                 }
                 
                 if(uRef) {
                     unitvalue = (char *) unitbuf;
                     for(i = 0; i < dim + 1; i++) unitvalue += HDstrlen(unitvalue) + 1;
+                    if (unitvalue[0] != '\0') new_dim = TRUE;
                 }
 
                 if(fRef) {
                     formatvalue = (char *) formatbuf;
                     for(i = 0; i < dim + 1; i++) formatvalue += HDstrlen(formatvalue) + 1;
+                    if (formatvalue[0] != '\0') new_dim = TRUE;
                 }
 
-/*                if(tmpname[0] == '\0')
-                    sprintf(tmpname, "Dimension-%d", dimcount++);
-*/
-                sprintf(tmpname, "Dim-%d_%d_%d_%d_%d_%d", dim, 
-                                 sddRef, lRef, uRef, fRef, sRef);
-                dimcount++;
-                /*
-                 *  We should check to make sure that we have unique 
-                 *    dimension names
-                 */
-                /*
-                 *  if this dimension already exists, set this_dim to
-                 *  its index else do nothing
-                 */
-                for(i = 0; i < current_dim; i++)
-                    if(strcmp(dims[i]->name->values, tmpname) == 0) {
-                        /* found it */
-                        this_dim = i;
-                    }             
-                                
-                new_dim = FALSE;
-                if(this_dim == FAIL) {
-                    this_dim = current_dim++;
-                    if(current_dim == max_thangs) {
-                        /* need to allocate more space */    
-                        max_thangs *= 2;
-
-                        dims = (NC_dim **) HDregetspace((VOIDP) dims, sizeof(NC_dim *) * max_thangs);
-                        if(!dims) HRETURN_ERROR(DFE_NOSPACE, FALSE);
-                        
-                        vars = (NC_var **) HDregetspace((VOIDP) vars, sizeof(NC_var *) * max_thangs);
-                        if(!vars) HRETURN_ERROR(DFE_NOSPACE, FALSE);
-                        
-                    }
-                    new_dim  = TRUE;
+                sprintf(tmpname, "Dim-%d", dimcount++);
+                
+                this_dim = current_dim++;
+                if(current_dim == max_thangs) {
+                     /* need to allocate more space */    
+                     max_thangs *= 2;
+                     dims = (NC_dim **) HDregetspace((VOIDP) dims, sizeof(NC_dim *) * max_thangs);
+                     if(!dims) HRETURN_ERROR(DFE_NOSPACE, FALSE);
+                     vars = (NC_var **) HDregetspace((VOIDP) vars, sizeof(NC_var *) * max_thangs);
+                     if(!vars) HRETURN_ERROR(DFE_NOSPACE, FALSE);
                 }
 
                 /*
-                 * hmmm, this will blow away the old dim record...
+                 * Create a new dimension record for each dimension. 
+                 * Each NC_dim takes 8 bytes in memory. 
                  */
                 dims[this_dim] = NC_new_dim(tmpname, dimsizes[dim]);
                 
@@ -665,7 +649,7 @@ intn hdf_read_ndgs(handle)
                  * Promote the dimension to a variable, but only if it has meta-data
                  *   stored with it.  
                  */
-                if(new_dim && scalebuf && scalebuf[dim]) {
+                if(new_dim || (scalebuf && scalebuf[dim])) {
                     vars[current_var] = NC_new_var(tmpname, 
                                                    hdf_unmap_type(scaletypes[dim]),
                                                    1, 
@@ -742,8 +726,6 @@ intn hdf_read_ndgs(handle)
             }
             
             /*
-             * Should the data var has a dummy name to avoid more than one data vars
-             *   having the same name (originally the same label)? 8/18/94
              * Should the LUF-label be mapped as attr of "longname", to be consistent
              *   with the dim vars? 8/18/94
              * Should the annotation-label mapped to attr "anno-label", if "longname"
