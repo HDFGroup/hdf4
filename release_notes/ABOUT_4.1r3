@@ -42,6 +42,9 @@ o Many problems have been fixed with the GR interface, including the
   - The GR interface can now read compressed files created with the 
     DFR8 and DF24 interfaces, except for those which were compressed 
     with IMCOMP compression.
+  
+  - The GR interface can read and write images compressed with RLE, 
+    GZIP and Skipping Huffman compression methods.
 
   - Palettes can now be written and read properly with the GR interface.
 
@@ -82,6 +85,7 @@ HDF 4.1 Release 3 has been tested on the following platforms:
    DEC Alpha/Digital Unix
    DEC Alpha/OpenVMS
    DEC Alpha NT
+   VAX OpenVMS
    Exemplar
    FreeBSD
    HP-UX 10.2
@@ -91,7 +95,7 @@ HDF 4.1 Release 3 has been tested on the following platforms:
    Macintosh 
    Solaris
    Solaris x86
-   SP2
+   SP
    SunOS 4.1.4
    Windows NT/95
 
@@ -116,6 +120,8 @@ o If you encounter problems building on a platform, please be sure to
   check the INSTALL file at the top of the HDF source tree, in case 
   these problems are documented in section 2.5, Platform-specific Notes.
 
+o On the NT, the hdp utility fails in the debug version when using the 
+  list command.
 
 Acknowledgements:
 ================
