@@ -215,6 +215,18 @@ int32 fmtlong(x) char*x;
 		return(1);  
 		}
 
+int32 fmtshort(x) char*x;   
+{	short ashort;
+		movebytes(x, &ashort, sizeof(short)); cn += printf("%d",ashort); 
+		return(1);  
+		}
+
+int32 fmtdouble(x) char*x;
+{	float adouble;
+		movebytes(x, &adouble, sizeof(double)); cn += printf("%f",adouble); 
+		return(1);  
+		}
+
 /* ------------------------------------------------ */
 
 int32 vsdumpfull(vs) VDATA * vs; 
@@ -248,10 +260,10 @@ int32 vsdumpfull(vs) VDATA * vs;
 		    i, w->name[i], w->type[i], w->order[i]);
 		switch(w->type[i]) {
 
-			case LOCAL_FLOATTYPE:
+			case LOCAL_CHARTYPE:
 				order[i] = w->order[i];
-				off[i]   = sizeof(float);
-				fmtfn[i] = fmtfloat;
+				off[i]   = sizeof(char);
+				fmtfn[i] = fmtchar;
 				break;
 
 			case LOCAL_INTTYPE:
@@ -260,22 +272,38 @@ int32 vsdumpfull(vs) VDATA * vs;
 				fmtfn[i] = fmtint;
 				break;
 
-			case LOCAL_BYTETYPE:
+			case LOCAL_FLOATTYPE:
 				order[i] = w->order[i];
-				off[i]   = sizeof(unsigned char);
-				fmtfn[i] = fmtbyte;
-				break;
-
-			case LOCAL_CHARTYPE:
-				order[i] = w->order[i];
-				off[i]   = sizeof(char);
-				fmtfn[i] = fmtchar;
+				off[i]   = sizeof(float);
+				fmtfn[i] = fmtfloat;
 				break;
 
 			case LOCAL_LONGTYPE:
 				order[i] = w->order[i];
 				off[i]   = sizeof(long);
 				fmtfn[i] = fmtlong;
+				break;
+
+			case LOCAL_BYTETYPE:
+				order[i] = w->order[i];
+				off[i]   = sizeof(unsigned char);
+				fmtfn[i] = fmtbyte;
+				break;
+
+			case LOCAL_SHORTTYPE:
+				order[i] = w->order[i];
+				off[i]   = sizeof(short);
+				fmtfn[i] = fmtshort;
+				break;
+
+			case LOCAL_DOUBLETYPE:
+				order[i] = w->order[i];
+				off[i]   = sizeof(double);
+				fmtfn[i] = fmtdouble;
+				break;
+
+			default: 
+			fprintf(stderr,"sorry, type [%s] not supported\n", w->type[i]); 
 				break;
 		}
 	}
