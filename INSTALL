@@ -28,8 +28,8 @@ Supported Platforms
   Sun4(Solaris 2.4)           CC SC3.0       f77              X         X
   SGI-?(IRIX4.0.2)            CC             f77              X         X
   SGI-Indy(IRIX5.3)           CC             f77              X         X
-  SGI-Indy(IRIX6.1_32)        CC             f77              X         X
-  SGI-Indy(IRIX6.1_64)        CC             f77              X         X
+  SGI-Indy(IRIX6.1_32)        CC 6.1         f77 6.1          X         X
+  SGI-Indy(IRIX6.1_64)        CC 6.1         f77 6.1          X         X
   HP9000/735(HPUX 9.03)       CC             f77              X         X
   Exemplar(HPUX)              CC (for HPUX)  f77              X         X
   Cray C90 (UNICOS 803.2)     CC             cf77             X         X
