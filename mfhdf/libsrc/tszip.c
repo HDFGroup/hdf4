@@ -908,6 +908,143 @@ test_szip_chunk()
 }   /* test_szip_chunk */ 
 
 /* 
+ * At this time, the use of SZIP compression with unlimited dimension SDSs
+ * is unavailable.  This test program is to verify that the feature is 
+ * correctly disabled.
+ */
+#define FILE_NAME_UNLIM	"SDSunlimitedsziped.hdf"
+#define SDS_NAME_UNLIM	"UnlimitedData"
+static intn 
+test_szip_unlimited()
+{
+    /************************* Variable declaration **************************/
+
+    int32	sd_id, sds_id;
+    intn 	status;
+    int32	dim_sizes[2], array_rank, num_type, attributes;
+    char	name[MAX_NC_NAME];
+    comp_info	c_info;
+    int32	pixels_per_scanline;
+    int32       start[2], edges[2];
+    int32       fill_value = 0;   /* Fill value */
+    int         i,j;
+    int		num_errs = 0;    /* number of errors so far */
+    int32	out_data[LENGTH][WIDTH];
+    int32	in_data[LENGTH][WIDTH]={
+	   			 100,100,200,200,300,400,
+	   			 100,100,200,200,300,400,
+				 100,100,200,200,300,400,
+				 300,300,  0,400,300,400,
+				 300,300,  0,400,300,400,
+				 300,300,  0,400,300,400,
+				   0,  0,600,600,300,400,
+				 500,500,600,600,300,400,
+				   0,  0,600,600,300,400};
+
+    /********************* End of variable declaration ***********************/
+
+    /* Create the file and initialize SD interface */
+    sd_id = SDstart (FILE_NAME_UNLIM, DFACC_CREATE);
+    CHECK(sd_id, FAIL, "SDstart");
+
+    /* Create the SDS */
+    dim_sizes[0] = SD_UNLIMITED;
+    dim_sizes[1] = WIDTH;
+    sds_id = SDcreate (sd_id, SDS_NAME, DFNT_INT32, RANK, dim_sizes);
+    CHECK(sds_id, FAIL, "SDcreate:Failed to create a data set for szip compression testing");
+
+    /* Define the location, pattern, and size of the data set */
+    for (i = 0; i < RANK; i++) {
+	start[i] = 0;
+	}
+    edges[0] = LENGTH;
+    edges[1] = WIDTH;
+
+    /* Fill the SDS array with the fill value */
+    status = SDsetfillvalue (sds_id, (VOIDP)&fill_value);
+    CHECK(status, FAIL, "SDsetfillvalue");
+
+    /* Initialize for SZIP */
+    pixels_per_scanline = dim_sizes[1];
+    c_info.szip.pixels = dim_sizes[0]*dim_sizes[1];;
+    c_info.szip.pixels_per_block = 2;
+    if(pixels_per_scanline >=2048)
+        c_info.szip.pixels_per_scanline = 512;
+    else
+        c_info.szip.pixels_per_scanline = dim_sizes[1];
+
+    c_info.szip.options_mask = NN_OPTION_MASK;
+    c_info.szip.options_mask |= RAW_OPTION_MASK;
+    c_info.szip.bits_per_pixel = 32;
+
+    /* Attempting to set SZIP compression will fail because SZIP is 
+     * not available with unlimited dimension yet */
+    status = SDsetcompress (sds_id, COMP_CODE_SZIP, &c_info);
+    VERIFY(status, FAIL, "SDsetcompress");
+
+    /* Write data to the SDS; data will be uncompressed */
+    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)in_data);
+    CHECK(status, FAIL, "SDwritedata");
+
+    /* Terminate access to the data set */
+    status = SDendaccess (sds_id);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* Terminate access to the SD interface and close the file to 
+       flush the compressed info to the file */
+    status = SDend (sd_id);
+    CHECK(status, FAIL, "SDend");
+
+    /*
+    * Verify the written data
+    */
+
+    /* Reopen the file and select the first SDS */
+    sd_id = SDstart (FILE_NAME_UNLIM, DFACC_READ);
+    CHECK(sd_id, FAIL, "SDstart");
+
+    sds_id = SDselect (sd_id, 0);
+    CHECK(sds_id, FAIL, "SDselect:Failed to select a data set for testing szip compression with unlimited dimension");
+
+    /* Retrieve information of the data set */
+    status = SDgetinfo(sds_id, name, &array_rank, dim_sizes, &num_type, &attributes);
+    CHECK(status, FAIL, "SDgetinfo");
+
+    /* Wipe out the output buffer */
+    HDmemset(&out_data, 0, sizeof(out_data));
+
+    /* Read the data set */
+    start[0] = 0;
+    start[1] = 0;
+    edges[0] = LENGTH;
+    edges[1] = WIDTH;
+    status = SDreaddata (sds_id, start, NULL, edges, (VOIDP)out_data);
+    CHECK(status, FAIL, "SDreaddata");
+
+    /* Compare read data against input data */
+    for (j=0; j<LENGTH; j++) 
+    {
+        for (i=0; i<WIDTH; i++)
+	    if (out_data[j][i] != in_data[j][i])
+	    {
+		fprintf(stderr,"Bogus val in loc [%d][%d] in compressed dset, want %ld got %ld\n", j, i, (long)in_data[j][i], (long)out_data[j][i]);
+		num_errs++;
+	    }
+    }
+
+    /* Terminate access to the data set */
+    status = SDendaccess (sds_id);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* Terminate access to the SD interface and close the file */
+    status = SDend (sd_id);
+    CHECK(status, FAIL, "SDend");
+
+    /* Return the number of errors that's been kept track of so far */
+    return num_errs;
+}  /* test_szip_unlimited */
+
+/* 
  * Test drive for testing the szip compression feature with SD interface 
  */
 extern int 
@@ -920,5 +1057,6 @@ test_szip_compression ()
     num_errs = num_errs + test_szip_SDSfl32bit();
     num_errs = num_errs + test_szip_SDSfl64bit();
     num_errs = num_errs + test_szip_chunk();
+    num_errs = num_errs + test_szip_unlimited();
     return num_errs;
 }

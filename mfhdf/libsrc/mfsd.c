@@ -4046,6 +4046,8 @@ SDsetcompress(int32 id,                /* IN: dataset ID */
 {
     NC        *handle;
     NC_var    *var;
+    NC_dim    *dim;	/* to check if the dimension is unlimited */
+    int32      dimindex;/* to obtain the NC_dim record */
     model_info m_info;  /* modeling information for the HCcreate() call */
     intn       status = FAIL;
     intn       ret_value = SUCCEED;
@@ -4083,6 +4085,31 @@ SDsetcompress(int32 id,                /* IN: dataset ID */
           ret_value = FAIL;
           goto done;
       }
+
+    /* When the compression is SZIP, disallow the use of unlimited dimension */
+    if (comp_type == COMP_CODE_SZIP)
+    {
+	/* Get the index of the SDS' first dimension from the list of indices
+	 * branching out from NC_var.  This index indicates where this dim 
+	 * is in the "dims" list branching out from NC. */
+        dimindex = var->assoc->values[0];
+
+        /* Retrieve the NC_dim record to check for unlimited dimension */
+        dim = SDIget_dim(handle, dimindex);
+	if(dim == NULL)
+	{
+	    ret_value = FAIL;
+	    goto done;
+	}
+
+	/* If this dimension is unlimited, then return FAIL; the subsequent 
+	 * writing of this SDS will write uncompressed data */
+	if (dim->size == SD_UNLIMITED)
+	{
+	    ret_value = FAIL;
+	    goto done;
+	}
+    }
 
 #ifdef SDDEBUG
     printf("SDsetcompress(): var->data_ref=%d\n",(int)var->data_ref);
