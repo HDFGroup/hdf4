@@ -3477,7 +3477,7 @@ uint16 GRidtoref(int32 riid)
     else
       {
         if(ri_ptr->rig_ref==DFREF_WILDCARD)
-            ri_ptr->rig_ref=Hnewref(gr_ptr->hdf_file_id,DFTAG_RIG);
+            ri_ptr->rig_ref=Htagnewref(gr_ptr->hdf_file_id,DFTAG_RIG);
         ret_value=ri_ptr->rig_ref;
       } /* end else */
 #endif /* OLD_WAY */
