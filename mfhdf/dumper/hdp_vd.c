@@ -131,7 +131,9 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
                        strcpy(string, ptr);
                        dumpvd_opts->filter_num[i] = atoi(string);
                        ptr = tempPtr + 1;
-                    }
+		       /*printf("dumpvd_opt:%d\n", dumpvd_opts->filter_num[i]);
+                        */ 
+		    }
 		    dumpvd_opts->filter_num[i] = NULL;
                     (*curr_arg)++;
                     break;
@@ -346,6 +348,9 @@ int choose_vd(dump_info_t *dumpvd_opts, int32 vd_chosen[MAXCHOICES],
 	       k++;
             }
          } /* for */
+/*	 for (i=0; vd_chosen[i]!=-1; i++)
+	    printf("%d\n", vd_chosen[i]);
+*/
          break;
       case DNAME: 
          for (i=0; dumpvd_opts->filter_str[i]!=NULL; i++) {
@@ -426,11 +431,15 @@ static intn dvd(dump_info_t *dumpvd_opts, intn curr_arg,
        
 	for (i=0; i<MAXCHOICES; i++)
 	   vd_chosen[i] = -1;
+
         /* Find out which VDs have been chosen. */
         choose_vd(dumpvd_opts, vd_chosen, file_id, &index_error);
-        
+/*
+        for (i=0; i<5; i++)
+	    printf("*** %d\n", vd_chosen[i]);
+*/
 	/* In case of index error, skip the current file. */
-	if ((index_error) && (vd_chosen[0]==-1))
+	if (index_error)
 	   continue;
         /* Get output file name.  */
         if (dumpvd_opts->dump_to_file) 
@@ -445,10 +454,24 @@ static intn dvd(dump_info_t *dumpvd_opts, intn curr_arg,
 	/* Determine if all VDs are to be dumped out. */
 	if (vd_chosen[x]==-1) /* If so, set the corresponding flag. */
 	   dumpall = 1;
-	else /* Otherwise, sort the indices of the chosen VDs in increasing 
-		order so that they will be dumped out in such order. */
-	   sort(vd_chosen);
-
+	else { /* Otherwise, sort the indices of the chosen VDs in increasing 
+	   	  order so that they will be dumped out in such order. */
+	   sort(vd_chosen); 
+/*
+           int32 i, j, temp;
+	   for (i=0; vd_chosen[i]!=-1; i++)
+	      for (j=i; vd_chosen[j]!=-1; j++)
+		 if (vd_chosen[i]>vd_chosen[j]) {
+		    temp = vd_chosen[i];
+		    vd_chosen[i] = vd_chosen[j];
+		    vd_chosen[j] = temp;
+                 }
+*/
+        }
+/*
+	for (i=0; vd_chosen[i]!=-1; i++)
+	   printf("vd_chosen[%d]=%d\n", i, vd_chosen[i]);
+*/
 	/* Examine each VD. */
 	for (i=0; (vdata_ref=VSgetid(file_id,vdata_ref)) != -1; i++) { 
 	   int data_only, flds_match=0;

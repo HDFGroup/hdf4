@@ -29,8 +29,8 @@ void sort(int32 chosen[MAXCHOICES])
 {
    int32 temp, i, j;
 
-   for (i=0; i<MAXCHOICES; i++)
-      for (j=i; j<MAXCHOICES; j++) 
+   for (i=0; chosen[i]!=-1; i++)
+      for (j=i; chosen[j]!=-1; j++) 
          if (chosen[i]>chosen[j]) {
             temp = chosen[i];
             chosen[i] = chosen[j];
