@@ -6,5 +6,5 @@ LIBPATH ..\lib
 
 NAME testhdf
 FILE testhdf, rig, sdstr, blocks, an, anfile, extelt, file, file1, vers
-FILE sdmms, sdnmms, slab, litend, tvset, comp
+FILE sdmms, sdnmms, slab, litend, tvset, comp, conv, bitio, tree
 LIBRARY df

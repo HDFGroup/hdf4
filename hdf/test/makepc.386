@@ -1,10 +1,5 @@
 #
-# $Header$
-#
-# $Log$
-# Revision 1.1  1993/10/19 17:41:26  koziol
-# Updated tests and added a makefile for Watcom C/386
-#
+# $Id$
 #
 # ##################################################################
 #
@@ -159,11 +154,13 @@ ARCHIVE=hdf.zip
 
 SRCS=   testhdf.c rig.c sdstr.c blocks.c an.c anfile.c &
         extelt.c file.c file1.c vers.c sdmms.c &
-        sdnmms.c slab.c litend.c tvset.c comp.c
+        sdnmms.c slab.c litend.c tvset.c comp.c conv.c bitio.c &
+        tree.c
 
 CTESTS= testhdf.obj rig.obj sdstr.obj blocks.obj an.obj anfile.obj &
         extelt.obj file.obj file1.obj vers.obj sdmms.obj &
-        sdnmms.obj slab.obj litend.obj tvset.obj comp.obj
+        sdnmms.obj slab.obj litend.obj tvset.obj comp.obj conv.obj bitio.obj &
+        tree.obj
 
 FTESTS= tr8f.exe t24f.exe tpf.exe tanf.exe tanfilef.exe tsdstrf.exe tsdntf.exe tsdnntf.exe &
         tsdmmsf.exe tsdnmmsf.exe tstubsf.exe &
@@ -195,4 +192,3 @@ fortest.exe: $(FTESTS) $(LIBDIR)\df.lib fortest.obj
 
 clean:
     -$(RM) $(RMFLAGS) *.hdf *.obj *.exe
-

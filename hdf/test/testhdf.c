@@ -41,7 +41,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 */
 
-#define MAXNUMOFTESTS 20
+#define MAXNUMOFTESTS 25
 
 /* Exportable variables */
 int num_errs = 0;
@@ -129,6 +129,7 @@ main (argc, argv)
     InitTest("24bit",test_r24,"24BIT RASTER IMAGE INTERFACE");
     InitTest("anot",test_an,"ANNOTATIONS");
     InitTest("anfile",test_anfile,"FILE ANNOTATIONS");
+    InitTest("conv",test_conv,"CONVERSION INTERFACE");
     InitTest("sdmms",test_sdmms,"SDMMS");
     InitTest("sdnmms",test_sdnmms,"SDNMMS");
     InitTest("sdstr",test_tsdstr,"DATASTRINGS");

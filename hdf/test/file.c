@@ -17,7 +17,6 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /*
-
 * Hopen
 ** Create a file.
 ** Open an existing file.

@@ -1,30 +1,19 @@
+# ****************************************************************************
+# * NCSA HDF                                                                 *
+# * Software Development Group                                               *
+# * National Center for Supercomputing Applications                          *
+# * University of Illinois at Urbana-Champaign                               *
+# * 605 E. Springfield, Champaign IL 61820                                   *
+# *                                                                          *
+# * For conditions of distribution and use, see the accompanying             *
+# * hdf/COPYING file.                                                        *
+# *                                                                          *
+# ***************************************************************************
 #
-# $Header$
-#
-# $Log$
-# Revision 1.4  1993/08/16 21:58:15  koziol
-# Fixed access list for these files, and the actual changes I made to the
-# files are for PC compatibility.
-#
-# Revision 1.2  1993/01/26  19:45:08  koziol
-# Added new test files for checking little-endian support
-#
-# Revision 1.1  1993/01/19  06:12:23  koziol
-# New Makefile for the test files on the PC
-#
-# Revision 1.2  1992/10/12  18:11:51  koziol
-# Updated for v3.2r2 release
-#
-# Revision 1.1  1992/08/25  21:40:44  koziol
-# Initial revision
-#
+# $Id$
 #
 # ##################################################################
 #
-#                   NCSA HDF Version 3.2 release 3
-#                          December 1992
-#
-#                  MAKEFILE for testing HDF Version 3.2
 #
 # This makefile creates HDF test programs.  There are three categories
 # of test programs: 
