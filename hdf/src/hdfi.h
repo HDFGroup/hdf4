@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.23  1993/04/30 20:28:51  koziol
-Added correct #define's for JPEG on the Cray
+Revision 1.24  1993/05/05 19:47:04  chouck
+Define PROTOTYPE if using C++
 
+ * Revision 1.23  1993/04/30  20:28:51  koziol
+ * Added correct #define's for JPEG on the Cray
+ *
  * Revision 1.22  1993/04/27  21:05:04  chouck
  * Added JPeg defines for Convex
  *
@@ -134,6 +137,12 @@ Added correct #define's for JPEG on the Cray
 #ifdef __STDC__
 #define PROTOTYPE
 #include <stdlib.h>
+#endif
+
+#if defined (__cplusplus) || (defined c_plusplus)
+#ifndef PROTOTYPE
+#define PROTOTYPE
+#endif
 #endif
 
 #ifdef SUN
