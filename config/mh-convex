@@ -14,7 +14,7 @@ FC = fc
 FFLAGS =
 
 # Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
-RANLIB = touch
+RANLIB = ranlib
 
 # Name of library archiver and flags to send, default 'AR=ar', 'ARFLAGS=r'
 AR = ar
