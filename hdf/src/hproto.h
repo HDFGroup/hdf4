@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.34  1993/07/01 17:15:21  briand
-Removed a '\' from line 1320.
+Revision 1.35  1993/07/31 16:55:17  georgev
+Fixed fortran stubs for slabs.
 
+ * Revision 1.34  1993/07/01  17:15:21  briand
+ * Removed a '\' from line 1320.
+ *
  * Revision 1.33  1993/05/11  16:51:07  koziol
  * Fixed typos and bugs in the Fujitsu VP support
  *
@@ -1237,10 +1240,10 @@ extern FRETVAL(intf) ndfr8sjpeg
 #   define ndfsdsetnt        FNAME(DFSDSETNT)
 #   define ndfsdgetnt        FNAME(DFSDGETNT)
 #   define ndfsdlastref      FNAME(DFSDLASTREF)
-#   define ndfsdwref         FNAME(DFSDWREF)
+#   define ndfsdiwref         FNAME(DFSDIWREF)
 #   define ndfsdsfill        FNAME(DFSDSFILL)
 #   define ndfsdgfill        FNAME(DFSDGFILL)
-#   define ndfsdsslab        FNAME(DFSDSSLAB)
+#   define ndfsdisslab        FNAME(DFSDISSLAB)
 #   define ndfsdwslab        FNAME(DFSDWSLAB)
 #   define ndfsdeslab        FNAME(DFSDESLAB)
 #else
@@ -1291,10 +1294,10 @@ extern FRETVAL(intf) ndfr8sjpeg
 #   define ndfsdsetnt        FNAME(dfsdsetnt)
 #   define ndfsdgetnt        FNAME(dfsdgetnt)
 #   define ndfsdlastref      FNAME(dfsdlastref)
-#   define ndfsdwref         FNAME(dfsdwref)
+#   define ndfsdiwref         FNAME(dfsdiwref)
 #   define ndfsdsfill        FNAME(dfsdsfill)
 #   define ndfsdgfill        FNAME(dfsdgfill)
-#   define ndfsdsslab        FNAME(dfsdsslab)
+#   define ndfsdisslab        FNAME(dfsdisslab)
 #   define ndfsdwslab        FNAME(dfsdwslab)
 #   define ndfsdeslab        FNAME(dfsdeslab)
 #endif /* DF_CAPFNAMES */
