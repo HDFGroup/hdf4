@@ -19,9 +19,10 @@ CSOURCES = atom.c bitvect.c cdeflate.c cnbit.c cnone.c crle.c cskphuff.c    \
 
 CHEADERS = atom.h bitvect.h cdeflate.h cnbit.h cnone.h cskphuff.h crle.h    \
            cszip.h df.h dfan.h dfi.h dfgr.h dfrig.h dfsd.h dfstubs.h        \
-           dfufp2i.h dynarray.h hbitio.h hchunks.h hcomp.h hcompi.h hconv.h \
-           hdf.h hdfi.h herr.h hfile.h hkit.h hlimits.h hntdefs.h hproto.h  \
-           htags.h linklist.h mfan.h mfgr.h mstdio.h tbbt.h vattr.h vg.h
+           dfufp2i.h dynarray.h h4config.h hbitio.h hchunks.h hcomp.h       \
+           hcompi.h hconv.h hdf.h hdfi.h herr.h hfile.h hkit.h hlimits.h    \
+           hntdefs.h hproto.h  htags.h linklist.h mfan.h mfgr.h mstdio.h    \
+           tbbt.h vattr.h vg.h
 FHEADERS = dffunc.f90 hdf.f90 dffunc.inc hdf.inc
 
 if HDF_BUILD_FORTRAN
