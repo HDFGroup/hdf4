@@ -2,7 +2,7 @@
  *	Copyright 1990, University Corporation for Atmospheric Research
  *      See netcdf/COPYRIGHT file for copying and redistribution conditions.
  */
-/* /hdf/src/master/dist/mfhdf/fortran/jackets.src,v 1.6 1994/08/11 17:52:33 koziol Exp */
+/* $Id$ */
 /*
  * OVERVIEW
  *

@@ -1,7 +1,7 @@
 c********************************************************************
 c   Copyright 1993, UCAR/Unidata
 c   See netcdf/COPYRIGHT file for copying and redistribution conditions.
-c   /hdf/src/master/dist/mfhdf/fortran/ftest.src,v 1.2 1993/04/28 21:03:42 chouck Exp
+c   $Id$
 c********************************************************************/
 
 
