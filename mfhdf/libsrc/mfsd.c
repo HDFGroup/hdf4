@@ -1720,7 +1720,6 @@ VOIDP data;
     if((start == NULL) || (end == NULL) || (data == NULL))
         return FAIL;
 
-
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) {
         handle = SDIhandle_from_id(sdsid, DIMTYPE);

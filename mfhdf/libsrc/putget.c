@@ -149,11 +149,7 @@ const long *coords ;
                 attr = NC_findattr(&vp->attrs, _FillValue);
 
                 if(attr != NULL)
-#ifdef OLD_WAY
-                    hdf_fill_array(strg, len, (*attr)->data->values, vp->type);
-#else /* OLD_WAY */
                     HDmemfill(strg,(*attr)->data->values,vp->szof,(vp->len/vp->HDFsize));
-#endif /* OLD_WAY */
                 else 
                     NC_arrayfill(strg, len, vp->type);
 
@@ -617,73 +613,6 @@ intn SDPfreebuf()
 }
 #endif /* HDF */
 
-#ifdef OLD_WAY
-
-/* ---------------------------- hdf_fill_array ---------------------------- */
-/*
-  Fill the array pointed to by storage with the value pointed to
-  by value.  It is assumed that the filling is being done on
-  behalf of variable vp which is used to compute the number of 
-  fill values to generate.
-*/
-int 
-    hdf_fill_array(storage, len, value, type)
-Void  * storage;
-Void  * value;
-int32   len;
-int32   type;
-{
-    register uint8 *lo, *hi;
-    
-    lo = (uint8 *) storage;
-    hi = (uint8 *) storage + len;
-
-    switch(type) {
-    case NC_BYTE    :
-    case NC_CHAR    :
-        HDmemset(lo, *((char *)value), len);
-        break;
-    case NC_SHORT    :
-        {
-            int16 t = *((int16 *) value);
-            while(lo < hi) {
-                *((int16 *) lo) = t;
-                lo += sizeof(int16);
-            }
-        }
-        break;
-    case NC_LONG     :
-        {
-            int32 t =  *((int32 *) value);
-            while(lo < hi) {
-                *((int32 *) lo) = t;
-                lo += sizeof(int32);
-            }
-        }
-        break;
-    case NC_FLOAT    :
-        {
-            float t = *((float *) value);
-            while(lo < hi) {
-                *((float *) lo) = t;
-                lo += sizeof(float);
-            }
-        }
-        break;
-    case NC_DOUBLE   :
-        {
-            double t = *((double *) value);
-            while(lo < hi) {
-                *((double *) lo) = t;
-                lo += sizeof(double);
-            }
-        }
-        break;
-    }
-    
-} /* hdf_fill_array */
-#endif /* OLD_WAY */
-
 #define MAX_SIZE 1000000
 
 /* ------------------------- hdf_get_data ------------------- */
@@ -700,9 +629,6 @@ NC_var *vp;
     NC_attr **attr;
     int32 vg;
     int32 vsid, nvalues, status, tag, t, n;
-#ifdef OLD_WAY
-    register Void *values;  
-#endif
     int32 byte_count, len;
     int32 to_do, done, chunk_size;
     
@@ -763,27 +689,22 @@ NC_var *vp;
     to_do   = chunk_size / vp->HDFsize;     /* number of values in a chunk */
     
     len = to_do * vp->szof;                 /* size of buffer for fill values */
-#ifdef OLD_WAY
-    values = (Void *) HDmalloc(len);    /* buffer to hold unconv fill vals */
-#else
     if (tValues_size < len ) {
         if (tValues) HDfree((VOIDP)tValues);
         tValues_size = len;
         tValues = HDmalloc(len);
         if (tValues == NULL)
+          {
+           tValues_size=0;
            return FALSE;
+          } /* end if */
     }
-#endif
     byte_count = to_do * vp->HDFsize;       /* external buffer size */
 
     if(!attr) {
         NC_arrayfill((VOIDP)tValues, len, vp->type);
     } else {
-#ifdef OLD_WAY
-        hdf_fill_array((VOIDP)tValues, len, (*attr)->data->values, vp->type);
-#else
         HDmemfill((VOIDP)tValues,(*attr)->data->values,vp->szof,to_do);
-#endif /* OLD_WAY */
     }
     
     /* --------------------------------------
@@ -812,7 +733,10 @@ NC_var *vp;
         tBuf_size = byte_count;
         tBuf = (int8 *) HDmalloc(byte_count);
         if (tBuf == NULL) 
+          {
+            tBuf_size=0;
             return FALSE;
+          } /* end if */
     }
 
     /*
@@ -881,10 +805,6 @@ NC_var *vp;
         
 #ifdef DEBUG 
     fprintf(stderr, "Done with the DATA Vdata returning id %d\n", vsid);
-#endif
-
-#ifdef OLD_WAY
-    HDfree((VOIDP)values);   
 #endif
 
     vp->aid = FAIL;
@@ -959,6 +879,7 @@ uint32    count;
     int32 byte_count;
     uint8 platntsubclass;  /* the machine type of the current platform */
     uint8 outntsubclass;   /* the data's machine type */
+    uintn convert;          /* whether to convert or not */
 
 #ifdef DEBUG
     fprintf(stderr, "hdf_xdr_NCvdata I've been called : %s\n", vp->name->values);
@@ -986,11 +907,7 @@ uint32    count;
 
                     len = count * vp->szof;
                     if(attr != NULL)
-#ifdef OLD_WAY
-                        hdf_fill_array(values, len, (*attr)->data->values, vp->type);
-#else /* OLD_WAY */
                         HDmemfill(values,(*attr)->data->values,vp->szof,(vp->len/vp->HDFsize));
-#endif /* OLD_WAY */
                     else 
                         NC_arrayfill(values, len, vp->type);
                     
@@ -1001,25 +918,16 @@ uint32    count;
             }
     }
 
-#if 0    
-    if((vp->data_offset < 0) && (handle->hdf_mode == DFACC_RDONLY)) {
-        /* blank the memory */
-        HDmemset(values, (char) 0, count * vp->szof);
-        return TRUE;
-    }
-#endif    
-
-    
     /* 
      * It may be the case that the current does NOT begin at the start of the
      *   data-object which is storing it.  In that case compute the correct 
      *   location.
      */
-    if(vp->data_offset > 0) where += vp->data_offset;
+    if(vp->data_offset > 0) 
+        where += vp->data_offset;
     
     /* position ourselves correctly */
-    status = Hseek(vp->aid, where, DF_START);
-    if(status == FAIL)
+    if( Hseek(vp->aid, where, DF_START) == FAIL)
         return(FALSE);
     
     byte_count = count * vp->HDFsize;
@@ -1027,14 +935,20 @@ uint32    count;
     platntsubclass = DFKgetPNSC(vp->HDFtype, DF_MT); 
     outntsubclass = DFKisnativeNT(vp->HDFtype) ? DFKgetPNSC(vp->HDFtype, DF_MT)
 	    : (DFKislitendNT(vp->HDFtype) ? DFNTF_PC : DFNTF_HDFDEFAULT);
+    convert= (uintn)(platntsubclass!=outntsubclass);
 
     /* make sure our tmp buffer is big enough to hold everything */
-    if(platntsubclass!=outntsubclass && tBuf_size < byte_count) {
-        if(tBuf) HDfree((VOIDP)tBuf);
+    if(convert && tBuf_size < byte_count) {
+        if(tBuf) 
+            HDfree((VOIDP)tBuf);
         tBuf_size = byte_count;
         tBuf = (int8 *) HDmalloc(tBuf_size);
-        if(tBuf == NULL) return FALSE;
-    }
+        if(tBuf == NULL) 
+          {
+            tBuf_size=0;
+            return FALSE;
+          } /* end if */
+      } /* end if */
     
 
 /*    This should be set by the caller */
@@ -1045,27 +959,27 @@ CM_HDFtype = vp->HDFtype;
 #endif
     /* Read or write the data into / from values */
     if(handle->xdrs->x_op == XDR_DECODE) {
-	if(platntsubclass!=outntsubclass) {
+        if(convert) {
             status = Hread(vp->aid, byte_count, (uint8 *) tBuf);
-            if(status != byte_count) return FALSE;
-        
+            if(status != byte_count) 
+                return FALSE;
             DFKnumin((uint8 *) tBuf, (uint8 *) values, (uint32) count, 0, 0);
-	  } /* end if */
-	else {
+          } /* end if */
+        else {
             status = Hread(vp->aid, byte_count, (uint8 *) values);
-            if(status != byte_count) return FALSE;
-	  } /* end else */
+            if(status != byte_count)
+                return FALSE;
+          } /* end else */
     } else {
-	if(platntsubclass!=outntsubclass) {
+        if(convert) {
             DFKnumout((uint8 *) values, tBuf, (uint32) count, 0, 0);
-        
             status = Hwrite(vp->aid, byte_count, (uint8 *) tBuf);
-	  } /* end if */
-	else 
+          } /* end if */
+        else 
             status = Hwrite(vp->aid, byte_count, (uint8 *) values);
 
         if(status != byte_count) 
-	    return FALSE;
+            return FALSE;
     }
 
 #ifdef DEBUG
@@ -1073,7 +987,6 @@ CM_HDFtype = vp->HDFtype;
 #endif
     
     return(TRUE);
-    
 } /* hdf_xdr_NCvdata */
 
 
@@ -1162,10 +1075,15 @@ uint32    count;
     /* make sure our tmp buffer is big enough to hold everything */
     byte_count = count * vp->HDFsize;
     if(tBuf_size < byte_count) {
-        if(tBuf) HDfree((VOIDP)tBuf);
+        if(tBuf) 
+            HDfree((VOIDP)tBuf);
         tBuf_size = byte_count;
         tBuf = (int8 *) HDmalloc(tBuf_size);
-        if(tBuf == NULL) return FALSE;
+        if(tBuf == NULL) 
+          {
+            tBuf_size=0;
+            return FALSE;
+          } /* end if */
     }
     
 
