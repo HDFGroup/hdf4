@@ -2,12 +2,12 @@
 #
 # Compiliers:
 # For gcc version
-CC=gcc
-CFLAGS=-ansi -pedantic -Wall -D_HPUX_SOURCE
+#CC=gcc
+#CFLAGS=-ansi -pedantic -Wall -D_HPUX_SOURCE
 #
-#Using HP-ANSI compilier
-#CC=cc
-#CFLAGS=-Aa -D_HPUX_SOURCE
+#Using HP-ANSI compilier also needs LIBS = -lm(see below)
+CC=cc
+CFLAGS=-Aa -D_HPUX_SOURCE
 
 # Fortran compilier
 FC = f77
@@ -24,3 +24,6 @@ ARFLAGS = r
 RM = /bin/rm
 RMFLAGS = -f
 
+# Extra libraries to be include like '-lm' for fabs()
+# Needed only with naitve HP-ANSI compilier
+LIBS = -lm
