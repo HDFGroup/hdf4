@@ -13,7 +13,12 @@ C
 C $Id$
 C     
       subroutine tstubsf (nerrors)
+      implicit none
       
+      integer nerrors
+      character*(*) myname
+      parameter (myname = "stubs")
+
       character ar0*10
       character ar1*9
       character ar2*30
@@ -21,7 +26,6 @@ C
 
       character in*20
 
-      integer nerrors
       integer dfile
       integer dfinfo(16)
       integer dlist(128)
@@ -50,6 +54,7 @@ C
       data ar3 /'...three'/
 
 
+      call ptestban("Testing", myname)
       nerrors = 0
       a0size = len(ar0)
       a1size = len(ar1)

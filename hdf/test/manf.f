@@ -27,9 +27,12 @@ C
       implicit none
       include "fortest.inc"
 
+      integer number_failed
+      character*(*) myname
+      parameter (myname = "manf")
+
       integer afstart, afend, afcreate, affcreate
       integer afwriteann, afendaccess, hopen, hclose
-      integer number_failed
 
       integer dssdims, dsadata, dslref, dsgdims
       integer d8aimg, DFR8lastref, d8gimg
@@ -70,6 +73,7 @@ C
       real      data(ROWS, COLS)
 
 
+      call ptestban("Testing", myname)
       number_failed = 0
       numberfailed =  0
       CR = char(10)

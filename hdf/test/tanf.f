@@ -32,11 +32,15 @@ C
       implicit none
       include "fortest.inc"
 
+      integer number_failed
+      character*(*) myname
+      parameter (myname = "an")
+
       integer daplab, dapdesc  
       integer dssdims, dsadata, dslref, dsgdims
       integer d8aimg, DFR8lastref, d8gimg
 
-      integer number_failed, ISFIRST, NOTFIRST, MAXLEN_LAB
+      integer ISFIRST, NOTFIRST, MAXLEN_LAB
       integer MAXLEN_DESC, ROWS, COLS, REPS
       integer DFTAG_SDG, DFTAG_RIG
 
@@ -64,6 +68,8 @@ C
       character image(ROWS, COLS), newimage(ROWS, COLS)
       real      data(ROWS, COLS)
 
+
+      call ptestban("Testing", myname)
       number_failed =  0
       CR = char(10)
       TESTFILE = 'tdfanF.hdf'

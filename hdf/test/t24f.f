@@ -13,7 +13,8 @@ C
 C $Id$
 C
       subroutine t24f (number_failed)
-
+      implicit none
+      include "fortest.inc"
 C
 C Test Program: 
 C     		Writes 24-bit raster images with specified interlace 
@@ -23,6 +24,10 @@ C Input file: none
 C Output file: tdf24f.hdf
 C
 C
+      integer number_failed
+      character*(*) myname
+      parameter (myname = "r24")
+
       integer d2setil, d2reqil, d2pimg, d2aimg
       integer d2gdims, d2gimg, d2first
 
@@ -31,8 +36,9 @@ C
       character*1 CR
       character buf(3, 2, 2), buf1(2, 3, 2), buf2(2, 2, 3)
       character in(3,2,2), in1(2, 3, 2), in2(2, 2, 3)
-      integer i, j, k, ret, number_failed
+      integer i, j, k, ret
 
+      call ptestban("Testing", myname)
       TESTFILE = 'tdf24f.hdf'
       CR = char(10)
       number_failed = 0
@@ -50,37 +56,36 @@ C
               buf2(j, i, 3) = char(2*i - j)
 2       continue
 150   continue
-      print *, 'Setting il to 0'
+      call MESSAGE(VERBO_HI, 'Setting il to 0', Verbosity)
       ret = d2setil(0)
-      call RESULT(ret, 'd2setil',number_failed)
-      print *, ' Putting buffer 1'
+      call VERIFY(ret, 'd2setil',number_failed, Verbosity)
+      call MESSAGE(VERBO_HI, ' Putting buffer 1', Verbosity)
       ret = d2pimg(TESTFILE, buf, 2, 2)
-      call RESULT(ret, 'd2pimg',number_failed)
-      print *, 'Setting il to 1'
+      call VERIFY(ret, 'd2pimg',number_failed, Verbosity)
+      call MESSAGE(VERBO_HI, 'Setting il to 1', Verbosity)
       ret = d2setil(1)
-      call RESULT(ret, 'd2setil',number_failed)
-      print *, 'Adding buf1'
+      call VERIFY(ret, 'd2setil',number_failed, Verbosity)
+      call MESSAGE(VERBO_HI, 'Adding buf1', Verbosity)
       ret = d2aimg(TESTFILE, buf1, 2, 2)
-      call RESULT(ret, 'd2aimg',number_failed)
-      print *, 'Setting il to 2'
+      call VERIFY(ret, 'd2aimg',number_failed, Verbosity)
+      call MESSAGE(VERBO_HI, 'Setting il to 2', Verbosity)
       ret = d2setil(2)
-      call RESULT(ret, 'd2setil',number_failed)
-      print *, 'Adding buf2'
+      call VERIFY(ret, 'd2setil',number_failed, Verbosity)
+      call MESSAGE(VERBO_HI, 'Adding buf2', Verbosity)
       ret = d2aimg(TESTFILE, buf2, 2, 2)
-      call RESULT(ret, 'd2aimg',number_failed)
-      print *, 'Restarting file'
+      call VERIFY(ret, 'd2aimg',number_failed, Verbosity)
+      call MESSAGE(VERBO_HI, 'Restarting file', Verbosity)
       ret = d2first()
-      call RESULT(ret, 'd2first',number_failed)
-      print *, 'Req il 0'
+      call VERIFY(ret, 'd2first',number_failed, Verbosity)
+      call MESSAGE(VERBO_HI, 'Req il 0', Verbosity)
       ret = d2reqil(0)
-      call RESULT(ret, 'd2reqil',number_failed)
-      print *, 'Getting dims'
+      call VERIFY(ret, 'd2reqil',number_failed, Verbosity)
+      call MESSAGE(VERBO_HI, 'Getting dims', Verbosity)
       ret = d2gdims(TESTFILE, d1, d2, il)
-      call RESULT(ret, 'd2gdims',number_failed)
-      print *, 'd1:', d1,' d2:', d2, ' il:', il
-      print *, 'Getting image'
+      call VERIFY(ret, 'd2gdims',number_failed, Verbosity)
+      call MESSAGE(VERBO_HI, 'Getting image', Verbosity)
       ret = d2gimg(TESTFILE, in, 2, 2)
-      call RESULT(ret, 'd2gimg',number_failed)
+      call VERIFY(ret, 'd2gimg',number_failed, Verbosity)
       do 200 i=1, 2
           do 180 j=1, 2
               do 160 k=1,3
@@ -91,13 +96,12 @@ C
 180       continue
 200   continue
   
-      print *, 'Getting dimensions'
+      call MESSAGE(VERBO_HI, 'Getting dimensions', Verbosity)
       ret = d2gdims(TESTFILE, d1, d2, il)
-      call RESULT(ret, 'd2gdims',number_failed)
-      print *,  'd1:', d1,' d2:', d2, ' il:', il
-      print *, 'Getting image'
+      call VERIFY(ret, 'd2gdims',number_failed, Verbosity)
+      call MESSAGE(VERBO_HI, 'Getting image', Verbosity)
       ret = d2gimg(TESTFILE,  in, 2, 2)
-      call RESULT(ret, 'd2gimg',number_failed)
+      call VERIFY(ret, 'd2gimg',number_failed, Verbosity)
       do 250 i=1, 2
           do 220 j=1, 2
               do 210 k = 1, 3
@@ -108,13 +112,12 @@ C
 220       continue
 250   continue
 
-      print *, 'Getting dimensions'
+      call MESSAGE(VERBO_HI, 'Getting dimensions', Verbosity)
       ret = d2gdims(TESTFILE, d1, d2, il)
-      call RESULT(ret, 'd2gdims',number_failed)
-      print *,  'd1:', d1,' d2:', d2, ' il:', il
-      print *, 'Getting image'
+      call VERIFY(ret, 'd2gdims',number_failed, Verbosity)
+      call MESSAGE(VERBO_HI, 'Getting image', Verbosity)
       ret = d2gimg(TESTFILE,  in, 2, 2)
-      call RESULT(ret, 'd2gimg',number_failed)
+      call VERIFY(ret, 'd2gimg',number_failed, Verbosity)
       do 300 i=1, 2
           do 280 j=1, 2
               do 260 k = 1, 3
@@ -125,19 +128,18 @@ C
 280       continue
 300   continue
 
-      print *, 'Restarting file'
+      call MESSAGE(VERBO_HI, 'Restarting file', Verbosity)
       ret = d2first()
-      call RESULT(ret, 'd2first',number_failed)
-      print *, 'Req il 1'
+      call VERIFY(ret, 'd2first',number_failed, Verbosity)
+      call MESSAGE(VERBO_HI, 'Req il 1', Verbosity)
       ret = d2reqil(1)
-      call RESULT(ret, 'd2reqil',number_failed)
-      print *, 'Getting dimensions'
+      call VERIFY(ret, 'd2reqil',number_failed, Verbosity)
+      call MESSAGE(VERBO_HI, 'Getting dimensions', Verbosity)
       ret = d2gdims(TESTFILE, d1, d2, il)
-      call RESULT(ret, 'd2gdims',number_failed)
-      print *,  'd1:', d1,' d2:', d2, ' il:', il
-      print *, 'Getting image'
+      call VERIFY(ret, 'd2gdims',number_failed, Verbosity)
+      call MESSAGE(VERBO_HI, 'Getting image', Verbosity)
       ret = d2gimg(TESTFILE,  in1, 2, 2)
-      call RESULT(ret, 'd2gimg',number_failed)
+      call VERIFY(ret, 'd2gimg',number_failed, Verbosity)
       do 350 i=1, 2
           do 320 j=1, 2
               do 310 k=1,3
@@ -148,13 +150,12 @@ C
 320       continue
 350   continue
 
-      print *, 'Getting dimensions'
+      call MESSAGE(VERBO_HI, 'Getting dimensions', Verbosity)
       ret = d2gdims(TESTFILE, d1, d2, il)
-      call RESULT(ret, 'd2gdims',number_failed)
-      print *,  'd1:', d1,' d2:', d2, ' il:', il
-      print *, 'Getting image'
+      call VERIFY(ret, 'd2gdims',number_failed, Verbosity)
+      call MESSAGE(VERBO_HI, 'Getting image', Verbosity)
       ret = d2gimg(TESTFILE,  in1, 2, 2)
-      call RESULT(ret, 'd2gimg',number_failed)
+      call VERIFY(ret, 'd2gimg',number_failed, Verbosity)
       do 400 i=1, 2
           do 380 j=1, 2
               do 360 k = 1, 3
@@ -165,13 +166,12 @@ C
 380       continue
 400   continue
 
-      print *, 'Getting dimensions'
+      call MESSAGE(VERBO_HI, 'Getting dimensions', Verbosity)
       ret = d2gdims(TESTFILE, d1, d2, il)
-      call RESULT(ret, 'd2gdims',number_failed)
-      print *,  'd1:', d1,' d2:', d2, ' il:', il
-      print *, 'Getting image'
+      call VERIFY(ret, 'd2gdims',number_failed, Verbosity)
+      call MESSAGE(VERBO_HI, 'Getting image', Verbosity)
       ret = d2gimg(TESTFILE,  in1, 2, 2)
-      call RESULT(ret, 'd2gimg',number_failed)
+      call VERIFY(ret, 'd2gimg',number_failed, Verbosity)
       do 450 i=1, 2
           do 420 j=1, 2
               do 410 k =1, 3  
@@ -182,19 +182,18 @@ C
 420       continue
 450   continue
 
-      print *, 'Restarting file'
+      call MESSAGE(VERBO_HI, 'Restarting file', Verbosity)
       ret = d2first()
-      call RESULT(ret, 'd2first',number_failed)
-      print *, 'Req il 2'
+      call VERIFY(ret, 'd2first',number_failed, Verbosity)
+      call MESSAGE(VERBO_HI, 'Req il 2', Verbosity)
       ret = d2reqil(2)
-      call RESULT(ret, 'd2reqil',number_failed)
-      print *, 'Getting dimensions'
+      call VERIFY(ret, 'd2reqil',number_failed, Verbosity)
+      call MESSAGE(VERBO_HI, 'Getting dimensions', Verbosity)
       ret = d2gdims(TESTFILE, d1, d2, il)
-      call RESULT(ret, 'd2gdims',number_failed)
-      print *,  'd1:', d1,' d2:', d2, ' il:', il
-      print *, 'Getting image'
+      call VERIFY(ret, 'd2gdims',number_failed, Verbosity)
+      call MESSAGE(VERBO_HI, 'Getting image', Verbosity)
       ret = d2gimg(TESTFILE,  in2, 2, 2)
-      call RESULT(ret, 'd2gimg',number_failed)
+      call VERIFY(ret, 'd2gimg',number_failed, Verbosity)
       do 500 i=1, 2
           do 480 j=1, 2
               do 460 k=1, 3
@@ -205,13 +204,12 @@ C
 480       continue
 500   continue
 
-      print *, 'Getting dimensions'
+      call MESSAGE(VERBO_HI, 'Getting dimensions', Verbosity)
       ret = d2gdims(TESTFILE, d1, d2, il)
-      call RESULT(ret, 'd2gdims',number_failed)
-      print *,  'd1:', d1,' d2:', d2, ' il:', il
-      print *, 'Getting image'
+      call VERIFY(ret, 'd2gdims',number_failed, Verbosity)
+      call MESSAGE(VERBO_HI, 'Getting image', Verbosity)
       ret = d2gimg(TESTFILE,  in2, 2, 2)
-      call RESULT(ret, 'd2gimg',number_failed)
+      call VERIFY(ret, 'd2gimg',number_failed, Verbosity)
       do 550 i=1, 2
           do 520 j=1, 2
               do 510 k = 1,3
@@ -222,13 +220,12 @@ C
 520       continue
 550   continue
 
-      print *, 'Getting dimensions'
+      call MESSAGE(VERBO_HI, 'Getting dimensions', Verbosity)
       ret = d2gdims(TESTFILE, d1, d2, il)
-      call RESULT(ret, 'd2gdims',number_failed)
-      print *,  'd1:', d1,' d2:', d2, ' il:', il
-      print *, 'Getting image'
+      call VERIFY(ret, 'd2gdims',number_failed, Verbosity)
+      call MESSAGE(VERBO_HI, 'Getting image', Verbosity)
       ret = d2gimg(TESTFILE,  in2, 2, 2)
-      call RESULT(ret, 'd2gimg',number_failed)
+      call VERIFY(ret, 'd2gimg',number_failed, Verbosity)
       do 600 i=1, 2
           do 580 j=1, 2
               do 560 k = 1, 3
@@ -239,9 +236,9 @@ C
 580       continue
 600   continue
 
-      print *, CR, CR
       if (number_failed .eq. 0) then 
-          print *, '****** ALL TESTS SUCCESSFUL ******'
+          call MESSAGE(VERBO_DEF + 1,
+     +		'****** ALL TESTS SUCCESSFUL ******', Verbosity)
       else
           print *, '****** ', number_failed, ' TESTS FAILES  ******'
       endif

@@ -118,7 +118,6 @@ main(int argc, char *argv[])
     }
 
     Verbosity = 4;  /* Default Verbosity is Low */
-    fprintf(cmdfile, "%s %d\n", VERBOSITY_STR, Verbosity);
     for (CLLoop = 1; CLLoop < argc; CLLoop++)
       {
           if ((argc > CLLoop + 1) && ((HDstrcmp(argv[CLLoop], "-verbose") == 0) ||

@@ -13,6 +13,7 @@ C
 C $Id$
 C
       subroutine tsdnmmsf (number_failed)
+      implicit none
 C
 C
 C  Program to test writing SDSs with different types of data and
@@ -30,6 +31,9 @@ C   to be 'byte' not 'character'  You will also need to remove
 C   a couple of calls to char().  If you search on the string 
 C   VMS you should be able to find all of the necessary changes.
 C
+      integer number_failed
+      character*(*) myname
+      parameter (myname = "sdnmms")
    
       integer dsgdata, dsadata, dssdims, dssrang, dsgrang, dssnt
       integer dssdisc, dsgdisc
@@ -60,12 +64,13 @@ C      byte ti8max, ti8min
 
       integer i, j, err, err1, err2, err3
       integer rank, dims(2)
-      integer number_failed
       integer DFNT_NFLOAT64, DFNT_NFLOAT32, DFNT_NINT8, DFNT_NINT16
       integer DFNT_NINT32,  DFNT_NATIVE
       integer DFNT_FLOAT64, DFNT_FLOAT32, DFNT_INT8, DFNT_INT16
       integer DFNT_INT32 
 
+
+      call ptestban("Testing", myname)
       f64max = 40.0
       f64min = 0.0
       f32max = 40.0

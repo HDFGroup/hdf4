@@ -13,6 +13,7 @@ C
 C $Id$
 C
       subroutine tsdnntf (number_failed)
+      implicit none
 C
 C
 C  Program to test writing SDSs with different types of data.
@@ -30,6 +31,9 @@ C   to be 'byte' not 'character'  You will also need to remove
 C   a couple of calls to char().  If you search on the string 
 C   VMS you should be able to find all of the necessary changes.
 C
+      integer number_failed
+      character*(*) myname
+      parameter (myname = "sdnnt")
 
       integer dspdata, dsgdata, dsadata, dssdims, dssnt
       
@@ -45,12 +49,12 @@ C      byte      i8(10,10), ti8(10,10)
       integer i, j, err, err1, err2
       integer rank
       integer dims(2)
-      integer number_failed
       integer DFNT_FLOAT64, DFNT_FLOAT32, DFNT_INT8, DFNT_INT16
       integer DFNT_INT32
       integer DFNT_NFLOAT64, DFNT_NFLOAT32, DFNT_NINT8
       integer DFNT_NINT16, DFNT_NINT32, DFNT_NATIVE
       
+      call ptestban("Testing", myname)
       DFNT_FLOAT64 = 6
       DFNT_FLOAT32 = 5
       DFNT_INT8 = 20

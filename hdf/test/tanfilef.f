@@ -30,9 +30,13 @@ C
       implicit none
       include "fortest.inc"
 
+      integer number_failed
+      character*(*) myname
+      parameter (myname = "anfile")
+
       integer daafid, daafds,dagfidl,dagfid
       integer dagfdsl, dagfds, hopen, hclose
-      integer ret, number_failed
+      integer ret
       integer ISFIRST, NOFIRST, MAXLEN_LAB, MAXLEN_DESC
       integer fid, DFACC_CREATE, DFACC_READ
 
@@ -42,6 +46,7 @@ C
       character*64 TESTFILE
       character*1 CR
 
+      call ptestban("Testing", myname)
       ISFIRST = 1
       NOFIRST = 0
       number_failed = 0
@@ -140,6 +145,7 @@ C
 C*********************************************
 
       subroutine checklen(ret, oldstr, type)
+      implicit none
       character*(*) type, oldstr 
       integer ret
 
@@ -160,6 +166,7 @@ C
 C***********************************************
 
       subroutine checkann(oldstr, newstr, ret, type)
+      implicit none
       character*90  oldstr, newstr
       character*(*) type
       integer ret
@@ -180,6 +187,7 @@ C
 C***********************************************
 
       subroutine checklab(oldstr, newstr, ret, type)
+      implicit none
       character*30  oldstr, newstr
       character*(*) type
       integer ret

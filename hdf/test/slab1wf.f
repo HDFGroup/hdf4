@@ -13,12 +13,16 @@ C
 C $Id$
 C
       subroutine slab1wf (num_err)
+      implicit none
 C
 C Program writes data set as the first 3 of 5 slabs to slab1wf.hdf
 C The program slab2wf writes the last 2 of 5 slabs to slab1wf.hdf 
 C 
 C Output file: slab1wf.hdf
 
+      integer num_err
+      character*(*) myname
+      parameter (myname = "slab1wf")
 
       integer dssdims, dssdisc, dssdist
       integer dssfill, dssslab, dswslab, dseslab
@@ -32,8 +36,8 @@ C Output file: slab1wf.hdf
       character*10 lcol,ucol,fcol,lrow,urow,frow,lpln,upln,fpln
       character*30 fn, sn
       integer fnlen
-      integer num_err
      
+      call ptestban("Testing", myname)
       print *,'\n  Writing the first 3 of 5 slabs to slab1wf.hdf'
 
       DFTAG_SDT = 709 

@@ -22,3 +22,23 @@ in fortest.arg contains a command and a parameter.
 
 
 "fortest" then invokes "fortestF" with "fortest.arg" as input.
+
+
+Verbosity convention
+
+The higher the verbosity value, the more information printed.
+So, output for higher verbosity also include output of all lower
+verbosity.
+
+    Value	Description
+    0		None:	No informational message.
+    1			"All tests passed"
+    2			Header of overall test
+    3		Default: header and results of individual test
+    4		
+    5		Low:	Major category of tests.
+    6
+    7		Medium:	Minor category of tests such as functions called.
+    8
+    9		High:	Highest level.  All information.
+

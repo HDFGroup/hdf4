@@ -29,7 +29,11 @@ C Output file: tvsetf1.hdf
       implicit none
       include "fortest.inc"
 
-      integer number_failed,vfstart,hopen,vfatch,vfgid,vfgnxt,vfinsrt
+      integer number_failed
+      character*(*) myname
+      parameter (myname = "vsetf")
+
+      integer vfstart,hopen,vfatch,vfgid,vfgnxt,vfinsrt
       integer vfgttrs,vfadtr, hclose, vsfatch
       integer vsffdef,vsffnd,vsfgid
       integer vsfinq,vsfsfld
@@ -84,6 +88,7 @@ C Output file: tvsetf1.hdf
       DATA fdata/5.0,5.1,5.2,5.3,5.4,5.5,5.6,5.7,5.8,5.9/
       DATA gdata1/6.0,6.1,6.2,6.3,6.4,6.5,6.6,6.7,6.8,6.9/
 
+      call ptestban("Testing", myname)
       cdata = 'abcdebcdefcdefg'
       fn1 = 'tvsetf1.hdf'
 

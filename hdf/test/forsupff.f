@@ -244,3 +244,25 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
       return
       end
+
+
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+C
+C     SUBROUTINE ptestban
+C     Print the Test banner
+C
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+      subroutine ptestban(action, name)
+      implicit none
+      include "fortest.inc"
+
+      character*(*) action, name
+
+      if (Verbosity .ge. VERBO_DEF) then
+	print *, "====================================="
+	print *, action, ' ', name
+	print *, "====================================="
+      endif
+
+      return
+      end

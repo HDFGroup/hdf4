@@ -13,13 +13,17 @@ C
 C $Id$
 C
       subroutine tsdstrf (num_failed)
+      implicit none
 C
 C This program tests correctness of writing and read datastrings
 C and dimension strings.
 C To avoid the '\0' inserted by HDstrncpy, compare the first 14
 C characters of output and input strings in subroutine compare()
+      integer num_failed
+      character*(*) myname
+      parameter (myname = "sdstr")
 
-      integer rank, i, j, ret, err, num_failed
+      integer rank, i, j, ret, err
       integer dims(2)
       integer dssnt, dssdims, dssdast, dssdist, dspdata
       integer dsgdast, dsgdist, dsgdata, DFNT_NFLOAT32
@@ -30,6 +34,7 @@ C characters of output and input strings in subroutine compare()
       character*16 indimlabels(2), indimunits(2), indimfmts(2)
       character*15 fn
 
+      call ptestban("Testing", myname)
       DFNT_NFLOAT32 = 4096+5
       rank = 2
       dims(1) = 10
@@ -104,6 +109,7 @@ C characters of output and input strings in subroutine compare()
      
 
       subroutine compare(outstring, instring, num)
+      implicit none
       character*14 outstring, instring
       integer      num
 C

@@ -8,9 +8,9 @@ C Interface to invoke tests for HDF Fortran interfaces.
 	integer nerror, retcode
 	character cmd*15, test*30
 
-C Default to cleanup *.hdf files and set verbosity at 3
+C Default to cleanup *.hdf files and set verbosity to default value
 	CleanUp = .TRUE.
-	Verbosity = 3
+	Verbosity = VERBO_DEF
 
 	nerror = 0
 	call getcmd(cmd, test, retcode)
@@ -89,13 +89,6 @@ C
 	retcode = 0
 
 C Parse command types
-	print *, "====================================="
-	print *, cmd, param
-	print *, "====================================="
-	if (cmd .EQ. "Skip") then
-	    return
-	endif
-
 	if (cmd .EQ. "Verbosity") then
 	    Verbosity = index('0123456789', param(1:1)) - 1
 	    return
@@ -106,6 +99,13 @@ C Parse command types
 	    return
 	endif
 	    
+C	print *, "====================================="
+C	print *, cmd, param
+C	print *, "====================================="
+	if (cmd .EQ. "Skip") then
+	    call ptestban("Skipping", param)
+	    return
+	endif
 
 	if (cmd .NE. "Test") then
 	    print *, "Unknown Command: ", cmd, param

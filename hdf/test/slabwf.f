@@ -21,6 +21,9 @@ C Output files: slabwf.hdf, slab1wf, slab4wf
       implicit none
       include "fortest.inc"
 
+      integer num_err
+      character*(*) myname
+      parameter (myname = "slab")
 
       integer dssdims, dssdisc, dssdist, dssfill
       integer dssslab, dswslab, dseslab, dsrslab
@@ -36,10 +39,10 @@ C Output files: slabwf.hdf, slab1wf, slab4wf
       character*10 lcol,ucol,fcol,lrow,urow,frow,lpln,upln,fpln
       character*30 fn, sn, sn1, sn2, sn4
       integer fnlen
-      integer num_err
       integer nref
       integer number_failed
 
+      call ptestban("Testing", myname)
       number_failed = 0
 
       DFTAG_SDT = 709 
