@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/10/01 02:54:34  chouck
+Added function DF24lastref()
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*-----------------------------------------------------------------------------
  * File:    dfgr.c
@@ -1292,9 +1295,30 @@ int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran,
         newlut = NULL;
     }
 
-/*!!!no use    Grlastref = wref;*/             /* remember ref written */
+    Grlastref = wref;          /* remember the last ref */
 
     wref = 0;                  /* don't know ref to write next */
 
     return(Hclose(file_id));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    DFGRlastref
+ * Purpose: Return last ref written or read
+ * Inputs:  none
+ * Globals: Grlastref
+ * Returns: ref on success
+ * Users:   HDF users, utilities, other routines
+ * Invokes: none
+ * Method:  return Grlastref
+ * Remarks: none
+ *---------------------------------------------------------------------------*/
+
+#ifdef PROTOTYPE
+int DFGRIlastref(void)
+#else
+int DFGRIlastref()
+#endif
+{
+    return((int) Grlastref);
 }

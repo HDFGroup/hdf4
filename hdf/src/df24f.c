@@ -5,12 +5,15 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/09/11 14:15:04  koziol
-Changed Fortran stubs' parameter passing to use a new typedef, intf,
-which should be typed to the size of an INTEGER*4 in whatever Fortran
-compiler the C functions need to be compatible with.  (This is mostly
-for the PC and possibly for the Mac)
+Revision 1.3  1992/10/01 02:54:34  chouck
+Added function DF24lastref()
 
+ * Revision 1.2  1992/09/11  14:15:04  koziol
+ * Changed Fortran stubs' parameter passing to use a new typedef, intf,
+ * which should be typed to the size of an INTEGER*4 in whatever Fortran
+ * compiler the C functions need to be compatible with.  (This is mostly
+ * for the PC and possibly for the Mac)
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -38,37 +41,6 @@ for the PC and possibly for the Mac)
 
 #include "hdf.h"
 #include "dfgr.h"
-
-#ifndef DF24_FNAMES
-#   define DF24_FNAMES
-#ifdef DF_CAPFNAMES
-#   define nd2reqil  FNAME(D2REQIL)
-#   define ndf24reqil    FNAME(DF24REQIL)
-#   define nd2sdims  FNAME(D2SDIMS)
-#   define ndf24setdims  FNAME(DF24SETDIMS)
-#   define nd2setil  FNAME(D2SETIL)
-#   define ndf24setil    FNAME(DF24SETIL)
-#   define nd2first  FNAME(D2FIRST)
-#   define ndf24restart  FNAME(DF24RESTART)
-#   define nd2igdim  FNAME(D2IGDIM)
-#   define nd2igimg  FNAME(D2IGIMG)
-#   define nd2iaimg  FNAME(D2IAIMG)
-#   define nd2irref  FNAME(D2IRREF)
-#else
-#   define nd2reqil  FNAME(d2reqil)
-#   define ndf24reqil    FNAME(df24reqil)
-#   define nd2sdims  FNAME(d2sdims)
-#   define ndf24setdims  FNAME(df24setdims)
-#   define nd2setil  FNAME(d2setil)
-#   define ndf24setil    FNAME(df24setil)
-#   define nd2first  FNAME(d2first)
-#   define ndf24restart  FNAME(df24restart)
-#   define nd2igdim  FNAME(d2igdim)
-#   define nd2igimg  FNAME(d2igimg)
-#   define nd2iaimg  FNAME(d2iaimg)
-#   define nd2irref  FNAME(d2irref)
-#endif /* DF_CAPFNAMES */
-#endif /* DF24_FNAMES */
 
 #define LUT     0
 #define IMAGE   1
@@ -269,6 +241,25 @@ nd2first()
     return (DFGRIrestart());
 }
 
+/*-----------------------------------------------------------------------------
+ * Name:    df24lref
+ * Purpose: return last reference number 
+ * Inputs:  
+ * Returns: last ref number
+ * Users:   HDF HLL (high-level library) users, utilities, other routines
+ * Invokes: DFGRIrestart
+ * Remarks: none
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nd24lref(void)
+#else
+nd24lref()
+#endif /* PROTOTYPE */
+{
+    return (DFGRIlastref());
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    df24reqil

@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.5  1992/09/15 19:58:20  koziol
-CHanged major and minor -> majorv and minorv respectively
+Revision 1.6  1992/10/01 02:54:34  chouck
+Added function DF24lastref()
 
+ * Revision 1.5  1992/09/15  19:58:20  koziol
+ * CHanged major and minor -> majorv and minorv respectively
+ *
  * Revision 1.4  1992/09/11  14:15:04  koziol
  * Changed Fortran stubs' parameter passing to use a new typedef, intf,
  * which should be typed to the size of an INTEGER*4 in whatever Fortran
@@ -995,6 +998,7 @@ extern FRETVAL(intf) ndfplastref
 #   define nd2igimg  FNAME(D2IGIMG)
 #   define nd2iaimg  FNAME(D2IAIMG)
 #   define nd2irref  FNAME(D2IRREF)
+#   define nd24lref  FNAME(D24LREF)
 #else
 #   define nd2reqil  FNAME(d2reqil)
 #   define ndf24reqil    FNAME(df24reqil)
@@ -1008,6 +1012,7 @@ extern FRETVAL(intf) ndfplastref
 #   define nd2igimg  FNAME(d2igimg)
 #   define nd2iaimg  FNAME(d2iaimg)
 #   define nd2irref  FNAME(d2irref)
+#   define nd24lref  FNAME(d24lref)
 #endif /* DF_CAPFNAMES */
 #endif /* DF24_FNAMES */
 
@@ -1047,6 +1052,9 @@ extern FRETVAL(intf) ndf24restart
 
 extern FRETVAL(intf) nd2irref
     PROTO((_fcd filename, intf *ref, intf *fnlen));
+
+extern FRETVAL(intf) nd24lref
+         PROTO((void));
 
 /*
 ** from dfF.c

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/10/01 02:54:34  chouck
+Added function DF24lastref()
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*-----------------------------------------------------------------------------
  * File:    df24.c
@@ -246,4 +249,22 @@ int DF24readref(filename, ref)
 #endif
 {
     return (DFGRreadref(filename, ref));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    DF24lastref
+ * Purpose: Return reference number of last read or written RIG
+ * Inputs:
+ * Returns: Last reference number
+ * Users:   HDF HLL (high-level library) users, utilities, other routines
+ * Invokes: DFGRIlastref
+ * Remarks: none
+ *---------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+int DF24lastref(void)
+#else
+int DF24lastref()
+#endif
+{
+    return DFGRIlastref();
 }
