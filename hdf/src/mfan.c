@@ -1636,6 +1636,7 @@ ANstart(int32 file_id)
 #if 0
   file_entry->access_mode = acc_mode;
 #endif
+  file_entry->access_mode = 0;
   file_entry->an_tree[AN_DATA_LABEL] = NULL;   /* data label ann tree */
   file_entry->an_tree[AN_DATA_DESC]  = NULL;   /* data description ann tree */
   file_entry->an_tree[AN_FILE_LABEL] = NULL;   /* file label ann tree */
@@ -1644,6 +1645,7 @@ ANstart(int32 file_id)
   file_entry->an_num[AN_DATA_DESC]  = -1;   
   file_entry->an_num[AN_FILE_LABEL] = -1;   
   file_entry->an_num[AN_FILE_DESC]  = -1;   
+  file_entry->filename = NULL;
 #if 0
   if ((file_entry->filename = HDmalloc(strlen(filename)+1)) == NULL)
     HRETURN_ERROR(DFE_NOSPACE, FAIL);
@@ -1997,8 +1999,10 @@ ANend(int32 an_id)
                                             &ann_key))== NULL)
             HRETURN_ERROR(DFE_BADCALL, FAIL);      
 
-          HDfree(ann_node); /* free node */
-          HDfree(ann_key);       /* free key */
+          if(ann_node != NULL)
+            HDfree(ann_node); /* free node */
+          if(ann_key != NULL)
+            HDfree(ann_key);  /* free key */
 
         } /* end for 'entry */
       /* finally free tree */
@@ -2024,8 +2028,10 @@ ANend(int32 an_id)
                                             &ann_key))== NULL)
             HRETURN_ERROR(DFE_BADCALL, FAIL);      
 
-          HDfree(ann_node); /* free node */
-          HDfree(ann_key);       /* free key */
+          if (ann_node != NULL)
+            HDfree(ann_node);   /* free node */
+          if (ann_key != NULL)
+            HDfree(ann_key);    /* free key */
 
         } /* end for 'entry */
       /* finally free tree */
@@ -2051,8 +2057,10 @@ ANend(int32 an_id)
                                             &ann_key))== NULL)
             HRETURN_ERROR(DFE_BADCALL, FAIL);      
 
-          HDfree(ann_node); /* free node */
-          HDfree(ann_key);       /* free key */
+          if (ann_node != NULL)
+            HDfree(ann_node);   /* free node */
+          if (ann_key != NULL)
+            HDfree(ann_key);    /* free key */
 
         } /* end for 'entry */
       /* finally free tree */
@@ -2078,8 +2086,10 @@ ANend(int32 an_id)
                                             &ann_key))== NULL)
             HRETURN_ERROR(DFE_BADCALL, FAIL);      
 
-          HDfree(ann_node); /* free node */
-          HDfree(ann_key);       /* free key */
+          if (ann_node != NULL)
+            HDfree(ann_node); /* free node */
+          if (ann_key != NULL)
+            HDfree(ann_key);       /* free key */
 
         } /* end for 'entry */
       /* finally free tree */
@@ -2092,8 +2102,10 @@ ANend(int32 an_id)
     HRETURN_ERROR(DFE_BADCALL, FAIL);      
 
   /* free file data & key */
-  HDfree(file_entry);
-  HDfree(kp);
+  if (file_entry != NULL)
+    HDfree(file_entry);
+  if(kp != NULL)
+    HDfree(kp);
 #endif /* use tbbt */
 
 #if 0
