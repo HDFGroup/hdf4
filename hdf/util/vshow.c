@@ -217,7 +217,7 @@ char* x;
 #endif
 {	
   int i = 0;
-  HDmemcpy(&i, x, 4);
+  HDmemcpy(&i, x, sizeof(int32));
   cn += printf("%d", i); 
   return(1);  
 }
@@ -230,7 +230,7 @@ char* x;
 #endif
 {
   float f = 0;
-  HDmemcpy(&f, x, 4);
+  HDmemcpy(&f, x, sizeof(float32));
   cn += printf("%f", f); 
   return(1);  
 }
@@ -243,7 +243,7 @@ char* x;
 #endif
 {	
   long l = 0;
-  HDmemcpy(&l, x, 4);
+  HDmemcpy(&l, x, sizeof(int32));
   cn += printf("%ld", l);
   return(1);  
 }
@@ -256,7 +256,7 @@ char* x;
 #endif
 {	
   short s = 0;
-  HDmemcpy(&s, x, 2);
+  HDmemcpy(&s, x, sizeof(int16));
   cn += printf("%d", s);
   return(1);  
 }
@@ -269,7 +269,7 @@ char*x;
 #endif
 {	
   double d = 0;
-  HDmemcpy(&d, x, 8);
+  HDmemcpy(&d, x, sizeof(float64));
   cn += printf("%f", d); 
   return(1);  
 }
