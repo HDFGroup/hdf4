@@ -4330,7 +4330,8 @@ int32 flags;
      This routine gets any special information on the SDS. If its chunked,
      chunked and compressed or just a regular SDS. Currently it will only
      fill the array of chunk lengths for each dimension as specified in
-     the 'HDF_CHUNK_DEF' union. You can pass in a NULL for 'chunk_def'
+     the 'HDF_CHUNK_DEF' union. It does not tell you the type of compression
+     or the compression parameters used. You can pass in a NULL for 'chunk_def'
      if don't want the chunk lengths for each dimension.
      If successfull it will return a bit-or'd value in 'flags' indicating 
      if the SDS is  chunked(HDF_CHUNK), chunked and compressed(HDF_CHUNK | HDF_COMP) 
@@ -4419,7 +4420,11 @@ int32 *flags;
                       This space was allocated by the library */
                    HDfree(info_block.cdims);
 
-                   /* Check to see if compressed */
+                   /* Check to see if compressed.
+                      Currently we don't fill in the 'comp' structure 
+                      because currently only the information about the 
+                      compression type is available in get compression
+                      info code and not the parameters that went along. */
                    switch(info_block.comp_type)
                      {
                      case COMP_CODE_NONE:

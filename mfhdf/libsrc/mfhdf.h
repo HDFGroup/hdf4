@@ -290,7 +290,8 @@ extern intn SDsetchunk
      This routine gets any special information on the SDS. If its chunked,
      chunked and compressed or just a regular SDS. Currently it will only
      fill the array of chunk lengths for each dimension as specified in
-     the 'HDF_CHUNK_DEF' union. You can pass in a NULL for 'chunk_def'
+     the 'HDF_CHUNK_DEF' union. It does not tell you the type of compression
+     used or the compression parameters. You can pass in a NULL for 'chunk_def'
      if don't want the chunk lengths for each dimension.
      Additionaly if successfull it will return a bit-or'd value in 'flags' 
      indicating if the SDS is:
