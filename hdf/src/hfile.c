@@ -944,7 +944,10 @@ Hstartwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
     HGOTO_ERROR(DFE_BADAID, FAIL);
 
   access_rec = HAatom_object(ret);
-  if (access_rec->new_elem && (Hsetlength(ret, length) == FAIL))
+
+  /* if new element set the length */
+  if (access_rec->new_elem       
+      && (Hsetlength(ret, length) == FAIL))
     {
       Hendaccess(ret);
       HGOTO_ERROR(DFE_BADLEN, FAIL);
@@ -1006,7 +1009,7 @@ Hstartaccess(int32 file_id, uint16 tag, uint16 ref, uint32 flags)
   if (BADFREC(file_rec))
     HGOTO_ERROR(DFE_ARGS, FAIL);
 
-  /* can write in this file? */
+  /* If writing, can we write to this file? */
   if ((flags & DFACC_WRITE) && !(file_rec->access & DFACC_WRITE))
     HGOTO_ERROR(DFE_DENIED, FAIL);
 
@@ -1021,71 +1024,83 @@ Hstartaccess(int32 file_id, uint16 tag, uint16 ref, uint32 flags)
     access_rec->appendable = TRUE;	/* start data as appendable */
   else
     access_rec->appendable = FALSE;		/* start data as non-appendable */
-  access_rec->special_info = NULL;
+
+  access_rec->special_info = NULL; /* reset */
 
   /* if the DFACC_CURRENT flag is set, start searching for the tag/ref from */
   /* the current location in the DD list */
-  if (flags & DFACC_CURRENT ||
-        Hfind(access_rec->file_id,tag,ref,&new_tag,&new_ref,&new_off,&new_len,DF_FORWARD)==FAIL)
-    {
+  if (flags & DFACC_CURRENT 
+      || Hfind(access_rec->file_id,tag,ref,&new_tag,&new_ref,
+               &new_off,&new_len,DF_FORWARD)==FAIL)
+    { /* not in DD list */
         new_tag=tag;
         new_ref=ref;
         new_off=INVALID_OFFSET;
         new_len=INVALID_LENGTH;
     }
 
-  if ((access_rec->ddid=HTPselect(file_rec, new_tag, new_ref)) == FAIL)
-    {
+  /* get DD id for tag/ref if in DD list using 'new_tag' and 'new_ref' */
+  if ((access_rec->ddid = HTPselect(file_rec, new_tag, new_ref)) == FAIL)
+    { /* not in DD list */
       /* can't create data elements with only read access */
       if (!(flags & DFACC_WRITE))
           HGOTO_ERROR(DFE_NOMATCH, FAIL);
 
       /* dd not found, so have to create new element */
-      if((access_rec->ddid=HTPcreate(file_rec,new_tag,new_ref))==FAIL)
+      if((access_rec->ddid = HTPcreate(file_rec,new_tag,new_ref))==FAIL)
           HGOTO_ERROR(DFE_NOFREEDD, FAIL);
 
-      ddnew = TRUE;
-    }		/* end if */
-  else     /* tag/ref already exists */
+      ddnew = TRUE; /* mark as new element */
+    }		
+  else     /* tag/ref already exists in DD list. */
     {   /* need to update the access_rec block and idx */
+
       /* If the tag we were looking up is special, and we aren't looking */
       /* for the actual special element information, then use special */
       /* element access to the data... -QAK */
       if (!SPECIALTAG(tag) && HTPis_special(access_rec->ddid)==TRUE)
         { /* found, if this elt is special, let special function handle it */
-          access_rec->special_func = HIget_function_table(access_rec);
-          if (access_rec->special_func==NULL)
-              HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+            /* get special function table for element */
+            access_rec->special_func = HIget_function_table(access_rec);
+            if (access_rec->special_func==NULL)
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+            /* call appropriate special startread/startwrite fcn */
           if (!(flags & DFACC_WRITE))
             ret_value = (*access_rec->special_func->stread) (access_rec);
           else
             ret_value = (*access_rec->special_func->stwrite) (access_rec);
 
-          goto done; /* we are done */
-        }	/* end if */
-    }		/* end else */
+          goto done; /* we are done since the special fcn should take
+                        of everthing. */
+
+        }	/* end if special */
+    }		/* end else tag/ref exists */
 
   /* Need to check if the "new" element was written to the file without */
   /* it's length being set.  If that was the case, the offset and length */
   /* will be marked as invalid, and therefore we should mark it as "new" */
   /* again when the element is re-opened -QAK */
   if (!ddnew && new_off == INVALID_OFFSET && new_len == INVALID_LENGTH)
-    ddnew = TRUE;
+    ddnew = TRUE; /* mark as new element */
 
   /* update the access record, and the file record */
-  access_rec->posn = 0;
-  access_rec->access = flags;		/* keep the access flags around */
-  access_rec->file_id = file_id;
-  access_rec->special = 0;
-  access_rec->new_elem = ddnew;	/* set the flag indicating whether this elt is new */
-  file_rec->attach++;
+  access_rec->posn     = 0;
+  access_rec->access   = flags;		/* keep the access flags around */
+  access_rec->file_id  = file_id;
+  access_rec->special  = 0;     /* not special */
+  access_rec->new_elem = ddnew;	/* set the flag indicating whether 
+                                   this elt is new */
+  file_rec->attach++; /* increment number of elts attached to file */
+
+  /* check current maximum ref for file and update if necessary */
   if (new_ref > file_rec->maxref)
     file_rec->maxref = new_ref;
 
   /*
-  *  If this is the first time we are writting to this file
-  *    update the version tags as needed
-  */
+   * If this is the first time we are writting to this file
+   *    update the version tags as needed */
   if (!file_rec->version_set)
     HIcheckfileversion(file_id);
 
@@ -1153,7 +1168,7 @@ Hsetlength(int32 aid, int32 length)
   if ((offset = HPgetdiskblock(file_rec, length, FALSE)) == FAIL)
       HGOTO_ERROR(DFE_SEEKERROR, FAIL);
 
-  /* fill in dd record */
+  /* fill in dd record updating the offset and length of the element */
   if(HTPupdate(access_rec->ddid,offset,length)==FAIL)
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
@@ -1334,7 +1349,7 @@ printf("%s: entering\n",FUNC);
 
   /* if special elt, use special function */
   if (access_rec->special)
-    {
+    { /* yes, call special seek fucntion with proper args */
 #ifdef QAK
 printf("%s: access ID is special\n",FUNC);
 #endif /* QAK */
@@ -1368,11 +1383,14 @@ printf("%s: check 1.5, offset=%d, origin=%d, data_len=%d\n",FUNC,(int)offset,(in
 #ifdef QAK
 printf("%s: check 2.0\n",FUNC);
 #endif /* QAK */
+/* check if element is appendable and writing past current element length */
   if (access_rec->appendable && offset >= data_len)
-    {
+    { /* yes */
       file_rec = HAatom_object(access_rec->file_id);
+
+      /* check if we are at end of file */
       if (data_len + data_off != file_rec->f_end_off)
-          {	/* dataset at end? */
+          {	/* nope, so try to convert element into linked-block element */
             if (HLconvert(access_id, HDF_APPENDABLE_BLOCK_LEN, HDF_APPENDABLE_BLOCK_NUM) == FAIL)
               {
                 access_rec->appendable = FALSE;
@@ -1501,7 +1519,7 @@ Hread(int32 access_id, int32 length, VOIDP data)
 
   /* special elt, so call special function */
   if (access_rec->special)
-    {
+    { /* yes, call special read function with proper args */
       ret_value = (*access_rec->special_func->read) (access_rec, length, data);
       goto done; /* we are done */
     }
@@ -1528,6 +1546,7 @@ Hread(int32 access_id, int32 length, VOIDP data)
   if (length == 0 || length + access_rec->posn > data_len)
     length = data_len - access_rec->posn;
 
+  /* read in data */
   if (HP_read(file_rec, data, length) == FAIL)
     HGOTO_ERROR(DFE_READERROR, FAIL);
 
@@ -1587,14 +1606,16 @@ Hwrite(int32 access_id, int32 length, const VOIDP data)
   /* clear error stack and check validity of access id */
   HEclear();
   access_rec = HAatom_object(access_id);
-  if (access_rec == (accrec_t *) NULL || !(access_rec->access & DFACC_WRITE)
-        || data == NULL)
+  if (access_rec == (accrec_t *) NULL 
+      || !(access_rec->access & DFACC_WRITE)
+      || data == NULL)
     HGOTO_ERROR(DFE_ARGS, FAIL);
 
 #ifdef QAK
 printf("%s: length=%ld\n",FUNC,(long)length);
 #endif /* QAK */
-  /* if special elt, call special function */
+
+  /* if special elt, call special write function */
   if (access_rec->special)
     {
 #ifdef QAK
@@ -1602,14 +1623,15 @@ printf("%s: access record is special\n",FUNC);
 #endif /* QAK */
       ret_value = (*access_rec->special_func->write) (access_rec, length, data);
       goto done; /* we are done */
-    }
+    } /* end special */
 
   /* check validity of file record and get dd ptr */
   file_rec = HAatom_object(access_rec->file_id);
   if (BADFREC(file_rec))
     HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-  /* check for a "new" element and make it appendable if so */
+  /* check for a "new" element and make it appendable if so.
+     Does this mean every element is by default appendable? */
   if (access_rec->new_elem == TRUE)
     {
       Hsetlength(access_id, length);	/* make the initial chunk of data */
@@ -1619,7 +1641,9 @@ printf("%s: access record is special\n",FUNC);
 #ifdef QAK
 printf("%s: before HTPinquire\n",FUNC);
 #endif /* QAK */
-  /* get the offset and length of the dataset */
+
+  /* get the offset and length of the element. This should have
+     been set by Hstartwrite(). */
   if(HTPinquire(access_rec->ddid,NULL,NULL,&data_off,&data_len)==FAIL)
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
@@ -1628,14 +1652,20 @@ printf("%s: length=%ld, data_len=%ld, access_rec->posn=%ld\n",FUNC,(long)length,
 #endif /* QAK */
   /* check validity of length and write data.
    NOTE: it is an error to attempt write past the end of the elt */
-  if (length <= 0 ||
-      (!access_rec->appendable && length + access_rec->posn > data_len))
+  if (length <= 0 
+      || (!access_rec->appendable && length + access_rec->posn > data_len))
     HGOTO_ERROR(DFE_BADSEEK, FAIL);
 
+  /* check if element is appendable and write length exceeds current 
+     data element length */
   if (access_rec->appendable && length + access_rec->posn > data_len)
-    {
+    { /* yes */
+
+        /* is data element at end of file? 
+           hmm. not sure about this condition. */
       if (data_len + data_off != file_rec->f_end_off)
-        {	/* dataset at end? */
+        {	/* nope, not at end of file. Try to promote to
+               linked-block element. */
           if (HLconvert(access_id, HDF_APPENDABLE_BLOCK_LEN, HDF_APPENDABLE_BLOCK_NUM) == FAIL)
             {
               access_rec->appendable = FALSE;
@@ -1643,20 +1673,21 @@ printf("%s: length=%ld, data_len=%ld, access_rec->posn=%ld\n",FUNC,(long)length,
             }		/* end if */
             /* successfully converted the element into a linked block */
             /* now loop back and actually write the data out */
-          if ((ret_value=Hwrite(access_id, length, data)) == FAIL)
+          if ((ret_value = Hwrite(access_id, length, data)) == FAIL)
             HGOTO_ERROR(DFE_WRITEERROR, FAIL);
           goto done;    /* we're finished, wrap things up */
         }	/* end if */
 
-      /* Update the length of the DD */
-      if(HTPupdate(access_rec->ddid,INVALID_OFFSET,access_rec->posn+length)==FAIL)
+      /* Update the DD with the new length. Note argument of '-2' for
+         the offset parameter means not to change the offset in the DD. */
+      if(HTPupdate(access_rec->ddid,-2,access_rec->posn+length)==FAIL)
           HGOTO_ERROR(DFE_INTERNAL, FAIL);
     }		/* end if */
 
-  /* seek and write data */
 #ifdef QAK
 printf("%s: offset=%ld\n",FUNC,(long)(access_rec->posn+data_off));
 #endif /* QAK */
+  /* seek and write data */
   if (HPseek(file_rec, access_rec->posn + data_off) == FAIL)
     HGOTO_ERROR(DFE_SEEKERROR, FAIL);
 
@@ -2262,8 +2293,10 @@ Htrunc(int32 aid, int32 trunc_len)
   /* check for actually being able to truncate the data */
   if (data_len > trunc_len)
     {
-      /* set the new length of the dataset */
-      if(HTPupdate(access_rec->ddid,INVALID_OFFSET,trunc_len)==FAIL)
+      /* set the new length of the dataset.
+         Note value of '-2' for the offset paramter means not to update
+         the offset in the DD.*/
+      if(HTPupdate(access_rec->ddid,-2,trunc_len)==FAIL)
           HGOTO_ERROR(DFE_INTERNAL, FAIL);
       if (access_rec->posn > trunc_len)		/* move the seek position back */
         access_rec->posn = trunc_len;
