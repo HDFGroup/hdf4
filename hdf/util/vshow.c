@@ -83,7 +83,7 @@ main(int ac, char **av)
     char        vsname[VSNAMELENMAX];
     char        vgclass[VGNAMELENMAX], vsclass[VSNAMELENMAX];
     const char *name;
-    int32       fulldump = 0, start = 1;
+    int32       fulldump = 0, start = 1, full;
 
 #if defined __MWERKS__
     ac = ccommand(&av);
@@ -141,7 +141,7 @@ main(int ac, char **av)
               HDstrcat(vgname, "NoName");
           printf("\nvg:%d <%d/%d> (%s {%s}) has %d entries:\n",
            (int) nvg, (int) vgotag, (int) vgoref, vgname, vgclass, (int) n);
-
+          dumpattr(vg, fulldump, 0);
           for (t = 0; t < Vntagrefs(vg); t++)
             {
                 Vgettagref(vg, t, &vstag, &vsid);
@@ -170,7 +170,10 @@ main(int ac, char **av)
                           vsdumpfull(vs);
                       else if (fulldump && vsno == vsoref)
                           vsdumpfull(vs);
-
+                      /* dump attributes */
+                      full = fulldump && (vsno == 0 || vsno == vsoref);
+                      dumpattr(vs, full, 1);
+                                         
                       VSdetach(vs);
                   }
                 else if (vstag == DFTAG_VG)
@@ -192,6 +195,7 @@ main(int ac, char **av)
                       Vgetclass(vgt, vgclass);
                       printf("  vg:%d <%d/%d> ne=%d (%s {%s})\n",
                              (int) t, (int) vgotag, (int) vgoref, (int) ne, vgname, vgclass);
+                      dumpattr(vg, fulldump, 0);
                       Vdetach(vgt);
                   }
                 else
@@ -250,6 +254,8 @@ main(int ac, char **av)
                     vsdumpfull(vs);
                 else if (fulldump && vsno == vsoref)
                     vsdumpfull(vs);
+                full = fulldump && ( vsno == 0 || vsno == vsoref);
+                dumpattr(vs, full, 1);
                 VSdetach(vs);
             }
           HDfree((VOIDP) lonevs);
@@ -475,9 +481,243 @@ vsdumpfull(int32 vs)
     /* ============================================ */
 
     HDfree((VOIDP) bb);
-    printf("\n\n");
+    printf("\n");
 
     return (1);
 
 }   /* vsdumpfull */
+/* ------------------------------------------------ */
+intn dumpattr(int32 vid, intn full, intn isvs)
+{
+   intn i, j, k, cn=0;
+   VDATA *vs;
+   vsinstance_t *vs_inst;
+   VGROUP *vg;
+   vginstance_t *v;
+   intn ret, nattrs, f_nattrs, alloc_flag=0;
+   vs_attr_t *vs_alist;
+   vg_attr_t *v_alist;
+   int32 i_type, i_count, i_size, off;
+   uint8 attrbuf[BUFFER], *buf, *ptr;
+   int32 (*fmtfn)(char *);
+   char name[FIELDNAMELENMAX+1];
+ 
+   if (isvs)  {
+      vs_inst = (vsinstance_t *)HAatom_object(vid);
+      if (vs_inst == NULL)  {
+         printf(">>>dumpattr:failed in getting vdata instance.\n");
+         return FAIL;
+      } 
+      vs = vs_inst->vs;
+      if (vs == NULL)  {
+         printf(">>>dumpattr:Failed in getting vs. \n");
+         return FAIL;
+      }
+      if (0 == (nattrs = VSnattrs(vid))) {
+          printf(" 0 attributes.\n");
+          return SUCCEED;
+      }
+      vs_alist = vs->alist;
+      if (!full) {
+          printf("     %d attributes:  attr_tag/ref  attr_of_field",
+                       nattrs);
+          printf("( note: -1 -- the vdata)\n");
+          for (i=0; i<nattrs; i++)  {
+             printf("     %d:               %d/%d               %d\n",
+                 i, vs_alist->atag, vs_alist->aref,vs_alist->findex);
+             vs_alist++;
+         }
+         return SUCCEED;
+      }
+      printf("%d attributes:\n", nattrs);
+      for (j=-1; j<vs->wlist.n; j++) {
+          f_nattrs = VSfnattrs(vid, j);
+          if (f_nattrs == 0) continue;  /* no attr for this field */
+          if (j == -1)
+             printf("   Attrs of vdata:\n");
+          else 
+             printf("   Attrs of field %d:\n", j);
+          for (i = 0; i<f_nattrs; i++)  {   /* dump the attrs */
+              ret = VSattrinfo(vid, j, i, name, &i_type, &i_count, &i_size);
+              if (ret == FAIL) {
+                 printf(">>>dumpattr: failed in getting attr info.\n");
+                 continue;
+              }
+              printf("     %d: name=%s type=%d count=%d size=%d\n",
+                       i, name, i_type, i_count, i_size);
+              if (i_size > BUFFER) {
+                  if (NULL == (buf = HDmalloc(i_size)))  {
+                     printf(">>>dumpattr:can't allocate buf.\n");
+                     continue;
+                  }
+                  alloc_flag = 1;
+                  if ( ret = VSgetattr(vid, j, i, (VOIDP)buf)) {
+                     printf(">>>dympattr: failed in VSgetattr.\n");
+                     continue;
+                  }
+              }
+              else 
+              {
+                 if ( ret = VSgetattr(vid, j, i, (VOIDP)attrbuf)) {
+                     printf(">>>dympattr: failed in VSgetattr.\n");
+                     continue;
+                  }
+              }
+              /* format output */
+              switch (i_type)  {
+                 case DFNT_CHAR:
+                 case DFNT_UCHAR:
+                      fmtfn = fmtchar;
+                      break;
+                 case DFNT_UINT8:
+                 case DFNT_INT8:
+                      fmtfn = fmtbyte;
+                      break;
+                 case DFNT_UINT16:
+                 case DFNT_INT16:
+                      fmtfn = fmtshort;
+                      break;
+                 case DFNT_UINT32:
+                 case DFNT_INT32:
+                      fmtfn = fmtlong;
+                      break;
+                 case DFNT_FLOAT32:
+                      fmtfn = fmtfloat;
+                      break;
+                 case DFNT_FLOAT64:
+                      fmtfn = fmtdouble;
+                      break;
+                default:
+                    printf(">>>dumpattr: sorry, type [%d] not supported\n", (int) i_type);
+                    break;
+              }
+              off = DFKNTsize(i_type | DFNT_NATIVE);
+              ptr = (alloc_flag) ? buf : attrbuf;
+              putchar('\t');
+              cn = 0;
+              for (k=0; k<i_count; k++)  {
+                  fmtfn((char *)ptr);
+                  ptr += off;
+                  putchar(' ');
+                  cn++;
+                  if (cn > 55)  {
+                     putchar('\n');
+                     putchar('\t');
+                     cn = 0;
+                  }
+              }
+              if (cn) putchar('\n');
+              if (alloc_flag) {
+                 if ( buf != NULL) 
+                    HDfree(buf);
+                 alloc_flag = 0;
+              }
+          }  /*  attr */
+      }   /* field   */
+   }  /* isvs */
+
+   else {  /* vgroup */
+      v = (vginstance_t *)HAatom_object(vid);
+      if (v== NULL)  {
+         printf(">>>dumpattr:failed in getting vgroup instance.\n");
+         return FAIL;
+      } 
+      vg = v->vg;
+      if (vg == NULL)  {
+         printf(">>>dumpattr:Failed in getting vg. \n");
+         return FAIL;
+      }
+      if (0 == (nattrs = Vnattrs(vid)))  {
+          printf("  0 attributes.\n");
+          return SUCCEED;
+      }
+      v_alist = vg->alist;
+      if (!full) {
+          printf("%d attributes:  attr_tag/ref  \n", nattrs);
+          for (i=0; i<nattrs; i++)  {
+             printf("     %d:               %d/%d    \n",
+                 i, v_alist->atag, v_alist->aref);
+             v_alist++;
+         }
+         return SUCCEED;
+      }
+      printf("%d attributes:\n", nattrs);
+      for (i = 0; i<nattrs; i++)  {   /* dump the attrs */
+          ret = Vattrinfo(vid, i, name, &i_type, &i_count, &i_size);
+          if (ret == FAIL) {
+              printf(">>>dumpattr: failed in getting attr info.\n");
+              continue;
+          }
+          printf("   %d: name=%s type=%d count=%d size=%d\n",
+                     i,  name, i_type, i_count, i_size);
+          if (i_size > BUFFER) {
+              if (NULL == (buf = HDmalloc(i_size)))  {
+                 printf(">>>dumpattr:can't allocate buf.\n");
+                 continue;
+              }
+              alloc_flag = 1;
+              if ( ret = Vgetattr(vid, i, (VOIDP)buf)) {
+                 printf(">>>dympattr: failed in Vgetattr.\n");
+                 continue;
+              }
+          }
+          else 
+          {
+             if ( ret = Vgetattr(vid, i, (VOIDP)attrbuf)) {
+                 printf(">>>dympattr: failed in Vgetattr.\n");
+                 continue;
+              }
+          }
+          /* format output */
+          switch (i_type)  {
+             case DFNT_CHAR:
+             case DFNT_UCHAR:
+                  fmtfn = fmtchar;
+                  break;
+             case DFNT_UINT8:
+             case DFNT_INT8:
+                  fmtfn = fmtbyte;
+                  break;
+             case DFNT_UINT16:
+             case DFNT_INT16:
+                  fmtfn = fmtshort;
+                  break;
+             case DFNT_UINT32:
+             case DFNT_INT32:
+                  fmtfn = fmtlong;
+                  break;
+             case DFNT_FLOAT32:
+                  fmtfn = fmtfloat;
+                  break;
+             case DFNT_FLOAT64:
+                  fmtfn = fmtdouble;
+                  break;
+             default:
+                printf(">>>dumpattr: sorry, type [%d] not supported\n", (int) i_type);
+                break;
+          }
+          off = DFKNTsize(i_type | DFNT_NATIVE);
+          ptr = (alloc_flag) ? buf : attrbuf;
+          putchar('\t');
+          cn = 0;
+          for (k=0; k<i_count; k++)  {
+              fmtfn((char *)ptr);
+              ptr += off;
+              putchar(' ');
+              cn++;
+              if (cn > 55)  {
+                 putchar('\n');
+                 putchar('\t');
+                 cn = 0;
+              }
+          }
+          if (cn) putchar('\n');
+          if (alloc_flag) {
+             if ( buf != NULL) 
+                HDfree(buf);
+             alloc_flag = 0;
+          }
+      }  /*  attr */
+   }  /* vgroup */
+}                   
 /* ------------------------------------- */
