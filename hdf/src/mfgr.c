@@ -278,7 +278,7 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
 
     /* search through the GR group for raster images & global attributes */
     curr_image = 0;
-    if((gr_ref=(uint16)VSfind(file_id,GR_NAME))!=FAIL)
+    if((gr_ref=(uint16)VSfind(file_id,GR_NAME))!=0)
       {
           int32       gr_key;         /* Vgroup key of the GR Vgroup */
 
@@ -334,11 +334,10 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
 
                                       if((new_attr=(at_info_t *)HDgetspace(sizeof(at_info_t)))==NULL)
                                           HRETURN_ERROR(DFE_NOSPACE,FAIL);
-                                      new_attr->tag=img_tag;
-                                      new_attr->ref=img_ref;
+                                      new_attr->ref=grp_ref;
                                       new_attr->index=gr_ptr->gattr_count;
                                       new_attr->data_modified=FALSE;
-                                      new_attr->meta_modified=FALSE;
+                                      new_attr->new=FALSE;
                                       new_attr->data=NULL;
                                       if((at_key=VSattach(file_id,(int32)img_ref,"r"))!=FAIL)
                                         {
@@ -647,11 +646,10 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
 
                                                   if((new_attr=(at_info_t *)HDgetspace(sizeof(at_info_t)))==NULL)
                                                       HRETURN_ERROR(DFE_NOSPACE,FAIL);
-                                                  new_attr->tag=img_tag;
                                                   new_attr->ref=img_ref;
                                                   new_attr->index=new_image->lattr_count;
                                                   new_attr->data_modified=FALSE;
-                                                  new_attr->meta_modified=FALSE;
+                                                  new_attr->new=FALSE;
                                                   new_attr->data=NULL;
                                                   if((at_key=VSattach(file_id,(int32)img_ref,"r"))!=FAIL)
                                                     {
@@ -1287,7 +1285,7 @@ intn GRIupdateRI(int32 hdf_file_id,ri_info_t *img_ptr)
  NAME
     GRIup_attr_data
  PURPOSE
-    Internal routine to update the attribute data
+    Internal routine to update/create the attribute data
  USAGE
     intn GRIup_attr_data(hdf_file_id,attr_ptr)
         int32 hdf_file_id;          IN: the file ID for the HDF file.
@@ -1307,7 +1305,6 @@ intn GRIupdateRI(int32 hdf_file_id,ri_info_t *img_ptr)
 intn GRIup_attr_data(int32 hdf_file_id,at_info_t *attr_ptr)
 {
     CONSTR(FUNC, "GRIup_attr_data");   /* for HERROR */
-    int32 GroupID;      /* attribute Vdata id */
 
     HEclear();
     if (!HDvalidfid(hdf_file_id) || attr_ptr==NULL)
@@ -1316,43 +1313,24 @@ intn GRIup_attr_data(int32 hdf_file_id,at_info_t *attr_ptr)
     /* Write out the attribute data */
     if (attr_ptr->ref==DFTAG_NULL)  /* create a new attribute */
       {
-/* QAK */
+        if((attr_ptr->ref=VHstoredata(hdf_file_id,attr_ptr->name,attr_ptr->data,
+                attr_ptr->len,attr_ptr->nt,RIGATTRNAME,RIGATTRCLASS))==(uint16)FAIL)
+            HRETURN_ERROR(DFE_VSCANTCREATE,FAIL);
+        attr_ptr->new=TRUE;
       } /* end if */
     else    /* update an existing one */
       {
+        int32 AttrID;       /* attribute Vdata id */
+
+        if((AttrID=VSattach(hdf_file_id,attr_ptr->ref,"w"))==FAIL)
+            HRETURN_ERROR(DFE_CANTATTACH,FAIL);
+        if(VSsetfields(AttrID,attr_ptr->name)==FAIL)
+            HRETURN_ERROR(DFE_BADFIELDS,FAIL);
+        if(VSwrite(AttrID,attr_ptr->data,attr_ptr->len,FULL_INTERLACE)==FAIL)
+            HRETURN_ERROR(DFE_VSWRITE,FAIL);
+        if(VSdetach(AttrID)==FAIL)
+            HRETURN_ERROR(DFE_CANTDETACH,FAIL);
       } /* end else */
-
-#ifdef BROKEN
-    /* Write out the RI Vgroup itself */
-    if ((GroupID = Vattach(hdf_file_id,(img_ptr->ri_ref>DFTAG_NULL ?
-            img_ptr->ri_ref : -1),"w")) == FAIL)
-        HRETURN_ERROR(DFE_CANTATTACH, FAIL);
-
-    /* add image dimension tag/ref to RIG */
-    if (Vaddtagref(GroupID, DFTAG_ID, (uint16) img_ptr->img_dim.dim_ref) == FAIL)
-        HRETURN_ERROR(DFE_CANTADDELEM, FAIL);
-
-    /* add image data tag/ref to RIG */
-    if (Vaddtagref(GroupID, img_ptr->img_tag, img_ptr->img_ref) == FAIL)
-        HRETURN_ERROR(DFE_CANTADDELEM, FAIL);
-
-    /* Check if we should write palette information */
-    if(img_ptr->lut_ref>DFTAG_NULL)
-      {
-          /* add palette dimension tag/ref to RIG */
-          if (Vaddtagref(GroupID, DFTAG_LD, (uint16) img_ptr->lut_dim.dim_ref) == FAIL)
-              HRETURN_ERROR(DFE_CANTADDELEM, FAIL);
-
-          /* add palette data tag/ref to RIG */
-          if (Vaddtagref(GroupID, img_ptr->lut_tag, img_ptr->lut_ref) == FAIL)
-              HRETURN_ERROR(DFE_CANTADDELEM, FAIL);
-      } /* end if */
-
-    /* write out RIG */
-    if(Vdetach(GroupID)==FAIL)
-        HRETURN_ERROR(DFE_CANTDETACH, FAIL);
-#endif /* BROKEN */
-
     return(SUCCEED);
 } /* end GRIup_attr_data() */
 
@@ -1394,6 +1372,19 @@ intn GRend(int32 grid)
     gr_idx=GRID2SLOT(grid);
     gr_ptr=gr_tab[gr_idx];
 
+    /* Check if the GR group exists, and create it if not */
+    if(gr_ptr->gr_ref==DFTAG_NULL)
+      {
+        int32 GroupID;
+
+        if((GroupID=Vattach(gr_ptr->hdf_file_id,-1,"w"))==FAIL)
+            HRETURN_ERROR(DFE_CANTATTACH,FAIL);
+        if((gr_ptr->gr_ref=VQueryref(GroupID))==(uint16)FAIL)
+            HRETURN_ERROR(DFE_NOVALS,FAIL);
+        if(Vdetach(GroupID)==FAIL)
+            HRETURN_ERROR(DFE_CANTDETACH,FAIL);
+      } /* end if */
+
     /* Write out the information for RIs which have been changed */
     if(gr_ptr->gr_modified==TRUE && gr_ptr->gr_count>0)
       {
@@ -1414,6 +1405,7 @@ intn GRend(int32 grid)
                 if(img_ptr->data_modified==TRUE)
                   {
                     /* do nothing currently, we are synchronously updating the image data */
+                    HRETURN_ERROR(DFE_INTERNAL,FAIL); /* fail for now! */
                   } /* end if */
 
                 /* check if the image meta-info has been modified */
@@ -1424,6 +1416,7 @@ intn GRend(int32 grid)
                           HRETURN_ERROR(DFE_INTERNAL, FAIL);
                       if(GRIupdateRI(gr_ptr->hdf_file_id,img_ptr)==FAIL)
                           HRETURN_ERROR(DFE_INTERNAL, FAIL);
+                      img_ptr->meta_modified=FALSE;
                   } /* end if */
 
                 /* check if the local attributes has been modified */
@@ -1447,17 +1440,27 @@ intn GRend(int32 grid)
                               {
                                   if(GRIup_attr_data(gr_ptr->hdf_file_id,attr_ptr)==FAIL)
                                       HRETURN_ERROR(DFE_INTERNAL, FAIL);
-                              } /* end if */
+                                  attr_ptr->data_modified=FALSE;
 
-                            /* check if the attribute meta-info has been modified */
-                            if(attr_ptr->meta_modified==TRUE)
-                              {
+                                  /* check if the attribute was added to the group */
+                                  if(attr_ptr->new==TRUE)
+                                    {
+                                        int32 GroupID;  /* ID of the Vgroup */
+
+                                        if((GroupID=Vattach(gr_ptr->hdf_file_id,img_ptr->ri_ref,"w"))==FAIL)
+                                            HRETURN_ERROR(DFE_CANTATTACH,FAIL);
+                                        if(Vaddtagref(GroupID,ATTR_TAG,attr_ptr->ref)==FAIL)
+                                            HRETURN_ERROR(DFE_CANTADDELEM,FAIL);
+                                        if(Vdetach(GroupID)==FAIL)
+                                            HRETURN_ERROR(DFE_CANTDETACH,FAIL);
+                                    } /* end if */
                               } /* end if */
 
                             /* get the next local attribute in the tree/list */
                             if (NULL != (t = (VOIDP *) tbbtnext((TBBT_NODE *) t)))     /* get the next node in the tree */
                                 attr_ptr = (at_info_t *) * t;     /* get actual pointer to the at_info_t */
                         } /* end while */
+                      img_ptr->attr_modified=FALSE;
                   } /* end if */
 
                 /* get the next image in the tree/list */
@@ -1479,25 +1482,143 @@ intn GRend(int32 grid)
           else
               attr_ptr = (at_info_t *) * t;   /* get actual pointer to the at_info_t */
 
-          /* cycle through all of the  global attributes in memory */
+          /* cycle through all of the global attributes in memory */
           while (t!=NULL)
             {
                 /* check if the attribute data has been modified */
                 if(attr_ptr->data_modified==TRUE)
                   {
-                  } /* end if */
+                    if(GRIup_attr_data(gr_ptr->hdf_file_id,attr_ptr)==FAIL)
+                        HRETURN_ERROR(DFE_INTERNAL, FAIL);
+                    attr_ptr->data_modified=FALSE;
 
-                /* check if the attribute meta-info has been modified */
-                if(attr_ptr->meta_modified==TRUE)
-                  {
+                    /* check if the attribute was a new attribute */
+                    if(attr_ptr->new==TRUE)
+                      {
+                        int32 GroupID;  /* ID of the Vgroup */
+
+                        if((GroupID=Vattach(gr_ptr->hdf_file_id,gr_ptr->gr_ref,"w"))==FAIL)
+                            HRETURN_ERROR(DFE_CANTATTACH,FAIL);
+                        if(Vaddtagref(GroupID,ATTR_TAG,attr_ptr->ref)==FAIL)
+                            HRETURN_ERROR(DFE_CANTADDELEM,FAIL);
+                        if(Vdetach(GroupID)==FAIL)
+                            HRETURN_ERROR(DFE_CANTDETACH,FAIL);
+                      } /* end if */
                   } /* end if */
 
                 /* get the next global attribute in the tree/list */
                 if (NULL != (t = (VOIDP *) tbbtnext((TBBT_NODE *) t)))     /* get the next node in the tree */
                     attr_ptr = (at_info_t *) * t;     /* get actual pointer to the at_info_t */
             } /* end while */
+        gr_ptr->gattr_modified=FALSE;
       } /* end if */
 
 /* Close down the entry for this file in the GR table */
     return(SUCCEED);
 } /* end GRend() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRselect
+ PURPOSE
+    Select a raster image to operate on.
+ USAGE
+    int32 GRselect(grid,index)
+        int32 grid;          IN: GR ID from GRstart
+        int32 index;         IN: Which raster image to select (indexed from 0)
+ RETURNS
+    A valid riid (Raster-Image ID) on success, or FAIL.
+
+ DESCRIPTION
+    Selects a raster image from the file to work on.  This ID is needed for
+    all operations on the image dataset, including reading/writing data,
+    annotations, etc.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+int32 GRselect(int32 grid,int32 index)
+{
+    CONSTR(FUNC, "GRselect");   /* for HERROR */
+    int32 gr_idx;               /* index into the gr_tab array */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    VOIDP *t;                   /* temp. ptr to the image found */
+
+    /* clear error stack and check validity of file id */
+    HEclear();
+
+    /* check the validity of the GR ID */
+    if(!VALIDGRID(grid))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    
+    /* Get the array index for the grid */
+    gr_idx=GRID2SLOT(grid);
+    gr_ptr=gr_tab[gr_idx];
+
+    /* check the validity index range */
+    if(index<0 || index>=gr_ptr->gr_count)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
+        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+    ri_ptr=(ri_info_t *)t;
+
+    ri_ptr->access++;
+
+    return(RISLOT2ID(gr_ptr->hdf_file_id,index));
+} /* end GRselect() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRnametoindex
+ PURPOSE
+    Map a raster image name to an index.
+ USAGE
+    int32 GRnametoindex(grid,name)
+        int32 grid;          IN: GR ID from GRstart
+        char *name;          IN: Name of raster image to search for
+ RETURNS
+    A valid index on success, or FAIL.
+
+ DESCRIPTION
+    Searches for a raster image based on the name provided.  This routine
+    maps from names of raster images to indices inside the GR group.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+int32 GRnametoindex(int32 grid,char *name)
+{
+    CONSTR(FUNC, "GRnametoindex");   /* for HERROR */
+    int32 gr_idx;               /* index into the gr_tab array */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    VOIDP *t;                   /* temp. ptr to the image found */
+
+    /* clear error stack and check validity of file id */
+    HEclear();
+
+    /* check the validity of the GR ID */
+    if(!VALIDGRID(grid) || name==NULL)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    
+    /* Get the array index for the grid */
+    gr_idx=GRID2SLOT(grid);
+    gr_ptr=gr_tab[gr_idx];
+
+    if((t = (VOIDP *) tbbtfirst((TBBT_NODE *)gr_ptr->grtree))==NULL)
+        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+    do {
+        ri_ptr=(ri_info_t *)t;
+        if(HDstrcmp(ri_ptr->name,name)==0)  /* ie. the name matches */
+            return(ri_ptr->index);
+    } while((t= (VOIDP *) tbbtnext((TBBT_NODE *)t))==NULL);
+
+    return(FAIL);
+} /* end GRnametoindex() */
+

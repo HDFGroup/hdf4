@@ -40,11 +40,16 @@ gr_interlace_t;
 #ifdef MFGR_MASTER
 
 /* By default this is the same as the number of files allowed to be open */
-#define MAX_GR_FILES MAX_FILE
+#define MAX_GR_FILES    MAX_FILE
 
 /* The names of the Vgroups created by the GR interface */
 #define GR_NAME "RIG0.0"    /* name of the Vgroup containing all the images */
 #define RI_NAME "RI0.0"     /* name of a Vgroup containing information about one image */
+#define RIGATTRNAME  "RIATTR0.0N"  /* name of a Vdata containing an attribute */
+#define RIGATTRCLASS "RIATTR0.0C"  /* class of a Vdata containing an attribute */
+
+/* The tag of the attribute data */
+#define ATTR_TAG    DFTAG_VH    /* Current GR attributes are stored in VDatas */
 
 /* The default threshhold for attributes which will be cached */
 #define GR_ATTR_THRESHHOLD  2048    
@@ -96,21 +101,21 @@ typedef struct gr_info {
     TBBT_TREE  *gattree;        /* Root of global attribute B-Tree */
     uintn       gattr_modified; /* whether any global attributes have been modified */
 
-    intn        access;         /* the number of active pointers to this file's Vstuff */
+    intn        access;         /* the number of active pointers to this file's GRstuff */
     uint32      attr_cache;     /* the threshhold for the attribute sizes to cache */
 } gr_info_t;
 
 gr_info_t *gr_tab[MAX_GR_FILES]={0};
 
 typedef struct {
-    int32 index;                /* index of the attribute (needs to be first in the struct) */
-    int32 nt;                   /* number type of the attribute */
-    int32 len;                  /* length/order of the attribute */
-    uint16 tag,ref;             /* tag/ref of the attribute */
-    uintn data_modified;        /* flag to indicate whether the attribute data has been modified */
-    uintn meta_modified;        /* flag to indicate whether the attribute meta-info has been modified */
-    char *name;                 /* name of the attribute */
-    VOIDP data;                 /* data for the attribute */
+    int32 index;            /* index of the attribute (needs to be first in the struct) */
+    int32 nt;               /* number type of the attribute */
+    int32 len;              /* length/order of the attribute */
+    uint16 ref;             /* ref of the attribute (stored in VData) */
+    uintn data_modified;    /* flag to indicate whether the attribute data has been modified */
+    uintn new;              /* flag to indicate whether the attribute was added to the Vgroup */
+    char *name;             /* name of the attribute */
+    VOIDP data;             /* data for the attribute */
 } at_info_t;
 
 typedef struct dim_info {
@@ -138,7 +143,9 @@ typedef struct ri_info {
     char   *name;               /* name of the image */
     int32   lattr_count;        /* # of local attr entries in ri_info so far */
     TBBT_TREE *lattree;         /* Root of the local attribute B-Tree */
+    intn access;                /* the number of times this image has been selected */
 } ri_info_t;
+
 #endif /* MFGR_MASTER */
 
 #endif /* __MFGR_H */

@@ -247,7 +247,7 @@ getTmpName(char **pname)
     static int  count = 0;
     char        s[32];
 
-    (void) sprintf(s, "%she%d.%d", TDIR, getpid(), count);
+    (void) sprintf(s, "%she%d.%d", TDIR, (int)getpid(), count);
     count++;
 
     length = HDstrlen(s);

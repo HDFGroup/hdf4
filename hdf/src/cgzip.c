@@ -447,6 +447,7 @@ HCPcgzip_stread(accrec_t * access_rec)
         HRETURN_ERROR(DFE_CINIT, FAIL);
     return (ret);
 #endif /* LATER */
+    return(FAIL);   /* until this routine is finished */
 }   /* HCPcgzip_stread() */
 
 /*--------------------------------------------------------------------------
@@ -485,6 +486,7 @@ HCPcgzip_stwrite(accrec_t * access_rec)
 #endif
     return (ret);
 #endif /* LATER */
+    return(FAIL);   /* until this routine is finished */
 }   /* HCPcgzip_stwrite() */
 
 /*--------------------------------------------------------------------------
@@ -551,6 +553,7 @@ HCPcgzip_seek(accrec_t * access_rec, int32 offset, int origin)
     HDfreespace(tmp_buf);
     return (SUCCEED);
 #endif /* LATER */
+    return(FAIL);   /* until this routine is finished */
 }   /* HCPcgzip_seek() */
 
 /*--------------------------------------------------------------------------
@@ -588,6 +591,7 @@ HCPcgzip_read(accrec_t * access_rec, int32 length, VOIDP data)
 
     return (length);
 #endif /* LATER */
+    return(FAIL);   /* until this routine is finished */
 }   /* HCPcgzip_read() */
 
 /*--------------------------------------------------------------------------
@@ -634,6 +638,7 @@ HCPcgzip_write(accrec_t * access_rec, int32 length, const VOIDP data)
 
     return (length);
 #endif /* LATER */
+    return(FAIL);   /* until this routine is finished */
 }   /* HCPcgzip_write() */
 
 /*--------------------------------------------------------------------------
@@ -723,4 +728,5 @@ HCPcgzip_endaccess(accrec_t * access_rec)
 
     return (SUCCEED);
 #endif /* LATER */
+    return(FAIL);   /* until this routine is finished */
 }   /* HCPcgzip_endaccess() */

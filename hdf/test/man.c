@@ -83,8 +83,6 @@ check_fann(char *fname)
   int32 file_handle;
   int32 ann_handle;
   int32 nflabs, nfdescs, nolabs, nodescs;
-  intn  num_dlabels, num_ddescs;
-  intn  *dlabels, *ddescs;
   int32 ann_len;
   uint8 *ann_label = NULL;
   uint8 *ann_desc = NULL;
@@ -268,11 +266,8 @@ genimage(int height, int width, float *data, uint8 *image)
 static      VOID
 check_lab_desc(char *fname, uint16 tag, uint16 ref, uint8 *label[], uint8 *desc[])
 {
-  int32 inlablen, indesclen;
-  char  *indesc;
   int32 ret;
   int32 file_handle;
-  int32 ann_handle;
   int32 nflabs, nfdescs, nolabs, nodescs;
   intn  num_dlabels, num_ddescs;
   int32  *dlabels, *ddescs;
@@ -475,7 +470,6 @@ test_man()
   float  *data;
   int32   file_handle; /* file handle */
   int32   ann_handle;  /* annotation handle */
-  ann_type    antype;      /* annotation type */
 
   /***** generate float array and image *****/
   data     = (float *) HDgetspace(ROWS * COLS * sizeof(float));

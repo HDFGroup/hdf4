@@ -178,6 +178,7 @@ typedef enum
 /* Raster errors */
       DFE_NODIM,                /* No dimension record associated with image */
       DFE_BADRIG,               /* Error processing a RIG */
+      DFE_RINOTFOUND,           /* Can't find raster image */
 
 /* SDG/NDG errors */
       DFE_BADTABLE,             /* the nsdg table is wrong */
@@ -338,6 +339,7 @@ PRIVATE const struct error_messages_t error_messages[] =
 /* Raster errors */
     {DFE_NODIM,         "No dimension record associated with image"},
     {DFE_BADRIG,        "Error processing a RIG"},
+    {DFE_RINOTFOUND,    "Can't find raster image"},
 
 /* SDG/NDG errors */
     {DFE_BADTABLE,      "The nsdg table is wrong"},

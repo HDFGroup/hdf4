@@ -253,72 +253,72 @@ static int  state_table[17][10] =
        OPT_h        OPT_m   */
 
     /* state 0: start */
-    1, ERR, ERR, ERR, ERR, ERR, ERR, ERR,
-    14, ERR,
+    {1, ERR, ERR, ERR, ERR, ERR, ERR, ERR,
+    14, ERR},
 
     /* state 1: input files */
-    1, 2, ERR, ERR, ERR, ERR, ERR, ERR,
-    ERR, ERR,
+    {1, 2, ERR, ERR, ERR, ERR, ERR, ERR,
+    ERR, ERR},
 
     /* state 2: -o[utfile] */
-    3, ERR, ERR, ERR, ERR, ERR, ERR, ERR,
-    ERR, ERR,
+    {3, ERR, ERR, ERR, ERR, ERR, ERR, ERR,
+    ERR, ERR},
 
     /* state 3: outfile */
-    ERR, ERR, 4, ERR, ERR, ERR, ERR, 13,
-    ERR, ERR,
+    {ERR, ERR, 4, ERR, ERR, ERR, ERR, 13,
+    ERR, ERR},
 
     /* state 4: -r[aster] */
-    ERR, ERR, ERR, 5, 9, ERR, 10, 12,
-    ERR, 15,
+    {ERR, ERR, ERR, 5, 9, ERR, 10, 12,
+    ERR, 15},
 
     /* state 5: -e[xpand] */
-    ERR, ERR, ERR, ERR, ERR, 6, ERR, ERR,
-    ERR, ERR,
+    {ERR, ERR, ERR, ERR, ERR, 6, ERR, ERR,
+    ERR, ERR},
 
     /* state 6: -e[xpand] or -i[nterp] option argument */
-    ERR, ERR, ERR, ERR, ERR, 7, ERR, ERR,
-    ERR, ERR,
+    {ERR, ERR, ERR, ERR, ERR, 7, ERR, ERR,
+    ERR, ERR},
 
     /* state 7: -e[xpand] or -i[nterp] option argument */
-    ERR, ERR, ERR, ERR, ERR, 8, 10, 12,
-    ERR, 15,
+    {ERR, ERR, ERR, ERR, ERR, 8, 10, 12,
+    ERR, 15},
 
     /* state 8: -e[xpand] or -i[nterp] option argument */
-    ERR, ERR, ERR, ERR, ERR, ERR, 10, 12,
-    ERR, 15,
+    {ERR, ERR, ERR, ERR, ERR, ERR, 10, 12,
+    ERR, 15},
 
     /* state 9: -i[nterp] */
-    ERR, ERR, ERR, ERR, ERR, 6, ERR, ERR,
-    ERR, ERR,
+    {ERR, ERR, ERR, ERR, ERR, 6, ERR, ERR,
+    ERR, ERR},
 
     /* state 10: -p[alfile] */
-    11, ERR, ERR, ERR, ERR, ERR, ERR, ERR,
-    ERR, ERR,
+    {11, ERR, ERR, ERR, ERR, ERR, ERR, ERR,
+    ERR, ERR},
 
     /* state 11: palfile */
-    ERR, ERR, ERR, 5, 9, ERR, ERR, 12,
-    ERR, 15,
+    {ERR, ERR, ERR, 5, 9, ERR, ERR, 12,
+    ERR, 15},
 
     /* state 12: -f[loat] (after -r[aster]) */
-    ERR, ERR, ERR, ERR, ERR, ERR, ERR, ERR,
-    ERR, ERR,
+    {ERR, ERR, ERR, ERR, ERR, ERR, ERR, ERR,
+    ERR, ERR},
 
     /* state 13: -f[loat] */
-    ERR, ERR, 4, ERR, ERR, ERR, ERR, ERR,
-    ERR, ERR,
+    {ERR, ERR, 4, ERR, ERR, ERR, ERR, ERR,
+    ERR, ERR},
 
     /* state 14: -h[elp] */
-    ERR, ERR, ERR, ERR, ERR, ERR, ERR, ERR,
-    ERR, ERR,
+    {ERR, ERR, ERR, ERR, ERR, ERR, ERR, ERR,
+    ERR, ERR},
 
     /* state 15: -m[ean] */
-    ERR, ERR, ERR, ERR, ERR, 16, ERR, ERR,
-    ERR, ERR,
+    {ERR, ERR, ERR, ERR, ERR, 16, ERR, ERR,
+    ERR, ERR},
 
     /* state 16: mean */
-    ERR, ERR, ERR, 5, 9, ERR, 10, 12,
-    ERR, ERR
+    {ERR, ERR, ERR, 5, 9, ERR, 10, 12,
+    ERR, ERR}
 };
 
 /* static local functions */

@@ -111,7 +111,9 @@ FRETVAL(intf)
 naffileinfo(intf *file_id, intf *num_flabel, intf *num_fdesc, intf *num_olabel,
             intf *num_odesc)
 {
+#ifdef LATER
   CONSTR(FUNC, "affileinfo");
+#endif /* LATER */
   intf  ret;
   int32 nflabel, nfdesc, nolabel, nodesc; 
 
@@ -137,11 +139,11 @@ naffileinfo(intf *file_id, intf *num_flabel, intf *num_fdesc, intf *num_olabel,
 FRETVAL(intf)
 nafend(intf *file_id)
 {
+#ifdef LATER
   CONSTR(FUNC, "afend");
-  intf ret;
+#endif /* LATER */
 
-  ret = ANend((int32) *file_id);
-  return ret;
+  return (intf)ANend((int32) *file_id);
 } /* nafend() */
 
 /*-----------------------------------------------------------------------------
@@ -158,11 +160,11 @@ nafend(intf *file_id)
 FRETVAL(intf)
 nafcreate(intf *file_id, intf *etag, intf *eref, intf *atype)
 {
+#ifdef LATER
   CONSTR(FUNC, "afcreate");
-  intf ret;
+#endif /* LATER */
 
-  ret = ANcreate((int32)*file_id,(uint16)*etag,(uint16)*eref,(ann_type)*atype);
-  return ret;
+  return (intf)ANcreate((int32)*file_id,(uint16)*etag,(uint16)*eref,(ann_type)*atype);
 } /* nafcreate() */
 
 /*-----------------------------------------------------------------------------
@@ -177,11 +179,11 @@ nafcreate(intf *file_id, intf *etag, intf *eref, intf *atype)
 FRETVAL(intf)
 naffcreate(intf *file_id, intf *atype)
 {
+#ifdef LATER
   CONSTR(FUNC, "affcreate");
-  intf ret;
+#endif /* LATER */
 
-  ret = ANcreatef((int32)*file_id,(ann_type)*atype);
-  return ret;
+  return (intf)ANcreatef((int32)*file_id,(ann_type)*atype);
 } /* naffcreate() */
 
 /*-----------------------------------------------------------------------------
@@ -201,11 +203,11 @@ naffcreate(intf *file_id, intf *atype)
 FRETVAL(intf)
 nafselect(intf *file_id, intf *index, intf *atype)
 {
+#ifdef LATER
   CONSTR(FUNC, "afselect");
-  intf ret;
+#endif /* LATER */
 
-  ret = ANselect((int32)*file_id,(int32)*index, (ann_type)*atype);
-  return ret;
+  return (intf)ANselect((int32)*file_id,(int32)*index, (ann_type)*atype);
 } /* nafselect() */
 
 /*-----------------------------------------------------------------------------
@@ -222,11 +224,11 @@ nafselect(intf *file_id, intf *index, intf *atype)
 FRETVAL(intf)
 nafnumann(intf *file_id, intf *atype, intf *etag, intf *eref)
 {
+#ifdef LATER
   CONSTR(FUNC, "afnumann");
-  intf ret;
+#endif /* LATER */
 
-  ret = ANnumann((int32)*file_id,(ann_type)*atype,(uint16)*etag,(uint16)*eref);
-  return ret;
+  return (intf)ANnumann((int32)*file_id,(ann_type)*atype,(uint16)*etag,(uint16)*eref);
 } /* nafnumann() */
 
 /*-----------------------------------------------------------------------------
@@ -286,11 +288,11 @@ nafannlist(intf *file_id, intf *atype, intf *etag, intf *eref, intf alist[])
 FRETVAL(intf)
 nafannlen(intf *an_id)
 {
+#ifdef LATER
   CONSTR(FUNC, "afannlen");
-  intf ret;
+#endif /* LATER */
 
-  ret = ANannlen((int32)*an_id);
-  return ret;
+  return (intf)ANannlen((int32)*an_id);
 } /* nafannlen() */
 
 /*-----------------------------------------------------------------------------
@@ -306,11 +308,11 @@ nafannlen(intf *an_id)
 FRETVAL(intf)
 nafwriteann(intf *an_id,_fcd *ann, intf *annlen)
 {
+#ifdef LATER
   CONSTR(FUNC, "afwriteann");
-  intf ret;
+#endif /* LATER */
 
-  ret = ANwriteann((int32)*an_id,(uint8 *) _fcdtocp(ann), (int32) *annlen);
-  return ret;
+  return (intf)ANwriteann((int32)*an_id,(uint8 *) _fcdtocp(ann), (int32) *annlen);
 } /* nafwriteann() */
 
 /*-----------------------------------------------------------------------------
@@ -326,11 +328,11 @@ nafwriteann(intf *an_id,_fcd *ann, intf *annlen)
 FRETVAL(intf)
 nafreadann(intf *an_id,_fcd *ann, intf *maxlen)
 {
+#ifdef LATER
   CONSTR(FUNC, "afreadann");
-  intf ret;
+#endif /* LATER */
 
-  ret = ANreadann((int32)*an_id,(uint8 *) _fcdtocp(ann), (int32) *maxlen);
-  return ret;
+  return (intf)ANreadann((int32)*an_id,(uint8 *) _fcdtocp(ann), (int32) *maxlen);
 } /* nafreadann() */
 
 /*-----------------------------------------------------------------------------
@@ -344,11 +346,11 @@ nafreadann(intf *an_id,_fcd *ann, intf *maxlen)
 FRETVAL(intf)
 nafendaccess(intf *an_id)
 {
+#ifdef LATER
   CONSTR(FUNC, "afendaccess");
-  intf ret;
+#endif /* LATER */
 
-  ret = ANendaccess((int32)*an_id);
-  return ret;
+  return (intf)ANendaccess((int32)*an_id);
 } /* nafendaccess() */
 
 

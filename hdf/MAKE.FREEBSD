@@ -86,4 +86,4 @@ RM= /bin/rm
 RMFLAGS= -f 
 
 #include the generic part of the makefile
-include build.inc
+.include "build.inc"

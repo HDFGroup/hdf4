@@ -104,8 +104,8 @@ dumpnodeKey(VOID *key, VOID *data)
   if (data != NULL) 
     {
       node = (ANnode *) data;
-      printf("file_id=%d, ann_key=%d, new_ann=%d\n", node->file_id,
-             node->ann_key, node->new_ann);
+      printf("file_id=%ld, ann_key=%ld, new_ann=%d\n", (long)node->file_id,
+             (long)node->ann_key, node->new_ann);
     }
   else 
     printf("(NULL)\n");
@@ -121,7 +121,7 @@ dumpentryKey(VOID *key, VOID *data)
   if (data != NULL) 
     {
       node = (ANentry *) data;
-      printf("ann_id=%d, annref=%d, elmtag=%d, elmref=%d\n", node->ann_id,
+      printf("ann_id=%ld, annref=%d, elmtag=%d, elmref=%d\n", (long)node->ann_id,
              node->annref, node->elmtag, node->elmref);
     }
   else 
@@ -138,8 +138,8 @@ dumpfileKey(VOID *key, VOID *data)
   if (data != NULL) 
     {
       node = (ANfile *) data;
-      printf("filename=%s, accesmode=%d \n", node->filename,
-             node->access_mode);
+      printf("filename=%s, accesmode=%ld \n", node->filename,
+             (long)node->access_mode);
     }
   else 
     printf("(NULL)\n");
@@ -236,7 +236,9 @@ ANIanncmp(VOIDP i, VOIDP j, intn value)
 PRIVATE int32
 ANinit(void)
 {
+#ifdef LATER
   CONSTR(FUNC, "ANinit");
+#endif /* LATER */
     
   /* Clear error stack */
   HEclear();
@@ -282,7 +284,9 @@ ANinit(void)
 int32
 ANdestroy(void)
 {
+#ifdef LATER
   CONSTR(FUNC, "ANdestroy");
+#endif /* LATER */
 
   /* Clear error stack */
   HEclear();
@@ -808,7 +812,7 @@ ANIfind(int32 file_id, ann_type type, uint16 ann_ref)
       HE_REPORT_RETURN("failed to find annotation of 'type'", FAIL);
 
     /* get annotation entry from node */
-    ann_entry == (ANentry *) entry->data; 
+    ann_entry = (ANentry *) entry->data; 
 #endif /* user tbbt */
 
     /* return annotation id */
@@ -849,7 +853,6 @@ ANInumann(int32 file_id, ann_type type, uint16 elem_tag, uint16 elem_ref)
 #endif
     ANfile  *file_entry = NULL;
     ANentry *ann_entry  = NULL;
-    int32   ann_key;
     intn    nanns = 0; 
 
     /* Clear error stack */
@@ -947,7 +950,6 @@ ANIannlist(int32 file_id, ann_type type, uint16 elem_tag, uint16 elem_ref,
 #endif
     ANfile  *file_entry = NULL;
     ANentry *ann_entry  = NULL;
-    int32   ann_key;
     intn    nanns = 0;
 
     /* Clear error stack */
@@ -1029,14 +1031,14 @@ ANIannlist(int32 file_id, ann_type type, uint16 elem_tag, uint16 elem_ref,
 PRIVATE int32
 ANIannlen(int32 ann_id)
 {
+#ifdef LATER
     CONSTR(FUNC, "ANIannlen");
+#endif /* LATER */
 #ifdef HAVE_RBTREE
     Rb_node entry;
 #else
     TBBT_NODE *entry = NULL;
 #endif
-    ANfile  *file_entry = NULL;
-    ANentry *ann_entry  = NULL;
     ANnode  *ann_node   = NULL;
     int32  file_id;
     int32  type;
@@ -1143,8 +1145,6 @@ ANIreadann(int32 ann_id, uint8 *ann, int32 maxlen)
 #else
     TBBT_NODE *entry = NULL;
 #endif
-    ANfile  *file_entry = NULL;
-    ANentry *ann_entry  = NULL;
     ANnode  *ann_node   = NULL;
     int32   file_id;
     int32   type;
@@ -1318,7 +1318,6 @@ ANIwriteann(int32 ann_id, uint8 *ann, int32 ann_len)
     uint16  elem_ref;
     uint8   datadi[4] = {0,0,0,0};      /* to hold data tag/ref for writing */
     uint8   *ptr = NULL;
-    int32   new_ann;
 
     /* Clear error stack */
     HEclear();
@@ -1507,11 +1506,8 @@ ANIcreate(int32 file_id, uint16 elem_tag, uint16 elem_ref, ann_type type )
 {
   CONSTR(FUNC, "ANIcreate");    /* for HERROR */
   int32   ann_id;
-  int     newflag = 0;
   uint16  ann_tag;
   uint16  ann_ref;
-  uint8   datadi[4] = {0,0,0,0};      /* to hold data tag/ref for writing */
-  uint8   *ptr = NULL;
 
   /* Clear error stack */
   HEclear();
@@ -1669,8 +1665,6 @@ ANfileinfo(int32 file_id, int32 *n_file_label, int32 *n_file_desc,
   TBBT_NODE *entry = NULL;
 #endif
   ANfile  *file_entry = NULL;
-  ANentry *ann_entry  = NULL;
-  uint32  ann_key;
 
   /* Clear error stack */
   HEclear();
@@ -1762,8 +1756,6 @@ ANend(int32 file_id)
   ANfile  *file_entry = NULL;
   ANentry *ann_entry  = NULL;
   ANnode  *ann_node   = NULL;
-  int32   ret;
-  int32   ann_id;
   VOID    *ann_key = NULL;
   VOID    *kp = NULL;
 
@@ -2097,7 +2089,9 @@ ANend(int32 file_id)
 EXPORT int32
 ANcreate(int32 file_id, uint16 elem_tag, uint16 elem_ref, ann_type type)
 {
+#ifdef LATER
   CONSTR(FUNC, "ANcreate");    /* for HERROR */
+#endif /* LATER */
 
   return (ANIcreate(file_id, elem_tag, elem_ref, type));
 } /* ANcreate() */
@@ -2120,7 +2114,9 @@ ANcreate(int32 file_id, uint16 elem_tag, uint16 elem_ref, ann_type type)
 EXPORT int32
 ANcreatef(int32 file_id, ann_type type)
 {
+#ifdef LATER
   CONSTR(FUNC, "ANcreatef");    /* for HERROR */
+#endif /* LATER */
   uint16 ann_tag;
   uint16 ann_ref;
 
@@ -2171,8 +2167,9 @@ ANselect(int32 file_id, int32 index, ann_type type)
 #endif
   ANfile  *file_entry = NULL;
   ANentry *ann_entry  = NULL;
-  int32   ann_key;
+#ifdef HAVE_RBTREE
   intn    i;
+#endif /* HAVE_RBTREE */
 
   /* Clear error stack */
   HEclear();
@@ -2255,7 +2252,10 @@ ANselect(int32 file_id, int32 index, ann_type type)
 EXPORT intn
 ANnumann(int32 file_id, ann_type type, uint16 elem_tag, uint16 elem_ref)
 {
+#ifdef LATER
   CONSTR(FUNC, "ANnumann");
+#endif /* LATER */
+
   return ANInumann(file_id, type, elem_tag, elem_ref);
 } /* ANnumann() */
 
@@ -2287,7 +2287,10 @@ EXPORT intn
 ANannlist(int32 file_id, ann_type type, uint16 elem_tag, uint16 elem_ref,
            int32 ann_list[])
 {
+#ifdef LATER
   CONSTR(FUNC, "ANannlist");
+#endif /* LATER */
+
   return ANIannlist(file_id, type, elem_tag, elem_ref, ann_list);
 } /* ANannlist() */
 
@@ -2310,7 +2313,10 @@ ANannlist(int32 file_id, ann_type type, uint16 elem_tag, uint16 elem_ref,
 EXPORT int32
 ANannlen(int32 ann_id)
 {
+#ifdef LATER
   CONSTR(FUNC, "ANannlen");
+#endif /* LATER */
+
   return ANIannlen(ann_id);
 } /* ANannlen() */
 
@@ -2337,7 +2343,10 @@ ANannlen(int32 ann_id)
 EXPORT int32
 ANwriteann(int32 ann_id, uint8 *ann, int32 annlen)
 {
+#ifdef LATER
   CONSTR(FUNC, "ANwriteann");    /* for HERROR */
+#endif /* LATER */
+
   return ANIwriteann(ann_id, ann, annlen);
 } /* ANwriteann() */
 
@@ -2363,7 +2372,10 @@ ANwriteann(int32 ann_id, uint8 *ann, int32 annlen)
 EXPORT int32
 ANreadann(int32 ann_id, uint8 *ann, int32 maxlen)
 {
+#ifdef LATER
   CONSTR(FUNC, "ANreadann");    /* for HERROR */
+#endif /* LATER */
+
   return ANIreadann(ann_id, ann, maxlen);
 } /* ANreadann() */
 
@@ -2381,7 +2393,10 @@ ANreadann(int32 ann_id, uint8 *ann, int32 maxlen)
 EXPORT intn
 ANendaccess(int32 an_id)
 {
+#ifdef LATER
   CONSTR(FUNC, "ANendaccess");    /* for HERROR */
+#endif /* LATER */
+
   return SUCCEED;
 } /* ANendaccess() */
 

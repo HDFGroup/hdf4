@@ -79,7 +79,8 @@ FFLAGS= -g
 
 # ==> specify your C compiler
 CC=gcc
-CFLAGS=  -g 
+CFLAGS=  -ansi -Wall -pedantic -O
+#CFLAGS=  -g
 
 # ==> specify your C* compiler
 CS=cs
@@ -117,7 +118,7 @@ SHAR=shar
 ARCHIVE=hdf.shar
 
 #include the source file definitions
-include src.inc
+.include "src.inc"
 
 .c.o:
 	$(CC) $(CFLAGS) $(ALLINC) -c $<
@@ -144,10 +145,10 @@ libnofortran: $(COBJS) #$(JOBJS)
 libnostub nofortran: libnofortran .finstalled
 
 rebuild:
-	@$(MAKE) all $(HDF_FLAGS) FRC=force_rebuild
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all FRC=force_rebuild
 
 rebuildnofortran:
-	@$(MAKE) nofortran $(MFLAGS) $(HDF_FLAGS) FRC=force_rebuild
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran FRC=force_rebuild
 
 # Leave this target blank with no actions, the rebuild macros above depend on it
 force_rebuild:

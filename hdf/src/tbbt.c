@@ -957,9 +957,9 @@ tbbt_printNode(TBBT_NODE * node, VOID(*key_dump)(VOID *,VOID *))
         printf("ERROR:  null node pointer\n");
         return;
       }
-    printf("node=%08x, flags=%x, Lcnt=%d, Rcnt=%d\n", node, (unsigned)node->flags,
-           node->lcnt, node->rcnt);
-    printf("Lchild=%08x, Rchild=%08x, Parent=%08x\n", node->Lchild, node->Rchild, node->Parent);
+    printf("node=%p, flags=%x, Lcnt=%ld, Rcnt=%ld\n", node, (unsigned)node->flags,
+           (long)node->lcnt, (long)node->rcnt);
+    printf("Lchild=%p, Rchild=%p, Parent=%p\n", node->Lchild, node->Rchild, node->Parent);
     if (key_dump != NULL)
       {
         (*key_dump)(node->key,node->data);
@@ -1015,7 +1015,7 @@ tbbt_dump(TBBT_TREE *ptree, VOID (*key_dump)(VOID *,VOID *), intn method)
 
 	tree = (TBBT_TREE *) ptree;
 	printf("TBBT-tree dump  %x:\n\n",(int)ptree);
-	printf("capacity = %d\n",tree->count);
+	printf("capacity = %ld\n",(long)tree->count);
 	printf("\n");
 	tbbt_dumpNode(tree->root,key_dump, method);
 	return;
