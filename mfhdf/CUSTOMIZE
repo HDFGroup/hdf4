@@ -22,8 +22,8 @@
 # CC='gcc -traditional'
 #
 # C compiler flags (default is `-O'):
-CFLAGS=-O
-FFLAGS=
+CFLAGS='-O'
+FFLAGS='-O'
 #
 # C preprocessor flags 
 # CPPFLAGS=-DNDEBUG
