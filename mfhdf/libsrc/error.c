@@ -110,7 +110,7 @@ vfprintf(stream, fmt, va_alist)
  *	   nc_serror("can't open %s", file_name);
  *         nc_serror("process %d in state %s",pid,state);
  */
-#ifndef NO_STDARG
+#if !defined(NO_STDARG) && defined(PROTOTYPE)
 void
 nc_serror(char *fmt, ...)
 #else
@@ -178,7 +178,7 @@ nc_serror(fmt, va_alist)
  *         NCadvise(NC_NOERR, "just advice");
  *         NCadvise(NC_EBADID, "%d is not a valid cdf id", cdfid);
  */
-#ifndef NO_STDARG
+#if !defined(NO_STDARG) && defined(PROTOTYPE)
 void
 NCadvise(int err, char *fmt,...)
 #else
