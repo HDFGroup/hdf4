@@ -345,4 +345,4 @@ AC_SUBST(JHVINST)
 AC_SUBST_FILE(VERSION)
 VERSION=./VERSION
 
-AC_OUTPUT(Makefile native/Makefile native/hdflib/Makefile native/jhv/Makefile bin/jhv)
+AC_OUTPUT(Makefile native/Makefile native/hdflib/Makefile  bin/jhv)
