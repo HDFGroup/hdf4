@@ -45,6 +45,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define NBIT_TEST 
 #define COMP_TEST 
 #define CHUNK_TEST
+#define NETCDF_READ_TEST
 
 /* Macintosh console stuff */
 #if defined __MWERKS__
@@ -189,1995 +190,34 @@ static uint8  u8_data[2][3][4] =
         { 110, 111, 112, 113},
         { 120, 121, 122, 123}}};
 
-
-#endif /* CHUNK_TEST */
-
-#ifdef PROTOTYPE
-int main(int argc, char *argv[])
-#else
-int main(argc, argv)
-int argc;
-char *argv[];
-#endif
+intn
+test_chunk()
 {
-    int32 f1, f2, f3, fext, fnbit, fcomp, fchk; /* File handles */
+    int32 fchk; /* File handles */
     int32 nt;                /* Number type */
     int32 dimsize[10];       /* dimension sizes */
-    int32 newsds, newsds2, newsds3; /* SDS handles */
-    int32 sdsid;                    /* SDS handle */
-    int32 dimid, dimid1, dimid2; /* Dimension handles */
-    int32 num_sds;               /* number of SDS in file */
-    int32 num_gattr;             /* Number of global attributes */
-    int32 offset;                /* offset for ? */
-#ifdef CHUNK_TEST
+    int32 newsds, newsds2; /* SDS handles */
     int32   newsds4, newsds5, newsds6, newsds7, newsds8;   /* Chunked SDS ids */
     float32 inbuf_f32[2][3][4];  /* float32 Data array read from from file */
     uint16  inbuf_u16[2][3][4];  /* uint16 Data array read from from file */
     uint16  inbuf1_2u16[9][4];   /* Data array read for Example 1 */
     uint16  inbuf_2u16[5][2];    /* Data array read for Example 1 */
     uint8   inbuf_u8[2][3][4];   /* uint8 Data array read from from file */
-    uint8   inbuf[32];           /* input buffer */
     uint8   ru8_data[4];         /* chunk input buffer */
     int32   *rcdims;             /* for SDgetchunkinfo() */
     uint16  fill_u16 = 0;        /* fill value */
     HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
     HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
     int32   cflags;              /* chunk flags */
-    comp_info cinfo;             /* compression info */
-#endif /* CHUNK_TEST */
-#if defined COMP_TEST && !defined CHUNK_TEST
-    comp_info cinfo;            /* compression information structure */
-#endif /* COMP_TEST */
-    int32 index;       /* Index of dataset in file */
-    int32 ival;
-    int32 sdid;        /* another SDS handle */
-    int32 rank;        /* rank of SDS */
-    intn  status;      /* status flag */
-    intn  i,j,k;       /* loop variables */
-    intn  nattrs;      /* Number of attributes again? */
-    char name[90];
-    char text[256];
+    int32   index;       /* Index of dataset in file */
+    intn    status;      /* status flag */
+    intn    i,j,k;       /* loop variables */
     int32   start[10], end[10], stride[10]; /* start, end, stride arrays */
-    int32   scale[10];
-    char    l[80], u[80], fmt[80], c[80];
-    int32   count;
-    int32   fillval;
     int32   idata[100];
     int32   rdata[100];
-    int16   sdata[100];
-    int32   ndg_saved_ref;  /* used to save a ref of an SDS in one of the test */
-    uint8   iuval;
-    float32 data[1000], max, min, imax, imin;
-    float64 cal, cale, ioff, ioffe;
+    float32 max, min;
     int     num_err = 0;    /* number of errors so far */
 
-
-#if defined __MWERKS__
-    argc = ccommand(&argv);
-#endif
-
-    ncopts = NC_VERBOSE;
-
-    /* Testing SDstart */
-    /* Try start non-existing file with RDONLY and RDWR. Both should fail. */
-    f1 = SDstart(UFOFILE, DFACC_RDONLY);
-
-    if (f1 != FAIL)
-      {
-          fprintf(stderr, "SDstart(..., RDONLY) should fail\n");
-          num_err++;
-          SDend(f1);
-      }
-
-    f1 = SDstart(UFOFILE, DFACC_RDWR);
-    if (f1 != FAIL)
-      {
-          fprintf(stderr, "SDstart(..., RDWR) should fail\n");
-          num_err++;
-          SDend(f1);
-      }
-
-    /* -------hmm what are testing here?----------------- */
-
-    /* Create two files */
-    f1 = SDstart(FILE1, DFACC_CREATE);
-    CHECK(f1, FAIL, "SDstart");
-
-    f2 = SDstart(FILE2, DFACC_CREATE);
-    CHECK(f2, FAIL, "SDstart");
-
-    /* whats in these empty files */
-    status = SDfileinfo(f1, &num_sds, &num_gattr);
-    CHECK(status, FAIL, "SDfileinfo");
-
-    if(num_gattr != 0) 
-      {
-          fprintf(stderr, "File %s still has stuff in it\n", FILE1);
-          num_err++;
-      }
-
-    /* create a 4 by 8 dataset called DataSetAlpha in file test1.hdf */
-    dimsize[0] = 4;
-    dimsize[1] = 8;
-    newsds = SDcreate(f1, "DataSetAlpha", DFNT_FLOAT32, 2, dimsize);
-    CHECK(newsds, FAIL, "SDcreate: Failed to create a new data set DataSetAlpha ");
-
-    /* save the ref number for the first dataset --- will check at very end */
-    ndg_saved_ref = SDidtoref(newsds);
-    CHECK(ndg_saved_ref, 0, "SDidtoref: Failed to get NDG ref for DataSetAlpha ");
-
-    /* create datatset DataSetGamma in file test1.hdf */
-    newsds3 = SDcreate(f1, "DataSetGamma", DFNT_FLOAT64, 1, dimsize);
-    CHECK(newsds3, FAIL, "SDcreate:Failed to create a new data set gamma");
-
-    /* get info on number of datasets and global attributes in file */
-    status = SDfileinfo(f1, &num_sds, &num_gattr);
-    CHECK(status, FAIL, "SDfileinfo");
-
-    if(num_sds != 2) 
-      {
-        fprintf(stderr, "Wrong number of datasets in file 1\n");
-        num_err++;
-      }
-
-    /* get dimension handle for first dimension? of DataSetGamma */
-    dimid = SDgetdimid(newsds3, 0);
-    CHECK(dimid, FAIL, "SDgetdimid:Failed to get dimension id");
-
-    /* reset the dimension name to Mydim? */
-    status = SDsetdimname(dimid, "MyDim");
-    CHECK(status, FAIL, "SDsetdimname: Failed to set dimension name to 'MyDim'");
-
-    /* Set dimension attribute to 'TRUE' */
-    status = SDsetattr(dimid, "DimensionAttribute", DFNT_CHAR8, 4, "TRUE");
-    CHECK(status, FAIL, "SDsetattr: Failed to set Dimension attribute");
-    
-    /* hmm. look it back up again. */
-    status = SDfindattr(dimid, "DimensionAttribute");
-    if(status != 0) 
-      {
-        fprintf(stderr, "SDfindattr: Bad index for finding 'DimensionAttribute' %d\n",
-                status);
-        num_err++;
-      }
-
-    /* Find out info about first atribute for dimension  */
-    status = SDattrinfo(dimid, (int32) 0, name, &nt, &count);
-    CHECK(status, FAIL, "SDattrinfo");
-
-    /* read first attribute in, assume CHAR here. */
-    status = SDreadattr(dimid, 0, text);
-    CHECK(status, FAIL, "SDreadattr");
-    
-    /* Compare value reterieved to what was written */
-    if(HDstrncmp(text, "TRUE", count)) 
-      {
-        fprintf(stderr, "SDreadattr: Invalid dimension attribute read <%s>\n", text);
-        num_err++;
-      }
-
-    /* get First dimension of dataset 'DataSetAlpha' */
-    dimid = SDgetdimid(newsds, 0);
-    CHECK(dimid, FAIL, "SDgetdimid: Failed to get dimension id");
-
-    /* Set this name of this dimension to 'Mydim' */
-    status = SDsetdimname(dimid, "MyDim");
-    CHECK(status, FAIL, "SDsetdimname");
-
-
-    /* Set the scales for this dimension also */
-    scale[0] = 1;
-    scale[1] = 5;
-    scale[2] = 7;
-    scale[3] = 24;
-    status = SDsetdimscale(dimid, 4, DFNT_INT32, (VOIDP) scale);
-    CHECK(status, FAIL, "SDsetdimscale");
-
-    /* Set the dimension strings for the dimension also */
-    status = SDsetdimstrs(dimid, "DimLabel", NULL, "TheFormat");
-    CHECK(status, FAIL, "SDsetdimstrs");
-
-    /* verify that we can read the dimensions values with SDreaddata */
-    start[0] = 0;
-    end[0]   = 4;
-    status = SDreaddata(dimid, start, NULL, end, (VOIDP) idata);
-    CHECK(status, FAIL, "SDreaddata");
-
-    /* compare retrieved values for scale */
-    for(i = 0; i < 4; i++) 
-      {
-        if(idata[i] != scale[i]) 
-          {
-              fprintf(stderr, "SDreaddata() returned %ld not %ld in location %d\n", 
-                      (long)idata[i], (long)scale[i], i);
-              num_err++;
-          }
-      }
-
-    /* hmm...lets store an attribute here for the dimension */
-    max = 3.1415;
-    status = SDsetattr(dimid, "DimAttr", DFNT_FLOAT32, 1, (VOIDP) &max);
-    CHECK(status, FAIL, "SDsetattr");
-
-    /* lets make sure we can read it too */
-    status = SDattrinfo(dimid, 3, name, &nt, &count);
-    CHECK(status, FAIL, "SDattrinfo");
-
-    if(nt != DFNT_FLOAT32) 
-      {
-        fprintf(stderr, "Wrong number type for SDattrinfo(dim)\n");
-        num_err++;
-      }
-
-    if(count != 1) 
-      {
-        fprintf(stderr, "Wrong count for SDattrinfo(dim)\n");
-        num_err++;
-      }
-
-    if(strcmp(name, "DimAttr")) 
-      {
-        fprintf(stderr, "Wrong name for SDattrinfo(dim)\n");
-        num_err++;
-      }
-
-    /* get second dimension of data set 'DataSetAlpha' */
-    dimid2 = SDgetdimid(newsds, 1);
-    CHECK(dimid2, FAIL, "SDgetdimid: Failed to get second dimension id");
-
-    /* lets store an attribute for the dimension without explicitly 
-       creating the coord var first */
-    ival = -256;
-    status = SDsetattr(dimid2, "Integer", DFNT_INT32, 1, (VOIDP) &ival);
-    CHECK(status, FAIL, "SDsetattr");
-
-    /* lets make sure we can read it too */
-    status = SDattrinfo(dimid2, 0, name, &nt, &count);
-    CHECK(status, FAIL, "SDattrinfo");
-
-    if(nt != DFNT_INT32) 
-      {
-        fprintf(stderr, "Wrong number type for SDattrinfo(dim)\n");
-        num_err++;
-      }
-
-    if(count != 1) 
-      {
-        fprintf(stderr, "Wrong count for SDattrinfo(dim)\n");
-        num_err++;
-      }
-
-    if(strcmp(name, "Integer")) 
-      {
-        fprintf(stderr, "Wrong name for SDattrinfo(dim)\n");
-        num_err++;
-      }
-
-    /* read dimension attribute back in */
-    ival = 0;
-    status = SDreadattr(dimid2, 0, (VOIDP) &ival);
-    CHECK(status, FAIL, "SDreatattr");
-    
-    if(ival != -256) 
-      {
-        fprintf(stderr, "Wrong value for SDreadattr(dim)\n");
-        num_err++;
-      }
-
-    /* add an unsigned integer as an dimension attribute */
-    iuval = 253;
-    status = SDsetattr(dimid2, "UnsignedInteger", DFNT_UINT8, 1, (VOIDP) &iuval);
-    CHECK(status, FAIL, "SDsetattr");
-
-    /* lets make sure we can read it too */
-    status = SDattrinfo(dimid2, 1, name, &nt, &count);
-    CHECK(status, FAIL, "SDattrinfo");
-
-    if(nt != DFNT_UINT8) 
-      {
-        fprintf(stderr, "Wrong number type for SDattrinfo(dim)\n");
-        num_err++;
-      }
-
-    if(count != 1) 
-      {
-        fprintf(stderr, "Wrong count for SDattrinfo(dim)\n");
-        num_err++;
-      }
-
-    if(strcmp(name, "UnsignedInteger")) 
-      {
-        fprintf(stderr, "Wrong name for SDattrinfo(dim)\n");
-        num_err++;
-      }
-
-    /* read second dimension attribute back in */
-    iuval = 0;
-    status = SDreadattr(dimid2, 1, (VOIDP) &iuval);
-    CHECK(status, FAIL, "SDreatattr");
-    
-    if(iuval != 253) 
-      {
-        fprintf(stderr, "Wrong value for SDreadattr(dim)\n");
-        num_err++;
-      }
-
-    /* Find index of data set 'DataSetAlpha' in file test1.hdf */
-    status = SDnametoindex(f1, "DataSetAlpha");
-    if(status != 0) 
-      {
-        fprintf(stderr, "Couldn't find data set in file 1\n");
-        num_err++;
-      }
-
-    /* Try finding data set in test2.hdf, should fail? */
-    status = SDnametoindex(f2, "DataSetAlpha");
-    if(status != FAIL) 
-      {
-        fprintf(stderr, "Found data set in wrong file 2\n");
-        num_err++;
-      }
-
-    /* Try finding non-existent dataset in file, should fail */
-    status = SDnametoindex(f1, "BogusDataSet");
-    if(status != FAIL) 
-      {
-        fprintf(stderr, "Found bogus data set in file 1\n");
-        num_err++;
-      }
-
-    /* Set fill value for data set 'DataSetAlpha' assume we still have valid
-       handle at this point...*/
-    max = -17.5;
-    status = SDsetfillvalue(newsds, (VOIDP) &max);
-    CHECK(status, FAIL, "SDsetfillvalue");
-
-    /* initialize array to write out */
-    for(i = 0; i < 10; i++)
-        data[i] = (float32) i;
-
-    /* write out (1,1)->(3,3) array out */ 
-    start[0] = start[1] = 1;
-    end[0]   = end[1]   = 3;
-    status = SDwritedata(newsds, start, NULL, end, (VOIDP) data);
-    CHECK(status, FAIL, "SDwritedata");
-
-    /* set the range for data set 'DataSetAlpha' */
-    max = 10.0;
-    min = 4.6;
-    status = SDsetrange(newsds, (VOIDP) &max, (VOIDP) &min);
-    CHECK(status, FAIL, "SDsetrange");
-
-    /* Brillant...., retrieve it right back....*/
-    status = SDgetrange(newsds, (VOIDP) &imax, (VOIDP) &imin);
-    CHECK(status, FAIL, "SDsetrange");
-
-    /* set a character attribute for data set 'DataSetAlpha' */
-    status = SDsetattr(newsds, "spam", DFNT_CHAR8, 6, "Hi mom");
-    CHECK(status, FAIL, "SDsetattr");
-
-    /* Set the data strings for data set 'DataSetAlpha' */
-    status = SDsetdatastrs(newsds, "TheLabel", "TheUnits", NULL, "TheCordsys");
-    CHECK(status, FAIL, "SDsetdatastrs");
-
-    /* Brilliant.....retrieve them right back */
-    status = SDgetdatastrs(newsds, l, u, fmt, c, 80);
-    CHECK(status, FAIL, "SDgetdatastrs");
-
-    if(HDstrcmp(l, "TheLabel")) 
-      {
-        fprintf(stderr, "Bogus label returned (%s)\n", l);
-        num_err++;
-      }
-    if(HDstrcmp(u, "TheUnits")) 
-      {
-        fprintf(stderr, "Bogus units returned (%s)\n", u);
-        num_err++;
-      }
-    if(HDstrcmp(fmt, "")) 
-      {
-        fprintf(stderr, "Bogus format returned\n");
-        num_err++;
-      }
-    if(HDstrcmp(c, "TheCordsys")) 
-      {
-        fprintf(stderr, "Bogus cordsys returned\n");
-        num_err++;
-      }
-
-    /* retrieve CHAR attribute for 'DataSetAlpha' */
-    status = SDfindattr(newsds, "spam");
-    if(status != 2) 
-      {
-        fprintf(stderr, "Bad index for SDfindattr\n");
-        num_err++;
-      }
-
-    /* retrieve non-existent CHAR attribute for 'DataSetAlpha'. 
-       Should fail. */
-    status = SDfindattr(newsds, "blarf");
-    if(status != FAIL) 
-      {
-        fprintf(stderr, "SDfindattr found non-existant attribute\n");
-        num_err++;
-      }
-
-    /* hmm....set global attributes for File 'test1.hdf' */
-    status = SDsetattr(f1, "F-attr", DFNT_CHAR8, 10, "globulator");
-    CHECK(status, FAIL, "SDsetattr");
-
-    /* get info about the global attribute just created....*/
-    status = SDattrinfo(f1, (int32) 0, name, &nt, &count);
-    CHECK(status, FAIL, "SDattrinfo");
-
-    /* read this global attribute back in ....*/
-    status = SDreadattr(f1, 0, text);
-    CHECK(status, FAIL, "SDreadattr");
-    
-    if(HDstrncmp(text, "globulator", count)) 
-      {
-        fprintf(stderr, "Invalid global attribute read <%s>\n", text);
-        num_err++;
-      }
-
-    /* Get number of SDS and global attributes in file 'test2.hdf'.
-       It should be empty...*/
-    status = SDfileinfo(f2, &num_sds, &num_gattr);
-    if(num_sds != 0) 
-      {
-        fprintf(stderr, "File2 still has stuff in it\n");
-        num_err++;
-      }
-
-    /* Set calibration info for dataset 'DataSetGamma' in file 'test1.hdf' */
-    cal   = 1.0;
-    cale  = 5.0;
-    ioff  = 3.0;
-    ioffe = 2.5;
-    nt    = DFNT_INT8;
-    status = SDsetcal(newsds3, cal, cale, ioff, ioffe, nt);
-    CHECK(status, FAIL, "SDsetcal");
-
-    /* create a record variable in file 'test2.hdf' */
-    dimsize[0] = SD_UNLIMITED;
-    dimsize[1] = 6;
-    newsds2 = SDcreate(f2, "DataSetBeta", DFNT_INT16, 2, dimsize);
-    CHECK(newsds2, FAIL, "SDcreate: Failed to create new data set 'DataSetBeta'");
-
-    /* get info on number of SDSs and global attributes in file 'test2.hdf'
-       There should be only 1 SDS */
-    status = SDfileinfo(f2, &num_sds, &num_gattr);
-    if(num_sds != 1) 
-      {
-        fprintf(stderr, "Wrong number of datasets in file 2\n");
-        num_err++;
-      }
-
-    for(i = 0; i < 50; i++)
-        sdata[i] = i;
-
-    /* Write data to dataset 'DataSetBeta' in file 'test2.hdf' */
-    start[0] = start[1] = 0;
-    end[0]   = 8;
-    end[1]   = 6;
-    status = SDwritedata(newsds2, start, NULL, end, (VOIDP) sdata);
-    CHECK(status, FAIL, "SDwritedata");
-
-    /* Now read part of an earlier dataset,'DataSetAlpha', 
-       back in from file 'test1.hdf' */
-    start[0] = start[1] = 0;
-    end[0]   = end[1]   = 3;
-    status = SDreaddata(newsds, start, NULL, end, (VOIDP) data);
-    CHECK(status, FAIL, "SDreaddata");
-
-    /* verify the data values retrieved from 'DataSetAlpha' */
-    if(data[0] != -17.5) 
-      {
-        fprintf(stderr, "Wrong value returned loc 0: %f\n",(float)data[0]);
-        num_err++;
-      }
-    if(data[3] != -17.5) 
-      {
-        fprintf(stderr, "Wrong value returned loc 3: %f\n",(float)data[3]);
-        num_err++;
-      }
-    if(data[5] != 1.0) 
-      {
-        fprintf(stderr, "Wrong value returned loc 5: %f\n",(float)data[5]);
-        num_err++;
-      }
-    if(data[6] != -17.5) 
-      {
-        fprintf(stderr, "Wrong value returned loc 6: %f\n",(float)data[6]);
-        num_err++;
-      }
-    if(data[8] != 4.0) 
-      {
-        fprintf(stderr, "Wrong value returned loc 8: %f\n",(float)data[8]);
-        num_err++;
-      }
-
-    for(i = 0; i < 50; i++)
-        sdata[i] = 0;
-
-    /* read data back in from 'DataSetBeta' from file 'test2.hdf' */
-    start[0] = start[1] = 1;
-    end[0]   = 3;
-    end[1]   = 3;
-    stride[0] = 2;
-    stride[1] = 2;
-    status = SDreaddata(newsds2, start, stride, end, (VOIDP) sdata);
-    CHECK(status, FAIL, "SDreaddata");
-
-    /* why do we print these 10 values here?....*/
-    for(i = 0; i < 10; i++)
-        printf("%d := %d\n", i, sdata[i]);
-    
-    /* why do we set calibration info and then use SDgetcal() 
-       on dataset 'DataSetGamma' ? */
-    cal   = 1.0;
-    cale  = 5.0;
-    ioff  = 3.0;
-    ioffe = 2.5;
-    nt    = DFNT_INT8;
-    status = SDgetcal(newsds3, &cal, &cale, &ioff, &ioffe, &nt);
-    CHECK(status, FAIL, "SDgetcal");
-
-    /* Verify calibration data for data set 'DataSetGamma' */
-    if(cal != 1.0) 
-      {
-        fprintf(stderr, "Wrong calibration info\n");
-        num_err++;
-      }
-
-    if(cale != 5.0) 
-      {
-        fprintf(stderr, "Wrong calibration info\n");
-        num_err++;
-      }
-
-    if(ioff != 3.0) 
-      {
-        fprintf(stderr, "Wrong calibration info\n");
-        num_err++;
-      }
-
-    if(ioffe != 2.5) 
-      {
-        fprintf(stderr, "Wrong calibration info\n");
-        num_err++;
-      }
-
-    if(nt != DFNT_INT8) 
-      {
-        fprintf(stderr, "Wrong calibration info\n");
-        num_err++;
-      }
-
-    /* end access to data set 'DataSetAlpha' */
-    status = SDendaccess(newsds);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* end access to data set 'DataSetBeta' */
-    status = SDendaccess(newsds2);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* end access to data set 'DataSetGamma' */
-    status = SDendaccess(newsds3);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* Close access to file 'test1.hdf' */
-    status = SDend(f1);
-    CHECK(status, FAIL, "SDend");
-
-    /* Close access to file 'test2.hdf' */
-    status = SDend(f2);
-    CHECK(status, FAIL, "SDend");
-
-
-    /*
-     * New set of tests?.....
-     */
-
-    /* test SDsetfillmode   */
-    /* test fixed size SDS   */
-    /* create an empty SDS, set SD_NOFILL.
-       Change the fill mode to SD_FILL, and write a slab of data */
-
-    /* open file 'test1.hdf' */
-    f1 = SDstart(FILE1, DFACC_RDWR);
-    CHECK(f1, FAIL, "SDstart (again)");
-
-    /* Set fill mode on file to not write out fill values */
-    status = SDsetfillmode(f1, SD_NOFILL);
-    CHECK(status, FAIL, "SDsetfillmode: (SD_NOFILL)");
-
-    /* Create data set 'FIXED1' in file test1.hdf */
-    dimsize[0]=5;
-    dimsize[1]=6;
-    sdid = SDcreate(f1, "FIXED1", DFNT_INT32, 2, dimsize);
-    CHECK(sdid, FAIL, "SDcreate:Fail to create data set 'FIXED1' in 'test1.hdf'");
-
-
-    for (i=0; i<30; i++)
-        idata[i] = i+100;
-
-    /* Set fill value attribute for data set 'FIXED1' using SDsetattr().
-       Same affect as using SDsetfillvalue(). */
-    fillval = -300;
-    status = SDsetattr(sdid, "_FillValue", DFNT_INT32, 1,
-               (VOIDP) &fillval); /* can use SDsetfillvalue */
-    CHECK(status, FAIL, "SDsetattr");
-
-    /* end access to data set 'FIXED1' */
-    status = SDendaccess(sdid);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* get index of dataset in file 'test1.hdf' called 'FIXED1' */
-    index = SDnametoindex(f1, "FIXED1");
-    CHECK(index, FAIL, "SDnametoindex");
-
-    /* Select data set 'FIXED1' based on it's index */
-    sdid = SDselect(f1, index);
-    CHECK(sdid, FAIL, "SDselect");
-
-    /* change the fill mode for the file back to writing out the fill
-       values. */
-    status = SDsetfillmode(f1, SD_FILL);
-    CHECK(status, FAIL, "SDsetfillmode");
-
-    /* Write data to data set 'FIXED1'.
-       Note that SD_FILL mode is on. */
-    start[0]=2;
-    start[1]=0;
-    end[0]=1;
-    end[1]=6;
-    status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
-    CHECK(status, FAIL, "SDwritedata: (SD_FILL)");
-
-    /* end access to data set 'FIXED1' */
-    status = SDendaccess(sdid);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* set the fill mode for 'test1.hdf' to no-fill */
-    status = SDsetfillmode(f1, SD_NOFILL);
-    CHECK(status, FAIL, "SDsetfillmode (SD_NOFILL)");
-
-    /* create a data set 'FIXED' in file 'test1.hdf' */
-    sdid = SDcreate(f1, "FIXED", DFNT_INT32, 2, dimsize);
-    CHECK(sdid,FAIL,"SDcreate:Failed to create data set 'FIXED' in file 'test1.hdf'");
-
-    for (i=0; i<30; i++)
-        idata[i] = i+100;
-
-    /* Set fill value for data set 'FIXED' using SDsetfillvalue() */
-    fillval = -300;
-    status = SDsetfillvalue(sdid, (VOIDP) &fillval);
-    CHECK(status, FAIL, "SDsetfillvalue");
-
-    /* write out the first 2 records to data set 'FIXED' with SD_NOFILL mode */
-    start[0]=2;
-    start[1]=0;
-    end[0]=1;
-    end[1]=6;
-    status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
-    CHECK(status, FAIL, "SDwritedata: (SD_NOFILL)");
-
-    /* end access to data set 'FIXED' */
-    status = SDendaccess(sdid);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* close file 'test1.hdf' */
-    status = SDend(f1);
-    CHECK(status, FAIL, "SDend");
-
-    /* open again, write record 4 with SD_FILL mode */
-    /* fill values already written out in the first SDwritedata,
-       fillmode changes should not affect the fill values */
-
-    /* open file 'test1.hdf' */
-    f1 = SDstart(FILE1, DFACC_RDWR);
-    CHECK(f1, FAIL, "SDstart: test1.hdf");
-
-    /* Set fill mode to SD_FILL */
-    status = SDsetfillmode(f1, SD_FILL);
-    CHECK(status, FAIL, "SDsetfillmode: (SD_FILL)");
-
-    /* get index of data set 'FIXED' */
-    index = SDnametoindex(f1, "FIXED");
-    CHECK(index, FAIL, "SDnametoindex: (FIXED)");
-
-    /* Select the data set 'FIXED' based on it's index */
-    sdid = SDselect(f1, index);
-    CHECK(sdid, FAIL, "SDselect: (FIXED)");
-
-    /* Write record 4 */
-    start[0]=4;
-    start[1]=0;
-    end[0]=1;
-    end[1]=6;
-    status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
-    CHECK(status, FAIL, "SDwritedata (SD_FILL)");
-
-    /* end acces to data set 'FIXED' */
-    status = SDendaccess(sdid);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* close file 'test1.hdf' */
-    status = SDend(f1);
-    CHECK(status, FAIL, "SDend");
-
-    /* read back and check fill values */
-
-    /* open file 'test1.hdf' back up */
-    f1 = SDstart(FILE1, DFACC_RDWR);
-    CHECK(f1, FAIL, "SDstart: test1.hdf");
-
-    /* get index of data set 'FIXED' */
-    index = SDnametoindex(f1, "FIXED");
-    CHECK(index, FAIL, "SDnametoindex (FIXED)");
-
-    /* Select the data set 'FIXED' based on it's index */
-    sdid = SDselect(f1, index);
-    CHECK(sdid, FAIL, "SDselect (FIXED)");
-
-    /* read data back in from data set 'FIXED' */
-    start[0]=0;
-    start[1]=0;
-    end[0]=5;
-    end[1]=6;
-    status = SDreaddata(sdid, start, NULL, end, (VOIDP)idata);
-    CHECK(status, FAIL, "SDreaddata(FIXED)");
-
-    /* verify the data */
-    for (i=12; i<18; i++)  
-      {
-        if ((idata[i] != 100 + (i-12)) ||
-            (idata[i+12] != 100 + (i-12))) 
-          {
-           fprintf(stderr, "wrong value: should be %d, got %d %d\n",
-                           100 + i-12, idata[i], idata[i+12]);
-           num_err++;
-          }
-      }
-    
-    for (i=18; i<24; i++)  
-      {
-        if (idata[i] ==fillval) 
-          {
-           fprintf(stderr, "wrong value: should not be %d, got %d\n",
-                           fillval, idata[i]);
-           num_err++;
-          }
-      }
-
-    /* end access to data set 'FIXED' */
-    status = SDendaccess(sdid);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* read back in data set 'FIXED1' , with fill values */
-
-    /* get index of data set 'FIXED1' from file 'test1.hdf' */
-    index = SDnametoindex(f1, "FIXED1");
-    CHECK(index, FAIL, "SDnametoindex (FIXED1)");
-
-    /* select dataset 'FIXED1' based on it's index in the file */
-    sdid = SDselect(f1, index);
-    CHECK(sdid, FAIL, "SDselect (FIXED1)");
-
-    /* read data from data set 'FIXED1' */
-    start[0]=0;
-    start[1]=0;
-    end[0]=5;
-    end[1]=6;
-    status = SDreaddata(sdid, start, NULL, end, (VOIDP)idata);
-    CHECK(status, FAIL, "SDreaddata(FIXED)");
-
-    /* verify the data */
-    for (i=12; i<18; i++)  
-      {
-        if (idata[i] != (100 + (i-12)))  
-          {
-           fprintf(stderr, "wrong value: should be %d, got %d \n",
-                           100 + i-12, idata[i]);
-           num_err++;
-          }
-      }
-
-    for (i=18; i<24; i++)  
-      {
-        if (idata[i] != fillval) 
-          {
-           fprintf(stderr, "wrong value: should be %d, got %d\n",
-                           fillval, idata[i]);
-           num_err++;
-          }
-      }
-
-    /* end access to data set 'FIXED1' in file 'test1.hdf' */
-    status = SDendaccess(sdid);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* close file 'test1.hdf' */
-    status = SDend(f1);
-    CHECK(status, FAIL, "SDend");
-
-   /* 
-    * test UNLIMITED size SDS   
-    */
-
-    /* open file 'test1.hdf' */
-    f1 = SDstart(FILE1, DFACC_RDWR);
-    CHECK(f1, FAIL, "SDstart (file1)");
-
-    /* set fill mode to no-fill */
-    status = SDsetfillmode(f1, SD_NOFILL);
-    CHECK(status, FAIL, "SDsetfillmode (SD_NOFILL)");
-
-    /* Set first dimension to UNLIMITED.
-       Create data set 'UNLIMITED_SDS' in file 'test1.hdf' */
-    dimsize[0]=SD_UNLIMITED;
-    dimsize[1]=6;
-    sdid = SDcreate(f1, "UNLIMITED_SDS", DFNT_INT32, 2, dimsize);
-    CHECK(sdid, FAIL, "SDcreate:Failed to create data set 'UNLIMITED_SDS' in file 'test1.hdf'");
-
-    for (i=0; i<24; i++)
-        idata[i] = i;
-
-    /* Set fill value for data set 'UNLIMITED_SDS' */
-    fillval = -300;
-    status = SDsetfillvalue(sdid, (VOIDP) &fillval);
-    CHECK(status, FAIL, "SDsetattr");
-
-    /* write out the third record with SD_NOFILL mode on */
-    start[0]=2;
-    start[1]=0;
-    end[0]=1;
-    end[1]=6;
-    status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
-    CHECK(status, FAIL, "SDwritedata: (SD_NOFILL, UNLIMITED)");
-
-    /* end access to data set 'UNLIMITED_SDS' in file 'test1.hdf' */
-    status = SDendaccess(sdid);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* Close file 'test1.hdf' */
-    status = SDend(f1);
-    CHECK(status, FAIL, "SDend");
-
-    /* open again, write record 4 with SD_FILL mode */
-
-    /* open file 'test1.hdf' again */
-    f1 = SDstart(FILE1, DFACC_RDWR);
-    CHECK(f1, FAIL, "SDstart: test1.hdf");
-
-    /* set fill mode to SD_FILL */
-    status = SDsetfillmode(f1, SD_FILL);
-    CHECK(status, FAIL, "SDsetfillmode: (SD_FILL)");
-
-    /* get index of data set 'UNLIMITED_SDS' */
-    index = SDnametoindex(f1, "UNLIMITED_SDS");
-    CHECK(index, FAIL, "SDnametoindex: (UNLIMITED)");
-
-    /* select data set 'UNLIMITED_SDS' based on it's index in the file */
-    sdid = SDselect(f1, index);
-    CHECK(sdid, FAIL, "SDselect: (UNLIMITED)");
-
-    /* write 4?th record to data set */
-    start[0]=4;
-    start[1]=0;
-    end[0]=1;
-    end[1]=6;
-    status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
-    CHECK(status, FAIL, "SDwritedata: (SD_FILL)");
-
-    /* end access to data set 'UNLIMITED_SDS' */
-    status = SDendaccess(sdid);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* close file 'test1.hdf' */
-    status = SDend(f1);
-    CHECK(status, FAIL, "SDend");
-
-    /* read back and check fill values */
-
-    /* open file 'test1.hdf' again */
-    f1 = SDstart(FILE1, DFACC_RDWR);
-    CHECK(f1, FAIL, "SDstart: (test1.hdf)");
-
-    /* get index of data set 'UNLIMITED_SDS' */
-    index = SDnametoindex(f1, "UNLIMITED_SDS");
-    CHECK(index, FAIL, "SDnametoindex: (UNLIMITED_SDS)");
-
-    /* select data set 'UNLIMITED_SDS' based on it's index in the file */
-    sdid = SDselect(f1, index);
-    CHECK(sdid, FAIL, "SDselect: (UNLIMITED_SDS)");
-
-    /* read data from data set 'UNLIMITED_SDS' */
-    start[0]=0;
-    start[1]=0;
-    end[0]=5;
-    end[1]=6;
-    status = SDreaddata(sdid, start, NULL, end, (VOIDP)idata);
-    CHECK(status, FAIL, "SDwritedata(NO_FILL)");
-
-    /* verify the data */
-    for (i=12; i<18; i++)  
-      {
-        if ((idata[i] != (i-12)) || (idata[i+12] != (i-12))) 
-          {
-           fprintf(stderr, "wrong value: should be %d, got %d\n",
-                           i-12, idata[i], idata[i+12]);
-           num_err++;
-          }
-      }
-
-    for (i=18; i<24; i++)  
-      {
-        if (idata[i] !=fillval) 
-          {
-           fprintf(stderr, "wrong value: should be %d, got %d\n",
-                           fillval, idata[i]);
-           num_err++;
-          }
-      }
-
-    /* end access to data set 'UNLIMITED_SDS' */
-    status = SDendaccess(sdid);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* close file 'test1.hdf' */
-    status = SDend(f1);
-    CHECK(status, FAIL, "SDend");
-
-   /* 
-    * test SDsetdimval_incomp() 
-    */
-
-    /* open file 'test1.hdf' */
-    f1 = SDstart(FILE1, DFACC_RDWR);
-    CHECK(f1, FAIL, "SDstart (file1)");
-
-    /* set first dimension to be UNLIMITED.
-       Create data set 'dimval_non_compat' */
-    dimsize[0]=SD_UNLIMITED;
-    dimsize[1]=6;
-    sdid = SDcreate(f1, "dimval_non_compat", DFNT_INT32, 2, dimsize);
-    CHECK(sdid,FAIL,"SDcreate:Failed to create data set 'dimval_non_compat' in file 'test1.hdf'");
-
-    /* get handle for first dimension of data set 'dimval_non_compat' */
-    dimid=SDgetdimid(sdid, 0);
-    CHECK(dimid, FAIL, "SDgetdimid");
-
-    /* get handle for second dimension of data set 'dimval_non_compat' */
-    dimid1=SDgetdimid(sdid, 1);
-    CHECK(dimid1, FAIL, "SDgetdimid");
-
-    /* set second dimension as not being backward compatible? */
-    status = SDsetdimval_comp(dimid1, SD_DIMVAL_BW_INCOMP);
-    CHECK(status, FAIL, "SDsetdimval_comp");
-
-    for (i=0; i<6; i++)
-        scale[i]=i*5;
-
-    /* set the scale for the second dimension */
-    status = SDsetdimscale(dimid1, 6, DFNT_INT32, scale);
-    CHECK(status, FAIL, "SDsetdimscale");
-
-    for (i=0; i<24; i++)
-        idata[i] = i;
-
-    /* write data to data set 'dimval_non_compat' in file 'test1.hdf' */
-    start[0]=0;
-    start[1]=0;
-    end[0]=4;
-    end[1]=6;
-    status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
-    CHECK(status, FAIL, "SDwritedata");
-
-    /* end access to data set 'dimval_non_compat' */
-    status = SDendaccess(sdid);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* close file 'test1.hdf */
-    status = SDend(f1);
-    CHECK(status, FAIL, "SDend");
-
-    /* read back and change dimval compatibility  */
-
-    /* open file 'test1.hdf' again */
-    f1 = SDstart(FILE1, DFACC_RDWR);
-    CHECK(f1, FAIL, "SDstart: (again2)");
-
-    /* get index of data set 'dimval_non_compat' in file 'test1.hdf' */
-    index = SDnametoindex(f1, "dimval_non_compat");
-    CHECK(index,FAIL,"SDnametoindex: failed to get index for data set 'dimval_non_compat' in file 'test1.hdf'");
-
-    /* select data set 'dimval_non_compat' based on it's index in file */
-    sdid = SDselect(f1, index);
-    CHECK(sdid,FAIL,"SDselect:Failed to select data set 'dimval_non_compat' in file 'test1.hdf'");
-
-    /* info on data set 'dimval_non_compat' */
-    status = SDgetinfo(sdid, name, (int32 *)&rank, dimsize, &nt, (int32 *)&nattrs);
-    CHECK(status, FAIL, "SDgetinfo");
-
-    /* verify correctness of information */
-    if (rank!=2 || dimsize[0]!=4 || dimsize[1]!=6 || nt!=DFNT_INT32) 
-      {
-        fprintf(stderr, "SDgetinfo returned wrong values\n");
-          num_err++;
-      }
-
-    /* get handle for first dimension of data set 'dimval_non_compat' */
-    dimid=SDgetdimid(sdid,0);
-    CHECK(dimid, FAIL, "SDgetdimid");
-
-    /* get dimension info for first dimension */
-    status = SDdiminfo(dimid, name, (int32 *)&dimsize[0], &nt, (int32 *)&nattrs);
-    CHECK(status, FAIL, "SDdiminfo");
-
-    /* verify correctness of information */
-    if (dimsize[0]!=SD_UNLIMITED || nt!= 0 )  
-      {
-          fprintf(stderr, "SDdiminfo returned wrong values\n");
-          num_err++;
-      }
-
-    /* get handle for second dimension of data set 'dimval_non_compat' */
-    dimid1=SDgetdimid(sdid,1);
-    CHECK(dimid1, FAIL, "SDgetdimid");
-
-    /* get dimension info for second dimension */
-    status = SDdiminfo(dimid1, name, (int32 *)&dimsize[1], &nt, (int32 *)&nattrs);
-    CHECK(status, FAIL, "SDdiminfo");
-
-    /* verify correctness of information */
-    if (dimsize[1]!=6 || nt!= DFNT_INT32 )  
-      {
-          fprintf(stderr, "Failed on SDgetinfo call\n");
-          num_err++;
-      }
-
-    /* read data back from data set 'dimval_non_compat' */
-    status = SDreaddata(sdid, start, NULL, end, (VOIDP)idata);
-    CHECK(status, FAIL, "SDwritedata");
-
-    /* verify data */
-    for (i=0; i<24; i++)  
-      {
-        if (idata[i] != i) 
-          {
-           fprintf(stderr, "wrong value: should be %d, got %d\n",
-                           i, idata[i]);
-           num_err++;
-          }
-      }
-
-    /* see if second dimensionis backward compatible. 
-       should be incompatible? */
-    status = SDisdimval_bwcomp(dimid1);
-    if (status != SD_DIMVAL_BW_INCOMP)  
-      {
-          fprintf(stderr, "SDisdimvalcomp returned wrong value for dimension\n");
-          num_err++;
-      }
-
-    /* re-set second dimension as backward compatible? */
-    status = SDsetdimval_comp(dimid1, SD_DIMVAL_BW_COMP);
-    CHECK(status, FAIL, "SDsetdimval_comp");
-
-    /* end access to data set 'dimval_non_compat' */
-    status = SDendaccess(sdid);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* close file 'test1.hdf' */
-    status = SDend(f1);
-    CHECK(status, FAIL, "SDend");
-
-    /* open one last time to check that NDG ref has been constant */
-    /* check SDsetdimval_compat */
-
-    /* open file 'test1.hdf' again */
-    f1 = SDstart(FILE1, DFACC_RDWR);
-    CHECK(f1, FAIL, "SDstart (again3)");
-
-    /* get index of data set 'dimval_non_compat' in file 'test1.hdf' */
-    index = SDnametoindex(f1, "dimval_non_compat");
-    CHECK(index,FAIL,"SDnametoindex: failed to get index for data set 'dimval_non_compat' in file 'test1.hdf'");
-
-    /* select data set 'dimval_non_compat' based on it's index in file */
-    sdid = SDselect(f1, index);
-    CHECK(sdid,FAIL,"SDselect:Failed to select data set 'dimval_non_compat' in file 'test1.hdf'");
-
-    /* info on data set 'dimval_non_compat' */
-    status = SDgetinfo(sdid, name, (int32 *)&rank, dimsize, &nt, (int32 *)&nattrs);
-    CHECK(status, FAIL, "SDgetinfo");
-
-    /* verify correctness of information */
-    if (rank!=2 || dimsize[0]!=4 || dimsize[1]!=6 || nt!=DFNT_INT32) 
-      {
-        fprintf(stderr, "SDgetinfo returned wrong values\n");
-          num_err++;
-      }
-
-    /* get handle for second dimension of data set 'dimval_non_compat' */
-    dimid1=SDgetdimid(sdid,1);
-    CHECK(dimid1, FAIL, "SDgetdimid");
-
-    /* get dimension info for second dimension */
-    status = SDdiminfo(dimid1, name, (int32 *)&dimsize[1], &nt, (int32 *)&nattrs);
-    CHECK(status, FAIL, "SDdiminfo");
-
-    /* verify correctness of information */
-    if (dimsize[1]!=6 || nt!= DFNT_INT32 )  
-      {
-          fprintf(stderr, "Failed on SDgetinfo call\n");
-          num_err++;
-      }
-
-    /* see if second dimensionis backward compatible. 
-       should be backward compatible? */
-    status = SDisdimval_bwcomp(dimid1);
-    if (status != SD_DIMVAL_BW_COMP)  
-      {
-          fprintf(stderr, "SDisdimvalcomp returned wrong value\n");
-          num_err++;
-      }
-
-    /* end access to data set 'dimval_non_compat' */
-    status = SDendaccess(sdid);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /*
-     * used saved ref at the begining to retrieve the data set
-     */
-    
-    /* get the index of the data set to which this 'ref' belongs to */
-    index = SDreftoindex(f1, ndg_saved_ref);
-    CHECK(index,FAIL,"SDreftoindex: failed to get index for 'ndg_saved_ref'");
-
-    /* get handle for this data set (DataSetAlpha) */
-    sdsid = SDselect(f1, index);
-    CHECK(sdsid,FAIL,"SDselect: Failed to get handle for data set 'DataSetAlpha' ");
-
-    /* check if ref of this is the same as the one saved earlier */
-    if(ndg_saved_ref != SDidtoref(sdsid)) 
-      {
-        fprintf(stderr, "Saved NDG ref != to SDindextoref of same\n");
-        num_err++;
-      }
-
-    /* end access to data set 'DataSetAlpha' in file 'test1.hdf' */    
-    status = SDendaccess(sdsid);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* close file 'test1.hdf' */
-    status = SDend(f1);
-    CHECK(status, FAIL, "SDend");
-
-#ifdef EXTERNAL_TEST
-
-    /*
-     * Test the External File storage stuff
-     */
-
-    /* Create file 'exttst.hdf' */
-    fext = SDstart(EXTTST, DFACC_CREATE);
-    CHECK(fext, FAIL, "SDstart");
-
-    /* Create data set 'ExteneralDataSet' in file 'exttst.hdf' */
-    nt = DFNT_INT32 | DFNT_NATIVE;
-    dimsize[0] = 5;
-    dimsize[1] = 5;
-    newsds = SDcreate(fext, "ExternalDataSet", nt, 2, dimsize);
-    CHECK(newsds, FAIL, "SDcreate: Failed to create a new data set 'ExternalDataSet' for external promotion");
-
-    /* initialize data to write out */
-    for(i = 0; i < 25; i++)
-        idata[i] = i;
-
-    /* Write data to all of data set 'ExternalDataSet' in file 'exttst.hdf' */
-    start[0] = start[1] = 0;
-    end[0]   = end[1]   = 5;
-    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
-    CHECK(status, FAIL, "SDwritedata");
-
-    /* Now promote data set 'ExternalDataSet' to an external data set
-       in the file 'extfile.hdf' */
-    status = SDsetexternalfile(newsds, EXTFILE, 0);
-    CHECK(status, FAIL, "SDsetexternalfile");
-
-    for(i = 0; i < 10; i++)
-        idata[i] = i * 10;
-
-    /* Now write data to part of newly promoted data set 'ExternalDataSet'
-       which is now an external data set */
-    start[0] = start[1] = 0;
-    end[0]   = 2;
-    end[1]   = 5;
-    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
-    CHECK(status, FAIL, "SDwritedata");
-
-    /* end access to data set 'ExternalDataSet' */
-    status = SDendaccess(newsds);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* need to close to flush external info to file 'exttst.hdf' */
-    status = SDend(fext);
-    CHECK(status, FAIL, "SDend");
-
-    /* Open file 'exttst.hdf' again */
-    fext = SDstart(EXTTST, DFACC_RDWR);
-    CHECK(fext, FAIL, "SDstart (again)");
-
-    /* Create a "wrapper" data set in file 'exttst.hdf'. i.e. a data set 
-       that will point to data in an already existing external file */
-    dimsize[0] = 3;
-    dimsize[1] = 3;
-    newsds2 = SDcreate(fext, "WrapperDataSet", nt, 2, dimsize);
-    CHECK(newsds2, FAIL, "SDcreate:Failed to create a new data set('WrapperDataSet') for external wrapping");
-
-    /* Promote the regular data set  to a "wrapper" one by making
-       it point to where the real data is in the external file 'extfile.hdf'.
-       Note that only a subset of the real data('ExternalDataSet') is pointed to
-       by the "wrapper" data set. */
-    offset = DFKNTsize(nt) * 2;
-    status = SDsetexternalfile(newsds2, EXTFILE, offset);
-    CHECK(status, FAIL, "SDsetexternalfile");
-
-    /* now read data back from this "wrapper" data set */
-    start[0] = start[1] = 0;
-    end[0]   = end[1]   = 3;
-    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) idata);
-    CHECK(status, FAIL, "SDreaddata");
-
-    /* verify data read back in */
-    for(i = 0; i < 8; i++)
-      {
-        if(idata[i] != (i + 2) * 10) 
-          {
-            fprintf(stderr, "Bogus val in loc %d in wrapper dset want %d  got %ld\n", 
-		    i, (i + 2) * 10, (long)idata[i]);
-            num_err++;
-          }
-      }
-
-    if(idata[8] != 10) 
-      {
-        fprintf(stderr, "Bogus val in last loc in wrapper dset want 10  got %ld\n",
-		(long)idata[8]);
-        num_err++;
-      }
-
-    /* End access to data set "WrapperDataSet" */
-    status = SDendaccess(newsds2);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* Close file 'exttst.hdf' */
-    status = SDend(fext);
-    CHECK(status, FAIL, "SDend");
-
-#endif /* EXTERNAL_TEST */
-
-
-#ifdef NBIT_TEST
-
-    /*
-     * Test the N-Bit storage stuff
-     */
-
-    /* Create file 'nbit.hdf' */
-    fnbit = SDstart(NBITFILE, DFACC_CREATE);
-    CHECK(fnbit, FAIL, "SDstart");
-
-    /* Create data set 'NBitDataSet' in file 'nbit.hdf' */
-    nt = DFNT_INT32;
-    dimsize[0] = 5;
-    dimsize[1] = 5;
-    newsds = SDcreate(fnbit, "NBitDataSet", nt, 2, dimsize);
-    CHECK(newsds,FAIL,"SDcreate:Failed to create a new data set('NBitDataSet') for n-bit testing");
-
-    /* Initialize data to write out */
-    for(i = 0; i < 25; i++)
-        idata[i] = i*10;
-
-    /* Promote the data set 'NBitDataSet' to an NBIT data set */
-    status = SDsetnbitdataset(newsds,6,7,FALSE,FALSE);
-    CHECK(status, FAIL, "SDsetnbitdataset");
-
-    /* Write data to the NBIT data set 'NBitDataSet' */
-    start[0] = start[1] = 0;
-    end[0]   = end[1]   = 5;
-    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
-    CHECK(status, FAIL, "SDwritedata");
-
-    /* end access to NBIT data set 'NBitDataSet' */
-    status = SDendaccess(newsds);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* need to close to flush n-bit info to file.
-       hmm... */
-    status = SDend(fnbit);
-    CHECK(status, FAIL, "SDend");
-
-    /* read the n-bit data back in */
-    fnbit = SDstart(NBITFILE, DFACC_RDWR);
-    CHECK(fnbit, FAIL, "SDstart (again)");
-
-    /* Select the NBIT data set back in, assume it is the first one */
-    newsds2 = SDselect(fnbit, 0);
-    CHECK(newsds2, FAIL,"SDselect:Failed to select a data set for n-bit access");
-
-    /* read data back in from the NBIT data set */
-    start[0] = start[1] = 0;
-    end[0]   = end[1]   = 5;
-    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
-    CHECK(status, FAIL, "SDreaddata");
-
-    /* verify the data */
-    for(i = 0; i < 25; i++)
-      {
-        if((idata[i]&0x7f) != rdata[i]) 
-          {
-            fprintf(stderr,"Bogus val in loc %d in n-bit dset want %ld got %ld\n",
-		    i, (long)idata[i], (long)rdata[i]);
-            num_err++;
-          }
-      }
-
-    /* end access to NBIT data set */
-    status = SDendaccess(newsds2);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* close file 'nbit.hdf' */
-    status = SDend(fnbit);
-    CHECK(status, FAIL, "SDend");
-
-#endif /* NBIT_TEST */
-
-#ifdef COMP_TEST
-    /*
-     * Test the compressed storage routines
-     */
-
-#ifdef QAK
-printf("writing 1st compressed dataset, basic skipping huffman\n");
-#endif /* QAK */
-    fcomp = SDstart(COMPFILE1, DFACC_CREATE);
-    CHECK(fcomp, FAIL, "SDstart");
-
-    nt = DFNT_INT32;
-    dimsize[0] = 5;
-    dimsize[1] = 5;
-    newsds = SDcreate(fcomp, "CompDataSet1", nt, 2, dimsize);
-    if(newsds == FAIL) {
-        fprintf(stderr, "Failed to create a new data set for compression testing\n");
-        num_err++;
-    }
-
-    for(i = 0; i < 25; i++)
-        idata[i] = i*10;
-
-#ifdef QAK
-printf("before SDsetcompress\n");
-#endif /* QAK */
-    cinfo.skphuff.skp_size=4;
-    status = SDsetcompress(newsds,COMP_CODE_SKPHUFF,&cinfo);
-    CHECK(status, FAIL, "SDcompress");
-
-    start[0] = start[1] = 0;
-    end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDwritedata\n");
-#endif /* QAK */
-    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
-    CHECK(status, FAIL, "SDwritedata");
-
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
-    status = SDendaccess(newsds);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* need to close to flush compressed info to file */
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
-
-    /* read the compressed data back in */
-#ifdef QAK
-printf("reading compressed dataset\n");
-#endif /* QAK */
-    fcomp = SDstart(COMPFILE1, DFACC_RDWR);
-    CHECK(fcomp, FAIL, "SDstart (again)");
-
-    newsds2 = SDselect(fcomp, 0);
-    if(newsds == FAIL) {
-        fprintf(stderr, "Failed to select a data set for compressed access\n");
-        num_err++;
-    }
-
-    start[0] = start[1] = 0;
-    end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDreaddata\n");
-#endif /* QAK */
-    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
-    CHECK(status, FAIL, "SDreaddata");
-
-    for(i = 0; i < 25; i++)
-        if(idata[i] != rdata[i]) {
-            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
-            num_err++;
-        }
-
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
-    status = SDendaccess(newsds2);
-    CHECK(status, FAIL, "SDendaccess");
-
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
-
-#ifdef QAK
-printf("writing 2nd compressed dataset, partially filled & skipping huffman\n");
-#endif /* QAK */
-    fcomp = SDstart(COMPFILE2, DFACC_CREATE);
-    CHECK(fcomp, FAIL, "SDstart");
-
-    nt = DFNT_INT32;
-    dimsize[0] = 5;
-    dimsize[1] = 5;
-    newsds = SDcreate(fcomp, "CompDataSet2", nt, 2, dimsize);
-    if(newsds == FAIL) {
-        fprintf(stderr, "Failed to create a new data set for compression testing\n");
-        num_err++;
-    }
-
-    fillval=43;
-#ifdef QAK
-printf("before SDsetfillvalue\n");
-#endif /* QAK */
-    status = SDsetfillvalue(newsds,(VOIDP)&fillval);
-    CHECK(status, FAIL, "SDsetfillvalue");
-
-#ifdef QAK
-printf("before SDsetcompress\n");
-#endif /* QAK */
-    cinfo.skphuff.skp_size=4;
-    status = SDsetcompress(newsds,COMP_CODE_SKPHUFF,&cinfo);
-    CHECK(status, FAIL, "SDsetcompress");
-
-    /* fill the array with the standard info */
-    for(i = 0; i < 25; i++)
-        idata[i] = i*10;
-    /* overwrite selected portions with the fill value */
-    for(i = 0; i < 5; i++)
-        idata[i] = fillval;
-    for(i = 20; i < 25; i++)
-        idata[i] = fillval;
-
-    start[0] = 1;
-    start[1] = 0;
-    end[0]   = 3;
-    end[1]   = 5;
-#ifdef QAK
-printf("before SDwritedata\n");
-#endif /* QAK */
-    status = SDwritedata(newsds, start, NULL, end, (VOIDP) &idata[5]);
-    CHECK(status, FAIL, "SDwritedata");
-
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
-    status = SDendaccess(newsds);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* need to close to flush compressed info to file */
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
-
-    /* read the compressed data back in */
-#ifdef QAK
-printf("reading compressed dataset\n");
-#endif /* QAK */
-    fcomp = SDstart(COMPFILE2, DFACC_RDWR);
-    CHECK(fcomp, FAIL, "SDstart (again)");
-
-    newsds2 = SDselect(fcomp, 0);
-    if(newsds == FAIL) {
-        fprintf(stderr, "Failed to select a data set for compressed access\n");
-        num_err++;
-    }
-
-    start[0] = start[1] = 0;
-    end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDreaddata\n");
-#endif /* QAK */
-    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
-    CHECK(status, FAIL, "SDreaddata");
-
-    for(i = 0; i < 25; i++)
-        if(idata[i] != rdata[i]) {
-            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
-            num_err++;
-        }
-
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
-    status = SDendaccess(newsds2);
-    CHECK(status, FAIL, "SDendaccess");
-
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
-
-#ifdef QAK
-printf("creating 3rd compressed dataset, compressed template & skipping huffman\n");
-#endif /* QAK */
-    fcomp = SDstart(COMPFILE3, DFACC_CREATE);
-    CHECK(fcomp, FAIL, "SDstart");
-
-    nt = DFNT_INT32;
-    dimsize[0] = 5;
-    dimsize[1] = 5;
-    newsds = SDcreate(fcomp, "CompDataSet3", nt, 2, dimsize);
-    if(newsds == FAIL) {
-        fprintf(stderr, "Failed to create a new data set for compression testing\n");
-        num_err++;
-    }
-
-    fillval=56;
-#ifdef QAK
-printf("before SDsetfillvalue\n");
-#endif /* QAK */
-    status = SDsetfillvalue(newsds,(VOIDP)&fillval);
-    CHECK(status, FAIL, "SDsetfillvalue");
-
-#ifdef QAK
-printf("before SDsetcompress\n");
-#endif /* QAK */
-    cinfo.skphuff.skp_size=4;
-    status = SDsetcompress(newsds,COMP_CODE_SKPHUFF,&cinfo);
-    CHECK(status, FAIL, "SDsetcompress");
-
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
-    status = SDendaccess(newsds);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* need to close to flush compressed info to file */
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
-
-    /* read the compressed data back in */
-#ifdef QAK
-printf("reading compressed dataset\n");
-#endif /* QAK */
-    fcomp = SDstart(COMPFILE3, DFACC_RDWR);
-    CHECK(fcomp, FAIL, "SDstart (again)");
-
-    newsds2 = SDselect(fcomp, 0);
-    if(newsds == FAIL) {
-        fprintf(stderr, "Failed to select a data set for compressed access\n");
-        num_err++;
-    }
-
-    start[0] = start[1] = 0;
-    end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDreaddata\n");
-#endif /* QAK */
-    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
-    CHECK(status, FAIL, "SDreaddata");
-
-    for(i = 0; i < 25; i++)
-        if(fillval != rdata[i]) {
-            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
-            num_err++;
-        }
-
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
-    status = SDendaccess(newsds2);
-    CHECK(status, FAIL, "SDendaccess");
-
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
-
-#ifdef QAK
-printf("creating 4th compressed dataset, compressed template read, then partial write & skipping huffman\n");
-#endif /* QAK */
-    fcomp = SDstart(COMPFILE4, DFACC_CREATE);
-    CHECK(fcomp, FAIL, "SDstart");
-
-    nt = DFNT_INT32;
-    dimsize[0] = 5;
-    dimsize[1] = 5;
-    newsds = SDcreate(fcomp, "CompDataSet4", nt, 2, dimsize);
-    if(newsds == FAIL) {
-        fprintf(stderr, "Failed to create a new data set for compression testing\n");
-        num_err++;
-    }
-
-    fillval=67;
-#ifdef QAK
-printf("before SDsetfillvalue\n");
-#endif /* QAK */
-    status = SDsetfillvalue(newsds,(VOIDP)&fillval);
-    CHECK(status, FAIL, "SDsetfillvalue");
-
-#ifdef QAK
-printf("before SDsetcompress\n");
-#endif /* QAK */
-    cinfo.skphuff.skp_size=4;
-    status = SDsetcompress(newsds,COMP_CODE_SKPHUFF,&cinfo);
-    CHECK(status, FAIL, "SDsetcompress");
-
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
-    status = SDendaccess(newsds);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* need to close to flush compressed info to file */
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
-
-    /* read the compressed data back in */
-#ifdef QAK
-printf("reading compressed dataset\n");
-#endif /* QAK */
-    fcomp = SDstart(COMPFILE4, DFACC_RDWR);
-    CHECK(fcomp, FAIL, "SDstart (again)");
-
-    newsds2 = SDselect(fcomp, 0);
-    if(newsds == FAIL) {
-        fprintf(stderr, "Failed to select a data set for compressed access\n");
-        num_err++;
-    }
-
-    start[0] = start[1] = 0;
-    end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDreaddata\n");
-#endif /* QAK */
-    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
-    CHECK(status, FAIL, "SDreaddata");
-
-    for(i = 0; i < 25; i++)
-        if(fillval != rdata[i]) {
-            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
-            num_err++;
-        }
-
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
-    status = SDendaccess(newsds2);
-    CHECK(status, FAIL, "SDendaccess");
-
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
-
-#ifdef QAK
-printf("writing compressed dataset\n");
-#endif /* QAK */
-    fcomp = SDstart(COMPFILE4, DFACC_RDWR);
-    CHECK(fcomp, FAIL, "SDstart (again)");
-
-    newsds2 = SDselect(fcomp, 0);
-    if(newsds == FAIL) {
-        fprintf(stderr, "Failed to select a data set for compressed access\n");
-        num_err++;
-    }
-    /* fill the array with the standard info */
-    for(i = 0; i < 25; i++)
-        idata[i] = i*10;
-    /* overwrite selected portions with the fill value */
-    for(i = 0; i < 10; i++)
-        idata[i] = fillval;
-    for(i = 20; i < 25; i++)
-        idata[i] = fillval;
-
-    start[0] = 2;
-    start[1] = 0;
-    end[0]   = 2;
-    end[1]   = 5;
-#ifdef QAK
-printf("before SDwritedata\n");
-#endif /* QAK */
-    status = SDwritedata(newsds, start, NULL, end, (VOIDP) &idata[10]);
-    CHECK(status, FAIL, "SDwritedata");
-
-
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
-    status = SDendaccess(newsds);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* need to close to flush compressed info to file */
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
-
-    fcomp = SDstart(COMPFILE4, DFACC_RDWR);
-    CHECK(fcomp, FAIL, "SDstart (again)");
-
-    newsds2 = SDselect(fcomp, 0);
-    if(newsds == FAIL) {
-        fprintf(stderr, "Failed to select a data set for compressed access\n");
-        num_err++;
-    }
-
-    start[0] = start[1] = 0;
-    end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDreaddata\n");
-#endif /* QAK */
-    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
-    CHECK(status, FAIL, "SDreaddata");
-
-    for(i = 0; i < 25; i++)
-        if(idata[i] != rdata[i]) {
-            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
-            num_err++;
-        }
-
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
-    status = SDendaccess(newsds2);
-    CHECK(status, FAIL, "SDendaccess");
-
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
-
-#ifdef QAK
-printf("writing 5th compressed dataset, basic RLE\n");
-#endif /* QAK */
-    fcomp = SDstart(COMPFILE5, DFACC_CREATE);
-    CHECK(fcomp, FAIL, "SDstart");
-
-    nt = DFNT_INT32;
-    dimsize[0] = 5;
-    dimsize[1] = 5;
-    newsds = SDcreate(fcomp, "CompDataSet5", nt, 2, dimsize);
-    if(newsds == FAIL) {
-        fprintf(stderr, "Failed to create a new data set for compression testing\n");
-        num_err++;
-    }
-
-    for(i = 0; i < 25; i++)
-        idata[i] = i*10;
-
-#ifdef QAK
-printf("before SDsetcompress\n");
-#endif /* QAK */
-    status = SDsetcompress(newsds,COMP_CODE_RLE,&cinfo);
-    CHECK(status, FAIL, "SDcompress");
-
-    start[0] = start[1] = 0;
-    end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDwritedata\n");
-#endif /* QAK */
-    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
-    CHECK(status, FAIL, "SDwritedata");
-
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
-    status = SDendaccess(newsds);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* need to close to flush compressed info to file */
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
-
-    /* read the compressed data back in */
-#ifdef QAK
-printf("reading compressed dataset\n");
-#endif /* QAK */
-    fcomp = SDstart(COMPFILE5, DFACC_RDWR);
-    CHECK(fcomp, FAIL, "SDstart (again)");
-
-    newsds2 = SDselect(fcomp, 0);
-    if(newsds == FAIL) {
-        fprintf(stderr, "Failed to select a data set for compressed access\n");
-        num_err++;
-    }
-
-    start[0] = start[1] = 0;
-    end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDreaddata\n");
-#endif /* QAK */
-    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
-    CHECK(status, FAIL, "SDreaddata");
-
-    for(i = 0; i < 25; i++)
-        if(idata[i] != rdata[i]) {
-            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
-            num_err++;
-        }
-
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
-    status = SDendaccess(newsds2);
-    CHECK(status, FAIL, "SDendaccess");
-
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
-
-#ifdef QAK
-printf("writing 6th compressed dataset, no encoding\n");
-#endif /* QAK */
-    fcomp = SDstart(COMPFILE6, DFACC_CREATE);
-    CHECK(fcomp, FAIL, "SDstart");
-
-    nt = DFNT_INT32;
-    dimsize[0] = 5;
-    dimsize[1] = 5;
-    newsds = SDcreate(fcomp, "CompDataSet6", nt, 2, dimsize);
-    if(newsds == FAIL) {
-        fprintf(stderr, "Failed to create a new data set for compression testing\n");
-        num_err++;
-    }
-
-    for(i = 0; i < 25; i++)
-        idata[i] = i*10;
-
-#ifdef QAK
-printf("before SDsetcompress\n");
-#endif /* QAK */
-    status = SDsetcompress(newsds,COMP_CODE_NONE,&cinfo);
-    CHECK(status, FAIL, "SDcompress");
-
-    start[0] = start[1] = 0;
-    end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDwritedata\n");
-#endif /* QAK */
-    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
-    CHECK(status, FAIL, "SDwritedata");
-
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
-    status = SDendaccess(newsds);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* need to close to flush compressed info to file */
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
-
-    /* read the compressed data back in */
-#ifdef QAK
-printf("reading compressed dataset\n");
-#endif /* QAK */
-    fcomp = SDstart(COMPFILE6, DFACC_RDWR);
-    CHECK(fcomp, FAIL, "SDstart (again)");
-
-    newsds2 = SDselect(fcomp, 0);
-    if(newsds == FAIL) {
-        fprintf(stderr, "Failed to select a data set for compressed access\n");
-        num_err++;
-    }
-
-    start[0] = start[1] = 0;
-    end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDreaddata\n");
-#endif /* QAK */
-    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
-    CHECK(status, FAIL, "SDreaddata");
-
-    for(i = 0; i < 25; i++)
-        if(idata[i] != rdata[i]) {
-            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
-            num_err++;
-        }
-
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
-    status = SDendaccess(newsds2);
-    CHECK(status, FAIL, "SDendaccess");
-
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
-
-#ifdef QAK
-printf("writing 7th compressed dataset, deflate encoding\n");
-#endif /* QAK */
-    fcomp = SDstart(COMPFILE7, DFACC_CREATE);
-    CHECK(fcomp, FAIL, "SDstart");
-
-    nt = DFNT_INT32;
-    dimsize[0] = 5;
-    dimsize[1] = 5;
-    newsds = SDcreate(fcomp, "CompDataSet7", nt, 2, dimsize);
-    if(newsds == FAIL) {
-        fprintf(stderr, "Failed to create a new data set for compression testing\n");
-        num_err++;
-    }
-
-    for(i = 0; i < 25; i++)
-        idata[i] = i*10;
-
-#ifdef QAK
-printf("before SDsetcompress\n");
-#endif /* QAK */
-    cinfo.deflate.level=6;
-    status = SDsetcompress(newsds,COMP_CODE_DEFLATE,&cinfo);
-    CHECK(status, FAIL, "SDcompress");
-
-    start[0] = start[1] = 0;
-    end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDwritedata\n");
-#endif /* QAK */
-    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
-    CHECK(status, FAIL, "SDwritedata");
-
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
-    status = SDendaccess(newsds);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* need to close to flush compressed info to file */
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
-
-    /* read the compressed data back in */
-#ifdef QAK
-printf("reading compressed dataset\n");
-#endif /* QAK */
-    fcomp = SDstart(COMPFILE7, DFACC_RDWR);
-    CHECK(fcomp, FAIL, "SDstart (again)");
-
-    newsds2 = SDselect(fcomp, 0);
-    if(newsds == FAIL) {
-        fprintf(stderr, "Failed to select a data set for compressed access\n");
-        num_err++;
-    }
-
-    start[0] = start[1] = 0;
-    end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDreaddata\n");
-#endif /* QAK */
-    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
-    CHECK(status, FAIL, "SDreaddata");
-
-    for(i = 0; i < 25; i++)
-        if(idata[i] != rdata[i]) {
-            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
-            num_err++;
-        }
-
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
-    status = SDendaccess(newsds2);
-    CHECK(status, FAIL, "SDendaccess");
-
-#ifdef QAK
-printf("before SDend\n");
-#endif /* QAK */
-    status = SDend(fcomp);
-    CHECK(status, FAIL, "SDend");
-
-#endif /* COMP_TEST */
-
-
-#ifdef CHUNK_TEST
 
     /* Create file 'chktst.hdf' */
     fchk = SDstart(CHKFILE, DFACC_CREATE);
@@ -3446,7 +1486,2096 @@ printf("before SDend\n");
 
   done:
 
+    return num_err;
+} /* test_chunk() */
 #endif /* CHUNK_TEST */
+
+#ifdef NETCDF_READ_TEST
+static uint16  netcdf_u16[2][3] = {{1, 2, 3}, 
+                                   {4, 5, 6}};
+
+/* Tests reading of netCDF file 'test1.nc' using the SDxxx inteface.
+   Note not all features of reading SDS from netCDF files are tested here.
+   Hopefully more tests will be added over time as needed/required. */
+intn
+test_netcdf_reading()
+{
+	int32 sd_id;
+    int32 sds_id;
+    int32 n_datasets;
+    int32 n_file_attrs;
+    int32 index;
+	int32 rank;
+    int32 num_type;
+    int32 attributes;
+	int32 dim_sizes[MAX_VAR_DIMS];
+    int32 start[MAX_VAR_DIMS];
+    int32 edges[MAX_VAR_DIMS];
+    int16 array_data[2][3];
+	char name[MAX_NC_NAME];
+    int32 status;
+    intn i, j;
+    int     num_err = 0;    /* number of errors so far */
+
+	/* Open the file 'test1.nc' and initialize the SDxxx interface. */
+	sd_id = SDstart("test1.nc", DFACC_RDONLY);
+    CHECK(sd_id, FAIL, "netCDF Read Test 1. SDstart failed on file test1.nc");
+
+	/* Determine the contents of the file. */
+	status = SDfileinfo(sd_id, &n_datasets, &n_file_attrs);
+    CHECK(status, FAIL, "netCDF Read Test 1. SDfileinfo failed on file test1.nc");
+
+    /* There should be 8 datasets in the file and 1 file level attribute */
+    if (n_datasets != 8 )
+      {
+          fprintf(stderr,"netCDF Read Test 1: SDfileinfo returned wrong number of datasets in file test1.nc \n");
+          num_err++;
+      }
+
+    if (n_file_attrs != 1 )
+      {
+          fprintf(stderr,"netCDF Read Test 1: SDfileinfo returned wrong number of file attributes in file test1.nc \n");
+          num_err++;
+      }
+#if 0
+    fprintf(stdout,"n_datasets=%d, n_file_attrs=%d \n", 
+            n_datasets, n_file_attrs);
+#endif
+
+	/* Access and find the 2-dim dataset of data-type shorts(DFNT_INT16). 
+       in the file while querying every data set in the file. 
+       There should only be one dataset that matches and is named 'order'.*/
+	for (index = 0; index < n_datasets; index++) 
+      {
+          sds_id = SDselect(sd_id, index);
+          CHECK(sds_id, FAIL, "netCDF Read Test 1. SDselect failed for dataset in  file test1.nc");
+
+          status = SDgetinfo(sds_id, name, &rank, dim_sizes, &num_type, &attributes);
+          CHECK(status, FAIL, "netCDF Read Test 1. SDgetinfo failed for dataset in  file test1.nc");
+
+          /* look for the dataset 'order' based on rank and number type */
+          if (rank == 2 & num_type == DFNT_INT16)
+            { /* should only be one of these */
+#if 0
+                fprintf(stdout,"found SDS with rank 2 and num_type DFNT_INT16(22) \n");
+#endif
+                start[0] =  start[1] = 0; 
+                edges [0] = dim_sizes[0];
+                edges [1] = dim_sizes[1];
+        
+                status = SDreaddata (sds_id, start, NULL, edges, (VOIDP) array_data);
+                CHECK(status, FAIL, "netCDF Read Test 1. SDreaddata failed for dataset in  file test1.nc");
+#if 0
+                fprintf (stderr,"\nData for 2-dimensional array of type DFNT_INT16: \n");
+#endif
+                /* check the data against our buffer 'netcdf_u16[][]' */
+                for (j = 0; j < dim_sizes[0]; j++ )
+                  {
+                      for (i = 0; i < dim_sizes[1]; i++)
+                        {
+                            if (array_data[j][i] != netcdf_u16[j][i])
+                              {
+                                  fprintf(stderr,"netCDF Read Test 1: bogus val read: wanted netcdf[%d][%d]=%d, read array[%d][%d]=%d \n",
+                                          j,i,netcdf_u16[j][i], j,i, array_data[j][i] );
+                              }
+#if 0
+                            fprintf(stderr,"  %i ", array_data[j][i]);
+#endif
+                        }
+#if 0
+                      fprintf(stderr,"\n");
+#endif
+                  }
+            }
+
+          /* end access to this SDS */
+          status = SDendaccess(sds_id);
+          CHECK(status, FAIL, "netCDF Read Test 1. SDendaccess failed for dataset in  file test1.nc");
+      } /* end querying every dataset in file */
+
+	/* Terminate access to the SD interface and close the file. */
+	status = SDend(sd_id);
+    CHECK(status, FAIL, "netCDF Read Test 1. SDend failed for file test1.nc");
+
+    return num_err;
+} /* test_netcdf_reading() */
+#endif /* NETCDF_READ_TEST */
+
+int 
+main(int argc, char *argv[])
+{
+    int32 f1, f2, fext, fnbit, fcomp; /* File handles */
+    int32 nt;                /* Number type */
+    int32 dimsize[10];       /* dimension sizes */
+    int32 newsds, newsds2, newsds3; /* SDS handles */
+    int32 sdsid;                    /* SDS handle */
+    int32 dimid, dimid1, dimid2; /* Dimension handles */
+    int32 num_sds;               /* number of SDS in file */
+    int32 num_gattr;             /* Number of global attributes */
+    int32 offset;                /* offset for ? */
+#if defined COMP_TEST 
+    comp_info cinfo;            /* compression information structure */
+#endif /* COMP_TEST */
+    int32 index;       /* Index of dataset in file */
+    int32 ival;
+    int32 sdid;        /* another SDS handle */
+    int32 rank;        /* rank of SDS */
+    intn  status;      /* status flag */
+    intn  i,j,k;       /* loop variables */
+    intn  nattrs;      /* Number of attributes again? */
+    char name[90];
+    char text[256];
+    int32   start[10], end[10], stride[10]; /* start, end, stride arrays */
+    int32   scale[10];
+    char    l[80], u[80], fmt[80], c[80];
+    int32   count;
+    int32   fillval;
+    int32   idata[100];
+    int32   rdata[100];
+    int16   sdata[100];
+    int32   ndg_saved_ref;  /* used to save a ref of an SDS in one of the test */
+    uint8   iuval;
+    float32 data[1000], max, min, imax, imin;
+    float64 cal, cale, ioff, ioffe;
+    int     num_err = 0;    /* number of errors so far */
+
+
+#if defined __MWERKS__
+    argc = ccommand(&argv);
+#endif
+
+    ncopts = NC_VERBOSE;
+
+    /* Testing SDstart */
+    /* Try start non-existing file with RDONLY and RDWR. Both should fail. */
+    f1 = SDstart(UFOFILE, DFACC_RDONLY);
+
+    if (f1 != FAIL)
+      {
+          fprintf(stderr, "SDstart(..., RDONLY) should fail\n");
+          num_err++;
+          SDend(f1);
+      }
+
+    f1 = SDstart(UFOFILE, DFACC_RDWR);
+    if (f1 != FAIL)
+      {
+          fprintf(stderr, "SDstart(..., RDWR) should fail\n");
+          num_err++;
+          SDend(f1);
+      }
+
+    /* -------hmm what are testing here?----------------- */
+
+    /* Create two files */
+    f1 = SDstart(FILE1, DFACC_CREATE);
+    CHECK(f1, FAIL, "SDstart");
+
+    f2 = SDstart(FILE2, DFACC_CREATE);
+    CHECK(f2, FAIL, "SDstart");
+
+    /* whats in these empty files */
+    status = SDfileinfo(f1, &num_sds, &num_gattr);
+    CHECK(status, FAIL, "SDfileinfo");
+
+    if(num_gattr != 0) 
+      {
+          fprintf(stderr, "File %s still has stuff in it\n", FILE1);
+          num_err++;
+      }
+
+    /* create a 4 by 8 dataset called DataSetAlpha in file test1.hdf */
+    dimsize[0] = 4;
+    dimsize[1] = 8;
+    newsds = SDcreate(f1, "DataSetAlpha", DFNT_FLOAT32, 2, dimsize);
+    CHECK(newsds, FAIL, "SDcreate: Failed to create a new data set DataSetAlpha ");
+
+    /* save the ref number for the first dataset --- will check at very end */
+    ndg_saved_ref = SDidtoref(newsds);
+    CHECK(ndg_saved_ref, 0, "SDidtoref: Failed to get NDG ref for DataSetAlpha ");
+
+    /* create datatset DataSetGamma in file test1.hdf */
+    newsds3 = SDcreate(f1, "DataSetGamma", DFNT_FLOAT64, 1, dimsize);
+    CHECK(newsds3, FAIL, "SDcreate:Failed to create a new data set gamma");
+
+    /* get info on number of datasets and global attributes in file */
+    status = SDfileinfo(f1, &num_sds, &num_gattr);
+    CHECK(status, FAIL, "SDfileinfo");
+
+    if(num_sds != 2) 
+      {
+        fprintf(stderr, "Wrong number of datasets in file 1\n");
+        num_err++;
+      }
+
+    /* get dimension handle for first dimension? of DataSetGamma */
+    dimid = SDgetdimid(newsds3, 0);
+    CHECK(dimid, FAIL, "SDgetdimid:Failed to get dimension id");
+
+    /* reset the dimension name to Mydim? */
+    status = SDsetdimname(dimid, "MyDim");
+    CHECK(status, FAIL, "SDsetdimname: Failed to set dimension name to 'MyDim'");
+
+    /* Set dimension attribute to 'TRUE' */
+    status = SDsetattr(dimid, "DimensionAttribute", DFNT_CHAR8, 4, "TRUE");
+    CHECK(status, FAIL, "SDsetattr: Failed to set Dimension attribute");
+    
+    /* hmm. look it back up again. */
+    status = SDfindattr(dimid, "DimensionAttribute");
+    if(status != 0) 
+      {
+        fprintf(stderr, "SDfindattr: Bad index for finding 'DimensionAttribute' %d\n",
+                status);
+        num_err++;
+      }
+
+    /* Find out info about first atribute for dimension  */
+    status = SDattrinfo(dimid, (int32) 0, name, &nt, &count);
+    CHECK(status, FAIL, "SDattrinfo");
+
+    /* read first attribute in, assume CHAR here. */
+    status = SDreadattr(dimid, 0, text);
+    CHECK(status, FAIL, "SDreadattr");
+    
+    /* Compare value reterieved to what was written */
+    if(HDstrncmp(text, "TRUE", count)) 
+      {
+        fprintf(stderr, "SDreadattr: Invalid dimension attribute read <%s>\n", text);
+        num_err++;
+      }
+
+    /* get First dimension of dataset 'DataSetAlpha' */
+    dimid = SDgetdimid(newsds, 0);
+    CHECK(dimid, FAIL, "SDgetdimid: Failed to get dimension id");
+
+    /* Set this name of this dimension to 'Mydim' */
+    status = SDsetdimname(dimid, "MyDim");
+    CHECK(status, FAIL, "SDsetdimname");
+
+
+    /* Set the scales for this dimension also */
+    scale[0] = 1;
+    scale[1] = 5;
+    scale[2] = 7;
+    scale[3] = 24;
+    status = SDsetdimscale(dimid, 4, DFNT_INT32, (VOIDP) scale);
+    CHECK(status, FAIL, "SDsetdimscale");
+
+    /* Set the dimension strings for the dimension also */
+    status = SDsetdimstrs(dimid, "DimLabel", NULL, "TheFormat");
+    CHECK(status, FAIL, "SDsetdimstrs");
+
+    /* verify that we can read the dimensions values with SDreaddata */
+    start[0] = 0;
+    end[0]   = 4;
+    status = SDreaddata(dimid, start, NULL, end, (VOIDP) idata);
+    CHECK(status, FAIL, "SDreaddata");
+
+    /* compare retrieved values for scale */
+    for(i = 0; i < 4; i++) 
+      {
+        if(idata[i] != scale[i]) 
+          {
+              fprintf(stderr, "SDreaddata() returned %ld not %ld in location %d\n", 
+                      (long)idata[i], (long)scale[i], i);
+              num_err++;
+          }
+      }
+
+    /* hmm...lets store an attribute here for the dimension */
+    max = 3.1415;
+    status = SDsetattr(dimid, "DimAttr", DFNT_FLOAT32, 1, (VOIDP) &max);
+    CHECK(status, FAIL, "SDsetattr");
+
+    /* lets make sure we can read it too */
+    status = SDattrinfo(dimid, 3, name, &nt, &count);
+    CHECK(status, FAIL, "SDattrinfo");
+
+    if(nt != DFNT_FLOAT32) 
+      {
+        fprintf(stderr, "Wrong number type for SDattrinfo(dim)\n");
+        num_err++;
+      }
+
+    if(count != 1) 
+      {
+        fprintf(stderr, "Wrong count for SDattrinfo(dim)\n");
+        num_err++;
+      }
+
+    if(strcmp(name, "DimAttr")) 
+      {
+        fprintf(stderr, "Wrong name for SDattrinfo(dim)\n");
+        num_err++;
+      }
+
+    /* get second dimension of data set 'DataSetAlpha' */
+    dimid2 = SDgetdimid(newsds, 1);
+    CHECK(dimid2, FAIL, "SDgetdimid: Failed to get second dimension id");
+
+    /* lets store an attribute for the dimension without explicitly 
+       creating the coord var first */
+    ival = -256;
+    status = SDsetattr(dimid2, "Integer", DFNT_INT32, 1, (VOIDP) &ival);
+    CHECK(status, FAIL, "SDsetattr");
+
+    /* lets make sure we can read it too */
+    status = SDattrinfo(dimid2, 0, name, &nt, &count);
+    CHECK(status, FAIL, "SDattrinfo");
+
+    if(nt != DFNT_INT32) 
+      {
+        fprintf(stderr, "Wrong number type for SDattrinfo(dim)\n");
+        num_err++;
+      }
+
+    if(count != 1) 
+      {
+        fprintf(stderr, "Wrong count for SDattrinfo(dim)\n");
+        num_err++;
+      }
+
+    if(strcmp(name, "Integer")) 
+      {
+        fprintf(stderr, "Wrong name for SDattrinfo(dim)\n");
+        num_err++;
+      }
+
+    /* read dimension attribute back in */
+    ival = 0;
+    status = SDreadattr(dimid2, 0, (VOIDP) &ival);
+    CHECK(status, FAIL, "SDreatattr");
+    
+    if(ival != -256) 
+      {
+        fprintf(stderr, "Wrong value for SDreadattr(dim)\n");
+        num_err++;
+      }
+
+    /* add an unsigned integer as an dimension attribute */
+    iuval = 253;
+    status = SDsetattr(dimid2, "UnsignedInteger", DFNT_UINT8, 1, (VOIDP) &iuval);
+    CHECK(status, FAIL, "SDsetattr");
+
+    /* lets make sure we can read it too */
+    status = SDattrinfo(dimid2, 1, name, &nt, &count);
+    CHECK(status, FAIL, "SDattrinfo");
+
+    if(nt != DFNT_UINT8) 
+      {
+        fprintf(stderr, "Wrong number type for SDattrinfo(dim)\n");
+        num_err++;
+      }
+
+    if(count != 1) 
+      {
+        fprintf(stderr, "Wrong count for SDattrinfo(dim)\n");
+        num_err++;
+      }
+
+    if(strcmp(name, "UnsignedInteger")) 
+      {
+        fprintf(stderr, "Wrong name for SDattrinfo(dim)\n");
+        num_err++;
+      }
+
+    /* read second dimension attribute back in */
+    iuval = 0;
+    status = SDreadattr(dimid2, 1, (VOIDP) &iuval);
+    CHECK(status, FAIL, "SDreatattr");
+    
+    if(iuval != 253) 
+      {
+        fprintf(stderr, "Wrong value for SDreadattr(dim)\n");
+        num_err++;
+      }
+
+    /* Find index of data set 'DataSetAlpha' in file test1.hdf */
+    status = SDnametoindex(f1, "DataSetAlpha");
+    if(status != 0) 
+      {
+        fprintf(stderr, "Couldn't find data set in file 1\n");
+        num_err++;
+      }
+
+    /* Try finding data set in test2.hdf, should fail? */
+    status = SDnametoindex(f2, "DataSetAlpha");
+    if(status != FAIL) 
+      {
+        fprintf(stderr, "Found data set in wrong file 2\n");
+        num_err++;
+      }
+
+    /* Try finding non-existent dataset in file, should fail */
+    status = SDnametoindex(f1, "BogusDataSet");
+    if(status != FAIL) 
+      {
+        fprintf(stderr, "Found bogus data set in file 1\n");
+        num_err++;
+      }
+
+    /* Set fill value for data set 'DataSetAlpha' assume we still have valid
+       handle at this point...*/
+    max = -17.5;
+    status = SDsetfillvalue(newsds, (VOIDP) &max);
+    CHECK(status, FAIL, "SDsetfillvalue");
+
+    /* initialize array to write out */
+    for(i = 0; i < 10; i++)
+        data[i] = (float32) i;
+
+    /* write out (1,1)->(3,3) array out */ 
+    start[0] = start[1] = 1;
+    end[0]   = end[1]   = 3;
+    status = SDwritedata(newsds, start, NULL, end, (VOIDP) data);
+    CHECK(status, FAIL, "SDwritedata");
+
+    /* set the range for data set 'DataSetAlpha' */
+    max = 10.0;
+    min = 4.6;
+    status = SDsetrange(newsds, (VOIDP) &max, (VOIDP) &min);
+    CHECK(status, FAIL, "SDsetrange");
+
+    /* Brillant...., retrieve it right back....*/
+    status = SDgetrange(newsds, (VOIDP) &imax, (VOIDP) &imin);
+    CHECK(status, FAIL, "SDsetrange");
+
+    /* set a character attribute for data set 'DataSetAlpha' */
+    status = SDsetattr(newsds, "spam", DFNT_CHAR8, 6, "Hi mom");
+    CHECK(status, FAIL, "SDsetattr");
+
+    /* Set the data strings for data set 'DataSetAlpha' */
+    status = SDsetdatastrs(newsds, "TheLabel", "TheUnits", NULL, "TheCordsys");
+    CHECK(status, FAIL, "SDsetdatastrs");
+
+    /* Brilliant.....retrieve them right back */
+    status = SDgetdatastrs(newsds, l, u, fmt, c, 80);
+    CHECK(status, FAIL, "SDgetdatastrs");
+
+    if(HDstrcmp(l, "TheLabel")) 
+      {
+        fprintf(stderr, "Bogus label returned (%s)\n", l);
+        num_err++;
+      }
+    if(HDstrcmp(u, "TheUnits")) 
+      {
+        fprintf(stderr, "Bogus units returned (%s)\n", u);
+        num_err++;
+      }
+    if(HDstrcmp(fmt, "")) 
+      {
+        fprintf(stderr, "Bogus format returned\n");
+        num_err++;
+      }
+    if(HDstrcmp(c, "TheCordsys")) 
+      {
+        fprintf(stderr, "Bogus cordsys returned\n");
+        num_err++;
+      }
+
+    /* retrieve CHAR attribute for 'DataSetAlpha' */
+    status = SDfindattr(newsds, "spam");
+    if(status != 2) 
+      {
+        fprintf(stderr, "Bad index for SDfindattr\n");
+        num_err++;
+      }
+
+    /* retrieve non-existent CHAR attribute for 'DataSetAlpha'. 
+       Should fail. */
+    status = SDfindattr(newsds, "blarf");
+    if(status != FAIL) 
+      {
+        fprintf(stderr, "SDfindattr found non-existant attribute\n");
+        num_err++;
+      }
+
+    /* hmm....set global attributes for File 'test1.hdf' */
+    status = SDsetattr(f1, "F-attr", DFNT_CHAR8, 10, "globulator");
+    CHECK(status, FAIL, "SDsetattr");
+
+    /* get info about the global attribute just created....*/
+    status = SDattrinfo(f1, (int32) 0, name, &nt, &count);
+    CHECK(status, FAIL, "SDattrinfo");
+
+    /* read this global attribute back in ....*/
+    status = SDreadattr(f1, 0, text);
+    CHECK(status, FAIL, "SDreadattr");
+    
+    if(HDstrncmp(text, "globulator", count)) 
+      {
+        fprintf(stderr, "Invalid global attribute read <%s>\n", text);
+        num_err++;
+      }
+
+    /* Get number of SDS and global attributes in file 'test2.hdf'.
+       It should be empty...*/
+    status = SDfileinfo(f2, &num_sds, &num_gattr);
+    if(num_sds != 0) 
+      {
+        fprintf(stderr, "File2 still has stuff in it\n");
+        num_err++;
+      }
+
+    /* Set calibration info for dataset 'DataSetGamma' in file 'test1.hdf' */
+    cal   = 1.0;
+    cale  = 5.0;
+    ioff  = 3.0;
+    ioffe = 2.5;
+    nt    = DFNT_INT8;
+    status = SDsetcal(newsds3, cal, cale, ioff, ioffe, nt);
+    CHECK(status, FAIL, "SDsetcal");
+
+    /* create a record variable in file 'test2.hdf' */
+    dimsize[0] = SD_UNLIMITED;
+    dimsize[1] = 6;
+    newsds2 = SDcreate(f2, "DataSetBeta", DFNT_INT16, 2, dimsize);
+    CHECK(newsds2, FAIL, "SDcreate: Failed to create new data set 'DataSetBeta'");
+
+    /* get info on number of SDSs and global attributes in file 'test2.hdf'
+       There should be only 1 SDS */
+    status = SDfileinfo(f2, &num_sds, &num_gattr);
+    if(num_sds != 1) 
+      {
+        fprintf(stderr, "Wrong number of datasets in file 2\n");
+        num_err++;
+      }
+
+    for(i = 0; i < 50; i++)
+        sdata[i] = i;
+
+    /* Write data to dataset 'DataSetBeta' in file 'test2.hdf' */
+    start[0] = start[1] = 0;
+    end[0]   = 8;
+    end[1]   = 6;
+    status = SDwritedata(newsds2, start, NULL, end, (VOIDP) sdata);
+    CHECK(status, FAIL, "SDwritedata");
+
+    /* Now read part of an earlier dataset,'DataSetAlpha', 
+       back in from file 'test1.hdf' */
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 3;
+    status = SDreaddata(newsds, start, NULL, end, (VOIDP) data);
+    CHECK(status, FAIL, "SDreaddata");
+
+    /* verify the data values retrieved from 'DataSetAlpha' */
+    if(data[0] != -17.5) 
+      {
+        fprintf(stderr, "Wrong value returned loc 0: %f\n",(float)data[0]);
+        num_err++;
+      }
+    if(data[3] != -17.5) 
+      {
+        fprintf(stderr, "Wrong value returned loc 3: %f\n",(float)data[3]);
+        num_err++;
+      }
+    if(data[5] != 1.0) 
+      {
+        fprintf(stderr, "Wrong value returned loc 5: %f\n",(float)data[5]);
+        num_err++;
+      }
+    if(data[6] != -17.5) 
+      {
+        fprintf(stderr, "Wrong value returned loc 6: %f\n",(float)data[6]);
+        num_err++;
+      }
+    if(data[8] != 4.0) 
+      {
+        fprintf(stderr, "Wrong value returned loc 8: %f\n",(float)data[8]);
+        num_err++;
+      }
+
+    for(i = 0; i < 50; i++)
+        sdata[i] = 0;
+
+    /* read data back in from 'DataSetBeta' from file 'test2.hdf' */
+    start[0] = start[1] = 1;
+    end[0]   = 3;
+    end[1]   = 3;
+    stride[0] = 2;
+    stride[1] = 2;
+    status = SDreaddata(newsds2, start, stride, end, (VOIDP) sdata);
+    CHECK(status, FAIL, "SDreaddata");
+
+    /* why do we print these 10 values here?....*/
+    for(i = 0; i < 10; i++)
+        printf("%d := %d\n", i, sdata[i]);
+    
+    /* why do we set calibration info and then use SDgetcal() 
+       on dataset 'DataSetGamma' ? */
+    cal   = 1.0;
+    cale  = 5.0;
+    ioff  = 3.0;
+    ioffe = 2.5;
+    nt    = DFNT_INT8;
+    status = SDgetcal(newsds3, &cal, &cale, &ioff, &ioffe, &nt);
+    CHECK(status, FAIL, "SDgetcal");
+
+    /* Verify calibration data for data set 'DataSetGamma' */
+    if(cal != 1.0) 
+      {
+        fprintf(stderr, "Wrong calibration info\n");
+        num_err++;
+      }
+
+    if(cale != 5.0) 
+      {
+        fprintf(stderr, "Wrong calibration info\n");
+        num_err++;
+      }
+
+    if(ioff != 3.0) 
+      {
+        fprintf(stderr, "Wrong calibration info\n");
+        num_err++;
+      }
+
+    if(ioffe != 2.5) 
+      {
+        fprintf(stderr, "Wrong calibration info\n");
+        num_err++;
+      }
+
+    if(nt != DFNT_INT8) 
+      {
+        fprintf(stderr, "Wrong calibration info\n");
+        num_err++;
+      }
+
+    /* end access to data set 'DataSetAlpha' */
+    status = SDendaccess(newsds);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* end access to data set 'DataSetBeta' */
+    status = SDendaccess(newsds2);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* end access to data set 'DataSetGamma' */
+    status = SDendaccess(newsds3);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* Close access to file 'test1.hdf' */
+    status = SDend(f1);
+    CHECK(status, FAIL, "SDend");
+
+    /* Close access to file 'test2.hdf' */
+    status = SDend(f2);
+    CHECK(status, FAIL, "SDend");
+
+
+    /*
+     * New set of tests?.....
+     */
+
+    /* test SDsetfillmode   */
+    /* test fixed size SDS   */
+    /* create an empty SDS, set SD_NOFILL.
+       Change the fill mode to SD_FILL, and write a slab of data */
+
+    /* open file 'test1.hdf' */
+    f1 = SDstart(FILE1, DFACC_RDWR);
+    CHECK(f1, FAIL, "SDstart (again)");
+
+    /* Set fill mode on file to not write out fill values */
+    status = SDsetfillmode(f1, SD_NOFILL);
+    CHECK(status, FAIL, "SDsetfillmode: (SD_NOFILL)");
+
+    /* Create data set 'FIXED1' in file test1.hdf */
+    dimsize[0]=5;
+    dimsize[1]=6;
+    sdid = SDcreate(f1, "FIXED1", DFNT_INT32, 2, dimsize);
+    CHECK(sdid, FAIL, "SDcreate:Fail to create data set 'FIXED1' in 'test1.hdf'");
+
+
+    for (i=0; i<30; i++)
+        idata[i] = i+100;
+
+    /* Set fill value attribute for data set 'FIXED1' using SDsetattr().
+       Same affect as using SDsetfillvalue(). */
+    fillval = -300;
+    status = SDsetattr(sdid, "_FillValue", DFNT_INT32, 1,
+               (VOIDP) &fillval); /* can use SDsetfillvalue */
+    CHECK(status, FAIL, "SDsetattr");
+
+    /* end access to data set 'FIXED1' */
+    status = SDendaccess(sdid);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* get index of dataset in file 'test1.hdf' called 'FIXED1' */
+    index = SDnametoindex(f1, "FIXED1");
+    CHECK(index, FAIL, "SDnametoindex");
+
+    /* Select data set 'FIXED1' based on it's index */
+    sdid = SDselect(f1, index);
+    CHECK(sdid, FAIL, "SDselect");
+
+    /* change the fill mode for the file back to writing out the fill
+       values. */
+    status = SDsetfillmode(f1, SD_FILL);
+    CHECK(status, FAIL, "SDsetfillmode");
+
+    /* Write data to data set 'FIXED1'.
+       Note that SD_FILL mode is on. */
+    start[0]=2;
+    start[1]=0;
+    end[0]=1;
+    end[1]=6;
+    status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
+    CHECK(status, FAIL, "SDwritedata: (SD_FILL)");
+
+    /* end access to data set 'FIXED1' */
+    status = SDendaccess(sdid);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* set the fill mode for 'test1.hdf' to no-fill */
+    status = SDsetfillmode(f1, SD_NOFILL);
+    CHECK(status, FAIL, "SDsetfillmode (SD_NOFILL)");
+
+    /* create a data set 'FIXED' in file 'test1.hdf' */
+    sdid = SDcreate(f1, "FIXED", DFNT_INT32, 2, dimsize);
+    CHECK(sdid,FAIL,"SDcreate:Failed to create data set 'FIXED' in file 'test1.hdf'");
+
+    for (i=0; i<30; i++)
+        idata[i] = i+100;
+
+    /* Set fill value for data set 'FIXED' using SDsetfillvalue() */
+    fillval = -300;
+    status = SDsetfillvalue(sdid, (VOIDP) &fillval);
+    CHECK(status, FAIL, "SDsetfillvalue");
+
+    /* write out the first 2 records to data set 'FIXED' with SD_NOFILL mode */
+    start[0]=2;
+    start[1]=0;
+    end[0]=1;
+    end[1]=6;
+    status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
+    CHECK(status, FAIL, "SDwritedata: (SD_NOFILL)");
+
+    /* end access to data set 'FIXED' */
+    status = SDendaccess(sdid);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* close file 'test1.hdf' */
+    status = SDend(f1);
+    CHECK(status, FAIL, "SDend");
+
+    /* open again, write record 4 with SD_FILL mode */
+    /* fill values already written out in the first SDwritedata,
+       fillmode changes should not affect the fill values */
+
+    /* open file 'test1.hdf' */
+    f1 = SDstart(FILE1, DFACC_RDWR);
+    CHECK(f1, FAIL, "SDstart: test1.hdf");
+
+    /* Set fill mode to SD_FILL */
+    status = SDsetfillmode(f1, SD_FILL);
+    CHECK(status, FAIL, "SDsetfillmode: (SD_FILL)");
+
+    /* get index of data set 'FIXED' */
+    index = SDnametoindex(f1, "FIXED");
+    CHECK(index, FAIL, "SDnametoindex: (FIXED)");
+
+    /* Select the data set 'FIXED' based on it's index */
+    sdid = SDselect(f1, index);
+    CHECK(sdid, FAIL, "SDselect: (FIXED)");
+
+    /* Write record 4 */
+    start[0]=4;
+    start[1]=0;
+    end[0]=1;
+    end[1]=6;
+    status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
+    CHECK(status, FAIL, "SDwritedata (SD_FILL)");
+
+    /* end acces to data set 'FIXED' */
+    status = SDendaccess(sdid);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* close file 'test1.hdf' */
+    status = SDend(f1);
+    CHECK(status, FAIL, "SDend");
+
+    /* read back and check fill values */
+
+    /* open file 'test1.hdf' back up */
+    f1 = SDstart(FILE1, DFACC_RDWR);
+    CHECK(f1, FAIL, "SDstart: test1.hdf");
+
+    /* get index of data set 'FIXED' */
+    index = SDnametoindex(f1, "FIXED");
+    CHECK(index, FAIL, "SDnametoindex (FIXED)");
+
+    /* Select the data set 'FIXED' based on it's index */
+    sdid = SDselect(f1, index);
+    CHECK(sdid, FAIL, "SDselect (FIXED)");
+
+    /* read data back in from data set 'FIXED' */
+    start[0]=0;
+    start[1]=0;
+    end[0]=5;
+    end[1]=6;
+    status = SDreaddata(sdid, start, NULL, end, (VOIDP)idata);
+    CHECK(status, FAIL, "SDreaddata(FIXED)");
+
+    /* verify the data */
+    for (i=12; i<18; i++)  
+      {
+        if ((idata[i] != 100 + (i-12)) ||
+            (idata[i+12] != 100 + (i-12))) 
+          {
+           fprintf(stderr, "wrong value: should be %d, got %d %d\n",
+                           100 + i-12, idata[i], idata[i+12]);
+           num_err++;
+          }
+      }
+    
+    for (i=18; i<24; i++)  
+      {
+        if (idata[i] ==fillval) 
+          {
+           fprintf(stderr, "wrong value: should not be %d, got %d\n",
+                           fillval, idata[i]);
+           num_err++;
+          }
+      }
+
+    /* end access to data set 'FIXED' */
+    status = SDendaccess(sdid);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* read back in data set 'FIXED1' , with fill values */
+
+    /* get index of data set 'FIXED1' from file 'test1.hdf' */
+    index = SDnametoindex(f1, "FIXED1");
+    CHECK(index, FAIL, "SDnametoindex (FIXED1)");
+
+    /* select dataset 'FIXED1' based on it's index in the file */
+    sdid = SDselect(f1, index);
+    CHECK(sdid, FAIL, "SDselect (FIXED1)");
+
+    /* read data from data set 'FIXED1' */
+    start[0]=0;
+    start[1]=0;
+    end[0]=5;
+    end[1]=6;
+    status = SDreaddata(sdid, start, NULL, end, (VOIDP)idata);
+    CHECK(status, FAIL, "SDreaddata(FIXED)");
+
+    /* verify the data */
+    for (i=12; i<18; i++)  
+      {
+        if (idata[i] != (100 + (i-12)))  
+          {
+           fprintf(stderr, "wrong value: should be %d, got %d \n",
+                           100 + i-12, idata[i]);
+           num_err++;
+          }
+      }
+
+    for (i=18; i<24; i++)  
+      {
+        if (idata[i] != fillval) 
+          {
+           fprintf(stderr, "wrong value: should be %d, got %d\n",
+                           fillval, idata[i]);
+           num_err++;
+          }
+      }
+
+    /* end access to data set 'FIXED1' in file 'test1.hdf' */
+    status = SDendaccess(sdid);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* close file 'test1.hdf' */
+    status = SDend(f1);
+    CHECK(status, FAIL, "SDend");
+
+   /* 
+    * test UNLIMITED size SDS   
+    */
+
+    /* open file 'test1.hdf' */
+    f1 = SDstart(FILE1, DFACC_RDWR);
+    CHECK(f1, FAIL, "SDstart (file1)");
+
+    /* set fill mode to no-fill */
+    status = SDsetfillmode(f1, SD_NOFILL);
+    CHECK(status, FAIL, "SDsetfillmode (SD_NOFILL)");
+
+    /* Set first dimension to UNLIMITED.
+       Create data set 'UNLIMITED_SDS' in file 'test1.hdf' */
+    dimsize[0]=SD_UNLIMITED;
+    dimsize[1]=6;
+    sdid = SDcreate(f1, "UNLIMITED_SDS", DFNT_INT32, 2, dimsize);
+    CHECK(sdid, FAIL, "SDcreate:Failed to create data set 'UNLIMITED_SDS' in file 'test1.hdf'");
+
+    for (i=0; i<24; i++)
+        idata[i] = i;
+
+    /* Set fill value for data set 'UNLIMITED_SDS' */
+    fillval = -300;
+    status = SDsetfillvalue(sdid, (VOIDP) &fillval);
+    CHECK(status, FAIL, "SDsetfillvalue");
+
+    /* write out the third record with SD_NOFILL mode on */
+    start[0]=2;
+    start[1]=0;
+    end[0]=1;
+    end[1]=6;
+    status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
+    CHECK(status, FAIL, "SDwritedata: (SD_NOFILL, UNLIMITED)");
+
+    /* end access to data set 'UNLIMITED_SDS' in file 'test1.hdf' */
+    status = SDendaccess(sdid);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* Close file 'test1.hdf' */
+    status = SDend(f1);
+    CHECK(status, FAIL, "SDend");
+
+    /* open again, write record 4 with SD_FILL mode */
+
+    /* open file 'test1.hdf' again */
+    f1 = SDstart(FILE1, DFACC_RDWR);
+    CHECK(f1, FAIL, "SDstart: test1.hdf");
+
+    /* set fill mode to SD_FILL */
+    status = SDsetfillmode(f1, SD_FILL);
+    CHECK(status, FAIL, "SDsetfillmode: (SD_FILL)");
+
+    /* get index of data set 'UNLIMITED_SDS' */
+    index = SDnametoindex(f1, "UNLIMITED_SDS");
+    CHECK(index, FAIL, "SDnametoindex: (UNLIMITED)");
+
+    /* select data set 'UNLIMITED_SDS' based on it's index in the file */
+    sdid = SDselect(f1, index);
+    CHECK(sdid, FAIL, "SDselect: (UNLIMITED)");
+
+    /* write 4?th record to data set */
+    start[0]=4;
+    start[1]=0;
+    end[0]=1;
+    end[1]=6;
+    status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
+    CHECK(status, FAIL, "SDwritedata: (SD_FILL)");
+
+    /* end access to data set 'UNLIMITED_SDS' */
+    status = SDendaccess(sdid);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* close file 'test1.hdf' */
+    status = SDend(f1);
+    CHECK(status, FAIL, "SDend");
+
+    /* read back and check fill values */
+
+    /* open file 'test1.hdf' again */
+    f1 = SDstart(FILE1, DFACC_RDWR);
+    CHECK(f1, FAIL, "SDstart: (test1.hdf)");
+
+    /* get index of data set 'UNLIMITED_SDS' */
+    index = SDnametoindex(f1, "UNLIMITED_SDS");
+    CHECK(index, FAIL, "SDnametoindex: (UNLIMITED_SDS)");
+
+    /* select data set 'UNLIMITED_SDS' based on it's index in the file */
+    sdid = SDselect(f1, index);
+    CHECK(sdid, FAIL, "SDselect: (UNLIMITED_SDS)");
+
+    /* read data from data set 'UNLIMITED_SDS' */
+    start[0]=0;
+    start[1]=0;
+    end[0]=5;
+    end[1]=6;
+    status = SDreaddata(sdid, start, NULL, end, (VOIDP)idata);
+    CHECK(status, FAIL, "SDwritedata(NO_FILL)");
+
+    /* verify the data */
+    for (i=12; i<18; i++)  
+      {
+        if ((idata[i] != (i-12)) || (idata[i+12] != (i-12))) 
+          {
+           fprintf(stderr, "wrong value for %d: should be %d, got %d\n",
+                           i-12, idata[i], idata[i+12]);
+           num_err++;
+          }
+      }
+
+    for (i=18; i<24; i++)  
+      {
+        if (idata[i] !=fillval) 
+          {
+           fprintf(stderr, "wrong value: should be %d, got %d\n",
+                           fillval, idata[i]);
+           num_err++;
+          }
+      }
+
+    /* end access to data set 'UNLIMITED_SDS' */
+    status = SDendaccess(sdid);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* close file 'test1.hdf' */
+    status = SDend(f1);
+    CHECK(status, FAIL, "SDend");
+
+   /* 
+    * test SDsetdimval_incomp() 
+    */
+
+    /* open file 'test1.hdf' */
+    f1 = SDstart(FILE1, DFACC_RDWR);
+    CHECK(f1, FAIL, "SDstart (file1)");
+
+    /* set first dimension to be UNLIMITED.
+       Create data set 'dimval_non_compat' */
+    dimsize[0]=SD_UNLIMITED;
+    dimsize[1]=6;
+    sdid = SDcreate(f1, "dimval_non_compat", DFNT_INT32, 2, dimsize);
+    CHECK(sdid,FAIL,"SDcreate:Failed to create data set 'dimval_non_compat' in file 'test1.hdf'");
+
+    /* get handle for first dimension of data set 'dimval_non_compat' */
+    dimid=SDgetdimid(sdid, 0);
+    CHECK(dimid, FAIL, "SDgetdimid");
+
+    /* get handle for second dimension of data set 'dimval_non_compat' */
+    dimid1=SDgetdimid(sdid, 1);
+    CHECK(dimid1, FAIL, "SDgetdimid");
+
+    /* set second dimension as not being backward compatible? */
+    status = SDsetdimval_comp(dimid1, SD_DIMVAL_BW_INCOMP);
+    CHECK(status, FAIL, "SDsetdimval_comp");
+
+    for (i=0; i<6; i++)
+        scale[i]=i*5;
+
+    /* set the scale for the second dimension */
+    status = SDsetdimscale(dimid1, 6, DFNT_INT32, scale);
+    CHECK(status, FAIL, "SDsetdimscale");
+
+    for (i=0; i<24; i++)
+        idata[i] = i;
+
+    /* write data to data set 'dimval_non_compat' in file 'test1.hdf' */
+    start[0]=0;
+    start[1]=0;
+    end[0]=4;
+    end[1]=6;
+    status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
+    CHECK(status, FAIL, "SDwritedata");
+
+    /* end access to data set 'dimval_non_compat' */
+    status = SDendaccess(sdid);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* close file 'test1.hdf */
+    status = SDend(f1);
+    CHECK(status, FAIL, "SDend");
+
+    /* read back and change dimval compatibility  */
+
+    /* open file 'test1.hdf' again */
+    f1 = SDstart(FILE1, DFACC_RDWR);
+    CHECK(f1, FAIL, "SDstart: (again2)");
+
+    /* get index of data set 'dimval_non_compat' in file 'test1.hdf' */
+    index = SDnametoindex(f1, "dimval_non_compat");
+    CHECK(index,FAIL,"SDnametoindex: failed to get index for data set 'dimval_non_compat' in file 'test1.hdf'");
+
+    /* select data set 'dimval_non_compat' based on it's index in file */
+    sdid = SDselect(f1, index);
+    CHECK(sdid,FAIL,"SDselect:Failed to select data set 'dimval_non_compat' in file 'test1.hdf'");
+
+    /* info on data set 'dimval_non_compat' */
+    status = SDgetinfo(sdid, name, (int32 *)&rank, dimsize, &nt, (int32 *)&nattrs);
+    CHECK(status, FAIL, "SDgetinfo");
+
+    /* verify correctness of information */
+    if (rank!=2 || dimsize[0]!=4 || dimsize[1]!=6 || nt!=DFNT_INT32) 
+      {
+        fprintf(stderr, "SDgetinfo returned wrong values\n");
+          num_err++;
+      }
+
+    /* get handle for first dimension of data set 'dimval_non_compat' */
+    dimid=SDgetdimid(sdid,0);
+    CHECK(dimid, FAIL, "SDgetdimid");
+
+    /* get dimension info for first dimension */
+    status = SDdiminfo(dimid, name, (int32 *)&dimsize[0], &nt, (int32 *)&nattrs);
+    CHECK(status, FAIL, "SDdiminfo");
+
+    /* verify correctness of information */
+    if (dimsize[0]!=SD_UNLIMITED || nt!= 0 )  
+      {
+          fprintf(stderr, "SDdiminfo returned wrong values\n");
+          num_err++;
+      }
+
+    /* get handle for second dimension of data set 'dimval_non_compat' */
+    dimid1=SDgetdimid(sdid,1);
+    CHECK(dimid1, FAIL, "SDgetdimid");
+
+    /* get dimension info for second dimension */
+    status = SDdiminfo(dimid1, name, (int32 *)&dimsize[1], &nt, (int32 *)&nattrs);
+    CHECK(status, FAIL, "SDdiminfo");
+
+    /* verify correctness of information */
+    if (dimsize[1]!=6 || nt!= DFNT_INT32 )  
+      {
+          fprintf(stderr, "Failed on SDgetinfo call\n");
+          num_err++;
+      }
+
+    /* read data back from data set 'dimval_non_compat' */
+    status = SDreaddata(sdid, start, NULL, end, (VOIDP)idata);
+    CHECK(status, FAIL, "SDwritedata");
+
+    /* verify data */
+    for (i=0; i<24; i++)  
+      {
+        if (idata[i] != i) 
+          {
+           fprintf(stderr, "wrong value: should be %d, got %d\n",
+                           i, idata[i]);
+           num_err++;
+          }
+      }
+
+    /* see if second dimensionis backward compatible. 
+       should be incompatible? */
+    status = SDisdimval_bwcomp(dimid1);
+    if (status != SD_DIMVAL_BW_INCOMP)  
+      {
+          fprintf(stderr, "SDisdimvalcomp returned wrong value for dimension\n");
+          num_err++;
+      }
+
+    /* re-set second dimension as backward compatible? */
+    status = SDsetdimval_comp(dimid1, SD_DIMVAL_BW_COMP);
+    CHECK(status, FAIL, "SDsetdimval_comp");
+
+    /* end access to data set 'dimval_non_compat' */
+    status = SDendaccess(sdid);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* close file 'test1.hdf' */
+    status = SDend(f1);
+    CHECK(status, FAIL, "SDend");
+
+    /* open one last time to check that NDG ref has been constant */
+    /* check SDsetdimval_compat */
+
+    /* open file 'test1.hdf' again */
+    f1 = SDstart(FILE1, DFACC_RDWR);
+    CHECK(f1, FAIL, "SDstart (again3)");
+
+    /* get index of data set 'dimval_non_compat' in file 'test1.hdf' */
+    index = SDnametoindex(f1, "dimval_non_compat");
+    CHECK(index,FAIL,"SDnametoindex: failed to get index for data set 'dimval_non_compat' in file 'test1.hdf'");
+
+    /* select data set 'dimval_non_compat' based on it's index in file */
+    sdid = SDselect(f1, index);
+    CHECK(sdid,FAIL,"SDselect:Failed to select data set 'dimval_non_compat' in file 'test1.hdf'");
+
+    /* info on data set 'dimval_non_compat' */
+    status = SDgetinfo(sdid, name, (int32 *)&rank, dimsize, &nt, (int32 *)&nattrs);
+    CHECK(status, FAIL, "SDgetinfo");
+
+    /* verify correctness of information */
+    if (rank!=2 || dimsize[0]!=4 || dimsize[1]!=6 || nt!=DFNT_INT32) 
+      {
+        fprintf(stderr, "SDgetinfo returned wrong values\n");
+          num_err++;
+      }
+
+    /* get handle for second dimension of data set 'dimval_non_compat' */
+    dimid1=SDgetdimid(sdid,1);
+    CHECK(dimid1, FAIL, "SDgetdimid");
+
+    /* get dimension info for second dimension */
+    status = SDdiminfo(dimid1, name, (int32 *)&dimsize[1], &nt, (int32 *)&nattrs);
+    CHECK(status, FAIL, "SDdiminfo");
+
+    /* verify correctness of information */
+    if (dimsize[1]!=6 || nt!= DFNT_INT32 )  
+      {
+          fprintf(stderr, "Failed on SDgetinfo call\n");
+          num_err++;
+      }
+
+    /* see if second dimensionis backward compatible. 
+       should be backward compatible? */
+    status = SDisdimval_bwcomp(dimid1);
+    if (status != SD_DIMVAL_BW_COMP)  
+      {
+          fprintf(stderr, "SDisdimvalcomp returned wrong value\n");
+          num_err++;
+      }
+
+    /* end access to data set 'dimval_non_compat' */
+    status = SDendaccess(sdid);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /*
+     * used saved ref at the begining to retrieve the data set
+     */
+    
+    /* get the index of the data set to which this 'ref' belongs to */
+    index = SDreftoindex(f1, ndg_saved_ref);
+    CHECK(index,FAIL,"SDreftoindex: failed to get index for 'ndg_saved_ref'");
+
+    /* get handle for this data set (DataSetAlpha) */
+    sdsid = SDselect(f1, index);
+    CHECK(sdsid,FAIL,"SDselect: Failed to get handle for data set 'DataSetAlpha' ");
+
+    /* check if ref of this is the same as the one saved earlier */
+    if(ndg_saved_ref != SDidtoref(sdsid)) 
+      {
+        fprintf(stderr, "Saved NDG ref != to SDindextoref of same\n");
+        num_err++;
+      }
+
+    /* end access to data set 'DataSetAlpha' in file 'test1.hdf' */    
+    status = SDendaccess(sdsid);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* close file 'test1.hdf' */
+    status = SDend(f1);
+    CHECK(status, FAIL, "SDend");
+
+#ifdef EXTERNAL_TEST
+
+    /*
+     * Test the External File storage stuff
+     */
+
+    /* Create file 'exttst.hdf' */
+    fext = SDstart(EXTTST, DFACC_CREATE);
+    CHECK(fext, FAIL, "SDstart");
+
+    /* Create data set 'ExteneralDataSet' in file 'exttst.hdf' */
+    nt = DFNT_INT32 | DFNT_NATIVE;
+    dimsize[0] = 5;
+    dimsize[1] = 5;
+    newsds = SDcreate(fext, "ExternalDataSet", nt, 2, dimsize);
+    CHECK(newsds, FAIL, "SDcreate: Failed to create a new data set 'ExternalDataSet' for external promotion");
+
+    /* initialize data to write out */
+    for(i = 0; i < 25; i++)
+        idata[i] = i;
+
+    /* Write data to all of data set 'ExternalDataSet' in file 'exttst.hdf' */
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
+    CHECK(status, FAIL, "SDwritedata");
+
+    /* Now promote data set 'ExternalDataSet' to an external data set
+       in the file 'extfile.hdf' */
+    status = SDsetexternalfile(newsds, EXTFILE, 0);
+    CHECK(status, FAIL, "SDsetexternalfile");
+
+    for(i = 0; i < 10; i++)
+        idata[i] = i * 10;
+
+    /* Now write data to part of newly promoted data set 'ExternalDataSet'
+       which is now an external data set */
+    start[0] = start[1] = 0;
+    end[0]   = 2;
+    end[1]   = 5;
+    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
+    CHECK(status, FAIL, "SDwritedata");
+
+    /* end access to data set 'ExternalDataSet' */
+    status = SDendaccess(newsds);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* need to close to flush external info to file 'exttst.hdf' */
+    status = SDend(fext);
+    CHECK(status, FAIL, "SDend");
+
+    /* Open file 'exttst.hdf' again */
+    fext = SDstart(EXTTST, DFACC_RDWR);
+    CHECK(fext, FAIL, "SDstart (again)");
+
+    /* Create a "wrapper" data set in file 'exttst.hdf'. i.e. a data set 
+       that will point to data in an already existing external file */
+    dimsize[0] = 3;
+    dimsize[1] = 3;
+    newsds2 = SDcreate(fext, "WrapperDataSet", nt, 2, dimsize);
+    CHECK(newsds2, FAIL, "SDcreate:Failed to create a new data set('WrapperDataSet') for external wrapping");
+
+    /* Promote the regular data set  to a "wrapper" one by making
+       it point to where the real data is in the external file 'extfile.hdf'.
+       Note that only a subset of the real data('ExternalDataSet') is pointed to
+       by the "wrapper" data set. */
+    offset = DFKNTsize(nt) * 2;
+    status = SDsetexternalfile(newsds2, EXTFILE, offset);
+    CHECK(status, FAIL, "SDsetexternalfile");
+
+    /* now read data back from this "wrapper" data set */
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 3;
+    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) idata);
+    CHECK(status, FAIL, "SDreaddata");
+
+    /* verify data read back in */
+    for(i = 0; i < 8; i++)
+      {
+        if(idata[i] != (i + 2) * 10) 
+          {
+            fprintf(stderr, "Bogus val in loc %d in wrapper dset want %d  got %ld\n", 
+		    i, (i + 2) * 10, (long)idata[i]);
+            num_err++;
+          }
+      }
+
+    if(idata[8] != 10) 
+      {
+        fprintf(stderr, "Bogus val in last loc in wrapper dset want 10  got %ld\n",
+		(long)idata[8]);
+        num_err++;
+      }
+
+    /* End access to data set "WrapperDataSet" */
+    status = SDendaccess(newsds2);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* Close file 'exttst.hdf' */
+    status = SDend(fext);
+    CHECK(status, FAIL, "SDend");
+
+#endif /* EXTERNAL_TEST */
+
+
+#ifdef NBIT_TEST
+
+    /*
+     * Test the N-Bit storage stuff
+     */
+
+    /* Create file 'nbit.hdf' */
+    fnbit = SDstart(NBITFILE, DFACC_CREATE);
+    CHECK(fnbit, FAIL, "SDstart");
+
+    /* Create data set 'NBitDataSet' in file 'nbit.hdf' */
+    nt = DFNT_INT32;
+    dimsize[0] = 5;
+    dimsize[1] = 5;
+    newsds = SDcreate(fnbit, "NBitDataSet", nt, 2, dimsize);
+    CHECK(newsds,FAIL,"SDcreate:Failed to create a new data set('NBitDataSet') for n-bit testing");
+
+    /* Initialize data to write out */
+    for(i = 0; i < 25; i++)
+        idata[i] = i*10;
+
+    /* Promote the data set 'NBitDataSet' to an NBIT data set */
+    status = SDsetnbitdataset(newsds,6,7,FALSE,FALSE);
+    CHECK(status, FAIL, "SDsetnbitdataset");
+
+    /* Write data to the NBIT data set 'NBitDataSet' */
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
+    CHECK(status, FAIL, "SDwritedata");
+
+    /* end access to NBIT data set 'NBitDataSet' */
+    status = SDendaccess(newsds);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* need to close to flush n-bit info to file.
+       hmm... */
+    status = SDend(fnbit);
+    CHECK(status, FAIL, "SDend");
+
+    /* read the n-bit data back in */
+    fnbit = SDstart(NBITFILE, DFACC_RDWR);
+    CHECK(fnbit, FAIL, "SDstart (again)");
+
+    /* Select the NBIT data set back in, assume it is the first one */
+    newsds2 = SDselect(fnbit, 0);
+    CHECK(newsds2, FAIL,"SDselect:Failed to select a data set for n-bit access");
+
+    /* read data back in from the NBIT data set */
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
+    CHECK(status, FAIL, "SDreaddata");
+
+    /* verify the data */
+    for(i = 0; i < 25; i++)
+      {
+        if((idata[i]&0x7f) != rdata[i]) 
+          {
+            fprintf(stderr,"Bogus val in loc %d in n-bit dset want %ld got %ld\n",
+		    i, (long)idata[i], (long)rdata[i]);
+            num_err++;
+          }
+      }
+
+    /* end access to NBIT data set */
+    status = SDendaccess(newsds2);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* close file 'nbit.hdf' */
+    status = SDend(fnbit);
+    CHECK(status, FAIL, "SDend");
+
+#endif /* NBIT_TEST */
+
+#ifdef COMP_TEST
+    /*
+     * Test the compressed storage routines
+     */
+
+#ifdef QAK
+printf("writing 1st compressed dataset, basic skipping huffman\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE1, DFACC_CREATE);
+    CHECK(fcomp, FAIL, "SDstart");
+
+    nt = DFNT_INT32;
+    dimsize[0] = 5;
+    dimsize[1] = 5;
+    newsds = SDcreate(fcomp, "CompDataSet1", nt, 2, dimsize);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to create a new data set for compression testing\n");
+        num_err++;
+    }
+
+    for(i = 0; i < 25; i++)
+        idata[i] = i*10;
+
+#ifdef QAK
+printf("before SDsetcompress\n");
+#endif /* QAK */
+    cinfo.skphuff.skp_size=4;
+    status = SDsetcompress(newsds,COMP_CODE_SKPHUFF,&cinfo);
+    CHECK(status, FAIL, "SDcompress");
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDwritedata\n");
+#endif /* QAK */
+    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
+    CHECK(status, FAIL, "SDwritedata");
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* need to close to flush compressed info to file */
+    status = SDend(fcomp);
+    CHECK(status, FAIL, "SDend");
+
+    /* read the compressed data back in */
+#ifdef QAK
+printf("reading compressed dataset\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE1, DFACC_RDWR);
+    CHECK(fcomp, FAIL, "SDstart (again)");
+
+    newsds2 = SDselect(fcomp, 0);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to select a data set for compressed access\n");
+        num_err++;
+    }
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDreaddata\n");
+#endif /* QAK */
+    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
+    CHECK(status, FAIL, "SDreaddata");
+
+    for(i = 0; i < 25; i++)
+        if(idata[i] != rdata[i]) {
+            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
+            num_err++;
+        }
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds2);
+    CHECK(status, FAIL, "SDendaccess");
+
+    status = SDend(fcomp);
+    CHECK(status, FAIL, "SDend");
+
+#ifdef QAK
+printf("writing 2nd compressed dataset, partially filled & skipping huffman\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE2, DFACC_CREATE);
+    CHECK(fcomp, FAIL, "SDstart");
+
+    nt = DFNT_INT32;
+    dimsize[0] = 5;
+    dimsize[1] = 5;
+    newsds = SDcreate(fcomp, "CompDataSet2", nt, 2, dimsize);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to create a new data set for compression testing\n");
+        num_err++;
+    }
+
+    fillval=43;
+#ifdef QAK
+printf("before SDsetfillvalue\n");
+#endif /* QAK */
+    status = SDsetfillvalue(newsds,(VOIDP)&fillval);
+    CHECK(status, FAIL, "SDsetfillvalue");
+
+#ifdef QAK
+printf("before SDsetcompress\n");
+#endif /* QAK */
+    cinfo.skphuff.skp_size=4;
+    status = SDsetcompress(newsds,COMP_CODE_SKPHUFF,&cinfo);
+    CHECK(status, FAIL, "SDsetcompress");
+
+    /* fill the array with the standard info */
+    for(i = 0; i < 25; i++)
+        idata[i] = i*10;
+    /* overwrite selected portions with the fill value */
+    for(i = 0; i < 5; i++)
+        idata[i] = fillval;
+    for(i = 20; i < 25; i++)
+        idata[i] = fillval;
+
+    start[0] = 1;
+    start[1] = 0;
+    end[0]   = 3;
+    end[1]   = 5;
+#ifdef QAK
+printf("before SDwritedata\n");
+#endif /* QAK */
+    status = SDwritedata(newsds, start, NULL, end, (VOIDP) &idata[5]);
+    CHECK(status, FAIL, "SDwritedata");
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* need to close to flush compressed info to file */
+    status = SDend(fcomp);
+    CHECK(status, FAIL, "SDend");
+
+    /* read the compressed data back in */
+#ifdef QAK
+printf("reading compressed dataset\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE2, DFACC_RDWR);
+    CHECK(fcomp, FAIL, "SDstart (again)");
+
+    newsds2 = SDselect(fcomp, 0);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to select a data set for compressed access\n");
+        num_err++;
+    }
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDreaddata\n");
+#endif /* QAK */
+    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
+    CHECK(status, FAIL, "SDreaddata");
+
+    for(i = 0; i < 25; i++)
+        if(idata[i] != rdata[i]) {
+            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
+            num_err++;
+        }
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds2);
+    CHECK(status, FAIL, "SDendaccess");
+
+    status = SDend(fcomp);
+    CHECK(status, FAIL, "SDend");
+
+#ifdef QAK
+printf("creating 3rd compressed dataset, compressed template & skipping huffman\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE3, DFACC_CREATE);
+    CHECK(fcomp, FAIL, "SDstart");
+
+    nt = DFNT_INT32;
+    dimsize[0] = 5;
+    dimsize[1] = 5;
+    newsds = SDcreate(fcomp, "CompDataSet3", nt, 2, dimsize);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to create a new data set for compression testing\n");
+        num_err++;
+    }
+
+    fillval=56;
+#ifdef QAK
+printf("before SDsetfillvalue\n");
+#endif /* QAK */
+    status = SDsetfillvalue(newsds,(VOIDP)&fillval);
+    CHECK(status, FAIL, "SDsetfillvalue");
+
+#ifdef QAK
+printf("before SDsetcompress\n");
+#endif /* QAK */
+    cinfo.skphuff.skp_size=4;
+    status = SDsetcompress(newsds,COMP_CODE_SKPHUFF,&cinfo);
+    CHECK(status, FAIL, "SDsetcompress");
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* need to close to flush compressed info to file */
+    status = SDend(fcomp);
+    CHECK(status, FAIL, "SDend");
+
+    /* read the compressed data back in */
+#ifdef QAK
+printf("reading compressed dataset\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE3, DFACC_RDWR);
+    CHECK(fcomp, FAIL, "SDstart (again)");
+
+    newsds2 = SDselect(fcomp, 0);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to select a data set for compressed access\n");
+        num_err++;
+    }
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDreaddata\n");
+#endif /* QAK */
+    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
+    CHECK(status, FAIL, "SDreaddata");
+
+    for(i = 0; i < 25; i++)
+        if(fillval != rdata[i]) {
+            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
+            num_err++;
+        }
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds2);
+    CHECK(status, FAIL, "SDendaccess");
+
+    status = SDend(fcomp);
+    CHECK(status, FAIL, "SDend");
+
+#ifdef QAK
+printf("creating 4th compressed dataset, compressed template read, then partial write & skipping huffman\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE4, DFACC_CREATE);
+    CHECK(fcomp, FAIL, "SDstart");
+
+    nt = DFNT_INT32;
+    dimsize[0] = 5;
+    dimsize[1] = 5;
+    newsds = SDcreate(fcomp, "CompDataSet4", nt, 2, dimsize);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to create a new data set for compression testing\n");
+        num_err++;
+    }
+
+    fillval=67;
+#ifdef QAK
+printf("before SDsetfillvalue\n");
+#endif /* QAK */
+    status = SDsetfillvalue(newsds,(VOIDP)&fillval);
+    CHECK(status, FAIL, "SDsetfillvalue");
+
+#ifdef QAK
+printf("before SDsetcompress\n");
+#endif /* QAK */
+    cinfo.skphuff.skp_size=4;
+    status = SDsetcompress(newsds,COMP_CODE_SKPHUFF,&cinfo);
+    CHECK(status, FAIL, "SDsetcompress");
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* need to close to flush compressed info to file */
+    status = SDend(fcomp);
+    CHECK(status, FAIL, "SDend");
+
+    /* read the compressed data back in */
+#ifdef QAK
+printf("reading compressed dataset\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE4, DFACC_RDWR);
+    CHECK(fcomp, FAIL, "SDstart (again)");
+
+    newsds2 = SDselect(fcomp, 0);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to select a data set for compressed access\n");
+        num_err++;
+    }
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDreaddata\n");
+#endif /* QAK */
+    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
+    CHECK(status, FAIL, "SDreaddata");
+
+    for(i = 0; i < 25; i++)
+        if(fillval != rdata[i]) {
+            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
+            num_err++;
+        }
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds2);
+    CHECK(status, FAIL, "SDendaccess");
+
+    status = SDend(fcomp);
+    CHECK(status, FAIL, "SDend");
+
+#ifdef QAK
+printf("writing compressed dataset\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE4, DFACC_RDWR);
+    CHECK(fcomp, FAIL, "SDstart (again)");
+
+    newsds2 = SDselect(fcomp, 0);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to select a data set for compressed access\n");
+        num_err++;
+    }
+    /* fill the array with the standard info */
+    for(i = 0; i < 25; i++)
+        idata[i] = i*10;
+    /* overwrite selected portions with the fill value */
+    for(i = 0; i < 10; i++)
+        idata[i] = fillval;
+    for(i = 20; i < 25; i++)
+        idata[i] = fillval;
+
+    start[0] = 2;
+    start[1] = 0;
+    end[0]   = 2;
+    end[1]   = 5;
+#ifdef QAK
+printf("before SDwritedata\n");
+#endif /* QAK */
+    status = SDwritedata(newsds, start, NULL, end, (VOIDP) &idata[10]);
+    CHECK(status, FAIL, "SDwritedata");
+
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* need to close to flush compressed info to file */
+    status = SDend(fcomp);
+    CHECK(status, FAIL, "SDend");
+
+    fcomp = SDstart(COMPFILE4, DFACC_RDWR);
+    CHECK(fcomp, FAIL, "SDstart (again)");
+
+    newsds2 = SDselect(fcomp, 0);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to select a data set for compressed access\n");
+        num_err++;
+    }
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDreaddata\n");
+#endif /* QAK */
+    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
+    CHECK(status, FAIL, "SDreaddata");
+
+    for(i = 0; i < 25; i++)
+        if(idata[i] != rdata[i]) {
+            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
+            num_err++;
+        }
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds2);
+    CHECK(status, FAIL, "SDendaccess");
+
+    status = SDend(fcomp);
+    CHECK(status, FAIL, "SDend");
+
+#ifdef QAK
+printf("writing 5th compressed dataset, basic RLE\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE5, DFACC_CREATE);
+    CHECK(fcomp, FAIL, "SDstart");
+
+    nt = DFNT_INT32;
+    dimsize[0] = 5;
+    dimsize[1] = 5;
+    newsds = SDcreate(fcomp, "CompDataSet5", nt, 2, dimsize);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to create a new data set for compression testing\n");
+        num_err++;
+    }
+
+    for(i = 0; i < 25; i++)
+        idata[i] = i*10;
+
+#ifdef QAK
+printf("before SDsetcompress\n");
+#endif /* QAK */
+    status = SDsetcompress(newsds,COMP_CODE_RLE,&cinfo);
+    CHECK(status, FAIL, "SDcompress");
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDwritedata\n");
+#endif /* QAK */
+    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
+    CHECK(status, FAIL, "SDwritedata");
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* need to close to flush compressed info to file */
+    status = SDend(fcomp);
+    CHECK(status, FAIL, "SDend");
+
+    /* read the compressed data back in */
+#ifdef QAK
+printf("reading compressed dataset\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE5, DFACC_RDWR);
+    CHECK(fcomp, FAIL, "SDstart (again)");
+
+    newsds2 = SDselect(fcomp, 0);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to select a data set for compressed access\n");
+        num_err++;
+    }
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDreaddata\n");
+#endif /* QAK */
+    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
+    CHECK(status, FAIL, "SDreaddata");
+
+    for(i = 0; i < 25; i++)
+        if(idata[i] != rdata[i]) {
+            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
+            num_err++;
+        }
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds2);
+    CHECK(status, FAIL, "SDendaccess");
+
+    status = SDend(fcomp);
+    CHECK(status, FAIL, "SDend");
+
+#ifdef QAK
+printf("writing 6th compressed dataset, no encoding\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE6, DFACC_CREATE);
+    CHECK(fcomp, FAIL, "SDstart");
+
+    nt = DFNT_INT32;
+    dimsize[0] = 5;
+    dimsize[1] = 5;
+    newsds = SDcreate(fcomp, "CompDataSet6", nt, 2, dimsize);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to create a new data set for compression testing\n");
+        num_err++;
+    }
+
+    for(i = 0; i < 25; i++)
+        idata[i] = i*10;
+
+#ifdef QAK
+printf("before SDsetcompress\n");
+#endif /* QAK */
+    status = SDsetcompress(newsds,COMP_CODE_NONE,&cinfo);
+    CHECK(status, FAIL, "SDcompress");
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDwritedata\n");
+#endif /* QAK */
+    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
+    CHECK(status, FAIL, "SDwritedata");
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* need to close to flush compressed info to file */
+    status = SDend(fcomp);
+    CHECK(status, FAIL, "SDend");
+
+    /* read the compressed data back in */
+#ifdef QAK
+printf("reading compressed dataset\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE6, DFACC_RDWR);
+    CHECK(fcomp, FAIL, "SDstart (again)");
+
+    newsds2 = SDselect(fcomp, 0);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to select a data set for compressed access\n");
+        num_err++;
+    }
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDreaddata\n");
+#endif /* QAK */
+    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
+    CHECK(status, FAIL, "SDreaddata");
+
+    for(i = 0; i < 25; i++)
+        if(idata[i] != rdata[i]) {
+            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
+            num_err++;
+        }
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds2);
+    CHECK(status, FAIL, "SDendaccess");
+
+    status = SDend(fcomp);
+    CHECK(status, FAIL, "SDend");
+
+#ifdef QAK
+printf("writing 7th compressed dataset, deflate encoding\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE7, DFACC_CREATE);
+    CHECK(fcomp, FAIL, "SDstart");
+
+    nt = DFNT_INT32;
+    dimsize[0] = 5;
+    dimsize[1] = 5;
+    newsds = SDcreate(fcomp, "CompDataSet7", nt, 2, dimsize);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to create a new data set for compression testing\n");
+        num_err++;
+    }
+
+    for(i = 0; i < 25; i++)
+        idata[i] = i*10;
+
+#ifdef QAK
+printf("before SDsetcompress\n");
+#endif /* QAK */
+    cinfo.deflate.level=6;
+    status = SDsetcompress(newsds,COMP_CODE_DEFLATE,&cinfo);
+    CHECK(status, FAIL, "SDcompress");
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDwritedata\n");
+#endif /* QAK */
+    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
+    CHECK(status, FAIL, "SDwritedata");
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* need to close to flush compressed info to file */
+    status = SDend(fcomp);
+    CHECK(status, FAIL, "SDend");
+
+    /* read the compressed data back in */
+#ifdef QAK
+printf("reading compressed dataset\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE7, DFACC_RDWR);
+    CHECK(fcomp, FAIL, "SDstart (again)");
+
+    newsds2 = SDselect(fcomp, 0);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to select a data set for compressed access\n");
+        num_err++;
+    }
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDreaddata\n");
+#endif /* QAK */
+    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
+    CHECK(status, FAIL, "SDreaddata");
+
+    for(i = 0; i < 25; i++)
+        if(idata[i] != rdata[i]) {
+            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
+            num_err++;
+        }
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds2);
+    CHECK(status, FAIL, "SDendaccess");
+
+#ifdef QAK
+printf("before SDend\n");
+#endif /* QAK */
+    status = SDend(fcomp);
+    CHECK(status, FAIL, "SDend");
+
+#endif /* COMP_TEST */
+
+
+#ifdef CHUNK_TEST
+    status = test_chunk();
+    CHECK(status, FAIL, "test_chunk");
+    num_err = num_err + status;
+#endif /* CHUNK_TEST */
+
+#ifdef NETCDF_READ_TEST
+    status = test_netcdf_reading();
+    CHECK(status, FAIL, "test_netcdf_reading");
+    num_err = num_err + status;
+#endif /* NETCDF_READ_TEST */
 
     printf("num_err == %d\n", num_err);
 
