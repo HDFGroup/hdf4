@@ -19,5 +19,9 @@ void test_tsdstr();
 void test_vers();
 void test_slab();
 void test_litend();
+void test_tv1();
+void test_tv2();
+void test_egchi();
 
 #endif
+
