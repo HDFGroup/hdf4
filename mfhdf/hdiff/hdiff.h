@@ -45,6 +45,9 @@ struct fspec {			/* selection for comparison  */
     int sd;			/*
 				 * if true, compare SD data only 
 				 */
+				int gr;			/*
+				 * if true, compare GR data only 
+				 */
     int vd;			/*
 				 * if true, compare Vdata only 
 				 */
@@ -85,12 +88,17 @@ int  hdiff(char *fname1, char *fname2, struct fspec fspec);
 int  gattr_diff(int32 sdid1, int32 sdid2, struct fspec specp);
 int  sdattr_diff(int32 sdid1, int32 sdid2, struct fspec specp);
 int  sddata_diff(int32 sdid1, int32 sdid2, struct fspec specp);
+int  grdata_diff(int32 sdid1, int32 sdid2, struct fspec specp);
 int  vdata_diff(int32 fid1, int32 fid2, struct fspec specp, int32 cmp_flag, int32 f_flag);
 void pr_att_vals(nc_type type, int len, void *vals);
 int  vdata_cmp(int32 vs1, int32 vs2, char *gname, char*cname, int32 max_err_cnt);
 void fmt_print(uint8 *x, int32 type);
 void make_vars(char *optarg, struct fspec* fspecp, int option);
 int  is_readable( char *vgclass );
+
+int array_diff(void *buf1, void *buf2, int32 tot_cnt, int32 type, float err_limit, 
+															int32 max_err_cnt, int32 statistics,
+															void *fill1, void *fill2);
 
 
 #ifdef __cplusplus

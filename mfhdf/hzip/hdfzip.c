@@ -19,9 +19,11 @@
 void print_options(options_t *options);
 
 
-void hzip_init (options_t *options)
+void hzip_init (options_t *options, int verbose)
 {
  memset(options,0,sizeof(options_t));
+ options->threshold = 1024;
+ options->verbose   = verbose;
  
 #if defined (ONE_TABLE)
  options_table_init(&(options->op_tbl));
@@ -67,8 +69,8 @@ void hzip(char* infile, char* outfile, options_t *options)
 {
  options->trip=0;
 
- if (options->verbose)
-  print_options(options);
+ /* also checks input */
+ print_options(options);
 
  /* first check for objects in input that are in the file */
  if (list(infile,outfile,options)==0)
@@ -107,6 +109,10 @@ void hzip_addcomp(char* str, options_t *options)
  int             n_objs;             /*number of objects in the current -t or -c option entry */
  int             i;
 
+ if (options->all_comp==1){
+  printf("Error: Invalid compression input: '*' is present with other objects <%s>\n",str);
+  exit(1);
+ }
 
  /* parse the -t option */
  obj_list=parse_comp(str,&n_objs,&comp);
@@ -183,6 +189,10 @@ void hzip_addchunk(char* str, options_t *options)
  int             chunk_rank;         /*global rank for chunks */
  int             i, j;
 
+ if (options->all_chunk==1){
+  printf("Error: Invalid chunking input: '*' is present with other objects <%s>\n",str);
+  exit(1);
+ }
  
  /* parse the -c option */
  obj_list=parse_chunk(str,&n_objs,chunk_lengths,&chunk_rank);
@@ -242,7 +252,7 @@ void hzip_addchunk(char* str, options_t *options)
 /*-------------------------------------------------------------------------
  * Function: print_options
  *
- * Purpose: 
+ * Purpose: print options
  *
  * Return: void
  *
@@ -254,77 +264,184 @@ void hzip_addchunk(char* str, options_t *options)
  */
 void print_options(options_t *options)
 {
- int   i, k;
- 
-#if 1
- 
+ int   i, k, j, has_cp=0, has_ck=0;
+
 /*-------------------------------------------------------------------------
  * objects to chunk
  *-------------------------------------------------------------------------
  */
- 
- printf("Objects to chunk are...\n");
- if (options->all_chunk==1)
-  printf("\tChunk all\n");
+ if (options->verbose) 
+ {
+  printf("Objects to chunk are...\n");
+  if (options->all_chunk==1)  {
+   printf("\tChunk all with dimension [");
+   for ( j = 0; j < options->chunk_g.rank; j++)  
+    printf("%d ", options->chunk_g.chunk_lengths[j]);
+   printf("]\n");
+  }
+ }/* verbose */
+
  for ( i = 0; i < options->op_tbl->nelems; i++) 
  {
   char* obj_name=options->op_tbl->objs[i].path;
-
+  
   if (options->op_tbl->objs[i].chunk.rank>0)
   {
-   printf("\t%s ",obj_name); 
-   for ( k = 0; k < options->op_tbl->objs[i].chunk.rank; k++) 
-    printf("%d ",options->op_tbl->objs[i].chunk.chunk_lengths[k]);
-   printf("\n");
+   if (options->verbose){
+    printf("\t%s ",obj_name); 
+    for ( k = 0; k < options->op_tbl->objs[i].chunk.rank; k++) 
+     printf("%d ",options->op_tbl->objs[i].chunk.chunk_lengths[k]);
+    printf("\n");
+   }
+   has_ck=1;
   }
   else if (options->op_tbl->objs[i].chunk.rank==-2)
   {
-   printf("\t%s %s\n",obj_name,"NONE"); 
+   if (options->verbose)
+    printf("\t%s %s\n",obj_name,"NONE"); 
+   has_ck=1;
   }
  }
  
-
-/*-------------------------------------------------------------------------
+ if (options->all_chunk==1 && has_ck){
+  printf("Error: Invalid chunking input: '*' is present with other objects\n");
+  exit(1);
+ }
+ 
+ 
+ /*-------------------------------------------------------------------------
  * objects to compress/uncompress
  *-------------------------------------------------------------------------
  */
  
- printf("Objects to compress are...\n");
- if (options->all_comp==1)
-  printf("\tCompress all\n");
+ if (options->verbose) 
+ {
+  printf("Objects to compress are...\n");
+  if (options->all_comp==1) 
+    printf("\tCompress all with %s compression, parameter %d\n",
+     get_scomp(options->comp_g.type),
+     options->comp_g.info);
+ } /* verbose */
+
  for ( i = 0; i < options->op_tbl->nelems; i++) 
  {
   if (options->op_tbl->objs[i].comp.type>=0)
   {
    char* obj_name=options->op_tbl->objs[i].path;
-   printf("\t%s     \t %s compression, parameter %d\n",
-    obj_name,
-    get_scomp(options->op_tbl->objs[i].comp.type),
-    options->op_tbl->objs[i].comp.info);
-   
+   if (options->verbose) {
+    printf("\t%s     \t %s compression, parameter %d\n",
+     obj_name,
+     get_scomp(options->op_tbl->objs[i].comp.type),
+     options->op_tbl->objs[i].comp.info);
+   }
+   has_cp=1;
   }
  }
  
-#else
+ if (options->all_comp==1 && has_cp){
+  printf("Error: Invalid compression input: * is present with other objects\n");
+  exit(1);
+ }
+ 
 
- printf("Objects to modify are...\n");
- if (options->all_chunk==1)
-  printf("   Chunk all\n");
- if (options->all_comp==1)
-  printf("   Compress all\n");
- for ( i = 0; i < options->op_tbl->nelems; i++) 
- {
-  path      = options->op_tbl->objs[i].path;
-  comp_type = options->op_tbl->objs[i].comp.type;
-  rank      = options->op_tbl->objs[i].chunk.rank;
-  
-  printf(PFORMAT,
-   (rank>0)?"chunk":"",                    /*chunk info*/
-   (comp_type>0)?get_scomp(comp_type):"",  /*compression info*/
-   path);                                  /*name*/
+}
 
+
+
+/*-------------------------------------------------------------------------
+ * Function: read_info
+ *
+ * Purpose: read comp and chunk options from file
+ *
+ * Return: void
+ *
+ * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
+ *
+ * Date: July 30, 2003
+ *
+ *-------------------------------------------------------------------------
+ */
+
+void read_info(char *filename,options_t *options) 
+{
+ char stype[10];
+ char comp_info[1024];
+ FILE *fp;
+ char c;
+ int  i, rc=1;
+
+ 
+ if ((fp = fopen(filename, "r")) == (FILE *)NULL) {
+  printf( "Cannot open options file %s", filename);
+  exit(1);
  }
 
-#endif
- 
+ /* Cycle until end of file reached */
+ while( 1 )
+ {
+  rc=fscanf(fp, "%s", stype);
+  if (rc==-1)
+   break;
+   
+ /*-------------------------------------------------------------------------
+  * comp
+  *-------------------------------------------------------------------------
+  */
+  if (strcmp(stype,"-t") == 0) { 
+
+   /* find begining of info */
+   i=0; c='0';
+   while( c!='"' )
+   {
+    fscanf(fp, "%c", &c);
+   }
+   c='0';
+   /* go until end */
+   while( c!='"' )
+   {
+    fscanf(fp, "%c", &c);
+    comp_info[i]=c;
+    i++;
+   }
+   comp_info[i-1]='\0'; /*cut the last " */    
+
+   hzip_addcomp(comp_info,options);
+  }
+ /*-------------------------------------------------------------------------
+  * chunk
+  *-------------------------------------------------------------------------
+  */
+  else if (strcmp(stype,"-c") == 0) { 
+   
+   /* find begining of info */
+   i=0; c='0';
+   while( c!='"' )
+   {
+    fscanf(fp, "%c", &c);
+   }
+   c='0';
+   /* go until end */
+   while( c!='"' )
+   {
+    fscanf(fp, "%c", &c);
+    comp_info[i]=c;
+    i++;
+   }
+   comp_info[i-1]='\0'; /*cut the last " */    
+
+   hzip_addchunk(comp_info,options);
+  }
+ /*-------------------------------------------------------------------------
+  * not valid
+  *-------------------------------------------------------------------------
+  */
+  else {
+   printf( "Bad file format for %s", filename);
+   exit(1);
+  }
+ }
+
+ fclose(fp);
+ return;
 }
+

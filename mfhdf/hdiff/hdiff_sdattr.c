@@ -23,10 +23,7 @@ sdattr_diff(int32 sdid1, int32 sdid2, struct fspec specp)
  int ia, ib;                     /* attribute number */
  int iv1, iv2;                   /* variable number */
  int iret1, iret2, iflag, istop, ret=0;
- 
- if (0)
- printf ("\n*****     SD attributes comparison:     *****\n");
- 
+
  iret1 =  SDfileinfo(sdid1, &nvars1, &ngatts1);
  iret2 =  SDfileinfo(sdid2, &nvars2, &ngatts2);
  

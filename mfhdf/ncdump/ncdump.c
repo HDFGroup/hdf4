@@ -248,7 +248,6 @@ pr_att_vals(type, len, vals)
  */
 char *fixstr(char *str)
 {
-    char *strdup(const char *);
 	char *new_str, *ptr;
 
 	if (!str)

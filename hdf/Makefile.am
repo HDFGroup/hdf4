@@ -1,1 +1,1 @@
-SUBDIRS=jpeg src test util
+SUBDIRS=src test util

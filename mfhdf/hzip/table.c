@@ -55,7 +55,7 @@ int table_search(table_t *table, int tag, int ref )
  *-------------------------------------------------------------------------
  */
 
-void table_add(table_t *table, int tag, int ref, char* path, int print)
+void table_add(table_t *table, int tag, int ref, char* path)
 {
  int i;
  
@@ -72,10 +72,7 @@ void table_add(table_t *table, int tag, int ref, char* path, int print)
  table->objs[i].tag = tag;
  table->objs[i].ref = ref;
  strcpy(table->objs[i].obj_name,path);
-#if 0
- if (print)
-  printf(PFORMAT,"","",path);    
-#endif
+
 }
 
 

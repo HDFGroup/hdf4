@@ -13,40 +13,69 @@
 
 #include "hdf.h"
 #include "mfhdf.h"
+#include "hcomp.h"
 #include "hzip.h"
 #include "hdiff.h"
 #include "add.h"
+#include "verify.h"
 
-#if 1
-#define HZIP_DEBUG  /* turn on for verbose output of hzip and hdiff */
-#endif
-
-#define FILENAME         "hziptst.hdf"
-#define FILENAME_OUT     "hziptst_out.hdf"
 #define DATA_FILE1       "image8.txt"
 #define DATA_FILE2       "image24pixel.txt"
-char    *progname;       /* for error messages */
+char    *progname;     
+
+
+/*-------------------------------------------------------------------------
+ * Function: main
+ *
+ * Purpose: test program for hzip
+ *
+ * A)This program writes several HDF objects to the file FILENAME
+ *   The image data consists of realistic data read from the files DATA_FILE1
+ *   (8bit image) and DATA_FILE2 (24bit image)
+ *  The objects written are
+ *  1) groups
+ *  2) images 
+ *  3) datasets
+ *  4) vdatas with attributes and field attributes
+ *  5) global and local attributes
+ *  6) labels and annotations
+ *
+ * B) Then several calls are made to hzip, in each call the FILENAME_OUT is 
+ *  generated
+ *
+ * C) In each test the hdiff utility is called to compare the files 
+ *  FILENAME and FILENAME_OUT
+ *
+ * D) In each test the verifiy_comp_chunk function is called to compare 
+ *  the input and output compression and chunking parameters
+ *
+ * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
+ *
+ * Date: August 3, 2003
+ *
+ *-------------------------------------------------------------------------
+ */
 
 int main(void)
 {
- 
- intn   status_n;     /* returned status_n for functions returning an intn  */
- int32  status_32,    /* returned status_n for functions returning an int32 */
-        vgroup_ref=-1,/* reference number of the group */
-        vgroup1_id,   /* vgroup identifier */
-        vgroup2_id,   /* vgroup identifier */
-        vgroup3_id,   /* vgroup identifier */
-        vgroup_img_id,/* vgroup identifier */
-        vg_index,     /* position of a vgroup in the vgroup  */
-        file_id,      /* HDF file identifier, same for V interface */
-        chunk_flags,  /* Chunking flag */ 
-        comp_type;    /* compression flag */
- comp_info     comp_info;    /* compression structure */ 
+ intn          status_n;     /* returned status_n for functions returning an intn  */
+ int32         status_32,    /* returned status_n for functions returning an int32 */
+               vgroup_ref=-1,/* reference number of the group */
+               vgroup1_id,   /* vgroup identifier */
+               vgroup2_id,   /* vgroup identifier */
+               vgroup3_id,   /* vgroup identifier */
+               vgroup_img_id,/* vgroup identifier */
+               vg_index,     /* position of a vgroup in the vgroup  */
+               file_id;      /* HDF file identifier, same for V interface */
  options_t     options;      /* for hzip  */ 
  static struct fspec fspec;  /* for hdiff  */ 
- int           ret;
-	int32         attr_n_values = 3;  /* number of values in the vg attribute */
+ int           verbose=0;
+ int32         attr_n_values = 3;  /* number of values in the vg attribute */
  char          vg_attr[3]    = {'A', 'B', 'C'};/* vg attribute values*/
+ comp_coder_t  comp_type;    /* to retrieve compression type into */
+ int32         chunk_flags;  /* Chunking flag */ 
+ comp_info     comp_info;    /* compression structure */ 
+ int32         in_chunk_lengths[MAX_VAR_DIMS];
 
  /* initialize options for hdiff */
  memset(&fspec,0,sizeof(struct fspec));
@@ -54,9 +83,10 @@ int main(void)
  fspec.sa = 1;    /* compare SD local attributes */
  fspec.sd = 1;    /* compare SD data */
  fspec.vd = 1;    /* compare Vdata */
+ fspec.gr = 1;    /* compare GR data */
 
 /*-------------------------------------------------------------------------
- * create FILENAME with SDSs, images , groups and vdatas
+ * create a file with SDSs, images , groups and vdatas
  *-------------------------------------------------------------------------
  */
        
@@ -108,12 +138,13 @@ int main(void)
  /* add non chunked, non compressed sds */
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_NONE;
-#if 1
  add_sd(FILENAME,"dset1",vgroup1_id,chunk_flags,comp_type,NULL);
  add_sd(FILENAME,"dset2",vgroup2_id,chunk_flags,comp_type,NULL);
  add_sd(FILENAME,"dset3",vgroup3_id,chunk_flags,comp_type,NULL);
-#endif
  add_sd(FILENAME,"dset4",0,chunk_flags,comp_type,NULL);
+ add_sd(FILENAME,"dset5",0,chunk_flags,comp_type,NULL);
+ add_sd(FILENAME,"dset6",0,chunk_flags,comp_type,NULL);
+ add_sd3d(FILENAME,"dset7",0,chunk_flags,comp_type,NULL);
 
 
 /*-------------------------------------------------------------------------
@@ -124,7 +155,6 @@ int main(void)
  *-------------------------------------------------------------------------
  */ 
 
-#if 1
  /* add a chunked, non compressed sds */
  chunk_flags = HDF_CHUNK;
  comp_type   = COMP_CODE_NONE;
@@ -140,7 +170,6 @@ int main(void)
  comp_type   = COMP_CODE_DEFLATE;
  comp_info.deflate.level = 6;
  add_sd(FILENAME,"dset_comp",0,chunk_flags,comp_type,&comp_info);
-#endif
 
  
 /*-------------------------------------------------------------------------
@@ -148,10 +177,8 @@ int main(void)
  *-------------------------------------------------------------------------
  */ 
 
-#if 1
  add_r24(FILENAME,DATA_FILE2,vgroup_img_id);
  add_r24(FILENAME,DATA_FILE2,0);
-#endif
 
 /*-------------------------------------------------------------------------
  * add some GR images to the file
@@ -159,21 +186,17 @@ int main(void)
  *-------------------------------------------------------------------------
  */ 
 
-#if 1
  add_gr(DATA_FILE1,"gr1",file_id,vgroup1_id);
  add_gr(DATA_FILE2,"gr2",file_id,vgroup2_id);
  add_gr(DATA_FILE1,"gr3",file_id,vgroup3_id);
  add_gr(DATA_FILE2,"gr4",file_id,0);
-#endif
 
 /*-------------------------------------------------------------------------
  * add some RIS8 images to the file
  *-------------------------------------------------------------------------
  */ 
-#if 1
  add_r8(FILENAME,DATA_FILE1,vgroup_img_id);
  add_r8(FILENAME,DATA_FILE1,0);
-#endif
 
 
 /*-------------------------------------------------------------------------
@@ -182,12 +205,22 @@ int main(void)
  *-------------------------------------------------------------------------
  */ 
 
-#if 1
  add_vs("vdata1",file_id,vgroup1_id);
  add_vs("vdata2",file_id,vgroup2_id);
  add_vs("vdata3",file_id,vgroup3_id);
-#endif
  add_vs("vdata4",file_id,0);
+
+/*-------------------------------------------------------------------------
+ * add some global attributes to the file
+ *-------------------------------------------------------------------------
+ */ 
+ add_glb_attrs(FILENAME,file_id);
+
+/*-------------------------------------------------------------------------
+ * add annotations to the file
+ *-------------------------------------------------------------------------
+ */ 
+ add_an(file_id);
 
 /*-------------------------------------------------------------------------
  * end
@@ -207,40 +240,227 @@ int main(void)
  status_n = Hclose (file_id);
 
 
-
 /*-------------------------------------------------------------------------
- * check; we call the hdiff utility to compare the input and output file
+ * TESTS:
+ * 1) zip FILENAME with some compression/chunking options
+ * 2) use the hdiff utility to compare the input and output file; it returns RET==0
+ *    if the high-level objects have the same data
+ * 3) use the API functions SD(GR)getcompress, SD(GR)getchunk to verify
+ *    the compression/chunking input on the otput file
  *-------------------------------------------------------------------------
  */
 
-
-/*-------------------------------------------------------------------------
- * test1a:  
- *-------------------------------------------------------------------------
- */
-
-#if 1
-
- TESTING("compressing SELECTED, chunking SELECTED");
- hzip_init (&options);
-#if defined (HZIP_DEBUG)
- printf("\n-----------------------------------------------------\n");
- options.verbose=1;
+#if defined (HZIPTST_DEBUG)
+ verbose        =1;
  fspec.verbose  =1;
 #endif
- hzip_addcomp("gr4:GZIP",&options);
- hzip_addchunk("gr4:20x20",&options);
 
+ in_chunk_lengths[0]=10;
+ in_chunk_lengths[1]=8;
+ in_chunk_lengths[2]=6;
+
+
+/*-------------------------------------------------------------------------
+ * test1:  
+ *-------------------------------------------------------------------------
+ */
+ TESTING("compressing SDS SELECTED with HUFF, chunking SELECTED");
+ hzip_init (&options,verbose);
+ hzip_addcomp("dset7:HUFF 1",&options);
+ hzip_addchunk("dset7:10x8x6",&options);
  hzip(FILENAME,FILENAME_OUT,&options);
  hzip_end (&options);
- ret=hdiff(FILENAME,FILENAME_OUT,fspec);
- if (ret==0) PASSED() else H5_FAILED();
+ if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+  goto out;
+ if ( sds_verifiy_comp("dset7",COMP_CODE_SKPHUFF, 1) == -1) 
+  goto out;
+ if ( sds_verifiy_chunk("dset7",HDF_CHUNK|HDF_COMP,3,in_chunk_lengths) == -1) 
+  goto out;
+ PASSED();
 
-#endif
 
+/*-------------------------------------------------------------------------
+ * test2:  
+ *-------------------------------------------------------------------------
+ */
+ TESTING("compressing SDS SELECTED with RLE, chunking SELECTED");
+ hzip_init (&options,verbose);
+ hzip_addcomp("dset4:RLE",&options);
+ hzip_addchunk("dset4:10x8",&options);
+ hzip(FILENAME,FILENAME_OUT,&options);
+ hzip_end (&options);
+ if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+  goto out;
+ if ( sds_verifiy_comp("dset4",COMP_CODE_RLE, 0) == -1) 
+  goto out;
+ if ( sds_verifiy_chunk("dset4",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
+  goto out;
+ PASSED();
+
+/*-------------------------------------------------------------------------
+ * test3:  
+ *-------------------------------------------------------------------------
+ */
+ TESTING("compressing SDS SELECTED with GZIP, chunking SELECTED");
+ hzip_init (&options,verbose);
+ hzip_addcomp("dset4:GZIP 6",&options);
+ hzip_addchunk("dset4:10x8",&options);
+ hzip(FILENAME,FILENAME_OUT,&options);
+ hzip_end (&options);
+ if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+  goto out;
+ if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 6) == -1) 
+  goto out;
+ if ( sds_verifiy_chunk("dset4",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
+  goto out;
+ PASSED();
+
+
+/*-------------------------------------------------------------------------
+ * test4:  
+ *-------------------------------------------------------------------------
+ */
+ TESTING("compressing SDS SELECTED with NONE, chunking SELECTED NONE");
+ hzip_init (&options,verbose);
+ hzip_addcomp("dset_chunk_comp:NONE",&options);
+ hzip_addcomp("dset_chunk:NONE",&options);
+ hzip_addchunk("dset_chunk_comp:NONE",&options);
+ hzip_addchunk("dset_chunk:NONE",&options);
+ hzip(FILENAME,FILENAME_OUT,&options);
+ hzip_end (&options);
+ if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+  goto out;
+ if ( sds_verifiy_comp("dset_chunk_comp",COMP_CODE_NONE, 0) == -1) 
+  goto out;
+ if ( sds_verifiy_comp("dset_chunk",COMP_CODE_NONE, 0) == -1) 
+  goto out;
+ if ( sds_verifiy_chunk("dset_chunk_comp",HDF_NONE,0,0) == -1) 
+  goto out;
+ if ( sds_verifiy_chunk("dset_chunk",HDF_NONE,0,0) == -1) 
+  goto out;
+ PASSED();
+
+
+/*-------------------------------------------------------------------------
+ * test5:  
+ *-------------------------------------------------------------------------
+ */
+ TESTING("compressing SDS SELECTED with all types, chunking SELECTED");
+ hzip_init (&options,verbose);
+ hzip_addcomp("dset4:GZIP 9",&options);
+ hzip_addcomp("dset5:RLE",&options);
+ hzip_addcomp("dset6:HUFF 2",&options);
+ hzip_addchunk("dset4:10x8",&options);
+ hzip_addchunk("dset5:10x8",&options);
+ hzip_addchunk("dset6:10x8",&options);
+ hzip(FILENAME,FILENAME_OUT,&options);
+ hzip_end (&options);
+ if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+  goto out;
+ if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 9) == -1) 
+  goto out;
+ if ( sds_verifiy_comp("dset5",COMP_CODE_RLE, 0) == -1) 
+  goto out;
+ if ( sds_verifiy_comp("dset6",COMP_CODE_SKPHUFF, 2) == -1) 
+  goto out;
+ if ( sds_verifiy_chunk("dset4",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
+  goto out;
+ if ( sds_verifiy_chunk("dset5",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
+  goto out;
+ if ( sds_verifiy_chunk("dset6",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
+  goto out;
+ PASSED();
+
+/*-------------------------------------------------------------------------
+ * test6:  
+ *-------------------------------------------------------------------------
+ */
+ TESTING("compressing SDS SELECTED with all types, no chunking");
+ hzip_init (&options,verbose);
+ hzip_addcomp("dset4:GZIP 9",&options);
+ hzip_addcomp("dset5:RLE",&options);
+ hzip_addcomp("dset6:HUFF 2",&options);
+ hzip(FILENAME,FILENAME_OUT,&options);
+ hzip_end (&options);
+ if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+  goto out;
+ if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 9) == -1) 
+  goto out;
+ if ( sds_verifiy_comp("dset5",COMP_CODE_RLE, 0) == -1) 
+  goto out;
+ if ( sds_verifiy_comp("dset6",COMP_CODE_SKPHUFF, 2) == -1) 
+  goto out;
+ PASSED();
+
+/*-------------------------------------------------------------------------
+ * test7:  
+ *-------------------------------------------------------------------------
+ */
+
+ TESTING("compressing SDS ALL, chunking SELECTED NONE");
+ hzip_init (&options,verbose);
+ hzip_addcomp("*:GZIP 1",&options);
+ hzip_addchunk("dset_chunk_comp:NONE",&options);
+ hzip_addchunk("dset_chunk:NONE",&options);
+ hzip(FILENAME,FILENAME_OUT,&options);
+ hzip_end (&options);
+ if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+  goto out;
+ if ( sds_verifiy_comp_all(COMP_CODE_DEFLATE, 1) == -1) 
+  goto out;
+ if ( sds_verifiy_chunk("dset_chunk_comp",HDF_NONE,0,0) == -1) 
+  goto out;
+ if ( sds_verifiy_chunk("dset_chunk",HDF_NONE,0,0) == -1) 
+  goto out;
+ PASSED();
+
+/*-------------------------------------------------------------------------
+ * test8:  
+ *-------------------------------------------------------------------------
+ */
+
+ TESTING("no compressing, chunking ALL");
+ hzip_init (&options,verbose);
+ hzip_addchunk("*:10x8",&options);
+ hzip(FILENAME,FILENAME_OUT,&options);
+ hzip_end (&options);
+ if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+  goto out;
+ if ( sds_verifiy_chunk_all(HDF_CHUNK,2,in_chunk_lengths,"dset7") == -1) 
+  goto out;
+ PASSED();
+
+/*-------------------------------------------------------------------------
+ * test9:  
+ *-------------------------------------------------------------------------
+ */
+
+ verbose        =1;
+ fspec.verbose  =1;
+
+ TESTING("compressing SDS ALL with GZIP, chunking ALL");
+ printf("\n");
+ hzip_init (&options,verbose);
+ hzip_addcomp("*:GZIP 1",&options);
+ hzip_addchunk("*:10x8",&options);
+ hzip(FILENAME,FILENAME_OUT,&options);
+ hzip_end (&options);
+ if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+  goto out;
+ if ( sds_verifiy_comp_all(COMP_CODE_DEFLATE, 1) == -1) 
+  goto out;
+ if ( sds_verifiy_chunk_all(HDF_CHUNK|HDF_COMP,2,in_chunk_lengths,"dset7") == -1) 
+  goto out;
+ PASSED();
+ 
+/*-------------------------------------------------------------------------
+ * all tests PASSED
+ *-------------------------------------------------------------------------
+ */
  
  return 0;
+out:
+ H4_FAILED();
+ return 1;
 }
-
-
 

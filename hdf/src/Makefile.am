@@ -13,6 +13,7 @@ libdf_a_SOURCES = atom.c bitvect.c cdeflate.c cnbit.c cnone.c crle.c    \
                   mfanf.c mfgr.c mfgrf.c mfgrff.f mstdio.c tbbt.c       \
                   vattr.c vattrf.c vattrff.f vconv.c vg.c vgf.c vgff.f  \
                   vgp.c vhi.c vio.c vparse.c vrw.c vsfld.c
+
 include_HEADERS = hfile.h hdf.h hdfi.h herr.h hproto.h hcomp.h hconv.h  \
                   hbitio.h tbbt.h crle.h cnbit.h mstdio.h cnone.h       \
                   cskphuff.h cdeflate.h hlimits.h hntdefs.h htags.h     \

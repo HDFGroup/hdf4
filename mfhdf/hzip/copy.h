@@ -18,8 +18,6 @@
 #include "table.h"
 
 
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -58,6 +56,16 @@ void vgroup_insert(char* infname,char* outfname,int32 infile_id,int32 outfile_id
                    int npairs,              /* number tag/ref pairs for parent group */
                    table_t *table,
                    options_t *options);
+
+int copy_sds_attrs(int32 sds_id,
+                   int32 sds_out,
+                   int32 nattrs,          
+                   options_t *options);
+
+int copy_gr_attrs(int32 ri_id,
+                  int32 ri_out,
+                  int32 nattrs,          
+                  options_t *options);
 
 
 char *get_path(char*path_name, char*obj_name);

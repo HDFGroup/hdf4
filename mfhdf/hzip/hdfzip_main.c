@@ -20,9 +20,9 @@
 static void usage();
 
 /*
-Examples:
--v -i hziptst.hdf -o hziptst_out.hdf -c "*:2x2" -t "*:GZIP 6"
-
+Examples of use:
+-v -i hziptst.hdf -o hziptst_out.hdf -t "dataset:GZIP 6" -c "dataset:2x2"
+-v -i hziptst.hdf -o hziptst_out.hdf -f info.txt
 */
 
 
@@ -34,8 +34,8 @@ int main(int argc, char **argv)
  int         i;
 
 
- /* initialize options, -t table and -c table  */
- hzip_init (&options);
+ /* initialize options  */
+ hzip_init (&options,0);
 
  for ( i = 1; i < argc; i++) 
  {
@@ -57,13 +57,28 @@ int main(int argc, char **argv)
    ++i;
   }
   else if (strcmp(argv[i], "-c") == 0) {       
-
+   
    /* parse the -c option */
    hzip_addchunk(argv[i+1],&options);
-
+   
    /* jump to next */
    ++i;
   }
+
+  else if (strcmp(argv[i], "-m") == 0) {       
+   
+   options.threshold = parse_number(argv[i+1]);
+   if (options.threshold==-1) {
+    printf("Error: Invalid treshold size <%s>\n",argv[i+1]);
+    exit(1);
+   }
+   ++i;
+  }
+  
+  else if (strcmp(argv[i], "-f") == 0) {       
+   read_info(argv[++i],&options);
+  }
+  
   else if (argv[i][0] == '-') {
    usage();
   }
@@ -72,109 +87,6 @@ int main(int argc, char **argv)
  if (infile == NULL || outfile == NULL) 
   usage();
  
-
-/*-------------------------------------------------------------------------
- * print objects to compress/uncompress
- *-------------------------------------------------------------------------
- */
-
-#if 0
- 
- if (options.verbose)
- printf("Objects to compress are...\n");
- for ( i = 0; i < options.cp_tbl->nelems; i++) 
- {
-  for ( j = 0; j < options.cp_tbl->objs[i].n_objs; j++) 
-  {
-   char* obj_name=options.cp_tbl->objs[i].obj_list[j].obj;
-   if (options.verbose)
-   printf("\t%s     \t %s compression, parameter %d\n",
-    obj_name,
-    get_scomp(options.cp_tbl->objs[i].comp.type),
-    options.cp_tbl->objs[i].comp.info);
-   
-   /* check for duplicate names in input */
-   for ( ii = 0; ii < options.cp_tbl->nelems; ii++) 
-   {
-    if (ii==i) continue;
-    for ( jj = 0; jj < options.cp_tbl->objs[ii].n_objs; jj++) 
-    {
-     if (strcmp(obj_name,options.cp_tbl->objs[ii].obj_list[jj].obj)==0)
-     {
-      printf("\t%s     \t %s compression, parameter %d\n",
-       obj_name,
-       get_scomp(options.cp_tbl->objs[ii].comp.type),
-       options.cp_tbl->objs[ii].comp.info);
-      
-      printf("Error: %s is already present in input. Exiting...\n",obj_name);
-      comp_list_free(options.cp_tbl);
-      exit(1);
-     }
-    }
-    
-   }
-  }
- }
- 
-
- if (options.compress==ALL && options.cp_tbl->nelems>1) 
- {
-  printf("Error: '*' wildcard is present with other objects. Exiting...\n");
-  comp_list_free(options.cp_tbl);
-  exit(1);
- }
-
-
-/*-------------------------------------------------------------------------
- * print objects to chunk
- *-------------------------------------------------------------------------
- */
-
- if (options.verbose)
- printf("Objects to chunk are...\n");
- for ( i = 0; i < options.ck_tbl->nelems; i++) 
- {
-  for ( j = 0; j < options.ck_tbl->objs[i].n_objs; j++) 
-  {
-   char* obj_name=options.ck_tbl->objs[i].obj_list[j].obj;
-   if (options.verbose) {
-    printf("\t%s ",obj_name); 
-    for ( k = 0; k < options.ck_tbl->objs[i].rank; k++) 
-     printf("%d ",options.ck_tbl->objs[i].chunk_lengths[k]);
-    printf("\n");
-   }
-   
-   /* check for duplicate names in input */
-   for ( ii = 0; ii < options.ck_tbl->nelems; ii++) 
-   {
-    if (ii==i) continue;
-    for ( jj = 0; jj < options.ck_tbl->objs[ii].n_objs; jj++) 
-    {
-     if (strcmp(obj_name,options.ck_tbl->objs[ii].obj_list[jj].obj)==0)
-     {
-      printf("\t%s     \n",obj_name); 
-      
-      printf("Error: %s is already present in input. Exiting...\n",obj_name);
-      chunk_list_free(options.ck_tbl);
-      exit(1);
-     }
-    }
-    
-   }
-  }
- }
- 
-
- if (options.chunk==ALL && options.ck_tbl->nelems>1) 
- {
-  printf("Error: '*' wildcard is present with other objects. Exiting...\n");
-  chunk_list_free(options.ck_tbl);
-  exit(1);
- }
-
-
-#endif
-
  /* zip it */
  hzip(infile,outfile,&options);
  
@@ -199,7 +111,7 @@ void usage()
 {
 
  printf(
-  "hzip -i input -o output [-h] [-v] [-t 'comp_info'] [-c 'chunk_info']\n");
+  "hzip -i input -o output [-h] [-v] [-t 'comp_info'] [-c 'chunk_info'] [-f comp_file] [-m number]\n");
  printf("  -i input          Input HDF File\n");
  printf("  -o output         Output HDF File\n");
  printf("  [-h]              Print usage message\n");
@@ -230,6 +142,8 @@ void usage()
  printf("\t\t        <dim_1 x dim_2 x ... dim_n> or\n");
  printf("\t\t        NONE, to unchunk a previous chunked object\n");
  printf("  -f comp_file      File with compression info in it (instead of the two above options)\n");
+ printf("  -m number         Do not compress objects wich size in bytes is smaller than number\n");
+ printf("                    A default minimum of 1024 bytes is used\n");
  printf("\n");
  printf("Examples:\n");
  printf("\n");

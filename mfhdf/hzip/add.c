@@ -19,15 +19,12 @@
 
 
 
-/* read image data */
+/* globals for read image data, used in gr, r8 and r24 add */
 int      X_LENGTH;
 int      Y_LENGTH;
 int      N_COMPS;
 unsigned char *image_data = 0;   
 
-/* sds */
-#define X_DIM      4
-#define Y_DIM      16
 
 
 /*-------------------------------------------------------------------------
@@ -121,7 +118,56 @@ void add_gr(char* name_file,char* gr_name,int32 file_id,int32 vgroup_id)
   free( image_data );
   image_data=NULL;
  }
+}
 
+/*-------------------------------------------------------------------------
+ * Function: add_glb_attrs
+ *
+ * Purpose: utility function to write global attributes
+ *
+ * Return: void
+ *
+ * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
+ *
+ * Date: July 30, 2003
+ *
+ *-------------------------------------------------------------------------
+ */
+
+void add_glb_attrs(char *fname,int32 file_id)
+{
+ intn  status;                 /* status for functions returning an intn */
+ int32 sd_id,                  /* SD interface identifier */
+       gr_id;                  /* GR interface identifier */
+ uint8 attr_values[2]={1,2};
+ int   n_values=2;
+     
+/*-------------------------------------------------------------------------
+ * make SDS global attributes
+ *-------------------------------------------------------------------------
+ */ 
+ 
+ /* initialize the SD interface */
+ sd_id  = SDstart (fname, DFACC_WRITE);
+
+ /* assign an attribute to the SD */
+ status = SDsetattr(sd_id, "MySDgattr", DFNT_UINT8, n_values, (VOIDP)attr_values);
+
+ /* terminate access to the SD interface */
+ status = SDend (sd_id);
+
+/*-------------------------------------------------------------------------
+ * make GR global attributes
+ *-------------------------------------------------------------------------
+ */ 
+
+ gr_id  = GRstart(file_id);
+ 
+ /* assign an attribute to the GR */
+ status = GRsetattr(gr_id, "MyGRgattr", DFNT_UINT8, n_values, (VOIDP)attr_values);
+
+ /* terminate access to the GR interface */
+ status = GRend (gr_id);
 }
 
 
@@ -264,6 +310,13 @@ void add_r24(char *fname,char* name_file,int32 vgroup_id)
  *-------------------------------------------------------------------------
  */
 
+
+/* dimensions of dataset */
+#define X_DIM      20
+#define Y_DIM      80
+#define Z_DIM      2
+
+
 void add_sd(char *fname,             /* file name */
             char* sds_name,          /* sds name */
             int32 vgroup_id,         /* group ID */
@@ -291,7 +344,6 @@ void add_sd(char *fname,             /* file name */
  float64 data_Y[Y_DIM];             /* Y dimension dimension scale */
  int     i, j;
  HDF_CHUNK_DEF chunk_def;           /* Chunking definitions */ 
-
  
  /* Define chunk's dimensions */
  chunk_def.chunk_lengths[0] = Y_DIM/2;
@@ -312,7 +364,6 @@ void add_sd(char *fname,             /* file name */
 /* initialize dimension scales */
  for (i=0; i < X_DIM; i++) data_X[i] = i;
  for (i=0; i < Y_DIM; i++) data_Y[i] = 0.1 * i;
-
 
  /* initialize the SD interface */
  sd_id = SDstart (fname, DFACC_WRITE);
@@ -378,8 +429,116 @@ void add_sd(char *fname,             /* file name */
   default: 
    break;
   }
-
  }
+
+ /* obtain the reference number of the SDS using its identifier */
+ sds_ref = SDidtoref (sds_id);
+ 
+#if defined( HZIP_DEBUG)
+ printf("add_sd %d\n",sds_ref); 
+#endif
+ 
+ /* add the SDS to the vgroup. the tag DFTAG_NDG is used */
+ if (vgroup_id)
+  status_32 = Vaddtagref (vgroup_id, TAG_GRP_DSET, sds_ref);
+ 
+ /* terminate access to the SDS */
+ status_n = SDendaccess (sds_id);
+ 
+ /* terminate access to the SD interface */
+ status_n = SDend (sd_id);
+}
+
+
+/*-------------------------------------------------------------------------
+ * Function: add_sd3d
+ *
+ * Purpose: utility function to write with
+ *  SD - Multifile Scientific Data Interface,
+ *  optionally :
+ *   1)inserting the SD into the group VGROUP_ID
+ *   2)making the dataset chunked and/or compressed
+ *
+ * Return: void
+ *
+ * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
+ *
+ * Date: July 3, 2003
+ *
+ *-------------------------------------------------------------------------
+ */
+
+void add_sd3d(char *fname,             /* file name */
+              char* sds_name,          /* sds name */
+              int32 vgroup_id,         /* group ID */
+              int32 chunk_flags,       /* chunk flags */
+              int32 comp_type,         /* compression flag */
+              comp_info *comp_info     /* compression structure */ )
+
+{
+ intn   status_n;     /* returned status_n for functions returning an intn  */
+ int32  status_32,    /* returned status_n for functions returning an int32 */
+        sd_id,        /* SD interface identifier */
+        sds_id,       /* data set identifier */
+        sds_ref,      /* reference number of the data set */
+        dim_sds[3],   /* dimension of the data set */
+        rank = 3,     /* rank of the data set array */
+        start[3],     /* write start */
+        fill_value=2, /* fill value */
+        data[Z_DIM][Y_DIM][X_DIM];
+ int    i, j, k;
+ HDF_CHUNK_DEF chunk_def;           /* Chunking definitions */ 
+ 
+ /* Define chunk's dimensions */
+ chunk_def.chunk_lengths[0] = Z_DIM/2;
+ chunk_def.chunk_lengths[1] = Y_DIM/2;
+ chunk_def.chunk_lengths[2] = X_DIM/2;
+ /* To use chunking with RLE, Skipping Huffman, and GZIP compression */
+ chunk_def.comp.chunk_lengths[0] = Y_DIM/2;
+ chunk_def.comp.chunk_lengths[1] = Y_DIM/2;
+ chunk_def.comp.chunk_lengths[2] = X_DIM/2;
+ 
+ /* GZIP compression, set compression type, flag and deflate level*/
+ chunk_def.comp.comp_type = COMP_CODE_DEFLATE;
+ chunk_def.comp.cinfo.deflate.level = 6;             
+
+ /* data set data initialization */
+ for (k = 0; k < Z_DIM; k++){
+  for (j = 0; j < Y_DIM; j++) 
+   for (i = 0; i < X_DIM; i++)
+    data[k][j][i] = (i + j) + 1;
+ }
+ 
+ /* initialize the SD interface */
+ sd_id = SDstart (fname, DFACC_WRITE);
+ 
+ /* set the size of the SDS's dimension */
+ dim_sds[0] = Z_DIM;
+ dim_sds[1] = Y_DIM;
+ dim_sds[2] = X_DIM;
+ 
+ /* create the SDS */
+ sds_id = SDcreate (sd_id, sds_name, DFNT_INT32, rank, dim_sds);
+
+ /* set chunk */
+ if ( (chunk_flags == HDF_CHUNK) || (chunk_flags == (HDF_CHUNK | HDF_COMP)) )
+  status_n = SDsetchunk (sds_id, chunk_def, chunk_flags);
+ 
+ /* use compress without chunk-in */
+ else if ( (chunk_flags==HDF_NONE || chunk_flags==HDF_CHUNK) && 
+            comp_type>COMP_CODE_NONE && comp_type<COMP_CODE_INVALID)
+  status_n = SDsetcompress (sds_id, comp_type, comp_info); 
+
+ /* set a fill value */
+ status_n = SDsetfillvalue (sds_id, (VOIDP)&fill_value);
+  
+ /* define the location and size of the data to be written to the data set */
+ start[0] = 0;
+ start[1] = 0;
+ start[2] = 0;
+ 
+ /* write the stored data to the data set */
+ status_n = SDwritedata (sds_id, start, NULL, dim_sds, (VOIDP)data);
 
  /* obtain the reference number of the SDS using its identifier */
  sds_ref = SDidtoref (sds_id);
@@ -505,8 +664,57 @@ void add_vs(char* vs_name,int32 file_id,int32 vgroup_id)
  
  /* Terminate access to the VS interface */
  status_n = Vend (file_id);
- 
 }
+
+
+/*-------------------------------------------------------------------------
+ * Function: add_an
+ *
+ * Purpose: utility function to write AN
+ *
+ * Return: void
+ *
+ * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
+ *
+ * Date: July 30, 2003
+ *
+ *-------------------------------------------------------------------------
+ */
+
+#define  FILE_LABEL_TXT "General HDF objects"
+#define  FILE_DESC_TXT  "This is an HDF file that contains general HDF objects"
+
+void add_an(int32 file_id)
+{
+ intn  status_n;     /* returned status for functions returning an intn  */
+ int32 status_32,    /* returned status for functions returning an int32 */
+       an_id,        /* AN interface identifier */
+       file_label_id,/* file label identifier */
+       file_desc_id; /* file description identifier */
+         
+ /* Initialize the AN interface */
+ an_id = ANstart (file_id);
+
+ /* Create the file label */
+ file_label_id = ANcreatef (an_id, AN_FILE_LABEL);
+
+ /* Write the annotations to the file label */
+ status_32 = ANwriteann (file_label_id,FILE_LABEL_TXT,strlen (FILE_LABEL_TXT));
+
+ /* Create file description */
+ file_desc_id = ANcreatef (an_id, AN_FILE_DESC);
+
+ /* Write the annotation to the file description */
+ status_32 = ANwriteann (file_desc_id, FILE_DESC_TXT, strlen (FILE_DESC_TXT));
+
+/* Terminate access to each annotation explicitly */
+ status_n = ANendaccess (file_label_id);
+ status_n = ANendaccess (file_desc_id);
+ 
+/* Terminate access to the AN interface */
+ status_32 = ANend (an_id);
+}
+
 
 
 /*-------------------------------------------------------------------------
@@ -538,7 +746,7 @@ int read_data(char* file_name)
 
  if ( f == NULL )
  {
-  printf( "Could not open file %s. Try set $srcdir \n", file_name );
+  printf( "Could not open file <%s>\n", file_name );
   return -1;
  }
 
