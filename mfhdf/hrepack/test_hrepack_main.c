@@ -135,7 +135,7 @@ int main(void)
  /* create the 4th vgroup, for images */
  vgroup_img_id = Vattach (file_id, vgroup_ref, "w");
  status_32     = Vsetname (vgroup_img_id, "images");
-
+ 
 /*-------------------------------------------------------------------------
  * add some SDS to the file
  * duplicates are inserted in the groups "g1", "g2", "g3" and root
@@ -169,8 +169,8 @@ int main(void)
 
  /* add a chunked-compressed sds with SDsetchunk */
  chunk_flags = HDF_CHUNK | HDF_COMP;
- comp_type   = COMP_CODE_NONE;
- add_sd(FILENAME,file_id,"dset_chunk_comp",0,chunk_flags,comp_type,NULL);
+ comp_type   = COMP_CODE_DEFLATE;
+ add_sd(FILENAME,file_id,"dset_chunk_comp",0,chunk_flags,comp_type,&comp_info);
 
 /*-------------------------------------------------------------------------
  * GZIP
@@ -210,6 +210,9 @@ int main(void)
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_SZIP;
  add_sd(FILENAME,file_id,"dset_szip",0,chunk_flags,comp_type,&comp_info);
+  
+ add_sd_szip_all(FILENAME,file_id,0);
+ 
 #endif
 
 /*-------------------------------------------------------------------------
@@ -255,9 +258,13 @@ int main(void)
  *-------------------------------------------------------------------------
  */ 
 
+#if defined (ENABLE_SZIP)
+
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_SZIP;
  add_gr("gr_szip",file_id,0,chunk_flags,comp_type,&comp_info);
+
+#endif
 
 /*-------------------------------------------------------------------------
  * add some GR realistic images to the file
@@ -580,5 +587,6 @@ int main(void)
 out:
  H4_FAILED();
  return 1;
+
 }
 
