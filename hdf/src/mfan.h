@@ -19,7 +19,7 @@
  * Contents:
  *          Structure definitions: ANnode, ANentry, ANfile
  *          Constant definitions:  AN_DATA_LABEL, AN_DATA_DESC
- *                                 AN_FILE_LABEL, AN_FILE_DESC
+ *          (-moved to hdf.h)       AN_FILE_LABEL, AN_FILE_DESC
  * Remarks: none
  *----------------------------------------------------------------------------*/
 
@@ -27,12 +27,7 @@
 #define _MFAN_H
 
 #include "hdf.h"
-
-#ifdef HAVE_RBTREE
-#include "rb.h"  /* Red-Black tree routines */
-#else /* use tbbt */
-#include "tbbt.h"
-#endif /* use tbbt */
+#include "tbbt.h" /* Threaded-balanced binary tree stuff */
 
 #if 0
 /* enumerated types of the varous annotation types 
@@ -75,27 +70,16 @@ typedef struct ANfile
   char    *filename;      /* File name */
   int32   access_mode;    /* access mode this file was opened with */
   intn    an_num[4];      /* Holds number of annotations found of each type */
-#ifdef HAVE_RBTREE
-  Rb_node an_tree[4];     /* RB-tress for each type of annotation in file 
-                           * i.e. file/data labels and descriptions */
-#else  /* use tbbt */
   TBBT_TREE *an_tree[4];  /* tbbt trees for each type of annotation in file 
                            * i.e. file/data labels and descriptions */
-#endif /* use tbbt */
 } ANfile;
 
 #ifdef MFAN_C
 /* WE ARE IN MAIN ANNOTATION SOURCE FILE "mfan.c" */
 
 /* PRIVATE variables and defintions */
-
-#ifdef HAVE_RBTREE
-EXPORT Rb_node ANfilelist = NULL; /* List of open files */
-EXPORT Rb_node ANnodelist = NULL; /* List of all anotations across files */
-#else /* use tbbt */
 EXPORT TBBT_TREE *ANfilelist = NULL; /* List of open files */
 EXPORT TBBT_TREE *ANnodelist = NULL; /* List of all anotations across files */
-#endif /* use tbbt */
 PRIVATE intn    num_anns   = 0;    /* total number of annotations 
                                       i.e. all files */
 
@@ -305,7 +289,9 @@ extern intn  ANendaccess(int32 ann_id /* IN: annotation id */);
 extern int32 ANget_tagref(int32 an_id, int32 index, ann_type type,
                           uint16 *ann_tag, uint16 *ann_ref);
 
-extern int32 ANid2tagref(int32 an_id, uint16 *ann_tag, uint16 *ann_ref);
+extern int32 ANid2tagref(int32 ann_id, uint16 *ann_tag, uint16 *ann_ref);
+
+extern int32 ANtagref2id(int32 an_id, uint16 ann_tag, uint16 ann_ref);
 
 extern uint16 atype2tag(ann_type atype);
 

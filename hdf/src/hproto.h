@@ -2147,6 +2147,8 @@ extern int32 ANget_tagref(int32 an_id, int32 index, ann_type type,
 
 extern int32 ANid2tagref(int32 an_id, uint16 *ann_tag, uint16 *ann_ref);
 
+extern int32 ANtagref2id(int32 an_id, uint16 ann_tag, uint16 ann_ref);
+
 extern uint16 atype2tag(ann_type atype);
 
 extern ann_type tag2atype(uint16 atag);
