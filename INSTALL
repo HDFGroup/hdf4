@@ -20,7 +20,7 @@ Supported Platforms
 
   Platform(OS)            C-Compiler  Fortran-Compiler   libdf.a   libmfhdf.a
   ------------            -----------  -----------------   -------   -----------
-  Sun4(SunOS 4.1.3)           GCC 2.6.3      f77 SC1.0        X         X
+  Sun4(SunOS 4.1.4)           GCC 2.7.2      f77 SC1.0        X         X
   Sun4(Solaris 2.3)           CC SC3.0       f77 SC3.0        X         X
   SGI-?(IRIX4.0.2)            CC             f77              X         X
   SGI-Indy(IRIX5.3)           CC             f77              X         X
@@ -36,7 +36,7 @@ Supported Platforms
   DEC Alpha/OSF1/1 v3.0       CC 3.11        f77              X         X
   DecStation/MIPSEL           CC              -
   IBM PC - Intel Pentium
-       Solarisx86             GCC 2.6.3       -               X         X
+       Solarisx86             GCC 2.7.0       -               X         X
        Linux                  GCC         Fortran compiler    X         X
                                              2.6.2
                                  (Fortran to C converter)
@@ -180,7 +180,7 @@ Platform-specific Notes
     HPUX(9.03) on PA-RISC
     ---------------------
     The distribution has been compiled/tested with both the native
-    ANSI-C compiler and GCC 2.6.3. In both cases the native fortran
+    ANSI-C compiler and GCC 2.7.2. In both cases the native fortran
     compiler f77 was used. The binary distribution was compiled
     using the native compilers.
 
@@ -198,7 +198,7 @@ Platform-specific Notes
     xdr netCDF test does not without the above fix. The binary 
     distribution was compiled using the native compilers.
 
-    Solaris(2.3) on Sparc
+    Solaris(2.5) on Sparc
     ---------------------
     The distribution has been compiled/tested with the native
     ANSI-C compiler and native fortran compiler. The binary 
@@ -206,9 +206,9 @@ Platform-specific Notes
 
     Solaris(2.4) on INTEL(x86)
     ---------------------------
-    The distribution has been compiled/tested with GCC 2.6.3 with
-    NO fortran support. The binary distribution was compiled
-    using GCC 2.6.3.
+    The distribution has been compiled/tested with GCC 2.7.0 with
+    *NO* fortran support. The binary distribution was compiled
+    using GCC 2.7.0.
 
 
     Windows '95 or Windows NT
@@ -251,7 +251,9 @@ Pablo Instrumentation
     #PABLO_FLAGS  = -DHAVE_PABLO
     #PABLO_INCLUDE = -I/hdf2/Pablo/Instrument.HP/include
 
-    After setting these values you must re-run  the toplevel 'configure' script. 
+    After setting these values you must re-run the toplevel 'configure' script.
+    Make sure that your start from a clean re-build(i.e. 'make clean') after
+    re-running the toplevel 'configure' script and then run 'make'.
     Details on running configure can be found above in the section
     'General Configuration/Installation - Unix'.
 
@@ -290,8 +292,10 @@ File Page Buffering(Beta release)
     # documentation before enabling this feature.
     #FMPOOL_FLAGS  = -DHAVE_FMPOOL
 
-    After setting these values you must re-run  the toplevel 'configure' 
-    script.  Details on running configure can be found above in the section
+    After setting these values you must re-run the toplevel 'configure' script.
+    Make sure that your start from a clean re-build(i.e. 'make clean') after
+    re-running the toplevel 'configure' script and then run 'make'.
+    Details on running configure can be found above in the section
     'General Configuration/Installation - Unix'.
 
 
