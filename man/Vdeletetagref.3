@@ -1,0 +1,44 @@
+.\" WARNING! THIS FILE WAS GENERATED AUTOMATICALLY BY c2man!
+.\" DO NOT EDIT! CHANGES MADE TO THIS FILE WILL BE LOST!
+.TH "hproto.h" 3 "16 October 1997" "c2man hproto.h"
+.SH "NAME"
+Vdeletetagref \- delete tag/ref pair in Vgroup
+.SH "SYNOPSIS"
+.ft B
+#include <hdf.h>
+.sp
+extern intn Vdeletetagref
+.br
+(
+.br
+	int32 vkey,
+.br
+	int32 tag,
+.br
+	int32 ref
+.br
+);
+.sp
+.ft R
+.SH "PARAMETERS"
+.TP
+.B "int32 vkey"
+IN: vgroup key.
+.TP
+.B "int32 tag"
+IN: tag to delete in vgroup.
+.TP
+.BR "int32 ref" 
+IN: ref to delete in vgroup.
+.SH "DESCRIPTION"
+.SS "Vdeletetagref"
+Deletes the given tag/ref pair from the Vgroup.  If the given tag/ref pair does not exist in the vgroup the routine will return FAIL. Users should use Vinqtagref() to check if the tag/ref pair exists before deleting.
+
+.SH "RETURNS"
+.SS "Vdeletetagref"
+Returns SUCCEED if the tag/ref pair is deleted from Vgroup and FAIL if unsuccessful.
+.SH "NAME"
+.SS "Vdeletetagref"
+Vdeletetagref   -- delete tag/ref pair in Vgroup
+
+
