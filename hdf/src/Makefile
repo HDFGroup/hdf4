@@ -71,7 +71,7 @@ FC=f77
 FFLAGS= -g
 
 # ==> specify your C compiler
-CC=cc
+CC=gcc
 CFLAGS=  -g 
 
 # ==> specify your C* compiler
