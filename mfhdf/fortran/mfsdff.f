@@ -357,7 +357,7 @@ C                                    RLE, GZIP or SKPHUFF
 C                                2 - SDS is chunked and compressed with
 C                                    NBIT
 C        Returns:   0 on success, -1 on failure
-C        Calls:     scgichnk (C stub for SD setchunk function)
+C        Calls:     scgichnk (C stub for SDgetchunkinfo function)
 C-------------------------------------------------------------------------
 
          INTEGER function sfgichnk(id, dim_length, comp_flag)
@@ -377,7 +377,7 @@ C        Inputs:    id       - data set ID
 C                   start    - chunk coordinates 
 C                   char_data - buffer the data will be read into  
 C        Returns:   0 on success, -1 on failure
-C        Calls:     scrcchnk (C stub for SDwriteChunk function)
+C        Calls:     scrcchnk (C stub for SDreadchunk function)
 C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
 
@@ -400,7 +400,7 @@ C        Inputs:    id       - data set ID
 C                   start    - chunk coordinates 
 C                   num_data - buffer the  numeric data will be read into  
 C        Returns:   0 on success, -1 on failure
-C        Calls:     scrchnk (C stub for SDwriteChunk function)
+C        Calls:     scrchnk (C stub for SDreadchunk function)
 C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
 
@@ -469,7 +469,7 @@ C              parameters for each type of compression
 C
 C                       
 C        Returns:   0 on success, -1 on failure
-C        Calls:     scschnk (C stub for SD setchunk function)
+C        Calls:     scschnk (C stub for SDsetchunk function)
 C-------------------------------------------------------------------------
 
          INTEGER function sfschnk(id, dim_length, comp_type,comp_prm)
@@ -489,7 +489,7 @@ C        Inputs:    id       - data set ID
 C                   start    - chunk coordinates 
 C                   char_data - buffer containing  data to be written  
 C        Returns:   0 on success, -1 on failure
-C        Calls:     scwcchnk (C stub for SDwriteChunk function)
+C        Calls:     scwcchnk (C stub for SDwritechunk function)
 C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
 
@@ -512,7 +512,7 @@ C        Inputs:    id       - data set ID
 C                   start    - chunk coordinates 
 C                   num_data - buffer containing data to be written  
 C        Returns:   0 on success, -1 on failure
-C        Calls:     scwchnk (C stub for SDwriteChunk function)
+C        Calls:     scwchnk (C stub for SDwritechunk function)
 C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
 
@@ -545,7 +545,7 @@ C        NOTE: IT IS USER's responsibility to pass correct compression
 C              parameters for each type of compression
 C
 C        Returns:   0 on success, -1 on failure
-C        Calls:     scscompress (C stub for SD setchunk function)
+C        Calls:     scscompress (C stub for SDsetcompress function)
 C-------------------------------------------------------------------------
 
          INTEGER function sfscompress(id, comp_type,comp_prm)
