@@ -366,7 +366,7 @@ GLOBAL VOID write_file_header (compress_info_ptr cinfo)
 
     /* Get an AID to write the JPEG header into.  1024 bytes should be more */
     /*  than enough (it should fit into 575) */
-    aid=Hstartwrite(img_file_id,img_scheme,img_ref,(int32)1024);
+    aid=Hstartwrite(img_file_id,(uint16)img_scheme,img_ref,(int32)1024);
 
     emit_marker(aid, M_SOI);    /* first the SOI */       /* 2 */
 

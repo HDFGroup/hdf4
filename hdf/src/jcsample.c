@@ -41,6 +41,8 @@ METHODDEF VOID
 downsample_init (compress_info_ptr cinfo)
 {
   /* no work for now */
+    /* shut compiler up */
+    cinfo=cinfo;
 }
 
 
@@ -62,6 +64,9 @@ int_downsample (compress_info_ptr cinfo, int which_component,
   long outcol, outcol_h;	/* outcol_h == outcol*h_expand */
   JSAMPROW inptr, outptr;
   int32 outvalue;
+
+    /* shut compiler up */
+    below=below; above=above; input_rows=input_rows; input_cols=input_cols;
 
 #ifdef DEBUG			/* for debugging pipeline controller */
   if (output_rows != compptr->v_samp_factor ||
@@ -113,6 +118,10 @@ h2v1_downsample (compress_info_ptr cinfo, int which_component,
   long outcol;
   register JSAMPROW inptr, outptr;
 
+    /* shut compiler up */
+    below=below; above=above; input_rows=input_rows; input_cols=input_cols;
+    which_component=which_component; cinfo=cinfo;
+
 #ifdef DEBUG			/* for debugging pipeline controller */
   jpeg_component_info * compptr = cinfo->cur_comp_info[which_component];
   if (output_rows != compptr->v_samp_factor ||
@@ -127,7 +136,7 @@ h2v1_downsample (compress_info_ptr cinfo, int which_component,
     outptr = output_data[outrow];
     inptr = input_data[outrow];
     for (outcol = 0; outcol < output_cols; outcol++) {
-      *outptr++ = (JSAMPLE) ((unsigned)(GETJSAMPLE(*inptr) + GETJSAMPLE(inptr[1]) 
+      *outptr++ = (JSAMPLE) ((unsigned)(GETJSAMPLE(*inptr) + GETJSAMPLE(inptr[1])
 			+ 1) >> 1);
       inptr += 2;
     }
@@ -151,6 +160,10 @@ h2v2_downsample (compress_info_ptr cinfo, int which_component,
   int inrow, outrow;
   long outcol;
   register JSAMPROW inptr0, inptr1, outptr;
+
+    /* shut compiler up */
+    below=below; above=above; input_rows=input_rows; input_cols=input_cols;
+    which_component=which_component; cinfo=cinfo;
 
 #ifdef DEBUG			/* for debugging pipeline controller */
   jpeg_component_info * compptr = cinfo->cur_comp_info[which_component];
@@ -191,6 +204,10 @@ fullsize_downsample (compress_info_ptr cinfo, int which_component,
 		     JSAMPARRAY above, JSAMPARRAY input_data, JSAMPARRAY below,
 		     JSAMPARRAY output_data)
 {
+    /* shut compiler up */
+    below=below; above=above; input_rows=input_rows; input_cols=input_cols;
+    which_component=which_component; cinfo=cinfo;
+
 #ifdef DEBUG			/* for debugging pipeline controller */
   if (input_cols != output_cols || input_rows != output_rows)
     ERREXIT(cinfo->emethods, "Pipeline controller messed up");
@@ -219,6 +236,9 @@ h2v2_smooth_downsample (compress_info_ptr cinfo, int which_component,
   long colctr;
   register JSAMPROW inptr0, inptr1, above_ptr, below_ptr, outptr;
   int32 membersum, neighsum, memberscale, neighscale;
+
+    /* shut compiler up */
+    input_cols=input_cols; which_component=which_component;
 
 #ifdef DEBUG			/* for debugging pipeline controller */
   jpeg_component_info * compptr = cinfo->cur_comp_info[which_component];
@@ -332,6 +352,9 @@ fullsize_smooth_downsample (compress_info_ptr cinfo, int which_component,
   int32 membersum, neighsum, memberscale, neighscale;
   int colsum, lastcolsum, nextcolsum;
 
+    /* shut compiler up */
+    input_cols=input_cols; which_component=which_component;
+
 #ifdef DEBUG			/* for debugging pipeline controller */
   if (input_cols != output_cols || input_rows != output_rows)
     ERREXIT(cinfo->emethods, "Pipeline controller messed up");
@@ -400,6 +423,9 @@ METHODDEF VOID
 downsample_term (compress_info_ptr cinfo)
 {
   /* no work for now */
+    /* shut compiler up */
+    cinfo=cinfo;
+
 }
 
 

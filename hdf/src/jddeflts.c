@@ -39,6 +39,9 @@ METHODDEF VOID
 d_progress_monitor (decompress_info_ptr cinfo, long loopcounter, long looplimit)
 {
   /* do nothing */
+    /* shut compiler up */
+    cinfo=cinfo; loopcounter=loopcounter; looplimit=looplimit;
+
 }
 
 

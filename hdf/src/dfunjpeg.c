@@ -226,7 +226,7 @@ LOCAL VOID get_dqt (decompress_info_ptr cinfo)
     QUANT_TBL_PTR quant_ptr;
   
     length = get_2bytes(cinfo) - 2;
-  
+
     while (length > 0) {
         n = JGETC(cinfo);
         prec = n >> 4;
@@ -246,7 +246,7 @@ LOCAL VOID get_dqt (decompress_info_ptr cinfo)
         for (i = 0; i < DCTSIZE2; i++) {
             tmp = (uint16)JGETC(cinfo);
             if (prec)
-                tmp = (tmp<<8) + (uint16)JGETC(cinfo);
+                tmp = (uint16)((tmp<<8) + (uint16)JGETC(cinfo));
             quant_ptr[i] = tmp;
         }
 
@@ -305,7 +305,7 @@ LOCAL VOID get_app0 (decompress_info_ptr cinfo)
       /* Save info */
             cinfo->density_unit = b[7];
             cinfo->X_density = (uint16)(((uint16)b[8] << 8) + b[9]);
-            cinfo->Y_density = ((uint16)b[10] << 8) + b[11];
+            cinfo->Y_density = (uint16)(((uint16)b[10] << 8) + b[11]);
       /* Assume colorspace is YCbCr, unless UI has overridden me */
             if (cinfo->jpeg_color_space == CS_UNKNOWN)
                 cinfo->jpeg_color_space = CS_YCbCr;
@@ -334,10 +334,10 @@ LOCAL VOID get_sof (decompress_info_ptr cinfo, int code)
   
     length = get_2bytes(cinfo);
   
-    cinfo->data_precision = JGETC(cinfo);
+    cinfo->data_precision = (short)JGETC(cinfo);
     cinfo->image_height   = get_2bytes(cinfo);
     cinfo->image_width    = get_2bytes(cinfo);
-    cinfo->num_components = JGETC(cinfo);
+    cinfo->num_components = (short)JGETC(cinfo);
 
     TRACEMS4(cinfo->emethods, 1,
 	   "Start Of Frame 0x%02x: width=%u, height=%u, components=%d",
@@ -373,11 +373,11 @@ LOCAL VOID get_sof (decompress_info_ptr cinfo, int code)
     for (ci = 0; ci < cinfo->num_components; ci++) {
         compptr = &cinfo->comp_info[ci];
         compptr->component_index = ci;
-        compptr->component_id = JGETC(cinfo);
+        compptr->component_id = (short)JGETC(cinfo);
         c = JGETC(cinfo);
-        compptr->h_samp_factor = (c >> 4) & 15;
-        compptr->v_samp_factor = (c     ) & 15;
-        compptr->quant_tbl_no  = JGETC(cinfo);
+        compptr->h_samp_factor = (short)((c >> 4) & 15);
+        compptr->v_samp_factor = (short)((c     ) & 15);
+        compptr->quant_tbl_no  = (short)JGETC(cinfo);
       
         TRACEMS4(cinfo->emethods, 1, "    Component %d: %dhx%dv q=%d",
             compptr->component_id, compptr->h_samp_factor,
@@ -396,9 +396,9 @@ LOCAL VOID get_sos (decompress_info_ptr cinfo)
     length = get_2bytes(cinfo);
   
     n = JGETC(cinfo);  /* Number of components */
-    cinfo->comps_in_scan = n;
+    cinfo->comps_in_scan = (short)n;
     length -= 3;
-  
+
     if (length != (n * 2 + 3) || n < 1 || n > MAX_COMPS_IN_SCAN)
         ERREXIT(cinfo->emethods, "Bogus SOS length");
 
@@ -418,8 +418,8 @@ LOCAL VOID get_sos (decompress_info_ptr cinfo)
 
         compptr = &cinfo->comp_info[ci];
         cinfo->cur_comp_info[i] = compptr;
-        compptr->dc_tbl_no = (c >> 4) & 15;
-        compptr->ac_tbl_no = (c     ) & 15;
+        compptr->dc_tbl_no = (short)((c >> 4) & 15);
+        compptr->ac_tbl_no = (short)((c     ) & 15);
 
         TRACEMS3(cinfo->emethods, 1, "    c%d: [dc=%d ac=%d]", cc,
              compptr->dc_tbl_no, compptr->ac_tbl_no);
@@ -560,7 +560,7 @@ GLOBAL VOID read_file_header (decompress_info_ptr cinfo)
     int c;
 
     /* Start reading from the header */
-    jdata_aid=Hstartread(img_file_id,img_scheme,img_ref);
+    jdata_aid=Hstartread(img_file_id,(uint16)img_scheme,img_ref);
 
   /* Demand an SOI marker at the start of the file --- otherwise it's
    * probably not a JPEG file at all.  If the user interface wants to support
@@ -711,6 +711,8 @@ GLOBAL int read_jpeg_data (decompress_info_ptr cinfo)
 GLOBAL VOID read_scan_trailer (decompress_info_ptr cinfo)
 {
   /* no work needed */
+    /* shut the compiler up */
+    cinfo=cinfo;
 }
 
 
@@ -723,6 +725,9 @@ GLOBAL VOID read_file_trailer (decompress_info_ptr cinfo)
 #ifdef QAK
   /* no work needed */
 #else
+    /* shut the compiler up */
+    cinfo=cinfo;
+
     Hendaccess(jdata_aid);
 #endif
 }
@@ -789,6 +794,8 @@ GLOBAL VOID output_init (decompress_info_ptr cinfo)
    * If you have requested color quantization, the colormap is NOT yet set.
    * You may wish to defer output initialization until put_color_map is called.
    */
+    /* shut the compiler up */
+    cinfo=cinfo;
 }
 
 
@@ -816,6 +823,8 @@ GLOBAL VOID put_color_map (decompress_info_ptr cinfo, int num_colors,
         JSAMPARRAY colormap)
 /* Write the color map */
 {
+    /* shut the compiler up */
+    cinfo=cinfo; num_colors=num_colors; colormap=colormap;
 #ifndef OLD_WAY
 #ifdef QAK
   /* You need not provide this routine if you always set cinfo->quantize_colors
@@ -922,6 +931,8 @@ GLOBAL VOID output_term (decompress_info_ptr cinfo)
   /* This termination routine may not need to do anything. */
   /* Note that the JPEG code will only call it during successful exit; */
   /* if you want it called during error exit, you gotta do that yourself. */
+    /* shut the compiler up */
+    cinfo=cinfo;
 }
 
 

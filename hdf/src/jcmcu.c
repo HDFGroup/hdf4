@@ -95,12 +95,12 @@ extract_block (JSAMPARRAY input_data, int start_row, long start_col,
       temp = (JCOEF) block[ZAG[i]];
       /* divide by *quanttbl, ensuring proper rounding */
       if (temp < 0) {
-	temp = -temp;
-	temp += *quanttbl>>1;
+	temp = (JCOEF)-temp;
+	temp += (JCOEF)(*quanttbl>>1);
 	temp /= *quanttbl;
-	temp = -temp;
+	temp = (JCOEF)-temp;
       } else {
-	temp += *quanttbl>>1;
+	temp += (JCOEF)(*quanttbl>>1);
 	temp /= *quanttbl;
       }
       *output_data++ = temp;
@@ -179,6 +179,8 @@ extract_init (compress_info_ptr cinfo)
 #ifdef DCT_ERR_STATS
   dcterrorsum = dcterrormax = dctcoefcount = 0;
 #endif
+    /* shut compiler up */
+    cinfo=cinfo;
 }
 
 
@@ -194,6 +196,8 @@ extract_term (compress_info_ptr cinfo)
   TRACEMS3(cinfo->emethods, 0, "DCT roundoff errors = %d/%d,  max = %d",
 	   dcterrorsum, dctcoefcount, dcterrormax);
 #endif
+    /* shut compiler up */
+    cinfo=cinfo;
 }
 
 

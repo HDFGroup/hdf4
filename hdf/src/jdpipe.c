@@ -112,7 +112,7 @@ interleaved_scan_setup (decompress_info_ptr cinfo)
     /* for interleaved scan, sampling factors give # of blocks per component */
     compptr->MCU_width = compptr->h_samp_factor;
     compptr->MCU_height = compptr->v_samp_factor;
-    compptr->MCU_blocks = compptr->MCU_width * compptr->MCU_height;
+    compptr->MCU_blocks = (short)(compptr->MCU_width * compptr->MCU_height);
     /* compute physical dimensions of component */
     compptr->downsampled_width = jround_up(compptr->true_comp_width,
 					   (long) (compptr->MCU_width*DCTSIZE));
@@ -402,6 +402,9 @@ emit_1pass (decompress_info_ptr cinfo, int num_rows, JSAMPIMAGE fullsize_data,
 /* This is not used when doing 2-pass color quantization. */
 /* The dummy argument simply lets this be called via scan_big_image. */
 {
+    /* shut compiler up */
+    dummy=dummy;
+
   if (cinfo->quantize_colors) {
     (*cinfo->methods->color_quantize) (cinfo, num_rows, fullsize_data,
 				       output_workspace[0]);
@@ -474,7 +477,7 @@ smooth_mcu_row (decompress_info_ptr cinfo,
 
   for (ci = 0; ci < cinfo->comps_in_scan; ci++) {
     compptr = cinfo->cur_comp_info[ci];
-    last = compptr->MCU_height - 1;
+    last = (short)(compptr->MCU_height - 1);
 
     if (above == NULL)
       prev = NULL;

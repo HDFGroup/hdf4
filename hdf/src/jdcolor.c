@@ -153,6 +153,8 @@ METHODDEF VOID
 ycc_rgb_term (decompress_info_ptr cinfo)
 {
   /* no work (we let free_all release the workspace) */
+    /* shut compiler up */
+    cinfo=cinfo;
 }
 
 
@@ -168,6 +170,8 @@ null_init (decompress_info_ptr cinfo)
 /* colorout_init for cases where no setup is needed */
 {
   /* no work needed */
+    /* shut compiler up */
+    cinfo=cinfo;
 }
 
 
@@ -198,6 +202,9 @@ METHODDEF VOID
 grayscale_convert (decompress_info_ptr cinfo, int num_rows, long num_cols,
 		   JSAMPIMAGE input_data, JSAMPIMAGE output_data)
 {
+    /* shut compiler up */
+    cinfo=cinfo;
+
   jcopy_sample_rows(input_data[0], 0, output_data[0], 0,
 		    num_rows, num_cols);
 }
@@ -212,6 +219,8 @@ null_term (decompress_info_ptr cinfo)
 /* colorout_term for cases where no teardown is needed */
 {
   /* no work needed */
+    /* shut compiler up */
+    cinfo=cinfo;
 }
 
 

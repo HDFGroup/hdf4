@@ -80,7 +80,7 @@ interleaved_scan_setup (compress_info_ptr cinfo)
     /* for interleaved scan, sampling factors give # of blocks per component */
     compptr->MCU_width = compptr->h_samp_factor;
     compptr->MCU_height = compptr->v_samp_factor;
-    compptr->MCU_blocks = compptr->MCU_width * compptr->MCU_height;
+    compptr->MCU_blocks = (short)(compptr->MCU_width * compptr->MCU_height);
     /* compute physical dimensions of component */
     compptr->downsampled_width = jround_up(compptr->true_comp_width,
 					   (long) (compptr->MCU_width*DCTSIZE));

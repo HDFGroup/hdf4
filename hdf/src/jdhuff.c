@@ -63,7 +63,7 @@ fix_huff_tbl (HUFF_TBL * htbl)
   p = 0;
   for (l = 1; l <= 16; l++) {
     if (htbl->bits[l]) {
-      htbl->valptr[l] = p;	/* huffval[] index of 1st sym of code len l */
+      htbl->valptr[l] = (short)p;	/* huffval[] index of 1st sym of code len l */
       htbl->mincode[l] = huffcode[p]; /* minimum code of length l */
       p += htbl->bits[l];
       htbl->maxcode[l] = huffcode[p-1];	/* maximum code of length l */
@@ -289,7 +289,7 @@ process_restart (decompress_info_ptr cinfo)
 
   /* Update restart state */
   cinfo->restarts_to_go = cinfo->restart_interval;
-  cinfo->next_restart_num = (cinfo->next_restart_num + 1) & 7;
+  cinfo->next_restart_num = (short)((cinfo->next_restart_num + 1) & 7);
 }
 
 
@@ -398,6 +398,8 @@ METHODDEF VOID
 huff_decoder_term (decompress_info_ptr cinfo)
 {
   /* No work needed */
+    /* shut compiler up */
+    cinfo=cinfo;
 }
 
 

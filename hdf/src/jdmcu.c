@@ -178,6 +178,8 @@ METHODDEF VOID
 disassemble_init (decompress_info_ptr cinfo)
 {
   /* no work for now */
+    /* shut compiler up */
+    cinfo=cinfo;
 }
 
 
@@ -189,6 +191,8 @@ METHODDEF VOID
 disassemble_term (decompress_info_ptr cinfo)
 {
   /* no work for now */
+    /* shut compiler up */
+    cinfo=cinfo;
 }
 
 

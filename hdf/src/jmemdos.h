@@ -97,10 +97,10 @@ typedef struct backing_store_struct * backing_store_ptr;
 typedef struct backing_store_struct {
 	/* Methods for reading/writing/closing this backing-store object */
     METHOD(VOID, read_backing_store, (backing_store_ptr info,
-                      VOIDP buffer_address, long file_offset, long byte_count);
+                      VOIDP buffer_address, long file_offset, long byte_count));
     METHOD(VOID, write_backing_store, (backing_store_ptr info,
-                      VOIDP buffer_address, long file_offset, long byte_count);
-    METHOD(VOID, close_backing_store, (backing_store_ptr info);
+                      VOIDP buffer_address, long file_offset, long byte_count));
+    METHOD(VOID, close_backing_store, (backing_store_ptr info));
     /* Private fields for system-dependent backing-store management */
 	/* For the MS-DOS environment, we need: */
 	handle_union handle;	/* reference to backing-store storage object */
