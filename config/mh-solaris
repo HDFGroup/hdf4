@@ -25,11 +25,16 @@ VERSION  = 4.0
 #
 #Using ANSI compilier also needs LIBSX = -lm(see below)
 CC=cc
-#CFLAGS= -Xc -xO2 -g -v
+# Use the following lines for Solaris 32-bit support
 CFLAGS= -Xc -xO2
+#CFLAGS= -Xc -xO2 -g -v
+# Use the following lines for Solaris 64-bit support
+#CFLAGS= -Xc -xO2 -xarch=v9
+#CFLAGS= -xarch=v9 -g -v
 
-# Fortran compilier
-FC = f77
+# Fortran compilier (set to NONE if no FORTRAN support)
+#FC = f77
+FC = NONE
 #FFLAGS = -g
 FFLAGS = -O
 
@@ -108,8 +113,11 @@ CFLAGS_NETCDF =
 # for AIX
 # CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -D_ALL_SOURCE
 #
-# for Sunos and Linux
+# for Sunos/Solaris 32-bit and Linux
 CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DNO_STRERROR
+#
+# for Solaris 64-bit
+#CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DBIG_LONGS
 #
 # for IRIX6.0 (32-bit mode). If you prefer other 32 bit option like -n32, 
 #  replace '-32' below
