@@ -113,7 +113,8 @@ CPP_XDR		= -I/usr/include/rpc
 XDR_LIBOBJS     =
 
 # location of library, sometimes the sunos requires -lsun
-LD_XDR		= 
+# Solaris requires -lnsl
+LD_XDR      = -lnsl
 XDR_INSTALL_DEPS =
 
 # ------------ Port Macros for NETCDF --------------------
