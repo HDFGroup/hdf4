@@ -175,8 +175,8 @@ void print_item(int32 fid, dd_t *desc_list, intn n)
 				ntagrefs=Vntagrefs(vkey);
 				printf("\tContents: %d items\n",(int)ntagrefs);
 				if(ntagrefs>0) {
-					tag_arr=HDgetspace(sizeof(int32)*ntagrefs);
-					ref_arr=HDgetspace(sizeof(int32)*ntagrefs);
+					tag_arr=(int32 *)HDgetspace(sizeof(int32)*ntagrefs);
+					ref_arr=(int32 *)HDgetspace(sizeof(int32)*ntagrefs);
 					if(tag_arr==NULL || ref_arr==NULL) {
 						HDfreespace(tag_arr);
 						HDfreespace(ref_arr);
@@ -325,7 +325,7 @@ int main(int argc, char *argv[])
         exit (1);
     }
     
-    desc_buf=HDgetspace(sizeof(dd_t)*MAXBUFF);
+    desc_buf=(dd_t *)HDgetspace(sizeof(dd_t)*MAXBUFF);
 
     while(i < argc) {
         file_name = argv[i];

@@ -979,7 +979,6 @@ int quit(int status)
 	    return HE_FAIL;
     }
     exit(status);
-    return SUCCEED;
 }
 
 int HEhelp(HE_CMD *dummy)

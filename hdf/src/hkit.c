@@ -632,7 +632,7 @@ char _HUGE *HDgetNTdesc(int32 nt)
 	    if(ret_desc==NULL)
 	       ret_desc=HDstrdup(nt_descriptions[i].desc);
 	    else {
-		char *t=HDgetspace(HDstrlen(ret_desc)+HDstrlen(nt_descriptions[i].desc)+2);
+		char *t=(char *)HDgetspace(HDstrlen(ret_desc)+HDstrlen(nt_descriptions[i].desc)+2);
 		if(t==NULL) {
                     HDfreespace(ret_desc);
 		    HRETURN_ERROR(DFE_NOSPACE,NULL);

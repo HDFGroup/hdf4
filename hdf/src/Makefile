@@ -83,7 +83,7 @@ CFLAGS=  -g -D${MACHINE}
 
 # ==> specify your archiver
 AR=ar
-ARFLAGS=r
+ARFLAGS=cr
 
 # ==> specify your archive randomizer (if needed, see below)
 RANLIB=ranlib

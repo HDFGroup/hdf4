@@ -31,6 +31,9 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include <stdio.h>
 #include <string.h>
+#ifdef IBM6000
+#include <sys/stat.h>
+#endif /* IBM6000 */
 #include "hdf.h"
 #include "herr.h"
 #include "hfile.h"

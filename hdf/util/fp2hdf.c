@@ -1530,7 +1530,7 @@ char *s;
 	 */
 	cp = s;
 	(void) strtod(s, &cp);
-	if ((*cp == NULL) && (cp != s))
+	if ((*cp == '\0') && (cp != s))
 		rval = TRUE;
 
 	/*
@@ -1539,7 +1539,7 @@ char *s;
 	else {
 		cp = s;
 		(void) strtol(s, &cp, 0);
-		if ((*cp == NULL) && (cp != s))
+		if ((*cp == '\0') && (cp != s))
 			rval = TRUE;
 	}
 

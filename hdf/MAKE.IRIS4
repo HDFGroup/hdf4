@@ -107,11 +107,11 @@ HDF_FLAGS       = \
 #
 all:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="src util test" _sub message 
+          SUBDIRS="src util test dumper" _sub message 
 
 allnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
-          SUBDIRS="src util test" _sub message 
+          SUBDIRS="src util test dumper" _sub message 
 
 libnofortran:
 	@$(MAKE) $(MYFLAGS) $(HDF_FLAGS) TARG=nofortran \
@@ -133,6 +133,10 @@ tests:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
           SUBDIRS="src test" _sub
 
+hdp:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
+          SUBDIRS="src dumper" _sub
+
 testnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
           SUBDIRS="src test" _sub message 
@@ -143,7 +147,7 @@ testnofortran:
 
 clean:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
-          SUBDIRS="src util test" _sub
+          SUBDIRS="src util test dumper" _sub
 	$(RM) $(RMFLAGS) core *.log
 
 distclean:

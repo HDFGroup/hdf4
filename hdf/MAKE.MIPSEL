@@ -61,7 +61,7 @@ MACHINE=MIPSEL
 
 # Define your C compiler and flags
 CC= cc
-CFLAGS= -D${MACHINE}  -O
+CFLAGS= -D${MACHINE}  -O -std
 
 # Define your FORTRAN compiler
 FC= f77
@@ -113,11 +113,11 @@ HDF_FLAGS       = \
 #
 all:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="src util test" _sub message 
+          SUBDIRS="src util test dumper" _sub message 
 
 allnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
-          SUBDIRS="src util test" _sub message 
+          SUBDIRS="src util test dumper" _sub message 
 
 libnofortran:
 	@$(MAKE) $(MYFLAGS) $(HDF_FLAGS) TARG=nofortran \
@@ -138,6 +138,10 @@ utilities:
 tests:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
           SUBDIRS="test" _sub
+
+hdp:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
+          SUBDIRS="src dumper" _sub
 
 #install:      $(INSTALL_DIRS)
 #	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
