@@ -192,7 +192,8 @@ fortest: $(FTESTS) $(HDFLIB)/libdf.a fortest.o
 ftests: $(FTESTS)
 
 clean: 
-	 -$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) fortest core
+	 -$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) fortest core \
+	qtesthdf ptesthdf
 
 depend: 
 	 makedepend -I$(HDFINC) *.c
