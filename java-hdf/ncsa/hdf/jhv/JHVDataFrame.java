@@ -135,12 +135,12 @@ public class JHVDataFrame extends Frame implements AdjustmentListener,
     // append control
 
     ctrPanel1.add(new Label("Expansion factor:", Label.RIGHT));
-    ctrPanel1.add(factor = new TextField("8"));
+    ctrPanel1.add(factor = new TextField("2"));
     
     imageStyle = new Checkbox("Interpolate");
     ctrPanel1.add(imageStyle);
     imageStyle.addItemListener(this);
-    imageStyle.setState(true);
+    imageStyle.setState(false);
     
     Button MakeImageButton = new Button("Make Image");
     Button DismissButton = new Button("Dismiss");
@@ -282,17 +282,29 @@ public class JHVDataFrame extends Frame implements AdjustmentListener,
     } 
 	
     if ("Make Image" .equals(arg)) {
-	 if (imageStyle.getState()) 
+         setCursor(Cursor.WAIT_CURSOR);
+	 if (imageStyle.getState()) {
 	   // create interpolate image 
 	   dataCanvas.displayInterpolateImage();
 	 
-	 else
+	 } else {
 	   // create the sample image
 	    dataCanvas.displaySampleImage();
+         }
+         setCursor(Cursor.DEFAULT_CURSOR);
     }
     
 
   }
+
+  public void setCursor(int cursor) {
+
+    super.setCursor(cursor);
+
+    // default toolkit, make cursor effective
+    Toolkit.getDefaultToolkit().sync();
+  }
+
 
   public void itemStateChanged(ItemEvent e)
   {

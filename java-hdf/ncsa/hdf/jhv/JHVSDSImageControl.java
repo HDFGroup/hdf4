@@ -49,8 +49,8 @@ public class JHVSDSImageControl extends Frame implements Runnable {
 
 	this.imageCanvas = imageCanvas;
 
-	maxValue = imageCanvas.min;
-	minValue = imageCanvas.max;
+	maxValue = imageCanvas.max;
+	minValue = imageCanvas.min;
 
 	maxSlider = new Slider();
 	minSlider = new Slider();
@@ -58,7 +58,7 @@ public class JHVSDSImageControl extends Frame implements Runnable {
 	// get real max. min
 	double[] minmax = null;
 	try {
-		getRange(imageCanvas.hdfData, imageCanvas.hdfDataType);
+		minmax = getRange(imageCanvas.hdfData, imageCanvas.hdfDataType);
 	} catch (HDFException e ) {}
 	if (minmax != null) {
 
@@ -68,7 +68,7 @@ public class JHVSDSImageControl extends Frame implements Runnable {
 		maxValue = minmax[1];
 	   }
 
-	   maxSlider.setSliderRange(minValue, maxValue);
+	   maxSlider.setSliderRange(minmax[0], minmax[1]);
 	   maxSlider.setSliderValue(maxValue); // current max.
 	   minSlider.setSliderRange(minValue, maxValue);
 	   minSlider.setSliderValue(minValue); // current min.
@@ -261,8 +261,8 @@ public class JHVSDSImageControl extends Frame implements Runnable {
 	if (sliderChanged()) { // slider changed
 
 	   // label changed
-	   maxLabel.setText(getString(minValue,10));
-	   minLabel.setText(getString(maxValue,10));
+	   maxLabel.setText(getString(maxValue,10));
+	   minLabel.setText(getString(minValue,10));
 
 	   // reset slider
 	   maxSlider.setSliderUnchanged();
