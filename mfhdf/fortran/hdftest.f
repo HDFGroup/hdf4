@@ -1196,14 +1196,14 @@ C
 C
 C  Data declaration
 C
-         integer   data(n,m),
+         integer*4 data(n,m),
      .             chunk(nc,mc),
      .             chunk_out(nc,mc),
      .             chunk_data(nc,mc,n_nc,n_mc)
 C
 C  Buffers to hold part of the data when we read data back
 C
-         integer    part_data(n_part,m_part)
+         integer*4 part_data(n_part,m_part)
 C
 C  HDF parameters initialization
 C
@@ -2197,11 +2197,11 @@ C
 C
 C  Data declaration
 C
-         integer   data(n,m)
+         integer*4 data(n,m)
 C
 C  Buffer to hold part of the data when we read data back
 C
-         integer    part_data(n_part,m_part)
+         integer*4 part_data(n_part,m_part)
 C
 C  HDF parameters initialization
 C
