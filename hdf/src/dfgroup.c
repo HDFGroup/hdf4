@@ -5,9 +5,10 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1993/09/11 21:00:12  koziol
-Defined alternate HDstrdup routine for VMS and fixed a couple of HDstrdup
-mistakes.
+Revision 1.9  1993/09/11 21:14:26  koziol
+Fixed sizeof(DFdi) problem on Cray Y-MP.  Replaced all occurences of
+sizeof(DFdi) with a hard-coded 4, because there is no fileNTsize vs.
+localNTsize distinction made in these routines.
 
  * Revision 1.7  1993/08/16  21:45:12  koziol
  * Wrapped in changes for final, working version on the PC.
@@ -200,7 +201,7 @@ int DFdiget(list, ptag, pref)
         HRETURN_ERROR(DFE_INTERNAL, FAIL);
 
     /* compute address of Ndi'th di */
-    p = (uint8 *) list_rec->DIlist + sizeof(DFdi) * list_rec->current++;
+    p = (uint8 *) list_rec->DIlist + 4 * list_rec->current++;
     UINT16DECODE(p, *ptag);
     UINT16DECODE(p, *pref);
 
@@ -240,7 +241,7 @@ int32 DFdisetup(maxsize)
     if (!new_list)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    new_list->DIlist = (uint8 *) HDgetspace((uint32)(maxsize * sizeof(DFdi)));
+    new_list->DIlist = (uint8 *) HDgetspace((uint32)(maxsize * 4));
     if (!new_list->DIlist) {
         HDfreespace((VOIDP)new_list);
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
@@ -282,7 +283,7 @@ int DFdiput(list, tag, ref)
         HRETURN_ERROR(DFE_INTERNAL, FAIL);
 
     /* compute address of Ndi'th di to put tag/ref in */
-    p = (uint8 *) list_rec->DIlist + sizeof(DFdi) * list_rec->current++;
+    p = (uint8 *) list_rec->DIlist + 4 * list_rec->current++;
     UINT16ENCODE(p, tag);
     UINT16ENCODE(p, ref);
 
@@ -322,7 +323,7 @@ int DFdiwrite(file_id, list, tag, ref)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     ret = Hputelement(file_id, tag, ref, list_rec->DIlist,
-                      (int32)list_rec->current * sizeof(DFdi));
+                      (int32)list_rec->current * 4);
     HDfreespace((VOIDP)list_rec->DIlist);
     HDfreespace((VOIDP)list_rec);
 #ifdef QAK
