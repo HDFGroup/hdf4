@@ -44,3 +44,37 @@ C----------------------------------------------------------------------------*/
       return
       end
 
+C------------------------------------------------------------------------------
+C Name: hxsdir
+C Purpose:  call hxisdir to set directory variable for locating an external file
+C Inputs:   dir: names of directory separated by colons.
+C Returns:  SUCCEED if no error, else FAIL
+C Users:    Fortran stub routine
+C Invokes: hxisdir
+C----------------------------------------------------------------------------*/
+
+      integer function hxsdir(dir)
+
+      character*(*) dir
+
+      hxsdir = hxisdir(dir, len(dir))
+      return
+      end
+
+C------------------------------------------------------------------------------
+C Name: hxscdir
+C Purpose:  call hxiscdir to set directory variable for creating an external file
+C Inputs:   dir: name of the directory
+C Returns:  SUCCEED if no error, else FAIL
+C Users:    Fortran stub routine
+C Invokes: hxiscdir
+C----------------------------------------------------------------------------*/
+
+      integer function hxscdir(dir)
+
+      character*(*) dir
+
+      hxscdir = hxiscdir(dir, len(dir))
+      return
+      end
+

@@ -12,7 +12,7 @@ C****************************************************************************
 C
 C $Id$
 C
-C	dffunctions.f
+C	dffunc.inc
 C
 C	Declarations of return values for HDF SDS functions
 C
@@ -252,6 +252,8 @@ C
       integer heprnt
       integer hnumber
       integer hopen
+      integer hxscdir
+      integer hxsdir
 
 C End of declarations
 

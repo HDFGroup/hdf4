@@ -32,9 +32,13 @@ static char RcsId[] = "@(#)$Revision$";
 #ifdef DF_CAPFNAMES
 #   define nhiopen   FNAME(HIOPEN)
 #   define nhclose   FNAME(HCLOSE)
+#   define nhxisdir   FNAME(HXISDIR)
+#   define nhxiscdir  FNAME(HXISCDIR)
 #else
 #   define nhiopen   FNAME(hiopen)
-#   define nhclose  FNAME(hclose)
+#   define nhclose   FNAME(hclose)
+#   define nhxisdir   FNAME(hxisdir)
+#   define nhxiscdir  FNAME(hxiscdir)
 #endif /* DF_CAPFNAMES */
 #endif /* HFILE_FNAMES */
 
@@ -92,3 +96,48 @@ nhnumber(int32 file_id, uint16 tag)
 {
     return (Hnumber(file_id, tag));
 }
+
+/*-----------------------------------------------------------------------------
+ * Name:    hxisdir
+ * Purpose: call HXsetdir to set the directory variable for locating an external file
+ * Inputs:  dir: names of directory separated by colons
+ * Returns: SUCCEED if no error, else FAIL
+ * Users:   HDF Fortran programmers
+ * Invokes: HXsetdir
+ * Method:  Convert dir to C string, call HXsetdir
+ *---------------------------------------------------------------------------*/
+
+FRETVAL(intf)
+nhxisdir(_fcd dir, intf * dirlen)
+{
+    char       *fn;
+    intf        ret;
+
+    fn = HDf2cstring(dir, (intn) *dirlen);
+    ret = (intf) HXsetdir(fn);
+    HDfree(fn);
+    return (ret);
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    hxiscdir
+ * Purpose: call HXsetcreatedir to set the directory variable for creating an external file
+ * Inputs:  dir: name of directory
+ * Returns: SUCCEED if no error, else FAIL
+ * Users:   HDF Fortran programmers
+ * Invokes: HXsetcreatedir
+ * Method:  Convert dir to C string, call HXsetcdir
+ *---------------------------------------------------------------------------*/
+
+FRETVAL(intf)
+nhxiscdir(_fcd dir, intf * dirlen)
+{
+    char       *fn;
+    intf        ret;
+
+    fn = HDf2cstring(dir, (intn) *dirlen);
+    ret = (intf) HXsetcreatedir(fn);
+    HDfree(fn);
+    return (ret);
+}
+
