@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.2  1992/08/26 16:25:18  sxu
+# Revision 1.3  1993/01/14 17:26:29  georgev
+# Upated headers in Makefiles to reflect HDF3.3.
+#
+# Revision 1.2  1992/08/26  16:25:18  sxu
 # *** empty log message ***
 #
 # Revision 1.1  1992/08/24  20:56:31  sxu
@@ -34,7 +37,7 @@ $ ! Makefile for VAX/VMX systems.
 $ !
 $ ! Make full df lib (with fortran stubs)
 $ type sys$input
-  ======== Building HDF 3.2 ========
+  ======== Building HDF 3.3 ========
 $ !
 $ ! Build the base HDF library
 $ !
@@ -69,4 +72,4 @@ $ @MAKE
 $ set default hdf$src
 $ !
 $ type sys$input
-  ======== HDF 3.2 has now been built ========
+  ======== HDF 3.3 has now been built ========

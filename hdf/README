@@ -1,5 +1,5 @@
 
-In general, HDF 3.2 can be built with a single command from this 
+In general, HDF 3.3 can be built with a single command from this 
 directory.  The file Makefile is a generic, machine independent 
 Makefile which you can modify if there is no Makefile already built 
 for your machine.
