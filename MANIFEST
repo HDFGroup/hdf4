@@ -55,6 +55,7 @@
 ./config/mh-sun
 ./config/mh-t3e
 ./config/mh-unicos
+./config/powerpc-apple
 ./config/powerpc-ibm-aix5.x
 ./config/solaris2.x
 
@@ -739,6 +740,7 @@
 
 ./mfhdf/fortran/config/ftest-aix.f
 ./mfhdf/fortran/config/ftest-alpha.f
+./mfhdf/fortran/config/ftest-apple.f
 ./mfhdf/fortran/config/ftest-convex.f
 ./mfhdf/fortran/config/ftest-dec.f
 ./mfhdf/fortran/config/ftest-fbsd.f
@@ -759,6 +761,7 @@
 ./mfhdf/fortran/config/ftest-unicos.f
 ./mfhdf/fortran/config/jackets-aix.c
 ./mfhdf/fortran/config/jackets-alpha.c
+./mfhdf/fortran/config/jackets-apple.c
 ./mfhdf/fortran/config/jackets-convex.c
 ./mfhdf/fortran/config/jackets-dec.c
 ./mfhdf/fortran/config/jackets-fbsd.c
@@ -779,6 +782,7 @@
 ./mfhdf/fortran/config/jackets-unicos.c
 ./mfhdf/fortran/config/netcdf-aix.inc
 ./mfhdf/fortran/config/netcdf-alpha.inc
+./mfhdf/fortran/config/netcdf-apple.inc
 ./mfhdf/fortran/config/netcdf-convex.inc
 ./mfhdf/fortran/config/netcdf-dec.inc
 ./mfhdf/fortran/config/netcdf-fbsd.inc
@@ -965,6 +969,7 @@
 
 ./mfhdf/libsrc/config/netcdf-aix.h
 ./mfhdf/libsrc/config/netcdf-alpha.h
+./mfhdf/libsrc/config/netcdf-apple.h
 ./mfhdf/libsrc/config/netcdf-convex.h
 ./mfhdf/libsrc/config/netcdf-dec.h
 ./mfhdf/libsrc/config/netcdf-fbsd.h
