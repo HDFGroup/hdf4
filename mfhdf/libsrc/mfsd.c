@@ -4038,7 +4038,7 @@ int32 flags;
           cdims = cdef->chunk_lengths;
           chunk[0].chunk_flag = 0;  /* nothing set for this now */
           chunk[0].comp_type = COMP_CODE_NONE; /* nothing set */
-          chunk[0].model_type = COMP_MODEL_STDIO; /* nothing set */
+          chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
           chunk[0].cinfo = &cinfo; /* dummy */
           chunk[0].minfo = &minfo; /* dummy */
           break;
@@ -4046,7 +4046,7 @@ int32 flags;
           cdef  = (HDF_CHUNK_DEF *)&chunk_def;
           cdims = cdef->comp.chunk_lengths;
           chunk[0].chunk_flag = SPECIAL_COMP;  /* Compression */
-          chunk[0].comp_type  = cdef->comp.comp_type; 
+          chunk[0].comp_type  = (comp_coder_t)cdef->comp.comp_type; 
           chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
           chunk[0].cinfo = &cdef->comp.cinfo; 
           chunk[0].minfo = &minfo; /* dummy */
@@ -4055,7 +4055,7 @@ int32 flags;
           cdef  = (HDF_CHUNK_DEF *)&chunk_def;
           cdims = cdef->nbit.chunk_lengths;
           chunk[0].chunk_flag = SPECIAL_COMP;  /* NBIT is a type of compression */
-          chunk[0].comp_type  = COMP_CODE_NBIT;
+          chunk[0].comp_type  = COMP_CODE_NBIT;   /* Nbit compression? */
           chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
           /* set up n-bit parameters */
           cinfo.nbit.nt        = var->HDFtype;
