@@ -36,6 +36,7 @@ typedef int16 gr_interlace_t;
 
 #include "hfile.h"
 #include "tbbt.h"       /* Get tbbt routines */
+#include "api_adpt.h"
 
 /* This is the size of the hash tables used for GR & RI IDs */
 #define GRATOM_HASH_SIZE    32
@@ -126,7 +127,8 @@ typedef struct ri_info {
 } ri_info_t;
 
 /* Useful raster routines for generally private use */
-extern intn GRIil_convert(const void * inbuf,gr_interlace_t inil,void * outbuf,
+
+HDFLIBAPI intn GRIil_convert(const void * inbuf,gr_interlace_t inil,void * outbuf,
         gr_interlace_t outil,int32 dims[2],int32 ncomp,int32 nt);
 
 extern VOID GRIgrdestroynode(void * n);

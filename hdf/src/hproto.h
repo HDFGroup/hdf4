@@ -3292,7 +3292,7 @@ RETURNS
     FAIL if unsuccessful.
 
 *******************************************************************************/
-intn
+HDFLIBAPI intn
 Vdeletetagref(int32 vkey, /* IN: vgroup key */ 
               int32 tag,  /* IN: tag to delete in vgroup */
               int32 ref   /* IN: ref to delete in vgroup */);
