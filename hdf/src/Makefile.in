@@ -482,3 +482,7 @@ mfan.o: hfile.h mfan.h $(FRC)
 mfanf.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 mfanf.o: hfile.h mfan.h $(FRC)
 mfgr.o: hdf.h hlimits.h hdfi.h herr.h hproto.h hfile.h mfgr.h $(FRC)
+hchunks.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+hchunks.o: hfile.h hchunks.h mcache.h hqueue.h $(FRC)
+mcache.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+mcache.o: hfile.h mcache.h hqueue.h
