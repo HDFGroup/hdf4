@@ -250,3 +250,21 @@ C----------------------------------------------------------------------
       
       return
       end
+
+C----------------------------------------------------------------------
+C     Name: sdffattr
+C     Purpose:  call scfattr, find an attribute
+C     Inputs:   id: Object to look at
+C               name: name of attribute
+C     Returns: attribute number on success, FAIL on failure with error set
+C     Users:    Fortran stub routine
+C----------------------------------------------------------------------
+
+      integer function sffattr(id, name)
+
+      character*(*) name
+      integer       id, scfattr
+
+      sffattr = scfattr(id, name, len(name))
+      return
+      end

@@ -927,3 +927,31 @@ nscsattr(id, name, nt, count, data, len)
     return(ret);
 }
 
+/*-----------------------------------------------------------------------------
+ * Name:    scfattr
+ * Purpose: call SDfindattr to find an attribute
+ * Inputs:  id: object to look at
+ *          name: name of attribute to find
+ * Returns: attribute id on success, -1 on failure with error set
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nscfattr(intf *id, _fcd name, intf *namelen)
+#else
+nscfattr(id, name, namelen)
+    _fcd name;
+    intf *id;
+    intf *namelen;
+#endif /* PROTOTYPE */
+{
+    char *fn;
+    intf ret;
+    
+    fn = HDf2cstring(name, *namelen);
+    
+    ret = (intf) SDfindattr(*id, fn);
+    HDfreespace(fn);
+
+    return(ret);
+}
