@@ -54,6 +54,7 @@
 ./config/mh-sun
 ./config/mh-t3e
 ./config/mh-unicos
+./config/powerpc-ibm-aix5.x
 ./config/solaris2.x
 
 ./hdf/COPYING
