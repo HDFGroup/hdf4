@@ -91,6 +91,8 @@ usage(intn argc, char *argv[])
     printf("               [-b[egin] name] \n");
     printf("               [-s[ummary]]  \n");
     printf("               [-c[leanoff]]  \n");
+    printf("               [-n[ocaching]]  \n");
+    printf("               [-h[elp]]  \n");
     printf("\n\n");
     printf("verbose   controls the amount of information displayed\n");
     printf("exclude   to exclude tests by name\n");
@@ -98,6 +100,8 @@ usage(intn argc, char *argv[])
     printf("begin     start at the name of the test givin\n");
     printf("summary   prints a summary of test results at the end\n");
     printf("cleanoff  does not delete *.hdf files after execution of tests\n");
+    printf("nocaching do not turn on low-level DD caching\n");
+    printf("help      print out this information\n");
     printf("\n\n");
     printf("This program currently tests the following: \n\n");
     printf("%16s %s\n", "Name", "Description");
@@ -114,6 +118,7 @@ main(int argc, char *argv[])
     int         Loop, Loop1;
     int         Summary = 0;
     int         CleanUp = 1;
+    int         Cache = 1;
     int         ret;
     uint32      lmajor, lminor, lrelease;
     char        lstring[81];
@@ -173,7 +178,8 @@ main(int argc, char *argv[])
                                   (HDstrcmp(argv[CLLoop], "-s") == 0)))
               Summary = 1;
 
-          if ((argc > CLLoop) && (HDstrcmp(argv[CLLoop], "-help") == 0))
+          if ((argc > CLLoop) && ((HDstrcmp(argv[CLLoop], "-help") == 0) ||
+                                  (HDstrcmp(argv[CLLoop], "-h") == 0)))
             {
                 usage(argc, argv);
                 exit(0);
@@ -182,6 +188,11 @@ main(int argc, char *argv[])
           if ((argc > CLLoop) && ((HDstrcmp(argv[CLLoop], "-cleanoff") == 0) ||
                                   (HDstrcmp(argv[CLLoop], "-c") == 0)))
               CleanUp = 0;
+
+          if ((argc > CLLoop) && ((HDstrcmp(argv[CLLoop], "-nocache") == 0) ||
+                                  (HDstrcmp(argv[CLLoop], "-n") == 0)))
+              Cache = 0;
+
           if ((argc > CLLoop + 1) && ((HDstrcmp(argv[CLLoop], "-exclude") == 0) ||
                                       (HDstrcmp(argv[CLLoop], "-x") == 0)))
             {
@@ -225,6 +236,9 @@ main(int argc, char *argv[])
                   }     /* end while */
             }   /* end if */
       }     /* end for */
+
+    if(Cache) /* turn on caching, unless we were instucted not to */
+	Hcache(CACHE_ALL_FILES,TRUE);
 
     for (Loop = 0; Loop < Index; Loop++)
       {
