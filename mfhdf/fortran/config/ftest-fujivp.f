@@ -1,13 +1,13 @@
 c********************************************************************
 c   Copyright 1993, UCAR/Unidata
 c   See netcdf/COPYRIGHT file for copying and redistribution conditions.
-c   $Header$
+c   $Id$
 c********************************************************************/
 
 
 
 c
-c     program to test the Sun Fortran jacket interface to the netCDF
+c     program to test the FUJIVP Fortran jacket interface to the netCDF
 c
       program ftest
       
@@ -133,13 +133,13 @@ c     will be copied
       integer*2 shval(2)
       integer i, j, k
       character*31 varnam, attname(2,7), gattnam(2)
-      integer bytval(2)
+      integer*1 bytval(2)
       common /atts/attname, gattnam
       integer*2 svalidrg(2)
       real rvalidrg(2)
       integer lvalidrg(2)
       double precision dvalidrg(2)
-      integer bvalidrg(2)
+      integer*1 bvalidrg(2)
       character*31 gavalue(2), cavalue(2)
       real epsilon
 
@@ -188,9 +188,7 @@ c
             if (attnam .ne. gattnam(i)) write(*,*) 'error in ncagt G'
             if (charval .ne. gavalue(i))
      + write(*,*) 'error in ncagt G2', lenstr, charval, gavalue(i)
-                  charval = '                                    
-     +                                                    
-     +                         '
+                  charval = ' '                                   
          else if (attype .eq. NCSHORT) then
             call ncagt (outcdf, NCGLOBAL, attnam, shval, iret) 
          else if (attype .eq. NCLONG) then
@@ -218,47 +216,45 @@ c
                if (attype .eq. NCBYTE) then
                   call ncagt (outcdf, i, attnam, bytval, 
      +                 iret)
-                  if (attnam .ne. attname(j,i)) write(*,*) 'error in 
-     + ncagt BYTE N'
+                  if (attnam .ne. attname(j,i)) write(*,*)
+     + 'error in ncagt BYTE N'
                   if (bytval(j) .ne. bvalidrg(j)) write(*,*)
      + 'ncacpy: byte ', bytval(j), ' .ne. ', bvalidrg(j)
                else if (attype .eq. NCCHAR) then
                   call ncagtc (outcdf, i, attnam, charval, 
      +                 lenstr, iret)
-                  if (attnam .ne. attname(j,i)) write(*,*) 'error in 
-     + ncagt CHAR N'
-                  if (charval .ne. cavalue(j)) write(*,*) 'error in
-     + ncagt'
-                  charval = '                                    
-     +                                                    
-     +                         '
+                  if (attnam .ne. attname(j,i)) write(*,*)
+     + 'error in ncagt CHAR N'
+                  if (charval .ne. cavalue(j)) write(*,*)
+     + 'error in  ncagt'
+                  charval = ' '                                    
                else if (attype .eq. NCSHORT) then
                   call ncagt (outcdf, i, attnam, shval, 
      +                 iret)  
-                  if (attnam .ne. attname(j,i)) write(*,*) 'error in 
-     + ncagt SHORT N'
+                  if (attnam .ne. attname(j,i)) write(*,*)
+     + 'error in ncagt SHORT N'
                   if (shval(j) .ne. svalidrg(j)) then
                      write(*,*) 'error in ncagt SHORT'
                   end if
                else if (attype .eq. NCLONG) then
                   call ncagt (outcdf, i, attnam, lngval, 
      +                 iret)
-                  if (attnam .ne. attname(j,i)) write(*,*) 'error in 
-     + ncagt LONG N'
-                  if (lngval(j) .ne. lvalidrg(j)) write(*,*) 'error 
-     + in ncagt LONG'
+                  if (attnam .ne. attname(j,i)) write(*,*)
+     + 'error in ncagt LONG N'
+                  if (lngval(j) .ne. lvalidrg(j)) write(*,*)
+     + 'error in ncagt LONG'
                else if (attype .eq. NCFLOAT) then
                   call ncagt (outcdf, i, attnam, flval, 
      +                 iret)            
-                  if (attnam .ne. attname(j,i)) write(*,*) 'error in 
-     + ncagt FLOAT N'
-                  if (flval(j) .ne. rvalidrg(j)) write(*,*) 'error 
-     + in ncagt FLOAT'
+                  if (attnam .ne. attname(j,i)) write(*,*)
+     + 'error in ncagt FLOAT N'
+                  if (flval(j) .ne. rvalidrg(j)) write(*,*)
+     + 'error in ncagt FLOAT'
                else if (attype .eq. NCDOUBLE) then
                   call ncagt (outcdf, i, attnam, doubval,
      +                 iret)          
-                  if (attnam .ne. attname(j,i)) write(*,*) 'error in 
-     + ncagt DOUBLE N'
+                  if (attnam .ne. attname(j,i)) write(*,*)
+     + 'error in ncagt DOUBLE N'
                   if ( abs(doubval(j) - dvalidrg(j)) .gt. epsilon)
      + write(*,*) 'error in ncagt DOUBLE'
                end if
@@ -336,7 +332,7 @@ c     maximum length of an attribute
       real flval(2)
       integer lngval(2)
       integer*2 shval(2)
-      integer bytval(2)
+      integer*1 bytval(2)
       integer vartyp, nvdims, vdims(MAXVDIMS), nvatts
 
       character*31 varnam, attname(2,7), gattnam(2)
@@ -345,7 +341,7 @@ c     maximum length of an attribute
       real rvalidrg(2)
       integer lvalidrg(2)
       double precision dvalidrg(2)
-      integer bvalidrg(2)
+      integer*1 bvalidrg(2)
       character*31 gavalue(2), cavalue(2)
       real epsilon
 
@@ -409,45 +405,45 @@ c
                if (attype .eq. NCBYTE) then
                   call ncagt (ncid, i, attnam, bytval, 
      +                 iret)
-                  if (attnam .ne. attname(j,i)) write(*,*) 'error in 
-     + ncagt BYTE name'
+                  if (attnam .ne. attname(j,i)) write(*,*)
+     + 'error in ncagt BYTE name'
                   if (bytval(j) .ne. bvalidrg(j)) write(*,*)
      + 'ncacpy: byte ', bytval(j), ' .ne. ', bvalidrg(j)
                else if (attype .eq. NCCHAR) then
                   call ncagtc (ncid, i, attnam, charval, 
      +                 lenstr, iret)
-                  if (attnam .ne. attname(j,i)) write(*,*) 'error in 
-     + ncagt CHAR name'
-                  if (charval .ne. cavalue(j)) write(*,*) 'error in
-     + ncagt CHAR name'
+                  if (attnam .ne. attname(j,i)) write(*,*)
+     + 'error in ncagt CHAR name'
+                  if (charval .ne. cavalue(j)) write(*,*)
+     + 'error in ncagt CHAR name'
 	         charval = '                                        '
                else if (attype .eq. NCSHORT) then
                   call ncagt (ncid, i, attnam, shval, 
      +                 iret)  
-                  if (attnam .ne. attname(j,i)) write(*,*) 'error in 
-     + ncagt SHORT name'
+                  if (attnam .ne. attname(j,i)) write(*,*)
+     + 'error in ncagt SHORT name'
                   if (shval(j) .ne. svalidrg(j)) then
                      write(*,*) 'error in ncagt SHORT'
                   end if
                else if (attype .eq. NCLONG) then
                   call ncagt (ncid, i, attnam, lngval, 
      +                 iret)
-                  if (attnam .ne. attname(j,i)) write(*,*) 'error in 
-     + ncagt LONG name'
-                  if (lngval(j) .ne. lvalidrg(j)) write(*,*) 'error 
-     + in ncagt LONG'
+                  if (attnam .ne. attname(j,i)) write(*,*)
+     + 'error in ncagt LONG name'
+                  if (lngval(j) .ne. lvalidrg(j)) write(*,*)
+     + 'error in ncagt LONG'
                else if (attype .eq. NCFLOAT) then
                   call ncagt (ncid, i, attnam, flval, 
      +                 iret)            
-                  if (attnam .ne. attname(j,i)) write(*,*) 'error in 
-     + ncagt FLOAT name'
-                  if (flval(j) .ne. rvalidrg(j)) write(*,*) 'error 
-     + in ncagt FLOAT'
+                  if (attnam .ne. attname(j,i)) write(*,*)
+     + 'error in ncagt FLOAT name'
+                  if (flval(j) .ne. rvalidrg(j)) write(*,*)
+     + 'error in ncagt FLOAT'
                else if (attype .eq. NCDOUBLE) then
                   call ncagt (ncid, i, attnam, doubval,
      +                 iret)          
-                  if (attnam .ne. attname(j,i)) write(*,*) 'error in 
-     + ncagt DOUBLE name'
+                  if (attnam .ne. attname(j,i)) write(*,*)
+     + 'error in ncagt DOUBLE name'
                   if ( abs(doubval(j) - dvalidrg(j)) .gt. epsilon)
      + write(*,*) 'error in ncagt DOUBLE'
                end if
@@ -469,7 +465,7 @@ c attribute vectors
       real rvalidrg(2)
       integer lvalidrg(2)
       double precision dvalidrg(2)
-      integer bvalidrg(2)
+      integer*1 bvalidrg(2)
 
 c     variable ids
       integer  bid, sid, lid, fid, did, cid, chid
@@ -696,10 +692,10 @@ c     dimensions
 c
       do 10 i = 1, ndims
          call ncdinq (ncid, i, dname, dsize, iret)
-         if (dname .ne. dimnam(i)) write(*,*) 'error in ncdinq or
-     + ncddef, dname=', dname
-         if (dsize .ne. dimsiz(i)) write(*,*) 'error in ncdinq or
-     + ncddef, dsize=',dsize
+         if (dname .ne. dimnam(i)) write(*,*)
+     + 'error in ncdinq or  ncddef, dname=', dname
+         if (dsize .ne. dimsiz(i)) write(*,*)
+     + 'error in ncdinq or ncddef, dsize=',dsize
          dimid = ncdid (ncid, dname, iret)
          if (dimid .ne. i) write(*,*)
      +      'error in ncdinq or ncddef, dimid=', dimid
@@ -710,41 +706,45 @@ c
       do 30 i = 1, nvars
          call ncvinq (ncid, i, vname, vartyp, nvdims,
      +        vdims, nvatts, iret)
-         if (vname .ne. varnam(i)) write(*,*) 'error: from ncvinq, wrong
-     + name returned: ', vname, ' .ne. ', varnam(i)
-         if (vartyp .ne. vtyp(i)) write(*,*) 'error: from ncvinq, wrong 
-     + type returned: ', vartyp, ' .ne. ', vtyp(i)
-         if (nvdims .ne. vndims(i)) write(*,*) 'error: from ncvinq, wrong
-     + num dims returned: ', vdims, ' .ne. ', vndims(i)
+         if (vname .ne. varnam(i)) write(*,*)
+     + 'error: from ncvinq, wrong name returned: ', vname,
+     + ' .ne. ', varnam(i)
+         if (vartyp .ne. vtyp(i)) write(*,*)
+     + 'error: from ncvinq, wrong type returned: ', vartyp,
+     + ' .ne. ', vtyp(i)
+         if (nvdims .ne. vndims(i)) write(*,*)
+     + 'error: from ncvinq, wrong num dims returned: ', vdims,
+     + ' .ne. ', vndims(i)
          do 35 j = 1, nvdims
-            if (vdims(j) .ne. vdlist(j,i)) write(*,*) 'error: from ncvinq
-     + wrong dimids: ', vdims(j), ' .ne. ', vdlist(j,i)
+            if (vdims(j) .ne. vdlist(j,i)) write(*,*)
+     + 'error: from ncvinq wrong dimids: ', vdims(j),
+     + ' .ne. ', vdlist(j,i)
  35      continue
-         if (nvatts .ne. vnatts(i)) write(*,*) 'error in ncvinq or
-     + ncvdef'
+         if (nvatts .ne. vnatts(i)) write(*,*)
+     + 'error in ncvinq or ncvdef'
 c
 c     attributes
 c
          do 45 k = 1, nvatts
             call ncanam (ncid, i, k, attnam, iret)
             call ncainq (ncid, i, attnam, attype, attlen, iret)
-            if (attnam .ne. attname(k,i)) write(*,*) 'error in ncanam
-     +  or ncapt'
-            if (attype .ne. attyp(k,i)) write(*,*) 'error in ncainq or
-     +  ncapt'
-            if (attlen .ne. atlen(k,i)) write(*,*) 'error in ncainq or
-     +  ncapt'
+            if (attnam .ne. attname(k,i)) write(*,*)
+     + 'error in ncanam or ncapt'
+            if (attype .ne. attyp(k,i)) write(*,*)
+     + 'error in ncainq or ncapt'
+            if (attlen .ne. atlen(k,i)) write(*,*)
+     + 'error in ncainq or ncapt'
  45      continue
  30   continue
       do 40 i = 1, natts
          call ncanam (ncid, NCGLOBAL, i, attnam, iret)
          call ncainq (ncid, NCGLOBAL, attnam, attype, attlen, iret)
-         if (attnam .ne. gattnam(i)) write(*,*) 'error in ncanam
-     +        or ncapt'
-         if (attype .ne. gattyp(i)) write(*,*) 'error in ncainq or
-     +        ncapt'
-         if (attlen .ne. gatlen(i)) write(*,*) 'error in ncainq or
-     +        ncapt'
+         if (attnam .ne. gattnam(i)) write(*,*)
+     + 'error in ncanam or ncapt'
+         if (attype .ne. gattyp(i)) write(*,*)
+     + 'error in ncainq or ncapt'
+         if (attlen .ne. gatlen(i)) write(*,*)
+     + 'error in ncainq or ncapt'
  40   continue
       call ncclos(ncid, iret)
       return
@@ -877,7 +877,7 @@ c
       integer itime, ilev, ilat, ilon
 
 c     arrays of data values to be read
-      integer barray(times), byval(times)
+      integer*1 barray(times), byval(times)
       integer*2 sarray(times), shval(times)
       integer larray(lats)
       real farray(levels, lats, lons, times)
@@ -1003,7 +1003,7 @@ c
       integer bid, sid, lid, fid, did, cid, chid
       common /vars/bid, sid, lid, fid, did, cid, chid
 
-      integer bvalue
+      integer*1 bvalue
       integer*2 svalue
       integer lvalue
       real fvalue
@@ -1040,8 +1040,8 @@ c
 c     test ncvgt1 for float
 c
       call ncvgt1 (ncid, fid, findx, fvalue, iret)
-      if (abs(fvalue - 3.14159) .gt. epsilon) write(*,*) 'error in ncvgt
-     +1 float:', fvalue, ' not close to', 3.14159
+      if (abs(fvalue - 3.14159) .gt. epsilon) write(*,*)
+     + 'error in ncvgt1 float:', fvalue, ' not close to', 3.14159
 c
 c     test ncvgt1 for double
 c
@@ -1091,7 +1091,7 @@ c     will be written
       integer count(MAXNCDIM)
 
 c     arrays of data values to be written
-      integer barray(times)
+      integer*1 barray(times)
       integer*2 sarray(times)
       integer larray(lats)
       real farray(levels, lats, lons, times)
@@ -1178,7 +1178,7 @@ c
 
       integer lvalue
       integer*2 svalue
-      integer bvalue
+      integer*1 bvalue
       double precision onethird
       integer bid, sid, lid, fid, did, cid, chid
       common /vars/bid, sid, lid, fid, did, cid, chid
