@@ -119,24 +119,24 @@ Configuration/Installation
 
     To compile the library and utiltites type:
 
-        ./make 
+        make 
 
     To find out the available make targets type:
 
-        ./make help
+        make help
 
     To test the libraries type :
 
-        ./make test 
+        make test 
 
     It is a good idea to save the output of the tests and view it later for errors.
     e.g. 
 
-        ./make test >& make.test.out
+        make test >& make.test.out
 
     To install the libraries, utilities, includes and man pages type: e.g.
 
-        ./make install
+        make install
 
 
     To install on a Windows '95 or Windows NT machine, read the seperate
