@@ -1,4 +1,4 @@
-      Install HDF4.0 release 2 on Windows NT and Windows 95
+      Install HDF4.1 Release 1 on Windows NT and Windows 95
 
 Since Windows NT, Windows '95 (Chicago) and Windows 3.1 (with the Win 32s
 extensions) all are designed to run the same 32-bit code, our decision is
@@ -8,10 +8,10 @@ future.
 
 The instructions which follow assume that you will be using one of the 'zip'
 files that we provide, either the complete source & binary release
-(hdf41b1.zip) or the source only release (hdf41b1s.zip).  To build the HDF,
+(hdf41r1.zip) or the source only release (hdf41r1s.zip).  To build the HDF,
 JPEG, zlib and netCDF libraries and utilities, follow these instructions:
 
-    1) Create a directory to unpack the library in (\HDF4.1b1 for example).
+    1) Create a directory to unpack the library in (\HDF4.1r1 for example).
 
     2) Copy the distribution archive to that directory and unpack it using
         the appropriate archiver options to create a directory hierarchy.
