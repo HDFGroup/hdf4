@@ -29,7 +29,7 @@ void usage(intn argc, char *argv[])
     printf("\t Commands:\n");
     printf("\t     list \tlists contents of files in <filename list>\n");
     printf("\t     dumpsds\tdisplays data of NDGs and SDGs in files listed in <filename list>\n");
-    printf("\t     dumpvs\tdisplays data of vdatas in <filename list>. Not implemented yet.\n");
+    printf("\t     dumpvd\tdisplays data of vdatas in <filename list>. Not implemented yet.\n");
     printf("\t     dumpvg\tdisplays data of vgroups in <filename list>. Not implemented yet.\n");
     printf("\t     dumpris\tdisplays data of RIGs in <filename list>. Not implemented yet.\n");
 } 
@@ -49,17 +49,24 @@ int main(int argc, char *argv[])
 	  }	/* end if */
 
 	curr_arg=1;
-    while(curr_arg<argc && (argv[curr_arg][0]=='-' || argv[curr_arg][0]=='/')) {
+/*	printf("Argument 0: %s\n",argv[0]);
+	printf("Argument 1: %s\n",argv[1]);
+ */
+    while(curr_arg<argc && (argv[curr_arg][0]=='-')) {
+      printf("\n");
+      printf("Here executed!!\n");
+      printf("\n");
+  /*  while(curr_arg<argc && (argv[curr_arg][0]=='-' || argv[curr_arg][0]=='/')) {  */
         switch(argv[curr_arg][1]) {
-			case 'H':
-			case 'h':	/* Print help for a given command */
+			case 'H': 
+	         /*		case 'h':  */  /*	 Print help for a given command */
                                 if (curr_arg < argc-1)  {
-				    glob_opts.help=TRUE;
-				    break;
+				    glob_opts.help=TRUE; /* for displaying options. */
+				    break; 
 				}
-           default:    
-       		usage(argc,argv);
-       		exit(1);
+                        default:    
+       		               usage(argc,argv); /* Display the general usage. */
+       		               exit(1);      
        	}	/* end switch */
         curr_arg++;
       }	/* end while */
@@ -83,21 +90,15 @@ printf("command=%s\n",argv[curr_arg]);
 			break;
 
 		case DUMPRIG:
-/*			do_dumprig(curr_arg,argc,argv,&glob_opts);
-*/
-                        printf("Not implemented \n");
+			do_dumprig(curr_arg,argc,argv,&glob_opts);
 			break;
 
 		case DUMPVG:
-/*			do_dumpvg(curr_arg,argc,argv,&glob_opts);
-*/
-                        printf("Not implemented \n");
+			do_dumpvg(curr_arg,argc,argv,&glob_opts);
 			break;
 
 		case DUMPVD:
-/*			do_dumpvd(curr_arg,argc,argv,&glob_opts);
-*/
-                        printf("Not implemented \n");
+			do_dumpvd(curr_arg,argc,argv,&glob_opts);
 			break;
 
 		case HELP:
@@ -111,71 +112,6 @@ printf("command=%s\n",argv[curr_arg]);
 			break;
 	  }	/* end switch */
     
-#ifdef QAK
-    desc_buf=HDgetspace(sizeof(dd_t)*MAXBUFF);
-
-    while(i < argc) {
-        file_name = argv[i];
-        fid = Hopen(file_name, DFACC_READ, -1);
-        printf( "%s:  ", argv[i]);
-        if(fid == FAIL) {
-            if(HEvalue(1) == DFE_NOTDFFILE) {
-                printf("\n\tNot an HDF file.\n");
-                i++;
-                continue;
-            } else {
-                printf("\n");
-                fflush(stdout);
-                HEprint(stderr, 0);
-            }
-        }
-        
-		aid = Hstartread(fid, DFTAG_WILDCARD, DFREF_WILDCARD);
-		if(aid == FAIL) {
-            HEprint(stderr, 0);
-            i++;
-            continue;	  
-		}
-        
-		status = SUCCEED;
-		for(n = 0; (n < MAXBUFF) && (status != FAIL); n++) {
-            Hinquire(aid, NULL, &desc_buf[n].tag, &desc_buf[n].ref, &desc_buf[n].length,
-                     &desc_buf[n].offset, NULL, NULL, NULL);
-            status = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT);
-		}
-        
-		if(n == MAXBUFF) 
-            fprintf(stderr, 
-                    "Warning:  File may have more DD's than hdfls can display\n");
-        
-		if(debug) {
-            printf("\n");
-            for (j=0; j<n; j++) {
-                printf("%6d) tag %6d ref %6d ", j, desc_buf[j].tag, desc_buf[j].ref);
-                printf(" offset %10ld length %10ld\n", desc_buf[j].offset, desc_buf[j].length);
-            }
-		}
-		if (sort) 
-			qsort( (char *)desc_buf, n, sizeof(dd_t), compare);
-	
-		v_init_done=FALSE;
-		lprint(fid, desc_buf, n);
-		if(v_init_done==TRUE)
-			Vfinish(fid);
-        
-		if(Hendaccess(aid) == FAIL) 
-            HEprint(stderr, 0);
-        
-        if (Hclose(fid) == FAIL) 
-            HEprint(stderr, 0);
-        
-        i++;
-        printf("\n");
-    }
-
-    HDfreespace(desc_buf);
-#endif
-
     return(0);
 }
 

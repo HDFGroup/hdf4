@@ -1,6 +1,6 @@
 # Makefile for HDF dumper(1).
 #
-# $Id$
+# Makefile.in,v 1.2 1994/05/19 20:18:53 sxu Exp
 
 PROGRAM		= hdp
 BINFILES	= $(PROGRAM)

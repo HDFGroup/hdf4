@@ -80,7 +80,7 @@ typedef struct {
  } list_info_t;
 
 /* Which dataset to dump */
-typedef enum {DINDEX, DREFNUM, DNAME, DCLASS, DALL} filter_t;
+typedef enum {DINDEX, DREFNUM, DNAME, DCLASS, DFIELDS, DALL} filter_t;
 
 /* Which contents to dump */
 typedef enum {DVERBOSE, DHEADER, DDATA} content_t;
@@ -91,13 +91,13 @@ typedef enum {DASCII, DBINARY} file_type_t;
 /* 'dumpsds' command option structure */
 typedef struct {
 	filter_t filter;		/* Which SDS to dump */
-	intn filter_num;		/* A ref # or index to use as filter */
-	char filter_str[MAXNAMELEN];	/* A name or class to use as filter */
+	intn *filter_num;		/* A ref # or index to use as filter */
+	char *filter_str[MAXNAMELEN];	/* A name or class to use as filter */
 	content_t contents;		/* Which contents to dump */
 	intn dump_to_file;		/* Whether to dump to a filename */
 	file_type_t file_type;		/* What kind of data to dump to file */
 	char file_name[MAXNAMELEN];	/* Name of file to dump into */
- } dumpsds_info_t;
+ } dump_info_t;
 
 /* Filename list structure */
 typedef struct {
@@ -147,8 +147,8 @@ typedef struct {
 extern void do_list(intn curr_arg,intn argc,char *argv[],dump_opt_t *glob_opts);
 
 /* hdp_sds.c */
-extern int32 dumpfull(int32 nt,int32 cnt,VOIDP databuf,intn indent,FILE *ofp);
-extern void do_dumpsds(intn curr_arg,intn argc,char *argv[],
+/* extern int32 dumpfull(int32 nt,int32 cnt,VOIDP databuf,intn indent,FILE *ofp);
+*/ extern void do_dumpsds(intn curr_arg,intn argc,char *argv[],
 	dump_opt_t *glob_opts);
 
 /* hdp_rig.c */

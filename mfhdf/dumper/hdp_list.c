@@ -11,10 +11,10 @@
  ****************************************************************************/
 
 #ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
+static char RcsId[] = "@(#)1.1";
 #endif
 
-/* $Id$ */
+/* hdp_list.c,v 1.1 1994/04/18 15:49:14 georgev Exp */
 
 #include "hdp.h"
 #include "mfhdf.h"
