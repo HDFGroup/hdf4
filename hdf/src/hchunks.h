@@ -27,6 +27,10 @@
 #ifndef __HCHUNKS_H
 #define __HCHUNKS_H
 
+//RWR Modification Start 07/14/98
+#include "api_adpt.h"
+//RWR Modification End
+
 /* required includes */
 #include "hfile.h"  /* special info stuff */
 
@@ -167,7 +171,7 @@ extern      "C"
 */
 
 /* User Public */
-    extern int32 HMCcreate
+    HDFLIBAPI int32 HMCcreate
         (int32 file_id,       /* IN: file to put linked chunk element in */
          uint16 tag,          /* IN: tag of element */
          uint16 ref,          /* IN: ref of element */
@@ -177,22 +181,22 @@ extern      "C"
          HCHUNK_DEF *chk_array /* IN: structure describing chunk distribution
                                  can be an array? but we only handle 1 level */);
 
-    extern int32 HMCsetMaxcache
+    HDFLIBAPI int32 HMCsetMaxcache
         (int32 access_id, /* IN: access aid to mess with */
          int32 maxcache,  /* IN: max number of pages to cache */
          int32 flags      /* IN: flags = 0, HMC_PAGEALL */);
 
-    extern int32 HMCwriteChunk
+    HDFLIBAPI int32 HMCwriteChunk
         (int32 access_id,  /* IN: access aid to mess with */
          int32 *origin,    /* IN: origin of chunk to write */
          const VOID *datap /* IN: buffer for data */);
 
-    extern int32 HMCreadChunk
+    HDFLIBAPI int32 HMCreadChunk
         (int32 access_id,  /* IN: access aid to mess with */
          int32 *origin,    /* IN: origin of chunk to read */
          VOID *datap       /* IN: buffer for data */);
 
-    extern int32 HMCPcloseAID
+    HDFLIBAPI int32 HMCPcloseAID
         (accrec_t *access_rec /* IN:  access record of file to close */);
 
 /* Library Private */
