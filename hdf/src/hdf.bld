@@ -1,7 +1,9 @@
 +hfile &
++hbitio &
 +herr &
 +hblocks &
 +hextelt &
++hcomp &
 +hkit &
 +dfan &
 +dfr8 &
@@ -35,6 +37,10 @@
 +dfutil &
 +dfstubs &
 +hdfalloc &
++mstdio &
++crle &
++cnbit &
++hbigext &
 +hfilef &
 +herrf &
 +dfanf &
@@ -81,5 +87,3 @@
 +jquant1 &
 +jquant2 &
 +jrevdct
-
-

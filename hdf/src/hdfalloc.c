@@ -281,7 +281,7 @@ VOIDP HDregetspace(VOIDP vfp, uint32 new_size)
  NAME
     HDfreespace -- free dynamicly allocated memory
  USAGE
-    VOIDP HDfreespace(vfp)
+    void HDfreespace(vfp)
         VOIDP vfp;          IN: pointer to the memory block to free.
  RETURNS
     NULL?
@@ -293,19 +293,18 @@ VOIDP HDregetspace(VOIDP vfp, uint32 new_size)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-void _HUGE *HDfreespace(void *vfp)
+void HDfreespace(void *vfp)
 {
     HGLOBAL hTmp;
 
     if (!vfp)
-        return(NULL);
+        return;
     hTmp=(HGLOBAL)(*(--((WORD far *) vfp)));
     if (!hTmp)
-        return(NULL);
+        return;
     GlobalUnlock(hTmp);
     GlobalFree(hTmp);
 
-    return(NULL);
 }   /* end HDfreespace() */
 #else /* !WIN3 */
 
@@ -414,7 +413,7 @@ VOIDP HDregetspace(VOIDP ptr, uint32 qty)
  NAME
     HDfreespace -- free dynamicly allocated memory
  USAGE
-    VOIDP HDfreespace(vfp)
+    void HDfreespace(vfp)
         VOIDP vfp;          IN: pointer to the memory block to free.
  RETURNS
     NULL?
@@ -426,21 +425,19 @@ VOIDP HDregetspace(VOIDP ptr, uint32 qty)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VOIDP HDfreespace(void *ptr)
+void HDfreespace(void *ptr)
 {
     char *p=ptr;
 
-    if(ptr==NULL)
-        return(NULL);
-
+    if(ptr!=NULL) {
 #ifndef TEST_PC
-    p-=(sizeof(char)+sizeof(uint32));    /* decrement the pointer to free */
-    if(*p)    /* check whether block of memory was allocated with halloc() */
-        hfree(p);
-    else       /* memory was allocated through malloc() */
+        p-=(sizeof(char)+sizeof(uint32));    /* decrement the pointer to free */
+        if(*p)    /* check whether block of memory was allocated with halloc() */
+            hfree(p);
+        else       /* memory was allocated through malloc() */
 #endif
-        free(p);
-    return(NULL);
+            free(p);
+      } /* end if */
 }   /* end HDfreespace() */
 
 #endif /* WIN3 */
@@ -515,7 +512,7 @@ VOIDP HDregetspace(VOIDP where, uint32 qty)
  NAME
     HDfreespace -- free dynamicly allocated memory
  USAGE
-    VOIDP HDfreespace(vfp)
+    void HDfreespace(vfp)
         VOIDP vfp;          IN: pointer to the memory block to free.
  RETURNS
     NULL?
@@ -527,17 +524,16 @@ VOIDP HDregetspace(VOIDP where, uint32 qty)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VOIDP HDfreespace(VOIDP ptr)
+void HDfreespace(VOIDP ptr)
 {
     if (ptr!=NULL)
         free(ptr);
-    return(NULL);
 }   /* end HDfreespace() */
 #endif /* MALLOC_CHECK */
 
 #endif /* !PC | PC386 */
 
-#ifdef MALLOC_CHECK
+#if defined MALLOC_CHECK | (defined PC & !defined PC386)
 /*--------------------------------------------------------------------------
  NAME
     HDclearspace -- dynamicly allocates memory and clears it to zero
@@ -559,6 +555,7 @@ VOIDP HDfreespace(VOIDP ptr)
 --------------------------------------------------------------------------*/
 VOIDP HDclearspace(uint32 n,uint32 size)
 {
+    char FUNC[]="HDclearspace";
     VOIDP p;
 
     p=HDgetspace(n*size);

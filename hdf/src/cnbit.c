@@ -160,7 +160,7 @@ printf("HCIcnbit_init(): i=%d, mask_top=%d, mask_bot=%d, top_bit=%d, bot_bit=%d\
             else {  /* only top part of byte is in mask */
                 nbit_info->mask_info[i].offset=7;
                 nbit_info->mask_info[i].length=(top_bit-mask_bot)+1;
-                nbit_info->mask_info[i].mask=mask_arr8[(top_bit-mask_bot)+1]<<(8-((top_bit-mask_bot)+1));
+                nbit_info->mask_info[i].mask=(uint8)(mask_arr8[(top_bit-mask_bot)+1]<<(8-((top_bit-mask_bot)+1)));
                 break;  /* we've found the bottom of the mask, we're done */
               } /* end else */
           } /* end if */
@@ -174,7 +174,7 @@ printf("HCIcnbit_init(): i=%d, mask_top=%d, mask_bot=%d, top_bit=%d, bot_bit=%d\
                 else {  /* entire bit-field is inside of this byte */
                     nbit_info->mask_info[i].offset=mask_top-bot_bit;
                     nbit_info->mask_info[i].length=(mask_top-mask_bot)+1;
-                    nbit_info->mask_info[i].mask=mask_arr8[(mask_top-mask_bot)+1]<<(mask_bot-bot_bit);
+                    nbit_info->mask_info[i].mask=(uint8)(mask_arr8[(mask_top-mask_bot)+1]<<(mask_bot-bot_bit));
                     break;  /* we've found the bottom of the mask, we're done */
                   } /* end else */
               } /* end if */
@@ -320,8 +320,8 @@ printf("HCInbit_decode(): i=%d, sign_bit=%d, input_bits=%x\n",i,sign_bit,input_b
             nbit_info->buf_pos=0;   /* reset buffer position */
           } /* end if */
 
-        copy_length=(length>(NBIT_BUF_SIZE-nbit_info->buf_pos)) ?
-                (NBIT_BUF_SIZE-nbit_info->buf_pos) : length;
+        copy_length=(intn)((length>(NBIT_BUF_SIZE-nbit_info->buf_pos)) ?
+                (NBIT_BUF_SIZE-nbit_info->buf_pos) : length);
 
         HDmemcpy(buf,&(nbit_info->buffer[nbit_info->buf_pos]),copy_length);
 
@@ -423,6 +423,9 @@ PRIVATE int32 HCIcnbit_term(compinfo_t *info)
 #ifdef LATER
     CONSTR(FUNC,"HCIcnbit_term");
 #endif
+
+    /* shut compiler up */
+    info=info;
 
     return(SUCCEED);
 }   /* end HCIcnbit_term() */
@@ -564,6 +567,9 @@ int32 HCPcnbit_seek(accrec_t *access_rec, int32 offset, int origin)
     comp_coder_nbit_info_t *nbit_info;  /* ptr to n-bit info */
     int32 bit_offset;                   /* offset of the bit to seek to */
 
+    /* shut compiler up */
+    origin=origin;
+
     info=(compinfo_t *)access_rec->special_info;
     nbit_info= &(info->cinfo.coder_info.nbit_info);
 
@@ -573,7 +579,7 @@ int32 HCPcnbit_seek(accrec_t *access_rec, int32 offset, int origin)
 
     bit_offset=(offset/nbit_info->nt_size)*nbit_info->mask_len;
 
-    if(Hbitseek(info->aid,bit_offset/8,bit_offset%8)==FAIL)
+    if(Hbitseek(info->aid,bit_offset/8,(intn)(bit_offset%8))==FAIL)
         HRETURN_ERROR(DFE_CSEEK,FAIL);
 
     nbit_info->buf_pos=NBIT_BUF_SIZE;   /* force re-read if writing */
@@ -690,6 +696,11 @@ int32 HCPcnbit_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
                         uint16 *pref, int32 *plength, int32 *poffset,
                         int32 *pposn, int16 *paccess, int16 *pspecial)
 {
+    /* shut compiler up */
+    access_rec=access_rec; pfile_id=pfile_id; ptag=ptag; pref=pref;
+    plength=plength; poffset=poffset; pposn=pposn; paccess=paccess;
+    pspecial=pspecial;
+
     return(SUCCEED);
 }   /* HCPcnbit_inquire() */
 

@@ -186,7 +186,7 @@ extern VOIDP HDregetspace
 extern VOIDP HDclearspace
   (uint32 n, uint32 size);
 
-extern VOIDP HDfreespace
+extern void HDfreespace
   (VOIDP ptr);
 
 #endif /* (defined PC && !defined PC386) || defined MALLOC_CHECK */
