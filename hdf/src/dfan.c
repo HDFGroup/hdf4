@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.3  1992/11/07 20:12:48  sxu
+added nlabs in DFANIlablist.
 
+ * Revision 1.2  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -951,7 +954,7 @@ int listsize, maxlen, startpos, isfortran;
     uint16 ref;
     DFANdirhead *p;
     uint8 *lp;                    /* pointer to label */
-    int nrefs;
+    int nrefs, nlabs;
     uint8 labeldi[4];             /* to read in and discard data/ref */
     
     HEclear();
@@ -996,52 +999,56 @@ int listsize, maxlen, startpos, isfortran;
     Hendaccess(aid);
 
         /* get directory of all labels */
+    nlabs = Hnumber(file_id, DFTAG_DIL);
+    if (nlabs != 0)  {
+       if (DFANdir[DFAN_LABEL]==NULL) {          /* if no dir info create dir */
+          if (0== DFANIlocate(file_id, DFAN_LABEL, 0, 0)){
+             Hendaccess(aid); Hclose(file_id); return FAIL;
+          }
+       }
 
-    if (DFANdir[DFAN_LABEL]==NULL) {          /* if no dir info create dir */
-        if (0== DFANIlocate(file_id, DFAN_LABEL, 0, 0)){
-            Hendaccess(aid); Hclose(file_id); return FAIL;
-        }
-    }
-
-    lp = labellist;
+       lp = labellist;
 
        /* Look through all labels. Get those that correspond to the tag,
            and match them with corresponding tag/refs in the reflist.      */
 
-    for (p = DFANdir[DFAN_LABEL]; p!=NULL; p=p->next) { /* for each ann dir */
-        for (i=0; i<p->nentries; i++) {              /* for each tag in dir */
-            if (p->entries[i].datatag==tag) {        /* if this tag==our tag */
+       for (p = DFANdir[DFAN_LABEL]; p!=NULL; p=p->next) { /* for each ann dir */
+           for (i=0; i<p->nentries; i++) {              /* for each tag in dir */
+               if (p->entries[i].datatag==tag) {        /* if this tag==our tag */
 
-                aid = Hstartread(file_id, DFTAG_DIL, p->entries[i].annref);
-                if (aid == FAIL) {
-                    Hendaccess(aid); Hclose(file_id); return FAIL;
-                }
-                if ((int32)FAIL == Hread(aid, (int32) 4, labeldi)) { /* data tag/ref */
-                    Hendaccess(aid); Hclose(file_id); return FAIL;
-                }
+                  aid = Hstartread(file_id, DFTAG_DIL, p->entries[i].annref);
+                  if (aid == FAIL) {
+                     Hendaccess(aid); Hclose(file_id); return FAIL;
+                  }
+                  if ((int32)FAIL == Hread(aid, (int32) 4, labeldi)) { /* data tag/ref */
+                     Hendaccess(aid); Hclose(file_id); return FAIL;
+                  }
                     /* look for corresponding ref in reflist */
-                for (k=0; k<nrefs && p->entries[i].dataref != reflist[k];k++)
+                  for (k=0; k<nrefs && p->entries[i].dataref != reflist[k];k++)
                      ;
-                if (k < nrefs) {               /* if ref found */
+                  if (k < nrefs) {               /* if ref found */
 
                     lp = labellist + k*maxlen;      /* get pos to copy to */
 
                         /* note len on read may be too big, but OK for DFread */
                     len = Hread(aid, (int32) (maxlen-1), lp);
-                    if (len == FAIL) { 
+                    if (len == FAIL) {
                         Hendaccess(aid); Hclose(file_id); return FAIL;
                     }
                         /* ret now contains actual length read */
                         /* pad with blanks for Fortran; add null for C */
-                    if (isfortran) 
+                    if (isfortran)
                         while (len++ < maxlen) lp[len] = ' ';
-                    else 
+                    else
                         lp[len] = '\0';
-                }
-                Hendaccess(aid);
-            }
-        }
-    }
+                  }
+                  Hendaccess(aid);
+               }  /* tag == our tag  */
+           }      /* for each tag in dir  */
+       } /* for each ann dir  */
+    }   /* nlabs != 0  */
+    if (FAIL == Hclose(file_id))       /* close file */
+
     if (FAIL == Hclose(file_id))       /* close file */
         return FAIL; 
     return(nrefs);
