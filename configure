@@ -7559,7 +7559,13 @@ for config_file in $src_files; do
   fi
 done
 
-                                                                                                                                                                                                                            ac_config_files="$ac_config_files Makefile hdf/Makefile hdf/src/Makefile hdf/test/Makefile hdf/util/Makefile hdf/util/testutil.sh man/Makefile mfhdf/Makefile mfhdf/dumper/Makefile mfhdf/dumper/testhdp.sh mfhdf/fortran/Makefile mfhdf/hdfimport/Makefile mfhdf/hdfimport/testutil.sh mfhdf/hdiff/Makefile mfhdf/hrepack/Makefile mfhdf/libsrc/Makefile mfhdf/ncdump/Makefile mfhdf/ncgen/Makefile mfhdf/nctest/Makefile mfhdf/pablo/Makefile mfhdf/port/Makefile mfhdf/xdr/Makefile"
+                                                                                                                                                                                                                  ac_config_files="$ac_config_files Makefile hdf/Makefile hdf/src/Makefile hdf/test/Makefile hdf/util/Makefile hdf/util/testutil.sh man/Makefile mfhdf/Makefile mfhdf/dumper/Makefile mfhdf/dumper/testhdp.sh mfhdf/fortran/Makefile mfhdf/hdfimport/Makefile mfhdf/hdfimport/testutil.sh mfhdf/hdiff/Makefile mfhdf/hrepack/Makefile mfhdf/libsrc/Makefile mfhdf/ncdump/Makefile mfhdf/ncgen/Makefile mfhdf/nctest/Makefile mfhdf/pablo/Makefile mfhdf/port/Makefile"
+
+
+if test "X$build_xdr" = "Xyes"; then
+            ac_config_files="$ac_config_files mfhdf/xdr/Makefile"
+
+fi
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
