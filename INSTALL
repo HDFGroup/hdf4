@@ -2,7 +2,9 @@ Installing HDF/netCDF
 =====================
 
     For compiling and installing HDF/netCDF libraries,tests and
-    utilities on a system, please follow these instructions.
+    utilities on a system, please follow these instructions. This
+    document is still under construction and certain sections are
+    incomplete.
 
 Supported Platforms
 ===================
@@ -26,11 +28,9 @@ Supported Platforms
        Free BSD 2.0         GCC 2.6.2     Fortran compiler    X         X
                                              2.6.2
                                  (Fortran to C converter)
-
-
   
   NeXT/NeXTSTEP                
-  MacQuadra950(MacOS-7.5)    MPW           LS Fortran
+  MacQuadra950(MacOS-7.5)    
   Fujitsu VP/UXPM               
   Intel i860                    
   VMS/VMS                       
@@ -45,7 +45,13 @@ Requirements
         was available the free GNU ANSI compilier GCC was used.
 
       * Fortran 77 compilier if you want fortran support. See above
-        table for platforms where fortran is supported.
+        table for platforms where fortran is supported. You can
+        compile 'libdf.a'(HDF library) without fortran support by using the
+        make target 'allnofortran' e.g. 'make allnofortran'. If there is no
+        fortran compilier the 'configure' script on the netCDF side of the  
+        distribution(mfhdf) should detect that absence and configure the
+        package accordingly. See below for further details of
+        configuration and installation.
         
 
 Configuration/Installation
@@ -62,30 +68,105 @@ Configuration/Installation
     platfrom you are configuring the distribution for by calling the shell
     script 'config.guess'. It outputs a unique string based on information
     obtained from the UNIX command 'uname' consisting of CPU-VENDOR-OS
-    e.g. 'hppa1.1-hp-hpux9.03' from an  HP9000/735 running HPUX-9.03.
+    e.g. 'hppa1.1-hp-hpux9.03' for an  HP9000/735 running HPUX-9.03.
+
+    The following shows the layout of the files used in the configuration.
+
+    $(toplevel)/Makefile.in
+                config.guess
+                config.sub
+                configure (cygnus)
+                configure.in
+                config/mh-hpux, mh-sun,.....
+                      /custom_hpux, mh-sun,...
+
+                mfhdf/CUSTOMIZE
+                      configure(autconf)
+
+                hdf/Makefile.in
+                hdf/src/Makefile.in
+                hdf/test/Makefile.in
+                hdf/util/Makefile.in
+
+                hdf/jpeg/configure.in
+                hdf/jpeg/Makefile.in
+                hdf/jpeg/configure.gnu
+                hdf/jpeg/config/mh-hpux, mh-sun,...
+                hdf/jpeg/config/jhpux.h, jsun.h,...
+
+    To build both of the libraries contained in this directory,
+    run the ``configure'' script int $(toplevel), e.g.:
+
+	./configure -v --prefix=/usr/local/hdf
+
+    If you're using `csh' on an old version of System V, you might need to type
+    `sh ./configure -v --prefix=/usr/local/hdf' instead to prevent `csh' 
+     from trying to execute `configure' itself.
+
+    This will configure the distribution to install the libraries,
+    utilities, include and man files in '/usr/local/hdf/lib','/usr/local/hdf/bin',
+    '/usr/local/hdf/include' and '/usr/local/hdf/man' respectively. The
+    default 'prefix' is '/usr/local'. It is advisable to use something
+    like the above to avoid overwriting say another 'libjpeg.a' that might be
+    installed in '/usr/local/lib'. The '-v' option is for verbose output.
+
+    If the configure script can't determine your type of computer, give it
+    the name as an argument, for instance ``./configure sun4''.  You can
+    use the script ``config.sub'' to test whether a name is recognized; if
+    it is, config.sub translates it to a triplet specifying CPU, vendor,
+    and OS.(e.g hppa1.1-hp-hpux9.03 for an HP900/735 running HPUX9.03).
+
+    To compile the library and utiltites type:
+
+        ./make 
+
+    To find out the available make targets type:
+
+        ./make help
+
+    To test the libraries type :
+
+        ./make test 
+
+    It is a good idea to save the output of the tests and view it later for errors.
+    e.g. 
+
+        ./make test >& make.test.out
+
+    To install the libraries, utilities, includes and man pages type: e.g.
+
+        ./make install
 
 
     To install on a Windows '95 or Windows NT machine, read the seperate
     installation instructions for Windows NT.
 
-
 Documentation
 =============
 
+    Manual pages for the library are not yet completed but some early
+    drafts are avaiable in XXX.
+
+    Various formatted documents related to HDF can be obtained by ?
 
 
-Compilers and Options
+Installation Location
 =====================
-
-
-
-Installation Names
-==================
 
     By default, `make install' will install the HDF/netCDF files in
     `/usr/local/bin', `/usr/local/man', etc.  You can specify an
     installation prefix other than `/usr/local' by giving `configure' the
-    option `--prefix=PATH'.
+    option `--prefix=PATH'. 
+
+    eg.  ./configure -v --prefix=/usr/local/hdf
+
+     This will configure the distribution to install the libraries,
+     utilities, include and man files in '/usr/local/hdf/lib','/usr/local/hdf/bin',
+     '/usr/local/hdf/include' and '/usr/local/hdf/man' respectively. The
+     default 'prefix' is '/usr/local'. It is advisable to use something
+     like the above to avoid overwriting say another 'libjpeg.a' that might be
+     installed in '/usr/local/lib'.
+
 
 Specifying the System Type
 ==========================
@@ -99,19 +180,38 @@ Specifying the System Type
 
          CPU-COMPANY-SYSTEM
 
+    e.g. hppa1.1-hp-hpux9.03
+
     See the file `config.sub' for the possible values of each field.
 
-Operation Controls
+    One system that requires this is the CM5. To configure properly
+    for the parallel support on the CM5 you must type the following on the
+    front end:
+
+          ./configure -v CM5
+
+Configure Options 
 ==================
+
+Usage: configure [OPTIONS] [HOST]
+
+Where HOST and TARGET are something like "sparc-sunos", "mips-sgi-irix5", etc.
 
     `configure' recognizes the following options to control how it
     operates. 
 
 NOTE: not all options are currently supported by this
-      distribution.
+      distribution.The following are the only ones supported.
 
     `--help'
          Print a summary of the options to `configure', and exit.
+
+     `--prefix=MYDIR`          install into MYDIR [/usr/local]
+
+
+
+
+
 
 
 
