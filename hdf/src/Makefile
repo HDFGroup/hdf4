@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.3  1992/11/02 16:35:41  koziol
+# Revision 1.4  1992/11/02 18:07:57  chouck
+# Added hcomp.h into the list of include files to move
+#
+# Revision 1.3  1992/11/02  16:35:41  koziol
 # Updates from 3.2r2 -> 3.3
 #
 # Revision 1.2  1992/09/17  19:49:16  koziol
@@ -102,7 +105,7 @@ LINTFLAGS=
 SHAR=shar
 ARCHIVE=hdf.shar
 
-HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h dfan.h dfrig.h dfgr.h dfsd.h \
+HDRS=hcomp.h hfile.h hdf.h hdfi.h herr.h hproto.h dfan.h dfrig.h dfgr.h dfsd.h \
      dfgroup.h dfconvrt.h vg.h df.h dfi.h dfstubs.h dfufp2i.h vproto.h 
 
 CSRCS=hfile.c herr.c hblocks.c hextelt.c hkit.c dfan.c dfr8.c dfcomp.c \
