@@ -146,7 +146,7 @@ tbbtfind(TBBT_NODE * root, VOIDP key,
 /* tbbtffind -- Look up a node in a tree based on a key value */
 /* This routine is based on tbbtfind (fix bugs in both places!) */
 /* Returns a pointer to the found node (or NULL) */
-TBBT_NODE  *
+static TBBT_NODE  *
 tbbtffind(TBBT_NODE * root, VOIDP key, uintn fast_compare, TBBT_NODE ** pp)
 {
     TBBT_NODE  *ptr = root;
