@@ -172,16 +172,6 @@
 #endif	/* NC_OLD_FILLVALUES above */
 
 /*
- * Added feature. The above values are defaults.
- * If you wish a variable to use a different value than the above
- * defaults, create an attribute with the same type as the variable
- * and the following reserved name. The value you give the attribute
- * will be used as the fill value for that variable.
- */
-#define _FillValue	"_FillValue"
-
-
-/*
  *  masks for the struct NC flags field; passed in as 'mode' arg to
  * nccreate and ncopen.
  *
@@ -234,6 +224,15 @@
 #define MAX_NC_VARS 5000	 /* max variables per file */
 #define MAX_NC_NAME 256		 /* max length of a name */
 #define MAX_VAR_DIMS 32          /* max per variable dimensions */
+/*
+ * Added feature. 
+ * If you wish a variable to use a different value than the 
+ * defaults, create an attribute with the same type as the variable
+ * and the following reserved name. The value you give the attribute
+ * will be used as the fill value for that variable.
+ */
+
+#define _FillValue "_FillValue"
 
 #else /* HDF */
 
