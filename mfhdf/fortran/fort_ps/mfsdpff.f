@@ -1010,8 +1010,8 @@ C----------------------------------------------------------------------
 C     Name: sfid2ref
 C     Purpose:  call scid2ref, map an id to ref
 C     Inputs:   id: variable id
-C     Returns: refernce number on success, FAIL on failure with error s
-et
+C     Returns: refernce number on success, FAIL on failure with errors
+C              set
 C     Users:    Fortran stub routine
 C----------------------------------------------------------------------
 
