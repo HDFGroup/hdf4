@@ -43,6 +43,9 @@ static char sbuf[80]; /* message buffer */
 int vsdumpfull(VDATA *);
 #endif
 
+int32 vsdumpfull
+  PROTO((VDATA * vs)); 
+
 main(ac,av) int ac; 
 char**av;
 {
@@ -60,9 +63,9 @@ char**av;
 
 	char fields[50], vgname[50],vsname[50];
 	char  vgclass[50],vsclass[50];
-	int32 fulldump = 0;
+	int32 fulldump = 0, start = 1;
 
-	if (ac==3) if(av[2][0]=='-'||av[2][0]=='+') {
+	if (ac >= 2) if(av[2][0]=='-'||av[2][0]=='+') {
 		sscanf(&(av[2][1]),"%d",&vsno);
 		if(vsno == 0) {
 			sprintf(sbuf,"FULL DUMP\n"); 
@@ -75,8 +78,9 @@ char**av;
 		fulldump = 1;
 		if(av[2][0]=='+') condensed = 1; 
 		else condensed = 0;
+                start = 2;
 	}
-	if(ac<2) {
+	if(ac < 2) {
 		sprintf(sbuf,"%s: dumps HDF vsets info from hdf file\n",av[0]);
 		PMSG;
 		sprintf(sbuf,"usage: %s file {+n} \n", av[0]);
@@ -193,39 +197,55 @@ char**av;
 /* printing functions used by vsdumpfull(). */
 static int32 cn = 0;
 int32 fmtbyte(x) unsigned char*x;  { cn += printf("%02x ",*x); return(1);  }
+
 int32 fmtchar(x) char*x; 
 { 
-	cn++; putchar(*x); return(1);
-	}
-int32 fmtint(x) char*x;
-{	int aint;
-		movebytes(x, &aint, sizeof(int)); cn += printf("%d",aint); 
-		return(1);  
-		}
+  cn++; putchar(*x); return(1);
+}
 
-int32 fmtfloat(x) char*x;
-{	float afloat;
-		movebytes(x, &afloat, sizeof(float)); cn += printf("%f",afloat); 
-		return(1);  
-		}
+int32 fmtint(x) 
+     char* x;
+{	
+  int aint;
+  movebytes(x, (unsigned char *)&aint, sizeof(int)); 
+  cn += printf("%d",aint); 
+  return(1);  
+}
 
-int32 fmtlong(x) char*x;   
-{	long along;
-		movebytes(x, &along, sizeof(long)); cn += printf("%ld",along); 
-		return(1);  
-		}
+int32 fmtfloat(x) 
+     char* x;
+{
+  float afloat;
+  movebytes(x, (unsigned char *) &afloat, sizeof(float)); 
+  cn += printf("%f",afloat); 
+  return(1);  
+}
 
-int32 fmtshort(x) char*x;   
-{	short ashort;
-		movebytes(x, &ashort, sizeof(short)); cn += printf("%d",ashort); 
-		return(1);  
-		}
+int32 fmtlong(x) 
+     char* x;   
+{	
+  long along;
+  movebytes(x, (unsigned char *) &along, sizeof(long)); 
+  cn += printf("%ld",along); 
+  return(1);  
+}
+
+int32 fmtshort(x) 
+     char* x;   
+{	
+  short ashort;
+  movebytes(x, (unsigned char *) &ashort, sizeof(short)); 
+  cn += printf("%d",ashort); 
+  return(1);  
+}
 
 int32 fmtdouble(x) char*x;
-{	double adouble;
-		movebytes(x, &adouble, sizeof(double)); cn += printf("%f",adouble); 
-		return(1);  
-		}
+{	
+  double adouble;
+  movebytes(x, (unsigned char *) &adouble, sizeof(double)); 
+  cn += printf("%f",adouble); 
+  return(1);  
+}
 
 /* ------------------------------------------------ */
 
