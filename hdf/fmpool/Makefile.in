@@ -122,6 +122,8 @@ CL= ${CC} $(CFLAGS) -c -D__FMPINTERFACE_PRIVATE ${AUXFLAGS} -I.
 
 #all: libfmpool.a
 
+debug rebuild rebuildnofortran nofortran: all
+
 all::         FORCE
 	@if test -z "$(FMPOOL_FLAGS)"; then \
 	  : true; \
@@ -136,7 +138,7 @@ libfmpool.a: $(LIBOBJECTS) $(HDFLIB)/libdf.a
 	  $(AR) rcuv $(HDFLIB)/libdf.a $(LIBOBJECTS); \
 	  $(RANLIB) $(HDFLIB)/libdf.a ; \
 	fi
-	$(AR) su libfmpool.a
+	$(AR2) libfmpool.a
 
 libfmpool: $(LIBOBJECTS)
 	$(RM) $(RMFLAGS) libfmpool.a
