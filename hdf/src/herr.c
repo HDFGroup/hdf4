@@ -45,6 +45,8 @@ EXPORTED ROUTINES
 #include <varargs.h>
 #endif
 
+#define FUNC_NAME_LEN   32
+
 /* We use a stack to hold the errors plus we keep track of the function,
    file and line where the error occurs. */
 
@@ -52,7 +54,11 @@ EXPORTED ROUTINES
 typedef struct error_t
   {
       hdf_err_code_t error_code;    /* Error number */
+#ifdef OLD_WAY
       const char *function_name;    /* function where error occur */
+#else /* OLD_WAY */
+      char function_name[FUNC_NAME_LEN];    /* function where error occur */
+#endif /* OLD_WAY */
       const char *file_name;    /* file where error occur */
       intn        line;         /* line in file where error occurs */
       intn        system;       /* for system or HDF error */
@@ -192,7 +198,11 @@ HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_na
 
     if (error_top < ERR_STACK_SZ)
       {
+#ifdef OLD_WAY
           error_stack[error_top].function_name = function_name;
+#else /* OLD_WAY */
+          HDstrcpy(error_stack[error_top].function_name,function_name);
+#endif /* OLD_WAY */
           error_stack[error_top].file_name = file_name;
           error_stack[error_top].line = line;
           error_stack[error_top].error_code = error_code;

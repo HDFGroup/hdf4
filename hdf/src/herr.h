@@ -214,7 +214,10 @@ typedef enum
 /* bit I/O errors */
       DFE_BITREAD,              /* There was a bit-read error */
       DFE_BITWRITE,             /* There was a bit-write error */
-      DFE_BITSEEK               /* There was a bit-seek error */
+      DFE_BITSEEK,              /* There was a bit-seek error */
+
+/* tbbt interface errors */
+      DFE_TBBTINS               /* Failed to insert element into tree */
   }
 hdf_err_code_t;
 
@@ -376,7 +379,8 @@ PRIVATE const struct error_messages_t error_messages[] =
 /* bit I/O errors */
     {DFE_BITREAD,       "There was a bit-read error"},
     {DFE_BITWRITE,      "There was a bit-write error"},
-    {DFE_BITSEEK,       "There was a bit-seek error"}
+    {DFE_BITSEEK,       "There was a bit-seek error"},
+    {DFE_TBBTINS,       "Failed to insert element into tree"}
 };
 #endif /* _H_ERR_MASTER_ */
 

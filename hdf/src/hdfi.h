@@ -1218,7 +1218,7 @@ extern uint8 FAR *DFtbuf;
 #ifdef DUMBCC
 #define CONSTR(v,s) char *v=s
 #else
-#define CONSTR(v,s) char v[]=s
+#define CONSTR(v,s) const char v[]=s
 #endif
 
 /* Old-style memory allocation function aliases -QAK */

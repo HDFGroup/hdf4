@@ -581,10 +581,10 @@ extern      "C"
                  intn direction);
 
     extern int  HInew_dd_block
-                (filerec_t * file_rec, int16 ndds, char *FUNC);
+                (filerec_t * file_rec, int16 ndds, const char *FUNC);
 
     extern int  HIupdate_dd
-                (filerec_t * file_rec, ddblock_t * block, int32 idx, char *FUNC);
+                (filerec_t * file_rec, ddblock_t * block, int32 idx, const char *FUNC);
 
     extern VOIDP HIgetspinfo
                 (accrec_t * access_rec, uint16 tag, uint16 ref);

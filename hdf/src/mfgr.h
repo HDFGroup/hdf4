@@ -51,6 +51,7 @@ gr_interlace_t;
 #define FILL_ATTR    "FillValue"   /* name of an attribute containing the fill value */
 
 /* The tag of the attribute data */
+#define RI_TAG      DFTAG_VG    /* Current RI groups are stored in Vgroups */
 #define ATTR_TAG    DFTAG_VH    /* Current GR attributes are stored in VDatas */
 
 /* The default threshhold for attributes which will be cached */
@@ -80,7 +81,7 @@ gr_interlace_t;
 #define RISLOT2ID(g,s) ( (((uint32)g & 0xff) << 16) | \
                     (((uint32)RIIDTYPE & 0xff) << 24) | ((s) & 0xffff) )
 #define VALIDRIID(i) ((((uint32)(i) >> 24) & 0xff) == RIIDTYPE)
-#define VALIDRIINDEX(i,gp) ((i)>0 && (i)<(gp)->gr_count)
+#define VALIDRIINDEX(i,gp) ((i)>=0 && (i)<(gp)->gr_count)
 #define RIID2SLOT(i) (VALIDRIID(i) ? (uint32)(i) & 0xffff : -1)
 #define RIID2GRID(i) (VALIDRIID(i) ? ((uint32)(i) >> 16) & 0xff : -1)
 

@@ -214,16 +214,16 @@ PRIVATE intn HIchangedd
 #endif
 
 PRIVATE intn HIget_file_slot
-		(const char *path, char *FUNC);
+		(const char *path, const char *FUNC);
 
 PRIVATE intn HIvalid_magic
-		(hdf_file_t file, char *FUNC);
+		(hdf_file_t file, const char *FUNC);
 
 PRIVATE intn HIfill_file_rec
-		(filerec_t * file_rec, char *FUNC);
+		(filerec_t * file_rec, const char *FUNC);
 
 PRIVATE intn HIinit_file_dds
-		(filerec_t * file_rec, int16 ndds, char *FUNC);
+		(filerec_t * file_rec, int16 ndds, const char *FUNC);
 
 PRIVATE intn HIflush_dds
 		(filerec_t * file_rec);
@@ -232,7 +232,7 @@ PRIVATE intn HIextend_file
 		(filerec_t * file_rec);
 
 PRIVATE funclist_t *HIget_function_table
-		(accrec_t * access_rec, char *FUNC);
+		(accrec_t * access_rec, const char *FUNC);
 
 PRIVATE intn HIupdate_version
 		(int32);
@@ -2374,7 +2374,7 @@ DESCRIPTION
 
 --------------------------------------------------------------------------*/
 int
-HIupdate_dd(filerec_t * file_rec, ddblock_t * block, int32 idx, char *FUNC)
+HIupdate_dd(filerec_t * file_rec, ddblock_t * block, int32 idx, const char *FUNC)
 {
 int32       offset;         /* offset of updated dd in file */
 uint8      *p;              /* temp buffer ptr */
@@ -2886,7 +2886,7 @@ DESCRIPTION
 
 --------------------------------------------------------------------------*/
 PRIVATE int
-HIinit_file_dds(filerec_t * file_rec, int16 ndds, char *FUNC)
+HIinit_file_dds(filerec_t * file_rec, int16 ndds, const char *FUNC)
 {
 ddblock_t  *block;          /* dd block to intialize */
 uint8      *p;              /* temp buffer ptr */
@@ -3081,7 +3081,7 @@ DESCRIPTION
 
 --------------------------------------------------------------------------*/
 PRIVATE funclist_t *
-HIget_function_table(accrec_t * access_rec, char *FUNC)
+HIget_function_table(accrec_t * access_rec, const char *FUNC)
 {
 dd_t         *dd;             /* ptr to current dd */
 filerec_t    *file_rec;       /* file record */
@@ -3590,7 +3590,7 @@ HDfwritebig(VOIDP buffer, int32 size, FILE * fp)
 
 --------------------------------------------------------------------------*/
 PRIVATE int
-HIget_file_slot(const char *path, char *FUNC)
+HIget_file_slot(const char *path, const char *FUNC)
 {
     int         i;
     int         slot;
@@ -3680,7 +3680,7 @@ HIget_file_slot(const char *path, char *FUNC)
 
 --------------------------------------------------------------------------*/
 PRIVATE intn
-HIvalid_magic(hdf_file_t file, char *FUNC)
+HIvalid_magic(hdf_file_t file, const char *FUNC)
 {
     char        b[MAGICLEN];    /* Temporary buffer */
 
@@ -3764,7 +3764,7 @@ HIget_access_slot(void)
 
 --------------------------------------------------------------------------*/
 int
-HInew_dd_block(filerec_t * file_rec, int16 ndds, char *FUNC)
+HInew_dd_block(filerec_t * file_rec, int16 ndds, const char *FUNC)
 {
     ddblock_t  *block;          /* current dd block */
     int32       nextoffset;     /* offset of new ddblock */
@@ -3888,7 +3888,7 @@ HInew_dd_block(filerec_t * file_rec, int16 ndds, char *FUNC)
         the data descriptors.
 --------------------------------------------------------------------------*/
 PRIVATE int
-HIfill_file_rec(filerec_t * file_rec, char *FUNC)
+HIfill_file_rec(filerec_t * file_rec, const char *FUNC)
 {
     uint8      *p;              /* Temporary pointer. */
     int32       n;

@@ -90,6 +90,8 @@ tbbt_nbr(TBBT_NODE * ptr, intn side)
         return (ptr->link[side]);
 /*        return(NULL); */
     ptr = ptr->link[side];
+    if(ptr==NULL)
+        return(NULL);
     while (HasChild(ptr, Other(side)))
         ptr = ptr->link[Other(side)];
     return (ptr);
