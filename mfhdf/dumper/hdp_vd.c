@@ -459,14 +459,11 @@ void printHeader(
       messy when being displayed if it were to be dumped out at once. 
       print_fields displays a list in a nice way even if the list is 
       long.  The second parameter specifies how the field name list 
-      begins; it's needed because dumpvd also uses this routine and 
-      has different indentation format than dumpvg */
+      begins; it's needed because dumpvg also uses this routine and 
+      has different indentation format than dumpvd */
    print_fields( fields, "   fields = ", fp );
 
-   if( curr_vd->vsize > 0 ) /* print vdata record size */
-      fprintf(fp, "   record size (in bytes) = %d;\n", (int)curr_vd->vsize);
-   else
-      fprintf(fp, "   record size = <Undefined>;\n");
+   fprintf(fp, "   record size (in bytes) = %d;\n", (int)curr_vd->vsize);
 
    if( curr_vd->name[0] == '\0' ) /* print vdata name */
       fprintf(fp, "   name = <Undefined>; ");
@@ -643,20 +640,28 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
       /* Note: each of the parameters retuned by a query routine below 
 	 must be checked before being used */
 
-      /* Retrieves general information about the vdata */
-      if (FAIL == VSinquire( vd_id, &nvf, &interlace, fields, &vsize, vdname ))
+      /* Retrieves general information about the vdata.  Note that NULL is
+	 passed in for vdata's record size because it is not needed and 
+	 attempting to retrieve it causes failure when the vdata doesn't
+	 have any fields defined.  (bug #626) - BMR Mar 12, 02 */
+      if (FAIL == VSinquire( vd_id, &nvf, &interlace, fields, NULL, vdname ))
 	 ERROR_CONT_END( "in %s: VSinquire failed for vdata with ref#=%d", 
                         "dumpvd_ascii", (int) vdata_ref, vd_id );
 
-      /* Get the size of the specified fields of the vdata only if there
-         are fields defined by VSsetfields and VSfdefine in the vdata */
+      /* Get the HDF size of the specified fields of the vdata only if 
+	 there are fields previously defined by VSsetfields and VSfdefine */
+ /*     vsize = 0; /* reset record size */
+/*
       if( fields != NULL && fields[0] != '\0' )
       {
+*/
           vsize = VShdfsize( vd_id, fields );
           if (vsize == FAIL)
              ERROR_CONT_END( "in %s: VShdfsize failed for vdata with ref#=%d",
 			 "dumpvd_ascii", (int) vdata_ref, vd_id );
+/*
       }
+*/
 
       if (FAIL == (vdata_tag = VSQuerytag(vd_id)))
          ERROR_CONT_END( "in %s: VSQuerytag failed for vdata with ref#=%d", 
@@ -847,7 +852,7 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
          ERROR_CONT_2( "in %s: VSattach failed for vdata with ref#=%d", 
                         "dumpvd_binary", (int) vdata_ref );
 
-      status = VSinquire(vd_id, &nvf, &interlace, fields, &vsize, vdname);
+      status = VSinquire(vd_id, &nvf, &interlace, fields, NULL, vdname);
       if( FAIL == status ) /* end access to vd_id and cont. to next vdata */
          ERROR_CONT_END( "in %s: VSinquire failed for vdata with ref#=%d", 
                         "dumpvd_binary", (int) vdata_ref, vd_id );

@@ -246,7 +246,7 @@ VShdfsize(int32 vkey,   /* IN vdata key */
         for (j = 0; j < vs->wlist.n; j++)	
             totalsize += vs->wlist.isize[j];
       }		
-    else
+    else if (fields[0] != '\0')  /* implies: return 0 for empty 'fields' */
       {  /* parse field string */
         if ((scanattrs(fields, &ac, &av) < 0) || (ac < 1))
             HGOTO_ERROR(DFE_ARGS, FAIL);
