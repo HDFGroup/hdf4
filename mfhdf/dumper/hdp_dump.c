@@ -156,7 +156,7 @@ dumpfull(int32 nt, int32 cnt, VOIDP databuf, intn indent, FILE * ofp)
 	int32       off;
 	intn        cn;
 
-	switch (nt)
+	switch (nt & 0xff )
 	  {
 		  case DFNT_CHAR:
 			  fmtfunct = fmtchar;

@@ -230,7 +230,7 @@ sdsdumpfull(int32 sds_id, int32 rank, int32 dimsizes[], int32 nt,
 	   "dimsizes[i]" is size of dimension "i". */
 	int32       j, i, ret;
 	VOIDP       buf;
-	int32       eltsz, read_nelts;
+	int32       numtype, eltsz, read_nelts;
 	int32       done;			/* number of rows we have done */
 	int32      *left, *start, *edge;
 	intn        count;
@@ -242,7 +242,8 @@ sdsdumpfull(int32 sds_id, int32 rank, int32 dimsizes[], int32 nt,
 	  }
 
 	/* Compute the number of the bytes for each value. */
-	eltsz = DFKNTsize(nt | DFNT_NATIVE);
+        numtype = nt & DFNT_MASK;
+	eltsz = DFKNTsize(numtype | DFNT_NATIVE);
 
 	read_nelts = dimsizes[rank - 1];
 	buf = (VOIDP) HDmalloc(read_nelts * eltsz);
@@ -281,7 +282,7 @@ sdsdumpfull(int32 sds_id, int32 rank, int32 dimsizes[], int32 nt,
 	  {		/* If there is only one dimension, then dump the data
 			   and the job is done. */
 		  ret = SDreaddata(sds_id, start, NULL, edge, buf);
-		  ret = dumpfull(nt, read_nelts, buf, indent, fp);
+		  ret = dumpfull(numtype, read_nelts, buf, indent, fp);
 	  }
 	else if (rank > 1)
 	  {
@@ -289,7 +290,7 @@ sdsdumpfull(int32 sds_id, int32 rank, int32 dimsizes[], int32 nt,
 		  while (!done)
 			{	/* In each iteration, a row in dumped and "left[]" is modified accordingly. */
 				ret = SDreaddata(sds_id, start, NULL, edge, buf);
-				ret = dumpfull(nt, read_nelts, buf, indent, fp);
+				ret = dumpfull(numtype, read_nelts, buf, indent, fp);
 				for (count = 0; count < indent; count++)
 					putc(' ', fp);
 
