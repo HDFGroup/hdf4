@@ -153,7 +153,7 @@ HCIcrle_decode(compinfo_t * info, int32 length, uint8 *buf)
                   {     /* run byte */
                       rle_info->rle_state = RLE_RUN;    /* set to run state */
                       rle_info->buf_length = (c & COUNT_MASK) + RLE_MIN_RUN;    /* run length */
-                      if ((rle_info->last_byte = HDgetc(info->aid)) == FAIL)
+                      if ((rle_info->last_byte = HDgetc(info->aid)) == (uintn)FAIL)
                           HRETURN_ERROR(DFE_READERROR, FAIL);
                   }     /* end if */
                 else

@@ -25,6 +25,7 @@ static char RcsId[] = "@(#)$Revision$";
  Invokes:
 
  PRIVATE conversion functions:
+    Cray UNICOS
     DFKui2i -  Unicos routine for importing 16 bit unsigned integers
     DFKui2s -  Unicos routine for importing 16 bit signed integers
     DFKuo2i -  Unicos routine for exporting 16 bit unsigned integers
@@ -49,6 +50,16 @@ static char RcsId[] = "@(#)$Revision$";
     DFKluo4f-  Unicos routine for exporting little-endian 32 bit floats
     DFKlui8f-  Unicos routine for importing little-endian 64 bit floats
     DFKluo8f-  Unicos routine for exporting little-endian 64 bit floats
+
+    Cray MPP (T3D)
+    DFKmi2i -  CRAYMPP routine for importing 16 bit unsigned integers
+    DFKmi2s -  CRAYMPP routine for importing 16 bit signed integers
+    DFKmo2i -  CRAYMPP routine for exporting 16 bit unsigned integers
+    DFKmo2s -  CRAYMPP routine for exporting 16 bit signed integers
+    DFKlmi2i-  CRAYMPP routine for importing little-endian 16 bit unsigned ints
+    DFKlmi2s-  CRAYMPP routine for importing little-endian 16 bit signed ints
+    DFKlmo2i-  CRAYMPP routine for exporting little-endian 16 bit unsigned ints
+    DFKlmo2s-  CRAYMPP routine for exporting little-endian 16 bit signed ints
 
  Remarks:
     These files used to be in dfconv.c, but it got a little too huge,
@@ -4130,3 +4141,279 @@ DFKluo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 int         cray_dummy;         /* prevent empty symbol table messages */
 
 #endif /* UNICOS */
+
+/* =============================================================*/
+/* CRAY-MPP (T3D) routines 					*/
+/* ============================================================ */
+#if defined(CRAYMPP)
+
+/************************************************************/
+/* DFKmi2i()                                                */
+/* -->CRAY-MPP routine for importing 2 byte data items      */
+/* (**) This routine converts two byte IEEE to 4 bytes      */
+/*      CRAY-MPP big endian integer unsigned.               */
+/************************************************************/
+int
+DFKmi2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+        uint32 dest_stride)
+{
+    intn	i;
+    uint8      *source = (uint8 *) s;
+    uint8      *dest = (uint8 *) d;
+    char       *FUNC = "DFKmi2i";
+
+    HEclear();
+
+    if (source_stride == 0 && dest_stride == 0){
+	source_stride = 2;
+	dest_stride   = 4;
+    }
+
+    /* parameters check */
+    if (source == dest			/* Inplace conversions not permitted */
+	|| num_elm == 0			/* No elements is an error */
+	|| source_stride == 0		/* only positive stride allowed */
+	|| dest_stride == 0		/* only positive stride allowed */
+	)
+        HRETURN_ERROR(DFE_BADCONV, FAIL);
+
+  for (i = 0; i < num_elm; i++)
+    {
+	dest[0] = 0x00;
+	dest[1] = 0x00;
+	dest[2] = source[0];
+	dest[3] = source[1];
+	source += source_stride;
+	dest += dest_stride;
+    }
+    return (SUCCEED);
+}
+
+/************************************************************/
+/* DFKmi2s()                                                */
+/* -->CRAY-MPP routine for importing 2 byte signed ints     */
+/* (**) This routine converts two byte IEEE to 4 bytes      */
+/*      Cray-MPP big endian integers.                       */
+/************************************************************/
+int
+DFKmi2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+        uint32 dest_stride)
+{
+    intn	i;
+    uint8      *source = (uint8 *) s;
+    uint8      *dest = (uint8 *) d;
+    char       *FUNC = "DFKmi2i";
+
+    HEclear();
+
+    if (source_stride == 0 && dest_stride == 0){
+	source_stride = 2;
+	dest_stride   = 4;
+    }
+
+    /* parameters check */
+    if (source == dest			/* Inplace conversions not permitted */
+	|| num_elm == 0			/* No elements is an error */
+	|| source_stride == 0		/* only positive stride allowed */
+	|| dest_stride == 0		/* only positive stride allowed */
+	)
+        HRETURN_ERROR(DFE_BADCONV, FAIL);
+
+    for (i = 0; i < num_elm; i++)
+    {
+	if ((source[0] & 0x80))
+	{   /* Need to extend sign */
+	    dest[0] = 0xff;
+	    dest[1] = 0xff;
+	} 
+	else
+	{
+	    dest[0] = 0x00;
+	    dest[1] = 0x00;
+	}
+	dest[2] = source[0];
+	dest[3] = source[1];
+	source += source_stride;
+	dest += dest_stride;
+    }
+    return (SUCCEED);
+}
+
+/************************************************************/
+/* DFKmo2b()                                                */
+/* -->CRAY-MPP routine for exporting 4 byte data as 2 byte  */
+/*    data items.  This works for signed and unsigned data. */
+/************************************************************/
+int
+DFKmo2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+        uint32 dest_stride)
+{
+    uintn	i;
+    uint8      *source = (uint8 *) s;
+    uint8      *dest = (uint8 *) d;
+    char       *FUNC = "DFKmo2b";
+
+    HEclear();
+
+    if (source_stride == 0 && dest_stride == 0){
+	source_stride = 4;
+	dest_stride   = 2;
+    }
+
+    /* parameters check */
+    if (source == dest			/* Inplace conversions not permitted */
+	|| num_elm == 0			/* No elements is an error */
+	|| source_stride == 0		/* only positive stride allowed */
+	|| dest_stride == 0		/* only positive stride allowed */
+	)
+        HRETURN_ERROR(DFE_BADCONV, FAIL);
+
+    for (i = 0; i < num_elm; i++)
+    {
+	dest[0] = source[2];
+	dest[1] = source[3];
+	source += source_stride;
+	dest += dest_stride;
+    }
+    return (SUCCEED);
+}
+
+/************************************************************/
+/* DFKlmi2i()                                               */
+/* -->CRAY-MPP routine for importing 2 byte data items        */
+/* (**) This routine converts two byte little-endian IEEE   */
+/*      to 4 byte Cray-MPP big endian integer.              */
+/************************************************************/
+int
+DFKlmi2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+         uint32 dest_stride)
+{
+    uintn	i;
+    uint8      *source = (uint8 *) s;
+    uint8      *dest = (uint8 *) d;
+    char       *FUNC = "DFKlmi2i";
+
+    HEclear();
+
+    if (source_stride == 0 && dest_stride == 0){
+	source_stride = 2;
+	dest_stride   = 4;
+    }
+
+    /* parameters check */
+    if (source == dest			/* Inplace conversions not permitted */
+	|| num_elm == 0			/* No elements is an error */
+	|| source_stride == 0		/* only positive stride allowed */
+	|| dest_stride == 0		/* only positive stride allowed */
+	)
+        HRETURN_ERROR(DFE_BADCONV, FAIL);
+
+
+          for (i = 0; i < num_elm; i++)
+            {
+                dest[0] = 0x00;
+                dest[1] = 0x00;
+                dest[2] = source[1];
+                dest[3] = source[0];
+                source += source_stride;
+                dest += dest_stride;
+            }   /* end for */
+    return (SUCCEED);
+}
+
+/************************************************************/
+/* DFKlmi2s()                                                */
+/* -->CRAY-MPP routine for importing 2 byte signed ints       */
+/* (**) This routine converts two byte IEEE to 4 bytes   */
+/*      Cray-MPP big endian integer.              */
+/************************************************************/
+int
+DFKlmi2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+         uint32 dest_stride)
+{
+
+    uintn	i;
+    uint8      *source = (uint8 *) s;
+    uint8      *dest = (uint8 *) d;
+    char       *FUNC = "DFKlmi2s";
+
+    HEclear();
+
+    if (source_stride == 0 && dest_stride == 0){
+	source_stride = 2;
+	dest_stride   = 4;
+    }
+
+    /* parameters check */
+    if (source == dest			/* Inplace conversions not permitted */
+	|| num_elm == 0			/* No elements is an error */
+	|| source_stride == 0		/* only positive stride allowed */
+	|| dest_stride == 0		/* only positive stride allowed */
+	)
+        HRETURN_ERROR(DFE_BADCONV, FAIL);
+
+    for (i = 0; i < num_elm; i++)
+    {
+	if ((source[1] & 0x80))
+	  {   /* Need to extend sign */
+	      dest[0] = 0xff;
+	      dest[1] = 0xff;
+	  }     /* end if */
+	else
+	  {
+	      dest[0] = 0x00;
+	      dest[1] = 0x00;
+	  }     /* end else */
+	dest[2] = source[1];
+	dest[3] = source[0];
+	source += source_stride;
+	dest += dest_stride;
+    }
+    return (SUCCEED);
+}
+
+/************************************************************/
+/* DFKlmo2b()                                               */
+/* -->CRAY-MPP routine for exporting 4 bytes signed int as  */
+/*    2 bytes little-endian data items                      */
+/************************************************************/
+int
+DFKlmo2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+         uint32 dest_stride)
+{
+    uint32 i;
+    uint8      *source = (uint8 *) s;
+    uint8      *dest = (uint8 *) d;
+    char       *FUNC = "DFKlmo2b";
+
+
+    HEclear();
+
+    if (source_stride == 0 && dest_stride == 0){
+	source_stride = 4;
+	dest_stride   = 2;
+    }
+
+    /* parameters check */
+    if (source == dest			/* Inplace conversions not permitted */
+	|| num_elm == 0			/* No elements is an error */
+	|| source_stride == 0		/* only positive stride allowed */
+	|| dest_stride == 0		/* only positive stride allowed */
+	)
+        HRETURN_ERROR(DFE_BADCONV, FAIL);
+
+    for (i = 0; i < num_elm; i++)
+    {
+	dest[0] = source[3];
+	dest[1] = source[2];
+	source += source_stride;
+	dest += dest_stride;
+    }   /* end for */
+    return (SUCCEED);
+}
+
+#else  /* i.e. not on a craympp */
+
+int         craympp_dummy;         /* prevent empty symbol table messages */
+
+#endif /* CRAYMPP */

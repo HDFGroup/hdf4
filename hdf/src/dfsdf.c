@@ -76,11 +76,6 @@ static char RcsId[] = "@(#)$Revision$";
 #include "hdf.h"
 #include "dfsd.h"
 
-/* Prototypes */
-extern FRETVAL(intf) ndsiwref(_fcd filename, intf * fnlen, intf * ref);
-extern FRETVAL(intf) ndsisslab(_fcd filename, intf * fnlen);
-extern FRETVAL(intf) ndsirslab(_fcd filename, intf * fnlen, intf start[], intf slab_size[],
-                               intf stride[], VOIDP buffer, intf buffer_size[]);
 
 /*-----------------------------------------------------------------------------
  * Name:    dsgdisc
@@ -1559,7 +1554,7 @@ ndswslab(intf start[], intf stride[],
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndseslab()
+ndseslab(void)
 {
     return DFSDendslab();
 }
@@ -1586,7 +1581,8 @@ ndsirslab(_fcd filename, intf * fnlen, intf start[], intf slab_size[],
     char       *fn;
     intf        ret;
     intn        rank, i;
-    int32      *cbuffer_size, *cslab_size, *cstart, *p, *wp, *wsp;
+    int32      *lbuffer_size, *lslab_size, *lstart, *lstride;
+    int32	*p, *wp, *wsp, *sp;
     intn        isndg;
 
     /* Convert "filename" to fortran string */
@@ -1605,15 +1601,19 @@ ndsirslab(_fcd filename, intf * fnlen, intf start[], intf slab_size[],
           p = (int32 *) HDmalloc((uint32) (rank * sizeof(int32)));
           if (p == NULL)
               return FAIL;
-          cbuffer_size = p;
+          lbuffer_size = p;
           wp = (int32 *) HDmalloc((uint32) (rank * sizeof(int32)));
           if (wp == NULL)
               return FAIL;
-          cslab_size = wp;
+          lslab_size = wp;
           wsp = (int32 *) HDmalloc((uint32) (rank * sizeof(int32)));
           if (wsp == NULL)
               return FAIL;
-          cstart = wsp;
+          lstart = wsp;
+          sp = (int32 *) HDmalloc((uint32) (rank * sizeof(int32)));
+          if (sp == NULL)
+              return FAIL;
+          lstride = sp;
 
           for (i = 1; i <= rank; i++)
             {
@@ -1623,12 +1623,15 @@ ndsirslab(_fcd filename, intf * fnlen, intf start[], intf slab_size[],
                 wp++;
                 *wsp = start[rank - i];
                 wsp++;
+                *sp = stride[rank - i];
+                sp++;
             }
-          ret = DFSDreadslab(fn, cstart, cslab_size, (int32 *) stride, buffer,
-                             cbuffer_size);
-          HDfree((VOIDP) cstart);
-          HDfree((VOIDP) cslab_size);
-          HDfree((VOIDP) cbuffer_size);
+          ret = DFSDreadslab(fn, lstart, lslab_size, lstride, buffer,
+                             lbuffer_size);
+          HDfree((VOIDP) lstart);
+          HDfree((VOIDP) lslab_size);
+          HDfree((VOIDP) lbuffer_size);
+          HDfree((VOIDP) lstride);
       }
     else
         ret = DFSDreadslab(fn, (int32 *) start, (int32 *) slab_size,

@@ -961,7 +961,7 @@ DFdup(DF * dfile, uint16 itag, uint16 iref, uint16 otag, uint16 oref)
     else
         DFerror = DFE_NONE;
 
-    if (Hdupdd(DFid, itag, iref, otag, oref) != 0)
+    if (Hdupdd(DFid, itag, iref, otag, oref) != SUCCEED)
       {
           DFerror = HEvalue(1);
           return (-1);

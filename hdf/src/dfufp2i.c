@@ -112,7 +112,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 FRETVAL(int)
 nduif2i(int32 *hdim, int32 *vdim, float32 *max, float32 *min, float32 hscale[],
-        float32 vscale[], float32 data[], uint8 *palette, _fcd outfile,
+        float32 vscale[], float32 data[], _fcd palette, _fcd outfile,
         int *ct_method, int32 *hres, int32 *vres, int *compress, int *lenfn)
 {
     char       *fn;
@@ -122,7 +122,7 @@ nduif2i(int32 *hdim, int32 *vdim, float32 *max, float32 *min, float32 hscale[],
     if (!fn)
 	return(FAIL);
     ret = DFUfptoimage(*hdim, *vdim, (float32)*max, (float32)*min, hscale, vscale, data,
-                _fcdtocp(palette), fn, *ct_method, *hres, *vres, *compress);
+                (uint8 *)_fcdtocp(palette), fn, *ct_method, *hres, *vres, *compress);
     HDfree(fn);
     return (ret);
 }

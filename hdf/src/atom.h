@@ -36,7 +36,7 @@ MAXGROUP                    /* Highest group in group_t (Invalid as true group) 
 } group_t;
 
 /* Type of atoms to return to users */
-typedef uint32 atom_t;
+typedef int32 atom_t;
 
 #if defined ATOM_MASTER | defined ATOM_TESTER
 

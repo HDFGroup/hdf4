@@ -94,7 +94,7 @@ PRIVATE intn Remove_vfile
             (HFILEID f);
 
 PRIVATE void vunpackvg
-            (VGROUP * vg, uint8 buf[], uintn len);
+            (VGROUP * vg, uint8 buf[], intn len);
 
 /*
    * --------------------------------------------------------------------
@@ -574,7 +574,7 @@ vpackvg(VGROUP * vg, uint8 buf[], int32 *size)
  */
 
 PRIVATE void
-vunpackvg(VGROUP * vg, uint8 buf[], uintn len)
+vunpackvg(VGROUP * vg, uint8 buf[], intn len)
 {
     uint8 *bb;
     uintn u;
@@ -656,7 +656,7 @@ VGROUP _HUGE *VPgetinfo(HFILEID f,uint16 ref)
     CONSTR(FUNC, "VPgetinfo");
 	VGROUP         *vg;
     uint8          *vgpack;
-    uint32          len;
+    intn          len;
     VGROUP _HUGE *ret_value = NULL; /* FAIL */
           
     /* Find out how long the VGroup information is */

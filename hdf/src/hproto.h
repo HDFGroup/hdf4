@@ -1100,6 +1100,26 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
     extern intn DFKluo8f
                 (VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
+/* CRAY-MPP */
+    extern intn DFKmi2i
+                (VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
+
+    extern intn DFKmi2s
+                (VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
+
+    extern intn DFKmo2b
+                (VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
+
+    extern intn DFKlmi2i
+                (VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
+
+    extern intn DFKlmi2s
+                (VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
+
+    extern intn DFKlmo2b
+                (VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
+
+
 /*
    ** from dfkvms.c
  */
@@ -1686,6 +1706,16 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
     extern      FRETVAL(intf) ndseslab
                 (void);
 
+    extern	FRETVAL(intf) ndsiwref
+		(_fcd filename, intf * fnlen, intf * ref);
+
+    extern	FRETVAL(intf) ndsisslab
+		(_fcd filename, intf * fnlen);
+
+    extern	FRETVAL(intf) ndsirslab
+		(_fcd filename, intf * fnlen, intf start[], intf slab_size[],
+	         intf stride[], VOIDP buffer, intf buffer_size[]);
+
 /*
    ** from dfpF.c
  */
@@ -2051,7 +2081,7 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
     extern      FRETVAL(int) nduif2i
                 (int32 _HUGE * hdim, int32 _HUGE * vdim, float32 _HUGE * max,
         float32 _HUGE * min, float32 _HUGE hscale[], float32 _HUGE vscale[],
-                 float32 _HUGE data[], uint8 _HUGE * palette, _fcd outfile,
+                 float32 _HUGE data[], _fcd palette, _fcd outfile,
               int _HUGE * ct_method, int32 _HUGE * hres, int32 _HUGE * vres,
                  int _HUGE * compress, int _HUGE * lenfn);
 

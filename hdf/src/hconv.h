@@ -67,10 +67,17 @@
 #   if !defined(UNICOS)
 #       define UI8_IN     DFKnb1b   /* Unsigned Integer, 8 bits */
 #       define UI8_OUT    DFKnb1b
+#   if defined(CRAYMPP)
+#       define SI16_IN    DFKmi2s
+#       define SI16_OUT   DFKmo2b
+#       define UI16_IN    DFKmi2i
+#       define UI16_OUT   DFKmo2b
+#   else
 #       define SI16_IN    DFKnb2b   /* S = Signed */
 #       define SI16_OUT   DFKnb2b
 #       define UI16_IN    DFKnb2b
 #       define UI16_OUT   DFKnb2b
+#   endif
 #       define SI32_IN    DFKnb4b
 #       define SI32_OUT   DFKnb4b
 #       define UI32_IN    DFKnb4b
@@ -94,10 +101,17 @@
 
 #       define LUI8_IN    DFKnb1b   /* Little Endian Unsigned Integer, 8 bits */
 #       define LUI8_OUT   DFKnb1b
+#   if defined(CRAYMPP)
+#       define LSI16_IN   DFKlmi2s
+#       define LSI16_OUT  DFKlmo2b
+#       define LUI16_IN   DFKlmi2i
+#       define LUI16_OUT  DFKlmo2b
+#   else
 #       define LSI16_IN   DFKsb2b
 #       define LSI16_OUT  DFKsb2b
 #       define LUI16_IN   DFKsb2b
 #       define LUI16_OUT  DFKsb2b
+#   endif
 #       define LSI32_IN   DFKsb4b
 #       define LSI32_OUT  DFKsb4b
 #       define LUI32_IN   DFKsb4b
@@ -203,10 +217,17 @@
 #ifndef UNICOS
 #     define NUI8_IN    DFKnb1b
 #     define NUI8_OUT   DFKnb1b
+#   if defined(CRAYMPP)
+#     define NSI16_IN   DFKmi2s
+#     define NSI16_OUT  DFKmo2b
+#     define NUI16_IN   DFKmi2i
+#     define NUI16_OUT  DFKmo2b
+#   else
 #     define NSI16_IN   DFKnb2b
 #     define NSI16_OUT  DFKnb2b
 #     define NUI16_IN   DFKnb2b
 #     define NUI16_OUT  DFKnb2b
+#   endif
 #     define NSI32_IN   DFKnb4b
 #     define NSI32_OUT  DFKnb4b
 #     define NUI32_IN   DFKnb4b

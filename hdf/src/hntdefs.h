@@ -157,6 +157,22 @@
 
 /* then the native sizes of number types */
 
+/* Unusual number sizes */
+/* Cray (UNICOS) native number sizes:
+	Char = 8 bits, unsigned
+	Short=64 int=64 long=64 float=64 double=64 bits
+	Long double=128 bits
+	Char pointers = 64 bits
+	Int pointers = 64 bits
+*/
+/* T3D (CRAYMPP) native number sizes:
+	Char = 8 bits, unsigned
+	Short=32 int=64 long=64 float=32 double=64 bits
+	Long double=64 bits
+	Char pointers = 64 bits
+	Int pointers = 64 bits
+*/
+
 #if !defined(UNICOS)
 #    define SIZE_NFLOAT32    4
 #    define SIZE_NFLOAT64    8
@@ -164,8 +180,13 @@
 
 #    define SIZE_NINT8       1
 #    define SIZE_NUINT8      1
+#if defined(CRAYMPP)
+#    define SIZE_NINT16      4
+#    define SIZE_NUINT16     4
+#else
 #    define SIZE_NINT16      2
 #    define SIZE_NUINT16     2
+#endif
 #    define SIZE_NINT32      4
 #    define SIZE_NUINT32     4
 #    define SIZE_NINT64      8
@@ -177,8 +198,13 @@
 #    define SIZE_NCHAR       1  /* For backward compat char8 == char */
 #    define SIZE_NUCHAR8     1
 #    define SIZE_NUCHAR      1  /* For backward compat uchar8 == uchar */
+#if defined(CRAYMPP)
+#    define SIZE_NCHAR16     4  /* No current plans for support */
+#    define SIZE_NUCHAR16    4  /* No current plans for support */
+#else
 #    define SIZE_NCHAR16     2  /* No current plans for support */
 #    define SIZE_NUCHAR16    2  /* No current plans for support */
+#endif
 #else  /* !!!!!! SOMEBODY NEEDS TO CHECK THESE !!!!! */
 #    define SIZE_NFLOAT32    8
 #    define SIZE_NFLOAT64    8

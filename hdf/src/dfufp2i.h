@@ -58,7 +58,7 @@ extern      "C"
 #ifdef OLD_WAY
     extern int  duif2i_(int32 *hdim, int32 *vdim, float32 *max, float32 *min,
                         float32 hscale[], float32 vscale[], float32 data[],
-                  uint8 *palette, _fcd outfile, int *ct_method, int32 *hres,
+                  _fcd palette, _fcd outfile, int *ct_method, int32 *hres,
                         int32 *vres, int *compress, int *lenfn);
     extern int  DFUfptoimage(int32 hdim, int32 vdim, float32 max, float32 min,
                              float32 *hscale, float32 *vscale, float32 *data,

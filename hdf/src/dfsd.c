@@ -3691,7 +3691,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
   /* write an SDG point to the dataset if it is an NDG SDG  */
   if (issdg)
     {
-      if (Hdupdd(file_id, DFTAG_SDG, ref, DFTAG_NDG, ref) < 0)
+      if (Hdupdd(file_id, DFTAG_SDG, ref, DFTAG_NDG, ref) == FAIL)
         {
           Hclose(file_id);
           ret_value = FAIL;

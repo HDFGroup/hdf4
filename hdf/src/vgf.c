@@ -645,7 +645,7 @@ nvffname(intf * vkey, intf * index, _fcd fname)
 
     if((fieldname=VFfieldname((int32)*vkey,(int32)*index))!=NULL)
       {
-        HDstrcpy(fname,fieldname);
+        HDstrcpy(_fcdtocp(fname),fieldname);
         return(SUCCEED);
       } /* end if */
     else

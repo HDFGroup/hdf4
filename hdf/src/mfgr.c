@@ -2577,7 +2577,8 @@ printf("%s: check 3\n",FUNC);
 printf("%s: file_nt_subclass=%x, platnumsubclass=%x\n",FUNC,(unsigned)ri_ptr->img_dim.file_nt_subclass,(unsigned)platnumsubclass);
 printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_size,(unsigned)pixel_disk_size);
 #endif /* QAK */
-    convert = (ri_ptr->img_dim.file_nt_subclass != platnumsubclass);  /* is conversion necessary? */
+    convert = (ri_ptr->img_dim.file_nt_subclass != platnumsubclass) ||
+	(pixel_mem_size != pixel_disk_size);  /* is conversion necessary? */
 
     if(convert || switch_interlace==TRUE)
       {   /* convert image data to HDF disk format */
@@ -3158,7 +3159,7 @@ fprintf(stderr,"%s: data=%p\n",FUNC,data);
 printf("%s: file_nt_subclass=%x, platnumsubclass=%x\n",FUNC,(unsigned)ri_ptr->img_dim.file_nt_subclass,(unsigned)platnumsubclass);
 printf("%s: pixel_disk_size=%u\n",FUNC,(unsigned)pixel_disk_size);
 #endif /* QAK */
-    convert = (ri_ptr->img_dim.file_nt_subclass != platnumsubclass);  /* is conversion necessary? */
+    convert = (pixel_disk_size != pixel_mem_size) || (ri_ptr->img_dim.file_nt_subclass != platnumsubclass);  /* is conversion necessary? */
 
 #ifdef QAK
 fprintf(stderr,"%s: solid_block=%d\n",FUNC,(int)solid_block);

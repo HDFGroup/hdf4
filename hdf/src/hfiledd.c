@@ -871,7 +871,7 @@ done:
     Checks if the tag for the DD id is a special tag.
 
  RETURNS
-    Returns TRUE(1)/FALSE(0) if successful and FAIL otherwise
+    Returns TRUE(1)/FALSE(0)
 
 *******************************************************************************/
 intn HTPis_special(atom_t ddid             /* IN: DD id to inquire about */
@@ -884,7 +884,7 @@ intn HTPis_special(atom_t ddid             /* IN: DD id to inquire about */
     HEclear();
     /* Retrieve the atom's object, so we can update the DD */
     if((dd_ptr=HAatom_object(ddid))==NULL)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FALSE);
 
     /* Get the information requested */
     if(SPECIALTAG(dd_ptr->tag))
@@ -893,7 +893,7 @@ intn HTPis_special(atom_t ddid             /* IN: DD id to inquire about */
         ret_value=FALSE;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FALSE)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1895,7 +1895,7 @@ static intn HTIupdate_dd(filerec_t * file_rec, dd_t * dd_ptr)
     /* not certain whether this is actually necessary, but better safe than */
     /* sorry later... -QAK */
     if ((dd_ptr->offset != INVALID_OFFSET && dd_ptr->length != INVALID_LENGTH) &&
-        ((uint32) dd_ptr->offset + (uint32) dd_ptr->length) > file_rec->f_end_off)
+        ( dd_ptr->offset +  dd_ptr->length) > file_rec->f_end_off)
       file_rec->f_end_off = dd_ptr->offset + dd_ptr->length;
 
 done:
