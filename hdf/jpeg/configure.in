@@ -114,7 +114,7 @@ fi
 
 # make sure host specific 'jconfig.h' is there
 if [ ! -f ${srcdir}/${files} ]; then
-    echo '***' "We are missing host specific ${host_makefile_frag}" 1>&2
+    echo '***' "We are missing host specific ${files}" 1>&2
     echo '***' "Please read the installation docs" 1>&2
     exit 1
 fi
