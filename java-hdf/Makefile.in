@@ -152,7 +152,9 @@ install-classes: $(PACKAGES)
 uninstall-classes:
 	rm -f $(JHVINSTALLDIR)/lib/classes.zip
 
-install-lib: ./lib/@JAVATARG@/libhdf.$(SLEXT) ./lib/@JAVATARG@/libjhv.$(SLEXT)
+#install-lib: ./lib/@JAVATARG@/libhdf.$(SLEXT) ./lib/@JAVATARG@/libjhv.$(SLEXT)
+
+install-lib: natives
 	if test ! -d $(LIBDIR); then \
 	mkdir -p $(LIBDIR); \
 	fi; \
