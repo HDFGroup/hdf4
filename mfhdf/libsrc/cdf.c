@@ -1157,6 +1157,10 @@ NC **handlep;
   NC_dim **dims = NULL;
   NC_dim **dims1 = NULL;
   NC_array *tmp = NULL;
+#ifdef HDF
+  long *dim_size_array, *tsizeptr, tsize;
+  uint32 *dim_hash_array, *thashptr, thash;
+#endif /* HDF */
   Void *vars = NULL;
   Void *attrs = NULL;
 
@@ -1190,6 +1194,15 @@ NC **handlep;
   count = 0;
   if((*handlep)->dims) {
       tmp = (*handlep)->dims; 
+#ifdef HDF
+      dims = (NC_dim **) (*handlep)->dims->values;
+      tsizeptr=dim_size_array=(long *)HDmalloc(sizeof(long)*(size_t)tmp->count);
+      thashptr=dim_hash_array=(uint32 *)HDmalloc(sizeof(uint32)*(size_t)tmp->count);
+      for(i = 0; i < tmp->count; i++,dims++) {
+          *tsizeptr++=(*dims)->size;
+          *thashptr++=(*dims)->name->hash;
+        } /* end for */
+#endif /* HDF */
       dims = (NC_dim **) (*handlep)->dims->values;
       for(i = 0; i < tmp->count; i++) {
 
@@ -1197,11 +1210,28 @@ NC **handlep;
           /* make sure we don't duplicate dimensions */
           done = FALSE;
           dims1 = (NC_dim **) (*handlep)->dims->values;
+#ifdef HDF
+          tsize=dim_size_array[i];
+          thash=dim_hash_array[i];
+          tsizeptr=dim_size_array;
+          thashptr=dim_hash_array;
+#endif /* HDF */
           for(j = 0; j < i; j++) {
+#ifdef HDF
+              /* this order on the test is faster -QAK */
+              if(
+                  thash==*thashptr && tsize==*tsizeptr &&
+                  NC_compare_string((*dims)->name,(*dims1)->name)==0
+                  )
+                  done = TRUE;
+              tsizeptr++;
+              thashptr++;
+#else /* HDF */
               if((*dims1)->size == (*dims)->size &&
                  HDstrcmp((*dims)->name->values, 
                           (*dims1)->name->values) == 0)
                   done = TRUE;
+#endif /* HDF */
               dims1++;
           }
 
@@ -1213,6 +1243,10 @@ NC **handlep;
           }
           dims++;
       }
+#ifdef HDF
+      HDfree(dim_size_array);
+      HDfree(dim_hash_array);
+#endif /* HDF */
   }
   
   /* 
