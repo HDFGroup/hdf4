@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.9  1993/09/01 23:35:13  georgev
-Added defines for THINK_C.
+Revision 1.10  1993/09/08 20:58:07  georgev
+Cleaned up some Global space only for the Mac.
 
+ * Revision 1.9  1993/09/01  23:35:13  georgev
+ * Added defines for THINK_C.
+ *
  * Revision 1.8  1993/08/28  02:00:17  georgev
  * Mac fix. No strdup().
  *
@@ -74,10 +77,14 @@ Added defines for THINK_C.
 ** to scanattrs.
 **
 */
-
-PRIVATE char* 	symptr[50];
-PRIVATE char    sym[50][FIELDNAMELENMAX+1];
-PRIVATE	intn 	nsym;
+#if defined(macintosh) | defined(THINK_C)
+PRIVATE char** 	symptr = NULL; /* array of ptrs to tokens  ?*/
+PRIVATE char**  sym = NULL;    /* array of tokens ? */
+#else  /* !macintosh */
+PRIVATE char* 	symptr[50]; /* array of ptrs to tokens  ?*/
+PRIVATE char    sym[50][FIELDNAMELENMAX+1]; /* array of tokens ? */
+#endif /* !macintosh */
+PRIVATE	intn 	nsym;   /* token index ? */
 
 #ifdef PROTOTYPE
 int32 scanattrs (char *attrs, int32 *attrc, char ***attrv)
@@ -93,7 +100,7 @@ int32 scanattrs (attrs,attrc,attrv)
   register char   *s, *s0, *ss;
   register intn   i, slen, len;
   char * FUNC = "scanattrs";
-#if !defined(macintosh) | !defined(THINK_C)
+#if !(defined(macintosh) | defined(THINK_C))
   char * saved_string = HDstrdup(attrs);
 #else /* macintosh */
   char * saved_string;
@@ -103,7 +110,30 @@ int32 scanattrs (attrs,attrc,attrv)
   if (HIstrncpy(saved_string, attrs, slen) == NULL)
       return FAIL;
 #endif /* macintosh */
-  
+
+#if defined(macintosh) | defined(THINK_C)
+  /* Lets allocate space for ptrs to tokens and tokens */
+  if (symptr == NULL)
+    {
+      symptr = (char **)HDgetspace(50 * sizeof(char *));
+      if (symptr == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+    }
+  if (sym == NULL)
+    {
+      sym = (char **)HDgetspace(50 * sizeof(char *));
+      if (sym == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+
+      for (i = 0; i < 50; i++)
+        {
+      	  sym[i] = (char *)HDgetspace(sizeof(char) * (FIELDNAMELENMAX + 1));
+      	  if (sym[i] == NULL)
+              HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      	}
+     }
+#endif /* macintosh */
+ 
   s = saved_string;
   slen = HDstrlen(s);
   nsym = 0;
