@@ -36,9 +36,8 @@ main(argc,argv)
     char *argv[];
 #endif /* PROTOTYPE */
 {
-    int i, ret;
+    int i;
     char *outfile;
-    int image = 1;
     intn jpeg_qual=75;      /* JPEG quality factor */
     uint16 prevref, writeref, compress = (uint16) 0;
     comp_info cinfo;        /* compression structure */
@@ -83,19 +82,15 @@ main(argc,argv)
         if (*argv[i] == '-') {
             switch (argv[i][1]) {
                 case 'r':               /* raster */
-                    image = 1;
                     compress = (uint16) 0;
                     break;
                 case 'c':               /* RLE */
-                    image = 1;
                     compress = COMP_RLE;
                     break;
                 case 'i':               /* IMCOMP */
-                    image = 1;
                     compress = COMP_IMCOMP;
                     break;
                 case 'j':               /* JPEG */
-                    image = 1;
                     compress = COMP_JPEG;
                     if((jpeg_qual=atoi(&argv[i][2]))<=0 || jpeg_qual>100) {
                         printf("Bad JPEG quality setting, should be between\n");
@@ -186,7 +181,7 @@ main(argc,argv)
                 }
 
                 writeref=Hnewref(out_fid);
-                ret = DFR8writeref(outfile, writeref);
+                DFR8writeref(outfile, writeref);
 
                 if(compress)
                     DFR8setcompress(compress,&cinfo);
@@ -240,8 +235,8 @@ main(argc,argv)
                   } /* end if */
 
                 /* sequence past this image */
-                ret = DFR8readref(argv[i], prevref);
-                ret = DFR8getdims(argv[i], &xdim, &ydim, &ispal);
+                DFR8readref(argv[i], prevref);
+                DFR8getdims(argv[i], &xdim, &ydim, &ispal);
 
                 HDfreespace((VOIDP)space);
             }

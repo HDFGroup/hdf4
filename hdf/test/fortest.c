@@ -55,9 +55,9 @@ const char* TheDescr;
 void CallFortranTest(TheCall) 
 char* TheCall;
 {
+#ifdef VMS
   static  char TheProc[25];
 
-#ifdef VMS
   strcpy(TheProc , "run ");   
   strcat(TheProc, TheCall);
   system(TheProc);
@@ -71,13 +71,11 @@ main (argc, argv)
      char* argv[];
 {
   int CLLoop; /* Command Line Loop */
-  int ErrLoop;
   int Loop,Loop1;
   int Summary    = 0;
   int CleanUp    = 1;
-  int ret;
   uint32 lmajor, lminor, lrelease;
-  char fstring[81], lstring[81], output[256];
+  char lstring[81];
 
   InitTest("slab1","./slab1wf","");
   InitTest("slab2","./slab2wf","");
@@ -99,7 +97,7 @@ main (argc, argv)
 #endif
 
   Verbocity = 4; /* Default Verbocity is Low */
-  ret = Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
+  Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
 
   printf("\nFORTEST V%s Built on: %s \n", VERSION, BUILDDATE );
   printf("HDF Library Version: %d.%dr%d %s\n\n",

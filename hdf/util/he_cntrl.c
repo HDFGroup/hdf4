@@ -1103,8 +1103,7 @@ HE_CMD *parseCmd(p)
     else
 	cmd->func = findFunc(cmd->argv[0]);
 
-    if (((HE_CMD*) cmd->func == (HE_CMD*) HEalias) || 
-        ((HE_CMD*) cmd->func == (HE_CMD*) HEwait)) {
+    if ((cmd->func == (HE_FUNC) HEalias) || (cmd->func == (HE_FUNC) HEwait)) {
       /* let the alias command handle the parsing */
       cmd->argv[1] = copyStr(*p);
       cmd->argc = 2;
@@ -1173,8 +1172,8 @@ HE_CMD *getCmd()
     cmd->next = (HE_CMD *) NULL; /* Cut off links since these will be */
 				 /* accessed later */
 
-    if (cmd && (((HE_CMD*)cmd->func == (HE_CMD*)HEif) ||
-                ((HE_CMD*)cmd->func == (HE_CMD*)HEselect)) &&
+    if (cmd && ((cmd->func == (HE_FUNC)HEif) ||
+                (cmd->func == (HE_FUNC)HEselect)) &&
 	!((cmd->argc > 1) && (cmd->argv[1][0] == '-') &&
 	  (findOpt(cmd->argv[1]+1) == HE_HELP)))
     {

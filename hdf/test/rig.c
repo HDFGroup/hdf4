@@ -1612,10 +1612,9 @@ void test_r8()
 
     int x,y;
     int ret, num_images=0;
-    uint16 ref1, ref2, ref3;
+    uint16 ref1, ref2;
     int32 xd, yd;
     int ispal;
-    int error;
     uint8 *jpeg_8bit_temp;
 
     im1 = (uint8 *) HDgetspace(XD1 * YD1 * sizeof(uint8));
@@ -1685,7 +1684,6 @@ void test_r8()
     ret = DFR8addimage(TESTFILE, (VOIDP)im2, XD2, YD2, DFTAG_IMCOMP);
     RESULT("DFR8addimage");
     num_images++;
-    ref3 = DFR8lastref();
 
     ret = DFR8nimages(TESTFILE);
     if (ret != num_images) {
@@ -1704,7 +1702,6 @@ void test_r8()
     RESULT("DFR8getdims");
     ret = DFR8getimage(TESTFILE, (uint8 *) ii1, (int32) XD1, (int32) YD1, ipal);
     RESULT("DFR8getimage");
-    error = FALSE;
     check_im_pal(XD1, YD1, xd, yd, (uint8 **)im1, (uint8 **)ii1, pal1, ipal);
 
     MESSAGE(5,printf("Verifying RLE compressed image\n"););

@@ -404,9 +404,6 @@ uint16 ref;
 	VDATA 		*vs;  			 /* new vdata to be returned */
 	int32 		vspacksize;
     uint8       *vspack;
-    int32       access;
-	vsinstance_t	* w;
-	vfile_t			* vf;
 
     /* allocate space for vs,  & zero it out  */
     if ( (vs=(VDATA*) HDgetspace (sizeof(VDATA))) == NULL)
@@ -497,8 +494,8 @@ char *  accesstype;
 #endif
 {
 	VDATA 		*vs;  			 /* new vdata to be returned */
-	int32 		vspacksize;
 #ifdef OLD_WAY
+	int32 		vspacksize;
     uint8       *vspack;
 #endif /* OLD_WAY */
     int32       access;

@@ -486,7 +486,6 @@ char    *vsname;
     vsinstance_t    *w;
     VDATA           *vs;
     char * FUNC = "VSsetname";
-    int slen;
 
     if (!VALIDVSID(vkey)) {
         HERROR(DFE_ARGS);
@@ -507,7 +506,7 @@ char    *vsname;
         return;
     }
 
-    if ( (slen = HDstrlen(vsname)) > VSNAMELENMAX) {
+    if ( HDstrlen(vsname) > VSNAMELENMAX) {
         HDstrncpy(vs->vsname, vsname,VSNAMELENMAX);
 		vs->vsname[VSNAMELENMAX]='\0';
 	}
@@ -535,7 +534,6 @@ char    *vsclass;
     vsinstance_t    *w;
     VDATA           *vs;
     char * FUNC = "VSsetclass";
-    int slen;
 
     if (!VALIDVSID(vkey)) {
         HERROR(DFE_ARGS);
@@ -556,7 +554,7 @@ char    *vsclass;
         return;
     }
 
-    if ( (slen = HDstrlen(vsclass)) > VSNAMELENMAX) {
+    if ( HDstrlen(vsclass) > VSNAMELENMAX) {
         HDstrncpy(vs->vsclass, vsclass,VSNAMELENMAX);
 		vs->vsclass[VSNAMELENMAX]='\0';
 	}

@@ -79,7 +79,6 @@ main (argc, argv)
   int Loop,Loop1;
   int Summary    = 0;
   int CleanUp    = 1;
-  int ret;
   uint32 lmajor, lminor, lrelease;
   char lstring[81];
 
@@ -108,7 +107,7 @@ main (argc, argv)
 
 
   Verbocity = 4; /* Default Verbocity is Low */
-  ret = Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
+  Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
 
   printf("\nFor help use: testhdf -help\n");
   printf("Built with HDF Library Version: %d.%dr%d %s\n\n",

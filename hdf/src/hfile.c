@@ -601,8 +601,6 @@ intn Hnextread(access_id, tag, ref, origin)
     access_rec->appendable=FALSE;   /* start data as non-appendable */
     access_rec->flush=FALSE;        /* start data as not needing flushing */
     if (SPECIALTAG(access_rec->block->ddlist[access_rec->idx].tag)) {
-	int32 ret;
-
        /* special element, call special function to handle */
        access_rec->special_func = HIget_function_table(access_rec, FUNC);
        if (!access_rec->special_func)
@@ -611,7 +609,7 @@ intn Hnextread(access_id, tag, ref, origin)
 #ifdef OLD_WAY
        return (int)(*access_rec->special_func->stread)(access_rec);
 #else
-	if((ret=(*access_rec->special_func->stread)(access_rec))!=FAIL)
+	if((*access_rec->special_func->stread)(access_rec)!=FAIL)
 		return(SUCCEED);
 	else
 		return(FAIL);

@@ -510,7 +510,6 @@ int getR8(xdim, ydim, image, pal, compress)
     FILE *fp;
     int32 length;
     char *buf;
-    int ret;
 
     if (!fileOpen())
     {
@@ -530,14 +529,14 @@ int getR8(xdim, ydim, image, pal, compress)
 	fprintf(stderr,"Error opening image file: %s.\n", image);
 	return FAIL;
     }
-    if ((ret = fread(buf, xdim, ydim, fp)) < ydim)
+    if (fread(buf, xdim, ydim, fp) < ydim)
     {
 	fprintf(stderr,"Error reading image file: %s.\n", image);
 	return FAIL;
     }
     fclose(fp);
 
-    if ((ret = DFR8addimage(he_file, buf, xdim, ydim, compress)) < 0)
+    if (DFR8addimage(he_file, buf, xdim, ydim, compress) < 0)
     {
 	HEprint(stderr, 0);
 	return FAIL;
@@ -562,16 +561,15 @@ int setPal(pal)
     char palette[HE_PALETTE_SZ];
     register char *p;
     register int i;
-    int ret;
 
     if ((fp = fopen(pal, "r")) == NULL)
     {
 	fprintf(stderr,"Error opening palette file: %s.\n", pal);
 	return FAIL;
     }
-    if ((ret = fread(reds, 1, HE_COLOR_SZ, fp)) < HE_COLOR_SZ ||
-	(ret = fread(greens, 1, HE_COLOR_SZ, fp)) < HE_COLOR_SZ ||
-	(ret = fread(blues, 1, HE_COLOR_SZ, fp)) < HE_COLOR_SZ)
+    if (fread(reds, 1, HE_COLOR_SZ, fp) < HE_COLOR_SZ ||
+	fread(greens, 1, HE_COLOR_SZ, fp) < HE_COLOR_SZ ||
+	fread(blues, 1, HE_COLOR_SZ, fp) < HE_COLOR_SZ)
     {
 	fprintf(stderr, "Error reading palette file: %s.\n", pal);
 	return FAIL;

@@ -856,7 +856,6 @@ intn DFSDIsetdimstrs(dim, label, unit, format)
 {
     intn i;
     intn rdim;
-    intn luflen;
     intn luf;			/* takes values LABEL, UNIT, FORMAT */
 				/* in succession */
     char *lufp;			/* points to label, unit, format */
@@ -874,7 +873,6 @@ intn DFSDIsetdimstrs(dim, label, unit, format)
       {
 	/* set lufp to point to label etc. as apppropriate */
         lufp   = (luf == LABEL) ? label : (luf == UNIT) ? unit  : format;
-        luflen = HDstrlen(lufp);
 
 	/* allocate space if necessary */
         if (!Writesdg.dimluf[luf]) 
@@ -2521,7 +2519,9 @@ intn DFSDIputndg(file_id, ref, sdg)
     uint8 outNT;	    /* file number type subclass */
     int32 GroupID;
     int32 numtype;	/* current number type	*/
+#ifdef OLD_WAY
     int32 localNTsize;  /* size of this NT on as it is on this machine */
+#endif /* OLD_WAY */
     int32 fileNTsize;	/* size of this NT as it will be in the file */
     int32 scaleNTsize;	/* size of scale NT as it will be in the file */
     int32 ret;
@@ -2543,7 +2543,9 @@ intn DFSDIputndg(file_id, ref, sdg)
     fileNTsize      = DFKNTsize(numtype);
     scaleNTsize     = fileNTsize;   /* for now, assume same. MAY CHANGE */
     outNT           = sdg->filenumsubclass;
+#ifdef OLD_WAY
     localNTsize = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
+#endif /* OLD_WAY */
     platnumsubclass = DFKgetPNSC(numtype, DF_MT);
 
     /* prepare to start writing ndg   */
@@ -3617,7 +3619,9 @@ intn DFSDIgetslice(filename, winst, windims, data, dims, isfortran)
     int32 *dimsleft;      /* array for tracking the current position in data[] */
     int32 isnative;
     int32 fileoffset;     /* offset into the current dataset in the file */
+#ifdef OLD_WAY
     int32 machinetype;    /* assigned DF_MT.  used for debugging */
+#endif /* OLD_WAY */
     uint8 platnumsubclass; /* class of this NT for this platform */
     uint8 fileNT;         /* file number subclass */
     uint8 *scatterbuf;    /* buffer to hold the current row contiguously */
@@ -3651,7 +3655,9 @@ intn DFSDIgetslice(filename, winst, windims, data, dims, isfortran)
     fileNT      = Readsdg.filenumsubclass;
     issdg       = Readsdg.isndg? 0: 1; 
     isnative    = DFNT_NATIVE;
+#ifdef OLD_WAY
     machinetype = DF_MT;
+#endif /* OLD_WAY */
     localNTsize = DFKNTsize((numtype | isnative) & (~DFNT_LITEND));
     fileNTsize  = DFKNTsize(numtype);
     platnumsubclass = DFKgetPNSC(numtype & (~DFNT_LITEND), DF_MT);
@@ -4561,7 +4567,6 @@ DFSDwriteslab(start, stride, count, data)
     int32 leastsig;       /* fastest varying subscript in the array */
     int32 convert;        /* true if machine NT != NT to be read */
     int32 done;           /* true if we are at the end of the slab */
-    int32 issdg;          /* 1 -- pure sdg. do what HDF3.1 does   */
     int32 numtype;        /* current number type  */
     int32 fileNTsize;     /* size of this NT in the file  */
     int32 localNTsize;    /* size of this NT as it occurs in this machine */
@@ -4569,7 +4574,10 @@ DFSDwriteslab(start, stride, count, data)
     int32 sdgsize;        /* number of bytes to be written in the SDG */
     int32 rowsize;        /* number of bytes to be written at once */
                           /*   in the hyperslab */
+#ifdef OLD_WAY
+    int32 issdg;          /* 1 -- pure sdg. do what HDF3.1 does   */
     int32 datastride;     /* number of floats in one row of data[] */
+#endif /* OLD_WAY */
     int32 fileoffset;     /* offset into the current dataset in the file */
     int32 *doffset;       /* array for accessing the next element in data[] */
     int32 *foffset;       /* array for accessing  next element in the file */
@@ -4626,7 +4634,9 @@ DFSDwriteslab(start, stride, count, data)
     localNTsize     = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
     fileNTsize      = DFKNTsize(numtype);
     fileNT          = Writesdg.filenumsubclass;
+#ifdef OLD_WAY
     issdg           = Writesdg.isndg? 0: 1;
+#endif /* OLD_WAY */
 
     /* Calculate total bytes in SDS that can be written */
     sdgsize = fileNTsize;
@@ -4735,8 +4745,10 @@ DFSDwriteslab(start, stride, count, data)
         for (i = leastsig; i > 0; i--)
             doffset[i-1] = doffset[i] * sizedims[i];
 
+#ifdef OLD_WAY
         /* Set data stride along leastsig */
         datastride = sizedims[leastsig];
+#endif /* OLD_WAY */
 
         /*
         ** Compute offsets in the file for dimension, according to the

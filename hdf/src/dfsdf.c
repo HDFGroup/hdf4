@@ -98,12 +98,11 @@ ndsgdisc(dim, maxsize, scale)
 #endif /* PROTOTYPE */
 {
     intn rank, cdim;
-    intf ret;
     intn isndg;
 
-    ret = DFSDIisndg(&isndg);
+    DFSDIisndg(&isndg);
     if (isndg) 	{
-        ret = DFSDIgetrrank(&rank);
+        DFSDIgetrrank(&rank);
         if (rank < *dim)
             return FAIL;
         cdim = rank - (intn)*dim + 1;
@@ -193,10 +192,10 @@ ndssdisc(dim, dimsize, scale)
     VOID *scale;
 #endif /* PROTOTYPE */
 {
-    int cdim, ret;
+    int cdim;
     intn rank;
 
-    ret = DFSDIgetwrank(&rank);
+    DFSDIgetwrank(&rank);
     if (rank < *dim) return FAIL;
     cdim = rank - (intn)*dim + 1;
 
@@ -927,11 +926,10 @@ ndfsdgetdimstrs(dim, label, unit, format)
 {
     intn isndg;
     intn rank, cdim;
-    intf ret;
 
-    ret = DFSDIisndg(&isndg);
+    DFSDIisndg(&isndg);
     if (isndg) 	{
-        ret = DFSDIgetrrank(&rank);
+        DFSDIgetrrank(&rank);
     	if (rank < *dim) return FAIL;
         cdim = rank - (intn)*dim + 1;
     }
@@ -965,11 +963,11 @@ ndfsdgetdimscale(dim, maxsize, scale)
 {
 
     intn isndg;
-    intn  rank, cdim, ret;
+    intn  rank, cdim;
 
-    ret = DFSDIisndg(&isndg);
+    DFSDIisndg(&isndg);
     if (isndg) 	{
-        ret = DFSDIgetrrank(&rank);
+        DFSDIgetrrank(&rank);
     	if (rank < *dim) return FAIL;
         cdim = rank - (intn)*dim + 1;
     }
@@ -1060,9 +1058,8 @@ ndfsdsetdimscale(dim, dimsize, scale)
 #endif /* PROTOTYPE */
 {
     intn rank, cdim;
-    intf ret;
 
-    ret = DFSDIgetwrank(&rank);
+    DFSDIgetwrank(&rank);
     if (rank < *dim) return FAIL;
     cdim = rank - (intn)*dim + 1;
 
@@ -1427,12 +1424,11 @@ ndsigdis(dim, label, unit, format, llabel, lunit, lformat)
 {
     char *ilabel, *iunit, *iformat;
     intn rank, cdim;
-    intf ret;
     intn isndg, status;
 
-    ret = DFSDIisndg(&isndg);
+    DFSDIisndg(&isndg);
     if (isndg) 	{
-        ret = DFSDIgetrrank(&rank);
+        DFSDIgetrrank(&rank);
     	if (rank < *dim) return FAIL;
         cdim = rank - (intn)*dim + 1;
     }

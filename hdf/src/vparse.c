@@ -71,13 +71,15 @@ int32 scanattrs (attrs,attrc,attrv)
      
 {
     register char   *s, *s0, *ss;
-    register intn   i, slen, len;
+    register intn   len;
 #ifdef LATER
     char * FUNC = "scanattrs";
 #endif
     char * saved_string = (char *) HDstrdup(attrs);
     
 #if defined(macintosh) | defined(THINK_C)
+    register intn   i;
+
     /* Lets allocate space for ptrs to tokens and tokens */
     if (symptr == NULL) {
         symptr = (char **)HDgetspace(50 * sizeof(char *));
@@ -100,7 +102,6 @@ int32 scanattrs (attrs,attrc,attrv)
 #endif /* macintosh */
     
     s = saved_string;
-    slen = HDstrlen(s);
     nsym = 0;
     
     s0 = s;

@@ -21,6 +21,12 @@ do {if (Verbocity>9) printf("   Call to HDF routine: %15s at line %4d in %s retu
 if(ret == val) {printf("*** UNEXPECTED RETURN from %s is %d\n", where, (int)ret); num_errs++;} \
 } while(0)
 
+/* Used to make certain a return pointer value _is_ a value */
+#define CHECKP(ret, val, where) \
+do {if (Verbocity>9) printf("   Call to HDF routine: %15s at line %4d in %s returned %p \n",where,__LINE__,__FILE__,(VOIDP)ret);\
+if(ret == val) {printf("*** UNEXPECTED RETURN from %s is %p\n", where, (VOIDP)ret); num_errs++;} \
+} while(0)
+
 /* Used to make certain a return value _is_not_ a value */
 #define VERIFY(x, val, where) \
 do {if (Verbocity>9) printf("   Call to HDF routine: %15s at line %4d in %s had value %d \n",where,__LINE__,__FILE__,(int)x);\

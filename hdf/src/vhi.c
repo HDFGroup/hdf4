@@ -58,7 +58,9 @@ PUBLIC int32 VHstoredata (f, field, buf, n, datatype, vsname, vsclass)
 {
   int32	ref;
   int32 order = 1;
+#ifdef LATER
   char * FUNC = "VHstoredata";
+#endif /* LATER */
   
   ref = (int32) VHstoredatam (f, field, buf, n, datatype, vsname, vsclass, order);
   return (ref);
@@ -96,7 +98,9 @@ char *  vsname, * vsclass;
     int32 s;
     int32 ref;
     int32 vs;
+#ifdef LATER
     char * FUNC = "VHstoredatam";
+#endif /* LATER */
     
     vs = VSattach (f,-1,"w");
     if (vs == FAIL)
@@ -149,7 +153,9 @@ char        * vgname, * vgclass;
 {
     int32 ref, i, s;
     int32 vg;
+#ifdef LATER
     char * FUNC = "VHmakegroup";
+#endif /* LATER */
 
     vg = Vattach (f, -1, "w");
     if(vg == FAIL)

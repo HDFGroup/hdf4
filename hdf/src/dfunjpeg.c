@@ -39,8 +39,6 @@ PRIVATE int32 img_file_id;  /* File ID for the HDF file */
 PRIVATE uint16 img_tag;     /* tag number of the image to write out */
 PRIVATE uint16 img_ref;     /* reference number of the image to write out */
 PRIVATE int32 jdata_aid;    /* AID for writing out chunks of the image */
-PRIVATE int32 img_xdim,     /* X and Y dimensions of the image to compress */
-    img_ydim;
 PRIVATE uint8 *img_ptr;     /* Pointer to the image to compress */
 PRIVATE intn img_scheme;    /* What type of image comp. are we doing? 24 or 8 bit */
 
@@ -1127,8 +1125,6 @@ intn DFCIunjpeg(file_id, tag, ref, image, xdim, ydim, scheme)
     img_tag=tag;        /* keep dataset's tag around */
     img_ref=ref;        /* keep reference number around */
     img_ptr=(uint8 *)image;  /* Set the static pointer to the image to read */
-    img_xdim=xdim;      /* Keep local copies of the X and Y dimensions */
-    img_ydim=ydim;
     img_scheme=(intn)scheme;  /* Type of image compression we are going to do */
 
     /* Initialize the system-dependent method pointers. */
