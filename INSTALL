@@ -1,4 +1,32 @@
-Obtaining the latest version
+***************************************************************************
+  CONTENTS
+  --------
+  1. Obtaining the latest version
+
+  2. Installing HDF/netCDF
+  2.1 Supported Platforms
+  2.2 Requirements
+  2.3 General Configuration/Installation - Unix
+  2.4 Platform-specific Notes
+  2.5 Pablo Instrumentation
+  2.6 File Cache(Beta release)
+  2.7 Installation Location
+  2.8 Specifying the System Type
+  2.9 Configure Options 
+
+  3. Man pages
+
+  4. Release Notes
+
+  5. 4.0 Documentation
+
+  6. FAQ
+
+  7. HELP
+
+*****************************************************************************
+
+1. Obtaining the latest version
 ============================
 
     The most recent version of the distribution can be obtained from
@@ -8,14 +36,14 @@ the NCSA ftp archive site at:
 or
      ftp://ftp.ncsa.uiuc.edu/HDF/HDF_Current
 
-Installing HDF/netCDF	
+2. Installing HDF/netCDF	
 =====================
 
     For compiling and installing HDF/netCDF libraries,tests and
     utilities on a system, please follow these instructions. 
 
-Supported Platforms
-===================
+2.1 Supported Platforms
+    ===================
 
   For PLATFORM specific NOTES see the section below called
   'Platform-specific Notes'.
@@ -53,8 +81,8 @@ Supported Platforms
   Windows NT/95               Visual C++ 4.0   -              X         X  
   VAX/VMS                        -             -              -         -  
 
-Requirements
-============
+2.2 Requirements
+    ============
 
     To build both HDF and netCDF library from sources, you need:
 
@@ -74,8 +102,8 @@ Requirements
         See below for further details of configuration and installation.
         
 
-General Configuration/Installation - Unix
-=========================================
+2.3 General Configuration/Installation - Unix
+    =========================================
 
     Overview
     --------        
@@ -107,7 +135,9 @@ General Configuration/Installation - Unix
                 config.sub
                 configure (cygnus)
                 configure.in (cygnus)
-                config/mh-hpux, mh-sun,.....
+                config/mh-hpux, mh-sun,.....(host makefile fragments)
+
+                man/Makefile.in
 
                 mfhdf/CUSTOMIZE(not used)
                 mfhdf/configure(autoconf - not used)
@@ -121,12 +151,18 @@ General Configuration/Installation - Unix
                 hdf/test/Makefile.in
                 hdf/util/Makefile.in
                 hdf/zlib/Makefile.in
+                hdf/pablo/Makefile.in
 
                 hdf/jpeg/configure.in (cygnus)
                 hdf/jpeg/Makefile.in
                 hdf/jpeg/configure.gnu(autoconf - not used)
-                hdf/jpeg/config/mh-hpux, mh-sun,...
+                hdf/jpeg/config/mh-hpux, mh-sun,... (host makefile fragments)
                 hdf/jpeg/config/jhpux.h, jsun.h,...   -> linked to jconfig.h
+
+                hdf/fmpool/configure, configure.in config.guess, config.sub,
+                           Makefile.in (all cygnus)
+                hdf/fmpool/config/mh-hpux, mh-sun,...(host makefile fragments)
+                hdf/fmpool/config/fmpsolaris.h,...    -> linked to fmpconf.h
 
     Changing default values(CC,CFLAGS,..)
     -------------------------------------
@@ -137,6 +173,9 @@ General Configuration/Installation - Unix
 
     for your particular operating system. After changing the values you must 
     re-run the top-level 'configure' script. 
+
+    It is also a good idea to look at the other variables to make sure 
+    they are set correctly for your system.
 
     Running configure
     -----------------
@@ -171,10 +210,10 @@ General Configuration/Installation - Unix
     on the command line to configure. If you don't provide a target on
     the command line configure calls 'config.guess' to guess what platfrom
     it is configuring for. The shell script 'config.guess' uses the unix
-    command 'uname' to figure out what the CPU, vendor, and OS of the
-    platform. If you do provided a target on the command line configure
+    command 'uname' to figure out the CPU, vendor, and OS of the
+    platform. If you do provided a target on the command line, configure
     calls the shell script 'config.sub' to build the triplet specifying
-    CPU, vendor, and OS from the full or partial target.
+    CPU, vendor, and OS from the full or partial target provided.
 
     If the configure script can't determine your type of computer, give it
     a general name that the computer is generally refered to as an argument, 
@@ -196,6 +235,9 @@ General Configuration/Installation - Unix
     does not work this means that 'config.sub' needs to be edited to
     provide the proper mapping from your target to a full mapping that
     is supported. 
+
+    There are currently NO instructions for Porting the distribution to a 
+    new platform.
 
     Compiling, Testing and Installing
     ---------------------------------
@@ -221,8 +263,9 @@ General Configuration/Installation - Unix
 
         make install
 
-Platform-specific Notes
-========================
+2.4 Platform-specific Notes
+    ========================
+
     HPUX(9.03) on PA-RISC
     ---------------------
     The distribution has been compiled/tested with both the native
@@ -307,7 +350,8 @@ Platform-specific Notes
     They have been run through the Macintosh BinHex utility program. 
     You need to compile the libraries before you can compile the test 
     programs 'testhdf', 'xdrtest', 'cdftest', 'hdftest' and  'nctest'.
-    Note that the test programs are SOUX applications.
+
+    Note that the test programs are SIOUX applications.
     You need at least 8MB of memory to run the test programs.
 
     $(toplevel)/
@@ -340,8 +384,8 @@ Platform-specific Notes
 
 
 
-Pablo Instrumentation
-====================
+2.5 Pablo Instrumentation
+    ====================
     This version of the distribution has support to create an instrumented 
     version of the HDF library(libdf-inst.a). This library along
     the Pablo performance data capture libraries can be used to gather data
@@ -381,8 +425,8 @@ Pablo Instrumentation
     Details on running configure can be found above in the section
     'General Configuration/Installation - Unix'.
 
-File Cache(Beta release)
-=================================
+2.6 File Cache(Beta release)
+    =================================
     This version of the distribution has preliminary support for file caching.
 
 *NOTE*: This version is NOT officially supported on all platforms
@@ -422,24 +466,8 @@ File Cache(Beta release)
     'General Configuration/Installation - Unix'.
 
 
-Documentation
-=============
-
-    Manual pages for the library are not yet completed but some early
-    drafts are available in:
-
-         $(toplevel)/man.
-
-    The files in sub-directory $(toplevel)/release_notes are detailed 
-    descriptions for the new features. They can be used as supplement 
-    documentation for HDF4.0. Those files are also available on the NCSA 
-    ftp server(ftp.ncsa.uiuc.edu) in:
- 
-         /HDF/Documentation/HDF4.0/4.0_release_notes/.
-
-
-Installation Location
-=====================
+2.7 Installation Location
+    =====================
 
     By default, `make install' will install the HDF/netCDF files in
     `/usr/local/bin', `/usr/local/man', etc.  You can specify an
@@ -456,8 +484,8 @@ Installation Location
      installed in '/usr/local/lib'.
 
 
-Specifying the System Type
-==========================
+2.8 Specifying the System Type
+    ==========================
 
     There may be some features `configure' can not figure out
     automatically, but needs to determine by the type of host HDF/netCDF
@@ -478,18 +506,18 @@ Specifying the System Type
 
           ./configure -v CM5
 
-Configure Options 
-==================
+2.9 Configure Options 
+    ==================
 
-Usage: configure [OPTIONS] [HOST]
+    Usage: configure [OPTIONS] [HOST]
 
-Where HOST and TARGET are something like "sparc-sunos", "mips-sgi-irix5", etc.
+    Where HOST and TARGET are something like "sparc-sunos", "mips-sgi-irix5",etc.
 
     `configure' recognises the following options to control how it
     operates. 
 
-NOTE: not all options are currently supported by this
-      distribution.The following are the only ones supported.
+    NOTE: not all options are currently supported by this
+          distribution.The following are the only ones supported.
 
     `--help'
          Print a summary of the options to `configure', and exit.
@@ -497,10 +525,42 @@ NOTE: not all options are currently supported by this
      `--prefix=MYDIR`          install into MYDIR [/usr/local]
 
 
+3. Man pages
+   =============
 
+    Manual pages for the library are not yet completed but some early
+    drafts are available in:
 
+         $(toplevel)/man.
 
+4. Release notes
+   =============
+    The files in sub-directory $(toplevel)/release_notes are detailed 
+    descriptions for the new features. They can be used as supplement 
+    documentation for HDF4.0. Those files are also available on the NCSA 
+    ftp server(ftp.ncsa.uiuc.edu) in:
+ 
+         /HDF/Documentation/HDF4.0/4.0_release_notes/.
 
+5. Documentation
+   =============
 
+   The HDF 4.0 documentation can be found on the NCSA ftp server
+   in the directory /HDF/Documentation/HDF4.0/Users_Guide.  The
+   HDF home page is at:
 
+      http://hdf.ncsa.uiuc.edu/
+
+6. FAQ
+   ===
+   An FAQ is available on our ftp server, as well as under
+   "Information about HDF" in the home page.
+
+7. HELP
+   ====
+   If you have any questions or comments, or would like to be
+   added to or removed from our hdfnews email list, contact us
+   at:
+
+      hdfhelp@ncsa.uiuc.edu
 
