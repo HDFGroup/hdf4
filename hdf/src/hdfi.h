@@ -600,11 +600,16 @@ Please check your Makefile.
 #endif
 
 #include <fcntl.h>
+#ifdef unix
+#include <sys/types.h>      /* for unbuffered file I/O */
+#include <sys/stat.h>
+#else /* !unix */
 #include <sys\types.h>      /* for unbuffered file I/O */
 #include <sys\stat.h>
 #include <io.h>
-#include <malloc.h>
 #include <conio.h>          /* for debugging getch() calls */
+#endif /* unix */
+#include <malloc.h>
 #include <string.h>         /* for vaious string functions */
 #include <limits.h>         /* for UINT_MAX used in various places */
 #include <stdlib.h>

@@ -190,7 +190,7 @@ extern int32 DFIspaceleft
 extern
 #endif /*DFMASTER*/
 int
-#ifdef PC
+#if defined(PC) & !defined(PC386)
 far
 #endif /* PC */
 DFerror;            /* Error code for DF routines */

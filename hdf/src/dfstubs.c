@@ -1591,7 +1591,7 @@ DF *dfile;
 #include <ctype.h>
 #endif
 
-#ifdef PC
+#if defined(PC) & !defined(PC386)
 #ifdef WIN3
 int32 DFIspaceleft(void)
 {
