@@ -25,8 +25,9 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/02/11 17:15:23  chouck
-Initial revision
+Revision 1.2  1992/02/11 17:16:24  chouck
+Cosmetic changes.
+Added new tag values
 
  * Revision 3.3  1991/10/22  17:56:10  dilg
  * 5
@@ -59,11 +60,12 @@ Initial revision
  * some cosmetic modifications
  *
 */
-#include "df.h"
+#include "hdf.h"
+#include "hfile.h"
 
 #define MAXBUFF 2000
 
-DFdesc desc[MAXBUFF];
+dd_t desc[MAXBUFF];
 
 int
     debug=0,        /* Debugging is off by default */
@@ -75,6 +77,10 @@ struct des {
     char name[50];
 }   tagdes[]={
         {DFTAG_NULL, "Empty               (Utility)   "},
+
+        {DFTAG_LINKED,  "Link to other block (Utility)"},
+        {DFTAG_VERSION, "File Version        (Utility)   "},
+
         {DFTAG_FID,  "File Identifier     (Utility)   "},
         {DFTAG_FD,   "File Description    (Utility)   "},
         {DFTAG_TID,  "Tag Identifier      (Utility)   "},
@@ -108,33 +114,42 @@ struct des {
         {DFTAG_RLE,  "Run Length Encoding (Raster)    "},
         {DFTAG_IMC,  "IMCOMP Encoding     (Raster)    "},
         {DFTAG_SDG,  "Scientific Data Group (SciData) "},
-        {DFTAG_SD,   "Scientific Data     (SciData)   "},
         {DFTAG_SDD,  "SciData description (SciData)   "},
+        {DFTAG_SD,   "Scientific Data     (SciData)   "},
+        {DFTAG_SDS,  "SciData Scales      (SciData)   "},
         {DFTAG_SDL,  "SciData labels      (SciData)   "},
         {DFTAG_SDU,  "SciData units       (SciData)   "},
         {DFTAG_SDF,  "SciData formats     (SciData)   "},
-        {DFTAG_SDS,  "SciData scales      (SciData)   "},
-        {DFTAG_SDM,  "SciData max/min     (SciData)   "},
+        {DFTAG_SDM,  "SciData max/min     (SciData)   "}, 
         {DFTAG_SDC,  "SciData coordsys    (SciData)   "},
-        {-1,         "Unknown Tag                     "}
+        {DFTAG_SDT,  "SciData transpose   (SciData)   "},
+
+        {DFTAG_RLE,  "Run Length Encoding (Compression)"},
+        {DFTAG_IMC,     "IMCOMP compression (Compression)"},
+        {DFTAG_IMCOMP, "IMCOMP compression (Compression)"},
+
+#ifdef VSDATATAG
+        {VGDESCTAG,  "Vset Group Desc     (Vset)"},
+        {VSDESCTAG,  "Vset Set Desc       (Vset)"},
+        {VSDATATAG,  "Vset Data           (Vset)"},
+#endif
+
+	{-1,         "Unknown Tag                     "}
     };
 
-#if defined __STDC__ || defined PC
-int compare(struct DFdd *, struct DFdd *);
-int main(int, char **);
-int lprint(struct DFdd *, int);
-#else
-int compare();
-int main();
-int lprint();
-#endif /* __STDC__ || PC */
+int compare
+  PROTO((struct DFdd *, struct DFdd *));
+int main
+  PROTO((int, char **));
+int lprint
+  PROTO((struct DFdd *, int));
 
-#if defined __STDC__ || defined PC
-int compare(DFdesc *a, DFdesc *b)
+#ifdef PROTOTYPE
+int compare(dd_t *a, DFdesc *b)
 #else
 int compare(a, b)
-DFdesc *a,*b;
-#endif /* __STDC__ || PC */
+dd_t *a,*b;
+#endif /* PROTOTYPE */
 {
     if (a->tag>b->tag) return(1);
     if (a->tag<b->tag) return(-1);
@@ -143,19 +158,21 @@ DFdesc *a,*b;
     return(0);
 }
 
-#if defined __STDC__ || defined PC
+#ifdef PROTOTYPE
 main(int argc, char *argv[])
 #else
 main(argc, argv)
 int argc;
 char *argv[];
-#endif /* __STDC__ || PC */
+#endif /* PROTOTYPE */
 {
-    DF *df;
+    int32 fid;
     int i=1, j, n;
+    filerec_t *file_rec;    /* file record */
+    dd_t *desc;
 
     if (argc <2) {
-        printf("%s,  version: 1.0   date: December 1, 1988\n",argv[0]);
+        printf("%s,  version: 1.1   date: February 10, 1992\n",argv[0]);
         printf("hdfls [-o][-l] fn ....\n");
         printf("        This program displays information about the");
         printf(" data elements in\n");
@@ -183,69 +200,90 @@ char *argv[];
         i++;
         }
     while (i<argc) {
-        df=DFopen( argv[i], DFACC_READ, -1);
-        printf( "%s:", argv[i]);
-        if (!df) {
-            if (DFerror==DFE_NOTDFFILE) 
-                    printf(" not an NCSA Format Data File.\n");
-            else printf(" Error opening file.\n");
-            i++;
-            continue;
-            }
+        fid=Hopen( argv[i], DFACC_READ, -1);
+        printf( "%s:  ", argv[i]);
+        if (fid == FAIL) {
+	  printf("Not an HDF file.\n");
+	  i++;
+	  continue;
+	}
 
-        n = DFdescriptors(df, desc, 0, MAXBUFF);
+	file_rec = FID2REC(fid);
+	
+	/*
+	  while{desc = file_rec->ddhead->ddlist) {
+	  */
+	desc = file_rec->ddhead->ddlist;
+	n = file_rec->ddhead->ndds;
+	
+	if(debug) {
+	  for (j=0; j<n; j++) {
+	    printf("%d) %d[%d]",j,desc[j].tag,desc[j].ref);
+	    printf(" off %ld len %ld\n", desc[j].offset,desc[j].length);
+	  }
+	}
+	
+	if (sort) qsort( (char *) desc, n, sizeof(dd_t), compare);
+	
+	lprint(desc, n);
+	/*	
+	}
+	*/
 
-        for (j=0; j<n; j++) {
-            if (debug) printf("%d) %d[%d]",j,desc[j].tag,desc[j].ref);
-            if (debug) printf(" off %ld len %ld\n",
-                    desc[j].offset,desc[j].length);
-            }
+        if (Hclose(fid) == FAIL) 
+	  HEprint();
 
-        if (sort) qsort( (char *) desc, n, sizeof(DFdesc), compare);
-
-        lprint(desc, n);
-
-        if (DFclose(df)<0) printf("Error %d @ close\n", DFerror);
         i++;
         printf("\n");
     }
     return(0);              /* success */
 }
 
-#if defined __STDC__ || defined PC
-lprint(DFdesc *desc, int num)
+#ifdef PROTOTYPE
+int lprint(dd_t *desc, int num)
 #else
-lprint(desc, num)
-DFdesc  *desc;
+int lprint(desc, num)
+dd_t  *desc;
 int num;
-#endif /* __STDC__ || PC */
+#endif /* PROTOTYPE */
 {
-    
-    int i=0,j=0;
-    int prev=0, empty=0;
-
-    while (j <num) {
-        if (desc[j].tag==DFTAG_NULL) {
-            empty++;
-            j++;
-            continue;               /* don't print anything now */
-        }
-        i=0;
-        while ((uint16)tagdes[i].num!=desc[j].tag  && tagdes[i].num>0) i++;
-        printf("\n%s:", tagdes[i].name);
-        printf(" (tag %d)\n",desc[j].tag);
-        if (!longout) printf("\tRef nos:");
-        prev=desc[j].tag;
-        while (desc[j].tag==(uint16)prev && j<num) {
-            if (longout)
-                printf("\t\tRef no %6d   %8ld bytes\n", desc[j].ref,
-                                                            desc[j].length);
-            else {
-                printf(" %d",desc[j].ref);
-            }
-            j++;
-        }
+  
+  int i=0,j=0;
+  int prev=0, empty=0;
+  
+  while (j <num) {
+    if (desc[j].tag==DFTAG_NULL) {
+      empty++;
+      j++;
+      continue;               /* don't print anything now */
     }
-    printf("\nEmpty (tag %d): %d slots\n",DFTAG_NULL, empty);
-    return(0);
+
+    /*
+    ** Find and print text description of this tag
+    */
+    i=0;
+    while ((uint16)tagdes[i].num!=desc[j].tag  && tagdes[i].num>0) i++;
+    printf("\n%s:", tagdes[i].name);
+    printf(" (tag %d)\n",desc[j].tag);
+
+    /*
+    ** Print out reference number information
+    */
+    prev=desc[j].tag;
+    if(longout) {
+      while (desc[j].tag==(uint16)prev && j<num) {
+	printf("\t\tRef no %6d   %8ld bytes\n", desc[j].ref, desc[j].length);
+	j++;
+      }
+    } else {
+      printf("\tRef nos:");
+      while (desc[j].tag==(uint16)prev && j<num) {
+	printf(" %d",desc[j].ref);
+	j++;
+      }
+    }
+  }
+  printf("\nEmpty (tag %d): %d slots\n", DFTAG_NULL, empty);
+  return 0;
+
 }
