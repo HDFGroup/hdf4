@@ -126,7 +126,6 @@ nhestringc(error_code, error_message, len)
                 status = 0;
                 HDpackFstring(cstring,  _fcdtocp(error_message),  *len);
    }  
-   HDfree(cstring); 
    return status;
  
  
