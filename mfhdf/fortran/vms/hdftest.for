@@ -13,13 +13,13 @@ C
 
       integer access, nt, rank, stat, ival, ivals(1000), i, err
       integer dims(10), start(10), end(10), stride(10), count, nattr
-      integer max, min, num, ref, j, k
+      integer max, min, num, ref, j
       integer natt(2), inatt(2)
       real fval
 
       real*8  cal, cale, ioff, ioffe
       real*8  eps
-      character*60  name, l, u, f, c
+      character*50  name, l, u, f, c
       character cdata(6,4), icdata(6,4), cfill, icfill
       character catt(2), icatt(2)
 
@@ -175,9 +175,9 @@ C     create a new file
       if(err.ne.0) print *, 'After ReadVerify err = ', err
 
       nt = 24
-      stat = sfsattr(sds2, 'TestAttr', nt, 3, ivals)
+      stat = sfsnatt(sds2, 'TestAttr', nt, 3, ivals)
       if(stat.ne.0) then
-         print *, 'Read data returned', stat
+         print *, 'Set numeric attr returned', stat
          err = err + 1
       endif
 
@@ -837,7 +837,13 @@ C read char data and char fill
              endif
 230       continue
 250   continue
-
+C read char fillvalue
+      stat = sfgcfill(sds2, icfill)
+      if ((stat .eq. -1) .or. (icfill .ne. cfill)) then
+         print *, 'sfgcfill returned', sds2
+         err = err + 1
+      endif
+ 
 C read char attr
       stat = sffattr(sds2, 'CharAttr')
       if (stat .eq. -1) then
