@@ -192,6 +192,8 @@ extern      "C"
 
     extern void HPend(void);
 
+    extern intn HDdont_atexit(void);
+
 /*
    ** from hfiledd.c
  */

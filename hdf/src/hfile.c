@@ -133,6 +133,9 @@ PRIVATE list_head_t *cleanup_list = NULL;
 PRIVATE Generic_list *cleanup_list = NULL;
 #endif
 
+/* Whether to install the atexit routine */
+PRIVATE intn install_atexit = TRUE;
+
 /*--------------------- Externally defined Globals --------------------------*/
 /* Function tables declarations.  These function tables contain pointers
    to functions that help access each type of special element. */
@@ -2522,6 +2525,60 @@ done:
   return ret_value;
 }	/* Hsetacceesstype() */
 
+/*--------------------------------------------------------------------------
+ NAME
+    HDdont_atexit
+ PURPOSE
+    Indicates to the library that an 'atexit()' routine is _not_ to be installed
+ USAGE
+    intn HDdont_atexit(void)
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+        This routine indicates to the library that an 'atexit()' cleanip routine
+    should not be installed.  The major (only?) purpose for this is in
+    situations where the library is dynamically linked into an application and
+    is un-linked from the application before 'exit()' gets callled.  In those
+    situations, a routine installed with 'atexit()' would jump to a routine
+    which was no longer in memory, causing errors.
+        In order to be effective, this routine _must_ be called before any other
+    HDF function calls, and must be called each time the library is loaded/
+    linked into the application. (the first time and after it's been un-loaded) 
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    If this routine is used, certain memory buffers will not be de-allocated,
+    although in theory a user could call HPend on their own...
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn HDdont_atexit(void)
+{
+#ifdef LATER
+    CONSTR(FUNC, "HDdont_atexit");    /* for HERROR */
+#endif /* LATER */
+    intn        ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+  TRACE_ON(H_mask, ID_HDdont_atexit);
+#endif /* HAVE_PABLO */
+
+    if(install_atexit == TRUE)
+        install_atexit=FALSE;
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(H_mask, ID_HPregister_term_func);
+#endif /* HAVE_PABLO */
+
+    return(ret_value);
+} /* end HDdont_atexit() */
+
 /*==========================================================================
 
 Internal Routines
@@ -2557,8 +2614,9 @@ PRIVATE intn HIstart(void)
     library_terminate = TRUE;
 
     /* Install atexit() library cleanup routine */
-    if (HDatexit(&HPend) != 0)
-      HGOTO_ERROR(DFE_CANTINIT, FAIL);
+    if(install_atexit==TRUE)
+        if (HDatexit(&HPend) != 0)
+          HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
     /* Create the file ID and access ID groups */
     if(HAinit_group(FIDGROUP,64)==FAIL)
@@ -2687,16 +2745,6 @@ void HPend(void)
             (*term_func)();
           } while((term_func=(hdf_termfunc_t)HDGLnext_in_list(*cleanup_list))!=NULL);
       } /* end if */
-#ifdef OLD_WAY
-    DFR8Pshutdown();
-    DFGRPshutdown();
-    DFSDPshutdown();
-    GRPshutdown();
-    VSPshutdown();
-    VPshutdown();
-    ANdestroy();
-    DFANPshutdown();
-#endif /* OLD_WAY */
 
     /* can't issue errors if you're free'ing the error stack. */
     HDGLdestroy_list(cleanup_list);    /* clear the list of interface cleanup routines */
