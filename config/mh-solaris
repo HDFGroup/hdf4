@@ -23,3 +23,6 @@ ARFLAGS = ru
 # Name of remove utility, default 'RM=/bin/rm', 'RMFLAGS=-f'
 RM = /bin/rm
 RMFLAGS = -f
+
+# Extra libraris like '-lm' for fabs() 
+LIBS = -lm
