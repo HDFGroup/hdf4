@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.21  1993/09/08 20:57:13  georgev
-Fixed flags for UNIXUNBUFIO.
+Revision 1.22  1993/09/13 21:12:54  chouck
+Modified date for Release 1
 
+ * Revision 1.21  1993/09/08  20:57:13  georgev
+ * Fixed flags for UNIXUNBUFIO.
+ *
  * Revision 1.20  1993/09/08  18:29:29  koziol
  * Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
  *
@@ -100,7 +103,7 @@ Fixed flags for UNIXUNBUFIO.
 #define LIBVER_MAJOR	3
 #define LIBVER_MINOR    3
 #define LIBVER_RELEASE	0
-#define LIBVER_STRING   "NCSA HDF Version 3.3 Beta Release 2 June, 1993"
+#define LIBVER_STRING   "NCSA HDF Version 3.3 Release 1, September 1993"
 #define LIBVER_LEN	92	/* 4+4+4+80 = 92 */
 /* end of version tags */
 
