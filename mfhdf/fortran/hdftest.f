@@ -56,6 +56,8 @@ C
       DATA natt/10,20/, inatt/0,0/
       DATA i32/15,25/, ii32/0,0/
 
+      err=0
+
 C
 C--- Create a file with an empty SDS
 C
