@@ -1519,22 +1519,22 @@ char  *l, *u, *f, *c;
     if(var == NULL)
         return FAIL;
     
-    if(l) 
+    if(l && l[0] != '\0') 
         if(SDIputattr(&var->attrs, "long_name", NC_CHAR, 
                       (intn) HDstrlen(l), l) == FAIL)
             return FAIL;
 
-    if(u) 
+    if(u && u[0] != '\0') 
         if(SDIputattr(&var->attrs, "units", NC_CHAR, 
                       (intn) HDstrlen(u), u) == FAIL)
             return FAIL;
 
-    if(f) 
+    if(f && f[0] != '\0') 
         if(SDIputattr(&var->attrs, "format", NC_CHAR, 
                       (intn) HDstrlen(f), f) == FAIL)
             return FAIL;
     
-    if(c) 
+    if(c && c[0] !='\0') 
         if(SDIputattr(&var->attrs, "cordsys", NC_CHAR, 
                       (intn) HDstrlen(c), c) == FAIL)
             return FAIL;
@@ -1985,17 +1985,17 @@ char  *l, *u, *f;
         return FAIL;
 
     /* set the attributes */
-    if(l)
+    if(l && l[0] != '\0')
         if(SDIputattr(&var->attrs, "long_name", NC_CHAR,
                       (intn) HDstrlen(l), l) == FAIL)
             return FAIL;
 
-    if(u)
+    if(u && u[0] != '\0')
         if(SDIputattr(&var->attrs, "units", NC_CHAR,
                       (intn) HDstrlen(u), u) == FAIL)
             return FAIL;
 
-    if(f)
+    if(f && f[0] != '\0')
         if(SDIputattr(&var->attrs, "format", NC_CHAR,
                       (intn) HDstrlen(f), f) == FAIL)
             return FAIL;
