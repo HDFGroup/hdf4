@@ -109,7 +109,8 @@ DISTFILES = $(MAN_NROFF_1) $(MAN_NROFF_3)
 
 # Man pages
 MAN_NROFF_1 = hdf.1 hdfls.1 hdfpack.1 hdp.1 ristosds.1
-MAN_NROFF_3 = hxsetcreatedir.3 hxsetdir.3 sdsetaccesstype.3
+MAN_NROFF_3 = hxsetcreatedir.3 hxsetdir.3 sdsetaccesstype.3 \
+              sdisdimval_bwcomp.3 sdsetdimval_comp.3 mfan.3
 
 all: docs
 
