@@ -176,6 +176,11 @@ FHEADERS = dffunc.f90 hdf.f90 dffunc.inc hdf.inc
 @HDF_BUILD_FORTRAN_FALSE@include_HEADERS = $(CHEADERS)
 
 SUFFIXES = .inc .f90
+
+
+#############################################################################
+#############################################################################
+DISTCLEANFILES = dffunc.f90 hdf.f90
 subdir = hdf/src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
@@ -581,6 +586,7 @@ clean-generic:
 
 distclean-generic:
 	-rm -f $(CONFIG_CLEAN_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
