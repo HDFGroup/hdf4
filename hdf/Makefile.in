@@ -1,51 +1,62 @@
 # Makefile for HDF
 #
-#### Start of system configuration section. ####
+### Start of system configuration section. ####
 # Set shell so we know what it is
 SHELL = /bin/sh
 
-# Configure subsitutes preset values in for the following macros
 # 'srcdir' Gets set to directory this Makefile is found in
-srcdir = @srcdir@
-VPATH  = @srcdir@
-TOP_SRCDIR = @top_srcdir@
-prefix     = @prefix@
-exec_prefix = @exec_prefix@
-ACDEFS = @DEFS@
-CC     = @CC@
-CFLAGS   = @CFLAGS@
-CPPFLAGS = @CPPFLAGS@
-LDFLAGS  = @LDFLAGS@
-LIBS     = @LIBS@
-FC       = @FC@
-FFLAGS   = @FFLAGS@
+srcdir = .
 
-INSTALL  = @INSTALL@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@
-INSTALL_DATA    = @INSTALL_DATA@
+prefix = /usr/local
+
+exec_prefix = $(prefix)
+tooldir = $(exec_prefix)/$(target)
+
+program_transform_name =
+
+datadir = $(prefix)/lib
+mandir = $(prefix)/man
+man1dir = $(mandir)/man1
+man2dir = $(mandir)/man2
+man3dir = $(mandir)/man3
+man4dir = $(mandir)/man4
+man5dir = $(mandir)/man5
+man6dir = $(mandir)/man6
+man7dir = $(mandir)/man7
+man8dir = $(mandir)/man8
+man9dir = $(mandir)/man9
+docdir = $(datadir)/doc
+
+INSTALL = $${srcroot}/install.sh -c
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = $(INSTALL) -m 644
 
 # /usr/local/bin/m4 (GNU version?)
-M4   = @M4@
-# /usr/loal/bin/perl (GNU version?)
-PERL = @PERL@
+M4   = /usr/local/bin/m4
+# /usr/local/bin/perl (GNU version?)
+PERL = /usr/local/bin/perl
 
 # Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
-RANLIB = @RANLIB@
+RANLIB = ranlib
 
 # Name of library archiver and flags to send, default 'AR=ar', 'ARFLAGS=r'
-AR = @AR@
-ARFLAGS = @ARFLAGS@
+AR = ar
+ARFLAGS = r
 
 # Name of remove utility, default 'RM=/bin/rm', 'RMFLAGS=-f'
-RM = @RM@
-RMFLAGS = @RMFLAGS@
+RM = /bin/rm
+RMFLAGS = -f
+
+#defaults
+AS = as
+CC = gcc
+CFLAGS = -ansi
+FC = f77
+FFLAGS=
 
 # Set for document generation
 MAKEINFO = makeinfo
 TEXI2DVI = texi2dvi
-
-prefix = @prefix@
-exec_prefix = @exec_prefix@
 
 # Directory in which to install scripts.
 bindir = $(exec_prefix)/bin
@@ -56,10 +67,13 @@ libdir = $(prefix)/lib
 # Directory in which to install documentation info files.
 infodir = $(prefix)/info
 
-#### End of system configuration section. ####
+#### host and target specific makefile fragments come in here.
+###
 
-PACKAGE	 = @PACKAGE@
-VERSION  = @VERSION@
+### End of system configuration section. ####
+
+PACKAGE	 = HDF
+VERSION  = 4.0
 
 MANIFEST = Makefile.in
 
@@ -95,19 +109,19 @@ HDF_FLAGS       = \
 #
 all:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="src jpeg util test" _sub message 
+          SUBDIRS="src jpeg util test" subd message 
 
 allnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
-          SUBDIRS="src jpeg util test" _sub message 
+          SUBDIRS="src jpeg util test" subd message 
 
 rebuild rebuildnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="src jpeg util test" _sub message 
+          SUBDIRS="src jpeg util test" subd message 
 
 libnofortran:
 	@$(MAKE) $(MYFLAGS) $(HDF_FLAGS) TARG=nofortran \
-	  SUBDIRS="src jpeg" _sub message
+	  SUBDIRS="src jpeg" subd message
 
 libnostub: libnofortran
 
@@ -115,52 +129,53 @@ allnostub: allnofortran
 
 libdf:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="src" _sub
+          SUBDIRS="src" subd
 
 libjpeg:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="jpeg" _sub
+          SUBDIRS="jpeg" subd
 
 utilities:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="src jpeg util" _sub
+          SUBDIRS="src jpeg util" subd
 
 tests:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="src jpeg test" _sub
+          SUBDIRS="src jpeg test" subd
 
 testnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
-          SUBDIRS="src jpeg test" _sub message 
+          SUBDIRS="src jpeg test" subd message 
 
 perfs:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="src jpeg perf" _sub
+          SUBDIRS="src jpeg perf" subd
 
 #install:      $(INSTALL_DIRS)
 #	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
-#          SUBDIRS="src util test" _sub
+#          SUBDIRS="src util test" subd
 
 debug:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=debug \
-          SUBDIRS="src jpeg test" _sub message 
+          SUBDIRS="src jpeg test" subd message 
 
 saber:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=saber \
-          SUBDIRS="src jpeg test" _sub
+          SUBDIRS="src jpeg test" subd
 
 clean:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
-          SUBDIRS="src jpeg util test" _sub
+          SUBDIRS="src jpeg util test" subd
 	$(RM) $(RMFLAGS) core *.log
 
 distclean:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
-          SUBDIRS="src jpeg util test" _sub
+          SUBDIRS="src jpeg util test" subd
 	$(RM) $(RMFLAGS) core *.log
 	$(RM) -rf bin lib include
 
-_sub:
+# for recusive make in subdirs
+subd:
 	@for dir in $(SUBDIRS); do \
           (cd $$dir; echo Making \`$(TARG)\' in `pwd`; \
               $(MAKE) $(MFLAGS) $(HDF_FLAGS) $(TARG)); \
@@ -196,10 +211,6 @@ message:
 	@echo ""
 	@echo "If you have any old vset files (v 1.0) you must use vcompat"
 	@echo "to make them compatible with Vset 2.0 applications"
-	@echo ""
-	@echo "User programs can be created as follows:"
-	@echo ""
-	@echo "   cc -D${MACHINE} program.c libdf.a -o program"
 	@echo ""
 	@echo "***********************************************************"
 	@echo ""
