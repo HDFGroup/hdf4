@@ -1136,14 +1136,27 @@ VSdetach(int32 vkey /* IN: vdata key? */)
                 if (FAIL == vpackvs(vs, Vhbuf, &vspacksize))
                     HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-                /* the old one should be blown away if VH size changed  */
+                /* if VH size changed we need to re-use the tag/ref
+                 * for new header. This will cause the pointer to the
+                 * original vdata header to be lost but this is okay.  */
                 if (vs->new_h_sz)
-                  { /* erase old one */
-                    /* hmm..looking at this call shows that it is allowed 
-                       to fail. This is probably because there is no call 
-                       to check if the tag/ref pair exists before trying to 
-                       delete it. So for now this looks okay -GV */
-                    Hdeldd(vs->f, DFTAG_VH, vs->oref);
+                  { 
+                      /* check if tag/ref exists in DD list already */
+                      switch(HDcheck_tagref(vs->f, DFTAG_VH, vs->oref))
+                        {
+                        case 0: /* not found */
+                            break;
+                        case 1: /* found, reuse tag/ref */
+                            if (HDreuse_tagref(vs->f, DFTAG_VH, vs->oref) == FAIL)
+                                HGOTO_ERROR(DFE_INTERNAL, FAIL);
+                            break;
+                        case -1: /* error */
+                            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+                            break;
+                        default: /* should never get here */
+                            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+                            break;
+                        }
                   }
 
                 /* write new one */

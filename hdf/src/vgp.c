@@ -1381,14 +1381,31 @@ Vdetach(int32 vkey /* IN: vgroup key */)
               HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
           /*
-           *  For now attempt to blow away the old one.  This is a total HACK
-           *    but the H-level needs to stabilize first
+           *  If vgroup alreay exists, try to re-use the same
+           *  tag/ref. This will cause the pointer to the original
+           *  vgroup to be lost but this is okay.
            */
           if(!vg->new_vg)
             {
-                Hdeldd(vg->f, DFTAG_VG, vg->oref);
+                /* check if tag/ref exists in DD list already */
+                switch(HDcheck_tagref(vg->f, DFTAG_VG, vg->oref))
+                  {
+                  case 0: /* not found */
+                      break;
+                  case 1: /* found, reuse tag/ref */
+                      if (HDreuse_tagref(vg->f, DFTAG_VG, vg->oref) == FAIL)
+                          HGOTO_ERROR(DFE_INTERNAL, FAIL);
+                      break;
+                  case -1: /* error */
+                      HGOTO_ERROR(DFE_INTERNAL, FAIL);
+                      break;
+                  default: /* should never get here */
+                      HGOTO_ERROR(DFE_INTERNAL, FAIL);
+                      break;
+                  } 
             }
 
+          /* write out vgroup */
           if (Hputelement(vg->f, DFTAG_VG, vg->oref, Vgbuf, vgpacksize) == FAIL)
               HERROR(DFE_WRITEERROR);
 
