@@ -1076,6 +1076,33 @@ nscsextf(id, name, offset, namelen)
 }
 
 /*-----------------------------------------------------------------------------
+ * Name:    sfsnbit
+ * Purpose: store data in n-bit data element
+ * Inputs:  id: sds id
+ *          start_bit: starting bit offset
+ *          bit_len: # of bits to write
+ *          sign_ext: whether to use the top bit as a sign extender
+ *          fill_one: whether to fill the "background bits" with ones
+ * Returns: 0 on success, -1 on failure with error set
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nsfsnbit(intf *id, intf *start_bit, intf *bit_len, intf *sign_ext, intf *fill_one)
+#else
+nsfsnbit(id, start_bit, bit_len, sign_ext, fill_one)
+     intf *id;
+     intf *start_bit;
+     intf *bit_len;
+     intf *sign_ext;
+     intf *fill_one;
+#endif /* PROTOTYPE */
+{
+    return((intf)SDsetnbitdataset((int32)*id,(intn)*start_bit,(intn)*bit_len,
+	(intn)*sign_ext,(intn)*fill_one));
+}
+
+/*-----------------------------------------------------------------------------
  * Name:    sdfsacct
  * Purpose: Call SDsetaccesstype to set the access type
  * Inputs:  id: sds id
