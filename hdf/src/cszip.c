@@ -865,6 +865,7 @@ HCPcszip_write(accrec_t * access_rec, int32 length, const void * data)
     compinfo_t *info;           /* special element information */
     comp_coder_szip_info_t *szip_info;    /* ptr to SZIP info */
 
+#ifdef H4_HAVE_LIBSZ
     if (SZ_encoder_enabled() == 0) 
 	HRETURN_ERROR(DFE_NOENCODER, FAIL);
     info = (compinfo_t *) access_rec->special_info;
@@ -881,6 +882,11 @@ HCPcszip_write(accrec_t * access_rec, int32 length, const void * data)
         HRETURN_ERROR(DFE_CENCODE, FAIL);
 
     return (length);
+#else /* ifdef H4_HAVE_LIBSZ */
+
+    HRETURN_ERROR(DFE_CANTDECOMP, FAIL);
+
+#endif /* H4_HAVE_LIBSZ */
 }   /* HCPcszip_write() */
 
 /*--------------------------------------------------------------------------
