@@ -58,7 +58,7 @@
 #define MACIO       3
 #define PCIO        4
 #define WINIO       5
-#define PAGEBUFIO   6
+#define PAGEBUFIO   6    /* page buffering - fmpool */
 
 #if defined(IBM6000) || defined(_AIX)
 #define _POSIX_SOURCE
@@ -144,7 +144,11 @@ typedef double            float64;
 #define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
+#ifdef  HAVE_FMPOOL
+#define FILELIB PABEBUFIO  /* enable page buffering */
+#else
 #define FILELIB UNIXBUFIO
+#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -198,7 +202,11 @@ typedef double            float64;
 #define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
+#ifdef  HAVE_FMPOOL
+#define FILELIB PAGEBUFIO  /* enable page buffering */
+#else
 #define FILELIB UNIXBUFIO
+#endif
 #ifndef __STDC__
 #define const
 #endif
@@ -261,7 +269,11 @@ typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 #define _HUGE              /* This should only be defined to a value on the PC */
 /* #define FNAME_POST_UNDERSCORE */
 #define _fcdtocp(desc) (desc)
+#ifdef  HAVE_FMPOOL
+#define FILELIB PAGEBUFIO  /* enable page buffering */
+#else
 #define FILELIB UNIXBUFIO
+#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -313,7 +325,11 @@ typedef double            float64;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 #define _HUGE              /* This should only be defined to a value on the PC */
 #define _fcdtocp(desc) (desc)
+#ifdef  HAVE_FMPOOL
+#define FILELIB PAGEBUFIO  /* enable page buffering */
+#else
 #define FILELIB UNIXBUFIO
+#endif
 #ifndef __STDC__
 #define const
 #endif
@@ -367,7 +383,11 @@ typedef int                intf;     /* size of INTEGERs in Fortran compiler */
 #define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
+#ifdef  HAVE_FMPOOL
+#define FILELIB PAGEBUFIO  /* enable page buffering */
+#else
 #define FILELIB UNIXBUFIO
+#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -424,8 +444,11 @@ typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 
 #define _HUGE              /* This should only be defined to a value on the PC */
 #define DF_CAPFNAMES            /* fortran names are in all caps */
+#ifdef  HAVE_FMPOOL
+#define FILELIB PAGEBUFIO  /* enable page buffering */
+#else
 #define FILELIB UNIXBUFIO
-
+#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -538,7 +561,11 @@ typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 #define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
+#ifdef  HAVE_FMPOOL
+#define FILELIB PAGEBUFIO  /* enable page buffering */
+#else
 #define FILELIB UNIXBUFIO
+#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -592,7 +619,11 @@ typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 #define _HUGE              /* This should only be defined to a value on the PC */
 #define _fcdtocp(desc) (desc)
 #define FNAME_POST_UNDERSCORE
+#ifdef  HAVE_FMPOOL
+#define FILELIB PAGEBUFIO  /* enable page buffering */
+#else
 #define FILELIB UNIXBUFIO
+#endif
 #ifndef __STDC__
 #define const
 #undef HPROTO
@@ -780,7 +811,11 @@ typedef long              intf;     /* size of INTEGERs in Fortran compiler */
 #define FILELIB WINIO
 #else /* ! WIN3 */
 #ifdef PC386 /* !WIN3 */
+#ifdef  HAVE_FMPOOL
+#define FILELIB PAGEBUFIO  /* enable page buffering */
+#else
 #define FILELIB UNIXBUFIO
+#endif
 #else /* must be plain PC */
 #define FILELIB PCIO
 #endif /* PC */
@@ -851,7 +886,11 @@ typedef double            float64;
 #define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
+#ifdef  HAVE_FMPOOL
+#define FILELIB PAGEBUFIO  /* enable page buffering */
+#else
 #define FILELIB UNIXBUFIO
+#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -952,7 +991,11 @@ typedef double            float64;
 #define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
+#ifdef  HAVE_FMPOOL
+#define FILELIB PAGEBUFIO  /* enable page buffering */
+#else
 #define FILELIB UNIXBUFIO
+#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
