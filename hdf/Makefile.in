@@ -172,7 +172,7 @@ libjpeg:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd
 
-libjpeg:
+libz:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libz.a \
           SUBDIRS="zlib" subd
 
