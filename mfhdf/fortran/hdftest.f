@@ -29,7 +29,7 @@ C comment out the next line for VMS
       integer sfrdata,  sfwdata,   sfdimid,  sfsdmname
       integer sffinfo,  sfn2index, sfsdmstr, sfsdtstr, sfsdscale
       integer sfscal,   sfselect,  sfginfo,  sfgdinfo, sfgainfo
-      integer sffattr,  sfsrange,  sfgrange, sfgfill
+      integer sffattr,  sfsrange,  sfgrange, sfgfill,  sfsflmd
       integer sfgcal,   sfgdscale, sfgdtstr, sfgdmstr
       integer sfid2ref, sfref2index, sfsdmvc, sfisdmvc
       integer sfsextf,  hxsdir,    hxscdir
@@ -38,11 +38,13 @@ C comment out the next line for VMS
 C commnet out next line for VMS 
       integer sfsattr,  sfrattr
       integer SD_UNLIMITED, SD_DIMVAL_BW_INCOMP, DFNT_INT32
-      integer SD_DIMVAL_BW_COMP
+      integer SD_DIMVAL_BW_COMP, SD_FILL, SD_NOFILL
       parameter (SD_UNLIMITED = 0,
      +            SD_DIMVAL_BW_INCOMP = 0,
      +            SD_DIMVAL_BW_COMP = 1,
-     +            DFNT_INT32 = 24)
+     +            DFNT_INT32 = 24,
+     +            SD_FILL = 0,
+     +            SD_NOFILL = 256)
       DATA cfill/'@'/, icfill/' '/
       DATA catt/'U','S'/, icatt/' ',' '/
       DATA natt/10,20/, inatt/0,0/
@@ -903,6 +905,200 @@ C Close file
          print *, 'SDend returned', stat
          err = err + 1
       endif
+C Test set fill mode
+      fid1 = sfstart('test1.hdf', 3)
+      nt = 24
+      rank = 2
+      dims(1) = 6
+      dims(2) = 5
+      sds1 = sfcreate(fid1, 'FIXED1', nt,rank,dims)
+      ival = -300
+      do  400 i = 1, 30
+          ivals(i) = i + 100
+400   continue
+      stat = sfsfill(sds1, ival)
+      if(stat .ne. 0) then
+           print *, 'sfsnatt returned', stat
+           err = err + 1
+      endif
+      stat = sfsflmd(fid1, SD_NOFILL)
+      if(stat .ne. SD_FILL) then
+           print *, 'sfsflmd returned', stat
+           err = err + 1
+      endif
+      stat = sfendacc(sds1)
+      if(stat .ne. 0) then
+           print *, 'sfendacc returned', stat
+           err = err + 1
+      endif
+      i = sfn2index(fid1,'FIXED1')
+      sds1 = sfselect(fid1, i)
+      if(sds1 .lt. 0) then
+           print *, 'sfselect returned', sds1
+           err = err + 1
+      endif
+      start(1) = 0
+      start(2) = 2
+      stride(1) = 1
+      stride(2) = 1
+      end(1) = 6
+      end(2) = 1
+      stat = sfsflmd(fid1, SD_FILL)
+      if (stat .ne. SD_NOFILL) then
+           print *, 'sfsflmd returned', stat
+           err = err + 1
+      endif
+      stat = sfwdata(sds1,start, stride, end, ivals)
+      if (stat .eq. -1) then
+           print *, 'sfwdata returned', stat
+           err = err + 1
+      endif
+      stat = sfendacc(sds1)
+C create a new fixed size SDS, srite the 3rd rec NOFILL.
+C then set to SD_FILL and write the 5th rec.
+      sds1 = sfcreate(fid1, 'FIXED_SDS', nt,rank,dims)
+      stat = sfsfill(sds1, ival)
+      stat = sfsflmd(fid1, SD_NOFILL)
+      if(stat .ne. SD_FILL) then
+           print *, 'sfsflmd returned', stat
+           err = err + 1
+      endif
+      stat = sfwdata(sds1,start, stride, end, ivals)
+      if (stat .eq. -1) then
+           print *, 'sfwdata returned', stat
+           err = err + 1
+      endif
+      stat = sfendacc(sds1)
+      stat = sfend(fid1)
+C open again, change fillmode and write the 5th rec 
+      fid1 = sfstart('test1.hdf', 3)
+      i = sfn2index(fid1, 'FIXED_SDS')
+      sds1 = sfselect(fid1, i)
+      stat = sfsflmd(fid1, SD_FILL)
+      start(2) = 4
+      stat = sfwdata(sds1,start,stride,end,ivals)
+      stat = sfendacc(sds1)
+      stat = sfend(fid1) 
+C read back FIXED_SDS
+      fid1 = sfstart('test1.hdf', 3)
+      i = sfn2index(fid1, 'FIXED_SDS')
+      sds1 = sfselect(fid1, i)
+      start(1) = 0
+      start(2) = 0
+      end(1) = 6
+      end(2) = 5
+      stat = sfrdata(sds1,start,stride,end,ivals)
+      stat = sfendacc(sds1)
+      do 450 i=13,18
+         if (ivals(i) .ne. (100+(i-12))) then
+             print *,'wrong value: should be ', 100+(i-12)
+             print *,' get ', ivals(i)
+             err = err+1
+         endif
+         if (ivals(i+12) .ne. (100+(i-12))) then
+             print *,'wrong value: should be ', 100+(i-12)
+             print *,' get ', ivals(i+12)
+             err = err+1
+         endif
+450   continue
+      do 500 i=19,24
+         if (ivals(i) .eq. ival) then
+             print *,'Should not be ',ival, ' got ', ivals(i)
+             err = err+1
+         endif
+500   continue
+C read FIXED1
+      i = sfn2index(fid1, 'FIXED1')
+      sds1 = sfselect(fid1, i)
+      stat = sfrdata(sds1,start,stride,end,ivals)
+      stat = sfendacc(sds1)
+      do 510 i=13,18
+         if (ivals(i) .ne. (100+(i-12))) then
+             print *,'wrong value: should be ', 100+(i-12)
+             print *,' get ', ivals(i)
+             err = err+1
+         endif
+510   continue
+      do 520 i=19,24
+         if (ivals(i) .ne. ival) then
+            print *,'Should be ',ival, ' got ', ivals(i)
+             err = err+1
+         endif
+520   continue
+      stat = sfend(fid1)
+C test unlimited sds 
+      fid1 = sfstart('test1.hdf', 3)
+      if (fid1 .eq. -1) then
+            print *,'Open test1.hdf failed.'
+             err = err+1
+      endif
+      dims(1) = 6
+      dims(2) = SD_UNLIMITED
+      sds1=sfcreate(fid1,'UNLIMITED_SDS',24,rank,dims)
+      if (sds1 .eq. -1) then
+          print *,'create UNLIMITED_SDS failed. '
+          err = err+1
+      endif
+      ival = -300
+      do 550 i=1,24
+         ivals(i) = i
+550   continue
+      stat = sfsfill(sds1, ival)
+      stat = sfsflmd(fid1, SD_NOFILL)
+      if (stat .ne. SD_FILL) then
+          print *,'Should be ',SD_FILL, ' got ',  stat
+          err = err+1
+      endif
+      start(1) = 0
+      start(2) = 2
+      end(1) = 6
+      end(2) = 1
+      stat = sfwdata(sds1,start, stride, end, ivals)
+      if (stat .eq. -1) then
+          print *,'write UNLIMITED_SDS failed. '
+          err = err+1
+      endif
+      stat = sfendacc(sds1)
+      stat = sfend(fid1)
+C open again, write the 5th rec
+      fid1 = sfstart('test1.hdf', 3)
+      i = sfn2index(fid1, 'UNLIMITED_SDS')
+      sds1 = sfselect(fid1, i)
+      stat = sfsflmd(fid1, SD_FILL)
+      start(2) = 4
+      stat = sfwdata(sds1,start,stride,end, ivals)
+      stat = sfendacc(sds1)
+      stat = sfend(fid1)
+C read back 
+      fid1 = sfstart('test1.hdf', 3)
+      i = sfn2index(fid1, 'UNLIMITED_SDS')
+      sds1 = sfselect(fid1, i)
+      start(1) = 0
+      start(2) = 0
+      end(1) = 6
+      end(2) = 5
+      stat = sfrdata(sds1,start,stride,end,ivals)
+      stat = sfendacc(sds1)
+      do 600 i=13,18
+         if (ivals(i) .ne. (i-12)) then
+             print *,'wrong value: should be ', (i-12)
+             print *,' get ', ivals(i)
+             err = err+1
+         endif
+         if (ivals(i+12) .ne. (i-12)) then
+             print *,'wrong value: should be ', (i-12)
+             print *,' get ', ivals(i+12)
+             err = err+1
+         endif
+600   continue
+      do 650 i=19,24
+         if (ivals(i) .ne. ival) then
+             print *,'Should be ',ival, ' got ', ivals(i)
+             err = err+1
+         endif
+650   continue
+      stat = sfend(fid1) 
+      
 
       print *, 'Total errors : ', err
 

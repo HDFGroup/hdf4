@@ -40,12 +40,14 @@ FRETVAL(intf) nsfsfill(intf *id, VOIDP val);
 FRETVAL(intf) nsfgfill(intf *id, VOIDP val);
 FRETVAL(intf) nsfrnatt(intf *id, intf *index, VOIDP buf);
 FRETVAL(intf) nscsnatt(intf *id, _fcd name, intf *nt, intf *count, VOIDP data, intf *len);
+FRETVAL(intf) nsfsflmd(intf *id, intf *fillmode);
 #else
 FRETVAL(intf) nsfscfill();
 FRETVAL(intf) nsfsfill();
 FRETVAL(intf) nsfgfill();
 FRETVAL(intf) nsfrnatt();
 FRETVAL(intf) nscsnatt();
+FRETVAL(intf) nsfsflmd();
 #endif /* PROTOTYPE */
 
 /*-----------------------------------------------------------------------------
@@ -1381,4 +1383,30 @@ nsfisdmvc(id)
 {
     return((intf) SDisdimval_bwcomp(*id));
 }
+
+/*-----------------------------------------------------------------------------
+ * Name:    sfsflmd
+ * Purpose: Call SDsetfillmode to set for the file fill mode 
+ *            as fill or nofill
+ * Inputs:  id: file id
+ *          fillmode: Desired fill mode for the file,
+ *                                 either SD_FILL or SD_NOFILL.
+ *                                 SD_FILL is the default mode.
+ *
+ * Returns: The current (before the new mode is set) fill mode;
+ *          FAIL (-1) for error. 
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nsfsflmd(intf *id, intf *fillmode)
+#else
+nsfsflmd(id, fillmode)
+    intf *id, *fillmode;
+#endif  /* PROTOTYPE */
+{
+    return((intf) SDsetfillmode(*id, *fillmode));
+}
 #endif /* HDF */
+
