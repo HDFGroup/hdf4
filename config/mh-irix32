@@ -33,13 +33,10 @@ VERSION  = 4.0
 #
 # Using ANSI compilier
 CC=cc
-# Temporary turned off the -O option which causes an error in
-# the zlib compression code.
 # IRIX 6.1 has an error in its system include file, stdio.h,
 # that gives incorrect warning message when both "-n32" and "-ansi"
 # flags are used.
-#CFLAGS=-ansi -n32 -mips3 -O -s
-CFLAGS=-ansi -n32 -mips3 -s
+CFLAGS=-ansi -n32 -mips3 -O -s
 
 # Fortran compilier
 FC = f77
