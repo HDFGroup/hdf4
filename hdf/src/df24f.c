@@ -285,13 +285,13 @@ nd2scomp(scheme)
 intf *scheme;
 #endif /* PROTOTYPE */
 {
-    comp_info *cinfo;   /* Structure containing compression parameters */
+    comp_info cinfo;   /* Structure containing compression parameters */
 
     if(*scheme==COMP_JPEG) {  /* check for JPEG compression and set defaults */
-        cinfo->jpeg.quality=75;
-        cinfo->jpeg.force_baseline=1;
+        cinfo.jpeg.quality=75;
+        cinfo.jpeg.force_baseline=1;
       } /* end if */
-    return (DF24setcompress((int32)*scheme,cinfo));
+    return (DF24setcompress((int32)*scheme,&cinfo));
 }   /* end d2scomp() */
 
 /*-----------------------------------------------------------------------------
@@ -315,11 +315,11 @@ intf *quality;
 intf *force_baseline;
 #endif /* PROTOTYPE */
 {
-    comp_info *cinfo;   /* Structure containing compression parameters */
+    comp_info cinfo;   /* Structure containing compression parameters */
 
-    cinfo->jpeg.quality=(intn)*quality;
-    cinfo->jpeg.force_baseline=(intn)*force_baseline;
-    return (DF24setcompress((int32)COMP_JPEG,cinfo));
+    cinfo.jpeg.quality=(intn)*quality;
+    cinfo.jpeg.force_baseline=(intn)*force_baseline;
+    return (DF24setcompress((int32)COMP_JPEG,&cinfo));
 }   /* end d2sjpeg() */
 
 /*-----------------------------------------------------------------------------
@@ -428,13 +428,13 @@ ndf24scompress(scheme)
 intf *scheme;
 #endif /* PROTOTYPE */
 {
-    comp_info *cinfo;   /* Structure containing compression parameters */
+    comp_info cinfo;   /* Structure containing compression parameters */
 
     if(*scheme==COMP_JPEG) {  /* check for JPEG compression and set defaults */
-        cinfo->jpeg.quality=75;
-        cinfo->jpeg.force_baseline=1;
+        cinfo.jpeg.quality=75;
+        cinfo.jpeg.force_baseline=1;
       } /* end if */
-    return (DF24setcompress((int32)*scheme,cinfo));
+    return (DF24setcompress((int32)*scheme,&cinfo));
 }   /* end df24setcompress() */
 
 /*-----------------------------------------------------------------------------
@@ -458,11 +458,11 @@ intf *quality;
 intf *force_baseline;
 #endif /* PROTOTYPE */
 {
-    comp_info *cinfo;   /* Structure containing compression parameters */
+    comp_info cinfo;   /* Structure containing compression parameters */
 
-    cinfo->jpeg.quality=(intn)*quality;
-    cinfo->jpeg.force_baseline=(intn)*force_baseline;
-    return (DF24setcompress((int32)COMP_JPEG,cinfo));
+    cinfo.jpeg.quality=(intn)*quality;
+    cinfo.jpeg.force_baseline=(intn)*force_baseline;
+    return (DF24setcompress((int32)COMP_JPEG,&cinfo));
 }   /* end df24setjpeg() */
 
 /*-----------------------------------------------------------------------------
