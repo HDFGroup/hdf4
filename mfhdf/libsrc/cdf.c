@@ -833,7 +833,7 @@ NC_attr **attr;
       
   status = VHstoredatam(handle->hdf_file, ATTR_FIELD_NAME, 
                         (unsigned char *) values, size, 
-                        type, name, ATTRIBUTE, order);
+                        type, name, _HDF_ATTRIBUTE, order);
 
 #if DEBUG
  fprintf(stderr, "hdf_write_attr returning %d\n", status);
@@ -880,9 +880,9 @@ int32 cnt;
      count++;
   } 
   if((*dim)->size == NC_UNLIMITED) 
-      class = UDIMENSION;
+      class = _HDF_UDIMENSION;
   else
-      class = DIMENSION;
+      class = _HDF_DIMENSION;
   
   if(HDstrncmp((*dim)->name->values, "fakeDim", 7) == 0)
       sprintf(name, "fakeDim%d", (int)cnt);
@@ -1079,7 +1079,7 @@ NC_var **var;
 #endif /* WRITE_NDG */
 
   (*var)->vgid = VHmakegroup(handle->hdf_file, tags, refs, count, 
-                             (*var)->name->values, VARIABLE);
+                             (*var)->name->values, _HDF_VARIABLE);
 
 #ifdef DEBUG
   if((*var)->vgid == FAIL) {
@@ -1207,7 +1207,7 @@ NC **handlep;
 
   /* write out final VGroup thang */
   status = VHmakegroup((*handlep)->hdf_file, tags, refs, count, 
-		       (*handlep)->path, CDF);
+		       (*handlep)->path, _HDF_CDF);
   if(status == FAIL)
       HEprint(stdout, 0);
 
@@ -1267,15 +1267,15 @@ int32  vg;
   }
 
   /*
-   * Look through for a Vgroup of class DIMENSION
+   * Look through for a Vgroup of class _HDF_DIMENSION
    */
   while((id = Vgetnext(vg, id)) != FAIL) {
     if(Visvg(vg, id)) {
       dim = Vattach(handle->hdf_file, id, "r");
       if(dim == FAIL) continue;
       Vgetclass(dim, vgclass);
-      if(!HDstrcmp(vgclass, DIMENSION) || 
-         !HDstrcmp(vgclass, UDIMENSION)) {
+      if(!HDstrcmp(vgclass, _HDF_DIMENSION) || 
+         !HDstrcmp(vgclass, _HDF_UDIMENSION)) {
          int is_dimval, is_dimval01;
          /* init both flags to FALSE  */
          is_dimval = FALSE;
@@ -1294,12 +1294,12 @@ int32  vg;
              VSgetclass(vs, vsclass);
 	     if(!HDstrcmp(vsclass, DIM_VALS)) {
                  is_dimval = TRUE;
-                 if (HDstrcmp(vgclass, UDIMENSION))  /* not unlimited di
+                 if (HDstrcmp(vgclass, _HDF_UDIMENSION))  /* not unlimited di
 m */
                      VSQuerycount(vs, &dim_size);   
              }
              if ((!HDstrcmp(vsclass, DIM_VALS01)) || 
-                 (!HDstrcmp(vgclass, UDIMENSION))) { /* DIM_VALS && UDIMENSION */
+                 (!HDstrcmp(vgclass, _HDF_UDIMENSION))) { /* DIM_VALS && _HDF_UDIMENSION */
 	          int32 val;	/* needs a temp var since handle->numrecs */
 				/* may not be an int32 */
                   VSsetfields(vs, "Values");
@@ -1310,7 +1310,7 @@ m */
                    */
                   if(VSread(vs, (uint8 *) &val, 1, FULL_INTERLACE) != 1)
                       HEprint(stderr, 0);
-                  if (!HDstrcmp(vgclass, UDIMENSION))   {
+                  if (!HDstrcmp(vgclass, _HDF_UDIMENSION))   {
                        dim_size = NC_UNLIMITED;
                        handle->numrecs = val;
                   }
@@ -1408,7 +1408,7 @@ int32   vg;
   }
 
   /*
-   * look through for a Vdata of class ATTRIBUTE
+   * look through for a Vdata of class _HDF_ATTRIBUTE
    */
   n = Vntagrefs(vg);
   for (t = 0; t < n; t++) {
@@ -1420,7 +1420,7 @@ int32   vg;
               HEprint(stdout, 0);
           
           VSgetclass(vs, class);
-          if(!HDstrcmp(class, ATTRIBUTE)) {
+          if(!HDstrcmp(class, _HDF_ATTRIBUTE)) {
               VSinquire(vs, &attr_size, NULL, fields, &vsize, vsname);
               nt = VFfieldtype(vs, 0);
               type = hdf_unmap_type(nt);
@@ -1527,7 +1527,7 @@ int32  vg;
   }
 
   /*
-   * Look through for a Vgroup of class VARIABLE
+   * Look through for a Vgroup of class _HDF_VARIABLE
    */
   vg_size = Vntagrefs(vg);
   for(i = 0; i < vg_size; i++) {
@@ -1537,7 +1537,7 @@ int32  vg;
           if(var == FAIL) continue;
           
          Vgetclass(var, class);
-          if(!HDstrcmp(class, VARIABLE)) {
+          if(!HDstrcmp(class, _HDF_VARIABLE)) {
               
               /*
                * We have found a VGroup representing a Variable
@@ -1561,10 +1561,10 @@ int32  vg;
                       sub = Vattach(handle->hdf_file, sub_id, "r");
 
                       Vgetclass(sub, class);
-                      if(!HDstrcmp(class, DIMENSION) || 
-                         !HDstrcmp(class, UDIMENSION)) {
+                      if(!HDstrcmp(class, _HDF_DIMENSION) || 
+                         !HDstrcmp(class, _HDF_UDIMENSION)) {
                           
-                          if(!HDstrcmp(class, UDIMENSION))
+                          if(!HDstrcmp(class, _HDF_UDIMENSION))
                               is_rec_var = TRUE;
                           
                           Vinquire(sub, &entries, subname);      
@@ -1755,7 +1755,7 @@ NC **handlep;
 #endif
 
 #ifdef OLD_WAY
-  /* find first thing of type CDF */
+  /* find first thing of type _HDF_CDF */
   vgid = -1;
   found = FALSE;
   while(!found && ((vgid = Vgetid((*handlep)->hdf_file, vgid)) != FAIL)) {
@@ -1763,7 +1763,7 @@ NC **handlep;
     if(cdf_vg == FAIL) 
         HRETURN_ERROR(DFE_CANTATTACH,FALSE);
     Vgetclass(cdf_vg, class);
-    if(!HDstrcmp(class, CDF)) 
+    if(!HDstrcmp(class, _HDF_CDF)) 
         found = TRUE;
     else 
         Vdetach(cdf_vg);
@@ -1772,7 +1772,7 @@ NC **handlep;
     return FALSE;
 
 #else
-    if((vgid=Vfindclass((*handlep)->hdf_file,CDF))!=FAIL) {
+    if((vgid=Vfindclass((*handlep)->hdf_file,_HDF_CDF))!=FAIL) {
         cdf_vg = Vattach((*handlep)->hdf_file, vgid, "r");
         if(cdf_vg == FAIL) 
             HRETURN_ERROR(DFE_CANTATTACH,FALSE);
@@ -1786,7 +1786,7 @@ NC **handlep;
 #if DEBUG
   Vinquire(cdf_vg, &entries, vgname);
 
- fprintf(stderr, "Found CDF : %s  (%d entries)\n", vgname, entries);
+ fprintf(stderr, "Found _HDF_CDF : %s  (%d entries)\n", vgname, entries);
 #endif
 
   /* read in dimensions */
@@ -2025,7 +2025,7 @@ void hdf_close(handle)
             if(Visvg(vg, id)) {
                 dim = Vattach(handle->hdf_file, id, "r");
                 Vgetclass(dim, class);
-                if(!HDstrcmp(class, UDIMENSION)) {
+                if(!HDstrcmp(class, _HDF_UDIMENSION)) {
                     sub_id = -1;
                     while((sub_id = Vgetnext(dim, sub_id)) != FAIL) {
                         if(Visvs(dim, sub_id)) {

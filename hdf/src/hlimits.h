@@ -182,19 +182,19 @@ ibute */
 ribute */
 
 /* classes of the Vdatas/Vgroups created by the SD interface, from local_nc.h  */
-#define ATTRIBUTE         "Attr0.0" 
+#define _HDF_ATTRIBUTE         "Attr0.0" 
         /* class of a Vdata containing SD interface attribute */
-#define VARIABLE          "Var0.0"
+#define _HDF_VARIABLE          "Var0.0"
         /* class of a Vgroup representing an SD NDG */
-#define DIMENSION         "Dim0.0"
+#define _HDF_DIMENSION         "Dim0.0"
         /* class of a Vgroup representing an SD dimension */
-#define UDIMENSION        "UDim0.0"
+#define _HDF_UDIMENSION        "UDim0.0"
         /* class of a Vgroup representing an SD UNLIMITED dimension*/
 #define DIM_VALS          "DimVal0.0"
         /* class of a Vdata containing an SD dimension size and fake values */
 #define DIM_VALS01        "DimVal0.1"
              /* class of a Vdata containing an SD dimension size */
-#define CDF               "CDF0.0"
+#define _HDF_CDF               "CDF0.0"
 /* DATA is defined in DTM. Change DATA to DATA0 *
 #define DATA              "Data0.0"
 */
