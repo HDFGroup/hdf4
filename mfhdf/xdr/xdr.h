@@ -44,7 +44,7 @@
  * decode as a series of calls on the nested data types.
  */
 /*
-#ifdef vms
+#if (defined vms) && !(defined __vax)   
 #include <in.h>
 typedef unsigned int    u_int;
 #endif

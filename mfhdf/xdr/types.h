@@ -37,8 +37,13 @@ long htonl(long);
 #include <stddef.h>
 #include <stdlib.h>
 #else
+#ifdef __vax
+extern void *malloc();
+#else
 extern char *malloc();
+#endif /* __vax */
 #endif
+
 #define mem_alloc(bsize)    malloc(bsize)
 #define mem_free(ptr, bsize)    free(ptr)
 
