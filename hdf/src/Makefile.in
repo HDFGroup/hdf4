@@ -597,7 +597,11 @@ uninstall-am: uninstall-includeHEADERS uninstall-info-am \
 	uninstall-libLIBRARIES
 
 .inc.f90:
-	sed -e 's/^[cC]/!/' -e 's/^     [^ ]/     \&/' < $(srcdir)/$< > $*.f90
+	if test -f $<; then                                             \
+	  sed -e 's/^[cC]/!/' -e 's/^     [^ ]/     \&/' < $< > $*.f90; \
+	else                                                            \
+	  sed -e 's/^[cC]/!/' -e 's/^     [^ ]/     \&/' < $(srcdir)/$< > $*.f90; \
+	fi
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
