@@ -31,6 +31,7 @@
 ./bin/snapshot
 
 ./config/BlankForm
+./config/irix6.x
 ./config/mh-aix
 ./config/mh-aix64
 ./config/mh-alpha
@@ -1011,6 +1012,7 @@
 ./mfhdf/ncgen/vmstab.h
 ./mfhdf/ncgen/vms_yy.c
 
+./mfhdf/nctest/Makefile.am
 ./mfhdf/nctest/Makefile.in
 ./mfhdf/nctest/README
 ./mfhdf/nctest/add.c
