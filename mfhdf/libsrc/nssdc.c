@@ -57,6 +57,21 @@
 #define CDF_CHAR     (long) 51                  /* a "string" data type */
 #define CDF_UCHAR    (long) 52                  /* a "string" data type */
 
+#define NETWORK_ENCODING        1L
+#define SUN_ENCODING            2L
+#define VAX_ENCODING            3L
+#define DECSTATION_ENCODING     4L
+#define SGi_ENCODING            5L
+#define IBMPC_ENCODING          6L
+#define IBMRS_ENCODING          7L
+#define HOST_ENCODING           8L
+#define HP_ENCODING             11L
+#define NeXT_ENCODING           12L
+#define ALPHAOSF1_ENCODING      13L
+#define ALPHAVMSd_ENCODING      14L
+#define ALPHAVMSg_ENCODING      15L
+
+
 /* ---------------------------- cdf_unmap_type ---------------------------- */
 /*
   UnMap a data type.  I.e. go from a CDF type to an NC_<type>
@@ -171,6 +186,16 @@ nssdc_read_cdf(xdrs, handlep)
      */
     if(!bitset(flags, CDF_FORMAT_BIT)) {
         fprintf(stderr, "We are only able to handle single-file CDFs.  Sorry.\n");
+        return (FALSE);
+    }
+
+    /* Check the encoding */
+    if((encoding != NETWORK_ENCODING) &&
+       (encoding != SUN_ENCODING)     && 
+       (encoding != SGi_ENCODING)     &&      
+       (encoding != IBMRS_ENCODING)   && 
+       (encoding != HP_ENCODING)) {
+        fprintf(stderr, "We are only able to handle IEEE encoded files.  Sorry.\n");
         return (FALSE);
     }
        
