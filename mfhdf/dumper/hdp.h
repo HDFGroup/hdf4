@@ -92,8 +92,7 @@ typedef enum {DASCII, DBINARY} file_type_t;
 /* 'dumpsds' command option structure */
 typedef struct {
 	filter_t filter;		/* Which data object to dump */
-	intn *filter_num;		/* ref #'s or indices to use as 
-					   filter */
+	intn *filter_num;		/* ref #'s or indices to use as filter */
 	char *filter_str[MAXCHOICES];	/* names or classes to use as filter */
 	content_t contents;		/* What contents to dump */
 	intn dump_to_file;		/* Whether to dump to a filename */
@@ -190,4 +189,3 @@ extern void sort_obj_list(objlist_t *o_list,sort_t sort_type);
 
 #endif /* __HDP_H */
 
-FILE *fopen();

@@ -52,17 +52,16 @@ int32 Vstr_index(int32 file_id, char filter_str[MAXNAMELEN], int name,
 void dumpvg_usage(intn argc,char *argv[])
 {
 	printf("Usage:\n");
-	printf("%s dumpvg [-a|-i <index>|-n <name>|-r <ref>|-c <class>] [-dhv] [-o <filename> [-bx]] <filelist>\n",argv[0]);
+	printf("%s dumpvg [-a|-i <index>|-n <name>|-r <ref>] [-dhv] [-o <filename> [-bx]] <filelist>\n",argv[0]);
 	printf("\t-a\tDump all VDs in the file (default)\n");
 	printf("\t-i <index>\tDump the <index>th SDS in the file \n");
-	printf("\t-n <name>\tDump the VGs with name <name>\n");
-	printf("\t-r <ref>\tDump the VGs with reference number <ref>\n");
-	printf("\t-c <class>\tDump the VGs with class <class>\n");
-	printf("\t-d\tDump data only, no tag/ref\n");
+	printf("\t-n <name>\tDump the VDS with name <name>\n");
+	printf("\t-r <ref>\tDump the VDS with reference number <ref>\n");
+	printf("\t-d\tDump data only, no tag/ref, formatted to input to hp2hdf\n");
 	printf("\t-h\tDump header only, no annotation for elements nor data\n");
 	printf("\t-v\tDump everything including all annotations (default)\n");
 	printf("\t-o <filename>\tOutput to file <filename>\n");
-	printf("\t-b\tBinary format of output ( not available)\n");
+	printf("\t-b\tBinary format of output\n");
 	printf("\t-x\tAscii text format of output (default)\n");
 }	/* end list_usage() */
 
@@ -275,6 +274,10 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
        
 	max_vgs = NUM_VGS;
 	list = (struct node**)HDmalloc(sizeof(struct node*)*max_vgs);
+        if (list==NULL) {
+	   printf("Not enough memory!\n");
+	   exit(-1);
+        }
 	num_vgs = 0;
 	for (i=0; (vg_ref=Vgetid(file_id,vg_ref))!=-1; i++) { 
 	   int32 skip=FALSE;
@@ -302,6 +305,10 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
 	      list = HDregetspace(list,(uint32)sizeof(struct node)*max_vgs);
            }
 	   list[i] = (struct node*)HDmalloc(sizeof(struct node)); 
+           if (list[i]==NULL) {
+	      printf("Not enough memory!\n");
+	      exit(-1);
+           }
 	   num_nodes++;
 	   
 	   switch (dumpvg_opts->contents) {
@@ -317,6 +324,10 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
 		 len = DFANgetdesclen(file_name,vg_tag,vg_ref);
 		 if (len!=FAIL) {
 		    label_str = (char *) HDmalloc((uint32) len + 1);
+                    if (label_str==NULL) {
+	               printf("Not enough memory!\n");
+	               exit(-1);
+                    }
 		    status = DFANgetdesc(file_name,vg_tag,vg_ref,
 					 label_str,len+1);
 		    label_str[len] = '\0';
@@ -376,8 +387,15 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode,
 
    num_entries = Vntagrefs(vg_id);
    aNode->children = (char**)HDmalloc(sizeof(char*)*num_entries);
+   if (aNode->children==NULL) {
+      printf("Not enough memory!\n");
+      exit(-1);
+   }
    aNode->type = (char**)HDmalloc(sizeof(char*)*num_entries);
-   
+   if (aNode->type==NULL) {
+      printf("Not enough memory!\n");
+      exit(-1);
+   }
    for (t = 0; t<num_entries; t++) {
       Vgettagref(vg_id, t, &tag, &vsid);
       found = 1;
@@ -402,8 +420,16 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode,
          } 
 	 Vdetach(vgt);
 	 aNode->children[t] = (char*)HDmalloc(sizeof(char)*HDstrlen(vgname));
+         if (aNode->children[t]==NULL) {
+            printf("Not enough memory!\n");
+            exit(-1);
+         }
 	 HDstrcpy(aNode->children[t], vgname);
 	 aNode->type[t] = (char*)HDmalloc(sizeof(char)*3);
+         if (aNode->type[t]==NULL) {
+            printf("Not enough memory!\n");
+            exit(-1);
+         }
 	 HDstrcpy(aNode->type[t], "vg");
       } /* if */
       else if (tag == VSDESCTAG) {
@@ -461,9 +487,17 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode,
 
 	 VSdetach(vs);
 	 aNode->children[t] = (char*)HDmalloc(sizeof(char)*HDstrlen(vsname));
+         if (aNode->children[t]==NULL) {
+            printf("Not enough memory!\n");
+            exit(-1);
+         }
 	 HDstrcpy(aNode->children[t], vsname); 
 	 
 	 aNode->type[t] = (char*)HDmalloc(sizeof(char)*3);
+         if (aNode->type[t]==NULL) {
+            printf("Not enough memory!\n");
+            exit(-1);
+         }
 	 HDstrcpy(aNode->type[t], "vd");
       }
       else {
@@ -475,14 +509,36 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode,
 	    fprintf(fp, "\ttag = %d; reference = %d;\n", (int) tag, (int) vsid);
 	 }
 	 aNode->children[t] = (char*)HDmalloc(sizeof(char)*4);
+         if (aNode->children[t]==NULL) {
+            printf("Not enough memory!\n");
+            exit(-1);
+         }
          HDstrcpy(aNode->children[t], "***"); 
+/*
 	 tempPtr = (char*)HDgettagdesc((uint16) tag);
 	 if (!tempPtr) {
 	    aNode->type[t] = (char*)HDmalloc(sizeof(char)*15);
+            if (aNode->type[t]==NULL) {
+               printf("Not enough memory!\n");
+               exit(-1);
+            }
 	    HDstrcpy(aNode->type[t], "Unknown Object"); 
          }
 	 else
-	    aNode->type[t] = tempPtr + 6;
+	    aNode->type[t] = tempPtr;
+ */
+
+	 if (!strcmp(name, "Unknown Tag")) {
+	    aNode->type[t] = (char*)HDmalloc(sizeof(char)*15);
+            if (aNode->type[t]==NULL) {
+               printf("Not enough memory!\n");
+               exit(-1);
+            }
+	    HDstrcpy(aNode->type[t], "Unknown Object"); 
+         }
+	 else
+	    aNode->type[t] = name;
+
       }
    } /* for */
    aNode->children[num_entries] = NULL;

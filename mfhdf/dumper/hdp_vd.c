@@ -50,19 +50,16 @@ int32 charcount(char *str, char onechar)
 void dumpvd_usage(intn argc,char *argv[])
 {
 	printf("Usage:\n");
-	printf("%s dumpvd [-a|-i <index>|-n <name>|-r <ref>|-c <class>]",argv[0]);
-        printf(" [-dhv] [-f <fields>] [-o <filename> [-bx]] <filelist>\n");
+	printf("%s dumpvd [-a|-i <index>|-n <name>|-r <ref>] [-dhv] [-o <filename> [-bx]] <filelist>\n",argv[0]);
 	printf("\t-a\tDump all VDs in the file (default)\n");
 	printf("\t-i <index>\tDump the <index>th SDS in the file \n");
-	printf("\t-n <name>\tDump the VDs with name <name>\n");
-	printf("\t-r <ref>\tDump the VDs with reference number <ref>\n");
-        printf("\t-c <class>\tDump the VDs with class <class>\n");
-	printf("\t-d\tDump data only, no tag/ref\n");
+	printf("\t-n <name>\tDump the VDS with name <name>\n");
+	printf("\t-r <ref>\tDump the VDS with reference number <ref>\n");
+	printf("\t-d\tDump data only, no tag/ref, formatted to input to hp2hdf\n");
 	printf("\t-h\tDump header only, no annotation for elements nor data\n");
 	printf("\t-v\tDump everything including all annotations (default)\n");
-        printf("\t-f <fields>\tDump data of specified fields.\n");
 	printf("\t-o <filename>\tOutput to file <filename>\n");
-	printf("\t-b\tBinary format of output ( not available)\n");
+	printf("\t-b\tBinary format of output\n");
 	printf("\t-x\tAscii text format of output (default)\n");
 }	/* end list_usage() */
 
@@ -97,10 +94,18 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
 		case 'i':	/* dump by index */
 		    dumpvd_opts->filter=DINDEX;	
                     (*curr_arg)++;
-		    string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);	
+		    string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);
+		    if (string==NULL) {
+		       printf("Not enough memory!\n");
+	               exit(-1);
+		    }
 		    ptr = argv[*curr_arg];
 		    dumpvd_opts->filter_num = (int*)HDmalloc(sizeof(int)*
 					      (charcount(ptr, ',')+1));
+		    if (dumpvd_opts->filter_num==NULL) {
+		       printf("Not enough memory!\n");
+	               exit(-1);
+		    }
 		    lastItem = 0;
 		    /* Extract each index from the index list and store it 
 		       as an element into the "filter_num" array. */
@@ -122,9 +127,17 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
                     dumpvd_opts->filter=DREFNUM;
 		    (*curr_arg)++;
 		    string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);	
+		    if (string==NULL) {
+		       printf("Not enough memory!\n");
+	               exit(-1);
+		    }
                     ptr = argv[*curr_arg];
 		    dumpvd_opts->filter_num = (int*)HDmalloc(sizeof(int)*
 					      (charcount(ptr, ',')+1));
+		    if (dumpvd_opts->filter_num==NULL) {
+		       printf("Not enough memory!\n");
+	               exit(-1);
+		    }
                     lastItem = 0;
                     for (i=0; !lastItem; i++) {
                        tempPtr = HDstrchr(ptr, ',');
@@ -133,6 +146,10 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
                        else
                           *tempPtr = '\0';
 		       string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);	
+		       if (string==NULL) {
+		          printf("Not enough memory!\n");
+	                  exit(-1);
+		       }
                        HDstrcpy(string, ptr);
                        dumpvd_opts->filter_num[i] = atoi(string);
                        ptr = tempPtr + 1;
@@ -155,6 +172,10 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
 		       else 
 			  *tempPtr = '\0';
 		       string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);	
+		       if (string==NULL) {
+		          printf("Not enough memory!\n");
+	                  exit(-1);
+		       }
 		       HDstrcpy(string, ptr);
 		       dumpvd_opts->filter_str[i] = string;
 		       ptr = tempPtr +1;
@@ -175,6 +196,10 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
 		       else
 			  *tempPtr = '\0';
 		       string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);
+		       if (string==NULL) {
+		          printf("Not enough memory!\n");
+	                  exit(-1);
+		       }
 		       HDstrcpy(string,ptr);
 		       dumpvd_opts->filter_str[i] = string;
 		       ptr = tempPtr + 1;
@@ -198,6 +223,10 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
 		       else
 			  *tempPtr = '\0';
 		       string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN); 
+		       if (string==NULL) {
+		          printf("Not enough memory!\n");
+	                  exit(-1);
+		       }
 		       HDstrcpy(string, ptr); 
 		       flds_chosen[i] = string;
 		       ptr = tempPtr + 1;
@@ -311,23 +340,6 @@ void do_dumpvd(intn curr_arg,intn argc,char *argv[],dump_opt_t *glob_opts)
 */
 static int32 cn = 0;
 
-
-int32 fmtbyte(unsigned char *x, FILE *ofp);
-int32 fmtint8(VOIDP x, FILE *ofp);
-int32 fmtuint8(VOIDP x, FILE *ofp);
-int32 fmtint16(VOIDP x, FILE *ofp);
-int32 fmtuint16(VOIDP x, FILE *ofp);
-int32 fmtchar(VOIDP x, FILE *ofp);
-int32 fmtuchar8(VOIDP x, FILE *ofp);
-int32 fmtint(VOIDP x, FILE *ofp);
-int32 fmtfloat32(VOIDP x, FILE *ofp);
-int32 fmtint32(VOIDP x, FILE *ofp);
-int32 fmtuint32(VOIDP x, FILE *ofp);
-int32 fmtshort(VOIDP x, FILE *ofp);
-int32 fmtfloat64(char *x, FILE *ofp);
-
-#define BUFFER 1000000
-
 int choose_vd(dump_info_t *dumpvd_opts, int32 vd_chosen[MAXCHOICES], 
 	      int32 file_id, int *index_error)
 {
@@ -353,9 +365,6 @@ int choose_vd(dump_info_t *dumpvd_opts, int32 vd_chosen[MAXCHOICES],
 	       k++;
             }
          } /* for */
-/*	 for (i=0; vd_chosen[i]!=-1; i++)
-	    printf("%d\n", vd_chosen[i]);
-*/
          break;
       case DNAME: 
          for (i=0; dumpvd_opts->filter_str[i]!=NULL; i++) {
@@ -439,18 +448,17 @@ static intn dvd(dump_info_t *dumpvd_opts, intn curr_arg,
 
         /* Find out which VDs have been chosen. */
         choose_vd(dumpvd_opts, vd_chosen, file_id, &index_error);
-/*
-        for (i=0; i<5; i++)
-	    printf("*** %d\n", vd_chosen[i]);
-*/
+	
 	/* In case of index error, skip the current file. */
 	if (index_error)
 	   continue;
+
         /* Get output file name.  */
         if (dumpvd_opts->dump_to_file) 
 	   fp = fopen(dumpvd_opts->file_name, "w");
         else 
 	   fp = stdout;
+
         if (dumpvd_opts->contents!=DDATA)
            fprintf(fp, "File name: %s \n\n", file_name);
 	Vstart(file_id);
@@ -462,26 +470,12 @@ static intn dvd(dump_info_t *dumpvd_opts, intn curr_arg,
 	else { /* Otherwise, sort the indices of the chosen VDs in increasing 
 	   	  order so that they will be dumped out in such order. */
 	   sort(vd_chosen); 
-/*
-           int32 i, j, temp;
-	   for (i=0; vd_chosen[i]!=-1; i++)
-	      for (j=i; vd_chosen[j]!=-1; j++)
-		 if (vd_chosen[i]>vd_chosen[j]) {
-		    temp = vd_chosen[i];
-		    vd_chosen[i] = vd_chosen[j];
-		    vd_chosen[j] = temp;
-                 }
-*/
         }
-/*
-	for (i=0; vd_chosen[i]!=-1; i++)
-	   printf("vd_chosen[%d]=%d\n", i, vd_chosen[i]);
-*/
+
 	/* Examine each VD. */
 	for (i=0; (vdata_ref=VSgetid(file_id,vdata_ref)) != -1; i++) { 
 	   int data_only, flds_match=0;
-	   char sep[2];
-           
+	   char sep[2], dummy;
 	   /* Only dump the info of the chosen VDs or all of the VDs if none
 	      has been selected. */
 	   if ((!dumpall) && (i!=vd_chosen[x])) 
@@ -583,10 +577,15 @@ static intn dvd(dump_info_t *dumpvd_opts, intn curr_arg,
 			    vsize);
 		    fprintf(fp, "   name = %s; class = %s;\n", 
 		            vdname, vdclass);
+
 		    /* read in all of the annotations */
 		    len = DFANgetdesclen(file_name,vdata_tag,vdata_ref);
 		    if (len != FAIL) {
 		       label_str = (char *) HDmalloc((uint32) len + 1);
+		       if (label_str==NULL) {
+		          printf("Not enough memory!\n");
+	                  exit(-1);
+		       }
 		       status = DFANgetdesc(file_name,vdata_tag,vdata_ref,
 					    label_str,len+1);
 		       label_str[len] = '\0';
@@ -596,13 +595,14 @@ static intn dvd(dump_info_t *dumpvd_opts, intn curr_arg,
 		          printf("\t  Description: %s\n",label_str);
                        HDfree(label_str);
                     } /* if (len != FAIL) */
+
 	         case DHEADER: /* header only, no annotations nor data */
 		    if (dumpvd_opts->contents == DHEADER) 
 		       break;
 	         case DDATA: /* data only */
 		    if (dumpvd_opts->contents == DDATA) {
 		       data_only = 1;
-		       HDstrcpy(sep, "");
+		       HDstrcpy(sep, ""); 
 		    }
 		    else {
 		       data_only = 0;
@@ -614,10 +614,12 @@ static intn dvd(dump_info_t *dumpvd_opts, intn curr_arg,
 	      } /* switch */
 	   }
 	   VSdetach(vd_id);
-         } /* for */
-	 Vend(file_id);
-      }      /* while (curr_arg < argc)  */
-      return(0);
+        } /* for */
+	Vend(file_id);
+        if (dumpvd_opts->dump_to_file) 
+	   fclose(fp);
+     }  /* while (curr_arg < argc)  */
+     return(0);
 }     /* dvd */
 
 

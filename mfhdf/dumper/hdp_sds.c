@@ -48,11 +48,11 @@ void dumpsds_usage(intn argc,char *argv[])
 	printf("\t-i <index>\tDump the <index>th SDS in the file \n");
 	printf("\t-n <name>\tDump the SDS with name <name>\n");
 	printf("\t-r <ref>\tDump the SDS with reference number <ref>\n");
-	printf("\t-d\tDump data only, no tag/ref\n");
+	printf("\t-d\tDump data only, no tag/ref, formatted to input to hp2hdf\n");
 	printf("\t-h\tDump header only, no annotation for elements nor data\n");
 	printf("\t-v\tDump everything including all annotations (default)\n");
 	printf("\t-o <filename>\tOutput to file <filename>\n");
-	printf("\t-b\tBinary format of output ( not available)\n");
+	printf("\t-b\tBinary format of output\n");
 	printf("\t-x\tAscii text format of output (default)\n");
 }	/* end list_usage() */
 
@@ -68,9 +68,11 @@ void init_dumpsds_opts(dump_info_t *dumpsds_opts)
 
 intn parse_dumpsds_opts(dump_info_t *dumpsds_opts,intn *curr_arg,intn argc,char *argv[])
 {
-     int32 i, k, lastItem, number=1;
+     int32 i, lastItem, numItems;
      char *tempPtr, *ptr, *string;
-        if (*curr_arg >= argc) return(FAIL); 
+
+    if (*curr_arg >= argc) return(FAIL); 
+
 	while ((*curr_arg < argc) && 
               (argv[*curr_arg][0]=='-')) { 
 	    switch(argv[*curr_arg][1]) {
@@ -81,46 +83,64 @@ intn parse_dumpsds_opts(dump_info_t *dumpsds_opts,intn *curr_arg,intn argc,char 
 
 		case 'i':	/* dump by index */
 		    dumpsds_opts->filter=DINDEX;	
-                    (*curr_arg)++;
-		    dumpsds_opts->filter_num = (int*)HDmalloc(sizeof(int*)*1000);
-		    string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);
+            (*curr_arg)++;
+
 		    ptr = argv[*curr_arg];
-		    lastItem = 0;
-		    for (i=0; !lastItem; i++) {
-		       tempPtr = strchr(ptr, ',');
-		       if (tempPtr==NULL)
-			  lastItem = 1;
-		       else
-			  *tempPtr = '\0';
-	 	       HDstrcpy(string, ptr);
-		       dumpsds_opts->filter_num[i] = atoi(string);
+            numItems=0;
+            while((tempPtr=HDstrchr(ptr,','))!=NULL)
+              {
+                  numItems++;
+                  ptr++;
+              } /* end while */
+
+		    dumpsds_opts->filter_num = (intn*)HDmalloc(sizeof(intn)*numItems);
+		    if (dumpsds_opts->filter_num==NULL) {
+		       printf("Not enough memory!\n");
+		       exit(-1);
+            }
+		    ptr = argv[*curr_arg];
+            i=0;
+            while((tempPtr=HDstrchr(ptr,','))!=NULL)
+              {
+               *tempPtr = '\0';
+		       dumpsds_opts->filter_num[i] = atoi(ptr);
 		       ptr = tempPtr + 1;
+               i++;
 		    }
 		    dumpsds_opts->filter_num[i] = -1;
 		    (*curr_arg)++;
 		    break;
 
-                case 'r':       /* dump by reference */
-                    dumpsds_opts->filter=DREFNUM;
-                    (*curr_arg)++; 
-		    dumpsds_opts->filter_num = (int*)HDmalloc(sizeof(int*)*1000);
-		    string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);
-		    lastItem = 0;
-		    ptr = argv[*curr_arg];
-		    for (i=0; !lastItem; i++) {
-			tempPtr = strchr(ptr, ',');
-			if (tempPtr==NULL)
-			   lastItem = 1;
-		        else
-			   *tempPtr = '\0';
-		        string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);
-			HDstrcpy(string,ptr);
-			dumpsds_opts->filter_num[i] = atoi(string);
-			ptr = tempPtr + 1;
-		    }
-		    dumpsds_opts->filter_num[i] = -1;
-		    (*curr_arg)++;
-                    break;
+            case 'r':       /* dump by reference */
+                dumpsds_opts->filter=DREFNUM;
+                (*curr_arg)++; 
+
+                ptr = argv[*curr_arg];
+                numItems=0;
+                while((tempPtr=HDstrchr(ptr,','))!=NULL)
+                  {
+                      numItems++;
+                      ptr++;
+                  } /* end while */
+
+                dumpsds_opts->filter_num = (intn*)HDmalloc(sizeof(intn)*numItems);
+                if (dumpsds_opts->filter_num==NULL) {
+                   printf("Not enough memory!\n");
+                   exit(-1);
+                        }
+
+                ptr = argv[*curr_arg];
+                i=0;
+                while((tempPtr=HDstrchr(ptr,','))!=NULL)
+                  {
+                   *tempPtr = '\0';
+                   dumpsds_opts->filter_num[i] = atoi(ptr);
+                   ptr = tempPtr + 1;
+                   i++;
+                }
+                dumpsds_opts->filter_num[i] = -1;
+                (*curr_arg)++;
+                break;
 
 		case 'n':	/* dump by names */
 		    dumpsds_opts->filter=DNAME;	/* dump by name */
@@ -128,12 +148,16 @@ intn parse_dumpsds_opts(dump_info_t *dumpsds_opts,intn *curr_arg,intn argc,char 
 		    lastItem = 0;
 		    ptr = argv[*curr_arg];
 		    for (i=0; !lastItem; i++) {
-		       tempPtr = strchr(ptr, ',');
+		       tempPtr = HDstrchr(ptr, ',');
 		       if (tempPtr==NULL)
 			  lastItem = 1;
 		       else
 			  *tempPtr = '\0';
 		       string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);
+		       if (string==NULL) {
+		          printf("Not enough memory!\n");
+		          exit(-1);
+                       }
 		       HDstrcpy(string, ptr);
 		       dumpsds_opts->filter_str[i] = string;
 		       ptr = tempPtr + 1;
@@ -196,14 +220,14 @@ void do_dumpsds(intn curr_arg,intn argc,char *argv[],dump_opt_t *glob_opts)
         case DINDEX : 
             ret = dsd(&dumpsds_opts, curr_arg, argc, argv);
             if (ret == FAIL) {
-                printf("Failure in dump %ith SDS \n", dumpsds_opts.filter_num);
+                printf("Failure in dump %dth SDS \n", dumpsds_opts.filter_num);
                 exit(1);
             }
             break;
         case DREFNUM :
             ret = dsd(&dumpsds_opts, curr_arg, argc, argv);
             if (ret == FAIL) {
-                printf("Failure in dump ref=%i SDS \n", dumpsds_opts.filter_num);
+                printf("Failure in dump ref=%d SDS \n", dumpsds_opts.filter_num);
                 exit(1);
             }
             break;
@@ -385,7 +409,7 @@ int32 dumpfull(int32 nt,int32 cnt,VOIDP databuf,intn indent,FILE *ofp)
             fmtfunct = fmtfloat64;
             break;
        default:
-            fprintf(ofp, "HDP does not support type [%i] \n", (int)nt);
+            fprintf(ofp, "HDP does not support type [%d] \n", (int)nt);
             break;
     }
     b = databuf;
@@ -420,7 +444,7 @@ int32 sdsdumpfull(int32 sds_id, int32 rank, int32 dimsizes[], int32 nt,
     int32 *left, *start, *edge;
 
     if (indent>65)  { /* This block is probably not necessary. */
-         printf("Bad indentation %i\n", indent);
+         printf("Bad indentation %d\n", indent);
          exit(1);
     } 
    
@@ -429,9 +453,25 @@ int32 sdsdumpfull(int32 sds_id, int32 rank, int32 dimsizes[], int32 nt,
 
     read_nelts = dimsizes[rank-1];
     buf=(VOIDP)HDmalloc(read_nelts*eltsz);
+    if (buf==NULL) {
+       printf("Not enough memory!\n");
+       exit(-1);
+    }
     left = (int32 *)HDmalloc(rank * sizeof(int32));
+    if (left==NULL) {
+       printf("Not enough memory!\n");
+       exit(-1);
+    }
     start = (int32 *)HDmalloc(rank * sizeof(int32));
+    if (start==NULL) {
+       printf("Not enough memory!\n");
+       exit(-1);
+    }
     edge = (int32 *)HDmalloc(rank*sizeof(int32));
+    if (edge==NULL) {
+       printf("Not enough memory!\n");
+       exit(-1);
+    }
     for (i=0; i<rank; i++)   {
         start[i] = 0; /* Starting location to read the data. */
         left[i] = dimsizes[i]; 
@@ -633,15 +673,15 @@ static intn dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[
                      if (isdimvar) {
                          fprintf(fp,"\nDimension Variable Name = %s\n\t ",
 				 name); 
-			 fprintf(fp,"Index = %i\n\t Type= %s\n", i, nt_desc);
+			 fprintf(fp,"Index = %d\n\t Type= %s\n", i, nt_desc);
                      } 
 		     else {
                          fprintf(fp,"\nVariable Name = %s\n\t Index = ", name);
-			 fprintf(fp,"%i\n\t Type= %s\n", i, nt_desc);
+			 fprintf(fp,"%d\n\t Type= %s\n", i, nt_desc);
                      }
 		     HDfree(nt_desc);
-		     fprintf(fp,"\t Ref. = %i\n", (int)sd_ref);
-                     fprintf(fp,"\t Rank = %i\n\t Number of attributes = %i\n",
+		     fprintf(fp,"\t Ref. = %d\n", (int)sd_ref);
+                     fprintf(fp,"\t Rank = %d\n\t Number of attributes = %d\n",
                                    (int)rank, (int)nattr);
                      for (j=0; j<rank; j++)   {
 			 int32 temp;
@@ -649,16 +689,16 @@ static intn dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[
                          ret = SDdiminfo(dim_id, dim_nm, &temp,
                                  &(dimNT[j]), &(dimnattr[j]));
                          attr_nt_desc = HDgetNTdesc(dimNT[j]);
-                         fprintf(fp, "\t Dim%i: Name=%s\n", (int)j, dim_nm);
+                         fprintf(fp, "\t Dim%d: Name=%s\n", (int)j, dim_nm);
                          if (temp == 0)  {
 			  fprintf(fp, "\t\t Size = UNLIMITED ");
-			  fprintf(fp, "(currently %i)\n", (int)dimsizes[j]);
+			  fprintf(fp, "(currently %d)\n", (int)dimsizes[j]);
 			 }
 			 else
-			    fprintf(fp, "\t\t Size = %i\n",(int)dimsizes[j]);
+			    fprintf(fp, "\t\t Size = %d\n",(int)dimsizes[j]);
 			 fprintf(fp, "\t\t Type = %s\n",attr_nt_desc); 
 			 HDfree(attr_nt_desc);
-                         fprintf(fp, "\t\t Number of attributes = %i\n", 
+                         fprintf(fp, "\t\t Number of attributes = %d\n", 
 				 (int)dimnattr[j]);
                      }
 		     /* Print annotations */
@@ -677,14 +717,18 @@ static intn dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[
                          }
                          attr_buf_size = DFKNTsize(attr_nt)*attr_count;
                          attr_buf =(VOIDP) HDmalloc(attr_buf_size);
+                         if (attr_buf==NULL) {
+                            printf("Not enough memory!\n");
+                            exit(-1);
+                         }
                          ret=SDreadattr(sds_id, attr_index, attr_buf);
                          if (ret == FAIL) {
                              printf("Failure in SDfindattr %s\n", file_name);
                              exit(1);
                          }
-                         fprintf(fp, "\t Attr%i: Name = %s\n", (int)attr_index,
+                         fprintf(fp, "\t Attr%d: Name = %s\n", (int)attr_index,
 				 attr_name);
-                         fprintf(fp, "\t\t Type = %s \n\t\t Count= %i\n", 
+                         fprintf(fp, "\t\t Type = %s \n\t\t Count= %d\n", 
                                         attr_nt_desc, (int)attr_count);
                          HDfree(attr_nt_desc);
                          fprintf(fp, "\t\t Value = ");
