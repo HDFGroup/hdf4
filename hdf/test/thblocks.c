@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/05/14 15:25:31  chouck
-Fixed calls to Hinquire()
+Revision 1.3  1992/05/29 22:30:15  mfolk
+Added some casts to avoid warnings when compiling on Convex.
 
+ * Revision 1.2  1992/05/14  15:25:31  chouck
+ * Fixed calls to Hinquire()
+ *
  * Revision 1.1  1992/02/10  20:59:34  chouck
  * Initial revision
  *
@@ -16,7 +19,7 @@ Fixed calls to Hinquire()
 #include "hdf.h"
 #define TESTFILE_NAME "t.hdf"
 static int shell = 0;
-char outbuf[4096], inbuf[4096];
+uint8 outbuf[4096], inbuf[4096];
 
 void do_shell()
 {
@@ -57,14 +60,15 @@ int main(argc, argv)
 
     puts("putting some data elements into the file.");
     puts("Regular Data element 1000 1");
-    ret = Hputelement(fid, 1000, 1, "element 1000 1 wrong",
+    ret = Hputelement(fid, (uint16) 1000, (uint16) 1, 
+                     (uint8 *) "element 1000 1 wrong",
                       strlen("element 1000 1 wrong") + 1);
     printf("ret from Hputelement is %d\n", ret);
     aid1 = HLcreate(fid, 1000, 1, 10,10);
     printf("aid1 from HLcreate is %d\n", aid1);
     ret = Hseek(aid1, strlen("element 1000 1"), DF_START);
     printf("ret from Hseek is %d\n", ret);
-    ret = Hwrite(aid1, strlen("correct")+1, "correct");
+    ret = Hwrite(aid1, strlen("correct")+1, (uint8 *) "correct");
     printf("ret from Hwrite is %d\n", ret);
     ret = Hendaccess(aid1);
     printf("ret from Hendaccess is %d\n", ret);
@@ -90,7 +94,7 @@ int main(argc, argv)
     printf("ret from Hendaccess is %d\n", ret);
 
     puts("getting data element 1000 4");
-    ret = Hgetelement(fid, 1000, 4, inbuf);
+    ret = Hgetelement(fid, (uint16) 1000, (uint16) 4, inbuf);
     printf("ret from Hgetelement is %d\n", ret);
     for (i=0; i<ret; i++) {
        if (inbuf[i] != outbuf[i])
@@ -187,7 +191,7 @@ int main(argc, argv)
     printf("aid from Hstartwrite is %d\n", aid1);
 
     puts("writing ABCD into data element");
-    ret = Hwrite(aid2, 4, "ABCD");
+    ret = Hwrite(aid2, 4, (uint8 *) "ABCD");
     printf("ret from Hwrite is %d\n", ret);
 
     puts("ending read access element");
