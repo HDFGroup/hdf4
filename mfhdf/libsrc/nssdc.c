@@ -185,7 +185,9 @@ nssdc_read_cdf(xdrs, handlep)
      * Only handle single file implementations for now
      */
     if(!bitset(flags, CDF_FORMAT_BIT)) {
+#ifdef DEBUG
         fprintf(stderr, "We are only able to handle single-file CDFs.  Sorry.\n");
+#endif
         return (FALSE);
     }
 
@@ -195,7 +197,9 @@ nssdc_read_cdf(xdrs, handlep)
        (encoding != SGi_ENCODING)     &&      
        (encoding != IBMRS_ENCODING)   && 
        (encoding != HP_ENCODING)) {
+#ifdef DEBUG
         fprintf(stderr, "We are only able to handle IEEE encoded files.  Sorry.\n");
+#endif
         return (FALSE);
     }
        
@@ -845,9 +849,11 @@ nssdc_write_cdf(xdrs, handlep)
     fprintf(stderr, "nssdc_write_cdf i've been called\n");
 #endif
 
+#ifdef DEBUG
     fprintf(stderr, "We are sorry, we currently do not support writing to\n");
     fprintf(stderr, "CDF files.  If you would like to see this capabilities\n");
     fprintf(stderr, "please contact the HDF group at NCSA.\n");
+#endif
 
     return (FALSE);
         

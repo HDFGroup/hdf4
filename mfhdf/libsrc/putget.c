@@ -304,7 +304,9 @@ const long *coords ;
             return( vp->begin + handle->recsize * *coords + offset) ;
             break;
         case CDF_FILE:
+#ifdef DEBUG
             fprintf(stderr, "Yow!  Don't do CDF records yet\n");
+#endif
             return (0);
             break;
         }
@@ -1119,14 +1121,10 @@ uint32    count;
 
 #ifdef DEBUG
     fprintf(stderr, "nssdc_xdr_NCvdata I've been called : %s\n", vp->name->values);
-#endif
-
-#ifdef DEBUG 
     fprintf(stderr, "Where = %d  count = %d\n", where, count);
-#endif
-
     fprintf(stderr, "nssdc_xdr_NCvdata I've been called : %s reading %d from %d\n", 
             vp->name->values, count, where);
+#endif
 
     /* position ourselves correctly */
     status = HI_SEEK((hdf_file_t) handle->cdf_fp, where);
@@ -1143,7 +1141,9 @@ uint32    count;
     }
     
 
+#ifdef DEBUG
     fprintf(stderr, "\tbyte_count %d   vp->HDFsize %d\n", byte_count, vp->HDFsize);
+#endif
 
     /* Read or write the data into / from values */
     if(handle->xdrs->x_op == XDR_DECODE) {

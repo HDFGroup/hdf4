@@ -229,7 +229,9 @@ PRIVATE intn hdf_read_ndgs(handle)
             uint16 ntTag, ntRef;
             
             if(HQuerytagref(aid, &ndgTag, &ndgRef) == FAIL) {
+#ifdef DEBUG
                 fprintf(stderr, "Call to Hinquire failed\n");
+#endif
                 return FALSE;
             }
 

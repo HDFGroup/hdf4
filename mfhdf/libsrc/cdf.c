@@ -147,8 +147,10 @@ int mode ;
             else
                 cdf->file_type = netCDF_FILE;
             
+#ifdef DEBUG
             if(cdf->file_type == CDF_FILE)
                 printf("Yow!  found a CDF file\n");
+#endif
         }
 
         /*
@@ -242,7 +244,9 @@ int mode ;
 #endif /* macintosh */
             break;
         case CDF_FILE:
+#ifdef DEBUG
             fprintf(stderr, "About to do CDF file set up\n");
+#endif
             cdf->cdf_fp =  HI_OPEN(name, hdf_mode);
             if (OPENERR(cdf->cdf_fp)) 
                 HRETURN_ERROR(DFE_DENIED,NULL);
@@ -678,7 +682,9 @@ NC_dim *dim;
                         DFNT_INT32, dim->name->values, DIM_VALS);
       
       if(ref == FAIL) {
+#ifdef DEBUG
           fprintf(stderr, "FAILed creating Vdata %s\n", dim->name->values);
+#endif
           return FAIL;
       }
       
@@ -987,6 +993,7 @@ NC_var **var;
   (*var)->vgid = VHmakegroup(handle->hdf_file, tags, refs, count, 
                              (*var)->name->values, VARIABLE);
 
+#ifdef DEBUG
   if((*var)->vgid == FAIL) {
       fprintf(stderr, "Failed to write variable %s\n", (*var)->name->values);
       fprintf(stderr, "count = %d\n", count);
@@ -995,6 +1002,7 @@ NC_var **var;
           
       HEprint(stdout, 0);
   }  
+#endif
 
   return (*var)->vgid;
   
@@ -1034,7 +1042,9 @@ NC **handlep;
   tags = (int32 *) HDmalloc(sz * sizeof(int32) + 1);
   refs = (int32 *) HDmalloc(sz * sizeof(int32) + 1);
   if(!tags || !refs) {
+#ifdef DEBUG
       fprintf(stderr, "Out of memory line %d file %s\n", __LINE__, __FILE__);
+#endif
       return FALSE;
   }
 
@@ -1161,7 +1171,9 @@ int32  vg;
   count = 0;
   dimension = (NC_dim **) HDmalloc(sizeof(NC_dim *) * Vntagrefs(vg) + 1);
   if(!dimension) {
+#ifdef DEBUG
     fprintf(stderr, "Out of memory line %d file %s\n", __LINE__, __FILE__);
+#endif
     return FAIL;
   }
 
@@ -1204,7 +1216,9 @@ int32  vg;
 
 	      dimension[count] = NC_new_dim(vgname, dim_size);
 	      if(!dimension[count]) {
+#ifdef DEBUG
 		fprintf(stderr, "Can't create new dimension #%d\n", count);
+#endif
 		return FAIL;
 	      }
 	      
@@ -1268,7 +1282,9 @@ int32   vg;
   count = 0;
   attributes = (NC_attr **) HDmalloc(sizeof(NC_attr *) * Vntagrefs(vg) + 1);
   if(!attributes) {
+#ifdef DEBUG
     fprintf(stderr, "Out of memory line %d file %s\n", __LINE__, __FILE__);
+#endif
     return NULL;
   }
 
@@ -1300,7 +1316,9 @@ int32   vg;
               attributes[count] = 
                   (NC_attr *) NC_new_attr(vsname, type, attr_size, values);
               if(!attributes[count]) {
+#ifdef DEBUG
                   fprintf(stderr, "Can't create new attribute #%d\n", count);
+#endif
                   return NULL;
               }
               attributes[count]->HDFtype = nt;
@@ -1371,7 +1389,9 @@ int32  vg;
   count = 0;
   variables = (NC_var **) HDmalloc(sizeof(NC_var *) * Vntagrefs(vg) + 1);
   if(!variables) {
+#ifdef DEBUG
     fprintf(stderr, "Out of memory line %d file %s\n", __LINE__, __FILE__);
+#endif
     return FAIL;
   }
 
@@ -1380,7 +1400,9 @@ int32  vg;
    */
   dims = (int *) HDmalloc(sizeof(int) * Vntagrefs(vg) + 1);
   if(!dims) {
+#ifdef DEBUG
     fprintf(stderr, "Out of memory line %d file %s\n", __LINE__, __FILE__);
+#endif
     return FAIL;
   }
 
@@ -1442,7 +1464,9 @@ int32  vg;
                       break;
                   case DFTAG_SDRAG : /* ----- Ragged Array index ----- */
                       rag_ref = sub_id;
+#ifdef DEBUG
                       printf("Lookout!  Found a ragged array element\n");
+#endif
                       break;
                   case DFTAG_NT :   /* ------- Number type ------- */
                       if(Hgetelement(handle->hdf_file, tag, sub_id, ntstring) == FAIL)
@@ -1488,7 +1512,9 @@ int32  vg;
               variables[count] = NC_new_var(vgname, type, ndims, dims);
               vp = variables[count];
               if(!vp) {
+#ifdef DEBUG
                   fprintf(stderr, "Can't read new variable %s\n", vgname);
+#endif
                   return FAIL;
               }
               
@@ -1746,7 +1772,9 @@ int id;
         Hdeldd(handle->hdf_file, DFTAG_VH, ref);
         Hdeldd(handle->hdf_file, DFTAG_VS, ref);
 */ 
+#ifdef DEBUG
         if(status == FAIL) printf("Yikes failed deleting Vdata %d\n",ref);
+#endif
 
         break;
     case DFTAG_SD :
@@ -1801,7 +1829,9 @@ NC *handle;
         status = Hdeldd(handle->hdf_file, (uint16) tag, (uint16) ref);
     }
 
+#ifdef DEBUG
     if(status == FAIL) printf("Yikes failed deleting %d\n", tag);
+#endif
 
   }
 
@@ -1811,7 +1841,9 @@ NC *handle;
   
   Vdetach(vg);
   status = Vdelete(handle->hdf_file, (int32) handle->vgid);
+#ifdef DEBUG
   if(status == FAIL) printf("Yikes failed deleting VGroup\n");
+#endif
 /*   Hdeldd(handle->hdf_file, DFTAG_VG, handle->vgid); */
   handle->vgid = 0;
 
