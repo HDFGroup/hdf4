@@ -250,8 +250,8 @@ test_chunks(void)
     chunk[0].chunk_size = 4; /* 2x2 = 4 bytes */
     chunk[0].nt_size    = 1; /* number type size */
     chunk[0].chunk_flag = 0; /* nothing set */
-    chunk[0].comp_type = 0; /* nothing set */
-    chunk[0].model_type = 0; /* nothing set */
+    chunk[0].comp_type = COMP_CODE_NONE; /* nothing set */
+    chunk[0].model_type = COMP_MODEL_STDIO; /* nothing set */
     chunk[0].cinfo = NULL; /* nothing set */
     chunk[0].minfo = NULL; /* nothing set */
 
@@ -568,8 +568,8 @@ test_chunks(void)
     chunk[0].chunk_size = 6; /* 3x2 = 6 bytes */
     chunk[0].nt_size    = 1; /* number type size */
     chunk[0].chunk_flag = 0; /* nothing set */
-    chunk[0].comp_type = 0; /* nothing set */
-    chunk[0].model_type = 0; /* nothing set */
+    chunk[0].comp_type = COMP_CODE_NONE; /* nothing set */
+    chunk[0].model_type = COMP_MODEL_STDIO; /* nothing set */
     chunk[0].cinfo = NULL; /* nothing set */
     chunk[0].minfo = NULL; /* nothing set */
 
@@ -692,8 +692,8 @@ test_chunks(void)
     chunk[0].chunk_size = 24; /* 2x3x4 bytes */
     chunk[0].nt_size    = 1; /* number type size */
     chunk[0].chunk_flag = 0; /* nothing set */
-    chunk[0].comp_type = 0; /* nothing set */
-    chunk[0].model_type = 0; /* nothing set */
+    chunk[0].comp_type = COMP_CODE_NONE; /* nothing set */
+    chunk[0].model_type = COMP_MODEL_STDIO; /* nothing set */
     chunk[0].cinfo = NULL; /* nothing set */
     chunk[0].minfo = NULL; /* nothing set */
 
@@ -859,8 +859,8 @@ test_chunks(void)
     chunk[0].chunk_size = 60; /* 3x4x5 = 60 bytes */
     chunk[0].nt_size    = 1; /* number type size */
     chunk[0].chunk_flag = 0; /* nothing set */
-    chunk[0].comp_type = 0; /* nothing set */
-    chunk[0].model_type = 0; /* nothing set */
+    chunk[0].comp_type = COMP_CODE_NONE; /* nothing set */
+    chunk[0].model_type = COMP_MODEL_STDIO; /* nothing set */
     chunk[0].cinfo = NULL; /* nothing set */
     chunk[0].minfo = NULL; /* nothing set */
 
@@ -1024,8 +1024,8 @@ test_chunks(void)
     chunk[0].chunk_size = 4; /* 1x1x4 bytes */
     chunk[0].nt_size    = 1; /* number type size */
     chunk[0].chunk_flag = 0; /* nothing set */
-    chunk[0].comp_type = 0; /* nothing set */
-    chunk[0].model_type = 0; /* nothing set */
+    chunk[0].comp_type = COMP_CODE_NONE; /* nothing set */
+    chunk[0].model_type = COMP_MODEL_STDIO; /* nothing set */
     chunk[0].cinfo = NULL; /* nothing set */
     chunk[0].minfo = NULL; /* nothing set */
 #if 0
@@ -1400,8 +1400,8 @@ test_chunks(void)
     chunk[0].chunk_size = 4; /* 1x1x4 bytes, logical  */
     chunk[0].nt_size    = 2; /* number type size, uint16 */
     chunk[0].chunk_flag = 0; /* nothing set */
-    chunk[0].comp_type = 0; /* nothing set */
-    chunk[0].model_type = 0; /* nothing set */
+    chunk[0].comp_type = COMP_CODE_NONE; /* nothing set */
+    chunk[0].model_type = COMP_MODEL_STDIO; /* nothing set */
     chunk[0].cinfo = NULL; /* nothing set */
     chunk[0].minfo = NULL; /* nothing set */
 #if 0
@@ -1525,8 +1525,8 @@ test_chunks(void)
     chunk[0].chunk_size = 4; /* 1x1x4 bytes, logical */
     chunk[0].nt_size    = 4; /* number type size, float32 */
     chunk[0].chunk_flag = 0; /* nothing set */
-    chunk[0].comp_type = 0; /* nothing set */
-    chunk[0].model_type = 0; /* nothing set */
+    chunk[0].comp_type = COMP_CODE_NONE; /* nothing set */
+    chunk[0].model_type = COMP_MODEL_STDIO; /* nothing set */
     chunk[0].cinfo = NULL; /* nothing set */
     chunk[0].minfo = NULL; /* nothing set */
 #if 0
@@ -1661,8 +1661,8 @@ test_chunks(void)
     chunk[0].chunk_size = 120;
     chunk[0].nt_size    = 1; /* number type size */
     chunk[0].chunk_flag = 0; /* nothing set */
-    chunk[0].comp_type = 0; /* nothing set */
-    chunk[0].model_type = 0; /* nothing set */
+    chunk[0].comp_type = COMP_CODE_NONE; /* nothing set */
+    chunk[0].model_type = COMP_MODEL_STDIO; /* nothing set */
     chunk[0].cinfo = NULL; /* nothing set */
     chunk[0].minfo = NULL; /* nothing set */
 #if 0
@@ -1842,8 +1842,8 @@ test_chunks(void)
     chunk[0].chunk_size = 57600;
     chunk[0].nt_size    = 1; /* number type size */
     chunk[0].chunk_flag = 0; /* nothing set */
-    chunk[0].comp_type = 0; /* nothing set */
-    chunk[0].model_type = 0; /* nothing set */
+    chunk[0].comp_type = COMP_CODE_NONE; /* nothing set */
+    chunk[0].model_type = COMP_MODEL_STDIO; /* nothing set */
     chunk[0].cinfo = NULL; /* nothing set */
     chunk[0].minfo = NULL; /* nothing set */
 
