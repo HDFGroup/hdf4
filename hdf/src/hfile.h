@@ -39,8 +39,8 @@
 /* invalid offset & length to indicate a partially defined element 
 * written to the HDF file i.e. can handle the case where the the
 * element is defined but not written out */
-#define INVALID_OFFSET 0xFFFFFFFF
-#define INVALID_LENGTH 0xFFFFFFFF
+#define INVALID_OFFSET -1
+#define INVALID_LENGTH -1
 
 
 /* ----------------------------- Version Tags ----------------------------- */
@@ -350,13 +350,13 @@ typedef struct filerec_t
       version_t   version;      /* file version info */
 
       /* Seek caching info */
-      uint32      f_cur_off;    /* Current location in the file */
+      int32      f_cur_off;    /* Current location in the file */
       fileop_t    last_op;      /* the last file operation performed */
 
       /* DD block caching info */
       intn        cache;        /* boolean: whether caching is on */
       intn        dirty;        /* boolean: if dd list needs to be flushed */
-      uint32      f_end_off;    /* offset of the end of the file */
+      int32      f_end_off;    /* offset of the end of the file */
 
       /* DD list pointers */
       struct ddblock_t *ddhead; /* head of ddblock list */
