@@ -203,8 +203,8 @@ local int get_byte(s)
 local void check_header(s)
     gz_stream *s;
 {
-    int method = 0;
-    int flags = 0;
+    int method; /* method byte */
+    int flags;  /* flags byte */
     uInt len;
     int c;
 
@@ -288,14 +288,15 @@ int gzread (file, buf, len)
     unsigned len;
 {
     gz_stream *s = (gz_stream*)file;
-    Byte *start = buf; /* starting point for crc computation */
+    Bytef *start = buf; /* starting point for crc computation */
+    Byte  *next_out; /* == stream.next_out but not forced far (for MSDOS) */
 
     if (s == NULL || s->mode != 'r') return Z_STREAM_ERROR;
 
     if (s->z_err == Z_DATA_ERROR || s->z_err == Z_ERRNO) return -1;
     if (s->z_err == Z_STREAM_END) return 0;  /* EOF */
 
-    s->stream.next_out = buf;
+    s->stream.next_out = next_out = buf;
     s->stream.avail_out = len;
 
     while (s->stream.avail_out != 0) {
@@ -306,14 +307,15 @@ int gzread (file, buf, len)
 	    if (n > s->stream.avail_out) n = s->stream.avail_out;
 	    if (n > 0) {
 		zmemcpy(s->stream.next_out, s->stream.next_in, n);
-		s->stream.next_out  += n;
+		next_out += n;
+		s->stream.next_out = next_out;
 		s->stream.next_in   += n;
 		s->stream.avail_out -= n;
 		s->stream.avail_in  -= n;
 	    }
 	    if (s->stream.avail_out > 0) {
-		s->stream.avail_out -= fread(s->stream.next_out,
-					     1, s->stream.avail_out, s->file);
+		s->stream.avail_out -= fread(next_out, 1, s->stream.avail_out,
+					     s->file);
 	    }
 	    return (int)(len - s->stream.avail_out);
 	}
@@ -510,7 +512,7 @@ char*  gzerror (file, errnum)
 
     m =  (char*)(*errnum == Z_ERRNO ? zstrerror(errno) : s->stream.msg);
 
-    if (m == NULL || *m == '\0') m = (char*)z_errmsg[1-s->z_err];
+    if (m == NULL || *m == '\0') m = ERR_MSG(s->z_err);
 
     TRYFREE(s->msg);
     s->msg = (char*)ALLOC(strlen(s->path) + strlen(m) + 3);

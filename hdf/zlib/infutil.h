@@ -41,7 +41,8 @@ struct inflate_blocks_state {
       inflate_huft *tb;         /* bit length decoding tree */
     } trees;            /* if DTREE, decoding info for trees */
     struct {
-      inflate_huft *tl, *td;    /* trees to free */
+      inflate_huft *tl;
+      inflate_huft *td;         /* trees to free */
       inflate_codes_statef 
          *codes;
     } decode;           /* if CODES, current state */

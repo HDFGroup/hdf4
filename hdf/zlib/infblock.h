@@ -33,6 +33,5 @@ extern int inflate_blocks_free OF((
 
 extern void inflate_set_dictionary OF((
     inflate_blocks_statef *s,
-    z_stream *z,
     const Bytef *d,  /* dictionary */
     uInt  n));       /* dictionary length */

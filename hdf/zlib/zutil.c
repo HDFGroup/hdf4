@@ -15,8 +15,6 @@ struct internal_state      {int dummy;}; /* for buggy compilers */
 extern void exit OF((int));
 #endif
 
-const char *zlib_version = ZLIB_VERSION;
-
 const char *z_errmsg[10] = {
 "need dictionary",     /* Z_NEED_DICT       2  */
 "stream end",          /* Z_STREAM_END      1  */
@@ -29,6 +27,11 @@ const char *z_errmsg[10] = {
 "incompatible version",/* Z_VERSION_ERROR (-6) */
 ""};
 
+
+char *zlibVersion()
+{
+    return ZLIB_VERSION;
+}
 
 void z_error (m)
     char *m;
@@ -178,7 +181,7 @@ voidpf zcalloc (opaque, items, size)
     unsigned items;
     unsigned size;
 {
-    if (opaque) opaque = 0; /* to make compiler happy */
+    if (opaque) items += size - size; /* make compiler happy */
     return (voidpf)calloc(items, size);
 }
 
@@ -186,8 +189,8 @@ void  zcfree (opaque, ptr)
     voidpf opaque;
     voidpf ptr;
 {
-    if (opaque) opaque = 0; /* to make compiler happy */
     free(ptr);
+    if (opaque) return; /* make compiler happy */
 }
 
 #endif /* MY_ZCALLOC */

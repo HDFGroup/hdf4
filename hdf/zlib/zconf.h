@@ -9,8 +9,8 @@
 #define _ZCONF_H
 
 /*
- * People prefering a unique prefix for all types and library functions
- * should compile with -DZ_PREFIX
+ * If you *really* need a unique prefix for all types and library functions,
+ * compile with -DZ_PREFIX. The "standard" zlib should be compiled without it.
  */
 #ifdef Z_PREFIX
 #  define deflateInit_	z_deflateInit_
@@ -20,10 +20,12 @@
 #  define inflate	z_inflate
 #  define inflateEnd	z_inflateEnd
 #  define deflateInit2_	z_deflateInit2_
+#  define deflateSetDictionary z_deflateSetDictionary
 #  define deflateCopy	z_deflateCopy
 #  define deflateReset	z_deflateReset
 #  define deflateParams	z_deflateParams
 #  define inflateInit2_	z_inflateInit2_
+#  define inflateSetDictionary z_inflateSetDictionary
 #  define inflateSync	z_inflateSync
 #  define inflateReset	z_inflateReset
 #  define compress	z_compress
@@ -35,7 +37,7 @@
 #  define Byte		z_Byte
 #  define uInt		z_uInt
 #  define uLong		z_uLong
-#  define Bytef		z_Bytef
+#  define Bytef	        z_Bytef
 #  define charf		z_charf
 #  define intf		z_intf
 #  define uIntf		z_uIntf
@@ -72,13 +74,15 @@
 #  define STDC
 #endif
 
-#if !defined(STDC) && !defined(const)
-#  define const
+#ifndef STDC
+#  ifndef const /* cannot use !defined(STDC) && !defined(const) on Mac */
+#    define const
+#  endif
 #endif
 
 #ifdef	__MWERKS__ /* Metrowerks CodeWarrior declares fileno() in unix.h */
 #  include <unix.h>
-#  define Byte _Byte /* Byte already used on Mac */
+#  define NO_DUMMY_DECL /* buggy compiler merges all .h files incorrectly */
 #endif
 
 /* Maximum value for memLevel in deflateInit2 */
@@ -124,7 +128,8 @@
  * to define NO_MEMCPY in zutil.h.  If you don't need the mixed model,
  * just define FAR to be empty.
  */
-#if defined(M_I86SM) || defined(M_I86MM) /* MSC small or medium model */
+#if (defined(M_I86SM) || defined(M_I86MM)) && !defined(__32BIT__)
+   /* MSC small or medium model */
 #  define SMALL_MEDIUM
 #  ifdef _MSC_VER
 #    define FAR __far
@@ -133,15 +138,18 @@
 #  endif
 #endif
 #if defined(__BORLANDC__) && (defined(__SMALL__) || defined(__MEDIUM__))
+#  ifndef __32BIT__
 #    define SMALL_MEDIUM
 #    define FAR __far
+#  endif
 #endif
 #ifndef FAR
 #   define FAR
 #endif
 /* The Watcom compiler defines M_I86SM and __SMALL__ even in 32 bit mode */
-#if defined(__WATCOMC__) && defined(__386__)
+#if defined(__WATCOMC__) && defined(__386__) && defined(SMALL_MEDIUM)
 #  undef FAR
+#  define FAR
 #  undef SMALL_MEDIUM
 #endif
 
@@ -149,7 +157,12 @@ typedef unsigned char  Byte;  /* 8 bits */
 typedef unsigned int   uInt;  /* 16 bits or more */
 typedef unsigned long  uLong; /* 32 bits or more */
 
-typedef Byte  FAR Bytef;
+#if defined(__BORLANDC__) && defined(SMALL_MEDIUM)
+   /* Borland C/C++ ignores FAR inside typedef */
+#  define Bytef Byte FAR
+#else
+   typedef Byte  FAR Bytef;
+#endif
 typedef char  FAR charf;
 typedef int   FAR intf;
 typedef uInt  FAR uIntf;
@@ -161,6 +174,15 @@ typedef uLong FAR uLongf;
 #else
    typedef Byte FAR *voidpf;
    typedef Byte     *voidp;
+#endif
+
+
+/* Compile with -DZLIB_DLL for Windows DLL support */
+#if (defined(_WINDOWS) || defined(WINDOWS)) && defined(ZLIB_DLL)
+#  include <windows.h>
+#  define EXPORT  WINAPI
+#else
+#  define EXPORT
 #endif
 
 #endif /* _ZCONF_H */

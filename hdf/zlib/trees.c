@@ -232,7 +232,7 @@ local void send_bits(s, value, length)
  */
 local void tr_static_init()
 {
-    static static_init_done = 0;
+    static int static_init_done = 0;
     int n;        /* iterates over tree elements */
     int bits;     /* bit counter */
     int length;   /* length value */

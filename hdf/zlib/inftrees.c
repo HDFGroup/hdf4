@@ -6,7 +6,7 @@
 #include "zutil.h"
 #include "inftrees.h"
 
-char inflate_copyright[] = " inflate 1.0 Copyright 1995-1996 Mark Adler ";
+char inflate_copyright[] = " inflate 1.0.2 Copyright 1995-1996 Mark Adler ";
 /*
   If you use the zlib library in a product, an acknowledgment is welcome
   in the documentation of your product. If for some reason you cannot
@@ -215,7 +215,8 @@ z_stream *zs;           /* for zalloc function */
         w += l;                 /* previous table always l bits */
 
         /* compute minimum size table less than or equal to l bits */
-        z = (z = g - w) > (uInt)l ? l : z;      /* table size upper limit */
+        z = g - w;
+        z = z > (uInt)l ? l : z;        /* table size upper limit */
         if ((f = 1 << (j = k - w)) > a + 1)     /* try a k-w bit table */
         {                       /* too few codes for k-w bit table */
           f -= a + 1;           /* deduct codes from patterns left */
@@ -268,7 +269,7 @@ z_stream *zs;           /* for zalloc function */
       }
       else
       {
-        r.exop = (Byte)e[*p - s] + 16 + 64; /* non-simple--look up in lists */
+        r.exop = (Byte)(e[*p - s] + 16 + 64);/* non-simple--look up in lists */
         r.base = d[*p++ - s];
       }
 

@@ -116,6 +116,10 @@ extern const char *z_errmsg[10]; /* indexed by 2-zlib_error */
 #  define OS_CODE  0x0a
 #endif
 
+#ifdef _BEOS_
+#  define fdopen(fd,mode) NULL /* No fdopen() */
+#endif
+
         /* Common defaults */
 
 #ifndef OS_CODE

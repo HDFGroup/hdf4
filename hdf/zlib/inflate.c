@@ -153,10 +153,10 @@ int inflate(z, f)
 z_stream *z;
 int f;
 {
-  int r = f;    /* to avoid warning about unused f */
+  int r;
   uInt b;
 
-  if (z == Z_NULL || z->state == Z_NULL || z->next_in == Z_NULL)
+  if (z == Z_NULL || z->state == Z_NULL || z->next_in == Z_NULL || f < 0)
     return Z_STREAM_ERROR;
   r = Z_BUF_ERROR;
   while (1) switch (z->state->mode)
@@ -283,12 +283,12 @@ uInt  dictLength;
   if (adler32(1L, dictionary, dictLength) != z->adler) return Z_DATA_ERROR;
   z->adler = 1L;
 
-  if (length >= (1<<z->state->wbits))
+  if (length >= ((uInt)1<<z->state->wbits))
   {
     length = (1<<z->state->wbits)-1;
     dictionary += dictLength - length;
   }
-  inflate_set_dictionary(z->state->blocks, z, dictionary, length);
+  inflate_set_dictionary(z->state->blocks, dictionary, length);
   z->state->mode = BLOCKS;
   return Z_OK;
 }

@@ -24,7 +24,7 @@
 #else
    extern void exit  OF((int));
 #endif
-extern int unlink OF((const char *));
+
 
 #if defined(MSDOS) || defined(OS2) || defined(WIN32)
 #  include <fcntl.h>
@@ -35,11 +35,14 @@ extern int unlink OF((const char *));
 #endif
 
 #ifdef VMS
+#  define unlink delete
 #  define GZ_SUFFIX "-gz"
 #else
 #  define GZ_SUFFIX ".gz"
 #endif
 #define SUFFIX_LEN sizeof(GZ_SUFFIX)
+
+extern int unlink OF((const char *));
 
 #define BUFLEN 4096
 #define MAX_NAME_LEN 1024
