@@ -685,3 +685,81 @@ done:
   return ret_value;
 }	/* VFfieldorder */
 
+/* -------------------------- VSsetexternalfile --------------------------- */
+/*
+
+ NAME
+	VSsetexternalfile -- store Vdat info in a separate file
+ USAGE
+	int32 VSsetexternalfile(id, filename, offset)
+        int32   id;                  IN: vdata ID
+        char  * filename;            IN: name of external file
+        int32   offset;              IN: offset in external file
+ RETURNS
+        Return SUCCEED or FAIL
+
+ DESCRIPTION
+        Specify that the actual data for this Vdata be stored in a 
+        separate file (an "external file" in HDF terms).
+
+        Only the data (as in VSwrite()) will be stored externally.  
+        Attributes and such will still be in the main file
+
+        IMPORTANT:  It is the user's responsibility to see that the 
+        separate files are transported with the main file.
+
+--------------------------------------------------------------------------- */
+
+intn VSsetexternalfile(int32 vkey, char *filename, int32 offset)
+{
+    CONSTR(FUNC, "VSsetexternalfile");
+    int32       ret_value = SUCCEED;
+
+    vsinstance_t *w;
+    VDATA      *vs;
+    intn       status;
+
+    if(!filename || offset < 0)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    if (!VALIDVSID(vkey))
+	    HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* locate vs's index in vstab */
+    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+
+    vs = w->vs;
+    if (vs->access != 'w')
+        HGOTO_ERROR(DFE_BADACC, FAIL);
+
+    if (-1L == vexistvs(vs->f, vs->oref))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+
+    if(!w->ref)
+	HGOTO_ERROR(DFE_NOVS, FAIL);
+
+    /* no need to give a length since the element already exists */
+    /* The Data portion of a Vdata is always stored in linked blocks. */
+    /* So, use the special tag */
+    status = (intn)HXcreate(vs->f, (uint16)VSDATATAG, (uint16) w->ref,
+		      filename, offset, (int32)0);
+    if(status != FAIL) {
+	if((vs->aid != 0) && (vs->aid != FAIL))
+	    Hendaccess(vs->aid);
+	vs->aid = status;
+    }
+    else
+	ret_value = FAIL;
+
+
+done:
+    if(ret_value == FAIL)
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+    /* Normal function cleanup */
+
+    return ret_value;
+} /* VSsetexternalfile */

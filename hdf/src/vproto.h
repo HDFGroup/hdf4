@@ -299,6 +299,10 @@ extern      "C"
     extern int32 VFfieldorder
                 (int32 vkey, int32 index);
 
+    extern intn VSsetexternalfile
+		(int32 vkey, char *filename, int32 offset);
+
+
 /*
    ** from vrw.c
  */
