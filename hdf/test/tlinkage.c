@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/07/09 16:08:00  chouck
-Minor fix to a few routine names for VMS
+Revision 1.4  1992/11/19 17:15:13  chouck
+HIlock() and HIunlock() are now static
 
+ * Revision 1.3  1992/07/09  16:08:00  chouck
+ * Minor fix to a few routine names for VMS
+ *
  * Revision 1.2  1992/05/29  19:23:00  chouck
  * Modified to reflect current names
  *
@@ -57,8 +60,10 @@ main()
     Hishdf();
     Hsync();
     HIgetspinfo();
+/*
     HIlock();
     HIunlock();
+*/
     HDvalidfid();
     HDerr();
     Hnumber();
