@@ -855,6 +855,8 @@ uint32    count;
 {
     int32 status;
     int32 byte_count;
+    uint8 platntsubclass;  /* the machine type of the current platform */
+    uint8 outntsubclass;   /* the data's machine type */
 
 #if DEBUG
     fprintf(stderr, "hdf_xdr_NCvdata I've been called : %s\n", vp->name->values);
@@ -912,9 +914,12 @@ uint32    count;
     
     byte_count = count * vp->HDFsize;
 
-#ifndef CM5
+    platntsubclass = DFKgetPNSC(vp->HDFtype, DF_MT); 
+    outntsubclass = DFKisnativeNT(vp->HDFtype) ? DFKgetPNSC(vp->HDFtype, DF_MT)
+	    : (DFKislitendNT(vp->HDFtype) ? DFNTF_PC : DFNTF_HDFDEFAULT);
+
     /* make sure our tmp buffer is big enough to hold everything */
-    if(tBuf_size < byte_count) {
+    if(platntsubclass!=outntsubclass && tBuf_size < byte_count) {
         if(tBuf) HDfreespace((VOIDP)tBuf);
         tBuf_size = byte_count;
         tBuf = (int8 *) HDgetspace(tBuf_size);
@@ -925,41 +930,33 @@ uint32    count;
 /*    This should be set by the caller */
 /*    DFKsetNT(vp->HDFtype); */
     
-    /* Read or write the data into / from values */
-    if(handle->xdrs->x_op == XDR_DECODE) {
-        status = Hread(vp->aid, byte_count, (uint8 *) tBuf);
-        if(status != byte_count) return FALSE;
-        
-        /* convert tBuf into values */
-        DFKnumin((uint8 *) tBuf, (uint8 *) values, (uint32) count, 0, 0);
-        
-    } else {
-      
-        /*  convert values into tBuf */
-        DFKnumout((uint8 *) values, tBuf, (uint32) count, 0, 0);
-        
-        status = Hwrite(vp->aid, byte_count, (uint8 *) tBuf);
-        if(status != byte_count) return FALSE;
-    }
-#else
-    /* no data conversion for CM5, for now. */
 #ifdef CM5
 CM_HDFtype = vp->HDFtype;
 #endif
-
-    /*
-     * Just do the I/O let the level above us worry about converting
-     *  the data
-     */
+    /* Read or write the data into / from values */
     if(handle->xdrs->x_op == XDR_DECODE) {
-        status = Hread(vp->aid, byte_count, (uint8 *) values);
-        if(status != byte_count) return FALSE;
+	if(platntsubclass!=outntsubclass) {
+            status = Hread(vp->aid, byte_count, (uint8 *) tBuf);
+            if(status != byte_count) return FALSE;
+        
+            DFKnumin((uint8 *) tBuf, (uint8 *) values, (uint32) count, 0, 0);
+	  } /* end if */
+	else {
+            status = Hread(vp->aid, byte_count, (uint8 *) values);
+            if(status != byte_count) return FALSE;
+	  } /* end else */
     } else {
-        status = Hwrite(vp->aid, byte_count, (uint8 *) values);
-        if(status != byte_count) return FALSE;
+	if(platntsubclass!=outntsubclass) {
+            DFKnumout((uint8 *) values, tBuf, (uint32) count, 0, 0);
+        
+            status = Hwrite(vp->aid, byte_count, (uint8 *) tBuf);
+	  } /* end if */
+	else 
+            status = Hwrite(vp->aid, byte_count, (uint8 *) values);
+
+        if(status != byte_count) 
+	    return FALSE;
     }
- 
-#endif
 
 #ifdef DEBUG
     fprintf(stderr, " * * * Done with call to xdr_NCvdata * * *\n");
