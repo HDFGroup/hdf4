@@ -1199,7 +1199,7 @@ intn rval;
         }
 }
 
-JNIEXPORT jboolean JNICALL Java_ncsa_hdf_hdflib_HDFLibrary_SDsetdimval_comp 
+JNIEXPORT jboolean JNICALL Java_ncsa_hdf_hdflib_HDFLibrary_SDsetdimval_1comp 
 ( JNIEnv *env,
 jobject obj, 
 jint sdsid, 
@@ -1216,7 +1216,7 @@ intn rval;
         }
 }
 
-JNIEXPORT jboolean JNICALL Java_ncsa_hdf_hdflib_HDFLibrary_SDisdimval_bwcomp 
+JNIEXPORT jboolean JNICALL Java_ncsa_hdf_hdflib_HDFLibrary_SDisdimval_1bwcomp 
 ( JNIEnv *env,
 jobject obj, 
 jint dimid )
