@@ -32,8 +32,12 @@ $ cc/define=VMS/include=hdf$include   anfile
 $ cc/define=VMS/include=hdf$include   slab
 $ cc/define=VMS/include=hdf$include   sdstr
 $ cc/define=VMS/include=hdf$include   litend
+$ cc/define=VMS/include=hdf$include   tv1
+$ cc/define=VMS/include=hdf$include   tv2
+$ cc/define=VMS/include=hdf$include   egchi
 $ link testhdf,rig,sdmms,sdnmms,an,anfile,sdstr,slab,litend, -
-  hfile, hfile1,hblocks,hextelt,vers,hdf$lib/lib,sys$clib/lib
+  hfile, hfile1,hblocks,hextelt,vers,tv1, tv2, egchi, -
+  hdf$lib/lib,sys$clib/lib
 $ type sys$input 
   **  Making Fortran interface test programs **
 $!
@@ -54,6 +58,7 @@ $ fortran slab1wf.f
 $ fortran slab2wf.f
 $ fortran slab3wf.f
 $ fortran slab4wf.f
+$ fortran egfhi.f
 $ link fortest, hdf$lib/lib, sys$clib/lib
 $ link tr8f, hdf$lib/lib, sys$clib/lib
 $ link t24f, hdf$lib/lib, sys$clib/lib
@@ -71,6 +76,7 @@ $ link slab1wf, hdf$lib/lib, sys$clib/lib
 $ link slab2wf, hdf$lib/lib, sys$clib/lib
 $ link slab3wf, hdf$lib/lib, sys$clib/lib
 $ link slab4wf, hdf$lib/lib, sys$clib/lib
+$ link egfhi, hdf$lib/lib, sys$clib/lib
 $ delete *.obj;*
 $!
 
