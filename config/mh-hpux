@@ -25,7 +25,7 @@ VERSION  = 4.0
 #
 #Using HP-ANSI compilier also needs LIBSX = -lm(see below)
 CC=cc
-CFLAGS=-Aa -D_HPUX_SOURCE -O 
+CFLAGS=-Ae -O +ESlit +w1
 
 # Fortran compilier, possible values fort77, f77, cf77 and fc
 FC = f77
