@@ -292,6 +292,8 @@ DFGRsetcompress(int32 scheme, comp_info * cinfo)
     CONSTR(FUNC, "DFGRsetcompress");
     intn   ret_value = SUCCEED;
 
+    HEclear();
+
     /* Perform global, one-time initialization */
     if (library_terminate == FALSE)
         if(DFGRIstart()==FAIL)

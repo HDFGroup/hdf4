@@ -2657,13 +2657,13 @@ void HPend(void)
 #ifdef OLD_WAY
     DFR8Pshutdown();
     DFGRPshutdown();
+    DFSDPshutdown();
 #endif /* OLD_WAY */
 
     /* can't issue errors if you're free'ing the error stack. */
     GRPshutdown();
     VSPfreebuf();
     VPshutdown();
-    DFSDPshutdown();
     DFANPshutdown();
     ANdestroy();
     HPbitshutdown();

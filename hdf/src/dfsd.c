@@ -191,14 +191,18 @@ PRIVATE char *Lastfile = NULL;
 PRIVATE uint16 Lastref = 0;     /* Last ref to be read/written? */
 PRIVATE DFdi lastnsdg;          /* last read nsdg in nsdg_t */
 
+/* Whether we've installed the library termination function yet for this interface */
+PRIVATE intn library_terminate = FALSE;
+
 /* Private buffer */
 PRIVATE uint8 *ptbuf = NULL;
 
 /* Prototypes */
-extern intn DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr);
-extern intn DFSDInextnsdg(DFnsdg_t_hdr * l_nsdghdr, DFdi * nsdg);
-extern intn DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg);
-extern intn DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg);
+static intn DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr);
+static intn DFSDInextnsdg(DFnsdg_t_hdr * l_nsdghdr, DFdi * nsdg);
+static intn DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg);
+static intn DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg);
+static intn DFSDIstart(void);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -238,6 +242,11 @@ DFSDgetdims(const char *filename, intn *prank, int32 sizes[], intn maxrank)
 #endif /* HAVE_PABLO */
 
   HEclear();  /* Clear error stack */
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
   if (!prank)     /* check if ptr is valid */
     HGOTO_ERROR(DFE_BADPTR, FAIL);
@@ -312,6 +321,11 @@ DFSDgetdatastrs(char *label, char *unit, char *format, char *coordsys)
 #endif /* HAVE_PABLO */
 
   HEclear();  /* Clear error stack */
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
   if (Newdata < 0)
     HGOTO_ERROR(DFE_BADCALL, FAIL);
@@ -390,6 +404,11 @@ DFSDgetdimstrs(int dim, char *label, char *unit, char *format)
 
   HEclear();  /* Clear error stack */
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if (Newdata < 0)
     HGOTO_ERROR(DFE_BADCALL, FAIL);
 /* NOTE: Once DFSDsetdimstrs is changed to always write all three (label,
@@ -464,6 +483,11 @@ DFSDgetdatalen(intn *llabel, intn *lunit, intn *lformat, intn *lcoordsys)
 
   HEclear();  /* Clear error stack */
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if (Newdata < 0)
     HGOTO_ERROR(DFE_BADCALL, FAIL);
 
@@ -518,6 +542,11 @@ DFSDgetdimlen(intn dim, intn *llabel, intn *lunit, intn *lformat)
 #endif /* HAVE_PABLO */
 
   HEclear();  /* Clear error stack */
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
   if (Newdata < 0)
     HGOTO_ERROR(DFE_BADCALL, FAIL);
@@ -579,6 +608,11 @@ DFSDgetdimscale(intn dim, int32 maxsize, VOIDP scale)
 #endif /* HAVE_PABLO */
 
   HEclear();  /* Clear error stack */
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
   if (Newdata < 0)
     HGOTO_ERROR(DFE_BADCALL, FAIL);
@@ -661,6 +695,11 @@ DFSDgetrange(VOIDP pmax, VOIDP pmin)
 #endif /* HAVE_PABLO */
 
   HEclear();  /* Clear error stack */
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
   if (Newdata < 0)
     HGOTO_ERROR(DFE_BADCALL, FAIL);
@@ -771,11 +810,17 @@ intn
 DFSDsetlengths(intn maxlen_label, intn maxlen_unit, intn maxlen_format,
                intn maxlen_coordsys)
 {
+  CONSTR(FUNC, "DFSDsetlengths");
   intn ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
     TRACE_ON(DFSD_mask, ID_DFSDsetlengths);
 #endif /* HAVE_PABLO */
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
   if (maxlen_label > 0)
     Maxstrlen[LABEL] = maxlen_label;
@@ -785,6 +830,14 @@ DFSDsetlengths(intn maxlen_label, intn maxlen_unit, intn maxlen_format,
     Maxstrlen[FORMAT] = maxlen_format;
   if (maxlen_coordsys > 0)
     Maxstrlen[COORDSYS] = maxlen_coordsys;
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
 #ifdef HAVE_PABLO
     TRACE_OFF(DFSD_mask, ID_DFSDsetlengths);
 #endif /* HAVE_PABLO */
@@ -822,6 +875,11 @@ DFSDsetdims(intn rank, int32 dimsizes[])
 #endif /* HAVE_PABLO */
 
   HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
   if (Sfile_id != DF_NOFILE)
     HGOTO_ERROR(DFE_BADCALL, FAIL);
@@ -943,7 +1001,13 @@ DFSDIsetdatastrs(const char *label, const char *unit, const char *format, const 
                                 /* in succession */
   const char *lufp;           /* points to label, unit, format */
                                 /* in succession */
+  CONSTR(FUNC, "DFSDIsetdatastrs");    /* for HERROR */
   intn      ret_value = SUCCEED;
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
    /* NOTE: The following code should be changed to write all three, even if
       one or more is an empty string.  Then, when DFSDgetdatastrs is called
@@ -1065,6 +1129,11 @@ DFSDIsetdimstrs(intn dim, const char *label, const char *unit, const char *forma
 
   HEclear();
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   /* translate from 1 to 0 origin */
   rdim = dim - 1;
 
@@ -1158,6 +1227,12 @@ DFSDsetdimscale(intn dim, int32 dimsize, VOIDP scale)
 #endif /* HAVE_PABLO */
 
     HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
     rdim = dim - 1;     /* translate from 1 to 0 origin */
 
     if (!Writesdg.dimsizes)
@@ -1283,12 +1358,18 @@ DFSDsetrange(VOIDP maxi, VOIDP mini)
     intn        i;
     uint8      *p1, *p2;
     intn        ret_value = SUCCEED;
+    CONSTR(FUNC, "DFSDsetrange");    /* for HERROR */
 
 #ifdef HAVE_PABLO
     TRACE_ON(DFSD_mask, ID_DFSDsetrange);
 #endif /* HAVE_PABLO */
 
     HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
     p1 = &(Writesdg.max_min[0]);
     for (i = 0; i < 16; i++)
@@ -1308,13 +1389,11 @@ DFSDsetrange(VOIDP maxi, VOIDP mini)
 
     Ref.maxmin = 0;
 
-#ifdef LATER
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-#endif /* LATER */
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
@@ -1421,15 +1500,28 @@ intn
 DFSDrestart(void)
 {
   intn ret_value = SUCCEED;
+  CONSTR(FUNC, "DFSDndatasets");
 
 #ifdef HAVE_PABLO
     TRACE_ON(DFSD_mask, ID_DFSDrestart);
 #endif /* HAVE_PABLO */
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if (Lastfile != NULL)
     *Lastfile = '\0';   /* set to 0-length string instead of NULLing ptr */
   Readref = 0;
 
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
 #ifdef HAVE_PABLO
     TRACE_OFF(DFSD_mask, ID_DFSDrestart);
 #endif /* HAVE_PABLO */
@@ -1466,6 +1558,11 @@ DFSDndatasets(char *filename)
 
   HEclear();
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   /* should use reopen if same file as last time - more efficient */
   file_id = DFSDIopen(filename, DFACC_READ);
   if (file_id == FAIL)
@@ -1473,10 +1570,7 @@ DFSDndatasets(char *filename)
 
   nsdgs = nsdghdr->size;
   if (Hclose(file_id) == FAIL)
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+      HGOTO_ERROR(DFE_CANTCLOSE,FAIL);
 
   ret_value = nsdgs;
 
@@ -1509,19 +1603,22 @@ done:
 intn
 DFSDclear(void)
 {
+  CONSTR(FUNC, "DFSDclear");
   intn   ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
     TRACE_ON(DFSD_mask, ID_DFSDclear);
 #endif /* HAVE_PABLO */
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   lastnsdg.tag = DFTAG_NULL;
   lastnsdg.ref = 0;
   if (DFSDIclearNT(&Writesdg) < 0)
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
   ret_value = DFSDIclear(&Writesdg);
 
@@ -1554,14 +1651,27 @@ done:
 uint16
 DFSDlastref(void)
 {
+  CONSTR(FUNC, "DFSDlastref");
   uint16  ret_value;
 
 #ifdef HAVE_PABLO
     TRACE_ON(DFSD_mask, ID_DFSDlastref);
 #endif /* HAVE_PABLO */
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   ret_value = ((uint16) Lastref);
 
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
 #ifdef HAVE_PABLO
     TRACE_OFF(DFSD_mask, ID_DFSDlastref);
 #endif /* HAVE_PABLO */
@@ -1603,18 +1713,18 @@ DFSDreadref(char *filename, uint16 ref)
 
   HEclear();
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   file_id = DFSDIopen(filename, DFACC_READ);
   if (file_id == DF_NOFILE)
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+      HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
   if ((aid = Hstartread(file_id, DFTAG_SDG, ref)) == FAIL
-      && (aid = Hstartread(file_id, DFTAG_NDG, ref)) == FAIL)
-    {
+        && (aid = Hstartread(file_id, DFTAG_NDG, ref)) == FAIL)
       HCLOSE_GOTO_ERROR(file_id, DFE_NOMATCH, FAIL);
-    }
 
   Hendaccess(aid);
   Readref = ref;
@@ -1725,25 +1835,24 @@ DFSDstartslice(const char *filename)
 
   HEclear();
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if (!Writesdg.rank)     /* dimensions not set */
     HGOTO_ERROR(DFE_BADDIM, FAIL);
 
   Sfile_id = DFSDIopen(filename, DFACC_WRITE);
   if (Sfile_id == DF_NOFILE)
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+    HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
   Writesdg.data.tag = DFTAG_SD;
 
   if (!Writeref)
     Writeref = Hnewref(Sfile_id);
   if (!Writeref)
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+    HGOTO_ERROR(DFE_BADREF, FAIL);
   Writesdg.data.ref = Writeref;
 
   if (Writesdg.numbertype == DFNT_NONE)   /* if NT not set,default to float32 */
@@ -1756,20 +1865,12 @@ DFSDstartslice(const char *filename)
 
   Writesdg.aid = Hstartwrite(Sfile_id, DFTAG_SD, Writeref, size);
   if (Writesdg.aid == FAIL)
-    {
-      Hclose(Sfile_id);
-      ret_value = FAIL;
-      goto done;
-    }
+    HCLOSE_GOTO_ERROR(Sfile_id,DFE_BADAID, FAIL);
 
   /* allocate array for keeping track of dims written */
   Sddims = (int32 *) HDmalloc((uint32) Writesdg.rank * sizeof(int32));
   if (Sddims == NULL)
-    {
-      Hclose(Sfile_id);
-      ret_value = FAIL;
-      goto done;
-    }
+    HCLOSE_GOTO_ERROR(Sfile_id,DFE_NOSPACE, FAIL);
 
   for (i = 0; i < Writesdg.rank; i++)
     Sddims[i] = 0;  /* nothing written so far */
@@ -1904,9 +2005,7 @@ DFSDsetNT(int32 numbertype)
 {
   uint8       outNT;
   intn        ret_value = SUCCEED;
-#ifdef LATER
   CONSTR(FUNC, "DFSDsetNT");
-#endif
 
 #ifdef HAVE_PABLO
     TRACE_ON(DFSD_mask, ID_DFSDsetNT);
@@ -1914,21 +2013,21 @@ DFSDsetNT(int32 numbertype)
 
   HEclear();
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   outNT = (int8) (DFKisnativeNT(numbertype) ? DFKgetPNSC(numbertype, DF_MT) :
                   (DFKislitendNT(numbertype) ? DFNTF_PC : DFNTF_HDFDEFAULT));
   if ((numbertype == Writesdg.numbertype)
-      && (outNT == Writesdg.filenumsubclass))
-    {
-      ret_value = SUCCEED;
-      goto done;
-    }
+        && (outNT == Writesdg.filenumsubclass))
+    HGOTO_DONE(SUCCEED);
 
   /* Forget previous numbertype  */
   if (DFSDIclearNT((DFSsdg *) & Writesdg) < 0)
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
   Writesdg.numbertype = numbertype;
   Writesdg.filenumsubclass = outNT;
   Ref.nt = 0;
@@ -1966,11 +2065,14 @@ DFSDIclearNT(DFSsdg * sdg)
 {
   intn        i;
   intn      ret_value = SUCCEED;
-#ifdef LATER
   CONSTR(FUNC, "DFSDIclearNT");
-#endif
 
   HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
   sdg->numbertype = DFNT_NONE;
   sdg->filenumsubclass = DFNTF_NONE;
@@ -1988,13 +2090,11 @@ DFSDIclearNT(DFSsdg * sdg)
   Ref.scales = -1;    /* new number type              */
   Ref.new_ndg = -1;
 
-#ifdef LATER
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-#endif /* LATER */
 
   /* Normal function cleanup */
 
@@ -2039,6 +2139,11 @@ DFSDgetNT(int32 *pnumbertype)
 #endif /* HAVE_PABLO */
 
   HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
   *(pnumbertype) = Readsdg.numbertype;
   if (*(pnumbertype) == DFNT_NONE)
@@ -2093,12 +2198,16 @@ DFSDpre32sdg(char *filename, uint16 ref, intn *ispre32)
     TRACE_ON(DFSD_mask, ID_DFSDpre32sdg);
 #endif /* HAVE_PABLO */
 
+    HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
     file_id = DFSDIopen(filename, DFACC_READ);
     if (file_id == FAIL)
-      {
-        ret_value = FAIL;
-        goto done;
-      }
+        HGOTO_ERROR(DFE_BADOPEN, FAIL);
     ptr = nsdghdr->nsdg_t;
     num = nsdghdr->size;
 
@@ -2123,11 +2232,8 @@ DFSDpre32sdg(char *filename, uint16 ref, intn *ispre32)
             }
       }     /* while  */
 
-    if (((num == 0) && (ptr != NULL)) || ((num != 0) && (ptr == NULL))
-        || !found)
-      {
-          HCLOSE_GOTO_ERROR(file_id, DFE_BADTABLE, FAIL);
-      }
+    if (((num == 0) && (ptr != NULL)) || ((num != 0) && (ptr == NULL)) || !found)
+      HCLOSE_GOTO_ERROR(file_id, DFE_BADTABLE, FAIL);
 
     if (Hclose(file_id) < 0)
         ret_value = FAIL;
@@ -2163,7 +2269,7 @@ done:
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   DFSDIopen for READ
  *--------------------------------------------------------------------------*/
-intn
+static intn
 DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
 {
   uint32      sz_DFnsdgle = (uint32) sizeof(struct DFnsdgle);
@@ -2188,6 +2294,13 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
   intn       ret_value = SUCCEED;
   CONSTR(FUNC, "DFSDsetnsdg_t");
 
+    HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if (!HDvalidfid(file_id))
     HGOTO_ERROR(DFE_BADCALL, FAIL);
 
@@ -2205,17 +2318,13 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
   ndgs = Hnumber(file_id, DFTAG_NDG);
   sdgs = Hnumber(file_id, DFTAG_SDG);
   if ((ndgs == FAIL) || (sdgs == FAIL))
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+    HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
   if ((ndgs + sdgs) == 0)
     {     /* no sdgs or ndgs in file */
       l_nsdghdr->size = 0;
       l_nsdghdr->nsdg_t = NULL;
-      ret_value = SUCCEED;
-      goto done;
+      HGOTO_DONE(SUCCEED);
     }
   if ((ntb = (DFnsdgle *) HDmalloc(sz_DFnsdgle)) == NULL)
     HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -2280,16 +2389,12 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
 
           /* Does this NDG have an SDG?       */
           if ((GroupID = DFdiread(file_id, DFTAG_NDG, inref)) < 0)
-            {
-              ret_value = FAIL;
-              goto done;
-            }
+            HGOTO_ERROR(DFE_BADGROUP, FAIL);
 
           found = FALSE;
           di.tag = DFTAG_NULL;
           di.ref = 0;
-          while ((found == 0)
-                 && (DFdiget(GroupID, &di.tag, &di.ref) == 0))
+          while ((found == 0) && (DFdiget(GroupID, &di.tag, &di.ref) == 0))
             {
               if (di.tag == DFTAG_SDLNK)
                 found = TRUE;
@@ -2298,10 +2403,7 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
           if (found)
             {     /* read in the tag/refs in the link element */
               if (Hgetelement(file_id, di.tag, di.ref, ptbuf) == (int32) FAIL)
-                {
-                  ret_value = FAIL;
-                  goto done;
-                }
+                  HGOTO_ERROR(DFE_GETELEM, FAIL);
               bufp = ptbuf;
               UINT16DECODE(bufp, lnkdd[0].tag);
               UINT16DECODE(bufp, lnkdd[0].ref);
@@ -2345,10 +2447,7 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
             }
           /* Does it belong to  an NDG?    */
           if ((GroupID = DFdiread(file_id, DFTAG_SDG, inref)) < 0)
-            {
-              ret_value = FAIL;
-              goto done;
-            }
+              HGOTO_ERROR(DFE_BADGROUP, FAIL);
           found = FALSE;
           di.tag = DFTAG_NULL;
           di.ref = 0;
@@ -2360,10 +2459,7 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
           if (found)
             {     /* read in the tag/refs in the link element */
               if (Hgetelement(file_id, di.tag, di.ref, ptbuf) == (int32) FAIL)
-                {
-                  ret_value = FAIL;
-                  goto done;
-                }
+                  HGOTO_ERROR(DFE_GETELEM, FAIL);
               bufp = ptbuf;
               UINT16DECODE(bufp, lnkdd[0].tag);
               UINT16DECODE(bufp, lnkdd[0].ref);
@@ -2375,8 +2471,7 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
         }   /* end of SDG    */
 
       /*   get next dd   */
-      moretags = (SUCCEED ==
-                  Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT));
+      moretags = (SUCCEED == Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT));
     }     /* gone through the dd blocks   */
   Hendaccess(aid);
 
@@ -2452,7 +2547,7 @@ done:
 *      nsdg: the structure holds the di of next sdg or ndg
 * Returns: 0 on succeeds, FAIL on failure
 * -------------------------------------------------------------------*/
-intn
+static intn
 DFSDInextnsdg(DFnsdg_t_hdr * l_nsdghdr, DFdi * nsdg)
 {
   uint32      num;
@@ -2461,16 +2556,20 @@ DFSDInextnsdg(DFnsdg_t_hdr * l_nsdghdr, DFdi * nsdg)
   intn        ret_value = SUCCEED;
   CONSTR(FUNC, "DFSDInextnsdg");
 
+    HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   nsdg->tag = DFTAG_NULL;
   nsdg->ref = 0;
   ptr = l_nsdghdr->nsdg_t;
   num = l_nsdghdr->size;
 
   if ((ptr == NULL) || (num == 0))
-    {
-      ret_value = SUCCEED;
-      goto done;
-    }
+      HGOTO_DONE(SUCCEED);
 
   if ((lastnsdg.tag == DFTAG_NULL) && (lastnsdg.ref == 0))
     {
@@ -2494,8 +2593,7 @@ DFSDInextnsdg(DFnsdg_t_hdr * l_nsdghdr, DFdi * nsdg)
         }   /* while  */
 
       if (((num == 0) && (ptr != NULL))
-          || ((num != 0) && (ptr == NULL))
-          || !found)
+          || ((num != 0) && (ptr == NULL)) || !found)
         {
           HGOTO_ERROR(DFE_BADTABLE, FAIL);
         }
@@ -2535,7 +2633,7 @@ done:
  *          previously allocated space.
  * Remarks: This accepts non-float32 data
  *---------------------------------------------------------------------------*/
-intn
+static intn
 DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
 {
   int32       i;
@@ -2560,6 +2658,11 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
 
   HEclear();
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if (!HDvalidfid(file_id))
     HGOTO_ERROR(DFE_BADCALL, FAIL);
 
@@ -2576,10 +2679,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
 
   /* read NDG into memory */
   if ((GroupID = DFdiread(file_id, tag, ref)) < 0)
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+        HGOTO_ERROR(DFE_BADGROUP, FAIL);
 
   DFSDIclear(sdg);
   if (tag == DFTAG_NDG)
@@ -2605,17 +2705,13 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
         case DFTAG_SDD: /* dimension */
           aid = Hstartread(file_id, elmt.tag, elmt.ref);
           if (aid == FAIL)
-            {
-              ret_value = FAIL;
-              goto done;
-            }
+            HGOTO_ERROR(DFE_BADAID, FAIL);
 
           /* read rank */
           if (Hread(aid, (int32) 2, ptbuf) == FAIL)
             {
               Hendaccess(aid);
-              ret_value = FAIL;
-              goto done;
+              HGOTO_ERROR(DFE_READERROR, FAIL);
             }
           p = ptbuf;
           INT16DECODE(p, sdg->rank);
@@ -2626,16 +2722,14 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
           if (sdg->dimsizes == NULL)
             {
               Hendaccess(aid);
-              ret_value = FAIL;
-              goto done;
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
             }
 
           /* read dimension record */
           if (Hread(aid, (int32) 4 * sdg->rank, ptbuf) == FAIL)
             {
               Hendaccess(aid);
-              ret_value = FAIL;
-              goto done;
+              HGOTO_ERROR(DFE_READERROR, FAIL);
             }
           p = ptbuf;
           for (i = 0; i < sdg->rank; i++)
@@ -2645,8 +2739,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
           if (Hread(aid, (int32) 4, ptbuf) == FAIL)
             {
               Hendaccess(aid);
-              ret_value = FAIL;
-              goto done;
+              HGOTO_ERROR(DFE_READERROR, FAIL);
             }
           p = ptbuf;
           UINT16DECODE(p, nt.tag);
@@ -2656,8 +2749,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
           if (Hgetelement(file_id, nt.tag, nt.ref, ntstring) == FAIL)
             {
               Hendaccess(aid);
-              ret_value = FAIL;
-              goto done;
+              HGOTO_ERROR(DFE_GETELEM, FAIL);
             }
 
           /* check for any valid NT */
@@ -2706,8 +2798,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
               if (Hread(aid, (int32) 4, ptbuf) == FAIL)
                 {
                   Hendaccess(aid);
-                  ret_value = FAIL;
-                  goto done;
+                  HGOTO_ERROR(DFE_READERROR, FAIL);
                 }
               p = ptbuf;
               UINT16DECODE(p, nt.tag);
@@ -2717,8 +2808,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
               if (Hgetelement(file_id, nt.tag, nt.ref, ntstring) == FAIL)
                 {
                   Hendaccess(aid);
-                  ret_value = FAIL;
-                  goto done;
+                  HGOTO_ERROR(DFE_GETELEM, FAIL);
                 }
 
               /* check for any valid NT */
@@ -2760,23 +2850,16 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
           /* get needed size of buffer, allocate */
           length = Hlength(file_id, elmt.tag, elmt.ref);
           if (length == FAIL)
-            {
-              ret_value = FAIL;
-              goto done;
-            }
+              HGOTO_ERROR(DFE_BADLEN, FAIL);
           buf = (uint8 *) HDmalloc((uint32) length);
           if (buf == NULL)
-            {
-              ret_value = FAIL;
-              goto done;
-            }
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
           /* read in luf */
           if (Hgetelement(file_id, elmt.tag, elmt.ref, buf) == FAIL)
             {
               HDfree((VOIDP) buf);
-              ret_value = FAIL;
-              goto done;
+              HGOTO_ERROR(DFE_GETELEM, FAIL);
             }
           p = buf;
 
@@ -2786,8 +2869,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
           if (sdg->dataluf[luf] == NULL)
             {
               HDfree((VOIDP) buf);
-              ret_value = FAIL;
-              goto done;
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
             }
 
           /* extract data luf */
@@ -2800,8 +2882,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
           if (sdg->dimluf[luf] == NULL)
             {
               HDfree((VOIDP) buf);
-              ret_value = FAIL;
-              goto done;
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
             }
 
           /* extract dimension lufs */
@@ -2812,8 +2893,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
               if (sdg->dimluf[luf][i] == NULL)
                 {
                   HDfree((VOIDP) buf);
-                  ret_value = FAIL;
-                  goto done;
+                  HGOTO_ERROR(DFE_NOSPACE, FAIL);
                 }
               HDstrcpy(sdg->dimluf[luf][i], (char *) p);
               p += HDstrlen(sdg->dimluf[luf][i]) + 1;
@@ -2828,24 +2908,19 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
           /* set up to read scale */
           aid = Hstartread(file_id, elmt.tag, elmt.ref);
           if (aid == FAIL)
-            {
-              ret_value = FAIL;
-              goto done;
-            }
+              HGOTO_ERROR(DFE_BADAID, FAIL);
 
           /* read isscales */
           isscales = (uint8 *) HDmalloc((uint32) sdg->rank);
           if (isscales == NULL)
             {
               Hendaccess(aid);
-              ret_value = FAIL;
-              goto done;
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
             }
           if (Hread(aid, (int32) sdg->rank, isscales) == FAIL)
             {
               Hendaccess(aid);
-              ret_value = FAIL;
-              goto done;
+              HGOTO_ERROR(DFE_READERROR, FAIL);
             }
 
           /* allocate scale pointers */
@@ -2855,8 +2930,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
             {
               HDfree((VOIDP) isscales);
               Hendaccess(aid);
-              ret_value = FAIL;
-              goto done;
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
             }
 
           /* read scales */
@@ -2873,8 +2947,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                 {
                   HDfree((VOIDP) isscales);
                   Hendaccess(aid);
-                  ret_value = FAIL;
-                  goto done;
+                  HGOTO_ERROR(DFE_NOSPACE, FAIL);
                 }
 
               if (platnumsubclass == fileNT)
@@ -2885,8 +2958,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                     {
                       HDfree((VOIDP) isscales);
                       Hendaccess(aid);
-                      ret_value = FAIL;
-                      goto done;
+                      HGOTO_ERROR(DFE_READERROR, FAIL);
                     }
                 }
               else
@@ -2897,8 +2969,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                     {
                       HDfree((VOIDP) isscales);
                       Hendaccess(aid);
-                      ret_value = FAIL;
-                      goto done;
+                      HGOTO_ERROR(DFE_NOSPACE, FAIL);
                     }
 
                   /* read scale from file */
@@ -2908,8 +2979,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                       HDfree((VOIDP) buf);
                       HDfree((VOIDP) isscales);
                       Hendaccess(aid);
-                      ret_value = FAIL;
-                      goto done;
+                      HGOTO_ERROR(DFE_READERROR, FAIL);
                     }
 
                   p = buf;
@@ -2929,25 +2999,16 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
           /* find and allocate necessary space */
           length = Hlength(file_id, elmt.tag, elmt.ref);
           if (length == FAIL)
-            {
-              ret_value = FAIL;
-              goto done;
-            }
+              HGOTO_ERROR(DFE_BADLEN, FAIL);
 
           sdg->coordsys = (char *) HDmalloc((uint32) length);
           if (sdg->coordsys == NULL)
-            {
-              ret_value = FAIL;
-              goto done;
-            }
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
           /* read coordsys */
           if (Hgetelement(file_id, elmt.tag, elmt.ref,
                           (uint8 *) sdg->coordsys) == FAIL)
-            {
-              ret_value = FAIL;
-              goto done;
-            }
+              HGOTO_ERROR(DFE_GETELEM, FAIL);
           break;
 
         case DFTAG_SDM: /* max/min */
@@ -2955,10 +3016,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
             {     /* no conversion */
               if (Hgetelement(file_id, elmt.tag, elmt.ref,
                               (uint8 *) &(sdg->max_min[0])) == FAIL)
-                {
-                  ret_value = FAIL;
-                  goto done;
-                }
+                  HGOTO_ERROR(DFE_GETELEM, FAIL);
             }
           else
             {
@@ -2966,17 +3024,11 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
               /* allocate buffer */
               buf = (uint8 *) HDmalloc((uint32) 2 * fileNTsize);
               if (buf == NULL)
-                {
-                  ret_value = FAIL;
-                  goto done;
-                }
+                  HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
               /* read and convert max/min */
               if (Hgetelement(file_id, elmt.tag, elmt.ref, buf) == FAIL)
-                {
-                  ret_value = FAIL;
-                  goto done;
-                }
+                  HGOTO_ERROR(DFE_GETELEM, FAIL);
 
               DFKconvert((VOIDP) buf, (VOIDP) &(sdg->max_min[0]), numtype, 2,
                          DFACC_READ, 0, 0);
@@ -2992,20 +3044,14 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
               /* get size of element */
               intn        eltSize = (intn) Hlength(file_id, elmt.tag, elmt.ref);
               if (eltSize == FAIL)
-                {
-                  ret_value = FAIL;
-                  goto done;
-                }
+                  HGOTO_ERROR(DFE_BADLEN, FAIL);
 
               if (eltSize == 36)
                 {
                    /* element is new, double based type */
                   if (Hgetelement(file_id, elmt.tag, elmt.ref,
                                   (unsigned char *) &sdg->cal) < 0)
-                    {
-                      ret_value = FAIL;
-                      goto done;
-                    }
+                      HGOTO_ERROR(DFE_GETELEM, FAIL);
                 }
               else
                 {
@@ -3015,10 +3061,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                    /* allocate input buffer */
                   if (Hgetelement(file_id, elmt.tag, elmt.ref,
                                   (unsigned char *) buf2) < 0)
-                    {
-                      ret_value = FAIL;
-                      goto done;
-                    }
+                      HGOTO_ERROR(DFE_GETELEM, FAIL);
 
                   /* move 'em over */
                   sdg->ioff = (float64) buf2[0];
@@ -3036,25 +3079,16 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
               /* get size of element */
               eltSize = (intn) Hlength(file_id, elmt.tag, elmt.ref);
               if (eltSize == FAIL)
-                {
-                  ret_value = FAIL;
-                  goto done;
-                }
+                  HGOTO_ERROR(DFE_BADLEN, FAIL);
 
               /* allocate buffer */
               buf = (uint8 *) HDmalloc((uint32) eltSize);
               if (buf == NULL)
-                {
-                  ret_value = FAIL;
-                  goto done;
-                }
+                  HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
               /* read and convert calibration */
               if (Hgetelement(file_id, elmt.tag, elmt.ref, buf) == FAIL)
-                {
-                  ret_value = FAIL;
-                  goto done;
-                }
+                  HGOTO_ERROR(DFE_GETELEM, FAIL);
 
               if (eltSize == 36)
                 {
@@ -3097,18 +3131,12 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
               /* get size of element */
               intn        eltSize = (intn) Hlength(file_id, elmt.tag, elmt.ref);
               if (eltSize == FAIL)
-                {
-                  ret_value = FAIL;
-                  goto done;
-                }
+                  HGOTO_ERROR(DFE_BADLEN, FAIL);
 
               /* get element */
               if (Hgetelement(file_id, elmt.tag, elmt.ref,
                               (unsigned char *) sdg->fill_value) == FAIL)
-                {
-                  ret_value = FAIL;
-                  goto done;
-                }
+                  HGOTO_ERROR(DFE_GETELEM, FAIL);
             }
           else
             {
@@ -3117,25 +3145,16 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
               /* get size of element  */
               eltSize = (intn) Hlength(file_id, elmt.tag, elmt.ref);
               if (eltSize == FAIL)
-                {
-                  ret_value = FAIL;
-                  goto done;
-                }
+                  HGOTO_ERROR(DFE_BADLEN, FAIL);
 
               /* allocate buffer for conversion  */
               buf = (uint8 *) HDmalloc((uint32) eltSize);
               if (buf == NULL)
-                {
-                  ret_value = FAIL;
-                  goto done;
-                }
+                  HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
               /* read fill value into buffer */
               if (Hgetelement(file_id, elmt.tag, elmt.ref, buf) == FAIL)
-                {
-                  ret_value = FAIL;
-                  goto done;
-                }
+                  HGOTO_ERROR(DFE_GETELEM, FAIL);
 
               /* convert the fill value  */
               DFKconvert((VOIDP) buf, (VOIDP) sdg->fill_value,
@@ -3181,7 +3200,7 @@ done:
  *          DFwrite
  * Remarks: Writes out NTs
  *---------------------------------------------------------------------------*/
-intn
+static intn
 DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
 {
   int32       i;
@@ -3209,6 +3228,11 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
 
   HEclear();
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if (!HDvalidfid(file_id))
     HGOTO_ERROR(DFE_BADCALL, FAIL);
   if (!ref)
@@ -3234,17 +3258,11 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
 
   /* prepare to start writing ndg   */
   if ((GroupID = DFdisetup(10)) < 0)
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+    HGOTO_ERROR(DFE_GROUPSETUP, FAIL);
 
   /* put ND and ref       */
   if (DFdiput(GroupID, sdg->data.tag, sdg->data.ref) < 0)
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+    HGOTO_ERROR(DFE_PUTGROUP, FAIL);
 
   if (Ref.nt <= 0)
     {     /* will not execute if has been written in putsdg  */
@@ -3254,10 +3272,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
       ntstring[2] = (uint8) (fileNTsize * 8);   /* width of number type in bits */
       ntstring[3] = outNT;  /* class: IEEE or machine class */
       if (Hputelement(file_id, DFTAG_NT, ref, ntstring, (int32) 4) == FAIL)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+        HGOTO_ERROR(DFE_PUTELEM, FAIL);
       Ref.nt = ref;
     }
 
@@ -3281,20 +3296,13 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
           UINT16ENCODE(bufp, nt.ref);
         }
       /* write out NDD record */
-      ret = Hputelement(file_id, DFTAG_SDD, ref, ptbuf, (int32) (bufp - ptbuf));
-      if (ret == FAIL)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+      if ( Hputelement(file_id, DFTAG_SDD, ref, ptbuf, (int32) (bufp - ptbuf)) == FAIL)
+        HGOTO_ERROR(DFE_PUTELEM, FAIL);
       Ref.dims = ref;
     }
   /* write dimension record tag/ref */
   if (DFdiput(GroupID, DFTAG_SDD, (uint16) Ref.dims) < 0)
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+    HGOTO_ERROR(DFE_PUTGROUP, FAIL);
 
   /* write out label/unit/format */
   for (luf = LABEL; luf <= FORMAT; luf++)
@@ -3333,23 +3341,15 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
                 }
             }     /* i loop   */
           Ref.luf[luf] = ref;     /* remember ref */
-          ret = Hputelement(file_id, luftag, (uint16) Ref.luf[luf],
-                            ptbuf, (int32) (bufp - ptbuf));
-          if (ret == FAIL)
-            {
-              ret_value = FAIL;
-              goto done;
-            }
+          if ( Hputelement(file_id, luftag, (uint16) Ref.luf[luf], ptbuf, (int32) (bufp - ptbuf)) == FAIL)
+            HGOTO_ERROR(DFE_PUTELEM, FAIL);
         }   /* luf was set */
 
       /* write luf tag/ref */
       if (Ref.luf[luf] > 0)
         {
           if (DFdiput(GroupID, luftag, (uint16) Ref.luf[luf]) < 0)
-            {
-              ret_value = FAIL;
-              goto done;
-            }
+            HGOTO_ERROR(DFE_PUTGROUP, FAIL);
         }
     }     /* luf loop     */
 
@@ -3358,10 +3358,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
     {     /* if scale set */
       Isscales = (uint8 *) HDmalloc((uint32) sdg->rank);
       if (Isscales == NULL)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
       Ref.scales = (-1);    /* assume there is no scale */
 
       /* set up Isscales array */
@@ -3392,16 +3389,14 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
       if (aid == FAIL)
         {
           HDfree((VOIDP) Isscales);
-          ret_value = FAIL;
-          goto done;
+          HGOTO_ERROR(DFE_BADAID, FAIL);
         }
 
       /* write Isscales */
       if (Hwrite(aid, (int32) sdg->rank, Isscales) == FAIL)
         {
           HDfree((VOIDP) Isscales);
-          ret_value = FAIL;
-          goto done;
+          HGOTO_ERROR(DFE_WRITEERROR, FAIL);
         }
 
       /* Write scales */
@@ -3415,8 +3410,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
                          (uint8 *) sdg->dimscales[j]) == FAIL)
                 {
                   HDfree((VOIDP) Isscales);
-                  ret_value = FAIL;
-                  goto done;
+                  HGOTO_ERROR(DFE_WRITEERROR, FAIL);
                 }
             }
           else
@@ -3426,8 +3420,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
               if (buf == NULL)
                 {
                   HDfree((VOIDP) Isscales);
-                  ret_value = FAIL;
-                  goto done;
+                  HGOTO_ERROR(DFE_NOSPACE, FAIL);
                 }
               /* convert, all at once */
               DFKconvert((VOIDP) sdg->dimscales[j], (VOIDP) buf, numtype,
@@ -3438,8 +3431,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
                 {
                   HDfree((VOIDP) Isscales);
                   HDfree((VOIDP) buf);
-                  ret_value = FAIL;
-                  goto done;
+                  HGOTO_ERROR(DFE_WRITEERROR, FAIL);
                 }
               HDfree((VOIDP) buf);
             }
@@ -3453,32 +3445,21 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
   Isscales = NULL;
   if (Ref.scales > 0)
     if (DFdiput(GroupID, DFTAG_SDS, (uint16) Ref.scales) < 0)
-      {
-        ret_value = FAIL;
-        goto done;
-      }
+      HGOTO_ERROR(DFE_PUTGROUP, FAIL);
 
   /* write coordsys */
   if (!sdg->coordsys || !sdg->coordsys[0])
     Ref.coordsys = (-1);
   if (!Ref.coordsys)
     {
-      ret = Hputelement(file_id, DFTAG_SDC, ref, (uint8 *) sdg->coordsys,
-                        (int32) (HDstrlen(sdg->coordsys) + 1));
-      if (ret == FAIL)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+      if ( Hputelement(file_id, DFTAG_SDC, ref, (uint8 *) sdg->coordsys, (int32) (HDstrlen(sdg->coordsys) + 1)) == FAIL)
+          HGOTO_ERROR(DFE_PUTELEM, FAIL);
       Ref.coordsys = ref;
     }
   if (Ref.coordsys > 0)
     {
       if (DFdiput(GroupID, DFTAG_SDC, (uint16) Ref.coordsys) < 0)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+          HGOTO_ERROR(DFE_PUTGROUP, FAIL);
     }
 
   /* write max/min */
@@ -3486,14 +3467,8 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
     {
       if (platnumsubclass == outNT)
         {   /* no conversion */
-          ret = Hputelement(file_id, DFTAG_SDM, ref,
-                            (uint8 *) &(sdg->max_min[0]),
-                            (int32) (2 * fileNTsize));
-          if (ret == FAIL)
-            {
-              ret_value = FAIL;
-              goto done;
-            }
+          if ( Hputelement(file_id, DFTAG_SDM, ref, (uint8 *) &(sdg->max_min[0]), (int32) (2 * fileNTsize)) == FAIL)
+              HGOTO_ERROR(DFE_PUTELEM, FAIL);
           Ref.maxmin = ref;
         }
       else
@@ -3501,24 +3476,17 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
           /* allocate buffer */
           buf = (uint8 *) HDmalloc((uint32) 2 * fileNTsize);    /* max/min is 8 bytes */
           if (buf == NULL)
-            {
-              ret_value = FAIL;
-              goto done;
-            }
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
           /* convert */
           DFKconvert((VOIDP) &(sdg->max_min[0]), (VOIDP) buf,
                      numtype, 2, DFACC_WRITE, 0, 0);
 
           /* write */
-          ret = Hputelement(file_id, DFTAG_SDM, ref, buf,
-                            (int32) (2 * fileNTsize));
-
-          if (ret == FAIL)
+          if ( Hputelement(file_id, DFTAG_SDM, ref, buf, (int32) (2 * fileNTsize)) == FAIL)
             {
               HDfree((VOIDP) buf);
-              ret_value = FAIL;
-              goto done;
+              HGOTO_ERROR(DFE_PUTELEM, FAIL);
             }
 
           Ref.maxmin = ref;
@@ -3528,10 +3496,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
   if (Ref.maxmin > 0)
     {
       if (DFdiput(GroupID, DFTAG_SDM, (uint16) Ref.maxmin) < 0)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+          HGOTO_ERROR(DFE_PUTGROUP, FAIL);
     }
   Ref.maxmin = (-1);  /* max/min should be reset for each data set */
 
@@ -3543,10 +3508,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
           if (Hputelement(file_id, DFTAG_CAL, ref,
                           (unsigned char *) &sdg->cal,
                           (int32) 36) < 0)
-            {
-              ret_value =FAIL;
-              goto done;
-            }
+              HGOTO_ERROR(DFE_PUTELEM, FAIL);
           Ref.cal = ref;
         }
       else
@@ -3565,10 +3527,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
           /* write it into the file */
           if (Hputelement(file_id, DFTAG_CAL, ref,
                           (unsigned char *) buf2, (int32) 36) < 0)
-            {
-              ret_value = FAIL;
-              goto done;
-            }
+              HGOTO_ERROR(DFE_PUTELEM, FAIL);
           Ref.cal = ref;
 
         }
@@ -3577,10 +3536,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
   if (Ref.cal > 0)
     {
       if (DFdiput(GroupID, DFTAG_CAL, (uint16) Ref.cal) < 0)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+          HGOTO_ERROR(DFE_PUTGROUP, FAIL);
     }
   Ref.cal = (-1);     /* Calibration should be reset for each data set */
 
@@ -3592,10 +3548,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
           if (Hputelement(file_id, DFTAG_FV, ref,
                           (unsigned char *) sdg->fill_value,
                           (int32) fileNTsize) == FAIL)
-            {
-              ret_value = FAIL;
-              goto done;
-            }
+              HGOTO_ERROR(DFE_PUTELEM, FAIL);
           Ref.fill_value = ref;
         }
       else
@@ -3611,10 +3564,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
           if (Hputelement(file_id, DFTAG_FV, ref,
                           (unsigned char *) buf2,
                           (int32) fileNTsize) == FAIL)
-            {
-              ret_value = FAIL;
-              goto done;
-            }
+              HGOTO_ERROR(DFE_PUTELEM, FAIL);
 
           Ref.fill_value = ref;
         }
@@ -3624,29 +3574,20 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
   if (Ref.fill_value > 0)
     {
       if (DFdiput(GroupID, DFTAG_FV, (uint16) Ref.fill_value) == FAIL)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+          HGOTO_ERROR(DFE_PUTGROUP, FAIL);
     }
   Ref.fill_value = (-1);  /* Fill value should be reset for each data set  */
 
   if (!Ref.transpose)
     {     /* if transposed, add transpose tag */
       if (Hdupdd(file_id, DFTAG_SDT, ref, DFTAG_SDD, ref) == FAIL)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+          HGOTO_ERROR(DFE_DUPDD, FAIL);
       Ref.transpose = ref;
     }
   if (Ref.transpose > 0)
     {
       if (DFdiput(GroupID, DFTAG_SDT, (uint16) Ref.transpose) < 0)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+          HGOTO_ERROR(DFE_PUTGROUP, FAIL);
     }
 
   if (numtype == DFNT_FLOAT32)
@@ -3665,38 +3606,23 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
           UINT16ENCODE(bufp, lnkdd[i].tag);
           UINT16ENCODE(bufp, lnkdd[i].ref);
         }
-      ret = Hputelement(file_id, DFTAG_SDLNK, ref,
-                        ptbuf, (int32) (bufp - ptbuf));
-      if (ret == FAIL)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+      if ( Hputelement(file_id, DFTAG_SDLNK, ref, ptbuf, (int32) (bufp - ptbuf)) == FAIL)
+          HGOTO_ERROR(DFE_PUTELEM, FAIL);
 
       /* write DFTAG_SDLNK  */
       if (DFdiput(GroupID, DFTAG_SDLNK, ref) < 0)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+          HGOTO_ERROR(DFE_PUTGROUP, FAIL);
     }
 
   /* write out NDG */
   if (DFdiwrite(file_id, GroupID, DFTAG_NDG, ref) < 0)
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+      HGOTO_ERROR(DFE_GROUPWRITE, FAIL);
 
   /* write an SDG point to the dataset if it is an NDG SDG  */
   if (issdg)
     {
       if (Hdupdd(file_id, DFTAG_SDG, ref, DFTAG_NDG, ref) == FAIL)
-        {
-          Hclose(file_id);
-          ret_value = FAIL;
-          goto done;
-        }
+          HCLOSE_GOTO_ERROR(file_id,DFE_DUPDD, FAIL);
     }
 
 done:
@@ -3732,6 +3658,11 @@ DFSDIendslice(intn isfortran)
   if (Sfile_id == DF_NOFILE)
     HGOTO_ERROR(DFE_BADCALL, FAIL);
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   /* check if slice writes complete */
   for (i = 0; i < Writesdg.rank; i++)
     {
@@ -3748,11 +3679,7 @@ DFSDIendslice(intn isfortran)
     }
 
   if (DFSDIputndg(Sfile_id, Writeref, &Writesdg) < 0)
-    {
-      Hclose(Sfile_id);
-      ret_value = FAIL;
-      goto done;
-    }
+      HCLOSE_GOTO_ERROR(Sfile_id,DFE_INTERNAL,FAIL);
 
   /* old nsdg table should be reset next time  */
   if (nsdghdr != NULL)
@@ -3819,6 +3746,11 @@ DFSDIopen(const char *filename, intn acc_mode)
   int32       ret_value = SUCCEED;
   CONSTR(FUNC, "DFSDIopen");
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if (Sfile_id != DF_NOFILE)  /* in the middle of a partial write */
     HGOTO_ERROR(DFE_ALROPEN, FAIL);
 
@@ -3835,12 +3767,8 @@ DFSDIopen(const char *filename, intn acc_mode)
       if (Lastfile == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
       /* open file */
-      file_id = Hopen(filename, acc_mode, (int16) 0);
-      if (file_id == FAIL)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+      if (( file_id = Hopen(filename, acc_mode, (int16) 0)) == FAIL)
+        HGOTO_ERROR(DFE_BADOPEN, FAIL);
     }
   else if ((HDstrcmp(Lastfile, filename)) || (acc_mode == DFACC_CREATE))
     {     /* open a new file, delete nsdg table and reset lastnsdg  */
@@ -3866,12 +3794,8 @@ DFSDIopen(const char *filename, intn acc_mode)
         }
 
       /* treat create as different file */
-      file_id = Hopen(filename, acc_mode, (int16) 0);
-      if (file_id == FAIL)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+      if (( file_id = Hopen(filename, acc_mode, (int16) 0))== FAIL)
+        HGOTO_ERROR(DFE_BADOPEN, FAIL);
       Newdata = (-1);   /* data in Readsdg is not fresh */
       Readsdg.data.ref = 0;     /* No SDG read yet */
 
@@ -3888,12 +3812,8 @@ DFSDIopen(const char *filename, intn acc_mode)
     }
   else
     {
-      file_id = Hopen(filename, acc_mode, (int16) 0);
-      if (file_id == FAIL)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+      if (( file_id = Hopen(filename, acc_mode, (int16) 0))== FAIL)
+        HGOTO_ERROR(DFE_BADOPEN, FAIL);
     }
 
   /* if read, set up nsdg table */
@@ -3908,10 +3828,7 @@ DFSDIopen(const char *filename, intn acc_mode)
   if ((nsdghdr->nsdg_t == NULL) && (acc_mode == DFACC_READ))
     {
       if (DFSDIsetnsdg_t(file_id, nsdghdr) < 0)
-        {
-          ret_value = (FAIL);
-          goto done;
-        }
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
       lastnsdg.tag = DFTAG_NULL;
       lastnsdg.ref = 0;
     }
@@ -3952,6 +3869,11 @@ DFSDIsdginfo(int32 file_id)
 
   HEclear();
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if (!HDvalidfid(file_id))
     HGOTO_ERROR(DFE_BADCALL, FAIL);
 
@@ -3974,19 +3896,13 @@ DFSDIsdginfo(int32 file_id)
               Hendaccess(aid);
             }
           else
-            {
-              ret_value = FAIL;
-              goto done;
-            }
+            HGOTO_ERROR(DFE_BADAID, FAIL);
         }
     }
   else
     {
       if (DFSDInextnsdg(nsdghdr, &ptr) < 0)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
       if ((ptr.tag != DFTAG_NDG) && (ptr.tag != DFTAG_SDG))
         HGOTO_ERROR(DFE_BADTAG, FAIL);
       if (ptr.ref <= 0)
@@ -3996,10 +3912,7 @@ DFSDIsdginfo(int32 file_id)
 
   /* find next sd object */
   if (DFSDIgetndg(file_id, ptr.tag, ptr.ref, &Readsdg) < 0)
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
   /* remember what type of thing we just read */
   Readsdg.isndg = (ptr.tag == DFTAG_NDG) ? 1 : 0;
@@ -4037,31 +3950,23 @@ DFSDIrefresh(char *filename)
 {
   int32       file_id;
   intn        ret_value = SUCCEED;
-#ifdef LATER
   CONSTR(FUNC, "DFSDIrefresh");
-#endif
 
   HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if (Newdata != 1 || Nextsdg)
     {     /* if Readsdg not fresh  */
-      file_id = DFSDIopen(filename, DFACC_READ);    /* open/reopen file */
-      if (file_id == FAIL)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+      if (( file_id = DFSDIopen(filename, DFACC_READ))== FAIL)
+            HGOTO_ERROR(DFE_BADOPEN, FAIL);
       if (DFSDIsdginfo(file_id) < 0)
-        {   /* reads next SDG from file */
-          Hclose(file_id);
-          ret_value = FAIL;
-          goto done;
-          /* on error, close file and return */
-        }
+        HCLOSE_GOTO_ERROR(file_id,DFE_INTERNAL, FAIL);
       if (Hclose(file_id) < 0)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+        HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
       Nextsdg = 0;
     }
 
@@ -4157,6 +4062,11 @@ DFSDIclear(DFSsdg * sdg)
 
   HEclear();
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if (Sfile_id != DF_NOFILE)  /* cannot clear during slice writes */
     HGOTO_ERROR(DFE_BADCALL, FAIL);
 
@@ -4249,25 +4159,19 @@ DFSDIgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data,
 
   HEclear();
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if (Newdata != 1 || Nextsdg)
     {     /* if Readsdg not fresh */
-      file_id = DFSDIopen(filename, DFACC_READ);
-      if (file_id == DF_NOFILE)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+      if (( file_id = DFSDIopen(filename, DFACC_READ))== DF_NOFILE)
+        HGOTO_ERROR(DFE_BADOPEN, FAIL);
       if (DFSDIsdginfo(file_id) < 0)
-        {   /* reads next SDG from file */
-          Hclose(file_id);
-          ret_value = FAIL;
-          goto done;
-        }
+        HCLOSE_GOTO_ERROR(file_id,DFE_INTERNAL, FAIL);
       if (Hclose(file_id) == FAIL)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+        HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
     }
 
   winst = (int32 *) HDmalloc((uint32) Readsdg.rank * sizeof(int32));
@@ -4326,47 +4230,34 @@ DFSDIputdata(const char *filename, intn rank, int32 *dimsizes, VOIDP data,
   intn        ret;
   int32       file_id;
   intn        ret_value = SUCCEED;
-#ifdef LATER
   CONSTR(FUNC, "DFSDIputdata");
-#endif
 
   HEclear();
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if (!accmode)
     {     /* new file */
-      file_id = DFSDIopen(filename, DFACC_CREATE);
-      if (file_id == DF_NOFILE)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+      if (( file_id = DFSDIopen(filename, DFACC_CREATE))== DF_NOFILE)
+        HGOTO_ERROR(DFE_BADOPEN, FAIL);
       if (Hclose(file_id) == FAIL)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+        HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
     }
 
   if (Ref.dims)
     {     /* don't call setdims if already called */
       if (DFSDsetdims(rank, dimsizes) < 0)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
     }
 
   if (DFSDstartslice(filename) < 0)
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+    HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
   if ((ret = DFSDIputslice(Writesdg.dimsizes, data, dimsizes, isfortran)) < 0)
-    {
-      ret_value = ret;
-      goto done;
-    }
+    HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
   ret_value = DFSDIendslice(isfortran);
 
@@ -4467,24 +4358,21 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[],
 
   HEclear();
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if (data == NULL)
     HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-  file_id = DFSDIopen(filename, DFACC_READ);
-  if (file_id == DF_NOFILE)
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+  if (( file_id = DFSDIopen(filename, DFACC_READ))== DF_NOFILE)
+    HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
   if (Newdata != 1)
     {     /* if Readsdg not fresh */
-      if (DFSDIsdginfo(file_id) < 0)
-        {   /* reads next SDG from file */
-          Hclose(file_id);
-          ret_value = FAIL;
-          goto done;
-        }
+      if (DFSDIsdginfo(file_id) < 0) /* reads next SDG from file */
+        HCLOSE_GOTO_ERROR(file_id,DFE_INTERNAL, FAIL);
     }
   rank = Readsdg.rank;
   numtype = Readsdg.numbertype;
@@ -4565,9 +4453,7 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[],
   if (aid == FAIL)
     {
       HDfree((VOIDP) wstart);
-      Hclose(file_id);
-      ret_value = FAIL;
-      goto done;
+      HCLOSE_GOTO_ERROR(file_id,DFE_BADAID, FAIL);
     }
 
   error = 0;
@@ -4808,7 +4694,7 @@ DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
   int32       fileNT;         /* class of NT for the data to write */
   int32       isnative;
   int32       localNTsize;    /* size of this NT as it occurs in theis machine */
-  int32       ret = FAIL;     /* return code from DFwrite */
+  int32       ret = SUCCEED;  /* return code from DFwrite */
   int32       i, j;           /* temporaries */
   int32       numelements;    /* number of elements to write out per row */
   int32       writesize;      /* number of bytes to write out per row */
@@ -4823,6 +4709,11 @@ DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
   isfortran = isfortran;
 
   HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
   if (!data)
     HGOTO_ERROR(DFE_BADPTR, FAIL);
@@ -4898,13 +4789,8 @@ DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
         numelements *= windims[i];
       writesize = numelements * fileNTsize;
 
-      ret = Hwrite(Writesdg.aid, writesize, (uint8 *) data);    /* done */
-      if (ret == FAIL)
-        {
-          Hclose(Sfile_id);
-          ret_value = FAIL;
-          goto done;
-        }
+      if ( Hwrite(Writesdg.aid, writesize, (uint8 *) data) == FAIL)
+            HCLOSE_GOTO_ERROR(Sfile_id,DFE_WRITEERROR, FAIL);
     }
   else
     {     /* must step through the data */
@@ -4927,11 +4813,7 @@ DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
         {
           buf = (uint8 *) HDmalloc((uint32) writesize);
           if (buf == NULL)
-            {
-              Hclose(Sfile_id);
-              ret_value = FAIL;
-              goto done;
-            }
+            HCLOSE_GOTO_ERROR(Sfile_id,DFE_NOSPACE, FAIL);
           for (i = 0; i < j; i++, datap += datastride)
             {
               DFKconvert((VOIDP) datap, (VOIDP) buf, numtype,
@@ -4940,9 +4822,7 @@ DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
               if (ret == FAIL)
                 {
                   HDfree((VOIDP) buf);
-                  Hclose(Sfile_id);
-                  ret_value = FAIL;
-                  goto done;
+                  HCLOSE_GOTO_ERROR(Sfile_id,DFE_WRITEERROR, FAIL);
                 }
             }
           HDfree((VOIDP) buf);
@@ -4950,13 +4830,8 @@ DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
       else
         {   /* !contiguous      */
           for (i = 0; i < j; i++, datap += datastride)
-            ret = Hwrite(Writesdg.aid, writesize, datap);
-          if (ret == FAIL)
-            {
-              Hclose(Sfile_id);
-              ret_value = FAIL;
-              goto done;
-            }
+              if ( Hwrite(Writesdg.aid, writesize, datap) == FAIL)
+                  HCLOSE_GOTO_ERROR(Sfile_id,DFE_WRITEERROR, FAIL);
         }
     }
 
@@ -5022,6 +4897,11 @@ DFSDgetcal(float64 *pcal, float64 *pcal_err, float64 *pioff,
 #endif /* HAVE_PABLO */
 
   HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
   if (Newdata < 0)
     HGOTO_ERROR(DFE_BADCALL, FAIL);
@@ -5094,6 +4974,7 @@ intn
 DFSDsetcal(float64 cal, float64 cal_err, float64 ioff, float64 ioff_err,
            int32 cal_nt)
 {
+    CONSTR(FUNC, "DFSDsetcal");
   intn    ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -5101,6 +4982,11 @@ DFSDsetcal(float64 cal, float64 cal_err, float64 ioff, float64 ioff_err,
 #endif /* HAVE_PABLO */
 
   HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
   Writesdg.cal = (float64) cal;
   Writesdg.cal_err = (float64) cal_err;
@@ -5110,6 +4996,13 @@ DFSDsetcal(float64 cal, float64 cal_err, float64 ioff, float64 ioff_err,
 
   Ref.cal = 0;
 
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
 #ifdef HAVE_PABLO
     TRACE_OFF(DFSD_mask, ID_DFSDsetcal);
 #endif /* HAVE_PABLO */
@@ -5147,13 +5040,14 @@ DFSDwriteref(const char *filename, uint16 ref)
   /* Clear error stack */
   HEclear();
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   /* Open file for read access */
-  file_id = DFSDIopen(filename, DFACC_READ);
-  if (file_id == DF_NOFILE)
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+  if (( file_id = DFSDIopen(filename, DFACC_READ))== DF_NOFILE)
+    HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
   /* Check for existence of SDG */
   if ((aid = Hstartread(file_id, DFTAG_SDG, ref)) == FAIL
@@ -5173,9 +5067,7 @@ DFSDwriteref(const char *filename, uint16 ref)
       && (DFSDIgetndg(file_id, DFTAG_NDG, ref, &Writesdg) < 0))
     {
       Hendaccess(aid);
-      Hclose(file_id);
-      ret_value = FAIL;
-      goto done;
+      HCLOSE_GOTO_ERROR(file_id, DFE_INTERNAL, FAIL);
     }
 
   /* Close access to file, set Writeref */
@@ -5225,9 +5117,8 @@ DFSDsetfillvalue(VOIDP fill_value)
   int32       numtype;        /* current number type  */
   uint32      localNTsize;    /* size of this NT on as it is on this machine  */
   intn        ret_value = SUCCEED;
-#ifdef LATER
   CONSTR(FUNC, "DFSDsetfillvalue");
-#endif
+
 #ifdef HAVE_PABLO
     TRACE_ON(DFSD_mask, ID_DFSDsetfillvalue);
 #endif /* HAVE_PABLO */
@@ -5235,11 +5126,15 @@ DFSDsetfillvalue(VOIDP fill_value)
   /* Clear error stack  */
   HEclear();
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   /* Check to see if fill value written out already */
   if (Ref.fill_value == -1 && Writesdg.fill_fixed == TRUE)
     {
-      ret_value = FAIL;
-      goto done;
+      HGOTO_ERROR(DFE_INTERNAL, FAIL);
     }
   else
     {
@@ -5299,6 +5194,11 @@ DFSDgetfillvalue(VOIDP fill_value)
 
   /* Clear error stack  */
   HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
   /* Check if Readsdg is fresh  */
   if (Newdata < 0)
@@ -5418,6 +5318,11 @@ DFSDstartslab(const char *filename)
   /* Clear errors */
   HEclear();
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   /* Check rank set i.e. DFSDsetdims()  */
   if (!Writesdg.rank)
     HGOTO_ERROR(DFE_BADDIM, FAIL);
@@ -5427,12 +5332,8 @@ DFSDstartslab(const char *filename)
     DFSDsetNT(DFNT_FLOAT32);
 
   /* Open file */
-  Sfile_id = DFSDIopen(filename, DFACC_WRITE);
-  if (Sfile_id == DF_NOFILE)
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+  if (( Sfile_id = DFSDIopen(filename, DFACC_WRITE))== DF_NOFILE)
+    HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
   /*
   ** Check for Writeref set i.e. DFSDwriteref() called?
@@ -5444,10 +5345,7 @@ DFSDstartslab(const char *filename)
   if (!Writeref)
     Writeref = Hnewref(Sfile_id);
   if (!Writeref)
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+    HGOTO_ERROR(DFE_BADREF, FAIL);
   Writesdg.data.ref = Writeref;
 
   /* Intialize a few local variables */
@@ -5462,11 +5360,7 @@ DFSDstartslab(const char *filename)
   /* set up to write data */
   Writesdg.aid = Hstartwrite(Sfile_id, DFTAG_SD, Writeref, sdg_size);
   if (Writesdg.aid == FAIL)
-    {
-      Hclose(Sfile_id);
-      ret_value = FAIL;
-      goto done;
-    }
+    HCLOSE_GOTO_ERROR(Sfile_id,DFE_BADAID, FAIL);
 
   /*
    ** Check if fill value is set
@@ -5481,8 +5375,7 @@ DFSDstartslab(const char *filename)
       if ((fill_buf = (uint8 *) HDmalloc((uint32) fill_bufsize)) == NULL)
         {
           Hendaccess(Writesdg.aid);
-          Hclose(Sfile_id);
-          HGOTO_ERROR(DFE_NOSPACE, FAIL);
+          HCLOSE_GOTO_ERROR(Sfile_id,DFE_NOSPACE, FAIL);
         }
 
       /* Intialize buffer to fill value */
@@ -5499,9 +5392,8 @@ DFSDstartslab(const char *filename)
               if (Hwrite(Writesdg.aid, fill_bufsize, fill_buf) == FAIL)
                 {
                   Hendaccess(Writesdg.aid);
-                  Hclose(Sfile_id);
                   HDfree((VOIDP) fill_buf);
-                  HGOTO_ERROR(DFE_WRITEERROR, FAIL);
+                  HCLOSE_GOTO_ERROR(Sfile_id,DFE_WRITEERROR, FAIL);
                 }
             }
         }
@@ -5509,9 +5401,8 @@ DFSDstartslab(const char *filename)
       if (Hwrite(Writesdg.aid, odd_size, fill_buf) == FAIL)
         {
           Hendaccess(Writesdg.aid);
-          Hclose(Sfile_id);
           HDfree((VOIDP) fill_buf);
-          HGOTO_ERROR(DFE_WRITEERROR, FAIL);
+          HCLOSE_GOTO_ERROR(Sfile_id,DFE_WRITEERROR, FAIL);
         }
 
       Writesdg.fill_fixed = TRUE;   /* fill value cannot be changed */
@@ -5610,6 +5501,11 @@ DFSDwriteslab(int32 start[], int32 stride[],
   /* Clear error stack  */
   HEclear();
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   /* Sanity checking of input data  */
   if (!data)
     HGOTO_ERROR(DFE_BADPTR, FAIL);
@@ -5628,10 +5524,7 @@ DFSDwriteslab(int32 start[], int32 stride[],
       */
       if ((count[i] < 1) || (start[i] < 1)
           || (start[i] + count[i] - 1 > Writesdg.dimsizes[i]))
-        {
-          Hclose(Sfile_id);
-          HGOTO_ERROR(DFE_BADDIM, FAIL);
-        }
+          HCLOSE_GOTO_ERROR(Sfile_id,DFE_BADDIM, FAIL);
     }
 
   /* Intialize a few local variables */
@@ -5657,10 +5550,7 @@ DFSDwriteslab(int32 start[], int32 stride[],
    */
   startdims = (int32 *) HDmalloc((uint32) 3 * rank * sizeof(int32));
   if (startdims == NULL)
-    {
-      Hclose(Sfile_id);
-      HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    }
+      HCLOSE_GOTO_ERROR(Sfile_id,DFE_NOSPACE, FAIL);
   sizedims = startdims + rank;
   filedims = sizedims + rank;
 
@@ -5721,8 +5611,7 @@ DFSDwriteslab(int32 start[], int32 stride[],
             {
               HDfree((VOIDP) startdims);
               Hendaccess(aid);
-              Hclose(Sfile_id);
-              HGOTO_ERROR(DFE_NOSPACE, FAIL);
+              HCLOSE_GOTO_ERROR(Sfile_id,DFE_NOSPACE, FAIL);
             }
         }
       else
@@ -5735,8 +5624,7 @@ DFSDwriteslab(int32 start[], int32 stride[],
           HDfree((VOIDP) startdims);
           HDfree((VOIDP) buf);
           Hendaccess(aid);
-          Hclose(Sfile_id);
-          HGOTO_ERROR(DFE_NOSPACE, FAIL);
+          HCLOSE_GOTO_ERROR(Sfile_id,DFE_NOSPACE, FAIL);
         }
       dimsleft = foffset + rank;
       doffset = dimsleft + rank;
@@ -5893,6 +5781,11 @@ DFSDendslab(void)
   /* Clear error stack */
   HEclear();
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFSDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   /* Valid file id */
   if (Sfile_id == DF_NOFILE)
     HGOTO_ERROR(DFE_BADCALL, FAIL);
@@ -5901,11 +5794,7 @@ DFSDendslab(void)
   if (!Ref.new_ndg)
     {
       if (DFSDIputndg(Sfile_id, Writeref, &Writesdg) < 0)
-        {
-          Hclose(Sfile_id);
-          ret_value = FAIL;
-          goto done;
-        }
+        HCLOSE_GOTO_ERROR(Sfile_id,DFE_INTERNAL, FAIL);
 
       /* old nsdg table should be reset next time  */
       if (nsdghdr != NULL)
@@ -5955,6 +5844,45 @@ done:
 
   return ret_value;
 }
+
+/*--------------------------------------------------------------------------
+ NAME
+    DFSDIstart
+ PURPOSE
+    DFSD-level initialization routine
+ USAGE
+    intn DFSDIstart()
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+    Register the shut-down routine (DFSDPshutdown) for call with atexit
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+PRIVATE intn DFSDIstart(void)
+{
+    CONSTR(FUNC, "DFSDIstart");    /* for HERROR */
+    intn        ret_value = SUCCEED;
+
+    /* Don't call this routine again... */
+    library_terminate = TRUE;
+
+    /* Install atexit() library cleanup routine */
+    if (HPregister_term_func(&DFSDPshutdown) != 0)
+      HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+    return(ret_value);
+} /* end DFSDIstart() */
 
 /*--------------------------------------------------------------------------
  NAME
