@@ -202,44 +202,44 @@ int32 fmtchar(x) char*x;
 int32 fmtint(x) 
      char* x;
 {	
-  int aint;
-  memcpy((unsigned char *)&aint, x, sizeof(int)); 
-  cn += printf("%d",aint); 
+  int *i;
+  i = (int *) x;
+  cn += printf("%d", *i); 
   return(1);  
 }
 
 int32 fmtfloat(x) 
      char* x;
 {
-  float afloat;
-  memcpy((unsigned char *) &afloat, x, sizeof(float)); 
-  cn += printf("%f",afloat); 
+  float *f;
+  f = (float *) x;
+  cn += printf("%f", *f); 
   return(1);  
 }
 
 int32 fmtlong(x) 
      char* x;   
 {	
-  long along;
-  memcpy((unsigned char *) &along, x, sizeof(long)); 
-  cn += printf("%ld",along); 
+  long *l;
+  l = (long *) x;
+  cn += printf("%ld", *l);
   return(1);  
 }
 
 int32 fmtshort(x) 
      char* x;   
 {	
-  short ashort;
-  memcpy((unsigned char *) &ashort, x, sizeof(short)); 
-  cn += printf("%d",ashort); 
+  short *s;
+  s = (short *) x;
+  cn += printf("%d", *s);
   return(1);  
 }
 
 int32 fmtdouble(x) char*x;
 {	
-  double adouble;
-  memcpy((unsigned char *) &adouble, x, sizeof(double)); 
-  cn += printf("%f",adouble); 
+  double *d;
+  d = (double *) x;
+  cn += printf("%f", *d); 
   return(1);  
 }
 
@@ -270,7 +270,7 @@ int32 vsdumpfull(vs) VDATA * vs;
   w = &(vs->wlist);
   
   nf = w->n;
-  for (i=0;i<w->n;i++) {
+  for (i=0; i < w->n; i++) {
     printf("%d: fld [%s], type=%d, order=%d\n", i, w->name[i], w->type[i], w->order[i]);
 
     order[i] = w->order[i];
@@ -315,12 +315,22 @@ int32 vsdumpfull(vs) VDATA * vs;
   b= bb;
   cn=0;
   
-  for(j=0;j<nv;j++) {
-    for(i=0;i<nf;i++) {
-      for(t=0;t<order[i];t++) { (fmtfn[i]) (b); b+=off[i]; }
+  for(j=0; j < nv; j++) {
+    for(i=0; i < nf; i++) {
+      for(t=0; t < order[i]; t++) { 
+        (fmtfn[i]) (b); 
+        b += off[i]; 
+        putchar(' ');
+        cn++;
+      }
       putchar(' ');
     }
-    if (condensed) { if( cn > 70) { putchar('\n'); cn=0; } } 
+    
+    if (condensed) { 
+      if( cn > 70) { 
+        putchar('\n'); cn=0; 
+      } 
+    } 
     else putchar('\n');
   }
   
