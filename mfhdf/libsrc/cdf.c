@@ -528,6 +528,7 @@ int type;
 {
 
   switch(type) {
+  case NC_UNSPECIFIED : /* be like netCDF */
   case NC_CHAR   :
     return DFNT_CHAR;
   case NC_BYTE   :
