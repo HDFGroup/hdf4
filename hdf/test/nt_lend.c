@@ -68,7 +68,7 @@ intn test_little_read()
             num_errs++;
           } /* end if */
         else {
-            data_i8 = HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int8));
+            data_i8=(int8 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int8));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,data_i8);
             RESULT("DFSDgetdata");
 
@@ -94,7 +94,7 @@ intn test_little_read()
             num_errs++;
           } /* end if */
         else {
-            data_u8 = HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(uint8));
+            data_u8=(uint8 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(uint8));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,data_u8);
             RESULT("DFSDgetdata");
 
@@ -120,7 +120,7 @@ intn test_little_read()
             num_errs++;
           } /* end if */
         else {
-            data_i16 = HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int16));
+            data_i16=(int16 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int16));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,data_i16);
             RESULT("DFSDgetdata");
 
@@ -146,7 +146,8 @@ intn test_little_read()
             num_errs++;
           } /* end if */
         else {
-            data_u16 = HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(uint16));
+            data_u16=(uint16 *)HDgetspace(dimsizes[0]*
+		    dimsizes[1]*sizeof(uint16));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,data_u16);
             RESULT("DFSDgetdata");
 
@@ -172,7 +173,7 @@ intn test_little_read()
             num_errs++;
           } /* end if */
         else {
-            data_i32 = HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int32));
+            data_i32=(int32 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int32));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,data_i32);
             RESULT("DFSDgetdata");
 
@@ -198,7 +199,8 @@ intn test_little_read()
             num_errs++;
           } /* end if */
         else {
-            data_u32 = HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(uint32));
+            data_u32=(uint32 *)HDgetspace(dimsizes[0]*dimsizes[1]*
+		    sizeof(uint32));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,data_u32);
             RESULT("DFSDgetdata");
 
@@ -224,7 +226,8 @@ intn test_little_read()
             num_errs++;
           } /* end if */
         else {
-            data_f32 = HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(float32));
+            data_f32=(float32 *)HDgetspace(dimsizes[0]*dimsizes[1]*
+		    sizeof(float32));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,data_f32);
             RESULT("DFSDgetdata");
 
@@ -250,7 +253,8 @@ intn test_little_read()
             num_errs++;
           } /* end if */
         else {
-            data_f64 = HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(float64));
+            data_f64=(float64 *)HDgetspace(dimsizes[0]*dimsizes[1]*
+		    sizeof(float64));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,data_f64);
             RESULT("DFSDgetdata");
 
@@ -355,7 +359,7 @@ intn test_little_write()
             num_errs++;
           } /* end if */
         else {
-            data_i8 = HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int8));
+            data_i8=(int8 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int8));
             ret=DFSDgetdata(TMPFILE,rank,dimsizes,data_i8);
             RESULT("DFSDgetdata");
 
@@ -381,7 +385,7 @@ intn test_little_write()
             num_errs++;
           } /* end if */
         else {
-            data_u8 = HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(uint8));
+            data_u8=(uint8 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(uint8));
             ret=DFSDgetdata(TMPFILE,rank,dimsizes,data_u8);
             RESULT("DFSDgetdata");
 
@@ -407,7 +411,7 @@ intn test_little_write()
             num_errs++;
           } /* end if */
         else {
-            data_i16 = HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int16));
+            data_i16=(int16 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int16));
             ret=DFSDgetdata(TMPFILE,rank,dimsizes,data_i16);
             RESULT("DFSDgetdata");
 
@@ -433,7 +437,8 @@ intn test_little_write()
             num_errs++;
           } /* end if */
         else {
-            data_u16 = HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(uint16));
+            data_u16=(uint16 *)HDgetspace(dimsizes[0]*dimsizes[1]*
+		   sizeof(uint16));
             ret=DFSDgetdata(TMPFILE,rank,dimsizes,data_u16);
             RESULT("DFSDgetdata");
 
@@ -459,7 +464,7 @@ intn test_little_write()
             num_errs++;
           } /* end if */
         else {
-            data_i32 = HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int32));
+            data_i32=(int32 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int32));
             ret=DFSDgetdata(TMPFILE,rank,dimsizes,data_i32);
             RESULT("DFSDgetdata");
 
@@ -485,7 +490,8 @@ intn test_little_write()
             num_errs++;
           } /* end if */
         else {
-            data_u32 = HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(uint32));
+            data_u32=(uint 32*)HDgetspace(dimsizes[0]*dimsizes[1]*
+		    sizeof(uint32));
             ret=DFSDgetdata(TMPFILE,rank,dimsizes,data_u32);
             RESULT("DFSDgetdata");
 
@@ -511,7 +517,8 @@ intn test_little_write()
             num_errs++;
           } /* end if */
         else {
-            data_f32 = HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(float32));
+            data_f32=(float32 *)HDgetspace(dimsizes[0]*dimsizes[1]*
+		    sizeof(float32));
             ret=DFSDgetdata(TMPFILE,rank,dimsizes,data_f32);
             RESULT("DFSDgetdata");
 
@@ -537,7 +544,8 @@ intn test_little_write()
             num_errs++;
           } /* end if */
         else {
-            data_f64 = HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(float64));
+            data_f64=(float64 *)HDgetspace(dimsizes[0]*dimsizes[1]*
+		    sizeof(float64));
             ret=DFSDgetdata(TMPFILE,rank,dimsizes,data_f64);
             RESULT("DFSDgetdata");
 
