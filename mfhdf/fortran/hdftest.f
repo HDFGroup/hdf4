@@ -24,6 +24,7 @@
       integer sfscal,   sfselect,  sfginfo,  sfgdinfo, sfgainfo
       integer sfrattr,  sfsrange,  sfgrange, sfgfill
       integer sfgcal,   sfgdscale, sfgdtstr, sfgdmstr
+      integer sfid2ref, sfref2index
 
 C     create a new file
       err = 0
@@ -189,13 +190,13 @@ C     create a new file
          err = err + 1
       endif
 
-      ref = sfidtoref(sds1)
+      ref = sfid2ref(sds1)
       if(ref.eq.0) then
          print *, 'sfidtoref failed'
          err = err + 1
       endif
 
-      stat = sfreftoindex(fid1, ref)
+      stat = sfref2index(fid1, ref)
       if(stat.ne.0) then
          print *, 'mapping from ref to index failed', stat
          err = err + 1
