@@ -696,6 +696,7 @@ Please check your Makefile.
 #define GOT_MACHINE
 
 #include <string.h>
+#define isascii(c)  (isprint(c) || iscntrl(c))
 #ifndef __GNUC__
 #include <memory.h>
 #endif /* __GNUC__ */
@@ -1049,7 +1050,7 @@ extern uint8 FAR *DFtbuf;
 #  define HDstrncpy(s1,s2,n)    (strncpy((s1),(s2),(n)))
 #  define HDstrchr(s,c)    (strchr((s),(c)))
 /* Can't use on PCs. strdup() uses malloc() and HDgetspace uses halloc() */
-#if !(defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MIPSEL)
+#if !(defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MIPSEL | defined NEXT)
 #  define HDstrdup(s)      (strdup((s)))
 #endif /* !(VMS | PC) */
 #endif /* WIN3 */

@@ -194,7 +194,7 @@ extern intn memcmp_big
 
 #endif  /* WIN3 | PC */
 
-#if defined VMS | (defined PC & !defined PC386)
+#if defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MIPSEL | defined NEXT
 extern char *HDstrdup
   PROTO((const char *s));
 
