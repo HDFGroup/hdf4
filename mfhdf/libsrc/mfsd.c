@@ -275,9 +275,9 @@ int32 SDstart(name, HDFmode)
 
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-int32 SDend(int32 id)
+intn SDend(int32 id)
 #else
-int32 SDend(id)
+intn SDend(id)
 int32 id;
 #endif
 {
@@ -346,9 +346,9 @@ int32 id;
 
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-int32 SDfileinfo(int32 fid, int32 *datasets, int32 *attrs)
+intn SDfileinfo(int32 fid, int32 *datasets, int32 *attrs)
 #else
-int32 SDfileinfo(fid, datasets, attrs)
+intn SDfileinfo(fid, datasets, attrs)
 int32   fid;
 int32 * datasets;
 int32 * attrs;
@@ -409,11 +409,11 @@ int32 * attrs;
         
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-int32 SDselect(int32 fid, intn index)
+int32 SDselect(int32 fid, int32 index)
 #else
 int32 SDselect(fid, index)
 int32 fid;
-intn  index;
+int32 index;
 #endif
 {
     NC    *handle;
@@ -467,10 +467,10 @@ intn  index;
  
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-int32 SDgetinfo(int32 sdsid, char *name, int32 *rank, int32 *dimsizes, 
+intn SDgetinfo(int32 sdsid, char *name, int32 *rank, int32 *dimsizes, 
                 int32 *nt, int32 *nattr)
 #else
-int32 SDgetinfo(sdsid, name, rank, dimsizes, nt, nattr)
+intn SDgetinfo(sdsid, name, rank, dimsizes, nt, nattr)
 int32 sdsid;
 char  *name;
 int32 *rank, *nt, *nattr, *dimsizes;
@@ -544,9 +544,9 @@ int32 *rank, *nt, *nattr, *dimsizes;
  
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-int32 SDreaddata(int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data)
+intn SDreaddata(int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data)
 #else
-int32 SDreaddata(sdsid, start, stride, end, data)
+intn SDreaddata(sdsid, start, stride, end, data)
 int32 sdsid;
 int32 *start, *stride, *end;
 VOIDP data;
@@ -1064,7 +1064,7 @@ intn  number;
         a name throw it out and use the new one.
 
 --------------------------------------------------------------------------- */
-int32
+intn
 #ifdef PROTOTYPE
 SDsetdimname(int32 id, char *name)
 #else
@@ -1149,7 +1149,7 @@ char  * name;
         to disk.
           
 --------------------------------------------------------------------------- */
-int32
+intn
 #ifdef PROTOTYPE
 SDendaccess(int32 id)
 #else
@@ -1458,13 +1458,13 @@ NC_array *** app;
 --------------------------------------------------------------------------- */
 intn
 #ifdef PROTOTYPE
-SDsetattr(int32 id, char *name, int32 nt, intn count, VOIDP data)
+SDsetattr(int32 id, char *name, int32 nt, int32 count, VOIDP data)
 #else
 SDsetattr(id, name, nt, count, data)
 int32 id;
 char  *name;
 int32 nt;
-intn  count;
+int32 count;
 VOIDP data;
 #endif
 {
@@ -1524,13 +1524,13 @@ VOIDP data;
 --------------------------------------------------------------------------- */
 intn
 #ifdef PROTOTYPE
-SDattrinfo(int32 id, int32 index, char *name, int32 *nt, intn *count)
+SDattrinfo(int32 id, int32 index, char *name, int32 *nt, int32 *count)
 #else
 SDattrinfo(id, index, name, nt, count)
 int32 id, index;
 char  *name;
 int32 *nt;
-intn  *count;
+int32  *count;
 #endif
 {
 
@@ -1669,9 +1669,9 @@ VOIDP buf;
  
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-int32 SDwritedata(int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data)
+intn SDwritedata(int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data)
 #else
-int32 SDwritedata(sdsid, start, stride, end, data)
+intn SDwritedata(sdsid, start, stride, end, data)
 int32 sdsid;
 int32 *start, *stride, *end;
 VOIDP data;
@@ -1789,9 +1789,9 @@ VOIDP data;
  
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-int32 SDsetdatastrs(int32 sdsid, char *l, char *u, char *f, char *c)
+intn SDsetdatastrs(int32 sdsid, char *l, char *u, char *f, char *c)
 #else
-int32 SDsetdatastrs(sdsid, l, u, f, c)
+intn SDsetdatastrs(sdsid, l, u, f, c)
 int32 sdsid;
 char  *l, *u, *f, *c;
 #endif
@@ -1864,9 +1864,9 @@ char  *l, *u, *f, *c;
 
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-int32 SDsetcal(int32 sdsid, float64 cal, float64 cale, float64 ioff, float64 ioffe, int32 nt)
+intn SDsetcal(int32 sdsid, float64 cal, float64 cale, float64 ioff, float64 ioffe, int32 nt)
 #else
-int32 SDsetcal(sdsid, cal, cale, ioff, ioffe, nt)
+intn SDsetcal(sdsid, cal, cale, ioff, ioffe, nt)
 int32 sdsid;
 float64 cal, cale, ioff, ioffe;
 int32 nt;
@@ -1932,9 +1932,9 @@ int32 nt;
  
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-int32 SDsetfillvalue(int32 sdsid, VOIDP val)
+intn SDsetfillvalue(int32 sdsid, VOIDP val)
 #else
-int32 SDsetfillvalue(sdsid, val)
+intn SDsetfillvalue(sdsid, val)
 int32 sdsid;
 VOIDP val;
 #endif
@@ -1988,9 +1988,9 @@ VOIDP val;
  
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-int32 SDgetfillvalue(int32 sdsid, VOIDP val)
+intn SDgetfillvalue(int32 sdsid, VOIDP val)
 #else
-int32 SDgetfillvalue(sdsid, val)
+intn SDgetfillvalue(sdsid, val)
 int32 sdsid;
 VOIDP val;
 #endif
@@ -2049,9 +2049,9 @@ VOIDP val;
  
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-int32 SDgetdatastrs(int32 sdsid, char *l, char *u, char *f, char *c, intn len)
+intn SDgetdatastrs(int32 sdsid, char *l, char *u, char *f, char *c, intn len)
 #else
-int32 SDgetdatastrs(sdsid, l, u, f, c, len)
+intn SDgetdatastrs(sdsid, l, u, f, c, len)
 int32 sdsid;
 char *l, *u, *f, *c;
 intn len;
@@ -2143,9 +2143,9 @@ intn len;
 
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-int32 SDgetcal(int32 sdsid, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, int32 *nt)
+intn SDgetcal(int32 sdsid, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, int32 *nt)
 #else
-int32 SDgetcal(sdsid, cal, cale, ioff, ioffe, nt)
+intn SDgetcal(sdsid, cal, cale, ioff, ioffe, nt)
 int32    sdsid;
 float64  *cal, *cale, *ioff, *ioffe;
 int32    *nt;
@@ -2315,9 +2315,9 @@ int32    id, nt;
  
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-int32 SDsetdimstrs(int32 id, char *l, char *u, char *f)
+intn SDsetdimstrs(int32 id, char *l, char *u, char *f)
 #else
-int32 SDsetdimstrs(id, l, u, f)
+intn SDsetdimstrs(id, l, u, f)
 int32 id;
 char  *l, *u, *f;
 #endif
@@ -2444,9 +2444,9 @@ int32 index;
  
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-int32 SDsetdimscale(int32 id, int32 count, int32 nt, VOIDP data)
+intn SDsetdimscale(int32 id, int32 count, int32 nt, VOIDP data)
 #else
-int32 SDsetdimscale(id, count, nt, data)
+intn SDsetdimscale(id, count, nt, data)
 int32 id;
 int32 count, nt;
 VOIDP data;
@@ -2521,9 +2521,9 @@ VOIDP data;
  
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-int32 SDgetdimscale(int32 id, VOIDP data)
+intn SDgetdimscale(int32 id, VOIDP data)
 #else
-int32 SDgetdimscale(id, data)
+intn SDgetdimscale(id, data)
 int32 id;
 VOIDP data;
 #endif
@@ -2596,9 +2596,9 @@ VOIDP data;
 
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-int32 SDdiminfo(int32 id, char *name, int32 *size, int32 *nt, int32 *nattr)
+intn SDdiminfo(int32 id, char *name, int32 *size, int32 *nt, int32 *nattr)
 #else
-int32 SDdiminfo(id, name, size, nt, nattr)
+intn SDdiminfo(id, name, size, nt, nattr)
 int32 id;
 char  *name;
 int32 *nt, *nattr, *size;
@@ -2678,9 +2678,9 @@ int32 *nt, *nattr, *size;
  
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-int32 SDgetdimstrs(int32 id, char *l, char *u, char *f, intn len)
+intn SDgetdimstrs(int32 id, char *l, char *u, char *f, intn len)
 #else
-int32 SDgetdimstrs(id, l, u, f, len)
+intn SDgetdimstrs(id, l, u, f, len)
 int32 id;
 char  *l, *u, *f;
 intn  len;
@@ -2793,7 +2793,7 @@ intn  len;
 
 
 --------------------------------------------------------------------------- */
-int32
+intn
 #ifdef PROTOTYPE
 SDsetexternalfile(int32 id, char *filename, int32 offset)
 #else
@@ -3096,7 +3096,7 @@ int32   id;
         Return TRUE if the dataset in question is a coordinate variable
 
 --------------------------------------------------------------------------- */
-int32
+intn
 #ifdef PROTOTYPE
 SDiscoordvar(int32 id)
 #else
