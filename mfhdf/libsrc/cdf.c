@@ -418,7 +418,7 @@ xdr_cdf(xdrs, handlep)
 * 
 ******************************************************************************
 *
-* Please report all bugs / comments to chouck@ncsa.uiuc.edu
+* Please report all bugs / comments to hdfhelp@ncsa.uiuc.edu
 *
 *****************************************************************************/
 
