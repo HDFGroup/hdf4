@@ -1227,6 +1227,7 @@
 ./mfhdf/libsrc/test1.nc
 ./mfhdf/libsrc/test_cdf.sav
 ./mfhdf/libsrc/testout.sav
+./mfhdf/libsrc/tszip.c
 ./mfhdf/libsrc/var.c
 ./mfhdf/libsrc/win32cdf.h
 ./mfhdf/libsrc/win32cdf.mak
