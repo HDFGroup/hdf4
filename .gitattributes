@@ -104,9 +104,6 @@ java-hdf/lib/hdficons/sds.gif -text
 java-hdf/lib/hdficons/vdata.gif -text
 java-hdf/lib/hdficons/vgroup.gif -text
 java-hdf/lib/hdficons/warning.gif -text
-java-hdf/samples/annras.hdf -text
-java-hdf/samples/layers8bit.hdf -text
-java-hdf/samples/sdsvdata.hdf -text
 mfhdf/dumper/Example6.hdf -text
 mfhdf/dumper/Image_with_Palette.hdf -text
 mfhdf/dumper/ctxtr2r.hdf -text

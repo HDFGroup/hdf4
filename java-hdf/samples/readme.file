@@ -1,8 +1,0 @@
-
-The following is a list of HDF test files.
-
-  annras.hdf:     2 raster image plus nice annotation. 
-  layers8bit.hdf: 8-bit raster images for layer feature demo.
-  sdsvdata.hdf:   HDF SDS and Vdata example.
-  textfile.txt:   ASCII file file
-
