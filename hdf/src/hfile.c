@@ -3359,10 +3359,27 @@ done:
 --------------------------------------------------------------------------*/
 intn HPcompare_filerec_path(const VOIDP obj, const VOIDP key)
 {
+    filerec_t  *frec  = obj;
+    const char *fname = key;
+    intn        ret_value = FALSE; /* set default as FALSE */
 #ifdef LATER
     CONSTR(FUNC, "HPcompare_filerec_path");
 #endif /* LATER */
 
+    /* check args */
+    if (frec != NULL && fname != NULL)
+      {
+          /* check bad file record */
+          if (BADFREC(frec))
+              ret_value = FALSE;
+          else
+            {
+                if(!HDstrcmp(frec->path,fname))
+                    ret_value = TRUE;
+                else
+                    ret_value = FALSE;
+            }
+      }
 
 #ifdef LATER
 done:
@@ -3374,7 +3391,7 @@ done:
 
     /* Normal function cleanup */
 
-    return(!HDstrcmp(((const filerec_t *)obj)->path,(const char *)key));
+    return ret_value;
 }	/* HPcompare_filerec_path */
 
 /*--------------------------------------------------------------------------
