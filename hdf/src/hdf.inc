@@ -469,4 +469,12 @@ c       Vdata fields packing types
       parameter (HDF_VSPACK   = 0,
      *           HDF_VSUNPACK = 1)
 
+C    Multi-file Annotation types
+      integer AN_DATA_LABEL, AN_DATA_DESC, AN_FILE_LABEL, AN_FILE_DESC
+
+      parameter(AN_DATA_LABEL = 0,
+     *			AN_DATA_DESC  = 1,
+     *			AN_FILE_LABEL = 2,
+     * 			AN_FILE_DESC  = 3)
+
 c******************End of hdf.inc***************************

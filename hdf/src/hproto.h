@@ -2070,6 +2070,11 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #  define nafwriteann   FNAME(AFWRITEANN)
 #  define nafreadann    FNAME(AFREADANN)
 #  define nafendaccess  FNAME(AFENDACCESS)
+#  define nafgettagref  FNAME(AFGETTAGREF)
+#  define nafidtagref   FNAME(AFIDTAGREF)
+#  define naftagrefid   FNAME(AFTAGREFID)
+#  define nafatypetag   FNAME(AFATYPETAG)
+#  define naftagatype   FNAME(AFTAGATYPE)
 #else  /* !DF_CAPFNAMES */
 #  define nafstart      FNAME(afstart)
 #  define naffileinfo   FNAME(affileinfo)
@@ -2083,6 +2088,11 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #  define nafwriteann   FNAME(afwriteann)
 #  define nafreadann    FNAME(afreadann)
 #  define nafendaccess  FNAME(afendaccess)
+#  define nafgettagref  FNAME(afgettagref)
+#  define nafidtagref   FNAME(afidtagref)
+#  define naftagrefid   FNAME(aftagrefid)
+#  define nafatypetag   FNAME(afatypetag)
+#  define naftagatype   FNAME(aftagatype)
 #endif /* DF_CAPFNAMES */
 #endif /* MFAN_FNAMES */
 
@@ -2124,6 +2134,21 @@ nafreadann(intf *ann_id,_fcd ann, intf *maxlen);
 
 extern FRETVAL(intf)
 nafendaccess(intf *ann_id);
+
+extern FRETVAL(intf)
+nafgettagref(intf *an_id, intf *index, intf *type, intf *tag, intf *ref);
+
+extern FRETVAL(intf)
+nafidtagref(intf *ann_id, intf *tag, intf *ref);
+
+extern FRETVAL(intf)
+naftagrefid(intf *an_id, intf *tag, intf *ref);
+
+extern FRETVAL(intf)
+nafatypetag(intf *atype);
+
+extern FRETVAL(intf)
+naftagatype(intf *tag);
 
 /* Multi-file Annotation C-routines found in mfan.c */
 extern int32 ANstart(int32 file_id);

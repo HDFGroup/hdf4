@@ -84,6 +84,7 @@ static char RcsId[] = "@(#)$Revision$";
  *  ----------------------
  *  ANget_tagref - get tag/ref pair to annotation type and index
  *  ANid2tagref  - get tag/ref pair to annotation ID
+ *  ANtagref2id  - get annotation id given tag/ref
  *  atype2tag - annotation type to corresponding annotation TAG
  *  tag2atype - annotation TAG to corresponding annotation type
  *

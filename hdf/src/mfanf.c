@@ -26,7 +26,8 @@ static char RcsId[] = "@(#)$Revision$";
  *
  *  NOTES: TYPE here refers to file/data label/description types 
  *         They are AN_FILE_LABEL, AN_FILE_DESC, AN_DATA_LABEL, AN_DATA_DESC
- *         THE tag/ref refers to data tag/ref
+ *         THE tag/ref refers to data tag/ref. The fortran equivalents
+ *         are defined in 'hdf.inc'.
  *
  *  C-stubs directly callable by Fortran Users
  *  ------------------------------------------
@@ -44,7 +45,12 @@ static char RcsId[] = "@(#)$Revision$";
  *    afannlen   - get length of annotation given handle
  *    afwriteann - write annotation given handle
  *    afreadann  - read annotation given handle
- *    afendaccess- end access to annotation using handle
+ *    afendaccess - end access to annotation using handle
+ *    afgettagref - get tag/ref pair to annotation ID
+ *    afidtagref  - get tag/ref given annotation id 
+ *    aftagrefid  - get annotation id given tag/ref
+ *    afatypetag  - annotation type to corresponding annotation TAG
+ *    aftagatype  - annotation TAG to corresponding annotation type
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
@@ -381,5 +387,115 @@ nafendaccess(intf *ann_id)
   return (intf)ANendaccess((int32)*ann_id);
 } /* nafendaccess() */
 
+/*-----------------------------------------------------------------------------
+ * Name:    afgettagref 
+ * Purpose: 
+ * Inputs:  
+ * Returns: see ANget_tagref()
+ * Users:   Fortran Users
+ * Invokes: ANget_tagref()
+ * Author: GeorgeV
+ *---------------------------------------------------------------------------*/
+FRETVAL(intf)
+nafgettagref(intf *an_id, intf *index, intf *type, intf *tag, intf *ref)
+{
+#ifdef LATER
+  CONSTR(FUNC, "afgettagref");
+#endif /* LATER */
+  intf   ret;
+  uint16 otag, oref;
 
+  ret = (intf)ANget_tagref((int32)*an_id,(int32)*index,(ann_type)*type,
+                           &otag, &oref);
 
+  *tag = otag;
+  *ref = oref;
+
+  return ret;
+} /* nafgettagref() */
+
+/*-----------------------------------------------------------------------------
+ * Name:    afidtagref
+ * Purpose: 
+ * Inputs:  
+ * Returns: see ANid2tagref()
+ * Users:   Fortran Users
+ * Invokes: ANid2tagerf()
+ * Author: GeorgeV
+ *---------------------------------------------------------------------------*/
+FRETVAL(intf)
+nafidtagref(intf *ann_id, intf *tag, intf *ref)
+{
+#ifdef LATER
+  CONSTR(FUNC, "afidtagref");
+#endif /* LATER */
+  intf   ret;
+  uint16 otag, oref;
+
+  ret = (intf)ANid2tagref((int32)*ann_id, &otag, &oref);
+
+  *tag = otag;
+  *ref = oref;
+
+  return ret;
+} /* nafidtagref() */
+
+/*-----------------------------------------------------------------------------
+ * Name:    aftagrefid
+ * Purpose: 
+ * Inputs:  
+ * Returns: see ANtagref2id()
+ * Users:   Fortran Users
+ * Invokes: ANtagref2id()
+ * Author: GeorgeV
+ *---------------------------------------------------------------------------*/
+FRETVAL(intf)
+naftagrefid(intf *an_id, intf *tag, intf *ref)
+{
+#ifdef LATER
+  CONSTR(FUNC, "aftagrefid");
+#endif /* LATER */
+  
+  return (intf)ANtagref2id((int32)*an_id, (uint16)*tag, (uint16)*ref);
+
+} /* naftagrefid() */
+
+/*-----------------------------------------------------------------------------
+ * Name:    afatypetag
+ * Purpose: 
+ * Inputs:  
+ * Returns: see ANatype2tag()
+ * Users:   Fortran Users
+ * Invokes: ANatype2tag()
+ * Author: GeorgeV
+ *---------------------------------------------------------------------------*/
+FRETVAL(intf)
+nafatypetag(intf *atype)
+{
+#ifdef LATER
+  CONSTR(FUNC, "aftypetag");
+#endif /* LATER */
+
+  return (intf)ANatype2tag((ann_type)*atype);
+
+} /* nafatypetag() */
+
+/*-----------------------------------------------------------------------------
+ * Name:    aftagatype
+ * Purpose: 
+ * Inputs:  
+ * Returns: see ANtag2atype()
+ * Users:   Fortran Users
+ * Invokes: ANtag2atype()
+ * Author: GeorgeV
+ *---------------------------------------------------------------------------*/
+FRETVAL(intf)
+naftagatype(intf *tag)
+{
+#ifdef LATER
+  CONSTR(FUNC, "aftagatype");
+#endif /* LATER */
+
+  return (intf)ANtag2atype((uint16)*tag);
+
+} /* naftagatype() */
