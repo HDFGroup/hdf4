@@ -418,7 +418,7 @@ extern int hdf_write_attr
     PROTO((XDR *,NC *,NC_attr **));
 
 extern int32 hdf_write_dim
-    PROTO((XDR *,NC *,NC_dim **));
+    PROTO((XDR *,NC *,NC_dim **,int32));
 
 extern int32 hdf_write_var
     PROTO((XDR *,NC *,NC_var **));
