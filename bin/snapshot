@@ -56,6 +56,10 @@ while [ $# -gt 0 ] ; do
 	    cmdcheckout="checkout"
 	    cmd=""
 	    ;;
+	diff)
+	    cmddiff="diff"
+	    cmd=""
+	    ;;
 	test)
 	    cmdtest="test"
 	    cmd=""
@@ -108,12 +112,14 @@ done
 if [ "$cmd" = help ]; then
     set -
     cat <<EOF
-Usage: $0 [all] [checkout] [test] [release] [help]
+Usage: $0 [all] [checkout] [diff] [test] [release] [help]
           [archive <arch_path>] [dir <dir>]
 	  [op-configure <option>] [--<option>]
     all:      Run all commands (checkout, test & release)
               [Default is all]
     checkout: Run cvs checkout
+    diff:     Run diff on current and previous versions.  Exit 0 if
+              no significant differences are found.  Otherwise, non-zero.
     test:     Run test
     release:  Run release
     clean:    Run make clean
@@ -174,7 +180,7 @@ fi # Do CVS checkout
 #=============================
 # Run Test the HDF4 library
 #=============================
-if [ "$cmd" = "all" -o -n "$cmdtest" ]; then
+if [ "$cmd" = "all" -o -n "$cmdtest" -o -n "$cmddiff" ]; then
     TESTDIR=${CURRENT}
     INSTALLDIR=${TESTDIR}/installdir
     test -d $INSTALLDIR || mkdir $INSTALLDIR
@@ -203,6 +209,16 @@ if [ "$cmd" = "all" -o -n "$cmdtest" ]; then
 		    break
 		fi
 	    done
+	fi
+    fi
+
+    # if diff is choosen, exit 0 if no significant differences are found.
+    # otherwise, exit 1.  This includes cases of other failures.
+    if [ -n "$cmddiff" ]; then
+	if [ $snapshot = no ]; then
+	    exit 0
+	else
+	    exit 1
 	fi
     fi
 
