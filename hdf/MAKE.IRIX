@@ -63,10 +63,14 @@ MACHINE=IRIS4
 # Define your C compiler and flags
 CC= cc
 CFLAGS= -D${MACHINE} -ansi -O
+# For IRIX_6.0 32-bit mode, uncomment next line and comment out the previous line.
+#CFLAGS= -D${MACHINE} -ansi -32 -O
 
 # Define your FORTRAN compiler
 FC= f77
 FFLAGS=
+# For IRIX_6.0 32-bit mode, uncomment next line and comment out the previous line.
+#FFLAGS=-32
 
 # Define gl library
 GLLIB = -lgl_s
