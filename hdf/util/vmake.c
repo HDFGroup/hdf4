@@ -295,7 +295,7 @@ printf("vsadd: ref is %d\n",ref);
 	  strcat(allfields,",");
      }
 
-  i=DFIstrlen(allfields); allfields[i-1]='\0'; /* remove last comma */
+  i=HDstrlen(allfields); allfields[i-1]='\0'; /* remove last comma */
 
   VSsetname(vs,vsname);
   stat = VSsetfields(vs,allfields);
@@ -414,7 +414,7 @@ int32 scanit (string,fields,type,order)
 
  
  compact(string,ss);
- ns = DFIstrlen(ss); ss[ns++] = ',';
+ ns = HDstrlen(ss); ss[ns++] = ',';
 
  p1 = p2 = 0;
  for(i=0;i<ns;i++) {
@@ -449,7 +449,7 @@ int32 compact (ss,dd)
      char *ss, *dd; 
 #endif
 {
-  int i,t,n = DFIstrlen(ss);
+  int i,t,n = HDstrlen(ss);
   for(t=0,i=0;i<n;i++) if(ss[i]!=' ') { dd[t++] = ss[i]; }
   dd[t] = '\0';
   return (1);
@@ -499,7 +499,7 @@ int32 *num;
 {
   int32 i,n;
   i=0;
-  n=DFIstrlen(ss);
+  n=HDstrlen(ss);
   while(i<n) {
     if(ss[i]<'0' ||  ss[i] >'9') break; 
     i++;
