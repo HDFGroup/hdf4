@@ -6,8 +6,8 @@ HDF4.1r1
    (ANget_tagref, ANid2tagref ...).
 3. A bug was fixed where old data (DFSD) in native and little endian format 
    could not be read by the SD interface correctly.
-4. The variable _HDF_ENTIRE_VDATA has been changed to _HDF_VDATA and HDF_VDATA, 
-   to avoid confusion.  This variable had been added to HDF 4.1b1.  For those
+4. The variable _HDF_ENTIRE_VDATA has been changed to _HDF_VDATA, to avoid 
+   confusion.  This variable had been added to HDF 4.1b1.  For those
    users who are already using it, a macro called  _HDF_ENTIRE_VDATA has been
    added, which is defined as _HDF_VDATA.
 5. SD_FILL and SD_NOFILL were added as file fillmodes.   
