@@ -417,6 +417,8 @@ typedef struct sp_info_block_t
 
     /* Chunked elements */
       int32       chunk_size;   /* logical size of chunks */
+      int32       ndims;        /* number of dimensions */
+      int32       *cdims;       /* array of chunk lengths for each dimension */
   }
 sp_info_block_t;
 
