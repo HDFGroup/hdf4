@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/04/14 21:39:02  georgev
-Had to add some VOIDP casts to some functions to make the compiler happy.
+Revision 1.6  1993/09/01 23:20:37  georgev
+Fixed some casts for jpeg.
 
+ * Revision 1.5  1993/04/14  21:39:02  georgev
+ * Had to add some VOIDP casts to some functions to make the compiler happy.
+ *
  * Revision 1.4  1993/03/29  18:38:15  chouck
  * Cleaned up a bunch of casting problems
  *
@@ -186,7 +189,7 @@ int DFputcomp(file_id, tag, ref, image, xdim, ydim, palette, newpal, scheme, cin
 
         case DFTAG_JPEG:        /* JPEG compression (for 24-bit images) */
         case DFTAG_GREYJPEG:    /* JPEG compression (for 8-bit images) */
-            ret=DFCIjpeg(file_id,tag,ref,xdim,ydim,image,scheme,cinfo);
+            ret=DFCIjpeg(file_id,tag,ref,xdim,ydim,(VOIDP)image,scheme,cinfo);
             break;
 
         default:                   /* unknown compression scheme */
@@ -366,7 +369,7 @@ int DFgetcomp(file_id, tag, ref, image, xdim, ydim, scheme)
 
         case DFTAG_JPEG:
         case DFTAG_GREYJPEG:
-            if(DFCIunjpeg(file_id, tag, ref, image, xdim, ydim, scheme)==FAIL)
+            if(DFCIunjpeg(file_id, tag, ref, (VOIDP)image, xdim, ydim, scheme)==FAIL)
                 return(FAIL);
             break;
 
