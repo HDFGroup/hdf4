@@ -13,11 +13,20 @@ $!
 $ librep := library/replace [--.LIB]mfhdf.OLB
 $ copy [.config]netcdf-vms.h netcdf.h
 $!
-$ ccc := cc /noopt/debug/include=([-.xdr],[--.hdf.src],[--.hdf.jpeg], -
- [--.hdf.zlib])/define=(NO_SYS_XDR_INC, swap, HDF, VMS)
+$ if f$getsyi("arch_name") .eqs. "VAX"
+$ then 
+$ ccopt = "/DECC/STANDARD=VAXC"
+$ define/nolog sys$clib sys$library:deccrtl
+$ else
+$ ccopt = ""
+$ define/nolog sys$clib sys$library:vaxcrtl
+$ endif
+$ ccc := cc 'ccopt /opt/nodebug  -
+         /include=([-.xdr],[--.hdf.src],[--.hdf.jpeg], -
+         [--.hdf.zlib])/define=(NO_SYS_XDR_INC, swap, HDF, VMS)
 $!
 $ define rpc sys$disk:[-.xdr]
-$ define sys sys$library
+$! define sys sys$library
 $!
 $ ccc ARRAY.C
 $ ccc ATTR.C
@@ -53,7 +62,7 @@ $ link/nodebug/exec=CDFTEST.exe/syslib -
     [--.hdf.jpeg]libjpeg/library, -
     [--.hdf.zlib]libz/library,  -
     sys$input/opt 
- 	sys$library:vaxcrtl/lib
+ 	sys$clib/lib
 $!
 $ create/dir [-.-.include]
 $!
@@ -66,7 +75,7 @@ $ link/nodebug/exec=hdftest.exe/syslib -
     [--.hdf.jpeg]libjpeg/library, -
     [--.hdf.zlib]libz/library, -
     sys$input/opt 
-        sys$library:vaxcrtl/lib
+        sys$clib/lib
 $ type sys$input
        Run cdftest
 $ run cdftest
