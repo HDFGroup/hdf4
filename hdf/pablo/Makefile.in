@@ -159,7 +159,7 @@ DISTFILES = Makefile.in $(PSRCS)
 # to extract all the object files out of libdf.a 
 HOBJS=`ar xv $(HDFLIB)/libdf.a | sed 's/x -//'`
 
-PINCS = $(PCHDRS) $(PFINCS)
+PINCS = $(PABLO_INCLUDES)
 
 #
 #include the HDF source file definitions
@@ -255,7 +255,6 @@ pinstall-lib: pinstall-headers
 
 pinstall-headers:
 	for p in $(PINCS); do \
-	    cp $(PABLO_INCDIR)/$$p .;\
 	    $(INSTALL_DATA) \
 		`pwd`/$$p $(includedir)/$$p; \
 	done
@@ -317,14 +316,25 @@ help:
 
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
-PabloHDF.o: PabloHDF.c ProcIDs.h ProcMasks.h HDFTrace.h ProcMasks.inc
-	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c PabloHDF.c
-PabloHDF_RT.o: PabloHDF_RT.c ProcIDs.h ProcMasks.h HDFTrace.h ProcMasks.inc
-	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c PabloHDF_RT.c
-PabloHDF_SDDF.o: PabloHDF_SDDF.c ProcIDs.h ProcMasks.h HDFTrace.h ProcMasks.inc
-	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c PabloHDF_SDDF.c
-PabloHDFff.o: ProcIDs.h
-	$(FC) $(FFLAGS) -c PabloHDFff.f
+PABLO_INCLUDES = HDFentryNames.h HDFidList.h ProcIDs.h HDFTrace.h ProcMasks.h \
+		 ProcMasks.inc
+
+HDFentryNames.h: HDFentries.txt
+	sort $? | sed "s/.*/\"&\",/" > $@
+
+HDFidList.h: HDFentries.txt
+	sort $? | sed "s/.*/ID_&,/" > $@
+
+ProcIDs.h: HDFidList.h
+
+PabloHDF.o: PabloHDF.c $(PABLO_INCLUDES)
+	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c $<
+PabloHDF_RT.o: PabloHDF_RT.c $(PABLO_INCLUDES)
+	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c $<
+PabloHDF_SDDF.o: PabloHDF_SDDF.c $(PABLO_INCLUDES)
+	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c $<
+PabloHDFff.o: PabloHDFff.f ProcIDs.h
+	$(FC) $(FFLAGS) -c $<
  
 #get all the source dependecies.....
 # the dependencies don't work well

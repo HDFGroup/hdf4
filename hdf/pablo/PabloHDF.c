@@ -126,8 +126,6 @@ void HDFendTrace (void);
 void HDFendTrace_RT (void);
 void HDFendTrace_SDDF(void);
 void startHDFtraceEvent (int );
-int computeProcMask (int eventID);
-int computePacketTag(int eventID);
 void endHDFtraceEvent (int , int , char *, int );
 void traceEvent ( int , HDFsetInfo *, unsigned );
 void traceEvent_RT ( int , HDFsetInfo *, unsigned );
@@ -217,47 +215,6 @@ void endHDFtraceEvent(int eventID, int setID, char *setName, int IDtype )
 	} else {
 	   traceEvent_RT( eventID, &info, 0 ) ;
 	}
-}
-/*======================================================================*
-//      compute the packet tag corresponding to an event ID             *
-//======================================================================*/
-int computePacketTag(int eventID)
-{
-	int TagBin[] = { DUMMY_HDF, ID_DFAN, ID_DFP, ID_DFR8, ID_DFSD, ID_DF24,
-	                     ID_H, ID_HE, ID_SD, ID_VF, ID_V, ID_VH, ID_VS,
-	                     ID_AN, ID_GR, ID_HA, ID_DA, ID_HUL, END_HDF };
-	int nBins = sizeof(TagBin)/sizeof(int);
-	int j;
-	
-	for ( j = 0; j < nBins-1; ++j ) {
-	   if ( TagBin[j] <= eventID && eventID < TagBin[j+1] ) {
-	      return j*HDF_FAMILY;
-	   }
-	}
-	fprintf(stderr,"computePackeTag: eventID = %d is out of range\n");
-
-	return -1;	/* signal failure */
-	
-}
-/*======================================================================*
-//      compute the proc mask corresponding to an event ID 	        *
-//======================================================================*/
-int computeProcMask(int eventID)
-{
-	int TagBin[] = { DUMMY_HDF, ID_DFAN, ID_DFP, ID_DFR8, ID_DFSD, ID_DF24,
-	                     ID_H, ID_HE, ID_SD, ID_VF, ID_V, ID_VH, ID_VS,
-	                     ID_AN, ID_GR, ID_HA, ID_DA, ID_HUL, END_HDF };
-	int nBins = sizeof(TagBin)/sizeof(int);
-	int j;
-	
-	for ( j = 0; j < nBins-1; ++j ) {
-	   if ( TagBin[j] <= eventID && eventID < TagBin[j+1] ) {
-	      return 1 << j;
-	   }
-	}
-	fprintf(stderr,"computeProcMask: eventID = %d is out of range\n");
-	
-	return -1;	/* signal failure */
 }
 /******************************************************************************/
 
