@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
     if(argc<3)
         usage();
 
-    if((jfif_char=HDstrchr(argv[2],'#'))==NULL)
+    if((jfif_char=(char *)HDstrchr(argv[2],'#'))==NULL)
         HDstrcpy(jfif_name,argv[2]);        /* copy the JPEG file name */
     else {
         if(jfif_char>argv[2]) {   /* copy initial portion */

@@ -25,6 +25,8 @@ METHODDEF VOID
 upsample_init (decompress_info_ptr cinfo)
 {
   /* no work for now */
+    /* shut compiler up */
+    cinfo=cinfo;
 }
 
 
@@ -56,6 +58,9 @@ int_upsample (decompress_info_ptr cinfo, int which_component,
   int inrow, outrow;
   register long incol;
 
+    /* shut compiler up */
+    below=below; above=above; output_rows=output_rows; output_cols=output_cols;
+
 #ifdef DEBUG			/* for debugging pipeline controller */
   if (input_rows != compptr->v_samp_factor ||
       output_rows != cinfo->max_v_samp_factor ||
@@ -65,8 +70,8 @@ int_upsample (decompress_info_ptr cinfo, int which_component,
     ERREXIT(cinfo->emethods, "Bogus upsample parameters");
 #endif
 
-  h_expand = cinfo->max_h_samp_factor / compptr->h_samp_factor;
-  v_expand = cinfo->max_v_samp_factor / compptr->v_samp_factor;
+  h_expand = (short)(cinfo->max_h_samp_factor / compptr->h_samp_factor);
+  v_expand = (short)(cinfo->max_v_samp_factor / compptr->v_samp_factor);
 
   outrow = 0;
   for (inrow = 0; inrow < input_rows; inrow++) {
@@ -105,6 +110,10 @@ h2v1_upsample (decompress_info_ptr cinfo, int which_component,
   register int invalue;
   int inrow;
   register long colctr;
+
+    /* shut compiler up */
+    below=below; above=above; output_rows=output_rows; output_cols=output_cols;
+    which_component=which_component; cinfo=cinfo;
 
 #ifdef DEBUG			/* for debugging pipeline controller */
   jpeg_component_info * compptr = cinfo->cur_comp_info[which_component];
@@ -164,6 +173,10 @@ h2v2_upsample (decompress_info_ptr cinfo, int which_component,
 #endif
   int inrow, outrow, v;
   register long colctr;
+
+    /* shut compiler up */
+    output_rows=output_rows; output_cols=output_cols;
+    which_component=which_component; cinfo=cinfo;
 
 #ifdef DEBUG			/* for debugging pipeline controller */
   jpeg_component_info * compptr = cinfo->cur_comp_info[which_component];
@@ -229,6 +242,9 @@ fullsize_upsample (decompress_info_ptr cinfo, int which_component,
 		   JSAMPARRAY above, JSAMPARRAY input_data, JSAMPARRAY below,
 		   JSAMPARRAY output_data)
 {
+    /* shut compiler up */
+    below=below; above=above; input_rows=input_rows; input_cols=input_cols;
+    which_component=which_component; cinfo=cinfo;
 #ifdef DEBUG			/* for debugging pipeline controller */
   if (input_cols != output_cols || input_rows != output_rows)
     ERREXIT(cinfo->emethods, "Pipeline controller messed up");
@@ -247,6 +263,8 @@ METHODDEF VOID
 upsample_term (decompress_info_ptr cinfo)
 {
   /* no work for now */
+    /* shut compiler up */
+    cinfo=cinfo;
 }
 
 

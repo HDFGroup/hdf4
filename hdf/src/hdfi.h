@@ -1153,21 +1153,21 @@ extern uint8 FAR *DFtbuf;
 **
 **---------------------------------------------------------------*/
 #if defined(FNAME_PRE_UNDERSCORE) && defined(FNAME_POST_UNDERSCORE)
-#ifdef __STDC__
+#if defined __STDC__ | defined CONVEX
 #   define FNAME(x)     _##x##_
 #else
 #   define FNAME(x)     _/**/x/**/_
 #endif
 #endif
 #if defined(FNAME_PRE_UNDERSCORE) && !defined(FNAME_POST_UNDERSCORE)
-#ifdef __STDC__
+#if defined __STDC__ | defined CONVEX
 #   define FNAME(x)     _##x
 #else
 #   define FNAME(x)     _/**/x
 #endif
 #endif
 #if !defined(FNAME_PRE_UNDERSCORE) && defined(FNAME_POST_UNDERSCORE)
-#ifdef __STDC__
+#if defined __STDC__ | defined CONVEX
 #   define FNAME(x)     x##_
 #else
 #   define FNAME(x)     x/**/_

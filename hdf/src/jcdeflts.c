@@ -51,9 +51,9 @@ add_huff_table (compress_info_ptr cinfo,
 {
   if (*htblptr == NULL)
     *htblptr = (HUFF_TBL *) (*cinfo->emethods->alloc_small) (SIZEOF(HUFF_TBL));
-  
-  HDmemcpy((*htblptr)->bits, bits, SIZEOF((*htblptr)->bits));
-  HDmemcpy((*htblptr)->huffval, val, SIZEOF((*htblptr)->huffval));
+
+  HDmemcpy((*htblptr)->bits, (const VOIDP)bits, SIZEOF((*htblptr)->bits));
+  HDmemcpy((*htblptr)->huffval, (const VOIDP)val, SIZEOF((*htblptr)->huffval));
 
   /* Initialize sent_table FALSE so table will be written to JPEG file.
    * In an application where we are writing non-interchange JPEG files,

@@ -131,6 +131,9 @@ color_quant2_prescan (decompress_info_ptr cinfo, int num_rows,
   long col;
   long width = cinfo->image_width;
 
+    /* shut compiler up */
+    workspace=workspace;
+
   for (row = 0; row < num_rows; row++) {
     ptr0 = image_data[0][row];
     ptr1 = image_data[1][row];
@@ -715,6 +718,9 @@ find_best_colors (decompress_info_ptr cinfo, int minc0, int minc1, int minc2,
   /* This array holds the distance to the nearest-so-far color for each cell */
   int32 bestdist[BOX_Y_ELEMS * BOX_C_ELEMS * BOX_C_ELEMS];
 
+    /* shut compiler up */
+    cinfo=cinfo;
+
   /* Initialize best-distance for each cell of the update box */
   bptr = bestdist;
   for (i = BOX_Y_ELEMS*BOX_C_ELEMS*BOX_C_ELEMS-1; i >= 0; i--)
@@ -990,29 +996,29 @@ pass2_dither (decompress_info_ptr cinfo, int num_rows,
       /* Propagate error to adjacent pixels */
       /* Remember that nextrowerr entries are in reverse order! */
       two_val = c0 * 2;
-      nextrowerr[0-3]  = c0;	/* not +=, since not initialized yet */
+      nextrowerr[0-3]  = (FSERROR)c0;	/* not +=, since not initialized yet */
       c0 += two_val;		/* form error * 3 */
-      nextrowerr[0+3] += c0;
+      nextrowerr[0+3] += (FSERROR)c0;
       c0 += two_val;		/* form error * 5 */
-      nextrowerr[0  ] += c0;
+      nextrowerr[0  ] += (FSERROR)c0;
       c0 += two_val;		/* form error * 7 */
-      thisrowerr[0+3] += c0;
+      thisrowerr[0+3] += (FSERROR)c0;
       two_val = c1 * 2;
-      nextrowerr[1-3]  = c1;	/* not +=, since not initialized yet */
+      nextrowerr[1-3]  = (FSERROR)c1;	/* not +=, since not initialized yet */
       c1 += two_val;		/* form error * 3 */
-      nextrowerr[1+3] += c1;
+      nextrowerr[1+3] += (FSERROR)c1;
       c1 += two_val;		/* form error * 5 */
-      nextrowerr[1  ] += c1;
+      nextrowerr[1  ] += (FSERROR)c1;
       c1 += two_val;		/* form error * 7 */
-      thisrowerr[1+3] += c1;
+      thisrowerr[1+3] += (FSERROR)c1;
       two_val = c2 * 2;
-      nextrowerr[2-3]  = c2;	/* not +=, since not initialized yet */
+      nextrowerr[2-3]  = (FSERROR)c2;	/* not +=, since not initialized yet */
       c2 += two_val;		/* form error * 3 */
-      nextrowerr[2+3] += c2;
+      nextrowerr[2+3] += (FSERROR)c2;
       c2 += two_val;		/* form error * 5 */
-      nextrowerr[2  ] += c2;
+      nextrowerr[2  ] += (FSERROR)c2;
       c2 += two_val;		/* form error * 7 */
-      thisrowerr[2+3] += c2;
+      thisrowerr[2+3] += (FSERROR)c2;
       /* Advance to next column */
       ptr0 += dir;
       ptr1 += dir;
@@ -1122,6 +1128,8 @@ color_quant2_doit (decompress_info_ptr cinfo, quantize_caller_ptr source_method)
 METHODDEF VOID
 color_quant2_term (decompress_info_ptr cinfo)
 {
+    /* shut compiler up */
+    cinfo=cinfo;
   /* no work (we let free_all release the histogram/cache and colormaps) */
   /* Note that we *mustn't* free the external colormap before free_all, */
   /* since output module may use it! */
@@ -1137,6 +1145,8 @@ METHODDEF VOID
 color_quantize2 (decompress_info_ptr cinfo, int num_rows,
 		JSAMPIMAGE input_data, JSAMPARRAY output_data)
 {
+    /* shut compiler up */
+    output_data=output_data; input_data=input_data; num_rows=num_rows;
   ERREXIT(cinfo->emethods, "Should not get here!");
 }
 

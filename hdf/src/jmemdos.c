@@ -206,6 +206,9 @@ jfree_large (VOIDP object)
 GLOBAL long
 jmem_available (long min_bytes_needed, long max_bytes_needed)
 {
+    /* shut compiler up */
+    max_bytes_needed=max_bytes_needed; min_bytes_needed=min_bytes_needed;
+
   return methods->max_memory_to_use - total_used;
 }
 
@@ -284,6 +287,9 @@ open_file_store (backing_store_ptr info, long total_bytes_needed)
 {
   short handle;
   char tracemsg[TEMP_NAME_LENGTH+40];
+
+    /* shut compiler up */
+    total_bytes_needed=total_bytes_needed;
 
   select_file_name(info->temp_name);
   if (jdos_open((short far *) & handle, (char far *) info->temp_name)) {

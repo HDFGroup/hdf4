@@ -242,6 +242,8 @@ output_value (decompress_info_ptr cinfo, int ci, int j, int maxj)
 /* Return j'th output value, where j will range from 0 to maxj */
 /* The output values must fall in 0..MAXJSAMPLE in increasing order */
 {
+    /* shut compiler up */
+    cinfo=cinfo; ci=ci;
   /* We always provide values 0 and MAXJSAMPLE for each component;
    * any additional values are equally spaced between these limits.
    * (Forcing the upper and lower values to the limits ensures that
@@ -256,6 +258,8 @@ largest_input_value (decompress_info_ptr cinfo, int ci, int j, int maxj)
 /* Return largest input value that should map to j'th output value */
 /* Must have largest(j=0) >= 0, and largest(j=maxj) >= MAXJSAMPLE */
 {
+    /* shut compiler up */
+    cinfo=cinfo; ci=ci;
   /* Breakpoints are halfway between values returned by output_value */
   return (int) (((int32) (2*j + 1) * MAXJSAMPLE + maxj) / (2*maxj));
 }
@@ -495,7 +499,7 @@ color_quantize_dither (decompress_info_ptr cinfo, int num_rows,
 	 * RIGHT_SHIFT rounds towards minus infinity, so adding 8 is correct
 	 * for either sign of the error value.
 	 */
-	val = RIGHT_SHIFT(*thisrowerr + 8, 4);
+	val = (FSERROR)RIGHT_SHIFT(*thisrowerr + 8, 4);
 	/* Compute pixel value + error compensation, range-limit to
 	 * 0..MAXJSAMPLE.  Note max error value is +- MAXJSAMPLE.
 	 */
@@ -509,7 +513,7 @@ color_quantize_dither (decompress_info_ptr cinfo, int num_rows,
 	val -= GETJSAMPLE(colormap_ci[pixcode]);
 	/* Propagate error to (same component of) adjacent pixels */
 	/* Remember that nextrowerr entries are in reverse order! */
-	two_val = val * 2;
+	two_val = (FSERROR)(val * 2);
 	nextrowerr[-1]  = val; /* not +=, since not initialized yet */
 	val += two_val;		/* form error * 3 */
 	nextrowerr[ 1] += val;
@@ -538,6 +542,8 @@ color_quant_term (decompress_info_ptr cinfo)
   /* no work (we let free_all release the workspace) */
   /* Note that we *mustn't* free the colormap before free_all, */
   /* since output module may use it! */
+    /* shut compiler up */
+    cinfo=cinfo;
 }
 
 
@@ -550,6 +556,8 @@ METHODDEF VOID
 color_quant_prescan (decompress_info_ptr cinfo, int num_rows,
 		     JSAMPIMAGE image_data, JSAMPARRAY workspace)
 {
+    /* shut compiler up */
+    workspace=workspace; image_data=image_data; num_rows;
   ERREXIT(cinfo->emethods, "Should not get here!");
 }
 
@@ -562,6 +570,8 @@ color_quant_prescan (decompress_info_ptr cinfo, int num_rows,
 METHODDEF VOID
 color_quant_doit (decompress_info_ptr cinfo, quantize_caller_ptr source_method)
 {
+    /* shut compiler up */
+    source_method=source_method;
   ERREXIT(cinfo->emethods, "Should not get here!");
 }
 
