@@ -91,6 +91,8 @@ PRIVATE int32 SDIfreevarAID
 PRIVATE intn SDIapfromid
     (int32 id, NC ** handlep, NC_array *** app);
 
+/* Whether we've installed the library termination function yet for this interface */
+PRIVATE intn library_terminate = FALSE;
 
 /******************************************************************************
  NAME
@@ -231,6 +233,39 @@ done:
 
 /******************************************************************************
  NAME
+	SDIstart -- initialize the SD interface
+
+ DESCRIPTION
+    Register the atexit callback function, etc.
+
+ RETURNS
+    SUCCEED/FAIL
+******************************************************************************/
+static intn
+SDIstart(void)
+{
+    CONSTR(FUNC, "SDIstart");    /* for HERROR */
+    intn        ret_value = SUCCEED;
+
+    /* Don't call this routine again... */
+    library_terminate = TRUE;
+
+    /* Install atexit() library cleanup routine */
+    if (HPregister_term_func(&SDPfreebuf) != 0)
+          HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
+done:
+    if(ret_value == FAIL)
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+    /* Normal function cleanup */
+    return(ret_value);
+} /* end SDIstart() */
+
+/******************************************************************************
+ NAME
 	SDstart -- open a file
 
  DESCRIPTION
@@ -245,6 +280,7 @@ int32
 SDstart(const char *name,   /* IN: file name to open */
         int32       HDFmode /* IN: access mode to open file with */)
 {
+    CONSTR(FUNC, "SDstart");    /* for HERROR */
     intn    cdfid;
     int32   fid;
     intn    NCmode;
@@ -257,6 +293,11 @@ SDstart(const char *name,   /* IN: file name to open */
 
     /* turn off annoying crash on error stuff */
     ncopts = 0;
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(SDIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
     /* check access mode */
     if(HDFmode & DFACC_WRITE)
