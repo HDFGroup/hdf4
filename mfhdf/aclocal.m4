@@ -53,6 +53,7 @@ case "${OS}" in
   hpux*)        UC_ENSURE(HDF_INC, -DHP9000)
                 LD_XDR=;;
   osf*)         UC_ENSURE(HDF_INC, -DDEC_ALPHA)
+		UC_ENSURE(CPPFLAGS, -DBIG_LONGS)
                 LD_XDR=;;
   convex*)      UC_ENSURE(HDF_INC, -DCONVEX)
                 LD_XDR=;;
