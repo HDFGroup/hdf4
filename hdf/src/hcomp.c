@@ -505,14 +505,14 @@ printf("HCcreate(): entering\n");
     if(FAIL==(slot=HIget_access_slot()))
        HRETURN_ERROR(DFE_TOOMANY,FAIL);
 
-    access_rec=&access_records[slot];
+    access_rec= &access_records[slot];
 
 #ifdef TESTING
 printf("HCcreate(): check 1\n");
 #endif
     /* look for existing data element of the same tag/ref */
     if(FAIL!=HIlookup_dd(file_rec, tag, ref, &data_block, &data_idx)) {
-        data_dd=&(data_block->ddlist[data_idx]);
+        data_dd= &(data_block->ddlist[data_idx]);
         if(SPECIALTAG(data_dd->tag)) {
            /* abort since we cannot convert the data element to a compressed
               data element */
@@ -539,7 +539,7 @@ printf("HCcreate(): check 1\n");
         access_rec->block=file_rec->null_block;
         access_rec->idx  =file_rec->null_idx;
       } /* end else */
-    dd=&access_rec->block->ddlist[access_rec->idx];
+    dd= &access_rec->block->ddlist[access_rec->idx];
 
 #ifdef TESTING
 printf("HCcreate(): check 2\n");
@@ -627,7 +627,7 @@ printf("HCcreate(): check 5, coder_funcs.write=%p\n",info->cinfo.coder_funcs.wri
 printf("HCcreate(): check 6, coder_funcs.write=%p\n",info->cinfo.coder_funcs.write);
 #endif
     /* update access record and file record */
-    access_rec->special_func=&comp_funcs;
+    access_rec->special_func= &comp_funcs;
     access_rec->special=SPECIAL_COMP;
     access_rec->posn=0;
     access_rec->access=DFACC_WRITE;
@@ -756,7 +756,7 @@ PRIVATE int32 HCIstaccess(accrec_t *access_rec, int16 acc_mode)
     access_rec->access=acc_mode;
 
     /* get the dd for information */
-    info_dd=&access_rec->block->ddlist[access_rec->idx];
+    info_dd= &access_rec->block->ddlist[access_rec->idx];
 
     /* get the special info record */
 #ifdef OLD_WAY

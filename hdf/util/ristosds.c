@@ -34,7 +34,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define USAGE "ristosds infile{ infile} -o outfile"
 
 int main
-    (int, char **);
+    (int, char *a[]);
 int cntimage
     (char *filename, int32 *p_w, int32 *p_h, int *n_images);
 VOID finishing

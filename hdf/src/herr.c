@@ -29,7 +29,7 @@ static char RcsId[] = "@(#)$Revision$";
 /*
 ** Include files for variable argument processing for HEreport
 */
-#if defined __STDC__
+#if defined __STDC__ || defined MIPSEL
 #include <stdarg.h>
 #else
 #include <varargs.h>

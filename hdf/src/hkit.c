@@ -418,7 +418,7 @@ intn HIcount_dd(filerec_t *file_rec, uint16 cnt_tag,uint16 cnt_ref,
     uint16 special_tag;                /* corresponding special tag */
 
     /* search for special version also */
-    special_tag = MKSPECIALTAG(look_tag);
+    special_tag = MKSPECIALTAG(cnt_tag);
 
     for (block=file_rec->ddhead; block!=NULL; block=block->next) {
 		t_all_cnt+=block->ndds;
@@ -426,14 +426,14 @@ intn HIcount_dd(filerec_t *file_rec, uint16 cnt_tag,uint16 cnt_ref,
 		list = block->ddlist;
 		for (idx=0; idx < block->ndds; idx++) {
 			/* skip the empty dd's */
-			if ((list[idx].tag==DFTAG_NULL && look_tag!=DFTAG_NULL) 
-					|| (list[idx].tag==DFTAG_FREE && look_tag!=DFTAG_FREE))
+			if ((list[idx].tag==DFTAG_NULL && cnt_tag!=DFTAG_NULL) 
+					|| (list[idx].tag==DFTAG_FREE && cnt_tag!=DFTAG_FREE))
 				continue;
 
-			if(((look_tag==DFTAG_WILDCARD || list[idx].tag==look_tag)
+			if(((cnt_tag==DFTAG_WILDCARD || list[idx].tag==cnt_tag)
 					|| (special_tag!=DFTAG_NULL && special_tag!=DFTAG_FREE 
 					&& list[idx].tag==special_tag))
-					&& (look_ref==DFREF_WILDCARD || list[idx].ref==look_ref)) {
+					&& (cnt_ref==DFREF_WILDCARD || list[idx].ref==cnt_ref)) {
 
 				/* we have a match !! */
 				t_real_cnt++;

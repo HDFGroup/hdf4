@@ -51,7 +51,7 @@ char * file_name;    /* name of current file being listed */
 int compare
   (const VOID *, const VOID *);
 int main
-  (int, char **);
+  (int, char *a[]);
 void lprint
   (int32, dd_t *, int);
 void print_item

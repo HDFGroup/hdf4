@@ -121,7 +121,7 @@ printf("HCIcnbit_init(): after seek call\n");
 printf("HCIcnbit_init(): 0.1 - coder_func.write=%p\n",info->cinfo.coder_funcs.write);
 #endif
 
-    nbit_info=&(info->cinfo.coder_info.nbit_info);
+    nbit_info= &(info->cinfo.coder_info.nbit_info);
 
     /* Initialize N-bit state information */
     nbit_info->buf_pos=NBIT_BUF_SIZE;   /* start at the beginning of the buffer */
@@ -240,7 +240,7 @@ PRIVATE int32 HCIcnbit_decode(compinfo_t *info,int32 length,uint8 *buf)
     intn i,j;               /* local counting variable */
 
     /* get a local ptr to the nbit info for convenience */
-    nbit_info=&(info->cinfo.coder_info.nbit_info);
+    nbit_info= &(info->cinfo.coder_info.nbit_info);
 
 #ifdef TESTING
 printf("HCIcnbit_decode(): nbit_info=%p\n",nbit_info);
@@ -270,7 +270,7 @@ printf("HCInbit_decode(): length=%d, buf=%p\n",length,buf);
 
             for(i=0; i<buf_items; i++) {
                 /* get a ptr to the mask info for convenience also */
-                mask_info=&(nbit_info->mask_info[0]);
+                mask_info= &(nbit_info->mask_info[0]);
 
                 if(nbit_info->sign_ext) {   /* special code for expanding sign extended data */
                     rbuf2=rbuf;   /* set temporary pointer into buffer */
@@ -362,13 +362,13 @@ PRIVATE int32 HCIcnbit_encode(compinfo_t *info,int32 length,uint8 *buf)
     nbit_mask_info_t *mask_info;    /* ptr to the mask info */
 
     /* get a local ptr to the nbit info for convenience */
-    nbit_info=&(info->cinfo.coder_info.nbit_info);
+    nbit_info= &(info->cinfo.coder_info.nbit_info);
 
 #ifdef TESTING
 printf("HCIcnbit_encode(): nbit_info=%p, length=%d, buf=%p\n",nbit_info,length,buf);
 #endif
     /* get a ptr to the mask info for convenience also */
-    mask_info=&(nbit_info->mask_info[nbit_info->nt_pos]);
+    mask_info= &(nbit_info->mask_info[nbit_info->nt_pos]);
 
     orig_length=length;     /* save this for later */
     for(; length>0; length--, buf++) {  /* encode until we store all the bytes */
@@ -559,7 +559,7 @@ int32 HCPcnbit_seek(accrec_t *access_rec, int32 offset, int origin)
     int32 bit_offset;                   /* offset of the bit to seek to */
 
     info=(compinfo_t *)access_rec->special_info;
-    nbit_info=&(info->cinfo.coder_info.nbit_info);
+    nbit_info= &(info->cinfo.coder_info.nbit_info);
 
     /* only seek to an even multiple of the NT-sized elements in the dataset */
     if(offset%nbit_info->nt_size!=0)
@@ -713,7 +713,7 @@ int32 HCPcnbit_endaccess(accrec_t *access_rec)
     comp_coder_nbit_info_t *nbit_info;  /* ptr to n-bit info */
 
     info=(compinfo_t *)access_rec->special_info;
-    nbit_info=&(info->cinfo.coder_info.nbit_info);
+    nbit_info= &(info->cinfo.coder_info.nbit_info);
 
     /* flush out n-bit buffer */
     if(access_rec->access==DFACC_WRITE)

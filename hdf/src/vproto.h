@@ -75,10 +75,10 @@ extern intn VSinquire
     char _HUGE *fields, int32 _HUGE *eltsize, char _HUGE *vsname);
 
 extern int32 VSlone
-  (HFILEID f, int32 _HUGE idarray[], int32 asize);
+  (HFILEID f, int32 _HUGE *idarray, int32 asize);
 
 extern int32 Vlone
-  (HFILEID f, int32 _HUGE idarray[], int32 asize);
+  (HFILEID f, int32 _HUGE *idarray, int32 asize);
 
 extern int32 Vfind
   (HFILEID f, const char _HUGE *vgname);

@@ -28,7 +28,11 @@ typedef struct tag_descript_t {
 } tag_descript_t;
 
 /* stringizing macro */
+#ifndef MIPSEL
 #define string(x) #x
+#else
+#define string(x) "x"
+#endif /* MIPSEL */
 
 /*  NOTE: 
  *        Please keep tag names <= 30 characters - a 

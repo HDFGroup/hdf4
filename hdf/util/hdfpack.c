@@ -63,7 +63,7 @@ VOID merge_blocks
     (mydd_t *dd, int32 infile, int32 outfile);
 
 int main
-    (int, char **);
+    (int, char *a[]);
 static VOID usage
     (char *);
 static VOID hdferror

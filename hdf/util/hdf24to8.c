@@ -63,7 +63,7 @@ typedef unsigned int	UINT;
 #define USAGE	fprintf (stderr, "usage: hdf24hdf8 hdf24_file hdf8_file\n")
 
 int main
-  (int, char **);
+  (int, char *a[]);
 int r24r8
   (int32, int32, unsigned char *, unsigned char *, int, unsigned char *);
 

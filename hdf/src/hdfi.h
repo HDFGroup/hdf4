@@ -72,6 +72,11 @@
 #endif
 #endif
 
+/* Define this for now, the stupid C compiler on the Decstation under */
+/* Ultrix 4.0 doesn't understand ANSI-style function prototypes for function */
+/* pointers in structure definitions */
+#define PROTO(x) x
+
 #if defined TEST_PC || defined TEST_WIN
 #define FAR far
 #else
@@ -562,6 +567,8 @@ typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 #define FILELIB UNIXBUFIO
 #ifndef __STDC__
 #define const
+#undef PROTO
+#define PROTO(x) ()
 #endif /* __STDC__ */
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */

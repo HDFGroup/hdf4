@@ -612,7 +612,7 @@ NAME
 USAGE
         int32 VSlone(f, idarray, asize)
         HFILEID f;        IN: file id.
-        int32 idarray[];  IN: array to contain the refs.
+        int32 *idarray;   IN: array to contain the refs.
         int32 asize;      IN: size of idarray.
 RETURNS
 
@@ -623,7 +623,7 @@ DESCRIPTION
 		 to asize worth of refs.
 --------------------------------------------------------------------- */
 
-PUBLIC int32 VSlone(HFILEID f, int32 idarray[], int32 asize) 
+PUBLIC int32 VSlone(HFILEID f, int32 *idarray, int32 asize) 
 {
     uint8  *lonevdata; /* lcl wrk area: stores flags of vdatas */
     int32  i, vgid, vsid, vstag;
@@ -675,7 +675,7 @@ NAME
 USAGE
         int32 Vlone(f, idarray, asize)
         HFILEID f;        IN: file id.
-        int32 idarray[];  IN: array to contain the refs.
+        int32 *idarray;   IN: array to contain the refs.
         int32 asize;      IN: size of idarray.
 RETURNS
 
@@ -687,7 +687,7 @@ DESCRIPTION
 --------------------------------------------------------------------- */
 
 
-PUBLIC int32 Vlone (HFILEID f, int32 idarray[], int32 asize)
+PUBLIC int32 Vlone (HFILEID f, int32 *idarray, int32 asize)
 {
     uint8 * lonevg; /* local wrk area: stores flags of vgroups */
     int32   i;

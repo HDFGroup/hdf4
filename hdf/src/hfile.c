@@ -2469,7 +2469,7 @@ uint16 HDbase_tag(uint16 tag)
         it is not necessary to have any files open to get this information.
 
 --------------------------------------------------------------------------*/
-intn Hgetlibversion(uint32 *majorv, uint32 *minorv, uint32 *releasev, char string[])
+intn Hgetlibversion(uint32 *majorv, uint32 *minorv, uint32 *releasev, char *string)
 {
     CONSTR(FUNC,"Hgetlibversion");
 
@@ -2505,7 +2505,7 @@ intn Hgetlibversion(uint32 *majorv, uint32 *minorv, uint32 *releasev, char strin
 
 --------------------------------------------------------------------------*/
 intn Hgetfileversion(int32 file_id, uint32 *majorv, uint32 *minorv,
-		    uint32 *release, char string[])
+		    uint32 *release, char *string)
 {
     filerec_t *file_rec;
     CONSTR(FUNC,"Hgetfileversion");

@@ -102,7 +102,7 @@ char
     *wherebig=NULL,             /* where to store small image */
     *wheresmall=NULL;           /* where to store image-related stuff */
 
-int main(int, char **);
+int main(int, char *a[]);
 int getspace(void);
 int getpix(void);
 int largeset(void);

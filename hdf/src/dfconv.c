@@ -129,11 +129,11 @@ PRIVATE int DFKInoset
 **  Conversion Routine Pointer Definitions
 */
 int (*DFKnumin)
-        (VOIDP source, VOIDP dest, uint32 num_elm,
-                uint32 source_stride, uint32 dest_stride) = DFKInoset;
+        PROTO((VOIDP source, VOIDP dest, uint32 num_elm,
+                uint32 source_stride, uint32 dest_stride)) = DFKInoset;
 int (*DFKnumout)
-        (VOIDP source, VOIDP dest, uint32 num_elm,
-                uint32 source_stride, uint32 dest_stride) = DFKInoset;
+        PROTO((VOIDP source, VOIDP dest, uint32 num_elm,
+                uint32 source_stride, uint32 dest_stride)) = DFKInoset;
 
 /************************************************************
  * If the programmer forgot to call DFKsetntype, then let
@@ -353,10 +353,10 @@ intn DFKsetNT(int32 ntype)
  *****************************************************************************/
 PUBLIC
 int DFKsetcustom(
-  int (*DFKcustin)(VOIDP source, VOIDP dest, uint32 num_elm,
-		   uint32 source_stride, uint32 dest_stride), 
-  int (*DFKcustout)(VOIDP source, VOIDP dest, uint32 num_elm, 
-		    uint32 source_stride, uint32 dest_stride)
+  int (*DFKcustin)PROTO((VOIDP source, VOIDP dest, uint32 num_elm,
+		   uint32 source_stride, uint32 dest_stride)), 
+  int (*DFKcustout)PROTO((VOIDP source, VOIDP dest, uint32 num_elm, 
+		    uint32 source_stride, uint32 dest_stride))
 )
 {
   DFKnumin = DFKcustin;

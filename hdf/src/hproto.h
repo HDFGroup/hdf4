@@ -361,6 +361,9 @@ extern int32 DFdiread
 extern intn DFdiget
     (int32 list, uint16 _HUGE *ptag, uint16 _HUGE *pref);
 
+extern intn DFdinobj
+    (int32 list);
+
 extern int32 DFdisetup
     (int maxsize);
 

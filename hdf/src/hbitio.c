@@ -609,7 +609,7 @@ printf("Hbitseek(): bytez=%p, bytea=%p, bytep=%p, buf_read=%d, block_offset=%d\n
     if(bit_offset>0) {
         bitfile_rec->count=BITNUM-bit_offset;
         if(bitfile_rec->mode=='w') {  /* if writing, mask off bits not yet written */
-            bitfile_rec->bits=*(bitfile_rec->bytep);
+            bitfile_rec->bits= *(bitfile_rec->bytep);
             bitfile_rec->bits&=maskc[bit_offset]<<bitfile_rec->count;
 	  } /* end if */
 	else {

@@ -179,6 +179,30 @@ intn DFdiget(int32 list, uint16 *ptag, uint16 *pref)
 
 
 /*-----------------------------------------------------------------------------
+ * Name:    DFdinobj
+ * Purpose: return number of tag/refs in the group
+ * Inputs:  list: handle to group (which is list of DIs)
+ * Returns: number of tag/refs in the group on success, 
+ *	-1 on failure with error set
+ * Users:   HDF systems programmers, hdp utility
+ * Invokes: none
+ * Remarks: nuttin'
+ *---------------------------------------------------------------------------*/
+intn DFdinobj(int32 list)
+{
+    CONSTR(FUNC,"DFdinobj");
+    DIlist_ptr list_rec;
+
+    list_rec = GID2REC(list);
+
+    if (!list_rec)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    return(list_rec->num);
+} /* DFdinobj() */
+
+
+/*-----------------------------------------------------------------------------
  * Name:    DFdisetup
  * Purpose: setup space for storing a list of DIs to be written out
  * Inputs:  maxsize: maximum number of DIs expected in the list

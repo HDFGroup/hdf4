@@ -100,7 +100,7 @@ typedef   struct tbbt_tree  TBBT_TREE;
 struct tbbt_tree {
   TBBT_NODE *root;
   unsigned long count;  /* The number of nodes in the tree currently */
-  intn     (*compar) (VOIDP k1,VOIDP k2,intn cmparg);
+  intn     (*compar) PROTO((VOIDP k1,VOIDP k2,intn cmparg));
   intn     cmparg;
 #endif /* TBBT_INTERNALS */
 };
@@ -161,7 +161,7 @@ extern "C" {
 #endif /* c_plusplus || __cplusplus */
 
 TBBT_TREE *tbbtdmake
-    (intn (*compar)(VOIDP ,VOIDP ,intn), intn arg );
+    (intn (*compar)PROTO((VOIDP ,VOIDP ,intn)), intn arg );
 /* Allocates and initializes an empty threaded, balanced, binary tree and
  * returns a pointer to the control structure for it.  You can also create
  * empty trees without this function as long as you never use tbbtd* routines
@@ -217,7 +217,7 @@ TBBT_TREE *tbbtdmake
 TBBT_NODE *tbbtdfind
     (TBBT_TREE *tree, VOIDP key, TBBT_NODE **pp);
 TBBT_NODE *tbbtfind
-    (TBBT_NODE *root,VOIDP key, intn (*cmp)(VOIDP,VOIDP,intn),
+    (TBBT_NODE *root,VOIDP key, intn (*cmp)PROTO((VOIDP,VOIDP,intn)),
         intn arg, TBBT_NODE **pp);
 /* Locate a node based on the key given.  A pointer to the node in the tree
  * with a key value matching `key' is returned.  If no such node exists, NULL
@@ -242,7 +242,7 @@ TBBT_NODE *tbbtindx
 TBBT_NODE *tbbtdins
     (TBBT_TREE *tree, VOIDP item, VOIDP key);
 TBBT_NODE *tbbtins
-    (TBBT_NODE **root,VOIDP item,VOIDP key, intn (*cmp)(VOIDP,VOIDP,intn), intn arg );
+    (TBBT_NODE **root,VOIDP item,VOIDP key, intn (*cmp)PROTO((VOIDP,VOIDP,intn)), intn arg );
 /* Insert a new node to the tree having a key value of `key' and a data pointer
  * of `item'.  If a node already exists in the tree with key value `key' or if
  * malloc() fails, NULL is returned (no node is inserted), otherwise a pointer

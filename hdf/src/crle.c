@@ -96,7 +96,7 @@ PRIVATE int32 HCIcrle_init(accrec_t *access_rec)
     if(Hseek(info->aid,0,DF_START)==FAIL)   /* seek to beginning of element */
         HRETURN_ERROR(DFE_SEEKERROR,FAIL);
 
-    rle_info=&(info->cinfo.coder_info.rle_info);
+    rle_info= &(info->cinfo.coder_info.rle_info);
 
     /* Initialize RLE state information */
     rle_info->rle_state=RLE_INIT;       /* start in initial state */
@@ -137,7 +137,7 @@ PRIVATE int32 HCIcrle_decode(compinfo_t *info,int32 length,uint8 *buf)
     uintn dec_len;           /* length to decode */
     intn c;                 /* character to hold a byte read in */
 
-    rle_info=&(info->cinfo.coder_info.rle_info);
+    rle_info= &(info->cinfo.coder_info.rle_info);
 
     orig_length=length;     /* save this for later */
     while(length>0) {   /* decode until we have all the bytes we need */
@@ -211,14 +211,14 @@ PRIVATE int32 HCIcrle_encode(compinfo_t *info,int32 length,uint8 *buf)
     int32 orig_length;      /* original length to write */
     intn c;                 /* character to hold a byte read in */
 
-    rle_info=&(info->cinfo.coder_info.rle_info);
+    rle_info= &(info->cinfo.coder_info.rle_info);
 
     orig_length=length;     /* save this for later */
     while(length>0) {   /* encode until we stored all the bytes */
         switch(rle_info->rle_state) {
             case RLE_INIT:  /* initial encoding state */
                 rle_info->rle_state=RLE_MIX;    /* shift to MIX state */
-                rle_info->last_byte=rle_info->buffer[0]=*buf;
+                rle_info->last_byte=rle_info->buffer[0]= *buf;
                 rle_info->buf_length=1;
                 rle_info->buf_pos=1;
                 buf++;
@@ -234,7 +234,7 @@ PRIVATE int32 HCIcrle_encode(compinfo_t *info,int32 length,uint8 *buf)
                         HRETURN_ERROR(DFE_WRITEERROR,FAIL);
                     if(HDputc((uint8)rle_info->last_byte,info->aid)==FAIL)
                         HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-                    rle_info->last_byte=rle_info->buffer[0]=*buf;
+                    rle_info->last_byte=rle_info->buffer[0]= *buf;
                     rle_info->buf_length=1;
                     rle_info->buf_pos=1;
                   } /* end if */
@@ -268,7 +268,7 @@ PRIVATE int32 HCIcrle_encode(compinfo_t *info,int32 length,uint8 *buf)
                   } /* end if */
                 else {  /* continue MIX */
                     rle_info->second_byte=rle_info->last_byte;
-                    rle_info->last_byte=rle_info->buffer[rle_info->buf_pos]=*buf;
+                    rle_info->last_byte=rle_info->buffer[rle_info->buf_pos]= *buf;
                     rle_info->buf_length++;
                     rle_info->buf_pos++;
                     if(rle_info->buf_length>=RLE_BUF_SIZE) {    /* check for too long */
@@ -318,7 +318,7 @@ PRIVATE int32 HCIcrle_term(compinfo_t *info)
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
     intn c;                 /* character to hold a byte read in */
 
-    rle_info=&(info->cinfo.coder_info.rle_info);
+    rle_info= &(info->cinfo.coder_info.rle_info);
 
     switch(rle_info->rle_state) {
         case RLE_RUN:
@@ -474,7 +474,7 @@ int32 HCPcrle_seek(accrec_t *access_rec, int32 offset, int origin)
     uint8 *tmp_buf;                 /* pointer to throw-away buffer */
 
     info=(compinfo_t *)access_rec->special_info;
-    rle_info=&(info->cinfo.coder_info.rle_info);
+    rle_info= &(info->cinfo.coder_info.rle_info);
 
     if(offset<rle_info->offset) {    /* need to seek from the beginning */
         if(access_rec->access==DFACC_WRITE && rle_info->rle_state!=RLE_INIT)
@@ -564,7 +564,7 @@ int32 HCPcrle_write(accrec_t *access_rec, int32 length, const VOIDP data)
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
 
     info=(compinfo_t *)access_rec->special_info;
-    rle_info=&(info->cinfo.coder_info.rle_info);
+    rle_info= &(info->cinfo.coder_info.rle_info);
 
     /* Don't allow random write in a dataset unless: */
     /*  1 - append onto the end */
@@ -641,7 +641,7 @@ int32 HCPcrle_endaccess(accrec_t *access_rec)
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
 
     info=(compinfo_t *)access_rec->special_info;
-    rle_info=&(info->cinfo.coder_info.rle_info);
+    rle_info= &(info->cinfo.coder_info.rle_info);
 
     /* flush out RLE buffer */
     if(access_rec->access==DFACC_WRITE && rle_info->rle_state!=RLE_INIT)
