@@ -57,26 +57,32 @@ static char RcsId[] = "@(#)$Revision$";
                    file(variable length)
 
  LOCAL ROUTINES
-   None
- EXPORTED ROUTINES
-   HXcreate         -- create an external element
-   HXPsetaccesstype -- set the access type of the external file
    HXIstaccess      -- set up AID to access an ext elem
+   HXIbuildfilename -- Build the Filename for the External Element
+
+ EXPORTED BUT LIBRARY PRIVATE ROUTINES
+   HXPcloseAID      -- close file but keep AID active
+   HXPendacess      -- close file, free AID
+   HXPinfo          -- return info about an external element
+   HXPinquire       -- retreive information about an external element
+   HXPread          -- read some data out of an external file
+   HXPreset         -- replace the current external info with new info
+   HXPseek          -- set the seek position
+   HXPsetaccesstype -- set the I/O access type of the external file
    HXPstread        -- open an access record for reading
    HXPstwrite       -- open an access record for reading
-   HXPseek          -- set the seek position
-   HXPread          -- read some data out of an external file
    HXPwrite         -- write some data out to an external file
-   HXPinquire       -- retreive information about an external element
-   HXPendacess      -- close file, free AID
-   HXPcloseAID      -- close file but keep AID active
-   HXPinfo          -- return info about an external element
-   HXPreset         -- replace the current external info with new info
-   HXPsetaccesstype -- set the I/O access type of the external file
+
+EXPORTED ROUTINES
+   HXcreate         -- create an external element
+   HXsetcreatedir   -- set the directory variable for creating external file
+   HXsetdir         -- set the directory variable for locating external file
+
 ------------------------------------------------------------------------- */
 
 #include "hdf.h"
 #include "hfile.h"
+#include <sys/stat.h>
 
 /* extinfo_t -- external elt information structure */
 
@@ -97,7 +103,7 @@ extinfo_t;
 /* forward declaration of the functions provided in this module */
 PRIVATE int32 HXIstaccess
             (accrec_t * access_rec, int16 access);
-PRIVATE char *HXPbuildfilename
+PRIVATE char *HXIbuildfilename
 	(const char *ext_fname, const intn acc_mode);
 
 /* ext_funcs -- table of the accessing functions of the external
@@ -219,7 +225,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     dd = &access_rec->block->ddlist[access_rec->idx];
 
     /* build the customized external file name. */
-    if (!(fname = HXPbuildfilename(extern_file_name, DFACC_CREATE)))
+    if (!(fname = HXIbuildfilename(extern_file_name, DFACC_CREATE)))
         HRETURN_ERROR(DFE_BADOPEN, FAIL);
 
     /* create the external file */
@@ -440,7 +446,7 @@ HXPsetaccesstype(accrec_t * access_rec)
       }
 
     /* build the customized external file name. */
-    if (!(fname = HXPbuildfilename(info->extern_file_name, DFACC_OLD)))
+    if (!(fname = HXIbuildfilename(info->extern_file_name, DFACC_OLD)))
         HRETURN_ERROR(DFE_BADOPEN, FAIL);
 
     /* Open the external file for the correct access type */
@@ -712,7 +718,7 @@ HXPread(accrec_t * access_rec, int32 length, VOIDP data)
 	char	*fname;
 
 	/* build the customized external file name. */
-	if (!(fname = HXPbuildfilename(info->extern_file_name, DFACC_OLD)))
+	if (!(fname = HXIbuildfilename(info->extern_file_name, DFACC_OLD)))
 	    HRETURN_ERROR(DFE_BADOPEN, FAIL);
 
 	info->file_external = HI_OPEN(fname, access_rec->access);
@@ -797,7 +803,7 @@ HXPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
 	char *fname;
 
 	/* build the customized external file name. */
-	if (!(fname = HXPbuildfilename(info->extern_file_name, DFACC_OLD)))
+	if (!(fname = HXIbuildfilename(info->extern_file_name, DFACC_OLD)))
 	    HRETURN_ERROR(DFE_BADOPEN, FAIL);
 
 	info->file_external = HI_OPEN(fname, access_rec->access);
@@ -1176,14 +1182,15 @@ HXsetcreatedir(char *dir)
 
 /*------------------------------------------------------------------------ 
 NAME
-   HXsetdir -- set the directory variable for creating external file
+   HXsetdir -- set the directory variable for locating external file
 USAGE
    intn HXsetdir(dir)
-   char *dir		IN: directory for creating external file
+   char *dir		IN: directory for locating external file
 RETURNS
    SUCCEED if no error, else FAIL
 DESCRIPTION
-   Set up the directory variable for creating external file.
+   Set up the directory variable for locating external file.
+   It can contain multiple directories separated by colons.
    The directory content is copied into HXsetdir area.
    If dir is NULL, the directory variable is unset.
    If error encountered during setup, previous value of extdir
@@ -1211,12 +1218,12 @@ HXsetdir(char *dir)
     return(SUCCEED);
 }	/* HXsetdir */
 
-/* ------------------------------- HXPbuildfilename ------------------------------- */
+/* ------------------------------- HXIbuildfilename ------------------------------- */
 /*
 NAME
-    HXPbuildfilename -- Build the Filename for the External Element
+    HXIbuildfilename -- Build the Filename for the External Element
 USAGE
-    char* HXPbuildfilename(char *ext_fname, const intn acc_mode)
+    char* HXIbuildfilename(char *ext_fname, const intn acc_mode)
     char            * ext_fname;	IN: external filename as stored
     intn 	      acc_mode;		IN: access mode
 RETURNS
@@ -1230,13 +1237,12 @@ DESCRIPTION
 /* for end-of-line two extra times, or even use memcpy since the string lengths */
 /* are calculated already.  For now, it works. */
 #define HDstrcpy3(s1, s2, s3, s4)	(HDstrcat(HDstrcat(HDstrcpy(s1, s2),s3),s4))
-#include <sys/stat.h>
 
 PRIVATE
 char *
-HXPbuildfilename(const char *ext_fname, const intn acc_mode)
+HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 {
-    char       *FUNC = "HXPbuildfilename";  /* for HERROR */
+    char       *FUNC = "HXIbuildfilename";  /* for HERROR */
     int	        fname_len;		/* string length of the ext_fname */
     int	        path_len;		/* string length of prepend pathname */
     static	firstinvoked = 1;	/* true if invoked the first time */
@@ -1397,4 +1403,4 @@ HXPbuildfilename(const char *ext_fname, const intn acc_mode)
 	HDfree(finalpath);
 	HRETURN_ERROR(DFE_ARGS, NULL);
     }
-}	/* HXPbuildfilename */
+}	/* HXIbuildfilename */
