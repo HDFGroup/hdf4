@@ -915,9 +915,10 @@ dialog.
     =====================
 
     This version of the distribution has support to create an instrumented 
-    version of the HDF library(libdf-inst.a). This library along with
-    the Pablo performance data capture libraries can be used to gather data
-    about I/O behavior and procedure execution times.  
+    version of the HDF libraries(libdf-inst.a and libmfhdf-inst.a). This 
+    library along with the Pablo performance data capture libraries can be 
+    used to gather data about I/O behavior and procedure execution times.  
+    Version 5.1 or higher of the trace library is required.
 
     More detailed documentation on how to use the instrumented version of
     the HDF library with Pablo can be found in the Pablo directory: 
@@ -925,12 +926,12 @@ dialog.
        $(toplevel)/hdf/pablo 
 
     See the provided '$(toplevel)/hdf/pablo/README.Pablo' and the PostScript 
-    file '$(toplevel)/hdf/pablo/Pablo.ps'.
+    file '$(toplevel)/hdf/pablo/Pablo.ps'.  
 
-    At this time only an instrumented version of the core HDF library libdf.a 
-    can be created. Future versions will have support for the SDxx interface
-    found in libmfhdf.a. Current interfaces supported are ANxx, GRxx, DFSDxx,
-    DFANxx, DFPxx, DFR8xx, DF24xx, Hxx, Vxx, and VSxx.
+    In this version both an instrumented version of the core HDF library 
+    libdf.a and the library libmfhdf.a can be created.  Current interfaces 
+    supported are ANxx, GRxx, DFSDxx, DFANxx, DFPxx, DFR8xx, DF24xx, Hxx, 
+    SDxx, Vxx, and VSxx.
 
     To enable the creation of an instrumented library the following section
     in the makefile fragment($(toplevel)/config/mh-<os>) must be uncommented 
@@ -942,11 +943,11 @@ dialog.
     # See the documentation in the directory 'hdf/pablo' for further 
     # information about Pablo and what platforms it is supported on
     # before enabling. 
-    # You need to set 'PABLO_INCLUDE' to the Pablo distribution 
+    # You need to set 'PABLO_INCDIR' to the Pablo distribution 
     # include directory to get to files 'IOTrace.h', 'IOTrace_SD.h' and others.
     #PABLO_FLAGS  = -DHAVE_PABLO
-    #PABLO_INCLUDE = -I/hdf2/Pablo/Instrument.HP/include
-
+    #PABLO_INCDIR = /usr/local/include/pablo-5.1
+    #PABLO_INCLUDE = -I$(PABLO_INCDIR)
     After setting these values you must re-run the toplevel 'configure' script.
     Make sure that you start from a clean re-build(i.e. 'make clean') after
     re-running the toplevel 'configure' script and then run 'make'.
