@@ -216,9 +216,9 @@ int32 fmtint(x)
 char* x;
 #endif
 {	
-  int *i;
-  i = (int *) x;
-  cn += printf("%d", *i); 
+  int i = 0;
+  HDmemcpy(&i, x, 4);
+  cn += printf("%d", i); 
   return(1);  
 }
 
@@ -229,10 +229,10 @@ int32 fmtfloat(x)
 char* x;
 #endif
 {
-    float *f;
-    f = (float *) x;
-    cn += printf("%f", *f);
-    return(1);
+  float f = 0;
+  HDmemcpy(&f, x, 4);
+  cn += printf("%f", f); 
+  return(1);  
 }
 
 #ifdef PROTOTYPE
@@ -242,10 +242,10 @@ int32 fmtlong(x)
 char* x;
 #endif
 {	
-    int32 *l;
-    l = (int32 *) x;
-    cn += printf("%d", *l);
-    return(1);
+  long l = 0;
+  HDmemcpy(&l, x, 4);
+  cn += printf("%ld", l);
+  return(1);  
 }
 
 #ifdef PROTOTYPE
@@ -255,10 +255,10 @@ int32 fmtshort(x)
 char* x;
 #endif
 {	
-    int16 *s;
-    s = (int16 *) x;
-    cn += printf("%d", *s);
-    return(1);
+  short s = 0;
+  HDmemcpy(&s, x, 2);
+  cn += printf("%d", s);
+  return(1);  
 }
 
 #ifdef PROTOTYPE
@@ -268,10 +268,10 @@ int32 fmtdouble(x)
 char*x;
 #endif
 {	
-    double *d;
-    d = (double *) x;
-    cn += printf("%f", *d);
-    return(1);
+  double d = 0;
+  HDmemcpy(&d, x, 8);
+  cn += printf("%f", d); 
+  return(1);  
 }
 
 /* ------------------------------------------------ */

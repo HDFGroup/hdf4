@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.27  1993/04/19 23:04:30  koziol
-General Code Cleanup to reduce/remove compilation warnings on PC
+Revision 1.28  1993/05/17 22:54:41  sxu
+Wrapped in changes made in 3.2 and upgrade *.COM files for 3.3.
 
+ * Revision 1.27  1993/04/19  23:04:30  koziol
+ * General Code Cleanup to reduce/remove compilation warnings on PC
+ *
  * Revision 1.26  1993/04/13  21:40:09  georgev
  * Fixed cast problem for qsort on SGI's.
  *
@@ -138,7 +141,7 @@ void qsort(void *base, size_t nmemb, size_t size,
         int (*compar) (const void*, const void *));
 #endif
 
-#define MAXBUFF 4000
+#define MAXBUFF 8192
 
 dd_t desc[MAXBUFF];
 
@@ -277,7 +280,7 @@ char *argv[];
             }
 	}
 	
-	if (sort) qsort( desc, n, sizeof(dd_t), compare);
+	if (sort) qsort( (char *)desc, n, sizeof(dd_t), compare);
 	
 	lprint(desc, n);
         
