@@ -88,6 +88,10 @@ typedef struct dyn_write_struct
   }
 DYN_VWRITELIST;
 
+/* If there are too many attrs and performance becomes a problem,
+   the vs_attr_t list defined below can be replaced by an
+   array of attr lists, each list contains attrs for 1 field.
+ */ 
 typedef struct dyn_vsattr_struct
    {
       int32       findex;   /* which field this attr belongs to */

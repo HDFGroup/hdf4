@@ -96,11 +96,11 @@ MFGR_COBJS=mfgr.o
 
 FSRCS = $(FCSRCS) $(FFSRCS)
 #FCSRCS=hfilef.c herrf.c dfanf.c dfr8f.c dfpf.c df24f.c dfsdf.c vgf.c dff.c \
-#    dfutilf.c mfanf.c mfgrf.c hkitf.c
+#    dfutilf.c mfanf.c mfgrf.c hkitf.c vattrf.c
 FCSRCS=$(H_FCSRCS) $(V_FCSRCS) $(DF_FCSRCS) $(DFAN_FCSRCS) $(DFSD_FCSRCS) \
        $(DFRI_FCSRCS) $(MFAN_FCSRCS) $(MFGR_FCSRCS)
 H_FCSRCS=hfilef.c herrf.c
-V_FCSRCS=vgf.c
+V_FCSRCS=vgf.c vattrf.c
 DF_FCSRCS=dff.c dfutilf.c
 DFAN_FCSRCS=dfanf.c
 DFSD_FCSRCS=dfsdf.c
@@ -109,11 +109,11 @@ MFAN_FCSRCS=mfanf.c
 MFGR_FCSRCS=mfgrf.c
 
 #FFSRCS=hfileff.f dfanff.f df24ff.f dfpff.f dfr8ff.f dfsdff.f vgff.f dfff.f \
-#    dfufp2if.f mfgrff.f hkitff.f
+#    dfufp2if.f mfgrff.f hkitff.f vattrff.f
 FFSRCS=$(H_FFSRCS) $(V_FFSRCS) $(DF_FFSRCS) $(DFAN_FFSRCS) $(DFSD_FFSRCS) \
        $(DFRI_FFSRCS) $(MFAN_FFSRCS) $(MFGR_FFSRCS)
 H_FFSRCS=hfileff.f 
-V_FFSRCS=vgff.f
+V_FFSRCS=vgff.f vattrff.f
 DF_FFSRCS=dfff.f dfufp2if.f
 DFAN_FFSRCS=dfanff.f
 DFSD_FFSRCS=dfsdff.f
@@ -123,12 +123,12 @@ MFGR_FFSRCS=mfgrff.f
 
 FOBJS = $(FCOBJS) $(FFOBJS)
 #FCOBJS=hfilef.o herrf.o dfanf.o dfr8f.o dfpf.o df24f.o dfsdf.o vgf.o dff.o \
-#    dfutilf.o mfanf.o mfgrf.o 
+#    dfutilf.o mfanf.o mfgrf.o vattrf.o
 
 FCOBJS=$(H_FCOBJS) $(V_FCOBJS) $(DF_FCOBJS) $(DFAN_FCOBJS) $(DFSD_FCOBJS) \
        $(DFRI_FCOBJS) $(MFAN_FCOBJS) $(MFGR_FCOBJS)
 H_FCOBJS=hfilef.o herrf.o 
-V_FCOBJS=vgf.o
+V_FCOBJS=vgf.o vattrf.o
 DF_FCOBJS=dff.o dfutilf.o
 DFAN_FCOBJS=dfanf.o
 DFSD_FCOBJS=dfsdf.o
@@ -137,11 +137,11 @@ MFAN_FCOBJS=mfanf.o
 MFGR_FCOBJS=mfgrf.o
 
 #FFOBJS=hfileff.o dfanff.o df24ff.o dfpff.o dfr8ff.o dfsdff.o vgff.o dfff.o \
-#    dfufp2if.o mfgrff.o hkitff.o
+#    dfufp2if.o mfgrff.o hkitff.o vattrff.o
 FFOBJS=$(H_FFOBJS) $(V_FFOBJS) $(DF_FFOBJS) $(DFAN_FFOBJS) $(DFSD_FFOBJS) \
        $(DFRI_FFOBJS) $(MFAN_FFOBJS) $(MFGR_FFOBJS)
 H_FFOBJS=hfileff.o 
-V_FFOBJS=vgff.o
+V_FFOBJS=vgff.o vattrff.o
 DF_FFOBJS=dfff.o dfufp2if.o
 DFAN_FFOBJS=dfanff.o
 DFSD_FFOBJS=dfsdff.o

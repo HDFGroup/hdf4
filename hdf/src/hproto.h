@@ -2829,6 +2829,7 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 #   define  nvsdtchc FNAME(VSDTCHC)
 #   define  nvsqref  FNAME(VSQREF)
 #   define  nvsqtag  FNAME(VSQTAG)
+#   define  nvsqnfld FNAME(VSQNFLD)
 #   define  nvsgver  FNAME(VSGVER)
 #   define  nvsseekc FNAME(VSSEEKC)
 #   define  nvsgnamc FNAME(VSGNAMC)
@@ -2909,6 +2910,7 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 #   define  nvsdtchc FNAME(vsdtchc)
 #   define  nvsqref  FNAME(vsqref)
 #   define  nvsqtag  FNAME(vsqtag)
+#   define  nvsqnfld FNAME(vsqnfld)
 #   define  nvsgver  FNAME(vsgver)
 #   define  nvsseekc FNAME(vsseekc)
 #   define  nvsgnamc FNAME(vsgnamc)
@@ -3028,6 +3030,9 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 
     extern      FRETVAL(intf) nvsqtag
                 (intf  * vkey);
+  
+    extern      FRETVAL(intf) nvsqnfld
+                (intf * vkey);
 
     extern      FRETVAL(intf) nvsgver
                 (intf  * vkey);
@@ -3203,6 +3208,95 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 
     extern      FRETVAL(intf) nvadtrc
                 (intf  * vkey, intf  * tag, intf  * ref);
+
+/* 
+  ** from vattrf.c
+ */
+#ifndef VATTR_FNAMES
+#  define VATTR_FNAMES
+#ifdef DF_CAPFNAMES
+#  define nvsfcfdx   FNAME(VSFCFDX)
+#  define nvsfcsat   FNAME(VSFCSAT)
+#  define nvsfcsca   FNAME(VSFCSCA)
+#  define nvsfnat    FNAME(VSFNAT)
+#  define nvsffnat   FNAME(VSFFNAT)
+#  define nvsfcfda   FNAME(VSFCFDA)
+#  define nvsfainf   FNAME(VSFAINF)
+#  define nvsfgat    FNAME(VSFGAT)
+#  define nvsfgcat   FNAME(VSFGCAT)
+#  define nvsfisat   FNAME(VSFISAT)
+#  define nvfcsatt   FNAME(VFCSATT)
+#  define nvfcscat   FNAME(VFCSCAT)
+#  define nvfnatts   FNAME(VFNATTS)
+#  define nvfcfdat   FNAME(VFCFDAT)
+#  define nvfainfo   FNAME(VFAINFO)
+#  define nvfgatt    FNAME(VFGATT)
+#  define nvfgcatt   FNAME(VFGCATT)
+#  define nvfgver    FNAME(VFGVER)
+#else       /* !DF_CAPFNAMES  */
+#  define nvsfcfdx   FNAME(vsfcfdx)
+#  define nvsfcsat   FNAME(vsfcsat)
+#  define nvsfcsca   FNAME(vsfcsca)
+#  define nvsfnat    FNAME(vsfnat)
+#  define nvsffnat   FNAME(vsffnat)
+#  define nvsfcfda   FNAME(vsfcfda)
+#  define nvsfainf   FNAME(vsfainf)
+#  define nvsfgat    FNAME(vsfgat)
+#  define nvsfgcat   FNAME(vsfgcat)
+#  define nvsfisat   FNAME(vsfisat)
+#  define nvfcsatt   FNAME(vfcsatt)
+#  define nvfcscat   FNAME(vfcscat)
+#  define nvfnatts   FNAME(vfnatts)
+#  define nvfcfdat   FNAME(vfcfdat)
+#  define nvfainfo   FNAME(vfainfo)
+#  define nvfgatt    FNAME(vfgatt)
+#  define nvfgcatt   FNAME(vfgcatt)
+#  define nvfgver    FNAME(vfgver)
+#endif   /* DF_CAPFNAMES */
+#endif   /* VATTR_FNAMES  */
+   extern   FRETVAL(intf) nvsfcfdx
+            (intf *vsid, _fcd fldnm, intf *findex,
+             intf *fldnmlen);
+   extern   FRETVAL(intf) nvsfcsat
+            (intf *vsid, intf *findex, _fcd attrnm, intf *dtype,
+             intf *count, intf *values, intf *attrnmlen);
+   extern   FRETVAL(intf) nvsfcsca
+            (intf *vsid, intf *findex, _fcd attrnm, intf *dtype,
+             intf *count, _fcd values, intf *attrnmlen);
+   extern   FRETVAL(intf) nvsfnat
+            (intf *vsid);
+   extern   FRETVAL(intf) nvsffnat
+            (intf *vsid, intf *findex);
+   extern   FRETVAL(intf) nvsfcfda
+            (intf *vsid, intf *findex, _fcd attrnm, intf *attrnmlen);
+   extern   FRETVAL(intf) nvsfainf
+            (intf *vsid, intf *findex, intf *aindex, _fcd attrname,
+             intf *dtype, intf *count, intf *size);
+   extern   FRETVAL(intf) nvsfgat
+            (intf *vsid, intf *findex, intf *aindex, intf *values);
+   extern   FRETVAL(intf) nvsfgcat
+            (intf *vsid, intf *findex, intf *aindex, _fcd *values);
+   extern   FRETVAL(intf) nvsfisat
+            (intf *vsid);
+   extern   FRETVAL(intf) nvfcsatt
+            (intf *vgid, _fcd attrnm, intf *dtype,
+             intf *count, intf *values, intf *attrnmlen);
+   extern   FRETVAL(intf) nvfcscat
+            (intf *vgid, _fcd attrnm, intf *dtype, intf *count,
+             _fcd values, intf *attrnmlen);
+   extern   FRETVAL(intf) nvfnatts
+            (intf *vgid);
+   extern   FRETVAL(intf) nvfcfdat
+            (intf *vgid, _fcd attrnm, intf *attrnmlen);
+   extern   FRETVAL(intf) nvfainfo
+            (intf *vgid, intf *aindex, _fcd attrname,
+             intf *dtype, intf *count, intf *size);
+   extern   FRETVAL(intf) nvfgatt
+            (intf *vgid, intf *aindex, intf *values);
+   extern   FRETVAL(intf) nvfgcatt
+            (intf *vgid, intf *aindex, _fcd *values);
+   extern   FRETVAL(intf) nvfgver
+            (intf *vgid);
 
 #if defined c_plusplus || defined __cplusplus
 }

@@ -105,7 +105,10 @@ static char RcsId[] = "@(#)$Revision$";
 *                              entire vdata.
 *            uint16 atag, aref  -- tag/ref of the attr vdata
 *         } vs_attr_t;
-**     typedef struct dyn_vgattr_struct
+*          (If there are too many attrs and performance becomes a 
+*           problem, the vs_attr_t listed above can be replaced by an
+*           array of attr lists, each list contains attrs for 1 field.)
+*     typedef struct dyn_vgattr_struct
 *        {
 *            uint16 atag, aref  -- tag/ref of the attr vdata
 *         } vg_attr_t;
@@ -152,9 +155,6 @@ static char RcsId[] = "@(#)$Revision$";
 *   intn Vsetattr(int32 vgid,  char *attrname, int32 datatype,
 *                 int32 count, VOIDP values) 
 *        set attr for a vgroup
-*   intn Vresetattr(int32 vgid,  char *attrname, int32 datatype,
-*                   int32 count, VOIDP values)
-*        modify an existing attr
 *   intn Vnattrs(int32 vgid)
 *        number of attrs for a vgroup
 *   intn Vfindattr(int32 vgid, char *attrname)
@@ -166,7 +166,9 @@ static char RcsId[] = "@(#)$Revision$";
 *        get values of an attribute
 *   int32 Vgetversion(int32 vgid)
 *        get vset version of a vgroup
-* 
+*   int32 VSQuerynfields(int32 vsid)
+*        get number of fields of a vdata. This routine is 
+*        added in vio.c, to be close with other VSQuery routines. 
 * Private routines:
 *
 * Affected existing functions:
@@ -203,7 +205,7 @@ RETURNS
               FAIL otherwise.
 DESCRIPTION
       This routine searchs field names only. It doesn't
-      check with the vdata name.  Use VSinquire() or VSgetname()
+      search the vdata name.  Use VSinquire() or VSgetname()
       to find vdata name. 
 ---------------------------------------------------- */
 intn VSfindex(int32 vsid, char *fieldname, int32 *fldindex)

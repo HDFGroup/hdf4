@@ -181,24 +181,32 @@ C
 C	Declarations of return values for HDF Vgroup functions
 C
       integer vfadtr 
+      integer vfainfo
       integer vfatch
       integer vfdtch
       integer vfend
       integer vfents
+      integer vffdatt
       integer vffloc
+      integer vfgattr
+      integer vfgcatt
       integer vfgcls
       integer vfgid
       integer vfgnam
       integer vfgnxt
       integer vfgttr
       integer vfgttrs
+      integer vfgver
       integer vfinq
       integer vfinqtr
       integer vfinsrt
       integer vfisvg
       integer vfisvs
       integer vflone
+      integer vfnattrs
       integer vfntr
+      integer vfsatt
+      integer vfscatt
       integer vfscls
       integer vfsnam
       integer vfstart
@@ -214,22 +222,32 @@ C
 C
 C	Declarations of return values for HDF Vdata functions
 C
+      integer vsfainf
       integer vsfatch
       integer vsfdlte
       integer vsfdtch
       integer vsfelts
       integer vsfex
       integer vsffdef
+      integer vsffdat
+      integer vsffidx
+      integer vsffnat
       integer vsffnd
+      integer vsfgat
+      integer vsfgcat
       integer vsfgcls
       integer vsfgfld
       integer vsfgid
       integer vsfgint
       integer vsfgnam
       integer vsfinq
+      integer vsfisat
       integer vsflone
+      integer vsfnat
       integer vsfndc
       integer vsfread
+      integer vsfsat
+      integer vsfscat
       integer vsfscls
       integer vsfseek
       integer vsfsfld
@@ -247,6 +265,7 @@ C
       integer vsqfflds
       integer vsqfvsiz
       integer vsqfname
+      integer vsqnfld
 
 C
 C	Declarations of return values for HDF low level H functions
