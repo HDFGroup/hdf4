@@ -31,7 +31,13 @@ hdf/util/testfiles/storm130.raw -text svneol=unset#application/octet-stream
 hdf/util/testfiles/storm140.raw -text svneol=unset#application/octet-stream
 hdf/util/testfiles/test.cdf -text
 hdf/util/testfiles/test.hdf -text
+mfhdf/dumper/Example6.hdf -text
 mfhdf/dumper/ctxtr2r.hdf -text
+mfhdf/dumper/grtdfi322.hdf -text
+mfhdf/dumper/grtdfui162.hdf -text
+mfhdf/dumper/grtdfui82.hdf -text
+mfhdf/dumper/grtdfui83.hdf -text
+mfhdf/dumper/grtdfui84.hdf -text
 mfhdf/dumper/star.hdf -text
 mfhdf/dumper/swf32.hdf -text
 mfhdf/dumper/swi16.hdf -text
