@@ -29,7 +29,7 @@
 #if defined c_plusplus || defined __cplusplus
 extern      "C"
 {
-#endif				/* c_plusplus || __cplusplus */
+#endif                          /* c_plusplus || __cplusplus */
 
 /*
    ** from cskphuff.c
@@ -46,8 +46,8 @@ extern      "C"
 
     extern int32 HCPcskphuff_inquire
                 (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
-	       int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
-		 int16 *pspecial);
+               int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
+                 int16 *pspecial);
 
     extern int32 HCPcskphuff_read
                 (accrec_t * access_rec, int32 length, VOIDP data);
@@ -60,7 +60,7 @@ extern      "C"
 
 #if defined c_plusplus || defined __cplusplus
 }
-#endif				/* c_plusplus || __cplusplus */
+#endif                          /* c_plusplus || __cplusplus */
 
 /* The maximum source character code: */
 #define MAXCHAR     255
@@ -77,20 +77,20 @@ extern      "C"
 /* Skipping huffman [en|de]coding information */
 typedef struct
 {
-    intn        skip_size;	/* number of bytes in each element */
-    uintn     **left,		/* define the left and right pointer arrays */
+    intn        skip_size;      /* number of bytes in each element */
+    uintn     **left,           /* define the left and right pointer arrays */
               **right;
-    uint8     **up;		/* define the up pointer array */
-    intn        skip_pos;	/* current byte to read or write */
-    int32       offset;		/* offset in the de-compressed array */
+    uint8     **up;             /* define the up pointer array */
+    intn        skip_pos;       /* current byte to read or write */
+    int32       offset;         /* offset in the de-compressed array */
 }
 comp_coder_skphuff_info_t;
 
 #ifndef CSKPHUFF_MASTER
-extern funclist_t cskphuff_funcs;	/* functions to perform skipping huffman encoding */
+extern funclist_t cskphuff_funcs;   /* functions to perform skipping huffman encoding */
 #else
 funclist_t  cskphuff_funcs =
-{				/* functions to perform skipping huffman encoding */
+{                               /* functions to perform skipping huffman encoding */
     HCPcskphuff_stread,
     HCPcskphuff_stwrite,
     HCPcskphuff_seek,

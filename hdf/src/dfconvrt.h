@@ -53,10 +53,10 @@
         st=DFNTF_IEEE;\
       }\
       if (st==DFNTF_IEEE && dt==DFNTF_CRAY) {\
-	int i=1;\
+    int i=1;\
         SCUP32(s,d,&sz,&i);\
       } else if (st==DFNTF_CRAY && (dt==DFNTF_IEEE || dt==DFNTF_PC)) {\
-	int i=1;\
+    int i=1;\
         CSPK32(s,d,&sz,&i);\
       } else if (st==DFNTF_IEEE && dt==DFNTF_VAX) {\
         status = DFCVieeeF2vaxF((union float_uint_uchar *)s,(union float_uint_uchar *)d,sz);\

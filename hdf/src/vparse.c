@@ -31,7 +31,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 /*
    ** Given a string (attrs) , the routine parses it into token strings,
-   ** and returns a ptr (attrv) to an array of ptrs where the tokens 
+   ** and returns a ptr (attrv) to an array of ptrs where the tokens
    ** are stored.  The number of tokens are returned in attrc.
    **
    ** Currently used only by routines that manipulate field names.
@@ -42,57 +42,57 @@ static char RcsId[] = "@(#)$Revision$";
    ** RETURN FAIL if error.
    ** RETURN SUCCEED if ok.
    **
-   ** Current implementation: all strings inputs converted to uppercase.    
+   ** Current implementation: all strings inputs converted to uppercase.
    ** tokens must be separated by COMMAs.
    **
    ** Tokens are stored in static area sym , and pointers are returned
-   ** to calling routine. Hence, tokens must be used before next call 
+   ** to calling routine. Hence, tokens must be used before next call
    ** to scanattrs.
    **
  */
-#if defined(macintosh) | defined(THINK_C) | defined(DMEM)	/* Dynamic memory */
-PRIVATE char **symptr = NULL;	/* array of ptrs to tokens  ? */
-PRIVATE char **sym = NULL;	/* array of tokens ? */
+#if defined(macintosh) | defined(THINK_C) | defined(DMEM)   /* Dynamic memory */
+PRIVATE char **symptr = NULL;   /* array of ptrs to tokens  ? */
+PRIVATE char **sym = NULL;      /* array of tokens ? */
 #else  /* !macintosh */
-PRIVATE char *symptr[50];	/* array of ptrs to tokens  ? */
-PRIVATE char sym[50][FIELDNAMELENMAX + 1];	/* array of tokens ? */
+PRIVATE char *symptr[50];       /* array of ptrs to tokens  ? */
+PRIVATE char sym[50][FIELDNAMELENMAX + 1];  /* array of tokens ? */
 #endif /* !macintosh */
-PRIVATE intn nsym;		/* token index ? */
+PRIVATE intn nsym;              /* token index ? */
 
-int32 
+int32
 scanattrs(const char *attrs, int32 *attrc, char ***attrv)
 
 {
     register char *s, *s0, *ss;
     register intn slen, len;
-#if defined(macintosh) | defined(THINK_C) | defined(DMEM)	/* Dynamic memory */
+#if defined(macintosh) | defined(THINK_C) | defined(DMEM)   /* Dynamic memory */
     CONSTR(FUNC, "scanattrs");
 #endif
     char       *saved_string = (char *) HDstrdup((char *) attrs);
 
-#if defined(macintosh) | defined(THINK_C) | defined(DMEM)	/* Dynamic memory */
+#if defined(macintosh) | defined(THINK_C) | defined(DMEM)   /* Dynamic memory */
     register intn i;
 
     /* Lets allocate space for ptrs to tokens and tokens */
     if (symptr == NULL)
       {
-	  symptr = (char **) HDgetspace(50 * sizeof(char *));
-	  if (symptr == NULL)
-	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          symptr = (char **) HDgetspace(50 * sizeof(char *));
+          if (symptr == NULL)
+              HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
 
     if (sym == NULL)
       {
-	  sym = (char **) HDgetspace(50 * sizeof(char *));
-	  if (sym == NULL)
-	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          sym = (char **) HDgetspace(50 * sizeof(char *));
+          if (sym == NULL)
+              HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-	  for (i = 0; i < 50; i++)
-	    {
-		sym[i] = (char *) HDgetspace(sizeof(char) * (FIELDNAMELENMAX + 1));
-		if (sym[i] == NULL)
-		    HRETURN_ERROR(DFE_NOSPACE, FAIL);
-	    }
+          for (i = 0; i < 50; i++)
+            {
+                sym[i] = (char *) HDgetspace(sizeof(char) * (FIELDNAMELENMAX + 1));
+                if (sym[i] == NULL)
+                    HRETURN_ERROR(DFE_NOSPACE, FAIL);
+            }
       }
 
 #endif /* macintosh */
@@ -106,55 +106,55 @@ scanattrs(const char *attrs, int32 *attrc, char ***attrv)
       {
 
 #ifdef VDATA_FIELDS_ALL_UPPER
-	  if (*s >= 'a' && *s <= 'z')
-	      *s = (char) toupper(*s);
+          if (*s >= 'a' && *s <= 'z')
+              *s = (char) toupper(*s);
 #endif /* VDATA_FIELDS_ALL_UPPER */
 
-	  if (ISCOMMA(*s))
-	    {
+          if (ISCOMMA(*s))
+            {
 
-		/* make sure we've got a legitimate length */
-		len = (intn) (s - s0);
-		if (len <= 0)
-		    return (FAIL);
+                /* make sure we've got a legitimate length */
+                len = (intn) (s - s0);
+                if (len <= 0)
+                    return (FAIL);
 
-		/* save that token */
-		ss = symptr[nsym] = sym[nsym];
-		nsym++;
+                /* save that token */
+                ss = symptr[nsym] = sym[nsym];
+                nsym++;
 
-		/* shove the string into our static buffer.  YUCK! */
-		if (len > FIELDNAMELENMAX)
-		    len = FIELDNAMELENMAX;
-		HIstrncpy(ss, s0, len + 1);
+                /* shove the string into our static buffer.  YUCK! */
+                if (len > FIELDNAMELENMAX)
+                    len = FIELDNAMELENMAX;
+                HIstrncpy(ss, s0, len + 1);
 
-		/* skip over the comma */
-		s++;
+                /* skip over the comma */
+                s++;
 
-		/* skip over white space before the next field name */
-		while (*s && *s == ' ')
-		    s++;
+                /* skip over white space before the next field name */
+                while (*s && *s == ' ')
+                    s++;
 
-		/* keep track of the first character of the next token */
-		s0 = s;
+                /* keep track of the first character of the next token */
+                s0 = s;
 
-	    }
-	  else
-	    {
+            }
+          else
+            {
 
-		/* move along --- nothing to see here */
-		s++;
-	    }
+                /* move along --- nothing to see here */
+                s++;
+            }
       }
 
     /* save the last token */
     len = (intn) (s - s0);
     if (len <= 0)
-	return (FAIL);
+        return (FAIL);
     ss = symptr[nsym] = sym[nsym];
     nsym++;
 
     if (len > FIELDNAMELENMAX)
-	len = FIELDNAMELENMAX;
+        len = FIELDNAMELENMAX;
     HIstrncpy(ss, s0, len + 1);
 
     symptr[nsym] = NULL;
@@ -163,8 +163,8 @@ scanattrs(const char *attrs, int32 *attrc, char ***attrv)
 
     HDfreespace(saved_string);
 
-    return (SUCCEED);	/* ok */
+    return (SUCCEED);   /* ok */
 
-}	/* scanattrs */
+}   /* scanattrs */
 
 /* ------------------------------------------------------------------ */

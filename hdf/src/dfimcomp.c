@@ -66,18 +66,18 @@ struct box
       struct box *right;
   };
 
-uint8      *new_pal;		/* pointer to new palette           */
+uint8      *new_pal;            /* pointer to new palette           */
 
-static int *hist = (int *) NULL;	/* histogram for distinct colors    */
-static struct box *frontier = (struct box *) NULL;	/* pointer to the */
+static int *hist = (int *) NULL;    /* histogram for distinct colors    */
+static struct box *frontier = (struct box *) NULL;  /* pointer to the */
 /* list of boxes */
-static struct rgb *distinct_pt = (struct rgb *) NULL;	/* contains all */
+static struct rgb *distinct_pt = (struct rgb *) NULL;   /* contains all */
 /* distinct rgb points */
 
-static struct rgb *color_pt = (struct rgb *) NULL;	/*contains the hi-lo */
+static struct rgb *color_pt = (struct rgb *) NULL;  /*contains the hi-lo */
 /*colors for each block */
-static uint8 *image;		/* contains the compressed image            */
-static int  trans[MAXCOLOR];	/* color translation table                  */
+static uint8 *image;            /* contains the compressed image            */
+static int  trans[MAXCOLOR];    /* color translation table                  */
 
 PRIVATE VOID compress(unsigned char raster[], int block);
 PRIVATE VOID init_global(int32 xdim, int32 ydim, VOIDP out, VOIDP out_pal);
@@ -124,7 +124,7 @@ PRIVATE int next_pt(int dim, int i, int rank[], int distinct);
 
 VOID
 DFCIimcomp(int32 xdim, int32 ydim, uint8 in[], uint8 out[],
-	   uint8 in_pal[], uint8 out_pal[], int mode)
+           uint8 in_pal[], uint8 out_pal[], int mode)
 {
     unsigned char raster[48];
     int         blocks, nmbr;
@@ -135,46 +135,46 @@ DFCIimcomp(int32 xdim, int32 ydim, uint8 in[], uint8 out[],
     /* compress pixel blocks */
     blocks = 0;
     for (i = 0; i < (ydim / 4); i++)
-	for (j = 0; j < (xdim / 4); j++)
-	  {
-	      switch (mode)
-		{
-		    case BIT8:		/* 8 bit per pixel format */
-			k = 0;
-			for (y = (i * 4); y < (i * 4 + 4); y++)
-			    for (x = (j * 4); x < (j * 4 + 4); x++)
-			      {
-				  l = y * xdim + x;
-				  raster[k++] = (unsigned char)
-				      in_pal[3 * (unsigned char) in[l]];
-				  raster[k++] = (unsigned char)
-				      in_pal[3 * (unsigned char) in[l] + 1];
-				  raster[k++] = (unsigned char)
-				      in_pal[3 * (unsigned char) in[l] + 2];
-			      }		/* end of for x */
-			compress(raster, blocks);
-			break;
+        for (j = 0; j < (xdim / 4); j++)
+          {
+              switch (mode)
+                {
+                    case BIT8:      /* 8 bit per pixel format */
+                        k = 0;
+                        for (y = (i * 4); y < (i * 4 + 4); y++)
+                            for (x = (j * 4); x < (j * 4 + 4); x++)
+                              {
+                                  l = y * xdim + x;
+                                  raster[k++] = (unsigned char)
+                                      in_pal[3 * (unsigned char) in[l]];
+                                  raster[k++] = (unsigned char)
+                                      in_pal[3 * (unsigned char) in[l] + 1];
+                                  raster[k++] = (unsigned char)
+                                      in_pal[3 * (unsigned char) in[l] + 2];
+                              }     /* end of for x */
+                        compress(raster, blocks);
+                        break;
 
-		    case BIT24:	/* 24 bit per pixel format */
-			k = 0;
-			for (y = (i * 4); y < (i * 4 + 4); y++)
-			    for (x = (j * 4); x < (j * 4 + 4); x++)
-			      {
-				  l = 3 * (y * xdim + x);
-				  raster[k++] = (unsigned char) in[l];
-				  raster[k++] = (unsigned char) in[l + 1];
-				  raster[k++] = (unsigned char) in[l + 2];
-			      }		/* end of for x */
-			compress(raster, blocks);
-			break;
+                    case BIT24: /* 24 bit per pixel format */
+                        k = 0;
+                        for (y = (i * 4); y < (i * 4 + 4); y++)
+                            for (x = (j * 4); x < (j * 4 + 4); x++)
+                              {
+                                  l = 3 * (y * xdim + x);
+                                  raster[k++] = (unsigned char) in[l];
+                                  raster[k++] = (unsigned char) in[l + 1];
+                                  raster[k++] = (unsigned char) in[l + 2];
+                              }     /* end of for x */
+                        compress(raster, blocks);
+                        break;
 
-		    default:	/* unsupported format */
-			printf("Error : Unsupported Format \n");
-			exit(1);
-		}	/* end of switch */
+                    default:    /* unsupported format */
+                        printf("Error : Unsupported Format \n");
+                        exit(1);
+                }   /* end of switch */
 
-	      blocks++;
-	  }	/* end of for j */
+              blocks++;
+          }     /* end of for j */
 
     /* set palette */
     nmbr = cnt_color(blocks);
@@ -182,21 +182,21 @@ DFCIimcomp(int32 xdim, int32 ydim, uint8 in[], uint8 out[],
        printf("Number of colors %d \n", nmbr);
      */
     if (nmbr <= PALSIZE)
-	set_palette(blocks);
+        set_palette(blocks);
     else
       {
-	  sel_palette(blocks, nmbr, color_pt);
-	  map(blocks);
+          sel_palette(blocks, nmbr, color_pt);
+          map(blocks);
       }
 
     fillin_color(blocks);
     if (color_pt)
       {
-	  HDfreespace((VOIDP) color_pt);
-	  color_pt = NULL;
-      }		/* end if */
+          HDfreespace((VOIDP) color_pt);
+          color_pt = NULL;
+      }     /* end if */
 
-}	/* end of DFCIimcomp */
+}   /* end of DFCIimcomp */
 
 /************************************************************************/
 /*  Function    : compress                                              */
@@ -227,12 +227,12 @@ compress(unsigned char raster[], int block)
     y_av = (float32) 0.0;
     for (i = 0; i < 16; i++)
       {
-	  j = 3 * i;
-	  y[i] = (float32) 0.3 *(float32) raster[j] +
-	              (float32) 0.59 *(float32) raster[j + 1] +
-	              (float32) 0.11 *(float32) raster[j + 2];
-	  /*    printf("compress: y[%d] is %f\n",i,y[i]); */
-	  y_av = y_av + y[i];
+          j = 3 * i;
+          y[i] = (float32) 0.3 *(float32) raster[j] +
+                      (float32) 0.59 *(float32) raster[j + 1] +
+                      (float32) 0.11 *(float32) raster[j + 2];
+          /*    printf("compress: y[%d] is %f\n",i,y[i]); */
+          y_av = y_av + y[i];
       }
     y_av /= (float32) 16.0;
     /*  printf("y_av is %f\n",y_av); */
@@ -240,8 +240,8 @@ compress(unsigned char raster[], int block)
     /* initialize c_hi and c_lo */
     for (i = RED; i <= BLUE; i++)
       {
-	  c_hi[i] = 0;
-	  c_lo[i] = 0;
+          c_hi[i] = 0;
+          c_lo[i] = 0;
       }
 
     /* build bit map */
@@ -251,40 +251,40 @@ compress(unsigned char raster[], int block)
     lo = hi + 1;
     for (i = 0; i < 2; i++)
       {
-	  bit = 128;
-	  for (j = (i * 8); j < (i * 8 + 8); j++)
-	    {
-		if (y[j] > y_av)
-		  {
-		      image[k] |= bit;
-		      high++;
-		      for (l = RED; l <= BLUE; l++)
-			  c_hi[l] = c_hi[l] + (int) raster[3 * j + l];
-		  }
-		else
-		  {
-		      for (l = RED; l <= BLUE; l++)
-			  c_lo[l] = c_lo[l] + (int) raster[3 * j + l];
-		  }	/* end of if */
+          bit = 128;
+          for (j = (i * 8); j < (i * 8 + 8); j++)
+            {
+                if (y[j] > y_av)
+                  {
+                      image[k] |= bit;
+                      high++;
+                      for (l = RED; l <= BLUE; l++)
+                          c_hi[l] = c_hi[l] + (int) raster[3 * j + l];
+                  }
+                else
+                  {
+                      for (l = RED; l <= BLUE; l++)
+                          c_lo[l] = c_lo[l] + (int) raster[3 * j + l];
+                  }     /* end of if */
 
-		bit >>= 1;
-	    }	/* end of for j */
+                bit >>= 1;
+            }   /* end of for j */
 
-	  k++;
-      }		/* end of for i */
+          k++;
+      }     /* end of for i */
 
     /* calculate hi lo color */
     for (i = RED; i <= BLUE; i++)
       {
-	  if (high != 0)
-	      color_pt[hi].c[i] = (uint8) ((float) c_hi[i] / (float) high);
-	  if (high != 16)
-	      color_pt[lo].c[i] = (uint8) ((float) c_lo[i] / (float) (16 - high));
-	  color_pt[hi].c[i] >>= 3;
-	  color_pt[lo].c[i] >>= 3;
+          if (high != 0)
+              color_pt[hi].c[i] = (uint8) ((float) c_hi[i] / (float) high);
+          if (high != 16)
+              color_pt[lo].c[i] = (uint8) ((float) c_lo[i] / (float) (16 - high));
+          color_pt[hi].c[i] >>= 3;
+          color_pt[lo].c[i] >>= 3;
 
       }
-}	/* end of compress */
+}   /* end of compress */
 
 /************************************************************************/
 /*  Function    : init_global                       */
@@ -307,27 +307,27 @@ init_global(int32 xdim, int32 ydim, VOIDP out, VOIDP out_pal)
     image = (unsigned char *) out;
     new_pal = (unsigned char *) out_pal;
     if (color_pt)
-	HDfreespace((VOIDP) color_pt);
+        HDfreespace((VOIDP) color_pt);
     color_pt = (struct rgb *) HDgetspace((unsigned) ((xdim * ydim) / 8) *
-					 sizeof(struct rgb));
+                                         sizeof(struct rgb));
 
     if (image == NULL || color_pt == NULL || new_pal == NULL)
       {
-	  printf("Error : Out of Memory\n");
-	  exit(1);
+          printf("Error : Out of Memory\n");
+          exit(1);
       }
 
     /* initialize */
     for (i = 0; i < (xdim * ydim / 4); i++)
-	image[i] = 0;
+        image[i] = 0;
 
     for (i = 0; i < (xdim * ydim / 8); i++)
-	for (j = RED; j <= BLUE; j++)
-	    color_pt[i].c[j] = 0;
+        for (j = RED; j <= BLUE; j++)
+            color_pt[i].c[j] = 0;
 
     for (i = 0; i < MAXCOLOR; i++)
-	trans[i] = -1;
-}	/* end of init_global */
+        trans[i] = -1;
+}   /* end of init_global */
 
 /************************************************************************/
 /*  Function    : cnt_color                                 */
@@ -346,22 +346,22 @@ cnt_color(int blocks)
     int         i, k, count;
 
     for (i = 0; i < MAXCOLOR; i++)
-	temp[i] = -1;
+        temp[i] = -1;
 
     for (i = 0; i < (2 * blocks); i++)
       {
-	  k = indx(color_pt[i].c[RED], color_pt[i].c[GREEN], color_pt[i].c[BLUE]);
-	  /*    printf("cnt_color: k is %d\n",k); */
-	  temp[k] = 0;
+          k = indx(color_pt[i].c[RED], color_pt[i].c[GREEN], color_pt[i].c[BLUE]);
+          /*    printf("cnt_color: k is %d\n",k); */
+          temp[k] = 0;
       }
 
     count = 0;
     for (i = 0; i < MAXCOLOR; i++)
-	if (temp[i] == 0)
-	    count++;
+        if (temp[i] == 0)
+            count++;
 
     return count;
-}	/* end of cnt_color */
+}   /* end of cnt_color */
 
 /************************************************************************/
 /*  Function    : set_palette                       */
@@ -386,17 +386,17 @@ set_palette(int blocks)
     ent = 0;
     for (i = 0; i < (2 * blocks); i++)
       {
-	  k = indx(color_pt[i].c[RED], color_pt[i].c[GREEN], color_pt[i].c[BLUE]);
-	  if (trans[k] == -1)
-	    {
-		new_pal[3 * ent] = (uint8) (color_pt[i].c[RED] << 3);
-		new_pal[3 * ent + 1] = (uint8) (color_pt[i].c[GREEN] << 3);
-		new_pal[3 * ent + 2] = (uint8) (color_pt[i].c[BLUE] << 3);
-		trans[k] = ent;
-		ent++;
-	    }
+          k = indx(color_pt[i].c[RED], color_pt[i].c[GREEN], color_pt[i].c[BLUE]);
+          if (trans[k] == -1)
+            {
+                new_pal[3 * ent] = (uint8) (color_pt[i].c[RED] << 3);
+                new_pal[3 * ent + 1] = (uint8) (color_pt[i].c[GREEN] << 3);
+                new_pal[3 * ent + 2] = (uint8) (color_pt[i].c[BLUE] << 3);
+                trans[k] = ent;
+                ent++;
+            }
       }
-}	/* end of set_palette */
+}   /* end of set_palette */
 
 /************************************************************************/
 /*  Function    : fillin_color                      */
@@ -415,13 +415,13 @@ fillin_color(int blocks)
     int         i, j, k;
 
     for (i = 0; i < blocks; i++)
-	for (j = HI; j <= LO; j++)
-	  {
-	      k = indx(color_pt[2 * i + j].c[RED], color_pt[2 * i + j].c[GREEN],
-		       color_pt[2 * i + j].c[BLUE]);
-	      image[i * 4 + 2 + j] = (uint8) trans[k];
-	  }
-}	/* end of fillin_color */
+        for (j = HI; j <= LO; j++)
+          {
+              k = indx(color_pt[2 * i + j].c[RED], color_pt[2 * i + j].c[GREEN],
+                       color_pt[2 * i + j].c[BLUE]);
+              image[i * 4 + 2 + j] = (uint8) trans[k];
+          }
+}   /* end of fillin_color */
 
 /************************************************************************/
 /*  Function    : indx                          */
@@ -442,7 +442,7 @@ indx(unsigned char r, unsigned char g, unsigned char b)
     temp = 0;
     temp = ((r & 0x1f) << 10) | ((g & 0x1f) << 5) | (b & 0x1f);
     return temp;
-}	/* end of indx */
+}   /* end of indx */
 
 /************************************************************************/
 /*  Function    : map                           */
@@ -463,23 +463,23 @@ map(int blocks)
 
     for (i = 0; i < (2 * blocks); i++)
       {
-	  k = indx(color_pt[i].c[RED], color_pt[i].c[GREEN], color_pt[i].c[BLUE]);
+          k = indx(color_pt[i].c[RED], color_pt[i].c[GREEN], color_pt[i].c[BLUE]);
 
-	  if (trans[k] == -1)
-	    {
-		r = (uint8) (color_pt[i].c[RED] << 3);
-		g = (uint8) (color_pt[i].c[GREEN] << 3);
-		b = (uint8) (color_pt[i].c[BLUE] << 3);
-		trans[k] = nearest_color(r, g, b);
-		/*
-		   printf("map: %d %d %d mapped to %d %d %d\n", r, g, b, new_pal[tran
-		   s[k]*3
-		   ],
-		   new_pal[trans[k]*3+1], new_pal[trans[k]*3+2]);
-		 */
-	    }
+          if (trans[k] == -1)
+            {
+                r = (uint8) (color_pt[i].c[RED] << 3);
+                g = (uint8) (color_pt[i].c[GREEN] << 3);
+                b = (uint8) (color_pt[i].c[BLUE] << 3);
+                trans[k] = nearest_color(r, g, b);
+                /*
+                   printf("map: %d %d %d mapped to %d %d %d\n", r, g, b, new_pal[tran
+                   s[k]*3
+                   ],
+                   new_pal[trans[k]*3+1], new_pal[trans[k]*3+2]);
+                 */
+            }
       }
-}	/* end of map */
+}   /* end of map */
 
 /************************************************************************/
 /*  Function    : nearest_color                     */
@@ -498,21 +498,21 @@ nearest_color(uint8 r, uint8 g, uint8 b)
     long int    min, error;
 
     min = sqr((int16) (r - new_pal[0])) + sqr((int16) (g - new_pal[1])) +
-	sqr((int16) (b - new_pal[2]));
+        sqr((int16) (b - new_pal[2]));
     nearest = 0;
     for (i = 1; i < PALSIZE; i++)
       {
-	  error = sqr((int16) (r - new_pal[3 * i])) + sqr((int16) (g - new_pal[3 * i + 1])) +
-	      sqr((int16) (b - new_pal[3 * i + 2]));
-	  if (error < min)
-	    {
-		min = error;
-		nearest = i;
-	    }
+          error = sqr((int16) (r - new_pal[3 * i])) + sqr((int16) (g - new_pal[3 * i + 1])) +
+              sqr((int16) (b - new_pal[3 * i + 2]));
+          if (error < min)
+            {
+                min = error;
+                nearest = i;
+            }
       }
 
     return nearest;
-}	/* end of nearest_color */
+}   /* end of nearest_color */
 
 /************************************************************************/
 /*  Function    : sqr                           */
@@ -551,28 +551,28 @@ DFCIunimcomp(int32 xdim, int32 ydim, uint8 in[], uint8 out[])
     uint8       hi_color, lo_color;
 
     for (y = 0; y < (ydim / 4); y++)
-	for (x = 0; x < xdim; x = x + 4)
-	  {
-	      k = y * xdim + x;
-	      hi_color = (unsigned char) in[k + 2];
-	      lo_color = (unsigned char) in[k + 3];
+        for (x = 0; x < xdim; x = x + 4)
+          {
+              k = y * xdim + x;
+              hi_color = (unsigned char) in[k + 2];
+              lo_color = (unsigned char) in[k + 3];
 
-	      bitmap = ((unsigned char) in[k] << 8) | (unsigned char) in[k + 1];
+              bitmap = ((unsigned char) in[k] << 8) | (unsigned char) in[k + 1];
 
-	      for (i = (y * 4); i < (y * 4 + 4); i++)
-		{
-		    temp = bitmap >> (3 + y * 4 - i) * 4;
-		    for (j = x; j < (x + 4); j++)
-		      {
-			  if ((temp & 8) == 8)
-			      out[i * xdim + j] = (char) hi_color;
-			  else
-			      out[i * xdim + j] = (char) lo_color;
-			  temp = temp << 1;
-		      }
-		}
-	  }	/* end of for x */
-}	/* end of DFCIunimcomp */
+              for (i = (y * 4); i < (y * 4 + 4); i++)
+                {
+                    temp = bitmap >> (3 + y * 4 - i) * 4;
+                    for (j = x; j < (x + 4); j++)
+                      {
+                          if ((temp & 8) == 8)
+                              out[i * xdim + j] = (char) hi_color;
+                          else
+                              out[i * xdim + j] = (char) lo_color;
+                          temp = temp << 1;
+                      }
+                }
+          }     /* end of for x */
+}   /* end of DFCIunimcomp */
 
 /************************************************************************/
 /*  Module Name : color                         */
@@ -610,24 +610,24 @@ sel_palette(int blocks, int distinct, struct rgb *color_pt)
     /* split box into smaller boxes with about equal number of points */
     for (boxes = 1; boxes < PALSIZE; boxes++)
       {
-	  /*
-	     ptr=frontier->right;
-	     j = 0;
-	     while (ptr != NULL)
-	     {
-	     printf("Box %d, distinct %d, total %d\n",j,ptr->nmbr_distinct,
-	     ptr->nmbr_pts);
-	     for (i=0; i<ptr->nmbr_distinct; i++)
-	     printf("pt %d: %d %d %d",i,distinct_pt[ptr->pts[i]].c[RED],
-	     distinct_pt[ptr->pts[i]].c[GREEN],
-	     distinct_pt[ptr->pts[i]].c[BLUE]);
-	     j++;
-	     ptr = ptr->right;
-	     }
-	   */
+          /*
+             ptr=frontier->right;
+             j = 0;
+             while (ptr != NULL)
+             {
+             printf("Box %d, distinct %d, total %d\n",j,ptr->nmbr_distinct,
+             ptr->nmbr_pts);
+             for (i=0; i<ptr->nmbr_distinct; i++)
+             printf("pt %d: %d %d %d",i,distinct_pt[ptr->pts[i]].c[RED],
+             distinct_pt[ptr->pts[i]].c[GREEN],
+             distinct_pt[ptr->pts[i]].c[BLUE]);
+             j++;
+             ptr = ptr->right;
+             }
+           */
 
-	  ptr = find_box();
-	  split_box(ptr);
+          ptr = find_box();
+          split_box(ptr);
       }
 
     assign_color();
@@ -656,61 +656,61 @@ init(int blocks, int distinct, struct rgb *color_pt)
 
     /* alloc memory */
     if (hist)
-	HDfreespace((VOIDP) hist);
+        HDfreespace((VOIDP) hist);
     if (distinct_pt)
-	HDfreespace((VOIDP) distinct_pt);
+        HDfreespace((VOIDP) distinct_pt);
     hist = (int *) HDgetspace((unsigned) distinct * sizeof(int));
     distinct_pt = (struct rgb *) HDgetspace((unsigned) distinct *
-					    sizeof(struct rgb));
+                                            sizeof(struct rgb));
 
     for (i = 0; i < distinct; i++)
-	hist[i] = 0;
+        hist[i] = 0;
 
     /* select distinct pts and set up histogram */
     for (i = 0; i < MAXCOLOR; i++)
-	temp[i] = -1;
+        temp[i] = -1;
 
     k = 0;
     for (i = 0; i < (2 * blocks); i++)
       {
-	  j = ((int) color_pt[i].c[RED] << 10) | (color_pt[i].c[GREEN] << 5) |
-	      color_pt[i].c[BLUE];
+          j = ((int) color_pt[i].c[RED] << 10) | (color_pt[i].c[GREEN] << 5) |
+              color_pt[i].c[BLUE];
 
-	  if (temp[j] == -1)
-	    {
-		/* new pt */
-		temp[j] = k;
-		for (l = RED; l <= BLUE; l++)
-		    distinct_pt[k].c[l] = color_pt[i].c[l];
-		k++;
-	    }
+          if (temp[j] == -1)
+            {
+                /* new pt */
+                temp[j] = k;
+                for (l = RED; l <= BLUE; l++)
+                    distinct_pt[k].c[l] = color_pt[i].c[l];
+                k++;
+            }
 
-	  hist[temp[j]]++;
+          hist[temp[j]]++;
       }
 
     /* set up first box */
     first = (struct box *) HDgetspace(sizeof(struct box));
     for (i = RED; i <= BLUE; i++)
       {
-	  first->bnd[i][LO] = (float32) 999.9;
-	  first->bnd[i][HI] = (float32) -999.9;
+          first->bnd[i][LO] = (float32) 999.9;
+          first->bnd[i][HI] = (float32) -999.9;
 
-	  for (j = 0; j < distinct; j++)
-	    {
-		if (first->bnd[i][LO] > (float) distinct_pt[j].c[i])
-		    first->bnd[i][LO] = (float) distinct_pt[j].c[i];
+          for (j = 0; j < distinct; j++)
+            {
+                if (first->bnd[i][LO] > (float) distinct_pt[j].c[i])
+                    first->bnd[i][LO] = (float) distinct_pt[j].c[i];
 
-		if (first->bnd[i][HI] < (float) distinct_pt[j].c[i])
-		    first->bnd[i][HI] = (float) distinct_pt[j].c[i];
-	    }	/* end of for j */
+                if (first->bnd[i][HI] < (float) distinct_pt[j].c[i])
+                    first->bnd[i][HI] = (float) distinct_pt[j].c[i];
+            }   /* end of for j */
 
-	  first->bnd[i][LO] = first->bnd[i][LO] - (float32) EPSILON;
-	  first->bnd[i][HI] = first->bnd[i][HI] + (float32) EPSILON;
-      }		/* end of for i */
+          first->bnd[i][LO] = first->bnd[i][LO] - (float32) EPSILON;
+          first->bnd[i][HI] = first->bnd[i][HI] + (float32) EPSILON;
+      }     /* end of for i */
 
     first->pts = (int *) HDgetspace((unsigned) distinct * sizeof(int));
     for (i = 0; i < distinct; i++)
-	first->pts[i] = i;
+        first->pts[i] = i;
     first->nmbr_pts = 2 * blocks;
     first->nmbr_distinct = distinct;
 
@@ -723,7 +723,7 @@ init(int blocks, int distinct, struct rgb *color_pt)
 
     HDfreespace((VOIDP) first);
     HDfreespace((VOIDP) dummy);
-}	/* end of init */
+}   /* end of init */
 
 /************************************************************************/
 /*  Function    : sort                          */
@@ -746,23 +746,23 @@ sort(int l, int r, int dim, int rank[])
 
     if (r > l)
       {
-	  i = partition(l, r, dim, rank);
-	  sort(l, i - 1, dim, rank);
-	  sort(i + 1, r, dim, rank);
+          i = partition(l, r, dim, rank);
+          sort(l, i - 1, dim, rank);
+          sort(i + 1, r, dim, rank);
       }
 }
 
 /************************************************************************
-*  Function    : partition                     
-*  Purpose : Partitions the list into 2 parts as in the quick sort 
-*        algorithm                     
-*  Parameter   :                       
-*    l, r   - index of leftmost and rightmost element  
-*    dim    - dimension along which sorting is done    
-*    rank   - an array which carries the index of the points to be 
-*  Returns     : index where list is partitioned       
-*  Called by   : sort()                      
-*  Calls       : none                          
+*  Function    : partition
+*  Purpose : Partitions the list into 2 parts as in the quick sort
+*        algorithm
+*  Parameter   :
+*    l, r   - index of leftmost and rightmost element
+*    dim    - dimension along which sorting is done
+*    rank   - an array which carries the index of the points to be
+*  Returns     : index where list is partitioned
+*  Called by   : sort()
+*  Calls       : none
 ************************************************************************/
 
 PRIVATE int
@@ -778,20 +778,20 @@ partition(int l, int r, int dim, int rank[])
     /* repeat until i and j crosses */
     do
       {
-	  /* repeat until an element >= v is found */
-	  do
-	      i++;
-	  while (distinct_pt[rank[i]].c[dim] < v);
+          /* repeat until an element >= v is found */
+          do
+              i++;
+          while (distinct_pt[rank[i]].c[dim] < v);
 
-	  /* repeat until an element <= v is found */
-	  do
-	      j--;
-	  while ((j > 0) && (distinct_pt[rank[j]].c[dim] > v));
+          /* repeat until an element <= v is found */
+          do
+              j--;
+          while ((j > 0) && (distinct_pt[rank[j]].c[dim] > v));
 
-	  /* swap pointers */
-	  temp = rank[i];
-	  rank[i] = rank[j];
-	  rank[j] = temp;
+          /* swap pointers */
+          temp = rank[i];
+          rank[i] = rank[j];
+          rank[j] = temp;
       }
     while (i < j);
 
@@ -827,19 +827,19 @@ find_box(void)
     max = NULL;
     temp = frontier->right;
     while (temp != NULL)
-	if ((temp->nmbr_distinct > 1) && (max_pts < temp->nmbr_pts))
-	  {
-	      max_pts = temp->nmbr_pts;
-	      max = temp;
-	      temp = temp->right;
-	  }
-	else
-	    temp = temp->right;
+        if ((temp->nmbr_distinct > 1) && (max_pts < temp->nmbr_pts))
+          {
+              max_pts = temp->nmbr_pts;
+              max = temp;
+              temp = temp->right;
+          }
+        else
+            temp = temp->right;
 
     if (max == NULL)
       {
-	  printf("Error : Number of color points < palette \n");
-	  exit(1);
+          printf("Error : Number of color points < palette \n");
+          exit(1);
       }
 
     return max;
@@ -871,11 +871,11 @@ split_box(struct box * ptr)
     r_child = (struct box *) HDgetspace(sizeof(struct box));
 
     for (i = RED; i <= BLUE; i++)
-	for (j = HI; j <= LO; j++)
-	  {
-	      l_child->bnd[i][j] = ptr->bnd[i][j];
-	      r_child->bnd[i][j] = ptr->bnd[i][j];
-	  }
+        for (j = HI; j <= LO; j++)
+          {
+              l_child->bnd[i][j] = ptr->bnd[i][j];
+              r_child->bnd[i][j] = ptr->bnd[i][j];
+          }
     l_child->bnd[dim][HI] = median;
     r_child->bnd[dim][LO] = median;
 
@@ -888,8 +888,8 @@ split_box(struct box * ptr)
     l_child->left = ptr->left;
     (ptr->left)->right = l_child;
     if (ptr->right != NULL)
-	(ptr->right)->left = r_child;
-}	/* end of split_box */
+        (ptr->right)->left = r_child;
+}   /* end of split_box */
 
 /************************************************************************/
 /*  Function    : assign_color                      */
@@ -914,39 +914,39 @@ assign_color(void)
     temp = frontier->right;
     for (ent = 0; ent < PALSIZE; ent++)
       {
-	  for (k = RED; k <= BLUE; k++)
-	      c[k] = 0;
+          for (k = RED; k <= BLUE; k++)
+              c[k] = 0;
 
-	  /*
-	     printf("Box %d: number of pts %d\n", ent, temp->nmbr_pts);
-	   */
+          /*
+             printf("Box %d: number of pts %d\n", ent, temp->nmbr_pts);
+           */
 
-	  for (j = 0; j < temp->nmbr_distinct; j++)
-	    {
-		/*
-		   printf("pt %d:", j);
-		 */
-		for (k = RED; k <= BLUE; k++)
-		  {
-		      /*
-		         printf("%d ",distinct_pt[temp->pts[j]].c[k]);
-		       */
-		      c[k] = c[k] +
-			  distinct_pt[temp->pts[j]].c[k] * hist[temp->pts[j]];
-		  }
-		/*
-		   printf("\n");
-		 */
-	    }
+          for (j = 0; j < temp->nmbr_distinct; j++)
+            {
+                /*
+                   printf("pt %d:", j);
+                 */
+                for (k = RED; k <= BLUE; k++)
+                  {
+                      /*
+                         printf("%d ",distinct_pt[temp->pts[j]].c[k]);
+                       */
+                      c[k] = c[k] +
+                          distinct_pt[temp->pts[j]].c[k] * hist[temp->pts[j]];
+                  }
+                /*
+                   printf("\n");
+                 */
+            }
 
-	  for (k = RED; k <= BLUE; k++)
-	    {
-		c[k] = c[k] / temp->nmbr_pts;
-		new_pal[3 * ent + k] = (uint8) (c[k] << 3);
-	    }
+          for (k = RED; k <= BLUE; k++)
+            {
+                c[k] = c[k] / temp->nmbr_pts;
+                new_pal[3 * ent + k] = (uint8) (c[k] << 3);
+            }
 
-	  temp = temp->right;
-      }		/* end of for entry */
+          temp = temp->right;
+      }     /* end of for entry */
 }
 
 /************************************************************************/
@@ -967,30 +967,30 @@ select_dim(struct box *ptr)
 
     for (j = RED; j <= BLUE; j++)
       {
-	  low[j] = distinct_pt[ptr->pts[0]].c[j];
-	  high[j] = distinct_pt[ptr->pts[0]].c[j];
+          low[j] = distinct_pt[ptr->pts[0]].c[j];
+          high[j] = distinct_pt[ptr->pts[0]].c[j];
       }
 
     for (i = 1; i < ptr->nmbr_distinct; i++)
-	for (j = RED; j <= BLUE; j++)
-	  {
-	      if (low[j] > distinct_pt[ptr->pts[i]].c[j])
-		  low[j] = distinct_pt[ptr->pts[i]].c[j];
-	      if (high[j] < distinct_pt[ptr->pts[i]].c[j])
-		  high[j] = distinct_pt[ptr->pts[i]].c[j];
-	  }
+        for (j = RED; j <= BLUE; j++)
+          {
+              if (low[j] > distinct_pt[ptr->pts[i]].c[j])
+                  low[j] = distinct_pt[ptr->pts[i]].c[j];
+              if (high[j] < distinct_pt[ptr->pts[i]].c[j])
+                  high[j] = distinct_pt[ptr->pts[i]].c[j];
+          }
 
     max = (uint8) (high[RED] - low[RED]);
     i = RED;
     for (j = GREEN; j <= BLUE; j++)
-	if (max < (uint8) (high[j] - low[j]))
-	  {
-	      max = (uint8) (high[j] - low[j]);
-	      i = j;
-	  }
+        if (max < (uint8) (high[j] - low[j]))
+          {
+              max = (uint8) (high[j] - low[j]);
+              i = j;
+          }
 
     return i;
-}	/* end of select_dim */
+}   /* end of select_dim */
 
 /************************************************************************/
 /*  Function    : find_med                      */
@@ -1014,7 +1014,7 @@ find_med(struct box *ptr, int dim)
 
     rank = (int *) HDgetspace((unsigned) ptr->nmbr_distinct * sizeof(int));
     for (i = 0; i < ptr->nmbr_distinct; i++)
-	rank[i] = ptr->pts[i];
+        rank[i] = ptr->pts[i];
 
     sort(0, ptr->nmbr_distinct - 1, dim, rank);
     /*
@@ -1026,25 +1026,25 @@ find_med(struct box *ptr, int dim)
     prev = i = 0;
     while ((i < ptr->nmbr_distinct) && (count < ptr->nmbr_pts / 2))
       {
-	  next = next_pt(dim, i, rank, ptr->nmbr_distinct);
-	  for (j = i; j < next; j++)
-	      count = count + hist[rank[j]];
+          next = next_pt(dim, i, rank, ptr->nmbr_distinct);
+          for (j = i; j < next; j++)
+              count = count + hist[rank[j]];
 
-	  prev = i;
-	  i = next;
+          prev = i;
+          i = next;
       }
 
     if (prev == 0)
       {
-	  /* the first distinct point overshot the median */
-	  median = (float32) distinct_pt[rank[prev]].c[dim] + (float32) EPSILON;
+          /* the first distinct point overshot the median */
+          median = (float32) distinct_pt[rank[prev]].c[dim] + (float32) EPSILON;
       }
     else
-	median = (float32) distinct_pt[rank[prev - 1]].c[dim] + (float32) EPSILON;
+        median = (float32) distinct_pt[rank[prev - 1]].c[dim] + (float32) EPSILON;
 
     HDfreespace((VOIDP) rank);
     return median;
-}	/* end of find_med */
+}   /* end of find_med */
 
 /************************************************************************/
 /*  Function    : classify                      */
@@ -1071,31 +1071,31 @@ classify(struct box * ptr, struct box * child)
     total = 0;
     for (i = 0; i < ptr->nmbr_distinct; i++)
       {
-	  j = ptr->pts[i];
-	  if ((((float) distinct_pt[j].c[RED] >= child->bnd[RED][LO]) &&
-	       ((float) distinct_pt[j].c[RED] <= child->bnd[RED][HI])) &&
-	      (((float) distinct_pt[j].c[GREEN] >= child->bnd[GREEN][LO]) &&
-	       ((float) distinct_pt[j].c[GREEN] <= child->bnd[GREEN][HI])) &&
-	      (((float) distinct_pt[j].c[BLUE] >= child->bnd[BLUE][LO]) &&
-	       ((float) distinct_pt[j].c[BLUE] <= child->bnd[BLUE][HI])))
-	    {
-		/* pt is in new box */
-		temp[distinct] = j;
-		distinct++;
-		total = total + hist[j];
-	    }	/* end of if */
-      }		/* end of for i */
+          j = ptr->pts[i];
+          if ((((float) distinct_pt[j].c[RED] >= child->bnd[RED][LO]) &&
+               ((float) distinct_pt[j].c[RED] <= child->bnd[RED][HI])) &&
+              (((float) distinct_pt[j].c[GREEN] >= child->bnd[GREEN][LO]) &&
+               ((float) distinct_pt[j].c[GREEN] <= child->bnd[GREEN][HI])) &&
+              (((float) distinct_pt[j].c[BLUE] >= child->bnd[BLUE][LO]) &&
+               ((float) distinct_pt[j].c[BLUE] <= child->bnd[BLUE][HI])))
+            {
+                /* pt is in new box */
+                temp[distinct] = j;
+                distinct++;
+                total = total + hist[j];
+            }   /* end of if */
+      }     /* end of for i */
 
     /* assign points */
     child->nmbr_pts = total;
     child->nmbr_distinct = distinct;
     child->pts = (int *) HDgetspace((unsigned) distinct * sizeof(int));
     for (i = 0; i < distinct; i++)
-	child->pts[i] = temp[i];
+        child->pts[i] = temp[i];
 
     HDfreespace((VOIDP) temp);
 
-}	/* end of classify */
+}   /* end of classify */
 
 /************************************************************************/
 /*  Function    : next_pt                       */
@@ -1119,8 +1119,8 @@ next_pt(int dim, int i, int rank[], int distinct)
 
     old = distinct_pt[rank[i]].c[dim];
     for (j = (i + 1); j < distinct; j++)
-	if (distinct_pt[rank[j]].c[dim] != old)
-	    break;
+        if (distinct_pt[rank[j]].c[dim] != old)
+            break;
 
     return j;
-}	/* end of next_pt */
+}   /* end of next_pt */

@@ -21,17 +21,17 @@ static char RcsId[] = "@(#)$Revision$";
    * vgf.c
    * Part of the HDF VSet interface.
    *
-   * C routines (short names) to be called from fortran 
+   * C routines (short names) to be called from fortran
    *
    *
    *********************************************************************** */
 
 #include "vg.h"
 
-/* 
+/*
    **  remove trailing blanks from a string. input argument is a  string
-   **  and *MUST* be a variable and not a constant!! For internal use only!! 
-   **  Used only on Crays where the Fortran compiler will pad strings to the 
+   **  and *MUST* be a variable and not a constant!! For internal use only!!
+   **  Used only on Crays where the Fortran compiler will pad strings to the
    **  nearest 8-byte boundary.
  */
 
@@ -43,11 +43,11 @@ trimendblanks(char *ss)
     n = HDstrlen(ss);
     for (i = n - 1; i >= 0; i--)
       {
-	  if (ss[i] != ' ')
-	    {
-		ss[i + 1] = '\0';
-		break;
-	    }
+          if (ss[i] != ' ')
+            {
+                ss[i + 1] = '\0';
+                break;
+            }
       }
 }
 
@@ -78,7 +78,7 @@ ndfivopn(_fcd name, intf * acc_mode, intf * defdds, intf * namelen)
     ret = (intf) Vopen(fn, (intn) *acc_mode, (int16) *defdds);
     HDfreespace(fn);
     return (ret);
-}	/* end ndfivopn() */
+}   /* end ndfivopn() */
 
 /*-----------------------------------------------------------------------------
  * Name:    dfvclos
@@ -93,9 +93,9 @@ FRETVAL(intf)
 ndfvclos(intf * file_id)
 {
     return (Vclose(*file_id));
-}	/* ndfvclos() */
+}   /* ndfvclos() */
 
-/* 
+/*
    **  attach to a vgroup and returns its ptr
    **  related: Vattach--vatchc--VFATCH
  */
@@ -116,7 +116,7 @@ nvatchc(HFILEID * f, intf * vgid, _fcd accesstype)
 
 /* ------------------------------------------------------------------ */
 
-/* 
+/*
    **  detach from a vgroup
    **  related: Vdetach--vdtchc--VFDTCH
  */
@@ -128,7 +128,7 @@ nvdtchc(intf * vkey)
 }
 /* ------------------------------------------------------------------ */
 
-/* 
+/*
    **  get the name of a vgroup
    **  related: Vgetname--vgnamc--VFGNAM
  */
@@ -137,10 +137,10 @@ FRETVAL(intf)
 nvgnamc(intf * vkey, _fcd vgname)
 {
     return (Vgetname(*vkey, vgname));
-}	/* VGNAMC */
+}   /* VGNAMC */
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  get the class name of a vgroup
    **  related: Vgetclass--vgclsc--VFGCLS
  */
@@ -149,11 +149,11 @@ FRETVAL(intf)
 nvgclsc(intf * vkey, _fcd vgclass)
 {
     return (Vgetclass(*vkey, vgclass));
-}	/* VGCLSC */
+}   /* VGCLSC */
 
 /* ------------------------------------------------------------------ */
-/* 
-   **  general inquiry on a vgroup 
+/*
+   **  general inquiry on a vgroup
    **  related: Vinquire--vinqc--VFINQ
  */
 
@@ -161,10 +161,10 @@ FRETVAL(intf)
 nvinqc(intf * vkey, intf * nentries, _fcd vgname)
 {
     return ((intf) Vinquire(*vkey, (int32 *) nentries, vgname));
-}	/* VINQC */
+}   /* VINQC */
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  gets the id of the next vgroup in the file
    **  related: Vgetid--vgidc--VFGID
  */
@@ -176,7 +176,7 @@ nvgidc(HFILEID * f, intf * vgid)
 }
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  gets the id of the next entry in the vgroup
    **  related: Vgetnext--vgnxtc--VFGNXT
  */
@@ -188,7 +188,7 @@ nvgnxtc(intf * vkey, intf * id)
 }
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  sets the name of the vgroup
    **  related: Vsetname--vsnamc--VFSNAM
  */
@@ -208,7 +208,7 @@ nvsnamc(intf * vkey, _fcd vgname, intf * vgnamelen)
 }
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  sets the class name of the vgroup
    **  related: Vsetclass--vsclsc--VFSCLS
  */
@@ -228,7 +228,7 @@ nvsclsc(intf * vkey, _fcd vgclass, intf * vgclasslen)
 }
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  inserts a vset object (ie a vgroup or vdata ptr) into the given vgroup
    **  related: Vinsert--vinsrtc--VFINSRT
  */
@@ -240,7 +240,7 @@ nvinsrtc(intf * vkey, intf * vobjptr)
 }
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  tests if a vset object (having id id) in a vgroup refers to a vgroup
    **  related: Visvg--visvgc--VFISVG
  */
@@ -252,7 +252,7 @@ nvisvgc(intf * vkey, intf * id)
 }
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  wrapper for Vstart
  */
 
@@ -260,10 +260,10 @@ FRETVAL(intf)
 nvfstart(HFILEID * f)
 {
     return (Vstart(*f));
-}	/* nvfstart */
+}   /* nvfstart */
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  wrapper for Vend
  */
 
@@ -271,10 +271,10 @@ FRETVAL(intf)
 nvfend(HFILEID * f)
 {
     return ((intf) Vend(*f));
-}	/* nvfend */
+}   /* nvfend */
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  tests if an id in a vgroup refers to a vdata
    **  related: Visvs--visvsc--VFISVS
  */
@@ -289,7 +289,7 @@ nvisvsc(intf * vkey, intf * id)
 /*  VDATA routines                                    */
 /* ================================================== */
 
-/* 
+/*
    **  attach to a vdata and returns its ptr
    **  related: VSattach--vsatchc--VFATCH
  */
@@ -300,7 +300,7 @@ nvsatchc(HFILEID * f, intf * vsid, _fcd accesstype)
     intf        vkey;
     char       *acc;
 
-    acc = HDf2cstring(accesstype, 1);	/* 'r' or 'w' only */
+    acc = HDf2cstring(accesstype, 1);   /* 'r' or 'w' only */
     vkey = VSattach(*f, *vsid, acc);
     HDfreespace(acc);
 
@@ -308,7 +308,7 @@ nvsatchc(HFILEID * f, intf * vsid, _fcd accesstype)
 }
 
 /* ------------------------------------------------------------------ */
-/*  
+/*
    **  detach from a vdata
    **  related: VSdetach--vsdtchc--VFDTCH
  */
@@ -320,7 +320,7 @@ nvsdtchc(intf * vkey)
 }
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  seeks to a given element position in a vadata
    **  related: VSseek--vsseekc--VSFSEEK
  */
@@ -332,7 +332,7 @@ nvsseekc(intf * vkey, intf * eltpos)
 }
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  gets the name of a vdata
    **  related: VSgetname--vsgnamc--VSFGNAM
  */
@@ -341,10 +341,10 @@ FRETVAL(intf)
 nvsgnamc(intf * vkey, _fcd vsname)
 {
     return (VSgetname(*vkey, vsname));
-}	/* VSGNAMC */
+}   /* VSGNAMC */
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  get the class name of a vdata
    **  related: VSgetclass--vsgclsc--VSFGCLS
  */
@@ -353,7 +353,7 @@ FRETVAL(intf)
 nvsgclsc(intf * vkey, _fcd vsclass)
 {
     return (VSgetclass(*vkey, vsclass));
-}	/* VSGCLSC */
+}   /* VSGCLSC */
 
 /* ------------------------------------------------------------------ */
 /*
@@ -363,11 +363,11 @@ nvsgclsc(intf * vkey, _fcd vsclass)
 
 FRETVAL(intf)
 nvsinqc(intf * vkey, intf * nelt, intf * interlace, _fcd fields, intf * eltsize,
-	_fcd vsname)
+        _fcd vsname)
 {
     return ((intf) VSinquire(*vkey, (int32 *) nelt, (int32 *) interlace,
-			     fields, (int32 *) eltsize, vsname));
-}	/* VSINQC */
+                             fields, (int32 *) eltsize, vsname));
+}   /* VSINQC */
 
 /* ------------------------------------------------------------------ */
 /*
@@ -410,7 +410,7 @@ nvsfndc(HFILEID * f, _fcd name, intf * namelen)
 }
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  gets the id of the next vdata from the file
    **  related: VSgetid--vsgidc--VSFGID
  */
@@ -434,7 +434,7 @@ nvsdltc(HFILEID * f, intf * vsid)
 }
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  sets the name of a vdata
    **  related: VSsetname--vssnamc--VSFSNAM
  */
@@ -454,7 +454,7 @@ nvssnamc(intf * vkey, _fcd vsname, intf * vsnamelen)
 }
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  sets the class name of the vdata
    **  related: VSsetclass--vssclsc--VSFSCLS
  */
@@ -494,7 +494,7 @@ nvssfldc(intf * vkey, _fcd fields, intf * fieldslen)
 }
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  sets the file interlace of a vdata
    **  related: VSsetinterlace--vssintc--VSFSINT
  */
@@ -506,7 +506,7 @@ nvssintc(intf * vkey, intf * interlace)
 }
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  defines a new field to be used in the vdata
    **  related: VSfdefine--vsfdefc--VSFFDEF
  */
@@ -525,7 +525,7 @@ nvsfdefc(intf * vkey, _fcd field, intf * localtype, intf * order, intf * fieldle
 }
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  reads from a vdata
    **  related: VSread--vsreadc--VSFREAD
  */
@@ -537,7 +537,7 @@ nvsreadc(intf * vkey, uint8 *buf, intf * nelt, intf * interlace)
 }
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  writes to a vdata
    **  related: VSwrite--vswritc--VSFWRIT
  */
@@ -554,7 +554,7 @@ nvswritc(intf * vkey, uint8 *buf, intf * nelt, intf * interlace)
 /* undocumented */
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  gets the interlace of the vdata
    **  related: VSgetinterlace--vsgintc--VSFGINT
  */
@@ -566,7 +566,7 @@ nvsgintc(intf * vkey)
 }
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  gets the number of elements in the vdata
    **  related: VSelts--vseltsc--VSFELTS
  */
@@ -578,7 +578,7 @@ nvseltsc(intf * vkey)
 }
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  gets the fields in the vdata
    **  related: VSgetfields--vsgfldc--VSFGFLD
  */
@@ -587,10 +587,10 @@ FRETVAL(intf)
 nvsgfldc(intf * vkey, _fcd fields)
 {
     return ((intf) VSgetfields(*vkey, fields));
-}	/* VSGFLDC */
+}   /* VSGFLDC */
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  determines the (machine) size of the given fields
    **  related: VSsizeof--vssizc--VSFSIZ
  */
@@ -621,7 +621,7 @@ nventsc(HFILEID * f, intf * vgid)
 }
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  gets the refs of all lone vgroups in the file
    **  related: Vlone--vlonec--VFLONE
  */
@@ -651,7 +651,7 @@ nvslonec(HFILEID * f, intf ** idarray, intf * asize)
  */
 
 /*
-   **  store a simple dataset in a vdata 
+   **  store a simple dataset in a vdata
    **  related: VHstoredata--vhsdc--vhfsd
  */
 
@@ -682,8 +682,8 @@ nvhsdc(HFILEID * f, _fcd field, uint8 *buf, intf * n, intf * datatype, _fcd vsna
 
 FRETVAL(intf)
 nvhsdmc(HFILEID * f, _fcd field, uint8 *buf, intf * n, intf * datatype,
-	_fcd vsname, _fcd vsclass, intf * order, intf * fieldlen,
-	intf * vsnamelen, intf * vsclasslen)
+        _fcd vsname, _fcd vsclass, intf * order, intf * fieldlen,
+        intf * vsnamelen, intf * vsclasslen)
 {
     char       *fld, *name, *class;
     intf        ret_val;
@@ -702,13 +702,13 @@ nvhsdmc(HFILEID * f, _fcd field, uint8 *buf, intf * n, intf * datatype,
 
 /* ------------------------------------------------------------------ */
 /*
-   **  make a new vgroup given several tag/ref pairs 
+   **  make a new vgroup given several tag/ref pairs
    **  related: VHmakegroup--vhmkgpc--vhfmkgp
  */
 
 FRETVAL(intf)
 nvhmkgpc(HFILEID * f, intf * tagarray, intf * refarray, intf * n, _fcd vgname,
-	 _fcd vgclass, intf * vgnamelen, intf * vgclasslen)
+         _fcd vgclass, intf * vgnamelen, intf * vgclasslen)
 {
     char       *gname, *gclass;
     intf        ret_val;
@@ -717,7 +717,7 @@ nvhmkgpc(HFILEID * f, intf * tagarray, intf * refarray, intf * n, _fcd vgname,
     gclass = HDf2cstring(vgclass, (intn) *vgclasslen);
 
     ret_val = (intf) VHmakegroup(*f, (int32 *) tagarray, (int32 *) refarray,
-				 *n, gname, gclass);
+                                 *n, gname, gclass);
     HDfreespace(gname);
     HDfreespace(gclass);
 
@@ -745,7 +745,7 @@ nvflocc(intf * vkey, _fcd field, intf * fieldlen)
 }
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  tests if a tag/ref pair is in a vgroup.
    **  related: Vinqtagref--vinqtrc--vfinqtr
  */
@@ -756,7 +756,7 @@ nvinqtrc(intf * vkey, intf * tag, intf * ref)
     return ((intf) Vinqtagref(*vkey, *tag, *ref));
 }
 /* ------------------------------------------------------------------ */
-/* 
+/*
    **  gets the number of tag/refs stored in a vgroup
    **  related: Vntagrefs--vntrc--VFNTR
  */
@@ -769,7 +769,7 @@ nvntrc(intf * vkey)
 /* ------------------------------------------------------------------ */
 
 /*
-   **  returns all the tag/ref pairs in a vgroup 
+   **  returns all the tag/ref pairs in a vgroup
    **  related: Vgettagrefs--vgttrsc--vfgttrs
  */
 
@@ -781,7 +781,7 @@ nvgttrsc(intf * vkey, intf * tagarray, intf * refarray, intf * n)
 
 /* ------------------------------------------------------------------ */
 /*
-   **  returns a specified tag/ref pair in a vgroup 
+   **  returns a specified tag/ref pair in a vgroup
    **  related: Vgettagref--vgttrc--vfgttr
  */
 
@@ -792,7 +792,7 @@ nvgttrc(intf * vkey, intf * which, intf * tag, intf * ref)
 }
 /* ------------------------------------------------------------------ */
 
-/* 
+/*
    **  tests if a tag/ref pair is in a vgroup.
    **  related: Vinqtagref--vinqtrc--vfinqtr
  */
@@ -804,7 +804,7 @@ nvadtrc(intf * vkey, intf * tag, intf * ref)
 }
 /* ------------------------------------------------------------------ */
 
-/* 
+/*
    **  checks the number of elements in a vgroup
    **  related: VSQuerycount--vsqfnelt
  */
@@ -822,7 +822,7 @@ nvsqfnelt(intf * vkey, intf * nelt)
 }
 /* ------------------------------------------------------------------ */
 
-/* 
+/*
    **  checks the interlace of a vgroup
    **  related: VSQueryinterlace--vsqfintr
  */
@@ -840,7 +840,7 @@ nvsqfintr(intf * vkey, intf * interlace)
 }
 /* ------------------------------------------------------------------ */
 
-/* 
+/*
    **  gets the names of the fields of a vgroup
    **  related: VSQueryfields--vsqfflds
  */
@@ -852,7 +852,7 @@ nvsqfldsc(intf * vkey, _fcd fields)
 }
 /* ------------------------------------------------------------------ */
 
-/* 
+/*
    **  checks the size of an element of a vgroup
    **  related: VSQueryvsize--vsqfvsiz
  */
@@ -870,7 +870,7 @@ nvsqfvsiz(intf * vkey, intf * size)
 }
 /* ------------------------------------------------------------------ */
 
-/* 
+/*
    **  gets the names of a vgroup
    **  related: VSQueryname--vsqfname
  */

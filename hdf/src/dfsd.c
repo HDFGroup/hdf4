@@ -29,7 +29,7 @@ static char RcsId[] = "@(#)$Revision$";
     DFSDgetdims      - get rank and dim sizes
     DFSDgetdatastrs  - get label, unit, format and coord system of data
     DFSDgetdimstrs   - get label, unit and format for a dimension
-    DFSDgetdatalen   - 
+    DFSDgetdatalen   -
     DFSDgetdimlen    -
     DFSDgetdimscale  - get scale for a dimension
     DFSDgetrange     - get max and min of data
@@ -46,7 +46,7 @@ static char RcsId[] = "@(#)$Revision$";
     DFSDsetorder     - set array order to C or FORTRAN order
     DFSDsetNT        - set number type to be written out
     DFSDputdata      - output data, data info, and display info
-    DFSDrestart      - forget info about last file accessed - restart from 
+    DFSDrestart      - forget info about last file accessed - restart from
                        beginning
     DFSDndatasets    - return number of SDGs in file
     DFSDclear        - forget all info set by DFSDset* routines
@@ -89,7 +89,7 @@ Fortran stub functions:
     dsisdas - set data label, unit, format and coord system
     dsisdis - set dim labels, units and formats
 
- Remarks: 
+ Remarks:
     These functions will be copied into dfsd.c after debugging.
     This version assumes that all the values are floating point.
  *---------------------------------------------------------------------------*/
@@ -106,15 +106,15 @@ Fortran stub functions:
 #define FORMAT  2
 #define COORDSYS 3
 
-#define NFGSDG_TYPE_SDG	0	/* a pure SDG  */
-#define NFGSDG_TYPE_NFG	1	/* a pure NDG  */
-#define NFGSDG_TYPE_SDGNDG 2	/* an SDG in NDG */
+#define NFGSDG_TYPE_SDG 0   /* a pure SDG  */
+#define NFGSDG_TYPE_NFG 1   /* a pure NDG  */
+#define NFGSDG_TYPE_SDGNDG 2    /* an SDG in NDG */
 
 /* Init NSDG table header      */
 PRIVATE DFnsdg_t_hdr *nsdghdr = NULL;
 
 /* initialize aid to -1 and numbertype to DFNT_NONE.   S. Xu    */
-PRIVATE DFSsdg Readsdg =	/* struct for reading */
+PRIVATE DFSsdg Readsdg =        /* struct for reading */
 {
     {(uint16) 0, (uint16) 0}, (intn) 0, NULL, NULL,
     {NULL, NULL, NULL},
@@ -126,7 +126,7 @@ PRIVATE DFSsdg Readsdg =	/* struct for reading */
     {0}, 0
 };
 
-PRIVATE DFSsdg Writesdg =	/* struct for writing */
+PRIVATE DFSsdg Writesdg =       /* struct for writing */
 {
     {(uint16) 0, (uint16) 0}, (intn) 0, NULL, NULL,
     {NULL, NULL, NULL},
@@ -138,24 +138,24 @@ PRIVATE DFSsdg Writesdg =	/* struct for writing */
     {0}, 0
 };
 
-PRIVATE uint16 Writeref = 0;	/* ref of next SDG/NDG to write to file */
-PRIVATE intn Newdata = (-1);	/* Values in Readsdg fresh? */
-				/* -1 : no descriptor read */
-				/* 1 : descriptor read */
-PRIVATE intn Nextsdg = 1;	/* Signal if DFSDgetdata should get the */
-				/* next SDG/NDG */
-PRIVATE int32 Sfile_id = DF_NOFILE;	/* pointer to file for slice writes */
-PRIVATE int32 *Sddims;		/*dims written so far in slice write */
+PRIVATE uint16 Writeref = 0;    /* ref of next SDG/NDG to write to file */
+PRIVATE intn Newdata = (-1);    /* Values in Readsdg fresh? */
+                /* -1 : no descriptor read */
+                /* 1 : descriptor read */
+PRIVATE intn Nextsdg = 1;       /* Signal if DFSDgetdata should get the */
+                /* next SDG/NDG */
+PRIVATE int32 Sfile_id = DF_NOFILE;     /* pointer to file for slice writes */
+PRIVATE int32 *Sddims;          /*dims written so far in slice write */
 
 PRIVATE struct
-  {				/* Indicators of status (s) of info:    */
-      intn        dims;		/* s = -1: there is no info in this category */
-      intn        nt;		/* s = 0: info was set, but not yet written */
-      intn        coordsys;	/* s > 0: info was set and written with ref no.s */
+  {                             /* Indicators of status (s) of info:    */
+      intn        dims;         /* s = -1: there is no info in this category */
+      intn        nt;           /* s = 0: info was set, but not yet written */
+      intn        coordsys;     /* s > 0: info was set and written with ref no.s */
       intn        luf[3];
       intn        scales;
       intn        maxmin;
-      intn        transpose;	/* It should be taken out!!!            !!!  */
+      intn        transpose;    /* It should be taken out!!!            !!!  */
       intn        cal;
       intn        fill_value;
       intn        new_ndg;
@@ -164,17 +164,17 @@ Ref =
 {
     -1, -1, -1,
     {
-	-1, -1, -1
+        -1, -1, -1
     }
     ,-1, -1, -1, -1, -1, -1
 };
 
 PRIVATE intn Maxstrlen[4] =
 {DFS_MAXLEN, DFS_MAXLEN, DFS_MAXLEN, DFS_MAXLEN};
-PRIVATE intn Ismaxmin = 0;	/* is there a max/min value on read?  */
-PRIVATE intn FileTranspose = 0;	/* is the data in column major order? */
-PRIVATE intn Fortorder = 0;	/* should data be written col major?  */
-PRIVATE intn IsCal = 0;		/* has calibration info been set?     */
+PRIVATE intn Ismaxmin = 0;      /* is there a max/min value on read?  */
+PRIVATE intn FileTranspose = 0; /* is the data in column major order? */
+PRIVATE intn Fortorder = 0;     /* should data be written col major?  */
+PRIVATE intn IsCal = 0;         /* has calibration info been set?     */
 
 /* In ver. 3.2 numbertype and file number format (subclass) are included  */
 /* in DFSsdg, and  fileNTsize is local to functions .           */
@@ -184,20 +184,20 @@ PRIVATE intn IsCal = 0;		/* has calibration info been set?     */
 /*           outNTsize=4,                        */
 /*           userNT=DFNTF_IEEE ;         default */
 
-PRIVATE uint16 Readref = 0;	/* ref of next SDG/NDG to be read? */
+PRIVATE uint16 Readref = 0;     /* ref of next SDG/NDG to be read? */
 #if 0
-PRIVATE char Lastfile[DF_MAXFNLEN] = "";	/* last file opened */
+PRIVATE char Lastfile[DF_MAXFNLEN] = "";    /* last file opened */
 #endif
 PRIVATE char *Lastfile = NULL;
-PRIVATE uint16 Lastref = 0;	/* Last ref to be read/written? */
-PRIVATE DFdi lastnsdg;		/* last read nsdg in nsdg_t */
+PRIVATE uint16 Lastref = 0;     /* Last ref to be read/written? */
+PRIVATE DFdi lastnsdg;          /* last read nsdg in nsdg_t */
 
 /* Private buffer */
 PRIVATE uint8 *ptbuf = NULL;
 
 /*--------------------------------------------------------------------------
- NAME    
-       DFSDgetdims 
+ NAME
+       DFSDgetdims
  USAGE
        int DFSDgetdims(filename, prank, sizes, maxrank)
        char  *filename;   IN:  Name of file with scientific data set
@@ -208,13 +208,13 @@ PRIVATE uint8 *ptbuf = NULL;
  RETURNS
        Returns SUCCED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
-       Gets the number of dimensions(rank) and the sizes of the dimensions 
+       Gets the number of dimensions(rank) and the sizes of the dimensions
        (dimsizes) for the next data set in the file. The input argument
        "maxrank" tells the size of the array that is allocated for storing
-       the "dimsizses" array. The value of rank cannot exceed the value of 
+       the "dimsizses" array. The value of rank cannot exceed the value of
        "maxrank". The allocation of space for reading in the scientific
        data set should correspond to the values read in by "DFSDgetdims".
-       The first value in the array "dimsizes" should equal the first 
+       The first value in the array "dimsizes" should equal the first
        dimension of the array that is allocated to hold the data set; the
        second value in "dimsizes" should equal the second dimension of the
        data set, and so forth. "DFSDgetdims" opens and closes the file.
@@ -227,34 +227,34 @@ DFSDgetdims(const char *filename, intn *prank, int32 sizes[], intn maxrank)
     int32       file_id;
     CONSTR(FUNC, "DFSDgetdims");
 
-    HEclear();	/* Clear error stack */
+    HEclear();  /* Clear error stack */
 
-    if (!prank)		/* check if ptr is valid */
-	HRETURN_ERROR(DFE_BADPTR, FAIL);
+    if (!prank)     /* check if ptr is valid */
+        HRETURN_ERROR(DFE_BADPTR, FAIL);
 
-    file_id = DFSDIopen(filename, DFACC_READ);	/* open/reopen file */
+    file_id = DFSDIopen(filename, DFACC_READ);  /* open/reopen file */
     if (file_id == FAIL)
-	return FAIL;
+        return FAIL;
 
     if (DFSDIsdginfo(file_id) < 0)
-      {		/* reads next SDG from file */
-	  Hclose(file_id);
-	  return FAIL;	/* on error, close file and return */
+      {     /* reads next SDG from file */
+          Hclose(file_id);
+          return FAIL;  /* on error, close file and return */
       }
 
-    *prank = Readsdg.rank;	/* copy rank, dimensions */
-    if (maxrank < *prank)	/* if not all dimensions copied */
-	HRETURN_ERROR(DFE_NOTENOUGH, FAIL);
+    *prank = Readsdg.rank;  /* copy rank, dimensions */
+    if (maxrank < *prank)   /* if not all dimensions copied */
+        HRETURN_ERROR(DFE_NOTENOUGH, FAIL);
 
-    for (i = 0; i < *prank; i++)	/* copy dimensions */
-	sizes[i] = Readsdg.dimsizes[i];
+    for (i = 0; i < *prank; i++)    /* copy dimensions */
+        sizes[i] = Readsdg.dimsizes[i];
     Nextsdg = 0;
 
     return (Hclose(file_id));
 }
 
 /*---------------------------------------------------------------------------
- NAME    
+ NAME
        DFSDgetdatastrs
  USAGE
        int DFSDgetdatastrs(label, unit, format, coordsys)
@@ -267,7 +267,7 @@ DFSDgetdims(const char *filename, intn *prank, int32 sizes[], intn maxrank)
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
        Retrieves information about the data from its associated attribute
-       strings. Particularly, it reads the label, unit and format strings 
+       strings. Particularly, it reads the label, unit and format strings
        for the data. The parameter "coordsys" gives the coordinate system
        that is to be used for interpreting the dimension information.
 
@@ -279,10 +279,10 @@ DFSDgetdatastrs(char *label, char *unit, char *format, char *coordsys)
     char       *lufp;
     CONSTR(FUNC, "DFSDgetdatastrs");
 
-    HEclear();	/* Clear error stack */
+    HEclear();  /* Clear error stack */
 
     if (Newdata < 0)
-	HRETURN_ERROR(DFE_BADCALL, FAIL);
+        HRETURN_ERROR(DFE_BADCALL, FAIL);
 /* NOTE: Once DFSDsetdatastrs is changed to always write all three (label,
    unit and format) whenever it is called, this routine should be
    changed so that it returns all three, if any exist.  This means
@@ -293,27 +293,27 @@ DFSDgetdatastrs(char *label, char *unit, char *format, char *coordsys)
     /* copy label, unit, format */
     for (luf = LABEL; luf <= FORMAT; luf++)
       {
-	  lufp = (luf == LABEL) ? label : (luf == UNIT) ? unit : format;
-	  if (lufp)
-	    {
-		if (Readsdg.dataluf[luf])
-		    HIstrncpy(lufp, Readsdg.dataluf[luf], Maxstrlen[luf]);
-	    }
-      }		/* end for 'luf' */
+          lufp = (luf == LABEL) ? label : (luf == UNIT) ? unit : format;
+          if (lufp)
+            {
+                if (Readsdg.dataluf[luf])
+                    HIstrncpy(lufp, Readsdg.dataluf[luf], Maxstrlen[luf]);
+            }
+      }     /* end for 'luf' */
     /* copy coordsys */
     if (coordsys)
       {
-	  if (Readsdg.coordsys)
-	      HIstrncpy(coordsys, Readsdg.coordsys, Maxstrlen[COORDSYS]);
-	  else
-	      coordsys[0] = '\0';
+          if (Readsdg.coordsys)
+              HIstrncpy(coordsys, Readsdg.coordsys, Maxstrlen[COORDSYS]);
+          else
+              coordsys[0] = '\0';
       }
 
     return SUCCEED;
 }
 
 /*----------------------------------------------------------------------------
- NAME   
+ NAME
        DFSDgetdimstrs
  USAGE
        int DFSDgetdimstrs(dim, label, unit, format)
@@ -326,7 +326,7 @@ DFSDgetdatastrs(char *label, char *unit, char *format, char *coordsys)
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
        Gets the labe, unit and format strings corresponding to the specified
-       dimension. The space allocated for the label, unit and format string 
+       dimension. The space allocated for the label, unit and format string
        must be at least 1 byte larger than the length of the string. If the
        length is unknown when the program is written, declare the array size
        as 1+maxlen_label, _unit or _format after they are set by "DFSDsetlengths".
@@ -340,42 +340,42 @@ DFSDgetdimstrs(int dim, char *label, char *unit, char *format)
     char       *lufp;
     CONSTR(FUNC, "DFSDgetdimstrs");
 
-    HEclear();	/* Clear error stack */
+    HEclear();  /* Clear error stack */
 
     if (Newdata < 0)
-	HRETURN_ERROR(DFE_BADCALL, FAIL);
+        HRETURN_ERROR(DFE_BADCALL, FAIL);
 /* NOTE: Once DFSDsetdimstrs is changed to always write all three (label,
    unit and format) whenever it is called, this routine should be
    changed so that it returns all three, if any exist.  This means
-   that it also should be changed to return -1 if none exist. 
+   that it also should be changed to return -1 if none exist.
    (Currently it returns FAIL only if the SDS doesn't exist.)
  */
 
-    rdim = dim - 1;	/* translate dim to zero origin */
+    rdim = dim - 1;     /* translate dim to zero origin */
     if ((rdim >= Readsdg.rank) || (rdim < 0))
-	HRETURN_ERROR(DFE_BADDIM, FAIL);
+        HRETURN_ERROR(DFE_BADDIM, FAIL);
 
     /* copy labels etc */
     for (luf = LABEL; luf <= FORMAT; luf++)
       {
-	  lufp = (luf == LABEL) ? label : (luf == UNIT) ? unit : format;
-	  if (lufp)
-	    {
-		if (!Readsdg.dimluf)
-		  {	/* no labels etc */
-		      *lufp = '\0';
-		      continue;
-		  }
-		if (Readsdg.dimluf[luf])
-		    HIstrncpy(lufp, Readsdg.dimluf[luf][rdim], Maxstrlen[luf]);
-	    }	/* end if 'lufp' */
-      }		/* end for 'luf' */
+          lufp = (luf == LABEL) ? label : (luf == UNIT) ? unit : format;
+          if (lufp)
+            {
+                if (!Readsdg.dimluf)
+                  {     /* no labels etc */
+                      *lufp = '\0';
+                      continue;
+                  }
+                if (Readsdg.dimluf[luf])
+                    HIstrncpy(lufp, Readsdg.dimluf[luf][rdim], Maxstrlen[luf]);
+            }   /* end if 'lufp' */
+      }     /* end for 'luf' */
 
     return SUCCEED;
 }
 
 /*---------------------------------------------------------------------------
- NAME   
+ NAME
        DFSDgetdatalen
  USAGE
        int DFSDgetdatalen(llabel, lunit, lformat, lcoordsys)
@@ -389,7 +389,7 @@ DFSDgetdimstrs(int dim, char *label, char *unit, char *format)
  DESCRIPTION
        Gets actual length of label, unit, format and coordinate system
        strings. The space allocated for the label, unit, format and
-       coordinate system strings must be at least 1 byte larger than the 
+       coordinate system strings must be at least 1 byte larger than the
        actual length of the string.
 
 ----------------------------------------------------------------------------*/
@@ -398,25 +398,25 @@ DFSDgetdatalen(intn *llabel, intn *lunit, intn *lformat, intn *lcoordsys)
 {
     CONSTR(FUNC, "DFSDgetdatalen");
 
-    HEclear();	/* Clear error stack */
+    HEclear();  /* Clear error stack */
 
     if (Newdata < 0)
-	HRETURN_ERROR(DFE_BADCALL, FAIL);
+        HRETURN_ERROR(DFE_BADCALL, FAIL);
 
     *llabel = Readsdg.dataluf[LABEL] ?
-	HDstrlen(Readsdg.dataluf[LABEL]) : 0;
+        HDstrlen(Readsdg.dataluf[LABEL]) : 0;
     *lunit = Readsdg.dataluf[UNIT] ?
-	HDstrlen(Readsdg.dataluf[UNIT]) : 0;
+        HDstrlen(Readsdg.dataluf[UNIT]) : 0;
     *lformat = Readsdg.dataluf[FORMAT] ?
-	HDstrlen(Readsdg.dataluf[FORMAT]) : 0;
+        HDstrlen(Readsdg.dataluf[FORMAT]) : 0;
     *lcoordsys = Readsdg.coordsys ?
-	HDstrlen(Readsdg.coordsys) : 0;
+        HDstrlen(Readsdg.coordsys) : 0;
 
     return SUCCEED;
 }
 
 /*---------------------------------------------------------------------------
- NAME 
+ NAME
        DFSDgetdimlen
  USAGE
        int DFSDgetdimlen(dim, llabel, lunit, lformat)
@@ -437,39 +437,39 @@ DFSDgetdimlen(intn dim, intn *llabel, intn *lunit, intn *lformat)
 {
     CONSTR(FUNC, "DFSDgetdimlen");
 
-    HEclear();	/* Clear error stack */
+    HEclear();  /* Clear error stack */
 
     if (Newdata < 0)
-	HRETURN_ERROR(DFE_BADCALL, FAIL);
+        HRETURN_ERROR(DFE_BADCALL, FAIL);
 
     if (dim > Readsdg.rank)
-	HRETURN_ERROR(DFE_BADDIM, FAIL);
+        HRETURN_ERROR(DFE_BADDIM, FAIL);
 
     *llabel = Readsdg.dimluf[LABEL][dim - 1] ?
-	HDstrlen(Readsdg.dimluf[LABEL][dim - 1]) : 0;
+        HDstrlen(Readsdg.dimluf[LABEL][dim - 1]) : 0;
     *lunit = Readsdg.dimluf[UNIT][dim - 1] ?
-	HDstrlen(Readsdg.dimluf[UNIT][dim - 1]) : 0;
+        HDstrlen(Readsdg.dimluf[UNIT][dim - 1]) : 0;
     *lformat = Readsdg.dimluf[FORMAT][dim - 1] ?
-	HDstrlen(Readsdg.dimluf[FORMAT][dim - 1]) : 0;
+        HDstrlen(Readsdg.dimluf[FORMAT][dim - 1]) : 0;
 
     return SUCCEED;
 }
 
 /*----------------------------------------------------------------------------
- NAME   
+ NAME
        DFSDgetdimscale
  USAGE
        int DFSDgetdimscale(dim, maxsize, scale)
        int   dim;      IN: Dimension this scale corresponds to
-       int32 size;     IN:  size of scale 
-       VOIDP scale;    OUT: the scale 
+       int32 size;     IN:  size of scale
+       VOIDP scale;    OUT: the scale
  RETURN
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
        Gets the scale corresponding to the specified demension. The DFSD
        interface in HDFv3.3 requires that the dimension scales are of the
        same number type as the corresponding data. To store dimension scales
-       of a different number type than the corresponding data see the 
+       of a different number type than the corresponding data see the
        multi-file SD interface.
 ---------------------------------------------------------------------------*/
 intn
@@ -482,31 +482,31 @@ DFSDgetdimscale(intn dim, int32 maxsize, VOIDP scale)
     uint8      *p1, *p2;
     CONSTR(FUNC, "DFSDgetdimscale");
 
-    HEclear();	/* Clear error stack */
+    HEclear();  /* Clear error stack */
 
     if (Newdata < 0)
-	HRETURN_ERROR(DFE_BADCALL, FAIL);
+        HRETURN_ERROR(DFE_BADCALL, FAIL);
 
-    rdim = dim - 1;	/* translate dim to zero origin */
+    rdim = dim - 1;     /* translate dim to zero origin */
     if ((rdim >= Readsdg.rank) || (rdim < 0))
-	HRETURN_ERROR(DFE_BADDIM, FAIL);
+        HRETURN_ERROR(DFE_BADDIM, FAIL);
 
     if (maxsize < Readsdg.dimsizes[rdim])
-	HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     if (!scale)
-	HRETURN_ERROR(DFE_BADPTR, FAIL);
+        HRETURN_ERROR(DFE_BADPTR, FAIL);
 
-    if (!Readsdg.dimscales || !Readsdg.dimscales[rdim])		/* no scale */
-	HRETURN_ERROR(DFE_NOVALS, FAIL);
+    if (!Readsdg.dimscales || !Readsdg.dimscales[rdim])     /* no scale */
+        HRETURN_ERROR(DFE_NOVALS, FAIL);
 
     /* get number type and copy data from Readsdg to scale */
     if (Readsdg.numbertype == DFNT_NONE)
-	Readsdg.numbertype = DFNT_FLOAT32;
+        Readsdg.numbertype = DFNT_FLOAT32;
 
     numtype = Readsdg.numbertype;
     localNTsize = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
-    dimsize = localNTsize * Readsdg.dimsizes[rdim];	/* in bytes  */
+    dimsize = localNTsize * Readsdg.dimsizes[rdim];     /* in bytes  */
 
     p1 = (uint8 *) scale;
     p2 = (uint8 *) (Readsdg.dimscales[rdim]);
@@ -516,9 +516,9 @@ DFSDgetdimscale(intn dim, int32 maxsize, VOIDP scale)
 }
 
 /*---------------------------------------------------------------------------
- NAME    
+ NAME
        DFSDgetrange
- USAGE 
+ USAGE
        int DFSDgetrange(max, min)
        VOIDP max;    OUT: High value stored with the scientific data set
        VOIDP min;    OUT: Low value stored with the scientific data set
@@ -535,7 +535,7 @@ DFSDgetdimscale(intn dim, int32 maxsize, VOIDP scale)
        the FORTRAN version they are simple variables of the same type as the
        data array. Neither "DFSDgetrange" or "DFSDgetdata" compare the "max"
        and "min" values stored with the data set to the actual values in
-       the data set; they merely retrieve the data. As a result, the 
+       the data set; they merely retrieve the data. As a result, the
        maximum and minimum values may not always reflect the actual maximum
        and minimum vlaues in the data set. In some cases the "max" and "min"
        values may actually lie outside the range of values in the data set.
@@ -548,33 +548,33 @@ DFSDgetrange(VOIDP pmax, VOIDP pmin)
     uint8      *p1, *p2;
     CONSTR(FUNC, "DFSDgetrange");
 
-    HEclear();	/* Clear error stack */
+    HEclear();  /* Clear error stack */
 
     if (Newdata < 0)
-	HRETURN_ERROR(DFE_BADCALL, FAIL);
+        HRETURN_ERROR(DFE_BADCALL, FAIL);
 
     /* get number type and copy data  */
     if (Readsdg.numbertype == DFNT_NONE)
-	Readsdg.numbertype = DFNT_FLOAT32;
+        Readsdg.numbertype = DFNT_FLOAT32;
     numtype = Readsdg.numbertype;
     localNTsize = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
 
-    if (Ismaxmin)	/* Ismaxmin is a global */
+    if (Ismaxmin)   /* Ismaxmin is a global */
       {
-	  p1 = (uint8 *) pmax;
-	  p2 = (uint8 *) &(Readsdg.max_min[0]);
-	  HDmemcpy(p1, p2, localNTsize);
-	  p1 = (uint8 *) pmin;
-	  p2 = &(Readsdg.max_min[localNTsize]);
-	  HDmemcpy(p1, p2, localNTsize);
-	  return SUCCEED;
+          p1 = (uint8 *) pmax;
+          p2 = (uint8 *) &(Readsdg.max_min[0]);
+          HDmemcpy(p1, p2, localNTsize);
+          p1 = (uint8 *) pmin;
+          p2 = &(Readsdg.max_min[localNTsize]);
+          HDmemcpy(p1, p2, localNTsize);
+          return SUCCEED;
       }
     else
-	HRETURN_ERROR(DFE_NOVALS, FAIL);
+        HRETURN_ERROR(DFE_NOVALS, FAIL);
 }
 
 /*---------------------------------------------------------------------------
- NAME  
+ NAME
       DFSDgetdata
  USAGE
       intn DFSDgetdata(filename, rank, maxsizes, data)
@@ -590,28 +590,28 @@ DFSDgetrange(VOIDP pmax, VOIDP pmin)
        Reads the next data set in the file. If you do no know the values of
        "rank" or "dimsizes", you must call "DFSDgetdims" to get them and
        then use them to provide the right amount of space for the array
-       "data". If you do not know the number type of the data in the 
+       "data". If you do not know the number type of the data in the
        scientific dat set, you can call "DFSDgetNT" to find out.
        Subsequent calls to "DFSDgetdata"(or to "DFSDgetdims" and "DFSDgetdata")
        will sequentially read scientific data sets from the file. For example,
        if "DFSDgetdata" is called three times in succession, the third call
        reads data from the third scientific data set in the file. Note that
-       if you do no know the values of "rank" or "dimsizes" you must call 
+       if you do no know the values of "rank" or "dimsizes" you must call
        "DFSDgetdims" to get them each time and then provide the necessary
        space to hold the data. If "DFSDgetdims" or "DFSDgetdata" is called
        and there are no more scientific data sets left in the file, an
-       error code is returned and nothing is read. "DFSDrestart" can be 
+       error code is returned and nothing is read. "DFSDrestart" can be
        used to override this convention.
 
 ---------------------------------------------------------------------------*/
 intn
 DFSDgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data)
 {
-    return (DFSDIgetdata(filename, rank, maxsizes, data, 0));	/* 0 == C */
+    return (DFSDIgetdata(filename, rank, maxsizes, data, 0));   /* 0 == C */
 }
 
 /*-----------------------------------------------------------------------------
- NAME 
+ NAME
        DFSDsetlengths
  USAGE
        int DFSDsetlengths(maxlen_label, maxlen_unit, maxlen_format, maxlen_coordsys)
@@ -631,22 +631,22 @@ DFSDgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data)
 -----------------------------------------------------------------------------*/
 intn
 DFSDsetlengths(intn maxlen_label, intn maxlen_unit, intn maxlen_format,
-	       intn maxlen_coordsys)
+               intn maxlen_coordsys)
 {
     if (maxlen_label > 0)
-	Maxstrlen[LABEL] = maxlen_label;
+        Maxstrlen[LABEL] = maxlen_label;
     if (maxlen_unit > 0)
-	Maxstrlen[UNIT] = maxlen_unit;
+        Maxstrlen[UNIT] = maxlen_unit;
     if (maxlen_format > 0)
-	Maxstrlen[FORMAT] = maxlen_format;
+        Maxstrlen[FORMAT] = maxlen_format;
     if (maxlen_coordsys > 0)
-	Maxstrlen[COORDSYS] = maxlen_coordsys;
+        Maxstrlen[COORDSYS] = maxlen_coordsys;
 
     return SUCCEED;
 }
 
 /*-----------------------------------------------------------------------------
- NAME   
+ NAME
        DFSDsetdims
  USAGE
        int DFSDsetdims(rank, dimsizes)
@@ -658,8 +658,8 @@ DFSDsetlengths(intn maxlen_label, intn maxlen_unit, intn maxlen_format,
        Sets the rank and dimension sizes for all subsequent scientific data
        sets written to the file. This routine must be called before calling
        either "DFSDgetdimstrs" or "DFSDsetdimscale". "DFSDsetdims" need not
-       be called if other set routines are not called and the correct 
-       dimensions are supplied in "DFSDputdata" or "DFSDadddata". If the 
+       be called if other set routines are not called and the correct
+       dimensions are supplied in "DFSDputdata" or "DFSDadddata". If the
        rank or dimension sizes change, all previous set calls are cleared,
        except for the number type which is set by calling "DFSDsetNT".
 -----------------------------------------------------------------------------*/
@@ -672,41 +672,41 @@ DFSDsetdims(intn rank, int32 dimsizes[])
     HEclear();
 
     if (Sfile_id != DF_NOFILE)
-	HRETURN_ERROR(DFE_BADCALL, FAIL);
+        HRETURN_ERROR(DFE_BADCALL, FAIL);
 
-    if (Writesdg.rank == rank)	/* check if dimensions same */
+    if (Writesdg.rank == rank)  /* check if dimensions same */
       {
-	  if (Writesdg.dimsizes)
-	    {
-		for (i = 0; i < rank; i++)
-		  {
-		      if (Writesdg.dimsizes[i] != dimsizes[i])
-			  break;
-		  }
-		if (i == rank)
-		    return SUCCEED;	/* Dimensions same as before */
-	    }
+          if (Writesdg.dimsizes)
+            {
+                for (i = 0; i < rank; i++)
+                  {
+                      if (Writesdg.dimsizes[i] != dimsizes[i])
+                          break;
+                  }
+                if (i == rank)
+                    return SUCCEED;     /* Dimensions same as before */
+            }
       }
 
     /* forget all attributes set previously */
     if (DFSDIclear((DFSsdg *) & Writesdg) < 0)
-	return FAIL;
+        return FAIL;
 
     /* allocate dimensions */
     Writesdg.dimsizes = (int32 *) HDgetspace((uint32) (rank * sizeof(int32)));
     if (Writesdg.dimsizes == NULL)
-	return FAIL;
+        return FAIL;
 
     /* copy dimensions */
     Writesdg.rank = rank;
     for (i = 0; i < rank; i++)
-	Writesdg.dimsizes[i] = dimsizes[i];
+        Writesdg.dimsizes[i] = dimsizes[i];
 
     /* Note dimensions modified */
     Ref.dims = 0;
 
-    /* 
-       *  Added side effect, allows creation of new "ref" whenever called 
+    /*
+       *  Added side effect, allows creation of new "ref" whenever called
        *  before DFSDwriteslab().
      */
     Ref.new_ndg = 0;
@@ -716,7 +716,7 @@ DFSDsetdims(intn rank, int32 dimsizes[])
 }
 
 /*-----------------------------------------------------------------------------
- NAME    
+ NAME
        DFSDsetdatastrs
  USAGE
        int DFSDsetdatastrs(label, unit, format, coordsys)
@@ -756,9 +756,9 @@ DFSDsetdatastrs(const char *label, const char *unit, const char *format, const c
 intn
 DFSDIsetdatastrs(const char *label, const char *unit, const char *format, const char *coordsys)
 {
-    intn        luf;		/* takes values LABEL, UNIT, FORMAT */
+    intn        luf;            /* takes values LABEL, UNIT, FORMAT */
     /* in succession */
-    const char *lufp;		/* points to label, unit, format */
+    const char *lufp;           /* points to label, unit, format */
     /* in succession */
 
 /* NOTE: The following code should be changed to write all three, even if
@@ -769,28 +769,28 @@ DFSDIsetdatastrs(const char *label, const char *unit, const char *format, const 
 
     for (luf = LABEL; luf <= FORMAT; luf++)
       {
-	  /* set lufp to point to label etc. as apppropriate */
-	  lufp = (luf == LABEL) ? label : (luf == UNIT) ? unit : format;
+          /* set lufp to point to label etc. as apppropriate */
+          lufp = (luf == LABEL) ? label : (luf == UNIT) ? unit : format;
 
-	  /* free space if allocated */
-	  HDfreenclear(Writesdg.dataluf[luf]);
+          /* free space if allocated */
+          HDfreenclear(Writesdg.dataluf[luf]);
 
-	  /* copy string */
-	  if (lufp)
-	    {
-		Writesdg.dataluf[luf] = (char *) HDstrdup((char *) lufp);
-		if (Writesdg.dataluf[luf] == NULL)
-		    return FAIL;
-	    }
+          /* copy string */
+          if (lufp)
+            {
+                Writesdg.dataluf[luf] = (char *) HDstrdup((char *) lufp);
+                if (Writesdg.dataluf[luf] == NULL)
+                    return FAIL;
+            }
       }
 
     HDfreenclear(Writesdg.coordsys);
 
     if (coordsys)
       {
-	  Writesdg.coordsys = (char *) HDstrdup((char *) coordsys);
-	  if (Writesdg.coordsys == NULL)
-	      return FAIL;
+          Writesdg.coordsys = (char *) HDstrdup((char *) coordsys);
+          if (Writesdg.coordsys == NULL)
+              return FAIL;
       }
 
     /* indicate that label, unit, format and coordsys info modified */
@@ -800,7 +800,7 @@ DFSDIsetdatastrs(const char *label, const char *unit, const char *format, const 
 }
 
 /*-----------------------------------------------------------------------------
- NAME 
+ NAME
        DFSDsetdimstrs()
  USAGE
        int  DFSDsetdimstrs(dim, label, unit, format)
@@ -812,10 +812,10 @@ DFSDIsetdatastrs(const char *label, const char *unit, const char *format, const 
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
        Sets the label, unit, and format strings corresponding to the specified
-       dimension. In both FORTRAN and C programs, dim=1 for the first 
+       dimension. In both FORTRAN and C programs, dim=1 for the first
        dimension, and dim=2 for the second and so on. If the user is not
        interested in one or more strings, empty strings can be used as
-       parameters for the "DFSDsetdimstrs" call. For example, 
+       parameters for the "DFSDsetdimstrs" call. For example,
        "DFSDsetdimstrs(1, "vertical", "", "") " will set the label for the
        first dimension to "vertical" and set the unit and format strings to
        empty strings.
@@ -824,12 +824,12 @@ intn
 DFSDsetdimstrs(intn dim, const char *label, const char *unit, const char *format)
 {
     return (DFSDIsetdimstrs(dim, label, unit, format));
-}	/* DFSDsetdimstrs */
+}   /* DFSDsetdimstrs */
 
 /*-----------------------------------------------------------------------------
  * Name:    DFSDIsetdimstrs()
  * Purpose: For the given dimension, set label, unit, format
- *          This routine needs to be called once for each dimension whose 
+ *          This routine needs to be called once for each dimension whose
  *          values the user wants to set.
  * Inputs:  dim: the dimension that this info applies to
  *          label: label to be used to describe this dimension
@@ -848,9 +848,9 @@ DFSDIsetdimstrs(intn dim, const char *label, const char *unit, const char *forma
     intn        i;
     intn        rdim;
     intn        luflen;
-    intn        luf;		/* takes values LABEL, UNIT, FORMAT */
+    intn        luf;            /* takes values LABEL, UNIT, FORMAT */
     /* in succession */
-    const char *lufp;		/* points to label, unit, format */
+    const char *lufp;           /* points to label, unit, format */
     /* in succession */
     CONSTR(FUNC, "DFSDsetdimstrs");
     HEclear();
@@ -859,27 +859,27 @@ DFSDIsetdimstrs(intn dim, const char *label, const char *unit, const char *forma
     rdim = dim - 1;
 
     if ((rdim >= Writesdg.rank) || (rdim < 0))
-	HRETURN_ERROR(DFE_BADDIM, FAIL);
+        HRETURN_ERROR(DFE_BADDIM, FAIL);
 
     for (luf = LABEL; luf <= FORMAT; luf++)
       {
-	  /* set lufp to point to label etc. as apppropriate */
-	  lufp = (luf == LABEL) ? label : (luf == UNIT) ? unit : format;
-	  luflen = HDstrlen(lufp);
+          /* set lufp to point to label etc. as apppropriate */
+          lufp = (luf == LABEL) ? label : (luf == UNIT) ? unit : format;
+          luflen = HDstrlen(lufp);
 
-	  /* allocate space if necessary */
-	  if (!Writesdg.dimluf[luf])
-	    {
-		Writesdg.dimluf[luf] =
-		    (char **) HDgetspace((uint32) Writesdg.rank * sizeof(char *));
-		if (Writesdg.dimluf[luf] == NULL)
-		    return FAIL;
-		for (i = 0; i < Writesdg.rank; i++)	/* set allocated pointers to NULL */
-		    Writesdg.dimluf[luf][i] = NULL;
-	    }
+          /* allocate space if necessary */
+          if (!Writesdg.dimluf[luf])
+            {
+                Writesdg.dimluf[luf] =
+                    (char **) HDgetspace((uint32) Writesdg.rank * sizeof(char *));
+                if (Writesdg.dimluf[luf] == NULL)
+                    return FAIL;
+                for (i = 0; i < Writesdg.rank; i++)     /* set allocated pointers to NULL */
+                    Writesdg.dimluf[luf][i] = NULL;
+            }
 
-	  /* free string space if allocated */
-	  HDfreenclear(Writesdg.dimluf[luf][rdim]);
+          /* free string space if allocated */
+          HDfreenclear(Writesdg.dimluf[luf][rdim]);
 
 /* NOTE: The following code should be changed to write all three, even if
    one or more is an empty string.  Then, when DFSDgetdimstrs is called
@@ -887,13 +887,13 @@ DFSDIsetdimstrs(intn dim, const char *label, const char *unit, const char *forma
    be empty strings.
  */
 
-	  /* copy string */
-	  if (lufp)
-	    {
-		Writesdg.dimluf[luf][rdim] = (char *) HDstrdup((char *) lufp);
-		if (Writesdg.dimluf[luf][rdim] == NULL)
-		    return FAIL;
-	    }
+          /* copy string */
+          if (lufp)
+            {
+                Writesdg.dimluf[luf][rdim] = (char *) HDstrdup((char *) lufp);
+                if (Writesdg.dimluf[luf][rdim] == NULL)
+                    return FAIL;
+            }
       }
     /* Indicate that this info has not been written to file */
     Ref.luf[LABEL] = Ref.luf[UNIT] = Ref.luf[FORMAT] = 0;
@@ -902,7 +902,7 @@ DFSDIsetdimstrs(intn dim, const char *label, const char *unit, const char *forma
 }
 
 /*-----------------------------------------------------------------------------
- NAME  
+ NAME
        DFSDsetdimscale
  USAGE
        int DFSDsetdimscale(dim, dimsize, scale)
@@ -915,7 +915,7 @@ DFSDIsetdimstrs(intn dim, const char *label, const char *unit, const char *forma
        Sets the scale for a dimension. A scale is a 1D array whose value
        describes reference points along one of the dimensions of the
        scientific data set. For example, a 2D scientific data set representing
-       points on a mpa could have two scales, one representing points of 
+       points on a mpa could have two scales, one representing points of
        latitude, and the other points of longitude.
 -----------------------------------------------------------------------------*/
 intn
@@ -930,38 +930,38 @@ DFSDsetdimscale(intn dim, int32 dimsize, VOIDP scale)
     CONSTR(FUNC, "DFSDsetdimscale");
 
     HEclear();
-    rdim = dim - 1;	/* translate from 1 to 0 origin */
+    rdim = dim - 1;     /* translate from 1 to 0 origin */
 
     if (!Writesdg.dimsizes)
-	HRETURN_ERROR(DFE_BADCALL, FAIL);
+        HRETURN_ERROR(DFE_BADCALL, FAIL);
 
     if (Writesdg.numbertype == DFNT_NONE)
       {
-	  if (DFSDsetNT(DFNT_FLOAT32) < 0)
-	      return FAIL;
+          if (DFSDsetNT(DFNT_FLOAT32) < 0)
+              return FAIL;
       }
     numtype = Writesdg.numbertype;
     localNTsize = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
 
-    if ((rdim >= Writesdg.rank) || (rdim < 0)	/* check dimensions */
-	|| (dimsize != Writesdg.dimsizes[rdim]))
+    if ((rdim >= Writesdg.rank) || (rdim < 0)   /* check dimensions */
+        || (dimsize != Writesdg.dimsizes[rdim]))
       {
-	  HRETURN_ERROR(DFE_BADDIM, FAIL);
+          HRETURN_ERROR(DFE_BADDIM, FAIL);
       }
 
     if (!scale)
-      {		/* No scale for this dimension */
-	  if (Writesdg.dimscales)
-	      HDfreenclear(Writesdg.dimscales[rdim]);
-	  Ref.scales = 0;
-	  return SUCCEED;
+      {     /* No scale for this dimension */
+          if (Writesdg.dimscales)
+              HDfreenclear(Writesdg.dimscales[rdim]);
+          Ref.scales = 0;
+          return SUCCEED;
       }
 
     /* get number type and size of this type in this machine  */
     if (Writesdg.numbertype == DFNT_NONE)
       {
-	  if (DFSDsetNT(DFNT_FLOAT32) < 0)
-	      return FAIL;
+          if (DFSDsetNT(DFNT_FLOAT32) < 0)
+              return FAIL;
       }
     numtype = Writesdg.numbertype;
     localNTsize = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
@@ -970,21 +970,21 @@ DFSDsetdimscale(intn dim, int32 dimsize, VOIDP scale)
     /* allocate space for dimscales if necessary */
     if (!Writesdg.dimscales)
       {
-	  Writesdg.dimscales =
-	      (uint8 **) HDgetspace((uint32) Writesdg.rank * sizeof(int8 *));
-	  if (Writesdg.dimscales == NULL)
-	      return FAIL;
-	  for (i = 0; i < Writesdg.rank; i++)	/* set allocated pointers to NULL */
-	      Writesdg.dimscales[i] = NULL;
+          Writesdg.dimscales =
+              (uint8 **) HDgetspace((uint32) Writesdg.rank * sizeof(int8 *));
+          if (Writesdg.dimscales == NULL)
+              return FAIL;
+          for (i = 0; i < Writesdg.rank; i++)   /* set allocated pointers to NULL */
+              Writesdg.dimscales[i] = NULL;
       }
 
     if (!Writesdg.dimscales[rdim])
       {
-	  /* allocate dimension scale space if necessary */
-	  Writesdg.dimscales[rdim] =
-	      (uint8 *) HDgetspace((uint32) bytesize);
-	  if (Writesdg.dimscales[rdim] == NULL)
-	      return FAIL;
+          /* allocate dimension scale space if necessary */
+          Writesdg.dimscales[rdim] =
+              (uint8 *) HDgetspace((uint32) bytesize);
+          if (Writesdg.dimscales[rdim] == NULL)
+              return FAIL;
       }
 
     /* copy scale */
@@ -999,26 +999,26 @@ DFSDsetdimscale(intn dim, int32 dimsize, VOIDP scale)
 }
 
 /*-----------------------------------------------------------------------------
- NAME    
+ NAME
        DFSDsetrange
- USAGE 
+ USAGE
        int DFSDsetrange(max, min)
        VOIDP max;    IN: High value in the scientific data set
        VOIDP min;    IN: Low value in the scientific data set
  RETURNS
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
-       Sets the maximum and minimum values to be stored with the scientific 
-       data set. Since these values are supposed to relate to the data itself, 
+       Sets the maximum and minimum values to be stored with the scientific
+       data set. Since these values are supposed to relate to the data itself,
        it is assumed that they are of the same number type as the data itself.
        One implication of this is that in the C version of "DFSDgetrange"
        the arguments are pointers, rather than simple variables, whereas in
        the FORTRAN version they are simple variables of the same type as the
        data array. This routine does not compute the maximum and minimum values;
-       it merely stores the values it is given. As a result, the 
+       it merely stores the values it is given. As a result, the
        maximum and minimum values may not always reflect the actual maximum
        and minimum vlaues in the data set. When the maximum and minimum
-       values are written to a file, the HDF elemement that hold these value 
+       values are written to a file, the HDF elemement that hold these value
        is cleared, because it is assumed that subsequent data sets will have
        different values for "max" and "min". These values are automatically
        cleared aftera a call to either "DFSDputdata" or "DFSDaddadata".
@@ -1035,11 +1035,11 @@ DFSDsetrange(VOIDP maxi, VOIDP mini)
 
     p1 = &(Writesdg.max_min[0]);
     for (i = 0; i < 16; i++)
-	*p1++ = 0;	/* clear max_min   */
+        *p1++ = 0;  /* clear max_min   */
 
     /* get number type and copy the values to Writesdg   */
     if (Writesdg.numbertype == DFNT_NONE)
-	DFSDsetNT(DFNT_FLOAT32);
+        DFSDsetNT(DFNT_FLOAT32);
 
     numtype = Writesdg.numbertype;
     localNTsize = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
@@ -1055,7 +1055,7 @@ DFSDsetrange(VOIDP maxi, VOIDP mini)
 }
 
 /*-----------------------------------------------------------------------------
- NAME 
+ NAME
        DFSDputdata
  USAGE
        intn DFSDputdata(filename, rank, dimsizes, data)
@@ -1070,7 +1070,7 @@ DFSDsetrange(VOIDP maxi, VOIDP mini)
        If a new filename is used, "DFSDputdata" functions exactly like
        "DFSDadddata".
  WARNING
-       "DFSDputdata" will write data to an existing file by destroying the 
+       "DFSDputdata" will write data to an existing file by destroying the
        contents of the original file. Use with caution.
 -----------------------------------------------------------------------------*/
 
@@ -1095,13 +1095,13 @@ RETURNS
       SUCCEED(0) if successful and FAIL(-1) otherwise.
 
 DESCRIPTION
-      In addition to appending any multidemensional array of data to an HDF 
+      In addition to appending any multidemensional array of data to an HDF
       file, "DFSDaddata" automatically stores any information pertinent to the
       data set. It will not overwrite existing data in the file. The array
-      "data" can be of any valid type. However if no number type has been set 
+      "data" can be of any valid type. However if no number type has been set
       by "DFSDsetNT", it is assumed that the data type is of type "float32".
       The invocation of "DFSDadddata" triggers the writing of the entire
-      scientific data set. That is, when "DFSDadddat" is called, all 
+      scientific data set. That is, when "DFSDadddat" is called, all
       information that has been set by "DFSDset* " calls is written to the
       file, along with the data array itself.
 -----------------------------------------------------------------------------*/
@@ -1113,7 +1113,7 @@ DFSDadddata(const char *filename, intn rank, int32 dimsizes[], VOIDP data)
 }
 
 /*-----------------------------------------------------------------------------
- NAME   
+ NAME
        DFSDrestart
  USAGE
        int DFSDrestart()
@@ -1127,13 +1127,13 @@ intn
 DFSDrestart(void)
 {
     if (Lastfile != NULL)
-	*Lastfile = '\0';	/* set to 0-length string instead of NULLing ptr */
+        *Lastfile = '\0';   /* set to 0-length string instead of NULLing ptr */
     Readref = 0;
     return (SUCCEED);
 }
 
 /*-----------------------------------------------------------------------------
- NAME 
+ NAME
        DFSDndatasets
  USAGE
        int32 DFSDndatasets(filename)
@@ -1143,7 +1143,7 @@ DFSDrestart(void)
  DESCRIPTION
        Returns the number of scientific datasets in the file. In HDFv3.3
        "DFSDndatasets" replaces "DFSDnumber". In order to maintain backward
-       compatibility with existing HDF applications, HDF will continue to 
+       compatibility with existing HDF applications, HDF will continue to
        support "DFSDnumber". However, it is recommended that all new applications
        use "DFSDndatasets" instead of "DFSDnumber".
 -----------------------------------------------------------------------------*/
@@ -1160,25 +1160,25 @@ DFSDndatasets(char *filename)
     /* should use reopen if same file as last time - more efficient */
     file_id = DFSDIopen(filename, DFACC_READ);
     if (file_id == FAIL)
-	HRETURN_ERROR(DFE_BADOPEN, FAIL);
+        HRETURN_ERROR(DFE_BADOPEN, FAIL);
 
     nsdgs = nsdghdr->size;
     if (Hclose(file_id) == FAIL)
-	return FAIL;
+        return FAIL;
 
     return nsdgs;
 }
 
 /*-----------------------------------------------------------------------------
- NAME   
+ NAME
        DFSDclear
  USAGE
        int DFSDclear()
  RETURNS
       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
-      Clears all possible set values. After a call to "DFSDclear", all 
-      values set by an "DFSDset*" calls will not be written unless they 
+      Clears all possible set values. After a call to "DFSDclear", all
+      values set by an "DFSDset*" calls will not be written unless they
       are set again.
 ----------------------------------------------------------------------------*/
 intn
@@ -1187,13 +1187,13 @@ DFSDclear(void)
     lastnsdg.tag = DFTAG_NULL;
     lastnsdg.ref = 0;
     if (DFSDIclearNT(&Writesdg) < 0)
-	return FAIL;
+        return FAIL;
 
     return (DFSDIclear(&Writesdg));
 }
 
 /*-----------------------------------------------------------------------------
- NAME   
+ NAME
        DFSDlastref
  USAGE
        uint16 DFSDlastref()
@@ -1211,7 +1211,7 @@ DFSDlastref(void)
 }
 
 /*-----------------------------------------------------------------------------
- NAME  
+ NAME
        DFSDreadref
  USAGE
        int DFSDreadref(filename, ref)
@@ -1241,12 +1241,12 @@ DFSDreadref(char *filename, uint16 ref)
 
     file_id = DFSDIopen(filename, DFACC_READ);
     if (file_id == DF_NOFILE)
-	return FAIL;
+        return FAIL;
 
     if ((aid = Hstartread(file_id, DFTAG_SDG, ref)) == FAIL
-	&& (aid = Hstartread(file_id, DFTAG_NDG, ref)) == FAIL)
+        && (aid = Hstartread(file_id, DFTAG_NDG, ref)) == FAIL)
       {
-	  HCLOSE_RETURN_ERROR(file_id, DFE_NOMATCH, FAIL);
+          HCLOSE_RETURN_ERROR(file_id, DFE_NOMATCH, FAIL);
       }
 
     Hendaccess(aid);
@@ -1256,11 +1256,11 @@ DFSDreadref(char *filename, uint16 ref)
 }
 
 /*-----------------------------------------------------------------------------
- NAME    
+ NAME
        DFSDgetslice
  USAGE
        intn DFSDgetslice(filename, winst, windims, data, dims)
-       char  *filename;       IN:  name of HDF file 
+       char  *filename;       IN:  name of HDF file
        int32 winst[];         IN:  array containing the coordinates for the start
                                    of the slice
        int32 windims[];       IN:  array containing the dimensions of the slice
@@ -1269,7 +1269,7 @@ DFSDreadref(char *filename, uint16 ref)
  RETURNS
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
-       Gets a part of a scientific data set from a file. "DFSDgetslice" 
+       Gets a part of a scientific data set from a file. "DFSDgetslice"
        accesses the data set last accessed by "DFSDgetdims". If "DFSDgetdims"
        has not been called for the named file, "DFSDgetslice" gets a slice
        from the next data set in the file. The array "winst" specifies the
@@ -1277,8 +1277,8 @@ DFSDreadref(char *filename, uint16 ref)
        size of the slice. The number of elements in both "winst" and "windims"
        must be equal to the rank of the data set. For example, if the file
        contains a 3D data set, "winst" may contain the values {2,4,3}, while
-       "windims" contains the values {3,1,4} and the dims shuld be at least 
-       {3,1,4}, the same size as the slice. This will extract a 3x4, 
+       "windims" contains the values {3,1,4} and the dims shuld be at least
+       {3,1,4}, the same size as the slice. This will extract a 3x4,
        two-dimensional slice, containing the elements between(2,4.3) and
        (4,4,6) from the original data set. The array "data" is the array
        into which the slice is read. It must be at least as big as the desired
@@ -1294,29 +1294,29 @@ DFSDreadref(char *filename, uint16 ref)
 
 intn
 DFSDgetslice(const char *filename, int32 winst[], int32 windims[], VOIDP data,
-	     int32 dims[])
+             int32 dims[])
 {
     return (DFSDIgetslice(filename, winst, windims, data, dims, 0));
 }
 
 /*-----------------------------------------------------------------------------
- NAME    
+ NAME
        DFSDstartslice
  USAGE
        int DFSDstartslice(filename)
        char *filename;   IN: name of HDF file to write to
  RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise. 
+       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
        Prepares the DFSD interface to write a slice to a scientific data set.
-       Before calling "DFSDstartslice", you must call "DFSDsetdims" to 
+       Before calling "DFSDstartslice", you must call "DFSDsetdims" to
        specify the dimensions of the data set to be written to the file.
        "DFSDstartslice" always appends a new data set to an existing file.
        Remember, you must call "DFSDstartslice" before calling "DFSDputslice"
        or "DFSDendslice". "DFSDstarslice" is obsolete in favor of "DFSDstartslab"
-       "DFSDstartslab" is the recommended function to call to use when 
+       "DFSDstartslab" is the recommended function to call to use when
        beginning hyperslab(i.e. data slabs) opertaions. HDFv3.3 will continue
-       to support "DFSDstartslice" only to maintain backward compatibility 
+       to support "DFSDstartslice" only to maintain backward compatibility
        with HDF applications built on earlier version of the library.
 -----------------------------------------------------------------------------*/
 intn
@@ -1328,52 +1328,52 @@ DFSDstartslice(const char *filename)
 
     HEclear();
 
-    if (!Writesdg.rank)		/* dimensions not set */
-	HRETURN_ERROR(DFE_BADDIM, FAIL);
+    if (!Writesdg.rank)     /* dimensions not set */
+        HRETURN_ERROR(DFE_BADDIM, FAIL);
 
     Sfile_id = DFSDIopen(filename, DFACC_WRITE);
     if (Sfile_id == DF_NOFILE)
-	return FAIL;
+        return FAIL;
 
     if (!Writeref)
-	Writeref = Hnewref(Sfile_id);
+        Writeref = Hnewref(Sfile_id);
     if (!Writeref)
-	return FAIL;
+        return FAIL;
 
     Writesdg.data.tag = DFTAG_SD;
     Writesdg.data.ref = Writeref;
 
-    if (Writesdg.numbertype == DFNT_NONE)	/* if NT not set,default to float32 */
-	DFSDsetNT(DFNT_FLOAT32);
+    if (Writesdg.numbertype == DFNT_NONE)   /* if NT not set,default to float32 */
+        DFSDsetNT(DFNT_FLOAT32);
 
     /* set up to write data */
     size = DFKNTsize(Writesdg.numbertype);
     for (i = 0; i < Writesdg.rank; i++)
-	size *= Writesdg.dimsizes[i];
+        size *= Writesdg.dimsizes[i];
 
     Writesdg.aid = Hstartwrite(Sfile_id, DFTAG_SD, Writeref, size);
     if (Writesdg.aid == FAIL)
       {
-	  Hclose(Sfile_id);
-	  return FAIL;
+          Hclose(Sfile_id);
+          return FAIL;
       }
 
     /* allocate array for keeping track of dims written */
     Sddims = (int32 *) HDgetspace((uint32) Writesdg.rank * sizeof(int32));
     if (Sddims == NULL)
       {
-	  Hclose(Sfile_id);
-	  return FAIL;
+          Hclose(Sfile_id);
+          return FAIL;
       }
 
     for (i = 0; i < Writesdg.rank; i++)
-	Sddims[i] = 0;	/* nothing written so far */
+        Sddims[i] = 0;  /* nothing written so far */
 
     return SUCCEED;
 }
 
 /*-----------------------------------------------------------------------------
- NAME  
+ NAME
        DFSDputslice
  USAGE
        int DFSDputslice(winend, data, dims)
@@ -1398,7 +1398,7 @@ DFSDstartslice(const char *filename)
        parameters assume FORTRAN-style 1-based arrays. "DFSDputslice" is
        obsoleted by "DFSDwriteslab". DFSDwriteslab is the recommended function
        call to use when writing hyperslabs(previously known as data slices).
-       HDFv3.3 will continue to support "DFSDputslice" only to maintain 
+       HDFv3.3 will continue to support "DFSDputslice" only to maintain
        backward compatibility with HDF applications built on earlier versions
        of the library.
 -----------------------------------------------------------------------------*/
@@ -1409,7 +1409,7 @@ DFSDputslice(int32 winend[], VOIDP data, int32 dims[])
 }
 
 /*-----------------------------------------------------------------------------
- NAME    
+ NAME
        DFSDendslice
  USAGE
        int DFSDendslice()
@@ -1417,10 +1417,10 @@ DFSDputslice(int32 winend[], VOIDP data, int32 dims[])
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
        Terminates the write operation after storing a slice of data in a
-       scientific data set. "DFSDendslice" must be called after all the 
+       scientific data set. "DFSDendslice" must be called after all the
        slices are written. It checks to insure that the entire data set
        has been written, and returns an error code if not. "DFSDendslice"
-       is obsolete in favor of "DFSDendslab". "DFSDendslab" is the 
+       is obsolete in favor of "DFSDendslab". "DFSDendslab" is the
        recommended function call to use when terminating hyperslab(previously
        known as data slices) operations. HDFv3.3 will continue to support
        "DFSDendslice" only to maintain backward compatability with HDF
@@ -1435,7 +1435,7 @@ DFSDendslice(void)
 }
 
 /*---------------------------------------------------------------------------
- NAME  
+ NAME
        DFSDsetNT
  USAGE
        int DFSDsetNT(numbertype)
@@ -1443,13 +1443,13 @@ DFSDendslice(void)
  RETURNS
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
-       Sets the number type for the data to be written in the next write 
-       operation. "DFSDsetNT" must be called if a number type other than 
-       "float32" is to be stored. "DFSDsetNT" and "DFSDsetdims" can be called 
-       in any order, but they should be called before any other "DFSDset*" 
-       functions and before "DFSDputdata" or "DFSDadddata". Valid values for 
-       "DFSDgetNT" are of the general form "DFNT_<numbertype>". If you include 
-       the headier file "hdf.h" in your program, you can use the following 
+       Sets the number type for the data to be written in the next write
+       operation. "DFSDsetNT" must be called if a number type other than
+       "float32" is to be stored. "DFSDsetNT" and "DFSDsetdims" can be called
+       in any order, but they should be called before any other "DFSDset*"
+       functions and before "DFSDputdata" or "DFSDadddata". Valid values for
+       "DFSDgetNT" are of the general form "DFNT_<numbertype>". If you include
+       the headier file "hdf.h" in your program, you can use the following
        symbolic names for the number types:
             32-bit float          DFNT_FLOAT32    5
             64-bit float          DFNT_FLOAT64    6
@@ -1471,14 +1471,14 @@ DFSDsetNT(int32 numbertype)
     HEclear();
 
     outNT = (int8) (DFKisnativeNT(numbertype) ? DFKgetPNSC(numbertype, DF_MT) :
-		 (DFKislitendNT(numbertype) ? DFNTF_PC : DFNTF_HDFDEFAULT));
+                 (DFKislitendNT(numbertype) ? DFNTF_PC : DFNTF_HDFDEFAULT));
     if ((numbertype == Writesdg.numbertype)
-	&& (outNT == Writesdg.filenumsubclass))
-	return SUCCEED;
+        && (outNT == Writesdg.filenumsubclass))
+        return SUCCEED;
 
     /* Forget previous numbertype  */
     if (DFSDIclearNT((DFSsdg *) & Writesdg) < 0)
-	return FAIL;
+        return FAIL;
     Writesdg.numbertype = numbertype;
     Writesdg.filenumsubclass = outNT;
     Ref.nt = 0;
@@ -1516,33 +1516,33 @@ DFSDIclearNT(DFSsdg * sdg)
     /* sdg->dimscales will be freed only when rank is changed        */
     if (sdg->dimscales)
       {
-	  for (i = 0; i < sdg->rank; i++)
-	      HDfreenclear(sdg->dimscales[i]);
+          for (i = 0; i < sdg->rank; i++)
+              HDfreenclear(sdg->dimscales[i]);
       }
 
     Ref.nt = -1;
-    Ref.maxmin = -1;	/* maxmin and scales should be changed to */
-    Ref.scales = -1;	/* new number type              */
+    Ref.maxmin = -1;    /* maxmin and scales should be changed to */
+    Ref.scales = -1;    /* new number type              */
     Ref.new_ndg = -1;
 
     return SUCCEED;
 }
 
 /*---------------------------------------------------------------------------
- NAME  
+ NAME
        DFSDgetNT
  USAGE
        int DFSDgetNT(numbertype)
-       int32 *numbertype;    OUT: Number type of the data in the scientific 
+       int32 *numbertype;    OUT: Number type of the data in the scientific
                                   data set.
  RETURNS
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
-       Gets the number type of the current scientific data set. This 
+       Gets the number type of the current scientific data set. This
        information is then used by calls such as "DFSDgetdata" and
-       "DFSDgetslice". Since "DFSDgetNT" gets the number type of the 
-       current data set, "DFSDgetdims" must be called before calling 
-       "DFSDgetNT". Valid values for "DFSDgetNT" are of the general form 
+       "DFSDgetslice". Since "DFSDgetNT" gets the number type of the
+       current data set, "DFSDgetdims" must be called before calling
+       "DFSDgetNT". Valid values for "DFSDgetNT" are of the general form
        "DFNT_<numbertype>". The following are valid symbolic names and
        their number types:
 
@@ -1565,7 +1565,7 @@ DFSDgetNT(int32 *pnumbertype)
 
     *(pnumbertype) = Readsdg.numbertype;
     if (*(pnumbertype) == DFNT_NONE)
-	HRETURN_ERROR(DFE_BADNUMTYPE, FAIL);
+        HRETURN_ERROR(DFE_BADNUMTYPE, FAIL);
 
     return SUCCEED;
 }
@@ -1573,9 +1573,9 @@ DFSDgetNT(int32 *pnumbertype)
 /*---------------------------------------------------------------------------
  NAME
        DFSDpre32sdg
- USAGE 
+ USAGE
        int DFSDpre32sdg(filename, ref, ispre32)
-       char   *filename;      IN:  The name of the HDF file containing the 
+       char   *filename;      IN:  The name of the HDF file containing the
                                    scientific data set
        uint16 ref;            IN:  Reference number of scientific data set
        int    ispre32;        OUT: Pointer to the results of the inquiry
@@ -1583,7 +1583,7 @@ DFSDgetNT(int32 *pnumbertype)
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
        Tests if the scientific data set with the specified reference number
-       was created by a HDF library that precedes HDF3.2. This routine is 
+       was created by a HDF library that precedes HDF3.2. This routine is
        for programmers who need to know whether a scientific data set was
        written by a version of the HDF library earlier than HDF3.2. If the
        scientific data set was created with a version of HDF prior to v3.2,
@@ -1602,42 +1602,42 @@ DFSDpre32sdg(char *filename, uint16 ref, intn *ispre32)
 
     file_id = DFSDIopen(filename, DFACC_READ);
     if (file_id == FAIL)
-	return FAIL;
+        return FAIL;
     ptr = nsdghdr->nsdg_t;
     num = nsdghdr->size;
 
     while ((num > 0) && (ptr != NULL) && !found)
       {
-	  if ((ptr->nsdg.tag == DFTAG_SDG)
-	      && (ptr->nsdg.ref == ref))
-	    {	/* pure SDG  */
-		found = 1;
-		*ispre32 = TRUE;
-	    }
-	  else if ((ptr->sdg.tag == DFTAG_SDG)
-		   && (ptr->sdg.ref == ref))
-	    {	/* NDGSDG   */
-		found = 1;
-		*ispre32 = FALSE;
-	    }
-	  else
-	    {
-		ptr = ptr->next;
-		num--;
-	    }
-      }		/* while  */
+          if ((ptr->nsdg.tag == DFTAG_SDG)
+              && (ptr->nsdg.ref == ref))
+            {   /* pure SDG  */
+                found = 1;
+                *ispre32 = TRUE;
+            }
+          else if ((ptr->sdg.tag == DFTAG_SDG)
+                   && (ptr->sdg.ref == ref))
+            {   /* NDGSDG   */
+                found = 1;
+                *ispre32 = FALSE;
+            }
+          else
+            {
+                ptr = ptr->next;
+                num--;
+            }
+      }     /* while  */
 
     if (((num == 0) && (ptr != NULL)) || ((num != 0) && (ptr == NULL))
-	|| !found)
+        || !found)
       {
-	  HCLOSE_RETURN_ERROR(file_id, DFE_BADTABLE, FAIL);
+          HCLOSE_RETURN_ERROR(file_id, DFE_BADTABLE, FAIL);
       }
 
     if (Hclose(file_id) < 0)
-	return FAIL;
+        return FAIL;
 
     return SUCCEED;
-}	/* end of DFSDpre32sdg   */
+}   /* end of DFSDpre32sdg   */
 
 /******************************************************************************/
 /*--------------------- Lower level routines --------------------------------*/
@@ -1651,7 +1651,7 @@ DFSDpre32sdg(char *filename, uint16 ref, intn *ispre32)
             fields: the 1st field is NDG or SDG, the 2nd
             field has value only when it is a special
             NDG, i.e. the data set is float32 and not
-     	    compressed.
+            compressed.
  * Inputs:  file_id: pointer to HDF file containing SDG
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   DFSDIopen for READ
@@ -1660,9 +1660,9 @@ intn
 DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
 {
     uint32      sz_DFnsdgle = (uint32) sizeof(struct DFnsdgle);
-    int32       aid;		/* access id */
-    int32       ndgs;		/* number of ndg's */
-    int32       sdgs;		/* number of sdg's */
+    int32       aid;            /* access id */
+    int32       ndgs;           /* number of ndg's */
+    int32       sdgs;           /* number of sdg's */
     int32       GroupID;
     uint16      intag;
     uint16      inref;
@@ -1681,14 +1681,14 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
     CONSTR(FUNC, "DFSDsetnsdg_t");
 
     if (!HDvalidfid(file_id))
-	HRETURN_ERROR(DFE_BADCALL, FAIL);
+        HRETURN_ERROR(DFE_BADCALL, FAIL);
 
     /* Check if temproray buffer has been allocated */
     if (ptbuf == NULL)
       {
-	  ptbuf = (uint8 *) HDgetspace(TBUF_SZ * sizeof(uint8));
-	  if (ptbuf == NULL)
-	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          ptbuf = (uint8 *) HDgetspace(TBUF_SZ * sizeof(uint8));
+          if (ptbuf == NULL)
+              HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
 
 /* MMM:  Talk to Shiming and make sure the change made to the way ndgs
@@ -1697,163 +1697,163 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
     ndgs = Hnumber(file_id, DFTAG_NDG);
     sdgs = Hnumber(file_id, DFTAG_SDG);
     if ((ndgs == FAIL) || (sdgs == FAIL))
-	return FAIL;
+        return FAIL;
 
     if ((ndgs + sdgs) == 0)
-      {		/* no sdgs or ndgs in file */
-	  l_nsdghdr->size = 0;
-	  l_nsdghdr->nsdg_t = NULL;
-	  return SUCCEED;
+      {     /* no sdgs or ndgs in file */
+          l_nsdghdr->size = 0;
+          l_nsdghdr->nsdg_t = NULL;
+          return SUCCEED;
       }
     if ((ntb = (DFnsdgle *) HDgetspace(sz_DFnsdgle)) == NULL)
-	HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     /* the first node in each table is a dummy node  */
-    ntb->nsdg.tag = DFTAG_NULL;		/* set up and init an ndg table  */
+    ntb->nsdg.tag = DFTAG_NULL;     /* set up and init an ndg table  */
     ntb->nsdg.ref = 0;
     ntb->sdg.tag = DFTAG_NULL;
     ntb->sdg.ref = 0;
     ntb->next = NULL;
 
     if ((stb = (DFnsdgle *) HDgetspace(sz_DFnsdgle)) == NULL)
-	HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    stb->nsdg.tag = DFTAG_NULL;		/* set up and init an sdg table  */
+    stb->nsdg.tag = DFTAG_NULL;     /* set up and init an sdg table  */
     stb->nsdg.ref = 0;
-    stb->sdg.tag = DFTAG_NULL;	/* this field should be named as */
-    stb->sdg.ref = 0;	/* stb->ndg.tag, the ndg to which this */
-    stb->next = NULL;	/* sdg belongs.                 */
+    stb->sdg.tag = DFTAG_NULL;  /* this field should be named as */
+    stb->sdg.ref = 0;   /* stb->ndg.tag, the ndg to which this */
+    stb->next = NULL;   /* sdg belongs.                 */
 
     aid = Hstartread(file_id, DFTAG_WILDCARD, DFREF_WILDCARD);
     moretags = (aid != FAIL);
     while (moretags)
-      {		/* read dd's and put each dd in ntb or stb */
-	  HQuerytagref(aid, &intag, &inref);
-	  /* put NDG or SDG on ntb or stb */
-	  if (intag == DFTAG_NDG)
-	    {
-		nr = ntb;
-		nf = ntb;
-		while ((inref > nf->nsdg.ref) && (nf->next != NULL))
-		  {
-		      nr = nf;
-		      nf = nf->next;
-		  }
-		/* MMM:  Tlk to Shiming and make sure the way this part was rearranged is ok.
-		 */
+      {     /* read dd's and put each dd in ntb or stb */
+          HQuerytagref(aid, &intag, &inref);
+          /* put NDG or SDG on ntb or stb */
+          if (intag == DFTAG_NDG)
+            {
+                nr = ntb;
+                nf = ntb;
+                while ((inref > nf->nsdg.ref) && (nf->next != NULL))
+                  {
+                      nr = nf;
+                      nf = nf->next;
+                  }
+                /* MMM:  Tlk to Shiming and make sure the way this part was rearranged is ok.
+                 */
 
-		/* check for duplicate nsdg */
-		if (inref == nf->nsdg.ref)
-		    HRETURN_ERROR(DFE_BADNDG, FAIL);
+                /* check for duplicate nsdg */
+                if (inref == nf->nsdg.ref)
+                    HRETURN_ERROR(DFE_BADNDG, FAIL);
 
-		/* add a node to the table */
-		if ((new = (DFnsdgle *) HDgetspace(sz_DFnsdgle)) == NULL)
-		    HRETURN_ERROR(DFE_NOSPACE, FAIL);
+                /* add a node to the table */
+                if ((new = (DFnsdgle *) HDgetspace(sz_DFnsdgle)) == NULL)
+                    HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-		new->nsdg.tag = DFTAG_NDG;
-		new->nsdg.ref = inref;
-		new->sdg.tag = DFTAG_NULL;
-		new->sdg.ref = 0;
+                new->nsdg.tag = DFTAG_NDG;
+                new->nsdg.ref = inref;
+                new->sdg.tag = DFTAG_NULL;
+                new->sdg.ref = 0;
 
-		if (inref < nf->nsdg.ref)
-		  {	/* does it go before current node? */
-		      new->next = nf;
-		      nr->next = new;
-		  }
-		else
-		  {	/* or at the end? */
-		      new->next = nf->next;
-		      nf->next = new;
-		  }
+                if (inref < nf->nsdg.ref)
+                  {     /* does it go before current node? */
+                      new->next = nf;
+                      nr->next = new;
+                  }
+                else
+                  {     /* or at the end? */
+                      new->next = nf->next;
+                      nf->next = new;
+                  }
 
-		/* Does this NDG have an SDG?       */
-		if ((GroupID = DFdiread(file_id, DFTAG_NDG, inref)) < 0)
-		    return FAIL;
+                /* Does this NDG have an SDG?       */
+                if ((GroupID = DFdiread(file_id, DFTAG_NDG, inref)) < 0)
+                    return FAIL;
 
-		found = FALSE;
-		di.tag = DFTAG_NULL;
-		di.ref = 0;
-		while ((found == 0)
-		       && (DFdiget(GroupID, &di.tag, &di.ref) == 0))
-		  {
-		      if (di.tag == DFTAG_SDLNK)
-			  found = TRUE;
-		  }
+                found = FALSE;
+                di.tag = DFTAG_NULL;
+                di.ref = 0;
+                while ((found == 0)
+                       && (DFdiget(GroupID, &di.tag, &di.ref) == 0))
+                  {
+                      if (di.tag == DFTAG_SDLNK)
+                          found = TRUE;
+                  }
 
-		if (found)
-		  {	/* read in the tag/refs in the link element */
-		      if (Hgetelement(file_id, di.tag, di.ref, ptbuf) == (int32) FAIL)
-			  return FAIL;
-		      bufp = ptbuf;
-		      UINT16DECODE(bufp, lnkdd[0].tag);
-		      UINT16DECODE(bufp, lnkdd[0].ref);
-		      UINT16DECODE(bufp, lnkdd[1].tag);
-		      UINT16DECODE(bufp, lnkdd[1].ref);
-		      new->sdg.tag = lnkdd[1].tag;
-		      new->sdg.ref = lnkdd[1].ref;
-		  }
-	    }	/* end of NDG    */
+                if (found)
+                  {     /* read in the tag/refs in the link element */
+                      if (Hgetelement(file_id, di.tag, di.ref, ptbuf) == (int32) FAIL)
+                          return FAIL;
+                      bufp = ptbuf;
+                      UINT16DECODE(bufp, lnkdd[0].tag);
+                      UINT16DECODE(bufp, lnkdd[0].ref);
+                      UINT16DECODE(bufp, lnkdd[1].tag);
+                      UINT16DECODE(bufp, lnkdd[1].ref);
+                      new->sdg.tag = lnkdd[1].tag;
+                      new->sdg.ref = lnkdd[1].ref;
+                  }
+            }   /* end of NDG    */
 
-	  if (intag == DFTAG_SDG)
-	    {
-		sr = stb;
-		sf = stb;
-		while ((inref > sf->nsdg.ref) && (sf->next != NULL))
-		  {
-		      sr = sf;
-		      sf = sf->next;
-		  }
-		if (inref == sf->nsdg.ref)
-		    HRETURN_ERROR(DFE_BADNDG, FAIL);
+          if (intag == DFTAG_SDG)
+            {
+                sr = stb;
+                sf = stb;
+                while ((inref > sf->nsdg.ref) && (sf->next != NULL))
+                  {
+                      sr = sf;
+                      sf = sf->next;
+                  }
+                if (inref == sf->nsdg.ref)
+                    HRETURN_ERROR(DFE_BADNDG, FAIL);
 
-		/* insert a new node */
-		if ((new = (DFnsdgle *) HDgetspace(sz_DFnsdgle)) == NULL)
-		    HRETURN_ERROR(DFE_NOSPACE, FAIL);
+                /* insert a new node */
+                if ((new = (DFnsdgle *) HDgetspace(sz_DFnsdgle)) == NULL)
+                    HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-		new->nsdg.tag = DFTAG_SDG;
-		new->nsdg.ref = inref;
-		new->sdg.tag = DFTAG_NULL;
-		new->sdg.ref = 0;
+                new->nsdg.tag = DFTAG_SDG;
+                new->nsdg.ref = inref;
+                new->sdg.tag = DFTAG_NULL;
+                new->sdg.ref = 0;
 
-		if (inref < sf->nsdg.ref)
-		  {	/* does it go before current node? */
-		      new->next = sf;
-		      sr->next = new;
-		  }
-		else
-		  {	/* or at the end? */
-		      new->next = sf->next;
-		      sf->next = new;
-		  }
-		/* Does it belong to  an NDG?    */
-		if ((GroupID = DFdiread(file_id, DFTAG_SDG, inref)) < 0)
-		    return FAIL;
-		found = FALSE;
-		di.tag = DFTAG_NULL;
-		di.ref = 0;
-		while ((found == 0) && (DFdiget(GroupID, &di.tag, &di.ref) == 0))
-		  {
-		      if (di.tag == DFTAG_SDLNK)
-			  found = TRUE;
-		  }
-		if (found)
-		  {	/* read in the tag/refs in the link element */
-		      if (Hgetelement(file_id, di.tag, di.ref, ptbuf) == (int32) FAIL)
-			  return FAIL;
-		      bufp = ptbuf;
-		      UINT16DECODE(bufp, lnkdd[0].tag);
-		      UINT16DECODE(bufp, lnkdd[0].ref);
-		      UINT16DECODE(bufp, lnkdd[1].tag);
-		      UINT16DECODE(bufp, lnkdd[1].ref);
-		      new->sdg.tag = lnkdd[0].tag;
-		      new->sdg.ref = lnkdd[0].ref;
-		  }
-	    }	/* end of SDG    */
+                if (inref < sf->nsdg.ref)
+                  {     /* does it go before current node? */
+                      new->next = sf;
+                      sr->next = new;
+                  }
+                else
+                  {     /* or at the end? */
+                      new->next = sf->next;
+                      sf->next = new;
+                  }
+                /* Does it belong to  an NDG?    */
+                if ((GroupID = DFdiread(file_id, DFTAG_SDG, inref)) < 0)
+                    return FAIL;
+                found = FALSE;
+                di.tag = DFTAG_NULL;
+                di.ref = 0;
+                while ((found == 0) && (DFdiget(GroupID, &di.tag, &di.ref) == 0))
+                  {
+                      if (di.tag == DFTAG_SDLNK)
+                          found = TRUE;
+                  }
+                if (found)
+                  {     /* read in the tag/refs in the link element */
+                      if (Hgetelement(file_id, di.tag, di.ref, ptbuf) == (int32) FAIL)
+                          return FAIL;
+                      bufp = ptbuf;
+                      UINT16DECODE(bufp, lnkdd[0].tag);
+                      UINT16DECODE(bufp, lnkdd[0].ref);
+                      UINT16DECODE(bufp, lnkdd[1].tag);
+                      UINT16DECODE(bufp, lnkdd[1].ref);
+                      new->sdg.tag = lnkdd[0].tag;
+                      new->sdg.ref = lnkdd[0].ref;
+                  }
+            }   /* end of SDG    */
 
-	  /*   get next dd   */
-	  moretags = (SUCCEED ==
-		Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT));
-      }		/* gone through the dd blocks   */
+          /*   get next dd   */
+          moretags = (SUCCEED ==
+                Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT));
+      }     /* gone through the dd blocks   */
     Hendaccess(aid);
 
     /* merge stb and ntb        */
@@ -1861,47 +1861,47 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
     nf = ntb->next;
     while (nf != NULL)
       {
-	  inref = nf->sdg.ref;
-	  if (inref != 0)
-	    {	/* it has an SDG   */
-		sr = stb;
-		sf = stb;
-		while ((sf->nsdg.ref < inref) && (sf->next != NULL))
-		  {
-		      sr = sf;
-		      sf = sf->next;
-		  }
-		if (sf->nsdg.ref == inref)
-		  {
-		      if (sf->sdg.ref != nf->nsdg.ref)
-			{
-			    HRETURN_ERROR(DFE_BADNDG, FAIL);
-			}
-		      else
-			{
-			    sr->next = sf->next;
-			    HDfreenclear(sf);
-			    sdgs--;
-			}
-		  }
-	    }
-	  nf = nf->next;
+          inref = nf->sdg.ref;
+          if (inref != 0)
+            {   /* it has an SDG   */
+                sr = stb;
+                sf = stb;
+                while ((sf->nsdg.ref < inref) && (sf->next != NULL))
+                  {
+                      sr = sf;
+                      sf = sf->next;
+                  }
+                if (sf->nsdg.ref == inref)
+                  {
+                      if (sf->sdg.ref != nf->nsdg.ref)
+                        {
+                            HRETURN_ERROR(DFE_BADNDG, FAIL);
+                        }
+                      else
+                        {
+                            sr->next = sf->next;
+                            HDfreenclear(sf);
+                            sdgs--;
+                        }
+                  }
+            }
+          nf = nf->next;
       }
 
     /* check all SDGNDGs were removed   */
     sf = stb->next;
     while (sf != NULL)
       {
-	  if (sf->sdg.ref != 0)
-	      HRETURN_ERROR(DFE_BADSDG, FAIL);
-	  sf = sf->next;
+          if (sf->sdg.ref != 0)
+              HRETURN_ERROR(DFE_BADSDG, FAIL);
+          sf = sf->next;
       }
 
     /* merge the two tables into one */
-    nf = ntb;	/* looking for the end of ntb   */
+    nf = ntb;   /* looking for the end of ntb   */
     while (nf->next != NULL)
-	nf = nf->next;
-    nf->next = stb->next;	/* the first node in stb is a dummy */
+        nf = nf->next;
+    nf->next = stb->next;   /* the first node in stb is a dummy */
     l_nsdghdr->size = ndgs + sdgs;
     l_nsdghdr->nsdg_t = ntb->next;
 
@@ -1910,13 +1910,13 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
     HDfreespace((VOIDP) ntb);
 
     return SUCCEED;
-}	/* end of DFSDsdtnsdg_t   */
+}   /* end of DFSDsdtnsdg_t   */
 
 /*-----------------------------------------------------------------------
-* Name	DFSDInextnsdg
+* Name  DFSDInextnsdg
 * Purpose: Returns next ndg or sdg in the file
-* Inputs:  nsdghdr: point to the nsdg table 
-*	   nsdg: the structure holds the di of next sdg or ndg
+* Inputs:  nsdghdr: point to the nsdg table
+*      nsdg: the structure holds the di of next sdg or ndg
 * Returns: 0 on succeeds, FAIL on failure
 * -------------------------------------------------------------------*/
 intn
@@ -1933,45 +1933,45 @@ DFSDInextnsdg(DFnsdg_t_hdr * l_nsdghdr, DFdi * nsdg)
     num = l_nsdghdr->size;
 
     if ((ptr == NULL) || (num == 0))
-	return SUCCEED;
+        return SUCCEED;
 
     if ((lastnsdg.tag == DFTAG_NULL) && (lastnsdg.ref == 0))
       {
-	  found = TRUE;
+          found = TRUE;
       }
     else
       {
-	  while ((num > 0) && (ptr != NULL) && !found)
-	    {
-		if ((ptr->nsdg.tag == lastnsdg.tag)
-		    && (ptr->nsdg.ref == lastnsdg.ref))
-		  {
-		      if ((ptr = ptr->next) != NULL)
-			  found = TRUE;
-		  }
-		else
-		  {
-		      ptr = ptr->next;
-		      num--;
-		  }
-	    }	/* while  */
+          while ((num > 0) && (ptr != NULL) && !found)
+            {
+                if ((ptr->nsdg.tag == lastnsdg.tag)
+                    && (ptr->nsdg.ref == lastnsdg.ref))
+                  {
+                      if ((ptr = ptr->next) != NULL)
+                          found = TRUE;
+                  }
+                else
+                  {
+                      ptr = ptr->next;
+                      num--;
+                  }
+            }   /* while  */
 
-	  if (((num == 0) && (ptr != NULL))
-	      || ((num != 0) && (ptr == NULL))
-	      || !found)
-	    {
-		HRETURN_ERROR(DFE_BADTABLE, FAIL);
-	    }
-      }		/* else   */
+          if (((num == 0) && (ptr != NULL))
+              || ((num != 0) && (ptr == NULL))
+              || !found)
+            {
+                HRETURN_ERROR(DFE_BADTABLE, FAIL);
+            }
+      }     /* else   */
 
     if (found)
       {
-	  nsdg->tag = ptr->nsdg.tag;
-	  nsdg->ref = ptr->nsdg.ref;
+          nsdg->tag = ptr->nsdg.tag;
+          nsdg->ref = ptr->nsdg.ref;
       }
 
     return SUCCEED;
-}	/* end of DFSDInextnsdg   */
+}   /* end of DFSDInextnsdg   */
 
 /*-----------------------------------------------------------------------------
  * Name:    DFSDIgetndg
@@ -1982,10 +1982,10 @@ DFSDInextnsdg(DFnsdg_t_hdr * l_nsdghdr, DFdi * nsdg)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF programmers, DFSDIsdginfo
  * Invokes: DFgetelement, DFdiread, DFdiget, DFaccess, DFread
-	    DFSDgetsdg
+        DFSDgetsdg
  * Method:  Reads in NDG using DFdiread.  Gets each tag/ref using DFdiget.
  *          Reads in dimensions using DFgetelement.
- * 	    Call DFSDgetsdg to read in the rest info.
+ *      Call DFSDgetsdg to read in the rest info.
  *          Mallocs space for these, freeing
  *          previously allocated space.
  * Remarks: This accepts non-float32 data
@@ -1999,43 +1999,43 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
     DFdi        elmt;
     DFdi        nt;
     int32       length;
-    int32       numtype = 0;	/* current number type */
-    int32       fileNTsize = 0;	/* size of this NT as it is in the file */
-    int32       localNTsize = 0;	/* size of this NT as it is in this machine */
+    int32       numtype = 0;    /* current number type */
+    int32       fileNTsize = 0; /* size of this NT as it is in the file */
+    int32       localNTsize = 0;    /* size of this NT as it is in this machine */
     int32       ret;
     int32       aid;
     int32       GroupID;
-    int8        fileNT = 0;	/* file number subclass */
-    int8        platnumsubclass = 0;	/* platform number subclass */
+    int8        fileNT = 0;     /* file number subclass */
+    int8        platnumsubclass = 0;    /* platform number subclass */
     uint8       ntstring[4];
     uint8      *isscales;
     uint8      *buf;
-    uint8      *p;		/* temporary pointer for moving things to buffer */
+    uint8      *p;              /* temporary pointer for moving things to buffer */
     CONSTR(FUNC, "DFSDIgetndg");
 
     HEclear();
 
     if (!HDvalidfid(file_id))
-	HRETURN_ERROR(DFE_BADCALL, FAIL);
+        HRETURN_ERROR(DFE_BADCALL, FAIL);
 
     if (!ref)
-	HRETURN_ERROR(DFE_BADREF, FAIL);
+        HRETURN_ERROR(DFE_BADREF, FAIL);
 
     /* Check if temproray buffer has been allocated */
     if (ptbuf == NULL)
       {
-	  ptbuf = (uint8 *) HDgetspace(TBUF_SZ * sizeof(uint8));
-	  if (ptbuf == NULL)
-	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          ptbuf = (uint8 *) HDgetspace(TBUF_SZ * sizeof(uint8));
+          if (ptbuf == NULL)
+              HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
 
     /* read NDG into memory */
     if ((GroupID = DFdiread(file_id, tag, ref)) < 0)
-	return FAIL;
+        return FAIL;
 
     DFSDIclear(sdg);
     if (tag == DFTAG_NDG)
-	DFSDIclearNT(sdg);
+        DFSDIclearNT(sdg);
     Ismaxmin = 0;
     IsCal = FALSE;
 
@@ -2044,488 +2044,488 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
      */
     while (!DFdiget(GroupID, &elmt.tag, &elmt.ref))
       {
-	  luf = -1;	/* flag value for label/unit/ */
-	  /* format gets process tag/ref */
-	  switch (elmt.tag)
-	    {
-
-		case DFTAG_SD:		/* data tag/ref */
-		    sdg->data.tag = elmt.tag;	/* put tag/ref in struct */
-		    sdg->data.ref = elmt.ref;
-		    break;
-
-		case DFTAG_SDD:	/* dimension */
-		    aid = Hstartread(file_id, elmt.tag, elmt.ref);
-		    if (aid == FAIL)
-			return FAIL;
-
-		    /* read rank */
-		    if (Hread(aid, (int32) 2, ptbuf) == FAIL)
-		      {
-			  Hendaccess(aid);
-			  return FAIL;
-		      }
-		    p = ptbuf;
-		    INT16DECODE(p, sdg->rank);
-
-		    /* get space for dimensions */
-		    sdg->dimsizes = (int32 *) HDgetspace((uint32) sdg->rank *
-							 sizeof(int32));
-		    if (sdg->dimsizes == NULL)
-		      {
-			  Hendaccess(aid);
-			  return FAIL;
-		      }
-
-		    /* read dimension record */
-		    if (Hread(aid, (int32) 4 * sdg->rank, ptbuf) == FAIL)
-		      {
-			  Hendaccess(aid);
-			  return FAIL;
-		      }
-		    p = ptbuf;
-		    for (i = 0; i < sdg->rank; i++)
-			INT32DECODE(p, sdg->dimsizes[i]);
-
-		    /* read tag/ref of NT */
-		    if (Hread(aid, (int32) 4, ptbuf) == FAIL)
-		      {
-			  Hendaccess(aid);
-			  return FAIL;
-		      }
-		    p = ptbuf;
-		    UINT16DECODE(p, nt.tag);
-		    UINT16DECODE(p, nt.ref);
-
-		    /* read actual NT */
-		    if (Hgetelement(file_id, nt.tag, nt.ref, ntstring) == FAIL)
-		      {
-			  Hendaccess(aid);
-			  return FAIL;
-		      }
-
-		    /* check for any valid NT */
-		    if (ntstring[1] == DFNT_NONE)
-		      {
-			  Hendaccess(aid);
-			  HRETURN_ERROR(DFE_BADCALL, FAIL);
-		      }
-
-		    /* if looking for an SDG type must be FLOAT32 */
-		    if (tag == DFTAG_SDG && ntstring[1] != DFNT_FLOAT32)
-		      {
-			  Hendaccess(aid);
-			  HRETURN_ERROR(DFE_BADCALL, FAIL);
-		      }
-
-		    /* set NT info */
-		    numtype = ntstring[1];
-		    fileNT = ntstring[3];
-		    platnumsubclass = DFKgetPNSC(numtype, DF_MT);
-		    if ((fileNT != DFNTF_HDFDEFAULT)
-			&& (fileNT != DFNTF_PC)
-			&& (fileNT != platnumsubclass))
-		      {
-			  Hendaccess(aid);
-			  HRETURN_ERROR(DFE_BADCALL, FAIL);
-		      }
-		    if (fileNT != DFNTF_HDFDEFAULT)
-		      {		/* if native or little endian */
-			  if (fileNT != DFNTF_PC)	/* native */
-			      numtype |= DFNT_NATIVE;
-			  else	/* little endian */
-			      numtype |= DFNT_LITEND;
-		      }		/* end if */
-
-		    sdg->filenumsubclass = ntstring[3];
-		    sdg->numbertype = numtype;
-
-		    /* set size of NT    */
-		    fileNTsize = DFKNTsize(numtype);
-		    localNTsize = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
-
-		    /* read and check all scale NTs */
-		    for (i = 0; i < sdg->rank; i++)
-		      {
-			  if (Hread(aid, (int32) 4, ptbuf) == FAIL)
-			    {
-				Hendaccess(aid);
-				return FAIL;
-			    }
-			  p = ptbuf;
-			  UINT16DECODE(p, nt.tag);
-			  UINT16DECODE(p, nt.ref);
-
-			  /* read NT itself */
-			  if (Hgetelement(file_id, nt.tag, nt.ref, ntstring) == FAIL)
-			    {
-				Hendaccess(aid);
-				return FAIL;
-			    }
-
-			  /* check for any valid NT */
-			  if (ntstring[1] == DFNT_NONE)
-			    {
-				Hendaccess(aid);
-				HRETURN_ERROR(DFE_BADCALL, FAIL);
-			    }
-
-			  /* if looking for an SDG type must be FLOAT32 */
-			  if (tag == DFTAG_SDG && ntstring[1] != DFNT_FLOAT32)
-			    {
-				Hendaccess(aid);
-				HRETURN_ERROR(DFE_BADCALL, FAIL);
-			    }
-
-		      }		/* end for loop */
-		    Hendaccess(aid);
-		    break;
-
-		case DFTAG_SDLNK:	/* SDG NDG link */
-		    break;	/* do nothing in 3.2  */
-
-		case DFTAG_SDL:	/* labels */
-		    if (luf == (-1))
-			luf = LABEL;
-
-		case DFTAG_SDU:	/* units */
-		    if (luf == (-1))
-			luf = UNIT;
-
-		case DFTAG_SDF:	/* formats */
-		    if (luf == (-1))
-			luf = FORMAT;
-
-		    if (!sdg->dimsizes)
-			HRETURN_ERROR(DFE_CORRUPT, FAIL);
-
-		    /* get needed size of buffer, allocate */
-		    length = Hlength(file_id, elmt.tag, elmt.ref);
-		    if (length == FAIL)
-			return FAIL;
-		    buf = (uint8 *) HDgetspace((uint32) length);
-		    if (buf == NULL)
-			return FAIL;
-
-		    /* read in luf */
-		    if (Hgetelement(file_id, elmt.tag, elmt.ref, buf) == FAIL)
-		      {
-			  HDfreespace((VOIDP) buf);
-			  return FAIL;
-		      }
-		    p = buf;
-
-		    /* allocate data luf space */
-		    sdg->dataluf[luf] = (char *) HDgetspace((uint32) HDstrlen((char *) p) + 1);
-
-		    if (sdg->dataluf[luf] == NULL)
-		      {
-			  HDfreespace((VOIDP) buf);
-			  return FAIL;
-		      }
-
-		    /* extract data luf */
-		    HDstrcpy(sdg->dataluf[luf], (char *) p);
-		    p += HDstrlen(sdg->dataluf[luf]) + 1;
-
-		    /* get space for dimluf array */
-		    sdg->dimluf[luf] =
-			(char **) HDgetspace((uint32) sdg->rank * sizeof(char *));
-		    if (sdg->dimluf[luf] == NULL)
-		      {
-			  HDfreespace((VOIDP) buf);
-			  return FAIL;
-		      }
-
-		    /* extract dimension lufs */
-		    for (i = 0; i < sdg->rank; i++)
-		      {
-			  sdg->dimluf[luf][i] = (char *)
-			      HDgetspace((uint32) HDstrlen((char *) p) + 1);
-			  if (sdg->dimluf[luf][i] == NULL)
-			    {
-				HDfreespace((VOIDP) buf);
-				return FAIL;
-			    }
-			  HDstrcpy(sdg->dimluf[luf][i], (char *) p);
-			  p += HDstrlen(sdg->dimluf[luf][i]) + 1;
-		      }
-		    HDfreespace((VOIDP) buf);
-		    break;
-
-		case DFTAG_SDS:	/* scales */
-		    if (!sdg->dimsizes)
-			HRETURN_ERROR(DFE_CORRUPT, FAIL);
-
-		    /* set up to read scale */
-		    aid = Hstartread(file_id, elmt.tag, elmt.ref);
-		    if (aid == FAIL)
-			return FAIL;
-
-		    /* read isscales */
-		    isscales = (uint8 *) HDgetspace((uint32) sdg->rank);
-		    if (isscales == NULL)
-		      {
-			  Hendaccess(aid);
-			  return FAIL;
-		      }
-		    if (Hread(aid, (int32) sdg->rank, isscales) == FAIL)
-		      {
-			  Hendaccess(aid);
-			  return FAIL;
-		      }
-
-		    /* allocate scale pointers */
-		    sdg->dimscales =
-			(uint8 **) HDgetspace((uint32) sdg->rank * sizeof(int8 *));
-		    if (sdg->dimscales == NULL)
-		      {
-			  HDfreespace((VOIDP) isscales);
-			  Hendaccess(aid);
-			  return FAIL;
-		      }
-
-		    /* read scales */
-		    for (i = 0; i < sdg->rank; i++)
-		      {
-			  sdg->dimscales[i] = NULL;	/* default */
-			  if (!isscales[i])
-			      continue;
-
-			  /* space for scale */
-			  sdg->dimscales[i] = (uint8 *)
-			      HDgetspace((uint32) sdg->dimsizes[i] * localNTsize);
-			  if (sdg->dimscales[i] == NULL)
-			    {
-				HDfreespace((VOIDP) isscales);
-				Hendaccess(aid);
-				return FAIL;
-			    }
-
-			  if (platnumsubclass == fileNT)
-			    {	/* no conversion needed */
-				ret = Hread(aid, (int32) sdg->dimsizes[i] * fileNTsize,
-					    (uint8 *) sdg->dimscales[i]);
-				if (ret == FAIL)
-				  {
-				      HDfreespace((VOIDP) isscales);
-				      Hendaccess(aid);
-				      return FAIL;
-				  }
-			    }
-			  else
-			    {	/* conversion necessary */
-
-				/* allocate conversion buffer */
-				buf = (uint8 *) HDgetspace((uint32) sdg->dimsizes[i] * fileNTsize);
-				if (buf == NULL)
-				  {
-				      HDfreespace((VOIDP) isscales);
-				      Hendaccess(aid);
-				      return FAIL;
-				  }
-
-				/* read scale from file */
-				ret = Hread(aid,
-					    (int32) (sdg->dimsizes[i] * fileNTsize), buf);
-				if (ret == FAIL)
-				  {
-				      HDfreespace((VOIDP) buf);
-				      HDfreespace((VOIDP) isscales);
-				      Hendaccess(aid);
-				      return FAIL;
-				  }
-
-				p = buf;
-
-				/* convert, all at once */
-				DFKconvert((VOIDP) p, (VOIDP) sdg->dimscales[i], numtype,
-					sdg->dimsizes[i], DFACC_READ, 0, 0);
-
-				HDfreespace((VOIDP) buf);
-			    }
-		      }
-		    HDfreespace((VOIDP) isscales);
-		    Hendaccess(aid);
-		    break;
-
-		case DFTAG_SDC:	/* coordsys */
-		    /* find and allocate necessary space */
-		    length = Hlength(file_id, elmt.tag, elmt.ref);
-		    if (length == FAIL)
-			return FAIL;
-
-		    sdg->coordsys = (char *) HDgetspace((uint32) length);
-		    if (sdg->coordsys == NULL)
-			return FAIL;
-
-		    /* read coordsys */
-		    if (Hgetelement(file_id, elmt.tag, elmt.ref,
-				    (uint8 *) sdg->coordsys) == FAIL)
-			return FAIL;
-		    break;
-
-		case DFTAG_SDM:	/* max/min */
-		    if (fileNT == platnumsubclass)
-		      {		/* no conversion */
-			  if (Hgetelement(file_id, elmt.tag, elmt.ref,
-				      (uint8 *) &(sdg->max_min[0])) == FAIL)
-			      return FAIL;
-		      }
-		    else
-		      {
-			  /* conversion needed */
-			  /* allocate buffer */
-			  buf = (uint8 *) HDgetspace((uint32) 2 * fileNTsize);
-			  if (buf == NULL)
-			      return FAIL;
-
-			  /* read and convert max/min */
-			  if (Hgetelement(file_id, elmt.tag, elmt.ref, buf) == FAIL)
-			      return FAIL;
-
-			  DFKconvert((VOIDP) buf, (VOIDP) &(sdg->max_min[0]), numtype, 2,
-				     DFACC_READ, 0, 0);
-
-			  HDfreespace((VOIDP) buf);
-		      }
-		    Ismaxmin = 1;
-		    break;
-
-		case DFTAG_CAL:
-		    if (fileNT == platnumsubclass)
-		      {		/* no conversion */
-			  /* get size of element */
-			  intn        eltSize = (intn) Hlength(file_id, elmt.tag, elmt.ref);
-			  if (eltSize == FAIL)
-			      return FAIL;
-
-			  if (eltSize == 36)
-			    {
-				/* element is new, double based type */
-				if (Hgetelement(file_id, elmt.tag, elmt.ref,
-					   (unsigned char *) &sdg->cal) < 0)
-				    return FAIL;
-			    }
-			  else
-			    {
-				/* element is old float based type */
-				float32     buf2[4];
-
-				/* allocate input buffer */
-				if (Hgetelement(file_id, elmt.tag, elmt.ref,
-						(unsigned char *) buf2) < 0)
-				    return FAIL;
-
-				/* move 'em over */
-				sdg->ioff = (float64) buf2[0];
-				sdg->ioff_err = (float64) buf2[1];
-				sdg->cal = (float64) buf2[2];
-				sdg->cal_err = (float64) buf2[3];
-				sdg->cal_type = DFNT_INT16;
-
-			    }
-		      }
-		    else
-		      {
-			  intn        eltSize;
-
-			  /* get size of element */
-			  eltSize = (intn) Hlength(file_id, elmt.tag, elmt.ref);
-			  if (eltSize == FAIL)
-			      return FAIL;
-
-			  /* allocate buffer */
-			  buf = (uint8 *) HDgetspace((uint32) eltSize);
-			  if (buf == NULL)
-			      return FAIL;
-
-			  /* read and convert calibration */
-			  if (Hgetelement(file_id, elmt.tag, elmt.ref, buf) == FAIL)
-			      return FAIL;
-
-			  if (eltSize == 36)
-			    {
-				/* element is new, double based type */
-				/* read in the 64bit float factors */
-				DFKconvert((VOIDP) buf,
-					   (VOIDP) &sdg->cal,
-					 DFNT_FLOAT64, 4, DFACC_READ, 0, 0);
-
-				/* read in the 32bit integer number type */
-				DFKconvert((VOIDP) (buf + 32),
-					   (VOIDP) &sdg->cal_type,
-					   DFNT_INT32, 1, DFACC_READ, 0, 0);
-			    }
-			  else
-			    {
-				/* element is old float based type */
-				float32     buf2[4];
-
-				/* convert calibration factors */
-				DFKconvert((VOIDP) buf, (VOIDP) buf2, DFNT_FLOAT32, 4,
-					   DFACC_READ, 0, 0);
-
-				/* move 'em over */
-				sdg->ioff = (float64) buf2[0];
-				sdg->ioff_err = (float64) buf2[1];
-				sdg->cal = (float64) buf2[2];
-				sdg->cal_err = (float64) buf2[3];
-				sdg->cal_type = DFNT_INT16;
-
-			    }
-			  HDfreespace((VOIDP) buf);
-		      }
-		    IsCal = TRUE;
-		    break;
-
-		case DFTAG_FV:
-		    if (fileNT == platnumsubclass)
-		      {		/* no conversion */
-			  /* get size of element */
-			  intn        eltSize = (intn) Hlength(file_id, elmt.tag, elmt.ref);
-			  if (eltSize == FAIL)
-			      return FAIL;
-
-			  /* get element */
-			  if (Hgetelement(file_id, elmt.tag, elmt.ref,
-				 (unsigned char *) sdg->fill_value) == FAIL)
-			      return FAIL;
-		      }
-		    else
-		      {
-			  intn        eltSize;
-
-			  /* get size of element  */
-			  eltSize = (intn) Hlength(file_id, elmt.tag, elmt.ref);
-			  if (eltSize == FAIL)
-			      return FAIL;
-
-			  /* allocate buffer for conversion  */
-			  buf = (uint8 *) HDgetspace((uint32) eltSize);
-			  if (buf == NULL)
-			      return FAIL;
-
-			  /* read fill value into buffer */
-			  if (Hgetelement(file_id, elmt.tag, elmt.ref, buf) == FAIL)
-			      return FAIL;
-
-			  /* convert the fill value  */
-			  DFKconvert((VOIDP) buf, (VOIDP) sdg->fill_value,
-				     numtype, 1, DFACC_READ, 0, 0);
-
-			  HDfreespace((VOIDP) buf);
-		      }
-		    break;
-
-		case DFTAG_SDT:
-		    FileTranspose = 1;
-		    break;
-		default:
-		    if ((elmt.tag <= DFTAG_BREQ) && (elmt.tag >= DFTAG_EREQ))
-			HRETURN_ERROR(DFE_BADNDG, FAIL);
-		    break;
-	    }
+          luf = -1;     /* flag value for label/unit/ */
+          /* format gets process tag/ref */
+          switch (elmt.tag)
+            {
+
+                case DFTAG_SD:      /* data tag/ref */
+                    sdg->data.tag = elmt.tag;   /* put tag/ref in struct */
+                    sdg->data.ref = elmt.ref;
+                    break;
+
+                case DFTAG_SDD: /* dimension */
+                    aid = Hstartread(file_id, elmt.tag, elmt.ref);
+                    if (aid == FAIL)
+                        return FAIL;
+
+                    /* read rank */
+                    if (Hread(aid, (int32) 2, ptbuf) == FAIL)
+                      {
+                          Hendaccess(aid);
+                          return FAIL;
+                      }
+                    p = ptbuf;
+                    INT16DECODE(p, sdg->rank);
+
+                    /* get space for dimensions */
+                    sdg->dimsizes = (int32 *) HDgetspace((uint32) sdg->rank *
+                                                         sizeof(int32));
+                    if (sdg->dimsizes == NULL)
+                      {
+                          Hendaccess(aid);
+                          return FAIL;
+                      }
+
+                    /* read dimension record */
+                    if (Hread(aid, (int32) 4 * sdg->rank, ptbuf) == FAIL)
+                      {
+                          Hendaccess(aid);
+                          return FAIL;
+                      }
+                    p = ptbuf;
+                    for (i = 0; i < sdg->rank; i++)
+                        INT32DECODE(p, sdg->dimsizes[i]);
+
+                    /* read tag/ref of NT */
+                    if (Hread(aid, (int32) 4, ptbuf) == FAIL)
+                      {
+                          Hendaccess(aid);
+                          return FAIL;
+                      }
+                    p = ptbuf;
+                    UINT16DECODE(p, nt.tag);
+                    UINT16DECODE(p, nt.ref);
+
+                    /* read actual NT */
+                    if (Hgetelement(file_id, nt.tag, nt.ref, ntstring) == FAIL)
+                      {
+                          Hendaccess(aid);
+                          return FAIL;
+                      }
+
+                    /* check for any valid NT */
+                    if (ntstring[1] == DFNT_NONE)
+                      {
+                          Hendaccess(aid);
+                          HRETURN_ERROR(DFE_BADCALL, FAIL);
+                      }
+
+                    /* if looking for an SDG type must be FLOAT32 */
+                    if (tag == DFTAG_SDG && ntstring[1] != DFNT_FLOAT32)
+                      {
+                          Hendaccess(aid);
+                          HRETURN_ERROR(DFE_BADCALL, FAIL);
+                      }
+
+                    /* set NT info */
+                    numtype = ntstring[1];
+                    fileNT = ntstring[3];
+                    platnumsubclass = DFKgetPNSC(numtype, DF_MT);
+                    if ((fileNT != DFNTF_HDFDEFAULT)
+                        && (fileNT != DFNTF_PC)
+                        && (fileNT != platnumsubclass))
+                      {
+                          Hendaccess(aid);
+                          HRETURN_ERROR(DFE_BADCALL, FAIL);
+                      }
+                    if (fileNT != DFNTF_HDFDEFAULT)
+                      {     /* if native or little endian */
+                          if (fileNT != DFNTF_PC)   /* native */
+                              numtype |= DFNT_NATIVE;
+                          else  /* little endian */
+                              numtype |= DFNT_LITEND;
+                      }     /* end if */
+
+                    sdg->filenumsubclass = ntstring[3];
+                    sdg->numbertype = numtype;
+
+                    /* set size of NT    */
+                    fileNTsize = DFKNTsize(numtype);
+                    localNTsize = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
+
+                    /* read and check all scale NTs */
+                    for (i = 0; i < sdg->rank; i++)
+                      {
+                          if (Hread(aid, (int32) 4, ptbuf) == FAIL)
+                            {
+                                Hendaccess(aid);
+                                return FAIL;
+                            }
+                          p = ptbuf;
+                          UINT16DECODE(p, nt.tag);
+                          UINT16DECODE(p, nt.ref);
+
+                          /* read NT itself */
+                          if (Hgetelement(file_id, nt.tag, nt.ref, ntstring) == FAIL)
+                            {
+                                Hendaccess(aid);
+                                return FAIL;
+                            }
+
+                          /* check for any valid NT */
+                          if (ntstring[1] == DFNT_NONE)
+                            {
+                                Hendaccess(aid);
+                                HRETURN_ERROR(DFE_BADCALL, FAIL);
+                            }
+
+                          /* if looking for an SDG type must be FLOAT32 */
+                          if (tag == DFTAG_SDG && ntstring[1] != DFNT_FLOAT32)
+                            {
+                                Hendaccess(aid);
+                                HRETURN_ERROR(DFE_BADCALL, FAIL);
+                            }
+
+                      }     /* end for loop */
+                    Hendaccess(aid);
+                    break;
+
+                case DFTAG_SDLNK:   /* SDG NDG link */
+                    break;  /* do nothing in 3.2  */
+
+                case DFTAG_SDL: /* labels */
+                    if (luf == (-1))
+                        luf = LABEL;
+
+                case DFTAG_SDU: /* units */
+                    if (luf == (-1))
+                        luf = UNIT;
+
+                case DFTAG_SDF: /* formats */
+                    if (luf == (-1))
+                        luf = FORMAT;
+
+                    if (!sdg->dimsizes)
+                        HRETURN_ERROR(DFE_CORRUPT, FAIL);
+
+                    /* get needed size of buffer, allocate */
+                    length = Hlength(file_id, elmt.tag, elmt.ref);
+                    if (length == FAIL)
+                        return FAIL;
+                    buf = (uint8 *) HDgetspace((uint32) length);
+                    if (buf == NULL)
+                        return FAIL;
+
+                    /* read in luf */
+                    if (Hgetelement(file_id, elmt.tag, elmt.ref, buf) == FAIL)
+                      {
+                          HDfreespace((VOIDP) buf);
+                          return FAIL;
+                      }
+                    p = buf;
+
+                    /* allocate data luf space */
+                    sdg->dataluf[luf] = (char *) HDgetspace((uint32) HDstrlen((char *) p) + 1);
+
+                    if (sdg->dataluf[luf] == NULL)
+                      {
+                          HDfreespace((VOIDP) buf);
+                          return FAIL;
+                      }
+
+                    /* extract data luf */
+                    HDstrcpy(sdg->dataluf[luf], (char *) p);
+                    p += HDstrlen(sdg->dataluf[luf]) + 1;
+
+                    /* get space for dimluf array */
+                    sdg->dimluf[luf] =
+                        (char **) HDgetspace((uint32) sdg->rank * sizeof(char *));
+                    if (sdg->dimluf[luf] == NULL)
+                      {
+                          HDfreespace((VOIDP) buf);
+                          return FAIL;
+                      }
+
+                    /* extract dimension lufs */
+                    for (i = 0; i < sdg->rank; i++)
+                      {
+                          sdg->dimluf[luf][i] = (char *)
+                              HDgetspace((uint32) HDstrlen((char *) p) + 1);
+                          if (sdg->dimluf[luf][i] == NULL)
+                            {
+                                HDfreespace((VOIDP) buf);
+                                return FAIL;
+                            }
+                          HDstrcpy(sdg->dimluf[luf][i], (char *) p);
+                          p += HDstrlen(sdg->dimluf[luf][i]) + 1;
+                      }
+                    HDfreespace((VOIDP) buf);
+                    break;
+
+                case DFTAG_SDS: /* scales */
+                    if (!sdg->dimsizes)
+                        HRETURN_ERROR(DFE_CORRUPT, FAIL);
+
+                    /* set up to read scale */
+                    aid = Hstartread(file_id, elmt.tag, elmt.ref);
+                    if (aid == FAIL)
+                        return FAIL;
+
+                    /* read isscales */
+                    isscales = (uint8 *) HDgetspace((uint32) sdg->rank);
+                    if (isscales == NULL)
+                      {
+                          Hendaccess(aid);
+                          return FAIL;
+                      }
+                    if (Hread(aid, (int32) sdg->rank, isscales) == FAIL)
+                      {
+                          Hendaccess(aid);
+                          return FAIL;
+                      }
+
+                    /* allocate scale pointers */
+                    sdg->dimscales =
+                        (uint8 **) HDgetspace((uint32) sdg->rank * sizeof(int8 *));
+                    if (sdg->dimscales == NULL)
+                      {
+                          HDfreespace((VOIDP) isscales);
+                          Hendaccess(aid);
+                          return FAIL;
+                      }
+
+                    /* read scales */
+                    for (i = 0; i < sdg->rank; i++)
+                      {
+                          sdg->dimscales[i] = NULL;     /* default */
+                          if (!isscales[i])
+                              continue;
+
+                          /* space for scale */
+                          sdg->dimscales[i] = (uint8 *)
+                              HDgetspace((uint32) sdg->dimsizes[i] * localNTsize);
+                          if (sdg->dimscales[i] == NULL)
+                            {
+                                HDfreespace((VOIDP) isscales);
+                                Hendaccess(aid);
+                                return FAIL;
+                            }
+
+                          if (platnumsubclass == fileNT)
+                            {   /* no conversion needed */
+                                ret = Hread(aid, (int32) sdg->dimsizes[i] * fileNTsize,
+                                            (uint8 *) sdg->dimscales[i]);
+                                if (ret == FAIL)
+                                  {
+                                      HDfreespace((VOIDP) isscales);
+                                      Hendaccess(aid);
+                                      return FAIL;
+                                  }
+                            }
+                          else
+                            {   /* conversion necessary */
+
+                                /* allocate conversion buffer */
+                                buf = (uint8 *) HDgetspace((uint32) sdg->dimsizes[i] * fileNTsize);
+                                if (buf == NULL)
+                                  {
+                                      HDfreespace((VOIDP) isscales);
+                                      Hendaccess(aid);
+                                      return FAIL;
+                                  }
+
+                                /* read scale from file */
+                                ret = Hread(aid,
+                                            (int32) (sdg->dimsizes[i] * fileNTsize), buf);
+                                if (ret == FAIL)
+                                  {
+                                      HDfreespace((VOIDP) buf);
+                                      HDfreespace((VOIDP) isscales);
+                                      Hendaccess(aid);
+                                      return FAIL;
+                                  }
+
+                                p = buf;
+
+                                /* convert, all at once */
+                                DFKconvert((VOIDP) p, (VOIDP) sdg->dimscales[i], numtype,
+                                        sdg->dimsizes[i], DFACC_READ, 0, 0);
+
+                                HDfreespace((VOIDP) buf);
+                            }
+                      }
+                    HDfreespace((VOIDP) isscales);
+                    Hendaccess(aid);
+                    break;
+
+                case DFTAG_SDC: /* coordsys */
+                    /* find and allocate necessary space */
+                    length = Hlength(file_id, elmt.tag, elmt.ref);
+                    if (length == FAIL)
+                        return FAIL;
+
+                    sdg->coordsys = (char *) HDgetspace((uint32) length);
+                    if (sdg->coordsys == NULL)
+                        return FAIL;
+
+                    /* read coordsys */
+                    if (Hgetelement(file_id, elmt.tag, elmt.ref,
+                                    (uint8 *) sdg->coordsys) == FAIL)
+                        return FAIL;
+                    break;
+
+                case DFTAG_SDM: /* max/min */
+                    if (fileNT == platnumsubclass)
+                      {     /* no conversion */
+                          if (Hgetelement(file_id, elmt.tag, elmt.ref,
+                                      (uint8 *) &(sdg->max_min[0])) == FAIL)
+                              return FAIL;
+                      }
+                    else
+                      {
+                          /* conversion needed */
+                          /* allocate buffer */
+                          buf = (uint8 *) HDgetspace((uint32) 2 * fileNTsize);
+                          if (buf == NULL)
+                              return FAIL;
+
+                          /* read and convert max/min */
+                          if (Hgetelement(file_id, elmt.tag, elmt.ref, buf) == FAIL)
+                              return FAIL;
+
+                          DFKconvert((VOIDP) buf, (VOIDP) &(sdg->max_min[0]), numtype, 2,
+                                     DFACC_READ, 0, 0);
+
+                          HDfreespace((VOIDP) buf);
+                      }
+                    Ismaxmin = 1;
+                    break;
+
+                case DFTAG_CAL:
+                    if (fileNT == platnumsubclass)
+                      {     /* no conversion */
+                          /* get size of element */
+                          intn        eltSize = (intn) Hlength(file_id, elmt.tag, elmt.ref);
+                          if (eltSize == FAIL)
+                              return FAIL;
+
+                          if (eltSize == 36)
+                            {
+                                /* element is new, double based type */
+                                if (Hgetelement(file_id, elmt.tag, elmt.ref,
+                                           (unsigned char *) &sdg->cal) < 0)
+                                    return FAIL;
+                            }
+                          else
+                            {
+                                /* element is old float based type */
+                                float32     buf2[4];
+
+                                /* allocate input buffer */
+                                if (Hgetelement(file_id, elmt.tag, elmt.ref,
+                                                (unsigned char *) buf2) < 0)
+                                    return FAIL;
+
+                                /* move 'em over */
+                                sdg->ioff = (float64) buf2[0];
+                                sdg->ioff_err = (float64) buf2[1];
+                                sdg->cal = (float64) buf2[2];
+                                sdg->cal_err = (float64) buf2[3];
+                                sdg->cal_type = DFNT_INT16;
+
+                            }
+                      }
+                    else
+                      {
+                          intn        eltSize;
+
+                          /* get size of element */
+                          eltSize = (intn) Hlength(file_id, elmt.tag, elmt.ref);
+                          if (eltSize == FAIL)
+                              return FAIL;
+
+                          /* allocate buffer */
+                          buf = (uint8 *) HDgetspace((uint32) eltSize);
+                          if (buf == NULL)
+                              return FAIL;
+
+                          /* read and convert calibration */
+                          if (Hgetelement(file_id, elmt.tag, elmt.ref, buf) == FAIL)
+                              return FAIL;
+
+                          if (eltSize == 36)
+                            {
+                                /* element is new, double based type */
+                                /* read in the 64bit float factors */
+                                DFKconvert((VOIDP) buf,
+                                           (VOIDP) &sdg->cal,
+                                         DFNT_FLOAT64, 4, DFACC_READ, 0, 0);
+
+                                /* read in the 32bit integer number type */
+                                DFKconvert((VOIDP) (buf + 32),
+                                           (VOIDP) &sdg->cal_type,
+                                           DFNT_INT32, 1, DFACC_READ, 0, 0);
+                            }
+                          else
+                            {
+                                /* element is old float based type */
+                                float32     buf2[4];
+
+                                /* convert calibration factors */
+                                DFKconvert((VOIDP) buf, (VOIDP) buf2, DFNT_FLOAT32, 4,
+                                           DFACC_READ, 0, 0);
+
+                                /* move 'em over */
+                                sdg->ioff = (float64) buf2[0];
+                                sdg->ioff_err = (float64) buf2[1];
+                                sdg->cal = (float64) buf2[2];
+                                sdg->cal_err = (float64) buf2[3];
+                                sdg->cal_type = DFNT_INT16;
+
+                            }
+                          HDfreespace((VOIDP) buf);
+                      }
+                    IsCal = TRUE;
+                    break;
+
+                case DFTAG_FV:
+                    if (fileNT == platnumsubclass)
+                      {     /* no conversion */
+                          /* get size of element */
+                          intn        eltSize = (intn) Hlength(file_id, elmt.tag, elmt.ref);
+                          if (eltSize == FAIL)
+                              return FAIL;
+
+                          /* get element */
+                          if (Hgetelement(file_id, elmt.tag, elmt.ref,
+                                 (unsigned char *) sdg->fill_value) == FAIL)
+                              return FAIL;
+                      }
+                    else
+                      {
+                          intn        eltSize;
+
+                          /* get size of element  */
+                          eltSize = (intn) Hlength(file_id, elmt.tag, elmt.ref);
+                          if (eltSize == FAIL)
+                              return FAIL;
+
+                          /* allocate buffer for conversion  */
+                          buf = (uint8 *) HDgetspace((uint32) eltSize);
+                          if (buf == NULL)
+                              return FAIL;
+
+                          /* read fill value into buffer */
+                          if (Hgetelement(file_id, elmt.tag, elmt.ref, buf) == FAIL)
+                              return FAIL;
+
+                          /* convert the fill value  */
+                          DFKconvert((VOIDP) buf, (VOIDP) sdg->fill_value,
+                                     numtype, 1, DFACC_READ, 0, 0);
+
+                          HDfreespace((VOIDP) buf);
+                      }
+                    break;
+
+                case DFTAG_SDT:
+                    FileTranspose = 1;
+                    break;
+                default:
+                    if ((elmt.tag <= DFTAG_BREQ) && (elmt.tag >= DFTAG_EREQ))
+                        HRETURN_ERROR(DFE_BADNDG, FAIL);
+                    break;
+            }
       }
 
     /* since the dataset exists, the fill value cannot be changed */
@@ -2553,7 +2553,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
     int32       i;
     intn        j;
     intn        luf;
-    intn        issdg = 0;	/* issdg=1 if it is NDG SDG  */
+    intn        issdg = 0;      /* issdg=1 if it is NDG SDG  */
     intn        len;
     uint16      luftag;
     uint8      *buf;
@@ -2561,12 +2561,12 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
     uint8      *bufp;
     uint8       ntstring[4];
     uint8       platnumsubclass;
-    uint8       outNT;		/* file number type subclass */
+    uint8       outNT;          /* file number type subclass */
     int32       GroupID;
-    int32       numtype;	/* current number type  */
-    int32       localNTsize;	/* size of this NT on as it is on this machine */
-    int32       fileNTsize;	/* size of this NT as it will be in the file */
-    int32       scaleNTsize;	/* size of scale NT as it will be in the file */
+    int32       numtype;        /* current number type  */
+    int32       localNTsize;    /* size of this NT on as it is on this machine */
+    int32       fileNTsize;     /* size of this NT as it will be in the file */
+    int32       scaleNTsize;    /* size of scale NT as it will be in the file */
     int32       ret;
     int32       aid;
     DFdi        nt;
@@ -2575,411 +2575,411 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
     HEclear();
 
     if (!HDvalidfid(file_id))
-	HRETURN_ERROR(DFE_BADCALL, FAIL);
+        HRETURN_ERROR(DFE_BADCALL, FAIL);
     if (!ref)
-	HRETURN_ERROR(DFE_BADREF, FAIL);
+        HRETURN_ERROR(DFE_BADREF, FAIL);
 
     /* Check if temproray buffer has been allocated */
     if (ptbuf == NULL)
       {
-	  ptbuf = (uint8 *) HDgetspace(TBUF_SZ * sizeof(uint8));
-	  if (ptbuf == NULL)
-	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          ptbuf = (uint8 *) HDgetspace(TBUF_SZ * sizeof(uint8));
+          if (ptbuf == NULL)
+              HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
 
     /* set number type and subclass     */
     if (sdg->numbertype == DFNT_NONE)
-	DFSDsetNT(DFNT_FLOAT32);	/* default is float32  */
+        DFSDsetNT(DFNT_FLOAT32);    /* default is float32  */
     numtype = sdg->numbertype;
     fileNTsize = DFKNTsize(numtype);
-    scaleNTsize = fileNTsize;	/* for now, assume same. MAY CHANGE */
+    scaleNTsize = fileNTsize;   /* for now, assume same. MAY CHANGE */
     outNT = sdg->filenumsubclass;
     localNTsize = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
     platnumsubclass = DFKgetPNSC(numtype, DF_MT);
 
     /* prepare to start writing ndg   */
     if ((GroupID = DFdisetup(10)) < 0)
-	return FAIL;
+        return FAIL;
 
     /* put ND and ref       */
     if (DFdiput(GroupID, sdg->data.tag, sdg->data.ref) < 0)
-	return FAIL;
+        return FAIL;
 
     if (Ref.nt <= 0)
-      {		/* will not execute if has been written in putsdg  */
-	  /* construct and write out NT */
-	  ntstring[0] = DFNT_VERSION;	/* version */
-	  ntstring[1] = (uint8) (numtype & 0xff);	/* type */
-	  ntstring[2] = (uint8) (fileNTsize * 8);	/* width of number type in bits */
-	  ntstring[3] = outNT;	/* class: IEEE or machine class */
-	  if (Hputelement(file_id, DFTAG_NT, ref, ntstring, (int32) 4) == FAIL)
-	      return FAIL;
-	  Ref.nt = ref;
+      {     /* will not execute if has been written in putsdg  */
+          /* construct and write out NT */
+          ntstring[0] = DFNT_VERSION;   /* version */
+          ntstring[1] = (uint8) (numtype & 0xff);   /* type */
+          ntstring[2] = (uint8) (fileNTsize * 8);   /* width of number type in bits */
+          ntstring[3] = outNT;  /* class: IEEE or machine class */
+          if (Hputelement(file_id, DFTAG_NT, ref, ntstring, (int32) 4) == FAIL)
+              return FAIL;
+          Ref.nt = ref;
       }
 
     /* write out NDD (dimension record) */
     if (Ref.dims <= 0)
-      {		/* new NDD; write rank, dims, data NT and scale NTs */
+      {     /* new NDD; write rank, dims, data NT and scale NTs */
 
-	  /* put rank & dimensions in buffer */
-	  bufp = ptbuf;
-	  UINT16ENCODE(bufp, sdg->rank);
-	  for (i = 0; i < sdg->rank; i++)
-	      INT32ENCODE(bufp, sdg->dimsizes[i]);
+          /* put rank & dimensions in buffer */
+          bufp = ptbuf;
+          UINT16ENCODE(bufp, sdg->rank);
+          for (i = 0; i < sdg->rank; i++)
+              INT32ENCODE(bufp, sdg->dimsizes[i]);
 
-	  /* put data NT and scale NTs  in buffer */
-	  nt.tag = DFTAG_NT;
-	  nt.ref = (uint16) Ref.nt;	/* same NT for scales too */
+          /* put data NT and scale NTs  in buffer */
+          nt.tag = DFTAG_NT;
+          nt.ref = (uint16) Ref.nt;     /* same NT for scales too */
 
-	  /* "<=" used to put 1 data NT + rank scale NTs in buffer */
-	  for (i = 0; i <= sdg->rank; i++)
-	    {	/* scale NTs written even if no scale! */
-		UINT16ENCODE(bufp, nt.tag);
-		UINT16ENCODE(bufp, nt.ref);
-	    }
-	  /* write out NDD record */
-	  ret = Hputelement(file_id, DFTAG_SDD, ref, ptbuf, (int32) (bufp - ptbuf));
-	  if (ret == FAIL)
-	      return FAIL;
-	  Ref.dims = ref;
+          /* "<=" used to put 1 data NT + rank scale NTs in buffer */
+          for (i = 0; i <= sdg->rank; i++)
+            {   /* scale NTs written even if no scale! */
+                UINT16ENCODE(bufp, nt.tag);
+                UINT16ENCODE(bufp, nt.ref);
+            }
+          /* write out NDD record */
+          ret = Hputelement(file_id, DFTAG_SDD, ref, ptbuf, (int32) (bufp - ptbuf));
+          if (ret == FAIL)
+              return FAIL;
+          Ref.dims = ref;
       }
     /* write dimension record tag/ref */
     if (DFdiput(GroupID, DFTAG_SDD, (uint16) Ref.dims) < 0)
-	return FAIL;
+        return FAIL;
 
     /* write out label/unit/format */
     for (luf = LABEL; luf <= FORMAT; luf++)
       {
-	  luftag = (uint16) ((luf == LABEL) ? DFTAG_SDL :
-			     (luf == UNIT) ? DFTAG_SDU : DFTAG_SDF);
-	  bufp = ptbuf;
-	  /* this block of code checks if luf is NULL, else writes it */
-	  if (!Ref.luf[luf])
-	    {	/* if luf was set */
-		Ref.luf[luf] = -1;	/* assume it is NULL */
+          luftag = (uint16) ((luf == LABEL) ? DFTAG_SDL :
+                             (luf == UNIT) ? DFTAG_SDU : DFTAG_SDF);
+          bufp = ptbuf;
+          /* this block of code checks if luf is NULL, else writes it */
+          if (!Ref.luf[luf])
+            {   /* if luf was set */
+                Ref.luf[luf] = -1;  /* assume it is NULL */
 
-		/* if dataluf non-NULL, set up to write */
-		if (sdg->dataluf[luf] && sdg->dataluf[luf][0])
-		  {
-		      HDstrcpy((char *) bufp, sdg->dataluf[luf]);
-		      bufp += HDstrlen(bufp) + 1;
-		  }
-		else
-		  {	/* dataluf NULL */
-		      *bufp++ = '\0';
-		  }
+                /* if dataluf non-NULL, set up to write */
+                if (sdg->dataluf[luf] && sdg->dataluf[luf][0])
+                  {
+                      HDstrcpy((char *) bufp, sdg->dataluf[luf]);
+                      bufp += HDstrlen(bufp) + 1;
+                  }
+                else
+                  {     /* dataluf NULL */
+                      *bufp++ = '\0';
+                  }
 
-		/* for each dimluf, if non-NULL, set up to write */
-		for (i = 0; i < sdg->rank; i++)
-		  {
-		      if (sdg->dimluf[luf] && sdg->dimluf[luf][i]
-			  && sdg->dimluf[luf][i][0])
-			{	/* dimluf not NULL */
-			    HDstrcpy((char *) bufp, sdg->dimluf[luf][i]);
-			    bufp += HDstrlen(bufp) + 1;
-			}
-		      else
-			{	/* dimluf NULL */
-			    *bufp++ = '\0';
-			}
-		  }	/* i loop   */
-		Ref.luf[luf] = ref;	/* remember ref */
-		ret = Hputelement(file_id, luftag, (uint16) Ref.luf[luf],
-				  ptbuf, (int32) (bufp - ptbuf));
-		if (ret == FAIL)
-		    return FAIL;
-	    }	/* luf was set */
+                /* for each dimluf, if non-NULL, set up to write */
+                for (i = 0; i < sdg->rank; i++)
+                  {
+                      if (sdg->dimluf[luf] && sdg->dimluf[luf][i]
+                          && sdg->dimluf[luf][i][0])
+                        {   /* dimluf not NULL */
+                            HDstrcpy((char *) bufp, sdg->dimluf[luf][i]);
+                            bufp += HDstrlen(bufp) + 1;
+                        }
+                      else
+                        {   /* dimluf NULL */
+                            *bufp++ = '\0';
+                        }
+                  }     /* i loop   */
+                Ref.luf[luf] = ref;     /* remember ref */
+                ret = Hputelement(file_id, luftag, (uint16) Ref.luf[luf],
+                                  ptbuf, (int32) (bufp - ptbuf));
+                if (ret == FAIL)
+                    return FAIL;
+            }   /* luf was set */
 
-	  /* write luf tag/ref */
-	  if (Ref.luf[luf] > 0)
-	    {
-		if (DFdiput(GroupID, luftag, (uint16) Ref.luf[luf]) < 0)
-		    return FAIL;
-	    }
-      }		/* luf loop     */
+          /* write luf tag/ref */
+          if (Ref.luf[luf] > 0)
+            {
+                if (DFdiput(GroupID, luftag, (uint16) Ref.luf[luf]) < 0)
+                    return FAIL;
+            }
+      }     /* luf loop     */
 
     /* check if there is a scale and write it out */
     if (!Ref.scales)
-      {		/* if scale set */
-	  Isscales = (uint8 *) HDgetspace((uint32) sdg->rank);
-	  if (Isscales == NULL)
-	      return FAIL;
-	  Ref.scales = (-1);	/* assume there is no scale */
+      {     /* if scale set */
+          Isscales = (uint8 *) HDgetspace((uint32) sdg->rank);
+          if (Isscales == NULL)
+              return FAIL;
+          Ref.scales = (-1);    /* assume there is no scale */
 
-	  /* set up Isscales array */
-	  for (i = 0; i < sdg->rank; i++)
-	    {
-		if (sdg->dimscales && sdg->dimscales[i])
-		  {	/* a scale exists */
-		      Isscales[i] = 1;
-		      Ref.scales = 0;	/* flag: write out scales */
-		  }
-		else
-		    Isscales[i] = 0;
-	    }
+          /* set up Isscales array */
+          for (i = 0; i < sdg->rank; i++)
+            {
+                if (sdg->dimscales && sdg->dimscales[i])
+                  {     /* a scale exists */
+                      Isscales[i] = 1;
+                      Ref.scales = 0;   /* flag: write out scales */
+                  }
+                else
+                    Isscales[i] = 0;
+            }
       }
 
     if (!Ref.scales)
-      {		/* write out scales */
-	  /* compute space needed for scales */
-	  len = 0;
-	  for (i = 0; i < sdg->rank; i++)
-	    {
-		if (Isscales[i] == 1)
-		    len += (intn) (sdg->dimsizes[i] * scaleNTsize);
-	    }
-	  len += sdg->rank;
+      {     /* write out scales */
+          /* compute space needed for scales */
+          len = 0;
+          for (i = 0; i < sdg->rank; i++)
+            {
+                if (Isscales[i] == 1)
+                    len += (intn) (sdg->dimsizes[i] * scaleNTsize);
+            }
+          len += sdg->rank;
 
-	  aid = Hstartwrite(file_id, DFTAG_SDS, ref, len);
-	  if (aid == FAIL)
-	    {
-		HDfreespace((VOIDP) Isscales);
-		return FAIL;
-	    }
+          aid = Hstartwrite(file_id, DFTAG_SDS, ref, len);
+          if (aid == FAIL)
+            {
+                HDfreespace((VOIDP) Isscales);
+                return FAIL;
+            }
 
-	  /* write Isscales */
-	  if (Hwrite(aid, (int32) sdg->rank, Isscales) == FAIL)
-	    {
-		HDfreespace((VOIDP) Isscales);
-		return FAIL;
-	    }
+          /* write Isscales */
+          if (Hwrite(aid, (int32) sdg->rank, Isscales) == FAIL)
+            {
+                HDfreespace((VOIDP) Isscales);
+                return FAIL;
+            }
 
-	  /* Write scales */
-	  for (j = 0; j < sdg->rank; j++)
-	    {
-		if (!Isscales[j])
-		    continue;
-		if (platnumsubclass == outNT)
-		  {	/* no conversion needed */
-		      if (Hwrite(aid, (int32) (fileNTsize * sdg->dimsizes[j]),
-				 (uint8 *) sdg->dimscales[j]) == FAIL)
-			{
-			    HDfreespace((VOIDP) Isscales);
-			    return FAIL;
-			}
-		  }
-		else
-		  {	/* convert and write */
-		      /* allocate buffer */
-		      buf = (uint8 *) HDgetspace((uint32) (fileNTsize * sdg->dimsizes[j]));
-		      if (buf == NULL)
-			{
-			    HDfreespace((VOIDP) Isscales);
-			    return FAIL;
-			}
-		      /* convert, all at once */
-		      DFKconvert((VOIDP) sdg->dimscales[j], (VOIDP) buf, numtype,
-				 sdg->dimsizes[j], DFACC_WRITE, 0, 0);
-		      /* write it all out */
-		      if (Hwrite(aid, (int32) (fileNTsize * sdg->dimsizes[j]), buf)
-			  == FAIL)
-			{
-			    HDfreespace((VOIDP) Isscales);
-			    HDfreespace((VOIDP) buf);
-			    return FAIL;
-			}
-		      HDfreespace((VOIDP) buf);
-		  }
-	    }
+          /* Write scales */
+          for (j = 0; j < sdg->rank; j++)
+            {
+                if (!Isscales[j])
+                    continue;
+                if (platnumsubclass == outNT)
+                  {     /* no conversion needed */
+                      if (Hwrite(aid, (int32) (fileNTsize * sdg->dimsizes[j]),
+                                 (uint8 *) sdg->dimscales[j]) == FAIL)
+                        {
+                            HDfreespace((VOIDP) Isscales);
+                            return FAIL;
+                        }
+                  }
+                else
+                  {     /* convert and write */
+                      /* allocate buffer */
+                      buf = (uint8 *) HDgetspace((uint32) (fileNTsize * sdg->dimsizes[j]));
+                      if (buf == NULL)
+                        {
+                            HDfreespace((VOIDP) Isscales);
+                            return FAIL;
+                        }
+                      /* convert, all at once */
+                      DFKconvert((VOIDP) sdg->dimscales[j], (VOIDP) buf, numtype,
+                                 sdg->dimsizes[j], DFACC_WRITE, 0, 0);
+                      /* write it all out */
+                      if (Hwrite(aid, (int32) (fileNTsize * sdg->dimsizes[j]), buf)
+                          == FAIL)
+                        {
+                            HDfreespace((VOIDP) Isscales);
+                            HDfreespace((VOIDP) buf);
+                            return FAIL;
+                        }
+                      HDfreespace((VOIDP) buf);
+                  }
+            }
 
-	  Ref.scales = ref;
-	  Hendaccess(aid);
+          Ref.scales = ref;
+          Hendaccess(aid);
       }
     HDfreespace((VOIDP) Isscales);
     Isscales = NULL;
     if (Ref.scales > 0)
-	if (DFdiput(GroupID, DFTAG_SDS, (uint16) Ref.scales) < 0)
-	    return FAIL;
+        if (DFdiput(GroupID, DFTAG_SDS, (uint16) Ref.scales) < 0)
+            return FAIL;
 
     /* write coordsys */
     if (!sdg->coordsys || !sdg->coordsys[0])
-	Ref.coordsys = (-1);
+        Ref.coordsys = (-1);
     if (!Ref.coordsys)
       {
-	  ret = Hputelement(file_id, DFTAG_SDC, ref, (uint8 *) sdg->coordsys,
-			    (int32) (HDstrlen(sdg->coordsys) + 1));
-	  if (ret == FAIL)
-	      return FAIL;
-	  Ref.coordsys = ref;
+          ret = Hputelement(file_id, DFTAG_SDC, ref, (uint8 *) sdg->coordsys,
+                            (int32) (HDstrlen(sdg->coordsys) + 1));
+          if (ret == FAIL)
+              return FAIL;
+          Ref.coordsys = ref;
       }
     if (Ref.coordsys > 0)
       {
-	  if (DFdiput(GroupID, DFTAG_SDC, (uint16) Ref.coordsys) < 0)
-	      return FAIL;
+          if (DFdiput(GroupID, DFTAG_SDC, (uint16) Ref.coordsys) < 0)
+              return FAIL;
       }
 
     /* write max/min */
     if (!Ref.maxmin)
       {
-	  if (platnumsubclass == outNT)
-	    {	/* no conversion */
-		ret = Hputelement(file_id, DFTAG_SDM, ref,
-				  (uint8 *) &(sdg->max_min[0]),
-				  (int32) (2 * fileNTsize));
-		if (ret == FAIL)
-		    return FAIL;
-		Ref.maxmin = ref;
-	    }
-	  else
-	    {
-		/* allocate buffer */
-		buf = (uint8 *) HDgetspace((uint32) 2 * fileNTsize);	/* max/min is 8 bytes */
-		if (buf == NULL)
-		    return FAIL;
+          if (platnumsubclass == outNT)
+            {   /* no conversion */
+                ret = Hputelement(file_id, DFTAG_SDM, ref,
+                                  (uint8 *) &(sdg->max_min[0]),
+                                  (int32) (2 * fileNTsize));
+                if (ret == FAIL)
+                    return FAIL;
+                Ref.maxmin = ref;
+            }
+          else
+            {
+                /* allocate buffer */
+                buf = (uint8 *) HDgetspace((uint32) 2 * fileNTsize);    /* max/min is 8 bytes */
+                if (buf == NULL)
+                    return FAIL;
 
-		/* convert */
-		DFKconvert((VOIDP) &(sdg->max_min[0]), (VOIDP) buf,
-			   numtype, 2, DFACC_WRITE, 0, 0);
+                /* convert */
+                DFKconvert((VOIDP) &(sdg->max_min[0]), (VOIDP) buf,
+                           numtype, 2, DFACC_WRITE, 0, 0);
 
-		/* write */
-		ret = Hputelement(file_id, DFTAG_SDM, ref, buf,
-				  (int32) (2 * fileNTsize));
+                /* write */
+                ret = Hputelement(file_id, DFTAG_SDM, ref, buf,
+                                  (int32) (2 * fileNTsize));
 
-		if (ret == FAIL)
-		  {
-		      HDfreespace((VOIDP) buf);
-		      return FAIL;
-		  }
+                if (ret == FAIL)
+                  {
+                      HDfreespace((VOIDP) buf);
+                      return FAIL;
+                  }
 
-		Ref.maxmin = ref;
-		HDfreespace((VOIDP) buf);
-	    }
+                Ref.maxmin = ref;
+                HDfreespace((VOIDP) buf);
+            }
       }
     if (Ref.maxmin > 0)
       {
-	  if (DFdiput(GroupID, DFTAG_SDM, (uint16) Ref.maxmin) < 0)
-	      return FAIL;
+          if (DFdiput(GroupID, DFTAG_SDM, (uint16) Ref.maxmin) < 0)
+              return FAIL;
       }
-    Ref.maxmin = (-1);	/* max/min should be reset for each data set */
+    Ref.maxmin = (-1);  /* max/min should be reset for each data set */
 
     /* Write calibration. */
     if (!Ref.cal)
       {
-	  if (platnumsubclass == outNT)
-	    {	/* no conversion */
-		if (Hputelement(file_id, DFTAG_CAL, ref,
-				(unsigned char *) &sdg->cal,
-				(int32) 36) < 0)
-		    return (-1);
-		Ref.cal = ref;
-	    }
-	  else
-	    {
-		/* allocate buffer */
-		uint8       buf2[4 * sizeof(float64) + sizeof(int32)];
+          if (platnumsubclass == outNT)
+            {   /* no conversion */
+                if (Hputelement(file_id, DFTAG_CAL, ref,
+                                (unsigned char *) &sdg->cal,
+                                (int32) 36) < 0)
+                    return (-1);
+                Ref.cal = ref;
+            }
+          else
+            {
+                /* allocate buffer */
+                uint8       buf2[4 * sizeof(float64) + sizeof(int32)];
 
-		/* convert doubles */
-		DFKconvert((VOIDP) &sdg->cal, (VOIDP) buf2,
-			   DFNT_FLOAT64, 4, DFACC_WRITE, 0, 0);
+                /* convert doubles */
+                DFKconvert((VOIDP) &sdg->cal, (VOIDP) buf2,
+                           DFNT_FLOAT64, 4, DFACC_WRITE, 0, 0);
 
-		/* convert int */
-		DFKconvert((VOIDP) &sdg->cal_type, (VOIDP) (buf2 + 32),
-			   DFNT_INT32, 1, DFACC_WRITE, 0, 0);
+                /* convert int */
+                DFKconvert((VOIDP) &sdg->cal_type, (VOIDP) (buf2 + 32),
+                           DFNT_INT32, 1, DFACC_WRITE, 0, 0);
 
-		/* write it into the file */
-		if (Hputelement(file_id, DFTAG_CAL, ref,
-				(unsigned char *) buf2, (int32) 36) < 0)
-		    return (FAIL);
-		Ref.cal = ref;
+                /* write it into the file */
+                if (Hputelement(file_id, DFTAG_CAL, ref,
+                                (unsigned char *) buf2, (int32) 36) < 0)
+                    return (FAIL);
+                Ref.cal = ref;
 
-	    }
+            }
       }
 
     if (Ref.cal > 0)
       {
-	  if (DFdiput(GroupID, DFTAG_CAL, (uint16) Ref.cal) < 0)
-	      return (FAIL);
+          if (DFdiput(GroupID, DFTAG_CAL, (uint16) Ref.cal) < 0)
+              return (FAIL);
       }
-    Ref.cal = (-1);	/* Calibration should be reset for each data set */
+    Ref.cal = (-1);     /* Calibration should be reset for each data set */
 
     /* Write fill value.  */
     if (!Ref.fill_value)
       {
-	  if (platnumsubclass == outNT)
-	    {	/* No conversion  */
-		if (Hputelement(file_id, DFTAG_FV, ref,
-				(unsigned char *) sdg->fill_value,
-				(int32) fileNTsize) == FAIL)
-		    return (FAIL);
-		Ref.fill_value = ref;
-	    }
-	  else
-	    {
-		/* Allocate buffer  */
-		uint8       buf2[DFSD_MAXFILL_LEN];
+          if (platnumsubclass == outNT)
+            {   /* No conversion  */
+                if (Hputelement(file_id, DFTAG_FV, ref,
+                                (unsigned char *) sdg->fill_value,
+                                (int32) fileNTsize) == FAIL)
+                    return (FAIL);
+                Ref.fill_value = ref;
+            }
+          else
+            {
+                /* Allocate buffer  */
+                uint8       buf2[DFSD_MAXFILL_LEN];
 
-		/* Convert from native to IEEE  */
-		DFKconvert((VOIDP) sdg->fill_value, (VOIDP) buf2,
-			   numtype, 1, DFACC_WRITE, 0, 0);
+                /* Convert from native to IEEE  */
+                DFKconvert((VOIDP) sdg->fill_value, (VOIDP) buf2,
+                           numtype, 1, DFACC_WRITE, 0, 0);
 
-		/* Write it into the file  */
-		if (Hputelement(file_id, DFTAG_FV, ref,
-				(unsigned char *) buf2,
-				(int32) fileNTsize) == FAIL)
-		    return (FAIL);
+                /* Write it into the file  */
+                if (Hputelement(file_id, DFTAG_FV, ref,
+                                (unsigned char *) buf2,
+                                (int32) fileNTsize) == FAIL)
+                    return (FAIL);
 
-		Ref.fill_value = ref;
-	    }
+                Ref.fill_value = ref;
+            }
       }
 
     /* Check to add to DFgroup  */
     if (Ref.fill_value > 0)
       {
-	  if (DFdiput(GroupID, DFTAG_FV, (uint16) Ref.fill_value) == FAIL)
-	      return (FAIL);
+          if (DFdiput(GroupID, DFTAG_FV, (uint16) Ref.fill_value) == FAIL)
+              return (FAIL);
       }
-    Ref.fill_value = (-1);	/* Fill value should be reset for each data set  */
+    Ref.fill_value = (-1);  /* Fill value should be reset for each data set  */
 
     if (!Ref.transpose)
-      {		/* if transposed, add transpose tag */
-	  if (Hdupdd(file_id, DFTAG_SDT, ref, DFTAG_SDD, ref) == FAIL)
-	      return FAIL;
-	  Ref.transpose = ref;
+      {     /* if transposed, add transpose tag */
+          if (Hdupdd(file_id, DFTAG_SDT, ref, DFTAG_SDD, ref) == FAIL)
+              return FAIL;
+          Ref.transpose = ref;
       }
     if (Ref.transpose > 0)
       {
-	  if (DFdiput(GroupID, DFTAG_SDT, (uint16) Ref.transpose) < 0)
-	      return FAIL;
+          if (DFdiput(GroupID, DFTAG_SDT, (uint16) Ref.transpose) < 0)
+              return FAIL;
       }
 
     if (numtype == DFNT_FLOAT32)
-      {		/* if float32, add a DFTAG_SDLNK   */
-	  DFdi        lnkdd[2];
+      {     /* if float32, add a DFTAG_SDLNK   */
+          DFdi        lnkdd[2];
 
-	  issdg = 1;
-	  lnkdd[0].tag = DFTAG_NDG;
-	  lnkdd[0].ref = ref;
-	  lnkdd[1].tag = DFTAG_SDG;
-	  lnkdd[1].ref = ref;
-	  bufp = ptbuf;
+          issdg = 1;
+          lnkdd[0].tag = DFTAG_NDG;
+          lnkdd[0].ref = ref;
+          lnkdd[1].tag = DFTAG_SDG;
+          lnkdd[1].ref = ref;
+          bufp = ptbuf;
 
-	  for (i = 0; i < 2; i++)
-	    {
-		UINT16ENCODE(bufp, lnkdd[i].tag);
-		UINT16ENCODE(bufp, lnkdd[i].ref);
-	    }
-	  ret = Hputelement(file_id, DFTAG_SDLNK, ref,
-			    ptbuf, (int32) (bufp - ptbuf));
-	  if (ret == FAIL)
-	      return FAIL;
+          for (i = 0; i < 2; i++)
+            {
+                UINT16ENCODE(bufp, lnkdd[i].tag);
+                UINT16ENCODE(bufp, lnkdd[i].ref);
+            }
+          ret = Hputelement(file_id, DFTAG_SDLNK, ref,
+                            ptbuf, (int32) (bufp - ptbuf));
+          if (ret == FAIL)
+              return FAIL;
 
-	  /* write DFTAG_SDLNK  */
-	  if (DFdiput(GroupID, DFTAG_SDLNK, ref) < 0)
-	      return FAIL;
+          /* write DFTAG_SDLNK  */
+          if (DFdiput(GroupID, DFTAG_SDLNK, ref) < 0)
+              return FAIL;
       }
 
     /* write out NDG */
     if (DFdiwrite(file_id, GroupID, DFTAG_NDG, ref) < 0)
-	return FAIL;
+        return FAIL;
 
     /* write an SDG point to the dataset if it is an NDG SDG  */
     if (issdg)
       {
-	  if (Hdupdd(file_id, DFTAG_SDG, ref, DFTAG_NDG, ref) < 0)
-	    {
-		Hclose(file_id);
-		return FAIL;
-	    }
+          if (Hdupdd(file_id, DFTAG_SDG, ref, DFTAG_NDG, ref) < 0)
+            {
+                Hclose(file_id);
+                return FAIL;
+            }
       }
 
     return SUCCEED;
@@ -3006,59 +3006,59 @@ DFSDIendslice(intn isfortran)
     HEclear();
 
     if (Sfile_id == DF_NOFILE)
-	HRETURN_ERROR(DFE_BADCALL, FAIL);
+        HRETURN_ERROR(DFE_BADCALL, FAIL);
 
     /* check if slice writes complete */
     for (i = 0; i < Writesdg.rank; i++)
       {
-	  if (!Fortorder && (i == 0) && (Sddims[i] == Writesdg.dimsizes[i]))
-	      continue;
-	  if ((isfortran || Fortorder) && (i == Writesdg.rank - 1)
-	      && (Sddims[i] == Writesdg.dimsizes[i]))
-	      continue;
-	  if ((isfortran || Fortorder || i > 0)
-	      && (!Fortorder || i < Writesdg.rank - 1) && (Sddims[i] == 0))
-	      continue;
+          if (!Fortorder && (i == 0) && (Sddims[i] == Writesdg.dimsizes[i]))
+              continue;
+          if ((isfortran || Fortorder) && (i == Writesdg.rank - 1)
+              && (Sddims[i] == Writesdg.dimsizes[i]))
+              continue;
+          if ((isfortran || Fortorder || i > 0)
+              && (!Fortorder || i < Writesdg.rank - 1) && (Sddims[i] == 0))
+              continue;
 
-	  HRETURN_ERROR(DFE_BADCALL, FAIL);
+          HRETURN_ERROR(DFE_BADCALL, FAIL);
       }
 
     if (DFSDIputndg(Sfile_id, Writeref, &Writesdg) < 0)
       {
-	  Hclose(Sfile_id);
-	  return FAIL;
+          Hclose(Sfile_id);
+          return FAIL;
       }
 
     /* old nsdg table should be reset next time  */
     if (nsdghdr != NULL)
       {
-	  if (nsdghdr->nsdg_t != NULL)
-	    {
-		DFnsdgle   *rear, *front;
+          if (nsdghdr->nsdg_t != NULL)
+            {
+                DFnsdgle   *rear, *front;
 
-		rear = nsdghdr->nsdg_t;
-		front = rear->next;
-		while (rear != NULL)
-		  {
-		      HDfreenclear(rear);
-		      rear = front;
-		      if (rear != NULL)
-			  front = rear->next;
-		  }
-		nsdghdr->size = 0;
-		nsdghdr->nsdg_t = NULL;
-		lastnsdg.tag = DFTAG_NULL;
-		lastnsdg.ref = 0;
-	    }
-	  HDfreenclear(nsdghdr);
+                rear = nsdghdr->nsdg_t;
+                front = rear->next;
+                while (rear != NULL)
+                  {
+                      HDfreenclear(rear);
+                      rear = front;
+                      if (rear != NULL)
+                          front = rear->next;
+                  }
+                nsdghdr->size = 0;
+                nsdghdr->nsdg_t = NULL;
+                lastnsdg.tag = DFTAG_NULL;
+                lastnsdg.ref = 0;
+            }
+          HDfreenclear(nsdghdr);
       }
 
-    Lastref = Writeref;		/* remember ref written */
-    Writeref = 0;	/* don't know ref to write next */
+    Lastref = Writeref;     /* remember ref written */
+    Writeref = 0;   /* don't know ref to write next */
 
     Hendaccess(Writesdg.aid);
     ret = Hclose(Sfile_id);
-    Sfile_id = 0;	/* partial write complete */
+    Sfile_id = 0;   /* partial write complete */
     HDfreenclear(Sddims);
 
     return (ret);
@@ -3086,89 +3086,89 @@ DFSDIopen(const char *filename, intn acc_mode)
     int32       file_id;
     CONSTR(FUNC, "DFSDIopen");
 
-    if (Sfile_id != DF_NOFILE)	/* in the middle of a partial write */
-	HRETURN_ERROR(DFE_ALROPEN, FAIL);
+    if (Sfile_id != DF_NOFILE)  /* in the middle of a partial write */
+        HRETURN_ERROR(DFE_ALROPEN, FAIL);
 
-    /* if last filename buffer has not been allocated 
+    /* if last filename buffer has not been allocated
      *    allocate buffer for "Lastfile" and open file
-     * else if same file as last time 
+     * else if same file as last time
      *    use reopen - more efficient
      *  else
-     *    open file for first time 
+     *    open file for first time
      */
     if (Lastfile == NULL)
       {
-	  Lastfile = (char *) HDgetspace((DF_MAXFNLEN + 1) * sizeof(char));
-	  if (Lastfile == NULL)
-	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
-	  /* open file */
-	  file_id = Hopen(filename, acc_mode, (int16) 0);
-	  if (file_id == FAIL)
-	      return FAIL;
+          Lastfile = (char *) HDgetspace((DF_MAXFNLEN + 1) * sizeof(char));
+          if (Lastfile == NULL)
+              HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          /* open file */
+          file_id = Hopen(filename, acc_mode, (int16) 0);
+          if (file_id == FAIL)
+              return FAIL;
       }
     else if ((HDstrcmp(Lastfile, filename)) || (acc_mode == DFACC_CREATE))
-      {		/* open a new file, delete nsdg table and reset lastnsdg  */
-	  if (nsdghdr != NULL)
-	    {
-		if (nsdghdr->nsdg_t != NULL)
-		  {
-		      DFnsdgle   *rear, *front;
+      {     /* open a new file, delete nsdg table and reset lastnsdg  */
+          if (nsdghdr != NULL)
+            {
+                if (nsdghdr->nsdg_t != NULL)
+                  {
+                      DFnsdgle   *rear, *front;
 
-		      rear = nsdghdr->nsdg_t;
-		      while (rear != NULL)
-			{
-			    front = rear->next;
-			    HDfreenclear(rear);
-			    rear = front;
-			}
-		      nsdghdr->size = 0;
-		      nsdghdr->nsdg_t = NULL;
-		      lastnsdg.tag = DFTAG_NULL;
-		      lastnsdg.ref = 0;
-		  }
-		HDfreenclear(nsdghdr);
-	    }
+                      rear = nsdghdr->nsdg_t;
+                      while (rear != NULL)
+                        {
+                            front = rear->next;
+                            HDfreenclear(rear);
+                            rear = front;
+                        }
+                      nsdghdr->size = 0;
+                      nsdghdr->nsdg_t = NULL;
+                      lastnsdg.tag = DFTAG_NULL;
+                      lastnsdg.ref = 0;
+                  }
+                HDfreenclear(nsdghdr);
+            }
 
-	  /* treat create as different file */
-	  file_id = Hopen(filename, acc_mode, (int16) 0);
-	  if (file_id == FAIL)
-	      return FAIL;
-	  Newdata = (-1);	/* data in Readsdg is not fresh */
-	  Readsdg.data.ref = 0;		/* No SDG read yet */
+          /* treat create as different file */
+          file_id = Hopen(filename, acc_mode, (int16) 0);
+          if (file_id == FAIL)
+              return FAIL;
+          Newdata = (-1);   /* data in Readsdg is not fresh */
+          Readsdg.data.ref = 0;     /* No SDG read yet */
 
-	  /* remember no info written to file */
-	  Ref.scales = (Ref.scales >= 0) ? 0 : Ref.scales;
-	  Ref.luf[LABEL] = (Ref.luf[LABEL] >= 0) ? 0 : Ref.luf[LABEL];
-	  Ref.luf[UNIT] = (Ref.luf[UNIT] >= 0) ? 0 : Ref.luf[UNIT];
-	  Ref.luf[FORMAT] = (Ref.luf[FORMAT] >= 0) ? 0 : Ref.luf[FORMAT];
-	  Ref.dims = (Ref.dims >= 0) ? 0 : Ref.dims;
-	  Ref.coordsys = (Ref.coordsys >= 0) ? 0 : Ref.coordsys;
-	  Ref.maxmin = (Ref.maxmin >= 0) ? 0 : Ref.maxmin;
-	  Ref.nt = (Ref.nt >= 0) ? 0 : Ref.nt;
-	  Ref.transpose = (Ref.transpose >= 0) ? 0 : Ref.transpose;
+          /* remember no info written to file */
+          Ref.scales = (Ref.scales >= 0) ? 0 : Ref.scales;
+          Ref.luf[LABEL] = (Ref.luf[LABEL] >= 0) ? 0 : Ref.luf[LABEL];
+          Ref.luf[UNIT] = (Ref.luf[UNIT] >= 0) ? 0 : Ref.luf[UNIT];
+          Ref.luf[FORMAT] = (Ref.luf[FORMAT] >= 0) ? 0 : Ref.luf[FORMAT];
+          Ref.dims = (Ref.dims >= 0) ? 0 : Ref.dims;
+          Ref.coordsys = (Ref.coordsys >= 0) ? 0 : Ref.coordsys;
+          Ref.maxmin = (Ref.maxmin >= 0) ? 0 : Ref.maxmin;
+          Ref.nt = (Ref.nt >= 0) ? 0 : Ref.nt;
+          Ref.transpose = (Ref.transpose >= 0) ? 0 : Ref.transpose;
       }
     else
       {
-	  file_id = Hopen(filename, acc_mode, (int16) 0);
-	  if (file_id == FAIL)
-	      return FAIL;
+          file_id = Hopen(filename, acc_mode, (int16) 0);
+          if (file_id == FAIL)
+              return FAIL;
       }
 
     /* if read, set up nsdg table */
     if (nsdghdr == NULL)
       {
-	  nsdghdr = (DFnsdg_t_hdr *) HDgetspace((uint32) sizeof(DFnsdg_t_hdr));
-	  if (nsdghdr == NULL)
-	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
-	  nsdghdr->size = 0;
-	  nsdghdr->nsdg_t = NULL;
+          nsdghdr = (DFnsdg_t_hdr *) HDgetspace((uint32) sizeof(DFnsdg_t_hdr));
+          if (nsdghdr == NULL)
+              HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          nsdghdr->size = 0;
+          nsdghdr->nsdg_t = NULL;
       }
     if ((nsdghdr->nsdg_t == NULL) && (acc_mode == DFACC_READ))
       {
-	  if (DFSDIsetnsdg_t(file_id, nsdghdr) < 0)
-	      return (FAIL);
-	  lastnsdg.tag = DFTAG_NULL;
-	  lastnsdg.ref = 0;
+          if (DFSDIsetnsdg_t(file_id, nsdghdr) < 0)
+              return (FAIL);
+          lastnsdg.tag = DFTAG_NULL;
+          lastnsdg.ref = 0;
       }
 
     HIstrncpy(Lastfile, filename, DF_MAXFNLEN);
@@ -3198,53 +3198,53 @@ DFSDIsdginfo(int32 file_id)
     HEclear();
 
     if (!HDvalidfid(file_id))
-	HRETURN_ERROR(DFE_BADCALL, FAIL);
+        HRETURN_ERROR(DFE_BADCALL, FAIL);
 
     if (Readref != 0)
       {
-	  aid = Hstartread(file_id, DFTAG_NDG, Readref);
-	  if (aid != FAIL)
-	    {
-		ptr.ref = Readref;
-		ptr.tag = DFTAG_NDG;
-		Hendaccess(aid);
-	    }
-	  else
-	    {
-		aid = Hstartread(file_id, DFTAG_SDG, Readref);
-		if (aid != FAIL)
-		  {
-		      ptr.ref = Readref;
-		      ptr.tag = DFTAG_SDG;
-		      Hendaccess(aid);
-		  }
-		else
-		    return FAIL;
-	    }
+          aid = Hstartread(file_id, DFTAG_NDG, Readref);
+          if (aid != FAIL)
+            {
+                ptr.ref = Readref;
+                ptr.tag = DFTAG_NDG;
+                Hendaccess(aid);
+            }
+          else
+            {
+                aid = Hstartread(file_id, DFTAG_SDG, Readref);
+                if (aid != FAIL)
+                  {
+                      ptr.ref = Readref;
+                      ptr.tag = DFTAG_SDG;
+                      Hendaccess(aid);
+                  }
+                else
+                    return FAIL;
+            }
       }
     else
       {
-	  if (DFSDInextnsdg(nsdghdr, &ptr) < 0)
-	      return FAIL;
-	  if ((ptr.tag != DFTAG_NDG) && (ptr.tag != DFTAG_SDG))
-	      HRETURN_ERROR(DFE_BADTAG, FAIL);
-	  if (ptr.ref <= 0)
-	      HRETURN_ERROR(DFE_BADREF, FAIL);
-	  Readref = ptr.ref;
+          if (DFSDInextnsdg(nsdghdr, &ptr) < 0)
+              return FAIL;
+          if ((ptr.tag != DFTAG_NDG) && (ptr.tag != DFTAG_SDG))
+              HRETURN_ERROR(DFE_BADTAG, FAIL);
+          if (ptr.ref <= 0)
+              HRETURN_ERROR(DFE_BADREF, FAIL);
+          Readref = ptr.ref;
       }
 
     /* find next sd object */
     if (DFSDIgetndg(file_id, ptr.tag, ptr.ref, &Readsdg) < 0)
-	return FAIL;
+        return FAIL;
 
     /* remember what type of thing we just read */
     Readsdg.isndg = (ptr.tag == DFTAG_NDG) ? 1 : 0;
 
-    Lastref = ptr.ref;	/* remember ref read */
+    Lastref = ptr.ref;  /* remember ref read */
     lastnsdg.tag = ptr.tag;
     lastnsdg.ref = ptr.ref;
 
-    Newdata = 1;	/* now Readsdg is fresh */
+    Newdata = 1;    /* now Readsdg is fresh */
     Readref = 0;
 
     return (0);
@@ -3271,19 +3271,19 @@ DFSDIrefresh(char *filename)
 
     HEclear();
     if (Newdata != 1 || Nextsdg)
-      {		/* if Readsdg not fresh  */
-	  file_id = DFSDIopen(filename, DFACC_READ);	/* open/reopen file */
-	  if (file_id == FAIL)
-	      return FAIL;
-	  if (DFSDIsdginfo(file_id) < 0)
-	    {	/* reads next SDG from file */
-		Hclose(file_id);
-		return FAIL;
-		/* on error, close file and return */
-	    }
-	  if (Hclose(file_id) < 0)
-	      return FAIL;
-	  Nextsdg = 0;
+      {     /* if Readsdg not fresh  */
+          file_id = DFSDIopen(filename, DFACC_READ);    /* open/reopen file */
+          if (file_id == FAIL)
+              return FAIL;
+          if (DFSDIsdginfo(file_id) < 0)
+            {   /* reads next SDG from file */
+                Hclose(file_id);
+                return FAIL;
+                /* on error, close file and return */
+            }
+          if (Hclose(file_id) < 0)
+              return FAIL;
+          Nextsdg = 0;
       }
     return (SUCCEED);
 }
@@ -3291,7 +3291,7 @@ DFSDIrefresh(char *filename)
 /*-----------------------------------------------------------------------------
  * Name:    DFSDIisndg
  * Purpose: is the current read sds an sdg or nsdg/ndg
- * Inputs:  isndg: 0 -- pure sdg( written by 3.1); 1 -- nsdg/ndg 
+ * Inputs:  isndg: 0 -- pure sdg( written by 3.1); 1 -- nsdg/ndg
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF systems programmers, functions in dfsdF.c
  * Invokes: none
@@ -3363,8 +3363,8 @@ DFSDIclear(DFSsdg * sdg)
 
     HEclear();
 
-    if (Sfile_id != DF_NOFILE)	/* cannot clear during slice writes */
-	HRETURN_ERROR(DFE_BADCALL, FAIL);
+    if (Sfile_id != DF_NOFILE)  /* cannot clear during slice writes */
+        HRETURN_ERROR(DFE_BADCALL, FAIL);
 
     HDfreenclear(sdg->dimsizes);
     HDfreenclear(sdg->coordsys);
@@ -3372,24 +3372,24 @@ DFSDIclear(DFSsdg * sdg)
     /* free label/unit/format pointers */
     for (luf = LABEL; luf <= FORMAT; luf++)
       {
-	  if (sdg->dimluf[luf])
-	    {	/* free strings */
-		for (i = 0; i < sdg->rank; i++)
-		    HDfreenclear(sdg->dimluf[luf][i]);
-	    }
+          if (sdg->dimluf[luf])
+            {   /* free strings */
+                for (i = 0; i < sdg->rank; i++)
+                    HDfreenclear(sdg->dimluf[luf][i]);
+            }
 
-	  /* free string pointers */
-	  HDfreenclear(sdg->dimluf[luf]);
+          /* free string pointers */
+          HDfreenclear(sdg->dimluf[luf]);
 
-	  /* free data string */
-	  HDfreenclear(sdg->dataluf[luf]);
+          /* free data string */
+          HDfreenclear(sdg->dataluf[luf]);
       }
 
     /* free scale pointers */
     if (sdg->dimscales)
       {
-	  for (i = 0; i < sdg->rank; i++)
-	      HDfreenclear(sdg->dimscales[i]);
+          for (i = 0; i < sdg->rank; i++)
+              HDfreenclear(sdg->dimscales[i]);
       }
 
     /* free array of scale pointers */
@@ -3403,7 +3403,7 @@ DFSDIclear(DFSsdg * sdg)
     sdg->aid = (int32) -1;
     sdg->compression = (int32) 0;
     FileTranspose = 0;
-    sdg->fill_fixed = FALSE;	/* allow fill_value to be changed */
+    sdg->fill_fixed = FALSE;    /* allow fill_value to be changed */
 
     Ref.dims = -1;
     Ref.scales = Ref.luf[LABEL] = Ref.luf[UNIT] = Ref.luf[FORMAT] = (-1);
@@ -3437,7 +3437,7 @@ DFSDIclear(DFSsdg * sdg)
 
 intn
 DFSDIgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data,
-	     intn isfortran)
+             intn isfortran)
 {
     intn        i;
     intn        ret;
@@ -3451,34 +3451,34 @@ DFSDIgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data,
     HEclear();
 
     if (Newdata != 1 || Nextsdg)
-      {		/* if Readsdg not fresh */
-	  file_id = DFSDIopen(filename, DFACC_READ);
-	  if (file_id == DF_NOFILE)
-	      return FAIL;
-	  if (DFSDIsdginfo(file_id) < 0)
-	    {	/* reads next SDG from file */
-		Hclose(file_id);
-		return FAIL;
-	    }
-	  if (Hclose(file_id) == FAIL)
-	      return FAIL;
+      {     /* if Readsdg not fresh */
+          file_id = DFSDIopen(filename, DFACC_READ);
+          if (file_id == DF_NOFILE)
+              return FAIL;
+          if (DFSDIsdginfo(file_id) < 0)
+            {   /* reads next SDG from file */
+                Hclose(file_id);
+                return FAIL;
+            }
+          if (Hclose(file_id) == FAIL)
+              return FAIL;
       }
 
     winst = (int32 *) HDgetspace((uint32) Readsdg.rank * sizeof(int32));
     if (winst == NULL)
-	return FAIL;
+        return FAIL;
 
     windims = (int32 *) HDgetspace((uint32) Readsdg.rank * sizeof(int32));
     if (windims == NULL)
       {
-	  HDfreespace((VOIDP) winst);
-	  return FAIL;
+          HDfreespace((VOIDP) winst);
+          return FAIL;
       }
 
     for (i = 0; i < rank; i++)
       {
-	  winst[i] = 1;
-	  windims[i] = Readsdg.dimsizes[i];
+          winst[i] = 1;
+          windims[i] = Readsdg.dimsizes[i];
       }
 
     ret = DFSDIgetslice(filename, winst, windims, data, maxsizes, isfortran);
@@ -3508,7 +3508,7 @@ DFSDIgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data,
 
 intn
 DFSDIputdata(const char *filename, intn rank, int32 *dimsizes, VOIDP data,
-	     intn accmode, intn isfortran)
+             intn accmode, intn isfortran)
 {
     intn        ret;
     int32       file_id;
@@ -3519,25 +3519,25 @@ DFSDIputdata(const char *filename, intn rank, int32 *dimsizes, VOIDP data,
     HEclear();
 
     if (!accmode)
-      {		/* new file */
-	  file_id = DFSDIopen(filename, DFACC_CREATE);
-	  if (file_id == DF_NOFILE)
-	      return FAIL;
-	  if (Hclose(file_id) == FAIL)
-	      return FAIL;
+      {     /* new file */
+          file_id = DFSDIopen(filename, DFACC_CREATE);
+          if (file_id == DF_NOFILE)
+              return FAIL;
+          if (Hclose(file_id) == FAIL)
+              return FAIL;
       }
 
     if (Ref.dims)
-      {		/* don't call setdims if already called */
-	  if (DFSDsetdims(rank, dimsizes) < 0)
-	      return FAIL;
+      {     /* don't call setdims if already called */
+          if (DFSDsetdims(rank, dimsizes) < 0)
+              return FAIL;
       }
 
     if (DFSDstartslice(filename) < 0)
-	return FAIL;
+        return FAIL;
 
     if ((ret = DFSDIputslice(Writesdg.dimsizes, data, dimsizes, isfortran)) < 0)
-	return ret;
+        return ret;
 
     return DFSDIendslice(isfortran);
 }
@@ -3567,7 +3567,7 @@ DFSDIputdata(const char *filename, intn rank, int32 *dimsizes, VOIDP data,
 /*****************************************************************************/
 /* DESIGN DECISIONS                                                          */
 /*****************************************************************************/
-/* 
+/*
    A. All stride/index/offset value will, when this is done -- refer to
    element counts rather than byte counts in the name of consistency.
 
@@ -3586,62 +3586,62 @@ DFSDIputdata(const char *filename, intn rank, int32 *dimsizes, VOIDP data,
 
 intn
 DFSDIgetslice(const char *filename, int32 winst[], int32 windims[],
-	      VOIDP data, int32 dims[], intn isfortran)
+              VOIDP data, int32 dims[], intn isfortran)
 {
-    intn        rank;		/* number of dimensions in data[] */
-    int32       leastsig;	/* fastest varying subscript in the array */
-    int32       error;		/* flag if an error occurred, */
+    intn        rank;           /* number of dimensions in data[] */
+    int32       leastsig;       /* fastest varying subscript in the array */
+    int32       error;          /* flag if an error occurred, */
     /*  used by DFconvert macro */
-    int32       convert;	/* true if machine NT != NT to be read */
-    int32       transposed;	/* true if we must transpose the data before writing */
-    int32       done;		/* true if we are at the end of the slice */
+    int32       convert;        /* true if machine NT != NT to be read */
+    int32       transposed;     /* true if we must transpose the data before writing */
+    int32       done;           /* true if we are at the end of the slice */
     int32       aid;
-    int32       i, j;		/* temporary loop index */
-    int32       issdg;		/* 1 -- pure sdg. do what HDF3.1 does   */
-    int32      *wstart;		/* tmp array containing starting slice dims */
-    int32      *wdims;		/* tmp array containing the slice size */
-    int32      *adims;		/* tmp array containing the dimensions of data[] */
-    int32      *fdims;		/* tmp array containing the dimensions */
+    int32       i, j;           /* temporary loop index */
+    int32       issdg;          /* 1 -- pure sdg. do what HDF3.1 does   */
+    int32      *wstart;         /* tmp array containing starting slice dims */
+    int32      *wdims;          /* tmp array containing the slice size */
+    int32      *adims;          /* tmp array containing the dimensions of data[] */
+    int32      *fdims;          /* tmp array containing the dimensions */
     /*  of the dataset in the file */
-    int32       numtype;	/* current number type  */
-    int32       fileNTsize;	/* size of this NT in the file  */
-    int32       localNTsize;	/* size of this NT as it occurs in this machine */
-    int32       numelements;	/* number of floats to read at once */
-    int32       readsize;	/* number of bytes to read at once */
-    int32       datastride;	/* number of floats in one row of data[] */
-    int32      *offset;		/* array for accessing the next element in data[] */
-    int32      *foffset;	/* array for accessing the next element in the file */
-    int32      *dimsleft;	/* array for tracking the current position in data[] */
+    int32       numtype;        /* current number type  */
+    int32       fileNTsize;     /* size of this NT in the file  */
+    int32       localNTsize;    /* size of this NT as it occurs in this machine */
+    int32       numelements;    /* number of floats to read at once */
+    int32       readsize;       /* number of bytes to read at once */
+    int32       datastride;     /* number of floats in one row of data[] */
+    int32      *offset;         /* array for accessing the next element in data[] */
+    int32      *foffset;        /* array for accessing the next element in the file */
+    int32      *dimsleft;       /* array for tracking the current position in data[] */
     int32       isnative;
-    int32       fileoffset;	/* offset into the current dataset in the file */
-    int32       machinetype;	/* assigned DF_MT.  used for debugging */
-    uint8       platnumsubclass;	/* class of this NT for this platform */
-    uint8       fileNT;		/* file number subclass */
-    uint8      *scatterbuf;	/* buffer to hold the current row contiguously */
-    uint8      *sp;		/* ptr into scatterbuf      */
-    uint8      *datap;		/* ptr into data[] at starting offset */
+    int32       fileoffset;     /* offset into the current dataset in the file */
+    int32       machinetype;    /* assigned DF_MT.  used for debugging */
+    uint8       platnumsubclass;    /* class of this NT for this platform */
+    uint8       fileNT;         /* file number subclass */
+    uint8      *scatterbuf;     /* buffer to hold the current row contiguously */
+    uint8      *sp;             /* ptr into scatterbuf      */
+    uint8      *datap;          /* ptr into data[] at starting offset */
     /* of current block */
-    uint8      *dp;		/* ptr into data[] at an element of the current row */
-    uint8      *buf;		/* buffer containing the converted current row */
-    int32       file_id;	/* HDF file pointer */
+    uint8      *dp;             /* ptr into data[] at an element of the current row */
+    uint8      *buf;            /* buffer containing the converted current row */
+    int32       file_id;        /* HDF file pointer */
     CONSTR(FUNC, "DFSDIgetslice");
 
     HEclear();
 
     if (data == NULL)
-	HRETURN_ERROR(DFE_BADPTR, FAIL);
+        HRETURN_ERROR(DFE_BADPTR, FAIL);
 
     file_id = DFSDIopen(filename, DFACC_READ);
     if (file_id == DF_NOFILE)
-	return FAIL;
+        return FAIL;
 
     if (Newdata != 1)
-      {		/* if Readsdg not fresh */
-	  if (DFSDIsdginfo(file_id) < 0)
-	    {	/* reads next SDG from file */
-		Hclose(file_id);
-		return FAIL;
-	    }
+      {     /* if Readsdg not fresh */
+          if (DFSDIsdginfo(file_id) < 0)
+            {   /* reads next SDG from file */
+                Hclose(file_id);
+                return FAIL;
+            }
       }
     rank = Readsdg.rank;
     numtype = Readsdg.numbertype;
@@ -3656,23 +3656,23 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[],
     /* get dimensions of slice to extract, set nwindims. also err check */
     for (i = 0; i < (int32) rank; i++)
       {
-	  /* check validity for the dimension ranges */
-	  if ((windims[i] < 1) || (winst[i] < 1)
-	      || (winst[i] + windims[i] - 1 > Readsdg.dimsizes[i]))
-	    {
-		HCLOSE_RETURN_ERROR(file_id, DFE_BADDIM, FAIL);
-	    }
-	  /* check if space allocated is sufficient */
-	  if (dims[i] < windims[i])
-	    {
-		HCLOSE_RETURN_ERROR(file_id, DFE_NOTENOUGH, FAIL);
-	    }
+          /* check validity for the dimension ranges */
+          if ((windims[i] < 1) || (winst[i] < 1)
+              || (winst[i] + windims[i] - 1 > Readsdg.dimsizes[i]))
+            {
+                HCLOSE_RETURN_ERROR(file_id, DFE_BADDIM, FAIL);
+            }
+          /* check if space allocated is sufficient */
+          if (dims[i] < windims[i])
+            {
+                HCLOSE_RETURN_ERROR(file_id, DFE_NOTENOUGH, FAIL);
+            }
       }
     /* allocate buffers */
     wstart = (int32 *) HDgetspace((uint32) 4 * rank * sizeof(int32));
     if (wstart == NULL)
       {
-	  HCLOSE_RETURN_ERROR(file_id, DFE_NOSPACE, FAIL);
+          HCLOSE_RETURN_ERROR(file_id, DFE_NOSPACE, FAIL);
       }
     wdims = wstart + rank;
     adims = wdims + rank;
@@ -3681,17 +3681,17 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[],
     /* copy arrays to private workspace (so that they are in row major order) */
     for (i = 0; i < (int32) rank; i++)
       {
-	  int32       ii = (issdg && isfortran) ? rank - i - 1 : i;
+          int32       ii = (issdg && isfortran) ? rank - i - 1 : i;
 
-	  adims[i] = dims[ii];
-	  ii = (issdg && FileTranspose) ? rank - i - 1 : i;
-	  wstart[i] = winst[ii] - 1;	/* translate to 0 origin */
-	  wdims[i] = windims[ii];
-	  fdims[i] = Readsdg.dimsizes[ii];
+          adims[i] = dims[ii];
+          ii = (issdg && FileTranspose) ? rank - i - 1 : i;
+          wstart[i] = winst[ii] - 1;    /* translate to 0 origin */
+          wdims[i] = windims[ii];
+          fdims[i] = Readsdg.dimsizes[ii];
       }
 
-    convert = (fileNT != platnumsubclass);	/* is conversion necessary */
-    transposed = issdg && (isfortran ^ FileTranspose);	/* is transposition needed */
+    convert = (fileNT != platnumsubclass);  /* is conversion necessary */
+    transposed = issdg && (isfortran ^ FileTranspose);  /* is transposition needed */
 
     /*
      * Note that if the data is transposed we must work on a row by row
@@ -3699,221 +3699,221 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[],
      */
     if (!transposed)
       {
-	  /* collapse dimensions if contiguous both in the file and in memory */
-	  for (i = (int32) rank - 1; i > 0; i--)
-	    {	/* stop before most sig dim */
-		if (adims[i] > wdims[i]		/* not all of data[] will be filled */
-		    || wstart[i] != 0	/* reading only part of the dataset */
-		    || wdims[i] < fdims[i])
-		  {
-		      break;
-		  }
-		wstart[i - 1] *= fdims[i];
-		wdims[i - 1] *= wdims[i];
-		adims[i - 1] *= adims[i];
-		fdims[i - 1] *= fdims[i];
-		rank--;
-	    }
+          /* collapse dimensions if contiguous both in the file and in memory */
+          for (i = (int32) rank - 1; i > 0; i--)
+            {   /* stop before most sig dim */
+                if (adims[i] > wdims[i]     /* not all of data[] will be filled */
+                    || wstart[i] != 0   /* reading only part of the dataset */
+                    || wdims[i] < fdims[i])
+                  {
+                      break;
+                  }
+                wstart[i - 1] *= fdims[i];
+                wdims[i - 1] *= wdims[i];
+                adims[i - 1] *= adims[i];
+                fdims[i - 1] *= fdims[i];
+                rank--;
+            }
       }
-    leastsig = (int32) rank - 1;	/* which is least sig dim */
+    leastsig = (int32) rank - 1;    /* which is least sig dim */
 
     /* position at start of data set */
     aid = Hstartread(file_id, Readsdg.data.tag, Readsdg.data.ref);
     if (aid == FAIL)
       {
-	  HDfreespace((VOIDP) wstart);
-	  Hclose(file_id);
-	  return FAIL;
+          HDfreespace((VOIDP) wstart);
+          Hclose(file_id);
+          return FAIL;
       }
 
     error = 0;
     if (rank == 1 && !convert)
       {
-	  /* all data is contiguous with no conversions */
-	  readsize = adims[0] * fileNTsize;
-	  if ((Hseek(aid, wstart[0] * fileNTsize, 0) == FAIL)
-	      || (readsize != Hread(aid, readsize, (uint8 *) data)))
-	    {
-		error = 1;
-	    }
+          /* all data is contiguous with no conversions */
+          readsize = adims[0] * fileNTsize;
+          if ((Hseek(aid, wstart[0] * fileNTsize, 0) == FAIL)
+              || (readsize != Hread(aid, readsize, (uint8 *) data)))
+            {
+                error = 1;
+            }
       }
     else
       {
-	  /*
-	   * The data must be further manipulated.
-	   * It may be transposed, may need conversion, may not be contiguous, or
-	   * any combination of these.
-	   */
-	  numelements = wdims[leastsig];
-	  readsize = numelements * fileNTsize;
+          /*
+           * The data must be further manipulated.
+           * It may be transposed, may need conversion, may not be contiguous, or
+           * any combination of these.
+           */
+          numelements = wdims[leastsig];
+          readsize = numelements * fileNTsize;
 
-	  /* allocate 1 row buffers */
-	  if (convert)
-	    {
-		if ((buf = (uint8 *) HDgetspace((uint32) readsize)) == NULL)
-		  {
-		      HDfreespace((VOIDP) wstart);
-		      Hendaccess(aid);
-		      HCLOSE_RETURN_ERROR(file_id, DFE_NOSPACE, FAIL);
-		  }
-	    }
-	  else
-	      buf = NULL;
+          /* allocate 1 row buffers */
+          if (convert)
+            {
+                if ((buf = (uint8 *) HDgetspace((uint32) readsize)) == NULL)
+                  {
+                      HDfreespace((VOIDP) wstart);
+                      Hendaccess(aid);
+                      HCLOSE_RETURN_ERROR(file_id, DFE_NOSPACE, FAIL);
+                  }
+            }
+          else
+              buf = NULL;
 
-	  if (transposed)
-	    {
-		scatterbuf =
-		    (uint8 *) HDgetspace((uint32) numelements * localNTsize);
+          if (transposed)
+            {
+                scatterbuf =
+                    (uint8 *) HDgetspace((uint32) numelements * localNTsize);
 
-		if (scatterbuf == NULL)
-		  {
-		      HDfreespace((VOIDP) wstart);
-		      HDfreespace((VOIDP) buf);
-		      Hendaccess(aid);
-		      HCLOSE_RETURN_ERROR(file_id, DFE_NOSPACE, FAIL);
-		  }
-	    }
-	  else
-	      scatterbuf = NULL;
+                if (scatterbuf == NULL)
+                  {
+                      HDfreespace((VOIDP) wstart);
+                      HDfreespace((VOIDP) buf);
+                      Hendaccess(aid);
+                      HCLOSE_RETURN_ERROR(file_id, DFE_NOSPACE, FAIL);
+                  }
+            }
+          else
+              scatterbuf = NULL;
 
-	  offset = (int32 *) HDgetspace((uint32) 3 * rank * sizeof(int32));
-	  if (offset == NULL)
-	    {
-		HDfreespace((VOIDP) wstart);
-		HDfreespace((VOIDP) buf);
-		HDfreespace((VOIDP) scatterbuf);
-		Hendaccess(aid);
-		HCLOSE_RETURN_ERROR(file_id, DFE_NOSPACE, FAIL);
-	    }
-	  foffset = offset + rank;
-	  dimsleft = foffset + rank;
+          offset = (int32 *) HDgetspace((uint32) 3 * rank * sizeof(int32));
+          if (offset == NULL)
+            {
+                HDfreespace((VOIDP) wstart);
+                HDfreespace((VOIDP) buf);
+                HDfreespace((VOIDP) scatterbuf);
+                Hendaccess(aid);
+                HCLOSE_RETURN_ERROR(file_id, DFE_NOSPACE, FAIL);
+            }
+          foffset = offset + rank;
+          dimsleft = foffset + rank;
 
-	  /* compute initial position in the data */
-	  for (i = leastsig; i >= 0; i--)
-	      dimsleft[i] = wdims[i];
+          /* compute initial position in the data */
+          for (i = leastsig; i >= 0; i--)
+              dimsleft[i] = wdims[i];
 
-	  /* compute offsets in the source array */
-	  if (transposed)
-	    {
-		offset[0] = 1 * localNTsize;
-		for (i = 0; i < leastsig; i++)
-		    offset[i + 1] = offset[i] * adims[leastsig - i];
-	    }
-	  else
-	    {
-		offset[leastsig] = 1 * localNTsize;
-		for (i = leastsig; i > 0; i--)
-		    offset[i - 1] = offset[i] * adims[i];
-	    }
-	  datastride = offset[leastsig];
+          /* compute offsets in the source array */
+          if (transposed)
+            {
+                offset[0] = 1 * localNTsize;
+                for (i = 0; i < leastsig; i++)
+                    offset[i + 1] = offset[i] * adims[leastsig - i];
+            }
+          else
+            {
+                offset[leastsig] = 1 * localNTsize;
+                for (i = leastsig; i > 0; i--)
+                    offset[i - 1] = offset[i] * adims[i];
+            }
+          datastride = offset[leastsig];
 
-	  /* compute offsets in the file */
-	  for (i = leastsig, foffset[i] = 1 * fileNTsize; i > 0; i--)
-	      foffset[i - 1] = foffset[i] * fdims[i];
+          /* compute offsets in the file */
+          for (i = leastsig, foffset[i] = 1 * fileNTsize; i > 0; i--)
+              foffset[i - 1] = foffset[i] * fdims[i];
 
-	  /*
-	   * Compute starting position in file
-	   * All file reads are done relative to this starting offset.
-	   * Cumulative offset is from most sig to next to least sig dim.
-	   */
-	  for (i = 0, fileoffset = 0; i < leastsig; i++)
-	      fileoffset = (fileoffset + wstart[i]) * fdims[i + 1];
-	  fileoffset += wstart[leastsig];	/* adjust for last dim */
-	  fileoffset *= fileNTsize;	/* convert to bytes */
+          /*
+           * Compute starting position in file
+           * All file reads are done relative to this starting offset.
+           * Cumulative offset is from most sig to next to least sig dim.
+           */
+          for (i = 0, fileoffset = 0; i < leastsig; i++)
+              fileoffset = (fileoffset + wstart[i]) * fdims[i + 1];
+          fileoffset += wstart[leastsig];   /* adjust for last dim */
+          fileoffset *= fileNTsize;     /* convert to bytes */
 
-	  datap = (uint8 *) data;
-	  done = 0;
-	  /* -- now read in the data */
-	  do
-	    {
-		/* move to the next data element in the file */
-		if (Hseek(aid, fileoffset, 0) == FAIL)
-		  {
-		      error = 1;
-		      break;
-		  }
+          datap = (uint8 *) data;
+          done = 0;
+          /* -- now read in the data */
+          do
+            {
+                /* move to the next data element in the file */
+                if (Hseek(aid, fileoffset, 0) == FAIL)
+                  {
+                      error = 1;
+                      break;
+                  }
 
-		/* read and convert one contiguous block of data */
-		if (convert)
-		  {
-		      if (readsize != Hread(aid, readsize, buf))
-			{
-			    error = 1;
-			    break;
-			}
-		      DFKconvert((VOIDP) buf, transposed ? (VOIDP) scatterbuf :
-		      (VOIDP) datap, numtype, numelements, DFACC_READ, 0, 0);
-		  }
-		else
-		  {
-		      if (readsize != Hread(aid, readsize,
-					    transposed ? scatterbuf : datap))
-			{
-			    error = 1;
-			    break;
-			}
-		  }
-		if (transposed)
-		  {
-		      /* scatter out the elements of one row */
+                /* read and convert one contiguous block of data */
+                if (convert)
+                  {
+                      if (readsize != Hread(aid, readsize, buf))
+                        {
+                            error = 1;
+                            break;
+                        }
+                      DFKconvert((VOIDP) buf, transposed ? (VOIDP) scatterbuf :
+                      (VOIDP) datap, numtype, numelements, DFACC_READ, 0, 0);
+                  }
+                else
+                  {
+                      if (readsize != Hread(aid, readsize,
+                                            transposed ? scatterbuf : datap))
+                        {
+                            error = 1;
+                            break;
+                        }
+                  }
+                if (transposed)
+                  {
+                      /* scatter out the elements of one row */
 #ifdef UNICOS
 #pragma ivdep
 #endif
-		      for (dp = datap, sp = scatterbuf, i = 0; i < numelements; i++)
-			{
-			    for (j = 0; j < localNTsize; j++)
-				*(dp + j) = *(sp + j);
-			    sp += localNTsize;
-			    dp += datastride;
-			}
-		  }
+                      for (dp = datap, sp = scatterbuf, i = 0; i < numelements; i++)
+                        {
+                            for (j = 0; j < localNTsize; j++)
+                                *(dp + j) = *(sp + j);
+                            sp += localNTsize;
+                            dp += datastride;
+                        }
+                  }
 
-		/*
-		 * Find starting place of the next row/block.
-		 * Note that all moves are relative:
-		 *   this preserves the starting offsets of each dimension
-		 */
-		for (i = leastsig - 1; i >= 0; i--)
-		  {
-		      if (--dimsleft[i] > 0)
-			{
-			    /* move to next element in the current dimension */
-			    datap += offset[i];
-			    fileoffset += foffset[i];
-			    break;
-			}
-		      else
-			{
-			    dimsleft[i] = wdims[i];
-			    /*
-			     * Note that we are still positioned at the beginning of
-			     * the last element in the current dimension
-			     */
-			    /* move back to the beginning of dimension i */
-			    datap -= offset[i] * (wdims[i] - 1);
-			    /* move back to beginning read position of dimension i */
-			    fileoffset -= foffset[i] * (wdims[i] - 1);
-			    if (i == 0)
-				done = 1;
-			}
-		  }
-	    }
-	  while (!done && leastsig > 0);
+                /*
+                 * Find starting place of the next row/block.
+                 * Note that all moves are relative:
+                 *   this preserves the starting offsets of each dimension
+                 */
+                for (i = leastsig - 1; i >= 0; i--)
+                  {
+                      if (--dimsleft[i] > 0)
+                        {
+                            /* move to next element in the current dimension */
+                            datap += offset[i];
+                            fileoffset += foffset[i];
+                            break;
+                        }
+                      else
+                        {
+                            dimsleft[i] = wdims[i];
+                            /*
+                             * Note that we are still positioned at the beginning of
+                             * the last element in the current dimension
+                             */
+                            /* move back to the beginning of dimension i */
+                            datap -= offset[i] * (wdims[i] - 1);
+                            /* move back to beginning read position of dimension i */
+                            fileoffset -= foffset[i] * (wdims[i] - 1);
+                            if (i == 0)
+                                done = 1;
+                        }
+                  }
+            }
+          while (!done && leastsig > 0);
 
-	  HDfreespace((VOIDP) buf);
-	  HDfreespace((VOIDP) scatterbuf);
-	  HDfreespace((VOIDP) offset);
+          HDfreespace((VOIDP) buf);
+          HDfreespace((VOIDP) scatterbuf);
+          HDfreespace((VOIDP) offset);
       }
 
     Hendaccess(aid);
     HDfreespace((VOIDP) wstart);
     if (error)
       {
-	  Hclose(file_id);
-	  return FAIL;
+          Hclose(file_id);
+          return FAIL;
       }
     else
-	return (Hclose(file_id));
+        return (Hclose(file_id));
 }
 
 /*----------------------------------------------------------------------------
@@ -3922,19 +3922,19 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[],
  * Inputs:  windims: array of size rank, containing size of slice
  *          data: array containing slice
  *          dims: dimensions of array data
- *	    	isfortran: 0 for C, 1 for Fortran
+ *          isfortran: 0 for C, 1 for Fortran
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   DFSDputslice
  * Invokes: DFwrite, HDgetspace, HDfreespace,DFKnumout(if conversion
-	    required)
+        required)
  * Method:  check dimensions for contiguity, convert types if necessary
  *          write to file
  * Remarks: dims may be larger than size of slice.  In that event, the actual
  *          data may not be contiguous in the array "data".
  *          DFSDstartslice must have been called first
  *          If DFKnumout is called, DFSDsetNT may need to have been
- *	    called
- *	    Note, writes must be contiguous - successive calls to putslice
+ *      called
+ *      Note, writes must be contiguous - successive calls to putslice
  *          must write out array consecutively, according to the setting
  *          of the Fortorder variable - row major if 0, column major if 1
  *--------------------------------------------------------------------------*/
@@ -3942,24 +3942,24 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[],
 intn
 DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
 {
-    intn        rank;		/* number of dimensions in data[] */
-    int32       leastsig;	/* fastest varying subscript in the array */
-    int32       convert;	/* true if machine NT = NT to be written */
-    int32       contiguous;	/* true if there are no gaps in the data to be written */
-    int32       numtype;	/* current number type */
-    int32       platnumsubclass;	/* class of this NT for this platform */
-    int32       fileNTsize;	/* size of this NT as it will be in the file */
-    int32       fileNT;		/* class of NT for the data to write */
+    intn        rank;           /* number of dimensions in data[] */
+    int32       leastsig;       /* fastest varying subscript in the array */
+    int32       convert;        /* true if machine NT = NT to be written */
+    int32       contiguous;     /* true if there are no gaps in the data to be written */
+    int32       numtype;        /* current number type */
+    int32       platnumsubclass;    /* class of this NT for this platform */
+    int32       fileNTsize;     /* size of this NT as it will be in the file */
+    int32       fileNT;         /* class of NT for the data to write */
     int32       isnative;
-    int32       localNTsize;	/* size of this NT as it occurs in theis machine */
-    int32       ret = FAIL;	/* return code from DFwrite */
-    int32       i, j;		/* temporaries */
-    int32       numelements;	/* number of elements to write out per row */
-    int32       writesize;	/* number of bytes to write out per row */
-    int32       datastride;	/* number of bytes in one row of data[] */
-    uint8      *datap;		/* pointer into data[] at */
+    int32       localNTsize;    /* size of this NT as it occurs in theis machine */
+    int32       ret = FAIL;     /* return code from DFwrite */
+    int32       i, j;           /* temporaries */
+    int32       numelements;    /* number of elements to write out per row */
+    int32       writesize;      /* number of bytes to write out per row */
+    int32       datastride;     /* number of bytes in one row of data[] */
+    uint8      *datap;          /* pointer into data[] at */
     /*  the start of the current row */
-    uint8      *buf;		/* buffer containing converted current row */
+    uint8      *buf;            /* buffer containing converted current row */
     CONSTR(FUNC, "DFSDIputslice");
 
     /* shut compiler up */
@@ -3968,46 +3968,46 @@ DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
     HEclear();
 
     if (!data)
-	HRETURN_ERROR(DFE_BADPTR, FAIL);
+        HRETURN_ERROR(DFE_BADPTR, FAIL);
 
     if (Sfile_id == DF_NOFILE)
-	HRETURN_ERROR(DFE_BADCALL, FAIL);
+        HRETURN_ERROR(DFE_BADCALL, FAIL);
 
     rank = Writesdg.rank;
 
     for (i = 0; i < (int32) rank; i++)
       {
-	  /* check validity for the dimension ranges */
-	  if ((windims[i] <= 0) || (windims[i] > Writesdg.dimsizes[i]))
-	      HRETURN_ERROR(DFE_BADDIM, FAIL);
+          /* check validity for the dimension ranges */
+          if ((windims[i] <= 0) || (windims[i] > Writesdg.dimsizes[i]))
+              HRETURN_ERROR(DFE_BADDIM, FAIL);
 
-	  /* check if space allocated is sufficient */
-	  if (dims[i] < windims[i])
-	      HRETURN_ERROR(DFE_NOTENOUGH, FAIL);
+          /* check if space allocated is sufficient */
+          if (dims[i] < windims[i])
+              HRETURN_ERROR(DFE_NOTENOUGH, FAIL);
       }
 
     /* check to see if the slices fit together */
     /* Same for Fortran or C    */
     /* find the first significant dimension */
     for (i = 0; windims[i] == 1 && i < (int32) rank - 1; i++)
-	/* empty */ ;
+        /* empty */ ;
     /* check that all 'lesser' dims match */
     for (j = i + 1; j < (int32) rank; j++)
       {
-	  if (Writesdg.dimsizes[j] != windims[j])
-	      HRETURN_ERROR(DFE_BADDIM, FAIL);
+          if (Writesdg.dimsizes[j] != windims[j])
+              HRETURN_ERROR(DFE_BADDIM, FAIL);
       }
 
     /* update Sddims to reflect new write */
     Sddims[i] += windims[i];
     for (; i > 0 && Sddims[i] >= Writesdg.dimsizes[i]; i--)
       {
-	  Sddims[i - 1] += Sddims[i] / Writesdg.dimsizes[i];
-	  /* promote the unit */
-	  Sddims[i] %= Writesdg.dimsizes[i];
+          Sddims[i - 1] += Sddims[i] / Writesdg.dimsizes[i];
+          /* promote the unit */
+          Sddims[i] %= Writesdg.dimsizes[i];
       }
 
-    leastsig = (int32) rank - 1;	/* which is least sig dim */
+    leastsig = (int32) rank - 1;    /* which is least sig dim */
     numtype = Writesdg.numbertype;
 
     /* get class of this num type for this platform */
@@ -4021,12 +4021,12 @@ DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
     contiguous = 1;
     for (i = 0; contiguous && i < (int32) rank; i++)
       {
-	  /* check if data at the end of the users array will be contiguous */
-	  if (dims[i] > Writesdg.dimsizes[i])
-	      contiguous = 0;
-	  /* Note: if a winstart[] array is ever added, will also need */
-	  /*      to check if data at start of users array will be */
-	  /*      contig                  */
+          /* check if data at the end of the users array will be contiguous */
+          if (dims[i] > Writesdg.dimsizes[i])
+              contiguous = 0;
+          /* Note: if a winstart[] array is ever added, will also need */
+          /*      to check if data at start of users array will be */
+          /*      contig                  */
       }
 
     /*
@@ -4036,80 +4036,80 @@ DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
     datap = (uint8 *) data;
     if (!convert && contiguous)
       {
-	  /* compute total number of elements to write */
-	  for (i = 0, numelements = 1; i < (int32) rank; i++)
-	      numelements *= windims[i];
-	  writesize = numelements * fileNTsize;
+          /* compute total number of elements to write */
+          for (i = 0, numelements = 1; i < (int32) rank; i++)
+              numelements *= windims[i];
+          writesize = numelements * fileNTsize;
 
-	  ret = Hwrite(Writesdg.aid, writesize, (uint8 *) data);	/* done */
-	  if (ret == FAIL)
-	    {
-		Hclose(Sfile_id);
-		return FAIL;
-	    }
+          ret = Hwrite(Writesdg.aid, writesize, (uint8 *) data);    /* done */
+          if (ret == FAIL)
+            {
+                Hclose(Sfile_id);
+                return FAIL;
+            }
       }
     else
-      {		/* must step through the data */
-	  /* compute number of occurrences of the least sig dim */
-	  if (Fortorder)
-	    {
-		for (i = (int32) rank - 1, j = 1; i > 0; i--)
-		    j *= windims[i];
-	    }
-	  else
-	    {
-		for (i = 0, j = 1; i < (int32) rank - 1; i++)
-		    j *= windims[i];
-	    }
+      {     /* must step through the data */
+          /* compute number of occurrences of the least sig dim */
+          if (Fortorder)
+            {
+                for (i = (int32) rank - 1, j = 1; i > 0; i--)
+                    j *= windims[i];
+            }
+          else
+            {
+                for (i = 0, j = 1; i < (int32) rank - 1; i++)
+                    j *= windims[i];
+            }
 
-	  numelements = windims[leastsig];
-	  writesize = numelements * fileNTsize;
-	  datastride = dims[leastsig] * localNTsize;
-	  if (convert)
-	    {
-		buf = (uint8 *) HDgetspace((uint32) writesize);
-		if (buf == NULL)
-		  {
-		      Hclose(Sfile_id);
-		      return FAIL;
-		  }
-		for (i = 0; i < j; i++, datap += datastride)
-		  {
-		      DFKconvert((VOIDP) datap, (VOIDP) buf, numtype,
-				 numelements, DFACC_WRITE, 0, 0);
-		      ret = Hwrite(Writesdg.aid, writesize, buf);	/* done */
-		      if (ret == FAIL)
-			{
-			    HDfreespace((VOIDP) buf);
-			    Hclose(Sfile_id);
-			    return FAIL;
-			}
-		  }
-		HDfreespace((VOIDP) buf);
-	    }
-	  else
-	    {	/* !contiguous      */
-		for (i = 0; i < j; i++, datap += datastride)
-		    ret = Hwrite(Writesdg.aid, writesize, datap);
-		if (ret == FAIL)
-		  {
-		      Hclose(Sfile_id);
-		      return FAIL;
-		  }
-	    }
+          numelements = windims[leastsig];
+          writesize = numelements * fileNTsize;
+          datastride = dims[leastsig] * localNTsize;
+          if (convert)
+            {
+                buf = (uint8 *) HDgetspace((uint32) writesize);
+                if (buf == NULL)
+                  {
+                      Hclose(Sfile_id);
+                      return FAIL;
+                  }
+                for (i = 0; i < j; i++, datap += datastride)
+                  {
+                      DFKconvert((VOIDP) datap, (VOIDP) buf, numtype,
+                                 numelements, DFACC_WRITE, 0, 0);
+                      ret = Hwrite(Writesdg.aid, writesize, buf);   /* done */
+                      if (ret == FAIL)
+                        {
+                            HDfreespace((VOIDP) buf);
+                            Hclose(Sfile_id);
+                            return FAIL;
+                        }
+                  }
+                HDfreespace((VOIDP) buf);
+            }
+          else
+            {   /* !contiguous      */
+                for (i = 0; i < j; i++, datap += datastride)
+                    ret = Hwrite(Writesdg.aid, writesize, datap);
+                if (ret == FAIL)
+                  {
+                      Hclose(Sfile_id);
+                      return FAIL;
+                  }
+            }
       }
 
     return (ret >= 0 ? 0 : -1);
 }
 
 /*-----------------------------------------------------------------------------
- NAME    
+ NAME
        DFSDgetcal
  USAGE
        int DFSDgetcal(pcal, pcal_err, pioff, pioff_err, cal_nt)
        float64 *pcal;       OUT: calibration factor
        float64 *pcal_err;   OUT: calibration error value
-       float64 *pioff;      OUT: uncalibrated offset value 
+       float64 *pioff;      OUT: uncalibrated offset value
        float64 *pioff_err;  OUT: uncalibrated offset error value
        int32   *cal_nt;     OUT: Nunber type of uncalibrated data
 
@@ -4129,7 +4129,7 @@ DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
 
        The relationship between a value 'iy' stored in a data set and the
        actual value 'y' is defined as:
-       
+
             y = cal * (iy - offset)
 
        The variable "offset_err" contains a potential error of offset,
@@ -4142,7 +4142,7 @@ DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
 #if defined __STDC__ || defined PC
 intn
 DFSDgetcal(float64 *pcal, float64 *pcal_err, float64 *pioff,
-	   float64 *pioff_err, int32 *cal_nt)
+           float64 *pioff_err, int32 *cal_nt)
 #else
 intn
 DFSDgetcal(pcal, pcal_err, pioff, pioff_err, cal_nt)
@@ -4158,24 +4158,24 @@ int32      *cal_nt;
     HEclear();
 
     if (Newdata < 0)
-	HRETURN_ERROR(DFE_BADCALL, FAIL);
+        HRETURN_ERROR(DFE_BADCALL, FAIL);
 
     if (IsCal)
       {
-	  *pcal = Readsdg.cal;
-	  *pcal_err = Readsdg.cal_err;
-	  *pioff = Readsdg.ioff;
-	  *pioff_err = Readsdg.ioff_err;
-	  *cal_nt = Readsdg.cal_type;
-	  return (SUCCEED);
+          *pcal = Readsdg.cal;
+          *pcal_err = Readsdg.cal_err;
+          *pioff = Readsdg.ioff;
+          *pioff_err = Readsdg.ioff_err;
+          *cal_nt = Readsdg.cal_type;
+          return (SUCCEED);
       }
     else
-	HRETURN_ERROR(DFE_NOVALS, FAIL);
+        HRETURN_ERROR(DFE_NOVALS, FAIL);
 
-}	/* DFSDgetcal */
+}   /* DFSDgetcal */
 
 /*-----------------------------------------------------------------------------
- NAME   
+ NAME
        DFSDsetcal
  USAGE
        intn DFSDsetcal(cal, cal_err, ioff, ioff_err, cal_nt)
@@ -4189,7 +4189,7 @@ int32      *cal_nt;
  DESCRIPTION
        Sets the calibration information associated with data. This routine
        sets the calibration record attached to a data set. A calibration
-       record contains four 64-bit floating point values followed by a 
+       record contains four 64-bit floating point values followed by a
        32-bit integer, to be interpreted as follows:
 
             cal        - calibration factor
@@ -4200,7 +4200,7 @@ int32      *cal_nt;
 
        The relationship between a value 'iy' stored in a data set and the
        actual value 'y' is defined as:
-       
+
             y = cal * (iy - offset)
 
        The variable "offset_err" contains a potential error of offset,
@@ -4215,7 +4215,7 @@ int32      *cal_nt;
 #if defined __STDC__ || defined PC
 intn
 DFSDsetcal(float64 cal, float64 cal_err, float64 ioff, float64 ioff_err,
-	   int32 cal_nt)
+           int32 cal_nt)
 #else
 intn
 DFSDsetcal(cal, cal_err, ioff, ioff_err, cal_nt)
@@ -4240,7 +4240,7 @@ int32       cal_nt;
 }
 
 /*-----------------------------------------------------------------------------
- NAME 
+ NAME
        DFSDwriteref
  USAGE
        int DFSDwriteref(filename, ref)
@@ -4252,7 +4252,7 @@ int32       cal_nt;
        Specifies the data set to be written to next by using the reference
        number. Note that there is no gaurantee that reference numbers appear
        in sequence in and HDF file; therefore, it is not safe to assume
-       that a reference number is the sequence number for a data set. 
+       that a reference number is the sequence number for a data set.
 -----------------------------------------------------------------------------*/
 intn
 DFSDwriteref(const char *filename, uint16 ref)
@@ -4267,13 +4267,13 @@ DFSDwriteref(const char *filename, uint16 ref)
     /* Open file for read access */
     file_id = DFSDIopen(filename, DFACC_READ);
     if (file_id == DF_NOFILE)
-	return FAIL;
+        return FAIL;
 
     /* Check for existence of SDG */
     if ((aid = Hstartread(file_id, DFTAG_SDG, ref)) == FAIL
-	&& (aid = Hstartread(file_id, DFTAG_NDG, ref)) == FAIL)
+        && (aid = Hstartread(file_id, DFTAG_NDG, ref)) == FAIL)
       {
-	  HCLOSE_RETURN_ERROR(file_id, DFE_NOMATCH, FAIL);
+          HCLOSE_RETURN_ERROR(file_id, DFE_NOMATCH, FAIL);
       }
 
     /*
@@ -4284,11 +4284,11 @@ DFSDwriteref(const char *filename, uint16 ref)
        ** numbertype, dimensions or fill value.
      */
     if ((DFSDIgetndg(file_id, DFTAG_SDG, ref, &Writesdg) < 0)
-	&& (DFSDIgetndg(file_id, DFTAG_NDG, ref, &Writesdg) < 0))
+        && (DFSDIgetndg(file_id, DFTAG_NDG, ref, &Writesdg) < 0))
       {
-	  Hendaccess(aid);
-	  Hclose(file_id);
-	  return FAIL;
+          Hendaccess(aid);
+          Hclose(file_id);
+          return FAIL;
       }
 
     /* Close access to file, set Writeref */
@@ -4300,7 +4300,7 @@ DFSDwriteref(const char *filename, uint16 ref)
 }
 
 /*-----------------------------------------------------------------------------
- NAME   
+ NAME
        DFSDsetfillvalue
  USAGE
        int DFSDsetfillvalue(fill_value)
@@ -4316,15 +4316,15 @@ DFSDwriteref(const char *filename, uint16 ref)
        gets written if the following "DFSDwriteslab" call is the first
        call to the data set i.e. the data set is created. It is assumed that
        the fille value has the same number type as the data set.
- WARNING 
+ WARNING
        Memory bug on SGI's if you try to free allocated space for fill values.
 -----------------------------------------------------------------------------*/
 
 intn
 DFSDsetfillvalue(VOIDP fill_value)
 {
-    int32       numtype;	/* current number type  */
-    uint32      localNTsize;	/* size of this NT on as it is on this machine  */
+    int32       numtype;        /* current number type  */
+    uint32      localNTsize;    /* size of this NT on as it is on this machine  */
 #ifdef LATER
     CONSTR(FUNC, "DFSDsetfillvalue");
 #endif
@@ -4334,19 +4334,19 @@ DFSDsetfillvalue(VOIDP fill_value)
 
     /* Check to see if fill value written out already */
     if (Ref.fill_value == -1 && Writesdg.fill_fixed == TRUE)
-	return FAIL;
+        return FAIL;
     else
       {
-	  /* Get local and file number type sizes  */
-	  numtype = Writesdg.numbertype;
-	  localNTsize = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
+          /* Get local and file number type sizes  */
+          numtype = Writesdg.numbertype;
+          localNTsize = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
 
-	  /* Set fill value in Writesdg struct, and set fill value flag  */
-	  Ref.fill_value = 0;
-	  if (HDmemcpy(Writesdg.fill_value, fill_value, localNTsize) != NULL)
-	      return SUCCEED;
-	  else
-	      return FAIL;
+          /* Set fill value in Writesdg struct, and set fill value flag  */
+          Ref.fill_value = 0;
+          if (HDmemcpy(Writesdg.fill_value, fill_value, localNTsize) != NULL)
+              return SUCCEED;
+          else
+              return FAIL;
       }
 }
 
@@ -4355,22 +4355,22 @@ DFSDsetfillvalue(VOIDP fill_value)
        DFSDgetfillvalue
  USAGE
        int DFSDgetfillvalue(fill_value)
-       VOID *fill_value;    OUT: Number to be stored in any unwritten 
+       VOID *fill_value;    OUT: Number to be stored in any unwritten
                                  locations of the scientific data set
  RETURNS
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
       Gets the value used to fill any unwritten location in a scientific
       data set. The value is set by "DFSDsetfillvalue". Note that a call
-      that initializes file information structures such as "DFSDgetdims" 
-      is required in order for "DFSDgetfillvalue" to succeed. This is because 
+      that initializes file information structures such as "DFSDgetdims"
+      is required in order for "DFSDgetfillvalue" to succeed. This is because
       "DFSDgetfillvalue" does not take a file name as an arguement.
 -----------------------------------------------------------------------------*/
 intn
 DFSDgetfillvalue(VOIDP fill_value)
 {
-    int32       numtype;	/* current number type  */
-    uint32      localNTsize;	/* size of this NT on as it is on this machine  */
+    int32       numtype;        /* current number type  */
+    uint32      localNTsize;    /* size of this NT on as it is on this machine  */
     CONSTR(FUNC, "DFSDgetfillvalue");
 
     /* Clear error stack  */
@@ -4378,7 +4378,7 @@ DFSDgetfillvalue(VOIDP fill_value)
 
     /* Check if Readsdg is fresh  */
     if (Newdata < 0)
-	HRETURN_ERROR(DFE_BADCALL, FAIL);
+        HRETURN_ERROR(DFE_BADCALL, FAIL);
 
     /* Get local number type size  */
     numtype = Readsdg.numbertype;
@@ -4386,9 +4386,9 @@ DFSDgetfillvalue(VOIDP fill_value)
 
     /* Set return fill value  */
     if (HDmemcpy(fill_value, Readsdg.fill_value, localNTsize) != NULL)
-	return SUCCEED;
+        return SUCCEED;
     else
-	return FAIL;
+        return FAIL;
 }
 
 /*-----------------------------------------------------------------------------
@@ -4402,7 +4402,7 @@ DFSDgetfillvalue(VOIDP fill_value)
        int32 slab_size[];    IN: array of size rank containing the size of
                                  each dimension in the slab of data
        int32 stride[];       IN: sub-sampling stride(not implemented)
-       VOIDP buffer;         OUT: buffer to hold the extracted slab of data 
+       VOIDP buffer;         OUT: buffer to hold the extracted slab of data
        int32 buffer_size[];  OUT: array containing the dimensions of the buffer
  RETURNS
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
@@ -4412,22 +4412,22 @@ DFSDgetfillvalue(VOIDP fill_value)
        "DFSDgetdata" is not called earlier. The "start[]" indices are relative
        to 1. The rank(size) of "start[]" must be the same as the number of
        dimensions of the specified variable. The elements of "slab_size[]"
-       must be no larger than the dimensions of the scientific data set. 
-       The stride feature is not currently implemented. For now just pass 
+       must be no larger than the dimensions of the scientific data set.
+       The stride feature is not currently implemented. For now just pass
        the "start[]" array as the arguement for "stride[]" where it will be
-       ignored. To extract a slab of lower dimension than that of the data 
+       ignored. To extract a slab of lower dimension than that of the data
        set, enter 1 in the "slab_size[] array for each ommitted dimension.
        For example, to extract a 2D slab from a 3D data set, specify the
-       beginning coordiantes in 3 dimensions in "start[]" and enter a 1 for 
-       the for the missing dimension in the array "slab_size[]". More 
+       beginning coordiantes in 3 dimensions in "start[]" and enter a 1 for
+       the for the missing dimension in the array "slab_size[]". More
        specifically, to extract a 3x4 slab containing the elements (6,7,8)
-       through (8.7,11) specify the begining coordiantes as {6,7,8} and 
+       through (8.7,11) specify the begining coordiantes as {6,7,8} and
        the slab size as {3,1,4}.
 -----------------------------------------------------------------------------*/
 
 intn
 DFSDreadslab(const char *filename, int32 start[], int32 slab_size[],
-	     int32 stride[], VOIDP buffer, int32 buffer_size[])
+             int32 stride[], VOIDP buffer, int32 buffer_size[])
 {
     /* shut compiler up */
     stride = stride;
@@ -4436,7 +4436,7 @@ DFSDreadslab(const char *filename, int32 start[], int32 slab_size[],
 }
 
 /*-----------------------------------------------------------------------------
- NAME   
+ NAME
        DFSDstartslab
  USAGE
        int DFSDstartslab(filename)
@@ -4458,7 +4458,7 @@ DFSDstartslab(const char *filename)
     int32       sdg_size;
     int32       localNTsize;
     int32       fileNTsize;
-    int32       fill_bufsize = 16384;	/* Chosen for the PC */
+    int32       fill_bufsize = 16384;   /* Chosen for the PC */
     int32       odd_size;
     uint8      *fill_buf;
 
@@ -4469,16 +4469,16 @@ DFSDstartslab(const char *filename)
 
     /* Check rank set i.e. DFSDsetdims()  */
     if (!Writesdg.rank)
-	HRETURN_ERROR(DFE_BADDIM, FAIL);
+        HRETURN_ERROR(DFE_BADDIM, FAIL);
 
     /* If NT not set(i.e. DFSDsetNT() not called), default to float32  */
     if (Writesdg.numbertype == DFNT_NONE)
-	DFSDsetNT(DFNT_FLOAT32);
+        DFSDsetNT(DFNT_FLOAT32);
 
     /* Open file */
     Sfile_id = DFSDIopen(filename, DFACC_WRITE);
     if (Sfile_id == DF_NOFILE)
-	return FAIL;
+        return FAIL;
 
     /*
        ** Check for Writeref set i.e. DFSDwriteref() called?
@@ -4486,9 +4486,9 @@ DFSDstartslab(const char *filename)
        ** Else use existing one.
      */
     if (!Writeref)
-	Writeref = Hnewref(Sfile_id);
+        Writeref = Hnewref(Sfile_id);
     if (!Writeref)
-	return FAIL;
+        return FAIL;
 
     /* Set tag, ref of SDG to write */
     Writesdg.data.tag = DFTAG_SD;
@@ -4501,14 +4501,14 @@ DFSDstartslab(const char *filename)
     /* Calculate size of of dataset */
     sdg_size = fileNTsize;
     for (i = 0; i < Writesdg.rank; i++)
-	sdg_size *= Writesdg.dimsizes[i];
+        sdg_size *= Writesdg.dimsizes[i];
 
     /* set up to write data */
     Writesdg.aid = Hstartwrite(Sfile_id, DFTAG_SD, Writeref, sdg_size);
     if (Writesdg.aid == FAIL)
       {
-	  Hclose(Sfile_id);
-	  return FAIL;
+          Hclose(Sfile_id);
+          return FAIL;
       }
 
     /*
@@ -4516,50 +4516,50 @@ DFSDstartslab(const char *filename)
      */
     if (!Ref.fill_value)
       {
-	  /* make the fill buffer smaller if possible */
-	  if (fill_bufsize > sdg_size && localNTsize == fileNTsize)
-	      fill_bufsize = sdg_size;
+          /* make the fill buffer smaller if possible */
+          if (fill_bufsize > sdg_size && localNTsize == fileNTsize)
+              fill_bufsize = sdg_size;
 
-	  /* Allocate space for fill buffer */
-	  if ((fill_buf = (uint8 *) HDgetspace((uint32) fill_bufsize)) == NULL)
-	    {
-		Hendaccess(Writesdg.aid);
-		Hclose(Sfile_id);
-		HRETURN_ERROR(DFE_NOSPACE, FAIL);
-	    }
+          /* Allocate space for fill buffer */
+          if ((fill_buf = (uint8 *) HDgetspace((uint32) fill_bufsize)) == NULL)
+            {
+                Hendaccess(Writesdg.aid);
+                Hclose(Sfile_id);
+                HRETURN_ERROR(DFE_NOSPACE, FAIL);
+            }
 
-	  /* Intialize buffer to fill value */
-	  for (i = 0; i < fill_bufsize; i = i + localNTsize)
-	      HDmemcpy((uint8 *) &(fill_buf[i]), Writesdg.fill_value, localNTsize);
+          /* Intialize buffer to fill value */
+          for (i = 0; i < fill_bufsize; i = i + localNTsize)
+              HDmemcpy((uint8 *) &(fill_buf[i]), Writesdg.fill_value, localNTsize);
 
-	  if (sdg_size <= fill_bufsize)
-	      odd_size = sdg_size;
-	  else
-	    {
-		odd_size = sdg_size % fill_bufsize;
-		for (i = 0; i < (sdg_size / fill_bufsize); i++)
-		  {	/* Write out fill buffer X times */
-		      if (Hwrite(Writesdg.aid, fill_bufsize, fill_buf) == FAIL)
-			{
-			    Hendaccess(Writesdg.aid);
-			    Hclose(Sfile_id);
-			    HDfreespace((VOIDP) fill_buf);
-			    HRETURN_ERROR(DFE_WRITEERROR, FAIL);
-			}
-		  }
-	    }
-	  /* Write fill values for odd size piece */
-	  if (Hwrite(Writesdg.aid, odd_size, fill_buf) == FAIL)
-	    {
-		Hendaccess(Writesdg.aid);
-		Hclose(Sfile_id);
-		HDfreespace((VOIDP) fill_buf);
-		HRETURN_ERROR(DFE_WRITEERROR, FAIL);
-	    }
+          if (sdg_size <= fill_bufsize)
+              odd_size = sdg_size;
+          else
+            {
+                odd_size = sdg_size % fill_bufsize;
+                for (i = 0; i < (sdg_size / fill_bufsize); i++)
+                  {     /* Write out fill buffer X times */
+                      if (Hwrite(Writesdg.aid, fill_bufsize, fill_buf) == FAIL)
+                        {
+                            Hendaccess(Writesdg.aid);
+                            Hclose(Sfile_id);
+                            HDfreespace((VOIDP) fill_buf);
+                            HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+                        }
+                  }
+            }
+          /* Write fill values for odd size piece */
+          if (Hwrite(Writesdg.aid, odd_size, fill_buf) == FAIL)
+            {
+                Hendaccess(Writesdg.aid);
+                Hclose(Sfile_id);
+                HDfreespace((VOIDP) fill_buf);
+                HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+            }
 
-	  Writesdg.fill_fixed = TRUE;	/* fill value cannot be changed */
-	  /* Free up space */
-	  HDfreespace((VOIDP) fill_buf);
+          Writesdg.fill_fixed = TRUE;   /* fill value cannot be changed */
+          /* Free up space */
+          HDfreespace((VOIDP) fill_buf);
       }
 
     return SUCCEED;
@@ -4570,10 +4570,10 @@ DFSDstartslab(const char *filename)
        DFSDwriteslab
  USAGE
        int  DFSDwriteslab(start, stride, count, data)
-       int32 start[];     IN: array containing the coordinates of the start 
-                              of the slab in the HDF file 
-       int32 stride[];    IN: array containing the dimensions of data[] 
-       int32 count[];     IN: array containing the size of the slab 
+       int32 start[];     IN: array containing the coordinates of the start
+                              of the slab in the HDF file
+       int32 stride[];    IN: array containing the dimensions of data[]
+       int32 count[];     IN: array containing the size of the slab
        VOID  *data;       IN: array to hold the floating point data to write
  RETURNS
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
@@ -4595,39 +4595,39 @@ DFSDstartslab(const char *filename)
 ----------------------------------------------------------------------------*/
 intn
 DFSDwriteslab(int32 start[], int32 stride[],
-	      int32 count[], VOIDP data)
+              int32 count[], VOIDP data)
 {
-    intn        rank;		/* number of dimensions in data[] */
-    int32       i;		/* temporary loop index */
+    intn        rank;           /* number of dimensions in data[] */
+    int32       i;              /* temporary loop index */
 
-    int32       leastsig;	/* fastest varying subscript in the array */
-    int32       convert;	/* true if machine NT != NT to be read */
-    int32       done;		/* true if we are at the end of the slab */
-    int32       issdg;		/* 1 -- pure sdg. do what HDF3.1 does   */
-    int32       numtype;	/* current number type  */
-    int32       fileNTsize;	/* size of this NT in the file  */
-    int32       localNTsize;	/* size of this NT as it occurs in this machine */
-    int32       numelements;	/* number of floats to read at once */
-    int32       sdgsize;	/* number of bytes to be written in the SDG */
-    int32       rowsize;	/* number of bytes to be written at once */
+    int32       leastsig;       /* fastest varying subscript in the array */
+    int32       convert;        /* true if machine NT != NT to be read */
+    int32       done;           /* true if we are at the end of the slab */
+    int32       issdg;          /* 1 -- pure sdg. do what HDF3.1 does   */
+    int32       numtype;        /* current number type  */
+    int32       fileNTsize;     /* size of this NT in the file  */
+    int32       localNTsize;    /* size of this NT as it occurs in this machine */
+    int32       numelements;    /* number of floats to read at once */
+    int32       sdgsize;        /* number of bytes to be written in the SDG */
+    int32       rowsize;        /* number of bytes to be written at once */
     /*   in the hyperslab */
-    int32       datastride;	/* number of floats in one row of data[] */
-    int32       fileoffset;	/* offset into the current dataset in the file */
-    int32      *doffset;	/* array for accessing the next element in data[] */
-    int32      *foffset;	/* array for accessing  next element in the file */
-    int32      *dimsleft;	/* array for tracking current position in data[] */
-    int32      *startdims;	/* tmp array containing starting slab dims */
-    int32      *sizedims;	/* tmp array containing the slab size */
-    int32      *filedims;	/* tmp array containing the dimensions */
+    int32       datastride;     /* number of floats in one row of data[] */
+    int32       fileoffset;     /* offset into the current dataset in the file */
+    int32      *doffset;        /* array for accessing the next element in data[] */
+    int32      *foffset;        /* array for accessing  next element in the file */
+    int32      *dimsleft;       /* array for tracking current position in data[] */
+    int32      *startdims;      /* tmp array containing starting slab dims */
+    int32      *sizedims;       /* tmp array containing the slab size */
+    int32      *filedims;       /* tmp array containing the dimensions */
     /*   of the dataset in the file */
-    int32       r_error;	/* flag if an error occurred, */
+    int32       r_error;        /* flag if an error occurred, */
     /*   used by DFconvert macro */
     int32       aid;
 
-    uint8       platnumsubclass;	/* class of this NT for this platform */
-    uint8       fileNT;		/* file number subclass  */
-    uint8      *buf;		/* buffer containing the converted current row */
-    uint8      *datap;		/* ptr into data[] at starting offset */
+    uint8       platnumsubclass;    /* class of this NT for this platform */
+    uint8       fileNT;         /* file number subclass  */
+    uint8      *buf;            /* buffer containing the converted current row */
+    uint8      *datap;          /* ptr into data[] at starting offset */
     /*   of current block */
 
     CONSTR(FUNC, "DFSDwriteslab");
@@ -4640,7 +4640,7 @@ DFSDwriteslab(int32 start[], int32 stride[],
 
     /* Sanity checking of input data  */
     if (!data)
-	HRETURN_ERROR(DFE_BADPTR, FAIL);
+        HRETURN_ERROR(DFE_BADPTR, FAIL);
 
     /* Set rank */
     rank = Writesdg.rank;
@@ -4648,18 +4648,18 @@ DFSDwriteslab(int32 start[], int32 stride[],
     /* Do sanity checking of starting and size dimension arrays  */
     for (i = 0; i < (int32) rank; i++)
       {
-	  /*
-	     ** Check validity for the dimension ranges by
-	     **  checking lower bound of slab sizes
-	     **  checking lower bound of starting dimensions
-	     **  checking upper bound on writing dimensions
-	   */
-	  if ((count[i] < 1) || (start[i] < 1)
-	      || (start[i] + count[i] - 1 > Writesdg.dimsizes[i]))
-	    {
-		Hclose(Sfile_id);
-		HRETURN_ERROR(DFE_BADDIM, FAIL);
-	    }
+          /*
+             ** Check validity for the dimension ranges by
+             **  checking lower bound of slab sizes
+             **  checking lower bound of starting dimensions
+             **  checking upper bound on writing dimensions
+           */
+          if ((count[i] < 1) || (start[i] < 1)
+              || (start[i] + count[i] - 1 > Writesdg.dimsizes[i]))
+            {
+                Hclose(Sfile_id);
+                HRETURN_ERROR(DFE_BADDIM, FAIL);
+            }
       }
 
     /* Intialize a few local variables */
@@ -4673,7 +4673,7 @@ DFSDwriteslab(int32 start[], int32 stride[],
     /* Calculate total bytes in SDS that can be written */
     sdgsize = fileNTsize;
     for (i = 0; i < Writesdg.rank; i++)
-	sdgsize *= Writesdg.dimsizes[i];
+        sdgsize *= Writesdg.dimsizes[i];
 
     /* Set Access Id */
     aid = Writesdg.aid;
@@ -4686,8 +4686,8 @@ DFSDwriteslab(int32 start[], int32 stride[],
     startdims = (int32 *) HDgetspace((uint32) 3 * rank * sizeof(int32));
     if (startdims == NULL)
       {
-	  Hclose(Sfile_id);
-	  HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          Hclose(Sfile_id);
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
     sizedims = startdims + rank;
     filedims = sizedims + rank;
@@ -4695,24 +4695,24 @@ DFSDwriteslab(int32 start[], int32 stride[],
     /* Copy arrays to private workspace (row major order) */
     for (i = 0; i < (int32) rank; i++)
       {
-	  startdims[i] = start[i] - 1;
-	  sizedims[i] = count[i];	/* dimensions of just slab */
-	  filedims[i] = Writesdg.dimsizes[i];	/* dimensions of whole SDG */
+          startdims[i] = start[i] - 1;
+          sizedims[i] = count[i];   /* dimensions of just slab */
+          filedims[i] = Writesdg.dimsizes[i];   /* dimensions of whole SDG */
       }
 
     /* Is conversion necessary */
     convert = (fileNT != platnumsubclass);
 
     /* Collapse dimensions if contiguous both in the file and in memory */
-    for (i = (int32) rank - 1; i > 0; i--)	/* stop before most sig dim */
+    for (i = (int32) rank - 1; i > 0; i--)  /* stop before most sig dim */
       {
-	  /* read only part of dataset */
-	  if (startdims[i] != 0 || sizedims[i] < filedims[i])
-	      break;
-	  startdims[i - 1] *= filedims[i];
-	  sizedims[i - 1] *= sizedims[i];
-	  filedims[i - 1] *= filedims[i];
-	  rank--;
+          /* read only part of dataset */
+          if (startdims[i] != 0 || sizedims[i] < filedims[i])
+              break;
+          startdims[i - 1] *= filedims[i];
+          sizedims[i - 1] *= sizedims[i];
+          filedims[i - 1] *= filedims[i];
+          rank--;
       }
 
     /*
@@ -4724,167 +4724,167 @@ DFSDwriteslab(int32 start[], int32 stride[],
     r_error = 0;
     if (rank == 1 && !convert)
       {
-	  /* all data is contiguous with no conversions */
-	  rowsize = sizedims[0] * fileNTsize;
-	  if ((Hseek(aid, startdims[0] * fileNTsize, 0) == FAIL)
-	      || (rowsize != Hwrite(aid, rowsize, (uint8 *) data)))
-	    {
-		r_error = 1;
-	    }
+          /* all data is contiguous with no conversions */
+          rowsize = sizedims[0] * fileNTsize;
+          if ((Hseek(aid, startdims[0] * fileNTsize, 0) == FAIL)
+              || (rowsize != Hwrite(aid, rowsize, (uint8 *) data)))
+            {
+                r_error = 1;
+            }
       }
     else
       {
-	  /*
-	     * The data must be further manipulated.
-	     * It may need conversion, may not be contiguous, or
-	     * any combination of these.
-	   */
-	  numelements = sizedims[leastsig];	/* # of elmenents in a row */
-	  rowsize = numelements * fileNTsize;	/* # of bytes in a row */
+          /*
+             * The data must be further manipulated.
+             * It may need conversion, may not be contiguous, or
+             * any combination of these.
+           */
+          numelements = sizedims[leastsig];     /* # of elmenents in a row */
+          rowsize = numelements * fileNTsize;   /* # of bytes in a row */
 
-	  /* If conversion, allocate 1 row buffers */
-	  if (convert)
-	    {
-		if ((buf = (uint8 *) HDgetspace((uint32) rowsize)) == NULL)
-		  {
-		      HDfreespace((VOIDP) startdims);
-		      Hendaccess(aid);
-		      Hclose(Sfile_id);
-		      HRETURN_ERROR(DFE_NOSPACE, FAIL);
-		  }
-	    }
-	  else
-	      buf = NULL;
+          /* If conversion, allocate 1 row buffers */
+          if (convert)
+            {
+                if ((buf = (uint8 *) HDgetspace((uint32) rowsize)) == NULL)
+                  {
+                      HDfreespace((VOIDP) startdims);
+                      Hendaccess(aid);
+                      Hclose(Sfile_id);
+                      HRETURN_ERROR(DFE_NOSPACE, FAIL);
+                  }
+            }
+          else
+              buf = NULL;
 
-	  /* Allocate space for file and data offsets and dimsleft */
-	  foffset = (int32 *) HDgetspace((uint32) 3 * rank * sizeof(int32));
-	  if (foffset == NULL)
-	    {
-		HDfreespace((VOIDP) startdims);
-		HDfreespace((VOIDP) buf);
-		Hendaccess(aid);
-		Hclose(Sfile_id);
-		HRETURN_ERROR(DFE_NOSPACE, FAIL);
-	    }
-	  dimsleft = foffset + rank;
-	  doffset = dimsleft + rank;
+          /* Allocate space for file and data offsets and dimsleft */
+          foffset = (int32 *) HDgetspace((uint32) 3 * rank * sizeof(int32));
+          if (foffset == NULL)
+            {
+                HDfreespace((VOIDP) startdims);
+                HDfreespace((VOIDP) buf);
+                Hendaccess(aid);
+                Hclose(Sfile_id);
+                HRETURN_ERROR(DFE_NOSPACE, FAIL);
+            }
+          dimsleft = foffset + rank;
+          doffset = dimsleft + rank;
 
-	  /* Set number of dimensions left */
-	  for (i = leastsig; i >= 0; i--)
-	      dimsleft[i] = sizedims[i];
+          /* Set number of dimensions left */
+          for (i = leastsig; i >= 0; i--)
+              dimsleft[i] = sizedims[i];
 
-	  /* compute offsets in the source array */
-	  doffset[leastsig] = 1 * localNTsize;
-	  for (i = leastsig; i > 0; i--)
-	      doffset[i - 1] = doffset[i] * sizedims[i];
+          /* compute offsets in the source array */
+          doffset[leastsig] = 1 * localNTsize;
+          for (i = leastsig; i > 0; i--)
+              doffset[i - 1] = doffset[i] * sizedims[i];
 
-	  /* Set data stride along leastsig */
-	  datastride = sizedims[leastsig];
+          /* Set data stride along leastsig */
+          datastride = sizedims[leastsig];
 
-	  /*
-	     ** Compute offsets in the file for dimension, according to the
-	     ** possible length for each dimension. Depends on numbertype.
-	   */
-	  for (i = leastsig, foffset[i] = 1 * fileNTsize; i > 0; i--)
-	      foffset[i - 1] = foffset[i] * filedims[i];
+          /*
+             ** Compute offsets in the file for dimension, according to the
+             ** possible length for each dimension. Depends on numbertype.
+           */
+          for (i = leastsig, foffset[i] = 1 * fileNTsize; i > 0; i--)
+              foffset[i - 1] = foffset[i] * filedims[i];
 
-	  /*
-	     ** Compute starting position in file
-	     ** All file writes are done relative to this starting offset.
-	     ** Cumulative offset is from most sig to next to least sig dim.
-	   */
-	  for (i = 0, fileoffset = 0; i < leastsig; i++)
-	      fileoffset = fileoffset + (startdims[i] * foffset[i]);
+          /*
+             ** Compute starting position in file
+             ** All file writes are done relative to this starting offset.
+             ** Cumulative offset is from most sig to next to least sig dim.
+           */
+          for (i = 0, fileoffset = 0; i < leastsig; i++)
+              fileoffset = fileoffset + (startdims[i] * foffset[i]);
 
-	  /* Dont forget about last dimension */
-	  fileoffset = fileoffset + startdims[leastsig] * fileNTsize;
+          /* Dont forget about last dimension */
+          fileoffset = fileoffset + startdims[leastsig] * fileNTsize;
 
-	  datap = (uint8 *) data;
-	  done = 0;
+          datap = (uint8 *) data;
+          done = 0;
 
-	  /* -- now write the data */
-	  do
-	    {
-		/* move to the next data element in the file */
-		if (Hseek(aid, fileoffset, 0) == FAIL)
-		  {
-		      r_error = 1;
-		      break;
-		  }
+          /* -- now write the data */
+          do
+            {
+                /* move to the next data element in the file */
+                if (Hseek(aid, fileoffset, 0) == FAIL)
+                  {
+                      r_error = 1;
+                      break;
+                  }
 
-		/*  If convert and write one contiguous block of data */
-		/*  Else write one contiguous block of data */
-		if (convert)
-		  {
-		      DFKconvert((VOIDP) datap, (VOIDP) buf, numtype,
-				 numelements, DFACC_WRITE, 0, 0);
-		      if (rowsize != Hwrite(aid, rowsize, buf))
-			{
-			    r_error = 1;
-			    break;
-			}
-		  }
-		else
-		  {
-		      if (rowsize != Hwrite(aid, rowsize, datap))
-			{
-			    r_error = 1;
-			    break;
-			}
-		  }
+                /*  If convert and write one contiguous block of data */
+                /*  Else write one contiguous block of data */
+                if (convert)
+                  {
+                      DFKconvert((VOIDP) datap, (VOIDP) buf, numtype,
+                                 numelements, DFACC_WRITE, 0, 0);
+                      if (rowsize != Hwrite(aid, rowsize, buf))
+                        {
+                            r_error = 1;
+                            break;
+                        }
+                  }
+                else
+                  {
+                      if (rowsize != Hwrite(aid, rowsize, datap))
+                        {
+                            r_error = 1;
+                            break;
+                        }
+                  }
 
-		/*
-		 * Find starting place of the next row/block.
-		 * Note that all moves are relative:
-		 *   this preserves the starting offsets of each dimension
-		 */
-		for (i = leastsig - 1; i >= 0; i--)
-		  {
-		      if (--dimsleft[i] > 0)
-			{
-			    /* Move to next element in the current dimension */
-			    datap += doffset[i];
-			    fileoffset += foffset[i];
-			    break;
-			}
-		      else
-			{
-			    dimsleft[i] = sizedims[i];
-			    /*
-			     * Note that we are still positioned at the beginning of
-			     * the last element in the current dimension
-			     */
-			    /* move back to the beginning of dimension i */
-			    datap -= doffset[i] * (sizedims[i] - 1);
+                /*
+                 * Find starting place of the next row/block.
+                 * Note that all moves are relative:
+                 *   this preserves the starting offsets of each dimension
+                 */
+                for (i = leastsig - 1; i >= 0; i--)
+                  {
+                      if (--dimsleft[i] > 0)
+                        {
+                            /* Move to next element in the current dimension */
+                            datap += doffset[i];
+                            fileoffset += foffset[i];
+                            break;
+                        }
+                      else
+                        {
+                            dimsleft[i] = sizedims[i];
+                            /*
+                             * Note that we are still positioned at the beginning of
+                             * the last element in the current dimension
+                             */
+                            /* move back to the beginning of dimension i */
+                            datap -= doffset[i] * (sizedims[i] - 1);
 
-			    /* move back to beginning read position of dimension i */
-			    fileoffset -= foffset[i] * (sizedims[i] - 1);
-			    if (i == 0)
-				done = 1;
-			}
-		  }
-	    }
-	  while (!done && leastsig > 0);
+                            /* move back to beginning read position of dimension i */
+                            fileoffset -= foffset[i] * (sizedims[i] - 1);
+                            if (i == 0)
+                                done = 1;
+                        }
+                  }
+            }
+          while (!done && leastsig > 0);
 
-	  HDfreespace((VOIDP) buf);
-	  HDfreespace((VOIDP) foffset);
+          HDfreespace((VOIDP) buf);
+          HDfreespace((VOIDP) foffset);
       }
 
     /* Clean up time.... */
     HDfreespace((VOIDP) startdims);
 
     if (r_error)
-	return FAIL;
+        return FAIL;
     else
-	return SUCCEED;
+        return SUCCEED;
 }
 
 /*-----------------------------------------------------------------------------
- NAME 
+ NAME
        DFSDendslab
  USAGE
        int DFSDendslab()
- 
+
  RETURNS
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
@@ -4904,51 +4904,51 @@ DFSDendslab(void)
 
     /* Valid file id */
     if (Sfile_id == DF_NOFILE)
-	HRETURN_ERROR(DFE_BADCALL, FAIL);
+        HRETURN_ERROR(DFE_BADCALL, FAIL);
 
     /* Check to see if we have written out the SDG info */
     if (!Ref.new_ndg)
       {
-	  if (DFSDIputndg(Sfile_id, Writeref, &Writesdg) < 0)
-	    {
-		Hclose(Sfile_id);
-		return FAIL;
-	    }
+          if (DFSDIputndg(Sfile_id, Writeref, &Writesdg) < 0)
+            {
+                Hclose(Sfile_id);
+                return FAIL;
+            }
 
-	  /* old nsdg table should be reset next time  */
-	  if (nsdghdr != NULL)
-	    {
-		if (nsdghdr->nsdg_t != NULL)
-		  {
-		      DFnsdgle   *rear, *front;
+          /* old nsdg table should be reset next time  */
+          if (nsdghdr != NULL)
+            {
+                if (nsdghdr->nsdg_t != NULL)
+                  {
+                      DFnsdgle   *rear, *front;
 
-		      rear = nsdghdr->nsdg_t;
-		      front = rear->next;
-		      while (rear != NULL)
-			{
-			    HDfreenclear(rear);
-			    rear = front;
-			    if (rear != NULL)
-				front = rear->next;
-			}
-		      nsdghdr->size = 0;
-		      nsdghdr->nsdg_t = NULL;
-		      lastnsdg.tag = DFTAG_NULL;
-		      lastnsdg.ref = 0;
-		  }
+                      rear = nsdghdr->nsdg_t;
+                      front = rear->next;
+                      while (rear != NULL)
+                        {
+                            HDfreenclear(rear);
+                            rear = front;
+                            if (rear != NULL)
+                                front = rear->next;
+                        }
+                      nsdghdr->size = 0;
+                      nsdghdr->nsdg_t = NULL;
+                      lastnsdg.tag = DFTAG_NULL;
+                      lastnsdg.ref = 0;
+                  }
 
-		HDfreenclear(nsdghdr);
-	    }
+                HDfreenclear(nsdghdr);
+            }
 
-	  Ref.new_ndg = -1;
+          Ref.new_ndg = -1;
       }
 
     /* Slab clean up */
     Hendaccess(Writesdg.aid);
     ret = Hclose(Sfile_id);
     Sfile_id = 0;
-    Lastref = (uint16) Writeref;	/* remember ref written */
-    Writeref = 0;	/* Reset Write ref */
+    Lastref = (uint16) Writeref;    /* remember ref written */
+    Writeref = 0;   /* Reset Write ref */
 
     return ret;
 }

@@ -43,11 +43,11 @@ static char RcsId[] = "@(#)$Revision$";
 #define CSKPHUFF_MASTER
 #define CODER_CLIENT
 /* HDF compression includes */
-#include "hcompi.h"	/* Internal definitions for compression */
+#include "hcompi.h"     /* Internal definitions for compression */
 
 /* Internal Defines */
 /* #define TESTING */
-#define TMP_BUF_SIZE    8192	/* size of throw-away buffer */
+#define TMP_BUF_SIZE    8192    /* size of throw-away buffer */
 
 /*
    *   This piece of code uses Semi-Splay trees to Huffman encode a raster
@@ -80,45 +80,45 @@ PRIVATE int32 HCIcskphuff_init(accrec_t * access_rec);
 static void
 HCIcskphuff_splay(comp_coder_skphuff_info_t * skphuff_info, uint8 plain)
 {
-    uintn       a, b;		/* children of nodes to semi-rotate */
-    uint8       c, d;		/* pair of nodes to semi-rotate */
-    uintn       skip_num;	/* the tree we are splaying */
+    uintn       a, b;           /* children of nodes to semi-rotate */
+    uint8       c, d;           /* pair of nodes to semi-rotate */
+    uintn       skip_num;       /* the tree we are splaying */
 
-    skip_num = skphuff_info->skip_pos;	/* get the tree number to splay */
-    a = plain + SUCCMAX;	/* get the index for this source code in the up array */
+    skip_num = skphuff_info->skip_pos;  /* get the tree number to splay */
+    a = plain + SUCCMAX;    /* get the index for this source code in the up array */
     do
-      {		/* walk up the tree, semi-rotating pairs */
-	  c = skphuff_info->up[skip_num][a];	/* find the parent of the node to semi-rotate around */
-	  if (c != ROOT)
-	    {	/* a pair remain above this node */
-		d = skphuff_info->up[skip_num][c];	/* get the grand-parent of the node to semi-rotate around */
-		b = skphuff_info->left[skip_num][d];
+      {     /* walk up the tree, semi-rotating pairs */
+          c = skphuff_info->up[skip_num][a];    /* find the parent of the node to semi-rotate around */
+          if (c != ROOT)
+            {   /* a pair remain above this node */
+                d = skphuff_info->up[skip_num][c];  /* get the grand-parent of the node to semi-rotate around */
+                b = skphuff_info->left[skip_num][d];
 
 /* Exchange the children of the pair */
-		if (c == b)
-		  {
-		      b = skphuff_info->right[skip_num][d];
-		      skphuff_info->right[skip_num][d] = a;
-		  }	/* end if */
-		else
-		    skphuff_info->left[skip_num][d] = a;
+                if (c == b)
+                  {
+                      b = skphuff_info->right[skip_num][d];
+                      skphuff_info->right[skip_num][d] = a;
+                  }     /* end if */
+                else
+                    skphuff_info->left[skip_num][d] = a;
 
-		if (a == skphuff_info->left[skip_num][c])
-		    skphuff_info->left[skip_num][c] = b;
-		else
-		    skphuff_info->right[skip_num][c] = b;
+                if (a == skphuff_info->left[skip_num][c])
+                    skphuff_info->left[skip_num][c] = b;
+                else
+                    skphuff_info->right[skip_num][c] = b;
 
-		skphuff_info->up[skip_num][a] = d;
-		skphuff_info->up[skip_num][b] = c;
-		a = d;
-	    }	/* end if */
-	  else
-	    {	/* handle odd node at end */
-		a = c;
-	    }	/* end else */
+                skphuff_info->up[skip_num][a] = d;
+                skphuff_info->up[skip_num][b] = c;
+                a = d;
+            }   /* end if */
+          else
+            {   /* handle odd node at end */
+                a = c;
+            }   /* end else */
       }
     while (a != ROOT);
-}	/* end HCIcskphuff_splay() */
+}   /* end HCIcskphuff_splay() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -143,17 +143,17 @@ PRIVATE int32
 HCIcskphuff_init(accrec_t * access_rec)
 {
     CONSTR(FUNC, "HCIcskphuff_init");
-    compinfo_t *info;		/* special element information */
-    comp_coder_skphuff_info_t *skphuff_info;	/* ptr to skphuff info */
-    intn        i, j, k;	/* local counting var */
+    compinfo_t *info;           /* special element information */
+    comp_coder_skphuff_info_t *skphuff_info;    /* ptr to skphuff info */
+    intn        i, j, k;        /* local counting var */
 
     info = (compinfo_t *) access_rec->special_info;
 
 #ifdef TESTING
     printf("HCIcskphuff_init(): before Hbitseek() call\n");
 #endif /* TESTING */
-    if (Hbitseek(info->aid, 0, 0) == FAIL)	/* seek to beginning of element */
-	HRETURN_ERROR(DFE_SEEKERROR, FAIL);
+    if (Hbitseek(info->aid, 0, 0) == FAIL)  /* seek to beginning of element */
+        HRETURN_ERROR(DFE_SEEKERROR, FAIL);
 
 #ifdef TESTING
     printf("HCIcskphuff_init(): after Hbitseek() call\n");
@@ -161,16 +161,16 @@ HCIcskphuff_init(accrec_t * access_rec)
     skphuff_info = &(info->cinfo.coder_info.skphuff_info);
 
     /* Initialize RLE state information */
-    skphuff_info->skip_pos = 0;		/* start in first byte */
-    skphuff_info->offset = 0;	/* start at the beginning of the data */
+    skphuff_info->skip_pos = 0;     /* start in first byte */
+    skphuff_info->offset = 0;   /* start at the beginning of the data */
 
     /* allocate pointers to the compression buffers */
     if ((skphuff_info->left = (uintn **) HDgetspace(sizeof(uintn *) * skphuff_info->skip_size)) == NULL)
-	            HRETURN_ERROR(DFE_NOSPACE, FAIL);
+                    HRETURN_ERROR(DFE_NOSPACE, FAIL);
     if ((skphuff_info->right = (uintn **) HDgetspace(sizeof(uintn *) * skphuff_info->skip_size)) == NULL)
-	            HRETURN_ERROR(DFE_NOSPACE, FAIL);
+                    HRETURN_ERROR(DFE_NOSPACE, FAIL);
     if ((skphuff_info->up = (uint8 **) HDgetspace(sizeof(uint8 *) * skphuff_info->skip_size)) == NULL)
-	            HRETURN_ERROR(DFE_NOSPACE, FAIL);
+                    HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
 #ifdef TESTING
     printf("HCIcskphuff_init(): halfway through allocating space\n");
@@ -178,34 +178,34 @@ HCIcskphuff_init(accrec_t * access_rec)
     /* allocate compression buffer for each skipping byte */
     for (i = 0; i < skphuff_info->skip_size; i++)
       {
-	  if ((skphuff_info->left[i] = (uintn *) HDgetspace(sizeof(uintn) * SUCCMAX)) == NULL)
-	                  HRETURN_ERROR(DFE_NOSPACE, FAIL);
-	  if ((skphuff_info->right[i] = (uintn *) HDgetspace(sizeof(uintn) * SUCCMAX)) == NULL)
-	                  HRETURN_ERROR(DFE_NOSPACE, FAIL);
-	  if ((skphuff_info->up[i] = (uint8 *) HDgetspace(sizeof(uint8) * TWICEMAX)) == NULL)
-	                  HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }		/* end for */
+          if ((skphuff_info->left[i] = (uintn *) HDgetspace(sizeof(uintn) * SUCCMAX)) == NULL)
+                          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          if ((skphuff_info->right[i] = (uintn *) HDgetspace(sizeof(uintn) * SUCCMAX)) == NULL)
+                          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          if ((skphuff_info->up[i] = (uint8 *) HDgetspace(sizeof(uint8) * TWICEMAX)) == NULL)
+                          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }     /* end for */
 
 #ifdef TESTING
     printf("HCIcskphuff_init(): after allocating space\n");
 #endif /* TESTING */
     for (k = 0; k < skphuff_info->skip_size; k++)
       {
-	  for (i = 0; i < TWICEMAX; i++)	/* initialize the up pointers to point to their parent in the tree */
-	      skphuff_info->up[k][i] = i >> 1;
+          for (i = 0; i < TWICEMAX; i++)    /* initialize the up pointers to point to their parent in the tree */
+              skphuff_info->up[k][i] = i >> 1;
 
-	  for (j = 0; j < SUCCMAX; j++)
-	    {	/* initialize the left & right pointers correctly */
-		skphuff_info->left[k][j] = j << 1;
-		skphuff_info->right[k][j] = (j << 1) + 1;
-	    }	/* end for */
-      }		/* end for */
+          for (j = 0; j < SUCCMAX; j++)
+            {   /* initialize the left & right pointers correctly */
+                skphuff_info->left[k][j] = j << 1;
+                skphuff_info->right[k][j] = (j << 1) + 1;
+            }   /* end for */
+      }     /* end for */
 
 #ifdef TESTING
     printf("HCIcskphuff_init(): after initializing arrays\n");
 #endif /* TESTING */
     return (SUCCEED);
-}	/* end HCIcskphuff_init() */
+}   /* end HCIcskphuff_init() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -232,39 +232,39 @@ PRIVATE int32
 HCIcskphuff_decode(compinfo_t * info, int32 length, uint8 *buf)
 {
     CONSTR(FUNC, "HCIcskphuff_decode");
-    comp_coder_skphuff_info_t *skphuff_info;	/* ptr to skipping Huffman info */
-    int32       orig_length;	/* original length to read */
-    intn        bit;		/* bit from the file */
+    comp_coder_skphuff_info_t *skphuff_info;    /* ptr to skipping Huffman info */
+    int32       orig_length;    /* original length to read */
+    intn        bit;            /* bit from the file */
     uintn       a;
-    uint8       plain;		/* the source code expanded from the file */
+    uint8       plain;          /* the source code expanded from the file */
 
     skphuff_info = &(info->cinfo.coder_info.skphuff_info);
 
-    orig_length = length;	/* save this for later */
+    orig_length = length;   /* save this for later */
     while (length > 0)
-      {		/* decode until we have all the bytes we need */
-	  a = ROOT;	/* start at the root of the tree and find the leaf we need */
+      {     /* decode until we have all the bytes we need */
+          a = ROOT;     /* start at the root of the tree and find the leaf we need */
 
-	  do
-	    {	/* walk down once for each bit on the path */
-		if ((bit = Hgetbit(info->aid)) == 0)	/* get the next bit from the file */
-		    a = skphuff_info->left[skphuff_info->skip_pos][a];
-		else if (bit == 1)
-		    a = skphuff_info->right[skphuff_info->skip_pos][a];
-		else	/* bit==-1, i.e. an error */
-		    HRETURN_ERROR(DFE_CDECODE, FAIL);
-	    }
-	  while (a <= MAXCHAR);
+          do
+            {   /* walk down once for each bit on the path */
+                if ((bit = Hgetbit(info->aid)) == 0)    /* get the next bit from the file */
+                    a = skphuff_info->left[skphuff_info->skip_pos][a];
+                else if (bit == 1)
+                    a = skphuff_info->right[skphuff_info->skip_pos][a];
+                else    /* bit==-1, i.e. an error */
+                    HRETURN_ERROR(DFE_CDECODE, FAIL);
+            }
+          while (a <= MAXCHAR);
 
-	  plain = a - SUCCMAX;
-	  HCIcskphuff_splay(skphuff_info, plain);
-	  skphuff_info->skip_pos = (skphuff_info->skip_pos + 1) % skphuff_info->skip_size;
-	  *buf++ = plain;
-	  length--;
-      }		/* end while */
-    skphuff_info->offset += orig_length;	/* incr. abs. offset into the file */
+          plain = a - SUCCMAX;
+          HCIcskphuff_splay(skphuff_info, plain);
+          skphuff_info->skip_pos = (skphuff_info->skip_pos + 1) % skphuff_info->skip_size;
+          *buf++ = plain;
+          length--;
+      }     /* end while */
+    skphuff_info->offset += orig_length;    /* incr. abs. offset into the file */
     return (SUCCEED);
-}	/* end HCIcskphuff_decode() */
+}   /* end HCIcskphuff_decode() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -292,42 +292,42 @@ PRIVATE int32
 HCIcskphuff_encode(compinfo_t * info, int32 length, uint8 *buf)
 {
     CONSTR(FUNC, "HCIcskphuff_encode");
-    comp_coder_skphuff_info_t *skphuff_info;	/* ptr to skipping Huffman info */
-    int32       orig_length;	/* original length to write */
-    uint8       stack_ptr = 0;	/* pointer to the position on the stack */
-    intn        stack[MAXCHAR];	/* stack to store the bits generated */
-    uintn       a;		/* variable to record the position in the tree */
+    comp_coder_skphuff_info_t *skphuff_info;    /* ptr to skipping Huffman info */
+    int32       orig_length;    /* original length to write */
+    uint8       stack_ptr = 0;  /* pointer to the position on the stack */
+    intn        stack[MAXCHAR]; /* stack to store the bits generated */
+    uintn       a;              /* variable to record the position in the tree */
 
     skphuff_info = &(info->cinfo.coder_info.skphuff_info);
 
-    orig_length = length;	/* save this for later */
+    orig_length = length;   /* save this for later */
     while (length > 0)
-      {		/* encode until we stored all the bytes */
-	  a = *buf + SUCCMAX;	/* find position in the up array */
-	  do
-	    {	/* walk up the tree, pushing bits */
-		stack[stack_ptr] = (skphuff_info->right[skphuff_info->skip_pos][skphuff_info->up[skphuff_info->skip_pos][a]] == a);	/* push a 1 is this is the right node */
-		stack_ptr++;
-		a = skphuff_info->up[skphuff_info->skip_pos][a];
-	    }
-	  while (a != ROOT);
+      {     /* encode until we stored all the bytes */
+          a = *buf + SUCCMAX;   /* find position in the up array */
+          do
+            {   /* walk up the tree, pushing bits */
+                stack[stack_ptr] = (skphuff_info->right[skphuff_info->skip_pos][skphuff_info->up[skphuff_info->skip_pos][a]] == a);     /* push a 1 is this is the right node */
+                stack_ptr++;
+                a = skphuff_info->up[skphuff_info->skip_pos][a];
+            }
+          while (a != ROOT);
 
-	  do
-	    {	/* output the bits we have */
-		stack_ptr--;
-		if (Hputbit(info->aid, stack[stack_ptr]) == FAIL)
-		    HRETURN_ERROR(DFE_CENCODE, FAIL);
-	    }
-	  while (stack_ptr != 0);
-	  HCIcskphuff_splay(skphuff_info, *buf);	/* semi-splay the tree around this node */
-	  skphuff_info->skip_pos = (skphuff_info->skip_pos + 1) % skphuff_info->skip_size;
-	  buf++;
-	  length--;
-      }		/* end while */
+          do
+            {   /* output the bits we have */
+                stack_ptr--;
+                if (Hputbit(info->aid, stack[stack_ptr]) == FAIL)
+                    HRETURN_ERROR(DFE_CENCODE, FAIL);
+            }
+          while (stack_ptr != 0);
+          HCIcskphuff_splay(skphuff_info, *buf);    /* semi-splay the tree around this node */
+          skphuff_info->skip_pos = (skphuff_info->skip_pos + 1) % skphuff_info->skip_size;
+          buf++;
+          length--;
+      }     /* end while */
 
-    skphuff_info->offset += orig_length;	/* incr. abs. offset into the file */
+    skphuff_info->offset += orig_length;    /* incr. abs. offset into the file */
     return (SUCCEED);
-}	/* end HCIcskphuff_encode() */
+}   /* end HCIcskphuff_encode() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -355,14 +355,14 @@ HCIcskphuff_term(compinfo_t * info)
 #ifdef LATER
     CONSTR(FUNC, "HCIcskphuff_term");
 #endif /* endif LATER */
-    comp_coder_skphuff_info_t *skphuff_info;	/* ptr to skipping Huffman info */
+    comp_coder_skphuff_info_t *skphuff_info;    /* ptr to skipping Huffman info */
 
     skphuff_info = &(info->cinfo.coder_info.skphuff_info);
 
     skphuff_info->skip_pos = 0;
 
     return (SUCCEED);
-}	/* end HCIcskphuff_term() */
+}   /* end HCIcskphuff_term() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -388,7 +388,7 @@ PRIVATE int32
 HCIcskphuff_staccess(accrec_t * access_rec, int16 acc_mode)
 {
     CONSTR(FUNC, "HCIcskphuff_staccess");
-    compinfo_t *info;		/* special element information */
+    compinfo_t *info;           /* special element information */
 
     info = (compinfo_t *) access_rec->special_info;
 
@@ -396,19 +396,19 @@ HCIcskphuff_staccess(accrec_t * access_rec, int16 acc_mode)
     printf("HCIcskphuff_staccess(): before bitio calls\n");
 #endif /* TESTING */
     if (acc_mode == DFACC_READ)
-	info->aid = Hstartbitread(access_rec->file_id, DFTAG_COMPRESSED,
-				  info->comp_ref);
+        info->aid = Hstartbitread(access_rec->file_id, DFTAG_COMPRESSED,
+                                  info->comp_ref);
     else
-	info->aid = Hstartbitwrite(access_rec->file_id, DFTAG_COMPRESSED,
-				   info->comp_ref, info->length);
+        info->aid = Hstartbitwrite(access_rec->file_id, DFTAG_COMPRESSED,
+                                   info->comp_ref, info->length);
 
 #ifdef TESTING
     printf("HCIcskphuff_staccess(): after bitio calls\n");
 #endif /* TESTING */
     if (info->aid == FAIL)
-	HRETURN_ERROR(DFE_DENIED, FAIL);
-    return (HCIcskphuff_init(access_rec));	/* initialize the skip-Huffman info */
-}	/* end HCIcskphuff_staccess() */
+        HRETURN_ERROR(DFE_DENIED, FAIL);
+    return (HCIcskphuff_init(access_rec));  /* initialize the skip-Huffman info */
+}   /* end HCIcskphuff_staccess() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -437,9 +437,9 @@ HCPcskphuff_stread(accrec_t * access_rec)
     int32       ret;
 
     if ((ret = HCIcskphuff_staccess(access_rec, DFACC_READ)) == FAIL)
-	HRETURN_ERROR(DFE_CINIT, FAIL);
+        HRETURN_ERROR(DFE_CINIT, FAIL);
     return (ret);
-}	/* HCPcskphuff_stread() */
+}   /* HCPcskphuff_stread() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -471,12 +471,12 @@ HCPcskphuff_stwrite(accrec_t * access_rec)
     printf("HCPcskphuff_stwrite(): before call to HCIcskphuff_staccess()\n");
 #endif
     if ((ret = HCIcskphuff_staccess(access_rec, DFACC_WRITE)) == FAIL)
-	HRETURN_ERROR(DFE_CINIT, FAIL);
+        HRETURN_ERROR(DFE_CINIT, FAIL);
 #ifdef TESTING
     printf("HCPcskphuff_stwrite(): after call to HCIcskphuff_staccess(), ret=%\n", (int) ret);
 #endif
     return (ret);
-}	/* HCPcskphuff_stwrite() */
+}   /* HCPcskphuff_stwrite() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -506,9 +506,9 @@ int32
 HCPcskphuff_seek(accrec_t * access_rec, int32 offset, int origin)
 {
     CONSTR(FUNC, "HCPcskphuff_seek");
-    compinfo_t *info;		/* special element information */
-    comp_coder_skphuff_info_t *skphuff_info;	/* ptr to skipping Huffman info */
-    uint8      *tmp_buf;	/* pointer to throw-away buffer */
+    compinfo_t *info;           /* special element information */
+    comp_coder_skphuff_info_t *skphuff_info;    /* ptr to skipping Huffman info */
+    uint8      *tmp_buf;        /* pointer to throw-away buffer */
 
     /* shut compiler up */
     origin = origin;
@@ -517,30 +517,30 @@ HCPcskphuff_seek(accrec_t * access_rec, int32 offset, int origin)
     skphuff_info = &(info->cinfo.coder_info.skphuff_info);
 
     if (offset < skphuff_info->offset)
-      {		/* need to seek from the beginning */
-	  if (HCIcskphuff_init(access_rec) == FAIL)
-	      HRETURN_ERROR(DFE_CINIT, FAIL);
-      }		/* end if */
+      {     /* need to seek from the beginning */
+          if (HCIcskphuff_init(access_rec) == FAIL)
+              HRETURN_ERROR(DFE_CINIT, FAIL);
+      }     /* end if */
 
-    if ((tmp_buf = (uint8 *) HDgetspace(TMP_BUF_SIZE)) == NULL)		/* get tmp buffer */
-	HRETURN_ERROR(DFE_NOSPACE, FAIL);
+    if ((tmp_buf = (uint8 *) HDgetspace(TMP_BUF_SIZE)) == NULL)     /* get tmp buffer */
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    while (skphuff_info->offset + TMP_BUF_SIZE < offset)	/* grab chunks */
-	if (HCIcskphuff_decode(info, TMP_BUF_SIZE, tmp_buf) == FAIL)
-	  {
-	      HDfreespace(tmp_buf);
-	      HRETURN_ERROR(DFE_CDECODE, FAIL);
-	  }	/* end if */
-    if (skphuff_info->offset < offset)	/* grab the last chunk */
-	if (HCIcskphuff_decode(info, offset - skphuff_info->offset, tmp_buf) == FAIL)
-	  {
-	      HDfreespace(tmp_buf);
-	      HRETURN_ERROR(DFE_CDECODE, FAIL);
-	  }	/* end if */
+    while (skphuff_info->offset + TMP_BUF_SIZE < offset)    /* grab chunks */
+        if (HCIcskphuff_decode(info, TMP_BUF_SIZE, tmp_buf) == FAIL)
+          {
+              HDfreespace(tmp_buf);
+              HRETURN_ERROR(DFE_CDECODE, FAIL);
+          }     /* end if */
+    if (skphuff_info->offset < offset)  /* grab the last chunk */
+        if (HCIcskphuff_decode(info, offset - skphuff_info->offset, tmp_buf) == FAIL)
+          {
+              HDfreespace(tmp_buf);
+              HRETURN_ERROR(DFE_CDECODE, FAIL);
+          }     /* end if */
 
     HDfreespace(tmp_buf);
     return (SUCCEED);
-}	/* HCPcskphuff_seek() */
+}   /* HCPcskphuff_seek() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -567,15 +567,15 @@ int32
 HCPcskphuff_read(accrec_t * access_rec, int32 length, VOIDP data)
 {
     CONSTR(FUNC, "HCPcskphuff_read");
-    compinfo_t *info;		/* special element information */
+    compinfo_t *info;           /* special element information */
 
     info = (compinfo_t *) access_rec->special_info;
 
     if (HCIcskphuff_decode(info, length, data) == FAIL)
-	HRETURN_ERROR(DFE_CDECODE, FAIL);
+        HRETURN_ERROR(DFE_CDECODE, FAIL);
 
     return (length);
-}	/* HCPcskphuff_read() */
+}   /* HCPcskphuff_read() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -602,8 +602,8 @@ int32
 HCPcskphuff_write(accrec_t * access_rec, int32 length, const VOIDP data)
 {
     CONSTR(FUNC, "HCPcskphuff_write");
-    compinfo_t *info;		/* special element information */
-    comp_coder_skphuff_info_t *skphuff_info;	/* ptr to skipping Huffman info */
+    compinfo_t *info;           /* special element information */
+    comp_coder_skphuff_info_t *skphuff_info;    /* ptr to skipping Huffman info */
 
     info = (compinfo_t *) access_rec->special_info;
     skphuff_info = &(info->cinfo.coder_info.skphuff_info);
@@ -612,14 +612,14 @@ HCPcskphuff_write(accrec_t * access_rec, int32 length, const VOIDP data)
     /*  1 - append onto the end */
     /*  2 - start at the beginning and rewrite (at least) the whole dataset */
     if ((info->length != skphuff_info->offset)
-	&& (skphuff_info->offset != 0 || length < info->length))
-	HRETURN_ERROR(DFE_UNSUPPORTED, FAIL);
+        && (skphuff_info->offset != 0 || length < info->length))
+        HRETURN_ERROR(DFE_UNSUPPORTED, FAIL);
 
     if (HCIcskphuff_encode(info, length, data) == FAIL)
-	HRETURN_ERROR(DFE_CENCODE, FAIL);
+        HRETURN_ERROR(DFE_CENCODE, FAIL);
 
     return (length);
-}	/* HCPcskphuff_write() */
+}   /* HCPcskphuff_write() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -652,8 +652,8 @@ HCPcskphuff_write(accrec_t * access_rec, int32 length, const VOIDP data)
 --------------------------------------------------------------------------*/
 int32
 HCPcskphuff_inquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
-		    uint16 *pref, int32 *plength, int32 *poffset,
-		    int32 *pposn, int16 *paccess, int16 *pspecial)
+                    uint16 *pref, int32 *plength, int32 *poffset,
+                    int32 *pposn, int16 *paccess, int16 *pspecial)
 {
     /* shut compiler up */
     access_rec = access_rec;
@@ -667,7 +667,7 @@ HCPcskphuff_inquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
     pspecial = pspecial;
 
     return (SUCCEED);
-}	/* HCPcskphuff_inquire() */
+}   /* HCPcskphuff_inquire() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -692,18 +692,18 @@ intn
 HCPcskphuff_endaccess(accrec_t * access_rec)
 {
     CONSTR(FUNC, "HCPcskphuff_endaccess");
-    compinfo_t *info;		/* special element information */
+    compinfo_t *info;           /* special element information */
 
     info = (compinfo_t *) access_rec->special_info;
 
     /* flush out RLE buffer */
     if (access_rec->access == DFACC_WRITE)
-	if (HCIcskphuff_term(info) == FAIL)
-	    HRETURN_ERROR(DFE_CTERM, FAIL);
+        if (HCIcskphuff_term(info) == FAIL)
+            HRETURN_ERROR(DFE_CTERM, FAIL);
 
     /* close the compressed data AID */
     if (Hendbitaccess(info->aid, 0) == FAIL)
-	HRETURN_ERROR(DFE_CANTCLOSE, FAIL);
+        HRETURN_ERROR(DFE_CANTCLOSE, FAIL);
 
     return (SUCCEED);
-}	/* HCPcskphuff_endaccess() */
+}   /* HCPcskphuff_endaccess() */

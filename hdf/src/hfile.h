@@ -45,13 +45,13 @@
 #endif /* MAX_ACC */
 
 /* Magic cookie for HDF data files */
-#define MAGICLEN 4	/* length */
-#define HDFMAGIC "\016\003\023\001"	/* ^N^C^S^A */
+#define MAGICLEN 4  /* length */
+#define HDFMAGIC "\016\003\023\001"     /* ^N^C^S^A */
 
 /* sizes of elements in a file.  This is necessary because
    the size of variables need not be the same as in the file
    (cannot use sizeof) */
-#define DD_SZ 12	/* 2+2+4+4 */
+#define DD_SZ 12    /* 2+2+4+4 */
 #define NDDS_SZ 2
 #define OFFSET_SZ 4
 
@@ -72,12 +72,12 @@
 /* ----------------------------- Version Tags ----------------------------- */
 /* Library version numbers */
 
-#define LIBVER_MAJOR	4
+#define LIBVER_MAJOR    4
 #define LIBVER_MINOR    0
-#define LIBVER_RELEASE	0
+#define LIBVER_RELEASE  0
 #define LIBVER_STRING   "NCSA HDF Version 4.0 Release 0, ?month? ?year?"
-#define LIBVSTR_LEN    80	/* length of version string  */
-#define LIBVER_LEN	92	/* 4+4+4+80 = 92 */
+#define LIBVSTR_LEN    80   /* length of version string  */
+#define LIBVER_LEN  92  /* 4+4+4+80 = 92 */
 /* end of version tags */
 
 /* -------------------------- File I/O Functions -------------------------- */
@@ -85,7 +85,7 @@
    default to stdio library i.e. UNIX buffered I/O */
 
 #ifndef FILELIB
-#   define FILELIB UNIXBUFIO	/* UNIX buffered I/O is the default */
+#   define FILELIB UNIXBUFIO    /* UNIX buffered I/O is the default */
 #endif /* FILELIB */
 
 #if (FILELIB == UNIXBUFIO)
@@ -145,7 +145,7 @@ typedef short hdf_file_t;
 #   define HI_SEEK(x,y)         mlseek(x, (int32 )y, 0)
 #   define HI_SEEKEND(x)        mlseek(x, 0L, 2)
 #   define HI_TELL(x)           mlseek(x,0L,1)
-#   define DF_OPENERR(f)	    ((f) == -1)
+#   define DF_OPENERR(f)        ((f) == -1)
 #   define OPENERR(f)           (f < 0)
 #endif /* FILELIB == MACIO */
 
@@ -215,34 +215,34 @@ typedef HFILE hdf_file_t;
 /* record of each data decsriptor */
 typedef struct dd_t
   {
-      uint16      tag;		/* Tag number of element */
-      uint16      ref;		/* Reference number of element */
-      int32       length;	/* length of dd */
-      int32       offset;	/* offset to next dd */
+      uint16      tag;          /* Tag number of element */
+      uint16      ref;          /* Reference number of element */
+      int32       length;       /* length of dd */
+      int32       offset;       /* offset to next dd */
   }
 dd_t;
 
 /* version tags */
 typedef struct version_t
   {
-      uint32      majorv;	/* major version number */
-      uint32      minorv;	/* minor version number */
-      uint32      release;	/* release number */
-      char        string[LIBVSTR_LEN + 1];	/* optional text description, len 80+1 */
-      int16       modified;	/* indicates file was modified */
+      uint32      majorv;       /* major version number */
+      uint32      minorv;       /* minor version number */
+      uint32      release;      /* release number */
+      char        string[LIBVSTR_LEN + 1];  /* optional text description, len 80+1 */
+      int16       modified;     /* indicates file was modified */
   }
 version_t;
 
 /* record of a block of data descriptors, mirrors structure of a HDF file.  */
 typedef struct ddblock_t
   {
-      intn        dirty;	/* boolean: should this DD block be flushed? */
-      int32       myoffset;	/* offset of this DD block in the file */
-      int16       ndds;		/* number of dd's in this block */
-      int32       nextoffset;	/* offset to the next ddblock in the file */
-      struct ddblock_t *next;	/* pointer to the next ddblock in memory */
-      struct ddblock_t *prev;	/* Pointer to previous ddblock. */
-      struct dd_t *ddlist;	/* pointer to array of dd's */
+      intn        dirty;        /* boolean: should this DD block be flushed? */
+      int32       myoffset;     /* offset of this DD block in the file */
+      int16       ndds;         /* number of dd's in this block */
+      int32       nextoffset;   /* offset to the next ddblock in the file */
+      struct ddblock_t *next;   /* pointer to the next ddblock in memory */
+      struct ddblock_t *prev;   /* Pointer to previous ddblock. */
+      struct dd_t *ddlist;      /* pointer to array of dd's */
   }
 ddblock_t;
 
@@ -252,54 +252,54 @@ ddblock_t;
 /* tag/ref structure */
 typedef struct tag_ref_str
   {
-      intn        tag;		/* tag for this element */
-      intn        ref;		/* ref for this element */
-      ddblock_t  *pblock;	/* ddblock this object is in */
-      int32       pidx;		/* this object's index into dd block */
+      intn        tag;          /* tag for this element */
+      intn        ref;          /* ref for this element */
+      ddblock_t  *pblock;       /* ddblock this object is in */
+      int32       pidx;         /* this object's index into dd block */
   }
 tag_ref    , *tag_ref_ptr;
 
 /* tag/ref list structure */
 typedef struct tag_ref_list_str
   {
-      int         count;	/* number of objects */
-      tag_ref     objects[HASH_BLOCK_SIZE];	/* DDs */
-      struct tag_ref_list_str *next;	/* next one in the list */
+      int         count;        /* number of objects */
+      tag_ref     objects[HASH_BLOCK_SIZE];     /* DDs */
+      struct tag_ref_list_str *next;    /* next one in the list */
   }
 tag_ref_list, *tag_ref_list_ptr;
 
 /* File record structure */
 typedef struct filerec_t
   {
-      char       *path;		/* name of file */
-      hdf_file_t  file;		/* either file descriptor or pointer */
-      uint16      maxref;	/* highest ref in this file */
-      intn        access;	/* access mode */
-      intn        refcount;	/* reference count / times opened */
-      intn        attach;	/* number of access elts attached */
-      intn        version_set;	/* version tag stuff */
-      version_t   version;	/* file version info */
+      char       *path;         /* name of file */
+      hdf_file_t  file;         /* either file descriptor or pointer */
+      uint16      maxref;       /* highest ref in this file */
+      intn        access;       /* access mode */
+      intn        refcount;     /* reference count / times opened */
+      intn        attach;       /* number of access elts attached */
+      intn        version_set;  /* version tag stuff */
+      version_t   version;      /* file version info */
 
       /* fast lookup of empty dd stuff */
-      int32       null_idx;	/* index into null_block of NULL entry */
-      struct ddblock_t *null_block;	/* last block a NULL entry was found in */
+      int32       null_idx;     /* index into null_block of NULL entry */
+      struct ddblock_t *null_block;     /* last block a NULL entry was found in */
 
       /* DD block caching info */
-      intn        cache;	/* boolean: whether caching is on */
-      intn        dirty;	/* boolean: if dd list needs to be flushed */
-      uint32      f_end_off;	/* offset of the end of the file */
+      intn        cache;        /* boolean: whether caching is on */
+      intn        dirty;        /* boolean: if dd list needs to be flushed */
+      uint32      f_end_off;    /* offset of the end of the file */
 
-      struct ddblock_t *ddhead;	/* head of ddblock list */
-      struct ddblock_t *ddlast;	/* end of ddblock list */
+      struct ddblock_t *ddhead; /* head of ddblock list */
+      struct ddblock_t *ddlast; /* end of ddblock list */
 
       /* hash table stuff */
-      tag_ref_list_ptr hash[HASH_MASK + 1];	/* hashed table of tag / refs */
+      tag_ref_list_ptr hash[HASH_MASK + 1];     /* hashed table of tag / refs */
   }
 filerec_t;
 
 /* bits for filerec_t 'dirty' flag */
-#define DDLIST_DIRTY   0x01	/* mark whether to flush dirty DD blocks */
-#define FILE_END_DIRTY 0x02	/* indicate that the file needs to be extended */
+#define DDLIST_DIRTY   0x01     /* mark whether to flush dirty DD blocks */
+#define FILE_END_DIRTY 0x02     /* indicate that the file needs to be extended */
 
 /* Each access element is associated with a tag/ref to keep track of
    the dd it is pointing at.  To facilitate searching for next dd's,
@@ -307,44 +307,44 @@ filerec_t;
    index into the ddlist of that ddblock. */
 typedef struct accrec_t
   {
-      intn        appendable;	/* whether appends to the data are allowed */
-      intn        flush;	/* whether the DD for this data should be flushed */
+      intn        appendable;   /* whether appends to the data are allowed */
+      intn        flush;        /* whether the DD for this data should be flushed */
       /* when Hendaccess() is called */
-      intn        used;		/* whether the access record is used */
-      int16       access;	/* access codes */
-      int16       special;	/* special element ? */
-      uintn       access_type;	/* I/O access type: serial/parallel/... */
-      int32       file_id;	/* id of attached file */
-      int32       idx;		/* index of dd into *block */
-      int32       posn;		/* seek position with respect to */
+      intn        used;         /* whether the access record is used */
+      int16       access;       /* access codes */
+      int16       special;      /* special element ? */
+      uintn       access_type;  /* I/O access type: serial/parallel/... */
+      int32       file_id;      /* id of attached file */
+      int32       idx;          /* index of dd into *block */
+      int32       posn;         /* seek position with respect to */
       /* start of element */
-      VOIDP       special_info;	/* special element info? */
-      struct ddblock_t *block;	/* ptr to ddblock that contains dd */
-      struct funclist_t *special_func;	/* ptr to special function? */
+      VOIDP       special_info; /* special element info? */
+      struct ddblock_t *block;  /* ptr to ddblock that contains dd */
+      struct funclist_t *special_func;  /* ptr to special function? */
   }
 accrec_t;
 
-/* this type is returned to applications programs or other special 
-   interfaces when they need to know information about a given 
+/* this type is returned to applications programs or other special
+   interfaces when they need to know information about a given
    special element.  This is all information that would not be returned
    via Hinquire().  This should probably be a union of structures. */
 typedef struct sp_info_block_t
   {
-      int16       key;		/* type of special element this is */
+      int16       key;          /* type of special element this is */
 
       /* external elements */
-      int32       offset;	/* offset in the file */
-      char       *path;		/* file name - should not be freed by user */
+      int32       offset;       /* offset in the file */
+      char       *path;         /* file name - should not be freed by user */
 
       /* linked blocks */
-      int32       first_len;	/* length of first block */
-      int32       block_len;	/* length of standard block */
-      int32       nblocks;	/* number of blocks per chunk */
+      int32       first_len;    /* length of first block */
+      int32       block_len;    /* length of standard block */
+      int32       nblocks;      /* number of blocks per chunk */
 
       /* compressed elements */
-      int32       comp_type;	/* compression type */
-      int32       model_type;	/* model type */
-      int32       comp_size;	/* size of compressed information */
+      int32       comp_type;    /* compression type */
+      int32       model_type;   /* model type */
+      int32       comp_size;    /* size of compressed information */
 
   }
 sp_info_block_t;
@@ -358,9 +358,9 @@ typedef struct funclist_t
       int32       (*stwrite) HPROTO((accrec_t * rec));
       int32       (*seek) HPROTO((accrec_t * access_rec, int32 offset, intn origin));
       int32       (*inquire) HPROTO((accrec_t * access_rec, int32 *pfile_id,
-				 uint16 *ptag, uint16 *pref, int32 *plength,
-			       int32 *poffset, int32 *pposn, int16 *paccess,
-				     int16 *pspecial));
+                                 uint16 *ptag, uint16 *pref, int32 *plength,
+                               int32 *poffset, int32 *pposn, int16 *paccess,
+                                     int16 *pspecial));
       int32       (*read) HPROTO((accrec_t * access_rec, int32 length, VOIDP data));
       int32       (*write) HPROTO((accrec_t * access_rec, int32 length, const VOIDP data));
       intn        (*endaccess) HPROTO((accrec_t * access_rec));
@@ -371,8 +371,8 @@ funclist_t;
 
 typedef struct functab_t
   {
-      int16       key;		/* the key for this type of special elt */
-      funclist_t *tab;		/* table of accessing functions */
+      int16       key;          /* the key for this type of special elt */
+      funclist_t *tab;          /* table of accessing functions */
   }
 functab_t;
 
@@ -388,9 +388,9 @@ functab_t;
 #define SDSTYPE   4
 #define DIMTYPE   5
 #define CDFTYPE   6
-#define VGIDTYPE  8	/* also defined in vg.h for Vgroups */
-#define VSIDTYPE  9	/* also defined in vg.h for Vsets */
-#define BITTYPE   10	/* For bit-accesses */
+#define VGIDTYPE  8     /* also defined in vg.h for Vgroups */
+#define VSIDTYPE  9     /* also defined in vg.h for Vsets */
+#define BITTYPE   10    /* For bit-accesses */
 #define FSLOT2ID(s) ((int32)((((uint32)FIDTYPE & 0xffff) << 16)|((s) & 0xffff)))
 #define VALIDFID(i) (((((uint32)(i) >> 16) & 0xffff) == FIDTYPE) && \
                      (((uint32)(i) & 0xffff) < MAX_FILE))
@@ -433,7 +433,7 @@ functab_t;
 extern accrec_t *access_records;
 
 /* file records array.  defined in hfile.c */
-#if defined(macintosh) | defined(THINK_C) | defined(DMEM)	/* Dynamic memory */
+#if defined(macintosh) | defined(THINK_C) | defined(DMEM)   /* Dynamic memory */
 extern filerec_t *file_records;
 #else  /* !macintosh */
 extern filerec_t file_records[];
@@ -443,7 +443,7 @@ extern filerec_t file_records[];
 #define FILE_NDDS(file_rec) ((file_rec)->ddlast->ndds)
 
 /* -------------------------- H-Layer Prototypes -------------------------- */
-/* 
+/*
    ** Functions to get information of special elt from other access records.
    **   defined in hfile.c
    ** These should really be HD... routines, but they are only used within
@@ -453,17 +453,17 @@ extern filerec_t file_records[];
 #if defined c_plusplus || defined __cplusplus
 extern      "C"
 {
-#endif				/* c_plusplus || __cplusplus */
+#endif                          /* c_plusplus || __cplusplus */
 
     extern int  HIget_access_slot
                 (void);
 
     extern intn HIcount_dd(filerec_t * file_rec, uint16 cnt_tag, uint16 cnt_ref,
-			   uintn *all_cnt, uintn *real_cnt);
+                           uintn *all_cnt, uintn *real_cnt);
 
     extern int  HIfind_dd
                 (uint16 look_tag, uint16 look_ref, ddblock_t ** pblock, int32 *pidx,
-		 intn direction);
+                 intn direction);
 
     extern int  HInew_dd_block
                 (filerec_t * file_rec, int16 ndds, char *FUNC);
@@ -476,11 +476,11 @@ extern      "C"
 
     extern int  HIlookup_dd
                 (filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
-		 ddblock_t ** pblock, int32 *pidx);
+                 ddblock_t ** pblock, int32 *pidx);
 
     extern int  HIadd_hash_dd
                 (filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
-		 ddblock_t * pblock, int32 pidx);
+                 ddblock_t * pblock, int32 pidx);
 
     extern int  HIdel_hash_dd
                 (filerec_t * file_rec, uint16 look_tag, uint16 look_ref);
@@ -514,8 +514,8 @@ extern      "C"
 
     extern int32 HLPinquire
                 (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
-	       int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
-		 int16 *pspecial);
+               int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
+                 int16 *pspecial);
 
     extern intn HLPendaccess
                 (accrec_t * access_rec);
@@ -543,8 +543,8 @@ extern      "C"
 
     extern int32 HXPinquire
                 (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
-	       int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
-		 int16 *pspecial);
+               int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
+                 int16 *pspecial);
 
     extern intn HXPendaccess
                 (accrec_t * access_rec);
@@ -581,8 +581,8 @@ extern      "C"
 
     extern int32 HBPinquire
                 (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
-	       int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
-		 int16 *pspecial);
+               int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
+                 int16 *pspecial);
 
     extern intn HBPendaccess
                 (accrec_t * access_rec);
@@ -608,8 +608,8 @@ extern      "C"
 
     extern int32 HCPinquire
                 (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
-	       int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
-		 int16 *pspecial);
+               int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
+                 int16 *pspecial);
 
     extern int32 HCPread
                 (accrec_t * access_rec, int32 length, VOIDP data);
@@ -642,10 +642,10 @@ extern      "C"
     extern int32 mwrite
                 (hdf_file_t rn, char *buf, int32 n);
 
-#endif				/* MAC */
+#endif                          /* MAC */
 
 #if defined c_plusplus || defined __cplusplus
 }
-#endif				/* c_plusplus || __cplusplus */
+#endif                          /* c_plusplus || __cplusplus */
 
-#endif				/* HFILE_H */
+#endif                          /* HFILE_H */

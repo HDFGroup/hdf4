@@ -20,7 +20,7 @@ static char RcsId[] = "@(#)$Revision$";
  * File:     df24F.c
  * Purpose:  read and write 24-bit raster images
  * Invokes:  dfgr.c df24.c
- * Contents: 
+ * Contents:
  *  d2reqil: use this interlace when returning image
  *  df24reqil: use this interlace when returning image
  *  d2sdims: set dimensions of image
@@ -38,7 +38,7 @@ static char RcsId[] = "@(#)$Revision$";
  *  d2sjpeg:  set JPEG parameters (short name)
  *  df24setJPEG: set JPEG parameters (long name)
  *
- * Remarks:A RIG specifies attributes associated with an image - lookup table, 
+ * Remarks:A RIG specifies attributes associated with an image - lookup table,
  *          dimension, compression, color compensation etc.
  *---------------------------------------------------------------------------*/
 
@@ -150,18 +150,18 @@ nd2igimg(_fcd filename, _fcd image, intf * xdim, intf * ydim, intf * fnlen)
 
 FRETVAL(intf)
 nd2iaimg(_fcd filename, _fcd image, intf * xdim, intf * ydim, intf * fnlen,
-	 intf * newfile)
+         intf * newfile)
 {
     char       *fn;
     intf        ret;
 
     if (!dimsset)
-	if (DFGRIsetdims(*xdim, *ydim, 3, IMAGE) < 0)
-	    return (-1);
+        if (DFGRIsetdims(*xdim, *ydim, 3, IMAGE) < 0)
+            return (-1);
 
     fn = HDf2cstring(filename, (intn) *fnlen);
     ret = DFGRIaddimlut(fn, (VOIDP) _fcdtocp(image), *xdim, *ydim,
-			IMAGE, 1, (intn) *newfile);
+                        IMAGE, 1, (intn) *newfile);
     HDfreespace((VOIDP) fn);
     return (ret);
 }
@@ -185,7 +185,7 @@ nd2setil(intf * il)
 /*-----------------------------------------------------------------------------
  * Name:    d2first
  * Purpose: restart 24 bit raster file
- * Inputs:  
+ * Inputs:
  * Returns: 0 on success, -1 on failure with DFerror set
  * Users:   HDF HLL (high-level library) users, utilities, other routines
  * Invokes: DFGRIrestart
@@ -200,8 +200,8 @@ nd2first(void)
 
 /*-----------------------------------------------------------------------------
  * Name:    d2lref
- * Purpose: return last reference number 
- * Inputs:  
+ * Purpose: return last reference number
+ * Inputs:
  * Returns: last ref number
  * Users:   HDF HLL (high-level library) users, utilities, other routines
  * Invokes: DFGRIrestart
@@ -230,15 +230,15 @@ nd2lref(void)
 FRETVAL(intf)
 nd2scomp(intf * scheme)
 {
-    comp_info   cinfo;		/* Structure containing compression parameters */
+    comp_info   cinfo;          /* Structure containing compression parameters */
 
     if (*scheme == COMP_JPEG)
-      {		/* check for JPEG compression and set defaults */
-	  cinfo.jpeg.quality = 75;
-	  cinfo.jpeg.force_baseline = 1;
-      }		/* end if */
+      {     /* check for JPEG compression and set defaults */
+          cinfo.jpeg.quality = 75;
+          cinfo.jpeg.force_baseline = 1;
+      }     /* end if */
     return (DF24setcompress((int32) *scheme, &cinfo));
-}	/* end d2scomp() */
+}   /* end d2scomp() */
 
 /*-----------------------------------------------------------------------------
  * Name:    d2sjpeg
@@ -255,12 +255,12 @@ nd2scomp(intf * scheme)
 FRETVAL(intf)
 nd2sjpeg(intf * quality, intf * force_baseline)
 {
-    comp_info   cinfo;		/* Structure containing compression parameters */
+    comp_info   cinfo;          /* Structure containing compression parameters */
 
     cinfo.jpeg.quality = (intn) *quality;
     cinfo.jpeg.force_baseline = (intn) *force_baseline;
     return (DF24setcompress((int32) COMP_JPEG, &cinfo));
-}	/* end d2sjpeg() */
+}   /* end d2sjpeg() */
 
 /*-----------------------------------------------------------------------------
  * Name:    df24reqil
@@ -315,7 +315,7 @@ ndf24setil(intf * il)
 /*-----------------------------------------------------------------------------
  * Name:    df24restart
  * Purpose: restart 24 bit raster file
- * Inputs:  
+ * Inputs:
  * Returns: 0 on success, -1 on failure with DFerror set
  * Users:   HDF HLL (high-level library) users, utilities, other routines
  * Invokes: DFGRIrestart
@@ -344,15 +344,15 @@ ndf24restart(void)
 FRETVAL(intf)
 ndf24scompress(intf * scheme)
 {
-    comp_info   cinfo;		/* Structure containing compression parameters */
+    comp_info   cinfo;          /* Structure containing compression parameters */
 
     if (*scheme == COMP_JPEG)
-      {		/* check for JPEG compression and set defaults */
-	  cinfo.jpeg.quality = 75;
-	  cinfo.jpeg.force_baseline = 1;
-      }		/* end if */
+      {     /* check for JPEG compression and set defaults */
+          cinfo.jpeg.quality = 75;
+          cinfo.jpeg.force_baseline = 1;
+      }     /* end if */
     return (DF24setcompress((int32) *scheme, &cinfo));
-}	/* end df24setcompress() */
+}   /* end df24setcompress() */
 
 /*-----------------------------------------------------------------------------
  * Name:    df24sjpeg
@@ -369,12 +369,12 @@ ndf24scompress(intf * scheme)
 FRETVAL(intf)
 ndf24sjpeg(intf * quality, intf * force_baseline)
 {
-    comp_info   cinfo;		/* Structure containing compression parameters */
+    comp_info   cinfo;          /* Structure containing compression parameters */
 
     cinfo.jpeg.quality = (intn) *quality;
     cinfo.jpeg.force_baseline = (intn) *force_baseline;
     return (DF24setcompress((int32) COMP_JPEG, &cinfo));
-}	/* end df24setjpeg() */
+}   /* end df24setjpeg() */
 
 /*-----------------------------------------------------------------------------
  * Name:    d2irref
@@ -385,7 +385,7 @@ ndf24sjpeg(intf * quality, intf * force_baseline)
  * Returns: 0 on success, -1 on failure with DFerror set
  * Users:   HDF HLL (high-level library) users, utilities, other routines
  * Invokes: DFGRreadref
- * Remarks: 
+ * Remarks:
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)

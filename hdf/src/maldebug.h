@@ -25,10 +25,10 @@
 #define _MALDEBUG_H
 
 /* Compilation options */
-#define MEM_LIST	/* Build internal list */
-#define MEM_WHERE	/* Keep track of memory block source */
-#define MEM_HEADER	/* Keep headers and footers around for each block */
-#define MEM_COMP_FREE	/* Complement the space free'd */
+#define MEM_LIST    /* Build internal list */
+#define MEM_WHERE   /* Keep track of memory block source */
+#define MEM_HEADER  /* Keep headers and footers around for each block */
+#define MEM_COMP_FREE   /* Complement the space free'd */
 
 /* Interface functions */
 unsigned long Mem_Used(void);
@@ -48,12 +48,12 @@ void       *mem_HDfreespace(void *ptr);
 /* Interface macros */
 #if !defined(__MALDEBUG__)
 #if defined(MEM_WHERE)
-#define HDgetspace(a)	    mem_HDgetspace((a),__FILE__,__LINE__)
-#define HDregetspace(a,b)	mem_HDregetspace((a),(b),__FILE__,__LINE__)
+#define HDgetspace(a)       mem_HDgetspace((a),__FILE__,__LINE__)
+#define HDregetspace(a,b)   mem_HDregetspace((a),(b),__FILE__,__LINE__)
 #define HDfreespace(a)      mem_HDfreespace((a),__FILE__,__LINE__)
 #else
-#define HDgetspace(a)	    mem_HDgetspace(a)
-#define HDregetspace(a,b)	mem_HDregetspace((a),(b))
+#define HDgetspace(a)       mem_HDgetspace(a)
+#define HDregetspace(a,b)   mem_HDregetspace((a),(b))
 #define HDfreespace(a)      mem_HDfreespace(a)
 #endif
 #endif

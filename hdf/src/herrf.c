@@ -20,7 +20,7 @@ static char RcsId[] = "@(#)$Revision$";
  * File:    herrf.c
  * Purpose: C stubs for error-handling Fortran routines
  * Invokes: herr.c.
- * Contents: 
+ * Contents:
  *     heprnt_:    Call HEprint to print error message
  * Remarks: none
  *---------------------------------------------------------------------------*/
@@ -40,7 +40,7 @@ static char RcsId[] = "@(#)$Revision$";
  * Name:    heprnt
  * Purpose: call HEprint to print error messages, starting from top of stack
  * Inputs:  print_levels: number of levels to print
- * Returns: 0 on success, FAIL on failure 
+ * Returns: 0 on success, FAIL on failure
  * Users:   Fortran stub routine
  * Invokes: HEprint
  * Remarks: This routine has one less parameter than HEprint, because it

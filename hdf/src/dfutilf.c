@@ -20,7 +20,7 @@ static char RcsId[] = "@(#)$Revision$";
  * File:    dfutilf.c
  * Purpose: C stubs for Fortran utility routines
  * Invokes: dfutil.c
- * Contents: 
+ * Contents:
  *  dfindnr_:       For a given tag, find the next ref after the given ref
  *---------------------------------------------------------------------------*/
 
@@ -44,7 +44,7 @@ static char RcsId[] = "@(#)$Revision$";
  *          tag:   tag to look for
  *          lref:  ref after which to search
  *
- * Returns: the desired ref if successful, on failure with	DFerror set
+ * Returns: the desired ref if successful, on failure with  DFerror set
  * Users:   HDF Fortran programmers
  * Invokes: DFfindnextref
  *---------------------------------------------------------------------------*/
@@ -66,7 +66,7 @@ ndfindnr(intf * dfile, intf * tag, intf * lref)
  *          tag:   tag to look for
  *          lref:  ref after which to search
  *
- * Returns: the desired ref if successful, on failure with	DFerror set
+ * Returns: the desired ref if successful, on failure with  DFerror set
  * Users:   HDF Fortran programmers
  * Invokes: DFfindnextref
  *---------------------------------------------------------------------------*/

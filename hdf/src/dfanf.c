@@ -21,7 +21,7 @@ static char RcsId[] = "@(#)$Revision$";
  * File:    dfanF.c
  * Purpose: Fortran stubs for annotation routines
  * Invokes: dfan.c dfkit.c
- * Contents: 
+ * Contents:
  *
  *  daiganl_     : get length of annotation of tag/ref
  *  daigann_     : get annotation of tag/ref
@@ -31,8 +31,8 @@ static char RcsId[] = "@(#)$Revision$";
  *  dfanlastref_ : return last ref written or read
  *
  *  dfanaddfds_    : add file description
- *  dfangetfidlen_ : get length of file id  
- *  dfangetfdslen_ : get length of file description  
+ *  dfangetfidlen_ : get length of file id
+ *  dfangetfdslen_ : get length of file description
  *  dfangetfid_    : get file id
  *  dfangetfds_    : get file description
  *  daafds_        : get file description
@@ -151,14 +151,14 @@ ndaiganl(_fcd filename, intf * tag, intf * ref, intf * type, intf * fnlen)
 
 FRETVAL(intf)
 ndaigann(_fcd filename, intf * tag, intf * ref, _fcd annotation, intf * maxlen,
-	 intf * type, intf * fnlen)
+         intf * type, intf * fnlen)
 {
     char       *fn;
     intf        ret;
 
     fn = HDf2cstring(filename, (intn) *fnlen);
     ret = DFANIgetann(fn, (uint16) *tag, (uint16) *ref,
-	     (uint8 *) _fcdtocp(annotation), (int32) *maxlen, (intn) *type);
+             (uint8 *) _fcdtocp(annotation), (int32) *maxlen, (intn) *type);
     HDfreespace((VOIDP) fn);
 
     return (ret);
@@ -180,14 +180,14 @@ ndaigann(_fcd filename, intf * tag, intf * ref, _fcd annotation, intf * maxlen,
 
 FRETVAL(intf)
 ndaipann(_fcd filename, intf * tag, intf * ref, _fcd annotation,
-	 intf * annlen, intf * type, intf * fnlen)
+         intf * annlen, intf * type, intf * fnlen)
 {
     char       *fn;
     intf        ret;
 
     fn = HDf2cstring(filename, (intn) *fnlen);
     ret = DFANIputann(fn, (uint16) *tag, (uint16) *ref,
-	     (uint8 *) _fcdtocp(annotation), (int32) *annlen, (intn) *type);
+             (uint8 *) _fcdtocp(annotation), (int32) *annlen, (intn) *type);
     HDfreespace((VOIDP) fn);
     return (ret);
 }
@@ -213,7 +213,7 @@ ndaipann(_fcd filename, intf * tag, intf * ref, _fcd annotation,
 
 FRETVAL(intf)
 ndailist(_fcd filename, intf * tag, intf reflist[], _fcd labellist,
-	 intf * listsize, intf * maxlen, intf * startpos, intf * fnlen)
+         intf * listsize, intf * maxlen, intf * startpos, intf * fnlen)
 {
     char       *fn;
     int         i;
@@ -228,14 +228,14 @@ ndailist(_fcd filename, intf * tag, intf reflist[], _fcd labellist,
     tempreflist = (uint16 *) DFIgetspace((int32) (*listsize) * sizeof(uint16));
     /* 1 for isfortran */
     nrefs = DFANIlablist(fn, (uint16) *tag, tempreflist,
-			 (uint8 *) _fcdtocp(labellist),
-			 (int) *listsize, (int) *maxlen, (int) *startpos, 1);
+                         (uint8 *) _fcdtocp(labellist),
+                         (int) *listsize, (int) *maxlen, (int) *startpos, 1);
     if (nrefs < 0)
-	return FAIL;
+        return FAIL;
 
     /* move ref numbers into caller's reflist */
     for (i = 0; i < *listsize; i++)
-	reflist[i] = tempreflist[i];
+        reflist[i] = tempreflist[i];
 
     HDfreespace((VOIDP) fn);
     HDfreespace((VOIDP) tempreflist);
@@ -345,7 +345,7 @@ FRETVAL(intf)
 ndfangetfid(intf * dfile, _fcd id, intf * maxlen, intf * isfirst)
 {
     return (DFANIgetfann(*dfile, _fcdtocp(id), *maxlen,
-			 DFAN_LABEL, (intn) *isfirst));
+                         DFAN_LABEL, (intn) *isfirst));
 }
 
 /*-----------------------------------------------------------------------------
@@ -363,7 +363,7 @@ FRETVAL(intf)
 ndfangetfds(intf * dfile, _fcd id, intf * maxlen, intf * isfirst)
 {
     return (DFANIgetfann(*dfile, _fcdtocp(id), *maxlen,
-			 DFAN_DESC, (intn) *isfirst));
+                         DFAN_DESC, (intn) *isfirst));
 }
 
 /*-----------------------------------------------------------------------------
@@ -404,8 +404,8 @@ ndagfidl(intf * dfile, intf * isfirst)
 }
 
 /*-----------------------------------------------------------------------------
- * Name:    dagfdsl 
- * Purpose: get length of next file description (Fortran callable C version) 
+ * Name:    dagfdsl
+ * Purpose: get length of next file description (Fortran callable C version)
  * Inputs:  dfile: pointer to HDF file
  *          isfirst: 1: start with first one; 0: get length of next one
  * Returns: On success: length of next file ID; On failure: -1, with DFerror set
@@ -434,12 +434,12 @@ FRETVAL(intf)
 ndagfid(intf * dfile, _fcd id, intf * maxlen, intf * isfirst)
 {
     return (DFANIgetfann(*dfile, _fcdtocp(id), *maxlen,
-			 DFAN_LABEL, (intn) *isfirst));
+                         DFAN_LABEL, (intn) *isfirst));
 }
 
 /*-----------------------------------------------------------------------------
  * Name:    dagfds
- * Purpose: get file description 
+ * Purpose: get file description
  *          (short form of DFANgetfds; Fortran callable C version)
  * Inputs:  dfile: pointer to HDF file
  *          desc: description to write to file
@@ -453,7 +453,7 @@ FRETVAL(intf)
 ndagfds(intf * dfile, _fcd id, intf * maxlen, intf * isfirst)
 {
     return (DFANIgetfann(*dfile, _fcdtocp(id), *maxlen,
-			 DFAN_DESC, (intn) *isfirst));
+                         DFAN_DESC, (intn) *isfirst));
 }
 
 /*-----------------------------------------------------------------------------

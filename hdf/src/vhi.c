@@ -16,7 +16,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
-/* 
+/*
    * File
    *       vhi.c
    *       HDF Vset high-level access routines VHxxxx
@@ -29,7 +29,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "vg.h"
 
-/* ------------------------ VHstoredata ------------------------------- 
+/* ------------------------ VHstoredata -------------------------------
    NAME
    VHstoredata -- stores data in a field of a new vdata
    USAGE
@@ -46,16 +46,16 @@ static char RcsId[] = "@(#)$Revision$";
    On success returns reference number of the new vdata, a positive integer;
    on failure retruns -1.
    DESCRIPTION
-   Stores 'n' elements of data from 'buf' as a field 'field' in a new vdata 
+   Stores 'n' elements of data from 'buf' as a field 'field' in a new vdata
    called 'vsname' into the already opened HDF file (with file id 'f').
-   The datatype variable must be specified as a valid HDF type; n should not 
+   The datatype variable must be specified as a valid HDF type; n should not
    be zero or negative.
    Returns -1 if error; ref of that new vdata (a +ve integer) if successful.
    ------------------------------------------------------------------------- */
 
-PUBLIC int32 
+int32
 VHstoredata(HFILEID f, char *field, uint8 buf[], int32 n, int32 datatype,
-	    char *vsname, char *vsclass)
+            char *vsname, char *vsclass)
 
 {
     int32       ref;
@@ -68,19 +68,19 @@ VHstoredata(HFILEID f, char *field, uint8 buf[], int32 n, int32 datatype,
     return (ref);
 }
 
-/* ----------------------- VHstoredatam ---------------------------- 
+/* ----------------------- VHstoredatam ----------------------------
    NAME
    VHstoredatam -- Same as VHstoredata but allows aggregate-typed field.
    USAGE
    int32 VHstoredata (f, field, buf, n, datatype, vsname, vsclass, order)
    HFILEID f;           IN: File id, returned from Hopen.
    char *  field;       IN: Name of the field.
-   uint8   buf[];       IN: Buffer of data to be stored in the field. 
+   uint8   buf[];       IN: Buffer of data to be stored in the field.
    int32   n;           IN: Number of elements in buf to be written.
    inter   datatype;    IN: Numter type of the data to be written.
    char *  vsname;      IN: Name of the new vdata.
    char *  vsclass;     IN: Class of the new vdata.
-   int32   order;       IN: Order of the field. 
+   int32   order;       IN: Order of the field.
 
    RETURNS
    On success returns reference number of the new vdata, a positive integer;
@@ -93,7 +93,7 @@ VHstoredata(HFILEID f, char *field, uint8 buf[], int32 n, int32 datatype,
    Returns -1 if error; ref of that new vdata (a +ve integer) if successful.
    --------------------------------------------------------------------------- */
 
-PUBLIC int32 
+int32
 VHstoredatam(HFILEID f, char *field, uint8 buf[], int32 n, int32 datatype, char *vsname, char *vsclass, int32 order)
 {
     int32       s;
@@ -105,19 +105,19 @@ VHstoredatam(HFILEID f, char *field, uint8 buf[], int32 n, int32 datatype, char 
 
     vs = VSattach(f, -1, "w");
     if (vs == FAIL)
-	return (FAIL);
+        return (FAIL);
 
     s = VSfdefine(vs, field, datatype, order);
     if (s == -1)
-	return (FAIL);
+        return (FAIL);
 
     s = VSsetfields(vs, field);
     if (s == -1)
-	return (FAIL);
+        return (FAIL);
 
     s = VSwrite(vs, buf, n, FULL_INTERLACE);
     if (n != s)
-	return (FAIL);
+        return (FAIL);
 
     VSsetname(vs, vsname);
     VSsetclass(vs, vsclass);
@@ -126,12 +126,12 @@ VHstoredatam(HFILEID f, char *field, uint8 buf[], int32 n, int32 datatype, char 
 
     return ((int32) ref);
 
-}	/* VHstoredatam */
+}   /* VHstoredatam */
 
 /* ------------------------ VHmakegroup ------------------------------- */
-/* 
+/*
    NAME
-   VHmakegroup -- Creates a vgroup to store pairs of tag/ref. 
+   VHmakegroup -- Creates a vgroup to store pairs of tag/ref.
    USAGE
    int32 VHmakegroup (f, tagarray, refarray , n, vgname, vgclass)
    HFILEID f;           IN: File id, returned from Hopen.
@@ -148,14 +148,14 @@ VHstoredatam(HFILEID f, char *field, uint8 buf[], int32 n, int32 datatype, char 
    Takes an array of tags and and array of refs and create a vgroup to
    store them. You tell it how many tag/ref pairs there are. You must
    also give the vgroup a name.i Creating EMPTY vgroups is allowed.
-   VHmakegroup does bot check if a tag/ref is valid or exist, 
+   VHmakegroup does bot check if a tag/ref is valid or exist,
    but ALL tag/ref pairs MUST be unique.
 
    Returns  -1 if error; ref of the new vgroup (a +ve integre) if ok.
 
    --------------------------------------------------------------------------- */
 
-PUBLIC int32 
+int32
 VHmakegroup(HFILEID f, int32 tagarray[], int32 refarray[], int32 n, char *vgname, char *vgclass)
 {
     int32       ref, i, s;
@@ -166,16 +166,16 @@ VHmakegroup(HFILEID f, int32 tagarray[], int32 refarray[], int32 n, char *vgname
 
     vg = Vattach(f, -1, "w");
     if (vg == FAIL)
-	return (FAIL);
+        return (FAIL);
 
     Vsetname(vg, vgname);
     Vsetclass(vg, vgclass);
 
     for (i = 0; i < n; i++)
       {
-	  s = Vaddtagref(vg, tagarray[i], refarray[i]);
-	  if (s == -1)
-	      return (FAIL);
+          s = Vaddtagref(vg, tagarray[i], refarray[i]);
+          if (s == -1)
+              return (FAIL);
       }
 
     ref = VQueryref(vg);
@@ -183,6 +183,6 @@ VHmakegroup(HFILEID f, int32 tagarray[], int32 refarray[], int32 n, char *vgname
 
     return (ref);
 
-}	/* VHmakegroup */
+}   /* VHmakegroup */
 
 /* ------------------------------------------------------------------ */

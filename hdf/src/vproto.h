@@ -15,7 +15,7 @@
 #if defined c_plusplus || defined __cplusplus
 extern      "C"
 {
-#endif				/* c_plusplus || __cplusplus */
+#endif                          /* c_plusplus || __cplusplus */
 
 /*
    ** from vconv.c
@@ -73,7 +73,7 @@ extern      "C"
 
     extern intn VSinquire
                 (int32 vkey, int32 _HUGE * nelt, int32 _HUGE * interlace,
-	   char _HUGE * fields, int32 _HUGE * eltsize, char _HUGE * vsname);
+           char _HUGE * fields, int32 _HUGE * eltsize, char _HUGE * vsname);
 
     extern int32 VSlone
                 (HFILEID f, int32 _HUGE * idarray, int32 asize);
@@ -198,15 +198,15 @@ extern      "C"
  */
     extern int32 VHstoredata
                 (HFILEID f, char _HUGE * field, uint8 _HUGE buf[], int32 n, int32 datatype,
-		 char _HUGE * vsname, char _HUGE * vsclass);
+                 char _HUGE * vsname, char _HUGE * vsclass);
 
     extern int32 VHstoredatam
                 (HFILEID f, char _HUGE * field, uint8 _HUGE buf[], int32 n, int32 datatype,
-		 char _HUGE * vsname, char _HUGE * vsclass, int32 order);
+                 char _HUGE * vsname, char _HUGE * vsclass, int32 order);
 
     extern int32 VHmakegroup
                 (HFILEID f, int32 _HUGE tagarray[], int32 _HUGE refarray[], int32 n, char _HUGE * vgname,
-		 char _HUGE * vgclass);
+                 char _HUGE * vgclass);
 
 /*
    ** from vio.c
@@ -348,7 +348,7 @@ extern      "C"
 #   define  nvsqfldsc   FNAME(VSQFLDSC)
 #   define  nvsqfvsiz   FNAME(VSQFVSIZ)
 #   define  nvsqnamec   FNAME(VSQNAMEC)
-#else				/* !DF_CAPFNAMES */
+#else                           /* !DF_CAPFNAMES */
 #   define  ndfivopn FNAME(dfivopn)
 #   define  ndfvclos FNAME(dfvclos)
 #   define  nvatchc  FNAME(vatchc)
@@ -403,8 +403,8 @@ extern      "C"
 #   define  nvsqfldsc   FNAME(vsqfldsc)
 #   define  nvsqfvsiz   FNAME(vsqfvsiz)
 #   define  nvsqnamec   FNAME(vsqnamec)
-#endif				/* DF_CAPFNAMES */
-#endif				/* VG_FNAMES */
+#endif                          /* DF_CAPFNAMES */
+#endif                          /* VG_FNAMES */
 
     extern      FRETVAL(intf) ndfivopn
                 (_fcd filename, intf _HUGE * acc_mode, intf _HUGE * defdds, intf _HUGE * namelen);
@@ -465,7 +465,7 @@ extern      "C"
 
     extern      FRETVAL(intf) nvsinqc
                 (intf _HUGE * vkey, intf _HUGE * nelt, intf _HUGE * interlace,
-		 _fcd fields, intf _HUGE * eltsize, _fcd vsname);
+                 _fcd fields, intf _HUGE * eltsize, _fcd vsname);
 
     extern      FRETVAL(intf) nvsfexc
                 (intf _HUGE * vkey, _fcd fields, intf _HUGE * fieldslen);
@@ -493,15 +493,15 @@ extern      "C"
 
     extern      FRETVAL(intf) nvsfdefc
                 (intf _HUGE * vkey, _fcd field, intf _HUGE * localtype,
-		 intf _HUGE * order, intf _HUGE * fieldlen);
+                 intf _HUGE * order, intf _HUGE * fieldlen);
 
     extern      FRETVAL(intf) nvsreadc
                 (intf _HUGE * vkey, uint8 _HUGE * buf, intf _HUGE * nelt,
-		 intf _HUGE * interlace);
+                 intf _HUGE * interlace);
 
     extern      FRETVAL(intf) nvswritc
                 (intf _HUGE * vkey, uint8 _HUGE * buf, intf _HUGE * nelt,
-		 intf _HUGE * interlace);
+                 intf _HUGE * interlace);
 
     extern      FRETVAL(intf) nvsgintc
                 (intf _HUGE * vkey);
@@ -527,16 +527,16 @@ extern      "C"
     extern      FRETVAL(intf) nvhsdc
                 (HFILEID _HUGE * f, _fcd field, uint8 _HUGE * buf, intf _HUGE * n, intf _HUGE * datatype,
     _fcd vsname, _fcd vsclass, intf _HUGE * fieldlen, intf _HUGE * vsnamelen,
-		 intf _HUGE * vsclasslen);
+                 intf _HUGE * vsclasslen);
 
     extern      FRETVAL(intf) nvhsdmc
                 (HFILEID _HUGE * f, _fcd field, uint8 _HUGE * buf, intf _HUGE * n, intf _HUGE * datatype,
        _fcd vsname, _fcd vsclass, intf _HUGE * order, intf _HUGE * fieldlen,
-		 intf _HUGE * vsnamelen, intf _HUGE * vsclasslen);
+                 intf _HUGE * vsnamelen, intf _HUGE * vsclasslen);
 
     extern      FRETVAL(intf) nvhmkgpc
                 (HFILEID _HUGE * f, intf _HUGE * tagarray, intf _HUGE * refarray, intf _HUGE * n,
-		 _fcd vgname, _fcd vgclass, intf _HUGE * vgnamelen, intf _HUGE * vgclasslen);
+                 _fcd vgname, _fcd vgclass, intf _HUGE * vgnamelen, intf _HUGE * vgclasslen);
 
     extern      FRETVAL(intf) nvflocc
                 (intf _HUGE * vkey, _fcd field, intf _HUGE * fieldlen);
@@ -558,4 +558,4 @@ extern      "C"
 
 #if defined c_plusplus || defined __cplusplus
 }
-#endif				/* c_plusplus || __cplusplus */
+#endif                          /* c_plusplus || __cplusplus */

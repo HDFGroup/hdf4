@@ -52,12 +52,12 @@ EXPORTED ROUTINES
 /* the structure of the error stack element */
 typedef struct error_t
   {
-      hdf_err_code_t error_code;	/* Error number */
-      const char *function_name;	/* function where error occur */
-      const char *file_name;	/* file where error occur */
-      intn        line;		/* line in file where error occurs */
-      intn        system;	/* for system or HDF error */
-      char       *desc;		/* optional supplied description */
+      hdf_err_code_t error_code;    /* Error number */
+      const char *function_name;    /* function where error occur */
+      const char *file_name;    /* file where error occur */
+      intn        line;         /* line in file where error occurs */
+      intn        system;       /* for system or HDF error */
+      char       *desc;         /* optional supplied description */
   }
 error_t;
 
@@ -105,12 +105,12 @@ const char _HUGE *
 HEstring(hdf_err_code_t error_code)
 {
 #ifndef OLD_WAY
-    int         i;		/* temp int index */
+    int         i;              /* temp int index */
 
     /* look for the error_code in error message table */
     for (i = 0; i < ERRMESG_SZ; i++)
-	if (error_messages[i].error_code == error_code)
-	    return error_messages[i].str;
+        if (error_messages[i].error_code == error_code)
+            return error_messages[i].str;
 
     /* otherwise, return default message */
     return DEFAULT_MESG;
@@ -135,17 +135,17 @@ HEclear(void)
 {
 
     if (!error_top)
-	return;
+        return;
 
     /* error_top == 0 means no error in stack */
     /* clean out old descriptions if they exist */
     for (; error_top > 0; error_top--)
       {
-	  if (error_stack[error_top - 1].desc)
-	    {
-		HDfreespace(error_stack[error_top - 1].desc);
-		error_stack[error_top - 1].desc = NULL;
-	    }
+          if (error_stack[error_top - 1].desc)
+            {
+                HDfreespace(error_stack[error_top - 1].desc);
+                error_stack[error_top - 1].desc = NULL;
+            }
       }
 } /* HEclear */
 
@@ -178,14 +178,14 @@ HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_na
 
     if (!error_stack)
       {
-	  error_stack = (error_t *) HDgetspace((uint32) sizeof(error_t) * ERR_STACK_SZ);
-	  if (!error_stack)
-	    {
-		puts("HEpush cannot allocate space.  Unable to continue!!");
-		exit(8);
-	    }
-	  for (i = 0; i < ERR_STACK_SZ; i++)
-	      error_stack[i].desc = NULL;
+          error_stack = (error_t *) HDgetspace((uint32) sizeof(error_t) * ERR_STACK_SZ);
+          if (!error_stack)
+            {
+                puts("HEpush cannot allocate space.  Unable to continue!!");
+                exit(8);
+            }
+          for (i = 0; i < ERR_STACK_SZ; i++)
+              error_stack[i].desc = NULL;
       }
 
     /* if stack is full, discard error */
@@ -193,18 +193,18 @@ HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_na
 
     if (error_top < ERR_STACK_SZ)
       {
-	  error_stack[error_top].function_name = function_name;
-	  error_stack[error_top].file_name = file_name;
-	  error_stack[error_top].line = line;
-	  error_stack[error_top].error_code = error_code;
-	  if (error_stack[error_top].desc)
-	    {
-		HDfreespace(error_stack[error_top].desc);
-		error_stack[error_top].desc = NULL;
-	    }
-	  error_top++;
+          error_stack[error_top].function_name = function_name;
+          error_stack[error_top].file_name = file_name;
+          error_stack[error_top].line = line;
+          error_stack[error_top].error_code = error_code;
+          if (error_stack[error_top].desc)
+            {
+                HDfreespace(error_stack[error_top].desc);
+                error_stack[error_top].desc = NULL;
+            }
+          error_top++;
       }
-}	/* HEpush */
+}   /* HEpush */
 
 /*-------------------------------------------------------------------------
 NAME
@@ -225,22 +225,22 @@ HEreport(const char *format,...)
 {
     va_list     arg_ptr;
     char       *tmp;
-    CONSTR(FUNC, "HEreport");	/* name of function if HIalloc fails */
+    CONSTR(FUNC, "HEreport");   /* name of function if HIalloc fails */
 
     va_start(arg_ptr, format);
 
     if ((error_top < ERR_STACK_SZ + 1) && (error_top > 0))
       {
-	  tmp = (char *) HDgetspace(ERR_STRING_SIZE);
-	  if (!tmp)
-	    {
-		HERROR(DFE_NOSPACE);
-		return;
-	    }
-	  vsprintf(tmp, format, arg_ptr);
-	  if (error_stack[error_top - 1].desc)
-	      HDfreespace(error_stack[error_top - 1].desc);
-	  error_stack[error_top - 1].desc = tmp;
+          tmp = (char *) HDgetspace(ERR_STRING_SIZE);
+          if (!tmp)
+            {
+                HERROR(DFE_NOSPACE);
+                return;
+            }
+          vsprintf(tmp, format, arg_ptr);
+          if (error_stack[error_top - 1].desc)
+              HDfreespace(error_stack[error_top - 1].desc);
+          error_stack[error_top - 1].desc = tmp;
       }
 
     va_end(arg_ptr);
@@ -265,20 +265,20 @@ DESCRIPTION
 VOID
 HEprint(FILE * stream, int32 print_levels)
 {
-    if (print_levels == 0 || print_levels > error_top)	/* print all errors */
-	print_levels = error_top;
+    if (print_levels == 0 || print_levels > error_top)  /* print all errors */
+        print_levels = error_top;
 
     /* print the errors starting from most recent */
     for (print_levels--; print_levels >= 0; print_levels--)
       {
-	  fprintf(stream, "HDF error: (%d) <%s>\n\tDetected in %s() [%s line %d]\n",
-		  error_stack[print_levels].error_code,
-		  HEstring(error_stack[print_levels].error_code),
-		  error_stack[print_levels].function_name,
-		  error_stack[print_levels].file_name,
-		  error_stack[print_levels].line);
-	  if (error_stack[print_levels].desc)
-	      fprintf(stream, "\t%s\n", error_stack[print_levels].desc);
+          fprintf(stream, "HDF error: (%d) <%s>\n\tDetected in %s() [%s line %d]\n",
+                  error_stack[print_levels].error_code,
+                  HEstring(error_stack[print_levels].error_code),
+                  error_stack[print_levels].function_name,
+                  error_stack[print_levels].file_name,
+                  error_stack[print_levels].line);
+          if (error_stack[print_levels].desc)
+              fprintf(stream, "\t%s\n", error_stack[print_levels].desc);
       }
 } /* HEprint */
 
@@ -300,7 +300,8 @@ int16
 HEvalue(int32 level)
 {
     if (level > 0 && level <= error_top)
-	return (int16) error_stack[error_top - level].error_code;
+        return (int16) error_stack[error_top - level].error_code;
     else
 	return DFE_NONE;
 } /* HEvalue */
+

@@ -20,7 +20,7 @@ static char RcsId[] = "@(#)$Revision$";
  * File:     dfan.c
  * Purpose:  read and write annotations: labels and descriptions of data items
  * Invokes:  df.c
- * Contents: 
+ * Contents:
  *
  *  DFANgetlablen:  - get length of label of tag/ref
  *  DFANgetlabel:   - get label of tag/ref
@@ -58,19 +58,19 @@ static char RcsId[] = "@(#)$Revision$";
 #include "hfile.h"
 #include "dfan.h"
 
-PRIVATE uint16 Lastref = 0;	/* Last ref read/written */
-PRIVATE uint16 Next_label_ref = 0;	/* Next file label ref to read/write */
-PRIVATE uint16 Next_desc_ref = 0;	/* Next file desc ref to read/write */
+PRIVATE uint16 Lastref = 0;     /* Last ref read/written */
+PRIVATE uint16 Next_label_ref = 0;  /* Next file label ref to read/write */
+PRIVATE uint16 Next_desc_ref = 0;   /* Next file desc ref to read/write */
 
 #if 0
-static char Lastfile[DF_MAXFNLEN] = "";		/* last file opened */
+static char Lastfile[DF_MAXFNLEN] = "";     /* last file opened */
 #endif
 PRIVATE char *Lastfile = NULL;
 
 /* pointers to directories of object annotations */
 PRIVATE DFANdirhead *DFANdir[2] =
-{NULL,				/* object labels       */
- NULL				/* object descriptions */
+{NULL,                          /* object labels       */
+ NULL                           /* object descriptions */
 };
 /*
    ** Prototypes for local functions
@@ -89,12 +89,12 @@ PRIVATE int32 _DFANIopen();
 
 /*-----------------------------------------------------------------------------
  NAME
-       DFANgetlablen -- get length of label of tag/ref 
+       DFANgetlablen -- get length of label of tag/ref
  USAGE
        int32 DFANgetlablen(filename, tag, ref)
-       char *filename;     IN: filename: name of HDF file 
-       uint16 tag;         IN: tag of data object assigned the label 
-       uint16 ref;         IN: reference number of the data object assigned 
+       char *filename;     IN: filename: name of HDF file
+       uint16 tag;         IN: tag of data object assigned the label
+       uint16 ref;         IN: reference number of the data object assigned
                                the label
  RETURNS
        length of label on success, FAIL (-1) otherwise
@@ -102,7 +102,7 @@ PRIVATE int32 _DFANIopen();
        Calls DFANIgetannlen to get label length.
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
-       This routine should be used to insure that there is enough space 
+       This routine should be used to insure that there is enough space
        allocated for a label before actually reading it.
  EXAMPLES
  REVISION LOG
@@ -120,10 +120,10 @@ DFANgetlablen(const char *filename, uint16 tag, uint16 ref)
  USAGE
        int DFANgetlabel(filename, tag, ref, label, maxlen)
        char *filename;   IN: name of HDF file
-       uint16 tag;       IN: tag of object of assigned the label 
-       uint16 ref;       IN: ref number of object of assigned the label 
-       char *label;      OUT: buffer allocated to hold the label 
-       int32 maxlen;     IN: size of buffer allocated to hold the label 
+       uint16 tag;       IN: tag of object of assigned the label
+       uint16 ref;       IN: ref number of object of assigned the label
+       char *label;      OUT: buffer allocated to hold the label
+       int32 maxlen;     IN: size of buffer allocated to hold the label
  RETURNS
        SUCCEED (0) if successful and FAIL (-1) otherwise
  DESCRIPTION
@@ -139,7 +139,7 @@ DFANgetlablen(const char *filename, uint16 tag, uint16 ref)
 
 intn
 DFANgetlabel(const char *filename, uint16 tag, uint16 ref, char *label,
-	     int32 maxlen)
+             int32 maxlen)
 {
     return (DFANIgetann(filename, tag, ref, (uint8 *) label, maxlen, DFAN_LABEL));
 }
@@ -172,7 +172,7 @@ DFANgetdesclen(const char *filename, uint16 tag, uint16 ref)
 
 /*--------------------------------------------------------------------------
  NAME
-       DFANgetdesc -- Reads the description assigned to the data object 
+       DFANgetdesc -- Reads the description assigned to the data object
                       with the given tag and reference number.
  USAGE
        int DFANgetdesc(filename, tag, ref, desc, maxlen)
@@ -196,7 +196,7 @@ DFANgetdesclen(const char *filename, uint16 tag, uint16 ref)
 
 intn
 DFANgetdesc(const char *filename, uint16 tag, uint16 ref, char *desc,
-	    int32 maxlen)
+            int32 maxlen)
 {
     return (DFANIgetann(filename, tag, ref, (uint8 *) desc, maxlen, DFAN_DESC));
 }
@@ -212,7 +212,7 @@ DFANgetdesc(const char *filename, uint16 tag, uint16 ref, char *desc,
        int32 DFANgetfidlen(file_id, isfirst)
        int32 file_id;    IN: HDF file label returned by Hopen
        int isfirst;      IN: 1 to read the first label in the file
-                             0 to read the next label in the file 
+                             0 to read the next label in the file
  RETURNS
        Length of file label if successful, and FAIL (-1) otherwise
  DESCRIPTION
@@ -240,8 +240,8 @@ DFANgetfidlen(int32 file_id, int isfirst)
  USAGE
        int32 DFANgetfid(file_id, label, maxlen, isfirst)
        int32 file_id;   IN: HDF file label returned by Hopen
-       char *label;     OUT: buffer allocated to hold the label 
-       int32 maxlen;    IN: size of buffer allocated to hold the label 
+       char *label;     OUT: buffer allocated to hold the label
+       int32 maxlen;    IN: size of buffer allocated to hold the label
        int isfirst;     IN: 0 to read the next label in the file;
                             1 to read the first label in the file
  RETURNS
@@ -250,7 +250,7 @@ DFANgetfidlen(int32 file_id, int isfirst)
        Invokes DFANIgetfann to get label
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
-       If maxlen is not great enough, the label is truncated to 
+       If maxlen is not great enough, the label is truncated to
        maxlen-1 characters.
  EXAMPLES
  REVISION LOG
@@ -269,7 +269,7 @@ DFANgetfid(int32 file_id, char *label, int32 maxlen, intn isfirst)
        int32 DFANgetfdslen(file_id, isfirst)
        int32 file_id;    IN: HDF file description returned by Hopen
        int isfirst;      IN: 1 to read the first description in the file
-                             0 to read the next description in the file 
+                             0 to read the next description in the file
  RETURNS
        Length of file description if successful, and FAIL (-1) otherwise
  DESCRIPTION
@@ -297,8 +297,8 @@ DFANgetfdslen(int32 file_id, intn isfirst)
  USAGE
        int32 DFANgetfds(file_id, desc, maxlen, isfirst)
        int32 file_id;  IN: HDF file description returned by Hopen
-       char *desc;     OUT: buffer allocated to hold the description 
-       int32 maxlen;   IN: size of buffer allocated to hold the description 
+       char *desc;     OUT: buffer allocated to hold the description
+       int32 maxlen;   IN: size of buffer allocated to hold the description
        int isfirst;    IN: 0 to read the next description in the file;
                            1 to read the first description in the file
  RETURNS
@@ -307,7 +307,7 @@ DFANgetfdslen(int32 file_id, intn isfirst)
        Invokes DFANIgetfann to get description
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
-       If maxlen is not great enough, the description is truncated to 
+       If maxlen is not great enough, the description is truncated to
        maxlen-1 characters.
  EXAMPLES
  REVISION LOG
@@ -348,7 +348,7 @@ intn
 DFANputlabel(const char *filename, uint16 tag, uint16 ref, char *label)
 {
     return (DFANIputann(filename, tag, ref, (uint8 *) label,
-			(int32) HDstrlen(label), DFAN_LABEL));
+                        (int32) HDstrlen(label), DFAN_LABEL));
 }
 
 /*--------------------------------------------------------------------------
@@ -377,7 +377,7 @@ DFANputlabel(const char *filename, uint16 tag, uint16 ref, char *label)
 
 intn
 DFANputdesc(const char *filename, uint16 tag, uint16 ref, char *desc,
-	    int32 desclen)
+            int32 desclen)
 {
     return (DFANIputann(filename, tag, ref, (uint8 *) desc, desclen, DFAN_DESC));
 }
@@ -391,7 +391,7 @@ DFANputdesc(const char *filename, uint16 tag, uint16 ref, char *desc,
        DFANaddfid -- Write a file label to a file
  USAGE
        int DFANaddfid(file_id, id)
-       int32 file_id;   IN: file identifier 
+       int32 file_id;   IN: file identifier
        char *id;        IN: label to write to file
  RETURNS
        SUCCEED (0) if successful and FAIL (-1) otherwise
@@ -414,7 +414,7 @@ DFANaddfid(int32 file_id, char *id)
        DFANaddfds -- Write a file description to a file
  USAGE
        int DFANaddfds(file_id, desc, desclen)
-       int32 file_id;   IN: file identifier 
+       int32 file_id;   IN: file identifier
        char *desc;      IN: description to write to file
        int32 desclen;   IN: length of description
  RETURNS
@@ -465,17 +465,17 @@ DFANlastref(void)
  NAME
        DFANlablist -- Return list of refs and labels for a given tag
  USAGE
-       int DFANlablist(filename, tag, reflist, labellist, 
+       int DFANlablist(filename, tag, reflist, labellist,
                                                 listsize, maxlen, startpos)
        char *filename;   IN: name of HDF file
-       uint16 tag;       IN: tag to use when searching for ref numbers 
+       uint16 tag;       IN: tag to use when searching for ref numbers
                              and labels
        uint16 reflist[]; OUT: array allocated to place ref numbers in
        char *labellist;  OUT: array of strings allocated to place labels in
        int listsize;     IN: size of ref number list and label list
        int maxlen;       IN: maximum length allocated for label
-       int startpos;     IN: Starting position.  Beginning from the 
-                             startpos'th entry, up to listsize entries 
+       int startpos;     IN: Starting position.  Beginning from the
+                             startpos'th entry, up to listsize entries
                              will be returned.
  RETURNS
        Number of ref numbers found if successful and FAIL (-1) otherwise
@@ -494,10 +494,10 @@ DFANlastref(void)
 
 intn
 DFANlablist(const char *filename, uint16 tag, uint16 reflist[], char *labellist,
-	    intn listsize, intn maxlen, intn startpos)
+            intn listsize, intn maxlen, intn startpos)
 {
     return (DFANIlablist(filename, tag, reflist, (uint8 *) labellist,
-			 listsize, maxlen, startpos, 0));
+                         listsize, maxlen, startpos, 0));
 }
 
 /******************************************************************************/
@@ -521,7 +521,7 @@ DFANlablist(const char *filename, uint16 tag, uint16 reflist[], char *labellist,
 
  EXAMPLES
  REVISION LOG
-       
+
  *------------------------------------------------------------------------*/
 
 PRIVATE int32
@@ -534,37 +534,37 @@ DFANIopen(const char *filename, intn acc_mode)
     /* Check if filename buffer has been allocated */
     if (Lastfile == NULL)
       {
-	  Lastfile = (char *) HDgetspace((DF_MAXFNLEN + 1) * sizeof(char));
-	  *Lastfile = '\0';	/* initialize with 0-length string */
-	  if (Lastfile == NULL)
-	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          Lastfile = (char *) HDgetspace((DF_MAXFNLEN + 1) * sizeof(char));
+          *Lastfile = '\0';     /* initialize with 0-length string */
+          if (Lastfile == NULL)
+              HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
 
     /* use reopen if same file as last time - more efficient */
     if (HDstrncmp(Lastfile, filename, DF_MAXFNLEN) || (acc_mode == DFACC_CREATE))
       {
-	  /* treat create as different file */
-	  file_id = Hopen(filename, acc_mode, 0);
-	  if (file_id == FAIL)
-	      return FAIL;
+          /* treat create as different file */
+          file_id = Hopen(filename, acc_mode, 0);
+          if (file_id == FAIL)
+              return FAIL;
 
-	  for (p = DFANdir[0]; p != NULL; p = q)
-	    {	/* free linked list space */
-		q = p->next;
-		HDfreespace((VOIDP) p);
-	    }
-	  for (p = DFANdir[1]; p != NULL; p = q)
-	    {
-		q = p->next;
-		HDfreespace((VOIDP) p);
-	    }
-	  DFANdir[0] = DFANdir[1] = NULL;
+          for (p = DFANdir[0]; p != NULL; p = q)
+            {   /* free linked list space */
+                q = p->next;
+                HDfreespace((VOIDP) p);
+            }
+          for (p = DFANdir[1]; p != NULL; p = q)
+            {
+                q = p->next;
+                HDfreespace((VOIDP) p);
+            }
+          DFANdir[0] = DFANdir[1] = NULL;
       }
     else
       {
-	  file_id = Hopen(filename, acc_mode, 0);
-	  if (file_id == FAIL)
-	      return FAIL;
+          file_id = Hopen(filename, acc_mode, 0);
+          if (file_id == FAIL)
+              return FAIL;
       }
 
     HIstrncpy(Lastfile, filename, DF_MAXFNLEN);
@@ -579,24 +579,24 @@ DFANIopen(const char *filename, intn acc_mode)
        uint16 DFANIlocate(file_id, type, tag, ref)
        int32 file_id:   IN: pointer to HDF file
        int type:        IN: DFAN_LABEL for labels, DFAN_DESC for descriptions
-       uint16 tag, ref: IN: tag/ref of item for which we want ref of 
+       uint16 tag, ref: IN: tag/ref of item for which we want ref of
                             annotation
 
  RETURNS
         ref of annotation on if successful; 0 otherwise
  DESCRIPTION
-       Searches through directory for annotations with given tag/ref.  (If 
+       Searches through directory for annotations with given tag/ref.  (If
        there is no directory, it creates one.)
 
  GLOBAL VARIABLES
-       
+
  COMMENTS, BUGS, ASSUMPTIONS
        BUG: When FORTRAN calls this routine with type "label", the string
        returned is incorrect in length by one character
  EXAMPLES
-       
+
  REVISION LOG
-       
+
  *------------------------------------------------------------------------*/
 
 uint16
@@ -618,56 +618,56 @@ DFANIlocate(int32 file_id, int type, uint16 tag, uint16 ref)
     /* if no directory for this type of annotation, make one */
     if (DFANdir[type] == NULL)
       {
-	  nanns = Hnumber(file_id, anntag);
-	  if (nanns == 0)
-	      return (0);
+          nanns = Hnumber(file_id, anntag);
+          if (nanns == 0)
+              return (0);
 
-	  /* allocate directory space.  Note head struct includes 1 entry */
-	  DFANdir[type] = (DFANdirhead *)
-	      HDgetspace(((uint32) sizeof(DFANdirhead) +
-			  (nanns - 1) * sizeof(DFANdirentry)));
-	  DFANdir[type]->next = NULL;
-	  DFANdir[type]->nentries = nanns;
+          /* allocate directory space.  Note head struct includes 1 entry */
+          DFANdir[type] = (DFANdirhead *)
+              HDgetspace(((uint32) sizeof(DFANdirhead) +
+                          (nanns - 1) * sizeof(DFANdirentry)));
+          DFANdir[type]->next = NULL;
+          DFANdir[type]->nentries = nanns;
 
-	  /* fill directory table */
-	  aid = Hstartread(file_id, anntag, DFREF_WILDCARD);
-	  if (aid == FAIL)
-	    {
-		Hendaccess(aid);
-		return 0;
-	    }
-	  else
-	      more_anns = SUCCEED;
+          /* fill directory table */
+          aid = Hstartread(file_id, anntag, DFREF_WILDCARD);
+          if (aid == FAIL)
+            {
+                Hendaccess(aid);
+                return 0;
+            }
+          else
+              more_anns = SUCCEED;
 
-	  for (i = 0; (i < nanns) && (more_anns != FAIL); i++)
-	    {
+          for (i = 0; (i < nanns) && (more_anns != FAIL); i++)
+            {
 
-		if (FAIL == Hinquire(aid, (int32 *) NULL, (uint16 *) NULL, &annref,
-			     (int32 *) NULL, (int32 *) NULL, (int32 *) NULL,
-				     (int16 *) NULL, (int16 *) NULL))
-		    return 0;
-		if ((int32) FAIL == Hread(aid, (int32) 4, datadi))
-		    return 0;
+                if (FAIL == Hinquire(aid, (int32 *) NULL, (uint16 *) NULL, &annref,
+                             (int32 *) NULL, (int32 *) NULL, (int32 *) NULL,
+                                     (int16 *) NULL, (int16 *) NULL))
+                    return 0;
+                if ((int32) FAIL == Hread(aid, (int32) 4, datadi))
+                    return 0;
 
-		/* get data tag/ref */
-		DFANdir[type]->entries[i].annref = annref;
-		ptr = (uint8 *) &(datadi[0]);
-		UINT16DECODE(ptr, DFANdir[type]->entries[i].datatag);
-		UINT16DECODE(ptr, DFANdir[type]->entries[i].dataref);
+                /* get data tag/ref */
+                DFANdir[type]->entries[i].annref = annref;
+                ptr = (uint8 *) &(datadi[0]);
+                UINT16DECODE(ptr, DFANdir[type]->entries[i].datatag);
+                UINT16DECODE(ptr, DFANdir[type]->entries[i].dataref);
 
-		more_anns = Hnextread(aid, anntag, DFREF_WILDCARD, DF_CURRENT);
-	    }
-	  Hendaccess(aid);
+                more_anns = Hnextread(aid, anntag, DFREF_WILDCARD, DF_CURRENT);
+            }
+          Hendaccess(aid);
       }
     if (!tag)
-	return (1);	/* used to generate directory without search */
+        return (1);     /* used to generate directory without search */
 
     /* find annotation that goes with this tag/ref */
     for (p = (DFANdirhead *) DFANdir[type]; p != NULL; p = p->next)
-	for (i = 0; i < p->nentries; i++)
-	    if (p->entries[i].annref != 0)
-		if ((p->entries[i].dataref == ref) && (p->entries[i].datatag == tag))
-		    return (p->entries[i].annref);
+        for (i = 0; i < p->nentries; i++)
+            if (p->entries[i].annref != 0)
+                if ((p->entries[i].dataref == ref) && (p->entries[i].datatag == tag))
+                    return (p->entries[i].annref);
     HERROR(DFE_NOMATCH);
     return (0);
 }
@@ -679,8 +679,8 @@ DFANIlocate(int32 file_id, int type, uint16 tag, uint16 ref)
        int type:        IN: DFAN_LABEL for labels, DFAN_DESC for descriptions
        uint16 annref:   IN: ref of annotation
        uint16 datatag,: IN: tag of item of which this is annotation
-       uint16 dataref;  IN: ref of item of which this is annotation 
-       
+       uint16 dataref;  IN: ref of item of which this is annotation
+
  RETURNS
        SUCCEED (0) if successful and FAIL (-1) otherwise
  DESCRIPTION
@@ -699,38 +699,38 @@ DFANIaddentry(int type, uint16 annref, uint16 datatag, uint16 dataref)
 
     /* move to last entry in list */
     for (p = DFANdir[type]; (p != NULL) && (p->next != NULL); p = p->next)
-	;
+        ;
 
     if (p)
-      {		/* not new list */
-	  for (i = 0; i < p->nentries; i++)	/* check all entries */
-	      if (p->entries[i].annref == 0)
-		{	/* empty slot */
-		    p->entries[i].annref = annref;	/* store entry */
-		    p->entries[i].datatag = datatag;
-		    p->entries[i].dataref = dataref;
-		    return (0);
-		}
+      {     /* not new list */
+          for (i = 0; i < p->nentries; i++)     /* check all entries */
+              if (p->entries[i].annref == 0)
+                {   /* empty slot */
+                    p->entries[i].annref = annref;  /* store entry */
+                    p->entries[i].datatag = datatag;
+                    p->entries[i].dataref = dataref;
+                    return (0);
+                }
       }
 
     /* need new list or new node in list */
     /* allocate directory space.  Note head struct includes 1 entry */
     q = (DFANdirhead *) HDgetspace((uint32) sizeof(DFANdirhead) +
-			      (DFAN_DEFENTRIES - 1) * sizeof(DFANdirentry));
+                              (DFAN_DEFENTRIES - 1) * sizeof(DFANdirentry));
     q->next = NULL;
     q->nentries = DFAN_DEFENTRIES;
     if (!p)
-	DFANdir[type] = q;	/* set pointer to this new node */
+        DFANdir[type] = q;  /* set pointer to this new node */
     else
-	p->next = q;
+        p->next = q;
 
     /* store entry */
     q->entries[0].annref = annref;
     q->entries[0].datatag = datatag;
     q->entries[0].dataref = dataref;
 
-    for (i = 1; i < DFAN_DEFENTRIES; i++)	/* mark rest unused */
-	q->entries[i].annref = 0;
+    for (i = 1; i < DFAN_DEFENTRIES; i++)   /* mark rest unused */
+        q->entries[i].annref = 0;
 
     return (0);
 }
@@ -765,37 +765,37 @@ DFANIgetannlen(const char *filename, uint16 tag, uint16 ref, int type)
     HEclear();
     if (!tag)
       {
-	  HERROR(DFE_BADTAG);
-	  return FAIL;
+          HERROR(DFE_BADTAG);
+          return FAIL;
       }
     if (!ref)
       {
-	  HERROR(DFE_BADREF);
-	  return FAIL;
+          HERROR(DFE_BADREF);
+          return FAIL;
       }
 
     file_id = DFANIopen(filename, DFACC_READ);
     if (file_id == FAIL)
-	return FAIL;
+        return FAIL;
 
     /* get ref of annotation of tag/ref */
     annref = DFANIlocate(file_id, type, tag, ref);
     if (annref == 0)
       {
-	  Hclose(file_id);
-	  return FAIL;
+          Hclose(file_id);
+          return FAIL;
       }
-    anntag = (uint16) ((type == DFAN_LABEL) ? DFTAG_DIL : DFTAG_DIA);	/* set type tag */
+    anntag = (uint16) ((type == DFAN_LABEL) ? DFTAG_DIL : DFTAG_DIA);   /* set type tag */
 
-    annlength = Hlength(file_id, anntag, annref) - 4;	/* 4=len of data tag/ref */
+    annlength = Hlength(file_id, anntag, annref) - 4;   /* 4=len of data tag/ref */
     if (annlength == FAIL)
       {
-	  Hclose(file_id);
-	  return FAIL;
+          Hclose(file_id);
+          return FAIL;
       }
-    Lastref = annref;	/* remember ref last accessed */
-    if (Hclose(file_id) == FAIL)	/* close file */
-	return FAIL;
+    Lastref = annref;   /* remember ref last accessed */
+    if (Hclose(file_id) == FAIL)    /* close file */
+        return FAIL;
 
     return (annlength);
 }
@@ -825,41 +825,41 @@ DFANIgetannlen(const char *filename, uint16 tag, uint16 ref, int type)
 
 intn
 DFANIgetann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
-	    int32 maxlen, int type)
+            int32 maxlen, int type)
 {
     CONSTR(FUNC, "DFANIgetann");
     int32       file_id, aid;
     int32       annlen;
     uint16      anntag, annref;
-    uint8       datadi[4];	/* to read in and discard data/ref! */
+    uint8       datadi[4];      /* to read in and discard data/ref! */
 
     HEclear();
     if (!ann)
       {
-	  HERROR(DFE_BADPTR);
-	  return FAIL;
+          HERROR(DFE_BADPTR);
+          return FAIL;
       }
     if (!tag)
       {
-	  HERROR(DFE_BADTAG);
-	  return FAIL;
+          HERROR(DFE_BADTAG);
+          return FAIL;
       }
     if (!ref)
       {
-	  HERROR(DFE_BADREF);
-	  return FAIL;
+          HERROR(DFE_BADREF);
+          return FAIL;
       }
 
     file_id = DFANIopen(filename, DFACC_READ);
     if (file_id == FAIL)
-	return FAIL;
+        return FAIL;
 
     /* get annref and anntag of annotation of tag/ref */
     annref = DFANIlocate(file_id, type, tag, ref);
     if (annref == 0)
       {
-	  Hclose(file_id);
-	  return FAIL;
+          Hclose(file_id);
+          return FAIL;
       }
     anntag = (uint16) ((type == DFAN_LABEL) ? DFTAG_DIL : DFTAG_DIA);
 
@@ -867,49 +867,49 @@ DFANIgetann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
     aid = Hstartread(file_id, anntag, annref);
     if (aid == FAIL)
       {
-	  Hendaccess(aid);
-	  Hclose(file_id);
-	  return FAIL;
+          Hendaccess(aid);
+          Hclose(file_id);
+          return FAIL;
       }
     if (FAIL == Hinquire(aid, (int32 *) NULL, (uint16 *) NULL, (uint16 *) NULL, &annlen,
-	    (int32 *) NULL, (int32 *) NULL, (int16 *) NULL, (int16 *) NULL))
+            (int32 *) NULL, (int32 *) NULL, (int16 *) NULL, (int16 *) NULL))
       {
-	  Hendaccess(aid);
-	  Hclose(file_id);
-	  return FAIL;
+          Hendaccess(aid);
+          Hclose(file_id);
+          return FAIL;
       }
-    annlen -= 4;	/* first four bytes were tag/ref, so they don't count */
+    annlen -= 4;    /* first four bytes were tag/ref, so they don't count */
 
     /* check length, if not enough space, truncate annotation */
     /* labels need space for null terminator, descriptions don't */
     if (type == DFAN_LABEL)
       {
-	  if (annlen > maxlen - 1)
-	      annlen = maxlen - 1;
+          if (annlen > maxlen - 1)
+              annlen = maxlen - 1;
       }
     else
       {
-	  if (annlen > maxlen)
-	      annlen = maxlen;
+          if (annlen > maxlen)
+              annlen = maxlen;
       }
 
     /* read annotation */
     if ((int32) FAIL == Hread(aid, (int32) 4, datadi))
-      {		/* go past tag/ref */
-	  Hendaccess(aid);
-	  Hclose(file_id);
-	  return FAIL;
+      {     /* go past tag/ref */
+          Hendaccess(aid);
+          Hclose(file_id);
+          return FAIL;
       }
     if ((int32) FAIL == Hread(aid, annlen, ann))
-      {		/* read the annotation */
-	  Hendaccess(aid);
-	  Hclose(file_id);
-	  return FAIL;
+      {     /* read the annotation */
+          Hendaccess(aid);
+          Hclose(file_id);
+          return FAIL;
       }
     if (type == DFAN_LABEL)
-	ann[annlen] = '\0';	/* terminate string properly */
+        ann[annlen] = '\0';     /* terminate string properly */
 
-    Lastref = annref;	/* remember ref last accessed */
+    Lastref = annref;   /* remember ref last accessed */
     Hendaccess(aid);
     return (Hclose(file_id));
 }
@@ -928,7 +928,7 @@ DFANIgetann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
  RETURNS
        SUCCEED (0) if successful and FAIL (-1) otherwise
  DESCRIPTION
-       Checks for pre-existence of annotation, replacing old one if it 
+       Checks for pre-existence of annotation, replacing old one if it
        exists. Writes out annotation, and updates directory..
  GLOBAL VARIABLES
        Lastref.
@@ -941,36 +941,36 @@ DFANIgetann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
 
 intn
 DFANIputann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
-	    int32 annlen, int type)
+            int32 annlen, int type)
 {
 
     CONSTR(FUNC, "DFANIputann");
     int32       file_id, aid;
     int         newflag = 0;
     uint16      anntag, annref;
-    uint8       datadi[4];	/* to hold data tag/ref for writing */
+    uint8       datadi[4];      /* to hold data tag/ref for writing */
     uint8      *ptr;
 
     HEclear();
     if (!ann)
       {
-	  HERROR(DFE_BADPTR);
-	  return FAIL;
+          HERROR(DFE_BADPTR);
+          return FAIL;
       }
     if (!tag)
       {
-	  HERROR(DFE_BADTAG);
-	  return FAIL;
+          HERROR(DFE_BADTAG);
+          return FAIL;
       }
     if (!ref)
       {
-	  HERROR(DFE_BADREF);
-	  return FAIL;
+          HERROR(DFE_BADREF);
+          return FAIL;
       }
 
     file_id = DFANIopen(filename, DFACC_RDWR);
     if (file_id == 0)
-	return FAIL;
+        return FAIL;
 
     anntag = (uint16) ((type == DFAN_LABEL) ? DFTAG_DIL : DFTAG_DIA);
 
@@ -978,26 +978,26 @@ DFANIputann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
     annref = DFANIlocate(file_id, type, tag, ref);
     if (annref == 0)
       {
-	  annref = Hnewref(file_id);
-	  if (annref == 0)
-	    {
-		Hclose(file_id);
-		return FAIL;
-	    }
-	  newflag = 1;	/* remember to add ann tag/ref to directory */
+          annref = Hnewref(file_id);
+          if (annref == 0)
+            {
+                Hclose(file_id);
+                return FAIL;
+            }
+          newflag = 1;  /* remember to add ann tag/ref to directory */
       }
 
     /*
      * if annotation exists, delete it and rewrite new annotation
      */
     if (newflag == 0)
-      {		/* does prev annotation exist? */
-	  if (Hdeldd(file_id, anntag, annref) == FAIL)
-	    {
-		Hclose(file_id);
-		HEreport("Unable to replace old annotation");
-		return FAIL;
-	    }
+      {     /* does prev annotation exist? */
+          if (Hdeldd(file_id, anntag, annref) == FAIL)
+            {
+                Hclose(file_id);
+                HEreport("Unable to replace old annotation");
+                return FAIL;
+            }
       }
 
     /* put annotation */
@@ -1005,39 +1005,39 @@ DFANIputann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
     aid = Hstartwrite(file_id, anntag, annref, annlen + 4);
     if (aid == FAIL)
       {
-	  Hendaccess(aid);
-	  Hclose(file_id);
-	  return FAIL;
+          Hendaccess(aid);
+          Hclose(file_id);
+          return FAIL;
       }
 
     /* write annotation */
-    ptr = (uint8 *) &(datadi[0]);	/* first, write the object's tag/ref */
+    ptr = (uint8 *) &(datadi[0]);   /* first, write the object's tag/ref */
     UINT16ENCODE(ptr, tag);
     UINT16ENCODE(ptr, ref);
     if ((int32) FAIL == Hwrite(aid, (int32) 4, datadi))
       {
-	  Hclose(file_id);
-	  return FAIL;
+          Hclose(file_id);
+          return FAIL;
       }
     if ((int32) FAIL == Hwrite(aid, annlen, ann))
-      {		/* then write the annotation */
-	  Hendaccess(aid);
-	  Hclose(file_id);
-	  return FAIL;
+      {     /* then write the annotation */
+          Hendaccess(aid);
+          Hclose(file_id);
+          return FAIL;
       }
 
     /* put annotation tag/ref into directory if new */
     if (newflag)
       {
-	  if (FAIL == DFANIaddentry(type, annref, tag, ref))
-	    {
-		Hendaccess(aid);
-		Hclose(file_id);
-		return FAIL;
-	    }
+          if (FAIL == DFANIaddentry(type, annref, tag, ref))
+            {
+                Hendaccess(aid);
+                Hclose(file_id);
+                return FAIL;
+            }
       }
 
-    Lastref = annref;	/* remember ref last accessed */
+    Lastref = annref;   /* remember ref last accessed */
     Hendaccess(aid);
     return (Hclose(file_id));
 }
@@ -1075,8 +1075,8 @@ DFANIputann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
 
 intn
 DFANIlablist(const char *filename, uint16 tag, uint16 reflist[],
-	     uint8 *labellist, int listsize, int maxlen, int startpos,
-	     int isfortran)
+             uint8 *labellist, int listsize, int maxlen, int startpos,
+             int isfortran)
 {
     CONSTR(FUNC, "DFANIlablist");
     int32       i;
@@ -1084,60 +1084,60 @@ DFANIlablist(const char *filename, uint16 tag, uint16 reflist[],
     int32       file_id, aid, len;
     uint16      ref;
     DFANdirhead *p;
-    uint8      *lp;		/* pointer to label */
+    uint8      *lp;             /* pointer to label */
     intn        nrefs, nlabs;
-    uint8       labeldi[4];	/* to read in and discard data/ref */
+    uint8       labeldi[4];     /* to read in and discard data/ref */
 
     HEclear();
 
     if (!reflist || !labellist)
       {
-	  HERROR(DFE_BADPTR);
-	  return FAIL;
+          HERROR(DFE_BADPTR);
+          return FAIL;
       }
     if (!tag)
       {
-	  HERROR(DFE_BADTAG);
-	  return FAIL;
+          HERROR(DFE_BADTAG);
+          return FAIL;
       }
 
     file_id = DFANIopen(filename, DFACC_READ);
     if (file_id == 0)
-	return FAIL;
+        return FAIL;
 
     /* clear labellist.  pad with blanks for Fortran; add null for C  */
     if (isfortran)
-	HDmemset(labellist, ' ', (uint32) maxlen * (uint32) listsize);
+        HDmemset(labellist, ' ', (uint32) maxlen * (uint32) listsize);
     else
-	HDmemset(labellist, '\0', (uint32) maxlen * (uint32) listsize);
+        HDmemset(labellist, '\0', (uint32) maxlen * (uint32) listsize);
 
     /* find all refs for this tag; store them in reflist */
-    nrefs = (intn) Hnumber(file_id, tag);	/* how many times is tag in file? */
+    nrefs = (intn) Hnumber(file_id, tag);   /* how many times is tag in file? */
     if (nrefs == FAIL)
       {
-	  Hclose(file_id);
-	  return FAIL;
+          Hclose(file_id);
+          return FAIL;
       }
 
-    aid = Hstartread(file_id, tag, DFREF_WILDCARD);	/* set search for refs */
+    aid = Hstartread(file_id, tag, DFREF_WILDCARD);     /* set search for refs */
     if (aid == FAIL)
       {
-	  Hendaccess(aid);
-	  Hclose(file_id);
-	  return FAIL;
+          Hendaccess(aid);
+          Hclose(file_id);
+          return FAIL;
       }
 
     for (i = 0, j = 0; i < nrefs && j < listsize; i++)
       {
-	  if (HQuerytagref(aid, (uint16 *) NULL, &ref) == FAIL)
-	    {
-		Hendaccess(aid);
-		Hclose(file_id);
-		return FAIL;
-	    }
-	  if (i >= startpos - 1)
-	      reflist[j++] = ref;	/* store next ref in reflist */
-	  Hnextread(aid, tag, DFREF_WILDCARD, DF_CURRENT);
+          if (HQuerytagref(aid, (uint16 *) NULL, &ref) == FAIL)
+            {
+                Hendaccess(aid);
+                Hclose(file_id);
+                return FAIL;
+            }
+          if (i >= startpos - 1)
+              reflist[j++] = ref;   /* store next ref in reflist */
+          Hnextread(aid, tag, DFREF_WILDCARD, DF_CURRENT);
       }
     nrefs = j;
     Hendaccess(aid);
@@ -1147,72 +1147,72 @@ DFANIlablist(const char *filename, uint16 tag, uint16 reflist[],
     nlabs = (intn) Hnumber(file_id, DFTAG_DIL);
     if (nlabs != 0)
       {
-	  if (DFANdir[DFAN_LABEL] == NULL)
-	    {	/* if no dir info create dir */
-		if (0 == DFANIlocate(file_id, DFAN_LABEL, 0, 0))
-		  {
-		      Hendaccess(aid);
-		      Hclose(file_id);
-		      return FAIL;
-		  }
-	    }
+          if (DFANdir[DFAN_LABEL] == NULL)
+            {   /* if no dir info create dir */
+                if (0 == DFANIlocate(file_id, DFAN_LABEL, 0, 0))
+                  {
+                      Hendaccess(aid);
+                      Hclose(file_id);
+                      return FAIL;
+                  }
+            }
 
-	  lp = labellist;
+          lp = labellist;
 
-	  /* Look through all labels. Get those that correspond to the tag,
-	     and match them with corresponding tag/refs in the reflist.      */
+          /* Look through all labels. Get those that correspond to the tag,
+             and match them with corresponding tag/refs in the reflist.      */
 
-	  for (p = DFANdir[DFAN_LABEL]; p != NULL; p = p->next)
-	    {	/* for each ann dir */
-		for (i = 0; i < p->nentries; i++)
-		  {	/* for each tag in dir */
-		      if (p->entries[i].datatag == tag)
-			{	/* if this tag==our tag */
+          for (p = DFANdir[DFAN_LABEL]; p != NULL; p = p->next)
+            {   /* for each ann dir */
+                for (i = 0; i < p->nentries; i++)
+                  {     /* for each tag in dir */
+                      if (p->entries[i].datatag == tag)
+                        {   /* if this tag==our tag */
 
-			    aid = Hstartread(file_id, DFTAG_DIL, p->entries[i].annref);
-			    if (aid == FAIL)
-			      {
-				  Hendaccess(aid);
-				  Hclose(file_id);
-				  return FAIL;
-			      }
-			    if ((int32) FAIL == Hread(aid, (int32) 4, labeldi))
-			      {		/* data tag/ref */
-				  Hendaccess(aid);
-				  Hclose(file_id);
-				  return FAIL;
-			      }
-			    /* look for corresponding ref in reflist */
-			    for (k = 0; k < nrefs && p->entries[i].dataref != reflist[k]; k++)
-				;
-			    if (k < nrefs)
-			      {		/* if ref found */
+                            aid = Hstartread(file_id, DFTAG_DIL, p->entries[i].annref);
+                            if (aid == FAIL)
+                              {
+                                  Hendaccess(aid);
+                                  Hclose(file_id);
+                                  return FAIL;
+                              }
+                            if ((int32) FAIL == Hread(aid, (int32) 4, labeldi))
+                              {     /* data tag/ref */
+                                  Hendaccess(aid);
+                                  Hclose(file_id);
+                                  return FAIL;
+                              }
+                            /* look for corresponding ref in reflist */
+                            for (k = 0; k < nrefs && p->entries[i].dataref != reflist[k]; k++)
+                                ;
+                            if (k < nrefs)
+                              {     /* if ref found */
 
-				  lp = labellist + k * maxlen;	/* get pos to copy to */
+                                  lp = labellist + k * maxlen;  /* get pos to copy to */
 
-				  /* note len on read may be too big, but OK for DFread */
-				  len = Hread(aid, (int32) (maxlen - 1), lp);
-				  if (len == FAIL)
-				    {
-					Hendaccess(aid);
-					Hclose(file_id);
-					return FAIL;
-				    }
-				  /* ret now contains actual length read */
-				  /* pad with blanks for Fortran; add null for C */
-				  if (isfortran)
-				      while (len++ < maxlen)
-					  lp[len] = ' ';
-				  else
-				      lp[len] = '\0';
-			      }
-			    Hendaccess(aid);
-			}	/* tag == our tag  */
-		  }	/* for each tag in dir  */
-	    }	/* for each ann dir  */
-      }		/* nlabs != 0  */
-    if (FAIL == Hclose(file_id))	/* close file */
-	return FAIL;
+                                  /* note len on read may be too big, but OK for DFread */
+                                  len = Hread(aid, (int32) (maxlen - 1), lp);
+                                  if (len == FAIL)
+                                    {
+                                        Hendaccess(aid);
+                                        Hclose(file_id);
+                                        return FAIL;
+                                    }
+                                  /* ret now contains actual length read */
+                                  /* pad with blanks for Fortran; add null for C */
+                                  if (isfortran)
+                                      while (len++ < maxlen)
+                                          lp[len] = ' ';
+                                  else
+                                      lp[len] = '\0';
+                              }
+                            Hendaccess(aid);
+                        }   /* tag == our tag  */
+                  }     /* for each tag in dir  */
+            }   /* for each ann dir  */
+      }     /* nlabs != 0  */
+    if (FAIL == Hclose(file_id))    /* close file */
+        return FAIL;
     return (nrefs);
 }
 
@@ -1221,9 +1221,9 @@ DFANIlablist(const char *filename, uint16 tag, uint16 reflist[],
        DFANaddfann -- Write a file label or description to a file
  USAGE
        int DFANaddfid(file_id, id)
-       int32 file_id;  IN: pointer to HDF file 
+       int32 file_id;  IN: pointer to HDF file
        char *ann;      IN: annotation to write to file
-       int32 annlen:   IN: length of annotation 
+       int32 annlen:   IN: length of annotation
        int type:       IN: DFAN_LABEL for labels, DFAN_DESC for descriptions
  RETURNS
        SUCCEED (0) if successful and FAIL (-1) otherwise
@@ -1245,21 +1245,21 @@ DFANIaddfann(int32 file_id, char *ann, int32 annlen, int type)
     HEclear();
     if (!ann)
       {
-	  HERROR(DFE_BADPTR);
-	  return FAIL;
+          HERROR(DFE_BADPTR);
+          return FAIL;
       }
 
     anntag = (uint16) ((type == DFAN_LABEL) ? DFTAG_FID : DFTAG_FD);
 
     annref = Hnewref(file_id);
     if (annref == 0)
-	return FAIL;
+        return FAIL;
 
     /* write out annotation */
     if (FAIL == Hputelement(file_id, anntag, annref, (uint8 *) ann, annlen))
-	return FAIL;
+        return FAIL;
 
-    Lastref = annref;	/* remember ref last accessed */
+    Lastref = annref;   /* remember ref last accessed */
     return (0);
 }
 
@@ -1275,7 +1275,7 @@ DFANIaddfann(int32 file_id, char *ann, int32 annlen, int type)
        length of annotation if successful and FAIL (-1) otherwise
  DESCRIPTION
        Uses isfirst and Next_label_ref (or Next_desc_ref) to determine
-       which annotation to pick up next. 
+       which annotation to pick up next.
  GLOBAL VARIABLES
        Lastref
        Next_label_ref
@@ -1298,40 +1298,40 @@ DFANIgetfannlen(int32 file_id, int type, int isfirst)
     /* Identify tag for this "type" of access; determine which ref to key on. */
     if (type == DFAN_LABEL)
       {
-	  anntag = DFTAG_FID;
-	  annref = (uint16) ((isfirst == 1) ? DFREF_WILDCARD : Next_label_ref);
+          anntag = DFTAG_FID;
+          annref = (uint16) ((isfirst == 1) ? DFREF_WILDCARD : Next_label_ref);
       }
     else
       {
-	  anntag = DFTAG_FD;
-	  annref = (uint16) ((isfirst == 1) ? DFREF_WILDCARD : Next_desc_ref);
+          anntag = DFTAG_FD;
+          annref = (uint16) ((isfirst == 1) ? DFREF_WILDCARD : Next_desc_ref);
       }
     aid = Hstartread(file_id, anntag, annref);
     if (aid == FAIL)
       {
-	  Hendaccess(aid);
-	  return FAIL;
+          Hendaccess(aid);
+          return FAIL;
       }
     if (FAIL == Hinquire(aid, (int32 *) NULL, (uint16 *) NULL, &annref, &length,
-	    (int32 *) NULL, (int32 *) NULL, (int16 *) NULL, (int16 *) NULL))
+            (int32 *) NULL, (int32 *) NULL, (int16 *) NULL, (int16 *) NULL))
       {
-	  Hendaccess(aid);
-	  return FAIL;
+          Hendaccess(aid);
+          return FAIL;
       }
-    if (type == DFAN_LABEL)	/* prepare for next call */
-	Next_label_ref = annref;
+    if (type == DFAN_LABEL)     /* prepare for next call */
+        Next_label_ref = annref;
     else
-	Next_desc_ref = annref;
+        Next_desc_ref = annref;
 
     Hendaccess(aid);
-    Lastref = annref;	/* remember ref last accessed */
+    Lastref = annref;   /* remember ref last accessed */
 
-    if (length >= 0)	/* (length == 0) => no length found */
-	return length;
+    if (length >= 0)    /* (length == 0) => no length found */
+        return length;
     else
       {
-	  HERROR(DFE_NOMATCH);
-	  return FAIL;
+          HERROR(DFE_NOMATCH);
+          return FAIL;
       }
 }
 
@@ -1355,7 +1355,7 @@ DFANIgetfannlen(int32 file_id, int type, int isfirst)
        Lastref, Next_desc_ref, Next_label_ref
  COMMENTS, BUGS, ASSUMPTIONS
        If maxlen not great enough, ann is truncated to maxlen-1 chars
-       BUG: If ref is high possible ref value, setting of Next_label_ref 
+       BUG: If ref is high possible ref value, setting of Next_label_ref
             or Next_desc_ref behave unpredictably.
  EXAMPLES
  REVISION LOG
@@ -1363,7 +1363,7 @@ DFANIgetfannlen(int32 file_id, int type, int isfirst)
 
 int32
 DFANIgetfann(int32 file_id, char *ann, int32 maxlen, int type,
-	     int isfirst)
+             int isfirst)
 {
     CONSTR(FUNC, "DFANIgetfann");
     uint16      anntag, annref;
@@ -1373,68 +1373,68 @@ DFANIgetfann(int32 file_id, char *ann, int32 maxlen, int type,
 
     if (!ann)
       {
-	  HERROR(DFE_BADPTR);
-	  return FAIL;
+          HERROR(DFE_BADPTR);
+          return FAIL;
       }
     /* Identify tag for this "type" of access; determine which ref to key on. */
     if (type == DFAN_LABEL)
       {
-	  anntag = DFTAG_FID;
-	  annref = (uint16) ((isfirst == 1) ? DFREF_WILDCARD : Next_label_ref);
+          anntag = DFTAG_FID;
+          annref = (uint16) ((isfirst == 1) ? DFREF_WILDCARD : Next_label_ref);
       }
     else
       {
-	  anntag = DFTAG_FD;
-	  annref = (uint16) ((isfirst == 1) ? DFREF_WILDCARD : Next_desc_ref);
+          anntag = DFTAG_FD;
+          annref = (uint16) ((isfirst == 1) ? DFREF_WILDCARD : Next_desc_ref);
       }
 
     aid = Hstartread(file_id, anntag, annref);
     if (aid == FAIL)
       {
-	  Hendaccess(aid);
-	  return FAIL;
+          Hendaccess(aid);
+          return FAIL;
       }
     if (FAIL == Hinquire(aid, (int32 *) NULL, (uint16 *) NULL, &annref, &length,
-	    (int32 *) NULL, (int32 *) NULL, (int16 *) NULL, (int16 *) NULL))
+            (int32 *) NULL, (int32 *) NULL, (int16 *) NULL, (int16 *) NULL))
       {
-	  Hendaccess(aid);
-	  return FAIL;
+          Hendaccess(aid);
+          return FAIL;
       }
-    length = (length > maxlen) ? maxlen : length;	/* truncate if too long */
+    length = (length > maxlen) ? maxlen : length;   /* truncate if too long */
 
-    if ((int32) FAIL == Hread(aid, length, (uint8 *) ann))	/* get the annotation */
-	return FAIL;
+    if ((int32) FAIL == Hread(aid, length, (uint8 *) ann))  /* get the annotation */
+        return FAIL;
 
     if (length > maxlen - 1)
-	length = maxlen - 1;
+        length = maxlen - 1;
 
     ann[length] = '\0';
 
-    Lastref = annref;	/* remember ref last accessed */
+    Lastref = annref;   /* remember ref last accessed */
 
     /* prepare for next call */
     if (FAIL == Hnextread(aid, anntag, DFREF_WILDCARD, DF_CURRENT))
-      {		/* If no more of them, set Next_ ???_ref */
-	  if (type == DFAN_LABEL)	/*    to one higher than current value   */
-	      Next_label_ref++;		/*    so that next call will fail.       */
-	  else
-	      Next_desc_ref++;
+      {     /* If no more of them, set Next_ ???_ref */
+          if (type == DFAN_LABEL)   /*    to one higher than current value   */
+              Next_label_ref++;     /*    so that next call will fail.       */
+          else
+              Next_desc_ref++;
       }
     else
-      {		/* Otherwise save the next ref */
-	  if (FAIL == Hinquire(aid, (int32 *) NULL, (uint16 *) NULL, &annref,
-			     (int32 *) NULL, (int32 *) NULL, (int32 *) NULL,
-			       (int16 *) NULL, (int16 *) NULL))
-	    {
-		Hendaccess(aid);
-		return FAIL;
-	    }
-	  if (type == DFAN_LABEL)
-	      Next_label_ref = annref;
-	  else
-	      Next_desc_ref = annref;
+      {     /* Otherwise save the next ref */
+          if (FAIL == Hinquire(aid, (int32 *) NULL, (uint16 *) NULL, &annref,
+                             (int32 *) NULL, (int32 *) NULL, (int32 *) NULL,
+                               (int16 *) NULL, (int16 *) NULL))
+            {
+                Hendaccess(aid);
+                return FAIL;
+            }
+          if (type == DFAN_LABEL)
+              Next_label_ref = annref;
+          else
+              Next_desc_ref = annref;
       }
 
     Hendaccess(aid);
-    return (length);	/* return length of label */
+    return (length);    /* return length of label */
 }

@@ -18,8 +18,8 @@
 #ifndef TBBT_H
 #define TBBT_H
 
-#ifdef lint	/* lint always complains but may complain more if... */
-# define   TBBT_INTERNALS	/* TBBT_INTERNALS not always defined */
+#ifdef lint     /* lint always complains but may complain more if... */
+# define   TBBT_INTERNALS   /* TBBT_INTERNALS not always defined */
 #endif /* lint */
 
 typedef struct tbbt_node TBBT_NODE;
@@ -27,35 +27,35 @@ typedef struct tbbt_node TBBT_NODE;
 /* Threaded node structure */
 struct tbbt_node
   {
-      VOIDP       data;		/* Pointer to user data to be associated with node */
-      VOIDP       key;		/* Field to sort nodes on */
+      VOIDP       data;         /* Pointer to user data to be associated with node */
+      VOIDP       key;          /* Field to sort nodes on */
 
 #ifdef TBBT_INTERNALS
 # define   PARENT  0
 # define   LEFT    1
 # define   RIGHT   2
-      TBBT_NODE  *link[3];	/* Pointers to parent, left child, and right child */
+      TBBT_NODE  *link[3];      /* Pointers to parent, left child, and right child */
 # define  Parent    link[PARENT]
 # define  Lchild    link[LEFT]
 # define  Rchild    link[RIGHT]
 # define  TBBT_FLAG unsigned long
 # define  TBBT_LEAF unsigned long
-      TBBT_FLAG   flags;	/* Combination of the following bit fields: */
-# define  TBBT_HEAVY(s) s	/* If the `s' sub-tree is deeper than the other */
-# define  TBBT_DOUBLE   4	/* If "heavy" sub-tree is two levels deeper */
-# define  TBBT_INTERN   8	/* If node is internal (has two children) */
+      TBBT_FLAG   flags;        /* Combination of the following bit fields: */
+# define  TBBT_HEAVY(s) s       /* If the `s' sub-tree is deeper than the other */
+# define  TBBT_DOUBLE   4       /* If "heavy" sub-tree is two levels deeper */
+# define  TBBT_INTERN   8       /* If node is internal (has two children) */
 # define  TBBT_UNBAL    ( TBBT_HEAVY(LEFT) | TBBT_HEAVY(RIGHT) )
 # define  TBBT_FLAGS    ( TBBT_UNBAL | TBBT_INTERN | TBBT_DOUBLE )
 # define  TBBT_CHILD(s) ( TBBT_INTERN | TBBT_HEAVY(s) )
-      TBBT_LEAF   lcnt;		/* count of left children */
-      TBBT_LEAF   rcnt;		/* count of right children */
-# define  LeftCnt(node) ( (node)->lcnt )	/* Left descendants */
-# define  RightCnt(node) ( (node)->rcnt )	/* Left descendants */
-#if defined macintosh | defined THINK_C		/* Macro substitution limit */
+      TBBT_LEAF   lcnt;         /* count of left children */
+      TBBT_LEAF   rcnt;         /* count of right children */
+# define  LeftCnt(node) ( (node)->lcnt )    /* Left descendants */
+# define  RightCnt(node) ( (node)->rcnt )   /* Left descendants */
+#if defined macintosh | defined THINK_C     /* Macro substitution limit */
 # define  Cnt(node,s)   ( 1==(s) ? LeftCnt(node) : RightCnt(node) )
-#else				/* !macintosh */
+#else                           /* !macintosh */
 # define  Cnt(node,s)   ( LEFT==(s) ? LeftCnt(node) : RightCnt(node) )
-#endif				/* !macintosh */
+#endif                          /* !macintosh */
 #ifdef QAK
 # define  HasChild(n,s) ( TBBT_CHILD(s) & (n)->flags )
 # define  Heavy(n,s)    ( TBBT_HEAVY(s) & (n)->flags )
@@ -64,28 +64,28 @@ struct tbbt_node
 #else
 # define  HasChild(n,s) ( Cnt(n,s)>0 )
 # define  Heavy(n,s)    ( (s) & (LeftCnt(n)>RightCnt(n) ? LEFT : \
-				 LeftCnt(n)==RightCnt(n) ? 0 : RIGHT))
+                 LeftCnt(n)==RightCnt(n) ? 0 : RIGHT))
 # define  Intern(n)     ( LeftCnt(n) && RightCnt(n) )
 # define  UnBal(n)      ( LeftCnt(n)>RightCnt(n) ? LEFT : \
-				 LeftCnt(n)==RightCnt(n) ? 0 : RIGHT)
+                 LeftCnt(n)==RightCnt(n) ? 0 : RIGHT)
 #endif
 # define  Double(n)     ( TBBT_DOUBLE & (n)->flags )
 # define  Other(side)   ( LEFT + RIGHT - (side) )
 #ifdef QAK
 # define  Delta(n,s)    (  ( Heavy(n,s) ? 1 : -1 )                          \
                             *  ( Double(n) ? 2 : UnBal(n) ? 1 : 0 )  )
-#if defined macintosh | defined THINK_C		/* There is a limit to recursive
-						   macro substitution */
+#if defined macintosh | defined THINK_C     /* There is a limit to recursive
+                                               macro substitution */
 # define  SetFlags(n,s,c,b,i)   (  ( -2<(b) && (b)<2 ? 0 : TBBT_DOUBLE )   \
     |  ( 0>(b) ? TBBT_HEAVY(s) : (b)>0 ? TBBT_HEAVY( 1 + 2 - (s)) : 0 )    \
     |  ( ( LEFT==(s) ? (c) : LeftCnt(n) ) << TBBT_BITS )                   \
     |  ( (i) ? TBBT_INTERN : 0 )  )
-#else				/* !macintosh */
+#else                           /* !macintosh */
 # define  SetFlags(n,s,c,b,i)   (  ( -2<(b) && (b)<2 ? 0 : TBBT_DOUBLE )   \
     |  ( 0>(b) ? TBBT_HEAVY(s) : (b)>0 ? TBBT_HEAVY(Other(s)) : 0 )        \
     |  ( ( LEFT==(s) ? (c) : LeftCnt(n) ) << TBBT_BITS )                   \
     |  ( (i) ? TBBT_INTERN : 0 )  )
-#endif				/* !macintosh */
+#endif                          /* !macintosh */
 /* n=node, s=LEFT/RIGHT, c=`s' descendant count, b=balance(s), i=internal */
 /* SetFlags( ptr, LEFT, Cnt(RIGHT,kid), -2, YES ) */
 #else
@@ -101,10 +101,10 @@ typedef struct tbbt_tree TBBT_TREE;
 struct tbbt_tree
   {
       TBBT_NODE  *root;
-      unsigned long count;	/* The number of nodes in the tree currently */
+      unsigned long count;      /* The number of nodes in the tree currently */
       intn        (*compar) HPROTO((VOIDP k1, VOIDP k2, intn cmparg));
       intn        cmparg;
-#endif				/* TBBT_INTERNALS */
+#endif                          /* TBBT_INTERNALS */
   };
 #ifndef TBBT_INTERNALS
 typedef TBBT_NODE **TBBT_TREE;
@@ -161,7 +161,7 @@ typedef TBBT_NODE **TBBT_TREE;
 #if defined c_plusplus || defined __cplusplus
 extern      "C"
 {
-#endif				/* c_plusplus || __cplusplus */
+#endif                          /* c_plusplus || __cplusplus */
 
     TBBT_TREE  *tbbtdmake
                 (intn (*compar) HPROTO((VOIDP, VOIDP, intn)), intn arg);
@@ -221,7 +221,7 @@ extern      "C"
                 (TBBT_TREE * tree, VOIDP key, TBBT_NODE ** pp);
     TBBT_NODE  *tbbtfind
                 (TBBT_NODE * root, VOIDP key, intn (*cmp) HPROTO((VOIDP, VOIDP, intn)),
-		 intn arg, TBBT_NODE ** pp);
+                 intn arg, TBBT_NODE ** pp);
 /* Locate a node based on the key given.  A pointer to the node in the tree
  * with a key value matching `key' is returned.  If no such node exists, NULL
  * is returned.  Whether a node is found or not, if `pp' is not NULL, `*pp'
@@ -310,7 +310,7 @@ extern      "C"
  * traversal is used:
  *      -1 : Pre-Order Traversal
  *       1 : Post-Order Traversal
- *       0 : In-Order Traversal 
+ *       0 : In-Order Traversal
  */
 
     long        tbbtcount
@@ -318,6 +318,6 @@ extern      "C"
 
 #if defined c_plusplus || defined __cplusplus
 }
-#endif				/* c_plusplus || __cplusplus */
+#endif                          /* c_plusplus || __cplusplus */
 
-#endif				/* TBBT_H */
+#endif                          /* TBBT_H */

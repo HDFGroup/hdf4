@@ -21,7 +21,7 @@ static char RcsId[] = "@(#)$Revision$";
  * File:    hfilef.c
  * Purpose: C stubs for Fortran low level routines
  * Invokes: hfile.c
- * Contents: 
+ * Contents:
  *  hiopen_:   call Hopen to open HDF file
  *  hclose_:   call Hclose to close HDF file
  *---------------------------------------------------------------------------*/
@@ -43,7 +43,7 @@ static char RcsId[] = "@(#)$Revision$";
  * Name:    hiopen
  * Purpose: call Hopen to open HDF file
  * Inputs:  name: name of file to open
- *          acc_mode: access mode - integer with value DFACC_READ etc. 
+ *          acc_mode: access mode - integer with value DFACC_READ etc.
  *          defdds: default number of DDs per header block
  *          namelen: length of name
  * Returns: 0 on success, -1 on failure with error set

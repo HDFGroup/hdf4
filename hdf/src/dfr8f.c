@@ -20,7 +20,7 @@ static char RcsId[] = "@(#)$Revision$";
  * File:    dfr8F.c
  * Purpose: C stubs for Fortran RIS routines
  * Invokes: dfr8.c dfkit.c
- * Contents: 
+ * Contents:
  *  d8spal:     Set palette to write out with subsequent images
  *  d8first:    Call DFR8restart to reset sequencing to first image
  *  d8igdim:    Call DFR8getdims to get dimensions of next image
@@ -147,7 +147,7 @@ nd8igimg(_fcd filename, _fcd image, intf * xdim, intf * ydim, _fcd pal, intf * l
 
     fn = HDf2cstring(filename, (intn) *lenfn);
     ret = DFR8getimage(fn, (uint8 *) _fcdtocp(image), *xdim, *ydim,
-		       (uint8 *) _fcdtocp(pal));
+                       (uint8 *) _fcdtocp(pal));
     HDfreespace((VOIDP) fn);
     return (ret);
 }
@@ -167,14 +167,14 @@ nd8igimg(_fcd filename, _fcd image, intf * xdim, intf * ydim, _fcd pal, intf * l
 
 FRETVAL(intf)
 nd8ipimg(_fcd filename, _fcd image, intf * xdim, intf * ydim, intf * compress,
-	 intf * lenfn)
+         intf * lenfn)
 {
     char       *fn;
     intf        ret;
 
     fn = HDf2cstring(filename, (intn) *lenfn);
     ret = (intf) DFR8putimage(fn, (VOIDP) _fcdtocp(image),
-			  (int32) *xdim, (int32) *ydim, (uint16) *compress);
+                          (int32) *xdim, (int32) *ydim, (uint16) *compress);
     HDfreespace((VOIDP) fn);
     return (ret);
 }
@@ -194,14 +194,14 @@ nd8ipimg(_fcd filename, _fcd image, intf * xdim, intf * ydim, intf * compress,
 
 FRETVAL(intf)
 nd8iaimg(_fcd filename, _fcd image, intf * xdim, intf * ydim, intf * compress,
-	 intf * lenfn)
+         intf * lenfn)
 {
     char       *fn;
     intf        ret;
 
     fn = HDf2cstring(filename, (intn) *lenfn);
     ret = (intf) DFR8addimage(fn, (VOIDP) _fcdtocp(image),
-			  (int32) *xdim, (int32) *ydim, (uint16) *compress);
+                          (int32) *xdim, (int32) *ydim, (uint16) *compress);
     HDfreespace((VOIDP) fn);
     return (ret);
 }
@@ -228,7 +228,7 @@ nd8irref(_fcd filename, intf * ref, intf * fnlen)
 
     fn = HDf2cstring(filename, (intn) *fnlen);
     if (!fn)
-	return -1;
+        return -1;
     ret = DFR8readref(fn, Ref);
     HDfreespace((VOIDP) fn);
     return ret;
@@ -242,7 +242,7 @@ nd8irref(_fcd filename, intf * ref, intf * fnlen)
  * Returns: 0 on success, -1 on failure
  * Users:   HDF programmers, other routines and utilities
  * Invokes: DFR8writeref
- * Remarks: 
+ * Remarks:
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
@@ -268,7 +268,7 @@ nd8iwref(_fcd filename, intf * ref, intf * fnlen)
  * Returns: number of images on success, -1 on failure
  * Users:   HDF programmers, other routines and utilities
  * Invokes: DFR8nimages
- * Remarks: 
+ * Remarks:
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
@@ -314,15 +314,15 @@ nd8lref(void)
 FRETVAL(intf)
 nd8scomp(intf * scheme)
 {
-    comp_info   cinfo;		/* Structure containing compression parameters */
+    comp_info   cinfo;          /* Structure containing compression parameters */
 
     if (*scheme == COMP_JPEG)
-      {		/* check for JPEG compression and set defaults */
-	  cinfo.jpeg.quality = 75;
-	  cinfo.jpeg.force_baseline = 1;
-      }		/* end if */
+      {     /* check for JPEG compression and set defaults */
+          cinfo.jpeg.quality = 75;
+          cinfo.jpeg.force_baseline = 1;
+      }     /* end if */
     return (DFR8setcompress((int32) *scheme, &cinfo));
-}	/* end d8scomp() */
+}   /* end d8scomp() */
 
 /*-----------------------------------------------------------------------------
  * Name:    d8sjpeg
@@ -339,12 +339,12 @@ nd8scomp(intf * scheme)
 FRETVAL(intf)
 nd8sjpeg(intf * quality, intf * force_baseline)
 {
-    comp_info   cinfo;		/* Structure containing compression parameters */
+    comp_info   cinfo;          /* Structure containing compression parameters */
 
     cinfo.jpeg.quality = (intn) *quality;
     cinfo.jpeg.force_baseline = (intn) *force_baseline;
     return (DFR8setcompress((int32) COMP_JPEG, &cinfo));
-}	/* end d8sjpeg() */
+}   /* end d8sjpeg() */
 
 /*-----------------------------------------------------------------------------
  * Name:    dfr8lastref
@@ -353,7 +353,7 @@ nd8sjpeg(intf * quality, intf * force_baseline)
  * Returns: ref on success, -1 on failure
  * Users:   HDF programmers, other routines and utilities
  * Invokes: DFR8lastref
- * Remarks: 
+ * Remarks:
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
@@ -410,15 +410,15 @@ ndfr8restart(void)
 FRETVAL(intf)
 ndfr8scompress(intf * scheme)
 {
-    comp_info   cinfo;		/* Structure containing compression parameters */
+    comp_info   cinfo;          /* Structure containing compression parameters */
 
     if (*scheme == COMP_JPEG)
-      {		/* check for JPEG compression and set defaults */
-	  cinfo.jpeg.quality = 75;
-	  cinfo.jpeg.force_baseline = 1;
-      }		/* end if */
+      {     /* check for JPEG compression and set defaults */
+          cinfo.jpeg.quality = 75;
+          cinfo.jpeg.force_baseline = 1;
+      }     /* end if */
     return (DFR8setcompress((int32) *scheme, &cinfo));
-}	/* end dfr8setcompress() */
+}   /* end dfr8setcompress() */
 
 /*-----------------------------------------------------------------------------
  * Name:    dfr8sjpeg
@@ -435,9 +435,9 @@ ndfr8scompress(intf * scheme)
 FRETVAL(intf)
 ndfr8sjpeg(intf * quality, intf * force_baseline)
 {
-    comp_info   cinfo;		/* Structure containing compression parameters */
+    comp_info   cinfo;          /* Structure containing compression parameters */
 
     cinfo.jpeg.quality = (intn) *quality;
     cinfo.jpeg.force_baseline = (intn) *force_baseline;
     return (DFR8setcompress((int32) COMP_JPEG, &cinfo));
-}	/* end dfr8setjpeg() */
+}   /* end dfr8setjpeg() */

@@ -43,10 +43,10 @@ static char RcsId[] = "@(#)$Revision$";
 #include "hdf.h"
 #include "dfgr.h"
 
-static intn Newdata = 0;	/* does Readrig contain fresh data? */
-static intn dimsset = 0;	/* have dimensions been set? */
+static intn Newdata = 0;        /* does Readrig contain fresh data? */
+static intn dimsset = 0;        /* have dimensions been set? */
 static int32 last_xdim = 0;
-static int32 last_ydim = 0;	/* .....gheesh......... */
+static int32 last_ydim = 0;     /* .....gheesh......... */
 
 #define LUT     0
 #define IMAGE   1
@@ -77,8 +77,8 @@ DF24getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pil)
 
     do
       {
-	  if (DFGRIgetdims(filename, pxdim, pydim, &ncomps, pil, IMAGE) < 0)
-	      HRETURN_ERROR(DFE_NODIM, FAIL);
+          if (DFGRIgetdims(filename, pxdim, pydim, &ncomps, pil, IMAGE) < 0)
+              HRETURN_ERROR(DFE_NODIM, FAIL);
       }
     while (ncomps != 3);
 
@@ -86,7 +86,7 @@ DF24getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pil)
     last_ydim = *pydim;
     Newdata = 1;
     return (SUCCEED);
-}	/* end DF24getdims() */
+}   /* end DF24getdims() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -107,7 +107,7 @@ intn
 DF24reqil(intn il)
 {
     return (DFGRIreqil(il, IMAGE));
-}	/* end DF24reqil() */
+}   /* end DF24reqil() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -140,25 +140,25 @@ DF24getimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
     HEclear();
 
     if (!filename || !*filename || !image || (xdim <= 0) || (ydim <= 0))
-	HRETURN_ERROR(DFE_ARGS, FAIL);
+        HRETURN_ERROR(DFE_ARGS, FAIL);
 
     if (!Newdata && DF24getdims(filename, &tx, &ty, &il) == FAIL)
-	HRETURN_ERROR(DFE_NODIM, FAIL);
+        HRETURN_ERROR(DFE_NODIM, FAIL);
 
     if (Newdata)
       {
-	  tx = last_xdim;
-	  ty = last_ydim;
-      }		/* end if */
+          tx = last_xdim;
+          ty = last_ydim;
+      }     /* end if */
 
     if ((tx > xdim) || (ty > ydim))
-	HRETURN_ERROR(DFE_BADDIM, FAIL);
+        HRETURN_ERROR(DFE_BADDIM, FAIL);
 
     ret = DFGRIgetimlut(filename, image, xdim, ydim, IMAGE, 0);
 
     Newdata = 0;
     return (ret);
-}	/* end DF24getimage() */
+}   /* end DF24getimage() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -181,7 +181,7 @@ DF24setdims(int32 xdim, int32 ydim)
 {
     dimsset = 1;
     return (DFGRIsetdims(xdim, ydim, 3, IMAGE));
-}	/* end DF24setdims() */
+}   /* end DF24setdims() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -202,7 +202,7 @@ intn
 DF24setil(intn il)
 {
     return (DFGRIsetil(il, IMAGE));
-}	/* end DF24setil() */
+}   /* end DF24setil() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -228,7 +228,7 @@ intn
 DF24setcompress(int32 type, comp_info * cinfo)
 {
     return (DFGRsetcompress(type, cinfo));
-}	/* end DF24setcompress() */
+}   /* end DF24setcompress() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -249,7 +249,7 @@ intn
 DF24restart(void)
 {
     return (DFGRIrestart());
-}	/* end DF24restart() */
+}   /* end DF24restart() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -278,11 +278,11 @@ DF24addimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
 
     /* 0 == C */
     if (!dimsset && DFGRIsetdims(xdim, ydim, 3, IMAGE) == FAIL)
-	HRETURN_ERROR(DFE_BADDIM, FAIL);
-    dimsset = 0;	/* reset to new rig */
+        HRETURN_ERROR(DFE_BADDIM, FAIL);
+    dimsset = 0;    /* reset to new rig */
 
     return (DFGRIaddimlut(filename, image, xdim, ydim, IMAGE, 0, 0));
-}	/* end DF24addimage() */
+}   /* end DF24addimage() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -311,11 +311,11 @@ DF24putimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
 
     /* 0 == C */
     if (!dimsset && DFGRIsetdims(xdim, ydim, 3, IMAGE) == FAIL)
-	HRETURN_ERROR(DFE_BADDIM, FAIL);
-    dimsset = 0;	/* reset to new rig */
+        HRETURN_ERROR(DFE_BADDIM, FAIL);
+    dimsset = 0;    /* reset to new rig */
 
     return (DFGRIaddimlut(filename, image, xdim, ydim, IMAGE, 0, 1));
-}	/* end DF24putimage() */
+}   /* end DF24putimage() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -337,56 +337,56 @@ DF24nimages(const char *filename)
 {
     CONSTR(FUNC, "DF24nimages");
     int32       file_id;
-    int32       group_id;	/* group ID for looking at RIG's */
-    uint16      elt_tag, elt_ref;	/* tag/ref of items in a RIG */
-    intn        nimages;	/* total number of potential images */
-    uint16      find_tag, find_ref;	/* storage for tag/ref pairs found */
-    int32       find_off, find_len;	/* storage for offset/lengths of tag/refs found */
-    uint8       GRtbuf[64];	/* local buffer to read the ID element into */
+    int32       group_id;       /* group ID for looking at RIG's */
+    uint16      elt_tag, elt_ref;   /* tag/ref of items in a RIG */
+    intn        nimages;        /* total number of potential images */
+    uint16      find_tag, find_ref;     /* storage for tag/ref pairs found */
+    int32       find_off, find_len;     /* storage for offset/lengths of tag/refs found */
+    uint8       GRtbuf[64];     /* local buffer to read the ID element into */
 
     HEclear();
 
     /* should use reopen if same file as last time - more efficient */
     if ((file_id = DFGRIopen(filename, DFACC_READ)) == FAIL)
-	HRETURN_ERROR(DFE_BADOPEN, FAIL);
+        HRETURN_ERROR(DFE_BADOPEN, FAIL);
 
     /* go through the RIGs looking for 24-bit images */
     nimages = 0;
     find_tag = find_ref = 0;
     while (Hfind(file_id, DFTAG_RIG, DFREF_WILDCARD, &find_tag, &find_ref, &find_off, &find_len, DF_FORWARD) == SUCCEED)
       {
-	  /* read RIG into memory */
-	  if ((group_id = DFdiread(file_id, DFTAG_RIG, find_ref)) == FAIL)
-	      HRETURN_ERROR(DFE_INTERNAL, FAIL);
-	  while (!DFdiget(group_id, &elt_tag, &elt_ref))
-	    {	/* get next tag/ref */
-		if (elt_tag == DFTAG_ID)
-		  {	/* just look for ID tags to get the number of components */
-		      if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL)
-			{
-			    int32       temp;	/* temporary holding variable */
-			    int32       ncomponents;	/* number of image components */
-			    uint8      *p;
+          /* read RIG into memory */
+          if ((group_id = DFdiread(file_id, DFTAG_RIG, find_ref)) == FAIL)
+              HRETURN_ERROR(DFE_INTERNAL, FAIL);
+          while (!DFdiget(group_id, &elt_tag, &elt_ref))
+            {   /* get next tag/ref */
+                if (elt_tag == DFTAG_ID)
+                  {     /* just look for ID tags to get the number of components */
+                      if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL)
+                        {
+                            int32       temp;   /* temporary holding variable */
+                            int32       ncomponents;    /* number of image components */
+                            uint8      *p;
 
-			    p = GRtbuf;
-			    INT32DECODE(p, temp);
-			    INT32DECODE(p, temp);
-			    UINT16DECODE(p, temp);
-			    UINT16DECODE(p, temp);
-			    INT16DECODE(p, ncomponents);
-			    if (ncomponents == 3)	/* whew, all that work and we finally found a 24-bit image */
-				nimages++;
-			}	/* end if */
-		      else
-			  HRETURN_ERROR(DFE_GETELEM, FAIL);
-		  }	/* end if */
-	    }	/* end while */
-      }		/* end while */
+                            p = GRtbuf;
+                            INT32DECODE(p, temp);
+                            INT32DECODE(p, temp);
+                            UINT16DECODE(p, temp);
+                            UINT16DECODE(p, temp);
+                            INT16DECODE(p, ncomponents);
+                            if (ncomponents == 3)   /* whew, all that work and we finally found a 24-bit image */
+                                nimages++;
+                        }   /* end if */
+                      else
+                          HRETURN_ERROR(DFE_GETELEM, FAIL);
+                  }     /* end if */
+            }   /* end while */
+      }     /* end while */
 
     if (Hclose(file_id) == FAIL)
-	HRETURN_ERROR(DFE_CANTCLOSE, FAIL);
+        HRETURN_ERROR(DFE_CANTCLOSE, FAIL);
     return (nimages);
-}	/* end DF24nimages() */
+}   /* end DF24nimages() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -408,7 +408,7 @@ intn
 DF24readref(const char *filename, uint16 ref)
 {
     return (DFGRreadref(filename, ref));
-}	/* end DF24readref() */
+}   /* end DF24readref() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -428,4 +428,4 @@ uint16
 DF24lastref(void)
 {
     return (DFGRIlastref());
-}	/* end DF24lastref() */
+}   /* end DF24lastref() */

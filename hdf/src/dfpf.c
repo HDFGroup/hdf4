@@ -20,7 +20,7 @@ static char RcsId[] = "@(#)$Revision$";
  * File:    dfpF.c
  * Purpose: C stubs for Palette Fortran routines
  * Invokes: dfp.c dfkit.c
- * Contents: 
+ * Contents:
  *  dpigpal_     : Call DFPgetpal to get palette
  *  dpippal_     : Call DFPputpal to write/overwrite palette in file
  *  dpinpal_     : Call DFPnpals to get number of palettes in file
@@ -107,7 +107,7 @@ ndpippal(_fcd filename, _fcd pal, intf * overwrite, _fcd filemode, intf * fnlen)
 
     fn = HDf2cstring(filename, (intn) *fnlen);
     ret = DFPputpal(fn, (VOIDP) _fcdtocp(pal), (intn) *overwrite,
-		    (char *) _fcdtocp(filemode));
+                    (char *) _fcdtocp(filemode));
     HDfreespace((VOIDP) fn);
     return (ret);
 }

@@ -31,7 +31,7 @@
 #if defined c_plusplus || defined __cplusplus
 extern      "C"
 {
-#endif				/* c_plusplus || __cplusplus */
+#endif                          /* c_plusplus || __cplusplus */
 
 /*
    ** from crle.c
@@ -48,8 +48,8 @@ extern      "C"
 
     extern int32 HCPcrle_inquire
                 (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
-	       int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
-		 int16 *pspecial);
+               int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
+                 int16 *pspecial);
 
     extern int32 HCPcrle_read
                 (accrec_t * access_rec, int32 length, VOIDP data);
@@ -62,7 +62,7 @@ extern      "C"
 
 #if defined c_plusplus || defined __cplusplus
 }
-#endif				/* c_plusplus || __cplusplus */
+#endif                          /* c_plusplus || __cplusplus */
 
 /* size of the RLE buffer */
 #define RLE_BUF_SIZE    128
@@ -78,28 +78,28 @@ extern      "C"
 /* RLE [en|de]coding information */
 typedef struct
 {
-    int32       offset;		/* offset in the file */
-    uint8       buffer[RLE_BUF_SIZE];	/* buffer for storing RLE bytes */
-    intn        buf_length;	/* number of bytes in buffer */
-    intn        buf_pos;	/* offset into the buffer */
-    uintn       last_byte,	/* the last byte stored in the buffer */
-                second_byte;	/* the second to last byte stored in the buffer */
+    int32       offset;         /* offset in the file */
+    uint8       buffer[RLE_BUF_SIZE];   /* buffer for storing RLE bytes */
+    intn        buf_length;     /* number of bytes in buffer */
+    intn        buf_pos;        /* offset into the buffer */
+    uintn       last_byte,      /* the last byte stored in the buffer */
+                second_byte;    /* the second to last byte stored in the buffer */
     enum
       {
-	  RLE_INIT,		/* initial state, need to read a byte to determine
-				   next state */
-	  RLE_RUN,		/* buffer up to the current position is a run */
-	  RLE_MIX
-      }				/* buffer up to the current position is a mix */
-    rle_state;			/* state of the buffer storage */
+          RLE_INIT,             /* initial state, need to read a byte to determine
+                                   next state */
+          RLE_RUN,              /* buffer up to the current position is a run */
+          RLE_MIX
+      }                         /* buffer up to the current position is a mix */
+    rle_state;                  /* state of the buffer storage */
 }
 comp_coder_rle_info_t;
 
 #ifndef CRLE_MASTER
-extern funclist_t crle_funcs;	/* functions to perform run-length encoding */
+extern funclist_t crle_funcs;   /* functions to perform run-length encoding */
 #else
 funclist_t  crle_funcs =
-{				/* functions to perform run-length encoding */
+{                               /* functions to perform run-length encoding */
     HCPcrle_stread,
     HCPcrle_stwrite,
     HCPcrle_seek,

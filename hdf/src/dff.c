@@ -21,7 +21,7 @@ static char RcsId[] = "@(#)$Revision$";
  * File:    dfF.c
  * Purpose: C stubs for Fortran low level routines
  * Invokes: dfF.c
- * Contents: 
+ * Contents:
  *  dfiopen:   call DFopen to open HDF file
  *  dfclose:   call DFclose to close HDF file
  *  dfdesc:    call DFdescriptors to get contents of DDs
@@ -97,7 +97,7 @@ static char RcsId[] = "@(#)$Revision$";
  * Name:    dfiopen
  * Purpose: call DFopen to open HDF file
  * Inputs:  name: name of file to open
- *      acc_mode: access mode - integer with value DFACC_READ etc. 
+ *      acc_mode: access mode - integer with value DFACC_READ etc.
  *      defdds: default number of DDs per header block
  *      namelen: length of name
  * Returns: 0 on success, -1 on failure with DFerror set
@@ -157,10 +157,10 @@ ndfdesc(intf * dfile, intf ptr[][4], intf * begin, intf * num)
     /* copy ptr1 array  ptr; note row/column inversion */
     for (i = 0; i < num_desc; i++)
       {
-	  ptr[i][0] = (int32) ptr1[i].tag;
-	  ptr[i][1] = (int32) ptr1[i].ref;
-	  ptr[i][2] = ptr1[i].offset;
-	  ptr[i][3] = ptr1[i].length;
+          ptr[i][0] = (int32) ptr1[i].tag;
+          ptr[i][1] = (int32) ptr1[i].ref;
+          ptr[i][2] = ptr1[i].offset;
+          ptr[i][3] = ptr1[i].length;
       }
 
     HDfreespace((VOIDP) ptr1);
@@ -183,7 +183,7 @@ FRETVAL(intf)
 ndfdup(intf * dfile, intf * tag, intf * ref, intf * otag, intf * oref)
 {
     return (DFdup((DF *) * dfile, (uint16) *tag, (uint16) *ref, (uint16) *otag,
-		  (uint16) *oref));
+                  (uint16) *oref));
 }
 
 /*-----------------------------------------------------------------------------
@@ -265,7 +265,7 @@ ndfread(intf * dfile, _fcd ptr, intf * len)
  * Name:    dfseek
  * Purpose: Call DFseek to move to offset within item
  * Inputs:  dfile: pointer to HDF file
- *	    offset: number of bytes from beginning of item to move to
+ *      offset: number of bytes from beginning of item to move to
  * Returns: 0 on success, -1 on failure with DFerror set
  * Users:   HDF Fortran programmers
  * Invokes: DFseek
@@ -281,8 +281,8 @@ ndfseek(intf * dfile, intf * offset)
  * Name:    dfwrite
  * Purpose: Call DFwrite to write part of item
  * Inputs:  dfile: pointer to HDF file
- *	    ptr: pointer to data to write
- *	    len: number of bytes to write
+ *      ptr: pointer to data to write
+ *      len: number of bytes to write
  * Returns: 0 on success, -1 on failure with DFerror set
  * Users:   HDF Fortran programmers
  * Invokes: DFwrite
@@ -313,8 +313,8 @@ ndfupdate(intf * dfile)
  * Name:    dfget
  * Purpose: Call DFget to read an element
  * Inputs:  dfile: pointer to HDF file
- *	    tag, ref: pointer to item to read
- *	    ptr: space to read item into
+ *      tag, ref: pointer to item to read
+ *      ptr: space to read item into
  * Returns: 0 on success, -1 on failure with DFerror set
  * Users:   HDF Fortran programmers
  * Invokes: DFgetelement
@@ -324,16 +324,16 @@ FRETVAL(intf)
 ndfget(intf * dfile, intf * tag, intf * ref, _fcd ptr)
 {
     return (DFgetelement((DF *) * dfile, (uint16) *tag, (uint16) *ref,
-			 (char *) _fcdtocp(ptr)));
+                         (char *) _fcdtocp(ptr)));
 }
 
 /*-----------------------------------------------------------------------------
  * Name:    dfput
  * Purpose: Call DFput to write an element
  * Inputs:  dfile: pointer to HDF file
- *	    tag, ref: attributes of item to write
- *	    ptr: item to write
- *	    len: size of item
+ *      tag, ref: attributes of item to write
+ *      ptr: item to write
+ *      len: size of item
  * Returns: 0 on success, -1 on failure with DFerror set
  * Users:   HDF Fortran programmers
  * Invokes: DFputelement
@@ -343,14 +343,14 @@ FRETVAL(intf)
 ndfput(intf * dfile, intf * tag, intf * ref, _fcd ptr, intf * len)
 {
     return (DFputelement((DF *) * dfile, (uint16) *tag, (uint16) *ref,
-			 (char *) _fcdtocp(ptr), *len));
+                         (char *) _fcdtocp(ptr), *len));
 }
 
 /*-----------------------------------------------------------------------------
  * Name:    dfsfind
  * Purpose: Call DFsetfind to set up search
  * Inputs:  dfile: pointer to HDF file
- *	    tag, ref: attributes of item to find
+ *      tag, ref: attributes of item to find
  * Returns: 0 on success, -1 on failure with DFerror set
  * Users:   HDF Fortran programmers
  * Invokes: DFsetfind
@@ -366,8 +366,8 @@ ndfsfind(intf * dfile, intf * tag, intf * ref)
  * Name:    dffind
  * Purpose: Call DFfind to find next match
  * Inputs:  dfile: pointer to HDF file
- *	    itag, iref: attributes of item found
- *	    len: size of item
+ *      itag, iref: attributes of item found
+ *      len: size of item
  * Returns: 0 on success, -1 on failure with DFerror set
  * Users:   HDF Fortran programmers
  * Invokes: DFfind
@@ -425,7 +425,7 @@ ndfnewref(intf * dfile)
  * Name:    dfnumber
  * Purpose: Call DFnumber to get unused ref no
  * Inputs:  dfile: pointer to HDF file
- *	    tag:   pointer to (int16)tag to count
+ *      tag:   pointer to (int16)tag to count
  * Returns: int: number of occurances of given tag
  * Users:   HDF Fortran programmers
  * Invokes: DFnumber
@@ -441,7 +441,7 @@ ndfnumber(intf * dfile, intf * tag)
  * Name:    dfstat
  * Purpose: Call DFstat to get staus info on file
  * Inputs:  dfile:  pointer to HDF file
- *	    dfinfo: pointer to DFdata structure to fill in
+ *      dfinfo: pointer to DFdata structure to fill in
  * Returns: 0 on success, -1 on failure with DFerror set
  * Users:   HDF Fortran programmers
  * Invokes: DFstat
@@ -457,7 +457,7 @@ ndfstat(intf * dfile, DFdata * dfinfo)
  * Name:    dfiishdf
  * Purpose: Call DFishdf to test file
  * Inputs:  name:    name of file to test
- *	    namelen: pointer to variable containing length of name string
+ *      namelen: pointer to variable containing length of name string
  * Returns: 0 on success, -1 on failure with DFerror set
  * Users:   HDF Fortran programmers
  * Invokes: DFishdf

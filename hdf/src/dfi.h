@@ -17,7 +17,7 @@
  * File:    dfi.h
  * Purpose: HDF internal header file
  * Invokes: stdio.h, sys/file.h
- * Contents: 
+ * Contents:
  *  Compilation parameters
  *  Machine-dependent definitions
  *  Flexibility definitions: i/o buffering, dynamic memory, structure i/o
@@ -33,17 +33,17 @@
 /*          Compilation Parameters for Flexibility and Portability          */
 
 /* modify this line for buffered/unbuffered i/o */
-#define	DF_BUFFIO
+#define DF_BUFFIO
 
 /* modify this line for dynamic/static memory allocation */
-#define	DF_DYNAMIC
+#define DF_DYNAMIC
 
 /* modify this line if structures cannot be read/written as is */
-#undef	DF_STRUCTOK	/* leave it this way - hdfsh expects it */
+#undef  DF_STRUCTOK     /* leave it this way - hdfsh expects it */
 
 #ifdef PERM_OUT
 /* Current version number */
-#define	DFVERSION   3.20
+#define DFVERSION   3.20
 #endif /* PERM_OUT */
 
 /*--------------------------------------------------------------------------*/
@@ -53,12 +53,12 @@
 #ifdef IRIS4
 #undef DF_STRUCTOK
 #include <sys/types.h>
-#include <sys/file.h>	/* for unbuffered i/o stuff */
+#include <sys/file.h>   /* for unbuffered i/o stuff */
 #ifndef DFmovmem
-#define	DFmovmem(from, to, len) bcopy(from, to, len)
+#define DFmovmem(from, to, len) bcopy(from, to, len)
 #endif /* DFmovmem */
 #ifndef DF_STRUCTOK
-#define	UINT16READ(p, x)    { x = ((*p++) & 255)<<8; x |= (*p++) & 255; }
+#define UINT16READ(p, x)    { x = ((*p++) & 255)<<8; x |= (*p++) & 255; }
 #define INT16READ(p, x)     { x = (*p++)<<8; x |= (*p++) & 255; }
 #define INT32READ(p, x)     { x = (*p++)<<24; x|=((*p++) & 255)<<16;    \
                                 x|=((*p++) & 255)<<8; x|=(*p++) & 255; }
@@ -73,11 +73,11 @@
 #endif /* DF_MT  */
 #endif /*IRIS4 */
 
-#ifdef IBM6000	/* NOTE: IBM6000 defines are same as for SUN */
+#ifdef IBM6000  /* NOTE: IBM6000 defines are same as for SUN */
 #if ! defined mc68010 && ! defined mc68020 && ! defined mc68030
 #undef DF_STRUCTOK
 #endif
-#include <sys/file.h>	/* for unbuffered i/o stuff */
+#include <sys/file.h>   /* for unbuffered i/o stuff */
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #ifndef DF_STRUCTOK
 #define UINT16READ(p, x) { x = ((*p++) & 255)<<8; x |= (*p++) & 255; }
@@ -94,23 +94,23 @@
 #endif /*IBM6000 */
 
 #ifdef MAC
-#undef DF_BUFFIO	/* use unbuffered i/o */
-#include <memory.h>	/* malloc stuff for MPW 3.0 */
-#include <fcntl.h>	/* unbuffered IO stuff for MPW 3.0 */
-#ifdef THINK_C	/* for LightSpeed C */
+#undef DF_BUFFIO    /* use unbuffered i/o */
+#include <memory.h>     /* malloc stuff for MPW 3.0 */
+#include <fcntl.h>  /* unbuffered IO stuff for MPW 3.0 */
+#ifdef THINK_C  /* for LightSpeed C */
 #include <unix.h>
 #else  /*THINK_C                   MPW, possibly others */
-#include <Files.h>	/* for unbuffered i/o stuff */
+#include <Files.h>  /* for unbuffered i/o stuff */
 #endif /*THINK_C */
-#define	DF_CAPFNAMES	/* fortran names are in all caps */
-#define DF_DYNAMIC	/* use dynamic allocation */
-#ifdef THINK_C	/* LightSpeed C does not have memcpy */
+#define DF_CAPFNAMES    /* fortran names are in all caps */
+#define DF_DYNAMIC  /* use dynamic allocation */
+#ifdef THINK_C  /* LightSpeed C does not have memcpy */
 #define DFmovmem(from, to, len) DFImemcopy(from, to, len)
 #else  /*THINK_C */
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #endif /*THINK_C */
-#define malloc(x)   NewPtr((Size)   (x))	/* don't use malloc on the Mac */
-#define free(x)     DisposPtr((Ptr) (x))	/* don't use free on the Nac   */
+#define malloc(x)   NewPtr((Size)   (x))    /* don't use malloc on the Mac */
+#define free(x)     DisposPtr((Ptr) (x))    /* don't use free on the Nac   */
 #undef DF_STRUCTOK
 #define UINT16READ(p, x) { x = ((*p++) & 255)<<8; x |= (*p++) & 255; }
 #define INT16READ(p, x) { x = (*p++)<<8; x |= (*p++) & 255; }
@@ -127,12 +127,12 @@
 #ifdef VMS
 /*#undef DF_BUFFIO should be buff !!!! */
    /* use only unbuff i/o - buff doesn't work! */
-#ifndef DFopen	/* avoid double includes */
+#ifndef DFopen  /* avoid double includes */
 /* #include "dfivms.h" */
 #endif /*DFopen */
 #undef DF_STRUCTOK
-#define DF_CAPFNAMES	/* fortran names are in all caps */
-#include <file.h>	/* for unbuffered i/o stuff */
+#define DF_CAPFNAMES    /* fortran names are in all caps */
+#include <file.h>   /* for unbuffered i/o stuff */
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #ifndef DF_STRUCTOK
 #define UINT16READ(p, x) { x = ((*p++) & 255)<<8; x |= (*p++) & 255; }
@@ -152,7 +152,7 @@
 #if ! defined mc68010 && ! defined mc68020 && ! defined mc68030
 #undef DF_STRUCTOK
 #endif
-#include <sys/file.h>	/* for unbuffered i/o stuff */
+#include <sys/file.h>   /* for unbuffered i/o stuff */
 #define int8 char
 #define uint8 unsigned char
 #define int16 short int
@@ -177,20 +177,20 @@
 
 /*--------------------------------------------------------------------------*/
 /*                      Flexibility parameters                              */
-#ifdef MAC	/* MAC specific file manager calls */
-#	define DF_OPEN(x,y) mopen(x,y)
-#	define DF_CLOSE(x) mclose(x)
-#	define DF_SEEK(x,y,z) mlseek(x,y,z)
-#	define DF_SKEND(x,y,z) mlseek(x,-1*y,z)
-#	define DF_TELL(x) mlseek(x,0L,1)
-#	define DF_READ(a,b,c,d) mread(d,a,b*c)
-#	define DF_WRITE(a,b,c,d) mwrite(d,a,b*c)
-#	define DF_FLUSH(a)	/* no need to flush */
-#	define DF_RDACCESS 0	/* dummy */
-#	define DF_WRACCESS 0	/* dummy */
-#	define DF_OPENERR(f)	((f) == -1)
+#ifdef MAC  /* MAC specific file manager calls */
+#   define DF_OPEN(x,y) mopen(x,y)
+#   define DF_CLOSE(x) mclose(x)
+#   define DF_SEEK(x,y,z) mlseek(x,y,z)
+#   define DF_SKEND(x,y,z) mlseek(x,-1*y,z)
+#   define DF_TELL(x) mlseek(x,0L,1)
+#   define DF_READ(a,b,c,d) mread(d,a,b*c)
+#   define DF_WRITE(a,b,c,d) mwrite(d,a,b*c)
+#   define DF_FLUSH(a)  /* no need to flush */
+#   define DF_RDACCESS 0    /* dummy */
+#   define DF_WRACCESS 0    /* dummy */
+#   define DF_OPENERR(f)    ((f) == -1)
 #else  /* !MAC */
-#ifdef DF_BUFFIO	/* set all calls to do buffered I/O */
+#ifdef DF_BUFFIO    /* set all calls to do buffered I/O */
 #define DF_OPEN(x,y) fopen(x,y)
 #define DF_CLOSE(x) fclose(x)
 #define DF_SEEK(x,y,z) fseek(x,y,z)
@@ -199,7 +199,7 @@
 #define DF_READ(a,b,c,d) fread(a,b,c,d)
 #define DF_WRITE(a,b,c,d) fwrite(a,b,c,d)
 #define DF_FLUSH(a) fflush(a)
-#define DF_OPENERR(f)	(!(f))
+#define DF_OPENERR(f)   (!(f))
 #ifdef PC
 #define DF_RDACCESS "rb"
 #define DF_WRACCESS "rb+"
@@ -219,7 +219,7 @@
 #define DF_READ(a,b,c,d) _lread((int)(d),(LPSTR)(a),(WORD)((WORD)(b)*(WORD)(c)))
 #define DF_WRITE(a,b,c,d) _lwrite((int)(d),(LPSTR)(a),(WORD)((WORD)(b)*(WORD)(c)))
 #define DF_OPENERR(f)   ((f) == -1)
-#define DF_FLUSH(a)	/* no need to flush */
+#define DF_FLUSH(a)     /* no need to flush */
 #define DF_RDACCESS OF_READ
 #define DF_WRACCESS OF_READWRITE
 #else
@@ -231,7 +231,7 @@
 #define DF_READ(a,b,c,d) read(d,a,b*c)
 #define DF_WRITE(a,b,c,d) write(d,a,b*c)
 #define DF_OPENERR(f)   ((f) == -1)
-#define DF_FLUSH(a)	/* no need to flush */
+#define DF_FLUSH(a)     /* no need to flush */
 #define DF_RDACCESS O_RDONLY | O_BINARY
 #define DF_WRACCESS O_RDWR | O_BINARY
 #endif
@@ -243,8 +243,8 @@
 #define DF_TELL(x) lseek(x,0L,1)
 #define DF_READ(a,b,c,d) read(d,a,b*c)
 #define DF_WRITE(a,b,c,d) write(d,a,b*c)
-#define DF_OPENERR(f)	((f) == -1)
-#define DF_FLUSH(a)	/* no need to flush */
+#define DF_OPENERR(f)   ((f) == -1)
+#define DF_FLUSH(a)     /* no need to flush */
 #define DF_RDACCESS O_RDONLY
 #define DF_WRACCESS O_RDWR
 #endif /* PC */
@@ -254,7 +254,7 @@
     /* if not allocating memory dynamically, need buffer for compression */
 #ifndef DF_DYNAMIC
 #define DF_TBUF
-#define DF_TBUFSZ	10000	/* buffer size */
+#define DF_TBUFSZ   10000   /* buffer size */
 #endif /*DF_DYNAMIC */
 
     /* if reading/writing structures not ok, need buffer for conversion */
@@ -262,20 +262,20 @@
 #ifndef DF_TBUF
 #ifndef DF_STRUCTOK
 #define DF_TBUF
-#define DF_TBUFSZ	512	/* buffer size can be smaller */
+#define DF_TBUFSZ   512     /* buffer size can be smaller */
 #endif /*DF_STRUCTOK */
 #endif /*DF_TBUF */
 
-/* 
+/*
    MACRO FCALLKEYW for any special fortran-C stub keyword
 
    MacIntosh MPW LS-fortran needs pascal since it can interface best with
    pascal functions
  */
-#if defined(MAC)	/* with LS FORTRAN */
-#   define FCALLKEYW	pascal
+#if defined(MAC)    /* with LS FORTRAN */
+#   define FCALLKEYW    pascal
 #else  /* !MAC */
-#   define FCALLKEYW	/*NONE */
+#   define FCALLKEYW    /*NONE */
 #endif
 
 #ifndef PC
@@ -299,9 +299,9 @@ char       *malloc();
 /*--------------------------------------------------------------------------*/
 /*                          Size parameters                                 */
 #ifdef PERM_OUT
-#define DF_MAXDFS           32	/* How many DF's can be open at once */
-#define DF_DEFAULTDDS       16	/* How many DD's a file has by default */
-#define DF_MAXFNLEN         256		/* maximum length of filename parameters */
+#define DF_MAXDFS           32  /* How many DF's can be open at once */
+#define DF_DEFAULTDDS       16  /* How many DD's a file has by default */
+#define DF_MAXFNLEN         256     /* maximum length of filename parameters */
 #endif /* PERM_OUT */
 
 #ifndef FILE

@@ -35,17 +35,17 @@ static char RcsId[] = "@(#)$Revision$";
 /* Static variables for JPEG compression (eventually these need to be stored */
 /* in the JPEG structure to hand around (to allow the routines to be */
 /* re-entrant)) */
-PRIVATE int32 img_file_id = 0;	/* File ID for the HDF file */
-PRIVATE uint16 img_tag = 0;	/* tag number of the image to write out */
-PRIVATE uint16 img_ref = 0;	/* reference number of the image to write out */
-PRIVATE int32 jdata_aid = 0;	/* AID for writing out chunks of the image */
-PRIVATE int32 img_xdim = 0;	/* X and Y dimensions of the image to compress */
+PRIVATE int32 img_file_id = 0;  /* File ID for the HDF file */
+PRIVATE uint16 img_tag = 0;     /* tag number of the image to write out */
+PRIVATE uint16 img_ref = 0;     /* reference number of the image to write out */
+PRIVATE int32 jdata_aid = 0;    /* AID for writing out chunks of the image */
+PRIVATE int32 img_xdim = 0;     /* X and Y dimensions of the image to compress */
 PRIVATE int32 img_ydim = 0;
-PRIVATE uint8 *img_ptr = NULL;	/* Pointer to the image to compress */
-PRIVATE intn img_scheme = 0;	/* What type of image comp. are we doing? 24 or 8 bit */
+PRIVATE uint8 *img_ptr = NULL;  /* Pointer to the image to compress */
+PRIVATE intn img_scheme = 0;    /* What type of image comp. are we doing? 24 or 8 bit */
 
 typedef enum
-  {				/* JPEG marker codes */
+  {                             /* JPEG marker codes */
       M_SOF0 = 0xc0,
       M_SOF1 = 0xc1,
       M_SOF2 = 0xc2,
@@ -122,11 +122,11 @@ skip_variable(decompress_info_ptr cinfo, int code)
     length = get_2bytes(cinfo);
 
     TRACEMS2(cinfo->emethods, 1,
-	     "Skipping marker 0x%02x, length %u", code, (int) length);
+             "Skipping marker 0x%02x, length %u", code, (int) length);
 
     for (length -= 2; length > 0; length--)
-	(void) JGETC(cinfo);
-}	/* end skip_variable() */
+        (void) JGETC(cinfo);
+}   /* end skip_variable() */
 
 LOCAL       VOID
 get_dht(decompress_info_ptr cinfo)
@@ -142,55 +142,55 @@ get_dht(decompress_info_ptr cinfo)
 
     while (length > 0)
       {
-	  index = JGETC(cinfo);
+          index = JGETC(cinfo);
 
-	  TRACEMS1(cinfo->emethods, 1, "Define Huffman Table 0x%02x", index);
+          TRACEMS1(cinfo->emethods, 1, "Define Huffman Table 0x%02x", index);
 
-	  bits[0] = 0;
-	  count = 0;
-	  for (i = 1; i <= 16; i++)
-	    {
-		bits[i] = (uint8) JGETC(cinfo);
-		count += bits[i];
-	    }
+          bits[0] = 0;
+          count = 0;
+          for (i = 1; i <= 16; i++)
+            {
+                bits[i] = (uint8) JGETC(cinfo);
+                count += bits[i];
+            }
 
-	  TRACEMS8(cinfo->emethods, 2, "        %3d %3d %3d %3d %3d %3d %3d %3d",
-		   bits[1], bits[2], bits[3], bits[4],
-		   bits[5], bits[6], bits[7], bits[8]);
-	  TRACEMS8(cinfo->emethods, 2, "        %3d %3d %3d %3d %3d %3d %3d %3d",
-		   bits[9], bits[10], bits[11], bits[12],
-		   bits[13], bits[14], bits[15], bits[16]);
+          TRACEMS8(cinfo->emethods, 2, "        %3d %3d %3d %3d %3d %3d %3d %3d",
+                   bits[1], bits[2], bits[3], bits[4],
+                   bits[5], bits[6], bits[7], bits[8]);
+          TRACEMS8(cinfo->emethods, 2, "        %3d %3d %3d %3d %3d %3d %3d %3d",
+                   bits[9], bits[10], bits[11], bits[12],
+                   bits[13], bits[14], bits[15], bits[16]);
 
-	  if (count > 256)
-	      ERREXIT(cinfo->emethods, "Bogus DHT counts");
+          if (count > 256)
+              ERREXIT(cinfo->emethods, "Bogus DHT counts");
 
-	  for (i = 0; i < count; i++)
-	      huffval[i] = (uint8) JGETC(cinfo);
+          for (i = 0; i < count; i++)
+              huffval[i] = (uint8) JGETC(cinfo);
 
-	  length -= 1 + 16 + count;
+          length -= 1 + 16 + count;
 
-	  if (index & 0x10)
-	    {	/* AC table definition */
-		index -= 0x10;
-		htblptr = &cinfo->ac_huff_tbl_ptrs[index];
-	    }
-	  else
-	    {	/* DC table definition */
-		htblptr = &cinfo->dc_huff_tbl_ptrs[index];
-	    }
+          if (index & 0x10)
+            {   /* AC table definition */
+                index -= 0x10;
+                htblptr = &cinfo->ac_huff_tbl_ptrs[index];
+            }
+          else
+            {   /* DC table definition */
+                htblptr = &cinfo->dc_huff_tbl_ptrs[index];
+            }
 
-	  if (index < 0 || index >= NUM_HUFF_TBLS)
-	      ERREXIT1(cinfo->emethods, "Bogus DHT index %d", index);
+          if (index < 0 || index >= NUM_HUFF_TBLS)
+              ERREXIT1(cinfo->emethods, "Bogus DHT index %d", index);
 
-	  if (*htblptr == NULL)
-	      *htblptr = (HUFF_TBL *) (*cinfo->emethods->alloc_small) (SIZEOF(HUFF_TBL));
+          if (*htblptr == NULL)
+              *htblptr = (HUFF_TBL *) (*cinfo->emethods->alloc_small) (SIZEOF(HUFF_TBL));
 
-	  HDmemcpy((void *) (*htblptr)->bits, (void *) bits,
-		   SIZEOF((*htblptr)->bits));
-	  HDmemcpy((void *) (*htblptr)->huffval, (void *) huffval,
-		   SIZEOF((*htblptr)->huffval));
+          HDmemcpy((void *) (*htblptr)->bits, (void *) bits,
+                   SIZEOF((*htblptr)->bits));
+          HDmemcpy((void *) (*htblptr)->huffval, (void *) huffval,
+                   SIZEOF((*htblptr)->huffval));
       }
-}	/* end get_dht() */
+}   /* end get_dht() */
 
 LOCAL       VOID
 get_dac(decompress_info_ptr cinfo)
@@ -203,30 +203,30 @@ get_dac(decompress_info_ptr cinfo)
 
     while (length > 0)
       {
-	  index = JGETC(cinfo);
-	  val = JGETC(cinfo);
+          index = JGETC(cinfo);
+          val = JGETC(cinfo);
 
-	  TRACEMS2(cinfo->emethods, 1,
-		   "Define Arithmetic Table 0x%02x: 0x%02x", index, val);
+          TRACEMS2(cinfo->emethods, 1,
+                   "Define Arithmetic Table 0x%02x: 0x%02x", index, val);
 
-	  if (index < 0 || index >= (2 * NUM_ARITH_TBLS))
-	      ERREXIT1(cinfo->emethods, "Bogus DAC index %d", index);
+          if (index < 0 || index >= (2 * NUM_ARITH_TBLS))
+              ERREXIT1(cinfo->emethods, "Bogus DAC index %d", index);
 
-	  if (index >= NUM_ARITH_TBLS)
-	    {	/* define AC table */
-		cinfo->arith_ac_K[index - NUM_ARITH_TBLS] = (uint8) val;
-	    }
-	  else
-	    {	/* define DC table */
-		cinfo->arith_dc_L[index] = (uint8) (val & 0x0F);
-		cinfo->arith_dc_U[index] = (uint8) (val >> 4);
-		if (cinfo->arith_dc_L[index] > cinfo->arith_dc_U[index])
-		    ERREXIT1(cinfo->emethods, "Bogus DAC value 0x%x", val);
-	    }
+          if (index >= NUM_ARITH_TBLS)
+            {   /* define AC table */
+                cinfo->arith_ac_K[index - NUM_ARITH_TBLS] = (uint8) val;
+            }
+          else
+            {   /* define DC table */
+                cinfo->arith_dc_L[index] = (uint8) (val & 0x0F);
+                cinfo->arith_dc_U[index] = (uint8) (val >> 4);
+                if (cinfo->arith_dc_L[index] > cinfo->arith_dc_U[index])
+                    ERREXIT1(cinfo->emethods, "Bogus DAC value 0x%x", val);
+            }
 
-	  length -= 2;
+          length -= 2;
       }
-}	/* end get_dac() */
+}   /* end get_dac() */
 
 LOCAL       VOID
 get_dqt(decompress_info_ptr cinfo)
@@ -241,54 +241,54 @@ get_dqt(decompress_info_ptr cinfo)
 
     while (length > 0)
       {
-	  n = JGETC(cinfo);
-	  prec = n >> 4;
-	  n &= 0x0F;
+          n = JGETC(cinfo);
+          prec = n >> 4;
+          n &= 0x0F;
 
-	  TRACEMS2(cinfo->emethods, 1,
-		   "Define Quantization Table %d  precision %d", n, prec);
+          TRACEMS2(cinfo->emethods, 1,
+                   "Define Quantization Table %d  precision %d", n, prec);
 
-	  if (n >= NUM_QUANT_TBLS)
-	      ERREXIT1(cinfo->emethods, "Bogus table number %d", n);
+          if (n >= NUM_QUANT_TBLS)
+              ERREXIT1(cinfo->emethods, "Bogus table number %d", n);
 
-	  if (cinfo->quant_tbl_ptrs[n] == NULL)
-	      cinfo->quant_tbl_ptrs[n] = (QUANT_TBL_PTR)
-		  (*cinfo->emethods->alloc_small) (SIZEOF(QUANT_TBL));
-	  quant_ptr = cinfo->quant_tbl_ptrs[n];
+          if (cinfo->quant_tbl_ptrs[n] == NULL)
+              cinfo->quant_tbl_ptrs[n] = (QUANT_TBL_PTR)
+                  (*cinfo->emethods->alloc_small) (SIZEOF(QUANT_TBL));
+          quant_ptr = cinfo->quant_tbl_ptrs[n];
 
-	  for (i = 0; i < DCTSIZE2; i++)
-	    {
-		tmp = (uint16) JGETC(cinfo);
-		if (prec)
-		    tmp = (uint16) ((tmp << 8) + (uint16) JGETC(cinfo));
-		quant_ptr[i] = tmp;
-	    }
+          for (i = 0; i < DCTSIZE2; i++)
+            {
+                tmp = (uint16) JGETC(cinfo);
+                if (prec)
+                    tmp = (uint16) ((tmp << 8) + (uint16) JGETC(cinfo));
+                quant_ptr[i] = tmp;
+            }
 
-	  for (i = 0; i < DCTSIZE2; i += 8)
-	    {
-		TRACEMS8(cinfo->emethods, 2, "        %4d %4d %4d %4d %4d %4d %4d %4d",
-			 quant_ptr[i], quant_ptr[i + 1], quant_ptr[i + 2], quant_ptr[i + 3],
-			 quant_ptr[i + 4], quant_ptr[i + 5], quant_ptr[i + 6], quant_ptr[i + 7]);
-	    }
+          for (i = 0; i < DCTSIZE2; i += 8)
+            {
+                TRACEMS8(cinfo->emethods, 2, "        %4d %4d %4d %4d %4d %4d %4d %4d",
+                         quant_ptr[i], quant_ptr[i + 1], quant_ptr[i + 2], quant_ptr[i + 3],
+                         quant_ptr[i + 4], quant_ptr[i + 5], quant_ptr[i + 6], quant_ptr[i + 7]);
+            }
 
-	  length -= DCTSIZE2 + 1;
-	  if (prec)
-	      length -= DCTSIZE2;
+          length -= DCTSIZE2 + 1;
+          if (prec)
+              length -= DCTSIZE2;
       }
-}	/* end get_dqt() */
+}   /* end get_dqt() */
 
 LOCAL       VOID
 get_dri(decompress_info_ptr cinfo)
 /* Process a DRI marker */
 {
     if (get_2bytes(cinfo) != 4)
-	ERREXIT(cinfo->emethods, "Bogus length in DRI");
+        ERREXIT(cinfo->emethods, "Bogus length in DRI");
 
     cinfo->restart_interval = (uint16) get_2bytes(cinfo);
 
     TRACEMS1(cinfo->emethods, 1,
-	     "Define Restart Interval %d", cinfo->restart_interval);
-}	/* end get_dri() */
+             "Define Restart Interval %d", cinfo->restart_interval);
+}   /* end get_dri() */
 
 LOCAL       VOID
 get_app0(decompress_info_ptr cinfo)
@@ -305,45 +305,45 @@ get_app0(decompress_info_ptr cinfo)
 
     if (length >= JFIF_LEN)
       {
-	  for (buffp = 0; buffp < JFIF_LEN; buffp++)
-	      b[buffp] = (uint8) JGETC(cinfo);
-	  length -= JFIF_LEN;
+          for (buffp = 0; buffp < JFIF_LEN; buffp++)
+              b[buffp] = (uint8) JGETC(cinfo);
+          length -= JFIF_LEN;
 
-	  if (b[0] == 'J' && b[1] == 'F' && b[2] == 'I' && b[3] == 'F' && b[4] == 0)
-	    {
-		/* Found JFIF APP0 marker: check version */
-		/* Major version must be 1 */
-		if (b[5] != 1)
-		    ERREXIT2(cinfo->emethods, "Unsupported JFIF revision number %d.%02d",
-			     b[5], b[6]);
-		/* Minor version should be 0 or 1, but try to process anyway if newer */
-		if (b[6] != 0 && b[6] != 1)
-		    TRACEMS2(cinfo->emethods, 0, "Warning: unknown JFIF revision number %d.%02d",
-			     b[5], b[6]);
-		/* Save info */
-		cinfo->density_unit = b[7];
-		cinfo->X_density = (uint16) (((uint16) b[8] << 8) + b[9]);
-		cinfo->Y_density = (uint16) (((uint16) b[10] << 8) + b[11]);
-		/* Assume colorspace is YCbCr, unless UI has overridden me */
-		if (cinfo->jpeg_color_space == CS_UNKNOWN)
-		    cinfo->jpeg_color_space = CS_YCbCr;
-		TRACEMS3(cinfo->emethods, 1, "JFIF APP0 marker, density %dx%d  %d",
-		   cinfo->X_density, cinfo->Y_density, cinfo->density_unit);
-	    }
-	  else
-	    {
-		TRACEMS(cinfo->emethods, 1, "Unknown APP0 marker (not JFIF)");
-	    }
+          if (b[0] == 'J' && b[1] == 'F' && b[2] == 'I' && b[3] == 'F' && b[4] == 0)
+            {
+                /* Found JFIF APP0 marker: check version */
+                /* Major version must be 1 */
+                if (b[5] != 1)
+                    ERREXIT2(cinfo->emethods, "Unsupported JFIF revision number %d.%02d",
+                             b[5], b[6]);
+                /* Minor version should be 0 or 1, but try to process anyway if newer */
+                if (b[6] != 0 && b[6] != 1)
+                    TRACEMS2(cinfo->emethods, 0, "Warning: unknown JFIF revision number %d.%02d",
+                             b[5], b[6]);
+                /* Save info */
+                cinfo->density_unit = b[7];
+                cinfo->X_density = (uint16) (((uint16) b[8] << 8) + b[9]);
+                cinfo->Y_density = (uint16) (((uint16) b[10] << 8) + b[11]);
+                /* Assume colorspace is YCbCr, unless UI has overridden me */
+                if (cinfo->jpeg_color_space == CS_UNKNOWN)
+                    cinfo->jpeg_color_space = CS_YCbCr;
+                TRACEMS3(cinfo->emethods, 1, "JFIF APP0 marker, density %dx%d  %d",
+                   cinfo->X_density, cinfo->Y_density, cinfo->density_unit);
+            }
+          else
+            {
+                TRACEMS(cinfo->emethods, 1, "Unknown APP0 marker (not JFIF)");
+            }
       }
     else
       {
-	  TRACEMS1(cinfo->emethods, 1,
-		   "Short APP0 marker, length %d", (int) length);
+          TRACEMS1(cinfo->emethods, 1,
+                   "Short APP0 marker, length %d", (int) length);
       }
 
-    while (length-- > 0)	/* skip any remaining data */
-	(void) JGETC(cinfo);
-}	/* end get_app0() */
+    while (length-- > 0)    /* skip any remaining data */
+        (void) JGETC(cinfo);
+}   /* end get_app0() */
 
 LOCAL       VOID
 get_sof(decompress_info_ptr cinfo, int code)
@@ -362,56 +362,56 @@ get_sof(decompress_info_ptr cinfo, int code)
     cinfo->num_components = (short) JGETC(cinfo);
 
     TRACEMS4(cinfo->emethods, 1,
-	     "Start Of Frame 0x%02x: width=%u, height=%u, components=%d",
-	     code, (int) cinfo->image_width, (int) cinfo->image_height,
-	     cinfo->num_components);
+             "Start Of Frame 0x%02x: width=%u, height=%u, components=%d",
+             code, (int) cinfo->image_width, (int) cinfo->image_height,
+             cinfo->num_components);
 
     /* We don't support files in which the image height is initially specified */
     /* as 0 and is later redefined by DNL.  As long as we have to check that,  */
     /* might as well have a general sanity check. */
     if (cinfo->image_height <= 0 || cinfo->image_width <= 0
-	|| cinfo->num_components <= 0)
-	ERREXIT(cinfo->emethods, "Empty JPEG image (DNL not supported)");
+        || cinfo->num_components <= 0)
+        ERREXIT(cinfo->emethods, "Empty JPEG image (DNL not supported)");
 
 #ifdef EIGHT_BIT_SAMPLES
     if (cinfo->data_precision != 8)
-	ERREXIT(cinfo->emethods, "Unsupported JPEG data precision");
+        ERREXIT(cinfo->emethods, "Unsupported JPEG data precision");
 #endif
 #ifdef TWELVE_BIT_SAMPLES
-    if (cinfo->data_precision != 12)	/* this needs more thought?? */
-	ERREXIT(cinfo->emethods, "Unsupported JPEG data precision");
+    if (cinfo->data_precision != 12)    /* this needs more thought?? */
+        ERREXIT(cinfo->emethods, "Unsupported JPEG data precision");
 #endif
 #ifdef SIXTEEN_BIT_SAMPLES
-    if (cinfo->data_precision != 16)	/* this needs more thought?? */
-	ERREXIT(cinfo->emethods, "Unsupported JPEG data precision");
+    if (cinfo->data_precision != 16)    /* this needs more thought?? */
+        ERREXIT(cinfo->emethods, "Unsupported JPEG data precision");
 #endif
 
     if (length != (cinfo->num_components * 3 + 8))
-	ERREXIT(cinfo->emethods, "Bogus SOF length");
+        ERREXIT(cinfo->emethods, "Bogus SOF length");
 
     cinfo->comp_info = (jpeg_component_info *) (*cinfo->emethods->alloc_small)
-	(cinfo->num_components * SIZEOF(jpeg_component_info));
+        (cinfo->num_components * SIZEOF(jpeg_component_info));
 
     for (ci = 0; ci < cinfo->num_components; ci++)
       {
-	  compptr = &cinfo->comp_info[ci];
-	  compptr->component_index = ci;
-	  compptr->component_id = (short) JGETC(cinfo);
-	  c = JGETC(cinfo);
-	  compptr->h_samp_factor = (short) ((c >> 4) & 15);
-	  compptr->v_samp_factor = (short) ((c) & 15);
-	  compptr->quant_tbl_no = (short) JGETC(cinfo);
+          compptr = &cinfo->comp_info[ci];
+          compptr->component_index = ci;
+          compptr->component_id = (short) JGETC(cinfo);
+          c = JGETC(cinfo);
+          compptr->h_samp_factor = (short) ((c >> 4) & 15);
+          compptr->v_samp_factor = (short) ((c) & 15);
+          compptr->quant_tbl_no = (short) JGETC(cinfo);
 
 #ifdef JPEG40A
-	  /* define all components to be needed, just in case... */
-	  compptr->component_needed = (boolean) TRUE;
+          /* define all components to be needed, just in case... */
+          compptr->component_needed = (boolean) TRUE;
 #endif
 
-	  TRACEMS4(cinfo->emethods, 1, "    Component %d: %dhx%dv q=%d",
-		   compptr->component_id, compptr->h_samp_factor,
-		   compptr->v_samp_factor, compptr->quant_tbl_no);
+          TRACEMS4(cinfo->emethods, 1, "    Component %d: %dhx%dv q=%d",
+                   compptr->component_id, compptr->h_samp_factor,
+                   compptr->v_samp_factor, compptr->quant_tbl_no);
       }
-}	/* end get_sof() */
+}   /* end get_sof() */
 
 LOCAL       VOID
 get_sos(decompress_info_ptr cinfo)
@@ -423,40 +423,40 @@ get_sos(decompress_info_ptr cinfo)
 
     length = get_2bytes(cinfo);
 
-    n = JGETC(cinfo);	/* Number of components */
+    n = JGETC(cinfo);   /* Number of components */
     cinfo->comps_in_scan = (short) n;
     length -= 3;
 
     if (length != (n * 2 + 3) || n < 1 || n > MAX_COMPS_IN_SCAN)
-	ERREXIT(cinfo->emethods, "Bogus SOS length");
+        ERREXIT(cinfo->emethods, "Bogus SOS length");
 
     TRACEMS1(cinfo->emethods, 1, "Start Of Scan: %d components", n);
 
     for (i = 0; i < n; i++)
       {
-	  cc = JGETC(cinfo);
-	  c = JGETC(cinfo);
-	  length -= 2;
+          cc = JGETC(cinfo);
+          c = JGETC(cinfo);
+          length -= 2;
 
-	  for (ci = 0; ci < cinfo->num_components; ci++)
-	      if (cc == cinfo->comp_info[ci].component_id)
-		  break;
+          for (ci = 0; ci < cinfo->num_components; ci++)
+              if (cc == cinfo->comp_info[ci].component_id)
+                  break;
 
-	  if (ci >= cinfo->num_components)
-	      ERREXIT(cinfo->emethods, "Invalid component number in SOS");
+          if (ci >= cinfo->num_components)
+              ERREXIT(cinfo->emethods, "Invalid component number in SOS");
 
-	  compptr = &cinfo->comp_info[ci];
-	  cinfo->cur_comp_info[i] = compptr;
-	  compptr->dc_tbl_no = (short) ((c >> 4) & 15);
-	  compptr->ac_tbl_no = (short) ((c) & 15);
+          compptr = &cinfo->comp_info[ci];
+          cinfo->cur_comp_info[i] = compptr;
+          compptr->dc_tbl_no = (short) ((c >> 4) & 15);
+          compptr->ac_tbl_no = (short) ((c) & 15);
 
-	  TRACEMS3(cinfo->emethods, 1, "    c%d: [dc=%d ac=%d]", cc,
-		   compptr->dc_tbl_no, compptr->ac_tbl_no);
+          TRACEMS3(cinfo->emethods, 1, "    c%d: [dc=%d ac=%d]", cc,
+                   compptr->dc_tbl_no, compptr->ac_tbl_no);
       }
 
     while (length-- > 0)
-	(void) JGETC(cinfo);
-}	/* end get_sos() */
+        (void) JGETC(cinfo);
+}   /* end get_sos() */
 
 LOCAL       VOID
 get_soi(decompress_info_ptr cinfo)
@@ -470,18 +470,18 @@ get_soi(decompress_info_ptr cinfo)
 
     for (i = 0; i < NUM_ARITH_TBLS; i++)
       {
-	  cinfo->arith_dc_L[i] = 0;
-	  cinfo->arith_dc_U[i] = 1;
-	  cinfo->arith_ac_K[i] = 5;
+          cinfo->arith_dc_L[i] = 0;
+          cinfo->arith_dc_U[i] = 1;
+          cinfo->arith_ac_K[i] = 5;
       }
     cinfo->restart_interval = 0;
 
-    cinfo->density_unit = 0;	/* set default JFIF APP0 values */
+    cinfo->density_unit = 0;    /* set default JFIF APP0 values */
     cinfo->X_density = 1;
     cinfo->Y_density = 1;
 
-    cinfo->CCIR601_sampling = FALSE;	/* Assume non-CCIR sampling */
-}	/* end get_soi */
+    cinfo->CCIR601_sampling = FALSE;    /* Assume non-CCIR sampling */
+}   /* end get_soi */
 
 LOCAL int
 next_marker(decompress_info_ptr cinfo)
@@ -494,27 +494,27 @@ next_marker(decompress_info_ptr cinfo)
     nbytes = 0;
     do
       {
-	  do
-	    {	/* skip any non-FF bytes */
-		nbytes++;
-		c = JGETC(cinfo);
-	    }
-	  while (c != 0xFF);
-	  do
-	    {	/* skip any duplicate FFs */
-		nbytes++;
-		c = JGETC(cinfo);
-	    }
-	  while (c == 0xFF);
+          do
+            {   /* skip any non-FF bytes */
+                nbytes++;
+                c = JGETC(cinfo);
+            }
+          while (c != 0xFF);
+          do
+            {   /* skip any duplicate FFs */
+                nbytes++;
+                c = JGETC(cinfo);
+            }
+          while (c == 0xFF);
       }
-    while (c == 0);	/* repeat if it was a stuffed FF/00 */
+    while (c == 0);     /* repeat if it was a stuffed FF/00 */
 
     if (nbytes != 2)
-	TRACEMS2(cinfo->emethods, 1, "Skipped %d bytes before marker 0x%02x",
-		 nbytes - 2, c);
+        TRACEMS2(cinfo->emethods, 1, "Skipped %d bytes before marker 0x%02x",
+                 nbytes - 2, c);
 
     return c;
-}	/* end next_marker() */
+}   /* end next_marker() */
 
 LOCAL       JPEG_MARKER
 process_tables(decompress_info_ptr cinfo)
@@ -525,67 +525,67 @@ process_tables(decompress_info_ptr cinfo)
 
     while (TRUE)
       {
-	  c = next_marker(cinfo);
+          c = next_marker(cinfo);
 
-	  switch (c)
-	    {
-		case M_SOF0:
-		case M_SOF1:
-		case M_SOF2:
-		case M_SOF3:
-		case M_SOF5:
-		case M_SOF6:
-		case M_SOF7:
-		case M_JPG:
-		case M_SOF9:
-		case M_SOF10:
-		case M_SOF11:
-		case M_SOF13:
-		case M_SOF14:
-		case M_SOF15:
-		case M_SOI:
-		case M_EOI:
-		case M_SOS:
-		    return ((JPEG_MARKER) c);
+          switch (c)
+            {
+                case M_SOF0:
+                case M_SOF1:
+                case M_SOF2:
+                case M_SOF3:
+                case M_SOF5:
+                case M_SOF6:
+                case M_SOF7:
+                case M_JPG:
+                case M_SOF9:
+                case M_SOF10:
+                case M_SOF11:
+                case M_SOF13:
+                case M_SOF14:
+                case M_SOF15:
+                case M_SOI:
+                case M_EOI:
+                case M_SOS:
+                    return ((JPEG_MARKER) c);
 
-		case M_DHT:
-		    get_dht(cinfo);
-		    break;
+                case M_DHT:
+                    get_dht(cinfo);
+                    break;
 
-		case M_DAC:
-		    get_dac(cinfo);
-		    break;
+                case M_DAC:
+                    get_dac(cinfo);
+                    break;
 
-		case M_DQT:
-		    get_dqt(cinfo);
-		    break;
+                case M_DQT:
+                    get_dqt(cinfo);
+                    break;
 
-		case M_DRI:
-		    get_dri(cinfo);
-		    break;
+                case M_DRI:
+                    get_dri(cinfo);
+                    break;
 
-		case M_APP0:
-		    get_app0(cinfo);
-		    break;
+                case M_APP0:
+                    get_app0(cinfo);
+                    break;
 
-		case M_RST0:	/* these are all parameterless */
-		case M_RST1:
-		case M_RST2:
-		case M_RST3:
-		case M_RST4:
-		case M_RST5:
-		case M_RST6:
-		case M_RST7:
-		case M_TEM:
-		    TRACEMS1(cinfo->emethods, 1, "Unexpected marker 0x%02x", c);
-		    break;
+                case M_RST0:    /* these are all parameterless */
+                case M_RST1:
+                case M_RST2:
+                case M_RST3:
+                case M_RST4:
+                case M_RST5:
+                case M_RST6:
+                case M_RST7:
+                case M_TEM:
+                    TRACEMS1(cinfo->emethods, 1, "Unexpected marker 0x%02x", c);
+                    break;
 
-		default:	/* must be DNL, DHP, EXP, APPn, JPGn, COM, or RESn */
-		    skip_variable(cinfo, c);
-		    break;
-	    }
+                default:    /* must be DNL, DHP, EXP, APPn, JPGn, COM, or RESn */
+                    skip_variable(cinfo, c);
+                    break;
+            }
       }
-}	/* end process_tables() */
+}   /* end process_tables() */
 
 /*
  * Initialize and read the file header (everything through the SOF marker).
@@ -605,92 +605,92 @@ read_file_header(decompress_info_ptr cinfo)
      * before calling jpeg_decompress().
      */
     if (JGETC(cinfo) != 0xFF || JGETC(cinfo) != M_SOI)
-	ERREXIT(cinfo->emethods, "Not a JPEG file");
+        ERREXIT(cinfo->emethods, "Not a JPEG file");
 
-    get_soi(cinfo);	/* OK, process SOI */
+    get_soi(cinfo);     /* OK, process SOI */
 
     /* Process markers until SOF */
     c = process_tables(cinfo);
 
     switch (c)
       {
-	  case M_SOF0:
-	  case M_SOF1:
-	      get_sof(cinfo, c);
-	      cinfo->arith_code = FALSE;
-	      break;
+          case M_SOF0:
+          case M_SOF1:
+              get_sof(cinfo, c);
+              cinfo->arith_code = FALSE;
+              break;
 
-	  case M_SOF9:
-	      get_sof(cinfo, c);
-	      cinfo->arith_code = TRUE;
-	      break;
+          case M_SOF9:
+              get_sof(cinfo, c);
+              cinfo->arith_code = TRUE;
+              break;
 
-	  default:
-	      ERREXIT1(cinfo->emethods, "Unsupported SOF marker type 0x%02x", c);
-	      break;
-      }		/* end switch */
+          default:
+              ERREXIT1(cinfo->emethods, "Unsupported SOF marker type 0x%02x", c);
+              break;
+      }     /* end switch */
 
     /* Figure out what colorspace we have */
     /* (too bad the JPEG committee didn't provide a real way to specify this) */
 
     switch (cinfo->num_components)
       {
-	  case 1:
-	      cinfo->jpeg_color_space = CS_GRAYSCALE;
-	      break;
+          case 1:
+              cinfo->jpeg_color_space = CS_GRAYSCALE;
+              break;
 
-	  case 3:
-	      /* if we saw a JFIF marker, leave it set to YCbCr; */
-	      /* also leave it alone if UI has provided a value */
-	      if (cinfo->jpeg_color_space == CS_UNKNOWN)
-		{
-		    short       cid0 = cinfo->comp_info[0].component_id;
-		    short       cid1 = cinfo->comp_info[1].component_id;
-		    short       cid2 = cinfo->comp_info[2].component_id;
+          case 3:
+              /* if we saw a JFIF marker, leave it set to YCbCr; */
+              /* also leave it alone if UI has provided a value */
+              if (cinfo->jpeg_color_space == CS_UNKNOWN)
+                {
+                    short       cid0 = cinfo->comp_info[0].component_id;
+                    short       cid1 = cinfo->comp_info[1].component_id;
+                    short       cid2 = cinfo->comp_info[2].component_id;
 
-		    /* assume it's JFIF w/out marker */
-		    if (cid0 == 1 && cid1 == 2 && cid2 == 3)
-			cinfo->jpeg_color_space = CS_YCbCr;
-		    /* prototype's YIQ matrix */
-		    else if (cid0 == 1 && cid1 == 4 && cid2 == 5)
-			cinfo->jpeg_color_space = CS_YIQ;
-		    else
-		      {
-			  TRACEMS3(cinfo->emethods, 0,
-				   "Unrecognized component IDs %d %d %d, assuming YCbCr",
-				   cid0, cid1, cid2);
-			  cinfo->jpeg_color_space = CS_YCbCr;
-		      }		/* end else */
-		}	/* end if */
-	      break;
+                    /* assume it's JFIF w/out marker */
+                    if (cid0 == 1 && cid1 == 2 && cid2 == 3)
+                        cinfo->jpeg_color_space = CS_YCbCr;
+                    /* prototype's YIQ matrix */
+                    else if (cid0 == 1 && cid1 == 4 && cid2 == 5)
+                        cinfo->jpeg_color_space = CS_YIQ;
+                    else
+                      {
+                          TRACEMS3(cinfo->emethods, 0,
+                                   "Unrecognized component IDs %d %d %d, assuming YCbCr",
+                                   cid0, cid1, cid2);
+                          cinfo->jpeg_color_space = CS_YCbCr;
+                      }     /* end else */
+                }   /* end if */
+              break;
 
-	  case 4:
-	      cinfo->jpeg_color_space = CS_CMYK;
-	      break;
+          case 4:
+              cinfo->jpeg_color_space = CS_CMYK;
+              break;
 
-	  default:
-	      cinfo->jpeg_color_space = CS_UNKNOWN;
-	      break;
-      }		/* end switch */
+          default:
+              cinfo->jpeg_color_space = CS_UNKNOWN;
+              break;
+      }     /* end switch */
 
     Hendaccess(jdata_aid);
 
     if ((jdata_aid = Hstartread(img_file_id, img_tag, img_ref)) == FAIL)
       {
-	  /* What _should_ we do on an error?  We can't return an error,  */
-	  /*  because this routine is called from the JPEG subroutines... */
-	  fprintf(stderr, "Error from Hstartread\n");
-	  HEprint(stderr, 0);	/* print all the errors */
-      }		/* end if */
+          /* What _should_ we do on an error?  We can't return an error,  */
+          /*  because this routine is called from the JPEG subroutines... */
+          fprintf(stderr, "Error from Hstartread\n");
+          HEprint(stderr, 0);   /* print all the errors */
+      }     /* end if */
     else
-      {		/* Successful Hstartread() on the JPEG data, prime the buffer */
-	  cinfo->next_input_byte = cinfo->input_buffer + MIN_UNGET;
+      {     /* Successful Hstartread() on the JPEG data, prime the buffer */
+          cinfo->next_input_byte = cinfo->input_buffer + MIN_UNGET;
 
-	  cinfo->bytes_in_buffer = (int) Hread(jdata_aid, JPEG_BUF_SIZE,
-					  (uint8 *) cinfo->next_input_byte);
-      }		/* end else */
+          cinfo->bytes_in_buffer = (int) Hread(jdata_aid, JPEG_BUF_SIZE,
+                                          (uint8 *) cinfo->next_input_byte);
+      }     /* end else */
 
-}	/* end read_file_header() */
+}   /* end read_file_header() */
 
 /*
  * Read the start of a scan (everything through the SOS marker).
@@ -707,20 +707,20 @@ read_scan_header(decompress_info_ptr cinfo)
 
     switch (c)
       {
-	  case M_SOS:
-	      get_sos(cinfo);
-	      return TRUE;
+          case M_SOS:
+              get_sos(cinfo);
+              return TRUE;
 
-	  case M_EOI:
-	      TRACEMS(cinfo->emethods, 1, "End Of Image");
-	      return FALSE;
+          case M_EOI:
+              TRACEMS(cinfo->emethods, 1, "End Of Image");
+              return FALSE;
 
-	  default:
-	      ERREXIT1(cinfo->emethods, "Unexpected marker 0x%02x", c);
-	      break;
-      }		/* end switch */
-    return FALSE;	/* keeps lint happy */
-}	/* read_scan_header() */
+          default:
+              ERREXIT1(cinfo->emethods, "Unexpected marker 0x%02x", c);
+              break;
+      }     /* end switch */
+    return FALSE;   /* keeps lint happy */
+}   /* read_scan_header() */
 
 /*
  * Reload the input buffer after it's been emptied, and return the next byte.
@@ -734,17 +734,17 @@ read_jpeg_data(decompress_info_ptr cinfo)
 
 #ifdef OLD_WAY
     cinfo->bytes_in_buffer = (int) JFREAD(cinfo->input_file,
-				     cinfo->next_input_byte, JPEG_BUF_SIZE);
+                                     cinfo->next_input_byte, JPEG_BUF_SIZE);
 #else
     cinfo->bytes_in_buffer = (int) Hread(jdata_aid, JPEG_BUF_SIZE,
-					 (uint8 *) cinfo->next_input_byte);
+                                         (uint8 *) cinfo->next_input_byte);
 #endif
 
     if (cinfo->bytes_in_buffer <= 0)
-	ERREXIT(cinfo->emethods, "Unexpected EOF in JPEG file");
+        ERREXIT(cinfo->emethods, "Unexpected EOF in JPEG file");
 
     return JGETC(cinfo);
-}	/* read_jpeg_data() */
+}   /* read_jpeg_data() */
 
 /*
  * Finish up after a compressed scan (series of read_jpeg_data calls);
@@ -864,7 +864,7 @@ output_init(decompress_info_ptr cinfo)
 
 GLOBAL      VOID
 put_color_map(decompress_info_ptr cinfo, int num_colors,
-	      JSAMPARRAY colormap)
+              JSAMPARRAY colormap)
 /* Write the color map */
 {
     /* shut the compiler up */
@@ -880,26 +880,26 @@ put_color_map(decompress_info_ptr cinfo, int num_colors,
     fprintf(stderr, "put_color_map called: there's a bug here somewhere!\n");
 #endif
 #else
-    uint8      *img_pal,	/* Pointer to an array to store the palette in */
+    uint8      *img_pal,        /* Pointer to an array to store the palette in */
                *tmp_pal;
-    intn        i;		/* local counting variable */
+    intn        i;              /* local counting variable */
     register JSAMPROW ptr0, ptr1, ptr2;
 
     tmp_pal = img_pal = HDgetspace(768);
     if (img_pal == NULL)
-	return;
-    ptr0 = colormap[0];		/* this code assumes only 3 components, cuz thats */
-    ptr1 = colormap[1];		/* all HDF handles at the moment... */
+        return;
+    ptr0 = colormap[0];     /* this code assumes only 3 components, cuz thats */
+    ptr1 = colormap[1];     /* all HDF handles at the moment... */
     ptr2 = colormap[2];
     for (i = 0; i < num_colors; i++)
       {
-	  *tmp_pal++ = GETJSAMPLE(*ptr0);	/* red */
-	  ptr0++;
-	  *tmp_pal++ = GETJSAMPLE(*ptr1);	/* green */
-	  ptr1++;
-	  *tmp_pal++ = GETJSAMPLE(*ptr2);	/* blue */
-	  ptr2++;
-      }		/* end for */
+          *tmp_pal++ = GETJSAMPLE(*ptr0);   /* red */
+          ptr0++;
+          *tmp_pal++ = GETJSAMPLE(*ptr1);   /* green */
+          ptr1++;
+          *tmp_pal++ = GETJSAMPLE(*ptr2);   /* blue */
+          ptr2++;
+      }     /* end for */
     DFR8Dsetreadpal(img_pal);
     HDfreespace(img_pal);
 #endif
@@ -944,36 +944,36 @@ put_pixel_rows(decompress_info_ptr cinfo, int num_rows, JSAMPIMAGE pixel_data)
     register int row;
 
     if (img_scheme == DFTAG_JPEG)
-      {		/* check for 24-bit image */
-	  for (row = 0; row < num_rows; row++)
-	    {
-		ptr0 = pixel_data[0][row];
-		ptr1 = pixel_data[1][row];
-		ptr2 = pixel_data[2][row];
-		for (col = 0; col < cinfo->image_width; col++)
-		  {
-		      *img_ptr++ = GETJSAMPLE(*ptr0);	/* red */
-		      ptr0++;
-		      *img_ptr++ = GETJSAMPLE(*ptr1);	/* green */
-		      ptr1++;
-		      *img_ptr++ = GETJSAMPLE(*ptr2);	/* blue */
-		      ptr2++;
-		  }	/* end for */
-	    }	/* end for */
-      }		/* end if */
+      {     /* check for 24-bit image */
+          for (row = 0; row < num_rows; row++)
+            {
+                ptr0 = pixel_data[0][row];
+                ptr1 = pixel_data[1][row];
+                ptr2 = pixel_data[2][row];
+                for (col = 0; col < cinfo->image_width; col++)
+                  {
+                      *img_ptr++ = GETJSAMPLE(*ptr0);   /* red */
+                      ptr0++;
+                      *img_ptr++ = GETJSAMPLE(*ptr1);   /* green */
+                      ptr1++;
+                      *img_ptr++ = GETJSAMPLE(*ptr2);   /* blue */
+                      ptr2++;
+                  }     /* end for */
+            }   /* end for */
+      }     /* end if */
     else
-      {		/* must be 8-bit image */
-	  for (row = 0; row < num_rows; row++)
-	    {
-		ptr0 = pixel_data[0][row];
-		for (col = 0; col < cinfo->image_width; col++)
-		  {
-		      *img_ptr++ = GETJSAMPLE(*ptr0);
-		      ptr0++;
-		  }	/* end for */
-	    }	/* end for */
-      }		/* end else */
-}	/* end put_pixel_rows() */
+      {     /* must be 8-bit image */
+          for (row = 0; row < num_rows; row++)
+            {
+                ptr0 = pixel_data[0][row];
+                for (col = 0; col < cinfo->image_width; col++)
+                  {
+                      *img_ptr++ = GETJSAMPLE(*ptr0);
+                      ptr0++;
+                  }     /* end for */
+            }   /* end for */
+      }     /* end else */
+}   /* end put_pixel_rows() */
 
 GLOBAL      VOID
 output_term(decompress_info_ptr cinfo)
@@ -998,7 +998,7 @@ output_term(decompress_info_ptr cinfo)
  * any decompression parameter changes that are desirable.  For example,
  * if it is found that the JPEG file is grayscale, you might want to do
  * things differently than if it is color.  You can also delay setting
- * quantize_colors and associated options until this point. 
+ * quantize_colors and associated options until this point.
  *
  * j_d_defaults initializes out_color_space to CS_RGB.  If you want grayscale
  * output you should set out_color_space to CS_GRAYSCALE.  Note that you can
@@ -1011,13 +1011,13 @@ d_ui_method_selection(decompress_info_ptr cinfo)
     /* if grayscale input, force grayscale output; */
     /* else leave the output colorspace as set by main routine. */
     if (cinfo->jpeg_color_space == CS_GRAYSCALE)
-	cinfo->out_color_space = CS_GRAYSCALE;
+        cinfo->out_color_space = CS_GRAYSCALE;
 
     if (img_scheme == DFTAG_GREYJPEG)
-      {		/* for 8-bit raster output */
-	  cinfo->quantize_colors = TRUE;
-	  cinfo->desired_number_of_colors = 256;
-      }		/* end if */
+      {     /* for 8-bit raster output */
+          cinfo->quantize_colors = TRUE;
+          cinfo->desired_number_of_colors = 256;
+      }     /* end if */
 
     /* select output routines */
     cinfo->methods->output_init = output_init;
@@ -1042,7 +1042,7 @@ d_ui_method_selection(decompress_info_ptr cinfo)
 
 intn
 DFCIunjpeg(int32 file_id, uint16 tag, uint16 ref, VOIDP image, int32 xdim,
-	   int32 ydim, int16 scheme)
+           int32 ydim, int16 scheme)
 {
     /* These three structs contain JPEG parameters and working data.
      * They must survive for the duration of parameter setup and one
@@ -1053,29 +1053,29 @@ DFCIunjpeg(int32 file_id, uint16 tag, uint16 ref, VOIDP image, int32 xdim,
     struct Decompress_methods_struct dc_methods;
     struct External_methods_struct e_methods;
 
-    img_file_id = file_id;	/* keep the file ID around */
-    img_tag = tag;	/* keep dataset's tag around */
-    img_ref = ref;	/* keep reference number around */
-    img_ptr = (uint8 *) image;	/* Set the static pointer to the image to read */
-    img_xdim = xdim;	/* Keep local copies of the X and Y dimensions */
+    img_file_id = file_id;  /* keep the file ID around */
+    img_tag = tag;  /* keep dataset's tag around */
+    img_ref = ref;  /* keep reference number around */
+    img_ptr = (uint8 *) image;  /* Set the static pointer to the image to read */
+    img_xdim = xdim;    /* Keep local copies of the X and Y dimensions */
     img_ydim = ydim;
-    img_scheme = (intn) scheme;		/* Type of image compression we are going to do */
+    img_scheme = (intn) scheme;     /* Type of image compression we are going to do */
 
     /* Initialize the system-dependent method pointers. */
-    cinfo.methods = &dc_methods;	/* links to method structs */
+    cinfo.methods = &dc_methods;    /* links to method structs */
     cinfo.emethods = &e_methods;
 
     /* Here we use the default JPEG error handler, which will just print
        * an error message on stderr and call exit().  See the second half of
        * this file for an example of more graceful error recovery.
      */
-    jselerror(&e_methods);	/* select std error/trace message routines */
+    jselerror(&e_methods);  /* select std error/trace message routines */
 
     /* Here we use the standard memory manager provided with the JPEG code.
        * In some cases you might want to replace the memory manager, or at
        * least the system-dependent part of it, with your own code.
      */
-    jselmemmgr(&e_methods);	/* select std memory allocation routines */
+    jselmemmgr(&e_methods);     /* select std memory allocation routines */
 
     /* If the decompressor requires full-image buffers (for two-pass color
      * quantization or a noninterleaved JPEG file), it will create temporary
@@ -1126,5 +1126,5 @@ DFCIunjpeg(int32 file_id, uint16 tag, uint16 ref, VOIDP image, int32 xdim,
     fclose(cinfo.input_file);
 #endif
 
-    return (SUCCEED);	/* we must be ok... */
-}	/* end DFCIunjpeg() */
+    return (SUCCEED);   /* we must be ok... */
+}   /* end DFCIunjpeg() */

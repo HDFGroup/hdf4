@@ -24,9 +24,9 @@
    required but efficiency should be okay. */
 typedef struct tag_descript_t
   {
-      uint16      tag;		/* tag for description ? */
-      const char *desc;		/* tag description ? */
-      const char *name;		/* tag name ? */
+      uint16      tag;          /* tag for description ? */
+      const char *desc;         /* tag description ? */
+      const char *name;         /* tag name ? */
   }
 tag_descript_t;
 
@@ -37,8 +37,8 @@ tag_descript_t;
 #define string(x) "x"
 #endif /* MIPSEL */
 
-/*  NOTE: 
- *        Please keep tag descriptions <= 30 characters - a 
+/*  NOTE:
+ *        Please keep tag descriptions <= 30 characters - a
  *        lot of pretty-printing code depends on it.
  */
 PRIVATE const tag_descript_t tag_descriptions[] =
@@ -122,9 +122,9 @@ PRIVATE const tag_descript_t tag_descriptions[] =
    required but efficiency should be okay. */
 typedef struct nt_descript_t
   {
-      int32       nt;		/* nt for description */
-      const char *name;		/* nt name */
-      const char *desc;		/* nt description */
+      int32       nt;           /* nt for description */
+      const char *name;         /* nt name */
+      const char *desc;         /* nt description */
   }
 nt_descript_t;
 

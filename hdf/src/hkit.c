@@ -64,11 +64,11 @@ HDc2fstr(char *str, intn len)
     int         i;
 
     for (i = 0; (str[i]); i++)
-	/* EMPTY */ ;
+        /* EMPTY */ ;
     for (; i < len; i++)
-	str[i] = ' ';
+        str[i] = ' ';
     return SUCCEED;
-}	/* HDc2fstr */
+}   /* HDc2fstr */
 
 /* ----------------------------- HDf2sstring ------------------------------ */
 /*
@@ -94,13 +94,13 @@ HDf2cstring(_fcd fdesc, intn len)
 
     str = _fcdtocp(fdesc);
     for (i = len - 1; i >= 0 && ((str[i] & 0x80) || !isgraph(str[i])); i--)
-	/*EMPTY */ ;
+        /*EMPTY */ ;
     cstr = (char *) HDgetspace((uint32) (i + 2));
     cstr[i + 1] = '\0';
     for (; i >= 0; i--)
-	cstr[i] = str[i];
+        cstr[i] = str[i];
     return cstr;
-}	/* HDf2cstring */
+}   /* HDf2cstring */
 
 /* ----------------------------- HIlookup_dd ------------------------------ */
 /*
@@ -120,45 +120,45 @@ DESCRIPTION
    where the dd resides and the index of the dd in the 
    ddblock ddlist.
 
-   This function is different from HIfind_dd in that it 
-   does not understand any ordering in the file.  Wildcards 
-   sent to this routine (i.e. to get the 'next' widget 
+   This function is different from HIfind_dd in that it
+   does not understand any ordering in the file.  Wildcards
+   sent to this routine (i.e. to get the 'next' widget
    get passed off to HIfind_dd().
 
 ---------------------------------------------------------------------------*/
 int 
 HIlookup_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
-	    ddblock_t ** pblock, int32 *pidx)
+            ddblock_t ** pblock, int32 *pidx)
 {
 #ifdef LATER
-    CONSTR(FUNC, "HIlookup_dd");	/* for HERROR */
+    CONSTR(FUNC, "HIlookup_dd");    /* for HERROR */
 #endif
     register intn tag, ref, key, i;
     register tag_ref_list_ptr p;
     tag_ref_ptr o_ptr;
 
     if (look_tag == DFTAG_WILDCARD || look_ref == DFREF_WILDCARD)
-	return (HIfind_dd(look_tag, look_ref, pblock, pidx, DF_FORWARD));
+        return (HIfind_dd(look_tag, look_ref, pblock, pidx, DF_FORWARD));
 
     tag = (intn) look_tag;
     ref = (intn) look_ref;
 
     /*
-     * Look for the normal version 
+     * Look for the normal version
      */
     key = tag + ref;
 
     for (p = file_rec->hash[key & HASH_MASK]; p; p = p->next)
       {
-	  for (i = 0, o_ptr = &p->objects[0]; i < p->count; i++, o_ptr++)
-	    {
-		if (o_ptr->tag == tag && o_ptr->ref == ref)
-		  {
-		      *pblock = o_ptr->pblock;
-		      *pidx = o_ptr->pidx;
-		      return SUCCEED;
-		  }
-	    }
+          for (i = 0, o_ptr = &p->objects[0]; i < p->count; i++, o_ptr++)
+            {
+                if (o_ptr->tag == tag && o_ptr->ref == ref)
+                  {
+                      *pblock = o_ptr->pblock;
+                      *pidx = o_ptr->pidx;
+                      return SUCCEED;
+                  }
+            }
       }
 
     /* Try looking for the special version of this tag */
@@ -167,15 +167,15 @@ HIlookup_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
 
     for (p = file_rec->hash[key & HASH_MASK]; p; p = p->next)
       {
-	  for (i = 0, o_ptr = &p->objects[0]; i < p->count; i++, o_ptr++)
-	    {
-		if (o_ptr->tag == tag && o_ptr->ref == ref)
-		  {
-		      *pblock = o_ptr->pblock;
-		      *pidx = o_ptr->pidx;
-		      return SUCCEED;
-		  }
-	    }
+          for (i = 0, o_ptr = &p->objects[0]; i < p->count; i++, o_ptr++)
+            {
+                if (o_ptr->tag == tag && o_ptr->ref == ref)
+                  {
+                      *pblock = o_ptr->pblock;
+                      *pidx = o_ptr->pidx;
+                      return SUCCEED;
+                  }
+            }
       }
 
     return FAIL;
@@ -202,14 +202,14 @@ DESCRIPTION
 ---------------------------------------------------------------------------*/
 int 
 HIadd_hash_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
-	      ddblock_t * pblock, int32 pidx)
+              ddblock_t * pblock, int32 pidx)
 {
-    CONSTR(FUNC, "HIadd_hash_dd");	/* for HERROR */
+    CONSTR(FUNC, "HIadd_hash_dd");  /* for HERROR */
     register intn tag, ref, key, i;
     register tag_ref_list_ptr p, where;
 
     if (look_tag == DFTAG_NULL)
-	return SUCCEED;
+        return SUCCEED;
 
     tag = (intn) look_tag;
     ref = (intn) look_ref;
@@ -220,33 +220,33 @@ HIadd_hash_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
     if (where && where->count < HASH_BLOCK_SIZE)
       {
 
-	  i = where->count++;
+          i = where->count++;
 
-	  where->objects[i].pblock = pblock;
-	  where->objects[i].pidx = pidx;
-	  where->objects[i].tag = tag;
-	  where->objects[i].ref = ref;
+          where->objects[i].pblock = pblock;
+          where->objects[i].pidx = pidx;
+          where->objects[i].tag = tag;
+          where->objects[i].ref = ref;
 
       }
     else
       {
 
-	  if ((p = (tag_ref_list_ptr) HDgetspace((uint32) sizeof(tag_ref_list))) == NULL)
-	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          if ((p = (tag_ref_list_ptr) HDgetspace((uint32) sizeof(tag_ref_list))) == NULL)
+              HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-	  p->objects[0].pblock = pblock;
-	  p->objects[0].pidx = pidx;
-	  p->objects[0].tag = tag;
-	  p->objects[0].ref = ref;
+          p->objects[0].pblock = pblock;
+          p->objects[0].pidx = pidx;
+          p->objects[0].tag = tag;
+          p->objects[0].ref = ref;
 
-	  p->next = where;
-	  p->count = 1;
-	  file_rec->hash[key & HASH_MASK] = p;
+          p->next = where;
+          p->count = 1;
+          file_rec->hash[key & HASH_MASK] = p;
 
       }
 
     return SUCCEED;
-}	/* HIadd_hash_dd */
+}   /* HIadd_hash_dd */
 
 /* ---------------------------- HIdel_hash_dd ----------------------------- */
 /*
@@ -268,7 +268,7 @@ int
 HIdel_hash_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref)
 {
 #ifdef LATER
-    CONSTR(FUNC, "HIdel_hash_dd");	/* for HERROR */
+    CONSTR(FUNC, "HIdel_hash_dd");  /* for HERROR */
 #endif
     register intn tag, ref, key, i;
     register tag_ref_list_ptr p;
@@ -280,18 +280,18 @@ HIdel_hash_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref)
     p = file_rec->hash[key & HASH_MASK];
 
     if (!p)
-	return SUCCEED;
+        return SUCCEED;
 
     for (p = file_rec->hash[key & HASH_MASK]; p; p = p->next)
       {
-	  for (i = 0; i < p->count; i++)
-	    {
-		if (p->objects[i].tag == tag && p->objects[i].ref == ref)
-		  {
-		      p->objects[i].tag = DFTAG_NULL;
-		      return SUCCEED;
-		  }
-	    }
+          for (i = 0; i < p->count; i++)
+            {
+                if (p->objects[i].tag == tag && p->objects[i].ref == ref)
+                  {
+                      p->objects[i].tag = DFTAG_NULL;
+                      return SUCCEED;
+                  }
+            }
       }
 
     return SUCCEED;
@@ -327,13 +327,13 @@ DESCRIPTION
 ---------------------------------------------------------------------------*/
 int 
 HIfind_dd(uint16 look_tag, uint16 look_ref, ddblock_t ** pblock, int32 *pidx,
-	  intn direction)
+          intn direction)
 {
-    register intn idx;		/* index into ddlist of current dd searched */
-    register ddblock_t *block;	/* ptr to current ddblock searched */
-    register dd_t *list;	/* ptr to current ddlist searched */
+    register intn idx;          /* index into ddlist of current dd searched */
+    register ddblock_t *block;  /* ptr to current ddblock searched */
+    register dd_t *list;        /* ptr to current ddlist searched */
 
-    uint16      special_tag;	/* corresponding special tag */
+    uint16      special_tag;    /* corresponding special tag */
 
     /* search for special version also */
     special_tag = MKSPECIALTAG(look_tag);
@@ -438,21 +438,21 @@ DESCRIPTION
 ---------------------------------------------------------------------------*/
 intn 
 HIcount_dd(filerec_t * file_rec, uint16 cnt_tag, uint16 cnt_ref,
-	   uintn *all_cnt, uintn *real_cnt)
+           uintn *all_cnt, uintn *real_cnt)
 {
-    uintn       t_all_cnt = 0;	/* count of all tag/refs found */
-    uintn       t_real_cnt = 0;	/* count of all tag/refs except NULL & FREE */
-    intn        idx;		/* index into ddlist of current dd searched */
-    ddblock_t  *block;		/* ptr to current ddblock searched */
-    dd_t       *list;		/* ptr to current ddlist searched */
-    uint16      special_tag;	/* corresponding special tag */
+    uintn       t_all_cnt = 0;  /* count of all tag/refs found */
+    uintn       t_real_cnt = 0; /* count of all tag/refs except NULL & FREE */
+    intn        idx;            /* index into ddlist of current dd searched */
+    ddblock_t  *block;          /* ptr to current ddblock searched */
+    dd_t       *list;           /* ptr to current ddlist searched */
+    uint16      special_tag;    /* corresponding special tag */
 
     /* search for special version also */
     special_tag = MKSPECIALTAG(cnt_tag);
 
     for (block = file_rec->ddhead; block != NULL; block = block->next)
       {
-	  t_all_cnt += block->ndds;
+          t_all_cnt += block->ndds;
 
 	  list = block->ddlist;
 	  for (idx = 0; idx < block->ndds; idx++)
@@ -492,21 +492,21 @@ DESCRIPTION
    This should be primarily used for debugging
 
    The MAC does not really support fflush() so this r
-   outine just returns SUCCEED always on a MAC w/o 
+   outine just returns SUCCEED always on a MAC w/o
    really doing anything.
 
 ---------------------------------------------------------------------------*/
 intn 
 HDflush(int32 file_id)
 {
-    CONSTR(FUNC, "HDflush");	/* for HERROR */
+    CONSTR(FUNC, "HDflush");    /* for HERROR */
 
 #ifndef MAC
     filerec_t  *file_rec;
 
     file_rec = FID2REC(file_id);
     if (BADFREC(file_rec))
-	HRETURN_ERROR(DFE_ARGS, FAIL);
+        HRETURN_ERROR(DFE_ARGS, FAIL);
 
     fflush(file_rec->file);
 #endif /* MAC */
@@ -540,10 +540,10 @@ HDpackFstring(char *src, char *dest, intn len)
     intn        sofar;
 
     for (sofar = 0; (sofar < len) && (*src != '\0'); sofar++)
-	*dest++ = *src++;
+        *dest++ = *src++;
 
     while (sofar++ < len)
-	*dest++ = ' ';
+        *dest++ = ' ';
 
     return SUCCEED;
 }	/* HDpackFstring */
@@ -567,8 +567,8 @@ HDgettagname(uint16 tag)
     intn        i;
 
     for (i = 0; i < sizeof(tag_descriptions) / sizeof(tag_descript_t); i++)
-	if (tag_descriptions[i].tag == tag)
-	    return (tag_descriptions[i].desc);
+        if (tag_descriptions[i].tag == tag)
+            return (tag_descriptions[i].desc);
     return (NULL);
 } /* HDgettagname */
 
@@ -589,35 +589,35 @@ DESCRIPTION
 char _HUGE *
 HDgettagsname(uint16 tag)
 {
-    CONSTR(FUNC, "HDgettagsname");	/* for HERROR */
+    CONSTR(FUNC, "HDgettagsname");  /* for HERROR */
     char       *ret = NULL;
     intn        i;
 
     if (SPECIALTAG(tag))
-	ret = (char *) HDstrdup("Special ");
+        ret = (char *) HDstrdup("Special ");
     tag = BASETAG(tag);
     for (i = 0; i < sizeof(tag_descriptions) / sizeof(tag_descript_t); i++)
-	if (tag_descriptions[i].tag == tag)
-	  {
-	      if (ret == NULL)
-		  ret = (char *) HDstrdup((char *) tag_descriptions[i].name);
-	      else
-		{
-		    char       *t;
+        if (tag_descriptions[i].tag == tag)
+          {
+              if (ret == NULL)
+                  ret = (char *) HDstrdup((char *) tag_descriptions[i].name);
+              else
+                {
+                    char       *t;
 
-		    t = (char *) HDgetspace(HDstrlen(ret) +
-				    HDstrlen(tag_descriptions[i].name) + 2);
-		    if (t == NULL)
-		      {
-			  HDfreespace(ret);
-			  HRETURN_ERROR(DFE_NOSPACE, NULL);
-		      }		/* end if */
-		    HDstrcpy(t, ret);
-		    HDstrcat(t, tag_descriptions[i].name);
-		    HDfreespace(ret);
-		    ret = t;
-		}	/* end else */
-	  }	/* end if */
+                    t = (char *) HDgetspace(HDstrlen(ret) +
+                                    HDstrlen(tag_descriptions[i].name) + 2);
+                    if (t == NULL)
+                      {
+                          HDfreespace(ret);
+                          HRETURN_ERROR(DFE_NOSPACE, NULL);
+                      }     /* end if */
+                    HDstrcpy(t, ret);
+                    HDstrcat(t, tag_descriptions[i].name);
+                    HDfreespace(ret);
+                    ret = t;
+                }   /* end else */
+          }     /* end if */
     return (ret);
 }  /* HDgettagsname */
 
@@ -640,8 +640,8 @@ HDgettagnum(const char *tag_name)
     intn        i;
 
     for (i = 0; i < sizeof(tag_descriptions) / sizeof(tag_descript_t); i++)
-	if (0 == HDstrcmp(tag_descriptions[i].name, tag_name))
-	    return (tag_descriptions[i].tag);
+        if (0 == HDstrcmp(tag_descriptions[i].name, tag_name))
+            return (tag_descriptions[i].tag);
     return (FAIL);
 } /* HDgettagnum */
 
@@ -661,45 +661,45 @@ DESCRIPTION
 char _HUGE *
 HDgetNTdesc(int32 nt)
 {
-    CONSTR(FUNC, "HDgetNTdesc");	/* for HERROR */
+    CONSTR(FUNC, "HDgetNTdesc");    /* for HERROR */
     intn        i;
     char       *ret_desc = NULL;
 
     /* evil hard-coded values */
     if (nt & DFNT_NATIVE)
-	ret_desc = (char *) HDstrdup((char *) nt_descriptions[0].desc);
+        ret_desc = (char *) HDstrdup((char *) nt_descriptions[0].desc);
     else if (nt & DFNT_CUSTOM)
-	ret_desc = (char *) HDstrdup((char *) nt_descriptions[1].desc);
+        ret_desc = (char *) HDstrdup((char *) nt_descriptions[1].desc);
     else if (nt & DFNT_LITEND)
-	ret_desc = (char *) HDstrdup((char *) nt_descriptions[2].desc);
+        ret_desc = (char *) HDstrdup((char *) nt_descriptions[2].desc);
 
-    nt &= DFNT_MASK;	/* mask off unusual format types */
+    nt &= DFNT_MASK;    /* mask off unusual format types */
     for (i = 3; i < sizeof(nt_descriptions) / sizeof(nt_descript_t); i++)
-	if (nt_descriptions[i].nt == nt)
-	  {
-	      if (ret_desc == NULL)
-		  ret_desc = (char *) HDstrdup((char *) nt_descriptions[i].desc);
-	      else
-		{
-		    char       *t;
+        if (nt_descriptions[i].nt == nt)
+          {
+              if (ret_desc == NULL)
+                  ret_desc = (char *) HDstrdup((char *) nt_descriptions[i].desc);
+              else
+                {
+                    char       *t;
 
-		    t = (char *) HDgetspace(HDstrlen(ret_desc) +
-				     HDstrlen(nt_descriptions[i].desc) + 2);
-		    if (t == NULL)
-		      {
-			  HDfreespace(ret_desc);
-			  HRETURN_ERROR(DFE_NOSPACE, NULL);
-		      }		/* end if */
-		    HDstrcpy(t, ret_desc);
-		    HDstrcat(t, " ");
-		    HDstrcat(t, nt_descriptions[i].desc);
-		    HDfreespace(ret_desc);
-		    ret_desc = t;
-		}	/* end else */
-	      return (ret_desc);
-	  }	/* end if */
+                    t = (char *) HDgetspace(HDstrlen(ret_desc) +
+                                     HDstrlen(nt_descriptions[i].desc) + 2);
+                    if (t == NULL)
+                      {
+                          HDfreespace(ret_desc);
+                          HRETURN_ERROR(DFE_NOSPACE, NULL);
+                      }     /* end if */
+                    HDstrcpy(t, ret_desc);
+                    HDstrcat(t, " ");
+                    HDstrcat(t, nt_descriptions[i].desc);
+                    HDfreespace(ret_desc);
+                    ret_desc = t;
+                }   /* end else */
+              return (ret_desc);
+          }     /* end if */
     return (NULL);
-}	/* end HDgetNTdesc() */
+}   /* end HDgetNTdesc() */
 
 /* ------------------------------- HDfidtoname ------------------------------ */
 /*
@@ -719,11 +719,11 @@ DESCRIPTION
 const char _HUGE *
 HDfidtoname(int32 file_id)
 {
-    CONSTR(FUNC, "HDfidtoname");	/* for HERROR */
+    CONSTR(FUNC, "HDfidtoname");    /* for HERROR */
     filerec_t  *file_rec;
 
     if ((file_rec = FID2REC(file_id)) == NULL)
-	HRETURN_ERROR(DFE_ARGS, NULL);
+        HRETURN_ERROR(DFE_ARGS, NULL);
 
     return (file_rec->path);
-}	/* HDfidtoname */
+}   /* HDfidtoname */

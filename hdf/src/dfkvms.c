@@ -24,7 +24,7 @@ static char RcsId[] = "@(#)$Revision$";
     Routines to support Vax-native conversion to and from HDF format
 
  Invokes:
-    
+
  PRIVATE conversion functions:
     DFKvi4f -  VMS routine for importing 32 bit floats
     DFKvo4f -  VMS routine for exporting 32 bit floats
@@ -75,11 +75,11 @@ static char RcsId[] = "@(#)$Revision$";
 /************************************************************/
 int
 DFKvi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
-	uint32 dest_stride)
+        uint32 dest_stride)
 {
-    int         in_place = 0;	/* Inplace must be detected */
+    int         in_place = 0;   /* Inplace must be detected */
     register uint32 i;
-    uint8       buf[4];		/* Inplace processing buffer */
+    uint8       buf[4];         /* Inplace processing buffer */
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
     char       *FUNC = "DFKvi4f";
@@ -88,69 +88,69 @@ DFKvi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     HEclear();
 
     if (source == dest)
-	in_place = TRUE;
+        in_place = TRUE;
 
     if (num_elm == 0 || in_place)
-      {		/* No elements is an error as is in place. */
-	  HERROR(DFE_BADCONV);
-	  return FAIL;
+      {     /* No elements is an error as is in place. */
+          HERROR(DFE_BADCONV);
+          return FAIL;
       }
 
     if (source_stride == 0 && dest_stride == 0)
-	source_stride = dest_stride = 4;
+        source_stride = dest_stride = 4;
 
     for (i = 0; i < num_elm; i++)
       {
 
-	  /* extract exponent */
-	  exp = (source[0] << 1) | (source[1] >> 7);
-	  if (exp)
-	    {
-		/* 
-		 * non-zero exponent 
-		 */
+          /* extract exponent */
+          exp = (source[0] << 1) | (source[1] >> 7);
+          if (exp)
+            {
+                /*
+                 * non-zero exponent
+                 */
 
-		/* copy mantissa, last bit of exponent */
-		dest[0] = source[1];
-		dest[2] = source[3];
-		dest[3] = source[2];
-		if (exp < 254)
-		    /* normal value */
-		    dest[1] = source[0] + (uint8) 1;	/* actually adds two to exp */
-		else
-		  {
-		      /* infinity or NaN */
-		      if (exp == 254)	/* unrepresentable - OFL */
-			  /* set mant = 0 for overflow */
-			  dest[0] = dest[1] = dest[2] = dest[3] = 0;
-		      dest[0] &= 0x7f;	/* set last bit of exp to 0 */
-		      dest[1] = 0x80;	/* sign=1 exp=0 -> OFL or NaN */
-		  }
-	    }
-	  else if (source[1] & 0x60)
-	    {	/* denormalized value */
-		register int shft;
+                /* copy mantissa, last bit of exponent */
+                dest[0] = source[1];
+                dest[2] = source[3];
+                dest[3] = source[2];
+                if (exp < 254)
+                    /* normal value */
+                    dest[1] = source[0] + (uint8) 1;    /* actually adds two to exp */
+                else
+                  {
+                      /* infinity or NaN */
+                      if (exp == 254)   /* unrepresentable - OFL */
+                          /* set mant = 0 for overflow */
+                          dest[0] = dest[1] = dest[2] = dest[3] = 0;
+                      dest[0] &= 0x7f;  /* set last bit of exp to 0 */
+                      dest[1] = 0x80;   /* sign=1 exp=0 -> OFL or NaN */
+                  }
+            }
+          else if (source[1] & 0x60)
+            {   /* denormalized value */
+                register int shft;
 
-		shft = (source[1] & 0x40) ? 1 : 2;	/* shift needed to normalize */
-		/* shift mantissa */
-		/* note last bit of exp set to 1 implicitly */
-		dest[0] = (uint8) (source[1] << shft)
-		    | (uint8) (source[2] >> (8 - shft));
-		dest[3] = (uint8) (source[2] << shft)
-		    | (uint8) (source[3] >> (8 - shft));
-		dest[2] = (uint8) (source[3] << shft);
-		dest[1] = (uint8) (source[0] & 0x80);	/* sign */
-		if (shft == 1)
-		  {	/* set exp to 2 */
-		      dest[1] |= 0x01;
-		      dest[0] &= 0x7f;	/* set LSB of exp to 0 */
-		  }
-	    }
-	  else
-	      dest[0] = dest[1] = dest[2] = dest[3] = 0;
+                shft = (source[1] & 0x40) ? 1 : 2;  /* shift needed to normalize */
+                /* shift mantissa */
+                /* note last bit of exp set to 1 implicitly */
+                dest[0] = (uint8) (source[1] << shft)
+                    | (uint8) (source[2] >> (8 - shft));
+                dest[3] = (uint8) (source[2] << shft)
+                    | (uint8) (source[3] >> (8 - shft));
+                dest[2] = (uint8) (source[3] << shft);
+                dest[1] = (uint8) (source[0] & 0x80);   /* sign */
+                if (shft == 1)
+                  {     /* set exp to 2 */
+                      dest[1] |= 0x01;
+                      dest[0] &= 0x7f;  /* set LSB of exp to 0 */
+                  }
+            }
+          else
+              dest[0] = dest[1] = dest[2] = dest[3] = 0;
 
-	  source += source_stride;
-	  dest += dest_stride;
+          source += source_stride;
+          dest += dest_stride;
       }
 
     return 0;
@@ -158,47 +158,47 @@ DFKvi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 #ifdef DFKIT
     for (i = 0; i < size; i++)
       {
-	  /* extract exponent */
-	  exp = (uint8) (in[i].c[0] << 1) | (uint8) (in[i].c[1] >> 7);
-	  if (exp)
-	    {	/* non-zero exponent */
-		/* copy mantissa, last bit of exponent */
-		out[i].c[0] = in[i].c[1];
-		out[i].c[2] = in[i].c[3];
-		out[i].c[3] = in[i].c[2];
-		if (exp < 254)	/* normal value */
-		    out[i].c[1] = in[i].c[0] + (uint8) 1;	/* adds two to exp */
-		else
-		  {	/* infinity or NaN */
-		      if (exp == 254)	/* unrepresentable - OFL */
-			  out[i].i = 0;		/* set mant=0 for overflow */
-		      out[i].c[0] &= 0x7f;	/* set last bit of exp to 0 */
-		      out[i].c[1] = 0x80;	/* sign=1 exp=0 -> OFL or NaN */
-		  }
-	    }
-	  else if (in[i].c[1] & 0x60)
-	    {	/* denormalized value */
-		register int shft;
+          /* extract exponent */
+          exp = (uint8) (in[i].c[0] << 1) | (uint8) (in[i].c[1] >> 7);
+          if (exp)
+            {   /* non-zero exponent */
+                /* copy mantissa, last bit of exponent */
+                out[i].c[0] = in[i].c[1];
+                out[i].c[2] = in[i].c[3];
+                out[i].c[3] = in[i].c[2];
+                if (exp < 254)  /* normal value */
+                    out[i].c[1] = in[i].c[0] + (uint8) 1;   /* adds two to exp */
+                else
+                  {     /* infinity or NaN */
+                      if (exp == 254)   /* unrepresentable - OFL */
+                          out[i].i = 0;     /* set mant=0 for overflow */
+                      out[i].c[0] &= 0x7f;  /* set last bit of exp to 0 */
+                      out[i].c[1] = 0x80;   /* sign=1 exp=0 -> OFL or NaN */
+                  }
+            }
+          else if (in[i].c[1] & 0x60)
+            {   /* denormalized value */
+                register int shft;
 
-		/* shift needed to normalize */
-		shft = (in[i].c[1] & 0x40) ? 1 : 2;
+                /* shift needed to normalize */
+                shft = (in[i].c[1] & 0x40) ? 1 : 2;
 
-		/* shift mantissa */
-		/* note last bit of exp set to 1 implicitly */
-		out[i].c[0] = (uint8) (in[i].c[1] << shft)
-		    | (uint8) (in[i].c[2] >> (8 - shft));
-		out[i].c[3] = (uint8) (in[i].c[2] << shft)
-		    | (uint8) (in[i].c[3] >> (8 - shft));
-		out[i].c[2] = (uint8) (in[i].c[3] << shft);
-		out[i].c[1] = (uint8) (in[i].c[0] & 0x80);	/* sign */
-		if (shft == 1)
-		  {	/* set exp to 2 */
-		      out[i].c[1] |= 0x01;
-		      out[i].c[0] &= 0x7f;	/* set LSB of exp to 0 */
-		  }
-	    }
-	  else
-	      out[i].i = 0;	/* zero */
+                /* shift mantissa */
+                /* note last bit of exp set to 1 implicitly */
+                out[i].c[0] = (uint8) (in[i].c[1] << shft)
+                    | (uint8) (in[i].c[2] >> (8 - shft));
+                out[i].c[3] = (uint8) (in[i].c[2] << shft)
+                    | (uint8) (in[i].c[3] >> (8 - shft));
+                out[i].c[2] = (uint8) (in[i].c[3] << shft);
+                out[i].c[1] = (uint8) (in[i].c[0] & 0x80);  /* sign */
+                if (shft == 1)
+                  {     /* set exp to 2 */
+                      out[i].c[1] |= 0x01;
+                      out[i].c[0] &= 0x7f;  /* set LSB of exp to 0 */
+                  }
+            }
+          else
+              out[i].i = 0;     /* zero */
       }
     return (0);
 #endif /* DFKIT */
@@ -211,11 +211,11 @@ DFKvi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 /************************************************************/
 int
 DFKvo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
-	uint32 dest_stride)
+        uint32 dest_stride)
 {
-    int         in_place = 0;	/* Inplace must be detected */
+    int         in_place = 0;   /* Inplace must be detected */
     register uint32 i;
-    uint8       buf[4];		/* Inplace processing buffer */
+    uint8       buf[4];         /* Inplace processing buffer */
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
     char       *FUNC = "DFKvo4f";
@@ -224,79 +224,79 @@ DFKvo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     HEclear();
 
     if (source == dest)
-	in_place = TRUE;
+        in_place = TRUE;
 
     if (num_elm == 0 || in_place)
-      {		/* No elements is an error as is in place */
-	  HERROR(DFE_BADCONV);
-	  return FAIL;
+      {     /* No elements is an error as is in place */
+          HERROR(DFE_BADCONV);
+          return FAIL;
       }
 
     if (source_stride == 0 && dest_stride == 0)
-	source_stride = dest_stride = 4;
+        source_stride = dest_stride = 4;
 
     for (i = 0; i < num_elm; i++)
       {
 
-	  /* extract exponent */
-	  exp = (source[1] << 1) | (source[0] >> 7);
+          /* extract exponent */
+          exp = (source[1] << 1) | (source[0] >> 7);
 
-	  if (!exp && !source[1])
-	    {
-		/* 
-		 * zero value 
-		 */
-		dest[0] = dest[1] = dest[2] = dest[3] = 0;
-	    }
-	  else if (exp > 2)
-	    {
-		/*
-		 * Normal value
-		 */
+          if (!exp && !source[1])
+            {
+                /*
+                 * zero value
+                 */
+                dest[0] = dest[1] = dest[2] = dest[3] = 0;
+            }
+          else if (exp > 2)
+            {
+                /*
+                 * Normal value
+                 */
 
-		dest[0] = source[1] - (uint8) 1;	/* subtracts 2 from exponent */
-		/* copy mantissa, LSB of exponent */
-		dest[1] = source[0];
-		dest[2] = source[3];
-		dest[3] = source[2];
+                dest[0] = source[1] - (uint8) 1;    /* subtracts 2 from exponent */
+                /* copy mantissa, LSB of exponent */
+                dest[1] = source[0];
+                dest[2] = source[3];
+                dest[3] = source[2];
 
-	    }
-	  else if (exp)
-	    {
-		register intn shft;
-		/* 
-		 * denormalized number 
-		 */
+            }
+          else if (exp)
+            {
+                register intn shft;
+                /*
+                 * denormalized number
+                 */
 
-		/* keep sign, zero exponent */
-		dest[0] = source[1] & 0x80;
+                /* keep sign, zero exponent */
+                dest[0] = source[1] & 0x80;
 
-		shft = 3 - exp;
+                shft = 3 - exp;
 
-		/* shift original mant by 1 or 2 to get denormalized mant */
-		/* prefix mantissa with '1'b or '01'b as appropriate */
-		dest[1] = (uint8) ((source[0] & 0x7f) >> shft)
-		    | (uint8) (0x10 << exp);
-		dest[2] = (uint8) (source[0] << (8 - shft))
-		    | (uint8) (source[3] >> shft);
-		dest[3] = (uint8) (source[3] << (8 - shft))
-		    | (uint8) (source[2] >> shft);
-	    }
-	  else
-	    {
-		/* 
-		 * sign=1 -> infinity or NaN 
-		 */
+                /* shift original mant by 1 or 2 to get denormalized mant */
+                /* prefix mantissa with '1'b or '01'b as appropriate */
+                dest[1] = (uint8) ((source[0] & 0x7f) >> shft)
+                    | (uint8) (0x10 << exp);
+                dest[2] = (uint8) (source[0] << (8 - shft))
+                    | (uint8) (source[3] >> shft);
+                dest[3] = (uint8) (source[3] << (8 - shft))
+                    | (uint8) (source[2] >> shft);
+            }
+          else
+            {
+                /*
+                 * sign=1 -> infinity or NaN
+                 */
 
-		dest[0] = 0xff;		/* set exp to 255 */
-		/* copy mantissa */
-		dest[1] = source[0] | (uint8) 0x80;	/* LSB of exp = 1 */
-		dest[2] = source[3];
-		dest[3] = source[2];
-	    }
+                dest[0] = 0xff;     /* set exp to 255 */
+                /* copy mantissa */
+                dest[1] = source[0] | (uint8) 0x80;     /* LSB of exp = 1 */
+                dest[2] = source[3];
+                dest[3] = source[2];
+            }
 
-	  source += source_stride;
-	  dest += dest_stride;
+          source += source_stride;
+          dest += dest_stride;
       }
 
     return 0;
@@ -307,42 +307,42 @@ DFKvo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
     for (i = 0; i < size; i++)
       {
-	  /* extract exponent */
-	  exp = (uint8) (in[i].c[1] << 1) | (uint8) (in[i].c[0] >> 7);
-	  if (!exp && !in[i].c[1])
-	      out[i].i = 0;	/* zero value */
-	  else if (exp > 2)
-	    {	/* normal value */
-		out[i].c[0] = in[i].c[1] - (uint8) 1;	/* subtracts 2 from expent */
-		/* copy mantissa, LSB of exponent */
-		out[i].c[1] = in[i].c[0];
-		out[i].c[2] = in[i].c[3];
-		out[i].c[3] = in[i].c[2];
-	    }
-	  else if (exp)
-	    {	/* denormalized number */
-		register int shft;
+          /* extract exponent */
+          exp = (uint8) (in[i].c[1] << 1) | (uint8) (in[i].c[0] >> 7);
+          if (!exp && !in[i].c[1])
+              out[i].i = 0;     /* zero value */
+          else if (exp > 2)
+            {   /* normal value */
+                out[i].c[0] = in[i].c[1] - (uint8) 1;   /* subtracts 2 from expent */
+                /* copy mantissa, LSB of exponent */
+                out[i].c[1] = in[i].c[0];
+                out[i].c[2] = in[i].c[3];
+                out[i].c[3] = in[i].c[2];
+            }
+          else if (exp)
+            {   /* denormalized number */
+                register int shft;
 
-		/* keep sign, zero exponent */
-		out[i].c[0] = in[i].c[1] & (uint8) 0x80;
-		shft = 3 - exp;
-		/* shift original mant by 1 or 2 to get denormalized mant */
-		/* prefix mantissa with '1'b or '01'b as appropriate */
-		out[i].c[1] = (uint8) ((in[i].c[0] & 0x7f) >> shft)
-		    | (uint8) (0x10 << exp);
-		out[i].c[2] = (uint8) (in[i].c[0] << (8 - shft))
-		    | (uint8) (in[i].c[3] >> shft);
-		out[i].c[3] = (uint8) (in[i].c[3] << (8 - shft))
-		    | (uint8) (in[i].c[2] >> shft);
-	    }
-	  else
-	    {	/* sign=1 -> infinity or NaN */
-		out[i].c[0] = 0xff;	/* set exp to 255 */
-		/* copy mantissa */
-		out[i].c[1] = in[i].c[0] | (uint8) 0x80;	/* LSB of exp = 1 */
-		out[i].c[2] = in[i].c[3];
-		out[i].c[3] = in[i].c[2];
-	    }
+                /* keep sign, zero exponent */
+                out[i].c[0] = in[i].c[1] & (uint8) 0x80;
+                shft = 3 - exp;
+                /* shift original mant by 1 or 2 to get denormalized mant */
+                /* prefix mantissa with '1'b or '01'b as appropriate */
+                out[i].c[1] = (uint8) ((in[i].c[0] & 0x7f) >> shft)
+                    | (uint8) (0x10 << exp);
+                out[i].c[2] = (uint8) (in[i].c[0] << (8 - shft))
+                    | (uint8) (in[i].c[3] >> shft);
+                out[i].c[3] = (uint8) (in[i].c[3] << (8 - shft))
+                    | (uint8) (in[i].c[2] >> shft);
+            }
+          else
+            {   /* sign=1 -> infinity or NaN */
+                out[i].c[0] = 0xff;     /* set exp to 255 */
+                /* copy mantissa */
+                out[i].c[1] = in[i].c[0] | (uint8) 0x80;    /* LSB of exp = 1 */
+                out[i].c[2] = in[i].c[3];
+                out[i].c[3] = in[i].c[2];
+            }
       }
     return (0);
 
@@ -390,11 +390,11 @@ struct dbl_limits
 static struct dbl_limits dbl_lim[2] =
 {
     {
-	{0x7f, 0xff, 0x0, 0xffff, 0xffff, 0xfff},	/* Max Vax */
-	{0x0, 0x7ff, 0x0, 0x0}},	/* Max IEEE */
+        {0x7f, 0xff, 0x0, 0xffff, 0xffff, 0xfff},   /* Max Vax */
+        {0x0, 0x7ff, 0x0, 0x0}},    /* Max IEEE */
     {
-	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0},		/* Min Vax */
-	{0x0, 0x0, 0x0, 0x0}}	/* Min IEEE */
+        {0x0, 0x0, 0x0, 0x0, 0x0, 0x0},     /* Min Vax */
+        {0x0, 0x0, 0x0, 0x0}}   /* Min IEEE */
 };
 
 /************************************************************/
@@ -403,11 +403,11 @@ static struct dbl_limits dbl_lim[2] =
 /************************************************************/
 int
 DFKvi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
-	uint32 dest_stride)
+        uint32 dest_stride)
 {
-    int         in_place = 0;	/* Inplace must be detected */
+    int         in_place = 0;   /* Inplace must be detected */
     register uint32 i;
-    uint8       buf[4];		/* Inplace processing buffer */
+    uint8       buf[4];         /* Inplace processing buffer */
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
     char       *FUNC = "DFKvi8f";
@@ -421,67 +421,67 @@ DFKvi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     HEclear();
 
     if (source == dest)
-	in_place = TRUE;
+        in_place = TRUE;
 
     if (num_elm == 0 || in_place)
-      {		/* No elements is an error as is in place. */
-	  HERROR(DFE_BADCONV);
-	  return FAIL;
+      {     /* No elements is an error as is in place. */
+          HERROR(DFE_BADCONV);
+          return FAIL;
       }
 
     if (source_stride == 0 && dest_stride == 0)
-	source_stride = dest_stride = 8;
+        source_stride = dest_stride = 8;
 
     for (i = 0; i < num_elm; i++)
       {
-	shipit:	/* In VAX, bytes in a word are counted from right to left */
-	  {
-	      register int j, k;
-	      uint8      *bufi, *i3e;
+        shipit: /* In VAX, bytes in a word are counted from right to left */
+          {
+              register int j, k;
+              uint8      *bufi, *i3e;
 
-	      i3e = source;
-	      bufi = (uint8 *) &(id);
-	      for (j = 0; j < 2; j++)
-		{
-		    for (k = 0; k < 4; k++)
-			bufi[k] = i3e[3 - k];
-		    bufi += 4;
-		    i3e += 4;
-		}
-	  }	/* shipit   */
+              i3e = source;
+              bufi = (uint8 *) &(id);
+              for (j = 0; j < 2; j++)
+                {
+                    for (k = 0; k < 4; k++)
+                        bufi[k] = i3e[3 - k];
+                    bufi += 4;
+                    i3e += 4;
+                }
+          }     /* shipit   */
 
-	  vd = (struct vax_double *) dest;
+          vd = (struct vax_double *) dest;
 
-	  found = FALSE;
+          found = FALSE;
 
-	  for (j = 0, lim = dbl_lim;
-	       j < sizeof(dbl_lim) / sizeof(struct dbl_limits);
-	       j++, lim++)
-	    {
-		if ((id.mantissa2 == lim->ieee.mantissa2) &&
-		    (id.mantissa1 == lim->ieee.mantissa1) &&
-		    (id.exp == lim->vaxx.exp))
-		  {
-		      *vd = lim->vaxx;
-		      found = TRUE;
-		      break;
-		  }
-	    }
+          for (j = 0, lim = dbl_lim;
+               j < sizeof(dbl_lim) / sizeof(struct dbl_limits);
+               j++, lim++)
+            {
+                if ((id.mantissa2 == lim->ieee.mantissa2) &&
+                    (id.mantissa1 == lim->ieee.mantissa1) &&
+                    (id.exp == lim->vaxx.exp))
+                  {
+                      *vd = lim->vaxx;
+                      found = TRUE;
+                      break;
+                  }
+            }
 
-	  if (!found)
-	    {
-		vd->exp = id.exp - IEEE_DBL_BIAS + VAX_DBL_BIAS;
-		vd->mantissa1 = id.mantissa1 >> 13;
-		vd->mantissa2 = ((id.mantissa1 & MASK(13)) << 3) |
-		    (id.mantissa2 >> 29);
-		vd->mantissa3 = id.mantissa2 >> 13;
-		vd->mantissa4 = id.mantissa2 << 3;
-	    }
+          if (!found)
+            {
+                vd->exp = id.exp - IEEE_DBL_BIAS + VAX_DBL_BIAS;
+                vd->mantissa1 = id.mantissa1 >> 13;
+                vd->mantissa2 = ((id.mantissa1 & MASK(13)) << 3) |
+                    (id.mantissa2 >> 29);
+                vd->mantissa3 = id.mantissa2 >> 13;
+                vd->mantissa4 = id.mantissa2 << 3;
+            }
 
-	  vd->sign = id.sign;
+          vd->sign = id.sign;
 
-	  source += source_stride;
-	  dest += dest_stride;
+          source += source_stride;
+          dest += dest_stride;
       }
 
     return 0;
@@ -493,11 +493,11 @@ DFKvi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 /************************************************************/
 int
 DFKvo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
-	uint32 dest_stride)
+        uint32 dest_stride)
 {
-    int         in_place = 0;	/* Inplace must be detected */
+    int         in_place = 0;   /* Inplace must be detected */
     register intn i;
-    uint8       buf[4];		/* Inplace processing buffer */
+    uint8       buf[4];         /* Inplace processing buffer */
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
     char       *FUNC = "DFKvo8f";
@@ -511,69 +511,69 @@ DFKvo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     HEclear();
 
     if (source == dest)
-	in_place = TRUE;
+        in_place = TRUE;
 
     if (num_elm == 0 || in_place)
-      {		/* No elements is an error as is in place. */
-	  HERROR(DFE_BADCONV);
-	  return FAIL;
+      {     /* No elements is an error as is in place. */
+          HERROR(DFE_BADCONV);
+          return FAIL;
       }
 
     if (source_stride == 0 && dest_stride == 0)
-	source_stride = dest_stride = 8;
+        source_stride = dest_stride = 8;
 
     for (i = 0; i < num_elm; i++)
       {
 
-	  vd = *((struct vax_double *) source);
+          vd = *((struct vax_double *) source);
 
-	  found = FALSE;
+          found = FALSE;
 
-	  for (j = 0, lim = dbl_lim;
-	       j < sizeof(dbl_lim) / sizeof(struct dbl_limits);
-	       j++, lim++)
-	    {
-		if ((vd.mantissa4 == lim->vaxx.mantissa4) &&
-		    (vd.mantissa3 == lim->vaxx.mantissa3) &&
-		    (vd.mantissa2 == lim->vaxx.mantissa2) &&
-		    (vd.mantissa1 == lim->vaxx.mantissa1) &&
-		    (vd.exp == lim->vaxx.exp))
-		  {
-		      id = lim->ieee;
-		      found = TRUE;
-		      break;
-		  }
-	    }
+          for (j = 0, lim = dbl_lim;
+               j < sizeof(dbl_lim) / sizeof(struct dbl_limits);
+               j++, lim++)
+            {
+                if ((vd.mantissa4 == lim->vaxx.mantissa4) &&
+                    (vd.mantissa3 == lim->vaxx.mantissa3) &&
+                    (vd.mantissa2 == lim->vaxx.mantissa2) &&
+                    (vd.mantissa1 == lim->vaxx.mantissa1) &&
+                    (vd.exp == lim->vaxx.exp))
+                  {
+                      id = lim->ieee;
+                      found = TRUE;
+                      break;
+                  }
+            }
 
-	  if (!found)
-	    {
-		id.exp = vd.exp - VAX_DBL_BIAS + IEEE_DBL_BIAS;
-		id.mantissa1 = (vd.mantissa1 << 13) | (vd.mantissa2 >> 3);
-		id.mantissa2 = ((vd.mantissa2 & MASK(3)) << 29) |
-		    (vd.mantissa3 << 13) |
-		    ((vd.mantissa4 >> 3) & MASK(13));
-	    }
+          if (!found)
+            {
+                id.exp = vd.exp - VAX_DBL_BIAS + IEEE_DBL_BIAS;
+                id.mantissa1 = (vd.mantissa1 << 13) | (vd.mantissa2 >> 3);
+                id.mantissa2 = ((vd.mantissa2 & MASK(3)) << 29) |
+                    (vd.mantissa3 << 13) |
+                    ((vd.mantissa4 >> 3) & MASK(13));
+            }
 
-	  id.sign = vd.sign;
+          id.sign = vd.sign;
 
-	shipit:	/* In VAX the bytes in a word are counted from right to left */
-	  {
-	      register int j, k;
-	      uint8      *i3e, *bufo;
+        shipit: /* In VAX the bytes in a word are counted from right to left */
+          {
+              register int j, k;
+              uint8      *i3e, *bufo;
 
-	      i3e = (uint8 *) &(id);
-	      bufo = dest;
-	      for (j = 0; j < 2; j++)
-		{
-		    for (k = 0; k < 4; k++)
-			bufo[k] = i3e[3 - k];
-		    bufo += 4;
-		    i3e += 4;
-		}
-	  }
+              i3e = (uint8 *) &(id);
+              bufo = dest;
+              for (j = 0; j < 2; j++)
+                {
+                    for (k = 0; k < 4; k++)
+                        bufo[k] = i3e[3 - k];
+                    bufo += 4;
+                    i3e += 4;
+                }
+          }
 
-	  source += source_stride;
-	  dest += dest_stride;
+          source += source_stride;
+          dest += dest_stride;
       }
 
     return 0;
@@ -585,11 +585,11 @@ DFKvo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 /************************************************************/
 int
 DFKlvi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
-	 uint32 dest_stride)
+         uint32 dest_stride)
 {
-    int         in_place = 0;	/* Inplace must be detected */
+    int         in_place = 0;   /* Inplace must be detected */
     register uint32 i;
-    uint8       buf[4];		/* Inplace processing buffer */
+    uint8       buf[4];         /* Inplace processing buffer */
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
     char       *FUNC = "DFKvi4f";
@@ -598,69 +598,69 @@ DFKlvi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     HEclear();
 
     if (source == dest)
-	in_place = TRUE;
+        in_place = TRUE;
 
     if (num_elm == 0 || in_place)
-      {		/* No elements is an error as is in place. */
-	  HERROR(DFE_BADCONV);
-	  return FAIL;
+      {     /* No elements is an error as is in place. */
+          HERROR(DFE_BADCONV);
+          return FAIL;
       }
 
     if (source_stride == 0 && dest_stride == 0)
-	source_stride = dest_stride = 4;
+        source_stride = dest_stride = 4;
 
     for (i = 0; i < num_elm; i++)
       {
 
-	  /* extract exponent */
-	  exp = (source[3] << 1) | (source[2] >> 7);
-	  if (exp)
-	    {
-		/* 
-		 * non-zero exponent 
-		 */
+          /* extract exponent */
+          exp = (source[3] << 1) | (source[2] >> 7);
+          if (exp)
+            {
+                /*
+                 * non-zero exponent
+                 */
 
-		/* copy mantissa, last bit of exponent */
-		dest[0] = source[2];
-		dest[2] = source[0];
-		dest[3] = source[1];
-		if (exp < 254)
-		    /* normal value */
-		    dest[1] = source[3] + (uint8) 1;	/* actually adds two to exp */
-		else
-		  {
-		      /* infinity or NaN */
-		      if (exp == 254)	/* unrepresentable - OFL */
-			  /* set mant = 0 for overflow */
-			  dest[0] = dest[1] = dest[2] = dest[3] = 0;
-		      dest[0] &= 0x7f;	/* set last bit of exp to 0 */
-		      dest[1] = 0x80;	/* sign=1 exp=0 -> OFL or NaN */
-		  }
-	    }
-	  else if (source[2] & 0x60)
-	    {	/* denormalized value */
-		register int shft;
+                /* copy mantissa, last bit of exponent */
+                dest[0] = source[2];
+                dest[2] = source[0];
+                dest[3] = source[1];
+                if (exp < 254)
+                    /* normal value */
+                    dest[1] = source[3] + (uint8) 1;    /* actually adds two to exp */
+                else
+                  {
+                      /* infinity or NaN */
+                      if (exp == 254)   /* unrepresentable - OFL */
+                          /* set mant = 0 for overflow */
+                          dest[0] = dest[1] = dest[2] = dest[3] = 0;
+                      dest[0] &= 0x7f;  /* set last bit of exp to 0 */
+                      dest[1] = 0x80;   /* sign=1 exp=0 -> OFL or NaN */
+                  }
+            }
+          else if (source[2] & 0x60)
+            {   /* denormalized value */
+                register int shft;
 
-		shft = (source[2] & 0x40) ? 1 : 2;	/* shift needed to normalize */
-		/* shift mantissa */
-		/* note last bit of exp set to 1 implicitly */
-		dest[0] = (uint8) (source[2] << shft) | (uint8) (source[1] >> (8 - shft));
-		dest[3] = (uint8) (source[1] << shft) | (uint8) (source[0] >> (8 - shft));
-		dest[2] = (uint8) (source[0] << shft);
-		dest[1] = (uint8) (source[3] & 0x80);	/* sign */
-		if (shft == 1)
-		  {	/* set exp to 2 */
-		      dest[1] |= 0x01;
-		      dest[0] &= 0x7f;	/* set LSB of exp to 0 */
-		  }
-	    }
-	  else
-	    {
-		dest[0] = dest[1] = dest[2] = dest[3] = 0;
-	    }
+                shft = (source[2] & 0x40) ? 1 : 2;  /* shift needed to normalize */
+                /* shift mantissa */
+                /* note last bit of exp set to 1 implicitly */
+                dest[0] = (uint8) (source[2] << shft) | (uint8) (source[1] >> (8 - shft));
+                dest[3] = (uint8) (source[1] << shft) | (uint8) (source[0] >> (8 - shft));
+                dest[2] = (uint8) (source[0] << shft);
+                dest[1] = (uint8) (source[3] & 0x80);   /* sign */
+                if (shft == 1)
+                  {     /* set exp to 2 */
+                      dest[1] |= 0x01;
+                      dest[0] &= 0x7f;  /* set LSB of exp to 0 */
+                  }
+            }
+          else
+            {
+                dest[0] = dest[1] = dest[2] = dest[3] = 0;
+            }
 
-	  source += source_stride;
-	  dest += dest_stride;
+          source += source_stride;
+          dest += dest_stride;
       }
 
     return 0;
@@ -668,47 +668,47 @@ DFKlvi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 #ifdef DFKIT
     for (i = 0; i < size; i++)
       {
-	  /* extract exponent */
-	  exp = (uint8) (in[i].c[0] << 1) | (uint8) (in[i].c[1] >> 7);
-	  if (exp)
-	    {	/* non-zero exponent */
-		/* copy mantissa, last bit of exponent */
-		out[i].c[0] = in[i].c[1];
-		out[i].c[2] = in[i].c[3];
-		out[i].c[3] = in[i].c[2];
-		if (exp < 254)	/* normal value */
-		    out[i].c[1] = in[i].c[0] + (uint8) 1;	/* adds two to exp */
-		else
-		  {	/* infinity or NaN */
-		      if (exp == 254)	/* unrepresentable - OFL */
-			  out[i].i = 0;		/* set mant=0 for overflow */
-		      out[i].c[0] &= 0x7f;	/* set last bit of exp to 0 */
-		      out[i].c[1] = 0x80;	/* sign=1 exp=0 -> OFL or NaN */
-		  }
-	    }
-	  else if (in[i].c[1] & 0x60)
-	    {	/* denormalized value */
-		register int shft;
+          /* extract exponent */
+          exp = (uint8) (in[i].c[0] << 1) | (uint8) (in[i].c[1] >> 7);
+          if (exp)
+            {   /* non-zero exponent */
+                /* copy mantissa, last bit of exponent */
+                out[i].c[0] = in[i].c[1];
+                out[i].c[2] = in[i].c[3];
+                out[i].c[3] = in[i].c[2];
+                if (exp < 254)  /* normal value */
+                    out[i].c[1] = in[i].c[0] + (uint8) 1;   /* adds two to exp */
+                else
+                  {     /* infinity or NaN */
+                      if (exp == 254)   /* unrepresentable - OFL */
+                          out[i].i = 0;     /* set mant=0 for overflow */
+                      out[i].c[0] &= 0x7f;  /* set last bit of exp to 0 */
+                      out[i].c[1] = 0x80;   /* sign=1 exp=0 -> OFL or NaN */
+                  }
+            }
+          else if (in[i].c[1] & 0x60)
+            {   /* denormalized value */
+                register int shft;
 
-		/* shift needed to normalize */
-		shft = (in[i].c[1] & 0x40) ? 1 : 2;
+                /* shift needed to normalize */
+                shft = (in[i].c[1] & 0x40) ? 1 : 2;
 
-		/* shift mantissa */
-		/* note last bit of exp set to 1 implicitly */
-		out[i].c[0] = (uint8) (in[i].c[1] << shft)
-		    | (uint8) (in[i].c[2] >> (8 - shft));
-		out[i].c[3] = (uint8) (in[i].c[2] << shft)
-		    | (uint8) (in[i].c[3] >> (8 - shft));
-		out[i].c[2] = (uint8) (in[i].c[3] << shft);
-		out[i].c[1] = (uint8) (in[i].c[0] & 0x80);	/* sign */
-		if (shft == 1)
-		  {	/* set exp to 2 */
-		      out[i].c[1] |= 0x01;
-		      out[i].c[0] &= 0x7f;	/* set LSB of exp to 0 */
-		  }
-	    }
-	  else
-	      out[i].i = 0;	/* zero */
+                /* shift mantissa */
+                /* note last bit of exp set to 1 implicitly */
+                out[i].c[0] = (uint8) (in[i].c[1] << shft)
+                    | (uint8) (in[i].c[2] >> (8 - shft));
+                out[i].c[3] = (uint8) (in[i].c[2] << shft)
+                    | (uint8) (in[i].c[3] >> (8 - shft));
+                out[i].c[2] = (uint8) (in[i].c[3] << shft);
+                out[i].c[1] = (uint8) (in[i].c[0] & 0x80);  /* sign */
+                if (shft == 1)
+                  {     /* set exp to 2 */
+                      out[i].c[1] |= 0x01;
+                      out[i].c[0] &= 0x7f;  /* set LSB of exp to 0 */
+                  }
+            }
+          else
+              out[i].i = 0;     /* zero */
       }
     return (0);
 #endif /* DFKIT */
@@ -721,11 +721,11 @@ DFKlvi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 /************************************************************/
 int
 DFKlvo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
-	 uint32 dest_stride)
+         uint32 dest_stride)
 {
-    int         in_place = 0;	/* Inplace must be detected */
+    int         in_place = 0;   /* Inplace must be detected */
     register uint32 i;
-    uint8       buf[4];		/* Inplace processing buffer */
+    uint8       buf[4];         /* Inplace processing buffer */
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
     char       *FUNC = "DFKvo4f";
@@ -734,79 +734,79 @@ DFKlvo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     HEclear();
 
     if (source == dest)
-	in_place = TRUE;
+        in_place = TRUE;
 
     if (num_elm == 0 || in_place)
-      {		/* No elements is an error as is in place */
-	  HERROR(DFE_BADCONV);
-	  return FAIL;
+      {     /* No elements is an error as is in place */
+          HERROR(DFE_BADCONV);
+          return FAIL;
       }
 
     if (source_stride == 0 && dest_stride == 0)
-	source_stride = dest_stride = 4;
+        source_stride = dest_stride = 4;
 
     for (i = 0; i < num_elm; i++)
       {
 
-	  /* extract exponent */
-	  exp = (source[1] << 1) | (source[0] >> 7);
+          /* extract exponent */
+          exp = (source[1] << 1) | (source[0] >> 7);
 
-	  if (!exp && !source[1])
-	    {
-		/* 
-		 * zero value 
-		 */
-		dest[0] = dest[1] = dest[2] = dest[3] = 0;
-	    }
-	  else if (exp > 2)
-	    {
-		/*
-		 * Normal value
-		 */
+          if (!exp && !source[1])
+            {
+                /*
+                 * zero value
+                 */
+                dest[0] = dest[1] = dest[2] = dest[3] = 0;
+            }
+          else if (exp > 2)
+            {
+                /*
+                 * Normal value
+                 */
 
-		dest[3] = source[1] - (uint8) 1;	/* subtracts 2 from exponent */
-		/* copy mantissa, LSB of exponent */
-		dest[2] = source[0];
-		dest[1] = source[3];
-		dest[0] = source[2];
+                dest[3] = source[1] - (uint8) 1;    /* subtracts 2 from exponent */
+                /* copy mantissa, LSB of exponent */
+                dest[2] = source[0];
+                dest[1] = source[3];
+                dest[0] = source[2];
 
-	    }
-	  else if (exp)
-	    {
-		register intn shft;
-		/* 
-		 * denormalized number 
-		 */
+            }
+          else if (exp)
+            {
+                register intn shft;
+                /*
+                 * denormalized number
+                 */
 
-		/* keep sign, zero exponent */
-		dest[3] = source[1] & 0x80;
+                /* keep sign, zero exponent */
+                dest[3] = source[1] & 0x80;
 
-		shft = 3 - exp;
+                shft = 3 - exp;
 
-		/* shift original mant by 1 or 2 to get denormalized mant */
-		/* prefix mantissa with '1'b or '01'b as appropriate */
-		dest[2] = (uint8) ((source[0] & 0x7f) >> shft)
-		    | (uint8) (0x10 << exp);
-		dest[1] = (uint8) (source[0] << (8 - shft))
-		    | (uint8) (source[3] >> shft);
-		dest[0] = (uint8) (source[3] << (8 - shft))
-		    | (uint8) (source[2] >> shft);
-	    }
-	  else
-	    {
-		/* 
-		 * sign=1 -> infinity or NaN 
-		 */
+                /* shift original mant by 1 or 2 to get denormalized mant */
+                /* prefix mantissa with '1'b or '01'b as appropriate */
+                dest[2] = (uint8) ((source[0] & 0x7f) >> shft)
+                    | (uint8) (0x10 << exp);
+                dest[1] = (uint8) (source[0] << (8 - shft))
+                    | (uint8) (source[3] >> shft);
+                dest[0] = (uint8) (source[3] << (8 - shft))
+                    | (uint8) (source[2] >> shft);
+            }
+          else
+            {
+                /*
+                 * sign=1 -> infinity or NaN
+                 */
 
-		dest[3] = 0xff;		/* set exp to 255 */
-		/* copy mantissa */
-		dest[2] = source[0] | (uint8) 0x80;	/* LSB of exp = 1 */
-		dest[1] = source[3];
-		dest[0] = source[2];
-	    }
+                dest[3] = 0xff;     /* set exp to 255 */
+                /* copy mantissa */
+                dest[2] = source[0] | (uint8) 0x80;     /* LSB of exp = 1 */
+                dest[1] = source[3];
+                dest[0] = source[2];
+            }
 
-	  source += source_stride;
-	  dest += dest_stride;
+          source += source_stride;
+          dest += dest_stride;
       }
 
     return 0;
@@ -817,42 +817,42 @@ DFKlvo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
     for (i = 0; i < size; i++)
       {
-	  /* extract exponent */
-	  exp = (uint8) (in[i].c[1] << 1) | (uint8) (in[i].c[0] >> 7);
-	  if (!exp && !in[i].c[1])
-	      out[i].i = 0;	/* zero value */
-	  else if (exp > 2)
-	    {	/* normal value */
-		out[i].c[0] = in[i].c[1] - (uint8) 1;	/* subtracts 2 from expent */
-		/* copy mantissa, LSB of exponent */
-		out[i].c[1] = in[i].c[0];
-		out[i].c[2] = in[i].c[3];
-		out[i].c[3] = in[i].c[2];
-	    }
-	  else if (exp)
-	    {	/* denormalized number */
-		register int shft;
+          /* extract exponent */
+          exp = (uint8) (in[i].c[1] << 1) | (uint8) (in[i].c[0] >> 7);
+          if (!exp && !in[i].c[1])
+              out[i].i = 0;     /* zero value */
+          else if (exp > 2)
+            {   /* normal value */
+                out[i].c[0] = in[i].c[1] - (uint8) 1;   /* subtracts 2 from expent */
+                /* copy mantissa, LSB of exponent */
+                out[i].c[1] = in[i].c[0];
+                out[i].c[2] = in[i].c[3];
+                out[i].c[3] = in[i].c[2];
+            }
+          else if (exp)
+            {   /* denormalized number */
+                register int shft;
 
-		/* keep sign, zero exponent */
-		out[i].c[0] = in[i].c[1] & (uint8) 0x80;
-		shft = 3 - exp;
-		/* shift original mant by 1 or 2 to get denormalized mant */
-		/* prefix mantissa with '1'b or '01'b as appropriate */
-		out[i].c[1] = (uint8) ((in[i].c[0] & 0x7f) >> shft)
-		    | (uint8) (0x10 << exp);
-		out[i].c[2] = (uint8) (in[i].c[0] << (8 - shft))
-		    | (uint8) (in[i].c[3] >> shft);
-		out[i].c[3] = (uint8) (in[i].c[3] << (8 - shft))
-		    | (uint8) (in[i].c[2] >> shft);
-	    }
-	  else
-	    {	/* sign=1 -> infinity or NaN */
-		out[i].c[0] = 0xff;	/* set exp to 255 */
-		/* copy mantissa */
-		out[i].c[1] = in[i].c[0] | (uint8) 0x80;	/* LSB of exp = 1 */
-		out[i].c[2] = in[i].c[3];
-		out[i].c[3] = in[i].c[2];
-	    }
+                /* keep sign, zero exponent */
+                out[i].c[0] = in[i].c[1] & (uint8) 0x80;
+                shft = 3 - exp;
+                /* shift original mant by 1 or 2 to get denormalized mant */
+                /* prefix mantissa with '1'b or '01'b as appropriate */
+                out[i].c[1] = (uint8) ((in[i].c[0] & 0x7f) >> shft)
+                    | (uint8) (0x10 << exp);
+                out[i].c[2] = (uint8) (in[i].c[0] << (8 - shft))
+                    | (uint8) (in[i].c[3] >> shft);
+                out[i].c[3] = (uint8) (in[i].c[3] << (8 - shft))
+                    | (uint8) (in[i].c[2] >> shft);
+            }
+          else
+            {   /* sign=1 -> infinity or NaN */
+                out[i].c[0] = 0xff;     /* set exp to 255 */
+                /* copy mantissa */
+                out[i].c[1] = in[i].c[0] | (uint8) 0x80;    /* LSB of exp = 1 */
+                out[i].c[2] = in[i].c[3];
+                out[i].c[3] = in[i].c[2];
+            }
       }
     return (0);
 
@@ -866,11 +866,11 @@ DFKlvo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 /************************************************************/
 int
 DFKlvi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
-	 uint32 dest_stride)
+         uint32 dest_stride)
 {
-    int         in_place = 0;	/* Inplace must be detected */
+    int         in_place = 0;   /* Inplace must be detected */
     register uint32 i;
-    uint8       buf[4];		/* Inplace processing buffer */
+    uint8       buf[4];         /* Inplace processing buffer */
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
     char       *FUNC = "DFKvi8f";
@@ -884,53 +884,53 @@ DFKlvi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     HEclear();
 
     if (source == dest)
-	in_place = TRUE;
+        in_place = TRUE;
 
     if (num_elm == 0 || in_place)
-      {		/* No elements is an error as is in place. */
-	  HERROR(DFE_BADCONV);
-	  return FAIL;
+      {     /* No elements is an error as is in place. */
+          HERROR(DFE_BADCONV);
+          return FAIL;
       }
 
     if (source_stride == 0 && dest_stride == 0)
-	source_stride = dest_stride = 8;
+        source_stride = dest_stride = 8;
 
     for (i = 0; i < num_elm; i++)
       {
-	  HDmemcpy(&(id), &source[4], 4);	/* swap the two 4-byte words */
-	  HDmemcpy(((uint8 *) &(id)) + 4, source, 4);
+          HDmemcpy(&(id), &source[4], 4);   /* swap the two 4-byte words */
+          HDmemcpy(((uint8 *) &(id)) + 4, source, 4);
 
-	  vd = (struct vax_double *) dest;
+          vd = (struct vax_double *) dest;
 
-	  found = FALSE;
+          found = FALSE;
 
-	  for (j = 0, lim = dbl_lim;
-	       j < sizeof(dbl_lim) / sizeof(struct dbl_limits); j++, lim++)
-	    {
-		if ((id.mantissa2 == lim->ieee.mantissa2) &&
-		    (id.mantissa1 == lim->ieee.mantissa1) &&
-		    (id.exp == lim->vaxx.exp))
-		  {
-		      *vd = lim->vaxx;
-		      found = TRUE;
-		      break;
-		  }
-	    }
+          for (j = 0, lim = dbl_lim;
+               j < sizeof(dbl_lim) / sizeof(struct dbl_limits); j++, lim++)
+            {
+                if ((id.mantissa2 == lim->ieee.mantissa2) &&
+                    (id.mantissa1 == lim->ieee.mantissa1) &&
+                    (id.exp == lim->vaxx.exp))
+                  {
+                      *vd = lim->vaxx;
+                      found = TRUE;
+                      break;
+                  }
+            }
 
-	  if (!found)
-	    {
-		vd->exp = id.exp - IEEE_DBL_BIAS + VAX_DBL_BIAS;
-		vd->mantissa1 = id.mantissa1 >> 13;
-		vd->mantissa2 = ((id.mantissa1 & MASK(13)) << 3) |
-		    (id.mantissa2 >> 29);
-		vd->mantissa3 = id.mantissa2 >> 13;
-		vd->mantissa4 = id.mantissa2 << 3;
-	    }
+          if (!found)
+            {
+                vd->exp = id.exp - IEEE_DBL_BIAS + VAX_DBL_BIAS;
+                vd->mantissa1 = id.mantissa1 >> 13;
+                vd->mantissa2 = ((id.mantissa1 & MASK(13)) << 3) |
+                    (id.mantissa2 >> 29);
+                vd->mantissa3 = id.mantissa2 >> 13;
+                vd->mantissa4 = id.mantissa2 << 3;
+            }
 
-	  vd->sign = id.sign;
+          vd->sign = id.sign;
 
-	  source += source_stride;
-	  dest += dest_stride;
+          source += source_stride;
+          dest += dest_stride;
       }
 
     return 0;
@@ -942,11 +942,11 @@ DFKlvi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 /************************************************************/
 int
 DFKlvo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
-	 uint32 dest_stride)
+         uint32 dest_stride)
 {
-    int         in_place = 0;	/* Inplace must be detected */
+    int         in_place = 0;   /* Inplace must be detected */
     register intn i;
-    uint8       buf[4];		/* Inplace processing buffer */
+    uint8       buf[4];         /* Inplace processing buffer */
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
     char       *FUNC = "DFKvo8f";
@@ -960,56 +960,56 @@ DFKlvo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     HEclear();
 
     if (source == dest)
-	in_place = TRUE;
+        in_place = TRUE;
 
     if (num_elm == 0 || in_place)
-      {		/* No elements is an error as is in place. */
-	  HERROR(DFE_BADCONV);
-	  return FAIL;
+      {     /* No elements is an error as is in place. */
+          HERROR(DFE_BADCONV);
+          return FAIL;
       }
 
     if (source_stride == 0 && dest_stride == 0)
-	source_stride = dest_stride = 8;
+        source_stride = dest_stride = 8;
 
     for (i = 0; i < num_elm; i++)
       {
 
-	  vd = *((struct vax_double *) source);
+          vd = *((struct vax_double *) source);
 
-	  found = FALSE;
+          found = FALSE;
 
-	  for (j = 0, lim = dbl_lim;
-	       j < sizeof(dbl_lim) / sizeof(struct dbl_limits);
-	       j++, lim++)
-	    {
-		if ((vd.mantissa4 == lim->vaxx.mantissa4) &&
-		    (vd.mantissa3 == lim->vaxx.mantissa3) &&
-		    (vd.mantissa2 == lim->vaxx.mantissa2) &&
-		    (vd.mantissa1 == lim->vaxx.mantissa1) &&
-		    (vd.exp == lim->vaxx.exp))
-		  {
-		      id = lim->ieee;
-		      found = TRUE;
-		      break;
-		  }
-	    }
+          for (j = 0, lim = dbl_lim;
+               j < sizeof(dbl_lim) / sizeof(struct dbl_limits);
+               j++, lim++)
+            {
+                if ((vd.mantissa4 == lim->vaxx.mantissa4) &&
+                    (vd.mantissa3 == lim->vaxx.mantissa3) &&
+                    (vd.mantissa2 == lim->vaxx.mantissa2) &&
+                    (vd.mantissa1 == lim->vaxx.mantissa1) &&
+                    (vd.exp == lim->vaxx.exp))
+                  {
+                      id = lim->ieee;
+                      found = TRUE;
+                      break;
+                  }
+            }
 
-	  if (!found)
-	    {
-		id.exp = vd.exp - VAX_DBL_BIAS + IEEE_DBL_BIAS;
-		id.mantissa1 = (vd.mantissa1 << 13) | (vd.mantissa2 >> 3);
-		id.mantissa2 = ((vd.mantissa2 & MASK(3)) << 29) |
-		    (vd.mantissa3 << 13) |
-		    ((vd.mantissa4 >> 3) & MASK(13));
-	    }
+          if (!found)
+            {
+                id.exp = vd.exp - VAX_DBL_BIAS + IEEE_DBL_BIAS;
+                id.mantissa1 = (vd.mantissa1 << 13) | (vd.mantissa2 >> 3);
+                id.mantissa2 = ((vd.mantissa2 & MASK(3)) << 29) |
+                    (vd.mantissa3 << 13) |
+                    ((vd.mantissa4 >> 3) & MASK(13));
+            }
 
-	  id.sign = vd.sign;
+          id.sign = vd.sign;
 
-	  HDmemcpy(dest, ((uint8 *) &(id)) + 4, 4);	/* swap the two 4-byte words */
-	  HDmemcpy(&dest[4], &(id), 4);
+          HDmemcpy(dest, ((uint8 *) &(id)) + 4, 4);     /* swap the two 4-byte words */
+          HDmemcpy(&dest[4], &(id), 4);
 
-	  source += source_stride;
-	  dest += dest_stride;
+          source += source_stride;
+          dest += dest_stride;
       }
 
     return 0;
@@ -1017,6 +1017,6 @@ DFKlvo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
 #else
 
-int         vms_dummy;		/* prevent empty symbol table messages */
+int         vms_dummy;          /* prevent empty symbol table messages */
 
 #endif /* VMS */

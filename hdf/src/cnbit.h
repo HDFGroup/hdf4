@@ -29,7 +29,7 @@
 #if defined c_plusplus || defined __cplusplus
 extern      "C"
 {
-#endif				/* c_plusplus || __cplusplus */
+#endif                          /* c_plusplus || __cplusplus */
 
 /*
    ** from cnbit.c
@@ -46,8 +46,8 @@ extern      "C"
 
     extern int32 HCPcnbit_inquire
                 (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
-	       int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
-		 int16 *pspecial);
+               int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
+                 int16 *pspecial);
 
     extern int32 HCPcnbit_read
                 (accrec_t * access_rec, int32 length, VOIDP data);
@@ -60,7 +60,7 @@ extern      "C"
 
 #if defined c_plusplus || defined __cplusplus
 }
-#endif				/* c_plusplus || __cplusplus */
+#endif                          /* c_plusplus || __cplusplus */
 
 /* size of the N-bit buffer */
 #define NBIT_BUF_SIZE   (MAX_NT_SIZE*64)
@@ -68,36 +68,36 @@ extern      "C"
 #define NBIT_MASK_SIZE  (MAX_NT_SIZE)
 
 typedef struct
-{				/* structure to hold bit vector info */
-    intn        offset,		/* offset of the bit information */
-                length;		/* number of bits in the information */
-    uint8       mask;		/* mask for this bit vector */
+{                               /* structure to hold bit vector info */
+    intn        offset,         /* offset of the bit information */
+                length;         /* number of bits in the information */
+    uint8       mask;           /* mask for this bit vector */
 }
 nbit_mask_info_t;
 
 /* N-bit [en|de]coding information */
 typedef struct
   {
-      int32       nt;		/* number type of data we are encoding */
-      intn        nt_size;	/* size of the number-type in the file */
-      intn        fill_one;	/* whether to fill with 1's or not (0's) */
-      intn        sign_ext;	/* whether to sign extend or not */
-      uint8       buffer[NBIT_BUF_SIZE];	/* buffer for expanding n-bit data in */
-      intn        buf_pos;	/* current offset in the expansion buffer */
-      intn        mask_off,	/* offset of the bit to start masking with */
-                  mask_len;	/* number of bits to mask */
-      uint32      offset;	/* offset in the file in terms of bytes */
-      uint8       mask_buf[NBIT_MASK_SIZE];	/* buffer to hold the bitmask */
-      nbit_mask_info_t mask_info[NBIT_MASK_SIZE];	/* information about the mask */
-      intn        nt_pos;	/* current byte to read or write */
+      int32       nt;           /* number type of data we are encoding */
+      intn        nt_size;      /* size of the number-type in the file */
+      intn        fill_one;     /* whether to fill with 1's or not (0's) */
+      intn        sign_ext;     /* whether to sign extend or not */
+      uint8       buffer[NBIT_BUF_SIZE];    /* buffer for expanding n-bit data in */
+      intn        buf_pos;      /* current offset in the expansion buffer */
+      intn        mask_off,     /* offset of the bit to start masking with */
+                  mask_len;     /* number of bits to mask */
+      uint32      offset;       /* offset in the file in terms of bytes */
+      uint8       mask_buf[NBIT_MASK_SIZE];     /* buffer to hold the bitmask */
+      nbit_mask_info_t mask_info[NBIT_MASK_SIZE];   /* information about the mask */
+      intn        nt_pos;       /* current byte to read or write */
   }
 comp_coder_nbit_info_t;
 
 #ifndef CNBIT_MASTER
-extern funclist_t cnbit_funcs;	/* functions to perform N-bit encoding */
+extern funclist_t cnbit_funcs;  /* functions to perform N-bit encoding */
 #else
 funclist_t  cnbit_funcs =
-{				/* functions to perform N-bit encoding */
+{                               /* functions to perform N-bit encoding */
     HCPcnbit_stread,
     HCPcnbit_stwrite,
     HCPcnbit_seek,
