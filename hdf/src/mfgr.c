@@ -5233,7 +5233,14 @@ printf("%s: check 2.0\n",FUNC);
     /* Test if the tag/ref pair has been assigned yet */
     if(ri_ptr->img_tag==DFTAG_NULL || ri_ptr->img_ref==DFREF_WILDCARD)
       {
-        ri_ptr->img_tag=DFTAG_RI;
+#ifdef QAK
+printf("%s: check 2.1\n",FUNC);
+#endif /* QAK */
+
+        if(ri_ptr->use_cr_drvr)
+            ri_ptr->img_tag=DFTAG_CI;
+        else
+            ri_ptr->img_tag=DFTAG_RI;
         ri_ptr->img_ref=Htagnewref(hdf_file_id,ri_ptr->img_tag);
       } /* end if */
 
