@@ -1893,7 +1893,7 @@ nsfisrcrd(id)
     return((intf) SDisrecord(*id));
 }
 /*-----------------------------------------------------------------------------
- * Name:    sfsblksz
+ * Name:    sfsblsz
  * Purpose: call SDsetblocksize
  * Inputs:  id:          sd id
             block_size:  block size  in bytes
@@ -1902,7 +1902,7 @@ nsfisrcrd(id)
 
    FRETVAL(intf)
 #ifdef PROTOTYPE
-nsfsblksz(intf *id, intf *block_size)
+nsfsblsz(intf *id, intf *block_size)
 #else
 nsfsblsz(id, block_size)
      intf *id;
