@@ -92,7 +92,7 @@
 
 /* PABLO support files */
 #ifdef HAVE_PABLO
-#define IOTRACE
+#define HDFIOTRACE
 #include "HDFIOTrace.h"
 #endif  /* HAVE_PABLO */
 

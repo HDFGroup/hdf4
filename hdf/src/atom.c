@@ -14,6 +14,7 @@
 static char RcsId[] = "@(#)$Revision$";
 #endif
 
+
 /* $Id$ */
 
 /*
@@ -63,6 +64,9 @@ MODIFICATION HISTORY
 #include "atom.h"
 #include <assert.h>
 
+#ifdef HAVE_PABLO
+#define PABLO_mask ID_atom_c
+#endif
 /* Private function prototypes */
 static atom_info_t *HAIfind_atom(atom_t atm);
 
@@ -93,7 +97,7 @@ intn HAinit_group(group_t grp,      /* IN: Group to initialize */
     intn ret_value=SUCCEED;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(HA_mask, ID_HAinit_group);
+    TRACE_ON(PABLO_mask, ID_HAinit_group);
 #endif /* HAVE_PABLO */
 
     HEclear();
@@ -157,7 +161,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(HA_mask, ID_HAinit_group);
+    TRACE_OFF(PABLO_mask, ID_HAinit_group);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -185,7 +189,7 @@ intn HAdestroy_group(group_t grp       /* IN: Group to destroy */
     intn ret_value=SUCCEED;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(HA_mask, ID_HAdestroy_group);
+    TRACE_ON(PABLO_mask, ID_HAdestroy_group);
 #endif /* HAVE_PABLO */
 
     HEclear();
@@ -225,7 +229,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(HA_mask, ID_HAdestroy_group);
+    TRACE_OFF(PABLO_mask, ID_HAdestroy_group);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -259,7 +263,7 @@ atom_t HAregister_atom(group_t grp,     /* IN: Group to register the object in *
     atom_t ret_value=SUCCEED;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(HA_mask, ID_HAregister_atom);
+    TRACE_ON(PABLO_mask, ID_HAregister_atom);
 #endif /* HAVE_PABLO */
 
     HEclear();
@@ -299,7 +303,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(HA_mask, ID_HAregister_atom);
+    TRACE_OFF(PABLO_mask, ID_HAregister_atom);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -334,7 +338,7 @@ VOIDP HAatom_object(atom_t atm   /* IN: Atom to retrieve object for */
     VOIDP ret_value=NULL;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(HA_mask, ID_HAatom_object);
+    TRACE_ON(PABLO_mask, ID_HAatom_object);
 #endif /* HAVE_PABLO */
 
     HEclear();
@@ -377,7 +381,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(HA_mask, ID_HAatom_object);
+    TRACE_OFF(PABLO_mask, ID_HAatom_object);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -401,7 +405,7 @@ group_t HAatom_group(atom_t atm   /* IN: Atom to retrieve group for */
     group_t ret_value=BADGROUP;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(HA_mask, ID_HAatom_group);
+    TRACE_ON(PABLO_mask, ID_HAatom_group);
 #endif /* HAVE_PABLO */
 
     HEclear();
@@ -417,7 +421,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(HA_mask, ID_HAatom_group);
+    TRACE_OFF(PABLO_mask, ID_HAatom_group);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -449,7 +453,7 @@ VOIDP HAremove_atom(atom_t atm   /* IN: Atom to remove */
     VOIDP ret_value=NULL;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(HA_mask, ID_HAremove_atom);
+    TRACE_ON(PABLO_mask, ID_HAremove_atom);
 #endif /* HAVE_PABLO */
 
     HEclear();
@@ -510,7 +514,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(HA_mask, ID_HAremove_atom);
+    TRACE_OFF(PABLO_mask, ID_HAremove_atom);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -542,7 +546,7 @@ void * HAsearch_atom(group_t grp,        /* IN: Group to search for the object i
     void * ret_value=NULL;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(HA_mask, ID_HAsearch_atom);
+    TRACE_ON(PABLO_mask, ID_HAsearch_atom);
 #endif /* HAVE_PABLO */
 
     HEclear();
@@ -573,7 +577,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(HA_mask, ID_HAsearch_atom);
+    TRACE_OFF(PABLO_mask, ID_HAsearch_atom);
 #endif /* HAVE_PABLO */
 
   return ret_value;

@@ -17,7 +17,7 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 #ifdef HAVE_PABLO
-#define HDF_mask DFSD_mask
+#define PABLO_mask ID_dfsd_c
 #endif
  
 /*-----------------------------------------------------------------------------
@@ -242,7 +242,7 @@ DFSDgetdims(const char *filename, intn *prank, int32 sizes[], intn maxrank)
   intn       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDgetdims);
+    TRACE_ON(PABLO_mask,ID_DFSDgetdims);
 #endif /* HAVE_PABLO */
 
   HEclear();  /* Clear error stack */
@@ -287,7 +287,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDgetdims, file_id, filename, HDF_File_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDgetdims);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -321,7 +321,7 @@ DFSDgetdatastrs(char *label, char *unit, char *format, char *coordsys)
   intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDgetdatastrs);
+    TRACE_ON(PABLO_mask,ID_DFSDgetdatastrs);
 #endif /* HAVE_PABLO */
 
   HEclear();  /* Clear error stack */
@@ -367,7 +367,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDgetdatastrs, NoDSid, label, HDF_Label_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDgetdatastrs);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -403,7 +403,7 @@ DFSDgetdimstrs(int dim, char *label, char *unit, char *format)
   intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDgetdimstrs);
+    TRACE_ON(PABLO_mask,ID_DFSDgetdimstrs);
 #endif /* HAVE_PABLO */
 
   HEclear();  /* Clear error stack */
@@ -450,7 +450,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDgetdimstrs, NoDSid, label, HDF_Label_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDgetdimstrs);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -482,7 +482,7 @@ DFSDgetdatalen(intn *llabel, intn *lunit, intn *lformat, intn *lcoordsys)
   intn      ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDgetdatalen);
+    TRACE_ON(PABLO_mask,ID_DFSDgetdatalen);
 #endif /* HAVE_PABLO */
 
   HEclear();  /* Clear error stack */
@@ -508,7 +508,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDgetdatalen, NoDSid, NULL, HDF_NULL_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDgetdatalen);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -538,7 +538,7 @@ DFSDgetdimlen(intn dim, intn *llabel, intn *lunit, intn *lformat)
   intn ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDgetdimlen);
+    TRACE_ON(PABLO_mask,ID_DFSDgetdimlen);
 #endif /* HAVE_PABLO */
 
   HEclear();  /* Clear error stack */
@@ -566,7 +566,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDgetdimlen, NoDSid, NULL, HDF_NULL_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDgetdimlen);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -601,7 +601,7 @@ DFSDgetdimscale(intn dim, int32 maxsize, VOIDP scale)
   intn       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDgetdimscale);
+    TRACE_ON(PABLO_mask,ID_DFSDgetdimscale);
 #endif /* HAVE_PABLO */
 
   HEclear();  /* Clear error stack */
@@ -647,7 +647,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDgetdimscale, NoDSid, NULL, HDF_NULL_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDgetdimscale);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -688,7 +688,7 @@ DFSDgetrange(VOIDP pmax, VOIDP pmin)
   int         ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDgetrange);
+    TRACE_ON(PABLO_mask,ID_DFSDgetrange);
 #endif /* HAVE_PABLO */
 
   HEclear();  /* Clear error stack */
@@ -729,7 +729,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDgetrange, NoDSid, NULL, HDF_NULL_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDgetrange);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -772,13 +772,13 @@ DFSDgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data)
   intn ret_value;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDgetdata);
+    TRACE_ON(PABLO_mask,ID_DFSDgetdata);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFSDIgetdata(filename, rank, maxsizes, data, 0));   /* 0 == C */
 
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDgetdata, NoDSid, filename, HDF_File_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDgetdata);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -811,7 +811,7 @@ DFSDsetlengths(intn maxlen_label, intn maxlen_unit, intn maxlen_format,
   intn ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDsetlengths);
+    TRACE_ON(PABLO_mask,ID_DFSDsetlengths);
 #endif /* HAVE_PABLO */
 
     /* Perform global, one-time initialization */
@@ -836,7 +836,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDsetlengths, NoDSid, NULL, HDF_NULL_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDsetlengths);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -868,7 +868,7 @@ DFSDsetdims(intn rank, int32 dimsizes[])
   intn     ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDsetdims);
+    TRACE_ON(PABLO_mask,ID_DFSDsetdims);
 #endif /* HAVE_PABLO */
 
   HEclear();
@@ -936,7 +936,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFSDsetdims, NoDSid, NULL, HDF_NULL_ID );
+    TRACE_OFF(PABLO_mask, ID_DFSDsetdims);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -963,13 +963,13 @@ DFSDsetdatastrs(const char *label, const char *unit, const char *format, const c
   intn ret_value;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDsetdatastrs);
+    TRACE_ON(PABLO_mask,ID_DFSDsetdatastrs);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFSDIsetdatastrs(label, unit, format, coordsys));
 
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDsetdatastrs, NoDSid, label, HDF_Label_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDsetdatastrs);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1084,13 +1084,13 @@ DFSDsetdimstrs(intn dim, const char *label, const char *unit, const char *format
   intn ret_value;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDsetdimstrs);
+    TRACE_ON(PABLO_mask,ID_DFSDsetdimstrs);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFSDIsetdimstrs(dim, label, unit, format));
 
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDsetdimstrs, NoDSid, label, HDF_Label_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDsetdimstrs);
 #endif /* HAVE_PABLO */
   
   return ret_value;
@@ -1218,7 +1218,7 @@ DFSDsetdimscale(intn dim, int32 dimsize, VOIDP scale)
     CONSTR(FUNC, "DFSDsetdimscale");
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDsetdimscale);
+    TRACE_ON(PABLO_mask,ID_DFSDsetdimscale);
 #endif /* HAVE_PABLO */
 
     HEclear();
@@ -1314,7 +1314,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDsetdimscale, NoDSid, NULL, HDF_NULL_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDsetdimscale);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1356,7 +1356,7 @@ DFSDsetrange(VOIDP maxi, VOIDP mini)
     CONSTR(FUNC, "DFSDsetrange");    /* for HERROR */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDsetrange);
+    TRACE_ON(PABLO_mask,ID_DFSDsetrange);
 #endif /* HAVE_PABLO */
 
     HEclear();
@@ -1392,7 +1392,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDsetrange, NoDSid, NULL, HDF_NULL_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDsetrange);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1424,14 +1424,14 @@ DFSDputdata(const char *filename, intn rank, int32 dimsizes[], VOIDP data)
   intn ret_value;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDputdata);
+    TRACE_ON(PABLO_mask,ID_DFSDputdata);
 #endif /* HAVE_PABLO */
 
   /* 0, 0 specify create mode, C style array (row major) */
   ret_value = (DFSDIputdata(filename, rank, dimsizes, data, 0, 0));
 
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDputdata, NoDSid, filename, HDF_File_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDputdata);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1467,14 +1467,14 @@ DFSDadddata(const char *filename, intn rank, int32 dimsizes[], VOIDP data)
   intn  ret_value;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDadddata);
+    TRACE_ON(PABLO_mask,ID_DFSDadddata);
 #endif /* HAVE_PABLO */
 
   /* 1, 0 specifies append mode, C style array (row major) */
   ret_value = (DFSDIputdata(filename, rank, dimsizes, data, 1, 0));
 
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDadddata, NoDSid, filename, HDF_File_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDadddata);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1498,7 +1498,7 @@ DFSDrestart(void)
   CONSTR(FUNC, "DFSDndatasets");
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDrestart);
+    TRACE_ON(PABLO_mask,ID_DFSDrestart);
 #endif /* HAVE_PABLO */
 
     /* Perform global, one-time initialization */
@@ -1518,7 +1518,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDrestart, NoDSid, NULL, HDF_NULL_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDrestart);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1548,7 +1548,7 @@ DFSDndatasets(char *filename)
   CONSTR(FUNC, "DFSDndatasets");
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDndatasets);
+    TRACE_ON(PABLO_mask,ID_DFSDndatasets);
 #endif /* HAVE_PABLO */
 
   HEclear();
@@ -1577,7 +1577,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDndatasets, NoDSid, filename, HDF_File_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDndatasets);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1602,7 +1602,7 @@ DFSDclear(void)
   intn   ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDclear);
+    TRACE_ON(PABLO_mask,ID_DFSDclear);
 #endif /* HAVE_PABLO */
 
     /* Perform global, one-time initialization */
@@ -1625,7 +1625,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDclear, NoDSid, NULL, HDF_NULL_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDclear);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1650,7 +1650,7 @@ DFSDlastref(void)
   uint16  ret_value;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDlastref);
+    TRACE_ON(PABLO_mask,ID_DFSDlastref);
 #endif /* HAVE_PABLO */
 
     /* Perform global, one-time initialization */
@@ -1668,7 +1668,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDlastref, NoDSid, NULL, HDF_NULL_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDlastref);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1703,7 +1703,7 @@ DFSDreadref(char *filename, uint16 ref)
   CONSTR(FUNC, "DFSDreadref");
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDreadref);
+    TRACE_ON(PABLO_mask,ID_DFSDreadref);
 #endif /* HAVE_PABLO */
 
   HEclear();
@@ -1735,7 +1735,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDreadref, file_id, filename, HDF_File_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDreadref);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1784,13 +1784,13 @@ DFSDgetslice(const char *filename, int32 winst[], int32 windims[], VOIDP data,
   intn ret_value;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDgetslice);
+    TRACE_ON(PABLO_mask,ID_DFSDgetslice);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFSDIgetslice(filename, winst, windims, data, dims, 0));
 
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDgetslice, NoDSid, filename, HDF_File_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDgetslice);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1825,7 +1825,7 @@ DFSDstartslice(const char *filename)
   CONSTR(FUNC, "DFSDstartslice");
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDstartslice);
+    TRACE_ON(PABLO_mask,ID_DFSDstartslice);
 #endif /* HAVE_PABLO */
 
   HEclear();
@@ -1878,7 +1878,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDstartslice, NoDSid, filename, HDF_File_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDstartslice);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1920,13 +1920,13 @@ DFSDputslice(int32 winend[], VOIDP data, int32 dims[])
   intn ret_value;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDputslice);
+    TRACE_ON(PABLO_mask,ID_DFSDputslice);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFSDIputslice(winend, data, dims, 0));
 
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDputslice, NoDSid, NULL, HDF_NULL_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDputslice);
 #endif /* HAVE_PABLO */
   
   return ret_value;
@@ -1957,13 +1957,13 @@ DFSDendslice(void)
   intn ret_value;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDendslice);
+    TRACE_ON(PABLO_mask,ID_DFSDendslice);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFSDIendslice(0));
 
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDendslice, NoDSid, NULL, HDF_NULL_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDendslice);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -2003,7 +2003,7 @@ DFSDsetNT(int32 numbertype)
   CONSTR(FUNC, "DFSDsetNT");
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDsetNT);
+    TRACE_ON(PABLO_mask,ID_DFSDsetNT);
 #endif /* HAVE_PABLO */
 
   HEclear();
@@ -2039,7 +2039,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDsetNT, NoDSid, NULL, HDF_NULL_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDsetNT);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -2130,7 +2130,7 @@ DFSDgetNT(int32 *pnumbertype)
   CONSTR(FUNC, "DFSDgetNT");
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDgetNT);
+    TRACE_ON(PABLO_mask,ID_DFSDgetNT);
 #endif /* HAVE_PABLO */
 
   HEclear();
@@ -2152,7 +2152,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDgetNT, NoDSid, NULL, HDF_NULL_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDgetNT);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -2190,7 +2190,7 @@ DFSDpre32sdg(char *filename, uint16 ref, intn *ispre32)
     CONSTR(FUNC, "DFSDpre32sdg");
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDpre32sdg);
+    TRACE_ON(PABLO_mask,ID_DFSDpre32sdg);
 #endif /* HAVE_PABLO */
 
     HEclear();
@@ -2241,7 +2241,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDpre32sdg, NoDSid, filename, HDF_File_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDpre32sdg);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -4987,7 +4987,7 @@ DFSDgetcal(float64 *pcal, float64 *pcal_err, float64 *pioff,
   CONSTR(FUNC, "DFSDgetcal");
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_DFSDgetcal);
+  TRACE_ON(PABLO_mask,ID_DFSDgetcal);
 #endif /* HAVE_PABLO */
 
   HEclear();
@@ -5020,7 +5020,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFSDgetcal, NoDSid, NULL, HDF_NULL_ID );
+    TRACE_OFF(PABLO_mask, ID_DFSDgetcal);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -5072,7 +5072,7 @@ DFSDsetcal(float64 cal, float64 cal_err, float64 ioff, float64 ioff_err,
   intn    ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDsetcal);
+    TRACE_ON(PABLO_mask,ID_DFSDsetcal);
 #endif /* HAVE_PABLO */
 
   HEclear();
@@ -5098,7 +5098,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFSDsetcal, NoDSid, NULL, HDF_NULL_ID );
+    TRACE_OFF(PABLO_mask, ID_DFSDsetcal);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -5128,7 +5128,7 @@ DFSDwriteref(const char *filename, uint16 ref)
   CONSTR(FUNC, "DFSDwriteref");
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDwriteref);
+    TRACE_ON(PABLO_mask,ID_DFSDwriteref);
 #endif /* HAVE_PABLO */
 
   /* Clear error stack */
@@ -5179,7 +5179,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DFSDwriteref, NoDSid, filename, HDF_File_ID );
+        TRACE_OFF(PABLO_mask, ID_DFSDwriteref);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -5214,7 +5214,7 @@ DFSDsetfillvalue(VOIDP fill_value)
   CONSTR(FUNC, "DFSDsetfillvalue");
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DFSDsetfillvalue);
+    TRACE_ON(PABLO_mask,ID_DFSDsetfillvalue);
 #endif /* HAVE_PABLO */
 
   /* Clear error stack  */
@@ -5252,7 +5252,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFSDsetfillvalue, NoDSid, NULL, HDF_NULL_ID );
+    TRACE_OFF(PABLO_mask, ID_DFSDsetfillvalue);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -5283,7 +5283,7 @@ DFSDgetfillvalue(VOIDP fill_value)
   CONSTR(FUNC, "DFSDgetfillvalue");
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_DFSDgetfillvalue);
+  TRACE_ON(PABLO_mask,ID_DFSDgetfillvalue);
 #endif /* HAVE_PABLO */
 
   /* Clear error stack  */
@@ -5316,7 +5316,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFSDgetfillvalue, NoDSid, NULL, HDF_NULL_ID );
+    TRACE_OFF(PABLO_mask, ID_DFSDgetfillvalue);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -5364,13 +5364,13 @@ DFSDreadslab(const char *filename, int32 start[], int32 slab_size[],
   stride = stride;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_DFSDreadslab);
+  TRACE_ON(PABLO_mask,ID_DFSDreadslab);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFSDgetslice(filename, start, slab_size, buffer, buffer_size));
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFSDreadslab, NoDSid, filename, HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_DFSDreadslab);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -5408,7 +5408,7 @@ DFSDstartslab(const char *filename)
   CONSTR(FUNC, "DFSDstartslab");
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_DFSDstartslab);
+  TRACE_ON(PABLO_mask,ID_DFSDstartslab);
 #endif /* HAVE_PABLO */
 
   /* Clear errors */
@@ -5537,7 +5537,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFSDstartslab,Sfile_id,filename, HDF_File_ID);
+    TRACE_OFF(PABLO_mask, ID_DFSDstartslab);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -5609,7 +5609,7 @@ DFSDwriteslab(int32 start[], int32 stride[],
   CONSTR(FUNC, "DFSDwriteslab");
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_DFSDwriteslab);
+  TRACE_ON(PABLO_mask,ID_DFSDwriteslab);
 #endif /* HAVE_PABLO */
 
   /* shut compiler up */
@@ -5861,7 +5861,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFSDwriteslab, NoDSid, NULL, HDF_NULL_ID );
+    TRACE_OFF(PABLO_mask, ID_DFSDwriteslab);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -5888,7 +5888,7 @@ DFSDendslab(void)
   CONSTR(FUNC, "DFSDendslab");
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_DFSDendslab);
+  TRACE_ON(PABLO_mask,ID_DFSDendslab);
 #endif /* HAVE_PABLO */
 
   /* Clear error stack */
@@ -5952,7 +5952,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFSDendslab, NoDSid, NULL, HDF_NULL_ID );
+    TRACE_OFF(PABLO_mask, ID_DFSDendslab);
 #endif /* HAVE_PABLO */
 
   return ret_value;

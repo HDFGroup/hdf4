@@ -16,7 +16,7 @@ static char RcsId[] = "@(#)$Revision$";
 /* vg.c,v 1.15.4.1 1993/10/26 19:25:07 georgev Exp */
 
 #ifdef HAVE_PABLO
-#define HDF_mask VS_mask
+#define PABLO_mask ID_vg_c
 #endif
 
 /*
@@ -116,7 +116,7 @@ VSelts(int32 vkey /* IN: vdata key */)
     CONSTR(FUNC, "VSelts");
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_VSelts);
+    TRACE_ON(PABLO_mask,ID_VSelts);
 #endif /* HAVE_PABLO */
 
     /* make sure vdata key is part of vdata group */
@@ -143,7 +143,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF(ID_VSelts, vkey, NULL, HDF_Vdata_ID );
+    TRACE_OFF(PABLO_mask,ID_VSelts);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -169,7 +169,7 @@ VSgetinterlace(int32 vkey /* IN: vdata key */)
     CONSTR(FUNC, "VSgetinterlace");
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_VSgetinterlace);
+    TRACE_ON(PABLO_mask,ID_VSgetinterlace);
 #endif /* HAVE_PABLO */
 
     /* check key is valid vdata */
@@ -196,7 +196,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF(ID_VSgetinterlace, vkey, NULL, HDF_Vdata_ID );
+    TRACE_OFF(PABLO_mask,ID_VSgetinterlace);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -223,7 +223,7 @@ VSsetinterlace(int32 vkey,     /* IN: vdata key */
     CONSTR(FUNC, "VSsetinterlace");
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_VSsetinterlace);
+  TRACE_ON(PABLO_mask,ID_VSsetinterlace);
 #endif /* HAVE_PABLO */
 
     /* check key is valid vdata */
@@ -265,7 +265,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF(ID_VSsetinterlace, vkey, NULL , HDF_Vdata_ID );
+    TRACE_OFF(PABLO_mask,ID_VSsetinterlace);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -294,7 +294,7 @@ VSgetfields(int32 vkey,   /* IN: vdata key */
     CONSTR(FUNC, "VSgetfields");
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_VSgetfields);
+  TRACE_ON(PABLO_mask,ID_VSgetfields);
 #endif /* HAVE_PABLO */
 
     /* check key is valid vdata */
@@ -331,7 +331,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_VSgetfields, vkey, NULL , HDF_Vdata_ID );
+    TRACE_OFF(PABLO_mask, ID_VSgetfields);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -365,7 +365,7 @@ VSfexist(int32 vkey,  /* IN: vdata key */
     CONSTR(FUNC, "VSfexist");
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_VSfexist);
+  TRACE_ON(PABLO_mask,ID_VSfexist);
 #endif /* HAVE_PABLO */
 
     /* check key is valid vdata */
@@ -423,7 +423,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_VSfexist, vkey, NULL, HDF_Vdata_ID );
+    TRACE_OFF(PABLO_mask, ID_VSfexist);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -455,7 +455,7 @@ VSsizeof(int32 vkey,   /* IN vdata key */
     CONSTR(FUNC, "VSsizeof");
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_VSsizeof);
+  TRACE_ON(PABLO_mask,ID_VSsizeof);
 #endif /* HAVE_PABLO */
 
     /* check key is valid vdata */
@@ -508,7 +508,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_VSsizeof, vkey, NULL, HDF_Vdata_ID );
+    TRACE_OFF(PABLO_mask, ID_VSsizeof);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -555,7 +555,7 @@ VSsetname(int32 vkey,        /* IN: Vdata key */
     CONSTR(FUNC, "VSsetname");
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_VSsetname);
+  TRACE_ON(PABLO_mask,ID_VSsetname);
 #endif /* HAVE_PABLO */
 
     /* check key is valid vdata */
@@ -596,7 +596,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_VSsetname, vkey, vsname , HDF_Vdata_ID );
+    TRACE_OFF(PABLO_mask, ID_VSsetname);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -627,7 +627,7 @@ VSsetclass(int32 vkey,         /* IN: vdata key */
     CONSTR(FUNC, "VSsetclass");
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_VSsetclass);
+  TRACE_ON(PABLO_mask,ID_VSsetclass);
 #endif /* HAVE_PABLO */
 
     /* check key is valid vdata */
@@ -668,7 +668,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_VSsetclass, vkey, vsclass , HDF_Vdata_ID );
+    TRACE_OFF(PABLO_mask, ID_VSsetclass);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -695,7 +695,7 @@ VSgetname(int32 vkey,   /* IN: vdata key */
     CONSTR(FUNC, "VSgetname");
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_VSgetname);
+  TRACE_ON(PABLO_mask,ID_VSgetname);
 #endif /* HAVE_PABLO */
 
     /* check key is valid vdata */
@@ -726,7 +726,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_VSgetname, vkey, NULL , HDF_Vdata_ID );
+    TRACE_OFF(PABLO_mask, ID_VSgetname);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -753,7 +753,7 @@ VSgetclass(int32 vkey,    /* IN: vdata key */
     CONSTR(FUNC, "VSgetclass");
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_VSgetclass);
+  TRACE_ON(PABLO_mask,ID_VSgetclass);
 #endif /* HAVE_PABLO */
 
     /* check key is valid vdata */
@@ -780,7 +780,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_VSgetclass, vkey, vsclass , HDF_Vdata_ID );
+    TRACE_OFF(PABLO_mask, ID_VSgetclass);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -811,7 +811,7 @@ VSinquire(int32 vkey,       /* IN: vdata key */
   CONSTR(FUNC, "VSinquire");
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_VSinquire);
+  TRACE_ON(PABLO_mask,ID_VSinquire);
 #endif /* HAVE_PABLO */
 
     /* check key is valid vdata */
@@ -854,7 +854,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_VSinquire, vkey, NULL, HDF_Vdata_ID );
+    TRACE_OFF(PABLO_mask, ID_VSinquire);
 #endif /* HAVE_PABLO */
 
     return ret_value;   /* ok */
@@ -889,7 +889,7 @@ VSlone(HFILEID f,     /* IN: file id */
     CONSTR(FUNC, "VSlone");
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_VSlone);
+  TRACE_ON(PABLO_mask,ID_VSlone);
 #endif /* HAVE_PABLO */
 
     /* -- allocate local space for vdata refs, init to zeros -- */
@@ -941,7 +941,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_VSlone, vkey, NULL , HDF_Vdata_ID );
+    TRACE_OFF(PABLO_mask, ID_VSlone);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -975,7 +975,7 @@ Vlone(HFILEID f,      /* IN: file id */
     CONSTR(FUNC, "Vlone");
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_Vlone);
+  TRACE_ON(PABLO_mask,ID_Vlone);
 #endif /* HAVE_PABLO */
 
     /* -- allocate space for vgroup refs, init to zeroes -- */
@@ -1028,7 +1028,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_MASK_TRACE_OFF( V_mask, ID_Vlone, vkey, NULL , HDF_Vdata_ID );
+    TRACE_OFF( PABLO_mask, ID_Vlone );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1060,7 +1060,7 @@ Vfind(HFILEID f,          /* IN: file id */
 #endif
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_Vfind);
+  TRACE_ON(PABLO_mask,ID_Vfind);
 #endif /* HAVE_PABLO */
 
     /* process through Vgroups in file */
@@ -1087,7 +1087,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_MASK_TRACE_OFF( V_mask, ID_Vfind, ret_value, vgname , HDF_Vdata_ID );
+    TRACE_OFF( PABLO_mask, ID_Vfind );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1119,7 +1119,7 @@ VSfind(HFILEID f,          /* IN: file id */
 #endif
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_VSfind);
+  TRACE_ON(PABLO_mask,ID_VSfind);
 #endif /* HAVE_PABLO */
 
     /* process through Vdatas in file */
@@ -1146,7 +1146,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_VSfind, vsid, vsname , HDF_Vdata_ID );
+    TRACE_OFF(PABLO_mask, ID_VSfind);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1178,7 +1178,7 @@ Vfindclass(HFILEID f,           /* IN: file id */
 #endif
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_Vfindclass);
+  TRACE_ON(PABLO_mask,ID_Vfindclass);
 #endif /* HAVE_PABLO */
 
     /* process through Vgroups in file */
@@ -1205,7 +1205,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_MASK_TRACE_OFF( V_mask, ID_Vfindclass, vgid, vgclass , HDF_Vdata_ID );
+    TRACE_OFF( PABLO_mask, ID_Vfindclass);
 #endif /* HAVE_PABLO */
 
   return ret_value;    
@@ -1237,7 +1237,7 @@ VSfindclass(HFILEID f,           /* IN: file id */
 #endif
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_VSfindclass);
+  TRACE_ON(PABLO_mask,ID_VSfindclass);
 #endif /* HAVE_PABLO */
 
     /* process through Vdatas in file */
@@ -1264,7 +1264,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_VSfindclass, vsid, vsclass , HDF_Vdata_ID );
+    TRACE_OFF(PABLO_mask, ID_VSfindclass);
 #endif /* HAVE_PABLO */
 
   return ret_value;

@@ -16,7 +16,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 #ifdef HAVE_PABLO
-#define HDF_mask H_mask
+#define PABLO_mask ID_hextelt_c
 #endif
 
 /*LINTLIBRARY */
@@ -213,7 +213,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     int32       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_HXcreate);
+    TRACE_ON(PABLO_mask,ID_HXcreate);
 #endif /* HAVE_PABLO */
     /* clear error stack and validate args */
     HEclear();
@@ -365,7 +365,7 @@ done:
       HDfree(buf);
 
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_HXcreate, file_id, extern_file_name, HDF_File_ID );
+        TRACE_OFF(PABLO_mask, ID_HXcreate);
 #endif /* HAVE_PABLO */
   return ret_value; 
 } /* HXcreate */
@@ -1160,7 +1160,7 @@ HXsetcreatedir(const char *dir)
   intn       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_HXsetcreatedir);
+    TRACE_ON(PABLO_mask,ID_HXsetcreatedir);
 #endif /* HAVE_PABLO */
 
   if (dir)
@@ -1184,7 +1184,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_HXsetcreatedir, NoDSid, dir, HDF_Directory_ID );
+        TRACE_OFF(PABLO_mask, ID_HXsetcreatedir);
 #endif /* HAVE_PABLO */
   return ret_value; 
 }	/* HXsetcreatedir */
@@ -1217,7 +1217,7 @@ HXsetdir(const char *dir)
   intn   ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_HXsetdir);
+    TRACE_ON(PABLO_mask,ID_HXsetdir);
 #endif /* HAVE_PABLO */
   if (dir)
     {
@@ -1240,7 +1240,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_HXsetdir, NoDSid, dir, HDF_Directory_ID );
+        TRACE_OFF(PABLO_mask, ID_HXsetdir);
 #endif /* HAVE_PABLO */
   return ret_value; 
 }	/* HXsetdir */

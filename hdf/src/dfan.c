@@ -62,7 +62,7 @@ static char RcsId[] = "@(#)$Revision$";
 /* define Pablo trace hooks                                                 */
 /****************************************************************************/
 #ifdef HAVE_PABLO
-#define HDF_mask DFAN_mask
+#define PABLO_mask ID_dfan_c
 #endif
 
 PRIVATE uint16 Lastref = 0;     /* Last ref read/written */
@@ -120,13 +120,13 @@ DFANgetlablen(const char *filename, uint16 tag, uint16 ref)
   int32 ret_value;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON (  ID_DFANgetlablen);
+  TRACE_ON (PABLO_mask,  ID_DFANgetlablen);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFANIgetannlen(filename, tag, ref, DFAN_LABEL));
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFANgetlablen, NoDSid, filename, HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_DFANgetlablen);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -161,13 +161,13 @@ DFANgetlabel(const char *filename, uint16 tag, uint16 ref, char *label,
   intn ret_value;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON (  ID_DFANgetlabel);
+  TRACE_ON (PABLO_mask,  ID_DFANgetlabel);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFANIgetann(filename, tag, ref, (uint8 *) label, maxlen, DFAN_LABEL));
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFANgetlabel, NoDSid, filename, HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_DFANgetlabel);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -198,13 +198,13 @@ DFANgetdesclen(const char *filename, uint16 tag, uint16 ref)
   int32 ret_value;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON (  ID_DFANgetdesclen);
+  TRACE_ON (PABLO_mask,  ID_DFANgetdesclen);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFANIgetannlen(filename, tag, ref, DFAN_DESC));
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFANgetdesclen, NoDSid, filename, HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_DFANgetdesclen);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -241,13 +241,13 @@ DFANgetdesc(const char *filename, uint16 tag, uint16 ref, char *desc,
   intn ret_value;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON (  ID_DFANgetdesc);
+  TRACE_ON (PABLO_mask,  ID_DFANgetdesc);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFANIgetann(filename, tag, ref, (uint8 *) desc, maxlen, DFAN_DESC));
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFANgetdesc, NoDSid, filename, HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_DFANgetdesc);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -285,13 +285,13 @@ DFANgetfidlen(int32 file_id, int isfirst)
   int32 ret_value;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON (  ID_DFANgetfidlen);
+  TRACE_ON (PABLO_mask,  ID_DFANgetfidlen);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFANIgetfannlen(file_id, DFAN_LABEL, isfirst));
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFANgetfidlen, file_id, NULL, HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_DFANgetfidlen);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -324,13 +324,13 @@ DFANgetfid(int32 file_id, char *label, int32 maxlen, intn isfirst)
   int32 ret_value;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON (  ID_DFANgetfid);
+  TRACE_ON (PABLO_mask,  ID_DFANgetfid);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFANIgetfann(file_id, label, maxlen, DFAN_LABEL, isfirst));
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFANgetfid, file_id, NULL, HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_DFANgetfid);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -364,13 +364,13 @@ DFANgetfdslen(int32 file_id, intn isfirst)
   int32 ret_value;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON (  ID_DFANgetfdslen);
+  TRACE_ON (PABLO_mask,  ID_DFANgetfdslen);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFANIgetfannlen(file_id, DFAN_DESC, isfirst));
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFANgetfdslen, file_id, NULL, HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_DFANgetfdslen);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -403,13 +403,13 @@ DFANgetfds(int32 file_id, char *desc, int32 maxlen, intn isfirst)
   int32 ret_value;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON (  ID_DFANgetfds);
+  TRACE_ON (PABLO_mask,  ID_DFANgetfds);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFANIgetfann(file_id, desc, maxlen, DFAN_DESC, isfirst));
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFANgetfds, file_id, NULL, HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_DFANgetfds);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -445,14 +445,14 @@ DFANputlabel(const char *filename, uint16 tag, uint16 ref, char *label)
   intn ret_value;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON (  ID_DFANputlabel);
+  TRACE_ON (PABLO_mask,  ID_DFANputlabel);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFANIputann(filename, tag, ref, (uint8 *) label,
                            (int32) HDstrlen(label), DFAN_LABEL));
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFANputlabel, NoDSid, filename, HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_DFANputlabel);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -488,13 +488,13 @@ DFANputdesc(const char *filename, uint16 tag, uint16 ref, char *desc,
   intn ret_value;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON (  ID_DFANputdesc);
+  TRACE_ON (PABLO_mask,  ID_DFANputdesc);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFANIputann(filename, tag, ref, (uint8 *) desc, desclen, DFAN_DESC));
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFANputdesc, NoDSid, filename, HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_DFANputdesc);
 #endif /* HAVE_PABLO */
   
   return ret_value;
@@ -526,13 +526,13 @@ DFANaddfid(int32 file_id, char *id)
   intn ret_value;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON (  ID_DFANaddfid);
+  TRACE_ON (PABLO_mask,  ID_DFANaddfid);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFANIaddfann(file_id, id, (int32) HDstrlen(id), DFAN_LABEL));
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFANaddfid, file_id, NULL, HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_DFANaddfid);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -563,13 +563,13 @@ DFANaddfds(int32 file_id, char *desc, int32 desclen)
   intn ret_value;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON (  ID_DFANaddfds);
+  TRACE_ON (PABLO_mask,  ID_DFANaddfds);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFANIaddfann(file_id, desc, desclen, DFAN_DESC));
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFANaddfds, file_id, NULL, HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_DFANaddfds);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -600,13 +600,13 @@ DFANlastref(void)
   uint16 ret_value;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON (  ID_DFANlastref);
+  TRACE_ON (PABLO_mask,  ID_DFANlastref);
 #endif /* HAVE_PABLO */
 
   ret_value = (Lastref);
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFANlastref, NoDSid, NULL, HDF_NULL_ID );
+    TRACE_OFF(PABLO_mask, ID_DFANlastref);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -649,13 +649,13 @@ DFANlablist(const char *filename, uint16 tag, uint16 reflist[], char *labellist,
   intn ret_value;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON (  ID_DFANlablist);
+  TRACE_ON (PABLO_mask,  ID_DFANlablist);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFANIlablist(filename, tag, reflist, (uint8 *) labellist,
                             listsize, maxlen, startpos, 0));
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFANlablist, NoDSid, filename, HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_DFANlablist);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -683,13 +683,13 @@ intn DFANclear(void)
   intn ret_value;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON (ID_DFANclear);
+  TRACE_ON (PABLO_mask,ID_DFANclear);
 #endif /* HAVE_PABLO */
 
   ret_value = DFANIclear();
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFANclear, NoDSid, NULL, HDF_NULL_ID );
+    TRACE_OFF(PABLO_mask, ID_DFANclear);
 #endif /* HAVE_PABLO */
 
   return ret_value;

@@ -16,7 +16,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 #ifdef HAVE_PABLO
-#define HDF_mask VS_mask
+#define PABLO_mask ID_vrw_c
 #endif
 
 /***********************************************************************
@@ -112,7 +112,7 @@ VSseek(int32 vkey,   /* IN: vdata key */
     CONSTR(FUNC, "VSseek");
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_VSseek);
+    TRACE_ON(PABLO_mask,ID_VSseek);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -152,7 +152,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_VSseek, vkey, NULL , HDF_Vdata_ID );
+        TRACE_OFF( PABLO_mask, ID_VSseek );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -202,7 +202,7 @@ VSread(int32 vkey,       /* IN: vdata key */
     CONSTR(FUNC, "VSread");
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_VSread);
+    TRACE_ON(PABLO_mask,ID_VSread);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -480,7 +480,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_VSread, vkey, NULL , HDF_Vdata_ID );
+        TRACE_OFF( PABLO_mask,ID_VSread);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -534,7 +534,7 @@ VSwrite(int32 vkey,         /* IN: vdata key */
     CONSTR(FUNC, "VSwrite");
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_VSwrite);
+    TRACE_ON(PABLO_mask,ID_VSwrite);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -820,7 +820,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_VSwrite, vkey, NULL , HDF_Vdata_ID );
+        TRACE_OFF( PABLO_mask, ID_VSwrite );
 #endif /* HAVE_PABLO */
 
   return ret_value;

@@ -16,7 +16,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 #ifdef HAVE_PABLO
-#define HDF_mask VS_mask
+#define PABLO_mask ID_vattr_c
 #endif
 
 /**************************************************************
@@ -210,7 +210,7 @@ intn VSfindex(int32 vsid, const char *fieldname, int32 *findex)
      intn i, found = 0;
 
 #ifdef PABLO
-     HDF_TRACE_ON(ID_VSfindex);
+     TRACE_ON(PABLO_mask,ID_VSfindex);
 #endif
      
      HEclear();
@@ -250,7 +250,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF(ID_VSfindex, vsid, NULL, HDF_Vdata_ID );
+    TRACE_OFF(PABLO_mask,ID_VSfindex);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -296,7 +296,7 @@ intn VSsetattr(int32 vsid, int32 findex, const char *attrname,
      int32 attr_vs_ref, fid, attr_vsid;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_VSsetattr);
+  TRACE_ON(PABLO_mask,ID_VSsetattr);
 #endif /* HAVE_PABLO */
 
      HEclear();
@@ -379,7 +379,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_VSsetattr, vsid, NULL, HDF_Vdata_ID);
+    TRACE_OFF(PABLO_mask, ID_VSsetattr);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -407,7 +407,7 @@ intn VSnattrs(int32 vsid)
     int32 ret_value = SUCCEED;
     
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_VSnattrs);
+  TRACE_ON(PABLO_mask,ID_VSnattrs);
 #endif /* HAVE_PABLO */
 
      HEclear();
@@ -428,7 +428,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-       HDF_TRACE_OFF( ID_VSnattrs, vsid, NULL, HDF_Vdata_ID );
+       TRACE_OFF(PABLO_mask, ID_VSnattrs);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -460,7 +460,7 @@ intn VSfnattrs(int32 vsid, int32 findex)
     intn i, nattrs, t_attrs;
  
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_VSfnattrs);
+  TRACE_ON(PABLO_mask,ID_VSfnattrs);
 #endif /* HAVE_PABLO */
 
      HEclear();
@@ -492,7 +492,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_VSfnattrs, vsid, NULL, HDF_Vdata_ID );
+        TRACE_OFF(PABLO_mask, ID_VSfnattrs);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -526,7 +526,7 @@ intn VSfindattr(int32 vsid, int32 findex, const char *attrname)
      intn i, nattrs, a_index, found;
 
 #ifdef HAVE_PABLO
-     HDF_TRACE_ON(ID_VSfindattr);
+     TRACE_ON(PABLO_mask,ID_VSfindattr);
 #endif /* HAVE_PABLO */
 
      HEclear();
@@ -589,7 +589,7 @@ done:
   /* Normal function cleanup */
 
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_VSfindattr, vsid, NULL, HDF_Vdata_ID );
+        TRACE_OFF(PABLO_mask, ID_VSfindattr);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -630,7 +630,7 @@ intn VSattrinfo(int32 vsid, int32 findex, intn attrindex,
      char *fldname;
 
 #ifdef HAVE_PABLO
-     HDF_TRACE_ON(ID_VSattrinfo);
+     TRACE_ON(PABLO_mask,ID_VSattrinfo);
 #endif /* HAVE_PABLO */
 
      HEclear();
@@ -697,7 +697,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-            HDF_TRACE_OFF( ID_VSattrinfo, vsid, NULL, HDF_Vdata_ID );
+            TRACE_OFF(PABLO_mask, ID_VSattrinfo);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -732,7 +732,7 @@ intn VSgetattr(int32 vsid, int32 findex, intn attrindex,
      char fields[FIELDNAMELENMAX+1];
 
 #ifdef HAVE_PABLO
-     HDF_TRACE_ON(ID_VSgetattr);
+     TRACE_ON(PABLO_mask,ID_VSgetattr);
 #endif /* HAVE_PABLO */
 
      HEclear();
@@ -798,7 +798,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-            HDF_TRACE_OFF( ID_VSgetattr, vsid, NULL, HDF_Vdata_ID  );
+             TRACE_OFF(PABLO_mask, ID_VSgetattr);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -825,7 +825,7 @@ intn VSisattr(int32 vsid)
      int32  ret_value = FALSE;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_VSisattr);
+  TRACE_ON(PABLO_mask,ID_VSisattr);
 #endif /* HAVE_PABLO */
 
      HEclear();
@@ -846,7 +846,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-            HDF_TRACE_OFF( ID_VSisattr, vsid, NULL, HDF_Vdata_ID );
+            TRACE_OFF(PABLO_mask, ID_VSisattr);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -889,7 +889,7 @@ intn Vsetattr(int32 vgid, const char *attrname, int32 datatype,
     intn i;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_Vsetattr);
+  TRACE_ON(PABLO_mask,ID_Vsetattr);
 #endif /* HAVE_PABLO */
 
     HEclear();
@@ -972,7 +972,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_Vsetattr, vgid, NULL, HDF_Vdata_ID );
+        TRACE_OFF(PABLO_mask, ID_Vsetattr);
 #endif /* HAVE_PABLO */
   
   return ret_value;
@@ -1004,7 +1004,7 @@ int32 Vgetversion(int32 vgid)
     int32 ret_value = FAIL;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_Vgetversion);
+  TRACE_ON(PABLO_mask,ID_Vgetversion);
 #endif /* HAVE_PABLO */
 
     HEclear();
@@ -1029,7 +1029,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-            HDF_TRACE_OFF( ID_Vgetversion, vgid, NULL, HDF_Vdata_ID );
+            TRACE_OFF(PABLO_mask, ID_Vgetversion);
 #endif /* HAVE_PABLO */
   
   return ret_value;
@@ -1054,7 +1054,7 @@ intn Vnattrs(int32 vgid)
     int32 ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_Vnattrs);
+  TRACE_ON(PABLO_mask,ID_Vnattrs);
 #endif  /* HAVE_PABLO */
 
     HEclear();
@@ -1079,7 +1079,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-            HDF_TRACE_OFF( ID_Vnattrs, vgid, NULL, HDF_Vdata_ID  );
+            TRACE_OFF(PABLO_mask, ID_Vnattrs);
 #endif /* HAVE_PABLO */
   
   return ret_value;
@@ -1110,7 +1110,7 @@ intn Vfindattr(int32 vgid, const char *attrname)
     intn i, found;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_Vfindattr);
+    TRACE_ON(PABLO_mask,ID_Vfindattr);
 #endif /* HAVE_PABLO */
 
     HEclear();
@@ -1156,7 +1156,7 @@ done:
   /* Normal function cleanup */
 
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_Vfindattr, vgid, NULL, HDF_Vdata_ID );
+        TRACE_OFF(PABLO_mask, ID_Vfindattr);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1197,7 +1197,7 @@ intn Vattrinfo(int32 vgid, intn attrindex, char *name,
     int32 ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_Vattrinfo);
+    TRACE_ON(PABLO_mask,ID_Vattrinfo);
 #endif /* HAVE_PABLO */
 
     HEclear();
@@ -1251,7 +1251,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-            HDF_TRACE_OFF( ID_Vattrinfo, vgid, NULL, HDF_Vdata_ID );
+            TRACE_OFF(PABLO_mask, ID_Vattrinfo);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1284,7 +1284,7 @@ intn Vgetattr(int32 vgid, intn attrindex, void * values)
     int32 ret_value = SUCCEED;
     
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_Vgetattr);
+    TRACE_ON(PABLO_mask,ID_Vgetattr);
 #endif /* HAVE_PABLO */
 
     HEclear();
@@ -1334,7 +1334,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-            HDF_TRACE_OFF( ID_Vgetattr, vgid, NULL, HDF_Vdata_ID );
+            TRACE_OFF(PABLO_mask, ID_Vgetattr);
 #endif /* HAVE_PABLO */
 
   return ret_value;

@@ -16,7 +16,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 #ifdef HAVE_PABLO
-#define HDF_mask H_mask
+#define PABLO_mask ID_hcompri_c
 #endif
 
 /*LINTLIBRARY */
@@ -121,7 +121,7 @@ HRPconvert(int32 fid, uint16 tag, uint16 ref, int32 xdim, int32 ydim,int16 schem
     int32      ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_HRPconvert);
+    TRACE_ON(PABLO_mask,ID_HRPconvert);
 #endif /* HAVE_PABLO */
     /* clear error stack and validate args */
     HEclear();
@@ -184,7 +184,7 @@ done:
     } /* end if */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF(ID_HRPconvert, NoDSid, NULL, HDF_NULL_ID );
+    TRACE_OFF(PABLO_mask,ID_HRPconvert);
 #endif /* HAVE_PABLO */
   return ret_value; 
 } /* HRPconvert */

@@ -16,7 +16,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 #ifdef HAVE_PABLO
-#define HDF_mask H_mask
+#define PABLO_mask ID_hbuffer_c
 #endif
 
 /*LINTLIBRARY */
@@ -126,7 +126,7 @@ HBconvert(int32 aid)
     intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_HBcreate);
+    TRACE_ON(PABLO_mask,ID_HBconvert);
 #endif /* HAVE_PABLO */
     /* clear error stack and validate args */
     HEclear();
@@ -220,7 +220,7 @@ done:
     } /* end if */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF(ID_HBconvert, NoDSid, NULL, HDF_NULL_ID );
+    TRACE_OFF(PABLO_mask,ID_HBconvert);
 #endif /* HAVE_PABLO */
   return ret_value; 
 } /* HBconvert */

@@ -17,7 +17,7 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 #ifdef HAVE_PABLO
-#define HDF_mask DA_mask
+#define PABLO_mask ID_dynarray_c
 #endif
 
 /*
@@ -90,7 +90,7 @@ dynarr_p DAcreate_array(intn start_size,      /* IN: Initial array size */
     dynarr_p    ret_value=NULL;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DAcreate_array);
+    TRACE_ON(PABLO_mask,ID_DAcreate_array);
 #endif /* HAVE_PABLO */
 
     HEclear();
@@ -125,7 +125,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DAcreate_array, NoDSid, NULL, HDF_NULL_ID );
+        TRACE_OFF(PABLO_mask, ID_DAcreate_array);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -153,7 +153,7 @@ intn DAdestroy_array(dynarr_p arr,  /* IN: Array to destroy */
     intn    ret_value=SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DAdestroy_array);
+    TRACE_ON(PABLO_mask,ID_DAdestroy_array);
 #endif /* HAVE_PABLO */
 
     HEclear();
@@ -181,7 +181,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DAdestroy_array, NoDSid, NULL, HDF_NULL_ID );
+        TRACE_OFF(PABLO_mask, ID_DAdestroy_array);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -206,7 +206,7 @@ intn DAsize_array(dynarr_p arr   /* IN: Array to get size of */
     intn    ret_value=SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DAsize_array);
+    TRACE_ON(PABLO_mask,ID_DAsize_array);
 #endif /* HAVE_PABLO */
 
     HEclear();
@@ -224,7 +224,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DAsize_array, NoDSid, NULL, HDF_NULL_ID );
+        TRACE_OFF(PABLO_mask, ID_DAsize_array);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -252,7 +252,7 @@ VOIDP DAget_elem(dynarr_p arr_ptr, /* IN: Array to access */
     VOIDP    ret_value=NULL;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DAget_elem);
+    TRACE_ON(PABLO_mask,ID_DAget_elem);
 #endif /* HAVE_PABLO */
 
     HEclear();
@@ -273,7 +273,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DAget_elem, NoDSid, NULL, HDF_NULL_ID );
+        TRACE_OFF(PABLO_mask, ID_DAget_elem);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -303,7 +303,7 @@ intn DAset_elem(dynarr_p arr_ptr,  /* IN: Array to access */
     intn        ret_value=SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DAset_elem);
+    TRACE_ON(PABLO_mask,ID_DAset_elem);
 #endif /* HAVE_PABLO */
 
     HEclear();
@@ -344,7 +344,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_DAset_elem, NoDSid, NULL, HDF_NULL_ID );
+        TRACE_OFF(PABLO_mask, ID_DAset_elem);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -372,7 +372,7 @@ VOIDP DAdel_elem(dynarr_p arr_ptr, /* IN: Array to access */
     VOIDP    ret_value=NULL;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_DAdel_elem);
+    TRACE_ON(PABLO_mask,ID_DAdel_elem);
 #endif /* HAVE_PABLO */
 
     HEclear();
@@ -396,7 +396,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DAdel_elem, NoDSid, NULL, HDF_NULL_ID );
+    TRACE_OFF(PABLO_mask, ID_DAdel_elem);
 #endif /* HAVE_PABLO */
 
   return ret_value;

@@ -17,7 +17,7 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 #ifdef HAVE_PABLO
-#define HDF_mask H_mask
+#define PABLO_mask ID_filedd_c
 #endif
 
 /*
@@ -948,7 +948,7 @@ intn Hdupdd(int32 file_id,      /* IN: File ID the tag/refs are in */
     intn ret_value=SUCCEED;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_Hdupdd);
+  TRACE_ON(PABLO_mask,ID_Hdupdd);
 #endif /* HAVE_PABLO */
 
     /* clear error stack and check validity of file id */
@@ -987,7 +987,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_Hdupdd, file_id, NULL, HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_Hdupdd);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1019,7 +1019,7 @@ int32 Hnumber(int32 file_id,    /* IN: File ID the tag/refs are in */
     int32 ret_value=SUCCEED;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_Hnumber);
+  TRACE_ON(PABLO_mask,ID_Hnumber);
 #endif /* HAVE_PABLO */
 
     HEclear();
@@ -1040,7 +1040,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_Hnumber, file_id, NULL , HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_Hnumber);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1069,7 +1069,7 @@ Hnewref(int32 file_id /* IN: File ID the tag/refs are in */)
     uint16      ret_value = 0; /* 0 is invalid ref */
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_Hnewref);
+  TRACE_ON(PABLO_mask,ID_Hnewref);
 #endif /* HAVE_PABLO */
 
     /* clear error stack and check validity of file record id */
@@ -1106,7 +1106,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_Hnewref, file_id, NULL , HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_Hnewref);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1138,7 +1138,7 @@ Htagnewref(int32 file_id,/* IN: File ID the tag/refs are in */
     uint16      ret_value = 0; /* 0 is invalid ref */
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_Htagnewref);
+  TRACE_ON(PABLO_mask,ID_Htagnewref);
 #endif /* HAVE_PABLO */
 
     /* clear error stack and check validity of file record id */
@@ -1164,7 +1164,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_Htagnewref, file_id, NULL , HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_Htagnewref);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1207,7 +1207,7 @@ intn Hfind(int32 file_id,       /* IN: file ID to search in */
     intn    ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_Hfind);
+    TRACE_ON(PABLO_mask,ID_Hfind);
 #endif /* HAVE_PABLO */
 
     /* clear error stack and check validity of the access id */
@@ -1246,7 +1246,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-     HDF_TRACE_OFF( ID_Hfind, file_id, NULL , HDF_File_ID );
+     TRACE_OFF(PABLO_mask, ID_Hfind);
 #endif /* HAVE_PABLO */
 
     return ret_value;
@@ -1347,7 +1347,7 @@ HDreuse_tagref(int32 file_id, /* IN: id of file */
   intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_HDreuse_tagref);
+  TRACE_ON(PABLO_mask,ID_HDreuse_tagref);
 #endif /* HAVE_PABLO */
 
   /* clear error stack and check validity of file record id */
@@ -1389,7 +1389,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  HDF_TRACE_OFF( ID_HDreuse_tagref,  file_id, NULL , HDF_File_ID );
+  TRACE_OFF(PABLO_mask, ID_HDreuse_tagref);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1421,7 +1421,7 @@ intn Hdeldd(int32 file_id, uint16 tag, uint16 ref)
   intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_Hdeldd);
+  TRACE_ON(PABLO_mask,ID_Hdeldd);
 #endif /* HAVE_PABLO */
 
   /* clear error stack and check validity of file record id */
@@ -1446,7 +1446,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  HDF_TRACE_OFF( ID_Hdeldd, file_id, NULL , HDF_File_ID );
+  TRACE_OFF(PABLO_mask, ID_Hdeldd);
 #endif /* HAVE_PABLO */
 
   return ret_value;

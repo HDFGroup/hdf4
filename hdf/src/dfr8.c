@@ -15,7 +15,7 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 #ifdef HAVE_PABLO
-#define HDF_mask DFR8_mask
+#define PABLO_mask ID_dfr8_c
 #endif
 
 /* $Id$ */
@@ -186,7 +186,7 @@ DFR8setcompress(int32 type, comp_info * cinfo)
   intn   ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_DFR8setcompress);
+ TRACE_ON(PABLO_mask,ID_DFR8setcompress); 
 #endif /* HAVE_PABLO */
 
   /* Perform global, one-time initialization */
@@ -220,7 +220,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFR8setcompress, NoDSid, NULL, HDF_NULL_ID );
+ 	TRACE_OFF(PABLO_mask, ID_DFR8setcompress);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -256,7 +256,7 @@ DFR8getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pispal)
   intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_DFR8getdims);
+ 	TRACE_ON(PABLO_mask,ID_DFR8getdims);
 #endif /* HAVE_PABLO */
 
   HEclear();
@@ -292,7 +292,7 @@ done:
       Hclose(file_id);
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFR8getdims, file_id, filename, HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_DFR8getdims);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -334,7 +334,7 @@ DFR8getimage(const char *filename, uint8 *image, int32 xdim, int32 ydim, uint8 *
   intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_DFR8getimage);
+  TRACE_ON(PABLO_mask,ID_DFR8getimage);
 #endif /* HAVE_PABLO */
 
   HEclear();
@@ -410,7 +410,7 @@ done:
   /* Normal function cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFR8getimage, file_id, filename, HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_DFR8getimage);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -443,7 +443,7 @@ DFR8setpalette(uint8 *pal)
   intn     ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_DFR8setpalette);
+  TRACE_ON(PABLO_mask,ID_DFR8setpalette);
 #endif /* HAVE_PABLO */
 
   /* Perform global, one-time initialization */
@@ -481,7 +481,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFR8setpalette, NoDSid, NULL, HDF_NULL_ID );
+    TRACE_OFF(PABLO_mask, ID_DFR8setpalette);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -699,7 +699,7 @@ DFR8putimage(const char *filename, const void * image, int32 xdim, int32 ydim,
     intn ret_value;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_DFR8putimage);
+   TRACE_ON(PABLO_mask,ID_DFR8putimage);
 #endif /* HAVE_PABLO */
 
   /* Perform global, one-time initialization */
@@ -718,7 +718,7 @@ done:
   /* Normal function cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFR8putimage, NoDSid, filename, HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_DFR8putimage);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -755,7 +755,7 @@ DFR8addimage(const char *filename, const void * image, int32 xdim, int32 ydim,
     intn ret_value;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_DFR8addimage);
+  TRACE_ON(PABLO_mask,ID_DFR8addimage);
 #endif /* HAVE_PABLO */
 
   /* Perform global, one-time initialization */
@@ -774,7 +774,7 @@ done:
   /* Normal function cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFR8addimage, NoDSid, filename, HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_DFR8addimage);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1054,7 +1054,7 @@ DFR8nimages(const char *filename)
   intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_DFR8nimages);
+  TRACE_ON(PABLO_mask,ID_DFR8nimages);
 #endif /* HAVE_PABLO */
 
   HEclear();
@@ -1194,7 +1194,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFR8nimages, file_id, NULL, HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_DFR8nimages);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1227,7 +1227,7 @@ DFR8readref(const char *filename, uint16 ref)
   intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_DFR8readref);
+  TRACE_ON(PABLO_mask,ID_DFR8readref);
 #endif /* HAVE_PABLO */
 
   HEclear();
@@ -1260,7 +1260,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFR8readref, file_id, filename, HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_DFR8readref);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1290,7 +1290,7 @@ DFR8writeref(const char *filename, uint16 ref)
   intn  ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_DFR8writeref);
+  TRACE_ON(PABLO_mask,ID_DFR8writeref);
 #endif /* HAVE_PABLO */
 
   HEclear();
@@ -1313,7 +1313,7 @@ done:
   /* Normal function cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFR8writeref, NoDSid, filename, HDF_File_ID );
+    TRACE_OFF(PABLO_mask, ID_DFR8writeref);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1341,7 +1341,7 @@ DFR8restart(void)
     intn ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_DFR8restart);
+  TRACE_ON(PABLO_mask,ID_DFR8restart);
 #endif /* HAVE_PABLO */
 
   /* Perform global, one-time initialization */
@@ -1360,7 +1360,7 @@ done:
   /* Normal function cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFR8restart, NoDSid, NULL, HDF_NULL_ID );
+    TRACE_OFF(PABLO_mask, ID_DFR8restart);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1388,7 +1388,7 @@ DFR8lastref(void)
     uint16 ret_value;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_DFR8lastref);
+  TRACE_ON(PABLO_mask,ID_DFR8lastref);
 #endif /* HAVE_PABLO */
 
   /* Perform global, one-time initialization */
@@ -1407,7 +1407,7 @@ done:
   /* Normal function cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFR8lastref, NoDSid, NULL, HDF_NULL_ID );
+    TRACE_OFF(PABLO_mask, ID_DFR8lastref);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1730,7 +1730,7 @@ PRIVATE intn DFR8Istart(void)
     intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_DFR8Istart);
+  TRACE_ON(PABLO_mask,ID_DFR8Istart);
 #endif /* HAVE_PABLO */
 
     /* Don't call this routine again... */
@@ -1748,7 +1748,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_DFR8Istart, NoDSid, NULL, HDF_NULL_ID );
+    TRACE_OFF(PABLO_mask, ID_DFR8Istart);
 #endif /* HAVE_PABLO */
 
     return(ret_value);

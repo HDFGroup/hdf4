@@ -17,7 +17,7 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 #ifdef HAVE_PABLO
-#define HDF_mask HE_mask
+#define PABLO_mask ID_herr_c
 #endif
 
 /*LINTLIBRARY */
@@ -91,7 +91,7 @@ HEstring(hdf_err_code_t error_code)
 {
     int         i;              /* temp int index */
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_HEstring);
+    TRACE_ON(PABLO_mask,ID_HEstring);
 #endif /* HAVE_PABLO */
 
     /* look for the error_code in error message table */
@@ -99,13 +99,13 @@ HEstring(hdf_err_code_t error_code)
         if (error_messages[i].error_code == error_code)
           {
 #ifdef HAVE_PABLO
-            HDF_TRACE_OFF( ID_HEstring, NoDSid, NULL, HDF_NULL_ID );
+            TRACE_OFF(PABLO_mask, ID_HEstring);
 #endif /* HAVE_PABLO */
             return error_messages[i].str;
           }
 
 #ifdef HAVE_PABLO
-        HDF_TRACE_OFF( ID_HEstring, NoDSid, NULL, HDF_NULL_ID );
+        TRACE_OFF(PABLO_mask, ID_HEstring);
 #endif /* HAVE_PABLO */
     /* otherwise, return default message */
     return DEFAULT_MESG;
@@ -126,7 +126,7 @@ VOID
 HEPclear(void)
 {
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_HEclear);
+  TRACE_ON(PABLO_mask,ID_HEclear);
 #endif /* HAVE_PABLO */
     if (!error_top)
         goto done;
@@ -144,7 +144,7 @@ HEPclear(void)
 
 done:
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_HEclear, NoDSid, NULL, HDF_NULL_ID );
+    TRACE_OFF(PABLO_mask, ID_HEclear);
 #endif /* HAVE_PABLO */
   return;
 } /* HEPclear */
@@ -174,7 +174,7 @@ HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_na
 {
     intn        i;
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_HEpush);
+    TRACE_ON(PABLO_mask,ID_HEpush);
 #endif /* HAVE_PABLO */
 
     /* if the stack is not allocated, then do it */
@@ -207,7 +207,7 @@ HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_na
           error_top++;
       }
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_HEpush, NoDSid, NULL, HDF_NULL_ID );
+    TRACE_OFF(PABLO_mask, ID_HEpush);
 #endif /* HAVE_PABLO */
 }   /* HEpush */
 
@@ -233,7 +233,7 @@ HEreport(const char *format,...)
     CONSTR(FUNC, "HEreport");   /* name of function if HIalloc fails */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_HEreport);
+    TRACE_ON(PABLO_mask,ID_HEreport);
 #endif /* HAVE_PABLO */
 
     va_start(arg_ptr, format);
@@ -256,7 +256,7 @@ HEreport(const char *format,...)
 
 done:
 #ifdef HAVE_PABLO
-     HDF_TRACE_OFF( ID_HEreport, NoDSid, NULL, HDF_NULL_ID );
+     TRACE_OFF(PABLO_mask, ID_HEreport);
 #endif /* HAVE_PABLO */
     return;
 } /* HEreport */
@@ -280,7 +280,7 @@ VOID
 HEprint(FILE * stream, int32 print_levels)
 {
 #ifdef HAVE_PABLO
-  HDF_TRACE_ON(ID_HEprint);
+  TRACE_ON(PABLO_mask,ID_HEprint);
 #endif /* HAVE_PABLO */
     if (print_levels == 0 || print_levels > error_top)  /* print all errors */
         print_levels = error_top;
@@ -298,7 +298,7 @@ HEprint(FILE * stream, int32 print_levels)
               fprintf(stream, "\t%s\n", error_stack[print_levels].desc);
       }
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF( ID_HEprint, NoDSid, NULL, HDF_NULL_ID );
+    TRACE_OFF(PABLO_mask, ID_HEprint);
 #endif /* HAVE_PABLO */
 } /* HEprint */
 
