@@ -1,4 +1,6 @@
 * text=auto !eol
+/Win32.nofortran.zip -text
+/Win32.zip -text
 /Win32all.zip -text
 /Win32full.zip -text
 /Win32min.zip -text
