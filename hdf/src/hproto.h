@@ -36,106 +36,106 @@ extern "C" {
 ** from hfile.c
 */
 extern int32 Hopen 
-  PROTO((char _HUGE *path, intn access, int16 ndds));
+    PROTO((char _HUGE *path, intn access, int16 ndds));
 
 extern intn Hclose
-  PROTO((int32 file_id));
+    PROTO((int32 file_id));
 
 extern int32 Hstartread
-  PROTO((int32 file_id, uint16 tag, uint16 ref));
+    PROTO((int32 file_id, uint16 tag, uint16 ref));
 
 extern intn Hnextread
-  PROTO((int32 access_id, uint16 tag, uint16 ref, intn origin));
+    PROTO((int32 access_id, uint16 tag, uint16 ref, intn origin));
 
 extern intn Hfind
     PROTO((int32 file_id, uint16 search_tag, uint16 search_ref,
-        uint16 *find_tag,uint16 *find_ref,int32 *find_offset,
-        int32 *find_length,intn direction));
+           uint16 *find_tag,uint16 *find_ref,int32 *find_offset,
+           int32 *find_length,intn direction));
 
 extern intn Hexist
-    (int32 file_id, uint16 search_tag, uint16 search_ref);
+    PROTO((int32 file_id, uint16 search_tag, uint16 search_ref));
 
 extern intn Hinquire
-  PROTO((int32 access_id, int32 _HUGE *pfile_id, uint16 _HUGE *ptag,
-        uint16 _HUGE *pref,int32 _HUGE *plength, int32 _HUGE *poffset,
-        int32 _HUGE *pposn, int16 _HUGE *paccess, int16 _HUGE *pspecial));
+    PROTO((int32 access_id, int32 _HUGE *pfile_id, uint16 _HUGE *ptag,
+           uint16 _HUGE *pref,int32 _HUGE *plength, int32 _HUGE *poffset,
+           int32 _HUGE *pposn, int16 _HUGE *paccess, int16 _HUGE *pspecial));
 
 extern int32 Hstartwrite
-  PROTO((int32 file_id, uint16 tag, uint16 ref, int32 length));
+    PROTO((int32 file_id, uint16 tag, uint16 ref, int32 length));
 
 extern intn Happendable
-  PROTO((int32 aid));
+    PROTO((int32 aid));
 
 extern intn Hseek
-  PROTO((int32 access_id, int32 offset, intn origin));
+    PROTO((int32 access_id, int32 offset, intn origin));
 
 extern int32 Hread
-  PROTO((int32 access_id, int32 length, uint8 _HUGE *data));
+    PROTO((int32 access_id, int32 length, uint8 _HUGE *data));
 
 extern int32 Hwrite
-  PROTO((int32 access_id, int32 length, uint8 _HUGE *data));
+    PROTO((int32 access_id, int32 length, uint8 _HUGE *data));
 
 extern int32 Htrunc
-  PROTO((int32 access_id, int32 trunc_len));
+    PROTO((int32 access_id, int32 trunc_len));
 
 extern int32 Hendaccess
-  PROTO((int32 access_id));
+    PROTO((int32 access_id));
 
 extern intn HDgetc
-  PROTO((int32 access_id));
+    PROTO((int32 access_id));
 
 extern intn HDputc
-  PROTO((uint8 c,int32 access_id));
+    PROTO((uint8 c,int32 access_id));
 
 extern int32 Hgetelement
-  PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE *data));
+    PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE *data));
 
 extern int32 Hputelement
-  PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE *data, int32 length));
+    PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE *data, int32 length));
 
 extern int32 Hlength
-  PROTO((int32 file_id, uint16 tag, uint16 ref));
+    PROTO((int32 file_id, uint16 tag, uint16 ref));
 
 extern int32 Hoffset
-  PROTO((int32 file_id, uint16 tag, uint16 ref));
+    PROTO((int32 file_id, uint16 tag, uint16 ref));
 
 extern int Hdupdd
-  PROTO((int32 file_id, uint16 tag, uint16 ref, uint16 old_tag, uint16 old_ref));
+    PROTO((int32 file_id, uint16 tag, uint16 ref, uint16 old_tag, uint16 old_ref));
 
 extern int Hdeldd
-  PROTO((int32 file_id, uint16 tag, uint16 ref));
+    PROTO((int32 file_id, uint16 tag, uint16 ref));
 
 extern uint16 Hnewref
-  PROTO((int32 file_id));
+    PROTO((int32 file_id));
 
 extern int Hsync
-  PROTO((int32 file_id));
+    PROTO((int32 file_id));
 
 extern int Hnumber
-  PROTO((int32 file_id, uint16 tag));
+    PROTO((int32 file_id, uint16 tag));
 
 extern int Hgetlibversion
-  PROTO((uint32 _HUGE *majorv, uint32 _HUGE *minorv,
-        uint32 _HUGE *releasev, char _HUGE *string));
+    PROTO((uint32 _HUGE *majorv, uint32 _HUGE *minorv,
+           uint32 _HUGE *releasev, char _HUGE *string));
 
 extern int Hgetfileversion
-  PROTO((int32 file_id, uint32 _HUGE *majorv, uint32 _HUGE *minorv,
-        uint32 _HUGE *release, char _HUGE *string));
+    PROTO((int32 file_id, uint32 _HUGE *majorv, uint32 _HUGE *minorv,
+           uint32 _HUGE *release, char _HUGE *string));
 
 #if defined WIN3
 extern int32 HDfreadbig
-  PROTO((VOIDP buffer, int32 size,HFILE fp));
+    PROTO((VOIDP buffer, int32 size,HFILE fp));
 
 extern int32 HDfwritebig
-  PROTO((VOIDP buffer, int32 size,HFILE fp));
+    PROTO((VOIDP buffer, int32 size,HFILE fp));
 
 #else  /* !WIN3 */
 #if defined PC
 extern int32 HDfreadbig
-  PROTO((VOIDP buffer, int32 size,FILE _HUGE *fp));
+    PROTO((VOIDP buffer, int32 size,FILE _HUGE *fp));
 
 extern int32 HDfwritebig
-  PROTO((VOIDP buffer, int32 size,FILE _HUGE *fp));
+    PROTO((VOIDP buffer, int32 size,FILE _HUGE *fp));
 #endif /* PC */
 #endif /* !WIN3 */
 
@@ -143,26 +143,26 @@ extern uint16 HDmake_special_tag
   PROTO((uint16 tag));
 
 extern bool HDis_special_tag
-  PROTO((uint16 tag));
+    PROTO((uint16 tag));
 
 extern uint16 HDbase_tag
-  PROTO((uint16 tag));
+    PROTO((uint16 tag));
 
 extern int HDerr
-  PROTO((int32 file_id));
+    PROTO((int32 file_id));
 
 extern bool HDvalidfid
-  PROTO((int32 file_id));
+    PROTO((int32 file_id));
 
 extern char _HUGE *HDgettagname
-  PROTO((uint16 tag));
+    PROTO((uint16 tag));
 
 extern int32 Hishdf
-  PROTO((char _HUGE *filename));
+    PROTO((char _HUGE *filename));
 
 extern intn Hfidinquire
     PROTO((int32 file_id, char _HUGE **fname, intn _HUGE *access,
-        intn _HUGE *attach));
+           intn _HUGE *attach));
 
 /*
 ** from hdfalloc.c
