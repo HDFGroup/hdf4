@@ -24,8 +24,6 @@ The utilities are:
 
     . hdfpack --  compacts an hdf file
 
-    . hdfrseq -- displays images
-
     . hdftopal -- extracts a palette from an hdf file
   
     . hdftor8 -- exatracts 8-bit raster images and palettes from an
@@ -52,4 +50,5 @@ The utilities are:
 
 
 
+Hdfrseq, which displays images, has been moved to /HDF/contrib/NCSA/hdfrseq/.
 
