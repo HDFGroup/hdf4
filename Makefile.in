@@ -1,0 +1,242 @@
+# $Id$
+#
+# Makefile to build HDF & netcdf libraries and utilities...etc
+#
+
+################ Start of system configuration section. #############
+
+# Set shell so we know what it is
+SHELL = /bin/sh
+
+# Configure subsitutes preset values in for the following macros
+# 'srcdir' Gets set to directory this Makefile is found in
+srcdir = @srcdir@
+VPATH  = @srcdir@
+TOP_SRCDIR = @top_srcdir@
+prefix     = @prefix@
+exec_prefix = @exec_prefix@
+ACDEFS = @DEFS@
+CC     = @CC@
+CFLAGS   = @CFLAGS@
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS  = @LDFLAGS@
+LIBS     = @LIBS@
+FC       = @FC@
+FFLAGS   = @FFLAGS@
+
+INSTALL  = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA    = @INSTALL_DATA@
+
+# /usr/local/bin/m4 (GNU version?)
+M4   = @M4@
+# /usr/loal/bin/perl (GNU version?)
+PERL = @PERL@
+
+# Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
+RANLIB = @RANLIB@
+
+# Name of library archiver and flags to send, default 'AR=ar', 'ARFLAGS=r'
+AR = @AR@
+ARFLAGS = @ARFLAGS@
+
+# Name of remove utility, default 'RM=/bin/rm', 'RMFLAGS=-f'
+RM = @RM@
+RMFLAGS = @RMFLAGS@
+
+# Set for document generation
+MAKEINFO = makeinfo
+TEXI2DVI = texi2dvi
+
+# Directory in which to install binaries
+bindir = $(exec_prefix)/bin
+
+# Directory in which to install header files.
+includedir = $(prefex)/include
+
+# Directory in which to install library files.
+libdir = $(prefix)/lib
+
+# Directory in which to install documentation info files.
+infodir = $(prefix)/info
+
+############## End of system configuration section. ###############
+
+PACKAGE	 = @PACKAGE@
+VERSION  = @VERSION@
+
+MANIFEST = CUSTOMIZE MANIFEST \
+	  Makefile.in configure \
+	  configure.in 
+HDFDIR    = hdf
+NETCDFDIR = mfhdf
+SUBDIRS= $(HDFDIR) $(NETCDFDIR)
+
+#
+# Flags to recursively send to make to overide ones inserted by Configure
+#
+
+HDF_FLAGS       = \
+        CC="$(CC)" \
+        CFLAGS="$(CFLAGS)" \
+        FC="$(FC)" \
+        FFLAGS="$(FFLAGS)" \
+        RANLIB="$(RANLIB)" \
+        AR="$(AR)" \
+        ARFLAGS="$(ARFLAGS)" \
+        RM="$(RM)" \
+        RMFLAGS="$(RMFLAGS)" \
+        MACHINE="$(MACHINE)" \
+        HDFLIB="$(HDFLIB)" \
+        HDFINC="$(HDFINC)" \
+	HDFBIN="$(HDFBIN)"	
+
+#
+#General rules
+#
+
+all:	
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(SUBDIRS)" _sub
+		
+test:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(SUBDIRS)" _sub
+		
+allnofortran: 
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(HDFDIR)" _sub
+
+libnofortran: 
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(HDFDIR)" _sub
+
+libnostub: 
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(HDFDIR)" _sub
+
+allnostub: 
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(HDFDIR)" _sub
+
+libdf: 
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(HDFDIR)" _sub
+
+utilities: 
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(HDFDIR)" _sub
+
+install:	
+	true
+
+clean:		
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(SUBDIRS)" _sub
+
+distclean::	
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(SUBDIRS)" _sub
+
+# target for recursive directory make
+_sub:
+	@for dir in $(SUBDIRS); do \
+          (cd $$dir; echo Making \`$(TARG)\' in `pwd`; \
+              $(MAKE) $(MFLAGS) $(HDF_FLAGS) $(TARG)); \
+	done
+
+# For making distribution
+distdir = $(TOP_SRCDIR)/$(PACKAGE)-$(VERSION)
+dist: $(DISTFILES)
+	rm -rf $(distdir)
+	mkdir $(distdir)
+	chmod 777 $(distdir)
+	@for file in $(DISTFILES); do \
+	  ln $(srcdir)/$$file $(distdir) 2> /dev/null \
+	    || { echo copying $$file instead; \
+	    cp -p $(srcdir)/$$file $(distdir);}; \
+	done
+	for subdir in $(SUBDIRS); do \
+	  echo making $@ in $$subdir; \
+	  mkdir $(distdir)/$$subdir || exit 1; \
+	  (cd $$subdir && $(MAKE) $@) || exit 1; \
+	done
+	chmod -R a+r $(distdir)
+	tar chozf $(distdir).tar.gz $(distdir)
+	rm -rf $(distdir)
+
+ftp:	$(FTPDIR)/$(PACKAGE)-$(VERSION).tar.Z
+	test ! -h $(FTPDIR)/$(PACKAGE).tar.Z && exit 0; \
+	cd $(FTPDIR) || exit 1; \
+	rm $(PACKAGE).tar.Z || exit 1; \
+	ln -s $(PACKAGE)-$(VERSION).tar.Z $(PACKAGE).tar.Z;
+
+$(FTPDIR)/$(PACKAGE)-$(VERSION).tar.Z:	$(PACKAGE)-$(VERSION).tar.Z
+	cp $(PACKAGE)-$(VERSION).tar.Z $@ 
+	chmod u+rw,g+rw,o=r $@
+
+tar.Z:	$(PACKAGE)-$(VERSION).tar.Z
+
+$(PACKAGE)-$(VERSION).tar.Z:	MANIFEST
+	dir=`basename \`pwd\`` \
+	&& id=$(PACKAGE)-$(VERSION) \
+	&& cd .. \
+	&& ln -s $$dir $$id \
+	&& tar -chof - `sed "s|^|$$id/|" $$id/MANIFEST` \
+	    | compress > $$id/$@ \
+	&& rm $$id
+
+MANIFEST:	FORCE_IT
+	@echo 1>&2 Creating MANIFEST
+	@$(MAKE) -s $(MFLAGS) $(LOCAL_MACROS) MANIFEST.echo > $@
+
+MANIFEST.echo:	FORCE_IT
+	@$(MAKE) -s $(MFLAGS) $(LOCAL_MACROS) \
+	    MANIFEST=`echo $(MANIFEST) | sed 's/MANIFEST//'` \
+	    ensure_manifest > /dev/null
+	@echo $(MANIFEST) | fmt -1
+	@if [ -n "$(SUBDIRS)" ]; then \
+	    subdirs="$(SUBDIRS)"; \
+	    for subdir in $$subdirs; do \
+		(cd $$subdir && \
+	        echo 1>&2 Creating $@ in `pwd` && \
+		$(MAKE) $(MFLAGS) $(LOCAL_MACROS) MANIFEST.echo | \
+		    sed "s|^|$$subdir/|") || exit 1; \
+	    done; \
+	else \
+	    :; \
+	fi
+
+ensure_manifest:	$(MANIFEST)
+
+# For the justification of the following Makefile rules, see node
+# `Automatic Remaking' in GNU Autoconf documentation.
+
+Makefile: $(TOP_SRCDIR)/config.status Makefile.in
+	CONFIG_FILES=$@ CONFIG_HEADERS= $(TOP_SRCDIR)/config.status
+
+config.h: stamp-h
+
+stamp-h: $(TOP_SRCDIR)/config.status $(srcdir)/config.h.in
+	CONFIG_FILES= CONFIG_HEADERS=config.h $(TOP_SRCDIR)/config.status
+
+config.status: configure
+	$(TOP_SRCDIR)/config.status --recheck
+
+configure: configure.in
+	cd $(srcdir) && autoconf
+
+config.h.in: stamp-h.in
+
+stamp-h.in: configure.in
+	cd $(srcdir) && autoheader
+# Use echo instead of date to avoid spurious conflicts for
+# people who use CVS, since stamp-h.in is distributed.
+	echo > $(srcdir)/$@
+
+# Tell versions [3.59,3.63) of GNU make not to export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:
+
+# dummy target as a dependency for forcing a rule to be always executed
+FORCE_IT:
