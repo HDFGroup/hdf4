@@ -4281,7 +4281,7 @@ const VOID *datap;
     int16      special;         /* Special code */
     int32      csize;           /* phsical chunk size */
     sp_info_block_t info_block; /* special info block */
-    int32      byte_count;      /* bytes to write */
+    uint32     byte_count;      /* bytes to write */
     uint8      platntsubclass;  /* the machine type of the current platform */
     uint8      outntsubclass;   /* the data's machine type */
     uintn      convert;         /* whether to convert or not */
@@ -4320,8 +4320,6 @@ const VOID *datap;
       {
           if (special == SPECIAL_CHUNKED)
             {  /* yes */
-                /* set number type */
-                DFKsetNT(var->HDFtype);
 
                 /* get ready to write */
                 handle->xdrs->x_op = XDR_ENCODE;
@@ -4371,10 +4369,12 @@ const VOID *datap;
                       if(convert) 
                         {
 #ifdef CHK_DEBUG
-                            fprintf(stderr,"SDwriteChunk: convert \n");
+        fprintf(stderr,"SDwriteChunk: convert, var->HDFsize=%d, var->HDFtype=%d \n",
+                var->HDFsize, var->HDFtype);
 #endif
+                            /* set number type */
                             DFKsetNT(var->HDFtype);
-                            DFKnumout((VOID *)datap, tBuf, (uint32) csize, 0, 0);
+                            DFKnumout((VOID *)datap, tBuf, byte_count, 0, 0);
                             status = HMCwriteChunk(var->aid, origin, tBuf);
                         } /* end if */
                       else 
@@ -4442,7 +4442,7 @@ VOID *datap;
     int16      special;         /* Special code */
     int32      csize;           /* phsical chunk size */
     sp_info_block_t info_block; /* special info block */
-    int32      byte_count;      /* bytes to read */
+    uint32     byte_count;      /* bytes to read */
     uint8      platntsubclass;  /* the machine type of the current platform */
     uint8      outntsubclass;   /* the data's machine type */
     uintn      convert;         /* whether to convert or not */
@@ -4481,9 +4481,6 @@ VOID *datap;
       {
           if (special == SPECIAL_CHUNKED)
             {  /* yes */
-                /* set number type */
-                DFKsetNT(var->HDFtype);
-
                 /* get ready to read */
                 handle->xdrs->x_op = XDR_DECODE;
 
@@ -4532,12 +4529,14 @@ VOID *datap;
                       if(convert) 
                         {
 #ifdef CHK_DEBUG
-                            fprintf(stderr,"SDreadChunk: convert \n");
+        fprintf(stderr,"SDreadChunk: convert, var->HDFsize=%d, var->HDFtype=%d \n",
+                var->HDFsize, var->HDFtype);
 #endif
                             status = HMCreadChunk(var->aid, origin, tBuf);
-                            /* convert chunk */
+                            /* set number type */
                             DFKsetNT(var->HDFtype);
-                            DFKnumin(tBuf, datap, (uint32) csize, 0, 0);
+                            /* convert chunk */
+                            DFKnumin(tBuf, datap, byte_count, 0, 0);
                         } /* end if */
                       else 
                           status = HMCreadChunk(var->aid, origin, datap);
