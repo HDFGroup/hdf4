@@ -63,4 +63,5 @@ mfhdf/hzip/hziptst.hdf -text
 mfhdf/hzip/hziptst_out.hdf -text
 mfhdf/libsrc/test1.nc -text
 mfhdf/libsrc/test_cdf.sav -text
+mfhdf/nctest/test_unlim.nc -text
 mfhdf/xdr/test_xdr.sav svneol=native#unset
