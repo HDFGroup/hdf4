@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1993/01/26 19:42:48  koziol
-Added support for reading and writing Little-Endian data on all
-platforms.  This has been tested on: Cray, Sun, and PCs so far.
+Revision 1.7  1993/03/29 17:21:03  chouck
+Fixed a prototype problem
 
+ * Revision 1.6  1993/01/26  19:42:48  koziol
+ * Added support for reading and writing Little-Endian data on all
+ * platforms.  This has been tested on: Cray, Sun, and PCs so far.
+ *
  * Revision 1.5  1993/01/19  05:56:03  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -140,7 +143,7 @@ void _HUGE *HDgetspace(uint32 qty)
     return((void _HUGE *)wfpTmp);
 }
 
-void _HUGE *HDregetspace(VOIDP vfp, uint32 new_size)
+VOIDP HDregetspace(VOIDP vfp, uint32 new_size)
 {
     char *FUNC="HDregetspace";
     HGLOBAL new_handle;         /* handle of the new memory block */
@@ -217,7 +220,7 @@ void _HUGE *HDgetspace(uint32 qty)
 #define MIN(a,b)    (((a)<(b)) ? (a) : (b))
 #endif
 
-void _HUGE *HDregetspace(VOIDP ptr, uint32 qty)
+VOIDP HDregetspace(VOIDP ptr, uint32 qty)
 {
     char *FUNC="HDregetspace";
     uint32 old_size;
@@ -277,9 +280,9 @@ void _HUGE *HDfreespace(void *ptr)
 
 
 #if defined PROTOTYPE
-void *HDgetspace(uint32 qty)
+VOIDP HDgetspace(uint32 qty)
 #else
-void *HDgetspace(qty)
+VOIDP HDgetspace(qty)
 uint32 qty;
 #endif /* PROTOTYPE */
 {
@@ -296,9 +299,9 @@ uint32 qty;
 }
 
 #if defined PROTOTYPE
-void *HDregetspace(VOIDP where, uint32 qty)
+VOIDP HDregetspace(VOIDP where, uint32 qty)
 #else
-void *HDregetspace(where, qty)
+VOIDP HDregetspace(where, qty)
 VOIDP where;
 uint32 qty;
 #endif /* PROTOTYPE */
@@ -316,10 +319,10 @@ uint32 qty;
 }
 
 #if defined PROTOTYPE
-void *HDfreespace(void *ptr)
+VOIDP HDfreespace(VOIDP ptr)
 #else
-void *HDfreespace(ptr)
-void *ptr;
+VOIDP HDfreespace(ptr)
+VOIDP ptr;
 #endif /* PROTOTYPE */
 {
     if (ptr!=NULL) free(ptr);
