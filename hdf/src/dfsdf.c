@@ -28,9 +28,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1993/01/04 19:17:36  sxu
-changed dfsdpre32 to dfsdpre32sdg
+Revision 1.7  1993/01/04 21:26:13  sxu
+delete dspre32 and dfsdpre32
 
+ * Revision 1.6  1993/01/04  19:17:36  sxu
+ * changed dfsdpre32 to dfsdpre32sdg
+ *
  * Revision 1.5  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -95,8 +98,6 @@ changed dfsdpre32 to dfsdpre32sdg
  *  dfsdrestart_:   Call DFSDrestart to get SDGs again from beginning of file
  *  dfsdputslice_:  Call DFSDIputslice to write slice to file
  *  dfsdendslice_:  Call DFSDendslice to end slice writes, write SDG to file
- *  dfsdpre32:      Call DFSDpre32 to test if the SDS was  written
- *                      using HDF library previous to HDF3.2
  *  dfsdsetnt_:     Call DFSDsetNT to set number type
  *  dfsdgetnt_:	    Call DFSDgetNT to get number type
  *  dfsdlastref_:   Call DFSDlastref to get ref of last SDS accessed
@@ -447,26 +448,6 @@ ndseslc()
     return(DFSDIendslice(1));
 }
 
-
-/*-----------------------------------------------------------------------------
- * Name:    dspre32
- * Purpose: test if the SDS was  written using HDF library previous 
- *          to HDF3.2
- * Returns: TRUE if written by 3.1, FALSE if by 3.2
- * Users:   HDF Fortran programmers
- * Method:  Invokes DFSDpre32
- * Remarks: 0 specifies default value
- *---------------------------------------------------------------------------*/
-
-        FRETVAL(intf)
-#ifdef PROTOTYPE
-ndspre32(void)
-#else
-ndspre32()
-#endif /* PROTOTYPE */
-{
-    return(DFSDpre32());
-}
 
 /*-----------------------------------------------------------------------------
  * Name:    dssnt
@@ -1321,26 +1302,6 @@ ndfsdendslice()
 }
 
 
-/*-----------------------------------------------------------------------------
- * Name:    dfsdpre32
- * Purpose: test if the SDS was  written using HDF library previous 
- *          to HDF3.2
- * Output:  ispre32 is 0 if written by 3.2, 1 if by 3.1
- * Returns: 0 on success, FAIL on failure with error set
- * Users:   HDF Fortran programmers
- * Method:  Invokes DFSDpre32
- * Remarks: 0 specifies default value
- *---------------------------------------------------------------------------*/
-
-        FRETVAL(intf)
-#ifdef PROTOTYPE
-ndfsdpre32(void)
-#else
-ndfsdpre32()
-#endif /* PROTOTYPE */
-{
-    return(DFSDpre32());
-}
 
 /*-----------------------------------------------------------------------------
  * Name:    dfsdsetnt
