@@ -14,17 +14,10 @@ package ncsa.hdf.jhv;
 import  java.awt.*;
 import  java.lang.*;
 import  ncsa.hdf.hdflib.*;
+import  ncsa.hdf.java.awt.*;
+import  ncsa.hdf.java.awt.event.*;
 
-
-//------------------------------------------------------------------
-//
-//  Upgraded to the JDK 1.1.1b Event Model.
-//   - Apu Kapadia  May 22nd, 1997.
-//
-//------------------------------------------------------------------
-
-
-
+//  Upgraded to the JDK 1.1.1b Event Model by Apu.
 public class JHVSDSImageControl extends Frame implements Runnable {
 
 	JHVImageCanvas imageCanvas;

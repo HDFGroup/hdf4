@@ -11,24 +11,22 @@
 
 package ncsa.hdf.jhv;
 
-import java.awt.image.*;
+import ncsa.hdf.java.awt.image.*;
+import ncsa.hdf.java.awt.*;
+import ncsa.hdf.java.awt.event.*;
 
+import java.awt.image.*;
 import java.lang.Thread;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import ncsa.hdf.hdflib.*;
 
-
-//---------------------------------------------------------------------------
-//
-// Upgraded to the JDK 1.1.1b Event Model.
-//   - Apu Kapadia May 21st, 1997.
-//
-//---------------------------------------------------------------------------
-
-
-/** This class will create the spreadsheet to display the dataset value. */
+/* This class will create the spreadsheet to display the dataset value. 
+ * Port to jdk-1.1 by apu. 
+ * @version  1.00 
+ * @auther   Xinjian Lu
+ */
 public class JHVDataFrame extends Frame implements AdjustmentListener, 
   ActionListener,
   ItemListener{
@@ -56,7 +54,7 @@ public class JHVDataFrame extends Frame implements AdjustmentListener,
     
     /** image operation */
     Checkbox  imageStyle = null;
-    
+
     /** Constructor of the class.
      * @param frame the object.
      * @param rect  the rectangle to specify the range of the dataset 
@@ -187,7 +185,7 @@ public class JHVDataFrame extends Frame implements AdjustmentListener,
     dataCanvas.repaint();
     
     // show component of the frame
-    show();
+    setVisible(true);
     
     // compute the cell position
     dataCanvas.computeCellPosition();
@@ -263,7 +261,6 @@ public class JHVDataFrame extends Frame implements AdjustmentListener,
 
   }
 
-
   /**
    * Called if an action occurs in the Component
    * @param evt the event
@@ -305,7 +302,6 @@ public class JHVDataFrame extends Frame implements AdjustmentListener,
     Toolkit.getDefaultToolkit().sync();
   }
 
-
   public void itemStateChanged(ItemEvent e)
   {
     if (dataCanvas.imageFrame != null) {
@@ -318,7 +314,6 @@ public class JHVDataFrame extends Frame implements AdjustmentListener,
       }
     
   }
-
 } // end of class JHVDataFrame
 
 /** This class is the implementation of the spreadsheet of the HDF object */
@@ -908,11 +903,16 @@ int m = (int)(height - (canvasHeight - p));
 
 
   
+
   public void mouseEntered(MouseEvent e) {}
+
   public void mouseExited(MouseEvent e) {}
+
   public void mouseClicked(MouseEvent e) {}
   
+
   public void mouseReleased(MouseEvent e) {}
+
   /**
    * Called if the mouse is down.
    * @param evt the event
@@ -952,9 +952,7 @@ int m = (int)(height - (canvasHeight - p));
 	 		       imgCanvas.datasetRange.y + selectedDataset.y,
                                1,
                                1);
-       imgCanvas.drawRectangle(subsetArea);
-
-   	    
+       imgCanvas.drawRectangle(subsetArea);	    
       }
     }
     
@@ -964,6 +962,7 @@ int m = (int)(height - (canvasHeight - p));
     
 
   public void mouseMoved(MouseEvent e) {}
+
   /**
    * Called if the mouse is draged.
    * @param evt the event
@@ -1748,7 +1747,8 @@ class JHVDataRangeCanvas extends Canvas {
       
       // first value
       int kk = datFrame.dataCanvas.hOffset + 
-	datFrame.dataCanvas.datasetRange.x;
+	datFrame.dataCanvas.datasetRange.x +
+	datFrame.imgCanvas.subsetRange.x ;
       
       for (int i=0; i<=colNumber; i++)  
 	if ((datFrame.dataCanvas.hOffset + i) <
@@ -1769,7 +1769,8 @@ class JHVDataRangeCanvas extends Canvas {
       int y = 1;  
       // first value
       int kk = datFrame.dataCanvas.vOffset + 
-	datFrame.dataCanvas.datasetRange.y;
+	datFrame.dataCanvas.datasetRange.y + 
+	datFrame.imgCanvas.subsetRange.y ;
       
       for (int i=1; i<=rowNumber; i++)  
 	if ((datFrame.dataCanvas.vOffset + i) <=

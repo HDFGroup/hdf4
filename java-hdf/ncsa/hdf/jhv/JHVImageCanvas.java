@@ -19,17 +19,16 @@ import java.awt.event.*;
 
 import ncsa.hdf.hdflib.*;
 import ncsa.hdf.palette.*;
+import ncsa.hdf.java.awt.image.*;
+import ncsa.hdf.java.awt.*;
+import ncsa.hdf.java.awt.event.*;
 
-//-------------------------------------------------------------------------------------
-//
-//  Upgraded to the JDK 1.1.1b Event Model.
-//   - Apu Kapadia May 21st, 1997.
-//
-//--------------------------------------------------------------------------------------
- /* This class implement full resolution image from HDF process,
+import ncsa.hdf.plots.*;
+
+/* This class implement full resolution image from HDF process,
   * by implementing the PaletteEditorAdapter interface the image
   * palette should be modified through  generic "Palette Editor"
-  * implemented in seprate package -xlu 7/97*/
+  * implemented in seprate package -xlu 7/97 */
 
 /** The image will be display on this canvas */
 public class JHVImageCanvas extends Canvas
@@ -75,6 +74,7 @@ public class JHVImageCanvas extends Canvas
 
   // data range
   boolean 	dataRangeFlag  = false;
+  // double[]	dataRange = new double[2];
   double min;
   double max;
 
@@ -120,7 +120,7 @@ public class JHVImageCanvas extends Canvas
     
   /** the indicator that the mouse has been draged */
   boolean  dragFlag  =  false;
- 
+
   /** the indicator of the mouse position */
   boolean mouseOnImageFlag = false;
     
@@ -164,10 +164,20 @@ public class JHVImageCanvas extends Canvas
   PaletteEditor paletteEditor;
 
   // indicator to display the coordinates.
-  boolean	showCoordinate = true;
+  boolean	showCoordinate = false;
 
   // coordinate info.
   String	coorInfo = "";
+
+  // subset range of an image
+  Rectangle 	subsetRange;
+
+  // display image value mode, pixel or digital value
+  int		dispImageDataMode = JHVImageFrame.NONE_VALUE;
+  int		imagePlotMode     = JHVImageFrame.NONE_PLOT;
+
+  // plot of  histogram and radial plot
+  XYPlot	aPlot, hPlot;
 
   /** new constructor for image canvas
    * @param frame the frame of this object
@@ -190,6 +200,17 @@ public class JHVImageCanvas extends Canvas
 
     addMouseListener(this);
     addMouseMotionListener(this);
+  }
+
+  /** new constructor for image canvas
+   * @param frame the frame of this object
+   */
+  public JHVImageCanvas(JHVImageFrame frame, Rectangle subset) {
+
+    this(frame);
+
+    // keep subset image range
+    this.subsetRange = subset;
   }
 
   /**
@@ -220,8 +241,6 @@ public class JHVImageCanvas extends Canvas
 	
 	// enable adjustMenuItem
 	imageFrame.adjustMenuItem.setEnabled(true);
-	
-	
 	break;
 	
       case HDFObjectNode.Vdata:
@@ -250,6 +269,8 @@ public class JHVImageCanvas extends Canvas
       The dataset range may be smaller than the actual dataset range, fill the 
       value if bigger or smaller than specified dataset range.  Native method
       makeImageDataByRange() take charge of that. 
+      Date: 9-16-97
+      Native method makeImageDataByRange() has been taken off and 
       **************************************************************/
     HDFLibrary hdf = app.hdf;
     
@@ -261,11 +282,11 @@ public class JHVImageCanvas extends Canvas
   	// make image data
       	boolean cvFlag = true;
       	if (dataRangeFlag) {
-	  cvFlag = app.makeImageDataByRange( hdfData, min, max,
+	  cvFlag = ImageDataConverter.makeImageDataByRange( hdfData, min, max,
 			     hdfDataType, imageWidth, imageHeight, (int)0,  imageData);
         }
         else {
-	  cvFlag = app.makeImageData(hdfData,hdfDataType,
+	  cvFlag = ImageDataConverter.makeImageData(hdfData,hdfDataType,
 				     imageWidth,imageHeight,
 			       		 0, imageData);
 	}
@@ -301,17 +322,15 @@ public class JHVImageCanvas extends Canvas
     	boolean cvFlag = true;
       	if (dataRangeFlag) {   
 	
-	  cvFlag = app.makeImageDataByRange(hdfData,min, max,
+	  cvFlag = ImageDataConverter.makeImageDataByRange(hdfData,min, max,
 			hdfDataType, imageWidth,imageHeight,
 					    0, imageData);
         }
         else {
-	  cvFlag = app.makeImageData(hdfData,hdfDataType,
+	  cvFlag = ImageDataConverter.makeImageData(hdfData,hdfDataType,
 				     imageWidth,imageHeight,
 				     0, imageData);
 	}
-	
-	
 	
  	if (cvFlag) { // succed to convert dataset.
 	  
@@ -328,7 +347,11 @@ public class JHVImageCanvas extends Canvas
 					  imagePalette,1);
         }
       }
-    }
+    }// for (int i=2; i<=numberOfImage; i++) {
+ 
+    // repaint image
+    setImage(images[0]);
+
   }
   
 
@@ -339,7 +362,6 @@ public class JHVImageCanvas extends Canvas
 
     HDFLibrary hdf = new HDFLibrary();
     
-
     // set the reference number
     if (hdf.DFR8readref(filename, node.ref) == false)
       return;
@@ -383,11 +405,12 @@ public class JHVImageCanvas extends Canvas
 
     // for animation
     images = new Image[1];
-    
+
     for (int i=1; i<=1 ;i++)  {
       images[i-1] = createRasterImage(imageData, imageWidth, imageHeight,
 				      imagePalette,i);	  
-	}
+    }
+    setImage(images[0]);
   }
 
   /** read 24-raster  image data from the HDF file 
@@ -514,11 +537,13 @@ public class JHVImageCanvas extends Canvas
     boolean hasPalette = false;
     
     // image width
-    int w = dim_sizes[0];
-    
+    // int w = dim_sizes[0];
+    int w = subsetRange.width;
+
     // image height;
-    int h = dim_sizes[1];
-    
+    // int h = dim_sizes[1];
+    int h = subsetRange.height;
+
     // image data size;
     int dataSize = w*h*ncomp*hdf.DFKNTsize(nt);
     
@@ -540,11 +565,11 @@ public class JHVImageCanvas extends Canvas
     else
       hasPalette = true;
     
-    
     int[] lutInfo = new int[4];
     // Reminder to myselef.
     // GRgetlutinfo() does work when having aa access to the HDF file
     // created by DFR8 or DF24 interface.
+    /*******************************************************
     if( hdf.GRgetlutinfo( lutid, lutInfo)) {
       hasPalette = true;
     } else {
@@ -557,8 +582,12 @@ public class JHVImageCanvas extends Canvas
     } else {
       hasPalette = true;
     }
-    
+ 
     // assign the palette
+    //int lutSize = lutInfo[0] * lutInfo[3] * hdf.DFKNTsize(lutInfo[1]);
+    //char[] lutDat = new char[lutSize];
+    *******************************************************/
+
     // set interlace to read	
     hdf.GRreqlutil(riid, HDFConstants.MFGR_INTERLACE_PIXEL);	
     
@@ -567,25 +596,27 @@ public class JHVImageCanvas extends Canvas
       // get palette (easy processing)
       ;  	
     }
-    else  { // default	
-      for (int i=0; i<256; i++)
-	for (int j=0; j<3; j++)  
-	  imagePalette[i*3+j] = (byte)i;
+    else  { // default	   
+      // try rainbow
+      imagePalette = null;
+      imagePalette = getPaletteOfRainbow();
     }
     
     // read image data	
     int start[] = new int[2];
     int stride[]= new int[2];
     int count[] = new int[2];
-    
-    start[0] = 0;
-    start[1] = 0;
-    
-    stride[0] = 1;
+     
+    start[0] = subsetRange.x;
+    start[1] = subsetRange.y;
+ 
+     stride[0] = 1;
     stride[1] = 1;
     
-    count[0] = w   ;
-    count[1] = h   ;
+    // count[0] = w   ;
+    // count[1] = h   ;
+    count[0] = subsetRange.width;
+    count[1] = subsetRange.height;
     
     // read flag
     boolean readFlag = hdf.GRreadimage(riid,start,stride,count,hdfData);
@@ -603,7 +634,7 @@ public class JHVImageCanvas extends Canvas
     imageData = new byte[imageHeight*imageWidth];
     
     for (int i=1; i<=numberOfImage ;i++) {
-      if (app.makeImageData(hdfData,hdfDataType,
+      if (ImageDataConverter.makeImageData(hdfData,hdfDataType,
 			      imageWidth,imageHeight,
 			      (imageWidth*imageHeight*(i-1)),
 			      imageData)) {
@@ -611,7 +642,8 @@ public class JHVImageCanvas extends Canvas
 					imagePalette,1);	
 	}
     }
-    
+    // repaint image
+    setImage(images[0]);   
   }
   
 
@@ -670,7 +702,6 @@ public class JHVImageCanvas extends Canvas
     
     // return value
     boolean retVal = true;
-    
     try {
       switch(node.type) {
       case HDFObjectNode.RIS8:
@@ -686,7 +717,7 @@ public class JHVImageCanvas extends Canvas
 	
 	// read data
 	if(readSDS(app.hdfFile, planeNumber))  {
-	 retVal = app.makeImageData(hdfData,hdfDataType,
+	 retVal = ImageDataConverter.makeImageData(hdfData,hdfDataType,
 				    imageWidth,imageHeight,
 				    0,   // start position
 				    imageData);
@@ -699,11 +730,8 @@ public class JHVImageCanvas extends Canvas
       case HDFObjectNode.Vgroup:
 	break;
       }
-      
-    } catch (HDFException e) {
-	System.out.println("Warning: Exception caught and ignored (readDataset)");
-    }
-    return retVal;
+      } catch (HDFException e) {};
+      return retVal;
   }
   
 
@@ -728,7 +756,9 @@ public class JHVImageCanvas extends Canvas
       Date: 3-12-97
       Add on line to  read the dataset range so that we can create image
       by dataset range if dataset range is exist! 
-      **************************************************************/
+      Date: 6-2-97
+      Add a possiblity to handle subset process of an SDS.
+    **************************************************************/
     
     boolean retVal = false;
     int sdsid      = -1;
@@ -756,17 +786,30 @@ public class JHVImageCanvas extends Canvas
 	ss[0] = name;
 	int  dimsize[]     = new int[16];
 	if (hdf.SDgetinfo(sdsid, ss, dimsize, SDInfo)) {
-	name = ss[0];
+	  name = ss[0];
 	  retVal = readSDSData(sdsid, SDInfo[0], SDInfo[1], dimsize, plane);  
 
 	  double mm[] = new double[2];
 	  // check to see max. or min.
 	  dataRangeFlag = hdf.SDgetrange(sdsid, mm);
-	  max = mm[0];
-	  min = mm[1];  
-	}
+	
+	  // if pre-defined range attribute of SDS is not exist, gets it from 
+   	  // the value calculated before displaying the preview image
+	  if (!dataRangeFlag) {
+	    dataRangeFlag = true;
+	    //dataRange[0] = app.hdfCanvas.getMaxValue();
+	    //dataRange[1] = app.hdfCanvas.getMinValue();
+ 	    max = app.hdfCanvas.getMaxValue();
+	    min = app.hdfCanvas.getMinValue();
+	  }
+	  else {
+	  	max = mm[0];
+	  	min = mm[1]; 
+	  } 
+	} // if (hdf.SDgetinfo(sdsid, ss, dimsize, SDInfo)) {
       } 
-    } 
+    }  // if (index == HDFConstants.FAIL) 
+
     hdf.SDendaccess(sdsid);
     return (retVal);
   }
@@ -799,87 +842,82 @@ public class JHVImageCanvas extends Canvas
   /** Return the RAINBOW palette 
    * rgb rgb rgb rgb rgb ....
    */
-  public  byte[] getPaletteOfRainbow()  {
-    
-    
-    byte[][]  values={	
-      
-      {
-	0,  4,  9, 13, 18, 22, 27, 31, 36, 40, 45, 50, 54, 58, 61, 64,
-	68, 69, 72, 74, 77, 79, 80, 82, 83, 85, 84, 86, 87, 88, 86, 87,
-	87, 87, 85, 84, 84, 84, 83, 79, 78, 77, 76, 71, 70, 68, 66, 60,
-	58, 55, 53, 46, 43, 40, 36, 33, 25, 21, 16, 12,  4,  0,  0,  0,
-	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,
-	8, 12, 21, 25, 29, 33, 42, 46, 51, 55, 63, 67, 72, 76, 80, 89,
-	93, 97,101,110,114,119,123,-125,-121,-116,-112,-103,-99,-95,-91,-87,
--78,-74,-69,-65,-57,-53,-48,-44,-35,-31,-27,-23,-14,-10,-6,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
-      },
-      
-      {
-	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,  8,
-	16, 21, 25, 29, 38, 42, 46, 51, 55, 63, 67, 72, 76, 84, 89, 93,
-	97,106,110,114,119,127,-125,-121,-116,-112,-104,-99,-95,-91,-82,-78,
--74,-69,-61,-57,-53,-48,-40,-36,-31,-27,-23,-14,-10,-6,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--6,-14,-18,-23,-27,-35,-40,-44,-48,-57,-61,-65,-69,-78,-82,-86,
--91,-95,-103,-108,-112,-116,-125,127,123,119,110,106,102, 97, 89, 85,
-	80, 76, 72, 63, 59, 55, 51, 42, 38, 34, 29, 21, 17, 12,  8,  0
-      },
-      
-      {
-	0,  3,  7, 10, 14, 19, 23, 28, 32, 38, 43, 48, 53, 59, 63, 68,
-	72, 77, 81, 86, 91, 95,100,104,109,113,118,122,127,-124,-120,-115,
--111,-106,-102,-97,-93,-88,-83,-79,-74,-70,-65,-61,-56,-52,-47,-42,
--38,-33,-29,-24,-20,-15,-11,-6,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-10,
--14,-18,-23,-31,-36,-40,-44,-53,-57,-61,-65,-69,-78,-82,-86,-91,
--99,-104,-108,-112,-121,-125,127,123,114,110,106,102, 97, 89, 84, 80,
-	76, 67, 63, 59, 55, 46, 42, 38, 34, 25, 21, 16, 12,  8,  0,  0,
-	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0
-      }
-      
-    };
-    
-    
-    // number of color
-    int  ncolors = 256;
-    
-    byte retPal[] = new byte[768];
-    
-    for (int i=0; i<256; i += 1) {
-      
-      retPal[3*i]   = (byte)values[0][i];
-      retPal[3*i+1] = (byte)values[1][i];
-      retPal[3*i+2] = (byte)values[2][i];
-    }
-    
-    return retPal;
-    
-  }
-  
+ public  byte[] getPaletteOfRainbow()  {
+
+	int[] rainbowValues = {  
+
+   // rgb,rgb, ......
+   0x00, 0x00, 0x00, 0x7c, 0x00, 0xff, 0x78, 0x00, 0xfe, 0x73, 0x00, 0xff,
+   0x6f, 0x00, 0xfe, 0x6a, 0x00, 0xff, 0x66, 0x00, 0xfe, 0x61, 0x00, 0xff,
+   0x5d, 0x00, 0xfe, 0x58, 0x00, 0xff, 0x54, 0x00, 0xfe, 0x4f, 0x00, 0xff,
+   0x4b, 0x00, 0xfe, 0x46, 0x00, 0xff, 0x42, 0x00, 0xfe, 0x3d, 0x00, 0xff,
+   0x39, 0x00, 0xfe, 0x34, 0x00, 0xff, 0x30, 0x00, 0xfe, 0x2b, 0x00, 0xff,
+   0x27, 0x00, 0xfe, 0x22, 0x00, 0xff, 0x1e, 0x00, 0xfe, 0x19, 0x00, 0xff,
+   0x15, 0x00, 0xfe, 0x10, 0x00, 0xff, 0x0c, 0x00, 0xfe, 0x07, 0x00, 0xff,
+   0x03, 0x00, 0xfe, 0x00, 0x02, 0xff, 0x00, 0x06, 0xfe, 0x00, 0x0b, 0xff,
+   0x00, 0x0f, 0xfe, 0x00, 0x14, 0xff, 0x00, 0x18, 0xfe, 0x00, 0x1d, 0xff,
+   0x00, 0x21, 0xfe, 0x00, 0x26, 0xff, 0x00, 0x2a, 0xfe, 0x00, 0x2f, 0xff,
+   0x00, 0x33, 0xfe, 0x00, 0x38, 0xff, 0x00, 0x3c, 0xfe, 0x00, 0x41, 0xff,
+   0x00, 0x45, 0xfe, 0x00, 0x4a, 0xff, 0x00, 0x4e, 0xfe, 0x00, 0x53, 0xff,
+   0x00, 0x57, 0xfe, 0x00, 0x5c, 0xff, 0x00, 0x60, 0xfe, 0x00, 0x65, 0xff,
+   0x00, 0x69, 0xfe, 0x00, 0x6e, 0xff, 0x00, 0x72, 0xfe, 0x00, 0x77, 0xff,
+   0x00, 0x7a, 0xfe, 0x00, 0x80, 0xff, 0x00, 0x83, 0xfe, 0x00, 0x89, 0xff,
+   0x00, 0x8c, 0xfe, 0x00, 0x92, 0xff, 0x00, 0x95, 0xfe, 0x00, 0x9b, 0xff,
+   0x00, 0x9e, 0xfe, 0x00, 0xa4, 0xff, 0x00, 0xa7, 0xfe, 0x00, 0xad, 0xff,
+   0x00, 0xb0, 0xfe, 0x00, 0xb6, 0xff, 0x00, 0xb9, 0xfe, 0x00, 0xbf, 0xff,
+   0x00, 0xc2, 0xfe, 0x00, 0xc8, 0xff, 0x00, 0xcb, 0xfe, 0x00, 0xd1, 0xff,
+   0x00, 0xd4, 0xfe, 0x00, 0xda, 0xff, 0x00, 0xdd, 0xfe, 0x00, 0xe3, 0xff,
+   0x00, 0xe6, 0xfe, 0x00, 0xec, 0xff, 0x00, 0xf0, 0xfe, 0x00, 0xf5, 0xff,
+   0x00, 0xf9, 0xfe, 0x00, 0xfe, 0xff, 0x00, 0xfe, 0xfa, 0x00, 0xff, 0xf7,
+   0x00, 0xfe, 0xf1, 0x00, 0xff, 0xee, 0x00, 0xfe, 0xe8, 0x00, 0xff, 0xe5,
+   0x00, 0xfe, 0xdf, 0x00, 0xff, 0xdc, 0x00, 0xfe, 0xd6, 0x00, 0xff, 0xd3,
+   0x00, 0xfe, 0xcd, 0x00, 0xff, 0xca, 0x00, 0xfe, 0xc4, 0x00, 0xff, 0xc1,
+   0x00, 0xfe, 0xbb, 0x00, 0xff, 0xb8, 0x00, 0xfe, 0xb2, 0x00, 0xff, 0xaf,
+   0x00, 0xfe, 0xa9, 0x00, 0xff, 0xa6, 0x00, 0xfe, 0xa0, 0x00, 0xff, 0x9d,
+   0x00, 0xfe, 0x97, 0x00, 0xff, 0x94, 0x00, 0xfe, 0x8e, 0x00, 0xff, 0x8b,
+   0x00, 0xfe, 0x85, 0x00, 0xff, 0x82, 0x00, 0xfe, 0x7d, 0x00, 0xff, 0x79,
+   0x00, 0xfe, 0x74, 0x00, 0xff, 0x70, 0x00, 0xfe, 0x6b, 0x00, 0xff, 0x67,
+   0x00, 0xfe, 0x62, 0x00, 0xff, 0x5e, 0x00, 0xfe, 0x59, 0x00, 0xff, 0x55,
+   0x00, 0xfe, 0x50, 0x00, 0xff, 0x4c, 0x00, 0xfe, 0x47, 0x00, 0xff, 0x43,
+   0x00, 0xfe, 0x3e, 0x00, 0xff, 0x3a, 0x00, 0xfe, 0x35, 0x00, 0xff, 0x31,
+   0x00, 0xfe, 0x2c, 0x00, 0xff, 0x28, 0x00, 0xfe, 0x23, 0x00, 0xff, 0x1f,
+   0x00, 0xfe, 0x1a, 0x00, 0xff, 0x16, 0x00, 0xfe, 0x11, 0x00, 0xff, 0x0d,
+   0x00, 0xfe, 0x08, 0x00, 0xff, 0x04, 0x01, 0xfe, 0x00, 0x05, 0xff, 0x00,
+   0x0a, 0xfe, 0x00, 0x0e, 0xff, 0x00, 0x13, 0xfe, 0x00, 0x17, 0xff, 0x00,
+   0x1c, 0xfe, 0x00, 0x20, 0xff, 0x00, 0x25, 0xfe, 0x00, 0x29, 0xff, 0x00,
+   0x2e, 0xfe, 0x00, 0x32, 0xff, 0x00, 0x37, 0xfe, 0x00, 0x3b, 0xff, 0x00,
+   0x40, 0xfe, 0x00, 0x44, 0xff, 0x00, 0x49, 0xfe, 0x00, 0x4d, 0xff, 0x00,
+   0x52, 0xfe, 0x00, 0x56, 0xff, 0x00, 0x5b, 0xfe, 0x00, 0x5f, 0xff, 0x00,
+   0x64, 0xfe, 0x00, 0x68, 0xff, 0x00, 0x6d, 0xfe, 0x00, 0x71, 0xff, 0x00,
+   0x76, 0xfe, 0x00, 0x7b, 0xff, 0x00, 0x7e, 0xfe, 0x00, 0x84, 0xff, 0x00,
+   0x87, 0xfe, 0x00, 0x8d, 0xff, 0x00, 0x90, 0xfe, 0x00, 0x96, 0xff, 0x00,
+   0x99, 0xfe, 0x00, 0x9f, 0xff, 0x00, 0xa2, 0xfe, 0x00, 0xa8, 0xff, 0x00,
+   0xab, 0xfe, 0x00, 0xb1, 0xff, 0x00, 0xb4, 0xfe, 0x00, 0xba, 0xff, 0x00,
+   0xbd, 0xfe, 0x00, 0xc3, 0xff, 0x00, 0xc6, 0xfe, 0x00, 0xcc, 0xff, 0x00,
+   0xcf, 0xfe, 0x00, 0xd5, 0xff, 0x00, 0xd8, 0xfe, 0x00, 0xde, 0xff, 0x00,
+   0xe1, 0xfe, 0x00, 0xe7, 0xff, 0x00, 0xea, 0xfe, 0x00, 0xf0, 0xff, 0x00,
+   0xf3, 0xfe, 0x00, 0xf9, 0xff, 0x00, 0xfc, 0xfe, 0x00, 0xff, 0xfc, 0x00,
+   0xfe, 0xf7, 0x00, 0xff, 0xf3, 0x00, 0xfe, 0xee, 0x00, 0xff, 0xea, 0x00,
+   0xfe, 0xe5, 0x00, 0xff, 0xe1, 0x00, 0xfe, 0xdc, 0x00, 0xff, 0xd8, 0x00,
+   0xfe, 0xd3, 0x00, 0xff, 0xcf, 0x00, 0xfe, 0xca, 0x00, 0xff, 0xc6, 0x00,
+   0xfe, 0xc1, 0x00, 0xff, 0xbd, 0x00, 0xfe, 0xb8, 0x00, 0xff, 0xb4, 0x00,
+   0xfe, 0xaf, 0x00, 0xff, 0xab, 0x00, 0xfe, 0xa6, 0x00, 0xff, 0xa2, 0x00,
+   0xfe, 0x9d, 0x00, 0xff, 0x99, 0x00, 0xfe, 0x94, 0x00, 0xff, 0x90, 0x00,
+   0xfe, 0x8b, 0x00, 0xff, 0x87, 0x00, 0xfe, 0x83, 0x00, 0xff, 0x7e, 0x00,
+   0xfe, 0x7a, 0x00, 0xff, 0x75, 0x00, 0xfe, 0x71, 0x00, 0xff, 0x6c, 0x00,
+   0xfe, 0x68, 0x00, 0xff, 0x63, 0x00, 0xfe, 0x5f, 0x00, 0xff, 0x5a, 0x00,
+   0xfe, 0x56, 0x00, 0xff, 0x51, 0x00, 0xfe, 0x4d, 0x00, 0xff, 0x48, 0x00,
+   0xfe, 0x44, 0x00, 0xff, 0x3f, 0x00, 0xfe, 0x3b, 0x00, 0xff, 0x36, 0x00,
+   0xfe, 0x32, 0x00, 0xff, 0x2d, 0x00, 0xfe, 0x29, 0x00, 0xff, 0x24, 0x00,
+   0xfe, 0x20, 0x00, 0xff, 0x1b, 0x00, 0xfe, 0x17, 0x00, 0xff, 0x12, 0x00,
+   0xfe, 0x0e, 0x00, 0xff, 0x09, 0x00, 0xff, 0x05, 0x00, 0xff, 0xff, 0xff };
+
+	byte[] retVal = new byte[768];
+	for (int kk=0; kk<768; kk++) 
+	    retVal[kk] = (byte)rainbowValues[kk];  
+	return retVal;
+ }
+ 
 
   /** create the raster image by  specified image data
    * @param imgData the image data(pixel value)
@@ -944,11 +982,13 @@ public class JHVImageCanvas extends Canvas
       return false;
     
     // image width
-    int w = dims[rank-1];
-    
+    // int w = dims[rank-1];
+    int w = subsetRange.width;
+
     // image height;
-    int h = dims[rank-2];
-    
+    // int h = dims[rank-2];
+    int h = subsetRange.height;
+
     if ((w*h) < 0)
       return false;
     
@@ -965,7 +1005,6 @@ public class JHVImageCanvas extends Canvas
       // try rainbow as default
       imagePalette = null;
       imagePalette = getPaletteOfRainbow();
-
     }
     
     // read sds data	
@@ -976,26 +1015,35 @@ public class JHVImageCanvas extends Canvas
     stride[0] = 1;
     stride[1] = 1;
     stride[2] = 1;
-    
-    if (rank == 3) {	
+     
+    if (rank == 3) {
+	
       start[0] = plane -1;
-      start[1] = 0;
-      start[2] = 0;	
-      
+      // start[1] = 0;
+      // start[2] = 0;	
+      start[1] = subsetRange.y;
+      start[2] = subsetRange.x;
+ 
       count[2] = w   ;  // x 
       count[1] = h   ;  // y
       count[0] = 1   ;
+	
     }
     else {
-      start[0] = 0;
-      start[1] = 0;
-      
+      // start[0] = 0;
+      // start[1] = 0;
+         
+      start[0] = subsetRange.y;
+      start[1] = subsetRange.x;
+ 
       count[0] = h   ;  // y 
       count[1] = w   ;  // x
     }
     
     boolean readFlag = hdf.SDreaddata(sdsid,start,stride,count,hdfData);
-    
+    // System.out.println("readSDS: " + readFlag);
+
+    // set data type;
     this.hdfDataType = nt;
     
     // set number of the image(converted)
@@ -1470,7 +1518,7 @@ public class JHVImageCanvas extends Canvas
 	  imageFrame.numPlane = currentPlaneNumber;
 
 	  // set image for hdfCanvas
-	  app.hdfCanvas.setImage(image);
+	  // app.hdfCanvas.setImage(image);
 	  
 	  // set image for current canvas
 	  setImage(image);
@@ -1498,7 +1546,7 @@ public class JHVImageCanvas extends Canvas
   	  imageFrame.numPlane = currentPlaneNumber;
 
 	  // set image for hdfCanvas
-	  app.hdfCanvas.setImage(image);
+	  // app.hdfCanvas.setImage(image);
 	  
 	  // set image for current canvas
 	  setImage(image);
@@ -1644,10 +1692,14 @@ public class JHVImageCanvas extends Canvas
 
       // set image area;
       imageArea.setBounds(startx, starty, imageWidth, imageHeight);
-      
-      if (dragFlag)
-	g.drawRect(dragArea.x, dragArea.y, dragArea.width, dragArea.height);
-
+   
+      // mouse pressed
+      if (dragFlag) { 
+         if ((imagePlotMode != JHVImageFrame.RADIAL_PLOT) && (dragArea != null))
+	 	g.drawRect(dragArea.x, dragArea.y, dragArea.width, dragArea.height);
+      	 else 
+	 	g.drawRect(startx+tx, my-1+ty, getImageWidth(), 2); 
+      }
       // draw the subset area to response the data selected
       if (drawSubsetFlag) {
 	g.draw3DRect(drawSubsetArea.x,
@@ -1718,21 +1770,20 @@ public class JHVImageCanvas extends Canvas
 
   /**
    * Called if the mouse is up.
-   * @param evt the event
-   * @param x the x coordinate
-   * @param y the y coordinate
-   * @see java.awt.Component#mouseUp
    */
   public void mouseReleased(MouseEvent e)
   {
     int x = e.getX();
     int y = e.getY();
+  
+    if (imagePlotMode == JHVImageFrame.RADIAL_PLOT)
+	dragFlag = false;
 
     if (dragArea == null)
 	return;    
  
     // set show coordinate flag
-    setShowCoordinate(false);
+    // setShowCoordinate(false);
 
     // compute the dataset range based on the draged area & scroll offset
     // if the dragArea is inside the image area
@@ -1784,10 +1835,6 @@ public class JHVImageCanvas extends Canvas
 
   /**
    * Called if the mouse is down.
-   * @param evt the event
-   * @param x the x coordinate
-   * @param y the y coordinate
-   * @see java.awt.Component#mouseDown
    */
   public void mousePressed(MouseEvent e)
   {
@@ -1797,22 +1844,197 @@ public class JHVImageCanvas extends Canvas
     // keep the mouse position
     currentDragArea = new Rectangle(x+tx, y+ty, 0,0);
 
+    if (imagePlotMode == JHVImageFrame.RADIAL_PLOT)  // radial plots
+  	// radial plots test
+    	radialPlots(new Rectangle(0,x-starty,1, 0 )); 
+    else if (imagePlotMode == JHVImageFrame.HISTOGRAM_PLOT)
+	     plotHistogram(new Rectangle(1,1));
+    
   }
   
 
+   // make a radial plot for a selectd line of an image,
+   // the horizontal line looks like (x,y, x+w, y)
+   void radialPlots(Rectangle rect) {
+
+     // working on horizontal line
+     try {
+	// System.out.println(rect);
+	int x = rect.x;
+	int y = rect.y;
+
+	int w = imageWidth;
+    	int h = imageHeight; 
+	
+	double[] rArray = new double[rect.width];
+
+	int firstPos = 0;
+	
+	for (int i=x; i<x+rect.width; i++) {
+		double retDat = (double)getData(i, y);
+		rArray[i-x] = retDat;
+	}
+
+	double[][] pArray = new double[2][rect.width];
+
+	for (int k =0; k<rect.width; k++) {
+	    pArray[1][k] = (double)rArray[k];
+	    pArray[0][k] = (double)(k+x);
+	}
+
+	int fx = subsetRange.x;
+	int fy = subsetRange.y;
+
+	String xStr = "(";
+	xStr = xStr + Integer.toString(x+fx) + "," + Integer.toString(y+fy) + ") ~ (" ;
+	xStr = xStr + Integer.toString(x+w+fx-1) + "," + Integer.toString(y+fy) + ")";
+
+	if (aPlot==null)  {
+	   aPlot= new XYPlot(new Frame(), pArray);
+	   // aPlot= new XYPlot((Frame)imageFrame, pArray);
+	}
+	else {
+	   aPlot.setData(pArray);
+   	   aPlot.show();
+	}
+
+	// set title
+	aPlot.setTitle("Radial Plot of an Image");
+	aPlot.setXAxisTag(xStr);
+	aPlot.setYAxisTag("Pixel Value");
+
+	if (dispImageDataMode != JHVImageFrame.DIGIT_VALUE)
+	   // image mode and pixel value is at (0,255)
+	   aPlot.setYAxisRange(0,255);
+	else
+	   if (dataRangeFlag)
+		aPlot.setYAxisRange(min,max);
+	   else {
+
+		double yMin, yMax;
+		yMin = yMax = rArray[0];
+		for (int i=0; i<rArray.length; i++) {
+	    		double tmp = rArray[i];
+
+	    		yMin = Math.min(tmp, yMin);
+	    		yMax = Math.max(tmp, yMax);
+		}
+		aPlot.setYAxisRange(yMin, yMax);
+	    }
+       } catch (HDFException e) {};
+    }
+
+   // make a histogram graphic by selected area of an image, and
+   // histogram display is based on image's palette
+   void plotHistogram(Rectangle rect) {
+
+	// selected range
+	int x = rect.x;
+	int y = rect.y;
+
+	int w = imageWidth;
+    	int h = imageHeight;
+	
+	// distributed data value
+	double pArray[][] = new double[2][256];
+
+	// retrieve data distribution
+	int firstPos = 0;	
+	for (int i=x; i<x+rect.width; i++) {
+	    for (int j=y; j<y+rect.height; j++) {
+
+		int pos = (j * w + i);
+		pos += firstPos;
+		int retDat = ((byte)imageData[pos]);
+		if (retDat < 0)  retDat += 256;
+
+		pArray[1][retDat] += 1;
+	   }
+	}
+
+	double maxVal = max;
+	double minVal = min;
+	if  (maxVal == minVal) {
+	    maxVal = 255;
+	    minVal = 0;
+	}
+	// scale value of x-axis of histogram
+	for (int k =0; k<256; k++) {
+		if (dispImageDataMode != JHVImageFrame.DIGIT_VALUE)
+	 	   pArray[0][k] = (double)k;   // pixcel value
+		else {
+		   // physical value
+		   double deta = (maxVal-minVal)/255;
+		   pArray[0][k] = minVal +(double)deta*k;
+		}
+	}
+
+	if (hPlot==null) {
+
+	   // new instance of histogram
+	   //hPlot= new XYPlot(pArray);
+	   hPlot = new XYPlot(new Frame(), pArray);
+	   // hPlot = new XYPlot((Frame)imageFrame, pArray);
+	   
+  	   Color colors[] = new Color[256];
+    	   for (int ci=0; ci<256; ci++) {
+		int red = (byte)imagePalette[ci*3];
+		if (red<0) red += 256;
+		int green = (byte)imagePalette[ci*3+1];
+		if (green<0) green += 256;
+		int blue = (byte)imagePalette[ci*3+2];
+		if (blue<0) blue += 256;
+
+		colors[ci] = new Color(red,green,blue);
+		hPlot.setColors(colors);
+    	   }
+	} 
+	else {
+	   hPlot.setData(pArray);
+	   hPlot.show();
+	}
+
+	if (dispImageDataMode == JHVImageFrame.DIGIT_VALUE)  
+	   hPlot.setXAxisRange(minVal,maxVal);
+	else
+	   hPlot.setXAxisRange(0,255);
+
+	// set title
+	hPlot.setTitle("Histogram of an Image");
+	hPlot.setXAxisTag("Pixel Value");
+	hPlot.setYAxisTag("Pixel Number");
+
+	// hPlot.setPlotMode(hPlot.plotPane.HISTOGRAM);
+ 	hPlot.setPlotMode(XYPlotPane.HISTOGRAM);
+
+     }
+
   /**
    * Called if the mouse is dragged (the mouse button is down)
-   * @param evt the event
-   * @param x the x coordinate
-   * @param y the y coordinate
-   * @see java.awt.Component#mouseDrag
    */
-  public void mouseDragged(MouseEvent e) 
-  {
+  public void mouseDragged(MouseEvent e) {
+
     int x = e.getX();
     int y = e.getY();
     dragFlag = true;
     
+    // set mouse point
+    mx = x;
+    my = y;
+
+    if (imagePlotMode == JHVImageFrame.RADIAL_PLOT)  { // radial plots
+	// radial plots
+	dragArea = null;  // force to skip when mouse released  
+	checkMousePosition(mx,my);
+
+	if (mouseOnImageFlag) {	
+	   repaint();
+    	   // radial plots test
+    	   radialPlots(new Rectangle(0,my-starty+ty,getImageWidth(), 0 )); 
+	} 
+    } 
+    else  {
+
     // resize the draged area
     currentDragArea.setSize(x-currentDragArea.x + tx, y-currentDragArea.y + ty);
     
@@ -1822,21 +2044,50 @@ public class JHVImageCanvas extends Canvas
     
     // make sure that drag area can be drawable
     dragArea = getDrawableRect(currentDragArea, d);
-    
-    
+       
     // set show coordinate flag
-    setShowCoordinate(false);
-    
+    // setShowCoordinate(false);
+    mouseOnImageFlag = false; // force not to display coord. value
+
     // repaint to display the info. or not. 		
     repaint();
+
+    // test for radial plots
+    datasetRange = new Rectangle(dragArea.x - startx , 
+				 dragArea.y - starty ,
+				 dragArea.width,      dragArea.height);
+    // make the draw area valid
+    int dx = dragArea.x - startx;
+    int dy = dragArea.y - starty;
+    int w  = dragArea.width;
+    int h  = dragArea.height;
+    
+    if (dx <0) {	
+	w += dx;
+	dx = 0;
+    }
+    
+    if (dy <0) {
+	h += dy;
+	dy = 0;
+    }
+    
+    if ( (dx+w) > imageArea.width)
+       w = imageArea.width - dx;
+    if ( (dy+h) > imageArea.height)
+       h = imageArea.height - dy;
+
+    // reset the datasetRange
+    datasetRange.setBounds(dx,dy,w,h);
+    // draw histogram plot if possible
+    if (imagePlotMode == JHVImageFrame.HISTOGRAM_PLOT)  
+    	plotHistogram(datasetRange);
+
+    } // if (dispImageDataMode == JHVImageFrame.RADIAL_PLOT)  
   }
 
   /**
    * Called when the mouse enters the component.
-   * @param evt the event
-   * @param x the x coordinate
-   * @param y the y coordinate
-   * @see java.awt.Component#mouseEnter
    */
   public void mouseEntered(MouseEvent e)
   {
@@ -1858,7 +2109,7 @@ public class JHVImageCanvas extends Canvas
       mouseOnImageFlag = true;
 
       // set show coordinate flag
-      setShowCoordinate(true);
+      // setShowCoordinate(true);
 	 
      // change the cursor type to "cross" if possible to show the coordinate
      ((Component)imageFrame).setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));    
@@ -1868,7 +2119,7 @@ public class JHVImageCanvas extends Canvas
 
 	mouseOnImageFlag = false;
     	// set show coordinate flag
-      	setShowCoordinate(false);
+      	// setShowCoordinate(false);
 	 
      	// change the cursor type to "default" if possible to show the coordinate
        	((Component)imageFrame).setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -1882,17 +2133,13 @@ public class JHVImageCanvas extends Canvas
 
    /**
    * Called if the mouse moves (the mouse button is up)
-   * @param evt the event
-   * @param x the x coordinate
-   * @param y the y coordinate
-   * @see java.awt.Component#mouseMove
    */
   public void mouseMoved(MouseEvent e)
   {
     int x = e.getX();
     int y = e.getY();
 
-    	// check mouse position, then do something to that.
+    // check mouse position, then do something to that.
     checkMousePosition(x,y);
     
     try{
@@ -1909,10 +2156,6 @@ public class JHVImageCanvas extends Canvas
 
     /**
      * Called when the mouse exits the component.
-     * @param evt the event
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @see java.awt.Component#mouseExit
      */
   public void mouseExited(MouseEvent e)
   {
@@ -1923,11 +2166,11 @@ public class JHVImageCanvas extends Canvas
     repaint();
     
     // change the cursor type to "cross" if possible to show the coordinate
-    if (showCoordinate)
-      ((Component) imageFrame).setCursor(new Cursor(Cursor.DEFAULT_CURSOR));    
+    // if (showCoordinate)
+    ((Component) imageFrame).setCursor(new Cursor(Cursor.DEFAULT_CURSOR));    
     
       // set show coordinate flag
-    setShowCoordinate(false);
+    // setShowCoordinate(false);
   }
 
 /** make spreadsheet for draged area of the image */
@@ -2005,8 +2248,11 @@ public void drawRectangle(Rectangle rect) {
    */
   float  getData(int x, int y) throws HDFException {
 
-    HDFNativeData convert = new HDFNativeData();
-    float retDat;
+   HDFNativeData convert = new HDFNativeData();
+   float retDat;
+
+   // digital value display
+   if (dispImageDataMode == JHVImageFrame.DIGIT_VALUE) {
 
     // data size for the original data based on the data number type
     int datasize = hdf.DFKNTsize(hdfDataType);
@@ -2079,13 +2325,31 @@ public void drawRectangle(Rectangle rect) {
 	default:
 	  retDat = 0;
     }
-    return retDat;
+   } else if (dispImageDataMode == JHVImageFrame.PIXEL_VALUE) {
+
+    // the image dataset range
+    int w = imageWidth;
+    int h = imageHeight;
+
+    // adjust the first data position
+    int firstPos = 0 ;
+ 	
+    // first extract number position by row
+    int pos = (y * w + x);
+
+    // adjust the pos.
+    pos += firstPos;
+    retDat = (float)((byte)imageData[pos]);
+    // convert to positive if the number is negative 
+    if (retDat < 0)  retDat += 256.0f;	
+ 
+   } else retDat = 0.0f;
+   return retDat;
   }
 
-  /** Return the coordinate info.
-   */
+  // Return the coordinate info.
   String  getCoordinateInfo(int x, int y) throws HDFException {
-   
+   	
 	// keep the dataset position
     	Rectangle datPos = null;
 	datPos	         = new Rectangle(x+tx-startx, y+ty-starty, 0,0);
@@ -2093,8 +2357,9 @@ public void drawRectangle(Rectangle rect) {
 	// data value
 	float	coorData = getData(x+tx-startx, y+ty-starty);
 
-	return  ("[" + Integer.toString(x+tx-startx) + " , "
-		+ Integer.toString(y+ty-starty)  + "]= " + Float.toString(coorData));
+	return  ("[" + Integer.toString(x+tx-startx+subsetRange.x) + " , "
+		+ Integer.toString(y+ty-starty+subsetRange.y)  + "]= " + Float.toString(coorData));
+
   }
 
  /**
@@ -2239,7 +2504,7 @@ public void drawRectangle(Rectangle rect) {
 
    public void recoverImage() {
 
-	jhvCanvas.setImage(images[imageNumber-1]);
+	// jhvCanvas.setImage(images[imageNumber-1]);
 
 	// recover the orignal image
 	setImage(images[imageNumber-1]);
@@ -2264,7 +2529,7 @@ public void drawRectangle(Rectangle rect) {
 
 	// make image data
       	boolean cvFlag = true;
-    	   cvFlag = app.makeImageDataByRange(data,min,max, datatype,
+    	   cvFlag = ImageDataConverter.makeImageDataByRange(data,min,max, datatype,
 			       		        w,h,
 			       		        0, imageData);
 
@@ -2295,5 +2560,10 @@ public void drawRectangle(Rectangle rect) {
       */
      public void setPaletteEditorOpen(boolean flag)  {
        this.paletteEditorOpen = flag;
+    }
+
+      public void setSubsetRange(Rectangle rect) {
+
+	subsetRange = rect;
     }
 }

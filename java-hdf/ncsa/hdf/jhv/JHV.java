@@ -11,19 +11,9 @@
 
 package ncsa.hdf.jhv;
 
-
-
-
-// -------------------------------------------------
-//
-// Upgraded to 1.1.1 by Apu Kapadia.
-// May 20, 1997.
-//
-// -------------------------------------------------
-
-
-
 import  ncsa.hdf.hdflib.*;
+import  ncsa.hdf.java.util.*;
+import  ncsa.hdf.java.awt.image.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -42,18 +32,16 @@ import java.net.*;
  * 	Keep track of current HDF directory, and selected HDF file will be
  * located under previous selected HDF file directory.  Also improve the  
  * "Load File" and let it do more work than "Open file".  08/08/97 xlu
- *
- * @author HDF Group, NCSA
+ *      Support lagre HDF file access, more changes.    09/06/97 xlu
+ * @version 1.00   8/10/97
+ * @author Xinjian LU, HDF Group, NCSA
  */
 public class JHV extends Applet implements ActionListener {
 
  static {
                 System.loadLibrary("hdf");
         }
- static {
-                System.loadLibrary("jhv");
-        }
-
+ 
   // my frame
   Frame    	jhvFrame;
 
@@ -206,12 +194,45 @@ int fid;
   public void actionPerformed(ActionEvent e)
   {
     String arg = e.getActionCommand();
-
-     if (arg.equals("Open")) {
+  
+    if (arg.equals("Open Layers")) {
 	
 	// an HDF file source 
 	openFileOnLocal();
 	setup(hdfFile);
+	hdfTree.refresh();
+	
+	// clean up the hdfCanvas
+	hdfCanvas.setImage(null);
+	hdfCanvas.repaint();	
+
+	// invoke JHVLayerImage
+	JHVLayeredImage layeredImages = new JHVLayeredImage(hdfFile);
+     } else {
+  
+       if (arg.equals("Open Animation")) {
+	
+	// an HDF file source 
+	openFileOnLocal();
+	setup(hdfFile);
+	hdfTree.refresh();
+	
+	// clean up the hdfCanvas
+	hdfCanvas.setImage(null);
+	hdfCanvas.repaint();	
+
+	// invoke JHVImageAnimation
+	JHVImageAnimation animatedImages = new JHVImageAnimation(hdfFile);
+       }
+     }
+  
+     if (arg.equals("Open")) {
+	
+	// an HDF file source 
+	openFileOnLocal();
+	setup(hdfFile);     
+
+	hdfTree.resetTreeOffset();
 	hdfTree.refresh();
 	
 	// clean up the hdfCanvas
@@ -253,6 +274,8 @@ int fid;
       if (!isLocal) {
 	infoText.setText("Remote file access is not supported yet.");	
       }
+
+      hdfTree.resetTreeOffset();
       hdfTree.refresh();
       
       // clean up the hdfCanvas
@@ -842,12 +865,21 @@ int fid;
         Menu fileMenu = new Menu(menuTitle);
     
 	MenuItem menuOpen = new MenuItem("Open");
+	MenuItem menuOpenLayer = new MenuItem("Open Layers");
+	MenuItem menuOpenAnimation = new MenuItem("Open Animation");
+
 	MenuItem menuExit = new MenuItem("Exit");
+
 	menuOpen.addActionListener(this);
+	menuOpenLayer.addActionListener(this);
+	menuOpenAnimation.addActionListener(this);
+
 	menuExit.addActionListener(this);
 
         fileMenu.add(menuOpen);
-    
+        // fileMenu.add(menuOpenLayer);
+        // fileMenu.add(menuOpenAnimation);
+
         fileMenu.addSeparator();
     
         fileMenu.add(menuExit);
@@ -941,12 +973,12 @@ int fid;
     
   }
 
-   public boolean makeImageDataByRange(byte[] data, double min, double max, 
+   public  boolean makeImageDataByRange_old(byte[] data, double min, double max, 
                                 int datatype, int w, int h, 
                                 byte[] output)
    {
 
-        return (makeImageDataByRange(data,min,max,datatype,w,h,0,output));
+        return (makeImageDataByRange_old(data,min,max,datatype,w,h,0,output));
         
     }
 
@@ -962,7 +994,7 @@ int fid;
     */
 // can this be done in Java rather than C?  REMcG 6.18.97
 
-   public native boolean makeImageData(byte[] data, int datatype, int w, int h, int pos,
+   public native boolean makeImageData_old(byte[] data, int datatype, int w, int h, int pos,
                              byte[] output);
    
 
@@ -978,7 +1010,7 @@ int fid;
     * @return TRUE if successed, or false
     */
 
-   public native boolean makeImageDataByRange(byte[] data, double min, double max,
+   public native boolean makeImageDataByRange_old(byte[] data, double min, double max,
                              int datatype, int w, int h, int pos,
                              byte[] output);
    
@@ -993,6 +1025,8 @@ int fid;
    Need changed to the following methods:
 	getHdfSDSgattr(), getHdfSDSattr(),
 	getHdfGRgattr(),  getHdfGRattr(),
+   Date: 6-5-97
+	Take UINT8 same as INT8.
 */
 
 class HDFTreeNode extends TreeNode
@@ -1006,6 +1040,12 @@ class HDFTreeNode extends TreeNode
   // the current generic image
   Image image = null;
   Image paletteImage = null;
+
+  // default preffered image size
+  public static final int PREFFEREDIMAGESIZE = 256;
+ 
+  // skip value when read a large HDF file (subsample)
+  int	skip=1;
 
   /** create the new HDF Tree node
    * @param obj  the generic object
@@ -1056,17 +1096,15 @@ class HDFTreeNode extends TreeNode
 
     super.select(tree, modifier);
 
-
     // do something for HDF
     HDFObjectNode  node = (HDFObjectNode)(tree.selectedNode.hdfObject);
      
     // detect the type of the node
     int nodeType = node.getObjType();
-
     
     // open HDF file
     hdf = applet_.hdf;
-	int fid = applet_.fid;
+    int fid = applet_.fid;
 
     try {
         // HDF Annotation node
@@ -1082,22 +1120,17 @@ class HDFTreeNode extends TreeNode
 		dispHdfRis24(applet_.hdfFile, node);
     
         // HDF GR
-        if ((nodeType == node.GRGLOBALATTR) 
-		|| (node.type == node.GRDATASETATTR)
-		|| (node.type == node.GRDATASET))  {
-    
+     	if ((nodeType == node.GRGLOBALATTR) || (node.type == node.GRDATASETATTR)
+	   || (node.type == node.GRDATASET) ||(node.type == node.GRDATASETAN)  )  {
 		dispHdfGR(fid, node);
         }
     
         // HDF SDS
-        if ((nodeType == node.SDSGLOBALATTR) 
-		|| (node.type == node.SDSDATASETATTR)
-		|| (node.type == node.SDSDATASET)) {
-    	 
-		dispHdfSDS(applet_.hdfFile,node);
+   	if ((nodeType == node.SDSGLOBALATTR) || (node.type == node.SDSDATASETATTR)
+	   || (node.type == node.SDSDATASET) || (node.type == node.SDSDATASETAN)) {
+    	 	dispHdfSDS(applet_.hdfFile,node);
         }
-       
-        
+           
         // HDF VDATA
         if (nodeType == node.Vdata) {
 		// vdata processing
@@ -1238,6 +1271,143 @@ public String ANfileannotation() throws HDFException {
 	return retStr;
    }
 
+    /** get object  label from HDF file 
+     * @param tag  the tag of the HDF object.
+     * @param ref  the reference number
+     * @return the string look like text of the object label 
+     */
+     public String ANgetobjectlabel(int tag,int ref) throws HDFException {
+	
+	StringBuffer retStr = new StringBuffer();
+	int[] fileInfo = new int[4];
+	int an_id =  hdf.ANstart(applet_.fid);
+	if (hdf.ANfileinfo(an_id, fileInfo) == false ) {
+		hdf.ANend(an_id);
+	   return  retStr.toString();
+	}
+
+	// set the file annotation type to be a label
+	int anntype = HDFConstants.AN_DATA_LABEL;
+
+	// get the number of the object label
+	int numObjectLabel = hdf.ANnumann(an_id, anntype, (short)tag, (short)ref);
+
+	// System.out.println("Label Number: "+ numObjectLabel);
+
+	if (numObjectLabel == HDFConstants.FAIL)
+	   return new String();
+
+	// alocate space 
+	int ann_id_list[] = new int[numObjectLabel];
+
+	// get the list of the object annotation id
+	int numAnnid = hdf.ANannlist(an_id, anntype, tag, ref, ann_id_list);
+
+	if (numAnnid == HDFConstants.FAIL)
+	   return new String();
+	
+	for (int i=0; i<numObjectLabel; i++) {
+
+	   // get ann_id;
+	   int annid = ann_id_list[i];
+
+	   // System.out.println("annid: " + annid);
+
+	   // get the object label length
+	   int objectLabelLen = hdf.ANannlen(annid);
+
+	   // System.out.println("Len="+ objectLabelLen);
+
+	   if (objectLabelLen >0) {
+
+	      String objectLabelBuf[] = new String[1];
+	      objectLabelBuf[0] = new String("");
+	      // get object label
+	      if (hdf.ANreadann(annid, objectLabelBuf, objectLabelLen))  {
+		  retStr.append("  ");
+		  retStr.append((new String(objectLabelBuf[0])).trim());
+		  retStr.append("           \n");
+	      }	  			      
+	   } // if (objectLabelLen > 0)
+	   
+	}  // for ()
+
+	hdf.ANend(an_id);
+
+	return retStr.toString();
+
+   }
+
+   /** get the object desc from HDF file 
+     * @param tag  the tag of the HDF object.
+     * @param ref  the reference number
+     * @return the string look like text of the object desc 
+     */
+     public String ANgetobjectdesc(int tag,int ref) throws HDFException  {
+
+	StringBuffer retStr = new StringBuffer();
+	int[] fileInfo = new int[4];
+
+	// set the file annotation type to be a desc
+	int anntype = HDFConstants.AN_DATA_DESC;
+
+	int an_id =  hdf.ANstart(applet_.fid);
+
+	// System.out.println("fid: "+ applet_.fid);
+	// System.out.println("an_id: "+ an_id);
+	if (hdf.ANfileinfo(an_id, fileInfo) == false ) {
+		hdf.ANend(an_id);
+	   return  retStr.toString();
+	}
+
+	// get the number of the object desc
+	int numObjectDesc = hdf.ANnumann(an_id, anntype, (short)tag, (short)ref);
+
+	// System.out.println("Desc Number: "+ numObjectDesc);
+
+	if (numObjectDesc == HDFConstants.FAIL)
+	   return new String();
+
+	// alocate space 
+	int ann_id_list[] = new int[numObjectDesc];
+
+	// get the list of the object annotation id
+	int numAnnid = hdf.ANannlist(an_id, anntype, tag, ref, ann_id_list);
+
+	if (numAnnid == HDFConstants.FAIL)
+	   return new String();
+	
+	for (int i=0; i<numObjectDesc; i++) {
+
+	   // get ann_id;
+	   int annid = ann_id_list[i];
+
+	   // System.out.println("annid: " + annid);
+
+	   // get the object desc length
+	   int objectDescLen = hdf.ANannlen(annid);
+
+	   // System.out.println("Len="+ objectDescLen);
+
+	   if (objectDescLen >0) {
+
+	      String objectDescBuf[] = new String[1];
+	      objectDescBuf[0] = new String("");
+	      // get object desc
+	      if (hdf.ANreadann(annid, objectDescBuf, objectDescLen))  {
+		  retStr.append("  ");
+		  retStr.append((new String(objectDescBuf[0])).trim());
+		  retStr.append("   \n");
+	      }	  			      
+	   } // if (objectDescLen > 0)
+	   
+	}  // for ()
+	
+	hdf.ANend(an_id);
+	return retStr.toString();
+
+   }
+
   /** display the HDF file 8-raster image generic information
    * @param filename the HDF file name
    * @param node the HDF Object node
@@ -1292,13 +1462,10 @@ public String ANfileannotation() throws HDFException {
 	HDFLibrary hdf = new HDFLibrary(); 
 	int argv[] = new int[2];
 	boolean argB[] = new boolean[1];
-
-    
+  
     // set the reference number
     if (hdf.DFR8readref(filename, node.ref) == false)
       return;
-
-    
     
     // get HDF image information
     if (hdf.DFR8getdims(filename,argv,argB) == false)
@@ -1335,9 +1502,9 @@ public String ANfileannotation() throws HDFException {
     
     // diaplay the raster image
     if (img != null) {
-      
-      applet_.hdfCanvas.setImageSize(w,h);
-      
+      // set the image size (org)
+      applet_.hdfCanvas.setOriginalImageSize(w,h);
+   
       applet_.hdfCanvas.setImage(img, palImage);
       
       applet_.hdfCanvas.repaint();
@@ -1597,8 +1764,11 @@ public String ANfileannotation() throws HDFException {
 	// display the info.
 	dispMessage(attrBuf); 
       }
-      else { 
-	dispHdfGRimage(grid, node);
+      else {  // object annotation
+	if (node.type == node.GRDATASETAN) 
+	    dispHdfObjectAnnotation(fid, node);
+	else
+	    dispHdfGRimage(grid, node);
       }
     } 
     hdf.GRend(grid);
@@ -1649,11 +1819,17 @@ public String ANfileannotation() throws HDFException {
     
     // display the raster image
     if (image != null) {
+      // set the image size (org)
+      applet_.hdfCanvas.setOriginalImageSize(w,h);
       
-      applet_.hdfCanvas.setImageSize(w,h);
+      // set the image
       applet_.hdfCanvas.setImage(image,paletteImage);
-      applet_.hdfCanvas.repaint();
-      
+        
+      applet_.hdfCanvas.setSubsampleFactor(skip);
+
+      // repaint the image 
+      // applet_.hdfCanvas.repaint();
+     
       // set the current HDF Object Node
       applet_.hdfCanvas.setObject(node);
       
@@ -1673,7 +1849,7 @@ public String ANfileannotation() throws HDFException {
    * @return the image, otherwise null
    */
   public Image getHdfGRimage(int riid, int ncomp, int nt, int interlace, int w, int h, int plane) 
-throws HDFException {
+	 throws HDFException {
 
     HDFLibrary hdf = (HDFLibrary)applet_.hdf;
     Image image = null;
@@ -1681,10 +1857,10 @@ throws HDFException {
     boolean hasPalette = false;
     
     // image data size;
-    int dataSize = w*h*ncomp*hdf.DFKNTsize(nt);
+    // int dataSize = w*h*ncomp*hdf.DFKNTsize(nt);
     
     // specify the image data storage	
-    byte imageData[]    = new byte[dataSize];
+    // byte imageData[]    = new byte[dataSize];
     
     // image palette
     byte imagePalette[] = new byte[3*256];
@@ -1701,20 +1877,42 @@ throws HDFException {
     else
       hasPalette = true;
     
-	// specify palette info.
+    // specify palette info.
     int[] lutInfo = new int[4];
+
+    // Reminder to myselef.
+    // GRgetlutinfo() may not work correctly when having aa access to the HDF file
+    // created by DFR8 or DF24 interface.
+    /*********************************************************
+      if (hdfgr.GRgetlutinfo(lutid, lutInfo)) // succeed
+      hasPalette = true;
+      else
+      hasPalette = false;
+      
+      if ((lutInfo[0] != 3) || (lutInfo[3] != 256))
+      hasPalette = false;
+      else
+      hasPalette = true;  
     
+    //System.out.println("ncomp: " + lutInfo[0]);
+    //System.out.println("elemt: " + lutInfo[3]);
+    
+    // assign the palette
+    //int lutSize = lutInfo[0] * lutInfo[3] * hdfgr.DFKNTsize(lutInfo[1]);
+    //char[] lutDat = new char[lutSize];
+    ************************************************************/
+
+    // set interlace to read	
     hdf.GRreqlutil(riid, HDFConstants.MFGR_INTERLACE_PIXEL);	
     
-    if ((hasPalette) && (hdf.GRreadlut(lutid, imagePalette))) {
-      
+    if ((hasPalette) && (hdf.GRreadlut(lutid, imagePalette))) {   
       // get palette (easy processing)
       ;  	
     }
     else  { // default	
-      for (int i=0; i<256; i++)
-	for (int j=0; j<3; j++)  
-	  imagePalette[i*3+j] = (byte)i;
+      // try rainbow
+      imagePalette = null;
+      imagePalette = getPaletteOfRainbow();
     }
     
     // create palette image
@@ -1727,147 +1925,185 @@ throws HDFException {
     
     start[0] = 0;
     start[1] = 0;
+     
+    // get subsample image
+    int max = (h>w?h:w);
     
-    stride[0] = 1;
-    stride[1] = 1;
+    skip = max / PREFFEREDIMAGESIZE;
+    if ((skip>0) && ((w/skip) > 0) && ((h/skip) > 0)) {
+
+	skip++;
+
+	// do subset
+	stride[0] = skip;
+    	stride[1] = skip;
+   	count[0] = w/skip ;  // x
+	count[1] = h /skip ;  // y
+    }
+    else {
+
+	skip = 1;
+    	stride[0] = 1;
+    	stride[1] = 1;
     
-    count[0] = w  ;  // x
-    count[1] = h   ;  // y
+    	count[0] = w  ;  // x
+    	count[1] = h   ;  // y
+    }
+     
+    w = count[0];
+    h = count[1];
+
+    // System.out.println("w*h: " + w + "*" + h);
+
+    // image data size;
+    int dataSize = w*h*ncomp*hdf.DFKNTsize(nt);
     
+    // specify the image data storage	
+    byte imageData[]    = new byte[dataSize];
+
+    // read flag
     boolean readFlag = hdf.GRreadimage(riid,start,stride,count,imageData);
     
     // image data
     byte[] output = new byte[w*h];
     
     if (readFlag) {
-	/* convert the data into a standard image */
-      if (applet_.makeImageData(imageData,nt,w,h,(w*h*(plane-1)),output)) {
+      // convert the data into a standard image  
+      if (ImageDataConverter.makeImageData(imageData,nt,w,h,(w*h*(plane-1)),output)) {
 	image = createRasterImage(output,w,h,imagePalette);
-	}
+      }
     }
     return image;
   }
   
 
   /** Process numeric attributes or strings, converting from bytes to Java
-    *  types.
-    *  This calls native routines to do the numeric conversions.
-    */
-String doattrs( byte[] buf, int buffsize, int NT, int count ) throws HDFException {
+   *  types.
+   *  This calls native routines to do the numeric conversions.
+   */
+  String doattrs( byte[] buf, int buffsize, int NT, int count ) throws HDFException {
 
-	HDFNativeData convert = new HDFNativeData();
-	String lr         = new String("\t");
-	String semicolon  = new String("; ");
-	String str = new String(" ");
-
-	int incr = hdf.DFKNTsize(NT);
-
-	switch(NT) {
-	case HDFConstants.DFNT_CHAR:
-		// take it as char
-		str = str.concat(lr);
-		for (int jj=0; jj<count; jj+=incr) {
-			String sval = new String(buf,jj,1);
-			str = str.concat(sval);
-		}
-		break;
-	case HDFConstants.DFNT_UCHAR8:
-	//case HDFConstants.DFNT_UCHAR:
-	case HDFConstants.DFNT_UINT8:
-		str = str.concat(lr);
-		for (int jj=0; jj<count; jj+=incr) {
-		Byte bval = new Byte(buf[jj]);
-		Short shval;
-		if (bval.shortValue() < 0) {
-			shval = new Short((short)(bval.intValue() + 256));
-		} else {
-			shval = new Short(bval.shortValue());
-		}
-		str = str.concat(shval.toString());
-		str = str.concat(semicolon);
-		}
-		break;
-	case HDFConstants.DFNT_INT8:
-		str = str.concat(lr);
-		for (int jj=0; jj<count; jj+=incr) {
-			// convert to integer
-			Byte bval = new Byte(buf[jj]);
-			str = str.concat(bval.toString());
-			str = str.concat(semicolon);
-		}
-		break;
-	case HDFConstants.DFNT_INT16:
-		str.concat(lr);
-		for (int jj=0; jj<count; jj+=incr) {
-			// convert to integer
-			Short shval = new Short(convert.byteToShort(buf,jj));
-			str = str.concat(shval.toString());
-			str = str.concat(semicolon);
-		}
-		break;
-	case HDFConstants.DFNT_UINT16:
-		str = str.concat(lr);
-		for (int jj=0; jj<count; jj+=incr) {
-		Short shval = new Short(convert.byteToShort(buf,jj));
-		Integer ival;
-		if (shval.shortValue() < 0) {
-			ival = new Integer((shval.intValue() + 65536));
-		} else {
-			ival = new Integer(shval.intValue());
-		}
-		str = str.concat(ival.toString());
-		str = str.concat(semicolon);
-		}
-		break;
-	case HDFConstants.DFNT_INT32:
-		str = str.concat(lr);
-		for (int jj=0; jj<count; jj+=incr) {
-			// convert to integer
-			Integer ival = new Integer(convert.byteToInt(buf,jj));
-			str = str.concat(ival.toString());
-			str = str.concat(semicolon);
-		}
-		break;
-
-	case HDFConstants.DFNT_UINT32:
-		str = str.concat(lr);
-		for (int jj=0; jj<count; jj+=incr) {
-		Integer ival = new Integer(convert.byteToInt(buf,jj));
-		Float fval;
-		if (ival.intValue() < 0) {
-			fval = new Float((ival.floatValue() + (float)4294967295.0));
-		} else {
-			fval = new Float(ival.intValue());
-		}
-		str = str.concat(ival.toString());
-		str = str.concat(semicolon);
-		}
-		break;
-
-	//case HDFConstants.DFNT_FLOAT:
-	case HDFConstants.DFNT_FLOAT32:
-		str = str.concat(lr);
-		for (int jj=0; jj<count; jj+=incr) {
-			// convert to float
-			Float fval = new Float(convert.byteToFloat(buf,jj));
-			str = str.concat(fval.toString());
-			str = str.concat(semicolon);
-		}
-		break;
-
-	//case HDFConstants.DFNT_FLOAT64:
-	case HDFConstants.DFNT_DOUBLE:
-		str = str.concat(lr);
-		for (int jj=0; jj<count; jj+=incr) {
-			// convert to integer
-			Double dval = new Double(convert.byteToDouble(buf,jj));
-			str = str.concat(dval.toString());
-			str = str.concat(semicolon);
-		}
-		break;
-	} 
-	return(str);
-}
+    HDFNativeData convert = new HDFNativeData();
+    String lr         = new String("\t");
+    String semicolon  = new String("; ");
+    String str = new String(" ");
+    
+    int incr = hdf.DFKNTsize(NT);
+    
+    switch(NT) {
+    case HDFConstants.DFNT_CHAR:
+      // take it as char
+      str = str.concat(lr);
+      for (int jj=0; jj<count; jj++) {
+	String sval = new String(buf,jj,1);
+	str = str.concat(sval);
+      }
+      break;
+    case HDFConstants.DFNT_UCHAR8:
+      //case HDFConstants.DFNT_UCHAR:
+    case HDFConstants.DFNT_UINT8:
+      str = str.concat(lr);
+      for (int jj=0; jj<count; jj++) {
+	Byte bval = new Byte(buf[jj]);
+	Short shval;
+	if (bval.shortValue() < 0)  
+	  shval = new Short((short)(bval.intValue() + 256));
+	else  
+	  shval = new Short(bval.shortValue());
+	
+	str = str.concat(shval.toString());
+	str = str.concat(semicolon);
+      }
+      break;
+    case HDFConstants.DFNT_INT8:
+      str = str.concat(lr);
+      for (int jj=0; jj<count; jj++) {
+	int pos = jj*incr;
+	// convert to integer
+	Byte bval = new Byte(buf[pos]);
+	str = str.concat(bval.toString());
+	str = str.concat(semicolon);
+      }
+      break;
+    case HDFConstants.DFNT_INT16:
+      str.concat(lr);
+      for (int jj=0; jj<count; jj++) {
+	int pos = jj*incr;
+	// convert to integer
+	Short shval = new Short(convert.byteToShort(buf,pos));
+	str = str.concat(shval.toString());
+	str = str.concat(semicolon);
+      }
+      break;
+    case HDFConstants.DFNT_UINT16:
+      str = str.concat(lr);
+      for (int jj=0; jj<count; jj+=incr) {
+	int pos = jj*incr;
+	Short shval = new Short(convert.byteToShort(buf,pos));
+	Integer ival;
+	if (shval.shortValue() < 0)  
+	  ival = new Integer((shval.intValue() + 65536));
+	else  
+	  ival = new Integer(shval.intValue());
+	
+	str = str.concat(ival.toString());
+	str = str.concat(semicolon);
+      }
+      break;
+    case HDFConstants.DFNT_INT32:
+      str = str.concat(lr);
+      for (int jj=0; jj<count; jj++) {
+	int pos = jj*incr;
+	// convert to integer
+	Integer ival = new Integer(convert.byteToInt(buf,pos));
+	str = str.concat(ival.toString());
+	str = str.concat(semicolon);
+      }
+      break;
+      
+    case HDFConstants.DFNT_UINT32:
+      str = str.concat(lr);
+      for (int jj=0; jj<count; jj+=incr) {
+	int pos = jj*incr;
+	Integer ival = new Integer(convert.byteToInt(buf,pos));
+	Float fval;
+	if (ival.intValue() < 0) {
+	  fval = new Float((ival.floatValue() + (float)4294967295.0));
+	} else {
+	  fval = new Float(ival.intValue());
+	}
+	str = str.concat(ival.toString());
+	str = str.concat(semicolon);
+      }
+      break;
+      
+      //case HDFConstants.DFNT_FLOAT:
+    case HDFConstants.DFNT_FLOAT32:
+      str = str.concat(lr);
+      for (int jj=0; jj<count; jj++) {
+	int pos = jj*incr;
+	// convert to float
+	Float fval = new Float(convert.byteToFloat(buf,pos));
+	str = str.concat(fval.toString());
+	str = str.concat(semicolon);
+      }
+      break;
+      
+      //case HDFConstants.DFNT_FLOAT64:
+    case HDFConstants.DFNT_DOUBLE:
+      str = str.concat(lr);
+      for (int jj=0; jj<count; jj++) {
+	int pos = jj*incr;
+	// convert to integer
+	Double dval = new Double(convert.byteToDouble(buf,pos));
+	str = str.concat(dval.toString());
+	str = str.concat(semicolon);
+      }
+      break;
+    } 
+    return(str);
+  }
+  
 
   /** display the HDF file generic raster image in the image canvas
    * @param grid  the GR identifier
@@ -1875,11 +2111,12 @@ String doattrs( byte[] buf, int buffsize, int NT, int count ) throws HDFExceptio
    * @return the string of the global attribute.
    */
   public String getHdfGRgattr(int grid, HDFObjectNode node ) throws HDFException {
-  
-  String attr = new String();	
+   
+  StringBuffer attr = new StringBuffer();	
   String lr         = new String("\t");
   String semicolon  = new String("; ");
-  
+
+  // get the reference 
   int kk = node.index;
   
   // for each of the global attribute 
@@ -1890,24 +2127,26 @@ String doattrs( byte[] buf, int buffsize, int NT, int count ) throws HDFExceptio
   
   if (hdf.GRattrinfo(grid, kk, n, attrInfo)) {
     name = n[0];
-    attr = attr.concat("\nName:  ");
-    attr = attr.concat(name);
-    
+    attr.append("\nName:  ");
+    attr.append(name);
+ 
     // read the attribute as bytes, call doattrs to convet to Java types.
     int attrSize = hdf.DFKNTsize(attrInfo[0])*attrInfo[1] + 1;
     byte[] buf = new byte[attrSize];
-    if (hdf.GRgetattr(grid, kk, buf)) {
-      return (attr);
+    if (!hdf.GRgetattr(grid, kk, buf)) {
+      return (attr.toString());
     }
     buf[attrSize-1] = '\0';
-     
-    attr = attr.concat("\nType : " + hdf.HDgetNTdesc(attrInfo[0]));
-    attr = attr.concat("\nCount: " + Integer.toString(attrInfo[1]));
+      
+    // namber type
+    attr.append("\nType : " + hdf.HDgetNTdesc( attrInfo[0]));
+    attr.append("\nCount: " + Integer.toString(attrInfo[1]));
     
-    attr = attr.concat("\nValue: " );
-    attr = attr.concat(doattrs( buf, attrSize, attrInfo[0], attrInfo[1] ));
+    // tag value
+    attr.append("\nValue: " );
+    attr.append(doattrs( buf, attrSize, attrInfo[0], attrInfo[1] ));
   } 
-  return attr;
+  return attr.toString();
 }
   
 
@@ -1919,8 +2158,8 @@ String doattrs( byte[] buf, int buffsize, int NT, int count ) throws HDFExceptio
 public String getHdfGRattr(int grid, HDFObjectNode node) throws HDFException {
     
     int riid	  = -1;
-    
-    String attr = new String();	
+
+    StringBuffer attr = new StringBuffer();	
     String lr         = new String("\n\t");
     String semicolon  = new String("; ");
     
@@ -1943,25 +2182,65 @@ public String getHdfGRattr(int grid, HDFObjectNode node) throws HDFException {
 
     if (hdf.GRattrinfo(riid, kk, n, attrInfo)) {
       name = n[0];
-      attr = attr.concat("\nName:  ");
-      attr = attr.concat(name);
+      attr.append("\nName:  ");
+      attr.append(name);
       
       int attrSize = hdf.DFKNTsize(attrInfo[0])*attrInfo[1] + 1;
       byte[] buf = new byte[attrSize];
       if (!hdf.GRgetattr(riid, kk, buf)) {
 	hdf.GRendaccess(riid);
-	return(attr);
+	return(attr.toString());
       }
          
-      attr = attr.concat("\nType : " + hdf.HDgetNTdesc(attrInfo[0]));
-      attr = attr.concat("\nCount: " + attrInfo[1]);
+      attr.append("\nType : " + hdf.HDgetNTdesc(attrInfo[0]));
+      attr.append("\nCount: " + attrInfo[1]);
 
-      attr = attr.concat("\nValue:");
+      attr.append("\nValue:");
       
-      attr = attr.concat(doattrs( buf, attrSize, attrInfo[0], attrInfo[1] ));
+      attr.append(doattrs( buf, attrSize, attrInfo[0], attrInfo[1] ));
     } 
     hdf.GRendaccess(riid);
-    return attr;
+    return attr.toString();
+  }
+  
+
+  /** display an HDF file object annotation
+   * @param fid a file identifer
+   * @param node  the HDF Object node
+   * @return a object annotation
+   */
+  public void dispHdfObjectAnnotation(int fid, HDFObjectNode node)
+	      throws HDFException {  
+    
+    // String lr         = new String("\n\t");
+    String lr         = new String("\n\t");
+    String semicolon  = new String("; ");
+    
+    // get the reference 
+    int ref = node.ref;
+    int tag = node.tag;
+
+    String label = ANgetobjectlabel(tag,ref);
+    String an = "";
+
+    if (label.length() >0 ) 
+    	an = "Object Label: \n" + label +"\n";
+
+    String desc = ANgetobjectdesc(tag,ref);
+    if (desc.length() >0 ) 
+    	an = "Object Annotation: \n" + desc + "\n" ;
+
+    // display the information 
+    StringBuffer annInfo = new StringBuffer(" ==================== HDF Object Annotation ==============\n");
+    annInfo.append( an.trim()+"\n");
+    annInfo.append("\n ==============================================\n");
+
+    // applet_.infoText.appendText(annInfo);
+    applet_.infoText.setText(annInfo.toString());
+
+    // for iamge
+    eraseImage();
+  
   }
   
 
@@ -2067,45 +2346,9 @@ public void dispHdfSDS(String filename, HDFObjectNode node) throws HDFException 
       hdf.SDend(sdid);
       return;
     }
-    
-    // get HDF SDS information
-    int[] fileInfo = new int[2];
-    
-    if (hdf.SDfileinfo(sdid, fileInfo ) == false) {
-      hdf.SDend(sdid);
-      return;
-    }
-    
-    String attrBuf = new String();	
-    
-    if (node.type == node.SDSGLOBALATTR) {
-      // SDS Global Attributes
-      attrBuf = attrBuf.concat("\n======================== SDS Global Attribute =================\n");
-      // the whole Global Attribute
-      attrBuf = attrBuf.concat(getHdfSDSgattr(sdid, node));
-      attrBuf = attrBuf.concat("\n===================== End of SDS Global Attribute ==============\n");
-      
-      // display the info.
-      dispMessage(attrBuf); 
+
+    dispHdfSDS(sdid, node);
  
-    }
-    else {
-      if (node.type == node.SDSDATASETATTR) {
-	// SDS dataset attribute
-	attrBuf = attrBuf.concat("\n=====================  SDS Dataset Attribute  ================\n");
-	// the whole Global Attribute 
-	attrBuf = attrBuf.concat(getHdfSDSattr(sdid, node));
-	attrBuf = attrBuf.concat("\n===================== End of SDS Dataset Attribute ============\n");
-	
-	// display the info.
-	dispMessage(attrBuf); 
-	
-      }
-      else { 
-	
-	dispHdfSDSimage(sdid, node);
-      }
-    } 
     hdf.SDend(sdid);
   }
   
@@ -2114,33 +2357,37 @@ public void dispHdfSDS(String filename, HDFObjectNode node) throws HDFException 
    * @param sdid the SDS identifier
    * @param node the HDF Object node
    */
-public void dispHDfSDS(int sdid, HDFObjectNode node) throws HDFException {
+public void dispHdfSDS(int sdid, HDFObjectNode node) throws HDFException {
   
     int sdsid = -1;
-    
-    int[]fileInfo = new int[2];
-    
+
+    // get HDF SDS information
+    int[] fileInfo = new int[2];
+     
     if (hdf.SDfileinfo(sdid, fileInfo) == false) {
       hdf.SDend(sdid);
       return;
     }
     
-    String attrBuf = new String();	
+    StringBuffer attrBuf = new StringBuffer();	
     
     if (node.type == node.SDSGLOBALATTR) {
-	attrBuf = attrBuf.concat("\n======================== SDS Global Attribute =================\n");
-	attrBuf = attrBuf.concat(getHdfSDSgattr(sdid, node));
-	attrBuf = attrBuf.concat("\n===================== End of SDS Global Attribute ==============\n");
+	attrBuf.append("\n======================== SDS Global Attribute =================\n");
+	attrBuf.append(getHdfSDSgattr(sdid, node));
+	attrBuf.append("\n===================== End of SDS Global Attribute ==============\n");
 
-	dispMessage(attrBuf);
+	dispMessage(attrBuf.toString());
     }
     else {
 	if (node.type == node.SDSDATASETATTR) {
-		attrBuf = attrBuf.concat("\n=====================  SDS Dataset Attribute  ================\n");
-		attrBuf = attrBuf.concat(getHdfSDSattr(sdid, node));
-		attrBuf = attrBuf.concat("\n===================== End of SDS Dataset Attribute ============\n");
-		dispMessage(attrBuf);
+		attrBuf.append("\n=====================  SDS Dataset Attribute  ================\n");
+		attrBuf.append(getHdfSDSattr(sdid, node));
+		attrBuf.append("\n===================== End of SDS Dataset Attribute ============\n");
+		dispMessage(attrBuf.toString());
 	} else { 
+	      if (node.type == node.SDSDATASETAN)  
+	    	dispHdfObjectAnnotation(applet_.fid, node);
+	      else
 		dispHdfSDSimage(sdid, node);
 	}
     } 
@@ -2200,11 +2447,17 @@ public void dispHdfSDSimage(int sdid, HDFObjectNode node) throws HDFException {
     
     // display the raster image
     if (image != null) {
+      // set the image size
+      applet_.hdfCanvas.setOriginalImageSize(w,h);
       
-      applet_.hdfCanvas.setImageSize(w,h);
+      // set the image
       applet_.hdfCanvas.setImage(image, paletteImage);
-      applet_.hdfCanvas.repaint();
-      
+       
+      applet_.hdfCanvas.setSubsampleFactor(skip);
+
+      // repaint the image 
+      // applet_.hdfCanvas.repaint();
+
       // set the current HDF Object Node
       applet_.hdfCanvas.setObject(node);
       
@@ -2245,20 +2498,17 @@ public Image getHdfSDSimage(int sdsid, int rank, int nt, int[] dims,int plane)
     if ((rank<=1) || (rank>=4))
       return null;
     
-    int w = dims[rank-1];
-    
+    int w = dims[rank-1];  
     int h = dims[rank-2];
     
     if ((w*h) < 0)
       return null;
     
-    int dataSize = w*h*hdf.DFKNTsize(nt);
-    
-    byte sdsData[]    = new byte[dataSize];
+    // int dataSize = w*h*hdf.DFKNTsize(nt);
+    // byte sdsData[]    = new byte[dataSize];
     
     byte imagePalette[] = new byte[3*256];
-    
-    
+       
     if (hasPalette == false)  { 
       // try rainbow
       imagePalette = null;
@@ -2277,38 +2527,80 @@ public Image getHdfSDSimage(int sdsid, int rank, int nt, int[] dims,int plane)
     start[0] = 0;
     start[1] = 0;
     start[2] = 0;
-    
-    stride[0] = 1;
-    stride[1] = 1;
-    stride[2] = 1;
+      
+    stride[0] = 1;   
+    count[0]  = 1;
 
-	//  ???? only two cases covered here!!!!  FIX!!  REMcG  6.18.97
-    if (rank == 3) {
-      count[0] = 1   ;
-      count[1] = h   ;	
-      count[2] = w   ;
+    // get subsample image
+    int max = (h>w?h:w);
+    
+    skip = max / PREFFEREDIMAGESIZE;
+    if ((skip>0) && ((w/skip) > 0) && ((h/skip) > 0)) {
+
+	skip++;
+
+	// do subset
+	stride[1] = skip;
+    	stride[2] = skip;
+   	count[1] = h /skip ;  // y
+	count[2] = w /skip ;  //x
+
     }
     else {
-      count[0] = h   ;	
-      count[1] = w   ;
-    }
+
+	skip = 1;
+
+    	stride[1] = 1;
+    	stride[2] = 1;
     
-    // read flag
+    	count[1] = h  ;   // y
+    	count[2] = w   ;  // x
+    }
+
+    // reset width and height of an image(subsample) 
+    w = count[2];
+    h = count[1];
+
+    if (rank == 2) {
+
+      stride[0] = stride[1];
+      stride[1] = stride[2];
+      count[0] = count[1]   ;
+      count[1] = count[2]   ;	    
+    }
+
+    // sds data size;
+    int dataSize = w*h*hdf.DFKNTsize(nt);
+    
+    // specify the image data storage	
+    byte sdsData[]    = new byte[dataSize];
+
+    // read flag  ,  
+    // reminder: just handle 2d & 3d. need to do later to 4d. xlu 9/7/97
     boolean readFlag = hdf.SDreaddata(sdsid,start,stride,count,sdsData);
     
     // iamge data
     byte[] output = new byte[w*h];
-    
+    double range[] = new double[2];
     if (readFlag) {
-
+  
       boolean cvFlag = true;
       double maxmin[] = new double[2];
-      if (hdf.SDgetrange(sdsid, maxmin)) {
-      	 cvFlag = applet_.makeImageDataByRange(sdsData,maxmin[1],
+      if (hdf.SDgetrange(sdsid, maxmin)) { 
+	 double tmp = maxmin[0];  // max.
+	 range[0] = maxmin[1];	 // min.
+	 range[1] = tmp;
+      	 cvFlag = ImageDataConverter.makeImageDataByRange(sdsData,maxmin[1],
 		maxmin[0],nt,w,h,(w*h*(plane-1)),output);
       } else {
-	 cvFlag = applet_.makeImageData(sdsData,nt,w,h,(w*h*(plane-1)),output);
+	 range = getDataRange(sdsData, nt, w*h);   // small -> big
+	 // cvFlag = applet_.makeImageData(sdsData,nt,w,h,(w*h*(plane-1)),output);
+   	 cvFlag = ImageDataConverter.makeImageDataByRange(sdsData,range[0],
+		range[1],nt,w,h,(w*h*(plane-1)),output);
       }
+  
+      // set sds range
+      applet_.hdfCanvas.setDataRange(range);
 
       if (cvFlag) {
 
@@ -2422,9 +2714,8 @@ public String getHdfSDSattr(int sdid, HDFObjectNode node) throws HDFException {
 	return(attr);
       }
       
-      attr = attr.concat("\nValue:");
-      
-	attr = attr.concat(doattrs( buf, attrSize, attrInfo[0], attrInfo[1] ));
+      attr = attr.concat("\nValue:");  
+      attr = attr.concat(doattrs( buf, attrSize, attrInfo[0], attrInfo[1] ));
     } 
     hdf.SDendaccess(riid);
     return attr;
@@ -2567,68 +2858,8 @@ public  void dispHdfVdataInfo(int fid, HDFObjectNode node) throws HDFException {
    */
  public  ColorModel getColorModelOfRainbow()  {
 
-
- byte[][]  values={	
-	
-{
-  0,  4,  9, 13, 18, 22, 27, 31, 36, 40, 45, 50, 54, 58, 61, 64,
- 68, 69, 72, 74, 77, 79, 80, 82, 83, 85, 84, 86, 87, 88, 86, 87,
- 87, 87, 85, 84, 84, 84, 83, 79, 78, 77, 76, 71, 70, 68, 66, 60,
- 58, 55, 53, 46, 43, 40, 36, 33, 25, 21, 16, 12,  4,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,
-  8, 12, 21, 25, 29, 33, 42, 46, 51, 55, 63, 67, 72, 76, 80, 89,
- 93, 97,101,110,114,119,123,-125,-121,-116,-112,-103,-99,-95,-91,-87,
--78,-74,-69,-65,-57,-53,-48,-44,-35,-31,-27,-23,-14,-10,-6,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
-},
-    
-{
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,  8,
- 16, 21, 25, 29, 38, 42, 46, 51, 55, 63, 67, 72, 76, 84, 89, 93,
- 97,106,110,114,119,127,-125,-121,-116,-112,-104,-99,-95,-91,-82,-78,
--74,-69,-61,-57,-53,-48,-40,-36,-31,-27,-23,-14,-10,-6,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--6,-14,-18,-23,-27,-35,-40,-44,-48,-57,-61,-65,-69,-78,-82,-86,
--91,-95,-103,-108,-112,-116,-125,127,123,119,110,106,102, 97, 89, 85,
- 80, 76, 72, 63, 59, 55, 51, 42, 38, 34, 29, 21, 17, 12,  8,  0
-},
-   
-{
-  0,  3,  7, 10, 14, 19, 23, 28, 32, 38, 43, 48, 53, 59, 63, 68,
- 72, 77, 81, 86, 91, 95,100,104,109,113,118,122,127,-124,-120,-115,
--111,-106,-102,-97,-93,-88,-83,-79,-74,-70,-65,-61,-56,-52,-47,-42,
--38,-33,-29,-24,-20,-15,-11,-6,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-10,
--14,-18,-23,-31,-36,-40,-44,-53,-57,-61,-65,-69,-78,-82,-86,-91,
--99,-104,-108,-112,-121,-125,127,123,114,110,106,102, 97, 89, 84, 80,
- 76, 67, 63, 59, 55, 46, 42, 38, 34, 25, 21, 16, 12,  8,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0
-}
-  
-};
-
+ 	byte[]  values;	
+	values = getPaletteOfRainbow();
 
  	// number of color
 	int  ncolors = 256;
@@ -2638,15 +2869,14 @@ public  void dispHdfVdataInfo(int fid, HDFObjectNode node) throws HDFException {
     	byte[] green = new byte[256];
     	byte[] blue  = new byte[256];
 
-	for (int i=0; i<256; i += 1) {
+	for (int i=0; i<256; i++ ) {
 	
-	    red[i]  = values[0][i];
-	    green[i]= values[1][i];
-	    blue[i] = values[2][i];
+	    red[i]  = (byte)values[i*3  ];
+	    green[i]= (byte)values[i*3+1];
+	    blue[i] = (byte)values[i*3+2];
 	}
 
-	return new IndexColorModel(8, 256, red, green, blue);
-	
+	return new IndexColorModel(8, 256, red, green, blue);	
  }
 
  /** Return the RAINBOW palette 
@@ -2654,81 +2884,78 @@ public  void dispHdfVdataInfo(int fid, HDFObjectNode node) throws HDFException {
    */
  public  byte[] getPaletteOfRainbow()  {
 
+	int[] rainbowValues = {  
 
- byte[][]  values={	
-	
-{
-  0,  4,  9, 13, 18, 22, 27, 31, 36, 40, 45, 50, 54, 58, 61, 64,
- 68, 69, 72, 74, 77, 79, 80, 82, 83, 85, 84, 86, 87, 88, 86, 87,
- 87, 87, 85, 84, 84, 84, 83, 79, 78, 77, 76, 71, 70, 68, 66, 60,
- 58, 55, 53, 46, 43, 40, 36, 33, 25, 21, 16, 12,  4,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,
-  8, 12, 21, 25, 29, 33, 42, 46, 51, 55, 63, 67, 72, 76, 80, 89,
- 93, 97,101,110,114,119,123,-125,-121,-116,-112,-103,-99,-95,-91,-87,
--78,-74,-69,-65,-57,-53,-48,-44,-35,-31,-27,-23,-14,-10,-6,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
-},
-    
-{
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,  8,
- 16, 21, 25, 29, 38, 42, 46, 51, 55, 63, 67, 72, 76, 84, 89, 93,
- 97,106,110,114,119,127,-125,-121,-116,-112,-104,-99,-95,-91,-82,-78,
--74,-69,-61,-57,-53,-48,-40,-36,-31,-27,-23,-14,-10,-6,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--6,-14,-18,-23,-27,-35,-40,-44,-48,-57,-61,-65,-69,-78,-82,-86,
--91,-95,-103,-108,-112,-116,-125,127,123,119,110,106,102, 97, 89, 85,
- 80, 76, 72, 63, 59, 55, 51, 42, 38, 34, 29, 21, 17, 12,  8,  0
-},
-   
-{
-  0,  3,  7, 10, 14, 19, 23, 28, 32, 38, 43, 48, 53, 59, 63, 68,
- 72, 77, 81, 86, 91, 95,100,104,109,113,118,122,127,-124,-120,-115,
--111,-106,-102,-97,-93,-88,-83,-79,-74,-70,-65,-61,-56,-52,-47,-42,
--38,-33,-29,-24,-20,-15,-11,-6,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
--1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-10,
--14,-18,-23,-31,-36,-40,-44,-53,-57,-61,-65,-69,-78,-82,-86,-91,
--99,-104,-108,-112,-121,-125,127,123,114,110,106,102, 97, 89, 84, 80,
- 76, 67, 63, 59, 55, 46, 42, 38, 34, 25, 21, 16, 12,  8,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0
-}
-  
-};
+   // rgb,rgb, ......
+   0x00, 0x00, 0x00, 0x7c, 0x00, 0xff, 0x78, 0x00, 0xfe, 0x73, 0x00, 0xff,
+   0x6f, 0x00, 0xfe, 0x6a, 0x00, 0xff, 0x66, 0x00, 0xfe, 0x61, 0x00, 0xff,
+   0x5d, 0x00, 0xfe, 0x58, 0x00, 0xff, 0x54, 0x00, 0xfe, 0x4f, 0x00, 0xff,
+   0x4b, 0x00, 0xfe, 0x46, 0x00, 0xff, 0x42, 0x00, 0xfe, 0x3d, 0x00, 0xff,
+   0x39, 0x00, 0xfe, 0x34, 0x00, 0xff, 0x30, 0x00, 0xfe, 0x2b, 0x00, 0xff,
+   0x27, 0x00, 0xfe, 0x22, 0x00, 0xff, 0x1e, 0x00, 0xfe, 0x19, 0x00, 0xff,
+   0x15, 0x00, 0xfe, 0x10, 0x00, 0xff, 0x0c, 0x00, 0xfe, 0x07, 0x00, 0xff,
+   0x03, 0x00, 0xfe, 0x00, 0x02, 0xff, 0x00, 0x06, 0xfe, 0x00, 0x0b, 0xff,
+   0x00, 0x0f, 0xfe, 0x00, 0x14, 0xff, 0x00, 0x18, 0xfe, 0x00, 0x1d, 0xff,
+   0x00, 0x21, 0xfe, 0x00, 0x26, 0xff, 0x00, 0x2a, 0xfe, 0x00, 0x2f, 0xff,
+   0x00, 0x33, 0xfe, 0x00, 0x38, 0xff, 0x00, 0x3c, 0xfe, 0x00, 0x41, 0xff,
+   0x00, 0x45, 0xfe, 0x00, 0x4a, 0xff, 0x00, 0x4e, 0xfe, 0x00, 0x53, 0xff,
+   0x00, 0x57, 0xfe, 0x00, 0x5c, 0xff, 0x00, 0x60, 0xfe, 0x00, 0x65, 0xff,
+   0x00, 0x69, 0xfe, 0x00, 0x6e, 0xff, 0x00, 0x72, 0xfe, 0x00, 0x77, 0xff,
+   0x00, 0x7a, 0xfe, 0x00, 0x80, 0xff, 0x00, 0x83, 0xfe, 0x00, 0x89, 0xff,
+   0x00, 0x8c, 0xfe, 0x00, 0x92, 0xff, 0x00, 0x95, 0xfe, 0x00, 0x9b, 0xff,
+   0x00, 0x9e, 0xfe, 0x00, 0xa4, 0xff, 0x00, 0xa7, 0xfe, 0x00, 0xad, 0xff,
+   0x00, 0xb0, 0xfe, 0x00, 0xb6, 0xff, 0x00, 0xb9, 0xfe, 0x00, 0xbf, 0xff,
+   0x00, 0xc2, 0xfe, 0x00, 0xc8, 0xff, 0x00, 0xcb, 0xfe, 0x00, 0xd1, 0xff,
+   0x00, 0xd4, 0xfe, 0x00, 0xda, 0xff, 0x00, 0xdd, 0xfe, 0x00, 0xe3, 0xff,
+   0x00, 0xe6, 0xfe, 0x00, 0xec, 0xff, 0x00, 0xf0, 0xfe, 0x00, 0xf5, 0xff,
+   0x00, 0xf9, 0xfe, 0x00, 0xfe, 0xff, 0x00, 0xfe, 0xfa, 0x00, 0xff, 0xf7,
+   0x00, 0xfe, 0xf1, 0x00, 0xff, 0xee, 0x00, 0xfe, 0xe8, 0x00, 0xff, 0xe5,
+   0x00, 0xfe, 0xdf, 0x00, 0xff, 0xdc, 0x00, 0xfe, 0xd6, 0x00, 0xff, 0xd3,
+   0x00, 0xfe, 0xcd, 0x00, 0xff, 0xca, 0x00, 0xfe, 0xc4, 0x00, 0xff, 0xc1,
+   0x00, 0xfe, 0xbb, 0x00, 0xff, 0xb8, 0x00, 0xfe, 0xb2, 0x00, 0xff, 0xaf,
+   0x00, 0xfe, 0xa9, 0x00, 0xff, 0xa6, 0x00, 0xfe, 0xa0, 0x00, 0xff, 0x9d,
+   0x00, 0xfe, 0x97, 0x00, 0xff, 0x94, 0x00, 0xfe, 0x8e, 0x00, 0xff, 0x8b,
+   0x00, 0xfe, 0x85, 0x00, 0xff, 0x82, 0x00, 0xfe, 0x7d, 0x00, 0xff, 0x79,
+   0x00, 0xfe, 0x74, 0x00, 0xff, 0x70, 0x00, 0xfe, 0x6b, 0x00, 0xff, 0x67,
+   0x00, 0xfe, 0x62, 0x00, 0xff, 0x5e, 0x00, 0xfe, 0x59, 0x00, 0xff, 0x55,
+   0x00, 0xfe, 0x50, 0x00, 0xff, 0x4c, 0x00, 0xfe, 0x47, 0x00, 0xff, 0x43,
+   0x00, 0xfe, 0x3e, 0x00, 0xff, 0x3a, 0x00, 0xfe, 0x35, 0x00, 0xff, 0x31,
+   0x00, 0xfe, 0x2c, 0x00, 0xff, 0x28, 0x00, 0xfe, 0x23, 0x00, 0xff, 0x1f,
+   0x00, 0xfe, 0x1a, 0x00, 0xff, 0x16, 0x00, 0xfe, 0x11, 0x00, 0xff, 0x0d,
+   0x00, 0xfe, 0x08, 0x00, 0xff, 0x04, 0x01, 0xfe, 0x00, 0x05, 0xff, 0x00,
+   0x0a, 0xfe, 0x00, 0x0e, 0xff, 0x00, 0x13, 0xfe, 0x00, 0x17, 0xff, 0x00,
+   0x1c, 0xfe, 0x00, 0x20, 0xff, 0x00, 0x25, 0xfe, 0x00, 0x29, 0xff, 0x00,
+   0x2e, 0xfe, 0x00, 0x32, 0xff, 0x00, 0x37, 0xfe, 0x00, 0x3b, 0xff, 0x00,
+   0x40, 0xfe, 0x00, 0x44, 0xff, 0x00, 0x49, 0xfe, 0x00, 0x4d, 0xff, 0x00,
+   0x52, 0xfe, 0x00, 0x56, 0xff, 0x00, 0x5b, 0xfe, 0x00, 0x5f, 0xff, 0x00,
+   0x64, 0xfe, 0x00, 0x68, 0xff, 0x00, 0x6d, 0xfe, 0x00, 0x71, 0xff, 0x00,
+   0x76, 0xfe, 0x00, 0x7b, 0xff, 0x00, 0x7e, 0xfe, 0x00, 0x84, 0xff, 0x00,
+   0x87, 0xfe, 0x00, 0x8d, 0xff, 0x00, 0x90, 0xfe, 0x00, 0x96, 0xff, 0x00,
+   0x99, 0xfe, 0x00, 0x9f, 0xff, 0x00, 0xa2, 0xfe, 0x00, 0xa8, 0xff, 0x00,
+   0xab, 0xfe, 0x00, 0xb1, 0xff, 0x00, 0xb4, 0xfe, 0x00, 0xba, 0xff, 0x00,
+   0xbd, 0xfe, 0x00, 0xc3, 0xff, 0x00, 0xc6, 0xfe, 0x00, 0xcc, 0xff, 0x00,
+   0xcf, 0xfe, 0x00, 0xd5, 0xff, 0x00, 0xd8, 0xfe, 0x00, 0xde, 0xff, 0x00,
+   0xe1, 0xfe, 0x00, 0xe7, 0xff, 0x00, 0xea, 0xfe, 0x00, 0xf0, 0xff, 0x00,
+   0xf3, 0xfe, 0x00, 0xf9, 0xff, 0x00, 0xfc, 0xfe, 0x00, 0xff, 0xfc, 0x00,
+   0xfe, 0xf7, 0x00, 0xff, 0xf3, 0x00, 0xfe, 0xee, 0x00, 0xff, 0xea, 0x00,
+   0xfe, 0xe5, 0x00, 0xff, 0xe1, 0x00, 0xfe, 0xdc, 0x00, 0xff, 0xd8, 0x00,
+   0xfe, 0xd3, 0x00, 0xff, 0xcf, 0x00, 0xfe, 0xca, 0x00, 0xff, 0xc6, 0x00,
+   0xfe, 0xc1, 0x00, 0xff, 0xbd, 0x00, 0xfe, 0xb8, 0x00, 0xff, 0xb4, 0x00,
+   0xfe, 0xaf, 0x00, 0xff, 0xab, 0x00, 0xfe, 0xa6, 0x00, 0xff, 0xa2, 0x00,
+   0xfe, 0x9d, 0x00, 0xff, 0x99, 0x00, 0xfe, 0x94, 0x00, 0xff, 0x90, 0x00,
+   0xfe, 0x8b, 0x00, 0xff, 0x87, 0x00, 0xfe, 0x83, 0x00, 0xff, 0x7e, 0x00,
+   0xfe, 0x7a, 0x00, 0xff, 0x75, 0x00, 0xfe, 0x71, 0x00, 0xff, 0x6c, 0x00,
+   0xfe, 0x68, 0x00, 0xff, 0x63, 0x00, 0xfe, 0x5f, 0x00, 0xff, 0x5a, 0x00,
+   0xfe, 0x56, 0x00, 0xff, 0x51, 0x00, 0xfe, 0x4d, 0x00, 0xff, 0x48, 0x00,
+   0xfe, 0x44, 0x00, 0xff, 0x3f, 0x00, 0xfe, 0x3b, 0x00, 0xff, 0x36, 0x00,
+   0xfe, 0x32, 0x00, 0xff, 0x2d, 0x00, 0xfe, 0x29, 0x00, 0xff, 0x24, 0x00,
+   0xfe, 0x20, 0x00, 0xff, 0x1b, 0x00, 0xfe, 0x17, 0x00, 0xff, 0x12, 0x00,
+   0xfe, 0x0e, 0x00, 0xff, 0x09, 0x00, 0xff, 0x05, 0x00, 0xff, 0xff, 0xff };
 
-	int  ncolors = 256;
-	
-	byte retPal[] = new byte[768];
-
-	for (int i=0; i<256; i += 1) {
-	
-	    retPal[3*i]   = (byte)values[0][i];
-	    retPal[3*i+1] = (byte)values[1][i];
-	    retPal[3*i+2] = (byte)values[2][i];
-	}
-
-	return retPal;
-	
+	byte[] retVal = new byte[768];
+	for (int kk=0; kk<768; kk++) 
+	    retVal[kk] = (byte)rainbowValues[kk];
+	return retVal;
  }
  
 
@@ -2950,10 +3177,14 @@ public  void dispHdfVdataInfo(int fid, HDFObjectNode node) throws HDFException {
 
     hdf = applet_.hdf;
 
+    if (isExpanded()) { // expanded node
     try {
 	    switch (nodeType) {
 	    case node.RIS8: // HDF 8-raster image   
 		dispHdfRis8Info(applet_.hdfFile, node);
+// test for animation
+// invoke JHVImageAnimation
+// JHVImageAnimation animatedImages = new JHVImageAnimation(applet_.hdfFile);
 		break;
 
 	    case node.RIS24: // HDF 24-raster image
@@ -2989,6 +3220,7 @@ public  void dispHdfVdataInfo(int fid, HDFObjectNode node) throws HDFException {
     } catch (HDFException e) {
 	System.out.println("Warning:  Exception caught and ignored (expandCollapse)");
     }
+    } // if (isExpanded()) ...
 
     // set cursor type to "DEFAULT_CURSOR"
     ((Component)applet_.jhvFrame).setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -3012,4 +3244,81 @@ public  void dispHdfVdataInfo(int fid, HDFObjectNode node) throws HDFException {
       
     }
   }
+
+   public  double[] getDataRange(byte[] data, int nt, int size) {
+
+    HDFNativeData convert = new HDFNativeData();
+
+    double max = Double.MIN_VALUE;
+    double min = Double.MAX_VALUE;
+    int datasize = 1;
+    try {
+      // data size for the original data based on the data number type
+      datasize = HDFLibrary.DFKNTsize(nt);
+    } catch (HDFException e) {};
+
+    // extract the dataset to be processed
+    for (int i=0; i<size; i++) {
+
+	int pos = i*datasize;
+
+	double tmp = 0;	
+	switch(nt) {
+	// one bit char
+	case HDFConstants.DFNT_CHAR:
+	case HDFConstants.DFNT_UCHAR8:
+	case HDFConstants.DFNT_UINT8:
+	   tmp = (double)((byte)data[pos]);
+	  // convert to positive if the number is negative 
+	  if (tmp < 0)  
+	     tmp += 256.0d;	
+	  break;
+		
+	// signed integer (byte)	
+	case HDFConstants.DFNT_INT8:
+	  
+	  tmp = (double)((byte)data[pos]);
+	  break;
+	  
+        // short	
+	case HDFConstants.DFNT_INT16:
+	case HDFConstants.DFNT_UINT16:
+	  tmp = (double)convert.byteToShort(data, pos);
+	  break;
+	    
+	case HDFConstants.DFNT_INT32:
+	case HDFConstants.DFNT_UINT32:
+		
+	  tmp = (double)convert.byteToInt(data, pos);
+	  break;
+		  
+	//case HDFConstants.DFNT_FLOAT:
+	case HDFConstants.DFNT_FLOAT32:
+	
+	  tmp = (double)convert.byteToFloat(data, pos);
+	  break;
+	    
+	//case HDFConstants.DFNT_DOUBLE:
+	case HDFConstants.DFNT_FLOAT64:
+	
+	  tmp = convert.byteToDouble(data, pos);
+	  break;
+	
+	default:
+	  tmp = 0;
+	}
+	    
+	max = Math.max(tmp,max);
+	min = Math.min(tmp,min);
+
+    }     // for (int i=0; )
+
+    // System.out.println("Max: " + max);
+    // System.out.println("Min: " + min);
+
+    double range[] = new double[2];    
+    range[0] = min;
+    range[1] = max;
+    return range;
+  } 
 }

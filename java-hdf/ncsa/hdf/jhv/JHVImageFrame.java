@@ -22,18 +22,15 @@ import java.awt.event.*;
 import java.io.*;
 
 import ncsa.hdf.hdflib.*;
+import ncsa.hdf.java.awt.image.*;
+import ncsa.hdf.java.awt.*;
+import ncsa.hdf.java.awt.event.*;
 
-
-//----------------------------------------------------------------------------
-//
-//  Upgraded to the JDK 1.1.1b Event Model
-//   - Apu Kapadia May 21st, 1997.
-//
-//-----------------------------------------------------------------------------
-
+//  Upgraded to the JDK 1.1.1b Event Model by Apu
 /**
- * This class will display the image in the new frame winthin the canvas 
- * what about panel control?
+ * This class displays an image in seprate window. More image processing is here.
+ * @version 1.50  9/6/97
+ * @auther Xinjian  Lu
  */
 public class JHVImageFrame extends Frame implements ItemListener, ActionListener, AdjustmentListener{
 
@@ -97,12 +94,29 @@ public class JHVImageFrame extends Frame implements ItemListener, ActionListener
   JHVImageBCControl	imageBCControl;
 
   MenuItem		adjustMenuItem;
+  
+  // display pixel value or digital value?
+  public static final int NONE_VALUE  = 0;
+  public static final int PIXEL_VALUE = 1;
+  public static final int DIGIT_VALUE = 2;
+
+  public static final int NONE_PLOT = 3;
+  public static final int RADIAL_PLOT = 4;
+  public static final int HISTOGRAM_PLOT = 5;
+
+  // view menu items
+  CheckboxMenuItem 	digitItem;
+  CheckboxMenuItem	pixelItem;
+  CheckboxMenuItem	noneItem;
+  CheckboxMenuItem	radialItem;
+  CheckboxMenuItem	histogramItem;
+  CheckboxMenuItem	noPlotItem;
 
   /** Create the seprate frame based on the HDF browser's image canvas.
    *  This frame will display the HDF raster image with scroll panel
    * @param app the JHV applet name
    */
-  public JHVImageFrame(JHVCanvas canvas_) {
+  public JHVImageFrame(JHVCanvas canvas_, Rectangle subset) {
     
     // JHV applet 
     applet_ = canvas_.app;
@@ -117,27 +131,28 @@ public class JHVImageFrame extends Frame implements ItemListener, ActionListener
     setMenuBar(this.createJHVImageMenuBar());
  
     // image canvas
-    imageCanvas = new JHVImageCanvas(this);
+    imageCanvas = new JHVImageCanvas(this, subset);
              
     // set jhv canvas associated with image canvas
     imageCanvas.jhvCanvas = canvas_;
     
     // set image
-    if (canvas_.currentImage != null)
+    // if (canvas_.currentImage != null)
       // set image for image canvas
-      imageCanvas.setImage(canvas_.currentImage);
+      // imageCanvas.setImage(canvas_.currentImage);
 
     // set image size
-    int w = canvas_.getImageWidth();
-    int h = canvas_.getImageHeight();
-    imageCanvas.setImageSize(w,h);
-	
+    // int w = canvas_.getImageWidth();
+    // int h = canvas_.getImageHeight();
+    // imageCanvas.setImageSize(w,h);
+    imageCanvas.setImageSize(subset.width, subset.height);
+
     // set canvas size
     // imageCanvas.setCanvasSize(w,h);
     imageCanvas.setCanvasSize(200,200);
     
     // repaint the image
-    imageCanvas.repaint();
+    // imageCanvas.repaint();
          
     // get HDF Object Node;
     imageCanvas.setHDFObjectNode( canvas_.node );
@@ -156,6 +171,7 @@ public class JHVImageFrame extends Frame implements ItemListener, ActionListener
     
     //imagePanel.imageCanvas.checkSize();
     imageCanvas.checkSize();
+
     speedsChoice.addItemListener(this);
     this.addWindowListener(new WindowClosedProcess());
   }
@@ -182,6 +198,8 @@ public class JHVImageFrame extends Frame implements ItemListener, ActionListener
         MenuBar  jhvImageMenuBar = new MenuBar();
         jhvImageMenuBar.add(createFileMenu("File"));
   	jhvImageMenuBar.add(createEditMenu("Edit"));
+	jhvImageMenuBar.add(createViewMenu("View"));	
+	jhvImageMenuBar.add(createPlotMenu("Plot"));
     	jhvImageMenuBar.add(createPaletteMenu("Palette"));
 	jhvImageMenuBar.add(createImageMenu("Image"));
 	jhvImageMenuBar.add(createFilterMenu("Filter"));
@@ -206,6 +224,55 @@ public class JHVImageFrame extends Frame implements ItemListener, ActionListener
     
         return fileMenu;
     
+    }
+
+  /** create a view menu by provoded title
+    * @param menuTitle the menu title
+    */
+    public Menu createViewMenu(String  menuTitle) {
+    
+        // new menu by specified menuTitle
+        Menu viewMenu = new Menu(menuTitle);
+    
+	noneItem = new CheckboxMenuItem("No Value",true);
+	noneItem.addItemListener(this); 
+        viewMenu.add(noneItem);
+
+	// add menuItem  
+	digitItem = new CheckboxMenuItem("Digital Value");
+	digitItem.addItemListener(this);  
+	viewMenu.add(digitItem); //default
+
+	pixelItem = new CheckboxMenuItem("Pixel Value");
+	pixelItem.addItemListener(this); 
+        viewMenu.add(pixelItem);
+
+        return viewMenu;    
+    }
+
+  /** create a plot menu by provoded title
+    * @param menuTitle the menu title
+    */
+    public Menu createPlotMenu(String  menuTitle) {
+    
+        // new menu by specified menuTitle
+        Menu plotMenu = new Menu(menuTitle);
+
+    	// histogram or arial plots
+	noPlotItem = new CheckboxMenuItem("No Plots",true);
+	noPlotItem.addItemListener(this); 
+        plotMenu.add(noPlotItem);
+
+	// histogram or arial plots
+	radialItem = new CheckboxMenuItem("Radial Plots");
+	radialItem.addItemListener(this); 
+        plotMenu.add(radialItem);
+
+	histogramItem = new CheckboxMenuItem("Histogram Plots");
+	histogramItem.addItemListener(this); 
+        plotMenu.add(histogramItem);
+
+        return plotMenu;    
     }
 
    /** create a edit  menu by provoded title such like bright/contrast ...
@@ -500,7 +567,7 @@ public Panel createDisplayItems() {
       img_ = imageCanvas.getImage(numPlane);
       
       // set image for hdfCanvas and repaint it
-      applet_.hdfCanvas.setImage(img_);
+      // applet_.hdfCanvas.setImage(img_);
       
       // set image for current canvas & repaint it
       imageCanvas.setImage(img_);
@@ -520,7 +587,7 @@ public Panel createDisplayItems() {
       img_ = imageCanvas.getImage(numPlane);
       
       // set image for hdfCanvas
-      applet_.hdfCanvas.setImage(img_);
+      // applet_.hdfCanvas.setImage(img_);
 
       // set image for current canvas
       imageCanvas.setImage(img_);
@@ -551,17 +618,20 @@ public Panel createDisplayItems() {
 
     //paint the canvas
     imageCanvas.repaint();
-    
-    // show the whole components
-    show();
-
+  
     // adjust the size of the frame
-
     setSize(frameWidth, frameHeight);
     
     // set scrollbar value
     imageCanvas.setHScrollValue();
-    imageCanvas.setVScrollValue();
+    imageCanvas.setVScrollValue();   
+
+    // default location
+    setLocation(100,100);
+
+    // show the whole components
+    setVisible(true);
+
   }
 
     public void close() {
@@ -581,6 +651,16 @@ public Panel createDisplayItems() {
 	   imageBCControl.close();
 	   imageBCControl = null;
 	}
+
+	if (imageCanvas.hPlot != null) {
+	   (imageCanvas.hPlot).xyPlotExit();
+	   imageCanvas.hPlot = null;
+	}
+	if (imageCanvas.aPlot != null) {
+	   (imageCanvas.aPlot).xyPlotExit();
+	   imageCanvas.aPlot = null;
+	}
+	
     }
 
     /** Enables annimated button */
@@ -625,7 +705,7 @@ public Panel createDisplayItems() {
 	    // Undo All , Undo ...
 	    if (("Undo All".equals(arg)) || ("Undo".equals(arg)))
 		handleEditMenuEvent(arg);
-
+ 
 	    // "New palette"  , "Set Palette"
 	    if (("New Palette".equals(arg)) || ("Set Palette".equals(arg)))
 		handlePaletteMenuEvent(arg);
@@ -668,6 +748,67 @@ public Panel createDisplayItems() {
 		jhvCanvas.setImage(imageCanvas.preImage);
 		imageCanvas.setImage(imageCanvas.preImage);
 	    }
+    }
+
+    // Handle View menu events
+    public void handleViewMenuEvent( CheckboxMenuItem item) {
+
+	    Object labels[] = item.getSelectedObjects();
+	    if (labels == null) return;
+	    String label = (String)labels[0];
+
+	    // Pixel Value
+	    if ("Pixel Value".equals(label)) {
+		noneItem.setState(false);
+	        digitItem.setState(false);
+		pixelItem.setState(true);
+		imageCanvas.dispImageDataMode = PIXEL_VALUE;
+		imageCanvas.setShowCoordinate(true);
+	    } else  
+	      	if ("Digital Value".equals(label))  {
+			noneItem.setState(false);
+			digitItem.setState(true);
+			pixelItem.setState(false);		
+			imageCanvas.dispImageDataMode = DIGIT_VALUE;
+			imageCanvas.setShowCoordinate(true);	
+	    	} else {
+	      	if ("No Value".equals(label))  {
+			noneItem.setState(true);
+			digitItem.setState(false);
+			pixelItem.setState(false);			
+			imageCanvas.dispImageDataMode = NONE_VALUE;
+			imageCanvas.setShowCoordinate(false);
+		}
+	       }	    
+    }
+
+    // Handle Plot menu events
+    public void handlePlotMenuEvent( CheckboxMenuItem item) {
+
+	    Object labels[] = item.getSelectedObjects();
+	    if (labels == null) return;
+	    String label = (String)labels[0];
+
+	    // radial polts
+	    if ("Radial Plots".equals(label)) {
+		noPlotItem.setState(false);
+		radialItem.setState(true);
+		histogramItem.setState(false);
+		imageCanvas.imagePlotMode = RADIAL_PLOT;
+	    } else  {
+	      	if ("Histogram Plots".equals(label))  {
+			noPlotItem.setState(false);
+			radialItem.setState(false);
+			histogramItem.setState(true);
+			imageCanvas.imagePlotMode = HISTOGRAM_PLOT;
+	        }      	
+	  	else if ("No Plots".equals(label))  {
+			noPlotItem.setState(true);
+			radialItem.setState(false);
+			histogramItem.setState(false);
+			imageCanvas.imagePlotMode = NONE_PLOT;
+	       }
+	   } // if ("Radial Plots".equals(label)) {
     }
 
     public void setNewPalette() {
@@ -819,48 +960,67 @@ public Panel createDisplayItems() {
       handleMenuEvent(arg);
   }
 
-  public void itemStateChanged(ItemEvent e)
-  {
+     public void setSubsetRange(Rectangle rect) {
+	imageCanvas.setSubsetRange(rect);
+    }
+
+  public void itemStateChanged(ItemEvent e)  {
+ 
     plane = imageCanvas.numberOfImage;
     ItemSelectable target = e.getItemSelectable();
+    
+    if (target instanceof CheckboxMenuItem) { // view menu & plot menu
+	Object labels[] = ((CheckboxMenuItem)target).getSelectedObjects();
+	if (labels == null) return;
+	String label = (String)labels[0];
+ 	if (("Pixel Value".equals(label))   ||
+	    ("Digital Value".equals(label)) ||
+	    ("No Value".equals(label)) )
+	   handleViewMenuEvent((CheckboxMenuItem)target);
+	else 
+	   handlePlotMenuEvent((CheckboxMenuItem)target);
+    }
+    else {
+      if(target instanceof Choice) {
 
-    if(target instanceof Choice)
-      {
 	Choice choice = (Choice) target;
 	// speed choice;
 	String speedStr = choice.getSelectedItem();
-	if (Character.isDigit(speedStr.charAt(0))) 
-	  {
+	if (Character.isDigit(speedStr.charAt(0))) {
 	    // get spreed value
 	    float tmpVal = Float.valueOf(speedStr).floatValue()* 1000.0f;
 	    int sp = (int)(tmpVal);
 	    
 	    // set animationed speed
 	    imageCanvas.setSpeeds(sp);
-	  } 
-      }
-
-    if(target instanceof Checkbox)
-      {
+	}
+    } 
+    else if(target instanceof Checkbox) {
 	Checkbox checkBox = (Checkbox)target;
-
 	String label = checkBox.getLabel();
 	
 	if (label.equals("100%"))
 	    zoomFactor = 1.0f;
-
-	if (label.equals("200%"))
-	    zoomFactor = 2.0f;
-	if (label.equals("500%"))
-	    zoomFactor = 5.0f;
-	if (label.equals("800%"))
-	    zoomFactor = 8.0f;
-	if (label.equals("1000%"))
-	    zoomFactor = 10.0f;
-      }
-
+	else {
+	    if (label.equals("200%"))
+	       zoomFactor = 2.0f;
+	    else {
+		 if (label.equals("500%"))
+	 	    zoomFactor = 5.0f;
+		 else 
+		    if (label.equals("800%"))
+	    		zoomFactor = 8.0f;
+		    else {
+			if (label.equals("1000%"))
+	    		   zoomFactor = 10.0f;
+		    }
+		}// if (label.equals("200%")) 
+	    }  //if (label.equals("100%"))
+      } // if(target instanceof Checkbox) {
+    } // if (target instanceof CheckboxMenuItem)  
   }
   
+
   /**
    * Handles the event. Returns true if the event is handled and
    * should not be passed to the parent of this component. The default
@@ -902,5 +1062,4 @@ public Panel createDisplayItems() {
       }
     }
   }
-
 }

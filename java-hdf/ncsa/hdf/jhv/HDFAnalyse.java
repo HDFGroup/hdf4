@@ -13,16 +13,16 @@ package ncsa.hdf.jhv;
 
 import java.util.Vector;
 
-import java.util.Queue;
-
+import ncsa.hdf.java.util.Queue;
 import ncsa.hdf.hdflib.*;
 
- /* This class will analyse the HDF file and put the HDF object into 
-  * the Queue. Hdf object is the node create by HDFObjectNode class
+/* This class will analyse the HDF file and put the HDF object into 
+  * the Queue. Hdf object is the node created by HDFObjectNode class
   * Date: 3-12-97 Modified "getSDSObject()".
   * 		  Keep the name of an HDF object node to be more readable,
   *		  to be as the form look like "sdsname: long_name".
-  *  		  
+  * @version 2.00  9/3/97
+  * @auther  Xinjian Lu  		  
   */
 
 public class HDFAnalyse {
@@ -559,6 +559,29 @@ public class HDFAnalyse {
 			   
 			       sdsDatasetQueue.put(node);
 
+			        // Date: 6-12-97:
+  				// Added following code to handle object annotation. but it is limited.
+				// For SDS, take "Number Dataset Group(720)" as an example
+			        // for dataset object annotation 
+			       if ( ( (ANgetobjectlabel(tag,ref)).length() > 0 ) || 
+ 				    ( (ANgetobjectdesc(tag,ref)).length() > 0 ) )
+				{
+				   // HDF SDS dataset annotation   node     
+
+				   node = new HDFObjectNode();
+				   node.setObjType(node.SDSDATASETAN);
+				   node.setObjLevel(2);
+				   node.setTagRef(tag,ref);
+				   node.setName("SDS Dataset Annotation");
+
+				   node.setHasParent(true);
+				   node.setParentObj(datasetParentNode);
+							
+				   // Add gr dataset node
+				   sdsDatasetQueue.put(node);
+				
+				} 
+
 			       // for dataset attributes
 			       int datasetAttrNumber = SDInfo[2];
 			       if (datasetAttrNumber > 0) {
@@ -784,6 +807,30 @@ public class HDFAnalyse {
 			   
 			       grDatasetQueue.put(node);
 
+			        // Date: 6-12-97:
+  				// Added following code to handle object annotation. but it is limited.
+				// For R8, R24 take 306 as tag for object annotation.
+				// For GR, take "Raster Image Group(306)" as an example
+			        // for dataset object annotation 
+			        if ( ( (ANgetobjectlabel(tag,ref)).length() > 0 ) || 
+ 				    ( (ANgetobjectdesc(tag,ref)).length() > 0 ) )
+				{
+				   // HDF GR dataset annotation   node     
+
+				   node = new HDFObjectNode();
+				   node.setObjType(node.GRDATASETAN);
+				   node.setObjLevel(2);
+				   node.setTagRef(tag,ref);
+				   node.setName("GR Dataset Annotation");
+
+				   node.setHasParent(true);
+				   node.setParentObj(datasetParentNode);
+							
+				   // Add gr dataset node
+				   grDatasetQueue.put(node);
+				
+				} 
+
 			       // for dataset attributes
 			       int datasetAttrNumber = datasetinfo[3];
 			       if (datasetAttrNumber > 0) {
@@ -957,6 +1004,29 @@ public class HDFAnalyse {
 	        node.setParentObj(datasetParentNode);
 
 	        sdsDatasetQueue.put(node);
+	
+		// Date: 6-12-97:
+  		// Added following code to handle object annotation. but it is limited.
+		// For SDS, take "Number Dataset Group(720)" as an example
+		// for dataset object annotation 
+		if ( ( (ANgetobjectlabel(tag,ref)).length() > 0 ) || 
+ 		     ( (ANgetobjectdesc(tag,ref)).length() > 0 ) )
+		 {
+			// HDF SDS dataset annotation   node     
+
+			node = new HDFObjectNode();
+			node.setObjType(node.SDSDATASETAN);
+			node.setObjLevel(level+1);
+			node.setTagRef(tag,ref);
+			node.setName("SDS Dataset Annotation");
+
+			node.setHasParent(true);
+			node.setParentObj(datasetParentNode);
+							
+			// Add gr dataset node
+			sdsDatasetQueue.put(node);				
+		} 
+
 
 	        // for dataset attributes
 	        int datasetAttrNumber = SDInfo[2];
@@ -1318,7 +1388,6 @@ public class HDFAnalyse {
 	} 
    }
 
-
   /** Does the HDF file have file label or file description.
      * @return true if the HDF file contains file label or desc. , 
      *         false otherwise
@@ -1350,5 +1419,138 @@ public class HDFAnalyse {
                 return false;
            }
         }
+   }
+
+   /** get object  label from HDF file 
+     * @param tag  the tag of the HDF object.
+     * @param ref  the reference number
+     * @return the string look like text of the object label 
+     */
+     public String ANgetobjectlabel(int tag,int ref) throws HDFException {
+	
+	StringBuffer retStr = new StringBuffer();
+	int[] fileInfo = new int[4];
+	int an_id =  hdf.ANstart(this.fid);
+	if (hdf.ANfileinfo(an_id, fileInfo) == false ) {
+		hdf.ANend(an_id);
+	   return  retStr.toString();
+	}
+
+	// set the file annotation type to be a label
+	int anntype = HDFConstants.AN_DATA_LABEL;
+
+	// get the number of the object label
+	int numObjectLabel = hdf.ANnumann(an_id, anntype, (short)tag, (short)ref);
+
+	// System.out.println("Label Number: "+ numObjectLabel);
+
+	if (numObjectLabel == HDFConstants.FAIL)
+	   return new String();
+
+	// alocate space 
+	int ann_id_list[] = new int[numObjectLabel];
+
+	// get the list of the object annotation id
+	int numAnnid = hdf.ANannlist(an_id, anntype, tag, ref, ann_id_list);
+
+	if (numAnnid == HDFConstants.FAIL)
+	   return new String();
+	
+	for (int i=0; i<numObjectLabel; i++) {
+
+	   // get ann_id;
+	   int annid = ann_id_list[i];
+
+	   // System.out.println("annid: " + annid);
+
+	   // get the object label length
+	   int objectLabelLen = hdf.ANannlen(annid);
+
+	   // System.out.println("Len="+ objectLabelLen);
+
+	   if (objectLabelLen >0) {
+
+	      String objectLabelBuf[] = new String[1];
+	      objectLabelBuf[0] = new String("");
+	      // get object label
+	      if (hdf.ANreadann(annid, objectLabelBuf, objectLabelLen))  {
+		  retStr.append("  ");
+		  retStr.append((new String(objectLabelBuf[0])).trim());
+		  retStr.append("           \n");
+	      }	  			      
+	   } // if (objectLabelLen > 0)
+	   
+	}  // for ()
+
+	hdf.ANend(an_id);
+
+	return retStr.toString();
+
+   }
+
+   /** get the object desc from HDF file 
+     * @param tag  the tag of the HDF object.
+     * @param ref  the reference number
+     * @return the string look like text of the object desc 
+     */
+     public String ANgetobjectdesc(int tag,int ref) throws HDFException  {
+	
+	StringBuffer retStr = new StringBuffer();
+	int[] fileInfo = new int[4];
+
+	// set the file annotation type to be a desc
+	int anntype = HDFConstants.AN_DATA_DESC;
+
+	int an_id =  hdf.ANstart(this.fid);
+	if (hdf.ANfileinfo(an_id, fileInfo) == false ) {
+		hdf.ANend(an_id);
+	   return  retStr.toString();
+	}
+
+	// get the number of the object desc
+	int numObjectDesc = hdf.ANnumann(an_id, anntype, (short)tag, (short)ref);
+
+	// System.out.println("Desc Number: "+ numObjectDesc);
+
+	if (numObjectDesc == HDFConstants.FAIL)
+	   return new String();
+
+	// alocate space 
+	int ann_id_list[] = new int[numObjectDesc];
+
+	// get the list of the object annotation id
+	int numAnnid = hdf.ANannlist(an_id, anntype, tag, ref, ann_id_list);
+
+	if (numAnnid == HDFConstants.FAIL)
+	   return new String();
+	
+	for (int i=0; i<numObjectDesc; i++) {
+
+	   // get ann_id;
+	   int annid = ann_id_list[i];
+
+	   // System.out.println("annid: " + annid);
+
+	   // get the object desc length
+	   int objectDescLen = hdf.ANannlen(annid);
+
+	   if (objectDescLen >0) {
+
+	      String objectDescBuf[] = new String[1];
+	      objectDescBuf[0] = new String("");
+	      // get object desc
+	      if (hdf.ANreadann(annid, objectDescBuf, objectDescLen))  {
+
+		  retStr.append("  ");
+		  retStr.append((new String(objectDescBuf[0])).trim());
+		  retStr.append("   \n");
+	      }	  			      
+	   } // if (objectDescLen > 0)
+	   
+	}  // for ()
+	
+	hdf.ANend(an_id);
+	return retStr.toString();
+
    }
 }

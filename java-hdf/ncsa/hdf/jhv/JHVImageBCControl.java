@@ -14,14 +14,9 @@ package ncsa.hdf.jhv;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
+import ncsa.hdf.java.awt.image.*;
 
-
-//----------------------------------------------------------------------------------
-//
-//  Upgraded to the JDK 1.1.1b Event Model
-//    - Apu Kapadia May 22nd, 1997.
-//
-//----------------------------------------------------------------------------------
+//  Upgraded to the JDK 1.1.1b Event Model by Apu
 public class JHVImageBCControl  extends Frame implements ActionListener, ItemListener,
   AdjustmentListener {
 

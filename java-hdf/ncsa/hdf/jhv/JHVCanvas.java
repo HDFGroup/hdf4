@@ -25,18 +25,10 @@ import java.io.IOException;
 import java.util.*;
 import java.net.*;
 
-
-//---------------------------------------------------------------------
-//
-//  Upgraded to the JDK 1.1.1b Event Model.
-//    - Apu Kapadia, May 21st, 1997.
-//
-//---------------------------------------------------------------------
-
-
 /**
  * JHV  is to display the HDF tree structure
- *
+ * Modified: 
+ * 	Handle large HDF file access. xlu 9/6/97
  * @author HDF Group, NCSA
  */
 
@@ -53,12 +45,15 @@ public class JHVCanvas extends Canvas implements MouseListener,
   HDFObjectNode	node;
   
   String infoStr = "";
-  
+
+  int originalImageWidth  = 256;
+  int originalImageHeight = 256;
+ 
   // image size;
   int imageWidth  = 256;
   int imageHeight = 256;
   
-  Rectangle 	imgRange = new Rectangle() ;
+  // Rectangle 	imgRange = new Rectangle() ;
   
   // variables for double-buffer
   Image 	offScreenImage = null;
@@ -68,6 +63,28 @@ public class JHVCanvas extends Canvas implements MouseListener,
   
   // current mouse position on the image
   int mx, my;
+
+  // top-left point of an image displayed     
+  int startx, starty;
+
+  Rectangle 	currentDragArea;
+
+  // following two variables to be added to handle the large dataset access.
+  // image area in this canvas
+  Rectangle  imageArea = new Rectangle();
+    
+  // subset range of an image
+  Rectangle  subsetRange;
+
+  // indicator of a mouse gragging
+  boolean 	dragFlag = false;
+  Rectangle	dragArea;
+
+  // subsample - expanded factor
+  int	skip = 1;
+  
+  // sds data range
+  double[] range;
 
   /** the constructor */
   JHVCanvas() { 
@@ -86,6 +103,7 @@ public class JHVCanvas extends Canvas implements MouseListener,
    */ 
   public void setImage(Image img) {
 
+    if (img==null) dragFlag = false;
     this.currentImage = null;
     this.currentImage = img;
     this.currentPaletteImage = null;
@@ -102,6 +120,9 @@ public class JHVCanvas extends Canvas implements MouseListener,
   public void setImage(Image img, Image palImage){
     this.currentImage = img;
     this.currentPaletteImage = palImage;
+
+    setImageSize(img.getWidth(this), img.getHeight(this));
+
     repaint();
     try {
       Thread.sleep(10);
@@ -136,6 +157,12 @@ public class JHVCanvas extends Canvas implements MouseListener,
     imageHeight= height;
   }
 
+ public void setOriginalImageSize(int width, int height) {
+    
+    originalImageWidth = width;
+    originalImageHeight= height;
+  }
+
   /** return the current image in the canvas */
   public Image getImage() {
     return currentImage;
@@ -161,7 +188,7 @@ public class JHVCanvas extends Canvas implements MouseListener,
     return new Dimension(20,20);
   }
 
-  /**
+   /**
    * Paints the component.
    * @param g the specified Graphics window
    * @see java.awt.Component#paint
@@ -172,14 +199,19 @@ public class JHVCanvas extends Canvas implements MouseListener,
     int w = getSize().width;
     int h = getSize().height;
     
+    //System.out.println("HDBCanvas: " + w + ", " + h);
+    
     // get the approciate position to display the image
-    int startx=1, starty=1;
+    startx=0;
+    starty=0;
     
     // If the image size is greater than the Canvas make the image shrink
     int width;
     int height;
     width = getImageWidth();
     height= getImageHeight();
+    
+    // System.out.println ( "Image: " + width + " ," + height);
     
     int  factor_x = width / w;	 
     int  factor_y = height / h;
@@ -192,12 +224,12 @@ public class JHVCanvas extends Canvas implements MouseListener,
     }
     
     if (width>w)
-      startx = 1;
+      startx = 0;
     else
       startx = (w-width)/2;
     
     if (height>h)
-      starty = 1;
+      starty = 0;
     else
       starty = (h-height)/2;
     
@@ -216,12 +248,17 @@ public class JHVCanvas extends Canvas implements MouseListener,
 
     } else {
       // draw the frame
+      // setBackground(Color.black);
+
+      //g.setColor(Color.red);
+
+      //g.drawRect(0,0,getSize().width, getSize().height);
       g.setColor(Color.white);
       g.draw3DRect(1,1,getSize().width-2,getSize().height-2,false);
 	
       // image
       g.drawImage(currentImage, startx, starty,width, height, this);
-	
+    
       // display palette    
       if (currentPaletteImage != null) {
 	
@@ -252,14 +289,19 @@ public class JHVCanvas extends Canvas implements MouseListener,
 	mouseOnImageFlag  = false;
 	
 	// write info. on the top of the image
-	writeInfo(g, mx, my, "Click for more");
+	writeInfo(g, mx, my, "Highlight image");
 	
       }
     }
-    
+  
     // set the image range
-    imgRange.setBounds(startx, starty, width, height);
+    imageArea.setBounds(startx, starty, width, height);
     
+    g.setColor(Color.red);   
+    if  (dragFlag)
+	g.drawRect(dragArea.x, dragArea.y, dragArea.width, dragArea.height);
+
+    //System.out.println("imageArea: " + imageArea);  
   }
 
   /** Write the information on the top of the image
@@ -329,7 +371,7 @@ public class JHVCanvas extends Canvas implements MouseListener,
     
     if (offScreenImage == null) {
       // offScreenImage not created; create it.
-      offScreenImage = createImage(d.width, d.height);	
+      offScreenImage = createImage(d.width*2, d.height*2);	
       
       // get the off-screen graphics context    
       offGraphics    = offScreenImage.getGraphics();
@@ -365,19 +407,10 @@ public class JHVCanvas extends Canvas implements MouseListener,
   {
     int x = me.getX();
     int y = me.getY();
-
-    if (imgRange.contains(x,y)) {
-      
-      // make annotation (Click to get the orignal image)
-      mouseOnImageFlag = true;
-
-      mx = x;
-      my = y;
-      repaint();
-    }
-
+  
+    // check mouse position, then do something.
+    checkMousePosition(x,y);
   }
-
 
   /**
    * Called when the mouse exits the component.
@@ -393,8 +426,26 @@ public class JHVCanvas extends Canvas implements MouseListener,
     repaint();
   }
 
+  public void mouseDragged(MouseEvent me) {
+	int x = me.getX();
+    	int y = me.getY();
 
-  public void mouseDragged(MouseEvent me) {}
+ 	// set the mouse draged
+    	dragFlag = true;
+    
+    	// resize the draged area
+    	currentDragArea.setSize(x-currentDragArea.x , y-currentDragArea.y );
+    
+    	// get the rectangle that can be drawable(the value is valid);
+    	// get current canvas size 
+    	Dimension d = getSize();
+    
+    	// make sure that drag area can be drawable
+    	dragArea = getDrawableRect(currentDragArea, d);
+
+    	// repaint to display the info. or not. 		
+    	repaint();
+  }
 
   /**
    * Called if the mouse moves (the mouse button is up)
@@ -406,48 +457,207 @@ public class JHVCanvas extends Canvas implements MouseListener,
 
   public void mouseMoved(MouseEvent me)
   {
-
     int x = me.getX();
     int y = me.getY();
-
-    if (imgRange.contains(x,y)) {
-      
-      // make annotation (Click to get the orignal image)
-      mouseOnImageFlag = true;
-      mx = x;
-      my = y;
-      repaint();
-    }
+ 
+    // check mouse position, then do something to that.
+    checkMousePosition(x,y);
+    repaint();
   }
 						   
+
   public void mouseClicked(MouseEvent me) {}
-  public void mousePressed(MouseEvent me) {}
+
+  public void mousePressed(MouseEvent me) {
+   
+	int x = me.getX();
+    	int y = me.getY();
+
+	// keep the mouse position
+    	currentDragArea = new Rectangle(x, y, 0,0);
+  }
 						   
+
    /**						      	   
     * Called if the mouse is up.
-    * @param evt the event
-    * @param x the x coordinate
-    * @param y the y coordinate
-    * @see java.awt.Component#mouseUp
     */
-  public void mouseReleased(MouseEvent me)
-  {
-    if ( !imgRange.contains(me.getX(),me.getY()) ) return;
-
-    if ((node != null) && (currentImage != null)) {
+  public void mouseReleased(MouseEvent me)   {
+    
+    // Is dragArea valid?
+    // Checks if two rectangles intersect.
+    if  (node != null) {
+      if ((node.getObjType() != node.RIS8) && 
+	  (node.getObjType() != node.RIS24) ) {
+	
+	if ( dragFlag) 
+	  if ( ! dragArea.intersects(imageArea) ) return ;
+	
+	if (!dragFlag)
+	  subsetRange = new Rectangle(0,0,originalImageWidth, originalImageHeight);
+	else {
+	  // compute the dataset range based on the draged area & scroll offset
+	  // if the dragArea is inside the image area
+	  // set datasetArea.
+	  subsetRange = new Rectangle(dragArea.x - startx , 
+				      dragArea.y - starty ,
+				      dragArea.width,      dragArea.height);
+	  
+	  // make the draw area valid
+	  int dx = dragArea.x - startx;
+	  int dy = dragArea.y - starty;
+	  int w  = dragArea.width;
+	  int h  = dragArea.height;
+	  
+	  if (dx <0) {	
+	    w += dx;
+	    dx = 0;
+	  }
+	  
+	  if (dy <0) {
+	    h += dy;
+	    dy = 0;
+	  }
+	  
+	  if ( (dx+w) > imageArea.width)
+	    w = imageArea.width - dx;
+	  if ( (dy+h) > imageArea.height)
+	    h = imageArea.height - dy;
+	  
+	  int f = getSubsampleFactor();
+	  
+	  int  factor_x = getImageWidth() / getSize().width  ;
+	  int  factor_y = getImageHeight()/ getSize().height ;
+	  
+	  int factor = Math.max(factor_x, factor_y) + 1;
+	  
+	  if (factor>1) f *= factor;
+	  
+	  // reset the datasetRange
+	  if ( (dragArea.intersection(imageArea)).equals(imageArea) )
+	    // drag area is bigger enough
+	    subsetRange.setBounds(0,0,originalImageWidth, originalImageHeight);
+	  else
+	    subsetRange.setBounds(dx*f,dy*f,w*f,h*f);
+	  
+	  if ((dragArea.x<imageArea.x)&&
+	      ((dragArea.width+dragArea.x)>(imageArea.x+imageArea.height)))
+	    subsetRange.setBounds(0,subsetRange.y,originalImageWidth,subsetRange.height);
+	  
+	  if ((dragArea.y<imageArea.y)&&
+	      ((dragArea.height+dragArea.y)>(imageArea.y+imageArea.height)))
+	    subsetRange.setBounds(subsetRange.x,0,subsetRange.width,originalImageHeight );
+	  
+	}
+      }
+      else
+	subsetRange = new Rectangle(0,0,originalImageWidth, originalImageHeight);
+      
+      // System.out.println("HDBCanvas::mouseUp::Dataset: " + subsetRange);
+    }
+    
+    if ((node != null) && (currentImage != null) && (subsetRange != null)) {
       
       // set cursor type to "WAIT_CURSOR"
       ((Component)app.jhvFrame).setCursor(new Cursor(Cursor.WAIT_CURSOR));
       
       // Create  new frame and display the orginal image use the ScrollPanel
-      JHVImageFrame frame = new JHVImageFrame(this);
+      // JHVImageFrame frame = new JHVImageFrame(this);
+      JHVImageFrame frame = new JHVImageFrame(this, subsetRange);
       
       // display frame
       frame.popup();
       
       // set cursor type to "DEFAULT_CURSOR"
       ((Component)app.jhvFrame).setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+      
+    }  
+    
+  }
+  
+
+  /** Return the new drawable rectangle based on the anonther rectangle &
+   *  currnet canvas size.
+   * @param originalRect the rectangle
+   * @param drawingArea  the size can be painted.
+   * @return the new rectangle
+   */
+  Rectangle getDrawableRect(Rectangle originalRect, Dimension drawingArea) {
+    int x = originalRect.x;
+    int y = originalRect.y;
+    int width = originalRect.width ;
+    int height = originalRect.height ;
+    
+    //Make sure rectangle width and height are positive.
+    if (width < 0) {
+      width = 0 - width;
+      x = x - width + 1;
+      if (x < 0) {
+	width += x;
+	x = 0;
+      }
     }
+    if (height < 0) {
+      height = 0 - height;
+      y = y - height + 1;
+      if (y < 0) {
+	height += y;
+	y = 0;
+      }
+    }
+    
+    //The rectangle shouldn't extend past the drawing area.
+    if ((x + width ) > drawingArea.width) {
+      width = drawingArea.width - x ;
+    }
+    if ((y + height )> drawingArea.height) {
+      height = drawingArea.height - y ;
+    }  
+    return new Rectangle(x, y, width, height);;
   }
 
+  // check mouse position, then do something to that.
+  public void checkMousePosition(int x, int y) {
+	
+    // check if the point(x,y) is inside the image area
+    if (imageArea.contains(x,y)) {
+  
+      // make annotation (Click to get the orignal image)
+      mouseOnImageFlag = true;
+    } // if (imageArea.inside(x,y)) {
+    else {
+	mouseOnImageFlag = false;  
+    }
+
+    // keep current mouse position.
+    mx=x; my=y;
+  }
+  
+
+  void setSubsampleFactor(int skip) {
+	this.skip = skip;
+   }
+
+   int getSubsampleFactor() {
+	return this.skip;
+   }
+
+   
+
+   public void setDataRange(double[] range) {
+	this.range = range;
+  }
+
+ 
+
+ public double getMaxValue() {
+	if (range != null)
+	   return range[1];
+	return 0;
+  }
+
+  public double getMinValue() {
+	if (range != null)
+	   return range[0]; 
+	return 0;
+  }
 }

@@ -14,17 +14,6 @@ package ncsa.hdf.jhv;
 import  java.awt.*;
 import java.awt.event.*;
 
-
-//--------------------------------------------------------------------------
-//
-//  Upgraded to the JDK 1.1.1b Event Model.
-//    - Apu Kapadia May 22nd, 1997.
-//
-//--------------------------------------------------------------------------
-
-
-
-
 /** This class will display the image  in the seprate  window */
 
 class ImageCanvas extends Canvas {
@@ -421,7 +410,7 @@ public class ImageFrame extends Frame
         setSize(frameWidth, frameHeight);
     
     // show the whole components
-    show();
+    setVisible(true);
   
     // set scrollbar value
     imageCanvas.setHScrollValue();
@@ -469,10 +458,15 @@ public class ImageFrame extends Frame
    */
 
   public void windowActivated(WindowEvent we) {}
+
   public void windowClosed(WindowEvent we) {}
+
   public void windowDeactivated(WindowEvent we) {}
+
   public void windowDeiconified(WindowEvent we) {}
+
   public void windowIconified(WindowEvent we) {}
+
   public void windowOpened(WindowEvent we) {}
 
   public void windowClosing(WindowEvent we)
@@ -488,7 +482,6 @@ public class ImageFrame extends Frame
     dispose();	 
     
   }
-
 
   public void adjustmentValueChanged(AdjustmentEvent e)
   {
@@ -536,6 +529,7 @@ public class ImageFrame extends Frame
   }
   
   
+
   public void actionPerformed(ActionEvent e)
   {
     

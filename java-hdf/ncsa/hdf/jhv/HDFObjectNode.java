@@ -12,9 +12,7 @@
 package ncsa.hdf.jhv;
 
 import java.util.Vector;
-import java.util.Queue;
-
-// package statement will come here
+import ncsa.hdf.java.util.Queue;
 
 /** This class define the contants for each HDF object.
     * @author HDF group, NCSA
@@ -32,12 +30,14 @@ import java.util.Queue;
 	public static final  int    GRGLOBALATTR     = GR*10 +1;
 	public static final  int    GRDATASETATTR    = GR*10 +2;
 	public static final  int    GRDATASET        = GR*10 +3;
-	
+	public static final  int    GRDATASETAN      = GR*10 +4;
+
 	public static final  int    SDS        = Annotation + 5;
 	// for sds object
 	public static final  int    SDSGLOBALATTR     = SDS*10 +1;
 	public static final  int    SDSDATASETATTR    = SDS*10 +2;
 	public static final  int    SDSDATASET        = SDS*10 +3;
+	public static final  int    SDSDATASETAN      = SDS*10 +4;
 	
 	public static final  int    Vdata      = Annotation + 6;
      	public static final  int    Vgroup     = Annotation + 7;	

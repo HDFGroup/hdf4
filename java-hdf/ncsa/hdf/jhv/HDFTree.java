@@ -16,28 +16,16 @@ import	java.awt.*;
 import	java.util.Vector;
 import java.awt.event.*;
 
-
-//----------------------------------------------------------------------
-//
-// Upgraded to the JDK 1.1.1b Event Model.
-//  - Apu Kapadia, May 21st,  1997.
-//
-// Bugs seen:
-//   When a tree is collapsed to a size smaller than the cell size,
-//   the scrollbar correctly (?) resizes to the maxsize.
-//   But this prevents the user from scrolling back to the top of
-//   the tree, and is 'stuck' at the present view.
-//----------------------------------------------------------------------
-
-
-
 /**
  * A HDFTree class is to display HDF Tree data structres like heirarchical
  * file systems. The Tree class was written by Sandip Chitale, we make a 
  * change to suite for our HDF file.
+ * Upgraded to the JDK 1.1.1b Event Model by Apu.
  *
+ * @version 1.02  xlu
  * @author HDF Group, NCSA
  */
+
 public class HDFTree extends Panel implements MouseListener, 
                                               AdjustmentListener { 
                                                                                            
@@ -228,7 +216,8 @@ public class HDFTree extends Panel implements MouseListener,
 	if (count!=0)
 	   treeVector.removeAllElements();    
 
-	
+	treeHOffset = 0;
+	treeVOffset = 0;	
   }
 
   /** remove the subtree of a TreeNode
@@ -271,10 +260,9 @@ public class HDFTree extends Panel implements MouseListener,
   }
 
   /** adjust the Scrollbar and repaint the graphics */
-
   public void  refresh()
   {
-
+  
     /* get the displayed node */
     computedDisplayTree();
 
@@ -286,6 +274,11 @@ public class HDFTree extends Panel implements MouseListener,
     
     // repaint the graphics
     repaint();
+  }
+
+  public void  resetTreeOffset() {
+  	treeHOffset = 0;
+	treeVOffset = 0;
   }
 
   /** get the displayed tree node */
@@ -340,10 +333,7 @@ public class HDFTree extends Panel implements MouseListener,
         return getMinimumSize();
     }
 
-   //public void actionPerformed(ActionEvent event) {
-//	/* not sure what goes here */
-//	}
-
+ 
 
    public void adjustmentValueChanged(AdjustmentEvent e)
    {
@@ -394,7 +384,6 @@ public class HDFTree extends Panel implements MouseListener,
      }
    }
 
-
   public void mouseClicked(MouseEvent e)
   {
     int x = e.getX();
@@ -444,11 +433,12 @@ public class HDFTree extends Panel implements MouseListener,
   }
 
   public void mousePressed(MouseEvent e){}
+
   public void mouseReleased(MouseEvent e){}
+
   public void mouseEntered(MouseEvent e){}
+
   public void mouseExited(MouseEvent e){}
-
-
 
   /** reshap */
   public synchronized  void setBounds(int x, int y, int w, int h)   { 
