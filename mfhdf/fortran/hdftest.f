@@ -438,13 +438,13 @@ C
 
 C
 C     Testing External Element functions: sfsextf, hxsdir, hxscdir.
-C     First set the external create directory to "/tmp".
+C     First set the external create directory to "testdir".
 C     Set dataset sds3 to store in external file.
 C     Try read it back (should fail the first time).
-C     Set locating directory to "nosuch:/tmp".
+C     Set locating directory to "nosuch:testdir".
 C     Read again.  Should succeed this time.
 C
-      stat = hxscdir('/tmp')
+      stat = hxscdir('testdir')
       if(stat.ne.0) then
 	 print *, 'HX set create dir (hxscdir) returned', stat
 	 err = err + 1
@@ -486,7 +486,7 @@ C
          err = err + 1
       endif
 
-      stat = hxsdir('nosuch:/tmp')
+      stat = hxsdir('nosuch:testdir')
       if(stat.ne.0) then
 	 print *, 'HX set dir (hxscdir) returned', stat
 	 err = err + 1

@@ -167,6 +167,8 @@ LD_NETCDF	= $(srcdir)/../libsrc/libmfhdf.a
 LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(JPEG_LIB) $(ZLIB_LIB)
 prefix		= ../../..
 
+# directory used by extelt test.
+TESTDIR = testdir
 
 all::		FORCE
 	@case "$(FC)" in \
@@ -628,12 +630,13 @@ dummy_info $(INFO):   texinfo.tex
 # ###########################################################################
 clean::
 	rm -f $(GARBAGE) $(PROGRAM) a.out core *.o *.a *.so.* *.sa.* *.so \
-	    *.log
+	    *.log $(TESTDIR)/*
 
 realclean::	distclean
 distclean::
 	rm -f $(GARBAGE) $(PROGRAM) a.out core *.o *.a *.so.* *.sa.* *.so \
-	    *.log Makefile config.status cc_id tags ftest.f netcdf.inc jackets.c
+	    *.log Makefile config.status cc_id tags ftest.f netcdf.inc jackets.c \
+	    $(TESTDIR)/*
 
 
 # ###########################################################################
@@ -790,6 +793,7 @@ $(PROGRAM).f:	fortc1.sed fortc2.sed common.m4 $(PROGRAM).src $(OS).m4
 
 hdftest:        hdftest.f $(LIBRARY)
 	$(FC) $(FFLAGS) hdftest.f $(LIBS) -o $@
+	test -d $(TESTDIR) || mkdir $(TESTDIR)
 	./hdftest > hdfout.new
 	@cmd="$(DIFF) $(DIFF_FLAGS) hdfout.new hdftst.sav"; \
 	    echo $$cmd; \
