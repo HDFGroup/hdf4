@@ -5,10 +5,15 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.11  1993/09/11 18:07:57  koziol
-Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
-cleaned up some goofy string manipulations in various places.
+Revision 1.12  1993/09/20 19:56:05  koziol
+Updated the "special element" function pointer array to be a structure
+of function pointers.  This way, function prototypes can be written for the
+functions pointers and some type checking done.
 
+ * Revision 1.11  1993/09/11  18:07:57  koziol
+ * Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
+ * cleaned up some goofy string manipulations in various places.
+ *
  * Revision 1.10  1993/06/16  17:17:59  chouck
  * Fixed comments and increased some buffer sizes
  *
@@ -98,7 +103,7 @@ PRIVATE int32 HXIendaccess
    data element function modules.  The position of each function in
    the table is standard */
 
-int32 (*ext_funcs[])() = {
+funclist_t ext_funcs = {
     HXIstread,
     HXIstwrite,
     HXIseek,
@@ -335,7 +340,7 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
 
     /* update access record and file record */
 
-    access_rec->special_func = ext_funcs;
+    access_rec->special_func = &ext_funcs;
     access_rec->special = SPECIAL_EXT;
     access_rec->posn = 0;
     access_rec->access = DFACC_WRITE;

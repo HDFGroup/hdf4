@@ -2,9 +2,14 @@
 $Header$
 
 $Log$
-Revision 1.22  1993/09/13 21:12:54  chouck
-Modified date for Release 1
+Revision 1.23  1993/09/20 19:56:14  koziol
+Updated the "special element" function pointer array to be a structure
+of function pointers.  This way, function prototypes can be written for the
+functions pointers and some type checking done.
 
+ * Revision 1.22  1993/09/13  21:12:54  chouck
+ * Modified date for Release 1
+ *
  * Revision 1.21  1993/09/08  20:57:13  georgev
  * Fixed flags for UNIXUNBUFIO.
  *
@@ -303,16 +308,27 @@ typedef struct accrec_t {
                                 /* when Hendaccess() is called */
     int16 special;
     VOIDP special_info;
-    int32 (**special_func)();
+    struct funclist_t *special_func;
 } accrec_t;
 
 /* a function table record for accessing special data elements.
    special data elements of a key could be accessed through the list
    of functions in array pointed to by tab. */
+typedef struct funclist_t {
+    int32 (*stread) PROTO((accrec_t *rec));
+    int32 (*stwrite) PROTO((accrec_t *rec));
+    int32 (*seek) PROTO((accrec_t *access_rec, int32 offset, intn origin));
+    int32 (*inquire) PROTO((accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
+                     uint16 *pref, int32 *plength, int32 *poffset,
+                     int32 *pposn, int16 *paccess, int16 *pspecial));
+    int32 (*read) PROTO((accrec_t *access_rec, int32 length, VOIDP data));
+    int32 (*write) PROTO((accrec_t *access_rec, int32 length, VOIDP data));
+    int32 (*endaccess) PROTO((accrec_t *access_rec));
+} funclist_t;
 
 typedef struct functab_t {
     int16 key;                 /* the key for this type of special elt */
-    int32 (**tab)();           /* table of accessing functions */
+    funclist_t *tab;            /* table of accessing functions */
 } functab_t;
 
 /* sizes of elements in a file.  This is necessary because
@@ -339,18 +355,6 @@ typedef struct functab_t {
 /* largest number that will fit into 16-bit word ref variable */
 
 #define MAX_REF ((uint16)32767)
-
-/* indices for special function table: the list of accessing functions
-   are ordered so that the functions are always in the same position
-   in a table */
-
-#define SP_STREAD 0
-#define SP_STWRITE 1
-#define SP_SEEK 2
-#define SP_INQUIRE 3
-#define SP_READ 4
-#define SP_WRITE 5
-#define SP_END 6
 
 /* macros */
 

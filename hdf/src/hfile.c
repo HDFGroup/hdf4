@@ -5,10 +5,15 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.21  1993/09/11 18:08:01  koziol
-Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
-cleaned up some goofy string manipulations in various places.
+Revision 1.22  1993/09/20 19:56:09  koziol
+Updated the "special element" function pointer array to be a structure
+of function pointers.  This way, function prototypes can be written for the
+functions pointers and some type checking done.
 
+ * Revision 1.21  1993/09/11  18:08:01  koziol
+ * Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
+ * cleaned up some goofy string manipulations in various places.
+ *
  * Revision 1.20  1993/09/08  20:55:37  georgev
  * Added #defines for THINK_C.
  *
@@ -198,7 +203,7 @@ static int HIunlock
 
 static int HIchangedd
   PROTO((dd_t *datadd, ddblock_t *block, int idx, int16 special,
-	 VOIDP special_info, int32 (**special_func)()));
+	 VOIDP special_info, funclist_t *special_func));
 
 /* Array of file records that contains all relevant
    information on an opened HDF file.
@@ -232,20 +237,20 @@ uint8 *tbuf = (uint8 *)int_tbuf;
 /* Functions for accessing the linked block special
    data element.  For definition of the linked block, see hblocks.c. */
 
-extern int32 (*linked_funcs[])();
+extern funclist_t linked_funcs;
 
 /* Functions for accessing external data elements, or data
    elements that are in some other files.  For definition of the external
    data element, see hext.c. */
 
-extern int32 (*ext_funcs[])();
+extern funclist_t ext_funcs;
 
 /* Table of these function tables for accessing special elements.  The first
    member of each record is the speical code for that type of data element. */
 
 functab_t functab[] = {
-    {SPECIAL_LINKED, linked_funcs},
-    {SPECIAL_EXT, ext_funcs},
+    {SPECIAL_LINKED, &linked_funcs},
+    {SPECIAL_EXT, &ext_funcs},
     {0, NULL}                  /* terminating record; add new record */
                                /* before this line */
 };
@@ -265,7 +270,8 @@ PRIVATE int HIfill_file_rec
 PRIVATE int HIinit_file_dds
   PROTO((filerec_t *file_rec, int16 ndds, char *FUNC));
 
-PRIVATE int32 (**HIget_function_table PROTO((accrec_t *access_rec, char *FUNC)))();
+PRIVATE funclist_t *HIget_function_table 
+  PROTO((accrec_t *access_rec, char *FUNC));
 
 PRIVATE int HIupdate_version
   PROTO((int32));
@@ -665,7 +671,7 @@ int32 Hstartread(file_id, tag, ref)
            access_rec->used = FALSE;
            return FAIL;
        }
-       return (*access_rec->special_func[SP_STREAD])(access_rec);
+       return (*access_rec->special_func->stread)(access_rec);
     }
 
     /* reset the data element and update file record */
@@ -786,7 +792,7 @@ intn Hnextread(access_id, tag, ref, origin)
            return FAIL;
        }
        HIunlock(access_rec->file_id); /* remove old attach to the file_rec */
-       return (int)(*access_rec->special_func[SP_STREAD])(access_rec);
+       return (int)(*access_rec->special_func->stread)(access_rec);
     }
 
     access_rec->special = 0;
@@ -967,7 +973,7 @@ intn Hinquire(access_id, pfile_id, ptag, pref, plength, poffset, pposn,
     /* if special elt, let special functions handle it */
 
     if (access_rec->special) {
-       return (int)(*access_rec->special_func[SP_INQUIRE])
+       return (int)(*access_rec->special_func->inquire)
            (access_rec, pfile_id, ptag, pref, plength,
             poffset, pposn, paccess, pspecial);
     }
@@ -1096,7 +1102,7 @@ int32 Hstartwrite(file_id, tag, ref, length)
            access_rec->used = FALSE;
            return FAIL;
        }
-       return (*access_rec->special_func[SP_STWRITE])(access_rec);
+       return (*access_rec->special_func->stwrite)(access_rec);
     }
 
     /* the dd is pointed to by access_rec->block and access_rec->idx */
@@ -1316,7 +1322,7 @@ intn Hseek(access_id, offset, origin)
     /* if special elt, use special function */
 
     if (access_rec->special) {
-       return (*access_rec->special_func[SP_SEEK])(access_rec, offset, origin);
+       return (*access_rec->special_func->seek)(access_rec, offset, origin);
     }
 
     /* calculate real offset based on the origin and check for range */
@@ -1422,7 +1428,7 @@ int32 Hread(access_id, length, data)
     /* special elt, so call special function */
 
     if (access_rec->special) {
-       return (*access_rec->special_func[SP_READ])(access_rec, length, data);
+       return (*access_rec->special_func->read)(access_rec, length, data);
     }
 
     /* check validity of file record */
@@ -1514,7 +1520,7 @@ int32 Hwrite(access_id, length, data)
 
     /* if special elt, call special function */
     if (access_rec->special)
-       return (*access_rec->special_func[SP_WRITE])(access_rec, length, data);
+       return (*access_rec->special_func->write)(access_rec, length, data);
 
     /* check validity of file record and get dd ptr */
     file_rec = FID2REC(access_rec->file_id);
@@ -1613,7 +1619,7 @@ int32 Hendaccess(access_id)
     /* if special elt, call special function */
 
     if (access_rec->special) {
-       return (*access_rec->special_func[SP_END])(access_rec);
+       return (*access_rec->special_func->endaccess)(access_rec);
     }
 
     /* check validity of file record */
@@ -2243,7 +2249,7 @@ int32 Htrunc(aid, trunc_len)
 #ifdef OLD_WAY
     /* if special elt, call special function */
     if (access_rec->special)
-       return (*access_rec->special_func[SP_WRITE])(access_rec, length, data);
+       return (*access_rec->special_func->write)(access_rec, length, data);
 #endif
 
     /* check for actually being able to truncate the data */
@@ -2368,7 +2374,7 @@ int HDerr(file_id)
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
 static int HIchangedd(dd_t *datadd, ddblock_t *block, int idx, int16 special,
-              VOIDP special_info, int32 (**special_func)())
+              VOIDP special_info, funclist_t *special_func)
 #else
 static int HIchangedd(datadd, block, idx, special, special_info, special_func)
     dd_t *datadd;               /* dd that had been converted to special */
@@ -2376,7 +2382,7 @@ static int HIchangedd(datadd, block, idx, special, special_info, special_func)
     int idx;                    /* next dd list index of converted dd */
     int16 special;              /* special code of converted dd */
     VOIDP special_info;         /* special info of converted dd */
-    int32 (**special_func)();   /* special function table of converted dd */
+    funclist_t *special_func;   /* special function table of converted dd */
 #endif
 {
     int i;                     /* temp index */
@@ -2512,9 +2518,9 @@ PRIVATE int HIinit_file_dds(file_rec, ndds, FUNC)
  get the function table for special elt of an access record
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-PRIVATE int32 (**HIget_function_table(accrec_t *access_rec, char *FUNC))()
+PRIVATE funclist_t *HIget_function_table(accrec_t *access_rec, char *FUNC)
 #else
-PRIVATE int32 (** HIget_function_table(access_rec, FUNC))()
+PRIVATE funclist_t *HIget_function_table(access_rec, FUNC)
     accrec_t *access_rec;      /* access record */
     char *FUNC;                        /* for HERROR */
 #endif

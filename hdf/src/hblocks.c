@@ -5,9 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1993/09/08 18:29:19  koziol
-Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
+Revision 1.9  1993/09/20 19:56:02  koziol
+Updated the "special element" function pointer array to be a structure
+of function pointers.  This way, function prototypes can be written for the
+functions pointers and some type checking done.
 
+ * Revision 1.8  1993/09/08  18:29:19  koziol
+ * Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
+ *
  * Revision 1.7  1993/09/03  14:10:09  koziol
  * Saved debugging info.
  *
@@ -107,8 +112,8 @@ PRIVATE int32 HLIstwrite PROTO((accrec_t *access_rec));
 PRIVATE link_t *HLIgetlink PROTO((int32 file_id, uint16 ref, \
                         int32 number_blocks));
 PRIVATE int32 HLIseek PROTO((accrec_t *access_rec, int32 offset, int origin));
-PRIVATE int32 HLIread PROTO((accrec_t *access_rec, int32 length, uint8 *data));
-PRIVATE int32 HLIwrite PROTO((accrec_t *access_rec, int32 length, uint8 *data));
+PRIVATE int32 HLIread PROTO((accrec_t *access_rec, int32 length, VOIDP data));
+PRIVATE int32 HLIwrite PROTO((accrec_t *access_rec, int32 length, VOIDP data));
 PRIVATE link_t *HLInewlink PROTO((int32 file_id, int32 number_blocks,
                           uint16 link_ref, uint16 first_block_ref));
 PRIVATE int32 HLIinquire PROTO((accrec_t *access_rec, int32 *pfile_id, \
@@ -118,7 +123,7 @@ PRIVATE int32 HLIendaccess PROTO((accrec_t *access_rec));
 
 /* the accessing function table for linked blocks */
 
-int32 (*linked_funcs[])() = {
+funclist_t linked_funcs = {
     HLIstread,
     HLIstwrite,
     HLIseek,
@@ -328,7 +333,7 @@ int32 HLcreate(file_id, tag, ref, block_length, number_blocks)
 
     /* update access record and file record */
 
-    access_rec->special_func = linked_funcs;
+    access_rec->special_func = &linked_funcs;
     access_rec->special = SPECIAL_LINKED;
     access_rec->posn = 0;
     access_rec->access = DFACC_WRITE;
@@ -628,15 +633,16 @@ PRIVATE int32 HLIseek(access_rec, offset, origin)
  read data from elt into data buffer
 -*/
 #ifdef PROTOTYPE
-PRIVATE int32 HLIread(accrec_t *access_rec, int32 length, uint8 *data)
+PRIVATE int32 HLIread(accrec_t *access_rec, int32 length, VOIDP datap)
 #else
 PRIVATE int32 HLIread(access_rec, length, data)
     accrec_t *access_rec;      /* access record */
     int32 length;              /* length of data to read */
-    uint8 *data;               /* buffer to read data into */
+    VOIDP datap;               /* buffer to read data into */
 #endif
 {
     char *FUNC="HLIread";      /* for HERROR */
+    uint8 *data=(uint8 *)datap;
 
     /* information record for this special data elt */
 
@@ -766,15 +772,16 @@ PRIVATE int32 HLIread(access_rec, length, data)
  write out data into linked block data elt
 -*/
 #ifdef PROTOTYPE
-PRIVATE int32 HLIwrite(accrec_t *access_rec, int32 length, uint8 *data)
+PRIVATE int32 HLIwrite(accrec_t *access_rec, int32 length, VOIDP datap)
 #else
 PRIVATE int32 HLIwrite(access_rec, length, data)
     accrec_t *access_rec;      /* access record */
     int32 length;              /* length of data */
-    uint8 *data;                        /* data buffer to write from */
+    VOIDP datap;                        /* data buffer to write from */
 #endif
 {
     char *FUNC="HLIwrite";     /* for HERROR */
+    uint8 *data=(uint8 *)datap;
     filerec_t *file_rec =      /* file record */
        FID2REC(access_rec->file_id);
     dd_t *info_dd =                    /* dd of the special info record */
