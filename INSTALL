@@ -82,7 +82,7 @@
                               CC 7.0         f77 7.0          X         X
   SGI-PowerChallenge(IRIX6.2_64)
                               CC 7.0         f77 7.0          X         X
-  SGI-Origin(IRIX6.4_32)      CC 7.1         f77 7.1          X         X
+  SGI-Origin(IRIX6.4_n32)     CC 7.1         f77 7.1          X         X
   SGI-Origin(IRIX6.4_64)      CC 7.1         f77 7.1          X         X
   HP9000/735(HP-UX 9.03)      CC A.09.77     f77 09.16        X         X
   HP9000/770(HP-UX B.10.10)   CC A.10.30     f77              X         X
