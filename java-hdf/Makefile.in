@@ -317,11 +317,6 @@ ncsa.hdf.hdflib: \
 	ncsa/hdf/hdflib/HDFRLECompInfo.class \
 	ncsa/hdf/hdflib/HDFSKPHUFFCompInfo.class 
 
-ncsa.hdf.io: \
-	ncsa/hdf/io/ASCIIWriter.class \
-	ncsa/hdf/io/HDFWriter.class \
-	ncsa/hdf/io/TestVdata.class 
-
 ncsa.hdf.jhv: \
 	ncsa/hdf/jhv/HDFTree.class \
 	ncsa/hdf/jhv/ImageDataConverter.class \
@@ -461,9 +456,6 @@ HDFOldRLECompInfo:	ncsa/hdf/hdflib/HDFOldRLECompInfo.class
 HDFOnlyChunkInfo:	ncsa/hdf/hdflib/HDFOnlyChunkInfo.class
 HDFRLECompInfo:	ncsa/hdf/hdflib/HDFRLECompInfo.class
 HDFSKPHUFFCompInfo:	ncsa/hdf/hdflib/HDFSKPHUFFCompInfo.class
-ASCIIWriter:	ncsa/hdf/io/ASCIIWriter.class
-HDFWriter:	ncsa/hdf/io/HDFWriter.class
-TestVdata:	ncsa/hdf/io/TestVdata.class
 HDFTree:	ncsa/hdf/jhv/HDFTree.class
 HDFTreeNode:	ncsa/hdf/jhv/HDFTreeNode.class
 ImageDataConverter:	ncsa/hdf/jhv/ImageDataConverter.class
@@ -611,9 +603,6 @@ SRCFILES= \
 ./ncsa/hdf/hdflib/HDFOnlyChunkInfo.java \
 ./ncsa/hdf/hdflib/HDFRLECompInfo.java \
 ./ncsa/hdf/hdflib/HDFSKPHUFFCompInfo.java \
-./ncsa/hdf/io/ASCIIWriter.java \
-./ncsa/hdf/io/HDFWriter.java \
-./ncsa/hdf/io/TestVdata.java \
 ./ncsa/hdf/jhv/HDFTree.java \
 ./ncsa/hdf/jhv/ImageDataConverter.java \
 ./ncsa/hdf/jhv/ImageFrame.java \
@@ -756,9 +745,6 @@ CLASSES= ./ncsa/hdf/awt/animation/ImageAnimation.class \
 ./ncsa/hdf/hdflib/HDFOnlyChunkInfo.class \
 ./ncsa/hdf/hdflib/HDFRLECompInfo.class \
 ./ncsa/hdf/hdflib/HDFSKPHUFFCompInfo.class \
-./ncsa/hdf/io/ASCIIWriter.class \
-./ncsa/hdf/io/HDFWriter.class \
-./ncsa/hdf/io/TestVdata.class \
 ./ncsa/hdf/jhv/HDFTree.class \
 ./ncsa/hdf/jhv/TreeNode.class \
 ./ncsa/hdf/jhv/ImageDataConverter.class \
