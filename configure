@@ -116,7 +116,8 @@ esac
 
 # Loop over all args
 
-while :
+#while :
+for arg
 do
 
 # Break out if there are no more args
@@ -664,7 +665,8 @@ for subdir in . ${subdirs} ; do
 #  Added this variable to make symlinks easier when linking
 # to files not in the same directory -GV
         THISDIR=${PWD=`pwd`}
-        while [ -n "${files}" ] ; do
+#        while [ -n "${files}" ] ; do
+        for file in ${files} ;  do
                 # set file to car of files, files to cdr of files
                 set ${files}; file=$1; shift; files=$*
                 set ${links}; link=$1; shift; links=$*
