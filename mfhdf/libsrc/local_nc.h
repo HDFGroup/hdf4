@@ -17,6 +17,9 @@
 #endif
 
 #ifndef       NO_SYS_XDR_INC
+#ifdef VMS
+#    define  STDC_INCLUDES
+#endif   /* VMS */
 #include	<rpc/types.h>
 #include	<rpc/xdr.h>
 #else
@@ -165,15 +168,14 @@ extern char *cdf_routine_name ; /* defined in lerror.c */
                        /*  C D L 1 */
 #define	NCLINKMAGIC	0x43444c01
 
-/* if have HDF this will already be defined */
-#ifndef HDF
+#ifndef HDF /* HDF has already worked out if we have prototypes */
 #undef PROTO
 #ifndef NO_HAVE_PROTOTYPES 
 #   define	PROTO(x)	x
 #else
 #   define	PROTO(x)	()
 #endif
-#endif /* HDF */
+#endif
 
 #ifdef __cplusplus
 extern "C" {

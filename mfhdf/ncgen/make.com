@@ -4,7 +4,8 @@ $! --------------------------------------------------------------------------
 $!
 $! $Id$
 $
-$ ccc := cc /opt/nodebug/include=([--.include],sys$library)/nolist
+$ ccc := cc /opt/nodebug/include=([---.include], -
+     [--.hdf.include], sys$library)/nolist/define=HDF/define=VMS
 $
 $ copy vmstab.c ncgentab.c
 $ copy vmstab.h ncgentab.h
@@ -32,6 +33,6 @@ $ link/nodebug/notraceback/exe=NCGEN.exe -
     load.obj, -
     main.obj, -
     ncgentab.obj, -
-    [--.lib]netcdf/library, -
+    [---.lib]netcdf/library, [--.hdf.lib]df/library, -
     sys$input/opt
 	sys$library:vaxcrtl.exe/share

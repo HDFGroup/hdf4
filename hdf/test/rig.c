@@ -1054,7 +1054,7 @@ static uint8 FAR jpeg_24bit_j75[JPEGY][JPEGX][3]={
 static uint8 FAR jpeg_24bit_temp[JPEGY][JPEGX][3];
 
 
-#define ABS(x)  ((x)<0 ? (-x) : x)
+#define ABS(x)  ((int)(x)<0 ? (-x) : x)
 
 #ifdef PROTOTYPE
 intn fuzzy_memcmp(const void *s1,const void *s2,int32 len,intn fuzz_factor)
@@ -1069,7 +1069,7 @@ intn fuzz_factor;
 	const uint8 *t1=(const uint8 *)s1;
 	const uint8 *t2=(const uint8 *)s2;
 
-	while(ABS(*t2-*t1)<=fuzz_factor && len>0) {
+	while((int)ABS(*t2-*t1)<=fuzz_factor && len>0) {
 		t1++;
 		t2++;
 		len--;
@@ -1138,8 +1138,8 @@ void test_r24()
     RESULT("DF24addimage");
     ref2 = DF24lastref();
 
-    if((ret=DF24nimages(TESTFILE)) != 3) {
-        fprintf(stderr,"  >>> DF24nimages() gives wrong number: %d <<<\n",ret);
+    if(DF24nimages(TESTFILE) != 3) {
+        fprintf(stderr,"  >>> DF24nimages() gives wrong number <<<\n");
         num_errs++;
     }
 
@@ -1153,8 +1153,6 @@ void test_r24()
     RESULT("DF24reqil");
     ret = DF24getdims(TESTFILE, &xd, &yd, &il);
     RESULT("DF24getdims");
-if(ret==FAIL)
-    HEprint(stderr,0);
 
     if((xd != XSIZE) || (yd != YSIZE) || il != 0) {
         fprintf(stderr, "Returned meta-data is wrong for image 0\n");

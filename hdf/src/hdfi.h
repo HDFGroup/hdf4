@@ -363,6 +363,7 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 #include <file.h>               /* for unbuffered i/o stuff */
+#include <limits.h>
 
 #define DF_MT              DFMT_VAX
 typedef int                VOID;
@@ -598,9 +599,6 @@ Please check your Makefile.
 #include <limits.h>         /* for UINT_MAX used in various places */
 #include <stdlib.h>
 #include <ctype.h>          /* for character macros */
-#ifdef __WATCOMC__
-#include <stddef.h>         /* for the 'fortran' pragma */
-#endif
 #ifdef WIN3
 #ifndef GMEM_MOVEABLE       /* check if windows header is already included */
 #include <windows.h>        /* include the windows headers */
@@ -913,9 +911,6 @@ correctly.
         *(p) = (uint8)(((i) >> 8) & 0xff); (p)++; \
         *(p) = (uint8)((i) & 0xff); (p)++; }
 
-#   define NBYTEENCODE(d, s, n) \
-{   HDmemcpy(d,s,n); p+=n }
-
 #   define INT16DECODE(p, i) \
 { (i) = (int16)((*(p) & 0xff) << 8); (p)++; \
         (i) |= (int16)((*(p) & 0xff)); (p)++; }
@@ -935,11 +930,6 @@ correctly.
         (i) |= ((uint32)(*(p) & 0xff) << 16); (p)++; \
         (i) |= ((uint32)(*(p) & 0xff) << 8); (p)++; \
         (i) |= (*(p) & 0xff); (p)++; }
-
-/* Note! the NBYTEDECODE macro is backwards from the memcpy() routine, */
-/*      in the spirit of the other DECODE macros */
-#   define NBYTEDECODE(s, d, n) \
-{   HDmemcpy(d,s,n); p+=n }
 
 /**************************************************************************
 *                   Conversion Routine Pointers
@@ -961,14 +951,12 @@ extern int (*DFKnumout)();
 *  memory is needed, as when small conversions are done
 ******************************************************************/
 #define DF_TBUFSZ       512     /* buffer size can be smaller */
-#if 0 /* replaced with dynamic memory calls */
 #ifdef  HMASTER
     int    FAR int_DFtbuf[DF_TBUFSZ]; /* int declaration to force word boundary */
     uint8  FAR *DFtbuf = (uint8 *) int_DFtbuf;
 #else /* !HMASTER */
 extern uint8 FAR *DFtbuf;
 #endif /*HMASTER*/
-#endif 
 
 /*----------------------------------------------------------------
 ** MACRO FCALLKEYW for any special fortran-C stub keyword

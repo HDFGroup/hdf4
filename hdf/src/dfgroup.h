@@ -12,30 +12,9 @@
 
 /* $Id$ */
 
-#ifndef TPROTO_H
-#define TPROTO_H
+#ifndef DFGROUP /* avoid re-inclusion */
+#define DFGROUP
 
 #include "hdf.h"
-#include "tutils.h"
 
-void test_an();
-void test_anfile();
-void test_hblocks();
-void test_hextelt();
-void test_hfile();
-void test_hfile1();
-void test_r24();
-void test_r8();
-void test_pal();
-void test_sdmms();
-void test_sdnmms();
-void test_tsdstr();
-void test_vers();
-void test_slab();
-void test_litend();
-void test_vsets();
-void test_tbbt();
-void test_conv();
-
-#endif
-
+#endif /* DFGROUP */

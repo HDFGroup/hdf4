@@ -12,6 +12,7 @@
 #
 # $Id$
 #
+#
 # ##################################################################
 #
 #           MAKEFILE for creating the HDF library, libdf.a, on HP 9000's
@@ -61,7 +62,7 @@ MACHINE=HP9000
 
 # Define your C compiler and flags
 CC= cc
-CFLAGS= -Aa -D_HPUX_SOURCE -D${MACHINE} -O
+CFLAGS= -Aa -D_HPUX_SOURCE -D${MACHINE}  -O
 
 # Define your FORTRAN compiler
 FC= f77
@@ -119,10 +120,6 @@ allnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
           SUBDIRS="src util test" _sub message 
 
-testnofortran:
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
-          SUBDIRS="src test" _sub message 
-
 libnofortran:
 	@$(MAKE) $(MYFLAGS) $(HDF_FLAGS) TARG=nofortran \
 	  SUBDIRS="src" _sub message
@@ -137,19 +134,15 @@ libdf:
 
 utilities:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="src util" _sub
+          SUBDIRS="util" _sub
 
 tests:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="src test" _sub
+          SUBDIRS="test" _sub
 
 #install:      $(INSTALL_DIRS)
 #	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
 #          SUBDIRS="src util test" _sub
-
-saber:
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=saber \
-          SUBDIRS="src test" _sub
 
 clean:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \

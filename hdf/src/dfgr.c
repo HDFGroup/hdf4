@@ -17,90 +17,73 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /*-----------------------------------------------------------------------------
- * File:     dfgr.c
- * Purpose:  read and write general raster images
- * Invokes:  df.c, dfkit.c, dfcomp.c, dfgroup.c, dfgr.h
+ * File:    dfgr.c
+ * Purpose: read and write general raster images
+ * Invokes: df.c, dfkit.c, dfcomp.c, dfgroup.c, dfgr.h
  * Contents:
- *  DFGRgetlutdims  : get dimensions of lookup table
- *  DFGRreqlutil    : use this interlace when returning lookup table
- *  DFGRgetlut      : read in lookup table
- *  DFGRgetimdims   : get dimensions of image
- *  DFGRreqimil     : use this interlace when returning image
- *  DFGRgetimage    : read in image
- *  DFGRsetcompress : specify compression scheme to be used
- *  DFGRsetlutdims  : set dimensions of lookup table
- *  DFGRsetlut      : set lookup table to write out with subsequent images
- *  DFGRaddlut      : write out lookup table
- *  DFGRsetimdims   : set dimensions of image
- *  DFGRaddimage    : write out image
+ *  DFGRgetlutdims: get dimensions of lookup table
+ *  DFGRreqlutil: use this interlace when returning lookup table
+ *  DFGRgetlut: read in lookup table
+ *  DFGRgetimdims: get dimensions of image
+ *  DFGRreqimil: use this interlace when returning image
+ *  DFGRgetimage: read in image
+ *  DFGRsetcompress: specify compression scheme to be used
+ *  DFGRsetlutdims: set dimensions of lookup table
+ *  DFGRsetlut: set lookup table to write out with subsequent images
+ *  DFGRaddlut: write out lookup table
+ *  DFGRsetimdims: set dimensions of image
+ *  DFGRaddimage: write out image
  *
- *  DFGRgetrig  : read in raster image group
- *  DFGRaddrig  : write out raster image group
+ *  DFGRgetrig: read in raster image group
+ *  DFGRaddrig: write out raster image group
  *
- *  DFGRIopen      : open/reopen file
- *  DFGRIriginfo   : obtain info about next RIG
- *  DFGRIgetdims   : get dimensions of lut/iamge
- *  DFGRIreqil     : get lut/image with this interlace
- *  DFGRIgetimlut  : get image/lut
- *  DFGRIsetdims   : set image/lut dimensions
- *  DFGRIaddimlut  : write out image/lut
+ *  DFGRIopen: open/reopen file
+ *  DFGRIriginfo: obtain info about next RIG
+ *  DFGRIgetdims: get dimensions of lut/iamge
+ *  DFGRIreqil: get lut/image with this interlace
+ *  DFGRIgetimlut: get image/lut
+ *  DFGRIsetdims: set image/lut dimensions
+ *  DFGRIaddimlut: write out image/lut
  * Remarks: A RIG specifies attributes associated with an image - lookup table,
+
  *          dimension, compression, color compensation etc.
  *---------------------------------------------------------------------------*/
 
 #include "dfgr.h"
 #include "herr.h"
 
-#if 0
-PRIVATE char   Grlastfile[DF_MAXFNLEN] = "";
-#endif
-PRIVATE char  *Grlastfile = NULL;
-PRIVATE uint8 *Grlutdata  = NULL;    /* points to lut, if in memory */
-PRIVATE intn   Grnewdata  = 0;       /* does Grread contain fresh data? */
-PRIVATE intn   Grcompr    = 0;       /* compression scheme to use */
-PRIVATE comp_info Grcinfo;           /* Compression information for each 
-                                        scheme */
-PRIVATE uint16 Grrefset   = 0;       /* Ref of image to get next */
-PRIVATE uint16 Grlastref  = 0;       /* Last ref read/written */
-PRIVATE intn   Grreqil[2] = {0, 0};  /* requested lut/image il */
-PRIVATE struct {                     /* track refs of set vals written before */
-    intn  lut;                       /* -1: no vals set */
-    int16 dims[2];                   /* 0: vals set, not written */
-    intn  nt;                        /* non-zero: ref of val in file */
+static char Grlastfile[DF_MAXFNLEN];
+static DFGRrig Grread;         /* information about RIG being read */
+static DFGRrig Grwrite;        /* information about RIG being written */
+static int Grnewdata = 0;      /* does Grread contain fresh data? */
+static int Grcompr = 0;        /* compression scheme to use */
+static comp_info Grcinfo;      /* Compression information for each scheme */
+uint8  *Grlutdata=NULL;        /* points to lut, if in memory */
+static uint16 Grrefset=0;      /* Ref of image to get next */
+static uint16 Grlastref = 0;   /* Last ref read/written */
+static int Grreqil[2]= {0, 0}; /* requested lut/image il */
+static struct {                        /* track refs of set vals written before
+ */
+    int lut;                   /* -1: no vals set */
+    int16 dims[2];             /* 0: vals set, not written */
+    int nt;                    /* non-zero: ref of val in file */
 } Ref = {-1, {-1, -1}, -1 };
-PRIVATE DFGRrig Grread = {      /* information about RIG being read */
-    NULL, 0, 0, (float32)0.0, (float32)0.0,
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
+
+static DFGRrig Grzrig = {      /* empty RIG for initialization */
     { {0, 0}, {0, 0}, {0, 0}, },
-    { {0, 0, 0, 0, {0, 0}, {0, 0}},
-      {0, 0, 0, 0, {0, 0}, {0, 0}},
-      {0, 0, 0, 0, {0, 0}, {0, 0}}, },
+    { {0, 0, {0, 0}, 0, 0, {0, 0}},
+      {0, 0, {0, 0}, 0, 0, {0, 0}},
+      {0, 0, {0, 0}, 0, 0, {0, 0}}, },
+    0, 0, (float32)0.0, (float32)0.0,
+    {(float32)0.0, (float32)0.0, (float32)0.0},
+    {(float32)0.0, (float32)0.0, (float32)0.0},
+    {(float32)0.0, (float32)0.0, (float32)0.0},
+    {(float32)0.0, (float32)0.0, (float32)0.0}, NULL
 };
-PRIVATE DFGRrig Grwrite = {     /* information about RIG being written */
-    NULL, 0, 0, (float32)0.0, (float32)0.0,
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    { {0, 0}, {0, 0}, {0, 0}, },
-    { {0, 0, 0, 0, {0, 0}, {0, 0}},
-      {0, 0, 0, 0, {0, 0}, {0, 0}},
-      {0, 0, 0, 0, {0, 0}, {0, 0}}, },
-};
-PRIVATE DFGRrig Grzrig = {      /* empty RIG for initialization */
-    NULL, 0, 0, (float32)0.0, (float32)0.0,
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    { {0, 0}, {0, 0}, {0, 0}, },
-    { {0, 0, 0, 0, {0, 0}, {0, 0}},
-      {0, 0, 0, 0, {0, 0}, {0, 0}},
-      {0, 0, 0, 0, {0, 0}, {0, 0}}, },
-};
+
+#ifdef QAK
+uint8 GRtbuf[512];
+#endif
 
 #define LUT     0
 #define IMAGE   1
@@ -505,12 +488,14 @@ PRIVATE int DFGRgetrig(file_id, ref, rig)
     uint8 GRtbuf[64];       /* local buffer for reading RIG info */
 
     HEclear();
-    if (!HDvalidfid(file_id) || !ref)
-        HRETURN_ERROR(DFE_ARGS,FAIL);
-
+    if (!HDvalidfid(file_id) || !ref) {
+       HERROR(DFE_ARGS);
+        return FAIL;
+    }
+    
     /* read RIG into memory */
-    if ((GroupID = DFdiread(file_id, DFTAG_RIG, ref)) == FAIL)
-        HRETURN_ERROR(DFE_READERROR,FAIL);
+    if ((GroupID = DFdiread(file_id, DFTAG_RIG, ref)) == FAIL) 
+        return FAIL;
 
     *rig = Grzrig;             /* fill rig with zeroes */
     while (!DFdiget(GroupID, &elt_tag, &elt_ref)) {  /* get next tag/ref */
@@ -522,13 +507,11 @@ PRIVATE int DFGRgetrig(file_id, ref, rig)
                 rig->data[type].tag = elt_tag;
                 rig->data[type].ref = elt_ref;
                 break;
-
             case DFTAG_ID:          /* read description info */
             case DFTAG_LD:
                 type = (elt_tag==DFTAG_LD) ? LUT : IMAGE;
-                if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL) {
+               if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL) {
                     uint8 *p;
-
                     p = GRtbuf;
                     INT32DECODE(p, rig->datadesc[type].xdim);
                     INT32DECODE(p, rig->datadesc[type].ydim);
@@ -539,7 +522,7 @@ PRIVATE int DFGRgetrig(file_id, ref, rig)
                     UINT16DECODE(p, rig->datadesc[type].compr.tag);
                     UINT16DECODE(p, rig->datadesc[type].compr.ref);
                 } else
-                   HRETURN_ERROR(DFE_READERROR,FAIL);
+                   return FAIL;
 
                 if (rig->datadesc[type].nt.tag==0)
                    break; /* old RIGs */
@@ -547,9 +530,11 @@ PRIVATE int DFGRgetrig(file_id, ref, rig)
                /* read NT */
                 if (Hgetelement(file_id, rig->datadesc[type].nt.tag,
                                rig->datadesc[type].nt.ref, ntstring) == FAIL)
-                    HRETURN_ERROR(DFE_READERROR,FAIL);
-                if ((ntstring[2]!=8) || (ntstring[1]!=DFNT_UCHAR))
-                    HRETURN_ERROR(DFE_BADCALL,FAIL);
+                    return FAIL;
+                if ((ntstring[2]!=8) || (ntstring[1]!=DFNT_UCHAR)) {
+                    HERROR(DFE_BADCALL);
+                    return FAIL;
+                }
                 break;
             default:           /* ignore unknown tags */
                 break;
@@ -584,7 +569,6 @@ PRIVATE int DFGRaddrig(file_id, ref, rig)
     int32 lutsize;
     int32 GroupID;
     uint8 GRtbuf[64];       /* local buffer for reading RIG info */
-intn i;
 
     HEclear();
 
@@ -609,7 +593,6 @@ intn i;
 
     if (Ref.dims[IMAGE]==0) {
         uint8 *p;
-
         p = GRtbuf;
         INT32ENCODE(p, rig->datadesc[IMAGE].xdim);
         INT32ENCODE(p, rig->datadesc[IMAGE].ydim);
@@ -619,7 +602,6 @@ intn i;
         INT16ENCODE(p, rig->datadesc[IMAGE].interlace);
         UINT16ENCODE(p, rig->datadesc[IMAGE].compr.tag);
         UINT16ENCODE(p, rig->datadesc[IMAGE].compr.ref);
-
         if (Hputelement(file_id, DFTAG_ID, ref,
                        GRtbuf, (int32)(p-GRtbuf)) == FAIL)
             return FAIL;
@@ -627,8 +609,10 @@ intn i;
         Ref.dims[IMAGE] = ref;
     }
     if (!Ref.lut) {            /* associated lut not written to this file */
-        if (Grlutdata==NULL)   /* no lut associated */
-            HRETURN_ERROR(DFE_ARGS,FAIL);
+        if (Grlutdata==NULL) { /* no lut associated */
+            HERROR(DFE_ARGS);
+            return FAIL;
+        }
         lutsize = Grwrite.datadesc[LUT].xdim * Grwrite.datadesc[LUT].ydim *
            Grwrite.datadesc[LUT].ncomponents;
         if (Hputelement(file_id, DFTAG_LUT, ref,
@@ -704,36 +688,25 @@ int32 DFGRIopen(filename, access)
     int access;
 #endif
 {
-    char *FUNC="DFGRIopen";
     int32 file_id;
 
     file_id = Hopen(filename, access, 0);
-    if (file_id == FAIL)
-        HRETURN_ERROR(DFE_BADOPEN,FAIL);
-
-    /* Check if filename buffer has been allocated */
-    if (Grlastfile == NULL)
-      {
-        Grlastfile = (char *)HDgetspace((DF_MAXFNLEN +1) * sizeof(char));
-        if (Grlastfile == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
+    if (file_id == FAIL) return FAIL;
 
     /* use reopen if same file as last time - more efficient */
     if (HDstrncmp(Grlastfile,filename,DF_MAXFNLEN) || (access==DFACC_CREATE)) {
        /* treat create as different file */
         Grrefset = 0;          /* no ref to get set for this file */
         Grnewdata = 0;
-        if (Ref.lut>0)
-            Ref.lut = 0;
+        if (Ref.lut>0) Ref.lut = 0;
         if (Grlutdata==NULL)
-            Ref.lut = (-1);     /* no LUT if not a "set" call */
+           Ref.lut = (-1);     /* no LUT if not a "set" call */
         if (Ref.dims[IMAGE]>0)
-            Ref.dims[IMAGE] = 0;
+           Ref.dims[IMAGE] = 0;
         if (Ref.dims[LUT]>0)
-            Ref.dims[LUT] = 0;
+           Ref.dims[LUT] = 0;
         if (Ref.nt>0)
-            Ref.nt = 0;
+           Ref.nt = 0;
         Grread = Grzrig;        /* no rigs read yet */
     }
 
@@ -773,31 +746,34 @@ int32 file_id;
     Grrefset = 0;              /* no longer need to remember specified ref */
     gettag = DFTAG_RIG;
     for (i=0; i<4; i++) {      /* repeat for RIG, RI8, CI8, II8 */
-        if (isfirst) {
+       if (isfirst) {
            aid = Hstartread(file_id, gettag, getref);
-        } else {
-            aid = Hstartread(file_id, gettag, Grread.data[IMAGE].ref);
-            if ((aid != FAIL) &&
-                    Hnextread(aid, gettag, getref, DF_CURRENT) == FAIL) {
-                Hendaccess(aid);
-                aid = FAIL;
-            }
-        }
-        if (aid == FAIL) {  /* not found */
+       } else {
+           aid = Hstartread(file_id, gettag, Grread.data[IMAGE].ref);
+           if ((aid != FAIL) &&
+               Hnextread(aid, gettag, getref, DF_CURRENT) == FAIL) {
+               Hendaccess(aid);
+               aid = FAIL;
+           }
+       }
+       if (aid == FAIL) {
+           /* not found */
             if (gettag==DFTAG_RIG) { /* were looking for RIGs */
                 if ((Grread.data[IMAGE].tag==DFTAG_RI) /* file has Rigs */
-                        || (Grread.data[IMAGE].tag==DFTAG_CI))
+                    || (Grread.data[IMAGE].tag==DFTAG_CI)) {
                     return FAIL;       /* no more to return */
+                }
                 gettag = DFTAG_RI8; /* if no RIGs in file, look for RI8s */
             }
-            else if ((gettag==DFTAG_II8) && (!newref))  /* no RI8/CI8/II8 */
+            else if ((gettag==DFTAG_II8) && (!newref)) { /* no RI8/CI8/II8 */
                 return FAIL;
+            }
             continue;          /* continue checking */
         }
-        /* found */
-        HQuerytagref(aid, &dummy, &ref);
-        Hendaccess(aid);
-        if (!newref || (ref < newref)) {    /* is it next one? */
+       /* found */
+       HQuerytagref(aid, &dummy, &ref);
+       Hendaccess(aid);
+        if (!newref || (ref < newref)) { /* is it next one? */
             newref = ref;      /* remember tag, ref */
             newtag = gettag;
         }
@@ -880,18 +856,18 @@ int DFGRIgetdims(filename, pxdim, pydim, pncomps, pil, type)
 
     file_id = DFGRIopen(filename, DFACC_READ);
     if (file_id == FAIL)
-        HRETURN_ERROR(DFE_BADOPEN,FAIL);
+       return FAIL;
 
     if (type==IMAGE) {         /* getimdims sequences, getlutdims does not */
-        /* reads next RIG or RI8 from file */
-        if (DFGRIriginfo(file_id) == FAIL)
+        if (DFGRIriginfo(file_id)
+           == FAIL)            /* reads next RIG or RI8 from file */
             return(HDerr(file_id)); /* on error, close file and return -1 */
         Grnewdata = 1;
     }
 
     if (type==LUT && Grread.data[LUT].ref==0) {
-        HERROR(DFE_NOMATCH);
-        return HDerr(file_id);             /* no LUT */
+            HERROR(DFE_NOMATCH);
+            return HDerr(file_id);             /* no LUT */
     }
     if (pxdim)
        *pxdim = Grread.datadesc[type].xdim;
@@ -1171,7 +1147,7 @@ int DFGRIrestart(void)
 int DFGRIrestart()
 #endif
 {
-    Grlastfile = NULL;
+    Grlastfile[0] = '\0';
     Grrefset = 0;
     return SUCCEED;
 }
@@ -1219,14 +1195,6 @@ int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran, newfile)
     uint8 *p;
 
     HEclear();
-
-    /* Check if filename buffer has been allocated */
-    if (Grlastfile == NULL)
-      {
-        Grlastfile = (char *)HDgetspace((DF_MAXFNLEN +1) * sizeof(char));
-        if (Grlastfile == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
 
     if (0 != HDstrcmp(Grlastfile,filename)) {  /* if new file, reset dims */
       Grwrite.datadesc[type].xdim = xdim;

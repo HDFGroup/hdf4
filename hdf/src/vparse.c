@@ -50,7 +50,7 @@ static char RcsId[] = "@(#)$Revision$";
 ** to scanattrs.
 **
 */
-#if defined(macintosh) | defined(THINK_C) | defined(DMEM) /* Dynamic memory */
+#if defined(macintosh) | defined(THINK_C)
 PRIVATE char** 	symptr = NULL; /* array of ptrs to tokens  ?*/
 PRIVATE char**  sym = NULL;    /* array of tokens ? */
 #else  /* !macintosh */
@@ -75,7 +75,7 @@ int32 scanattrs (attrs,attrc,attrv)
   char * FUNC = "scanattrs";
   char * saved_string = (char *) HDstrdup(attrs);
 
-#if defined(macintosh) | defined(THINK_C) | defined(DMEM) /* Dynamic memory */
+#if defined(macintosh) | defined(THINK_C)
   /* Lets allocate space for ptrs to tokens and tokens */
   if (symptr == NULL)
     {

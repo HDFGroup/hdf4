@@ -43,8 +43,8 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* ------------------------------------------------------------------ */
 
-PRIVATE void oldunpackvg PROTO((VGROUP *vg,uint8  buf[], int32 *size));
-PRIVATE void oldunpackvs PROTO((VDATA *vs, uint8 buf[], int32 *size));
+static void oldunpackvg PROTO((VGROUP *vg,uint8  buf[], int32 *size));
+static void oldunpackvs PROTO((VDATA *vs, uint8 buf[], int32 *size));
 
 /*
 *  this routine checks that the given OPENED file is compatible with

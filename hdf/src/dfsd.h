@@ -71,10 +71,6 @@ typedef struct DFnsdg_t_hdr	{
     DFnsdgle *nsdg_t;
 }  DFnsdg_t_hdr;
 
-#if defined c_plusplus || defined __cplusplus
-extern "C" {
-#endif /* c_plusplus || __cplusplus */
-
 extern int32 DFSDIopen
     PROTO((char _HUGE *filename, int access));
 
@@ -124,9 +120,4 @@ extern int DFSDIsetdatastrs
     PROTO((char _HUGE *label, char _HUGE *unit, char _HUGE *format,
             char _HUGE *coordsys));
 
-#if defined c_plusplus || defined __cplusplus
-}
-#endif /* c_plusplus || __cplusplus */
-
 #endif /*DFSDG*/
-

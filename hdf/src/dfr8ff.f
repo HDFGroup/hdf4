@@ -12,25 +12,26 @@ C****************************************************************************
 C
 C $Id$
 C
+C
 C------------------------------------------------------------------------------
 C File:     dfr8Ff.f
 C Purpose:  Fortran stubs for Fortran RIS routines
 C Invokes:  dfr8F.c
 C Contents: 
-C   d8gdims       : call d8igdim to get dimensions of next image
-C   d8gimg        : call d8igimg to get next image
-C   d8pimg        : call d8ipimg to put image to new file
-C   d8aimg        : call d8iaimg to add image to existing file
-C   d8nims        : call d8inims to get number of images in the file
-C   d8wref        : call d8iwref to set ref for the next write of image
-C   d8rref        : call d8irref to set ref for the next read of image
-C   dfr8getdims   : call d8igdim to get dimensions of next image
-C   dfr8getimage  : call d8igimg to get next image
-C   dfr8putimage  : call d8ipimg to put image to new file
-C   dfr8addimage  : call d8iaimg to add image to existing file
-C   dfr8nimages   :  call d8inims to get the number of images in the file
-C   dfr8writeref  : call d8iwref to set ref for the next write of image
-C   dfr8readref   : call d8iref to set ref for the next read of image
+C   d8gdims: call d8igdim to get dimensions of next image
+C   d8gimg: call d8igimg to get next image
+C   d8pimg: call d8ipimg to put image to new file
+C   d8aimg: call d8iaimg to add image to existing file
+C   d8nims: call d8inims to get number of images in the file
+C   d8wref: call d8iwref to set ref for the next write of image
+C   d8rref: call d8irref to set ref for the next read of image
+C   dfr8getdims: call d8igdim to get dimensions of next image
+C   dfr8getimage: call d8igimg to get next image
+C   dfr8putimage: call d8ipimg to put image to new file
+C   dfr8addimage: call d8iaimg to add image to existing file
+C   dfr8nimages:  call d8inims to get the number of images in the file
+C   dfr8writeref: call d8iwref to set ref for the next write of image
+C   dfr8readref: call d8iref to set ref for the next read of image
 C -----------------------------------------------------------------------------
 
 C------------------------------------------------------------------------------

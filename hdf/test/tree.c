@@ -1,3 +1,9 @@
+/* $Id$ */
+
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -9,12 +15,6 @@
  * hdf/COPYING file.                                                        *
  *                                                                          *
  ****************************************************************************/
-
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-
-/* $Id$ */
 
 /*
  FILE

@@ -25,6 +25,7 @@
  *          This file is included with user programs, but users do not see it.
  *---------------------------------------------------------------------------*/
 
+
 #ifndef DFI_H
 #define DFI_H
 
@@ -313,4 +314,3 @@ char *malloc();
 #endif /*FILE*/
 
 #endif /* DFI_H */
-

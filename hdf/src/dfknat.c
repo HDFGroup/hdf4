@@ -17,7 +17,7 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /*------------------------------------------------------------------
- File:  dfknat.c
+ File:  dfcnat.c
 
  Purpose:
     Routines to support "native mode" conversion to and from HDF format

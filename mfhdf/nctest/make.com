@@ -4,7 +4,9 @@ $! --------------------------------------------------------------------------
 $!
 $! $Id$
 $
-$ ccc := cc /opt/nodebug/include=([-.-.include])/nolist
+$ ccc := cc /opt/nodebug/include=([-.-.hdf.include],[-.libsrc])/nolist  -
+            /define=stdc_includes/define=swap/define=VMS/define=HDF
+
 $
 $ ccc ADD.C
 $ ccc ATTTESTS.C
@@ -46,7 +48,7 @@ $ link/nodebug/notraceback/exe=NCTEST.exe -
     varputg.obj, -
     vputgetg.obj, -
     vartests.obj, -
-    [-.-.lib]netcdf/library, -
+    [-.-.-.lib]netcdf/library, [-.-.hdf.lib]df/library, -
     sys$input/opt
 	sys$library:vaxcrtl.exe/share
 $

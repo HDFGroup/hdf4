@@ -11,8 +11,8 @@
  ****************************************************************************/
 
 #ifdef RCSID
-static char *RcsId[] = "@(#)$Revision$";
-#endif 
+static char RcsId[] = "@(#)$Revision$";
+#endif
 
 /* $Id$ */
 
@@ -330,7 +330,7 @@ char *argv[];
       } /* end if */
 
     /* store 24-bit image */
-    if(DF24putimage(argv[file+1],img24_buf,xdim,ydim)==FAIL) {
+    if(DF24putimage(argv[file+1],(VOIDP)img24_buf,xdim,ydim)==FAIL) {
         printf("Error storing 24-bit image\n");
         HEprint(stdout,0);
         return(1);

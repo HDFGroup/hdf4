@@ -12,9 +12,6 @@ static bool_t NC_xdr_cdf
 
 #define WRITE_NDG 1
 
-/* Private buffer */
-PRIVATE uint8 *ptbuf = NULL;
-
 /*
  * free the stuff that xdr_cdf allocates
  */
@@ -733,7 +730,6 @@ NC_var **var;
   uint16       nt_ref, rank;
   int32     *  ip, GroupID, val;
   uint8     *  bufp;
-  char      *FUNC = "hdf_write_var";
 
   register int  i, count;
   register Void *attribute;
@@ -817,13 +813,6 @@ NC_var **var;
   count++;
   
 #ifdef WRITE_NDG
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
-        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
-        if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
 
   /* prepare to start writing ndg   */
   if ((GroupID = DFdisetup(10)) < 0)
@@ -839,7 +828,7 @@ NC_var **var;
       return FAIL;
 
   /* put rank & dimensions in buffer */
-  bufp = ptbuf;
+  bufp = DFtbuf;
   rank = assoc->count;
   UINT16ENCODE(bufp, rank);
   for(i = 0; i < rank; i++) {
@@ -864,7 +853,7 @@ NC_var **var;
           UINT16ENCODE(bufp, nt_ref);
       }   
   /* write out SDD record */
-  if(Hputelement(handle->hdf_file, DFTAG_SDD, ref, ptbuf, (int32) (bufp-ptbuf)) == FAIL)
+  if(Hputelement(handle->hdf_file, DFTAG_SDD, ref, DFtbuf, (int32) (bufp-DFtbuf)) == FAIL)
       return FAIL;
   
   /* write dimension record tag/ref */
@@ -876,8 +865,10 @@ NC_var **var;
   count++;
 
   /* Add a bogus tag so we know this NDG is really a variable */
+/*
   if (DFdiput(GroupID, BOGUS_TAG,(uint16) ref) == FAIL)
       return FAIL;
+*/
 
   /* write out NDG */
   if (DFdiwrite(handle->hdf_file, GroupID, DFTAG_NDG, (*var)->ndg_ref) < 0) 
@@ -891,16 +882,9 @@ NC_var **var;
 
   (*var)->vgid = VHmakegroup(handle->hdf_file, tags, refs, count, 
                              (*var)->name->values, VARIABLE);
-
-  if((*var)->vgid == FAIL) {
-      fprintf(stderr, "Failed to write variable %s\n", (*var)->name->values);
-      fprintf(stderr, "count = %d\n", count);
-      for(i = 0; i < count; i++)
-          fprintf(stderr, "i = %d   tag = %d ref = %d\n", i, tags[i], refs[i]);
-          
+  if((*var)->vgid == FAIL)
       HEprint(stdout, 0);
-  }  
-
+  
   return (*var)->vgid;
   
 } /* hdf_write_var */
@@ -983,7 +967,6 @@ NC **handlep;
       for(i = 0; i < tmp->count; i++) {
           tags[count] = (int32) VAR_TAG;
           refs[count] = (int32) hdf_write_var(xdrs, (*handlep), (NC_var **)vars);
-          if(refs[count] == FAIL) return FALSE;
           vars += tmp->szof;
           count++;
       }
@@ -998,7 +981,6 @@ NC **handlep;
       for(i = 0; i < tmp->count; i++) {
           tags[count] = (int32) ATTR_TAG;
           refs[count] = (int32) hdf_write_attr(xdrs, (*handlep), (NC_attr **)attrs);
-          if(refs[count] == FAIL) return FALSE;
           attrs += tmp->szof;
           count++;
       }
@@ -1422,8 +1404,11 @@ int32  vg;
                       
                       /*
                        * Now figure out how many recs have been written
+                       * For a while there was a -1 at the end of this
+                       *   equation.  I don't remember why its there
+                       *   (4-Nov-93)
                        */
-                      vp->numrecs = data_count / vp->dsizes[0] - 1; 
+                      vp->numrecs = data_count / vp->dsizes[0]; 
                       
 #ifdef DEBUG
                       fprintf(stderr, "I have set numrecs to %d\n", vp->numrecs);

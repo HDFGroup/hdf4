@@ -22,7 +22,7 @@ COPTS		=
 INCDIR		= $(INSTROOT)[include]
 LIBDIR		= $(INSTROOT)[lib]
 LIBOBJS		= xdr.obj, xdrfloat.obj, xdrstdio.obj, htonl.obj, ntohl.obj
-LIBRARY		= [-]netcdf.olb
+LIBRARY		= [---.lib]netcdf.olb
 LINKFLAGS	= /nodebug/exec=$(mms$target_name).exe
 !LINKFLAGS	= /debug/exec=$(mms$target_name).exe
 CFLAGS		= $(COPTS)/include=sys$disk:[]

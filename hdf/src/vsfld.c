@@ -142,16 +142,25 @@ char    *fields;
     VDATA           *vs;
     char  * FUNC = "VSsetfields";
 
-    if (!VALIDVSID(vkey))
-        HRETURN_ERROR(DFE_ARGS,FAIL);
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
 
   /* locate vs's index in vstab */
-    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey))))
-        HRETURN_ERROR(DFE_NOVS,FAIL);
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
 
     vs=w->vs;
-    if (vs == NULL)
-        HRETURN_ERROR(DFE_ARGS,FAIL);
+    if (vs == NULL) {
+          HERROR(DFE_ARGS);
+          HEprint(stderr,0);
+          return(FAIL);
+    }
 
     if((scanattrs(fields, &ac, &av) == FAIL) || (ac == 0))
         HRETURN_ERROR(DFE_BADFIELDS,FAIL);
@@ -161,7 +170,7 @@ char    *fields;
    *   read list cuz there is nothing there to read yet...
    */
     if(vs->access == 'w' && vs->nvertices == 0) {
-        wlist = &(vs->wlist);  /* use a shorter name to make code cleaner */
+        wlist = &(vs->wlist);
         wlist->ivsize = 0;
         wlist->n      = 0;
         for(i = 0; i < ac; i++) {
@@ -218,14 +227,14 @@ char    *fields;
             wlist->off[i] = (int16)j;
             j += wlist->isize[i];
         }
-        
-        return(SUCCEED); /* ok */
-    } /* writing to empty vdata */
     
-    /*
-     *   No matter the access mode, if there are elements in the VData
-     *      we should set the read list
-     */
+        return(SUCCEED); /* ok */
+  } /* writing to empty vdata */
+
+  /*
+   *   No matter the access mode, if there are elements in the VData
+   *      we should set the read list
+   */
     if(vs->nvertices > 0) {
         rlist = &(vs->rlist);
         rlist->n = 0;
@@ -275,12 +284,18 @@ int32   localtype, order;
     VDATA           *vs;
     char  * FUNC = "VSfdefine";
 
-    if (!VALIDVSID(vkey))
-        HRETURN_ERROR(DFE_ARGS,FAIL);
-
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
+  
   /* locate vs's index in vstab */
-    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey))))
-        HRETURN_ERROR(DFE_NOVS,FAIL);
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
 
     vs=w->vs;
     if ((vs == NULL) || (scanattrs(field,&ac,&av) == FAIL) || (ac != 1))
