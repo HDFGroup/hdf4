@@ -116,7 +116,7 @@ int mode ;
         int32 hdf_mode;
         char * FUNC = "NC_new_cdf";
 
-	cdf = (NC *)HDmalloc(sizeof(NC)) ;
+	cdf = (NC *)HDcalloc(1,sizeof(NC)) ;
 	if( cdf == NULL )
 	{
 		nc_serror("NC_new_cdf") ;
