@@ -46,9 +46,9 @@ HDFBIN = ../bin
 JPEGLIB = ../jpeg
 JPEGINC = ../jpeg
 #For IRIS4, include libgl_s.a
-#GLLIB = -lgl_s
+GLLIB = -lgl_s
 #For the HP9000 include libm.a
-GLLIB = -lm
+MATHLIB = -lm
 
 CFLAGS = -D$(MACHINE)
 
@@ -62,11 +62,11 @@ CFLAGS = -D$(MACHINE)
 	$(CC) -c $(CFLAGS) -I$(HDFINC) $<
 #	$(CC) -c $(CFLAGS) -I$(HDFINC) $(GLLIB)  $<
 
-all: hdfed utils fp2hdf fptest
+all: hdfed utils fptest
 	-if( test \! -d $(HDFBIN)) then (mkdir $(HDFBIN)) fi
 	-cp $(UTILS) hdfed $(HDFBIN)
 
-nofortran: hdfed utils fp2hdf fptest
+nofortran: hdfed utils fptest
 
 rebuild:
 	@$(MAKE) all $(HDF_FLAGS) FRC=force_rebuild
@@ -79,6 +79,9 @@ force_rebuild:
 
 hdfed: he.h he_proto.h $(HEOBJ) $(HDFLIB)/libdf.a $(FRC)
 	$(CC) $(CFLAGS) -I$(HDFINC) $(HEOBJ) $(HDFLIB)/libdf.a -o hdfed $(JPEGLIB)/libjpeg.a
+
+fp2hdf: $(HDFLIB)/libdf.a fp2hdf.c
+	$(CC) $(CFLAGS) -I$(HDFINC) fp2hdf.c -o $@ $(HDFLIB)/libdf.a $(GLLIB) $(MATHLIB) $(JPEGLIB)/libjpeg.a
 
 .c: $(HDFLIB)/libdf.a
 	$(CC) $(CFLAGS) -I$(HDFINC) $< -o $@ $(HDFLIB)/libdf.a $(GLLIB) $(JPEGLIB)/libjpeg.a
