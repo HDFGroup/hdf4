@@ -13,13 +13,13 @@ $ fort MFSDFF.FOR
 $ fort HDFTEST.FOR
 $ fort FTEST.FOR
 $
-$ link/debug/traceback/exec=HDFTEST.exe -
+$ link/nodebug/traceback/exec=HDFTEST.exe -
     hdftest.obj, mfsdf.obj, mfsdff.obj, -
     [----.lib]netcdf.olb/lib, [---.hdf.lib]df.olb/lib, -
     sys$input/opt
         sys$library:vaxcrtl.exe/share
 
-$ link/debug/traceback/exec=FTEST.exe -
+$ link/nodebug/traceback/exec=FTEST.exe -
     ftest.obj, -
     jackets.obj, -
     [----.lib]netcdf.olb/lib, [---.hdf.lib]df.olb/lib,  -
@@ -30,6 +30,6 @@ $ library/replace [----.lib]NETCDF.OLB JACKETS
 $
 $ copy netcdf.inc [----.include]
 $
-$ run ftest
 $ run hdftest
+$ run ftest
 $

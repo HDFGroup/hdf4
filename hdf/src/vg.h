@@ -72,10 +72,10 @@ typedef struct write_struct
   char 	name[VSFIELDMAX][FIELDNAMELENMAX+1]; /* S name of each field */
   
   int16	len[VSFIELDMAX];     /* S length of each fieldname */
-  intn  type[VSFIELDMAX];    /* S field type */
+  int16 type[VSFIELDMAX];    /* S field type */
   int16	off[VSFIELDMAX];     /* S field offset in element in vdata */
-  intn  isize[VSFIELDMAX];   /* S internal (HDF) size [incl order] */
-  intn  order[VSFIELDMAX];   /* S order of field */
+  int16 isize[VSFIELDMAX];   /* S internal (HDF) size [incl order] */
+  int16 order[VSFIELDMAX];   /* S order of field */
   int16	esize[VSFIELDMAX];   /*  external (local machine) size [incl order] */
 } VWRITELIST;
 
@@ -102,6 +102,7 @@ struct vgroup_desc
   char    vgname[VGNAMELENMAX+1];   /* S name of this vgroup */
   char    vgclass[VGNAMELENMAX+1];  /* S class name of this vgroup */
   intn    marked;           /* =1 if new info has been added to vgroup */
+  intn    new;              /* =1 if this is a new vgroup */
   uint16  extag, exref;     /* expansion tag-ref */
   int16	  version, more;	/* version and "more" field */	
   intn    msize;            /* max size of storage arrays */
@@ -311,6 +312,9 @@ extern "C" {
 extern vsinstance_t _HUGE * vsinstance
     PROTO((HFILEID f, uint16 vsid));
 
+extern vginstance_t *vginstance
+    PROTO((HFILEID f, uint16 vgid));
+
 extern VWRITELIST _HUGE * vswritelist
     PROTO((int32 vskey));
 
@@ -322,6 +326,12 @@ extern int32 vinsertpair
 
 extern void vpackvs
     PROTO((VDATA _HUGE *vs, uint8 _HUGE buf[], int32 _HUGE *size));
+
+extern VGROUP *VPgetinfo
+    PROTO((HFILEID f,uint16 ref));
+
+extern VDATA *VSPgetinfo
+    PROTO((HFILEID f,uint16 ref));
 
 #if defined c_plusplus || defined __cplusplus
 }

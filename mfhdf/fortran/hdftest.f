@@ -15,7 +15,7 @@
       real fval
 
       real*8  cal, cale, ioff, ioffe
-
+      real*8  eps
       character* 60  name, l, u, f, c
 
       integer sfstart,  sfcreate,  sfendacc, sfend,    sfsfill
@@ -28,8 +28,9 @@
 
 C     create a new file
       err = 0
+      eps = 0.0001
       access = 4
-      fid1 = sfstart("test1.hdf", access)
+      fid1 = sfstart('test1.hdf', access)
       if(fid1.ne.393216) then
          print *, 'Hopen returned bad ID'
          err = err + 1
@@ -39,7 +40,7 @@ C     create a new file
       dims(2) = 9
       nt = 24
       rank = 2
-      sds1 = sfcreate(fid1, "Alpha", nt, rank, dims)
+      sds1 = sfcreate(fid1, 'Alpha', nt, rank, dims)
       if(sds1.eq.-1) then
          print *, 'SDcreate #1 returned bad ID', sds1
          err = err + 1
@@ -50,7 +51,7 @@ C     create a new file
       dims(3) = 15
       nt = 5
       rank = 3
-      sds2 = sfcreate(fid1, "Beta[float32]", nt, rank, dims)
+      sds2 = sfcreate(fid1, 'Beta[float32]', nt, rank, dims)
       if(sds2.eq.-1) then
          print *, 'SDcreate #2 returned bad ID', sds2
          err = err + 1
@@ -114,18 +115,49 @@ C     create a new file
       endif
       
       if(err.ne.0) print *, 'Before ReadVerify err = ', err
-      if (ivals(2).ne.6)  err = err + 1
-      if (ivals(3).ne.14) err = err + 1
-      if (ivals(4).ne.8)  err = err + 1
-      if (ivals(5).ne.9)  err = err + 1
-      if (ivals(6).ne.14) err = err + 1
-      if (ivals(7).ne.14) err = err + 1
-      if (ivals(8).ne.14) err = err + 1
-      if (ivals(9).ne.14) err = err + 1
+      if (ivals(2).ne.6)  then
+        err = err + 1
+        print *, 'was expecting 6 got', ivals(2)
+      endif
+      if (ivals(3).ne.14) then
+        err = err + 1
+        print *, 'was expecting 14 got', ivals(3)
+        endif
+      if (ivals(4).ne.8)  then
+        err = err + 1
+        print *, 'was expecting 8 got', ivals(4)
+        endif
+
+
+      if (ivals(5).ne.9)  then
+        err = err + 1
+        print *, 'was expecting 9 got', ivals(5)
+        endif
+
+      if (ivals(6).ne.14) then
+        err = err + 1
+        print *, 'was expecting 14 got', ivals(6)
+        endif
+
+      if (ivals(7).ne.14) then
+        err = err + 1
+        print *, 'was expecting 14 got', ivals(7)
+        endif
+
+      if (ivals(8).ne.14) then
+        err = err + 1
+        print *, 'was expecting 14 got', ivals(8)
+        endif
+
+      if (ivals(9).ne.14) then
+        err = err + 1
+        print *, 'was expecting 14 got', ivals(9)
+        endif
+
       if(err.ne.0) print *, 'After ReadVerify err = ', err
 
       nt = 24
-      stat = sfsattr(sds2, "TestAttr", nt, 3, ivals)
+      stat = sfsattr(sds2, 'TestAttr', nt, 3, ivals)
       if(stat.ne.0) then
          print *, 'Read data returned', stat
          err = err + 1
@@ -137,13 +169,13 @@ C     create a new file
          err = err + 1
       endif
 
-      stat = sfsdmname(dim1, "TestDim")
+      stat = sfsdmname(dim1, 'TestDim')
       if(stat.ne.0) then
          print *, 'Set dim name returned', stat
          err = err + 1
       endif
 
-      stat = sfsdmstr(dim1, "dA", "dBB", "dCCC")
+      stat = sfsdmstr(dim1, 'dA', 'dBB', 'dCCC')
       if(stat.ne.0) then
          print *, 'Set dim strs returned', stat
          err = err + 1
@@ -161,7 +193,7 @@ C     create a new file
          err = err + 1
       endif
 
-      stat = sfsdtstr(sds1, "lxxx", "uyyy", "fzzz", "caaa")
+      stat = sfsdtstr(sds1, 'lxxx', 'uyyy', 'fzzz', 'caaa')
       if(stat.ne.0) then
          print *, 'Set data strings returned', stat
          err = err + 1
@@ -184,7 +216,7 @@ C     create a new file
          err = err + 1
       endif
 
-      stat = sfn2index(fid1, "Alpha")
+      stat = sfn2index(fid1, 'Alpha')
       if(stat.ne.0) then
          print *, 'Index of Alpha data set is wrong', stat
          err = err + 1
@@ -202,14 +234,14 @@ C     create a new file
          err = err + 1
       endif
 
-      stat = sfn2index(fid1, "Bogus")
+      stat = sfn2index(fid1, 'Bogus')
       if(stat.ne.(-1)) then
          print *, 'Found a bogus data set with index', stat
          err = err + 1
       endif
 
       nt = 4
-      stat = sfsattr(fid1, "Globulator", nt, 12, "Howdy Sailor")
+      stat = sfsattr(fid1, 'Globulator', nt, 12, 'Howdy Sailor')
       if(stat.ne.0) then
          print *, 'Set attr returned', stat
          err = err + 1
@@ -231,7 +263,7 @@ C
 C     OK, let's open it back up and take a look at what we've done
 C
 
-      fid2 = sfstart("test1.hdf", 3)
+      fid2 = sfstart('test1.hdf', 3)
       if(fid2.ne.393216) then
          print *, 'Reopen returned', fid2
          err = err + 1
@@ -348,10 +380,10 @@ C
          err = err + 1
       endif
 
-      if(cal.ne.10.1) err = err + 1
-      if(cale.ne.20.1) err = err + 1
-      if(ioff.ne.40.1) err = err + 1
-      if(ioffe.ne.50.1) err = err + 1
+      if(abs(cal - 10.1) .gt. eps) err = err + 1
+      if(abs(cale - 20.1) .gt. eps) err = err + 1
+      if(abs(ioff - 40.1) .gt. eps) err = err + 1
+      if(abs(ioffe - 50.1) .gt. eps) err = err + 1
       if(nt.ne.16) err = err + 1
 
 

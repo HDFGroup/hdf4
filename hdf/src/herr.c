@@ -24,7 +24,6 @@ static char RcsId[] = "@(#)$Revision$";
 #define _H_ERR_MASTER_
 
 #include "hdf.h"
-#include "herr.h"
 
 /*
 ** Include files for variable argument processing for HEreport

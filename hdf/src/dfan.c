@@ -17,41 +17,41 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /*-----------------------------------------------------------------------------
- * File:     dfan.c
- * Purpose:  read and write annotations: labels and descriptions of data items
- * Invokes:  df.c
+ * File:    dfan.c
+ * Purpose: read and write annotations: labels and descriptions of data items
+ * Invokes: df.c
  * Contents: 
  *
- *  DFANgetlablen:  - get length of label of tag/ref
- *  DFANgetlabel:   - get label of tag/ref
- *  DFANgetdesclen: - get length of description of tag/ref
- *  DFANgetdesc:    - get description of tag/ref
+ *  DFANgetlablen: get length of label of tag/ref
+ *  DFANgetlabel:  get label of tag/ref
+ *  DFANgetdesclen: get length of description of tag/ref
+ *  DFANgetdesc:   get description of tag/ref
  *
- *  DFANgetfidlen:  - get length of file ID
- *  DFANgetfid:     - get file ID
- *  DFANgetfdslen:  - get length of file description
- *  DFANgetfds:     - get file description
+ *  DFANgetfidlen: get length of file ID
+ *  DFANgetfid:    get file ID
+ *  DFANgetfdslen: get length of file description
+ *  DFANgetfds:    get file description
  *
- *  DFANputlabel:   - put label of tag/ref
- *  DFANputdesc:    - put description of tag/ref
+ *  DFANputlabel:  put label of tag/ref
+ *  DFANputdesc:   put description of tag/ref
  *
- *  DFANaddfid:     - add file ID
- *  DFANaddfds:     - add file description
+ *  DFANaddfid:    add file ID
+ *  DFANaddfds:    add file description
  *
- *  DFANlastref:    - return ref of last annotation read or written
- *  DFANlablist:    - get list of labels for a particular tag
+ *  DFANlastref:   return ref of last annotation read or written
+ *  DFANlablist:   get list of labels for a particular tag
  *
- *  DFANIopen:      - open/reopen file
- *  DFANIlocate:    - return ref of label/desc of tag/ref
- *  DFANIaddentry:  - add entry in annotation directory
- *  DFANIgetannlen: - get length of annotation of tag/ref
- *  DFANIgetann:    - get annotation of tag/ref
- *  DFANIputann:    - put annotation of tag/ref
- *  DFANIlablist:   - get list of labels for a particular tag
+ *  DFANIopen:     open/reopen file
+ *  DFANIlocate:   return ref of label/desc of tag/ref
+ *  DFANIaddentry: add entry in annotation directory
+ *  DFANIgetannlen: get length of annotation of tag/ref
+ *  DFANIgetann:   get annotation of tag/ref
+ *  DFANIputann:   put annotation of tag/ref
+ *  DFANIlablist:  get list of labels for a particular tag
  *
- *  DFANIaddfann:   - add file annotation (ID or description)
- *  DFANIgetfannlen: - get length of file annotation
- *  DFANIgetfann:    - get file annotation
+ *  DFANIaddfann:  add file annotation (ID or description)
+ *  DFANIgetfannlen: get length of file annotation
+ *  DFANIgetfann:  get file annotation
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
@@ -59,17 +59,14 @@ static char RcsId[] = "@(#)$Revision$";
 #include "hfile.h"
 #include "dfan.h"
 
-PRIVATE uint16 Lastref = 0;             /* Last ref read/written */
-PRIVATE uint16 Next_label_ref = 0;      /* Next file label ref to read/write */
-PRIVATE uint16 Next_desc_ref = 0;       /* Next file desc ref to read/write */
+static uint16 Lastref = 0;             /* Last ref read/written */
+static uint16 Next_label_ref = 0;      /* Next file label ref to read/write */
+static uint16 Next_desc_ref = 0;       /* Next file desc ref to read/write */
 
-#if 0
-static char Lastfile[DF_MAXFNLEN] = "";          /* last file opened */
-#endif
-PRIVATE char *Lastfile = NULL;
+static char Lastfile[DF_MAXFNLEN];          /* last file opened */
 
 /* pointers to directories of object annotations */
-PRIVATE DFANdirhead *DFANdir[2] = { NULL,          /* object labels       */
+static DFANdirhead *DFANdir[2] = { NULL,          /* object labels       */
                                    NULL           /* object descriptions */
                                  };
 /*
@@ -82,6 +79,40 @@ PRIVATE int32 DFANIopen
 #else /*VMS*/
 PRIVATE int32 _DFANIopen();
 #endif
+
+#ifdef OLD_WAY
+uint16 DFANIlocate
+  PROTO((int32 file_id, int type, uint16 tag, uint16 ref));
+
+int DFANIaddentry
+  PROTO((int type, uint16 annref, uint16 datatag, uint16 dataref));
+
+
+int32 DFANIgetannlen
+  PROTO((char *filename, uint16 tag, uint16 ref, int type));
+
+int DFANIgetann
+  PROTO((char *filename, uint16 tag, uint16 ref, uint8 *ann,
+                int32 maxlen, int type));
+
+int DFANIputann
+  PROTO((char *filename, uint16 tag, uint16 ref, uint8 *ann, 
+	 int32 annlen, int type));
+
+int DFANIlablist
+  PROTO((char *filename, uint16 tag, uint16 reflist[], uint8 *labellist,
+	 int listsize, int maxlen, int startpos, int isfortran));
+
+int DFANIaddfann
+  PROTO((int32 file_id, char *ann, int32 annlen, int type));
+
+int32 DFANIgetfannlen
+  PROTO((int32 file_id, int type, int isfirst));
+
+int32 DFANIgetfann
+  PROTO((int32 file_id, char *ann, int32 maxlen, int type, int isfirst));
+#endif  /* OLD_WAY */
+
 
 /*-----------------------------------------------------------------------------
  * HDF object (i.e. tag/ref) label and description input routines
@@ -122,10 +153,10 @@ int32 DFANgetlablen(filename, tag, ref)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFANgetlabel(char *filename, uint16 tag, uint16 ref, char *label,
+intn DFANgetlabel(char *filename, uint16 tag, uint16 ref, char *label,
                  int32 maxlen)
 #else
-int DFANgetlabel(filename, tag, ref, label, maxlen)
+intn DFANgetlabel(filename, tag, ref, label, maxlen)
 char *filename;
 uint16 tag, ref;
 char *label;
@@ -171,10 +202,10 @@ uint16 tag, ref;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFANgetdesc(char *filename, uint16 tag, uint16 ref, char *desc,
+intn DFANgetdesc(char *filename, uint16 tag, uint16 ref, char *desc,
                 int32 maxlen)
 #else
-int DFANgetdesc(filename, tag, ref, desc, maxlen)
+intn DFANgetdesc(filename, tag, ref, desc, maxlen)
 char *filename;
 uint16 tag, ref;
 char *desc;
@@ -225,13 +256,13 @@ int isfirst;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int32 DFANgetfid(int32 file_id, char *id, int32 maxlen, int isfirst)
+int32 DFANgetfid(int32 file_id, char *id, int32 maxlen, intn isfirst)
 #else
 int32 DFANgetfid(file_id, id, maxlen, isfirst)
 int32 file_id;
 char *id;
 int32 maxlen;
-int isfirst;
+intn isfirst;
 #endif 
 {
      return ( DFANIgetfann(file_id, id, maxlen, DFAN_LABEL, isfirst) );
@@ -250,11 +281,11 @@ int isfirst;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int32 DFANgetfdslen(int32 file_id, int isfirst)
+int32 DFANgetfdslen(int32 file_id, intn isfirst)
 #else
 int32 DFANgetfdslen(file_id, isfirst)
     int32 file_id;
-    int isfirst;
+    intn isfirst;
 #endif 
 {
      return ( DFANIgetfannlen(file_id, DFAN_DESC, isfirst) );
@@ -277,13 +308,13 @@ int32 DFANgetfdslen(file_id, isfirst)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int32 DFANgetfds(int32 file_id, char *desc, int32 maxlen, int isfirst)
+int32 DFANgetfds(int32 file_id, char *desc, int32 maxlen, intn isfirst)
 #else
 int32 DFANgetfds(file_id, desc, maxlen, isfirst)
 int32 file_id;
 char *desc;
 int32 maxlen;
-int isfirst;
+intn isfirst;
 #endif 
 {
     return ( DFANIgetfann(file_id, desc, maxlen, DFAN_DESC, isfirst) );
@@ -307,9 +338,9 @@ int isfirst;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFANputlabel(char *filename, uint16 tag, uint16 ref, char *label)
+intn DFANputlabel(char *filename, uint16 tag, uint16 ref, char *label)
 #else
-int DFANputlabel(filename, tag, ref, label)
+intn DFANputlabel(filename, tag, ref, label)
 char *filename;
 uint16 tag, ref;
 char *label;
@@ -333,10 +364,10 @@ char *label;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFANputdesc(char *filename, uint16 tag, uint16 ref, char *desc,
+intn DFANputdesc(char *filename, uint16 tag, uint16 ref, char *desc,
                 int32 desclen)
 #else
-int DFANputdesc(filename, tag, ref, desc, desclen)
+intn DFANputdesc(filename, tag, ref, desc, desclen)
 char *filename;
 uint16 tag, ref;
 char *desc;
@@ -362,9 +393,9 @@ int32 desclen;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFANaddfid(int32 file_id, char *id)
+intn DFANaddfid(int32 file_id, char *id)
 #else
-int DFANaddfid(file_id, id)
+intn DFANaddfid(file_id, id)
 int32 file_id;
 char *id;
 #endif 
@@ -385,9 +416,9 @@ char *id;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFANaddfds(int32 file_id, char *desc, int32 desclen)
+intn DFANaddfds(int32 file_id, char *desc, int32 desclen)
 #else
-int DFANaddfds(file_id, desc, desclen)
+intn DFANaddfds(file_id, desc, desclen)
 int32 file_id;
 char *desc;
 int32 desclen;
@@ -445,15 +476,15 @@ uint16 DFANlastref()
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFANlablist(char *filename, uint16 tag, uint16 reflist[], char *labellist,
-                int listsize, int maxlen, int startpos)
+intn DFANlablist(char *filename, uint16 tag, uint16 reflist[], char *labellist,
+                intn listsize, intn maxlen, intn startpos)
 #else
-int DFANlablist(filename, tag, reflist, labellist, listsize, maxlen, startpos)
+intn DFANlablist(filename, tag, reflist, labellist, listsize, maxlen, startpos)
 char *filename;
 uint16 tag, reflist[];
 char *labellist;
-int listsize;
-int maxlen, startpos;
+intn listsize;
+intn maxlen, startpos;
 #endif 
 {
     return(DFANIlablist(filename, tag, reflist, (uint8 *)labellist, 
@@ -486,17 +517,9 @@ char *filename;
 intn access;
 #endif 
 {
-    char *FUNC = "DFANIopen";
+
     int32 file_id;
     DFANdirhead *p, *q;
-
-    /* Check if filename buffer has been allocated */
-    if (Lastfile == NULL)
-      {
-        Lastfile = (char *)HDgetspace((DF_MAXFNLEN +1) * sizeof(char));
-        if (Lastfile == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
 
         /* use reopen if same file as last time - more efficient */
     if (HDstrncmp(Lastfile,filename,DF_MAXFNLEN) || (access==DFACC_CREATE)) {
@@ -565,8 +588,11 @@ uint16 tag, ref;
         /* if no directory for this type of annotation, make one */
     if (DFANdir[type]==NULL) { 
         nanns = Hnumber(file_id, anntag); 
-        if (nanns == 0)
-            return(0);
+#ifdef QAK
+        if (nanns < 0) return(0);
+#else
+        if (nanns == 0) return(0);
+#endif
 
            /* allocate directory space.  Note head struct includes 1 entry */
         DFANdir[type] = (DFANdirhead *)
@@ -942,13 +968,13 @@ int listsize, maxlen, startpos, isfortran;
     
     HEclear();
 
-    if (!reflist || !labellist)  { 
-        HERROR(DFE_BADPTR); return FAIL; }
-    if (!tag) { 
-        HERROR(DFE_BADTAG); return FAIL; }
+    if (!reflist || !labellist)   
+        HRETURN_ERROR(DFE_BADPTR,FAIL);
+    if (!tag)  
+        HRETURN_ERROR(DFE_BADTAG,FAIL); 
 
     file_id = DFANIopen(filename, DFACC_READ);
-    if (file_id == 0) return FAIL;
+    if (file_id == FAIL) return FAIL;
 
     /* clear labellist.  pad with blanks for Fortran; add null for C  */
     if (isfortran)
@@ -1224,3 +1250,5 @@ int isfirst;
     Hendaccess(aid);
     return(length);                /* return length of label */
 }
+
+

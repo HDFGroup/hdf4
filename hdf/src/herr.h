@@ -47,8 +47,13 @@
    same assumptions as HRETURN_ERROR.  IN ADDITION, this macro causes
    the file specified by the id "fid" to be closed */
 
-#define HCLOSE_RETURN_ERROR(hfid, err, ret_val) {HERROR(err); Hclose(hfid); \
-                                                return(ret_val);}
+#define HCLOSE_RETURN_ERROR(hfid, err, ret_val) {HERROR(err); Hclose(hfid); return(ret_val);} 
+
+#if 0
+/* Clear the error stack */
+extern int32 error_top;
+#define HEclear() { error_top = (int32)0; }
+#endif
 
 /*
 ======================================================================
@@ -135,11 +140,6 @@
 #define DFE_CODER       -74 /* Error in encoding layer of compression */
 #define DFE_CINIT       -75 /* Error in encoding initialization */
 #define DFE_CDECODE     -76 /* Error in decoding compressed data */
-#define DFE_CENCODE     -77 /* Error in encoding compressed data */
-#define DFE_CTERM       -78 /* Error in encoding termination */
-#define DFE_MINIT       -79 /* Error in modeling initialization */
-#define DFE_COMPINFO    -80 /* Invalid compression header */
-#define DFE_BADRIG      -81 /* error processing a RIG */
 
 #ifdef _H_ERR_MASTER_
 
@@ -152,7 +152,7 @@ typedef struct error_messages_t {
     char *str;
 } error_messages_t;
 
-PRIVATE const struct error_messages_t error_messages[] =
+PRIVATE const error_messages_t error_messages[] =
 {
 { DFE_NONE,         "No error"},
 { DFE_FNF,          "File not found"},
@@ -229,14 +229,8 @@ PRIVATE const struct error_messages_t error_messages[] =
 { DFE_MODEL,        "Error in modeling layer of compression"},
 { DFE_CODER,        "Error in encoding layer of compression"},
 { DFE_CINIT,        "Error in encoding initialization"},
-{ DFE_CDECODE,      "Error in decoding compressed data"},
-{ DFE_CENCODE,      "Error in encoding compressed data"},
-{ DFE_CTERM,        "Error in encoding termination"},
-{ DFE_MINIT,        "Error in modeling initialization"},
-{ DFE_COMPINFO,     "Invalid compression header"},
-{ DFE_BADRIG,       "Error processing a RIG"}
+{ DFE_CDECODE,      "Error in decoding compressed data"}
 };
 #endif /* _H_ERR_MASTER_ */
 
 #endif /* __HERR_H */
-

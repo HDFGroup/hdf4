@@ -29,28 +29,29 @@ int32 xdim, ydim;
 int ispal;
 
 #ifdef PROTOTYPE
-int main(int argc, char *argv[]);
-#else
-int main();
-#endif /* PROTOTYPE */
-
-#ifdef PROTOTYPE
 main(int argc, char *argv[]) 
 #else
 main(argc,argv) 
     int argc;
     char *argv[];
 #endif /* PROTOTYPE */
-    {
+{
     int i, ret;
     char *outfile;
     int image = 1;
     intn jpeg_qual=75;      /* JPEG quality factor */
-    uint16 prevref, writeref = 200, compress = (uint16) 0;
+    uint16 prevref, writeref, compress = (uint16) 0;
     comp_info cinfo;        /* compression structure */
+    int32 out_fid;          /* file ID for the output file */
+    intn copy_flabel,       /* flag to indicate to copy file labels */
+        copy_fdesc,         /* flag to indicate to copy file descriptions */
+        copy_ilabel,        /* flag to indicate to copy image labels */
+        copy_idesc;         /* flag to indicate to copy image descriptions */
+    char *annbuf;           /* buffer to store annotations in */
+    uint32 annbuflen=0;     /* length of the annotation buffer */
 
     if (argc < 3) { 
-        printf("%s,  version: 1.2   date: December 21, 1992\n", argv[0]);
+        printf("%s,  version: 1.3   date: October 15, 1994\n", argv[0]);
         printf("  This utility will read in raster-8 images from an\n");
         printf("  HDF file and create a new HDF containing the\n");
         printf("  images in a compressed format.  Images will be\n");
@@ -69,7 +70,16 @@ main(argc,argv)
 
     outfile = argv[1];
 
+    /* open the output file so that we can write Annotations into it easily */
+    if((out_fid=Hopen(outfile,DFACC_ALL,0))==FAIL) {
+        printf("Error opening output file: %s\n",outfile);
+        exit(1);
+      } /* end if */
+
     for (i = 2; i < argc; i++) {
+        /* turn all the flags on (default settings) */
+        copy_flabel=copy_fdesc=copy_ilabel=copy_idesc=TRUE;
+
         if (*argv[i] == '-') {
             switch (argv[i][1]) {
                 case 'r':               /* raster */
@@ -101,6 +111,62 @@ main(argc,argv)
             }
         }
         else { /* file name */
+            /* copy the file annotations and labels over */
+            if(copy_flabel==TRUE || copy_fdesc==TRUE) {
+                intn isfirst;   /* flip-flop for first image */
+                int32 annlen;   /* length of the annotation to copy */
+                int32 old_fid;  /* file ID for the old and new files */
+
+                if((old_fid=Hopen(argv[i],DFACC_READ,0))==FAIL) {
+                    printf("Error opening input file: %s, skipping to next file\n",argv[i]);
+                    continue;
+                  } /* end if */
+                if(copy_flabel==TRUE) {
+                    isfirst=1;
+                    while((annlen=DFANgetfidlen(old_fid,isfirst))!=FAIL) {
+                        if(annbuflen==0 || annlen>annbuflen) {
+                            if(annbuflen!=0)
+                                HDfreespace(annbuf);
+                            if((annbuf=(char *)HDgetspace(annlen))==NULL) {
+                                printf("Error allocating buffer for annotation, aborting!\n");
+                                exit(1);
+                              } /* end if */
+                            annbuflen=annlen;
+                          } /* end if */
+                        if(DFANgetfid(old_fid,annbuf,annbuflen,isfirst)==FAIL) 
+                            printf("Error reading file annotation from file:%s, continuing\n",argv[i]);
+                        else {
+                            if(DFANaddfid(out_fid,annbuf)==FAIL)
+                                printf("Error wriring annotation to file:%s, continuing\n",outfile);
+                          } /* end else */
+                        isfirst=0; /* get the next label from the file */
+                      } /* end while */
+                  } /* end if */
+                if(copy_fdesc==TRUE) {
+                    isfirst=1; 
+                    while((annlen=DFANgetfdslen(old_fid,isfirst))!=FAIL) {
+                        if(annbuflen==0 || annlen>annbuflen) {
+                            if(annbuflen!=0)
+                                HDfreespace(annbuf);
+                            if((annbuf=(char *)HDgetspace(annlen))==NULL) {
+                                printf("Error allocating buffer for annotation, aborting!\n");
+                                exit(1);
+                              } /* end if */
+                            annbuflen=annlen;
+                          } /* end if */
+                        if(DFANgetfds(old_fid,annbuf,annbuflen,isfirst)==FAIL) 
+                            printf("Error reading file annotation from file:%s, continuing\n",argv[i]);
+                        else {
+                            if(DFANaddfds(out_fid,annbuf,annlen)==FAIL)
+                                printf("Error wriring annotation to file:%s, continuing\n",outfile);
+                          } /* end else */
+                        isfirst=0; /* get the next label from the file */
+                      } /* end while */
+                  } /* end if */
+              } /* end if */
+
+
+            /* copy the images over */
             while (DFR8getdims(argv[i], &xdim, &ydim, &ispal) >= 0) {
                 prevref = DFR8lastref();
                 if ((space = (uint8 *) HDgetspace(xdim * ydim)) == NULL) {
@@ -112,12 +178,15 @@ main(argc,argv)
                     printf("Error reading image from file %s\n", argv[i]);
                     exit(1);
                 }
-                if (ispal) DFR8setpalette((uint8 *) palette);
+                if (ispal)
+                    DFR8setpalette((uint8 *) palette);
                 else if (compress == DFTAG_IMC) {
                     printf("Couldn't find palette for IMCOMP compression\n");
                     exit(1);
                 }
-                ret = DFR8writeref(outfile, writeref++);
+
+                writeref=Hnewref(out_fid);
+                ret = DFR8writeref(outfile, writeref);
 
                 if(compress)
                     DFR8setcompress(compress,&cinfo);
@@ -127,6 +196,49 @@ main(argc,argv)
                     exit(1);
                 }
 
+                /* sequence through the annotations for this image */
+                if(copy_ilabel==TRUE || copy_idesc==TRUE) {
+                    uint16 image_tag=DFTAG_RIG; /* tag to look for image annotations with */
+                    int32 annlen;   /* length of the annotation to copy */
+
+                    if(copy_ilabel==TRUE) {
+                        if((annlen=DFANgetlablen(argv[i],image_tag,prevref))!=FAIL) {
+                            if(annbuflen==0 || annlen>annbuflen) {
+                                if(annbuflen!=0)
+                                    HDfreespace(annbuf);
+                                if((annbuf=(char *)HDgetspace(annlen))==NULL) {
+                                    printf("Error allocating buffer for annotation, aborting!\n");
+                                    exit(1);
+                                  } /* end if */
+                                annbuflen=annlen;
+                              } /* end if */
+                            if(DFANgetlabel(argv[i],image_tag,prevref,annbuf,annbuflen)==FAIL)
+                                printf("Error reading annotation from file:%s, continuing\n",argv[i]);
+                            else
+                                if(DFANputlabel(outfile,image_tag,writeref,annbuf)==FAIL)
+                                    printf("Error writing annotation to file:%s, continuing\n",outfile);
+                          } /* end if */
+                      } /* end if */
+                    if(copy_idesc==TRUE) {
+                        if((annlen=DFANgetdesclen(argv[i],image_tag,prevref))!=FAIL) {
+                            if(annbuflen==0 || annlen>annbuflen) {
+                                if(annbuflen!=0)
+                                    HDfreespace(annbuf);
+                                if((annbuf=(char *)HDgetspace(annlen))==NULL) {
+                                    printf("Error allocating buffer for annotation, aborting!\n");
+                                    exit(1);
+                                  } /* end if */
+                                annbuflen=annlen;
+                              } /* end if */
+                            if(DFANgetdesc(argv[i],image_tag,prevref,annbuf,annbuflen)==FAIL)
+                                printf("Error reading annotation from file:%s, continuing\n",argv[i]);
+                            else
+                                if(DFANputdesc(outfile,image_tag,writeref,annbuf,annlen)==FAIL)
+                                    printf("Error writing annotation to file:%s, continuing\n",outfile);
+                          } /* end if */
+                      } /* end if */
+                  } /* end if */
+
                 /* sequence past this image */
                 ret = DFR8readref(argv[i], prevref);
                 ret = DFR8getdims(argv[i], &xdim, &ydim, &ispal);
@@ -135,6 +247,10 @@ main(argc,argv)
             }
         }
     }
+
+    Hclose(out_fid); /* remember to close the file */
+    if(annbuflen!=0)    /* and free the buffer space */
+        HDfreespace(annbuf);
 
     return(0);
 }

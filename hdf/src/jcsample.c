@@ -162,8 +162,8 @@ JSAMPARRAY output_data;
     outptr = output_data[outrow];
     inptr = input_data[outrow];
     for (outcol = 0; outcol < output_cols; outcol++) {
-      *outptr++ = (JSAMPLE) ((GETJSAMPLE(*inptr) + GETJSAMPLE(inptr[1])
-			      + 1) >> 1);
+      *outptr++ = (JSAMPLE) ((unsigned)(GETJSAMPLE(*inptr) + GETJSAMPLE(inptr[1]) 
+			+ 1) >> 1);
       inptr += 2;
     }
   }
@@ -218,7 +218,7 @@ JSAMPARRAY output_data;
     inptr0 = input_data[inrow];
     inptr1 = input_data[inrow+1];
     for (outcol = 0; outcol < output_cols; outcol++) {
-      *outptr++ = (JSAMPLE) ((GETJSAMPLE(*inptr0) + GETJSAMPLE(inptr0[1]) +
+      *outptr++ = (JSAMPLE) ((unsigned)(GETJSAMPLE(*inptr0) + GETJSAMPLE(inptr0[1]) +
 			      GETJSAMPLE(*inptr1) + GETJSAMPLE(inptr1[1])
 			      + 2) >> 2);
       inptr0 += 2; inptr1 += 2;

@@ -10,8 +10,8 @@ C* hdf/COPYING file.                                                        *
 C*                                                                          *
 C****************************************************************************
 C
-C $Id$ 
-C     
+C $Id$
+C
 c **************************************************************************
 c *
 c * vgFf.f
@@ -53,35 +53,32 @@ c	------------------------------------------------------------
 c	detaches from a vgroup
 c	related: Vdetach--vdtchc--VFDTCH
 
-      integer function vfdtch (vg)
+      subroutine  vfdtch (vg)
       integer     vg
-      integer   vdtchc
 
-      vfdtch = vdtchc (vg)
+      call vdtchc (vg)
       end
 
 c	------------------------------------------------------------
 c	general inquiry on a vgroup
 c	related: Vgetname--vgnamc--VFGNAM
 
-      integer function vfgnam (vg, vgname)
+      subroutine vfgnam (vg, vgname)
       integer         vg
       character*(*)   vgname
-      integer         vgnamc
 
-      vfgnam = vgnamc (vg, vgname)
+      call vgnamc (vg, vgname)
       end
 c	------------------------------------------------------------
 c	get the class name of a vgroup
 c	related: Vgetclass--vgclsc--VFGCLS
 
-      integer function vfgcls (vg, vgclass)
+      subroutine vfgcls (vg, vgclass)
 
       integer			vg
       character*(*)	vgclass
-      integer       vgclsc
 
-      vfgcls = vgclsc  (vg, vgclass)
+      call vgclsc  (vg, vgclass)
       end
 c   ------------------------------------------------------------
 c	general inquiry on a vgroup
@@ -122,23 +119,21 @@ c	------------------------------------------------------------
 c	sets the name of the vgroup
 c	related: Vsetname--vsnamc--VFSNAM
 
-      integer function vfsnam (vg, vgname)
+      subroutine vfsnam (vg, vgname)
       integer			vg
       character*(*)	vgname
-      integer       vsnamc
 
-      vfsnam = vsnamc (vg, vgname, len(vgname))
+      call vsnamc (vg, vgname, len(vgname))
       end
 c   ------------------------------------------------------------
 c	sets the class name of the vgroup
 c	related: Vsetclass--vsclsc--VFSCLS
 
-      integer function vfscls (vg, vgclass)
+      subroutine vfscls (vg, vgclass)
       integer			vg
       character*(*)	vgclass
-      integer      vsclsc
 
-      vfscls = vsclsc  (vg, vgclass, len(vgclass))
+      call vsclsc  (vg, vgclass, len(vgclass))
       end
 
 c	------------------------------------------------------------
@@ -195,11 +190,10 @@ c     ------------------------------------------------------------
 c     detach from a vdata
 c     related: VSdetach--vsdtchc--vfdtch
 
-      integer function vsfdtch (vs)
+      subroutine	vsfdtch (vs)
       integer		vs
-      integer       vsdtchc
 
-      vsfdtch = vsdtchc (vs)
+      call vsdtchc (vs)
       end
 
 c     ------------------------------------------------------------
@@ -217,24 +211,22 @@ c     ------------------------------------------------------------
 c     gets the name of a vdata
 c     related: VSgetname--vsgnamc--vsfgnam
 
-      integer function vsfgnam (vs, vsname)
+      subroutine  vsfgnam (vs, vsname)	
       integer			vs
       character*(*)	vsname
-      integer       vsgnamc
 
-      vsfgnam = vsgnamc (vs, vsname)
+      call vsgnamc (vs, vsname)
       end
 
 c     ------------------------------------------------------------
 c     get the class name of a vdata
 c     related: VSgetclass--vsgclsc--vsfgcls
 
-      integer function vsfgcls (vs, vsclass)
+      subroutine vsfgcls (vs, vsclass)			 
       integer			vs
       character*(*)	vsclass
-      integer       vsgclsc
 
-      vsfgcls = vsgclsc  (vs, vsclass)
+      call vsgclsc  (vs, vsclass)
       end
 
 c     ------------------------------------------------------------
@@ -246,14 +238,14 @@ c     related: VSinquire--vsinqc--vsfinq
       character*(*)	fields, vsname
       integer			vsinqc
 
-      vsfinq = vsinqc (vs,nvs,ilace,fields,vsize,vsname)
+      vsfinq = vsinqc (vs,nvs,ilace,fields,vsize,vsname) 
       end
 
 c     ------------------------------------------------------------
 c     tests if given fields exist in the vdata
 c     related: VSfexist--vsfexc--vsfex
 
-      integer	function vsfex (vs, fields)
+      integer	function vsfex (vs, fields)		
       integer			vs
       character*(*)	fields
       integer			vsfexc
@@ -261,23 +253,11 @@ c     related: VSfexist--vsfexc--vsfex
       vsfex = vsfexc (vs, fields, len(fields))
       end
 
-c     ------------------------------------------------------------
-c     looks for a Vdata with a given name
-c     related: VSfind--vsfind--vsffnd
-
-      integer	function vsffnd (vs, name)
-      integer			vs
-      character*(*)	name
-      integer			vsfind
-
-      vsffnd = vsfndc (vs, name, len(name))
-      end
-
 c  ------------------------------------------------------------
 c     gets the id of the next vdata from the file
 c     related: VSgetid--vsgidc--vsfgid
 
-      integer  function vsfgid (f, vsid)
+      integer  function vsfgid (f, vsid) 
       integer     f, vsid
       integer     vsgidc
 
@@ -288,24 +268,22 @@ c     ------------------------------------------------------------
 c     sets the name of a vdata
 c     related: VSsetname--vssnamc--vsfsnam
 
-      integer function vsfsnam (vs, vsname)
+      subroutine vsfsnam (vs, vsname)	
       integer			vs
       character*(*)	vsname
-      integer       vssnamc
 
-      vsfsnam = vssnamc (vs, vsname, len(vsname))
+      call vssnamc (vs, vsname, len(vsname))
       end
 
 c     ------------------------------------------------------------
 c     set the class name of a vdata
 c     related: VSsetclass--vssclsc--vsfscls
 
-      integer function vsfscls (vs, vsclass)
+      subroutine vsfscls (vs, vsclass)			 
       integer			vs
       character*(*)	vsclass
-      integer vssclsc
 
-      vsfscls = vssclsc  (vs, vsclass, len(vsclass))
+      call vssclsc  (vs, vsclass, len(vsclass))
       end
 
 c     ------------------------------------------------------------
@@ -557,7 +535,7 @@ c     related: Vgettagref--vgttrc--vfgttr
       integer function vfgttr (vg, which, tag, ref)
       integer		vg, which
       integer		tag, ref
-      integer		vgttrc
+      integer		vgttrc									
 
       vfgttr = vgttrc (vg, which, tag, ref)
       end

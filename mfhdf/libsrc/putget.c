@@ -486,7 +486,11 @@ Void *values ;
 	case NC_SHORT :
 		return( xdr_NCvshort(xdrs, (unsigned)rem/2, (short *)values) ) ;
 	case NC_LONG :
-		return( xdr_long(xdrs, (long *)values) ) ;
+#ifdef __alpha
+		return( xdr_int(xdrs, (nclong *)values) ) ;
+#else
+		return( xdr_long(xdrs, (nclong *)values) ) ;
+#endif
 	case NC_FLOAT :
 		return( xdr_float(xdrs, (float *)values) ) ;
 	case NC_DOUBLE : 
@@ -519,7 +523,7 @@ Void *values ;
 * 
 ******************************************************************************
 *
-* Please report all bugs / comments to chouck@ncsa.uiuc.edu
+* Please report all bugs / comments to hdfhelp@ncsa.uiuc.edu
 *
 *****************************************************************************/
 
@@ -591,6 +595,8 @@ int32   type;
     
 } /* hdf_fill_array */
 
+#define MAX_SIZE 1000000
+
 /* ------------------------- hdf_get_data ------------------- */
 /*
  * Given a variable vgid return the id of a valid data storage
@@ -607,13 +613,14 @@ NC_var *vp;
     int32 vsid, nvalues, status, tag, t, n;
     register Void *values;
     int32 byte_count, len;
+    int32 to_do, done, chunk_size;
     
 #if DEBUG 
     fprintf(stderr, "hdf_get_data I've been called\n");
 #endif
     
-    if(!handle) return NULL;
-    if(!vp) return NULL;
+    if(!handle) return 0;
+    if(!vp) return 0;
 
     /* 
      * if it is stored as NDGs we can't do any better than what was
@@ -623,22 +630,26 @@ NC_var *vp;
     
     if(vp->vgid) {
         /* attach to the variable's Vgroup */
-        vg = Vattach(handle->hdf_file, vp->vgid, "w");
+        vg = Vattach(handle->hdf_file, vp->vgid, "r");
         if(vg == FAIL) {
             HEprint(stderr, 0);
-            return NULL;
+            return 0;
         }
         
         /* loop through looking for a data storage object */
         n = Vntagrefs(vg);
         for(t = 0; t < n; t++) {
             Vgettagref(vg, t, &tag, &vsid);
-            if(tag == DATA_TAG) return vsid;
+            if(tag == DATA_TAG) {
+                Vdetach(vg);
+                return vsid;
+            }
         }
+        Vdetach(vg);
     }
     
     if(handle->hdf_mode == DFACC_RDONLY)
-        return NULL;
+        return 0;
   
     /* 
      * create a new data storage object
@@ -650,13 +661,22 @@ NC_var *vp;
 #endif  
     
     /* look up fill value (if it exists) */
-    len = (vp->len / vp->HDFsize) * vp->szof;
-    values = (Void *) HDgetspace(len);
     attr = NC_findattr(&(vp->attrs), _FillValue);
 
-    byte_count = vp->len;
-    nvalues = vp->len / vp->HDFsize;
+
+    /* compute the various size parameters */
+    if(vp->len > MAX_SIZE)
+        chunk_size = MAX_SIZE;
+    else
+        chunk_size = vp->len;
+
+    nvalues = vp->len / vp->HDFsize;        /* total number of values */
+    to_do   = chunk_size / vp->HDFsize;     /* number of values in a chunk */
     
+    len = to_do * vp->szof;                 /* size of buffer for fill values */
+    values = (Void *) HDgetspace(len);      /* buffer to hold unconv fill vals */
+    byte_count = to_do * vp->HDFsize;       /* external buffer size */
+
     if(!attr) {
         NC_arrayfill(values, len, vp->type);
     } else {
@@ -673,7 +693,7 @@ NC_var *vp;
     vsid = Hnewref(handle->hdf_file);
     vp->aid = Hstartwrite(handle->hdf_file, DATA_TAG, vsid, byte_count);
 
-    if(vp->aid == FAIL) return NULL;
+    if(vp->aid == FAIL) return 0;
 
     /* make sure our tmp buffer is big enough to hold everything */
     if(tBuf_size < byte_count) {
@@ -686,21 +706,66 @@ NC_var *vp;
      * Do numerical conversions
      */
     DFKsetNT(vp->HDFtype);
-    DFKnumout((uint8 *) values, tBuf, (uint32) nvalues, 0, 0);
+    DFKnumout((uint8 *) values, tBuf, (uint32) to_do, 0, 0);
 
-    status = Hwrite(vp->aid, byte_count, (uint8 *) tBuf);
-    if(status != byte_count) return NULL;
-    if(Hendaccess(vp->aid) == FAIL) return NULL;
+    /*
+     * Write out the values
+     */
+    done = 0;
+    while(done != nvalues) {
+        status = Hwrite(vp->aid, byte_count, (uint8 *) tBuf);
+        if(status != byte_count) return 0;
+        done += to_do;
+        if(nvalues - done < to_do) {
+            to_do = nvalues - done;
+            byte_count = to_do * vp->HDFsize;
+        }
+    }
+
+    if(Hendaccess(vp->aid) == FAIL) return 0;
 
     /* if it is a record var might as well make it linked blocks now */
     if(IS_RECVAR(vp)) {
+#ifdef OLD_WAY
         vp->aid = HLcreate(handle->hdf_file, DATA_TAG, vsid, 
-                           byte_count * BLOCK_SIZE, BLOCK_COUNT);
-        if(vp->aid == FAIL) return NULL;
-        if(Hendaccess(vp->aid) == FAIL) return NULL;
+                           vp->len * BLOCK_SIZE, BLOCK_COUNT);
+#else /* OLD_WAY */
+        int32 block_size; /* the size of the linked blocks to use */
+
+/* The block size is calculated according to the following heuristic: */
+/*   First, the block size the user set is used, if set. */
+/*   Second, the block size is calculated according to the size being */
+/*           written times the BLOCK_MULT value, in order to make */
+/*           bigger blocks if the slices are very small. */
+/*   Third, the calculated size is check if it is bigger than the */
+/*           MAX_BLOCK_SIZE value so that huge empty blocks are not */
+/*           created.  If the calculated size is greater than */
+/*           MAX_BLOCK_SIZE, then MAX_BLOCK_SIZE is used */
+/* These are very vague heuristics, but hopefully they should avoid */
+/* some of the past problems... -QAK */
+        if(vp->block_size!=(-1)) /* use value the user provided, if available */
+            block_size=vp->block_size;
+        else { /* try figuring out a good value using some heuristics */
+            block_size=vp->len*BLOCK_MULT;
+            if(block_size>MAX_BLOCK_SIZE)
+                block_size=MAX_BLOCK_SIZE;
+          } /* end else */
+
+        vp->aid = HLcreate(handle->hdf_file, DATA_TAG, vsid, block_size,
+		BLOCK_COUNT);
+#endif /* OLD_WAY */
+        if(vp->aid == FAIL) return 0;
+        if(Hendaccess(vp->aid) == FAIL) return 0;
     }
 
     if(vp->vgid) {
+        /* attach to the variable's Vgroup */
+        vg = Vattach(handle->hdf_file, vp->vgid, "w");
+        if(vg == FAIL) {
+            HEprint(stderr, 0);
+            return 0;
+        }
+        
         /* add new Vdata to existing Vgroup */
         Vaddtagref(vg, (int32) DATA_TAG, (int32) vsid);
         
@@ -742,7 +807,7 @@ NC_var    * vp;
     /*
      * Fail if there is no data
      */
-    if(vp->data_ref == NULL) return(FALSE);
+    if(vp->data_ref == 0) return(FALSE);
 
     if(handle->hdf_mode == DFACC_RDONLY)
         vp->aid = Hstartread(handle->hdf_file, vp->data_tag, vp->data_ref);
@@ -767,6 +832,8 @@ NC_var    * vp;
  *  data attach to it now.  Since attaching / detaching is so
  *  slow, stay attached for future reads / writes.  As a result,
  *  we must always attach with write access.
+ *
+ * The calling routine is responsible for calling DFKsetNT() as required.
  */
 static bool_t
 hdf_xdr_NCvdata(handle, vp, where, type, count, values)
@@ -798,17 +865,20 @@ uint32    count;
          */
         if(vp->data_ref == 0) 
             if(handle->hdf_mode == DFACC_RDONLY) {
-                if(vp->data_tag == DATA_TAG) {
+                if(vp->data_tag == DATA_TAG ||
+                   vp->data_tag == DFTAG_SDS) {
                     NC_attr ** attr;
                     int len;
                     
                     attr = NC_findattr(&vp->attrs, _FillValue);
-                    len = (vp->len / vp->HDFsize) * vp->szof;       
+/* fill the buffer, use 'count' instead of 'vp->len' to calculate len   */
+/*                    len = (vp->len / vp->HDFsize) * vp->szof;       */
+
+                    len = count * vp->szof;
                     if(attr != NULL)
                         hdf_fill_array(values, len, (*attr)->data->values, vp->type);
                     else 
                         NC_arrayfill(values, len, vp->type);
-                    
                 }
                 return TRUE;
             } else {
@@ -849,9 +919,10 @@ uint32    count;
     }
     
 
-    /* Read or write the data into / from values */
-    DFKsetNT(vp->HDFtype);
+/*    This should be set by the caller */
+/*    DFKsetNT(vp->HDFtype); */
     
+    /* Read or write the data into / from values */
     if(handle->xdrs->x_op == XDR_DECODE) {
         status = Hread(vp->aid, byte_count, (uint8 *) tBuf);
         if(status != byte_count) return FALSE;
@@ -893,7 +964,7 @@ uint32    count;
 } /* xdr_NCvdata */
 
 
-/* ------------------------- xdr_NCv1data ------------------- */
+/* ------------------------- hdf_xdr_NCv1data ------------------- */
 /*
  * read / write a single datum of type 'type' at 'where'
  * This is designed to replace the xdr based routine of the
@@ -939,6 +1010,7 @@ VOIDP     values;
 
 #endif
     
+    DFKsetNT(vp->HDFtype);
     return (hdf_xdr_NCvdata(handle, vp, where, type, 1, values)); 
 
 } /* hdf_xdr_NCv1data */
@@ -1124,8 +1196,12 @@ Void *values ;
 		} /* else */
 		return(TRUE) ;
 	case NC_LONG :
+#ifdef __alpha
+		xdr_NC_fnct = xdr_int ;
+#else
 		xdr_NC_fnct = xdr_long ;
-		szof = sizeof(long) ;
+#endif
+		szof = sizeof(nclong) ;
 		break ;
 	case NC_FLOAT :
 		xdr_NC_fnct = xdr_float ;
@@ -1235,10 +1311,12 @@ Void *values ;
 
 #ifdef HDF
         if(handle->is_hdf) {
-          if(!hdf_xdr_NCvdata(handle, vp,
-                          offset, vp->type, 
-                          (uint32)*edges, values))
-            return(-1) ;
+            DFKsetNT(vp->HDFtype);
+            if(!hdf_xdr_NCvdata(handle, vp,
+                                offset, vp->type, 
+                                (uint32)*edges, values))
+                return(-1) ;
+            vp->numrecs = MAX(vp->numrecs, (*start + *edges));
         } else 
 #endif
           {
@@ -1295,24 +1373,28 @@ Void *values ;
 	arrayp("edges", vp->assoc->count, edges) ;
 #endif /* VDEBUG */
 
-	if(vp->assoc->count == 0) /* 'scaler' variable */
-	{
-	
 #ifdef HDF
-          if(handle->is_hdf) {
-		return(
-		hdf_xdr_NCv1data(handle, vp, vp->begin, vp->type, values) ?
-		0 : -1 ) ;
-          } else
+        /* set the number type now so we only do it once */
+        if(handle->is_hdf)
+            DFKsetNT(vp->HDFtype);
 #endif
-            {
-		return(
-		xdr_NCv1data(handle->xdrs, vp->begin, vp->type, values) ?
-		0 : -1 ) ;
-            }
 
-	}
-
+	if(vp->assoc->count == 0) {   /* 'scaler' variable */
+#ifdef HDF
+            if(handle->is_hdf) {
+                return(
+                       hdf_xdr_NCv1data(handle, vp, vp->begin, vp->type, values) ?
+                       0 : -1 ) ;
+            } else
+#endif
+                {
+                    return(
+                           xdr_NCv1data(handle->xdrs, vp->begin, vp->type, values) ?
+                           0 : -1 ) ;
+                }
+            
+        }
+        
 	if( !NCcoordck(handle, vp, start) )
 		return(-1) ;
 
@@ -1632,6 +1714,7 @@ Void **datap ;
 
 #ifdef HDF
                 if(handle->is_hdf) {
+                    DFKsetNT(rvp[ii]->HDFtype);
                     if(!hdf_xdr_NCvdata(handle, rvp[ii],
                                         offset, rvp[ii]->type, 
                                         (uint32)iocount, datap[ii]))

@@ -23,7 +23,7 @@ val_fill(type, len, vals)
     union {
 	char *cp;
 	short *sp;
-	long *lp;
+	nclong *lp;
 	float *fp;
 	double *dp;
     } gp;
@@ -41,9 +41,9 @@ val_fill(type, len, vals)
 	  *gp.sp++ = (short) (iel - len/2); /* negative and positive values */
 	break;
       case NC_LONG:
-	gp.lp = (long *) vals;
+	gp.lp = (nclong *) vals;
 	for (iel = 0; iel < len; iel++)
-	  *gp.lp++ = (long) (iel - len/2);
+	  *gp.lp++ = (nclong) (iel - len/2);
 	break;
       case NC_FLOAT:
 	gp.fp = (float *) vals;
@@ -128,7 +128,7 @@ val_cmp (type, len, v1, v2)
     union {
 	char *cp;
 	short *sp;
-	long *lp;
+	nclong *lp;
 	float *fp;
 	double *dp;
     } gp, hp;
@@ -156,8 +156,8 @@ val_cmp (type, len, v1, v2)
 	}
 	break;
       case NC_LONG:
-	gp.lp = (long *) v1;
-	hp.lp = (long *) v2;
+	gp.lp = (nclong *) v1;
+	hp.lp = (nclong *) v2;
 	for (iel = 0; iel < len; iel++) {
 	    if (*gp.lp != *hp.lp)
 	      return (iel + 1);
@@ -204,7 +204,7 @@ val_out(type, len, vals)
     union {
 	char *cp;
 	short *sp;
-	long *lp;
+	nclong *lp;
 	float *fp;
 	double *dp;
     } gp;
@@ -223,7 +223,7 @@ val_out(type, len, vals)
 	  (void)fprintf(stderr,"%d%s",*gp.sp++,iel<len-1 ? ", " : "");
 	break;
       case NC_LONG:
-	gp.lp = (long *) vals;
+	gp.lp = (nclong *) vals;
 	for (iel = 0; iel < len; iel++)
 	  (void)fprintf(stderr,"%ld%s",*gp.lp++,iel<len-1 ? ", " : "");
 	break;

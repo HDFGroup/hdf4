@@ -57,7 +57,7 @@ test_ncattput(path)
     static char byte_vals[] = {'a', 'b'};
     static char char_vals[] = "chars";
     static short short_vals[] = {-999, 0, 999};
-    static long long_vals[] = {10, 20};
+    static nclong long_vals[] = {10, 20};
     static float float_vals[] = {1.5, 2.5, 3.5 };
     static double double_vals[] = {4.5, 5.5, 6.5, 7.5};
     /* 
@@ -463,11 +463,9 @@ test_ncattget(path)
     int uu_id;			/* variable id */
     static struct cdfvar uu =	/* variable */
       {"uu", NC_LONG, 2, ___, 0};
-    static long uumax = 1000;	/* attribute value */
+    static nclong uumax = 1000;	/* attribute value */
     static struct cdfatt vmax = /* attribute */
 	{___, "valid_max", NC_LONG, 1, (void *) &uumax};
-
-    extern void val_out();
 
     static char pname[] = "test_ncattget";
 

@@ -1,3 +1,4 @@
+
 ! ****************************************************************************
 ! * NCSA HDF                                                                 *
 ! * Software Development Group                                               *
@@ -24,12 +25,12 @@
 $ create/dir [.lib]
 $ create/dir [.include]
 $ create/dir [.bin]
-$ define/nolog hdf$src     _$1$dia0:[folk.33b2.hdf.src]   ! HDF src
-$ define/nolog hdf$util    _$1$dia0:[folk.33b2.hdf.util]  ! HDF utilities
-$ define/nolog hdf$test    _$1$dia0:[folk.33b2.hdf.test]  ! HDF test programs
-$ define/nolog hdf$lib     _$1$dia0:[folk.33b2.hdf.lib]df ! Location and name for lib
-$ define/nolog hdf$include _$1$dia0:[folk.33b2.hdf.include] ! Where to put includes
-$ define/nolog hdf$bin     _$1$dia0:[folk.33b2.hdf.bin]   ! Where to put executables
+$ define/nolog hdf$src     mrlxp4$dka300:[folk.HDF33r3.hdf.src]   ! HDF src
+$ define/nolog hdf$util    mrlxp4$dka300:[folk.HDF33r3.hdf.util]  ! HDF utilities
+$ define/nolog hdf$test    mrlxp4$dka300:[folk.HDF33r3.hdf.test]  ! HDF test programs
+$ define/nolog hdf$lib     mrlxp4$dka300:[folk.HDF33r3.hdf.lib]df ! Location and name for lib
+$ define/nolog hdf$include mrlxp4$dka300:[folk.HDF33r3.hdf.include] ! Where to put includes
+$ define/nolog hdf$bin     mrlxp4$dka300:[folk.HDF33r3.hdf.bin]   ! Where to put executables
 $ !
 $ define/nolog sys$clib sys$library:vaxcrtl
 $ !
@@ -38,7 +39,7 @@ $ !
 ! $ ! Make full df lib (with fortran stubs)
 $ type sys$input
   ======== Building HDF 3.3 ========
-! $ !
+! $ !              
 ! $ ! Build the base HDF library
 ! $ !
 $ set def hdf$src
@@ -53,6 +54,8 @@ $ @MAKEFS
 ! $ !
 $ copy df.olb hdf$lib
 $ copy *.h    hdf$include
+$ delete *.obj;*
+$ delete df.olb;*
 ! $ !
 ! $ ! Build the HDF utility programs
 ! $ !
@@ -62,6 +65,8 @@ $ @MAKEUTIL
 ! $ ! Move the HDF utilities to where they belong
 ! $ !
 $ copy *.exe hdf$bin
+$ delete *.exe;*
+$ delete *.obj;*
 ! $ !
 $ @setuputils
 ! $ !
@@ -69,7 +74,7 @@ $ @setuputils
 ! $ !
 $ set default hdf$test
 $ @MAKE
-$ set default hdf$src
-$ !
+! $ !
+$ delete *.obj;*
 $ type sys$input
-  ======== HDF 3.3 has now been built ========
+  ======== HDF 3.3 has now been built, run test programs! ========

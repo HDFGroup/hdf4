@@ -200,7 +200,9 @@ DFKNTsize(number_type)
 int32 number_type;
 #endif /* PROTOTYPE */
 {
+#ifdef LATER
     char *FUNC="DFKNTsize";
+#endif
 
 	switch (number_type)  {
     	    case DFNT_NUCHAR:	return(SIZE_NUCHAR);
@@ -556,7 +558,7 @@ int32 numbertype, machinetype;
         case DFNT_NUCHAR8:
         case DFNT_NCHAR16:
         case DFNT_NUCHAR16: return (int8)(machinetype & 0x0f);
-        default: return FAIL;
+        default: return (int8)FAIL;
     }
 }
 

@@ -126,7 +126,12 @@ FloatInf|Infinity|Inf	{    /* float missing values */
 		    sprintf(errstr,"bad long constant: %s",(char*)yytext);
 		    yyerror(errstr);
 		}
-		if (dd < LONG_MIN  ||  dd > LONG_MAX) {
+#ifdef __alpha
+		if (dd < INT_MIN  ||  dd > INT_MAX) 
+#else
+		if (dd < LONG_MIN  ||  dd > LONG_MAX) 
+#endif
+                {
 		    double_val = dd;
 		    return DOUBLE_CONST;
 		} else {

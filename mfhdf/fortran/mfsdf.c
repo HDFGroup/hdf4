@@ -995,7 +995,8 @@ nsfid2ref(id)
 
 /*-----------------------------------------------------------------------------
  * Name:    sfref2index
- * Purpose: call SDreftoindex to map a reference number to an index of a dataset
+ * Purpose: call SDreftoindex to map a reference number to an index of a 
+ *          dataset
  * Inputs:  id: file id
  *          ref: reference number to look up
  * Returns: reference number of a NDG representing this dataset
@@ -1011,4 +1012,24 @@ nsfref2index(id, ref)
 #endif /* PROTOTYPE */
 {
     return((intf) SDreftoindex(*id, (int32) *ref));
+}
+
+
+/*-----------------------------------------------------------------------------
+ * Name:    sfiscvar
+ * Purpose: call SDiscoordvar to see if a dataset is a coordinate variable
+ *          dataset
+ * Inputs:  id: sds id
+ * Returns: TRUE/FALSE
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nsfiscvar(intf *id)
+#else
+nsfiscvarindex(id)
+     intf *id;
+#endif /* PROTOTYPE */
+{
+    return((intf) SDiscoordvar(*id));
 }

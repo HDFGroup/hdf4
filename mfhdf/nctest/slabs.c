@@ -43,30 +43,30 @@ val_stuff(type, v, ii, val)	/* v[ii] = val */
     union gp {
 	char cp[1];
 	short sp[1];
-	long lp[1];
+	nclong lp[1];
 	float fp[1];
 	double dp[1];
     } *gp;
 
     gp = (union gp *) v;
     switch (type) {
-      case NC_BYTE:
-      case NC_CHAR:
+    case NC_BYTE:
+    case NC_CHAR:
 	gp->cp[ii] = (char) val;
 	break;
-      case NC_SHORT:
-    gp->sp[ii] = (short)val;
+    case NC_SHORT:
+        gp->sp[ii] = (short)val;
 	break;
-      case NC_LONG:
-	gp->lp[ii] = val;
+    case NC_LONG:
+	gp->lp[ii] = (nclong)val;
 	break;
-      case NC_FLOAT:
-    gp->fp[ii] = (float)val;
+    case NC_FLOAT:
+        gp->fp[ii] = (float)val;
 	break;
-      case NC_DOUBLE:
+    case NC_DOUBLE:
 	gp->dp[ii] = val;
 	break;
-      default:
+    default:
 	error("%s: bad type, test program error", pname);
     }
 }
@@ -91,7 +91,7 @@ val_diff(type, v, ii, val)	/* v[ii] != val */
     union gp {
 	char cp[1];
 	short sp[1];
-	long lp[1];
+	nclong lp[1];
 	float fp[1];
 	double dp[1];
     } *gp;
@@ -104,7 +104,7 @@ val_diff(type, v, ii, val)	/* v[ii] != val */
       case NC_SHORT:
 	return (gp->sp[ii] != (short) val);
       case NC_LONG:
-	return (gp->lp[ii] != (long) val);
+	return (gp->lp[ii] != (nclong) val);
       case NC_FLOAT:
 	return (gp->fp[ii] != (float) val);
       case NC_DOUBLE:

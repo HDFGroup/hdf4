@@ -12,19 +12,20 @@ C****************************************************************************
 C
 C $Id$
 C
+C
 C------------------------------------------------------------------------------
 C File:     df24Ff.f
 C Purpose:  read and write 24-bit raster images
 C Invokes:  df24F.c
 C Contents: 
-C   d2gdims:      - get dimensions of image
-C   d2gimg:       - read in image
-C   d2aimg:       - write out image
-C   d2rref:       - set reference number to be used for next get
-C   DF24getdims:  - get dimensions of image
-C   DF24getimage: - read in image
-C   DF24getimage: - write out image
-C   DF24readref:  - set reference number to be used for next get
+C   d2gdims: get dimensions of image
+C   d2gimg: read in image
+C   d2aimg: write out image
+C   d2rref: set reference number to be used for next get
+C   DF24getdims:  get dimensions of image
+C   DF24getimage: read in image
+C   DF24getimage: write out image
+C   DF24readref:  set reference number to be used for next get
 C
 C Remarks:  A RIG specifies attributes associated with an image - lookup table, 
 C           dimension, compression, color compensation etc.
@@ -123,6 +124,23 @@ C----------------------------------------------------------------------------*/
       end
 
 
+C------------------------------------------------------------------------------
+C Name: d2nimg
+C Purpose:  Count the # of 24-bit raster images in a file
+C Inputs:   filename: name of HDF file
+C Returns: # of images on success, -1 on failure with DFerror set
+C Users:    HDF HLL (high-level library) users, utilities, other routines
+C Invokes: d2inimg
+C Remarks: 
+C----------------------------------------------------------------------------*/
+
+      integer function d2nimg(name)
+      character*(*) name
+
+      d2nimg = d2inimg(name, len(name))
+      return
+      end
+
 CEND7MAX
 
 
@@ -216,4 +234,21 @@ C----------------------------------------------------------------------------*/
       df24readref = d2irref(name, ref, len(name))
       return
       end
+
+C------------------------------------------------------------------------------
+C Name: df24nimages
+C Purpose:  Count the # of 24-bit raster images in a file
+C Inputs:   filename: name of HDF file
+C Returns: # of images on success, -1 on failure with DFerror set
+C Users:    HDF HLL (high-level library) users, utilities, other routines
+C Invokes: d2inimg
+C Remarks: 
+C----------------------------------------------------------------------------*/
+C
+C      integer function df24nimages(name)
+C      character*(*) name
+
+C      df24nimages = d2inimg(name, len(name))
+C      return
+C      end
 

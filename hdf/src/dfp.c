@@ -17,31 +17,31 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /*-----------------------------------------------------------------------------
- * File:     dfp.c
- * Purpose:  read and write palettes
- * Invokes:  df.c
+ * File:    dfp.c
+ * Purpose: read and write palettes
+ * Invokes: df.c
  * Contents:
- *  DFPgetpal    : retrieve next palette
- *  DFPputpal    : write palette to file
- *  DFPaddpal    : add palette to file
- *  DFPnpals     : number of palettes in HDF file
- *  DFPreadref   : get palette with this reference number next
- *  DFPwriteref  : put palette with this reference number next
- *  DFPrestart   : forget info about last file accessed - restart from beginning
- *  DFPlastref   : return reference number of last element read or written
- *  DFPIopen     : open/reopen file
+ *  DFPgetpal: retrieve next palette
+ *  DFPputpal: write palette to file
+ *  DFPaddpal: add palette to file
+ *  DFPnpals: number of palettes in HDF file
+ *  DFPreadref: get palette with this reference number next
+ *  DFPwriteref: put palette with this reference number next
+ *  DFPrestart: forget info about last file accessed - restart from beginning
+ *  DFPlastref: return reference number of last element read or written
+ *  DFPIopen: open/reopen file
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
 #include "herr.h"
 #include "hfile.h"
 
-PRIVATE uint16 Readref = 0;
-PRIVATE uint16 Writeref = 0;
-PRIVATE uint16 Refset = 0;                /* Ref of palette to get next */
-PRIVATE uint16 Lastref = 0;     /* Last ref read/written */
+static uint16 Readref=0;
+static uint16 Writeref=0;
+static uint16 Refset=0;                /* Ref of palette to get next */
+static uint16 Lastref = 0;     /* Last ref read/written */
 
-PRIVATE char Lastfile[DF_MAXFNLEN] = ""; /* last file opened */
+static char Lastfile[DF_MAXFNLEN]; /* last file opened */
 
 #ifdef VMS
 int32 _DFPIopen();
@@ -261,6 +261,14 @@ int DFPnpals(filename)
        return(HDerr(file_id));
     npals = nip8 + nlut;
 
+    /* if no palettes just return zero and get out */
+    if(npals == 0) {
+        if (Hclose(file_id) == FAIL)
+            return FAIL;
+        
+        return(npals);
+    }
+
     /* Get space to store the palette offsets */
     if((pal_off=(int32 *)HDgetspace(npals*sizeof(int32)))==NULL) {
         HERROR(DFE_NOSPACE);
@@ -359,6 +367,9 @@ int DFPwriteref(filename, ref)
     uint16 ref;
 #endif
 {
+    /* shut the compiler up */
+    filename=filename;
+
     Writeref = ref;
     return SUCCEED;
 }

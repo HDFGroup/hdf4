@@ -13,7 +13,9 @@
 #include "dumplib.h"
 #include "vardata.h"
 
+#ifndef STREQ
 #define	STREQ(a, b)	(*(a) == *(b) && strcmp((a), (b)) == 0)
+#endif
 
 /*
  * Print a row of variable values.  Makes sure output lines aren't too long
@@ -44,7 +46,7 @@ pr_vals(vp, len, fmt, more, lastrow, vals)
     union {
 	char *cp;
 	short *sp;
-	long *lp;
+	nclong *lp;
 	float *fp;
 	double *dp;
     } gp;
@@ -133,7 +135,7 @@ pr_vals(vp, len, fmt, more, lastrow, vals)
 	lput(sout);
 	break;
       case NC_LONG:
-	gp.lp = (long *) vals;
+	gp.lp = (nclong *) vals;
 	for (iel = 0; iel < len-1; iel++) {
 	    (void) sprintf(sout, fmt, *gp.lp++);
 	    (void) strcat(sout, ", ");
@@ -282,7 +284,7 @@ pr_cvals(vp, len, fmt, more, lastrow, vals, fsp, cor)
     union {
 	char *cp;
 	short *sp;
-	long *lp;
+	nclong *lp;
 	float *fp;
 	double *dp;
     } gp;
@@ -374,7 +376,7 @@ pr_cvals(vp, len, fmt, more, lastrow, vals, fsp, cor)
 	annotate (vp, fsp, cor, iel);
 	break;
       case NC_LONG:
-	gp.lp = (long *) vals;
+	gp.lp = (nclong *) vals;
 	for (iel = 0; iel < len-1; iel++) {
 	    Printf(fmt, *gp.lp++);
 	    Printf(", ");

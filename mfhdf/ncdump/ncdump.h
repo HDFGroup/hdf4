@@ -3,10 +3,14 @@
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
  *   $Header$
  *********************************************************************/
-
 #define  Printf  (void) printf
-
+#ifdef HDF
+#  include "local_nc.h"
+#  define true TRUE
+#  define false FALSE
+#else 
 typedef enum {false=0, true=1} bool;
+#endif
 
 struct ncdim {			/* dimension */
     char name[MAX_NC_NAME];

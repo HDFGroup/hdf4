@@ -43,13 +43,13 @@ extern int32 VSelts
 extern int32 VSgetinterlace
   PROTO((int32 vkey));
 
-extern int32 VSsetinterlace
+extern intn VSsetinterlace
   PROTO((int32 vkey, int32 interlace));
 
 extern int32 VSgetfields
   PROTO((int32 vkey, char _HUGE *fields));
 
-extern int32 VSfexist
+extern intn VSfexist
   PROTO((int32 vkey, char _HUGE *fields));
 
 extern int32 VSsizeof
@@ -58,19 +58,19 @@ extern int32 VSsizeof
 extern VOID VSdump
   PROTO((int32 vkey));
 
-extern int32 VSsetname
+extern void VSsetname
   PROTO((int32 vkey, char _HUGE *vsname));
 
-extern int32 VSsetclass
+extern void VSsetclass
   PROTO((int32 vkey, char _HUGE *vsclass));
 
-extern int32 VSgetname
+extern void VSgetname
   PROTO((int32 vkey, char _HUGE *vsname));
 
-extern int32 VSgetclass
+extern void VSgetclass
   PROTO((int32 vkey, char _HUGE *vsclass));
 
-extern int32 VSinquire
+extern intn VSinquire
   PROTO((int32 vkey,int32 _HUGE *nelt, int32 _HUGE *interlace,
     char _HUGE *fields, int32 _HUGE *eltsize, char _HUGE *vsname));
 
@@ -85,6 +85,12 @@ extern int32 Vfind
 
 extern int32 VSfind
   PROTO((HFILEID f, char _HUGE *vsname));
+
+extern int32 Vfindclass
+  PROTO((HFILEID f, char _HUGE *vgclass));
+
+extern int32 VSfindclass
+  PROTO((HFILEID f, char _HUGE *vsclass));
 
 extern VOID Vsetzap
     PROTO((void));
@@ -104,7 +110,7 @@ extern VOID vdestroynode
 extern VOID vtfreekey
     PROTO((VOIDP k));
 
-extern intn Vinitialize
+extern VOID Vinitialize
   PROTO((HFILEID f));
 
 extern intn Vfinish
@@ -122,7 +128,7 @@ extern int32 vexistvg
 extern int32 Vattach
   PROTO((HFILEID f, int32 vgid, char _HUGE *accesstype));
 
-extern int32 Vdetach
+extern void Vdetach
   PROTO((int32 vkey));
 
 extern int32 Vinsert
@@ -132,7 +138,7 @@ extern int32 Vinsert
 extern int32 Vflocate
   PROTO((int32 vkey, char _HUGE *field));
 
-extern int32 Vinqtagref
+extern intn Vinqtagref
   PROTO((int32 vkey, int32 tag, int32 ref));
 
 extern int32 Vntagrefs
@@ -141,7 +147,7 @@ extern int32 Vntagrefs
 extern int32 Vgettagrefs
   PROTO((int32 vkey, int32 _HUGE tagarray[], int32 _HUGE refarray[], int32 n));
 
-extern int32 Vgettagref
+extern intn Vgettagref
   PROTO((int32 vkey, int32 which, int32 _HUGE *tag, int32 _HUGE *ref));
 
 extern int32 VQueryref
@@ -162,10 +168,10 @@ extern int32 Vsetname
 extern int32 Vsetclass
   PROTO((int32 vkey, char _HUGE *vgclass));
 
-extern int32 Visvg
+extern intn Visvg
   PROTO((int32 vkey, int32 id));
 
-extern int32 Visvs
+extern intn Visvs
     PROTO((int32 vkey, int32 id));
 
 extern int32 Vgetid
@@ -174,13 +180,13 @@ extern int32 Vgetid
 extern int32 Vgetnext
   PROTO((int32 vkey, int32 id));
 
-extern int32 Vgetname
+extern void Vgetname
   PROTO((int32 vkey, char _HUGE *vgname));
 
-extern int32 Vgetclass
+extern void Vgetclass
   PROTO((int32 vkey, char _HUGE *vgclass));
 
-extern int32 Vinquire
+extern intn Vinquire
   PROTO((int32 vkey, int32 _HUGE *nentries, char _HUGE *vgname));
 
 extern int32 Vdelete
@@ -222,7 +228,7 @@ extern VOID vsdestroynode
 extern int32 VSattach
     PROTO((HFILEID f, int32 vsid, char _HUGE *accesstype));
 
-extern int32 VSdetach
+extern void VSdetach
     PROTO((int32 vkey));
 
 extern int32 VSQuerytag
@@ -254,10 +260,10 @@ extern int16 VSIZEOF
 extern int16 HDFSIZEOF
     PROTO((int16 x));
 
-extern int32 VSsetfields
+extern intn VSsetfields
   PROTO((int32 vkey, char _HUGE *fields));
 
-extern int32 VSfdefine
+extern intn VSfdefine
   PROTO((int32 vkey, char _HUGE *field, int32 localtype, int32 order));
 
 extern int32 VFnfields 
@@ -317,7 +323,6 @@ extern int32 VSwrite
 #   define  nvsgclsc FNAME(VSGCLSC)
 #   define  nvsinqc  FNAME(VSINQC)
 #   define  nvsfexc  FNAME(VSFEXC)
-#   define  nvsfndc  FNAME(VSFNDC)
 #   define  nvsgidc  FNAME(VSGIDC)
 #   define  nvssnamc FNAME(VSSNAMC)
 #   define  nvssclsc FNAME(VSSCLSC)
@@ -366,7 +371,6 @@ extern int32 VSwrite
 #   define  nvsgclsc FNAME(vsgclsc)
 #   define  nvsinqc  FNAME(vsinqc)
 #   define  nvsfexc  FNAME(vsfexc)
-#   define  nvsfndc  FNAME(vsfndc)
 #   define  nvsgidc  FNAME(vsgidc)
 #   define  nvssnamc FNAME(vssnamc)
 #   define  nvssclsc FNAME(vssclsc)
@@ -405,13 +409,13 @@ extern FRETVAL(intf) ndfvclos
 extern FRETVAL(intf) nvatchc
     PROTO((HFILEID _HUGE *f, intf _HUGE *vgid, _fcd accesstype));
 
-extern FRETVAL(intf) nvdtchc
+extern FRETVAL(void) nvdtchc
     PROTO((intf _HUGE *vkey));
 
-extern FRETVAL(intf) nvgnamc
+extern FRETVAL(void) nvgnamc
     PROTO((intf _HUGE *vkey, _fcd vgname));
 
-extern FRETVAL(intf) nvgclsc
+extern FRETVAL(void) nvgclsc
     PROTO((intf _HUGE *vkey, _fcd vgclass));
 
 extern FRETVAL(intf) nvinqc
@@ -423,10 +427,10 @@ extern FRETVAL(intf) nvgidc
 extern FRETVAL(intf) nvgnxtc
     PROTO((intf _HUGE *vkey, intf _HUGE *id));
 
-extern FRETVAL(intf) nvsnamc
+extern FRETVAL(void) nvsnamc
     PROTO((intf _HUGE *vkey, _fcd vgname, intf _HUGE *vgnamelen));
 
-extern FRETVAL(intf) nvsclsc
+extern FRETVAL(void) nvsclsc
     PROTO((intf _HUGE *vkey, _fcd vgclass, intf _HUGE *vgclasslen));
 
 extern FRETVAL(intf) nvinsrtc
@@ -441,16 +445,16 @@ extern FRETVAL(intf) nvisvsc
 extern FRETVAL(intf) nvsatchc
     PROTO((HFILEID _HUGE *f, intf _HUGE *vsid, _fcd accesstype));
 
-extern FRETVAL(intf) nvsdtchc
+extern FRETVAL(void) nvsdtchc
     PROTO((intf _HUGE *vkey));
 
 extern FRETVAL(intf) nvsseekc
     PROTO((intf _HUGE *vkey, intf _HUGE *eltpos));
 
-extern FRETVAL(intf) nvsgnamc
+extern FRETVAL(void) nvsgnamc
     PROTO((intf _HUGE *vkey, _fcd vsname));
 
-extern FRETVAL(intf) nvsgclsc
+extern FRETVAL(void) nvsgclsc
     PROTO((intf _HUGE *vkey, _fcd vsclass));
 
 extern FRETVAL(intf) nvsinqc
@@ -460,16 +464,13 @@ extern FRETVAL(intf) nvsinqc
 extern FRETVAL(intf) nvsfexc
     PROTO((intf _HUGE *vkey, _fcd fields, intf _HUGE *fieldslen));
 
-extern FRETVAL(intf) nvsfndc
-    PROTO((HFILEID _HUGE *f, _fcd name, intf _HUGE *namelen));
-
 extern FRETVAL(intf) nvsgidc
     PROTO((HFILEID _HUGE *f, intf _HUGE *vsid));
 
-extern FRETVAL(intf) nvssnamc
+extern FRETVAL(void) nvssnamc
     PROTO((intf _HUGE *vkey, _fcd vsname,intf _HUGE *vsnamelen));
 
-extern FRETVAL(intf) nvssclsc
+extern FRETVAL(void) nvssclsc
     PROTO((intf _HUGE *vkey, _fcd vsclass, intf _HUGE *vsclasslen));
 
 extern FRETVAL(intf) nvssfldc

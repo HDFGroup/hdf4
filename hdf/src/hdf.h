@@ -26,10 +26,8 @@
 #define    PROTO(x) ()
 #endif
 
-/* Internal DF structure */
 typedef struct {
-    uint16 tag;  /* tag of element */
-    uint16 ref;  /* ref of element */
+    uint16 tag, ref;
 } DFdi;
 
 /* internal file access codes */
@@ -93,6 +91,9 @@ typedef struct {
 #ifndef PUBLIC
 #define PUBLIC  /* nothing */
 #endif
+
+/* functions declarations */
+
 
 /* masks for types */
 #define DFNT_HDF      0x00000000    /* standard HDF format  */
@@ -300,15 +301,12 @@ typedef struct {
 #    define SIZE_LCHAR16     2    /* No current plans for support */
 #    define SIZE_LUCHAR16    2    /* No current plans for support */
 
-        /* sizes of different number types */
-#       define MACHINE_I8_SIZE     1
-#       define MACHINE_I16_SIZE    2
-#       define MACHINE_I32_SIZE    4
-#       define MACHINE_F32_SIZE    4
-#       define MACHINE_F64_SIZE    8
-
-        /* maximum size of the atomic data types */
-#       define MAX_NT_SIZE      16
+          /* sizes of different number types */
+#          define MACHINE_I8_SIZE     1
+#          define MACHINE_I16_SIZE    2
+#          define MACHINE_I32_SIZE    4
+#          define MACHINE_F32_SIZE    4
+#          define MACHINE_F64_SIZE    8
 
 /* tbuf used as a temporary buffer for small jobs.  The size is
    preferably > 512 but MUST be > ~256.  It is advised that if an
@@ -323,9 +321,7 @@ typedef struct {
 #endif /* !macintosh */
 #endif
 
-#if 0 /* replaced with dynamic memory */
 extern uint8 *tbuf;
-#endif
 
 /* tags and refs */
 #define DFREF_WILDCARD      0
@@ -533,6 +529,7 @@ typedef int32           HFILEID;
    functions that are used by application programs.  */
 
 #include "hcomp.h"
+#include "herr.h"
 #include "hproto.h"
 #include "vproto.h"
 
