@@ -250,7 +250,7 @@ done:
 static intn
 SDIstart(void)
 {
-    CONSTR(FUNC, "SDIstart");    /* for HERROR */
+    CONSTR(FUNC, "SDIstart");    /* for HGOTO_ERROR */
     intn        ret_value = SUCCEED;
 
     /* Don't call this routine again... */
@@ -286,7 +286,7 @@ int32
 SDstart(const char *name,   /* IN: file name to open */
         int32       HDFmode /* IN: access mode to open file with */)
 {
-    CONSTR(FUNC, "SDstart");    /* for HERROR */
+    CONSTR(FUNC, "SDstart");    /* for HGOTO_ERROR */
     intn    cdfid;
     int32   fid;
     intn    NCmode;
@@ -618,6 +618,7 @@ SDgetinfo(int32  sdsid,   /* IN:  dataset ID */
           int32 *nt,      /* OUT: number type of data */
           int32 *nattr    /* OUT: the number of local attributes */)
 {
+    CONSTR(FUNC, "SDgetinfo");    /* for HGOTO_ERROR */
     intn    i;
     NC     *handle = NULL;
     NC_var *var = NULL;
@@ -630,6 +631,9 @@ SDgetinfo(int32  sdsid,   /* IN:  dataset ID */
 #ifdef HAVE_PABLO
     TRACE_ON(PABLO_mask, ID_SDgetinfo );
 #endif
+
+    if( rank == NULL || dimsizes == NULL || nt == NULL || nattr == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
@@ -1987,6 +1991,7 @@ SDattrinfo(int32  id,    /* IN:  object ID */
            int32 *nt,    /* OUT: attribute number type */
            int32 *count  /* OUT: number of attribute values */)
 {
+    CONSTR(FUNC, "SDattrinfo");    /* for HGOTO_ERROR */
     NC_array  *ap = NULL;
     NC_array **app = NULL;
     NC_attr  **atp = NULL;
@@ -2003,10 +2008,7 @@ SDattrinfo(int32  id,    /* IN:  object ID */
 
     /* sanity check args */
     if((name == NULL) || (nt == NULL) || (count == NULL))
-      {
-          ret_value = FAIL;
-          goto done;
-      }
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* determine what type of ID we've been given */
     if(SDIapfromid(id, &handle, &app) == FAIL)
@@ -2079,7 +2081,7 @@ SDreadattr(int32 id,    /* IN:  object ID */
            int32 index, /* IN:  attribute index */
            void * buf    /* OUT: data buffer  */)
 {
-
+    CONSTR(FUNC, "SDreadattr");    /* for HGOTO_ERROR */
     NC_array  *ap = NULL;
     NC_array **app = NULL;
     NC_attr  **atp = NULL;
@@ -2096,10 +2098,7 @@ SDreadattr(int32 id,    /* IN:  object ID */
 
     /* sanity check args */
     if(buf == NULL)
-      {
-          ret_value = FAIL;
-          goto done;
-      }
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* determine what type of ID we've been given */
     if(SDIapfromid(id, &handle, &app) == FAIL)
@@ -2164,6 +2163,7 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
             int32 *end,    /* IN: number of values to write per dimension */
             void *  data    /* IN: data buffer */)
 {
+    CONSTR(FUNC, "SDwritedata");    /* for HGOTO_ERROR */
     intn    varid;
     int32   status;
     NC     *handle = NULL;
@@ -2189,10 +2189,7 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
 #endif
 
     if((start == NULL) || (end == NULL) || (data == NULL))
-      {
-          ret_value = FAIL;
-          goto done;
-      }
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
@@ -2635,6 +2632,7 @@ intn
 SDgetfillvalue(int32 sdsid, /* IN:  dataset ID */
                void * val    /* OUT: fillvalue */)
 {
+    CONSTR(FUNC, "SDgetfillvalue");    /* for HGOTO_ERROR */
     NC       *handle = NULL;
     NC_var   *var = NULL;
     NC_attr **attr = NULL;
@@ -2647,6 +2645,10 @@ SDgetfillvalue(int32 sdsid, /* IN:  dataset ID */
 #ifdef HAVE_PABLO
     TRACE_ON(PABLO_mask, ID_SDgetfillvalue );
 #endif
+
+    /* sanity check args */
+    if(val == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
@@ -3395,6 +3397,13 @@ SDgetdimscale(int32 id,   /* IN:  dimension ID */
 #ifdef HAVE_PABLO
     TRACE_ON(PABLO_mask, ID_SDgetdimscale );
 #endif
+
+    /* sanity check args */
+    if(data == NULL)
+      {
+          ret_value = FAIL;
+          goto done;
+      }
 
     /* get the handle */
     handle = SDIhandle_from_id(id, DIMTYPE);
@@ -5703,6 +5712,7 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
              int32      *origin,/* IN: origin of chunk to write */
              const void *datap  /* IN: buffer for data */)
 {
+    CONSTR(FUNC, "SDwritechunk");    /* for HGOTO_ERROR */
     NC        *handle = NULL;   /* file handle */
     NC_var    *var    = NULL;   /* SDS variable */
     int16      special;         /* Special code */
@@ -5725,10 +5735,7 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
 
     /* Check args */
     if (origin == NULL || datap == NULL)
-      {
-        ret_value = FAIL;
-        goto done;
-      }
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* get file handle and verify it is an HDF file 
        we only handle writinng to SDS only not coordinate variables */
@@ -5903,6 +5910,7 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
             int32 *origin, /* IN: origin of chunk to write */
             void  *datap   /* IN/OUT: buffer for data */)
 {
+    CONSTR(FUNC, "SDreadchunk");    /* for HGOTO_ERROR */
     NC        *handle = NULL;   /* file handle */
     NC_var    *var    = NULL;   /* SDS variable */
     int16      special;         /* Special code */
@@ -5925,10 +5933,7 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
 
     /* Check args */
     if (origin == NULL || datap == NULL)
-      {
-        ret_value = FAIL;
-        goto done;
-      }
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* get file handle and verify it is an HDF file 
        we only handle reading from SDS only not coordinate variables */
