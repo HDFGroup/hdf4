@@ -3576,7 +3576,7 @@ int32 GRreftoindex(int32 grid,uint16 ref)
         HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     do {
         ri_ptr=(ri_info_t *)*t;
-        if(ri_ptr!=NULL && ri_ptr->ri_ref==ref)  /* the ref matches */
+        if(ri_ptr!=NULL && ((ri_ptr->ri_ref==ref) || (ri_ptr->ri_ref==DFREF_WILDCARD && ri_ptr->rig_ref==ref)))  /* the ref matches */
             HGOTO_DONE(ri_ptr->index);
     } while((t= (VOIDP *) tbbtnext((TBBT_NODE *)t))!=NULL);
 
@@ -3803,12 +3803,12 @@ done:
 --------------------------------------------------------------------------*/
 uint16 GRluttoref(int32 lutid)
 {
-    CONSTR(FUNC, "GRgetlutinfo");   /* for HERROR */
+    CONSTR(FUNC, "GRluttoref");   /* for HERROR */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     uint16 ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(GR_mask, ID_GRgetlutinfo);
+    TRACE_ON(GR_mask, ID_GRluttoref);
 #endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
