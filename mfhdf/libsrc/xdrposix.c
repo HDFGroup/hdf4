@@ -56,6 +56,7 @@ typedef	NETLONG		netlong;
 #include "local_nc.h" /* prototypes for NCadvis, nc_error */
 		      /* also obtains <stdio.h>, <rpc/types.h>, &
 		       * <rpc/xdr.h> */
+#include "mfhdf.h"
 #ifdef macintosh
 typedef long off_t;
 #endif

@@ -6,7 +6,7 @@
  * 605 E. Springfield, Champaign IL 61820                                   *
  *                                                                          *
  * For conditions of distribution and use, see the accompanying             *
- * hdf/COPYING file.                                                        *
+ * hdf/COPYING file.                                                      *
  *                                                                          *
  ****************************************************************************/
 
@@ -294,8 +294,13 @@ printf("swapkid(): check 3, ptr=%p, side=%d, kid=%p\n",ptr,side,kid);
             Cnt(ptr,Other(side)) + 1 + Cnt(kid,Other(side)),
             deep[2]-1-Max(deep[0],deep[1]), HasChild(kid,side) );
 #else
+#if defined macintosh | defined THINK_C /* Macro substitution limit on Mac*/
+    kid->flags= SetFlags( kid, ( 1 + 2 - (side) ),
+            deep[2]-1-Max(deep[0],0), HasChild(kid,side) );
+#else /* !macintosh */
     kid->flags= SetFlags( kid, Other(side),
             deep[2]-1-Max(deep[0],0), HasChild(kid,side) );
+#endif /* !macintosh */
 
     /* update leaf counts */
     if(side==LEFT) { /* kid's left count doesn't change, nor ptr's r-count */

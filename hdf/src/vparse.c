@@ -50,7 +50,7 @@ static char RcsId[] = "@(#)$Revision$";
 ** to scanattrs.
 **
 */
-#if defined(macintosh) | defined(THINK_C) | defined(DMEM) /* Dynamic memory */
+#if defined(macintosh) | defined(THINK_C)
 PRIVATE char** 	symptr = NULL; /* array of ptrs to tokens  ?*/
 PRIVATE char**  sym = NULL;    /* array of tokens ? */
 #else  /* !macintosh */
@@ -64,94 +64,97 @@ int32 scanattrs (char *attrs, int32 *attrc, char ***attrv)
 #else
 int32 scanattrs (attrs,attrc,attrv)
 
-	char	*attrs;		/* field string (input) */
-	int32	*attrc;		/* # of fields (output) */
-	char	***attrv;	/* array of char ptrs to fields (output) */
+     char	*attrs;		/* field string (input) */
+     int32	*attrc;		/* # of fields (output) */
+     char	***attrv;	/* array of char ptrs to fields (output) */
 #endif
-
+     
 {
-  register char   *s, *s0, *ss;
-  register intn   i, slen, len;
-  char * FUNC = "scanattrs";
-  char * saved_string = (char *) HDstrdup(attrs);
-
-#if defined(macintosh) | defined(THINK_C) | defined(DMEM) /* Dynamic memory */
-  /* Lets allocate space for ptrs to tokens and tokens */
-  if (symptr == NULL)
-    {
-      symptr = (char **)HDgetspace(50 * sizeof(char *));
-      if (symptr == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+    register char   *s, *s0, *ss;
+    register intn   i, slen, len;
+    char * FUNC = "scanattrs";
+    char * saved_string = (char *) HDstrdup(attrs);
+    
+#if defined(macintosh) | defined(THINK_C)
+    /* Lets allocate space for ptrs to tokens and tokens */
+    if (symptr == NULL) {
+        symptr = (char **)HDgetspace(50 * sizeof(char *));
+        if (symptr == NULL)
+            HRETURN_ERROR(DFE_NOSPACE, FAIL);
     }
-  if (sym == NULL)
-    {
-      sym = (char **)HDgetspace(50 * sizeof(char *));
-      if (sym == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-
-      for (i = 0; i < 50; i++)
-        {
-      	  sym[i] = (char *)HDgetspace(sizeof(char) * (FIELDNAMELENMAX + 1));
-      	  if (sym[i] == NULL)
-              HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      	}
-     }
+    
+    if (sym == NULL) {
+        sym = (char **)HDgetspace(50 * sizeof(char *));
+        if (sym == NULL)
+            HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        
+        for (i = 0; i < 50; i++)
+            {
+                sym[i] = (char *)HDgetspace(sizeof(char) * (FIELDNAMELENMAX + 1));
+                if (sym[i] == NULL)
+                    HRETURN_ERROR(DFE_NOSPACE, FAIL);
+            }
+    }
 #endif /* macintosh */
- 
-  s = saved_string;
-  slen = HDstrlen(s);
-  nsym = 0;
-  
-  s0 = s;
-  while(*s) {
-      if (*s >= 'a' && *s <= 'z') *s=(char)toupper(*s);
-      if ( ISCOMMA(*s) ) {
+    
+    s = saved_string;
+    slen = HDstrlen(s);
+    nsym = 0;
+    
+    s0 = s;
+    while(*s) {
 
-          /* make sure we've got a legitimate length */
-          len = (intn)(s - s0);
-          if (len <= 0) return(FAIL);
-          
-          /* save that token */
-          ss = symptr[nsym] = sym[nsym]; 
-          nsym++;
-          
-          /* shove the string into our static buffer.  YUCK! */
-          if(len>FIELDNAMELENMAX) len=FIELDNAMELENMAX;
-          HIstrncpy(ss, s0, len+1);
+#ifdef VDATA_FIELDS_ALL_UPPER
+        if (*s >= 'a' && *s <= 'z') *s=(char)toupper(*s);
+#endif /* VDATA_FIELDS_ALL_UPPER */
 
-          /* skip over the comma */
-          s++;
-
-          /* skip over white space before the next field name */
-          while(*s && *s == ' ') s++;
-          
-          /* keep track of the first character of the next token */
-          s0 = s;
-
-      } else {
-
+        if ( ISCOMMA(*s) ) {
+            
+            /* make sure we've got a legitimate length */
+            len = (intn)(s - s0);
+            if (len <= 0) return(FAIL);
+            
+            /* save that token */
+            ss = symptr[nsym] = sym[nsym]; 
+            nsym++;
+            
+            /* shove the string into our static buffer.  YUCK! */
+            if(len>FIELDNAMELENMAX) len=FIELDNAMELENMAX;
+            HIstrncpy(ss, s0, len+1);
+            
+            /* skip over the comma */
+            s++;
+            
+            /* skip over white space before the next field name */
+            while(*s && *s == ' ') s++;
+            
+            /* keep track of the first character of the next token */
+            s0 = s;
+            
+        } else {
+            
           /* move along --- nothing to see here */
-          s++;
-      }
-  }  
+            s++;
+        }
+    }  
   
-  /* save the last token */
-  len = (intn)(s - s0);
-  if (len <= 0) return(FAIL);
-  ss = symptr[nsym] = sym[nsym]; 
-  nsym++;
-  
-  if(len>FIELDNAMELENMAX) len=FIELDNAMELENMAX;
-  HIstrncpy(ss, s0, len+1);
-  
-  symptr[nsym] = NULL;
-  *attrc = nsym;
-  *attrv = (char**) symptr;
-  
-  HDfreespace(saved_string);
-
-  return(SUCCEED); /* ok */
-  
+    /* save the last token */
+    len = (intn)(s - s0);
+    if (len <= 0) return(FAIL);
+    ss = symptr[nsym] = sym[nsym]; 
+    nsym++;
+    
+    if(len>FIELDNAMELENMAX) len=FIELDNAMELENMAX;
+    HIstrncpy(ss, s0, len+1);
+    
+    symptr[nsym] = NULL;
+    *attrc = nsym;
+    *attrv = (char**) symptr;
+    
+    HDfreespace(saved_string);
+    
+    return(SUCCEED); /* ok */
+    
 } /* scanattrs */
 
 /* ------------------------------------------------------------------ */

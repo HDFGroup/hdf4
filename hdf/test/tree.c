@@ -1,3 +1,9 @@
+/* $Id$ */
+
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -9,12 +15,6 @@
  * hdf/COPYING file.                                                        *
  *                                                                          *
  ****************************************************************************/
-
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-
-/* $Id$ */
 
 /*
  FILE
@@ -138,6 +138,7 @@ void test_tbbt()
 	        tbbtrem((TBBT_NODE **)tree,(TBBT_NODE *)r,NULL);
                 MESSAGE(9,tbbtdump(tree,-1););
     	      } /* end for */
+	  tbbtdfree(tree,NULL,NULL);
 	  } /* end for */
       } /* end for */
 } /* end test_tbbt() */

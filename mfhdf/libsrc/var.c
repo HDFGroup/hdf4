@@ -811,7 +811,6 @@ xdr_NC_var(xdrs, vpp)
             
             (*vpp)->HDFtype = hdf_map_type((*vpp)->type);
             (*vpp)->HDFsize = DFKNTsize((*vpp)->HDFtype);
-            (*vpp)->aid = FAIL;
                 
         }
 

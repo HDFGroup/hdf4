@@ -16,8 +16,10 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
+#ifndef I860
 #include <stdlib.h>
 #include <string.h>
+#endif /* I860 */
 #include "hdf.h"
 
 /* Exception checking macro */
@@ -330,7 +332,7 @@ char *argv[];
       } /* end if */
 
     /* store 24-bit image */
-    if(DF24putimage(argv[file+1],img24_buf,xdim,ydim)==FAIL) {
+    if(DF24putimage(argv[file+1],(VOIDP)img24_buf,xdim,ydim)==FAIL) {
         printf("Error storing 24-bit image\n");
         HEprint(stdout,0);
         return(1);

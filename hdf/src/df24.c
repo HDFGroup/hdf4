@@ -17,22 +17,22 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /*-----------------------------------------------------------------------------
- * File:     df24.c
- * Purpose:  read and write 24-bit raster images
- * Invokes:  dfgr.c
+ * File:    df24.c
+ * Purpose: read and write 24-bit raster images
+ * Invokes: dfgr.c
  * Contents:
- *  DF24getdims:     - get dimensions of image
- *  DF24reqil:       - use this interlace when returning image
- *  DF24getimage:    - read in image
- *  DF24setdims:     - set dimensions of image
- *  DF24setil:       - set interlace of image to write next
- *  DF24setcompress: - set the compression to use when writing out next image
- *  DF24restart:     - restart looking for 24-bit images in a file
- *  DF24addimage:    - append image to file
- *  DF24putimage:    - write image to a file
- *  DF24readref:     - set ref of 24-bit RIG to get next
- *  DF24lastref:     - return reference number of last RIG read or written
- *  DF24nimages:     - get number of images in file
+ *  DF24getdims: get dimensions of image
+ *  DF24reqil: use this interlace when returning image
+ *  DF24getimage: read in image
+ *  DF24setdims: set dimensions of image
+ *  DF24setil: set interlace of image to write next
+ *  DF24setcompress: set the compression to use when writing out next image
+ *  DF24restart: restart looking for 24-bit images in a file
+ *  DF24addimage: append image to file
+ *  DF24putimage: write image to a file
+ *  DF24readref: set ref of 24-bit RIG to get next
+ *  DF24lastref: return reference number of last RIG read or written
+ *  DF24nimages: get number of images in file
  * Missing:
  *  DF24writeref: set ref of 24-bit RIG to write next
  *
@@ -79,7 +79,7 @@ int DF24getdims(filename, pxdim, pydim, pil)
 
     do {
         if (DFGRIgetdims(filename, pxdim, pydim, &ncomps, pil, IMAGE)<0)
-            return(FAIL);
+            return FAIL;
     } while (ncomps!=3);
 
     last_xdim = *pxdim;

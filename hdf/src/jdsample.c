@@ -157,18 +157,18 @@ JSAMPARRAY output_data;
     /* Special case for first column */
     invalue = GETJSAMPLE(*inptr++);
     *outptr++ = (JSAMPLE) invalue;
-    *outptr++ = (JSAMPLE) ((invalue * 3 + GETJSAMPLE(*inptr) + 2) >> 2);
+    *outptr++ = (JSAMPLE) ((unsigned)(invalue * 3 + GETJSAMPLE(*inptr) + 2) >> 2);
 
     for (colctr = input_cols - 2; colctr > 0; colctr--) {
       /* General case: 3/4 * nearer pixel + 1/4 * further pixel */
       invalue = GETJSAMPLE(*inptr++) * 3;
-      *outptr++ = (JSAMPLE) ((invalue + GETJSAMPLE(inptr[-2]) + 2) >> 2);
-      *outptr++ = (JSAMPLE) ((invalue + GETJSAMPLE(*inptr) + 2) >> 2);
+      *outptr++ = (JSAMPLE) ((unsigned)(invalue + GETJSAMPLE(inptr[-2]) + 2) >> 2);
+      *outptr++ = (JSAMPLE) ((unsigned)(invalue + GETJSAMPLE(*inptr) + 2) >> 2);
     }
 
     /* Special case for last column */
     invalue = GETJSAMPLE(*inptr);
-    *outptr++ = (JSAMPLE) ((invalue * 3 + GETJSAMPLE(inptr[-1]) + 2) >> 2);
+    *outptr++ = (JSAMPLE) ((unsigned)(invalue * 3 + GETJSAMPLE(inptr[-1]) + 2) >> 2);
     *outptr++ = (JSAMPLE) invalue;
   }
 }

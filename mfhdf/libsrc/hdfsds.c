@@ -1,3 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
+/* $Id$ */
+
 /***************************************************************************
  *
  * This file contains the code to read old SDS objects out of HDF files
@@ -38,7 +56,6 @@
 PRIVATE intn       sdgCurrent;
 PRIVATE intn       sdgMax;
 PRIVATE uint16     *sdgTable;
-PRIVATE uint8      *ptbuf = NULL;
 
 intn hdf_query_seen_sdg
     PROTO((uint16 ndgRef));
@@ -107,6 +124,7 @@ VOID hdf_register_seen_sdg(sdgRef)
  * Loop through all of the NDGs in the file and create data structures for 
  *  them
  *
+ * NOTE: DFtbuf is a global temporary buffer defined in hdfi.h
  */
 #ifdef PROTOTYPE
 intn hdf_read_ndgs(NC *handle)
@@ -169,14 +187,7 @@ intn hdf_read_ndgs(handle)
         HERROR(DFE_NOSPACE);
         return FALSE;
     }
-
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
-        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
-        if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
+    
 
     /* no dimensions or variables yet */
     current_dim = 0;
@@ -254,8 +265,8 @@ intn hdf_read_ndgs(handle)
                         return FALSE;
                     
                     /* read rank */
-                    if (Hread(aid1, (int32) 2, ptbuf) == FAIL) return FALSE;
-                    p = ptbuf;
+                    if (Hread(aid1, (int32) 2, DFtbuf) == FAIL) return FALSE;
+                    p = DFtbuf;
                     INT16DECODE(p, rank);
                     
                     /* get space for dimensions */
@@ -267,14 +278,14 @@ intn hdf_read_ndgs(handle)
                     if (scaletypes == NULL) return FALSE;
                     
                     /* read dimension record */
-                    if (Hread(aid1, (int32) 4 * rank, ptbuf) == FAIL) return FALSE;
-                    p = ptbuf;
+                    if (Hread(aid1, (int32) 4 * rank, DFtbuf) == FAIL) return FALSE;
+                    p = DFtbuf;
                     for (i = 0; i < rank; i++)
                         INT32DECODE(p, dimsizes[i]);
                     
                     /* read tag/ref of NT */
-                    if (Hread(aid1,(int32) 4,  ptbuf) == FAIL) return FALSE;
-                    p = ptbuf;
+                    if (Hread(aid1,(int32) 4,  DFtbuf) == FAIL) return FALSE;
+                    p = DFtbuf;
                     UINT16DECODE(p, ntTag);
                     UINT16DECODE(p, ntRef);
                     
@@ -287,8 +298,8 @@ intn hdf_read_ndgs(handle)
                     
                     /* read in scale NTs */
                     for(i = 0; i < rank; i++) {
-                        if (Hread(aid1,(int32) 4,  ptbuf) == FAIL) return FALSE;
-                        p = ptbuf;
+                        if (Hread(aid1,(int32) 4,  DFtbuf) == FAIL) return FALSE;
+                        p = DFtbuf;
                         UINT16DECODE(p, ntTag);
                         UINT16DECODE(p, ntRef);
                         
@@ -328,13 +339,13 @@ intn hdf_read_ndgs(handle)
                      * DFTAG_CAL => 'scale_factor', 'add_offset', 'scale_factor_err', 
                      *              'add_offset_err'
                      */
-                    if (Hgetelement(handle->hdf_file, tmpTag, tmpRef, ptbuf) == FAIL)
+                    if (Hgetelement(handle->hdf_file, tmpTag, tmpRef, DFtbuf) == FAIL)
                         return FALSE;
                     
                     if (Hlength(handle->hdf_file, tmpTag, tmpRef) == 36) {
                         /* DFNT_FLOAT64 based calibration */
                         
-                        DFKconvert((VOIDP)ptbuf, 
+                        DFKconvert((VOIDP)DFtbuf, 
                                    (VOIDP) tBuf, 
                                    DFNT_FLOAT64, 4, DFACC_READ, 0, 0);
                         
@@ -365,7 +376,7 @@ intn hdf_read_ndgs(handle)
                     } else {
                         /* DFNT_FLOAT32 based calibration */
 
-                        DFKconvert((VOIDP)ptbuf, 
+                        DFKconvert((VOIDP)DFtbuf, 
                                    (VOIDP)tBuf, 
                                    DFNT_FLOAT32, 4, DFACC_READ, 0, 0);
                         
@@ -400,10 +411,10 @@ intn hdf_read_ndgs(handle)
                     
                 case DFTAG_SDM:        /* valid range info */
                     
-                    if (Hgetelement(handle->hdf_file, tmpTag, tmpRef, ptbuf) == FAIL)
+                    if (Hgetelement(handle->hdf_file, tmpTag, tmpRef, DFtbuf) == FAIL)
                         return FALSE;
                     
-                    DFKconvert((VOIDP)ptbuf, 
+                    DFKconvert((VOIDP)DFtbuf, 
                                (VOIDP)tBuf, 
                                HDFtype, 2, DFACC_READ, 0, 0);
                     
@@ -424,12 +435,12 @@ intn hdf_read_ndgs(handle)
                 case DFTAG_SDLNK:
                     if(ndgTag == DFTAG_SDG) continue;
 
-                    if (Hgetelement(handle->hdf_file, tmpTag, tmpRef, ptbuf) == FAIL) {
+                    if (Hgetelement(handle->hdf_file, tmpTag, tmpRef, DFtbuf) == FAIL) {
                         return FALSE;
                     } else {
                         uint16 sdgTag, sdgRef;
 
-                        p = ptbuf;
+                        p = DFtbuf;
                         
                         /* the first two are for the NDG tag/ref */
                         UINT16DECODE(p, sdgTag);
@@ -634,7 +645,7 @@ intn hdf_read_ndgs(handle)
              * Convert spaces in the name to underscores (yuck) otherwise
              *    ncgen will barf on ncdumped files
              */
-            if(namebuf) {
+            if(namebuf && (namebuf[0] != '\0')) {
                 char *c;
                 for(c = (char *)namebuf; *c; c++)
                     if((*c) == ' ') (*c) = '_';
@@ -653,12 +664,12 @@ intn hdf_read_ndgs(handle)
             vars[current_var]->data_ref = sdRef;
             vars[current_var]->HDFtype  = HDFtype;
 
-            /*
-             * NOTE:  If the user changes the file and saves setting this
-             *   to ndgRef will blow away the old ndgs (but they will get
-             *   rewritten).  Otherwise calls to SDidtoref() will return
-             *   bogus values
-             */
+             /*
+              * NOTE:  If the user changes the file and saves setting this
+              *   to ndgRef will blow away the old ndgs (but they will get
+              *   rewritten).  Otherwise calls to SDidtoref() will return
+              *   bogus values
+              */
             vars[current_var]->ndg_ref  = ndgRef; 
 
             /*
@@ -717,7 +728,7 @@ intn hdf_read_ndgs(handle)
             /*
              * Units => 'units'
              */
-            if(unitbuf && (HDstrlen((char *) unitbuf) > 0)) {
+            if(unitbuf) {
                 attrs[current_attr++] = 
                     (NC_attr *) NC_new_attr("units", 
                                             NC_CHAR, 

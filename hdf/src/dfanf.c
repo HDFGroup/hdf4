@@ -22,12 +22,12 @@ static char RcsId[] = "@(#)$Revision$";
  * Invokes: dfan.c dfkit.c
  * Contents: 
  *
- *  daiganl_     : get length of annotation of tag/ref
- *  daigann_     : get annotation of tag/ref
- *  daipann_     : put annotation of tag/ref
- *  dailist_     : get list of refs and labels for a given tag
- *  dalref_      : return last ref written or read
- *  dfanlastref_ : return last ref written or read
+ *  daiganl_: get length of annotation of tag/ref
+ *  daigann_: get annotation of tag/ref
+ *  daipann_: put annotation of tag/ref
+ *  dailist_: get list of refs and labels for a given tag
+ *  dalref_ : return last ref written or read
+ *  dfanlastref_: return last ref written or read
  *
  *  dfanaddfds_    : add file description
  *  dfangetfidlen_ : get length of file id  
