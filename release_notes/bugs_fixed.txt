@@ -1,3 +1,33 @@
+HDF4.1r5
+========
+1. The following VS routines are added as requested (bug #267):
+     VSsetblocksize -- sets the block size of the linked-block element.
+     VSsetnumblocks -- sets the number of blocks for a linked-block element.
+     VSgetblockinfo -- retrieves the block size and the number of blocks
+                       of a linked-block element.
+
+2. When using SDsetdimscale to set the data type for a dimension to 
+   an unsigned type, the type became signed inadvertently (bug #172).  
+   This problem is now fixed.
+
+3. The memory leak in the netCDF part of the HDF/mfhdf distribution
+   is fixed. (bug #418)
+
+4. When using "hdp dumpgr", data was being printed in the range of 0-250
+   when it should be 0-168 (bug #422).  This problem is now fixed.
+
+5. hdp dumpgr has a new option to print palette data only -pd.  Also,
+   whenever option -p or -pd is given, only palettes are printed, no 
+   images nor file attributes. (bug #439)
+
+6. The "#define NULL" was removed since ANSI C compilers are required to
+   define NULL. (bug #448)
+
+7. Giving NULL to the fieldname argument in VSsetfields now returns
+   FAIL instead of causing segnmentation fault. (bug #554)
+
+8. Giving a NULL to the argument name in several name setting routines
+   now returns FAIL instead of causing segnmentation fault. (bug #514)
 
 HDF4.1r4
 ========
