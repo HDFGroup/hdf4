@@ -40,7 +40,7 @@
  * manipulating a memory pool. This version however is not 
  * compatible with the original Berkley version.
  *
- * Author: George V.
+ * Author: George V.- 9/3/96
  *
  *****************************************************************************/ 
 
@@ -76,6 +76,8 @@
  * complex end of list detection.
  *
  * For details on the use of these macros, see the queue(3) manual page.
+ * (BSD4.3 manual set - GeorgeV)
+ * 
  */
 
 /*

@@ -18,6 +18,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 /*-----------------------------------------------------------------------------
  * File:     mfan.c
+ * Author:   GeorgeV
  * Purpose:  Multi-file read and write annotations: labels and descriptions 
  *           of data items and file
  * Invokes:  
@@ -186,20 +187,23 @@ dumpfileKey(VOID *key, VOID *data)
 /* ------------------------------- ANIfidcmp -------------------------------- 
  NAME
 	ANIfidcmp -- compare two annotation interface id's
- USAGE
-	int32 ANIfidcmp(i, j)
-        int32 *i;        IN: annotation interfaced id
-        int32 *j;        IN: annotation interfaced id
- RETURNS
-        Returns 0 if i=j, -1 if i > j and 1 if i < j
+
  DESCRIPTION
-        Compares two annotation interface id's. Used by trees for file id's. 
+    Compares two annotation interface id's. Used by trees for file id's. 
+
+ RETURNS
+    Returns 0 if i=j, -1 if i > j and 1 if i < j
+
+ AUTHOR
+    GeorgeV.
 
  NOTE:- these file ID's are now refered to as annotation interface ID's
 
 --------------------------------------------------------------------------- */
 intn
-ANIfidcmp(VOIDP i, VOIDP j, intn value)
+ANIfidcmp(VOIDP i,   /* IN: annotation interfaced id (int32) */
+          VOIDP j,   /* IN: annotation interfaced id (int32) */
+          intn value)
 {
     if (*(int32 *)i == *(int32 *)j) 
         return 0;
@@ -212,18 +216,21 @@ ANIfidcmp(VOIDP i, VOIDP j, intn value)
 /* ------------------------------- ANIanncmp -------------------------------- 
  NAME
 	ANIanncmp -- compare two annotation keys or id's
- USAGE
-	int32 ANIanncmp(i, j)
-        int32 *i;        IN: annotation key(tag,reg)
-        int32 *j;        IN: annotation key(tag,reg)
- RETURNS
-        Returns 0 if i=j, -1 if i > j and 1 if i < j
+
  DESCRIPTION
         Compares two annotation keys. Used by tree for annotations
         Also used to compare annotation id's since also 32 bit value.
+
+ RETURNS
+        Returns 0 if i=j, -1 if i > j and 1 if i < j
+
+ AUTHOR
+    GeorgeV.
 --------------------------------------------------------------------------- */
 intn 
-ANIanncmp(VOIDP i, VOIDP j, intn value)
+ANIanncmp(VOIDP i,   /* IN: annotation key(tag,ref) */
+          VOIDP j,   /* IN: annotation key(tag,ref) */
+          intn value)
 {
     if (*(int32 *)i == *(int32 *)j) 
         return 0;
@@ -233,17 +240,58 @@ ANIanncmp(VOIDP i, VOIDP j, intn value)
         return 1;
 } /* ANIanncmp */
 
+/*--------------------------------------------------------------------------
+ NAME
+    ANIstart - AN-level initialization routine.
+
+ DESCRIPTION
+    Register the shut-down routine (ANPshutdown) for call with atexit
+
+ RETURNS
+    Returns SUCCEED/FAIL
+
+ AUTHOR
+    GeorgeV.
+
+--------------------------------------------------------------------------*/
+PRIVATE intn 
+ANIstart(void)
+{
+    CONSTR(FUNC, "ANIstart");    /* for HERROR */
+    intn        ret_value = SUCCEED;
+
+    /* Don't call this routine again... */
+    library_terminate = TRUE;
+
+    /* Install atexit() library cleanup routine */
+    if (HPregister_term_func(&ANdestroy) != 0)
+        HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
+  done:
+    if(ret_value == FAIL)   
+      { /* Error condition cleanup */
+
+      } /* end if */
+
+    /* Normal function cleanup */
+
+    return(ret_value);
+} /* end ANIstart() */
+
 /* ------------------------------- ANinit -------------------------------- 
  NAME
 	ANinit -- Initialize Annotation Interface
- USAGE
-	int32 ANinit(void)
+
+ DESCRIPTION
+    Initializes the annotation interface i.e. creates trees
+    to hold all open files using annotation interface.
 
  RETURNS
-        SUCCEED or FAIL
- DESCRIPTION
-        Initializes the annotation interface i.e. creates trees
-        to hold all open files using annotation interface.
+    SUCCEED or FAIL
+
+ AUTHOR
+    GeorgeV.
+
 --------------------------------------------------------------------------- */
 PRIVATE int32
 ANinit(void)
@@ -280,55 +328,19 @@ ANinit(void)
     return ret_value;
 } /* ANinit() */
 
-/*--------------------------------------------------------------------------
- NAME
-    ANIstart
- PURPOSE
-    AN-level initialization routine
- USAGE
-    intn ANIstart()
- RETURNS
-    Returns SUCCEED/FAIL
- DESCRIPTION
-    Register the shut-down routine (ANPshutdown) for call with atexit
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
---------------------------------------------------------------------------*/
-PRIVATE intn ANIstart(void)
-{
-    CONSTR(FUNC, "ANIstart");    /* for HERROR */
-    intn        ret_value = SUCCEED;
-
-    /* Don't call this routine again... */
-    library_terminate = TRUE;
-
-    /* Install atexit() library cleanup routine */
-    if (HPregister_term_func(&ANdestroy) != 0)
-        HGOTO_ERROR(DFE_CANTINIT, FAIL);
-
-  done:
-    if(ret_value == FAIL)   
-      { /* Error condition cleanup */
-
-      } /* end if */
-
-    /* Normal function cleanup */
-
-    return(ret_value);
-} /* end ANIstart() */
-
 /* ------------------------------- ANdestroy -------------------------------- 
  NAME
 	ANdestroy -- Un-Initialize Annotation Interface
- USAGE
-	intn ANdestroy(void)
+
+ DESCRIPTION
+    Unallocates global annotaton node list and file list.
 
  RETURNS
-        SUCCEED or FAIL
- DESCRIPTION
-        Unallocates global annotaton node list and file list.
+    SUCCEED or FAIL
+
+ AUTHOR
+    GeorgeV.
+
 --------------------------------------------------------------------------- */
 intn
 ANdestroy(void)
@@ -359,30 +371,28 @@ ANdestroy(void)
 /*--------------------------------------------------------------------------
  NAME
        ANIaddentry -- add entry to corresponding annotation RB tree
- USAGE
-       int16  ANIaddentry(an_id, type, ann_ref, elmtag, elmref, new_ann)
-       int32  an_id;  IN: annotation interface id
-       ann_type  type:  IN: AN_DATA_LABEL for data labels, 
-                            AN_DATA_DESC for data descriptions,
-                            AN_FILE_LABEL for file labels,
-                            AN_FILE_DESC for file descritpions.
-       uint16 ann_ref:  IN: ref of annotation
-       uint16 elmtag,:  IN: tag of item of which this is annotation
-       uint16 elmref;   IN: ref of item of which this is annotation
-       intn   new_ann;  IN: new annotation flag
+
+ DESCRIPTION
+       Adds annotation to correct tree
 
  RETURNS
        annotation ID if successful and FAIL (-1) otherwise
- DESCRIPTION
-       Adds annotation to correct tree
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
- *------------------------------------------------------------------------*/
+
+ AUTHOR
+    GeorgeV.
+
+ -------------------------------------------------------------------------*/
 PRIVATE int32
-ANIaddentry(int32 an_id, ann_type type, uint16 ann_ref, 
-            uint16 elmtag, uint16 elmref, intn new_ann)
+ANIaddentry(int32 an_id,    /* IN: annotation interface id */
+            ann_type type,  /* IN: annotation type 
+                               AN_DATA_LABEL for data labels, 
+                               AN_DATA_DESC for data descriptions,
+                               AN_FILE_LABEL for file labels,
+                               AN_FILE_DESC for file descritpions.*/ 
+            uint16 ann_ref, /* IN: ref of annotation */
+            uint16 elmtag,  /* IN: tag of item of which this is annotation */
+            uint16 elmref,  /* IN: ref of item of which this is annotation */
+            intn new_ann    /* IN: new annotation flag */)
 {
     CONSTR(FUNC, "ANIaddentry");
     TBBT_NODE *entry = NULL;
@@ -398,10 +408,6 @@ ANIaddentry(int32 an_id, ann_type type, uint16 ann_ref,
     HEclear();
 
     /* Valid file id */
-#if 0
-    if (an_id == FAIL)
-        HGOTO_ERROR(DFE_BADCALL, FAIL);
-#endif
     if (HAatom_group(an_id)!=FIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -514,26 +520,25 @@ ANIaddentry(int32 an_id, ann_type type, uint16 ann_ref,
 
 /*--------------------------------------------------------------------------
  NAME
-      ANIcreate_ann_tree --  create an annotation tree of 'type' for given file 
- USAGE
-       intn   ANIcreate_ann_tree(an_id, type)
-       int32  an_id;   IN: annotation interface id
-       int    type:      IN: AN_DATA_LABEL for data labels, 
-                             AN_DATA_DESC for data descriptions,
-                             AN_FILE_LABEL for file labels,
-                             AN_FILE_DESC for file descritpions.
- RETURNS
-       Number of annotations of 'type' in file if successful and 
-       FAIL (-1) otherwise
+     ANIcreate_ann_tree --  create an annotation tree of 'type' for given file 
+
  DESCRIPTION
-       Creates either a label or descritption annotation TBBTtree. 
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
- *------------------------------------------------------------------------*/
+     Creates either a label or descritption annotation TBBTtree. 
+
+ RETURNS
+     Number of annotations of 'type' in file if successful and 
+     FAIL (-1) otherwise
+
+ AUTHOR
+    GeorgeV.
+
+ -------------------------------------------------------------------------*/
 PRIVATE intn
-ANIcreate_ann_tree(int32 an_id, ann_type type)
+ANIcreate_ann_tree(int32 an_id,  /* IN: annotation interface id */
+                   ann_type type /* IN: AN_DATA_LABEL for data labels, 
+                                    AN_DATA_DESC for data descriptions,
+                                    AN_FILE_LABEL for file labels,
+                                    AN_FILE_DESC for file descritpions.*/)
 {
     CONSTR(FUNC, "ANIcreate_ann_tree");
     TBBT_NODE *entry = NULL;
@@ -555,10 +560,6 @@ ANIcreate_ann_tree(int32 an_id, ann_type type)
     HEclear();
 
     /* Valid file id */
-#if 0
-    if (an_id == FAIL)
-        HGOTO_ERROR(DFE_BADCALL, FAIL);
-#endif
     if (HAatom_group(an_id)!=FIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -725,26 +726,24 @@ ANIcreate_ann_tree(int32 an_id, ann_type type)
 /*--------------------------------------------------------------------------
  NAME
      ANIfind -- find annotation id for given annotation type and ref number
- USAGE
-       int16  ANIfind(an_id, type, ann_ref)
-       int32  an_id;   IN: annotation interface id
-       ann_type  type:   IN: AN_DATA_LABEL for data labels, 
-                             AN_DATA_DESC for data descriptions,
-                             AN_FILE_LABEL for file labels,
-                             AN_FILE_DESC for file descritpions.
-       uint16 ann_ref;   IN: ref of annotation
- RETURNS
-       annotation id if successful and FAIL (-1) otherwise
- DESCRIPTION
-       Find annotation id for the given annotation type and ref number
 
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
- *------------------------------------------------------------------------*/ 
+ DESCRIPTION
+     Find annotation id for the given annotation type and ref number
+
+ RETURNS
+    Annotation id if successful and FAIL (-1) otherwise
+
+ AUTHOR
+    GeorgeV.
+
+ -------------------------------------------------------------------------*/ 
 PRIVATE int32
-ANIfind(int32 an_id, ann_type type, uint16 ann_ref)
+ANIfind(int32 an_id,   /* IN: annotation interface id */
+        ann_type type, /* IN: AN_DATA_LABEL for data labels, 
+                          AN_DATA_DESC for data descriptions,
+                          AN_FILE_LABEL for file labels,
+                          AN_FILE_DESC for file descritpions.*/ 
+        uint16 ann_ref /* IN: ref of annotation */)
 {
     CONSTR(FUNC, "ANIfind");
     TBBT_NODE *entry = NULL;
@@ -757,13 +756,8 @@ ANIfind(int32 an_id, ann_type type, uint16 ann_ref)
     HEclear();
 
     /* Valid file id */
-#if 0
-    if (an_id == FAIL)
-        HGOTO_ERROR(DFE_BADCALL, FAIL);
-#endif
     if (HAatom_group(an_id)!=FIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
 
     /* First find file node from file tree */
     if ((entry = tbbtdfind(ANfilelist, &an_id, NULL)) == NULL)
@@ -813,27 +807,26 @@ ANIfind(int32 an_id, ann_type type, uint16 ann_ref)
  NAME
    ANInumann -- find number of annotation of 'type' that 
                  match the given element tag/ref 
- USAGE
-       intn  ANInumann(an_id, type, elm_tag, elem_ref)
-       int32  an_id;   IN: annotation interface id
-       int    type:      IN: AN_DATA_LABEL for data labels, 
-                             AN_DATA_DESC for data descriptions,
-                             AN_FILE_LABEL for file labels,
-                             AN_FILE_DESC for file descritpions.
-       uint16 elem_tag,: IN: tag of item of which this is annotation
-       uint16 elem_ref;  IN: ref of item of which this is annotation
- RETURNS
-       number of annotation found if successful and FAIL (-1) otherwise
+
  DESCRIPTION
-       Find number of annotation of 'type' for the given element 
-       tag/ref pair. Doesn't handle file lables/descs yet.
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
- *------------------------------------------------------------------------*/ 
+   Find number of annotation of 'type' for the given element 
+   tag/ref pair. Doesn't handle file lables/descs yet.
+
+ RETURNS
+   Number of annotation found if successful and FAIL (-1) otherwise
+
+ AUTHOR
+    GeorgeV.
+
+ -------------------------------------------------------------------------*/ 
 PRIVATE intn
-ANInumann(int32 an_id, ann_type type, uint16 elem_tag, uint16 elem_ref)
+ANInumann(int32 an_id,     /* IN: annotation interface id */
+          ann_type type,   /* IN: AN_DATA_LABEL for data labels, 
+                              AN_DATA_DESC for data descriptions,
+                              AN_FILE_LABEL for file labels,
+                              AN_FILE_DESC for file descritpions.*/
+          uint16 elem_tag, /* IN: tag of item of which this is annotation */
+          uint16 elem_ref  /* IN: ref of item of which this is annotation */)
 {
     CONSTR(FUNC, "ANInumann");
     TBBT_NODE *entry = NULL;
@@ -846,10 +839,6 @@ ANInumann(int32 an_id, ann_type type, uint16 elem_tag, uint16 elem_ref)
     HEclear();
 
     /* Valid file id */
-#if 0
-    if (an_id == FAIL)
-        HGOTO_ERROR(DFE_BADCALL, FAIL);
-#endif
     if (HAatom_group(an_id)!=FIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -895,29 +884,27 @@ ANInumann(int32 an_id, ann_type type, uint16 elem_tag, uint16 elem_ref)
  NAME
    ANIannlist -- generate list of annotation ids of 'type' that 
                  match the given element tag/ref 
- USAGE
-       intn  ANIannlist(an_id, type, elm_tag, elem_ref)
-       int32  an_id;   IN: annotation interface id
-       ann_type  type:   IN: AN_DATA_LABEL for data labels, 
-                             AN_DATA_DESC for data descriptions,
-                             AN_FILE_LABEL for file labels,
-                             AN_FILE_DESC for file descritpions.
-       uint16 elem_tag,: IN: tag of item of which this is annotation
-       uint16 elem_ref;  IN: ref of item of which this is annotation
-       int32  ann_list[]; OUT: array of ann_id's that match criteria.
- RETURNS
-       number of annotations ids found if successful and FAIL (-1) otherwise
+
  DESCRIPTION
        Find and generate list of annotation ids of 'type' for the given 
        element tag/ref pair
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
- *------------------------------------------------------------------------*/ 
+
+ RETURNS
+       number of annotations ids found if successful and FAIL (-1) otherwise
+
+ AUTHOR
+    GeorgeV.
+
+ ------------------------------------------------------------------------*/ 
 PRIVATE intn
-ANIannlist(int32 an_id, ann_type type, uint16 elem_tag, uint16 elem_ref,
-           int32 ann_list[])
+ANIannlist(int32 an_id,     /* IN: annotation interface id */
+           ann_type type,   /* IN: AN_DATA_LABEL for data labels, 
+                               AN_DATA_DESC for data descriptions,
+                               AN_FILE_LABEL for file labels,
+                               AN_FILE_DESC for file descritpions.*/
+           uint16 elem_tag, /* IN: tag of item of which this is annotation*/
+           uint16 elem_ref, /* IN: ref of item of which this is annotation */
+           int32 ann_list[] /* OUT: array of ann_id's that match criteria. */)
 {
     CONSTR(FUNC, "ANIannlist");
     TBBT_NODE *entry = NULL;
@@ -930,10 +917,6 @@ ANIannlist(int32 an_id, ann_type type, uint16 elem_tag, uint16 elem_ref,
     HEclear();
 
     /* Valid file id */
-#if 0
-    if (an_id == FAIL)
-        HGOTO_ERROR(DFE_BADCALL, FAIL);
-#endif
     if (HAatom_group(an_id)!=FIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -978,21 +961,19 @@ ANIannlist(int32 an_id, ann_type type, uint16 elem_tag, uint16 elem_ref,
 /*--------------------------------------------------------------------------
  NAME
        ANIannlen -- get length of annotation givne annotation id
- USAGE
-       int32 ANIannlen(ann_id)
-       int32 ann_id;   IN: annotation id
- RETURNS
-       length of annotation if successful and FAIL (-1) otherwise
+
  DESCRIPTION
        Uses the annotation id to find ann_key & file_id
- GLOBAL VARIABLES
 
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
- *------------------------------------------------------------------------*/
+ RETURNS
+       length of annotation if successful and FAIL (-1) otherwise
+
+ AUTHOR
+    GeorgeV.
+
+ ------------------------------------------------------------------------*/
 PRIVATE int32
-ANIannlen(int32 ann_id)
+ANIannlen(int32 ann_id /*  IN: annotation id */)
 {
 #ifdef LATER
     CONSTR(FUNC, "ANIannlen");
@@ -1074,24 +1055,22 @@ ANIannlen(int32 ann_id)
 /*--------------------------------------------------------------------------
  NAME
        ANIreadann -- read annotation given ann_id
- USAGE
-       intn ANIgetann(ann_id, ann, maxlen)
-       int32 ann_id;   IN: annotation id (handle)
-       char *ann;     OUT: space to return annotation in
-       int32 maxlen;   IN: size of space to return annotation in
- RETURNS
-       SUCCEED (0) if successful and FAIL (-1) otherwise
+
  DESCRIPTION
        Gets tag and ref of annotation.  Finds DD for that annotation.
        Reads the annotation, taking care of NULL terminator, if necessary.
- GLOBAL VARIABLES
 
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
- *------------------------------------------------------------------------*/
+ RETURNS
+       SUCCEED (0) if successful and FAIL (-1) otherwise
+
+ AUTHOR
+    GeorgeV.
+
+ ------------------------------------------------------------------------*/
 PRIVATE intn
-ANIreadann(int32 ann_id, char *ann, int32 maxlen)
+ANIreadann(int32 ann_id, /* IN: annotation id (handle) */ 
+           char *ann,    /* OUT: space to return annotation in */
+           int32 maxlen  /* IN: size of space to return annotation in */)
 {
     CONSTR(FUNC, "ANIreadann");
     TBBT_NODE *entry = NULL;
@@ -1220,25 +1199,22 @@ ANIreadann(int32 ann_id, char *ann, int32 maxlen)
 /*--------------------------------------------------------------------------
  NAME
        ANIwriteann -- write annotation given ann_id
- USAGE
-       intn ANIwriteann(ann_id, ann, ann_len)
-       char *ann_id;   IN: annotation id
-       char *ann;     IN: annotation to write
-       int32 ann_len;  IN: length of annotation
 
- RETURNS
-       SUCCEED (0) if successful and FAIL (-1) otherwise
  DESCRIPTION
        Checks for pre-existence of given annotation, replacing old one if it
        exists. Writes out annotation.
- GLOBAL VARIABLES
 
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
- *------------------------------------------------------------------------*/
+ RETURNS
+       SUCCEED (0) if successful and FAIL (-1) otherwise
+
+ AUTHOR
+    GeorgeV.
+
+ ------------------------------------------------------------------------*/
 PRIVATE intn
-ANIwriteann(int32 ann_id, const char *ann, int32 ann_len)
+ANIwriteann(int32 ann_id,    /* IN: annotation id */
+            const char *ann, /* IN: annotation to write */
+            int32 ann_len    /* IN: length of annotation */)
 {
     CONSTR(FUNC, "ANIwriteann");
     TBBT_NODE *fentry = NULL;
@@ -1386,24 +1362,26 @@ ANIwriteann(int32 ann_id, const char *ann, int32 ann_len)
 /* ------------------------------- ANIcreate ------------------------------- 
  NAME
 	ANIcreate - create a new annotation and return a handle(id)
- USAGE
-	int32 ANIcreate(int32 file_id, uint16 tag, uint16 ref, char *ann, 
-                      int32 ann_len, intn type )
-        int32 file_id;  IN: file ID
-        uint16 tag;     IN: tag of item to be assigned annotation
-        uint16 ref;     IN: reference number of itme to be assigned ann
-        ann_type  type: IN: AN_DATA_LABEL for data labels, 
-                             AN_DATA_DESC for data descriptions,
-                             AN_FILE_LABEL for file labels,
-                             AN_FILE_DESC for file descritpions.
- RETURNS
-        An ID to an annotation which can either be a label or description
+
  DESCRIPTION
-        Creates an annotation, returns an 'an_id' to work with the new 
-        annotation which can either be a label or description.
+    Creates an annotation, returns an 'an_id' to work with the new 
+    annotation which can either be a label or description.
+
+ RETURNS
+    An ID to an annotation which can either be a label or description
+
+ AUTHOR
+    GeorgeV.
+
 --------------------------------------------------------------------------- */
 PRIVATE intn 
-ANIcreate(int32 file_id, uint16 elem_tag, uint16 elem_ref, ann_type type )
+ANIcreate(int32 file_id,   /* IN: file ID */
+          uint16 elem_tag, /* IN: tag of item to be assigned annotation */
+          uint16 elem_ref, /* IN: reference number of itme to be assigned ann */ 
+          ann_type type    /* IN: AN_DATA_LABEL for data labels, 
+                              AN_DATA_DESC for data descriptions,
+                              AN_FILE_LABEL for file labels,
+                              AN_FILE_DESC for file descritpions.*/)
 {
     CONSTR(FUNC, "ANIcreate");    /* for HERROR */
     int32   ann_id;
@@ -1415,10 +1393,6 @@ ANIcreate(int32 file_id, uint16 elem_tag, uint16 elem_ref, ann_type type )
     HEclear();
   
     /* Valid file id */
-#if 0
-    if (file_id == FAIL)
-        HGOTO_ERROR(DFE_BADCALL, FAIL);
-#endif
     if (HAatom_group(file_id)!=FIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -1479,17 +1453,20 @@ ANIcreate(int32 file_id, uint16 elem_tag, uint16 elem_ref, ann_type type )
 /* ------------------------------- ANstart -------------------------------- 
  NAME
 	ANstart -- open file for annotation handling
- USAGE
-	int32 ANstart(file_id, path, HDFmode)
-        int32  file_id;         IN: file to start annotation access on
- RETURNS
-        A file ID or FAIL. Note that we use 'an_id' which is the same
-        as the file id.
+
  DESCRIPTION
-        Start annotation handling on the file return a annotation ID to the file.
+    Start annotation handling on the file return a annotation ID to the file.
+
+ RETURNS
+    A file ID or FAIL. Note that we use 'an_id' which is the same
+    as the file id.
+
+ AUTHOR
+    GeorgeV.
+
 --------------------------------------------------------------------------- */
 EXPORT int32
-ANstart(int32 file_id)
+ANstart(int32 file_id /* IN: file to start annotation access on*/)
 {
     CONSTR(FUNC, "ANstart");
     int32  *an_id    = NULL;
@@ -1505,10 +1482,6 @@ ANstart(int32 file_id)
     HEclear();
 
     /* check for valid file id */
-#if 0
-    if (file_id == FAIL)
-        HGOTO_ERROR(DFE_BADCALL, FAIL);
-#endif
     if (HAatom_group(file_id)!=FIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -1573,28 +1546,25 @@ ANstart(int32 file_id)
 /*--------------------------------------------------------------------------
  NAME
     ANfileinfo - Report high-level information about the ANxxx interface for a given file.
- USAGE
-    intn ANfileinfo(an_id, n_file_label, n_file_desc, n_obj_label, n_obj_desc)
-        int32 an_id;        IN:  annotation interface id
-        int32 *n_file_label;  OUT: the # of file labels
-        int32 *n_file_desc;   OUT: the # of file descriptions
-        int32 *n_obj_label;   OUT: the # of object labels
-        int32 *n_obj_desc;    OUT: the # of object descriptions
- RETURNS
-    SUCCEED/FAIL
+
  DESCRIPTION
     Reports general information about the number of file and object(i.e. data)
     annotations in the file. This routine is generally used to find
     the range of acceptable indices for ANselect calls.
 
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
+ RETURNS
+    SUCCEED/FAIL
+
+ AUTHOR
+    GeorgeV.
+
 --------------------------------------------------------------------------*/
 EXPORT intn 
-ANfileinfo(int32 an_id, int32 *n_file_label, int32 *n_file_desc,
-           int32 *n_obj_label, int32 *n_obj_desc)
+ANfileinfo(int32 an_id,         /* IN:  annotation interface id */
+           int32 *n_file_label, /* OUT: the # of file labels */
+           int32 *n_file_desc,  /* OUT: the # of file descriptions */
+           int32 *n_obj_label,  /* OUT: the # of object labels */
+           int32 *n_obj_desc    /* OUT: the # of object descriptions */)
 {
     CONSTR(FUNC, "ANfileinfo");    /* for HERROR */
     TBBT_NODE *entry = NULL;
@@ -1609,10 +1579,6 @@ ANfileinfo(int32 an_id, int32 *n_file_label, int32 *n_file_desc,
     HEclear();
 
     /* Valid file id */
-#if 0
-    if (an_id == FAIL)
-        HGOTO_ERROR(DFE_BADCALL, FAIL);
-#endif
     if (HAatom_group(an_id)!=FIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -1675,16 +1641,15 @@ ANfileinfo(int32 an_id, int32 *n_file_label, int32 *n_file_desc,
 /* -------------------------------- ANend ---------------------------------
  NAME
 	ANend -- End annotation access to file file
- USAGE
-	int32 ANend(an_id)
-        int32 an_id;               IN: Annotation ID of file to close
- RETURNS
-        SUCCEED / FAIL
+
  DESCRIPTION
-        End annotation access to file.
+    End annotation access to file.
+
+ RETURNS
+    SUCCEED / FAIL
 --------------------------------------------------------------------------- */
 EXPORT int32
-ANend(int32 an_id)
+ANend(int32 an_id /* IN: Annotation ID of file to close */)
 {
     CONSTR(FUNC,"ANend");
     TBBT_NODE *fentry = NULL;
@@ -1705,10 +1670,6 @@ ANend(int32 an_id)
     HEclear();
 
     /* Valid file id */
-#if 0
-    if (an_id == FAIL)
-        HGOTO_ERROR(DFE_BADCALL, FAIL);
-#endif
     if (HAatom_group(an_id)!=FIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -1869,21 +1830,24 @@ ANend(int32 an_id)
 /* ------------------------------------------------------------------------ 
  NAME
 	ANcreate - create a new element annotation and return a handle(id)
- USAGE
-	int32 ANcreate(an_id, tag, ref, ann, ann_len, type )
-        int32 an_id;    IN: annotation interface ID
-        uint16 tag;     IN: tag of item to be assigned annotation
-        uint16 ref;     IN: reference number of itme to be assigned ann
-        ann_type  type: IN: AN_DATA_LABEL for data labels, 
-                            AN_DATA_DESC for data descriptions,
- RETURNS
-        An ID to an annotation which can either be a label or description
+
  DESCRIPTION
-        Creates a data annotation, returns an 'an_id' to work with the new 
-        annotation which can either be a label or description.
+    Creates a data annotation, returns an 'an_id' to work with the new 
+    annotation which can either be a label or description.
+
+ RETURNS
+    An ID to an annotation which can either be a label or description
+
+ AUTHOR
+    GeorgeV.
+
 --------------------------------------------------------------------------- */
 EXPORT int32
-ANcreate(int32 an_id, uint16 elem_tag, uint16 elem_ref, ann_type type)
+ANcreate(int32 an_id,     /* IN: annotation interface ID */
+         uint16 elem_tag, /* IN: tag of item to be assigned annotation */ 
+         uint16 elem_ref, /* IN: reference number of itme to be assigned ann */ 
+         ann_type type    /* IN: AN_DATA_LABEL for data labels, 
+                             AN_DATA_DESC for data descriptions*/)
 {
 #ifdef LATER
     CONSTR(FUNC, "ANcreate");    /* for HERROR */
@@ -1906,20 +1870,22 @@ ANcreate(int32 an_id, uint16 elem_tag, uint16 elem_ref, ann_type type)
 /* ------------------------------------------------------------------------ 
  NAME
 	ANcreatef - create a new file annotation and return a handle(id)
- USAGE
-	int32 ANcreatef(an_id,ann_type type )
-        int32 an_id;    IN: annotation interface ID
-        ann_type  type: IN:  AN_FILE_LABEL for file labels,
-                             AN_FILE_DESC for file descritpions.
- RETURNS
-        An ID to an annotation which can either be a file label or description
+
  DESCRIPTION
-        Creates a file annotation, returns an 'an_id' to work with the new 
-        file annotation which can either be a label or description.
-        
+    Creates a file annotation, returns an 'an_id' to work with the new 
+    file annotation which can either be a label or description.
+
+ RETURNS
+    An ID to an annotation which can either be a file label or description        
+
+ AUTHOR
+    GeorgeV.
+
 --------------------------------------------------------------------------- */
 EXPORT int32
-ANcreatef(int32 an_id, ann_type type)
+ANcreatef(int32 an_id,  /* IN: annotation interface ID */
+          ann_type type /* IN:  AN_FILE_LABEL for file labels,
+                           AN_FILE_DESC for file descritpions.*/)
 {
 #ifdef LATER
     CONSTR(FUNC, "ANcreatef");    /* for HERROR */
@@ -1966,21 +1932,24 @@ ANcreatef(int32 an_id, ann_type type)
 /* ------------------------------- ANselect ------------------------------- 
  NAME
 	ANselect -- get an annotation ID from index of 'type'
- USAGE
-	int32 ANselect(file_id, index)
-        int32 an_id;    IN: annotation interface ID
-        int32 index;    IN: index of annottion to get ID for
-        ann_type  type: IN: AN_DATA_LABEL for data labels, 
-                            AN_DATA_DESC for data descriptions,
-                            AN_FILE_LABEL for file labels,
-                            AN_FILE_DESC for file descritpions.
- RETURNS
-        An ID to an annotation type which can either be a label or description 
+
  DESCRIPTION
-        The position index is ZERO based
+    The position index is ZERO based
+
+ RETURNS
+    An ID to an annotation type which can either be a label or description 
+
+ AUTHOR
+    GeorgeV.
+
 --------------------------------------------------------------------------- */
 EXPORT int32
-ANselect(int32 an_id, int32 index, ann_type type)
+ANselect(int32 an_id,  /* IN: annotation interface ID */
+         int32 index,  /* IN: index of annottion to get ID for */
+         ann_type type /* IN: AN_DATA_LABEL for data labels, 
+                          AN_DATA_DESC for data descriptions,
+                          AN_FILE_LABEL for file labels,
+                          AN_FILE_DESC for file descritpions.*/)
 {
     CONSTR(FUNC, "ANselect");    /* for HERROR */
     TBBT_NODE *fentry = NULL;
@@ -1997,10 +1966,6 @@ ANselect(int32 an_id, int32 index, ann_type type)
     HEclear();
 
     /* Valid file id */
-#if 0
-    if (an_id == FAIL)
-        HGOTO_ERROR(DFE_BADCALL, FAIL);
-#endif
     if (HAatom_group(an_id)!=FIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -2049,28 +2014,27 @@ ANselect(int32 an_id, int32 index, ann_type type)
 /*--------------------------------------------------------------------------
  NAME
    ANnumann -- find number of annotation of 'type' that 
-                 match the given element tag/ref 
- USAGE
-       intn  ANnumann(an_id, type, elm_tag, elem_ref)
-       int32  an_id;     IN: annotation interface id
-       int    type:      IN: AN_DATA_LABEL for data labels, 
+               match the given element tag/ref 
+
+ DESCRIPTION
+   Find number of annotation of 'type' for the given element 
+   tag/ref pair.
+
+ RETURNS
+   Number of annotation found if successful and FAIL (-1) otherwise
+
+ AUTHOR
+    GeorgeV.
+
+ ------------------------------------------------------------------------*/ 
+EXPORT intn
+ANnumann(int32 an_id,     /* IN: annotation interface id */
+         ann_type type,   /* IN: AN_DATA_LABEL for data labels, 
                              AN_DATA_DESC for data descriptions,
                              AN_FILE_LABEL for file labels,
-                             AN_FILE_DESC for file descritpions.
-       uint16 elem_tag,: IN: tag of item of which this is annotation
-       uint16 elem_ref;  IN: ref of item of which this is annotation
- RETURNS
-       number of annotation found if successful and FAIL (-1) otherwise
- DESCRIPTION
-       Find number of annotation of 'type' for the given element 
-       tag/ref pair.
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
- *------------------------------------------------------------------------*/ 
-EXPORT intn
-ANnumann(int32 an_id, ann_type type, uint16 elem_tag, uint16 elem_ref)
+                             AN_FILE_DESC for file descritpions.*/
+         uint16 elem_tag, /* IN: tag of item of which this is annotation */
+         uint16 elem_ref  /* IN: ref of item of which this is annotation */ )
 {
 #ifdef LATER
     CONSTR(FUNC, "ANnumann");
@@ -2094,29 +2058,27 @@ ANnumann(int32 an_id, ann_type type, uint16 elem_tag, uint16 elem_ref)
  NAME
    ANannlist -- generate list of annotation ids of 'type' that 
                  match the given element tag/ref 
- USAGE
-       intn  ANannlist(an_id, type, elm_tag, elem_ref)
-       int32  an_id;     IN: annotation interface id
-       ann_type  type:   IN: AN_DATA_LABEL for data labels, 
-                             AN_DATA_DESC for data descriptions,
-                             AN_FILE_LABEL for file labels,
-                             AN_FILE_DESC for file descritpions.
-       uint16 elem_tag,: IN: tag of item of which this is annotation
-       uint16 elem_ref;  IN: ref of item of which this is annotation
-       int32  ann_list[]; OUT: array of ann_id's that match criteria.
- RETURNS
-       number of annotations ids found if successful and FAIL (-1) otherwise
+
  DESCRIPTION
-       Find and generate list of annotation ids of 'type' for the given 
-       element tag/ref pair
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
- *------------------------------------------------------------------------*/ 
+   Find and generate list of annotation ids of 'type' for the given 
+   element tag/ref pair
+
+ RETURNS
+   Number of annotations ids found if successful and FAIL (-1) otherwise
+
+ AUTHOR
+    GeorgeV.
+
+ ------------------------------------------------------------------------*/ 
 EXPORT intn
-ANannlist(int32 an_id, ann_type type, uint16 elem_tag, uint16 elem_ref,
-          int32 ann_list[])
+ANannlist(int32 an_id,       /* IN: annotation interface id */
+          ann_type type,     /* IN: AN_DATA_LABEL for data labels, 
+                                AN_DATA_DESC for data descriptions,
+                                AN_FILE_LABEL for file labels,
+                                AN_FILE_DESC for file descritpions.*/
+          uint16 elem_tag,   /* IN: tag of item of which this is annotation */
+          uint16 elem_ref,   /* IN: ref of item of which this is annotation */
+          int32 ann_list[]   /* OUT: array of ann_id's that match criteria. */)
 {
 #ifdef LATER
     CONSTR(FUNC, "ANannlist");
@@ -2139,21 +2101,19 @@ ANannlist(int32 an_id, ann_type type, uint16 elem_tag, uint16 elem_ref,
 /*--------------------------------------------------------------------------
  NAME
        ANannlen -- get length of annotation givne annotation id
- USAGE
-       int32 ANannlen(ann_id)
-       int32 ann_id;   IN: annotation id
- RETURNS
-       length of annotation if successful and FAIL (-1) otherwise
+
  DESCRIPTION
        Uses the annotation id to find ann_key & file_id
- GLOBAL VARIABLES
 
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG 
- *------------------------------------------------------------------------*/
+ RETURNS
+       length of annotation if successful and FAIL (-1) otherwise
+
+ AUTHOR
+    GeorgeV.
+
+ ------------------------------------------------------------------------*/
 EXPORT int32
-ANannlen(int32 ann_id)
+ANannlen(int32 ann_id /* IN: annotation id */)
 {
 #ifdef LATER
     CONSTR(FUNC, "ANannlen");
@@ -2175,25 +2135,22 @@ ANannlen(int32 ann_id)
 /*--------------------------------------------------------------------------
  NAME
        ANwriteann -- write annotation given ann_id
- USAGE
-       intn ANwriteann(ann_id, ann, ann_len)
-       char *ann_id;   IN: annotation id
-       char *ann;     IN: annotation to write
-       int32 ann_len;  IN: length of annotation
 
- RETURNS
-       SUCCEED (0) if successful and FAIL (-1) otherwise
  DESCRIPTION
        Checks for pre-existence of given annotation, replacing old one if it
        exists. Writes out annotation.
- GLOBAL VARIABLES
 
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
- *------------------------------------------------------------------------*/
+ RETURNS
+       SUCCEED (0) if successful and FAIL (-1) otherwise
+
+ AUTHOR
+    GeorgeV.
+
+ ------------------------------------------------------------------------*/
 EXPORT int32
-ANwriteann(int32 ann_id, const char *ann, int32 annlen)
+ANwriteann(int32 ann_id,     /* IN: annotation id */
+           const char *ann,  /* IN: annotation to write */
+           int32 annlen      /* IN: length of annotation */)
 {
 #ifdef LATER
     CONSTR(FUNC, "ANwriteann");    /* for HERROR */
@@ -2215,24 +2172,22 @@ ANwriteann(int32 ann_id, const char *ann, int32 annlen)
 /*--------------------------------------------------------------------------
  NAME
        ANreadann -- read annotation given ann_id
- USAGE
-       intn ANreadann(ann_id, ann, maxlen)
-       int32 ann_id;   IN: annotation id (handle)
-       char *ann;     OUT: space to return annotation in
-       int32 maxlen;   IN: size of space to return annotation in
- RETURNS
-       SUCCEED (0) if successful and FAIL (-1) otherwise
+
  DESCRIPTION
        Gets tag and ref of annotation.  Finds DD for that annotation.
        Reads the annotation, taking care of NULL terminator, if necessary.
- GLOBAL VARIABLES
 
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
- *------------------------------------------------------------------------*/
+ RETURNS
+       SUCCEED (0) if successful and FAIL (-1) otherwise
+
+ AUTHOR
+    GeorgeV.
+
+ ------------------------------------------------------------------------*/
 EXPORT int32
-ANreadann(int32 ann_id, char *ann, int32 maxlen)
+ANreadann(int32 ann_id,  /* IN: annotation id (handle) */
+          char *ann,     /* OUT: space to return annotation in */
+          int32 maxlen   /* IN: size of space to return annotation in */)
 {
 #ifdef LATER
     CONSTR(FUNC, "ANreadann");    /* for HERROR */
@@ -2254,16 +2209,19 @@ ANreadann(int32 ann_id, char *ann, int32 maxlen)
 /* ----------------------------------------------------------------------- 
  NAME
 	ANendaccess -- end access to an annotation given it's id
- USAGE
-	intn ANendaccess(ann_id)
-        int32 ann_id;    IN: annotation id
- RETURNS
-        SUCCEED or FAIL
+
  DESCRIPTION
         Terminates access to an annotation. For now does nothing
+
+ RETURNS
+        SUCCEED(0) or FAIL(-1)
+
+ AUTHOR
+    GeorgeV.
+
 --------------------------------------------------------------------------- */
 EXPORT intn
-ANendaccess(int32 ann_id)
+ANendaccess(int32 ann_id /* IN: annotation id */)
 {
 #ifdef LATER
     CONSTR(FUNC, "ANendaccess");    /* for HERROR */
@@ -2282,24 +2240,27 @@ ANendaccess(int32 ann_id)
 /* -------------------------------------------------------------- 
  NAME
 	ANget_tagref - get tag/ref pair to annotation ID
- USAGE
-	int32 ANget_tagref(an_id, index, type, tag, ref)
-        int32 an_id;   IN: annotation interface ID
-        int32 index;     IN: index of annottion to get tag/ref for
-        ann_type  type:  IN: AN_DATA_LABEL for data labels, 
-                             AN_DATA_DESC for data descriptions,
-                             AN_FILE_LABEL for file labels,
-                             AN_FILE_DESC for file descritpions.
-        uint16 tag;     OUT: Tag for annotation
-        uint16 ref;     OUT: ref for annotation
- RETURNS
-        A tag/ref pairt to an annotation type which can either be a 
-        label or description given the annotation ID
+
  DESCRIPTION
-        The position index is zero based
+    The position index is zero based
+
+ RETURNS
+    A tag/ref pairt to an annotation type which can either be a 
+    label or description given the annotation ID
+
+ AUTHOR
+    GeorgeV.
+
 --------------------------------------------------------------------------- */
 EXPORT int32
-ANget_tagref(int32 an_id, int32 index, ann_type type, uint16 *tag, uint16 *ref)
+ANget_tagref(int32 an_id,   /* IN: annotation interface ID */
+             int32 index,   /* IN: index of annottion to get tag/ref for */
+             ann_type type, /* IN: AN_DATA_LABEL for data labels, 
+                               AN_DATA_DESC for data descriptions,
+                               AN_FILE_LABEL for file labels,
+                               AN_FILE_DESC for file descritpions.*/
+             uint16 *tag,   /* OUT: Tag for annotation */
+             uint16 *ref    /* OUT: ref for annotation */)
 {
     CONSTR(FUNC, "ANget_tagref");    /* for HERROR */
     TBBT_NODE *fentry = NULL;
@@ -2312,10 +2273,6 @@ ANget_tagref(int32 an_id, int32 index, ann_type type, uint16 *tag, uint16 *ref)
     HEclear();
 
     /* Valid file id */
-#if 0
-    if (an_id == FAIL)
-        HGOTO_ERROR(DFE_BADCALL, FAIL);
-#endif
     if (HAatom_group(an_id)!=FIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -2376,24 +2333,22 @@ ANget_tagref(int32 an_id, int32 index, ann_type type, uint16 *tag, uint16 *ref)
 
 /*--------------------------------------------------------------------------
  NAME
-       ANid2tagref -- get tag/ref given annotation id
- USAGE
-       int32 ANid2tagref(ann_id, tag, ref)
-       int32 ann_id;   IN: annotation id
-       uint16 tag;     OUT: Tag for annotation
-       uint16 ref;     OUT: ref for annotation
- RETURNS
-       SUCCEED if successful and FAIL (-1) otherwise. 
- DESCRIPTION
-       Uses the annotation id to find ann_node entry which contains ann_ref
- GLOBAL VARIABLES
+    ANid2tagref -- get tag/ref given annotation id
 
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
- *------------------------------------------------------------------------*/
+ DESCRIPTION
+    Uses the annotation id to find ann_node entry which contains ann_ref
+
+ RETURNS
+    SUCCEED(0) if successful and FAIL (-1) otherwise.  
+
+ AUTHOR
+    GeorgeV.
+
+ ------------------------------------------------------------------------*/
 int32
-ANid2tagref(int32 ann_id, uint16 *tag, uint16 *ref)
+ANid2tagref(int32 ann_id,  /* IN: annotation id */
+            uint16 *tag,   /* OUT: Tag for annotation */
+            uint16 *ref    /* OUT: ref for annotation */)
 {
 #ifdef LATER
     CONSTR(FUNC, "ANid2tagref");
@@ -2460,21 +2415,22 @@ ANid2tagref(int32 ann_id, uint16 *tag, uint16 *ref)
 /*--------------------------------------------------------------------------
  NAME
        ANtagref2id -- get annotation id given tag/ref
- USAGE
-       int32 ANtagref2id(an_id, tag, ref, ann_id)
-       int32 an_id;    IN  Annotation interface id
-       uint16 tag;     IN: Tag for annotation
-       uint16 ref;     IN: ref for annotation
-       int32 ann_id;   OUT: annotation id
 
- RETURNS
-       Annotation id of annotation if successful and FAIL(-1) otherwise. 
  DESCRIPTION
        Gets the annotation id of the annotation given the tag/ref of
        the annotation itself and the annotation interface id.
- *------------------------------------------------------------------------*/
+
+ RETURNS
+       Annotation id of annotation if successful and FAIL(-1) otherwise. 
+
+ AUTHOR
+    GeorgeV.
+
+ ------------------------------------------------------------------------*/
 int32
-ANtagref2id(int32 an_id, uint16 ann_tag, uint16 ann_ref)
+ANtagref2id(int32 an_id,    /* IN  Annotation interface id */
+            uint16 ann_tag, /* IN: Tag for annotation */
+            uint16 ann_ref  /* IN: ref for annotation */)
 {
     CONSTR(FUNC, "ANtagref2id");
     TBBT_NODE *entry = NULL;
@@ -2488,10 +2444,6 @@ ANtagref2id(int32 an_id, uint16 ann_tag, uint16 ann_ref)
     HEclear();
 
     /* Valid file id */
-#if 0
-    if (an_id == FAIL)
-        HGOTO_ERROR(DFE_BADCALL, FAIL);
-#endif
     if (HAatom_group(an_id)!=FIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -2559,17 +2511,23 @@ ANtagref2id(int32 an_id, uint16 ann_tag, uint16 ann_ref)
 
 /*-------------------------------------------------------------------- 
  NAME
-     atype2tag - annotation type to corresponding annotation TAG
+     ANatype2tag - annotation type to corresponding annotation TAG
+
  DESCRIPTION
-     translate annotation type to corresponding TAG
+     Translate annotation type to corresponding TAG
+
  RETURNS
-     returns TAG correspondign to annotatin type
+     Returns TAG corresponding to annotatin type
+
+ AUTHOR
+    GeorgeV.
+
 --------------------------------------------------------------------*/
 EXPORT uint16
-atype2tag(ann_type atype)
+ANatype2tag(ann_type atype /* IN: Annotation type */)
 {   /* Switch on annotation type "atype" */
 #ifdef LATER
-    CONSTR(FUNC, "atype2tag");    /* for HERROR */
+    CONSTR(FUNC, "ANatype2tag");    /* for HERROR */
 #endif /* LATER */
     uint16 ann_tag;
 
@@ -2582,21 +2540,27 @@ atype2tag(ann_type atype)
       default: ann_tag = 5;
       } /* switch */
     return ann_tag;
-} /* atype2tag */
+} /* ANatype2tag */
 
 /*-------------------------------------------------------------------- 
  NAME
-     tag2atype - annotation TAG to corresponding annotation type
+     ANtag2atype - annotation TAG to corresponding annotation type
+
  DESCRIPTION
-     translate annotation TAG to corresponding atype
+     Translate annotation TAG to corresponding atype
+
  RETURNS
-     returns type correspondign to annotatin TAG
+     Returns type corresponding to annotatin TAG
+
+ AUTHOR
+    GeorgeV.
+
 --------------------------------------------------------------------*/
 EXPORT ann_type
-tag2atype(uint16 atag)
+ANtag2atype(uint16 atag /* IN: annotation tag */)
 {   /* Switch on annotation tag */
 #ifdef LATER
-    CONSTR(FUNC, "tag2atype");    /* for HERROR */
+    CONSTR(FUNC, "ANtag2atype");    /* for HERROR */
 #endif /* LATER */
     ann_type atype;
 
@@ -2610,6 +2574,6 @@ tag2atype(uint16 atag)
       default: atype = AN_UNDEF;
       } /* switch */
     return atype;
-} /* tag2atype */
+} /* ANtag2atype */
 
 #endif /* MFAN_C */

@@ -41,7 +41,7 @@
  *
  * This version uses HDF number types.
  *
- * AUTHOR - George V.
+ * AUTHOR - George V.- 1996/08/22
  *****************************************************************************/ 
 
 /* $Id$ */
@@ -130,11 +130,6 @@ typedef struct MCACHE
   int32 object_id;            /* access ID of object this cache is for */
   int32 object_size;          /* size of object to cache 
                                  must be multiple of pagesize for now */
-#if 0
-    /* Original defintions */
-  VOID (*pgin) (VOID *cookie, int32 pgno, VOID *page); /* page in conversion routine */
-  VOID (*pgout) (VOID *cookie, int32 pgno, VOID *page);/* page out conversion routine*/
-#endif
   int32 (*pgin) (VOID *cookie, int32 pgno, VOID *page); /* page in conversion routine */
   int32 (*pgout) (VOID *cookie, int32 pgno, const VOID *page);/* page out conversion routine*/
   VOID	*pgcookie;                         /* cookie for page in/out routines */
@@ -211,7 +206,7 @@ extern int32  mcache_get_npages (
 extern VOID	 mcache_stat(
     MCACHE *mp /* IN: MCACHE cookie */);
 #endif /* STATISTICS */
-#if 0
+#if 0 /* NOT USED */
 extern intn	 mcache_page_sync (
     MCACHE *mp, /* IN: MCACHE cookie */
     int32 pgno, /* IN: page to sync */

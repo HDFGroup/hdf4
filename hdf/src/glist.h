@@ -16,7 +16,7 @@
          by Keith Pomakis(kppomaki@jeeves.uwaterloo.ca)-Spring, 1994
          It has been modifed to adhere to HDF coding standards.
 
-  -George V.
+  1996/05/29 - George V.
  ************************************************************************/
 
 /* $Id$ */

@@ -14,9 +14,9 @@
   Credits:
           Original code is part of the public domain 'Generic List Library'
           by Keith Pomakis(kppomaki@jeeves.uwaterloo.ca)-Spring, 1994
-          I modiefied it to adhere to HDF coding standards.
+          I modified it to adhere to HDF coding standards.
 
-  -George V.
+  1996/06/04 - George V. 
  ************************************************************************/
 
 #ifdef RCSID

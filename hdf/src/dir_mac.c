@@ -19,6 +19,12 @@
 
 #if defined(MAC) || defined (__MWERKS__) || defined(macintosh) || defined(SYMANTEC_C)
 
+/*
+ * Added to HDF core library for directory reading on the Macintosh
+ *
+ * 1996/03/01 - GeorgeV.
+ */
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif

@@ -40,7 +40,7 @@
  *
  * NOTE: references to pages here is the same as chunks
  *
- * AUTHOR - George V.
+ * AUTHOR - George V.- 1996/08/22
  *****************************************************************************/ 
 
 #ifdef RCSID
@@ -330,8 +330,7 @@ mcache_filter(
     mp->pgcookie = pgcookie;
 } /* mcache_filter() */
 
-#if 0
-
+#if 0 /* NOT USED YET */
 /******************************************************************************
 NAME
    mcache_new -- get a new page of memory and extend memory pool.
@@ -831,7 +830,7 @@ mcache_sync(
     return ret_value;
 } /* mcache_sync() */
 
-#if 0
+#if 0  /* NOT USED */
 /******************************************************************************
 NAME
    mcache_page_sync -- write the specified page to disk given its page number

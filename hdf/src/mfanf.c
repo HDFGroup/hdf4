@@ -18,6 +18,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 /*-----------------------------------------------------------------------------
  * File:     mfanf.c
+ * Author:   GeorgeV.
  * Purpose:  C-stubs for multi-file Fortran annotation routines
  * Invokes:  C-Routines in "mfan.c"
  * Contents: SEE annotation source/header files "mfan.c" and "mfan.h"
@@ -26,11 +27,6 @@ static char RcsId[] = "@(#)$Revision$";
  *  NOTES: TYPE here refers to file/data label/description types 
  *         They are AN_FILE_LABEL, AN_FILE_DESC, AN_DATA_LABEL, AN_DATA_DESC
  *         THE tag/ref refers to data tag/ref
- *
- *  C-stub for corresponding Fortran call(OBSOLETE)
- *  -------------------------------------
- *    acstart    - start annotation access on file and return file handle
- *               - called by afstart() in "mfanff.f"
  *
  *  C-stubs directly callable by Fortran Users
  *  ------------------------------------------
@@ -70,35 +66,6 @@ static char RcsId[] = "@(#)$Revision$";
 
 -----------------------------------------------------------------------------*/
 
-#if 0
-/*-----------------------------------------------------------------------------
- * Name:    acstart
- * Purpose: C-stub for afstart()
- * Inputs:  file_id: id of HDF file
- *          acc_mode: File access mode 
- *          namelen:  length of filename
- * Returns: file handle on SUCCEED and FAIL otherwise
- * Users:   afstart(mfanff.f)
- * Invokes: ANstart()
- *---------------------------------------------------------------------------*/
-FRETVAL(intf)
-nacstart(intf *file_id, intf *acc_mode, intf *namelen)
-{
-  char *fn;
-  intf ret;
-
-  /* Convert fortran string to C-usable string */
-  if ((fn = HDf2cstring(filename, (intn) *namelen)) == NULL)
-    return FAIL;
-
-  ret = ANstart((int32)file_id, (int32) *acc_mode);
-
-  HDfree((VOIDP) fn);
-
-  return (ret);
-} /* nacstart() */
-#endif
-
 /*-----------------------------------------------------------------------------
  * Name:    afstart
  * Purpose: Open file for annoation handling
@@ -106,6 +73,7 @@ nacstart(intf *file_id, intf *acc_mode, intf *namelen)
  * Returns: annotation interface handle on SUCCEED and FAIL otherwise
  * Users:   
  * Invokes: ANstart()
+ * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 nafstart(intf *file_id)
@@ -128,6 +96,7 @@ nafstart(intf *file_id)
  * Returns: see ANfileinfo()
  * Users:   Fortran Users
  * Invokes: ANfileinfo()
+ * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 naffileinfo(intf *an_id, intf *num_flabel, intf *num_fdesc, intf *num_olabel,
@@ -157,6 +126,7 @@ naffileinfo(intf *an_id, intf *num_flabel, intf *num_fdesc, intf *num_olabel,
  * Returns: see ANend()
  * Users:   Fortran Users
  * Invokes: ANend()
+ * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 nafend(intf *an_id)
@@ -197,6 +167,7 @@ nafcreate(intf *an_id, intf *etag, intf *eref, intf *atype)
  * Returns: see ANcreatef()
  * Users:   Fortran Users
  * Invokes: ANcreatf()
+ * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 naffcreate(intf *an_id, intf *atype)
@@ -222,6 +193,7 @@ naffcreate(intf *an_id, intf *atype)
  * Returns: see ANselect()
  * Users:   Fortran Users
  * Invokes: ANselect()
+ * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 nafselect(intf *an_id, intf *index, intf *atype)
@@ -243,6 +215,7 @@ nafselect(intf *an_id, intf *index, intf *atype)
  * Returns: see ANnumann()
  * Users:   Fortran Users
  * Invokes: ANnumann()
+ * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 nafnumann(intf *an_id, intf *atype, intf *etag, intf *eref)
@@ -265,6 +238,7 @@ nafnumann(intf *an_id, intf *atype, intf *etag, intf *eref)
  * Returns: number of annoations found that match else FAIL. see ANannlist()
  * Users:   Fortran Users
  * Invokes: ANnumann(), ANannlist()
+ * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 nafannlist(intf *an_id, intf *atype, intf *etag, intf *eref, intf alist[])
@@ -276,7 +250,7 @@ nafannlist(intf *an_id, intf *atype, intf *etag, intf *eref, intf alist[])
   intn  i;
 
   /* Get number of annotations that match tag/ref pair */
-  nanns =ANnumann((int32)*an_id,(ann_type)*atype,(uint16)*etag,(uint16)*eref);
+  nanns = ANnumann((int32)*an_id,(ann_type)*atype,(uint16)*etag,(uint16)*eref);
   if (nanns < 0)
     HE_REPORT_RETURN("ANnumann: failed to any annotations", FAIL);
 
@@ -307,6 +281,7 @@ nafannlist(intf *an_id, intf *atype, intf *etag, intf *eref, intf alist[])
  * Returns: see ANannlen()
  * Users:   Fortran Users
  * Invokes: ANannlen()
+ * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 nafannlen(intf *an_id)
@@ -327,6 +302,7 @@ nafannlen(intf *an_id)
  * Returns: see ANwriteann()
  * Users:   Fortran Users
  * Invokes: ANwriteann()
+ * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 nafwriteann(intf *ann_id,_fcd ann, intf *annlen)
@@ -339,6 +315,7 @@ nafwriteann(intf *ann_id,_fcd ann, intf *annlen)
     int32       cstr_len = 0;
     intf        status;
 
+    /* Convert fortran string to C-String */
     iann = HDf2cstring(ann, (intn) *annlen);
     if (!iann)
         return(FAIL);
@@ -347,7 +324,7 @@ nafwriteann(intf *ann_id,_fcd ann, intf *annlen)
     status = ANwriteann((int32)*ann_id, (char *) _fcdtocp(ann), 
                         (int32)*annlen);
 
-    HDfree(iann);
+    HDfree(iann); /* free allocaed space by HDf2cstring */
 
     return status;
 } /* nafwriteann() */
@@ -361,6 +338,7 @@ nafwriteann(intf *ann_id,_fcd ann, intf *annlen)
  * Returns: see ANreadann() (SUCCEED (0) if successful, else FAIL (-1))
  * Users:   Fortran Users
  * Invokes: ANreadann()
+ * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 nafreadann(intf *ann_id,_fcd ann, intf *maxlen)
@@ -369,18 +347,20 @@ nafreadann(intf *ann_id,_fcd ann, intf *maxlen)
     char	*iann = NULL;
     intn        status;
 
+    /* Allocate space for fortran string */
     if (*maxlen)
         iann = (char *) HDmalloc((uint32) *maxlen + 1);
 
     if (!iann)
-	HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     status = ANreadann((int32)*ann_id, iann, (int32)*maxlen);
 
+    /* C-String to Fortran String */
     HDpackFstring(iann, _fcdtocp(ann), (intn) *maxlen);
 
     if (iann)
-        HDfree(iann);
+        HDfree(iann); /* free allocated space */
 
     return status;
 } /* nafreadann() */
@@ -392,6 +372,7 @@ nafreadann(intf *ann_id,_fcd ann, intf *maxlen)
  * Returns: see ANendaccess()
  * Users:   Fortran Users
  * Invokes: ANendaccess()
+ * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 nafendaccess(intf *ann_id)

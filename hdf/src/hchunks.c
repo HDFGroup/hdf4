@@ -285,6 +285,9 @@ DESCRIPTION
     4. The user array contains the users seek postion in the element
 RETURNS
     SUCCEED/FAIL
+
+AUTHOR
+   -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
 PRIVATE int32
 create_dim_recs(DIM_REC **dptr, /* OUT: dimension record pointers */
@@ -350,6 +353,8 @@ DESCRIPTION
     chunk array and position within chunk.
 RETURNS
     Nothing
+AUTHOR
+   -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
 PRIVATE void
 update_chunk_indicies_seek(int32 sloc,    /* IN: physical Seek loc in element */
@@ -398,6 +403,8 @@ DESCRIPTION
     within that chunk array. 
 RETURNS
     Nothing
+AUTHOR
+   -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
 PRIVATE void
 compute_chunk_to_seek(int32 *chunk_seek, /* OUT: new physical chunk seek pos in element*/
@@ -463,6 +470,8 @@ DESCRIPTION
     the new chunk.
 RETURNS
     Nothing
+AUTHOR
+   -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
 PRIVATE void
 update_chunk_indices(int32 chunk_size, /* IN: physical size of chunk read/written*/
@@ -532,6 +541,8 @@ DESCRIPTION
     array to position in overall chunk array and within the chunk.
 RETURNS
     Nothing
+AUTHOR
+   -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
 PRIVATE void
 compute_array_to_chunk(int32 *chunk_indicies, /* OUT: chunk indicies */
@@ -560,6 +571,8 @@ DESCRIPTION
     Not implemented
 RETURNS
     Nothing
+AUTHOR
+   -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
 PRIVATE void
 calculate_num_to_chunk(int32 chunk_num, /* IN: chunk number within element */
@@ -583,6 +596,8 @@ DESCRIPTION
     and position within chunk. 
 RETURNS
     Nothing
+AUTHOR
+   -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
 PRIVATE void
 compute_chunk_to_array(int32 *chunk_indicies, /* IN: chunk indicies */
@@ -623,6 +638,8 @@ DESCRIPTION
     Computer user seek postion within element given user array.
 RETURNS
     Nothing
+AUTHOR
+   -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
 PRIVATE void
 compute_array_to_seek(int32 *user_seek,      /* OUT: user seek */
@@ -658,6 +675,8 @@ DESCRIPTION
     Calculate seek postion within chunk
 RETURNS
     Nothing
+AUTHOR
+   -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
 PRIVATE void
 calculate_seek_in_chunk(int32 *chunk_seek,/* OUT: new physical seek pos in element*/
@@ -693,6 +712,8 @@ DESCRIPTION
     Update chunk seek array with seek pos in chunk. 
 RETURNS
     Nothing
+AUTHOR
+   -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
 PRIVATE void
 update_seek_pos_chunk(int32 chunk_seek, /* IN: physical seek pos in chunk */
@@ -731,6 +752,8 @@ DESCRIPTION
     within that chunk array. 
 RETURNS
     Nothing
+AUTHOR
+   -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
 PRIVATE void
 calculate_chunk_num(int32 *chunk_num, /* OUT: new chunk number within element */
@@ -764,6 +787,8 @@ DESCRIPTION
   to the current chunk.
 RETURNS
     Nothing
+AUTHOR
+   -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
 PRIVATE void
 calculate_chunk_for_chunk(int32 *chunk_size,   /* OUT: chunk size for this chunk */
@@ -807,7 +832,9 @@ DESCRIPTION
 
    *** Only called by B-tree routines, should _not_ be called externally ***
 RETURNS
-   
+
+AUTHOR
+   -GeorgeV - 9/3/96   
 ---------------------------------------------------------------------------*/
 intn
 chkcompare(VOIDP k1,   /* IN: first key */
@@ -826,7 +853,18 @@ chkcompare(VOIDP k1,   /* IN: first key */
 
 /********* Helper fcns for dealing with chunk table TBBT tree ***************/
 
-/* free key - used by tbbt routines */
+/* -------------------------------------------------------------------------
+NAME
+    chkfreekey
+DESCRIPTION
+    Free key - used by tbbt routines 
+    *** Only called by B-tree routines, should _not_ be called externally ***
+
+RETURNS
+   Nothing
+AUTHOR
+   -GeorgeV - 9/3/96
+---------------------------------------------------------------------------*/
 VOID
 chkfreekey(VOIDP key /*IN: chunk key */ )
 {
@@ -843,6 +881,8 @@ DESCRIPTION
 
 RETURNS
    Nothing
+AUTHOR
+   -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
 VOID
 chkdestroynode(VOIDP n /* IN: chunk record */ )
@@ -887,6 +927,8 @@ DESCRIPTION
 
 RETURNS
    The AID of the access record on success FAIL on error.
+AUTHOR
+   -GeorgeV - 9/3/96
 ----------------------------------------------------------------------------*/
 PRIVATE int32
 HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
@@ -1417,7 +1459,8 @@ DESCRIPTION
 
 RETURNS
    The AID of newly created chunked element, FAIL on error.
-
+AUTHOR
+   -GeorgeV - 9/3/96
  --------------------------------------------------------------------------- */
 int32
 HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
@@ -1915,6 +1958,9 @@ DESCRIPTION
 RETURNS
      Returns number of 'maxcache' if successful and FAIL otherwise
 
+AUTHOR
+   -GeorgeV - 9/3/96
+
 NOTE
      This calls the real routine mcache_set_maxcache().
      Currently 'maxcache' has to be greater than 1. 
@@ -1977,6 +2023,8 @@ DESCRIPTION
 
 RETURNS
    The AID of the access record on success FAIL on error.
+AUTHOR
+   -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
 int32
 HMCPstread(accrec_t * access_rec /* IN: access record to fill in */)
@@ -2006,6 +2054,8 @@ DESCRIPTION
 
 RETURNS
    The AID of the access record on success FAIL on error.
+AUTHOR
+   -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
 int32
 HMCPstwrite(accrec_t * access_rec /* IN: access record to fill in */)
@@ -2035,6 +2085,8 @@ DESCRIPTION
 
 RETURNS
    SUCCEED / FAIL
+AUTHOR
+   -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
 int32
 HMCPseek(accrec_t * access_rec,  /* IN: access record to mess with */
@@ -2112,6 +2164,8 @@ DESCRIPTION
 
 RETURNS
    The number of bytes read or FAIL on error
+AUTHOR
+   -GeorgeV - 9/3/96
 --------------------------------------------------------------------------- */
 int32
 HMCPchunkread(VOID  *cookie,    /* IN: access record to mess with */
@@ -2236,6 +2290,8 @@ DESCRIPTION
 
 RETURNS
    The number of bytes read or FAIL on error
+AUTHOR
+   -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
 int32
 HMCreadChunk(int32 access_id,  /* IN: access aid to mess with */
@@ -2402,6 +2458,8 @@ DESCRIPTION
 
 RETURNS
    The number of bytes read or FAIL on error
+AUTHOR
+   -GeorgeV - 9/3/96
 --------------------------------------------------------------------------- */
 int32
 HMCPread(accrec_t * access_rec, /* IN: access record to mess with */
@@ -2590,6 +2648,8 @@ DESCRIPTION
 
 RETURNS
    The number of bytes written or FAIL on error
+AUTHOR
+   -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
 int32
 HMCPchunkwrite(VOID  *cookie,    /* IN: access record to mess with */
@@ -2757,6 +2817,8 @@ DESCRIPTION
 
 RETURNS
    The number of bytes written or FAIL on error
+AUTHOR
+   -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
 int32
 HMCwriteChunk(int32 access_id,  /* IN: access aid to mess with */
@@ -2997,6 +3059,8 @@ DESCRIPTION
 
 RETURNS
    The number of bytes written or FAIL on error
+AUTHOR
+   -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
 int32
 HMCPwrite(accrec_t * access_rec, /* IN: access record to mess with */
@@ -3256,6 +3320,8 @@ DESCRIPTION
 
 RETURNS
    SUCCEED / FAIL
+AUTHOR
+   -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
 int32
 HMCPcloseAID(accrec_t *access_rec /* IN:  access record of file to close */)
@@ -3339,6 +3405,8 @@ DESCRIPTION
 
 RETURNS
    SUCCEED / FAIL
+AUTHOR
+   -GeorgeV - 9/3/96
 --------------------------------------------------------------------------- */
 intn
 HMCPendaccess(accrec_t * access_rec /* IN:  access record to close */)
@@ -3401,6 +3469,8 @@ DESCRIPTION
    
 RETURNS
    SUCCEED / FAIL
+AUTHOR
+   -GeorgeV - 9/3/96
 --------------------------------------------------------------------------- */
 int32
 HMCPinfo(accrec_t *access_rec,       /* IN: access record of access elemement */
@@ -3466,6 +3536,8 @@ DESCRIPTION
 
 RETURNS
    SUCCEED/FAIL
+AUTHOR
+   -GeorgeV - 9/3/96
 --------------------------------------------------------------------------- */
 int32
 HMCPinquire(accrec_t *access_rec,  /* IN:  access record to return info about */
