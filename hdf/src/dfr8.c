@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/09/17 20:02:17  koziol
+Included Shiming's bugfix to RIG stuff
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*-----------------------------------------------------------------------------
  * File:    dfr8.c
@@ -903,21 +906,23 @@ PRIVATE int DFR8Iriginfo(file_id)
                foundRig = 0; /* No RIGs present in file */
            }
            /* RIG found */
-           Hinquire(aid, (int32*)NULL, (uint16*)NULL, &ref,
+           if (aid != FAIL)   {
+              Hinquire(aid, (int32*)NULL, (uint16*)NULL, &ref,
                     (int32*)NULL, (int32*)NULL, (int32*)NULL,
                     (int16*)NULL, (int16*)NULL);
-           if (DFR8getrig(file_id, ref, &Readrig) == FAIL) {
-               if (Refset || (HEvalue(1) != DFE_BADCALL)) {
-                   Refset = 0;
-                   Hendaccess(aid);
-                   return FAIL;
-               }
-               Readrig.image.ref = ref;
-           } else {
-               foundRig = 1;
-               Refset = 0;
+              if (DFR8getrig(file_id, ref, &Readrig) == FAIL) {
+                 if (Refset || (HEvalue(1) != DFE_BADCALL)) {
+                     Refset = 0;
+                     Hendaccess(aid);
+                     return FAIL;
+                 }
+                 Readrig.image.ref = ref;
+              } else {
+                 foundRig = 1;
+                 Refset = 0;
+              }
            }
-       } while (HEvalue(1) == DFE_BADCALL);
+       } while ( (aid != FAIL) && (HEvalue(1) == DFE_BADCALL));
        if (aid != FAIL) Hendaccess(aid);
     }
     if (Refset || !foundRig) { /* No RIGs present, look for RI8 and CI8 */
