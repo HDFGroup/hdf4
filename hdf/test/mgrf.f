@@ -1176,20 +1176,20 @@ C
 C
 C---Data
 C 
-      integer*2 chunk11(NCOMP* X_CH_LENGTH*Y_CH_LENGTH)
-      integer*2 chunk21(NCOMP* X_CH_LENGTH*Y_CH_LENGTH)
-      integer*2 chunk52(NCOMP* X_CH_LENGTH*Y_CH_LENGTH)
-      integer*2 chunk52_out(NCOMP* X_CH_LENGTH*Y_CH_LENGTH)
-      integer*2 data_org(NCOMP* X_LENGTH*Y_LENGTH)
+      integer chunk11(NCOMP* X_CH_LENGTH*Y_CH_LENGTH)
+      integer chunk21(NCOMP* X_CH_LENGTH*Y_CH_LENGTH)
+      integer chunk52(NCOMP* X_CH_LENGTH*Y_CH_LENGTH)
+      integer chunk52_out(NCOMP* X_CH_LENGTH*Y_CH_LENGTH)
+      integer data_org(NCOMP* X_LENGTH*Y_LENGTH)
        
-      integer*2 image_data_out(NCOMP,X_LENGTH,Y_LENGTH)
-      integer*2 data_arr(NCOMP,X_LENGTH,Y_LENGTH)
+      integer image_data_out(NCOMP,X_LENGTH,Y_LENGTH)
+      integer data_arr(NCOMP,X_LENGTH,Y_LENGTH)
       integer n_images, n_file_attrs
       equivalence (data_org(1), data_arr(1,1,1))
 C
 C---Default pixel value
 C
-      integer*2 pixel_value(3)
+      integer pixel_value(3)
 C
 C---Chunking dimension arrays
 C
