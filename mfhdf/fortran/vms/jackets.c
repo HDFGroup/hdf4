@@ -95,7 +95,7 @@ handle_err (pname, rcode)
     int rcode;			/* error return */
 {
     extern void NCadvise();
-    extern char *cdf_routine_name; /* routine name in error messages */
+    extern const char *cdf_routine_name; /* routine name in error messages */
 
     cdf_routine_name = pname;
     (void) NCadvise(rcode, "string won't fit in CHARACTER variable provided");
