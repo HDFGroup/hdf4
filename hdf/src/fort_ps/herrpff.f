@@ -26,7 +26,7 @@ C      integer hestringc
       return
       end
 C-----------------------------------------------------------------------------
-C Name: heprnt
+C Name: heprntf
 C Purpose: prints values from the error stack 
 C Inputs:  print_levels - number of levels to print 
 C Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
@@ -34,9 +34,9 @@ C
 C Remarks: This routine always prints to the standard output.
 C-----------------------------------------------------------------------------*/
 
-      integer function heprnt(print_levels)
+      integer function heprntf(print_levels)
 	!MS$if defined(BUILD_HDF_DLL)
-	!MS$attributes dllexport :: heprnt
+	!MS$attributes dllexport :: heprntf
 	!MS$endif
       integer print_levels 
 
@@ -46,6 +46,6 @@ C-----------------------------------------------------------------------------*/
           integer print_levels 
         END FUNCTION heprntc
       END INTERFACE
-      heprnt = heprntc(print_levels)
+      heprntf = heprntc(print_levels)
       return
       end

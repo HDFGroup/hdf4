@@ -54,6 +54,23 @@ nheprnt(intf * print_levels)
     HEprint(stderr, *print_levels);
 }
 /*-----------------------------------------------------------------------------
+ * Name:    heprntc
+ * Purpose: call HEprint to print error messages, starting from top of stack
+ * Inputs:  print_levels: number of levels to print
+ * Returns: 0 on success, FAIL on failure
+ * Users:   Fortran stub routine
+ * Invokes: HEprint
+ * Remarks: This routine has one less parameter than HEprint, because it
+ *          doesn't allow the user to specify the stream to print to.
+ *          Instead it prints automatically to stdout.
+ *---------------------------------------------------------------------------*/
+
+FRETVAL(VOID)
+nheprntc(intf * print_levels)
+{
+    HEprint(stderr, *print_levels);
+}
+/*-----------------------------------------------------------------------------
  * Name: hestringc
  * Purpose:  Calls HEstring
  * Inputs:   error_code - HDF error code

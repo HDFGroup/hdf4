@@ -2050,14 +2050,19 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #   define HERR_FNAMES
 #ifdef DF_CAPFNAMES
 #   define nheprnt   FNAME(HEPRNT)
+#   define nheprntc   FNAME(HEPRNTC)
 #   define nhestringc FNAME(HESTRINGC)
 #else
 #   define nheprnt   FNAME(heprnt)
+#   define nheprntc   FNAME(heprntc)
 #   define nhestringc FNAME(hestringc)
 #endif                          /* DF_CAPFNAMES */
 #endif                          /* HERR_FNAMES */
 
     HDFLIBAPI      FRETVAL(void) nheprnt
+                (intf  * print_levels);
+
+    HDFLIBAPI      FRETVAL(void) nheprntc
                 (intf  * print_levels);
 
     HDFLIBAPI      FRETVAL(intf) nhestringc

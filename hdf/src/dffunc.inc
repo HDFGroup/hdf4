@@ -580,6 +580,8 @@ C
       external hishdff
       integer  hestringf
       external hestringf
+      integer heprntf
+      external heprntf
       
 
 C

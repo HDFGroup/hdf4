@@ -155,3 +155,18 @@ C-----------------------------------------------------------------------------*/
      .                      len(error_message))
       return
       end
+C-----------------------------------------------------------------------------
+C Name: heprntf
+C Purpose: prints values from the error stack 
+C Inputs:  print_levels - number of levels to print 
+C Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
+C
+C Remarks: This routine always prints to the standard output.
+C-----------------------------------------------------------------------------*/
+
+      integer function heprntf(print_levels)
+      integer print_levels 
+      integer heprntc
+      heprntf = heprntc(print_levels)
+      return
+      end

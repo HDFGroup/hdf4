@@ -328,7 +328,7 @@ C**************************************************************
 
       integer affileinfo, afnumann, afannlist, afannlen
       integer afreadann, afstart, afend, afendaccess, hopen, hclose
-      integer hishdf, hestring
+      integer hishdf, hestringf
       character*80 error_message
 
       integer fileh, anh
@@ -354,10 +354,10 @@ C
           num_failed = num_failed + 1
           write(*,*) "HISHDF function failed"
       endif
-      ret = hestring(0, error_message)
+      ret = hestringf(0, error_message)
        if (ret .ne. 0) then
           num_failed = num_failed + 1
-          write(*,*) "HESTRING function failed"
+          write(*,*) "HESTRINGF function failed"
       endif
 
 C
