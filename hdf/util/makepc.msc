@@ -15,7 +15,7 @@
 #
 UTILS = hdf24to8.exe hdfcomp.exe hdfls.exe hdfpack.exe hdfrseq.exe hdftopal.exe \
     hdftor8.exe paltohdf.exe r8tohdf.exe ristosds.exe vcompat.exe vmake.exe \
-    vshow.exe make24.exe hdf2jpeg.exe jpeg2hdf.exe
+    vshow.exe hdf8to24.exe hdf2jpeg.exe jpeg2hdf.exe
 
 HEOBJ = he_main.obj he_cntrl.obj he_disp.obj he_file.obj
 
@@ -40,9 +40,9 @@ MACHINE = PC
 RM=del
 RMFLAGS=
 
-HDFLIB = ../lib
-HDFINC = ../include
-HDFBIN = ../bin
+HDFLIB = ..\lib
+HDFINC = ..\include
+HDFBIN = ..\bin
 
 IFLAGS=   /I../include /I.
 LIBS= ..\lib\df.lib
@@ -92,7 +92,7 @@ paltohdf.exe : paltohdf.obj
 r8tohdf.exe : r8tohdf.obj
     $(LN) $(LNFLAGS) $*,$*,nul,$(LIBS);
 
-make24.exe : make24.obj
+hdf8to24.exe : hdf8to24.obj
     $(LN) $(LNFLAGS) $*,$*,nul,$(LIBS);
 
 hdf2jpeg.exe : hdf2jpeg.obj
