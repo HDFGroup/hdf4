@@ -160,6 +160,9 @@ check_fann(const char *fname)
     char *ann_label = NULL; /* annotation label */
     char *ann_desc = NULL;  /* annotation desc */
     intn indx;
+    int32 ann_id;
+    uint16 ann_tag;
+    uint16 ann_ref;
     intn  i;
 
     /* open file again */
@@ -193,6 +196,26 @@ check_fann(const char *fname)
           /* see if this routine works */
           ret = ANget_tagref(an_handle,indx,AN_FILE_LABEL,&atag,&aref);
           RESULT("ANget_tagref");
+
+          /* see if this routine works. Use tag/ref from ANget_tagref() */
+          ann_id = ret = ANtagref2id(an_handle,atag,aref);
+          RESULT("ANtagref2id");
+
+          if (ann_id != ann_handle)
+            {
+                printf(">>> ANtagref2id failed to return valid annotation handle \n");
+                num_errs++;
+            }
+
+          /* see if this routine works. Use annotation id from ANtagref2id() */
+          ret = ANid2tagref(ann_id,&ann_tag,&ann_ref);
+          RESULT("ANid2tagref");
+
+          if (ann_tag != atag || ann_ref != aref)
+            {
+                printf(">>> ANid2tagref failed to return valid tag and ref \n");
+                num_errs++;
+            }
 
           /* check ann length */
           if (ann_len != (int32) HDstrlen(file_lab[i]))
