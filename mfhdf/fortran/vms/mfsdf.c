@@ -40,12 +40,19 @@ FRETVAL(intf) nsfsfill(intf *id, VOIDP val);
 FRETVAL(intf) nsfgfill(intf *id, VOIDP val);
 FRETVAL(intf) nsfrnatt(intf *id, intf *index, VOIDP buf);
 FRETVAL(intf) nscsnatt(intf *id, _fcd name, intf *nt, intf *count, VOIDP data, intf *len);
+FRETVAL(intf) nsfsflmd(intf *id, intf *fillmode);
+FRETVAL (intf) nscrchnk(intf *id, intf *start, VOIDP num_data);
+FRETVAL (intf) nscwchnk(intf *id, intf *start, VOIDP num_data);
 #else
 FRETVAL(intf) nsfscfill();
 FRETVAL(intf) nsfsfill();
 FRETVAL(intf) nsfgfill();
 FRETVAL(intf) nsfrnatt();
 FRETVAL(intf) nscsnatt();
+FRETVAL(intf) nsfsflmd();
+FRETVAL (intf) nscrchnk();
+FRETVAL (intf) nscwchnk();
+
 #endif /* PROTOTYPE */
 
 /*-----------------------------------------------------------------------------
@@ -939,7 +946,7 @@ nscgdatstrs(id, label, unit, format, coord, llabel, lunit, lformat, lcoord, len)
      intf *len;
 #endif /* PROTOTYPE */
 {
-    char *ilabel, *iunit, *iformat, *icoord;
+    char *ilabel, *iunit, *iformat, *icoord=NULL;
     intf ret;
 
     iunit = ilabel = iformat = NULL;
@@ -1365,4 +1372,555 @@ nsfisdmvc(id)
 {
     return((intf) SDisdimval_bwcomp(*id));
 }
+
+/*-----------------------------------------------------------------------------
+ * Name:    sfsflmd
+ * Purpose: Call SDsetfillmode to set for the file fill mode 
+ *            as fill or nofill
+ * Inputs:  id: file id
+ *          fillmode: Desired fill mode for the file,
+ *                                 either SD_FILL or SD_NOFILL.
+ *                                 SD_FILL is the default mode.
+ *
+ * Returns: The current (before the new mode is set) fill mode;
+ *          FAIL (-1) for error. 
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nsfsflmd(intf *id, intf *fillmode)
+#else
+nsfsflmd(id, fillmode)
+    intf *id, *fillmode;
+#endif  /* PROTOTYPE */
+{
+    return((intf) SDsetfillmode(*id, *fillmode));
+}
 #endif /* HDF */
+
+/*-------------------------------------------------------------------------
+ * Name:    scgichnk
+ * Puporse: Call SDgetchunkinfo
+ * Inputs:  id: SDS access id
+ * Outputs: dim_length: chunk dimensions
+ *          flags:            -1 - SDS is nonchunked
+ *                             0 - SDS is chunked, no compression
+ *                             1 - SDS is chunked and compressed 
+ *                                 with RLE, SKPHUFF and GZIP 
+ *                             2 - SDS is chunked and compressed with NBIT 
+ * Actual parameters are not returned. Will be fixed after HDF41r.2
+ *          comp_prm[0] = nbit_sign_ext, 
+ *          comp_prm[1] = nbit_fill_one, 
+ *          comp_prm[2] = nbit_start_bit, 
+ *          comp_prm[3] = nbit_bit_len:     NBIT compression parametes 
+ *
+ *          comp_prm[0] = skphuff_skp_size: size of individual elements for 
+ *                            Adaptive Huffman compression algorithm
+ *          comp_prm[0] = deflate_level:    GZIP  compression parameter
+ * Returns: 0 on success, -1 on failure with error set
+ * Users:   HDF Fortran programmers          
+ *-------------------------------------------------------------------------*/
+
+    FRETVAL (intf)
+#ifdef PROTOTYPE
+      nscgichnk(intf *id, intf *dim_length, intf *flags)
+#else
+       nscgichnk( id, dim_length, flags)
+       intf *id;       
+       intf *dim_length;
+       intf *flags;
+#endif /* PROTOTYPE */
+{
+
+HDF_CHUNK_DEF chunk_def;  /* Chunk definition set */
+int32 sdsid;              /* SDS id               */
+comp_info cinfo;          /* compression info     */
+int   i;
+int32 rank, status, cflags, comp_type;
+intf ret;
+
+int32 cdims[100], nt32, nattr32;
+sdsid = *id;
+
+/* Get  SDS rank */
+
+       status = SDgetinfo(sdsid, NULL, &rank, cdims, &nt32, &nattr32 );
+       if(status == FAIL) return FAIL;
+
+/* Get SDS info */
+  
+       status = SDgetchunkinfo(sdsid, &chunk_def, &cflags);
+       if(status == FAIL) return FAIL;
+
+
+switch (cflags)  
+
+  {
+
+  case HDF_NONE:       /* Non-chunked SDS */
+
+    *flags = -1;
+     ret = 0;
+     return(ret);
+     break;
+
+  case HDF_CHUNK:    /* Chunked, noncompressed SDS */
+
+    *flags = 0;
+     for (i=0; i < rank; i++)
+          dim_length[rank-i-1] = chunk_def.chunk_lengths[i];
+     ret = 0;
+     return(ret);
+     break;
+
+  case (HDF_CHUNK | HDF_COMP):     /* Chunked and compressed SDS
+                                      RLE, SKPHUFF or GZIP only */
+ 
+     *flags = 1;
+     for (i=0; i < rank; i++)
+          dim_length[rank-i-1] =  chunk_def.comp.chunk_lengths[i];
+     ret = 0;
+     return(ret);
+     break;
+
+  case (HDF_CHUNK | HDF_NBIT):     /* Chunked and NBIT compressed SDS */
+ 
+     *flags = 2;
+     for (i=0; i < rank; i++)
+          dim_length[rank-i-1] =  chunk_def.nbit.chunk_lengths[i];
+     ret = 0;
+     return(ret);
+     break;
+
+  default:
+
+    return FAIL;
+    break;
+            
+  }
+
+
+}   
+/*-----------------------------------------------------------------------------
+ * Name:     scrcchnk
+ * Purpose:  read the specified chunk of CHARACTER data to the buffer
+ * Inputs:   id        - data set ID
+ *           start     - origin of chunk to read 
+ * Outputs:  char_data  - buffer the data will be read into
+ * Calls:    scrchnk 
+ * Reamrks:  dimensions will be flipped in scrchnk function
+ * Returns:  0 on success, -1 on failure with error set
+ *----------------------------------------------------------------------------*/   
+    FRETVAL (intf)
+#ifdef PROTOTYPE 
+       nscrcchnk(intf *id, intf *start, _fcd char_data)
+#else
+       nscrcchnk(id, start, char_data)
+                intf *id;
+                intf *start;
+               _fcd  char_data;
+#endif /* PROTOTYPE */
+
+{
+       intf  ret;
+
+       ret = nscrchnk(id, start, (VOIDP) _fcdtocp(char_data));
+
+       return(ret);
+
+} 
+
+/*-----------------------------------------------------------------------------
+ * Name:     scrchnk
+ * Purpose:  read the specified chunk of NUMERIC data to the buffer
+ * Inputs:   id        - data set ID
+ *           start     - origin of chunk to read 
+ * Outputs:  num_data  - buffer the data will be read into
+ * Calls:    SDreadChunk
+ * Remarks:  need to flip the dimensions to account for array ordering
+ *           differencies (start --> cstart)
+ *           If performance becomes an issue, use static cstart 
+ * Returns:  0 on success, -1 on failure with error set
+ *----------------------------------------------------------------------------*/   
+    FRETVAL (intf)
+#ifdef PROTOTYPEi
+       nscrchnk(intf *id, intf *start, VOIDP num_data)
+#else
+       nscrchnk(id, start, num_data)
+                intf *id;
+                intf *start;
+                VOIDP num_data;
+#endif /* PROTOTYPE */
+
+{
+       intf    ret;
+       int32   rank, status, i;
+       int32   *cstart;
+
+       int32   cdims[100], nt32, nattr32;
+/* Get rank of SDS */
+
+       status = SDgetinfo(*id, NULL, &rank, cdims, &nt32, &nattr32);
+       if(status == FAIL) return FAIL;
+
+/* Allocate memory for cstart array; use static array, if performance
+       becomes an issue */
+
+       cstart = (int32 *) HDmalloc(sizeof(int32) * rank);
+       if(!cstart) return FAIL;
+
+/* Flip an array to account for array odering in Fortran and C */
+
+       for ( i=0; i < rank; i++)
+             cstart[i] = start[rank-i-1] - 1;
+
+/* Call SDreadChunk function to read the data */
+
+       ret = SDreadchunk(*id, cstart, num_data);
+
+/* Free memory */
+
+       HDfree((VOIDP)cstart);
+       return(ret);
+
+} 
+
+/*-----------------------------------------------------------------------------
+ * Name:     scscchnk
+ * Purpose:  set the maximum number of chunks to cache 
+ * Inputs:   id        - data set ID
+ *           maxcache  - max number of chunks to cache
+ *           flags     - flags= 0, HDF_CACHEALL
+ *                       Currently only 0 can be passed
+ * Calls:    SDsetchunkcache
+ * Returns:  0 on success, -1 on failure with error set
+ *----------------------------------------------------------------------------*/   
+    FRETVAL (intf)
+#ifdef PROTOTYPE
+       nscscchnk(intf *id, intf *maxcache, intf *flags)
+#else
+       nscscchnk(id, maxcache, flags)
+                intf *id;
+                intf *maxcache;
+                intf *flags;
+#endif /* PROTOTYPE */
+
+{
+       intf  ret;
+
+       ret = SDsetchunkcache(*id, *maxcache, *flags);
+
+       return(ret);
+
+} 
+
+/*-------------------------------------------------------------------------
+ * Name:    scschnk
+ * Puporse: Call SDsetchunk
+ * Inputs:  id: SDS access id
+ *          dim_length: chunk dimensions
+ *          comp_type:  type of compression
+ *                              COMP_CODE_NONE    (0)
+ *                              COMP_CODE_RLE     (1)
+ *                              COMP_CODE_NBIT    (2)
+ *                              COMP_CODE_SKPHUFF (3)
+ *                              COMP_CODE_DEFLATE (4)
+ *                              COMP_CODE_INVALID (5)
+ *          comp_prm[0] = nbit_sign_ext, 
+ *          comp_prm[1] = nbit_fill_one, 
+ *          comp_prm[2] = nbit_start_bit, 
+ *          comp_prm[3] = nbit_bit_len:     NBIT compression parametes 
+ *
+ *          comp_prm[0] = skphuff_skp_size: size of individual elements for 
+ *                            Adaptive Huffman compression algorithm
+ *          comp_prm[0] = deflate_level:    GZIP  compression parameter
+ * Returns: 0 on success, -1 on failure with error set
+ * Users:   HDF Fortran programmers          
+ *-------------------------------------------------------------------------*/
+
+    FRETVAL (intf)
+#ifdef PROTOTYPE
+      nscschnk(intf *id, intf *dim_length, intf *comp_type,
+                intf *comp_prm)
+#else
+       nscschnk( id, dim_length, comp_type,
+                 comp_prm)
+       intf *id;
+       intf *dim_length;
+       intf *comp_type;
+       intf *comp_prm;
+#endif /* PROTOTYPE */
+{
+
+HDF_CHUNK_DEF chunk_def;  /* Chunk definition set */
+int32 sdsid;              /* SDS id               */
+int32 cflags;             /* chunk flags          */
+comp_info cinfo;          /* compression info     */
+int   i, CASE;
+int32 rank, status;
+intf ret;
+
+int32 cdims[100], nt32, nattr32;
+
+/* Get rank of SDS */
+
+       status = SDgetinfo((int32) *id, NULL , &rank, cdims, &nt32, &nattr32);
+       if(status == FAIL) return FAIL;
+
+CASE = *comp_type;
+sdsid = *id;
+cflags = HDF_CHUNK | HDF_COMP;
+
+switch (CASE)  {
+
+       case 0:       /* No compression */
+         cflags = HDF_CHUNK;
+         for (i=0; i < rank; i++)
+               chunk_def.chunk_lengths[i] = dim_length[rank-i-1]; 
+         break;
+    
+       case 1:       /* RLE compression */
+         cflags = HDF_CHUNK | HDF_COMP;
+         for (i=0; i < rank; i++)
+                chunk_def.comp.chunk_lengths[i] = dim_length[rank-i-1];
+
+         chunk_def.comp.comp_type = COMP_CODE_RLE;
+
+         break;
+
+
+       case 2:      /* N-bit encoding */
+         cflags = HDF_CHUNK | HDF_NBIT;
+         for (i=0; i < rank; i++)
+                chunk_def.nbit.chunk_lengths[i] = dim_length[rank-i-1]; 
+
+         chunk_def.nbit.sign_ext = comp_prm[0]; 
+         chunk_def.nbit.fill_one = comp_prm[1]; 
+         chunk_def.nbit.start_bit = comp_prm[2];
+         chunk_def.nbit.bit_len = comp_prm[3]; 
+
+         break; 
+ 
+       case 3:      /* Skipping Huffman encoding */
+         cflags = HDF_CHUNK | HDF_COMP;
+          for (i=0; i < rank; i++)
+                chunk_def.comp.chunk_lengths[i] = dim_length[rank-i-1];
+
+          chunk_def.comp.comp_type = COMP_CODE_SKPHUFF;
+          chunk_def.comp.cinfo.skphuff.skp_size = comp_prm[0]; 
+
+          break;
+
+       case 4:      /* GZIP compression */  
+         cflags = HDF_CHUNK | HDF_COMP;
+          for (i=0; i < rank; i++)
+                 chunk_def.comp.chunk_lengths[i] = dim_length[rank-i-1];
+           
+          chunk_def.comp.comp_type = COMP_CODE_DEFLATE;
+          chunk_def.comp.cinfo.deflate.level = comp_prm[0];
+
+          break;
+
+       default:
+
+          return FAIL;
+          break;
+                    
+                     }
+
+ret = SDsetchunk(sdsid, chunk_def, cflags);
+ 
+return(ret);
+
+}   
+/*-----------------------------------------------------------------------------
+ * Name:     scwcchnk
+ * Purpose:  write the specified chunk of CHARACTER data to the SDS 
+ * Inputs:   id        - data set ID
+ *           start     - origin of chunk to read 
+ * Outputs:  char_data  - buffer the data will be read into
+ * Calls:    scwchnk 
+ * Reamrks:  dimensions will be flipped in scrchnk function
+ * Returns:  0 on success, -1 on failure with error set
+ *----------------------------------------------------------------------------*/   
+    FRETVAL (intf)
+#ifdef PROTOTYPE
+       nscwcchnk(intf *id, intf *start, _fcd char_data)
+#else
+       nscwcchnk(id, start, char_data)
+                intf *id;
+                intf *start;
+               _fcd  char_data;
+#endif /* PROTOTYPE */
+
+{
+       intf  ret;
+
+       ret = nscwchnk(id, start, (VOIDP) _fcdtocp(char_data));
+
+       return(ret);
+
+} 
+
+/*-----------------------------------------------------------------------------
+ * Name:     scwchnk
+ * Purpose:  write the specified chunk of NUMERIC data to the SDS
+ * Inputs:   id        - data set ID
+ *           start     - origin of chunk to write
+ *           num_data  - buffer for data
+ * Calls:    SDwritechunk
+ * Remarks:  need to flip the dimensions to account for array ordering
+ *           differencies (start --> cstart)
+ *           If performance becomes an issue, use static cstart 
+ * Returns:  0 on success, -1 on failure with error set
+ *----------------------------------------------------------------------------*/   
+    FRETVAL (intf)
+#ifdef PROTOTYPE
+       nscwchnk(intf *id, intf *start, VOIDP num_data)
+#else
+       nscwchnk(id, start, num_data)
+                intf *id;
+                intf *start;
+                VOIDP num_data;
+#endif /* PROTOTYPE */
+
+{
+       intf    ret;
+       int32   rank, status, i;
+       int32   *cstart;
+
+       int32   cdims[100], nt32, nattr32;
+/* Get rank of SDS */
+
+       status = SDgetinfo(*id, NULL, &rank, cdims, &nt32, &nattr32);
+       if(status == FAIL) return FAIL;
+
+/* Allocate memory for cstart array; use static array, if performance
+       becomes an issue */
+
+       cstart = (int32 *) HDmalloc(sizeof(int32) * rank);
+       if(!cstart) return FAIL;
+
+/* Flip an array */
+
+       for ( i=0; i < rank; i++)
+             cstart[i] = start[rank-i-1] - 1;
+
+/* Call SDwriteChunk function to write the data */
+
+       ret = SDwritechunk(*id, cstart, num_data);
+
+/* Free memory */ 
+
+       HDfree((VOIDP)cstart);
+
+       return(ret);
+
+} 
+/*-------------------------------------------------------------------------
+ * Name:    scscompress
+ * Puporse: Call SDsetcompress and SDsetnbitdataset
+ * Inputs:  id: SDS access id
+ *          comp_type:  type of compression
+ *                      COMP_CODE_NONE = 0
+ *                      COMP_CODE_RLE  = 1
+ *                      COMP_CODE_SKPHUFF = 3
+ *                      COMP_CODE_DEFLATE = 4
+ *          comp_prm[0] = skphuff_skp_size: size of individual elements for 
+ *                            Adaptive Huffman compression algorithm
+ *          comp_prm[0] = deflate_level:    GZIP  compression parameter
+ * Returns: 0 on success, -1 on failure with error set
+ * Users:   HDF Fortran programmers          
+ *-------------------------------------------------------------------------*/
+
+    FRETVAL (intf)
+#ifdef PROTOTYPE
+       nscscompress(intf *id, intf *comp_type, intf *comp_prm)
+#else
+       nscscompress( id, comp_type, comp_prm)
+       intf *id;
+       intf *comp_type;
+       intf *comp_prm;
+#endif /* PROTOTYPE */
+{
+
+int32 sdsid;              /* SDS id               */
+comp_info c_info;         /* compression info     */
+int32 c_type;              /* compression type definition */
+
+int   i, CASE;
+intf ret;
+
+
+
+CASE = *comp_type;
+sdsid = *id;
+switch (CASE)  {
+
+       case COMP_CODE_NONE:       /* No compression */
+         c_type = COMP_CODE_NONE;
+         break;
+    
+       case COMP_CODE_RLE:             /* RLE compression */
+         c_type = COMP_CODE_RLE;
+         break;
+ 
+       case COMP_CODE_SKPHUFF:      /* Skipping Huffman encoding */
+          c_type = COMP_CODE_SKPHUFF;
+          c_info.skphuff.skp_size = comp_prm[0]; 
+          break;
+
+       case COMP_CODE_DEFLATE:      /* GZIP compression */  
+          c_type = COMP_CODE_DEFLATE;
+          c_info.deflate.level = comp_prm[0]; 
+          break;
+
+       default:
+
+          return FAIL;
+          break;
+                    
+                     }
+
+ret = SDsetcompress(sdsid, c_type, &c_info);
+return(ret);
+
+}
+/*-----------------------------------------------------------------------------
+ * Name:    sfisrcrd
+ * Purpose: call SDisrecord to see if a dataset is a record variable
+ * Inputs:  id: sds id
+ * Returns: TRUE/FALSE (1/0))
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nsfisrcrd(intf *id)
+#else
+nsfisrcrd(id)
+     intf *id;
+#endif /* PROTOTYPE */
+{
+    return((intf) SDisrecord(*id));
+}
+/*-----------------------------------------------------------------------------
+ * Name:    sfsblsz
+ * Purpose: call SDsetblocksize
+ * Inputs:  id:          sd id
+            block_size:  block size  in bytes
+ * Returns: SUCCEED/FAIL (0/-1)
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nsfsblsz(intf *id, intf *block_size)
+#else
+nsfsblsz(id, block_size)
+     intf *id;
+     intf *block_size;
+#endif /* PROTOTYPE */
+{
+    return((intf) SDsetblocksize(*id, *block_size));
+}
+   
