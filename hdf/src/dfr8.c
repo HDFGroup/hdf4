@@ -53,7 +53,7 @@ static char RcsId[] = "@(#)$Revision$";
 #include "dfrig.h"
 
 /* Private Variables */
-PRIVATE uint8 *Palette = NULL;
+PRIVATE uint8 *paletteBuf = NULL;
 PRIVATE uint16 Refset = 0;      /* Ref of image to get next */
 PRIVATE uint16 Lastref = 0;     /* Last ref read/written */
 PRIVATE uint16 Writeref = 0;    /* ref of next image to put in this file */
@@ -431,7 +431,7 @@ done:
 
     If pal is NULL, no palette is associated with subsequent images.
  GLOBAL VARIABLES
-    Palette, Writerig, Newpalette
+    paletteBuf, Writerig, Newpalette
  COMMENTS, BUGS, ASSUMPTIONS
  EXAMPLES
  REVISION LOG
@@ -451,11 +451,11 @@ DFR8setpalette(uint8 *pal)
       if(DFR8Istart()==FAIL)
           HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
-  /* Check if Palette buffer has been allocated */
-  if (Palette == NULL)
+  /* Check if paletteBuf buffer has been allocated */
+  if (paletteBuf == NULL)
     {
-      Palette = (uint8 *) HDmalloc(768 * sizeof(uint8));
-      if (Palette == NULL)
+      paletteBuf = (uint8 *) HDmalloc(768 * sizeof(uint8));
+      if (paletteBuf == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     }     /* end if */
 
@@ -469,7 +469,7 @@ DFR8setpalette(uint8 *pal)
     }     /* end if */
   else
     {     /* store palette */
-      HDmemcpy(Palette, pal, 768);
+      HDmemcpy(paletteBuf, pal, 768);
       Newpalette = 1;
     }     /* end else */
 
@@ -505,7 +505,7 @@ done:
     with 8-bit rasters, then it will be written to the file too and associated
     with the image.
  GLOBAL VARIABLES
-    Palette, Newpalette, Writeref, CompressSet, CompType, CompInfo, Lastref,
+    paletteBuf, Newpalette, Writeref, CompressSet, CompType, CompInfo, Lastref,
     Writerig
  COMMENTS, BUGS, ASSUMPTIONS
     Palette will be associated with image is isPalette is 1
@@ -538,14 +538,14 @@ DFR8Iputimage(const char *filename, const void * image, int32 xdim, int32 ydim,
           HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
     /* Check if Palette buffer has been allocated */
-  if (Palette == NULL)
+  if (paletteBuf == NULL)
     {
-      Palette = (uint8 *) HDmalloc(768 * sizeof(uint8));
-      if (Palette == NULL)
+      paletteBuf = (uint8 *) HDmalloc(768 * sizeof(uint8));
+      if (paletteBuf == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     }     /* end if */
 
-  pal = (Newpalette >= 0) ? Palette : NULL;
+  pal = (Newpalette >= 0) ? paletteBuf : NULL;
   acc_mode = append ? DFACC_WRITE : DFACC_CREATE;
 
   if ((file_id = DFR8Iopen(filename, acc_mode)) == FAIL)
@@ -1773,10 +1773,10 @@ done:
 --------------------------------------------------------------------------*/
 intn DFR8Pshutdown(void)
 {
-    if(Palette!=NULL)
+    if(paletteBuf!=NULL)
       {
-          HDfree(Palette);
-          Palette=NULL;
+          HDfree(paletteBuf);
+          paletteBuf=NULL;
       } /* end if */
     return(SUCCEED);
 } /* end DFR8Pshutdown() */
