@@ -126,7 +126,7 @@ parse_dumpgr_opts(dump_info_t *dumpgr_opts,
          case 'h':	/* no annotations nor data */
 	     /* make sure -p is not also given */
 	     if( dumpgr_opts->print_pal )
-		ERROR_GOTO_0( "Option -h and -p must not be used together" );
+		ERROR_GOTO_0( "Option -h must not be used together with either -p or -pd" );
 
              dumpgr_opts->contents = DHEADER;
              (*curr_arg)++;
@@ -169,7 +169,7 @@ parse_dumpgr_opts(dump_info_t *dumpgr_opts,
          case 'p':   /* dump palette data */
 	     /* make sure -h is not also given */
 	     if( dumpgr_opts->contents == DHEADER )
-		ERROR_GOTO_0( "Option -h and -p must not be used together" );
+		ERROR_GOTO_0( "Option -h must not be used together with either -p or -pd" );
 
              dumpgr_opts->print_pal = TRUE;
 
