@@ -50,8 +50,10 @@ typedef struct {
 PRIVATE int32 HBIstaccess
     (accrec_t *access_rec, int16 acc_mode);
 
+#ifdef OLD_WAY /* use global temp. buffer now */
 /* Private buffer */
 PRIVATE uint8 *ptbuf = NULL;
+#endif 
 
 /* bigext_funcs -- table of the accessing functions of the big external
    data element function modules.  The position of each function in
@@ -113,6 +115,7 @@ int32 HBcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_na
     extinfo_t *info;           /* special element information */
     dd_t *data_dd;             /* dd of existing regular element */
     uint16 special_tag;                /* special version of tag */
+    uint8 local_ptbuf[14+MAX_PATH_LEN];
 
     /* clear error stack and validate args */
     HEclear();
@@ -124,6 +127,7 @@ int32 HBcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_na
     if (!(file_rec->access & DFACC_WRITE))
        HRETURN_ERROR(DFE_DENIED,FAIL);
 
+#ifdef OLD_WAY
     /* Check if temproray buffer has been allocated */
     if (ptbuf == NULL)
       {
@@ -131,6 +135,7 @@ int32 HBcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_na
         if (ptbuf == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
+#endif
 
     /* get a slot in the access records table */
     slot = HIget_access_slot();
@@ -235,7 +240,7 @@ int32 HBcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_na
 
     info->length_file_name = HDstrlen(extern_file_name);
     {
-       uint8 *p = ptbuf;
+       uint8 *p = local_ptbuf;
        INT16ENCODE(p, SPECIAL_EXT);
        INT32ENCODE(p, info->length);
        INT32ENCODE(p, info->extern_offset);
@@ -251,7 +256,7 @@ int32 HBcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_na
     dd->length = 14 + info->length_file_name;
     dd->tag = special_tag;
     dd->ref = ref;
-    if (HI_WRITE(file_rec->file, ptbuf, dd->length) == FAIL) {
+    if (HI_WRITE(file_rec->file, local_ptbuf, dd->length) == FAIL) {
        HERROR(DFE_WRITEERROR);
        access_rec->used = FALSE;
        return FAIL;
@@ -319,18 +324,21 @@ PRIVATE int32 HBIstaccess(accrec_t *access_rec, int16 acc_mode)
     dd_t *info_dd;             /* dd of the special information element */
     extinfo_t *info;           /* special element information */
     filerec_t *file_rec;       /* file record */
+    uint8 local_ptbuf[12];
 
     /* get file record and validate */
     file_rec = FID2REC(access_rec->file_id);
     if (BADFREC(file_rec) || !(file_rec->access & acc_mode))
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
+#ifdef OLD_WAY
     /* Check if temproray buffer has been allocated */
     if (ptbuf == NULL) {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
+#endif
     
     /* intialize the access record */
     access_rec->special = SPECIAL_EXT;
@@ -358,7 +366,7 @@ PRIVATE int32 HBIstaccess(accrec_t *access_rec, int16 acc_mode)
            access_rec->used = FALSE;
            HRETURN_ERROR(DFE_SEEKERROR,FAIL);
        }
-       if (HI_READ(file_rec->file, ptbuf, 12) == FAIL) {
+       if (HI_READ(file_rec->file, local_ptbuf, 12) == FAIL) {
            access_rec->used = FALSE;
            HRETURN_ERROR(DFE_READERROR,FAIL);
        }
@@ -369,7 +377,7 @@ PRIVATE int32 HBIstaccess(accrec_t *access_rec, int16 acc_mode)
            HRETURN_ERROR(DFE_NOSPACE,FAIL);
        }
        {
-           uint8 *p = ptbuf;
+           uint8 *p = local_ptbuf;
            INT32DECODE(p, info->length);
            INT32DECODE(p, info->extern_offset);
            INT32DECODE(p, info->length_file_name);
@@ -552,17 +560,20 @@ int32 HBPwrite(accrec_t *access_rec, int32 length, const VOIDP data)
     CONSTR(FUNC,"HBPwrite");     /* for HERROR */
     extinfo_t *info =          /* information on the special element */
        (extinfo_t*)(access_rec->special_info);
+    uint8 local_ptbuf[4];
 
     /* validate length */
     if (length < 0)
        HRETURN_ERROR(DFE_RANGE,FAIL);
 
+#ifdef OLD_WAY
     /* Check if temproray buffer has been allocated */
     if (ptbuf == NULL) {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
+#endif
 
     /* write the data onto file */
     if (HI_SEEK(info->file_external,
@@ -590,7 +601,7 @@ int32 HBPwrite(accrec_t *access_rec, int32 length, const VOIDP data)
     access_rec->posn += length;
     if (access_rec->posn > info->length) {
        uint8 *p =      /* temp buffer ptr */
-           ptbuf;
+           local_ptbuf;
        dd_t *info_dd =         /* dd of infromation element */
            &access_rec->block->ddlist[access_rec->idx];
        filerec_t *file_rec =   /* file record */
@@ -600,12 +611,11 @@ int32 HBPwrite(accrec_t *access_rec, int32 length, const VOIDP data)
        INT32ENCODE(p, info->length);
        if (HI_SEEK(file_rec->file, info_dd->offset+2) == FAIL)
            HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-       if (HI_WRITE(file_rec->file, ptbuf, 4) == FAIL)
+       if (HI_WRITE(file_rec->file, local_ptbuf, 4) == FAIL)
            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
     }
 
     return length;
-
 } /* HBPwrite */
 
 

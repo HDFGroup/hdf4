@@ -29,6 +29,16 @@
 #endif /* !PC */
 #endif /* MAX_FILE */
 
+/* Maximum length of external filename(s) (used in hextelt.c & hbigext.c) */
+#ifndef MAX_PATH_LEN
+#if defined PC && !defined PC386
+#define MAX_PATH_LEN 256
+#else /* non-DOS systems */
+#define MAX_PATH_LEN 1024
+#endif /* PATH_LEN defines */
+#endif /* MAX_PATH_LEN */
+
+#define MAX_
 /* Maximum number of access elements */
 #ifndef MAX_ACC
 #   define MAX_ACC 256
@@ -223,8 +233,10 @@ typedef struct version_t {
 
 /* record of a block of data descriptors, mirrors structure of a HDF file.  */
 typedef struct ddblock_t {
-    int16  ndds;                /* number of dd's in this block */
-    int32  nextoffset;          /* offset to the next ddblock in the file */
+    intn   dirty;              /* boolean: should this DD block be flushed? */
+    int32  myoffset;           /* offset of this DD block in the file */
+    int16  ndds;               /* number of dd's in this block */
+    int32  nextoffset;         /* offset to the next ddblock in the file */
     struct ddblock_t *next;    /* pointer to the next ddblock in memory */
     struct ddblock_t *prev;    /* Pointer to previous ddblock. */
     struct dd_t *ddlist;       /* pointer to array of dd's */
@@ -258,11 +270,19 @@ typedef struct filerec_t {
     intn      attach;           /* number of access elts attached */
     intn      version_set;      /* version tag stuff */
     version_t version;		/* file version info */
+
     /* fast lookup of empty dd stuff */
     int32             null_idx;   /* index into null_block of NULL entry */
     struct ddblock_t *null_block; /* last block a NULL entry was found in */
+
+    /* DD block caching info */
+    intn      cache;            /* boolean: whether caching is on */
+    intn      dirty;            /* boolean: if dd list needs to be flushed */
+    uint32    f_end_off;        /* offset of the end of the file */
+
     struct ddblock_t *ddhead;   /* head of ddblock list */
     struct ddblock_t *ddlast;   /* end of ddblock list */
+
     /* hash table stuff */
     tag_ref_list_ptr hash[HASH_MASK + 1];  /* hashed table of tag / refs */
 } filerec_t;
@@ -307,6 +327,7 @@ typedef struct sp_info_block_t {
     /* compressed elements */
     int32       comp_type;         /* compression type */
     int32       model_type; 	   /* model type */
+    int32       comp_size; 	   /* size of compressed information */
 
 } sp_info_block_t;
 

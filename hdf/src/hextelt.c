@@ -113,7 +113,7 @@ int32 HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_na
     extinfo_t *info;           /* special element information */
     dd_t *data_dd;             /* dd of existing regular element */
     uint16 special_tag;                /* special version of tag */
-    uint8 ptbuf[TBUF_SZ];      /* temp working buffer */
+    uint8 local_ptbuf[14+MAX_PATH_LEN];      /* temp working buffer */
 
     /* clear error stack and validate args */
     HEclear();
@@ -229,7 +229,7 @@ int32 HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_na
 
     info->length_file_name = HDstrlen(extern_file_name);
     {
-       uint8 *p = ptbuf;
+       uint8 *p = local_ptbuf;
        INT16ENCODE(p, SPECIAL_EXT);
        INT32ENCODE(p, info->length);
        INT32ENCODE(p, info->extern_offset);
@@ -239,21 +239,12 @@ int32 HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_na
     dd->ref = ref;
     dd->tag = special_tag;
     dd->length = 14 + info->length_file_name;
-#ifdef OLD_WAY
-    if (HI_SEEKEND(file_rec->file) == FAIL) {
-       access_rec->used = FALSE;
-       HDfreespace((VOIDP)info);
-       HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-    }
-    dd->offset = HI_TELL(file_rec->file);
-#else
     if((dd->offset=HPgetdiskblock(file_rec,dd->length,TRUE))==FAIL) {
         access_rec->used = FALSE;
         HDfreespace((VOIDP)info);
         HRETURN_ERROR(DFE_INTERNAL,FAIL);
       } /* end if */
-#endif
-    if (HI_WRITE(file_rec->file, ptbuf, dd->length) == FAIL) {
+    if (HI_WRITE(file_rec->file, local_ptbuf, dd->length) == FAIL) {
        HERROR(DFE_WRITEERROR);
        access_rec->used = FALSE;
        return FAIL;
@@ -392,7 +383,7 @@ PRIVATE int32 HXIstaccess(accrec_t *access_rec, int16 acc_mode)
     dd_t *info_dd;             /* dd of the special information element */
     extinfo_t *info;           /* special element information */
     filerec_t *file_rec;       /* file record */
-    uint8 ptbuf[TBUF_SZ];      /* working buffer */
+    uint8 local_ptbuf[12];      /* working buffer */
 
     /* get file record and validate */
     file_rec = FID2REC(access_rec->file_id);
@@ -425,7 +416,7 @@ PRIVATE int32 HXIstaccess(accrec_t *access_rec, int16 acc_mode)
            access_rec->used = FALSE;
            HRETURN_ERROR(DFE_SEEKERROR,FAIL);
        }
-       if (HI_READ(file_rec->file, ptbuf, 12) == FAIL) {
+       if (HI_READ(file_rec->file, local_ptbuf, 12) == FAIL) {
            access_rec->used = FALSE;
            HRETURN_ERROR(DFE_READERROR,FAIL);
        }
@@ -436,7 +427,7 @@ PRIVATE int32 HXIstaccess(accrec_t *access_rec, int16 acc_mode)
            HRETURN_ERROR(DFE_NOSPACE,FAIL);
        }
        {
-           uint8 *p = ptbuf;
+           uint8 *p = local_ptbuf;
            INT32DECODE(p, info->length);
            INT32DECODE(p, info->extern_offset);
            INT32DECODE(p, info->length_file_name);
@@ -651,7 +642,7 @@ int32 HXPread(accrec_t *access_rec, int32 length, VOIDP data)
 --------------------------------------------------------------------------- */
 int32 HXPwrite(accrec_t *access_rec, int32 length, const VOIDP data)
 {
-    uint8 ptbuf[TBUF_SZ];      /* temp buffer */
+    uint8 local_ptbuf[4];      /* temp buffer */
     CONSTR(FUNC,"HXPwrite");     /* for HERROR */
     extinfo_t *info =          /* information on the special element */
        (extinfo_t*)(access_rec->special_info);
@@ -712,7 +703,7 @@ int32 HXPwrite(accrec_t *access_rec, int32 length, const VOIDP data)
     access_rec->posn += length;
     if (access_rec->posn > info->length) {
        uint8 *p =      /* temp buffer ptr */
-           ptbuf;
+           local_ptbuf;
        dd_t *info_dd =         /* dd of infromation element */
            &access_rec->block->ddlist[access_rec->idx];
        filerec_t *file_rec =   /* file record */
@@ -722,7 +713,7 @@ int32 HXPwrite(accrec_t *access_rec, int32 length, const VOIDP data)
        INT32ENCODE(p, info->length);
        if (HI_SEEK(file_rec->file, info_dd->offset+2) == FAIL)
            HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-       if (HI_WRITE(file_rec->file, ptbuf, 4) == FAIL)
+       if (HI_WRITE(file_rec->file, local_ptbuf, 4) == FAIL)
            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
     }
 
@@ -927,7 +918,7 @@ int32 HXPreset(accrec_t * access_rec, sp_info_block_t * info_block)
     char      * FUNC="HXPreset"; /* for HERROR */
     dd_t      * dd;              /* dd of existing external element record */
     filerec_t * file_rec;        /* file record */ 
-    uint8       ptbuf[TBUF_SZ];  /* temp buffer */
+    uint8       local_ptbuf[14+MAX_PATH_LEN];  /* temp buffer */
     extinfo_t * info =           /* special information record */
        (extinfo_t *)access_rec->special_info;
 
@@ -966,7 +957,7 @@ int32 HXPreset(accrec_t * access_rec, sp_info_block_t * info_block)
 
     /* write the new external file record */
     {
-        uint8 *p = ptbuf;
+        uint8 *p = local_ptbuf;
         INT16ENCODE(p, SPECIAL_EXT);
         INT32ENCODE(p, info->length);
         INT32ENCODE(p, info->extern_offset);
@@ -975,7 +966,7 @@ int32 HXPreset(accrec_t * access_rec, sp_info_block_t * info_block)
     }
 
     /* write out the new external file record */
-    if (HI_WRITE(file_rec->file, ptbuf, dd->length) == FAIL) {
+    if (HI_WRITE(file_rec->file, local_ptbuf, dd->length) == FAIL) {
         HERROR(DFE_WRITEERROR);
         access_rec->used = FALSE;
         return FAIL;

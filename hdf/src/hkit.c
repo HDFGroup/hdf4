@@ -115,6 +115,7 @@ int HIlookup_dd(filerec_t *file_rec, uint16 look_tag, uint16 look_ref,
 #endif
     register intn tag, ref, key, i;
     register tag_ref_list_ptr p;
+    tag_ref_ptr o_ptr;
     
     if(look_tag == DFTAG_WILDCARD || look_ref == DFREF_WILDCARD)
         return (HIfind_dd(look_tag, look_ref, pblock, pidx, DF_FORWARD));
@@ -128,10 +129,10 @@ int HIlookup_dd(filerec_t *file_rec, uint16 look_tag, uint16 look_ref,
     key = tag + ref;
     
     for(p = file_rec->hash[key & HASH_MASK]; p; p = p->next) {
-        for(i = 0; i < p->count; i++) {
-            if(p->objects[i].tag == tag && p->objects[i].ref == ref) {
-                *pblock = p->objects[i].pblock;
-                *pidx   = p->objects[i].pidx;
+        for(i = 0, o_ptr=&p->objects[0]; i < p->count; i++,o_ptr++) {
+            if(o_ptr->tag == tag && o_ptr->ref == ref) {
+                *pblock = o_ptr->pblock;
+                *pidx   = o_ptr->pidx;
                 return SUCCEED;
             }
         }
@@ -144,10 +145,10 @@ int HIlookup_dd(filerec_t *file_rec, uint16 look_tag, uint16 look_ref,
     key = tag + ref;
     
     for(p = file_rec->hash[key & HASH_MASK]; p; p = p->next) {
-        for(i = 0; i < p->count; i++) {
-            if(p->objects[i].tag == tag && p->objects[i].ref == ref) {
-                *pblock = p->objects[i].pblock;
-                *pidx   = p->objects[i].pidx;
+        for(i = 0, o_ptr=&p->objects[0]; i < p->count; i++,o_ptr++) {
+            if(o_ptr->tag == tag && o_ptr->ref == ref) {
+                *pblock = o_ptr->pblock;
+                *pidx   = o_ptr->pidx;
                 return SUCCEED;
             }
         }
@@ -243,29 +244,29 @@ int HIadd_hash_dd(filerec_t *file_rec, uint16 look_tag, uint16 look_ref,
 int HIdel_hash_dd(filerec_t *file_rec, uint16 look_tag, uint16 look_ref)
 {
 #ifdef LATER
-  CONSTR(FUNC,"HIdel_hash_dd");       /* for HERROR */
+    CONSTR(FUNC,"HIdel_hash_dd");       /* for HERROR */
 #endif
-  register intn tag, ref, key, i;
-  register tag_ref_list_ptr p;
+    register intn tag, ref, key, i;
+    register tag_ref_list_ptr p;
 
-  tag = (intn) look_tag;
-  ref = (intn) look_ref;
-  key = tag + ref;
+    tag = (intn) look_tag;
+    ref = (intn) look_ref;
+    key = tag + ref;
   
-  p = file_rec->hash[key & HASH_MASK]; 
+    p = file_rec->hash[key & HASH_MASK]; 
 
-  if(!p) return SUCCEED;
+    if(!p) return SUCCEED;
 
-  for(p = file_rec->hash[key & HASH_MASK]; p; p = p->next) {
-      for(i = 0; i < p->count; i++) {
-          if(p->objects[i].tag == tag && p->objects[i].ref == ref) {
-              p->objects[i].tag = DFTAG_NULL;
-              return SUCCEED;
-          }
-      }
-  }
+    for(p = file_rec->hash[key & HASH_MASK]; p; p = p->next) {
+        for(i = 0; i < p->count; i++) {
+            if(p->objects[i].tag == tag && p->objects[i].ref == ref) {
+                p->objects[i].tag = DFTAG_NULL;
+                return SUCCEED;
+            }
+        }
+    }
   
-  return SUCCEED;
+    return SUCCEED;
   
 } /* HIdel_hash_dd */
 

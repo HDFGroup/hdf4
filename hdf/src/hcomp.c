@@ -109,8 +109,10 @@ PRIVATE int32 HCIinit_model
     (comp_model_info_t *minfo,comp_model_t model_type,
             model_info *m_info);
 
+#ifdef OLD_WAY  /* uses global (sometimes) or local (mostly) tbuf's now */
 /* Private buffer */
 PRIVATE uint8 *ptbuf = NULL;
+#endif
 
 /* comp_funcs -- struct of accessing functions for the compressed
    data element function modules.  The position of each function in
@@ -271,14 +273,17 @@ PRIVATE int32 HCIwrite_header(filerec_t *file_rec,accrec_t *access_rec,
 {
     CONSTR(FUNC,"HCIwrite_header");  /* for HERROR */
     uint8 *p;       /* pointer to the temporary buffer */
+    uint8 local_ptbuf[32];
 
+#ifdef OLD_WAY
     /* Check if temporary buffer has been allocated */
     if (ptbuf == NULL)
         if((ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8))) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
+#endif
 
     /* write special element info to the file */
-    p = ptbuf;
+    p = local_ptbuf;
     INT16ENCODE(p, SPECIAL_COMP);           /* specify special tag type */
     UINT16ENCODE(p, COMP_HEADER_VERSION);   /* specify header version */
     INT32ENCODE(p, info->length);           /* write length of un-comp. data */
@@ -323,22 +328,12 @@ printf("HCIwrite_header(): nt=%d, sign_ext=%d, fill_one=%d, start_bit=%d, bit_le
 
     dd->tag=special_tag;
     dd->ref=ref;
-    dd->length=p - ptbuf;      /* not a constant length */
-#ifdef OLD_WAY
-    if(HI_SEEKEND(file_rec->file)==FAIL) {
-       access_rec->used=FALSE;
-       HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-      } /* end if */
-
-    /* write compressed special element data to the file */
-    dd->offset=HI_TELL(file_rec->file);
-#else
+    dd->length=p - local_ptbuf;      /* not a constant length */
     if((dd->offset=HPgetdiskblock(file_rec,dd->length,TRUE))==FAIL) {
        access_rec->used=FALSE;
        HRETURN_ERROR(DFE_INTERNAL,FAIL);
       } /* end if */
-#endif
-    if(HI_WRITE(file_rec->file, ptbuf, dd->length)==FAIL) {
+    if(HI_WRITE(file_rec->file, local_ptbuf, dd->length)==FAIL) {
         access_rec->used=FALSE;
         HRETURN_ERROR(DFE_WRITEERROR,FAIL);
       } /* end if */
@@ -350,7 +345,8 @@ printf("HCIwrite_header(): nt=%d, sign_ext=%d, fill_one=%d, start_bit=%d, bit_le
       } /* end if */
 
     /* add new DD to hash table */
-    if(FAIL==HIadd_hash_dd(file_rec,dd->tag,dd->ref,access_rec->block,access_rec->idx)) {
+    if(FAIL==HIadd_hash_dd(file_rec,dd->tag,dd->ref,access_rec->block,
+	    access_rec->idx)) {
         access_rec->used=FALSE;
         HRETURN_ERROR(DFE_CANTHASH,FAIL);
       } /* end if */
@@ -389,23 +385,26 @@ PRIVATE int32 HCIread_header(filerec_t *file_rec,accrec_t *access_rec,
     uint16 header_version;      /* version of the compression header */
     uint16 mtype,ctype;         /* temporary variables for model and coder type */
     uint8 *p;       /* pointer to the temporary buffer */
+    uint8 local_ptbuf[32];
 
     /* shut compiler up */
     m_info=m_info; access_rec=access_rec;
 
+#ifdef OLD_WAY
     /* Check if temproray buffer has been allocated */
     if (ptbuf == NULL) {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
+#endif
 
     if(HI_SEEK(file_rec->file, info_dd->offset+2)==FAIL)
         HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-    if(HI_READ(file_rec->file, ptbuf, (COMP_HEADER_LENGTH-2))==FAIL)
+    if(HI_READ(file_rec->file, local_ptbuf, (COMP_HEADER_LENGTH-2))==FAIL)
         HRETURN_ERROR(DFE_READERROR,FAIL);
 
-    p = ptbuf;
+    p = local_ptbuf;
     UINT16DECODE(p, header_version);    /* get header length */
     INT32DECODE(p, info->length);   /* get _uncompressed_ data length */
     UINT16DECODE(p, info->comp_ref);    /* get ref # of comp. data */
@@ -512,13 +511,7 @@ int32 HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
     compinfo_t *info;       /* special element information */
     dd_t *data_dd;          /* dd of existing regular element */
     uint16 special_tag;     /* special version of tag */
-#ifdef OLD_WAY
-    uint8 *p;               /* pointer into the temp. buffer */
-#endif
     int32 ret;
-#ifdef OLD_WAY
-    uint16 ctype,mtype;     /* temp. storage for coder and model types */
-#endif
 
 #ifdef TESTING
 printf("HCcreate(): entering\n");
@@ -529,14 +522,6 @@ printf("HCcreate(): entering\n");
     if(BADFREC(file_rec) || SPECIALTAG(tag) 
 		|| (special_tag=MKSPECIALTAG(tag))==DFTAG_NULL)
        HRETURN_ERROR(DFE_ARGS,FAIL);
-
-
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL) {
-        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
-        if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
 
     /* chech for access permission */
     if(!(file_rec->access & DFACC_WRITE))
@@ -613,56 +598,10 @@ printf("HCcreate(): check 4\n");
 printf("HCcreate(): check 5, coder_funcs.write=%p\n",info->cinfo.coder_funcs.write);
 #endif
 
-#ifdef OLD_WAY
-    /* write special element info to the file */
-    p = ptbuf;
-    INT16ENCODE(p, SPECIAL_COMP);           /* specify special tag type */
-    UINT16ENCODE(p, COMP_HEADER_VERSION);   /* specify header version */
-    INT32ENCODE(p, info->length);           /* write length of un-comp. data */
-    UINT16ENCODE(p, (uint16)info->comp_ref);/* specify ref # of comp. data */
-    mtype=(uint16)model_type;
-    UINT16ENCODE(p, (uint16)mtype);    /* specify model type stored */
-    ctype=(uint16)coder_type;
-    UINT16ENCODE(p, (uint16)ctype);    /* specify coder type stored */
-    dd->tag=special_tag;
-    dd->ref=ref;
-    dd->length=COMP_HEADER_LENGTH;
-#ifdef OLD_WAY
-    if(HI_SEEKEND(file_rec->file)==FAIL) {
-       access_rec->used=FALSE;
-       HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-      } /* end if */
-    dd->offset=HI_TELL(file_rec->file);
-#else
-    if((dd->offset=HPgetdiskblock(file_rec,dd->length,TRUE))==FAIL) {
-       access_rec->used=FALSE;
-       HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-      } /* end if */
-#endif
-
-    /* write compressed special element data to the file */
-    if(HI_WRITE(file_rec->file, ptbuf, dd->length)==FAIL) {
-        access_rec->used=FALSE;
-        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-      } /* end if */
-
-    /* update DD block in the file */
-    if(FAIL==HIupdate_dd(file_rec,access_rec->block,access_rec->idx,FUNC)) {
-        access_rec->used=FALSE;
-        HRETURN_ERROR(DFE_CANTUPDATE,FAIL);
-      } /* end if */
-
-    /* add new DD to hash table */
-    if(FAIL==HIadd_hash_dd(file_rec,dd->tag,dd->ref,access_rec->block,access_rec->idx)) {
-        access_rec->used=FALSE;
-        HRETURN_ERROR(DFE_CANTHASH,FAIL);
-      } /* end if */
-#else
     if(HCIwrite_header(file_rec,access_rec,info,dd,special_tag,ref)==FAIL) {
         access_rec->used=FALSE;
         HRETURN_ERROR(DFE_WRITEERROR,FAIL);
       } /* end if */
-#endif
 
 #ifdef TESTING
 printf("HCcreate(): check 6, coder_funcs.write=%p\n",info->cinfo.coder_funcs.write);
@@ -772,10 +711,6 @@ PRIVATE int32 HCIstaccess(accrec_t *access_rec, int16 acc_mode)
     dd_t *info_dd;              /* dd of the special information element */
     compinfo_t *info;           /* special element information */
     filerec_t *file_rec;        /* file record */
-#ifdef OLD_WAY
-    uint16 header_version;      /* version of the compression header */
-    uint16 mtype,ctype;         /* temporary variables for model and coder type */
-#endif
     comp_info c_info;       /* encoding information from the header */
     model_info m_info;      /* modeling information from the header */
 
@@ -783,13 +718,6 @@ PRIVATE int32 HCIstaccess(accrec_t *access_rec, int16 acc_mode)
     file_rec=FID2REC(access_rec->file_id);
     if(BADFREC(file_rec) || !(file_rec->access & acc_mode))
         HRETURN_ERROR(DFE_ARGS,FAIL);
-
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL) {
-        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
-        if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
 
     /* intialize the access record */
     access_rec->special=SPECIAL_COMP;
@@ -800,69 +728,24 @@ PRIVATE int32 HCIstaccess(accrec_t *access_rec, int16 acc_mode)
     info_dd= &access_rec->block->ddlist[access_rec->idx];
 
     /* get the special info record */
-#ifdef OLD_WAY
-/* this won't work because the compression state will get screwed up */
-    access_rec->special_info=HIgetspinfo(access_rec,info_dd->tag,info_dd->ref);
-    if(access_rec->special_info) {  /* found it from other access records */
-        info=(compinfo_t *)access_rec->special_info;
-        info->attached++;
-      } /* end if */
-    else {  /* look for information in the file */
-#endif
-#ifdef OLD_WAY
-        if(HI_SEEK(file_rec->file, info_dd->offset+2)==FAIL) {
-            access_rec->used=FALSE;
-            HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-        }
-        if((ret=HI_READ(file_rec->file, ptbuf, (COMP_HEADER_LENGTH-2)))==FAIL) {
-            access_rec->used=FALSE;
-            HRETURN_ERROR(DFE_READERROR,FAIL);
-        }
-        access_rec->special_info=(VOIDP)HDgetspace(sizeof(compinfo_t));
-        info=(compinfo_t *)access_rec->special_info;
-        if(info==NULL) {
-           access_rec->used=FALSE;
-           HRETURN_ERROR(DFE_NOSPACE,FAIL);
-        }
-        {
-            uint8 *p = ptbuf;
-            UINT16DECODE(p, header_version);    /* get header length */
-            INT32DECODE(p, info->length);   /* get _uncompressed_ data length */
-            UINT16DECODE(p, info->comp_ref);    /* get ref # of comp. data */
-            UINT16DECODE(p, mtype);             /* get model type */
-            model_type=(comp_model_t)mtype;
-            UINT16DECODE(p, ctype);            /* get encoding type */
-            coder_type=(comp_coder_t)ctype;
-        }
-        info->attached=1;
-        if(HCIinit_model(&(info->minfo),model_type)==FAIL)
-            HRETURN_ERROR(DFE_MINIT,FAIL);
-        if(HCIinit_coder(&(info->cinfo),coder_type)==FAIL)
-            HRETURN_ERROR(DFE_CINIT,FAIL);
-#else
-        access_rec->special_info=(VOIDP)HDgetspace(sizeof(compinfo_t));
-        info=(compinfo_t *)access_rec->special_info;
-        if(info==NULL)
-            HRETURN_ERROR(DFE_NOSPACE,FAIL);
+    access_rec->special_info=(VOIDP)HDgetspace(sizeof(compinfo_t));
+    info=(compinfo_t *)access_rec->special_info;
+    if(info==NULL)
+        HRETURN_ERROR(DFE_NOSPACE,FAIL);
 
-        if(HCIread_header(file_rec,access_rec,info,info_dd,&c_info,
-                    &m_info)==FAIL) {
-            HDfreespace(info);
-            HRETURN_ERROR(DFE_COMPINFO,FAIL);
-          } /* end if */
-        info->attached=1;
-        if(HCIinit_model(&(info->minfo),info->minfo.model_type,&m_info)==FAIL) {
-            HDfreespace(info);
-            HRETURN_ERROR(DFE_MINIT,FAIL);
-          } /* end if */
-        if(HCIinit_coder(&(info->cinfo),info->cinfo.coder_type,&c_info)==FAIL) {
-            HDfreespace(info);
-            HRETURN_ERROR(DFE_CINIT,FAIL);
-          } /* end if */
-#endif
-#ifdef OLD_WAY
-      } /* end else */
-#endif
+    if(HCIread_header(file_rec,access_rec,info,info_dd,&c_info,&m_info)==FAIL) {
+        HDfreespace(info);
+        HRETURN_ERROR(DFE_COMPINFO,FAIL);
+      } /* end if */
+    info->attached=1;
+    if(HCIinit_model(&(info->minfo),info->minfo.model_type,&m_info)==FAIL) {
+        HDfreespace(info);
+        HRETURN_ERROR(DFE_MINIT,FAIL);
+      } /* end if */
+    if(HCIinit_coder(&(info->cinfo),info->cinfo.coder_type,&c_info)==FAIL) {
+        HDfreespace(info);
+        HRETURN_ERROR(DFE_CINIT,FAIL);
+      } /* end if */
 
     file_rec->attach++;
 
@@ -1065,6 +948,7 @@ int32 HCPwrite(accrec_t *access_rec, int32 length, const VOIDP data)
     CONSTR(FUNC,"HCPwrite");     /* for HERROR */
     compinfo_t *info;       /* information on the special element */
     int32 ret;
+    uint8 local_ptbuf[4];
 
 #ifdef TESTING
 printf("HCPwrite(): entering\n");
@@ -1073,13 +957,14 @@ printf("HCPwrite(): entering\n");
     if(length<0)
        HRETURN_ERROR(DFE_RANGE,FAIL);
 
-
+#ifdef OLD_WAY
     /* Check if temproray buffer has been allocated */
     if (ptbuf == NULL) {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
+#endif
 
 #ifdef TESTING
 printf("HCPwrite(): before func ptr call\n");
@@ -1094,7 +979,7 @@ printf("HCPwrite(): after func ptr call\n");
     /* update access record, and information about special element */
     access_rec->posn+=length;
     if(access_rec->posn>info->length) {
-        uint8 *p = ptbuf;           /* temp buffer ptr */
+        uint8 *p = local_ptbuf;           /* temp buffer ptr */
         dd_t *info_dd=           /* dd of infromation element */
             &access_rec->block->ddlist[access_rec->idx];
         filerec_t *file_rec=FID2REC(access_rec->file_id);    /* file record */
@@ -1103,7 +988,7 @@ printf("HCPwrite(): after func ptr call\n");
         INT32ENCODE(p, info->length);
         if(HI_SEEK(file_rec->file, info_dd->offset+4)==FAIL)
             HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-        if(HI_WRITE(file_rec->file, ptbuf, 4)==FAIL) /* re-write un-comp. len */
+        if(HI_WRITE(file_rec->file,local_ptbuf,4)==FAIL) /* re-write un-comp. len */
             HRETURN_ERROR(DFE_WRITEERROR,FAIL);
       } /* end if */
 
@@ -1277,6 +1162,7 @@ int32 HCPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
 
     info_block->comp_type = info->cinfo.coder_type;
     info_block->model_type = info->minfo.model_type;
+    info_block->comp_size=Hlength(access_rec->file_id,DFTAG_COMPRESSED,info->comp_ref);
 
     return SUCCEED;
 

@@ -95,8 +95,11 @@ extern int Hdeldd
 extern uint16 Hnewref
     (int32 file_id);
 
-extern int Hsync
+extern intn Hsync
     (int32 file_id);
+
+extern intn Hcache
+    (int32 file_id,intn cache_on);
 
 extern int32 Hnumber
     (int32 file_id, uint16 tag);
@@ -236,6 +239,9 @@ extern intn HDpackFstring
 extern int32 HLcreate
   (int32 file_id, uint16 tag, uint16 ref, int32 block_length,
         int32 number_blocks);
+
+intn HLconvert
+    (int32 aid,  int32 block_length, int32 number_blocks);
 
 extern int HDinqblockinfo
     (int32 aid, int32 *length, int32 *first_length, int32 *block_length,

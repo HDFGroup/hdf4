@@ -74,7 +74,7 @@ typedef enum {
     DFE_DFNULL,         /* DF is a null pointer */
     DFE_ILLTYPE,        /* DF has an illegal type: internal error */
     DFE_UNSUPPORTED,    /* Feature not currently supported */
-    DFE_BADDDLIST,      /* The DD list is non,existent: internal error */
+    DFE_BADDDLIST,      /* The DD list is non-existent: internal error */
     DFE_NOTDFFILE,      /* This is not a DF file and it is not 0 length */
     DFE_SEEDTWICE,      /* The DD list already seeded: internal error */
     DFE_NOSPACE,        /* Malloc failed */
@@ -157,7 +157,9 @@ typedef enum {
     DFE_CANTSHUTDOWN,   /* Can't shut down an interface we depend on */
     DFE_BITREAD,        /* There was a bit-read error */
     DFE_BITWRITE,       /* There was a bit-write error */
-    DFE_BITSEEK         /* There was a bit-seek error */
+    DFE_BITSEEK,        /* There was a bit-seek error */
+    DFE_CANTLINK,       /* Can't initialize link information */
+    DFE_CANTSYNC        /*Cannot syncronize memory with file */
 } hdf_err_code_t;
 
 #ifdef _H_ERR_MASTER_
@@ -268,7 +270,9 @@ PRIVATE const struct error_messages_t error_messages[] =
 { DFE_CANTSHUTDOWN, "Can't shut down an interface we depend on"},
 { DFE_BITREAD,      "There was a bit-read error"},
 { DFE_BITWRITE,     "There was a bit-write error"},
-{ DFE_BITSEEK,      "There was a bit-seek error"}
+{ DFE_BITSEEK,      "There was a bit-seek error"},
+{ DFE_CANTLINK,     "Can't initialize link information"},
+{ DFE_CANTSYNC,     "Cannot syncronize memory with file"}
 };
 #endif /* _H_ERR_MASTER_ */
 
