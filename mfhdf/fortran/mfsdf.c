@@ -1527,7 +1527,7 @@ switch (cflags)
  * Inputs:   id        - data set ID
  *           start     - origin of chunk to read 
  * Outputs:  num_data  - buffer the data will be read into
- * Calls:    SDreadChunk
+ * Calls:    SDreadchunk
  * Remarks:  need to flip the dimensions to account for array ordering
  *           differencies (start --> cstart)
  *           If performance becomes an issue, use static cstart 
@@ -1809,7 +1809,7 @@ return(ret);
 } 
 /*-------------------------------------------------------------------------
  * Name:    scscompress
- * Puporse: Call SDsetcompress and SDsetnbitdataset
+ * Puporse: Call SDsetcompress 
  * Inputs:  id: SDS access id
  *          comp_type:  type of compression
  *                      COMP_CODE_NONE = 0
