@@ -29,6 +29,12 @@ HDF4.1r5
 8. Giving a NULL to the argument name in several name setting routines
    now returns FAIL instead of causing segnmentation fault. (bug #514)
 
+9. Two routines are added to get compression information for the SD and
+   GR interfaces: SDgetcompress and GRgetcompress. (bug #307)  Note that, 
+   for a JPEG image, GRgetcompress only returns the compression type, not 
+   the compression information (i.e, quantity and force_baseline) because 
+   these information are not retrievable.
+
 HDF4.1r4
 ========
 1. Fixed GR JPEG compression problem.
