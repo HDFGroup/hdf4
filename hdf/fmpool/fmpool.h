@@ -68,7 +68,7 @@
 
 /* Default pagesize and max # of pages to cache */
 #define DEF_PAGESIZE   8192
-#define DEF_MAXCACHE   600
+#define DEF_MAXCACHE   2
 
 /* The BKT structures are the elements of the queues. */
 typedef struct _bkt 
@@ -316,6 +316,10 @@ int	 mpool_put __P((MPOOL *, void *, u_int32_t));
 int	 mpool_sync __P((MPOOL *));
 int	 mpool_page_sync __P((MPOOL *, pageno_t, u_int32_t));
 int	 mpool_close __P((MPOOL *));
+int	 mpool_set_lastpagesize __P((MPOOL *,pageno_t));
+pageno_t  mpool_get_lastpagesize __P((MPOOL *));
+pageno_t  mpool_get_pagesize __P((MPOOL *));
+pageno_t  mpool_get_npages __P((MPOOL *));
 #ifdef USE_INLINE
 BKT	*mpool_look __P((MPOOL *, pageno_t));
 BKT	*mpool_bkt __P((MPOOL *));
