@@ -702,6 +702,10 @@ extern int DFSDwriteslab
 extern int DFSDendslab
     PROTO((void));
 
+extern int DFSDreadslab
+    PROTO((char *filename, int32 _HUGE start[], int32 _HUGE slab_size[],
+           int32 _HUGE stride[], VOIDP buffer, int32 _HUGE buffer_size[]));
+
 /*
 ** from dfconv.c
 */
@@ -1174,6 +1178,7 @@ extern FRETVAL(intf) ndfr8sjpeg
 #   define ndsisslab         FNAME(DSISSLAB)
 #   define ndswslab          FNAME(DSWSLAB)
 #   define ndseslab          FNAME(DSESLAB)
+#   define ndsirslab         FNAME(DSIRSLAB)
 #else
 #   define ndsgdast  FNAME(dsgdast)
 #   define ndsgdisc  FNAME(dsgdisc)
@@ -1228,6 +1233,7 @@ extern FRETVAL(intf) ndfr8sjpeg
 #   define ndsisslab         FNAME(dsisslab)
 #   define ndswslab          FNAME(dswslab)
 #   define ndseslab          FNAME(dseslab)
+#   define ndsirslab         FNAME(dsirslab)
 #endif /* DF_CAPFNAMES */
 #endif  /* DFSD_FNAMES */
 

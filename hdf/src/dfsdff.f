@@ -41,6 +41,7 @@ C   dfsdreadref:    set up next ref to read
 C   dfsdnumber:     return number of SDGs in the file
 C   dswref:         set up next ref to write
 C   dssslab:        set up write to SDS
+C   dsrslab:        set up to read from SDS
 C Remarks: none
 C------------------------------------------------------------------------------
 
@@ -594,6 +595,31 @@ C------------------------------------------------------------------------------
 
       dssslab = dsisslab(filename, len(filename))
  
+      return
+      end
+
+C------------------------------------------------------------------------------
+C Name:     dsrslab
+C Purpose:  call dsirslab to get slab from SDS
+C Inputs:   filename: name of HDF file
+C           start: array of size = rank of data, containing start of slab
+C           slab_size: array of size rank, containing end of slab
+C           stride: sub sampling stride.
+C           buffer: array for returning slab
+C           buffer_size: dimensions of array data
+C Returns:  0 on success, -1 on failure with DFerror set
+C Users:    HDF Fortran programmers
+C Invokes:  dsirslab
+C------------------------------------------------------------------------------
+
+      integer function dsrslab(filename, start, slab_size, stride, buffer,
+     +                         buffer_size)
+      character*(*) filename
+      integer start, slab_size, stride, buffer, buffer_size, dsirslab
+
+      dsrslab = dsirslab(filename, len(filename), start, slab_size, stride, 
+     +                   buffer, buffer_size)
+
       return
       end
 

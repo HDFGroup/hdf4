@@ -60,6 +60,7 @@ static char RcsId[] = "@(#)$Revision$";
     DFSDstartslab - set up to write slabs
     DFSDwriteslab - write hyperslab of values
     DFSDendslab   - end of series of hyperslab writes
+    DFSDreadslab     - get part of the data, specified as a slab
 
 Lower level functions:
     DFSDgetsdg - read SDG into struct
@@ -4336,9 +4337,9 @@ DFSDgetfillvalue(fill_value)
 }
 
 /*-----------------------------------------------------------------------------
- * Name:    DFSDgetslab
+ * Name:    DFSDreadslab
  * Purpose: Get slab of data from SDG.  Will sequence to next SDG if
- *          DFSDgetdims, DFSDgetdata or DFSDgetslab not called earlier.
+ *          DFSDgetdims, DFSDgetdata or DFSDreadslab not called earlier.
  * Inputs:  filename: name of HDF file to use
  *          start: array of size = rank of data, containing start of slice
  *          slab_size: array of size rank, containing end of slice
@@ -4356,10 +4357,10 @@ DFSDgetfillvalue(fill_value)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDgetslab(char *filename, int32 start[], int32 slab_size[], 
+intn DFSDreadslab(char *filename, int32 start[], int32 slab_size[], 
                  int32 stride[], VOIDP buffer, int32 buffer_size[])
 #else
-intn DFSDgetslab(filename, start, slab_size, stride, buffer, buffer_size)
+intn DFSDreadslab(filename, start, slab_size, stride, buffer, buffer_size)
      char *filename;
      int32 start[];
      int32 slab_size[];
