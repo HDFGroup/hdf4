@@ -61,6 +61,8 @@
 ./config/powerpc-apple
 ./config/powerpc-ibm-aix5.x
 ./config/solaris2.x
+./config/sv1-cray
+./config/unicosmk2.0.6.X
 
 ./hdf/COPYING
 ./hdf/COPYRIGHT
