@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.13  1993/08/20 22:38:40  koziol
-Reduced the static memory of a couple of functions to make the PC happier...
+Revision 1.14  1993/08/28 23:03:19  georgev
+Again some cast fixes.
 
+ * Revision 1.13  1993/08/20  22:38:40  koziol
+ * Reduced the static memory of a couple of functions to make the PC happier...
+ *
  * Revision 1.12  1993/08/19  16:45:52  chouck
  * Added code and tests for multi-order Vdatas
  *
@@ -207,7 +210,7 @@ char    *fields;
    *   read list cuz there is nothing there to read yet...
    */
     if(vs->access == 'w' && vs->nvertices == 0) {
-        wlist=HDgetspace(sizeof(VWRITELIST));
+        wlist=(VWRITELIST *)HDgetspace(sizeof(VWRITELIST));
         HDmemcpy(wlist,&(vs->wlist),sizeof(VWRITELIST));
         wlist->ivsize = 0;
         wlist->n      = 0;
@@ -278,7 +281,7 @@ char    *fields;
    *      we should set the read list
    */
     if(vs->nvertices > 0) {
-        rlist=HDgetspace(sizeof(VREADLIST));
+        rlist=(VREADLIST *)HDgetspace(sizeof(VREADLIST));
         HDmemcpy(rlist,&(vs->rlist),sizeof(VREADLIST));
         rlist->n = 0;
         for (i = 0; i < ac; i++) {
