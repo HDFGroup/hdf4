@@ -629,7 +629,9 @@ uint32 num_elm, source_stride, dest_stride;
             dest[0] &= 0x7f;                  /* set LSB of exp to 0 */
           }
       }
-      else dest[0] = dest[1] = dest[2] = dest[3] = 0;
+      else {
+	  dest[0] = dest[1] = dest[2] = dest[3] = 0;
+      }
       
       source += source_stride;
       dest   += dest_stride;
@@ -722,9 +724,9 @@ uint32 num_elm, source_stride, dest_stride;
   for(i = 0; i < num_elm; i++) {
       
       /* extract exponent */
-      exp = (source[2] << 1) | (source[3] >> 7);
+      exp = (source[1] << 1) | (source[0] >> 7);
 
-      if(!exp && !source[2]) {
+      if(!exp && !source[1]) {
           /* 
            * zero value 
            */
@@ -735,11 +737,11 @@ uint32 num_elm, source_stride, dest_stride;
            * Normal value
            */
 
-          dest[0] = source[2] - (uint8)1; /* subtracts 2 from exponent */
+          dest[3] = source[1] - (uint8)1; /* subtracts 2 from exponent */
           /* copy mantissa, LSB of exponent */
-          dest[1] = source[3];
           dest[2] = source[0];
-          dest[3] = source[1];
+          dest[1] = source[3];
+          dest[0] = source[2];
 
       }
       else if(exp) {
@@ -749,29 +751,29 @@ uint32 num_elm, source_stride, dest_stride;
            */
 
           /* keep sign, zero exponent */
-          dest[0] = source[2] & 0x80;
+          dest[3] = source[1] & 0x80;
 
           shft = 3 - exp;
 
           /* shift original mant by 1 or 2 to get denormalized mant */
           /* prefix mantissa with '1'b or '01'b as appropriate */
-          dest[1] = (uint8)((source[3] & 0x7f) >> shft)
+          dest[2] = (uint8)((source[0] & 0x7f) >> shft)
                     | (uint8)(0x10 << exp);
-          dest[2] = (uint8)(source[3] << (8-shft))
-                    | (uint8)(source[0] >> shft);
-          dest[3] = (uint8)(source[0] << (8-shft))
-                    | (uint8)(source[1] >> shft);
+          dest[1] = (uint8)(source[0] << (8-shft))
+                    | (uint8)(source[3] >> shft);
+          dest[0] = (uint8)(source[3] << (8-shft))
+                    | (uint8)(source[2] >> shft);
       }
       else {
           /* 
            * sign=1 -> infinity or NaN 
            */
           
-          dest[0] = 0xff;                /* set exp to 255 */
+          dest[3] = 0xff;                /* set exp to 255 */
           /* copy mantissa */
-          dest[1] = source[3] | (uint8)0x80;  /* LSB of exp = 1 */
-          dest[2] = source[0];
-          dest[3] = source[1];
+          dest[2] = source[0] | (uint8)0x80;  /* LSB of exp = 1 */
+          dest[1] = source[3];
+          dest[0] = source[2];
       }
       
       source += source_stride;
