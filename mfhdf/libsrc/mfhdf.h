@@ -164,6 +164,12 @@ extern intn SDsetaccesstype
 extern intn SDsetblocksize
     (int32 sdsid, int32 block_size);
 
+extern intn SDsetdimval_comp
+    (int32 dimid, intn compt_mode);
+
+extern intn SDisdimval_bwcomp
+    (int32 dimid);
+
 /* Define the FORTRAN names */
 
 #ifndef MFSD_FNAMES
@@ -203,6 +209,8 @@ extern intn SDsetblocksize
 #   define nsfiscvar   FNAME(SFISCVAR)
 #   define nscsextf    FNAME(SCSEXTF)
 #   define nsfsacct    FNAME(SFSACCT)
+#   define nsfsdmvc    FNAME(SFSDMVC)
+#   define nsfisdmvc   FNAME(SFISDMVC)
 #else   /* DF_CAPFNAMES */
 #   define nscstart    FNAME(scstart)
 #   define nsfend      FNAME(sfend)
@@ -238,6 +246,8 @@ extern intn SDsetblocksize
 #   define nsfiscvar   FNAME(sfiscvar)
 #   define nscsextf    FNAME(scsextf)
 #   define nsfsacct    FNAME(sfsacct)
+#   define nsfsdmvc    FNAME(sfsdmvc)
+#   define nsfisdmvc   FNAME(sfisdmvc)
 #endif
 #endif
 
