@@ -41,6 +41,7 @@ export PATH || (echo "OOPS, this isn't sh.  Desperation time.  I will feed mysel
 remove=rm
 hard_link=ln
 symbolic_link='ln -s'
+mkdirprog=mkdir        # what is your make-directory-program
 
 #for Test
 #remove="echo rm"
@@ -662,14 +663,61 @@ for subdir in . ${subdirs} ; do
                 mv -f ${subdir}/config.status ${subdir}/config.back
         fi
 #
-#  Added this variable to make symlinks easier when linking
-# to files not in the same directory -GV
-        THISDIR=${PWD=`pwd`}
+#  Added THISDIR variable to make symlinks easier when linking
+#  to files not in the same directory -GV
+#        THISDIR=${PWD=`pwd`}
+        ### figure out what to do with srcdir
+        case "${srcdir}" in
+          ".") THISDIR=${PWD=`pwd`} ;; # no -srcdir option.  We're building in place.
+          /*) # absolute path
+              THISDIR=${srcdir}
+              ;;
+          *) # otherwise relative
+             THISDIR=../${srcdir}
+             ;;
+        esac
+#        echo "thisdir is $THISDIR "
 #        while [ -n "${files}" ] ; do
         for file in ${files} ;  do
                 # set file to car of files, files to cdr of files
                 set ${files}; file=$1; shift; files=$*
                 set ${links}; link=$1; shift; links=$*
+
+                ## Took this code from 'install-sh' script
+                ## this sed command emulates the dirname command
+                dstdir=`echo $link | sed -e 's,[^/]*$,,;s,/$,,;s,^$,.,'`
+
+                # Make sure that the destination directory exists.
+                #  this part is taken from Noah Friedman's mkinstalldirs script
+
+                # Skip lots of stat calls in the usual case.
+                if [ ! -d "$dstdir" ]; then
+                  defaultIFS='	
+                  '
+                  IFS="${IFS-${defaultIFS}}"
+
+                  oIFS="${IFS}"
+                  # Some sh's can't handle IFS=/ for some reason.
+                  IFS='%'
+                  set - `echo ${dstdir} | sed -e 's@/@%@g' -e 's@^%@/@'`
+                  IFS="${oIFS}"
+
+                  pathcomp=''
+
+                  while [ $# -ne 0 ] ; do
+                    pathcomp="${pathcomp}${1}"
+                    shift
+
+                    if [ ! -d "${pathcomp}" ] ;
+                    then
+                      $mkdirprog "${pathcomp}"
+                    else
+                      true
+                    fi
+
+                    pathcomp="${pathcomp}/"
+                  done
+                fi
 
                 if [ ! -r ${srcdir}/${file} ] ; then
                         echo '***' "${progname}: cannot create a link \"${link}\"," 1>&2
