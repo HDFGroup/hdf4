@@ -20,9 +20,17 @@ $! The following constants should probably be defined
 $!   only once in the main HDF MAKE.COM...
 $!
 $ hdflib= "[-.src]df/lib,[-.jpeg]libjpeg/lib,[-.zlib]libz/lib"
+$ hdfinc= "([-.src],[-.jpeg],[-.zlib])"
 $! define/nolog hdf$include ([-.src],[-.jpeg],[-.zlib])
+$! define/nolog sys$clib sys$library:deccrtl
+$ if f$getsyi("arch_name") .eqs. "VAX"
+$ then 
+$ ccopt = "/DECC/STANDARD=VAXC/opt/nodebug/define=VMS/include='hdfinc"
+$ define/nolog sys$clib sys$library:deccrtl
+$ else
+$ ccopt = "/opt/nodebug/define=VMS/include='hdfinc"
 $ define/nolog sys$clib sys$library:vaxcrtl
-$ ccopt= "/include=([-.src],[-.jpeg],[-.zlib])/opt/nodebug/define=VMS"
+$ endif
 $! ccopt= "/debug/noopt/include=([-.src],[-.jpeg],[-.zlib])/define=VMS"
 $! foropt= "/debug/noopt"
 $ foropt= "/opt/nodebug"
@@ -60,11 +68,15 @@ $ cc 'ccopt   nbit
 $ cc 'ccopt   tbv
 $ cc 'ccopt   gentest
 $ cc 'ccopt   tvsfpack
+$ cc 'ccopt   tvattr
+$ cc 'ccopt   chunks
 $ link/nodebug testhdf,rig,sdmms,sdnmms,an,anfile,sdstr, -
   slab,litend, file,file1,blocks,extelt,vers,tvset,conv,tree, -
-  bitio,comp,man,mgr.obj,nbit,tbv, tvsfpack, -
-  'hdflib, sys$library:vaxcrtl/lib
-$ link gentest, 'hdflib, sys$library:vaxcrtl/lib
+  bitio,comp,man,mgr.obj,nbit,tbv,tvsfpack,tvattr,chunks, -
+  'hdflib, sys$clib/lib
+$!  'hdflib, sys$library:deccrtl/lib
+$! link gentest, 'hdflib, sys$library:deccrtl/lib
+$ link gentest, 'hdflib, sys$clib/lib
 $ type sys$input 
   **  Making Fortran interface test programs **
 $!
@@ -90,6 +102,7 @@ $ fortran 'foropt forsupff.f
 $ fortran 'foropt manf.f
 $ fortran 'foropt mgrf.f
 $ fortran 'foropt tvsetf.f
+$ fortran 'foropt tvattrf.f
 $!
 $ link fortest,forsupf, 'hdflib, sys$clib/lib
 $ link tr8f, forsupff,forsupf, 'hdflib, sys$clib/lib
@@ -108,9 +121,10 @@ $ link manf,forsupff, forsupf, 'hdflib, sys$clib/lib
 $ link mgrf,forsupff, forsupf, 'hdflib, sys$clib/lib
 $ link egfhi,forsupff, forsupf, 'hdflib, sys$clib/lib
 $ link tvsetf,forsupff,forsupf, 'hdflib, sys$clib/lib
+$ link tvattrf,forsupff,forsupf, 'hdflib, sys$clib/lib
 $ link fortestF, forsupff,forsupf,tr8f,t24f,tpf,tsdmmsf, -
   tsdnmmsf,tsdntf,tsdnntf,tanf,tanfilef,tstubsf,tsdstrf, -
-  slabwf,manf,mgrf,tvsetf, -
+  slabwf,manf,mgrf,tvsetf,tvattrf, -
   'hdflib, sys$clib/lib
 $! delete *.obj;*
 $!
