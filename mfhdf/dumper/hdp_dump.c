@@ -31,7 +31,13 @@ static char RcsId[] = "$Revision$";
 intn 
 fmtbyte(unsigned char *x, file_type_t ft, FILE * ofp)
 {
-    return (fprintf(ofp, "%02x ", (unsigned) *x));
+    unsigned int s;
+    if(ft==DASCII)
+      return (fprintf(ofp, "%02x ", (unsigned) *x));
+    else
+      { s = (unsigned) * x;
+        fwrite(&s, sizeof(unsigned int),1,ofp);
+      }
 }
 
 intn 
@@ -49,12 +55,12 @@ fmtint8(VOIDP x, file_type_t ft, FILE * ofp)
 intn 
 fmtuint8(VOIDP x, file_type_t ft, FILE * ofp)
 {
-    unsigned s;
+    uint8 s;
     if(ft==DASCII)
     return (fprintf(ofp, "%u", (unsigned) *((unsigned char *) x)));
     else
       { s= (unsigned) *((unsigned char *) x);
-        fwrite(&s, sizeof(unsigned), 1, ofp);
+        fwrite(&s, sizeof(uint8), 1, ofp);
       } 
 }
 
@@ -99,8 +105,13 @@ fmtchar(VOIDP x, file_type_t ft, FILE * ofp)
 
 intn 
 fmtuchar8(VOIDP x, file_type_t ft, FILE * ofp)
-{
-    return (1 + fprintf(ofp, "%o", *((uchar8 *) x)));
+{   unsigned int s;
+    if(ft==DASCII) 
+      return (1 + fprintf(ofp, "%o", *((uchar8 *) x)));
+    else
+      { s = 1+(*((uchar8 *) x));
+        return(fwrite(&s, sizeof(unsigned int),1, ofp));
+      }
 }
 
 intn 
@@ -196,15 +207,16 @@ dumpfull(int32 nt, file_type_t ft, int32 cnt, VOIDP databuf, intn indent, FILE *
     intn        (*fmtfunct) (VOIDP, file_type_t, FILE *) = NULL;
     int32       off;
     intn        cn;
+   
 
     switch (nt & 0xff )
       {
       case DFNT_CHAR:
-        if(ft==DASCII)
+        /*  if(ft==DASCII)   */
           fmtfunct = fmtchar;
           break;
       case DFNT_UCHAR:
-        if(ft==DASCII)
+      /*  if(ft==DASCII)   */
           fmtfunct = fmtuchar8;
           break;
       case DFNT_UINT8:
