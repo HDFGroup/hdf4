@@ -24,8 +24,8 @@ $ cobj="dff,  dfsdf,  dfr8f,  df24f,  dfanf,  dfpf,  vgf,  hfilef, "+-
        "dfutilf, herrf, mfgrf, mfanf"
 $ fortran 'ffiles
 $ ccc 'cobj
-$ library/replace df 'cobj
-$ library/replace df 'fobj
+$ library/replace []df 'cobj
+$ library/replace []df 'fobj
 $ type sys$input
 	Added Fortran stubs to HDF library
 $!

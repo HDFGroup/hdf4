@@ -27,7 +27,7 @@ $ cobj="df24, dfan, dfcomp, dfgr, dfgroup, dfimcomp, dfp, dfr8, dfsd, "+-
 "mstdio,atom, bitvect, dynarray, hfiledd "
 
 $ ccc 'cobj 
-$ library/create df  'cobj
+$ library/create []df  'cobj
 $ type sys$input
 	Created base HDF library
 $!
