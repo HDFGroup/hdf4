@@ -64,7 +64,9 @@ C
 
       call MESSAGE(VERBO_HI, 'Getting ref1')
       ref1 = dplref()
-      call VERIFY(ref1, 'dplref', number_failed)
+      call VERIFY(ref1*1, 'dplref', number_failed)
+C VERIFY expects an integer, but ref1 is only integer*2.  The
+C expression promotes it to an integer expression.
 C     print *, 'ref1 is ', ref1
 
       call MESSAGE(VERBO_HI, 'Putting pal2 in file')
@@ -73,7 +75,7 @@ C     print *, 'ref1 is ', ref1
 
       call MESSAGE(VERBO_HI, 'Getting ref2')
       ref2 = dplref()
-      call VERIFY(ref2, 'dplref', number_failed)
+      call VERIFY(ref2*1, 'dplref', number_failed)
 C     print *, 'ref2 is ', ref2
      
       call MESSAGE(VERBO_HI, 'Restarting palette interface')
@@ -92,7 +94,7 @@ C     print *, 'ref2 is ', ref2
       
       call MESSAGE(VERBO_HI, 'Getting ref1')
       ref1 =  dplref()
-      call VERIFY(ref1, 'dplref', number_failed)
+      call VERIFY(ref1*1, 'dplref', number_failed)
 C     print *, 'Last ref is ', ref1
 
       call MESSAGE(VERBO_HI, 'Reading pal2.')
@@ -107,7 +109,7 @@ C     print *, 'Last ref is ', ref1
 
       call MESSAGE(VERBO_HI, 'Getting ref2')
       ref2 = dplref()
-      call VERIFY(ref2, 'dplref', number_failed)
+      call VERIFY(ref2*1, 'dplref', number_failed)
 C     print *, 'Last ref is ', ref2
 
       call MESSAGE(VERBO_HI, 'Getting number of palettes')
