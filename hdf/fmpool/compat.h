@@ -46,8 +46,6 @@
 #ifndef	_COMPAT_H_
 #define	_COMPAT_H_
 
-#include <sys/types.h>
-
 /*
  * If your system doesn't typedef u_long, u_short, or u_char
  */
