@@ -1,4 +1,4 @@
-               README for HDF 4.1r2 Distribution
+               README for HDF 4.1r3 Distribution
                ---------------------------------
 
 Obtaining the latest version
@@ -6,7 +6,7 @@ Obtaining the latest version
  The most recent version of the distribution can be obtained from
  the NCSA ftp archive site at:
 
-     ftp://ftp.ncsa.uiuc.edu/HDF/HDF_Current
+     ftp://ftp.ncsa.uiuc.edu/HDF/HDF_Current/
 
 Distribution Layout
 -------------------
@@ -24,14 +24,8 @@ Distribution Layout
              Please see the README in each directory for further info
              on each package. 
 
-   mfhdf  -- contains the netCDF(mfhdf) part of the HDF/netCDF distribution
-             and HDF dumper utility(hdp).
-
-   java-hdf -- optional Java interface and Java HDF Viewer.  The Java
-               products are built separately after the library has
-               been built.  Change to the java-hdf directory and
-               see the README.  
-               See: http://hdf.ncsa.uiuc.edu/java-hdf-html/
+   mfhdf  -- contains the netCDF(mfhdf) part of the HDF/mfhdf distribution
+             and HDF dumper utility (hdp).
 
    man    -- incomplete set of man page(s) for HDF.
 
@@ -39,7 +33,7 @@ Distribution Layout
                     release. Files in this sub-directory can be used 
                     as supplemental documentation for HDF4.1. These files 
                     are also available on the NCSA ftp server, 
-                    in /HDF/HDF_Current/release_notes.
+                    in /HDF/HDF_Current/release_notes/.
 
 Third Party Software Requirements:
 ---------------------------------
@@ -47,10 +41,10 @@ Third Party Software Requirements:
     for this is ftp://ftp.uu.net/graphics/jpeg/jpegsrc.v6b.tar.gz
 
 
- 2. ZLIB 1.0.4(libz.a) distribution.  
+ 2. ZLIB 1.1.3(libz.a) distribution.  
 
  Both of these distributions are included with this distribution
- in 'hdf/jpeg' and 'hdf/zlib'. The HDF/netCDF base distribution
+ in 'hdf/jpeg' and 'hdf/zlib'. The HDF/mfhdf base distribution
  in known to work with these versions only.
 
 System Requirements
