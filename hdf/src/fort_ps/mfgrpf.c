@@ -824,7 +824,7 @@ switch (cflags)
 
 
 }   
-#if 0 /* Commented out for now  -EIP 12/29/97 */ 
+//#if 0 /* Commented out for now  -EIP 12/29/97 */ 
 /*-----------------------------------------------------------------------------
  * Name:     mgcrcchnk
  * Purpose:  read the specified chunk of CHARACTER data to the buffer
@@ -904,7 +904,7 @@ switch (cflags)
 
 } 
 
-#endif /*Commented out for now -EIP 12/29/97 */
+//#endif /*Commented out for now -EIP 12/29/97 */
 /*-----------------------------------------------------------------------------
  * Name:     mgcscchnk
  * Purpose:  set the maximum number of chunks to cache 
@@ -1040,7 +1040,7 @@ ret = GRsetchunk(riid, chunk_def, cflags);
 return(ret);
 
 }   
-#if 0 /* Commented out for now  -EIP 12/29/97 */ 
+//#if 0 /* Commented out for now  -EIP 12/29/97 */ 
 /*-----------------------------------------------------------------------------
  * Name:     mgcwcchnk
  * Purpose:  write the specified chunk of CHARACTER data to the GR 
@@ -1120,7 +1120,7 @@ return(ret);
        return(ret);
 
 } 
-#endif /*Commented out for now -EIP 12/29/97 */
+//#endif /*Commented out for now -EIP 12/29/97 */
 /*-------------------------------------------------------------------------
  * Name:    mgcscompress
  * Puporse: Call GRsetcompress
