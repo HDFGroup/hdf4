@@ -27,7 +27,9 @@ int32
 dumpvd(int32 vd, int data_only, FILE * fp, char separater[2],
 	   int flds_indices[VSFIELDMAX], int dumpallfields)
 {
-	char        vdname[VSNAMELENMAX], fields[FIELDNAMELENMAX], flds[FIELDNAMELENMAX];
+	char        vdname[VSNAMELENMAX];
+        char        fields[VSFIELDMAX*FIELDNAMELENMAX];
+        char        flds[VSFIELDMAX*FIELDNAMELENMAX];
 	int32       j, i, t, interlace, nv, vsize;
 	uint8      *bb, *b;
 	DYN_VWRITELIST *w;
