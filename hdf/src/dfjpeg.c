@@ -64,9 +64,15 @@ void
 hdf_init_destination(struct jpeg_compress_struct *cinfo_ptr)
 {
     hdf_dest_ptr dest=(hdf_dest_ptr)cinfo_ptr->dest;
+    int32 temp_aid;
 
     if((dest->buffer=HDgetspace(sizeof(JOCTET)*OUTPUT_BUF_SIZE))==NULL)
         ERREXIT1(cinfo_ptr, JERR_OUT_OF_MEMORY, (int)1);
+
+    /* Create empty JPEG5/GREYJPEG5 tag/ref to indicate the image */
+    if((temp_aid=Hstartwrite(dest->file_id,dest->scheme,dest->ref,0))==FAIL)
+        ERREXIT(cinfo_ptr, JERR_FILE_WRITE);
+    Hendaccess(temp_aid);
 
     if((dest->aid=Hstartaccess(dest->file_id,dest->tag,dest->ref,DFACC_WRITE|DFACC_APPENDABLE))==FAIL)
         ERREXIT(cinfo_ptr, JERR_FILE_WRITE);
