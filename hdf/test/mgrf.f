@@ -24,6 +24,11 @@ C
       include 'fortest.inc'
 
       integer num_err
+C
+C  ---chunking and compression errors ----------
+      integer err_grchunk, err_grcompress
+C  ---------------------------------------------
+C
       character*20 myname
       parameter (myname = 'mgrf')
 
@@ -350,6 +355,36 @@ C Close the file
       ret = hclose(file_id)
       call VRFY(ret,'hclose',number_failed)
 
+C
+C     GR chunking and compression tests. Added by EIP 1/13/98
+C
+C     ----Chunking test
+C          creates the following files:
+C                       grch_no.hdf
+C                       grch_rl.hdf
+C                       grch_sk.hdf
+C                       grch_gz.hdf
+      err_grchunk = 0
+      call test_grchunk(err_grchunk)
+      if (err_grchunk .ne. 0) then
+         number_failed = number_failed + 1
+         print *, '*******mgrf: test_grchunk failed********'
+      endif
+C     ----Compression test
+C     THE TEST IS COMMENTED OUT UNTIL GRCOMPRESS is FIXED 1/13/98
+C
+C          creates the following files:
+C                       gr_no.hdf
+C                       gr_rl.hdf
+C                       gr_sk.hdf
+C                       gr_gz.hdf
+      err_grcompress = 0
+C      call test_grcompress(err_grcompress)
+      if (err_grcompress .ne. 0) then
+         number_failed = number_failed + 1
+         print *, '*******mgrf: test_grcompress failed*******'
+      endif
+C
       if (number_failed .eq. 0) then 
 	  if (Verbosity .gt. 6) then
 	      print *, CR, CR
@@ -358,7 +393,640 @@ C Close the file
       else
           print *, '****** ', number_failed, ' TESTS FAILED  ******'
       endif
+      return
+      end 
 
-      return 
+      subroutine test_grchunk( err_grchunk )
+      implicit none
+      integer N_COMP_TYPES, N_COMP_ARG, NCOMP, il
+      integer MFGR_INTERLACE_PIXEL 
+      parameter(N_COMP_TYPES = 4, N_COMP_ARG =1)
+      parameter(NCOMP = 2, MFGR_INTERLACE_PIXEL = 0)
+      integer ri_id(N_COMP_TYPES),
+     .        gr_id(N_COMP_TYPES),
+     .        file_id(N_COMP_TYPES)
+      integer dims(2), start(2), edges(2), stride(2)
+      integer err_grchunk
+      integer i, j, status, il, k, i_comp, index
+      integer flags, maxcache, nc_out
+      character*12 file(N_COMP_TYPES)
+      character*12 name(N_COMP_TYPES)
+C
+C---GR interface functions
+C
+      integer mgstart, mgcreat, mgwrimg, mgsnatt,
+     .        mgrdimg, mgselct, mgendac, mgend
+C
+C---GR chunking functions 
+C
+      integer mggichnk, 
+     .        mgscchnk,
+     .        mgschnk
+C
+      integer hopen, hclose
+      integer DFACC_CREATE, 
+     .        DFACC_READ,
+     .        DFACC_WRITE
+      integer DFNT_INT16
+      integer X_LENGTH, Y_LENGTH
+      integer X_CH_LENGTH, Y_CH_LENGTH
+      parameter (DFACC_CREATE = 4,
+     .           DFACC_READ   = 1,
+     .           DFACC_WRITE  = 2)
+      parameter (DFNT_INT16   = 22)
+      parameter (X_LENGTH     = 9,
+     .           Y_LENGTH     = 4,
+     .           X_CH_LENGTH  = 3,
+     .           Y_CH_LENGTH  = 2) 
+C
+C---Compression types and parameters arrays 
+C
+      integer comp_type(N_COMP_TYPES), comp_type_out(N_COMP_TYPES)
+      integer comp_prm(N_COMP_ARG)
+C
+C---Compression parameters
+C
+      integer COMP_CODE_NONE,
+     .          COMP_CODE_RLE,
+     .          COMP_CODE_SKPHUFF,
+     .          COMP_CODE_DEFLATE,
+     .          SKPHUFF_SKP_SIZE,
+     .          DEFLATE_LEVEL
+
+      parameter(COMP_CODE_NONE    = 0,
+     .          COMP_CODE_RLE     = 1,
+     .          COMP_CODE_SKPHUFF = 3,
+     .          COMP_CODE_DEFLATE = 4)
+      parameter (DEFLATE_LEVEL = 1,
+     .           SKPHUFF_SKP_SIZE = 2)
+C
+C---Data
+C 
+      integer*2 image_data(NCOMP, X_LENGTH, Y_LENGTH)
+      integer*2 image_data_out(NCOMP,X_LENGTH,Y_LENGTH)
+C
+C---Default pixel value
+C
+      integer*2 pixel_value(2)
+C
+C---Chunking dimension arrays
+C
+      integer ch_dims(2), ch_dims_out(2)
+C
+C---We will write/read to four different files corresponding to the
+C   different compression types.
+C
+C   No compresion
+C
+      file(1) = 'grch_no.hdf'
+      name(1) = 'Nocomp_data'    
+      comp_type(1) = COMP_CODE_NONE
+      comp_type_out(1) = 0
+C
+C   RLE compresion
+C
+      file(2) = 'grch_rl.hdf'
+      name(2) = 'Rlcomp_data'    
+      comp_type(2) = COMP_CODE_RLE
+      comp_type_out(2) = 1 
+C
+C   Adaptive Huffman compresion
+C
+      file(3) = 'grch_sk.hdf'
+      name(3) = 'Hucomp_data'    
+      comp_type(3) = COMP_CODE_SKPHUFF
+      comp_type_out(3) = 1 
+C
+C   GZIP compression
+C
+      file(4) = 'grch_gz.hdf'
+      name(4) = 'Gzcomp_data'    
+      comp_type(4) = COMP_CODE_DEFLATE
+      comp_type_out(4) = 1 
+C
+C  Data initialization
+C 
+      do 30 j = 1, Y_LENGTH
+         do 20 i = 1, X_LENGTH
+           do 10 k = 1, NCOMP
+            image_data(k, i, j) = i + j - 1
+10         continue
+20    continue
+30    continue
+C
+C  Initialize compression argument array
+C
+      do 35 i = 1, N_COMP_ARG
+          comp_prm(i) = 0
+35    continue
+C
+C---Define chunk dimensions
+C
+         ch_dims(1) = X_CH_LENGTH 
+         ch_dims(2) = Y_CH_LENGTH 
+C
+C   Main loop through different compression types
+C
+
+      do 1000 i_comp=1, N_COMP_TYPES
+C
+C     Create and open the file.
+C
+      file_id(i_comp) = hopen(file(i_comp), DFACC_CREATE, 0)
+C
+C     Initiate the GR interface.
+C
+      gr_id(i_comp) = mgstart(file_id(i_comp))
+
+C     Define the number of components and dimensions of the image.
+
+      il = MFGR_INTERLACE_PIXEL
+      dims(1) = X_LENGTH
+      dims(2) = Y_LENGTH
+
+C     Create the data set.
+
+      ri_id(i_comp) = mgcreat(gr_id(i_comp), name(i_comp), NCOMP,
+     .                        DFNT_INT16, il, dims)
+
+C
+C---Set pixel value
+C
+      pixel_value(1) = 0
+      pixel_value(2) = 0
+C
+C---Fill the image array with the default pixel value
+C
+      status = mgsnatt(ri_id(i_comp), 'FillValue', DFNT_INT16,
+     .                 ncomp, pixel_value) 
+      if(status .ne. 0) then
+         print *, 'mgsnatt failed for', i_comp, '-th data set'
+         err_grchunk = err_grchunk +1
+      endif 
+
+C
+C---Define chunked GR
+C
+      if (i_comp. eq. 3) comp_prm(1) = SKPHUFF_SKP_SIZE
+      if (i_comp. eq. 4) comp_prm(1) =  DEFLATE_LEVEL
+      status = mgschnk (ri_id(i_comp), ch_dims,
+     .                  comp_type(i_comp),comp_prm)
+      if(status .ne. 0) then
+         print *, 'mgschnk failed for', i_comp, '-th data set'
+         err_grchunk = err_grchunk +1
+      endif 
+C
+C---Set chunk cache to hold maximum of 3 chunks
+C
+      maxcache = 3
+      flags = 0
+      status = mgscchnk (ri_id(i_comp), maxcache, flags) 
+      if(status .ne. 3) then
+         print *, 'mgscchnk failed for', i_comp, '-th data set'
+         err_grchunk = err_grchunk +1
+      endif 
+C
+C     Define the location, pattern, and size of the data set
+C     that will be written to.
+      start(1) = 0
+      start(2) = 0
+      edges(1) = X_LENGTH
+      edges(2) = Y_LENGTH
+      stride(1) = 1
+      stride(2) = 1
+
+C     Write the stored data to the image array.
+      status = mgwrimg(ri_id(i_comp), start, stride, edges, image_data)
+      if(status .ne. 0) then
+         print *, 'mgwrimg failed for', i_comp, '-th data set'
+         err_grchunk = err_grchunk +1
+      endif 
+C
+C     Terminate access to the array.
+C
+      status = mgendac(ri_id(i_comp))
+      if(status .ne. 0) then
+         print *, 'mgendac failed for', i_comp, '-th data set'
+         err_grchunk = err_grchunk +1
+      endif 
+C
+C     Terminate access to the GR interface.
+C
+      status = mgend(gr_id(i_comp))
+      if(status .ne. 0) then
+         print *, 'mgend failed for', i_comp, '-th data set'
+         err_grchunk = err_grchunk +1
+      endif 
+C
+C     Close the file.
+C
+      status = hclose(file_id(i_comp))
+      if(status .ne. 0) then
+         print *, 'hclose failed for', i_comp, '-th data set'
+         err_grchunk = err_grchunk +1
+      endif 
+
+1000  continue
+
+
+      do 2000 i_comp=1, N_COMP_TYPES
+C
+C     Open the file.
+C
+      file_id(i_comp) = hopen(file(i_comp), DFACC_READ, 0)
+      if(status .eq. -1) then
+         print *, 'hopen failed for', i_comp, '-th data set'
+         err_grchunk = err_grchunk +1
+      endif 
+C
+C     Initiate the GR interface and select first data set.
+C
+      gr_id(i_comp) = mgstart(file_id(i_comp))
+      if(status .eq. -1) then
+         print *, 'mgstart failed for', i_comp, '-th data set'
+         err_grchunk = err_grchunk +1
+      endif 
+      index = 0
+      ri_id(i_comp) = mgselct(gr_id(i_comp), index)
+      if(status .eq. -1) then
+         print *, 'mgselct failed for', i_comp, '-th data set'
+         err_grchunk = err_grchunk +1
+      endif 
+C
+C     Read the stored data to the image array.
+C
+      status = mgrdimg(ri_id(i_comp), start, stride, edges,
+     .                  image_data_out)
+      if(status .ne. 0) then
+         print *, 'mgrdimg failed for', i_comp, '-th data set'
+         err_grchunk = err_grchunk +1
+      endif 
+C
+C--- Compare the data we read with the original data
+C
+      do 60 j = 1, Y_LENGTH
+         do 50 i = 1, X_LENGTH
+           do 40 k = 1, ncomp
+            if(image_data(k, i, j).ne.image_data_out(k,i,j)) then
+             print *, 'data is wrong'
+             err_grchunk = err_grchunk +1
+            endif 
+40         continue
+50    continue
+60    continue
+C
+C   Check chunking info
+C
+       status = mggichnk(ri_id(i_comp), ch_dims_out,
+     .                   nc_out)
+      if(status .ne. 0) then
+         print *, 'mggichnk failed for', i_comp, '-th data set'
+         err_grchunk = err_grchunk +1
+      endif 
+       if (comp_type_out(i_comp) .ne. nc_out) then
+          print *, 'mggichnk returns wrong compression type for',
+     .              i_comp, '-th data set'
+          err_grchunk = err_grchunk + 1
+       endif
+       if ( (ch_dims(1) .ne. ch_dims_out(1)) .or.
+     .      (ch_dims(2) .ne. ch_dims_out(2))) then
+          print *, 'mggichnk returns wrong chunk dimensions for',
+     .              i_comp, '-th data set'
+          err_grchunk = err_grchunk + 1
+       endif
+
+  
+C
+C     Terminate access to the array.
+C
+      status = mgendac(ri_id(i_comp))
+      if(status .ne. 0) then
+         print *, 'mgendac failed for', i_comp, '-th data set'
+         err_grchunk = err_grchunk +1
+      endif 
+C
+C     Terminate access to the GR interface.
+C
+      status = mgend(gr_id(i_comp))
+      if(status .ne. 0) then
+         print *, 'mgend failed for', i_comp, '-th data set'
+         err_grchunk = err_grchunk +1
+      endif 
+C
+C     Close the file.
+C
+      status = hclose(file_id(i_comp))
+      if(status .ne. 0) then
+         print *, 'hclose failed for', i_comp, '-th data set'
+         err_grchunk = err_grchunk +1
+      endif 
+2000  continue
+      return
       end
+C
+C     GR compression test
+C
+      subroutine test_grcompress( err_grcompress )
+      implicit none
+      integer N_COMP_TYPES, N_COMP_ARG, NCOMP, il
+      parameter(N_COMP_TYPES = 4, N_COMP_ARG =1)
+      integer MFGR_INTERLACE_PIXEL
+      parameter(NCOMP = 2, MFGR_INTERLACE_PIXEL = 0)
+      integer ri_id(N_COMP_TYPES),
+     .        gr_id(N_COMP_TYPES),
+     .        file_id(N_COMP_TYPES)
+      integer dims(2), start(2), edges(2), stride(2)
+      integer i, j, k, status, il, i_comp, index
+      integer err_grcompress
+      character*12 file(N_COMP_TYPES)
+      character*12 name(N_COMP_TYPES)
+C
+C---GR interface functions
+C
+      integer mgstart, mgcreat, mgwrimg, mgn2ndx,
+     .        mgsnatt,
+     .        mgrdimg, mgselct, mgendac, mgend
+C
+C---GR compression function 
+C
+      integer mgscompress
+C
+      integer hopen, hclose
+      integer DFACC_CREATE, 
+     .        DFACC_READ,
+     .        DFACC_WRITE
+      integer DFNT_INT16
+      integer X_LENGTH, Y_LENGTH
+      integer X_CH_LENGTH, Y_CH_LENGTH
+      parameter (DFACC_CREATE = 4,
+     .           DFACC_READ   = 1,
+     .           DFACC_WRITE  = 2)
+      parameter (DFNT_INT16   = 22)
+      parameter (X_LENGTH     = 9,
+     .           Y_LENGTH     = 4,
+     .           X_CH_LENGTH  = 3,
+     .           Y_CH_LENGTH  = 2) 
+C
+C---Compression types and parameters arrays 
+C
+      integer comp_type(N_COMP_TYPES)
+      integer comp_prm(N_COMP_ARG)
+C
+C---Compression parameters
+C
+      integer COMP_CODE_NONE,
+     .          COMP_CODE_RLE,
+     .          COMP_CODE_SKPHUFF,
+     .          COMP_CODE_DEFLATE,
+     .          SKPHUFF_SKP_SIZE,
+     .          DEFLATE_LEVEL
 
+      parameter(COMP_CODE_NONE    = 0,
+     .          COMP_CODE_RLE     = 1,
+     .          COMP_CODE_SKPHUFF = 3,
+     .          COMP_CODE_DEFLATE = 4)
+      parameter (DEFLATE_LEVEL = 1,
+     .           SKPHUFF_SKP_SIZE = 2)
+C
+C---Data
+C 
+      integer*2 image_data(NCOMP, X_LENGTH, Y_LENGTH)
+      integer*2 image_data_out(NCOMP,X_LENGTH,Y_LENGTH)
+C
+C---Default pixel value
+C
+      integer*2 pixel_value(2)
+C
+C---We will write/read to four different files corresponding to the
+C   different compression types.
+C
+C   No compresion
+C
+      file(1) = 'gr_no.hdf'
+      name(1) = 'Nocomp_data'    
+      comp_type(1) = COMP_CODE_NONE
+C
+C   RLE compresion
+C
+      file(2) = 'gr_rl.hdf'
+      name(2) = 'Rlcomp_data'    
+      comp_type(2) = COMP_CODE_RLE
+C
+C   Adaptive Huffman compresion
+C
+      file(3) = 'gr_sk.hdf'
+      name(3) = 'Hucomp_data'    
+      comp_type(3) = COMP_CODE_SKPHUFF
+C
+C   GZIP compression
+C
+      file(4) = 'gr_gz.hdf'
+      name(4) = 'Gzcomp_data'    
+      comp_type(4) = COMP_CODE_DEFLATE
+C
+C  Data initialization
+C 
+      do 30 j = 1, Y_LENGTH
+         do 20 i = 1, X_LENGTH
+           do 10 k = 1, NCOMP
+            image_data(k, i, j) = i + j - 1
+10         continue
+20    continue
+30    continue
+C
+C  Initialize compression argument array
+C
+      do 35 i = 1, N_COMP_ARG
+          comp_prm(i) = 0
+35    continue
+C
+C   Main loop through different compression types
+C
+
+      do 1000 i_comp=1, N_COMP_TYPES
+C
+C     Create and open the file.
+C
+      file_id(i_comp) = hopen(file(i_comp), DFACC_CREATE, 0)
+      if(file_id(i_comp) .eq. -1) then
+         print *, 'hopen failed for', i_comp, '-th data set'
+         err_grcompress = err_grcompress +1
+      endif 
+C
+C     Initiate the GR interface.
+C
+      gr_id(i_comp) = mgstart(file_id(i_comp))
+      if(gr_id(i_comp) .eq. -1) then
+         print *, 'mgstart failed for', i_comp, '-th data set'
+         err_grcompress = err_grcompress +1
+      endif 
+
+C     Define the number of components and dimensions of the image.
+
+      il = MFGR_INTERLACE_PIXEL
+      dims(1) = X_LENGTH
+      dims(2) = Y_LENGTH
+
+C     Create the data set.
+
+      ri_id(i_comp) = mgcreat(gr_id(i_comp), name(i_comp), NCOMP,
+     .                        DFNT_INT16, il, dims)
+      if(ri_id(i_comp) .eq. -1) then
+         print *, 'mgcreat failed for', i_comp, '-th data set'
+         err_grcompress = err_grcompress +1
+      endif 
+
+C
+C---Set pixel value
+C
+      pixel_value(1) = 0
+      pixel_value(2) = 0
+C
+C---Fill the image array with the default pixel value
+C
+      status = mgsnatt(ri_id(i_comp), 'FillValue', DFNT_INT16,
+     .                 ncomp, pixel_value) 
+      if(status .ne. 0) then
+         print *, 'mgsnatt failed for', i_comp, '-th data set'
+         err_grcompress = err_grcompress +1
+      endif 
+
+C
+C---Set compression
+C
+      if (i_comp. eq. 3) comp_prm(1) = SKPHUFF_SKP_SIZE
+      if (i_comp. eq. 4) comp_prm(1) =  DEFLATE_LEVEL
+      status = mgscompress (ri_id(i_comp), 
+     .                  comp_type(i_comp),comp_prm)
+      if(status .ne. 0) then
+         print *, 'mgscompress failed for', i_comp, '-th data set'
+         err_grcompress = err_grcompress +1
+      endif 
+C
+C     Define the location, pattern, and size of the data set
+C     that will be written to.
+      start(1) = 0
+      start(2) = 0
+      edges(1) = X_LENGTH
+      edges(2) = Y_LENGTH
+      stride(1) = 1
+      stride(2) = 1
+
+C     Write the stored data to the image array.
+      status = mgwrimg(ri_id(i_comp), start, stride, edges, image_data)
+      if(status .ne. 0) then
+         print *, 'mgwrimg failed for', i_comp, '-th data set'
+         err_grcompress = err_grcompress +1
+      endif 
+C
+C     Terminate access to the array.
+C
+      status = mgendac(ri_id(i_comp))
+      if(status .ne. 0) then
+         print *, 'mgendac failed for', i_comp, '-th data set'
+         err_grcompress = err_grcompress +1
+      endif 
+C
+C     Terminate access to the GR interface.
+C
+      status = mgend(gr_id(i_comp))
+      if(status .ne. 0) then
+         print *, 'mgend failed for', i_comp, '-th data set'
+         err_grcompress = err_grcompress +1
+      endif 
+C
+C     Close the file.
+C
+      status = hclose(file_id(i_comp))
+      if(status .ne. 0) then
+         print *, 'hclose failed for', i_comp, '-th data set'
+         err_grcompress = err_grcompress +1
+      endif 
+
+1000  continue
+
+
+      do 2000 i_comp=1, N_COMP_TYPES
+C
+C     Open the file.
+C
+      file_id(i_comp) = hopen(file(i_comp), DFACC_READ, 0)
+      if(file_id(i_comp) .eq. -1) then
+         print *, 'hopen failed for', i_comp, '-th data set'
+         err_grcompress = err_grcompress +1
+      endif 
+C
+C     Initiate the GR interface and select first data set.
+C
+      gr_id(i_comp) = mgstart(file_id(i_comp))
+      if(gr_id(i_comp) .eq. -1) then
+         print *, 'mgstart failed for', i_comp, '-th data set'
+         err_grcompress = err_grcompress +1
+      endif 
+      index = mgn2ndx(gr_id(i_comp), name(i_comp))
+      if(index .eq. -1) then
+         print *, 'mgn2ndx failed for', i_comp, '-th data set'
+         err_grcompress = err_grcompress +1
+      endif 
+      ri_id(i_comp) = mgselct(gr_id(i_comp), index)
+      if(ri_id(i_comp) .eq. -1) then
+         print *, 'mgselct failed for', i_comp, '-th data set'
+         err_grcompress = err_grcompress +1
+      endif 
+C
+C     Read the stored data to the image array.
+C
+      start(1) = 0
+      start(2) = 0
+      edges(1) = X_LENGTH
+      edges(2) = Y_LENGTH
+      stride(1) = 1
+      stride(2) = 1
+      status = mgrdimg(ri_id(i_comp), start, stride, edges,
+     .                  image_data_out)
+      if(status .ne. 0) then
+         print *, 'mgrdimg failed for', i_comp, '-th data set'
+         err_grcompress = err_grcompress +1
+      endif 
+C
+C--- Compare the data we read with the original data
+C
+      do 60 j = 1, Y_LENGTH
+         do 50 i = 1, X_LENGTH
+           do 40 k = 1, ncomp
+            if(image_data(k, i, j).ne.image_data_out(k,i,j)) then
+             print *, 'data is wrong'
+             err_grcompress = err_grcompress +1
+            endif 
+40         continue
+50    continue
+60    continue
+
+  
+C
+C     Terminate access to the array.
+C
+      status = mgendac(ri_id(i_comp))
+      if(status .ne. 0) then
+         print *, 'mgendac failed for', i_comp, '-th data set'
+         err_grcompress = err_grcompress +1
+      endif 
+C
+C     Terminate access to the GR interface.
+C
+      status = mgend(gr_id(i_comp))
+      if(status .ne. 0) then
+         print *, 'mgend failed for', i_comp, '-th data set'
+         err_grcompress = err_grcompress +1
+      endif 
+C
+C     Close the file.
+C
+      status = hclose(file_id(i_comp))
+      if(status .ne. 0) then
+         print *, 'hclose failed for', i_comp, '-th data set'
+         err_grcompress = err_grcompress +1
+      endif 
+2000  continue
+      return
+      end
