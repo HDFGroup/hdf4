@@ -6,6 +6,7 @@ FC=f77
 FFLAGS=  -g
 
 # ==> specify your C compiler
+#CC=gct -test-dir ../src
 CC=cc
 
 # ==> where are your hdf.h, hdfi.h and vg.h files located?
@@ -53,6 +54,12 @@ nofortran: testhdf
 #
 .c.o: 
 	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
+
+dbgtesthdf: $(CTESTS) $(HDFLIB)/libdf.a
+	purify $(CC) $(CFLAGS) -o dbgtesthdf $(CTESTS) $(HDFLIB)/libdf.a
+
+testhdf.tc: $(CTESTS) $(HDFLIB)/libdf.a
+	proof $(CC) $(CFLAGS) -o testhdf.tc $(CTESTS) $(HDFLIB)/libdf.a
 
 testhdf: $(CTESTS) $(HDFLIB)/libdf.a
 	$(CC) $(CFLAGS) -o testhdf $(CTESTS) $(HDFLIB)/libdf.a

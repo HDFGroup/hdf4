@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/08/16 21:47:49  koziol
-Wrapped in changes for final, working version on the PC.
+Revision 1.6  1993/08/28 00:12:40  georgev
+Added VOIDP casts to HDfreespace().
 
+ * Revision 1.5  1993/08/16  21:47:49  koziol
+ * Wrapped in changes for final, working version on the PC.
+ *
  * Revision 1.3  1993/05/03  21:32:36  koziol
  * First half of fixes to make Purify happy
  *
@@ -164,9 +167,9 @@ void test_an()
         check_lab_desc(DFTAG_RIG, refnum, labris, descris);
     }
 
-    HDfreespace(data);
-    HDfreespace(image);
-    HDfreespace(newimage);
+    HDfreespace((VOIDP)data);
+    HDfreespace((VOIDP)image);
+    HDfreespace((VOIDP)newimage);
 }
 
 
@@ -278,6 +281,6 @@ uint16 tag, ref;
             printf("\n\tSHOULD BE: %s<<<\n", desc);
             num_errs++;
         }
-	HDfreespace(indesc);
+	HDfreespace((VOIDP)indesc);
     }
 }

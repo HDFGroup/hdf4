@@ -1489,7 +1489,7 @@ void test_r24()
         num_errs++;
     }
 
-    HDfreespace(jpeg_24bit_temp);
+    HDfreespace((VOIDP)jpeg_24bit_temp);
 }
 
 

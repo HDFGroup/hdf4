@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1993/08/16 21:47:57  koziol
-Wrapped in changes for final, working version on the PC.
+Revision 1.2  1993/08/28 00:12:46  georgev
+Added VOIDP casts to HDfreespace().
 
+ * Revision 1.1  1993/08/16  21:47:57  koziol
+ * Wrapped in changes for final, working version on the PC.
+ *
  * Revision 1.2  1993/04/19  23:03:46  koziol
  * General Code Cleanup to reduce/remove compilation warnings on PC
  *
@@ -274,7 +277,7 @@ void test_hfile()
     CHECK(ret, TRUE, "Hishdf");
 
 #ifdef QAK
-    HDfreespace(outbuf);
-    HDfreespace(inbuf);
+    HDfreespace((VOIDP)outbuf);
+    HDfreespace((VOIDP)inbuf);
 #endif
 }
