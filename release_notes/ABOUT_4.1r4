@@ -7,11 +7,11 @@ INTRODUCTION
 This document describes the differences between HDF 4.1r3 and
 HDF 4.1r4.  It is written for people who are familiar with
 previous releases of HDF and wish to migrate to HDF 4.1r4.
-The release notes provide more in-depth information concerning
-the topics discussed here.  The HDF 4.1r4 documentation can be
-found on the NCSA ftp server (ftp.ncsa.uiuc.edu) in the directory:
 
-     /HDF/HDF/Documentation/HDF4.1r4
+The HDF 4.1r4 documentation can be found on the NCSA ftp server 
+(ftp.ncsa.uiuc.edu) in the directory:
+
+     /HDF/HDF/Documentation/HDF4.1r4/
 
 First-time HDF users are encouraged to read the FAQ in this
 release for more information about HDF.  Users can also look
@@ -28,39 +28,45 @@ CONTENTS
 - New Features and Changes
 - Platforms Tested
 - Known Problems
-- Acknowledgements
 
 New Features and Changes:
 ========================
 
-o This release focuses on new features and changes added to the
+This release focuses on new features and changes added to the
+GR interface.
+
+o Two new utilities have been added to HDF, gif2hdf and hdf2gif.
+  The gif2hdf utility will convert a GIF image into an HDF file
+  containing a GR image. The hdf2gif utility will convert an HDF GR 
+  image into a GIF image. 
+  
+o Chunking and chunking with compression have been added to the
   GR interface.
 
-  - Two new utilities have been added to HDF, gif2hdf and hdf2gif.
-    The gif2hdf utility will convert a GIF image into an HDF file
-    containing a GR image. The hdf2gif utility will convert a GR 
-    image in an HDF file into a GIF image. 
+o JPEG compression with the GR interface was not working properly.
+  This problem has been fixed.
+
+Several hdp options have been added:
   
-  - Chunking and chunking with compression have been added to the
-    GR interface.
+o Added -s option to dumpgr and dumpsds to allow printing data 
+  as a stream instead of breaking the lines at 65 characters. 
 
-  - JPEG compression with the GR interface was not working properly.
-    This problem has been fixed.
+o Added option -c to dumpgr and dumpsds to allow printing clean output 
+  for attributes with type DFNT_CHAR. With this option, hdp will print 
+  space characters, such as horizontal tabs, CRs, and LFs, as they are 
+  instead of "\digit" (still the default.)  This option also prints "..." 
+  for one or more null characters among the data.
 
-o Several hdp problems have been fixed:
-  
-  - EOS attributes are now displayed in a readable form.
+o Added option -l to dumpgr to allow printing data in different interlace
+  modes.
 
-
-Check the ./bugs_fixed.txt for other changes that are not listed
-here.
 
 Platforms Tested:
 ================
 
 HDF 4.1 Release 4 has been tested on the following platforms:
 
-   Cray J90                  
+   Cray J90  (available after initial 4.1r4 release)
    Cray T3E                      
    DEC Alpha/Digital Unix
    DEC Alpha/OpenVMS
@@ -85,4 +91,5 @@ web page (accessible from the HDF home page):
 Known Problems:
 ==============
 
+o The ncgen utility fails on the IBM SP.
 
