@@ -188,7 +188,11 @@ DFR8setcompress(int32 type, comp_info * cinfo)
 
     /* map JPEG compression into correct type of JPEG compression */
     if (type == COMP_JPEG)
+#ifdef OLD_WAY
         CompType = DFTAG_GREYJPEG;
+#else /* OLD_WAY */
+        CompType = DFTAG_GREYJPEG5;
+#endif /* OLD_WAY */
     else    /* otherwise, just use mapped tag */
         CompType = compress_map[type];
     CompInfo = (*cinfo);
@@ -450,15 +454,24 @@ DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
     if (compress || CompressSet)
       {
           /* if a compression type has been set, check if it's the same */
+#ifdef OLD_WAY
           if (CompressSet == FALSE || (compress > 1 && (int32) compress != CompType &&
                     !(compress == COMP_JPEG && CompType == DFTAG_GREYJPEG)))
+#else /* OLD_WAY */
+          if (CompressSet == FALSE || (compress > 1 && (int32) compress != CompType &&
+                    !(compress == COMP_JPEG && CompType == DFTAG_GREYJPEG5)))
+#endif /* OLD_WAY */
             {
                 if (compress > COMP_MAX_COMP || compress_map[compress] == 0)
                     HRETURN_ERROR(DFE_BADSCHEME, FAIL);
                 /* map JPEG compression into correct type of JPEG compression */
                 if (compress == COMP_JPEG)
                   {
+#ifdef OLD_WAY
                       CompType = DFTAG_GREYJPEG;
+#else /* OLD_WAY */
+                      CompType = DFTAG_GREYJPEG5;
+#endif /* OLD_WAY */
                       /* set up some sane JPEG params */
                       CompInfo.jpeg.quality = 75;
                       CompInfo.jpeg.force_baseline = TRUE;
@@ -487,7 +500,11 @@ DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
     Writerig.aspectratio = (float32) 1.0;
 
     /* Write out Raster-8 tags for those who want it */
+#ifdef OLD_WAY
     if (CompType != DFTAG_GREYJPEG)
+#else /* OLD_WAY */
+    if (CompType != DFTAG_GREYJPEG5)
+#endif /* OLD_WAY */
       {
           r8tag = (uint16) (CompType ?
              ((CompType == DFTAG_RLE) ? DFTAG_CI8 : DFTAG_II8) : DFTAG_RI8);

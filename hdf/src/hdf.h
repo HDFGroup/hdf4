@@ -455,6 +455,8 @@ extern uint8 *tbuf;
 #define DFTAG_IMCOMP    ((uint16)12)    /* IMCOMP compression */
 #define DFTAG_JPEG      ((uint16)13)    /* JPEG compression (24-bit data) */
 #define DFTAG_GREYJPEG  ((uint16)14)    /* JPEG compression (8-bit data) */
+#define DFTAG_JPEG5     ((uint16)15)    /* JPEG compression (24-bit data) */
+#define DFTAG_GREYJPEG5 ((uint16)16)    /* JPEG compression (8-bit data) */
 
 /* Interlace schemes */
 #define DFIL_PIXEL   0  /* Pixel Interlacing */

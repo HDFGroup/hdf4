@@ -300,7 +300,11 @@ DFGRsetcompress(int32 scheme, comp_info * cinfo)
 
     /* map JPEG compression into correct type of JPEG compression */
     if (scheme == COMP_JPEG)
+#ifdef OLD_WAY
         Grcompr = DFTAG_JPEG;   /* Set the compression scheme */
+#else /* OLD_WAY */
+        Grcompr = DFTAG_JPEG5;   /* Set the compression scheme */
+#endif /* OLD_WAY */
     else    /* otherwise, just use mapped tag */
         Grcompr = compress_map[scheme];
     Grcinfo = (*cinfo);     /* Set the compression parameters */
@@ -1246,9 +1250,15 @@ DFGRIaddimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
 #ifdef OLD_WAY
     is8bit = (Grwrite.datadesc[IMAGE].ncomponents == 1);
 #else
+#ifdef OLD_WAY
     /* make 8-bit compatibility only for older 8-bit stuff, not JPEG */
     is8bit = ((Grwrite.datadesc[IMAGE].ncomponents == 1) &&
               (Grcompr != DFTAG_GREYJPEG && Grcompr != DFTAG_JPEG));
+#else /* OLD_WAY */
+    /* make 8-bit compatibility only for older 8-bit stuff, not JPEG */
+    is8bit = ((Grwrite.datadesc[IMAGE].ncomponents == 1) &&
+              (Grcompr != DFTAG_GREYJPEG5 && Grcompr != DFTAG_JPEG5));
+#endif /* OLD_WAY */
 #endif
 
     wtag = (uint16) ((type == LUT) ? DFTAG_LUT : (Grcompr ? DFTAG_CI : DFTAG_RI));

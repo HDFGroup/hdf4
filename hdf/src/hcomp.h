@@ -60,7 +60,11 @@ uint16      compress_map[COMP_MAX_COMP + 1] =
 {                               /* Mapping from compression types to tags */
     0,                          /* No corresponding tag for un-compressed data */
     0,                          /* (1) */
+#ifdef OLD_WAY
     DFTAG_JPEG,                 /* COMP_JPEG -> DFTAG_JPEG (for JPEG compression) */
+#else /* OLD_WAY */
+    DFTAG_JPEG5,                /* COMP_JPEG -> DFTAG_JPEG5 (for JPEG compression) */
+#endif /* OLD_WAY */
     0,                          /* (3) */
     0,                          /* (4) */
     0,                          /* (5) */

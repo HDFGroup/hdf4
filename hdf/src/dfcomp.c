@@ -164,10 +164,17 @@ DFputcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
               HDfreespace((VOIDP) buffer);
               break;
 
+#ifdef OLD_WAY
           case DFTAG_JPEG:      /* JPEG compression (for 24-bit images) */
           case DFTAG_GREYJPEG:      /* JPEG compression (for 8-bit images) */
               ret = DFCIjpeg(file_id, tag, ref, xdim, ydim, (VOIDP) image, scheme, cinfo);
               break;
+#else /* OLD_WAY */
+          case DFTAG_JPEG5:      /* JPEG compression (for 24-bit images) */
+          case DFTAG_GREYJPEG5:      /* JPEG compression (for 8-bit images) */
+              ret = DFCIjpeg(file_id, tag, ref, xdim, ydim, (VOIDP) image, scheme, cinfo);
+              break;
+#endif /* OLD_WAY */
 
           default:      /* unknown compression scheme */
               HRETURN_ERROR(DFE_BADSCHEME, FAIL);
@@ -212,8 +219,13 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
 
     /* put this call up here instead of in switch statement, to make the */
     /* code easier to follow */
+#ifdef OLD_WAY
     if (scheme == DFTAG_JPEG || scheme == DFTAG_GREYJPEG)
         return (DFCIunjpeg(file_id, tag, ref, (VOIDP) image, xdim, ydim, scheme));
+#else /* OLD_WAY */
+    if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5)
+        return (DFCIunjpeg(file_id, tag, ref, (VOIDP) image, xdim, ydim, scheme));
+#endif /* OLD_WAY */
 
     /* Only do this stuff for non-JPEG compressed images */
     aid = Hstartread(file_id, tag, ref);

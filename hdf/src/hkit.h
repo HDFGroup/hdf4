@@ -113,7 +113,9 @@ PRIVATE const tag_descript_t tag_descriptions[] =
     {DFTAG_RLE, string(DFTAG_RLE), "Run Length Encoding"},
     {DFTAG_IMCOMP, string(DFTAG_IMCOMP), "IMCOMP Encoding"},
     {DFTAG_JPEG, string(DFTAG_JPEG), "24-bit JPEG Encoding"},
-    {DFTAG_GREYJPEG, string(DFTAG_GREYJPEG), "8-bit JPEG Encoding"}
+    {DFTAG_GREYJPEG, string(DFTAG_GREYJPEG), "8-bit JPEG Encoding"},
+    {DFTAG_JPEG5, string(DFTAG_JPEG5), "24-bit JPEG Encoding"},
+    {DFTAG_GREYJPEG5, string(DFTAG_GREYJPEG5), "8-bit JPEG Encoding"}
 
 };
 
