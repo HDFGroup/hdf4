@@ -314,7 +314,7 @@ dumpfull(int32       nt,
     b = databuf;
     off = DFKNTsize(nt | DFNT_NATIVE); /* what is offset for data type */
     if (off == FAIL){
-	fprintf(ofp, "Failed to find native size of type [%d] \n", nt);
+	fprintf(ofp, "Failed to find native size of type [%d] \n", (int)nt);
         ret_value = FAIL;
         goto done;
     }
