@@ -28,6 +28,9 @@ static char sccsid[] = "@(#)xdr_float.c 1.12 87/08/11 Copyr 1984 Sun Micro";
 #ifdef MSDOS
 #define SWAP_DOUBLES
 #endif
+#ifdef __FreeBSD__
+#define SWAP_DOUBLES
+#endif
 
 /*
  * NB: Not portable.

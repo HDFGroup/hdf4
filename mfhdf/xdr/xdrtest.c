@@ -48,7 +48,11 @@ static char rcsid[] = "$Id$" ;
 /* if this is NOT defined, then the program just reads the file */
 #define CREATE
 
+#ifdef __FreeBSD__
+#define EPSILON .005
+#else /* __FreeBSD__ */
 #define EPSILON .0005
+#endif /* __FreeBSD__ */
 
 main(ac,av)
 int ac ;
