@@ -568,6 +568,8 @@ VOID test_little_write()
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_f32,data_f32,CDIM_X*CDIM_Y*sizeof(float32))) {
+		int i,j;
+
                 fprintf(stderr,"FLOAT32 data was incorrect\n");
                 num_errs++;
               } /* end if */
