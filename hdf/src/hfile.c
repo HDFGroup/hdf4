@@ -6,9 +6,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1992/10/08 19:09:36  chouck
-Changed file_t to hdf_file_t to make strict ANSI compliant
+Revision 1.7  1992/10/09 20:49:17  chouck
+Added some patches to work with ThinkC I/O on the Mac
 
+ * Revision 1.6  1992/10/08  19:09:36  chouck
+ * Changed file_t to hdf_file_t to make strict ANSI compliant
+ *
  * Revision 1.5  1992/10/01  20:46:10  chouck
  * Fixed a Mac opening problem resulting from access change
  *
@@ -3218,6 +3221,9 @@ int32 file_id;
 */
 
 #include "Errors.h"
+#ifdef MPW
+#include "Strings.h"
+#endif
 
 /*
 
@@ -3229,6 +3235,7 @@ static int hdfc = '????', hdft = '_HDF';
 static int hdfc = ('?' << 24) + ('?' << 16) + ('?' << 8) + ('?');
 static int hdft = ('_' << 24) + ('H' << 16) + ('D' << 8) + ('F');
 
+#ifdef MPW
 hdf_file_t
 mopen(char *name, intn flags)
 {
@@ -3258,13 +3265,53 @@ mopen(char *name, intn flags)
     
     return(rn);  
 }
+#else
 
+static Str255 pname;
+
+hdf_file_t
+mopen(char *name, intn flags)
+{
+    hdf_file_t volref,rn;
+    OSErr result;
+    FInfo fndrInfo;
+
+    strcpy((char *) pname, (char *) name);
+    CtoPstr(pname);
+
+    result = GetVol(NULL,&volref);
+    
+    if (flags == DFACC_CREATE)   { /* we need to create it */
+        
+        result = GetFInfo(name, volref, &fndrInfo);
+        if (result != fnfErr)
+            if( noErr != (result = FSDelete(pname, volref)))
+                return FAIL;
+        
+        if (noErr != (result = Create(pname, volref, hdfc, hdft)))
+            return FAIL;
+        
+    }
+    
+    if (noErr != (result = FSOpen(pname, volref, &rn)))
+        return FAIL;
+    
+    if (flags & O_CREAT)    /* and truncate it */
+        SetEOF(rn, 0L);
+    
+    return(rn);  
+}
+
+#endif
+
+int32
 mclose(hdf_file_t rn)
 {
         return(FSClose(rn));
 }
 
-mread(hdf_file_t rn, char *buf, int n)
+int32 
+mread(hdf_file_t rn, char *buf, int32 n)
 {
 	OSErr result;
 
@@ -3274,7 +3321,8 @@ mread(hdf_file_t rn, char *buf, int n)
         return(n);
 }
 
-mwrite(hdf_file_t rn, char *buf, int n)
+int32
+mwrite(hdf_file_t rn, char *buf, int32 n)
 {
     OSErr result;
     
@@ -3284,11 +3332,16 @@ mwrite(hdf_file_t rn, char *buf, int n)
     return(n);
 }
 
-mlseek(hdf_file_t rn, int n, int m)
+int32
+mlseek(hdf_file_t rn, int32 n, int m)
 {
     OSErr result;
+    int32 newEOF;
+
+#ifdef OLD_EXTD
     long pos, oldpos, logEOF;
     Ptr buffy;
+#endif
     
     switch(m) {
     case 0:
@@ -3307,6 +3360,7 @@ mlseek(hdf_file_t rn, int n, int m)
         {
             if(result == eofErr)
                 {
+#ifdef OLD_EXTD
                     if(noErr != (result = GetEOF(rn, &logEOF)))
                         return FAIL;
                     
@@ -3319,8 +3373,19 @@ mlseek(hdf_file_t rn, int n, int m)
                             return FAIL;
                         }
                     DisposPtr(buffy);
+#else
+
+
+                    if(m != fsFromStart) {
+                        printf("mlseek: m != fsFromStart, m=%d, n=%ld.\n", m, n);
+                        return FAIL;
+                    }
                     
-                    /*if (pos < oldpos) return FAIL;*/
+                    newEOF = n;
+                    if(noErr != (result = SetEOF(rn, newEOF)))
+                        return FAIL;    
+                    
+#endif                     
                     
                     if (noErr != (result = SetFPos(rn, fsFromStart, n)))
                         return FAIL;
@@ -3331,8 +3396,14 @@ mlseek(hdf_file_t rn, int n, int m)
     if (noErr != (result = GetFPos(rn, &n)))
         return FAIL;
     
-    return(n);
+    if (m == fsFromMark) {
+        return(n);
+    } else {
+        return(SUCCEED);
+    }
+
 }
+
 
 #endif /* MAC */
 

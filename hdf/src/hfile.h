@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.2  1992/10/08 19:09:36  chouck
-Changed file_t to hdf_file_t to make strict ANSI compliant
+Revision 1.3  1992/10/09 20:49:17  chouck
+Added some patches to work with ThinkC I/O on the Mac
 
+ * Revision 1.2  1992/10/08  19:09:36  chouck
+ * Changed file_t to hdf_file_t to make strict ANSI compliant
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -91,10 +94,10 @@ typedef short hdf_file_t;
 #   define HI_CREATE(name) mopen(name, DFACC_CREATE)
 #   define HI_CLOSE(x) mclose(x)
 #   define HI_FLUSH(a) (SUCCEED)
-#   define HI_READ(a,b,c) mread(a,b,c)
-#   define HI_WRITE(a,b,c) mwrite(a,b,c)
-#   define HI_SEEK(x,y) mlseek(x,y,0)
-#   define HI_SEEKEND(x) mlseek(x,0,2)
+#   define HI_READ(a,b,c) mread(a, (char *) b, (int32) c)
+#   define HI_WRITE(a,b,c) mwrite(a, (char *) b, (int32) c)
+#   define HI_SEEK(x,y) mlseek(x, (int32 )y, 0)
+#   define HI_SEEKEND(x) mlseek(x, 0L, 2)
 #   define HI_TELL(x) mlseek(x,0L,1)
 #   define DF_OPENERR(f)	((f) == -1)
 #   define OPENERR(f)  (f < 0)
@@ -334,7 +337,14 @@ extern int mwrite
 	PROTO((hdf_file_t rn, char *buf, intn n));
 	
 extern int mlseek
-	PROTO((hdf_file_t rn, intn n, intn m));
+	PROTO((hdf_file_t rn, int32 n, intn m));
+
+extern int32 mread
+    PROTO((hdf_file_t rn, char *buf, int32 n));
+
+extern int32 mwrite
+    PROTO((hdf_file_t rn, char *buf, int32 n));
+
 #endif
 
 #endif /* HFILE_H */

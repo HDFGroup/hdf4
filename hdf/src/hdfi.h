@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.7  1992/09/28 18:24:01  koziol
-Removed '#define BSD' from NEXT section
+Revision 1.8  1992/10/09 20:49:17  chouck
+Added some patches to work with ThinkC I/O on the Mac
 
+ * Revision 1.7  1992/09/28  18:24:01  koziol
+ * Removed '#define BSD' from NEXT section
+ *
  * Revision 1.6  1992/09/25  15:42:46  koziol
  * Added 'const' fix for the HP9000 and added NeXT support in
  * (use -DNEXT on the compile line for the makefile)
@@ -431,6 +434,7 @@ Please check your Makefile.
 #include <String.h>
 #ifdef THINK_C                  /* for LightSpeed C */
 #include <unix.h>
+#define isascii(c)  (isprint(c) || iscntrl(c))
 #else /*THINK_C                   MPW, possibly others */
 #include <Files.h>              /* for unbuffered i/o stuff */
 #endif /*THINK_C*/
