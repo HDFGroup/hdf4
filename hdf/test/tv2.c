@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/03/01 22:29:07  dilg
-Initial revision
+Revision 1.2  1992/05/18 22:11:07  sxu
+modified constants for number types
 
+ * Revision 1.1  1992/03/01  22:29:07  dilg
+ * Initial revision
+ *
  * Revision 1.1  1992/02/29  19:55:36  likkai
  * Initial revision
  *
@@ -84,8 +87,8 @@ doit() {
 		VSsetname (vs1,vdatanames[i]); VSsetclass(vs1, CLASS);
 		VSsetname (vs2,vdatanames[i]); VSsetclass(vs2, CLASS);
 
-		VSfdefine(vs1, "DOLLARS", LOCAL_LONGTYPE,1);
-		VSfdefine(vs2, "DOLLARS", LOCAL_LONGTYPE,1);
+		VSfdefine(vs1, "DOLLARS", DFNT_INT32,1);
+		VSfdefine(vs2, "DOLLARS", DFNT_INT32,1);
 
 		VSsetfields (vs1,"DOLLARS");
 		VSsetfields (vs2,"DOLLARS");

@@ -2,9 +2,12 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.1  1992/03/01 22:29:07  dilg
-C Initial revision
+C Revision 1.2  1992/05/18 22:11:07  sxu
+C modified constants for number types
 C
+c Revision 1.1  1992/03/01  22:29:07  dilg
+c Initial revision
+c
 c Revision 1.1  1992/02/29  21:24:40  likkai
 c Initial revision
 c
@@ -57,9 +60,9 @@ c	--- declare the HDF and VSET routines used. This is compulsory!
 c	--- some defined constants. see "vg.h"
 
 	integer 			LONGTYPE				
-	parameter 		(LONGTYPE=4)
+	parameter 		(LONGTYPE=24)
 	integer 			REALTYPE				
-	parameter 		(REALTYPE=3)
+	parameter 		(REALTYPE=5)
 	integer			VDATATAG
 	parameter 		(VDATATAG=1962)
 	integer 			FULLACC	
@@ -79,7 +82,7 @@ c	------ generate some data -------
 112	continue
 
 c	------- open hdf file ------
-
+        
 	f = HOPEN ('egfhi.hdf'//char(0), FULLACC, 0)
 
 c	------- store 100 floats as one field in one vdata  ------

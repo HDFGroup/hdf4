@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/03/01 22:29:07  dilg
-Initial revision
+Revision 1.2  1992/05/18 22:11:07  sxu
+modified constants for number types
 
+ * Revision 1.1  1992/03/01  22:29:07  dilg
+ * Initial revision
+ *
  * Revision 1.1  1992/02/29  19:55:07  likkai
  * Initial revision
  *
@@ -67,7 +70,7 @@ int n;
 		vs = (VDATA*) VSattach(f,-1,"w");
 		sprintf(ss,"vdata#%d",i);
 		VSsetname(vs,ss);
-		VSfdefine(vs,"PRESS",LOCAL_FLOATTYPE,1);
+		VSfdefine(vs,"PRESS",DFNT_FLOAT32,1);
 		VSsetfields(vs,"PRESS");
 		makefloatdata(buf,ne);
 		VSwrite(vs,buf,ne,FULL_INTERLACE);

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/03/01 22:29:07  dilg
-Initial revision
+Revision 1.2  1992/05/18 22:11:07  sxu
+modified constants for number types
 
+ * Revision 1.1  1992/03/01  22:29:07  dilg
+ * Initial revision
+ *
  * Revision 1.1  1992/02/29  20:19:13  likkai
  * Initial revision
  *
@@ -103,10 +106,10 @@ doit() {
 	{ printf("open %s err\n",FS); exit(0); }
 
 	/* ---- create 2 vdatas --- */
-	pid = VHstoredata (f, "PRES", (unsigned char*) pvals ,NP, LOCAL_FLOATTYPE, "pressure vals",CLASS);
+	pid = VHstoredata (f, "PRES", (unsigned char*) pvals ,NP, DFNT_FLOAT32, "pressure vals",CLASS);
 	if (pid  == -1) { printf(" VHstoredata store PRES err. "); }
 
-	cid  = VHstoredatam(f, "COLOR",(unsigned char*) cvals, NC, LOCAL_LONGTYPE, "rgb colors", CLASS, 3);
+	cid  = VHstoredatam(f, "COLOR",(unsigned char*) cvals, NC, DFNT_INT32, "rgb colors", CLASS, 3);
 	if (cid  == -1) { printf(" VHstoredata store COLOR err. "); }
 
 	eid  = VHmakegroup (f, tags, refs, 0, "This is an EMPTY vgroup", CLASS);
