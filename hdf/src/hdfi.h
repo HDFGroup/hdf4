@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.6  1992/09/25 15:42:46  koziol
-Added 'const' fix for the HP9000 and added NeXT support in
-(use -DNEXT on the compile line for the makefile)
+Revision 1.7  1992/09/28 18:24:01  koziol
+Removed '#define BSD' from NEXT section
 
+ * Revision 1.6  1992/09/25  15:42:46  koziol
+ * Added 'const' fix for the HP9000 and added NeXT support in
+ * (use -DNEXT on the compile line for the makefile)
+ *
  * Revision 1.5  1992/09/18  21:54:35  koziol
  * Added the __STDC__ back to the Convex section
  *
@@ -538,7 +541,6 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
-#   define BSD
 #include <string.h>
 #ifndef __GNUC__
 #include <memory.h>
