@@ -656,29 +656,6 @@ resetSDS(
    }
 }  /* end of resetSDS */
 
-char *comp_method_txt(comp_coder_t comp_type)
-{
-    switch (comp_type)
-    {
-        case COMP_CODE_NONE:
-            return ("NONE");
-        case COMP_CODE_RLE:
-            return ("RLE");
-        case COMP_CODE_NBIT:
-            return ("NBIT");
-        case COMP_CODE_SKPHUFF:
-            return ("SKPHUFF");
-        case COMP_CODE_DEFLATE:
-            return ("DEFLATE");
-        case COMP_CODE_SZIP:
-            return ("SZIP");
-        case COMP_CODE_JPEG:
-            return ("JPEG");
-        default:
-            return ("INVALID");
-    }
-}
-
 /* printSDS_ASCII (yea, not SD_ASCII) prints all of the requested SDSs in
    the file
 */

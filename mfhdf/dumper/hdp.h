@@ -472,6 +472,7 @@ intn print_data_descs( const char *fname, int32 an_id, uint16 tag, uint16 ref);
 
 /* hdp_sds.c */
 extern intn do_dumpsds(intn curr_arg, intn argc, char *argv[], intn help);
+char *comp_method_txt(comp_coder_t comp_type);
 
 /* hdp_rig.c */
 extern intn do_dumprig(intn curr_arg, intn argc, char *argv[], intn help);

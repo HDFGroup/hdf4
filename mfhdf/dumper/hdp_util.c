@@ -753,3 +753,29 @@ alloc_index_list(
    HDmemfill(*index_list, &i, sizeof(int32), num_chosen);
 }  /* end of alloc_index_list */
 
+/* Given a compression type code, returns a character string that
+   indicates that compression method. */
+char
+*comp_method_txt(comp_coder_t comp_type)
+{
+    switch (comp_type)
+    {
+        case COMP_CODE_NONE:
+            return ("NONE");
+        case COMP_CODE_RLE:
+            return ("RLE");
+        case COMP_CODE_NBIT:
+            return ("NBIT");
+        case COMP_CODE_SKPHUFF:
+            return ("SKPHUFF");
+        case COMP_CODE_DEFLATE:
+            return ("DEFLATE");
+        case COMP_CODE_SZIP:
+            return ("SZIP");
+        case COMP_CODE_JPEG:
+            return ("JPEG");
+        default:
+            return ("INVALID");
+    }
+}
+
