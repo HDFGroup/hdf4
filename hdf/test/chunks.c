@@ -81,6 +81,20 @@ static char RcsId[] = "@(#)$Revision$";
  *       Set dimension to 12000x12000 array with 2,500 chunks 
  *       whith chunk of 240x240 = 57,600 bytes
  *
+ *    11. Create a new element but now there will be partial chunks and Compression.
+ *       Set dimension to 4x4 array with 4 chunks where each chunk is 3x2 = 6 bytes.
+ *       Real data size is 16 bytes, size with chunks is 
+ *       6 bytes x 4 chunks = 24 bytes.
+ *       The element will be compressed with RLE scheme.
+ *
+ *   12. Now create 3-D chunked, Compressed element with no partial chunks.
+ *       Write using HMCwriteChunk(). Read data back in first
+ *       using Hread() and verify. Then read data back in using
+ *       HMCreadChunk() and verify.
+ *       Set dimension to 2x3x4 array with 6 chunks 
+ *       where each chunk is 1x1x4= 4 bytes , total data size 24 bytes 
+ *       The element is compressed using RLE scheme.
+ *
  *  For all the tests the data is read back in and verified.
  *
  *  Routines tested using User level H-level calls:
@@ -202,6 +216,8 @@ test_chunks()
     uint16     inbuf_u16[2][3][4];   /* input data buffer */
     float32    inbuf_f32[2][3][4];   /* input data buffer */
     sp_info_block_t info_block;      /* special info block */
+    comp_info  cinfo;
+    model_info minfo;
     intn       errors = 0;
 
     /* intialize out buffer */
@@ -234,6 +250,10 @@ test_chunks()
     chunk[0].chunk_size = 4; /* 2x2 = 4 bytes */
     chunk[0].nt_size    = 1; /* number type size */
     chunk[0].chunk_flag = 0; /* nothing set */
+    chunk[0].comp_type = 0; /* nothing set */
+    chunk[0].model_type = 0; /* nothing set */
+    chunk[0].cinfo = NULL; /* nothing set */
+    chunk[0].minfo = NULL; /* nothing set */
 
     chunk[0].pdims[0].dim_length   = 4;
     chunk[0].pdims[0].chunk_length = 2;
@@ -425,6 +445,7 @@ test_chunks()
     MESSAGE(5, printf("Closing the file\n"););
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
+
     /* 
        2. Now create a new chunked 2-D element with same parameters
        before but write to 2 chunks of element using whole chunks.
@@ -546,6 +567,11 @@ test_chunks()
     chunk[0].num_dims   = 2;
     chunk[0].chunk_size = 6; /* 3x2 = 6 bytes */
     chunk[0].nt_size    = 1; /* number type size */
+    chunk[0].chunk_flag = 0; /* nothing set */
+    chunk[0].comp_type = 0; /* nothing set */
+    chunk[0].model_type = 0; /* nothing set */
+    chunk[0].cinfo = NULL; /* nothing set */
+    chunk[0].minfo = NULL; /* nothing set */
 
     chunk[0].pdims[0].dim_length   = 4;
     chunk[0].pdims[0].chunk_length = 3;  /* made this 3 */
@@ -665,6 +691,11 @@ test_chunks()
     chunk[0].num_dims   = 3;
     chunk[0].chunk_size = 24; /* 2x3x4 bytes */
     chunk[0].nt_size    = 1; /* number type size */
+    chunk[0].chunk_flag = 0; /* nothing set */
+    chunk[0].comp_type = 0; /* nothing set */
+    chunk[0].model_type = 0; /* nothing set */
+    chunk[0].cinfo = NULL; /* nothing set */
+    chunk[0].minfo = NULL; /* nothing set */
 
     chunk[0].pdims[0].dim_length   = 4;
     chunk[0].pdims[0].chunk_length = 2;  
@@ -827,6 +858,11 @@ test_chunks()
     chunk[0].num_dims   = 3;
     chunk[0].chunk_size = 60; /* 3x4x5 = 60 bytes */
     chunk[0].nt_size    = 1; /* number type size */
+    chunk[0].chunk_flag = 0; /* nothing set */
+    chunk[0].comp_type = 0; /* nothing set */
+    chunk[0].model_type = 0; /* nothing set */
+    chunk[0].cinfo = NULL; /* nothing set */
+    chunk[0].minfo = NULL; /* nothing set */
 
     chunk[0].pdims[0].dim_length   = 4;
     chunk[0].pdims[0].chunk_length = 3;  
@@ -988,6 +1024,17 @@ test_chunks()
     chunk[0].chunk_size = 4; /* 1x1x4 bytes */
     chunk[0].nt_size    = 1; /* number type size */
     chunk[0].chunk_flag = 0; /* nothing set */
+    chunk[0].comp_type = 0; /* nothing set */
+    chunk[0].model_type = 0; /* nothing set */
+    chunk[0].cinfo = NULL; /* nothing set */
+    chunk[0].minfo = NULL; /* nothing set */
+#if 0
+    chunk[0].chunk_flag = SPECIAL_COMP; /* compression */
+    chunk[0].comp_type  = COMP_CODE_RLE; /* RLE */
+    chunk[0].model_type = COMP_MODEL_STDIO; /* STDIO */
+    chunk[0].cinfo = &cinfo; /* nothing set */
+    chunk[0].minfo = &minfo; /* nothing set */
+#endif
 
     chunk[0].pdims[0].dim_length   = 2;
     chunk[0].pdims[0].chunk_length = 1;  
@@ -1353,6 +1400,17 @@ test_chunks()
     chunk[0].chunk_size = 4; /* 1x1x4 bytes, logical  */
     chunk[0].nt_size    = 2; /* number type size, uint16 */
     chunk[0].chunk_flag = 0; /* nothing set */
+    chunk[0].comp_type = 0; /* nothing set */
+    chunk[0].model_type = 0; /* nothing set */
+    chunk[0].cinfo = NULL; /* nothing set */
+    chunk[0].minfo = NULL; /* nothing set */
+#if 0
+    chunk[0].chunk_flag = SPECIAL_COMP; /* compression */
+    chunk[0].comp_type  = COMP_CODE_RLE; /* RLE */
+    chunk[0].model_type = COMP_MODEL_STDIO; /* STDIO */
+    chunk[0].cinfo = &cinfo; /* nothing set */
+    chunk[0].minfo = &minfo; /* nothing set */
+#endif
 
     chunk[0].pdims[0].dim_length   = 2;
     chunk[0].pdims[0].chunk_length = 1;  
@@ -1467,6 +1525,17 @@ test_chunks()
     chunk[0].chunk_size = 4; /* 1x1x4 bytes, logical */
     chunk[0].nt_size    = 4; /* number type size, float32 */
     chunk[0].chunk_flag = 0; /* nothing set */
+    chunk[0].comp_type = 0; /* nothing set */
+    chunk[0].model_type = 0; /* nothing set */
+    chunk[0].cinfo = NULL; /* nothing set */
+    chunk[0].minfo = NULL; /* nothing set */
+#if 0
+    chunk[0].chunk_flag = SPECIAL_COMP; /* compression */
+    chunk[0].comp_type  = COMP_CODE_RLE; /* RLE */
+    chunk[0].model_type = COMP_MODEL_STDIO; /* STDIO */
+    chunk[0].cinfo = &cinfo; /* nothing set */
+    chunk[0].minfo = &minfo; /* nothing set */
+#endif
 
     chunk[0].pdims[0].dim_length   = 2;
     chunk[0].pdims[0].chunk_length = 1;  
@@ -1591,6 +1660,18 @@ test_chunks()
     chunk[0].num_dims   = 4;
     chunk[0].chunk_size = 120;
     chunk[0].nt_size    = 1; /* number type size */
+    chunk[0].chunk_flag = 0; /* nothing set */
+    chunk[0].comp_type = 0; /* nothing set */
+    chunk[0].model_type = 0; /* nothing set */
+    chunk[0].cinfo = NULL; /* nothing set */
+    chunk[0].minfo = NULL; /* nothing set */
+#if 0
+    chunk[0].chunk_flag = SPECIAL_COMP; /* compression */
+    chunk[0].comp_type  = COMP_CODE_RLE; /* RLE */
+    chunk[0].model_type = COMP_MODEL_STDIO; /* STDIO */
+    chunk[0].cinfo = &cinfo; /* nothing set */
+    chunk[0].minfo = &minfo; /* nothing set */
+#endif
 
     chunk[0].pdims[0].dim_length   = 10;
     chunk[0].pdims[0].chunk_length = 2;
@@ -1760,6 +1841,11 @@ test_chunks()
     chunk[0].num_dims   = 2;
     chunk[0].chunk_size = 57600;
     chunk[0].nt_size    = 1; /* number type size */
+    chunk[0].chunk_flag = 0; /* nothing set */
+    chunk[0].comp_type = 0; /* nothing set */
+    chunk[0].model_type = 0; /* nothing set */
+    chunk[0].cinfo = NULL; /* nothing set */
+    chunk[0].minfo = NULL; /* nothing set */
 
     chunk[0].pdims[0].dim_length   = 12000;
     chunk[0].pdims[0].chunk_length = 240;
@@ -1906,6 +1992,503 @@ test_chunks()
     CHECK(ret, FAIL, "Hclose");
 
 #endif /* BIG_TEST */
+
+    /* 
+     Chunking with Compression testing..... 
+     */
+
+    /* 
+       11. Create a new element but now there will be partial chunks and Compression.
+       Set dimension to 4x4 array with 4 chunks where each chunk is 3x2 = 6 bytes.
+       Real data size is 16 bytes, size with chunks is 
+       6 bytes x 4 chunks = 24 bytes .
+
+       The element will be compressed with RLE scheme.
+
+       */
+    chunk[0].num_dims   = 2;
+    chunk[0].chunk_size = 6; /* 3x2 = 6 bytes */
+    chunk[0].nt_size    = 1; /* number type size */
+    chunk[0].chunk_flag = SPECIAL_COMP; /* compression */
+    chunk[0].comp_type  = COMP_CODE_RLE; /* RLE */
+    chunk[0].model_type = COMP_MODEL_STDIO; /* STDIO */
+    chunk[0].cinfo = &cinfo; /* nothing set */
+    chunk[0].minfo = &minfo; /* nothing set */
+
+    chunk[0].pdims[0].dim_length   = 4;
+    chunk[0].pdims[0].chunk_length = 3;  /* made this 3 */
+    chunk[0].pdims[0].distrib_type = 1;
+
+    chunk[0].pdims[1].dim_length   = 4;
+    chunk[0].pdims[1].chunk_length = 2;
+    chunk[0].pdims[1].distrib_type = 1;
+
+    /* Open file for writing odd size chunks now */
+    fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
+    CHECK(fid, FAIL, "Hopen");
+
+    MESSAGE(5, printf("Create another new element as a 2-D, uint8 chunked, RLE Compressed element\n"););
+    MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
+                      0,chunk[0].pdims[0].dim_length, 
+                      0,chunk[0].pdims[0].chunk_length););
+    MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
+                      1,chunk[0].pdims[1].dim_length, 
+                      1,chunk[0].pdims[1].chunk_length););
+
+    /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
+    aid1 = HMCcreate(fid, 1020, 20, 1, fill_val_len, &fill_val_u8, (CHUNK_DEF *)chunk);
+    CHECK(aid1, FAIL, "HMCcreate");
+
+    /* write 16 bytes out */
+    ret = Hwrite(aid1, 16, outbuf);
+    VERIFY(ret, 16, "Hwrite");
+    if (ret != 16)
+      {
+          fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int) ret);
+          errors++;
+          goto done;
+      }
+
+    MESSAGE(5, printf("Wrote to 4of4 chunks (16 bytes) in file\n"););
+    /* end access */
+    ret = Hendaccess(aid1);
+    CHECK(ret, FAIL, "Hendaccess");
+
+    MESSAGE(5, printf("Closing the file\n"); );
+    ret = Hclose(fid);
+    CHECK(ret, FAIL, "Hclose");
+
+    MESSAGE(5, printf("Open 2-D, uint8 chunked, RLE Compressed element again for reading\n"); );
+
+    /* Open file for reading now */
+    fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
+    CHECK(fid, FAIL, "Hopen");
+
+    /* start read access   tag,  ref */
+    aid1 = Hstartread(fid, 1020, 20);
+    CHECK(aid1, FAIL, "Hstartread");
+
+    /* inquire about element */
+    ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
+                   &acc_mode, &special);
+
+    CHECK(ret, FAIL, "Hinquire");
+    if (!special)
+      {
+          fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
+                  __LINE__);
+          errors++;
+          goto done;
+      }
+
+    /* Check values from Hinquire */
+    if ( ref != 20 || length != 16)
+      {
+          fprintf(stderr, "ERROR: Hinquire does not return the correct values \n");
+          fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,length);
+          errors++;
+          goto done;
+      }
+
+    /* read back in buffer  */
+    ret = Hread(aid1, 16, inbuf);
+    VERIFY(ret, 16, "Hread");
+    if (ret != 16)
+      {
+          fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);
+          errors++;
+          goto done;
+      }
+
+    /* verify the data */
+    MESSAGE(5, printf("Verifying 16 bytes of data\n"); );
+    for (i = 0; i < ret; i++)
+      {
+          if (inbuf[i] != outbuf[i])
+            {
+                printf("Wrong data at %d, out %d in %d\n", i, outbuf[i], inbuf[i]);
+                errors++;
+            }
+          inbuf[i] = '\0';
+      }
+    if (errors)
+        goto done;
+
+    /* end access and close file */
+    ret = Hendaccess(aid1);
+    CHECK(ret, FAIL, "Hendaccess");
+
+    MESSAGE(5, printf("Closing the file\n"); );
+    ret = Hclose(fid);
+    CHECK(ret, FAIL, "Hclose");
+
+    /* 
+       12. Now create 3-D chunked, Compressed element with no partial chunks.
+       Write using HMCwriteChunk(). Read data back in first
+       using Hread() and verify. Then read data back in using
+       HMCreadChunk() and verify.
+       Set dimension to 2x3x4 array with 6 chunks 
+       where each chunk is 1x1x4= 4 bytes , total data size 24 bytes 
+       
+       The element is compressed using RLE scheme.
+       */
+    chunk[0].num_dims   = 3;
+    chunk[0].chunk_size = 4; /* 1x1x4 bytes */
+    chunk[0].nt_size    = 1; /* number type size */
+    chunk[0].chunk_flag = SPECIAL_COMP; /* compression */
+    chunk[0].comp_type  = COMP_CODE_RLE; /* RLE */
+    chunk[0].model_type = COMP_MODEL_STDIO; /* STDIO */
+    chunk[0].cinfo = &cinfo; /* nothing set */
+    chunk[0].minfo = &minfo; /* nothing set */
+
+    chunk[0].pdims[0].dim_length   = 2;
+    chunk[0].pdims[0].chunk_length = 1;  
+    chunk[0].pdims[0].distrib_type = 1;
+
+    chunk[0].pdims[1].dim_length   = 3;
+    chunk[0].pdims[1].chunk_length = 1;
+    chunk[0].pdims[1].distrib_type = 1;
+
+    chunk[0].pdims[2].dim_length   = 4;
+    chunk[0].pdims[2].chunk_length = 4;
+    chunk[0].pdims[2].distrib_type = 1;
+
+    /* set fill value to 1 */
+    fill_val_u8 = 1;
+    fill_val_len = 1;
+
+    /* Open file for writing last odd size chunks now */
+    fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
+    CHECK(fid, FAIL, "Hopen");
+    MESSAGE(5, printf("Create another new element as a 3-D, uint8 chunked, REL Compressed element(192 bytes)\n"););
+    MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
+                      0,chunk[0].pdims[0].dim_length, 
+                      0,chunk[0].pdims[0].chunk_length););
+    MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
+                      1,chunk[0].pdims[1].dim_length, 
+                      1,chunk[0].pdims[1].chunk_length););
+    MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
+                      2,chunk[0].pdims[2].dim_length, 
+                      2,chunk[0].pdims[2].chunk_length););
+
+    /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
+    aid1 = HMCcreate(fid, 1020, 21, 1, fill_val_len, &fill_val_u8, (CHUNK_DEF *)chunk);
+    CHECK(aid1, FAIL, "HMCcreate");
+
+    /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
+    aid2 = HMCcreate(fid, 1020, 22, 1, fill_val_len, &fill_val_u8, (CHUNK_DEF *)chunk);
+    CHECK(aid1, FAIL, "HMCcreate");
+
+    /* write 24 bytes out */
+    ret = Hwrite(aid2, 24, u8_data);
+    if (ret != 24)
+      {
+          fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int) ret);
+          errors++;
+          goto done;
+      }
+
+    /* write data out as chunks */
+    MESSAGE(5, printf("Writing to 3-D, uint8 chunked, RLE Compressed element using HMCwriteChunk\n"); );
+
+    /* Write data use SDwriteChunk */
+    dims[0] = 0;
+    dims[1] = 0;
+    dims[2] = 0;
+    ret = HMCwriteChunk(aid1, dims, chunk1);
+    CHECK(ret, FAIL, "HMCwriteChunk");
+
+    dims[0] = 1;
+    dims[1] = 0;
+    dims[2] = 0;
+    ret = HMCwriteChunk(aid1, dims, chunk4);
+    CHECK(ret, FAIL, "HMCwriteChunk");
+
+    dims[0] = 0;
+    dims[1] = 1;
+    dims[2] = 0;
+    ret = HMCwriteChunk(aid1, dims, chunk2);
+    CHECK(ret, FAIL, "HMCwriteChunk");
+
+    dims[0] = 1;
+    dims[1] = 1;
+    dims[2] = 0;
+    ret = HMCwriteChunk(aid1, dims, chunk5);
+    CHECK(ret, FAIL, "HMCwriteChunk");
+
+    dims[0] = 0;
+    dims[1] = 2;
+    dims[2] = 0;
+    ret = HMCwriteChunk(aid1, dims, chunk3);
+    CHECK(ret, FAIL, "HMCwriteChunk");
+
+    dims[0] = 1;
+    dims[1] = 2;
+    dims[2] = 0;
+    ret = HMCwriteChunk(aid1, dims, chunk6);
+    CHECK(ret, FAIL, "HMCwriteChunk");
+
+    /* end access */
+    ret = Hendaccess(aid1);
+    CHECK(ret, FAIL, "Hendaccess");
+
+    /* end access */
+    ret = Hendaccess(aid2);
+    CHECK(ret, FAIL, "Hendaccess");
+
+    MESSAGE(5, printf("Closing the files\n"););
+    ret = Hclose(fid);
+    CHECK(ret, FAIL, "Hclose");
+
+    MESSAGE(5, printf("Open 3-D, uint8 chunked, RLE Compressed element again for reading\n"); );
+    /* Open file for reading now */
+    fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
+    CHECK(fid, FAIL, "Hopen");
+
+    /* start read access   tag,  ref */
+    aid1 = Hstartread(fid, 1020, 21);
+    CHECK(aid1, FAIL, "Hstartread");
+
+    /* start read access   tag,  ref */
+    aid2 = Hstartread(fid, 1020, 22);
+    CHECK(aid1, FAIL, "Hstartread");
+
+    /* inquire about element */
+    ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
+                   &acc_mode, &special);
+
+    CHECK(ret, FAIL, "Hinquire");
+    if (!special)
+      {
+          fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
+                  __LINE__);
+          errors++;
+          goto done;
+      }
+
+    /* Check values from Hinquire */
+    if ( ref != 21 || length != 24)
+      {
+          fprintf(stderr, "ERROR: Hinquire does not return the correct values \n");
+          fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,length);
+          errors++;
+          goto done;
+      }
+
+    MESSAGE(5, printf("Get/Check special info data\n"); );
+
+    /* get special info about element */
+    ret = HDget_special_info(aid1, &info_block);
+    CHECK(aid1, FAIL, "HDget_special_info");
+
+    /* check special info */
+    if (info_block.ndims != chunk[0].num_dims /* 2-D */)
+      {
+          fprintf(stderr, "ERROR: HDget_specail_info does not return the correct values \n");
+          errors++;
+          goto done;
+      }
+
+    /* check chunk_lengths */
+    if (info_block.cdims != NULL)
+      {
+          if ((info_block.cdims[0] != 1) 
+              || (info_block.cdims[1] != 1)
+              || (info_block.cdims[2] != 4))
+            {
+                fprintf(stderr, "ERROR: HDget_specail_info does not return the correct values \n");
+                errors++;
+                goto done;
+            }
+
+          /* free allocated space by routine */
+          HDfree(info_block.cdims);
+      }
+    else
+      {
+          fprintf(stderr, "ERROR: HDget_specail_info does not return the correct values \n");
+          errors++;
+          goto done;
+      }
+
+
+    /* read back in buffer  */
+    ret = Hread(aid1, 24, inbuf_u8);
+    VERIFY(ret, 24, "Hread");
+    if (ret != 24)
+      {
+          fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);
+          errors++;
+          goto done;
+      }
+
+    /* verify the data */
+    MESSAGE(5, printf("Verifying 24 bytes data from Hread\n"); );
+    for (i = 0; i < 2; i++)
+      {
+        for (j = 0; j < 3; j++)
+          {
+            for (k = 0; k < 4; k++)
+              {
+                  if (inbuf_u8[i][j][k] != u8_data[i][j][k])
+                    {
+                        printf("Wrong data at inbuf_u8[%d][%d][%d], out %d in %d\n", 
+                               i,j,k, u8_data[i][j][k], inbuf_u8[i][j][k]);
+                        errors++;
+                    }
+              }
+          }
+      }
+
+    if (errors)
+        goto done;
+
+    MESSAGE(5, printf("Verifying 24 bytes from uint8 chunked, RLE Compressed element using HMCreadChunk\n"); );
+    /* read data back as chunks */
+    dims[0] = 0;
+    dims[1] = 0;
+    dims[2] = 0;
+    ret = HMCreadChunk(aid2, dims, inbuf);
+    CHECK(ret, FAIL, "HMCreadChunk");
+    if (ret != 4)
+      {
+          fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
+          errors++;
+          goto done;
+      }
+
+    MESSAGE(5, printf("Verifying chunk1 4 bytes data\n"); );
+    for (i = 0; i < ret; i++)
+      {
+          if (inbuf[i] != chunk1[i])
+            {
+                printf("Wrong data at %d, out %d in %d\n", i, chunk1[i], inbuf[i]);
+                errors++;
+            }
+      }
+
+    dims[0] = 0;
+    dims[1] = 1;
+    dims[2] = 0;
+    ret = HMCreadChunk(aid2, dims, inbuf);
+    CHECK(ret, FAIL, "HMCreadChunk");
+    if (ret != 4)
+      {
+          fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
+          errors++;
+          goto done;
+      }
+
+    MESSAGE(5, printf("Verifying chunk2 4 bytes data\n"); );
+    for (i = 0; i < ret; i++)
+      {
+          if (inbuf[i] != chunk2[i])
+            {
+                printf("Wrong data at %d, out %d in %d\n", i, chunk2[i], inbuf[i]);
+                errors++;
+            }
+      }
+
+    dims[0] = 0;
+    dims[1] = 2;
+    dims[2] = 0;
+    ret = HMCreadChunk(aid2, dims, inbuf);
+    CHECK(ret, FAIL, "HMCreadChunk");
+    if (ret != 4)
+      {
+          fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
+          errors++;
+          goto done;
+      }
+
+    MESSAGE(5, printf("Verifying chunk3 4 bytes data\n"); );
+    for (i = 0; i < ret; i++)
+      {
+          if (inbuf[i] != chunk3[i])
+            {
+                printf("Wrong data at %d, out %d in %d\n", i, chunk3[i], inbuf[i]);
+                errors++;
+            }
+      }
+
+    dims[0] = 1;
+    dims[1] = 0;
+    dims[2] = 0;
+    ret = HMCreadChunk(aid2, dims, inbuf);
+    CHECK(ret, FAIL, "HMCreadChunk");
+    if (ret != 4)
+      {
+          fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
+          errors++;
+          goto done;
+      }
+
+    MESSAGE(5, printf("Verifying chunk4 4 bytes data\n"); );
+    for (i = 0; i < ret; i++)
+      {
+          if (inbuf[i] != chunk4[i])
+            {
+                printf("Wrong data at %d, out %d in %d\n", i, chunk4[i], inbuf[i]);
+                errors++;
+            }
+      }
+
+    dims[0] = 1;
+    dims[1] = 1;
+    dims[2] = 0;
+    ret = HMCreadChunk(aid2, dims, inbuf);
+    CHECK(ret, FAIL, "HMCreadChunk");
+    if (ret != 4)
+      {
+          fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
+          errors++;
+          goto done;
+      }
+
+    MESSAGE(5, printf("Verifying chunk5 4 bytes data\n"); );
+    for (i = 0; i < ret; i++)
+      {
+          if (inbuf[i] != chunk5[i])
+            {
+                printf("Wrong data at %d, out %d in %d\n", i, chunk5[i], inbuf[i]);
+                errors++;
+            }
+      }
+
+    dims[0] = 1;
+    dims[1] = 2;
+    dims[2] = 0;
+    ret = HMCreadChunk(aid2, dims, inbuf);
+    CHECK(ret, FAIL, "HMCreadChunk");
+    if (ret != 4)
+      {
+          fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
+          errors++;
+          goto done;
+      }
+
+    MESSAGE(5, printf("Verifying chunk6 4 bytes data\n"); );
+    for (i = 0; i < ret; i++)
+      {
+          if (inbuf[i] != chunk6[i])
+            {
+                printf("Wrong data at %d, out %d in %d\n", i, chunk6[i], inbuf[i]);
+                errors++;
+            }
+      }
+
+    /* end access and close file */
+    ret = Hendaccess(aid1);
+    CHECK(ret, FAIL, "Hendaccess");
+
+    /* end access and close file */
+    ret = Hendaccess(aid2);
+    CHECK(ret, FAIL, "Hendaccess");
+
+    MESSAGE(5, printf("Closing the file\n"););
+    ret = Hclose(fid);
+    CHECK(ret, FAIL, "Hclose");
+
 
   done:
     /* Don't forget to free dimensions allocate for chunk definition */
