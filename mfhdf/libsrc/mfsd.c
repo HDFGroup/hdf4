@@ -4090,7 +4090,12 @@ int32 flags;
               status = FAIL;
               goto done;
             }
-      } /* end if */
+      } 
+    else /* data ref exists, Error since can't convert existing SDS to chunked */
+      {
+          status = FAIL;
+          goto done;
+      }
 
     /* Now start setting chunk info */
     ndims = var->assoc->count; /* set number of dims i.e. rank */
