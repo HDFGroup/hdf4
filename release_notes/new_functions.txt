@@ -34,7 +34,7 @@ C                     FORTRAN                 Description
 
 (GRsetcompress)       mgscompress             compresses raster image
 
-GRsetchunk            mgschnk                 makes an raster image a chunked
+GRsetchunk            mgschnk                 makes a raster image a chunked
                                               raster image
 
 GRgetchunkinfo        mggichnk                gets info on a raster image
