@@ -1055,6 +1055,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
           info->minfo     = NULL;
           info->cinfo     = NULL;
           info->comp_sp_tag_header   = NULL;
+          info->comp_sp_tag_head_len = 0;
           info->num_recs  = 0; /* zero records to start with */
 
           /* read the special info structure from the file */
@@ -1602,8 +1603,8 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
           
           /* find compression header length */
           info->comp_sp_tag_head_len = HCPquery_encode_header(
-              (comp_model_t)info->model_type, info->minfo, 
-              (comp_coder_t)info->comp_type, info->cinfo);
+              (comp_model_t)chk_array->model_type, chk_array->minfo, 
+              (comp_coder_t)chk_array->comp_type, chk_array->cinfo);
 
           /* allocate space for compression header */
           if (( info->comp_sp_tag_header = (VOID *) HDmalloc(info->comp_sp_tag_head_len))==NULL)

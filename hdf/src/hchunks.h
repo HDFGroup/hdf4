@@ -71,8 +71,8 @@ typedef struct hchunk_def_struct {
     int32   chunk_flag;      /* multiply specialness? SPECIAL_COMP */
 
     /* For Compression info */
-    int32      comp_type;     /* Compression type */
-    int32      model_type;    /* Compression model type */
+    comp_coder_t comp_type;     /* Compression type */
+    comp_model_t model_type;    /* Compression model type */
     comp_info  *cinfo;        /* Compression info struct */
     model_info *minfo;        /* Compression model info struct */
 }HCHUNK_DEF, * HCHUNK_DEF_PTR;
@@ -130,8 +130,8 @@ typedef struct chunkinfo_t
     VOID        *comp_sp_tag_header;  /* compression header */
 
     /* For Compression info */
-    int32       comp_type;            /* Compression type */
-    int32       model_type;           /* Compression model type */
+    comp_coder_t comp_type;            /* Compression type */
+    comp_model_t model_type;           /* Compression model type */
     comp_info   *cinfo;               /* Compression info struct */
     model_info  *minfo;               /* Compression model info struct */
 
