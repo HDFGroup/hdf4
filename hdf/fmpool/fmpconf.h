@@ -31,6 +31,7 @@
 #define HAVE_LIMITS_H
 #define HAVE_UNISTD_H
 #define HAVE_STDLIB
+#define HAVE_STDIO_H
 #define HAVE_FCNTL
 #define HAVE_STAT
 #define HAVE_MIN_MAX
