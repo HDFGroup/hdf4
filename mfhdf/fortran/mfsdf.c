@@ -847,22 +847,24 @@ nscgainfo(id, number, name, nt, count, len)
      intf *count, *len, *nt;
 #endif /* PROTOTYPE */
 {
-    char *iname;
-    int32 status;
-    int32 nt32;
+    char  * iname;
+    intn    status;
+    int32   nt32;
+    int32   cnt32;
 
     iname = NULL;
     if(*len)   iname  = (char *) HDgetspace((uint32)*len + 1);
 
-    status = SDattrinfo(*id, *number, iname, &nt32, count);
+    status = SDattrinfo(*id, *number, iname, &nt32, &cnt32);
 
     HDpackFstring(iname,  _fcdtocp(name),  *len);
 
     if(iname)  HDfreespace((VOIDP)iname);
 
     *nt    = (intf) nt32;
+    *count = (intf) cnt32;
   
-    return(status);
+    return((intf)status);
 
 }
 
