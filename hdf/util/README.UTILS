@@ -52,9 +52,9 @@ hdfpack:
        Vdata with ref no. 55 that contains the values:
        0.0, 1.0, 2.0,..., 359.0
    The file sizes should be as follows:
-       test.cdf - 30272 
-       test.pck - 22745 
-       test.blk - 7245
+       test.cdf - 30275 
+       test.pck - 22756 
+       test.blk - 7246
 
 
 hdftopal/paltohdf
