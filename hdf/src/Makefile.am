@@ -39,3 +39,7 @@ SUFFIXES = .inc .f90
 	else                                                            \
 	  sed -e 's/^[cC]/!/' -e 's/^     [^ ]/     \&/' < $(srcdir)/$< > $*.f90; \
 	fi
+
+# Don't regenerate the h4config.h.in file (we'll do that ourselves, thank you).
+$(srcdir)/h4config.h.in:  $(top_srcdir)/configure.ac $(ACLOCAL_M4) 
+	@true

@@ -299,10 +299,6 @@ stamp-h1: $(srcdir)/h4config.h.in $(top_builddir)/config.status
 	@rm -f stamp-h1
 	cd $(top_builddir) && $(SHELL) ./config.status hdf/src/h4config.h
 
-$(srcdir)/h4config.h.in:  $(top_srcdir)/configure.ac $(ACLOCAL_M4) 
-	cd $(top_srcdir) && $(AUTOHEADER)
-	touch $(srcdir)/h4config.h.in
-
 distclean-hdr:
 	-rm -f h4config.h stamp-h1
 libLIBRARIES_INSTALL = $(INSTALL_DATA)
@@ -649,6 +645,10 @@ uninstall-am: uninstall-includeHEADERS uninstall-info-am \
 	else                                                            \
 	  sed -e 's/^[cC]/!/' -e 's/^     [^ ]/     \&/' < $(srcdir)/$< > $*.f90; \
 	fi
+
+# Don't regenerate the h4config.h.in file (we'll do that ourselves, thank you).
+$(srcdir)/h4config.h.in:  $(top_srcdir)/configure.ac $(ACLOCAL_M4) 
+	@true
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
