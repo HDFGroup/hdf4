@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.6  1993/01/26 19:42:42  koziol
-Added support for reading and writing Little-Endian data on all
-platforms.  This has been tested on: Cray, Sun, and PCs so far.
+Revision 1.7  1993/04/13 16:52:31  georgev
+Added DFIL_PIXEL, DFIL_LINE, DFIL_PLANE defines for interlacing schemes.
 
+ * Revision 1.6  1993/01/26  19:42:42  koziol
+ * Added support for reading and writing Little-Endian data on all
+ * platforms.  This has been tested on: Cray, Sun, and PCs so far.
+ *
  * Revision 1.5  1993/01/19  05:55:38  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -400,6 +403,11 @@ extern uint8 *tbuf;
 #define DFTAG_IMCOMP ((uint16)12)   /* IMCOMP compression */
 #define DFTAG_JPEG  ((uint16)13)    /* JPEG compression (24-bit data) */
 #define DFTAG_GREYJPEG  ((uint16)14)    /* JPEG compression (8-bit data) */
+
+/* Interlace schemes */
+#define DFIL_PIXEL   0  /* Pixel Interlacing */
+#define DFIL_LINE    1  /* Scan Line Interlacing */
+#define DFIL_PLANE   2  /* Scan Plane Interlacing */
 
 /* SPECIAL CODES */
 #define SPECIAL_LINKED 1
