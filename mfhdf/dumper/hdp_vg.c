@@ -25,81 +25,81 @@ static char RcsId[] = "@(#)$Revision$";
 #define NUM_VGS 20;
 
 struct node
-  {
-	  int32       index, displayed;
-	  char        name[MAXNAMELEN];
-	  char      **children, **type;
-  };
+{
+    int32       index, displayed;
+    char        name[MAXNAMELEN];
+    char      **children, **type;
+};
 
 void        display(struct node *ptr, int32 level, struct node **list,
-					int32 num_nodes, int32 firstchild);
+                    int32 num_nodes, int32 firstchild);
 
 static intn dvg(dump_info_t * dumpvg_opts, intn curr_arg, intn argc,
-				char *argv[]);
+                char *argv[]);
 
 int32       Vref_index(int32 file_id, int32 vg_ref);
 
 void        vgdumpfull(int32 vg_id, int32 file_id, FILE * fp, struct node *aNode,
-					   int32 skip);
+                       int32 skip);
 
 int32       Vstr_index(int32 file_id, char filter_str[MAXNAMELEN], int name,
-					   int32 *find_ref, int32 *index);
+                       int32 *find_ref, int32 *index);
 
 void 
 dumpvg_usage(intn argc, char *argv[])
 {
-	printf("Usage:\n");
-	printf("%s dumpvg [-a|-i <index>|-n <name>|-r <ref>] [-dhv] [-o <filename> [-bx]] <filelist>\n", argv[0]);
-	printf("\t-a\tDump all VDs in the file (default)\n");
-	printf("\t-i <index>\tDump the <index>th SDS in the file \n");
-	printf("\t-n <name>\tDump the VDS with name <name>\n");
-	printf("\t-r <ref>\tDump the VDS with reference number <ref>\n");
-	printf("\t-d\tDump data only, no tag/ref, formatted to input to hp2hdf\n");
-	printf("\t-h\tDump header only, no annotation for elements nor data\n");
-	printf("\t-v\tDump everything including all annotations (default)\n");
-	printf("\t-o <filename>\tOutput to file <filename>\n");
-	printf("\t-b\tBinary format of output\n");
-	printf("\t-x\tAscii text format of output (default)\n");
+    printf("Usage:\n");
+    printf("%s dumpvg [-a|-i <index>|-n <name>|-r <ref>] [-dhv] [-o <filename> [-bx]] <filelist>\n", argv[0]);
+    printf("\t-a\tDump all VDs in the file (default)\n");
+    printf("\t-i <index>\tDump the <index>th SDS in the file \n");
+    printf("\t-n <name>\tDump the VDS with name <name>\n");
+    printf("\t-r <ref>\tDump the VDS with reference number <ref>\n");
+    printf("\t-d\tDump data only, no tag/ref, formatted to input to hp2hdf\n");
+    printf("\t-h\tDump header only, no annotation for elements nor data\n");
+    printf("\t-v\tDump everything including all annotations (default)\n");
+    printf("\t-o <filename>\tOutput to file <filename>\n");
+    printf("\t-b\tBinary format of output\n");
+    printf("\t-x\tAscii text format of output (default)\n");
 }	/* end list_usage() */
 
 void 
 init_dumpvg_opts(dump_info_t * dumpvg_opts)
 {
-	dumpvg_opts->filter = DALL;		/* default dump all VGs */
-	dumpvg_opts->filter_num = FALSE;	/* not by reference nor by index */
-	dumpvg_opts->filter_str = NULL;		/* no strings */
-	dumpvg_opts->num_chosen = (-1);		/* default dump all items */
-	dumpvg_opts->contents = DVERBOSE;	/* default dump all information */
-	dumpvg_opts->dump_to_file = FALSE;	/* don't dump to output file */
-	dumpvg_opts->file_type = DASCII;	/* default output is ASCII file */
-	HDstrcpy(dumpvg_opts->file_name, "\0");
+    dumpvg_opts->filter = DALL;		/* default dump all VGs */
+    dumpvg_opts->filter_num = FALSE;	/* not by reference nor by index */
+    dumpvg_opts->filter_str = NULL;		/* no strings */
+    dumpvg_opts->num_chosen = (-1);		/* default dump all items */
+    dumpvg_opts->contents = DVERBOSE;	/* default dump all information */
+    dumpvg_opts->dump_to_file = FALSE;	/* don't dump to output file */
+    dumpvg_opts->file_type = DASCII;	/* default output is ASCII file */
+    HDstrcpy(dumpvg_opts->file_name, "\0");
 }	/* end init_list_opts() */
 
 void 
 do_dumpvg(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts)
 {
-	dump_info_t dumpvg_opts;	/* dumpvg options */
-	char       *dummy1[MAXNAMELEN];
-	int         dummy2;
+    dump_info_t dumpvg_opts;	/* dumpvg options */
+    char       *dummy1[MAXNAMELEN];
+    int         dummy2;
 
-	if (glob_opts->help == TRUE)
-	  {
-		  dumpvg_usage(argc, argv);
-		  return;
-	  }		/* end if */
+    if (glob_opts->help == TRUE)
+      {
+          dumpvg_usage(argc, argv);
+          return;
+      }		/* end if */
 
-	init_dumpvg_opts(&dumpvg_opts);
-	if (parse_dumpvd_opts(&dumpvg_opts, &curr_arg, argc, argv, dummy1, &dummy2) == FAIL)
-	  {
-		  dumpvg_usage(argc, argv);
-		  return;
-	  }		/* end if */
+    init_dumpvg_opts(&dumpvg_opts);
+    if (parse_dumpvd_opts(&dumpvg_opts, &curr_arg, argc, argv, dummy1, &dummy2) == FAIL)
+      {
+          dumpvg_usage(argc, argv);
+          return;
+      }		/* end if */
 
-	if (dvg(&dumpvg_opts, curr_arg, argc, argv) == FAIL)
-	  {
-		  printf("Failure in dumping Vgroup data\n");
-		  exit(1);
-	  }
+    if (dvg(&dumpvg_opts, curr_arg, argc, argv) == FAIL)
+      {
+          printf("Failure in dumping Vgroup data\n");
+          exit(1);
+      }
 }	/* end do_dumpvg() */
 
 static intn 
@@ -298,7 +298,11 @@ dvg(dump_info_t * dumpvg_opts, intn curr_arg, intn argc, char *argv[])
                 if (num_vgs > max_vgs)
                   {
                       max_vgs += NUM_VGS;
-                      list = HDregetspace(list, (uint32) sizeof(struct node) * max_vgs);
+                      if ((list = HDrealloc(list, (uint32) sizeof(struct node) * max_vgs)) == NULL)
+                        {
+                            printf("Not enough memory!\n");
+                            exit(-1);
+                        }
                   }
 
                 if (( list[i] = (struct node *) HDmalloc(sizeof(struct node))) == NULL)
@@ -370,12 +374,12 @@ dvg(dump_info_t * dumpvg_opts, intn curr_arg, intn argc, char *argv[])
             }
           if (list != NULL)
             {
-              for (i=0; i < max_vgs; i++)
-                {
-                    if (list[i] != NULL)
-                        HDfree(list[i]);
-                }
-              HDfree(list);
+                for (i=0; i < max_vgs; i++)
+                  {
+                      if (list[i] != NULL)
+                          HDfree(list[i]);
+                  }
+                HDfree(list);
             }
           if (vg_chosen!=NULL)
             {
@@ -393,294 +397,294 @@ dvg(dump_info_t * dumpvg_opts, intn curr_arg, intn argc, char *argv[])
 void 
 vgdumpfull(int32 vg_id, int32 file_id, FILE * fp, struct node *aNode, int32 skip)
 {
-	int32       vgt, vgotag, vgoref;
-	int32       t, vsid, ne, tag;
-	int         found = 0, num_entries;
-	int32       vs, nv, vsotag, vsoref, interlace, vsize;
-	char        fields[FIELDNAMELENMAX], vsname[MAXNAMELEN], vsclass[VSNAMELENMAX];
-	char        vgname[VGNAMELENMAX], vgclass[VGNAMELENMAX];
-	char       *name;
-	int32       z, lastItem, count = 0;
-	char       *tempPtr, *ptr, string[MAXNAMELEN], tempflds[FIELDNAMELENMAX];
+    int32       vgt, vgotag, vgoref;
+    int32       t, vsid, ne, tag;
+    int         found = 0, num_entries;
+    int32       vs, nv, vsotag, vsoref, interlace, vsize;
+    char        fields[FIELDNAMELENMAX], vsname[MAXNAMELEN], vsclass[VSNAMELENMAX];
+    char        vgname[VGNAMELENMAX], vgclass[VGNAMELENMAX];
+    char       *name;
+    int32       z, lastItem, count = 0;
+    char       *tempPtr, *ptr, string[MAXNAMELEN], tempflds[FIELDNAMELENMAX];
 
-	num_entries = Vntagrefs(vg_id);
-	aNode->children = (char **) HDmalloc(sizeof(char *) * (num_entries+1));
-	if (aNode->children == NULL)
-	  {
-		  printf("Not enough memory!\n");
-		  exit(-1);
-	  }
-	aNode->type = (char **) HDmalloc(sizeof(char *) * (num_entries+1));
-	if (aNode->type == NULL)
-	  {
-		  printf("Not enough memory!\n");
-		  exit(-1);
-	  }
-	for (t = 0; t < num_entries; t++)
-	  {
-		  Vgettagref(vg_id, t, &tag, &vsid);
-		  found = 1;
-		  if (tag == DFTAG_VG)
-			{
-				vgt = Vattach(file_id, vsid, "r");
-				if (vgt == FAIL)
-				  {
-					  printf("Cannot open vg id=%d\n", (int) vsid);
-					  continue;
-				  }
-				Vinquire(vgt, &ne, vgname);
-				if (HDstrlen(vgname) == 0)
-					HDstrcat(vgname, "NoName");
-				vgotag = VQuerytag(vgt);
-				vgoref = VQueryref(vgt);
-				Vgetclass(vgt, vgclass);
-				if (!skip)
-				  {
-					  fprintf(fp, "     #%d (Vgroup)\n\ttag = %d;",
-							  (int) t, (int) vgotag);
-					  fprintf(fp, "reference = %d;\n\tnumber of entries = %d;\n",
-							  (int) vgoref, (int) ne);
-					  fprintf(fp, "\tname = %s; class = %s\n", vgname, vgclass);
-				  }
-				Vdetach(vgt);
-				aNode->children[t] = (char *) HDmalloc(sizeof(char) * (HDstrlen(vgname)+1));
-				if (aNode->children[t] == NULL)
-				  {
-					  printf("Not enough memory!\n");
-					  exit(-1);
-				  }
-				HDstrcpy(aNode->children[t], vgname);
-				aNode->type[t] = (char *) HDmalloc(sizeof(char) * 3);
-				if (aNode->type[t] == NULL)
-				  {
-					  printf("Not enough memory!\n");
-					  exit(-1);
-				  }
-				HDstrcpy(aNode->type[t], "vg");
-			}	/* if */
-		  else if (tag == VSDESCTAG)
-			{
-				vs = VSattach(file_id, vsid, "r");
-				if (vs == FAIL)
-				  {
-					  printf("Cannot open vs id=%d\n", (int) vsid);
-					  continue;
-				  }
-				VSinquire(vs, &nv, &interlace, fields, &vsize, vsname);
-				vsotag = VSQuerytag(vs);
-				vsoref = VSQueryref(vs);
-				if (HDstrlen(vsname) == 0)
-					HDstrcat(vsname, "NoName");
-				VSgetclass(vs, vsclass);
+    num_entries = Vntagrefs(vg_id);
+    aNode->children = (char **) HDmalloc(sizeof(char *) * (num_entries+1));
+    if (aNode->children == NULL)
+      {
+          printf("Not enough memory!\n");
+          exit(-1);
+      }
+    aNode->type = (char **) HDmalloc(sizeof(char *) * (num_entries+1));
+    if (aNode->type == NULL)
+      {
+          printf("Not enough memory!\n");
+          exit(-1);
+      }
+    for (t = 0; t < num_entries; t++)
+      {
+          Vgettagref(vg_id, t, &tag, &vsid);
+          found = 1;
+          if (tag == DFTAG_VG)
+            {
+                vgt = Vattach(file_id, vsid, "r");
+                if (vgt == FAIL)
+                  {
+                      printf("Cannot open vg id=%d\n", (int) vsid);
+                      continue;
+                  }
+                Vinquire(vgt, &ne, vgname);
+                if (HDstrlen(vgname) == 0)
+                    HDstrcat(vgname, "NoName");
+                vgotag = VQuerytag(vgt);
+                vgoref = VQueryref(vgt);
+                Vgetclass(vgt, vgclass);
+                if (!skip)
+                  {
+                      fprintf(fp, "     #%d (Vgroup)\n\ttag = %d;",
+                              (int) t, (int) vgotag);
+                      fprintf(fp, "reference = %d;\n\tnumber of entries = %d;\n",
+                              (int) vgoref, (int) ne);
+                      fprintf(fp, "\tname = %s; class = %s\n", vgname, vgclass);
+                  }
+                Vdetach(vgt);
+                aNode->children[t] = (char *) HDmalloc(sizeof(char) * (HDstrlen(vgname)+1));
+                if (aNode->children[t] == NULL)
+                  {
+                      printf("Not enough memory!\n");
+                      exit(-1);
+                  }
+                HDstrcpy(aNode->children[t], vgname);
+                aNode->type[t] = (char *) HDmalloc(sizeof(char) * 3);
+                if (aNode->type[t] == NULL)
+                  {
+                      printf("Not enough memory!\n");
+                      exit(-1);
+                  }
+                HDstrcpy(aNode->type[t], "vg");
+            }	/* if */
+          else if (tag == VSDESCTAG)
+            {
+                vs = VSattach(file_id, vsid, "r");
+                if (vs == FAIL)
+                  {
+                      printf("Cannot open vs id=%d\n", (int) vsid);
+                      continue;
+                  }
+                VSinquire(vs, &nv, &interlace, fields, &vsize, vsname);
+                vsotag = VSQuerytag(vs);
+                vsoref = VSQueryref(vs);
+                if (HDstrlen(vsname) == 0)
+                    HDstrcat(vsname, "NoName");
+                VSgetclass(vs, vsclass);
 
-				if (!skip)
-				  {
-					  fprintf(fp, "     #%d (Vdata)\n", (int) t);
-					  fprintf(fp, "\ttag = %d; ", (int) vsotag);
-					  fprintf(fp, "reference = %d; \n", (int) vsoref);
-					  fprintf(fp, "\tnumber of records = %d; ", (int) nv);
-					  fprintf(fp, "interlace = %d;\n", (int) interlace);
-					  fprintf(fp, "\tfields = [");
+                if (!skip)
+                  {
+                      fprintf(fp, "     #%d (Vdata)\n", (int) t);
+                      fprintf(fp, "\ttag = %d; ", (int) vsotag);
+                      fprintf(fp, "reference = %d; \n", (int) vsoref);
+                      fprintf(fp, "\tnumber of records = %d; ", (int) nv);
+                      fprintf(fp, "interlace = %d;\n", (int) interlace);
+                      fprintf(fp, "\tfields = [");
 
-					  /* The list of field names can be very long and would 
-					     look very messy when being displayed if it were to 
-					     be dumped out at once. The following block of
-					     operations is to display a list in a nice way even 
-					     if the list is long. */
-					  lastItem = 0;
-					  HDstrcpy(tempflds, fields);
-					  ptr = tempflds;
-					  for (z = 0; !lastItem; z++)
-						{
-							tempPtr = HDstrchr(ptr, ',');
-							if (tempPtr == NULL)
-								lastItem = 1;
-							else
-								*tempPtr = '\0';
-							HDstrcpy(string, ptr);
-							count += HDstrlen(string);
-							if (count > 50)
-							  {
-								  fprintf(fp, "\n\t          ");
-								  count = 0;
-							  }
-							fprintf(fp, "%s", string);
-							if (!lastItem)
-								fprintf(fp, ", ");
-							ptr = tempPtr + 1;
-						}
-					  fprintf(fp, "];\n");
-					  fprintf(fp, "\trecord size (in bytes) = %d;\n", (int)vsize);
-					  fprintf(fp, "\tname = %s; class = %s;\n", vsname, vsclass);
-				  }
+                          /* The list of field names can be very long and would 
+                             look very messy when being displayed if it were to 
+                             be dumped out at once. The following block of
+                             operations is to display a list in a nice way even 
+                             if the list is long. */
+                      lastItem = 0;
+                      HDstrcpy(tempflds, fields);
+                      ptr = tempflds;
+                      for (z = 0; !lastItem; z++)
+                        {
+                            tempPtr = HDstrchr(ptr, ',');
+                            if (tempPtr == NULL)
+                                lastItem = 1;
+                            else
+                                *tempPtr = '\0';
+                            HDstrcpy(string, ptr);
+                            count += HDstrlen(string);
+                            if (count > 50)
+                              {
+                                  fprintf(fp, "\n\t          ");
+                                  count = 0;
+                              }
+                            fprintf(fp, "%s", string);
+                            if (!lastItem)
+                                fprintf(fp, ", ");
+                            ptr = tempPtr + 1;
+                        }
+                      fprintf(fp, "];\n");
+                      fprintf(fp, "\trecord size (in bytes) = %d;\n", (int)vsize);
+                      fprintf(fp, "\tname = %s; class = %s;\n", vsname, vsclass);
+                  }
 
-				VSdetach(vs);
-				aNode->children[t] = (char *) HDmalloc(sizeof(char) * (HDstrlen(vsname)+1));
-				if (aNode->children[t] == NULL)
-				  {
-					  printf("Not enough memory!\n");
-					  exit(-1);
-				  }
-				HDstrcpy(aNode->children[t], vsname);
+                VSdetach(vs);
+                aNode->children[t] = (char *) HDmalloc(sizeof(char) * (HDstrlen(vsname)+1));
+                if (aNode->children[t] == NULL)
+                  {
+                      printf("Not enough memory!\n");
+                      exit(-1);
+                  }
+                HDstrcpy(aNode->children[t], vsname);
 
-				aNode->type[t] = (char *) HDmalloc(sizeof(char) * 3);
-				if (aNode->type[t] == NULL)
-				  {
-					  printf("Not enough memory!\n");
-					  exit(-1);
-				  }
-				HDstrcpy(aNode->type[t], "vd");
-			}
-		  else
-			{
-                            char *cptr = NULL;
-                            int slen;
-                            int found=1;
+                aNode->type[t] = (char *) HDmalloc(sizeof(char) * 3);
+                if (aNode->type[t] == NULL)
+                  {
+                      printf("Not enough memory!\n");
+                      exit(-1);
+                  }
+                HDstrcpy(aNode->type[t], "vd");
+            }
+          else
+            {
+                char *cptr = NULL;
+                int slen;
+                int found=1;
 
-				cptr = HDgettagsname((uint16) tag);
-				if (!cptr)
-                                  {
-                                    slen = HDstrlen("Unknown Tag")+1;
-                                    cptr = "Unknown Tag";
-                                    found = 0;
-                                  }
-                                else
-                                    slen = HDstrlen(cptr)+1;
+                cptr = HDgettagsname((uint16) tag);
+                if (!cptr)
+                  {
+                      slen = HDstrlen("Unknown Tag")+1;
+                      cptr = "Unknown Tag";
+                      found = 0;
+                  }
+                else
+                    slen = HDstrlen(cptr)+1;
 
-                                if ((name = (char *)HDmalloc(sizeof(char) * (HDstrlen(cptr)+1))) == NULL)
-				  {
-                                      printf("Not enough memory!\n");
-                                      exit(-1);
-				  }
+                if ((name = (char *)HDmalloc(sizeof(char) * (HDstrlen(cptr)+1))) == NULL)
+                  {
+                      printf("Not enough memory!\n");
+                      exit(-1);
+                  }
 
-                                HDstrcpy(name,cptr);
-                                if (found)
-                                    HDfree(cptr);
-				if (!skip)
-				  {
-					  fprintf(fp, "     #%d (%s)\n", (int) t, name);
-					  fprintf(fp, "\ttag = %d; reference = %d;\n", (int) tag, (int) vsid);
-				  }
-				aNode->children[t] = (char *) HDmalloc(sizeof(char) * 4);
-				if (aNode->children[t] == NULL)
-				  {
-					  printf("Not enough memory!\n");
-					  exit(-1);
-				  }
-				HDstrcpy(aNode->children[t], "***");
+                HDstrcpy(name,cptr);
+                if (found)
+                    HDfree(cptr);
+                if (!skip)
+                  {
+                      fprintf(fp, "     #%d (%s)\n", (int) t, name);
+                      fprintf(fp, "\ttag = %d; reference = %d;\n", (int) tag, (int) vsid);
+                  }
+                aNode->children[t] = (char *) HDmalloc(sizeof(char) * 4);
+                if (aNode->children[t] == NULL)
+                  {
+                      printf("Not enough memory!\n");
+                      exit(-1);
+                  }
+                HDstrcpy(aNode->children[t], "***");
 
-				if (!strcmp(name, "Unknown Tag"))
-				  {
-					  aNode->type[t] = (char *) HDmalloc(sizeof(char) * 15);
-					  if (aNode->type[t] == NULL)
-						{
-							printf("Not enough memory!\n");
-							exit(-1);
-						}
-					  HDstrcpy(aNode->type[t], "Unknown Object");
-				  }
-				else
-					aNode->type[t] = name;
+                if (!strcmp(name, "Unknown Tag"))
+                  {
+                      aNode->type[t] = (char *) HDmalloc(sizeof(char) * 15);
+                      if (aNode->type[t] == NULL)
+                        {
+                            printf("Not enough memory!\n");
+                            exit(-1);
+                        }
+                      HDstrcpy(aNode->type[t], "Unknown Object");
+                  }
+                else
+                    aNode->type[t] = name;
 
-			}
-	  }		/* for */
-	aNode->children[num_entries] = NULL;
-	if (!found)
-		printf("     None.\n");
+            }
+      }		/* for */
+    aNode->children[num_entries] = NULL;
+    if (!found)
+        printf("     None.\n");
 }	/* vgdumpfull */
 
 void 
 display(struct node *ptr, int32 level, struct node **list, int32 num_nodes, int32 firstchild)
 {
-	char       *name;
-	int         i, k, x, z, num = 1, newline = TRUE;
+    char       *name;
+    int         i, k, x, z, num = 1, newline = TRUE;
 
-	level++;
-	if (!firstchild)
-		for (k = 0; k < level; k++)
-			for (z = 0; z < num; z++)
-				printf("\t");
-	else
-		for (z = 0; z < num; z++)
-			printf("\t");
-	if (level > 0)
-		printf("-- ");
-	printf("vg%d ", (int)ptr->index);
-	if (ptr->children[0] == NULL)
-		printf("\n");
-	if (!ptr->displayed)
-	  {
-		  for (i = 0; ptr->children[i] != NULL; i++)
-			{
-				if (i == 0)
-					firstchild = TRUE;
-				else
-					firstchild = FALSE;
-				name = ptr->children[i];
-				if ((HDstrcmp(ptr->type[i], "vd")) &&
-					(HDstrcmp(ptr->children[i], "***")))
-				  {
-					  x = 0;
-					  while (HDstrcmp(name, list[x]->name))
-						  x++;
-					  display(list[x], level, list, num_nodes, firstchild);
-				  }		/* if */
-				else
-				  {
-					  if (i > 0)
-						{
-							for (k = 0; k < level + 1; k++)
-								for (z = 0; z < num; z++)
-									printf("\t");
-						}
-					  if (firstchild)
-						  for (z = 0; z < num; z++)
-							  printf("\t");
-					  printf("-- ");
-					  /* printf("%s%d ", ptr->type[i], i); */
-					  printf("%s  \n", ptr->type[i]);
-					  newline = FALSE;
-				  }
-			}	/* for (i...) */
-		  /* ptr->displayed = TRUE; */
-	  }		/* if (!ptr->displayed) */
-	else
-		printf("\n");
+    level++;
+    if (!firstchild)
+        for (k = 0; k < level; k++)
+            for (z = 0; z < num; z++)
+                printf("\t");
+    else
+        for (z = 0; z < num; z++)
+            printf("\t");
+    if (level > 0)
+        printf("-- ");
+    printf("vg%d ", (int)ptr->index);
+    if (ptr->children[0] == NULL)
+        printf("\n");
+    if (!ptr->displayed)
+      {
+          for (i = 0; ptr->children[i] != NULL; i++)
+            {
+                if (i == 0)
+                    firstchild = TRUE;
+                else
+                    firstchild = FALSE;
+                name = ptr->children[i];
+                if ((HDstrcmp(ptr->type[i], "vd")) &&
+                    (HDstrcmp(ptr->children[i], "***")))
+                  {
+                      x = 0;
+                      while (HDstrcmp(name, list[x]->name))
+                          x++;
+                      display(list[x], level, list, num_nodes, firstchild);
+                  }		/* if */
+                else
+                  {
+                      if (i > 0)
+                        {
+                            for (k = 0; k < level + 1; k++)
+                                for (z = 0; z < num; z++)
+                                    printf("\t");
+                        }
+                      if (firstchild)
+                          for (z = 0; z < num; z++)
+                              printf("\t");
+                      printf("-- ");
+                          /* printf("%s%d ", ptr->type[i], i); */
+                      printf("%s  \n", ptr->type[i]);
+                      newline = FALSE;
+                  }
+            }	/* for (i...) */
+              /* ptr->displayed = TRUE; */
+      }		/* if (!ptr->displayed) */
+    else
+        printf("\n");
 }	/* display */
 
 int32 
 Vref_index(int32 file_id, int32 vg_ref)
 {
-	int32       find_ref = -1;
-	int         index = 0;
+    int32       find_ref = -1;
+    int         index = 0;
 
-	while ((find_ref = Vgetid(file_id, find_ref)) != -1)
-	  {
-		  if (find_ref == vg_ref)
-			  return(index);
+    while ((find_ref = Vgetid(file_id, find_ref)) != -1)
+      {
+          if (find_ref == vg_ref)
+              return(index);
           index++;
-	  }
+      }
     return (-1);
 }	/* Vref_index */
 
 int32 
 Vstr_index(int32 file_id, char filter_str[MAXNAMELEN],
-		   int name, int32 *find_ref, int32 *index)
+           int name, int32 *find_ref, int32 *index)
 {
-	int32       vg_id;
-	char        vg_name[MAXNAMELEN];
+    int32       vg_id;
+    char        vg_name[MAXNAMELEN];
 
-	while ((*find_ref = Vgetid(file_id, *find_ref)) != -1)
-	  {
-		  vg_id = Vattach(file_id, *find_ref, "r");
-		  if (name)
-			  Vgetname(vg_id, vg_name);
-		  else
-			  Vgetclass(vg_id, vg_name);
-		  Vdetach(vg_id);
-		  if (HDstrcmp(vg_name, filter_str) == 0)
+    while ((*find_ref = Vgetid(file_id, *find_ref)) != -1)
+      {
+          vg_id = Vattach(file_id, *find_ref, "r");
+          if (name)
+              Vgetname(vg_id, vg_name);
+          else
+              Vgetclass(vg_id, vg_name);
+          Vdetach(vg_id);
+          if (HDstrcmp(vg_name, filter_str) == 0)
               return(*index);
-		  (*index)++;
-	  }
+          (*index)++;
+      }
     return (-1);
 }
