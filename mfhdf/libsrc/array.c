@@ -561,7 +561,9 @@ xdr_NC_array(xdrs, app)
 		xdr_NC_fnct = xdr_shorts ;
 		goto func ;
 	case NC_LONG :
-#if defined __alpha || (_MIPS_SZLONG == 64)
+#if defined _CRAYMPP
+		xdr_NC_fnct = xdr_short;
+#elif defined __alpha || (_MIPS_SZLONG == 64)
 		xdr_NC_fnct = xdr_int ;
 #else
 		xdr_NC_fnct = xdr_long ;
