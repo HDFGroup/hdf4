@@ -26,8 +26,8 @@ if test "X-$CC" = "X-"; then
 fi
 
 if test "X-$F77" = "X-"; then
-  F77=f77
-  F77_BASENAME=f77
+  F77=fort77
+  F77_BASENAME=fort77
 fi
 
 if test "X-$CXX" = "X-"; then
@@ -111,7 +111,7 @@ case $CC_BASENAME in
     CFLAGS="$CFLAGS -Ae"
     DEBUG_CFLAGS="-g"
     DEBUG_CPPFLAGS=
-    PROD_CFLAGS="-O"
+    PROD_CFLAGS="-O -s"
     PROD_CPPFLAGS=
     PROFILE_CFLAGS="-pg"
     PROFILE_CPPFLAGS=
@@ -129,7 +129,7 @@ case $F77_BASENAME in
   *)
     FFLAGS="$FFLAGS "
     DEBUG_FFLAGS="-g"
-    PROD_FFLAGS="-O"
+    PROD_FFLAGS="-O -s"
     PROFILE_FFLAGS="-pg"
     ;;
 esac
