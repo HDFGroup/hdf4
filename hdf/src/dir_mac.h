@@ -22,6 +22,8 @@
 #ifndef	__dirent_h
 #define	__dirent_h
 
+#if defined(MAC) || defined (__MWERKS__) || defined(macintosh) || defined(SYMANTEC_C)
+
 #include <Files.h>
 
 /*	Maximum path length for opendir()	*/
@@ -88,4 +90,5 @@ extern	DIR	*hopendir(char *dirname, short vRefNum, long dirID);
 
 #include "sys_dir_mac.h"
 
+#endif /* defined(MAC) || defined (__MWERKS__) || defined(macintosh) || defined(SYMANTEC_C)  */
 #endif	/* !__dirent_h */

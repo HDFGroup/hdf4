@@ -17,6 +17,8 @@
  *
  ****************************************************************************************/
 
+#if defined(MAC) || defined (__MWERKS__) || defined(macintosh) || defined(SYMANTEC_C)
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
@@ -654,3 +656,5 @@ pathdir(DIR *dirp, char *path)
 
 	return path;
 }
+
+#endif /* defined(MAC) || defined (__MWERKS__) || defined(macintosh) || defined(SYMANTEC_C) */
