@@ -163,7 +163,7 @@ int mode ;
         else /* for mac we don't handle XDR files */
 		   return (NULL);
 #endif /* macintosh */
-#endif
+#endif /* HDF */
 
 
 	if(cdf->xdrs->x_op == XDR_DECODE) /* Not NC_CREAT */
