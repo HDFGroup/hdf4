@@ -958,7 +958,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
     chunkinfo_t *info    = NULL;     /* information about data elt */
     int32       dd_aid;              /* AID for writing the special info */
     uint16      data_tag, data_ref;  /* Tag/ref of the data in the file */
-    uint8       local_ptbuf[4];      /* 4 bytes for special header length */
+    uint8       local_ptbuf[6];      /* 6 bytes for special header length */
 #if 0
     uint8       *c_sp_header = NULL;   /* special element header(dynamic) */
 #endif
