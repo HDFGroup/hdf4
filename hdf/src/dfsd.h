@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.8  1993/01/26 19:42:40  koziol
-Added support for reading and writing Little-Endian data on all
-platforms.  This has been tested on: Cray, Sun, and PCs so far.
+Revision 1.9  1993/02/02 00:10:49  georgev
+Changed prototypes for Hyperslab routines to reflect new interface.
 
+ * Revision 1.8  1993/01/26  19:42:40  koziol
+ * Added support for reading and writing Little-Endian data on all
+ * platforms.  This has been tested on: Cray, Sun, and PCs so far.
+ *
  * Revision 1.7  1993/01/19  05:55:12  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -60,7 +63,7 @@ typedef struct DFSsdg {
     char    _HUGE **dimluf[3];   /* label/unit/format for each dim */
     uint8   _HUGE **dimscales;   /* scales for each dimension */
     uint8   max_min[16];        /* max, min values of data, */
-	    		       /* currently atmost 8 bytes each	*/
+	    		        /*  currently atmost 8 bytes each	*/
     int32   numbertype;         /* default is float32      */
     uint8   filenumsubclass;    /* number format in the file, default is IEEE */
     int32   aid;                /* access id     */
@@ -193,16 +196,19 @@ extern int DFSDgetcal
     PROTO((float64 _HUGE *pcal, float64 _HUGE *pcal_err, float64 _HUGE *pioff,
                float64 _HUGE *pioff_err, int32 _HUGE *cal_nt));
 
+/* Hyperslab routines */
 extern int DFSDwriteref
     PROTO((char _HUGE *filename, uint16 ref));
 extern int DFSDsetfillvalue
     PROTO((void _HUGE *fill_value));
 extern int DFSDgetfillvalue
     PROTO((void _HUGE *fill_value));
-extern int DFSDwritefillvalue
-    PROTO((char _HUGE *filename, void _HUGE *fill_value));
+extern int DFSDstartslab
+    PROTO((char _HUGE *filename));
 extern int DFSDwriteslab
-    PROTO((char _HUGE *filename, int32 _HUGE start[],int32 _HUGE stride[],
+    PROTO((int32 _HUGE start[], int32 _HUGE stride[],
            int32 _HUGE count[], void _HUGE *data));
+extern int DFSDendslab
+    PROTO((void));
 
 #endif /*DFSDG*/
