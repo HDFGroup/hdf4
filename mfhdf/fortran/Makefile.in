@@ -77,7 +77,7 @@ $(PROGRAM).f:	fortc1.sed fortc2.sed common.m4 $(PROGRAM).src $(OS).m4
 hdftest:        hdftest.f $(LIBRARY)
 	$(FC) -g hdftest.f $(LIBS) -o $@
 	./hdftest > hdfout.new
-	@cmd="diff hdfout.new hdftst.sav"; \
+	@cmd="diff -w hdfout.new hdftst.sav"; \
 	    echo $$cmd; \
 	    if $$cmd; then \
 		echo "*** HDF passes FORTRAN test ***"; \

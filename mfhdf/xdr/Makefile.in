@@ -42,7 +42,7 @@ all::         FORCE
 #
 test:		$(PROGRAM)
 	./$(PROGRAM) > $(PROGRAM)_out.new
-	@cmd="diff $(PROGRAM)_out.new testout.sav"; \
+	@cmd="diff -w $(PROGRAM)_out.new testout.sav"; \
 	echo $$cmd; \
 	if $$cmd; then \
 	    echo "*** XDR passes formatted test ***"; \
