@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.13  1992/06/04 04:47:15  sxu
+# Revision 1.14  1992/06/04 18:59:26  dilg
+# Changes back to generic SUN from IBM6000
+#
+# Revision 1.13  1992/06/04  04:47:15  sxu
 # add -cckr for IRIS4
 #
 # Revision 1.12  1992/06/01  13:23:15  mfolk
@@ -141,14 +144,14 @@
 # ##################################################################
 
 # ==> specify your machine
-MACHINE=IBM6000
+MACHINE=SUN
 
 # ==> specify your fortran compiler 
-FC=xlf 
+FC=f77 
 FFLAGS=  -g
 
 # ==> specify your C compiler
-CC=gcc
+CC=cc
 
 # ==> where are your hdf.h, hdfi.h and vg.h files located?
 IFLAGS=   -I../include -I.
@@ -163,7 +166,7 @@ IFLAGS=   -I../include -I.
 CFLAGS=  -g -D${MACHINE} $(IFLAGS)
 
 # ==> where is your HDF library (libdf.a) located?
-LIBS= ../formal/libdf.a
+LIBS= ../lib/libdf.a
 
 RM=/bin/rm
 RMFLAGS=-f
