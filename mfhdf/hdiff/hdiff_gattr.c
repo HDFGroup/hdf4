@@ -4,12 +4,18 @@
 #include <ctype.h>
 #include <stdlib.h>
 
+
+
 #include "hdf.h"
 #include "mfhdf.h"
 #include "vg.h"
 
 #include "hdiff.h"
 #include "dumplib.h"
+
+
+
+
 
 int
 gattr_diff(int32 sdid1, int32 sdid2, struct fspec specp)
@@ -98,3 +104,4 @@ gattr_diff(int32 sdid1, int32 sdid2, struct fspec specp)
  
  return ret;
 }
+

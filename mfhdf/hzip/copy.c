@@ -17,6 +17,8 @@
 #include "mfhdf.h"
 #include "copy.h"
 #include "parse.h"
+#include "utils.h"
+
 
 
 int  copy_vdata_attribute(int32 in, int32 out, int32 findex, intn attrindex);
@@ -54,7 +56,9 @@ int copy_sds(int32 sd_in,
              int32 vgroup_id_out_par, /* output parent group ID */
              char*path_name,          /* absolute path for input group name */
              options_t *options,
-             table_t *table)
+             table_t *table,
+             int32 infile_id,
+             int32 outfile_id)
 {
  intn  status_n;              /* returned status_n for functions returning an intn  */
  int32 status_32,             /* returned status_n for functions returning an int32 */
@@ -516,6 +520,12 @@ int copy_sds(int32 sd_in,
   }
  }
 
+ /* obtain the reference number of the new SDS using its identifier */
+ if ((sds_ref = SDidtoref (sds_out)) == FAIL) {
+  printf( "Failed to get new SDS reference in <%s>\n", path);
+  ret=-1;
+  goto out;
+ }
 
 /*-------------------------------------------------------------------------
  * add SDS to group
@@ -525,13 +535,6 @@ int copy_sds(int32 sd_in,
  /* add it to group, if present */
  if (vgroup_id_out_par) 
  {
-  /* obtain the reference number of the new SDS using its identifier */
-  if ((sds_ref = SDidtoref (sds_out)) == FAIL) {
-   printf( "Failed to get new SDS reference in <%s>\n", path);
-   ret=-1;
-   goto out;
-  }
-
   /* add the SDS to the vgroup. the tag DFTAG_NDG is used */
   if ((status_32 = Vaddtagref (vgroup_id_out_par, TAG_GRP_DSET, sds_ref)) == FAIL) {
    printf( "Failed to add new SDS to group <%s>\n", path);
@@ -539,6 +542,15 @@ int copy_sds(int32 sd_in,
    goto out;
   }
  }
+
+/*-------------------------------------------------------------------------
+ * copy ANs
+ *-------------------------------------------------------------------------
+ */ 
+ 
+ copy_an(infile_id,outfile_id,
+         ref,tag,sds_ref,tag, 
+         path,options);
 
 out:
  /* terminate access to the SDSs */
@@ -740,7 +752,9 @@ int copy_vdata_attribute(int32 in, int32 out, int32 findex, intn attrindex)
  *-------------------------------------------------------------------------
  */
 
-int  copy_gr(int32 gr_in,
+int  copy_gr(int32 infile_id,
+             int32 outfile_id,
+             int32 gr_in,
              int32 gr_out,
              int32 tag,               /* tag of input GR */
              int32 ref,               /* ref of input GR */
@@ -1164,6 +1178,11 @@ int  copy_gr(int32 gr_in,
   } /* SUCCEED */
  } /* has_pal==1 */
 
+ 
+ /* obtain the reference number of the new SDS using its identifier */
+ if ((gr_ref = GRidtoref (ri_out)) == FAIL) {
+  printf( "Failed to get new GR reference in <%s>\n", path);
+ }
 
 /*-------------------------------------------------------------------------
  * add GR to group, if needed
@@ -1171,17 +1190,24 @@ int  copy_gr(int32 gr_in,
  */ 
  if (vgroup_id_out_par) 
  {
-  /* obtain the reference number of the new SDS using its identifier */
-  if ((gr_ref = GRidtoref (ri_out)) == FAIL) {
-   printf( "Failed to get new GR reference in <%s>\n", path);
-  }
-
   /* add the GR to the vgroup. the tag DFTAG_RIG is used */
   if ((status_32 = Vaddtagref (vgroup_id_out_par, TAG_GRP_IMAGE, gr_ref)) == FAIL) {
    printf( "Failed to add new GR to group <%s>\n", path);
   }
  }
 
+/*-------------------------------------------------------------------------
+ * copy ANs
+ *-------------------------------------------------------------------------
+ */ 
+ 
+ copy_an(infile_id,outfile_id,
+         ref,DFTAG_RIG,gr_ref,DFTAG_RIG, 
+         path,options);
+ copy_an(infile_id,outfile_id,
+         ref,DFTAG_RI,gr_ref,DFTAG_RI,
+         path,options);
+ 
 
 out:
  
@@ -1449,6 +1475,13 @@ int copy_vs( int32 infile_id,
    printf( "Failed to add new VS to group <%s>\n", path);
   }
  }
+
+/*-------------------------------------------------------------------------
+ * copy ANs
+ *-------------------------------------------------------------------------
+ */ 
+
+ copy_vs_an(infile_id,outfile_id,vdata_id,vdata_out,path,options);
  
 out:
  /* terminate access to the VSs */
@@ -1464,38 +1497,6 @@ out:
 }
 
 
-/*-------------------------------------------------------------------------
- * Function: get_path
- *
- * Purpose: return absolute path for an object
- *
- * Return: path
- *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 11, 2003
- *
- *-------------------------------------------------------------------------
- */
-
-char * get_path(char*path_name, char*obj_name) 
-{
- char *path=NULL;
- /* initialize path */
- if (path_name!=NULL) 
- {
-  path = (char*) malloc(strlen(path_name) + strlen(obj_name) + 2);
-  strcpy( path, path_name );
-  strcat( path, "/" );
-  strcat( path, obj_name ); 
- }
- else
- {
-  path = (char*) malloc(strlen(obj_name) + 1);
-  strcpy( path, obj_name ); 
- }
- return path;
-}
 
 
 
@@ -1633,7 +1634,7 @@ int  options_get_info(options_t      *options,     /* global options */
                       )
 {
 
- obj_info_t *obj=NULL; /* check if we have info for this object */
+ pack_info_t *obj=NULL; /* check if we have info for this object */
  int         i;
  comp_info   c_info; /* for SZIP default values */
  

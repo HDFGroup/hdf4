@@ -83,21 +83,11 @@ test_little_read(void)
     float64 *data_f64;
     int ret;
 
-    char        filename[512] = "";
-    char       *srcdir = getenv("srcdir");
-
     MESSAGE(5,printf("Testing Little-Endian Read Routines\n"););
 
     MESSAGE(10,printf("Testing Little-Endian INT8 Reading Routines\n"););
 
-    /* Generate the correct name for the test file, by prepending the source path */
-    if (srcdir && ((strlen(srcdir) + strlen(FILENAME) + 1) < sizeof(filename))) {
-        strcpy(filename, srcdir);
-        strcat(filename, "/");
-    }
-    strcat(filename, FILENAME);
-
-    ret=DFSDgetdims(filename,&rank,dimsizes,2);
+    ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
     if(dimsizes[0]!=CDIM_Y || dimsizes[1]!=CDIM_X) {
         fprintf(stderr, "Dimensions for INT8 data were incorrect\n");
@@ -112,7 +102,7 @@ test_little_read(void)
           } /* end if */
         else {
             data_i8=(int8 *)HDmalloc((size_t)(dimsizes[0]*dimsizes[1])*sizeof(int8));
-            ret=DFSDgetdata(filename,rank,dimsizes,(VOIDP)data_i8);
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_i8);
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_i8,data_i8,CDIM_X*CDIM_Y*sizeof(int8))) {
@@ -125,7 +115,7 @@ test_little_read(void)
 
     MESSAGE(10,printf("Testing Little-Endian UINT8 Reading Routines\n"););
 
-    ret=DFSDgetdims(filename,&rank,dimsizes,2);
+    ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
     if(dimsizes[0]!=CDIM_Y || dimsizes[1]!=CDIM_X) {
         fprintf(stderr, "Dimensions for UINT8 data were incorrect\n");
@@ -140,7 +130,7 @@ test_little_read(void)
           } /* end if */
         else {
             data_u8=(uint8 *)HDmalloc((size_t)(dimsizes[0]*dimsizes[1])*sizeof(uint8));
-            ret=DFSDgetdata(filename,rank,dimsizes,(VOIDP)data_u8);
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_u8);
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_u8,data_u8,CDIM_X*CDIM_Y*sizeof(uint8))) {
@@ -153,7 +143,7 @@ test_little_read(void)
 
     MESSAGE(10,printf("Testing Little-Endian INT16 Reading Routines\n"););
 
-    ret=DFSDgetdims(filename,&rank,dimsizes,2);
+    ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
     if(dimsizes[0]!=CDIM_Y || dimsizes[1]!=CDIM_X) {
         fprintf(stderr, "Dimensions for INT16 data were incorrect\n");
@@ -168,7 +158,7 @@ test_little_read(void)
           } /* end if */
         else {
             data_i16=(int16 *)HDmalloc((size_t)(dimsizes[0]*dimsizes[1])*sizeof(int16));
-            ret=DFSDgetdata(filename,rank,dimsizes,(VOIDP)data_i16);
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_i16);
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_i16,data_i16,CDIM_X*CDIM_Y*sizeof(int16))) {
@@ -181,7 +171,7 @@ test_little_read(void)
 
     MESSAGE(10,printf("Testing Little-Endian UINT16 Reading Routines\n"););
 
-    ret=DFSDgetdims(filename,&rank,dimsizes,2);
+    ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
     if(dimsizes[0]!=CDIM_Y || dimsizes[1]!=CDIM_X) {
         fprintf(stderr, "Dimensions for UINT16 data were incorrect\n");
@@ -196,7 +186,7 @@ test_little_read(void)
           } /* end if */
         else {
             data_u16=(uint16 *)HDmalloc((size_t)(dimsizes[0]*dimsizes[1])*sizeof(uint16));
-            ret=DFSDgetdata(filename,rank,dimsizes,(VOIDP)data_u16);
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_u16);
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_u16,data_u16,CDIM_X*CDIM_Y*sizeof(uint16))) {
@@ -209,7 +199,7 @@ test_little_read(void)
 
     MESSAGE(10,printf("Testing Little-Endian INT32 Reading Routines\n"););
 
-    ret=DFSDgetdims(filename,&rank,dimsizes,2);
+    ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
     if(dimsizes[0]!=CDIM_Y || dimsizes[1]!=CDIM_X) {
         fprintf(stderr, "Dimensions for INT32 data were incorrect\n");
@@ -224,7 +214,7 @@ test_little_read(void)
           } /* end if */
         else {
             data_i32=(int32 *)HDmalloc((size_t)(dimsizes[0]*dimsizes[1])*sizeof(int32));
-            ret=DFSDgetdata(filename,rank,dimsizes,(VOIDP)data_i32);
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_i32);
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_i32,data_i32,CDIM_X*CDIM_Y*sizeof(int32))) {
@@ -237,7 +227,7 @@ test_little_read(void)
 
     MESSAGE(10,printf("Testing Little-Endian UINT32 Reading Routines\n"););
 
-    ret=DFSDgetdims(filename,&rank,dimsizes,2);
+    ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
     if(dimsizes[0]!=CDIM_Y || dimsizes[1]!=CDIM_X) {
         fprintf(stderr, "Dimensions for UINT32 data were incorrect\n");
@@ -252,7 +242,7 @@ test_little_read(void)
           } /* end if */
         else {
             data_u32=(uint32 *)HDmalloc((size_t)(dimsizes[0]*dimsizes[1])*sizeof(uint32));
-            ret=DFSDgetdata(filename,rank,dimsizes,(VOIDP)data_u32);
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_u32);
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_u32,data_u32,CDIM_X*CDIM_Y*sizeof(uint32))) {
@@ -265,7 +255,7 @@ test_little_read(void)
 
     MESSAGE(10,printf("Testing Little-Endian FLOAT32 Reading Routines\n"););
 
-    ret=DFSDgetdims(filename,&rank,dimsizes,2);
+    ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
     if(dimsizes[0]!=CDIM_Y || dimsizes[1]!=CDIM_X) {
         fprintf(stderr, "Dimensions for FLOAT32 data were incorrect\n");
@@ -280,7 +270,7 @@ test_little_read(void)
           } /* end if */
         else {
             data_f32=(float32 *)HDmalloc((size_t)(dimsizes[0]*dimsizes[1])*sizeof(float32));
-            ret=DFSDgetdata(filename,rank,dimsizes,(VOIDP)data_f32);
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_f32);
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_f32,data_f32,CDIM_X*CDIM_Y*sizeof(float32))) {
@@ -293,7 +283,7 @@ test_little_read(void)
 
     MESSAGE(10,printf("Testing Little-Endian FLOAT64 Reading Routines\n"););
 
-    ret=DFSDgetdims(filename,&rank,dimsizes,2);
+    ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
     if(dimsizes[0]!=CDIM_Y || dimsizes[1]!=CDIM_X) {
         fprintf(stderr, "Dimensions for FLOAT64 data were incorrect\n");
@@ -308,7 +298,7 @@ test_little_read(void)
           } /* end if */
         else {
             data_f64=(float64 *)HDmalloc((size_t)(dimsizes[0]*dimsizes[1])*sizeof(float64));
-            ret=DFSDgetdata(filename,rank,dimsizes,(VOIDP)data_f64);
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_f64);
             RESULT("DFSDgetdata");
 
 #if defined CONVEXNATIVE

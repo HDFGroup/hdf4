@@ -18,8 +18,9 @@ TESTS = nctest
 check_PROGRAMS = nctest
 
 ## Information for building the "ncgen" program
-nctest_SOURCES = varget.c vargetg.c varput.c varputg.c vardef.c vartests.c  \
-                 vputget.c vputgetg.c driver.c cdftests.c dimtests.c rec.c  \
-                 atttests.c misctest.c add.c error.c emalloc.c val.c slabs.c
+nctest_SOURCES = add.c atttests.c cdftests.c dimtests.c driver.c emalloc.c  \
+                 error.c misctest.c rec.c slabs.c val.c varget_unlim.c      \
+                 varget.c vargetg.c varput.c varputg.c vardef.c vartests.c  \
+                 vputget.c vputgetg.c
 nctest_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 nctest_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a

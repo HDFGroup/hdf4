@@ -311,21 +311,3 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       retcode = hisystem(cmd, len(cmd))
       return
       end
-
-
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-C
-C     SUBROUTINE fixname(name, name_out, name_out_len)
-C     Takes care of srcdir build
-C
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-      subroutine fixname(name, name_out, name_out_len)
-      implicit none
-
-      character*(*)  name
-      character*(*)  name_out
-      integer retcode, fixnamec, name_out_len
-
-      retcode = fixnamec(name, len(name), name_out, name_out_len)
-      return
-      end

@@ -4,6 +4,8 @@
 #include <ctype.h>
 #include <stdlib.h>
 
+
+
 #include "hdf.h"
 #include "mfhdf.h"
 
@@ -296,4 +298,5 @@ set_sigdigs(char *optarg)
  (void) sprintf(dbl_fmt, "%%.%dg", dbl_digits);
  set_formats(flt_fmt, dbl_fmt);
 }
+
 

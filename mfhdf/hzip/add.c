@@ -44,7 +44,10 @@ unsigned char *image_data = 0;
  *-------------------------------------------------------------------------
  */
 
-void add_gr_ffile(char* name_file,char* gr_name,int32 file_id,int32 vgroup_id)
+void add_gr_ffile(char* name_file,
+                  char* gr_name,
+                  int32 file_id,
+                  int32 vgroup_id)
 {
  int32  gr_id,          /* GR interface identifier */
         ri_id,          /* raster image identifier */
@@ -115,11 +118,12 @@ void add_gr_ffile(char* name_file,char* gr_name,int32 file_id,int32 vgroup_id)
 #endif
   
   /* add the GR to the vgroup. the tag DFTAG_RIG is used */
-  if (vgroup_id)
+  if (vgroup_id) {
    if (Vaddtagref (vgroup_id, TAG_GRP_IMAGE, gr_ref)==FAIL)
    {
     printf("Error: Could not add GR <%s> to group\n", gr_name);
    }
+  }
    
    /* terminate access to the raster image */
    if (GRendaccess (ri_id)==FAIL)
@@ -132,6 +136,10 @@ void add_gr_ffile(char* name_file,char* gr_name,int32 file_id,int32 vgroup_id)
    {
     printf("Error: Could not close GR interface\n");
    }
+   
+   
+   /* add an annotation and label to the object */
+   add_an(file_id, DFTAG_RI, gr_ref);
 
  }  /* read data */
 
@@ -140,6 +148,8 @@ void add_gr_ffile(char* name_file,char* gr_name,int32 file_id,int32 vgroup_id)
   free( image_data );
   image_data=NULL;
  }
+
+
 }
 
 
@@ -164,7 +174,7 @@ void add_gr_ffile(char* name_file,char* gr_name,int32 file_id,int32 vgroup_id)
 #define Y_DIM_GR     4
 
 void add_gr(char* gr_name,           /* gr name */
-            int32 file_id,            /* file ID */
+            int32 file_id,           /* file ID */
             int32 vgroup_id,         /* group ID */
             int32 chunk_flags,       /* chunk flags */
             int32 comp_type,         /* compression flag */
@@ -329,7 +339,9 @@ void add_gr(char* gr_name,           /* gr name */
  {
   printf("Error: Could not close GR interface\n");
  }
- 
+
+ /* add an annotation and label to the object */
+ add_an(file_id, DFTAG_RI, gr_ref);
  
 }
 
@@ -347,7 +359,8 @@ void add_gr(char* gr_name,           /* gr name */
  *-------------------------------------------------------------------------
  */
 
-void add_glb_attrs(char *fname,int32 file_id)
+void add_glb_attrs(char *fname,
+                   int32 file_id)
 {
  intn  status;                 /* status for functions returning an intn */
  int32 sd_id,                  /* SD interface identifier */
@@ -400,7 +413,7 @@ void add_glb_attrs(char *fname,int32 file_id)
  *-------------------------------------------------------------------------
  */
 
-void add_r8(char *fname,char* name_file,int32 vgroup_id)
+void add_r8(char *fname,char* name_file,int32 file_id, int32 vgroup_id)
 {
  intn   status_n;       /* returned status_n for functions returning an intn  */
  int32  status_32,      /* returned status_n for functions returning an int32 */
@@ -433,6 +446,9 @@ void add_r8(char *fname,char* name_file,int32 vgroup_id)
   /* add the image to the vgroup. the tag DFTAG_RIG is used */
   if (vgroup_id)
    status_32 = Vaddtagref (vgroup_id, TAG_GRP_IMAGE, ri_ref);
+
+  /* add an annotation and label to the object */
+  add_an(file_id, TAG_GRP_IMAGE, ri_ref);
  }
 
  if ( image_data )
@@ -460,7 +476,7 @@ void add_r8(char *fname,char* name_file,int32 vgroup_id)
  *-------------------------------------------------------------------------
  */
 
-void add_r24(char *fname,char* name_file,int32 vgroup_id)
+void add_r24(char *fname,char* name_file,int32 file_id, int32 vgroup_id)
 {
  intn   status_n;       /* returned status_n for functions returning an intn  */
  int32  status_32,      /* returned status_n for functions returning an int32 */
@@ -493,6 +509,9 @@ void add_r24(char *fname,char* name_file,int32 vgroup_id)
   /* add the image to the vgroup. the tag DFTAG_RIG is used */
   if (vgroup_id)
    status_32 = Vaddtagref (vgroup_id, TAG_GRP_IMAGE, ri_ref);
+
+  /* add an annotation and label to the object */
+  add_an(file_id, TAG_GRP_IMAGE, ri_ref);
  }
 
  if ( image_data )
@@ -531,6 +550,7 @@ void add_r24(char *fname,char* name_file,int32 vgroup_id)
 
 
 void add_sd(char *fname,             /* file name */
+            int32 file_id,           /* file ID */
             char* sds_name,          /* sds name */
             int32 vgroup_id,         /* group ID */
             int32 chunk_flags,       /* chunk flags */
@@ -684,6 +704,9 @@ void add_sd(char *fname,             /* file name */
  if (vgroup_id)
   status_32 = Vaddtagref (vgroup_id, TAG_GRP_DSET, sds_ref);
  
+ /* add an annotation and label to the object */
+ add_an(file_id, TAG_GRP_DSET, sds_ref);
+ 
  /* terminate access to the SDS */
  status_n = SDendaccess (sds_id);
  
@@ -711,6 +734,7 @@ void add_sd(char *fname,             /* file name */
  */
 
 void add_sd3d(char *fname,             /* file name */
+              int32 file_id,           /* file ID */
               char* sds_name,          /* sds name */
               int32 vgroup_id,         /* group ID */
               int32 chunk_flags,       /* chunk flags */
@@ -793,6 +817,9 @@ void add_sd3d(char *fname,             /* file name */
  /* add the SDS to the vgroup. the tag DFTAG_NDG is used */
  if (vgroup_id)
   status_32 = Vaddtagref (vgroup_id, TAG_GRP_DSET, sds_ref);
+
+ /* add an annotation and label to the object */
+ add_an(file_id, TAG_GRP_DSET, sds_ref);
  
  /* terminate access to the SDS */
  status_n = SDendaccess (sds_id);
@@ -835,6 +862,7 @@ void add_vs(char* vs_name,int32 file_id,int32 vgroup_id)
  intn    status_n;       /* returned status_n for functions returning an intn  */
  int32   status_32,      /* returned status_n for functions returning an int32 */
          vdata_ref,      /* reference number of the vdata */
+         vdata_tag,      /* tag number of the vdata */
          vdata_id,       /* vdata id */
          num_of_records; /* number of records actually written to vdata */
  int32   attr_n_values   = 3; /* number of values in the vdata attribute */
@@ -891,29 +919,33 @@ void add_vs(char* vs_name,int32 file_id,int32 vgroup_id)
  status_n = VSsetattr (vdata_id, 0, "Myfattr", DFNT_INT32, 
   field_n_values, fld_attr);
  
- /* Get the reference number of the vdata */
- vdata_ref = VSfind (file_id, vs_name);
+ /* Obtain the tag and ref number of the vdata */
+ vdata_tag = VSQuerytag (vdata_id);
+ vdata_ref = VSQueryref (vdata_id);
  
 #if defined( HZIP_DEBUG)
  printf("add_vs %d\n",vdata_ref); 
 #endif
  
- /* add the VS to the vgroup. the tag DFTAG_VS is used */
+ /* add the VS to the vgroup*/
  if (vgroup_id)
-  status_32 = Vaddtagref (vgroup_id, DFTAG_VS, vdata_ref);
+  status_32 = Vaddtagref (vgroup_id, vdata_tag, vdata_ref);
  
  /* terminate access to the VSs */
  status_32 = VSdetach (vdata_id);
  
  /* Terminate access to the VS interface */
  status_n = Vend (file_id);
+
+ /* add an annotation and label to the vdata */
+ add_an(file_id, vdata_tag, vdata_ref);
 }
 
 
 /*-------------------------------------------------------------------------
- * Function: add_an
+ * Function: add_file_an
  *
- * Purpose: utility function to write AN
+ * Purpose: utility function to write a file AN
  *
  * Return: void
  *
@@ -924,13 +956,13 @@ void add_vs(char* vs_name,int32 file_id,int32 vgroup_id)
  *-------------------------------------------------------------------------
  */
 
-#define  FILE_LABEL_TXT "General HDF objects"
-#define  FILE_DESC_TXT  "This is an HDF file that contains general HDF objects"
-#define  DATA_LABEL_TXT "Common AN Vgroup"
-#define  DATA_DESC_TXT  "This is a vgroup that is used to test data annotations"
+#define  FILE_LABEL_TXT "This is a file label"
+#define  FILE_DESC_TXT  "This is a file description"
+#define  DATA_LABEL_TXT "This is a data label"
+#define  DATA_DESC_TXT  "This is a data annotation"
 
 
-void add_an(int32 file_id)
+void add_file_an(int32 file_id)
 {
  intn  status_n;     /* returned status for functions returning an intn  */
  int32 status_32,    /* returned status for functions returning an int32 */
@@ -981,8 +1013,7 @@ void add_an(int32 file_id)
  data_label_id = ANcreate (an_id, vgroup_tag, vgroup_ref, AN_DATA_LABEL);
  
  /* Write the annotation text to the data label */
- status_32 = ANwriteann (data_label_id, DATA_LABEL_TXT, 
-  strlen (DATA_LABEL_TXT));
+ status_32 = ANwriteann (data_label_id, DATA_LABEL_TXT, strlen (DATA_LABEL_TXT));
  
  /* Create the data description for the vgroup identified by its tag and ref number */
  data_desc_id = ANcreate (an_id, vgroup_tag, vgroup_ref, AN_DATA_DESC);
@@ -1003,6 +1034,68 @@ void add_an(int32 file_id)
  /* Terminate access to the AN interface */
  status_32 = ANend (an_id);
 }
+
+
+
+/*-------------------------------------------------------------------------
+ * Function: add_an
+ *
+ * Purpose: utility function to write a AN
+ *
+ * Return: void
+ *
+ * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
+ *
+ * Date: August 19, 2003
+ *
+ *-------------------------------------------------------------------------
+ */
+
+
+void add_an(int32 file_id, int32 tag, int32 ref)
+{
+ intn  status_n;     /* returned status for functions returning an intn  */
+ int32 status_32,    /* returned status for functions returning an int32 */
+       an_id,        /* AN interface identifier */
+       data_label_id,  /* data label identifier */
+       data_desc_id;   /* data description identifier */
+         
+ /* Initialize the AN interface */
+ an_id = ANstart (file_id);
+
+/*-------------------------------------------------------------------------
+ * data labels and annotations
+ *-------------------------------------------------------------------------
+ */ 
+   
+ /* Create the data label for the object identified by its tag and ref number */
+ data_label_id = ANcreate (an_id, (uint16)tag, (uint16)ref, AN_DATA_LABEL);
+ 
+ /* Write the annotation text to the data label */
+ if (ANwriteann (data_label_id, DATA_LABEL_TXT, strlen (DATA_LABEL_TXT))==FAIL){
+  printf("Error: writing data label in tag %d ref %d\n", tag, ref);
+ }
+ 
+ /* Create the data description for the object identified by its tag and ref number */
+ data_desc_id = ANcreate (an_id, (uint16)tag, (uint16)ref, AN_DATA_DESC);
+ 
+ /* Write the annotation text to the data description */
+ if (ANwriteann (data_desc_id, DATA_DESC_TXT, strlen (DATA_DESC_TXT))==FAIL){
+  printf("Error: writing data label in tag %d ref %d\n", tag, ref);
+ }
+ 
+ /* Terminate access to each annotation explicitly */
+ status_n = ANendaccess (data_label_id);
+ status_n = ANendaccess (data_desc_id);
+ 
+ /* Terminate access to the AN interface */
+ status_32 = ANend (an_id);
+}
+
+
+
+
+
 
 
 

@@ -23,7 +23,7 @@
 #if defined (HZIPTST_DEBUG)
 #define TESTING(WHAT) {printf("%-70s", "Testing " WHAT); fflush(stdout); printf("\n");}
 #else
-#define TESTING(WHAT) {printf("%-70s", "Testing " WHAT); fflush(stdout);}
+#define TESTING(WHAT) {printf("%-70s", "Testing " WHAT); fflush(stdout); }
 #endif
 #define PASSED() {puts(" PASSED");fflush(stdout);}
 #define H4_FAILED() {puts("*FAILED*");fflush(stdout);}
@@ -34,13 +34,15 @@ extern "C" {
 
 
 /* write data */
-void add_an (int32 file_id);
+void add_file_an (int32 file_id);
+void add_an(int32 file_id, int32 tag, int32 ref);
 void add_glb_attrs(char *fname,int32 file_id);
 void add_gr_ffile (char* name_file,char* gr_name,int32 file_id,int32 vgroup_id);
-void add_r8 (char *fname,char* name_file,int32 vgroup_id);
-void add_r24(char *fname,char* name_file,int32 vgroup_id);
+void add_r8 (char *fname,char* name_file,int32 file_id, int32 vgroup_id);
+void add_r24(char *fname,char* name_file,int32 file_id, int32 vgroup_id);
 void add_vs (char* vs_name,int32 file_id,int32 vgroup_id);
 void add_sd (char *fname,
+             int32 file_id,           /* file ID */
              char* sds_name,          /* sds name */
              int32 vgroup_id,         /* group ID */
              int32 chunk_flags,       /* chunk flags */
@@ -48,14 +50,15 @@ void add_sd (char *fname,
              comp_info *c_info        /* compression structure */ );
 
 void add_sd3d(char *fname,
-             char* sds_name,          /* sds name */
-             int32 vgroup_id,         /* group ID */
-             int32 chunk_flags,       /* chunk flags */
-             int32 comp_type,         /* compression flag */
-             comp_info *c_info        /* compression structure */ );
+              int32 file_id,           /* file ID */
+              char* sds_name,          /* sds name */
+              int32 vgroup_id,         /* group ID */
+              int32 chunk_flags,       /* chunk flags */
+              int32 comp_type,         /* compression flag */
+              comp_info *c_info        /* compression structure */ );
 
 void add_gr(char* gr_name,           /* gr name */
-            int32 file_id,            /* file ID */
+            int32 file_id,           /* file ID */
             int32 vgroup_id,         /* group ID */
             int32 chunk_flags,       /* chunk flags */
             int32 comp_type,         /* compression flag */

@@ -23,10 +23,29 @@ extern "C" {
 #endif
 
 int  is_reserved(char*vgroup_class);
-int  copy_sds(int32 sd_in,int32 sd_out,int32 tag,int32 ref,int32 vgroup_id_out_par,
-              char*group_name,options_t *options,table_t *table);
-int  copy_gr (int32 gr_in,int32 gr_out,int32 tag,int32 ref,int32 vgroup_id_out_par,
-              char*group_name,options_t *options,table_t *table);
+
+int  copy_sds(int32 sd_in,
+              int32 sd_out,
+              int32 tag,
+              int32 ref,
+              int32 vgroup_id_out_par,
+              char*group_name,
+              options_t *options,
+              table_t *table,
+              int32 infile_id,
+              int32 outfile_id);
+
+int  copy_gr(int32 infile_id,
+             int32 outfile_id,
+             int32 gr_in,
+             int32 gr_out,
+             int32 tag,               /* tag of input GR */
+             int32 ref,               /* ref of input GR */
+             int32 vgroup_id_out_par, /* output parent group ID */
+             char*path_name,          /* absolute path for input group name */
+             options_t *options,
+             table_t *table);
+
 int  copy_vs( int32 infile_id,
               int32 outfile_id,
               int32 tag,
@@ -67,6 +86,32 @@ int copy_gr_attrs(int32 ri_id,
                   int32 ri_out,
                   int32 nattrs,          
                   options_t *options);
+
+int copy_vgroup_attrs(int32 vg_in, 
+                      int32 vg_out, 
+                      char *path,
+                      options_t *options);
+
+
+int copy_an(int32 infile_id,int32 outfile_id,
+            int32 ref_in, int32 tag_in,
+            int32 ref_out, int32 tag_out,
+            char *path, options_t *options);
+
+
+int copy_vg_an(int32 infile_id,
+               int32 outfile_id,
+               int32 vgroup_id,
+               int32 vgroup_id_out, 
+               char *path,
+               options_t *options);
+
+int copy_vs_an(int32 infile_id,
+               int32 outfile_id,
+               int32 vdata_id,
+               int32 vdata_id_out, 
+               char *path,
+               options_t *options);
 
 
 char *get_path(char*path_name, char*obj_name);

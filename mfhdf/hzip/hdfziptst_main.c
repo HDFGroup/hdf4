@@ -138,13 +138,13 @@ int main(void)
  /* add non chunked, non compressed sds */
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_NONE;
- add_sd(FILENAME,"dset1",vgroup1_id,chunk_flags,comp_type,NULL);
- add_sd(FILENAME,"dset2",vgroup2_id,chunk_flags,comp_type,NULL);
- add_sd(FILENAME,"dset3",vgroup3_id,chunk_flags,comp_type,NULL);
- add_sd(FILENAME,"dset4",0,chunk_flags,comp_type,NULL);
- add_sd(FILENAME,"dset5",0,chunk_flags,comp_type,NULL);
- add_sd(FILENAME,"dset6",0,chunk_flags,comp_type,NULL);
- add_sd3d(FILENAME,"dset7",0,chunk_flags,comp_type,NULL);
+ add_sd(FILENAME,file_id,"dset1",vgroup1_id,chunk_flags,comp_type,NULL);
+ add_sd(FILENAME,file_id,"dset2",vgroup2_id,chunk_flags,comp_type,NULL);
+ add_sd(FILENAME,file_id,"dset3",vgroup3_id,chunk_flags,comp_type,NULL);
+ add_sd(FILENAME,file_id,"dset4",0,chunk_flags,comp_type,NULL);
+ add_sd(FILENAME,file_id,"dset5",0,chunk_flags,comp_type,NULL);
+ add_sd(FILENAME,file_id,"dset6",0,chunk_flags,comp_type,NULL);
+ add_sd3d(FILENAME,file_id,"dset7",0,chunk_flags,comp_type,NULL);
 
 
 /*-------------------------------------------------------------------------
@@ -158,12 +158,12 @@ int main(void)
  /* add a chunked, non compressed sds */
  chunk_flags = HDF_CHUNK;
  comp_type   = COMP_CODE_NONE;
- add_sd(FILENAME,"dset_chunk",0,chunk_flags,comp_type,NULL);
+ add_sd(FILENAME,file_id,"dset_chunk",0,chunk_flags,comp_type,NULL);
 
  /* add a chunked-compressed sds with SDsetchunk */
  chunk_flags = HDF_CHUNK | HDF_COMP;
  comp_type   = COMP_CODE_NONE;
- add_sd(FILENAME,"dset_chunk_comp",0,chunk_flags,comp_type,NULL);
+ add_sd(FILENAME,file_id,"dset_chunk_comp",0,chunk_flags,comp_type,NULL);
 
 /*-------------------------------------------------------------------------
  * GZIP
@@ -173,7 +173,7 @@ int main(void)
  /* add some non chunked, compressed sds */
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_DEFLATE;
- add_sd(FILENAME,"dset_gzip",0,chunk_flags,comp_type,&comp_info);
+ add_sd(FILENAME,file_id,"dset_gzip",0,chunk_flags,comp_type,&comp_info);
 
 /*-------------------------------------------------------------------------
  * RLE
@@ -183,7 +183,7 @@ int main(void)
  /* add some non chunked, compressed sds */
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_RLE;
- add_sd(FILENAME,"dset_rle",0,chunk_flags,comp_type,&comp_info);
+ add_sd(FILENAME,file_id,"dset_rle",0,chunk_flags,comp_type,&comp_info);
 
 /*-------------------------------------------------------------------------
  * HUFF
@@ -193,7 +193,7 @@ int main(void)
  /* add some non chunked, compressed sds */
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_SKPHUFF;
- add_sd(FILENAME,"dset_huff",0,chunk_flags,comp_type,&comp_info);
+ add_sd(FILENAME,file_id,"dset_huff",0,chunk_flags,comp_type,&comp_info);
 
 /*-------------------------------------------------------------------------
  * SZIP
@@ -201,22 +201,22 @@ int main(void)
  */ 
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_SZIP;
- add_sd(FILENAME,"dset_szip",0,chunk_flags,comp_type,&comp_info);
+ add_sd(FILENAME,file_id,"dset_szip",0,chunk_flags,comp_type,&comp_info);
 
 /*-------------------------------------------------------------------------
  * add some RIS24 images to the file
  *-------------------------------------------------------------------------
  */ 
 
- add_r24(FILENAME,DATA_FILE2,vgroup_img_id);
- add_r24(FILENAME,DATA_FILE2,0);
+ add_r24(FILENAME,DATA_FILE2,file_id,vgroup_img_id);
+ add_r24(FILENAME,DATA_FILE2,file_id,0);
 
 /*-------------------------------------------------------------------------
  * add some RIS8 images to the file
  *-------------------------------------------------------------------------
  */ 
- add_r8(FILENAME,DATA_FILE1,vgroup_img_id);
- add_r8(FILENAME,DATA_FILE1,0);
+ add_r8(FILENAME,DATA_FILE1,file_id,vgroup_img_id);
+ add_r8(FILENAME,DATA_FILE1,file_id,0);
 
 
 /*-------------------------------------------------------------------------
@@ -285,7 +285,7 @@ int main(void)
  * add annotations to the file
  *-------------------------------------------------------------------------
  */ 
- add_an(file_id);
+ add_file_an(file_id);
 
 /*-------------------------------------------------------------------------
  * end
@@ -342,7 +342,7 @@ int main(void)
   goto out;
  PASSED();
 
-#if 0
+#if 1
 
 /*-------------------------------------------------------------------------
  * test2:  

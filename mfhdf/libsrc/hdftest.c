@@ -24,14 +24,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #ifdef HDF
 
-
-/* Macro to check status value and print error message */
-#define CHECK(status, fail_value, name) {if(status == fail_value) { \
-    printf("*** Routine %s FAILED at line %d ***\n", name, __LINE__); num_err++;}}
-/* BMR - 2/21/99: added macro VERIFY to use in testing SDcheckempty 
-   initially, but it should be used wherever appropriate */
-#define VERIFY(item, value, test_name) {if(item != value) { \
-    printf("*** UNEXPECTED VALUE from %s is %ld at line %4d in %s\n", test_name, (long)item,(int)__LINE__,__FILE__); num_err++;}}
+#include "hdftest.h"
 
 #define UFOFILE   "file.UFO"	/* non-existing file */
 #define FILE1     "test1.hdf"
@@ -1597,21 +1590,9 @@ test_netcdf_reading()
     int32 status;
     intn i, j;
     int     num_err = 0;    /* number of errors so far */
-    const char *basename = "test1.nc";
-    char    testfile[512] = "";
-    char   *srcdir = getenv("srcdir");
-
-
-    /* Generate the correct name for the test file, by prepending the source path */
-    if (srcdir && ((strlen(srcdir) + strlen(basename) + 1) < sizeof(testfile))) {
-        strcpy(testfile, srcdir);
-        strcat(testfile, "/");
-    }
-    strcat(testfile, basename);
-
 
 	/* Open the file 'test1.nc' and initialize the SDxxx interface. */
-	sd_id = SDstart(testfile, DFACC_RDONLY);
+	sd_id = SDstart("test1.nc", DFACC_RDONLY);
     CHECK(sd_id, FAIL, "netCDF Read Test 1. SDstart failed on file test1.nc");
 
 	/* Determine the contents of the file. */

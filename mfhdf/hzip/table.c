@@ -44,7 +44,7 @@ int table_search(table_t *table, int tag, int ref )
 /*-------------------------------------------------------------------------
  * Function: table_add
  *
- * Purpose: add tag and ref entry to table
+ * Purpose: add pair tag/ref and object path to table
  *
  * Return: void
  *
@@ -61,10 +61,11 @@ void table_add(table_t *table, int tag, int ref, char* path)
  
  if (table->nobjs == table->size) {
   table->size *= 2;
-  table->objs = (obj_t*)realloc(table->objs, table->size * sizeof(obj_t));
+  table->objs = (obj_info_t*)realloc(table->objs, table->size * sizeof(obj_info_t));
   
   for (i = table->nobjs; i < table->size; i++) {
    table->objs[i].tag = table->objs[i].ref = -1;
+   table->objs[i].flags[0] = table->objs[i].flags[1] = -1;
   }
  }
  
@@ -72,8 +73,9 @@ void table_add(table_t *table, int tag, int ref, char* path)
  table->objs[i].tag = tag;
  table->objs[i].ref = ref;
  strcpy(table->objs[i].obj_name,path);
-
+ table->objs[i].flags[0] = table->objs[i].flags[1] = -1;
 }
+
 
 
 /*-------------------------------------------------------------------------
@@ -97,16 +99,15 @@ void table_init( table_t **tbl )
  
  table->size = 20;
  table->nobjs = 0;
- table->objs = (obj_t*) malloc(table->size * sizeof(obj_t));
+ table->objs = (obj_info_t*) malloc(table->size * sizeof(obj_info_t));
  
  for (i = 0; i < table->size; i++) {
   table->objs[i].tag = table->objs[i].ref = -1;
+  table->objs[i].flags[0] = table->objs[i].flags[1] = -1;
  }
  
  *tbl = table;
 }
-
-
 
 /*-------------------------------------------------------------------------
  * Function: table_free
@@ -162,7 +163,8 @@ char* table_check(table_t *table, char*obj_name)
        tag==DFTAG_RIG ||
        tag==DFTAG_RI8 ||
        tag==DFTAG_CI8 ||
-       tag==DFTAG_II8 ) return NULL; else return "not compressible/chunk object";
+       tag==DFTAG_II8 ) return NULL; 
+   else return "not compressible/chunk object";
   }
  }
   
@@ -170,3 +172,34 @@ char* table_check(table_t *table, char*obj_name)
 }
 
 
+/*-------------------------------------------------------------------------
+ * Function: table_print
+ *
+ * Purpose: print object list
+ *
+ * Return: void
+ *
+ * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
+ *
+ * Date: August 25, 2003
+ *
+ *-------------------------------------------------------------------------
+ */
+
+void table_print(table_t *table)
+{
+ int i;
+
+ printf("---------------------------------------\n");
+ printf("%5s %6s    %-15s\n", "Tag", "Ref", "Name");
+ printf("---------------------------------------\n");
+
+ for (i = 0; i < table->nobjs; i++)
+ {
+  printf("%5d %6d    %-15s\n", 
+   table->objs[i].tag, 
+   table->objs[i].ref, 
+   table->objs[i].obj_name);
+ }
+
+}

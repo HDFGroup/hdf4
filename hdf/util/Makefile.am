@@ -1,4 +1,13 @@
-CPPFLAGS=-I$(top_srcdir)/hdf/src @CPPFLAGS@
+#############################################################################
+##                      Setup for building programs                        ##
+#############################################################################
+
+## Setup the different includes and preprocessor #defines we need.
+CPPFLAGS=@CPPFLAGS@ -I$(top_srcdir)/hdf/src
+
+#############################################################################
+##                          Programs to build                              ##
+#############################################################################
 
 bin_PROGRAMS = gif2hdf hdf2gif hdf2jpeg hdf24to8 hdf8to24 hdfcomp hdfed     \
                hdfls hdfpack hdftopal hdftor8 hdfunpac jpeg2hdf paltohdf    \

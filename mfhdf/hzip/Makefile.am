@@ -17,9 +17,9 @@ CPPFLAGS=@CPPFLAGS@ $(INCLUDES) $(DEFINES)
 
 bin_PROGRAMS = hzip
 
-hzip_SOURCES = copy.c hdfzip.c hdfzip_main.c list.c parse.c table.c
+hzip_SOURCES = copy.c hdfzip.c hdfzip_main.c list.c parse.c table.c utils.c
 hzip_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
-hzip_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+hzip_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 #############################################################################
 ##                   Testing -- Here there be dragons.                     ##
@@ -29,18 +29,19 @@ TESTS = hziptst
 check_PROGRAMS = hziptst
 
 hziptst_SOURCES = add.c copy.c hdfzip.c hdfziptst_main.c list.c parse.c     \
-                  table.c verify.c ../hdiff/dumplib.c ../hdiff/hdiff.c      \
-                  ../hdiff/hdiff_gattr.c ../hdiff/hdiff_grdata.c            \
+                  table.c utils.c verify.c ../hdiff/dumplib.c               \
+                  ../hdiff/hdiff.c ../hdiff/hdiff_gattr.c                   \
                   ../hdiff/hdiff_misc.c ../hdiff/hdiff_sdattr.c             \
-                  ../hdiff/hdiff_sddata.c ../hdiff/hdiff_vdata.c
+                  ../hdiff/hdiff_array.c ../hdiff/hdiff_list.c              \
+                  ../hdiff/hdiff_mattbl.c ../hdiff/hdiff_table.c
 hziptst_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
-hziptst_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+hziptst_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 noinst_PROGRAMS = hzipck
 
 hzipck_SOURCES = hdfzipck.c
 hzipck_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
-hzipck_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+hzipck_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 check: hziptst hzip
 	@srcdir="$(srcdir)" $(srcdir)/testhzip.sh

@@ -1,3 +1,8 @@
+#############################################################################
+##                      Setup for building programs                        ##
+#############################################################################
+
+## Setup the different includes and preprocessor #defines we need.
 INCLUDES=-I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc   \
          -I$(top_srcdir)/mfhdf/port
@@ -5,13 +10,23 @@ DEFINES=-DNDEBUG -DHDF
 
 CPPFLAGS=$(INCLUDES) $(DEFINES) @CPPFLAGS@
 
+#############################################################################
+##                          Library to build                               ##
+#############################################################################
+
 lib_LIBRARIES = libmfhdf.a
+
+## Information for building the "libmfhdf.a" library
 libmfhdf_a_SOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c         \
                      iarray.c error.c globdef.c mfsd.c nssdc.c putget.c \
                      putgetg.c sharray.c string.c var.c xdrposix.c      \
-                     xdrstdio.c ../fortran/jackets.c ../fortran/mfsdf.c \
+                     ../fortran/jackets.c ../fortran/mfsdf.c            \
                      ../fortran/mfsdff.f
 include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h 
+
+#############################################################################
+##                              Testing                                    ##
+#############################################################################
 
 check_PROGRAMS = cdftest hdftest
 

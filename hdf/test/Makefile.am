@@ -1,4 +1,12 @@
-CPPFLAGS=-I$(top_srcdir)/hdf/src @CPPFLAGS@
+#############################################################################
+##                      Setup for building programs                        ##
+#############################################################################
+
+CPPFLAGS=@CPPFLAGS@ -I$(top_srcdir)/hdf/src
+
+#############################################################################
+##                              Testing                                    ##
+#############################################################################
 
 TESTS = testhdf fortest
 check_PROGRAMS = testhdf fortest fortestF
@@ -6,7 +14,8 @@ check_PROGRAMS = testhdf fortest fortestF
 testhdf_SOURCES = an.c anfile.c bitio.c blocks.c buffer.c chunks.c comp.c   \
                   conv.c extelt.c file.c file1.c litend.c macros.c man.c    \
                   mgr.c nbit.c rig.c sdmms.c sdnmms.c sdstr.c slab.c tbv.c  \
-                  testhdf.c tree.c tvattr.c tvset.c tvsfpack.c vers.c
+                  testhdf.c tree.c tszip.c tvattr.c tvset.c tvsfpack.c      \
+                  vers.c
 testhdf_LDADD = ../src/libdf.a
 testhdf_DEPENDENCIES = testdir ../src/libdf.a
 

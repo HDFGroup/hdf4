@@ -2,20 +2,6 @@
 Expected output for 'hdiff hdifftst1.hdf hdifftst2.hdf'
 #############################
 $hdiff hdifftst1.hdf hdifftst2.hdf
-
----------------------------
-Attr Name: File_contents
-< "Storm_track_data1"
-> "Storm_track_data2"
-
----------------------------
-SD Name: dset1
-<<<<
-Dimension: (3, 2) ;
-	dset1:Valid_range = 1.f, 1.f ;
->>>>
-Dimension: (3, 2) ;
-	dset1:Valid_range = 1.f, 2.f ;
 Index: 1,   File1: 1,   File2: 2
 Index: 2,   File1: 1,   File2: 3
 Index: 3,   File1: 1,   File2: 4
@@ -37,3 +23,17 @@ Vdata Name: vdata2 (Data record comparison)
 Vdata Name: vdata3 (Data record comparison)
 > 0: 1.000000 2.000000 3.000000 4.000000 5.000000 6.000000 
 < 0: 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000 
+
+---------------------------
+Attr Name: File_contents
+< "Storm_track_data1"
+> "Storm_track_data2"
+
+---------------------------
+SD Name: dset1
+<<<<
+Dimension: (3, 2) ;
+	dset1:Valid_range = 1.f, 1.f ;
+>>>>
+Dimension: (3, 2) ;
+	dset1:Valid_range = 1.f, 2.f ;

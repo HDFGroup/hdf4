@@ -158,22 +158,13 @@ test_bitio_read(void)
     uint32      tempbuf;
     intn        i;
     uint8      *test_ptr;
-    char        datafile[512] = "";
-    char       *srcdir = getenv("srcdir");
 
     SEED((uintn) time(NULL));
 
     MESSAGE(6, printf("Testing bitio read routines\n");
         );
 
-    /* Generate the correct name for the test file, by prepending the source path */
-    if (srcdir && ((strlen(srcdir) + strlen(DATAFILE_NAME) + 1) < sizeof(datafile))) {
-        strcpy(datafile, srcdir);
-        strcat(datafile, "/");
-    }
-    strcat(datafile, DATAFILE_NAME);
-
-    fid = Hopen(datafile, DFACC_READ, 0);
+    fid = Hopen(DATAFILE_NAME, DFACC_READ, 0);
     CHECK(fid, FAIL, "Hopen");
 
     ret = Hgetelement(fid, DATA_TAG_1, DATA_REF_1, inbuf);
@@ -184,7 +175,7 @@ test_bitio_read(void)
 
     MESSAGE(8, printf("Reading 8 bits at a time\n");
         );
-    fid = Hopen(datafile, DFACC_READ, 0);
+    fid = Hopen(DATAFILE_NAME, DFACC_READ, 0);
     CHECK(fid, FAIL, "Hopen");
 
     bitid1 = Hstartbitread(fid, DATA_TAG_1, DATA_REF_1);

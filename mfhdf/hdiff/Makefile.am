@@ -1,23 +1,37 @@
-bin_PROGRAMS = hdiff
+#############################################################################
+##                      Setup for building programs                        ##
+#############################################################################
 
-INCLUDES=-I${top_srcdir}/hdf/src        \
-         -I${top_srcdir}/mfhdf/libsrc   \
-         -I${top_srcdir}/mfhdf/port     \
+## Setup the different includes and preprocessor #defines we need.
+INCLUDES=-I$(top_srcdir)/hdf/src        \
+         -I$(top_srcdir)/mfhdf/libsrc   \
+         -I$(top_srcdir)/mfhdf/port     \
          -I../libsrc
 DEFINES=-DNDEBUG -DHDF
+CPPFLAGS=@CPPFLAGS $(INCLUDES) $(DEFINES)
 
-hdiff_SOURCES = dumplib.c hdiff.c hdiff_main.c hdiff_gattr.c hdiff_misc.c   \
-                hdiff_sdattr.c hdiff_sddata.c hdiff_grdata.c hdiff_vdata.c
-hdiff_CPPFLAGS = ${INCLUDES} ${DEFINES} @CPPFLAGS@
-hdiff_LDADD = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a @LIBS@
-hdiff_DEPENPENDENCIES = ${top_builddir}/hdf/src/libdf.a ../libsrc/libmfhdf.a
+#############################################################################
+##                          Programs to build                              ##
+#############################################################################
+
+bin_PROGRAMS = hdiff
+
+## Information for building the "hdiff" program
+hdiff_SOURCES = dumplib.c hdiff.c hdiff_array.c hdiff_list.c hdiff_main.c   \
+                hdiff_mattbl.c hdiff_gattr.c hdiff_misc.c hdiff_sdattr.c    \
+                hdiff_table.c
+hdiff_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
+hdiff_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+
+#############################################################################
+##                              Testing                                    ##
+#############################################################################
 
 check_PROGRAMS = hdifftst
 
 hdifftst_SOURCES = hdifftst.c
-hdifftst_CPPFLAGS = ${INCLUDES} ${DEFINES} @CPPFLAGS@
-hdifftst_LDADD = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a @LIBS@
-hdifftst_DEPENPENDENCIES = ${top_builddir}/hdf/src/libdf.a ../libsrc/libmfhdf.a
+hdifftst_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
+hdifftst_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 check: hdifftst
-	sh ${srcdir}/testhdiff.sh
+	sh $(srcdir)/testhdiff.sh
