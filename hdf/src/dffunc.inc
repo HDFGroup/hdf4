@@ -46,7 +46,7 @@ C
 	integer DFSDsetorder,		dssodr
 	integer DFSDnumber,		dsnum
 	integer DFSDlastref,		dslref
-        integer dsp32sd,
+        integer dsp32sd
         integer dsscal
         integer dsgcal
 C
