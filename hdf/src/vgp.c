@@ -1,3 +1,15 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
@@ -49,8 +61,10 @@ PUBLIC VOID vsdestroynode
 * -------------------------------------------------------------------- 
 */
 
-
+#if 0
 PUBLIC vfile_t  vfile [MAX_VFILE] = {0};
+#endif
+PUBLIC vfile_t  *vfile = NULL;
 
 
 /* -------------------------- Load_vfile ------------------------ */
@@ -77,6 +91,16 @@ HFILEID f;
     uint16			tag, ref;
     char * FUNC = "Load_vfile";
     
+    /* Check if vfile buffer has been allocated */
+    if (vfile == NULL)
+      {
+        vfile = (vfile_t *)HDgetspace(MAX_VFILE * sizeof(vfile_t));
+        if (vfile == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        /* zero the space */
+        vfile = memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+      }
+
     /* allocate a new vfile_t structure */
     vf = Get_vfile(f);
     if(!vf)
@@ -170,6 +194,16 @@ HFILEID f;
     vfile_t      *vf=NULL;
     char * FUNC = "Remove_vfile";
     
+    /* Check if vfile buffer has been allocated */
+    if (vfile == NULL)
+      {
+        vfile = (vfile_t *)HDgetspace(MAX_VFILE * sizeof(vfile_t));
+        if (vfile == NULL)
+          HERROR(DFE_NOSPACE);
+        /* zero the space */
+        vfile = memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+      }
+
     /* Figure out what file to work on */
     vf = Get_vfile(f);
     
@@ -313,6 +347,16 @@ uint16  vgid;
     vfile_t      * vf;
     int32 key;
     char *FUNC = "vginstance";
+
+    /* Check if vfile buffer has been allocated */
+    if (vfile == NULL)
+      {
+        vfile = (vfile_t *)HDgetspace(MAX_VFILE * sizeof(vfile_t));
+        if (vfile == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, NULL);
+        /* zero the space */
+        vfile = memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+      }
 
     if (NULL== (vf = Get_vfile(f)))
         HRETURN_ERROR(DFE_FNF, NULL);
@@ -525,6 +569,16 @@ char    *accesstype;    /* access mode */
     vginstance_t    * v;
 	vfile_t			* vf;
 	char * FUNC = "Vattach";
+
+    /* Check if vfile buffer has been allocated */
+    if (vfile == NULL)
+      {
+        vfile = (vfile_t *)HDgetspace(MAX_VFILE * sizeof(vfile_t));
+        if (vfile == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        /* zero the space */
+        vfile = memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+      }
 
     if (f == FAIL)
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -1389,6 +1443,16 @@ int32   vgid;                   /* current vgid */
     if(vgid < -1 )
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
+    /* Check if vfile buffer has been allocated */
+    if (vfile == NULL)
+      {
+        vfile = (vfile_t *)HDgetspace(MAX_VFILE * sizeof(vfile_t));
+        if (vfile == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        /* zero the space */
+        vfile = memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+      }
+
     if (NULL==(vf = Get_vfile(f)))
         HRETURN_ERROR(DFE_FNF,FAIL);
 
@@ -1716,6 +1780,16 @@ int32 vgid;
 
     if(vgid < 0)
         HRETURN_ERROR(DFE_ARGS,FAIL);
+
+    /* Check if vfile buffer has been allocated */
+    if (vfile == NULL)
+      {
+        vfile = (vfile_t *)HDgetspace(MAX_VFILE * sizeof(vfile_t));
+        if (vfile == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        /* zero the space */
+        vfile = memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+      }
 
     if (NULL==(vf = Get_vfile(f)))
         HRETURN_ERROR(DFE_FNF,FAIL);
