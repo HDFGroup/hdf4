@@ -29,7 +29,9 @@
  */
 
 #ifdef __STDC__			/* if compiler claims to be ANSI, believe it */
+#ifndef HAVE_STDC
 #define HAVE_STDC
+#endif
 #endif
 
 

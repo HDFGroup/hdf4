@@ -335,8 +335,8 @@ int HIfind_dd(look_tag, look_ref, pblock, pidx, direction)
 
   This should be primarily used for debugging
 
-  The MAC does not really support fflush() so this routine just returns
-	SUCCEED always on a MAC w/o really doing anything.
+  The Macinstoh does not really support fflush() so this routine just returns
+	SUCCEED always on a Macintosh w/o really doing anything.
 
 */
 
@@ -349,7 +349,7 @@ intn HDflush(file_id)
 {
     char *FUNC="HDflush";       /* for HERROR */
 
-#ifndef MAC
+#ifndef macintosh
 
     filerec_t *file_rec;
     
@@ -361,7 +361,7 @@ intn HDflush(file_id)
     
     fflush(file_rec->file);
 
-#endif /* MAC */
+#endif /* macintosh */
 
     return SUCCEED;
 

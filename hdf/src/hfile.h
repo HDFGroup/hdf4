@@ -507,7 +507,7 @@ extern int32 HCPendaccess
 extern int32 HCPcloseAID
     PROTO((accrec_t *access_rec));
 
-#ifdef MAC
+#ifdef macintosh 
 extern hdf_file_t mopen
     PROTO((char * filename, intn access));
     

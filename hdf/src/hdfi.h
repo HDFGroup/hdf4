@@ -1043,7 +1043,7 @@ extern uint8 FAR *DFtbuf;
 #undef FRETVAL
 #endif
 
-#if defined(MAC)                /* with LS FORTRAN */
+#if defined(macintosh)                /* with LS FORTRAN */
 #ifndef ABSOFT
 #   define FCALLKEYW    pascal
 #   define FRETVAL(x)   pascal x
@@ -1055,7 +1055,7 @@ extern uint8 FAR *DFtbuf;
 #   define FRETVAL(x)   x __fortran
 #endif
 
-#ifndef FRETVAL /* !MAC && !PC */
+#ifndef FRETVAL /* !macintosh && !PC */
 #   define FCALLKEYW    /*NONE*/
 #   define FRETVAL(x)   x
 #endif

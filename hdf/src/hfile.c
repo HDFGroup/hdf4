@@ -1868,7 +1868,7 @@ Hishdf(filename)
     char *filename;
 #endif /* PROTOTYPE */
 {
-#if defined(VMS) || defined(MAC) || defined(PC)
+#if defined(VMS) || defined(macintosh) || defined(PC)
   
     int32 fid;
 
@@ -3265,7 +3265,7 @@ intn  *attach;
 
 } /* Hfidinquire */
 
-#if defined(MAC) & !defined(THINK_C)
+#if defined(macintosh) & !defined(THINK_C)
 /*
 *  Macintosh file stubs for HDF
 *
@@ -3448,4 +3448,4 @@ mlseek(hdf_file_t rn, int32 n, intn m)
 
 }
 
-#endif /* MAC */
+#endif /* macintosh */

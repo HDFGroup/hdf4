@@ -95,7 +95,7 @@
 #endif /*IBM6000*/
 
 
-#ifdef MAC
+#ifdef macintosh
 #undef DF_BUFFIO		/* use unbuffered i/o */
 #include <memory.h>             /* malloc stuff for MPW 3.0 */
 #include <fcntl.h>              /* unbuffered IO stuff for MPW 3.0 */
@@ -124,7 +124,7 @@
             *p++ = (x>>8) & 255; *p++ = x & 255; }
 #define DF_CREAT(name, prot) mopen(name, O_WRONLY|O_TRUNC|O_CREAT)
 #define DF_MT   DFMT_MAC
-#endif /*MAC*/
+#endif /* macintosh */
 
 #ifdef VMS
 /*#undef DF_BUFFIO should be buff !!!!*/
@@ -180,7 +180,7 @@
 
 /*--------------------------------------------------------------------------*/
 /*                      Flexibility parameters                              */
-#ifdef MAC			/* MAC specific file manager calls */
+#ifdef macintosh			/* MAC specific file manager calls */
 #	define DF_OPEN(x,y) mopen(x,y)
 #	define DF_CLOSE(x) mclose(x)
 #	define DF_SEEK(x,y,z) mlseek(x,y,z)
@@ -192,7 +192,7 @@
 #	define DF_RDACCESS 0		/* dummy */
 #	define DF_WRACCESS 0		/* dummy */
 #	define DF_OPENERR(f)	((f) == -1)
-#else /* !MAC */
+#else /* !macintosh */
 #ifdef DF_BUFFIO            /* set all calls to do buffered I/O */
 #define DF_OPEN(x,y) fopen(x,y)
 #define DF_CLOSE(x) fclose(x)
@@ -252,7 +252,7 @@
 #define DF_WRACCESS O_RDWR
 #endif /* PC */
 #endif /* DF_BUFFIO */
-#endif /* !MAC */
+#endif /* !macintosh  */
 
 
     /* if not allocating memory dynamically, need buffer for compression */
@@ -276,14 +276,14 @@ MACRO FCALLKEYW for any special fortran-C stub keyword
 MacIntosh MPW LS-fortran needs pascal since it can interface best with
 pascal functions
 */
-#if defined(MAC)		/* with LS FORTRAN */
+#if defined(macintosh)		/* with LS FORTRAN */
 #   define FCALLKEYW	pascal
-#else /* !MAC */
+#else /* !macintosh */
 #   define FCALLKEYW	/*NONE*/
 #endif
 
 #ifndef PC
-#ifndef MAC
+#ifndef macintosh
 #ifndef IRIS4
 #ifndef IBM6000
 #ifndef CONVEX
@@ -296,7 +296,7 @@ char *malloc();
 #endif /* !CONVEX */
 #endif /* !IBM6000 */
 #endif /* !IRIS4 */
-#endif /* !MAC */
+#endif /* !macintosh */
 #endif /* !PC */
 #endif /* PERM_OUT */
 

@@ -35,11 +35,11 @@ static char RcsId[] = "@(#)$Revision$";
 #define BIT8 0
 #define BIT24 1
 
-#if (!defined MAC && !defined PC) | defined PC386
+#if (!defined macintosh && !defined PC) | defined PC386
 #define MAXCOLOR 32768
-#else /*MAC*/
+#else /* macintosh */
 #define MAXCOLOR 768
-#endif /*MAC*/
+#endif /* macintosh */
 
 #ifndef NULL
 #   define NULL 0
