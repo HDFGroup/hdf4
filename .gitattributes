@@ -64,8 +64,6 @@ mfhdf/dumper/tdfr8f.hdf -text
 mfhdf/dumper/test.hdf -text
 mfhdf/dumper/tvattr.hdf -text
 mfhdf/dumper/tvset.hdf -text
-mfhdf/hdiff/testfiles/hdifftst1.hdf -text
-mfhdf/hdiff/testfiles/hdifftst2.hdf -text
 mfhdf/hzip/hziptst.hdf -text
 mfhdf/hzip/hziptst_out.hdf -text
 mfhdf/libsrc/test1.nc -text
