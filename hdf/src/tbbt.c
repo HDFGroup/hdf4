@@ -521,7 +521,7 @@ intn           arg;   /* Third argument for (*compar)() */
     intn cmp;
     TBBT_NODE *ptr, *parent;
 
-	if(root==NULL)
+	if(*root==NULL)
 		return(NULL);
     if(NULL != tbbtfind( *root, (key ? key : item), compar, arg, &parent )
             || NULL == ( ptr= Alloc(1,TBBT_NODE) ) )
