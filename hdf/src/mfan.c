@@ -1336,7 +1336,7 @@ ANIwriteann(int32 ann_id,    /* IN: annotation id */
           printf("ANIwriteann: ann_len=%d, ann=%s\n", ann_len,ann);
 #endif
           /* then write the annotation itself */
-          if ((int32) FAIL == Hwrite(aid, ann_len, (VOIDP)ann))
+          if ((int32) FAIL == Hwrite(aid, ann_len, ann))
             {     
                 Hendaccess(aid);
                 HE_REPORT_GOTO("Failed to write annotation",FAIL);
@@ -1347,7 +1347,7 @@ ANIwriteann(int32 ann_id,    /* IN: annotation id */
     else
       { /* file label/description 
          * write out file label/description */
-          if (FAIL == Hputelement(file_id, ann_tag, ann_ref, (uint8 *) ann, ann_len))
+          if (FAIL == Hputelement(file_id, ann_tag, ann_ref, (VOIDP)ann, ann_len))
               HE_REPORT_GOTO("Failed to write file annotation",FAIL);
 #ifdef AN_DEBUG
           printf("ANIwriteann: fann_len=%d, fann=%s\n", ann_len,ann);

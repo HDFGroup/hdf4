@@ -162,7 +162,9 @@ CONTENTS of VS stored in HDF file with tag DFTAG_VH:
 intn
 vpackvs(VDATA * vs, uint8 buf[], int32 *size)
 {
+#ifdef LATER
     CONSTR(FUNC, "vpackvg");
+#endif /* LATER */
 
     int32 i;
     uint8 *bb;

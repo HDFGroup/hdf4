@@ -390,7 +390,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
 #endif /* STDIO_BUF */
 	/* set up the newly created (and empty) file with
 	   the magic cookie and initial data descriptor records */
-          if (HP_write(file_rec, (VOIDP)HDFMAGIC, MAGICLEN) == FAIL)
+          if (HP_write(file_rec, (const VOIDP)HDFMAGIC, MAGICLEN) == FAIL)
             HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
           if (HI_FLUSH(file_rec->file) == FAIL)	/* flush the cookie */
@@ -1935,7 +1935,7 @@ Hputelement(int32 file_id, uint16 tag, uint16 ref, const uint8 *data,
   if (( access_id = Hstartwrite(file_id, (uint16) tag, (uint16) ref, length))== FAIL)
     HGOTO_ERROR(DFE_NOMATCH, FAIL);
 
-  if ((ret_value = Hwrite(access_id, length, (VOIDP) data)) == FAIL)
+  if ((ret_value = Hwrite(access_id, length, data)) == FAIL)
     HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
   if(Hendaccess(access_id)==FAIL)

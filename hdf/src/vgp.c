@@ -573,9 +573,9 @@ vexistvg(HFILEID f, uint16 vgid)
 intn
 vpackvg(VGROUP * vg, uint8 buf[], int32 *size)
 {
-/* #ifdef LATER  */
+#ifdef LATER
     CONSTR(FUNC, "vpackvg");
-/* #endif  */
+#endif
 
     uintn  i;
     uint8 *bb;

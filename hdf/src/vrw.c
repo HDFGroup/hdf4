@@ -390,13 +390,14 @@ done:
    (otherwise) subsequent writes result in link-blocks.
  */
 int32 
-VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
+VSwrite(int32 vkey, const uint8 buf[], int32 nelt, int32 interlace)
 {
     intn isize = 0;
     intn order = 0;
     intn index = 0;
     intn esize = 0;
-    uint8 *src, *dest, *Src;
+    uint8 *dest;
+    const uint8 *src, *Src;
 
     int32       j, type, offset;
     int32       position=0, new_size;

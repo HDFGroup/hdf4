@@ -218,7 +218,7 @@ HDgettagsname(uint16 tag)
         if (tag_descriptions[i].tag == tag)
           {
               if (ret == NULL)
-                  ret = (char *) HDstrdup((char *) tag_descriptions[i].name);
+                  ret = (char *) HDstrdup(tag_descriptions[i].name);
               else
                 {
                     char       *t;
@@ -285,18 +285,18 @@ HDgetNTdesc(int32 nt)
 
     /* evil hard-coded values */
     if (nt & DFNT_NATIVE)
-        ret_desc = (char *) HDstrdup((char *) nt_descriptions[0].desc);
+        ret_desc = (char *) HDstrdup(nt_descriptions[0].desc);
     else if (nt & DFNT_CUSTOM)
-        ret_desc = (char *) HDstrdup((char *) nt_descriptions[1].desc);
+        ret_desc = (char *) HDstrdup(nt_descriptions[1].desc);
     else if (nt & DFNT_LITEND)
-        ret_desc = (char *) HDstrdup((char *) nt_descriptions[2].desc);
+        ret_desc = (char *) HDstrdup(nt_descriptions[2].desc);
 
     nt &= DFNT_MASK;    /* mask off unusual format types */
     for (i = 3; i < (intn)(sizeof(nt_descriptions) / sizeof(nt_descript_t)); i++)
         if (nt_descriptions[i].nt == nt)
           {
               if (ret_desc == NULL)
-                  ret_desc = (char *) HDstrdup((char *) nt_descriptions[i].desc);
+                  ret_desc = (char *) HDstrdup(nt_descriptions[i].desc);
               else
                 {
                     char       *t;

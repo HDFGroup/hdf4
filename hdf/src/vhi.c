@@ -101,7 +101,7 @@ VHstoredata(HFILEID f, char *field, uint8 buf[], int32 n, int32 datatype,
    --------------------------------------------------------------------------- */
 
 int32
-VHstoredatam(HFILEID f, char *field, uint8 buf[], int32 n, int32 datatype, const char *vsname, const char *vsclass, int32 order)
+VHstoredatam(HFILEID f, const char *field, const uint8 buf[], int32 n, int32 datatype, const char *vsname, const char *vsclass, int32 order)
 {
     CONSTR(FUNC, "VHstoredatam");
     int32       ref;

@@ -2316,7 +2316,7 @@ AUTHOR
 int32
 HMCreadChunk(int32 access_id,  /* IN: access aid to mess with */
              int32 *origin,    /* IN: origin of chunk to read */
-             const VOID *datap /* IN: buffer for data */)
+             VOID *datap /* IN: buffer for data */)
 {
     CONSTR(FUNC, "HMCreadChunk");  /* for HERROR */
     accrec_t    *access_rec = NULL; /* access record */
@@ -2691,7 +2691,7 @@ HMCPchunkwrite(VOID  *cookie,    /* IN: access record to mess with */
     TBBT_NODE   *entry   = NULL;  /* node off of  chunk tree */
     uint8       *v_data  = NULL;  /* chunk table record i.e Vdata record */
     CHUNK_REC   *chkptr  = NULL;  /* Chunk record to inserted in TBBT  */
-    VOID        *bptr    = NULL;  /* data buffer pointer */
+    const VOID  *bptr    = NULL;  /* data buffer pointer */
     int32       chk_id   = FAIL ; /* chunkd accces id */
 #ifdef UNUSED
     uint8      *data     = NULL;  /* data buffer */
@@ -2718,7 +2718,7 @@ HMCPchunkwrite(VOID  *cookie,    /* IN: access record to mess with */
 #endif /* UNUSED */
     write_len     = (info->chunk_size * info->nt_size);
     bytes_written = 0;
-    bptr          = (VOID *)datap;
+    bptr          = datap;
 
 #ifdef CHK_DEBUG_4
     printf("HMCPchunkwrite called with chunk %d \n",chunk_num);
@@ -2866,7 +2866,7 @@ HMCwriteChunk(int32 access_id,  /* IN: access aid to mess with */
     chunkinfo_t *info       = NULL; /* chunked element information record */
     CHUNK_REC   *chkptr     = NULL; /* Chunk record to inserted in TBBT  */
     int32       *chk_key    = NULL; /* Chunk recored key for insertion in TBBT */
-    uint8       *bptr       = NULL; /* data buffer pointer */
+    const VOIDP *bptr       = NULL; /* data buffer pointer */
     VOID        *chk_data   = NULL; /* chunk data */
     uint8       *chk_dptr   = NULL; /* chunk data pointer */
     int32       relative_posn;      /* relative position in chunked element */
@@ -2913,7 +2913,7 @@ HMCwriteChunk(int32 access_id,  /* IN: access aid to mess with */
           relative_posn = access_rec->posn;
           write_len     = (info->chunk_size * info->nt_size);
           bytes_written = 0;
-          bptr          = (VOID *)datap;
+          bptr          = datap;
 
           /* copy origin over to seek chunk indicies 
              and set position within chunk to beginning of that chunk */

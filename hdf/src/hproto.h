@@ -2161,9 +2161,9 @@ extern int32 ANid2tagref(int32 an_id, uint16 *ann_tag, uint16 *ann_ref);
 
 extern int32 ANtagref2id(int32 an_id, uint16 ann_tag, uint16 ann_ref);
 
-extern uint16 atype2tag(ann_type atype);
+extern uint16 ANatype2tag(ann_type atype);
 
-extern ann_type tag2atype(uint16 atag);
+extern ann_type ANtag2atype(uint16 atag);
 
 extern intn ANdestroy(void);
 
@@ -2719,7 +2719,7 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
                  const char  * vsname, const char  * vsclass);
 
     extern int32 VHstoredatam
-                (HFILEID f, char  * field, uint8  buf[], int32 n, int32 datatype,
+                (HFILEID f, const char  * field, const uint8  buf[], int32 n, int32 datatype,
                  const char  * vsname, const char  * vsclass, int32 order);
 
     extern int32 VHmakegroup
@@ -2811,7 +2811,7 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
                 (int32 vkey, uint8  buf[], int32 nelt, int32 interlace);
 
     extern int32 VSwrite
-                (int32 vkey, uint8  buf[], int32 nelt, int32 interlace);
+                (int32 vkey, const uint8  buf[], int32 nelt, int32 interlace);
 
 /*
    ** from vgF.c
