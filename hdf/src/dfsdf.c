@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.14  1993/04/19 22:47:43  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.15  1993/04/26 00:10:41  koziol
+Updated calls to DFSDnumber to DFSDndatasets
 
+ * Revision 1.14  1993/04/19  22:47:43  koziol
+ * General Code Cleanup to reduce/remove errors on the PC
+ *
  * Revision 1.13  1993/04/05  22:35:31  koziol
  * Fixed goofups made in haste when patching code.
  *
@@ -82,7 +85,7 @@ General Code Cleanup to reduce/remove errors on the PC
  *  dsigslc:       Call DFSDIgetslice to get slice from file
  *  dsisslc:       Call DFSDstartslice to set up to write slice
  *  dslref:        Call DFSDlastref to get ref of last SDS accessed
- *  dsinum:        Call DFSDnumber to get number of SDG in the file
+ *  dsinum:        Call DFSDndatasets to get number of SDG in the file
  *  dsip32s:       Call DFSDpre32sdg to test if the sdg was written by HDF prior to
  *                      version 3.2
  *  dfsdgetdatastrs_:Call DFSDgetdatastrs to get attributes of data
@@ -866,8 +869,8 @@ ndslref()
  *          len: length of Fortran string filename
  * Returns: number of SDGs on success, -1 on failure with DFerror set
  * Users:   dsnum, dfsdnumber
- * Invokes: DFSDnumber, HDf2cstring
- * Method:  convert string, call DFSDnumber
+ * Invokes: DFSDndataset, HDf2cstring
+ * Method:  convert string, call DFSDndatasets
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
@@ -883,7 +886,7 @@ ndsinum(filename, len)
     intf status;
 
     cname = HDf2cstring(filename, (intn) *len);
-    status = DFSDnumber(cname);
+    status = DFSDndatasets(cname);
     HDfreespace(cname);
 
     return(status);

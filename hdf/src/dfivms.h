@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.5  1993/01/19 05:54:37  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.6  1993/04/26 00:10:38  koziol
+Updated calls to DFSDnumber to DFSDndatasets
 
+ * Revision 1.5  1993/01/19  05:54:37  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.3  1992/10/16  20:47:17  chouck
  * Added DFSDpre32
  *
@@ -103,7 +106,7 @@ port.  Lots of minor annoyances fixed.
 #define DFSDgetsdg _DFSDgetsdg
 #define DFSDgetslice _DFSDgetslice
 #define DFSDlastref _DFSDlastref
-#define DFSDnumber _DFSDnumber
+#define DFSDndatasets _DFSDndatasets
 #define DFSDpre32 _DFSDpre32
 #define DFSDputdata _DFSDputdata
 #define DFSDputsdg _DFSDputsdg
