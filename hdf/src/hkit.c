@@ -90,10 +90,10 @@ DESCRIPTION
 char _HUGE *
 HDf2cstring(_fcd fdesc, intn len)
 {
+    CONSTR(FUNC, "HDf2cstring");  /* for HERROR */
     char       *cstr, *str;
     int         i;
 
-    CONSTR(FUNC, "HDf2cstring");  /* for HERROR */
     str = _fcdtocp(fdesc);
 #ifdef OLD_WAY
     for (i = len - 1; i >= 0 && ((str[i] & 0x80) || !isgraph(str[i])); i--)

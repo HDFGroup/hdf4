@@ -145,11 +145,11 @@ ndfclose(intf * dfile)
 FRETVAL(intf)
 ndfdesc(intf * dfile, intf ptr[][4], intf * begin, intf * num)
 {
+    CONSTR(FUNC, "dfdesc");
     DFdesc     *ptr1;
     int         i;
     intf        num_desc;
 
-    CONSTR(FUNC, "dfdesc");
     /* allocate temporary space */
     if ((ptr1 = (DFdesc *) HDmalloc((uint32) *num * sizeof(DFdesc))) == NULL)
       HRETURN_ERROR(DFE_NOSPACE, -1);
@@ -378,10 +378,10 @@ ndfsfind(intf * dfile, intf * tag, intf * ref)
 FRETVAL(intf)
 ndffind(intf * dfile, intf * itag, intf * iref, intf * len)
 {
+    CONSTR(FUNC, "dffind");
     DFdesc     *ptr1;
     intf        ret;
 
-    CONSTR(FUNC, "dffind");
     ptr1 = (DFdesc *) HDmalloc((uint32) sizeof(DFdesc));
     if (ptr1 == NULL)
 	HRETURN_ERROR(DFE_NOSPACE, -1);

@@ -362,12 +362,8 @@ nafwriteann(intf *ann_id,_fcd ann, intf *annlen)
 FRETVAL(intf)
 nafreadann(intf *ann_id,_fcd ann, intf *maxlen)
 {
-  CONSTR(FUNC, "afreadann");
-
-#ifdef OLD_WAY
-  return (intf)ANreadann((int32)*an_id,(char *) _fcdtocp(ann), (int32) *maxlen);
-#else /* OLD_WAY */
-    char       *iann=NULL;
+    CONSTR(FUNC, "afreadann");
+    char	*iann = NULL;
     intn        status;
 
     if (*maxlen)
@@ -384,7 +380,6 @@ nafreadann(intf *ann_id,_fcd ann, intf *maxlen)
         HDfree(iann);
 
     return status;
-#endif /* OLD_WAY */
 } /* nafreadann() */
 
 /*-----------------------------------------------------------------------------
