@@ -430,6 +430,9 @@ c	PARAMETERS
      *          SD_DIMVAL_BW_COMP = 1,
      *          SD_DIMVAL_BW_INCOMP = 0)
 
+      integer   ENTIRE_VDATA
+      
+      parameter(ENTIRE_VDATA = -1)
 
 C       Statndard return codes       
       integer	SUCCEED, FAIL
