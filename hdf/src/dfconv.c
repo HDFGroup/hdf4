@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1993/02/16 18:47:26  koziol
-Cray Speedups
+Revision 1.7  1993/02/17 21:19:33  koziol
+Enabled Cray speedups, but left testing code in still
 
+ * Revision 1.6  1993/02/16  18:47:26  koziol
+ * Cray Speedups
+ *
  * Revision 1.5  1993/01/26  19:42:18  koziol
  * Added support for reading and writing Little-Endian data on all
  * platforms.  This has been tested on: Cray, Sun, and PCs so far.
@@ -104,12 +107,6 @@ Cray Speedups
 
  *------------------------------------------------------------------*/
 
-#ifdef QAK
-#if defined(__STDC__) && !defined(PROTOTYPE)
-#define PROTOTYPE
-#endif /* Assert prototype defined */
-#endif
-
 /*****************************************************************************/
 /*                                                                           */
 /*    All the routines in this file marked as PRIVATE have been marked so    */
@@ -133,10 +130,8 @@ Cray Speedups
 #include "herr.h"
 #include "hconv.h"
 
-#undef PRIVATE
-#define PRIVATE /* */
 
-#define TEST
+/* #define TEST */
 #ifdef TEST
 #define TEST3_sb4b
 
@@ -163,7 +158,7 @@ Cray Speedups
 #define TEST1_luo8f
 #endif
 
-/*#define DUFF */
+#define DUFF 
 #ifdef DUFF
 #define DUFF_sb4b
 
