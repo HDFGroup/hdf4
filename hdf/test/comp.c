@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1993/10/10 22:11:12  koziol
-Updated header files and added compression test.
+Revision 1.2  1993/10/19 17:41:24  koziol
+Updated tests and added a makefile for Watcom C/386
 
+ * Revision 1.1  1993/10/10  22:11:12  koziol
+ * Updated header files and added compression test.
+ *
  *
 */
 
@@ -41,6 +44,8 @@ void test_comp()
     register int i,j;
     int32 ret;
     intn errors = 0;
+    model_info m_info;
+    comp_info c_info;
 
     for (i=0; i<BUFSIZE; i++)
         outbuf[i] = (char) (i % 256);
@@ -79,7 +84,8 @@ void test_comp()
     CHECK(ref1, 0, "Hnewref");
 
     MESSAGE(5,printf("Create a new element as a compressed element\n"););
-    aid1 = HCcreate(fid, 1000, ref1, COMP_MODEL_STDIO, COMP_CODE_RLE);
+    aid1 = HCcreate(fid, 1000, ref1, COMP_MODEL_STDIO, &m_info,
+            COMP_CODE_RLE, &c_info);
     CHECK(aid1, FAIL, "HCcreate");
 
     ret = Hwrite(aid1, BUFSIZE/2, outbuf);
@@ -95,7 +101,8 @@ void test_comp()
     ref2 = Hnewref(fid);
     CHECK(ref2, 0, "Hnewref");
 
-    aid1 = HCcreate(fid, 1000, ref2, COMP_MODEL_STDIO, COMP_CODE_RLE);
+    aid1 = HCcreate(fid, 1000, ref2, COMP_MODEL_STDIO, &m_info,
+            COMP_CODE_RLE, &c_info);
     CHECK(aid1, FAIL, "HCcreate");
 
     ret = Hwrite(aid1, BUFSIZE/2, outbuf2);
@@ -142,7 +149,8 @@ void test_comp()
     ref3 = Hnewref(fid);
     CHECK(ref3, 0, "Hnewref");
 
-    aid1 = HCcreate(fid, 1020, ref3, COMP_MODEL_STDIO, COMP_CODE_RLE);
+    aid1 = HCcreate(fid, 1020, ref3, COMP_MODEL_STDIO, &m_info,
+            COMP_CODE_RLE, &c_info);
     CHECK(aid1, FAIL, "HCcreate");
 
     ret = Hwrite(aid1, BUFSIZE, outbuf);
