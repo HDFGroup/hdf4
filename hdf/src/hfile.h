@@ -355,6 +355,16 @@ typedef struct tag_ref_list_str
   }
 tag_ref_list, *tag_ref_list_ptr;
 
+/* For determining what the last file operation was */
+typedef enum
+  {
+      OP_UNKNOWN = 0,   /* Don't know what the last operation was (after fopen frex) */
+      OP_SEEK,          /* Last operation was a seek */
+      OP_WRITE,         /* Last operation was a write */
+      OP_READ           /* Last operation was a read */
+  }
+fileop_t;
+
 /* File record structure */
 typedef struct filerec_t
   {
@@ -373,6 +383,7 @@ typedef struct filerec_t
 
       /* Seek caching info */
       uint32      f_cur_off;    /* Current location in the file */
+      fileop_t    last_op;      /* the last file operation performed */
 
       /* DD block caching info */
       intn        cache;        /* boolean: whether caching is on */

@@ -349,6 +349,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
 				  }
 				file_rec->file = f;
                 file_rec->f_cur_off=0;
+                file_rec->last_op=OP_UNKNOWN;
 #else  /* NO_MULTI_OPEN */
 				HRETURN_ERROR(DFE_DENIED, FAIL);
 				return FAIL;
@@ -394,7 +395,8 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
 							HRETURN_ERROR(DFE_NOTDFFILE, FAIL);
 						}
 
-                      file_rec->f_cur_off=(-1);
+                      file_rec->f_cur_off=0;
+                      file_rec->last_op=OP_UNKNOWN;
 					  /* Read in all the relevant data descriptor records. */
 					  if (HIfill_file_rec(file_rec, FUNC) == FAIL)
 						{
@@ -415,6 +417,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
 				if (OPENERR(file_rec->file))
 					HRETURN_ERROR(DFE_BADOPEN, FAIL);
                 file_rec->f_cur_off=0;
+                file_rec->last_op=OP_UNKNOWN;
 #ifdef STDIO_BUF
 				/* Testing stdio buffered i/o */
 				if (setvbuf(file_rec->file, my_stdio_buf, _IOFBF, MY_STDIO_BUF_SIZE) != 0)
@@ -456,9 +459,11 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
 		HIread_version(FSLOT2ID(slot));
 /* end version tags */
     
+#ifdef QAK
     /* This is a slight kludge, to reset the seek offset after */
     /* the file's version is written out -QAK */
     file_rec->f_cur_off=(-1);
+#endif /* QAK */
 
 	return FSLOT2ID(slot);
 }	/* Hopen */
@@ -2597,7 +2602,7 @@ DESCRIPTION
 NOTE
 
 --------------------------------------------------------------------------*/
-intn
+PRIVATE intn
 HIsync(filerec_t *file_rec)
 {
 	CONSTR(FUNC, "HIsync");	/* for HERROR */
@@ -4292,13 +4297,22 @@ HPread(filerec_t *file_rec,VOIDP buf,int32 bytes)
 	CONSTR(FUNC, "HPread");
 
 #ifdef QAK
-printf("%s: a) f_cur_off=%ld, bytes=%ld\n",FUNC,(long)file_rec->f_cur_off,(long)bytes);
+printf("%s: a) f_cur_off=%ld, bytes=%ld, last_op=%d\n",FUNC,(long)file_rec->f_cur_off,(long)bytes,(int)file_rec->last_op);
 #endif /* QAK */
+    /* Check for switching file access operations */
+    if(file_rec->last_op==OP_WRITE || file_rec->last_op==OP_UNKNOWN)
+      {
+        file_rec->last_op=OP_UNKNOWN;
+        if(HPseek(file_rec,file_rec->f_cur_off)==FAIL)
+            HRETURN_ERROR(DFE_INTERNAL,FAIL);
+      } /* end if */
+
     if(HI_READ(file_rec->file,buf,bytes)==FAIL)
 		HRETURN_ERROR(DFE_READERROR, FAIL);
     file_rec->f_cur_off+=bytes;
+    file_rec->last_op=OP_READ;
 #ifdef QAK
-printf("%s: b) f_cur_off=%ld, ftell=%ld\n",FUNC,(long)file_rec->f_cur_off,(long)ftell(file_rec->file));
+printf("%s: b) f_cur_off=%ld, ftell=%ld, last_op=%d\n",FUNC,(long)file_rec->f_cur_off,(long)ftell(file_rec->file),(int)file_rec->last_op);
 #endif /* QAK */
     return(SUCCEED);
 } /* end HPread() */
@@ -4328,20 +4342,17 @@ HPseek(filerec_t *file_rec,int32 offset)
 	CONSTR(FUNC, "HPseek");
 
 #ifdef QAK
-printf("%s: a) f_cur_off=%ld, offset=%ld\n",FUNC,(long)file_rec->f_cur_off,(long)offset);
+printf("%s: a) f_cur_off=%ld, offset=%ld, last_op=%d\n",FUNC,(long)file_rec->f_cur_off,(long)offset,(int)file_rec->last_op);
 #endif /* QAK */
-#ifdef LATER
-    if(file_rec->f_cur_off!=offset)
+    if(file_rec->f_cur_off!=offset || file_rec->last_op==OP_UNKNOWN)
       {
-#endif /* LATER */
           if (HI_SEEK(file_rec->file, offset) == FAIL)
               HRETURN_ERROR(DFE_SEEKERROR, FAIL);
           file_rec->f_cur_off=offset;
-#ifdef LATER
+          file_rec->last_op=OP_SEEK;
       } /* end if */
-#endif /* LATER */
 #ifdef QAK
-printf("%s: b) f_cur_off=%ld, offset=%ld\n",FUNC,(long)file_rec->f_cur_off,(long)offset);
+printf("%s: b) f_cur_off=%ld, offset=%ld, last_op=%d\n",FUNC,(long)file_rec->f_cur_off,(long)offset,(int)file_rec->last_op);
 #endif /* QAK */
     return(SUCCEED);
 } /* end HPseek() */
@@ -4372,13 +4383,22 @@ HPwrite(filerec_t *file_rec,const VOIDP buf,int32 bytes)
 	CONSTR(FUNC, "HPwrite");
 
 #ifdef QAK
-printf("%s: a) f_cur_off=%ld, bytes=%ld\n",FUNC,(long)file_rec->f_cur_off,(long)bytes);
+printf("%s: a) f_cur_off=%ld, bytes=%ld, last_op=%d\n",FUNC,(long)file_rec->f_cur_off,(long)bytes,(int)file_rec->last_op);
 #endif /* QAK */
+    /* Check for switching file access operations */
+    if(file_rec->last_op==OP_READ || file_rec->last_op==OP_UNKNOWN)
+      {
+        file_rec->last_op=OP_UNKNOWN;
+        if(HPseek(file_rec,file_rec->f_cur_off)==FAIL)
+            HRETURN_ERROR(DFE_INTERNAL,FAIL);
+      } /* end if */
+
     if(HI_WRITE(file_rec->file,buf,bytes)==FAIL)
 		HRETURN_ERROR(DFE_WRITEERROR, FAIL);
     file_rec->f_cur_off+=bytes;
+    file_rec->last_op=OP_WRITE;
 #ifdef QAK
-printf("%s: b) f_cur_off=%ld, ftell=%ld\n",FUNC,(long)file_rec->f_cur_off,(long)ftell(file_rec->file));
+printf("%s: b) f_cur_off=%ld, ftell=%ld, last_op=%d\n",FUNC,(long)file_rec->f_cur_off,(long)ftell(file_rec->file),(int)file_rec->last_op);
 #endif /* QAK */
     return(SUCCEED);
 } /* end HPwrite() */
