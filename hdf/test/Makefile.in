@@ -56,6 +56,7 @@
 #          tvsfpack.c (pack/unpack field values into/from a vdata buf)
 #          egfhi.f  (Fortran version of egchi.c)
 #          tvsetf.f (Fortran version of tvset.c)
+#          tvattrf.f (Fortran version of tvattr.c)
 # The lower level C test programs are:
 #
 #              vers.c     (get version string from an HDF file)
@@ -251,11 +252,13 @@ COBJS= rig.o sdstr.o blocks.o an.o anfile.o extelt.o file.o file1.o vers.o \
 
 FSRCS= fortest.c fortestF.f forsupff.f forsupf.c \
 	manf.f mgrf.f slabwf.f t24f.f tanf.f tanfilef.f tpf.f tr8f.f \
-	tsdmmsf.f tsdnmmsf.f tsdnntf.f tsdntf.f tsdstrf.f tstubsf.f tvsetf.f
+	tsdmmsf.f tsdnmmsf.f tsdnntf.f tsdntf.f tsdstrf.f tstubsf.f \
+        tvsetf.f, tvattrf.f
 
 FOBJS = fortestF.o forsupff.o forsupf.o \
 	manf.o mgrf.o slabwf.o t24f.o tanf.o tanfilef.o tpf.o tr8f.o \
-	tsdmmsf.o tsdnmmsf.o tsdnntf.o tsdntf.o tsdstrf.o tstubsf.o tvsetf.o
+	tsdmmsf.o tsdnmmsf.o tsdnntf.o tsdntf.o tsdstrf.o tstubsf.o  \
+        tvsetf.o tvattrf.o
 
 #CFORSUPSRCS = forsupf.c
 

@@ -214,6 +214,11 @@ C Test command
 	    return
 	endif
 
+	if (param .EQ. 'vattrf') then
+	    call tvattrf(retcode)
+	    return
+	endif
+
 	if (param .EQ. 'stubs') then
 	    call tstubsf(retcode)
 	    return
