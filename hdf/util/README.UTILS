@@ -53,8 +53,8 @@ hdfpack:
        0.0, 1.0, 2.0,..., 359.0
    The file sizes should be as follows:
        test.cdf - 30272 
-       test.pck - 7245
-       test.blk - 22745 
+       test.pck - 22745 
+       test.blk - 7245
 
 
 hdftopal/paltohdf
