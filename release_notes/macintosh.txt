@@ -3,7 +3,7 @@ Macintosh of the HDF 4.1r3 library, providing C-language bindings to all
 4.1r3 features.
 
 The Macintosh reference implementation of the HDF 4.1r3 library was implemented
-and tested on a PowerMac Model 7600/120 running MacOS 8.0 using Metrowerks
+and tested on a PowerMac Model 7600/120 running MacOS 8.5.1 using Metrowerks
 CodeWarrior Pro1.  The library has also been run on a PowerMac G3.  
 
 Fortner cannot be certain that the libraries will run on other versions of
