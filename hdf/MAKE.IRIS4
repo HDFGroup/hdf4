@@ -2,11 +2,14 @@
 # $Header$
 #
 # $Log$
-# Revision 1.6  1992/08/26 16:25:18  sxu
+# Revision 1.7  1992/08/26 19:22:15  sxu
+# Correct a typo
+#
+# Revision 1.6  1992/08/26  16:25:18  sxu
 # *** empty log message ***
 #
 # Revision 1.5  1992/08/14  20:30:24  sxu
-# Added SHELL, -cckr (or -ansi) and -lgl_a.
+# Added SHELL, -cckr (or -ansi) and -lgl_s.
 #
 # Revision 1.4  1992/08/12  22:30:23  dilg
 # Reincarnated all machine-specific Makefiles from generic Makefile.
@@ -85,7 +88,7 @@ FC= f77
 FFLAGS=
 
 # Define gl library
-GLLIB = -lgl_a
+GLLIB = -lgl_s
 
 # Location where the HDF include files are to be installed
 HDFINC= `pwd`/include
