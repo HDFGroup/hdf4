@@ -1338,6 +1338,11 @@ test_chunks()
     CHECK(ret, FAIL, "Hclose");
 
 
+    /* The following tests will work if Number type conversion
+       is done on the ouput data, punt for now since 'hdftest'
+       tests these same tests with number type conversion  */
+#if  !(defined(UNICOS) || defined(_UNICOS) || defined(_CRAYMPP))
+
     /* 
        7. Now create 3-D chunked element with no partial chunks.
        Set dimension to 2x3x4 array with 6 chunks. Number type is uint16 
@@ -1574,6 +1579,7 @@ test_chunks()
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
 
+#endif /*  !(defined(UNICOS) || defined(_UNICOS) || defined(_CRAYMPP)) */
 
     /* 
        9. Create 4-D element with partial chunks.
