@@ -56,7 +56,7 @@
 ============================
 
     The most recent version of the distribution can be obtained from
-the NCSA ftp archive site at:
+    the NCSA ftp archive site at:
 
      ftp://ftp.ncsa.uiuc.edu/HDF/HDF_Current
 
@@ -76,35 +76,32 @@ the NCSA ftp archive site at:
   Platform(OS)            C-Compiler  Fortran-Compiler   libdf.a   libmfhdf.a
   ------------            ----------  ----------------   -------   -----------
   Sun4(SunOS 4.1.3)           GCC 2.6.3      f77              X         X
-  Sun4(Solaris 2.4)           CC SC3.0       f77 SC3.0        X         X
   Sun4(Solaris 2.5)           CC SC3.0       f77              X         X
   SGI-Indy(IRIX5.3)           CC             f77              X         X
   SGI-Indy(IRIX6.1_n32)       CC 6.1         f77 6.1          X         X
   SGI-Indy(IRIX6.1_64)        CC 6.1         f77 6.1          X         X
   HP9000/735(HPUX 9.03)       CC             f77              X         X
   Exemplar(HPUX 9.03)         CC (for HPUX)  f77              X         X
-  Cray C90 (UNICOS 803.2)     CC             cf77             X         X
+  Cray C90 (UNICOS 803.2)     -               -               -         - 
   Cray YMP (UNICOS 803.2)     CC             cf77             X         X
-  CM5 (Parallel I/O, 4.1.3_U1)CSTAR 7.2      CMF 2.1          X         X
-  IBM RS6000/AIX v4.1         XLC 3.1.3.5    f77 3.2.4.2      X         X
+  CM5 (Parallel I/O, 4.1.3_U1)-               -               -         -
+  IBM RS6000/AIX v4.1         -               -               -         - 
   IBM SP2 (single node, v4.1) XLC 3.1.3.5    f77 3.2.4.2      X         X 
   DEC Alpha/Digital Unix v3.2 CC             f77              X         X
   DEC Alpha/OpenVMS AXP v6.2  DECC 5.3       DEC FORTRAN      X         X
-  Fujitsu UXP/M-1800(SYS_V-4.0) CC            -               X         X
+  Fujitsu UXP/M-1800(SYS_V-4.0) -             -               -         - 
   IBM PC - Intel Pentium
        Solarisx86             GCC 2.6.3       -               X         X
        Linux(a.out) v1.2.4    GCC         Fortran compiler    X         X
                                              2.6.2
                                  (Fortran to C converter)
        Linux(elf)  1.2.13     GCC 2.7         -               X         X
-       FreeBSD 2.0            GCC 2.6.2   Fortran compiler    X         X
-                                             2.6.2
-                                 (Fortran to C converter)
+       FreeBSD 2.2            GCC 2.6.3      f77              X         X
 
   PowerPC(Mac-OS-7.5)         Codewarrior 8   -               X         X
   68k-far/4i/8d(Mac-OS-7.5)   Codewarrior 8   -               X         X
   Windows NT/95               Visual C++ 4.0  -               X         X  
-  T3D (v9.0.lai)              CC 4.0.5        -               X         X
+  T3D (v9.0.lai)                -             -               -         - 
   VAX/VMS                       -             -               -         -  
 
 2.2  Third Party Software Requirements:
@@ -345,6 +342,15 @@ the NCSA ftp archive site at:
     The distribution has been compiled/tested with the native
     ANSI-C compiler and native fortran compiler. The binary 
     distribution was compiled using the native compilers.
+
+    When compiling your programs on Solaris, you must include the 
+    the nsl library, to resolve calls to the xdr* routines.
+    For example,
+
+        cc -o <prog> <prog.c> -I<path for HDF include directory> \
+              -L<path for HDF libraries> -lmfhdf -ldf -ljpeg -lz \
+              -L/usr/lib -lnsl
+    
 
     2.5.3 Solaris(2.4) on INTEL(x86)
     --------------------------------
