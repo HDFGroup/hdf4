@@ -151,6 +151,7 @@ dumpvd(int32       vd,
           switch (w->type[i])
             {
             case DFNT_CHAR:
+            case DFNT_UCHAR:
                 vfmtfn[i] = fmtchar;
                 break;
 
