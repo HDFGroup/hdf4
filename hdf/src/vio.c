@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.13  1993/04/19 22:48:36  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.14  1993/04/22 16:05:54  chouck
+Minor Vset fixes
 
+ * Revision 1.13  1993/04/19  22:48:36  koziol
+ * General Code Cleanup to reduce/remove errors on the PC
+ *
  * Revision 1.12  1993/04/15  19:18:48  koziol
  * Fixed bug introduced into the tbbt routines with the last bugfix (sigh)
  *
@@ -870,14 +873,15 @@ int32 vkey;
  */
 
 #ifdef PROTOTYPE
-PUBLIC int32 VSappendable (int32 vkey)
+PUBLIC int32 VSappendable (int32 vkey, int32 blk)
 #else
-PUBLIC int32 VSappendable (vkey)
+PUBLIC int32 VSappendable (vkey, int32 blk)
 int32 vkey;
+int32 blk;
 #endif
 {
-    int32     status;
-    int32         blksize, curr_size;
+    int32           status;
+    int32           blksize, curr_size;
     vsinstance_t    *w;
     VDATA           *vs;
     char * FUNC = "VSappendable";
@@ -888,7 +892,7 @@ int32 vkey;
         return(FAIL);
     }
   
-  /* locate vs's index in vstab */
+    /* locate vs's index in vstab */
     if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
         HERROR(DFE_NOVS);
         HEprint(stderr, 0);
@@ -909,6 +913,8 @@ int32 vkey;
     else
         blksize = VDEFAULTBLKSIZE;
 
+    if(blk && blk > blksize) blksize = blk;
+
     status = HLcreate(vs->f, VSDATATAG, vs->oref, blksize, VDEFAULTNBLKS);
     if(status == FAIL)
         return FAIL;
@@ -916,6 +922,7 @@ int32 vkey;
     Hendaccess(status);
 
     return SUCCEED;
+
 } /* VSappendable */
 
 /* ======================================================= */

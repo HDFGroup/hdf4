@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.9  1993/04/19 22:48:28  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.10  1993/04/22 16:05:52  chouck
+Minor Vset fixes
 
+ * Revision 1.9  1993/04/19  22:48:28  koziol
+ * General Code Cleanup to reduce/remove errors on the PC
+ *
  * Revision 1.8  1993/04/08  18:33:52  chouck
  * Various Vset modifications (additions of Vdelete and VSdelete)
  *
@@ -262,6 +265,9 @@ struct vdata_desc {
 /* need to tune these to vertex boundary later.  Jason Ng 6-APR-92 */
 #define VDEFAULTBLKSIZE    1024
 #define VDEFAULTNBLKS      32
+
+/* Max order of a field in a Vdata */
+#define MAX_ORDER          32000
 
 /* .................................................................. */
 /* Private data structures. Unlikely to be of interest to applications */

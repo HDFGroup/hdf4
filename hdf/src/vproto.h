@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.10  1993/04/19 22:48:39  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.11  1993/04/22 16:05:55  chouck
+Minor Vset fixes
 
+ * Revision 1.10  1993/04/19  22:48:39  koziol
+ * General Code Cleanup to reduce/remove errors on the PC
+ *
  * Revision 1.9  1993/04/08  18:34:01  chouck
  * Various Vset modifications (additions of Vdelete and VSdelete)
  *
@@ -471,6 +474,10 @@ extern int32 VSgetversion
 
 extern int32 VSdelete
     PROTO((int32 f, int32 ref));
+
+extern int32 VSappendable 
+    PROTO((int32 vkey, int32 blk));
+
 
 /*
 ** from vsfld.c

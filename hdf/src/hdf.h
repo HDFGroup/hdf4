@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.8  1993/04/13 17:44:19  koziol
-Added patches for Fujitsu VP machines and fixed Cray fast conversion
-routines.
+Revision 1.9  1993/04/22 16:05:50  chouck
+Minor Vset fixes
 
+ * Revision 1.8  1993/04/13  17:44:19  koziol
+ * Added patches for Fujitsu VP machines and fixed Cray fast conversion
+ * routines.
+ *
  * Revision 1.7  1993/04/13  16:52:31  georgev
  * Added DFIL_PIXEL, DFIL_LINE, DFIL_PLANE defines for interlacing schemes.
  *
@@ -468,5 +471,9 @@ extern uint8 *tbuf;
 
 #include "hcomp.h"
 #include "hproto.h"
+
+/* these may eventaully evolve into real-life functions but not yet */
+#define HDFopen(f,a,d)      Hopen((f), (a), (d))
+#define HDFclose(f,a,d)     Hclose((f), (a), (d))
 
 #endif /* HDF_H */

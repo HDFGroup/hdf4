@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.7  1993/04/19 22:48:42  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.8  1993/04/22 16:05:57  chouck
+Minor Vset fixes
 
+ * Revision 1.7  1993/04/19  22:48:42  koziol
+ * General Code Cleanup to reduce/remove errors on the PC
+ *
  * Revision 1.6  1993/04/06  17:23:50  chouck
  * Added Vset macros
  *
@@ -327,14 +330,14 @@ int32   localtype, order;
     if ((vs == NULL) || (scanattrs(field,&ac,&av) < 0) || (ac != 1))
         HRETURN_ERROR(DFE_ARGS, FAIL);
   
-    if (order <1 || order > 1000)
+    if (order < 1 || order > MAX_ORDER)
         HRETURN_ERROR(DFE_BADORDER,FAIL);
   
   /* 
    ** check for any duplicates 
    */
   /* --- first look in the reserved symbol table --- */
-    for (j=0;j<NRESERVED;j++)
+    for (j = 0; j < NRESERVED; j++)
         if (!HDstrcmp(av[0], rstab[j].name)) {
             if (localtype != rstab[j].type && order != rstab[j].order)
                 break;
