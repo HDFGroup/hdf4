@@ -53,8 +53,13 @@
 
 /* For further error reporting */
 #define HE_REPORT(msg) HEreport(msg)
+#ifndef CONVEX
 #define HE_REPORT_RETURN(msg, ret_val) do { HEreport(msg); return(ret_val); \
                                           } while (0)
+#else /* CONVEX */
+#define HE_REPORT_RETURN(msg, ret_val) { HEreport(msg); return(ret_val); \
+                                          } 
+#endif /* CONVEX */
 #define HE_CLOSE_REPORT_RETURN(hfid,msg, ret_val) { HEreport(msg); \
                                                     Hclose(hfid); \
                                                     return(ret_val);}

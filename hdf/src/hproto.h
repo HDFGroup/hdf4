@@ -232,7 +232,7 @@ extern      "C"
 
 #endif                          /* WIN3 | PC */
 
-#if defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MIPSEL | defined NEXT
+#if defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MIPSEL | defined NEXT | defined CONVEX
     extern char *HDstrdup
                 (const char *s);
 

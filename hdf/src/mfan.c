@@ -2541,12 +2541,7 @@ ANget_tagref(int32 file_id, int32 index, ann_type type, uint16 *tag, uint16 *ref
      returns TAG correspondign to annotatin type
 --------------------------------------------------------------------*/
 EXPORT uint16
-#ifdef PROTOTYPE
 atype2tag(ann_type atype)
-#else
-atype2tag(ann_type)
-ann_type atype;         /* annotation type */
-#endif
 {   /* Switch on annotation type "atype" */
 #ifdef LATER
   CONSTR(FUNC, "atype2tag");    /* for HERROR */
@@ -2573,12 +2568,7 @@ ann_type atype;         /* annotation type */
      returns type correspondign to annotatin TAG
 --------------------------------------------------------------------*/
 EXPORT ann_type
-#ifdef PROTOTYPE
 tag2atype(uint16 atag)
-#else
-tag2atype(atag)
-uint16 atag;         /* annotation tag */
-#endif
 {   /* Switch on annotation tag */
 #ifdef LATER
   CONSTR(FUNC, "tag2atype");    /* for HERROR */
