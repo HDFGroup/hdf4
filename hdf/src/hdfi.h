@@ -90,6 +90,7 @@ Please check your Makefile.
 #define GOT_MACHINE
 
 #   define BSD
+#include <limits.h>
 #include <string.h>
 #ifndef __GNUC__
 #include <memory.h>
