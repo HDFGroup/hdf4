@@ -48,7 +48,7 @@ host_libs="$host_libs hdf/fmpool"
 configdirs=`echo ${host_libs}`
 
 #Directories we want configure to generate Makefiles from Makefile.in
-subdirs="hdf man hdf/src hdf/test hdf/util hdf/pablo mfhdf mfhdf/xdr mfhdf/port mfhdf/libsrc mfhdf/dumper mfhdf/nctest mfhdf/ncgen mfhdf/ncdump mfhdf/fortran mfhdf/doc"
+subdirs="hdf man hdf/src hdf/zlib hdf/test hdf/util hdf/pablo mfhdf mfhdf/xdr mfhdf/port mfhdf/libsrc mfhdf/dumper mfhdf/nctest mfhdf/ncgen mfhdf/ncdump mfhdf/fortran mfhdf/doc"
 
 ################################################################################
 
