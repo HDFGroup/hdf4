@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/05/29 22:30:15  mfolk
-Added some casts to avoid warnings when compiling on Convex.
+Revision 1.4  1992/05/31 19:08:09  mfolk
+Added uint8 * cast in line 91 for Convex.
 
+ * Revision 1.3  1992/05/29  22:30:15  mfolk
+ * Added some casts to avoid warnings when compiling on Convex.
+ *
  * Revision 1.2  1992/05/14  15:25:31  chouck
  * Fixed calls to Hinquire()
  *
@@ -88,7 +91,7 @@ int main(argc, argv)
     puts("putting data element 1000 2");
     aid1 = HLcreate(fid, 1000, 2, 128, 16);
     printf("aid1 from HLcreate is %d\n", aid1);
-    ret = Hwrite(aid1, strlen("element 1000 2")+1, "element 1000 2");
+    ret = Hwrite(aid1, strlen("element 1000 2")+1, (uint8 *) "element 1000 2");
     printf("ret from Hwrite is %d\n", ret);
     ret = Hendaccess(aid1);
     printf("ret from Hendaccess is %d\n", ret);
