@@ -47,9 +47,9 @@
 /* Library version numbers */
 
 #define LIBVER_MAJOR    4
-#define LIBVER_MINOR    1 
-#define LIBVER_RELEASE  5 
-#define LIBVER_STRING   "Post NCSA HDF Version 4.1 Release 5, November 5, 2001"
+#define LIBVER_MINOR    2 
+#define LIBVER_RELEASE  0 
+#define LIBVER_STRING   "NCSA HDF Version 4.2 Release 0 Beta, September 20, 2003"
 #define LIBVSTR_LEN    80   /* length of version string  */
 #define LIBVER_LEN  92      /* 4+4+4+80 = 92 */
 /* end of version tags */
