@@ -154,7 +154,6 @@ extern uint16 procTrace;
 #define ID_Hdeldd		603
 #define ID_Hdupdd		604
 #define ID_Hendaccess		605
-/* Hfidinquire does not exist! */
 #define ID_Hfind		606
 #define ID_Hgetelement		607
 #define ID_Hgetfileversion	608
@@ -188,6 +187,7 @@ extern uint16 procTrace;
 #define ID_Hsetaccesstype       636
 #define ID_Hexist               637
 #define ID_Hsetlength           638
+#define ID_Hfidinquire          639
 
 /* HDFclose and HDFopen are implemented as macros. */
 

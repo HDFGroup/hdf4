@@ -41,7 +41,7 @@ C IDs for annotation procedures
       integer ID_DFANaddfds,ID_DFANaddfid,ID_DFANgetdesc,ID_DFANgetdesclen
       integer ID_DFANgetfds,ID_DFANgetfdslen,ID_DFANgetfid,ID_DFANgetfidlen
       integer ID_DFANgetlabel,ID_DFANgetlablen,ID_DFANlablist,ID_DFANlastref
-      integer ID_DFANputdesc,ID_DFANputlabel
+      integer ID_DFANputdesc,ID_DFANputlabel, ID_DFANclear
 
       integer ID_DFPaddpal,ID_DFPgetpal,ID_DFPlastref,ID_DFPnpals
       integer ID_DFPputpal,ID_DFPreadref,ID_DFPrestart,ID_DFPwriteref
@@ -71,7 +71,10 @@ C IDs for annotation procedures
       integer ID_Hinquire,ID_Hishdf,ID_HLcreate,ID_Hlength,ID_Hnewref
       integer ID_Hnextread,ID_Hnumber,ID_Hoffset,ID_Hopen,ID_Hputelement
       integer ID_Hread,ID_Hseek,ID_Hstartread,ID_Hstartwrite,ID_Hsync
-      integer ID_Htrunc,ID_Hwrite,ID_HXcreate
+      integer ID_Htrunc,ID_Hwrite,ID_HXcreate, ID_HXsetcreatedir,
+      integer ID_HXsetdir, ID_HLconvert, ID_Hstartaccess, ID_Hisappendable
+      integer ID_Htell, ID_Htagnewref, ID_Hcaceh, ID_Hsetaccesstype
+      integer ID_Hexist, ID_Hsetlength, ID_Hfidinquire
 
       integer ID_HEclear,ID_HEprint,ID_HEpush,ID_HEreport,ID_HEstring
 
@@ -101,6 +104,19 @@ C IDs for annotation procedures
       integer ID_VSseek,ID_VSsetclass,ID_VSsetfields,ID_VSsetinterlace
       integer ID_VSsetname,ID_VSsizeof,ID_VSwrite
 
+      integer ID_ANstart, ID_ANfileinfo, ID_ANend, ID_ANcreate, ID_ANcreatef
+      integer ID_ANselect, ID_ANnumann, ID_ANannlist, ID_ANannlen
+      integer ID_ANreadann, ID_ANwriteann, ID_ANendaccess
+
+      integer ID_GRstart, ID_GRfileinfo, ID_GRend, ID_GRcreate, ID_GRselect
+      integer ID_GRnametoindex, ID_GRgetiminfo, ID_GRwriteimage
+      integer ID_GRreadimage, ID_GRendaccess, ID_GRgetdimid
+      integer ID_GRsetdimname, ID_GRdiminfo, ID_GRidtoref, ID_GRreftoindex
+      integer ID_GRreqlutil, ID_GRreqimageil, ID_GRgetlutid
+      integer ID_GRgetlutinfo, ID_GRwritelut, ID_GRreadlut
+      integer ID_GRsetexternalfile, ID_GRsetaccesstype, ID_GRsetcompress
+      integer ID_GRsetattr, ID_GRattrinfo, ID_GRgetattr, ID_GRfindattr
+
       parameter(ID_DFANaddfds           = 101,
      *          ID_DFANaddfid           = 102,
      *          ID_DFANgetdesc          = 103,
@@ -114,7 +130,8 @@ C IDs for annotation procedures
      *          ID_DFANlablist          = 111, 
      *          ID_DFANlastref          = 112,
      *          ID_DFANputdesc          = 113,
-     *          ID_DFANputlabel         = 114)
+     *          ID_DFANputlabel         = 114,
+     *          ID_DFANclear            = 115)
 
       parameter(ID_DFPaddpal            = 201,
      *          ID_DFPgetpal            = 202,
@@ -214,7 +231,19 @@ C IDs for annotation procedures
      *          ID_Hsync                = 624,
      *          ID_Htrunc               = 625,
      *          ID_Hwrite               = 626,
-     *          ID_HXcreate             = 627)
+     *          ID_HXcreate             = 627,
+     *          ID_HXsetcreatedir       = 628,
+     *          ID_HXsetdir             = 629,
+     *          ID_HLconvert            = 630,
+     *          ID_Hstartaccess         = 631,
+     *          ID_Hisappendable        = 632,
+     *          ID_Htell                = 633,
+     *          ID_Htagnewref           = 634,
+     *          ID_Hcache               = 635,
+     *          ID_Hsetaccesstype       = 636,
+     *          ID_Hexist               = 637,
+     *          ID_Hsetlength           = 638,
+     *          ID_Hfindinquire         = 639)
 
       parameter(ID_HEclear              = 701,
      *          ID_HEprint              = 702,
@@ -277,7 +306,11 @@ C IDs for annotation procedures
      *          ID_Vlone                = 1012,
      *          ID_Vntagrefs            = 1013,
      *          ID_Vsetclass            = 1014,
-     *          ID_Vsetname             = 1015)
+     *          ID_Vsetname             = 1015,
+     *          ID_Vinitialize          = 1016,
+     *          ID_Vfinish              = 1017,
+     *          ID_Vfind                = 1018,
+     *          ID_Vfindclass           = 1019)
 
       parameter(ID_VHmakegroup          = 1101,
      *          ID_VHstoredata          = 1102,
@@ -303,4 +336,49 @@ C IDs for annotation procedures
      *          ID_VSsetinterlace       = 1218,
      *          ID_VSsetname            = 1219,
      *          ID_VSsizeof             = 1220,
-     *          ID_VSwrite              = 1221)
+     *          ID_VSwrite              = 1221,
+     *          ID_VSappendable         = 1222,
+     *          ID_VSdelete             = 1223,
+     *          ID_VSfindclass          = 1224)
+
+      parameter(ID_ANstart              = 1300,
+     *          ID_ANfileinfo           = 1301,
+     *          ID_ANend                = 1302,
+     *          ID_ANcreate             = 1303,
+     *          ID_ANcreatef            = 1304,
+     *          ID_ANselect             = 1305,
+     *          ID_ANnumann             = 1306,
+     *          ID_ANannlist            = 1307,
+     *          ID_ANannlen             = 1308,
+     *          ID_ANreadann            = 1309,
+     *          ID_ANwriteann           = 1310,
+     *          ID_ANendaccess          = 1311)
+
+      parameter(ID_GRstart              = 1400,
+     *          ID_GRfileinfo           = 1401,
+     *          ID_GRend                = 1402,
+     *          ID_GRcreate             = 1403,
+     *          ID_GRselect             = 1404,
+     *          ID_GRnametoindex        = 1405,
+     *          ID_GRgetiminfo          = 1406,
+     *          ID_GRwriteimage         = 1407,
+     *          ID_GRreadimage          = 1408,
+     *          ID_GRendaccess          = 1409,
+     *          ID_GRgetdimid           = 1410,
+     *          ID_GRsetdimname         = 1411,
+     *          ID_GRdiminfo            = 1412,
+     *          ID_GRidtoref            = 1413,
+     *          ID_GRreftoindex         = 1414,
+     *          ID_GRreqlutil           = 1415,
+     *          ID_GRreqimageil         = 1416,
+     *          ID_GRgetlutid           = 1417,
+     *          ID_GRgetlutinfo         = 1418,
+     *          ID_GRwritelut           = 1419,
+     *          ID_GRreadlut            = 1420,
+     *          ID_GRsetexternalfile    = 1421,
+     *          ID_GRsetaccesstype      = 1422,
+     *          ID_GRsetcompress        = 1423,
+     *          ID_GRsetattr            = 1424,
+     *          ID_GRattrinfo           = 1425,
+     *          ID_GRgetattr            = 1426,
+     *          ID_GRfindattr           = 1427)
