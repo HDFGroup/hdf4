@@ -44,6 +44,8 @@ HDP COMMANDS
      hdp dumprig <filename list>
          displays data of RIGs in the listed files.
 
+     hdp dumpgr <filename list>
+         displays data of general RIGs in the listed files.
 
 HDP COMMAND OPTIONS
 
@@ -208,7 +210,34 @@ HDP COMMAND OPTIONS
           Output options
 
              -o <fn>    specify fn as output file name
-           * -b         binary file
+             -b         binary file
              -t         text ascii file (default)
 
+    hdp dumpgr [filter ops] [contents ops] [output ops] <filename list>
+    --------------------------------------------------------------------
+         Filter options
+              specify which general RIGs to dump.
 
+             -i <index>   dump general RIG's with indices specified in 
+                          <index>; indices correspond to the order of 
+                          the RIG in the file
+             -r <ref>     dump general RIG's with reference numbers 
+                          specified in <ref>
+             -n <name>    dump general RIG's with names specified in <name>
+             -a           dump all general RIG's in the file. (default)
+
+          Content options
+
+             -v    display everything including all annotations (default)
+             -h    header only, no annotation for elements or data
+             -d    data only, no tag/ref
+
+          Output options
+
+             -o <fn>    specify fn as output file name
+             -b         binary file
+             -t         ascii text file (default)
+
+          Note: any combination of an option from each of the three categories
+                can be used; but no more than one option from one category is
+                allowed.
