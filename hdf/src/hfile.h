@@ -66,9 +66,14 @@ typedef FILE *hdf_file_t;
 #   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
                  fopen((p), "r+", "mbc=64") : fopen((p), "r", "mbc=64"))
 #else  /*  !VMS  */
+#ifdef PC386
+#   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
+                        fopen((p), "rb+") : fopen((p), "rb"))
+#else /* !PC386 */
 #   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
                         fopen((p), "r+") : fopen((p), "r"))
-#endif
+#endif /* PC386 */
+#endif /* VMS */
 #ifdef PC386
 #   define HI_CREATE(p)        (fopen((p), "wb+"))
 #else /* PC386 */
