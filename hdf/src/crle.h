@@ -4,8 +4,8 @@
 /*-----------------------------------------------------------------------------
  * File:    crle.h
  * Purpose: Header file for run-length encoding information.
- * Dependencies: should be included after hdf.h
- * Invokes:
+ * Dependencies: should only be included from hcompi.h
+ * Invokes: none
  * Contents: Structures & definitions for run-length encoding.  This header
  *              should only be included in hcomp.c and crle.c.
  * Structure definitions:
@@ -70,10 +70,10 @@ typedef struct {
     intn buf_pos;           /* offset into the buffer */
     intn last_byte,         /* the last byte stored in the buffer */
         second_byte;        /* the second to last byte stored in the buffer */
-    enum {INIT,             /* initial state, need to read a byte to determine
+    enum {RLE_INIT,         /* initial state, need to read a byte to determine
                                 next state */
-        RUN,                /* buffer up to the current position is a run */
-        MIX}                /* buffer up to the current position is a mix */
+        RLE_RUN,            /* buffer up to the current position is a run */
+        RLE_MIX}            /* buffer up to the current position is a mix */
 	    rle_state;          /* state of the buffer storage */
  } comp_coder_rle_info_t;
 
