@@ -177,5 +177,8 @@
 #define DFUfptoimage    _DFUfptoimage
 #define Hclose          _Hclose
 #define Hopen           _Hopen
-
+#define Hnumber         _Hnumber
+#define Vdelete         _Vdelete
+#define Vnrefs          _Vnrefs
+#define Vfind           _Vfind
 #endif /* DFIVMS_H */

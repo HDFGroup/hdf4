@@ -23,7 +23,11 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "he.h"
 #ifdef VMS
-#   include descrip
+#   include <descrip.h>
+#   include <processes.h>
+#   include <unixlib.h>
+#   include <tpudef.h>
+#   include <tpu$routines>
 #endif
 
 /* get the prototype for the wait() func. */
@@ -156,10 +160,11 @@ annotate(char *editor, int ann)
         /* this is the child */
       {
           intn        ret_status;
+ 
           $DESCRIPTOR(input_file, file);
           $DESCRIPTOR(output_file, file);
           ret_status = TPU$EDIT(&input_file, &output_file);
-          fprintf("TPU$EDIT return status: %d. \n", ret_status);
+          fprintf(stderr, "TPU$EDIT return status: %d. \n", ret_status);
           exit(0);
       }
 #endif

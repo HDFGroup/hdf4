@@ -13,6 +13,7 @@
 ! $Id$
 ! $! Add the Fortran stubs to the HDF library
 ! $!
+$ ccc := cc/noopt/debug/define=VMS
 $ type sys$input
 	Compiling Fortran stubs
 $ ffiles="df24ff.f, dfff.f, dfpff.f, dfr8ff.f, dfanff.f, dfsdff.f, "+-
@@ -20,11 +21,11 @@ $ ffiles="df24ff.f, dfff.f, dfpff.f, dfr8ff.f, dfanff.f, dfsdff.f, "+-
 $ fobj="dfff, dfsdff, dfr8ff, df24ff, dfanff, dfpff, vgff, hfileff, "+-
        "dfufp2if"
 $ cobj="dff,  dfsdf,  dfr8f,  df24f,  dfanf,  dfpf,  vgf,  hfilef, "+-
-       "dfutilf, herrf"
+       "dfutilf, herrf, mfgrf, mfanf"
 $ fortran 'ffiles
-$ cc/define=VMS 'cobj
-$ library/insert df 'cobj
-$ library/insert df 'fobj
+$ ccc 'cobj
+$ library/replace df 'cobj
+$ library/replace df 'fobj
 $ type sys$input
 	Added Fortran stubs to HDF library
 $!

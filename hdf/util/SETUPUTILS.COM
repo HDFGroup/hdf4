@@ -16,10 +16,10 @@
 !$ ! set up utilities
 !$ ! change below to the hdf bin directory
 !$ ! 
-$ define/nolog hdf$bin    mrlxp4$dka300:[folk.hdf33.hdf.bin]
+$ define/nolog hdf$bin    mrlxp4$dka300:[folk.ovms.hdf.util]
 $ !
 $ hdfls     :== $ hdf$bin:hdfls
-$ hdfrseq   :== $ hdf$bin:hdfrseq
+!$ hdfrseq   :== $ hdf$bin:hdfrseq
 $ r8tohdf   :== $ hdf$bin:r8tohdf
 $ hdfcomp   :== $ hdf$bin:hdfcomp
 $ hdftor8   :== $ hdf$bin:hdftor8
@@ -33,4 +33,5 @@ $ vmake     :== $ hdf$bin:vmake
 $ hdfed     :== $ hdf$bin:hdfed
 $ hdf2jpeg  :== $ hdf$bin:hdf2jpeg
 $ jpeg2hdf  :== $ hdf$bin:jpeg2hdf
+$ fp2hdf    :== $ hdf$bin:fp2hdf
 

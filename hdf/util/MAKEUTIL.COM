@@ -20,29 +20,32 @@
 $ !
 $ type sys$input
 	Making utilities
-$ utils="hdfls,r8tohdf,hdfcomp,hdftor8,hdftopal,"+-
-"paltohdf,hdf24to8,hdfpack,ristosds,vshow,vmake,hdf2jpeg,"+-
-"jpeg2hdf,he_main,he_cntrl,he_disp,he_file"
+$ hdflib="[-.src]df/lib,[-.jpeg]libjpeg/lib,[-.zlib]libz/lib"
+$ utils="hdfls,r8tohdf,hdfcomp,hdftor8,hdftopal,hdf8to24,"+-
+"jpeg2hdf,fp2hdf,he_main,he_cntrl,he_disp,he_file,"  +-
+"paltohdf,hdf24to8,hdfpack,ristosds,vshow,vmake,hdf2jpeg"
+! "jpeg2hdf,fp2hdf,he_main,he_cntrl,he_disp,he_file"
 !$ define/nolog hdf$lib MRLXP4$DKA300:[folk.hdf33.hdf.lib]df.olb
-!$ define/nolog  sys$clib sys$library:vaxcrtl
-$ cc/define=VMS/include=[-.include] 'utils
-$ link/exe=hdfed he_main,he_cntrl,he_disp,he_file,hdf$lib/lib, -
-   sys$clib/lib, MRLXP4$DKA300:[folk.hdf33.hdf.util]helink.opt/option
-$ link hdfls,     hdf$lib/lib, sys$clib/lib
-$ link hdfrseq,   hdf$lib/lib, sys$clib/lib
-$ link r8tohdf,   hdf$lib/lib, sys$clib/lib
-$ link hdfcomp,   hdf$lib/lib, sys$clib/lib
-$ link hdftor8,   hdf$lib/lib, sys$clib/lib
-$ link hdftopal,  hdf$lib/lib, sys$clib/lib
-$ link paltohdf,  hdf$lib/lib, sys$clib/lib
-$ link hdf24to8,  hdf$lib/lib, sys$clib/lib
-$ link hdfpack,   hdf$lib/lib, sys$clib/lib
-$ link ristosds,  hdf$lib/lib, sys$clib/lib
-$ link vshow,     hdf$lib/lib, sys$clib/lib
-$ link vmake,     hdf$lib/lib, sys$clib/lib
-$ link hdf2jpeg,  hdf$lib/lib, sys$clib/lib
-$ link jpeg2hdf,  hdf$lib/lib, sys$clib/lib
-
+$ define/nolog  sys$clib sys$library:vaxcrtl
+$ cc/define=VMS/include=([-.src],[-.jpeg],[-.zlib]) 'utils
+$ link/exe=hdfed he_main,he_cntrl,he_disp,he_file,'hdflib, -
+   sys$clib/lib, MRLXP4$DKA300:[folk.ovms.hdf.util]helink.opt/option
+$ link hdfls,     'hdflib, sys$clib/lib
+!$ link hdfrseq,   'hdflib, sys$clib/lib
+$ link r8tohdf,   'hdflib, sys$clib/lib
+$ link hdfcomp,   'hdflib, sys$clib/lib
+$ link hdftor8,   'hdflib, sys$clib/lib
+$ link hdftopal,  'hdflib, sys$clib/lib
+$ link paltohdf,  'hdflib, sys$clib/lib
+$ link hdf24to8,  'hdflib, sys$clib/lib
+$ link hdfpack,   'hdflib, sys$clib/lib
+$ link ristosds,  'hdflib, sys$clib/lib
+$ link vshow,     'hdflib, sys$clib/lib
+$ link vmake,     'hdflib, sys$clib/lib
+$ link hdf2jpeg,  'hdflib, sys$clib/lib
+$ link jpeg2hdf,  'hdflib, sys$clib/lib
+$ link hdf24to8,  'hdflib, sys$clib/lib
+$ link fp2hdf,    'hdflib, sys$clib/lib
 $ type sys$input
 	Made all utils
 ****	Please edit setuputils.com and run the script to set up executables

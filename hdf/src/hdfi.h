@@ -458,8 +458,8 @@ Please check your Makefile.
 #include <limits.h>
 #include <sys/stat.h>
 #define DF_MT              DFMT_VAX
-typedef int                VOID;
-typedef char               *VOIDP;
+typedef void               VOID;
+typedef void               *VOIDP;
 typedef char               *_fcd;
 typedef char               char8;
 typedef unsigned char      uchar8;
@@ -467,8 +467,13 @@ typedef char               int8;
 typedef unsigned char      uint8;
 typedef short int          int16;
 typedef unsigned short int uint16;
+#ifdef __alpha
+typedef int                int32;
+typedef unsigned int       uint32;
+#else
 typedef long int           int32;
 typedef unsigned long int  uint32;
+#endif
 typedef int                intn;
 typedef unsigned int       uintn;
 typedef float              float32;
@@ -482,6 +487,7 @@ typedef int                intf;     /* size of INTEGERs in Fortran compiler */
   since the VMS link command is case-insensitive
 */
 #define FILELIB UNIXBUFIO
+#define DF_CAPFNAMES            /* fortran names are in all caps */
 #include "dfivms.h"
 
 
@@ -918,7 +924,7 @@ typedef double            float64;
 
 #endif /* MOTOROLA */
 
-#if defined DEC_ALPHA || defined __alpha
+#if defined DEC_ALPHA || (defined __alpha && defined __unix)
 
 #ifndef DEC_ALPHA
 #define DEC_ALPHA
