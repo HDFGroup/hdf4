@@ -659,7 +659,7 @@ NC_xdr_cdf(xdrs, handlep)
 	NC **handlep;
 {
 
-	u_long	magic = NCMAGIC ;
+	u_long	magic;
 
 	if( xdrs->x_op == XDR_FREE)
       {
@@ -669,7 +669,7 @@ NC_xdr_cdf(xdrs, handlep)
 	
 	if( xdr_getpos(xdrs) != 0)
       {
-          if( !xdr_setpos(xdrs, 0L) )
+          if( !xdr_setpos(xdrs, 0) )
             {
                 nc_serror("Can't set position to begin") ;
                 return(FALSE) ;
@@ -3562,7 +3562,7 @@ NC_var *vp ;
         alen /= 4 ;
 #if defined _CRAYMPP
         xdr_NC_fnct = xdr_short;
-#elif defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64)
+#elif defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64) || defined AIX5L64
         xdr_NC_fnct = xdr_int ;
 #else
         xdr_NC_fnct = xdr_long ;
