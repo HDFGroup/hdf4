@@ -361,7 +361,7 @@ PRIVATE intn hdf_read_ndgs(handle)
                           coordbuf[len] = '\0';
                           if (coordbuf[0] != '\0')  {
                               attrs[current_attr] =
-                                  (NC_attr *) NC_new_attr("cordsys",
+                                  (NC_attr *) NC_new_attr(_CoordSys,
                                       NC_CHAR, HDstrlen(coordbuf), coordbuf);
                               attrs[current_attr++]->HDFtype = DFNT_CHAR;
                           }
@@ -393,28 +393,28 @@ PRIVATE intn hdf_read_ndgs(handle)
                                    DFNT_FLOAT64, 4, DFACC_READ, 0, 0);
                         
                         attrs[current_attr] = 
-                            (NC_attr *) NC_new_attr("scale_factor", 
+                            (NC_attr *) NC_new_attr(_ScaleFactor, 
                                                     NC_DOUBLE, 
                                                     1, 
                                                     (Void *) &(tBuf[0]));
                         attrs[current_attr++]->HDFtype = DFNT_FLOAT64; 
 
                         attrs[current_attr] = 
-                            (NC_attr *) NC_new_attr("scale_factor_err", 
+                            (NC_attr *) NC_new_attr(_ScaleFactorErr, 
                                                     NC_DOUBLE, 
                                                     1, 
                                                     (Void *) &(tBuf[8]));    
                         attrs[current_attr++]->HDFtype = DFNT_FLOAT64;
  
                         attrs[current_attr] = 
-                            (NC_attr *) NC_new_attr("add_offset", 
+                            (NC_attr *) NC_new_attr(_AddOffset, 
                                                     NC_DOUBLE, 
                                                     1, 
                                                     (Void *) &(tBuf[16]));
                         attrs[current_attr++]->HDFtype = DFNT_FLOAT64;
 
                         attrs[current_attr] = 
-                            (NC_attr *) NC_new_attr("add_offset_err", 
+                            (NC_attr *) NC_new_attr(_AddOffsetErr, 
                                                     NC_DOUBLE, 
                                                     1, 
                                                     (Void *) &(tBuf[24]));
@@ -426,7 +426,7 @@ PRIVATE intn hdf_read_ndgs(handle)
                                    DFNT_INT32, 1, DFACC_READ, 0,0);
 
                         attrs[current_attr] =
-                            (NC_attr *) NC_new_attr("calibrated_nt",
+                            (NC_attr *) NC_new_attr(_CalibratedNt,
                                                     NC_LONG,
                                                     1,
                                                     (Void *) &(tBuf[0]));
@@ -440,28 +440,28 @@ PRIVATE intn hdf_read_ndgs(handle)
                                    DFNT_FLOAT32, 4, DFACC_READ, 0, 0);
                         
                         attrs[current_attr] = 
-                            (NC_attr *) NC_new_attr("scale_factor", 
+                            (NC_attr *) NC_new_attr(_ScaleFactor, 
                                                     NC_FLOAT, 
                                                     1, 
                                                     (Void *) &(tBuf[0]));
                         attrs[current_attr++]->HDFtype = DFNT_FLOAT32;
  
                         attrs[current_attr] = 
-                            (NC_attr *) NC_new_attr("scale_factor_err", 
+                            (NC_attr *) NC_new_attr(_ScaleFactorErr, 
                                                     NC_FLOAT, 
                                                     1, 
                                                     (Void *) &(tBuf[4]));    
                         attrs[current_attr++]->HDFtype = DFNT_FLOAT32;
 
                         attrs[current_attr] = 
-                            (NC_attr *) NC_new_attr("add_offset", 
+                            (NC_attr *) NC_new_attr(_AddOffset, 
                                                     NC_FLOAT, 
                                                     1, 
                                                     (Void *) &(tBuf[8]));
                         attrs[current_attr++]->HDFtype = DFNT_FLOAT32;
 
                         attrs[current_attr] = 
-                            (NC_attr *) NC_new_attr("add_offset_err", 
+                            (NC_attr *) NC_new_attr(_AddOffsetErr, 
                                                     NC_FLOAT, 
                                                     1, 
                                                     (Void *) &(tBuf[12]));
@@ -473,7 +473,7 @@ PRIVATE intn hdf_read_ndgs(handle)
                                    DFNT_INT16, 1, DFACC_READ, 0,0);
 
                         attrs[current_attr] =
-                            (NC_attr *) NC_new_attr("calibrated_nt",
+                            (NC_attr *) NC_new_attr(_CalibratedNt,
                                                     NC_SHORT,
                                                     1,
                                                     (Void *) &(tBuf[0]));
@@ -492,14 +492,14 @@ PRIVATE intn hdf_read_ndgs(handle)
                                HDFtype, 2, DFACC_READ, 0, 0);
                     
                     attrs[current_attr] = 
-                        (NC_attr *) NC_new_attr("valid_max", 
+                        (NC_attr *) NC_new_attr(_ValidMax, 
                                                 type, 
                                                 1, 
                                                 (Void *) tBuf);
                     attrs[current_attr++]->HDFtype = HDFtype;
                     
                     attrs[current_attr] = 
-                        (NC_attr *) NC_new_attr("valid_min", 
+                        (NC_attr *) NC_new_attr(_ValidMin, 
                                                 type, 
                                                 1, 
                                                 (Void *) &(tBuf[DFKNTsize(HDFtype)]));
@@ -727,7 +727,7 @@ PRIVATE intn hdf_read_ndgs(handle)
                     dimattrcnt = 0;
                     if (labelvalue && HDstrlen((char *)labelvalue)>0) {
                         dimattrs[dimattrcnt] =
-                           (NC_attr *) NC_new_attr("long_name", NC_CHAR,
+                           (NC_attr *) NC_new_attr(_LongName, NC_CHAR,
                                                     HDstrlen((char *)labelvalue),
                                                       (Void *) labelvalue);
                         dimattrs[dimattrcnt++]->HDFtype = DFNT_CHAR;
@@ -736,7 +736,7 @@ PRIVATE intn hdf_read_ndgs(handle)
                     /* Units => 'units' */
                     if(unitvalue && HDstrlen((char *)unitvalue)>0) {
                          dimattrs[dimattrcnt] =
-                             (NC_attr *) NC_new_attr("units", NC_CHAR,
+                             (NC_attr *) NC_new_attr(_Units, NC_CHAR,
                                            HDstrlen((char *)unitvalue),
                                            (Void *) unitvalue);
                          dimattrs[dimattrcnt++]->HDFtype = DFNT_CHAR;
@@ -745,7 +745,7 @@ PRIVATE intn hdf_read_ndgs(handle)
                     /* Fomrat => 'format' */
                     if(formatvalue && HDstrlen((char *)formatvalue)>0) {
                          dimattrs[dimattrcnt] =
-                             (NC_attr *) NC_new_attr("format", NC_CHAR,
+                             (NC_attr *) NC_new_attr(_Format, NC_CHAR,
                                            HDstrlen((char *)formatvalue),
                                            (Void *) formatvalue);
                          dimattrs[dimattrcnt++]->HDFtype = DFNT_CHAR;
@@ -839,7 +839,7 @@ PRIVATE intn hdf_read_ndgs(handle)
                         if((status != FAIL) && (tBuf[0] != '\0')){
                             
                             attrs[current_attr] = 
-                                (NC_attr *) NC_new_attr("remarks", 
+                                (NC_attr *) NC_new_attr(_Remarks, 
                                                         NC_CHAR, 
                                                         len, 
                                                         tBuf);
@@ -863,7 +863,7 @@ PRIVATE intn hdf_read_ndgs(handle)
                 if((status != FAIL) && (label[0] != '\0')){
                     
                     attrs[current_attr] = 
-                        (NC_attr *) NC_new_attr("anno_label", 
+                        (NC_attr *) NC_new_attr(_AnnoLabel, 
                                                 NC_CHAR, 
                                                 HDstrlen(label), 
                                                 label);
@@ -876,7 +876,7 @@ PRIVATE intn hdf_read_ndgs(handle)
              */
             if(labelbuf && (labelbuf[0] != '\0')) {
                 attrs[current_attr] =
-                    (NC_attr *) NC_new_attr("long_name",
+                    (NC_attr *) NC_new_attr(_LongName,
                                             NC_CHAR,
                                             HDstrlen((char *)labelbuf),
                                             (Void *) labelbuf);
@@ -888,7 +888,7 @@ PRIVATE intn hdf_read_ndgs(handle)
              */
             if(unitbuf && (unitbuf[0] != '\0')) {
                 attrs[current_attr] = 
-                    (NC_attr *) NC_new_attr("units", 
+                    (NC_attr *) NC_new_attr(_Units, 
                                             NC_CHAR, 
                                             HDstrlen((char *)unitbuf), 
                                             (Void *) unitbuf);
@@ -903,7 +903,7 @@ PRIVATE intn hdf_read_ndgs(handle)
              */
             if(formatbuf && (formatbuf[0] != '\0')) {
                 attrs[current_attr] =
-                    (NC_attr *) NC_new_attr("format",
+                    (NC_attr *) NC_new_attr(_Format,
                                             NC_CHAR,
                                             HDstrlen((char *)formatbuf),
                                             (Void *) formatbuf);

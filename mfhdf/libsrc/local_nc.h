@@ -70,6 +70,7 @@
 #define DATA_TAG  DFTAG_SD
 #define BOGUS_TAG ((uint16) 721)
 
+#if 0
 #define ATTRIBUTE         "Attr0.0"
 #define VARIABLE          "Var0.0"
 #define DIMENSION         "Dim0.0"
@@ -82,6 +83,8 @@
 */
 #define DATA0             "Data0.0"
 #define ATTR_FIELD_NAME   "VALUES"
+#endif
+
 #define DIMVAL_VERSION00  0  /* <dimsize> fake values */
 #define DIMVAL_VERSION01  1  /* 1 elt with value of <dimsize>  */
 #define BLOCK_MULT  64    /* multiplier for bytes in linked blocks */
