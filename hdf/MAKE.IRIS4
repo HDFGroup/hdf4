@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.8  1993/01/14 17:26:37  georgev
+# Revision 1.9  1993/02/16 20:50:47  chouck
+# Went back to using -ansi
+#
+# Revision 1.8  1993/01/14  17:26:37  georgev
 # Upated headers in Makefiles to reflect HDF3.3.
 #
 # Revision 1.7  1992/08/26  19:22:15  sxu
@@ -84,7 +87,7 @@ MACHINE=IRIS4
 
 # Define your C compiler and flags
 CC= cc
-CFLAGS= -D${MACHINE} -cckr
+CFLAGS= -D${MACHINE} -ansi
 
 # Define your FORTRAN compiler
 FC= f77
