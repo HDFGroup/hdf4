@@ -422,7 +422,7 @@ VFnfields(int32 vkey)
     vsinstance_t *w;
     VDATA      *vs;
     int32      ret_value = SUCCEED;
-    CONSTR(FUNC, "VFnfeilds");
+    CONSTR(FUNC, "VFnfields");
 
 #ifdef HAVE_PABLO
     TRACE_ON(VF_mask, ID_VFnfields);
@@ -607,7 +607,7 @@ VFfieldesize(int32 vkey, int32 index)
     vsinstance_t *w;
     VDATA      *vs;
     int32      ret_value = SUCCEED;
-    CONSTR(FUNC, "VFfieldisize");
+    CONSTR(FUNC, "VFfieldesize");
 
 #ifdef HAVE_PABLO
     TRACE_ON(VF_mask, ID_VFfieldesize);
