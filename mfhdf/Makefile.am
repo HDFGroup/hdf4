@@ -1,1 +1,1 @@
-SUBDIRS=port fortran libsrc ncdump ncgen dumper hdfimport hdiff hzip pablo nctest
+SUBDIRS=port fortran libsrc ncdump ncgen dumper hdfimport hdiff hrepack pablo nctest
