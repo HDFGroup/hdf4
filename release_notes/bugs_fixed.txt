@@ -28,7 +28,7 @@ HDF4.1r5
    FAIL instead of causing segmentation fault. (bug #554)
 
 8. Giving a NULL to the argument name in several name setting routines
-   now returns FAIL instead of causing segnmentation fault. (bug #514)
+   now returns FAIL instead of causing segmentation fault. (bug #514)
 
 9. Two routines were added to get compression information for the SD and
    GR interfaces, including chunked elements: SDgetcompress/sfgcompress 
