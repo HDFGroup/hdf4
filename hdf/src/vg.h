@@ -80,11 +80,14 @@ typedef struct dyn_write_struct
       intn        n;        /* S actual # fields in element */
       uint16      ivsize;   /* S size of element as stored in vdata */
       char        **name;   /* S name of each field */
-      int16       *type;    /* S field type */
-      uint16      *off;     /* S field offset in element in vdata */
-      uint16      *isize;   /* S internal (HDF) size [incl order] */
-      uint16      *order;   /* S order of field */
-      uint16      *esize;   /*  external (local machine) size [incl order] */
+#ifndef OLD_WAY
+      uint16      *bptr;    /* Pointer to hold the beginning of the buffer */
+#endif /* OLD_WAY */
+      int16       *type;    /* S field type (into bptr buffer) */
+      uint16      *off;     /* S field offset in element in vdata (into bptr buffer) */
+      uint16      *isize;   /* S internal (HDF) size [incl order] (into bptr buffer) */
+      uint16      *order;   /* S order of field (into bptr buffer) */
+      uint16      *esize;   /*  external (local machine) size [incl order] (into bptr buffer) */
   }
 DYN_VWRITELIST;
 
@@ -132,8 +135,9 @@ struct vgroup_desc
       uint32      flags;        /* indicate which version of VG should
                                    be written to the file */
       int32       nattrs;       /* number of attributes */
-      vg_attr_t  *alist;     /* index of attributes */
+      vg_attr_t  *alist;        /* index of attributes */
       int16       version, more;    /* version and "more" field */
+      struct vgroup_desc *next; /* pointer to next node (for free list only) */
   };
 /* VGROUP */
 
@@ -170,6 +174,7 @@ struct vdata_desc
       int16       version, more;    /* version and "more" field */
       int32       aid;          /* access id - for LINKED blocks */
       struct vs_instance_struct *instance;  /* ptr to the intance struct for this VData */
+      struct vdata_desc *next;  /* pointer to next node (for free list only) */
   };                            /* VDATA */
 
 /* --------------  H D F    V S E T   tags  ---------------------------- */
@@ -215,6 +220,7 @@ typedef struct vg_instance_struct
       intn        nattach;      /* # of current attachs to this vgroup */
       int32       nentries;     /* # of entries in that vgroup initially */
       VGROUP     *vg;           /* points to the vg when it is attached */
+      struct vg_instance_struct *next;  /* pointer to next node (for free list only) */
   }
 vginstance_t;
 
@@ -228,6 +234,7 @@ typedef struct vs_instance_struct
       intn        nattach;      /* # of current attachs to this vdata */
       int32       nvertices;    /* # of elements in that vdata initially */
       VDATA      *vs;           /* points to the vdata when it is attached */
+      struct vs_instance_struct *next;  /* pointer to next node (for free list only) */
   }
 vsinstance_t;
 
@@ -265,6 +272,24 @@ extern      "C"
 /*
  * Routines public to the VSet layer
  */
+    VDATA *VSIget_vdata_node(void);
+
+    void VSIrelease_vdata_node(VDATA *v);
+
+    extern vsinstance_t *VSIget_vsinstance_node(void);
+
+    extern void VSIrelease_vsinstance_node(vsinstance_t *vs);
+
+    VGROUP *VIget_vgroup_node(void);
+
+    void VIrelease_vgroup_node(VGROUP *v);
+
+    extern vginstance_t *VIget_vginstance_node(void);
+
+    extern void VIrelease_vginstance_node(vginstance_t *vg);
+
+    extern void VPparse_shutdown(void);
+
     extern vfile_t *Get_vfile(HFILEID f);
 
     extern vsinstance_t *vsinst
