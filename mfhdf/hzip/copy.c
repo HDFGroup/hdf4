@@ -1426,11 +1426,10 @@ int copy_vs( int32 infile_id,
  * add VS to group, if needed
  *-------------------------------------------------------------------------
  */ 
- 
  if (vgroup_id_out_par) 
  {
-  /* obtain the reference number of the new VS using its identifier */
-  if ((vdata_ref = VSfind (outfile_id,vdata_name)) == 0) {
+  /* obtain the reference number of the new VS  */
+  if ((vdata_ref=VSQueryref(vdata_out)) == 0) {
    printf( "Failed to get new VS reference in <%s>\n", path);
   }
   
@@ -1987,8 +1986,6 @@ int set_szip(int32 rank, int32 *dim_sizes, int32 dtype, comp_info *c_info)
 
  return 0;
 }
-
-
 
 
 
