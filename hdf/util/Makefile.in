@@ -213,7 +213,7 @@ install-prog: all
 	$(CC) $(ALL_CFLAGS) -c $<
 
 .c: $(HDFLIB)/libdf.a
-	$(CC) $(ALL_CFLAGS) $< -o $@ $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a $(LIBS)
+	$(CC) $(ALL_CFLAGS) $< -o $@ $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a $(LIBSX)
 
 .f: $(HDFLIB)/libdf.a 
 	$(FC) $(FFLAGS) $< $(HDFLIB)/libdf.a -o $@ $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
