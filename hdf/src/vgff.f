@@ -375,7 +375,7 @@ c     related: VSwrite--vswritc--vsfwrit
       integer	function	vsfwrit (vs, buf, nelts, interlace)
 
       integer			vs, nelts, interlace
-      integer			buf(*)	
+      character*(*)		buf(*)	
       integer			vswritc
 
       vsfwrit = vswritc (vs, buf, nelts, interlace)
