@@ -2,12 +2,7 @@ Fortner Software LLC ("Fortner") created the reference implementation for
 Macintosh of the HDF 4.1r3 library, providing C-language bindings to all
 4.1r3 features.
 
-The HDF 4.1r3 for Macintosh library resolves the following previously
-reported Macintosh-related matters (see comments in the source files for
-more details):  improvements on how directory paths are handled, and fixes 
-for memory leaks, #include problems, and other miscellaneous problems.
-
-The Macintosh reference implementation of the 4.1r3 library was implemented
+The Macintosh reference implementation of the HDF 4.1r3 library was implemented
 and tested on a PowerMac Model 7600/120 running MacOS 8.0 using Metrowerks
 CodeWarrior Pro1.  The library has also been run on a PowerMac G3.  
 
