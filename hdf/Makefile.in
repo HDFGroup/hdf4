@@ -84,10 +84,10 @@ HDF_FLAGS       = \
         ARFLAGS="$(ARFLAGS)" \
         RM="$(RM)" \
         RMFLAGS="$(RMFLAGS)" \
-        MACHINE="$(MACHINE)" \
-        HDFLIB="$(HDFLIB)" \
-        HDFINC="$(HDFINC)" \
-	HDFBIN="$(HDFBIN)"	
+        MACHINE="$(MACHINE)" 
+#        HDFLIB="$(HDFLIB)" \
+#        HDFINC="$(HDFINC)" \
+#	HDFBIN="$(HDFBIN)"	
 
 #
 #
