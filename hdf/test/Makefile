@@ -46,15 +46,13 @@ FOBJS = tr8f.o t24f.o tpf.o tanf.o tanfilef.o tsdstrf.o tsdntf.o \
 
 all: testhdf fortest 
 
+nofortran: testhdf
+
 #.c.o: 
 #	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
 #
 .c.o: 
 	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
-
-all: testhdf fortest
-
-nofortran: testhdf
 
 testhdf: $(CTESTS) $(HDFLIB)/libdf.a
 	$(CC) $(CFLAGS) -o testhdf $(CTESTS) $(HDFLIB)/libdf.a
