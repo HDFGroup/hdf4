@@ -1,3 +1,15 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 /* $Id$ */
 
 /*+ hfile.h
@@ -149,10 +161,10 @@ typedef HFILE hdf_file_t;
 
 /* record of each data decsriptor */
 typedef struct dd_t {
-    uint16 tag;      /* Tag number of element */
-    uint16 ref;      /* Reference number of element */
-    int32 length;    /* length of dd */
-    int32 offset;    /* offset to next dd */
+    uint16 tag;       /* Tag number of element */
+    uint16 ref;       /* Reference number of element */
+    int32  length;    /* length of dd */
+    int32  offset;    /* offset to next dd */
 } dd_t;
 
 /* version tags */
@@ -160,14 +172,14 @@ typedef struct version_t {
     uint32 majorv;		/* major version number */
     uint32 minorv;		/* minor version number */
     uint32 release;		/* release number */
-    char string[81];		/* optional text description */
-    int16 modified;		/* indicates file was modified */
+    char   string[81];		/* optional text description */
+    int16  modified;		/* indicates file was modified */
 } version_t;
 
 /* record of a block of data descriptors, mirrors structure of a HDF file.  */
 typedef struct ddblock_t {
-    int16 ndds;                /* number of dd's in this block */
-    int32 nextoffset;          /* offset to the next ddblock in the file */
+    int16  ndds;                /* number of dd's in this block */
+    int32  nextoffset;          /* offset to the next ddblock in the file */
     struct ddblock_t *next;    /* pointer to the next ddblock in memory */
     struct ddblock_t *prev;    /* Pointer to previous ddblock. */
     struct dd_t *ddlist;       /* pointer to array of dd's */
@@ -176,6 +188,7 @@ typedef struct ddblock_t {
 /* hashing information */
 #define HASH_MASK       0xff
 #define HASH_BLOCK_SIZE 100
+/* tag/ref structure */
 typedef struct tag_ref_str {
   intn        tag;              /* tag for this element */
   intn        ref;              /* ref for this element */
@@ -183,34 +196,30 @@ typedef struct tag_ref_str {
   int32       pidx;             /* this object's index into dd block */
 } tag_ref, *tag_ref_ptr;
 
+/* tag/ref list structure */
 typedef struct tag_ref_list_str {
     int         count;                      /* number of objects */
     tag_ref     objects[HASH_BLOCK_SIZE];   /* DDs */
-    struct tag_ref_list_str *next;  /* next one in the list */
+    struct tag_ref_list_str *next;          /* next one in the list */
 } tag_ref_list, *tag_ref_list_ptr;
 
 /* File record structure */
 typedef struct filerec_t {
-    char *path;                 /* name of file */
+    char      *path;            /* name of file */
     hdf_file_t file;            /* either file descriptor or pointer */
-    intn access;                /* access mode */
-    intn refcount;              /* reference count / times opened */
+    uint16    maxref;           /* highest ref in this file */
+    intn      access;           /* access mode */
+    intn      refcount;         /* reference count / times opened */
+    intn      attach;           /* number of access elts attached */
+    intn      version_set;      /* version tag stuff */
+    version_t version;		/* file version info */
+    /* fast lookup of empty dd stuff */
+    int32             null_idx;   /* index into null_block of NULL entry */
+    struct ddblock_t *null_block; /* last block a NULL entry was found in */
     struct ddblock_t *ddhead;   /* head of ddblock list */
     struct ddblock_t *ddlast;   /* end of ddblock list */
-    uint16 maxref;              /* highest ref in this file */
-    intn attach;                /* number of access elts attached */
-
-    /* version tag stuff */
-    intn version_set;
-    version_t version;		/* file version info */
-    
-    /* fast lookup of empty dd stuff */
-    struct ddblock_t *null_block; /* last block a NULL entry was found in */
-    int32             null_idx;   /* index into null_block of NULL entry */
-
     /* hash table stuff */
     tag_ref_list_ptr hash[HASH_MASK + 1];  /* hashed table of tag / refs */
-
 } filerec_t;
 
 /* Each access element is associated with a tag/ref to keep track of
@@ -218,19 +227,19 @@ typedef struct filerec_t {
    instead of pointing directly to the dd, we point to the ddblock and
    index into the ddlist of that ddblock. */
 typedef struct accrec_t {
-    int32 file_id;              /* id of attached file */
-    struct ddblock_t *block;    /* ptr to ddblock that contains dd */
-    int32 idx;                  /* index of dd into *block */
-    int32 posn;                 /* seek position with respect to */
-                                /* start of element */
-    int16 access;               /* access codes */
-    intn used;                  /* whether the access record is used */
     bool appendable;            /* whether appends to the data are allowed */
     bool flush;                 /* whether the DD for this data should be flushed */
                                 /* when Hendaccess() is called */
-    int16 special;
-    VOIDP special_info;
-    struct funclist_t *special_func;
+    intn used;                  /* whether the access record is used */
+    int16 access;               /* access codes */
+    int16 special;              /* special element ? */
+    int32 file_id;              /* id of attached file */
+    int32 idx;                  /* index of dd into *block */
+    int32 posn;                 /* seek position with respect to */
+                                /* start of element */
+    VOIDP special_info;         /* special element info? */
+    struct ddblock_t *block;    /* ptr to ddblock that contains dd */
+    struct funclist_t *special_func; /* ptr to special function? */
 } accrec_t;
 
 /* a function table record for accessing special data elements.
@@ -250,7 +259,7 @@ typedef struct funclist_t {
 } funclist_t;
 
 typedef struct functab_t {
-    int16 key;                 /* the key for this type of special elt */
+    int16       key;            /* the key for this type of special elt */
     funclist_t *tab;            /* table of accessing functions */
 } functab_t;
 
@@ -317,7 +326,7 @@ typedef struct functab_t {
 extern accrec_t *access_records;
 
 /* file records array.  defined in hfile.c */
-#if defined(macintosh) | defined(THINK_C)
+#if defined(macintosh) | defined(THINK_C) | defined(DMEM) /* Dynamic memory */
 extern filerec_t *file_records;
 #else /* !macintosh */
 extern filerec_t file_records[];

@@ -1,3 +1,15 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
@@ -48,7 +60,7 @@ static char RcsId[] = "@(#)$Revision$";
    information on an opened HDF file.
    See hfile.h for structure and members definition of filerec_t. */
 
-#if defined(macintosh) | defined(THINK_C)
+#if defined(macintosh) | defined(THINK_C) | defined(DMEM) /* Dynamic memory */
 struct filerec_t *file_records = NULL;
 #else /* !macintosh */
 struct filerec_t file_records[MAX_FILE];
@@ -65,10 +77,13 @@ struct accrec_t *access_records = NULL;
 /* Temporary memory space for doing some general stuff so we don't
    have to allocate and deallocate memory all the time.  This space should
    be "sufficiently" large, or at least 64 bytes long.  Routines using
-   tbuf should not assume that the buffer is longer than that. */
+   ptbuf should not assume that the buffer is longer than that. */
 
+#if 0 /* replaced with dynamic memory */
 int32 int_tbuf[TBUF_SZ];
 uint8 *tbuf = (uint8 *)int_tbuf;
+#endif
+PRIVATE uint8 *ptbuf = NULL;
 
 /* Function tables declarations.  These function tables contain pointers
    to functions that help access each type of special element. */
@@ -849,6 +864,14 @@ int32 Hstartwrite(file_id, tag, ref, length)
     if (slot == FAIL)
        HRETURN_ERROR(DFE_TOOMANY,FAIL);
 
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
+
     /* convert tag to base form */
     tag = BASETAG(tag);
 
@@ -920,7 +943,7 @@ int32 Hstartwrite(file_id, tag, ref, length)
                 access_rec->used = FALSE;
                 HRETURN_ERROR(DFE_SEEKERROR,FAIL);
             }
-            if (HI_WRITE(file_rec->file, tbuf, 1) == FAIL) {
+            if (HI_WRITE(file_rec->file, ptbuf, 1) == FAIL) {
                 access_rec->used = FALSE;
                 HRETURN_ERROR(DFE_WRITEERROR,FAIL);
             }
@@ -1786,12 +1809,20 @@ int HIupdate_dd(file_rec, block, idx, FUNC)
     if (HI_SEEK(file_rec->file, offset) == FAIL)
        HRETURN_ERROR(DFE_SEEKERROR,FAIL);
 
-    p = tbuf;
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
+
+    p = ptbuf;
     UINT16ENCODE(p, block->ddlist[idx].tag);
     UINT16ENCODE(p, block->ddlist[idx].ref);
     INT32ENCODE(p, block->ddlist[idx].offset);
     INT32ENCODE(p, block->ddlist[idx].length);
-    if (HI_WRITE(file_rec->file, tbuf, DD_SZ) == FAIL)
+    if (HI_WRITE(file_rec->file, ptbuf, DD_SZ) == FAIL)
        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
 
     return SUCCEED;
@@ -2218,11 +2249,19 @@ PRIVATE int HIinit_file_dds(file_rec, ndds, FUNC)
     block->next = (ddblock_t *) NULL;
     block->nextoffset = 0;
 
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
+
     /* write first dd block to file */
-    p = tbuf;
+    p = ptbuf;
     INT16ENCODE(p, block->ndds);
     INT32ENCODE(p, (int32) 0);
-    if (HI_WRITE(file_rec->file, tbuf, NDDS_SZ+OFFSET_SZ) == FAIL) {
+    if (HI_WRITE(file_rec->file, ptbuf, NDDS_SZ+OFFSET_SZ) == FAIL) {
        HERROR(DFE_WRITEERROR);
        return FAIL;
     }
@@ -2241,9 +2280,9 @@ PRIVATE int HIinit_file_dds(file_rec, ndds, FUNC)
 
     /* n is the maximum number of dd's in tbuf */
 
-    n = sizeof(int_tbuf) / DD_SZ;
+    n = TBUF_SZ / DD_SZ;
     if (n > ndds) n = ndds;
-    p = tbuf;
+    p = ptbuf;
 
     for (i = 0; i < n; i++) {
        UINT16ENCODE(p, (uint16)DFTAG_NULL);
@@ -2252,7 +2291,7 @@ PRIVATE int HIinit_file_dds(file_rec, ndds, FUNC)
        INT32ENCODE(p, (int32)0);
     }
     while (ndds > 0) {
-       if (HI_WRITE(file_rec->file, tbuf, n*DD_SZ) == FAIL)
+       if (HI_WRITE(file_rec->file, ptbuf, n*DD_SZ) == FAIL)
            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
        ndds -= n;
        if (n > ndds) n = ndds;
@@ -2289,13 +2328,21 @@ PRIVATE funclist_t *HIget_function_table(access_rec, FUNC)
     dd_t *dd;                  /* ptr to current dd */
     filerec_t *file_rec;       /* file record */
 
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, NULL);
+      }
+
     /* read in the special code in the special elt */
 
     dd = &access_rec->block->ddlist[access_rec->idx];
     file_rec = FID2REC(access_rec->file_id);
     if (HI_SEEK(file_rec->file, dd->offset) == FAIL)
        HRETURN_ERROR(DFE_SEEKERROR,NULL);
-    if (HI_READ(file_rec->file, tbuf, 2) == FAIL)
+    if (HI_READ(file_rec->file, ptbuf, 2) == FAIL)
        HRETURN_ERROR(DFE_READERROR,NULL);
 
     /* using special code, look up function table in associative table */
@@ -2303,7 +2350,7 @@ PRIVATE funclist_t *HIget_function_table(access_rec, FUNC)
        register int i;
        uint8 *p;
 
-       p = tbuf;
+       p = ptbuf;
        INT16DECODE(p, access_rec->special);
        for (i=0; functab[i].key != 0; i++) {
            if (access_rec->special == functab[i].key)
@@ -2779,7 +2826,7 @@ PRIVATE int HIget_file_slot(path, FUNC)
     int i;
     int slot;
 
-#if defined(macintosh) | defined(THINK_C)
+#if defined(macintosh) | defined(THINK_C) | defined(DMEM) 
 
     if (!file_records) {
         /* The array has not been allocated.  Allocating file records
@@ -2809,7 +2856,7 @@ PRIVATE int HIget_file_slot(path, FUNC)
        return file_records[0].path ? 0 : FAIL;
     }
 
-#endif /* macintosh or THINK_C */
+#endif /* macintosh or THINK_C or Dynamic Memory */
 
     /* Search for a matching or free slot. */
 
@@ -2951,22 +2998,30 @@ int HInew_dd_block(file_rec, ndds, FUNC)
     block->next = (ddblock_t *) NULL;
     block->nextoffset = 0;
 
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
+
     /* put the new dd block at the end of the file */
 
     if (HI_SEEKEND(file_rec->file) == FAIL)
        HRETURN_ERROR(DFE_SEEKERROR,FAIL);
 
     nextoffset = HI_TELL(file_rec->file);
-    p = tbuf;
+    p = ptbuf;
     INT16ENCODE(p, block->ndds);
     INT32ENCODE(p, (int32)0);
-    if (HI_WRITE(file_rec->file, tbuf, NDDS_SZ+OFFSET_SZ) == FAIL)
+    if (HI_WRITE(file_rec->file, ptbuf, NDDS_SZ+OFFSET_SZ) == FAIL)
        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
 
     /* set up the dd list of this dd block and put it in the file
        after the dd block header */
 
-    p = tbuf;
+    p = ptbuf;
     list = block->ddlist = (dd_t *) HDgetspace((uint32) ndds * sizeof(dd_t));
     if (list == (dd_t *) NULL)
        HRETURN_ERROR(DFE_NOSPACE,FAIL);
@@ -2976,9 +3031,9 @@ int HInew_dd_block(file_rec, ndds, FUNC)
        list[i].length = list[i].offset = 0;
     }
 
-    /* n is the number of dds that could fit into tbuf at one time */
+    /* n is the number of dds that could fit into ptbuf at one time */
 
-    n = sizeof(int_tbuf) / DD_SZ;
+    n = TBUF_SZ / DD_SZ;
     if (n > ndds) n = ndds;
     for (i = 0; i < n; i++) {
        UINT16ENCODE(p, (uint16)DFTAG_NULL);
@@ -2987,7 +3042,7 @@ int HInew_dd_block(file_rec, ndds, FUNC)
        INT32ENCODE(p, (int32)0);
     }
     while (ndds > 0) {
-       if (HI_WRITE(file_rec->file, tbuf, n*DD_SZ) == FAIL)
+       if (HI_WRITE(file_rec->file, ptbuf, n*DD_SZ) == FAIL)
            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
        ndds -= n;
        if (n > ndds) n = ndds;
@@ -3002,11 +3057,11 @@ int HInew_dd_block(file_rec, ndds, FUNC)
        offset = MAGICLEN + NDDS_SZ;
     else
        offset = file_rec->ddlast->prev->nextoffset + NDDS_SZ;
-    p = tbuf;
+    p = ptbuf;
     INT32ENCODE(p, nextoffset);
     if (HI_SEEK(file_rec->file, offset) == FAIL)
        HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-    if (HI_WRITE(file_rec->file, tbuf, OFFSET_SZ) == FAIL)
+    if (HI_WRITE(file_rec->file, ptbuf, OFFSET_SZ) == FAIL)
        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
 
     /* update file record */
@@ -3032,6 +3087,14 @@ PRIVATE int HIfill_file_rec(file_rec, FUNC)
   uint8 *p;               /* Temporary pointer. */
   int32 n;
   register intn ndds, i, idx;     /* Temporary integers. */
+
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
 
   /* Alloc start of linked list of ddblocks. */
 
@@ -3064,12 +3127,12 @@ PRIVATE int HIfill_file_rec(file_rec, FUNC)
        Read data consists of ndds (number of dd's in this block) and
        offset (offset to the next ddblock). */
 
-    if (HI_READ(file_rec->file, tbuf, NDDS_SZ+OFFSET_SZ) == FAIL)
+    if (HI_READ(file_rec->file, ptbuf, NDDS_SZ+OFFSET_SZ) == FAIL)
       HRETURN_ERROR(DFE_READERROR,FAIL);
 
     /* Decode the numbers. */
 
-    p = tbuf;
+    p = ptbuf;
     INT16DECODE(p, FILE_NDDS(file_rec));
     if (FILE_NDDS(file_rec) <= 0)   /* validity check */
         HRETURN_ERROR(DFE_CORRUPT,FAIL);
@@ -3086,11 +3149,11 @@ PRIVATE int HIfill_file_rec(file_rec, FUNC)
     /* Read in dd's. */
     ndds = FILE_NDDS(file_rec);
 
-    /* Since the tbuf might not be large enough to read in all the dd's
+    /* Since the ptbuf might not be large enough to read in all the dd's
        at once, we try to read in chunks as large as possible. */
 
-    /* n is number of dd's that could fit into tbuf at one time */
-    n = sizeof(int_tbuf) / DD_SZ;
+    /* n is number of dd's that could fit into ptbuf at one time */
+    n = TBUF_SZ / DD_SZ;
     if (n > ndds)
       n = ndds;
 
@@ -3103,12 +3166,12 @@ PRIVATE int HIfill_file_rec(file_rec, FUNC)
 
       /* Read in a chunk of dd's from the file. */
 
-      if (HI_READ(file_rec->file, tbuf, n * DD_SZ) == FAIL)
+      if (HI_READ(file_rec->file, ptbuf, n * DD_SZ) == FAIL)
         HRETURN_ERROR(DFE_READERROR, FAIL);
 
       /* decode the dd's */
 
-      p = tbuf;
+      p = ptbuf;
       for (i = 0; i < n; i++, idx++) {
         UINT16DECODE(p, file_rec->ddlast->ddlist[idx].tag);
         UINT16DECODE(p, file_rec->ddlast->ddlist[idx].ref);
