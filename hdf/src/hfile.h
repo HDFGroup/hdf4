@@ -22,7 +22,7 @@
 /* maximum number of files (number of slots for file records) */
 
 #ifndef MAX_FILE
-#ifdef PC
+#if defined PC && !defined PC386
 #   define MAX_FILE 8
 #else
 #   define MAX_FILE 16
@@ -43,12 +43,12 @@
 /* version tags */
 /* Library version numbers */
 
-#define LIBVER_MAJOR	3
+#define LIBVER_MAJOR    3
 #define LIBVER_MINOR    3
-#define LIBVER_RELEASE	3
+#define LIBVER_RELEASE  3
 #define LIBVER_STRING   "NCSA HDF Version 3.3 Release 3, February 1994"
 #define LIBVSTR_LEN    80      /* length of version string  */
-#define LIBVER_LEN	92	/* 4+4+4+80 = 92 */
+#define LIBVER_LEN  92  /* 4+4+4+80 = 92 */
 /* end of version tags */
 
 /* FILELIB -- file library to use for file access: 1 stdio, 2 fcntl
@@ -114,7 +114,7 @@ typedef short hdf_file_t;
 #   define HI_SEEK(x,y) mlseek(x, (int32 )y, 0)
 #   define HI_SEEKEND(x) mlseek(x, 0L, 2)
 #   define HI_TELL(x) mlseek(x,0L,1)
-#   define DF_OPENERR(f)	((f) == -1)
+#   define DF_OPENERR(f)    ((f) == -1)
 #   define OPENERR(f)  (f < 0)
 #endif /* FILELIB == MACIO */
 
@@ -158,6 +158,24 @@ typedef HFILE hdf_file_t;
 #   define OPENERR(f)  ((f) == (HFILE)HFILE_ERROR)
 #endif /* FILELIB == WINIO */
 
+#if (FILELIB == WINNTIO)
+/* using special Windows NT functions to enable reading/writing large chunks */
+typedef HFILE hdf_file_t;
+#   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
+                        _lopen((p), OF_READWRITE) : _lopen((p), OF_READ))
+#   define HI_CREATE(p)        (_lcreat((p), 0))
+#   define HI_READ(f, b, n)    (((int32)(n) == _hread((f), (b), (n))) ? \
+                                SUCCEED : FAIL)
+#   define HI_WRITE(f, b, n)   (((int32)(n) == _hwrite((f), (b), (n))) ? \
+                                SUCCEED : FAIL)
+#   define HI_CLOSE(f) (_lclose(f)==0 ? SUCCEED : FAIL)
+#   define HI_FLUSH(f) (0)
+#   define HI_SEEK(f, o)       (_llseek((f), (long)(o), 0))
+#   define HI_SEEKEND(f) (_llseek((f), (long)0, 2))
+#   define HI_TELL(f)  (_llseek((f),0l,1))
+#   define OPENERR(f)  ((f) == (HFILE)HFILE_ERROR)
+#endif /* FILELIB == WINNTIO */
+
 /* The internal structure used to keep track of the files opened: an
    array of filerec_t structures, each has a linked list of ddblock_t.
    Each ddblock_t struct points to an array of dd_t structs. */
@@ -173,11 +191,11 @@ typedef struct dd_t {
 
 /* version tags */
 typedef struct version_t {
-    uint32 majorv;		/* major version number */
-    uint32 minorv;		/* minor version number */
-    uint32 release;		/* release number */
-    char string[LIBVSTR_LEN+1];	/* optional text description, len 80+1 */
-    int16 modified;		/* indicates file was modified */
+    uint32 majorv;      /* major version number */
+    uint32 minorv;      /* minor version number */
+    uint32 release;     /* release number */
+    char string[LIBVSTR_LEN+1]; /* optional text description, len 80+1 */
+    int16 modified;     /* indicates file was modified */
 } version_t;
 
 /* record of a block of data descriptors, mirrors structure of a HDF file.  */
@@ -218,7 +236,7 @@ typedef struct filerec_t {
 
     /* version tag stuff */
     intn version_set;
-    version_t version;		/* file version info */
+    version_t version;      /* file version info */
     
     /* fast lookup of empty dd stuff */
     struct ddblock_t *null_block; /* last block a NULL entry was found in */
@@ -486,13 +504,13 @@ extern int32 HCPcloseAID
 
 #ifdef MAC
 extern hdf_file_t mopen
-	PROTO((char * filename, intn access));
-	
+    PROTO((char * filename, intn access));
+    
 extern int32 mclose
-	PROTO((hdf_file_t rn));
-	
+    PROTO((hdf_file_t rn));
+    
 extern int32 mlseek
-	PROTO((hdf_file_t rn, int32 n, intn m));
+    PROTO((hdf_file_t rn, int32 n, intn m));
 
 extern int32 mread
     PROTO((hdf_file_t rn, char *buf, int32 n));
