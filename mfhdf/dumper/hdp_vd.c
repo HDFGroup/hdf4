@@ -50,16 +50,19 @@ int32 charcount(char *str, char onechar)
 void dumpvd_usage(intn argc,char *argv[])
 {
 	printf("Usage:\n");
-	printf("%s dumpvd [-a|-i <index>|-n <name>|-r <ref>] [-dhv] [-o <filename> [-bx]] <filelist>\n",argv[0]);
+	printf("%s dumpvd [-a|-i <index>|-n <name>|-r <ref>|-c <class>]",argv[0]);
+        printf(" [-dhv] [-f <fields>] [-o <filename> [-bx]] <filelist>\n");
 	printf("\t-a\tDump all VDs in the file (default)\n");
 	printf("\t-i <index>\tDump the <index>th SDS in the file \n");
-	printf("\t-n <name>\tDump the VDS with name <name>\n");
-	printf("\t-r <ref>\tDump the VDS with reference number <ref>\n");
-	printf("\t-d\tDump data only, no tag/ref, formatted to input to hp2hdf\n");
+	printf("\t-n <name>\tDump the VDs with name <name>\n");
+	printf("\t-r <ref>\tDump the VDs with reference number <ref>\n");
+        printf("\t-c <class>\tDump the VDs with class <class>\n");
+	printf("\t-d\tDump data only, no tag/ref\n");
 	printf("\t-h\tDump header only, no annotation for elements nor data\n");
 	printf("\t-v\tDump everything including all annotations (default)\n");
+        printf("\t-f <fields>\tDump data of specified fields.\n");
 	printf("\t-o <filename>\tOutput to file <filename>\n");
-	printf("\t-b\tBinary format of output\n");
+	printf("\t-b\tBinary format of output ( not available)\n");
 	printf("\t-x\tAscii text format of output (default)\n");
 }	/* end list_usage() */
 

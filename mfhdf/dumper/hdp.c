@@ -31,7 +31,7 @@ void usage(intn argc, char *argv[])
     printf("\t     dumpsds\tdisplays data of NDGs and SDGs in files listed in <filename list>\n");
     printf("\t     dumpvd\tdisplays data of vdatas in <filename list>. \n");
     printf("\t     dumpvg\tdisplays data of vgroups in <filename list>. \n");
-    printf("\t     dumpris\tdisplays data of RIGs in <filename list>. \n");
+    printf("\t     dumprig\tdisplays data of RIGs in <filename list>. \n");
 } 
 
 int main(int argc, char *argv[])
