@@ -42,6 +42,26 @@ Third Party Software Requirements:
  in 'hdf/jpeg' and 'hdf/zlib'. The HDF/netCDF base distribution
  in known to work with these versions only.
 
+System Requirements
+-------------------
+ To build both HDF and netCDF library from sources, you need:
+
+   * ANSI C compiler. The native ANSI compilers on the above 
+     platforms are supported. On platforms where no ANSI compiler
+     was available the free GNU ANSI compiler GCC was used.
+
+   * Fortran 77 compiler if you want Fortran support. See above
+     table for platforms where Fortran is supported. You can
+     compile both libraries without Fortran support by setting 
+     the Fortran compiler variable 'FC = NONE' in the respective
+     makefile fragment(mh-<os>) found in the top-level 'config'
+     directory: 
+
+          $(toplevel)/config/mh-<os>.
+
+     See the INSTALL file for further details on configuration 
+     and installation.
+
 Configuring/Testing/Installing for UNIX systems(Short version)
 -------------------------------------------------------------
 It is now possible to automatically configure and build the
