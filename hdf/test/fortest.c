@@ -14,7 +14,7 @@ struct TestStruct {
   char Description[64];
   int  SkipFlag;
   char Name[16];
-  char *Call[20];
+  char Call[20];
 } Test[NUMOFTESTS] ;
 
 void InitTest (TheName, TheCall, TheDescr)
