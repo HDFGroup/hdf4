@@ -163,11 +163,6 @@ HCIinit_coder(int16 acc_mode, comp_coder_info_t * cinfo, comp_coder_t coder_type
 	/* coder not present?? */
               HRETURN_ERROR(DFE_BADCODER, FAIL)
     }
-    if (((acc_mode & DFACC_WRITE) == DFACC_WRITE) &&
-		((comp_info & COMP_ENCODER_ENABLED) == 0)) {
-	/* encoder not present?? */
-               HRETURN_ERROR(DFE_NOENCODER, FAIL)
-    }
 
     switch (coder_type)
       {     /* determin the type of encoding */
