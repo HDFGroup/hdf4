@@ -923,7 +923,7 @@ HIread2write(bitrec_t * bitfile_rec)
 {
     CONSTR(FUNC, "HIread2write");
 
-    bitfile_rec->block_offset = INT_MIN;    /* set to bogus value */
+    bitfile_rec->block_offset = (int32)LONG_MIN;    /* set to bogus value */
     bitfile_rec->mode = 'w';    /* change to write mode */
     if (Hbitseek(bitfile_rec->bit_id, bitfile_rec->byte_offset, (intn)(BITNUM - bitfile_rec->count)) == FAIL)
         HRETURN_ERROR(DFE_INTERNAL, FAIL);
@@ -957,7 +957,7 @@ HIwrite2read(bitrec_t * bitfile_rec)
     if (HIbitflush(bitfile_rec, -1, TRUE) == FAIL)  /* flush any leftover bits */
         HRETURN_ERROR(DFE_WRITEERROR, FAIL);
 
-    bitfile_rec->block_offset = INT_MIN;    /* set to bogus value */
+    bitfile_rec->block_offset = (int32)LONG_MIN;    /* set to bogus value */
     bitfile_rec->mode = 'r';    /* change to read mode */
     if (Hbitseek(bitfile_rec->bit_id, (int32)prev_offset, (intn)(BITNUM - prev_count)) == FAIL)
         HRETURN_ERROR(DFE_INTERNAL, FAIL);

@@ -8,7 +8,7 @@
  *
  * This file contains jacket routines written in C for interfacing Fortran
  * netCDF function calls to the actual C binding for the NetCDF.  This code
- * is written explicitly for Sun.  In general, these functions handle
+ * is written explicitly for AIX.  In general, these functions handle
  * character-string parameter conventions, convert between
  * column-major-order arrays and row-major-order arrays, and map between
  * array indices beginning at one and array indices beginning at zero.
@@ -34,7 +34,7 @@
 
 struct ncfils {			/* This will be a common block from Fortran */
     double dd;
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
     int ll;
 #else
     long ll;
@@ -43,7 +43,7 @@ struct ncfils {			/* This will be a common block from Fortran */
     short ss;
     char cc;
     char bb;
-} ncfils_ = {
+} ncfils = {
     FILL_DOUBLE,
     FILL_LONG,
     FILL_FLOAT,
@@ -65,7 +65,7 @@ struct ncfils {			/* This will be a common block from Fortran */
 
 struct ncfils {			/* This will be a common block from Fortran */
     double dd;
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
     int ll;
 #else
     long ll;
@@ -74,7 +74,7 @@ struct ncfils {			/* This will be a common block from Fortran */
     short ss;
     char cc;
     char bb;
-} ncfils_ = {
+} ncfils = {
     XDR_D_INFINITY,		/* You may have to insert a constant here */
     FILL_LONG,
     XDR_F_INFINITY,		/* You may have to insert a constant here */
@@ -417,7 +417,7 @@ stoig(shorts, ints, dims, basis, ndims)
 }
 #endif /* FORTRAN_HAS_NO_SHORT */
 
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
 /*
  * Convert multi-dimensional array of NCLONGs stored in ints to packed
  * array of longs, in malloc'ed space.  Returns pointer to longs or NULL
@@ -526,11 +526,11 @@ ltoig(longs, ints, dims, imap, ndims)
 }
 #endif	/* Alpha platform above */
 
-/* ------------ Sun FORTRAN jackets for netCDF Functions ------------ */
+/* ------------ AIX FORTRAN jackets for netCDF Functions ------------ */
 
 /* used to set the C global variable ncopts from Fortran */
 void
-ncpopt_(val)
+ncpopt(val)
     int		*val;	
 {
     ncopts = *val;
@@ -539,7 +539,7 @@ ncpopt_(val)
 
 /* used to get the C global variable ncopts from Fortran */
 void
-ncgopt_(val)
+ncgopt(val)
     int		*val;	
 {
     *val = ncopts;
@@ -550,7 +550,7 @@ ncgopt_(val)
  * file is placed in define mode.
  */
 int
-nccre_(pathname, clobmode, rcode, pathnamelen)
+nccre(pathname, clobmode, rcode, pathnamelen)
     char	*pathname;	
     int		pathnamelen;
     int		*clobmode;	
@@ -571,7 +571,7 @@ nccre_(pathname, clobmode, rcode, pathnamelen)
 
 /* opens an existing netCDF file for access */
 int
-ncopn_(pathname, rwmode, rcode, pathnamelen)
+ncopn(pathname, rwmode, rcode, pathnamelen)
     char	*pathname;	
     int		pathnamelen;
     int		*rwmode;	
@@ -592,7 +592,7 @@ ncopn_(pathname, rwmode, rcode, pathnamelen)
 
 /* adds a new dimension to an open netCDF file in define mode */
 int
-ncddef_(cdfid, dimname, dimlen, rcode, dimnamelen)
+ncddef(cdfid, dimname, dimlen, rcode, dimnamelen)
     int		*cdfid;	
     char	*dimname;	
     int		dimnamelen;
@@ -617,7 +617,7 @@ ncddef_(cdfid, dimname, dimlen, rcode, dimnamelen)
  * dimension
  */
 int
-ncdid_(cdfid, dimname, rcode, dimnamelen)
+ncdid(cdfid, dimname, rcode, dimnamelen)
     int		*cdfid;	
     char	*dimname;	
     int		dimnamelen;
@@ -638,7 +638,7 @@ ncdid_(cdfid, dimname, rcode, dimnamelen)
 
 /* adds a new variable to an open netCDF file in define mode */
 int
-ncvdef_(cdfid, varname, datatype, ndims, dimarray, rcode, varnamelen)
+ncvdef(cdfid, varname, datatype, ndims, dimarray, rcode, varnamelen)
     int		*cdfid;	
     char	*varname;	
     int		varnamelen;
@@ -666,7 +666,7 @@ ncvdef_(cdfid, varname, datatype, ndims, dimarray, rcode, varnamelen)
 
 /* returns the ID of a netCDF variable given its name */
 int
-ncvid_(cdfid, varname, rcode, varnamelen)
+ncvid(cdfid, varname, rcode, varnamelen)
     int		*cdfid;	
     char	*varname;	
     int		varnamelen;
@@ -687,7 +687,7 @@ ncvid_(cdfid, varname, rcode, varnamelen)
 
 /* returns number of bytes per netCDF data type */
 int
-nctlen_(datatype, rcode)
+nctlen(datatype, rcode)
     int		*datatype;	
     int		*rcode;	
 {
@@ -703,7 +703,7 @@ nctlen_(datatype, rcode)
 
 /* closes an open netCDF file */
 void
-ncclos_(cdfid, rcode)
+ncclos(cdfid, rcode)
     int		*cdfid;	
     int		*rcode;	
 {
@@ -714,7 +714,7 @@ ncclos_(cdfid, rcode)
 
 /* puts an open netCDF into define mode */
 void
-ncredf_(cdfid, rcode)
+ncredf(cdfid, rcode)
     int		*cdfid;	
     int		*rcode;	
 {
@@ -725,7 +725,7 @@ ncredf_(cdfid, rcode)
 
 /* takes an open netCDF out of define mode */
 void
-ncendf_(cdfid, rcode)
+ncendf(cdfid, rcode)
     int		*cdfid;	
     int		*rcode;	
 {
@@ -736,7 +736,7 @@ ncendf_(cdfid, rcode)
 
 /* returns information about an open netCDF file given its netCDF ID */
 void
-ncinq_(cdfid, ndims, nvars, natts, recdim, rcode)
+ncinq(cdfid, ndims, nvars, natts, recdim, rcode)
     int		*cdfid;	
     int		*ndims;	
     int		*nvars;	
@@ -758,7 +758,7 @@ ncinq_(cdfid, ndims, nvars, natts, recdim, rcode)
  * is current
  */
 void
-ncsnc_(cdfid, rcode)
+ncsnc(cdfid, rcode)
     int		*cdfid;	
     int		*rcode;	
 {
@@ -773,7 +773,7 @@ ncsnc_(cdfid, rcode)
  * or attributes
  */
 void
-ncabor_(cdfid, rcode)
+ncabor(cdfid, rcode)
     int		*cdfid;	
     int		*rcode;	
 {
@@ -784,7 +784,7 @@ ncabor_(cdfid, rcode)
 
 /* returns the name and size of a dimension, given its ID */
 void
-ncdinq_(cdfid, dimid, dimname, size, rcode, dimnamelen)
+ncdinq(cdfid, dimid, dimname, size, rcode, dimnamelen)
     int		*cdfid;	
     int		*dimid;	
     char	*dimname;	
@@ -812,7 +812,7 @@ ncdinq_(cdfid, dimid, dimname, size, rcode, dimnamelen)
 
 /* renames an existing dimension in a netCDF open for writing */
 void
-ncdren_(cdfid, dimid, dimname, rcode, dimnamelen)
+ncdren(cdfid, dimid, dimname, rcode, dimnamelen)
     int		*cdfid;	
     int		*dimid;	
     char	*dimname;	
@@ -829,7 +829,7 @@ ncdren_(cdfid, dimid, dimname, rcode, dimnamelen)
 
 /* returns information about a netCDF variable, given its ID */
 void
-ncvinq_(cdfid, varid, varname, datatype, ndims, dimarray, natts, rcode, varnamelen)
+ncvinq(cdfid, varid, varname, datatype, ndims, dimarray, natts, rcode, varnamelen)
     int		*cdfid;	
     int		*varid;	
     char	*varname;	
@@ -862,7 +862,7 @@ ncvinq_(cdfid, varid, varname, datatype, ndims, dimarray, natts, rcode, varnamel
 
 /* puts a single numeric data value into a variable of an open netCDF */
 void
-ncvpt1_(cdfid, varid, indices, value, rcode)
+ncvpt1(cdfid, varid, indices, value, rcode)
     int		*cdfid;	
     int		*varid;	
     int		*indices;	
@@ -904,7 +904,7 @@ ncvpt1_(cdfid, varid, indices, value, rcode)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
 	long          longs = *(int *)value;
@@ -930,7 +930,7 @@ ncvpt1_(cdfid, varid, indices, value, rcode)
 
 /* puts a single character into an open netCDF file */
 void
-ncvp1c_(cdfid, varid, indices, chval, rcode, chvallen)
+ncvp1c(cdfid, varid, indices, chval, rcode, chvallen)
     int		*cdfid;	
     int		*varid;	
     int		*indices;	
@@ -961,7 +961,7 @@ ncvp1c_(cdfid, varid, indices, chval, rcode, chvallen)
  * netCDF file
  */
 void
-ncvpt_(cdfid, varid, start, count, value, rcode)
+ncvpt(cdfid, varid, start, count, value, rcode)
     int		*cdfid;	
     int		*varid;	
     int		*start;	
@@ -1018,7 +1018,7 @@ ncvpt_(cdfid, varid, start, count, value, rcode)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
 	long *longs = itol (value, ncount, ndims);
@@ -1056,7 +1056,7 @@ ncvpt_(cdfid, varid, start, count, value, rcode)
 
 /* writes a hypercube of character values into an open netCDF file */
 void
-ncvptc_(cdfid, varid, start, count, string, lenstr, rcode, stringlen)
+ncvptc(cdfid, varid, start, count, string, lenstr, rcode, stringlen)
     int		*cdfid;	
     int		*varid;	
     int		*start;	
@@ -1096,7 +1096,7 @@ ncvptc_(cdfid, varid, start, count, string, lenstr, rcode, stringlen)
  * an open netCDF file
  */
 void
-ncvptg_(cdfid, varid, start, count, stride, basis, value, rcode)
+ncvptg(cdfid, varid, start, count, stride, basis, value, rcode)
     int		*cdfid;	
     int		*varid;	
     int		*start;	
@@ -1129,7 +1129,7 @@ ncvptg_(cdfid, varid, start, count, stride, basis, value, rcode)
 	tmpbasis	= nctypelen(NC_LONG);
     else
 #endif
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
     if (datatype == NC_LONG)
 	tmpbasis	= sizeof(int);
     else
@@ -1186,7 +1186,7 @@ ncvptg_(cdfid, varid, start, count, stride, basis, value, rcode)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
 	long *longs = itolg (value, ncount, nbasis, ndims);
@@ -1228,7 +1228,7 @@ ncvptg_(cdfid, varid, start, count, stride, basis, value, rcode)
  * an open netCDF file
  */
 void
-ncvpgc_(cdfid, varid, start, count, stride, basis, string, rcode, stringlen)
+ncvpgc(cdfid, varid, start, count, stride, basis, string, rcode, stringlen)
     int		*cdfid;	
     int		*varid;	
     int		*start;	
@@ -1271,7 +1271,7 @@ ncvpgc_(cdfid, varid, start, count, stride, basis, string, rcode, stringlen)
 
 /* gets a single numeric value from a variable of an open netCDF file */
 void
-ncvgt1_(cdfid, varid, indices, value, rcode)
+ncvgt1(cdfid, varid, indices, value, rcode)
     int		*cdfid;	
     int		*varid;	
     int		*indices;	
@@ -1322,7 +1322,7 @@ ncvgt1_(cdfid, varid, indices, value, rcode)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
 	long          longs;
@@ -1359,7 +1359,7 @@ ncvgt1_(cdfid, varid, indices, value, rcode)
  * netCDF file
  */
 void
-ncvg1c_(cdfid, varid, indices, chval, rcode, chvallen)
+ncvg1c(cdfid, varid, indices, chval, rcode, chvallen)
     int		*cdfid;	
     int		*varid;	
     int		*indices;	
@@ -1391,7 +1391,7 @@ ncvg1c_(cdfid, varid, indices, chval, rcode, chvallen)
  * netCDF file
  */
 void
-ncvgt_(cdfid, varid, start, count, value, rcode)
+ncvgt(cdfid, varid, start, count, value, rcode)
     int		*cdfid;	
     int		*varid;	
     int		*start;	
@@ -1464,7 +1464,7 @@ ncvgt_(cdfid, varid, start, count, value, rcode)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
 	long iocount = dimprod (ncount, ndims);	/* product of dimensions */
@@ -1518,7 +1518,7 @@ ncvgt_(cdfid, varid, start, count, value, rcode)
 
 /* reads a hypercube of character values from a netCDF variable */
 void
-ncvgtc_(cdfid, varid, start, count, string, lenstr, rcode, stringlen)
+ncvgtc(cdfid, varid, start, count, string, lenstr, rcode, stringlen)
     int		*cdfid;	
     int		*varid;	
     int		*start;	
@@ -1564,7 +1564,7 @@ ncvgtc_(cdfid, varid, start, count, string, lenstr, rcode, stringlen)
  * open netCDF file
  */
 void
-ncvgtg_(cdfid, varid, start, count, stride, basis, value, rcode)
+ncvgtg(cdfid, varid, start, count, stride, basis, value, rcode)
     int		*cdfid;	
     int		*varid;	
     int		*start;	
@@ -1597,7 +1597,7 @@ ncvgtg_(cdfid, varid, start, count, stride, basis, value, rcode)
 	tmpbasis	= nctypelen(NC_LONG);
     else
 #endif
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
     if (datatype == NC_LONG)
 	tmpbasis	= sizeof(int);
     else
@@ -1668,7 +1668,7 @@ ncvgtg_(cdfid, varid, start, count, stride, basis, value, rcode)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
 	long iocount = dimprod (ncount, ndims);	/* product of dimensions */
@@ -1720,7 +1720,7 @@ ncvgtg_(cdfid, varid, start, count, stride, basis, value, rcode)
  * of an open netCDF file
  */
 void
-ncvggc_(cdfid, varid, start, count, stride, basis, string, rcode, stringlen)
+ncvggc(cdfid, varid, start, count, stride, basis, string, rcode, stringlen)
     int		*cdfid;	
     int		*varid;	
     int		*start;	
@@ -1763,7 +1763,7 @@ ncvggc_(cdfid, varid, start, count, stride, basis, string, rcode, stringlen)
 
 /* changes the name of a netCDF variable in an open netCDF file */
 void
-ncvren_(cdfid, varid, varname, rcode, varnamelen)
+ncvren(cdfid, varid, varname, rcode, varnamelen)
     int		*cdfid;	
     int		*varid;	
     char	*varname;	
@@ -1784,7 +1784,7 @@ ncvren_(cdfid, varid, varname, rcode, varnamelen)
  * netCDF file
  */
 void
-ncapt_(cdfid, varid, attname, datatype, attlen, value, rcode, attnamelen)
+ncapt(cdfid, varid, attname, datatype, attlen, value, rcode, attnamelen)
     int		*cdfid;	
     int		*varid;	
     char	*attname;	
@@ -1834,7 +1834,7 @@ ncapt_(cdfid, varid, attname, datatype, attlen, value, rcode, attnamelen)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     if ((nc_type) *datatype == NC_LONG && handle->file_type!=HDF_FILE) {
 	long *longs = itol (value, attlen, 1);
@@ -1878,7 +1878,7 @@ ncapt_(cdfid, varid, attname, datatype, attlen, value, rcode, attnamelen)
  * of an open netCDF file
  */
 void
-ncaptc_(cdfid, varid, attname, datatype, lenstr, string, rcode, attnamelen, stringlen)
+ncaptc(cdfid, varid, attname, datatype, lenstr, string, rcode, attnamelen, stringlen)
     int		*cdfid;	
     int		*varid;	
     char	*attname;	
@@ -1912,7 +1912,7 @@ ncaptc_(cdfid, varid, attname, datatype, lenstr, string, rcode, attnamelen, stri
  * ID and name
  */
 void
-ncainq_(cdfid, varid, attname, datatype, attlen, rcode, attnamelen)
+ncainq(cdfid, varid, attname, datatype, attlen, rcode, attnamelen)
     int		*cdfid;	
     int		*varid;	
     char	*attname;	
@@ -1935,7 +1935,7 @@ ncainq_(cdfid, varid, attname, datatype, attlen, rcode, attnamelen)
  * and name
  */
 void
-ncagt_(cdfid, varid, attname, value, rcode, attnamelen)
+ncagt(cdfid, varid, attname, value, rcode, attnamelen)
     int		*cdfid;	
     int		*varid;	
     char	*attname;	
@@ -1999,7 +1999,7 @@ ncagt_(cdfid, varid, attname, value, rcode, attnamelen)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
 	long *longs = (long *) malloc (attlen * sizeof (long));
@@ -2052,7 +2052,7 @@ ncagt_(cdfid, varid, attname, value, rcode, attnamelen)
  * ID and name
  */
 void
-ncagtc_(cdfid, varid, attname, string, lenstr, rcode, attnamelen, stringlen)
+ncagtc(cdfid, varid, attname, string, lenstr, rcode, attnamelen, stringlen)
     int		*cdfid;	
     int		*varid;	
     char	*attname;	
@@ -2089,7 +2089,7 @@ ncagtc_(cdfid, varid, attname, string, lenstr, rcode, attnamelen, stringlen)
 
 /* copies an attribute from one open netCDF file to another */
 void
-ncacpy_(incdfid, invarid, attname, outcdfid, outvarid, rcode, attnamelen)
+ncacpy(incdfid, invarid, attname, outcdfid, outvarid, rcode, attnamelen)
     int		*incdfid;	
     int		*invarid;	
     char	*attname;	
@@ -2113,7 +2113,7 @@ ncacpy_(incdfid, invarid, attname, outcdfid, outvarid, rcode, attnamelen)
  * as an attribute of that variable
  */
 void
-ncanam_(cdfid, varid, attnum, attname, rcode, attnamelen)
+ncanam(cdfid, varid, attnum, attname, rcode, attnamelen)
     int		*cdfid;	
     int		*varid;	
     int		*attnum;	
@@ -2139,7 +2139,7 @@ ncanam_(cdfid, varid, attnum, attname, rcode, attnamelen)
 
 /* renames an attribute in an open netCDF file */
 void
-ncaren_(cdfid, varid, attname, newname, rcode, attnamelen, newnamelen)
+ncaren(cdfid, varid, attname, newname, rcode, attnamelen, newnamelen)
     int		*cdfid;	
     int		*varid;	
     char	*attname;	
@@ -2163,7 +2163,7 @@ ncaren_(cdfid, varid, attname, newname, rcode, attnamelen, newnamelen)
  * name
  */
 void
-ncadel_(cdfid, varid, attname, rcode, attnamelen)
+ncadel(cdfid, varid, attname, rcode, attnamelen)
     int		*cdfid;	
     int		*varid;	
     char	*attname;	
@@ -2184,7 +2184,7 @@ ncadel_(cdfid, varid, attname, rcode, attnamelen)
  * sets the fill mode of a netCDF file open for writing
  */
 int
-ncsfil_(cdfid, fillmode, rcode)
+ncsfil(cdfid, fillmode, rcode)
     int		*cdfid;	
     int		*fillmode;	
     int		*rcode;	

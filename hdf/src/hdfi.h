@@ -253,7 +253,7 @@ typedef float             float32;
 typedef double            float64;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 #define _HUGE              /* This should only be defined to a value on the PC */
-#define FNAME_POST_UNDERSCORE
+/* #define FNAME_POST_UNDERSCORE */
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
 
