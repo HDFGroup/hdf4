@@ -79,7 +79,7 @@ const char * filename;
     intn       ret;
     hdf_file_t fp;
     uint8      b[4];
-    uint8    * bb;
+    uint8    * bb = NULL;
     int32      magic_num;
   
     fp = HI_OPEN(filename, DFACC_READ);
@@ -611,9 +611,9 @@ int
 NC *handle;
 int i;
 {
-  NC_array *tmp;
-  NC_dim **d;
-  Void *dims;
+  NC_array *tmp = NULL;
+  NC_dim **d = NULL;
+  Void *dims = NULL;
   
   tmp = handle->dims;
   dims = handle->dims->values;
@@ -741,7 +741,7 @@ int32 dimval_ver;
   int i;
   int ref;
   long dsize;
-  int32 *val;
+  int32 *val = NULL;
 
 #ifdef DEBUG
  fprintf(stderr, "hdf_create_compat_dim_vdata I've been called\n");
@@ -799,8 +799,8 @@ NC *handle;
 NC_attr **attr;
 {
   int status;
-  char *name;
-  Void *values;
+  char *name = NULL;
+  Void *values = NULL;
   int size;
   int type;
   int order;
@@ -859,10 +859,11 @@ NC_dim **dim;
 int32 cnt;
 {
   int32 status;
-  int32 tags[100], refs[100];
+  int32 tags[100];
+  int32 refs[100];
   int32 count;
-  char  *class;
-  char  name[MAX_NC_NAME];
+  char  *class = NULL;
+  char  name[MAX_NC_NAME] = "";
 
 #if DEBUG
  fprintf(stderr, "hdf_write_dim I've been called\n");
@@ -918,16 +919,17 @@ XDR *xdrs;
 NC *handle;
 NC_var **var;
 {
-  NC_array  *  attrs;
-  NC_iarray *  assoc;
+  NC_array  *  attrs = NULL;
+  NC_iarray *  assoc = NULL;
   uint8        ntstring[4];
   uint16       ref;
   int8         outNT;
   uint8 tbuf[2+((MAX_VAR_DIMS+1)*8)];   /* temporary buffer */
-  int32 tags[MAX_NC_ATTRS + MAX_VAR_DIMS + 2], refs[MAX_NC_ATTRS + MAX_VAR_DIMS + 10];
+  int32 tags[MAX_NC_ATTRS + MAX_VAR_DIMS + 2];
+  int32 refs[MAX_NC_ATTRS + MAX_VAR_DIMS + 10];
   uint16       nt_ref, rank;
   int32     GroupID, val;
-  uint8     *  bufp;
+  uint8     *  bufp = NULL;
   char      *FUNC = "hdf_write_var";
 
   register int  i, count;
@@ -1110,12 +1112,15 @@ bool_t
 XDR *xdrs;
 NC **handlep;
 {
-  int32 *tags, *refs, count;
+  int32 *tags = NULL;
+  int32 *refs = NULL;
+  int32 count;
   int sz, i, j, status, done;
-  NC_dim **dims, **dims1;
-  NC_array *tmp;
-  Void *vars;
-  Void *attrs;
+  NC_dim **dims = NULL;
+  NC_dim **dims1 = NULL;
+  NC_array *tmp = NULL;
+  Void *vars = NULL;
+  Void *attrs = NULL;
 
 #if DEBUG
  fprintf(stderr, "hdf_write_xdr_cdf i've been called op = %d \n", xdrs->x_op);
@@ -1242,11 +1247,13 @@ NC     *handle;
 int32  vg;
 {
 
-  char vgname[100], vsclass[128], vgclass[128];
+  char vgname[100] = "";
+  char vsclass[128] = "";
+  char vgclass[128] = "";
   int id, count, i, found;
   int sub_id;
   int32 dim_size;
-  NC_dim **dimension;
+  NC_dim **dimension = NULL;
   int32 dim, entries;
   int32 vs;
 
@@ -1386,10 +1393,13 @@ NC     *handle;
 int32   vg;
 {
 
-  char vsname[100], fields[100], *values, class[128];
+  char vsname[100] = "";
+  char  fields[100] = "" ;
+  char class[128] = "";
+  char *values = NULL;
   int count, t, n;
   nc_type type;
-  NC_attr **attributes;
+  NC_attr **attributes = NULL;
   NC_array *Array = NULL;
   int32 vs, tag, id, vsize, attr_size, nt;
 
@@ -1491,14 +1501,16 @@ NC     *handle;
 int32  vg;
 {
 
-  char vgname[100], subname[100], class[128];
-  NC_var **variables, *vp;
-  int    ndims, *dims;
+  char vgname[100] = "";
+  char subname[100] = "";
+  char class[128] = "";
+  NC_var **variables = NULL;
+  NC_var *vp = NULL;
+  int    ndims, *dims = NULL;
   uint8 ntstring[4];
   int   data_ref, is_rec_var, vg_size, count;
   int32 data_count, HDFtype, tag, id;
   int32 n, sub_id, entries, ndg_ref, rag_ref;
-
   register int     t, i;
   register nc_type type;
   register int32   var, sub;
@@ -1993,14 +2005,14 @@ NC *handle;
 void hdf_close(handle)
      NC *handle;
 {
-    NC_array *tmp;
-    NC_var **vp;
+    NC_array *tmp = NULL;
+    NC_var **vp = NULL;
     Void *vars;
     register int i;
     int id, sub_id;
     int32 vg, dim;
     int32 vs;
-    char class[128];
+    char class[128] = "";
    
     CONSTR(FUNC,"hdf_close"); 
 
