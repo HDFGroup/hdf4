@@ -3,7 +3,7 @@
 # Compiliers:
 # For gcc version
 CC=gcc
-CFLAGS=-ansi -O
+CFLAGS=-ansi
 #CFLAGS=-ansi -Wall -pedantic -g
 #
 #Using ANSI compilier
@@ -12,7 +12,7 @@ CFLAGS=-ansi -O
 
 # Fortran compilier
 FC = f77
-FFLAGS =
+FFLAGS = 
 
 # Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
 RANLIB = ranlib
