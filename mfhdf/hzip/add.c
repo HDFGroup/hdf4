@@ -19,15 +19,12 @@
 
 
 
-/* read image data */
+/* globals for read image data, used in gr, r8 and r24 add */
 int      X_LENGTH;
 int      Y_LENGTH;
 int      N_COMPS;
 unsigned char *image_data = 0;   
 
-/* sds */
-#define X_DIM      4
-#define Y_DIM      16
 
 
 /*-------------------------------------------------------------------------
@@ -121,7 +118,56 @@ void add_gr(char* name_file,char* gr_name,int32 file_id,int32 vgroup_id)
   free( image_data );
   image_data=NULL;
  }
+}
 
+/*-------------------------------------------------------------------------
+ * Function: add_glb_attrs
+ *
+ * Purpose: utility function to write global attributes
+ *
+ * Return: void
+ *
+ * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
+ *
+ * Date: July 30, 2003
+ *
+ *-------------------------------------------------------------------------
+ */
+
+void add_glb_attrs(char *fname,int32 file_id)
+{
+ intn  status;                 /* status for functions returning an intn */
+ int32 sd_id,                  /* SD interface identifier */
+       gr_id;                  /* GR interface identifier */
+ uint8 attr_values[2]={1,2};
+ int   n_values=2;
+     
+/*-------------------------------------------------------------------------
+ * make SDS global attributes
+ *-------------------------------------------------------------------------
+ */ 
+ 
+ /* initialize the SD interface */
+ sd_id  = SDstart (fname, DFACC_WRITE);
+
+ /* assign an attribute to the SD */
+ status = SDsetattr(sd_id, "MySDgattr", DFNT_UINT8, n_values, (VOIDP)attr_values);
+
+ /* terminate access to the SD interface */
+ status = SDend (sd_id);
+
+/*-------------------------------------------------------------------------
+ * make GR global attributes
+ *-------------------------------------------------------------------------
+ */ 
+
+ gr_id  = GRstart(file_id);
+ 
+ /* assign an attribute to the GR */
+ status = GRsetattr(gr_id, "MyGRgattr", DFNT_UINT8, n_values, (VOIDP)attr_values);
+
+ /* terminate access to the GR interface */
+ status = GRend (gr_id);
 }
 
 
@@ -263,6 +309,11 @@ void add_r24(char *fname,char* name_file,int32 vgroup_id)
  *
  *-------------------------------------------------------------------------
  */
+
+
+/* dimensions of dataset */
+#define X_DIM      4
+#define Y_DIM      16
 
 void add_sd(char *fname,             /* file name */
             char* sds_name,          /* sds name */
@@ -505,8 +556,57 @@ void add_vs(char* vs_name,int32 file_id,int32 vgroup_id)
  
  /* Terminate access to the VS interface */
  status_n = Vend (file_id);
- 
 }
+
+
+/*-------------------------------------------------------------------------
+ * Function: add_an
+ *
+ * Purpose: utility function to write AN
+ *
+ * Return: void
+ *
+ * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
+ *
+ * Date: July 30, 2003
+ *
+ *-------------------------------------------------------------------------
+ */
+
+#define  FILE_LABEL_TXT "General HDF objects"
+#define  FILE_DESC_TXT  "This is an HDF file that contains general HDF objects"
+
+void add_an(int32 file_id)
+{
+ intn  status_n;     /* returned status for functions returning an intn  */
+ int32 status_32,    /* returned status for functions returning an int32 */
+       an_id,        /* AN interface identifier */
+       file_label_id,/* file label identifier */
+       file_desc_id; /* file description identifier */
+         
+ /* Initialize the AN interface */
+ an_id = ANstart (file_id);
+
+ /* Create the file label */
+ file_label_id = ANcreatef (an_id, AN_FILE_LABEL);
+
+ /* Write the annotations to the file label */
+ status_32 = ANwriteann (file_label_id,FILE_LABEL_TXT,strlen (FILE_LABEL_TXT));
+
+ /* Create file description */
+ file_desc_id = ANcreatef (an_id, AN_FILE_DESC);
+
+ /* Write the annotation to the file description */
+ status_32 = ANwriteann (file_desc_id, FILE_DESC_TXT, strlen (FILE_DESC_TXT));
+
+/* Terminate access to each annotation explicitly */
+ status_n = ANendaccess (file_label_id);
+ status_n = ANendaccess (file_desc_id);
+ 
+/* Terminate access to the AN interface */
+ status_32 = ANend (an_id);
+}
+
 
 
 /*-------------------------------------------------------------------------

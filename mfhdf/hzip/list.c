@@ -22,6 +22,9 @@ void list_vg (char* infname,char* outfname,int32 infile_id,int32 outfile_id,tabl
 void list_gr (char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
 void list_sds(char* infname,char* outfname,int32 infile_id,table_t *table,options_t *options);
 void list_vs (char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
+void list_glb(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
+void list_an (char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
+
 void vgroup_insert(char* infname, char* outfname, 
                    int32 infile_id, int32 outfile_id,
                    int32 vgroup_id_out, char*path_name, 
@@ -99,6 +102,8 @@ int list(char* infname, char* outfname, options_t *options)
  list_gr (infname,outfname,infile_id,outfile_id,table,options);
  list_sds(infname,outfname,infile_id,table,options);
  list_vs (infname,outfname,infile_id,outfile_id,table,options);
+	list_glb(infname,outfname,infile_id,outfile_id,table,options);
+	list_an (infname,outfname,infile_id,outfile_id,table,options);
 
  /* close the HDF files */
  status_n = Hclose (infile_id);
@@ -830,6 +835,198 @@ int copy_vgroup_attrs(int32 vg_in, int32 vg_out, char *path)
  }
  return 1;
 }
+
+
+/*-------------------------------------------------------------------------
+ * Function: list_glb
+ *
+ * Purpose: list/copy global SDS attributes, global GR atrributes
+ *
+ * Return: void
+ *
+ *-------------------------------------------------------------------------
+ */
+
+void list_glb(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options)
+{
+ intn  status;                 /* status for functions returning an intn */
+ int32 sd_id,                  /* SD interface identifier */
+       sd_out,                 /* SD interface identifier */
+       gr_id,                  /* GR interface identifier */
+       gr_out,                 /* GR interface identifier */
+       n_datasets,             /* number of datasets in the file */
+       n_file_attrs;           /* number of file attributes */
+	
+	if ( options->trip==0 ) 
+	{
+		return;
+	}
+     
+/*-------------------------------------------------------------------------
+ * copy SDS global attributes
+ *-------------------------------------------------------------------------
+ */ 
+ 
+ /* initialize the SD interface */
+ sd_id  = SDstart (infname, DFACC_READ);
+ sd_out = SDstart (outfname, DFACC_WRITE);
+
+ /* determine the number of data sets in the file and the number of file attributes */
+ status = SDfileinfo (sd_id, &n_datasets, &n_file_attrs);
+ 
+ copy_sds_attrs(sd_id,sd_out,n_file_attrs,options);
+
+ /* terminate access to the SD interface */
+ status = SDend (sd_id);
+ status = SDend (sd_out);
+
+
+/*-------------------------------------------------------------------------
+ * copy GR global attributes
+ *-------------------------------------------------------------------------
+ */ 
+
+ gr_id  = GRstart(infile_id);
+ gr_out = GRstart(outfile_id);
+
+ /* determine the number of data sets in the file and the number of file attributes */
+ status = GRfileinfo (gr_id, &n_datasets, &n_file_attrs);
+ 
+ copy_gr_attrs(gr_id,gr_out,n_file_attrs,options);
+
+ /* terminate access to the GR interface */
+ status = GRend (gr_id);
+ status = GRend (gr_out);
+ 
+
+}
+
+
+/*-------------------------------------------------------------------------
+ * Function: list_an
+ *
+ * Purpose: list/copy AN objects
+ *
+ * Return: void
+ *
+ *-------------------------------------------------------------------------
+ */
+
+void list_an(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options)
+{
+ intn  status_n;      /* returned status for functions returning an intn  */
+ int32 status_32,     /* returned status for functions returning an int32 */
+       an_id,         /* AN interface identifier */
+       ann_id,        /* an annotation identifier */
+       i,             /* position of an annotation in all of the same type*/
+       ann_length,    /* length of the text in an annotation */
+       an_out,        /* AN interface identifier */
+       file_label_id, /* file label identifier */
+       file_desc_id,  /* file description identifier */
+       n_file_labels, n_file_descs, n_data_labels, n_data_descs;
+ char *ann_buf;       /* buffer to hold the read annotation */
+
+ if ( options->trip==0 ) 
+ {
+  return;
+ }
+ 
+ /* Initialize the AN interface  */
+ an_id  = ANstart (infile_id);
+ an_out = ANstart (outfile_id);
+ 
+/*
+ * Get the annotation information, e.g., the numbers of file labels, file
+ * descriptions, data labels, and data descriptions.
+ */
+ status_n = ANfileinfo (an_id, &n_file_labels, &n_file_descs, 
+  &n_data_labels, &n_data_descs);
+ 
+
+/*-------------------------------------------------------------------------
+ * AN_FILE_LABEL
+ *-------------------------------------------------------------------------
+ */ 
+
+
+ for (i = 0; i < n_file_labels; i++)
+ {
+ /* Get the identifier of the current data label */
+  ann_id = ANselect (an_id, i, AN_FILE_LABEL);
+  
+  /* Get the length of the data label */
+  ann_length = ANannlen (ann_id);
+  
+  /* Allocate space for the buffer to hold the data label text */
+  ann_buf = malloc ((ann_length+1) * sizeof (char));
+  
+ /*
+  * Read and display the file label.  Note that the size of the buffer,
+  * i.e., the third parameter, is 1 character more than the length of
+  * the data label; that is for the null character.  It is not the case
+  * when a description is retrieved because the description does not 
+  * necessarily end with a null character.
+  * 
+  */
+  status_32 = ANreadann (ann_id, ann_buf, ann_length+1);
+
+  /* Create the file label */
+  file_label_id = ANcreatef (an_out, AN_FILE_LABEL);
+
+  /* Write the annotations  */
+  if ((status_32 = ANwriteann (file_label_id, ann_buf, ann_length))==FAIL) {
+   fprintf(stderr,"Failed to write file label %d\n", i);
+		}
+  
+  /* Terminate access to the current data label */
+  status_n = ANendaccess (ann_id);
+  status_n = ANendaccess (file_label_id);
+  
+  /* Free the space allocated for the annotation buffer */
+  free (ann_buf);
+ }
+
+/*-------------------------------------------------------------------------
+ * AN_FILE_DESC
+ *-------------------------------------------------------------------------
+ */ 
+
+ for (i = 0; i < n_file_descs; i++)
+ {
+ /* Get the identifier of the current data label */
+  ann_id = ANselect (an_id, i, AN_FILE_DESC);
+  
+  /* Get the length of the data label */
+  ann_length = ANannlen (ann_id);
+  
+  /* Allocate space for the buffer to hold the data label text */
+  ann_buf = malloc ((ann_length+1) * sizeof (char));
+ 
+  status_32 = ANreadann (ann_id, ann_buf, ann_length+1);
+
+   /* Create the label */
+  file_desc_id = ANcreatef (an_out, AN_FILE_DESC);
+
+  /* Write the annotations  */
+  if ((status_32 = ANwriteann (file_desc_id, ann_buf, ann_length))==FAIL){
+   fprintf(stderr,"Failed to write file description %d\n", i);
+		}
+  
+  /* Terminate access to the current data label */
+  status_n = ANendaccess (ann_id);
+  status_n = ANendaccess (file_desc_id);
+ 
+  /* Free the space allocated for the annotation buffer */
+  free (ann_buf);
+ }
+ 
+ /* Terminate access to the AN interface */
+ status_32 = ANend (an_id);
+ status_32 = ANend (an_out);
+ 
+}
+
+
 
 
 

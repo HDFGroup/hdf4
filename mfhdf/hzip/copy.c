@@ -21,24 +21,12 @@
 
 
 #if !defined (ONE_TABLE)
-
 comp_info_t* get_comp(options_t *options, char* path);
 int          get_chunk(options_t *options, char* path, int32 *chunk_lengths);
 #endif
 
-int copy_sds_attrs(int32 sds_id,
-                       int32 sds_out,
-                       int32 nattrs,          
-                       options_t *options);
-
-int copy_gr_attrs(int32 ri_id,
-                  int32 ri_out,
-                  int32 nattrs,          
-                  options_t *options);
 
 int copy_vdata_attribute(int32 in, int32 out, int32 findex, intn attrindex);
-
-
 void options_get_info(options_t      *options,     /* global options */
                       int32          *chunk_flags, /* chunk flags OUT */
                       HDF_CHUNK_DEF  *chunk_def,   /* chunk definition OUT */
@@ -494,19 +482,20 @@ out:
 /*-------------------------------------------------------------------------
  * Function: copy_sds_attrs
  *
- * Purpose: copy SDS attributes from input file to output file 
+ * Purpose: copy SD attributes from input file to output file 
+	*   used for global, dataset and dimension attributes
  *
  * Return: 1, for success, -1 for error 
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
- * Date: July 10, 2003
+ * Date: July 30, 2003
  *
  *-------------------------------------------------------------------------
  */
 
-int copy_sds_attrs(int32 sds_id,
-                   int32 sds_out,
+int copy_sds_attrs(int32 id_in,
+                   int32 id_out,
                    int32 nattrs,          
                    options_t *options)
 {
@@ -521,7 +510,7 @@ int copy_sds_attrs(int32 sds_id,
  /* loop through attributes in input SDS */
  for (i = 0; i < nattrs; i++) 
  {
-  if (SDattrinfo (sds_id, i, attr_name, &dtype, &nelms) == FAIL) {
+  if (SDattrinfo (id_in, i, attr_name, &dtype, &nelms) == FAIL) {
    fprintf(stderr, "Cannot get info for attribute number %d\n", i);
    return-1;
   }
@@ -534,12 +523,12 @@ int copy_sds_attrs(int32 sds_id,
    return-1;
   }
   /* read attributes from input SDS */
-  if (SDreadattr(sds_id, i, attr_buf) == FAIL) {
+  if (SDreadattr(id_in, i, attr_buf) == FAIL) {
    fprintf(stderr, "Cannot read attribute %s\n", attr_name);
    return-1;
   }
   /* put attributes into output SDS */
-  if (SDsetattr(sds_out, attr_name, dtype, nelms, attr_buf) == FAIL) {
+  if (SDsetattr(id_out, attr_name, dtype, nelms, attr_buf) == FAIL) {
    fprintf(stderr, "Cannot write attribute %s\n", attr_name);
    return-1;
   }
