@@ -848,7 +848,7 @@ HIbitflush(bitrec_t * bitfile_rec, intn flushbit, intn writeout)
     if (bitfile_rec->count < (intn)BITNUM)
       {     /* check if there are any */
 #ifdef QAK
-printf("%s: byte_offset=%d, max_offset=%d\n",FUNC,(int)bitfile_rec->byte_offset,(int)bitfile_rec->max_offset);
+printf("%s: byte_offset=%d, max_offset=%d, bitfile_rec->count=%d\n",FUNC,(int)bitfile_rec->byte_offset,(int)bitfile_rec->max_offset,(int)bitfile_rec->count);
 #endif /* QAK */
           if (bitfile_rec->byte_offset > bitfile_rec->max_offset)
             {
@@ -861,6 +861,9 @@ printf("%s: flushing bits, flushbit=%d, count=%d\n",FUNC,flushbit,bitfile_rec->c
             }   /* end if */
           else
             {   /* we are in the middle of a dataset and need to integrate */
+#ifdef QAK
+printf("%s: merging bits, bytea=%p, bytep=%p, bytez=%p\n",FUNC,bitfile_rec->bytea,bitfile_rec->bytep,bitfile_rec->bytez);
+#endif /* QAK */
                 /* mask off a place for the new bits */
                 *(bitfile_rec->bytep) &= (uint8)(~(maskc[(intn)BITNUM - bitfile_rec->count] << bitfile_rec->count));
 
@@ -868,7 +871,14 @@ printf("%s: flushing bits, flushbit=%d, count=%d\n",FUNC,flushbit,bitfile_rec->c
                 *(bitfile_rec->bytep) |= bitfile_rec->bits;
 
                 bitfile_rec->bytep++;
+                bitfile_rec->byte_offset++;
+                
+                /* Update the offset in the buffer */
+                if (bitfile_rec->byte_offset > bitfile_rec->max_offset)
+                    bitfile_rec->max_offset = bitfile_rec->byte_offset;
+
                 bitfile_rec->count = BITNUM;    /* reset count */
+                bitfile_rec->bits=0;            /* reset bits */
             }   /* end else */
       }     /* end if */
     if (writeout == TRUE)
