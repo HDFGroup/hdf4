@@ -1449,7 +1449,7 @@ done:
  PURPOSE
     Internal routine to update the meta-data for an image
  USAGE
-    intn GRIupdateRIG(hdf_file_id,img_ptr)
+    intn GRIupdatemeta(hdf_file_id,img_ptr)
         int32 hdf_file_id;          IN: the file ID for the HDF file.
         ri_info_t *img_ptr;         IN: pointer to the image info for the
                                         image to write.
@@ -1662,7 +1662,7 @@ done:
  PURPOSE
     Internal routine to update the RI Vgroup for an image
  USAGE
-    intn GRIupdateRIG(hdf_file_id,img_ptr)
+    intn GRIupdateRI(hdf_file_id,img_ptr)
         int32 hdf_file_id;          IN: the file ID for the HDF file.
         ri_info_t *img_ptr;         IN: pointer to the image info for the
                                         image to write.
@@ -2173,6 +2173,7 @@ int32 GRcreate(int32 grid,char *name,int32 ncomp,int32 nt,int32 il,int32 dimsize
 {
     CONSTR(FUNC, "GRcreate");   /* for HERROR */
     int32 gr_idx;               /* index into the gr_tab array */
+    int32 GroupID;              /* ID of the Vgroup created */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     int32    ret_value = SUCCEED;
@@ -2205,7 +2206,15 @@ int32 GRcreate(int32 grid,char *name,int32 ncomp,int32 nt,int32 il,int32 dimsize
 
     /* Assign image information */
     ri_ptr->index=gr_ptr->gr_count;
+#ifdef OLD_WAY
     ri_ptr->ri_ref=DFREF_WILDCARD;
+#else /* OLD_WAY */
+    if ((GroupID = Vattach(gr_ptr->hdf_file_id,-1,"w")) == FAIL)
+        HGOTO_ERROR(DFE_CANTATTACH, FAIL);
+    ri_ptr->ri_ref=(uint16)VQueryref(GroupID);
+    if(Vdetach(GroupID)==FAIL)
+        HGOTO_ERROR(DFE_CANTDETACH, FAIL);
+#endif /* OLD_WAY */
     ri_ptr->rig_ref=DFREF_WILDCARD;
     ri_ptr->img_dim.dim_ref=DFREF_WILDCARD;
     ri_ptr->img_dim.xdim=dimsizes[XDIM];
@@ -3477,7 +3486,7 @@ uint16 GRidtoref(int32 riid)
     else
       {
         if(ri_ptr->rig_ref==DFREF_WILDCARD)
-            ri_ptr->rig_ref=Htagnewref(gr_ptr->hdf_file_id,DFTAG_RIG);
+            HGOTO_ERROR(DFE_INTERNAL,(uint16)FAIL);
         ret_value=ri_ptr->rig_ref;
       } /* end else */
 #endif /* OLD_WAY */
