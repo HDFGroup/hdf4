@@ -44,10 +44,12 @@ write_vset_stuff(void)
     int32       fid, aid;
     int32       vg1, vg2;
     int32       vs1;
-    int32       count, i, j, num;
+    int32       count, i, j, num, max_order;
     int32       ibuf[2000];     /* integer buffer */
     float32     fbuf[2000];     /* floating point buffer */
     char        gbuf[2000];     /* generic buffer */
+    uint8       gbuf1[65536];   /* buffer for uint8 */
+    float32     gbuf2[20000];   /*  buffer for float32 */
     const char *name;
     char       *p;
     char8       c;
@@ -330,6 +332,67 @@ write_vset_stuff(void)
     MESSAGE(5, printf("created VDATA %s with %d elements\n", name, (int) count);
         );
 
+    /* test MAX_ORDER and MAX_FIELD_SIZE */
+    vs1 = VSattach(fid, -1, "w");
+    name = "Max_Order Vdata";
+    VSsetname(vs1, name);
+    VSfdefine(vs1, "max_order", DFNT_UINT8, MAX_ORDER);
+    status = VSsetfields(vs1, "max_order");
+    if (status == FAIL)
+      {
+          num_errs++;
+          printf(">>> Vsetfields failed for %s\n", name);
+      }
+
+    /* create some bogus data */
+    for (i = 0; i < MAX_ORDER; i++)
+         gbuf1[i] = i % 256;
+    VSwrite(vs1, (unsigned char *) gbuf1, 1, FULL_INTERLACE);
+    VSdetach(vs1);
+    MESSAGE(5, printf("created VDATA %s with %d order\n", name, (int)
+ MAX_ORDER);
+        );
+
+   vs1 = VSattach(fid, -1, "w");
+    name = "Max_Fldsize Vdata";
+    VSsetname(vs1, name);
+    max_order = MAX_FIELD_SIZE/SIZE_FLOAT32;
+    VSfdefine(vs1, "max_fldsize", DFNT_FLOAT32, max_order);
+    status = VSsetfields(vs1, "max_fldsize");
+    if (status == FAIL)
+      {
+          num_errs++;
+          printf(">>> Vsetfields failed for %s\n", name);
+      }
+    
+    /* create some bogus data */
+    for (i = 0; i < max_order; i++)
+         gbuf2[i] = i * 0.11; 
+    VSwrite(vs1, (unsigned char *) gbuf2, 1, FULL_INTERLACE);
+    VSdetach(vs1);
+    MESSAGE(5, printf("created VDATA %s with %d order\n", name, (int)
+ max_order);
+        );
+
+    /* create vdata exceeding MAX_FIELD_SIZE, should fail */
+    vs1 = VSattach(fid, -1, "w");
+    name = "Bad_Fldsize Vdata";
+    VSsetname(vs1, name);
+    max_order = MAX_FIELD_SIZE/SIZE_FLOAT32 + 1;
+    status = VSfdefine(vs1, "bad_fldsize", DFNT_FLOAT32, max_order);
+    if (status != FAIL)
+      {
+          num_errs++;
+          printf(">>> Vsetfields failed for %s\n", name);
+      }
+
+    status = VSsetfields(vs1, "bad_fldsize");
+    if (status != FAIL)
+      {
+          num_errs++;
+          printf(">>> Vsetfields failed for %s\n", name);
+      }
+    VSdetach(vs1);
     /* create a whole bunch of Vdatas to check for memory leakage */
     for (i = 0; i < VDATA_COUNT; i++)
       {
