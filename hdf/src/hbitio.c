@@ -180,6 +180,50 @@ int32 length;           /* length of elt to write */
 /*--------------------------------------------------------------------------
 
  NAME
+       Hbitappendable -- make a bitio AID appendable
+ USAGE
+       intn Hbitappendable(bitid)
+       int32 bitid;         IN: id of bit-element to make appendable
+ RETURNS
+        SUCCEED for success
+        FAIL to indicate failure
+ DESCRIPTION
+       If a dataset is at the end of a file, allow Hbitwrite()s to write
+       past the end of a file.  Allows expanding datasets without the use
+       of linked blocks.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+intn Hbitappendable(int32 bitid)
+#else
+intn Hbitappendable(bitid)
+int32 bitid;            /* Bit ID to use */
+#endif
+{
+    char *FUNC="Hbitappendable";    /* for HERROR */
+    bitrec_t *bitfile_rec;  /* access record */
+
+    /* clear error stack and check validity of file id */
+    HEclear();
+
+    if((bitfile_rec = BITID2REC(bitid))==NULL)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
+
+    /* Check for write access */
+    if(bitfile_rec->mode!='w')
+        HRETURN_ERROR(DFE_BADACC,FAIL);
+
+    if(Happendable(bitfile_rec->acc_id)==FAIL)
+        HRETURN_ERROR(DFE_NOTENOUGH,FAIL);
+    return(SUCCEED);
+}   /* end Hbitappendable() */
+
+/*--------------------------------------------------------------------------
+
+ NAME
        Hbitwrite -- write a number of bits out to a bit-element
  USAGE
        intn Hbitwrite(bitid, count, data)
@@ -215,6 +259,9 @@ uint32 data;            /* Actual bits to output */
     /* clear error stack and check validity of file id */
     HEclear();
 
+#ifdef QAK
+printf("Hbitwrite(): bitid=%d count=%d, data=%x\n",bitid,count,data);
+#endif
     if(count<=0 || (bitfile_rec = BITID2REC(bitid))==NULL)
         HRETURN_ERROR(DFE_ARGS,FAIL);
 

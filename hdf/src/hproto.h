@@ -269,6 +269,27 @@ extern VOID HEclear
     PROTO((void));
 
 /*
+** from hbitio.c
+*/
+extern int32 Hstartbitread
+    PROTO((int32 file_id,uint16 tag,uint16 ref));
+
+extern int32 Hstartbitwrite
+    PROTO((int32 file_id,uint16 tag,uint16 ref,int32 length));
+
+extern intn Hbitappendable
+    PROTO((int32 bitid));
+
+extern intn Hbitwrite
+    PROTO((int32 bitid, intn count, uint32 data));
+
+extern intn Hbitread
+    PROTO((int32 bitid, intn count, uint32 *data));
+
+extern int32 Hendbitaccess
+    PROTO((int32 bitfile_id,intn flushbit));
+
+/*
 ** from dfcomp.c
 */
 extern int DFputcomp
