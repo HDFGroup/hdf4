@@ -52,19 +52,9 @@ $ type sys$input
   **  Making C interface test programs **
 $!
 $ type sys$input
-        Making tr8
-$ cc/define=VMS/include=hdf$include   tr8
-$ link tr8, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making t24
-$ cc/define=VMS/include=hdf$include   t24
-$ link t24, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making tp
-$ cc/define=VMS/include=hdf$include   tp
-$ link tp, hdf$lib/lib, sys$clib/lib
+        Making trig
+$ cc/define=VMS/include=hdf$include   trig
+$ link trig, hdf$lib/lib, sys$clib/lib
 $!
 $ type sys$input
         Making tsdmms

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/10/01 02:53:23  chouck
-Initial revision
+Revision 1.2  1992/10/01 03:27:34  chouck
+Added tests in tp.c into trig.c
 
+ * Revision 1.1  1992/10/01  02:53:23  chouck
+ * Initial revision
+ *
  * Revision 1.2  1992/09/17  19:54:14  chouck
  * Made arrays smaller to keep Mac from crashing
  *
@@ -348,13 +351,12 @@ test_r24()
 #define YD1 10
 #define XD2 32
 #define YD2 11
-#define FALSE 0
-
-uint8 im1[XD1][YD1], im2[XD2][YD2], ii1[XD1][YD1], ii2[XD2][YD2];
-uint8 pal1[768], pal2[768], ipal[768];
 
 test_r8()
 {
+    uint8 im1[XD1][YD1], im2[XD2][YD2], ii1[XD1][YD1], ii2[XD2][YD2];
+    uint8 pal1[768], pal2[768], ipal[768];
+
     int x,y;
     int ret, num_images=0;
     uint16 ref1, ref2, ref3;
@@ -508,6 +510,116 @@ int check_im_pal(oldx, oldy, newx, newy, oldim, newim, oldpal, newpal)
     }
 }
 
+test_pal()
+{
+    int i;
+    int ret;
+    uint16 ref1, ref2;
+
+    char pal1[768], pal2[768];
+    char ipal[768];
+   
+
+    for (i=0;i<256;i++) {
+       pal1[3*i] = i;
+       pal1[3*i + 1] = i;
+       pal1[3*i + 2] = i;
+       pal2[i] = i;
+       pal2[i + 256] = i;
+       pal2[i + 512] = i;
+    }
+    
+    printf("\nAdding palettes to a file\n");
+
+    ret = DFPputpal(TESTFILE, pal1, 0, "w");
+    RESULT("DFPputpal");
+    ref1 = DFPlastref();
+
+
+    ret = DFPaddpal(TESTFILE, pal2);
+    RESULT("DFPaddpal");
+    ref2 = DFPlastref();
+
+    printf("\nReading and verifying palettes\n");
+
+    ret = DFPrestart();
+    RESULT("DFPrestart");
+
+
+    /* read and check palette 1 */
+    ret = DFPgetpal(TESTFILE, ipal);
+    RESULT("DFPgetpal");
+    for (i=0;i<768;i++)
+       if (ipal[i] != pal1[i])
+           printf("Error at %d, ipal %d pal1 %d\n", i, ipal[i], pal1[i]);
+
+    if(ref1 != DFPlastref()) {
+        fprintf(stderr,"  >>> DFPlastref() bad for palette 1 <<<\n");
+        num_errs++;
+    }
+
+
+    /* read and check palette 2 */
+    ret = DFPgetpal(TESTFILE, ipal);
+    RESULT("DFPgetpal");
+    for (i=0;i<768;i++)
+       if (ipal[i] != pal2[i])
+           printf("Error at %d, ipal %d pal2 %d\n", i, ipal[i], pal2[i]);
+
+    if(ref2 != DFPlastref()) {
+        fprintf(stderr,"  >>> DFPlastref() bad for palette 2 <<<\n");
+        num_errs++;
+    }
+
+    /*
+     * this is 4 instead of 2 since they are 8-bit pals and thus
+     * list twice and generic pals 
+     */
+
+    if(DFPnpals(TESTFILE) != 4) {
+        fprintf(stderr,"  >>> DFPnpals() gives wrong number <<<\n");
+        num_errs++;
+    }
+
+    /* recheck palette number 2 */
+    ret = DFPreadref(TESTFILE, ref2);
+    RESULT("DFPreadref");
+    ret = DFPgetpal(TESTFILE, ipal);
+    RESULT("DFPgetpal");
+    for (i=0;i<768;i++)
+       if (ipal[i] != pal2[i])
+           printf("Error at %d, ipal %d pal2 %d\n", i, ipal[i], pal2[i]);
+
+
+    /* recheck palette number 1 */
+    ret = DFPreadref(TESTFILE, ref1);
+    RESULT("DFPreadref");
+    ret = DFPgetpal(TESTFILE, ipal);
+    RESULT("DFPgetpal");
+    for (i=0;i<768;i++)
+       if (ipal[i] != pal1[i])
+           printf("Error at %d, ipal %d pal1 %d\n", i, ipal[i], pal1[i]);
+
+    printf("\nModifying first palette\n");
+    for (i=0;i<256;i++)
+       pal1[i+256] = 255 - i;
+    ret = DFPwriteref(TESTFILE, ref1);
+    RESULT("DFPwriteref");
+
+    ret = DFPputpal(TESTFILE, pal1, 1, "a");
+    RESULT("DFPputpal");
+
+    ret = DFPreadref(TESTFILE, ref1);
+    RESULT("DFPreafref");
+
+    ret = DFPgetpal(TESTFILE, ipal);
+    RESULT("DFPgetpal");
+    for (i=0;i<768;i++)
+       if (ipal[i] != pal1[i])
+           printf("Error at %d, ipal %d pal1 %d\n", i, ipal[i], pal1[i]);
+}
+
+
 
 
 main() {
@@ -517,7 +629,10 @@ main() {
     test_r24();
 
     printf("\n************ TESTING  8BIT RASTER IMAGE INTERFACE *************\n");
-    test_r8();
+    test_r8(); 
+
+    printf("\n************ TESTING  PALETTE INTERFACE *************\n");
+    test_pal();
 
     if(num_errs) {
         fprintf(stderr, "\n!!! %d Error(s) were detected !!!\n\n", num_errs);

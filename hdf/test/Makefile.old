@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.26  1992/10/01 02:53:23  chouck
+# Revision 1.27  1992/10/01 03:27:34  chouck
+# Added tests in tp.c into trig.c
+#
+# Revision 1.26  1992/10/01  02:53:23  chouck
 # Consolidated 8-bit and 24-bit raster image tests
 #
 # Revision 1.25  1992/09/17  19:50:15  koziol
@@ -103,8 +106,7 @@
 #
 # The application layer C test programs are:
 #
-#              trig    (8-bit and 24-bit raster image sets)
-#              tp      (palettes)
+#              trig    (8-bit, 24-bit raster image sets and palette interface)
 #              tsdnt  (scientific data sets, data only)
 #              tsdnnt (same as tdfsd_nt with native number types)
 #              tsdmms (scientific data sets, data, max/min and scales)
@@ -209,15 +211,15 @@ RM=/bin/rm
 RMFLAGS=-f
 
 CTESTS= trig tsdstr tsdmms tsdnmms tsdnnt tsdnt tan \
-        tanfile tp tstubs tv1 tv2 tvers egchi
+        tanfile tstubs tv1 tv2 tvers egchi
 
 CHDRS = df.h dfi.h dfsd.h vg.h df.h dfi.h dfstubs.h \
 	vproto.h 
-CTSRCS= tr8.c t24.c tsdstr.c tsdmms.c tsdnmms.c tsdnnt.c \
-        tsdnt.c tan.c tanfile.c tp.c tstubs.c \
+CTSRCS= trig.c tsdstr.c tsdmms.c tsdnmms.c tsdnnt.c \
+        tsdnt.c tan.c tanfile.c tstubs.c \
 	tv1.c tv2.c tvers.c egchi.c
-CTOBJS= tr8.o t24.o tsdstr.o tsdmms.o tsdnt.o tan.o tanfile.o \
-        tp.o tstubs.o tsdnmms.o tsdnnt.o tv1.o tv2.o \
+CTOBJS= trig.o tsdstr.o tsdmms.o tsdnt.o tan.o tanfile.o \
+        tstubs.o tsdnmms.o tsdnnt.o tv1.o tv2.o \
 	tvers.o egchi.o
 
 HTESTS= thfile thfile1 terr thblocks thextelt tlinkage
@@ -244,9 +246,6 @@ htests: $(HTESTS)
 	
 trig:  trig.c 
 	$(CC) $(CFLAGS) -I$(HDFINC)  trig.c $(HDFLIB)/libdf.a -o trig
-
-tp:   tp.c 
-	$(CC) $(CFLAGS) -I$(HDFINC)  tp.c $(HDFLIB)/libdf.a -o tp
 
 tsdstr:    tsdstr.c
 	$(CC) $(CFLAGS) -I$(HDFINC)  tsdstr.c $(HDFLIB)/libdf.a -o tsdstr
