@@ -49,13 +49,10 @@ Supported Platforms
                                  (Fortran to C converter)
 
   PowerPC(Mac-OS-7.5)         Codewarrior 8    -              X         X
-<<<<<<< INSTALL
   Windows NT/95               Visual C++ 4.0   -              X         X  
-=======
   68k-far/4i/8d(Mac-OS-7.5)   Codewarrior 8    -              X         X
-  Windows NT/95                -               -               -         - 
->>>>>>> 1.29
- 
+  VAX/VMS                        -             -              -         -  
+
 Requirements
 ============
 
@@ -84,7 +81,7 @@ General Configuration/Installation - Unix
     --------        
     In this distribution there are two types of 'configure'
     scripts. One is the Cygnus 'configure' script and the other is the
-    'configure' script created by the GNU autconf package. The Cygnus
+    'configure' script created by the GNU autoconf package. The Cygnus
     'configure' script is used at the top level to configure the overall
     distribution and the HDF/MFHDF/IJPEG libraries. The GNU 'configure' script
     is used by the netCDF/IJPEG distributions to configure themselves. However, 
