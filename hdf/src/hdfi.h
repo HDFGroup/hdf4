@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.31  1993/09/02 14:41:56  koziol
-Patches for Watcom/386 Support
+Revision 1.32  1993/09/08 20:54:53  georgev
+Fixed problem with #elif directive on HP9000.
+Deleted NewPtr, DisposPtr references for Mac.
 
+ * Revision 1.31  1993/09/02  14:41:56  koziol
+ * Patches for Watcom/386 Support
+ *
  * Revision 1.30  1993/08/18  16:04:09  chouck
  * Restored changes blown away in version 1.28 (addition of HDstrdup())
  * (grumble grumble)
@@ -615,8 +619,8 @@ Please check your Makefile.
 
 #include <memory.h>             /* malloc stuff for MPW 3.0 */
 #include <fcntl.h>              /* unbuffered IO stuff for MPW 3.0 */
-#include <String.h>
-#include <StdLib.h>
+#include <string.h>
+#include <stdlib.h>
 #ifdef THINK_C                  /* for LightSpeed C */
 #include <unix.h>
 #define isascii(c)  (isprint(c) || iscntrl(c))
@@ -627,8 +631,6 @@ Please check your Makefile.
 #define DF_CAPFNAMES            /* fortran names are in all caps */
 #endif /* ABSOFT */
 #define DF_DYNAMIC              /* use dynamic allocation */
-#define malloc(x)   NewPtr((Size)   (x))    /* don't use malloc on the Mac */
-#define free(x)     DisposPtr((Ptr) (x))    /* don't use free on the Nac   */ 
 #define DF_MT   DFMT_MAC
 
 typedef void              VOID;
@@ -749,10 +751,12 @@ typedef long              intf;     /* size of INTEGERs in Fortran compiler */
 
 #ifdef WIN3
 #define FILELIB WINIO
-#elif defined PC386 /* !WIN3 */
+#else /* ! WIN3 */
+#ifdef defined PC386 /* !WIN3 */
 #define FILELIB UNIXBUFIO
 #else /* must be plain PC */
 #define FILELIB PCIO
+#endif /* PC */
 #endif /* WIN3 */
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
