@@ -126,11 +126,11 @@ HIread_version       -- reads a version tag from a file
 
 +*/
 
-#include <string.h>
 #define HMASTER
 #include "hdf.h"
 #undef HMASTER
 #include "hfile.h"
+#include <string.h>
 
 /*--------------------- Locally defined Globals -----------------------------*/
 

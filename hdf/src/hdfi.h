@@ -59,6 +59,10 @@
 #define PCIO        4
 #define WINIO       5
 
+#if defined(IBM6000) || defined(_AIX)
+#define _POSIX_SOURCE
+#endif /* RS6000 hack */
+
 #include <stdio.h>
 
 #ifdef __STDC__
@@ -229,6 +233,7 @@ Please check your Makefile.
 #include <memory.h>
 #endif /* __GNUC__ */
 #include <sys/file.h>               /* for unbuffered i/o stuff */
+#include <sys/stat.h>
 #define DF_MT             DFMT_IBM6000
 typedef void              VOID;
 typedef void              *VOIDP;
