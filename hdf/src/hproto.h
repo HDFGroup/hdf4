@@ -61,138 +61,138 @@ extern      "C"
 /*
    ** from hfile.c
  */
-    extern int32 Hopen
+    HDFLIBAPI int32 Hopen
                 (const char *path, intn acc_mode, int16 ndds);
 
-    extern intn Hclose
+    HDFLIBAPI intn Hclose
                 (int32 file_id);
 
-    extern int32 Hstartread
+    HDFLIBAPI int32 Hstartread
                 (int32 file_id, uint16 tag, uint16 ref);
 
-    extern intn Hnextread
+    HDFLIBAPI intn Hnextread
                 (int32 access_id, uint16 tag, uint16 ref, intn origin);
 
-    extern intn Hexist
+    HDFLIBAPI intn Hexist
                 (int32 file_id, uint16 search_tag, uint16 search_ref);
 
-    extern intn Hinquire
+    HDFLIBAPI intn Hinquire
                 (int32 access_id, int32 * pfile_id, uint16 * ptag,
           uint16 * pref, int32 * plength, int32 * poffset,
         int32 * pposn, int16 * paccess, int16 * pspecial);
 
-    extern int32 Hstartwrite
+    HDFLIBAPI int32 Hstartwrite
                 (int32 file_id, uint16 tag, uint16 ref, int32 length);
 
-    extern int32 Hstartaccess
+    HDFLIBAPI int32 Hstartaccess
                 (int32 file_id, uint16 tag, uint16 ref, uint32 flags);
 
-    extern intn Hsetlength
+    HDFLIBAPI intn Hsetlength
                 (int32 file_id, int32 length);
 
-    extern intn Happendable
+    HDFLIBAPI intn Happendable
                 (int32 aid);
 
-    extern intn HPisappendable
+    HDFLIBAPI intn HPisappendable
                 (int32 aid);
 
-    extern intn HPregister_term_func
+    HDFLIBAPI intn HPregister_term_func
                 (hdf_termfunc_t term_func);
 
-    extern intn Hseek
+    HDFLIBAPI intn Hseek
                 (int32 access_id, int32 offset, intn origin);
 
-    extern int32 Htell
+    HDFLIBAPI int32 Htell
                 (int32 access_id);
 
-    extern int32 Hread
+    HDFLIBAPI int32 Hread
                 (int32 access_id, int32 length, void * data);
 
-    extern int32 Hwrite
+    HDFLIBAPI int32 Hwrite
                 (int32 access_id, int32 length, const void * data);
 
-    extern int32 Htrunc
+    HDFLIBAPI int32 Htrunc
                 (int32 access_id, int32 trunc_len);
 
-    extern intn Hendaccess
+    HDFLIBAPI intn Hendaccess
                 (int32 access_id);
 
-    extern intn HDgetc
+    HDFLIBAPI intn HDgetc
                 (int32 access_id);
 
-    extern intn HDputc
+    HDFLIBAPI intn HDputc
                 (uint8 c, int32 access_id);
 
-    extern int32 Hgetelement
+    HDFLIBAPI int32 Hgetelement
                 (int32 file_id, uint16 tag, uint16 ref, uint8 * data);
 
-    extern int32 Hputelement
+    HDFLIBAPI int32 Hputelement
                 (int32 file_id, uint16 tag, uint16 ref, const uint8 * data, int32 length);
 
-    extern int32 Hlength
+    HDFLIBAPI int32 Hlength
                 (int32 file_id, uint16 tag, uint16 ref);
 
-    extern int32 Hoffset
+    HDFLIBAPI int32 Hoffset
                 (int32 file_id, uint16 tag, uint16 ref);
 
-    extern intn Hsync
+    HDFLIBAPI intn Hsync
                 (int32 file_id);
 
-    extern intn Hcache
+    HDFLIBAPI intn Hcache
                 (int32 file_id, intn cache_on);
 
-    extern intn Hgetlibversion
+    HDFLIBAPI intn Hgetlibversion
                 (uint32 * majorv, uint32 * minorv,
                  uint32 * releasev, char * string);
 
-    extern intn Hgetfileversion
+    HDFLIBAPI intn Hgetfileversion
                 (int32 file_id, uint32 * majorv, uint32 * minorv,
                  uint32 * release, char * string);
 
-    extern intn Hsetaccesstype(int32 access_id, uintn accesstype);
+    HDFLIBAPI intn Hsetaccesstype(int32 access_id, uintn accesstype);
 
-    extern uint16 HDmake_special_tag
+    HDFLIBAPI uint16 HDmake_special_tag
                 (uint16 tag);
 
-    extern intn HDis_special_tag
+    HDFLIBAPI intn HDis_special_tag
                 (uint16 tag);
 
-    extern uint16 HDbase_tag
+    HDFLIBAPI uint16 HDbase_tag
                 (uint16 tag);
 
-    extern int  HDerr
+    HDFLIBAPI int  HDerr
                 (int32 file_id);
 
-    extern intn HDvalidfid
+    HDFLIBAPI intn HDvalidfid
                 (int32 file_id);
 
-    extern const char *HDgettagdesc
+    HDFLIBAPI const char *HDgettagdesc
                 (uint16 tag);
 
-    extern char *HDgettagsname
+    HDFLIBAPI char *HDgettagsname
                 (uint16 tag);
 
-    extern intn HDgettagnum
+    HDFLIBAPI intn HDgettagnum
                 (const char *tag_name);
 
-    extern char *HDgetNTdesc
+    HDFLIBAPI char *HDgetNTdesc
                 (int32 nt);
 
-    extern const char *HDfidtoname
+    HDFLIBAPI const char *HDfidtoname
                 (int32 fid);
 
-    extern intn Hishdf
+    HDFLIBAPI intn Hishdf
                 (const char * filename);
 
-    extern intn Hfidinquire
+    HDFLIBAPI intn Hfidinquire
                 (int32 file_id, char ** fname, intn * acc_mode,
                  intn * attach);
     
-    extern intn Hshutdown(void);
+    HDFLIBAPI intn Hshutdown(void);
 
-    extern void HPend(void);
+    HDFLIBAPI void HPend(void);
 
-    extern intn HDdont_atexit(void);
+    HDFLIBAPI intn HDdont_atexit(void);
 
 /*
    ** from hfiledd.c
@@ -210,7 +210,7 @@ extern      "C"
     returns SUCCEED (0) if successful, FAIL (-1) otherwise
 
 *******************************************************************************/
-intn Hdupdd(int32 file_id,      /* IN: File ID the tag/refs are in */
+HDFLIBAPI intn Hdupdd(int32 file_id,      /* IN: File ID the tag/refs are in */
         uint16 tag,             /* IN: Tag of new tag/ref */
         uint16 ref,             /* IN: Ref of new tag/ref */
         uint16 old_tag,         /* IN: Tag of old tag/ref */
@@ -232,7 +232,7 @@ intn Hdupdd(int32 file_id,      /* IN: File ID the tag/refs are in */
     the number of objects of type 'tag' else FAIL
 
 *******************************************************************************/
-int32 Hnumber(int32 file_id,    /* IN: File ID the tag/refs are in */
+HDFLIBAPI int32 Hnumber(int32 file_id,    /* IN: File ID the tag/refs are in */
         uint16 tag              /* IN: Tag to count */
 );
 
@@ -250,7 +250,7 @@ int32 Hnumber(int32 file_id,    /* IN: File ID the tag/refs are in */
     returns the ref number, 0 otherwise
 
 *******************************************************************************/
-uint16 Hnewref(int32 file_id        /* IN: File ID the tag/refs are in */
+HDFLIBAPI uint16 Hnewref(int32 file_id        /* IN: File ID the tag/refs are in */
 );
 
 /******************************************************************************
@@ -267,7 +267,7 @@ uint16 Hnewref(int32 file_id        /* IN: File ID the tag/refs are in */
     returns the ref number, 0 otherwise
 
 *******************************************************************************/
-uint16 Htagnewref(int32 file_id,    /* IN: File ID the tag/refs are in */
+HDFLIBAPI uint16 Htagnewref(int32 file_id,    /* IN: File ID the tag/refs are in */
         uint16 tag                  /* IN: Tag to search for a new ref for */
 );
 
@@ -288,7 +288,7 @@ uint16 Htagnewref(int32 file_id,    /* IN: File ID the tag/refs are in */
     returns SUCCEED (0) if successful and FAIL (-1) otherwise
 
 *******************************************************************************/
-intn Hfind(int32 file_id,       /* IN: file ID to search in */
+HDFLIBAPI intn Hfind(int32 file_id,       /* IN: file ID to search in */
         uint16 search_tag,      /* IN: the tag to search for (can be DFTAG_WILDCARD) */
         uint16 search_ref,      /* IN: ref to search for (can be DFREF_WILDCARD) */
         uint16 *find_tag,       /* IN: if (*find_tag==0) and (*find_ref==0) then start search */
@@ -317,7 +317,7 @@ intn Hfind(int32 file_id,       /* IN: file ID to search in */
     -1-> function failed
 
 *******************************************************************************/
-intn 
+HDFLIBAPI intn 
 HDcheck_tagref(int32  file_id, /* IN: id of file */
                uint16 tag,     /* IN: Tag to check */
                uint16 ref      /* IN: ref to check */);
@@ -342,7 +342,7 @@ DESCRIPTION
 RETURNS
    returns SUCCEED (0) if successful, FAIL (-1) otherwise
 ************************************************************************/
-intn 
+HDFLIBAPI intn 
 HDreuse_tagref(int32 file_id, /* IN: id of file */
                uint16 tag,    /* IN: tag of data descriptor to reuse */
                uint16 ref     /* IN: ref of data descriptor to reuse */ );
@@ -362,7 +362,7 @@ HDreuse_tagref(int32 file_id, /* IN: id of file */
     returns SUCCEED (0) if successful, FAIL (-1) otherwise
 
 *******************************************************************************/
-intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
+HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
         uint16 tag,             /* IN: Tag of tag/ref to delete */
         uint16 ref              /* IN: Ref of tag/ref to delete */
 );
@@ -371,182 +371,182 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
    ** from hdfalloc.c
  */
 
-    extern void * HDmemfill
+    HDFLIBAPI void * HDmemfill
                 (void * dest, const void * src, uint32 item_size, uint32 num_items);
 
-    extern char *HIstrncpy
+    HDFLIBAPI char *HIstrncpy
                 (char * dest, const char * source, int32 len);
 
-    extern int32 HDspaceleft
+    HDFLIBAPI int32 HDspaceleft
                 (void);
 
-#if defined MALLOC_CHECK
-    extern void * HDmalloc
+#if defined(MALLOC_CHECK) || defined(_HDFDLL_)
+    HDFPUBLIC extern void * HDmalloc
                 (uint32 qty);
 
-    extern void * HDrealloc
+    HDFPUBLIC extern void * HDrealloc
                 (void * where, uint32 qty);
 
-    extern void * HDcalloc
+    HDFPUBLIC extern void * HDcalloc
                 (uint32 n, uint32 size);
 
-    extern void HDfree
+    HDFPUBLIC extern void HDfree
                 (void * ptr);
 
 #endif /* defined MALLOC_CHECK */
 
-#if defined VMS || defined macintosh || defined MAC || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000 || defined SUN || defined IRIX
-    extern char *HDstrdup
+#if defined VMS || defined macintosh || defined MAC || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000 || defined SUN || defined IRIX || defined _HDFDLL_
+    HDFPUBLIC extern char *HDstrdup
                 (const char *s);
 
 #endif
 
-    extern intn HDc2fstr
+    HDFLIBAPI intn HDc2fstr
                 (char * str, intn len);
 
-    extern char *HDf2cstring
+    HDFLIBAPI char *HDf2cstring
                 (_fcd fdesc, intn len);
 
-    extern intn HDflush
+    HDFLIBAPI intn HDflush
                 (int32 file_id);
 
-    extern intn HDpackFstring
+    HDFLIBAPI intn HDpackFstring
                 (char * src, char * dest, intn len);
 
 /*
    ** from hblocks.c
  */
-    extern int32 HLcreate
+    HDFLIBAPI int32 HLcreate
                 (int32 file_id, uint16 tag, uint16 ref, int32 block_length,
                  int32 number_blocks);
 
-    extern intn HLconvert
+    HDFLIBAPI intn HLconvert
                 (int32 aid, int32 block_length, int32 number_blocks);
 
-    extern int  HDinqblockinfo
+    HDFLIBAPI int  HDinqblockinfo
                 (int32 aid, int32 *length, int32 *first_length, int32 *block_length,
                  int32 *number_blocks);
 
 /*
    ** from hextelt.c
  */
-    extern int32 HXcreate
+    HDFLIBAPI int32 HXcreate
                 (int32 file_id, uint16 tag, uint16 ref, const char * extern_file_name,
                  int32 offset, int32 start_len);
 
-    extern intn HXsetcreatedir
+    HDFLIBAPI intn HXsetcreatedir
                 (const char *dir);
 
-    extern intn HXsetdir
+    HDFLIBAPI intn HXsetdir
                 (const char *dir);
 
 /*
    ** from hcomp.c
  */
-    extern int32 HCcreate
+    HDFLIBAPI int32 HCcreate
                 (int32 file_id, uint16 tag, uint16 ref,
                  comp_model_t model_type, model_info * m_info,
                  comp_coder_t coder_type, comp_info * c_info);
 
-    extern int32 HCPquery_encode_header(comp_model_t model_type, model_info * m_info,
+    HDFLIBAPI int32 HCPquery_encode_header(comp_model_t model_type, model_info * m_info,
              comp_coder_t coder_type, comp_info * c_info);
 
-    extern intn HCPencode_header(uint8 *p, comp_model_t model_type, model_info * m_info,
+    HDFLIBAPI intn HCPencode_header(uint8 *p, comp_model_t model_type, model_info * m_info,
              comp_coder_t coder_type, comp_info * c_info);
 
-    extern intn HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info * m_info,
+    HDFLIBAPI intn HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info * m_info,
              comp_coder_t *coder_type, comp_info * c_info);
 
 
 /*
    ** from herr.c
  */
-    extern const char *HEstring
+    HDFLIBAPI const char *HEstring
                 (hdf_err_code_t error_code);
 
-    extern void HEpush
+    HDFLIBAPI void HEpush
                 (hdf_err_code_t error_code, const char * function_name,
                  const char * file_name, intn line);
 
-    extern void HEreport
+    HDFLIBAPI void HEreport
                 (const char *,...);
 
-    extern void HEprint
+    HDFLIBAPI void HEprint
                 (FILE * stream, int32 print_level);
 
-    extern int16 HEvalue
+    HDFLIBAPI int16 HEvalue
                 (int32 level);
 
-    extern void HEPclear
+    HDFLIBAPI void HEPclear
                 (void);
 
- 	extern intn HEshutdown(void);
+ 	HDFLIBAPI intn HEshutdown(void);
 
 /*
    ** from hbitio.c
  */
-    extern int32 Hstartbitread
+    HDFLIBAPI int32 Hstartbitread
                 (int32 file_id, uint16 tag, uint16 ref);
 
-    extern int32 Hstartbitwrite
+    HDFLIBAPI int32 Hstartbitwrite
                 (int32 file_id, uint16 tag, uint16 ref, int32 length);
 
-    extern intn Hbitappendable
+    HDFLIBAPI intn Hbitappendable
                 (int32 bitid);
 
-    extern intn Hbitwrite
+    HDFLIBAPI intn Hbitwrite
                 (int32 bitid, intn count, uint32 data);
 
-    extern intn Hbitread
+    HDFLIBAPI intn Hbitread
                 (int32 bitid, intn count, uint32 *data);
 
-    extern intn Hbitseek
+    HDFLIBAPI intn Hbitseek
                 (int32 bitid, int32 byte_offset, intn bit_offset);
 
-    extern intn Hgetbit
+    HDFLIBAPI intn Hgetbit
                 (int32 bitid);
 
-    extern int32 Hendbitaccess
+    HDFLIBAPI int32 Hendbitaccess
                 (int32 bitfile_id, intn flushbit);
 
-    extern intn HPbitshutdown(void);
+    HDFLIBAPI intn HPbitshutdown(void);
 
 /*
    ** from dfcomp.c
  */
-    extern intn DFputcomp
+    HDFLIBAPI intn DFputcomp
                 (int32 file_id, uint16 tag, uint16 ref, const uint8 * image,
         int32 xdim, int32 ydim, uint8 * palette, uint8 * newpal,
                  int16 scheme, comp_info * cinfo);
 
-    extern int  DFgetcomp
+    HDFLIBAPI int  DFgetcomp
                 (int32 file_id, uint16 tag, uint16 ref, uint8 * image,
                  int32 xdim, int32 ydim, uint16 scheme);
 
 /*
    ** from dfrle.c
  */
-    extern int32 DFCIrle
+    HDFLIBAPI int32 DFCIrle
                 (const void * buf, void * bufto, int32 len);
 
-    extern int32 DFCIunrle
+    HDFLIBAPI int32 DFCIunrle
                 (uint8 * buf, uint8 *bufto, int32 outlen, int resetsave);
 
 /*
    ** from dfimcomp.c
  */
-    extern void DFCIimcomp
+    HDFLIBAPI void DFCIimcomp
                 (int32 xdim, int32 ydim, const uint8 *in, uint8 out[],
                  uint8 in_pal[], uint8 out_pal[], int mode);
 
-    extern void DFCIunimcomp
+    HDFLIBAPI void DFCIunimcomp
                 (int32 xdim, int32 ydim, uint8 in[], uint8 out[]);
 
 /*
    ** from dfjpeg.c
  */
 
-    extern intn DFCIjpeg
+    HDFLIBAPI intn DFCIjpeg
                 (int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim,
                  const void * image, int16 scheme, comp_info * scheme_info);
 
@@ -554,454 +554,454 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
    ** from dfunjpeg.c
  */
 
-    extern intn DFCIunjpeg
+    HDFLIBAPI intn DFCIunjpeg
                 (int32 file_id, uint16 tag, uint16 ref, void * image, int32 xdim,
                  int32 ydim, int16 scheme);
 
 /*
    ** from dfgroup.c
  */
-    extern int32 DFdiread
+    HDFLIBAPI int32 DFdiread
                 (int32 file_id, uint16 tag, uint16 ref);
 
-    extern intn DFdiget
+    HDFLIBAPI intn DFdiget
                 (int32 list, uint16 * ptag, uint16 * pref);
 
-    extern intn DFdinobj
+    HDFLIBAPI intn DFdinobj
                 (int32 list);
 
-    extern int32 DFdisetup
+    HDFLIBAPI int32 DFdisetup
                 (int maxsize);
 
-    extern intn DFdiput
+    HDFLIBAPI intn DFdiput
                 (int32 list, uint16 tag, uint16 ref);
 
-    extern intn DFdiwrite
+    HDFLIBAPI intn DFdiwrite
                 (int32 file_id, int32 list, uint16 tag, uint16 ref);
                 
-    extern void DFdifree
+    HDFLIBAPI void DFdifree
     			(int32 groupID);
 
 /*
    ** from dfp.c
  */
-    extern intn DFPgetpal
+    HDFLIBAPI intn DFPgetpal
                 (const char * filename, void * palette);
 
-    extern intn DFPputpal
+    HDFLIBAPI intn DFPputpal
                 (const char * filename, const void * palette, intn overwrite, const char * filemode);
 
-    extern intn DFPaddpal
+    HDFLIBAPI intn DFPaddpal
                 (const char * filename, const void * palette);
 
-    extern intn DFPnpals
+    HDFLIBAPI intn DFPnpals
                 (const char * filename);
 
-    extern intn DFPreadref
+    HDFLIBAPI intn DFPreadref
                 (const char * filename, uint16 ref);
 
-    extern intn DFPwriteref
+    HDFLIBAPI intn DFPwriteref
                 (const char * filename, uint16 ref);
 
-    extern intn DFPrestart
+    HDFLIBAPI intn DFPrestart
                 (void);
 
-    extern uint16 DFPlastref
+    HDFLIBAPI uint16 DFPlastref
                 (void);
 
 /*
    ** from dfr8.c
  */
-    extern int  DFR8setcompress
+    HDFLIBAPI int  DFR8setcompress
                 (int32 scheme, comp_info * cinfo);
 
-    extern intn DFR8getdims
+    HDFLIBAPI intn DFR8getdims
                 (const char * filename, int32 * pxdim, int32 * pydim,
                  int * pispal);
 
-    extern intn DFR8getimage
+    HDFLIBAPI intn DFR8getimage
                 (const char * filename, uint8 * image, int32 xdim, int32 ydim,
                  uint8 * pal);
 
-    extern intn DFR8setpalette
+    HDFLIBAPI intn DFR8setpalette
                 (uint8 * pal);
 
-    extern intn DFR8putimage
+    HDFLIBAPI intn DFR8putimage
                 (const char * filename, const void * image, int32 xdim, int32 ydim, uint16 compress);
 
-    extern intn DFR8addimage
+    HDFLIBAPI intn DFR8addimage
                 (const char * filename, const void * image, int32 xdim, int32 ydim, uint16 compress);
 
-    extern intn DFR8nimages
+    HDFLIBAPI intn DFR8nimages
                 (const char * filename);
 
-    extern intn DFR8readref
+    HDFLIBAPI intn DFR8readref
                 (const char * filename, uint16 ref);
 
-    extern intn DFR8writeref
+    HDFLIBAPI intn DFR8writeref
                 (const char * filename, uint16 ref);
 
-    extern intn DFR8restart
+    HDFLIBAPI intn DFR8restart
                 (void);
 
-    extern uint16 DFR8lastref
+    HDFLIBAPI uint16 DFR8lastref
                 (void);
 
-    extern intn DFR8getpalref(uint16 *pal_ref);
+    HDFLIBAPI intn DFR8getpalref(uint16 *pal_ref);
 
-    extern intn DFR8Pshutdown(void);
+    HDFLIBAPI intn DFR8Pshutdown(void);
 
 /*
    ** from dfgr.c
  */
-    extern intn DFGRgetlutdims
+    HDFLIBAPI intn DFGRgetlutdims
                 (const char * filename, int32 * pxdim, int32 * pydim,
                  intn * pncomps, intn * pil);
 
-    extern intn DFGRreqlutil
+    HDFLIBAPI intn DFGRreqlutil
                 (intn il);
 
-    extern intn DFGRgetlut
+    HDFLIBAPI intn DFGRgetlut
                 (const char * filename, void * lut, int32 xdim, int32 ydim);
 
-    extern intn DFGRgetimdims
+    HDFLIBAPI intn DFGRgetimdims
                 (const char * filename, int32 * pxdim, int32 * pydim,
                  intn * pncomps, intn * pil);
 
-    extern intn DFGRreqimil
+    HDFLIBAPI intn DFGRreqimil
                 (intn il);
 
-    extern intn DFGRgetimage
+    HDFLIBAPI intn DFGRgetimage
                 (const char * filename, void * image, int32 xdim, int32 ydim);
 
-    extern intn DFGRsetcompress
+    HDFLIBAPI intn DFGRsetcompress
                 (int32 scheme, comp_info * cinfo);
 
-    extern intn DFGRsetlutdims
+    HDFLIBAPI intn DFGRsetlutdims
                 (int32 xdim, int32 ydim, intn ncomps, intn il);
 
-    extern intn DFGRsetlut
+    HDFLIBAPI intn DFGRsetlut
                 (void * lut, int32 xdim, int32 ydim);
 
-    extern intn DFGRaddlut
+    HDFLIBAPI intn DFGRaddlut
                 (const char * filename, void * lut, int32 xdim, int32 ydim);
 
-    extern intn DFGRsetimdims
+    HDFLIBAPI intn DFGRsetimdims
                 (int32 xdim, int32 ydim, intn ncomps, intn il);
 
-    extern intn DFGRaddimage
+    HDFLIBAPI intn DFGRaddimage
                 (const char * filename, void * image, int32 xdim, int32 ydim);
 
-    extern intn DFGRputimage
+    HDFLIBAPI intn DFGRputimage
                 (const char * filename, void * image, int32 xdim, int32 ydim);
 
-    extern intn DFGRreadref
+    HDFLIBAPI intn DFGRreadref
                 (const char * filename, uint16 ref);
 
-    extern uint16 DFGRIlastref
+    HDFLIBAPI uint16 DFGRIlastref
                 (void);
 
-    extern intn DFGRIgetdims
+    HDFLIBAPI intn DFGRIgetdims
                 (const char * filename, int32 * pxdim, int32 * pydim,
                  intn * pncomps, intn * pil, intn type);
 
-    extern intn DFGRIreqil
+    HDFLIBAPI intn DFGRIreqil
                 (intn il, intn type);
 
-    extern intn DFGRIgetimlut
+    HDFLIBAPI intn DFGRIgetimlut
                 (const char * filename, void * imlut, int32 xdim, int32 ydim, intn type,
                  intn isfortran, int *compressed, uint16 *compr_type, int *has_pal);
 
-    extern intn DFGRIsetdims
+    HDFLIBAPI intn DFGRIsetdims
                 (int32 xdim, int32 ydim, intn ncomps, intn type);
 
-    extern intn DFGRIsetil
+    HDFLIBAPI intn DFGRIsetil
                 (intn il, intn type);
 
-    extern intn DFGRIrestart
+    HDFLIBAPI intn DFGRIrestart
                 (void);
 
-    extern intn DFGRIaddimlut
+    HDFLIBAPI intn DFGRIaddimlut
                 (const char * filename, const void * imlut, int32 xdim, int32 ydim, intn type,
                  intn isfortran, intn newfile);
 
-    extern intn DFGRPshutdown(void);
+    HDFLIBAPI intn DFGRPshutdown(void);
 
 /*
    ** from df24.c
  */
-    extern intn DF24getdims
+    HDFLIBAPI intn DF24getdims
                 (const char * filename, int32 * pxdim, int32 * pydim,
                  intn * pil);
 
-    extern intn DF24reqil
+    HDFLIBAPI intn DF24reqil
                 (intn il);
 
-    extern intn DF24getimage
+    HDFLIBAPI intn DF24getimage
                 (const char * filename, void * image, int32 xdim, int32 ydim);
 
-    extern intn DF24setdims
+    HDFLIBAPI intn DF24setdims
                 (int32 xdim, int32 ydim);
 
-    extern intn DF24setil
+    HDFLIBAPI intn DF24setil
                 (intn il);
 
-    extern intn DF24setcompress
+    HDFLIBAPI intn DF24setcompress
                 (int32 type, comp_info * cinfo);
 
-    extern intn DF24restart
+    HDFLIBAPI intn DF24restart
                 (void);
 
-    extern intn DF24addimage
+    HDFLIBAPI intn DF24addimage
                 (const char * filename, const void * image, int32 xdim, int32 ydim);
 
-    extern intn DF24putimage
+    HDFLIBAPI intn DF24putimage
                 (const char * filename, const void * image, int32 xdim, int32 ydim);
 
-    extern intn DF24nimages
+    HDFLIBAPI intn DF24nimages
                 (const char * filename);
 
-    extern intn DF24readref
+    HDFLIBAPI intn DF24readref
                 (const char * filename, uint16 ref);
 
-    extern uint16 DF24lastref
+    HDFLIBAPI uint16 DF24lastref
                 (void);
 
 /*
    ** from dfan.c
  */
 
-    extern int32 DFANgetlablen
+    HDFLIBAPI int32 DFANgetlablen
                 (const char * filename, uint16 tag, uint16 ref);
 
-    extern intn DFANgetlabel
+    HDFLIBAPI intn DFANgetlabel
                 (const char * filename, uint16 tag, uint16 ref, char * label,
                  int32 maxlen);
 
-    extern int32 DFANgetdesclen
+    HDFLIBAPI int32 DFANgetdesclen
                 (const char * filename, uint16 tag, uint16 ref);
 
-    extern intn DFANgetdesc
+    HDFLIBAPI intn DFANgetdesc
                 (const char * filename, uint16 tag, uint16 ref, char * desc,
                  int32 maxlen);
 
-    extern int32 DFANgetfidlen
+    HDFLIBAPI int32 DFANgetfidlen
                 (int32 file_id, intn isfirst);
 
-    extern int32 DFANgetfid
+    HDFLIBAPI int32 DFANgetfid
                 (int32 file_id, char * id, int32 maxlen, intn isfirst);
 
-    extern int32 DFANgetfdslen
+    HDFLIBAPI int32 DFANgetfdslen
                 (int32 file_id, intn isfirst);
 
-    extern int32 DFANgetfds
+    HDFLIBAPI int32 DFANgetfds
                 (int32 file_id, char * desc, int32 maxlen, intn isfirst);
 
-    extern intn DFANputlabel
+    HDFLIBAPI intn DFANputlabel
                 (const char * filename, uint16 tag, uint16 ref, char * label);
 
-    extern intn DFANputdesc
+    HDFLIBAPI intn DFANputdesc
                 (const char * filename, uint16 tag, uint16 ref, char * desc,
                  int32 desclen);
 
-    extern intn DFANaddfid
+    HDFLIBAPI intn DFANaddfid
                 (int32 file_id, char * id);
 
-    extern intn DFANaddfds
+    HDFLIBAPI intn DFANaddfds
                 (int32 file_id, char * desc, int32 desclen);
 
-    extern uint16 DFANlastref
+    HDFLIBAPI uint16 DFANlastref
                 (void);
 
-    extern intn DFANlablist
+    HDFLIBAPI intn DFANlablist
                 (const char * filename, uint16 tag, uint16 reflist[],
          char * labellist, intn listsize, intn maxlen, intn startpos);
 
-    extern intn DFANclear
+    HDFLIBAPI intn DFANclear
                 (void);
 
-    extern intn DFANIclear
+    HDFLIBAPI intn DFANIclear
                 (void);
 
-    extern uint16 DFANIlocate
+    HDFLIBAPI uint16 DFANIlocate
                 (int32 file_id, int type, uint16 tag, uint16 ref);
 
-    extern int  DFANIaddentry
+    HDFLIBAPI int  DFANIaddentry
                 (int type, uint16 annref, uint16 datatag, uint16 dataref);
 
-    extern int32 DFANIgetannlen
+    HDFLIBAPI int32 DFANIgetannlen
                 (const char * filename, uint16 tag, uint16 ref, int type);
 
-    extern intn DFANIgetann
+    HDFLIBAPI intn DFANIgetann
                 (const char * filename, uint16 tag, uint16 ref, uint8 * ann,
                  int32 maxlen, int type);
 
-    extern intn DFANIputann
+    HDFLIBAPI intn DFANIputann
                 (const char * filename, uint16 tag, uint16 ref, uint8 * ann,
                  int32 annlen, int type);
 
-    extern int  DFANIlablist
+    HDFLIBAPI int  DFANIlablist
                 (const char * filename, uint16 tag, uint16 reflist[],
             uint8 * labellist, int listsize, int maxlen, int startpos,
                  int isfortran);
 
-    extern int  DFANIaddfann
+    HDFLIBAPI int  DFANIaddfann
                 (int32 file_id, char * ann, int32 annlen, int type);
 
-    extern int32 DFANIgetfannlen
+    HDFLIBAPI int32 DFANIgetfannlen
                 (int32 file_id, int type, int isfirst);
 
-    extern int32 DFANIgetfann
+    HDFLIBAPI int32 DFANIgetfann
                 (int32 file_id, char * ann, int32 maxlen, int type, int isfirst);
 
-    extern intn DFANPshutdown(void);
+    HDFLIBAPI intn DFANPshutdown(void);
 
 /*
    ** from dfsd.c
  */
 
-    extern int  DFSDgetdims
+    HDFLIBAPI int  DFSDgetdims
                 (const char * filename, intn * prank, int32 sizes[], intn maxrank);
 
-    extern int  DFSDgetdatastrs
+    HDFLIBAPI int  DFSDgetdatastrs
                 (char * label, char * unit, char * format, char * coordsys);
 
-    extern int  DFSDgetdimstrs
+    HDFLIBAPI int  DFSDgetdimstrs
                 (int dim, char * label, char * unit, char * format);
 
-    extern int  DFSDgetdatalen
+    HDFLIBAPI int  DFSDgetdatalen
                 (int * llabel, int * lunit, int * lformat, int * lcoordsys);
 
-    extern int  DFSDgetdimlen
+    HDFLIBAPI int  DFSDgetdimlen
                 (int dim, int * llabel, int * lunit, int * lformat);
 
-    extern int  DFSDgetdimscale
+    HDFLIBAPI int  DFSDgetdimscale
                 (intn dim, int32 maxsize, void * scale);
 
-    extern int  DFSDgetrange
+    HDFLIBAPI int  DFSDgetrange
                 (void * pmax, void * pmin);
 
-    extern int  DFSDgetdata
+    HDFLIBAPI int  DFSDgetdata
                 (const char * filename, intn rank, int32 maxsizes[], void * data);
 
-    extern int  DFSDsetlengths
+    HDFLIBAPI int  DFSDsetlengths
                 (int maxlen_label, int maxlen_unit, int maxlen_format,
                  int maxlen_coordsys);
 
-    extern int  DFSDsetdims
+    HDFLIBAPI int  DFSDsetdims
                 (intn rank, int32 dimsizes[]);
 
-    extern int  DFSDsetdatastrs
+    HDFLIBAPI int  DFSDsetdatastrs
                 (const char * label, const char * unit, const char * format, const char * coordsys);
 
-    extern int  DFSDsetdimstrs
+    HDFLIBAPI int  DFSDsetdimstrs
                 (int dim, const char * label, const char * unit, const char * format);
 
-    extern int  DFSDsetdimscale
+    HDFLIBAPI int  DFSDsetdimscale
                 (intn dim, int32 dimsize, void * scale);
 
-    extern int  DFSDsetrange
+    HDFLIBAPI int  DFSDsetrange
                 (void * maxi, void * mini);
 
-    extern int  DFSDputdata
+    HDFLIBAPI int  DFSDputdata
                 (const char * filename, intn rank, int32 dimsizes[], void * data);
 
-    extern int  DFSDadddata
+    HDFLIBAPI int  DFSDadddata
                 (const char * filename, intn rank, int32 dimsizes[], void * data);
 
-    extern int  DFSDrestart
+    HDFLIBAPI int  DFSDrestart
                 (void);
 
-    extern int32 DFSDndatasets
+    HDFLIBAPI int32 DFSDndatasets
                 (char * filename);
 
-    extern int  DFSDclear
+    HDFLIBAPI int  DFSDclear
                 (void);
 
-    extern uint16 DFSDlastref
+    HDFLIBAPI uint16 DFSDlastref
                 (void);
 
-    extern int  DFSDreadref
+    HDFLIBAPI int  DFSDreadref
                 (char * filename, uint16 ref);
 
-    extern int  DFSDgetslice
+    HDFLIBAPI int  DFSDgetslice
                 (const char * filename, int32 winst[], int32 windims[], void * data,
                  int32 dims[]);
 
-    extern int  DFSDstartslice
+    HDFLIBAPI int  DFSDstartslice
                 (const char * filename);
 
-    extern int  DFSDputslice
+    HDFLIBAPI int  DFSDputslice
                 (int32 winend[], void * data, int32 dims[]);
 
-    extern int  DFSDendslice
+    HDFLIBAPI int  DFSDendslice
                 (void);
 
-    extern int  DFSDsetNT
+    HDFLIBAPI int  DFSDsetNT
                 (int32 numbertype);
 
-    extern int  DFSDsetorder
+    HDFLIBAPI int  DFSDsetorder
                 (int arrayorder);
 
-    extern int  DFSDgetNT
+    HDFLIBAPI int  DFSDgetNT
                 (int32 * pnumbertype);
 
-    extern intn DFSDpre32sdg
+    HDFLIBAPI intn DFSDpre32sdg
                 (char * filename, uint16 ref, intn * ispre32);
 
-    extern int  DFSDsetcal
+    HDFLIBAPI int  DFSDsetcal
                 (float64 cal, float64 cal_err, float64 ioff,
                  float64 ioff_err, int32 cal_nt);
 
-    extern int  DFSDgetcal
+    HDFLIBAPI int  DFSDgetcal
                 (float64 * pcal, float64 * pcal_err, float64 * pioff,
                  float64 * pioff_err, int32 * cal_nt);
 
-    extern int  DFSDwriteref
+    HDFLIBAPI int  DFSDwriteref
                 (const char * filename, uint16 ref);
 
-    extern int  DFSDsetfillvalue
+    HDFLIBAPI int  DFSDsetfillvalue
                 (void * fill_value);
 
-    extern int  DFSDgetfillvalue
+    HDFLIBAPI int  DFSDgetfillvalue
                 (void * fill_value);
 
-    extern int  DFSDstartslab
+    HDFLIBAPI int  DFSDstartslab
                 (const char * filename);
 
-    extern int  DFSDwriteslab
+    HDFLIBAPI int  DFSDwriteslab
                 (int32 start[], int32 stride[], int32 count[],
                  void * data);
 
-    extern int  DFSDendslab
+    HDFLIBAPI int  DFSDendslab
                 (void);
 
-    extern int  DFSDreadslab
+    HDFLIBAPI int  DFSDreadslab
                 (const char *filename, int32 start[], int32 slab_size[],
              int32 stride[], void * buffer, int32 buffer_size[]);
 
-    extern intn DFSDPshutdown(void);
+    HDFLIBAPI intn DFSDPshutdown(void);
 
 /*
    ** from dfconv.c
  */
 
-    extern int  DFKNTsize
+    HDFLIBAPI int  DFKNTsize
                 (int32 number_type);
 
-    extern int32 DFKisnativeNT
+    HDFLIBAPI int32 DFKisnativeNT
                 (int32 numbertype);
 
-    extern int32 DFKislitendNT
+    HDFLIBAPI int32 DFKislitendNT
                 (int32 numbertype);
 
-    extern int8 DFKgetPNSC
+    HDFLIBAPI int8 DFKgetPNSC
                 (int32 numbertype, int32 machinetype);
 
-    extern intn DFKsetNT
+    HDFLIBAPI intn DFKsetNT
                 (int32 ntype);
 
-    extern int32 DFKconvert
+    HDFLIBAPI int32 DFKconvert
                 (void * source, void * dest, int32 ntype, int32 num_elm,
                  int16 acc_mode, int32 source_stride, int32 dest_stride);
 
@@ -1009,124 +1009,124 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
    ** from dfknat.c
  */
 
-    extern intn DFKnb1b
+    HDFLIBAPI intn DFKnb1b
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKnb2b
+    HDFLIBAPI intn DFKnb2b
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKnb4b
+    HDFLIBAPI intn DFKnb4b
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKnb8b
+    HDFLIBAPI intn DFKnb8b
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
 /*
    ** from dfkswap.c
  */
 
-    extern intn DFKsb2b
+    HDFLIBAPI intn DFKsb2b
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKsb4b
+    HDFLIBAPI intn DFKsb4b
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKsb8b
+    HDFLIBAPI intn DFKsb8b
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
 /*
    ** from dfkcray.c
  */
 
-    extern intn DFKui2i
+    HDFLIBAPI intn DFKui2i
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKui2s
+    HDFLIBAPI intn DFKui2s
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKuo2i
+    HDFLIBAPI intn DFKuo2i
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKuo2s
+    HDFLIBAPI intn DFKuo2s
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKui4i
+    HDFLIBAPI intn DFKui4i
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKui4s
+    HDFLIBAPI intn DFKui4s
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKuo4i
+    HDFLIBAPI intn DFKuo4i
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKuo4s
+    HDFLIBAPI intn DFKuo4s
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKui4f
+    HDFLIBAPI intn DFKui4f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKuo4f
+    HDFLIBAPI intn DFKuo4f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKui8f
+    HDFLIBAPI intn DFKui8f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKuo8f
+    HDFLIBAPI intn DFKuo8f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKlui2i
+    HDFLIBAPI intn DFKlui2i
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKlui2s
+    HDFLIBAPI intn DFKlui2s
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKluo2i
+    HDFLIBAPI intn DFKluo2i
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKluo2s
+    HDFLIBAPI intn DFKluo2s
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKlui4i
+    HDFLIBAPI intn DFKlui4i
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKlui4s
+    HDFLIBAPI intn DFKlui4s
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKluo4i
+    HDFLIBAPI intn DFKluo4i
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKluo4s
+    HDFLIBAPI intn DFKluo4s
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKlui4f
+    HDFLIBAPI intn DFKlui4f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKluo4f
+    HDFLIBAPI intn DFKluo4f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKlui8f
+    HDFLIBAPI intn DFKlui8f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKluo8f
+    HDFLIBAPI intn DFKluo8f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
 /* CRAY-MPP */
-    extern intn DFKmi2i
+    HDFLIBAPI intn DFKmi2i
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKmi2s
+    HDFLIBAPI intn DFKmi2s
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKmo2b
+    HDFLIBAPI intn DFKmo2b
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKlmi2i
+    HDFLIBAPI intn DFKlmi2i
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKlmi2s
+    HDFLIBAPI intn DFKlmi2s
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKlmo2b
+    HDFLIBAPI intn DFKlmo2b
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
 
@@ -1134,84 +1134,84 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
    ** from dfkvms.c
  */
 
-    extern intn DFKvi4f
+    HDFLIBAPI intn DFKvi4f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKvo4f
+    HDFLIBAPI intn DFKvo4f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKvi8f
+    HDFLIBAPI intn DFKvi8f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKvo8f
+    HDFLIBAPI intn DFKvo8f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKlvi4f
+    HDFLIBAPI intn DFKlvi4f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKlvo4f
+    HDFLIBAPI intn DFKlvo4f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKlvi8f
+    HDFLIBAPI intn DFKlvi8f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKlvo8f
+    HDFLIBAPI intn DFKlvo8f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
 /*
    ** from dfkconv.c
  */
 
-    extern intn DFKci4f
+    HDFLIBAPI intn DFKci4f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKco4f
+    HDFLIBAPI intn DFKco4f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKci8f
+    HDFLIBAPI intn DFKci8f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKco8f
+    HDFLIBAPI intn DFKco8f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKlci4f
+    HDFLIBAPI intn DFKlci4f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKlco4f
+    HDFLIBAPI intn DFKlco4f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKlci8f
+    HDFLIBAPI intn DFKlci8f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKlco8f
+    HDFLIBAPI intn DFKlco8f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
 /*
    ** from dfkfuji.c
  */
 
-    extern intn DFKpi4f
+    HDFLIBAPI intn DFKpi4f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKpo4f
+    HDFLIBAPI intn DFKpo4f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKpi8f
+    HDFLIBAPI intn DFKpi8f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKpo8f
+    HDFLIBAPI intn DFKpo8f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKlpi4f
+    HDFLIBAPI intn DFKlpi4f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKlpo4f
+    HDFLIBAPI intn DFKlpo4f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKlpi8f
+    HDFLIBAPI intn DFKlpi8f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-    extern intn DFKlpo8f
+    HDFLIBAPI intn DFKlpo8f
                 (void * s, void * d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
 /*
@@ -1262,63 +1262,63 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #endif                          /* DF_CAPFNAMES */
 #endif                          /* DFAN_FNAMES */
 
-    extern      FRETVAL(intf) ndaiganl
+    HDFLIBAPI      FRETVAL(intf) ndaiganl
                 (_fcd filename, intf * tag, intf * ref, intf * type,
                  intf * fnlen);
 
-    extern      FRETVAL(intf) ndaigann
+    HDFLIBAPI      FRETVAL(intf) ndaigann
                 (_fcd filename, intf * tag, intf * ref, _fcd annotation,
                  intf * maxlen, intf * type, intf * fnlen);
 
-    extern      FRETVAL(intf) ndaipann
+    HDFLIBAPI      FRETVAL(intf) ndaipann
                 (_fcd filename, intf * tag, intf * ref, _fcd annotation,
                  intf * annlen, intf * type, intf * fnlen);
 
-    extern      FRETVAL(intf) ndailist
+    HDFLIBAPI      FRETVAL(intf) ndailist
                 (_fcd filename, intf * tag, intf reflist[], _fcd labellist,
           intf * listsize, intf * maxlen, intf * startpos,
                  intf * fnlen);
 
-    extern      FRETVAL(intf) ndalref
+    HDFLIBAPI      FRETVAL(intf) ndalref
                 (void);
 
-    extern      FRETVAL(intf) ndaclear
+    HDFLIBAPI      FRETVAL(intf) ndaclear
                 (void);
 
-    extern      FRETVAL(intf) ndfanlastref
+    HDFLIBAPI      FRETVAL(intf) ndfanlastref
                 (void);
 
-    extern      FRETVAL(intf) ndfanaddfds
+    HDFLIBAPI      FRETVAL(intf) ndfanaddfds
                 (intf * dfile, _fcd desc, intf * desclen);
 
-    extern      FRETVAL(intf) ndfangetfidlen
+    HDFLIBAPI      FRETVAL(intf) ndfangetfidlen
                 (intf * dfile, intf * isfirst);
 
-    extern      FRETVAL(intf) ndfangetfdslen
+    HDFLIBAPI      FRETVAL(intf) ndfangetfdslen
                 (intf * dfile, intf * isfirst);
 
-    extern      FRETVAL(intf) ndfangetfid
+    HDFLIBAPI      FRETVAL(intf) ndfangetfid
                 (intf * dfile, _fcd id, intf * maxlen, intf * isfirst);
 
-    extern      FRETVAL(intf) ndfangetfds
+    HDFLIBAPI      FRETVAL(intf) ndfangetfds
                 (intf * dfile, _fcd id, intf * maxlen, intf * isfirst);
 
-    extern      FRETVAL(intf) ndaafds
+    HDFLIBAPI      FRETVAL(intf) ndaafds
                 (intf * dfile, _fcd desc, intf * desclen);
 
-    extern      FRETVAL(intf) ndagfidl
+    HDFLIBAPI      FRETVAL(intf) ndagfidl
                 (intf * dfile, intf * isfirst);
 
-    extern      FRETVAL(intf) ndagfdsl
+    HDFLIBAPI      FRETVAL(intf) ndagfdsl
                 (intf * dfile, intf * isfirst);
 
-    extern      FRETVAL(intf) ndagfid
+    HDFLIBAPI      FRETVAL(intf) ndagfid
                 (intf * dfile, _fcd id, intf * maxlen, intf * isfirst);
 
-    extern      FRETVAL(intf) ndagfds
+    HDFLIBAPI      FRETVAL(intf) ndagfds
                 (intf * dfile, _fcd id, intf * maxlen, intf * isfirst);
 
-    extern      FRETVAL(intf) ndaiafid
+    HDFLIBAPI      FRETVAL(intf) ndaiafid
                 (intf * dfile, _fcd id, intf * idlen);
 
 /*
@@ -1365,59 +1365,59 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #endif                          /* DF_CAPFNAMES */
 #endif                          /* DFR8_FNAMES */
 
-    extern      FRETVAL(intf) nd8spal
+    HDFLIBAPI      FRETVAL(intf) nd8spal
                 (_fcd pal);
 
-    extern      FRETVAL(intf) nd8first
+    HDFLIBAPI      FRETVAL(intf) nd8first
                 (void);
 
-    extern      FRETVAL(intf) nd8igdim
+    HDFLIBAPI      FRETVAL(intf) nd8igdim
                 (_fcd filename, intf * xdim, intf * ydim, intf * ispal,
                  intf * lenfn);
 
-    extern      FRETVAL(intf) nd8igimg
+    HDFLIBAPI      FRETVAL(intf) nd8igimg
                 (_fcd filename, _fcd image, intf * xdim, intf * ydim,
                  _fcd pal, intf * lenfn);
 
-    extern      FRETVAL(intf) nd8ipimg
+    HDFLIBAPI      FRETVAL(intf) nd8ipimg
                 (_fcd filename, _fcd image, intf * xdim, intf * ydim,
                  intf * compress, intf * lenfn);
 
-    extern      FRETVAL(intf) nd8iaimg
+    HDFLIBAPI      FRETVAL(intf) nd8iaimg
                 (_fcd filename, _fcd image, intf * xdim, intf * ydim,
                  intf * compress, intf * lenfn);
 
-    extern      FRETVAL(intf) nd8irref
+    HDFLIBAPI      FRETVAL(intf) nd8irref
                 (_fcd filename, intf * ref, intf * fnlen);
 
-    extern      FRETVAL(intf) nd8iwref
+    HDFLIBAPI      FRETVAL(intf) nd8iwref
                 (_fcd filename, intf * ref, intf * fnlen);
 
-    extern      FRETVAL(intf) nd8inims
+    HDFLIBAPI      FRETVAL(intf) nd8inims
                 (_fcd filename, intf * fnlen);
 
-    extern      FRETVAL(intf) nd8lref
+    HDFLIBAPI      FRETVAL(intf) nd8lref
                 (void);
 
-    extern      FRETVAL(intf) ndfr8lastref
+    HDFLIBAPI      FRETVAL(intf) ndfr8lastref
                 (void);
 
-    extern      FRETVAL(intf) ndfr8setpalette
+    HDFLIBAPI      FRETVAL(intf) ndfr8setpalette
                 (_fcd pal);
 
-    extern      FRETVAL(intf) ndfr8restart
+    HDFLIBAPI      FRETVAL(intf) ndfr8restart
                 (void);
 
-    extern      FRETVAL(intf) nd8scomp
+    HDFLIBAPI      FRETVAL(intf) nd8scomp
                 (intf * scheme);
 
-    extern      FRETVAL(intf) ndfr8scompress
+    HDFLIBAPI      FRETVAL(intf) ndfr8scompress
                 (intf * scheme);
 
-    extern      FRETVAL(intf) nd8sjpeg
+    HDFLIBAPI      FRETVAL(intf) nd8sjpeg
                 (intf * quality, intf * force_baseline);
 
-    extern      FRETVAL(intf) ndfr8sjpeg
+    HDFLIBAPI      FRETVAL(intf) ndfr8sjpeg
                 (intf * quality, intf * force_baseline);
 
 /*
@@ -1538,191 +1538,191 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #endif                          /* DF_CAPFNAMES */
 #endif                          /* DFSD_FNAMES */
 
-    extern      FRETVAL(intf) ndsgdisc
+    HDFLIBAPI      FRETVAL(intf) ndsgdisc
                 (intf * dim, intf * maxsize, void * scale);
 
-    extern      FRETVAL(intf) ndsgrang
+    HDFLIBAPI      FRETVAL(intf) ndsgrang
                 (void * pmax, void * pmin);
 
-    extern      FRETVAL(intf) ndssdims
+    HDFLIBAPI      FRETVAL(intf) ndssdims
                 (intf * rank, intf dimsizes[]);
 
-    extern      FRETVAL(intf) ndssdisc
+    HDFLIBAPI      FRETVAL(intf) ndssdisc
                 (intf * dim, intf * dimsize, void * scale);
 
-    extern      FRETVAL(intf) ndssrang
+    HDFLIBAPI      FRETVAL(intf) ndssrang
                 (void * max, void * min);
 
-    extern      FRETVAL(intf) ndsclear
+    HDFLIBAPI      FRETVAL(intf) ndsclear
                 (void);
 
-    extern      FRETVAL(intf) ndsslens
+    HDFLIBAPI      FRETVAL(intf) ndsslens
                 (intf * maxlen_label, intf * maxlen_unit,
                  intf * maxlen_format, intf * maxlen_coordsys);
 
-    extern      FRETVAL(intf) ndsgdiln
+    HDFLIBAPI      FRETVAL(intf) ndsgdiln
                 (intf * dim, intf * llabel, intf * lunit,
                  intf * lformat);
 
-    extern      FRETVAL(intf) ndsgdaln
+    HDFLIBAPI      FRETVAL(intf) ndsgdaln
                 (intf * llabel, intf * lunit, intf * lformat,
                  intf * lcoordsys);
 
-    extern      FRETVAL(intf) ndsfirst
+    HDFLIBAPI      FRETVAL(intf) ndsfirst
                 (void);
 
-    extern      FRETVAL(intf) ndspslc
+    HDFLIBAPI      FRETVAL(intf) ndspslc
                 (intf windims[], void * data, intf dims[]);
 
-    extern      FRETVAL(intf) ndseslc
+    HDFLIBAPI      FRETVAL(intf) ndseslc
                 (void);
 
-    extern      FRETVAL(intf) ndssnt
+    HDFLIBAPI      FRETVAL(intf) ndssnt
                 (intf * numbertype);
 
-    extern      FRETVAL(intf) ndsgnt
+    HDFLIBAPI      FRETVAL(intf) ndsgnt
                 (intf * pnumbertype);
 
-    extern      FRETVAL(intf) ndsigdim
+    HDFLIBAPI      FRETVAL(intf) ndsigdim
                 (_fcd filename, intf * prank, intf sizes[],
                  intf * maxrank, intf * lenfn);
 
-    extern      FRETVAL(intf) ndsigdat
+    HDFLIBAPI      FRETVAL(intf) ndsigdat
                 (_fcd filename, intf * rank, intf maxsizes[],
                  void * data, intf * fnlen);
 
-    extern      FRETVAL(intf) ndsipdat
+    HDFLIBAPI      FRETVAL(intf) ndsipdat
                 (_fcd filename, intf * rank, intf dimsizes[],
                  void * data, intf * fnlen);
 
-    extern      FRETVAL(intf) ndsiadat
+    HDFLIBAPI      FRETVAL(intf) ndsiadat
                 (_fcd filename, intf * rank, intf dimsizes[],
                  void * data, intf * fnlen);
 
-    extern      FRETVAL(intf) ndsigslc
+    HDFLIBAPI      FRETVAL(intf) ndsigslc
                 (_fcd filename, intf winst[], intf windims[],
                  void * data, intf dims[], intf * fnlen);
 
-    extern      FRETVAL(intf) ndsisslc
+    HDFLIBAPI      FRETVAL(intf) ndsisslc
                 (_fcd filename, intf * fnlen);
 
-    extern      FRETVAL(intf) ndsirref
+    HDFLIBAPI      FRETVAL(intf) ndsirref
                 (_fcd filename, intf * ref, intf * fnlen);
 
-    extern      FRETVAL(intf) ndslref
+    HDFLIBAPI      FRETVAL(intf) ndslref
                 (void);
 
-    extern      FRETVAL(intf) ndsinum
+    HDFLIBAPI      FRETVAL(intf) ndsinum
                 (_fcd filename, intf * len);
 
-    extern      FRETVAL(intf) ndsip32s
+    HDFLIBAPI      FRETVAL(intf) ndsip32s
                 (_fcd filename, intf * ref, intf * ispre32, intf * len);
 
-    extern      FRETVAL(intf) ndfsdgetdatastrs
+    HDFLIBAPI      FRETVAL(intf) ndfsdgetdatastrs
                 (_fcd label, _fcd unit, _fcd format, _fcd coordsys);
 
-    extern      FRETVAL(intf) ndfsdgetdimstrs
+    HDFLIBAPI      FRETVAL(intf) ndfsdgetdimstrs
                 (intf * dim, _fcd label, _fcd unit, _fcd format);
 
-    extern      FRETVAL(intf) ndfsdgetdimscale
+    HDFLIBAPI      FRETVAL(intf) ndfsdgetdimscale
                 (intf * dim, intf * maxsize, void * scale);
 
-    extern      FRETVAL(intf) ndfsdgetrange
+    HDFLIBAPI      FRETVAL(intf) ndfsdgetrange
                 (void * pmax, void * pmin);
 
-    extern      FRETVAL(intf) ndfsdsetdims
+    HDFLIBAPI      FRETVAL(intf) ndfsdsetdims
                 (intf * rank, intf dimsizes[]);
 
-    extern      FRETVAL(intf) ndfsdsetdimscale
+    HDFLIBAPI      FRETVAL(intf) ndfsdsetdimscale
                 (intf * dim, intf * dimsize, void * scale);
 
-    extern      FRETVAL(intf) ndfsdsetrange
+    HDFLIBAPI      FRETVAL(intf) ndfsdsetrange
                 (void * max, void * min);
 
-    extern      FRETVAL(intf) ndfsdclear
+    HDFLIBAPI      FRETVAL(intf) ndfsdclear
                 (void);
 
-    extern      FRETVAL(intf) ndfsdsetlengths
+    HDFLIBAPI      FRETVAL(intf) ndfsdsetlengths
                 (intf * maxlen_label, intf * maxlen_unit,
                  intf * maxlen_format, intf * maxlen_coordsys);
 
-    extern      FRETVAL(intf) ndfsdgetdimlen
+    HDFLIBAPI      FRETVAL(intf) ndfsdgetdimlen
                 (intf * dim, intf * llabel, intf * lunit,
                  intf * lformat);
 
-    extern      FRETVAL(intf) ndfsdgetdatalen
+    HDFLIBAPI      FRETVAL(intf) ndfsdgetdatalen
                 (intf * llabel, intf * lunit, intf * lformat,
                  intf * lcoordsys);
 
-    extern      FRETVAL(intf) ndfsdrestart
+    HDFLIBAPI      FRETVAL(intf) ndfsdrestart
                 (void);
 
-    extern      FRETVAL(intf) ndfsdputslice
+    HDFLIBAPI      FRETVAL(intf) ndfsdputslice
                 (intf windims[], void * data, intf dims[]);
 
-    extern      FRETVAL(intf) ndfsdendslice
+    HDFLIBAPI      FRETVAL(intf) ndfsdendslice
                 (void);
 
-    extern      FRETVAL(intf) ndfsdsetnt
+    HDFLIBAPI      FRETVAL(intf) ndfsdsetnt
                 (intf * numbertype);
 
-    extern      FRETVAL(intf) ndfsdgetnt
+    HDFLIBAPI      FRETVAL(intf) ndfsdgetnt
                 (intf * pnumbertype);
 
-    extern      FRETVAL(intf) ndfsdlastref
+    HDFLIBAPI      FRETVAL(intf) ndfsdlastref
                 (void);
 
-    extern      FRETVAL(intf) ndsisdis
+    HDFLIBAPI      FRETVAL(intf) ndsisdis
                 (intf * dim, _fcd flabel, _fcd funit, _fcd fformat,
              intf * llabel, intf * lunit, intf * lformat);
 
-    extern      FRETVAL(intf) ndsigdis
+    HDFLIBAPI      FRETVAL(intf) ndsigdis
                 (intf * dim, _fcd label, _fcd unit, _fcd format,
              intf * llabel, intf * lunit, intf * lformat);
 
-    extern      FRETVAL(intf) ndsisdas
+    HDFLIBAPI      FRETVAL(intf) ndsisdas
                 (_fcd flabel, _fcd funit, _fcd fformat, _fcd fcoordsys,
             intf * isfortran, intf * llabel, intf * lunit,
                  intf * lformat, intf * lcoordsys);
 
-    extern      FRETVAL(intf) ndsigdas
+    HDFLIBAPI      FRETVAL(intf) ndsigdas
                 (_fcd label, _fcd unit, _fcd format, _fcd coordsys, intf * llabel,
              intf * lunit, intf * lformat, intf * lcoord);
 
-    extern      FRETVAL(intf) ndsscal
+    HDFLIBAPI      FRETVAL(intf) ndsscal
                 (float64 * cal, float64 * cal_err, float64 * ioff,
                  float64 * ioff_err, intf * cal_type);
 
-    extern      FRETVAL(intf) ndsgcal
+    HDFLIBAPI      FRETVAL(intf) ndsgcal
                 (float64 * cal, float64 * cal_err, float64 * ioff,
                  float64 * ioff_err, intf * cal_type);
 
-    extern      FRETVAL(intf) ndswref
+    HDFLIBAPI      FRETVAL(intf) ndswref
                 (_fcd filename, intf * fnlen, intf * ref);
 
-    extern      FRETVAL(intf) ndssfill
+    HDFLIBAPI      FRETVAL(intf) ndssfill
                 (void * fill_value);
 
-    extern      FRETVAL(intf) ndsgfill
+    HDFLIBAPI      FRETVAL(intf) ndsgfill
                 (void * fill_value);
 
-    extern      FRETVAL(intf) ndssslab
+    HDFLIBAPI      FRETVAL(intf) ndssslab
                 (_fcd filename, intf * fnlen);
 
-    extern      FRETVAL(intf) ndswslab
+    HDFLIBAPI      FRETVAL(intf) ndswslab
                 (intf start[], intf  stride[],
                  intf  cont[], void * data);
 
-    extern      FRETVAL(intf) ndseslab
+    HDFLIBAPI      FRETVAL(intf) ndseslab
                 (void);
 
-    extern	FRETVAL(intf) ndsiwref
+    HDFLIBAPI	FRETVAL(intf) ndsiwref
 		(_fcd filename, intf * fnlen, intf * ref);
 
-    extern	FRETVAL(intf) ndsisslab
+    HDFLIBAPI	FRETVAL(intf) ndsisslab
 		(_fcd filename, intf * fnlen);
 
-    extern	FRETVAL(intf) ndsirslab
+    HDFLIBAPI	FRETVAL(intf) ndsirslab
 		(_fcd filename, intf * fnlen, intf start[], intf slab_size[],
 	         intf stride[], void * buffer, intf buffer_size[]);
 
@@ -1755,32 +1755,32 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #endif                          /* DF_CAPFNAMES */
 #endif                          /* DFP_FNAMES */
 
-    extern      FRETVAL(intf) ndpigpal
+    HDFLIBAPI      FRETVAL(intf) ndpigpal
                 (_fcd filename, _fcd pal, intf  * fnlen);
 
-    extern      FRETVAL(intf) ndpippal
+    HDFLIBAPI      FRETVAL(intf) ndpippal
                 (_fcd filename, _fcd pal, intf  * overwrite, _fcd filemode,
                  intf  * fnlen);
 
-    extern      FRETVAL(intf) ndpinpal
+    HDFLIBAPI      FRETVAL(intf) ndpinpal
                 (_fcd filename, intf  * fnlen);
 
-    extern      FRETVAL(intf) ndpirref
+    HDFLIBAPI      FRETVAL(intf) ndpirref
                 (_fcd filename, intf  * ref, intf  * fnlen);
 
-    extern      FRETVAL(intf) ndpiwref
+    HDFLIBAPI      FRETVAL(intf) ndpiwref
                 (_fcd filename, intf  * ref, intf  * fnlen);
 
-    extern      FRETVAL(intf) ndprest
+    HDFLIBAPI      FRETVAL(intf) ndprest
                 (void);
 
-    extern      FRETVAL(intf) ndplref
+    HDFLIBAPI      FRETVAL(intf) ndplref
                 (void);
 
-    extern      FRETVAL(intf) ndfprestart
+    HDFLIBAPI      FRETVAL(intf) ndfprestart
                 (void);
 
-    extern      FRETVAL(intf) ndfplastref
+    HDFLIBAPI      FRETVAL(intf) ndfplastref
                 (void);
 
 /*
@@ -1829,61 +1829,61 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #endif                          /* DF_CAPFNAMES */
 #endif                          /* DF24_FNAMES */
 
-    extern      FRETVAL(intf) nd2reqil
+    HDFLIBAPI      FRETVAL(intf) nd2reqil
                 (intf  * il);
 
-    extern      FRETVAL(intf) nd2sdims
+    HDFLIBAPI      FRETVAL(intf) nd2sdims
                 (intf  * xdim, intf  * ydim);
 
-    extern      FRETVAL(intf) nd2igdim
+    HDFLIBAPI      FRETVAL(intf) nd2igdim
                 (_fcd filename, intf  * pxdim, intf  * pydim, intf  * pil,
                  intf  * fnlen);
 
-    extern      FRETVAL(intf) nd2igimg
+    HDFLIBAPI      FRETVAL(intf) nd2igimg
                 (_fcd filename, _fcd image, intf  * xdim, intf  * ydim,
                  intf  * fnlen);
 
-    extern      FRETVAL(intf) nd2iaimg
+    HDFLIBAPI      FRETVAL(intf) nd2iaimg
                 (_fcd filename, _fcd image, intf  * xdim, intf  * ydim,
                  intf  * fnlen, intf  * newfile);
 
-    extern      FRETVAL(intf) nd2setil
+    HDFLIBAPI      FRETVAL(intf) nd2setil
                 (intf  * il);
 
-    extern      FRETVAL(intf) nd2first
+    HDFLIBAPI      FRETVAL(intf) nd2first
                 (void);
 
-    extern      FRETVAL(intf) ndf24reqil
+    HDFLIBAPI      FRETVAL(intf) ndf24reqil
                 (intf  * il);
 
-    extern      FRETVAL(intf) ndf24setdims
+    HDFLIBAPI      FRETVAL(intf) ndf24setdims
                 (intf  * xdim, intf  * ydim);
 
-    extern      FRETVAL(intf) ndf24setil
+    HDFLIBAPI      FRETVAL(intf) ndf24setil
                 (intf  * il);
 
-    extern      FRETVAL(intf) ndf24restart
+    HDFLIBAPI      FRETVAL(intf) ndf24restart
                 (void);
 
-    extern      FRETVAL(intf) nd2irref
+    HDFLIBAPI      FRETVAL(intf) nd2irref
                 (_fcd filename, intf  * ref, intf  * fnlen);
 
-    extern      FRETVAL(intf) nd2inimg
+    HDFLIBAPI      FRETVAL(intf) nd2inimg
                 (_fcd filename, intf  * fnlen);
 
-    extern      FRETVAL(intf) nd2lref
+    HDFLIBAPI      FRETVAL(intf) nd2lref
                 (void);
 
-    extern      FRETVAL(intf) nd2scomp
+    HDFLIBAPI      FRETVAL(intf) nd2scomp
                 (intf * scheme);
 
-    extern      FRETVAL(intf) ndf24scompress
+    HDFLIBAPI      FRETVAL(intf) ndf24scompress
                 (intf * scheme);
 
-    extern      FRETVAL(intf) nd2sjpeg
+    HDFLIBAPI      FRETVAL(intf) nd2sjpeg
                 (intf * quality, intf * force_baseline);
 
-    extern      FRETVAL(intf) ndf24sjpeg
+    HDFLIBAPI      FRETVAL(intf) ndf24sjpeg
                 (intf * quality, intf * force_baseline);
 
 /*
@@ -1936,69 +1936,69 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #endif                          /* DF_CAPFNAMES */
 #endif                          /* DF_FNAMES */
 
-    extern      FRETVAL(intf) ndfiopen
+    HDFLIBAPI      FRETVAL(intf) ndfiopen
                 (_fcd name, intf  * acc_mode, intf  * defdds, intf  * namelen);
 
-    extern      FRETVAL(intf) ndfclose
+    HDFLIBAPI      FRETVAL(intf) ndfclose
                 (intf  * dfile);
 
-    extern      FRETVAL(intf) ndfdesc
+    HDFLIBAPI      FRETVAL(intf) ndfdesc
                 (intf  * dfile, intf  ptr[][4], intf  * begin,
                  intf  * num);
 
-    extern      FRETVAL(intf) ndfdup
+    HDFLIBAPI      FRETVAL(intf) ndfdup
                 (intf  * dfile, intf  * tag, intf  * ref, intf  * otag,
                  intf  * oref);
 
-    extern      FRETVAL(intf) ndfdel
+    HDFLIBAPI      FRETVAL(intf) ndfdel
                 (intf  * dfile, intf  * tag, intf  * ref);
 
-    extern      FRETVAL(intf) ndfiaccess
+    HDFLIBAPI      FRETVAL(intf) ndfiaccess
                 (intf  * dfile, intf  * tag, intf  * ref, _fcd acc_mode, intf  * acclen);
 
-    extern      FRETVAL(intf) ndfstart
+    HDFLIBAPI      FRETVAL(intf) ndfstart
                 (intf  * dfile, intf  * tag, intf  * ref, char  * acc_mode);
 
-    extern      FRETVAL(intf) ndfread
+    HDFLIBAPI      FRETVAL(intf) ndfread
                 (intf  * dfile, _fcd ptr, intf  * len);
 
-    extern      FRETVAL(intf) ndfseek
+    HDFLIBAPI      FRETVAL(intf) ndfseek
                 (intf  * dfile, intf  * offset);
 
-    extern      FRETVAL(intf) ndfwrite
+    HDFLIBAPI      FRETVAL(intf) ndfwrite
                 (intf  * dfile, _fcd ptr, intf  * len);
 
-    extern      FRETVAL(intf) ndfupdate
+    HDFLIBAPI      FRETVAL(intf) ndfupdate
                 (intf  * dfile);
 
-    extern      FRETVAL(intf) ndfget
+    HDFLIBAPI      FRETVAL(intf) ndfget
                 (intf  * dfile, intf  * tag, intf  * ref, _fcd ptr);
 
-    extern      FRETVAL(intf) ndfput
+    HDFLIBAPI      FRETVAL(intf) ndfput
                 (intf  * dfile, intf  * tag, intf  * ref, _fcd ptr, intf  * len);
 
-    extern      FRETVAL(intf) ndfsfind
+    HDFLIBAPI      FRETVAL(intf) ndfsfind
                 (intf  * dfile, intf  * tag, intf  * ref);
 
-    extern      FRETVAL(intf) ndffind
+    HDFLIBAPI      FRETVAL(intf) ndffind
                 (intf  * dfile, intf  * itag, intf  * iref, intf  * len);
 
-    extern      FRETVAL(intf) ndferrno
+    HDFLIBAPI      FRETVAL(intf) ndferrno
                 (void);
 
-    extern      FRETVAL(intf) ndfnewref
+    HDFLIBAPI      FRETVAL(intf) ndfnewref
                 (intf  * dfile);
 
-    extern      FRETVAL(intf) ndfnumber
+    HDFLIBAPI      FRETVAL(intf) ndfnumber
                 (intf  * dfile, intf  * tag);
 
-    extern      FRETVAL(intf) ndfiishdf
+    HDFLIBAPI      FRETVAL(intf) ndfiishdf
                 (_fcd name, intf  * namelen);
 
 /*
    ** from dfutil.c
  */
-    extern uint16 DFfindnextref
+    HDFLIBAPI uint16 DFfindnextref
                 (int32 file_id, uint16 tag, uint16 lref);
 
 /*
@@ -2015,10 +2015,10 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #endif                          /* DF_CAPFNAMES */
 #endif                          /* DFUTIL_FNAMES */
 
-    extern      FRETVAL(intf) ndfindnr
+    HDFLIBAPI      FRETVAL(intf) ndfindnr
                 (intf  * dfile, intf  * tag, intf  * lref);
 
-    extern      FRETVAL(intf) ndffindnextref
+    HDFLIBAPI      FRETVAL(intf) ndffindnextref
                 (intf  * dfile, intf  * tag, intf  * lref);
 
 /*
@@ -2033,7 +2033,7 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #endif                          /* DF_CAPFNAMES */
 #endif                          /* HERR_FNAMES */
 
-    extern      FRETVAL(void) nheprnt
+    HDFLIBAPI      FRETVAL(void) nheprnt
                 (intf  * print_levels);
 
 /*
@@ -2086,29 +2086,29 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #endif                          /* DF_CAPFNAMES */
 #endif                          /* HFILE_FNAMES */
 
-    extern      FRETVAL(intf) nhiopen
+    HDFLIBAPI      FRETVAL(intf) nhiopen
                 (_fcd name, intf  * acc_mode, intf  * defdds, intf  * namelen);
 
-    extern      FRETVAL(intf) nhclose
+    HDFLIBAPI      FRETVAL(intf) nhclose
                 (intf  * file_id);
 
-    extern	FRETVAL(intf) nhnumber
+    HDFLIBAPI	FRETVAL(intf) nhnumber
 		(intf  * file_id, intf  * tag);
 
-    extern	FRETVAL(intf) nhxisdir
+    HDFLIBAPI	FRETVAL(intf) nhxisdir
 		(_fcd dir, intf * dirlen);
 
-    extern	FRETVAL(intf) nhxiscdir
+    HDFLIBAPI	FRETVAL(intf) nhxiscdir
 		(_fcd dir, intf * dirlen);
  
-    extern      FRETVAL(intf)
+    HDFLIBAPI      FRETVAL(intf)
                 nhddontatexit(void);
 
-    extern      FRETVAL(intf)   
+    HDFLIBAPI      FRETVAL(intf)   
                 nhglibverc(intf *major_v, intf *minor_v, intf *release,
                 _fcd string, intf *len);
 
-    extern      FRETVAL(intf)
+    HDFLIBAPI      FRETVAL(intf)
                 nhgfilverc(intf *file_id, intf *major_v, intf *minor_v,
                 intf *release, _fcd string, intf *len);
 
@@ -2127,14 +2127,14 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #endif                          /* DF_CAPFNAMES */
 #endif                          /* DFUFP2I_FNAMES */
 
-    extern      FRETVAL(int) nduif2i
+    HDFLIBAPI      FRETVAL(int) nduif2i
                 (int32  * hdim, int32  * vdim, float32  * max,
         float32  * min, float32  hscale[], float32  vscale[],
                  float32  data[], _fcd palette, _fcd outfile,
               int  * ct_method, int32  * hres, int32  * vres,
                  int  * compress, int  * lenfn);
 
-    extern int  DFUfptoimage
+    HDFLIBAPI int  DFUfptoimage
                 (int32 hdim, int32 vdim, float32 max, float32 min,
        float32  * hscale, float32  * vscale, float32  * data,
                  uint8  * palette, char  * outfile, int ct_method,
@@ -2224,99 +2224,99 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 
 /* Multi-file Annotation C-stubs for fortan interface found in mfanf.c */
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nafstart(intf *file_id);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 naffileinfo(intf *an_id, intf *num_flabel, intf *num_fdesc, intf *num_olabel,
             intf *num_odesc);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nafend(intf *an_id);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nafcreate(intf *an_id, intf *etag, intf *eref, intf *atype);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 naffcreate(intf *an_id, intf *atype);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nafselect(intf *an_id, intf *index, intf *atype);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nafnumann(intf *an_id, intf *atype, intf *etag, intf *eref);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nafannlist(intf *an_id, intf *atype, intf *etag, intf *eref, intf alist[]);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nafannlen(intf *ann_id);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nafwriteann(intf *ann_id,_fcd ann, intf *annlen);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nafreadann(intf *ann_id,_fcd ann, intf *maxlen);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nafendaccess(intf *ann_id);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nafgettagref(intf *an_id, intf *index, intf *type, intf *tag, intf *ref);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nafidtagref(intf *ann_id, intf *tag, intf *ref);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 naftagrefid(intf *an_id, intf *tag, intf *ref);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nafatypetag(intf *atype);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 naftagatype(intf *tag);
 
 /* Multi-file Annotation C-routines found in mfan.c */
-extern int32 ANstart(int32 file_id);
+HDFLIBAPI int32 ANstart(int32 file_id);
 
-extern intn  ANfileinfo(int32 an_id, int32 *n_file_label, int32 *n_file_desc,
+HDFLIBAPI intn  ANfileinfo(int32 an_id, int32 *n_file_label, int32 *n_file_desc,
                         int32 *n_obj_label, int32 *n_obj_desc);
 
-extern int32 ANend(int32 an_id);
+HDFLIBAPI int32 ANend(int32 an_id);
 
-extern int32 ANcreate(int32 an_id, uint16 elem_tag, uint16 elem_ref, 
+HDFLIBAPI int32 ANcreate(int32 an_id, uint16 elem_tag, uint16 elem_ref, 
                       ann_type type);
 
-extern int32 ANcreatef(int32 an_id, ann_type type);
+HDFLIBAPI int32 ANcreatef(int32 an_id, ann_type type);
 
-extern int32 ANselect(int32 an_id, int32 index, ann_type type);
+HDFLIBAPI int32 ANselect(int32 an_id, int32 index, ann_type type);
 
-extern intn  ANnumann(int32 an_id, ann_type type, uint16 elem_tag, 
+HDFLIBAPI intn  ANnumann(int32 an_id, ann_type type, uint16 elem_tag, 
                       uint16 elem_ref);
 
-extern intn  ANannlist(int32 an_id, ann_type type, uint16 elem_tag, 
+HDFLIBAPI intn  ANannlist(int32 an_id, ann_type type, uint16 elem_tag, 
                        uint16 elem_ref, int32 ann_list[]);
 
-extern int32 ANannlen(int32 ann_id);
+HDFLIBAPI int32 ANannlen(int32 ann_id);
 
-extern int32 ANwriteann(int32 ann_id, const char *ann, int32 annlen);
+HDFLIBAPI int32 ANwriteann(int32 ann_id, const char *ann, int32 annlen);
 
-extern int32 ANreadann(int32 ann_id, char *ann, int32 maxlen);
+HDFLIBAPI int32 ANreadann(int32 ann_id, char *ann, int32 maxlen);
 
-extern intn  ANendaccess(int32 ann_id);
+HDFLIBAPI intn  ANendaccess(int32 ann_id);
 
-extern int32 ANget_tagref(int32 an_id, int32 index, ann_type type,
+HDFLIBAPI int32 ANget_tagref(int32 an_id, int32 index, ann_type type,
                           uint16 *ann_tag, uint16 *ann_ref);
 
-extern int32 ANid2tagref(int32 an_id, uint16 *ann_tag, uint16 *ann_ref);
+HDFLIBAPI int32 ANid2tagref(int32 an_id, uint16 *ann_tag, uint16 *ann_ref);
 
-extern int32 ANtagref2id(int32 an_id, uint16 ann_tag, uint16 ann_ref);
+HDFLIBAPI int32 ANtagref2id(int32 an_id, uint16 ann_tag, uint16 ann_ref);
 
-extern uint16 ANatype2tag(ann_type atype);
+HDFLIBAPI uint16 ANatype2tag(ann_type atype);
 
-extern ann_type ANtag2atype(uint16 atag);
+HDFLIBAPI ann_type ANtag2atype(uint16 atag);
 
-extern intn ANdestroy(void);
+HDFLIBAPI intn ANdestroy(void);
 
 /* for Multi-file fortran GR interface */
 #ifndef MFGR_FNAMES
@@ -2494,198 +2494,198 @@ extern intn ANdestroy(void);
 #endif /* MFGR_FNAMES */
 
 /* Multi-file GR C-stubs for FORTRAN interface found in mfgrf.c */
-extern FRETVAL(intf)     /* !sl */
+HDFLIBAPI FRETVAL(intf)     /* !sl */
 nmgiwimg(intf * riid, intf *start, intf *stride, intf *count, VOIDP data);
 
-extern FRETVAL(intf)     /* !sl */
+HDFLIBAPI FRETVAL(intf)     /* !sl */
 nmgirimg(intf * riid, intf *start, intf *stride, intf *count, VOIDP data);
 
-extern FRETVAL(intf)     /* !sl */
+HDFLIBAPI FRETVAL(intf)     /* !sl */
 nmgignat(intf * riid, intf *index, VOIDP data);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgstart(intf * fid);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgfinfo(intf * grid,intf *n_datasets,intf *n_attrs);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgend(intf * grid);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgicreat(intf * grid, _fcd name, intf *ncomp, intf *nt, intf *il, intf dimsizes[2], intf *nlen);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgselct(intf * grid, intf *index);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgin2ndx(intf * grid, _fcd name, intf *nlen);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmggiinf(intf * riid, _fcd name, intf *ncomp, intf *nt, intf *il, intf *dimsizes, intf *nattr);
 
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgwcimg(intf * riid, intf *start, intf *stride, intf *count, _fcd data);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgrcimg(intf * riid, intf *start, intf *stride, intf *count, _fcd data);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgwrimg(intf * riid, intf *start, intf *stride, intf *count, void * data);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgrdimg(intf * riid, intf *start, intf *stride, intf *count, void * data);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgendac(intf * riid);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgid2rf(intf * riid);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgr2idx(intf * grid, intf *ref);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgrltil(intf * riid, intf *il);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgrimil(intf * riid, intf *il);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmggltid(intf * riid, intf *lut_index);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgglinf(intf * lutid, intf *ncomp, intf *nt, intf *il, intf *nentries);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgwrlut(intf * lutid, intf *ncomp, intf *nt, intf *il, intf *nentries, void * data);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgwclut(intf * lutid, intf *ncomp, intf *nt, intf *il, intf *nentries, _fcd data);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgrdlut(intf * lutid, void * data);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgrclut(intf * lutid, _fcd data);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgisxfil(intf * riid, _fcd filename, intf *offset, intf *nlen);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgsactp(intf * riid, intf *accesstype);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgiscatt(intf * riid, _fcd name, intf *nt, intf *count, _fcd data, intf *nlen);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgisattr(intf * riid, _fcd name, intf *nt, intf *count, void * data, intf *nlen);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgatinf(intf * riid, intf *index, _fcd name, intf *nt, intf *count);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmggcatt(intf * riid, intf *index, _fcd data);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmggnatt(intf * riid, intf *index, void * data);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmggattr(intf * riid, intf *index, void * data);
 
-extern FRETVAL(intf)
+HDFLIBAPI FRETVAL(intf)
 nmgifndat(intf * riid, _fcd name, intf *nlen);
 
-     extern FRETVAL (intf)
+     HDFLIBAPI FRETVAL (intf)
      nmgcgichnk(intf *id, intf *dim_length, intf *flags);
 
-    extern FRETVAL (intf)
+    HDFLIBAPI FRETVAL (intf)
        nmgcrcchnk(intf *id, intf *start, _fcd char_data);
 
-    extern FRETVAL (intf)
+    HDFLIBAPI FRETVAL (intf)
        nmgcrchnk(intf *id, intf *start, VOIDP num_data);
 
-    extern FRETVAL (intf)
+    HDFLIBAPI FRETVAL (intf)
        nmgcscchnk(intf *id, intf *maxcache, intf *flags);
 
-    extern FRETVAL (intf)
+    HDFLIBAPI FRETVAL (intf)
       nmgcschnk(intf *id, intf *dim_length, intf *comp_type,
                 intf *comp_prm);
-    extern FRETVAL (intf)
+    HDFLIBAPI FRETVAL (intf)
        nmgcwcchnk(intf *id, intf *start, _fcd char_data);
 
-    extern FRETVAL (intf)
+    HDFLIBAPI FRETVAL (intf)
        nmgcwchnk(intf *id, intf *start, VOIDP num_data);
 
-    extern FRETVAL (intf)
+    HDFLIBAPI FRETVAL (intf)
        nmgcscompress(intf *id, intf *comp_type, intf *comp_prm);
 
-    extern FRETVAL (intf)
+    HDFLIBAPI FRETVAL (intf)
        nmglt2rf(intf *id);
 
 /* Multi-file Raster C-routines found in mfgr.c */
-extern intn rigcompare(void * k1, void * k2, intn cmparg);
+HDFLIBAPI intn rigcompare(void * k1, void * k2, intn cmparg);
 
-extern int32 GRstart(int32 hdf_file_id);
+HDFLIBAPI int32 GRstart(int32 hdf_file_id);
 
-extern intn GRfileinfo(int32 grid,int32 *n_datasets,int32 *n_attrs);
+HDFLIBAPI intn GRfileinfo(int32 grid,int32 *n_datasets,int32 *n_attrs);
 
-extern intn GRend(int32 grid);
+HDFLIBAPI intn GRend(int32 grid);
 
-extern int32 GRcreate(int32 grid,const char *name,int32 ncomp,int32 nt,int32 il,
+HDFLIBAPI int32 GRcreate(int32 grid,const char *name,int32 ncomp,int32 nt,int32 il,
     int32 dimsizes[2]);
 
-extern int32 GRselect(int32 grid,int32 index);
+HDFLIBAPI int32 GRselect(int32 grid,int32 index);
 
-extern int32 GRnametoindex(int32 grid,const char *name);
+HDFLIBAPI int32 GRnametoindex(int32 grid,const char *name);
 
-extern intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
+HDFLIBAPI intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
     int32 dimsizes[2],int32 *n_attr);
 
-extern intn GRwriteimage(int32 riid,int32 start[2],int32 stride[2],
+HDFLIBAPI intn GRwriteimage(int32 riid,int32 start[2],int32 stride[2],
     int32 count[2],void * data);
 
-extern intn GRreadimage(int32 riid,int32 start[2],int32 stride[2],
+HDFLIBAPI intn GRreadimage(int32 riid,int32 start[2],int32 stride[2],
     int32 count[2],void * data);
 
-extern intn GRendaccess(int32 riid);
+HDFLIBAPI intn GRendaccess(int32 riid);
 
-extern uint16 GRidtoref(int32 riid);
+HDFLIBAPI uint16 GRidtoref(int32 riid);
 
-extern int32 GRreftoindex(int32 grid,uint16 ref);
+HDFLIBAPI int32 GRreftoindex(int32 grid,uint16 ref);
 
-extern intn GRreqlutil(int32 riid,intn il);
+HDFLIBAPI intn GRreqlutil(int32 riid,intn il);
 
-extern intn GRreqimageil(int32 riid,intn il);
+HDFLIBAPI intn GRreqimageil(int32 riid,intn il);
 
-extern int32 GRgetlutid(int32 riid,int32 index);
+HDFLIBAPI int32 GRgetlutid(int32 riid,int32 index);
 
-extern uint16 GRluttoref(int32 lutid);
+HDFLIBAPI uint16 GRluttoref(int32 lutid);
 
-extern intn GRgetlutinfo(int32 riid,int32 *ncomp,int32 *nt,
+HDFLIBAPI intn GRgetlutinfo(int32 riid,int32 *ncomp,int32 *nt,
     int32 *il,int32 *nentries);
 
-extern intn GRwritelut(int32 riid,int32 ncomps,int32 nt,
+HDFLIBAPI intn GRwritelut(int32 riid,int32 ncomps,int32 nt,
     int32 il,int32 nentries,void * data);
 
-extern intn GRreadlut(int32 lutid,void * data);
+HDFLIBAPI intn GRreadlut(int32 lutid,void * data);
 
-extern intn GRsetexternalfile(int32 riid,const char *filename,int32 offset);
+HDFLIBAPI intn GRsetexternalfile(int32 riid,const char *filename,int32 offset);
 
-extern intn GRsetaccesstype(int32 riid,uintn accesstype);
+HDFLIBAPI intn GRsetaccesstype(int32 riid,uintn accesstype);
 
-extern intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo);
+HDFLIBAPI intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo);
 
-extern intn GRsetattr(int32 id,const char *name,int32 attr_nt,int32 count,const void * data);
+HDFLIBAPI intn GRsetattr(int32 id,const char *name,int32 attr_nt,int32 count,const void * data);
 
-extern intn GRattrinfo(int32 id,int32 index,char *name,int32 *attr_nt,int32 *count);
+HDFLIBAPI intn GRattrinfo(int32 id,int32 index,char *name,int32 *attr_nt,int32 *count);
 
-extern intn GRgetattr(int32 id,int32 index,void * data);
+HDFLIBAPI intn GRgetattr(int32 id,int32 index,void * data);
 
-extern int32 GRfindattr(int32 id,const char *name);
+HDFLIBAPI int32 GRfindattr(int32 id,const char *name);
 
-extern intn GRPshutdown(void);
+HDFLIBAPI intn GRPshutdown(void);
 
 /*=== HDF_CHUNK_DEF same as in mfhdf.h - moved here  ====*/
 
@@ -2826,7 +2826,7 @@ typedef union hdf_chunk_def_u
  RETURNS
         SUCCEED/FAIL
 ******************************************************************************/
-extern intn GRsetchunk
+HDFLIBAPI intn GRsetchunk
     (int32 riid,             /* IN: raster access id */
      HDF_CHUNK_DEF chunk_def, /* IN: chunk definition */
      int32 flags              /* IN: flags */);
@@ -2862,7 +2862,7 @@ extern intn GRsetchunk
  RETURNS
         SUCCEED/FAIL
 ******************************************************************************/
-extern intn GRgetchunkinfo
+HDFLIBAPI intn GRgetchunkinfo
     (int32 riid,              /* IN: Raster access id */
      HDF_CHUNK_DEF *chunk_def, /* IN/OUT: chunk definition */
      int32 *flags              /* IN/OUT: flags */);
@@ -2889,7 +2889,7 @@ extern intn GRgetchunkinfo
  RETURNS
         SUCCEED/FAIL
 ******************************************************************************/
-extern intn GRwritechunk
+HDFLIBAPI intn GRwritechunk
     (int32 riid,      /* IN: raster access id */
      int32 *origin,    /* IN: origin of chunk to write */
      const void *datap /* IN: buffer for data */);
@@ -2914,7 +2914,7 @@ extern intn GRwritechunk
  RETURNS
         SUCCEED/FAIL
 ******************************************************************************/
-extern intn GRreadchunk
+HDFLIBAPI intn GRreadchunk
     (int32 riid,      /* IN: raster access id */
      int32 *origin,    /* IN: origin of chunk to read */
      void  *datap      /* IN/OUT: buffer for data */);
@@ -2965,7 +2965,7 @@ RETURNS
      Returns the 'maxcache' value for the chunk cache if successful 
      and FAIL otherwise
 ******************************************************************************/
-extern intn GRsetchunkcache
+HDFLIBAPI intn GRsetchunkcache
     (int32 riid,     /* IN: raster access id */
      int32 maxcache,  /* IN: max number of chunks to cache */
      int32 flags      /* IN: flags = 0, HDF_CACHEALL */);
@@ -2974,11 +2974,11 @@ extern intn GRsetchunkcache
 /* For Pablo wrapper functions */
 
 #if defined HAVE_PABLO || defined PABLO
-extern int HDFinitIOTrace(char *traceFileName, intn detail, intn lifetime,
+HDFLIBAPI int HDFinitIOTrace(char *traceFileName, intn detail, intn lifetime,
                           intn timeWindow, float64 timeWindowSize,
                           intn regionTrace, intn regionSize,
                           uint16 procTraceMask );
-extern int HDFendIOTrace(void);
+HDFLIBAPI int HDFendIOTrace(void);
 
 #ifndef PABLO_FNAMES
 #   define PABLO_FNAMES
@@ -3019,7 +3019,7 @@ NOTE
      the flags arguement. 
 
 ******************************************************************************/
-extern int  Hmpset(int pagesize, /* IN: pagesize to use for next open/create */
+HDFLIBAPI int  Hmpset(int pagesize, /* IN: pagesize to use for next open/create */
                    int maxcache, /* IN: max number of pages to cache */
                    int flags     /* IN: flags = 0, MP_PAGEALL */);
 
@@ -3037,7 +3037,7 @@ RETURNS
 NOTES
      This routine calls the real routine MPget().
 ******************************************************************************/
-extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
+HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
                    int *maxcache, /*OUT: max number of pages cached in last open/create */
                    int flags      /* IN: */);
 
@@ -3068,214 +3068,214 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 /* 
    ** from vattr.c
  */
-   extern intn Vsetattr
+   HDFLIBAPI intn Vsetattr
                 (int32 vgid,  const char *attrname, int32 datatype,
                  int32 count, const void * values);
-   extern intn Vnattrs
+   HDFLIBAPI intn Vnattrs
                 (int32 vgid);
-   extern intn Vfindattr
+   HDFLIBAPI intn Vfindattr
                 (int32 vgid, const char *attrname);
-   extern intn Vattrinfo
+   HDFLIBAPI intn Vattrinfo
                 (int32 vgid, intn attrindex, char *name, 
                  int32 *datatype, int32 *count, int32 *size);
-   extern intn Vgetattr
+   HDFLIBAPI intn Vgetattr
                 (int32 vgid, intn attrindex, void * values);
-   extern int32 Vgetversion
+   HDFLIBAPI int32 Vgetversion
                 (int32 vgid);
-   extern intn VSfindex
+   HDFLIBAPI intn VSfindex
                  (int32 vsid, const char *fieldname, int32 *fldindex);
-   extern intn VSsetattr
+   HDFLIBAPI intn VSsetattr
                 (int32 vsid, int32 findex, const char *attrname,
                  int32 datatype, int32 count, const void * values);
-   extern intn VSnattrs
+   HDFLIBAPI intn VSnattrs
                 (int32 vsid);
-   extern intn VSfnattrs
+   HDFLIBAPI intn VSfnattrs
                 (int32 vsid, int32 findex);
-   extern intn VSfindattr
+   HDFLIBAPI intn VSfindattr
                 (int32 vsid, int32 findex, const char *attrname);
-   extern intn VSattrinfo
+   HDFLIBAPI intn VSattrinfo
                 (int32 vsid, int32 findex, intn attrindex,
                  char *name, int32 *datatype, int32 *count, 
                  int32 *size);
-   extern intn VSgetattr
+   HDFLIBAPI intn VSgetattr
                 (int32 vsid, int32 findex, intn attrindex,
                   void * values);
-   extern intn VSisattr
+   HDFLIBAPI intn VSisattr
                 (int32 vsid);
 /*
    ** from vconv.c
  */
-    extern int32 vicheckcompat
+    HDFLIBAPI int32 vicheckcompat
                 (HFILEID f);
 
-    extern int32 vimakecompat
+    HDFLIBAPI int32 vimakecompat
                 (HFILEID f);
 
-    extern int32 vcheckcompat
+    HDFLIBAPI int32 vcheckcompat
                 (char  * fs);
 
-    extern int32 vmakecompat
+    HDFLIBAPI int32 vmakecompat
                 (char  * fs);
 
 /*
    ** from vg.c
  */
-    extern int32 VSelts
+    HDFLIBAPI int32 VSelts
                 (int32 vkey);
 
-    extern int32 VSgetinterlace
+    HDFLIBAPI int32 VSgetinterlace
                 (int32 vkey);
 
-    extern intn VSsetinterlace
+    HDFLIBAPI intn VSsetinterlace
                 (int32 vkey, int32 interlace);
 
-    extern int32 VSgetfields
+    HDFLIBAPI int32 VSgetfields
                 (int32 vkey, char  * fields);
 
-    extern intn VSfexist
+    HDFLIBAPI intn VSfexist
                 (int32 vkey, char  * fields);
 
-    extern int32 VSsizeof
+    HDFLIBAPI int32 VSsizeof
                 (int32 vkey, char  * fields);
 
-    extern void VSdump
+    HDFLIBAPI void VSdump
                 (int32 vkey);
 
-    extern int32 VSsetname
+    HDFLIBAPI int32 VSsetname
                 (int32 vkey, const char  * vsname);
 
-    extern int32 VSsetclass
+    HDFLIBAPI int32 VSsetclass
                 (int32 vkey, const char  * vsclass);
 
-    extern int32 VSgetname
+    HDFLIBAPI int32 VSgetname
                 (int32 vkey, char  * vsname);
 
-    extern int32 VSgetclass
+    HDFLIBAPI int32 VSgetclass
                 (int32 vkey, char  * vsclass);
 
-    extern intn VSinquire
+    HDFLIBAPI intn VSinquire
                 (int32 vkey, int32  * nelt, int32  * interlace,
            char  * fields, int32  * eltsize, char  * vsname);
 
-    extern int32 VSlone
+    HDFLIBAPI int32 VSlone
                 (HFILEID f, int32  * idarray, int32 asize);
 
-    extern int32 Vlone
+    HDFLIBAPI int32 Vlone
                 (HFILEID f, int32  * idarray, int32 asize);
 
-    extern int32 Vfind
+    HDFLIBAPI int32 Vfind
                 (HFILEID f, const char  * vgname);
 
-    extern int32 VSfind
+    HDFLIBAPI int32 VSfind
                 (HFILEID f, const char  * vsname);
 
-    extern int32 Vfindclass
+    HDFLIBAPI int32 Vfindclass
                 (HFILEID f, const char  * vgclass);
 
-    extern int32 VSfindclass
+    HDFLIBAPI int32 VSfindclass
                 (HFILEID f, const char  * vsclass);
 
-    extern void Vsetzap
+    HDFLIBAPI void Vsetzap
                 (void);
 
 /*
    ** from vgp.c
  */
-    extern intn vcompare
+    HDFLIBAPI intn vcompare
                 (void * k1, void * k2, intn cmparg);
 
-    extern intn vcompareref
+    HDFLIBAPI intn vcompareref
                 (void * k1, void * k2, intn cmparg);
 
-    extern void vdestroynode
+    HDFLIBAPI void vdestroynode
                 (void * n);
 
-    extern void vtfreekey
+    HDFLIBAPI void vtfreekey
                 (void * k);
 
-    extern intn Vinitialize
+    HDFLIBAPI intn Vinitialize
                 (HFILEID f);
 
-    extern intn Vfinish
+    HDFLIBAPI intn Vfinish
                 (HFILEID f);
 
-    extern HFILEID Vopen
+    HDFLIBAPI HFILEID Vopen
                 (char *path, intn acc_mode, int16 ndds);
 
-    extern intn Vclose
+    HDFLIBAPI intn Vclose
                 (HFILEID f);
 
-    extern int32 vexistvg
+    HDFLIBAPI int32 vexistvg
                 (HFILEID f, uint16 vgid);
 
-    extern int32 Vattach
+    HDFLIBAPI int32 Vattach
                 (HFILEID f, int32 vgid, const char  * accesstype);
 
-    extern int32 Vdetach
+    HDFLIBAPI int32 Vdetach
                 (int32 vkey);
 
-    extern int32 Vinsert
+    HDFLIBAPI int32 Vinsert
                 (int32 vkey, int32 vskey);
     /* note: 2nd arg of Vinsert can also be (VGROUP *) */
 
-    extern int32 Vflocate
+    HDFLIBAPI int32 Vflocate
                 (int32 vkey, char  * field);
 
-    extern intn Vinqtagref
+    HDFLIBAPI intn Vinqtagref
                 (int32 vkey, int32 tag, int32 ref);
 
-    extern int32 Vntagrefs
+    HDFLIBAPI int32 Vntagrefs
                 (int32 vkey);
 
-    extern int32 Vnrefs
+    HDFLIBAPI int32 Vnrefs
                 (int32 vkey,int32 tag);
 
-    extern int32 Vgettagrefs
+    HDFLIBAPI int32 Vgettagrefs
                 (int32 vkey, int32  tagarray[], int32  refarray[], int32 n);
 
-    extern intn Vgettagref
+    HDFLIBAPI intn Vgettagref
                 (int32 vkey, int32 which, int32  * tag, int32  * ref);
 
-    extern int32 VQueryref
+    HDFLIBAPI int32 VQueryref
                 (int32 vkey);
 
-    extern int32 VQuerytag
+    HDFLIBAPI int32 VQuerytag
                 (int32 vkey);
 
-    extern int32 Vaddtagref
+    HDFLIBAPI int32 Vaddtagref
                 (int32 vkey, int32 tag, int32 ref);
 
-    extern int32 Ventries
+    HDFLIBAPI int32 Ventries
                 (HFILEID f, int32 vgid);
 
-    extern int32 Vsetname
+    HDFLIBAPI int32 Vsetname
                 (int32 vkey, const char  * vgname);
 
-    extern int32 Vsetclass
+    HDFLIBAPI int32 Vsetclass
                 (int32 vkey, const char  * vgclass);
 
-    extern intn Visvg
+    HDFLIBAPI intn Visvg
                 (int32 vkey, int32 id);
 
-    extern intn Visvs
+    HDFLIBAPI intn Visvs
                 (int32 vkey, int32 id);
 
-    extern int32 Vgetid
+    HDFLIBAPI int32 Vgetid
                 (HFILEID f, int32 vgid);
 
-    extern int32 Vgetnext
+    HDFLIBAPI int32 Vgetnext
                 (int32 vkey, int32 id);
 
-    extern int32 Vgetname
+    HDFLIBAPI int32 Vgetname
                 (int32 vkey, char  * vgname);
 
-    extern int32 Vgetclass
+    HDFLIBAPI int32 Vgetclass
                 (int32 vkey, char  * vgclass);
 
-    extern intn Vinquire
+    HDFLIBAPI intn Vinquire
                 (int32 vkey, int32  * nentries, char  * vgname);
 
-    extern int32 Vdelete
+    HDFLIBAPI int32 Vdelete
                 (int32 f, int32 ref);
 
 /*******************************************************************************
@@ -3297,26 +3297,26 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
               int32 tag,  /* IN: tag to delete in vgroup */
               int32 ref   /* IN: ref to delete in vgroup */);
 
-    extern intn VPshutdown(void);
+    HDFLIBAPI intn VPshutdown(void);
 
 /*
    ** from vparse.c
  */
-    extern int32 scanattrs
+    HDFLIBAPI int32 scanattrs
                 (const char  * attrs, int32  * attrc, char  *** attrv);
 
 /*
    ** from vhi.c
  */
-    extern int32 VHstoredata
+    HDFLIBAPI int32 VHstoredata
                 (HFILEID f, const char  * field, const uint8  *buf, int32 n, int32 datatype,
                  const char  * vsname, const char  * vsclass);
 
-    extern int32 VHstoredatam
+    HDFLIBAPI int32 VHstoredatam
                 (HFILEID f, const char * field, const uint8  *buf, int32 n, int32 datatype,
                  const char  * vsname, const char  * vsclass, int32 order);
 
-    extern int32 VHmakegroup
+    HDFLIBAPI int32 VHmakegroup
                 (HFILEID f, int32  tagarray[], int32  refarray[], int32 n,
                     const char * vgname, const char  * vgclass);
 
@@ -3324,73 +3324,73 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
    ** from vio.c
  */
 
-    extern intn VSPhshutdown(void);
+    HDFLIBAPI intn VSPhshutdown(void);
 
-    extern int32 vexistvs
+    HDFLIBAPI int32 vexistvs
                 (HFILEID f, uint16 vsref);
 
-    extern void vsdestroynode
+    HDFLIBAPI void vsdestroynode
                 (void * n);
 
-    extern void vfdestroynode
+    HDFLIBAPI void vfdestroynode
                 (void * n);
 
-    extern int32 VSattach
+    HDFLIBAPI int32 VSattach
                 (HFILEID f, int32 vsref, const char  * accesstype);
 
-    extern int32 VSdetach
+    HDFLIBAPI int32 VSdetach
                 (int32 vkey);
 
-    extern int32 VSQuerytag
+    HDFLIBAPI int32 VSQuerytag
                 (int32 vkey);
 
-    extern int32 VSQueryref
+    HDFLIBAPI int32 VSQueryref
                 (int32 vkey);
  
-    extern int32 VSgetid
+    HDFLIBAPI int32 VSgetid
                 (HFILEID f, int32 vsref);
 
-    extern int32 VSgetversion
+    HDFLIBAPI int32 VSgetversion
                 (int32 vkey);
 
-    extern int32 VSdelete
+    HDFLIBAPI int32 VSdelete
                 (int32 f, int32 ref);
 
-    extern int32 VSappendable
+    HDFLIBAPI int32 VSappendable
                 (int32 vkey, int32 blk);
 
 /*
    ** from vsfld.c
  */
 
-    extern intn VSsetfields
+    HDFLIBAPI intn VSsetfields
                 (int32 vkey, const char  * fields);
 
-    extern intn VSfdefine
+    HDFLIBAPI intn VSfdefine
                 (int32 vkey, const char  * field, int32 localtype, int32 order);
 
-    extern int32 VFnfields
+    HDFLIBAPI int32 VFnfields
                 (int32 vkey);
 
-    extern char *VFfieldname
+    HDFLIBAPI char *VFfieldname
                 (int32 vkey, int32 index);
 
-    extern int32 VFfieldtype
+    HDFLIBAPI int32 VFfieldtype
                 (int32 vkey, int32 index);
 
-    extern int32 VFfieldisize
+    HDFLIBAPI int32 VFfieldisize
                 (int32 vkey, int32 index);
 
-    extern int32 VFfieldesize
+    HDFLIBAPI int32 VFfieldesize
                 (int32 vkey, int32 index);
 
-    extern int32 VFfieldorder
+    HDFLIBAPI int32 VFfieldorder
                 (int32 vkey, int32 index);
 
-    extern intn VSsetexternalfile
+    HDFLIBAPI intn VSsetexternalfile
 		(int32 vkey, const char *filename, int32 offset);
 
-    extern intn VSfpack
+    HDFLIBAPI intn VSfpack
                 (int32 vsid, intn packtype, const char *fields_in_buf,
                 void * buf, intn bufsz, intn n_records, 
                 const char *fields, void * fldbufpt[]);
@@ -3398,15 +3398,15 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 /*
    ** from vrw.c
  */
-    extern intn VSPshutdown(void);
+    HDFLIBAPI intn VSPshutdown(void);
 
-    extern int32 VSseek
+    HDFLIBAPI int32 VSseek
                 (int32 vkey, int32 eltpos);
 
-    extern int32 VSread
+    HDFLIBAPI int32 VSread
                 (int32 vkey, uint8  buf[], int32 nelt, int32 interlace);
 
-    extern int32 VSwrite
+    HDFLIBAPI int32 VSwrite
                 (int32 vkey, const uint8  buf[], int32 nelt, int32 interlace);
 
 /*
@@ -3749,270 +3749,270 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 #endif                          /* DF_CAPFNAMES */
 #endif                          /* VG_FNAMES */
 
-    extern      FRETVAL(intf) ndfivopn
+    HDFLIBAPI      FRETVAL(intf) ndfivopn
                 (_fcd filename, intf  * acc_mode, intf  * defdds, intf  * namelen);
 
-    extern      FRETVAL(intf) ndfvclos
+    HDFLIBAPI      FRETVAL(intf) ndfvclos
                 (intf  * file_id);
 
-    extern      FRETVAL(intf) nvatchc
+    HDFLIBAPI      FRETVAL(intf) nvatchc
                 (intf  * f, intf  * vgid, _fcd accesstype);
 
-    extern      FRETVAL(intf) nvdtchc
+    HDFLIBAPI      FRETVAL(intf) nvdtchc
                 (intf  * vkey);
 
-    extern      FRETVAL(intf) nvgnamc
+    HDFLIBAPI      FRETVAL(intf) nvgnamc
                 (intf  * vkey, _fcd vgname);
 
-    extern      FRETVAL(intf) nvgclsc
+    HDFLIBAPI      FRETVAL(intf) nvgclsc
                 (intf  * vkey, _fcd vgclass);
 
-    extern      FRETVAL(intf) nvinqc
+    HDFLIBAPI      FRETVAL(intf) nvinqc
                 (intf  * vkey, intf  * nentries, _fcd vgname);
 
-    extern      FRETVAL(intf) nvdeletec
+    HDFLIBAPI      FRETVAL(intf) nvdeletec
                 (intf  *f, intf  * vkey);
 
-    extern      FRETVAL(intf) nvgidc
+    HDFLIBAPI      FRETVAL(intf) nvgidc
                 (intf  * f, intf  * vgid);
 
-    extern      FRETVAL(intf) nvgnxtc
+    HDFLIBAPI      FRETVAL(intf) nvgnxtc
                 (intf  * vkey, intf  * id);
 
-    extern      FRETVAL(intf) nvsnamc
+    HDFLIBAPI      FRETVAL(intf) nvsnamc
                 (intf  * vkey, _fcd vgname, intf  * vgnamelen);
 
-    extern      FRETVAL(intf) nvsclsc
+    HDFLIBAPI      FRETVAL(intf) nvsclsc
                 (intf  * vkey, _fcd vgclass, intf  * vgclasslen);
 
-    extern      FRETVAL(intf) nvinsrtc
+    HDFLIBAPI      FRETVAL(intf) nvinsrtc
                 (intf  * vkey, intf  * vobjptr);
 
-    extern      FRETVAL(intf) nvisvgc
+    HDFLIBAPI      FRETVAL(intf) nvisvgc
                 (intf  * vkey, intf  * id);
 
-    extern      FRETVAL(intf) nvfstart
+    HDFLIBAPI      FRETVAL(intf) nvfstart
                 (intf  * f);
 
-    extern      FRETVAL(intf) nvfend
+    HDFLIBAPI      FRETVAL(intf) nvfend
                 (intf  * f);
 
-    extern      FRETVAL(intf) nvisvsc
+    HDFLIBAPI      FRETVAL(intf) nvisvsc
                 (intf  * vkey, intf  * id);
 
-    extern      FRETVAL(intf) nvsatchc
+    HDFLIBAPI      FRETVAL(intf) nvsatchc
                 (intf  * f, intf  * vsref, _fcd accesstype);
 
-    extern      FRETVAL(intf) nvsdtchc
+    HDFLIBAPI      FRETVAL(intf) nvsdtchc
                 (intf  * vkey);
 
-    extern      FRETVAL(intf) nvsqref
+    HDFLIBAPI      FRETVAL(intf) nvsqref
                 (intf  * vkey);
 
-    extern      FRETVAL(intf) nvsqtag
+    HDFLIBAPI      FRETVAL(intf) nvsqtag
                 (intf  * vkey);
   
-    extern      FRETVAL(intf) nvsqnfld
+    HDFLIBAPI      FRETVAL(intf) nvsqnfld
                 (intf * vkey);
 
-    extern      FRETVAL(intf) nvsgver
+    HDFLIBAPI      FRETVAL(intf) nvsgver
                 (intf  * vkey);
 
-    extern      FRETVAL(intf) nvsseekc
+    HDFLIBAPI      FRETVAL(intf) nvsseekc
                 (intf  * vkey, intf  * eltpos);
 
-    extern      FRETVAL(intf) nvsgnamc
+    HDFLIBAPI      FRETVAL(intf) nvsgnamc
                 (intf  * vkey, _fcd vsname, intf *vsnamelen);
 
-    extern      FRETVAL(intf) nvsgclsc
+    HDFLIBAPI      FRETVAL(intf) nvsgclsc
                 (intf  * vkey, _fcd vsclass, intf *vsclasslen);
 
-    extern      FRETVAL(intf) nvsinqc
+    HDFLIBAPI      FRETVAL(intf) nvsinqc
                 (intf  * vkey, intf  * nelt, intf  * interlace, _fcd fields,
 		intf  * eltsize, _fcd vsname, intf *fieldslen, intf *vsnamelen);
 
-    extern      FRETVAL(intf) nvsfexc
+    HDFLIBAPI      FRETVAL(intf) nvsfexc
                 (intf  * vkey, _fcd fields, intf  * fieldslen);
 
-    extern      FRETVAL(intf) nvsfndc
+    HDFLIBAPI      FRETVAL(intf) nvsfndc
                 (intf  * f, _fcd name, intf  * namelen);
 
-    extern      FRETVAL(intf) nvsgidc
+    HDFLIBAPI      FRETVAL(intf) nvsgidc
                 (intf  * f, intf  * vsref);
 
-    extern      FRETVAL(intf) nvsdltc
+    HDFLIBAPI      FRETVAL(intf) nvsdltc
                 (intf  * f, intf  * vsref);
 
-    extern      FRETVAL(intf) nvsapp
+    HDFLIBAPI      FRETVAL(intf) nvsapp
                 (intf  * vkey, intf  *blk);
 
-    extern      FRETVAL(intf) nvssnamc
+    HDFLIBAPI      FRETVAL(intf) nvssnamc
                 (intf  * vkey, _fcd vsname, intf  * vsnamelen);
 
-    extern      FRETVAL(intf) nvssclsc
+    HDFLIBAPI      FRETVAL(intf) nvssclsc
                 (intf  * vkey, _fcd vsclass, intf  * vsclasslen);
 
-    extern      FRETVAL(intf) nvssfldc
+    HDFLIBAPI      FRETVAL(intf) nvssfldc
                 (intf  * vkey, _fcd fields, intf  * fieldslen);
 
-    extern      FRETVAL(intf) nvssintc
+    HDFLIBAPI      FRETVAL(intf) nvssintc
                 (intf  * vkey, intf  * interlace);
 
-    extern      FRETVAL(intf) nvsfdefc
+    HDFLIBAPI      FRETVAL(intf) nvsfdefc
                 (intf  * vkey, _fcd field, intf  * localtype,
                  intf  * order, intf  * fieldlen);
 
-    extern      FRETVAL(intf) nvssextfc
+    HDFLIBAPI      FRETVAL(intf) nvssextfc
                 (intf  * vkey, _fcd fname, intf  * offset,
                  intf  * fnamelen);
 
-    extern      FRETVAL(intf) nvfnflds
+    HDFLIBAPI      FRETVAL(intf) nvfnflds
                 (intf  * vkey);
 
-    extern      FRETVAL(intf) nvffname
+    HDFLIBAPI      FRETVAL(intf) nvffname
                 (intf  * vkey, intf  *index, _fcd fname);
 
-    extern      FRETVAL(intf) nvfftype
+    HDFLIBAPI      FRETVAL(intf) nvfftype
                 (intf  * vkey, intf  *index);
 
-    extern      FRETVAL(intf) nvffisiz
+    HDFLIBAPI      FRETVAL(intf) nvffisiz
                 (intf  * vkey, intf  *index);
 
-    extern      FRETVAL(intf) nvffesiz
+    HDFLIBAPI      FRETVAL(intf) nvffesiz
                 (intf  * vkey, intf  *index);
 
-    extern      FRETVAL(intf) nvffordr
+    HDFLIBAPI      FRETVAL(intf) nvffordr
                 (intf  * vkey, intf  *index);
 
-    extern      FRETVAL(intf) nvsfrdc
+    HDFLIBAPI      FRETVAL(intf) nvsfrdc
                 (intf  * vkey, _fcd  cbuf, intf  * nelt,
                  intf  * interlace);
 
-    extern      FRETVAL(intf) nvsfrd
+    HDFLIBAPI      FRETVAL(intf) nvsfrd
                 (intf  * vkey, intf  * buf, intf  * nelt,
                  intf  * interlace);
 
-    extern      FRETVAL(intf) nvsreadc
+    HDFLIBAPI      FRETVAL(intf) nvsreadc
                 (intf  * vkey, uint8  * buf, intf  * nelt,
                  intf  * interlace);
 
-    extern      FRETVAL(intf) nvsfwrtc
+    HDFLIBAPI      FRETVAL(intf) nvsfwrtc
                 (intf  * vkey, _fcd  cbuf, intf  * nelt,
                  intf  * interlace);
 
-    extern      FRETVAL(intf) nvsfwrt
+    HDFLIBAPI      FRETVAL(intf) nvsfwrt
                 (intf  * vkey, intf  * buf, intf  * nelt,
                  intf  * interlace);
 
-    extern      FRETVAL(intf) nvswritc
+    HDFLIBAPI      FRETVAL(intf) nvswritc
                 (intf  * vkey, uint8  * buf, intf  * nelt,
                  intf  * interlace);
 
-    extern      FRETVAL(intf) nvsgintc
+    HDFLIBAPI      FRETVAL(intf) nvsgintc
                 (intf  * vkey);
 
-    extern      FRETVAL(intf) nvseltsc
+    HDFLIBAPI      FRETVAL(intf) nvseltsc
                 (intf  * vkey);
 
-    extern      FRETVAL(intf) nvsgfldc
+    HDFLIBAPI      FRETVAL(intf) nvsgfldc
                 (intf  * vkey, _fcd fields);
 
-    extern      FRETVAL(intf) nvssizc
+    HDFLIBAPI      FRETVAL(intf) nvssizc
                 (intf  * vkey, _fcd fields, intf  * fieldslen);
 
-    extern      FRETVAL(intf) nventsc
+    HDFLIBAPI      FRETVAL(intf) nventsc
                 (intf  * f, intf  * vgid);
 
-    extern      FRETVAL(intf) nvlonec
+    HDFLIBAPI      FRETVAL(intf) nvlonec
                 (intf  * f, intf  * idarray, intf  * asize);
 
-    extern      FRETVAL(intf) nvslonec
+    HDFLIBAPI      FRETVAL(intf) nvslonec
                 (intf  * f, intf  * idarray, intf  * asize);
 
-    extern      FRETVAL(intf) nvfindc
+    HDFLIBAPI      FRETVAL(intf) nvfindc
                 (intf  * f, _fcd name, intf  * namelen);
 
-    extern      FRETVAL(intf) nvfndclsc
+    HDFLIBAPI      FRETVAL(intf) nvfndclsc
                 (intf  * f, _fcd vgclass, intf  * classlen);
 
-    extern      FRETVAL(intf) nvhscdc
+    HDFLIBAPI      FRETVAL(intf) nvhscdc
                 (intf  * f, _fcd field, _fcd  cbuf, intf  * n, 
                  intf  * datatype, _fcd vsname, _fcd vsclass, 
                  intf  * fieldlen, intf  * vsnamelen,
                  intf  * vsclasslen);
 
-    extern      FRETVAL(intf) nvhsdc
+    HDFLIBAPI      FRETVAL(intf) nvhsdc
                 (intf  * f, _fcd field, uint8  * buf, intf  * n, 
                  intf  * datatype, _fcd vsname, _fcd vsclass, 
                  intf  * fieldlen, intf  * vsnamelen,
                  intf  * vsclasslen);
 
-    extern      FRETVAL(intf) nvhscdmc
+    HDFLIBAPI      FRETVAL(intf) nvhscdmc
                 (intf  * f, _fcd field, _fcd  cbuf, intf  * n,
                  intf  * datatype, _fcd vsname, _fcd vsclass, 
                  intf  * order, intf  * fieldlen, intf * vsnamelen,
                  intf  * vsclasslen);
 
-    extern      FRETVAL(intf) nvhsdmc
+    HDFLIBAPI      FRETVAL(intf) nvhsdmc
                 (intf  * f, _fcd field, uint8  * buf, intf  * n,
                  intf  * datatype, _fcd vsname, _fcd vsclass, 
                  intf  * order, intf  * fieldlen, intf * vsnamelen,
                  intf  * vsclasslen);
 
-    extern      FRETVAL(intf) nvhmkgpc
+    HDFLIBAPI      FRETVAL(intf) nvhmkgpc
                 (intf  * f, intf  * tagarray, intf  * refarray, intf  * n,
                  _fcd vgname, _fcd vgclass, intf  * vgnamelen, intf  * vgclasslen);
 
-    extern      FRETVAL(intf) nvflocc
+    HDFLIBAPI      FRETVAL(intf) nvflocc
                 (intf  * vkey, _fcd field, intf  * fieldlen);
 
-    extern      FRETVAL(intf) nvinqtrc
+    HDFLIBAPI      FRETVAL(intf) nvinqtrc
                 (intf  * vkey, intf  * tag, intf  * ref);
 
-    extern      FRETVAL(intf) nvntrc
+    HDFLIBAPI      FRETVAL(intf) nvntrc
                 (intf  * vkey);
 
-    extern      FRETVAL(intf) nvnrefs
+    HDFLIBAPI      FRETVAL(intf) nvnrefs
                 (intf  * vkey, intf  *tag);
 
-    extern      FRETVAL(intf) nvqref
+    HDFLIBAPI      FRETVAL(intf) nvqref
                 (intf  * vkey);
 
-    extern      FRETVAL(intf) nvqtag
+    HDFLIBAPI      FRETVAL(intf) nvqtag
                 (intf  * vkey);
 
-    extern      FRETVAL(intf) nvgttrsc
+    HDFLIBAPI      FRETVAL(intf) nvgttrsc
                 (intf  * vkey, intf  * tagarray, intf  * refarray, intf  * n);
 
-    extern      FRETVAL(intf) nvgttrc
+    HDFLIBAPI      FRETVAL(intf) nvgttrc
                 (intf  * vkey, intf  * which, intf  * tag, intf  * ref);
 
-    extern      FRETVAL(intf) nvadtrc
+    HDFLIBAPI      FRETVAL(intf) nvadtrc
                 (intf  * vkey, intf  * tag, intf  * ref);
 
-    extern      FRETVAL(intf) nvdtrc
+    HDFLIBAPI      FRETVAL(intf) nvdtrc
                 (intf  * vkey, intf  * tag, intf  * ref);
 
-    extern      FRETVAL(intf) nvsqfnelt
+    HDFLIBAPI      FRETVAL(intf) nvsqfnelt
                 (intf * vkey, intf * nelt);
 
-    extern      FRETVAL(intf)nvsqfintr
+    HDFLIBAPI      FRETVAL(intf)nvsqfintr
                 (intf * vkey, intf * interlace);
 
-    extern      FRETVAL(intf)nvsqfldsc
+    HDFLIBAPI      FRETVAL(intf)nvsqfldsc
                 (intf * vkey, _fcd fields, intf *fieldslen);
 
-    extern      FRETVAL(intf)nvsqfvsiz
+    HDFLIBAPI      FRETVAL(intf)nvsqfvsiz
                 (intf * vkey, intf * size);
 
-    extern      FRETVAL(intf)nvsqnamec  
+    HDFLIBAPI      FRETVAL(intf)nvsqnamec  
                 (intf * vkey, _fcd name, intf *namelen);
 
-    extern      FRETVAL(intf)nvsfccpk
+    HDFLIBAPI      FRETVAL(intf)nvsfccpk
                 (intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz,
         intf *nrecs, _fcd pckfld, _fcd fldbuf, intf *buflds_len, intf *fld_len);
 
-    extern      FRETVAL(intf)nvsfncpk
+    HDFLIBAPI      FRETVAL(intf)nvsfncpk
                 (intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz,
         intf *nrecs, _fcd pckfld, intf *fldbuf, intf *buflds_len, intf *fld_len);
 
@@ -4103,47 +4103,47 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 # endif
 #endif   /* DF_CAPFNAMES */
 #endif   /* VATTR_FNAMES  */
-   extern   FRETVAL(intf) nvsfcfdx
+   HDFLIBAPI   FRETVAL(intf) nvsfcfdx
             (intf *vsid, _fcd fldnm, intf *findex, intf *fldnmlen);
-   extern   FRETVAL(intf) nvsfcsat
+   HDFLIBAPI   FRETVAL(intf) nvsfcsat
             (intf *vsid, intf *findex, _fcd attrnm, intf *dtype,
              intf *count, intf *values, intf *attrnmlen);
-   extern   FRETVAL(intf) nvsfcsca
+   HDFLIBAPI   FRETVAL(intf) nvsfcsca
             (intf *vsid, intf *findex, _fcd attrnm, intf *dtype,
              intf *count, _fcd values, intf *attrnmlen);
-   extern   FRETVAL(intf) nvsfnats
+   HDFLIBAPI   FRETVAL(intf) nvsfnats
             (intf *vsid);
-   extern   FRETVAL(intf) nvsffnas
+   HDFLIBAPI   FRETVAL(intf) nvsffnas
             (intf *vsid, intf *findex);
-   extern   FRETVAL(intf) nvsfcfda
+   HDFLIBAPI   FRETVAL(intf) nvsfcfda
             (intf *vsid, intf *findex, _fcd attrnm, intf *attrnmlen);
-   extern   FRETVAL(intf) nvsfcain
+   HDFLIBAPI   FRETVAL(intf) nvsfcain
             (intf *vsid, intf *findex, intf *aindex, _fcd attrname,
              intf *dtype, intf *count, intf *size, intf *attrnamelen);
-   extern   FRETVAL(intf) nvsfgnat
+   HDFLIBAPI   FRETVAL(intf) nvsfgnat
             (intf *vsid, intf *findex, intf *aindex, intf *values);
-   extern   FRETVAL(intf) nvsfgcat
+   HDFLIBAPI   FRETVAL(intf) nvsfgcat
             (intf *vsid, intf *findex, intf *aindex, _fcd values);
-   extern   FRETVAL(intf) nvsfisat
+   HDFLIBAPI   FRETVAL(intf) nvsfisat
             (intf *vsid);
-   extern   FRETVAL(intf) nvfcsatt
+   HDFLIBAPI   FRETVAL(intf) nvfcsatt
             (intf *vgid, _fcd attrnm, intf *dtype,
              intf *count, intf *values, intf *attrnmlen);
-   extern   FRETVAL(intf) nvfcscat
+   HDFLIBAPI   FRETVAL(intf) nvfcscat
             (intf *vgid, _fcd attrnm, intf *dtype, intf *count,
              _fcd values, intf *attrnmlen);
-   extern   FRETVAL(intf) nvfnatts
+   HDFLIBAPI   FRETVAL(intf) nvfnatts
             (intf *vgid);
-   extern   FRETVAL(intf) nvfcfdat
+   HDFLIBAPI   FRETVAL(intf) nvfcfdat
             (intf *vgid, _fcd attrnm, intf *attrnmlen);
-   extern   FRETVAL(intf) nvfainfo
+   HDFLIBAPI   FRETVAL(intf) nvfainfo
             (intf *vgid, intf *aindex, _fcd attrname,
              intf *dtype, intf *count, intf *size);
-   extern   FRETVAL(intf) nvfgnatt
+   HDFLIBAPI   FRETVAL(intf) nvfgnatt
             (intf *vgid, intf *aindex, intf *values);
-   extern   FRETVAL(intf) nvfgcatt
+   HDFLIBAPI   FRETVAL(intf) nvfgcatt
             (intf *vgid, intf *aindex, _fcd values);
-   extern   FRETVAL(intf) nvfgver
+   HDFLIBAPI   FRETVAL(intf) nvfgver
             (intf *vgid);
 
 #if defined c_plusplus || defined __cplusplus

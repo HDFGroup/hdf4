@@ -15,6 +15,10 @@
 #ifndef _MFSD_H_
 #define _MFSD_H_
 
+//RWR Modification Start 07/14/98
+#include "api_adpt.h"
+//RWR Modification End
+
 #ifndef HDF
 #define HDF 1
 #endif
@@ -27,6 +31,28 @@
 #include "local_nc.h"
 #endif /* OLD_WAY */
 
+#if defined(_MSC_VER) && !defined(_MFHDFLIB_) && !defined(_HDFLIB_)	/* Auto-link when possible */
+#	define MFHDF_LIB_VER	"412"
+#	if !defined(_DEBUG)
+#		if !defined(_HDFDLL_)
+#			define MFHDF_LIB_NAME	"HM" MFHDF_LIB_VER ".lib"
+#			pragma message( "Automatic linking with the static single-threaded MFHDF library - " MFHDF_LIB_NAME )
+#		else
+#			define MFHDF_LIB_NAME	"HM" MFHDF_LIB_VER "m.lib"
+#			pragma message( "Automatic linking with the multithreaded MFHDF DLL - " MFHDF_LIB_NAME )
+#		endif
+#	else
+#		if !defined(_HDFDLL_)
+#			define MFHDF_LIB_NAME	"HM" MFHDF_LIB_VER "d.lib"
+#			pragma message( "Automatic linking with the debug static single-threaded MFHDF library - " MFHDF_LIB_NAME  )
+#		else
+#			define MFHDF_LIB_NAME	"HM" MFHDF_LIB_VER "md.lib"
+#			pragma message( "Automatic linking with the debug multithreaded MFHDF DLL - " MFHDF_LIB_NAME  )
+#		endif
+#	endif
+#	pragma comment(lib, MFHDF_LIB_NAME )
+#endif /* defined(_MSC_VER) && !defined(_MFHDFLIB_) && !defined(_HDFLIB_) */
+
 #define SD_UNLIMITED NC_UNLIMITED /* use this as marker for unlimited dimension */
 #define SD_NOFILL    NC_NOFILL
 #define SD_FILL      NC_FILL
@@ -38,137 +64,137 @@
 extern "C" {
 #endif
 
-extern int32 SDstart
+HDFLIBAPI int32 SDstart
     (const char *name, int32 access);
 
-extern intn SDend
+HDFLIBAPI intn SDend
     (int32 fid);
 
-extern intn SDfileinfo
+HDFLIBAPI intn SDfileinfo
     (int32 fid, int32 *datasets, int32 *attrs);
 
-extern int32 SDselect
+HDFLIBAPI int32 SDselect
     (int32 fid, int32 index);
 
-extern intn SDgetinfo
+HDFLIBAPI intn SDgetinfo
     (int32 sdsid, char *name, int32 *rank, int32 *dimsizes, 
            int32 *nt, int32 *nattr);
 
 #ifndef __CSTAR__
-extern intn SDreaddata
+HDFLIBAPI intn SDreaddata
     (int32 sdsid, int32 *start, int32 *stride, int32 *end, void * data);
 #endif
 
-extern uint16 SDgerefnumber
+HDFLIBAPI uint16 SDgerefnumber
     (int32 sdsid);
 
-extern int32 SDnametoindex
+HDFLIBAPI int32 SDnametoindex
     (int32 fid, const char *name);
 
-extern intn SDgetrange
+HDFLIBAPI intn SDgetrange
     (int32 sdsid, void * pmax, void * pmin);
 
-extern int32 SDcreate
+HDFLIBAPI int32 SDcreate
     (int32 fid, const char *name, int32 nt, int32 rank, int32 *dimsizes);
 
-extern int32 SDgetdimid
+HDFLIBAPI int32 SDgetdimid
     (int32 sdsid, intn number);
 
-extern intn SDsetdimname
+HDFLIBAPI intn SDsetdimname
     (int32 id, const char *name);
 
-extern intn SDendaccess
+HDFLIBAPI intn SDendaccess
     (int32 id);
 
-extern intn SDsetrange
+HDFLIBAPI intn SDsetrange
     (int32 sdsid, void * pmax, void * pmin);
 
-extern intn SDsetattr
+HDFLIBAPI intn SDsetattr
     (int32 id, const char *name, int32 nt, int32 count, const void * data);
 
-extern intn SDattrinfo
+HDFLIBAPI intn SDattrinfo
     (int32 id, int32 index, char *name, int32 *nt, int32 *count);
 
-extern intn SDreadattr
+HDFLIBAPI intn SDreadattr
     (int32 id, int32 index, void * buf);
 
 #ifndef __CSTAR__
-extern intn SDwritedata
+HDFLIBAPI intn SDwritedata
     (int32 sdsid, int32 *start, int32 *stride, int32 *end, void * data);
 #endif
 
-extern intn SDsetdatastrs
+HDFLIBAPI intn SDsetdatastrs
     (int32 sdsid, const char *l, const char *u, const char *f, const char *c);
 
-extern intn SDsetcal
+HDFLIBAPI intn SDsetcal
     (int32 sdsid, float64 cal, float64 cale, float64 ioff,
                float64 ioffe, int32 nt);
 
-extern intn SDsetfillvalue
+HDFLIBAPI intn SDsetfillvalue
     (int32 sdsid, void * val);
 
-extern intn SDgetfillvalue
+HDFLIBAPI intn SDgetfillvalue
     (int32 sdsid, void * val);
 
-extern intn SDsetfillmode
+HDFLIBAPI intn SDsetfillmode
     (int32 id, intn fillmode);
 
-extern intn SDgetdatastrs
+HDFLIBAPI intn SDgetdatastrs
     (int32 sdsid, char *l, char *u, char *f, char *c, intn len);
 
-extern intn SDgetcal
+HDFLIBAPI intn SDgetcal
     (int32 sdsid, float64 *cal, float64 *cale, float64 *ioff, 
                float64 *ioffe, int32 *nt);
 
-extern intn SDsetdimstrs
+HDFLIBAPI intn SDsetdimstrs
     (int32 id, const char *l, const char *u, const char *f);
 
-extern intn SDsetdimscale
+HDFLIBAPI intn SDsetdimscale
     (int32 id, int32 count, int32 nt, void * data);
 
-extern intn SDgetdimscale
+HDFLIBAPI intn SDgetdimscale
     (int32 id, void * data);
 
-extern intn SDdiminfo
+HDFLIBAPI intn SDdiminfo
     (int32 id, char *name, int32 *size, int32 *nt, int32 *nattr);
 
-extern intn SDgetdimstrs
+HDFLIBAPI intn SDgetdimstrs
     (int32 id, char *l, char *u, char *f, intn len);
 
-extern intn SDsetexternalfile
+HDFLIBAPI intn SDsetexternalfile
     (int32 id, const char *filename, int32 offset);
 
-extern intn SDsetnbitdataset
+HDFLIBAPI intn SDsetnbitdataset
     (int32 id, intn start_bit, intn bit_len, intn sign_ext, intn fill_one);
 
-extern intn SDsetcompress
+HDFLIBAPI intn SDsetcompress
     (int32 id, int32 type, comp_info *c_info);
 
-extern int32 SDfindattr
+HDFLIBAPI int32 SDfindattr
     (int32 id, const char *attrname);
 
-extern int32 SDidtoref
+HDFLIBAPI int32 SDidtoref
     (int32 id);
 
-extern int32 SDreftoindex
+HDFLIBAPI int32 SDreftoindex
     (int32 fid, int32 ref);
 
-extern int32 SDisrecord
+HDFLIBAPI int32 SDisrecord
     (int32 id);
 
-extern intn SDiscoordvar
+HDFLIBAPI intn SDiscoordvar
     (int32 id);
 
-extern intn SDsetaccesstype
+HDFLIBAPI intn SDsetaccesstype
     (int32 id, uintn accesstype);
 
-extern intn SDsetblocksize
+HDFLIBAPI intn SDsetblocksize
     (int32 sdsid, int32 block_size);
 
-extern intn SDsetdimval_comp
+HDFLIBAPI intn SDsetdimval_comp
     (int32 dimid, intn compt_mode);
 
-extern intn SDisdimval_bwcomp
+HDFLIBAPI intn SDisdimval_bwcomp
     (int32 dimid);
 
 /*====================== Chunking Routines ================================*/
@@ -277,7 +303,7 @@ extern intn SDisdimval_bwcomp
  RETURNS
         SUCCEED/FAIL
 ******************************************************************************/
-extern intn SDsetchunk
+HDFLIBAPI intn SDsetchunk
     (int32 sdsid,             /* IN: sds access id */
      HDF_CHUNK_DEF chunk_def, /* IN: chunk definition */
      int32 flags              /* IN: flags */);
@@ -314,7 +340,7 @@ extern intn SDsetchunk
  RETURNS
         SUCCEED/FAIL
 ******************************************************************************/
-extern intn SDgetchunkinfo
+HDFLIBAPI intn SDgetchunkinfo
     (int32 sdsid,              /* IN: sds access id */
      HDF_CHUNK_DEF *chunk_def, /* IN/OUT: chunk definition */
      int32 *flags              /* IN/OUT: flags */);
@@ -339,7 +365,7 @@ extern intn SDgetchunkinfo
  RETURNS
         SUCCEED/FAIL
 ******************************************************************************/
-extern intn SDwritechunk
+HDFLIBAPI intn SDwritechunk
     (int32 sdsid,      /* IN: sds access id */
      int32 *origin,    /* IN: origin of chunk to write */
      const void *datap /* IN: buffer for data */);
@@ -364,7 +390,7 @@ extern intn SDwritechunk
  RETURNS
         SUCCEED/FAIL
 ******************************************************************************/
-extern intn SDreadchunk
+HDFLIBAPI intn SDreadchunk
     (int32 sdsid,      /* IN: sds access id */
      int32 *origin,    /* IN: origin of chunk to read */
      void  *datap      /* IN/OUT: buffer for data */);
@@ -413,7 +439,7 @@ RETURNS
      Returns the 'maxcache' value for the chunk cache if successful 
      and FAIL otherwise
 ******************************************************************************/
-extern intn SDsetchunkcache
+HDFLIBAPI intn SDsetchunkcache
     (int32 sdsid,     /* IN: sds access id */
      int32 maxcache,  /* IN: max number of chunks to cache */
      int32 flags      /* IN: flags = 0, HDF_CACHEALL */);

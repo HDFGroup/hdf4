@@ -19,6 +19,10 @@
 #ifndef HFILE_H
 #define HFILE_H
 
+//RWR Modification Start 07/14/98
+#include "api_adpt.h"
+//RWR Modification End
+
 #include "tbbt.h"
 #include "bitvect.h"
 #include "atom.h"
@@ -532,148 +536,148 @@ extern      "C"
 {
 #endif                          /* c_plusplus || __cplusplus */
 
-    extern accrec_t *HIget_access_rec
+    HDFLIBAPI accrec_t *HIget_access_rec
                 (void);
 
-    extern void HIrelease_accrec_node(accrec_t *acc);
+    HDFLIBAPI void HIrelease_accrec_node(accrec_t *acc);
 
-    extern void * HIgetspinfo
+    HDFLIBAPI void * HIgetspinfo
                 (accrec_t * access_rec);
 
-    extern intn HPcompare_filerec_path
+    HDFLIBAPI intn HPcompare_filerec_path
                 (const void * obj, const void * key);
 
-    extern intn HPcompare_accrec_tagref
+    HDFLIBAPI intn HPcompare_accrec_tagref
                 (const void * rec1, const void * rec2);
 
-    extern int32 HPgetdiskblock
+    HDFLIBAPI int32 HPgetdiskblock
                 (filerec_t * file_rec, int32 block_size, intn moveto);
 
-    extern intn HPfreediskblock
+    HDFLIBAPI intn HPfreediskblock
                 (filerec_t * file_rec, int32 block_offset, int32 block_size);
 
-    extern int32 HDget_special_info
+    HDFLIBAPI int32 HDget_special_info
                 (int32 access_id, sp_info_block_t * info_block);
 
-    extern intn HP_read
+    HDFLIBAPI intn HP_read
                 (filerec_t *file_rec,void * buf,int32 bytes);
 
-    extern intn HPseek
+    HDFLIBAPI intn HPseek
                 (filerec_t *file_rec,int32 offset);
 
-    extern intn HP_write
+    HDFLIBAPI intn HP_write
                 (filerec_t *file_rec,const void * buf,int32 bytes);
 
-    extern intn tagcompare
+    HDFLIBAPI intn tagcompare
                 (void * k1, void * k2, intn cmparg);
 
-    extern VOID tagdestroynode
+    HDFLIBAPI VOID tagdestroynode
                 (void * n);
 
 /*
    ** from hblocks.c
  */
-    extern int32 HLPstread
+    HDFLIBAPI int32 HLPstread
                 (accrec_t * access_rec);
 
-    extern int32 HLPstwrite
+    HDFLIBAPI int32 HLPstwrite
                 (accrec_t * access_rec);
 
-    extern int32 HLPseek
+    HDFLIBAPI int32 HLPseek
                 (accrec_t * access_rec, int32 offset, int origin);
 
-    extern int32 HLPread
+    HDFLIBAPI int32 HLPread
                 (accrec_t * access_rec, int32 length, void * data);
 
-    extern int32 HLPwrite
+    HDFLIBAPI int32 HLPwrite
                 (accrec_t * access_rec, int32 length, const void * data);
 
-    extern int32 HLPinquire
+    HDFLIBAPI int32 HLPinquire
                 (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
                int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
                  int16 *pspecial);
 
-    extern intn HLPendaccess
+    HDFLIBAPI intn HLPendaccess
                 (accrec_t * access_rec);
 
-    extern int32 HLPcloseAID
+    HDFLIBAPI int32 HLPcloseAID
                 (accrec_t * access_rec);
 
-    extern int32 HLPinfo
+    HDFLIBAPI int32 HLPinfo
                 (accrec_t * access_rec, sp_info_block_t * info_block);
 
 /*
    ** from hextelt.c
  */
-    extern int32 HXPstread
+    HDFLIBAPI int32 HXPstread
                 (accrec_t * rec);
 
-    extern int32 HXPstwrite
+    HDFLIBAPI int32 HXPstwrite
                 (accrec_t * rec);
 
-    extern int32 HXPseek
+    HDFLIBAPI int32 HXPseek
                 (accrec_t * access_rec, int32 offset, int origin);
 
-    extern int32 HXPread
+    HDFLIBAPI int32 HXPread
                 (accrec_t * access_rec, int32 length, void * data);
 
-    extern int32 HXPwrite
+    HDFLIBAPI int32 HXPwrite
                 (accrec_t * access_rec, int32 length, const void * data);
 
-    extern int32 HXPinquire
+    HDFLIBAPI int32 HXPinquire
                 (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
                int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
                  int16 *pspecial);
 
-    extern intn HXPendaccess
+    HDFLIBAPI intn HXPendaccess
                 (accrec_t * access_rec);
 
-    extern int32 HXPcloseAID
+    HDFLIBAPI int32 HXPcloseAID
                 (accrec_t * access_rec);
 
-    extern int32 HXPinfo
+    HDFLIBAPI int32 HXPinfo
                 (accrec_t * access_rec, sp_info_block_t * info_block);
 
-    extern int32 HXPreset
+    HDFLIBAPI int32 HXPreset
                 (accrec_t * access_rec, sp_info_block_t * info_block);
 
-    extern intn HXPsetaccesstype
+    HDFLIBAPI intn HXPsetaccesstype
                 (accrec_t * access_rec);
 
-    extern intn HXPshutdown
+    HDFLIBAPI intn HXPshutdown
                 (void);
 
 /*
    ** from hcomp.c
  */
 
-    extern int32 HCPstread
+    HDFLIBAPI int32 HCPstread
                 (accrec_t * rec);
 
-    extern int32 HCPstwrite
+    HDFLIBAPI int32 HCPstwrite
                 (accrec_t * rec);
 
-    extern int32 HCPseek
+    HDFLIBAPI int32 HCPseek
                 (accrec_t * access_rec, int32 offset, int origin);
 
-    extern int32 HCPinquire
+    HDFLIBAPI int32 HCPinquire
                 (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
                int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
                  int16 *pspecial);
 
-    extern int32 HCPread
+    HDFLIBAPI int32 HCPread
                 (accrec_t * access_rec, int32 length, void * data);
 
-    extern int32 HCPwrite
+    HDFLIBAPI int32 HCPwrite
                 (accrec_t * access_rec, int32 length, const void * data);
 
-    extern intn HCPendaccess
+    HDFLIBAPI intn HCPendaccess
                 (accrec_t * access_rec);
 
-    extern int32 HCPcloseAID
+    HDFLIBAPI int32 HCPcloseAID
                 (accrec_t * access_rec);
 
-    extern int32 HCPinfo
+    HDFLIBAPI int32 HCPinfo
                 (accrec_t * access_rec, sp_info_block_t * info_block);
 
 /*
@@ -682,21 +686,21 @@ extern      "C"
 #include "hchunks.h"
 
 #if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
-    extern hdf_file_t mopen
+    HDFLIBAPI hdf_file_t mopen
                 (char *filename, intn access);
 
-    extern int32 mclose
+    HDFLIBAPI int32 mclose
                 (hdf_file_t rn);
 
-    extern int32 mlseek
+    HDFLIBAPI int32 mlseek
                 (hdf_file_t rn, int32 n, intn m);
 
-    extern int32 mread
+    HDFLIBAPI int32 mread
                 (hdf_file_t rn, char *buf, int32 n);
 
-    extern int32 mwrite
+    HDFLIBAPI int32 mwrite
                 (hdf_file_t rn, char *buf, int32 n);
-    extern intn mstat
+    HDFLIBAPI intn mstat
                 (char *path);
 
 #endif  /* macintosh */

@@ -15,6 +15,10 @@
 #ifndef HDFI_H
 #define HDFI_H
 
+//RWR Modification Start 07/14/98
+#include "api_adpt.h"
+//RWR Modification End
+
 #ifdef GOT_MACHINE
 #undef GOT_MACHINE
 #endif
@@ -805,6 +809,29 @@ Please check your Makefile.
 #ifdef __WATCOMC__
 #include <stddef.h>         /* for the 'fortran' pragma */
 #endif
+
+#if defined(_MSC_VER) && !defined(_MFHDFLIB_) && !defined(_HDFLIB_)	/* Auto-link when possible */
+#	define HDF_LIB_VER	"412"
+#	if !defined(_DEBUG)
+#		if !defined(_HDFDLL_)
+#			define HDF_LIB_NAME	"HD" HDF_LIB_VER ".lib"
+#			pragma message( "Automatic linking with the static single-threaded HDF library - " HDF_LIB_NAME )
+#		else
+#			define HDF_LIB_NAME	"HD" HDF_LIB_VER "m.lib"
+#			pragma message( "Automatic linking with the multithreaded HDF DLL - " HDF_LIB_NAME )
+#		endif
+#	else
+#		if !defined(_HDFDLL_)
+#			define HDF_LIB_NAME	"HD" HDF_LIB_VER "d.lib"
+#			pragma message( "Automatic linking with the debug static single-threaded HDF library - " HDF_LIB_NAME  )
+#		else
+#			define HDF_LIB_NAME	"HD" HDF_LIB_VER "md.lib"
+#			pragma message( "Automatic linking with the debug multithreaded HDF DLL - " HDF_LIB_NAME  )
+#		endif
+#	endif
+#	pragma comment(lib, HDF_LIB_NAME )
+#endif /* defined(_MSC_VER) && !defined(_MFHDFLIB_) && !defined(_HDFLIB_) */
+
 #if defined WIN386
 #ifndef GMEM_MOVEABLE       /* check if windows header is already included */
 #include <windows.h>        /* include the windows headers */
@@ -1186,9 +1213,9 @@ correctly.
 *                   Conversion Routine Pointers
 ***************************************************************************/
 #    ifndef DFKMASTER
-extern int (*DFKnumin)(const void * source, void * dest, uint32 num_elm,
+HDFPUBLIC extern int (*DFKnumin)(const void * source, void * dest, uint32 num_elm,
             uint32 source_stride,uint32 dest_stride);
-extern int (*DFKnumout)(const void * source, void * dest, uint32 num_elm,
+HDFPUBLIC extern int (*DFKnumout)(const void * source, void * dest, uint32 num_elm,
             uint32 source_stride,uint32 dest_stride);
 #     endif /* DFKMASTER */
 
@@ -1276,7 +1303,7 @@ extern int (*DFKnumout)(const void * source, void * dest, uint32 num_elm,
 /**************************************************************************
 *  Allocation functions defined differently 
 **************************************************************************/
-#if !defined MALLOC_CHECK
+#if !defined(MALLOC_CHECK) && !defined(_HDFDLL_)
 #  define HDmalloc(s)      (malloc((size_t)s))
 #  define HDcalloc(a,b)    (calloc((size_t)a,(size_t)b))
 #  define HDfree(p)        (free((void*)p))
@@ -1299,7 +1326,7 @@ extern int (*DFKnumout)(const void * source, void * dest, uint32 num_elm,
 #  define HDstrrchr(s,c)        (strrchr((s),(c)))
 #  define HDstrtol(s,e,b)       (strtol((s),(e),(b)))
 /* non-standard function, not defined on the following machines - */
-#if !(defined VMS || defined macintosh || defined MAC || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000 || defined ANSISUN || defined IRIX)
+#if !(defined VMS || defined macintosh || defined MAC || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000 || defined ANSISUN || defined IRIX || defined _HDFDLL_ )
 #  define HDstrdup(s)      ((char *)strdup((const char *)(s)))
 #endif /* !(VMS | etc..) */
 

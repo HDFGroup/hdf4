@@ -137,10 +137,10 @@ extern int DFconvert(uint8 *source, uint8 *dest, int ntype, int sourcetype,
 /*
    **  Conversion Routine Pointer Definitions
  */
-int         (*DFKnumin)
+HDFLIBAPI int	(*DFKnumin)
             (VOIDP source, VOIDP dest, uint32 num_elm,
                     uint32 source_stride, uint32 dest_stride) = DFKInoset;
-int         (*DFKnumout)
+HDFLIBAPI int	(*DFKnumout)
             (VOIDP source, VOIDP dest, uint32 num_elm,
                     uint32 source_stride, uint32 dest_stride) = DFKInoset;
 
