@@ -371,7 +371,6 @@ C                       grch_gz.hdf
          print *, '*******mgrf: test_grchunk failed********'
       endif
 C     ----Compression test
-C     THE TEST IS COMMENTED OUT UNTIL GRCOMPRESS is FIXED 1/13/98
 C
 C          creates the following files:
 C                       gr_no.hdf
@@ -379,7 +378,7 @@ C                       gr_rl.hdf
 C                       gr_sk.hdf
 C                       gr_gz.hdf
       err_grcompress = 0
-C      call test_grcompress(err_grcompress)
+      call test_grcompress(err_grcompress)
       if (err_grcompress .ne. 0) then
          number_failed = number_failed + 1
          print *, '*******mgrf: test_grcompress failed*******'
