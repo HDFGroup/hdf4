@@ -22,8 +22,7 @@ static char RcsId[] = "@(#)$Revision$";
        HDF testing framework main file.
 
  REMARKS
-        Currently these only really test RLE compression, at not very well
-        at that...
+	General test wrapper for HDF base library test programs
 
  DESIGN
             Each test function should be implemented as function having
@@ -40,11 +39,6 @@ static char RcsId[] = "@(#)$Revision$";
  EXPORTED ROUTINES/VARIABLES:
         Two variables are exported: num_errs, and Verbocity.
 
- AUTHOR
-       Quincey Koziol
-
- MODIFICATION HISTORY
-   10/19/93 - Threw this header in.
 */
 
 #define MAXNUMOFTESTS 20
