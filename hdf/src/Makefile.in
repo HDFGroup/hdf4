@@ -56,41 +56,55 @@
 # Set shell so we know what it is
 SHELL = /bin/sh
 
-# Configure subsitutes preset values in for the following macros
 # 'srcdir' Gets set to directory this Makefile is found in
-srcdir = @srcdir@
-VPATH  = @srcdir@
-TOP_SRCDIR = @top_srcdir@
-prefix     = @prefix@
-exec_prefix = @exec_prefix@
-ACDEFS = @DEFS@
-CC     = @CC@
-CFLAGS   = @CFLAGS@
-CPPFLAGS = @CPPFLAGS@
-LDFLAGS  = @LDFLAGS@
-LIBS     = @LIBS@
-FC       = @FC@
-FFLAGS   = @FFLAGS@
+srcdir = .
 
-INSTALL  = @INSTALL@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@
-INSTALL_DATA    = @INSTALL_DATA@
+prefix = /usr/local
+
+exec_prefix = $(prefix)
+tooldir = $(exec_prefix)/$(target)
+
+program_transform_name =
+
+datadir = $(prefix)/lib
+mandir = $(prefix)/man
+man1dir = $(mandir)/man1
+man2dir = $(mandir)/man2
+man3dir = $(mandir)/man3
+man4dir = $(mandir)/man4
+man5dir = $(mandir)/man5
+man6dir = $(mandir)/man6
+man7dir = $(mandir)/man7
+man8dir = $(mandir)/man8
+man9dir = $(mandir)/man9
+docdir = $(datadir)/doc
+
+INSTALL = $${srcroot}/install.sh -c
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = $(INSTALL) -m 644
 
 # /usr/local/bin/m4 (GNU version?)
-M4   = @M4@
-# /usr/loal/bin/perl (GNU version?)
-PERL = @PERL@
+M4   = /usr/local/bin/m4
+# /usr/local/bin/perl (GNU version?)
+PERL = /usr/local/bin/perl
 
 # Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
-RANLIB = @RANLIB@
+RANLIB = ranlib
 
 # Name of library archiver and flags to send, default 'AR=ar', 'ARFLAGS=r'
-AR = @AR@
-ARFLAGS = @ARFLAGS@
+AR = ar
+ARFLAGS = r
 
 # Name of remove utility, default 'RM=/bin/rm', 'RMFLAGS=-f'
-RM = @RM@
-RMFLAGS = @RMFLAGS@
+RM = /bin/rm
+RMFLAGS = -f
+
+#Compilier defaults overriden by top level make
+AS = as
+CC = gcc
+CFLAGS = -ansi
+FC = f77
+FFLAGS=
 
 # Set for document generation
 MAKEINFO = makeinfo
@@ -105,7 +119,10 @@ libdir = $(prefix)/lib
 # Directory in which to install documentation info files.
 infodir = $(prefix)/info
 
-############## End of system configuration section. ##############
+#### host and target specific makefile fragments come in here.
+###
+
+### End of system configuration section. ##############
 
 # ==> specify your machine
 #MACHINE=SUN
@@ -132,6 +149,16 @@ include src.inc
 
 #.SUFFIXES:
 .SUFFIXES: .c.o .f.o
+
+# This rule causes ansi2knr to be invoked.
+#@ISANSICOM@.c.o:
+#@ISANSICOM@	./ansi2knr $(srcdir)/$*.c T$*.c
+#@ISANSICOM@	$(CC) $(CFLAGS) -c T$*.c
+#@ISANSICOM@	$(RM) $(RMFLAGS) T$*.c $*.o
+#@ISANSICOM@	$(MV) T$*.o $*.o
+
+#ansi2knr: ansi2knr.c
+#	$(CC) $(CFLAGS) $(ANSI2KNRFLAGS) -o ansi2knr ansi2knr.c
 
 .c.o:
 	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c $<
