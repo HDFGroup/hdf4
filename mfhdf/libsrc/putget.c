@@ -298,16 +298,13 @@ const long *coords ;
         switch(handle->file_type) {
         case HDF_FILE:
             return( vp->dsizes[0] * *coords + offset) ;
-            break;
         case netCDF_FILE:
             return( vp->begin + handle->recsize * *coords + offset) ;
-            break;
         case CDF_FILE:
 #ifdef DEBUG
             fprintf(stderr, "Yow!  Don't do CDF records yet\n");
 #endif
             return (0);
-            break;
         }
 #else /* !HDF */
         return( vp->begin + handle->recsize * *coords + offset) ;
@@ -317,10 +314,8 @@ const long *coords ;
         switch(handle->file_type) {
         case HDF_FILE:
             return (offset);
-            break;
         case netCDF_FILE:
             return (vp->begin + offset);
-            break;
         case CDF_FILE:
             if((vix = vp->vixHead) == NULL)
                 return (-1);
@@ -1162,12 +1157,10 @@ Void *value ;
                 return(
                        hdf_xdr_NCv1data(handle, vp, vp->begin, vp->type, value) ?
                        0 : -1 ) ;
-                break;
             case netCDF_FILE:
                 return(
                        xdr_NCv1data(handle->xdrs, vp->begin, vp->type, value) ?
                        0 : -1 ) ;
-                break;
                 
             }
 #else /* !HDF */
@@ -1529,12 +1522,10 @@ Void *values ;
             return(
                 hdf_xdr_NCv1data(handle, vp, vp->begin, vp->type, values) ?
                 0 : -1 ) ;
-            break;
         case netCDF_FILE:
             return(
                 xdr_NCv1data(handle->xdrs, vp->begin, vp->type, values) ?
                 0 : -1 ) ;
-            break;
             }
 #else /* !HDF */
         return(

@@ -412,13 +412,10 @@ xdr_cdf(xdrs, handlep)
     switch((*handlep)->file_type) {
     case HDF_FILE:
         return(hdf_xdr_cdf(xdrs, handlep));
-        /*break;*/
     case netCDF_FILE:
         return(NC_xdr_cdf(xdrs, handlep));
-        /*break;*/
     case CDF_FILE:
         return(nssdc_xdr_cdf(xdrs, handlep));
-        /*break;*/
     default:
         return FALSE;
     }
