@@ -155,8 +155,8 @@ CPP_XDR		= -I/usr/include/rpc
 
 # If XDR library not present on the system then you need
 # uncomment the following and comment the one below it
-XDR_LIBOBJS    = xdr.o xdrfloat.o xdrstdio.o xdrarray.o
-#XDR_LIBOBJS     =
+#XDR_LIBOBJS    = xdr.o xdrfloat.o xdrstdio.o xdrarray.o
+XDR_LIBOBJS     =
 
 # Location of library, sometimes the sunos requires -lsun
 LD_XDR		= 
