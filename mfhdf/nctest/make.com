@@ -4,7 +4,7 @@ $! --------------------------------------------------------------------------
 $!
 $! $Id$
 $
-$ ccc := cc /noopt/debug/include=([--.hdf.src],[--.hdf.jpeg], -
+$ ccc := cc /opt/nodebug/include=([--.hdf.src],[--.hdf.jpeg], -
           [--.hdf.zlib],[-.libsrc])/nolist  -
             /define=(NO_SYS_XDR_INC,swap,HDF.VMS)
 
@@ -29,7 +29,7 @@ $ ccc VARPUTG.C
 $ ccc VPUTGETG.C
 $ ccc VARTESTS.C
 $
-$ link/debug/traceback/exe=NCTEST.exe -
+$ link/nodebug/traceback/exe=NCTEST.exe -
     add.obj, -
     atttests.obj, -
     cdftests.obj, -
