@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/02/28 14:33:49  mfolk
-Initial revision
+Revision 1.2  1992/02/28 15:22:47  mfolk
+*** empty log message ***
 
+ * Revision 1.1  1992/02/28  14:33:49  mfolk
+ * Initial revision
+ *
 */
 #include "hdf.h"
 
