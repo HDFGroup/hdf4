@@ -22,7 +22,7 @@ struct fspec specp;
  int     ia, ib;              /* attribute number */
  int     iret1, iret2, ret=0;
  
- if (specp.verbose)
+ if (0)
  printf ("\n*****     Global attributes comparison:     *****\n");
  
  iret1 =  SDfileinfo(sdid1, &nvars1, &ngatts1);

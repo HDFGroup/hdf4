@@ -64,7 +64,7 @@ struct fspec specp;
   varadd(vlist, varid1);
  }
  
- if (specp.verbose)
+ if (0)
  printf ("\n*****     SD Data comparison:     *****\n");
  
  iret1 =  SDfileinfo(sdid1, &nvars1, &ngatts1);
@@ -101,7 +101,7 @@ struct fspec specp;
   }
   
   if (specp.verbose) {
-  printf("\n---------------------------\n");
+  /*printf("\n---------------------------\n");*/
   printf("SD Name: %s .... Comparing\n", var1.name);
   }
   

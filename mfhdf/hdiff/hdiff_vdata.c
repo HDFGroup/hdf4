@@ -36,7 +36,7 @@ int32 f_flag;       /* to control the print out message */
  Vstart(fid1);
  Vstart(fid2);
  
- if (specp.verbose)
+ if (0)
  printf ("\n*****     Vdata comparison:     *****\n");
  
  vgid1 = -1;
@@ -78,6 +78,7 @@ int32 f_flag;       /* to control the print out message */
    
    Vinquire(vg2, &n2, vgname2);
    Vgetclass(vg2, vgclass2);
+	
    if (strcmp(vgname1, vgname2) == 0 && strcmp(vgclass1, vgclass2) == 0)
    {
     gfind = 1;
@@ -143,7 +144,7 @@ int32 f_flag;       /* to control the print out message */
       {
        vs1 = VSattach(fid1, vsid1, "r");
        if (specp.verbose)
-       printf("\n--Comparing... %s/%s/%s\n", vgname1, vgclass1, vsname1);
+							printf("VS Name: %s/%s .... Comparing\n", vgname1, vsname1);
        ret=vdata_cmp(vs1, vs2, vgname1, vgclass1, specp.max_err_cnt);
        VSdetach(vs1);
       }
@@ -224,7 +225,15 @@ int32 f_flag;       /* to control the print out message */
     vsid1 = lonevs1[i];
     vs1 = VSattach(fid1, vsid1, "r");
     VSgetname(vs1, vsname1);
-    
+				
+				VSgetclass(vs1, vgclass1);
+				/* skip special classes */
+				if (!is_readable(vgclass1))
+				{
+					VSdetach(vs1);
+					continue;
+				}
+  
     if (specp.nuvars > 0)   /* if specified vadata is selected */
     {
      imatch = 0;
@@ -260,7 +269,8 @@ int32 f_flag;       /* to control the print out message */
     {
      if (cmp_flag == 1)   /* compare the data only requested */
      {
-      printf("\nComparing... %s\n", vsname1);
+						if (specp.verbose)
+						printf("VS Name: %s .... Comparing\n", vsname1);
       ret=vdata_cmp(vs1, vs2, "No_Group","No_Class", specp.max_err_cnt);
      }
     }
@@ -530,24 +540,42 @@ int32 type;
  }
 }
 
+/*-------------------------------------------------------------------------
+ * Function: is_readable
+ *
+ * Purpose: check for reserved Vgroup/Vdata class/names
+ *
+ * Return: 1 if reserved, 0 if not
+ *
+ *-------------------------------------------------------------------------
+ */
 
-/* skip special classes */
-
-int is_readable( char *vgclass ) 
+int is_readable( char *vgroup_class ) 
 {
  int ret=1;
  
- if ( (strcmp(vgclass, "CDF0.0") == 0)   ||
-  (strcmp(vgclass, "Attr0.0") == 0)  ||
-  (strcmp(vgclass, "Var0.0") == 0)  || 
-  (strcmp(vgclass, "UDim0.0") == 0)  ||
-  (strcmp(vgclass, "Dim0.0") == 0)  ||
-  (strcmp(vgclass, "DimVal0.0") == 0)  ||
-  (strcmp(vgclass, "DimVal0.1") == 0)  ||
-  (strcmp(vgclass, "Data0.0") == 0)  ||
-  (strcmp(vgclass, "RIG0.0") == 0) ||  
-  (strcmp(vgclass, "_HDF_CHK_TBL_0") == 0) )
-  ret=0;
+ /* ignore reserved HDF groups/vdatas */
+ if(vgroup_class != NULL) {
+  if( (strcmp(vgroup_class,_HDF_ATTRIBUTE)==0) ||
+   (strcmp(vgroup_class,_HDF_VARIABLE) ==0) || 
+   (strcmp(vgroup_class,_HDF_DIMENSION)==0) ||
+   (strcmp(vgroup_class,_HDF_UDIMENSION)==0) ||
+   (strcmp(vgroup_class,DIM_VALS)==0) ||
+   (strcmp(vgroup_class,DIM_VALS01)==0) ||
+   (strcmp(vgroup_class,_HDF_CDF)==0) ||
+   (strcmp(vgroup_class,GR_NAME)==0) ||
+   (strcmp(vgroup_class,RI_NAME)==0) || 
+   (strcmp(vgroup_class,RIGATTRNAME)==0) ||
+   (strcmp(vgroup_class,RIGATTRCLASS)==0) ){
+   ret=0;
+  }
+
+  /* class and name(partial) for chunk table i.e. Vdata */
+  if( (strncmp(vgroup_class,"_HDF_CHK_TBL_",13)==0)){
+   ret=0;
+  }
+
+ }
  
  return ret;
  

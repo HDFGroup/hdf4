@@ -3,8 +3,6 @@ Expected output for 'hdiff -D -u vdata1 hdifftst1.hdf hdifftst2.hdf'
 #############################
 $hdiff -D -u vdata1 hdifftst1.hdf hdifftst2.hdf
 
-Comparing... vdata1
-
 ---------------------------
 Vdata Name: vdata1 (Data record comparison)
 > 0: V

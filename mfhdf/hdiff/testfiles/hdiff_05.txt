@@ -3,21 +3,15 @@ Expected output for 'hdiff -D hdifftst1.hdf hdifftst2.hdf'
 #############################
 $hdiff -D hdifftst1.hdf hdifftst2.hdf
 
-Comparing... vdata1
-
 ---------------------------
 Vdata Name: vdata1 (Data record comparison)
 > 0: V
 < 0: X
 
-Comparing... vdata2
-
 ---------------------------
 Vdata Name: vdata2 (Data record comparison)
 > 0: 1 2 3 4 
 < 0: 1 1 1 1 
-
-Comparing... vdata3
 
 ---------------------------
 Vdata Name: vdata3 (Data record comparison)
