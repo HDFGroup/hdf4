@@ -60,7 +60,7 @@ C
 	integer retcode
 
 	retcode = 0
-	open(cmdf, FILE=cmdfilename, err=100)
+	open(cmdf, FILE=cmdfilename, status='UNKNOWN',err=100)
 	return
 
 100	call MESSAGE(VERBO_NONE, 'failed to open command file')
