@@ -30,7 +30,9 @@
  *-------------------------------------------------------------------------
  */
 
-int sds_verifiy_comp(char *sds_name, int32 in_comp_type, int32 in_comp_info)
+int sds_verifiy_comp(const char *sds_name, 
+                     int32 in_comp_type, 
+                     int32 in_comp_info)
 {
  comp_coder_t  comp_type;    /* to retrieve compression type into */
  comp_info     comp_info;    /* compression structure */ 
@@ -96,7 +98,8 @@ int sds_verifiy_comp(char *sds_name, int32 in_comp_type, int32 in_comp_info)
  *-------------------------------------------------------------------------
  */
 
-int sds_verifiy_comp_all(int32 in_comp_type, int32 in_comp_info)
+int sds_verifiy_comp_all(int32 in_comp_type, 
+                         int32 in_comp_info)
 {
  comp_coder_t  comp_type;    /* to retrieve compression type into */
  comp_info     comp_info;    /* compression structure */ 
@@ -204,7 +207,9 @@ int sds_verifiy_comp_all(int32 in_comp_type, int32 in_comp_info)
  *-------------------------------------------------------------------------
  */
 
-int sds_verifiy_chunk(char *sds_name, int32 in_chunk_flags, int rank, 
+int sds_verifiy_chunk(const char *sds_name, 
+                      int32 in_chunk_flags, 
+                      int rank, 
                       int32 *in_chunk_lengths)
 {
  HDF_CHUNK_DEF chunk_def;    /* chunk defintion read */ 
@@ -270,8 +275,10 @@ int sds_verifiy_chunk(char *sds_name, int32 in_chunk_flags, int rank,
  *-------------------------------------------------------------------------
  */
 
-int sds_verifiy_chunk_all(int32 in_chunk_flags, int rank, 
-                          int32 *in_chunk_lengths,char *sds_exclude)
+int sds_verifiy_chunk_all(int32 in_chunk_flags, 
+                          int rank, 
+                          int32 *in_chunk_lengths,
+                          const char *sds_exclude)
 {
  HDF_CHUNK_DEF chunk_def;    /* chunk defintion read */ 
  int32         chunk_flags;  /* chunking flag */ 

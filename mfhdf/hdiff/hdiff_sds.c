@@ -34,8 +34,8 @@ int diff_sds_attrs(int32 sds1_id,int32 nattrs1,int32 sds2_id,int32 nattrs2,char*
  *-------------------------------------------------------------------------
  */
 
-int diff_sds(char  *fname1, 
-             char  *fname2, 
+int diff_sds(const char  *fname1, 
+             const char  *fname2, 
              int32 ref1,
              int32 ref2,
              diff_opt_t * opt)
@@ -265,8 +265,15 @@ int diff_sds(char  *fname1,
   to tot_err_cnt so it doesn't trip  
  */
  max_err_cnt = (opt->max_err_cnt >= 0) ? opt->max_err_cnt : nelms;
- nfound=array_diff(buf1, buf2, nelms, dtype1, opt->err_limit, 
-   max_err_cnt, opt->statistics, 0, 0);
+ nfound=array_diff(buf1, 
+                   buf2, 
+                   nelms, 
+                   dtype1, 
+                   opt->err_limit, 
+                   max_err_cnt, 
+                   opt->statistics, 
+                   0, 
+                   0);
   
  } /* flag to compare SDSs */
  

@@ -19,7 +19,7 @@
 #define PRINT_FSTATS(T) {\
  printf("Type: %s  Npts: %d  Ndiff: %d (%f%%)\n", \
  T, tot_cnt, n_diff, 100.*(float64)n_diff/(float64)tot_cnt); \
- printf("Avg Diff: %.3le  Max Diff: %.3le\n",  \
+ printf("Avg Diff: %.3e  Max Diff: %.3e\n",  \
  d_avg_diff/tot_cnt, d_max_diff); \
  printf("Range File1: %f/%f  File2: %f/%f\n", \
 d_min_val1, d_max_val1, d_min_val2, d_max_val2); }

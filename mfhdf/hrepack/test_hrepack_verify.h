@@ -26,12 +26,12 @@ extern "C" {
 #define FILENAME_OUT     "hziptst_out.hdf"
 
 
-int sds_verifiy_comp(char *sds_name, int32 in_comp_type, int32 in_comp_info);
+int sds_verifiy_comp(const char *sds_name, int32 in_comp_type, int32 in_comp_info);
 int sds_verifiy_comp_all(int32 in_comp_type, int32 in_comp_info);
-int sds_verifiy_chunk(char *sds_name, int32 in_chunk_flags, int rank, 
+int sds_verifiy_chunk(const char *sds_name, int32 in_chunk_flags, int rank, 
                       int32 *in_chunk_lengths);
 int sds_verifiy_chunk_all(int32 in_chunk_flags, int rank, 
-                          int32 *in_chunk_lengths,char *sds_exclude);
+                          int32 *in_chunk_lengths,const char *sds_exclude);
 
 
 #ifdef __cplusplus

@@ -83,7 +83,7 @@ int copy_sds(int32 sd_in,
  int32            chunk_flags;    /* chunk flags */ 
  int32            chunk_flags_in; /* chunk flags original*/ 
  intn             empty_sds;
- int              have_info;
+ int              have_info=0;
 
  sds_index = SDreftoindex(sd_in,ref);
  sds_id    = SDselect(sd_in,sds_index);

@@ -17,7 +17,7 @@
 static void usage();
 static int sds_get_compck(char *fname, char *sds_name);
 static int sds_get_all(char *fname);
-static char* get_schunk(int32 flags);
+static const char* get_schunk(int32 flags);
 static const char* get_scomp(comp_coder_t code);
 
 
@@ -124,6 +124,8 @@ int sds_get_compck(char *fname, char *sds_name)
  {
   switch (comp_type)
   {
+  default:
+   break;
   case COMP_CODE_RLE:
    break;
   case COMP_CODE_SKPHUFF:
@@ -261,7 +263,7 @@ const char* get_scomp(comp_coder_t code)
  */
 
 static
-char* get_schunk(int32 flags)
+const char* get_schunk(int32 flags)
 {
  if (flags==(HDF_CHUNK | HDF_COMP))
   return "HDF_CHUNK | HDF_COMP";

@@ -101,7 +101,7 @@ typedef struct {			/* selection for comparison  */
 extern "C" {
 #endif
 
-int  hdiff(char *fname1, char *fname2, diff_opt_t *opt);
+int  hdiff(const char *fname1, const char *fname2, diff_opt_t *opt);
 
 #ifdef __cplusplus
 }
@@ -134,13 +134,13 @@ int array_diff(void *buf1,
                void *fill2);
 
 
-int match( char *fname1, int nobjects1, dtable_t *list1,
-           char *fname2, int nobjects2, dtable_t *list2, 
+int match( const char *fname1, int nobjects1, dtable_t *list1,
+           const char *fname2, int nobjects2, dtable_t *list2, 
            diff_opt_t *opt );
 
 
-int diff( char *fname1,
-          char *fname2, 
+int diff( const char *fname1,
+          const char *fname2, 
           int32 file1_id,
           int32 file2_id,
           char *obj1_name,
@@ -168,8 +168,8 @@ int diff_gr( int32 file1_id,
              diff_opt_t * opt);
 
 
-int diff_sds(char  *fname1, 
-             char  *fname2, 
+int diff_sds(const char  *fname1, 
+             const char  *fname2, 
              int32 ref1,
              int32 ref2,
              diff_opt_t *opt);

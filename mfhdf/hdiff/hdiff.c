@@ -32,8 +32,8 @@
  */
 
 
-int hdiff(char *fname1, 
-          char *fname2, 
+int hdiff(const char *fname1, 
+          const char *fname2, 
           diff_opt_t *opt)
 {
  dtable_t  *list1;
@@ -110,10 +110,10 @@ int hdiff(char *fname1,
  *
  *-------------------------------------------------------------------------
  */
-int match( char *fname1, 
+int match( const char *fname1, 
            int nobjects1, 
            dtable_t *list1,
-           char *fname2, 
+           const char *fname2, 
            int nobjects2, 
            dtable_t *list2, 
            diff_opt_t *opt )
@@ -304,8 +304,8 @@ out:
  *-------------------------------------------------------------------------
  */
 
-int diff( char *fname1,
-          char *fname2, 
+int diff( const char *fname1,
+          const char *fname2, 
           int32 file1_id,
           int32 file2_id,
           char *obj1_name,
