@@ -246,7 +246,7 @@ pr_att_vals(type, len, vals)
  * 	If the string contains characters other than alpha-numerics,
  * 	an underscore, or a hyphen, convert it to an underscore.
  */
-static char *fixstr(char *str)
+char *fixstr(char *str)
 {
 	char *new_str, *ptr;
 

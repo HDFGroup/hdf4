@@ -13,6 +13,12 @@
 #include "dumplib.h"
 #include "vardata.h"
 
+/*
+ * Function from ncdump.c. "Fixes" variable names to remove spaces and other
+ * "illegal" characters.
+ */
+extern char *fixstr(char *str);
+
 static void annotate
     PROTO((struct ncvar *vp,struct fspec *fsp,long cor[], long iel));
 
@@ -481,6 +487,7 @@ vardata(vp, vdims, ncid, varid, fsp)
     long ncols;
     long nrows;
     int vrank = vp->ndims;
+    char *fixed_var;
 
     /* printf format used to print each value */
     const char *fmt = get_fmt(ncid, varid, vp->type);
@@ -492,11 +499,13 @@ vardata(vp, vdims, ncid, varid, fsp)
 	nels *= vdims[id];	/* total number of values for variable */
     }
 
+    fixed_var = fixstr(vp->name);
+
     if (vrank <= 1) {
-	Printf("\n %s = ", vp->name);
-	set_indent (strlen(vp->name) + 4);
+	Printf("\n %s = ", fixed_var);
+	set_indent (strlen(fixed_var) + 4);
     } else {
-	Printf("\n %s =\n  ", vp->name);
+	Printf("\n %s =\n  ", fixed_var);
 	set_indent (2);
     }
 
@@ -527,7 +536,7 @@ vardata(vp, vdims, ncid, varid, fsp)
 	    if (fsp->brief_data_cmnts != false
 		&& vrank > 1
 		&& left > 0) {	/* print brief comment with indices range */
-		Printf("// %s(",vp->name);
+		Printf("// %s(",fixed_var);
 		switch (fsp->data_lang) {
 		  case LANG_C:
 		    /* print brief comment with C variable indices */
@@ -576,5 +585,6 @@ vardata(vp, vdims, ncid, varid, fsp)
 	set_indent(2);
     }
 
+    free(fixed_var);
     return 0;
 }
