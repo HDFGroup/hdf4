@@ -5,11 +5,16 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1992/12/18 15:41:48  mfolk
-Added code in DFANIputann to promote annotation storage to linked
-block if the annotation already exists in the file, is not
-a linked block, AND we are increasing its size.
+Revision 1.6  1992/12/21 23:27:49  mfolk
+Changed DFANIputann so that when you rewrite an annotation it
+deletes the old one and writes the new one to the end of the
+file.
 
+ * Revision 1.5  1992/12/18  15:41:48  mfolk
+ * Added code in DFANIputann to promote annotation storage to linked
+ * block if the annotation already exists in the file, is not
+ * a linked block, AND we are increasing its size.
+ *
  * Revision 1.4  1992/11/28  18:35:27  chouck
  * Improved speed of initialization for DFANlablist()
  *
@@ -893,29 +898,15 @@ int type;
         newflag = 1;            /* remember to add ann tag/ref to directory */
     }
     
-     /*
-      * promote to linked-block if annotation exists, is not already
-      * a linked block, AND we are increasing its size.
-      */
+      /*
+       * if annotation exists, delete it and rewrite new annotation
+       */
     if (newflag == 0) {           /* does prev annotation exist? */
-          int16  special;   /* to tell if special tag was used */
-          int32  blocksize, /* size of block to create, if necessary */
-                 oldlength; /* length of prev annotation */
-
-        aid = Hstartread(file_id, anntag, annref);
-        if (aid == FAIL) {
-            Hendaccess(aid); Hclose(file_id); return FAIL;
-        } else {
-            HQuerylength(aid, &oldlength);
-            HQueryspecial(aid, &special);
-            if ( !special && (annlen > (oldlength-4)) ) {
-                Hendaccess(aid);
-                blocksize = (anntag == DFTAG_DIL) ? DFAN_LAB_BLKSIZE 
-                                                  : DFAN_DESC_BLKSIZE;
-                aid = HLcreate(file_id, anntag, annref,blocksize,8);
-            }
+        if (Hdeldd(file_id, anntag, annref) == FAIL) {
+            Hclose(file_id);
+            HEreport("Unable to replace old annotation");
+            return FAIL;
         }
-        Hendaccess(aid);
     }
 
         /* put annotation */
