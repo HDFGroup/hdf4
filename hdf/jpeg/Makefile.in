@@ -159,11 +159,11 @@ install-headers: jconfig.h
 
 clean:
 	$(RM) $(RMFLAGS) *.o cjpeg djpeg libjpeg.a rdjpgcom wrjpgcom ansi2knr
-	$(RM) $(RMFLAGS) core testout.* config.log config.status
+	$(RM) $(RMFLAGS) core testout.* config.log config.status jconfig.h
 
 distclean:
 	$(RM) $(RMFLAGS) *.o cjpeg djpeg libjpeg.a rdjpgcom wrjpgcom ansi2knr
-	$(RM) $(RMFLAGS) core testout.* config.log config.status
+	$(RM) $(RMFLAGS) core testout.* config.log config.status jconfig.h
 
 distribute:
 	$(RM) $(RMFLAGS) jpegsrc.tar*
