@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1992/09/11 18:32:51  chouck
-Assorted MAC mungings
+Revision 1.6  1993/01/19 06:24:18  koziol
+Updated for better portability and fixed minor compiler warnings
 
+ * Revision 1.5  1992/09/11  18:32:51  chouck
+ * Assorted MAC mungings
+ *
  * Revision 1.4  1992/08/26  16:28:28  sxu
  * Fixed a typo, eitor --> editor
  *
@@ -87,7 +90,7 @@ int annotate(editor, ann)
 #endif
 {
 
-#ifndef MAC
+#if !defined MAC && !defined PC
 
     int32 len;			/* length of annotation */
     char *buf;			/* annotation buffer */
@@ -204,7 +207,7 @@ int annotate(editor, ann)
 
 	return 1;
 	
-#endif /* ndef MAC */	
+#endif /* ndef MAC & PC */
 
 }
 

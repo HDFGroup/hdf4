@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.7  1992/09/11 18:32:51  chouck
-Assorted MAC mungings
+Revision 1.8  1993/01/19 06:24:16  koziol
+Updated for better portability and fixed minor compiler warnings
 
+ * Revision 1.7  1992/09/11  18:32:51  chouck
+ * Assorted MAC mungings
+ *
  * Revision 1.5  1992/08/24  21:59:44  sxu
  * *** empty log message ***
  *
@@ -348,7 +351,7 @@ int bigImg(targ, src)
 		*q++ = *p;
 		
 	for (i=1; i<factor ; i++) {
-	    DFmovmem(oldq,q,xsize); /* make one copy of the line */
+        HDmemcpy(q,oldq,xsize); /* make one copy of the line */
 	    q += xsize;
 	}
 

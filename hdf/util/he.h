@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.8  1993/01/16 04:13:57  georgev
-Fixed bug in hdfed
+Revision 1.9  1993/01/19 06:24:11  koziol
+Updated for better portability and fixed minor compiler warnings
 
+ * Revision 1.8  1993/01/16  04:13:57  georgev
+ * Fixed bug in hdfed
+ *
  * Revision 1.7  1992/09/11  18:32:51  chouck
  * Assorted MAC mungings
  *
@@ -49,7 +52,7 @@ Fixed bug in hdfed
 #endif /* DEBUG */
 
 #define HE_ARG_SZ 30
-#define HE_DESC_SZ 8192
+#define HE_DESC_SZ 512
 
 #define HE_COLOR_SZ 256
 #define HE_PALETTE_SZ 768
@@ -101,7 +104,6 @@ Fixed bug in hdfed
 #define HE_SHORT   34
 #define HE_DOUBLE  35
 #define HE_RAW     36
- 
 #define HE_USHORT  37
 #define HE_UDECIMAL 38
 

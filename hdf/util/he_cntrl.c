@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.11  1993/01/16 04:13:59  georgev
-Fixed bug in hdfed
+Revision 1.12  1993/01/19 06:24:13  koziol
+Updated for better portability and fixed minor compiler warnings
 
+ * Revision 1.11  1993/01/16  04:13:59  georgev
+ * Fixed bug in hdfed
+ *
  * Revision 1.10  1993/01/07  20:40:41  georgev
  * Small bug where a comment was inside another comment.
  *
@@ -272,77 +275,77 @@ int HEdump(cmd)
 	    switch (findOpt(cmd->argv[i] + 1))
 	    {
 	    case HE_HELP:
-		printf("dump [-offset <offset>] [-length <len>]\n"); 
-		printf("\t[-decimal|-short|-byte|-hexidecimal|-float|-double|-ascii|\n");
-              printf("\t[-udecimal|-ushort|-octal|]\n");
-		printf("\tDisplay the contents of the current object\n");
-		printf("\t-offset            Start offset\n");
-		printf("\t-length            Length (bytes) to look at\n");
-		printf("\t-decimal           Decimal format [32 bit integers]\n");
-		printf("\t-short             Decimal format   [16 bit integers]\n");
-		printf("\t-byte              Decimal format    [8 bit integers]\n");
-		printf("\t-hexidecimal       Hexidecimal format\n");
-		printf("\t-float             Float format   [32 bit floats]\n");
-		printf("\t-double            Float format  [64 bit floats]\n");
-		printf("\t-ascii             Ascii format\n");
-              printf("\t-udecimal          Unsigned Decimal format [32 bit integers]\n");
-              printf("\t-ushort            Unsigned Decimal format   [16 bit integers]\n");
-              printf("\t-octal             Octal format [Default]\n");
-		return HE_OK;
+            printf("dump [-offset <offset>] [-length <len>]\n");
+            printf("\t[-decimal|-short|-byte|-hexidecimal|-float|-double|-ascii|\n");
+                  printf("\t[-udecimal|-ushort|-octal|]\n");
+            printf("\tDisplay the contents of the current object\n");
+            printf("\t-offset            Start offset\n");
+            printf("\t-length            Length (bytes) to look at\n");
+            printf("\t-decimal           Decimal format [32 bit integers]\n");
+            printf("\t-short             Decimal format   [16 bit integers]\n");
+            printf("\t-byte              Decimal format    [8 bit integers]\n");
+            printf("\t-hexidecimal       Hexidecimal format\n");
+            printf("\t-float             Float format   [32 bit floats]\n");
+            printf("\t-double            Float format  [64 bit floats]\n");
+            printf("\t-ascii             Ascii format\n");
+            printf("\t-udecimal          Unsigned Decimal format [32 bit integers]\n");
+            printf("\t-ushort            Unsigned Decimal format   [16 bit integers]\n");
+            printf("\t-octal             Octal format [Default]\n");
+            return HE_OK;
 	    case HE_OFFSET:
-		offset = atoi(cmd->argv[++i]);
-		break;
+            offset = atoi(cmd->argv[++i]);
+            break;
 	    case HE_LENGTH:
-		length = atoi(cmd->argv[++i]);
-		if (length <= 0)
-		{
-		    fprintf(stderr,"Illegal length: %s, ignored.\n",
-			    cmd->argv[i]);
-		    length = 0;
-		}
-		break;
-	    case HE_DECIMAL:
-		format = "-i";
-		break;
-            case HE_UDECIMAL:
-                format = "-d";
-                break;
+            length = atoi(cmd->argv[++i]);
+            if (length <= 0)
+            {
+                fprintf(stderr,"Illegal length: %s, ignored.\n",
+                    cmd->argv[i]);
+                length = 0;
+            }
+            break;
+        case HE_DECIMAL:
+            format = "-i";
+            break;
+        case HE_UDECIMAL:
+            format = "-d";
+            break;
 	    case HE_SHORT:
-		format = "-j";
-		break;
-            case HE_USHORT:
-                format = "-s";
-                break;
+            format = "-j";
+            break;
+        case HE_USHORT:
+            format = "-s";
+            break;
 	    case HE_BYTE:
-		format = "-b";
-		break;
+            format = "-b";
+            break;
 	    case HE_OCTAL:
-		format = "-o";
-		break;
+            format = "-o";
+            break;
 	    case HE_HEX:
-		format = "-x";
-		break;
+            format = "-x";
+            break;
 	    case HE_FLOAT:
-		format = "-f";
-		break;
+            format = "-f";
+            break;
 	    case HE_DOUBLE:
-		format = "-e";
-		break;
+            format = "-e";
+            break;
 	    case HE_ASCII:
-		format = "-a";
-		break;
-            case HE_RAW:
-                raw = DFNT_NATIVE;
-                break;
+            format = "-a";
+            break;
+        case HE_RAW:
+            raw = DFNT_NATIVE;
+            break;
 	    case HE_NOTFOUND:
-		unkOpt(cmd->argv[i]);
-		return HE_FAIL;
+            unkOpt(cmd->argv[i]);
+            return HE_FAIL;
 	    case HE_AMBIG:
-		ambigOpt(cmd->argv[i]);
-		return HE_FAIL;
+            ambigOpt(cmd->argv[i]);
+            return HE_FAIL;
 	    default:
-		irrOpt(cmd->argv[i]);
-		return HE_FAIL;
+            irrOpt(cmd->argv[i]);
+            return HE_FAIL;
 	    }
 	else
 	{
@@ -1370,8 +1373,8 @@ int HEalias(cmd)
     for (cmdTail = cmd; cmdTail->next;  cmdTail = cmdTail->next)/*EMPTY*/
         ;
     while (cmdTail->next = parseCmd(&s))
-	for (; cmdTail->next;  cmdTail = cmdTail->next)/*EMPTY*/
-            ;
+    for (; cmdTail->next;  cmdTail = cmdTail->next)/*EMPTY*/
+        ;
     return setAlias(word, cmd);
 }
 

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.11  1993/01/16 04:14:00  georgev
-Fixed bug in hdfed
+Revision 1.12  1993/01/19 06:24:20  koziol
+Updated for better portability and fixed minor compiler warnings
 
+ * Revision 1.11  1993/01/16  04:14:00  georgev
+ * Fixed bug in hdfed
+ *
  * Revision 1.10  1992/12/21  23:31:17  mfolk
  * Fixed updateDesc call to DFdiget.  Previously it was missing
  * the first parameter, groupID.
@@ -453,8 +456,8 @@ int updateDesc()
       }
       for (j = 0; j < he_grp[he_numGrp].size; j++)
         DFdiget(groupID, &he_grp[he_numGrp].ddList[j].tag,
-                         &he_grp[he_numGrp].ddList[j].ref);
-
+                &he_grp[he_numGrp].ddList[j].ref);
+      
       he_numGrp++;
     }
   }
@@ -863,17 +866,18 @@ int writeGrp(file)
     int elt;
     int ret;
     int32 fid;
+    int32 gid;
 
     getNewRef(file, &ref);
 
     grp = currGrpNo();
-    DFdisetup(he_grp[grp].size);
+    gid=DFdisetup(he_grp[grp].size);
     for (i = 0; i < he_grp[grp].size; i++) {
       elt = findDesc(he_grp[grp].ddList + i);
       if (elt >= 0)
         writeElt(file, ref, elt);
       /* update the group dd list */
-      DFdiput(he_grp[grp].ddList[i].tag, ref);
+      DFdiput(gid,he_grp[grp].ddList[i].tag, ref);
     }
     /* do the group now */
 
@@ -882,7 +886,7 @@ int writeGrp(file)
 	HEprint(stderr, 0);
 	return FAIL;
     }
-    if ((ret = DFdiwrite(fid, currTag(), ref)) < 0)
+    if ((ret = DFdiwrite(fid, gid, currTag(), ref)) < 0)
     {
 	HEprint(stderr, 0);
 	return ret;
