@@ -479,75 +479,75 @@ int check_szip_params( int bits_per_pixel,
  
  if (pixels_per_block & 1)
  {
-		printf("Pixels per block must be even.\n");
-		return -1;
+  printf("Pixels per block must be even.\n");
+  return -1;
  }
  
-	if (pixels_per_block > pixels_per_scanline)
+ if (pixels_per_block > pixels_per_scanline)
  {
-		printf("Pixels per block is greater than pixels per scanline.\n");
-		return -1;
+  printf("Pixels per block is greater than pixels per scanline.\n");
+  return -1;
  }
  
-	if (bits_per_pixel >= 1 && bits_per_pixel <= 24)
-		;
-	else if (bits_per_pixel == 32 || bits_per_pixel == 64)
-		;
-	else
+ if (bits_per_pixel >= 1 && bits_per_pixel <= 24)
+  ;
+ else if (bits_per_pixel == 32 || bits_per_pixel == 64)
+  ;
+ else
  {
-		printf("bits per pixel must be in range 1..24,32,64");
-		return -1;
+  printf("bits per pixel must be in range 1..24,32,64");
+  return -1;
  }
  
-	if (pixels_per_block > MAX_PIXELS_PER_BLOCK)	
+ if (pixels_per_block > MAX_PIXELS_PER_BLOCK) 
  {
-		printf("maximum pixels per block exceeded");
-		return -1;
+  printf("maximum pixels per block exceeded");
+  return -1;
  }
  
-	if (pixels_per_block & 1)	
+ if (pixels_per_block & 1) 
  {
-		printf("pixels per block must be even");
-		return -1;
+  printf("pixels per block must be even");
+  return -1;
  }
  
-	if (pixels_per_block > pixels_per_scanline)
+ if (pixels_per_block > pixels_per_scanline)
  {
-	 printf("pixels per block > pixels per scanline");
-		return -1;
+  printf("pixels per block > pixels per scanline");
+  return -1;
  }
  
-	if (pixels_per_scanline > MAX_PIXELS_PER_SCANLINE)
+ if (pixels_per_scanline > MAX_PIXELS_PER_SCANLINE)
  {
-		printf("maximum pixels per scanline exceeded");
-		return -1;
+  printf("maximum pixels per scanline exceeded");
+  return -1;
  }
  
-	if (image_pixels < pixels_per_scanline)
+ if (image_pixels < pixels_per_scanline)
  {
-		printf("image pixels less than pixels per scanline");
-		return -1;
+  printf("image pixels less than pixels per scanline");
+  return -1;
  }
  
  if (image_pixels % pixels_per_scanline)
  {
-		fprintf(stderr, "Pixels (%d) must be integer multiple of pixels per scanline (%d)\n", 
+  fprintf(stderr, "Pixels (%d) must be integer multiple of pixels per scanline (%d)\n", 
    image_pixels,pixels_per_scanline);
-		return -1;
+  return -1;
  }
  
 #if 0
-	if (pixels_per_scanline % pixels_per_block)
+ if (pixels_per_scanline % pixels_per_block)
  {
-		fprintf(stderr, "Pixels per scanline (%d) must be an integer multiple of pixels per block (%d)\n", 
+  fprintf(stderr, "Pixels per scanline (%d) must be an integer multiple of pixels per block (%d)\n", 
    pixels_per_scanline, pixels_per_block);
-		return -1;
+  return -1;
  }
 #endif
 
 
  
-	return 0;
+ return 0;
 }
 
 
@@ -572,22 +572,22 @@ int32 chunksizes[32];
 int i;
 int32 cntr;
 
-	for (i = 0; i < rank; i++) {
-		chunkcnt = 1;
-		targetbytes = dimsize[i] * eltsz;
-		chunkrow = eltsz * chunk_def.chunk_lengths[i];
-		cntr = chunkrow;
-		while( cntr < targetbytes) {
-			cntr += chunkrow;
-			chunkcnt++;
-		}
-		chunksizes[i] = chunkcnt;
-	}
-	chunkcnt = 1;
-	for (i = 0; i < rank; i++) {
-		chunkcnt *= chunksizes[i];
-	}
-	printf("total chunks is %d\n",chunkcnt);
+ for (i = 0; i < rank; i++) {
+  chunkcnt = 1;
+  targetbytes = dimsize[i] * eltsz;
+  chunkrow = eltsz * chunk_def.chunk_lengths[i];
+  cntr = chunkrow;
+  while( cntr < targetbytes) {
+   cntr += chunkrow;
+   chunkcnt++;
+  }
+  chunksizes[i] = chunkcnt;
+ }
+ chunkcnt = 1;
+ for (i = 0; i < rank; i++) {
+  chunkcnt *= chunksizes[i];
+ }
+ printf("total chunks is %d\n",chunkcnt);
  return 0;
 }
 
