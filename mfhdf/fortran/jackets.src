@@ -81,7 +81,7 @@ M4__FORTRAN_DEFINES
 
 struct ncfils {			/* This will be a common block from Fortran */
     double dd;
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
     int ll;
 #else
     long ll;
@@ -112,7 +112,7 @@ struct ncfils {			/* This will be a common block from Fortran */
 
 struct ncfils {			/* This will be a common block from Fortran */
     double dd;
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
     int ll;
 #else
     long ll;
@@ -464,7 +464,7 @@ stoig(shorts, ints, dims, basis, ndims)
 }
 #endif /* FORTRAN_HAS_NO_SHORT */
 
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
 /*
  * Convert multi-dimensional array of NCLONGs stored in `int's to packed
  * array of `long's, in malloc'ed space.  Returns pointer to `long's or NULL
@@ -961,7 +961,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
 	long          longs = *(int *)value;
@@ -1076,7 +1076,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
 	long *longs = itol (value, ncount, ndims);
@@ -1188,7 +1188,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	tmpbasis	= nctypelen(NC_LONG);
     else
 #endif
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
     if (datatype == NC_LONG)
 	tmpbasis	= sizeof(int);
     else
@@ -1245,7 +1245,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
 	long *longs = itolg (value, ncount, nbasis, ndims);
@@ -1382,7 +1382,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
 	long          longs;
@@ -1525,7 +1525,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
 	long iocount = dimprod (ncount, ndims);	/* product of dimensions */
@@ -1659,7 +1659,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	tmpbasis	= nctypelen(NC_LONG);
     else
 #endif
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
     if (datatype == NC_LONG)
 	tmpbasis	= sizeof(int);
     else
@@ -1730,7 +1730,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
 	long iocount = dimprod (ncount, ndims);	/* product of dimensions */
@@ -1896,7 +1896,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     if ((nc_type) *datatype == NC_LONG && handle->file_type!=HDF_FILE) {
 	long *longs = itol (value, attlen, 1);
@@ -2060,7 +2060,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
 #ifdef HDF
     if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
 	long *longs = (long *) malloc (attlen * sizeof (long));

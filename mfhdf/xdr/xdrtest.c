@@ -70,7 +70,7 @@ char *av[] ;
 #endif
 
 	/* some random numbers, divisible by 4 and less than 32k */
-	static unsigned long seeks[] = 
+	static u_int seeks[] = 
 	{
 		   16828 ,
 		    8448 ,
@@ -91,7 +91,7 @@ char *av[] ;
 		   12556 ,
 	} ;
 
-	unsigned long poses[9] ;
+	u_int poses[9] ;
 	int jj = 0 ;
 
 	static char text[32] ={ "Hiya sailor. New in town?" };

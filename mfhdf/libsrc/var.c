@@ -179,9 +179,9 @@ NC_array *dims;
 
 out :
 /* don't round-up for HDF-encoded files */
-   #ifdef HDF
-            if (var->cdf->file_type != HDF_FILE)
-   #endif
+#ifdef HDF
+	if (var->cdf->file_type != HDF_FILE)
+#endif
  
 	switch(var->type) {
 	case NC_BYTE :
@@ -317,9 +317,9 @@ NC *handle ;
 		vpp < &vbase[handle->vars->count] ;
 		vpp ++)
 	{
- #ifdef HDF
+#ifdef HDF
                 (*vpp)->cdf= handle;
- #endif
+#endif
 
 		if( NC_var_shape(*vpp, handle->dims) == -1)
 			return(-1) ;

@@ -1,7 +1,3 @@
-# $Id$
-#
-# Machine/OS: SGI/IRIX 6.0 (32-bit mode)
-#
 # This file is for customizing the configuation process performed by
 # `./configuration'.  This file consists of sh(1) variable-definition lines.
 # The value given to those variables by this file will override their default
@@ -24,19 +20,19 @@
 #
 # Type of C compiler (default is `cc'):
 # Try 'gcc -ansi' if your cc is not ANSI compatible.
-CC='cc -32 -cckr'
+CC='cc'
 #
 # C compiler flags (default is `-O'):
-#CFLAGS='-g'
+#CFLAGS='-O'
 #
 # SGI needs not ranlib.  Set RANLIB to true as an no-op.
 RANLIB=true
 #
 # C preprocessor flags 
-# CPPFLAGS=-DNDEBUG
+CPPFLAGS='DBIG_LONGS'
 #
 # Type of FORTRAN 77 compiler (default is `f77'):
-FC='f77 -32'
+FC='f77'
 #
 # FORTRAN compiler flags (default is `'):
 #FFLAGS='-g'

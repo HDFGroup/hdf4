@@ -247,7 +247,7 @@ int mode ;
 #ifdef DEBUG
             fprintf(stderr, "About to do CDF file set up\n");
 #endif
-            cdf->cdf_fp =  HI_OPEN(name, hdf_mode);
+            cdf->cdf_fp = (FILE *) HI_OPEN(name, hdf_mode);
             if (OPENERR(cdf->cdf_fp)) 
                 HRETURN_ERROR(DFE_DENIED,NULL);
             break;
@@ -507,7 +507,7 @@ NC_xdr_cdf(xdrs, handlep)
 * 
 ******************************************************************************
 *
-* Please report all bugs / comments to chouck@ncsa.uiuc.edu
+* Please report all bugs / comments to hdfhelp@ncsa.uiuc.edu
 *
 *****************************************************************************/
 
@@ -658,14 +658,14 @@ NC_dim *dim;
 #endif
 
   } else {
-      int *val;
+      int32 *val;
       /* create a fake one */
 #if DEBUG
       fprintf(stderr, "Creating fake dim  ::::%s::: (%d)\n", dim->name->values, dsize);
 #endif
       
       /* allocate space */
-      val = (int *) HDmalloc(dsize * sizeof(int));
+      val = (int32 *) HDmalloc(dsize * sizeof(int32));
       if(!val) {
           HERROR(DFE_NOSPACE);
           return FAIL;
@@ -675,7 +675,7 @@ NC_dim *dim;
           for(i = 0; i < dsize; i++)
               val[i] = i;
       } else {
-          val[0] = handle->numrecs;
+          val[0] = (int32)handle->numrecs;
       }
       
       ref = VHstoredata(handle->hdf_file, "Values", (void *)val, dsize,
@@ -1172,6 +1172,7 @@ int32  vg;
   dimension = (NC_dim **) HDmalloc(sizeof(NC_dim *) * Vntagrefs(vg) + 1);
   if(!dimension) {
 #ifdef DEBUG
+    /* replace it with NCadvice or HERROR?? */
     fprintf(stderr, "Out of memory line %d file %s\n", __LINE__, __FILE__);
 #endif
     return FAIL;
@@ -1202,6 +1203,9 @@ int32  vg;
               VSQuerycount(vs, &dim_size);
 
               if(!HDstrcmp(vgclass, UDIMENSION)) {
+		  int32 val;	/* needs a temp var since handle->numrecs */
+				/* may not be an int32 */
+
                   dim_size = NC_UNLIMITED;
                   VSsetfields(vs, "Values");
                   VSseek(vs, 0);
@@ -1210,13 +1214,15 @@ int32  vg;
                    * This is highly dangerous since there might be multiple
                    * unlimited dimensions
                    */
-                  if(VSread(vs, (uint8 *) &(handle->numrecs), 1, FULL_INTERLACE) != 1)
+                  if(VSread(vs, (uint8 *) &val, 1, FULL_INTERLACE) != 1)
                       HEprint(stderr, 0);
+                  handle->numrecs = val;
               }
 
 	      dimension[count] = NC_new_dim(vgname, dim_size);
 	      if(!dimension[count]) {
 #ifdef DEBUG
+/* replace it with NCadvice or HERROR?? */
 		fprintf(stderr, "Can't create new dimension #%d\n", count);
 #endif
 		return FAIL;
@@ -1283,6 +1289,7 @@ int32   vg;
   attributes = (NC_attr **) HDmalloc(sizeof(NC_attr *) * Vntagrefs(vg) + 1);
   if(!attributes) {
 #ifdef DEBUG
+    /* replace it with NCAdvice or HERROR? */
     fprintf(stderr, "Out of memory line %d file %s\n", __LINE__, __FILE__);
 #endif
     return NULL;
@@ -1317,6 +1324,7 @@ int32   vg;
                   (NC_attr *) NC_new_attr(vsname, type, attr_size, values);
               if(!attributes[count]) {
 #ifdef DEBUG
+/* replace it with NCadvice or HERROR? */
                   fprintf(stderr, "Can't create new attribute #%d\n", count);
 #endif
                   return NULL;
@@ -2067,7 +2075,7 @@ NC_var *vp ;
 			break ;
 		case NC_LONG :
 			alen /= 4 ;
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
 			xdr_NC_fnct = xdr_int ;
 #else
 			xdr_NC_fnct = xdr_long ;

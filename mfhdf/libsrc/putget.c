@@ -550,7 +550,7 @@ Void *values ;
 	case NC_SHORT :
 		return( xdr_NCvshort(xdrs, (unsigned)rem/2, (short *)values) ) ;
 	case NC_LONG :
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
 		return( xdr_int(xdrs, (nclong *)values) ) ;
 #else
 		return( xdr_long(xdrs, (nclong *)values) ) ;
@@ -1357,7 +1357,7 @@ Void *values ;
 		} /* else */
 		return(TRUE) ;
 	case NC_LONG :
-#ifdef __alpha
+#if defined __alpha || (_MIPS_SZLONG == 64)
 		xdr_NC_fnct = xdr_int ;
 #else
 		xdr_NC_fnct = xdr_long ;
@@ -1854,7 +1854,7 @@ Void **datap ;
 	u_long offset ;
 	unsigned iocount ;
 
-	nrvars = NCnumrecvars(handle, rvp, NULL) ;
+	nrvars = NCnumrecvars(handle, rvp, (int*) NULL) ;
 	if(nrvars == -1)
 		return -1 ; /* TODO: what error message ?*/
 

@@ -39,6 +39,8 @@ main()
 
     ncopts &= ~NC_FATAL;	/* make errors nonfatal */
     ncopts &= ~NC_VERBOSE;	/* turn off error messages */
+    ncopts |= NC_VERBOSE;	/* turn  error messages on--AKC */
+    ncopts &= ~NC_VERBOSE;	/* turn off error messages */
 
     test_nccreate(testfile);
 

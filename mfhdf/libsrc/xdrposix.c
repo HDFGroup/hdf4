@@ -278,6 +278,10 @@ int nbytes;
 
 static bool_t   xdrposix_getlong();
 static bool_t   xdrposix_putlong();
+#if (_MIPS_SZLONG == 64)
+static bool_t   xdrposix_getint();
+static bool_t   xdrposix_putint();
+#endif
 static bool_t   xdrposix_getbytes();
 static bool_t   xdrposix_putbytes();
 static ncpos_t  xdrposix_getpos();
@@ -285,7 +289,11 @@ static bool_t   xdrposix_setpos();
 #ifdef CRAY
 static inline_t *   xdrposix_inline();
 #else
+#if (_MIPS_SZLONG == 64)
+static long *    xdrposix_inline();
+#else
 static netlong *    xdrposix_inline();
+#endif
 #endif
 static void xdrposix_destroy();
 
@@ -295,6 +303,12 @@ static void xdrposix_destroy();
 static struct xdr_ops   xdrposix_ops = {
     xdrposix_getlong,   /* deserialize a 32-bit int */
     xdrposix_putlong,   /* serialize a 32-bit int */
+#if (_MIPS_SZLONG == 64)
+    /* IRIX64 has 64 bits long and 32 bits int. */
+    /* It defines two extra entries for get/put int. */
+    xdrposix_getint,   /* deserialize a 32-bit int */
+    xdrposix_putint,   /* serialize a 32-bit int */
+#endif
     xdrposix_getbytes,  /* deserialize counted bytes */
     xdrposix_putbytes,  /* serialize counted bytes */
     xdrposix_getpos,    /* get offset in the stream */
@@ -307,6 +321,7 @@ static struct xdr_ops   xdrposix_ops = {
 /*
  * Fake an XDR initialization for HDF files
  */
+void
 hdf_xdrfile_create(xdrs, ncop)
      XDR *xdrs;
      int ncop;
@@ -416,7 +431,7 @@ xdrposix_destroy(xdrs)
 static bool_t
 xdrposix_getlong(xdrs, lp)
     XDR *xdrs;
-    netlong *lp;
+    long *lp;
 {
     unsigned char *up = (unsigned char *)lp ;
 #ifdef CRAY
@@ -434,7 +449,7 @@ xdrposix_getlong(xdrs, lp)
 static bool_t
 xdrposix_putlong(xdrs, lp)
     XDR *xdrs;
-    netlong *lp;
+    long *lp;
 {
 
     unsigned char *up = (unsigned char *)lp ;
@@ -522,7 +537,11 @@ xdrposix_setpos(xdrs, pos)
 #ifdef CRAY
 static inline_t *
 #else
+#if (_MIPS_SZLONG == 64)
+static long *
+#else
 static netlong *
+#endif
 #endif
 xdrposix_inline(xdrs, len)
     XDR *xdrs;
@@ -538,6 +557,48 @@ xdrposix_inline(xdrs, len)
     return (NULL);
 }
 
+#if (_MIPS_SZLONG == 64)
+
+static bool_t
+xdrposix_getint(xdrs, lp)
+    XDR *xdrs;
+    int *lp;
+{
+    unsigned char *up = (unsigned char *)lp ;
+    fprintf(stderr, "xdrposix_getint invoked.\n");
+#ifdef CRAY
+    *lp = 0 ;
+    up += (sizeof(long) - 4) ;
+#endif
+    if(bioread((biobuf *)xdrs->x_private, up, 4) < 4)
+        return (FALSE);
+#ifdef SWAP
+    *lp = ntohl(*lp);
+#endif
+    return (TRUE);
+}
+
+static bool_t
+xdrposix_putint(xdrs, lp)
+    XDR *xdrs;
+    int *lp;
+{
+
+    unsigned char *up = (unsigned char *)lp ;
+    fprintf(stderr, "xdrposix_putint invoked.\n");
+#ifdef SWAP
+    netlong mycopy = htonl(*lp);
+    up = (unsigned char *)&mycopy;
+#endif
+#ifdef CRAY
+    up += (sizeof(long) - 4) ;
+#endif
+
+    if (biowrite((biobuf *)xdrs->x_private, up, 4) < 4)
+        return (FALSE);
+    return (TRUE);
+}
+#endif
 
 int
 NCxdrfile_sync(xdrs)

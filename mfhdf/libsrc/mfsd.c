@@ -884,7 +884,9 @@ int32 nt, rank, *dimsizes;
 
     /* check if its a ragged array */
     if((rank > 1) && dimsizes[rank - 1] == SD_RAGGED) {
+#ifdef DEBUG
         printf("YOW!  We have a ragged array kids: %s\n", name);
+#endif
         rank--;
         is_ragged = TRUE;
     } else {
