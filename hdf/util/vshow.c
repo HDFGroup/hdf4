@@ -501,7 +501,7 @@ intn dumpattr(int32 vid, intn full, intn isvs)
    uint8 attrbuf[BUFFER], *buf, *ptr;
    int32 (*fmtfn)(char *);
    char name[FIELDNAMELENMAX+1];
- 
+
    if (isvs)  {
       vs_inst = (vsinstance_t *)HAatom_object(vid);
       if (vs_inst == NULL)  {
@@ -519,21 +519,24 @@ intn dumpattr(int32 vid, intn full, intn isvs)
       }
       vs_alist = vs->alist;
       if (!full) {
-          printf("     %d attributes:  attr_tag/ref  attr_of_field",
+          printf("     %d attributes:  attr_tag/ref     attr_of_field\n",
                        nattrs);
-          printf("( note: -1 -- the vdata)\n");
           for (i=0; i<nattrs; i++)  {
-             printf("     %d:               %d/%d               %d\n",
+             if (vs_alist->findex != ENTIRE_VDATA)
+                 printf("     %d:               %d/%d               %d\n",
                  i, vs_alist->atag, vs_alist->aref,vs_alist->findex);
+             else
+                 printf("     %d:               %d/%d         %s\n",
+                 i, vs_alist->atag, vs_alist->aref, "ENTIRE_VDATA");
              vs_alist++;
          }
          return SUCCEED;
       }
       printf("%d attributes:\n", nattrs);
-      for (j=-1; j<vs->wlist.n; j++) {
+      for (j=ENTIRE_VDATA; j<vs->wlist.n; j++) { /* ENTIRE_VDATA is -1 */
           f_nattrs = VSfnattrs(vid, j);
           if (f_nattrs == 0) continue;  /* no attr for this field */
-          if (j == -1)
+          if (j == ENTIRE_VDATA)
              printf("   Attrs of vdata:\n");
           else 
              printf("   Attrs of field %d:\n", j);
@@ -633,7 +636,7 @@ intn dumpattr(int32 vid, intn full, intn isvs)
       }
       v_alist = vg->alist;
       if (!full) {
-          printf("%d attributes:  attr_tag/ref  \n", nattrs);
+          printf("%d attributes:       attr_tag/ref  \n", nattrs);
           for (i=0; i<nattrs; i++)  {
              printf("     %d:               %d/%d    \n",
                  i, v_alist->atag, v_alist->aref);

@@ -21,6 +21,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "hdf.h"
 #include "hfile.h"
+#include "vg.h"
 
 /* Global Variables (ick) */
 #ifndef HDP_MASTER

@@ -577,7 +577,7 @@ dvd(dump_info_t * dumpvd_opts, intn curr_arg,
 
                             fprintf(fp, "   record size (in bytes) = %d;\n", (int)vsize);
                             fprintf(fp, "   name = %s; class = %s;\n", vdname, vdclass);
-                            ret = dumpattr(vd_id, -1, 1, ft, fp);     
+                            ret = dumpattr(vd_id, ENTIRE_VDATA, 1, ft, fp);     
                                 /* read in all of the annotations */
                             len = DFANgetdesclen(file_name, vdata_tag, vdata_ref);
                             if (len != FAIL)
