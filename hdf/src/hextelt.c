@@ -86,7 +86,7 @@ EXPORTED ROUTINES
 /* Directory seperator definitions relating to a path. 
  * Note this does not provide a universal way to recognize
  * different path name conventions and translate between them */
-#if defined (MAC) || defined (macintosh) || defined(__MWERKS__) || defined (SYMANTEC_C) 
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) 
 #define DIR_SEPC  58  /* Integer value of ':' */
 #define DIR_SEPS  ":"
 #else /* not Macintosh */
@@ -1273,7 +1273,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 
     char	*finalpath = NULL;	/* Final pathname to return */
     const char	*fname = NULL;
-#if !(defined (MAC) || defined (macintosh) || defined(__MWERKS__) || defined (SYMANTEC_C))
+#if !(defined (MAC) || defined (macintosh) || defined (SYMANTEC_C))
     struct	stat filestat;	/* for checking pathname existence */
 #endif
     char        *ret_value = NULL; /* FAIL */

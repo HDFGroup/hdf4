@@ -30,10 +30,10 @@ static char RcsId[] = "@(#)$Id$";
 /* Commmented out the following */
 #if 0
 /* Macintosh */
-#if defined SYMANTEC_C || defined __MWERKS__ 
+#if defined SYMANTEC_C || defined macintosh
 #define malloc NewPtr
 #define free   DisposePtr
-#endif /* SYMANTEC_C || __MWERKS__ */
+#endif /* SYMANTEC_C || macintosh */
 
 #define NEW(x) ((x *) emalloc(sizeof(x)))
 static void *emalloc(unsigned int n);

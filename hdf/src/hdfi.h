@@ -671,7 +671,7 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 
 #endif /* MIPSEL */
 
-#if defined(MAC) || defined(macintosh) || defined(__MWERKS__) || defined (SYMANTEC_C)
+#if defined(MAC) || defined(macintosh) || defined (SYMANTEC_C)
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
@@ -681,11 +681,11 @@ Please check your Makefile.
 
 #include <memory.h>             /* malloc stuff for MPW */
 #include <fcntl.h>              /* unbuffered I/O stuff for MPW */
-#ifdef __MWERKS__  /* Metrowerks */
+#ifdef __MWERKS__				/* Metrowerks */
 #include <sioux.h>
 #include <console.h>
 #endif
-#ifdef SYMANTEC_C                  /* for SYMANTEC C */
+#ifdef SYMANTEC_C				/* for SYMANTEC C */
 #include <unix.h>
 #define isascii(c)  (isprint(c) || iscntrl(c))
 #else  /* MPW, possibly others */
@@ -728,8 +728,8 @@ void exit(int status);
 
 #endif /*MAC*/
 
-/* Metrowerks compilier defines some PC stuff so need to exclude this on the MAC */
-#if !(defined(__MWERKS__) || defined(MAC))
+/* Metrowerks Mac compiler defines some PC stuff so need to exclude this on the Mac */
+#if !(defined(macintosh) || defined(MAC))
 
 #if defined INTEL86 || defined M_I86 || defined M_I386 || defined DOS386 || defined __i386 || defined UNIX386
 #ifndef INTEL86
@@ -827,7 +827,7 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 #define INCLUDES_ARE_ANSI
 
 #endif /* INTEL86 */
-#endif /* !(defined(__MWERKS__) || defined(MAC)) */
+#endif /* !(defined(macintosh) || defined(MAC)) */
 
 #if defined(NEXT) || defined(NeXT)
 
@@ -1263,8 +1263,8 @@ extern int (*DFKnumout)(const void * source, void * dest, uint32 num_elm,
 #  define HDstrchr(s,c)         (strchr((s),(c)))
 #  define HDstrrchr(s,c)        (strrchr((s),(c)))
 #  define HDstrtol(s,e,b)       (strtol((s),(e),(b)))
-/* non-standard function, not defined on the following mahcines - */
-#if !(defined VMS || defined macintosh || defined MAC || defined __MWERKS__ || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000 || defined ANSISUN || defined IRIX)
+/* non-standard function, not defined on the following machines - */
+#if !(defined VMS || defined macintosh || defined MAC || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000 || defined ANSISUN || defined IRIX)
 #  define HDstrdup(s)      ((char *)strdup((const char *)(s)))
 #endif /* !(VMS | etc..) */
 
@@ -1281,7 +1281,7 @@ extern int (*DFKnumout)(const void * source, void * dest, uint32 num_elm,
 /**************************************************************************
 *  Misc. functions
 **************************************************************************/
-#if defined (MAC) || defined (macintosh) || defined(__MWERKS__) || defined (SYMANTEC_C)
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
 #define HDstat(path, result)	(mstat(path))
 #else /* !macintosh */
 #define HDstat(path, result)	(stat(path, result))

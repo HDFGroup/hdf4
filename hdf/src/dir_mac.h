@@ -22,7 +22,7 @@
 #ifndef	__dirent_h
 #define	__dirent_h
 
-#if defined(MAC) || defined (__MWERKS__) || defined(macintosh) || defined(SYMANTEC_C)
+#if defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
 /*
  * Added to HDF core library for directory reading on the Macintosh
  *
@@ -95,5 +95,5 @@ extern	DIR	*hopendir(char *dirname, short vRefNum, long dirID);
 
 #include "sys_dir_mac.h"
 
-#endif /* defined(MAC) || defined (__MWERKS__) || defined(macintosh) || defined(SYMANTEC_C)  */
+#endif /* defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)  */
 #endif	/* !__dirent_h */

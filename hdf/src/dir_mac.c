@@ -17,7 +17,7 @@
  *
  ****************************************************************************************/
 
-#if defined(MAC) || defined (__MWERKS__) || defined(macintosh) || defined(SYMANTEC_C)
+#if defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
 
 /*
  * Added to HDF core library for directory reading on the Macintosh
@@ -679,4 +679,4 @@ pathdir(DIR *dirp, char *path)
 	return path;
 }
 
-#endif /* defined(MAC) || defined (__MWERKS__) || defined(macintosh) || defined(SYMANTEC_C) */
+#endif /* defined(MAC) || defined(macintosh) || defined(SYMANTEC_C) */
