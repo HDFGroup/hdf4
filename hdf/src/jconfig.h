@@ -22,7 +22,7 @@
 
 /*
  * HAVE_STDC is tested below to see whether ANSI features are available.
- * We avoid testing __STDC__ directly for arcane reasons of portability.
+ * We aVOID testing __STDC__ directly for arcane reasons of portability.
  * (On some compilers, __STDC__ is only defined if a switch is given,
  * but the switch also disables machine-specific features we need to get at.
  * In that case, -DHAVE_STDC in the Makefile is a convenient solution.)
@@ -31,6 +31,7 @@
 #ifdef __STDC__			/* if compiler claims to be ANSI, believe it */
 #define HAVE_STDC
 #endif
+
 
 /* Does your compiler support function prototypes? */
 /* (If not, you also need to use ansi2knr, see SETUP) */
@@ -89,9 +90,11 @@
  */
 
 #ifdef MSDOS			/* two-file style is needed for PCs */
+#ifndef USE_SETMODE		/* unless you have setmode() */
 #define TWO_FILE_COMMANDLINE
 #endif
-#ifdef THINK_C			/* needed for Macintosh too */
+#endif
+#ifdef THINK_C			/* it's needed for Macintosh too */
 #define TWO_FILE_COMMANDLINE
 #endif
 
@@ -118,16 +121,29 @@
  */
 
 
-/* On a few systems, type boolean and/or macros FALSE, TRUE may appear
+/* If your compiler supports inline functions, define INLINE
+ * as the inline keyword; otherwise define it as empty.
+ */
+
+#ifdef __GNUC__			/* for instance, GNU C knows about inline */
+#define INLINE __inline__
+#endif
+#ifndef INLINE			/* default is to define it as empty */
+#define INLINE
+#endif
+
+/* On a few systems, type bool and/or macros FALSE, TRUE may appear
  * in standard header files.  Or you may have conflicts with application-
  * specific header files that you want to include together with these files.
  * In that case you need only comment out these definitions.
  */
 
-typedef int boolean;
+#ifdef QAK
+typedef int bool;
+#endif
 #undef FALSE			/* in case these macros already exist */
 #undef TRUE
-#define FALSE	0		/* values of boolean */
+#define FALSE	0		/* values of bool */
 #define TRUE	1
 
 /* This defines the size of the I/O buffers for entropy compression
@@ -149,10 +165,16 @@ typedef int boolean;
  */
 
 /* Arithmetic coding is unsupported for legal reasons.  Complaints to IBM. */
-#undef  ARITH_CODING_SUPPORTED	/* Arithmetic coding back end? */
-#define MULTISCAN_FILES_SUPPORTED /* Multiple-scan JPEG files? */
-#define ENTROPY_OPT_SUPPORTED	/* Optimization of entropy coding parms? */
-#define BLOCK_SMOOTHING_SUPPORTED /* Block smoothing during decoding? */
+
+/* Encoder capability options: */
+#undef  C_ARITH_CODING_SUPPORTED    /* Arithmetic coding back end? */
+#undef  C_MULTISCAN_FILES_SUPPORTED /* Multiple-scan JPEG files?  (NYI) */
+#define ENTROPY_OPT_SUPPORTED	    /* Optimization of entropy coding parms? */
+#define INPUT_SMOOTHING_SUPPORTED   /* Input image smoothing option? */
+/* Decoder capability options: */
+#undef  D_ARITH_CODING_SUPPORTED    /* Arithmetic coding back end? */
+#define D_MULTISCAN_FILES_SUPPORTED /* Multiple-scan JPEG files? */
+#define BLOCK_SMOOTHING_SUPPORTED   /* Block smoothing during decoding? */
 #define QUANT_1PASS_SUPPORTED	/* 1-pass color quantization? */
 #define QUANT_2PASS_SUPPORTED	/* 2-pass color quantization? */
 /* these defines indicate which JPEG file formats are allowed */
@@ -279,5 +301,4 @@ typedef unsigned int JSAMPLE;
  */
 
 typedef int16 JCOEF;
-
 

@@ -157,7 +157,7 @@ JSAMPARRAY colormap;
   /* Allocate storage for RLE-style cmap, zero any extra entries */
   cmapsize = cinfo->color_out_comps * CMAPLENGTH * SIZEOF(rle_map);
   output_colormap = (rle_map *) (*cinfo->emethods->alloc_small) (cmapsize);
-  MEMZERO((VOIDP) output_colormap, cmapsize);
+  HDmemset(output_colormap, 0, cmapsize);
 
   /* Save away data in RLE format --- note 8-bit left shift! */
   /* Shifting would need adjustment for JSAMPLEs wider than 8 bits. */
@@ -191,7 +191,7 @@ decompress_info_ptr cinfo;
   long row;
 
   /* Initialize the header info */
-  MEMZERO((VOIDP) &header, SIZEOF(rle_hdr)); /* make sure all bits are 0 */
+  HDmemset(&header, 0, SIZEOF(rle_hdr)); /* make sure all bits are 0 */
   header.rle_file = cinfo->output_file;
   header.xmin     = 0;
   header.xmax     = cinfo->image_width  - 1;

@@ -18,8 +18,8 @@
 #ifdef INCLUDES_ARE_ANSI
 #include <stdlib.h>		/* to declare malloc(), free() */
 #else
-extern VOIDP malloc PROTO((size_t size));
-extern VOID free PROTO((VOIDP ptr));
+extern VOID * malloc PROTO((size_t size));
+extern VOID free PROTO((VOID *ptr));
 #endif
 
 #ifndef SEEK_SET		/* pre-ANSI systems may not define this; */
@@ -46,7 +46,7 @@ size_t sizeofobject;
 #endif
 {
   total_used += sizeofobject;
-  return (VOIDP) malloc(sizeofobject);
+  return (VOID *) malloc(sizeofobject);
 }
 
 GLOBAL VOID
@@ -200,7 +200,7 @@ external_methods_ptr emethods;
 
 GLOBAL VOID
 #ifdef PROTOTYPE
-jmem_term (void)
+jmem_term (VOID)
 #else
 jmem_term ()
 #endif

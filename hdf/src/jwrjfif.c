@@ -172,12 +172,12 @@ int index;
 
 LOCAL VOID
 #ifdef PROTOTYPE
-emit_dht (compress_info_ptr cinfo, int index, boolean is_ac)
+emit_dht (compress_info_ptr cinfo, int index, bool is_ac)
 #else
 emit_dht (cinfo, index, is_ac)
 compress_info_ptr cinfo;
 int index;
-boolean is_ac;
+bool is_ac;
 #endif
 /* Emit a DHT marker */
 {
@@ -364,10 +364,10 @@ compress_info_ptr cinfo;
   
   emit_2bytes(cinfo, 2 + 4 + 1 + 2 + 1 + 2 + 2 + 1 + 1); /* length */
 
-  emit_byte(cinfo, 'J');	/* Identifier */
-  emit_byte(cinfo, 'F');
-  emit_byte(cinfo, 'I');
-  emit_byte(cinfo, 'F');
+  emit_byte(cinfo, 0x4A);	/* Identifier: ASCII "JFIF" */
+  emit_byte(cinfo, 0x46);
+  emit_byte(cinfo, 0x49);
+  emit_byte(cinfo, 0x46);
   emit_byte(cinfo, 0);
   emit_byte(cinfo, 1);		/* Major version */
   emit_byte(cinfo, 1);		/* Minor version */
@@ -394,7 +394,7 @@ compress_info_ptr cinfo;
 {
   char qt_in_use[NUM_QUANT_TBLS];
   int i, prec;
-  boolean is_baseline;
+  bool is_baseline;
   
   emit_marker(cinfo, M_SOI);	/* first the SOI */
 
@@ -418,9 +418,6 @@ compress_info_ptr cinfo;
       prec += emit_dqt(cinfo, i);
   }
   /* now prec is nonzero iff there are any 16-bit quant tables. */
-
-  if (cinfo->restart_interval)
-    emit_dri(cinfo);
 
   /* Check for a non-baseline specification. */
   /* Note we assume that Huffman table numbers won't be changed later. */
@@ -478,6 +475,13 @@ compress_info_ptr cinfo;
       emit_dht(cinfo, cinfo->cur_comp_info[i]->ac_tbl_no, TRUE);
     }
   }
+
+  /* Emit DRI if required --- note that DRI value could change for each scan.
+   * If it doesn't, a tiny amount of space is wasted in multiple-scan files.
+   * We assume DRI will never be nonzero for one scan and zero for a later one.
+   */
+  if (cinfo->restart_interval)
+    emit_dri(cinfo);
 
   emit_sos(cinfo);
 }

@@ -24,8 +24,8 @@ decompress_info_ptr cinfo;
 {
   /* MCU disassembly */
   jseldmcu(cinfo);
-  /* Un-subsampling of pixels */
-  jselunsubsample(cinfo);
+  /* Upsampling of pixels */
+  jselupsample(cinfo);
 }
 
 
@@ -42,7 +42,7 @@ decompress_info_ptr cinfo;
   /* So is output file format selection (both are done by user interface). */
 
   /* Entropy decoding: either Huffman or arithmetic coding. */
-#ifdef ARITH_CODING_SUPPORTED
+#ifdef D_ARITH_CODING_SUPPORTED
   jseldarithmetic(cinfo);
 #else
   if (cinfo->arith_code) {
@@ -121,7 +121,7 @@ decompress_info_ptr cinfo;
 
   }
 
-  /* Compute logical subsampled dimensions of components */
+  /* Compute logical downsampled dimensions of components */
   for (ci = 0; ci < cinfo->num_components; ci++) {
     compptr = &cinfo->comp_info[ci];
     compptr->true_comp_width = (cinfo->image_width * compptr->h_samp_factor

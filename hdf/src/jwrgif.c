@@ -80,7 +80,7 @@ static code_int free_code;	/* first not-yet-used symbol code */
 
 static code_int FAR *hash_code;	/* => hash table of symbol codes */
 static code_int FAR *hash_prefix; /* => hash table of prefix symbols */
-static uint8 FAR *hash_suffix;  /* => hash table of suffix bytes */
+static uint8 FAR *hash_suffix;	/* => hash table of suffix bytes */
 
 
 /*
@@ -120,7 +120,7 @@ flush_packet ()
 
 /* Routine to convert variable-width codes into a byte stream */
 
-static int32 cur_accum;     /* holds bits not yet output */
+static int32 cur_accum;		/* holds bits not yet output */
 static int cur_bits;		/* # of bits in cur_accum */
 
 
@@ -161,7 +161,7 @@ code_int code;
 /* The LZW algorithm proper */
 
 static code_int waiting_code;	/* symbol not yet output; may be extendable */
-static boolean first_byte;	/* if TRUE, waiting_code is not valid */
+static bool first_byte;	/* if TRUE, waiting_code is not valid */
 
 
 LOCAL VOID
@@ -173,7 +173,7 @@ clear_hash ()
 /* Fill the hash table with empty entries */
 {
   /* It's sufficient to zero hash_code[] */
-  jzero_far((VOIDP) hash_code, HSIZE * SIZEOF(code_int));
+  jzero_far((VOID FAR *) hash_code, HSIZE * SIZEOF(code_int));
 }
 
 
@@ -365,7 +365,12 @@ JSAMPARRAY colormap;
    * Write the GIF header.
    * Note that we generate a plain GIF87 header for maximum compatibility.
    */
-  (VOID) JFWRITE(dcinfo->output_file, "GIF87a", 6);
+  putc('G', dcinfo->output_file);
+  putc('I', dcinfo->output_file);
+  putc('F', dcinfo->output_file);
+  putc('8', dcinfo->output_file);
+  putc('7', dcinfo->output_file);
+  putc('a', dcinfo->output_file);
   /* Write the Logical Screen Descriptor */
   put_word((uint16) dcinfo->image_width);
   put_word((uint16) dcinfo->image_height);
@@ -401,7 +406,7 @@ JSAMPARRAY colormap;
   }
   /* Write image separator and Image Descriptor */
   putc(',', dcinfo->output_file); /* separator */
-  put_word((uint16) 0);     /* left/top offset */
+  put_word((uint16) 0);		/* left/top offset */
   put_word((uint16) 0);
   put_word((uint16) dcinfo->image_width); /* image size */
   put_word((uint16) dcinfo->image_height);
@@ -437,7 +442,7 @@ decompress_info_ptr cinfo;
   hash_prefix = (code_int FAR *) (*cinfo->emethods->alloc_medium)
 				(HSIZE * SIZEOF(code_int));
   hash_suffix = (uint8 FAR *) (*cinfo->emethods->alloc_medium)
-                (HSIZE * SIZEOF(uint8));
+				(HSIZE * SIZEOF(uint8));
   /*
    * If we aren't quantizing, put_color_map won't be called,
    * so emit the header now.  This only happens with gray scale output.

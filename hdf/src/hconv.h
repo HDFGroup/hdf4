@@ -11,6 +11,60 @@
 #ifndef _HCONV_H
 #define _HCONV_H
 
+/* #define TEST */
+#ifdef TEST
+#define TEST3_sb4b
+
+#define TEST2_ui2i
+#define TEST2_ui2s
+#define TEST1_uo2i
+#define TEST2_ui4i
+#define TEST2_ui4s
+#define TEST1_uo4i
+#define TEST1_ui4f
+#define TEST1_uo4f
+#define TEST1_ui8f
+#define TEST1_uo8f
+
+#define TEST2_lui2i
+#define TEST2_lui2s
+#define TEST1_luo2i
+#define TEST2_lui4i
+#define TEST2_lui4s
+#define TEST2_luo4i
+#define TEST1_lui4f
+#define TEST1_luo4f
+#define TEST1_lui8f
+#define TEST1_luo8f
+#endif
+
+/* #define DUFF */
+#ifdef DUFF
+#define DUFF_sb4b
+
+#define DUFF_ui2i
+#define DUFF_ui2s
+#define DUFF_uo2i
+#define DUFF_ui4i
+#define DUFF_ui4s
+#define DUFF_uo4i
+#define DUFF_ui4f
+#define DUFF_uo4f
+#define DUFF_ui8f
+#define DUFF_uo8f
+
+#define DUFF_lui2i
+#define DUFF_lui2s
+#define DUFF_luo2i
+#define DUFF_lui4i
+#define DUFF_lui4s
+#define DUFF_luo4i
+#define DUFF_lui4f
+#define DUFF_luo4f
+#define DUFF_lui8f
+#define DUFF_luo8f
+#endif
+
 /*****************************************************************************/
 /* CONSTANT DEFINITIONS                                                      */
 /*****************************************************************************/

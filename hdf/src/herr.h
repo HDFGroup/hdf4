@@ -2,9 +2,18 @@
 $Header$
 
 $Log$
-Revision 1.3  1993/02/18 04:23:21  georgev
-Added new HCLOSE_RETURN_ERROR macro.
+Revision 1.4  1993/03/29 16:47:57  koziol
+Updated JPEG code to new JPEG 4 code.
+Changed VSets to use Threaded-Balanced-Binary Tree for internal
+	(in memory) representation.
+Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+	to use 32-bit integer keys instead of pointers.
+Backed out speedups for Cray, until I get the time to fix them.
+Fixed a bunch of bugs in the little-endian support in DFSD.
 
+ * Revision 1.3  1993/02/18  04:23:21  georgev
+ * Added new HCLOSE_RETURN_ERROR macro.
+ *
  * Revision 1.2  1993/01/19  05:55:44  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -74,9 +83,7 @@ extern int32 error_top;
 #define DFE_CANTCLOSE   -9  /* fclose wouldn't work! */
 #define DFE_DFNULL      -10 /* DF is a null pointer */
 #define DFE_ILLTYPE     -11 /* DF has an illegal type: internal error */
-
 #define DFE_UNSUPPORTED -12 /* Feature not currently supported */
-
 #define DFE_BADDDLIST   -13 /* The DD list is non-existent: internal error */
 #define DFE_NOTDFFILE   -14 /* This is not a DF file and it is not 0 length */
 #define DFE_SEEDTWICE   -15 /* The DD list already seeded: internal error */
@@ -127,6 +134,10 @@ extern int32 error_top;
 #define DFE_BADCONV     -60 /* Don't know how to convert data type */
 #define DFE_GENAPP      -61 /* Generic application-level error */
 #define DFE_CANTFLUSH   -62 /* Can't flush DD back to file */
+#define DFE_BADTYPE     -63 /* Incompatible types specified */
+#define DFE_SYMSIZE     -64 /* Too many symbols in users table */
+#define DFE_BADATTACH   -65 /* Cannot write to a previously attached VData */
+#define DFE_CANTDETACH  -66 /* Cannot detach a VData with access 'w' */
 
 #ifdef _H_ERR_MASTER_
 
@@ -153,9 +164,7 @@ PRIVATE struct error_messages_t error_messages[] =
 { DFE_CANTCLOSE,   "Unable to close file"},
 { DFE_DFNULL,      "DF has a null pointer"},
 { DFE_ILLTYPE,     "Internal error: DF has an illegal type"},
-
 { DFE_UNSUPPORTED, "Feature not currently supported"},
-
 { DFE_BADDDLIST,   "Internal error: The DD list is non-existent"},
 { DFE_NOTDFFILE,   "This is not an HDF file"},
 { DFE_SEEDTWICE,   "Internal error: The DD list is already seeded"},
@@ -204,7 +213,11 @@ PRIVATE struct error_messages_t error_messages[] =
 { DFE_OPENAID,     "There are still active AIDs"},
 { DFE_BADCONV,     "Don't know how to convert data type"},
 { DFE_GENAPP,      "Generic application-level error"},
-{ DFE_CANTFLUSH,   "Cannot flush the changed DD back to the file"}
+{ DFE_CANTFLUSH,   "Cannot flush the changed DD back to the file"},
+{ DFE_BADTYPE,     "Incompatible type specified"},
+{ DFE_SYMSIZE,     "Too many symbols in table"},
+{ DFE_BADATTACH,   "Cannot write to a previously attached VData"},
+{ DFE_CANTDETACH,  "Cannot detach a VData with access 'w'"}
 };
 #endif /* _H_ERR_MASTER_ */
 

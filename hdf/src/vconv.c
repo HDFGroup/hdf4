@@ -5,10 +5,19 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/01/19 05:56:10  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.4  1993/03/29 16:50:25  koziol
+Updated JPEG code to new JPEG 4 code.
+Changed VSets to use Threaded-Balanced-Binary Tree for internal
+	(in memory) representation.
+Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+	to use 32-bit integer keys instead of pointers.
+Backed out speedups for Cray, until I get the time to fix them.
+Fixed a bunch of bugs in the little-endian support in DFSD.
 
+ * Revision 1.3  1993/01/19  05:56:10  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.2  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -125,11 +134,12 @@ HFILEID f;
 
 	VGROUP	* vg = &tempvgroup;
 	VDATA		*vs = &tempvdata;
-	BYTE		buf[5000]; /* to store an old vdata or vgroup descriptor  */
+    uint8        buf[5000]; /* to store an old vdata or vgroup descriptor  */
 	int32 	bsize, aid;
     int32   stat;
     uint16 u;
 	uint16	tag, ref;
+    char * FUNC = "vimakecompat";
 
 	/* =============================================  */
 	/* --- read all vgs and convert each --- */
@@ -139,10 +149,8 @@ HFILEID f;
         HQuerytagref (aid, &tag, &ref);
         HQuerylength (aid, &bsize);
        stat = Hgetelement (f, (uint16)OLD_VGDESCTAG, ref, (uint8*)buf);
-		if (stat == FAIL) {
-			sprintf(sjs,"getvgroup_old. getelement err. \n"); zj;
-			return (0);
-			}
+        if (stat == FAIL)
+            HRETURN_ERROR(DFE_READERROR,0);
 
 		oldunpackvg (vg, buf, &bsize);
 		/* add new items */
@@ -153,18 +161,23 @@ HFILEID f;
 			vg->more = 0;
 		/* inside each vgroup, change the old tags to new */
             for(u=0;u<vg->nvelt;u++)
-                if (vg->tag[u] == OLD_VGDESCTAG) vg->tag[u] = NEW_VGDESCTAG;
-                else if (vg->tag[u] == OLD_VSDESCTAG) vg->tag[u] = NEW_VSDESCTAG;
-				else { sprintf(sjs,"vimakecompat: unknown tag %d] in vgroup!\n",
-                                vg->tag[u]); zj;
-						}
+                if (vg->tag[u] == OLD_VGDESCTAG)
+                    vg->tag[u] = NEW_VGDESCTAG;
+                else if (vg->tag[u] == OLD_VSDESCTAG)
+                    vg->tag[u] = NEW_VSDESCTAG;
+                else {  /* BAD */
+#ifdef OLD_WAY
+                    sprintf(sjs,"vimakecompat: unknown tag %d] in vgroup!\n",
+                        vg->tag[u]); zj;
+#else
+                    HERROR(DFE_NOTINSET);
+#endif
+                }
 		vpackvg (vg, buf, &bsize);
 
         stat = Hputelement (f, VGDESCTAG, ref, (uint8*)buf, bsize);
-		if (stat == FAIL) {
-			sprintf(sjs,"put vgroup desc error.\n"); zj;
-			return (0);
-			}
+        if (stat == FAIL)
+            HRETURN_ERROR(DFE_WRITEERROR,0);
 
         stat = Hnextread (aid, (uint16)OLD_VGDESCTAG, DFREF_WILDCARD, DF_CURRENT);
 		} /* while */
@@ -180,10 +193,8 @@ HFILEID f;
         HQuerytagref (aid, &tag, &ref);
         HQuerylength (aid, &bsize);
         stat = Hgetelement (f, tag, ref, (uint8*)buf);
-		if (stat == FAIL) {
-			sprintf(sjs,"getvdata_old. getelement err. \n"); zj;
-			return (0);
-			}
+        if (stat == FAIL)
+            HRETURN_ERROR(DFE_READERROR,0);
 
 		oldunpackvs (vs, buf, &bsize);
 
@@ -196,17 +207,13 @@ HFILEID f;
 		vpackvs (vs, buf, &bsize);
 
       stat = Hputelement (f, VSDESCTAG, ref, (uint8*)buf, bsize);
-		if (stat == FAIL) {
-			sprintf(sjs ,"put vdata desc error.\n"); zj;
-			return (0);
-			}
+        if (stat == FAIL)
+            HRETURN_ERROR(DFE_WRITEERROR,0);
 
 		/* duplicate a tag to point to vdata data */
             stat = Hdupdd (f, NEW_VSDATATAG, ref, (uint16)OLD_VSDATATAG, ref);
-			 if (stat == FAIL) {
-				 	sprintf(sjs,"Hdupdd - cannot duplicate vdata.\n"); zj;
-					return (0);
-					}
+             if (stat == FAIL)
+                HRETURN_ERROR(DFE_DUPDD,0);
         stat = Hnextread (aid, (uint16)OLD_VSDESCTAG, DFREF_WILDCARD, DF_CURRENT);
 		} /* while */
 
@@ -241,12 +248,11 @@ char * fs;
 
 	HFILEID	f;
 	int32 	stat;
+    char * FUNC = "vcheckcompat";
 
     f = Hopen (fs,DFACC_ALL,0);
-	if (f == FAIL) {
-		sprintf(sjs,"vcheckcompat: cannot open %s\n",fs); zj;
-		return (-1);
-		}	 	
+    if (f == FAIL)
+        HRETURN_ERROR(DFE_BADOPEN,FAIL);
 	stat = vicheckcompat(f); 
     Hclose (f);
 
@@ -268,44 +274,35 @@ char * fs;
 #ifdef PROTOTYPE
 int32 vmakecompat(char * fs) 
 #else
-
-int32 vmakecompat(fs) 
-	char * fs; 
-
+int32 vmakecompat(fs)
+char * fs;
 #endif
-
 {
 	HFILEID 	f;
 	int32 	stat;
+    char * FUNC = "vmakecompat";
 
     f = Hopen (fs,DFACC_ALL,0);
-   if (f == FAIL) { 
-		sprintf(sjs,"vmakecompat: cannot open %s\n",fs); zj;
-		return (0);
-		}	 	
+    if (f == FAIL)
+        HRETURN_ERROR(DFE_BADOPEN,FAIL);
 	stat = vimakecompat(f);
     Hclose (f);
 	return (stat);
-
 } /* vmakecompat */
 
 /* ==================================================================== */
 
 #ifdef PROTOTYPE
-void oldunpackvg (VGROUP *vg,BYTE  buf[], int32 *size)   
+void oldunpackvg (VGROUP *vg,uint8  buf[], int32 *size)
 #else
-
-void oldunpackvg (vg, buf, size)   
-
-	VGROUP*    	vg;		/* vgroup to be loaded with file data */
-	BYTE			buf[]; 	/* must contain a VGDESCTAG data object from file */
-	int32*     	size;  	/* ignored, but included to look like packvg() */
-
+void oldunpackvg (vg, buf, size)
+VGROUP*     vg;     /* vgroup to be loaded with file data */
+uint8            buf[];  /* must contain a VGDESCTAG data object from file */
+int32*      size;   /* ignored, but included to look like packvg() */
 #endif
-
 {
 
-	BYTE			*b, *bb;
+    uint8            *bb;
     uint32       i;
 	char * FUNC = "oldunpackvg";
 
@@ -314,50 +311,34 @@ void oldunpackvg (vg, buf, size)
 	bb = &buf[0];
 
 	/* retrieve nvelt */
-	b = bb;
-	INT16DECODE(b,vg->nvelt);
-	bb+=INT16SIZE;
+    INT16DECODE(bb,vg->nvelt);
 
 	/* retrieve the tags */
-	for (i=0;i<vg->nvelt;i++) {
-		b= bb;
-		INT16DECODE(b,vg->tag[i]);
-		bb +=INT16SIZE;
-	}
+    for (i=0;i<vg->nvelt;i++)
+        INT16DECODE(bb,vg->tag[i]);
 
 	/* retrieve the refs */
-	for (i=0;i<vg->nvelt;i++) {
-		b= bb;
-		INT16DECODE(b,vg->ref[i]);
-		bb +=INT16SIZE;
-	}
+    for (i=0;i<vg->nvelt;i++)
+        INT16DECODE(bb,vg->ref[i]);
 
 	/* retrieve vgname */
     HDstrcpy(vg->vgname, (char*) bb);
     bb += ( HDstrlen(vg->vgname)+1 );
 
-	if (vjv) {
-		sprintf(sjs,"unpackvg: vgname is [%s]\n",vg->vgname);
-		zj;
-	}
-
-} /* unpackvg */
+} /* oldunpackvg */
 
 /* ================================================================= */
 
 #ifdef PROTOTYPE
-void oldunpackvs (VDATA *vs, BYTE buf[], int32 *size)       
+void oldunpackvs (VDATA *vs, uint8 buf[], int32 *size)
 #else
 void oldunpackvs (vs, buf, size)       
-
-	VDATA 	*vs;
-	int32   	*size;	/* UNUSED, but retained for compatibility with packvs */
-	BYTE		buf[];
-
+VDATA   *vs;
+int32       *size;  /* UNUSED, but retained for compatibility with packvs */
+uint8        buf[];
 #endif
-
 {
-	BYTE		*b, *bb;
+    uint8   *bb;
 	int16    i;
 	char * FUNC = "oldunpackvs";
 
@@ -365,45 +346,28 @@ void oldunpackvs (vs, buf, size)
 
 	bb = &buf[0];
 
-	b = bb;
-	INT16DECODE(b,vs->interlace);
-	bb += INT16SIZE;
+    INT16DECODE(bb,vs->interlace);
 
-	b = bb;
-	INT32DECODE(b,vs->nvertices);
-	bb += INT32SIZE;
+    INT32DECODE(bb,vs->nvertices);
 
-	b = bb;
-	INT16DECODE(b,vs->wlist.ivsize);
-	bb += INT16SIZE;
+    INT16DECODE(bb,vs->wlist.ivsize);
 
-	b = bb;
-	INT16DECODE(b,vs->wlist.n);
-	bb += INT16SIZE;
+    INT16DECODE(bb,vs->wlist.n);
 
-	for (i=0;i<vs->wlist.n;i++)  { /* retrieve the type */
-		b = bb;
-		INT16DECODE(b,vs->wlist.type[i]);
-		bb += INT16SIZE;
-	}
+    for (i=0;i<vs->wlist.n;i++)     /* retrieve the type */
+        INT16DECODE(bb,vs->wlist.type[i]);
 
-	for (i=0;i<vs->wlist.n;i++)  { /* retrieve the isize */
-		b = bb;
-		INT16DECODE(b,vs->wlist.isize[i]);
-		bb += INT16SIZE;
-	}
-	for (i=0;i<vs->wlist.n;i++)  { /* retrieve the off */
-		b = bb;
-		INT16DECODE(b,vs->wlist.off[i]);
-		bb += INT16SIZE;
-	}
-	for (i=0;i<vs->wlist.n;i++)  { /* retrieve the order */
-		b = bb;
-		INT16DECODE(b,vs->wlist.order[i]);
-		bb += INT16SIZE;
-	}
+    for (i=0;i<vs->wlist.n;i++)    /* retrieve the isize */
+        INT16DECODE(bb,vs->wlist.isize[i]);
+
+    for (i=0;i<vs->wlist.n;i++)    /* retrieve the off */
+        INT16DECODE(bb,vs->wlist.off[i]);
+
+    for (i=0;i<vs->wlist.n;i++)    /* retrieve the order */
+        INT16DECODE(bb,vs->wlist.order[i]);
+
 	for (i=0;i<vs->wlist.n;i++) {
-        HDstrcpy(vs->wlist.name[i],  (char*) bb);
+        HDstrcpy(vs->wlist.name[i],(char*)bb);
         bb += ( HDstrlen(vs->wlist.name[i]) + 1 );
 	}
 
@@ -411,10 +375,8 @@ void oldunpackvs (vs, buf, size)
     bb += ( HDstrlen(vs->vsname) + 1);
 
 	/* **EXTRA**  fill in the machine-dependent size fields */
-	for (i=0;i<vs->wlist.n;i++) {
+    for (i=0;i<vs->wlist.n;i++)
 		vs->wlist.esize[i] = vs->wlist.order[i] * SIZEOF(vs->wlist.type[i]);
-	}
-
-} /* unpackvs */
+} /* oldunpackvs */
 
 /* ------------------------------------------------------------------ */

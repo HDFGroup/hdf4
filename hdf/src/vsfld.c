@@ -5,10 +5,19 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1993/01/19 05:56:36  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.5  1993/03/29 16:50:54  koziol
+Updated JPEG code to new JPEG 4 code.
+Changed VSets to use Threaded-Balanced-Binary Tree for internal
+	(in memory) representation.
+Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+	to use 32-bit integer keys instead of pointers.
+Backed out speedups for Cray, until I get the time to fix them.
+Fixed a bunch of bugs in the little-endian support in DFSD.
 
+ * Revision 1.4  1993/01/19  05:56:36  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.3  1992/11/24  16:49:49  chouck
  * Fixed a return value in VSsetfields()
  *
@@ -93,7 +102,7 @@ PRIVATE SYMDEF rstab[] =
 int16 SIZEOF (int16 x)
 #else
 int16 SIZEOF (x)
-	int16 x;
+int16 x;
 #endif
 {
   if (x < 0 || x > LOCALSIZETAB_SIZE-1) {
@@ -112,7 +121,7 @@ int16 SIZEOF (x)
 int16 HDFSIZEOF (int16 x)
 #else
 int16 HDFSIZEOF (x)
-     int16 x; 
+int16 x;
 #endif
 {
   
@@ -132,132 +141,142 @@ int16 HDFSIZEOF (x)
 */
 
 #ifdef PROTOTYPE
-PUBLIC int32 VSsetfields (VDATA *vs, char *fields)  
+PUBLIC int32 VSsetfields (int32 vkey, char *fields)
 #else
-PUBLIC int32 VSsetfields (vs,fields)      
-     VDATA   *vs;
-     char    *fields;
+PUBLIC int32 VSsetfields (vkey,fields)
+int32 vkey;
+char    *fields;
 #endif
 {
-  char  **av;
-  int32   ac, found;
-  register intn j, i;
-  int16   order;
-  VREADLIST     rlist;
-  VWRITELIST  wlist;
-  char  * FUNC = "VSsetfields";
+    char  **av;
+    int32   ac, found;
+    register intn j, i;
+    intn  order;
+    VREADLIST     rlist;
+    VWRITELIST  wlist;
+    vsinstance_t    *w;
+    VDATA           *vs;
+    char  * FUNC = "VSsetfields";
+
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
   
-  if (vs==NULL) return(FAIL);
-  if (scanattrs(fields,&ac,&av) < 0) {
-    sprintf(sjs,"@bad fields string [%s]\n",fields);
-    zj;
-    return(FAIL); /* bad fields string */
-  }
-  if (ac==0) return(FAIL);
+  /* locate vs's index in vstab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
+
+    vs=w->vs;
+    if (vs == NULL) {
+          HERROR(DFE_ARGS);
+          HEprint(stderr,0);
+          return(FAIL);
+    }
+  
+    if (scanattrs(fields,&ac,&av) < 0)
+        HRETURN_ERROR(DFE_BADFIELDS,FAIL);
+
+    if (ac==0)
+        return(FAIL);
   
   /* 
    * write to an empty vdata : set the write list but do not set the 
    *   read list cuz there is nothing there to read yet...
    */
-  if(vs->access == 'w' && vs->nvertices == 0) {
-    wlist        = vs->wlist;
-    wlist.ivsize = 0;
-    wlist.n      = 0;
-    for(i = 0; i < ac; i++) {
+    if(vs->access == 'w' && vs->nvertices == 0) {
+        wlist        = vs->wlist;
+        wlist.ivsize = 0;
+        wlist.n      = 0;
+        for(i = 0; i < ac; i++) {
       /* --- first look in the reserved symbol table --- */
-      for(found = 0, j = 0; j < NRESERVED; j++)
-        if (!HDstrcmp(av[i], rstab[j].name)) {
-          found = 1;
+            for(found = 0, j = 0; j < NRESERVED; j++)
+                if (!HDstrcmp(av[i], rstab[j].name)) {
+                    found = 1;
           
-          HDstrcpy( wlist.name[wlist.n],rstab[j].name);
-          order = rstab[j].order;
-          wlist.type[wlist.n]  =  rstab[j].type;
-          wlist.order[wlist.n] =  order;
-          wlist.esize[wlist.n] =  order * DFKNTsize(rstab[j].type | DFNT_NATIVE);
-          wlist.isize[wlist.n] =  order * rstab[j].isize;
-          wlist.ivsize  += wlist.isize[wlist.n];
-          wlist.n++;
-          break;
-        }
+                    HDstrcpy( wlist.name[wlist.n],rstab[j].name);
+                    order = rstab[j].order;
+                    wlist.type[wlist.n]  =  rstab[j].type;
+                    wlist.order[wlist.n] =  order;
+                    wlist.esize[wlist.n] =  order * DFKNTsize(rstab[j].type | DFNT_NATIVE);
+                    wlist.isize[wlist.n] =  order * rstab[j].isize;
+                    wlist.ivsize  += wlist.isize[wlist.n];
+                    wlist.n++;
+                    break;
+                }
       
       /* --- now look in the user's symbol table --- */
-      if(!found) {
-        for(found = 0,j = 0; j < vs->nusym; j++)
-          if (!HDstrcmp(av[i], vs->usym[j].name)) {
-            found = 1;
+            if(!found) {
+                for(found = 0,j = 0; j < vs->nusym; j++)
+                    if (!HDstrcmp(av[i], vs->usym[j].name)) {
+                        found = 1;
             
-            HDstrcpy (wlist.name[wlist.n], vs->usym[j].name);
-            order = vs->usym[j].order;
-            wlist.type[wlist.n]  = vs->usym[j].type;
-            wlist.order[wlist.n] = order;
-            wlist.esize[wlist.n] = order * DFKNTsize(vs->usym[j].type | DFNT_NATIVE);
-            wlist.isize[wlist.n] = order * vs->usym[j].isize;
-            wlist.ivsize+= wlist.isize[wlist.n];
-            wlist.n++;
-            break;
-          }
-      }
-      if (!found) {    /* field is not a defined field - error  */
-        sprintf(sjs,"@Vsetfield:field [%s] unknown\n",av[i]); zj;
-        return(FAIL);
-      }
-    }
+                        HDstrcpy (wlist.name[wlist.n], vs->usym[j].name);
+                        order = vs->usym[j].order;
+                        wlist.type[wlist.n]  = vs->usym[j].type;
+                        wlist.order[wlist.n] = order;
+                        wlist.esize[wlist.n] = order * DFKNTsize(vs->usym[j].type | DFNT_NATIVE);
+                        wlist.isize[wlist.n] = order * vs->usym[j].isize;
+                        wlist.ivsize+= wlist.isize[wlist.n];
+                        wlist.n++;
+                        break;
+                    }
+            }
+            if (!found)      /* field is not a defined field - error  */
+                HRETURN_ERROR(DFE_BADFIELDS,FAIL);
+        }
     
     /* *********************************************************** */
     /* ensure fields with order > 1 are alone  */
-    for (j=0,i=0;i<wlist.n;i++)
-      if (wlist.order[i] >1 && wlist.n != 1) {
-        sprintf(sjs,"@Vsetf: [%s] in [%s] has order %d. error.\n",
-                wlist.name[i], fields, wlist.order[i]); zj;
-        return(FAIL);
-      }
+        for (j=0,i=0;i<wlist.n;i++)
+            if (wlist.order[i] >1 && wlist.n != 1)
+                HRETURN_ERROR(DFE_BADORDER,FAIL);
     /* *********************************************************** */
     
     /* compute and save the fields' offsets */
-    for (j=0,i=0;i<wlist.n;i++) {
-      wlist.off[i] =j;
-      j += wlist.isize[i];
-    }
+        for (j=0,i=0; i<wlist.n; i++) {
+            wlist.off[i] =j;
+            j += wlist.isize[i];
+        }
     
     /* copy from wlist (temp) into vdata */
-    HDmemcpy((VOIDP) &(vs->wlist), (VOIDP) &(wlist), sizeof(wlist));
+        HDmemcpy((VOIDP) &(vs->wlist), (VOIDP) &(wlist), sizeof(wlist));
     
-    return(SUCCEED); /* ok */
-    
+        return(SUCCEED); /* ok */
   } /* writing to empty vdata */
 
   /*
    *   No matter the access mode, if there are elements in the VData 
    *      we should set the read list
    */
-  if(vs->nvertices > 0) {
-    rlist   = vs->rlist;
-    rlist.n = 0;
-    for (i=0;i<ac;i++) {
-      for (found=0, j=0; j<vs->wlist.n; j++)
-        if (!HDstrcmp(av[i], vs->wlist.name[j]) ) { /*  see if field exist */
-          found = 1;
+    if(vs->nvertices > 0) {
+        rlist   = vs->rlist;
+        rlist.n = 0;
+        for (i=0;i<ac;i++) {
+            for (found=0, j=0; j<vs->wlist.n; j++)
+                if (!HDstrcmp(av[i], vs->wlist.name[j]) ) { /*  see if field exist */
+                    found = 1;
           
-          rlist.item[rlist.n] = j; /* save as index into wlist->name */
-          rlist.n++;
-          break;
+                    rlist.item[rlist.n] = j; /* save as index into wlist->name */
+                    rlist.n++;
+                    break;
+                }
+            if (!found)       /* field does not exist - error */
+                HRETURN_ERROR(DFE_BADFIELDS,FAIL);
         }
-      if (!found)  {    /* field does not exist - error */
-        sprintf(sjs,"@Vsetfield: field [%s] does not exist in vs\n",
-                av[i]); zj;
-        return(FAIL);
-      }
-    }
     
     /* copy from rlist (temp) into vdata */
-    HDmemcpy((VOIDP) &(vs->rlist), (VOIDP) &(rlist), sizeof(rlist));
+        HDmemcpy((VOIDP) &(vs->rlist), (VOIDP) &(rlist), sizeof(rlist));
     
-    return(SUCCEED);
+        return(SUCCEED);
     
   } /* setting read list */
 
   return (FAIL);
-
 } /* VSsetfields */
 
 /* ------------------------------------------------------------------ */
@@ -268,86 +287,89 @@ PUBLIC int32 VSsetfields (vs,fields)
 */
 
 #ifdef PROTOTYPE
-PUBLIC int32 VSfdefine (VDATA *vs, char *field, int32 localtype, int32 order)   
+PUBLIC int32 VSfdefine (int32 vkey, char *field, int32 localtype, int32 order)
 #else
-PUBLIC int32 VSfdefine (vs, field, localtype, order)   
-     VDATA   *vs;
-     char    *field;
-     int32   localtype, order;
+PUBLIC int32 VSfdefine (vkey, field, localtype, order)
+int32 vkey;
+char    *field;
+int32   localtype, order;
 #endif
 {
-  char 	**av;
-  int32 ac;
-  char 	*ss;
-  int16 usymid, replacesym;
-  register intn j;
-  char  * FUNC = "VSfdefine";
+    char  **av;
+    int32 ac;
+    char  *ss;
+    int16 usymid, replacesym;
+    register intn j;
+    vsinstance_t    *w;
+    VDATA           *vs;
+    char  * FUNC = "VSfdefine";
+
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
   
-  if ((vs == NULL) || (scanattrs(field,&ac,&av) < 0) || (ac != 1)) {
-    HRETURN_ERROR(DFE_ARGS, FAIL);
-  }
+  /* locate vs's index in vstab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
+
+    vs=w->vs;
+    if ((vs == NULL) || (scanattrs(field,&ac,&av) < 0) || (ac != 1))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
   
-  if (order <1 || order > 1000) {
-    sprintf(sjs,"@VSfdefine: error order %ld\n",order);
-    zj;
-    return(FAIL);
-  }
+    if (order <1 || order > 1000)
+        HRETURN_ERROR(DFE_BADORDER,FAIL);
   
   /* 
    ** check for any duplicates 
    */
   /* --- first look in the reserved symbol table --- */
-  for (j=0;j<NRESERVED;j++)
-    if (!HDstrcmp(av[0], rstab[j].name)) {
-      if (localtype != rstab[j].type && order != rstab[j].order) {
-        sprintf(sjs,"@VSfdefine warning: predefined field [%s] redefined.\n", av[0]); zj;
-        break;
-      }
-    }
+    for (j=0;j<NRESERVED;j++)
+        if (!HDstrcmp(av[0], rstab[j].name)) {
+            if (localtype != rstab[j].type && order != rstab[j].order)
+                break;
+        }
 
   /* --- then look in the user's symbol table --- */
-  for (replacesym = 0,j = 0; j < vs->nusym; j++)
-    if (!HDstrcmp(av[0], vs->usym[j].name))  {
-      if (localtype != rstab[j].type && order != rstab[j].order) {
-        sprintf(sjs,"@VSfdefine warning: user field [%s] redefined.\n",av[0]); zj; 
-        replacesym = 1;
-        break;
-      }
-    }
+    for (replacesym = 0,j = 0; j < vs->nusym; j++)
+        if (!HDstrcmp(av[0], vs->usym[j].name))  {
+            if (localtype != rstab[j].type && order != rstab[j].order) {
+                replacesym = 1;
+                break;
+            }
+        }
   
-  if (replacesym)  
-    usymid = j; /* new definition will replace old at this index */
-  else 
-    usymid = vs->nusym;
+    if (replacesym)
+        usymid = j; /* new definition will replace old at this index */
+    else
+        usymid = vs->nusym;
   
-  if ((vs->usym[usymid].isize = DFKNTsize( (int32) localtype)) == FAIL) {
-    sprintf(sjs,"@Vfdefine: bad type (=%ld) for [%s]\n", localtype, av[0]); zj;
-    return(FAIL);
-  }
+    if ((vs->usym[usymid].isize = DFKNTsize( (int32) localtype)) == FAIL)
+        HRETURN_ERROR(DFE_BADTYPE,FAIL);
   
-  j  = HDstrlen(av[0]) + 1;
+    j  = HDstrlen(av[0]) + 1;
   
-  if( (ss = (char*) HDgetspace (j))==NULL)
-    HRETURN_ERROR(DFE_NOSPACE, FAIL);
+    if( (ss = (char*) HDgetspace (j))==NULL)
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
   
-  HDstrcpy(ss, av[0]);
-  vs->usym[usymid].name  = ss;
-  vs->usym[usymid].type  = (int16)localtype;
-  vs->usym[usymid].order = (int16)order;
+    HDstrcpy(ss, av[0]);
+    vs->usym[usymid].name  = ss;
+    vs->usym[usymid].type  = (int16)localtype;
+    vs->usym[usymid].order = (int16)order;
   
   /* prevent user-symbol table overflow */
-  if (vs->nusym >= USYMMAX) {
-    sprintf(sjs,"@VSFDEFINE: %d too many symbols\n",vs->nusym); zj;
-    for(j = 0; j < vs->nusym; j++)
-      { sprintf(sjs,"@ sym: %d [%s]\n",j,vs->usym[j].name); zj; }
-    return(FAIL);
-  }
+    if (vs->nusym >= USYMMAX)
+        HRETURN_ERROR(DFE_SYMSIZE,FAIL);
   
   /* increment vs->nusym only if no user field has been redefined */
-  if (!replacesym) vs->nusym++;
+    if (!replacesym)
+        vs->nusym++;
   
-  return(SUCCEED); 
-  
+    return(SUCCEED);
 } /* VSfdefine */
 
 /* ------------------------------------------------------------------ */

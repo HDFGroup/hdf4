@@ -225,7 +225,7 @@ compress_info_ptr cinfo;
   if ( (cur_bit+code_size) > last_bit) {
     /* Time to reload the buffer */
     if (out_of_blocks) {
-      TRACEMS(cinfo->emethods, 1, "Ran out of GIF bits");
+      WARNMS(cinfo->emethods, "Ran out of GIF bits");
       return end_code;		/* fake something useful */
     }
     /* preserve last two bytes of what we have -- assume code_size <= 16 */
@@ -234,7 +234,7 @@ compress_info_ptr cinfo;
     /* Load more bytes; set flag if we reach the terminator block */
     if ((count = GetDataBlock(cinfo, &code_buf[2])) == 0) {
       out_of_blocks = TRUE;
-      TRACEMS(cinfo->emethods, 1, "Ran out of GIF bits");
+      WARNMS(cinfo->emethods, "Ran out of GIF bits");
       return end_code;		/* fake something useful */
     }
     /* Reset counters */
@@ -283,44 +283,58 @@ compress_info_ptr cinfo;
   int incode;			/* saves actual input code */
 
   /* First time, just eat the expected Clear code(s) and return next code, */
-  /* which is assumed to be a raw byte. */
+  /* which is expected to be a raw byte. */
   if (first_time) {
     first_time = FALSE;
-    do {
-      code = GetCode(cinfo);
-    } while (code == clear_code);
-    firstcode = oldcode = code;	/* make firstcode, oldcode valid! */
-    return code;
+    code = clear_code;		/* enables sharing code with Clear case */
+  } else {
+
+    /* If any codes are stacked from a previously read symbol, return them */
+    if (sp > symbol_stack)
+      return (int) *(--sp);
+
+    /* Time to read a new symbol */
+    code = GetCode(cinfo);
+
   }
 
-  /* If any codes are stacked from a previously read symbol, return them */
-  if (sp > symbol_stack)
-    return (int) *(--sp);
-
-  code = GetCode(cinfo);
-
   if (code == clear_code) {
-    /* Reinit static state, swallow any extra Clear codes, and return */
+    /* Reinit static state, swallow any extra Clear codes, and */
+    /* return next code, which is expected to be a raw byte. */
     ReInitLZW();
     do {
       code = GetCode(cinfo);
     } while (code == clear_code);
-    firstcode = oldcode = code; /* gotta reinit these too */
+    if (code > clear_code) {	/* make sure it is a raw byte */
+      WARNMS(cinfo->emethods, "Corrupt data in GIF file");
+      code = 0;			/* use something valid */
+    }
+    firstcode = oldcode = code;	/* make firstcode, oldcode valid! */
     return code;
   }
 
   if (code == end_code) {
     /* Skip the rest of the image, unless GetCode already read terminator */
-    if (! out_of_blocks)
+    if (! out_of_blocks) {
       SkipDataBlocks(cinfo);
-    return -1;
+      out_of_blocks = TRUE;
+    }
+    /* Complain that there's not enough data */
+    WARNMS(cinfo->emethods, "Premature end of GIF image");
+    /* Pad data with 0's */
+    return 0;			/* fake something usable */
   }
 
-  /* Normal raw byte or LZW symbol */
+  /* Got normal raw byte or LZW symbol */
   incode = code;		/* save for a moment */
   
   if (code >= max_code) {	/* special case for not-yet-defined symbol */
-    *sp++ = (uint8) firstcode;  /* it will be defined as oldcode/firstcode */
+    /* code == max_code is OK; anything bigger is bad data */
+    if (code > max_code) {
+      WARNMS(cinfo->emethods, "Corrupt data in GIF file");
+      incode = 0;		/* prevent creation of loops in symbol table */
+    }
+    *sp++ = (uint8) firstcode;	/* it will be defined as oldcode/firstcode */
     code = oldcode;
   }
 
@@ -401,11 +415,11 @@ METHODDEF VOID
 input_init (compress_info_ptr cinfo)
 #else
 input_init (cinfo)
-compress_info_ptr cinfo;
+compress_info_ptr cinfo;)
 #endif
 {
   char hdrbuf[10];		/* workspace for reading control blocks */
-  uint16 width, height;     /* image dimensions */
+  uint16 width, height;		/* image dimensions */
   int colormaplen, aspectRatio;
   int c;
 
@@ -416,14 +430,14 @@ compress_info_ptr cinfo;
   /* Read and verify GIF Header */
   if (! ReadOK(cinfo->input_file, hdrbuf, 6))
     ERREXIT(cinfo->emethods, "Not a GIF file");
-  if (HDstrncmp(hdrbuf, "GIF", 3) != 0)
+  if (hdrbuf[0] != 'G' || hdrbuf[1] != 'I' || hdrbuf[2] != 'F')
     ERREXIT(cinfo->emethods, "Not a GIF file");
   /* Check for expected version numbers.
    * If unknown version, give warning and try to process anyway;
    * this is per recommendation in GIF89a standard.
    */
-  if ((HDstrncmp(hdrbuf+3, "87a", 3) != 0) &&
-      (HDstrncmp(hdrbuf+3, "89a", 3) != 0))
+  if ((hdrbuf[3] != '8' || hdrbuf[4] != '7' || hdrbuf[5] != 'a') &&
+      (hdrbuf[3] != '8' || hdrbuf[4] != '9' || hdrbuf[5] != 'a'))
     TRACEMS3(cinfo->emethods, 1,
 	     "Warning: unexpected GIF version number '%c%c%c'",
 	     hdrbuf[3], hdrbuf[4], hdrbuf[5]);
@@ -469,13 +483,14 @@ compress_info_ptr cinfo;
     width = LM_to_uint(hdrbuf[4],hdrbuf[5]);
     height = LM_to_uint(hdrbuf[6],hdrbuf[7]);
     is_interlaced = BitSet(hdrbuf[8], INTERLACE);
-    colormaplen = 2 << (hdrbuf[8] & 0x07);
 
     /* Read local colormap if header indicates it is present */
     /* Note: if we wanted to support skipping images, */
     /* we'd need to skip rather than read colormap for ignored images */
-    if (BitSet(hdrbuf[8], COLORMAPFLAG))
+    if (BitSet(hdrbuf[8], COLORMAPFLAG)) {
+      colormaplen = 2 << (hdrbuf[8] & 0x07);
       ReadColorMap(cinfo, colormaplen, colormap);
+    }
 
     input_code_size = ReadByte(cinfo); /* get minimum-code-size byte */
     if (input_code_size < 2 || input_code_size >= MAX_LZW_BITS)
@@ -489,11 +504,11 @@ compress_info_ptr cinfo;
 
   /* Prepare to read selected image: first initialize LZW decompressor */
   symbol_head = (uint16 FAR *) (*cinfo->emethods->alloc_medium)
-                (LZW_TABLE_SIZE * SIZEOF(uint16));
+				(LZW_TABLE_SIZE * SIZEOF(uint16));
   symbol_tail = (uint8 FAR *) (*cinfo->emethods->alloc_medium)
-                (LZW_TABLE_SIZE * SIZEOF(uint8));
+				(LZW_TABLE_SIZE * SIZEOF(uint8));
   symbol_stack = (uint8 FAR *) (*cinfo->emethods->alloc_medium)
-                (LZW_TABLE_SIZE * SIZEOF(uint8));
+				(LZW_TABLE_SIZE * SIZEOF(uint8));
   InitLZWCode();
 
   /*
@@ -519,6 +534,9 @@ compress_info_ptr cinfo;
   cinfo->image_width = width;
   cinfo->image_height = height;
   cinfo->data_precision = 8;	/* always, even if 12-bit JSAMPLEs */
+
+  TRACEMS3(cinfo->emethods, 1, "%ux%ux%d GIF image",
+	   (unsigned int) width, (unsigned int) height, colormaplen);
 }
 
 
@@ -545,8 +563,7 @@ JSAMPARRAY pixel_row;
   ptr1 = pixel_row[1];
   ptr2 = pixel_row[2];
   for (col = cinfo->image_width; col > 0; col--) {
-    if ((c = LZWReadByte(cinfo)) < 0)
-      ERREXIT(cinfo->emethods, "Premature end of GIF image");
+    c = LZWReadByte(cinfo);
     *ptr0++ = colormap[CM_RED][c];
     *ptr1++ = colormap[CM_GREEN][c];
     *ptr2++ = colormap[CM_BLUE][c];
@@ -572,7 +589,6 @@ JSAMPARRAY pixel_row;
   JSAMPARRAY image_ptr;
   register JSAMPROW sptr;
   register long col;
-  register int c;
   long row;
 
   /* Read the interlaced image into the big array we've created. */
@@ -582,9 +598,7 @@ JSAMPARRAY pixel_row;
 			(interlaced_image, row, TRUE);
     sptr = image_ptr[0];
     for (col = cinfo->image_width; col > 0; col--) {
-      if ((c = LZWReadByte(cinfo)) < 0)
-	ERREXIT(cinfo->emethods, "Premature end of GIF image");
-      *sptr++ = (JSAMPLE) c;
+      *sptr++ = (JSAMPLE) LZWReadByte(cinfo);
     }
   }
   cinfo->completed_passes++;

@@ -16,13 +16,15 @@
  * Expand an image so that it is a multiple of the MCU dimensions.
  * This is to be accomplished by duplicating the rightmost column
  * and/or bottommost row of pixels.  The image has not yet been
- * subsampled, so all components have the same dimensions.
+ * downsampled, so all components have the same dimensions.
  */
 
 METHODDEF VOID
 #ifdef PROTOTYPE
-edge_expand (compress_info_ptr cinfo, long input_cols, int input_rows,
-        long output_cols, int output_rows, JSAMPIMAGE image_data)
+edge_expand (compress_info_ptr cinfo,
+	     long input_cols, int input_rows,
+	     long output_cols, int output_rows,
+	     JSAMPIMAGE image_data)
 #else
 edge_expand (cinfo, input_cols, input_rows, output_cols, output_rows,
         image_data)

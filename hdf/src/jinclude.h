@@ -23,6 +23,7 @@
 /* QAK */
 #include "hdf.h"
 
+
 /*
  * Normally the __STDC__ macro can be taken as indicating that the system
  * include files conform to the ANSI C standard.  However, if you are running
@@ -86,13 +87,14 @@
  * We need the memcpy() and strcmp() functions, plus memory zeroing.
  * ANSI and System V implementations declare these in <string.h>.
  * BSD doesn't have the mem() functions, but it does have bcopy()/bzero().
+ * Some systems may declare memset and memcpy in <memory.h>.
+ *
  * NOTE: we assume the size parameters to these functions are of type size_t.
- * Insert casts in these macros if not!
+ * Change the casts in these macros if not!
  */
 
 #include <string.h>
-#define MEMZERO(voidptr,size)   HDmemset((voidptr), 0, (size))
-
+#define MEMZERO(VOIDptr,size)   HDmemset((VOIDptr), 0, (size))
 
 /* Now include the portable JPEG definition files. */
 
@@ -101,3 +103,4 @@
 #include "jpegdata.h"
 
 #endif /* JINCLUDE_H */
+

@@ -2,7 +2,16 @@
 # $Header$
 #
 # $Log$
-# Revision 1.3  1993/01/26 19:42:55  koziol
+# Revision 1.4  1993/03/29 16:50:23  koziol
+# Updated JPEG code to new JPEG 4 code.
+# Changed VSets to use Threaded-Balanced-Binary Tree for internal
+# 	(in memory) representation.
+# Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+# 	to use 32-bit integer keys instead of pointers.
+# Backed out speedups for Cray, until I get the time to fix them.
+# Fixed a bunch of bugs in the little-endian support in DFSD.
+#
+# Revision 1.3  1993/01/26  19:42:55  koziol
 # Added support for reading and writing Little-Endian data on all
 # platforms.  This has been tested on: Cray, Sun, and PCs so far.
 #
@@ -74,6 +83,7 @@ CC=cl
 #CFLAGS=  /D$(MACHINE) /AH /W4 /Ox $(IFLAGS) /Zp1
 CFLAGS=  /D$(MACHINE) /AH /W4 /Od $(IFLAGS) /Zi /Zp1
 #CFLAGS=  /D$(MACHINE) /AH /W4 /Od $(IFLAGS) /C /P
+#CFLAGS=  /D$(MACHINE) /AH /W4 /Od $(IFLAGS) /Zg
 
 # ==> where is your HDF library (df.lib) located?
 LIBS= ../lib/df.lib
@@ -91,18 +101,20 @@ RMFLAGS=
 LINTFLAGS=
 
 HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h dfan.h dfrig.h dfgr.h dfsd.h \
-     dfgroup.h vg.h df.h dfi.h dfstubs.h dfutil.h hconv.h
+     dfgroup.h vg.h df.h dfi.h dfstubs.h dfutil.h hconv.h tbbt.h
 
 CSRCS=hfile.c herr.c hblocks.c hextelt.c hkit.c dfan.c dfr8.c dfcomp.c \
       dfrle.c dfimcomp.c dfjpeg.c dfunjpeg.c dfp.c dfgr.c df24.c dfsd.c \
       dfgroup.c dfconv.c dfufp2i.c vg.c vrw.c vio.c vparse.c vconv.c vsfld.c \
-      vgp.c vhi.c dfutil.c dfstubs.c
+      vgp.c vhi.c dfutil.c dfstubs.c dfknat.c dfkswap.c dfkcray.c dfkvms.c \
+      dfkconv.c dfkfuji.c tbbt.c
 
 COBJS=hfile.obj herr.obj hblocks.obj hextelt.obj hkit.obj dfan.obj dfr8.obj \
         dfcomp.obj dfrle.obj dfimcomp.obj dfjpeg.obj dfunjpeg.obj dfp.obj \
         dfgr.obj df24.obj dfsd.obj dfgroup.obj dfconv.obj dfufp2i.obj vg.obj \
         vrw.obj vio.obj vparse.obj vconv.obj vsfld.obj vgp.obj vhi.obj \
-        dfutil.obj dfstubs.obj
+        dfutil.obj dfstubs.obj dfknat.obj dfkswap.obj dfkcray.obj dfkvms.obj \
+        dfkconv.obj dfkfuji.obj tbbt.obj
 
 FSRCS=hfilef.c herrf.c dfanf.c dfr8f.c dfpf.c df24f.c dfsdf.c vgf.c dff.c \
       dfutilf.c hfileff.f dfanff.f df24ff.f dfpff.f dfr8ff.f dfsdff.f vgff.f \
@@ -243,6 +255,24 @@ dfgroup.obj: dfgroup.c hdf.h herr.h hfile.h hdfi.h
 dfconv.obj: dfconv.c hdf.h herr.h hdfi.h hconv.h
     $(CC) /c $(CFLAGS) %s
 
+dfknat.obj: dfknat.c hdf.h herr.h hdfi.h hconv.h
+    $(CC) /c $(CFLAGS) %s
+
+dfkswap.obj: dfkswap.c hdf.h herr.h hdfi.h hconv.h
+    $(CC) /c $(CFLAGS) %s
+
+dfkcray.obj: dfkcray.c hdf.h herr.h hdfi.h hconv.h
+    $(CC) /c $(CFLAGS) %s
+
+dfkvms.obj: dfkvms.c hdf.h herr.h hdfi.h hconv.h
+    $(CC) /c $(CFLAGS) %s
+
+dfkconv.obj: dfkconv.c hdf.h herr.h hdfi.h hconv.h
+    $(CC) /c $(CFLAGS) %s
+
+dfkfuji.obj: dfkfuji.c hdf.h herr.h hdfi.h hconv.h
+    $(CC) /c $(CFLAGS) %s
+
 vg.obj: vg.c vg.h hdf.h hdfi.h
     $(CC) /c $(CFLAGS) %s
 
@@ -268,6 +298,9 @@ vgp.obj: vgp.c vg.h hdf.h hdfi.h
     $(CC) /c $(CFLAGS) %s
 
 vhi.obj: vhi.c vg.h hdf.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
+
+tbbt.obj: tbbt.c tbbt.h hdfi.h
     $(CC) /c $(CFLAGS) %s
 
 dfstubs.obj: dfstubs.c hdf.h herr.h dfstubs.h df.h dfi.h hdfi.h

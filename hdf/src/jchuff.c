@@ -7,13 +7,13 @@
  *
  * This file contains Huffman entropy encoding routines.
  * These routines are invoked via the methods entropy_encode,
- * entropy_encoder_init/term, and entropy_optimize.
+ * entropy_encode_init/term, and entropy_optimize.
  */
 
 #include "jinclude.h"
 
 
-/* Static variables to avoid passing 'round extra parameters */
+/* Static variables to aVOID passing 'round extra parameters */
 
 static compress_info_ptr cinfo;
 
@@ -29,7 +29,7 @@ LOCAL VOID
 #ifdef PROTOTYPE
 fix_huff_tbl (HUFF_TBL * htbl)
 #else
-fix_huff_tbl (htbl)
+fix_huff_tbl ( htbl)
 HUFF_TBL * htbl;
 #endif
 /* Compute derived values for a Huffman table */
@@ -43,11 +43,6 @@ HUFF_TBL * htbl;
   /* Note that this is in code-length order. */
 
   p = 0;
-
-/* Stop the Cray from dumping core... */
-#ifdef UNICOS
-#pragma novector
-#endif
   for (l = 1; l <= 16; l++) {
     for (i = 1; i <= (int) htbl->bits[l]; i++)
       huffsize[p++] = (char) l;
@@ -76,7 +71,7 @@ HUFF_TBL * htbl;
   /* Set any codeless symbols to have code length 0;
    * this allows emit_bits to detect any attempt to emit such symbols.
    */
-  MEMZERO((VOIDP) htbl->ehufsi, SIZEOF(htbl->ehufsi));
+  HDmemset(htbl->ehufsi, 0, SIZEOF(htbl->ehufsi));
 
   for (p = 0; p < lastp; p++) {
     htbl->ehufco[htbl->huffval[p]] = huffcode[p];
@@ -92,7 +87,7 @@ HUFF_TBL * htbl;
 
 LOCAL VOID
 #ifdef PROTOTYPE
-flush_bytes (void)
+flush_bytes (VOID)
 #else
 flush_bytes ()
 #endif
@@ -118,6 +113,7 @@ flush_bytes ()
  * between calls, so 24 bits are sufficient.
  */
 
+INLINE
 LOCAL VOID
 #ifdef PROTOTYPE
 emit_bits (uint16 code, int size)
@@ -161,7 +157,7 @@ int size;
 
 LOCAL VOID
 #ifdef PROTOTYPE
-flush_bits (void)
+flush_bits (VOID)
 #else
 flush_bits ()
 #endif
@@ -393,7 +389,7 @@ compress_info_ptr cinfo;
   flush_bits();
   flush_bytes();
   /* Release the I/O buffer */
-  (*cinfo->emethods->free_small) ((VOIDP) output_buffer);
+  (*cinfo->emethods->free_small) ((VOID *) output_buffer);
 }
 
 
@@ -429,7 +425,7 @@ long freq[];
 /* Generate the optimal coding for the given counts */
 {
 #define MAX_CLEN 32		/* assumed maximum initial code length */
-  uint8 bits[MAX_CLEN+1];   /* bits[k] = # of symbols with code length k */
+  uint8 bits[MAX_CLEN+1];	/* bits[k] = # of symbols with code length k */
   short codesize[257];		/* codesize[k] = code length of symbol k */
   short others[257];		/* next symbol in current branch of tree */
   int c1, c2;
@@ -438,8 +434,8 @@ long freq[];
 
   /* This algorithm is explained in section K.2 of the JPEG standard */
 
-  MEMZERO((VOIDP) bits, SIZEOF(bits));
-  MEMZERO((VOIDP) codesize, SIZEOF(codesize));
+  HDmemset(bits, 0,SIZEOF(bits));
+  HDmemset(codesize, 0, SIZEOF(codesize));
   for (i = 0; i < 257; i++)
     others[i] = -1;		/* init links to empty */
   
@@ -541,7 +537,7 @@ long freq[];
   bits[i]--;
   
   /* Return final symbol counts (only for lengths 0..16) */
-  HDmemcpy((VOIDP) htbl->bits, (VOIDP) bits, SIZEOF(htbl->bits));
+  HDmemcpy(htbl->bits, bits, SIZEOF(htbl->bits));
   
   /* Return a list of the symbols sorted by code length */
   /* It's not real clear to me why we don't need to consider the codelength
@@ -551,7 +547,7 @@ long freq[];
   for (i = 1; i <= MAX_CLEN; i++) {
     for (j = 0; j <= 255; j++) {
       if (codesize[j] == i) {
-    htbl->huffval[p] = (uint8) j;
+	htbl->huffval[p] = (uint8) j;
 	p++;
       }
     }
@@ -564,7 +560,8 @@ long freq[];
 
 LOCAL VOID
 #ifdef PROTOTYPE
-htest_one_block (JBLOCK block, JCOEF block0, long dc_counts[], long ac_counts[])
+htest_one_block (JBLOCK block, JCOEF block0,
+		 long dc_counts[], long ac_counts[])
 #else
 htest_one_block (block, block0, dc_counts, ac_counts)
 JBLOCK block;
@@ -701,14 +698,14 @@ MCU_output_caller_ptr source_method;
     if (dc_count_ptrs[tbl] == NULL) {
       dc_count_ptrs[tbl] = (long *) (*cinfo->emethods->alloc_small)
 					(257 * SIZEOF(long));
-      MEMZERO((VOIDP) dc_count_ptrs[tbl], 257 * SIZEOF(long));
+      HDmemset(dc_count_ptrs[tbl], 0, 257 * SIZEOF(long));
     }
     /* Create AC table */
     tbl = cinfo->cur_comp_info[i]->ac_tbl_no;
     if (ac_count_ptrs[tbl] == NULL) {
       ac_count_ptrs[tbl] = (long *) (*cinfo->emethods->alloc_small)
 					(257 * SIZEOF(long));
-      MEMZERO((VOIDP) ac_count_ptrs[tbl], 257 * SIZEOF(long));
+      HDmemset(ac_count_ptrs[tbl], 0, 257 * SIZEOF(long));
     }
   }
 
@@ -733,7 +730,7 @@ MCU_output_caller_ptr source_method;
       /* Compute the optimal Huffman encoding */
       gen_huff_coding(cinfo, *htblptr, dc_count_ptrs[tbl]);
       /* Release the count table */
-      (*cinfo->emethods->free_small) ((VOIDP) dc_count_ptrs[tbl]);
+      (*cinfo->emethods->free_small) ((VOID *) dc_count_ptrs[tbl]);
     }
     if (ac_count_ptrs[tbl] != NULL) {
       htblptr = & cinfo->ac_huff_tbl_ptrs[tbl];
@@ -744,7 +741,7 @@ MCU_output_caller_ptr source_method;
       /* Compute the optimal Huffman encoding */
       gen_huff_coding(cinfo, *htblptr, ac_count_ptrs[tbl]);
       /* Release the count table */
-      (*cinfo->emethods->free_small) ((VOIDP) ac_count_ptrs[tbl]);
+      (*cinfo->emethods->free_small) ((VOID *) ac_count_ptrs[tbl]);
     }
   }
 }
@@ -766,9 +763,9 @@ compress_info_ptr cinfo;
 #endif
 {
   if (! cinfo->arith_code) {
-    cinfo->methods->entropy_encoder_init = huff_init;
+    cinfo->methods->entropy_encode_init = huff_init;
     cinfo->methods->entropy_encode = huff_encode;
-    cinfo->methods->entropy_encoder_term = huff_term;
+    cinfo->methods->entropy_encode_term = huff_term;
 #ifdef ENTROPY_OPT_SUPPORTED
     cinfo->methods->entropy_optimize = huff_optimize;
     /* The standard Huffman tables are only valid for 8-bit data precision.

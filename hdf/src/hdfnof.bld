@@ -16,6 +16,12 @@
 +dfsd &
 +dfgroup &
 +dfconv &
++dfknat &
++dfkswap &
++dfkcray &
++dfkvms &
++dfkconv &
++dfkfuji &
 +dfufp2i &
 +vg &
 +vrw &
@@ -25,6 +31,7 @@
 +vsfld &
 +vgp &
 +vhi &
++tbbt &
 +dfutil &
 +dfstubs &
 +jutils &

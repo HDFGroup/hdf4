@@ -5,10 +5,19 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/01/19 05:56:34  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.6  1993/03/29 16:50:51  koziol
+Updated JPEG code to new JPEG 4 code.
+Changed VSets to use Threaded-Balanced-Binary Tree for internal
+	(in memory) representation.
+Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+	to use 32-bit integer keys instead of pointers.
+Backed out speedups for Cray, until I get the time to fix them.
+Fixed a bunch of bugs in the little-endian support in DFSD.
 
+ * Revision 1.5  1993/01/19  05:56:34  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.4  1992/12/02  22:32:27  chouck
  * Fixed a size problem in VSwrite() when calling QQQueryspecial()
  *
@@ -33,45 +42,31 @@ port.  Lots of minor annoyances fixed.
 #include "hfile.h"
 
 PRIVATE void Knumin
-    PROTO((BYTE *src,BYTE * dst,uint32 n,uint32 sdel,uint32 ddel));
+    PROTO((uint8 *src,uint8 * dst,uint32 n,uint32 sdel,uint32 ddel));
 
 PRIVATE void Knumout
-    PROTO((BYTE *src,BYTE * dst,uint32 n,uint32 sdel,uint32 ddel));
+    PROTO((uint8 *src,uint8 * dst,uint32 n,uint32 sdel,uint32 ddel));
 
 #ifdef PROTOTYPE
-PRIVATE void Knumin (BYTE *src, BYTE *dst, uint32 n, uint32 sdel, uint32 ddel)
+PRIVATE void Knumin (uint8 *src, uint8 *dst, uint32 n, uint32 sdel, uint32 ddel)
 #else
 PRIVATE void Knumin (src, dst, n, sdel, ddel)
-	BYTE 		*src, *dst;
-	uint32  	n, sdel, ddel;
+uint8        *src, *dst;
+uint32      n, sdel, ddel;
 #endif
-
 {
-  if (vjv) {
-    sprintf(sjs, "  -->> Knumin: n=%ld sdel=%ld ddel=%ld src=%lx dst=%lx\n",
-            n, sdel, ddel, src, dst); zj;
-  }
-  
   (*DFKnumin) (src, dst, n, sdel, ddel);
-  
 }
 
 #ifdef PROTOTYPE
-PRIVATE void Knumout (BYTE *src, BYTE *dst, uint32 n, uint32 sdel, uint32 ddel)
+PRIVATE void Knumout (uint8 *src, uint8 *dst, uint32 n, uint32 sdel, uint32 ddel)
 #else
 PRIVATE void Knumout (src, dst, n, sdel, ddel)
-	BYTE 		*src, *dst;
-	uint32  	n, sdel, ddel;
+uint8        *src, *dst;
+uint32      n, sdel, ddel;
 #endif
-
 {
-  if (vjv) {
-    sprintf(sjs, "  -->> Knumout: n=%ld sdel=%ld ddel=%ld src=%ld dst=%ld\n",
-            n, sdel, ddel, src, dst); zj;
-  }
-  
   (*DFKnumout) (src, dst, n, sdel, ddel);
-
 }
 
 /* --------------------------- VSseek -------------------------------------- */
@@ -86,34 +81,47 @@ PRIVATE void Knumout (src, dst, n, sdel, ddel)
 	RETURNS position of element seeked to (0 or a +ve integer)
         (eg  returns 5 if seek to the 6th element, etc)
 */
-
 #ifdef PROTOTYPE
-PUBLIC int32 VSseek (VDATA *vs, int32 eltpos)    
+PUBLIC int32 VSseek (int32 vkey, int32 eltpos)
 #else
-
-
-PUBLIC int32 VSseek (vs, eltpos)    
-	VDATA *	vs;
-	int32	   eltpos;
-
+PUBLIC int32 VSseek (vkey, eltpos)
+int32 vkey;
+int32      eltpos;
 #endif
-
 {
 	int32 	stat, offset;
-	char * 	FUNC = "VSseek";
+    vsinstance_t    *w;
+    VDATA           *vs;
+    char *  FUNC = "VSseek";
 
-	if ((vs==NULL) || (eltpos < 0)) {HERROR(DFE_ARGS); return(FAIL);}
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
+  
+  /* locate vs's index in vstab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
+
+    vs=w->vs;
+    if ((vs==NULL) || (eltpos < 0)) {
+        HERROR(DFE_ARGS);
+        return(FAIL);
+    }
 
 	offset  = eltpos * vs->wlist.ivsize;
 
     stat = Hseek (vs->aid, offset, DF_START);
 	if (stat==FAIL) {
-          HERROR(DFE_BADSEEK);
-          return(FAIL);
-        }
+        HERROR(DFE_BADSEEK);
+        return(FAIL);
+    }
 
 	return(eltpos); 
-
 } /* Vseek */
 
 /* ------------------------------------------------------------------------ */
@@ -127,52 +135,86 @@ PUBLIC int32 VSseek (vs, eltpos)
 */
 
 PRIVATE int32 Vtbufsize = 0;
-PRIVATE BYTE *Vtbuf = NULL;
+PRIVATE uint8 *Vtbuf = NULL;
 
 #ifdef PROTOTYPE
-PUBLIC int32 VSread (VDATA *vs,BYTE buf[], int32 nelt, int32 interlace)  
+PUBLIC int32 VSread (int32 vkey,uint8 buf[], int32 nelt, int32 interlace)
 #else
-PUBLIC int32 VSread (vs, buf, nelt, interlace)  
-	VDATA   *vs;
-	int32	nelt;
-	int32	interlace;
-	BYTE	buf[];
+PUBLIC int32 VSread (vkey, buf, nelt, interlace)
+int32 vkey;
+int32   nelt;
+int32   interlace;
+uint8    buf[];
 #endif
-
 {
-	register int16 isize,esize,hsize;
-	register BYTE	*b1,*b2;
+    register intn isize;
+    register int16 esize,hsize;
+    register uint8   *b1,*b2;
 	int32 			i,j, nv, offset, type;
 	VWRITELIST 		*w;
 	VREADLIST  		*r;
 	int32 			uvsize; /* size of "element" as NEEDED by user */
-	char * 	FUNC = "VSread";
+    vsinstance_t    *wi;
+    VDATA           *vs;
+    char *  FUNC = "VSread";
 
-	if(vs == NULL)		{ HERROR(DFE_ARGS); return(FAIL); }
-    if(vs->aid == NO_ID)    { HERROR(DFE_ARGS); return(FAIL); }
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
+  
+  /* locate vs's index in vstab */
+    if(NULL==(wi=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
+
+    vs=wi->vs;
+    if(vs == NULL) {
+        HERROR(DFE_ARGS);
+        return(FAIL);
+    }
+    if(vs->aid == NO_ID) {
+        HERROR(DFE_ARGS);
+        return(FAIL);
+    }
 /* Allow people to read when they have write access 
-	if(vs->access != 'r')	{ HERROR(DFE_BADACC); return(FAIL); }
+    if(vs->access != 'r') {
+        HERROR(DFE_BADACC);
+        return(FAIL);
+    }
 */
-	if(vs->nvertices == 0)	{ HERROR(DFE_ARGS); return(FAIL); }
+    if(vs->nvertices == 0)  {
+        HERROR(DFE_ARGS);
+        return(FAIL);
+    }
 
-	if(vexistvs(vs->f,vs->oref) == FAIL) { HERROR(DFE_NOVS); return(FAIL); }
+    if(vexistvs(vs->f,vs->oref) == FAIL) {
+        HERROR(DFE_NOVS);
+        return(FAIL);
+    }
 
-	if(interlace != FULL_INTERLACE  && interlace != NO_INTERLACE)
-          { HERROR(DFE_ARGS); return(FAIL); }
+    if(interlace != FULL_INTERLACE  && interlace != NO_INTERLACE) {
+        HERROR(DFE_ARGS);
+        return(FAIL);
+    }
 
 	w = &(vs->wlist);
 	r = &(vs->rlist);
 	hsize = vs->wlist.ivsize; 		/* size as stored in HDF */
 
 	/* alloc space (Vtbuf) for reading in the raw data from vdata */
-        if(Vtbufsize < nelt * hsize) {
-          Vtbufsize = nelt * hsize;
-          if(Vtbuf) HDfreespace(Vtbuf);
-          if((Vtbuf = (BYTE *) HDgetspace ( Vtbufsize )) == NULL) {
+    if(Vtbufsize < nelt * hsize) {
+        Vtbufsize = nelt * hsize;
+        if(Vtbuf)
+            HDfreespace(Vtbuf);
+        if((Vtbuf = (uint8 *) HDgetspace ( Vtbufsize )) == NULL) {
             HERROR(DFE_NOSPACE);
             return(FAIL);
           }
-        }
+    }
 
 	/* ================ start reading ============================== */
 	/* ================ start reading ============================== */
@@ -180,10 +222,10 @@ PUBLIC int32 VSread (vs, buf, nelt, interlace)
     nv = Hread (vs->aid, nelt * hsize, (uint8*) Vtbuf);
 
 	if ( nv != nelt*hsize ) {
-          HERROR(DFE_READERROR);
-          HEreport("Tried to read %d, only read %d", nelt * hsize, nv);
-          return FAIL;
-        }
+        HERROR(DFE_READERROR);
+        HEreport("Tried to read %d, only read %d", nelt * hsize, nv);
+        return FAIL;
+    }
 
 	/* ================ done reading =============================== */
 	/* ================ done reading =============================== */
@@ -222,16 +264,9 @@ PUBLIC int32 VSread (vs, buf, nelt, interlace)
 		isize = w->isize[0];
 		type = w->type[0];
 
-		if (vjv) {
-                  sprintf(sjs,">> R  SPECIAL (E) order=%d esiz=%d isiz=%d nelt=%ld vsize %d\n",
-                          w->order[0], esize, isize, nelt , hsize); zj;
-                  sprintf(sjs,"@VSREAD: type is %ld\n", type); zj;
-		}
-
 		/* Errr WORKS */
 		DFKsetNT(type); 
-		Knumin (b2, b1, (uint32) w->order[0] * nelt, 
-                        (uint32) isize/w->order[0],
+        Knumin (b2, b1, (uint32) w->order[0] * nelt, (uint32) isize/w->order[0],
                         (uint32) esize/w->order[0]);
     } /* case (e) */
 
@@ -239,8 +274,6 @@ PUBLIC int32 VSread (vs, buf, nelt, interlace)
 	/* CASE  (A):  user=none, vdata=full */
 
 	else if (interlace==NO_INTERLACE && vs->interlace==FULL_INTERLACE) {
-		if (vjv) { sprintf(sjs,">> R  CASE  (A): iu=none, iv=full \n"); zj;}
-
 		b1 = buf;
 		for (j=0;j<r->n;j++) {
 			i     = r->item[j];
@@ -261,8 +294,6 @@ PUBLIC int32 VSread (vs, buf, nelt, interlace)
 	/* ----------------------------------------------------------------- */
 	/* CASE  (B):  user=none, vdata=none */
 	else if (interlace==NO_INTERLACE && vs->interlace==NO_INTERLACE) {
-		if (vjv) { sprintf(sjs,">> R  CASE  (B):  iu=none, iv=none\n"); zj; }
-
 		b1 = buf;
 		for (j=0;j<r->n;j++) {
 			i     = r->item[j];
@@ -281,8 +312,6 @@ PUBLIC int32 VSread (vs, buf, nelt, interlace)
 	/* ----------------------------------------------------------------- */
 	/* CASE  (C):  iu=full, iv=full */
 	else if (interlace==FULL_INTERLACE && vs->interlace==FULL_INTERLACE) {
-		if (vjv) { sprintf(sjs,">> R  CASE  (C):  iu=full, iv=full\n"); zj; }
-
 		for (uvsize=0, j=0;j<r->n;j++)
 			uvsize += w->esize[r->item[j]];
 
@@ -306,8 +335,6 @@ PUBLIC int32 VSread (vs, buf, nelt, interlace)
 	/* CASE  (D):  user=full, vdata=none */
 	else if(interlace==FULL_INTERLACE && vs->interlace==NO_INTERLACE) {
 
-		if (vjv) { sprintf(sjs,">> R  CASE  (D):  iu=full, iv=none\n"); zj; }
-
 		for (uvsize=0, j=0;j<r->n;j++)
 			uvsize += w->esize[r->item[j]];
 
@@ -330,30 +357,27 @@ PUBLIC int32 VSread (vs, buf, nelt, interlace)
     HDfreespace (tbuf);
 */
 	return(nv/hsize);
-
 } /* VSread */
-
 
 /* ------------------------------------------------------------------ */
 /* debugging routine */
 
 #ifdef PROTOTYPE
-void bytedump (char *ss, BYTE buf[], int32 n)
+void bytedump (char *ss, uint8 buf[], int32 n)
 #else
-
 void bytedump (ss, buf, n)
-	char 		*ss;
-	BYTE		buf[]; 
-	int32 	n; 
-
+char        *ss;
+uint8        buf[];
+int32   n;
 #endif
-
 {
-  int32 i;
-  printf("BYTEDUMP at %ld [%s %ld]: ",buf, ss, n);
-  for(i=0;i<n;i++) printf(" %x", buf[i]);
-  printf("\n");
-  fflush(stdout);
+    int32 i;
+
+    printf("uint8DUMP at %ld [%s %ld]: ",buf, ss, n);
+    for(i=0;i<n;i++)
+        printf(" %x", buf[i]);
+    printf("\n");
+    fflush(stdout);
 }
 
 /* ------------------------------------------------------------------ */
@@ -372,40 +396,65 @@ void bytedump (ss, buf, n)
 */
 
 #ifdef PROTOTYPE
-PUBLIC int32 VSwrite (VDATA *vs, BYTE buf[], int32 nelt, int32 interlace)
+PUBLIC int32 VSwrite (int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
 #else
-PUBLIC int32 VSwrite (vs, buf, nelt, interlace)
-
-	VDATA 	*vs;
-	int32		nelt;
-	int32		interlace;
-	BYTE		buf[];
-
+PUBLIC int32 VSwrite (vkey, buf, nelt, interlace)
+int32 vkey;
+int32       nelt;
+int32       interlace;
+uint8        buf[];
 #endif
-
 {
-	register int16	isize,esize,hsize;
-	register BYTE 	*b1,*b2;
+    register intn  isize;
+    register int16 esize,hsize;
+    register uint8 *b1,*b2;
 /*
-	register BYTE	*tbuf;
+    register uint8   *tbuf;
 */
 	int32 		j,type, offset;
     int16       special;
-        int32           position, new_size;
+    int32           position, new_size;
 	VWRITELIST	*w;
 	int32 		uvsize;		/* size of "element" as needed by user */
-	char * 	FUNC = "VSwrite";
+    vsinstance_t    *wi;
+    VDATA           *vs;
+    char *  FUNC = "VSwrite";
 
-	if ((nelt <= 0) || (vs == NULL))       { HERROR(DFE_ARGS); return(FAIL); }
-	if (vs->access != 'w') 	               { HERROR(DFE_BADACC); return(FAIL); }
-    if ( -1L == vexistvs(vs->f,vs->oref) ) { HERROR(DFE_NOVS); return(FAIL); }
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
+  
+  /* locate vs's index in vstab */
+    if(NULL==(wi=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
+
+    vs=wi->vs;
+    if ((nelt <= 0) || (vs == NULL)) {
+        HERROR(DFE_ARGS);
+        return(FAIL);
+    }
+    if (vs->access != 'w') {
+        HERROR(DFE_BADACC);
+        return(FAIL);
+    }
+    if ( -1L == vexistvs(vs->f,vs->oref) ) {
+        HERROR(DFE_NOVS);
+        return(FAIL);
+    }
     if (vs->wlist.ivsize == 0) {
         HERROR(DFE_NOVS);
         HEreport("w: vsize 0. fields not set for write!");
         return(FAIL);
     }
-	if (interlace != NO_INTERLACE && interlace != FULL_INTERLACE )
-          { HERROR(DFE_ARGS); return(FAIL); }
+    if (interlace != NO_INTERLACE && interlace != FULL_INTERLACE ) {
+        HERROR(DFE_ARGS);
+        return(FAIL);
+    }
 
 	w = (VWRITELIST*) &vs->wlist;
 	hsize = w->ivsize; 		/* as stored in HDF file */
@@ -415,14 +464,14 @@ PUBLIC int32 VSwrite (vs, buf, nelt, interlace)
         Vtbufsize = nelt * hsize;
         if(Vtbuf)
             HDfreespace(Vtbuf);
-        if((Vtbuf = (BYTE *) HDgetspace ( Vtbufsize )) == NULL) {
+        if((Vtbuf = (uint8 *) HDgetspace ( Vtbufsize )) == NULL) {
             HERROR(DFE_NOSPACE);
             return(FAIL);
         }
     }
 
 /*
-    if((tbuf = (BYTE *) HDgetspace ( nelt * hsize)) == NULL) {
+    if((tbuf = (uint8 *) HDgetspace ( nelt * hsize)) == NULL) {
           HERROR(DFE_NOSPACE);
           return(FAIL);
         }
@@ -459,12 +508,6 @@ PUBLIC int32 VSwrite (vs, buf, nelt, interlace)
 		isize = w->isize[0];
 		type  = w->type[0];
 
-		if (vjv) {
-            sprintf(sjs,">> W SPECIAL(E) order=%d esiz=%d isiz=%d nelt=%ld vsiz=%d\n",
-                        w->order[0], esize, isize, nelt, hsize); zj;
-            sprintf(sjs,"@VSWRITE: type = %ld\n", type); zj;
-		}
-
 	/* Ewww WORKS */
         DFKsetNT(type); 
         Knumout(b1, b2, (uint32) w->order[0] * nelt,
@@ -474,8 +517,6 @@ PUBLIC int32 VSwrite (vs, buf, nelt, interlace)
 	/* ----------------------------------------------------------------- */
 	/* CASE  (A):  user=none, vdata=full */
 	else if (interlace==NO_INTERLACE && vs->interlace==FULL_INTERLACE) {
-
-		if (vjv) {sprintf(sjs, ">> W  CASE  (A):  iu=none, iv=full \n"); zj;} 
 
 		b1 = buf;
         for (j=0; j<w->n; j++) {
@@ -495,8 +536,6 @@ PUBLIC int32 VSwrite (vs, buf, nelt, interlace)
 	/* CASE  (B):  user=none, vdata=none */
 	else if (interlace==NO_INTERLACE && vs->interlace==NO_INTERLACE) {
 
-		if (vjv) { sprintf(sjs,">> W  CASE  (B):  iu=none, iv=none\n"); zj; }
-
 		b1 = buf;
         for (j=0; j<w->n; j++) {
 			b2    = Vtbuf + w->off[j] * nelt;
@@ -515,8 +554,6 @@ PUBLIC int32 VSwrite (vs, buf, nelt, interlace)
 	/* ----------------------------------------------------------------- */
 	/* CASE  (C):  user=full, vdata=full */
 	else if (interlace==FULL_INTERLACE && vs->interlace==FULL_INTERLACE) {
-		if (vjv) { sprintf(sjs, ">> W  CASE  (C):  iu=full, iv=full\n"); zj;}
-
         for (uvsize=0, j=0; j<w->n; j++)
 			uvsize += w->esize[j];
 
@@ -537,8 +574,6 @@ PUBLIC int32 VSwrite (vs, buf, nelt, interlace)
 	/* ----------------------------------------------------------------- */
 	/* CASE  (D):  user=full, vdata=none */
 	else if (interlace==FULL_INTERLACE && vs->interlace==NO_INTERLACE) {
-
-		if (vjv) { sprintf(sjs, ">> W  CASE  (D):  iu=full, iv=none\n"); zj;}
 
         for (uvsize=0, j=0; j<w->n; j++)
 			uvsize += w->esize[j];
@@ -582,15 +617,12 @@ PUBLIC int32 VSwrite (vs, buf, nelt, interlace)
                                VDEFAULTBLKSIZE, VDEFAULTNBLKS);
             /* seek back to correct point */
             j = Hseek(vs->aid, position, DF_START);
-            if(vjv) {sprintf(sjs,"promotion to LINK-BLOCK seek stat is %ld\n",j); zj;}
         }
     }
 	  
     j = Hwrite (vs->aid,  nelt * hsize, (uint8*) Vtbuf);
-	if (j != nelt * hsize) { 
-          sprintf(sjs,"Hwrite of %ld : %ld bytes written\n", nelt * hsize,j); zj;
-          return(FAIL);
-        }
+    if (j != nelt * hsize)
+        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
 
     if(new_size > vs->nvertices) vs->nvertices = new_size;
 
@@ -603,13 +635,10 @@ PUBLIC int32 VSwrite (vs, buf, nelt, interlace)
 		VMBLOCK * vm, *t;
 		int32 vmsize;
 		vmsize = nelt * hsize;
-		/* sprintf(sjs, "VMBLOCK saved: size=%ld\n", vmsize); zj; */
 
         vm  = (VMBLOCK*) HDgetspace (sizeof(VMBLOCK));
-		if (vm==NULL) { 
-			sprintf(sjs,"VSwrite: alloc vmblock err\n"); zj; 
-			return(0);
-			}
+        if (vm==NULL)
+            HRETURN_ERROR(DFE_NOSPACE,0);
 		vm->mem 	= tbuf;
 		vm->n 	= vmsize;
 		vm->next = NULL;
@@ -627,7 +656,6 @@ PUBLIC int32 VSwrite (vs, buf, nelt, interlace)
 		return (nelt);
 		/* END OF VMBLOCK VERSION */ }}
 #endif
-
 
 } /* VSwrite */
 

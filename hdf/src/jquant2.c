@@ -122,10 +122,10 @@ static hist3d histogram;	/* pointer to the histogram */
 
 METHODDEF VOID
 #ifdef PROTOTYPE
-color_quant_prescan2 (decompress_info_ptr cinfo, int num_rows,
-		     JSAMPIMAGE image_data, JSAMPARRAY workspace)
+color_quant2_prescan (decompress_info_ptr cinfo, int num_rows,
+             JSAMPIMAGE image_data, JSAMPARRAY workspace)
 #else
-color_quant_prescan2 (cinfo, num_rows, image_data, workspace)
+color_quant2_prescan (cinfo, num_rows, image_data, workspace)
 decompress_info_ptr cinfo;
 int num_rows;
 JSAMPIMAGE image_data;
@@ -521,7 +521,7 @@ decompress_info_ptr cinfo;
   TRACEMS1(cinfo->emethods, 1, "Selected %d colors for quantization",
 	   numboxes);
   /* Done with the box list */
-  (*cinfo->emethods->free_small) ((VOIDP) boxlist);
+  (*cinfo->emethods->free_small) ((VOIDP ) boxlist);
 }
 
 
@@ -975,15 +975,15 @@ JSAMPARRAY output_workspace;
  */
 
 #ifdef EIGHT_BIT_SAMPLES
-typedef int16 FSERROR;      /* 16 bits should be enough */
+typedef int16 FSERROR;		/* 16 bits should be enough */
 #else
-typedef int32 FSERROR;      /* may need more than 16 bits? */
+typedef int32 FSERROR;		/* may need more than 16 bits? */
 #endif
 
 typedef FSERROR FAR *FSERRPTR;	/* pointer to error array (in FAR storage!) */
 
 static FSERRPTR evenrowerrs, oddrowerrs; /* current-row and next-row errors */
-static boolean on_odd_row;	/* flag to remember which row we are on */
+static bool on_odd_row;	/* flag to remember which row we are on */
 
 
 METHODDEF VOID
@@ -999,16 +999,26 @@ JSAMPARRAY output_workspace;
 #endif
 /* This version performs Floyd-Steinberg dithering */
 {
-  register FSERROR val;
-  register FSERRPTR thisrowerr, nextrowerr;
+#ifdef EIGHT_BIT_SAMPLES
+  register int c0, c1, c2;
+  int two_val;
+#else
   register FSERROR c0, c1, c2;
-  register int pixcode;
+  FSERROR two_val;
+#endif
+  register FSERRPTR thisrowerr, nextrowerr;
   JSAMPROW ptr0, ptr1, ptr2, outptr;
   histptr cachep;
+  register int pixcode;
   int dir;
-  long col;
   int row;
+  long col;
   long width = cinfo->image_width;
+  JSAMPLE *range_limit = cinfo->sample_range_limit;
+  JSAMPROW colormap0 = my_colormap[0];
+  JSAMPROW colormap1 = my_colormap[1];
+  JSAMPROW colormap2 = my_colormap[2];
+  SHIFT_TEMPS
 
   /* Convert data to colormap indexes, which we save in output_workspace */
   for (row = 0; row < num_rows; row++) {
@@ -1036,33 +1046,21 @@ JSAMPARRAY output_workspace;
     /* need only initialize this one entry in nextrowerr */
     nextrowerr[0] = nextrowerr[1] = nextrowerr[2] = 0;
     for (col = width; col > 0; col--) {
-      /* Get this pixel's value and add accumulated errors */
-      /* The errors are in units of 1/16th pixel value */
-      val = (GETJSAMPLE(*ptr0) << 4) + thisrowerr[0];
-      if (val <= 0) val = 0;	/* must watch for range overflow! */
-      else {
-	val += 8;		/* divide by 16 with proper rounding */
-	val >>= 4;
-	if (val > MAXJSAMPLE) val = MAXJSAMPLE;
-      }
-      c0 = val;
-      val = (GETJSAMPLE(*ptr1) << 4) + thisrowerr[1];
-      if (val <= 0) val = 0;	/* must watch for range overflow! */
-      else {
-	val += 8;		/* divide by 16 with proper rounding */
-	val >>= 4;
-	if (val > MAXJSAMPLE) val = MAXJSAMPLE;
-      }
-      c1 = val;
-      val = (GETJSAMPLE(*ptr2) << 4) + thisrowerr[2];
-      if (val <= 0) val = 0;	/* must watch for range overflow! */
-      else {
-	val += 8;		/* divide by 16 with proper rounding */
-	val >>= 4;
-	if (val > MAXJSAMPLE) val = MAXJSAMPLE;
-      }
-      c2 = val;
-      /* Index into the cache with adjusted value */
+      /* For each component, get accumulated error and round to integer;
+       * form pixel value + error, and range-limit to 0..MAXJSAMPLE.
+       * RIGHT_SHIFT rounds towards minus infinity, so adding 8 is correct
+       * for either sign of the error value.  Max error is +- MAXJSAMPLE.
+       */
+      c0 = RIGHT_SHIFT(thisrowerr[0] + 8, 4);
+      c1 = RIGHT_SHIFT(thisrowerr[1] + 8, 4);
+      c2 = RIGHT_SHIFT(thisrowerr[2] + 8, 4);
+      c0 += GETJSAMPLE(*ptr0);
+      c1 += GETJSAMPLE(*ptr1);
+      c2 += GETJSAMPLE(*ptr2);
+      c0 = GETJSAMPLE(range_limit[c0]);
+      c1 = GETJSAMPLE(range_limit[c1]);
+      c2 = GETJSAMPLE(range_limit[c2]);
+      /* Index into the cache with adjusted pixel value */
       cachep = & histogram[c0 >> Y_SHIFT][c1 >> C_SHIFT][c2 >> C_SHIFT];
       /* If we have not seen this color before, find nearest colormap */
       /* entry and update the cache */
@@ -1072,34 +1070,34 @@ JSAMPARRAY output_workspace;
       pixcode = *cachep - 1;
       *outptr = (JSAMPLE) pixcode;
       /* Compute representation error for this pixel */
-      c0 -= (FSERROR) GETJSAMPLE(my_colormap[0][pixcode]);
-      c1 -= (FSERROR) GETJSAMPLE(my_colormap[1][pixcode]);
-      c2 -= (FSERROR) GETJSAMPLE(my_colormap[2][pixcode]);
+      c0 -= GETJSAMPLE(colormap0[pixcode]);
+      c1 -= GETJSAMPLE(colormap1[pixcode]);
+      c2 -= GETJSAMPLE(colormap2[pixcode]);
       /* Propagate error to adjacent pixels */
       /* Remember that nextrowerr entries are in reverse order! */
-      val = c0 * 2;
+      two_val = c0 * 2;
       nextrowerr[0-3]  = c0;	/* not +=, since not initialized yet */
-      c0 += val;		/* form error * 3 */
+      c0 += two_val;		/* form error * 3 */
       nextrowerr[0+3] += c0;
-      c0 += val;		/* form error * 5 */
+      c0 += two_val;		/* form error * 5 */
       nextrowerr[0  ] += c0;
-      c0 += val;		/* form error * 7 */
+      c0 += two_val;		/* form error * 7 */
       thisrowerr[0+3] += c0;
-      val = c1 * 2;
+      two_val = c1 * 2;
       nextrowerr[1-3]  = c1;	/* not +=, since not initialized yet */
-      c1 += val;		/* form error * 3 */
+      c1 += two_val;		/* form error * 3 */
       nextrowerr[1+3] += c1;
-      c1 += val;		/* form error * 5 */
+      c1 += two_val;		/* form error * 5 */
       nextrowerr[1  ] += c1;
-      c1 += val;		/* form error * 7 */
+      c1 += two_val;		/* form error * 7 */
       thisrowerr[1+3] += c1;
-      val = c2 * 2;
+      two_val = c2 * 2;
       nextrowerr[2-3]  = c2;	/* not +=, since not initialized yet */
-      c2 += val;		/* form error * 3 */
+      c2 += two_val;		/* form error * 3 */
       nextrowerr[2+3] += c2;
-      c2 += val;		/* form error * 5 */
+      c2 += two_val;		/* form error * 5 */
       nextrowerr[2  ] += c2;
-      c2 += val;		/* form error * 7 */
+      c2 += two_val;		/* form error * 7 */
       thisrowerr[2+3] += c2;
       /* Advance to next column */
       ptr0 += dir;
@@ -1121,9 +1119,9 @@ JSAMPARRAY output_workspace;
 
 METHODDEF VOID
 #ifdef PROTOTYPE
-color_quant_init2 (decompress_info_ptr cinfo)
+color_quant2_init (decompress_info_ptr cinfo)
 #else
-color_quant_init2 (cinfo)
+color_quant2_init (cinfo)
 decompress_info_ptr cinfo;
 #endif
 {
@@ -1143,7 +1141,7 @@ decompress_info_ptr cinfo;
   for (i = 0; i < HIST_Y_ELEMS; i++) {
     histogram[i] = (hist2d) (*cinfo->emethods->alloc_medium)
 				(HIST_C_ELEMS*HIST_C_ELEMS * SIZEOF(histcell));
-    jzero_far((VOIDP) histogram[i],
+    jzero_far((VOID FAR *) histogram[i],
 	      HIST_C_ELEMS*HIST_C_ELEMS * SIZEOF(histcell));
   }
 
@@ -1165,7 +1163,7 @@ decompress_info_ptr cinfo;
     evenrowerrs = (FSERRPTR) (*cinfo->emethods->alloc_medium) (arraysize);
     oddrowerrs  = (FSERRPTR) (*cinfo->emethods->alloc_medium) (arraysize);
     /* we only need to zero the forward contribution for current row. */
-    jzero_far((VOIDP) evenrowerrs, arraysize);
+    jzero_far((VOID FAR *) evenrowerrs, arraysize);
     on_odd_row = FALSE;
   }
 
@@ -1186,9 +1184,9 @@ decompress_info_ptr cinfo;
 
 METHODDEF VOID
 #ifdef PROTOTYPE
-color_quant_doit2 (decompress_info_ptr cinfo, quantize_caller_ptr source_method)
+color_quant2_doit (decompress_info_ptr cinfo, quantize_caller_ptr source_method)
 #else
-color_quant_doit2 (cinfo, source_method)
+color_quant2_doit (cinfo, source_method)
 decompress_info_ptr cinfo;
 quantize_caller_ptr source_method;
 #endif
@@ -1203,7 +1201,7 @@ quantize_caller_ptr source_method;
 				    cinfo->colormap);
   /* Re-zero the histogram so pass 2 can use it as nearest-color cache */
   for (i = 0; i < HIST_Y_ELEMS; i++) {
-    jzero_far((VOIDP) histogram[i],
+    jzero_far((VOID FAR *) histogram[i],
 	      HIST_C_ELEMS*HIST_C_ELEMS * SIZEOF(histcell));
   }
   /* Perform pass 2 */
@@ -1220,9 +1218,9 @@ quantize_caller_ptr source_method;
 
 METHODDEF VOID
 #ifdef PROTOTYPE
-color_quant_term2 (decompress_info_ptr cinfo)
+color_quant2_term (decompress_info_ptr cinfo)
 #else
-color_quant_term2 (cinfo)
+color_quant2_term (cinfo)
 decompress_info_ptr cinfo;
 #endif
 {
@@ -1240,7 +1238,7 @@ decompress_info_ptr cinfo;
 METHODDEF VOID
 #ifdef PROTOTYPE
 color_quantize2 (decompress_info_ptr cinfo, int num_rows,
-        JSAMPIMAGE input_data, JSAMPARRAY output_data)
+		JSAMPIMAGE input_data, JSAMPARRAY output_data)
 #else
 color_quantize2 (cinfo, num_rows, input_data, output_data)
 decompress_info_ptr cinfo;
@@ -1269,10 +1267,10 @@ decompress_info_ptr cinfo;
     /* Make sure jdmaster didn't give me a case I can't handle */
     if (cinfo->num_components != 3 || cinfo->jpeg_color_space != CS_YCbCr)
       ERREXIT(cinfo->emethods, "2-pass quantization only handles YCbCr input");
-    cinfo->methods->color_quant_init = color_quant_init2;
-    cinfo->methods->color_quant_prescan = color_quant_prescan2;
-    cinfo->methods->color_quant_doit = color_quant_doit2;
-    cinfo->methods->color_quant_term = color_quant_term2;
+    cinfo->methods->color_quant_init = color_quant2_init;
+    cinfo->methods->color_quant_prescan = color_quant2_prescan;
+    cinfo->methods->color_quant_doit = color_quant2_doit;
+    cinfo->methods->color_quant_term = color_quant2_term;
     cinfo->methods->color_quantize = color_quantize2;
   }
 }

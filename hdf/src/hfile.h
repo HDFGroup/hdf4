@@ -2,12 +2,15 @@
 $Header$
 
 $Log$
-Revision 1.10  1993/03/17 21:30:23  chouck
-Added offsets to external elements
+Revision 1.11  1993/03/29 16:48:03  koziol
+Updated JPEG code to new JPEG 4 code.
+Changed VSets to use Threaded-Balanced-Binary Tree for internal
+	(in memory) representation.
+Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+	to use 32-bit integer keys instead of pointers.
+Backed out speedups for Cray, until I get the time to fix them.
+Fixed a bunch of bugs in the little-endian support in DFSD.
 
- * Revision 1.9  1993/03/05  17:18:00  chouck
- * Added some new ID types
- *
  * Revision 1.8  1993/01/19  05:55:56  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -64,7 +67,7 @@ Added offsets to external elements
 #define LIBVER_MAJOR	3
 #define LIBVER_MINOR    3
 #define LIBVER_RELEASE	0
-#define LIBVER_STRING   "NCSA HDF Version 3.3 Alpha Release 5 Apr 1, 1993"
+#define LIBVER_STRING   "NCSA HDF Version 3.3 Beta Release 1 Nov 1, 1992"
 #define LIBVER_LEN	92	/* 4+4+4+80 = 92 */
 /* end of version tags */
 
@@ -169,7 +172,7 @@ typedef HFILE hdf_file_t;
 #   define HI_SEEKEND(f) (_llseek((f), (long)0, SEEK_END))
 #   define HI_TELL(f)  (_llseek((f),0l,SEEK_CUR))
 #   define OPENERR(f)  ((f) == (HFILE)HFILE_ERROR)
-#endif /* FILELIB == PCIO */
+#endif /* FILELIB == WINIO */
 
 /* The internal structure used to keep track of the files opened: an
    array of filerec_t structures, each has a linked list of ddblock_t.
@@ -314,10 +317,9 @@ typedef struct functab_t {
 #define AIDTYPE   2
 #define GROUPTYPE 3
 #define SDSTYPE   4
-#define DIMTYPE   5
-#define CDFTYPE   6
-
-
+#define VGIDTYPE  8         /* also defined in vg.h for Vgroups */
+#define VSIDTYPE  9         /* also defined in vg.h for Vsets */
+#define BITTYPE   10        /* For bit-accesses */
 #define FSLOT2ID(s) ((((uint32)FIDTYPE & 0xffff) << 16) | ((s) & 0xffff))
 #define VALIDFID(i) (((((uint32)(i) >> 16) & 0xffff) == FIDTYPE) && \
                     (((uint32)(i) & 0xffff) < MAX_FILE))
@@ -407,6 +409,4 @@ extern int32 mwrite
 #endif
 
 #endif /* HFILE_H */
-
-
 

@@ -35,6 +35,14 @@
 #include "jinclude.h"
 #include "jmemsys.h"		/* import the system-dependent declarations */
 
+#ifndef NO_GETENV
+#ifdef INCLUDES_ARE_ANSI
+#include <stdlib.h>		/* to declare getenv() */
+#else
+extern char * getenv PROTO((const char * name));
+#endif
+#endif
+
 
 /*
  * On many systems it is not necessary to distinguish alloc_small from
@@ -48,6 +56,24 @@
 #ifdef NEED_FAR_POINTERS
 #define NEED_ALLOC_MEDIUM	/* flags alloc_medium really exists */
 #endif
+
+
+/*
+ * Many machines require storage alignment: longs must start on 4-byte
+ * boundaries, doubles on 8-byte boundaries, etc.  On such machines, malloc()
+ * always returns pointers that are multiples of the worst-case alignment
+ * requirement, and we had better do so too.  This means the headers that
+ * we tack onto allocated structures had better have length a multiple of
+ * the alignment requirement.
+ * There isn't any really portable way to determine the worst-case alignment
+ * requirement.  In this code we assume that the alignment requirement is
+ * multiples of sizeof(align_type).  Here we define align_type as double;
+ * with this definition, the code will run on all machines known to me.
+ * If your machine has lesser alignment needs, you can save a few bytes
+ * by making align_type smaller.
+ */
+
+typedef double align_type;
 
 
 /*
@@ -72,8 +98,8 @@ static external_methods_ptr methods; /* saved for access to error_exit */
  * They don't have to be accurate, but the printed statistics will be
  * off a little bit if they are not.
  */
-#define MALLOC_OVERHEAD  (SIZEOF(VOIDP)) /* overhead for jget_small() */
-#define MALLOC_FAR_OVERHEAD  (SIZEOF(VOIDP)) /* for jget_large() */
+#define MALLOC_OVERHEAD  (SIZEOF(VOIDP )) /* overhead for jget_small() */
+#define MALLOC_FAR_OVERHEAD  (SIZEOF(VOIDP )) /* for jget_large() */
 
 static long total_num_small = 0;	/* total # of small objects alloced */
 static long total_bytes_small = 0;	/* total bytes requested */
@@ -161,10 +187,11 @@ int which;
  * These are all-in-memory, and are in near-heap space on an 80x86.
  */
 
-typedef struct small_struct * small_ptr;
+typedef union small_struct * small_ptr;
 
-typedef struct small_struct {
+typedef union small_struct {
 	small_ptr next;		/* next in list of allocated objects */
+	align_type dummy;	/* ensures alignment of following storage */
       } small_hdr;
 
 static small_ptr small_list;	/* head of list */
@@ -198,7 +225,7 @@ size_t sizeofobject;
   small_list = result;
   result++;			/* advance past header */
 
-  return (VOIDP) result;
+  return (VOIDP ) result;
 }
 
 
@@ -226,7 +253,7 @@ VOIDP ptr;
   }
   *llink = hdr->next;
 
-  jfree_small((VOIDP) hdr);
+  jfree_small((VOIDP ) hdr);
 
 #ifdef MEM_STATS
   cur_num_small--;
@@ -241,10 +268,11 @@ VOIDP ptr;
 
 #ifdef NEED_ALLOC_MEDIUM
 
-typedef struct medium_struct FAR * medium_ptr;
+typedef union medium_struct FAR * medium_ptr;
 
-typedef struct medium_struct {
+typedef union medium_struct {
 	medium_ptr next;	/* next in list of allocated objects */
+	align_type dummy;	/* ensures alignment of following storage */
       } medium_hdr;
 
 static medium_ptr medium_list;	/* head of list */
@@ -278,7 +306,7 @@ size_t sizeofobject;
   medium_list = result;
   result++;			/* advance past header */
 
-  return (VOIDP) result;
+  return (VOIDP ) result;
 }
 
 
@@ -306,7 +334,7 @@ VOIDP ptr;
   }
   *llink = hdr->next;
 
-  jfree_large((VOIDP) hdr);
+  jfree_large((VOIDP ) hdr);
 
 #ifdef MEM_STATS
   cur_num_medium--;
@@ -333,6 +361,7 @@ typedef struct small_sarray_struct {
 	small_sarray_ptr next;	/* next in list of allocated sarrays */
 	long numrows;		/* # of rows in this array */
 	long rowsperchunk;	/* max # of rows per allocation chunk */
+	JSAMPROW dummy;		/* ensures alignment of following storage */
       } small_sarray_hdr;
 
 static small_sarray_ptr small_sarray_list; /* head of list */
@@ -428,11 +457,11 @@ JSAMPARRAY ptr;
   /* Free the rows themselves; on 80x86 these are "far" */
   /* Note we only free the row-group headers! */
   for (i = 0; i < hdr->numrows; i += hdr->rowsperchunk) {
-    jfree_large((VOIDP) ptr[i]);
+    jfree_large((VOIDP ) ptr[i]);
   }
 
   /* Free header and row pointers */
-  free_small((VOIDP) hdr);
+  free_small((VOIDP ) hdr);
 
 #ifdef MEM_STATS
   cur_num_sarray--;
@@ -451,6 +480,7 @@ typedef struct small_barray_struct {
 	small_barray_ptr next;	/* next in list of allocated barrays */
 	long numrows;		/* # of rows in this array */
 	long rowsperchunk;	/* max # of rows per allocation chunk */
+	JBLOCKROW dummy;	/* ensures alignment of following storage */
       } small_barray_hdr;
 
 static small_barray_ptr small_barray_list; /* head of list */
@@ -546,11 +576,11 @@ JBLOCKARRAY ptr;
   /* Free the rows themselves; on 80x86 these are "far" */
   /* Note we only free the row-group headers! */
   for (i = 0; i < hdr->numrows; i += hdr->rowsperchunk) {
-    jfree_large((VOIDP) ptr[i]);
+    jfree_large((VOIDP ) ptr[i]);
   }
 
   /* Free header and row pointers */
-  free_small((VOIDP) hdr);
+  free_small((VOIDP ) hdr);
 
 #ifdef MEM_STATS
   cur_num_barray--;
@@ -602,7 +632,7 @@ JBLOCKARRAY ptr;
  * that is, successive access start_row numbers always differ by exactly the
  * unitheight.  This allows fairly simple buffer dump/reload logic if the
  * in-memory buffer is made a multiple of the unitheight.  It would be
- * possible to keep subsampled rather than fullsize data in the "big" arrays,
+ * possible to keep downsampled rather than fullsize data in the "big" arrays,
  * thus reducing temp file size, if we supported overlapping strip access
  * (access requests differing by less than the unitheight).  At the moment
  * I don't believe this is worth the extra complexity.
@@ -623,8 +653,8 @@ struct big_sarray_control {
 	long rows_in_mem;	/* height of memory buffer */
 	long rowsperchunk;	/* allocation chunk size in mem_buffer */
 	long cur_start_row;	/* first logical row # in the buffer */
-	boolean dirty;		/* do current buffer contents need written? */
-	boolean b_s_open;	/* is backing-store data valid? */
+    bool dirty;      /* do current buffer contents need written? */
+    bool b_s_open;   /* is backing-store data valid? */
 	big_sarray_ptr next;	/* link to next big sarray control block */
 	backing_store_info b_s_info; /* System-dependent control info */
 };
@@ -639,8 +669,8 @@ struct big_barray_control {
 	long rows_in_mem;	/* height of memory buffer */
 	long rowsperchunk;	/* allocation chunk size in mem_buffer */
 	long cur_start_row;	/* first logical row # in the buffer */
-	boolean dirty;		/* do current buffer contents need written? */
-	boolean b_s_open;	/* is backing-store data valid? */
+    bool dirty;      /* do current buffer contents need written? */
+    bool b_s_open;   /* is backing-store data valid? */
 	big_barray_ptr next;	/* link to next big barray control block */
 	backing_store_info b_s_info; /* System-dependent control info */
 };
@@ -784,8 +814,8 @@ long extra_medium_space;
 	/* It doesn't fit in memory, create backing store. */
 	sptr->rows_in_mem = max_unitheights * sptr->unitheight;
 	jopen_backing_store(& sptr->b_s_info,
-			    sptr->rows_in_array
-			    * sptr->samplesperrow * SIZEOF(JSAMPLE));
+			    (long) (sptr->rows_in_array *
+				    sptr->samplesperrow * SIZEOF(JSAMPLE)));
 	sptr->b_s_open = TRUE;
       }
       sptr->mem_buffer = alloc_small_sarray(sptr->samplesperrow,
@@ -811,8 +841,8 @@ long extra_medium_space;
 	/* It doesn't fit in memory, create backing store. */
 	bptr->rows_in_mem = max_unitheights * bptr->unitheight;
 	jopen_backing_store(& bptr->b_s_info,
-			    bptr->rows_in_array
-			    * bptr->blocksperrow * SIZEOF(JBLOCK));
+			    (long) (bptr->rows_in_array *
+				    bptr->blocksperrow * SIZEOF(JBLOCK)));
 	bptr->b_s_open = TRUE;
       }
       bptr->mem_buffer = alloc_small_barray(bptr->blocksperrow,
@@ -829,11 +859,11 @@ long extra_medium_space;
 
 LOCAL VOID
 #ifdef PROTOTYPE
-do_sarray_io (big_sarray_ptr ptr, boolean writing)
+do_sarray_io (big_sarray_ptr ptr, bool writing)
 #else
 do_sarray_io (ptr, writing)
 big_sarray_ptr ptr;
-boolean writing;
+bool writing;
 #endif
 /* Do backing store read or write of a "big" sample array */
 {
@@ -852,11 +882,11 @@ boolean writing;
     byte_count = rows * bytesperrow;
     if (writing)
       (*ptr->b_s_info.write_backing_store) (& ptr->b_s_info,
-                        (VOIDP) ptr->mem_buffer[i],
+					    (VOID FAR *) ptr->mem_buffer[i],
 					    file_offset, byte_count);
     else
       (*ptr->b_s_info.read_backing_store) (& ptr->b_s_info,
-                       (VOIDP) ptr->mem_buffer[i],
+					   (VOID FAR *) ptr->mem_buffer[i],
 					   file_offset, byte_count);
     file_offset += byte_count;
   }
@@ -865,11 +895,11 @@ boolean writing;
 
 LOCAL VOID
 #ifdef PROTOTYPE
-do_barray_io (big_barray_ptr ptr, boolean writing)
+do_barray_io (big_barray_ptr ptr, bool writing)
 #else
 do_barray_io (ptr, writing)
 big_barray_ptr ptr;
-boolean writing;
+bool writing;
 #endif
 /* Do backing store read or write of a "big" coefficient-block array */
 {
@@ -888,11 +918,11 @@ boolean writing;
     byte_count = rows * bytesperrow;
     if (writing)
       (*ptr->b_s_info.write_backing_store) (& ptr->b_s_info,
-                        (VOIDP) ptr->mem_buffer[i],
+					    (VOID FAR *) ptr->mem_buffer[i],
 					    file_offset, byte_count);
     else
       (*ptr->b_s_info.read_backing_store) (& ptr->b_s_info,
-                       (VOIDP) ptr->mem_buffer[i],
+					   (VOID FAR *) ptr->mem_buffer[i],
 					   file_offset, byte_count);
     file_offset += byte_count;
   }
@@ -901,12 +931,12 @@ boolean writing;
 
 METHODDEF JSAMPARRAY
 #ifdef PROTOTYPE
-access_big_sarray (big_sarray_ptr ptr, long start_row, boolean writable)
+access_big_sarray (big_sarray_ptr ptr, long start_row, bool writable)
 #else
 access_big_sarray (ptr, start_row, writable)
 big_sarray_ptr ptr;
 long start_row;
-boolean writable;
+bool writable;
 #endif
 /* Access the part of a "big" sample array starting at start_row */
 /* and extending for ptr->unitheight rows.  writable is true if  */
@@ -959,12 +989,12 @@ boolean writable;
 
 METHODDEF JBLOCKARRAY
 #ifdef PROTOTYPE
-access_big_barray (big_barray_ptr ptr, long start_row, boolean writable)
+access_big_barray (big_barray_ptr ptr, long start_row, bool writable)
 #else
 access_big_barray (ptr, start_row, writable)
 big_barray_ptr ptr;
 long start_row;
-boolean writable;
+bool writable;
 #endif
 /* Access the part of a "big" coefficient-block array starting at start_row */
 /* and extending for ptr->unitheight rows.  writable is true if  */
@@ -1041,7 +1071,7 @@ big_sarray_ptr ptr;
   if (ptr->mem_buffer != NULL)	/* just in case never realized */
     free_small_sarray(ptr->mem_buffer);
 
-  free_small((VOIDP) ptr); /* free the control block too */
+  free_small((VOID *) ptr);	/* free the control block too */
 }
 
 
@@ -1071,7 +1101,7 @@ big_barray_ptr ptr;
   if (ptr->mem_buffer != NULL)	/* just in case never realized */
     free_small_barray(ptr->mem_buffer);
 
-  free_small((VOIDP) ptr); /* free the control block too */
+  free_small((VOID *) ptr);	/* free the control block too */
 }
 
 
@@ -1099,10 +1129,10 @@ free_all ()
     free_small_barray((JBLOCKARRAY) (small_barray_list + 1));
   /* Free any remaining small objects */
   while (small_list != NULL)
-    free_small((VOIDP) (small_list + 1));
+    free_small((VOID *) (small_list + 1));
 #ifdef NEED_ALLOC_MEDIUM
   while (medium_list != NULL)
-    free_medium((VOIDP) (medium_list + 1));
+    free_medium((VOID FAR *) (medium_list + 1));
 #endif
 
   jmem_term();			/* system-dependent cleanup */
@@ -1163,4 +1193,27 @@ external_methods_ptr emethods;
   big_barray_list = NULL;
 
   jmem_init(emethods);		/* system-dependent initialization */
+
+  /* Check for an environment variable JPEGMEM; if found, override the
+   * default max_memory setting from jmem_init.  Note that a command line
+   * -m argument may again override this value.
+   * If your system doesn't support getenv(), define NO_GETENV to disable
+   * this feature.
+   */
+#ifndef NO_GETENV
+  { char * memenv;
+
+    if ((memenv = getenv("JPEGMEM")) != NULL) {
+      long lval;
+      char ch = 'x';
+
+      if (sscanf(memenv, "%ld%c", &lval, &ch) > 0) {
+	if (ch == 'm' || ch == 'M')
+	  lval *= 1000L;
+	emethods->max_memory_to_use = lval * 1000L;
+      }
+    }
+  }
+#endif
+
 }

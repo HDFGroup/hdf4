@@ -2,7 +2,16 @@
 # $Header$
 #
 # $Log$
-# Revision 1.9  1993/02/16 19:19:37  koziol
+# Revision 1.10  1993/03/29 16:47:10  koziol
+# Updated JPEG code to new JPEG 4 code.
+# Changed VSets to use Threaded-Balanced-Binary Tree for internal
+# 	(in memory) representation.
+# Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+# 	to use 32-bit integer keys instead of pointers.
+# Backed out speedups for Cray, until I get the time to fix them.
+# Fixed a bunch of bugs in the little-endian support in DFSD.
+#
+# Revision 1.9  1993/02/16  19:19:37  koziol
 # Deleted obsolete JPEG file from JINCS line
 #
 # Revision 1.8  1993/02/16  18:26:17  chouck
@@ -113,7 +122,7 @@ RANLIB=ranlib
 #ARFLAGS=rs
 #RANLIB=echo "AR substitied for RANLIB on library"
 
-# ==> The HP 9000 does not need ranlib. Uncomment the following line
+# ==> The HP 9000 and the Cray do not need ranlib. Uncomment the following line
 #RANLIB=touch
 
 RM=/bin/rm
@@ -123,17 +132,20 @@ SHAR=shar
 ARCHIVE=hdf.shar
 
 HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h dfan.h dfrig.h dfgr.h dfsd.h \
-     vg.h df.h dfi.h dfstubs.h dfufp2i.h vproto.h hcomp.h hconv.h
+     vg.h df.h dfi.h dfstubs.h dfufp2i.h vproto.h hcomp.h hconv.h hbitio.h \
+     tbbt.h
 
 CSRCS=hfile.c herr.c hblocks.c hextelt.c hkit.c dfan.c dfr8.c dfcomp.c \
       dfrle.c dfimcomp.c dfjpeg.c dfunjpeg.c dfp.c dfgr.c df24.c dfsd.c \
       dfgroup.c dfconv.c dfufp2i.c vg.c vrw.c vio.c vparse.c vconv.c vsfld.c \
-      vgp.c vhi.c dfutil.c dfstubs.c
+      vgp.c vhi.c dfutil.c dfstubs.c dfknat.c dfkswap.c dfkcray.c dfkvms.c \
+      dfkconv.c dfkfuji.c hbitio.c tbbt.c
 
 COBJS=hfile.o herr.o hblocks.o hextelt.o hkit.o dfan.o dfr8.o dfcomp.o \
       dfrle.o dfimcomp.o dfjpeg.o dfunjpeg.o dfp.o dfgr.o df24.o dfsd.o \
       dfgroup.o dfconv.o dfufp2i.o vg.o vrw.o vio.o vparse.o vconv.o vsfld.o \
-      vgp.o vhi.o dfutil.o dfstubs.o
+      vgp.o vhi.o dfutil.o dfstubs.o dfknat.o dfkswap.o dfkcray.o dfkvms.o \
+      dfkconv.o dfkfuji.o hbitio.o tbbt.o
 
 FSRCS=hfilef.c herrf.c hfileff.f dfanf.c dfr8f.c dfpf.c df24f.c dfsdf.c \
       vgf.c dff.c dfanff.f df24ff.f dfpff.f dfr8ff.f dfsdff.f vgff.f dfff.f \
@@ -205,6 +217,8 @@ hextelt.o: hfile.h hdf.h herr.h hdfi.h
 
 hkit.o: hfile.h hdf.h herr.h hdfi.h
 
+hbitio.o: hbitio.h hfile.h hdf.h herr.h hdfi.h
+
 dfan.o: hdf.h herr.h dfan.h hdfi.h hfile.h
 
 dfanf.o: hdf.h herr.h dfan.h hdfi.h
@@ -240,6 +254,18 @@ dfsdf.o: hdf.h herr.h dfsd.h hdfi.h
 dfgroup.o: hdf.h herr.h hfile.h hdfi.h
 
 dfconv.o: hdf.h herr.h hdfi.h hconv.h
+
+dfknat.o: hdf.h herr.h hdfi.h hconv.h
+
+dfkswap.o: hdf.h herr.h hdfi.h hconv.h
+
+dfkcray.o: hdf.h herr.h hdfi.h hconv.h
+
+dfkvms.o: hdf.h herr.h hdfi.h hconv.h
+
+dfkconv.o: hdf.h herr.h hdfi.h hconv.h
+
+dfkfuji.o: hdf.h herr.h hdfi.h hconv.h
 
 dfutil.o: hdf.h herr.h hdfi.h
 

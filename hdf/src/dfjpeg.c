@@ -184,12 +184,12 @@ int index;
 
 
 #ifdef PROTOTYPE
-LOCAL VOID emit_dht (compress_info_ptr cinfo, int index, boolean is_ac)
+LOCAL VOID emit_dht (compress_info_ptr cinfo, int index, bool is_ac)
 #else
 LOCAL VOID emit_dht (cinfo, index, is_ac)
 compress_info_ptr cinfo;
 int index;
-boolean is_ac;
+bool is_ac;
 #endif
 /* Emit a DHT marker */
 {
@@ -404,7 +404,7 @@ compress_info_ptr cinfo;
     int32 aid;
     char qt_in_use[NUM_QUANT_TBLS];
     int i, prec;
-    boolean is_baseline;
+    bool is_baseline;
 
     /* Get an AID to write the JPEG header into.  1024 bytes should be more */
     /*  than enough (it should fit into 575) */
@@ -783,14 +783,14 @@ intn DFCIjpeg(file_id, tag, ref, xdim, ydim, image, scheme, scheme_info)
    * call to jpeg_compress; typically, making them local data in the
    * calling routine is the best strategy.
    */
-    struct compress_info_struct cinfo;
-    struct compress_methods_struct c_methods;
-    struct external_methods_struct e_methods;
+    struct Compress_info_struct cinfo;
+    struct Compress_methods_struct c_methods;
+    struct External_methods_struct e_methods;
 
     img_file_id=file_id;    /* keep the file ID around */
     img_tag=tag;        /* keep dataset's tag around */
     img_ref=ref;        /* keep reference number around */
-    img_ptr=image;      /* Set the static pointer to the image to read */
+    img_ptr=(uint8 *)image;   /* Set the static pointer to the image to read */
     img_xdim=xdim;      /* Keep local copies of the X and Y dimensions */
     img_ydim=ydim;
     img_scheme=(intn)scheme;  /* Type of image compression we are going to do */

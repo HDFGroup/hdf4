@@ -32,6 +32,22 @@
 #endif
 
 
+/*
+ * On most systems, writing individual bytes with putc() is drastically less
+ * efficient than buffering a row at a time for fwrite().  But we must
+ * allocate the row buffer in near data space on PCs, because we are assuming
+ * small-data memory model, wherein fwrite() can't reach far memory.  If you
+ * need to process very wide images on a PC, you may have to use the putc()
+ * approach.  Also, there are still a few systems around wherein fwrite() is
+ * actually implemented as a putc() loop, in which case this buffer is a waste
+ * of space.  So the putc() method can be used by defining USE_PUTC_OUTPUT.
+ */
+
+#ifndef USE_PUTC_OUTPUT
+static char * row_buffer;	/* holds 1 pixel row's worth of output */
+#endif
+
+
 LOCAL VOID
 #ifdef PROTOTYPE
 write_header (decompress_info_ptr cinfo, int num_colors)
@@ -45,7 +61,7 @@ int num_colors;
   char targaheader[18];
 
   /* Set unused fields of header to 0 */
-  MEMZERO((VOIDP) targaheader, SIZEOF(targaheader));
+  HDmemset(targaheader, 0, SIZEOF(targaheader));
 
   if (num_colors > 0) {
     targaheader[1] = 1;		/* color map type 1 */
@@ -94,10 +110,20 @@ decompress_info_ptr cinfo;
     /* Targa doesn't have a mapped grayscale format, so we will */
     /* demap quantized gray output.  Never emit a colormap. */
     write_header(cinfo, 0);
+#ifndef USE_PUTC_OUTPUT
+    /* allocate space for row buffer: 1 byte/pixel */
+    row_buffer = (char *) (*cinfo->emethods->alloc_small)
+			((size_t) (SIZEOF(char) * cinfo->image_width));
+#endif
   } else if (cinfo->out_color_space == CS_RGB) {
     /* For quantized output, defer writing header until put_color_map time. */
     if (! cinfo->quantize_colors)
       write_header(cinfo, 0);
+#ifndef USE_PUTC_OUTPUT
+    /* allocate space for row buffer: 3 bytes/pixel */
+    row_buffer = (char *) (*cinfo->emethods->alloc_small)
+			((size_t) (3 * SIZEOF(char) * cinfo->image_width));
+#endif
   } else {
     ERREXIT(cinfo->emethods, "Targa output must be grayscale or RGB");
   }
@@ -107,6 +133,70 @@ decompress_info_ptr cinfo;
 /*
  * Write some pixel data.
  */
+
+#ifdef USE_PUTC_OUTPUT
+
+METHODDEF VOID
+#ifdef PROTOTYPE
+put_pixel_rows (decompress_info_ptr cinfo, int num_rows,
+		JSAMPIMAGE pixel_data)
+#else
+put_pixel_rows (cinfo, num_rows,pixel_data)
+decompress_info_ptr cinfo;
+int num_rows;
+JSAMPIMAGE pixel_data;
+#endif
+/* used for unquantized full-color output */
+{
+  register FILE * outfile = cinfo->output_file;
+  register JSAMPROW ptr0, ptr1, ptr2;
+  register long col;
+  long width = cinfo->image_width;
+  int row;
+  
+  for (row = 0; row < num_rows; row++) {
+    ptr0 = pixel_data[0][row];
+    ptr1 = pixel_data[1][row];
+    ptr2 = pixel_data[2][row];
+    for (col = width; col > 0; col--) {
+      putc(GETJSAMPLE(*ptr2), outfile); /* write in BGR order */
+      ptr2++;
+      putc(GETJSAMPLE(*ptr1), outfile);
+      ptr1++;
+      putc(GETJSAMPLE(*ptr0), outfile);
+      ptr0++;
+    }
+  }
+}
+
+METHODDEF VOID
+#ifdef PROTOTYPE
+put_gray_rows (decompress_info_ptr cinfo, int num_rows,
+	       JSAMPIMAGE pixel_data)
+#else
+put_gray_rows (cinfo, num_rows, pixel_data)
+decompress_info_ptr cinfo;
+int num_rows;
+JSAMPIMAGE pixel_data;
+#endif
+/* used for grayscale OR quantized color output */
+{
+  register FILE * outfile = cinfo->output_file;
+  register JSAMPROW ptr0;
+  register long col;
+  long width = cinfo->image_width;
+  int row;
+  
+  for (row = 0; row < num_rows; row++) {
+    ptr0 = pixel_data[0][row];
+    for (col = width; col > 0; col--) {
+      putc(GETJSAMPLE(*ptr0), outfile);
+      ptr0++;
+    }
+  }
+}
+
+#else /* use row buffering */
 
 METHODDEF VOID
 #ifdef PROTOTYPE
@@ -118,39 +208,59 @@ decompress_info_ptr cinfo;
 int num_rows;
 JSAMPIMAGE pixel_data;
 #endif
+/* used for unquantized full-color output */
 {
-  register FILE * outfile = cinfo->output_file;
+  FILE * outfile = cinfo->output_file;
   register JSAMPROW ptr0, ptr1, ptr2;
+  register char * row_bufferptr;
   register long col;
-  register long width = cinfo->image_width;
-  register int row;
+  long width = cinfo->image_width;
+  int row;
   
-  if (cinfo->final_out_comps == 1) {
-    /* here for grayscale or quantized color output */
-    for (row = 0; row < num_rows; row++) {
-      ptr0 = pixel_data[0][row];
-      for (col = width; col > 0; col--) {
-	putc(GETJSAMPLE(*ptr0), outfile);
-	ptr0++;
-      }
+  for (row = 0; row < num_rows; row++) {
+    ptr0 = pixel_data[0][row];
+    ptr1 = pixel_data[1][row];
+    ptr2 = pixel_data[2][row];
+    row_bufferptr = row_buffer;
+    for (col = width; col > 0; col--) {
+      *row_bufferptr++ = (char) GETJSAMPLE(*ptr2++); /* BGR order */
+      *row_bufferptr++ = (char) GETJSAMPLE(*ptr1++);
+      *row_bufferptr++ = (char) GETJSAMPLE(*ptr0++);
     }
-  } else {
-    /* here for unquantized color output */
-    for (row = 0; row < num_rows; row++) {
-      ptr0 = pixel_data[0][row];
-      ptr1 = pixel_data[1][row];
-      ptr2 = pixel_data[2][row];
-      for (col = width; col > 0; col--) {
-	putc(GETJSAMPLE(*ptr2), outfile); /* write in BGR order */
-	ptr2++;
-	putc(GETJSAMPLE(*ptr1), outfile);
-	ptr1++;
-	putc(GETJSAMPLE(*ptr0), outfile);
-	ptr0++;
-      }
-    }
+    (VOID) JFWRITE(outfile, row_buffer, 3*width);
   }
 }
+
+METHODDEF VOID
+#ifdef PROTOTYPE
+put_gray_rows (decompress_info_ptr cinfo, int num_rows,
+	       JSAMPIMAGE pixel_data)
+#else
+put_gray_rows (cinfo, num_rows, pixel_data)
+decompress_info_ptr cinfo;
+int num_rows;
+JSAMPIMAGE pixel_data;
+#endif
+/* used for grayscale OR quantized color output */
+{
+  FILE * outfile = cinfo->output_file;
+  register JSAMPROW ptr0;
+  register char * row_bufferptr;
+  register long col;
+  long width = cinfo->image_width;
+  int row;
+  
+  for (row = 0; row < num_rows; row++) {
+    ptr0 = pixel_data[0][row];
+    row_bufferptr = row_buffer;
+    for (col = width; col > 0; col--) {
+      *row_bufferptr++ = (char) GETJSAMPLE(*ptr0++);
+    }
+    (VOID) JFWRITE(outfile, row_buffer, width);
+  }
+}
+
+#endif /* USE_PUTC_OUTPUT */
 
 
 /*
@@ -158,20 +268,23 @@ JSAMPIMAGE pixel_data;
  * For Targa, this is only applied to grayscale data.
  */
 
+#ifdef USE_PUTC_OUTPUT
+
 METHODDEF VOID
 #ifdef PROTOTYPE
-put_demapped_rows (decompress_info_ptr cinfo, int num_rows,
+put_demapped_gray (decompress_info_ptr cinfo, int num_rows,
 		   JSAMPIMAGE pixel_data)
 #else
-put_demapped_rows (cinfo, num_rows, pixel_data)
+put_demapped_gray (cinfo, num_rows, pixel_data)
 decompress_info_ptr cinfo;
 int num_rows;
 JSAMPIMAGE pixel_data;
 #endif
 {
   register FILE * outfile = cinfo->output_file;
-  register JSAMPARRAY color_map = cinfo->colormap;
   register JSAMPROW ptr;
+  register JSAMPROW color_map0 = cinfo->colormap[0];
+  register int pixval;
   register long col;
   long width = cinfo->image_width;
   int row;
@@ -179,11 +292,46 @@ JSAMPIMAGE pixel_data;
   for (row = 0; row < num_rows; row++) {
     ptr = pixel_data[0][row];
     for (col = width; col > 0; col--) {
-      putc(GETJSAMPLE(color_map[0][GETJSAMPLE(*ptr)]), outfile);
-      ptr++;
+      pixval = GETJSAMPLE(*ptr++);
+      putc(GETJSAMPLE(color_map0[pixval]), outfile);
     }
   }
 }
+
+#else /* use row buffering */
+
+METHODDEF VOID
+#ifdef PROTOTYPE
+put_demapped_gray (decompress_info_ptr cinfo, int num_rows,
+		   JSAMPIMAGE pixel_data)
+#else
+put_demapped_gray (cinfo, num_rows, pixel_data)
+decompress_info_ptr cinfo;
+int num_rows;
+JSAMPIMAGE pixel_data;
+#endif
+{
+  FILE * outfile = cinfo->output_file;
+  register JSAMPROW ptr;
+  register char * row_bufferptr;
+  register JSAMPROW color_map0 = cinfo->colormap[0];
+  register int pixval;
+  register long col;
+  long width = cinfo->image_width;
+  int row;
+  
+  for (row = 0; row < num_rows; row++) {
+    ptr = pixel_data[0][row];
+    row_bufferptr = row_buffer;
+    for (col = width; col > 0; col--) {
+      pixval = GETJSAMPLE(*ptr++);
+      *row_bufferptr++ = (char) GETJSAMPLE(color_map0[pixval]);
+    }
+    (VOID) JFWRITE(outfile, row_buffer, width);
+  }
+}
+
+#endif /* USE_PUTC_OUTPUT */
 
 
 /*
@@ -216,7 +364,7 @@ JSAMPARRAY colormap;
       putc(GETJSAMPLE(colormap[0][i]), outfile);
     }
   } else {
-    cinfo->methods->put_pixel_rows = put_demapped_rows;
+    cinfo->methods->put_pixel_rows = put_demapped_gray;
   }
 }
 
@@ -255,7 +403,10 @@ decompress_info_ptr cinfo;
 {
   cinfo->methods->output_init = output_init;
   cinfo->methods->put_color_map = put_color_map;
-  cinfo->methods->put_pixel_rows = put_pixel_rows;
+  if (cinfo->out_color_space == CS_GRAYSCALE || cinfo->quantize_colors)
+    cinfo->methods->put_pixel_rows = put_gray_rows;
+  else
+    cinfo->methods->put_pixel_rows = put_pixel_rows;
   cinfo->methods->output_term = output_term;
 }
 

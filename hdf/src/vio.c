@@ -5,10 +5,19 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/01/19 05:56:27  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.6  1993/03/29 16:50:43  koziol
+Updated JPEG code to new JPEG 4 code.
+Changed VSets to use Threaded-Balanced-Binary Tree for internal
+	(in memory) representation.
+Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+	to use 32-bit integer keys instead of pointers.
+Backed out speedups for Cray, until I get the time to fix them.
+Fixed a bunch of bugs in the little-endian support in DFSD.
 
+ * Revision 1.5  1993/01/19  05:56:27  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.4  1992/11/30  22:00:01  chouck
  * Added fixes for changing to Vstart and Vend
  *
@@ -36,6 +45,12 @@ port.  Lots of minor annoyances fixed.
 
 #include "vg.h"
 #include "hfile.h"
+
+/* Private Function Prototypes */
+PRIVATE VOID vunpackvs
+    PROTO((VDATA *vs, uint8 buf[], int32 *size));
+
+/* External (within Vset routines) variables */
 extern vfile_t vfile[];
 
 /* ---------------------- DFvsetopen --------------------------------------- */
@@ -50,6 +65,7 @@ extern vfile_t vfile[];
 #undef DFclose
 #endif
 
+#ifdef QAK
 #ifdef VMS /* Redefine Hopen and Hclose for VMS linker */
 #define Hclose _Hclose
 #define Hopen _Hopen 
@@ -92,6 +108,7 @@ PUBLIC int32 DFvsetclose (f)
     s = Hclose(f);
     return (s);
 }
+#endif
 
 /* ------------------------------------------------------------------ */
 /*
@@ -105,27 +122,37 @@ PUBLIC int32 DFvsetclose (f)
 #ifdef PROTOTYPE
 vsinstance_t * vsinstance (HFILEID f, uint16 vsid)
 #else
-
 vsinstance_t * vsinstance (f,vsid)
-	HFILEID	f;
-	uint16 vsid;
-
+HFILEID f;
+uint16 vsid;
 #endif
-
 {
-  register uintn ref;
-  register vsinstance_t * w;
-  register vfile_t      * vf;
-  char * FUNC = "vsinstance";
+#ifdef OLD_WAY
+    register uintn ref;
+    register vsinstance_t * w;
+#endif
+    VOIDP *t;
+    register vfile_t      * vf;
+    int32 key;
+    char * FUNC = "vsinstance";
   
-  if (!(vf = Get_vfile(f))) HRETURN_ERROR(DFE_FNF, NULL);
+    if (NULL==(vf = Get_vfile(f)))
+        HRETURN_ERROR(DFE_FNF, NULL);
   
-  ref = (uintn) vsid;
-  for(w = vf->vstab.next; w; w = w->next) 
-    if (w->ref == ref) return(w);
+#ifdef OLD_WAY
+    ref = (uintn) vsid;
+    for(w = vf->vstab.next; w; w = w->next)
+        if (w->ref == ref) return(w);
+#else
+    /* tbbtdfind returns a pointer to the vsinstance_t pointer */
+    key=VSSLOT2ID(f,vsid);
+    t=(VOIDP *)tbbtdfind(vf->vstree,(VOIDP)&key,NULL);
+    if(t!=NULL)
+        return((vsinstance_t *)*t);     /* return the actual vsinstance_t ptr */
+#endif
   
-  return(NULL);
-  
+    HERROR(DFE_NOMATCH);
+    return(NULL);
 } /* vsinstance */
 
 /* --------------------------- vexists --------------------------------------- */
@@ -138,21 +165,17 @@ vsinstance_t * vsinstance (f,vsid)
 #ifdef PROTOTYPE
 int32 vexistvs (HFILEID f, uint16 vsid)         
 #else
-
-int32 vexistvs (f, vsid)         
-	HFILEID	f;
-	uint16 vsid;
-
+int32 vexistvs (f, vsid)
+HFILEID f;
+uint16 vsid;
 #endif
-
 {
-  char * FUNC = "vexistvs";
+    char * FUNC = "vexistvs";
   
-  if (NULL== vsinstance(f,vsid))
-    return(FAIL);
-  else
-    return (TRUE);
-  
+    if (NULL== vsinstance(f,vsid))
+        return(FAIL);
+    else
+        return (TRUE);
 } /* vexistvs */
 
 /* ------------------------------------------------------------------ */
@@ -175,9 +198,11 @@ CONTENTS of VS stored in HDF file with tag VSDESCTAG:
 ****/
 
 
+#ifdef QAK
 #define INT16SIZE 2
 #define UINT16SIZE 2
 #define INT32SIZE 4
+#endif
 
 /* ------------------------------- vpackvs ----------------------------------- */
 /*
@@ -205,115 +230,76 @@ convert a vs struct to a vspack suitable for storage in a HDF file
 */
 
 #ifdef PROTOTYPE
-void vpackvs (VDATA *vs, BYTE buf[], int32 *size)
+void vpackvs (VDATA *vs, uint8 buf[], int32 *size)
 #else
-
 void vpackvs (vs, buf, size)
-	VDATA 	*vs;
-	int32   	*size;
-	BYTE		buf[];
-
+VDATA   *vs;
+int32       *size;
+uint8        buf[];
 #endif
-
 {
-	register int32          i;
-	register BYTE		*b, *bb;
-	register int16         int16var;
+    register int32      i;
+    register uint8      *bb;
 	char * FUNC = "vpackvs";
 
 	bb = &buf[0];
 
 	/* save the interlace */
-	b = bb;
-	INT16ENCODE(b,vs->interlace);
-	bb+=INT16SIZE;
+    INT16ENCODE(bb,vs->interlace);
 
 	/* save nvertices */
-	b = bb;
-	INT32ENCODE(b,vs->nvertices);
-	bb+=INT32SIZE;
+    INT32ENCODE(bb,vs->nvertices);
 
 	/* save ivsize */
-	b = bb;
-	INT16ENCODE(b,vs->wlist.ivsize);
-	bb+=INT16SIZE;
+    INT16ENCODE(bb,vs->wlist.ivsize);
 
 	/* save nfields */
-	b = bb;
-	INT16ENCODE(b,vs->wlist.n);
-	bb+=INT16SIZE;
+    INT16ENCODE(bb,vs->wlist.n);
 
-	for (i=0;i<vs->wlist.n;i++) { /* save the type */
-		b = bb;
-		INT16ENCODE(b,vs->wlist.type[i]);
-		bb+=INT16SIZE;
-	}
-	for (i=0;i<vs->wlist.n;i++) { /* save the isize */
-		b = bb;
-		INT16ENCODE(b,vs->wlist.isize[i]);
-		bb+=INT16SIZE;
-	}
-	for (i=0;i<vs->wlist.n;i++) { /* save the offset */
-		b = bb;
-		INT16ENCODE(b,vs->wlist.off[i]);
-		bb+=INT16SIZE;
-	}
-	for (i=0;i<vs->wlist.n;i++)  { /* save the order */
-		b = bb;
-		INT16ENCODE(b,vs->wlist.order[i]);
-		bb+=INT16SIZE;
-	}
+    for (i=0;i<vs->wlist.n;i++)     /* save the type */
+        INT16ENCODE(bb,vs->wlist.type[i]);
+
+    for (i=0;i<vs->wlist.n;i++)     /* save the isize */
+        INT16ENCODE(bb,vs->wlist.isize[i]);
+
+    for (i=0;i<vs->wlist.n;i++)     /* save the offset */
+        INT16ENCODE(bb,vs->wlist.off[i]);
+
+    for (i=0;i<vs->wlist.n;i++)     /* save the order */
+        INT16ENCODE(bb,vs->wlist.order[i]);
 
 	/* save each field length and name - omit the null */
-	for (i=0;i<vs->wlist.n;i++) {
-		b = bb;
-        int16var = HDstrlen(vs->wlist.name[i]);
-		INT16ENCODE(b,int16var);
-		bb+=INT16SIZE;
+    for (i=0; i<vs->wlist.n; i++) {
+        INT16ENCODE(bb,HDstrlen(vs->wlist.name[i]));
 
         HDstrcpy((char*) bb, vs->wlist.name[i]);
         bb += HDstrlen(vs->wlist.name[i]);
 	}
 
 	/* save the vsnamelen and vsname - omit the null */
-	b = bb;
-    int16var = HDstrlen(vs->vsname);
-	INT16ENCODE(b,int16var);
-	bb+=INT16SIZE;
+    INT16ENCODE(bb,HDstrlen(vs->vsname));
 
     HDstrcpy((char*) bb,vs->vsname);
     bb += HDstrlen(vs->vsname);
 
 	/* save the vsclasslen and vsclass- omit the null */
-	b = bb;
-    int16var = HDstrlen(vs->vsclass);
-	INT16ENCODE(b,int16var);
-	bb+=INT16SIZE;
+    INT16ENCODE(bb,HDstrlen(vs->vsclass));
 
     HDstrcpy((char*) bb,vs->vsclass);
     bb += HDstrlen(vs->vsclass);
 
 	/* save the expansion tag/ref pair */
-	b= bb;
-	UINT16ENCODE(b,vs->extag);
-	bb +=UINT16SIZE;
+    UINT16ENCODE(bb,vs->extag);
 
-	b= bb;
-	UINT16ENCODE(b,vs->exref);
-	bb +=UINT16SIZE;
+    UINT16ENCODE(bb,vs->exref);
 
 	/* save the version field - init to version_2 now */
-	b= bb;
-	INT16ENCODE(b,vs->version);
-	bb +=INT16SIZE;
+    INT16ENCODE(bb,vs->version);
 
 	/* save the 'more' field - NONE now */
-	b= bb;
-	INT16ENCODE(b,vs->more);
-	bb +=INT16SIZE;
+    INT16ENCODE(bb,vs->more);
 
     *size = (int32) (bb - buf) + 1;
-
 } /* vpackvs */
 
 
@@ -326,28 +312,32 @@ PRIVATE
 int16 map_from_old_types(int16 type)
 #else
 int16 map_from_old_types(type)
-     int16 type;
+int16 type;
 #endif
 {
+    switch(type) {
+        case LOCAL_CHARTYPE:
+            return DFNT_CHAR;
 
-  switch(type) {
-  case LOCAL_CHARTYPE:
-    return DFNT_CHAR;
-  case LOCAL_BYTETYPE:
-    return DFNT_INT8;
-  case LOCAL_SHORTTYPE:
-  case LOCAL_INTTYPE:
-    return DFNT_INT16;
-  case LOCAL_LONGTYPE:
-    return DFNT_INT32;
-  case LOCAL_FLOATTYPE:
-    return DFNT_FLOAT32;
-  case LOCAL_DOUBLETYPE:
-    return DFNT_FLOAT32;
-  default:
-    return type;
-  }
+        case LOCAL_BYTETYPE:
+            return DFNT_INT8;
 
+        case LOCAL_SHORTTYPE:
+        case LOCAL_INTTYPE:
+            return DFNT_INT16;
+
+        case LOCAL_LONGTYPE:
+            return DFNT_INT32;
+
+        case LOCAL_FLOATTYPE:
+            return DFNT_FLOAT32;
+
+        case LOCAL_DOUBLETYPE:
+            return DFNT_FLOAT32;
+
+        default:
+            return type;
+    }
 } /* map_from_old_types */
 
 
@@ -358,19 +348,17 @@ This routine will also initalize the VDATA structure as much as it can.
 */
 
 #ifdef PROTOTYPE
-void vunpackvs (VDATA *vs, BYTE buf[], int32 *size)
+PRIVATE void vunpackvs (VDATA *vs, uint8 buf[], int32 *size)
 #else
-
-void vunpackvs (vs, buf, size)
-	VDATA 	*vs;
-	BYTE		buf[];
-	int32   	*size;	/* UNUSED, but retained for compatibility with vpackvs */
+PRIVATE void vunpackvs (vs, buf, size)
+VDATA   *vs;
+uint8   buf[];
+int32   *size;  /* UNUSED, but retained for compatibility with vpackvs */
 #endif
-
 {
-	BYTE		*b, *bb;
-	int32    i;
-	int16		int16var;
+    uint8   *bb;
+    int32   i;
+    int16   int16var;
 	char * FUNC = "vunpackvs";
 
 	i = *size; /* dum */
@@ -378,103 +366,66 @@ void vunpackvs (vs, buf, size)
 	bb = &buf[0];
 
 	/* retrieve interlace */
-	b = bb;
-	INT16DECODE(b,vs->interlace);
-	bb += INT16SIZE;
+    INT16DECODE(bb,vs->interlace);
 
 	/* retrieve nvertices */
-	b = bb;
-	INT32DECODE(b,vs->nvertices);
-	bb += INT32SIZE;
+    INT32DECODE(bb,vs->nvertices);
 
 	/* retrieve tore ivsize */
-	b = bb;
-	INT16DECODE(b,vs->wlist.ivsize);
-	bb += INT16SIZE;
+    INT16DECODE(bb,vs->wlist.ivsize);
 
 	/* retrieve nfields */
-	b = bb;
-	INT16DECODE(b,vs->wlist.n);
-	bb += INT16SIZE;
+    INT16DECODE(bb,vs->wlist.n);
 
-	for (i=0;i<vs->wlist.n;i++)  { /* retrieve the type */
-		b = bb;
-		INT16DECODE(b,vs->wlist.type[i]);
-		bb += INT16SIZE;
-	}
+    for (i=0;i <vs->wlist.n; i++)    /* retrieve the type */
+        INT16DECODE(bb,vs->wlist.type[i]);
 
-	for (i=0;i<vs->wlist.n;i++)  { /* retrieve the isize */
-		b = bb;
-		INT16DECODE(b,vs->wlist.isize[i]);
-		bb += INT16SIZE;
-	}
+    for (i=0; i<vs->wlist.n; i++)    /* retrieve the isize */
+        INT16DECODE(bb,vs->wlist.isize[i]);
 
-	for (i=0;i<vs->wlist.n;i++)  { /* retrieve the offset */
-		b = bb;
-		INT16DECODE(b,vs->wlist.off[i]);
-		bb += INT16SIZE;
-	}
+    for (i=0; i<vs->wlist.n; i++)    /* retrieve the offset */
+        INT16DECODE(bb,vs->wlist.off[i]);
 
-	for (i=0;i<vs->wlist.n;i++)  { /* retrieve the order */
-		b = bb;
-		INT16DECODE(b,vs->wlist.order[i]);
-		bb += INT16SIZE;
-	}
+    for (i=0; i<vs->wlist.n; i++)    /* retrieve the order */
+        INT16DECODE(bb,vs->wlist.order[i]);
 
 	/* retrieve the field names (and each field name's length)  */
-	for (i=0;i<vs->wlist.n;i++) {
-		b = bb;
-		INT16DECODE(b,int16var); /* this gives the length */
-		bb += INT16SIZE;
+    for (i=0; i<vs->wlist.n; i++) {
+        INT16DECODE(bb,int16var); /* this gives the length */
 
         HIstrncpy(vs->wlist.name[i], (char*) bb, int16var + 1);
 		bb += int16var;
 	}
 
 	/* retrieve the vsname (and vsnamelen)  */
-	b = bb;
-	INT16DECODE(b, int16var); /* this gives the length */
-	bb += INT16SIZE;
+    INT16DECODE(bb, int16var); /* this gives the length */
 
     HIstrncpy(vs->vsname, (char*) bb, int16var + 1);
 	bb += int16var;
 
 	/* retrieve the vsclass (and vsclasslen)  */
-	b = bb;
-	INT16DECODE(b, int16var); /* this gives the length */
-	bb += INT16SIZE;
+    INT16DECODE(bb, int16var); /* this gives the length */
 
     HIstrncpy(vs->vsclass, (char*) bb, int16var + 1);
 	bb += int16var;
 
 	/* retrieve the expansion tag and ref */
-	b = bb;
-	UINT16DECODE(b, vs->extag);
-	bb += UINT16SIZE;
-
-	b = bb;
-	UINT16DECODE(b, vs->exref);
-	bb += UINT16SIZE;
+    UINT16DECODE(bb, vs->extag);
+    UINT16DECODE(bb, vs->exref);
 
 	/* retrieve the version field */
-	b = bb;
-	INT16DECODE(b, vs->version);
-	bb += INT16SIZE;
+    INT16DECODE(bb, vs->version);
 
 	/* retrieve the 'more' field */
-	b = bb;
-	INT16DECODE(b, vs->more);
-	bb += INT16SIZE;
+    INT16DECODE(bb, vs->more);
 
-        if(vs->version <= VSET_OLD_TYPES)
-          for (i = 0; i < vs->wlist.n; i++) { /* save the type */
+    if(vs->version <= VSET_OLD_TYPES)
+        for (i = 0; i < vs->wlist.n; i++)   /* save the type */
             vs->wlist.type[i] = map_from_old_types(vs->wlist.type[i]);
-          }
         
 	/* --- EXTRA --- fill in the machine-dependent size fields */
-	for (i = 0; i < vs->wlist.n; i++) {
+    for (i = 0; i < vs->wlist.n; i++)
           vs->wlist.esize[i] = vs->wlist.order[i] * DFKNTsize(vs->wlist.type[i] | DFNT_NATIVE);
-	}
         
 } /* vunpackvs */
 
@@ -532,90 +483,101 @@ void vunpackvs (vs, buf, size)
    *************************************************************** */
 
 #ifdef PROTOTYPE
-PUBLIC VDATA * VSattach (HFILEID f, int32 vsid, char *accesstype) 
+PUBLIC int32 VSattach (HFILEID f, int32 vsid, char *accesstype)
 #else
-
-PUBLIC VDATA * VSattach (f, vsid, accesstype) 
-	HFILEID	f;
-	int32 	vsid;
-	char *	accesstype;
-
+PUBLIC int32 VSattach (f, vsid, accesstype)
+HFILEID f;
+int32   vsid;
+char *  accesstype;
 #endif
-
 {
 	VDATA 		*vs;  			 /* new vdata to be returned */
 	int32 		vspacksize;
-	BYTE			vspack[sizeof(VWRITELIST)];
-	int32			access;
+    uint8       vspack[sizeof(VWRITELIST)];
+    int32       access;
 	vsinstance_t	* w;
 	vfile_t			* vf;
 	char * FUNC = "VSattach";
 
-	if ((f == FAIL)  || (vsid < -1)) HRETURN_ERROR(DFE_ARGS, NULL);
-	if (!(vf = Get_vfile(f)))        HRETURN_ERROR(DFE_FNF, NULL);
+    if ((f == FAIL)  || (vsid < -1))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    if (NULL==(vf = Get_vfile(f)))
+        HRETURN_ERROR(DFE_FNF, FAIL);
 
-	if      ( accesstype[0]=='R' || accesstype[0]=='r') { access = 'r'; }
-	else if ( accesstype[0]=='W' || accesstype[0]=='w') { access = 'w'; }
-	else HRETURN_ERROR(DFE_BADACC, NULL);
-
-	if (vjv) {
-          sprintf(sjs,"#VSATTACH:vsid=%ld access=%s\n",vsid, accesstype); zj;
-        }
+    if ( accesstype[0]=='R' || accesstype[0]=='r')
+        access = 'r';
+    else if ( accesstype[0]=='W' || accesstype[0]=='w')
+        access = 'w';
+    else
+        HRETURN_ERROR(DFE_BADACC, FAIL);
 
 	if (vsid == -1) {  /* ---------- VSID IS -1 ----------------------- */
-          if (access == 'r') {
+        if (access == 'r') {
             HERROR(DFE_BADACC);
             HEreport("VSattach: may not read vsid of -1");
-            return(NULL);
+            return(FAIL);
           }
 
           /* otherwise 'w' */
           /* allocate space for vs,  & zero it out  */
-          if ( (vs= (VDATA*) HDgetspace (sizeof(VDATA))) == NULL)
-            HRETURN_ERROR(DFE_NOSPACE, NULL);
+        if ( (vs= (VDATA*) HDgetspace (sizeof(VDATA))) == NULL)
+            HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-          vs->nvertices = 0;
-          vs->wlist.n = vs->rlist.n = 0;
-          vs->islinked = FALSE;
-          vs->nusym = 0;
+        vs->nvertices = 0;
+        vs->wlist.n = vs->rlist.n = 0;
+        vs->islinked = FALSE;
+        vs->nusym = 0;
           
-          vs->oref		= vnewref(f);
-          if (vs->oref == 0) {HERROR(DFE_NOREF); HDfreespace (vs); return(NULL);}
+        vs->oref      = vnewref(f);
+        if (vs->oref == 0) {
+            HERROR(DFE_NOREF);
+            HDfreespace(vs);
+            return(FAIL);
+          }
           
-          vs->otag      = DFTAG_VH;
-          vs->vsname[0]     = '\0';
-          vs->interlace		= FULL_INTERLACE; /* DEFAULT */
-          vs->access		= 'w';
-          vs->f			= f;
-          vs->marked		= 0;
+        vs->otag      = DFTAG_VH;
+        vs->vsname[0] = '\0';
+        vs->interlace = FULL_INTERLACE; /* DEFAULT */
+        vs->access    = 'w';
+        vs->f         = f;
+        vs->marked    = 0;
           
-          vs->vsclass[0]	= '\0';
-          vs->extag		= 0;
-          vs->exref		= 0;
-          vs->more			= 0;
-          vs->version		= VSET_VERSION;
+        vs->vsclass[0]= '\0';
+        vs->extag     = 0;
+        vs->exref     = 0;
+        vs->more      = 0;
+        vs->version   = VSET_VERSION;
           
-          vs->vm		= (VMBLOCK*) NULL;
+        vs->vm        = (VMBLOCK*) NULL;
           
-          vs->aid		= 0;
+        vs->aid       = 0;
           
           /* attach new vs to file's vstab */
-          if ( NULL == (w = (vsinstance_t*) HDgetspace (sizeof(vsinstance_t))))
-            HRETURN_ERROR(DFE_NOSPACE, NULL);
+        if ( NULL == (w = (vsinstance_t*) HDgetspace (sizeof(vsinstance_t))))
+            HRETURN_ERROR(DFE_NOSPACE, FAIL);
           
-          vf->vstabtail->next = w;
-          vf->vstabtail       = w;
-          vf->vstabn++;
+#ifdef OLD_WAY
+        vf->vstabtail->next = w;
+        vf->vstabtail       = w;
           
-          w->next      = NULL;
-          w->ref       = (intn) vs->oref;
-          w->vs        = vs;
-          w->nattach   = 1;
-          w->nvertices = 0;
+        w->next      = NULL;
+#else
+        vf->vstabn++;
+        w->key       = (int32) VSSLOT2ID(f,vs->oref); /* set the key for the node */
+        w->ref       = (intn) vs->oref;
+        w->vs        = vs;
+        w->nattach   = 1;
+        w->nvertices = 0;
+        tbbtdins(vf->vstree,(VOIDP)w,NULL);    /* insert the vs instance in B-tree */
           
-          vs->instance = w;
+        vs->instance = w;
+#endif
 
-          return (vs);
+#ifdef OLD_WAY
+        return (vs);
+#else
+        return (w->key);
+#endif
 	} /* end of case where vsid is -1 */
 
 	/*  --------  VSID IS NON_NEGATIVE ------------- */
@@ -623,29 +585,30 @@ PUBLIC VDATA * VSattach (f, vsid, accesstype)
 	if (access == 'r') { /* reading an existing vdata */
 
         if (NULL == (w =  vsinstance (f, (uint16) vsid)) )
-            HRETURN_ERROR(DFE_VTAB, NULL);
-          
+            HRETURN_ERROR(DFE_VTAB, FAIL);
+
+        /* this vdata is already attached for 'r', ok to do so again */
         if (w->nattach && w->vs->access == 'r') {
-            /* this vdata is already attached for 'r', ok to do so again */
             w->nattach++;
+#ifdef OLD_WAY
             return (w->vs);
+#else
+            return (w->key);
+#endif
           }
           
-        if (w->vs) {
-            /* use existing vs record */
+        if (w->vs) {    /* use existing vs record */
             vs = w->vs;
-
         } else {
 
             /* allocate space for vs,  & zero it out  */
             if ( (vs=(VDATA*) HDgetspace (sizeof(VDATA))) == NULL)
-              HRETURN_ERROR(DFE_NOSPACE, NULL);
-
+                HRETURN_ERROR(DFE_NOSPACE, FAIL);
         }
 
           /* need to fetch from file */
         if (Hgetelement(f,DFTAG_VH,(uint16)vsid,vspack) == FAIL)
-            HRETURN_ERROR(DFE_NOVS, NULL);
+            HRETURN_ERROR(DFE_NOVS, FAIL);
           
         vs->wlist.n = vs->rlist.n = 0;
 
@@ -662,8 +625,8 @@ PUBLIC VDATA * VSattach (f, vsid, accesstype)
 
         vs->aid     = Hstartread(vs->f, VSDATATAG, vs->oref);
         if(vs->aid == FAIL) {
-          HDfreespace(vs);
-          HRETURN_ERROR(DFE_BADAID, NULL);
+            HDfreespace(vs);
+            HRETURN_ERROR(DFE_BADAID, FAIL);
         }
 
         vs->instance = w;
@@ -672,61 +635,68 @@ PUBLIC VDATA * VSattach (f, vsid, accesstype)
         w->vs        = vs;
         w->nattach   = 1;
         w->nvertices = vs->nvertices;
+#ifdef OLD_WAY
         return (vs);
+#else
+        return (w->key);
+#endif
  	} /* end of case where vsid is positive, and "r"  */
 
 
 	if (access == 'w') { /* writing to an existing vdata */
 
-          if ((w = vsinstance(f, (uint16) vsid)) == NULL) 
-            HRETURN_ERROR(DFE_VTAB, NULL);
+        if ((w = vsinstance(f, (uint16) vsid)) == NULL)
+            HRETURN_ERROR(DFE_VTAB, FAIL);
           
-          if (w->nattach)  /* vdata previously attached before */
-            RTNULL("VSattach: May not write to a previously attached vdata!");
+        if (w->nattach)  /* vdata previously attached before */
+            HRETURN_ERROR(DFE_BADATTACH,FAIL);
 
           /* free old record (should reuse....) */
-          if(w->vs) {
+        if(w->vs) {
             vs = w->vs;
-          } else {
+        } else {
             /* allocate space */
             if( (vs=(VDATA*) HDgetspace(sizeof(VDATA))) == NULL)
-              HRETURN_ERROR(DFE_NOSPACE, NULL);
-          }
+                HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        }
           
           /* need to fetch from file */
-          if (Hgetelement(f, DFTAG_VH, (uint16)vsid, vspack) == FAIL)
-            HRETURN_ERROR(DFE_NOMATCH, NULL);
+        if (Hgetelement(f, DFTAG_VH, (uint16)vsid, vspack) == FAIL)
+            HRETURN_ERROR(DFE_NOMATCH, FAIL);
           
-          vs->wlist.n = vs->rlist.n = 0;
-          vs->nusym = 0;
+        vs->wlist.n = vs->rlist.n = 0;
+        vs->nusym = 0;
           
           /* unpack the vs, then init all other fields in it */
-          vunpackvs (vs,vspack,&vspacksize);
-          vs->otag  = DFTAG_VH;
-          vs->oref    = (uint16)vsid;
-          vs->access	= 'w';
-          vs->f		= f;
-          vs->marked	= 0;
-          vs->vm	= (VMBLOCK*) NULL; 
+        vunpackvs (vs,vspack,&vspacksize);
+        vs->otag  = DFTAG_VH;
+        vs->oref    = (uint16)vsid;
+        vs->access    = 'w';
+        vs->f     = f;
+        vs->marked    = 0;
+        vs->vm    = (VMBLOCK*) NULL;
           
-          vs->aid   = Hstartwrite(vs->f, VSDATATAG, vs->oref, 0);
-          if(vs->aid == FAIL) { 
+        vs->aid   = Hstartwrite(vs->f, VSDATATAG, vs->oref, 0);
+        if(vs->aid == FAIL) {
             HDfreespace(vs);
-            HRETURN_ERROR(DFE_BADAID, NULL);
-          }
+            HRETURN_ERROR(DFE_BADAID, FAIL);
+        }
           
-          vs->instance = w;
+        vs->instance = w;
 
           /* attach vs to vsdir  at the vdata instance w */
-          w->vs        = vs;
-          w->nattach   = 1;
-          w->nvertices = vs->nvertices;
+        w->vs        = vs;
+        w->nattach   = 1;
+        w->nvertices = vs->nvertices;
           
-          return (vs);
+#ifdef OLD_WAY
+        return (vs);
+#else
+        return(w->key);
+#endif
           
 	} /* end of case where vsid is positive, and "w"  */
-	return (NULL);
-
+    return (FAIL);
 } /* VSattach */
 
 /* ------------------------ VSdetach ----------------------------- */
@@ -750,42 +720,48 @@ PUBLIC VDATA * VSattach (f, vsid, accesstype)
    *************************************************************** */
 
 #ifdef PROTOTYPE
-PUBLIC void VSdetach (VDATA *vs)
+PUBLIC void VSdetach (int32 vkey)
 #else
-
-PUBLIC void VSdetach (vs)
-	VDATA  *vs;
-
+PUBLIC void VSdetach (vkey)
+int32 vkey;
 #endif
-
 {
 	int32			i, stat, vspacksize;
-	BYTE			vspack[sizeof(VWRITELIST)];
-	vsinstance_t	*w;
-	char * FUNC = "VSdetach";
+    uint8            vspack[sizeof(VWRITELIST)];
+    vsinstance_t    *w;
+    VDATA           *vs;
+    char * FUNC = "VSdetach";
 
-	if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return;
+    }
+  
+  /* locate vg's index in vgtab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return;
+    }
+
+    vs=w->vs;
+    if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
           HERROR(DFE_ARGS);
           HEprint(stderr,0);
           return;
         }
 
-	/* locate vs's entry in vstab */
-	if (!(w = vs->instance)) {
-          sprintf(sjs,"@VSdetach: vs not found\n"); zj;
-          return;
-	}
-
 	w->nattach--;
 
 	/* --- case where access was 'r' --- */
 	if (vs->access =='r') {
-          if (w->nattach == 0) {
 #if 0
+          if (w->nattach == 0) {
             w->vs = NULL; /* detach vs from vsdir */
             HDfreespace(vs);
-#endif
           }
+#endif
           Hendaccess (vs->aid);
           vs->aid = NO_ID;
           return;
@@ -793,41 +769,41 @@ PUBLIC void VSdetach (vs)
 
 	/* --- case where access was 'w' --- */
 	if (w->nattach != 0) {
-		sprintf(sjs,"BUG IN VSET CODE. VSdetach on a vdata with 'w' access\n"); zj;
-		sprintf(sjs,"nattach is %d (should be ZERO) \n",w->nattach); zj;
-		}
+        HERROR(DFE_CANTDETACH);
+        return;
+    }
 
 	if (vs->marked)  { /* if marked , write out vdata's VSDESC to file */
-        if(vs->nvertices==0) {sprintf(sjs,"VSdetach: Empty vdata detached\n"); zj; }
+        if(vs->nvertices==0) { /* sprintf(sjs,"VSdetach: Empty vdata detached\n"); zj; */ }
         vpackvs(vs,vspack,&vspacksize);
         stat = Hputelement (vs->f,VSDESCTAG,vs->oref,vspack,vspacksize);
-        if (stat == FAIL)  RT("VSdetach: cannot write out vs");
+        if (stat == FAIL) {
+            HERROR(DFE_WRITEERROR);
+            return;
+        }
         vs->marked = 0;
     }
 
-	if (vjv && vs->nvertices<=0){
-        sprintf(sjs,"#VSdetach:vs->nver=%ld!\n",vs->nvertices); zj;
-	}
-
 	/* remove all defined symbols */
-    for (i=0;i<vs->nusym;i++) HDfreespace(vs->usym[i].name);
+    for(i=0; i<vs->nusym; i++)
+        HDfreespace(vs->usym[i].name);
 	vs->nusym = 0;
 
 #if 0
 		{{ /* THIS VERSION WITH VMBLOCKS */
                   VMBLOCK * t, *p;
                   int32 aid, stat, cursize, totalsize = 0;
-                  BYTE * vwhole;
+                  uint8 * vwhole;
                   
                   /* count total byte size */
                   t = vs->vm;
-                  while (t != NULL) { totalsize += t->n; t = t->next; }
-                  if (vjv) {
-                    sprintf(sjs,"VMBLOCKS total size = %ld\n", totalsize);zj;
+                  while (t != NULL) {
+                    totalsize += t->n;
+                    t = t->next;
                   }
-                  vwhole = (BYTE*) HDgetspace( totalsize );
+                  vwhole = (uint8*) HDgetspace( totalsize );
                   if (vwhole==NULL) {
-                    sprintf(sjs,"VSdetach: no mem for VWHOLE\n"); zj;
+                    HERROR(DFE_NOSPACE);
                     return;
                   }
                   /* coalesce all VMBLOCKS into vwhole */
@@ -845,8 +821,6 @@ PUBLIC void VSdetach (vs)
                   vs->vm = (VMBLOCK*) NULL;
                   
                   /* write out vwhole to file as 1 vdata */
-                  if (vjv) {
-                    sprintf(sjs,"---- Hstartwrite nbytes = %ld\n", totalsize);zj; }
                   stat = aid =Hstartwrite(vs->f,VSDATATAG,vs->oref, totalsize);
                   Hwrite(aid,  totalsize , vwhole);
                   Hendaccess (aid);
@@ -874,71 +848,53 @@ PUBLIC void VSdetach (vs)
  */
 
 #ifdef PROTOTYPE
-PUBLIC int32 VSappendable (VDATA *vs)
+PUBLIC int32 VSappendable (int32 vkey)
 #else
-
-PUBLIC int32 VSappendable (vs)
-	VDATA  *vs;
-
+PUBLIC int32 VSappendable (vkey)
+int32 vkey;
 #endif
-
 {
-  int32		status;
-  int32         blksize, curr_size;
-  char * FUNC = "VSappendable";
+    int32     status;
+    int32         blksize, curr_size;
+    vsinstance_t    *w;
+    VDATA           *vs;
+    char * FUNC = "VSappendable";
+
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
   
-  if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
-    HERROR(DFE_ARGS);
-    HEprint(stderr,0);
-    return (FAIL);
-  }
+  /* locate vs's index in vstab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
 
-  curr_size = vs->nvertices * vs->wlist.ivsize;
+    vs=w->vs;
+    if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
+          HERROR(DFE_ARGS);
+          HEprint(stderr,0);
+          return(FAIL);
+    }
+  
+    curr_size = vs->nvertices * vs->wlist.ivsize;
 
-  if(vs->nvertices && (curr_size > VDEFAULTBLKSIZE))
-      blksize = curr_size;
-  else
-      blksize = VDEFAULTBLKSIZE;
+    if(vs->nvertices && (curr_size > VDEFAULTBLKSIZE))
+        blksize = curr_size;
+    else
+        blksize = VDEFAULTBLKSIZE;
 
-  status = HLcreate(vs->f, VSDATATAG, vs->oref, blksize, VDEFAULTNBLKS);
-  if(status == FAIL)
-    return FAIL;
+    status = HLcreate(vs->f, VSDATATAG, vs->oref, blksize, VDEFAULTNBLKS);
+    if(status == FAIL)
+        return FAIL;
 
-  Hendaccess(status);
+    Hendaccess(status);
 
-  return SUCCEED;
-
+    return SUCCEED;
 } /* VSappendable */
-
-/* -------------------------- Visvs -------------------------------- */
-
-/* Visvs
-*  checks if an id in a vgroup refers to a VDATA
-*  RETURNS 1 if so
-*  RETURNS 0 if not, or if error.
-*/
-
-#ifdef PROTOTYPE
-PUBLIC int32 Visvs (VGROUP *vg, int32 id)       
-#else
-
-PUBLIC int32 Visvs (vg, id)       
-	VGROUP  *vg;
-	int32   id;
-
-#endif
-
-{
-  register intn i;
-  char * FUNC = "VSisvs";
-
-  i = vg->nvelt;
-  while(i) 
-    if (vg->ref[--i] == (uint16)id && vg->tag[i]==VSDESCTAG) return(1);
-  
-  return(0);
-  
-} /* Visvs */
 
 /* ======================================================= */
 
@@ -948,81 +904,214 @@ returns the id of the next  VDATA from the file f .
 RETURNS -1 on error.
 RETURNS vdata id (0 or +ve integer) 
 */
-
 #ifdef PROTOTYPE
 PUBLIC int32 VSgetid (HFILEID f, int32 vsid)
 #else
-
 PUBLIC int32 VSgetid (f, vsid)
-	int32 	vsid;
-	HFILEID	f;
-
+int32   vsid;
+HFILEID f;
 #endif
-
 {
 	vsinstance_t   * w;
 	vfile_t	       * vf;
-	char * FUNC = "VSgetid";
+    VOIDP *t;
+    int32 key;
+    char * FUNC = "VSgetid";
 
-	if (vsid < -1)            HRETURN_ERROR(DFE_ARGS, FAIL);
-	if (!(vf = Get_vfile(f))) HRETURN_ERROR(DFE_FNF, FAIL);
-
-	if (vjv) {
-        sprintf(sjs,"#VSgetid:vstabn is %ld\n",vf->vstabn); zj;
-	}
+    if (vsid < -1)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    if (NULL==(vf = Get_vfile(f)))
+        HRETURN_ERROR(DFE_FNF, FAIL);
 
 	if (vsid == -1) {
-          if (NULL == vf->vstab.next)
+#ifdef OLD_WAY
+        if (NULL == vf->vstab.next)
             return (FAIL);
-          else
+        else
             return((int32) (vf->vstab.next)->ref); /* rets 1st vdata's ref */
+#else
+        if (NULL == (t=(VOIDP *)tbbtfirst((TBBT_NODE *)*(vf->vstree))))
+            return (FAIL);
+        else {
+            w=(vsinstance_t *)*t;   /* get actual pointer to the vsinstance_t */
+            return( w->ref); /* rets 1st vdata's ref */
+          } /* end else */
+#endif
 	}
 
+#ifdef OLD_WAY
 	/* look in vstab  for vsid */
-
-        if ((w = vsinstance(f, (uint16) vsid)) == NULL) 
-          HRETURN_ERROR(DFE_VTAB, FAIL);
+    if ((w = vsinstance(f, (uint16) vsid)) == NULL)
+        HRETURN_ERROR(DFE_VTAB, FAIL);
 
 	if (w->next == NULL)
-          return(FAIL);			/* this is the last vdata, no more after it */
+        return(FAIL);         /* this is the last vdata, no more after it */
 	else
-          return( (int32) (w->next)->ref);  /* success, ret the next vdata's ref */
-
-} /* VSgetid */
-
-/* ------------------------------------------------------------------ */
-/*
-zero out n bytes in array x.
-*/
-#if 0
-#ifdef PROTOTYPE
-void zerofill (BYTE x[], int16 n)    
+        return( (int32) (w->next)->ref);  /* success, ret the next vdata's ref */
 #else
 
-void zerofill (x, n)    
-	BYTE 	x[];
-	int16 n;
+    /* tbbtdfind returns a pointer to the vsinstance_t pointer */
+    key=VSSLOT2ID(f,vsid);
+    t=(VOIDP *)tbbtdfind(vf->vstree,(VOIDP)&key,NULL);
+    if(t==NULL)     /* couldn't find the old vsid */
+        return(FAIL);
+    else
+        if (NULL==(t=(VOIDP *)tbbtnext((TBBT_NODE *)t)))      /* get the next node in the tree */
+            return(FAIL);
+        else {
+            w=(vsinstance_t *)*t;   /* get actual pointer to the vsinstance_t */
+            return(w->ref); /* rets vdata's ref */
+          } /* end else */
+#endif
+} /* VSgetid */
 
+/* -------------- Return the otag of a VData----------------- */
+
+PUBLIC 
+#ifdef PROTOTYPE
+int32 VSgetotag(int32 vkey,int32 *tag)
+#else
+int32 VSgetotag(vkey,tag)
+int32 vkey;
+int32 *tag;
 #endif
 {
-	for( ; n; n--) *x++ = 0;
+    vsinstance_t    *w;
+    VDATA           *vs;
+    char * FUNC = "VSgetversion";
 
-} /* zerofill */
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return(0);
+    }
+  
+  /* locate vs's index in vstab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return(0);
+    }
+
+    vs=w->vs;
+    if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
+          HERROR(DFE_ARGS);
+          HEprint(stderr,0);
+          return(0);
+    }
+
+    *tag=(int32)vs->otag;
+    return (SUCCEED);
+}   /* end VSgetotag() */
+
+/* -------------- Return the oref of a VData----------------- */
+
+PUBLIC 
+#ifdef PROTOTYPE
+int32 VSgetoref(int32 vkey,int32 *ref)
+#else
+int32 VSgetoref(vkey,ref)
+int32 vkey;
+int32 *ref;
 #endif
+{
+    vsinstance_t    *w;
+    VDATA           *vs;
+    char * FUNC = "VSgetversion";
+
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return(0);
+    }
+  
+  /* locate vs's index in vstab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return(0);
+    }
+
+    vs=w->vs;
+    if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
+          HERROR(DFE_ARGS);
+          HEprint(stderr,0);
+          return(0);
+    }
+
+    *ref=(int32)vs->oref;
+    return (SUCCEED);
+}   /* end VSgetoref() */
+
+/* -------------- Return the writelist of a VData----------------- */
+
+#ifdef PROTOTYPE
+VWRITELIST *vswritelist(int32 vkey)
+#else
+VWRITELIST *vswritelist(vkey)
+int32 vkey;
+#endif
+{
+    vsinstance_t    *w;
+    VDATA           *vs;
+    char * FUNC = "VSgetversion";
+
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return(NULL);
+    }
+  
+  /* locate vs's index in vstab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return(NULL);
+    }
+
+    vs=w->vs;
+    if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
+          HERROR(DFE_ARGS);
+          HEprint(stderr,0);
+          return(NULL);
+    }
+
+    return (&(vs->wlist));
+}   /* end vswritelist() */
 
 /* -------------- Return the version number of a VData----------------- */
 
 PUBLIC 
 #ifdef PROTOTYPE
-int32 VSgetversion(VDATA *vs)
+int32 VSgetversion(int32 vkey)
 #else
-int32 VSgetversion(vs)
-     VDATA *vs;
+int32 VSgetversion(vkey)
+int32 vkey;
 #endif
 {
+    vsinstance_t    *w;
+    VDATA           *vs;
+    char * FUNC = "VSgetversion";
 
-  if(!vs) return 0;
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return(0);
+    }
   
-  return (vs->version);
+  /* locate vs's index in vstab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return(0);
+    }
 
-}
+    vs=w->vs;
+    if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
+          HERROR(DFE_ARGS);
+          HEprint(stderr,0);
+          return(0);
+    }
+  
+    return (vs->version);
+}   /* end VSgetversion() */

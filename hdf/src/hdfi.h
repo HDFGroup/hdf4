@@ -2,9 +2,18 @@
 $Header$
 
 $Log$
-Revision 1.14  1993/02/16 18:45:02  koziol
-Added prototyping to RS/6000 definition
+Revision 1.15  1993/03/29 16:47:53  koziol
+Updated JPEG code to new JPEG 4 code.
+Changed VSets to use Threaded-Balanced-Binary Tree for internal
+	(in memory) representation.
+Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+	to use 32-bit integer keys instead of pointers.
+Backed out speedups for Cray, until I get the time to fix them.
+Fixed a bunch of bugs in the little-endian support in DFSD.
 
+ * Revision 1.14  1993/02/16  18:45:02  koziol
+ * Added prototyping to RS/6000 definition
+ *
  * Revision 1.13  1993/01/26  19:42:45  koziol
  * Added support for reading and writing Little-Endian data on all
  * platforms.  This has been tested on: Cray, Sun, and PCs so far.
@@ -248,6 +257,14 @@ typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 #ifndef __STDC__
 #define const
 #endif
+
+/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
+
+/* Determine the memory manager we are going to use. Valid values are: */
+/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
+/*  what each does */
+#define JMEMSYS         MEM_ANSI
+
 #endif /* HP9000 */
 
 
@@ -318,7 +335,7 @@ Please check your Makefile.
 
 #define DF_MT   DFMT_UNICOS
 typedef void            VOID;
-typedef char            *VOIDP;
+typedef void            *VOIDP;
 typedef char            *_fcd;
 typedef int             bool;
 typedef char            char8;
@@ -338,6 +355,14 @@ typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 #define _HUGE              /* This should only be defined to a value on the PC */
 #define DF_CAPFNAMES            /* fortran names are in all caps */
 #define FILELIB UNIXBUFIO
+
+
+/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
+
+/* Determine the memory manager we are going to use. Valid values are: */
+/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
+/*  what each does */
+#define JMEMSYS         MEM_ANSI
 
 #endif /* UNICOS */
 
@@ -377,6 +402,14 @@ typedef int                intf;     /* size of INTEGERs in Fortran compiler */
 */
 #define FILELIB UNIXBUFIO
 #include "dfivms.h"
+
+
+/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
+
+/* Determine the memory manager we are going to use. Valid values are: */
+/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
+/*  what each does */
+#define JMEMSYS         MEM_ANSI
 
 #endif /* VMS */
 
@@ -427,6 +460,14 @@ typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
+
+/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
+
+/* Determine the memory manager we are going to use. Valid values are: */
+/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
+/*  what each does */
+#define JMEMSYS         MEM_ANSI
+
 #endif /* CONVEX */
 
 
@@ -465,6 +506,14 @@ typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 #ifndef __STDC__
 #define const
 #endif /* __STDC__ */
+
+/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
+
+/* Determine the memory manager we are going to use. Valid values are: */
+/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
+/*  what each does */
+#define JMEMSYS         MEM_ANSI
+
 #endif /* MIPSEL */
 
 #ifdef MAC
@@ -479,6 +528,7 @@ Please check your Makefile.
 #include <memory.h>             /* malloc stuff for MPW 3.0 */
 #include <fcntl.h>              /* unbuffered IO stuff for MPW 3.0 */
 #include <String.h>
+#include <StdLib.h>
 #ifdef THINK_C                  /* for LightSpeed C */
 #include <unix.h>
 #define isascii(c)  (isprint(c) || iscntrl(c))
@@ -516,6 +566,14 @@ void exit(int status);
 
 #define register   /* don't mess with the MAC compiler's register allocation */
 #define FILELIB MACIO
+
+/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
+
+/* Determine the memory manager we are going to use. Valid values are: */
+/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
+/*  what each does */
+#define JMEMSYS         MEM_ANSI
+
 #endif /*MAC*/
 
 
@@ -686,6 +744,14 @@ typedef double            float64;
 #ifndef __STDC__
 #define const
 #endif
+
+/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
+
+/* Determine the memory manager we are going to use. Valid values are: */
+/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
+/*  what each does */
+#define JMEMSYS         MEM_ANSI
+
 #endif /* MOTOROLA */
 
 #ifdef ALPHA

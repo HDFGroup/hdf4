@@ -5,51 +5,12 @@
  * This file is part of the Independent JPEG Group's software.
  * For conditions of distribution and use, see the accompanying README file.
  *
- * This file contains MCU disassembly routines and quantization descaling.
+ * This file contains MCU disassembly and IDCT control routines.
  * These routines are invoked via the disassemble_MCU, reverse_DCT, and
  * disassemble_init/term methods.
  */
 
 #include "jinclude.h"
-
-
-/*
- * Quantization descaling and zigzag reordering
- */
-
-
-/* ZAG[i] is the natural-order position of the i'th element of zigzag order. */
-
-static const short ZAG[DCTSIZE2] = {
-  0,  1,  8, 16,  9,  2,  3, 10,
- 17, 24, 32, 25, 18, 11,  4,  5,
- 12, 19, 26, 33, 40, 48, 41, 34,
- 27, 20, 13,  6,  7, 14, 21, 28,
- 35, 42, 49, 56, 57, 50, 43, 36,
- 29, 22, 15, 23, 30, 37, 44, 51,
- 58, 59, 52, 45, 38, 31, 39, 46,
- 53, 60, 61, 54, 47, 55, 62, 63
-};
-
-
-LOCAL VOID
-#ifdef PROTOTYPE
-qdescale_zig (JBLOCK input, JBLOCKROW outputptr, QUANT_TBL_PTR quanttbl)
-#else
-qdescale_zig (input, outputptr, quanttbl)
-JBLOCK input;
-JBLOCKROW outputptr;
-QUANT_TBL_PTR quanttbl;
-#endif
-{
-  const short * zagptr = ZAG;
-  short i;
-
-  for (i = DCTSIZE2-1; i >= 0; i--) {
-    (*outputptr)[*zagptr++] = (*input++) * (*quanttbl++);
-  }
-}
-
 
 
 /*
@@ -60,26 +21,28 @@ QUANT_TBL_PTR quanttbl;
 METHODDEF VOID
 #ifdef PROTOTYPE
 disassemble_noninterleaved_MCU (decompress_info_ptr cinfo,
-        JBLOCKIMAGE image_data)
+				JBLOCKIMAGE image_data)
 #else
 disassemble_noninterleaved_MCU (cinfo, image_data)
 decompress_info_ptr cinfo;
 JBLOCKIMAGE image_data;
 #endif
 {
-  JBLOCK MCU_data[1];
+  JBLOCKROW MCU_data[1];
   long mcuindex;
-  jpeg_component_info * compptr;
-  QUANT_TBL_PTR quant_ptr;
 
   /* this is pretty easy since there is one component and one block per MCU */
-  compptr = cinfo->cur_comp_info[0];
-  quant_ptr = cinfo->quant_tbl_ptrs[compptr->quant_tbl_no];
+
+  /* Pre-zero the target area to speed up entropy decoder */
+  /* (we assume wholesale zeroing is faster than retail) */
+  jzero_far((VOID FAR *) image_data[0][0],
+	    (size_t) (cinfo->MCUs_per_row * SIZEOF(JBLOCK)));
+
   for (mcuindex = 0; mcuindex < cinfo->MCUs_per_row; mcuindex++) {
+    /* Point to the proper spot in the image array for this MCU */
+    MCU_data[0] = image_data[0][0] + mcuindex;
     /* Fetch the coefficient data */
     (*cinfo->methods->entropy_decode) (cinfo, MCU_data);
-    /* Descale, reorder, and distribute it into the image array */
-    qdescale_zig(MCU_data[0], image_data[0][0] + mcuindex, quant_ptr);
   }
 }
 
@@ -99,30 +62,38 @@ decompress_info_ptr cinfo;
 JBLOCKIMAGE image_data;
 #endif
 {
-  JBLOCK MCU_data[MAX_BLOCKS_IN_MCU];
+  JBLOCKROW MCU_data[MAX_BLOCKS_IN_MCU];
   long mcuindex;
   short blkn, ci, xpos, ypos;
   jpeg_component_info * compptr;
-  QUANT_TBL_PTR quant_ptr;
   JBLOCKROW image_ptr;
 
+  /* Pre-zero the target area to speed up entropy decoder */
+  /* (we assume wholesale zeroing is faster than retail) */
+  for (ci = 0; ci < cinfo->comps_in_scan; ci++) {
+    compptr = cinfo->cur_comp_info[ci];
+    for (ypos = 0; ypos < compptr->MCU_height; ypos++) {
+      jzero_far((VOID FAR *) image_data[ci][ypos],
+		(size_t) (cinfo->MCUs_per_row * compptr->MCU_width * SIZEOF(JBLOCK)));
+    }
+  }
+
   for (mcuindex = 0; mcuindex < cinfo->MCUs_per_row; mcuindex++) {
-    /* Fetch the coefficient data */
-    (*cinfo->methods->entropy_decode) (cinfo, MCU_data);
-    /* Descale, reorder, and distribute it into the image array */
+    /* Point to the proper spots in the image array for this MCU */
     blkn = 0;
     for (ci = 0; ci < cinfo->comps_in_scan; ci++) {
       compptr = cinfo->cur_comp_info[ci];
-      quant_ptr = cinfo->quant_tbl_ptrs[compptr->quant_tbl_no];
       for (ypos = 0; ypos < compptr->MCU_height; ypos++) {
 	image_ptr = image_data[ci][ypos] + (mcuindex * compptr->MCU_width);
 	for (xpos = 0; xpos < compptr->MCU_width; xpos++) {
-	  qdescale_zig(MCU_data[blkn], image_ptr, quant_ptr);
+	  MCU_data[blkn] = image_ptr;
 	  image_ptr++;
 	  blkn++;
 	}
       }
     }
+    /* Fetch the coefficient data */
+    (*cinfo->methods->entropy_decode) (cinfo, MCU_data);
   }
 }
 
@@ -157,7 +128,7 @@ int start_row;
 
   for (ci = 0; ci < cinfo->comps_in_scan; ci++) {
     /* calculate size of an MCU row in this component */
-    blocksperrow = cinfo->cur_comp_info[ci]->subsampled_width / DCTSIZE;
+    blocksperrow = cinfo->cur_comp_info[ci]->downsampled_width / DCTSIZE;
     numrows = cinfo->cur_comp_info[ci]->MCU_height;
     /* iterate through all blocks in MCU row */
     for (ri = 0; ri < numrows; ri++) {
@@ -170,7 +141,7 @@ int start_row;
 	 */
 	{ register JCOEFPTR elemptr = browptr[bi];
 	  register DCTELEM *localblkptr = block;
-	  register short elem = DCTSIZE2;
+	  register int elem = DCTSIZE2;
 
 	  while (--elem >= 0)
 	    *localblkptr++ = (DCTELEM) *elemptr++;
@@ -178,26 +149,39 @@ int start_row;
 
 	j_rev_dct(block);	/* perform inverse DCT */
 
-	/* output the data into the sample array.
+	/* Output the data into the sample array.
 	 * Note change from signed to unsigned representation:
 	 * DCT calculation works with values +-CENTERJSAMPLE,
 	 * but sample arrays always hold 0..MAXJSAMPLE.
-	 * Have to do explicit range-limiting because of quantization errors
-	 * and so forth in the DCT/IDCT phase.
+	 * We have to do range-limiting because of quantization errors in the
+	 * DCT/IDCT phase.  We use the sample_range_limit[] table to do this
+	 * quickly; the CENTERJSAMPLE offset is folded into table indexing.
 	 */
 	{ register JSAMPROW elemptr;
 	  register DCTELEM *localblkptr = block;
-	  register short elemr, elemc;
-	  register DCTELEM temp;
+	  register JSAMPLE *range_limit = cinfo->sample_range_limit +
+						CENTERJSAMPLE;
+#if DCTSIZE != 8
+	  register int elemc;
+#endif
+	  register int elemr;
 
 	  for (elemr = 0; elemr < DCTSIZE; elemr++) {
 	    elemptr = srowptr[elemr] + (bi * DCTSIZE);
-	    for (elemc = 0; elemc < DCTSIZE; elemc++) {
-	      temp = (*localblkptr++) + CENTERJSAMPLE;
-	      if (temp < 0) temp = 0;
-	      else if (temp > MAXJSAMPLE) temp = MAXJSAMPLE;
-	      *elemptr++ = (JSAMPLE) temp;
+#if DCTSIZE == 8		/* unroll the inner loop */
+	    *elemptr++ = range_limit[*localblkptr++];
+	    *elemptr++ = range_limit[*localblkptr++];
+	    *elemptr++ = range_limit[*localblkptr++];
+	    *elemptr++ = range_limit[*localblkptr++];
+	    *elemptr++ = range_limit[*localblkptr++];
+	    *elemptr++ = range_limit[*localblkptr++];
+	    *elemptr++ = range_limit[*localblkptr++];
+	    *elemptr++ = range_limit[*localblkptr++];
+#else
+	    for (elemc = DCTSIZE; elemc > 0; elemc--) {
+	      *elemptr++ = range_limit[*localblkptr++];
 	    }
+#endif
 	  }
 	}
       }

@@ -5,10 +5,19 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/01/19 05:56:12  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.4  1993/03/29 16:50:28  koziol
+Updated JPEG code to new JPEG 4 code.
+Changed VSets to use Threaded-Balanced-Binary Tree for internal
+	(in memory) representation.
+Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+	to use 32-bit integer keys instead of pointers.
+Backed out speedups for Cray, until I get the time to fix them.
+Fixed a bunch of bugs in the little-endian support in DFSD.
 
+ * Revision 1.3  1993/01/19  05:56:12  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.2  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -16,6 +25,7 @@ port.  Lots of minor annoyances fixed.
  * Initial revision
  *
 */
+
 /*
 *
 * vg.c
@@ -32,6 +42,10 @@ port.  Lots of minor annoyances fixed.
 
 #include "vg.h"
 
+/* Private functions */
+PRIVATE int32 matchnocase
+  PROTO((char *strx, char *stry));
+
 /* ------------------------------------------------------------------
 *	Vnewref
 *	utility routine. returns a unique reference number.
@@ -42,24 +56,21 @@ port.  Lots of minor annoyances fixed.
 *  undocumented
 *
 */
-
 #ifdef PROTOTYPE
 uint16 vnewref (HFILEID f)		
 #else
 uint16 vnewref (f)		
-
-	HFILEID	f;
+HFILEID f;
 #endif
-
 {
 	uint16 r;
 	char * FUNC = "vnewref";
 
     r = (uint16) Hnewref (f);
-	if (r == 0)  HERROR(DFE_NOFREEDD);
+    if (r == 0)
+        HERROR(DFE_NOFREEDD);
 
 	return (r);
-
 } /* vnewref */
 
 /* ================================================================== */
@@ -69,32 +80,24 @@ uint16 vnewref (f)
 */
 
 #ifdef PROTOTYPE
-int32 matchnocase (char *strx, char *stry)   
+PRIVATE int32 matchnocase (char *strx, char *stry)
 #else
-int32 matchnocase (strx, stry) 
-
-	char *strx,*stry;
+PRIVATE int32 matchnocase (strx, stry)
+char *strx,*stry;
 #endif
-
 {
 	int32 	i,nx,ny;
-	int16		tx,ty;
-	char 		*sx, *sy;
 
     nx = HDstrlen(strx);
     ny = HDstrlen(stry);
-	if (nx != ny) return(FALSE);  /* different lengths */
+    if (nx != ny)
+        return(FALSE);  /* different lengths */
 
-	for (sx=strx, sy=stry, i=0;i<nx;i++,sx++,sy++) {
-		tx= *sx; 
-		ty= *sy;
-		if (islower(tx)) tx=toupper(tx);
-		if (islower(ty)) ty=toupper(ty);
-		if (tx != ty) 	  return (FALSE);
-	}
+    for(i=0; i<nx; i++,strx++,stry++)
+        if(toupper(*strx)!=toupper(*stry))
+            return(FALSE);
 
 	return (TRUE);
-
 } /* matchnocase */
 
 
@@ -107,19 +110,38 @@ int32 matchnocase (strx, stry)
 * 28-MAR-91 Jason NG NCSA
 *
 */
-
 #ifdef PROTOTYPE
-PUBLIC int32 VSelts (VDATA *vs)  
+PUBLIC int32 VSelts (int32 vkey)
 #else
-PUBLIC int32 VSelts (vs)  
-
-	VDATA * vs;
+PUBLIC int32 VSelts (vkey)
+int32 vkey;
 #endif
 {
-	char * FUNC = "VSelts";
+    vsinstance_t    *w;
+    VDATA           *vs;
+    char * FUNC = "VSelts";
 
-	return( (vs->otag==VSDESCTAG) ?  vs->nvertices : FAIL);
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
+  
+  /* locate vg's index in vgtab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
 
+    vs=w->vs;
+    if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
+          HERROR(DFE_ARGS);
+          HEprint(stderr,0);
+          return(FAIL);
+    }
+
+    return(vs->nvertices);
 } /* VSelts */
 
 
@@ -133,18 +155,37 @@ PUBLIC int32 VSelts (vs)
 */
 
 #ifdef PROTOTYPE
-PUBLIC int32 VSgetinterlace (VDATA *vs) 
+PUBLIC int32 VSgetinterlace (int32 vkey)
 #else
-PUBLIC int32 VSgetinterlace (vs) 
-
-	VDATA * vs;
+PUBLIC int32 VSgetinterlace (vkey)
+int32 vkey;
 #endif
-
 {
-	char * FUNC = "VSgetinterlace";
+    vsinstance_t    *w;
+    VDATA           *vs;
+    char * FUNC = "VSgetinterlace";
 
-    return( (vs==NULL) ? (int32)FAIL : (int32) vs->interlace );
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
+  
+  /* locate vg's index in vgtab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
 
+    vs=w->vs;
+    if (vs == NULL) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr,0);
+        return(FAIL);
+    }
+
+    return((int32)(vs->interlace));
 } /* VSgetinterlace */
 
 /* ------------------------------------------------------------------
@@ -154,30 +195,52 @@ PUBLIC int32 VSgetinterlace (vs)
 */
 
 #ifdef PROTOTYPE
-PUBLIC int32 VSsetinterlace (VDATA *vs, int32 interlace)
+PUBLIC int32 VSsetinterlace(int32 vkey, int32 interlace)
 #else
-PUBLIC int32 VSsetinterlace (vs, interlace)
-
-	VDATA * vs;
-	int32 interlace;
+PUBLIC int32 VSsetinterlace(vkey, interlace)
+int32 vkey;
+int32 interlace;
 #endif
-
 {
-	char * FUNC = "VSsetinterlace";
+    vsinstance_t    *w;
+    VDATA           *vs;
+    char * FUNC = "VSsetinterlace";
 
-	if(vs == NULL)        {HERROR(DFE_BADPTR);  return(FAIL);}
-	if(vs->access == 'r') {HERROR(DFE_RDONLY);  return(FAIL);}
-   if(vs->nvertices > 0) {HERROR(DFE_NORESET); return(FAIL);}
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
+  
+  /* locate vg's index in vgtab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
+
+    vs=w->vs;
+    if(vs == NULL)  {
+        HERROR(DFE_BADPTR);
+        return(FAIL);
+    }
+
+    if(vs->access == 'r') {
+        HERROR(DFE_RDONLY);
+        return(FAIL);
+    }
+    if(vs->nvertices > 0) {
+        HERROR(DFE_NORESET);
+        return(FAIL);
+    }
 
 	/* currently only 2 kinds allowed */
-
-	if ( interlace == FULL_INTERLACE || 
-	    interlace == NO_INTERLACE ) {
-                vs->interlace = (int16)interlace;
-				return (TRUE); /* ok */
+    if ( interlace == FULL_INTERLACE || interlace == NO_INTERLACE ) {
+        vs->interlace = (int16)interlace;
+        return (TRUE); /* ok */
 	} 
-	else  return (FAIL);  	  
-
+    else
+        return (FAIL);
 } /* VSsetinterlace */
 
 
@@ -191,32 +254,45 @@ PUBLIC int32 VSsetinterlace (vs, interlace)
 */
 
 #ifdef PROTOTYPE
-PUBLIC int32 VSgetfields (VDATA *vs, char *fields)		
+PUBLIC int32 VSgetfields (int32 vkey, char *fields)
 #else
-PUBLIC int32 VSgetfields (vs, fields)		
-
-	VDATA * vs;
-	char  * fields;			/* fieldnames are returned in this var */
+PUBLIC int32 VSgetfields (vkey, fields)
+int32 vkey;
+char  * fields;         /* fieldnames are returned in this var */
 #endif
-
 {
 	int32 i;
+    vsinstance_t    *w;
+    VDATA           *vs;
     char * FUNC = "VSgetfields";
 
-	if (vs==NULL) {
-       HERROR(DFE_BADPTR);
-       return(FAIL);
-       }
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
+  
+  /* locate vg's index in vgtab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
+
+    vs=w->vs;
+    if(vs == NULL)  {
+        HERROR(DFE_BADPTR);
+        return(FAIL);
+    }
 
 	fields[0] = '\0';
-	for (i=0;i<vs->wlist.n;i++) { /* build the comma-separated string */
+    for (i=0;i<vs->wlist.n;i++) {   /* build the comma-separated string */
         HDstrcat(fields,vs->wlist.name[i]);
 		if ( i < vs->wlist.n - 1 )
             HDstrcat(fields,",");
 	}
 
 	return ((int32) vs->wlist.n);
-
 } /* VSgetfields */
 
 /* ------------------------------------------------------------------
@@ -228,47 +304,60 @@ PUBLIC int32 VSgetfields (vs, fields)
 */
 
 #ifdef PROTOTYPE
-PUBLIC int32 VSfexist (VDATA *vs, char *fields)
+PUBLIC int32 VSfexist (int32 vkey, char *fields)
 #else
-PUBLIC int32 VSfexist (vs, fields)      
-
-	VDATA * vs;
-	char	* fields;
+PUBLIC int32 VSfexist (vkey, fields)
+int32 vkey;
+char *fields;
 #endif
-
 {
 	char   		**av, *s;
 	int32			ac,i,j,found;
 	VWRITELIST	*w;
-	char * FUNC = "VSfexist";
+    vsinstance_t    *wi;
+    VDATA           *vs;
+    char * FUNC = "VSfexist";
+
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
+  
+  /* locate vg's index in vgtab */
+    if(NULL==(wi=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
+
+    vs=wi->vs;
 
 	/* call scanattrs to parse the string */
-
 	if (scanattrs(fields,&ac,&av) < 0) {
-          HERROR(DFE_BADFIELDS);
-          return (FAIL);
-        }
+        HERROR(DFE_BADFIELDS);
+        return (FAIL);
+    }
 
 	if ((vs == NULL) || (ac<1)) {
-          HERROR(DFE_ARGS);
-          return (FAIL); 	
-        }
+        HERROR(DFE_ARGS);
+        return (FAIL);
+    }
 
 	/* now check in vs's field table */
-
-	w = &vs->wlist;
-	for (i=0;i<ac;i++) {
-		for (found=0,s=av[i],j=0;j<w->n;j++) {
+    w = &vs->wlist;
+    for (i=0; i<ac; i++) {
+        for (found=0,s=av[i],j=0; j<w->n; j++) {
 			if ( matchnocase(s,w->name[j]) ) {
 				found = 1;
 				break;
 			}
 		}
-		if (!found) return (FAIL);
+        if (!found)
+            return (FAIL);
 	}
 
-	return (1);
-
+    return(TRUE);
 } /* VSfexist */
 
 
@@ -281,33 +370,41 @@ PUBLIC int32 VSfexist (vs, fields)
 */
 
 #ifdef PROTOTYPE
-PUBLIC int32 VSsizeof (VDATA *vs, char *fields) 
+PUBLIC int32 VSsizeof (int32 vkey, char *fields)
 #else
-PUBLIC int32 VSsizeof (vs, fields) 
-
-	VDATA *vs;
-	char  *fields;
+PUBLIC int32 VSsizeof (vkey, fields)
+int32 vkey;
+char  *fields;
 #endif
-
 {
 	int32 	totalsize, ac, i,j,found;
 	char   	**av;
-	char * FUNC = "VSsizeof";
+    vsinstance_t    *w;
+    VDATA           *vs;
+    char * FUNC = "VSsizeof";
 
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
+  
+  /* locate vg's index in vgtab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
+
+    vs=w->vs;
     if((vs==NULL) || (scanattrs(fields,&ac,&av) < 0) || (ac<1)) {
-          HERROR(DFE_ARGS);
-          return(FAIL);
-        }
-
-	if (vjv) { 
-		sprintf(sjs,"#VSsizeof: fields are [%s]\n",fields);
-		zj; 
-	}
+        HERROR(DFE_ARGS);
+        return(FAIL);
+    }
 
 	totalsize=0;
 	for (i=0;i<ac;i++) {
-		for (found=0,j=0;j<vs->wlist.n;j++)
-                  /* check fields in vs */
+        for (found=0,j=0;j<vs->wlist.n;j++) /* check fields in vs */
             if (!HDstrcmp(av[i], vs->wlist.name[j])) {
 				totalsize += vs->wlist.esize[j];
 				found=1;
@@ -315,14 +412,12 @@ PUBLIC int32 VSsizeof (vs, fields)
 			}
 
 		if (!found) {
-                        HERROR(DFE_ARGS);
-                        HEreport("VSsizeof:[%s] not in vs", av[i]);
+            HERROR(DFE_ARGS);
+            HEreport("VSsizeof:[%s] not in vs", av[i]);
 			return(FAIL);
 		}
 	}
-
 	return(totalsize);
-
 } /* VSsizeof */
 
 /* ================================================================== */
@@ -333,21 +428,20 @@ PUBLIC int32 VSsizeof (vs, fields)
 */
 
 #ifdef PROTOTYPE
-void VSdump (VDATA *vs)                       
+void VSdump (int32 vkey)
 #else
-void VSdump (vs)                       
-
-	VDATA *vs;
+void VSdump (vkey)
+int32 vkey;
 #endif
-
 {
-	VWRITELIST	*w;
+#ifdef OLD_WAY
+    VWRITELIST  *w;
 	int32 		i;
 	char * FUNC = "VSdump";
 
 	if (!vs) { 
           sprintf(sjs,"@VSdump: vs is null\n"); zj; 
-          return; 
+          return;
         }
 
 	sprintf(sjs,"@tag=%d ref=%d i=%d ",vs->otag, vs->oref,vs->interlace); zj;
@@ -363,7 +457,7 @@ void VSdump (vs)
 	}
 
 	sprintf(sjs,"\n"); zj;
-
+#endif  /* OLD_WAY */
 } /* VSdump */
 
 
@@ -376,18 +470,36 @@ void VSdump (vs)
 */
 
 #ifdef PROTOTYPE
-PUBLIC void VSsetname (VDATA *vs, char *vsname)
+PUBLIC void VSsetname (int32 vkey, char *vsname)
 #else
-PUBLIC void VSsetname (vs, vsname)
-
-	VDATA *vs;
-	char	*vsname;
+PUBLIC void VSsetname (vkey, vsname)
+int32 vkey;
+char    *vsname;
 #endif
-
 {
-	char * FUNC = "VSsetname";
+    vsinstance_t    *w;
+    VDATA           *vs;
+    char * FUNC = "VSsetname";
 
-	if (vs == NULL) return;
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return;
+    }
+  
+  /* locate vg's index in vgtab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return;
+    }
+
+    vs=w->vs;
+    if(vs==NULL) {
+        HERROR(DFE_BADPTR);
+        return;
+    }
+
     if ( HDstrlen(vsname) > VSNAMELENMAX) {
         HDstrncpy(vs->vsname, vsname,VSNAMELENMAX);
 		vs->vsname[VSNAMELENMAX]='\0';
@@ -395,8 +507,6 @@ PUBLIC void VSsetname (vs, vsname)
 	else 
         HDstrcpy(vs->vsname, vsname);
 	vs->marked = TRUE;
-	return;
-
 } /* VSsetname */
 
 /* ======================================================= */
@@ -408,19 +518,36 @@ PUBLIC void VSsetname (vs, vsname)
 */
 
 #ifdef PROTOTYPE
-PUBLIC void VSsetclass (VDATA *vs, char *vsclass)
+PUBLIC void VSsetclass (int32 vkey, char *vsclass)
 #else
-
-PUBLIC void VSsetclass (vs, vsclass)
-
-	VDATA *vs;
-	char	*vsclass;
+PUBLIC void VSsetclass (vkey, vsclass)
+int32 vkey;
+char    *vsclass;
 #endif
-
 {
-	char * FUNC = "VSsetclass";
+    vsinstance_t    *w;
+    VDATA           *vs;
+    char * FUNC = "VSsetclass";
 
-	if (vs == NULL) return;
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return;
+    }
+  
+  /* locate vg's index in vgtab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return;
+    }
+
+    vs=w->vs;
+    if(vs==NULL) {
+        HERROR(DFE_BADPTR);
+        return;
+    }
+
     if ( HDstrlen(vsclass) > VSNAMELENMAX) {
         HDstrncpy(vs->vsclass, vsclass,VSNAMELENMAX);
 		vs->vsclass[VSNAMELENMAX]='\0';
@@ -428,8 +555,6 @@ PUBLIC void VSsetclass (vs, vsclass)
 	else 
         HDstrcpy(vs->vsclass, vsclass);
 	vs->marked = TRUE;
-	return;
-
 } /* VSsetclass*/
 
 /* ======================================================= */
@@ -440,21 +565,37 @@ PUBLIC void VSsetclass (vs, vsclass)
 */
 
 #ifdef PROTOTYPE
-PUBLIC void VSgetname (VDATA *vs, char *vsname)      
+PUBLIC void VSgetname (int32 vkey, char *vsname)
 #else
-
-PUBLIC void VSgetname (vs, vsname)      
-
-	VDATA *vs;
-	char	*vsname;
+PUBLIC void VSgetname (vkey, vsname)
+int32 vkey;
+char    *vsname;
 #endif
-
 {
-	char * FUNC = "VSgetname";
+    vsinstance_t    *w;
+    VDATA           *vs;
+    char * FUNC = "VSgetname";
 
-    if (vs != NULL) HDstrcpy(vsname, vs->vsname);
-	return;
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return;
+    }
+  
+  /* locate vg's index in vgtab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return;
+    }
 
+    vs=w->vs;
+    if(vs==NULL) {
+        HERROR(DFE_BADPTR);
+        return;
+    }
+
+    HDstrcpy(vsname, vs->vsname);
 } /* VSgetname */
 
 /* ======================================================= */
@@ -465,21 +606,37 @@ PUBLIC void VSgetname (vs, vsname)
 */
 
 #ifdef PROTOTYPE
-PUBLIC void VSgetclass (VDATA *vs, char *vsclass)   
+PUBLIC void VSgetclass (int32 vkey, char *vsclass)
 #else
-
-PUBLIC void VSgetclass (vs, vsclass)   
-
-	VDATA *vs;
-	char	*vsclass;
+PUBLIC void VSgetclass (vkey, vsclass)
+int32 vkey;
+char    *vsclass;
 #endif
-
 {
-	char * FUNC = "VSgetclass";
+    vsinstance_t    *w;
+    VDATA           *vs;
+    char * FUNC = "VSgetclass";
 
-    if (vs != NULL) HDstrcpy(vsclass, vs->vsclass);
-	return;
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return;
+    }
+  
+  /* locate vg's index in vgtab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return;
+    }
 
+    vs=w->vs;
+    if(vs==NULL) {
+        HERROR(DFE_BADPTR);
+        return;
+    }
+
+    HDstrcpy(vsclass, vs->vsclass);
 } /* VSgetclass */
 
 
@@ -498,41 +655,30 @@ PUBLIC void VSgetclass (vs, vsclass)
 *	RETURNS 1 if ok
 *
 */
-
-
 #ifdef PROTOTYPE
-PUBLIC int32 VSinquire (VDATA *vs, int32 *nelt, int32 *interlace,
+PUBLIC int32 VSinquire (int32 vkey, int32 *nelt, int32 *interlace,
         char *fields, int32 *eltsize, char *vsname)
 #else
-
-PUBLIC int32 VSinquire (vs, nelt, interlace, fields, eltsize, vsname)   
-
-	VDATA 	*vs;
-	char  	*fields, *vsname;
-	int32 	*nelt, *interlace, *eltsize;
+PUBLIC int32 VSinquire (vkey, nelt, interlace, fields, eltsize, vsname)
+int32 vkey;
+char    *fields, *vsname;
+int32   *nelt, *interlace, *eltsize;
 #endif
-
 {
-	char * FUNC = "VSinquire";
+    char * FUNC = "VSinquire";
 
-	if (!vs) {
-          HERROR(DFE_BADPTR);
-          return(FAIL);
-        }
-	
 	if(fields)
-	  VSgetfields (vs,fields);
+        VSgetfields(vkey,fields);
 	if(nelt) 
-	  *nelt       = (int32) vs->nvertices;
+        *nelt=VSelts(vkey);
 	if(interlace)
-	  *interlace  = (int32) vs->interlace;
+        *interlace=VSgetinterlace(vkey);
 	if(eltsize)
-	  *eltsize    =  (int32) VSsizeof (vs,fields);
+        *eltsize=VSsizeof(vkey,fields);
 	if(vsname)
-      HDstrcpy(vsname,vs->vsname);
+        VSgetname(vkey,vsname);
 
 	return (SUCCEED); /* ok */
-
 } /* VSinquire */
 
 /* ================================================================== */
@@ -553,26 +699,29 @@ PUBLIC int32 VSinquire (vs, nelt, interlace, fields, eltsize, vsname)
 #ifdef PROTOTYPE
 PUBLIC int32 VSlone(HFILEID f, int32 idarray[], int32 asize) 
 #else
-
-PUBLIC int32 VSlone(f, idarray, asize) 
-
-	HFILEID	f;
-	int32  	idarray[];		 /* array to contain the refs */
-	int32 	asize;            /* input: size of idarray */
+PUBLIC int32 VSlone(f, idarray, asize)
+HFILEID f;
+int32   idarray[];       /* array to contain the refs */
+int32   asize;            /* input: size of idarray */
 #endif
-
 {
-	int16 	*lonevdata; /* lcl wrk area: stores flags of vdatas */
+    uint8   *lonevdata; /* lcl wrk area: stores flags of vdatas */
 	int32 	i,vgid, vsid, vstag;
+#ifdef OLD_WAY
 	VGROUP 	* vg;
+#else
+    int32   vkey;
+#endif
 	int32 	nlone; /* total number of lone vdatas */
 	char * FUNC = "VSlone";
 
 
 /* -- allocate space for vdata refs, init to zeroes -- */
-    if (NULL == (lonevdata = (int16*) HDgetspace( 65000 * sizeof(int16))))
-      { HERROR(DFE_NOSPACE); return(FAIL); }
-    for(i=0;i<65000;i++) lonevdata[i] = 0;
+    if (NULL == (lonevdata = (uint8 *) HDgetspace( 65000L * sizeof(uint8)))) {
+        HERROR(DFE_NOSPACE);
+        return(FAIL);
+    }
+    HDmemset(lonevdata,0,65000L*sizeof(uint8));
 
 /* -- look for all vdatas in the file, and flag (1) each -- */
     vsid = -1;
@@ -583,29 +732,37 @@ PUBLIC int32 VSlone(f, idarray, asize)
 /* -- increment its index in lonevdata if found -- */
     vgid = -1;
     while( -1L != (vgid = Vgetid (f, vgid))) { /* until no more vgroups */
+#ifdef OLD_WAY
         vg = (VGROUP*) Vattach(f,vgid,"r");
         for (i=0; i< Vntagrefs(vg); i++) {
             Vgettagref (vg, i, &vstag, &vsid);
             if (vstag==VSDESCTAG)
-                { lonevdata[vsid]++;  }
-            }
-        Vdetach(vg);
+                lonevdata[vsid]++;
         }
+        Vdetach(vg);
+#else
+        vkey = Vattach(f,vgid,"r");
+        for (i=0; i< Vntagrefs(vkey); i++) {
+            Vgettagref (vkey, i, &vstag, &vsid);
+            if (vstag==VSDESCTAG)
+                lonevdata[vsid]=0;
+        }
+        Vdetach(vkey);
+#endif
+    }
 
 /* -- check in lonevdata: it's a lone vdata if its flag is still 1 -- */
     nlone = 0;
-    for(i=0;i<65000;i++) {
-        if (1 == lonevdata[i]) {
-            if (nlone < asize) { /* insert into idarray up till asize */
+    for(i=0; i<65000; i++) {
+        if (lonevdata[i]) {
+            if (nlone < asize)      /* insert into idarray up till asize */
                 idarray[nlone] = i;
-                }
             nlone ++;
-            }
-       }
+        }
+    }
     HDfreespace(lonevdata);
 
     return (nlone); /* return the TOTAL # of lone vdatas */
-
 } /* VSlone */
 
 /* ================================================================== */
@@ -626,26 +783,29 @@ PUBLIC int32 VSlone(f, idarray, asize)
 #ifdef PROTOTYPE
 PUBLIC int32 Vlone (HFILEID f, int32 idarray[], int32 asize) 
 #else
-
-PUBLIC int32 Vlone (f, idarray, asize) 
-
-	HFILEID	f;
-	int32 	idarray[];		 /* array to contain the refs */
-	int32   asize;            /* input: size of idarray */
+PUBLIC int32 Vlone (f, idarray, asize)
+HFILEID f;
+int32   idarray[];       /* array to contain the refs */
+int32   asize;            /* input: size of idarray */
 #endif
-
 {
-	int16		*lonevg; /* local wrk area: stores flags of vgroups */
+    uint8       *lonevg; /* local wrk area: stores flags of vgroups */
 	int32		i;
 	int32 	vgid, vstag, id;
+#ifdef OLD_WAY
 	VGROUP 	* vg;
+#else
+    int32 vkey;
+#endif
 	int32 	nlone; /* total number of lone vgroups */
 	char * FUNC = "Vlone";
 
 /* -- allocate space for vgroup refs, init to zeroes -- */
-    if (NULL == (lonevg = (int16*) HDgetspace ( 65000 * sizeof(int16))))
-      { HERROR(DFE_NOSPACE); return(FAIL); }
-    for(i=0;i<65000;i++) lonevg[i] = 0;
+    if (NULL == (lonevg = (uint8 *) HDgetspace ( 65000L * sizeof(uint8)))) {
+        HERROR(DFE_NOSPACE);
+        return(FAIL);
+    }
+    HDmemset(lonevg,0,65000L*sizeof(uint8));
 
 /* -- look for all vgroups in the file, and flag (1) each -- */
     id = -1;
@@ -656,31 +816,39 @@ PUBLIC int32 Vlone (f, idarray, asize)
 /* -- increment its index in lonevg if found -- */
     vgid = -1;
     while( -1L != (vgid = Vgetid (f, vgid))) {  /* until no more vgroups */
-       printf("Vlone: vgid=%ld..attach",vgid);
+#ifdef OLD_WAY
         vg = (VGROUP*) Vattach(f,vgid,"r");
-       printf("..attach done\n");
         id = -1;
         for (i=0; i< Vntagrefs(vg); i++) {
             Vgettagref (vg, i, &vstag, &id);
-            if (vstag==VGDESCTAG) { lonevg[id]++;  }
-            }
-        Vdetach(vg);
+            if (vstag==VGDESCTAG)
+                lonevg[id]++;
         }
+        Vdetach(vg);
+#else
+        vkey = Vattach(f,vgid,"r");
+        id = -1;
+        for (i=0; i< Vntagrefs(vkey); i++) {
+            Vgettagref (vkey, i, &vstag, &id);
+            if (vstag==VGDESCTAG)
+                lonevg[id]=0;
+        }
+        Vdetach(vkey);
+#endif
+    }
 
-/* -- check in lonevg: it's a lone vgroup if its flag is still 1 -- */
-nlone = 0;
-for(i=0;i<65000;i++) {
-	if (1 == lonevg[i]) {
-	 	if (nlone < asize) { /* insert into idarray up till asize */
-			idarray[nlone] = i;
-			}
-		nlone ++;
-		}
-   }
-HDfreespace (lonevg);
+    /* -- check in lonevg: it's a lone vgroup if its flag is still 1 -- */
+    nlone = 0;
+    for(i=0; i<65000; i++) {
+        if (lonevg[i]) {
+            if (nlone < asize)  /* insert into idarray up till asize */
+                idarray[nlone] = i;
+            nlone ++;
+        }
+    }
+    HDfreespace (lonevg);
 
-return (nlone); /* return the TOTAL # of lone vgroups */
-
+    return (nlone); /* return the TOTAL # of lone vgroups */
 } /* Vlone */
 
 
@@ -695,29 +863,40 @@ return (nlone); /* return the TOTAL # of lone vgroups */
 #ifdef PROTOTYPE
 int32 Vfind (HFILEID f, char *vgname)
 #else
-
 int32 Vfind (f, vgname)
-
-	HFILEID	f;
-	char 	* vgname;
+HFILEID f;
+char    * vgname;
 #endif
-
 {
   	int32 	vgid = -1;
+    int32   ret_ref;
+#ifdef OLD_WAY
  	VGROUP* 	vg;
+#else
+    int32 vkey;
+#endif
   	char 		name[512];
 	char * 	FUNC = "Vfind";
 
     while ( -1L != (vgid=Vgetid(f, vgid)) ) {
+#ifdef OLD_WAY
 		vg = (VGROUP*) Vattach(f,vgid,"r");
 		if (vg==NULL) return(0); 			/* error */
 		Vgetname(vg, name);
 		Vdetach (vg);
-        if (!HDstrcmp(vgname,name))
-                  return ((int32) vg->oref);  /* found the vgroup */
+#else
+        vkey = Vattach(f,vgid,"r");
+        if (vkey==FAIL)
+            return(0);            /* error */
+        Vgetname(vkey, name);
+        Vdetach (vkey);
+#endif
+        if (!HDstrcmp(vgname,name)) {
+            Vgetoref(vkey,&ret_ref);
+            return (ret_ref);   /* found the vgroup */
+          } /* end if */
   	}
   	return(0); /* not found */
-
 } /* Vfind */
 
 /* ================================================================== */
@@ -727,32 +906,43 @@ int32 Vfind (f, vgname)
 * returns 0 if not found, or error.
 * otherwise, returns the vdata's ref (a +ve integer).
 */
-
 #ifdef PROTOTYPE
 int32 VSfind (HFILEID f, char *vsname)
 #else
-
 int32 VSfind (f, vsname)
-	HFILEID	f;
-	char * vsname;
+HFILEID f;
+char * vsname;
 #endif
-
 {
   	int32 	vsid = -1;
+    int32   ret_ref;
+#ifdef OLD_WAY
   	VDATA * 	vs;
+#else
+    int32 vkey;
+#endif
   	char 		name[512];
 	char * 	FUNC = "VSfind";
 
     while ( -1L != (vsid=VSgetid(f, vsid)) ) {
+#ifdef OLD_WAY
 		vs = (VDATA*) VSattach(f,vsid,"r");
 		if (vs==NULL) return(0); 			/* error */
 		VSgetname(vs, name);
 		VSdetach (vs);
-        if (!HDstrcmp(vsname, name))
-                  return ((int32) vs->oref);  /* found the vdata */
+#else
+        vkey = VSattach(f,vsid,"r");
+        if (vkey==FAIL)
+            return(0);            /* error */
+        VSgetname(vkey, name);
+        VSdetach (vkey);
+#endif
+        if (!HDstrcmp(vsname, name)) {
+            VSgetoref(vkey,&ret_ref);
+            return(ret_ref);  /* found the vdata */
+          } /* end if */
   	}
   	return(0); /* not found */
-
 } /* VSfind */
 
 /* ================================================================== */
@@ -762,14 +952,10 @@ int32 VSfind (f, vsname)
 */
 
 #ifdef PROTOTYPE
-PUBLIC void Vsetzap(void) 
+PUBLIC VOID Vsetzap(VOID)
 #else
-
-PUBLIC void Vsetzap() 
+PUBLIC VOID Vsetzap()
 #endif
-
 {
-
-	if (vjv) { sprintf(sjs,"Vsetzap: defunct\n"); zj; }
 }
 /* ================================================================== */

@@ -5,10 +5,19 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/01/19 05:54:26  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.6  1993/03/29 16:47:26  koziol
+Updated JPEG code to new JPEG 4 code.
+Changed VSets to use Threaded-Balanced-Binary Tree for internal
+	(in memory) representation.
+Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+	to use 32-bit integer keys instead of pointers.
+Backed out speedups for Cray, until I get the time to fix them.
+Fixed a bunch of bugs in the little-endian support in DFSD.
 
+ * Revision 1.5  1993/01/19  05:54:26  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.4  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -33,7 +42,7 @@ port.  Lots of minor annoyances fixed.
  *  DFGRgetimdims: get dimensions of image
  *  DFGRreqimil: use this interlace when returning image
  *  DFGRgetimage: read in image
- *  DFGRsetcomp: specify compression scheme to be used
+ *  DFGRsetcompress: specify compression scheme to be used
  *  DFGRsetlutdims: set dimensions of lookup table
  *  DFGRsetlut: set lookup table to write out with subsequent images
  *  DFGRaddlut: write out lookup table
@@ -280,7 +289,7 @@ comp_info *cinfo;
         Grcompr = DFTAG_JPEG;       /* Set the compression scheme */
     else    /* otherwise, just use mapped tag */
         Grcompr = compress_map[scheme];
-    Grcinfo = *cinfo;       /* Set the compression parameters */
+    Grcinfo = (*cinfo);       /* Set the compression parameters */
     return SUCCEED;
 }   /* end DFGRsetcompress() */
 
@@ -911,12 +920,9 @@ int DFGRIreqil(il, type)
 
 
 /*-----------------------------------------------------------------------------
- * Name:    DFGRIgetimlut
- * Purpose: get next image/lut from a RIG
- * Inputs:  filename: name of HDF file
- *          imlut: space to read image/lut into
- *          xdim, ydim: dimensions of space allocated by user for image/lut
- *          type: LUT for luts, IMAGE for images
+ * Name:    DFGRIg444444444444444444444444444444444444444444444444444444400000000000000000
+0444444444444444444444444444444444444444444444444444444444444444444444444444444444400000000000000000
+04444444444444444444444444444444444444444444444444444444444444444444444444444444for images
  *          isfortran: 0 if called from C, 1 if called from Fortran
  * Returns: 0 on success, -1 on failure with DFerror set
  *          image/lut in imlut

@@ -5,8 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.20  1993/02/25 22:35:41  georgev
-The fill value wasn't being freed.
+Revision 1.21  1993/03/29 16:47:40  koziol
+Updated JPEG code to new JPEG 4 code.
+Changed VSets to use Threaded-Balanced-Binary Tree for internal
+	(in memory) representation.
+Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+	to use 32-bit integer keys instead of pointers.
+Backed out speedups for Cray, until I get the time to fix them.
+Fixed a bunch of bugs in the little-endian support in DFSD.
 
  * Revision 1.19  1993/02/18  04:21:47  georgev
  * Fixed DFSDsetfillvalue so that users don't clobber their data.
@@ -539,7 +545,7 @@ void *scale;
         Readsdg.numbertype = DFNT_FLOAT32;
 
     numtype     = Readsdg.numbertype;
-    localNTsize = DFKNTsize(numtype | DFNT_NATIVE);
+    localNTsize = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
     dimsize     = localNTsize*Readsdg.dimsizes[rdim]; /* in bytes  */
 
     p1 = (uint8 *)scale;
@@ -582,7 +588,7 @@ void *pmax, *pmin;
     if (Readsdg.numbertype == DFNT_NONE)
         Readsdg.numbertype = DFNT_FLOAT32;
     numtype     = Readsdg.numbertype;
-    localNTsize = DFKNTsize(numtype | DFNT_NATIVE);
+    localNTsize = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
 
     if (Ismaxmin) 
       {
@@ -991,7 +997,7 @@ void *scale;
           return FAIL;
       }
     numtype     = Writesdg.numbertype;
-    localNTsize = DFKNTsize(numtype | DFNT_NATIVE);
+    localNTsize = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
 
     if ((rdim >= Writesdg.rank) || (rdim < 0) /* check dimensions */
 	|| (dimsize!=Writesdg.dimsizes[rdim])) 
@@ -1015,7 +1021,7 @@ void *scale;
           return FAIL;
       }
     numtype     = Writesdg.numbertype;
-    localNTsize = DFKNTsize(numtype | DFNT_NATIVE);
+    localNTsize = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
     bytesize    = dimsize * localNTsize;
         
     /* allocate space for dimscales if necessary */
@@ -1084,7 +1090,7 @@ void *maxi, *mini;
         DFSDsetNT(DFNT_FLOAT32);
 
     numtype     = Writesdg.numbertype;
-    localNTsize = DFKNTsize(numtype | DFNT_NATIVE);
+    localNTsize = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
     p1 = (uint8 *)maxi;
     p2 = (uint8 *)mini;
     
@@ -2580,7 +2586,7 @@ DFSsdg *sdg;
     fileNTsize      = DFKNTsize(numtype);
     scaleNTsize     = fileNTsize;   /* for now, assume same. MAY CHANGE */
     outNT           = sdg->filenumsubclass;
-    localNTsize     = DFKNTsize(numtype | DFNT_NATIVE);
+    localNTsize = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
     platnumsubclass = DFKgetPNSC(numtype, DF_MT);
     
     /* prepare to start writing ndg   */
@@ -3335,14 +3341,11 @@ DFSsdg *sdg;
     sdg->aid = (int32)-1;
     sdg->compression = (int32)0;
     FileTranspose = 0;
-    sdg->fill_value = HDfreespace(sdg->fill_value);
 
     Ref.dims = -1;
     Ref.scales = Ref.luf[LABEL] = Ref.luf[UNIT] = Ref.luf[FORMAT] = (-1);
     Ref.coordsys = Ref.maxmin = (-1);
     Ref.new_ndg = -1;
-    Ref.fill_value = -1;
-
     return(0);
 }
 
@@ -4187,7 +4190,7 @@ DFSDsetfillvalue(fill_value)
        /* Get local and file number type sizes  */
        numtype     = Writesdg.numbertype;
        fileNTsize  = DFKNTsize(numtype);
-       localNTsize = DFKNTsize(numtype | DFNT_NATIVE);
+       localNTsize = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
        
        /* Check if space allocated */
        if (Writesdg.fill_value == NULL)
@@ -4238,7 +4241,7 @@ DFSDgetfillvalue(fill_value)
 
     /* Get local number type size  */
     numtype     = Readsdg.numbertype;
-    localNTsize = DFKNTsize(numtype | DFNT_NATIVE);
+    localNTsize = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
 
     /* Set return fill value  */
     if (HDmemcpy(fill_value, Readsdg.fill_value, localNTsize) != NULL)
@@ -4307,7 +4310,7 @@ char *filename;
     Writesdg.data.ref = Writeref;
 
     /* Intialize a few local variables */
-    localNTsize     = DFKNTsize(Writesdg.numbertype | DFNT_NATIVE );
+    localNTsize = DFKNTsize((Writesdg.numbertype | DFNT_NATIVE) & (~DFNT_LITEND));
     fileNTsize      = DFKNTsize(Writesdg.numbertype);
 
     /* Calculate size of of dataset */

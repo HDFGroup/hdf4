@@ -49,7 +49,7 @@ EXTERN VOID jfree_large PROTO((VOIDP object));
  * On machines with flat address spaces, any large constant may be used here.
  */
 
-#define MAX_ALLOC_CHUNK		65400L
+#define MAX_ALLOC_CHUNK		65440L	/* leave room for malloc overhead */
 
 /*
  * This routine computes the total space available for allocation by
@@ -101,7 +101,7 @@ typedef struct backing_store_struct {
     METHOD(VOID, write_backing_store, (backing_store_ptr info,
                       VOIDP buffer_address, long file_offset, long byte_count));
     METHOD(VOID, close_backing_store, (backing_store_ptr info));
-	/* Private fields for system-dependent backing-store management */
+    /* Private fields for system-dependent backing-store management */
 	/* For the MS-DOS environment, we need: */
 	handle_union handle;	/* reference to backing-store storage object */
 	char temp_name[TEMP_NAME_LENGTH]; /* name if it's a file */
@@ -131,3 +131,4 @@ EXTERN VOID jopen_backing_store PROTO((backing_store_ptr info,
 
 EXTERN VOID jmem_init PROTO((external_methods_ptr emethods));
 EXTERN VOID jmem_term PROTO((VOID));
+

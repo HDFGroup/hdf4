@@ -2,8 +2,14 @@
 $Header$
 
 $Log$
-Revision 1.20  1993/03/17 21:30:26  chouck
-Added offsets to external elements
+Revision 1.21  1993/03/29 16:48:06  koziol
+Updated JPEG code to new JPEG 4 code.
+Changed VSets to use Threaded-Balanced-Binary Tree for internal
+	(in memory) representation.
+Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+	to use 32-bit integer keys instead of pointers.
+Backed out speedups for Cray, until I get the time to fix them.
+Fixed a bunch of bugs in the little-endian support in DFSD.
 
  * Revision 1.19  1993/02/17  20:45:10  briand
  * Added the FORTRAN stub for Hnumber.
@@ -195,16 +201,16 @@ extern char _HUGE *HIstrncpy
   PROTO((register char _HUGE *dest, register char _HUGE *source, int32 len));
 
 extern int32 HDspaceleft
-  PROTO((void));
+  PROTO((VOID));
 
-extern void _HUGE *HDgetspace
+extern VOIDP HDgetspace
   PROTO((uint32 qty));
 
-extern void _HUGE *HDregetspace
+extern VOIDP HDregetspace
   PROTO((VOIDP where, uint32 qty));
 
-extern void _HUGE *HDfreespace
-  PROTO((void _HUGE *ptr));
+extern VOIDP HDfreespace
+  PROTO((VOIDP ptr));
 
 #if defined WIN3 | defined PC
 extern VOIDP fmemcpy_big
@@ -246,8 +252,7 @@ extern int32 HLcreate
 ** from hextelt.c 
 */
 extern int32 HXcreate
-  PROTO((int32 file_id, uint16 tag, uint16 ref, char _HUGE *extern_file_name, 
-         int32 offset, int32 start_len));
+  PROTO((int32 file_id, uint16 tag, uint16 ref, char _HUGE *extern_file_name));
 
 /*
 ** from herr.c 
@@ -622,6 +627,171 @@ extern intn DFKsetNT
 extern int32 DFKconvert
     PROTO((VOIDP source, VOIDP dest, int32 ntype, int32 num_elm,
             int16 access, int32 source_stride, int32 dest_stride));
+
+/*
+** from dfknat.c
+*/
+
+extern intn DFKnb1b
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKnb2b
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKnb4b
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKnb8b
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+/*
+** from dfkswap.c
+*/
+
+extern intn DFKsb2b
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKsb4b
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKsb8b
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+/*
+** from dfkcray.c
+*/
+
+extern intn DFKui2i
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKui2s
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKuo2i
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKui4i
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKui4s
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKuo4i
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKui4f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKuo4f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKui8f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKuo8f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKlui2i
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKlui2s
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKluo2i
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKlui4i
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKlui4s
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKluo4i
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKlui4f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKluo4f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKlui8f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKluo8f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+/*
+** from dfkvms.c
+*/
+
+extern intn DFKvi4f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKvo4f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKvi8f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKvo8f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKlvi4f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKlvo4f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKlvi8f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKlvo8f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+/*
+** from dfkconv.c
+*/
+
+extern intn DFKci4f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKco4f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKci8f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKco8f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKlci4f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKlco4f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKlci8f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKlco8f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+/*
+** from dfkfuji.c
+*/
+
+extern intn DFKpi4f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKpo4f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKpi8f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKpo8f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
 
 /*
 ** from dfanF.c
@@ -1615,12 +1785,6 @@ extern int VSfind
 /*
 ** from vgp.c
 */
-extern void setjj
-  PROTO((void));
-
-extern void setnojj
-  PROTO((void));
-
 extern int Load_vfile
   PROTO((HFILEID f));
 

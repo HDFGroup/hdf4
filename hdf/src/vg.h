@@ -2,10 +2,19 @@
 $Header$
 
 $Log$
-Revision 1.5  1993/01/19 05:56:15  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.6  1993/03/29 16:50:30  koziol
+Updated JPEG code to new JPEG 4 code.
+Changed VSets to use Threaded-Balanced-Binary Tree for internal
+	(in memory) representation.
+Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+	to use 32-bit integer keys instead of pointers.
+Backed out speedups for Cray, until I get the time to fix them.
+Fixed a bunch of bugs in the little-endian support in DFSD.
 
+ * Revision 1.5  1993/01/19  05:56:15  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.4  1992/11/30  22:00:01  chouck
  * Added fixes for changing to Vstart and Vend
  *
@@ -20,15 +29,15 @@ port.  Lots of minor annoyances fixed.
  *
 */
 /*****************************************************************************
-*  Likkai Ng MAY 91  NCSA
 * 
 * vg.h
+*
 * Part of HDF VSet interface
 *
 * defines symbols and structures used in all v*.c files    
 *
 * NOTES:
-* This include file depends on the basic HDF *.h files dfi.h and df.h.
+* This include file depends on the basic HDF *.h files hdfi.h and hdf.h.
 * An 'S' in the comment means that that data field is saved in the HDF file.
 *
 ******************************************************************************/
@@ -39,37 +48,18 @@ port.  Lots of minor annoyances fixed.
 #include "hdf.h"
 #include "herr.h"
 
+/* Include file for Threaded, Balanced Binary Tree implementation */
+#include "tbbt.h"
+
 /* H-level customization jason ng 12-Feb-92 */
 typedef int32           HFILEID;
-#ifndef WIN3
-typedef unsigned char   BYTE;
-#endif
-
-#ifdef OLD_WAY
-#define QQnewref Hnewref
-#define QQstartread Hstartread 
-#define QQstartwrite Hstartwrite
-#define QQendaccess  Hendaccess
-#define QQQueryspecial HQueryspecial
-#define QQQuerytagref  HQuerytagref 
-#define QQQuerylength  HQuerylength
-#define QQgetelement  Hgetelement 
-#define QQputelement  Hputelement
-#define QQnextread  Hnextread
-#define QQdupdd  Hdupdd
-#define QQopen Hopen
-#define QQclose Hclose
-#define QQseek Hseek
-#define QQread Hread
-#define QQwrite Hwrite
-#endif
 
 /* 
 * interlacing supported by the vset. 
 */
 
 #define FULL_INTERLACE	0
-#define NO_INTERLACE		1
+#define NO_INTERLACE    1
 
 /* 
 * some max lengths 
@@ -79,19 +69,24 @@ typedef unsigned char   BYTE;
 *
 */
 
-#define FIELDNAMELENMAX	        16	/* fieldname   : 16 chars max */
+#define FIELDNAMELENMAX     16  /* fieldname   : 16 chars max */
 
-#define VSFIELDMAX		20  	/* max no of fields per vdata */
+#define VSFIELDMAX          20  /* max no of fields per vdata */
 #define VSNAMELENMAX		64	/* vdata name  : 64 chars max */    
 #define VGNAMELENMAX		64	/* vgroup name : 64 chars max */ 
 
+/* maximum number of files (number of slots for file records) */
+
+#ifndef MAX_VFILE
+#   define MAX_VFILE 16
+#endif
 
 /*
 * definition of the 2 data elements of the vset.
 */
 
 typedef struct vgroup_desc     	VGROUP;
-typedef struct vdata_desc			VDATA;
+typedef struct vdata_desc       VDATA;
 
 typedef VDATA VSUBGROUP;
 
@@ -113,22 +108,22 @@ typedef struct symdef_struct
 typedef struct vdata_memory_struct
 {
   int32 n;                   /* byte size */
-  BYTE  * mem;
+  uint8 * mem;
   struct vdata_memory_struct * next;
 } VMBLOCK;
 
 
 typedef struct write_struct	
 {
-  int16	n;		/* S actual # fields in element */
-  int16	ivsize;		/* S size of element as stored in vdata */
+  intn  n;                  /* S actual # fields in element */
+  int16 ivsize;             /* S size of element as stored in vdata */
   char 	name[VSFIELDMAX][FIELDNAMELENMAX+1]; /* S name of each field */
   
   int16	len[VSFIELDMAX];     /* S length of each fieldname */
-  int16	type[VSFIELDMAX];    /* S field type */
+  intn  type[VSFIELDMAX];    /* S field type */
   int16	off[VSFIELDMAX];     /* S field offset in element in vdata */
-  int16 isize[VSFIELDMAX];   /* S internal (HDF) size [incl order] */
-  int16	order[VSFIELDMAX];   /* S order of field */
+  intn  isize[VSFIELDMAX];   /* S internal (HDF) size [incl order] */
+  intn  order[VSFIELDMAX];   /* S order of field */
   int16	esize[VSFIELDMAX];   /*  external (local machine) size [incl order] */
   int32	(*toIEEEfn  [VSFIELDMAX] )();
   int32	(*fromIEEEfn[VSFIELDMAX] )();
@@ -203,7 +198,7 @@ struct vdata_desc {
 #define VSQueryref(vdata)	(vdata->oref)
 
 /* macros - Use these for accessing user-defined fields in a vdata. */
-#define VFnfields(vdata) 	(vdata->wlist.n)
+#define VFnfields(vdata)        (vdata->wlist.n)
 #define VFfieldname(vdata,t) 	(vdata->wlist.name[t])
 #define VFfieldtype(vdata,t) 	(vdata->wlist.type[t])
 #define VFfieldisize(vdata,t) 	(vdata->wlist.isize[t])
@@ -225,30 +220,16 @@ struct vdata_desc {
 #define VSDATATAG  		NEW_VSDATATAG 
 
 /*
-* Actual sizes of data types stored in HDF file. see hdf.h
-*/
-
-/*
-* Actual sizes of data types stored in HDF file, and are IEEE-defined. 
-*  == Obsolete. ==  24/March/92 
-*/
-#define IEEE_UNTYPEDSIZE   0
-#define IEEE_CHARSIZE      1
-#define IEEE_INT16SIZE     2
-#define IEEE_INT32SIZE     4
-#define IEEE_FLOATSIZE     4
-
-/*
 * types used in defining a new field via a call to VSfdefine
 */
 
-#define LOCAL_NOTYPE			0
-#define LOCAL_CHARTYPE  	1  /* 8-bit ascii text stream */
-#define LOCAL_INTTYPE 	 	2  /* 32-bit integers - don't use */
+#define LOCAL_NOTYPE        0
+#define LOCAL_CHARTYPE      1   /* 8-bit ascii text stream */
+#define LOCAL_INTTYPE       2   /* 32-bit integers - don't use */
 #define LOCAL_FLOATTYPE		3	/* as opposed to DOUBLE */ 
-#define LOCAL_LONGTYPE 	 	4  /* 32-bit integers */
+#define LOCAL_LONGTYPE      4   /* 32-bit integers */
 #define LOCAL_BYTETYPE 	 	5	/* 8-bit byte stream - unsupported */
-#define LOCAL_SHORTTYPE 	6  /* 16-bit integers - unsupported */
+#define LOCAL_SHORTTYPE     6   /* 16-bit integers - unsupported */
 #define LOCAL_DOUBLETYPE 	7	/* as opposed to FLOAT - unsupported */
 
 /*
@@ -266,37 +247,6 @@ struct vdata_desc {
 
 /* kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk */
 
-/* ------------------------------------------------------------------ */
-/* 2 GLOBAL VARIABLES (int vjv and char sj[]) provide a simple
-* debugging scheme. Debugging is turned on and off via calls to 
-* setjj and setnojj. These globals and functions are found in vgp.c.
-* 
-* If the debug feature is no longer needed, delete all these, and
-* all statements that refer to zj,sjs, and vjv from the source
-*
-*/
-
-
-extern int16 	vjv; 		/* debugger switch */
-extern char 	sjs[]; 		/* contains the debug/error message */
-
-/* zj just prints out the contents of the text buffer sjs. */
-/* sjs contains debugging messages when debug is on */
-/* for the Mac, replace define zj to be any print msg routine */
-
-#ifdef MAC
-#define zj
-#else
-#define zj \
-   {fprintf(stderr,"%s L-%d: %s",__FILE__,__LINE__,sjs); fflush(stderr); }
-#endif
-
-/* Macros for returning null, -1 or no value with a message */
-
-#define RTNULL(ss) { sprintf(sjs,"@%s\n",ss); zj; return(NULL); }
-#define RTNEG(ss) { sprintf(sjs,"@%s\n",ss); zj; return(FAIL); }
-#define RT(ss) 	{ sprintf(sjs,"@%s\n",ss); zj; return; }
-
 /* need to tune these to vertex boundary later.  Jason Ng 6-APR-92 */
 #define VDEFAULTBLKSIZE    512
 #define VDEFAULTNBLKS      8
@@ -313,60 +263,90 @@ extern char 	sjs[]; 		/* contains the debug/error message */
 * 
 */
 
-/* this is a memory copy of a vs tag/ref found in the file */
+/* this is a memory copy of a vg tag/ref found in the file */
 typedef struct vg_instance_struct {
+    int32    key;           /* key to look up with the B-tree routines */
+                            /* needs to be first in the structure */
     uintn    ref;           /* ref # of this vgroup in the file */
-	intn 	nattach;		/* # of current attachs to this vgroup */
+                            /* needs to be second in the structure */
+    intn    nattach;        /* # of current attachs to this vgroup */
 	int32 	nentries;	/* # of entries in that vgroup initially */
 	VGROUP 	*vg;			/* points to the vg when it is attached */
+#ifdef OLD_WAY
 	struct vg_instance_struct * next;
+#endif
 }	vginstance_t; 
 
 /* this is a memory copy of a vs tag/ref found in the file */
 typedef struct vs_instance_struct {
+    int32    key;           /* key to look up with the B-tree routines */
+                            /* needs to be first in the structure */
     uintn    ref;           /* ref # of this vdata in the file */
-	intn	nattach;		/* # of current attachs to this vdata */
-        int32   nvertices;  /* # of elements in that vdata initially */
+                            /* needs to be second in the structure */
+    intn    nattach;        /* # of current attachs to this vdata */
+    int32   nvertices;      /* # of elements in that vdata initially */
 	VDATA	*vs; 			/* points to the vdata when it is attached */
+#ifdef OLD_WAY
 	struct vs_instance_struct * next;
+#endif
 }	vsinstance_t; 
 
 /* each vfile_t maintains 2 linked lists: one of vgs and one of vdatas
 * that already exist or are just created for a given file.  */
 
-typedef struct vfiledir_struct {
+typedef int32 treekey;          /* type of keys for */
 
-  int32			vgtabn;		/* # of vg entries in vgtab so far */
+typedef struct vfiledir_struct {
+  int32         vgtabn;         /* # of vg entries in vgtab so far */
+#ifdef OLD_WAY
   vginstance_t	vgtab;			/* start of vg linked list */
   vginstance_t	*vgtabtail;	 	/* its tail end */
+#else
+    TBBT_TREE   *vgtree;         /* Root of VGroup B-Tree */
+#endif
   
-  int32			vstabn;		/* # of vs entries in vstab so far */
-  vsinstance_t	vstab;		/* start of vs linked list */
+  int32         vstabn;         /* # of vs entries in vstab so far */
+#ifdef OLD_WAY
+  vsinstance_t  vstab;          /* start of vs linked list */
   vsinstance_t	*vstabtail;		/* its tail end */
+#else
+    TBBT_TREE   *vstree;         /* Root of VSet B-Tree */
+#endif
 } vfile_t;
 
 /*
  * NOTE:  People at large should not use this macro as they do not
  *        have access to vfile[]
  */
-#define Get_vfile(f) (f > 0 ? (&vfile[(f & 0xffff)]) : NULL)
+#define Get_vfile(f) (f>=0 ? (&vfile[(f & 0xffff)]) : NULL)
+
+#define VGIDTYPE  8         /* Also defined in hfile.h */
+#define VSIDTYPE  9         /* Also defined in hfile.h */
+
+/* VGID and VSID's are composed of the following fields:    */
+/*      Top 8 Bits: File ID (can be used for Get_vfile)     */
+/*      Next 8 Bits:VGID/VSID constant (for identification) */
+/*      Bottom 16 Bits: ID for the individual VGroup/VSet   */
+
+#define VGSLOT2ID(f,s) ( (((uint32)f & 0xff) << 16) | \
+                    (((uint32)VGIDTYPE & 0xff) << 24) | ((s) & 0xffff) )
+#define VALIDVGID(i) (((((uint32)(i) >> 24) & 0xff) == VGIDTYPE) && \
+                    ((((uint32)(i) >> 16)  & 0xff) < MAX_VFILE))
+#define VGID2SLOT(i) (VALIDVGID(i) ? (uint32)(i) & 0xffff : -1)
+#define VGID2VFILE(i) (VALIDVGID(i) ? ((uint32)(i) >> 16) & 0xff : -1)
+
+#define VSSLOT2ID(f,s) ( (((uint32)f & 0xff) << 16) | \
+                    (((uint32)VSIDTYPE & 0xff) << 24) | ((s) & 0xffff) )
+#define VALIDVSID(i) (((((uint32)(i) >> 24) & 0xff) == VSIDTYPE) && \
+                    ((((uint32)(i) >> 16)  & 0xff) < MAX_VFILE))
+#define VSID2SLOT(i) (VALIDVSID(i) ? (uint32)(i) & 0xffff : -1)
+#define VSID2VFILE(i) (VALIDVSID(i) ? ((uint32)(i) >> 16) & 0xff : -1)
 
 /* .................................................................. */
 #define VSET_VERSION   3     /* DO NOT CHANGE!! */
 #define VSET_OLD_TYPES 2     /* All version <= 2 use old type mappings */
 
-#ifdef MAC
-#include "vproto.h"
-#include <String.h>
-#endif
 #include <ctype.h>
-
-/**  Quincy, these are to be deletedma dn put into hfile.c
-
-* DFopen and DFclose are redefined to perform additional work, 
-* ie Vset data structure initialization and clean-up.
-* Does not affect usage by other HDF interfaces.
-*/
 
 /* .................................................................. */
 
@@ -402,8 +382,10 @@ typedef struct vfiledir_struct {
 
 #include "vproto.h"
 
-#define Vinitialize(f)     Vstart((f))
-#define Vfinish(f)         Vend((f))
+#define Vstart(f)     Vinitialize((f))
+#define Vend(f)       Vfinish((f))
+#define DFvsetopen(x,y,z)   Vopen((x),(y),(z))
+#define DFvsetclose(x)   Vclose((x))
 
 #endif /* _VG_H */
 

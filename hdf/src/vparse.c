@@ -5,10 +5,19 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/01/19 05:56:29  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.4  1993/03/29 16:50:46  koziol
+Updated JPEG code to new JPEG 4 code.
+Changed VSets to use Threaded-Balanced-Binary Tree for internal
+	(in memory) representation.
+Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+	to use 32-bit integer keys instead of pointers.
+Backed out speedups for Cray, until I get the time to fix them.
+Fixed a bunch of bugs in the little-endian support in DFSD.
 
+ * Revision 1.3  1993/01/19  05:56:29  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.2  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -77,7 +86,7 @@ int32 scanattrs (attrs,attrc,attrv)
   s0 = s;
   for (i = 0; i < slen; i++, s++)
     if ( ISCOMMA(*s) ) {
-      len = s - s0; 
+      len = (intn)(s - s0);
       if (len <= 0) return(FAIL);
 
       /* save that token */
@@ -90,7 +99,7 @@ int32 scanattrs (attrs,attrc,attrv)
     }
   
   /* save the last token */
-  len = s - s0; 
+  len = (intn)(s - s0);
   if (len <= 0) return(FAIL);
   ss = symptr[nsym] = sym[nsym]; 
   nsym++;

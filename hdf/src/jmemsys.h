@@ -14,7 +14,7 @@
  * systems.  It should be usable as-is on the majority of non-MSDOS machines.
  */
 
-/* Avoid re-inclusion */
+/* AVOID re-inclusion */
 #ifndef JMEMSYS_H
 #define JMEMSYS_H
 

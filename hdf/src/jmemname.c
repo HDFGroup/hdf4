@@ -18,8 +18,8 @@
 #ifdef INCLUDES_ARE_ANSI
 #include <stdlib.h>		/* to declare malloc(), free() */
 #else
-extern void * malloc PROTO((size_t size));
-extern void free PROTO((void *ptr));
+extern VOID * malloc PROTO((size_t size));
+extern VOID free PROTO((VOID *ptr));
 #endif
 
 #ifndef SEEK_SET		/* pre-ANSI systems may not define this; */
@@ -146,7 +146,7 @@ size_t sizeofobject;
 #endif
 {
   total_used += sizeofobject;
-  return (VOIDP) malloc(sizeofobject);
+  return (VOID *) malloc(sizeofobject);
 }
 
 GLOBAL VOID
@@ -268,8 +268,11 @@ long total_bytes_needed;
   char tracemsg[TEMP_NAME_LENGTH+40];
 
   select_file_name(info->temp_name);
-  if ((info->temp_file = fopen(info->temp_name, RW_BINARY)) == NULL)
-    ERREXIT(methods, "Failed to create temporary file");
+  if ((info->temp_file = fopen(info->temp_name, RW_BINARY)) == NULL) {
+    /* hack to get around ERREXIT's inability to handle string parameters */
+    sprintf(tracemsg, "Failed to create temporary file %s", info->temp_name);
+    ERREXIT(methods, tracemsg);
+  }
   info->read_backing_store = read_backing_store;
   info->write_backing_store = write_backing_store;
   info->close_backing_store = close_backing_store;

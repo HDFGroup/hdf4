@@ -21,8 +21,8 @@
 #ifdef INCLUDES_ARE_ANSI
 #include <stdlib.h>		/* to declare malloc(), free() */
 #else
-extern void * malloc PROTO((size_t size));
-extern void free PROTO((void *ptr));
+extern VOIDP malloc PROTO((size_t size));
+extern VOID free PROTO((VOID *ptr));
 #endif
 
 
@@ -42,7 +42,7 @@ jget_small (sizeofobject)
 size_t sizeofobject;
 #endif
 {
-  return (VOIDP) malloc(sizeofobject);
+  return (VOID *) malloc(sizeofobject);
 }
 
 GLOBAL VOID

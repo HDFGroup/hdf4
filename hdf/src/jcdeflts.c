@@ -33,9 +33,9 @@
 
 METHODDEF VOID
 #ifdef PROTOTYPE
-progress_monitorc (compress_info_ptr cinfo, long loopcounter, long looplimit)
+c_progress_monitor (compress_info_ptr cinfo, long loopcounter, long looplimit)
 #else
-progress_monitorc (cinfo, loopcounter, looplimit)
+c_progress_monitor (cinfo, loopcounter, looplimit)
 compress_info_ptr cinfo;
 long loopcounter;
 long looplimit;
@@ -46,7 +46,7 @@ long looplimit;
 
 
 /*
- * Table setup routines
+ * Huffman table setup routines
  */
 
 LOCAL VOID
@@ -65,10 +65,8 @@ const uint8 *val;
   if (*htblptr == NULL)
     *htblptr = (HUFF_TBL *) (*cinfo->emethods->alloc_small) (SIZEOF(HUFF_TBL));
   
-  HDmemcpy((VOIDP) (*htblptr)->bits, (const VOIDP) bits,
-	 SIZEOF((*htblptr)->bits));
-  HDmemcpy((VOIDP) (*htblptr)->huffval, (const VOIDP) val,
-	 SIZEOF((*htblptr)->huffval));
+  HDmemcpy((*htblptr)->bits, bits, SIZEOF((*htblptr)->bits));
+  HDmemcpy((*htblptr)->huffval, val, SIZEOF((*htblptr)->huffval));
 
   /* Initialize sent_table FALSE so table will be written to JPEG file.
    * In an application where we are writing non-interchange JPEG files,
@@ -161,51 +159,28 @@ compress_info_ptr cinfo;
 }
 
 
-/* This is the sample quantization table given in the JPEG spec section K.1,
- * but expressed in zigzag order (as are all of our quant. tables).
- * The spec says that the values given produce "good" quality, and
- * when divided by 2, "very good" quality.  (These two settings are
- * selected by quality=50 and quality=75 in j_set_quality, below.)
+/*
+ * Quantization table setup routines
  */
 
-
-static const QUANT_VAL std_luminance_quant_tbl[DCTSIZE2] = {
-  16,  11,  12,  14,  12,  10,  16,  14,
-  13,  14,  18,  17,  16,  19,  24,  40,
-  26,  24,  22,  22,  24,  49,  35,  37,
-  29,  40,  58,  51,  61,  60,  57,  51,
-  56,  55,  64,  72,  92,  78,  64,  68,
-  87,  69,  55,  56,  80, 109,  81,  87,
-  95,  98, 103, 104, 103,  62,  77, 113,
- 121, 112, 100, 120,  92, 101, 103,  99
-};
-
-static const QUANT_VAL std_chrominance_quant_tbl[DCTSIZE2] = {
-  17,  18,  18,  24,  21,  24,  47,  26,
-  26,  47,  99,  66,  56,  66,  99,  99,
-  99,  99,  99,  99,  99,  99,  99,  99,
-  99,  99,  99,  99,  99,  99,  99,  99,
-  99,  99,  99,  99,  99,  99,  99,  99,
-  99,  99,  99,  99,  99,  99,  99,  99,
-  99,  99,  99,  99,  99,  99,  99,  99,
-  99,  99,  99,  99,  99,  99,  99,  99
-};
-
-
-LOCAL VOID
+GLOBAL VOID
 #ifdef PROTOTYPE
-add_quant_table (compress_info_ptr cinfo, int which_tbl,
-        const QUANT_VAL *basic_table, int scale_factor, boolean force_baseline)
+j_add_quant_table (compress_info_ptr cinfo, int which_tbl,
+		   const QUANT_VAL *basic_table, int scale_factor,
+		   bool force_baseline)
 #else
-add_quant_table (cinfo, which_tbl, basic_table, scale_factor, force_baseline)
+j_add_quant_table (cinfo, which_tbl, basic_table, scale_factor, force_baseline)
 compress_info_ptr cinfo;
 int which_tbl;
 const QUANT_VAL *basic_table;
 int scale_factor;
-boolean force_baseline;
+bool force_baseline;
 #endif
-/* Define a quantization table equal to the basic_table times */
-/* a scale factor (given as a percentage) */
+/* Define a quantization table equal to the basic_table times
+ * a scale factor (given as a percentage).
+ * If force_baseline is TRUE, the computed quantization table entries
+ * are limited to 1..255 for JPEG baseline compatibility.
+ */
 {
   QUANT_TBL_PTR * qtblptr = & cinfo->quant_tbl_ptrs[which_tbl];
   int i;
@@ -230,31 +205,25 @@ boolean force_baseline;
 }
 
 
-GLOBAL VOID
+GLOBAL int
 #ifdef PROTOTYPE
-j_set_quality (compress_info_ptr cinfo, int quality, boolean force_baseline)
+j_quality_scaling (int quality)
 #else
-j_set_quality (cinfo, quality, force_baseline)
-compress_info_ptr cinfo;
+j_quality_scaling (quality)
 int quality;
-boolean force_baseline;
 #endif
-/* Set or change the 'quality' (quantization) setting. */
-/* The 'quality' factor should be 0 (terrible) to 100 (very good). */
-/* Quality 50 corresponds to the JPEG basic tables given above; */
-/* quality 100 results in no quantization scaling at all. */
-/* If force_baseline is TRUE, quantization table entries are limited */
-/* to 0..255 for JPEG baseline compatibility; this is only an issue */
-/* for quality settings below 24. */
+/* Convert a user-specified quality rating to a percentage scaling factor
+ * for an underlying quantization table, using our recommended scaling curve.
+ * The input 'quality' factor should be 0 (terrible) to 100 (very good).
+ */
 {
-  /* Safety limit on quality factor.  Convert 0 to 1 to avoid zero divide. */
+  /* Safety limit on quality factor.  Convert 0 to 1 to aVOID zero divide. */
   if (quality <= 0) quality = 1;
   if (quality > 100) quality = 100;
 
-  /* Convert quality rating to a percentage scaling of the basic tables.
-   * The basic table is used as-is (scaling 100) for a quality of 50.
+  /* The basic table is used as-is (scaling 100) for a quality of 50.
    * Qualities 50..100 are converted to scaling percentage 200 - 2*Q;
-   * note that at Q=100 the scaling is 0, which will cause add_quant_table
+   * note that at Q=100 the scaling is 0, which will cause j_add_quant_table
    * to make all the table entries 1 (hence, no quantization loss).
    * Qualities 1..50 are converted to scaling percentage 5000/Q.
    */
@@ -263,9 +232,60 @@ boolean force_baseline;
   else
     quality = 200 - quality*2;
 
+  return quality;
+}
+
+
+GLOBAL VOID
+#ifdef PROTOTYPE
+j_set_quality (compress_info_ptr cinfo, int quality, bool force_baseline)
+#else
+j_set_quality (cinfo, quality, force_baseline)
+compress_info_ptr cinfo;
+int quality;
+bool force_baseline;
+#endif
+/* Set or change the 'quality' (quantization) setting, using default tables.
+ * This is the standard quality-adjusting entry point for typical user
+ * interfaces; only those who want detailed control over quantization tables
+ * would use the preceding two routines directly.
+ */
+{
+  /* This is the sample quantization table given in the JPEG spec section K.1,
+   * but expressed in zigzag order (as are all of our quant. tables).
+   * The spec says that the values given produce "good" quality, and
+   * when divided by 2, "very good" quality.  (These two settings are
+   * selected by quality=50 and quality=75 respectively.)
+   */
+  static const QUANT_VAL std_luminance_quant_tbl[DCTSIZE2] = {
+    16,  11,  12,  14,  12,  10,  16,  14,
+    13,  14,  18,  17,  16,  19,  24,  40,
+    26,  24,  22,  22,  24,  49,  35,  37,
+    29,  40,  58,  51,  61,  60,  57,  51,
+    56,  55,  64,  72,  92,  78,  64,  68,
+    87,  69,  55,  56,  80, 109,  81,  87,
+    95,  98, 103, 104, 103,  62,  77, 113,
+    121, 112, 100, 120,  92, 101, 103,  99
+    };
+  static const QUANT_VAL std_chrominance_quant_tbl[DCTSIZE2] = {
+    17,  18,  18,  24,  21,  24,  47,  26,
+    26,  47,  99,  66,  56,  66,  99,  99,
+    99,  99,  99,  99,  99,  99,  99,  99,
+    99,  99,  99,  99,  99,  99,  99,  99,
+    99,  99,  99,  99,  99,  99,  99,  99,
+    99,  99,  99,  99,  99,  99,  99,  99,
+    99,  99,  99,  99,  99,  99,  99,  99,
+    99,  99,  99,  99,  99,  99,  99,  99
+    };
+
+  /* Convert user 0-100 rating to percentage scaling */
+  quality = j_quality_scaling(quality);
+
   /* Set up two quantization tables using the specified quality scaling */
-  add_quant_table(cinfo, 0, std_luminance_quant_tbl, quality, force_baseline);
-  add_quant_table(cinfo, 1, std_chrominance_quant_tbl, quality, force_baseline);
+  j_add_quant_table(cinfo, 0, std_luminance_quant_tbl,
+		    quality, force_baseline);
+  j_add_quant_table(cinfo, 1, std_chrominance_quant_tbl,
+		    quality, force_baseline);
 }
 
 
@@ -298,12 +318,12 @@ boolean force_baseline;
 
 GLOBAL VOID
 #ifdef PROTOTYPE
-j_c_defaults (compress_info_ptr cinfo, int quality, boolean force_baseline)
+j_c_defaults (compress_info_ptr cinfo, int quality, bool force_baseline)
 #else
 j_c_defaults (cinfo, quality, force_baseline)
 compress_info_ptr cinfo;
 int quality;
-boolean force_baseline;
+bool force_baseline;
 #endif
 /* NB: the external methods must already be set up. */
 {
@@ -330,11 +350,7 @@ boolean force_baseline;
   /* for grayscale.  The others are assumed to be UV or similar chrominance. */
   cinfo->write_JFIF_header = TRUE;
   cinfo->jpeg_color_space = CS_YCbCr;
-#ifdef OLD_WAY
   cinfo->num_components = 3;
-#else
-  cinfo->num_components = cinfo->comps_in_scan = 3;
-#endif
   cinfo->comp_info = (jpeg_component_info *)
     (*cinfo->emethods->alloc_small) (4 * SIZEOF(jpeg_component_info));
   /* Note: we allocate a 4-entry comp_info array so that user interface can
@@ -393,11 +409,15 @@ boolean force_baseline;
   /* By default, use the simpler non-cosited sampling alignment */
   cinfo->CCIR601_sampling = FALSE;
 
+  /* No input smoothing */
+  cinfo->smoothing_factor = 0;
+
   /* No restart markers */
   cinfo->restart_interval = 0;
+  cinfo->restart_in_rows = 0;
 
   /* Install default do-nothing progress monitoring method. */
-  cinfo->methods->progress_monitor = progress_monitorc;
+  cinfo->methods->progress_monitor = c_progress_monitor;
 }
 
 

@@ -5,8 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1993/02/22 23:32:27  georgev
-Fixed minor compilier warning on SGI.
+Revision 1.7  1993/03/29 16:47:13  koziol
+Updated JPEG code to new JPEG 4 code.
+Changed VSets to use Threaded-Balanced-Binary Tree for internal
+	(in memory) representation.
+Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+	to use 32-bit integer keys instead of pointers.
+Backed out speedups for Cray, until I get the time to fix them.
+Fixed a bunch of bugs in the little-endian support in DFSD.
 
  * Revision 1.5  1993/01/19  05:54:00  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
@@ -473,8 +479,8 @@ intf *force_baseline;
 {
     comp_info *cinfo;   /* Structure containing compression parameters */
 
-    cinfo->jpeg.quality = *quality;
-    cinfo->jpeg.force_baseline = *force_baseline;
+    cinfo->jpeg.quality=*quality;
+    cinfo->jpeg.force_baseline=*force_baseline;
     return (DF24setcompress((int32)COMP_JPEG,cinfo));
 }   /* end df24setjpeg() */
 

@@ -112,7 +112,7 @@ typedef FSERROR FAR *FSERRPTR;	/* pointer to error array (in FAR storage!) */
 
 static FSERRPTR evenrowerrs[MAX_COMPONENTS]; /* errors for even rows */
 static FSERRPTR oddrowerrs[MAX_COMPONENTS];  /* errors for odd rows */
-static boolean on_odd_row;	/* flag to remember which row we are on */
+static bool on_odd_row;  /* flag to remember which row we are on */
 
 
 /*
@@ -146,7 +146,7 @@ int Ncolors[];
   int max_colors = cinfo->desired_number_of_colors;
   int total_colors, iroot, i;
   long temp;
-  boolean changed;
+  bool changed;
 
   /* We can allocate at least the nc'th root of max_colors per component. */
   /* Compute floor(nc'th root of max_colors). */
@@ -261,7 +261,7 @@ int maxj;
    * (Forcing the upper and lower values to the limits ensures that
    * dithering can't produce a color outside the selected gamut.)
    */
-  return (j * MAXJSAMPLE + maxj/2) / maxj;
+  return (int) (((int32) j * MAXJSAMPLE + maxj/2) / maxj);
 }
 
 
@@ -279,7 +279,7 @@ int maxj;
 /* Must have largest(j=0) >= 0, and largest(j=maxj) >= MAXJSAMPLE */
 {
   /* Breakpoints are halfway between values returned by output_value */
-  return (int)(((long)(2*j + 1) * MAXJSAMPLE + maxj) / (2*maxj));
+  return (int) (((int32) (2*j + 1) * MAXJSAMPLE + maxj) / (2*maxj));
 }
 
 
@@ -354,8 +354,8 @@ decompress_info_ptr cinfo;
     val = 0;
     k = largest_input_value(cinfo, i, 0, nci-1);
     for (j = 0; j <= MAXJSAMPLE; j++) {
-      while (k < j)     /* advance val if past boundary */
-        k = largest_input_value(cinfo, i, ++val, nci-1);
+      while (j > k)		/* advance val if past boundary */
+	k = largest_input_value(cinfo, i, ++val, nci-1);
       /* premultiply so that no multiplication needed in main processing */
       colorindex[i][j] = (JSAMPLE) (val * blksize);
     }
@@ -379,7 +379,7 @@ decompress_info_ptr cinfo;
       evenrowerrs[i] = (FSERRPTR) (*cinfo->emethods->alloc_medium) (arraysize);
       oddrowerrs[i]  = (FSERRPTR) (*cinfo->emethods->alloc_medium) (arraysize);
       /* we only need to zero the forward contribution for current row. */
-      jzero_far((VOIDP) evenrowerrs[i], arraysize);
+      jzero_far((VOID FAR *) evenrowerrs[i], arraysize);
     }
     on_odd_row = FALSE;
   }
@@ -512,6 +512,7 @@ JSAMPARRAY output_data;
   register FSERRPTR thisrowerr, nextrowerr;
   register JSAMPROW input_ptr;
   register JSAMPROW output_ptr;
+  JSAMPLE *range_limit = cinfo->sample_range_limit;
   JSAMPROW colorindex_ci;
   JSAMPROW colormap_ci;
   register int pixcode;
@@ -521,11 +522,12 @@ JSAMPARRAY output_data;
   int row;
   long col_counter;
   long width = cinfo->image_width;
+  SHIFT_TEMPS
 
   for (row = 0; row < num_rows; row++) {
     do_color_conversion(cinfo, input_data, row);
     /* Initialize output values to 0 so can process components separately */
-    jzero_far((VOIDP) output_data[row],
+    jzero_far((VOID FAR *) output_data[row],
 	      (size_t) (width * SIZEOF(JSAMPLE)));
     for (ci = 0; ci < nc; ci++) {
       if (on_odd_row) {
@@ -547,22 +549,22 @@ JSAMPARRAY output_data;
       colormap_ci = colormap[ci];
       *nextrowerr = 0;		/* need only initialize this one entry */
       for (col_counter = width; col_counter > 0; col_counter--) {
-	/* Compute pixel value + accumulated error for this component */
-	val = (((FSERROR) GETJSAMPLE(*input_ptr)) << 4) + *thisrowerr;
-	if (val < 0) val = 0;	/* must watch for range overflow! */
-	else {
-	  val += 8;		/* divide by 16 with proper rounding */
-	  val >>= 4;
-	  if (val > MAXJSAMPLE) val = MAXJSAMPLE;
-	}
+	/* Get accumulated error for this component, round to integer.
+	 * RIGHT_SHIFT rounds towards minus infinity, so adding 8 is correct
+	 * for either sign of the error value.
+	 */
+	val = RIGHT_SHIFT(*thisrowerr + 8, 4);
+	/* Compute pixel value + error compensation, range-limit to
+	 * 0..MAXJSAMPLE.  Note max error value is +- MAXJSAMPLE.
+	 */
+	val = GETJSAMPLE(range_limit[GETJSAMPLE(*input_ptr) + val]);
 	/* Select output value, accumulate into output code for this pixel */
-	pixcode = GETJSAMPLE(*output_ptr);
-	pixcode += GETJSAMPLE(colorindex_ci[val]);
+	pixcode = GETJSAMPLE(*output_ptr) + GETJSAMPLE(colorindex_ci[val]);
 	*output_ptr = (JSAMPLE) pixcode;
 	/* Compute actual representation error at this pixel */
 	/* Note: we can do this even though we don't yet have the final */
 	/* value of pixcode, because the colormap is orthogonal. */
-	val -= (FSERROR) GETJSAMPLE(colormap_ci[pixcode]);
+	val -= GETJSAMPLE(colormap_ci[pixcode]);
 	/* Propagate error to (same component of) adjacent pixels */
 	/* Remember that nextrowerr entries are in reverse order! */
 	two_val = val * 2;

@@ -41,10 +41,11 @@
 #include "jmemsys.h"
 
 #ifdef INCLUDES_ARE_ANSI
-#include <stdlib.h>		/* to declare malloc(), free() */
+#include <stdlib.h>		/* to declare malloc(), free(), getenv() */
 #else
-extern VOIDP malloc PROTO((size_t size));
-extern VOID free PROTO((VOIDP ptr));
+extern void * malloc PROTO((size_t size));
+extern void free PROTO((void *ptr));
+extern char * getenv PROTO((const char * name));
 #endif
 
 #ifdef NEED_FAR_POINTERS
@@ -78,27 +79,27 @@ extern VOID free PROTO((VOIDP ptr));
  * compiler memory model.  We assume "short" is 16 bits, "long" is 32.
  */
 
-typedef VOIDP XMSDRIVER;   /* actually a pointer to code */
+typedef void far * XMSDRIVER;	/* actually a pointer to code */
 typedef struct {		/* registers for calling XMS driver */
 	unsigned short ax, dx, bx;
-    VOIDP ds_si;
+	void far * ds_si;
       } XMScontext;
 typedef struct {		/* registers for calling EMS driver */
 	unsigned short ax, dx, bx;
-    VOIDP ds_si;
+	void far * ds_si;
       } EMScontext;
 
 EXTERN short far jdos_open PROTO((short far * handle, char far * filename));
 EXTERN short far jdos_close PROTO((short handle));
 EXTERN short far jdos_seek PROTO((short handle, long offset));
-EXTERN short far jdos_read PROTO((short handle, VOIDP buffer,
+EXTERN short far jdos_read PROTO((short handle, void far * buffer,
 			       unsigned short count));
-EXTERN short far jdos_write PROTO((short handle, VOIDP buffer,
+EXTERN short far jdos_write PROTO((short handle, void far * buffer,
 				unsigned short count));
-EXTERN VOID far jxms_getdriver PROTO((XMSDRIVER far *));
-EXTERN VOID far jxms_calldriver PROTO((XMSDRIVER, XMScontext far *));
-EXTERN short far jems_available PROTO((VOID));
-EXTERN VOID far jems_calldriver PROTO((EMScontext far *));
+EXTERN void far jxms_getdriver PROTO((XMSDRIVER far *));
+EXTERN void far jxms_calldriver PROTO((XMSDRIVER, XMScontext far *));
+EXTERN short far jems_available PROTO((void));
+EXTERN void far jems_calldriver PROTO((EMScontext far *));
 
 
 static external_methods_ptr methods; /* saved for access to error_exit */
@@ -113,13 +114,8 @@ static long total_used;		/* total FAR memory requested so far */
 
 static int next_file_num;	/* to distinguish among several temp files */
 
-LOCAL VOID
-#ifdef PROTOTYPE
+LOCAL void
 select_file_name (char * fname)
-#else
-select_file_name (fname)
-char * fname;
-#endif
 {
   const char * env;
   char * ptr;
@@ -156,28 +152,18 @@ char * fname;
  * routines malloc() and free().
  */
 
-GLOBAL VOIDP
-#ifdef PROTOTYPE
+GLOBAL void *
 jget_small (size_t sizeofobject)
-#else
-jget_small (sizeofobject)
-size_t sizeofobject;
-#endif
 {
   /* near data space is NOT counted in total_used */
 #ifndef NEED_FAR_POINTERS
   total_used += sizeofobject;
 #endif
-  return (VOIDP) malloc(sizeofobject);
+  return (void *) malloc(sizeofobject);
 }
 
-GLOBAL VOID
-#ifdef PROTOTYPE
-jfree_small (VOIDP object)
-#else
-jfree_small (object)
-VOIDP object;
-#endif
+GLOBAL void
+jfree_small (void * object)
 {
   free(object);
 }
@@ -189,25 +175,15 @@ VOIDP object;
 
 #ifdef NEED_FAR_POINTERS
 
-GLOBAL VOIDP
-#ifdef PROTOTYPE
+GLOBAL void FAR *
 jget_large (size_t sizeofobject)
-#else
-jget_large (sizeofobject)
-size_t sizeofobject;
-#endif
 {
   total_used += sizeofobject;
-  return (VOIDP) far_malloc(sizeofobject);
+  return (void FAR *) far_malloc(sizeofobject);
 }
 
-GLOBAL VOID
-#ifdef PROTOTYPE
-jfree_large (VOIDP object)
-#else
-jfree_large (object)
-VOIDP object;
-#endif
+GLOBAL void
+jfree_large (void FAR * object)
 {
   far_free(object);
 }
@@ -228,13 +204,7 @@ VOIDP object;
 #endif
 
 GLOBAL long
-#ifdef PROTOTYPE
 jmem_available (long min_bytes_needed, long max_bytes_needed)
-#else
-jmem_available (min_bytes_needed, max_bytes_needed)
-long min_bytes_needed;
-long max_bytes_needed;
-#endif
 {
   return methods->max_memory_to_use - total_used;
 }
@@ -267,16 +237,8 @@ long max_bytes_needed;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
-read_file_store (backing_store_ptr info, VOIDP buffer_address,
+read_file_store (backing_store_ptr info, VOID FAR * buffer_address,
 		 long file_offset, long byte_count)
-#else
-read_file_store (info, buffer_address, file_offset, byte_count)
-backing_store_ptr info;
-VOIDP buffer_address;
-long file_offset;
-long byte_count;
-#endif
 {
   if (jdos_seek(info->handle.file_handle, file_offset))
     ERREXIT(methods, "seek failed on temporary file");
@@ -290,16 +252,8 @@ long byte_count;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
-write_file_store (backing_store_ptr info, VOIDP buffer_address,
+write_file_store (backing_store_ptr info, VOID FAR * buffer_address,
 		  long file_offset, long byte_count)
-#else
-write_file_store (info, buffer_address, file_offset, byte_count)
-backing_store_ptr info;
-VOIDP buffer_address;
-long file_offset;
-long byte_count;
-#endif
 {
   if (jdos_seek(info->handle.file_handle, file_offset))
     ERREXIT(methods, "seek failed on temporary file");
@@ -313,12 +267,7 @@ long byte_count;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 close_file_store (backing_store_ptr info)
-#else
-close_file_store (info)
-backing_store_ptr info;
-#endif
 {
   jdos_close(info->handle.file_handle);	/* close the file */
   remove(info->temp_name);	/* delete the file */
@@ -330,20 +279,19 @@ backing_store_ptr info;
 }
 
 
-LOCAL boolean
-#ifdef PROTOTYPE
+LOCAL bool
 open_file_store (backing_store_ptr info, long total_bytes_needed)
-#else
-open_file_store (info, total_bytes_needed)
-backing_store_ptr info; total_bytes_needed;
-#endif
 {
   short handle;
   char tracemsg[TEMP_NAME_LENGTH+40];
 
   select_file_name(info->temp_name);
-  if (jdos_open((short far *) & handle, (char far *) info->temp_name))
+  if (jdos_open((short far *) & handle, (char far *) info->temp_name)) {
+    /* hack to get around TRACEMS' inability to handle string parameters */
+    sprintf(tracemsg, "Failed to create temporary file %s", info->temp_name);
+    ERREXIT(methods, tracemsg);	/* jopen_backing_store will fail anyway */
     return FALSE;
+  }
   info->handle.file_handle = handle;
   info->read_backing_store = read_file_store;
   info->write_backing_store = write_file_store;
@@ -365,7 +313,7 @@ static XMSDRIVER xms_driver;	/* saved address of XMS driver */
 
 typedef union {			/* either long offset or real-mode pointer */
 	long offset;
-    VOIDP ptr;
+	VOID far * ptr;
       } XMSPTR;
 
 typedef struct {		/* XMS move specification structure */
@@ -380,16 +328,8 @@ typedef struct {		/* XMS move specification structure */
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
-read_xms_store (backing_store_ptr info, VOIDP buffer_address,
+read_xms_store (backing_store_ptr info, VOID FAR * buffer_address,
 		long file_offset, long byte_count)
-#else
-read_xms_store (info, buffer_address, file_offset, byte_count)
-backing_store_ptr info;
-VOIDP buffer_address;
-long file_offset;
-long byte_count;
-#endif
 {
   XMScontext ctx;
   XMSspec spec;
@@ -405,14 +345,14 @@ long byte_count;
   spec.dst_handle = 0;
   spec.dst.ptr = buffer_address;
   
-  ctx.ds_si = (VOIDP) & spec;
+  ctx.ds_si = (VOID far *) & spec;
   ctx.ax = 0x0b00;		/* EMB move */
   jxms_calldriver(xms_driver, (XMScontext far *) & ctx);
   if (ctx.ax != 1)
     ERREXIT(methods, "read from extended memory failed");
 
   if (ODD(byte_count)) {
-    read_xms_store(info, (VOIDP) endbuffer,
+    read_xms_store(info, (VOID FAR *) endbuffer,
 		   file_offset + byte_count - 1L, 2L);
     ((char FAR *) buffer_address)[byte_count - 1L] = endbuffer[0];
   }
@@ -420,16 +360,8 @@ long byte_count;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
-write_xms_store (backing_store_ptr info, VOIDP buffer_address,
+write_xms_store (backing_store_ptr info, VOID FAR * buffer_address,
 		 long file_offset, long byte_count)
-#else
-write_xms_store (info, buffer_address, file_offset, byte_count)
-backing_store_ptr info;
-VOIDP buffer_address;
-long file_offset;
-long byte_count;
-#endif
 {
   XMScontext ctx;
   XMSspec spec;
@@ -445,29 +377,24 @@ long byte_count;
   spec.dst_handle = info->handle.xms_handle;
   spec.dst.offset = file_offset;
 
-  ctx.ds_si = (VOIDP) & spec;
+  ctx.ds_si = (VOID far *) & spec;
   ctx.ax = 0x0b00;		/* EMB move */
   jxms_calldriver(xms_driver, (XMScontext far *) & ctx);
   if (ctx.ax != 1)
     ERREXIT(methods, "write to extended memory failed");
 
   if (ODD(byte_count)) {
-    read_xms_store(info, (VOIDP) endbuffer,
+    read_xms_store(info, (VOID FAR *) endbuffer,
 		   file_offset + byte_count - 1L, 2L);
     endbuffer[0] = ((char FAR *) buffer_address)[byte_count - 1L];
-    write_xms_store(info, (VOIDP) endbuffer,
+    write_xms_store(info, (VOID FAR *) endbuffer,
 		    file_offset + byte_count - 1L, 2L);
   }
 }
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 close_xms_store (backing_store_ptr info)
-#else
-close_xms_store (info)
-backing_store_ptr info;
-#endif
 {
   XMScontext ctx;
 
@@ -479,14 +406,8 @@ backing_store_ptr info;
 }
 
 
-LOCAL boolean
-#ifdef PROTOTYPE
+LOCAL bool
 open_xms_store (backing_store_ptr info, long total_bytes_needed)
-#else
-open_xms_store (info, total_bytes_needed)
-backing_store_ptr info;
-long total_bytes_needed;
-#endif
 {
   XMScontext ctx;
 
@@ -528,7 +449,7 @@ long total_bytes_needed;
 
 typedef union {			/* either offset/page or real-mode pointer */
 	struct { unsigned short offset, page; } ems;
-    VOIDP ptr;
+	VOID far * ptr;
       } EMSPTR;
 
 typedef struct {		/* EMS move specification structure */
@@ -548,16 +469,8 @@ typedef struct {		/* EMS move specification structure */
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
-read_ems_store (backing_store_ptr info, VOIDP buffer_address,
+read_ems_store (backing_store_ptr info, VOID FAR * buffer_address,
 		long file_offset, long byte_count)
-#else
-read_ems_store (info, buffer_address, file_offset, byte_count)
-backing_store_ptr info;
-VOIDP buffer_address;
-long file_offset;
-long byte_count;
-#endif
 {
   EMScontext ctx;
   EMSspec spec;
@@ -571,7 +484,7 @@ long byte_count;
   spec.dst_handle = 0;
   spec.dst.ptr = buffer_address;
   
-  ctx.ds_si = (VOIDP) & spec;
+  ctx.ds_si = (VOID far *) & spec;
   ctx.ax = 0x5700;		/* move memory region */
   jems_calldriver((EMScontext far *) & ctx);
   if (HIBYTE(ctx.ax) != 0)
@@ -580,16 +493,8 @@ long byte_count;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
-write_ems_store (backing_store_ptr info, VOIDP buffer_address,
+write_ems_store (backing_store_ptr info, VOID FAR * buffer_address,
 		 long file_offset, long byte_count)
-#else
-write_ems_store (info, buffer_address, file_offset, byte_count)
-backing_store_ptr info;
-VOIDP buffer_address;
-long file_offset;
-long byte_count;
-#endif
 {
   EMScontext ctx;
   EMSspec spec;
@@ -603,7 +508,7 @@ long byte_count;
   spec.dst.ems.page = (unsigned short) (file_offset / EMSPAGESIZE);
   spec.dst.ems.offset = (unsigned short) (file_offset % EMSPAGESIZE);
   
-  ctx.ds_si = (VOIDP) & spec;
+  ctx.ds_si = (VOID far *) & spec;
   ctx.ax = 0x5700;		/* move memory region */
   jems_calldriver((EMScontext far *) & ctx);
   if (HIBYTE(ctx.ax) != 0)
@@ -612,12 +517,7 @@ long byte_count;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 close_ems_store (backing_store_ptr info)
-#else
-close_ems_store (info)
-backing_store_ptr info;
-#endif
 {
   EMScontext ctx;
 
@@ -629,14 +529,8 @@ backing_store_ptr info;
 }
 
 
-LOCAL boolean
-#ifdef PROTOTYPE
+LOCAL bool
 open_ems_store (backing_store_ptr info, long total_bytes_needed)
-#else
-open_ems_store (info, total_bytes_needed)
-backing_store_ptr info;
-long total_bytes_needed;
-#endif
 {
   EMScontext ctx;
 
@@ -680,13 +574,7 @@ long total_bytes_needed;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jopen_backing_store (backing_store_ptr info, long total_bytes_needed)
-#else
-jopen_backing_store (info, total_bytes_needed)
-backing_store_ptr info;
-long total_bytes_needed;
-#endif
 {
   /* Try extended memory, then expanded memory, then regular file. */
 #if XMS_SUPPORTED
@@ -710,12 +598,7 @@ long total_bytes_needed;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jmem_init (external_methods_ptr emethods)
-#else
-jmem_init (emethods)
-external_methods_ptr emethods;
-#endif
 {
   methods = emethods;		/* save struct addr for error exit access */
   emethods->max_memory_to_use = DEFAULT_MAX_MEM;
@@ -724,11 +607,7 @@ external_methods_ptr emethods;
 }
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jmem_term (VOID)
-#else
-jmem_term ()
-#endif
 {
   /* no work */
 }

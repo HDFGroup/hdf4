@@ -62,7 +62,7 @@ static int block_count;		/* # of pixels remaining in RLE block */
 static int dup_pixel_count;	/* # of times to duplicate previous pixel */
 
 /* This saves the correct pixel-row-expansion method for preload_image */
-static VOID (*get_pixel_row) PROTO((compress_info_ptr cinfo,
+static VOID (*get_pixel_row) PP((compress_info_ptr cinfo,
 				 JSAMPARRAY pixel_row));
 
 
@@ -382,7 +382,7 @@ compress_info_ptr cinfo;
   U_CHAR targaheader[18];
   int idlen, cmaptype, subtype, flags, interlace_type, components;
   uint16 width, height, maplen;
-  boolean is_bottom_up;
+  bool is_bottom_up;
 
 #define GET_2B(offset)	((unsigned int) UCH(targaheader[offset]) + \
 			 (((unsigned int) UCH(targaheader[offset+1])) << 8))
@@ -432,6 +432,8 @@ compress_info_ptr cinfo;
       get_pixel_row = get_8bit_row;
     else
       ERREXIT(cinfo->emethods, "Invalid or unsupported Targa file");
+    TRACEMS2(cinfo->emethods, 1, "%ux%u colormapped Targa image",
+	     width, height);
     break;
   case 2:			/* RGB image */
     switch (pixel_size) {
@@ -448,6 +450,8 @@ compress_info_ptr cinfo;
       ERREXIT(cinfo->emethods, "Invalid or unsupported Targa file");
       break;
     }
+    TRACEMS2(cinfo->emethods, 1, "%ux%u RGB Targa image",
+	     width, height);
     break;
   case 3:			/* Grayscale image */
     components = 1;
@@ -456,6 +460,8 @@ compress_info_ptr cinfo;
       get_pixel_row = get_8bit_gray_row;
     else
       ERREXIT(cinfo->emethods, "Invalid or unsupported Targa file");
+    TRACEMS2(cinfo->emethods, 1, "%ux%u grayscale Targa image",
+	     width, height);
     break;
   default:
     ERREXIT(cinfo->emethods, "Invalid or unsupported Targa file");

@@ -58,7 +58,7 @@ error_exit (msgtext)
 const char *msgtext;
 #endif
 {
-  trace_message(msgtext);
+  (*methods->trace_message) (msgtext);
   (*methods->free_all) ();	/* clean up memory allocation */
   exit(EXIT_FAILURE);
 }
@@ -84,4 +84,13 @@ external_methods_ptr emethods;
   emethods->trace_message = trace_message;
 
   emethods->trace_level = 0;	/* default = no tracing */
+
+  emethods->num_warnings = 0;	/* no warnings emitted yet */
+  /* By default, the first corrupt-data warning will be displayed,
+   * but additional ones will appear only if trace level is at least 3.
+   * A corrupt data file could generate many warnings, so it's a good idea
+   * to suppress additional messages except at high tracing levels.
+   */
+  emethods->first_warning_level = 0;
+  emethods->more_warning_level = 3;
 }

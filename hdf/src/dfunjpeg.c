@@ -706,9 +706,9 @@ HEprint(stderr,0);  /* print all the errors */
  */
 
 #ifdef PROTOTYPE
-GLOBAL boolean read_scan_header (decompress_info_ptr cinfo)
+GLOBAL bool read_scan_header (decompress_info_ptr cinfo)
 #else
-GLOBAL boolean read_scan_header (cinfo)
+GLOBAL bool read_scan_header (cinfo)
 decompress_info_ptr cinfo;
 #endif
 {
@@ -1101,14 +1101,14 @@ intn DFCIunjpeg(file_id, tag, ref, image, xdim, ydim, scheme)
    * call to jpeg_decompress; typically, making them local data in the
    * calling routine is the best strategy.
    */
-    struct decompress_info_struct cinfo;
-    struct decompress_methods_struct dc_methods;
-    struct external_methods_struct e_methods;
+    struct Decompress_info_struct cinfo;
+    struct Decompress_methods_struct dc_methods;
+    struct External_methods_struct e_methods;
 
     img_file_id=file_id;    /* keep the file ID around */
     img_tag=tag;        /* keep dataset's tag around */
     img_ref=ref;        /* keep reference number around */
-    img_ptr=image;      /* Set the static pointer to the image to read */
+    img_ptr=(uint8 *)image;  /* Set the static pointer to the image to read */
     img_xdim=xdim;      /* Keep local copies of the X and Y dimensions */
     img_ydim=ydim;
     img_scheme=(intn)scheme;  /* Type of image compression we are going to do */

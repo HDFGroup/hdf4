@@ -37,9 +37,9 @@
 
 METHODDEF VOID
 #ifdef PROTOTYPE
-progress_monitord (decompress_info_ptr cinfo, long loopcounter, long looplimit)
+d_progress_monitor (decompress_info_ptr cinfo, long loopcounter, long looplimit)
 #else
-progress_monitord (cinfo, loopcounter, looplimit)
+d_progress_monitor (cinfo, loopcounter, looplimit)
 decompress_info_ptr cinfo;
 long loopcounter;
 long looplimit;
@@ -51,7 +51,12 @@ long looplimit;
 
 /*
  * Reload the input buffer after it's been emptied, and return the next byte.
- * See the JGETC macro for calling conditions.
+ * See the JGETC macro for calling conditions.  Note in particular that
+ * read_jpeg_data may NOT return EOF.  If no more data is available, it must
+ * exit via ERREXIT, or perhaps synthesize fake data (such as an RST marker).
+ * In the present implementation, we insert an EOI marker; this might not be
+ * appropriate for non-JFIF file formats, but it usually allows us to handle
+ * a truncated JFIF file.
  *
  * This routine can be overridden by the system-dependent user interface,
  * in case the data source is not a stdio stream or some other special
@@ -63,9 +68,9 @@ long looplimit;
 
 METHODDEF int
 #ifdef PROTOTYPE
-read_jpeg_datad (decompress_info_ptr cinfo)
+d_read_jpeg_data (decompress_info_ptr cinfo)
 #else
-read_jpeg_datad (cinfo)
+d_read_jpeg_data (cinfo)
 decompress_info_ptr cinfo;
 #endif
 {
@@ -75,8 +80,12 @@ decompress_info_ptr cinfo;
 					cinfo->next_input_byte,
 					JPEG_BUF_SIZE);
   
-  if (cinfo->bytes_in_buffer <= 0)
-    ERREXIT(cinfo->emethods, "Unexpected EOF in JPEG file");
+  if (cinfo->bytes_in_buffer <= 0) {
+    WARNMS(cinfo->emethods, "Premature EOF in JPEG file");
+    cinfo->next_input_byte[0] = (char) 0xFF;
+    cinfo->next_input_byte[1] = (char) 0xD9; /* EOI marker */
+    cinfo->bytes_in_buffer = 2;
+  }
 
   return JGETC(cinfo);
 }
@@ -113,11 +122,11 @@ decompress_info_ptr cinfo;
 
 GLOBAL VOID
 #ifdef PROTOTYPE
-j_d_defaults (decompress_info_ptr cinfo, boolean standard_buffering)
+j_d_defaults (decompress_info_ptr cinfo, bool standard_buffering)
 #else
 j_d_defaults (cinfo, standard_buffering)
 decompress_info_ptr cinfo;
-boolean standard_buffering;
+bool standard_buffering;
 #endif
 /* NB: the external methods must already be set up. */
 {
@@ -165,8 +174,8 @@ boolean standard_buffering;
   }
 
   /* Install standard buffer-reloading method (outer code may override). */
-  cinfo->methods->read_jpeg_data = read_jpeg_datad;
+  cinfo->methods->read_jpeg_data = d_read_jpeg_data;
 
   /* Install default do-nothing progress monitoring method. */
-  cinfo->methods->progress_monitor = progress_monitord;
+  cinfo->methods->progress_monitor = d_progress_monitor;
 }
