@@ -245,6 +245,14 @@ intn DFPnpals(const char *filename)
     if ((nlut = Hnumber(file_id, DFTAG_LUT))== FAIL)
         return(HDerr(file_id));
     npals = nip8 + nlut;
+    
+    /* if no palettes just return zero and get out */
+    if(npals == 0) {
+        if (Hclose(file_id) == FAIL)
+            return FAIL;
+        
+        return(npals);
+    }
 
     /* Get space to store the palette offsets */
     if((pal_off=(int32 *)HDgetspace(npals*sizeof(int32)))==NULL)
