@@ -847,33 +847,35 @@ dialog.
 
     2.5.8 SP2 Single node
     ----------------------
-    HDF has been compiled and tested to run in a single node of the SP2
-    system.  You can make the library the same way you would on an AIX system.  
-    To use it in the parallel processing environment on the SP2 system, you
-    must run the HDF code in only one designated process since HDF does
-    not support concurrent access of the same HDF file.
+    HDF has been compiled and tested to run in a single node of the
+    SP2 system.  You can make the library the same way you would on an
+    AIX system.  To use it in the parallel processing environment, we
+    advise you to execute the HDF code in only one designated process
+    since HDF code does not support concurrent access to the same file.
 
 
     2.5.9 T3E Single node
     -------------------------
     HDF has been compiled and tested to run in a single node of the
-    T3E system.  To use it in the parallel processing environment on
-    the T3E system, you must run the HDF code in only one designated
-    process since HDF does not support concurrent access to the same
-    HDF file.
+    T3E system.  It is compiled with the '-X m' to produce malleable
+    code which can be executed with multiple processing elements (PEs).
+    The code has not been tested run with multiple PEs.  To use it in
+    the parallel processing environment, we advise you to execute the
+    HDF code in only one designated process since HDF code does not
+    support concurrent access to the same file.
 
 
-    NOTE: HDF is compiled with the f90 compiler starting this release.
+    NOTE: HDF is compiled with the f90 compiler starting release 4.1r2.
     Cray has phased out the cf77 compiler.  The f90 compiler issues
     numerous warnings during the compiling of the Fortran API test
     programs.  They can be safely ignored.  One warning is about the
-    unsupported DOUBLE PRECISION being replaced by REAL.  That works
-    fine for the purpose of the test programs since T3E REAL is 8
-    bytes in size which is the same size as DOUBLE PRECISION in other 
-    machines.  Another warning is by the loader complaining about many 
-    SYMBOLS referenced but not defined.  Those SYMBOLS are actually HDF 
-    Fortran function names declared in dffunc.inc file and they are not 
-    used in the testing.
+    unsupported DOUBLE PRECISION being replaced by REAL.  That works fine
+    for the purpose of the test programs since T3E REAL is 8 bytes in
+    size which is the same size as DOUBLE PRECISION in other machines.
+    Another warning is by the loader complaining about many SYMBOLS
+    referenced but not defined.  Those SYMBOLS are actually HDF Fortran
+    function names declared in dffunc.inc file and they are not used in
+    the testing.
 
 
     2.5.10a SGI IRIX 6.x
