@@ -229,7 +229,9 @@ vshow_DEPENDENCIES = ../src/libdf.a
 
 #############################################################################
 #############################################################################
-DISTCLEANFILES = bttrfly.hdf skull.gif SunWheel.hdf
+DISTCLEANFILES = gif_hdf_temp/bttrfly.hdf gif_hdf_temp/skull.gif              \
+               gif_hdf_temp/SunWheel.hdf
+
 subdir = hdf/util
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs

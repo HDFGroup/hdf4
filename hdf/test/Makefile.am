@@ -43,4 +43,4 @@ testdir:
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES=t5.hdf
+DISTCLEANFILES=testdir/t5.hdf

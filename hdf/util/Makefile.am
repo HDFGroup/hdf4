@@ -96,4 +96,5 @@ check:  $(bin_PROGRAMS)
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES=bttrfly.hdf skull.gif SunWheel.hdf
+DISTCLEANFILES=gif_hdf_temp/bttrfly.hdf gif_hdf_temp/skull.gif              \
+               gif_hdf_temp/SunWheel.hdf
