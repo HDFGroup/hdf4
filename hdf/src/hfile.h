@@ -287,6 +287,10 @@ typedef struct filerec_t {
     tag_ref_list_ptr hash[HASH_MASK + 1];  /* hashed table of tag / refs */
 } filerec_t;
 
+/* bits for filerec_t 'dirty' flag */
+#define DDLIST_DIRTY   0x01    /* mark whether to flush dirty DD blocks */
+#define FILE_END_DIRTY 0x02    /* indicate that the file needs to be extended */
+
 /* Each access element is associated with a tag/ref to keep track of
    the dd it is pointing at.  To facilitate searching for next dd's,
    instead of pointing directly to the dd, we point to the ddblock and

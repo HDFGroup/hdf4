@@ -327,7 +327,7 @@ int32 Hopen(const char *path, intn acc_mode, int16 ndds)
 
        /* currently, default is caching OFF */
        file_rec->cache=FALSE;
-       file_rec->dirty=FALSE;
+       file_rec->dirty=0; /* mark all dirty flags off to start */
 
        /* Set up the new pointers for empty space */
        file_rec->null_block = file_rec->ddhead;
@@ -392,10 +392,24 @@ intn Hclose(int32 file_id)
             HRETURN_ERROR(DFE_OPENAID,FAIL);
         }
         
-	/* before closing file, check whether to flush dirty DD blocks */
-	if(file_rec->cache && file_rec->dirty)
-	    if(HIflush_dds(file_rec)==FAIL)
-                HRETURN_ERROR(DFE_CANTFLUSH,FAIL);
+	/* before closing file, check whether to flush file info */
+	if(file_rec->cache && file_rec->dirty) {
+
+            /* flush DD blocks if necessary */
+	    if(file_rec->dirty&DDLIST_DIRTY)
+	        if(HIflush_dds(file_rec)==FAIL)
+                    HRETURN_ERROR(DFE_CANTFLUSH,FAIL);
+
+            /* extend the end of the file if necessary */
+	    if(file_rec->dirty&FILE_END_DIRTY) {
+		uint8 temp=0;
+
+		if(HI_SEEK(file_rec->file,file_rec->f_end_off)==FAIL)
+                    HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+                if(HI_WRITE(file_rec->file,&temp,1)==FAIL)
+                    HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+	      } /* end if */
+	  } /* end if */
 
         /* otherwise, nothing should still be using this file, close it */
 #if 0
@@ -1687,7 +1701,7 @@ int HIupdate_dd(filerec_t *file_rec, ddblock_t *block, int32 idx, char *FUNC)
 printf("HIupdate_dd(): file_rec->cache=%d, file_rec->dirty=%d\n",file_rec->cache,file_rec->dirty);
 #endif
 if(file_rec->cache) {  /* if caching is on, postpone update until later */
-    file_rec->dirty=TRUE;
+    file_rec->dirty|=DDLIST_DIRTY;
     block->dirty=TRUE;
   } /* end if */
 else {
@@ -1966,9 +1980,21 @@ intn Hsync(int32 file_id)
 
     /* check whether to flush the file info */
     if(file_rec->cache && file_rec->dirty) {
-	if(HIflush_dds(file_rec)==FAIL)
-            HRETURN_ERROR(DFE_CANTFLUSH,FAIL);
-	file_rec->dirty=FALSE; /* file doesn't need to be flushed now */
+        /* flush DD blocks if necessary */
+        if(file_rec->dirty&DDLIST_DIRTY)
+            if(HIflush_dds(file_rec)==FAIL)
+                HRETURN_ERROR(DFE_CANTFLUSH,FAIL);
+
+        /* extend the end of the file if necessary */
+        if(file_rec->dirty&FILE_END_DIRTY) {
+	    uint8 temp=0;
+
+	    if(HI_SEEK(file_rec->file,file_rec->f_end_off)==FAIL)
+                HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+            if(HI_WRITE(file_rec->file,&temp,1)==FAIL)
+                HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+	  } /* end if */
+	file_rec->dirty=0; /* file doesn't need to be flushed now */
       } /* end if */
 
     return(SUCCEED);
@@ -1999,9 +2025,21 @@ intn Hcache(int32 file_id,intn cache_on)
 
     /* check whether to flush the file info */
     if(cache_on==FALSE && (file_rec->cache && file_rec->dirty)) {
-	if(HIflush_dds(file_rec)==FAIL)
-            HRETURN_ERROR(DFE_CANTFLUSH,FAIL);
-	file_rec->dirty=FALSE; /* file doesn't need to be flushed now */
+        /* flush DD blocks if necessary */
+        if(file_rec->dirty&DDLIST_DIRTY)
+            if(HIflush_dds(file_rec)==FAIL)
+                HRETURN_ERROR(DFE_CANTFLUSH,FAIL);
+
+        /* extend the end of the file if necessary */
+        if(file_rec->dirty&FILE_END_DIRTY) {
+	    uint8 temp=0;
+
+	    if(HI_SEEK(file_rec->file,file_rec->f_end_off)==FAIL)
+                HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+            if(HI_WRITE(file_rec->file,&temp,1)==FAIL)
+                HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+	  } /* end if */
+	file_rec->dirty=0; /* file doesn't need to be flushed now */
       } /* end if */
     file_rec->cache=(cache_on!=0 ? TRUE : FALSE);
 
@@ -3017,7 +3055,7 @@ int HInew_dd_block(filerec_t *file_rec, int16 ndds, char *FUNC)
     block->dirty=file_rec->cache; /* if we're caching, wait to write DD block */
 
 if(file_rec->cache) /* if we are caching, wait to update previous DD block */
-    file_rec->dirty=TRUE;  /* indicate file needs to be flushed */
+    file_rec->dirty|=DDLIST_DIRTY;  /* indicate file needs to be flushed */
 else {
     p = ptbuf;
     INT16ENCODE(p, block->ndds);
@@ -3063,7 +3101,7 @@ if(!file_rec->cache) { /* if we are caching, wait to update previous DD block */
     block->prev = file_rec->ddlast;
     file_rec->ddlast->next = block;
 if(file_rec->cache) { /* if we are caching, wait to update previous DD block */
-    file_rec->dirty=TRUE; /* indicate file needs to be flushed */
+    file_rec->dirty|=DDLIST_DIRTY; /* indicate file needs to be flushed */
     file_rec->ddlast->dirty=TRUE; /* indicate this block needs to be flushed */
   } /* end if */
 else {
@@ -3419,10 +3457,14 @@ int32 HPgetdiskblock(filerec_t *file_rec, int32 block_size, intn moveto)
 
     /* reserve the space by marking the end of the element */
     if(block_size>0) {
+if(file_rec->cache) 
+    file_rec->dirty|=FILE_END_DIRTY;
+else {
         if (HI_SEEK(file_rec->file, ret+block_size-1) == FAIL) 
             HRETURN_ERROR(DFE_SEEKERROR,FAIL);
         if (HI_WRITE(file_rec->file, &temp, 1) == FAIL) 
             HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+  } /* end else */
       } /* end if */
     if(moveto==TRUE)  /* move back to the beginning of the element */
         if (HI_SEEK(file_rec->file, ret) == FAIL) 
