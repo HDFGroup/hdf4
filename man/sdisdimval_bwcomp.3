@@ -1,3 +1,4 @@
+.\" $Id$
 .TH SDISDIMVAL_BWCOMP 3 "November 1995" "NCSA HDF 4.0"
 .ft B
 #include <mfhdf.h>
@@ -5,14 +6,14 @@
 intn SDisdimval_bwcomp(int32 dimid)
 .sp
 .I  dimid
-	IN: dimension ID, returned from SDgetdimid
+	IN: dimension ID returned from SDgetdimid
 .TP
 Purpose
+.br
 Get the backward compatibility of a dimension record.
-
 .TP
 Return value
-Return SD_DIMVAL_BW_COMP (1) if backward compatible, 
+Returns SD_DIMVAL_BW_COMP (1) if backward compatible, 
 SD_DIMVAL_BW_INCOMP (0) if incompatible, FAIL if error.
 
 .TP
@@ -32,17 +33,16 @@ Unlimited dimension is always backward compatible.
 Examples
 
 .nf
-        status = SDisdimval_bwcomp(dimid1);
-        if (status == SD_DIMVAL_BW_COMP)  
-            status = SDsetdimval_comp(dimid, SD_DIMVAL_BW_INCOMP);
+status = SDisdimval_bwcomp(dimid1);
+if (status == SD_DIMVAL_BW_COMP)  
+    status = SDsetdimval_comp(dimid, SD_DIMVAL_BW_INCOMP);
 .fi
 
 .TP
 FORTRAN 
-No available yet.
+Not available yet.
 .br
 
 .TP
 See Also
-    
-    SDsetdimval_comp
+SDsetdimval_comp(3)

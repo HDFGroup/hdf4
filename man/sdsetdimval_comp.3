@@ -1,23 +1,25 @@
+.\" $Id$
 .TH SDSETDIMVAL_COMP 3 "November 1995" "NCSA HDF 4.0"
 .ft B
 #include <mfhdf.h>
 .TP
 intn SDsetdimval_comp(int32 dimid, intn comp_mode)
 .sp
-.I  dimid
-	IN: dimension ID, returned from SDgetdimid
+.I dimid
+	IN: dimension ID returned from SDgetdimid
+.br
 .I comp_mode
         IN: backward compatibility:
                SD_DIMVAL_BW_COMP -- compatible
                SD_DIMVAL_BW_INCOMP -- incompatible.
 .TP
 Purpose
+.br
 Set the backward compatibility mode of a dimension record for
 next write of that dimension.
-
 .TP
 Return value
-Return SUCCEED if no error, else FAIL.
+Returns SUCCEED if no error, else FAIL.
 
 .TP
 Description
@@ -67,10 +69,8 @@ Assuming the following,
 
 .TP
 FORTRAN 
-No available yet.
-.br
-
-     See Also
-
-              SDisdimval_bwcomp 
+Not available yet.
+.TP
+See Also
+SDisdimval_bwcomp(3)
 
