@@ -193,6 +193,8 @@ int32 HBcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_na
 
     if (data_dd) {
        VOIDP buf;              /* temporary buffer */
+
+#ifdef OLD_WAY
        buf = (VOIDP)HDgetspace((uint32) data_dd->length);
        if (!buf) {
            access_rec->used = FALSE;
@@ -210,6 +212,19 @@ int32 HBcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_na
            HDfreespace((VOIDP)buf);
            HRETURN_ERROR(DFE_READERROR,FAIL);
        }
+#else /* OLD_WAY */
+       if((buf = (VOIDP)HDgetspace((uint32) data_dd->length))==NULL) {
+           access_rec->used = FALSE;
+           HDfreespace((VOIDP)info);
+           HRETURN_ERROR(DFE_NOSPACE,FAIL);
+       }
+       if(Hgetelement(file_rec->file,data_dd->tag,data_dd->ref,buf)==FAIL) {
+           access_rec->used = FALSE;
+           HDfreespace((VOIDP)info);
+           HDfreespace((VOIDP)buf);
+           HRETURN_ERROR(DFE_READERROR,FAIL);
+	 } /* end if */
+#endif /* OLD_WAY */
        if (HI_SEEK(file_external, offset) == FAIL) {
            access_rec->used = FALSE;
            HDfreespace((VOIDP)info);
@@ -247,6 +262,7 @@ int32 HBcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_na
        INT32ENCODE(p, info->length_file_name);
        HDstrcpy((char *) p, extern_file_name);
     }
+#ifdef OLD_WAY
     if (HI_SEEKEND(file_rec->file) == FAIL) {
        access_rec->used = FALSE;
        HDfreespace((VOIDP)info);
@@ -256,17 +272,26 @@ int32 HBcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_na
     dd->length = 14 + info->length_file_name;
     dd->tag = special_tag;
     dd->ref = ref;
-    if (HI_WRITE(file_rec->file, local_ptbuf, dd->length) == FAIL) {
-       HERROR(DFE_WRITEERROR);
-       access_rec->used = FALSE;
-       return FAIL;
-    }
-
-    if (FAIL == HIupdate_dd(file_rec, access_rec->block,
-                           access_rec->idx, FUNC)) {
+#else
+    dd->length = 14 + info->length_file_name;
+    if((dd->offset=HPgetdiskblock(file_rec->file,dd->length,TRUE))==FAIL) {
         access_rec->used = FALSE;
         HDfreespace((VOIDP)info);
-        return FAIL;
+        HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+      } /* end if */
+    dd->tag = special_tag;
+    dd->ref = ref;
+#endif
+    if (HI_WRITE(file_rec->file, local_ptbuf, dd->length) == FAIL) {
+        access_rec->used = FALSE;
+        HDfreespace((VOIDP)info);
+        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+    }
+
+    if(FAIL == HIupdate_dd(file_rec,access_rec->block,access_rec->idx,FUNC)) {
+        access_rec->used = FALSE;
+        HDfreespace((VOIDP)info);
+        HRETURN_ERROR(DFE_CANTUPDATE,FAIL);
     }
 
     /* add new DD to hash table */
@@ -274,12 +299,20 @@ int32 HBcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_na
                            access_rec->idx)) {
         access_rec->used = FALSE;
         HDfreespace((VOIDP)info);
-        return FAIL;
+        HRETURN_ERROR(DFE_CANTHASH,FAIL);
     }
 
     if (data_dd) {
-       Hdeldd(file_id, data_dd->tag, data_dd->ref);
-       HIdel_hash_dd(file_rec, data_dd->tag, data_dd->ref);
+       if(Hdeldd(file_id, data_dd->tag, data_dd->ref)==FAIL) {
+           access_rec->used = FALSE;
+           HDfreespace((VOIDP)info);
+           HRETURN_ERROR(DFE_CANTDELDD,FAIL);
+         } /* end if */
+       if(HIdel_hash_dd(file_rec, data_dd->tag, data_dd->ref)==FAIL) {
+           access_rec->used = FALSE;
+           HDfreespace((VOIDP)info);
+           HRETURN_ERROR(DFE_CANTDELHASH,FAIL);
+         } /* end if */
     }
 
     /* update access record and file record */
@@ -535,7 +568,6 @@ int32 HBPread(accrec_t *access_rec, int32 length, VOIDP data)
     access_rec->posn += length;
 
     return length;
-
 } /* HBPread */
 
 
