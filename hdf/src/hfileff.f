@@ -121,3 +121,19 @@ C-----------------------------------------------------------------------------*/
      .                     len(string))
       return
       end
+C------------------------------------------------------------------------------
+C Name: hishdf
+C Purpose:  Identifies if the file "file_name" is an HDF file. 
+C Inputs:   file_name:  File name
+C Returns: TRUE (1) if successful, FALSE (0) otherwise.
+C Invokes: hiopen
+C----------------------------------------------------------------------------*/
+
+      integer function hishdf(filename)
+
+      character*(*) filename
+      integer       hiishdf
+
+      hishdf = hiishdf(filename, len(filename))
+      return
+      end

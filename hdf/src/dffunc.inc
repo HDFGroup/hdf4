@@ -560,6 +560,8 @@ C
       external hglibver
       integer  hgfilver
       external hgfilver
+      integer  hishdf
+      external hishdf
       
 
 C

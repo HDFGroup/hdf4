@@ -2063,6 +2063,7 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #   define nhddontatexit FNAME(HDDONTATEXIT)
 #   define nhglibverc FNAME(HGLIBVERC)
 #   define nhgfilverc FNAME(HGFILVERC)
+#   define nhiishdf   FNAME(HIISHDF)
 #  else                                   /* !sl */
 #   define nhiopen   FNAME(HIOPEN)
 #   define nhiclose   FNAME(HICLOSE)
@@ -2072,6 +2073,7 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #   define nhddontatexit FNAME(HDDONTATEXIT)
 #   define nhglibverc FNAME(HGLIBVERC)
 #   define nhgfilverc FNAME(HGFILVERC)
+#   define nhiishdf   FNAME(HIISHDF)
 #  endif
 
 #else
@@ -2084,6 +2086,7 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #   define nhddontatexit FNAME(hddontatexit)
 #   define nhglibverc FNAME(hglibverc)
 #   define nhgfilverc FNAME(hgfilverc)
+#   define nhiishdf   FNAME(hiishdf)
 #  else                                   /* !sl */
 #   define nhiopen   FNAME(hiopen)
 #   define nhiclose   FNAME(hiclose)
@@ -2093,6 +2096,7 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #   define nhddontatexit FNAME(hddontatexit)
 #   define nhglibverc FNAME(hglibverc)
 #   define nhgfilverc FNAME(hgfilverc)
+#   define nhiishdf   FNAME(hiishdF)
 #  endif
 
 #endif                          /* DF_CAPFNAMES */
@@ -2124,6 +2128,8 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 nhgfilverc(intf *file_id, intf *major_v, intf *minor_v,
                 intf *release, _fcd string, intf *len);
 
+    HDFLIBAPI      FRETVAL(intf) nhiishdf
+                (_fcd name, intf  * namelen);
 
 
     
