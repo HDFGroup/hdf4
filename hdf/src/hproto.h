@@ -278,10 +278,10 @@ extern      "C"
                  int32 offset, int32 start_len);
 
     extern intn HXsetcreatedir
-                (char *dir);
+                (const char *dir);
 
     extern intn HXsetdir
-                (char *dir);
+                (const char *dir);
 
     extern intn HXPshutdown
                 (void);
@@ -1862,14 +1862,14 @@ extern      "C"
 #   define nhiopen   FNAME(HIOPEN)
 #   define nhclose   FNAME(HCLOSE)
 #   define nhnumber  FNAME(HNUMBER)
-#   define nhxisdir   FNAME(HXISDIR)
-#   define nhxiscdir  FNAME(HXISCDIR)
+#   define nhxisdir  FNAME(HXISDIR)
+#   define nhxiscdir FNAME(HXISCDIR)
 #else
 #   define nhiopen   FNAME(hiopen)
-#   define nhclose  FNAME(hclose)
-#   define nhnumber FNAME(hnumber)
-#   define nhxisdir   FNAME(hxisdir)
-#   define nhxiscdir  FNAME(hxiscdir)
+#   define nhclose   FNAME(hclose)
+#   define nhnumber  FNAME(hnumber)
+#   define nhxisdir  FNAME(hxisdir)
+#   define nhxiscdir FNAME(hxiscdir)
 #endif                          /* DF_CAPFNAMES */
 #endif                          /* HFILE_FNAMES */
 
@@ -1879,14 +1879,16 @@ extern      "C"
     extern      FRETVAL(intf) nhclose
                 (intf _HUGE * file_id);
 
-    extern      FRETVAL(intf) nhnumber
-                (int32 file_id, uint16 tag);
+    extern	FRETVAL(intf) nhnumber
+		(int32 file_id, uint16 tag);
 
-    extern      FRETVAL(intf) nhxisdir
-                (_fcd dir, intf * dirlen);
-    
-    extern      FRETVAL(intf) nhxiscdir
-                (_fcd dir, intf * dirlen);
+    extern	FRETVAL(intf) nhxisdir
+		(_fcd dir, intf * dirlen);
+
+    extern	FRETVAL(intf) nhxiscdir
+		(_fcd dir, intf * dirlen);
+
+
 
 /*
    ** from dfufp2im.c

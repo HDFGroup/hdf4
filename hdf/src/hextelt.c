@@ -1209,7 +1209,7 @@ NAME
    HXsetcreatedir -- set the directory variable for creating external file
 USAGE
    intn HXsetcreatedir(dir)
-   char *dir		IN: directory for creating external file
+   const char *dir		IN: directory for creating external file
 RETURNS
    SUCCEED if no error, else FAIL
 DESCRIPTION
@@ -1221,7 +1221,7 @@ DESCRIPTION
 
 --------------------------------------------------------------------------*/
 intn
-HXsetcreatedir(char *dir)
+HXsetcreatedir(const char *dir)
 {
   char       *FUNC = "HXsetcreatedir";  /* for HERROR */
   char	*pt;
@@ -1233,7 +1233,7 @@ HXsetcreatedir(char *dir)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     }
   else
-    pt = dir;		/* will reset extcreatedir to NULL */
+    pt = NULL;		/* will reset extcreatedir to NULL */
 
   if (extcreatedir)
     HDfree(extcreatedir);
@@ -1256,7 +1256,7 @@ NAME
    HXsetdir -- set the directory variable for locating external file
 USAGE
    intn HXsetdir(dir)
-   char *dir		IN: directory for locating external file
+   const char *dir		IN: directory for locating external file
 RETURNS
    SUCCEED if no error, else FAIL
 DESCRIPTION
@@ -1269,7 +1269,7 @@ DESCRIPTION
 
 --------------------------------------------------------------------------*/
 intn
-HXsetdir(char *dir)
+HXsetdir(const char *dir)
 {
   char  *FUNC = "HXsetdir";  /* for HERROR */
   char	*pt;
@@ -1281,7 +1281,7 @@ HXsetdir(char *dir)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     }
   else
-    pt = dir;		/* will reset extdir to NULL */
+    pt = NULL;		/* will reset extdir to NULL */
 
   if (extdir)
     HDfree(extdir);

@@ -32,15 +32,13 @@ static char RcsId[] = "@(#)$Revision$";
 #ifdef DF_CAPFNAMES
 #   define nhiopen   FNAME(HIOPEN)
 #   define nhclose   FNAME(HCLOSE)
-#   define nhnumber  FNAME(HNUMBER)
-#   define nhxisdir   FNAME(HXISDIR)
-#   define nhxiscdir  FNAME(HXISCDIR)
+#   define nhxisdir  FNAME(HXISDIR)
+#   define nhxiscdir FNAME(HXISCDIR)
 #else
 #   define nhiopen   FNAME(hiopen)
 #   define nhclose   FNAME(hclose)
-#   define nhnumber FNAME(hnumber)
-#   define nhxisdir   FNAME(hxisdir)
-#   define nhxiscdir  FNAME(hxiscdir)
+#   define nhxisdir  FNAME(hxisdir)
+#   define nhxiscdir FNAME(hxiscdir)
 #endif /* DF_CAPFNAMES */
 #endif /* HFILE_FNAMES */
 
