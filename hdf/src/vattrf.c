@@ -62,7 +62,7 @@ nvsfcsat(intf *vsid, intf *findex, _fcd attrnm, intf *dtype,
 
     attrname = HDf2cstring(attrnm, (intn) *attrnmlen);
     if (!attrname) return(FAIL);
-    cfindex = (*findex == -1) ? (int32)_HDF_VDATA : *findex;
+    cfindex = *findex;
     ret = (intf )VSsetattr((int32) *vsid, (int32) cfindex, attrname,
               (int32) *dtype, (int32) *count, (VOIDP) values);
     HDfree(attrname);
@@ -85,7 +85,7 @@ nvsfcsca(intf *vsid, intf *findex, _fcd attrnm, intf *dtype,
  
     attrname = HDf2cstring(attrnm, (intn) *attrnmlen);
     if (!attrname) return(FAIL);
-    cfindex = (*findex == -1)? (int32)_HDF_VDATA : *findex;
+    cfindex = *findex;
     ret = (intf) VSsetattr((int32) *vsid, (int32) cfindex, attrname,
           (int32) *dtype, (int32) *count, (VOIDP) _fcdtocp(values));
     HDfree(attrname);
@@ -119,7 +119,7 @@ nvsffnas(intf *vsid, intf *findex)
     intf ret;
     int32 cfindex;
 
-    cfindex = (*findex == -1)? (int32)_HDF_VDATA : *findex;
+    cfindex = *findex;
     ret = (intf) VSfnattrs((int32) *vsid, (int32) cfindex);
     return(ret);
 }
@@ -139,7 +139,7 @@ nvsfcfda(intf *vsid, intf *findex, _fcd attrnm, intf *attrnmlen)
 
     attrname = HDf2cstring(attrnm, (intn) *attrnmlen);
     if (!attrname) return(FAIL);
-    cfindex = (*findex == -1)? (int32)_HDF_VDATA : *findex;
+    cfindex = *findex;
     
     ret = (intf) VSfindattr((int32) *vsid, (int32) cfindex, attrname);
     HDfree(attrname);
@@ -162,7 +162,7 @@ nvsfcain(intf *vsid, intf *findex, intf *aindex, _fcd attrname,
     int32 tdtype, tcount, tsize;
     char  *tattrname;
 
-    cfindex = (*findex == -1)? (int32)_HDF_VDATA : *findex;
+    cfindex = *findex;
     /* Allocate space for fortran strings */
     tattrname = (char *) HDmalloc(*attrnamelen + 1);
     if (!tattrname)
@@ -194,7 +194,7 @@ nvsfgnat(intf *vsid, intf *findex, intf *aindex, intf *values)
     intf ret;
     int32 cfindex;
 
-    cfindex = (*findex == -1)? (int32)_HDF_VDATA : *findex;
+    cfindex = *findex;
     ret = (intf) VSgetattr((int32) *vsid,(int32) cfindex,(int32) *aindex,
                            (VOIDP) values);
     return(ret);
@@ -211,7 +211,7 @@ nvsfgcat(intf *vsid,intf *findex,intf *aindex,_fcd values)
     intf ret;
     int32 cfindex;
 
-    cfindex = (*findex == -1)? (int32)_HDF_VDATA : *findex;
+    cfindex = *findex;
     ret = (intf )VSgetattr((int32) *vsid, cfindex, (int32) *aindex,
                     (VOIDP) _fcdtocp(values));
     return(ret);
