@@ -103,10 +103,10 @@ PRIVATE intn    num_anns   = 0;    /* total number of annotations
  *  ----------------------------
  *  | t(16bits) | r(16bits) |
  *  -----------------------------*/
-#define AN_CREATE_KEY(t,r) ((((int32)t & 0xff) << 16) | r)
+#define AN_CREATE_KEY(t,r) ((((int32)t & 0xffff) << 16) | r)
 
 /* Obtain Reference number from key */
-#define AN_KEY2REF(k)      ((uint16)((int32)k & 0xff))
+#define AN_KEY2REF(k)      ((uint16)((int32)k & 0xffff))
 
 /* Obtain Annotation type from key */
 #define AN_KEY2TYPE(k)     ((int32)((int32)k >> 16))
