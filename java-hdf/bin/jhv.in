@@ -2,9 +2,8 @@
 
 # Set up default variable values if not supplied by the user.
 
-set JHVHOME=@JHVINST@
-set JAVA=@JAVA@
-set JAVACLASSP=@CLASSPATH@
+set JHVHOME=@JHVINST@   # where the HDF Java viewer is installed
+set JAVAPATH=@JAVA@     # where Java is installed
 
 set JHVICONPATH=$JHVHOME/lib/hdficons
 set CPATH=$JHVHOME/lib/classes.zip
@@ -12,9 +11,9 @@ set CPATH=$JHVHOME/lib/classes.zip
 if (${?CLASSPATH} == 0) then
 	setenv CLASSPATH ""
 endif
-setenv CLASSPATH $CPATH":"$JAVACLASSP":"$CLASSPATH
+setenv CLASSPATH $CPATH":"$CLASSPATH
 
-setenv PATH `dirname $JAVA`":"$PATH
+setenv PATH $JAVAPATH":"$PATH
 
 
 if ($1 != "") then
@@ -65,4 +64,4 @@ switch ( $machtype )
         breaksw
 endsw
 
-$JAVA $JOPTS ncsa.hdf.jhv.JHV -jhviconspath $JHVICONPATH $JHVPATH;
+java $JOPTS ncsa.hdf.jhv.JHV -jhviconspath $JHVICONPATH $JHVPATH;
