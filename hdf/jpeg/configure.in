@@ -45,6 +45,7 @@ case "${host}" in
   *-hp-hpux*)             host_makefile_frag=config/mh-hpux ;;
   *-convex-bsd*)          host_makefile_frag=config/mh-convex ;;
   *-cray-unicos*)         host_makefile_frag=config/mh-unicos ;;
+  t3d-cray-craympp)       host_makefile_frag=config/mh-t3d ;;
   *-cm5-*)		  host_makefile_frag=config/mh-cm5 ;;
   S370*)                  host_makefile_frag=config/mh-fujivp ;;
   *-mac-*)		  host_makefile_frag=config/mh-mac ;;
@@ -114,6 +115,7 @@ case "${host}" in
   *-hp-hpux*)             files=config/jhpux.h ;;
   *-convex-bsd*)          files=config/jconvex.h ;;
   *-cray-unicos*)         files=config/junicos.h ;;
+  t3d-cray-craympp)       files=config/jt3d.h ;;
   *-cm5-*)		  files=config/jcm5.h ;;
   S370*)                  files=config/jfujivp.h ;;
   *-mac-*)		  files=config/jmac.h ;;
