@@ -3682,7 +3682,8 @@ intn  comp_mode;
         intn SDisdimval_bwcomp(dimid);
         int32 dimid;      IN: dimension ID, returned from SDgetdimid
  RETURNS
-        1 if dimval is backward compatible; 0 for not compatible.
+        SD_DIMVAL_BW_COMP if dimval is backward compatible;
+        SD_DIMVAL_BW_INCOMP for not compatible; FAIL for error. 
  DESCRIPTION
 
 --------------------------------------------------------------------------- */

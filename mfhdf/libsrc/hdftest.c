@@ -685,7 +685,7 @@ char *argv[];
         }
     }
     status = SDisdimval_bwcomp(dimid1);
-    if (status != 0)  {
+    if (status != SD_DIMVAL_BW_INCOMP)  {
           fprintf(stderr, "Failed on SDisdimvalcomp call\n");
           num_err++;
     }
@@ -722,7 +722,7 @@ char *argv[];
           num_err++;
     }
     status = SDisdimval_bwcomp(dimid1);
-    if (status != 1)  {
+    if (status != SD_DIMVAL_BW_COMP)  {
           fprintf(stderr, "Failed on SDisdimvalcomp call\n");
           num_err++;
     }
