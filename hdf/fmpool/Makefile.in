@@ -146,6 +146,10 @@ install-lib: libfmpool.a install-headers
 install-headers: fmpio.h
 	$(INSTALL_DATA) $(srcdir)/fmpio.h $(includedir)/fmpio.h
 
+manpages: 
+	c2man -G'File Memory Buffer Pool Stdio Interface' -ln -n fmpio.h
+	c2man -G'Shared Memory File Buffer Pool' -ln -n fmpool.h
+
 clean:
 	-$(RM) $(RMFLAGS) *.o *.mp core libfmpool.a tfmp tfmpr tfmpw
 
