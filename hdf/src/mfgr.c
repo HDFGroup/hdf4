@@ -5841,7 +5841,6 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
     intn       i;
     intn       switch_interlace = FALSE;/* whether the memory interlace needs to be switched around */
     intn       ret_value = SUCCEED;
-    intn       free_img_data = FALSE;
 
 #ifdef HAVE_PABLO
     HDF_TRACE_ON(ID_GRwritechunk);
@@ -5925,7 +5924,6 @@ printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_si
                             /* Allocate space for the conversion buffer */
                             if((img_data = HDmalloc(pixel_disk_size*csize)) == NULL)
                                 HGOTO_ERROR(DFE_NOSPACE,FAIL);
-                            free_img_data = TRUE;
 
                             if(switch_interlace == TRUE)
                               {
@@ -5952,14 +5950,15 @@ printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_si
                                                          ri_ptr->img_dim.ncomps*csize,DFACC_WRITE,0,0))
                                       HGOTO_ERROR(DFE_INTERNAL,FAIL);
                               }
+                          /* Write chunk out, */
+                          if ((ret_value = HMCwriteChunk(ri_ptr->img_aid, origin, img_data)) != FAIL)
+                              ret_value = SUCCEED;
                         }
-                      else /* no conversion necessary, just use the user's buffer */
-                          img_data = (VOID *)datap;
-
-                      /* Write chunk out, */
-                      if ((ret_value = HMCwriteChunk(ri_ptr->img_aid, origin, img_data)) 
-                          != FAIL)
-                          ret_value = SUCCEED;
+                      else { /* no conversion necessary, just use the user's buffer */
+                          /* Write chunk out, */
+                          if ((ret_value = HMCwriteChunk(ri_ptr->img_aid, origin, datap)) != FAIL)
+                              ret_value = SUCCEED;
+                      } /* end else */
                   } /* end if get special info block */
             }
           else /* not special CHUNKED */
@@ -5978,7 +5977,7 @@ printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_si
         HDfree(info_block.cdims);
 
     /* free conversion buffers if we created them */
-    if ((img_data != NULL) && (free_img_data))
+    if (img_data != NULL)
         HDfree(img_data);
 
 #ifdef HAVE_PABLO
