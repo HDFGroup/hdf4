@@ -3,7 +3,7 @@
   --------
   1. Obtaining the latest version
 
-  2. Installing HDF/mfhdf
+  2. Installing HDF/netCDF
   2.1 Supported Platforms
   2.2 Third Party Software Requirements
   2.3 System Requirements
@@ -60,10 +60,10 @@
 
      ftp://ftp.ncsa.uiuc.edu/HDF/HDF_Current
 
-2. Installing HDF/mfhdf	
-   ====================
+2. Installing HDF/netCDF	
+   =====================
 
-    For compiling and installing HDF/mfhdf libraries, tests and
+    For compiling and installing HDF/netCDF libraries, tests and
     utilities on a system, please follow these instructions. 
 
 2.1 Supported Platforms
@@ -117,7 +117,7 @@
      2. ZLIB 1.0.4(libz.a) distribution.
 
      Both of these distributions are included with this distribution
-     in 'hdf/jpeg' and 'hdf/zlib'. The HDF/mfhdf base distribution
+     in 'hdf/jpeg' and 'hdf/zlib'. The HDF/netCDF base distribution
      in known to work with these versions only.
 
 2.3 System Requirements
