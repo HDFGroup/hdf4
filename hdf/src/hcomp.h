@@ -39,7 +39,8 @@ typedef enum
       COMP_CODE_NONE = 0,       /* don't encode at all, just store */
       COMP_CODE_RLE,            /* for simple RLE encoding */
       COMP_CODE_NBIT,           /* for N-bit encoding */
-      COMP_CODE_SKPHUFF         /* for Skipping huffman encoding */
+      COMP_CODE_SKPHUFF,        /* for Skipping huffman encoding */
+      COMP_CODE_GZIP            /* for gzip encoding */
   }
 comp_coder_t;
 
@@ -88,11 +89,11 @@ model_info;
 typedef union tag_comp_info
   {                             /* Union to contain compression information */
       struct
-        {                       /* Struct to contain information about how to compress */
+        {   /* Struct to contain information about how to compress */
             /* or decompress a JPEG encoded 24-bit image */
-            intn        quality;    /* Quality factor for JPEG compression, should be from */
+            intn    quality;    /* Quality factor for JPEG compression, should be from */
             /* 0 (terrible) to 100 (very good) */
-            intn        force_baseline;     /* If force_baseline is set to TRUE then */
+            intn    force_baseline;     /* If force_baseline is set to TRUE then */
             /* quantization tables are limited to */
             /* 0..255 for JPEG baseline compability */
             /* This is only an issue for quality */
@@ -100,21 +101,27 @@ typedef union tag_comp_info
         }
       jpeg;
       struct
-        {                       /* struct to contain information about how to compress */
+        {   /* struct to contain information about how to compress */
             /* or decompress a N-bit encoded dataset */
-            int32       nt;     /* number type of the data to encode */
-            intn        sign_ext;   /* whether to sign extend or not */
-            intn        fill_one;   /* whether to fill with 1's or 0's */
-            intn        start_bit;  /* offset of the start bit in the data */
-            intn        bit_len;    /* number of bits to store */
+            int32   nt;     /* number type of the data to encode */
+            intn    sign_ext;   /* whether to sign extend or not */
+            intn    fill_one;   /* whether to fill with 1's or 0's */
+            intn    start_bit;  /* offset of the start bit in the data */
+            intn    bit_len;    /* number of bits to store */
         }
       nbit;
       struct
-        {                       /* struct to contain info about how to compress */
+        {   /* struct to contain info about how to compress */
             /* or decompress a "skipping" huffman encoded dataset */
-            intn        skp_size;   /* size of the individual elements when skipping */
+            intn    skp_size;   /* size of the individual elements when skipping */
         }
       skphuff;
+      struct
+        {   /* struct to contain info about how to compress */
+            /* or decompress a gzip encoded dataset */
+            intn    level;   /* how hard to work when compressing the data */
+        }
+      gzip;
   }
 comp_info;
 

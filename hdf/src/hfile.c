@@ -2016,7 +2016,7 @@ HDgetc(int32 access_id)
     CONSTR(FUNC, "HDgetc");     /* for HERROR */
     uint8       c;              /* character read in */
 
-    if (Hread(access_id, 1, &c) == FAIL)
+    if (Hread(access_id, 1, (VOIDP)&c) == FAIL)
         HRETURN_ERROR(DFE_READERROR, FAIL);
     return ((intn) c);
 
@@ -2043,7 +2043,7 @@ HDputc(uint8 c, int32 access_id)
 {
     CONSTR(FUNC, "HDputc");     /* for HERROR */
 
-    if (Hwrite(access_id, 1, &c) == FAIL)
+    if (Hwrite(access_id, 1, (VOIDP)&c) == FAIL)
         HRETURN_ERROR(DFE_WRITEERROR, FAIL);
     return ((intn) c);
 }   /* HDputc */
@@ -2136,7 +2136,7 @@ Hgetelement(int32 file_id, uint16 tag, uint16 ref, uint8 *data)
     if (access_id == FAIL)
         HRETURN_ERROR(DFE_NOMATCH, FAIL);
 
-    if ((length = Hread(access_id, (int32) 0, data)) == FAIL)
+    if ((length = Hread(access_id, (int32) 0, (VOIDP)data)) == FAIL)
         HERROR(DFE_READERROR);
 
     Hendaccess(access_id);
@@ -2178,7 +2178,7 @@ Hputelement(int32 file_id, uint16 tag, uint16 ref, uint8 *data,
     if (access_id == FAIL)
         HRETURN_ERROR(DFE_NOMATCH, FAIL);
 
-    if ((ret = Hwrite(access_id, length, data)) == FAIL)
+    if ((ret = Hwrite(access_id, length, (VOIDP)data)) == FAIL)
         HERROR(DFE_WRITEERROR);
     Hendaccess(access_id);
 

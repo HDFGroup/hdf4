@@ -888,7 +888,7 @@ HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
 
     access_id = Hstartread(file_id, tag, ref);
     if (access_id == FAIL ||
-        Hread(access_id, 2 + 2 * number_blocks, buffer) == FAIL)
+        Hread(access_id, 2 + 2 * number_blocks, (VOIDP)buffer) == FAIL)
       {
           HDfreespace((VOIDP) buffer);
           HDfreespace((VOIDP) new_link->block_list);
@@ -1043,7 +1043,7 @@ HLPread(accrec_t * access_rec, int32 length, VOIDP datap)
                 if (access_id == (int32) FAIL
                     || (relative_posn
                 && (int32) FAIL == Hseek(access_id, relative_posn, DF_START))
-                    || (int32) FAIL == (nbytes = Hread(access_id, remaining, data)))
+                    || (int32) FAIL == (nbytes = Hread(access_id, remaining, (VOIDP)data)))
                     HRETURN_ERROR(DFE_READERROR, FAIL);
 
                 bytes_read += nbytes;
@@ -1175,7 +1175,7 @@ HLPwrite(accrec_t * access_rec, int32 length, const VOIDP datap)
                         if (link_id == FAIL)
                             HRETURN_ERROR(DFE_WRITEERROR, FAIL);
                         UINT16ENCODE(p, t_link->nextref);
-                        if (Hwrite(link_id, 2, local_ptbuf) == FAIL)
+                        if (Hwrite(link_id, 2, (VOIDP)local_ptbuf) == FAIL)
                             HRETURN_ERROR(DFE_WRITEERROR, FAIL);
                         Hendaccess(link_id);
                     }   /* AA */
@@ -1222,7 +1222,7 @@ HLPwrite(accrec_t * access_rec, int32 length, const VOIDP datap)
 
           if ((relative_posn &&
                (int32) FAIL == Hseek(access_id, relative_posn, DF_START)) ||
-              (int32) FAIL == (nbytes = Hwrite(access_id, remaining, data)))
+              (int32) FAIL == (nbytes = Hwrite(access_id, remaining, (VOIDP)data)))
             {
                 HRETURN_ERROR(DFE_WRITEERROR, FAIL);
             }
@@ -1245,7 +1245,7 @@ HLPwrite(accrec_t * access_rec, int32 length, const VOIDP datap)
                 UINT16ENCODE(p, new_ref);
                 if (Hseek(link_id, 2 + 2 * block_idx, DF_START) == FAIL)
                     HRETURN_ERROR(DFE_SEEKERROR, FAIL);
-                if (Hwrite(link_id, 2, local_ptbuf) == FAIL)
+                if (Hwrite(link_id, 2, (VOIDP)local_ptbuf) == FAIL)
                     HRETURN_ERROR(DFE_WRITEERROR, FAIL);
                 Hendaccess(link_id);
 
@@ -1282,7 +1282,7 @@ HLPwrite(accrec_t * access_rec, int32 length, const VOIDP datap)
                           if (link_id == FAIL)
                               HRETURN_ERROR(DFE_WRITEERROR, FAIL);
                           UINT16ENCODE(p, t_link->nextref);
-                          if (Hwrite(link_id, 2, local_ptbuf) == FAIL)
+                          if (Hwrite(link_id, 2, (VOIDP)local_ptbuf) == FAIL)
                               HRETURN_ERROR(DFE_WRITEERROR, FAIL);
                           Hendaccess(link_id);
                       }     /* BB */
@@ -1397,7 +1397,7 @@ HLInewlink(int32 file_id, int32 number_blocks,
     }   /* CC */
 
     /* write the link */
-    if (Hwrite(link_id, 2 + 2 * number_blocks, buf) == FAIL)
+    if (Hwrite(link_id, 2 + 2 * number_blocks, (VOIDP)buf) == FAIL)
       {
           HDfreespace((VOIDP) buf);
           HDfreespace((VOIDP) t_link->block_list);

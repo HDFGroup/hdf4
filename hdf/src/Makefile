@@ -131,12 +131,14 @@ all: libdf.a .installed
 
 libdf.a: $(COBJS) $(FOBJS) #$(JOBJS)
 	-$(RM) libdf.a
-	$(AR) $(ARFLAGS) libdf.a `lorder '$(COBJS) $(FOBJS)' | tsort `
+#	$(AR) $(ARFLAGS) libdf.a `lorder '$(COBJS) $(FOBJS)' | tsort `
+	$(AR) $(ARFLAGS) libdf.a `lorder *.o | tsort `
 	$(RANLIB) libdf.a
 
 libnofortran: $(COBJS) #$(JOBJS) 
 	-$(RM) libdf.a
-	$(AR) $(ARFLAGS) libdf.a `lorder $(COBJS) | tsort `
+#	$(AR) $(ARFLAGS) libdf.a `lorder $(COBJS) | tsort `
+	$(AR) $(ARFLAGS) libdf.a `lorder *.o | tsort `
 	$(RANLIB) libdf.a
 
 libnostub nofortran: libnofortran .finstalled

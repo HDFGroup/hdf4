@@ -268,7 +268,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
                 HDfreespace((VOIDP) info);
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
             }
-          if (Hgetelement(file_id, data_dd->tag, data_dd->ref, buf) == FAIL)
+          if (Hgetelement(file_id, data_dd->tag, data_dd->ref, (VOIDP)buf) == FAIL)
             {
                 access_rec->used = FALSE;
                 HDfreespace((VOIDP) info);
