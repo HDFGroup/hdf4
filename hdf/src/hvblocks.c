@@ -254,21 +254,22 @@ HVcreate(int32 file_id, uint16 tag, uint16 ref)
     dd_t       *data_dd;        /* dd of existing regular element */
     uint16      special_tag;    /* special version of this tag */
     uint8       local_ptbuf[16];
+    int32       ret_value = SUCCEED;
 
     /* clear error stack and validate file record id */
     HEclear();
     file_rec = FID2REC(file_id);
     if (BADFREC(file_rec) || SPECIALTAG(tag)
         || (special_tag = MKSPECIALTAG(tag)) == DFTAG_NULL)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if (!(file_rec->access & DFACC_WRITE))
-        HRETURN_ERROR(DFE_DENIED, FAIL);
+        HGOTO_ERROR(DFE_DENIED, FAIL);
 
     /* get empty slot in access records */
     slot = HIget_access_slot();
     if (slot == FAIL)
-        HRETURN_ERROR(DFE_TOOMANY, FAIL);
+        HGOTO_ERROR(DFE_TOOMANY, FAIL);
 
     access_rec = &access_records[slot];
 
@@ -283,7 +284,7 @@ HVcreate(int32 file_id, uint16 tag, uint16 ref)
           if (SPECIALTAG(data_dd->tag))
             {
                 access_rec->used = FALSE;
-                HRETURN_ERROR(DFE_CANTMOD, FAIL);
+                HGOTO_ERROR(DFE_CANTMOD, FAIL);
             }   /* end if */
       }     /* end if */
     else
@@ -296,7 +297,7 @@ HVcreate(int32 file_id, uint16 tag, uint16 ref)
           if (HInew_dd_block(file_rec, FILE_NDDS(file_rec), FUNC) == FAIL)
             {
                 access_rec->used = FALSE;
-                HRETURN_ERROR(DFE_NOFREEDD, FAIL);
+                HGOTO_ERROR(DFE_NOFREEDD, FAIL);
             }
           else
             {
@@ -316,7 +317,7 @@ HVcreate(int32 file_id, uint16 tag, uint16 ref)
           if (HIdel_hash_dd(file_rec, data_dd->tag, data_dd->ref) == FAIL)
             {
                 access_rec->used = FALSE;
-                HRETURN_ERROR(DFE_CANTDELHASH, FAIL);
+                HGOTO_ERROR(DFE_CANTDELHASH, FAIL);
             }   
 
           data_dd->tag = DFTAG_VLINKED_DATA;
@@ -324,7 +325,7 @@ HVcreate(int32 file_id, uint16 tag, uint16 ref)
           if (HIupdate_dd(file_rec, data_block, data_idx, FUNC) == FAIL)
             {
                 access_rec->used = FALSE;
-                HRETURN_ERROR(DFE_CANTUPDATE, FAIL);
+                HGOTO_ERROR(DFE_CANTUPDATE, FAIL);
             }
 
           /* update hash table */
@@ -332,7 +333,7 @@ HVcreate(int32 file_id, uint16 tag, uint16 ref)
                             data_idx) == FAIL)
             {
                 access_rec->used = FALSE;
-                HRETURN_ERROR(DFE_CANTHASH, FAIL);
+                HGOTO_ERROR(DFE_CANTHASH, FAIL);
             }   
       }
 
@@ -343,13 +344,13 @@ HVcreate(int32 file_id, uint16 tag, uint16 ref)
     if ((dd->offset = HPgetdiskblock(file_rec, dd->length, TRUE)) == FAIL)
       {
           access_rec->used = FALSE;
-          HRETURN_ERROR(DFE_INTERNAL, FAIL);
+          HGOTO_ERROR(DFE_INTERNAL, FAIL);
       }     /* end if */
     access_rec->special_info = (VOIDP) HDmalloc((uint32) sizeof(vlnkinfo_t));
     if (!access_rec->special_info)
       {
           access_rec->used = FALSE;
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          HGOTO_ERROR(DFE_NOSPACE, FAIL);
       }
 
     info = (vlnkinfo_t *) access_rec->special_info;
@@ -369,7 +370,7 @@ HVcreate(int32 file_id, uint16 tag, uint16 ref)
     if (HPwrite(file_rec, local_ptbuf, dd->length) == FAIL)
       {
           access_rec->used = FALSE;
-          HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+          HGOTO_ERROR(DFE_WRITEERROR, FAIL);
       }
     dd->tag = special_tag;
     dd->ref = ref;
@@ -379,7 +380,7 @@ HVcreate(int32 file_id, uint16 tag, uint16 ref)
     if (!info->first_vlnk)
       {
           access_rec->used = FALSE;
-          HRETURN_ERROR(DFE_INTERNAL, FAIL);
+          HGOTO_ERROR(DFE_INTERNAL, FAIL);
       }
     info->last_vlnk=info->first_vlnk;
     info->link_ref = link_ref;
@@ -389,7 +390,7 @@ HVcreate(int32 file_id, uint16 tag, uint16 ref)
     if (HIupdate_dd(file_rec, access_rec->block, access_rec->idx, FUNC) == FAIL)
       {
           access_rec->used = FALSE;
-          HRETURN_ERROR(DFE_CANTUPDATE, FAIL);
+          HGOTO_ERROR(DFE_CANTUPDATE, FAIL);
       }
 
     /* update hash table */
@@ -397,7 +398,7 @@ HVcreate(int32 file_id, uint16 tag, uint16 ref)
                       access_rec->idx) == FAIL)
       {
           access_rec->used = FALSE;
-          HRETURN_ERROR(DFE_CANTHASH, FAIL);
+          HGOTO_ERROR(DFE_CANTHASH, FAIL);
       }     
 
     /* update access record and file record */
@@ -410,7 +411,17 @@ HVcreate(int32 file_id, uint16 tag, uint16 ref)
     access_rec->flush = FALSE;  /* start data as not needing flushing */
     file_rec->attach++;
 
-    return ASLOT2ID(slot);
+    ret_value = ASLOT2ID(slot);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }
 
 
@@ -442,11 +453,12 @@ HVIstaccess(accrec_t * access_rec, int16 acc_mode)
     int32       sinfo_aid;      /* AID for the special element information */
     uint16      vnum;           /* version number of the vlnk header */
     uint8       local_ptbuf[16];
+    int32       ret_value = SUCCEED;
 
     /* validate file record id */
     file_rec = FID2REC(access_rec->file_id);
     if (BADFREC(file_rec) || !(file_rec->access & acc_mode))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* set up some data in access record */
     access_rec->special = SPECIAL_VLINKED;
@@ -462,25 +474,26 @@ HVIstaccess(accrec_t * access_rec, int16 acc_mode)
       {
           ((vlnkinfo_t *) access_rec->special_info)->attached++;
           file_rec->attach++;
-          return ASLOT2ID(access_rec - access_records);
+          ret_value = ASLOT2ID(access_rec - access_records);
+          goto done;
       }
 
     /* Get access to the special element information */
     if((sinfo_aid=Hstartaccess(access_rec->file_id,dd->tag,dd->ref,DFACC_READ))==FAIL)
-        HRETURN_ERROR(DFE_BADAID, FAIL);
+        HGOTO_ERROR(DFE_BADAID, FAIL);
 
     /* seek past the special element identifier */
     if(Hseek(sinfo_aid, 2, DF_START) == FAIL)
-        HRETURN_ERROR(DFE_SEEKERROR, FAIL);
+        HGOTO_ERROR(DFE_SEEKERROR, FAIL);
 
     /* read in the information from file */
     if(Hread(sinfo_aid, 14, local_ptbuf) == FAIL)
-        HRETURN_ERROR(DFE_READERROR, FAIL);
+        HGOTO_ERROR(DFE_READERROR, FAIL);
 
     access_rec->special_info = (VOIDP) HDmalloc((uint32) sizeof(vlnkinfo_t));
     info = (vlnkinfo_t *) access_rec->special_info;
     if (!info)
-        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     {
         uint8      *p = local_ptbuf;
@@ -493,14 +506,14 @@ HVIstaccess(accrec_t * access_rec, int16 acc_mode)
 
     /* close the special element identifier */
     if(Hendaccess(sinfo_aid) == FAIL)
-        HRETURN_ERROR(DFE_INTERNAL, FAIL);
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* set up the block tables of the information */
     info->first_vlnk = HVIgetlink(access_rec->file_id, info->link_ref);
     if (!info->first_vlnk)
       {
           HDfree((VOIDP) info);
-          HRETURN_ERROR(DFE_INTERNAL, FAIL);
+          HGOTO_ERROR(DFE_INTERNAL, FAIL);
       }
 
     info->last_vlnk = info->first_vlnk;
@@ -520,7 +533,7 @@ HVIstaccess(accrec_t * access_rec, int16 acc_mode)
                       HDfree((VOIDP) l);
                   }
                 HDfree((VOIDP) info);
-                HRETURN_ERROR(DFE_INTERNAL, FAIL);
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
             }
           info->last_vlnk = info->last_vlnk->next;
       }
@@ -529,7 +542,17 @@ HVIstaccess(accrec_t * access_rec, int16 acc_mode)
     info->attached = 1;
     file_rec->attach++;
 
-    return ASLOT2ID(access_rec - access_records);
+    ret_value = ASLOT2ID(access_rec - access_records);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* HVIstaccess */
 
 /* ------------------------------ HVPstread ------------------------------- */
@@ -549,7 +572,11 @@ DESCRIPTION
 int32
 HVPstread(accrec_t * access_rec)
 {
-    return(HVIstaccess(access_rec, DFACC_READ));
+  int32  ret_value;
+
+  ret_value =(HVIstaccess(access_rec, DFACC_READ));
+
+  return ret_value;
 }   /* HVPstread */
 
 /* ------------------------------ HVPstwrite ------------------------------- */
@@ -569,7 +596,11 @@ DESCRIPTION
 int32
 HVPstwrite(accrec_t * access_rec)
 {
-    return(HVIstaccess(access_rec, DFACC_WRITE));
+  int32  ret_value;
+
+  ret_value = (HVIstaccess(access_rec, DFACC_WRITE));
+  
+  return ret_value;
 }   /* HVPstwrite */
 
 /* ------------------------------ HVIfreelinks ------------------------------ */
@@ -594,12 +625,13 @@ HVIfreelinks(accrec_t *access_rec)
     vlnk_t     *next;   /* next link to free */
     int32      aid;     /* aid to use when writing data */
     uint8      local_ptbuf[16];
+    intn       ret_value = SUCCEED;
 
     /* free the linked list of links/block tables */
     if(s_info->dirty==TRUE)
       { /* check if we need to update special info header */
           if((aid=Hstartaccess(access_rec->file_id,ACCREC_TAG(access_rec),ACCREC_REF(access_rec),DFACC_RDWR))==FAIL)
-              HRETURN_ERROR(DFE_CANTACCESS,FAIL);
+              HGOTO_ERROR(DFE_CANTACCESS,FAIL);
           {
               uint8      *p;
 
@@ -611,9 +643,9 @@ HVIfreelinks(accrec_t *access_rec)
               UINT16ENCODE(p, s_info->link_ref);  /* link_ref */
           }
           if(Hwrite(aid, ACCREC_LEN(access_rec), local_ptbuf) == FAIL)
-              HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+              HGOTO_ERROR(DFE_WRITEERROR, FAIL);
           if(Hendaccess(aid)==FAIL)
-              HRETURN_ERROR(DFE_CANTENDACCESS,FAIL);
+              HGOTO_ERROR(DFE_CANTENDACCESS,FAIL);
       } /* end if */
 
     for (s_link = s_info->first_vlnk; s_link!=NULL; s_link = next)
@@ -629,15 +661,15 @@ HVIfreelinks(accrec_t *access_rec)
               if(Hexist(access_rec->file_id,DFTAG_VLINKED,s_link->myref)==SUCCEED)
                 {
                   if((header_len=Hlength(access_rec->file_id,DFTAG_VLINKED,s_link->myref))==FAIL)
-                      HRETURN_ERROR(DFE_INTERNAL,FAIL);
+                      HGOTO_ERROR(DFE_INTERNAL,FAIL);
                   if(new_len!=header_len)
                     { /* delete header and re-write if it is too small */
                       if(Hdeldd(access_rec->file_id,DFTAG_VLINKED,s_link->myref)==FAIL)
-                          HRETURN_ERROR(DFE_INTERNAL,FAIL);
+                          HGOTO_ERROR(DFE_INTERNAL,FAIL);
                     } /* end if */
                 } /* end if */
               if((buf=(uint8 *)HDmalloc(new_len))==NULL)
-                  HRETURN_ERROR(DFE_NOSPACE,FAIL);
+                  HGOTO_ERROR(DFE_NOSPACE,FAIL);
               {
                   uint8      *p;
 
@@ -655,11 +687,11 @@ HVIfreelinks(accrec_t *access_rec)
               }
 
               if((aid=Hstartaccess(access_rec->file_id,DFTAG_VLINKED,s_link->myref,DFACC_RDWR))==FAIL)
-                  HRETURN_ERROR(DFE_CANTACCESS,FAIL);
+                  HGOTO_ERROR(DFE_CANTACCESS,FAIL);
               if(Hwrite(aid, new_len, buf) == FAIL)
-                  HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+                  HGOTO_ERROR(DFE_WRITEERROR, FAIL);
               if(Hendaccess(aid)==FAIL)
-                  HRETURN_ERROR(DFE_CANTENDACCESS,FAIL);
+                  HGOTO_ERROR(DFE_CANTENDACCESS,FAIL);
               HDfree(buf);
           } /* end if */
         next = s_link->next;
@@ -668,7 +700,15 @@ HVIfreelinks(accrec_t *access_rec)
       } /* end for */
     HDfree((VOIDP) s_info);
 
-    return(SUCCEED);
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* HVIfreelinks */
 
 
@@ -699,22 +739,23 @@ HVIgetlink(int32 file_id, uint16 ref)
     vlnk_t     *new_link;
     uint8      tmp_pbuf[12];    /* temporary buffer for reading block info */
     uint16     v_num;           /* version number of the header */
+    vlnk_t     *ret_value = NULL; /* FAIL */
 
     if (( new_link = (vlnk_t *) HDmalloc((uint32) sizeof(vlnk_t))) == NULL)
-        HRETURN_ERROR(DFE_NOSPACE, NULL);
+        HGOTO_ERROR(DFE_NOSPACE, NULL);
 
     new_link->next = NULL;
 
     if (( access_id = Hstartread(file_id, tag, ref)) == FAIL) 
       {
           HDfree((VOIDP) new_link);
-          HRETURN_ERROR(DFE_BADAID, NULL);
+          HGOTO_ERROR(DFE_BADAID, NULL);
       } /* end if */
 
     if( Hread(access_id, 10, tmp_pbuf) == FAIL)
       {
           HDfree((VOIDP) new_link);
-          HRETURN_ERROR(DFE_READERROR, NULL);
+          HGOTO_ERROR(DFE_READERROR, NULL);
       }
 
     {
@@ -733,7 +774,7 @@ HVIgetlink(int32 file_id, uint16 ref)
     if (new_link->block_list == NULL)
       {
           HDfree((VOIDP) new_link);
-          HRETURN_ERROR(DFE_NOSPACE, NULL);
+          HGOTO_ERROR(DFE_NOSPACE, NULL);
       }
     if(new_link->num_blocks>0) 
       {
@@ -743,7 +784,7 @@ HVIgetlink(int32 file_id, uint16 ref)
           {
               HDfree((VOIDP) new_link->block_list);
               HDfree((VOIDP) new_link);
-              HRETURN_ERROR(DFE_NOSPACE, NULL);
+              HGOTO_ERROR(DFE_NOSPACE, NULL);
           }     
 
         if( Hread(access_id, DISK_BLOCK_INFO_SIZE * new_link->num_blocks, buffer) == FAIL)
@@ -751,7 +792,7 @@ HVIgetlink(int32 file_id, uint16 ref)
               HDfree((VOIDP) buffer);
               HDfree((VOIDP) new_link->block_list);
               HDfree((VOIDP) new_link);
-              HRETURN_ERROR(DFE_READERROR, NULL);
+              HGOTO_ERROR(DFE_READERROR, NULL);
           }
 
         {
@@ -769,7 +810,17 @@ HVIgetlink(int32 file_id, uint16 ref)
       } /* end if */
     Hendaccess(access_id);
 
-    return(new_link);
+    ret_value = (new_link);
+
+done:
+  if(ret_value == NULL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* HVIgetlink */
 
 /* ------------------------------- HVPseek -------------------------------- */
@@ -791,10 +842,11 @@ int32
 HVPseek(accrec_t * access_rec, int32 offset, int origin)
 {
     CONSTR(FUNC, "HVPseek");    /* for HERROR */
+    int32    ret_value = SUCCEED;
 
     /* validate access record */
     if (access_rec->special != SPECIAL_VLINKED)
-        HRETURN_ERROR(DFE_INTERNAL, FAIL);
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* adjust the offset according to origin and validate */
     /* there is no upper bound to posn */
@@ -803,12 +855,20 @@ HVPseek(accrec_t * access_rec, int32 offset, int origin)
     if (origin == DF_END)
         offset += ((vlnkinfo_t *) (access_rec->special_info))->length;
     if (offset < 0)
-        HRETURN_ERROR(DFE_RANGE, FAIL);
+        HGOTO_ERROR(DFE_RANGE, FAIL);
 
     /* set position */
     access_rec->posn = offset;
 
-    return(SUCCEED);
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* HVPseek */
 
 /* ------------------------------- HVPread -------------------------------- */
@@ -835,6 +895,7 @@ HVPread(accrec_t * access_rec, int32 length, VOIDP datap)
 {
     CONSTR(FUNC, "HVPread");    /* for HERROR */
     uint8      *data = (uint8 *) datap;
+    int32       ret_value = SUCCEED;
 
     /* information record for this special data elt */
     vlnkinfo_t *info = (vlnkinfo_t *) (access_rec->special_info);
@@ -856,13 +917,16 @@ purify_printf("length=%d, info->length=%d, access_rec->posn=%d\n",(int)length,(i
     else
 /*      if (length < 0 || access_rec->posn + length > info->length)  */
     if (length < 0)
-        HRETURN_ERROR(DFE_RANGE, FAIL);
+        HGOTO_ERROR(DFE_RANGE, FAIL);
 
     if (access_rec->posn + length > info->length)
         length = info->length - access_rec->posn;
 
     if(length==0)
-        return(0); /* nothing to read */
+      {
+        ret_value = (0); /* nothing to read */
+        goto done;
+      }
 
     /* search for linked block to start reading from */
     /* find the correct block header */
@@ -871,7 +935,7 @@ purify_printf("length=%d, info->length=%d, access_rec->posn=%d\n",(int)length,(i
         relative_posn-=t_link->block_len;
         t_link=t_link->next;
         if(t_link==NULL)  /* can't find the correct header */
-            HRETURN_ERROR(DFE_INTERNAL, FAIL);
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
       } /* end while */
 
     /* search for correct block */
@@ -885,7 +949,7 @@ purify_printf("length=%d, t_link->block_len=%d\n",(int)length,(int)t_link->block
         relative_posn-=t_link->block_list[block_idx].len;
         block_idx++;
         if(block_idx>=t_link->num_blocks) /* can't find the correct block */
-            HRETURN_ERROR(DFE_INTERNAL, FAIL);
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
       } /* end while */
 
     /* found the starting block, now read in the data */
@@ -907,16 +971,16 @@ purify_printf("length=%d, t_link->block_len=%d\n",(int)length,(int)t_link->block
                 access_id = Hstartaccess(access_rec->file_id,
                 current_block->tag, current_block->ref, DFACC_READ);
                 if (access_id == (int32) FAIL)
-                    HRETURN_ERROR(DFE_INTERNAL, FAIL);
+                    HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
                 if(FAIL == Hseek(access_id, relative_posn, DF_START))
-                    HRETURN_ERROR(DFE_SEEKERROR, FAIL);
+                    HGOTO_ERROR(DFE_SEEKERROR, FAIL);
 
                 if(FAIL == (nbytes = Hread(access_id, remaining, data)))
-                    HRETURN_ERROR(DFE_READERROR, FAIL);
+                    HGOTO_ERROR(DFE_READERROR, FAIL);
 
                 if(Hendaccess(access_id)==FAIL)
-                    HRETURN_ERROR(DFE_INTERNAL, FAIL);
+                    HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
                 bytes_read += nbytes;
             }
@@ -934,14 +998,24 @@ purify_printf("length=%d, t_link->block_len=%d\n",(int)length,(int)t_link->block
                 block_idx = 0;
                 t_link = t_link->next;
                 if (t_link == NULL)
-                    HRETURN_ERROR(DFE_INTERNAL, FAIL);
+                    HGOTO_ERROR(DFE_INTERNAL, FAIL);
             }
           relative_posn = 0;
       }
     while (length > 0);     /* if still somemore to read in, repeat */
 
     access_rec->posn += bytes_read;
-    return(bytes_read);
+    ret_value = (bytes_read);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* HVPread  */
 
 /* ------------------------------- HVPwrite ------------------------------- */
@@ -981,12 +1055,13 @@ HVPwrite(accrec_t * access_rec, int32 length, const VOIDP datap)
     int32       old_length=length; /* original length to write */
     int32       data_aid;       /* AID of the data to write */
     intn        new_block=0;    /* if a new block was created for writing */
+    int32       ret_value = SUCCEED;
 
     /* validate length and file records */
     if(length <= 0)
-        HRETURN_ERROR(DFE_RANGE, FAIL);
+        HGOTO_ERROR(DFE_RANGE, FAIL);
     if(BADFREC(file_rec))
-        HRETURN_ERROR(DFE_INTERNAL, FAIL);
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* find the correct block header */
     prev_link=NULL;
@@ -1014,7 +1089,7 @@ HVPwrite(accrec_t * access_rec, int32 length, const VOIDP datap)
             new_ref=Htagnewref(access_rec->file_id,DFTAG_VLINKED);
             t_link=HVInewlink(access_rec->file_id,new_ref,NULL);
             if(t_link==NULL)
-                HRETURN_ERROR(DFE_INTERNAL,FAIL);
+                HGOTO_ERROR(DFE_INTERNAL,FAIL);
             prev_link->next=t_link;
             prev_link->nextref=new_ref;
 
@@ -1045,7 +1120,7 @@ HVPwrite(accrec_t * access_rec, int32 length, const VOIDP datap)
                   new_blocks=(block_t *)HDmalloc(sizeof(block_t)
                        *(t_link->max_blocks+VLINK_INC_BLOCKS));
                   if(new_blocks==NULL)
-                      HRETURN_ERROR(DFE_NOSPACE,FAIL);
+                      HGOTO_ERROR(DFE_NOSPACE,FAIL);
                   HDmemcpy(new_blocks,t_link->block_list,t_link->max_blocks*sizeof(block_t));
                   t_link->max_blocks+=VLINK_INC_BLOCKS;
                   HDfree(t_link->block_list);
@@ -1091,7 +1166,7 @@ printf("t_link->num_blocks=%d, relative_posn=%d\n",(int)t_link->num_blocks,(int)
                 relative_posn-=t_link->block_list[block_idx].len;
                 block_idx++;
                 if(block_idx>=t_link->num_blocks) /* can't find the correct block */
-                    HRETURN_ERROR(DFE_INTERNAL, FAIL);
+                    HGOTO_ERROR(DFE_INTERNAL, FAIL);
               } /* end while */
             if(t_link->block_list[block_idx].len==0)
                 new_block=1;
@@ -1105,11 +1180,11 @@ printf("t_link->num_blocks=%d, relative_posn=%d\n",(int)t_link->num_blocks,(int)
 
         new_ref=Htagnewref(access_rec->file_id,DFTAG_VLINKED_DATA);
         if((data_aid=Hstartaccess(access_rec->file_id,DFTAG_VLINKED_DATA,new_ref,DFACC_RDWR))==FAIL)
-            HRETURN_ERROR(DFE_CANTACCESS, FAIL);
+            HGOTO_ERROR(DFE_CANTACCESS, FAIL);
         if(Hwrite(data_aid,length,(const VOIDP)data)==FAIL)
-            HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+            HGOTO_ERROR(DFE_WRITEERROR, FAIL);
         if(Hendaccess(data_aid)==FAIL)
-            HRETURN_ERROR(DFE_CANTENDACCESS, FAIL);
+            HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
         t_link->block_list[block_idx].tag=DFTAG_VLINKED_DATA;
         t_link->block_list[block_idx].ref=new_ref;
         t_link->block_list[block_idx].len=length;
@@ -1123,7 +1198,7 @@ printf("t_link->num_blocks=%d, relative_posn=%d\n",(int)t_link->num_blocks,(int)
 
             write_length=MIN(length,t_link->block_list[block_idx].len-relative_posn);
             if((data_aid=Hstartaccess(access_rec->file_id,t_link->block_list[block_idx].tag,t_link->block_list[block_idx].ref,DFACC_RDWR))==FAIL)
-                HRETURN_ERROR(DFE_CANTACCESS, FAIL);
+                HGOTO_ERROR(DFE_CANTACCESS, FAIL);
             if(HPisappendable(data_aid))
               /* if current block is appendable & is the last block */
               /* in the variable linked list, then append data to it */
@@ -1142,13 +1217,13 @@ printf("t_link->num_blocks=%d, relative_posn=%d\n",(int)t_link->num_blocks,(int)
             if(relative_posn>0)
               {
                 if(Hseek(data_aid,relative_posn,DF_START)==FAIL)
-                    HRETURN_ERROR(DFE_SEEKERROR, FAIL);
+                    HGOTO_ERROR(DFE_SEEKERROR, FAIL);
                 relative_posn=0; /* reset the relative position in the block */
               } /* end if */
             if(Hwrite(data_aid,write_length,(const VOIDP)data)==FAIL)
-                HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+                HGOTO_ERROR(DFE_WRITEERROR, FAIL);
             if(Hendaccess(data_aid)==FAIL)
-                HRETURN_ERROR(DFE_CANTENDACCESS, FAIL);
+                HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
             length-=write_length; /* decrement # of bytes to write out */
             data+=write_length;
@@ -1183,7 +1258,7 @@ printf("t_link->num_blocks=%d, relative_posn=%d\n",(int)t_link->num_blocks,(int)
                               new_blocks=(block_t *)HDmalloc(sizeof(block_t)
                                    *(t_link->max_blocks+VLINK_INC_BLOCKS));
                               if(new_blocks==NULL)
-                                  HRETURN_ERROR(DFE_NOSPACE,FAIL);
+                                  HGOTO_ERROR(DFE_NOSPACE,FAIL);
                               HDmemcpy(new_blocks,t_link->block_list,t_link->max_blocks*sizeof(block_t));
                               t_link->max_blocks+=VLINK_INC_BLOCKS;
                               HDfree(t_link->block_list);
@@ -1201,7 +1276,7 @@ printf("t_link->num_blocks=%d, relative_posn=%d\n",(int)t_link->num_blocks,(int)
                             new_ref=Htagnewref(access_rec->file_id,DFTAG_VLINKED);
                             new_link=HVInewlink(access_rec->file_id,new_ref,NULL);
                             if(new_link==NULL)
-                                HRETURN_ERROR(DFE_INTERNAL,FAIL);
+                                HGOTO_ERROR(DFE_INTERNAL,FAIL);
                             
                             /* link the headers together */
                             t_link->next=new_link;
@@ -1227,11 +1302,11 @@ printf("t_link->num_blocks=%d, relative_posn=%d\n",(int)t_link->num_blocks,(int)
 
                 new_ref=Htagnewref(access_rec->file_id,DFTAG_VLINKED_DATA);
                 if((data_aid=Hstartaccess(access_rec->file_id,DFTAG_VLINKED_DATA,new_ref,DFACC_RDWR))==FAIL)
-                    HRETURN_ERROR(DFE_CANTACCESS, FAIL);
+                    HGOTO_ERROR(DFE_CANTACCESS, FAIL);
                 if(Hwrite(data_aid,length,(const VOIDP)data)==FAIL)
-                    HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+                    HGOTO_ERROR(DFE_WRITEERROR, FAIL);
                 if(Hendaccess(data_aid)==FAIL)
-                    HRETURN_ERROR(DFE_CANTENDACCESS, FAIL);
+                    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
                 t_link->block_list[block_idx].tag=DFTAG_VLINKED_DATA;
                 t_link->block_list[block_idx].ref=new_ref;
                 t_link->block_list[block_idx].len=length;
@@ -1242,7 +1317,17 @@ printf("t_link->num_blocks=%d, relative_posn=%d\n",(int)t_link->num_blocks,(int)
           } /* end while */
       } /* end else */
 
-    return(old_length);
+    ret_value = (old_length);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* HVPwrite */
 
 /* ------------------------------ HVInewlink ------------------------------ */
@@ -1269,16 +1354,17 @@ HVInewlink(int32 file_id, uint16 link_ref, dd_t *data_ptr)
 {
     CONSTR(FUNC, "HVInewlink"); /* for HERROR */
     vlnk_t     *t_link;         /* ptr to the new header */
+    vlnk_t     *ret_value = NULL; /* FAIL */
 
     if ((t_link=(vlnk_t *)HDmalloc(sizeof(vlnk_t)))==NULL)
-        HRETURN_ERROR(DFE_NOSPACE, NULL);
+        HGOTO_ERROR(DFE_NOSPACE, NULL);
 
     t_link->block_list = (block_t *) HDmalloc((uint32) VLINK_START_BLOCKS
                                                 * sizeof(block_t));
     if (!t_link->block_list)
       {
           HDfree((VOIDP) t_link);
-          HRETURN_ERROR(DFE_NOSPACE, NULL);
+          HGOTO_ERROR(DFE_NOSPACE, NULL);
       }
     t_link->next = NULL;
     t_link->myref = link_ref;
@@ -1297,7 +1383,17 @@ HVInewlink(int32 file_id, uint16 link_ref, dd_t *data_ptr)
         t_link->block_len=t_link->num_blocks=0;
 
     t_link->dirty=TRUE; /* mark the header as modified */
-    return(t_link);
+    ret_value = (t_link);
+
+done:
+  if(ret_value == NULL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* HVInewlink */
 
 /* ------------------------------ HVPinquire ------------------------------ */
@@ -1332,6 +1428,7 @@ HVPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
         &(access_rec->block->ddlist[access_rec->idx]);
     vlnkinfo_t *info =          /* special information record */
         (vlnkinfo_t *) access_rec->special_info;
+    int32       ret_value = SUCCEED;
 
     /* fill in the variables if they are present */
     if (pfile_id)
@@ -1351,7 +1448,7 @@ HVPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
     if (pspecial)
         *pspecial = access_rec->special;
 
-    return(SUCCEED);
+    return ret_value;
 }   /* HVPinquire */
 
 /* ----------------------------- HVPendaccess ----------------------------- */
@@ -1377,13 +1474,14 @@ HVPendaccess(accrec_t * access_rec)
         (vlnkinfo_t *) access_rec->special_info;
     filerec_t  *file_rec =      /* file record */
         FID2REC(access_rec->file_id);
+    intn      ret_value = SUCCEED;
 
     /* detach the special information record.
        If no more references to that, free the record */
     if (--(info->attached) <= 0)
       {
           if(HVIfreelinks(access_rec)==FAIL)
-              HRETURN_ERROR(DFE_INTERNAL,FAIL);
+              HGOTO_ERROR(DFE_INTERNAL,FAIL);
           access_rec->special_info = NULL;
       }
 
@@ -1393,7 +1491,15 @@ HVPendaccess(accrec_t * access_rec)
     /* free the access record */
     access_rec->used = FALSE;
 
-    return SUCCEED;
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* HLPendaccess */
 
 /* ------------------------------- HVPinfo -------------------------------- */
@@ -1417,16 +1523,25 @@ HVPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
     char       *FUNC = "HLPinfo";   /* for HERROR */
     vlnkinfo_t *info =          /* special information record */
         (vlnkinfo_t *) access_rec->special_info;
+    int32      ret_value = SUCCEED;
 
     /* validate access record */
     if (access_rec->special != SPECIAL_LINKED)
-        HRETURN_ERROR(DFE_INTERNAL, FAIL);
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* fill in the info_block */
     info_block->key = SPECIAL_VLINKED;
 
     info_block->min_block = info->min_size;
 
-    return(SUCCEED);
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* HVPinfo */
 

@@ -326,6 +326,7 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
     uint16      find_tag, find_ref;     /* storage for tag/ref pairs found */
     int32       find_off, find_len;     /* storage for offset/lengths of tag/refs found */
     intn        i, j;           /* local counting variable */
+    intn        ret_value = SUCCEED;
 
     HEclear();
 
@@ -334,19 +335,19 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
        case and then run through them all to eliminate matched pairs */
     nri = Hnumber(file_id, DFTAG_RI);     /* count the number of RI and CIs */
     if (nri == FAIL)
-        HRETURN_ERROR(DFE_INTERNAL, FAIL);
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
     nci = Hnumber(file_id, DFTAG_CI);     /* count the number of RI and CIs */
     if (nci == FAIL)
-        HRETURN_ERROR(DFE_INTERNAL, FAIL);
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
     nri8 = Hnumber(file_id, DFTAG_RI8);     /* add the number of RI8 and CI8s */
     if (nri8 == FAIL)
-        HRETURN_ERROR(DFE_INTERNAL, FAIL);
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
     nci8 = Hnumber(file_id, DFTAG_CI8);
     if (nci8 == FAIL)
-        HRETURN_ERROR(DFE_INTERNAL, FAIL);
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
     nvg = Hnumber(file_id, RI_TAG);
     if (nvg == FAIL)
-        HRETURN_ERROR(DFE_INTERNAL, FAIL);
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
     nimages = (intn) (nri + nci + nri8 + nci8 + nvg);
 
 #ifdef QAK
@@ -354,11 +355,14 @@ printf("%s: nri=%ld, nci=%ld, nri8=%ld, nci8=%ld, nvg=%ld\n",FUNC,(long)nri,(lon
 #endif /* QAK */
     /* if there are no images just close the file and get out */
     if (nimages == 0)
-        return (SUCCEED);
+      {
+        ret_value = (SUCCEED);
+        goto done;
+      }
 
     /* Get space to store the image offsets */
     if ((img_info = (struct image_info *) HDmalloc(nimages * sizeof(struct image_info))) == NULL)
-        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
     HDmemset(img_info,0,nimages*sizeof(struct image_info));    
 
     /* search through the GR group for raster images & global attributes */
@@ -430,7 +434,7 @@ printf("%s: found DFTAG_RI\n",FUNC);
                                       int32 at_key;         /* VData key for the attribute */
 
                                       if((new_attr=(at_info_t *)HDmalloc(sizeof(at_info_t)))==NULL)
-                                          HRETURN_ERROR(DFE_NOSPACE,FAIL);
+                                          HGOTO_ERROR(DFE_NOSPACE,FAIL);
 #ifdef QAK
 printf("%s: found global attribute, new_attr=%p\n",FUNC,new_attr);
 #endif /* QAK */
@@ -460,13 +464,13 @@ printf("%s: found global attribute, new_attr=%p\n",FUNC,new_attr);
                                               {
                                                 sprintf(textbuf,"Attribute #%d",(int)new_attr->index);
                                                 if((new_attr->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
-                                                    HRETURN_ERROR(DFE_NOSPACE,FAIL);
+                                                    HGOTO_ERROR(DFE_NOSPACE,FAIL);
                                                 HDstrcpy(new_attr->name,textbuf);
                                               } /* end if */
                                             else
                                               {
                                                 if((new_attr->name=(char *)HDmalloc(HDstrlen(fname)+1))==NULL)
-                                                    HRETURN_ERROR(DFE_NOSPACE,FAIL);
+                                                    HGOTO_ERROR(DFE_NOSPACE,FAIL);
                                                 HDstrcpy(new_attr->name,fname);
                                               } /* end else */
                                                 
@@ -499,7 +503,7 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
 
           /* read RIG into memory */
           if ((group_id = DFdiread(file_id, DFTAG_RIG, find_ref)) == FAIL)
-              HRETURN_ERROR(DFE_INTERNAL, FAIL);
+              HGOTO_ERROR(DFE_INTERNAL, FAIL);
           elt_tag = elt_ref = 0;    /* initialize bogus tag/ref */
           while (!DFdiget(group_id, &elt_tag, &elt_ref))
             {   /* get next tag/ref */
@@ -626,7 +630,7 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
                                   {
                                     HDfree((VOIDP) img_info);   /* free offsets */
                                     Hclose(file_id);
-                                    HRETURN_ERROR(DFE_NOSPACE,FAIL);
+                                    HGOTO_ERROR(DFE_NOSPACE,FAIL);
                                   } /* end if */
 
                                 /* Initialize all the fields in the image structure to zeros */
@@ -636,14 +640,14 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
                                 if(Vgetname(img_key,textbuf)==FAIL)
                                     sprintf(textbuf,"Raster Image #%d",(int)i);
                                 if((new_image->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
-                                    HRETURN_ERROR(DFE_NOSPACE,FAIL);
+                                    HGOTO_ERROR(DFE_NOSPACE,FAIL);
                                 HDstrcpy(new_image->name,textbuf);
 
                                 /* Initialize the local attribute tree */
                                 new_image->lattr_count = 0;
                                 new_image->lattree = tbbtdmake(rigcompare, sizeof(int32));
                                 if (new_image->lattree == NULL)
-                                    HRETURN_ERROR(DFE_NOSPACE, FAIL);
+                                    HGOTO_ERROR(DFE_NOSPACE, FAIL);
                                 new_image->ri_ref=img_info[i].grp_ref;
                                 if(img_info[i].aux_ref!=0)
                                     new_image->rig_ref=img_info[i].aux_ref;
@@ -684,11 +688,11 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
                                                     UINT16DECODE(p, new_image->lut_dim.comp_ref);
                                                 }
                                               else
-                                                  HRETURN_ERROR(DFE_READERROR, FAIL);
+                                                  HGOTO_ERROR(DFE_READERROR, FAIL);
                                                
                                                /* read NT */
                                               if (Hgetelement(file_id, new_image->lut_dim.nt_tag, new_image->lut_dim.nt_ref, ntstring) == FAIL)
-                                                  HRETURN_ERROR(DFE_READERROR, FAIL);
+                                                  HGOTO_ERROR(DFE_READERROR, FAIL);
 
                                               /* check for any valid NT */
                                               if (ntstring[1] == DFNT_NONE)
@@ -727,11 +731,11 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
                                                     UINT16DECODE(p, new_image->img_dim.comp_ref);
                                                 }
                                               else
-                                                  HRETURN_ERROR(DFE_READERROR, FAIL);
+                                                  HGOTO_ERROR(DFE_READERROR, FAIL);
                                                
                                                /* read NT */
                                               if (Hgetelement(file_id, new_image->img_dim.nt_tag, new_image->img_dim.nt_ref, ntstring) == FAIL)
-                                                  HRETURN_ERROR(DFE_READERROR, FAIL);
+                                                  HGOTO_ERROR(DFE_READERROR, FAIL);
 
                                               /* check for any valid NT */
                                               if (ntstring[1] == DFNT_NONE)
@@ -760,7 +764,7 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
                                                   int32 at_key;         /* VData key for the attribute */
 
                                                   if((new_attr=(at_info_t *)HDmalloc(sizeof(at_info_t)))==NULL)
-                                                      HRETURN_ERROR(DFE_NOSPACE,FAIL);
+                                                      HGOTO_ERROR(DFE_NOSPACE,FAIL);
                                                   new_attr->ref=(uint16)img_ref;
                                                   new_attr->index=new_image->lattr_count;
                                                   new_attr->data_modified=FALSE;
@@ -787,13 +791,13 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
                                                           {
                                                             sprintf(textbuf,"Attribute #%d",(int)new_attr->index);
                                                             if((new_attr->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
-                                                                HRETURN_ERROR(DFE_NOSPACE,FAIL);
+                                                                HGOTO_ERROR(DFE_NOSPACE,FAIL);
                                                             HDstrcpy(new_attr->name,textbuf);
                                                           } /* end if */
                                                         else
                                                           {
                                                             if((new_attr->name=(char *)HDmalloc(HDstrlen(fname)+1))==NULL)
-                                                                HRETURN_ERROR(DFE_NOSPACE,FAIL);
+                                                                HGOTO_ERROR(DFE_NOSPACE,FAIL);
                                                             HDstrcpy(new_attr->name,fname);
                                                           } /* end else */
                                                 
@@ -828,13 +832,13 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
 
                           /* read RIG into memory */
                           if ((GroupID = DFdiread(file_id, DFTAG_RIG, img_info[i].grp_ref)) == FAIL)
-                              HRETURN_ERROR(DFE_READERROR, FAIL);
+                              HGOTO_ERROR(DFE_READERROR, FAIL);
 
                           if((new_image=(ri_info_t *)HDmalloc(sizeof(ri_info_t)))==NULL)
                             {
                               HDfree((VOIDP) img_info);   /* free offsets */
                               Hclose(file_id);
-                              HRETURN_ERROR(DFE_NOSPACE,FAIL);
+                              HGOTO_ERROR(DFE_NOSPACE,FAIL);
                             } /* end if */
 
                           /* Initialize all the fields in the image structure to zeros */
@@ -843,13 +847,13 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
                           /* Get the name of the image */
                           sprintf(textbuf,"Raster Image #%d",(int)i);
                           if((new_image->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
-                              HRETURN_ERROR(DFE_NOSPACE,FAIL);
+                              HGOTO_ERROR(DFE_NOSPACE,FAIL);
                           HDstrcpy(new_image->name,textbuf);
 
                           /* Initialize the local attribute tree */
                           new_image->lattree = tbbtdmake(rigcompare, sizeof(int32));
                           if (new_image->lattree == NULL)
-                              HRETURN_ERROR(DFE_NOSPACE, FAIL);
+                              HGOTO_ERROR(DFE_NOSPACE, FAIL);
                           new_image->ri_ref=DFTAG_NULL;
                           new_image->rig_ref=img_info[i].grp_ref;
 
@@ -884,11 +888,11 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
                                                 UINT16DECODE(p, new_image->lut_dim.comp_ref);
                                             }
                                           else
-                                              HRETURN_ERROR(DFE_READERROR, FAIL);
+                                              HGOTO_ERROR(DFE_READERROR, FAIL);
                                                
                                            /* read NT */
                                           if (Hgetelement(file_id, new_image->lut_dim.nt_tag, new_image->lut_dim.nt_ref, ntstring) == FAIL)
-                                              HRETURN_ERROR(DFE_READERROR, FAIL);
+                                              HGOTO_ERROR(DFE_READERROR, FAIL);
 
                                           /* check for any valid NT */
                                           if (ntstring[1] == DFNT_NONE)
@@ -927,11 +931,11 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
                                                   UINT16DECODE(p, new_image->img_dim.comp_ref);
                                               }
                                             else
-                                                HRETURN_ERROR(DFE_GETELEM, FAIL);
+                                                HGOTO_ERROR(DFE_GETELEM, FAIL);
                                                
                                              /* read NT */
                                             if (Hgetelement(file_id, new_image->img_dim.nt_tag, new_image->img_dim.nt_ref, ntstring) == FAIL)
-                                                HRETURN_ERROR(DFE_GETELEM, FAIL);
+                                                HGOTO_ERROR(DFE_GETELEM, FAIL);
 
                                             /* check for any valid NT */
                                             if (ntstring[1] == DFNT_NONE)
@@ -974,7 +978,7 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
                             {
                               HDfree((VOIDP) img_info);   /* free offsets */
                               Hclose(file_id);
-                              HRETURN_ERROR(DFE_NOSPACE,FAIL);
+                              HGOTO_ERROR(DFE_NOSPACE,FAIL);
                             } /* end if */
 
                           /* Initialize all the fields in the image structure to zeros */
@@ -983,13 +987,13 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
                           /* Get the name of the image */
                           sprintf(textbuf,"Raster Image #%d",(int)i);
                           if((new_image->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
-                              HRETURN_ERROR(DFE_NOSPACE,FAIL);
+                              HGOTO_ERROR(DFE_NOSPACE,FAIL);
                           HDstrcpy(new_image->name,textbuf);
 
                           /* Initialize the local attribute tree */
                           new_image->lattree = tbbtdmake(rigcompare, sizeof(int32));
                           if (new_image->lattree == NULL)
-                              HRETURN_ERROR(DFE_NOSPACE, FAIL);
+                              HGOTO_ERROR(DFE_NOSPACE, FAIL);
                           new_image->ri_ref=DFTAG_NULL;
                           new_image->rig_ref=DFTAG_NULL;
 
@@ -1010,7 +1014,7 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
                                 new_image->img_dim.ydim=(int32)u;
                             }   /* end if */
                           else
-                              HRETURN_ERROR(DFE_GETELEM, FAIL);
+                              HGOTO_ERROR(DFE_GETELEM, FAIL);
 
                           /* only 8-bit images, so fill in rest of dim info */
                           new_image->img_dim.dim_ref=DFTAG_NULL;
@@ -1058,7 +1062,16 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
       } /* end for */
 
     HDfree((VOIDP) img_info);   /* free offsets */
-    return (SUCCEED);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRIget_image_list() */
 
 /*--------------------------------------------------------------------------
@@ -1086,25 +1099,26 @@ int32 GRstart(int32 hdf_file_id)
     CONSTR(FUNC, "GRstart");    /* for HERROR */
     intn next_gr;               /* index of the next open space in the gr_tab */
     gr_info_t *gr_ptr;          /* ptr to the new GR information for a file */
+    int32  ret_value = SUCCEED;
 
     /* clear error stack and check validity of file id */
     HEclear();
 
     /* check the validity of the file ID */
     if(!VALIDFID(hdf_file_id))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* get a GR id */
     if((next_gr=GRIget_empty_tab(hdf_file_id))==FAIL)
-        HRETURN_ERROR(DFE_TABLEFULL,FAIL);
+        HGOTO_ERROR(DFE_TABLEFULL,FAIL);
 
     /* allocate space for the GR information for this file */
     if((gr_ptr=(gr_info_t *)HDmalloc(sizeof(gr_info_t)))==NULL)
-        HRETURN_ERROR(DFE_NOSPACE,FAIL);
+        HGOTO_ERROR(DFE_NOSPACE,FAIL);
 
     /* Fire up the Vset interface */
     if(Vstart(hdf_file_id)==FAIL)
-        HRETURN_ERROR(DFE_CANTINIT,FAIL);
+        HGOTO_ERROR(DFE_CANTINIT,FAIL);
 
     /* Initialize the starting information for the interface */
     gr_ptr->hdf_file_id=hdf_file_id;
@@ -1112,19 +1126,19 @@ int32 GRstart(int32 hdf_file_id)
     gr_ptr->gr_count=0;
     gr_ptr->grtree = tbbtdmake(rigcompare, sizeof(int32));
     if (gr_ptr->grtree == NULL)
-        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
     gr_ptr->gr_modified=0;
 
     gr_ptr->gattr_count=0;
     gr_ptr->gattree = tbbtdmake(rigcompare, sizeof(int32));
     if (gr_ptr->gattree == NULL)
-        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
     gr_ptr->gattr_modified=0;
     gr_ptr->attr_cache=GR_ATTR_THRESHHOLD;
 
     /* Go get all the images and attributes in the file */
     if(GRIget_image_list(hdf_file_id,gr_ptr)==FAIL)
-        HRETURN_ERROR(DFE_INTERNAL,FAIL);
+        HGOTO_ERROR(DFE_INTERNAL,FAIL);
 
     /* assign the image info to the GR table */
     gr_tab[next_gr]=gr_ptr;
@@ -1136,7 +1150,17 @@ tbbtdump(gr_ptr->gattree,0);
 #endif /* QAK */
 
     /* Return handle to the GR interface to the user */
-    return((int32)GRSLOT2ID(hdf_file_id,next_gr));
+    ret_value = ((int32)GRSLOT2ID(hdf_file_id,next_gr));
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRstart() */
 
 /*--------------------------------------------------------------------------
@@ -1164,13 +1188,14 @@ intn GRfileinfo(int32 grid,int32 *n_datasets,int32 *n_attrs)
 {
     CONSTR(FUNC, "GRfileinfo");    /* for HERROR */
     int32 gr_idx;   /* index into the gr_tab array */
+    intn  ret_value = SUCCEED;
 
     /* clear error stack and check validity of file id */
     HEclear();
 
     /* check the validity of the GR ID */
     if(!VALIDGRID(grid))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     
     /* Get the array index for the grid */
     gr_idx=GRID2SLOT(grid);
@@ -1181,7 +1206,15 @@ intn GRfileinfo(int32 grid,int32 *n_datasets,int32 *n_attrs)
     if(n_attrs!=NULL)
         *n_attrs=gr_tab[gr_idx]->gattr_count;
         
-    return(SUCCEED);
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRfileinfo() */
 
 /*--------------------------------------------------------------------------
@@ -1212,10 +1245,11 @@ intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
     uint8 GRtbuf[64];   /* local buffer for reading RIG info */
     uint8 ntstring[4];  /* temporary storage for the number type information */
     uint8 *p;           /* temporary pointer into buffer */
+    intn  ret_value = SUCCEED;
 
     HEclear();
     if (!HDvalidfid(hdf_file_id) || img_ptr==NULL)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Weird test below to allow for tag/ref values of zero.  (I'll spare */
     /*  everyone my rant about why DFTAG_NULL should have been made zero */
@@ -1232,7 +1266,7 @@ intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
     ntstring[3] = DFNTC_BYTE;       /* class: data are numeric values */
     if (Hputelement(hdf_file_id, img_ptr->img_dim.nt_tag,
             img_ptr->img_dim.nt_ref, ntstring, (int32) 4) == FAIL)
-        HRETURN_ERROR(DFE_PUTELEM, FAIL);
+        HGOTO_ERROR(DFE_PUTELEM, FAIL);
     
     /* Check for a palette with this image */
     if(img_ptr->lut_ref>DFTAG_NULL)
@@ -1248,7 +1282,7 @@ intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
           ntstring[3] = DFNTC_BYTE;       /* class: data are numeric values */
           if (Hputelement(hdf_file_id, img_ptr->lut_dim.nt_tag,
                   img_ptr->lut_dim.nt_ref, ntstring, (int32)4) == FAIL)
-              HRETURN_ERROR(DFE_PUTELEM, FAIL);
+              HGOTO_ERROR(DFE_PUTELEM, FAIL);
 
           /* Write out the palette dimensions */
           p = GRtbuf;
@@ -1263,7 +1297,7 @@ intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
           if(img_ptr->lut_dim.dim_ref<=DFTAG_NULL)
               img_ptr->lut_dim.dim_ref=Htagnewref(hdf_file_id,DFTAG_LD);
           if (Hputelement(hdf_file_id, DFTAG_LD, img_ptr->lut_dim.dim_ref, GRtbuf, (int32)(p-GRtbuf)) == FAIL)
-              HRETURN_ERROR(DFE_PUTELEM, FAIL);
+              HGOTO_ERROR(DFE_PUTELEM, FAIL);
       } /* end if */
 
     /* Write out the image dimensions */
@@ -1279,9 +1313,17 @@ intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
     if(img_ptr->img_dim.dim_ref<=DFTAG_NULL)
         img_ptr->img_dim.dim_ref=Htagnewref(hdf_file_id,DFTAG_ID);
     if (Hputelement(hdf_file_id, DFTAG_ID, img_ptr->img_dim.dim_ref, GRtbuf, (int32)(p-GRtbuf)) == FAIL)
-        HRETURN_ERROR(DFE_PUTELEM, FAIL);
+        HGOTO_ERROR(DFE_PUTELEM, FAIL);
 
-    return(SUCCEED);
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRIupdatemeta() */
 
 /*--------------------------------------------------------------------------
@@ -1309,17 +1351,21 @@ intn GRIupdateRIG(int32 hdf_file_id,ri_info_t *img_ptr)
 {
     CONSTR(FUNC, "GRIupdateRIG");   /* for HERROR */
     int32 GroupID;      /* RIG id for group interface */
+    intn   ret_value = SUCCEED;
 
     HEclear();
     if (!HDvalidfid(hdf_file_id) || img_ptr==NULL)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Don't write out a RIG, unless it is compatible with the older RIGS */
     /*  which already exist.  This is to guarantee compatibility with older */
     /*  software, both application and in the library */
     if(img_ptr->img_dim.nt!=DFNT_UINT8 || (img_ptr->img_dim.ncomps!=1
             && img_ptr->img_dim.ncomps!=3))
-        return(SUCCEED); /* lie and say it's ok - QAK */
+      {
+        ret_value =(SUCCEED); /* lie and say it's ok - QAK */
+        goto done;
+      }
 
 #ifdef QAK
 printf("%s: writing RIG\n",FUNC);
@@ -1327,37 +1373,45 @@ printf("%s: writing RIG\n",FUNC);
 
     /* Write out the image/palette meta-information */
     if (GRIupdatemeta(hdf_file_id,img_ptr)==FAIL)
-        HRETURN_ERROR(DFE_INTERNAL, FAIL);
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* Write out the RIG itself */
     if ((GroupID = DFdisetup(6)) == FAIL)    /* max 6 tag/refs in set */
-        HRETURN_ERROR(DFE_GROUPSETUP, FAIL);
+        HGOTO_ERROR(DFE_GROUPSETUP, FAIL);
 
     /* add image dimension tag/ref to RIG */
     if (DFdiput(GroupID, DFTAG_ID, (uint16) img_ptr->img_dim.dim_ref) == FAIL)
-        HRETURN_ERROR(DFE_PUTGROUP, FAIL);
+        HGOTO_ERROR(DFE_PUTGROUP, FAIL);
 
     /* add image data tag/ref to RIG */
     if (DFdiput(GroupID, img_ptr->img_tag, img_ptr->img_ref) == FAIL)
-        HRETURN_ERROR(DFE_PUTGROUP, FAIL);
+        HGOTO_ERROR(DFE_PUTGROUP, FAIL);
 
     /* Check if we should write palette information */
     if(img_ptr->lut_ref>DFTAG_NULL)
       {
           /* add palette dimension tag/ref to RIG */
           if (DFdiput(GroupID, DFTAG_LD, (uint16) img_ptr->lut_dim.dim_ref) == FAIL)
-              HRETURN_ERROR(DFE_PUTGROUP, FAIL);
+              HGOTO_ERROR(DFE_PUTGROUP, FAIL);
 
           /* add palette data tag/ref to RIG */
           if (DFdiput(GroupID, img_ptr->lut_tag, img_ptr->lut_ref) == FAIL)
-              HRETURN_ERROR(DFE_PUTGROUP, FAIL);
+              HGOTO_ERROR(DFE_PUTGROUP, FAIL);
       } /* end if */
 
     /* write out RIG */
     if(DFdiwrite(hdf_file_id, GroupID, DFTAG_RIG, img_ptr->rig_ref)==FAIL)
-        HRETURN_ERROR(DFE_GROUPWRITE, FAIL);
+        HGOTO_ERROR(DFE_GROUPWRITE, FAIL);
 
-    return(SUCCEED);
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRIupdateRIG() */
 
 /*--------------------------------------------------------------------------
@@ -1385,22 +1439,23 @@ intn GRIupdateRI(int32 hdf_file_id,ri_info_t *img_ptr)
 {
     CONSTR(FUNC, "GRIupdateRI");   /* for HERROR */
     int32 GroupID;      /* RI vgroup id */
+    intn  ret_value = SUCCEED;
 
     HEclear();
     if (!HDvalidfid(hdf_file_id) || img_ptr==NULL)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
 #ifdef QAK
 printf("%s: check 1.0\n",FUNC);
 #endif /* QAK */
     /* Write out the image/palette meta-information */
     if (GRIupdatemeta(hdf_file_id,img_ptr)==FAIL)
-        HRETURN_ERROR(DFE_INTERNAL, FAIL);
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* Write out the RI Vgroup itself */
     if ((GroupID = Vattach(hdf_file_id,(img_ptr->ri_ref>DFTAG_NULL ?
             img_ptr->ri_ref : -1),"w")) == FAIL)
-        HRETURN_ERROR(DFE_CANTATTACH, FAIL);
+        HGOTO_ERROR(DFE_CANTATTACH, FAIL);
 
 #ifdef QAK
 printf("%s: check 2.0, GroupID=%ld\n",FUNC,(long)GroupID);
@@ -1412,15 +1467,15 @@ printf("%s: check 2.0, GroupID=%ld\n",FUNC,(long)GroupID);
     /* Set the name of the RI */
     if(img_ptr->name!=NULL)
         if(Vsetname(GroupID,img_ptr->name)==FAIL)
-            HRETURN_ERROR(DFE_BADVSNAME,FAIL);
+            HGOTO_ERROR(DFE_BADVSNAME,FAIL);
 
     /* Set the class of the RI group */
     if(Vsetclass(GroupID,RI_NAME)==FAIL)
-        HRETURN_ERROR(DFE_BADVSNAME,FAIL);
+        HGOTO_ERROR(DFE_BADVSNAME,FAIL);
 
     /* add image dimension tag/ref to RIG */
     if (Vaddtagref(GroupID, DFTAG_ID, (uint16) img_ptr->img_dim.dim_ref) == FAIL)
-        HRETURN_ERROR(DFE_CANTADDELEM, FAIL);
+        HGOTO_ERROR(DFE_CANTADDELEM, FAIL);
 
     /* If we don't have a tag for the image, just use DFTAG_RI for now */
     if(img_ptr->img_tag==DFTAG_NULL)
@@ -1428,25 +1483,33 @@ printf("%s: check 2.0, GroupID=%ld\n",FUNC,(long)GroupID);
 
     /* add image data tag/ref to RIG */
     if (Vaddtagref(GroupID, img_ptr->img_tag, img_ptr->img_ref) == FAIL)
-        HRETURN_ERROR(DFE_CANTADDELEM, FAIL);
+        HGOTO_ERROR(DFE_CANTADDELEM, FAIL);
 
     /* Check if we should write palette information */
     if(img_ptr->lut_ref>DFTAG_NULL)
       {
           /* add palette dimension tag/ref to RIG */
           if (Vaddtagref(GroupID, DFTAG_LD, (uint16) img_ptr->lut_dim.dim_ref) == FAIL)
-              HRETURN_ERROR(DFE_CANTADDELEM, FAIL);
+              HGOTO_ERROR(DFE_CANTADDELEM, FAIL);
 
           /* add palette data tag/ref to RIG */
           if (Vaddtagref(GroupID, img_ptr->lut_tag, img_ptr->lut_ref) == FAIL)
-              HRETURN_ERROR(DFE_CANTADDELEM, FAIL);
+              HGOTO_ERROR(DFE_CANTADDELEM, FAIL);
       } /* end if */
 
     /* write out RIG */
     if(Vdetach(GroupID)==FAIL)
-        HRETURN_ERROR(DFE_CANTDETACH, FAIL);
+        HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 
-    return(SUCCEED);
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRIupdateRI() */
 
 /*--------------------------------------------------------------------------
@@ -1473,10 +1536,11 @@ printf("%s: check 2.0, GroupID=%ld\n",FUNC,(long)GroupID);
 intn GRIup_attr_data(int32 hdf_file_id,at_info_t *attr_ptr)
 {
     CONSTR(FUNC, "GRIup_attr_data");   /* for HERROR */
+    intn   ret_value = SUCCEED;
 
     HEclear();
     if (!HDvalidfid(hdf_file_id) || attr_ptr==NULL)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
 #ifdef QAK
 printf("%s: attr_ptr->ref=%u\n",FUNC,attr_ptr->ref);
@@ -1486,7 +1550,7 @@ printf("%s: attr_ptr->ref=%u\n",FUNC,attr_ptr->ref);
       {
         if((attr_ptr->ref=(uint16)VHstoredata(hdf_file_id,attr_ptr->name,attr_ptr->data,
                 attr_ptr->len,attr_ptr->nt,RIGATTRNAME,RIGATTRCLASS))==(uint16)FAIL)
-            HRETURN_ERROR(DFE_VSCANTCREATE,FAIL);
+            HGOTO_ERROR(DFE_VSCANTCREATE,FAIL);
         attr_ptr->new_at=TRUE;
       } /* end if */
     else    /* update an existing one */
@@ -1494,15 +1558,24 @@ printf("%s: attr_ptr->ref=%u\n",FUNC,attr_ptr->ref);
         int32 AttrID;       /* attribute Vdata id */
 
         if((AttrID=VSattach(hdf_file_id,attr_ptr->ref,"w"))==FAIL)
-            HRETURN_ERROR(DFE_CANTATTACH,FAIL);
+            HGOTO_ERROR(DFE_CANTATTACH,FAIL);
         if(VSsetfields(AttrID,attr_ptr->name)==FAIL)
-            HRETURN_ERROR(DFE_BADFIELDS,FAIL);
+            HGOTO_ERROR(DFE_BADFIELDS,FAIL);
         if(VSwrite(AttrID,attr_ptr->data,attr_ptr->len,FULL_INTERLACE)==FAIL)
-            HRETURN_ERROR(DFE_VSWRITE,FAIL);
+            HGOTO_ERROR(DFE_VSWRITE,FAIL);
         if(VSdetach(AttrID)==FAIL)
-            HRETURN_ERROR(DFE_CANTDETACH,FAIL);
+            HGOTO_ERROR(DFE_CANTDETACH,FAIL);
       } /* end else */
-    return(SUCCEED);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRIup_attr_data() */
 
 /*--------------------------------------------------------------------------
@@ -1532,13 +1605,14 @@ intn GRend(int32 grid)
     int32 GroupID;              /* VGroup ID for the GR group */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     filerec_t *file_rec;        /* File record */
+    intn   ret_value = SUCCEED;
 
     /* clear error stack and check validity of file id */
     HEclear();
 
     /* check the validity of the GR ID */
     if(!VALIDGRID(grid))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     
     /* Get the array index for the grid */
     gr_idx=GRID2SLOT(grid);
@@ -1552,16 +1626,16 @@ intn GRend(int32 grid)
         if(gr_ptr->gr_ref==DFTAG_NULL)
           {
             if((GroupID=Vattach(gr_ptr->hdf_file_id,-1,"w"))==FAIL)
-                HRETURN_ERROR(DFE_CANTATTACH,FAIL);
+                HGOTO_ERROR(DFE_CANTATTACH,FAIL);
             if((gr_ptr->gr_ref=(uint16)VQueryref(GroupID))==(uint16)FAIL)
-                HRETURN_ERROR(DFE_NOVALS,FAIL);
+                HGOTO_ERROR(DFE_NOVALS,FAIL);
             if(Vsetname(GroupID,GR_NAME)==FAIL)
-                HRETURN_ERROR(DFE_BADVSNAME,FAIL);
+                HGOTO_ERROR(DFE_BADVSNAME,FAIL);
           } /* end if */
         else
           {
             if((GroupID=Vattach(gr_ptr->hdf_file_id,gr_ptr->gr_ref,"w"))==FAIL)
-                HRETURN_ERROR(DFE_CANTATTACH,FAIL);
+                HGOTO_ERROR(DFE_CANTATTACH,FAIL);
           } /* end else */
 
         /* Write out the information for RIs which have been changed */
@@ -1578,7 +1652,7 @@ printf("%s: gr_modified=%d, gr_count=%ld\n",FUNC,gr_ptr->gr_modified,(long)gr_pt
 #endif /* QAK */
               if (NULL == (t = (VOIDP *) tbbtfirst((TBBT_NODE *) * (gr_ptr->grtree))))
                 {
-                    HRETURN_ERROR(DFE_NOTINTABLE, FAIL);
+                    HGOTO_ERROR(DFE_NOTINTABLE, FAIL);
                 } /* end if */
               else
                   img_ptr = (ri_info_t *) * t;   /* get actual pointer to the ri_info_t */
@@ -1602,9 +1676,9 @@ printf("%s: ri_ref=%u\n",FUNC,img_ptr->ri_ref);
                       {
                           /* write out the RI/RIG information again */
                           if(GRIupdateRIG(gr_ptr->hdf_file_id,img_ptr)==FAIL)
-                              HRETURN_ERROR(DFE_INTERNAL, FAIL);
+                              HGOTO_ERROR(DFE_INTERNAL, FAIL);
                           if(GRIupdateRI(gr_ptr->hdf_file_id,img_ptr)==FAIL)
-                              HRETURN_ERROR(DFE_INTERNAL, FAIL);
+                              HGOTO_ERROR(DFE_INTERNAL, FAIL);
                           img_ptr->meta_modified=FALSE;
                       } /* end if */
 
@@ -1616,7 +1690,7 @@ printf("%s: ri_ref=%u\n",FUNC,img_ptr->ri_ref);
 
                           if (NULL == (t = (VOIDP *) tbbtfirst((TBBT_NODE *) * (img_ptr->lattree))))
                             {
-                                HRETURN_ERROR(DFE_NOTINTABLE, FAIL);
+                                HGOTO_ERROR(DFE_NOTINTABLE, FAIL);
                             } /* end if */
                           else
                               attr_ptr = (at_info_t *) * t;   /* get actual pointer to the at_info_t */
@@ -1628,7 +1702,7 @@ printf("%s: ri_ref=%u\n",FUNC,img_ptr->ri_ref);
                                 if(attr_ptr->data_modified==TRUE)
                                   {
                                       if(GRIup_attr_data(gr_ptr->hdf_file_id,attr_ptr)==FAIL)
-                                          HRETURN_ERROR(DFE_INTERNAL, FAIL);
+                                          HGOTO_ERROR(DFE_INTERNAL, FAIL);
                                       attr_ptr->data_modified=FALSE;
                                   } /* end if */
 
@@ -1641,11 +1715,11 @@ printf("%s: ri_ref=%u, atptr->ref=%u\n",FUNC,img_ptr->ri_ref,attr_ptr->ref);
                                       int32 GroupID;  /* ID of the Vgroup */
 
                                       if((GroupID=Vattach(gr_ptr->hdf_file_id,img_ptr->ri_ref,"w"))==FAIL)
-                                          HRETURN_ERROR(DFE_CANTATTACH,FAIL);
+                                          HGOTO_ERROR(DFE_CANTATTACH,FAIL);
                                       if(Vaddtagref(GroupID,ATTR_TAG,attr_ptr->ref)==FAIL)
-                                          HRETURN_ERROR(DFE_CANTADDELEM,FAIL);
+                                          HGOTO_ERROR(DFE_CANTADDELEM,FAIL);
                                       if(Vdetach(GroupID)==FAIL)
-                                          HRETURN_ERROR(DFE_CANTDETACH,FAIL);
+                                          HGOTO_ERROR(DFE_CANTDETACH,FAIL);
                                       attr_ptr->new_at=FALSE;
                                   } /* end if */
 
@@ -1659,7 +1733,7 @@ printf("%s: ri_ref=%u, atptr->ref=%u\n",FUNC,img_ptr->ri_ref,attr_ptr->ref);
                     /* Check if the RI is already in the GR, add it if not */
                     if(Vinqtagref(GroupID,RI_TAG,img_ptr->ri_ref)==FALSE)
                         if(Vaddtagref(GroupID,RI_TAG,img_ptr->ri_ref)==FAIL)
-                            HRETURN_ERROR(DFE_CANTADDELEM,FAIL);
+                            HGOTO_ERROR(DFE_CANTADDELEM,FAIL);
 
                     /* get the next image in the tree/list */
                     if (NULL != (t = (VOIDP *) tbbtnext((TBBT_NODE *) t)))     /* get the next node in the tree */
@@ -1678,7 +1752,7 @@ printf("%s: gr_ptr=%p, gr_ptr->gattr_modified=%d, gr_ptr->gattr_count=%ld\n",FUN
 
               if (NULL == (t = (VOIDP *) tbbtfirst((TBBT_NODE *) * (gr_ptr->gattree))))
                 {
-                    HRETURN_ERROR(DFE_NOTINTABLE, FAIL);
+                    HGOTO_ERROR(DFE_NOTINTABLE, FAIL);
                 } /* end if */
               else
                   attr_ptr = (at_info_t *) * t;   /* get actual pointer to the at_info_t */
@@ -1696,7 +1770,7 @@ printf("%s: attr_ptr->data_modified=%d\n",FUNC,attr_ptr->data_modified);
                     if(attr_ptr->data_modified==TRUE)
                       {
                         if(GRIup_attr_data(gr_ptr->hdf_file_id,attr_ptr)==FAIL)
-                            HRETURN_ERROR(DFE_INTERNAL, FAIL);
+                            HGOTO_ERROR(DFE_INTERNAL, FAIL);
                         attr_ptr->data_modified=FALSE;
 
 #ifdef QAK
@@ -1709,7 +1783,7 @@ printf("%s: attr_ptr->new_at=%d\n",FUNC,attr_ptr->new_at);
 printf("%s: GroupID=%ld\n",FUNC,(long)GroupID);
 #endif /* QAK */
                             if(Vaddtagref(GroupID,ATTR_TAG,attr_ptr->ref)==FAIL)
-                                HRETURN_ERROR(DFE_CANTADDELEM,FAIL);
+                                HGOTO_ERROR(DFE_CANTADDELEM,FAIL);
                             attr_ptr->new_at=FALSE;
                           } /* end if */
                       } /* end if */
@@ -1723,7 +1797,7 @@ printf("%s: GroupID=%ld\n",FUNC,(long)GroupID);
 
         /* Let go of the GR Vgroup */
         if(Vdetach(GroupID)==FAIL)
-            HRETURN_ERROR(DFE_CANTDETACH,FAIL);
+            HGOTO_ERROR(DFE_CANTDETACH,FAIL);
       } /* end if */
 
     /* Free all the memory we've allocated */
@@ -1736,8 +1810,17 @@ printf("%s: GroupID=%ld\n",FUNC,(long)GroupID);
 
     /* Close down the Vset routines we started */
     if(Vend(hdf_file_id)==FAIL)
-        HRETURN_ERROR(DFE_CANTSHUTDOWN,FAIL);
-    return(SUCCEED);
+        HGOTO_ERROR(DFE_CANTSHUTDOWN,FAIL);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRend() */
 
 /*--------------------------------------------------------------------------
@@ -1769,13 +1852,14 @@ int32 GRselect(int32 grid,int32 index)
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
+    int32  ret_value = SUCCEED;
 
     /* clear error stack and check validity of file id */
     HEclear();
 
     /* check the validity of the GR ID */
     if(!VALIDGRID(grid))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     
     /* Get the array index for the grid */
     gr_idx=GRID2SLOT(grid);
@@ -1783,15 +1867,25 @@ int32 GRselect(int32 grid,int32 index)
 
     /* check the index range validity */
     if(!VALIDRIINDEX(index,gr_ptr))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
     ri_ptr->access++;
 
-    return(RISLOT2ID(gr_idx,index));
+    ret_value = (RISLOT2ID(gr_idx,index));
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRselect() */
 
 /*--------------------------------------------------------------------------
@@ -1829,6 +1923,7 @@ int32 GRcreate(int32 grid,char *name,int32 ncomp,int32 nt,int32 il,int32 dimsize
     int32 gr_idx;               /* index into the gr_tab array */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    int32    ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
@@ -1837,7 +1932,7 @@ int32 GRcreate(int32 grid,char *name,int32 ncomp,int32 nt,int32 il,int32 dimsize
     if(!VALIDGRID(grid) || name==NULL || ncomp<1 || (il!=MFGR_INTERLACE_PIXEL
             && il!=MFGR_INTERLACE_LINE && il!=MFGR_INTERLACE_COMPONENT)
             || dimsizes==NULL || dimsizes[0]<=0 || dimsizes[1]<=0)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     
     /* Get the array index for the grid */
     gr_idx=GRID2SLOT(grid);
@@ -1845,12 +1940,12 @@ int32 GRcreate(int32 grid,char *name,int32 ncomp,int32 nt,int32 il,int32 dimsize
 
     /* Allocate space for the new image information */
     if((ri_ptr=(ri_info_t *)HDmalloc(sizeof(ri_info_t)))==NULL)
-        HRETURN_ERROR(DFE_NOSPACE,FAIL);
+        HGOTO_ERROR(DFE_NOSPACE,FAIL);
     HDmemset(ri_ptr,0,sizeof(ri_info_t));
     
     /* Allocate space for the name and copy it */
     if((ri_ptr->name=(char *)HDmalloc(HDstrlen(name)+1))==NULL)
-        HRETURN_ERROR(DFE_NOSPACE,FAIL);
+        HGOTO_ERROR(DFE_NOSPACE,FAIL);
     HDstrcpy(ri_ptr->name,name);
 
     /* Assign image information */
@@ -1876,7 +1971,7 @@ int32 GRcreate(int32 grid,char *name,int32 ncomp,int32 nt,int32 il,int32 dimsize
     ri_ptr->lattr_count=0;
     ri_ptr->lattree = tbbtdmake(rigcompare, sizeof(int32));
     if(ri_ptr->lattree==NULL)
-        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
     ri_ptr->comp_img=FALSE;
     ri_ptr->ext_img=FALSE;
     ri_ptr->acc_img=FALSE;
@@ -1892,7 +1987,17 @@ int32 GRcreate(int32 grid,char *name,int32 ncomp,int32 nt,int32 il,int32 dimsize
     gr_ptr->gr_modified=TRUE;
     gr_ptr->gr_count++;
 
-    return(RISLOT2ID(gr_idx,ri_ptr->index));
+    ret_value = (RISLOT2ID(gr_idx,ri_ptr->index));
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRcreate() */
 
 /*--------------------------------------------------------------------------
@@ -1923,27 +2028,41 @@ int32 GRnametoindex(int32 grid,char *name)
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
+    int32   ret_value = SUCCEED;
 
     /* clear error stack and check validity of file id */
     HEclear();
 
     /* check the validity of the GR ID */
     if(!VALIDGRID(grid) || name==NULL)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     
     /* Get the array index for the grid */
     gr_idx=GRID2SLOT(grid);
     gr_ptr=gr_tab[gr_idx];
 
     if((t = (VOIDP *) tbbtfirst((TBBT_NODE *)* (gr_ptr->grtree)))==NULL)
-        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     do {
         ri_ptr=(ri_info_t *)*t;
         if(ri_ptr!=NULL && HDstrcmp(ri_ptr->name,name)==0)  /* ie. the name matches */
-            return(ri_ptr->index);
+          {
+            ret_value =(ri_ptr->index);
+            goto done;
+          }
     } while((t= (VOIDP *) tbbtnext((TBBT_NODE *)t))!=NULL);
 
-    return(FAIL);
+    ret_value = (FAIL);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRnametoindex() */
 
 /*--------------------------------------------------------------------------
@@ -1985,13 +2104,14 @@ intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
     int32 index;                /* index of the RI in the GR */
+    intn  ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
 
     /* check the validity of the RI ID */
     if(!VALIDRIID(riid))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     
     /* Get the array index for the grid */
     gr_idx=RIID2GRID(riid);
@@ -2000,10 +2120,10 @@ intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
     /* check the index range validity */
     index=RIID2SLOT(riid);
     if(!VALIDRIINDEX(index,gr_ptr))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
     if(name!=NULL)
@@ -2027,7 +2147,15 @@ intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
     if(n_attr!=NULL)
         *n_attr=ri_ptr->lattr_count;
 
-    return(SUCCEED);
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRgetiminfo() */
 
 /*--------------------------------------------------------------------------
@@ -2084,6 +2212,7 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
     intn convert;               /* true if machine NT != NT to be written */
     uint8 platnumsubclass;      /* class of this NT for this platform */
     intn new_image=FALSE;       /* whether we are writing a new image out */
+    intn ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -2094,7 +2223,7 @@ printf("%s: check 1\n",FUNC);
     /* check the basic validity of the args (stride is OK to be NULL) */
     if(!VALIDRIID(riid) || start==NULL /* || in_stride==NULL */ || count==NULL
             || data==NULL)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     
     /* Get the correct parameters into the stride array */
     if(in_stride==NULL)
@@ -2108,7 +2237,7 @@ printf("%s: check 1\n",FUNC);
     /* Sanity check the start, stride, and count args */
     if((start[XDIM]<0 || start[YDIM]<0) || (stride[XDIM]<1 || stride[YDIM]<1)
             || (count[XDIM]<1 || count[YDIM]<1))
-        HRETURN_ERROR(DFE_BADDIM, FAIL);
+        HGOTO_ERROR(DFE_BADDIM, FAIL);
 
 #ifdef QAK
 printf("%s: check 2, stride[XDIM,YDIM]=%ld, %ld\n",FUNC,stride[XDIM],stride[YDIM]);
@@ -2129,10 +2258,10 @@ printf("%s: data=%p\n",FUNC,data);
     /* check the index range validity */
     index=RIID2SLOT(riid);
     if(!VALIDRIINDEX(index,gr_ptr))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
 #ifdef QAK
@@ -2167,7 +2296,7 @@ printf("%s: check 3\n",FUNC);
       {   /* convert image data to HDF disk format */
           /* Allocate space for the conversion buffer */
           if((img_data=HDmalloc(pixel_disk_size*count[XDIM]*count[YDIM]))==NULL)
-              HRETURN_ERROR(DFE_NOSPACE,FAIL);
+              HGOTO_ERROR(DFE_NOSPACE,FAIL);
 
           /* convert the pixel data into the HDF disk format */
           DFKconvert(data,img_data,ri_ptr->img_dim.nt,
@@ -2217,7 +2346,7 @@ printf("%s: check 5, new_image=%d, whole_image=%d, solid_block=%d\n",FUNC,new_im
             { /* write the whole image out */
                 if(Hputelement(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
                         (uint8 *)img_data,pixel_disk_size*count[XDIM]*count[YDIM])==FAIL)
-                    HRETURN_ERROR(DFE_PUTELEM,FAIL);
+                    HGOTO_ERROR(DFE_PUTELEM,FAIL);
             } /* end if */
           else
             { /* write only part of the image out */
@@ -2235,7 +2364,7 @@ printf("%s: check 6, ri_ptr->fill_img=%d, tag=%u, ref=%u\n",FUNC,(int)ri_ptr->fi
 #endif /* QAK */
                 if((aid=Hstartaccess(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
                         DFACC_WRITE))==FAIL)
-                    HRETURN_ERROR(DFE_BADAID,FAIL);
+                    HGOTO_ERROR(DFE_BADAID,FAIL);
                   
                 img_offset=((ri_ptr->img_dim.xdim*start[YDIM])+start[XDIM])*pixel_disk_size;
 
@@ -2249,7 +2378,7 @@ printf("%s: check 6, ri_ptr->fill_img=%d, tag=%u, ref=%u\n",FUNC,(int)ri_ptr->fi
 printf("%s: check 6.5, creating new image and need to fill it, ri_ptr->fill_value=%p\n",FUNC,ri_ptr->fill_value);
 #endif /* QAK */
                       if((fill_pixel=(VOIDP)HDmalloc(pixel_disk_size))==NULL)
-                          HRETURN_ERROR(DFE_NOSPACE,FAIL);
+                          HGOTO_ERROR(DFE_NOSPACE,FAIL);
 
                       /* create correct disk version of fill pixel */
                       if(ri_ptr->fill_value!=NULL)
@@ -2262,7 +2391,7 @@ printf("%s: check 6.5, creating new image and need to fill it, ri_ptr->fill_valu
                           if((at_index=GRfindattr(riid,FILL_ATTR))!=FAIL)
                             { /* Found a fill value attribute */
                                 if(GRgetattr(riid,at_index,fill_pixel)==FAIL)
-                                    HRETURN_ERROR(DFE_BADATTR,FAIL);
+                                    HGOTO_ERROR(DFE_BADATTR,FAIL);
                             } /* end if */
                           else
                               HDmemset(fill_pixel,0,pixel_disk_size);
@@ -2285,7 +2414,7 @@ printf("%s: check 6.75, xdim=%ld, ydim=%ld, fill_lo_size=%ld, fill_hi_size=%ld\n
                       /* allocate space for the "line" block */
                       fill_line_size=pixel_disk_size*ri_ptr->img_dim.xdim;
                       if((fill_line=(VOIDP)HDmalloc(fill_line_size))==NULL)
-                            HRETURN_ERROR(DFE_NOSPACE,FAIL);
+                            HGOTO_ERROR(DFE_NOSPACE,FAIL);
                       HDmemfill(fill_line,fill_pixel,pixel_disk_size,ri_ptr->img_dim.xdim);
 
                       fill_image=TRUE;  /* set flag to write out fill pixels */
@@ -2316,7 +2445,7 @@ printf("%s: check 8\n",FUNC);
 #endif /* QAK */
 #ifdef QAK
                             if(Hseek(aid,0,DF_START)==FAIL)
-                                HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+                                HGOTO_ERROR(DFE_SEEKERROR,FAIL);
 #endif /* QAK */
 
 #ifdef QAK
@@ -2327,7 +2456,7 @@ printf("%s: check 8.5\n",FUNC);
                               { /* fill in the lines leading up the block */
                                 for(i=0; i<start[YDIM]; i++)
                                     if(Hwrite(aid,fill_line_size,fill_line)==FAIL)
-                                        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                        HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                               } /* end if */
 
 #ifdef QAK
@@ -2336,7 +2465,7 @@ printf("%s: check 9\n",FUNC);
                             /* write prelude of low pixels */
                             if(fill_lo_size>0)
                                 if(Hwrite(aid,fill_lo_size,fill_line)==FAIL)
-                                    HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                    HGOTO_ERROR(DFE_WRITEERROR,FAIL);
 
 #ifdef QAK
 printf("%s: check 10, fill_lo_size=%ld, fill_hi_size=%ld, pix_len=%ld\n",FUNC,(long)fill_lo_size,(long)fill_hi_size,(long)pix_len);
@@ -2346,7 +2475,7 @@ printf("%s: *tmp_data=%u\n",FUNC,(unsigned)*(uint8 *)tmp_data);
                             for(i=0; i<count[YDIM]; i++)
                               {
                                   if(Hwrite(aid,pix_len,tmp_data)==FAIL)
-                                      HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                      HGOTO_ERROR(DFE_WRITEERROR,FAIL);
 
                                   /* This next write wraps around the high side */
                                   /* of the block and writes the next low side */
@@ -2354,7 +2483,7 @@ printf("%s: *tmp_data=%u\n",FUNC,(unsigned)*(uint8 *)tmp_data);
                                   if((fill_hi_size+fill_lo_size)>0
                                           && i<(count[YDIM]-1))
                                       if(Hwrite(aid,(fill_hi_size+fill_lo_size),fill_line)==FAIL)
-                                          HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                          HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                                   tmp_data=(VOIDP)((char *)tmp_data+pix_len);
                               } /* end for */
                             
@@ -2364,7 +2493,7 @@ printf("%s: check 11\n",FUNC);
                             /* Finish the last chunk of high side fill values */
                             if(fill_hi_size>0)
                                 if(Hwrite(aid,fill_hi_size,fill_line)==FAIL)
-                                    HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                    HGOTO_ERROR(DFE_WRITEERROR,FAIL);
 
 #ifdef QAK
 printf("%s: check 12\n",FUNC);
@@ -2376,7 +2505,7 @@ printf("%s: check 12\n",FUNC);
                                 for(i=start[YDIM]+((count[YDIM]-1)*stride[YDIM])+1;
                                         i<ri_ptr->img_dim.ydim; i++)
                                     if(Hwrite(aid,fill_line_size,fill_line)==FAIL)
-                                        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                        HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                               } /* end if */
 #ifdef QAK
 printf("%s: check 12.4\n",FUNC);
@@ -2392,9 +2521,9 @@ printf("%s: check 12.5\n",FUNC);
                             for(i=0; i<count[YDIM]; i++)
                               {
                                   if(Hseek(aid,img_offset,DF_START)==FAIL)
-                                      HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+                                      HGOTO_ERROR(DFE_SEEKERROR,FAIL);
                                   if(Hwrite(aid,pix_len,tmp_data)==FAIL)
-                                      HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                      HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                                   img_offset+=pixel_disk_size*ri_ptr->img_dim.xdim;
                                   tmp_data=(VOIDP)((char *)tmp_data+pix_len);
                               } /* end for */
@@ -2428,7 +2557,7 @@ printf("%s: check 14\n",FUNC);
                             /* write fills and sub-sampled data */
 #ifdef QAK
                             if(Hseek(aid,0,DF_START)==FAIL)
-                                HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+                                HGOTO_ERROR(DFE_SEEKERROR,FAIL);
 #endif /* QAK */
 
                             /* write out lines "below" the block */
@@ -2443,7 +2572,7 @@ printf("%s: check 14.1 start[YDIM]=%d, writing %ld bytes\n",FUNC,(int)start[YDIM
 printf("%s: check 14.15 i=%d\n",FUNC,i);
 #endif /* QAK */
                                     if(Hwrite(aid,fill_line_size,fill_line)==FAIL)
-                                        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                        HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                                   } /* end for */
                               } /* end if */
 
@@ -2454,7 +2583,7 @@ printf("%s: check 14.15 i=%d\n",FUNC,i);
 printf("%s: check 14.2 writing prelude of %d bytes\n",FUNC,(int)fill_lo_size);
 #endif /* QAK */
                                 if(Hwrite(aid,fill_lo_size,fill_line)==FAIL)
-                                    HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                    HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                               } /* end if */
 
 #ifdef QAK
@@ -2468,14 +2597,14 @@ printf("%s: check 14.61, count[YDIM]=%ld, count[XDIM]=%ld\n",FUNC,(long)count[YD
                                   for(j=0; j<count[XDIM]; j++)
                                     {
                                       if(Hwrite(aid,pixel_disk_size,tmp_data)==FAIL)
-                                          HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                          HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                                       if(fill_xdim==TRUE && j<(count[XDIM]-1))
                                         {
 #ifdef QAK
 printf("%s: check 14.63, writing fill_stride_size=%ld bytes\n",FUNC,(long)fill_stride_size);
 #endif /* QAK */
                                           if(Hwrite(aid,fill_stride_size,fill_line)==FAIL)
-                                              HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                              HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                                         } /* end if */
                                       tmp_data=(VOIDP)((char *)tmp_data+pixel_disk_size);
                                     } /* end for */
@@ -2488,7 +2617,7 @@ printf("%s: check 14.63, writing fill_stride_size=%ld bytes\n",FUNC,(long)fill_s
 printf("%s: check 14.65, k=%d\n",FUNC,(int)k);
 #endif /* QAK */
                                           if(Hwrite(aid,fill_line_size,fill_line)==FAIL)
-                                              HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                              HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                                         } /* end for */
 
                                   /* This next write wraps around the high side */
@@ -2501,7 +2630,7 @@ printf("%s: check 14.65, k=%d\n",FUNC,(int)k);
 printf("%s: check 14.7, i=%d\n",FUNC,(int)i);
 #endif /* QAK */
                                       if(Hwrite(aid,(fill_hi_size+fill_lo_size),fill_line)==FAIL)
-                                          HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                          HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                                     } /* end if */
                               } /* end for */
 
@@ -2512,7 +2641,7 @@ printf("%s: check 14.7, i=%d\n",FUNC,(int)i);
 printf("%s: check 14.75, fill_hi_size=%d\n",FUNC,(int)fill_hi_size);
 #endif /* QAK */
                                 if(Hwrite(aid,fill_hi_size,fill_line)==FAIL)
-                                    HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                    HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                               } /* end if */
 
 #ifdef INCORRECT
@@ -2526,7 +2655,7 @@ printf("%s: check 14.8, ri_ptr->img_dim.xdim=%d, ri_ptr->img_dim.ydim=%d\n",FUNC
                                   {
 printf("%s: check 14.81, i=%d\n",FUNC,i);
                                     if(Hwrite(aid,fill_line_size,fill_line)==FAIL)
-                                        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                        HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                                   } /* end for */
                               } /* end if */
 #endif /* QAK */
@@ -2552,9 +2681,9 @@ printf("%s: check 15.5, local_offset=%ld\n",FUNC,(long)local_offset);
                                   for(j=0; j<count[XDIM]; j++)
                                     {
                                       if(Hseek(aid,local_offset,DF_START)==FAIL)
-                                          HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+                                          HGOTO_ERROR(DFE_SEEKERROR,FAIL);
                                       if(Hwrite(aid,pixel_disk_size,tmp_data)==FAIL)
-                                          HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                          HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                                       local_offset+=stride_add;
                                       tmp_data=(VOIDP)((char *)tmp_data+pixel_disk_size);
                                     } /* end for */
@@ -2568,7 +2697,7 @@ printf("%s: check 15.5, local_offset=%ld\n",FUNC,(long)local_offset);
                     HDfree(fill_line);
 
                 if(Hendaccess(aid)==FAIL)
-                    HRETURN_ERROR(DFE_CANTENDACCESS,FAIL);
+                    HGOTO_ERROR(DFE_CANTENDACCESS,FAIL);
             } /* end else */
           ri_ptr->data_modified=TRUE;
       } /* end else */
@@ -2577,7 +2706,15 @@ printf("%s: check 15.5, local_offset=%ld\n",FUNC,(long)local_offset);
     ri_ptr->data_modified=TRUE;
     gr_ptr->gr_modified=TRUE;
 
-    return(SUCCEED);
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRwriteimage() */
 
 /*--------------------------------------------------------------------------
@@ -2631,6 +2768,7 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOI
     uintn pixel_disk_size;      /* size of a pixel on disk */
     intn convert;               /* true if machine NT != NT to be written */
     uint8 platnumsubclass;      /* class of this NT for this platform */
+    intn  ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -2638,7 +2776,7 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOI
     /* check the basic validity of the args (stride is OK to be NULL) */
     if(!VALIDRIID(riid) || start==NULL /* || in_stride==NULL */ || count==NULL
             || data==NULL)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     
     /* Get the correct parameters into the stride array */
     if(in_stride==NULL)
@@ -2652,7 +2790,7 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOI
     /* Sanity check the start, stride, and count args */
     if((start[XDIM]<0 || start[YDIM]<0) || (stride[XDIM]<1 || stride[YDIM]<1)
             || (count[XDIM]<1 || count[YDIM]<1))
-        HRETURN_ERROR(DFE_BADDIM, FAIL);
+        HGOTO_ERROR(DFE_BADDIM, FAIL);
 
 #ifdef QAK
 printf("%s: riid=%ld\n",FUNC,(long)riid);
@@ -2669,10 +2807,10 @@ printf("%s: data=%p\n",FUNC,data);
     /* check the index range validity */
     index=RIID2SLOT(riid);
     if(!VALIDRIINDEX(index,gr_ptr))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
     if(stride[XDIM]==1 && stride[YDIM]==1)
@@ -2709,13 +2847,13 @@ printf("%s: convert=%d\n",FUNC,(int)convert);
           pixel_mem_size=ri_ptr->img_dim.ncomps*DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND));
 
           if((fill_pixel=(VOIDP)HDmalloc(pixel_mem_size))==NULL)
-              HRETURN_ERROR(DFE_NOSPACE,FAIL);
+              HGOTO_ERROR(DFE_NOSPACE,FAIL);
 
           /* Try to find a fill value attribute */
           if((at_index=GRfindattr(riid,FILL_ATTR))!=FAIL)
             { /* Found a fill value attribute */
                 if(GRgetattr(riid,at_index,fill_pixel)==FAIL)
-                    HRETURN_ERROR(DFE_BADATTR,FAIL);
+                    HGOTO_ERROR(DFE_BADATTR,FAIL);
             } /* end if */
           else /* no fill value attribute */
               HDmemset(fill_pixel,0,pixel_mem_size);
@@ -2733,7 +2871,7 @@ printf("%s: image exists\n",FUNC);
             {   /* convert image data to HDF disk format */
                 /* Allocate space for the conversion buffer */
                 if((img_data=HDmalloc(pixel_disk_size*count[XDIM]*count[YDIM]))==NULL)
-                    HRETURN_ERROR(DFE_NOSPACE,FAIL);
+                    HGOTO_ERROR(DFE_NOSPACE,FAIL);
             } /* end if */
           else /* no conversion necessary, just use the user's buffer */
               img_data=data;
@@ -2748,7 +2886,7 @@ printf("%s: check 1.3, tag=%u, ref=%u\n",FUNC,(unsigned)ri_ptr->img_tag,(unsigne
 #endif /* QAK */
                 if(Hgetelement(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
                         (uint8 *)img_data)==FAIL)
-                    HRETURN_ERROR(DFE_GETELEM,FAIL);
+                    HGOTO_ERROR(DFE_GETELEM,FAIL);
             } /* end if */
           else
             { /* read only part of the image in */
@@ -2761,7 +2899,7 @@ printf("%s: check 1.5\n",FUNC);
 #endif /* QAK */
                 if((aid=Hstartaccess(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
                         DFACC_READ))==FAIL)
-                    HRETURN_ERROR(DFE_BADAID,FAIL);
+                    HGOTO_ERROR(DFE_BADAID,FAIL);
                   
                 img_offset=((ri_ptr->img_dim.xdim*start[YDIM])+start[XDIM])*pixel_disk_size;
 
@@ -2780,9 +2918,9 @@ printf("%s: check 2\n",FUNC);
                       for(i=0; i<count[YDIM]; i++)
                         {
                             if(Hseek(aid,img_offset,DF_START)==FAIL)
-                                HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+                                HGOTO_ERROR(DFE_SEEKERROR,FAIL);
                             if(Hread(aid,pix_len,tmp_data)==FAIL)
-                                HRETURN_ERROR(DFE_READERROR,FAIL);
+                                HGOTO_ERROR(DFE_READERROR,FAIL);
                             img_offset+=pixel_disk_size*ri_ptr->img_dim.xdim;
                             tmp_data=(VOIDP)((char *)tmp_data+pix_len);
                         } /* end for */
@@ -2805,9 +2943,9 @@ printf("%s: check 3\n",FUNC);
                             for(j=0; j<count[XDIM]; j++)
                               {
                                 if(Hseek(aid,local_offset,DF_START)==FAIL)
-                                    HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+                                    HGOTO_ERROR(DFE_SEEKERROR,FAIL);
                                 if(Hread(aid,pixel_disk_size,tmp_data)==FAIL)
-                                    HRETURN_ERROR(DFE_READERROR,FAIL);
+                                    HGOTO_ERROR(DFE_READERROR,FAIL);
                                 local_offset+=stride_add;
                                 tmp_data=(VOIDP)((char *)tmp_data+pixel_disk_size);
                               } /* end for */
@@ -2816,7 +2954,7 @@ printf("%s: check 3\n",FUNC);
                         } /* end for */
                   } /* end else */
                 if(Hendaccess(aid)==FAIL)
-                    HRETURN_ERROR(DFE_CANTENDACCESS,FAIL);
+                    HGOTO_ERROR(DFE_CANTENDACCESS,FAIL);
             } /* end else */
                   
 #ifdef QAK
@@ -2829,7 +2967,16 @@ printf("%s: convert=%d\n",FUNC,(int)convert);
                 HDfree(img_data);
             } /* end if */
       } /* end else */
-    return(SUCCEED);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRreadimage() */
 
 /*--------------------------------------------------------------------------
@@ -2863,13 +3010,14 @@ intn GRendaccess(int32 riid)
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
     int32 index;                /* index of the RI in the GR */
+    intn  ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
 
     /* check the validity of the RI ID */
     if(!VALIDRIID(riid))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     
     /* Get the array index for the grid */
     gr_idx=RIID2GRID(riid);
@@ -2878,27 +3026,35 @@ intn GRendaccess(int32 riid)
     /* check the index range validity */
     index=RIID2SLOT(riid);
     if(!VALIDRIINDEX(index,gr_ptr))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
     if(!(ri_ptr->access>0))
-        HRETURN_ERROR(DFE_CANTENDACCESS,FAIL);
+        HGOTO_ERROR(DFE_CANTENDACCESS,FAIL);
 
     /* Check for writing a fill value attribute out */
     if(ri_ptr->store_fill==TRUE)
       { /* store the fill value attribute before letting go of the image */
           if(GRsetattr(riid,FILL_ATTR,ri_ptr->img_dim.nt,ri_ptr->img_dim.ncomps,ri_ptr->fill_value)==FAIL)
-              HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+              HGOTO_ERROR(DFE_WRITEERROR,FAIL);
           ri_ptr->store_fill=FALSE;
       } /* end if */
 
     /* Reduce the number of accesses to the RI */
     ri_ptr->access--;
 
-    return(SUCCEED);
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRendaccess() */
 
 /*--------------------------------------------------------------------------
@@ -2931,13 +3087,14 @@ uint16 GRidtoref(int32 riid)
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
     int32 index;                /* index of the RI in the GR */
+    uint16  ret_value = 0; /* FAIL? */
 
     /* clear error stack and check validity of args */
     HEclear();
 
     /* check the validity of the RI ID */
     if(!VALIDRIID(riid))
-        HRETURN_ERROR(DFE_ARGS, (uint16)FAIL);
+        HGOTO_ERROR(DFE_ARGS, (uint16)FAIL);
     
     /* Get the array index for the grid */
     gr_idx=RIID2GRID(riid);
@@ -2946,13 +3103,23 @@ uint16 GRidtoref(int32 riid)
     /* check the index range validity */
     index=RIID2SLOT(riid);
     if(!VALIDRIINDEX(index,gr_ptr))
-        HRETURN_ERROR(DFE_ARGS, (uint16)FAIL);
+        HGOTO_ERROR(DFE_ARGS, (uint16)FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HRETURN_ERROR(DFE_RINOTFOUND,(uint16)FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND,(uint16)FAIL);
     ri_ptr=(ri_info_t *)*t;
 
-    return(ri_ptr->ri_ref!=DFTAG_NULL ? ri_ptr->ri_ref : ri_ptr->rig_ref);
+    ret_value = (ri_ptr->ri_ref!=DFTAG_NULL ? ri_ptr->ri_ref : ri_ptr->rig_ref);
+
+done:
+  if(ret_value == 0)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRidtoref() */
 
 /*--------------------------------------------------------------------------
@@ -2985,27 +3152,41 @@ int32 GRreftoindex(int32 grid,uint16 ref)
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
+    int32   ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
 
     /* check the validity of the RI ID */
     if(!VALIDGRID(grid))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     
     /* Get the array index for the grid */
     gr_idx=GRID2SLOT(grid);
     gr_ptr=gr_tab[gr_idx];
 
     if((t = (VOIDP *) tbbtfirst((TBBT_NODE *) *(gr_ptr->grtree)))==NULL)
-        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     do {
         ri_ptr=(ri_info_t *)*t;
         if(ri_ptr!=NULL && ri_ptr->ri_ref==ref)  /* the ref matches */
-            return(ri_ptr->index);
+          {
+            ret_value =(ri_ptr->index);
+            goto done;
+          }
     } while((t= (VOIDP *) tbbtnext((TBBT_NODE *)t))!=NULL);
 
-    return(FAIL);
+    ret_value = (FAIL);
+
+done:
+  if(ret_value == 0)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRreftoindex() */
 
 /*--------------------------------------------------------------------------
@@ -3043,6 +3224,7 @@ intn GRreqlutil(int32 riid,intn il)
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
     int32 index;                /* index of the RI in the GR */
+    intn  ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -3050,7 +3232,7 @@ intn GRreqlutil(int32 riid,intn il)
     /* check the validity of the RI ID */
     if(!VALIDRIID(riid) || il<(intn)MFGR_INTERLACE_PIXEL ||
             il>(intn)MFGR_INTERLACE_COMPONENT)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     
     /* Get the array index for the grid */
     gr_idx=RIID2GRID(riid);
@@ -3059,16 +3241,24 @@ intn GRreqlutil(int32 riid,intn il)
     /* check the index range validity */
     index=RIID2SLOT(riid);
     if(!VALIDRIINDEX(index,gr_ptr))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
     /* Assign interlacing scheme */
     ri_ptr->lut_il=(gr_interlace_t)il;   
 
-    return(SUCCEED);
+done:
+  if(ret_value == 0)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRreqlutil() */
 
 /*--------------------------------------------------------------------------
@@ -3106,6 +3296,7 @@ intn GRreqimageil(int32 riid,intn il)
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
     int32 index;                /* index of the RI in the GR */
+    intn  ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -3113,7 +3304,7 @@ intn GRreqimageil(int32 riid,intn il)
     /* check the validity of the RI ID */
     if(!VALIDRIID(riid) || il<(intn)MFGR_INTERLACE_PIXEL ||
             il>(intn)MFGR_INTERLACE_COMPONENT)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     
     /* Get the array index for the grid */
     gr_idx=RIID2GRID(riid);
@@ -3122,16 +3313,24 @@ intn GRreqimageil(int32 riid,intn il)
     /* check the index range validity */
     index=RIID2SLOT(riid);
     if(!VALIDRIINDEX(index,gr_ptr))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
     /* Assign interlacing scheme */
     ri_ptr->im_il=(gr_interlace_t)il;   
 
-    return(SUCCEED);
+done:
+  if(ret_value == 0)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRreqimageil() */
 
 /*--------------------------------------------------------------------------
@@ -3162,15 +3361,26 @@ intn GRreqimageil(int32 riid,intn il)
 int32 GRgetlutid(int32 riid,int32 lut_index)
 {
     CONSTR(FUNC, "GRgetlutid");   /* for HERROR */
+    int32  ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
 
     /* check the validity of the RI ID */
     if(!VALIDRIID(riid) || lut_index!=0)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     
-    return(riid);
+    ret_value =(riid);
+
+done:
+  if(ret_value == 0)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRgetlutid() */
 
 /*--------------------------------------------------------------------------
@@ -3208,13 +3418,14 @@ intn GRgetlutinfo(int32 lutid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
     int32 index;                /* index of the RI in the GR */
+    intn  ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
 
     /* check the validity of the RI ID */
     if(!VALIDRIID(lutid))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     
     /* Get the array index for the grid */
     gr_idx=RIID2GRID(lutid);
@@ -3223,10 +3434,10 @@ intn GRgetlutinfo(int32 lutid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
     /* check the index range validity */
     index=RIID2SLOT(lutid);
     if(!VALIDRIINDEX(index,gr_ptr))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
     if(ncomp!=NULL)
@@ -3238,7 +3449,15 @@ intn GRgetlutinfo(int32 lutid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
     if(nentries!=NULL)  /* xdim for LUTs is the number of entries */
         *nentries=ri_ptr->lut_dim.xdim;
 
-    return(SUCCEED);
+done:
+  if(ret_value == 0)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRgetlutinfo() */
 
 /*--------------------------------------------------------------------------
@@ -3278,6 +3497,7 @@ intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP 
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
     int32 index;                /* index of the RI in the GR */
+    intn  ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -3285,7 +3505,7 @@ intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP 
     /* check the validity of the args (how to check il?) */
     if(!VALIDRIID(lutid) || ncomps<1 || (DFKNTsize(nt)==FAIL)
             || nentries<1 || data==NULL)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     
     /* Get the array index for the grid */
     gr_idx=RIID2GRID(lutid);
@@ -3295,10 +3515,10 @@ intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP 
     /* check the index range validity */
     index=RIID2SLOT(lutid);
     if(!VALIDRIINDEX(index,gr_ptr))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
     /* Check if this is compatible with older-style palettes */
@@ -3309,7 +3529,7 @@ intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP 
             {   /* LUT already exists */
                 if(Hputelement(hdf_file_id,ri_ptr->lut_tag,ri_ptr->lut_ref,
                         data,ncomps*nentries*DFKNTsize(nt))==FAIL)
-                    HRETURN_ERROR(DFE_PUTELEM,FAIL);
+                    HGOTO_ERROR(DFE_PUTELEM,FAIL);
             } /* end if */
           else
             {   /* LUT does not exist */
@@ -3328,17 +3548,25 @@ intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP 
                 ri_ptr->lut_dim.comp_ref=DFTAG_NULL;
                 if(Hputelement(hdf_file_id,ri_ptr->lut_tag,ri_ptr->lut_ref,
                         data,ncomps*nentries*DFKNTsize(nt))==FAIL)
-                    HRETURN_ERROR(DFE_PUTELEM,FAIL);
+                    HGOTO_ERROR(DFE_PUTELEM,FAIL);
 
                 ri_ptr->meta_modified=TRUE;
             } /* end else */
       } /* end if */
     else
       {     /* currently, we are not going to support non-standard palettes */
-          HRETURN_ERROR(DFE_UNSUPPORTED,FAIL);
+          HGOTO_ERROR(DFE_UNSUPPORTED,FAIL);
       } /* end else */
 
-    return(SUCCEED);
+done:
+  if(ret_value == 0)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRwritelut() */
 
 /*--------------------------------------------------------------------------
@@ -3373,13 +3601,14 @@ intn GRreadlut(int32 lutid,VOIDP data)
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
     int32 index;                /* index of the RI in the GR */
+    intn  ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
 
     /* check the validity of the RI ID */
     if(!VALIDRIID(lutid) || data==NULL)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     
     /* Get the array index for the grid */
     gr_idx=RIID2GRID(lutid);
@@ -3389,19 +3618,27 @@ intn GRreadlut(int32 lutid,VOIDP data)
     /* check the index range validity */
     index=RIID2SLOT(lutid);
     if(!VALIDRIINDEX(index,gr_ptr))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
     if(ri_ptr->lut_tag!=DFTAG_NULL && ri_ptr->lut_ref!=DFTAG_NULL)
       {
           if(Hgetelement(hdf_file_id,ri_ptr->lut_tag,ri_ptr->lut_ref,data)==FAIL)
-              HRETURN_ERROR(DFE_GETELEM,FAIL);
+              HGOTO_ERROR(DFE_GETELEM,FAIL);
       } /* end if */
 
-    return(SUCCEED);
+done:
+  if(ret_value == 0)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRreadlut() */
 
 /*--------------------------------------------------------------------------
@@ -3436,13 +3673,14 @@ intn GRsetexternalfile(int32 riid,char *filename,int32 offset)
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
     int32 index;                /* index of the RI in the GR */
+    intn  ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
 
     /* check the validity of the RI ID */
     if(!VALIDRIID(riid))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     
     /* Get the array index for the grid */
     gr_idx=RIID2GRID(riid);
@@ -3451,21 +3689,29 @@ intn GRsetexternalfile(int32 riid,char *filename,int32 offset)
     /* check the index range validity */
     index=RIID2SLOT(riid);
     if(!VALIDRIINDEX(index,gr_ptr))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
     if((ri_ptr->ext_name=(char *)HDmalloc(HDstrlen(filename)+1))==NULL)
-        HRETURN_ERROR(DFE_NOSPACE,FAIL);
+        HGOTO_ERROR(DFE_NOSPACE,FAIL);
 
     /* Mark the image as external and cache parameters */
     ri_ptr->ext_img=TRUE;
     HDstrcpy(ri_ptr->ext_name,filename);
     ri_ptr->ext_offset=offset;
 
-    return(SUCCEED);
+done:
+  if(ret_value == 0)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRsetexternalfile() */
 
 /*--------------------------------------------------------------------------
@@ -3502,6 +3748,7 @@ intn GRsetaccesstype(int32 riid,uintn accesstype)
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
     int32 index;                /* index of the RI in the GR */
+    intn  ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -3509,7 +3756,7 @@ intn GRsetaccesstype(int32 riid,uintn accesstype)
     /* check the validity of the RI ID */
     if(!VALIDRIID(riid) || (accesstype!=DFACC_DEFAULT && accesstype!=DFACC_SERIAL
             && accesstype!=DFACC_PARALLEL))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     
     /* Get the array index for the grid */
     gr_idx=RIID2GRID(riid);
@@ -3518,17 +3765,25 @@ intn GRsetaccesstype(int32 riid,uintn accesstype)
     /* check the index range validity */
     index=RIID2SLOT(riid);
     if(!VALIDRIINDEX(index,gr_ptr))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
     /* Mark the image as having an access-mode and cache args */
     ri_ptr->acc_img=TRUE;
     ri_ptr->acc_type=accesstype;
 
-    return(SUCCEED);
+done:
+  if(ret_value == 0)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRsetaccesstype() */
 
 /*--------------------------------------------------------------------------
@@ -3564,13 +3819,14 @@ intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo)
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
     int32 index;                /* index of the RI in the GR */
+    intn  ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
 
     /* check the validity of the RI ID */
     if(!VALIDRIID(riid))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     
     /* Get the array index for the grid */
     gr_idx=RIID2GRID(riid);
@@ -3579,10 +3835,10 @@ intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo)
     /* check the index range validity */
     index=RIID2SLOT(riid);
     if(!VALIDRIINDEX(index,gr_ptr))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
     /* Mark the image as being compressed and cache args */
@@ -3590,7 +3846,15 @@ intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo)
     ri_ptr->comp_type=comp_type;
     HDmemcpy(&(ri_ptr->cinfo),cinfo,sizeof(comp_info));
 
-    return(SUCCEED);
+done:
+  if(ret_value == 0)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRsetcompress() */
 
 /*--------------------------------------------------------------------------
@@ -3637,6 +3901,7 @@ intn GRsetattr(int32 id,char *name,int32 attr_nt,int32 count,VOIDP data)
     uintn *update_flag;         /* pointer to the flag to indicate an attribute tree is changed */
     uintn found=FALSE;          /* boolean for indicating the attribute exists already */
     intn is_riid=FALSE;         /* whether we had a RIID */
+    intn ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -3648,7 +3913,7 @@ printf("%s: id=%ld, name=%p, data=%p, count=%ld\n",FUNC,(long)id,name,data,(long
     /* check the validity of the args */
     if((!VALIDRIID(id) && !VALIDGRID(id)) || data==NULL || name==NULL
             || count<=0 || (DFKNTsize(attr_nt)==FAIL))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     
     if(VALIDGRID(id))
       {
@@ -3682,10 +3947,10 @@ printf("%s: got a RIID\n",FUNC);
           /* check the index range validity */
           ri_index=RIID2SLOT(id);
           if(!VALIDRIINDEX(ri_index,gr_ptr))
-              HRETURN_ERROR(DFE_ARGS, FAIL);
+              HGOTO_ERROR(DFE_ARGS, FAIL);
 
           if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &ri_index, NULL))==NULL)
-              HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+              HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
           ri_ptr=(ri_info_t *)*t;
 
           hdf_file_id=gr_ptr->hdf_file_id;
@@ -3694,7 +3959,7 @@ printf("%s: got a RIID\n",FUNC);
           update_count=&(ri_ptr->lattr_count);
       } /* end if */
     else    /* shouldn't get here, but what the heck... */
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
 #ifdef QAK
 printf("%s: check 1, search_tree=%p\n",FUNC,search_tree);
@@ -3739,7 +4004,7 @@ printf("%s: found existing attribute\n",FUNC);
 #endif /* QAK */
           /* Catch the user if he tries to change the NT */
           if(attr_nt!=at_ptr->nt)
-              HRETURN_ERROR(DFE_ARGS, FAIL);
+              HGOTO_ERROR(DFE_ARGS, FAIL);
 
           /* Calc. old & new attr. sizes */
           new_at_size=count*DFKNTsize(attr_nt);
@@ -3751,13 +4016,13 @@ printf("%s: found existing attribute\n",FUNC);
 
                 /* Update data on disk */
                 if((AttrID=VSattach(hdf_file_id,at_ptr->ref,"w"))==FAIL)
-                    HRETURN_ERROR(DFE_CANTATTACH,FAIL);
+                    HGOTO_ERROR(DFE_CANTATTACH,FAIL);
                 if(VSsetfields(AttrID,at_ptr->name)==FAIL)
-                    HRETURN_ERROR(DFE_BADFIELDS,FAIL);
+                    HGOTO_ERROR(DFE_BADFIELDS,FAIL);
                 if(VSwrite(AttrID,data,count,FULL_INTERLACE)==FAIL)
-                    HRETURN_ERROR(DFE_VSWRITE,FAIL);
+                    HGOTO_ERROR(DFE_VSWRITE,FAIL);
                 if(VSdetach(AttrID)==FAIL)
-                    HRETURN_ERROR(DFE_CANTDETACH,FAIL);
+                    HGOTO_ERROR(DFE_CANTDETACH,FAIL);
 
                 /* Update in-memory fields */
                 at_ptr->len=count;
@@ -3775,7 +4040,7 @@ printf("%s: found existing attribute\n",FUNC);
                       if(at_ptr->data!=NULL)
                           HDfree(at_ptr->data);
                       if((at_ptr->data=(VOIDP)HDmalloc(new_at_size))==NULL)
-                          HRETURN_ERROR(DFE_NOSPACE,FAIL);
+                          HGOTO_ERROR(DFE_NOSPACE,FAIL);
                   } /* end if */
                 HDmemcpy(at_ptr->data,data,new_at_size);
 
@@ -3791,7 +4056,7 @@ printf("%s: found existing attribute\n",FUNC);
 printf("%s: check 2.5: creating new attribute\n",FUNC);
 #endif /* QAK */
         if((at_ptr=(at_info_t *)HDmalloc(sizeof(at_info_t)))==NULL)
-            HRETURN_ERROR(DFE_NOSPACE,FAIL);
+            HGOTO_ERROR(DFE_NOSPACE,FAIL);
 
         /* Fill in fields for the new attribute */
 #ifdef QAK
@@ -3803,7 +4068,7 @@ printf("%s:1: gr_ptr->gattr_count=%ld\n",FUNC,(long)gr_ptr->gattr_count);
 
         /* allocate space for the attribute name & copy it */
         if((at_ptr->name=(char *)HDmalloc(HDstrlen(name)+1))==NULL)
-            HRETURN_ERROR(DFE_NOSPACE,FAIL);
+            HGOTO_ERROR(DFE_NOSPACE,FAIL);
         HDstrcpy(at_ptr->name,name);
 
         /* calc. the attr size to see if it is worth caching */
@@ -3812,7 +4077,7 @@ printf("%s:1: gr_ptr->gattr_count=%ld\n",FUNC,(long)gr_ptr->gattr_count);
           { /* cacheable */
               /* allocate space for the attribute name & copy it */
               if((at_ptr->data=(char *)HDmalloc(at_size))==NULL)
-                  HRETURN_ERROR(DFE_NOSPACE,FAIL);
+                  HGOTO_ERROR(DFE_NOSPACE,FAIL);
               HDmemcpy(at_ptr->data,data,at_size);
               at_ptr->data_modified=TRUE;
               at_ptr->ref=DFTAG_NULL;
@@ -3821,7 +4086,7 @@ printf("%s:1: gr_ptr->gattr_count=%ld\n",FUNC,(long)gr_ptr->gattr_count);
           { /* non-cacheable */
               if((at_ptr->ref=(uint16)VHstoredata(hdf_file_id,at_ptr->name,data,
                       at_ptr->len,at_ptr->nt,RIGATTRNAME,RIGATTRCLASS))==(uint16)FAIL)
-                  HRETURN_ERROR(DFE_VSCANTCREATE,FAIL);
+                  HGOTO_ERROR(DFE_VSCANTCREATE,FAIL);
               at_ptr->data=NULL;
               at_ptr->data_modified=FALSE;
           } /* end else */
@@ -3829,7 +4094,7 @@ printf("%s:1: gr_ptr->gattr_count=%ld\n",FUNC,(long)gr_ptr->gattr_count);
 
         /* Add the attribute to the attribute tree */
         if(tbbtdins(search_tree, (VOIDP)at_ptr, NULL)==NULL)
-            HRETURN_ERROR(DFE_TBBTINS,FAIL);
+            HGOTO_ERROR(DFE_TBBTINS,FAIL);
 
         /* flag the attribute tree as being modified */
         *update_flag=TRUE;
@@ -3850,7 +4115,16 @@ printf("%s:2: gr_ptr->gattr_count=%ld\n",FUNC,(long)gr_ptr->gattr_count);
 #ifdef QAK
 printf("%s: check 3\n",FUNC);
 #endif /* QAK */
-    return(SUCCEED);
+
+done:
+  if(ret_value == 0)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRsetattr() */
 
 /*--------------------------------------------------------------------------
@@ -3889,13 +4163,14 @@ intn GRattrinfo(int32 id,int32 index,char *name,int32 *attr_nt,int32 *count)
     int32 ri_index;             /* index of the RI in the GR */
     TBBT_TREE *search_tree;     /* attribute tree to search through */
     at_info_t *at_ptr;          /* ptr to the attribute to work with */
+    intn   ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
 
     /* check the validity of the ID, the index is checked below */
     if(!VALIDRIID(id) && !VALIDGRID(id))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     
     if(VALIDGRID(id))
       {
@@ -3907,7 +4182,7 @@ printf("%s: found a GRID\n",FUNC);
           gr_ptr=gr_tab[gr_idx];
 
           if(index<0 || index>=gr_ptr->gattr_count)
-              HRETURN_ERROR(DFE_ARGS, FAIL);
+              HGOTO_ERROR(DFE_ARGS, FAIL);
 
           search_tree=gr_ptr->gattree;
       } /* end if */
@@ -3923,21 +4198,21 @@ printf("%s: found a RIID\n",FUNC);
           /* check the index range validity */
           ri_index=RIID2SLOT(id);
           if(!VALIDRIINDEX(ri_index,gr_ptr))
-              HRETURN_ERROR(DFE_ARGS, FAIL);
+              HGOTO_ERROR(DFE_ARGS, FAIL);
 
           if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &ri_index, NULL))==NULL)
-              HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+              HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
           ri_ptr=(ri_info_t *)*t;
 
           if(index<0 || index>=ri_ptr->lattr_count)
-              HRETURN_ERROR(DFE_ARGS, FAIL); 
+              HGOTO_ERROR(DFE_ARGS, FAIL); 
           search_tree=ri_ptr->lattree;
       } /* end if */
     else    /* shouldn't get here, but what the heck... */
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(search_tree, (VOIDP) &index, NULL))==NULL)
-        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     at_ptr=(at_info_t *)*t;
 
     if(name!=NULL)
@@ -3947,7 +4222,15 @@ printf("%s: found a RIID\n",FUNC);
     if(count!=NULL)
         *count=at_ptr->len;
 
-    return(SUCCEED);
+done:
+  if(ret_value == 0)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRattrinfo() */
 
 /*--------------------------------------------------------------------------
@@ -3986,13 +4269,14 @@ intn GRgetattr(int32 id,int32 index,VOIDP data)
     TBBT_TREE *search_tree;     /* attribute tree to search through */
     at_info_t *at_ptr;          /* ptr to the attribute to work with */
     int32 at_size;              /* size in bytes of the attribute data */
+    intn  ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
 
     /* check the validity of the ID & data ptr, the index is checked below */
     if((!VALIDRIID(id) && !VALIDGRID(id)) || data==NULL)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     
     if(VALIDGRID(id))
       {
@@ -4001,7 +4285,7 @@ intn GRgetattr(int32 id,int32 index,VOIDP data)
           gr_ptr=gr_tab[gr_idx];
 
           if(index<0 || index>=gr_ptr->gattr_count)
-              HRETURN_ERROR(DFE_ARGS, FAIL);
+              HGOTO_ERROR(DFE_ARGS, FAIL);
 
           hdf_file_id=gr_ptr->hdf_file_id;
           search_tree=gr_ptr->gattree;
@@ -4015,23 +4299,23 @@ intn GRgetattr(int32 id,int32 index,VOIDP data)
           /* check the index range validity */
           ri_index=RIID2SLOT(id);
           if(!VALIDRIINDEX(ri_index,gr_ptr))
-              HRETURN_ERROR(DFE_ARGS, FAIL);
+              HGOTO_ERROR(DFE_ARGS, FAIL);
 
           if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &ri_index, NULL))==NULL)
-              HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+              HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
           ri_ptr=(ri_info_t *)*t;
 
           if(index<0 || index>=ri_ptr->lattr_count)
-              HRETURN_ERROR(DFE_ARGS, FAIL);
+              HGOTO_ERROR(DFE_ARGS, FAIL);
 
           hdf_file_id=gr_ptr->hdf_file_id;
           search_tree=ri_ptr->lattree;
       } /* end if */
     else    /* shouldn't get here, but what the heck... */
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(search_tree, (VOIDP) &index, NULL))==NULL)
-        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     at_ptr=(at_info_t *)*t;
 
     /* Calculate the size of the attribute data */
@@ -4044,16 +4328,16 @@ intn GRgetattr(int32 id,int32 index,VOIDP data)
 
         /* Grab some memory for the attribute data */
         if((at_ptr->data=HDmalloc(at_size))==NULL)
-            HRETURN_ERROR(DFE_NOSPACE,FAIL);
+            HGOTO_ERROR(DFE_NOSPACE,FAIL);
             
         if((AttrID=VSattach(hdf_file_id,at_ptr->ref,"r"))==FAIL)
-            HRETURN_ERROR(DFE_CANTATTACH,FAIL);
+            HGOTO_ERROR(DFE_CANTATTACH,FAIL);
         if(VSsetfields(AttrID,at_ptr->name)==FAIL)
-            HRETURN_ERROR(DFE_BADFIELDS,FAIL);
+            HGOTO_ERROR(DFE_BADFIELDS,FAIL);
         if(VSread(AttrID,at_ptr->data,at_ptr->len,FULL_INTERLACE)==FAIL)
-            HRETURN_ERROR(DFE_VSWRITE,FAIL);
+            HGOTO_ERROR(DFE_VSWRITE,FAIL);
         if(VSdetach(AttrID)==FAIL)
-            HRETURN_ERROR(DFE_CANTDETACH,FAIL);
+            HGOTO_ERROR(DFE_CANTDETACH,FAIL);
       } /* end if */
 
     /* Copy the attribute into the user's buffer */
@@ -4063,7 +4347,15 @@ intn GRgetattr(int32 id,int32 index,VOIDP data)
     if(at_size>gr_ptr->attr_cache)
         HDfreenclear(at_ptr->data);
 
-    return(SUCCEED);
+done:
+  if(ret_value == 0)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRgetattr() */
 
 /*--------------------------------------------------------------------------
@@ -4099,13 +4391,14 @@ int32 GRfindattr(int32 id,char *name)
     TBBT_TREE *search_tree;     /* attribute tree to search through */
     at_info_t *at_ptr;          /* ptr to the attribute to work with */
     int32 index;                /* index of the RI in the GR */
+    int32 ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
 
     /* check the validity of the RI ID */
     if(!VALIDRIID(id) && !VALIDGRID(id))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     
     if(VALIDGRID(id))
       {
@@ -4124,25 +4417,38 @@ int32 GRfindattr(int32 id,char *name)
           /* check the index range validity */
           index=RIID2SLOT(id);
           if(!VALIDRIINDEX(index,gr_ptr))
-              HRETURN_ERROR(DFE_ARGS, FAIL);
+              HGOTO_ERROR(DFE_ARGS, FAIL);
 
           if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-              HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+              HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
           ri_ptr=(ri_info_t *)*t;
           search_tree=ri_ptr->lattree;
       } /* end if */
     else    /* shouldn't get here, but what the heck... */
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtfirst((TBBT_NODE *)*search_tree))==NULL)
-        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     do {
         at_ptr=(at_info_t *)*t;
         if(at_ptr!=NULL && HDstrcmp(at_ptr->name,name)==0)  /* ie. the name matches */
-            return(at_ptr->index);
+          {
+            ret_value = (at_ptr->index);
+            goto done;
+          }
     } while((t= (VOIDP *) tbbtnext((TBBT_NODE *)t))!=NULL);
 
-    return(FAIL);
+    ret_value = (FAIL);
+
+done:
+  if(ret_value == 0)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* end GRfindattr() */
 
 /*
