@@ -362,7 +362,14 @@ int  options_get_info(options_t      *options,     /* global options */
  *
  * Purpose: utility to set SZIP parameters
  *
- * Return: 0 for OK, 1 otherwise
+ * SZIP compresses data block by block, with a user-tunable block size. 
+ * This block size is passed in the parameter pixels_per_block and must be even, 
+ * with typical values being 8, 10, 16, and 32. The more pixel values vary, 
+ * the smaller this number should be. For optimal performance, the number of 
+ * pixels per scan line (i.e., the size of the fastest-changing dimension in the chunk) 
+ * should be an even multiple of the number of pixels per block. 
+ *
+ * Return: 0 for OK, -1 otherwise
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -379,6 +386,10 @@ int set_szip(int32 rank,
 {
  int   i;
 
+ /*
+ pixels_per_scanline = size of the fastest-changing dimension 
+ Must be <= MAX_PIXELS_PER_SCANLINE and <= pixels
+ */
  c_info->szip.pixels_per_scanline  = dim_sizes[rank-1]*ncomps;
  c_info->szip.pixels               = 1;
  for ( i = 0; i < rank; i++)
@@ -387,17 +398,35 @@ int set_szip(int32 rank,
  }
  c_info->szip.pixels              *= ncomps;
  
+ if (c_info->szip.pixels_per_scanline > MAX_PIXELS_PER_SCANLINE)
+ {
+  printf("Warning: in SZIP setting, pixels per scanline was set to <%d>, \
+          MAX_PIXELS_PER_SCANLINE\n");
+  c_info->szip.pixels_per_scanline = MAX_PIXELS_PER_SCANLINE;
+ }
+ 
  /* 
-  Contions to meet 
-  1) pixels must be an integer multiple of pixels per scanline (set by definition of PPS)
-  2) pixels_per_block must be an even number, and <= pixels_per_scanline 
-     and <= MAX_PIXELS_PER_BLOCK
+  pixels_per_block must be an even number, and <= pixels_per_scanline 
+  and <= MAX_PIXELS_PER_BLOCK
   */
 
  c_info->szip.pixels_per_block=2;
+ if (c_info->szip.pixels_per_block > c_info->szip.pixels_per_scanline)
+ {
+  printf("Error: in SZIP setting, pixels per block <%d>, \
+   cannot be greater than pixels per scanline<%d>\n",
+   c_info->szip.pixels_per_block, c_info->szip.pixels_per_scanline);
+  return -1;
+ }
+
  c_info->szip.options_mask = NN_OPTION_MASK;
  c_info->szip.options_mask |= RAW_OPTION_MASK;
  c_info->szip.compression_mode = NN_MODE;
+
+ /*
+  bits_per_pixel
+  Must be in range 1..24,32,64
+  */
  
  switch(dtype) 
  {
@@ -424,7 +453,6 @@ int set_szip(int32 rank,
   printf("Error: Bad numeric type <%d> in SZIP\n",dtype);
   return -1;
  }
-
 
  return check_szip_params( c_info->szip.bits_per_pixel, 
                            c_info->szip.pixels_per_block, 
