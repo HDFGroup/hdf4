@@ -2007,6 +2007,63 @@ int HDerr(int32 file_id)
 }
 
 
+/*--------------------------------------------------------------------------
+
+ NAME
+       Hsetacceesstype -- set the I/O access type (serial, parallel, ...)
+       of a data element
+ USAGE
+       intn Hsetacceesstype(access_id, accesstype)
+       int32 access_id;        IN: id of access element
+       uintn accesstype;       IN: I/O access type
+ RETURNS
+       returns FAIL (-1) if fail, SUCCEED (0) otherwise.
+ DESCRIPTION
+       Set the type of I/O for accessing the data element to
+       accesstype.
+
+--------------------------------------------------------------------------*/
+
+#ifdef CM5
+extern CM_DEBUG;
+#endif
+
+intn Hsetaccesstype(int32 access_id, uintn accesstype)
+{
+    char *FUNC="Hsetacceesstype";                /* for HERROR */
+    accrec_t *access_rec;      /* access record */
+
+    /* clear error stack and check validity of this access id */
+    HEclear();
+
+    access_rec = AID2REC(access_id);
+    if (access_rec == (accrec_t *) NULL || !access_rec->used)
+       HRETURN_ERROR(DFE_ARGS,FAIL);
+    if (accesstype != DFACC_DEFAULT && accesstype != DFACC_SERIAL &&
+	    accesstype != DFACC_PARALLEL)
+       HRETURN_ERROR(DFE_ARGS,FAIL);
+
+    if (accesstype == access_rec->access_type)
+	return SUCCEED;
+
+    /* kludge mode on */
+    if (accesstype != DFACC_PARALLEL)	/* go to PARALLEL only */
+	return FAIL;
+    if(access_rec->flush)
+	printf("need to flush access_rec\n");
+#ifdef CM5
+if (CM_DEBUG > 0){
+    printf("need to close old access\n");
+printf("old access_type is %d\n", access_rec->access_type);
+printf("new access_type is %d\n", accesstype);
+}
+    access_rec->access_type = accesstype;
+#endif
+    /* if special elt, call special function */
+    if (access_rec->special)
+    	return(HXsetaccesstype(access_rec, accesstype));
+}   /* Hsetacceesstype() */
+
 /*==========================================================================
 
   Internal Routines 
