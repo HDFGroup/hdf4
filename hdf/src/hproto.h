@@ -234,7 +234,7 @@ extern int HDinqblockinfo
 */
 extern int32 HXcreate
     (int32 file_id, uint16 tag, uint16 ref, const char _HUGE *extern_file_name,
-	    int32 f_offset, int32 start_len);
+	    int32 offset, int32 start_len);
 
 /*
 ** from hcomp.c
@@ -249,7 +249,7 @@ extern int32 HCcreate
 */
 extern int32 HBcreate
     (int32 file_id, uint16 tag, uint16 ref, const char _HUGE *extern_file_name,
-	    int32 f_offset, int32 start_len);
+	    int32 offset, int32 start_len);
 
 /*
 ** from herr.c

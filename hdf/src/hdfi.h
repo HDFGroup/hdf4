@@ -860,7 +860,11 @@ typedef double            float64;
 
 #endif /* MOTOROLA */
 
-#ifdef DEC_ALPHA
+#if defined DEC_ALPHA || defined __alpha
+
+#ifndef DEC_ALPHA
+#define DEC_ALPHA
+#endif
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
@@ -906,7 +910,11 @@ typedef double            float64;
 
 #endif /* DEC_ALPHA */
 
-#ifdef VP
+#if defined VP | defined __uxpm__
+
+#ifndef VP
+#define VP
+#endif
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
@@ -950,7 +958,11 @@ typedef double             float64;
 
 #endif /* VP */
 
-#ifdef I860
+#if defined I860 | defined i860
+
+#ifndef I860
+#define I860
+#endif
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
