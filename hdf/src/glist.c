@@ -288,9 +288,9 @@ HDGLinitialize_sorted_list(Generic_list *list,
     intn ret_value = SUCCEED;
 
     /* First initialize list */
-    ret_value = HDGLinitialize_list(list);
-
-    if (ret_value != FAIL)
+    if ((ret_value = HDGLinitialize_list(list)) == FAIL)
+        goto done;
+    else
         list->info->lt = lt; /* Set sort fcn */
 
 done:
