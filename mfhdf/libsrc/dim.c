@@ -201,8 +201,13 @@ long *sizep ;
 
 	if(name != NULL)
 	{
+#ifdef HDF
+		(void)memcpy( name, (*dp)->name->values, 
+			(size_t)(*dp)->name->len) ;
+#else
 		(void)strncpy( name, (*dp)->name->values, 
 			(size_t)(*dp)->name->len) ;
+#endif
 		name[(*dp)->name->len] = 0 ;
 	}
 	if(sizep != 0)

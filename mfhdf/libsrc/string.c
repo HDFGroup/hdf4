@@ -39,7 +39,11 @@ const char *str ;
 			goto alloc_err ;
 		if(str != NULL)
 		{
+#ifdef HDF
+			memcpy(ret->values, str, (size_t)count) ;
+#else
 			(void)strncpy(ret->values, str, count) ;
+#endif
 			ret->values[count] = 0 ;
 		}
 	} else { /* use what what you were given */

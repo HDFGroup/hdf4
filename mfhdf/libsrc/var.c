@@ -156,6 +156,8 @@ NC_array *dims;
 	dsizes = (unsigned long *)HDmalloc(ii * sizeof(unsigned long)) ;
 	if(dsizes == NULL)
 	{
+        Free(shape) ;
+        var->shape = NULL;
 		nc_serror("NC_var_dsizes") ;
 		return(-1) ;
 	}
@@ -443,7 +445,11 @@ int *nattrsp ;
 
 	if(name != NULL)
 	{
+#ifdef HDF
+		(void)memcpy( name, vp->name->values, vp->name->len) ;
+#else
 		(void)strncpy( name, vp->name->values, vp->name->len) ;
+#endif
 		name[vp->name->len] = 0 ;
 	}
 

@@ -250,8 +250,11 @@ int mode ;
             
             cdf->hdf_mode = hdf_mode;
             cdf->vgid = 0;
-            
+
+#if 0            
             HDstrncpy(cdf->path, name, FILENAME_MAX);
+#endif
+            HDmemcpy(cdf->path, name, FILENAME_MAX);
             
 #ifdef DEBUG
             printf("value returned from Hopen() : %d\n", cdf->hdf_file);

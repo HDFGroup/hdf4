@@ -517,7 +517,10 @@ int32 *rank, *nt, *nattr, *dimsizes;
         return FAIL;
 
     if(name != NULL) {
+        HDmemcpy(name, var->name->values, var->name->len);
+#if 0
         HDstrncpy(name, var->name->values, var->name->len);
+#endif
         name[var->name->len] = '\0';
     }
 
@@ -1611,7 +1614,10 @@ int32  *count;
 
     /* move the information over */
     if(name != NULL) {
+#if 0
         HDstrncpy(name, (*atp)->name->values, (*atp)->name->len);
+#endif
+        HDmemcpy(name, (*atp)->name->values, (*atp)->name->len);
         name[(*atp)->name->len] = '\0';
     }
 
@@ -2122,9 +2128,13 @@ intn len;
     if(l) {
         attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_LongName);
         if(attr != NULL) {
-            HDstrncpy((char *)l, (*attr)->data->values, len);
             if((*attr)->data->count < len)
-                l[(*attr)->data->count] = '\0';
+              {
+                  HDstrncpy((char *)l, (*attr)->data->values,(*attr)->data->count );
+                  l[(*attr)->data->count] = '\0';
+              }
+            else
+                HDstrncpy((char *)l, (*attr)->data->values,len );
         } else {
             l[0] = '\0';
         }
@@ -2132,9 +2142,14 @@ intn len;
     if(u) {
         attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_Units);
         if(attr != NULL) {
-            HDstrncpy((char *)u, (*attr)->data->values, len);
             if((*attr)->data->count < len)
-                u[(*attr)->data->count] = '\0';
+              {
+                  HDstrncpy((char *)u, (*attr)->data->values,(*attr)->data->count );
+                  u[(*attr)->data->count] = '\0';
+              }
+            else
+                HDstrncpy((char *)u, (*attr)->data->values, len);
+
         } else {
             u[0] = '\0';
         }
@@ -2142,9 +2157,13 @@ intn len;
     if(f) {
         attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_Format);
         if(attr != NULL) {
-            HDstrncpy((char *)f, (*attr)->data->values, len);
             if((*attr)->data->count < len)
-                f[(*attr)->data->count] = '\0';
+              {
+                  HDstrncpy((char *)f, (*attr)->data->values, (*attr)->data->count);
+                  f[(*attr)->data->count] = '\0';
+              }
+            else
+                HDstrncpy((char *)f, (*attr)->data->values, len);
         } else {
             f[0] = '\0';
         }
@@ -2152,9 +2171,14 @@ intn len;
     if(c) {
         attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_CoordSys);
         if(attr != NULL) {
-            HDstrncpy((char *)c, (*attr)->data->values, len);
             if((*attr)->data->count < len)
-                c[(*attr)->data->count] = '\0';
+              {
+                  HDstrncpy((char *)c, (*attr)->data->values, (*attr)->data->count);
+                  c[(*attr)->data->count] = '\0';
+              }
+            else
+                HDstrncpy((char *)c, (*attr)->data->values, len);
+
         } else {
             c[0] = '\0';
         }
@@ -2690,7 +2714,10 @@ int32 *nt, *nattr, *size;
         return FAIL;
 
     if(name != NULL) {
+#if 0
         HDstrncpy(name, dim->name->values, dim->name->len);
+#endif
+        HDmemcpy(name, dim->name->values, dim->name->len);
         name[dim->name->len] = '\0';
     } else {
         name = dim->name->values;
@@ -4211,7 +4238,6 @@ int32 sdsid;
     return status;
 } /* SDisChunked()*/
 
-
 /******************************************************************************
  NAME
         SDwriteChunk   -- write the specified chunk to the SDS
@@ -4260,7 +4286,7 @@ const VOID *datap;
     uint8      outntsubclass;   /* the data's machine type */
     uintn      convert;         /* whether to convert or not */
     static     int32 tBuf_size = 0; /* statc conversion buffer size */
-    static     int8  *tBuf = NULL; /* static buffer used for conversion */
+    static     uint8 *tBuf = NULL; /* static buffer used for conversion */
     intn       i;
     intn       status = SUCCEED;
 
@@ -4332,7 +4358,7 @@ const VOID *datap;
                             if(tBuf == NULL) 
                                 HDfree((VOIDP)tBuf);
                             tBuf_size = byte_count;
-                            tBuf      = (int8 *) HDmalloc(tBuf_size);
+                            tBuf      = (uint8 *) HDmalloc(tBuf_size);
                             if(tBuf == NULL) 
                               {
                                   tBuf_size = 0;
@@ -4344,6 +4370,10 @@ const VOID *datap;
                       /* Write chunk out, */
                       if(convert) 
                         {
+#ifdef CHK_DEBUG
+                            fprintf(stderr,"SDwriteChunk: convert \n");
+#endif
+                            DFKsetNT(var->HDFtype);
                             DFKnumout((uint8 *) datap, tBuf, (uint32) csize, 0, 0);
                             status = HMCwriteChunk(var->aid, origin, (uint8 *) tBuf);
                         } /* end if */
@@ -4417,7 +4447,7 @@ VOID *datap;
     uint8      outntsubclass;   /* the data's machine type */
     uintn      convert;         /* whether to convert or not */
     static     int32 tBuf_size = 0; /* statc conversion buffer size */
-    static     int8  *tBuf = NULL; /* static buffer used for conversion */
+    static     uint8  *tBuf = NULL; /* static buffer used for conversion */
     intn       i;
     intn       status = SUCCEED;
 
@@ -4489,7 +4519,7 @@ VOID *datap;
                             if(tBuf == NULL) 
                                 HDfree((VOIDP)tBuf);
                             tBuf_size = byte_count;
-                            tBuf      = (int8 *) HDmalloc(tBuf_size);
+                            tBuf      = (uint8 *) HDmalloc(tBuf_size);
                             if(tBuf == NULL) 
                               {
                                   tBuf_size = 0;
@@ -4501,8 +4531,12 @@ VOID *datap;
                       /* read chunk in */
                       if(convert) 
                         {
+#ifdef CHK_DEBUG
+                            fprintf(stderr,"SDreadChunk: convert \n");
+#endif
                             status = HMCreadChunk(var->aid, origin, (uint8 *) tBuf);
                             /* convert chunk */
+                            DFKsetNT(var->HDFtype);
                             DFKnumin((uint8 *) tBuf, (uint8 *) datap, (uint32) csize, 0, 0);
                         } /* end if */
                       else 

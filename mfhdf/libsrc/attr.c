@@ -309,8 +309,11 @@ char *name ;
 
 	attr = (NC_attr **) (*ap)->values ;
 	attr += attnum ;
-
+#ifdef HDF
+	(void)memcpy( name, (*attr)->name->values, (*attr)->name->len) ;
+#else
 	(void)strncpy( name, (*attr)->name->values, (*attr)->name->len) ;
+#endif
 	name[(*attr)->name->len] = 0 ;
 
 	return(attnum) ;
