@@ -957,12 +957,14 @@ public class JHVVdataPlotFrame  extends Frame
   public void popup() {
 
     // default frame size
-    setSize(500,400);
+    //setSize(500,400);
 
     // paint dataspread sheet
     plotCanvas.repaint();
     
     // show component of the frame
+    pack();
+    setSize(500,400);
     show();
     
   }

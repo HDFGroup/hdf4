@@ -181,13 +181,16 @@ public class JHVDataFrame extends Frame implements AdjustmentListener,
 
     //pack();
     // default frame size
-    setSize(3*256, 2*256);
+    //setSize(3*256, 2*256);
 
     // paint dataspread sheet
     dataCanvas.repaint();
     
     // show component of the frame
-    setVisible(true);
+    //setVisible(true);
+    pack();
+    setSize(3*256, 2*256);
+    show();
     
     // compute the cell position
     dataCanvas.computeCellPosition();

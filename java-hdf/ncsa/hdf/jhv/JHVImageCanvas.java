@@ -1906,7 +1906,6 @@ public void drawRectangle(Rectangle rect) {
 
         setNumberOfImage(1);
         images = new Image[1];
-
         images[0] = createRasterImage(imageData, imageWidth, imageHeight, imagePalette,1);
         setImage(images[0]);
 

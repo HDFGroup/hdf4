@@ -724,14 +724,14 @@ public Panel createDisplayItems() {
   public void popup() {
     
     // resize the frame; (which default size is best?)
-    setSize(frameWidth, frameHeight);
+    //setSize(frameWidth, frameHeight);
 
     //paint the canvas
     imageCanvas.repaint();
   
     // adjust the size of the frame
-    setSize(frameWidth, frameHeight);
-    
+    //setSize(frameWidth, frameHeight);
+
     // set scrollbar value
     imageCanvas.setHScrollValue();
     imageCanvas.setVScrollValue();   
@@ -740,8 +740,10 @@ public Panel createDisplayItems() {
     setLocation(100,100);
 
     // show the whole components
-    setVisible(true);
-
+    //setVisible(true);
+    pack();
+    setSize(frameWidth, frameHeight);
+    show();
   }
 
     public void close() {

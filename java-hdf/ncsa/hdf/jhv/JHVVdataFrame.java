@@ -131,12 +131,14 @@ public class JHVVdataFrame extends Frame implements AdjustmentListener  {
   public void popup() {
 
     // default frame size
-    setSize(700, 500);
+    //setSize(700, 500);
 
     // paint dataspread sheet
     vdataCanvas.repaint();
-    
+
     // show component of the frame
+    pack();
+    setSize(700, 500);
     show();
     
     // compute the cell position
