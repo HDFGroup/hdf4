@@ -402,9 +402,6 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
     extern intn HDpackFstring
                 (char _HUGE * src, char _HUGE * dest, intn len);
 
-    extern intn HDstr2int
-                (char _HUGE * str, VOIDP dest, intn len);
-
 /*
    ** from hblocks.c
  */
@@ -2015,14 +2012,12 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #   define nhnumber  FNAME(HNUMBER)
 #   define nhxisdir  FNAME(HXISDIR)
 #   define nhxiscdir FNAME(HXISCDIR)
-#   define nhfst2ic  FNAME(HFST2IC)
 #else
 #   define nhiopen   FNAME(hiopen)
 #   define nhclose   FNAME(hclose)
 #   define nhnumber  FNAME(hnumber)
 #   define nhxisdir  FNAME(hxisdir)
 #   define nhxiscdir FNAME(hxiscdir)
-#   define nhfst2ic  FNAME(hfst2ic)
 #endif                          /* DF_CAPFNAMES */
 #endif                          /* HFILE_FNAMES */
 
@@ -2041,10 +2036,6 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
     extern	FRETVAL(intf) nhxiscdir
 		(_fcd dir, intf * dirlen);
     
-    extern      FRETVAL(intf) nhfst2ic
-                (_fcd fdesc, intf *dest, intf *len);
-
-
 /*
    ** from dfufp2im.c
  */
