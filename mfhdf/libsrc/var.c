@@ -97,6 +97,8 @@ NC_array *dims;
 	size_t xszof ;
 
 #ifdef HDF
+        NC *handle;  /* for length promotion later */
+
 	xszof = var->HDFsize ; 
 #else
 	xszof = NC_xtypelen(var->type) ;
@@ -177,6 +179,10 @@ NC_array *dims;
 	}
 
 out :
+/* round-up for XDR-encoded files only  */
+#ifdef HDF
+        if (var->cdf->is_hdf == 0)
+#endif
 	switch(var->type) {
 	case NC_BYTE :
 	case NC_CHAR :
@@ -273,6 +279,10 @@ const int dims[] ;
 		if( NC_incr_array(handle->vars, (Void *)var) == NULL)
 			return(-1) ;
 	}
+
+#ifdef HDF
+        (*var)->cdf = handle; /* for NC_var_shape */
+#endif
 	if( NC_var_shape(*var, handle->dims) != -1)
 	{
 #ifdef HDF
@@ -308,6 +318,9 @@ NC *handle ;
 		vpp < &vbase[handle->vars->count] ;
 		vpp ++)
 	{
+#ifdef HDF
+                (*vpp)->cdf= handle;
+#endif
 		if( NC_var_shape(*vpp, handle->dims) == -1)
 			return(-1) ;
 	  	if(IS_RECVAR(*vpp))	

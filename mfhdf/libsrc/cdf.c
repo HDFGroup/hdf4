@@ -1232,6 +1232,7 @@ int32   vg;
 **   so that we can do a call to NC_var_shape() so that we can
 **   set the numrecs fields of variables (so we can fill record
 **   variables intelligently)
+**   Set vp->cdf before calling NC_var_shape. 
 */
 int 
   hdf_read_vars(xdrs, handle, vg)
@@ -1392,7 +1393,8 @@ int32  vg;
               vp->data_tag = DATA_TAG;
               vp->HDFtype  = HDFtype;
               vp->ndg_ref  = (uint16) ndg_ref;
-              
+              vp->cdf = handle; /* for NC_var_shape */
+ 
               if(vp->data_ref) {
                   /*
                    * We have already seen data for this variable so now
@@ -1508,7 +1510,7 @@ NC **handlep;
     if((vgid=Vfindclass((*handlep)->hdf_file,CDF))!=FAIL) {
         cdf_vg = Vattach((*handlep)->hdf_file, vgid, "r");
         if(cdf_vg == FAIL) {
-            fprintf(stderr, "Oops\n");
+/*            fprintf(stderr, "Oops\n");    */
             return FALSE;
         }
       } /* end if */

@@ -115,34 +115,6 @@ typedef struct {
 	NC_array	*data ;
 } NC_attr ;
 
-/* NC variable: description and data */
-typedef struct {
-	NC_string *name ;
-	NC_iarray *assoc ; /* user definition */
-	unsigned long *shape ; /* compiled info */
-	unsigned long *dsizes ; /* compiled info */
-	NC_array *attrs;
-	nc_type type ;		/* the discriminant */
-	unsigned long len ;		/* the total length originally allocated */
-	size_t szof ;		/* sizeof each value */
-	long begin ;  /* seek index, often an off_t */
-#ifdef HDF
-	int32 vgid;     /* id of the variable's Vgroup */
-        uint16 data_ref;  /* ref of the variable's data storage (if exists) */
-        uint16 data_tag;  /* tag of the variable's data storage (if exists) */
-        uint16 ndg_ref;   /* ref of ndg for this dataset */
-        intn   data_offset; /* non-traditional data may not begin at 0 */
-        int32  block_size;  /* size of the blocks for unlimited dim. datasets */
-        int numrecs;  /* number of records this has been filled to */
-        int32 aid;    /* aid for DFTAG_SD data */
-        int32 HDFtype; /* type of this variable as HDF thinks */
-        int32 HDFsize; /* size of this variable as HDF thinks */
-#endif
-} NC_var ;
-
-#define IS_RECVAR(vp) \
-	((vp)->shape != NULL ? (*(vp)->shape == NC_UNLIMITED) : 0 )
-
 typedef struct {
 	char path[FILENAME_MAX + 1] ;
 	unsigned flags ;
@@ -162,6 +134,35 @@ typedef struct {
         int hdf_mode; /* mode we are attached for */
 #endif
 } NC ;
+
+/* NC variable: description and data */
+typedef struct {
+	NC_string *name ;
+	NC_iarray *assoc ; /* user definition */
+	unsigned long *shape ; /* compiled info */
+	unsigned long *dsizes ; /* compiled info */
+	NC_array *attrs;
+	nc_type type ;		/* the discriminant */
+	unsigned long len ;	/* the total length originally allocated */
+	size_t szof ;		/* sizeof each value */
+	long begin ;  /* seek index, often an off_t */
+#ifdef HDF
+	NC *cdf;    /* handle of the file where this var belongs to  */
+        int32 vgid;     /* id of the variable's Vgroup */
+        uint16 data_ref;  /* ref of the variable's data storage (if exists) */
+        uint16 data_tag;  /* tag of the variable's data storage (if exists) */
+        uint16 ndg_ref;   /* ref of ndg for this dataset */
+        intn   data_offset; /* non-traditional data may not begin at 0 */
+        int32  block_size;  /* size of the blocks for unlimited dim. datasets */
+        int numrecs;  /* number of records this has been filled to */
+        int32 aid;    /* aid for DFTAG_SD data */
+        int32 HDFtype; /* type of this variable as HDF thinks */
+        int32 HDFsize; /* size of this variable as HDF thinks */
+#endif
+} NC_var ;
+
+#define IS_RECVAR(vp) \
+	((vp)->shape != NULL ? (*(vp)->shape == NC_UNLIMITED) : 0 )
 
 extern char *cdf_routine_name ; /* defined in lerror.c */
 
