@@ -6,11 +6,12 @@
 #CFLAGS=-ansi 
 #
 #Using ANSI compilier
-CC= xlc
+#CC= xlc
+CC= gcc
 CFLAGS=
 
 # Fortran compilier
-FC = NONE
+FC = g77
 FFLAGS =
 
 # Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
