@@ -1,20 +1,6 @@
 C
 C $Header$
-C
-C $Log$
-C Revision 1.1  1993/04/28 20:47:07  koziol
-C Renamed constant.f to constant.i and added dffunc.i
-C
-c Revision 1.1  1993/03/02  02:20:16  sxu
-c Initial revision
-c
-c Revision 1.2  1993/01/03  00:13:13  sxu
-c Add file header
-c
-c Revision 1.1  1992/12/03  09:34:59  koziol
-c Initial revision
-c
-C
+
 
 
 C	dffunctions.f
@@ -120,7 +106,40 @@ C
 	integer DFnumber
 	integer DFstat
 
-C End of function declarations
+C
+C       Decls of SFxxx functions for Fortran multi-file interface
+C
+      integer sfstart
+      integer sfn2index
+      integer sfcreate
+      integer sfsdmstr
+      integer sfsdmname
+      integer sfsdtstr
+      integer sfgdtstr
+      integer sfgdmstr
+      integer sfginfo
+      integer sfgainfo
+      integer sfgdinfo
+      integer sfsattr
+      integer sffattr
+      integer sfend
+      integer sfendacc
+      integer sffinfo
+      integer sfselect
+      integer sfdimid
+      integer sfgcal
+      integer sfscal
+      integer sfsdscale
+      integer sfgdscale
+      integer sfsfill
+      integer sfgfill
+      integer sfgrange
+      integer sfsrange
+      integer sfrattr
+      integer sfrdata
+      integer sfwdata
+
+C End of declarations
 
 
 
