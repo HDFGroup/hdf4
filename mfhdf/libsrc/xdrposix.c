@@ -40,16 +40,25 @@ typedef	NETLONG		netlong;
 #   ifdef MSDOS
 #       include <io.h>
 #   else
-#       include <unistd.h>
+#       ifndef macintosh
+#            include <unistd.h>
+#       endif
 #   endif
 #   include <fcntl.h>
 #endif
+#ifdef macintosh
+#include <types.h>
+#else
 #include <sys/types.h>
+#endif
 #include <string.h>
 #include "netcdf.h" /* NC_ */
 #include "local_nc.h" /* prototypes for NCadvis, nc_error */
 		      /* also obtains <stdio.h>, <rpc/types.h>, &
 		       * <rpc/xdr.h> */
+#ifdef macintosh
+typedef long off_t;
+#endif
 
 #ifndef DOS_FS
 typedef u_int ncpos_t ;
@@ -89,7 +98,7 @@ biobuf *abuf;
 {
 	if(abuf == NULL)
 		return;
-	HDfreespace(abuf) ;
+	HDfreespace((VOIDP)abuf) ;
 }
 
 
@@ -306,12 +315,15 @@ xdrposix_create(xdrs, fd, fmode, op)
 	enum xdr_op op;
 {
 
+#ifndef macintosh
 	biobuf *biop = new_biobuf(fd, fmode) ;
+#endif /* !macintosh */
 #ifdef XDRDEBUG
 fprintf(stderr,"xdrposix_create(): xdrs=%p, fd=%d, fmode=%d, op=%d\n",xdrs,fd,fmode,(int)op);
 fprintf(stderr,"xdrposix_create(): after new_biobuf(), biop=%p\n",biop);
 #endif
     xdrs->x_op = op;
+#ifndef macintosh 
 	xdrs->x_ops = &xdrposix_ops;
 	xdrs->x_private = (caddr_t) biop ;
 	/* unused */
@@ -328,8 +340,11 @@ fprintf(stderr,"xdrposix_create(): after new_biobuf(), biop=%p\n",biop);
 #ifdef XDRDEBUG
 fprintf(stderr,"xdrposix_create(): before rdbuf()\n");
 #endif
-    /* else, read the first bufferful */
+	/* else, read the first bufferful */
 	return( rdbuf(biop) ) ;
+#else /* macintosh */
+    return 0; /* Just return since we don't handle XDR files */
+#endif /* macintosh */
 }
 
 /*
@@ -549,7 +564,12 @@ fprintf(stderr,"NCxdrfile_create(): XDR=%p, path=%s, ncmode=%d\n",xdrs,path,ncmo
 	if(_fmode != O_BINARY)
 		_fmode = O_BINARY ;
 #endif
+#ifdef macintosh 
+    /* fd = open(path, fmode); */
+	fd = 1; /* We fake a file descriptor for error purposes */
+#else /* !macintosh  */
 	fd = open(path, fmode, 0666) ;
+#endif /* !macintosh */
 #ifdef XDRDEBUG
 fprintf(stderr,"NCxdrfile_create(): fmode=%d, fd=%d\n",fmode,fd);
 #endif
