@@ -119,8 +119,9 @@ intn hdf_read_sds_dims(handle)
     uint16 lRef, uRef, fRef, sRef, sdRef;
     uint16 tmpTag, tmpRef;
     int16  rank, type;
-    int32  *dimsizes, *vardims, *scaletypes, HDFtype;
+    int32  *dimsizes, *scaletypes, HDFtype;
     intn   dim, max_thangs, current_dim, current_var, current_attr;
+    intn   *vardims;
 
     /* info about netCDF structures */
     NC_dim  **dims;   /* hold list of dimensions as we create it */
@@ -244,7 +245,7 @@ intn hdf_read_sds_dims(handle)
                     /* get space for dimensions */
                     dimsizes = (int32 *) HDgetspace((uint32) rank * sizeof(int32));
                     if (dimsizes == NULL) return FALSE;
-                    vardims = (int32 *) HDgetspace((uint32) rank * sizeof(int32));
+                    vardims = (intn *) HDgetspace((uint32) rank * sizeof(intn));
                     if (vardims == NULL) return FALSE;
                     scaletypes = (int32 *) HDgetspace((uint32) rank * sizeof(int32));
                     if (scaletypes == NULL) return FALSE;
@@ -556,7 +557,7 @@ intn hdf_read_sds_dims(handle)
                  *    we put the dimensions
                  */
                 
-                vardims[dim] = this_dim;
+                vardims[dim] = (intn) this_dim;
                 
                 
                 /*
@@ -606,10 +607,10 @@ intn hdf_read_sds_dims(handle)
              *    a made up name
              */
             if(namebuf) {
-                vars[current_var] = NC_new_var((char *) namebuf, type, rank, vardims);
+                vars[current_var] = NC_new_var((char *) namebuf, type, (int) rank, vardims);
             } else {
                 sprintf(tmpname, "Data-Set-%d", ndgRef); 
-                vars[current_var] = NC_new_var(tmpname, type, rank, vardims);
+                vars[current_var] = NC_new_var(tmpname, type, (int) rank, vardims);
             }
             
             /*

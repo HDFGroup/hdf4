@@ -77,7 +77,7 @@ typedef struct {
 	NC_string *name ;
         long size ;
 #ifdef HDF
-	int vgid;   /* id of the Vgroup representing this dimension */
+	int32 vgid;   /* id of the Vgroup representing this dimension */
 #endif
 } NC_dim ;
 
@@ -99,7 +99,7 @@ typedef struct {
 	size_t szof ;		/* sizeof each value */
 	long begin ;  /* seek index, often an off_t */
 #ifdef HDF
-	int vgid;     /* id of the variable's Vgroup */
+	int32 vgid;     /* id of the variable's Vgroup */
         uint16 data_ref;  /* ref of the variable's data storage (if exists) */
         uint16 data_tag;  /* tag of the variable's data storage (if exists) */
         intn   data_offset; /* non-traditional data may not begin at 0 */

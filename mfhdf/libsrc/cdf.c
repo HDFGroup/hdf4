@@ -67,7 +67,7 @@ int mode ;
         if(mode & NC_CREAT)
             cdf->is_hdf = TRUE;
         else
-            cdf->is_hdf = Hishdf(name);
+            cdf->is_hdf = (int) Hishdf((char *) name);
         
         if(cdf->is_hdf) {
             int32 hdf_mode;
@@ -84,7 +84,7 @@ int mode ;
                 hdf_mode = DFACC_RDWR;
             }
 
-            cdf->hdf_file = Hopen(name, hdf_mode, 200);
+            cdf->hdf_file = (int32) Hopen((char *) name, hdf_mode, 200);
             Vstart(cdf->hdf_file);
             
             if(cdf->hdf_file == FAIL) {

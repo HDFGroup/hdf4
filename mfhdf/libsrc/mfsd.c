@@ -734,9 +734,10 @@ int32 nt, rank, *dimsizes;
     NC      * handle;
     NC_var  * var;
     NC_dim  * newdim;
-    int32     sdsid, *dims, nctype;
+    int32     sdsid, nctype;
     char      dimname[80];
     intn      i, num;
+    intn    * dims;
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDcreate: I've been called\n");
@@ -752,7 +753,7 @@ int32 nt, rank, *dimsizes;
         name = "DataSet";
 
     /* make fake dimensions which may or may not be over-ridden later */
-    dims = (int32 *) HDgetspace(rank * sizeof(int32));
+    dims = (intn *) HDgetspace(rank * sizeof(intn));
     if(dims == NULL)
         return FAIL;
 
@@ -775,7 +776,7 @@ int32 nt, rank, *dimsizes;
                 return FAIL;
 	}
 
-        dims[i] = handle->dims->count -1;
+        dims[i] = (intn) handle->dims->count -1;
 
     }
     
@@ -1841,6 +1842,7 @@ int32    id, nt;
     NC_string * name;
     int32       ii, nctype, len;
     NC_var   ** dp, *var;
+    intn        dimindex;
 
     /* look for a variable with the same name */
     name = dim->name;
@@ -1873,7 +1875,8 @@ int32    id, nt;
     if(nt == 0) nt = DFNT_FLOAT32;
 
     nctype = hdf_unmap_type(nt);
-    var = (NC_var *) NC_new_var(name->values, nctype, (unsigned)1, &id);
+    dimindex = id;
+    var = (NC_var *) NC_new_var(name->values, nctype, (unsigned)1, &dimindex);
     if(var == NULL)
         return FAIL;
     
