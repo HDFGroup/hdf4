@@ -2,9 +2,12 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.1  1992/04/27 17:07:49  sxu
-C Initial revision
+C Revision 1.2  1992/06/25 19:16:20  chouck
+C Changed double qutoes to single around string constants
 C
+c Revision 1.1  1992/04/27  17:07:49  sxu
+c Initial revision
+c
 C
       program tdfpF
 C
@@ -46,7 +49,7 @@ C
 100   continue
 
       Print *, 'Putting pal1 in new file.'
-      ret = dpppal(TESTFILE, pal1, 0, "w")
+      ret = dpppal(TESTFILE, pal1, 0, 'w')
       call RESULT(ret, 'dpppal')
 
       print *, 'Getting ref1'
@@ -142,7 +145,7 @@ C      call RESULT(ref2, 'dplref')
       ret = dpwref(TESTFILE, ref1)
       call RESULT(ret, 'dpwref')
       print *, 'Writing pal1'
-      ret = dpppal(TESTFILE, pal1, 1, "a")
+      ret = dpppal(TESTFILE, pal1, 1, 'a')
       call RESULT(ret, 'dpppal')
       ret=dplref()
       print *,'last ref is: ', ret
