@@ -74,7 +74,7 @@ LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
  odbccp32.lib ..\xdr\win32xdr.lib ..\libsrc\win32cdf.lib ..\util\win32utl.lib\
  ..\..\hdf\src\win32hdf.lib ..\..\hdf\jpeg\win32jpg.lib /NOLOGO\
  /SUBSYSTEM:console /INCREMENTAL:no /PDB:$(OUTDIR)/"ncdump.pdb" /MACHINE:I386\
- /OUT:$(OUTDIR)/"ncdump.exe" 
+ /STACK:2048000 /OUT:$(OUTDIR)/"ncdump.exe" 
 
 .\ncdump.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
