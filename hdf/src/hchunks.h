@@ -63,6 +63,7 @@ typedef struct dim_def_struct {
 /* Structure for each Chunk Definition*/
 typedef struct chunk_def_struct {
     int32 chunk_size;        /* size of this chunk*/
+    int32 nt_size;           /* number type size i.e. size of data type */
     int32 num_dims;          /* number of actual dimensions */
     DIM_DEF *pdims;          /* ptr to array of dimension records for this chunk*/
     int32 chunk_flag;        /* multiply specailness? */
@@ -80,6 +81,7 @@ typedef struct dim_rec_struct {
     int32 chunk_length;        /* chunk length along this dimension */
     
     /* computed field */
+    int32 last_chunk_length;   /* last chunk length along this dimension */
     int32 num_chunks;          /* i.e. "dim_length / chunk_length" */
 } DIM_REC, * DIM_REC_PTR;
 
@@ -107,6 +109,7 @@ typedef struct chunkinfo_t
     int32       flag;         /* flag for multiply specialness ...*/
     int32       length;       /* the actual length of the data elt */
     int32       chunk_size;   /* the logical size of the chunks */
+    int32       nt_size;      /* number type size i.e. size of data type */
     uint16      chktbl_tag;   /* DFTAG_VH - Vdata header */
     uint16      chktbl_ref;   /* ref of the first chunk table structure(VDATA) */
     uint16      sp_tag;       /* For future use.. */
@@ -143,7 +146,6 @@ extern      "C"
          uint16 tag,          /* IN: tag of element */
          uint16 ref,          /* IN: ref of element */
          uint8 nlevels,       /* IN: number of levels of chunks */
-         int32 data_len,      /* IN: length of element */
          int32 fill_val_len,  /* IN: fill value length in bytes */
          VOID  *fill_val,     /* IN: fill value */
          CHUNK_DEF *chk_array /* IN: structure describing chunk distribution

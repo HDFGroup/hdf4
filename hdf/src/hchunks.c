@@ -17,15 +17,20 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /*LINTLIBRARY */
-/* ------------------------------ HMChunks.c -------------------------------
+/* ------------------------------ HMCxxx -------------------------------
    Routines to implement chunked elements via a Vdatas for
    the chunk table and using a new data tag DFTAG_CHUNK to represent
-   each chunk object. As a result the total number of chunks
+   each chunk object. As a result the *total* number of chunks
    for all the chunked elements in an HDF file can only be as 
-   large as sizeof(uint16) = 65,536.
+   large as sizeof(uint16) = 65,536(i.e. number of refs).
+
+   This layer only has to deal with Chunks from a STDIO programming
+   model as this how special elements are viewed in the library.
+   The layers above deal with the more complex issues 
+   of deciding what data to read/write next given the users request.
    
-   NOTE: GeorgeV's standard Disclaimer <here>. I was coerced to
-         do it this way....
+   NOTE: GeorgeV's standard Disclaimer <here>. 
+         I was coerced to do it this way....
 
 
    Description of file format headers for chunked element
@@ -58,9 +63,9 @@ static char RcsId[] = "@(#)$Revision$";
                                     \______________/
    __________________________________________|
    V
-   CHUNKED DESCRIPTION RECORD(6 + 9 + 8 + 5 + 12 x ndims + 4 + fill_val_len + 
-                              'specialness' bytes) > 45 bytes
-   ================================================================================
+   CHUNKED DESCRIPTION RECORD(6 + 9 + 12 + 5 + 12 x ndims + 4 + fill_val_len + 
+                              'specialness' bytes) > 49 bytes
+   ============================================================================
    <-  2 bytes -> <-  4 bytes  -> (6 bytes)
    --------------------------------
    |sp_tag_desc  |sp_tag_head_len | ... cont'd
@@ -71,10 +76,10 @@ static char RcsId[] = "@(#)$Revision$";
    | version |    flag     | elm_tot_length |... cont'd
    ------------------------------------------
         
-   <- 4 bytes  -> <- 2 bytes -> <- 2 bytes -> (8 bytes)
-   -------------------------------------------
-...| chunk_size  | chk_tbl_tag | chk_tbl_ref | ...cont'd
-   -------------------------------------------
+   <- 4 bytes  -> <- 4 bytes  -> <- 2 bytes -> <- 2 bytes -> (12 bytes)
+   ---------------------------------------------------------
+...| chunk_size  |  nt_size     | chk_tbl_tag | chk_tbl_ref | ...cont'd
+   ---------------------------------------------------------
 
    <- 2 bytes -> <- 2 bytes -> <- 1 byte -> (5 bytes)
    ----------------------------------------
@@ -116,6 +121,7 @@ static char RcsId[] = "@(#)$Revision$";
                     chunks. Partial chunks are not distinguished from
                     regular chunks.
    chunk_size     - Size of data chunks(32 bit field)
+   nt_size        - Number type size i.e size of data type 
    chk_tbl_tag    - Tag of chunk table i.e. Vdata (16 bit field)
    chk_tbl_ref    - Reference number of the chunk table
                     i.e. Vdata (16 bit field)
@@ -184,6 +190,7 @@ EXPORTED ROUTINES
    HMCcreate       -- create a chunked element
    HMCwriteChunk   -- write out the specified chunk to a chunked element
    HMCsetMaxcache  -- maximum number of chunks to cache 
+   HMCPcloseAID    -- close file but keep AID active (For Hnextread())
 
    Library Private
    ---------------
@@ -195,7 +202,6 @@ EXPORTED ROUTINES
    HMCPchunkwrite  -- write out a single chunk to a chunked element
    HMCPwrite       -- write out some data to a chunked element
    HMCPinquire     -- Hinquire for chunked element
-   HMCPcloseAID    -- close file but keep AID active
    HMCPendacess    -- close a chunked element AID
    HMCPinfo        -- return info about a chunked element
 
@@ -210,7 +216,7 @@ LOCAL ROUTINES
    Chunking helper routines
    ------------------------
    create_dim_recs
-   calculate_chunk_indices
+   update_chunk_indices_seek
    update_chunk_indices
    calculate_chunk_seek      -- not used
    compute_array_to_chunk    -- not used
@@ -223,14 +229,15 @@ LOCAL ROUTINES
    -------------
    HMCIstaccess -- set up AID to access a chunked element
 
+   AUTHOR 
+   ------- 
+   -GeorgeV
 */
 
 /* for debugging */
-
 /*
 #define CHK_DEBUG
 */
-
 #define  _HCHUNKS_MAIN_
 #include "hdf.h"
 #include "hfile.h"
@@ -271,7 +278,7 @@ create_dim_recs(DIM_REC **dptr, /* OUT: dimension record pointers */
 
     /* allocate space for seek chunk indices and chunk seek positions */
     if ((*sbi = (int32 *)HDmalloc(sizeof(int32)*ndims)) == NULL)
-              HGOTO_ERROR(DFE_NOSPACE, FAIL);
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     if ((*spb = (int32 *)HDmalloc(sizeof(int32)*ndims)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -305,24 +312,27 @@ create_dim_recs(DIM_REC **dptr, /* OUT: dimension record pointers */
 
 /* -------------------------------------------------------------------------
 NAME
-    calculate_chunk_indices
+    update_chunk_indicies_seek
 DESCRIPTION
-  Give seek location within an element, calculate which chunk in
-  chunk array and position within chunk.
+    Give seek location within an element, calculate which chunk in
+    chunk array and position within chunk.
 RETURNS
     Nothing
 ---------------------------------------------------------------------------*/
 PRIVATE void
-calculate_chunk_indices(int32 sloc,    /* IN: Seek location in element */
-                        int32 ndims,   /* IN: number of dimensions of elem */
-                        int32 *sbi,    /* IN: seek chunk indicies array */
-                        int32 *spb,    /* IN: seek pos w/ chunk array */
-                        DIM_REC *ddims /* IN: dim record ptrs */)
+update_chunk_indicies_seek(int32 sloc,    /* IN: physical Seek loc in element */
+                           int32 ndims,   /* IN: number of dimensions of elem */
+                           int32 nt_size, /* IN: number type size */
+                           int32 *sbi,    /* IN: seek chunk indicies array */
+                           int32 *spb,    /* IN: seek pos w/ chunk array */
+                           DIM_REC *ddims /* IN: dim record ptrs */)
 {
     int32 i;
     int32 stmp;
 
-    stmp = sloc;
+    /* adjust physical seek->logical seek by using number type size */
+    stmp = sloc / nt_size;
+
     for(i = 0; i < ndims; i++) 
       { /* Calculate which chunk index in chunk representation */
           sbi[i] = (int32)((stmp % ddims[i].dim_length) 
@@ -331,14 +341,16 @@ calculate_chunk_indices(int32 sloc,    /* IN: Seek location in element */
           spb[i] = (int32)((stmp % ddims[i].dim_length) 
                            % ddims[i].chunk_length);
 
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_1
           printf("Dim %d: chunk_array =%d, chunk_pos_array = %d\n", 
                  i, sbi[i], spb[i]);
 #endif
           stmp = stmp / ddims[i].dim_length;
       } /* end for i */
 
-} /* calculdate_chunk_indices()*/
+} /* update_chunk_indicies_seek()*/
+
+#if 0 /* NOT USED */
 
 /* -------------------------------------------------------------------------
 NAME
@@ -351,7 +363,8 @@ RETURNS
     Nothing
 ---------------------------------------------------------------------------*/
 PRIVATE void
-update_chunk_indices(int32 chunk_size, /* IN: size of chunk read/written */
+update_chunk_indices(int32 chunk_size, /* IN: physical size of chunk read/written*/
+                     int32 nt_size,    /* IN: number type size */
                      int32 *sbi,       /* IN: seek chunk indicies array */
                      int32 *spb,       /* IN: seek pos w/ chunk array */
                      int32 ndims,      /* IN: number of dimensions */
@@ -359,34 +372,38 @@ update_chunk_indices(int32 chunk_size, /* IN: size of chunk read/written */
 {
     int32 change = 1;
     int32 index = 0;
+    int32 l_chunk_size = 0;
+
+    /* Adjust physical chunk_size -> logical chunk size by size of number type */
+    l_chunk_size = chunk_size / nt_size;
 
     while(change && index < ndims) 
       { /* add chunk written to current chunk dimension */
-          spb[index] += chunk_size;
+          spb[index] += l_chunk_size;
           change = 0;
           if(spb[index] == ddims[index].chunk_length) 
             { /* we've move to next chunk since we filled the previous one */
-#ifdef CHK_DEBUG
-                fprintf(stderr,"going to next chunk along spb[%d] to access\n",index);
+#ifdef CHK_DEBUG_1
+                fprintf(stderr,"going to next chunk along spb[%d] to access\n",
+                        index);
 #endif
                 spb[index] = 0; /* position at beginning of chunk */
                 if(++(sbi[index]) == ddims[index].num_chunks) 
                   { /* we've written to all the chunks in this demension, 
                        so reset for this dimension */
-#ifdef CHK_DEBUG
-                fprintf(stderr,"accessed all chunks along sbi[%d] so reset \n", 
-                        index);
+#ifdef CHK_DEBUG_1
+                    fprintf(stderr,"accessed all chunks along sbi[%d] so reset \n", 
+                            index);
 #endif
                       sbi[index] = 0;
                       change = 1;
                   } 
                 index++; /* go to next dimension */
-                chunk_size = 1; 
+                l_chunk_size = 1; 
             }
       } /* end while "change" */
 }
 
-#if 0 /* NOT USED */
 
 /* -------------------------------------------------------------------------
 NAME
@@ -398,15 +415,20 @@ RETURNS
     Nothing
 ---------------------------------------------------------------------------*/
 PRIVATE void
-calculate_chunk_seek(int32 *chunk_seek, /* OUT: new seek position within element */
+calculate_chunk_seek(int32 *chunk_seek, /* OUT: new physical seek pos in element*/
                      int32 ndims,       /* IN: number of dims */
+                     int32 nt_size,     /* IN: number type size */
                      int32 *sbi,        /* IN: seek chunk array */
                      int32 *spb,        /* IN; seek pos w/ chunk array */
                      DIM_REC *ddims,    /* IN: dim record ptrs */
-                     int32 chunk_size   /* IN: size of chunk */)
+                     int32 chunk_size   /* IN: physical size of chunk */)
 {
     int32 j;
     int32 new_seek;
+    int32 l_chunk_size = 0;
+
+    /* Adjust physical chunk_size -> logical chunk size by size of number type */
+    l_chunk_size = chunk_size / nt_size;
 
     /* Calculate Seek Location in element 
      * First calculste seek-chunk position in file 
@@ -421,10 +443,10 @@ calculate_chunk_seek(int32 *chunk_seek, /* OUT: new seek position within element
     /* must get chunk_size from somewhere else
      * to give us position in file relative to chunk.
      * Next comes adjustment of seek for postion inside chunk*/
-    *chunk_seek *= chunk_size; 
-#ifdef CHK_DEBUG
+    *chunk_seek *= l_chunk_size; 
+#ifdef CHK_DEBUG_1
     printf("  chunk_seek = %d(chunk# %d)\n", *chunk_seek,
-           *chunk_seek/chunk_size);       
+           *chunk_seek/l_chunk_size);       
 #endif
     /* Calculate seek position in chunk */
     new_seek = spb[ndims - 1];
@@ -436,11 +458,12 @@ calculate_chunk_seek(int32 *chunk_seek, /* OUT: new seek position within element
 
     /* add seek position in chunk to seek-chunk offset */
     new_seek += *chunk_seek;
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_1
     printf("   calculated seek position in file is %d\n", new_seek);
 #endif
 
-    *chunk_seek = new_seek;
+    /* multiply by number type size to get new physical seek positon */
+    *chunk_seek = new_seek * nt_size;
 
 } /* calculate_chunk_seek() */
 
@@ -505,10 +528,11 @@ RETURNS
     Nothing
 ---------------------------------------------------------------------------*/
 PRIVATE void
-calculate_seek_in_chunk(int32 *chunk_seek, /* OUT: new seek position within element */
-                        int32 ndims,       /* IN: number of dims */
-                        int32 *spb,        /* IN; seek pos w/ chunk array */
-                        DIM_REC *ddims     /* IN: dim record ptrs */ )
+calculate_seek_in_chunk(int32 *chunk_seek,/* OUT: new physical seek pos in element*/
+                        int32 ndims,      /* IN: number of dims */
+                        int32 nt_size,    /* IN: number type size */
+                        int32 *spb,       /* IN; seek pos w/ chunk array */
+                        DIM_REC *ddims    /* IN: dim record ptrs */ )
 {
     int32 j;
 
@@ -520,6 +544,9 @@ calculate_seek_in_chunk(int32 *chunk_seek, /* OUT: new seek position within elem
               + spb[j - 1];
       }
 
+    /* multiply by number type size to get new physical seek positon */
+    *chunk_seek =*chunk_seek * nt_size;
+   
 } /* calculate_seek_in_chunk() */
 
 
@@ -562,18 +589,36 @@ RETURNS
     Nothing
 ---------------------------------------------------------------------------*/
 PRIVATE void
-calculate_chunk_for_chunk(int32 *chunk_size,    /* OUT: chunk size for this chunk */
-                          int32 len,            /* IN: total length to operate on */
-                          int32 bytes_finished, /* IN: bytes already operted on*/
-                          int32 *spb,           /* IN: seek pos w/ chunk array */
-                          DIM_REC *ddims        /* IN: dim record ptrs */)
+calculate_chunk_for_chunk(int32 *chunk_size,   /* OUT: chunk size for this chunk */
+                          int32 nt_size,       /* IN: number type size */
+                          int32 len,           /* IN: total length to operate on */
+                          int32 bytes_finished,/* IN: bytes already operted on*/
+                          int32 *sbi,          /* IN: seek chunk array */
+                          int32 *spb,          /* IN: seek pos w/ chunk array */
+                          DIM_REC *ddims       /* IN: dim record ptrs */)
 {
-    /* Calculate size of chunk to write in this chunk */
-    if ((ddims[0].chunk_length - spb[0]) > (len - bytes_finished))
-        *chunk_size = len - bytes_finished;   /* less than a chunk to write */
-    else
-        *chunk_size = ddims[0].chunk_length - spb[0]; /* full chunk */
+    /* Is this the last chunk along slowest dimension 
+       In future need to handle variable case of any dimension being
+       the slowest. */
+    if (sbi[0] == ddims[0].num_chunks)
+      { /* last chunk */
+          /* Calculate size of chunk to write for the last chunk */
+          if ((ddims[0].last_chunk_length - spb[0]) * nt_size 
+              > (len - bytes_finished))
+              *chunk_size = len - bytes_finished; /* less than a chunk to write */
+          else /* last full chunk */
+              *chunk_size = (ddims[0].last_chunk_length - spb[0]) * nt_size; 
 
+      }
+    else /* not the last chunk */
+      {
+          /* Calculate size of chunk to write in this chunk */
+          if ((ddims[0].chunk_length - spb[0]) * nt_size 
+              > (len - bytes_finished))
+              *chunk_size = len - bytes_finished; /* less than a chunk to write */
+          else /* full chunk */
+              *chunk_size = (ddims[0].chunk_length - spb[0]) * nt_size; 
+      }
 } /* calculate_chunk_for_chunk() */
 
 
@@ -602,7 +647,7 @@ chkcompare(VOIDP k1,   /* IN: first key */
     return ret_value;
 }   /* chkcompare */
 
-/*********** Helper fcns for dealing with chunk table TBBT tree ***************/
+/********* Helper fcns for dealing with chunk table TBBT tree ***************/
 
 /* free key - used by tbbt routines */
 VOID
@@ -814,15 +859,17 @@ HMCIstaccess(accrec_t * access_rec, /* IN: access record to fill in */
               INT32DECODE(p, info->flag);         /* 4 bytes */
               INT32DECODE(p, info->length);       /* 4 bytes */
               INT32DECODE(p, info->chunk_size);   /* 4 bytes */
+              INT32DECODE(p, info->nt_size);      /* 4 bytes */
               UINT16DECODE(p, info->chktbl_tag);  /* 2 bytes */
               UINT16DECODE(p, info->chktbl_ref);  /* 2 bytes */
               UINT16DECODE(p, info->sp_tag);      /* 2 bytes */
               UINT16DECODE(p, info->sp_ref);      /* 2 bytes */
               HDmemcpy(&info->ndims,p, 1);        /* 1 bytes */
               p = p + 1;
-                                                 /* = 22 bytes */
+              /* = 26 bytes */
 
-              /* create dimension, seek_block and seek_pos arrays given number of dims */
+              /* create dimension, seek_block and seek_pos arrays 
+                 given number of dims */
               if (create_dim_recs(&(info->ddims),&(info->seek_chunk_indices),
                                   &(info->seek_pos_chunk),info->ndims) == FAIL)
                   HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -830,16 +877,27 @@ HMCIstaccess(accrec_t * access_rec, /* IN: access record to fill in */
               /* decode dimension stuff */
               for (j = 0; j < info->ndims; j++)
                 {
+                    int32 odd_size;
+
                     INT32DECODE(p,(info->ddims[j].distrib_type));  /* 4 bytes */
-                    INT32DECODE(p,(info->ddims[j].dim_length));   /* 4 bytes */
-                    INT32DECODE(p,(info->ddims[j].chunk_length)); /* 4 bytes */
+                    INT32DECODE(p,(info->ddims[j].dim_length));    /* 4 bytes */
+                    INT32DECODE(p,(info->ddims[j].chunk_length));  /* 4 bytes */
+                                                                  /* = 12 bytes */  
                     info->ddims[j].num_chunks = info->ddims[j].dim_length /
                         info->ddims[j].chunk_length;
-                    /* check to see if need to increase # of chunks along this dim */
-                    if (info->ddims[j].dim_length % info->ddims[j].chunk_length)
-                        info->ddims[j].num_chunks++; /* increase by one */
+                    /* check to see if need to increase # of chunks along this dim*/
+                    if (odd_size = (info->ddims[j].dim_length % info->ddims[j].chunk_length))
+
+                      {
+                          info->ddims[j].num_chunks++; /* increase by one */
+                          /* set last chunk length */
+                          info->ddims[j].last_chunk_length = odd_size; 
+                      }
+                    else
+                        info->ddims[j].last_chunk_length = info->ddims[j].chunk_length; /*  */	    
+
                     npages = npages * info->ddims[j].num_chunks;
-                }                                           /* = 12 x ndims bytes */
+                }   /* = 12 x ndims bytes */
 
               /* decode fill value length */
               INT32DECODE(p,(info->fill_val_len));   /* 4 bytes */
@@ -933,7 +991,7 @@ HMCIstaccess(accrec_t * access_rec, /* IN: access record to fill in */
                   {
                       HDmemcpy(&chkptr->origin[k],pntr,sizeof(int32));
                       pntr += sizeof(int32);
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_2
                       printf(" chktpr->origin[%d]=%d, ",k,chkptr->origin[k]);
 #endif
                   }
@@ -941,12 +999,12 @@ HMCIstaccess(accrec_t * access_rec, /* IN: access record to fill in */
                 /* Copy tag next */
                 HDmemcpy(&chkptr->chk_tag,pntr,sizeof(uint16));
                 pntr += sizeof(uint16);
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_2
                 printf(" chktpr->chk_tag=%d, ",chkptr->chk_tag);
 #endif
                 /* Copy ref last */
                 HDmemcpy(&chkptr->chk_ref,pntr,sizeof(uint16));
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_2
                 printf(" chktpr->chk_ref=%d, ",chkptr->chk_ref);
                 printf("\n");
 #endif
@@ -969,8 +1027,9 @@ HMCIstaccess(accrec_t * access_rec, /* IN: access record to fill in */
           /* create chunk cache with 'maxcache' set to the number of chunks
              in the last dimension */
           if ((info->chk_cache = mcache_open(&access_rec->file_id, access_aid, 
-                       info->chunk_size, info->ddims[0].num_chunks, 
-                       npages, 0)) == NULL)
+                                             (info->chunk_size*info->nt_size), 
+                                             info->ddims[0].num_chunks, 
+                                             npages, 0)) == NULL)
               HE_REPORT_GOTO("failed to find initialize chunk cache", FAIL);
 
           /* set up chunk read/write routines */
@@ -1074,7 +1133,6 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
           uint16 tag,          /* IN: tag of element */
           uint16 ref,          /* IN: ref of element */
           uint8 nlevels,       /* IN: number of levels of chunks */
-          int32 data_len,      /* IN: length of element */
           int32 fill_val_len,  /* IN: fill value length in bytes */
           VOID *fill_val,      /* IN: fill value */
           CHUNK_DEF *chk_array /* IN: structure describing chunk distribution
@@ -1093,6 +1151,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     uint16      special_tag;       /* special version of this tag */
     atom_t      data_id;           /* dd ID of existing regular element */
     int32       sp_tag_header_len = 0; /* length of special header */
+    int32       data_len   = 1;        /* logical length of element */
     int32       ret_value  = SUCCEED;
     char        v_name[30] = "";   /* name of vdata i.e. chunk table */
     intn        i;                 /* loop index */
@@ -1159,8 +1218,8 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     info->aid          = FAIL;
     info->version      = _HDF_CHK_HDR_VER ;     /* verson 1 for now */
     info->flag         = chk_array->chunk_flag; 
-    info->length       = data_len;              /* size of element */
-    info->chunk_size   = chk_array->chunk_size; /* chunk size */
+    info->chunk_size   = chk_array->chunk_size; /* logical chunk size */
+    info->nt_size      = chk_array->nt_size;    /* number type size */
     info->ndims        = chk_array->num_dims;   /* number of dimensions */
     info->sp_tag       = DFTAG_NULL;            /* not used currently */
     info->sp_ref       = 0;                     /* not used currently */
@@ -1238,31 +1297,51 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* Copy info from input to dimension arrays */
+    data_len = 1;
     for (i = 0; i < info->ndims; i++)
       {
+          int32 odd_size;
+
           info->ddims[i].distrib_type = chk_array->pdims[i].distrib_type;
           info->ddims[i].dim_length   = chk_array->pdims[i].dim_length;
           info->ddims[i].chunk_length = chk_array->pdims[i].chunk_length;
           info->ddims[i].num_chunks = info->ddims[i].dim_length /
               info->ddims[i].chunk_length;
           /* check to see if need to increase # of chunks along this dim */
-          if (info->ddims[i].dim_length % info->ddims[i].chunk_length)
-              info->ddims[i].num_chunks++; /* increase by one */
+          if (odd_size = (info->ddims[i].dim_length % info->ddims[i].chunk_length))
+            {
+                info->ddims[i].num_chunks++; /* increase by one */
+                /* set last chunk length */
+                info->ddims[i].last_chunk_length = odd_size; 
+            }
+          else
+              info->ddims[i].last_chunk_length = info->ddims[i].chunk_length; /*  */	    
+
+
+          /* calcualte number of chunks/pages in element */
           npages = npages * info->ddims[i].num_chunks;
-#ifdef CHK_DEBUG
+
+          /* compute logical element length */
+          data_len *= info->ddims[i].dim_length;
+
+#ifdef CHK_DEBUG_2
           printf("HMCcreate: dim[%d].dim_length=%d,",i,info->ddims[i].dim_length);
           printf("HMCcreate: dim[%d].chunk_length=%d,",i,info->ddims[i].chunk_length);
           printf("HMCcreate: dim[%d].num_chunks=%d,",i,info->ddims[i].num_chunks);
 #endif
-      }                                               
-#ifdef CHK_DEBUG
+      }  /* end for ndims */                                        
+#ifdef CHK_DEBUG_2
     printf("\n");
 #endif
+
+    /* Set logical length of element */
+    info->length = data_len;              /* logical size of element */
+
     /* Calculate total length of this special element header
        including the fields for 'sp_tag_desc' and 'sp_tag_head_len'.
        See description of format header at top of file for more
        info on fields */
-    sp_tag_header_len = 6 + 9 + 8 + 5 +(12*info->ndims) + 4 + info->fill_val_len;
+    sp_tag_header_len = 6 + 9 + 12 + 5 +(12*info->ndims) + 4 + info->fill_val_len;
 
     /* Allocate buffer space for header */
     if (( sp_header = (uint8 *) HDcalloc(sp_tag_header_len,1))==NULL)
@@ -1287,13 +1366,14 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
         INT32ENCODE(p, info->flag);         /* 4 bytes */
         INT32ENCODE(p, info->length);       /* 4 bytes */
         INT32ENCODE(p, info->chunk_size);   /* 4 bytes */
+        INT32ENCODE(p, info->nt_size);      /* 4 bytes */
         UINT16ENCODE(p, info->chktbl_tag);  /* 2 bytes */
         UINT16ENCODE(p, info->chktbl_ref);  /* 2 bytes */
         UINT16ENCODE(p, info->sp_tag);      /* 2 bytes */
         UINT16ENCODE(p, info->sp_ref);      /* 2 bytes */
         HDmemcpy(p, &info->ndims,1);        /* 1 bytes */
         p = p + 1;
-                                            /* = 28 bytes*/
+        /* = 32 bytes*/
         for (j = 0; j < info->ndims; j++)
           {
               INT32ENCODE(p,(info->ddims[j].distrib_type)); /* 4 bytes */
@@ -1314,7 +1394,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     if((dd_aid = Hstartaccess(file_id,special_tag,ref,DFACC_ALL))==FAIL)
         HGOTO_ERROR(DFE_CANTACCESS, FAIL);
 
-    /* write only the base 28 bytes ( 6 + 9 + 8 + 5)
+    /* write only the base 32 bytes ( 6 + 9 + 12 + 5)
        plus what is needed for each dimension which is (12 x ndims) bytes.
        plus for fill value 4 bytes + fill_val_len 
        plus in future multiply special headers  = sp_tag_header_len */
@@ -1331,8 +1411,8 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     /* Detach from the data DD ID */
     if(data_id != FAIL)
       {
-        if(HTPendaccess(data_id)==FAIL)
-            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+          if(HTPendaccess(data_id)==FAIL)
+              HGOTO_ERROR(DFE_INTERNAL, FAIL);
       }
 
     /* update access record and file record */
@@ -1354,8 +1434,9 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
 
     /* create chunk cache */
     if ((info->chk_cache = mcache_open(&access_rec->file_id, access_aid, 
-                      info->chunk_size, info->ddims[0].num_chunks, 
-                      npages,0)) == NULL)
+                                       (info->chunk_size*info->nt_size), 
+                                       info->ddims[0].num_chunks, 
+                                       npages,0)) == NULL)
         HE_REPORT_GOTO("failed to find initialize chunk cache", FAIL);
 
     /* set up chunk read/write routines */
@@ -1505,22 +1586,24 @@ HMCPseek(accrec_t * access_rec,  /* IN: access record to mess with */
     if (access_rec->special != SPECIAL_CHUNKED)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
+    /* get special info */
+    info = (chunkinfo_t *) (access_rec->special_info);
+
     /* adjust the offset according to origin and validate */
     /* there is no upper bound to posn */
     if (origin == DF_CURRENT)
         offset += access_rec->posn;
     if (origin == DF_END)
-        offset += ((chunkinfo_t *) (access_rec->special_info))->length;
+        offset += (info->length * info->nt_size); /* adjust by number type size */
     if (offset < 0)
         HGOTO_ERROR(DFE_RANGE, FAIL);
-
-    info = (chunkinfo_t *) (access_rec->special_info);
 
     /* Seek to given location(bytes) for reading/writing */
     /* i.e calculate chunk indices given seek location 
        this will update the proper arrays in the special info struct */
-    calculate_chunk_indices(offset,info->ndims,info->seek_chunk_indices,
-                            info->seek_pos_chunk,info->ddims);
+    update_chunk_indicies_seek(offset,info->ndims, info->nt_size,
+                               info->seek_chunk_indices,
+                               info->seek_pos_chunk,info->ddims);
 
     /* set position in access record */
     access_rec->posn = offset;
@@ -1584,16 +1667,16 @@ HMCPchunkread(VOID  *cookie,    /* IN: access record to mess with */
     info = (chunkinfo_t *) (access_rec->special_info);
     relative_posn = access_rec->posn;
     bytes_read    = 0;
-    read_len      = info->chunk_size; 
+    read_len      = (info->chunk_size * info->nt_size); 
 
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_3
     printf("HMCPchunkread called with chunk %d \n",chunk_num);
 #endif
     /* find chunk record in TBBT */
     if ((entry = (tbbtdfind(info->chk_tree, &chunk_num, NULL))) == NULL)
       { /* does not exist */
           /* calculate number of fill value items to fill buffer with */
-          nitems = info->chunk_size / info->fill_val_len;
+          nitems = (info->chunk_size * info->nt_size) / info->fill_val_len;
 
           /* copy fill values into buffer and return */
           if (HDmemfill(datap,info->fill_val, info->fill_val_len,nitems) == NULL)
@@ -1601,39 +1684,39 @@ HMCPchunkread(VOID  *cookie,    /* IN: access record to mess with */
       }
     else /* exists in TBBT */
       {
-        /* get chunk record from node */
-        chk_rec = (CHUNK_REC *) entry->data; 
+          /* get chunk record from node */
+          chk_rec = (CHUNK_REC *) entry->data; 
 
-        /* check to see if has been written to */
-        if (chk_rec->chk_tag != DFTAG_NULL)
-          { /* valid chunk in file */
-              /* Start read on chunk */
-              if ((chk_id = Hstartread(access_rec->file_id, chk_rec->chk_tag,
-                                       chk_rec->chk_ref)) == FAIL)
-                {
-                    Hendaccess(chk_id);
-                    HE_REPORT_GOTO("Hstartread failed to read chunk", FAIL);
-                }
+          /* check to see if has been written to */
+          if (chk_rec->chk_tag != DFTAG_NULL)
+            { /* valid chunk in file */
+                /* Start read on chunk */
+                if ((chk_id = Hstartread(access_rec->file_id, chk_rec->chk_tag,
+                                         chk_rec->chk_ref)) == FAIL)
+                  {
+                      Hendaccess(chk_id);
+                      HE_REPORT_GOTO("Hstartread failed to read chunk", FAIL);
+                  }
 
-              /* read data from chunk */
-              if (Hread(chk_id, read_len, bptr) == FAIL)
-                  HGOTO_ERROR(DFE_READERROR, FAIL);
+                /* read data from chunk */
+                if (Hread(chk_id, read_len, bptr) == FAIL)
+                    HGOTO_ERROR(DFE_READERROR, FAIL);
 
-              bytes_read = read_len;
+                bytes_read = read_len;
 
-              /* end access to chunk */
-              if (Hendaccess(chk_id) == FAIL)
-                  HE_REPORT_GOTO("Hendaccess failed to end access to chunk", FAIL);
+                /* end access to chunk */
+                if (Hendaccess(chk_id) == FAIL)
+                    HE_REPORT_GOTO("Hendaccess failed to end access to chunk", FAIL);
               
-          }
-        else /* chunk has not been written, so return fill value buffer */
-          {  /* calculate number of fill value items to fill buffer with */
-              nitems = info->chunk_size / info->fill_val_len;
+            }
+          else /* chunk has not been written, so return fill value buffer */
+            {  /* calculate number of fill value items to fill buffer with */
+                nitems = (info->chunk_size * info->nt_size) / info->fill_val_len;
 
-               /* copy fill values into buffer and return */
-              if (HDmemfill(datap,info->fill_val, info->fill_val_len,nitems) == NULL)
-                  HE_REPORT_GOTO("HDmemfill failed to fill read chunk", FAIL);
-          }
+                /* copy fill values into buffer and return */
+                if (HDmemfill(datap,info->fill_val, info->fill_val_len,nitems) == NULL)
+                    HE_REPORT_GOTO("HDmemfill failed to fill read chunk", FAIL);
+            }
       } /* end else exists in TBBT tree */
 
     ret_value = bytes_read; /* number of bytes read */
@@ -1643,7 +1726,7 @@ HMCPchunkread(VOID  *cookie,    /* IN: access record to mess with */
       { /* Error condition cleanup */
           if (chk_id != FAIL)
               Hendaccess(chk_id);
-       } /* end if */
+      } /* end if */
 
     /* Normal function cleanup */
 #ifdef HAVE_PABLO
@@ -1684,7 +1767,7 @@ HMCPread(accrec_t * access_rec, /* IN: access record to mess with */
     int32       chunk_num = 0;   /* next chunk number */
     VOID        *chk_data = NULL; /* chunk data */
     uint8       *chk_dptr = NULL; /* pointer to chunk data */
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_3
     int         i;
 #endif
     int32       ret_value = SUCCEED;
@@ -1700,16 +1783,19 @@ HMCPread(accrec_t * access_rec, /* IN: access record to mess with */
     /* set inputs */
     data = (uint8 *) datap;
     info = (chunkinfo_t *) (access_rec->special_info);
-    relative_posn = access_rec->posn;
+    relative_posn = access_rec->posn; /* current seek postion in element */
 
     /* validate length and set proper length */
     if (length == 0)
-        length = info->length - access_rec->posn;
+        length = (info->length * info->nt_size) - access_rec->posn;
     else if (length < 0)
         HGOTO_ERROR(DFE_RANGE, FAIL);
 
-    if (access_rec->posn + length > info->length)
-        length = info->length - access_rec->posn;
+    if (access_rec->posn + length > (info->length * info->nt_size))
+        length = (info->length * info->nt_size) - access_rec->posn;
+
+    /* should chunk indicies be updated with relative_posn? 
+       or did last operation update it already */
 
     /* enter translating length to proper filling of buffer from chunks */
     bptr = datap;
@@ -1718,7 +1804,7 @@ HMCPread(accrec_t * access_rec, /* IN: access record to mess with */
     while (bytes_read < read_len) 
       {
           /* for debuging */
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_3
           printf("Seek start(in chunk array):(");
           for (i = 0; i < info->ndims; i++)
               printf("%d%s", info->seek_chunk_indices[i], i!= info->ndims-1 ? ",":NULL);
@@ -1729,14 +1815,16 @@ HMCPread(accrec_t * access_rec, /* IN: access record to mess with */
           printf(")\n");
 #endif
 
-          /* calculate chunk to retrieve */
+          /* calculate chunk to retrieve on this pass */
           calculate_chunk_num(&chunk_num,info->ndims,info->seek_chunk_indices,
                               info->ddims);
 
-          /* calculate contiguouschunk size that we can read from this chunk */
-          calculate_chunk_for_chunk(&chunk_size,read_len,bytes_read,
+          /* calculate contiguous chunk size that we can read from this chunk 
+             during this pass */
+          calculate_chunk_for_chunk(&chunk_size,info->nt_size,read_len,bytes_read,
+                                    info->seek_chunk_indices,
                                     info->seek_pos_chunk,info->ddims);
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_3
           printf("reading chunk of %d bytes\n", chunk_size);
 #endif
 
@@ -1755,7 +1843,8 @@ HMCPread(accrec_t * access_rec, /* IN: access record to mess with */
           chk_dptr = chk_data; /* set chunk data ptr */
 
           /* calculate position in chunk */
-          calculate_seek_in_chunk(&read_seek,info->ndims,info->seek_pos_chunk,
+          calculate_seek_in_chunk(&read_seek,info->ndims,info->nt_size,
+                                  info->seek_pos_chunk,
                                   info->ddims);
 
           chk_dptr += read_seek; /* move to correct position in chunk */
@@ -1767,40 +1856,24 @@ HMCPread(accrec_t * access_rec, /* IN: access record to mess with */
           if (mcache_put(info->chk_cache, chk_data, 0) == FAIL)
               HE_REPORT_GOTO("HMCPread failed to put chunk back in cache", FAIL);
 
-#if 0     
-          for (i=0; i < chunk_size; i++)
-            {
-                printf("%x(%d)",*(bptr+i),*(bptr+i));
-                if (i != chunk_size - 1)
-                    printf(",");
-            }
-          printf("\n");
-#endif
-
           /* increment buffer pointer */
           bptr += chunk_size;
 
           /* adjust number of bytes already read */
           bytes_read += chunk_size; 
 
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_3
           printf("read %d bytes already\n", bytes_read);
 #endif
-#if 0
-          for (i=0; i < bytes_read; i++)
-            {
-                printf("%x(%d)",datap[i],datap[i]);
-                if (i != bytes_read - 1)
-                    printf(",");
-            }
-#endif
-#ifdef CHK_DEBUG
-          printf("\n");
-#endif
-          /* increment our starting seek postion i
-           * i.e. find new chunk to start writing to */
-          update_chunk_indices(chunk_size,info->seek_chunk_indices,
-                               info->seek_pos_chunk,info->ndims,info->ddims);
+          /* update relative position i.e. user element seek postion 
+             with chunk size written */
+          relative_posn += chunk_size;
+
+          /* i.e calculate chunk indices given seek location 
+             this will update the proper arrays in the special info struct */
+          update_chunk_indicies_seek(relative_posn,info->ndims, info->nt_size,
+                                     info->seek_chunk_indices,
+                                     info->seek_pos_chunk,info->ddims);
       } /* end while "bytes_read" */
 
     /* update access record postion with bytes read */
@@ -1869,11 +1942,11 @@ HMCPchunkwrite(VOID  *cookie,    /* IN: access record to mess with */
     file_rec =  HAatom_object(access_rec->file_id);
     info     = (chunkinfo_t *) (access_rec->special_info);
     relative_posn = access_rec->posn;
-    write_len     = info->chunk_size;
+    write_len     = (info->chunk_size * info->nt_size);
     bytes_written = 0;
     bptr          = (VOID *)datap;
 
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_4
     printf("HMCPchunkwrite called with chunk %d \n",chunk_num);
 #endif
     /* find chunk record in TBBT */
@@ -1900,17 +1973,17 @@ HMCPchunkwrite(VOID  *cookie,    /* IN: access record to mess with */
           /* Initialize chunk record */
           chkptr->chk_tag = DFTAG_CHUNK;
           chkptr->chk_ref = Htagnewref(access_rec->file_id, DFTAG_CHUNK);
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_4
           printf(" chktpr->chk_tag=%d, ",chkptr->chk_tag);
           printf(" chktpr->chk_ref=%d, ",chkptr->chk_ref);
 #endif
           for (k = 0; k < info->ndims; k++)
             {
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_4
                 printf(" chktpr->origin[%d]=%d, ",k,chkptr->origin[k]);
 #endif
             }
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_4
           printf("\n");
 #endif
 
@@ -1936,7 +2009,7 @@ HMCPchunkwrite(VOID  *cookie,    /* IN: access record to mess with */
 
     /* Start write on chunk */
     if ((chk_id = Hstartwrite(access_rec->file_id, chk_rec->chk_tag,
-                              chk_rec->chk_ref,info->chunk_size)) == FAIL)
+                              chk_rec->chk_ref,write_len)) == FAIL)
         HE_REPORT_GOTO("Hstartwrite failed to read chunk", FAIL);
 
     /* write data to chunk */
@@ -2021,15 +2094,15 @@ HMCsetMaxcache(int32 access_id, /* IN: access aid to mess with */
     else /* not special */
         ret_value = FAIL;
 
-done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
+  done:
+    if(ret_value == FAIL)   
+      { /* Error condition cleanup */
 
-    } /* end if */
+      } /* end if */
 
-  /* Normal function cleanup */
+    /* Normal function cleanup */
 
-  return ret_value;
+    return ret_value;
 } /* HMCsetMaxcache() */
 
 /* ------------------------------- HMCwriteChunk ---------------------------
@@ -2098,7 +2171,7 @@ HMCwriteChunk(int32 access_id,  /* IN: access aid to mess with */
           data     = (uint8 *) datap;
           info     = (chunkinfo_t *) (access_rec->special_info);
           relative_posn = access_rec->posn;
-          write_len     = info->chunk_size;
+          write_len     = (info->chunk_size * info->nt_size);
           bytes_written = 0;
           bptr          = (VOID *)datap;
 
@@ -2126,7 +2199,7 @@ HMCwriteChunk(int32 access_id,  /* IN: access aid to mess with */
                 /* Initialize chunk record */
                 chkptr->chk_tag = DFTAG_NULL;
                 chkptr->chk_ref = 0;
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_4
                 printf(" chktpr->chk_tag=%d, ",chkptr->chk_tag);
                 printf(" chktpr->chk_ref=%d, ",chkptr->chk_ref);
 #endif
@@ -2134,11 +2207,11 @@ HMCwriteChunk(int32 access_id,  /* IN: access aid to mess with */
                 for (k = 0; k < info->ndims; k++)
                   {
                       chkptr->origin[k] = origin[k];
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_4
                       printf(" chktpr->origin[%d]=%d, ",k,chkptr->origin[k]);
 #endif
                   }
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_4
                 printf("\n");
 #endif
                 /* set chunk record number to next Vdata record number */
@@ -2181,6 +2254,16 @@ HMCwriteChunk(int32 access_id,  /* IN: access aid to mess with */
               HE_REPORT_GOTO("HMCPwrite: failed to put chunk back in cache", FAIL);
 
           bytes_written = write_len;
+
+          /* update relative position i.e. user element seek postion 
+             with chunk size written */
+          relative_posn += write_len;
+
+          /* i.e calculate chunk indices given seek location 
+             this will update the proper arrays in the special info struct */
+          update_chunk_indicies_seek(relative_posn,info->ndims, info->nt_size,
+                                     info->seek_chunk_indices,
+                                     info->seek_pos_chunk,info->ddims);
 
           /* update access record with bytes written */
           access_rec->posn += bytes_written; 
@@ -2249,11 +2332,11 @@ HMCPwrite(accrec_t * access_rec, /* IN: access record to mess with */
     int32       chunk_num = 0;    /* chunk number */
     int32       ret_value = SUCCEED;
     intn        k;                  /* loop index */
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_4
     intn         i;
 #endif
 
-#ifdef HAVE_PABLO
+#ifdef HAVE_PABLO_4
     TRACE_ON(H_mask, ID_HMCPwrite);
 #endif /* HAVE_PABLO */
 
@@ -2274,12 +2357,15 @@ HMCPwrite(accrec_t * access_rec, /* IN: access record to mess with */
     if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
+    /* should chunk indicies be updated with relative_posn? 
+       or did last operation update it already */
+
     bytes_written = 0;
     bptr = datap;
     while (bytes_written < write_len) 
       {
           /* for debuging */
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_4
           printf("Seek start(in chunk array):(");
           for (i = 0; i < info->ndims; i++)
               printf("%d%s", info->seek_chunk_indices[i], i!= info->ndims-1 ? ",":NULL);
@@ -2295,10 +2381,11 @@ HMCPwrite(accrec_t * access_rec, /* IN: access record to mess with */
                               info->ddims);
 
           /* calculate contiguous chunk size that we can write to this chunk */
-          calculate_chunk_for_chunk(&chunk_size,write_len,bytes_written,
+          calculate_chunk_for_chunk(&chunk_size,info->nt_size,write_len,bytes_written,
+                                    info->seek_chunk_indices,
                                     info->seek_pos_chunk,info->ddims);
 
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_4
           printf("    writing chunk(%d) of %d bytes ->\n", chunk_num, chunk_size);
 #endif
 
@@ -2322,7 +2409,7 @@ HMCPwrite(accrec_t * access_rec, /* IN: access record to mess with */
                 /* Initialize chunk record */
                 chkptr->chk_tag = DFTAG_NULL;
                 chkptr->chk_ref = 0;
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_4
                 printf(" chktpr->chk_tag=%d, ",chkptr->chk_tag);
                 printf(" chktpr->chk_ref=%d, ",chkptr->chk_ref);
 #endif
@@ -2330,11 +2417,11 @@ HMCPwrite(accrec_t * access_rec, /* IN: access record to mess with */
                 for (k = 0; k < info->ndims; k++)
                   {
                       chkptr->origin[k] = info->seek_chunk_indices[k];
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_4
                       printf(" chktpr->origin[%d]=%d, ",k,chkptr->origin[k]);
 #endif
                   }
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_4
                 printf("\n");
 #endif
                 /* set chunk record number to next Vdata record number */
@@ -2362,8 +2449,8 @@ HMCPwrite(accrec_t * access_rec, /* IN: access record to mess with */
              numbers and not Vdata record numbers. 
              This would reduce some overhead in the number of chunks
              dealt with in the cache */
-#ifdef CHK_DEBUG
-         printf("getting chunk %d from cache\n",chunk_num);
+#ifdef CHK_DEBUG_4
+          printf("getting chunk %d from cache\n",chunk_num);
 #endif
           /* get chunk data from cache based on chunk number */
           if ((chk_data = (VOID *) mcache_get(info->chk_cache, chunk_num+1, 0)) == NULL)
@@ -2372,10 +2459,11 @@ HMCPwrite(accrec_t * access_rec, /* IN: access record to mess with */
           chk_dptr = chk_data; /* set chunk data ptr */
 
           /* calculate position in chunk */
-          calculate_seek_in_chunk(&write_seek,info->ndims,info->seek_pos_chunk,
+          calculate_seek_in_chunk(&write_seek,info->ndims,info->nt_size,
+                                  info->seek_pos_chunk,
                                   info->ddims);
 
-#ifdef CHK_DEBUG
+#ifdef CHK_DEBUG_4
           fprintf(stderr,"HMCPwrite: write_seek = %d\n", write_seek);
 #endif
           chk_dptr += write_seek; /* move to correct position in chunk */
@@ -2387,32 +2475,24 @@ HMCPwrite(accrec_t * access_rec, /* IN: access record to mess with */
           if (mcache_put(info->chk_cache, chk_data, MCACHE_DIRTY) == FAIL)
               HE_REPORT_GOTO("HMCPwrite: failed to put chunk back in cache", FAIL);
 
-#if 0
-          for (i=0; i < chunk_size; i++)
-            {
-                printf("%x(%d)",*(bptr+i),*(bptr+i));
-                if (i != chunk_size - 1)
-                    printf(",");
-            }
-          printf("\n");
-          if (!strncat(orig_buf,bptr,chunk_size))
-              printf("error: couldn't concatenat buffer to orig_buf \n");
-#endif
-
           /* increment buffer pointer */
           bptr += chunk_size;
 
-         /* adjust number of bytes already written */
+          /* adjust number of bytes already written */
           bytes_written += chunk_size; 
 
-#ifdef CHK_DEBUG
-          printf("     written %d bytes already ->", bytes_written);
-          printf("\n");
+#ifdef CHK_DEBUG_4
+          printf("     written %d bytes already -> \n", bytes_written);
 #endif
-          /* increment our starting seek postion i
-           * i.e. find new chunk to start writing to */
-          update_chunk_indices(chunk_size,info->seek_chunk_indices,
-                               info->seek_pos_chunk,info->ndims,info->ddims);
+          /* update relative position i.e. user element seek postion 
+             with chunk size written */
+          relative_posn += chunk_size;
+
+          /* i.e calculate chunk indices given seek location 
+             this will update the proper arrays in the special info struct */
+          update_chunk_indicies_seek(relative_posn,info->ndims, info->nt_size,
+                                     info->seek_chunk_indices,
+                                     info->seek_pos_chunk,info->ddims);
       } /* end while "bytes_written" */
 
     /* update access record with bytes written */
@@ -2484,8 +2564,8 @@ HMCPcloseAID(accrec_t *access_rec /* IN:  access record of file to close */)
                 /* Sync chunk cache */
                 mcache_sync(info->chk_cache);
 /*
-#define STATISTICS 
-*/
+  #define STATISTICS 
+  */
 #ifdef STATISTICS
                 mcache_stat(info->chk_cache);
 #endif
@@ -2527,13 +2607,13 @@ HMCPcloseAID(accrec_t *access_rec /* IN:  access record of file to close */)
           access_rec->special_info = NULL;
       } /* attached to info */
 
-done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
+  done:
+    if(ret_value == FAIL)   
+      { /* Error condition cleanup */
 
-    } /* end if */
+      } /* end if */
 
-  /* Normal function cleanup */
+    /* Normal function cleanup */
 
     return ret_value;
 }   /* HMCPcloseAID */
@@ -2637,7 +2717,7 @@ HMCPinfo(accrec_t * access_rec,       /* IN: access record of access elemement *
     /* fill in the info_chunk */
     info =  (chunkinfo_t *) access_rec->special_info;
     info_block->key = SPECIAL_CHUNKED;
-    info_block->chunk_size = info->chunk_size; 
+    info_block->chunk_size = (info->chunk_size * info->nt_size); 
     info_block->ndims      = info->ndims; 
 
     /* allocate space for chunk lengths */
@@ -2717,7 +2797,7 @@ HMCPinquire(accrec_t *access_rec,  /* IN:  access record to return info about */
     if (pref)
         *pref = data_ref;
     if (plength)
-        *plength = info->length;
+        *plength = (info->length * info->nt_size);
     if (poffset)
         *poffset = 0;   /* meaningless */
     if (pposn)
@@ -2740,4 +2820,3 @@ HMCPinquire(accrec_t *access_rec,  /* IN:  access record to return info about */
 
     return ret_value;
 }   /* HMCPinquire */
-
