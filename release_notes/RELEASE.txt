@@ -60,7 +60,7 @@ Support for new platforms and compilers
      * Fortran IBM xlf v 8.1 and Absoft f95 version 8.2 compilers 
        are supported on Mac OSX.
                                                           12/07/2004 EIP
-     * Absoft Fortran compiler f95 version 8.2 is supported on Linux 2.4 
+     * Absoft Fortran compiler f95 version 9.0 is supported on Linux 2.4 
                                                           12/07/2004 EIP
      * PGI C and Fortran compilers are supported on Linux 2.4 
      * Intel C and Fortran compilers are supported on Linux 2.4
@@ -119,7 +119,7 @@ HDF 4.2 Release 1 has been tested on the following platforms:
                                   F90 MIPSpro 7.3.1.3m 
 
     Linux 2.4.20.28               gcc 2.96, GNU Fortran 0.5.25,
-                                  Absoft Fortran 8.2
+                                  Absoft Fortran 9.0
                                   Intel(R) C++ and Fortran Compilers 
                                   Version 8.1
     Linux 2.4.21-268-smp #1 SMP x86_64 (AMD)
@@ -185,3 +185,17 @@ o  Using both fill-value and compression on SD datasets doesn't work.
 o  SDgetdimscale incorrectly returns FAIL when the associated SDS has the same
    name as the dimension
 
+o  When using PGI compilers make sure that JPEG library is also compiled with 
+   PGI C compiler; linking with JPEG built with gcc causes JPEG library tests
+   to fail.  To bypass the problem
+
+       x Set LIBS flag to $PGI_JPEG_INSTALL_DIR/lib/libjpeg.a
+          where $PGI_JPEG_INSTALL_DIR points to the installtion directory
+          for the PGI-compiled JPEG library:
+
+          setenv LIBS $PGI_JPEG_INSTALL_DIR/lib/libjpeg.a
+
+       x Use  --with-jpeg=$PGI_JPEG_INSTALL_DIR
+         configure flag to configure with the PGI-compiled JPEG library:
+
+          ./configure --with-jpeg=$PGI_JPEG_INSTALL_DIR --with-zlib....
