@@ -31,10 +31,9 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include <stdio.h>
 #include <string.h>
+#include <sys/types.h>
 #include <sys/stat.h>
 #include "hdf.h"
-#include "herr.h"
-#include "hfile.h"
 
 #define DefaultDatafile	"DataFile"
 
