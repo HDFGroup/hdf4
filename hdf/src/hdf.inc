@@ -424,11 +424,15 @@ C	PARAMETERS
       integer   SD_UNLIMITED
       integer   SD_DIMVAL_BW_COMP
       integer   SD_DIMVAL_BW_INCOMP 
+      integer   SD_FILL
+      integer   SD_NOFILL
 
       parameter(DF_MAXFNLEN     = 256,                                    &
      &          SD_UNLIMITED    = 0,                                      &
      &          SD_DIMVAL_BW_COMP = 1,                                    &
-     &          SD_DIMVAL_BW_INCOMP = 0)
+     &          SD_DIMVAL_BW_INCOMP = 0,                                  &
+     &          SD_FILL = 0,                                              &
+     &          SD_NOFILL = 256)
 
       integer   HDF_VDATA
       
