@@ -4479,6 +4479,8 @@ const VOID *datap;
     intn       i;
     intn       status = SUCCEED;
 
+    info_block.cdims = NULL;
+
     /* Check args */
     if (origin == NULL || datap == NULL)
       {
@@ -4528,10 +4530,6 @@ const VOID *datap;
                       for (i = 0; i < info_block.ndims; i++)
                           csize *= info_block.cdims[i];
 
-                      /* dont forget to free up info is special info block 
-                         This space was allocated by the library */
-                      HDfree(info_block.cdims);
-                      
                       /* adjust for number type size */
                       csize *= var->HDFsize;
 
@@ -4590,13 +4588,13 @@ const VOID *datap;
   done:
     if (status == FAIL)
       { /* Failure cleanup */
-          /* dont forget to free up info is special info block 
-             This space was allocated by the library */
-          if (info_block.cdims != NULL)
-              HDfree(info_block.cdims);
 
       }
     /* Normal cleanup */
+    /* dont forget to free up info is special info block 
+       This space was allocated by the library */
+    if (info_block.cdims != NULL)
+        HDfree(info_block.cdims);
 
     return status;
 } /* SDwritechunk() */
@@ -4655,6 +4653,8 @@ VOID *datap;
     intn       i;
     intn       status = SUCCEED;
 
+    info_block.cdims = NULL;
+
     /* Check args */
     if (origin == NULL || datap == NULL)
       {
@@ -4703,10 +4703,6 @@ VOID *datap;
                       for (i = 0; i < info_block.ndims; i++)
                           csize *= info_block.cdims[i];
 
-                      /* dont forget to free up info is special info block 
-                         This space was allocated by the library */
-                      HDfree(info_block.cdims);
-                      
                       /* adjust for number type size */
                       csize *= var->HDFsize;
 
@@ -4772,6 +4768,10 @@ VOID *datap;
 
       }
     /* Normal cleanup */
+    /* dont forget to free up info is special info block 
+       This space was allocated by the library */
+    if (info_block.cdims != NULL)
+        HDfree(info_block.cdims);
 
     return status;
 } /* SDreadchunk() */
