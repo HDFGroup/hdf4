@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.10  1993/09/08 20:58:07  georgev
-Cleaned up some Global space only for the Mac.
+Revision 1.11  1993/09/09 20:54:14  chouck
+Need to cast HDstrdup() call on Convex
 
+ * Revision 1.10  1993/09/08  20:58:07  georgev
+ * Cleaned up some Global space only for the Mac.
+ *
  * Revision 1.9  1993/09/01  23:35:13  georgev
  * Added defines for THINK_C.
  *
@@ -101,7 +104,7 @@ int32 scanattrs (attrs,attrc,attrv)
   register intn   i, slen, len;
   char * FUNC = "scanattrs";
 #if !(defined(macintosh) | defined(THINK_C))
-  char * saved_string = HDstrdup(attrs);
+  char * saved_string = (char *) HDstrdup(attrs);
 #else /* macintosh */
   char * saved_string;
   
