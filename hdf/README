@@ -1,9 +1,18 @@
-This directory contains four subdirectories and a README file.
+This directory contains:
 
 README -- This file.
+COPYING -- Copyright statement
+build.inc -- the hdf level Makefile to build HDF 4.0 on Unix based
+             platforms
+Makefile.in -- used by the Cygnus 'configure' script to
+       generate the hdf level Makefile.
 src -- contains all the unpacked source code for the HDF base 
           library.
 jpeg -- The Independent JPEG Group's JPEG software jpeg release 5b.
 test -- a test suite to test the HDF library.
 util -- HDF utilities and test data files.
+pablo -- Pablo performance data capture library
+fmpool -- file memory pool functions        
+zlib -- gzip library
+
 
