@@ -183,8 +183,8 @@ int     ct_method,       /* color transform method: 1=EXPAND; 2=INTERP */
         compress;        /* flag: 0 = don't compress; 1=do compression */
 #endif /* PROTOTYPE */
 {
-    Input in;
-    Output out;
+    struct Input in;
+    struct Output out;
 
     in.hdim = hdim;
     in.vdim = vdim;
@@ -225,11 +225,11 @@ int     ct_method,       /* color transform method: 1=EXPAND; 2=INTERP */
  *----------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int process(Input *in, Output *out)
+int process(struct Input *in, struct Output *out)
 #else
 int process(in, out)
-Input *in;
-Output *out;
+struct Input *in;
+struct Output *out;
 #endif /* PROTOTYPE */
 {
     int ret;
@@ -333,10 +333,10 @@ float32 *scale;
 /*  This function is commented out of the code!! */
 #ifdef DEBUG_HDF
 #ifdef PROTOTYPE
-int printinput(Input *in)
+int printinput(struct Input *in)
 #else
 int printinput(in)
-Input *in;
+struct Input *in;
 #endif /* PROTOTYPE */
 {
     int i,j; 
@@ -388,10 +388,10 @@ Input *in;
 /*  This function is commented out of the code!! */
 #ifdef DEBUG_HDF
 #ifdef PROTOTYPE
-int printoutput(Output *out)
+int printoutput(struct Output *out)
 #else
 int printoutput(out)
-Output *out;
+struct Output *out;
 #endif /* PROTOTYPE */
 {
     int i,j;
@@ -430,11 +430,11 @@ Output *out;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int convert_interp(Input *in, Output *out)
+int convert_interp(struct Input *in, struct Output *out)
 #else
 int convert_interp(in, out)
-Input   *in;
-Output  *out;
+struct Input   *in;
+struct Output  *out;
 #endif /* PROTOTYPE */
 {
     register int j,theval;
@@ -591,11 +591,11 @@ Output  *out;
  *---------------------------------------------------------------------------*/
 
 #ifdef  PROTOTYPE
-int pixrep_scaled(Input *in, Output *out)
+int pixrep_scaled(struct Input *in, struct Output *out)
 #else
 int pixrep_scaled(in, out)
-Input   *in;
-Output  *out;
+struct Input   *in;
+struct Output  *out;
 #endif /* PROTOTYPE */
 {
     register int32 j;
@@ -721,11 +721,11 @@ int32 *offsets;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int pixrep_simple(Input *in, Output *out)
+int pixrep_simple(struct Input *in, struct Output *out)
 #else
 int pixrep_simple(in, out)
-Input   *in;
-Output  *out;
+struct Input   *in;
+struct Output  *out;
 #endif /* PROTOTYPE */
 {
     int32 i,j;

@@ -110,60 +110,60 @@ vfprintf(stream, fmt, va_alist)
  *	   nc_serror("can't open %s", file_name);
  *         nc_serror("process %d in state %s",pid,state);
  */
-#ifndef NO_STDARG
 void
+#ifndef NO_STDARG
 nc_serror(char *fmt, ...)
 #else
 /*VARARGS1*/
-void
 nc_serror(fmt, va_alist)
      char *fmt ;
      va_dcl
 #endif /* !NO_STDARG */
 {
-
-	if( ncopts & NC_VERBOSE )
-	{
+    
+    if( ncopts & NC_VERBOSE ) {
     	va_list args ;
-		static char unknown[] = "Unknown Error";
+        static char unknown[] = "Unknown Error";
     	int errnum = errno;		/* save real errno in case we wipe it out */
     	char * cp;
-#ifndef NO_STDARG
-		va_start(args, fmt) ;
-#else
-		va_start(args) ;
-#endif /* !NO_STDARG */
-		(void) fprintf(stderr,"%s: ", cdf_routine_name);
-		(void) vfprintf(stderr,fmt,args) ;
-		va_end(args) ;
 
-    switch(errnum) {
+#ifndef NO_STDARG
+        va_start(args, fmt) ;
+#else
+        va_start(args) ;
+#endif /* !NO_STDARG */
+
+        (void) fprintf(stderr,"%s: ", cdf_routine_name);
+        (void) vfprintf(stderr,fmt,args) ;
+        va_end(args) ;
+        
+        switch(errnum) {
 	case 0 :
-		ncerr = NC_NOERR ;
-		(void) fputc('\n',stderr) ;
-		break ;
+            ncerr = NC_NOERR ;
+            (void) fputc('\n',stderr) ;
+            break ;
 #ifdef vms
 	case EVMSERR :
-		ncerr = NC_SYSERR ;
-		(void) fputc(': ',stderr) ;
-		(void) vmserror1(vaxc$errno) ;
-		break ;
+            ncerr = NC_SYSERR ;
+            (void) fputc(': ',stderr) ;
+            (void) vmserror1(vaxc$errno) ;
+            break ;
 #endif /* vms */
-    default :
+            default :
 		ncerr = NC_SYSERR ;
-        (void) fprintf(stderr,": %s\n",
-        	(cp = strerror(errnum)) == NULL ? unknown : cp ) ;
-		break ;
-    }
-    (void) fflush(stderr);	/* to ensure log files are current */
-
-    errno = 0 ; /* ??? */
-
-	} /* NC_VERBOSE */
-
-	if( ncopts & NC_FATAL )
+            (void) fprintf(stderr,": %s\n",
+                           (cp = strerror(errnum)) == NULL ? unknown : cp ) ;
+            break ;
+        }
+        (void) fflush(stderr);	/* to ensure log files are current */
+        
+        errno = 0 ; /* ??? */
+        
+    } /* NC_VERBOSE */
+    
+    if( ncopts & NC_FATAL )
 	{
-		exit(ncopts) ;
+            exit(ncopts) ;
 	}
 }
 

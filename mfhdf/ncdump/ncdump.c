@@ -143,7 +143,7 @@ pr_att_vals(type, len, vals)
     union {
 	char *cp;
 	short *sp;
-	long *lp;
+	nclong *lp;
 	float *fp;
 	double *dp;
     } gp;
@@ -210,7 +210,7 @@ pr_att_vals(type, len, vals)
 	  Printf ("%ds%s",*gp.sp++,iel<len-1 ? ", " : "");
 	break;
       case NC_LONG:
-	gp.lp = (long *) vals;
+	gp.lp = (nclong *) vals;
 	for (iel = 0; iel < len; iel++)
 	  Printf ("%ld%s",*gp.lp++,iel<len-1 ? ", " : "");
 	break;

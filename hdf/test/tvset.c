@@ -27,12 +27,15 @@ static char RcsId[] = "@(#)$Revision$";
 extern int Verbocity;
 extern int num_errs;
 
+#define VDATA_COUNT  1000 /* make this many Vdatas to check for memory leaks */
+
 #define FNAME0   "tvset.hdf"
 #define FNAME1   "tvset1.hdf"
 #define FNAME2   "tvset2.hdf"
 
-#define FIELD1   "FIELD_NAME_HERE"
-#define FIELD2   "DIFFERENT_FIELD_NAME"
+#define FIELD1       "FIELD_name_HERE"
+#define FIELD1_UPPER "FIELD_NAME_HERE"
+#define FIELD2       "DIFFERENT_FIELD_NAME"
 
 /* write some stuff to the file */
 int32 write_vset_stuff() {
@@ -73,7 +76,7 @@ int32 write_vset_stuff() {
         printf(">>> Failed creating initial Vgroup\n");
     }
 
-    Vsetname (vg1, "Simple Vgroup");
+    status = Vsetname (vg1, "Simple Vgroup");
     Vsetclass(vg1, "Test object");
     MESSAGE(5,printf("created Vgroup %s (empty)\n", "Simple Vgroup"););
 
@@ -271,6 +274,35 @@ int32 write_vset_stuff() {
     MESSAGE(5,printf("created VDATA %s with %d elements\n", name, count););
 
 
+    /* create a whole bunch of Vdatas to check for memory leakage */
+    for(i = 0; i < VDATA_COUNT; i++) {
+        char name[80];
+        vs1 = VSattach(fid, -1, "w");
+        if(vs1 == FAIL) {
+            num_errs++;
+            printf(">>> Vsattach failed on loop %d\n", i);
+            continue;
+        }
+        sprintf(name, "VdataLoop-%d", i);
+        VSsetname (vs1, name);
+        status = VSfdefine(vs1, "A", DFNT_CHAR8, 1);
+        if(status == FAIL) {
+            num_errs++;
+            printf(">>> VSfdefine failed on loop %d\n", i);
+            continue;
+        }
+        status = VSsetfields(vs1, "A");
+        if(status == FAIL) {
+            num_errs++;
+            printf(">>> VSsetfields failed on loop %d\n", i);
+            continue;
+        }
+        VSwrite(vs1, (unsigned char *) name, 1, FULL_INTERLACE);
+        VSdetach(vs1);
+    }
+
+
+
     Vend(fid);
     Hclose(fid);
     return SUCCEED;
@@ -428,12 +460,19 @@ int32 read_vset_stuff() {
         printf(">>> Got wrong data size %d should be sizeof(float32)\n", sz);
     }
 
+
+#ifndef VDATA_FIELDS_ALL_UPPER
     if(HDstrcmp(fields, FIELD1)) {        
         num_errs++;
         printf(">>> Got bogus field name %s\n", fields);
     }
+#else
+    if(HDstrcmp(fields, FIELD1_UPPER)) {        
+        num_errs++;
+        printf(">>> Got bogus field name %s\n", fields);
+    }
+#endif /* VDATA_FIELDS_ALL_UPPER */    
 
-    
     /* read it */
     VSsetfields(vs1, fields);
     for(i = 0; i < count; i++) fbuf[i] = 0;
@@ -782,13 +821,6 @@ int32 read_vset_stuff() {
     }
 
     VSdetach(vs1);
-
-    /* test VSgetid */
-    ref = VSgetid(fid, ref);
-    if(ref != FAIL) {
-        num_errs++;
-        printf(">>> VSgetid was able to find more Vdatas than were in the file\n");
-    }
 
     Vend(fid);
     Hclose(fid);

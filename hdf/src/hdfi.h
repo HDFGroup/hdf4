@@ -50,6 +50,7 @@
 #define     DFMT_MOTOROLA       0x1111
 #define     DFMT_ALPHA          0x4441
 #define     DFMT_VP             0x6611
+#define     DFMT_I860           0x4441
 
 /* I/O library constants */
 #define UNIXUNBUFIO 1
@@ -152,8 +153,8 @@ Please check your Makefile.
 
 #   define BSD
 #ifndef PROTOTYPE
-#define PROTOTYPE		/* to invoke ANSI prototypes */
-#endif	/* PROTOTYPE */
+#define PROTOTYPE       /* to invoke ANSI prototypes */
+#endif  /* PROTOTYPE */
 
 #include <string.h>
 #ifndef __GNUC__
@@ -363,6 +364,7 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 #include <file.h>               /* for unbuffered i/o stuff */
+#include <limits.h>
 
 #define DF_MT              DFMT_VAX
 typedef int                VOID;
@@ -417,10 +419,10 @@ Please check your Makefile.
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #include <stdlib.h>
 
-#define __STDC__					/* To invoke ANSI compilation */
+#define __STDC__                    /* To invoke ANSI compilation */
 #ifndef PROTOTYPE
-#define PROTOTYPE					/* to invoke ANSI prototypes */
-#endif	/* PROTOTYPE */
+#define PROTOTYPE                   /* to invoke ANSI prototypes */
+#endif  /* PROTOTYPE */
 
 /* For Convex machines with native format floats */
 #ifdef CONVEXNATIVE
@@ -471,6 +473,7 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 
+#include <limits.h>
 #include <sys/types.h>
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #define DF_MT   DFMT_MIPSEL
@@ -566,11 +569,15 @@ void exit(int status);
 
 #endif /*MAC*/
 
-#if defined WIN3 || defined __WINDOWS__
+#if defined WIN3 || defined __WINDOWS__ || defined _WINDOWS || defined WINNT
+#ifdef WINNT
+#define PC386
+#else /* WINNT */
 #ifndef WIN3
 #define WIN3
 #endif  /* WIN3 */
 #define PC
+#endif /* WINNT */
 #endif  /* WIN3 */
 
 #if defined PC || defined MSDOS || defined M_I86 || defined M_I386 || defined PC386
@@ -588,24 +595,30 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 
+#if !defined TEST_PC && !defined TEST_WIN && !defined unix
+#undef FAR
+#endif
+
 #include <fcntl.h>
+#ifdef unix
+#include <sys/types.h>      /* for unbuffered file I/O */
+#include <sys/stat.h>
+#else /* !unix */
 #include <sys\types.h>      /* for unbuffered file I/O */
 #include <sys\stat.h>
 #include <io.h>
-#include <malloc.h>
 #include <conio.h>          /* for debugging getch() calls */
+#endif /* unix */
+#include <malloc.h>
 #include <string.h>         /* for vaious string functions */
 #include <limits.h>         /* for UINT_MAX used in various places */
 #include <stdlib.h>
 #include <ctype.h>          /* for character macros */
-#ifdef __WATCOMC__
-#include <stddef.h>         /* for the 'fortran' pragma */
-#endif
-#ifdef WIN3
+#if defined WIN3 || defined WINNT
 #ifndef GMEM_MOVEABLE       /* check if windows header is already included */
 #include <windows.h>        /* include the windows headers */
 #endif
-#endif /* WIN3 */
+#endif /* WIN3 || WINNT */
 
 #define DF_MT             DFMT_PC
 
@@ -652,6 +665,9 @@ typedef long              intf;     /* size of INTEGERs in Fortran compiler */
 
 #define register    /* don't mess with the PC compiler's register allocation */
 
+#ifdef WINNT
+#define FILELIB WINNTIO
+#else
 #ifdef WIN3
 #define FILELIB WINIO
 #else /* ! WIN3 */
@@ -661,6 +677,7 @@ typedef long              intf;     /* size of INTEGERs in Fortran compiler */
 #define FILELIB PCIO
 #endif /* PC */
 #endif /* WIN3 */
+#endif /* WINNT */
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -884,6 +901,53 @@ typedef double             float64;
 
 #endif /* VP */
 
+#ifdef I860
+
+#ifdef GOT_MACHINE
+If you get an error on this line more than one machine type has been defined.
+Please check your Makefile.
+#endif
+#define GOT_MACHINE 1
+
+#include <limits.h>
+#include <sys/types.h>
+#include <sys/file.h>           /* for unbuffered i/o stuff */
+#include <unistd.h>             /* mis-using def. for SEEK_SET, but oh well */
+#define DF_MT   DFMT_I860
+typedef void            VOID;
+typedef void            *VOIDP;
+typedef char            *_fcd;
+typedef int             bool;
+typedef char            char8;
+typedef unsigned char   uchar8;
+typedef char            int8;
+typedef unsigned char   uint8;
+typedef short           int16;
+typedef unsigned short  uint16;
+typedef int             int32;
+typedef unsigned int    uint32;
+typedef int             intn;
+typedef unsigned int    uintn;
+typedef float           float32;
+typedef double          float64;
+typedef int             intf;     /* size of INTEGERs in Fortran compiler */
+#define _HUGE              /* This should only be defined to a value on the PC */
+#define _fcdtocp(desc) (desc)
+#define FNAME_POST_UNDERSCORE
+#define FILELIB UNIXBUFIO
+#ifndef __STDC__
+#define const
+#endif /* __STDC__ */
+
+/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
+
+/* Determine the memory manager we are going to use. Valid values are: */
+/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
+/*  what each does */
+#define JMEMSYS         MEM_ANSI
+
+#endif /* I860 */
+
 #ifndef GOT_MACHINE
 No machine type has been defined.  Your Makefile needs to have someing like
 -DSUN or -DUNICOS in order for the HDF internal structures to be defined
@@ -913,9 +977,6 @@ correctly.
         *(p) = (uint8)(((i) >> 8) & 0xff); (p)++; \
         *(p) = (uint8)((i) & 0xff); (p)++; }
 
-#   define NBYTEENCODE(d, s, n) \
-{   HDmemcpy(d,s,n); p+=n }
-
 #   define INT16DECODE(p, i) \
 { (i) = (int16)((*(p) & 0xff) << 8); (p)++; \
         (i) |= (int16)((*(p) & 0xff)); (p)++; }
@@ -935,11 +996,6 @@ correctly.
         (i) |= ((uint32)(*(p) & 0xff) << 16); (p)++; \
         (i) |= ((uint32)(*(p) & 0xff) << 8); (p)++; \
         (i) |= (*(p) & 0xff); (p)++; }
-
-/* Note! the NBYTEDECODE macro is backwards from the memcpy() routine, */
-/*      in the spirit of the other DECODE macros */
-#   define NBYTEDECODE(s, d, n) \
-{   HDmemcpy(d,s,n); p+=n }
 
 /**************************************************************************
 *                   Conversion Routine Pointers
@@ -961,14 +1017,12 @@ extern int (*DFKnumout)();
 *  memory is needed, as when small conversions are done
 ******************************************************************/
 #define DF_TBUFSZ       512     /* buffer size can be smaller */
-#if 0 /* replaced with dynamic memory calls */
 #ifdef  HMASTER
     int    FAR int_DFtbuf[DF_TBUFSZ]; /* int declaration to force word boundary */
     uint8  FAR *DFtbuf = (uint8 *) int_DFtbuf;
 #else /* !HMASTER */
 extern uint8 FAR *DFtbuf;
 #endif /*HMASTER*/
-#endif 
 
 /*----------------------------------------------------------------
 ** MACRO FCALLKEYW for any special fortran-C stub keyword
@@ -992,9 +1046,9 @@ extern uint8 FAR *DFtbuf;
 #endif /* ABSOFT */
 #endif
 
-#if defined(PC)   /* with MS Fortran */
-#   define FCALLKEYW    _fortran
-#   define FRETVAL(x)   x _fortran
+#if defined(PC) && !defined(PC386)   /* with MS Fortran */
+#   define FCALLKEYW    __fortran
+#   define FRETVAL(x)   x __fortran
 #endif
 
 #ifndef FRETVAL /* !MAC && !PC */

@@ -69,6 +69,7 @@ static char RcsId[] = "@(#)$Revision$";
  *  dsisslab:       Call DFSDstartslab to set up write to SDS
  *  dswslab:        Call DFSDwriteslab to write slab to file
  *  dseslab:        Call DFSDendslab to end slab writes, write NDG to file
+ *  dsirslab:       Call DFSDreadslab to get slab from SDS
  * Remarks: no C stubs needed for the put string routines, only Fortran stubs
  *---------------------------------------------------------------------------*/
 
@@ -1769,5 +1770,82 @@ ndseslab()
 #endif /* PROTOTYPE */
 {
     return DFSDendslab();
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    dsirslab
+ * Purpose: Call DFSDreadslab to read slab from SDS
+ * Inputs:  filename: name of HDF file
+ *          start: array of size = rank of data, containing start of slab
+ *          slab_size: array of size rank, containing end of slab
+ *          stride: sub sampling stride.
+ *          buffer: array for returning slab
+ *          buffer_size: dimensions of array data
+ *          fnlen: length of filename
+ * Returns: 0 on success, -1 on failure with DFerror set
+ * Users:   HDF Fortran programmers
+ * Invokes: DFSDreadslab
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+ndsirslab(_fcd filename, intf *fnlen, intf start[], intf slab_size[], 
+          intf stride[], VOIDP buffer, intf buffer_size[])
+#else
+ndsirslab(filename, fnlen, start, slab_size, stride, buffer, buffer_size)
+    _fcd filename;
+    intf *fnlen;
+    intf start[]; 
+    intf slab_size[];
+    intf stride[];
+    VOID *buffer;
+    intf buffer_size[];
+#endif /* PROTOTYPE */
+{
+    char *fn;
+    intf ret;
+    intn rank,i;
+    int32 *cbuffer_size, *cslab_size, *cstart, *p, *wp, *wsp;
+    intn isndg;
+
+    /* Convert "filename" to fortran string */
+    fn = HDf2cstring(filename, (intn)*fnlen);
+    if (fn == NULL) return FAIL;
+   
+    /* If DFSDgetdims has not be called call DFSDIsdginfo to refresh Readsdg */ 
+    if (DFSDIrefresh(fn)<0) return FAIL;
+ 
+    ret = DFSDIisndg(&isndg);
+    if (isndg)	{
+	    ret = DFSDIgetrrank(&rank);
+    	p = (int32 *)HDgetspace((uint32)(rank*sizeof(int32)));
+    	if (p == NULL) return FAIL;
+        cbuffer_size = p;
+    	wp = (int32 *)HDgetspace((uint32)(rank*sizeof(int32)));
+    	if (wp == NULL) return FAIL;
+        cslab_size = wp;
+    	wsp = (int32 *)HDgetspace((uint32)(rank*sizeof(int32)));
+    	if (wsp == NULL) return FAIL;
+        cstart = wsp;
+
+    	for (i=1; i <=  rank ; i++)	{
+            *p = buffer_size[rank - i];
+            p++;
+            *wp = slab_size[rank - i];
+            wp++;
+            *wsp = start[rank - i];
+            wsp++;
+        }
+    	ret =DFSDreadslab(fn, cstart, cslab_size, (int32 *)stride, buffer, 
+                         cbuffer_size);
+    	HDfreespace((VOIDP)cstart);
+    	HDfreespace((VOIDP)cslab_size);
+    	HDfreespace((VOIDP)cbuffer_size);
+    }
+    else	
+        ret = DFSDreadslab(fn, (int32 *)start, (int32 *)slab_size,
+                (int32 *)stride, buffer, (int32 *)buffer_size);
+    HDfreespace(fn);
+    return(ret);
 }
 

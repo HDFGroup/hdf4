@@ -1,3 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
+/* $Id$ */
+
 #define CHECK(status, name) {if(status == FAIL) { printf("*** Routine %s FAILED at line %d ***\n", name, __LINE__); num_err++;}}
 
 #include "mfhdf.h"
@@ -17,13 +35,14 @@ char *argv[];
 #endif 
 {
     int32 f1, f2, sdsid, nt, dimsize[10], nattr, rank;
-    int32 newsds, newsds2, newsds3, dimid, dimid2, number, offset;
+    int32 newsds, newsds2, newsds3, dimid, number, offset;
     int32 index;
     intn status, i;
     char name[90], text[256];
     int32   start[10], end[10], scale[10], stride[10];
     char    l[80], u[80], fmt[80], c[80];
-    int     count, num_err = 0;
+    int32   count;
+    int     num_err = 0;
     int32   idata[100];
     int16   sdata[100];
     int32  ndg_saved_ref;
@@ -84,6 +103,27 @@ char *argv[];
     CHECK(status, "SDsetdimname");
 
 
+    status = SDsetattr(dimid, "DimensionAttribute", DFNT_CHAR8, 
+                       4, "TRUE");
+    CHECK(status, "SDsetdimname");
+    
+    status = SDfindattr(dimid, "DimensionAttribute");
+    if(status != 0) {
+        fprintf(stderr, "Bad index for SDfindattr on Dimnesion Attribute %d\n",
+                status);
+        num_err++;
+    }
+
+    status = SDattrinfo(dimid, (int32) 0, name, &nt, &count);
+    CHECK(status, "SDattrinfo");
+
+    status = SDreadattr(dimid, 0, text);
+    CHECK(status, "SDreadattr");
+    
+    if(HDstrncmp(text, "TRUE", count)) {
+        fprintf(stderr, "Invalid dimension attribute read <%s>\n", text);
+        num_err++;
+    }
 
     dimid = SDgetdimid(newsds, 0);
     if(dimid == FAIL) {
@@ -103,83 +143,6 @@ char *argv[];
 
     status = SDsetdimstrs(dimid, "DimLabel", NULL, "TheFormat");
     CHECK(status, "SDsetdimstrs");
-
-    /* verify that we can read the dimensions values with SDreaddata */
-    start[0] = 0;
-    end[0]   = 4;
-    status = SDreaddata(dimid, start, NULL, end, idata);
-    CHECK(status, "SDreaddata");
-
-    for(i = 0; i < 4; i++) {
-        if(idata[i] != scale[i]) {
-            fprintf(stderr, "SDreaddata() returned %d not %d in location %d\n", 
-                    idata[i], scale[i], i);
-            num_err++;
-        }
-    }
-
-    /* lets store an attribute here */
-    max = 3.1415;
-    status = SDsetattr(dimid, "DimAttr", DFNT_FLOAT32, 1, &max);
-    CHECK(status, "SDsetattr");
-
-    /* lets make sure we can read it too */
-    status = SDattrinfo(dimid, 2, name, &nt, &count);
-    CHECK(status, "SDattrinfo");
-
-    if(nt != DFNT_FLOAT32) {
-        fprintf(stderr, "Wrong number type for SDattrinfo(dim)\n");
-        num_err++;
-    }
-
-    if(count != 1) {
-        fprintf(stderr, "Wrong count for SDattrinfo(dim)\n");
-        num_err++;
-    }
-
-    if(strcmp(name, "DimAttr")) {
-        fprintf(stderr, "Wrong name for SDattrinfo(dim)\n");
-        num_err++;
-    }
-
-    dimid2 = SDgetdimid(newsds, 1);
-    if(dimid2 == FAIL) {
-        fprintf(stderr, "Failed to get second dimension id\n");
-        num_err++;
-    }
-
-    /* lets store an attribute without explicitly creating the coord var first */
-    i = -256;
-    status = SDsetattr(dimid2, "Integer", DFNT_INT32, 1, &i);
-    CHECK(status, "SDsetattr");
-
-    /* lets make sure we can read it too */
-    status = SDattrinfo(dimid2, 0, name, &nt, &count);
-    CHECK(status, "SDattrinfo");
-
-    if(nt != DFNT_INT32) {
-        fprintf(stderr, "Wrong number type for SDattrinfo(dim)\n");
-        num_err++;
-    }
-
-    if(count != 1) {
-        fprintf(stderr, "Wrong count for SDattrinfo(dim)\n");
-        num_err++;
-    }
-
-    if(strcmp(name, "Integer")) {
-        fprintf(stderr, "Wrong name for SDattrinfo(dim)\n");
-        num_err++;
-    }
-
-    i = 0;
-    status = SDreadattr(dimid2, 0, &i);
-    CHECK(status, "SDreatattr");
-    
-    if(i != -256) {
-        fprintf(stderr, "Wrong value for SDreadattr(dim)\n");
-        num_err++;
-    }
 
     status = SDnametoindex(f1, "DataSetAlpha");
     if(status != 0) {
@@ -258,7 +221,7 @@ char *argv[];
     CHECK(status, "SDsetattr");
 
     status = SDattrinfo(f1, (int32) 0, name, &nt, &count);
-    CHECK(status, "SDinqattr");
+    CHECK(status, "SDattrinfo");
 
     status = SDreadattr(f1, 0, text);
     CHECK(status, "SDreadattr");
@@ -312,23 +275,23 @@ char *argv[];
     CHECK(status, "SDreaddata");
 
     if(data[0] != -17.5) {
-        fprintf(stderr, "Wrong value returned\n");
+        fprintf(stderr, "Wrong value returned loc 0\n");
         num_err++;
     }
     if(data[3] != -17.5) {
-        fprintf(stderr, "Wrong value returned\n");
+        fprintf(stderr, "Wrong value returned loc 3\n");
         num_err++;
     }
     if(data[5] != 1.0) {
-        fprintf(stderr, "Wrong value returned\n");
+        fprintf(stderr, "Wrong value returned loc 5\n");
         num_err++;
     }
     if(data[6] != -17.5) {
-        fprintf(stderr, "Wrong value returned\n");
+        fprintf(stderr, "Wrong value returned loc 6\n");
         num_err++;
     }
     if(data[8] != 4.0) {
-        fprintf(stderr, "Wrong value returned\n");
+        fprintf(stderr, "Wrong value returned loc 8\n");
         num_err++;
     }
 
