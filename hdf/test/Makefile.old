@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.1  1992/03/01 23:39:01  mfolk
+# Revision 1.2  1992/03/24 20:40:09  sxu
+# Bugs fixed in lib and include directories
+#
+# Revision 1.1  1992/03/01  23:39:01  mfolk
 # Initial revision
 #
 #
@@ -89,7 +92,7 @@
 MACHINE=SUN
 
 # ==> specify your fortran compiler
-FC=f77 -c
+FC=f77 -g
 FFLAGS=
 
 # ==> specify your C compiler
@@ -97,10 +100,10 @@ CC=cc
 CFLAGS=  -g -D${MACHINE} $(IFLAGS)
 
 # ==> where are your hdf.h, hdfi.h and vg.h files located?
-IFLAGS=   -I/hdf/32/include -I.
+IFLAGS=   -I/hdf/home/sxu/3.2tar/include -I.
 
 # ==> where is your HDF library (libdf.a) located?
-LIBS= /hdf/32/lib/libdf.a
+LIBS= /hdf/home/sxu/3.2tar/lib/libdf.a
 
 RM=/bin/rm
 RMFLAGS=-f
@@ -117,7 +120,7 @@ HHDRS = hfile.h hdf.h hdfi.h herr.h hproto.h
 HTSRCS= thfile.c thfile1.c terr.c thblocks.c thextelt.c 
 HTOBJS= thfile.o thfile1.o terr.o thblocks.o thextelt.o
 
-FTESTS= tdfsd_mmsF tdfsd_ntF
+FTESTS= tdfsd_ntF
 FSRCS = tdfsd_mmsF.c tdfsd_ntF.c
 FOBJS = tdfsd_mmsF.o tdfsd_ntF.o
 
@@ -128,50 +131,50 @@ ctests: $(CTESTS)
 ftests: $(FTESTS)
 
 htests: $(HTESTS)
+	
+tdfr8:  tdfr8.c 
+	$(CC) $(CFLAGS) -D$(MACHINE) tdfr8.c $(LIBS) -o tdfr8
 
-tdfr8:    hdf.h tdfr8.c libdf.a  
-	$(CC) $(CFLAGS) -D$(MACHINE) tdfr8.c libdf.a -o tdfr8
+tdf24:  tdf24.c 
+	$(CC) $(CFLAGS) -D$(MACHINE) tdf24.c $(LIBS) -o tdf24
 
-tdf24:    hdf.h tdf24.c libdf.a  
-	$(CC) $(CFLAGS) -D$(MACHINE) tdf24.c libdf.a -o tdf24
+tdfp:   tdfp.c 
+	$(CC) $(CFLAGS) -D$(MACHINE) tdfp.c $(LIBS) -o tdfp
 
-tdfp:    hdf.h tdfp.c libdf.a  
-	$(CC) $(CFLAGS) -D$(MACHINE) tdfp.c libdf.a -o tdfp
+tdfsd_nt:    tdfsd_nt.c 
+	$(CC) $(CFLAGS) -D$(MACHINE) tdfsd_nt.c $(LIBS) -o tdfsd_nt
 
-tdfsd_nt:    hdf.h tdfsd_nt.c libdf.a  
-	$(CC) $(CFLAGS) -D$(MACHINE) tdfsd_nt.c libdf.a -o tdfsd_nt
+tdfsd_mms:    tdfsd_mms.c 
+	$(CC) $(CFLAGS) -D$(MACHINE) tdfsd_mms.c $(LIBS) -o tdfsd_mms
 
-tdfsd_mms:    hdf.h tdfsd_mms.c libdf.a  
-	$(CC) $(CFLAGS) -D$(MACHINE) tdfsd_mms.c libdf.a -o tdfsd_mms
+tdfan:  tdfan.c 
+	$(CC) $(CFLAGS) -D$(MACHINE) tdfan.c $(LIBS) -o tdfan
 
-tdfan:    hdf.h tdfan.c libdf.a  
-	$(CC) $(CFLAGS) -D$(MACHINE) tdfan.c libdf.a -o tdfan
+tdfanfile:     tdfan.c 
+	$(CC) $(CFLAGS) -D$(MACHINE) tdfanfile.c $(LIBS) -o tdfanfile
 
-tdfanfile:    hdf.h tdfan.c libdf.a  
-	$(CC) $(CFLAGS) -D$(MACHINE) tdfanfile.c libdf.a -o tdfanfile
+tdfstubs:     tdfstubs.c 
+	$(CC) $(CFLAGS) -D$(MACHINE) tdfstubs.c $(LIBS) -o tdfstubs
 
-tdfstubs:    hdf.h tdfstubs.c libdf.a  
-	$(CC) $(CFLAGS) -D$(MACHINE) tdfstubs.c libdf.a -o tdfstubs
+tdfsd_ntF:   tdfsd_ntF.f
+	$(FC) $(FFLAGS) tdfsd_ntF.f $(LIBS)  -o tdfsd_ntF 
 
-tdfsd_ntF:  hdf.h tdfsd_ntF.f libdf.a
-	$(FC) $(FFLAGS) tdfsd_ntF.f libdf.a -o tdfsd_ntF
+#tdfsd_mmsF:   tdfsd_mmsF.f 
+#	$(FC) $(FFLAGS) tdfsd_mmsF.f $(LIBS) -o tdfsd_mmsF
 
-tdfsd_mmsF:  hdf.h tdfsd_mmsF.f libdf.a
-	$(FC) $(FFLAGS) tdfsd_mmsF.f libdf.a -o tdfsd_mmsF
+thfile:     thfile.c 
+	$(CC) $(CFLAGS) -D$(MACHINE) thfile.c $(LIBS) -o thfile
 
-thfile:    hdf.h tdfstubs.c libdf.a  
-	$(CC) $(CFLAGS) -D$(MACHINE) tdfstubs.c libdf.a -o tdfstubs
+thfile1:     thfile1.c 
+	$(CC) $(CFLAGS) -D$(MACHINE) thfile1.c $(LIBS) -o thfile1
 
-thfile1:    hdf.h tdfstubs.c libdf.a  
-	$(CC) $(CFLAGS) -D$(MACHINE) tdfstubs.c libdf.a -o tdfstubs
+terr:     terr.c 
+	$(CC) $(CFLAGS) -D$(MACHINE) terr.c $(LIBS) -o terr
 
-terr:    hdf.h tdfstubs.c libdf.a  
-	$(CC) $(CFLAGS) -D$(MACHINE) tdfstubs.c libdf.a -o tdfstubs
+thblocks:     thblocks.c 
+	$(CC) $(CFLAGS) -D$(MACHINE) thblocks.c $(LIBS) -o thblocks
 
-thblocks:    hdf.h tdfstubs.c libdf.a  
-	$(CC) $(CFLAGS) -D$(MACHINE) tdfstubs.c libdf.a -o tdfstubs
-
-thextelt:    hdf.h tdfstubs.c libdf.a  
-	$(CC) $(CFLAGS) -D$(MACHINE) tdfstubs.c libdf.a -o tdfstubs
+thextelt:     thextelt.c
+	$(CC) $(CFLAGS) -D$(MACHINE) thextelt.c $(LIBS) -o thextelt
 
 
