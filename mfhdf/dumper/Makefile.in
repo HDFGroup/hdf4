@@ -14,6 +14,9 @@
 
 @SET_MAKE@
 
+#############################################################################
+#############################################################################
+
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
@@ -49,7 +52,7 @@ CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
-CPPFLAGS = @CPPFLAGS@
+CPPFLAGS = $(INCLUDES) $(DEFINES) @CPPFLAGS@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
@@ -135,7 +138,6 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-bin_PROGRAMS = hdp
 
 INCLUDES = -I${top_srcdir}/hdf/src        \
          -I${top_srcdir}/mfhdf/libsrc   \
@@ -144,10 +146,14 @@ INCLUDES = -I${top_srcdir}/hdf/src        \
 
 DEFINES = -DNDEBUG -DHDF
 
+
+#############################################################################
+#############################################################################
+bin_PROGRAMS = hdp
+
 hdp_SOURCES = hdp.c hdp_dump.c hdp_gr.c hdp_list.c hdp_rig.c hdp_sds.c      \
               hdp_util.c hdp_vd.c hdp_vg.c show.c
 
-hdp_CPPFLAGS = ${INCLUDES} ${DEFINES} @CPPFLAGS@
 hdp_LDADD = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a @LIBS@
 hdp_DEPENPENDENCIES = ${top_builddir}/hdf/src/libdf.a ../libsrc/libmfhdf.a
 subdir = mfhdf/dumper
@@ -157,11 +163,10 @@ CONFIG_CLEAN_FILES = testhdp.sh
 bin_PROGRAMS = hdp$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
-am_hdp_OBJECTS = hdp-hdp.$(OBJEXT) hdp-hdp_dump.$(OBJEXT) \
-	hdp-hdp_gr.$(OBJEXT) hdp-hdp_list.$(OBJEXT) \
-	hdp-hdp_rig.$(OBJEXT) hdp-hdp_sds.$(OBJEXT) \
-	hdp-hdp_util.$(OBJEXT) hdp-hdp_vd.$(OBJEXT) \
-	hdp-hdp_vg.$(OBJEXT) hdp-show.$(OBJEXT)
+am_hdp_OBJECTS = hdp.$(OBJEXT) hdp_dump.$(OBJEXT) hdp_gr.$(OBJEXT) \
+	hdp_list.$(OBJEXT) hdp_rig.$(OBJEXT) hdp_sds.$(OBJEXT) \
+	hdp_util.$(OBJEXT) hdp_vd.$(OBJEXT) hdp_vg.$(OBJEXT) \
+	show.$(OBJEXT)
 hdp_OBJECTS = $(am_hdp_OBJECTS)
 hdp_DEPENDENCIES = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a
 hdp_LDFLAGS =
@@ -169,15 +174,11 @@ hdp_LDFLAGS =
 DEFAULT_INCLUDES =  -I. -I$(srcdir)
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/hdp-hdp.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hdp-hdp_dump.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hdp-hdp_gr.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hdp-hdp_list.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hdp-hdp_rig.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hdp-hdp_sds.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hdp-hdp_util.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hdp-hdp_vd.Po ./$(DEPDIR)/hdp-hdp_vg.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hdp-show.Po
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/hdp.Po ./$(DEPDIR)/hdp_dump.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hdp_gr.Po ./$(DEPDIR)/hdp_list.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hdp_rig.Po ./$(DEPDIR)/hdp_sds.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hdp_util.Po ./$(DEPDIR)/hdp_vd.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hdp_vg.Po ./$(DEPDIR)/show.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -231,16 +232,16 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdp-hdp.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdp-hdp_dump.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdp-hdp_gr.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdp-hdp_list.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdp-hdp_rig.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdp-hdp_sds.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdp-hdp_util.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdp-hdp_vd.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdp-hdp_vg.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdp-show.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdp_dump.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdp_gr.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdp_list.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdp_rig.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdp_sds.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdp_util.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdp_vd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdp_vg.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/show.Po@am__quote@
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
@@ -266,226 +267,6 @@ distclean-depend:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `if test -f '$<'; then $(CYGPATH_W) '$<'; else $(CYGPATH_W) '$(srcdir)/$<'; fi`
-
-hdp-hdp.o: hdp.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdp-hdp.o -MD -MP -MF "$(DEPDIR)/hdp-hdp.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdp-hdp.o `test -f 'hdp.c' || echo '$(srcdir)/'`hdp.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdp-hdp.Tpo" "$(DEPDIR)/hdp-hdp.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdp-hdp.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdp.c' object='hdp-hdp.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdp-hdp.Po' tmpdepfile='$(DEPDIR)/hdp-hdp.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdp-hdp.o `test -f 'hdp.c' || echo '$(srcdir)/'`hdp.c
-
-hdp-hdp.obj: hdp.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdp-hdp.obj -MD -MP -MF "$(DEPDIR)/hdp-hdp.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdp-hdp.obj `if test -f 'hdp.c'; then $(CYGPATH_W) 'hdp.c'; else $(CYGPATH_W) '$(srcdir)/hdp.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdp-hdp.Tpo" "$(DEPDIR)/hdp-hdp.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdp-hdp.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdp.c' object='hdp-hdp.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdp-hdp.Po' tmpdepfile='$(DEPDIR)/hdp-hdp.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdp-hdp.obj `if test -f 'hdp.c'; then $(CYGPATH_W) 'hdp.c'; else $(CYGPATH_W) '$(srcdir)/hdp.c'; fi`
-
-hdp-hdp_dump.o: hdp_dump.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdp-hdp_dump.o -MD -MP -MF "$(DEPDIR)/hdp-hdp_dump.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdp-hdp_dump.o `test -f 'hdp_dump.c' || echo '$(srcdir)/'`hdp_dump.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdp-hdp_dump.Tpo" "$(DEPDIR)/hdp-hdp_dump.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdp-hdp_dump.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdp_dump.c' object='hdp-hdp_dump.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdp-hdp_dump.Po' tmpdepfile='$(DEPDIR)/hdp-hdp_dump.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdp-hdp_dump.o `test -f 'hdp_dump.c' || echo '$(srcdir)/'`hdp_dump.c
-
-hdp-hdp_dump.obj: hdp_dump.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdp-hdp_dump.obj -MD -MP -MF "$(DEPDIR)/hdp-hdp_dump.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdp-hdp_dump.obj `if test -f 'hdp_dump.c'; then $(CYGPATH_W) 'hdp_dump.c'; else $(CYGPATH_W) '$(srcdir)/hdp_dump.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdp-hdp_dump.Tpo" "$(DEPDIR)/hdp-hdp_dump.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdp-hdp_dump.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdp_dump.c' object='hdp-hdp_dump.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdp-hdp_dump.Po' tmpdepfile='$(DEPDIR)/hdp-hdp_dump.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdp-hdp_dump.obj `if test -f 'hdp_dump.c'; then $(CYGPATH_W) 'hdp_dump.c'; else $(CYGPATH_W) '$(srcdir)/hdp_dump.c'; fi`
-
-hdp-hdp_gr.o: hdp_gr.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdp-hdp_gr.o -MD -MP -MF "$(DEPDIR)/hdp-hdp_gr.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdp-hdp_gr.o `test -f 'hdp_gr.c' || echo '$(srcdir)/'`hdp_gr.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdp-hdp_gr.Tpo" "$(DEPDIR)/hdp-hdp_gr.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdp-hdp_gr.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdp_gr.c' object='hdp-hdp_gr.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdp-hdp_gr.Po' tmpdepfile='$(DEPDIR)/hdp-hdp_gr.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdp-hdp_gr.o `test -f 'hdp_gr.c' || echo '$(srcdir)/'`hdp_gr.c
-
-hdp-hdp_gr.obj: hdp_gr.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdp-hdp_gr.obj -MD -MP -MF "$(DEPDIR)/hdp-hdp_gr.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdp-hdp_gr.obj `if test -f 'hdp_gr.c'; then $(CYGPATH_W) 'hdp_gr.c'; else $(CYGPATH_W) '$(srcdir)/hdp_gr.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdp-hdp_gr.Tpo" "$(DEPDIR)/hdp-hdp_gr.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdp-hdp_gr.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdp_gr.c' object='hdp-hdp_gr.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdp-hdp_gr.Po' tmpdepfile='$(DEPDIR)/hdp-hdp_gr.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdp-hdp_gr.obj `if test -f 'hdp_gr.c'; then $(CYGPATH_W) 'hdp_gr.c'; else $(CYGPATH_W) '$(srcdir)/hdp_gr.c'; fi`
-
-hdp-hdp_list.o: hdp_list.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdp-hdp_list.o -MD -MP -MF "$(DEPDIR)/hdp-hdp_list.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdp-hdp_list.o `test -f 'hdp_list.c' || echo '$(srcdir)/'`hdp_list.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdp-hdp_list.Tpo" "$(DEPDIR)/hdp-hdp_list.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdp-hdp_list.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdp_list.c' object='hdp-hdp_list.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdp-hdp_list.Po' tmpdepfile='$(DEPDIR)/hdp-hdp_list.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdp-hdp_list.o `test -f 'hdp_list.c' || echo '$(srcdir)/'`hdp_list.c
-
-hdp-hdp_list.obj: hdp_list.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdp-hdp_list.obj -MD -MP -MF "$(DEPDIR)/hdp-hdp_list.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdp-hdp_list.obj `if test -f 'hdp_list.c'; then $(CYGPATH_W) 'hdp_list.c'; else $(CYGPATH_W) '$(srcdir)/hdp_list.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdp-hdp_list.Tpo" "$(DEPDIR)/hdp-hdp_list.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdp-hdp_list.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdp_list.c' object='hdp-hdp_list.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdp-hdp_list.Po' tmpdepfile='$(DEPDIR)/hdp-hdp_list.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdp-hdp_list.obj `if test -f 'hdp_list.c'; then $(CYGPATH_W) 'hdp_list.c'; else $(CYGPATH_W) '$(srcdir)/hdp_list.c'; fi`
-
-hdp-hdp_rig.o: hdp_rig.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdp-hdp_rig.o -MD -MP -MF "$(DEPDIR)/hdp-hdp_rig.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdp-hdp_rig.o `test -f 'hdp_rig.c' || echo '$(srcdir)/'`hdp_rig.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdp-hdp_rig.Tpo" "$(DEPDIR)/hdp-hdp_rig.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdp-hdp_rig.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdp_rig.c' object='hdp-hdp_rig.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdp-hdp_rig.Po' tmpdepfile='$(DEPDIR)/hdp-hdp_rig.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdp-hdp_rig.o `test -f 'hdp_rig.c' || echo '$(srcdir)/'`hdp_rig.c
-
-hdp-hdp_rig.obj: hdp_rig.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdp-hdp_rig.obj -MD -MP -MF "$(DEPDIR)/hdp-hdp_rig.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdp-hdp_rig.obj `if test -f 'hdp_rig.c'; then $(CYGPATH_W) 'hdp_rig.c'; else $(CYGPATH_W) '$(srcdir)/hdp_rig.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdp-hdp_rig.Tpo" "$(DEPDIR)/hdp-hdp_rig.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdp-hdp_rig.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdp_rig.c' object='hdp-hdp_rig.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdp-hdp_rig.Po' tmpdepfile='$(DEPDIR)/hdp-hdp_rig.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdp-hdp_rig.obj `if test -f 'hdp_rig.c'; then $(CYGPATH_W) 'hdp_rig.c'; else $(CYGPATH_W) '$(srcdir)/hdp_rig.c'; fi`
-
-hdp-hdp_sds.o: hdp_sds.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdp-hdp_sds.o -MD -MP -MF "$(DEPDIR)/hdp-hdp_sds.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdp-hdp_sds.o `test -f 'hdp_sds.c' || echo '$(srcdir)/'`hdp_sds.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdp-hdp_sds.Tpo" "$(DEPDIR)/hdp-hdp_sds.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdp-hdp_sds.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdp_sds.c' object='hdp-hdp_sds.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdp-hdp_sds.Po' tmpdepfile='$(DEPDIR)/hdp-hdp_sds.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdp-hdp_sds.o `test -f 'hdp_sds.c' || echo '$(srcdir)/'`hdp_sds.c
-
-hdp-hdp_sds.obj: hdp_sds.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdp-hdp_sds.obj -MD -MP -MF "$(DEPDIR)/hdp-hdp_sds.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdp-hdp_sds.obj `if test -f 'hdp_sds.c'; then $(CYGPATH_W) 'hdp_sds.c'; else $(CYGPATH_W) '$(srcdir)/hdp_sds.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdp-hdp_sds.Tpo" "$(DEPDIR)/hdp-hdp_sds.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdp-hdp_sds.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdp_sds.c' object='hdp-hdp_sds.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdp-hdp_sds.Po' tmpdepfile='$(DEPDIR)/hdp-hdp_sds.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdp-hdp_sds.obj `if test -f 'hdp_sds.c'; then $(CYGPATH_W) 'hdp_sds.c'; else $(CYGPATH_W) '$(srcdir)/hdp_sds.c'; fi`
-
-hdp-hdp_util.o: hdp_util.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdp-hdp_util.o -MD -MP -MF "$(DEPDIR)/hdp-hdp_util.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdp-hdp_util.o `test -f 'hdp_util.c' || echo '$(srcdir)/'`hdp_util.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdp-hdp_util.Tpo" "$(DEPDIR)/hdp-hdp_util.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdp-hdp_util.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdp_util.c' object='hdp-hdp_util.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdp-hdp_util.Po' tmpdepfile='$(DEPDIR)/hdp-hdp_util.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdp-hdp_util.o `test -f 'hdp_util.c' || echo '$(srcdir)/'`hdp_util.c
-
-hdp-hdp_util.obj: hdp_util.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdp-hdp_util.obj -MD -MP -MF "$(DEPDIR)/hdp-hdp_util.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdp-hdp_util.obj `if test -f 'hdp_util.c'; then $(CYGPATH_W) 'hdp_util.c'; else $(CYGPATH_W) '$(srcdir)/hdp_util.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdp-hdp_util.Tpo" "$(DEPDIR)/hdp-hdp_util.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdp-hdp_util.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdp_util.c' object='hdp-hdp_util.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdp-hdp_util.Po' tmpdepfile='$(DEPDIR)/hdp-hdp_util.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdp-hdp_util.obj `if test -f 'hdp_util.c'; then $(CYGPATH_W) 'hdp_util.c'; else $(CYGPATH_W) '$(srcdir)/hdp_util.c'; fi`
-
-hdp-hdp_vd.o: hdp_vd.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdp-hdp_vd.o -MD -MP -MF "$(DEPDIR)/hdp-hdp_vd.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdp-hdp_vd.o `test -f 'hdp_vd.c' || echo '$(srcdir)/'`hdp_vd.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdp-hdp_vd.Tpo" "$(DEPDIR)/hdp-hdp_vd.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdp-hdp_vd.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdp_vd.c' object='hdp-hdp_vd.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdp-hdp_vd.Po' tmpdepfile='$(DEPDIR)/hdp-hdp_vd.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdp-hdp_vd.o `test -f 'hdp_vd.c' || echo '$(srcdir)/'`hdp_vd.c
-
-hdp-hdp_vd.obj: hdp_vd.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdp-hdp_vd.obj -MD -MP -MF "$(DEPDIR)/hdp-hdp_vd.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdp-hdp_vd.obj `if test -f 'hdp_vd.c'; then $(CYGPATH_W) 'hdp_vd.c'; else $(CYGPATH_W) '$(srcdir)/hdp_vd.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdp-hdp_vd.Tpo" "$(DEPDIR)/hdp-hdp_vd.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdp-hdp_vd.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdp_vd.c' object='hdp-hdp_vd.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdp-hdp_vd.Po' tmpdepfile='$(DEPDIR)/hdp-hdp_vd.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdp-hdp_vd.obj `if test -f 'hdp_vd.c'; then $(CYGPATH_W) 'hdp_vd.c'; else $(CYGPATH_W) '$(srcdir)/hdp_vd.c'; fi`
-
-hdp-hdp_vg.o: hdp_vg.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdp-hdp_vg.o -MD -MP -MF "$(DEPDIR)/hdp-hdp_vg.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdp-hdp_vg.o `test -f 'hdp_vg.c' || echo '$(srcdir)/'`hdp_vg.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdp-hdp_vg.Tpo" "$(DEPDIR)/hdp-hdp_vg.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdp-hdp_vg.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdp_vg.c' object='hdp-hdp_vg.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdp-hdp_vg.Po' tmpdepfile='$(DEPDIR)/hdp-hdp_vg.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdp-hdp_vg.o `test -f 'hdp_vg.c' || echo '$(srcdir)/'`hdp_vg.c
-
-hdp-hdp_vg.obj: hdp_vg.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdp-hdp_vg.obj -MD -MP -MF "$(DEPDIR)/hdp-hdp_vg.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdp-hdp_vg.obj `if test -f 'hdp_vg.c'; then $(CYGPATH_W) 'hdp_vg.c'; else $(CYGPATH_W) '$(srcdir)/hdp_vg.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdp-hdp_vg.Tpo" "$(DEPDIR)/hdp-hdp_vg.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdp-hdp_vg.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdp_vg.c' object='hdp-hdp_vg.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdp-hdp_vg.Po' tmpdepfile='$(DEPDIR)/hdp-hdp_vg.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdp-hdp_vg.obj `if test -f 'hdp_vg.c'; then $(CYGPATH_W) 'hdp_vg.c'; else $(CYGPATH_W) '$(srcdir)/hdp_vg.c'; fi`
-
-hdp-show.o: show.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdp-show.o -MD -MP -MF "$(DEPDIR)/hdp-show.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdp-show.o `test -f 'show.c' || echo '$(srcdir)/'`show.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdp-show.Tpo" "$(DEPDIR)/hdp-show.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdp-show.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='show.c' object='hdp-show.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdp-show.Po' tmpdepfile='$(DEPDIR)/hdp-show.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdp-show.o `test -f 'show.c' || echo '$(srcdir)/'`show.c
-
-hdp-show.obj: show.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdp-show.obj -MD -MP -MF "$(DEPDIR)/hdp-show.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdp-show.obj `if test -f 'show.c'; then $(CYGPATH_W) 'show.c'; else $(CYGPATH_W) '$(srcdir)/show.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdp-show.Tpo" "$(DEPDIR)/hdp-show.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdp-show.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='show.c' object='hdp-show.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdp-show.Po' tmpdepfile='$(DEPDIR)/hdp-show.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdp_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdp-show.obj `if test -f 'show.c'; then $(CYGPATH_W) 'show.c'; else $(CYGPATH_W) '$(srcdir)/show.c'; fi`
 uninstall-info-am:
 
 ETAGS = etags
@@ -660,8 +441,11 @@ uninstall-am: uninstall-binPROGRAMS uninstall-info-am
 	uninstall-am uninstall-binPROGRAMS uninstall-info-am
 
 
-check: hdp
-	sh testhdp.sh
+#############################################################################
+#############################################################################
+
+check:  hdp
+	@srcdir="$(srcdir)" sh ./testhdp.sh
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
