@@ -2844,9 +2844,9 @@ DFKlui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     uint32 i;
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
-    long       *lptr_dest = (long *) dest;
-    long       *lp_dest;
-    long       *lp_src;
+    unsigned long       *lptr_dest = (unsigned long *) dest;
+    unsigned long       *lp_dest;
+    unsigned long       *lp_src;
     char       *FUNC = "DFKui4i";
     int         ierr;           /* error from IEG2CRAY */
     int         type = 1;       /* type of conversion to perform 1=integer */
@@ -2883,8 +2883,8 @@ DFKlui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           odd_man_out = num_elm % 2;
 
           n = num_elm / 2;
-          lp_dest = (long *) dest;
-          lp_src = (long *) source;
+          lp_dest = (unsigned long *) dest;
+          lp_src = (unsigned long *) source;
           HDmemset(lp_dest, 0, num_elm * sizeof(long));     /* initialize to zeros */
           for (i = 0; i < n; i++)
             {
@@ -2911,8 +2911,8 @@ DFKlui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           odd_man_out = num_elm % 2;
 
           n = num_elm / 2;
-          lp_dest = (long *) dest;
-          lp_src = (long *) source;
+          lp_dest = (unsigned long *) dest;
+          lp_src = (unsigned long *) source;
           HDmemset(lp_dest, 0, num_elm * sizeof(long));     /* initialize to zeros */
           for (i = 0; i < n; i++)
             {
@@ -2949,20 +2949,17 @@ DFKlui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           int         odd_man_out;  /* By default there are even num_elm */
           uintn       orig_num_elm = num_elm;
 
-          lp_dest = (long *) dest;
-          lp_src = (long *) source;
+          lp_dest = (unsigned long *) dest;
+          lp_src = (unsigned long *) source;
           HDmemset(lp_dest, 0, num_elm * sizeof(long));     /* initialize to zeros */
 
           odd_man_out = num_elm % 2;
 
-          num_elm /= 2;
-          n = (num_elm + 7) / 8;
-          if (orig_num_elm > 1)
-              switch (num_elm % 8)
-                {
-                    case 0:
-                        do
-                          {
+          if (orig_num_elm > 1) {
+		num_elm /= 2;
+
+		/* The loop below has been unrolled in interations of 8 */
+		while (num_elm > 7) {
                               lp_dest[0] = (lp_src[0] & LUI4I_MASKA) >> 56 |
                                   (lp_src[0] & LUI4I_MASKB) >> 40 |
                                   (lp_src[0] & LUI4I_MASKC) >> 24 |
@@ -2973,8 +2970,7 @@ DFKlui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                                   (lp_src[0] & LUI4I_MASKH) << 24;
                               lp_dest += 2;
                               lp_src++;
-#ifdef QAK
-                    case 15:
+
                               lp_dest[0] = (lp_src[0] & LUI4I_MASKA) >> 56 |
                                   (lp_src[0] & LUI4I_MASKB) >> 40 |
                                   (lp_src[0] & LUI4I_MASKC) >> 24 |
@@ -2985,7 +2981,7 @@ DFKlui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                                   (lp_src[0] & LUI4I_MASKH) << 24;
                               lp_dest += 2;
                               lp_src++;
-                    case 14:
+
                               lp_dest[0] = (lp_src[0] & LUI4I_MASKA) >> 56 |
                                   (lp_src[0] & LUI4I_MASKB) >> 40 |
                                   (lp_src[0] & LUI4I_MASKC) >> 24 |
@@ -2996,7 +2992,7 @@ DFKlui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                                   (lp_src[0] & LUI4I_MASKH) << 24;
                               lp_dest += 2;
                               lp_src++;
-                    case 13:
+
                               lp_dest[0] = (lp_src[0] & LUI4I_MASKA) >> 56 |
                                   (lp_src[0] & LUI4I_MASKB) >> 40 |
                                   (lp_src[0] & LUI4I_MASKC) >> 24 |
@@ -3007,7 +3003,7 @@ DFKlui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                                   (lp_src[0] & LUI4I_MASKH) << 24;
                               lp_dest += 2;
                               lp_src++;
-                    case 12:
+
                               lp_dest[0] = (lp_src[0] & LUI4I_MASKA) >> 56 |
                                   (lp_src[0] & LUI4I_MASKB) >> 40 |
                                   (lp_src[0] & LUI4I_MASKC) >> 24 |
@@ -3018,7 +3014,7 @@ DFKlui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                                   (lp_src[0] & LUI4I_MASKH) << 24;
                               lp_dest += 2;
                               lp_src++;
-                    case 11:
+
                               lp_dest[0] = (lp_src[0] & LUI4I_MASKA) >> 56 |
                                   (lp_src[0] & LUI4I_MASKB) >> 40 |
                                   (lp_src[0] & LUI4I_MASKC) >> 24 |
@@ -3029,7 +3025,7 @@ DFKlui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                                   (lp_src[0] & LUI4I_MASKH) << 24;
                               lp_dest += 2;
                               lp_src++;
-                    case 10:
+
                               lp_dest[0] = (lp_src[0] & LUI4I_MASKA) >> 56 |
                                   (lp_src[0] & LUI4I_MASKB) >> 40 |
                                   (lp_src[0] & LUI4I_MASKC) >> 24 |
@@ -3040,7 +3036,7 @@ DFKlui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                                   (lp_src[0] & LUI4I_MASKH) << 24;
                               lp_dest += 2;
                               lp_src++;
-                    case 9:
+
                               lp_dest[0] = (lp_src[0] & LUI4I_MASKA) >> 56 |
                                   (lp_src[0] & LUI4I_MASKB) >> 40 |
                                   (lp_src[0] & LUI4I_MASKC) >> 24 |
@@ -3051,7 +3047,11 @@ DFKlui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                                   (lp_src[0] & LUI4I_MASKH) << 24;
                               lp_dest += 2;
                               lp_src++;
-                    case 8:
+			num_elm -= 8;
+                };
+
+		/* The loop below is a cleanup of iterations leftover modulo 8 */
+		while (num_elm > 0) {
                               lp_dest[0] = (lp_src[0] & LUI4I_MASKA) >> 56 |
                                   (lp_src[0] & LUI4I_MASKB) >> 40 |
                                   (lp_src[0] & LUI4I_MASKC) >> 24 |
@@ -3062,87 +3062,9 @@ DFKlui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                                   (lp_src[0] & LUI4I_MASKH) << 24;
                               lp_dest += 2;
                               lp_src++;
-#endif
-                    case 7:
-                              lp_dest[0] = (lp_src[0] & LUI4I_MASKA) >> 56 |
-                                  (lp_src[0] & LUI4I_MASKB) >> 40 |
-                                  (lp_src[0] & LUI4I_MASKC) >> 24 |
-                                  (lp_src[0] & LUI4I_MASKD) >> 8;
-                              lp_dest[1] = (lp_src[0] & LUI4I_MASKE) >> 24 |
-                                  (lp_src[0] & LUI4I_MASKF) >> 8 |
-                                  (lp_src[0] & LUI4I_MASKG) << 8 |
-                                  (lp_src[0] & LUI4I_MASKH) << 24;
-                              lp_dest += 2;
-                              lp_src++;
-                    case 6:
-                              lp_dest[0] = (lp_src[0] & LUI4I_MASKA) >> 56 |
-                                  (lp_src[0] & LUI4I_MASKB) >> 40 |
-                                  (lp_src[0] & LUI4I_MASKC) >> 24 |
-                                  (lp_src[0] & LUI4I_MASKD) >> 8;
-                              lp_dest[1] = (lp_src[0] & LUI4I_MASKE) >> 24 |
-                                  (lp_src[0] & LUI4I_MASKF) >> 8 |
-                                  (lp_src[0] & LUI4I_MASKG) << 8 |
-                                  (lp_src[0] & LUI4I_MASKH) << 24;
-                              lp_dest += 2;
-                              lp_src++;
-                    case 5:
-                              lp_dest[0] = (lp_src[0] & LUI4I_MASKA) >> 56 |
-                                  (lp_src[0] & LUI4I_MASKB) >> 40 |
-                                  (lp_src[0] & LUI4I_MASKC) >> 24 |
-                                  (lp_src[0] & LUI4I_MASKD) >> 8;
-                              lp_dest[1] = (lp_src[0] & LUI4I_MASKE) >> 24 |
-                                  (lp_src[0] & LUI4I_MASKF) >> 8 |
-                                  (lp_src[0] & LUI4I_MASKG) << 8 |
-                                  (lp_src[0] & LUI4I_MASKH) << 24;
-                              lp_dest += 2;
-                              lp_src++;
-                    case 4:
-                              lp_dest[0] = (lp_src[0] & LUI4I_MASKA) >> 56 |
-                                  (lp_src[0] & LUI4I_MASKB) >> 40 |
-                                  (lp_src[0] & LUI4I_MASKC) >> 24 |
-                                  (lp_src[0] & LUI4I_MASKD) >> 8;
-                              lp_dest[1] = (lp_src[0] & LUI4I_MASKE) >> 24 |
-                                  (lp_src[0] & LUI4I_MASKF) >> 8 |
-                                  (lp_src[0] & LUI4I_MASKG) << 8 |
-                                  (lp_src[0] & LUI4I_MASKH) << 24;
-                              lp_dest += 2;
-                              lp_src++;
-                    case 3:
-                              lp_dest[0] = (lp_src[0] & LUI4I_MASKA) >> 56 |
-                                  (lp_src[0] & LUI4I_MASKB) >> 40 |
-                                  (lp_src[0] & LUI4I_MASKC) >> 24 |
-                                  (lp_src[0] & LUI4I_MASKD) >> 8;
-                              lp_dest[1] = (lp_src[0] & LUI4I_MASKE) >> 24 |
-                                  (lp_src[0] & LUI4I_MASKF) >> 8 |
-                                  (lp_src[0] & LUI4I_MASKG) << 8 |
-                                  (lp_src[0] & LUI4I_MASKH) << 24;
-                              lp_dest += 2;
-                              lp_src++;
-                    case 2:
-                              lp_dest[0] = (lp_src[0] & LUI4I_MASKA) >> 56 |
-                                  (lp_src[0] & LUI4I_MASKB) >> 40 |
-                                  (lp_src[0] & LUI4I_MASKC) >> 24 |
-                                  (lp_src[0] & LUI4I_MASKD) >> 8;
-                              lp_dest[1] = (lp_src[0] & LUI4I_MASKE) >> 24 |
-                                  (lp_src[0] & LUI4I_MASKF) >> 8 |
-                                  (lp_src[0] & LUI4I_MASKG) << 8 |
-                                  (lp_src[0] & LUI4I_MASKH) << 24;
-                              lp_dest += 2;
-                              lp_src++;
-                    case 1:
-                              lp_dest[0] = (lp_src[0] & LUI4I_MASKA) >> 56 |
-                                  (lp_src[0] & LUI4I_MASKB) >> 40 |
-                                  (lp_src[0] & LUI4I_MASKC) >> 24 |
-                                  (lp_src[0] & LUI4I_MASKD) >> 8;
-                              lp_dest[1] = (lp_src[0] & LUI4I_MASKE) >> 24 |
-                                  (lp_src[0] & LUI4I_MASKF) >> 8 |
-                                  (lp_src[0] & LUI4I_MASKG) << 8 |
-                                  (lp_src[0] & LUI4I_MASKH) << 24;
-                              lp_dest += 2;
-                              lp_src++;
-                          }
-                        while (--n > 0);
-                }
+			num_elm -= 1;
+                };
+          }
           if (odd_man_out)
               *lp_dest = (lp_src[0] & LUI4I_MASKA) >> 56 |
                   (lp_src[0] & LUI4I_MASKB) >> 40 |
@@ -3344,6 +3266,7 @@ DFKluo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           HDfree(tmp_dst);
 #else
 #ifndef DUFF_luo4i
+#define TEST2_luo4i
 #if defined TEST2_luo4i
           int         odd_man_out = 0;  /* By default there are even num_elm */
           intn        n;
@@ -3352,8 +3275,8 @@ DFKluo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
               odd_man_out = 1;
 
           n = num_elm / 2;
-          lp_dest = (long *) dest;
-          lp_src = (long *) source;
+          lp_dest = (unsigned long *) dest;
+          lp_src = (unsigned long *) source;
           for (i = 0; i < n; i++)
             {
                 *lp_dest = ((lp_src[0] & LUO4I_MASKA) << 24) | ((lp_src[0] & LUO4I_MASKB) << 40) |
@@ -3379,23 +3302,20 @@ DFKluo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
             }
 #endif
 #else  /* DUFF_luo4i */
-          uintn n;
-          int         odd_man_out = 0;  /* By default there are even num_elm */
-          uintn       orig_num_elm = num_elm;
+       uintn n;
+       int         odd_man_out = 0;  /* By default there are even num_elm */
+       uintn       orig_num_elm = num_elm;
 
-          if (num_elm % 2)  /* If this is true, we have odd num */
+       if (num_elm % 2)  /* If this is true, we have odd num */
               odd_man_out = 1;
 
-          num_elm /= 2;
-          n = (num_elm + 7) / 8;
-          lp_dest = (unsigned long *) dest;
-          lp_src = (unsigned long *) source;
-          if (orig_num_elm > 1)
-              switch (num_elm % 8)
-                {
-                    case 0:
-                        do
-                          {
+        lp_dest = (unsigned long *) dest;
+        lp_src = (unsigned long *) source;
+	if (orig_num_elm > 1) {
+		num_elm /= 2;
+
+		/* The loop below has been unrolled in interations of 8 */
+		while (num_elm > 7) {
                               *lp_dest = ((lp_src[0] & LUO4I_MASKA) << 24) |
                                   ((lp_src[0] & LUO4I_MASKB) << 40) |
                                   ((lp_src[1] & LUO4I_MASKA) >> 8) |
@@ -3404,8 +3324,7 @@ DFKluo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                                   ((*lp_dest & LUO4I_MASKD) << 16);
                               lp_dest++;
                               lp_src += 2;
-#ifdef QAK
-                    case 15:
+
                               *lp_dest = ((lp_src[0] & LUO4I_MASKA) << 24) |
                                   ((lp_src[0] & LUO4I_MASKB) << 40) |
                                   ((lp_src[1] & LUO4I_MASKA) >> 8) |
@@ -3414,7 +3333,7 @@ DFKluo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                                   ((*lp_dest & LUO4I_MASKD) << 16);
                               lp_dest++;
                               lp_src += 2;
-                    case 14:
+
                               *lp_dest = ((lp_src[0] & LUO4I_MASKA) << 24) |
                                   ((lp_src[0] & LUO4I_MASKB) << 40) |
                                   ((lp_src[1] & LUO4I_MASKA) >> 8) |
@@ -3423,7 +3342,7 @@ DFKluo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                                   ((*lp_dest & LUO4I_MASKD) << 16);
                               lp_dest++;
                               lp_src += 2;
-                    case 13:
+
                               *lp_dest = ((lp_src[0] & LUO4I_MASKA) << 24) |
                                   ((lp_src[0] & LUO4I_MASKB) << 40) |
                                   ((lp_src[1] & LUO4I_MASKA) >> 8) |
@@ -3432,7 +3351,7 @@ DFKluo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                                   ((*lp_dest & LUO4I_MASKD) << 16);
                               lp_dest++;
                               lp_src += 2;
-                    case 12:
+
                               *lp_dest = ((lp_src[0] & LUO4I_MASKA) << 24) |
                                   ((lp_src[0] & LUO4I_MASKB) << 40) |
                                   ((lp_src[1] & LUO4I_MASKA) >> 8) |
@@ -3441,7 +3360,7 @@ DFKluo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                                   ((*lp_dest & LUO4I_MASKD) << 16);
                               lp_dest++;
                               lp_src += 2;
-                    case 11:
+
                               *lp_dest = ((lp_src[0] & LUO4I_MASKA) << 24) |
                                   ((lp_src[0] & LUO4I_MASKB) << 40) |
                                   ((lp_src[1] & LUO4I_MASKA) >> 8) |
@@ -3450,7 +3369,7 @@ DFKluo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                                   ((*lp_dest & LUO4I_MASKD) << 16);
                               lp_dest++;
                               lp_src += 2;
-                    case 10:
+
                               *lp_dest = ((lp_src[0] & LUO4I_MASKA) << 24) |
                                   ((lp_src[0] & LUO4I_MASKB) << 40) |
                                   ((lp_src[1] & LUO4I_MASKA) >> 8) |
@@ -3459,7 +3378,7 @@ DFKluo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                                   ((*lp_dest & LUO4I_MASKD) << 16);
                               lp_dest++;
                               lp_src += 2;
-                    case 9:
+
                               *lp_dest = ((lp_src[0] & LUO4I_MASKA) << 24) |
                                   ((lp_src[0] & LUO4I_MASKB) << 40) |
                                   ((lp_src[1] & LUO4I_MASKA) >> 8) |
@@ -3468,7 +3387,12 @@ DFKluo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                                   ((*lp_dest & LUO4I_MASKD) << 16);
                               lp_dest++;
                               lp_src += 2;
-                    case 8:
+
+			num_elm -= 8;
+		};
+
+		/* The loop below is a cleanup of iterations leftover modulo 8 */
+		while (num_elm > 0) {
                               *lp_dest = ((lp_src[0] & LUO4I_MASKA) << 24) |
                                   ((lp_src[0] & LUO4I_MASKB) << 40) |
                                   ((lp_src[1] & LUO4I_MASKA) >> 8) |
@@ -3477,73 +3401,9 @@ DFKluo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                                   ((*lp_dest & LUO4I_MASKD) << 16);
                               lp_dest++;
                               lp_src += 2;
-#endif
-                    case 7:
-                              *lp_dest = ((lp_src[0] & LUO4I_MASKA) << 24) |
-                                  ((lp_src[0] & LUO4I_MASKB) << 40) |
-                                  ((lp_src[1] & LUO4I_MASKA) >> 8) |
-                                  ((lp_src[1] & LUO4I_MASKB) << 8);
-                              *lp_dest = ((*lp_dest & LUO4I_MASKC) >> 16) |
-                                  ((*lp_dest & LUO4I_MASKD) << 16);
-                              lp_dest++;
-                              lp_src += 2;
-                    case 6:
-                              *lp_dest = ((lp_src[0] & LUO4I_MASKA) << 24) |
-                                  ((lp_src[0] & LUO4I_MASKB) << 40) |
-                                  ((lp_src[1] & LUO4I_MASKA) >> 8) |
-                                  ((lp_src[1] & LUO4I_MASKB) << 8);
-                              *lp_dest = ((*lp_dest & LUO4I_MASKC) >> 16) |
-                                  ((*lp_dest & LUO4I_MASKD) << 16);
-                              lp_dest++;
-                              lp_src += 2;
-                    case 5:
-                              *lp_dest = ((lp_src[0] & LUO4I_MASKA) << 24) |
-                                  ((lp_src[0] & LUO4I_MASKB) << 40) |
-                                  ((lp_src[1] & LUO4I_MASKA) >> 8) |
-                                  ((lp_src[1] & LUO4I_MASKB) << 8);
-                              *lp_dest = ((*lp_dest & LUO4I_MASKC) >> 16) |
-                                  ((*lp_dest & LUO4I_MASKD) << 16);
-                              lp_dest++;
-                              lp_src += 2;
-                    case 4:
-                              *lp_dest = ((lp_src[0] & LUO4I_MASKA) << 24) |
-                                  ((lp_src[0] & LUO4I_MASKB) << 40) |
-                                  ((lp_src[1] & LUO4I_MASKA) >> 8) |
-                                  ((lp_src[1] & LUO4I_MASKB) << 8);
-                              *lp_dest = ((*lp_dest & LUO4I_MASKC) >> 16) |
-                                  ((*lp_dest & LUO4I_MASKD) << 16);
-                              lp_dest++;
-                              lp_src += 2;
-                    case 3:
-                              *lp_dest = ((lp_src[0] & LUO4I_MASKA) << 24) |
-                                  ((lp_src[0] & LUO4I_MASKB) << 40) |
-                                  ((lp_src[1] & LUO4I_MASKA) >> 8) |
-                                  ((lp_src[1] & LUO4I_MASKB) << 8);
-                              *lp_dest = ((*lp_dest & LUO4I_MASKC) >> 16) |
-                                  ((*lp_dest & LUO4I_MASKD) << 16);
-                              lp_dest++;
-                              lp_src += 2;
-                    case 2:
-                              *lp_dest = ((lp_src[0] & LUO4I_MASKA) << 24) |
-                                  ((lp_src[0] & LUO4I_MASKB) << 40) |
-                                  ((lp_src[1] & LUO4I_MASKA) >> 8) |
-                                  ((lp_src[1] & LUO4I_MASKB) << 8);
-                              *lp_dest = ((*lp_dest & LUO4I_MASKC) >> 16) |
-                                  ((*lp_dest & LUO4I_MASKD) << 16);
-                              lp_dest++;
-                              lp_src += 2;
-                    case 1:
-                              *lp_dest = ((lp_src[0] & LUO4I_MASKA) << 24) |
-                                  ((lp_src[0] & LUO4I_MASKB) << 40) |
-                                  ((lp_src[1] & LUO4I_MASKA) >> 8) |
-                                  ((lp_src[1] & LUO4I_MASKB) << 8);
-                              *lp_dest = ((*lp_dest & LUO4I_MASKC) >> 16) |
-                                  ((*lp_dest & LUO4I_MASKD) << 16);
-                              lp_dest++;
-                              lp_src += 2;
-                          }
-                        while (--n > 0);
-                }
+			num_elm--;
+		};
+	}
           if (odd_man_out)
             {
                 *lp_dest = ((lp_src[0] & LUO4I_MASKA) << 24) |
