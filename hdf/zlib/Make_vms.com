@@ -4,7 +4,7 @@ $!
 $! Look for the compiler used
 $!
 $ ccopt = ""
-$ if f$trnlnm("HW_MODEL").ge.1024
+$ if f$getsyi("HW_MODEL").ge.1024
 $ then
 $  ccopt = "/prefix=all"+ccopt
 $  comp  = "__decc__=1"
@@ -65,9 +65,7 @@ $   write sys$output "Building minigzip..."
 $   CALL MAKE minigzip.OBJ "CC ''CCOPT' minigzip" -
                 minigzip.c zlib.h zconf.h
 $   call make minigzip.exe - 
-!                "LINK minigzip,libz.olb/lib,x11vms:xvmsutils.olb/lib" - 
-                 "LINK minigzip,libz.olb/lib,  -
-                      sys$common:[syslib]decwindows.olb/lib" - 
+                "LINK minigzip,libz.olb/lib,x11vms:xvmsutils.olb/lib" - 
                 minigzip.obj libz.olb
 $  else
 $   mms/macro=('comp')
