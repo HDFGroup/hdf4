@@ -112,6 +112,8 @@ intn GRreqimageil(int32 riid,intn il)
 LUT/Palette I/O Functions:
 int32 GRgetlutid(int32 riid,int32 index)
     - Get a palette id ('palid') for an RI.
+uint16 GRluttoref(int32 lutid)
+    - Maps a lutid to a reference # for annotating of including in a Vgroup.
 intn GRgetlutinfo(int32 lutid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
     - Gets information about a palette.
 intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP data)
@@ -3775,6 +3777,64 @@ done:
 #endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRgetlutid() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRluttoref
+
+ PURPOSE
+    Returns the ref # for a LUT.
+
+ USAGE
+    uint16 GRluttoref(lutid)
+        int32 lutid;        IN: LUT ID from GRgetlutid
+
+ RETURNS
+    Valid ref # if a palette exists, or DFREF_WILDCARD (0) if one doesn't
+    SUCCEED/FAIL
+
+ DESCRIPTION
+    Gets the ref # used to store the LUT in the file.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+uint16 GRluttoref(int32 lutid)
+{
+    CONSTR(FUNC, "GRgetlutinfo");   /* for HERROR */
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    uint16 ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRgetlutinfo);
+#endif /* HAVE_PABLO */
+    /* clear error stack and check validity of args */
+    HEclear();
+
+    /* check the validity of the RI ID */
+    if (HAatom_group(lutid)!=RIIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+    
+    /* locate LUT's object in hash table */
+    if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(lutid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+
+    ret_value=ri_ptr->lut_ref;
+
+done:
+  if(ret_value == 0)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRluttoref);
+#endif /* HAVE_PABLO */
+  return ret_value;
+} /* end GRluttoref() */
 
 /*--------------------------------------------------------------------------
  NAME

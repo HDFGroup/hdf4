@@ -2320,6 +2320,8 @@ extern intn GRreqimageil(int32 riid,intn il);
 
 extern int32 GRgetlutid(int32 riid,int32 index);
 
+extern uint16 GRluttoref(int32 lutid);
+
 extern intn GRgetlutinfo(int32 riid,int32 *ncomp,int32 *nt,
     int32 *il,int32 *nentries);
 
