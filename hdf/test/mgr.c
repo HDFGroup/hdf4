@@ -360,7 +360,15 @@ static void dump_image(void *data, int32 xdim, int32 ydim, int32 ncomp, int32 nt
             2. GRgetattr
         C. GRfindattr
     VIII. Old-Style Raster Image Access
+        A. Read data from RLE compressed image
+        B. Create RLE compressed image & write to it (not implemented)
+        C. Read data from 8-bit JPEG compressed image
+        D. Create 8-bit JPEG compressed image & write to it
+        E. Read data from 24-bit JPEG compressed image
+        F. Create 24-bit JPEG compressed image & write to it
     IX. Compressed image Functions
+    X.  Chunking write/read test
+
         
 */
 
@@ -2645,7 +2653,7 @@ static void test_mgr_image_chunk(int flag)
 /****************************************************************
 **
 **  test_mgr_image(): Multi-file Raster Image I/O Test Routine
-** 
+**  II. Create Images
 **      A. GRcreate/GRselect/GRendaccess w/GRgetiminfo
 **      B. Write/Read images
 **          1. With no Data
@@ -3587,7 +3595,13 @@ test_mgr_old(int flag)
 #define GZIPFILE    "gr_gzip.hdf"
 #define JPEGFILE    "gr_jpeg.hdf"
 
-/* Sub-tests for test_mgr_compress() */
+/* Sub-tests for test_mgr_compress():
+   - test_mgr_compress_a: Create/Write/Read gzip compressed image
+   - test_mgr_compress_b: Create/Write/Read 8-bit JPEG compressed image
+   - test_mgr_compress_c: Create/Read/Write 24-bit JPEG compressed Image
+   - test_get_compress:   Retrieve various compression information of 
+				compressed Image 
+*/
 static void test_mgr_compress_a(int flag)
 {
     int32 fid;              /* HDF file ID */
@@ -4027,14 +4041,234 @@ static void test_mgr_compress_c(int flag)
  
 } /* end test_mgr_compress_c() */
 
+/*--------------------------------------------------------------------------
+    The following 2 routines are added when bug# 307 was fixed:
+
+    - test_get_compress: tests the new functionality, getting compression
+                information of compressed image data.  The test
+        + creates a file and four compressed images written to the file,
+          then closes the file.
+        + re-opens the file, then reads and verifies each image's
+          compression information
+        The four images are created using the following compression
+        methods in that order: RLE, Skipping Huffman, Deflate, and JPEG.
+        For simplicity, all four images use the same data sample.
+
+    - make_comp_image: is a helper that test_get_compress uses to create
+                several compressed images.
+
+ -BMR (Sept 7, 01)
+--------------------------------------------------------------------------*/
+
+#define	COMPFILE	"gr_comp.hdf"
+#define	RLE_IMAGE	"Image with RLE Compression"
+#define	DEFLATE_IMAGE	"Image with Deflate Compression"
+#define	SKPHUFF_IMAGE	"Image with Skphuff Compression"
+#define	JPEG_IMAGE	"Image with JPEG Compression"
+#define	DEFLATE_LEVEL		7  /* arbitrary */
+#define	SKPHUFF_SKIPSIZE	28  /* arbitrary */
+
+intn make_comp_image( 
+		int32 grid,
+		char* img_name,
+		int32 comp_type,    /* Compression method */
+		comp_info* cinfo)    /* Compression parameters */
+{
+    int32 riid;         /* RI ID of the working image */
+    int32 dims[2]={10,10};	/* dimensions for the empty image */
+    uint8 image_data[10][10];	/* space for the image data */
+    int32 start[2];		/* start of image data to grab */
+    int32 stride[2];	/* stride of image data to grab */
+    intn i,j;		/* indices */
+    intn ret_value;        /* generic return value */
+
+    /* Initialize data we are going to write out */
+    for (i = 0; i < 10; i++)
+        for (j = 0; j < 10; j++)
+            image_data[i][j] = (uint8) (i + j + 10);
+
+    /* Create the image */
+    riid = GRcreate(grid, img_name, 1, DFNT_UINT8, MFGR_INTERLACE_PIXEL, dims);
+    CHECK(riid, FAIL, "GRcreate");
+
+    /* Set the compression as provided */
+    ret_value = GRsetcompress(riid, comp_type, cinfo);
+    CHECK(ret_value, FAIL, "GRsetcompress");
+
+    /* Write the image out */
+    start[0] = start[1] = 0;
+    stride[0] = stride[1] = 1;
+    ret_value = GRwriteimage(riid, start, stride, dims, image_data);
+    CHECK(ret_value, FAIL, "GRwriteimage");
+
+    /* Close the image */
+    ret_value = GRendaccess(riid);
+    CHECK(ret_value, FAIL, "GRendaccess");
+
+    return ret_value;
+}
+
+static void test_get_compress(int flag)
+{
+    int32 fid;          /* HDF file ID */
+    int32 grid;         /* GRID for the interface */
+    int32 riid;     	/* RI ID of the working image */
+    int32 comp_type;    /* Compression method */
+    comp_info cinfo;    /* Compression parameters - union */
+    intn status;        /* generic return value */
+
+/* D - Retrieve compression information of compressed images */
+    MESSAGE(8, printf("Verify the compression information of compressed images\n"););
+
+    /*
+     * Create a new file and several images with different compression
+     * schemes then close the images and the file
+     */
+
+    /* Create an hdf file, and initiate the GR interface */
+    fid = Hopen(COMPFILE, DFACC_CREATE, 0);
+    CHECK(fid, FAIL, "Hopen");
+
+    grid = GRstart(fid);
+    CHECK(grid, FAIL, "GRstart");
+
+    /* Create and write 4 images, with RLE, deflate, skipping huffman,
+       and JPEG compression methods. */
+
+    /* No compression info for the RLE image */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+
+    /* Create and write the first compressed image in this file */
+    make_comp_image(grid, RLE_IMAGE, COMP_CODE_RLE, &cinfo);
+
+    /* Set the compression info for the second image with skipping 
+       huffman method */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    cinfo.skphuff.skp_size = SKPHUFF_SKIPSIZE;
+
+    /* Create and write the second compressed image in this file */
+    make_comp_image(grid, SKPHUFF_IMAGE, COMP_CODE_SKPHUFF, &cinfo);
+
+    /* Set the compression info for the third image with deflate method */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    cinfo.deflate.level = DEFLATE_LEVEL;
+
+    /* Create and write the third compressed image in this file */
+    make_comp_image(grid, DEFLATE_IMAGE, COMP_CODE_DEFLATE, &cinfo);
+
+    /* Set the compression method for the fourth image */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    cinfo.jpeg.quality = 100;	/* won't be able to retrieved anyway */
+    cinfo.jpeg.force_baseline = 1;
+
+    /* Create and write the fourth compressed image in this file */
+    make_comp_image(grid, JPEG_IMAGE, COMP_CODE_JPEG, &cinfo);
+
+    /* Terminate access to the GR interface and close the file */
+    status = GRend(grid);
+    CHECK(status, FAIL, "GRend");
+    status = Hclose(fid);
+    CHECK(status, FAIL, "Hclose");
+
+    /*
+     * Re-open the file COMPFILE, and retrieve the compression information
+     * of its two images 
+     */
+    fid = Hopen(COMPFILE, DFACC_READ, 0);
+    CHECK(fid, FAIL, "Hopen");
+
+    grid = GRstart(fid);
+    CHECK(grid, FAIL, "GRstart");
+
+    /* get access to the first image */
+    riid = GRselect(grid, 0);
+    CHECK(riid, FAIL, "GRselect");
+
+    /* First image uses RLE compression method, so no info will be
+       retrieved */
+    status = GRgetcompress(riid, &comp_type, &cinfo);
+    CHECK(status, FAIL, "GRsetcompress");
+    VERIFY(comp_type, COMP_CODE_RLE, "GRgetcompress");
+
+    /* end access to the first image */
+    status = GRendaccess(riid);
+    CHECK(status, FAIL, "GRendaccess");
+
+    /* get the compression info of the second image, and then check 
+     * the values against the values set earlier, which are:
+     *		comp_type = COMP_CODE_SKPHUFF 
+     *		skp_size = SKPHUFF_SKIPSIZE
+     */
+
+    /* get access to the second image */
+    riid = GRselect(grid, 1);
+    CHECK(riid, FAIL, "GRselect");
+
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    status = GRgetcompress(riid, &comp_type, &cinfo);
+    CHECK(status, FAIL, "GRsetcompress");
+    VERIFY(comp_type, COMP_CODE_SKPHUFF, "GRgetcompress");
+    VERIFY(cinfo.skphuff.skp_size, SKPHUFF_SKIPSIZE, "GRgetcompress");
+
+    /* end access to the second image */
+    status = GRendaccess(riid);
+    CHECK(status, FAIL, "GRendaccess");
+
+    /* get the compression info of the third image, and then check 
+       the values against the values set earlier, which are:
+		comp_type = COMP_CODE_DEFLATE 
+		level = DEFLATE_LEVEL
+    */
+
+    /* get access to the third image */
+    riid = GRselect(grid, 2);
+    CHECK(riid, FAIL, "GRselect");
+
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    status = GRgetcompress(riid, &comp_type, &cinfo);
+    CHECK(status, FAIL, "GRsetcompress");
+    VERIFY(comp_type, COMP_CODE_DEFLATE, "GRgetcompress");
+    VERIFY(cinfo.deflate.level, DEFLATE_LEVEL, "GRgetcompress");
+
+    /* Terminate access to the third image */
+    status = GRendaccess(riid);
+    CHECK(status, FAIL, "GRendaccess");
+
+    /* get access to the fourth image */
+    riid = GRselect(grid, 3);
+    CHECK(riid, FAIL, "GRselect");
+
+    /* get the compression info of the second image, but only check 
+       the compression type value against that being set earlier 
+       ('quality' and 'force_baseline' are currently not retrievable) */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    status = GRgetcompress(riid, &comp_type, &cinfo);
+    CHECK(status, FAIL, "GRgetcompress");
+    VERIFY(comp_type, COMP_CODE_JPEG, "GRgetcompress");
+    VERIFY(cinfo.jpeg.quality, 0, "GRgetcompress");
+    VERIFY(cinfo.jpeg.force_baseline, 0, "GRgetcompress");
+
+    /* Terminate access to the third image */
+    status = GRendaccess(riid);
+    CHECK(status, FAIL, "GRendaccess");
+
+    /* Terminate access and close the file */
+    status = GRend(grid);
+    CHECK(status, FAIL, "GRend");
+    status = Hclose(fid);
+    CHECK(status, FAIL, "Hclose");
+
+} /* end test_get_compress */
+
 /****************************************************************
 **
 **  test_mgr_compress(): Multi-file Raster Compression tests
 ** 
-**  VIII. Compressed image tests
+**  IX. Compressed image tests
 **      A. Create/Read/Write gzip compressed Image
 **      B. Create/Read/Write 8-bit JPEG compressed Image
 **      C. Create/Read/Write 24-bit JPEG compressed Image
+**      D. Retrieve various compression information of compressed Image
 ** 
 ****************************************************************/
 static void
@@ -4046,6 +4280,7 @@ test_mgr_compress(int flag)
     test_mgr_compress_a(flag);
     test_mgr_compress_b(flag);
     test_mgr_compress_c(flag);
+    test_get_compress(flag);
 
 }   /* end test_mgr_compress() */
 
@@ -4131,7 +4366,7 @@ static void test_mgr_r24_a(int flag)
 **
 **  test_mgr_r24(): Multi-file Raster/DF24 Compatibility Tests
 ** 
-**  VIII. Multi-File Raster/DF24 Compatibility Tests
+**  X. Multi-File Raster/DF24 Compatibility Tests
 **      A. Read/Write DF24 Image
 ** 
 ****************************************************************/
@@ -4266,7 +4501,7 @@ static void test_mgr_r8_a(int flag)
 **
 **  test_mgr_r8(): Multi-file Raster/DF8 Compatibility Tests
 ** 
-**  VIII. Multi-File Raster/DF8 Compatibility Tests
+**  XI. Multi-File Raster/DF8 Compatibility Tests
 **      A. Read/Write DF8 Image with palette
 ** 
 ****************************************************************/
@@ -4378,7 +4613,7 @@ static void test_mgr_pal_a(int flag)
 **
 **  test_mgr_pal(): Multi-file Raster/DFP Compatibility Tests
 ** 
-**  VIII. Multi-File Raster/DFP Compatibility Tests
+**  XII. Multi-File Raster/DFP Compatibility Tests
 **      A. Read/Write DFP palettes
 ** 
 ****************************************************************/
@@ -4899,8 +5134,8 @@ test_mgr_chunkwr_pixel(int flag)
 **
 **  test_mgr_chunkwr(): GR chunking test 
 ** 
-**  X. GR write/read chunking test with enabled compression and
-**     different interlace modes.
+**  XIII. GR write/read chunking test with enabled compression and
+**       different interlace modes.
 **
 **      A. Write/read GR chunks with different kinds of compressions
 **         and PIXEL Interlace Mode  (test_mgr_chunkrw_pixel) 
@@ -4930,17 +5165,21 @@ test_mgr(void)
 {
     /*
         Each major outline portion has it's own main function:
-        I. Interface Initialization     - test_mgr_init
-        II. Create Images               - test_mgr_image
-        III. ID/Ref/Index Functions     - test_mgr_index
-        IV. Interlace Functions         - test_mgr_interlace
-        V. Palette Functions            - test_mgr_lut
-        VI. Special Element Functions   - test_mgr_special
-        VII. Atribute Functions         - test_mgr_attr
+        I. Interface Initialization      - test_mgr_init
+        II. Create Images                - test_mgr_image
+        III. ID/Ref/Index Functions      - test_mgr_index
+        IV. Interlace Functions          - test_mgr_interlace
+        V. Palette Functions             - test_mgr_lut
+        VI. Special Element Functions    - test_mgr_special
+        VII. Atribute Functions          - test_mgr_attr
         VIII. Access to old-style images - test_mgr_old
-        VIII. Compressed images         - test_mgr_compress
-        X.  Chunking write/read test 
-            with enabled compression    - test_mgr_chunkwr
+        IX. Compressed Image Functions   - test_mgr_compress
+        X. DF24 Compatibility tests      - test_mgr_r24
+        XI. DF8 Compatibility tests      - test_mgr_r8
+	XII. DFP Compatibility tests     - test_mgr_pal
+        XIII.  Chunking write/read test
+            with enabled compression     - test_mgr_chunkwr
+
     */
 
     /* Output message about test being performed */
@@ -4958,9 +5197,9 @@ test_mgr(void)
     test_mgr_compress(0);
     test_mgr_r24(0);
     test_mgr_r8(0);
-    test_mgr_chunkwr();
 #ifdef LATER
     test_mgr_pal(0);    /* read in old-style DFP palette tests */
 #endif /* LATER */
+    test_mgr_chunkwr();
 }   /* test_mgr() */
 
