@@ -21,7 +21,8 @@
 #define _NETCDF_
 
 //RWR Modification Start 07/14/98
-#include "api_adpt.h"
+//#include "api_adpt.h"
+#include "hdfi.h"
 //RWR Modification End
 
 /*
