@@ -225,6 +225,12 @@ JPEGINC=$(srcdir)/../jpeg
 # ==> where is your PABLO include files
 PABLO_HINC= $(srcdir)/../pablo
 
+# ==> specify where to find the FMPOOL include and source files 
+FMPOOL_INC=$(srcdir)/../fmpool
+FMPOOL_SRC=$(srcdir)/../fmpool
+
+ALL_CFLAGS = $(CFLAGS) $(FMPOOL_FLAGS) -I$(HDFINC) -I$(JPEGINC)
+
 MANIFEST = $(DISTFILES)
 
 DISTFILES = Makefile.in bitio.dat litend.dat nbit.dat tmgr.dat win32tst.mak \
@@ -259,9 +265,21 @@ $(FTESTS): $(FSRCS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
 
 $(FTESTS): $(FRC)
 
-all: testhdf fortest gentest
+#all: testhdf fortest gentest
+all::         FORCE
+	@if test -z "$(FMPOOL_FLAGS)"; then \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) testhdf fortest gentest; \
+	else		 \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" testhdf fortest gentest; \
+	fi
 
-nofortran: testhdf gentest
+#nofortran: testhdf gentest
+nofortran::         FORCE
+	@if test -z "$(FMPOOL_FLAGS)"; then \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) testhdf gentest; \
+	else		 \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" testhdf gentest; \
+	fi
 
 rebuild:
 	@$(MAKE) all $(HDF_FLAGS) FRC=force_rebuild
@@ -286,7 +304,7 @@ $(JPEGLIB)/libjpeg.a:
 #	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
 #
 .c.o: 
-	 $(CC) $(CFLAGS) -c -I$(HDFINC) -I$(JPEGINC) $*.c 
+	 $(CC) $(ALL_CFLAGS) -c $*.c 
 
 $(CTESTS) $(TESTF) $(FTESTS): $(FRC)
 
@@ -302,23 +320,23 @@ test-hdffortran: fortest fortest.sav
 	@cmp fortest.out fortest.sav && echo "*** Fortran tests passed ***";
 
 qtesthdf: $(CTESTS) $(HDFLIB)/libdf.a
-	quantify $(CC) $(CFLAGS) -o qtesthdf $(CTESTS) $(HDFSRC)/libdf.a $(JPEGLIB)/libjpeg.a
+	quantify $(CC) $(ALL_CFLAGS) -o qtesthdf $(CTESTS) $(HDFSRC)/libdf.a $(JPEGLIB)/libjpeg.a
 
 ptesthdf: $(CTESTS) $(HDFLIB)/libdf.a
-	purify $(CC) $(CFLAGS) -o ptesthdf $(CTESTS) $(HDFSRC)/libdf.a $(JPEGLIB)/libjpeg.a
+	purify $(CC) $(ALL_CFLAGS) -o ptesthdf $(CTESTS) $(HDFSRC)/libdf.a $(JPEGLIB)/libjpeg.a
 
 testhdf.tc: $(CTESTS) $(HDFLIB)/libdf.a
-	proof $(CC) $(CFLAGS) -o testhdf.tc $(CTESTS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
+	proof $(CC) $(ALL_CFLAGS) -o testhdf.tc $(CTESTS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
 
 testhdf: $(CTESTS) $(HDFLIB)/libdf.a
-	$(CC) $(CFLAGS) -o testhdf $(CTESTS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
+	$(CC) $(ALL_CFLAGS) -o testhdf $(CTESTS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
 	test -d $(TESTDIR) || mkdir $(TESTDIR)
 
 fortest: $(FTESTS) $(HDFLIB)/libdf.a fortest.o
-	$(CC) $(CFLAGS) -o fortest $(TESTF) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
+	$(CC) $(ALL_CFLAGS) -o fortest $(TESTF) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
 
 gentest: gentest.c $(HDFLIB)/libdf.a
-	$(CC) $(CFLAGS) -I$(HDFINC) gentest.c -o gentest $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
+	$(CC) $(ALL_CFLAGS) gentest.c -o gentest $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
 
 ftests: $(FTESTS)
 
@@ -334,7 +352,7 @@ depend:
 	 makedepend -I$(HDFINC) *.c
 
 saber:	$(SRCS)
-	 #load -I$(HDFINC) -D$(MACHINE) $(SRCS) 
+	 #load $(ALL_CFLAGS) $(SRCS) 
 
 # for distribution creation
 distdir = $(TOP_SRCDIR)/$(PACKAGE)-$(VERSION)/$(curdir)
@@ -345,6 +363,11 @@ dist: $(DISTFILES)
 	    || { echo copying $$file instead; \
 	    cp -p $(srcdir)/$$file $(distdir)/$$file;}; \
 	done
+
+# The following dummy target is useful as a dependency to ensure that a
+# rule is always executed.
+#
+FORCE:
 
 help:
 	@echo ""

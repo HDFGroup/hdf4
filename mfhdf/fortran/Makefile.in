@@ -79,13 +79,14 @@ INCDIR	 = $(prefix)/include
 HDF_LIB  = $(TOP_SRCDIR)/hdf/src/libdf.a
 HDF_INC  = $(TOP_SRCDIR)/hdf/src/
 PABLO_HINC = $(TOP_SRCDIR)/hdf/pablo
+FMPOOL_INC = $(TOP_SRCDIR)/hdf/fmpool
 JPEG_LIB = $(TOP_SRCDIR)/hdf/jpeg/libjpeg.a
 NETCDF_INC = $(TOP_SRCDIR)/mfhdf/libsrc
 PORT_INC   = $(TOP_SRCDIR)/mfhdf/port
 CPP	   = $(CC) -E
 CFLAGS_NETCDF = 
-CPPFLAGS_HDF  = -DNDEBUG -DHDF
-CPP_NETCDF    = -I. -I$(HDF_INC) -I$(NETCDF_INC) -I$(PORT_INC)
+CPPFLAGS_HDF  = -DNDEBUG -DHDF $(FMPOOL_FLAGS)
+CPP_NETCDF    = -I. -I$(HDF_INC) -I$(FMPOOL_INC) -I$(NETCDF_INC) -I$(PORT_INC)
 CPPFLAGS_LIB	= $(SWAP) $(NETLONG) 
 CPPFLAGS_XDR	= $(CPP_XDR) 
 CPPFLAGS_NETCDF =  $(CPPFLAGS_XDR) $(CPP_NETCDF) $(CPPFLAGS_LIB) $(CPPFLAGS_HDF) 
@@ -119,8 +120,8 @@ PROGRAM		= ftest
 #FFLAGS		= @FFLAGS@
 #HDF_LIB         = @HDF_LIB@
 #JPEG_LIB        = @JPEG_LIB@
-GARBAGE		= $(PROGRAM) test.nc copy.nc netcdf.inc jackets.c \
-		  $(PROGRAM).f test*.hdf hdftest hdfout.new
+GARBAGE		= $(PROGRAM) test.nc copy.nc \
+		  test*.hdf hdftest hdfout.new
 HEADERS		= netcdf.inc
 MANIFEST = $(DISTFILES)
 DISTFILES	= $(PROGRAM).src Makefile.in README aix.m4 common.inc \
@@ -621,7 +622,7 @@ clean::
 realclean::	distclean
 distclean::
 	rm -f $(GARBAGE) $(PROGRAM) a.out core *.o *.a *.so.* *.sa.* *.so \
-	    *.log Makefile config.status cc_id tags
+	    *.log Makefile config.status cc_id tags ftest.f netcdf.inc jackets.c
 
 
 # ###########################################################################

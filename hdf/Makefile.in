@@ -85,6 +85,7 @@ HDFINC= $(srcdir)/src
 HDFLIB= $(srcdir)/src
 HDFBIN= $(srcdir)/bin
 PABLO_HINC= $(srcdir)/pablo
+FMPOOL_INC= $(srcdir)/fmpool
 
 #
 #
@@ -105,9 +106,6 @@ HDF_FLAGS       = \
         PABLO_FLAGS="$(PABLO_FLAGS)" \
         PABLO_INCLUDE="$(PABLO_INCLUDE)" \
         MACHINE="$(MACHINE)" 
-#        HDFLIB="$(HDFLIB)" 
-#        HDFINC="$(HDFINC)" 
-#	HDFBIN="$(HDFBIN)"	
 
 LOCAL_MACROS  = CC="$(CC)" \
 	CFLAGS="$(CFLAGS)" \
@@ -201,13 +199,13 @@ test-hdffortran:
 
 install:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install-lib \
-          SUBDIRS="src jpeg " subd
+          SUBDIRS="src jpeg fmpool pablo" subd
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install \
           SUBDIRS="util" subd
 
 install-libs:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install-lib \
-          SUBDIRS="src jpeg" subd
+          SUBDIRS="src jpeg fmpool pablo" subd
 
 install-utils:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install \

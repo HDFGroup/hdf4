@@ -106,6 +106,19 @@ PABLO_INCLUDE= -I.
 ### ------------------- end of makefile fragments -------------------------
 
 # ############# End of system configuration section. ###############
+HDF_FLAGS       = \
+        CC="$(CC)" \
+        CFLAGS="$(CFLAGS)" \
+        FC="$(FC)" \
+        FFLAGS="$(FFLAGS)" \
+        RANLIB="$(RANLIB)" \
+        AR="$(AR)" \
+        ARFLAGS="$(ARFLAGS)" \
+        RM="$(RM)" \
+        RMFLAGS="$(RMFLAGS)" \
+        FMPOOL_FLAGS="$(FMPOOL_FLAGS)" \
+        MACHINE="$(MACHINE)" 
+
 LOCAL_MACROS  = CC="$(CC)" \
 	CFLAGS="$(CFLAGS)" \
 	CPP="$(CPP)" \
@@ -125,7 +138,11 @@ HDFSRC= $(srcdir)/../src
 JPEGINC=$(srcdir)/../jpeg
 JPEGLIB=$(srcdir)/../jpeg
 
-ALL_CFLAGS= $(CFLAGS) $(PABLO_FLAGS) -I. $(PABLO_INCLUDE) -I$(HDFINC) -I$(JPEGINC)
+# ==> specify where to find the FMPOOL include and source files 
+FMPOOL_INC=$(srcdir)/../fmpool
+FMPOOL_SRC=$(srcdir)/../fmpool
+
+ALL_CFLAGS= $(CFLAGS) $(PABLO_FLAGS) $(FMPOOL_FLAGS) -I. $(PABLO_INCLUDE) -I$(HDFINC) -I$(JPEGINC) -I$(FMPOOL_INC)
 
 LINTFLAGS=
 SHAR=shar

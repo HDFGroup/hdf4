@@ -134,6 +134,18 @@ TARGETLIB = libdf.a
 ### ------------------- end of makefile fragments -------------------------
 
 # ############# End of system configuration section. ###############
+HDF_FLAGS       = \
+        CC="$(CC)" \
+        CFLAGS="$(CFLAGS)" \
+        FC="$(FC)" \
+        FFLAGS="$(FFLAGS)" \
+        RANLIB="$(RANLIB)" \
+        AR="$(AR)" \
+        ARFLAGS="$(ARFLAGS)" \
+        RM="$(RM)" \
+        RMFLAGS="$(RMFLAGS)" \
+        MACHINE="$(MACHINE)" 
+
 LOCAL_MACROS  = CC="$(CC)" \
 	CFLAGS="$(CFLAGS)" \
 	CPP="$(CPP)" \
@@ -156,7 +168,11 @@ JPEGLIB=$(srcdir)/../jpeg
 PABLO_HINC=$(srcdir)/../pablo
 PABLO_SRC=$(srcdir)/../pablo
 
-ALL_CFLAGS = -I. $(CFLAGS) -I$(JPEGINC)
+# ==> specify where to find the FMPOOL include and source files 
+FMPOOL_INC=$(srcdir)/../fmpool
+FMPOOL_SRC=$(srcdir)/../fmpool
+
+ALL_CFLAGS = -I. $(CFLAGS) $(FMPOOL_FLAGS) -I$(JPEGINC)
 LINTFLAGS=
 SHAR=shar
 ARCHIVE=hdf.shar
@@ -202,17 +218,17 @@ cmextelt.o: cmextelt.cs
 #all: libdf.a 
 
 all::         FORCE
-	@if test -z "$(PABLO_FLAGS)"; then \
+	@if test -z "$(FMPOOL_FLAGS)"; then \
 	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) libdf.a; \
 	else		 \
-	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) libdf.a; \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" libdf.a; \
 	fi
 
 libnofortran::         FORCE
-	@if test -z "$(PABLO_FLAGS)"; then \
+	@if test -z "$(FMPOOL_FLAGS)"; then \
 	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) nofort-libdf.a; \
 	else		 \
-	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) nofort-libdf.a; \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" nofort-libdf.a; \
 	fi
 
 

@@ -106,6 +106,9 @@ HDFLIB= `pwd`/hdf/src
 # ==> where is your PABLO include files
 PABLO_HINC= `pwd`/hdf/pablo
 
+# ==> where is your FMPOOL include files
+FMPOOL_INC= `pwd`/hdf/fmpool
+
 #SUBDIRS = "this is set via configure, don't edit this"
 #OTHERS = 
 
@@ -143,6 +146,7 @@ NETCDF_FLAGS       = \
         ARFLAGS="$(ARFLAGS)" \
         RM="$(RM)" \
         RMFLAGS="$(RMFLAGS)" \
+        FMPOOL_FLAGS="$(FMPOOL_FLAGS)" \
         MACHINE="$(MACHINE)" \
         HDFINC="$(HDFINC)" \
         HDFLIB="$(HDFLIB)" 

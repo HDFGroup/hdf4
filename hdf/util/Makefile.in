@@ -93,6 +93,18 @@ infodir = $(prefix)/info
 ### ------------------- end of makefile fragments -------------------------
 
 # ############# End of system configuration section. ###############
+HDF_FLAGS       = \
+        CC="$(CC)" \
+        CFLAGS="$(CFLAGS)" \
+        FC="$(FC)" \
+        FFLAGS="$(FFLAGS)" \
+        RANLIB="$(RANLIB)" \
+        AR="$(AR)" \
+        ARFLAGS="$(ARFLAGS)" \
+        RM="$(RM)" \
+        RMFLAGS="$(RMFLAGS)" \
+        MACHINE="$(MACHINE)" 
+
 LOCAL_MACROS  = CC="$(CC)" \
 	CFLAGS="$(CFLAGS)" \
 	CPP="$(CPP)" \
@@ -115,8 +127,14 @@ JPEGINC=$(srcdir)/../jpeg
 # ==> where is your PABLO include files
 PABLO_HINC= $(srcdir)/../pablo
 
+# ==> specify where to find the FMPOOL include and source files 
+FMPOOL_INC=$(srcdir)/../fmpool
+FMPOOL_SRC=$(srcdir)/../fmpool
+
 #Where are the utility includes
 UTILINC=$(srcdir)
+
+ALL_CFLAGS = $(CFLAGS) $(FMPOOL_FLAGS) -I$(HDFINC) -I$(JPEGINC) -I$(UTILINC)
 
 OTHERDIRS = fixatr testfiles
 
@@ -148,11 +166,21 @@ HEOBJ = he_main.o he_cntrl.o he_disp.o he_file.o
 
 PROGS = $(UTILS) hdfed
 
-all: hdfed utils fp2hdf fptest
-#	-if( test \! -d $(HDFBIN)) then (mkdir $(HDFBIN)) fi
-#	-cp $(UTILS) hdfed $(HDFBIN)
+#all: hdfed utils fp2hdf fptest
+all::         FORCE
+	@if test -z "$(FMPOOL_FLAGS)"; then \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) hdfed utils fp2hdf fptest; \
+	else		 \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" hdfed utils fp2hdf fptest; \
+	fi
 
-nofortran: hdfed utils fp2hdf fptest
+#nofortran: hdfed utils fp2hdf fptest
+nofortran::         FORCE
+	@if test -z "$(FMPOOL_FLAGS)"; then \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) hdfed utils fp2hdf fptest; \
+	else		 \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" hdfed utils fp2hdf fptest; \
+	fi
 
 rebuild:
 	@$(MAKE) all $(HDF_FLAGS) FRC=force_rebuild
@@ -178,16 +206,16 @@ install-prog: all
 #	 $(CC) $(CFLAGS) -c -I$(HDFINC) -I$(UTILINC) -I$(JPEGINC) $*.c 
 
 .c.o: he.h he_proto.h $(HDFLIB)/libdf.a $(FRC)
-	$(CC) $(CFLAGS) -c -I$(HDFINC) -I$(UTILINC) -I$(JPEGINC) $<
+	$(CC) $(ALL_CFLAGS) -c $<
 
 .c: $(HDFLIB)/libdf.a
-	$(CC) $(CFLAGS) -I$(HDFINC) -I$(UTILINC) -I$(JPEGINC) $< -o $@ $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(LIBS)
+	$(CC) $(ALL_CFLAGS) $< -o $@ $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(LIBS)
 
 .f: $(HDFLIB)/libdf.a 
 	$(FC) $(FFLAGS) $< $(HDFLIB)/libdf.a -o $@ $(JPEGLIB)/libjpeg.a
 
 hdfed: he.h he_proto.h $(HEOBJ) $(HDFLIB)/libdf.a $(FRC)
-	$(CC) $(CFLAGS) -I$(HDFINC) -I$(UTILINC) $(HEOBJ) $(HDFLIB)/libdf.a -o hdfed $(JPEGLIB)/libjpeg.a
+	$(CC) $(ALL_CFLAGS) $(HEOBJ) $(HDFLIB)/libdf.a -o hdfed $(JPEGLIB)/libjpeg.a
 
 utils: $(UTILS) $(HDFLIB)/libdf.a
 
@@ -210,7 +238,7 @@ depend:
 	 makedepend -I$(HDFINC) -I$(UTILINC) *.c
 
 saber:	$(SRCS)
-	 #load -I$(HDFINC) -I$(UTILINC) -D$(MACHINE) $(SRCS) 
+	 #load $(ALL_CFLAGS) -D$(MACHINE) $(SRCS) 
 
 # for distribution creation
 distdir = $(TOP_SRCDIR)/$(PACKAGE)-$(VERSION)/$(curdir)
@@ -224,6 +252,11 @@ dist: $(DISTFILES)
 	    || { echo copying $$file instead; \
 	    cp -p $(srcdir)/$$file $(distdir)/$$file;}; \
 	done
+
+# The following dummy target is useful as a dependency to ensure that a
+# rule is always executed.
+#
+FORCE:
 
 help:
 	@echo ""

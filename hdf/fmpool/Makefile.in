@@ -120,6 +120,26 @@ HDFBIN= $(srcdir)/../bin
 
 CL= ${CC} $(CFLAGS) -c -D__FMPINTERFACE_PRIVATE ${AUXFLAGS} -I. 
 
+HDF_FLAGS       = \
+        CC="$(CC)" \
+        CFLAGS="$(CFLAGS)" \
+        FC="$(FC)" \
+        FFLAGS="$(FFLAGS)" \
+        RANLIB="$(RANLIB)" \
+        AR="$(AR)" \
+        ARFLAGS="$(ARFLAGS)" \
+        RM="$(RM)" \
+        RMFLAGS="$(RMFLAGS)" \
+        MACHINE="$(MACHINE)" 
+
+LOCAL_MACROS  = CC="$(CC)" \
+	CFLAGS="$(CFLAGS)" \
+	CPP="$(CPP)" \
+	CPPFLAGS="$(CPPFLAGS)" \
+	exec_prefix="$(exec_prefix)" \
+	FC="$(FC)" \
+	prefix="$(prefix)"
+
 #all: libfmpool.a
 
 debug rebuild rebuildnofortran nofortran: all
@@ -163,10 +183,21 @@ fmpool.o: ${INCLUDES} fmpconf.h fmpool.c
 fmpio.o:  ${INCLUDES} fmpconf.h fmpio.c 
 	${CL} fmpio.c
 
-install-lib: libfmpool.a install-headers
+$(HDFLIB)/libdf.a:
+
+install::  FORCE
+	@if test -z "$(FMPOOL_FLAGS)"; then \
+	  : true; \
+	else		 \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) fmpinstall-headers; \
+	fi
+
+install-lib:: install
+
+fmpinstall-lib: libfmpool.a install-headers
 	$(INSTALL_DATA) libfmpool.a $(libdir)/$(binprefix)libfmpool.a
 
-install-headers: fmpio.h
+fmpinstall-headers: fmpio.h
 	$(INSTALL_DATA) $(srcdir)/fmpio.h $(includedir)/fmpio.h
 
 manpages: 
