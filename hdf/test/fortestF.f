@@ -32,7 +32,7 @@ C Default to cleanup *.hdf files and set verbosity to default value
 	endif
 	print *, '====================================='
 
-	if (CleanUp) call system(CleanUpCMD)
+	if (CleanUp) call Hsystem(CleanUpCMD)
 
 	stop
 	end

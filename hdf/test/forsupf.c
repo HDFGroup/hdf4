@@ -45,3 +45,25 @@ ngetverb(void)
 #endif
 }   /* end getverb() */
 
+/*-----------------------------------------------------------------------------
+ * Name:    hisystem
+ * Purpose: Invoke the system call to execute cmd
+ * Inputs:  cmd -- the command to execute
+ * Returns: verbosity level on success, FAIL on failure
+ * Users:   HDF Fortran programmers
+ * Invokes: HDgetenv
+ *---------------------------------------------------------------------------*/
+
+FRETVAL(intf)
+nhisystem(_fcd cmd, intf *cmdlen)
+{
+    char       *fn;
+    intf        ret;
+
+    fn = HDf2cstring(cmd, (intn) *cmdlen);
+    if (!fn) return(FAIL);
+    ret = (intf) system(fn);
+    HDfree(fn);
+    return (ret);
+}   /* end nhisystem() */
+

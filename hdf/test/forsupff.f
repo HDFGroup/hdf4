@@ -285,3 +285,20 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
       return
       end
+
+
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+C
+C     SUBROUTINE hsystem(cmd)
+C     Print the Test banner
+C
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+      subroutine hsystem(cmd)
+      implicit none
+
+      character*(*) cmd
+      integer retcode, hisystem
+
+      retcode = hisystem(cmd, len(cmd))
+      return
+      end
