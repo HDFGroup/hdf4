@@ -3147,7 +3147,6 @@ fprintf(stderr, "SDsetcompress: I've been called\n");
     if(var==NULL)
         return FAIL;
 
-#ifdef OLD_WAY
 #ifdef SDDEBUG
 printf("SDsetcompress(): var->data_ref=%d\n",(int)var->data_ref);
 #endif /* SDDEBUG */
@@ -3180,39 +3179,26 @@ if(status==FAIL)
             Hendaccess(var->aid);
         var->aid = status;
       } /* end if */
-#else /* OLD_WAY */
-    if(var->aid!=FAIL)
-      {
-        status=(intn)HCcreate(handle->hdf_file,(uint16)DATA_TAG,
-                (uint16) var->data_ref,COMP_MODEL_STDIO,&m_info,
-            (comp_coder_t)type, c_info);
 
-#ifdef SDDEBUG
-printf("SDsetcompress(): HCcreate() status=%d\n",(intn)status);
-if(status==FAIL)
-    HEprint(stderr,0);
-#endif /* SDDEBUG */
+    /* Insert data tag/ref into the variable's Vgroup */
+    if(var->vgid) {
+        int32 vg;
 
-        if(status != FAIL) {
-            if((var->aid != 0) && (var->aid != FAIL))
-                Hendaccess(var->aid);
-            var->aid = status;
-          } /* end if */
-      } /* end if */
-    else
-      { /* data doesn't exist yet, wait until later to create compressed element */
-        var->is_compressed=TRUE;
-        var->model_type=COMP_MODEL_STDIO;
-        if((var->m_info=(model_info *)HDcalloc(sizeof(model_info),1))==NULL)
-            return(FAIL);
-        var->coder_type=(comp_coder_t)type;
-        if((var->c_info=(comp_info *)HDmalloc(sizeof(comp_info)))==NULL)
-            return(FAIL);
-        HDmemcpy(var->c_info,c_info,sizeof(comp_info));
-        status=SUCCEED;
-      } /* end else */
-#endif /* OLD_WAY */
+        /* attach to the variable's Vgroup */
+        vg = Vattach(handle->hdf_file, var->vgid, "w");
+        if(vg == FAIL)
+            return FAIL;
+        
+        /* add new Vdata to existing Vgroup */
+        Vaddtagref(vg, (int32) DATA_TAG, (int32) var->data_ref);
+        
+        /* detach from the variable's VGroup --- will no longer need it */
+        Vdetach(vg);
+    }
 
+    /* added a new object -- make sure we flush the header */
+    handle->flags |= NC_HDIRTY;
+            
     return(status != FAIL ? SUCCEED : FAIL);
 } /* SDsetcompress */
 
@@ -3736,11 +3722,11 @@ int32  block_size;
 --------------------------------------------------------------------------- */
 intn
 #ifdef PROTOTYPE
-SDsetfillmode(int32 sd_id, intn fillmode)
+SDsetfillmode(int32 sd_id, int32 fillmode)
 #else
 SDsetfillmode(sd_id, fillmode)
 int32 sd_id;
-intn  fillmode;
+int32  fillmode;
 #endif
 {
     NC     *handle;

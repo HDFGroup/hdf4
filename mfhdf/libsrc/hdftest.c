@@ -25,11 +25,19 @@ static char RcsId[] = "@(#)$Revision$";
 #define FILE1   "test1.hdf"
 #define FILE2   "test2.hdf"
 #define FILE3   "test3.hdf"
+#define COMPFILE1 "comptst1.hdf"
+#define COMPFILE2 "comptst2.hdf"
+#define COMPFILE3 "comptst3.hdf"
+#define COMPFILE4 "comptst4.hdf"
+#define COMPFILE5 "comptst5.hdf"
+#define COMPFILE6 "comptst6.hdf"
+#define COMPFILE7 "comptst7.hdf"
 #define EXTFILE "exttest.hdf"
 #define UFOFILE "file.UFO"	/* non-existing file */
 
 #define EXTERNAL_TEST
 #define NBIT_TEST
+#define COMP_TEST
 #define CHUNK_TEST
 
 #if defined __MWERKS__
@@ -184,7 +192,7 @@ int argc;
 char *argv[];
 #endif
 {
-    int32 f1, f2, f3, nt, dimsize[10], nattr;
+    int32 f1, f2, f3, fcomp, nt, dimsize[10], nattr;
     int32 newsds, newsds2, newsds3, dimid, dimid1, dimid2, number, offset;
     int32   sdsid;                /* SDS handle */
 #ifdef CHUNK_TEST
@@ -203,6 +211,9 @@ char *argv[];
     int32   cflags;              /* chunk flags */
     comp_info cinfo;             /* compression info */
 #endif /* CHUNK_TEST */
+#if defined COMP_TEST & !defined CHUNK_TEST
+    comp_info cinfo;            /* compression information structure */
+#endif /* COMP_TEST */
     int32 index, ival, sdid;
     int32 rank;
     intn status, i,j,k, nattrs;
@@ -748,7 +759,7 @@ char *argv[];
     dimsize[1] = 5;
     newsds = SDcreate(f3, "NBitDataSet", nt, 2, dimsize);
     if(newsds == FAIL) {
-        fprintf(stderr, "Failed to create a new data set for external promotion\n");
+        fprintf(stderr, "Failed to create a new data set for n-bit testing\n");
         num_err++;
     }
 
@@ -800,6 +811,648 @@ char *argv[];
     CHECK(status, "SDend");
 
 #endif /* NBIT_TEST */
+
+#ifdef COMP_TEST
+    /*
+     * Test the compressed storage routines
+     */
+
+#ifdef QAK
+printf("writing 1st compressed dataset, basic skipping huffman\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE1, DFACC_CREATE);
+    CHECK(f1, "SDstart");
+
+    nt = DFNT_INT32;
+    dimsize[0] = 5;
+    dimsize[1] = 5;
+    newsds = SDcreate(fcomp, "CompDataSet1", nt, 2, dimsize);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to create a new data set for compression testing\n");
+        num_err++;
+    }
+
+    for(i = 0; i < 25; i++)
+        idata[i] = i*10;
+
+#ifdef QAK
+printf("before SDsetcompress\n");
+#endif /* QAK */
+    cinfo.skphuff.skp_size=4;
+    status = SDsetcompress(newsds,COMP_CODE_SKPHUFF,&cinfo);
+    CHECK(status, "SDcompress");
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDwritedata\n");
+#endif /* QAK */
+    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
+    CHECK(status, "SDwritedata");
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds);
+    CHECK(status, "SDendaccess");
+
+    /* need to close to flush compressed info to file */
+    status = SDend(fcomp);
+    CHECK(status, "SDend");
+
+    /* read the compressed data back in */
+#ifdef QAK
+printf("reading compressed dataset\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE1, DFACC_RDWR);
+    CHECK(f1, "SDstart (again)");
+
+    newsds2 = SDselect(fcomp, 0);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to select a data set for compressed access\n");
+        num_err++;
+    }
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDreaddata\n");
+#endif /* QAK */
+    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
+    CHECK(status, "SDreaddata");
+
+    for(i = 0; i < 25; i++)
+        if(idata[i] != rdata[i]) {
+            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
+            num_err++;
+        }
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds2);
+    CHECK(status, "SDendaccess");
+
+    status = SDend(fcomp);
+    CHECK(status, "SDend");
+
+#ifdef QAK
+printf("writing 2nd compressed dataset, partially filled & skipping huffman\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE2, DFACC_CREATE);
+    CHECK(f1, "SDstart");
+
+    nt = DFNT_INT32;
+    dimsize[0] = 5;
+    dimsize[1] = 5;
+    newsds = SDcreate(fcomp, "CompDataSet2", nt, 2, dimsize);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to create a new data set for compression testing\n");
+        num_err++;
+    }
+
+    fillval=43;
+#ifdef QAK
+printf("before SDsetfillvalue\n");
+#endif /* QAK */
+    status = SDsetfillvalue(newsds,(VOIDP)&fillval);
+    CHECK(status, "SDsetfillvalue");
+
+#ifdef QAK
+printf("before SDsetcompress\n");
+#endif /* QAK */
+    cinfo.skphuff.skp_size=4;
+    status = SDsetcompress(newsds,COMP_CODE_SKPHUFF,&cinfo);
+    CHECK(status, "SDsetcompress");
+
+    /* fill the array with the standard info */
+    for(i = 0; i < 25; i++)
+        idata[i] = i*10;
+    /* overwrite selected portions with the fill value */
+    for(i = 0; i < 5; i++)
+        idata[i] = fillval;
+    for(i = 20; i < 25; i++)
+        idata[i] = fillval;
+
+    start[0] = 1;
+    start[1] = 0;
+    end[0]   = 3;
+    end[1]   = 5;
+#ifdef QAK
+printf("before SDwritedata\n");
+#endif /* QAK */
+    status = SDwritedata(newsds, start, NULL, end, (VOIDP) &idata[5]);
+    CHECK(status, "SDwritedata");
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds);
+    CHECK(status, "SDendaccess");
+
+    /* need to close to flush compressed info to file */
+    status = SDend(fcomp);
+    CHECK(status, "SDend");
+
+    /* read the compressed data back in */
+#ifdef QAK
+printf("reading compressed dataset\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE2, DFACC_RDWR);
+    CHECK(f1, "SDstart (again)");
+
+    newsds2 = SDselect(fcomp, 0);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to select a data set for compressed access\n");
+        num_err++;
+    }
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDreaddata\n");
+#endif /* QAK */
+    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
+    CHECK(status, "SDreaddata");
+
+    for(i = 0; i < 25; i++)
+        if(idata[i] != rdata[i]) {
+            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
+            num_err++;
+        }
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds2);
+    CHECK(status, "SDendaccess");
+
+    status = SDend(fcomp);
+    CHECK(status, "SDend");
+
+#ifdef QAK
+printf("creating 3rd compressed dataset, compressed template & skipping huffman\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE3, DFACC_CREATE);
+    CHECK(f1, "SDstart");
+
+    nt = DFNT_INT32;
+    dimsize[0] = 5;
+    dimsize[1] = 5;
+    newsds = SDcreate(fcomp, "CompDataSet3", nt, 2, dimsize);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to create a new data set for compression testing\n");
+        num_err++;
+    }
+
+    fillval=56;
+#ifdef QAK
+printf("before SDsetfillvalue\n");
+#endif /* QAK */
+    status = SDsetfillvalue(newsds,(VOIDP)&fillval);
+    CHECK(status, "SDsetfillvalue");
+
+#ifdef QAK
+printf("before SDsetcompress\n");
+#endif /* QAK */
+    cinfo.skphuff.skp_size=4;
+    status = SDsetcompress(newsds,COMP_CODE_SKPHUFF,&cinfo);
+    CHECK(status, "SDsetcompress");
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds);
+    CHECK(status, "SDendaccess");
+
+    /* need to close to flush compressed info to file */
+    status = SDend(fcomp);
+    CHECK(status, "SDend");
+
+    /* read the compressed data back in */
+#ifdef QAK
+printf("reading compressed dataset\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE3, DFACC_RDWR);
+    CHECK(f1, "SDstart (again)");
+
+    newsds2 = SDselect(fcomp, 0);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to select a data set for compressed access\n");
+        num_err++;
+    }
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDreaddata\n");
+#endif /* QAK */
+    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
+    CHECK(status, "SDreaddata");
+
+    for(i = 0; i < 25; i++)
+        if(fillval != rdata[i]) {
+            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
+            num_err++;
+        }
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds2);
+    CHECK(status, "SDendaccess");
+
+    status = SDend(fcomp);
+    CHECK(status, "SDend");
+
+#ifdef QAK
+printf("creating 4th compressed dataset, compressed template read, then partial write & skipping huffman\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE4, DFACC_CREATE);
+    CHECK(f1, "SDstart");
+
+    nt = DFNT_INT32;
+    dimsize[0] = 5;
+    dimsize[1] = 5;
+    newsds = SDcreate(fcomp, "CompDataSet4", nt, 2, dimsize);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to create a new data set for compression testing\n");
+        num_err++;
+    }
+
+    fillval=67;
+#ifdef QAK
+printf("before SDsetfillvalue\n");
+#endif /* QAK */
+    status = SDsetfillvalue(newsds,(VOIDP)&fillval);
+    CHECK(status, "SDsetfillvalue");
+
+#ifdef QAK
+printf("before SDsetcompress\n");
+#endif /* QAK */
+    cinfo.skphuff.skp_size=4;
+    status = SDsetcompress(newsds,COMP_CODE_SKPHUFF,&cinfo);
+    CHECK(status, "SDsetcompress");
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds);
+    CHECK(status, "SDendaccess");
+
+    /* need to close to flush compressed info to file */
+    status = SDend(fcomp);
+    CHECK(status, "SDend");
+
+    /* read the compressed data back in */
+#ifdef QAK
+printf("reading compressed dataset\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE4, DFACC_RDWR);
+    CHECK(f1, "SDstart (again)");
+
+    newsds2 = SDselect(fcomp, 0);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to select a data set for compressed access\n");
+        num_err++;
+    }
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDreaddata\n");
+#endif /* QAK */
+    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
+    CHECK(status, "SDreaddata");
+
+    for(i = 0; i < 25; i++)
+        if(fillval != rdata[i]) {
+            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
+            num_err++;
+        }
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds2);
+    CHECK(status, "SDendaccess");
+
+    status = SDend(fcomp);
+    CHECK(status, "SDend");
+
+#ifdef QAK
+printf("writing compressed dataset\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE4, DFACC_RDWR);
+    CHECK(f1, "SDstart (again)");
+
+    newsds2 = SDselect(fcomp, 0);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to select a data set for compressed access\n");
+        num_err++;
+    }
+    /* fill the array with the standard info */
+    for(i = 0; i < 25; i++)
+        idata[i] = i*10;
+    /* overwrite selected portions with the fill value */
+    for(i = 0; i < 10; i++)
+        idata[i] = fillval;
+    for(i = 20; i < 25; i++)
+        idata[i] = fillval;
+
+    start[0] = 2;
+    start[1] = 0;
+    end[0]   = 2;
+    end[1]   = 5;
+#ifdef QAK
+printf("before SDwritedata\n");
+#endif /* QAK */
+    status = SDwritedata(newsds, start, NULL, end, (VOIDP) &idata[10]);
+    CHECK(status, "SDwritedata");
+
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds);
+    CHECK(status, "SDendaccess");
+
+    /* need to close to flush compressed info to file */
+    status = SDend(fcomp);
+    CHECK(status, "SDend");
+
+    fcomp = SDstart(COMPFILE4, DFACC_RDWR);
+    CHECK(f1, "SDstart (again)");
+
+    newsds2 = SDselect(fcomp, 0);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to select a data set for compressed access\n");
+        num_err++;
+    }
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDreaddata\n");
+#endif /* QAK */
+    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
+    CHECK(status, "SDreaddata");
+
+    for(i = 0; i < 25; i++)
+        if(idata[i] != rdata[i]) {
+            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
+            num_err++;
+        }
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds2);
+    CHECK(status, "SDendaccess");
+
+    status = SDend(fcomp);
+    CHECK(status, "SDend");
+
+#ifdef QAK
+printf("writing 5th compressed dataset, basic RLE\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE5, DFACC_CREATE);
+    CHECK(f1, "SDstart");
+
+    nt = DFNT_INT32;
+    dimsize[0] = 5;
+    dimsize[1] = 5;
+    newsds = SDcreate(fcomp, "CompDataSet5", nt, 2, dimsize);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to create a new data set for compression testing\n");
+        num_err++;
+    }
+
+    for(i = 0; i < 25; i++)
+        idata[i] = i*10;
+
+#ifdef QAK
+printf("before SDsetcompress\n");
+#endif /* QAK */
+    status = SDsetcompress(newsds,COMP_CODE_RLE,&cinfo);
+    CHECK(status, "SDcompress");
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDwritedata\n");
+#endif /* QAK */
+    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
+    CHECK(status, "SDwritedata");
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds);
+    CHECK(status, "SDendaccess");
+
+    /* need to close to flush compressed info to file */
+    status = SDend(fcomp);
+    CHECK(status, "SDend");
+
+    /* read the compressed data back in */
+#ifdef QAK
+printf("reading compressed dataset\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE5, DFACC_RDWR);
+    CHECK(f1, "SDstart (again)");
+
+    newsds2 = SDselect(fcomp, 0);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to select a data set for compressed access\n");
+        num_err++;
+    }
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDreaddata\n");
+#endif /* QAK */
+    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
+    CHECK(status, "SDreaddata");
+
+    for(i = 0; i < 25; i++)
+        if(idata[i] != rdata[i]) {
+            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
+            num_err++;
+        }
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds2);
+    CHECK(status, "SDendaccess");
+
+    status = SDend(fcomp);
+    CHECK(status, "SDend");
+
+#ifdef QAK
+printf("writing 6th compressed dataset, no encoding\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE6, DFACC_CREATE);
+    CHECK(f1, "SDstart");
+
+    nt = DFNT_INT32;
+    dimsize[0] = 5;
+    dimsize[1] = 5;
+    newsds = SDcreate(fcomp, "CompDataSet6", nt, 2, dimsize);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to create a new data set for compression testing\n");
+        num_err++;
+    }
+
+    for(i = 0; i < 25; i++)
+        idata[i] = i*10;
+
+#ifdef QAK
+printf("before SDsetcompress\n");
+#endif /* QAK */
+    status = SDsetcompress(newsds,COMP_CODE_NONE,&cinfo);
+    CHECK(status, "SDcompress");
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDwritedata\n");
+#endif /* QAK */
+    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
+    CHECK(status, "SDwritedata");
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds);
+    CHECK(status, "SDendaccess");
+
+    /* need to close to flush compressed info to file */
+    status = SDend(fcomp);
+    CHECK(status, "SDend");
+
+    /* read the compressed data back in */
+#ifdef QAK
+printf("reading compressed dataset\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE6, DFACC_RDWR);
+    CHECK(f1, "SDstart (again)");
+
+    newsds2 = SDselect(fcomp, 0);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to select a data set for compressed access\n");
+        num_err++;
+    }
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDreaddata\n");
+#endif /* QAK */
+    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
+    CHECK(status, "SDreaddata");
+
+    for(i = 0; i < 25; i++)
+        if(idata[i] != rdata[i]) {
+            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
+            num_err++;
+        }
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds2);
+    CHECK(status, "SDendaccess");
+
+    status = SDend(fcomp);
+    CHECK(status, "SDend");
+
+#ifdef QAK
+printf("writing 7th compressed dataset, deflate encoding\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE7, DFACC_CREATE);
+    CHECK(f1, "SDstart");
+
+    nt = DFNT_INT32;
+    dimsize[0] = 5;
+    dimsize[1] = 5;
+    newsds = SDcreate(fcomp, "CompDataSet7", nt, 2, dimsize);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to create a new data set for compression testing\n");
+        num_err++;
+    }
+
+    for(i = 0; i < 25; i++)
+        idata[i] = i*10;
+
+#ifdef QAK
+printf("before SDsetcompress\n");
+#endif /* QAK */
+    cinfo.deflate.level=6;
+    status = SDsetcompress(newsds,COMP_CODE_DEFLATE,&cinfo);
+    CHECK(status, "SDcompress");
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDwritedata\n");
+#endif /* QAK */
+    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
+    CHECK(status, "SDwritedata");
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds);
+    CHECK(status, "SDendaccess");
+
+    /* need to close to flush compressed info to file */
+    status = SDend(fcomp);
+    CHECK(status, "SDend");
+
+    /* read the compressed data back in */
+#ifdef QAK
+printf("reading compressed dataset\n");
+#endif /* QAK */
+    fcomp = SDstart(COMPFILE7, DFACC_RDWR);
+    CHECK(f1, "SDstart (again)");
+
+    newsds2 = SDselect(fcomp, 0);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to select a data set for compressed access\n");
+        num_err++;
+    }
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+#ifdef QAK
+printf("before SDreaddata\n");
+#endif /* QAK */
+    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
+    CHECK(status, "SDreaddata");
+
+    for(i = 0; i < 25; i++)
+        if(idata[i] != rdata[i]) {
+            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
+            num_err++;
+        }
+
+#ifdef QAK
+printf("before SDendaccess\n");
+#endif /* QAK */
+    status = SDendaccess(newsds2);
+    CHECK(status, "SDendaccess");
+
+#ifdef QAK
+printf("before SDend\n");
+#endif /* QAK */
+    status = SDend(fcomp);
+    CHECK(status, "SDend");
+
+#endif /* COMP_TEST */
+
 /* test SDsetfillmode   */
 /* test fixed size SDS   */
 /* create an empty SDS, set SD_NOFILL.

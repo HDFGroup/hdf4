@@ -50,11 +50,6 @@ const int *dims ;
         ret->HDFtype = hdf_map_type(type);
         ret->HDFsize = DFKNTsize(ret->HDFtype);
         ret->is_ragged = FALSE;
-        ret->is_compressed = FALSE; /* initialize the compression info */
-        ret->model_type=COMP_MODEL_STDIO;
-        ret->m_info=NULL;
-        ret->coder_type=COMP_CODE_NONE;
-        ret->c_info=NULL;
 #endif
 
 	return(ret) ;
