@@ -54,6 +54,7 @@ test_sd()
 #endif
 
     status = chmod(FILE_NAME, mode);
+    CHECK(status, FAIL, "chmod");
 
     /* Create a protected file */
     fid = SDstart(FILE_NAME, DFACC_CREATE);
@@ -65,6 +66,15 @@ test_sd()
     if (ff != NULL) {
 	    HI_CLOSE(ff);
     }
+
+#ifdef WIN32
+    mode = _S_IWRITE;
+#else
+    mode =  S_IWUSR;
+#endif
+
+    status = chmod(FILE_NAME, mode);
+    CHECK(status, FAIL, "chmod");
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
