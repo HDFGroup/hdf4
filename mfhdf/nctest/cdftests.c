@@ -104,6 +104,11 @@ test_ncopen(path)
 	      pname);
 	return;
     }
+    if((cdfid0 = ncopen(xpath, NC_WRITE)) != -1) {
+	error("%s: ncopen should fail writing nonexistent file",
+	      pname);
+	return;
+    }
     if ((cdfid0 = ncopen(path, NC_WRITE)) == -1) {
 	error("%s: ncopen failed with NC_WRITE mode", pname);
 	return;
