@@ -60,6 +60,9 @@ $ hdp dumpgr grtdfui84.hdf
 $ hdp dumpgr grtdfui162.hdf
 $ hdp dumpgr grtdfi322.hdf
 $ hdp dumpgr -p image_with_palette.hdf
-$ hdp dumpgr -p -h image_with_palette.hdf
-$ hdp dumpgr -r 2,4 -p -d image_with_palette.hdf
+$ hdp dumpgr -h image_with_palette.hdf
+$ hdp dumpgr -r 2,4 -pd image_with_palette.hdf
+$ hdp dumpgr -r 6 -d -s grtdfui82.hdf
+$ hdp dumpgr -r 6 -m 1 grtdfui82.hdf
+$ hdp dumpgr -c grtdfi322.hdf
 $ exit
