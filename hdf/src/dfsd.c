@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.32  1993/09/02 00:00:21  georgev
-Fixed some more prototypes.
+Revision 1.33  1993/09/02 00:17:51  georgev
+Fixed large number of casts.
 
+ * Revision 1.32  1993/09/02  00:00:21  georgev
+ * Fixed some more prototypes.
+ *
  * Revision 1.31  1993/09/01  23:53:38  georgev
  * Fixed some errors in prototypes for DFSD calls.
  *
@@ -871,7 +874,7 @@ intn DFSDIsetdatastrs(label, unit, format, coordsys)
         lufp = (luf == LABEL) ? label : (luf == UNIT) ? unit : format;
 
 	/* free space if allocated */
-        Writesdg.dataluf[luf] = HDfreespace(Writesdg.dataluf[luf]);
+        Writesdg.dataluf[luf] = HDfreespace((VOIDP)Writesdg.dataluf[luf]);
 
 	/* copy string */
         if (lufp) 
@@ -883,7 +886,7 @@ intn DFSDIsetdatastrs(label, unit, format, coordsys)
           }
       }
 
-    Writesdg.coordsys = HDfreespace(Writesdg.coordsys);
+    Writesdg.coordsys = HDfreespace((VOIDP)Writesdg.coordsys);
 
     if (coordsys) 
       {
@@ -987,7 +990,7 @@ intn DFSDIsetdimstrs(dim, label, unit, format)
           }
 
 	/* free string space if allocated */
-        Writesdg.dimluf[luf][rdim] = HDfreespace(Writesdg.dimluf[luf][rdim]);
+        Writesdg.dimluf[luf][rdim] = HDfreespace((VOIDP)Writesdg.dimluf[luf][rdim]);
 
 /* NOTE: The following code should be changed to write all three, even if
          one or more is an empty string.  Then, when DFSDgetdimstrs is called
@@ -1066,7 +1069,7 @@ intn DFSDsetdimscale(dim, dimsize, scale)
       {		/* No scale for this dimension */
         if (Writesdg.dimscales)
             Writesdg.dimscales[rdim] =
-		(uint8 *) HDfreespace((char*) Writesdg.dimscales[rdim]);
+		(uint8 *) HDfreespace((VOIDP) Writesdg.dimscales[rdim]);
         Ref.scales = 0;
         return SUCCEED;
       }
@@ -1594,7 +1597,7 @@ intn DFSDIclearNT(sdg)
       {
         for (i=0; i<sdg->rank; i++)
             sdg->dimscales[i] = (uint8 *)
-                                HDfreespace((char *) sdg->dimscales[i]);
+                                HDfreespace((VOIDP) sdg->dimscales[i]);
       }
 
     Ref.nt      = -1;
@@ -1935,7 +1938,7 @@ intn DFSDIsetnsdg_t(file_id,nsdghdr)
                 else 
                   {
                     sr->next = sf->next;
-                    if ((sf = (DFnsdgle *)HDfreespace((char *) sf)) != NULL)
+                    if ((sf = (DFnsdgle *)HDfreespace((VOIDP) sf)) != NULL)
                         return FAIL;
                     sdgs--;
                   }
@@ -1962,8 +1965,8 @@ intn DFSDIsetnsdg_t(file_id,nsdghdr)
     nsdghdr->nsdg_t = ntb->next;
     
     /* Release the first nodes in stb and ntb  */
-    HDfreespace((char *)stb);
-    HDfreespace((char *)ntb);
+    HDfreespace((VOIDP)stb);
+    HDfreespace((VOIDP)ntb);
 
     return SUCCEED;
 }   /* end of DFSDsdtnsdg_t   */
@@ -2268,7 +2271,7 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
 
             /* read in luf */
             if (Hgetelement(file_id, elmt.tag, elmt.ref, buf) == FAIL) {
-                HDfreespace(buf);
+                HDfreespace((VOIDP)buf);
                 return FAIL;
               }
             p = buf;
@@ -2277,7 +2280,7 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
             sdg->dataluf[luf] = HDgetspace((uint32) HDstrlen((char*)p)+1);
 
             if (sdg->dataluf[luf] == NULL) {
-                HDfreespace(buf);
+                HDfreespace((VOIDP)buf);
                 return FAIL;
               }
 
@@ -2289,7 +2292,7 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
             sdg->dimluf[luf] =
                 (char **) HDgetspace((uint32) sdg->rank * sizeof(char *));
             if (sdg->dimluf[luf] == NULL) {
-                HDfreespace(buf);
+                HDfreespace((VOIDP)buf);
                 return FAIL;
               }
 
@@ -2299,13 +2302,13 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
                 sdg->dimluf[luf][i] =
                     HDgetspace((uint32) HDstrlen((char*)p) + 1);
                 if (sdg->dimluf[luf][i] == NULL) {
-                    HDfreespace(buf);
+                    HDfreespace((VOIDP)buf);
                     return FAIL;
                   }
                 HDstrcpy(sdg->dimluf[luf][i], (char*)p);
                 p += HDstrlen(sdg->dimluf[luf][i])+1;
               }
-            HDfreespace(buf);
+            HDfreespace((VOIDP)buf);
             break;
 
         case DFTAG_SDS:     /* scales */
@@ -2332,7 +2335,7 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
             sdg->dimscales =
                 (uint8 **) HDgetspace((uint32) sdg->rank * sizeof(int8 *));
             if (sdg->dimscales == NULL) {
-                HDfreespace(isscales);
+                HDfreespace((VOIDP)isscales);
                 Hendaccess(aid);
                 return FAIL;
               }
@@ -2347,7 +2350,7 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
                 sdg->dimscales[i] = (uint8 *)
                     HDgetspace((uint32) sdg->dimsizes[i] * localNTsize);
                 if (sdg->dimscales[i] == NULL) {
-                    HDfreespace(isscales);
+                    HDfreespace((VOIDP)isscales);
                     Hendaccess(aid);
                     return FAIL;
                   }
@@ -2357,7 +2360,7 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
                     ret = Hread(aid, (int32)sdg->dimsizes[i]*fileNTsize, 
                                 (uint8 *) sdg->dimscales[i]);
                     if (ret == FAIL) {
-                        HDfreespace(isscales);
+                        HDfreespace((VOIDP)isscales);
                         Hendaccess(aid);
                         return FAIL;
                       }
@@ -2368,7 +2371,7 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
                     /* allocate conversion buffer */
                     buf = (uint8 *) HDgetspace((uint32)sdg->dimsizes[i] * fileNTsize);
                     if (buf == NULL) {
-                        HDfreespace(isscales);
+                        HDfreespace((VOIDP)isscales);
                         Hendaccess(aid);
                         return FAIL;
                       }
@@ -2377,8 +2380,8 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
                     ret = Hread(aid,
                                 (int32) (sdg->dimsizes[i]*fileNTsize), buf);
                     if (ret == FAIL) {
-                        HDfreespace(buf);
-                        HDfreespace(isscales);
+                        HDfreespace((VOIDP)buf);
+                        HDfreespace((VOIDP)isscales);
                         Hendaccess(aid);
                         return FAIL;
                       }
@@ -2386,13 +2389,13 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
                     p = buf;
 
                     /* convert, all at once */
-                    DFKconvert(p, sdg->dimscales[i], numtype,
+                    DFKconvert((VOIDP)p, (VOIDP)sdg->dimscales[i], numtype,
                                sdg->dimsizes[i], DFACC_READ, 0, 0);
 
-                    HDfreespace(buf);
+                    HDfreespace((VOIDP)buf);
                   }
               }
-            HDfreespace(isscales);
+            HDfreespace((VOIDP)isscales);
             Hendaccess(aid);
             break;
 
@@ -2431,10 +2434,10 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
                 if (Hgetelement(file_id, elmt.tag, elmt.ref, buf) == FAIL)
                     return FAIL;
 
-                DFKconvert(buf, &(sdg->max_min[0]), numtype, 2,
+                DFKconvert((VOIDP)buf, (VOIDP)&(sdg->max_min[0]), numtype, 2,
                            DFACC_READ, 0, 0);
 
-                HDfreespace(buf);
+                HDfreespace((VOIDP)buf);
               }
             Ismaxmin = 1;
             break;
@@ -2495,13 +2498,13 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
                   {
                     /* element is new, double based type */
                     /* read in the 64bit float factors */
-                    DFKconvert(buf, 
-                               (unsigned char *) &sdg->cal,
+                    DFKconvert((VOIDP)buf, 
+                               (VOIDP) &sdg->cal,
                                DFNT_FLOAT64, 4, DFACC_READ, 0, 0);
 
                     /* read in the 32bit integer number type */
-                    DFKconvert(buf + 32,
-                               (unsigned char *) &sdg->cal_type, 
+                    DFKconvert((VOIDP)buf + 32,
+                               (VOIDP)&sdg->cal_type, 
                                DFNT_INT32, 1, DFACC_READ, 0, 0);
                   }
                 else 
@@ -2510,7 +2513,7 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
                     float32 buf2[4];
 
                     /* convert calibration factors */
-                    DFKconvert(buf, (uint8 *)buf2, DFNT_FLOAT32, 4,
+                    DFKconvert((VOIDP)buf, (VOIDP)buf2, DFNT_FLOAT32, 4,
                                DFACC_READ, 0, 0);
 
                     /* move 'em over */
@@ -2521,7 +2524,7 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
                     sdg->cal_type = DFNT_INT16;
 
                   }
-                HDfreespace(buf);
+                HDfreespace((VOIDP)buf);
               }
             IsCal = TRUE;
             break;
@@ -2558,10 +2561,10 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
                     return FAIL;
 
                 /* convert the fill value  */
-                DFKconvert(buf, (uint8 *) sdg->fill_value,
+                DFKconvert((VOIDP)buf, (VOIDP) sdg->fill_value,
                            numtype, 1, DFACC_READ, 0, 0);
 
-                HDfreespace(buf);
+                HDfreespace((VOIDP)buf);
              }
            break;
 
@@ -2780,14 +2783,14 @@ intn DFSDIputndg(file_id, ref, sdg)
         aid = Hstartwrite(file_id, DFTAG_SDS, ref, len);
         if (aid == FAIL )
           {
-            HDfreespace(Isscales);
+            HDfreespace((VOIDP)Isscales);
             return FAIL;
           }
 
         /* write Isscales */
         if (Hwrite(aid, (int32) sdg->rank, Isscales) == FAIL)
           {
-            HDfreespace(Isscales);
+            HDfreespace((VOIDP)Isscales);
             return FAIL;
           }
 
@@ -2801,7 +2804,7 @@ intn DFSDIputndg(file_id, ref, sdg)
                 if (Hwrite(aid, (int32) (fileNTsize * sdg->dimsizes[j]),
                            (uint8 *) sdg->dimscales[j]) == FAIL)
                   {
-                    HDfreespace(Isscales);
+                    HDfreespace((VOIDP)Isscales);
                     return FAIL;
                   }
               }
@@ -2811,28 +2814,28 @@ intn DFSDIputndg(file_id, ref, sdg)
                 buf = (uint8 *) HDgetspace((uint32) (fileNTsize * sdg->dimsizes[j]));
                 if (buf == NULL)
                   {
-                    HDfreespace(Isscales);
+                    HDfreespace((VOIDP)Isscales);
                     return FAIL;
                   }
                 /* convert, all at once */
-                DFKconvert(sdg->dimscales[j], buf, numtype,
+                DFKconvert((VOIDP)sdg->dimscales[j], (VOIDP)buf, numtype,
                            sdg->dimsizes[j], DFACC_WRITE, 0, 0);
                 /* write it all out */
                 if (Hwrite(aid, (int32) (fileNTsize * sdg->dimsizes[j]), buf)
                      == FAIL)
                   {
-                    HDfreespace(Isscales);
-                    HDfreespace(buf);
+                    HDfreespace((VOIDP)Isscales);
+                    HDfreespace((VOIDP)buf);
                     return FAIL;
                   }
-                HDfreespace(buf);
+                HDfreespace((VOIDP)buf);
               }
           }
 
         Ref.scales = ref;
         Hendaccess(aid);
       }
-    HDfreespace(Isscales);
+    HDfreespace((VOIDP)Isscales);
     if (Ref.scales > 0)
         if (DFdiput(GroupID, DFTAG_SDS, (uint16) Ref.scales) < 0)
             return FAIL;
@@ -2873,7 +2876,7 @@ intn DFSDIputndg(file_id, ref, sdg)
               return FAIL;
 
 	    /* convert */
-            DFKconvert((uint8*) &(sdg->max_min[0]), buf,
+            DFKconvert((VOIDP) &(sdg->max_min[0]), (VOIDP)buf,
                        numtype, 2, DFACC_WRITE, 0, 0);
 
 	    /* write */
@@ -2882,12 +2885,12 @@ intn DFSDIputndg(file_id, ref, sdg)
 
             if (ret == FAIL)
               {
-                HDfreespace(buf);
+                HDfreespace((VOIDP)buf);
                 return FAIL;
               }
 
             Ref.maxmin = ref;
-            HDfreespace(buf);
+            HDfreespace((VOIDP)buf);
           }
       }
     if (Ref.maxmin > 0)
@@ -2921,11 +2924,11 @@ intn DFSDIputndg(file_id, ref, sdg)
               return FAIL;
 
             /* convert doubles */            
-            DFKconvert((uint8*) &sdg->cal, buf, 
+            DFKconvert((VOIDP) &sdg->cal, (VOIDP)buf, 
                        DFNT_FLOAT64, 4, DFACC_WRITE, 0, 0);
 
             /* convert int */
-            DFKconvert((uint8*) &sdg->cal_type, buf + 32,
+            DFKconvert((VOIDP) &sdg->cal_type, (VOIDP)buf + 32,
                        DFNT_INT32, 1, DFACC_WRITE, 0, 0);
             
             /* write it into the file */
@@ -2934,7 +2937,7 @@ intn DFSDIputndg(file_id, ref, sdg)
                             (int32) 36) < 0) 
                 return(FAIL);
             Ref.cal = ref;
-            HDfreespace(buf);
+            HDfreespace((VOIDP)buf);
             
           }
       }
@@ -2963,7 +2966,7 @@ intn DFSDIputndg(file_id, ref, sdg)
             uint8 buf[DFSD_MAXFILL_LEN];
 
             /* Convert from native to IEEE  */
-            DFKconvert((uint8*) sdg->fill_value, buf,
+            DFKconvert((VOIDP) sdg->fill_value, (VOIDP)buf,
                        numtype, 1, DFACC_WRITE, 0, 0);
 
             /* Write it into the file  */
@@ -3098,7 +3101,7 @@ intn DFSDIendslice(isfortran)
 	    front = rear->next;
 	    while (rear != NULL)	
               {
-	       if ((rear = (DFnsdgle *)HDfreespace((void *) rear)) != NULL)
+	       if ((rear = (DFnsdgle *)HDfreespace((VOIDP) rear)) != NULL)
      	         return FAIL;
  	       rear = front;
 	       if (rear != NULL) front = rear->next;
@@ -3108,7 +3111,7 @@ intn DFSDIendslice(isfortran)
 	    lastnsdg.tag    = DFTAG_NULL;
 	    lastnsdg.ref    = 0;
           }
-        if ((nsdghdr=(DFnsdg_t_hdr *)HDfreespace((void *)nsdghdr)) != NULL)
+        if ((nsdghdr=(DFnsdg_t_hdr *)HDfreespace((VOIDP)nsdghdr)) != NULL)
           return FAIL;
       }
 	
@@ -3118,7 +3121,7 @@ intn DFSDIendslice(isfortran)
     Hendaccess(Writesdg.aid);
     ret      = Hclose(Sfile_id);
     Sfile_id = 0;       /* partial write complete */
-    Sddims   = (int32 *) HDfreespace((char*) Sddims);
+    Sddims   = (int32 *) HDfreespace((VOIDP) Sddims);
 
     return(ret);
 }
@@ -3167,7 +3170,7 @@ int32 DFSDIopen(filename, access)
                 while (rear != NULL)
                   {
                     front = rear->next;
-                    if ((rear = (DFnsdgle *)HDfreespace((void *) rear)) != NULL)
+                    if ((rear = (DFnsdgle *)HDfreespace((VOIDP) rear)) != NULL)
                         return FAIL;
                     rear = front;
                   }
@@ -3176,7 +3179,7 @@ int32 DFSDIopen(filename, access)
                 lastnsdg.tag    = DFTAG_NULL;
                 lastnsdg.ref    = 0;
               }
-            if ((nsdghdr=(DFnsdg_t_hdr *)HDfreespace((void *)nsdghdr)) != NULL)
+            if ((nsdghdr=(DFnsdg_t_hdr *)HDfreespace((VOIDP)nsdghdr)) != NULL)
                 return FAIL;
           }
 
@@ -3439,8 +3442,8 @@ intn DFSDIclear(sdg)
     if (Sfile_id !=DF_NOFILE)      /* cannot clear during slice writes */
         HRETURN_ERROR(DFE_BADCALL, FAIL); 
 
-    sdg->dimsizes = (int32 *) HDfreespace((char*) sdg->dimsizes);
-    sdg->coordsys = HDfreespace(sdg->coordsys);
+    sdg->dimsizes = (int32 *) HDfreespace((VOIDP) sdg->dimsizes);
+    sdg->coordsys = HDfreespace((VOIDP)sdg->coordsys);
 
     /* free label/unit/format pointers */
     for (luf = LABEL; luf <= FORMAT; luf++)
@@ -3448,14 +3451,14 @@ intn DFSDIclear(sdg)
         if (sdg->dimluf[luf])
           {       /* free strings */
             for (i = 0; i <sdg->rank; i++)
-                sdg->dimluf[luf][i] = HDfreespace(sdg->dimluf[luf][i]);
+                sdg->dimluf[luf][i] = HDfreespace((VOIDP)sdg->dimluf[luf][i]);
           }
 
 	/* free string pointers */
-        sdg->dimluf[luf] = (char **) HDfreespace((char*) sdg->dimluf[luf]);
+        sdg->dimluf[luf] = (char **) HDfreespace((VOIDP) sdg->dimluf[luf]);
 
 	/* free data string */
-        sdg->dataluf[luf] = HDfreespace(sdg->dataluf[luf]);
+        sdg->dataluf[luf] = HDfreespace((VOIDP)sdg->dataluf[luf]);
       }
 
     /* free scale pointers */
@@ -3463,11 +3466,11 @@ intn DFSDIclear(sdg)
       {
         for (i = 0; i < sdg->rank; i++)
             sdg->dimscales[i] = 
-              (uint8 *)HDfreespace((char*) sdg->dimscales[i]);
+              (uint8 *)HDfreespace((VOIDP) sdg->dimscales[i]);
       }
 
     /* free array of scale pointers */
-    sdg->dimscales = (uint8 **) HDfreespace((int8 *)sdg->dimscales);
+    sdg->dimscales = (uint8 **) HDfreespace((VOIDP)sdg->dimscales);
     sdg->rank      = 0;
 
     /* number type is independant to dimsizes   4/7/92  sxu
@@ -3551,7 +3554,7 @@ int DFSDIgetdata(filename, rank, maxsizes, data, isfortran)
     windims = (int32 *) HDgetspace((uint32) Readsdg.rank * sizeof(int32));
     if (windims == NULL) 
       {
-	HDfreespace((char*) winst);
+	HDfreespace((VOIDP) winst);
 	return FAIL;
       }
 
@@ -3563,8 +3566,8 @@ int DFSDIgetdata(filename, rank, maxsizes, data, isfortran)
 
     ret = DFSDIgetslice(filename, winst, windims, data, maxsizes, isfortran);
     Nextsdg = 1;
-    HDfreespace((char*) winst);
-    HDfreespace((char*) windims);
+    HDfreespace((VOIDP) winst);
+    HDfreespace((VOIDP) windims);
 
     return(ret);
 }
@@ -3818,7 +3821,7 @@ intn DFSDIgetslice(filename, winst, windims, data, dims, isfortran)
     aid = Hstartread(file_id, Readsdg.data.tag, Readsdg.data.ref);
     if (aid == FAIL)
       {
-        HDfreespace((char *)wstart);
+        HDfreespace((VOIDP)wstart);
         Hclose(file_id);
         return FAIL;
       }
@@ -3849,7 +3852,7 @@ intn DFSDIgetslice(filename, winst, windims, data, dims, isfortran)
           {
             if ((buf = (uint8 *) HDgetspace((uint32) readsize)) == NULL) 
               {
-                HDfreespace((char *)wstart);
+                HDfreespace((VOIDP)wstart);
                 Hendaccess(aid);
                 HCLOSE_RETURN_ERROR(file_id, DFE_NOSPACE, FAIL);
               }
@@ -3864,8 +3867,8 @@ intn DFSDIgetslice(filename, winst, windims, data, dims, isfortran)
 
             if (scatterbuf == NULL) 
               {
-                HDfreespace((char *)wstart);
-                HDfreespace(buf);
+                HDfreespace((VOIDP)wstart);
+                HDfreespace((VOIDP)buf);
                 Hendaccess(aid);
                 HCLOSE_RETURN_ERROR(file_id, DFE_NOSPACE, FAIL);
               }
@@ -3876,9 +3879,9 @@ intn DFSDIgetslice(filename, winst, windims, data, dims, isfortran)
         offset = (int32 *) HDgetspace((uint32)3 * rank * sizeof(int32));
         if (offset == NULL) 
           {
-            HDfreespace((char *)wstart);
-            HDfreespace(buf);
-            HDfreespace((char *)scatterbuf);
+            HDfreespace((VOIDP)wstart);
+            HDfreespace((VOIDP)buf);
+            HDfreespace((VOIDP)scatterbuf);
             Hendaccess(aid);
             HCLOSE_RETURN_ERROR(file_id, DFE_NOSPACE, FAIL);
           }
@@ -3936,8 +3939,8 @@ intn DFSDIgetslice(filename, winst, windims, data, dims, isfortran)
                     error=1;
                     break;
                 }
-                DFKconvert(buf, transposed ? (uint8 *)scatterbuf :
-                    (uint8 *)datap, numtype, numelements, DFACC_READ, 0, 0);
+                DFKconvert((VOIDP)buf, transposed ? (VOIDP)scatterbuf :
+                    (VOIDP)datap, numtype, numelements, DFACC_READ, 0, 0);
               }
             else 
               {
@@ -3994,13 +3997,13 @@ intn DFSDIgetslice(filename, winst, windims, data, dims, isfortran)
               }
         } while (!done && leastsig > 0);
 
-        HDfreespace(buf);
-        HDfreespace((char *)scatterbuf);
-        HDfreespace((char *)offset);
+        HDfreespace((VOIDP)buf);
+        HDfreespace((VOIDP)scatterbuf);
+        HDfreespace((VOIDP)offset);
       }
 
     Hendaccess(aid);
-    HDfreespace((char *)wstart);
+    HDfreespace((VOIDP)wstart);
     if (error)
       {
         Hclose(file_id);
@@ -4173,17 +4176,17 @@ intn DFSDIputslice(windims, data, dims, isfortran)
               }
             for (i = 0; i < j; i++, datap += datastride) 
               {
-                DFKconvert(datap, buf, numtype,
+                DFKconvert((VOIDP)datap, (VOIDP)buf, numtype,
                            numelements, DFACC_WRITE, 0, 0);
                 ret = Hwrite(Writesdg.aid, writesize, buf);  /* done */
                 if (ret == FAIL) 
                   {
-                    HDfreespace(buf);
+                    HDfreespace((VOIDP)buf);
                     Hclose(Sfile_id); 
                     return FAIL;
                   }
               }
-            HDfreespace(buf);
+            HDfreespace((VOIDP)buf);
           }
         else 
           { /* !contiguous	*/
@@ -4590,7 +4593,7 @@ DFSDstartslab(filename)
                  {
                     Hendaccess(Writesdg.aid);
                     Hclose(Sfile_id);
-                    HDfreespace(fill_buf);
+                    HDfreespace((VOIDP)fill_buf);
                     HRETURN_ERROR(DFE_WRITEERROR, FAIL);
                   }
              }
@@ -4600,13 +4603,13 @@ DFSDstartslab(filename)
            {
             Hendaccess(Writesdg.aid);
             Hclose(Sfile_id);
-            HDfreespace(fill_buf);
+            HDfreespace((VOIDP)fill_buf);
             HRETURN_ERROR(DFE_WRITEERROR, FAIL);
            }
 
         Writesdg.fill_fixed=TRUE;       /* fill value cannot be changed */
          /* Free up space */
-         HDfreespace(fill_buf);
+         HDfreespace((VOIDP)fill_buf);
       }
 
     return SUCCEED;
@@ -4787,7 +4790,7 @@ DFSDwriteslab(start, stride, count, data)
         if (convert)
           {
             if ((buf = (uint8 *) HDgetspace((uint32) rowsize)) == NULL) {
-                HDfreespace((char *)startdims);
+                HDfreespace((VOIDP)startdims);
                 Hendaccess(aid);
                 Hclose(Sfile_id);
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
@@ -4800,8 +4803,8 @@ DFSDwriteslab(start, stride, count, data)
         foffset = (int32 *) HDgetspace((uint32)3 * rank * sizeof(int32));
         if (foffset==NULL)
           {
-            HDfreespace((char *)startdims);
-            HDfreespace(buf);
+            HDfreespace((VOIDP)startdims);
+            HDfreespace((VOIDP)buf);
             Hendaccess(aid);
             Hclose(Sfile_id);
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
@@ -4855,7 +4858,7 @@ DFSDwriteslab(start, stride, count, data)
             /*  Else write one contiguous block of data */
             if (convert)
               {
-                DFKconvert((uint8 *)datap, buf, numtype,
+                DFKconvert((VOIDP)datap, (VOIDP)buf, numtype,
                             numelements, DFACC_WRITE, 0, 0);
                 if (rowsize != Hwrite(aid, rowsize, buf))
                   {
@@ -4904,12 +4907,12 @@ DFSDwriteslab(start, stride, count, data)
               }
         } while (!done && leastsig > 0);
 
-        HDfreespace(buf);
-        HDfreespace((char *)foffset);
+        HDfreespace((VOIDP)buf);
+        HDfreespace((VOIDP)foffset);
       }
 
     /* Clean up time....*/
-    HDfreespace((char *)startdims);
+    HDfreespace((VOIDP)startdims);
 
     if (r_error)
      return FAIL;
@@ -4966,7 +4969,7 @@ DFSDendslab()
                 front = rear->next;
                 while (rear != NULL)
                   {
-                   if ((rear=(DFnsdgle *)HDfreespace((void *) rear)) != NULL)
+                   if ((rear=(DFnsdgle *)HDfreespace((VOIDP) rear)) != NULL)
                       return FAIL;
                    rear = front;
                    if (rear != NULL)
@@ -4978,7 +4981,7 @@ DFSDendslab()
                 lastnsdg.ref = 0;
               }
 
-            if ((nsdghdr=(DFnsdg_t_hdr *)HDfreespace((void *)nsdghdr))
+            if ((nsdghdr=(DFnsdg_t_hdr *)HDfreespace((VOIDP)nsdghdr))
                  != NULL)
               {
                 return FAIL;

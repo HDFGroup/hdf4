@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.22  1993/08/28 01:37:44  georgev
-Fixed a slab fortran name.
+Revision 1.23  1993/09/02 00:17:58  georgev
+Fixed large number of casts.
 
+ * Revision 1.22  1993/08/28  01:37:44  georgev
+ * Fixed a slab fortran name.
+ *
  * Revision 1.21  1993/08/28  00:49:42  georgev
  * Changed slab long fortran names to short ones.
  *
@@ -151,12 +154,12 @@ Fixed a slab fortran name.
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndsgdisc(intf *dim, intf *maxsize, void *scale)
+ndsgdisc(intf *dim, intf *maxsize, VOIDP scale)
 #else
 ndsgdisc(dim, maxsize, scale)
     intf *dim;
     intf *maxsize;
-    void *scale;
+    VOID *scale;
 #endif /* PROTOTYPE */
 {
     intn rank, cdim;
@@ -188,10 +191,10 @@ ndsgdisc(dim, maxsize, scale)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndsgrang(void *pmax, void *pmin)
+ndsgrang(VOIDP pmax, VOIDP pmin)
 #else
 ndsgrang(pmax, pmin)
-    void *pmax, *pmin;
+    VOID *pmax, *pmin;
 #endif /* PROTOTYPE */
 {
     return(DFSDgetrange(pmax, pmin));
@@ -247,12 +250,12 @@ ndssdims(rank, dimsizes)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndssdisc(intf *dim, intf *dimsize, void *scale)
+ndssdisc(intf *dim, intf *dimsize, VOIDP scale)
 #else
 ndssdisc(dim, dimsize, scale)
     intf *dim;
     intf *dimsize;
-    void *scale;
+    VOID *scale;
 #endif /* PROTOTYPE */
 {
     int cdim, ret;
@@ -278,10 +281,10 @@ ndssdisc(dim, dimsize, scale)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndssrang(void *max, void *min)
+ndssrang(VOIDP max, VOIDP min)
 #else
 ndssrang(max, min)
-    void *max, *min;
+    VOID *max, *min;
 #endif /* PROTOTYPE */
 {
     return(DFSDsetrange(max, min));
@@ -299,7 +302,7 @@ ndssrang(max, min)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndsclear(void)
+ndsclear(VOID)
 #else
 ndsclear()
 #endif /* PROTOTYPE */
@@ -417,7 +420,7 @@ ndsgdaln(llabel, lunit, lformat, lcoordsys)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndsfirst(void)
+ndsfirst(VOID)
 #else
 ndsfirst()
 #endif /* PROTOTYPE */
@@ -440,11 +443,11 @@ ndsfirst()
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndspslc(intf windims[], void *data, intf dims[])
+ndspslc(intf windims[], VOIDP data, intf dims[])
 #else
 ndspslc(windims, data, dims)
     intf windims[];
-    void  *data;
+    VOID  *data;
     intf dims[];
 #endif /* PROTOTYPE */
 {
@@ -484,7 +487,7 @@ ndspslc(windims, data, dims)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndseslc(void)
+ndseslc(VOID)
 #else
 ndseslc()
 #endif /* PROTOTYPE */
@@ -595,12 +598,12 @@ ndsigdim(filename, prank, sizes, maxrank, lenfn)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndsigdat(_fcd filename, intf *rank, intf maxsizes[], void *data, intf *fnlen)
+ndsigdat(_fcd filename, intf *rank, intf maxsizes[], VOIDP data, intf *fnlen)
 #else
 ndsigdat(filename, rank, maxsizes, data, fnlen)
     _fcd filename;
     intf *rank, maxsizes[], *fnlen;
-    void *data;
+    VOID *data;
 #endif /* PROTOTYPE */
 {
     int32 i;
@@ -648,13 +651,13 @@ ndsigdat(filename, rank, maxsizes, data, fnlen)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndsipdat(_fcd filename, intf *rank, intf dimsizes[], void *data, intf *fnlen)
+ndsipdat(_fcd filename, intf *rank, intf dimsizes[], VOIDP data, intf *fnlen)
 #else
 ndsipdat(filename, rank, dimsizes, data, fnlen)
     _fcd filename;
     intf *rank;
     intf dimsizes[];
-    void *data;
+    VOID *data;
     intf *fnlen;
 #endif /* PROTOTYPE */
 {
@@ -697,13 +700,13 @@ ndsipdat(filename, rank, dimsizes, data, fnlen)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndsiadat(_fcd filename, intf *rank, intf dimsizes[], void *data, intf *fnlen)
+ndsiadat(_fcd filename, intf *rank, intf dimsizes[], VOIDP data, intf *fnlen)
 #else
 ndsiadat(filename, rank, dimsizes, data, fnlen)
     _fcd filename;
     intf *rank;
     intf dimsizes[];
-    void *data;
+    VOID *data;
     intf *fnlen;
 #endif /* PROTOTYPE */     
 {
@@ -747,14 +750,14 @@ ndsiadat(filename, rank, dimsizes, data, fnlen)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndsigslc(_fcd filename, intf winst[], intf windims[], void *data, intf dims[],
+ndsigslc(_fcd filename, intf winst[], intf windims[], VOIDP data, intf dims[],
     intf *fnlen)
 #else
 ndsigslc(filename, winst, windims, data, dims, fnlen)
     _fcd filename;
     intf winst[], windims[];
     intf dims[];
-    void *data;
+    VOID *data;
     intf *fnlen;
 #endif /* PROTOTYPE */
 {
@@ -875,7 +878,7 @@ ndsirref(filename, ref, fnlen)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE  
-ndslref(void)
+ndslref(VOID)
 #else
 ndslref()
 #endif /* PROTOTYPE */
@@ -1017,12 +1020,12 @@ ndfsdgetdimstrs(dim, label, unit, format)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfsdgetdimscale(intf *dim, intf *maxsize, void *scale)
+ndfsdgetdimscale(intf *dim, intf *maxsize, VOIDP scale)
 #else
 ndfsdgetdimscale(dim, maxsize, scale)
     intf *dim;
     intf *maxsize;
-    void *scale;
+    VOID *scale;
 #endif /* PROTOTYPE */
 {
 
@@ -1053,10 +1056,10 @@ ndfsdgetdimscale(dim, maxsize, scale)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfsdgetrange(void *pmax, void *pmin)
+ndfsdgetrange(VOIDP pmax, VOIDP pmin)
 #else
 ndfsdgetrange(pmax, pmin)
-    void *pmax, *pmin;
+    VOID *pmax, *pmin;
 #endif /* PROTOTYPE */
 {
     return(DFSDgetrange(pmax, pmin));
@@ -1113,12 +1116,12 @@ ndfsdsetdims(rank, dimsizes)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfsdsetdimscale(intf *dim, intf *dimsize, void *scale)
+ndfsdsetdimscale(intf *dim, intf *dimsize, VOIDP scale)
 #else
 ndfsdsetdimscale(dim, dimsize, scale)
     intf *dim;
     intf *dimsize;
-    void *scale;
+    VOID *scale;
 #endif /* PROTOTYPE */
 {
     intn rank, cdim;
@@ -1144,10 +1147,10 @@ ndfsdsetdimscale(dim, dimsize, scale)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfsdsetrange(void *max, void *min)
+ndfsdsetrange(VOIDP max, VOIDP min)
 #else
 ndfsdsetrange(max, min)
-    void *max, *min;
+    VOID *max, *min;
 #endif /* PROTOTYPE */
 {
     return(DFSDsetrange(max, min));
@@ -1165,7 +1168,7 @@ ndfsdsetrange(max, min)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfsdclear(void)
+ndfsdclear(VOID)
 #else
 ndfsdclear()
 #endif /* PROTOTYPE */
@@ -1279,7 +1282,7 @@ ndfsdgetdatalen(llabel, lunit, lformat, lcoordsys)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfsdrestart(void)
+ndfsdrestart(VOID)
 #else
 ndfsdrestart()
 #endif /* PROTOTYPE */
@@ -1302,11 +1305,11 @@ ndfsdrestart()
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfsdputslice(intf windims[], void *data, intf dims[])
+ndfsdputslice(intf windims[], VOIDP data, intf dims[])
 #else
 ndfsdputslice(windims, data, dims)
     intf windims[];
-    void *data;
+    VOID *data;
     intf dims[];
 #endif /* PROTOTYPE */
 {
@@ -1345,7 +1348,7 @@ ndfsdputslice(windims, data, dims)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfsdendslice(void)
+ndfsdendslice(VOID)
 #else
 ndfsdendslice()
 #endif /* PROTOTYPE */
@@ -1410,7 +1413,7 @@ ndfsdgetnt(pnumbertype)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfsdlastref(void)
+ndfsdlastref(VOID)
 #else
 ndfsdlastref()
 #endif /* PROTOTYPE */
@@ -1694,10 +1697,10 @@ ndsiwref(filename, fnlen, ref)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndssfill(void *fill_value)
+ndssfill(VOIDP fill_value)
 #else
 ndssfill(fill_value)
-    void *fill_value;
+    VOID *fill_value;
 #endif /* PROTOTYPE */
 {
     return DFSDsetfillvalue(fill_value);
@@ -1714,10 +1717,10 @@ ndssfill(fill_value)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndsgfill(void *fill_value)
+ndsgfill(VOIDP fill_value)
 #else
 ndsgfill(fill_value)
-    void *fill_value;
+    VOID *fill_value;
 #endif /* PROTOTYPE */
 {
     return DFSDgetfillvalue(fill_value);
@@ -1769,13 +1772,13 @@ ndsisslab(filename, fnlen)
     FRETVAL(intf)
 #ifdef PROTOTYPE
 ndswslab(intf start[], intf stride[],
-         intf count[], void *data)
+         intf count[], VOIDP data)
 #else
 ndswslab(start, stride, count, data)
     intf start[];
     intf stride[];
     intf count[];
-    void  *data;
+    VOID  *data;
 #endif /* PROTOTYPE */
 {
     int32 *lstart, *lstride, *lcount, *aptr, *bptr, *cptr;
