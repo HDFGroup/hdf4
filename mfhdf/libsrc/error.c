@@ -42,12 +42,13 @@ char *
 strerror(errnum)
 int errnum ;
 {
-    extern int sys_nerr;
-    extern const char * const sys_errlist[];
+	extern int sys_nerr;
+	extern const char * const sys_errlist[];
 
-    if(errnum < 0 || errnum >= sys_nerr) return NULL ;
-    /* else */
-    return sys_errlist[errnum] ;
+	if (errnum < 0 || errnum >= sys_nerr)
+		return NULL ;
+
+	return (char *)sys_errlist[errnum] ;
 }
 #endif /* NO_STRERROR */
 
@@ -127,9 +128,9 @@ nc_serror(fmt, va_alist)
     
     if( ncopts & NC_VERBOSE ) {
     	va_list args ;
-        static char unknown[] = "Unknown Error";
-    	int errnum = errno;		/* save real errno in case we wipe it out */
-    	char * cp;
+        static const char unknown[] = "Unknown Error";
+    	int errnum = errno;	/* save real errno in case we wipe it out */
+    	const char * cp;
 
 #ifndef NO_STDARG
         va_start(args, fmt) ;
@@ -159,18 +160,15 @@ nc_serror(fmt, va_alist)
                            (cp = strerror(errnum)) == NULL ? unknown : cp ) ;
             break ;
         }
+
         (void) fflush(stderr);	/* to ensure log files are current */
-        
         errno = 0 ; /* ??? */
-        
     } /* NC_VERBOSE */
     
-    if( ncopts & NC_FATAL )
-	{
-            exit(ncopts) ;
-	}
+    if( ncopts & NC_FATAL ) {
+	exit(ncopts) ;
+    }
 }
-
 
 /*
  * Like nc_serror above, but doesn't check for system error.
