@@ -47,9 +47,14 @@ it is assumed that you have done the following:
             c:\MyHDFstuff\HDF41r2\release_notes   ( release notes )
             c:\MyHDFstuff\HDF41r2\install_NT_95   ( this file)
 
+      
       3. If you are building an application that uses the HDF library 
-         please refer to the section below "STEP IV:
-         BUILDING AN APPLICATION USING THE HDF LIBRARY - SOME HELPFUL POINTERS"
+         the following locations will need to be specified for locating
+         header files and linking in the HDF libraries:
+ 
+            C:\MyHDFstuff\HDF41r2\lib
+            C:\MyHDFstuff\HDF41r2\include
+
 
 
 
@@ -76,13 +81,13 @@ it is assumed that you have done the following:
       Run WinZip on HDF41r2s.zip (the entire source tree).
       This should create a directory called 'dev' which 
       contains several files and directories.
+ 
 
       4. Replace the contents of two text files with platform 
          specific file contents.
 
-      Copy hdf\jpeg\config\jwin32.h to hdf\jpeg\jconfig.h
-      Copy mfhdf\libsrc\win32cdf.h to mfhdf\libsrc\netcdf.h
-
+      copy C:\MyHDFstuff\dev\hdf\jpeg\config\jwin32.h  C:\MyHDFstuff\dev\hdf\jpeg\jconfig.h
+      copy C:\MyHDFstuff\dev\mfhdf\libsrc\win32cdf.h C:\MyHDFstuff\dev\mfhdf\libsrc\netcdf.h
 
 
 STEP II: Select Installation type and Build.
