@@ -27,7 +27,7 @@ static char RcsId[] = "@(#)$Revision$";
 #include "vg.h"
 #include "hfile.h"
 
-PRIVATE int32 Load_vfile
+PRIVATE intn Load_vfile
     PROTO((HFILEID f));
 
 PRIVATE VOID Remove_vfile
@@ -78,9 +78,9 @@ RETURNS SUCCEED if ok.
 */
 
 #ifdef PROTOTYPE
-PRIVATE int32 Load_vfile (HFILEID f)    
+PRIVATE intn Load_vfile (HFILEID f)
 #else
-PRIVATE int32 Load_vfile (f)
+PRIVATE intn Load_vfile (f)
 HFILEID f;
 #endif
 {
@@ -90,7 +90,7 @@ HFILEID f;
     int32 			aid, stat;
     uint16			tag, ref;
     char * FUNC = "Load_vfile";
-    
+
     /* Check if vfile buffer has been allocated */
     if (vfile == NULL)
       {
@@ -307,8 +307,8 @@ HFILEID f;
 #endif
 {
     char * FUNC = "Vinitialize";
-    
-    Load_vfile (f);
+
+    return(Load_vfile (f));
 }
 
 /* ---------------------------- Vfinish ------------------------- */
@@ -781,18 +781,18 @@ int32 insertkey;          /* (VGROUP*) or (VDATA*), doesn't matter */
 {
     VGROUP *vg;
     vginstance_t  * v;
-    VDATA *velt;
     vsinstance_t  * w;
     vginstance_t  * x;
     register uintn u;
     char * FUNC = "Vinsert";
-    int32 newtag, newref, newfid;
-    
+    uint16 newtag, newref;
+    int32 newfid;
+
     if (!VALIDVGID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
-  
+
   /* locate vg's index in vgtab */
-    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) 
+    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey))))
         HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vg=v->vg;
@@ -809,7 +809,7 @@ int32 insertkey;          /* (VGROUP*) or (VDATA*), doesn't matter */
     
     newfid = FAIL;
     if (VALIDVSID(insertkey)) {
-  
+
         /* locate vs's index in vstab */
         if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(insertkey),(uint16)VSID2SLOT(insertkey))))
             HRETURN_ERROR(DFE_NOVS,FAIL);
@@ -817,8 +817,8 @@ int32 insertkey;          /* (VGROUP*) or (VDATA*), doesn't matter */
         if (w->vs == NULL)
             HRETURN_ERROR(DFE_ARGS,FAIL);
      
-        newtag = (int32) DFTAG_VH;
-        newref = (int32) w->vs->oref;
+        newtag = DFTAG_VH;
+        newref = w->vs->oref;
         newfid = w->vs->f;
 
     } else {
@@ -829,31 +829,31 @@ int32 insertkey;          /* (VGROUP*) or (VDATA*), doesn't matter */
             if(NULL==(x=(vginstance_t*)vginstance(VGID2VFILE(insertkey),(uint16)VGID2SLOT(insertkey))))
                 HRETURN_ERROR(DFE_NOVS,FAIL);
 
-            if (x->vg == NULL) 
+            if (x->vg == NULL)
                 HRETURN_ERROR(DFE_ARGS,FAIL);
 
-            newtag = (int32) DFTAG_VG;
-            newref = (int32) x->vg->oref;
+            newtag = DFTAG_VG;
+            newref = x->vg->oref;
             newfid = x->vg->f;
             
         }
 
     }
-    
+
     /* make sure we found something */
     if(newfid == FAIL)
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
     if (vg->f != newfid)
         HRETURN_ERROR(DFE_DIFFFILES,FAIL);
-    
+
     /* check and prevent duplicate links */
     for(u = 0; u < vg->nvelt; u++)
         if((vg->ref[u] == newref) && (vg->tag[u] == newtag))
             HRETURN_ERROR(DFE_DUPDD,FAIL);
 
     /* Finally, ok to insert */
-    vinsertpair(vg, (uint16) newtag, (uint16) newref);
+    vinsertpair(vg, newtag, newref);
 
     return(vg->nvelt - 1);
 } /* Vinsert */
@@ -1146,12 +1146,15 @@ int32 vkey;
 int32  tag, ref;
 #endif
 {
-    int32  n, i;
+    int32  n;
     vginstance_t  * v;
     VGROUP *vg;
+#ifdef NO_DUPLICATES
+    int32 i;
     uint16 ttag, rref;
+#endif
     char * FUNC = "Vaddtagref";
-    
+
     if (!VALIDVGID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
   
@@ -1814,4 +1817,3 @@ int32 vgid;
 
     return SUCCEED;
 } /* Vdelete */
-

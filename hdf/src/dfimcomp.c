@@ -29,7 +29,6 @@ static char RcsId[] = "@(#)$Revision$";
 
 
 #include "hdf.h"
-#include "herr.h"
 
 #define PALSIZE 256
 #define BIT8 0
@@ -1294,4 +1293,3 @@ PRIVATE int next_pt(dim, i, rank, distinct)
 
     return j;
 } /* end of next_pt */
-

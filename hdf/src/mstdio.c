@@ -43,7 +43,6 @@ static char RcsId[] = "@(#)$Revision$";
 /* General HDF includes */
 #include "hdf.h"
 #include "hfile.h"
-#include "herr.h"
 
 #define MSTDIO_MASTER
 #define MODEL_CLIENT

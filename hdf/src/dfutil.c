@@ -37,7 +37,6 @@ static char RcsId[] = "@(#)$Revision$";
  *--------------------------------------------------------------------------*/
 
 #include "hdf.h"
-#include "herr.h"
 
 /*-----------------------------------------------------------------------------
  * Name:    DFfindnextref
@@ -86,4 +85,3 @@ uint16 DFfindnextref(file_id, tag, lref)
     Hendaccess(aid);
     return (newref);
 }
-

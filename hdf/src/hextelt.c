@@ -32,7 +32,6 @@ static char RcsId[] = "@(#)$Revision$";
 -------------------------------------------------------------------------*/
 
 #include "hdf.h"
-#include "herr.h"
 #include "hfile.h"
 
 /* extinfo_t -- external elt information structure */
@@ -141,7 +140,7 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
       {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, NULL);
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
 
     /* get a slot in the access records table */
@@ -347,8 +346,8 @@ PRIVATE int32 HXIstaccess(access_rec, access)
     if (ptbuf == NULL) {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
-            HRETURN_ERROR(DFE_NOSPACE, NULL);
-    }
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
     
     /* intialize the access record */
     access_rec->special = SPECIAL_EXT;
@@ -610,9 +609,9 @@ int32 HXPwrite(access_rec, length, data)
     if (ptbuf == NULL) {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
-            HRETURN_ERROR(DFE_NOSPACE, NULL);
-    }
-    
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
+
     /* write the data onto file */
     if (HI_SEEK(info->file_external,
 		access_rec->posn + info->extern_offset) == FAIL)
@@ -806,5 +805,5 @@ accrec_t *access_rec;
     }
 
     return SUCCEED;
-
 } /* HXPcloseAID */
+

@@ -79,7 +79,6 @@ static char RcsId[] = "@(#)$Revision$";
 #define COMPRESS_MASTER
 #include "hdf.h"
 #include "hfile.h"
-#include "herr.h"
 
 /* HDF compression includes */
 #include "hcompi.h"         /* Internal definitions for compression */
@@ -133,9 +132,9 @@ funclist_t comp_funcs={
 
  USAGE
     int32 HCIinit_coder(cinfo,coder_type,coder_info)
-    comp_coder_info_t *cinfo;   IN/OUT: pointer to coder information to modify
-    comp_coder_t coder_type;    IN: the type of encoding to use
-    comp_info *coder_info;      IN: setup information for some encoding types
+        comp_coder_info_t *cinfo;   IN/OUT: pointer to coder information to modify
+        comp_coder_t coder_type;    IN: the type of encoding to use
+        comp_info *coder_info;      IN: setup information for some encoding types
 
  RETURNS
     Return SUCCEED or FAIL
@@ -169,7 +168,9 @@ PRIVATE int32 HCIinit_coder(cinfo, coder_type, c_info)
 
         case COMP_CODE_NBIT:        /* N-bit encoding */
             cinfo->coder_type=COMP_CODE_NBIT;   /* set the coding type */
+#ifdef NOT_YET
             cinfo->coder_funcs=cnbit_funcs;     /* set the N-bit func. ptrs */
+#endif
 
             /* copy coding info */
             cinfo->coder_info.nbit_info.nt=c_info->nbit.nt;
@@ -194,9 +195,9 @@ PRIVATE int32 HCIinit_coder(cinfo, coder_type, c_info)
 
  USAGE
     int32 HCIinit_model(minfo,model_type,m_info)
-    comp_model_info_t *minfo;   IN/OUT: pointer to model information to modify
-    comp_model_t model_type;    IN: the type of encoding to use
-    model_info *m_info;         IN: modeling information
+        comp_model_info_t *minfo;   IN/OUT: pointer to model information to modify
+        comp_model_t model_type;    IN: the type of encoding to use
+        model_info *m_info;         IN: modeling information
 
  RETURNS
     Return SUCCEED or FAIL
@@ -278,7 +279,7 @@ PRIVATE int32 HCIwrite_header(file_rec,access_rec,info,dd,special_tag,ref)
       {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, NULL);
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
 
     /* write special element info to the file */
@@ -393,7 +394,7 @@ PRIVATE int32 HCIread_header(file_rec,access_rec,info,info_dd,c_info,m_info)
       {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, NULL);
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
 
     if(HI_SEEK(file_rec->file, info_dd->offset+2)==FAIL)
@@ -454,10 +455,10 @@ PRIVATE int32 HCIread_header(file_rec,access_rec,info,info_dd,c_info,m_info)
 
  USAGE
     int32 HCcreate(id,tag,ref,model_type,coder_type)
-    int32 id;            IN: the file id to create the data in
-    uint16 tag,ref;      IN: the tag/ref pair which is to be compressed
-    intn model_type;     IN: the type of modeling to use
-    intn coder_type;     IN: the type of encoding to use
+        int32 id;            IN: the file id to create the data in
+        uint16 tag,ref;      IN: the tag/ref pair which is to be compressed
+        intn model_type;     IN: the type of modeling to use
+        intn coder_type;     IN: the type of encoding to use
 
  RETURNS
     Return an AID to the newly created compressed element, FAIL on error.
@@ -517,7 +518,7 @@ int32 HCcreate(file_id, tag, ref, model_type, m_info, coder_type, c_info)
       {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, NULL);
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
 
     /* chech for access permission */
@@ -700,8 +701,8 @@ int32 HCcreate(file_id, tag, ref, model_type, m_info, coder_type, c_info)
 
  USAGE
     int32 HCIstaccess(access_rec, access)
-    accrec_t *access_rec;   IN: the access record of the data element
-    int16 access;           IN: the type of access wanted
+        accrec_t *access_rec;   IN: the access record of the data element
+        int16 access;           IN: the type of access wanted
 
  RETURNS
     Returns an AID or FAIL
@@ -743,7 +744,7 @@ PRIVATE int32 HCIstaccess(access_rec, access)
       {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, NULL);
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
 
     /* intialize the access record */
@@ -830,7 +831,7 @@ PRIVATE int32 HCIstaccess(access_rec, access)
 
  USAGE
     int32 HCPstread(access_rec)
-    accrec_t *access_rec;   IN: the access record of the data element
+        accrec_t *access_rec;   IN: the access record of the data element
 
  RETURNS
     Returns an AID or FAIL
@@ -873,7 +874,7 @@ int32 HCPstread(access_rec)
 
  USAGE
     int32 HCPstwrite(access_rec)
-    accrec_t *access_rec;   IN: the access record of the data element
+        accrec_t *access_rec;   IN: the access record of the data element
 
  RETURNS
     Returns an AID or FAIL
@@ -916,9 +917,9 @@ int32 HCPstwrite(access_rec)
 
  USAGE
     int32 HCPseek(access_rec,offset,origin)
-    accrec_t *access_rec;   IN: the access record of the data element
-    int32 offset;       IN: the offset in bytes from the origin specified
-    intn origin;        IN: the origin to seek from
+        accrec_t *access_rec;   IN: the access record of the data element
+        int32 offset;       IN: the offset in bytes from the origin specified
+        intn origin;        IN: the origin to seek from
 
  RETURNS
     Returns SUCCEED or FAIL
@@ -968,9 +969,9 @@ int32 HCPseek(access_rec, offset, origin)
 
  USAGE
     int32 HCPread(access_rec,length,data)
-    accrec_t *access_rec;   IN: the access record of the data element
-    int32 length;           IN: the number of bytes to read
-    VOIDP data;             OUT: the buffer to place the bytes read
+        accrec_t *access_rec;   IN: the access record of the data element
+        int32 length;           IN: the number of bytes to read
+        VOIDP data;             OUT: the buffer to place the bytes read
 
  RETURNS
     Returns the number of bytes read or FAIL
@@ -1024,9 +1025,9 @@ int32 HCPread(access_rec, length, data)
 
  USAGE
     int32 HCPwrite(access_rec,length,data)
-    accrec_t *access_rec;   IN: the access record of the data element
-    int32 length;           IN: the number of bytes to write
-    VOIDP data;             IN: the buffer to retrieve the bytes written
+        accrec_t *access_rec;   IN: the access record of the data element
+        int32 length;           IN: the number of bytes to write
+        VOIDP data;             IN: the buffer to retrieve the bytes written
 
  RETURNS
     Returns the number of bytes written or FAIL
@@ -1062,7 +1063,7 @@ int32 HCPwrite(access_rec, length, data)
       {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, NULL);
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
 
     info=(compinfo_t *)access_rec->special_info;
@@ -1095,15 +1096,15 @@ int32 HCPwrite(access_rec, length, data)
  USAGE
     int32 HCPinquire(access_rec,pfile_id,ptag,pref,plength,poffset,pposn,
             paccess,pspecial)
-    accrec_t *access_rec;   IN: the access record of the data element
-    int32 *pfile_id;        OUT: ptr to file id
-    uint16 *ptag;           OUT: ptr to tag of information
-    uint16 *pref;           OUT: ptr to ref of information
-    int32 *plength;         OUT: ptr to length of data element
-    int32 *poffset;         OUT: ptr to offset of data element
-    int32 *pposn;           OUT: ptr to position of access in element
-    int16 *paccess;         OUT: ptr to access mode
-    int16 *pspecial;        OUT: ptr to special code
+        accrec_t *access_rec;   IN: the access record of the data element
+        int32 *pfile_id;        OUT: ptr to file id
+        uint16 *ptag;           OUT: ptr to tag of information
+        uint16 *pref;           OUT: ptr to ref of information
+        int32 *plength;         OUT: ptr to length of data element
+        int32 *poffset;         OUT: ptr to offset of data element
+        int32 *pposn;           OUT: ptr to position of access in element
+        int16 *paccess;         OUT: ptr to access mode
+        int16 *pspecial;        OUT: ptr to special code
 
  RETURNS
     Returns SUCCEED or FAIL
@@ -1166,7 +1167,7 @@ int32 HCPinquire(access_rec, pfile_id, ptag, pref, plength, poffset, pposn,
 
  USAGE
     int32 HCPendaccess(access_rec)
-    accrec_t *access_rec;   IN: the access record of the data element
+        accrec_t *access_rec;   IN: the access record of the data element
 
  RETURNS
     Returns SUCCEED or FAIL
@@ -1211,7 +1212,7 @@ int32 HCPendaccess(access_rec)
 
  USAGE
     int32 HCPcloseAID(access_rec)
-    accrec_t *access_rec;   IN: the access record of the data element
+        accrec_t *access_rec;   IN: the access record of the data element
 
  RETURNS
     Returns SUCCEED or FAIL

@@ -33,8 +33,6 @@ static char RcsId[] = "@(#)$Revision$";
 /* but hcomp.c now supercedes it. */
 #include "hdf.h"
 
-#include "herr.h"
-
 #define R8_MAX_BLOCKS 32
 #define R8_MAX_LENGTH 512
 
@@ -66,11 +64,11 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFputcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
+intn DFputcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
              int32 ydim, uint8 *palette, uint8 *newpal, int16 scheme,
              comp_info *cinfo)
 #else
-int DFputcomp(file_id, tag, ref, image, xdim, ydim, palette, newpal, scheme, cinfo)
+intn DFputcomp(file_id, tag, ref, image, xdim, ydim, palette, newpal, scheme, cinfo)
     int32 file_id;
     uint16 tag, ref;
     uint8 *image;
@@ -92,7 +90,7 @@ int DFputcomp(file_id, tag, ref, image, xdim, ydim, palette, newpal, scheme, cin
     int32 n;                   /* number of compressed bytes produced */
     int32 total;               /* total compressed bytes produced so far */
     int32 i;
-    intn ret=0;
+    int32 ret=0;
     int32 aid;
 
     if (!HDvalidfid(file_id) || !tag || !ref || xdim <= 0 || ydim <= 0 ||
@@ -187,7 +185,7 @@ int DFputcomp(file_id, tag, ref, image, xdim, ydim, palette, newpal, scheme, cin
             HERROR(DFE_BADSCHEME);
             return FAIL;
     }
-    return(ret);
+    return((intn)ret);
 }   /* end DFputcomp() */
 
 /*-----------------------------------------------------------------------------
@@ -371,4 +369,3 @@ int DFgetcomp(file_id, tag, ref, image, xdim, ydim, scheme)
 
     return SUCCEED;
 }   /* end DFgetcomp() */
-

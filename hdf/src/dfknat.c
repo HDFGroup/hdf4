@@ -53,7 +53,6 @@ static char RcsId[] = "@(#)$Revision$";
 /*****************************************************************************/
 
 #include "hdf.h"
-#include "herr.h"
 #include "hconv.h"
 
 /*****************************************************************************/
@@ -345,6 +344,5 @@ uint32 num_elm, source_stride, dest_stride;
     
   return 0;
 }
-
 
 

@@ -48,7 +48,6 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "hdf.h"
 #include "hfile.h"
-#include "herr.h"
 
 /* block_t - record of a linked block. contains the tag and ref of the
    data elt that forms the linked block */
@@ -175,7 +174,7 @@ int32 HLcreate(file_id, tag, ref, block_length, number_blocks)
       {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, NULL);
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
 
     /* get empty slot in access records */
@@ -416,9 +415,9 @@ PRIVATE int32 HLIstaccess(access_rec, access)
     if (ptbuf == NULL) {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
-            HRETURN_ERROR(DFE_NOSPACE, NULL);
-    }
-    
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
+
     /* set up some data in access record */
     access_rec->special = SPECIAL_LINKED;
     access_rec->posn = 0;
@@ -878,8 +877,8 @@ int32 HLPwrite(access_rec, length, datap)
     if (ptbuf == NULL) {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
-            HRETURN_ERROR(DFE_NOSPACE, NULL);
-    }
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
 
     /* determine linked block and position to start writing into */
 
@@ -1263,13 +1262,13 @@ int32 HLPinquire(access_rec, pfile_id, ptag, pref, plength, poffset,
 } /* HLPinquire */
 
 
-/* ----------------------------- HLIendaccess ----------------------------- */
+/* ----------------------------- HLPendaccess ----------------------------- */
 /*
 
  NAME
-	HXIendacess -- close a linked block AID
+	HLPendacess -- close a linked block AID
  USAGE
-	int32 HLIendaccess(access_rec)
+	int32 HLPendaccess(access_rec)
         access_t * access_rec;      IN:  access record to close
  RETURNS
         SUCCEED / FAIL
@@ -1320,7 +1319,5 @@ int32 HLPendaccess(access_rec)
     access_rec->used = FALSE;
 
     return SUCCEED;
-
-} /* HLIendaccess */
-
+} /* HLPendaccess */
 

@@ -18,7 +18,6 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include <ctype.h>
 #include "hdf.h"
-#include "herr.h"
 #include "hfile.h"
 #include "hkit.h"
 

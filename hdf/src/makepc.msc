@@ -48,7 +48,7 @@
 # You must modify the lines marked "# ==>".
 #
 
-.SUFFIXES : .f
+.SUFFIXES : .f .asm
 
 # ==> specify your machine
 MACHINE=PC
@@ -82,12 +82,8 @@ AR=lib
 ARFLAGS=/PAGE:32
 ARFLAGS2=/NOLOGO +
 
-# ==> specify your archive randomizer
-#RANLIB=ranlib
-
 RM=del
 RMFLAGS=
-LINTFLAGS=
 
 HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h dfan.h dfrig.h dfgr.h dfsd.h \
      dfgroup.h vg.h df.h dfi.h dfstubs.h dfutil.h hconv.h tbbt.h hcompi.h \
@@ -130,7 +126,7 @@ COMOBJECTS= jutils.obj jerror.obj jmemmgr.obj jmemsys.obj jmemdosa.obj
 # compression objectfiles
 CLIBOBJECTS= jcmaster.obj jcdeflts.obj jcarith.obj jccolor.obj jcexpand.obj \
         jchuff.obj jcmcu.obj jcpipe.obj jcsample.obj jfwddct.obj
-        
+
 CFILEOBJECTS=jwrjfif.obj jrdgif.obj jrdppm.obj jrdrle.obj jrdtarga.obj
 
 # decompression objectfiles
@@ -142,9 +138,6 @@ DFILEOBJECTS=jrdjfif.obj jwrgif.obj jwrppm.obj jwrrle.obj jwrtarga.obj
 
 # These objectfiles are included in libjpeg.lib
 JOBJS= $(CLIBOBJECTS) $(DLIBOBJECTS) $(COMOBJECTS)
-
-#add all utilities here
-#UTILS=vshow.obj
 
 #.c.obj:
 #    $(CC) /c $(CFLAGS) $<
@@ -177,146 +170,146 @@ note:
 	@echo "***********************************************************"
 	@echo ""
 
-hdf.h : hdfi.h
+hdf.h : hdfi.h herr.h
 
-hcompi.h : mstdio.h crle.h
+hcompi.h : mstdio.h crle.h cnbit.h
 
-hfile.obj: hfile.c hfile.h hdf.h herr.h hdfi.h
+hfile.obj: hfile.c hfile.h hdf.h
     $(CC) /c $(CFLAGS) %s
 
-herr.obj: herr.c hdf.h herr.h hdfi.h
+herr.obj: herr.c hdf.h
     $(CC) /c $(CFLAGS) %s
 
-hblocks.obj: hblocks.c hfile.h hdf.h herr.h hdfi.h
+hblocks.obj: hblocks.c hfile.h hdf.h
     $(CC) /c $(CFLAGS) %s
 
-hextelt.obj: hextelt.c hfile.h hdf.h herr.h hdfi.h
+hextelt.obj: hextelt.c hfile.h hdf.h
     $(CC) /c $(CFLAGS) %s
 
-hkit.obj: hkit.c hfile.h hdf.h herr.h hdfi.h
+hkit.obj: hkit.c hfile.h hdf.h
     $(CC) /c $(CFLAGS) %s
 
-hdfalloc.obj: hdfalloc.c hdf.h herr.h hdfi.h
+hdfalloc.obj: hdfalloc.c hdf.h
     $(CC) /c $(CFLAGS) %s
 
-dfan.obj: dfan.c hdf.h herr.h dfan.h hdfi.h
+dfan.obj: dfan.c hdf.h dfan.h
     $(CC) /c $(CFLAGS) %s
 
-dfanf.obj: dfanf.c hdf.h herr.h dfan.h hdfi.h
+dfanf.obj: dfanf.c hdf.h dfan.h
     $(CC) /c $(CFLAGS) %s
 
-dfr8.obj: dfr8.c hdf.h herr.h dfrig.h hdfi.h
+dfr8.obj: dfr8.c hdf.h dfrig.h
     $(CC) /c $(CFLAGS) %s
 
-dfr8f.obj: dfr8f.c hdf.h herr.h dfrig.h hdfi.h
+dfr8f.obj: dfr8f.c hdf.h dfrig.h
     $(CC) /c $(CFLAGS) %s
 
-dfcomp.obj: dfcomp.c hdf.h herr.h dfrig.h hdfi.h
+dfcomp.obj: dfcomp.c hdf.h dfrig.h
     $(CC) /c $(CFLAGS) %s
 
-dfimcomp.obj: dfimcomp.c hdf.h herr.h dfrig.h hdfi.h
+dfimcomp.obj: dfimcomp.c hdf.h dfrig.h
     $(CC) /c $(CFLAGS) %s
 
-dfrle.obj: dfrle.c hdf.h herr.h dfrig.h hdfi.h
+dfrle.obj: dfrle.c hdf.h dfrig.h
     $(CC) /c $(CFLAGS) %s
 
-dfjpeg.obj: dfjpeg.c hdf.h herr.h dfrig.h hdfi.h
+dfjpeg.obj: dfjpeg.c hdf.h dfrig.h
     $(CC) /c $(CFLAGS) %s
 
-dfunjpeg.obj: dfunjpeg.c hdf.h herr.h dfrig.h hdfi.h
+dfunjpeg.obj: dfunjpeg.c hdf.h dfrig.h
     $(CC) /c $(CFLAGS) %s
 
-dfp.obj: dfp.c hdf.h herr.h hdfi.h
+dfp.obj: dfp.c hdf.h
     $(CC) /c $(CFLAGS) %s
 
-dfpf.obj: dfpf.c hdf.h herr.h hdfi.h
+dfpf.obj: dfpf.c hdf.h
     $(CC) /c $(CFLAGS) %s
 
-dfgr.obj: dfgr.c hdf.h herr.h dfgr.h hdfi.h
+dfgr.obj: dfgr.c hdf.h dfgr.h
     $(CC) /c $(CFLAGS) %s
 
-df24.obj: df24.c hdf.h herr.h dfgr.h hdfi.h
+df24.obj: df24.c hdf.h dfgr.h
     $(CC) /c $(CFLAGS) %s
 
-df24f.obj: df24f.c hdf.h herr.h dfgr.h hdfi.h
+df24f.obj: df24f.c hdf.h dfgr.h
     $(CC) /c $(CFLAGS) %s
 
-dfsd.obj: dfsd.c hdf.h herr.h dfsd.h hdfi.h
+dfsd.obj: dfsd.c hdf.h dfsd.h
     $(CC) /c $(CFLAGS) %s
 
-dfsdf.obj: dfsdf.c hdf.h herr.h dfsd.h hdfi.h
+dfsdf.obj: dfsdf.c hdf.h dfsd.h
     $(CC) /c $(CFLAGS) %s
 
-dfgroup.obj: dfgroup.c hdf.h herr.h hfile.h hdfi.h
+dfgroup.obj: dfgroup.c hdf.h hfile.h
     $(CC) /c $(CFLAGS) %s
 
-dfconv.obj: dfconv.c hdf.h herr.h hdfi.h hconv.h
+dfconv.obj: dfconv.c hdf.h hconv.h
     $(CC) /c $(CFLAGS) %s
 
-dfknat.obj: dfknat.c hdf.h herr.h hdfi.h hconv.h
+dfknat.obj: dfknat.c hdf.h hconv.h
     $(CC) /c $(CFLAGS) %s
 
-dfkswap.obj: dfkswap.c hdf.h herr.h hdfi.h hconv.h
+dfkswap.obj: dfkswap.c hdf.h hconv.h
     $(CC) /c $(CFLAGS) %s
 
-dfkcray.obj: dfkcray.c hdf.h herr.h hdfi.h hconv.h
+dfkcray.obj: dfkcray.c hdf.h hconv.h
     $(CC) /c $(CFLAGS) %s
 
-dfkvms.obj: dfkvms.c hdf.h herr.h hdfi.h hconv.h
+dfkvms.obj: dfkvms.c hdf.h hconv.h
     $(CC) /c $(CFLAGS) %s
 
-dfkconv.obj: dfkconv.c hdf.h herr.h hdfi.h hconv.h
+dfkconv.obj: dfkconv.c hdf.h hconv.h
     $(CC) /c $(CFLAGS) %s
 
-dfkfuji.obj: dfkfuji.c hdf.h herr.h hdfi.h hconv.h
+dfkfuji.obj: dfkfuji.c hdf.h hconv.h
     $(CC) /c $(CFLAGS) %s
 
-vg.obj: vg.c vg.h hdf.h hdfi.h
+vg.obj: vg.c vg.h hdf.h
     $(CC) /c $(CFLAGS) %s
 
-vgf.obj: vgf.c vg.h hdf.h hdfi.h
+vgf.obj: vgf.c vg.h hdf.h
     $(CC) /c $(CFLAGS) %s
 
-vrw.obj: vrw.c vg.h hdf.h hdfi.h
+vrw.obj: vrw.c vg.h hdf.h
     $(CC) /c $(CFLAGS) %s
 
-vio.obj: vio.c vg.h hdf.h hdfi.h
+vio.obj: vio.c vg.h hdf.h
     $(CC) /c $(CFLAGS) %s
 
-vparse.obj: vparse.c vg.h hdf.h hdfi.h
+vparse.obj: vparse.c vg.h hdf.h
     $(CC) /c $(CFLAGS) %s
 
-vconv.obj: vconv.c vg.h hdf.h hdfi.h
+vconv.obj: vconv.c vg.h hdf.h
     $(CC) /c $(CFLAGS) %s
 
-vsfld.obj: vsfld.c vg.h hdf.h hdfi.h
+vsfld.obj: vsfld.c vg.h hdf.h
     $(CC) /c $(CFLAGS) %s
 
-vgp.obj: vgp.c vg.h hdf.h hdfi.h
+vgp.obj: vgp.c vg.h hdf.h
     $(CC) /c $(CFLAGS) %s
 
-vhi.obj: vhi.c vg.h hdf.h hdfi.h
+vhi.obj: vhi.c vg.h hdf.h
     $(CC) /c $(CFLAGS) %s
 
-tbbt.obj: tbbt.c tbbt.h hdfi.h
+tbbt.obj: tbbt.c tbbt.h hdf.h
     $(CC) /c $(CFLAGS) %s
 
-maldebug.obj : maldebug.c maldebug.h hdfi.h
+maldebug.obj : maldebug.c maldebug.h
     $(CC) /c $(CFLAGS) %s
 
-hcomp.obj : hcomp.c hdfi.h hcompi.h
+hcomp.obj : hcomp.c hdf.h hcompi.h
     $(CC) /c $(CFLAGS) %s
 
-mstdio.obj : mstdio.c hdfi.h hcompi.h mstdio.h
+mstdio.obj : mstdio.c hdf.h hcompi.h mstdio.h
     $(CC) /c $(CFLAGS) %s
 
-crle.obj : crle.c hdfi.h hcompi.h crle.h
+crle.obj : crle.c hdf.h hcompi.h crle.h
     $(CC) /c $(CFLAGS) %s
 
-dfstubs.obj: dfstubs.c hdf.h herr.h dfstubs.h df.h dfi.h hdfi.h
+dfstubs.obj: dfstubs.c hdf.h dfstubs.h df.h dfi.h
     $(CC) /c $(CFLAGS) %s
 
-dff.obj: dff.c hdf.h herr.h dfstubs.h df.h dfi.h hdfi.h
+dff.obj: dff.c hdf.h dfstubs.h df.h dfi.h
     $(CC) /c $(CFLAGS) %s
 
 hfileff.obj : hfileff.f
@@ -461,10 +454,8 @@ jwrtarga.obj : jwrtarga.c jinclude.h jconfig.h jpegdata.h
 jmemsys.obj : jmemsys.c jinclude.h jconfig.h jpegdata.h jmemsys.h
     $(CC) /c $(CFLAGS) %s
 
-
 jmemdosa.obj : jmemdosa.asm
-	masm /mx $*;
-
+	masm /mx %s
 
 install:
 	-mkdir $(INCDIR)
@@ -477,10 +468,3 @@ clean:
 
 cleanup:
 	-$(RM) $(RMFLAGS) libdf.a $(UTILS)
-
-lint: $(SRCS) $(R8SRCS)
-	$(LINT) $(LINTFLAGS) $(SRCS)
-
-TAGS: $(SRCS) $(HDRS)
-	etags $(SRCS) $(HDRS)
-

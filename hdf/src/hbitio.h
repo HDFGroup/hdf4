@@ -39,14 +39,14 @@
 #define BITBUF_SIZE 4096
 /* Macro to define the number of bits cached in the 'bits' variable */
 #define BITNUM      (sizeof(uint8)*8)
+/* Macro to define the number of bits able to be read/written at a time */
+#define DATANUM     (sizeof(uint32)*8)
 
 typedef struct bitrec_t {
-#ifdef OLD_WAY
-    FILE *file;     /* stdio file pointer */
-#else
     int32 acc_id;   /* Access ID for H layer I/O routines */
-#endif
     bool used;      /* whether this record is in use */
+    uint32 max_offset,  /* offset of the last byte written to the dataset */
+        byte_offset;    /* offset of the current byte in the dataset */
     uintn count;    /* bit count to next boundary */
     uint8 mode;     /* What the operation on this file is ('r', 'w', etc..) */
     uint8 bits;     /* extra bit buffer, 0..BITNUM-1 bits */
@@ -82,4 +82,3 @@ const uint32 maskl[33]
 ;
 
 #endif  /* __HBITIO_H */
-

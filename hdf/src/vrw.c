@@ -26,6 +26,7 @@ static char RcsId[] = "@(#)$Revision$";
 #include "vg.h"
 #include "hfile.h"
 
+#ifdef DELETE_FOR_40_RELEASE_IF_NOT_USED
 PRIVATE void Knumin
     PROTO((uint8 *src,uint8 * dst,uint32 n,uint32 sdel,uint32 ddel));
 
@@ -53,6 +54,7 @@ uint32      n, sdel, ddel;
 {
   (*DFKnumout) (src, dst, n, sdel, ddel);
 }
+#endif
 
 /* --------------------------- VSseek -------------------------------------- */
 
@@ -474,7 +476,7 @@ uint8        buf[];
             /* Awww ? */
             DFKsetNT(type); 
             for(index = 0; index < order; index++) {
-                Knumout (b1, b2, (uint32) nelt, (uint32) esize, (uint32) hsize);
+                DFKnumout (b1, b2, (uint32) nelt, (uint32) esize, (uint32) hsize);
                 b1 += esize / order;
                 b2 += isize / order;
             }
@@ -498,7 +500,7 @@ uint8        buf[];
             /* Bwww ? works sometimes */
             DFKsetNT(type);  
             for(index = 0; index < order; index++) {
-                Knumout (b1, b2, (uint32) nelt, (uint32) esize, (uint32) isize);
+                DFKnumout (b1, b2, (uint32) nelt, (uint32) esize, (uint32) isize);
                 b2 += isize / order;
                 b1 += esize / order;
             }
@@ -525,7 +527,7 @@ uint8        buf[];
             /* Cwww WORKS  */
             DFKsetNT(type); 
             for(index = 0; index < order; index++) {
-                Knumout (b1, b2, (uint32) nelt, (uint32) uvsize, (uint32) hsize);
+                DFKnumout (b1, b2, (uint32) nelt, (uint32) uvsize, (uint32) hsize);
                 b2 += isize / order;
                 b1 += esize / order;
             }
@@ -552,7 +554,7 @@ uint8        buf[];
             /* Dwww ? */
             DFKsetNT(type); 
             for(index = 0; index < order; index++) {
-                Knumout (b1, b2, (uint32) nelt, (uint32) uvsize, (uint32) isize);
+                DFKnumout (b1, b2, (uint32) nelt, (uint32) uvsize, (uint32) isize);
                 b2 += isize / order;
                 b1 += esize / order;
             }

@@ -27,7 +27,6 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
-#include "herr.h"
 
 /*-----------------------------------------------------------------------------
  * Name:    DFCIrle
@@ -168,4 +167,3 @@ int32 DFCIunrle(buf,bufto,outlen, resetsave)
     }
     return((int32)(p - buf));
 }
-

@@ -75,11 +75,11 @@ extern int32 HCPcrle_endaccess
 
 /* RLE [en|de]coding information */
 typedef struct {
-    uint32 offset;          /* offset in the file */
+    int32 offset;           /* offset in the file */
     uint8 buffer[RLE_BUF_SIZE];     /* buffer for storing RLE bytes */
     intn buf_length;        /* number of bytes in buffer */
     intn buf_pos;           /* offset into the buffer */
-    intn last_byte,         /* the last byte stored in the buffer */
+    uintn last_byte,        /* the last byte stored in the buffer */
         second_byte;        /* the second to last byte stored in the buffer */
     enum {RLE_INIT,         /* initial state, need to read a byte to determine
                                 next state */
@@ -103,4 +103,3 @@ funclist_t crle_funcs={    /* functions to perform run-length encoding */
 #endif
 
 #endif /* __CRLE_H */
-

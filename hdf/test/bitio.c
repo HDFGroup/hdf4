@@ -112,7 +112,7 @@ void test_bitio_write()
         VERIFY(ret,outbuf[i],"Hbitwrite");
       } /* end for */
 
-    ret=Hendbitaccess(bitid1);
+    ret=Hendbitaccess(bitid1,0);
     RESULT("Hbitendaccess");
 
     bitid1=Hstartbitread(fid,BITIO_TAG_1,BITIO_REF_1);
@@ -128,7 +128,7 @@ void test_bitio_write()
         num_errs++;
       }	/* end for */
 
-    ret=Hendbitaccess(bitid1);
+    ret=Hendbitaccess(bitid1,0);
     RESULT("Hbitendaccess");
     ret=Hclose(fid);
     RESULT("Hclose");
@@ -140,7 +140,7 @@ void test_bitio_read()
     int32 bitid1;
     int32 ret;
     intn inbits;
-    int32 tempbuf;
+    uint32 tempbuf;
     intn i;
 
     SEED((int)time(NULL));
@@ -164,7 +164,7 @@ void test_bitio_read()
         ret=Hbitread(bitid1,8,&inbuf2[i]);
         VERIFY(ret,8,"Hbitread");
       } /* end for */
-    ret=Hendbitaccess(bitid1);
+    ret=Hendbitaccess(bitid1,0);
     RESULT("Hbitendaccess");
 
     /* check the data */
@@ -192,7 +192,7 @@ void test_bitio_read()
             inbuf2[i]|=tempbuf;
           } /* end if */
       } /* end for */
-    ret=Hendbitaccess(bitid1);
+    ret=Hendbitaccess(bitid1,0);
     RESULT("Hbitendaccess");
 
     /* check the data */

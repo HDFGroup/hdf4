@@ -33,7 +33,6 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
-#include "herr.h"
 #include "hfile.h"
 
 PRIVATE uint16 Readref = 0;
@@ -43,22 +42,26 @@ PRIVATE uint16 Lastref = 0;     /* Last ref read/written */
 
 PRIVATE char Lastfile[DF_MAXFNLEN] = ""; /* last file opened */
 
-#ifdef VMS
-int32 _DFPIopen();
-#endif
+PRIVATE int32 DFPIopen
+    PROTO((char _HUGE *filename, intn access));
 
-
-/*-----------------------------------------------------------------------------
- * Name:    DFPgetpal
- * Purpose: get next palette from file
- * Inputs:  filename: name of HDF file
- *          palette: 768 byte space to read palette into
- * Returns: 0 on success, -1 on failure with DFerror set
- *          palette in pal
- * Users:   HDF HLL users, utilities, other routines
- * Invokes: DFPIopen, DFIerr, DFclose, DFgetelement
- *---------------------------------------------------------------------------*/
-
+/*--------------------------------------------------------------------------
+ NAME
+    DFPgetpal -- get next palette from file
+ USAGE
+    intn DFPgetpal(filename,palette)
+        char *filename;         IN: name of HDF file
+        VOIDP palette;          OUT: ptr to the buffer to store the palette in
+ RETURNS
+    SUCCEED on success, FAIL on failure.
+ DESCRIPTION
+    Gets the next palette from the file specified.
+ GLOBAL VARIABLES
+    Lastref, Refset
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
 intn DFPgetpal(char *filename, VOIDP palette)
 #else
@@ -74,85 +77,90 @@ intn DFPgetpal(filename, palette)
 
     HEclear();
 
-    if (!palette) {
-        HERROR(DFE_ARGS);
-        return FAIL;
-    }
-    file_id = DFPIopen(filename, DFACC_READ);
-    if (file_id == FAIL) {
-       return FAIL;
-    }
+    if (!palette)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
+
+    if ((file_id = DFPIopen(filename, DFACC_READ))== FAIL)
+       HRETURN_ERROR(DFE_BADOPEN,FAIL);
 
     if (Refset) {
         aid = Hstartread(file_id, DFTAG_IP8, Refset);
         if (aid == FAIL)
             aid = Hstartread(file_id, DFTAG_LUT, Refset);
-    } else if (Readref) {
-        aid = Hstartread(file_id, DFTAG_IP8, Readref);
-        if(aid == FAIL)
-            aid = Hstartread(file_id, DFTAG_LUT, Readref);
-        if (aid != FAIL &&
-              (Hnextread(aid, DFTAG_IP8, DFREF_WILDCARD, DF_CURRENT) == FAIL)) {
-            if(Hnextread(aid, DFTAG_LUT, DFREF_WILDCARD, DF_CURRENT) == FAIL){
-                Hendaccess(aid);
-               aid = FAIL;
-            }
-        }
-    } else {
-        aid = Hstartread(file_id, DFTAG_IP8, DFREF_WILDCARD);
-        if(aid == FAIL)
-            aid = Hstartread(file_id, DFTAG_LUT, DFREF_WILDCARD);
-    }
+      } /* end if */
+    else
+        if (Readref) {
+            aid = Hstartread(file_id, DFTAG_IP8, Readref);
+            if(aid == FAIL)
+                aid = Hstartread(file_id, DFTAG_LUT, Readref);
+            if (aid != FAIL &&
+                    (Hnextread(aid, DFTAG_IP8, DFREF_WILDCARD, DF_CURRENT) == FAIL)) {
+                if(Hnextread(aid, DFTAG_LUT, DFREF_WILDCARD, DF_CURRENT) == FAIL) {
+                    Hendaccess(aid);
+                    aid = FAIL;
+                  } /* end if */
+              } /* end if */
+          } /* end if */
+        else {
+            aid = Hstartread(file_id, DFTAG_IP8, DFREF_WILDCARD);
+            if(aid == FAIL)
+                aid = Hstartread(file_id, DFTAG_LUT, DFREF_WILDCARD);
+          } /* end else */
 
     Refset = 0;
-    if (aid == FAIL) {
+    if (aid == FAIL)
        return(HDerr(file_id));
-    }
+
     /* on error, close file and return -1 */
 
     if (Hinquire(aid, (int32*)NULL, (uint16*)NULL, &Readref, &length,
             (int32*)NULL, (int32*)NULL, (int16*)NULL, (int16*)NULL) == FAIL) {
-       Hendaccess(aid);
-       return HDerr(file_id);
-    }
+        Hendaccess(aid);
+        return HDerr(file_id);
+      } /* end if */
 
         /* read palette */
     if (Hread(aid, length, (uint8 *)palette) == FAIL) {
-       Hendaccess(aid);
-       return(HDerr(file_id));
-    }
+        Hendaccess(aid);
+        return(HDerr(file_id));
+      } /* end if */
 
     Hendaccess(aid);
 
     Lastref = Readref;
 
     return(Hclose(file_id));
-}
+}   /* end DFPgetpal() */
 
-
-/*-----------------------------------------------------------------------------
- * Name:    DFPputpal
- * Purpose: Write palette to file
- * Inputs:  filename: name of HDF file
- *          palette: palette to be written to file
- *          overwrite: if 1, overwrite last palette read or written
- *                     if 0, write it as a fresh palette
- *          filemode: if "a", append palette to file
- *                    if "w", create new file
- * Returns: 0 on success, -1 on failure with DFerror set
- * Users:   HDF users, programmers, utilities
- * Invokes: DFPIopen, DFclose, DFputelement, DFIerr
- * Remarks: To overwrite, the filename must be the same as for the previous
- *          call
- *---------------------------------------------------------------------------*/
-
+/*--------------------------------------------------------------------------
+ NAME
+    DFPputpal -- Write palette to file
+ USAGE
+    intn DFPputpal(filename,palette,overwrite,filemode)
+        char *filename;         IN: name of HDF file
+        VOIDP palette;          IN: ptr to the buffer retrieve the palette from
+        intn overwrite;         IN: whether to (1) overwrite last palette written,
+                                    or (0) write it as a fresh palette
+        char *filemode;         IN: if "a" append palette to file, "w" create
+                                    new file
+ RETURNS
+    SUCCEED on success, FAIL on failure.
+ DESCRIPTION
+    Stores a palette in an HDF file, with options for creating new file or appending,
+    and overwriting last palette written.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    To overwrite, the filename must be the same as for the previous call.
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFPputpal(char *filename, VOIDP palette, int overwrite, char *filemode)
+intn DFPputpal(char *filename, VOIDP palette, intn overwrite, char *filemode)
 #else
 intn DFPputpal(filename, palette, overwrite, filemode)
     char *filename;
     VOIDP palette;
-    int overwrite;
+    intn overwrite;
     char *filemode;
 #endif
 {
@@ -161,78 +169,81 @@ intn DFPputpal(filename, palette, overwrite, filemode)
 
     HEclear();
 
-    if (!palette) {
-        HERROR(DFE_ARGS);
-        return FAIL;
-    }
+    if (!palette)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
-    if (overwrite && HDstrcmp(filename, Lastfile)) {
-        HERROR(DFE_BADCALL);
-        return FAIL;
-    }
+    if (overwrite && HDstrcmp(filename, Lastfile))
+        HRETURN_ERROR(DFE_BADCALL,FAIL);
 
-    file_id = DFPIopen(filename,
-                      (*filemode=='w') ? DFACC_CREATE : DFACC_WRITE);
+    file_id = DFPIopen(filename, (*filemode=='w') ? DFACC_CREATE : DFACC_WRITE);
     if (file_id==FAIL)
-        return FAIL;
+        HRETURN_ERROR(DFE_BADOPEN,FAIL);
 
     /* if we want to overwrite, Lastref is the ref to write.  If not, if
         Writeref is set, we use that ref.  If not we get a fresh ref. The
         ref to write is placed in Lastref */
-
     if (!overwrite)
         Lastref = (uint16)(Writeref ? Writeref : Hnewref(file_id));
     if (Lastref == 0)
-        return FAIL;
+        HRETURN_ERROR(DFE_NOREF,FAIL);
 
     Writeref = 0;           /* don't know ref to write after this */
 
-        /* write out palette */
-    if (Hputelement(file_id, DFTAG_IP8, Lastref, 
-                             (uint8 *)palette, (int32) 768)<0)
-            return(HDerr(file_id));
+    /* write out palette */
+    if(Hputelement(file_id, DFTAG_IP8, Lastref, (uint8 *)palette, (int32)768)<0)
+        return(HDerr(file_id));
 
     Hdupdd(file_id, DFTAG_LUT, Lastref, DFTAG_IP8, Lastref);
 
     return(Hclose(file_id));
-}
+}   /* end DFPputpal() */
 
-
-/*-----------------------------------------------------------------------------
- * Name:    DFPaddpal
- * Purpose: Add palette to file
- * Inputs:  filename: name of HDF file
- *          palette: palette to be written to file
- * Returns: 0 on success, -1 on failure with DFerror set
- * Users:   HDF users, programmers, utilities
- * Invokes: DFPputpal
- *---------------------------------------------------------------------------*/
-
+/*--------------------------------------------------------------------------
+ NAME
+    DFPaddpal -- Append palette to file
+ USAGE
+    intn DFPaddpal(filename,palette)
+        char *filename;         IN: name of HDF file
+        VOIDP palette;          IN: ptr to the buffer retrieve the palette from
+ RETURNS
+    SUCCEED on success, FAIL on failure.
+ DESCRIPTION
+    Appends a palette in an HDF file.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int DFPaddpal(char *filename, VOIDP palette)
+intn DFPaddpal(char *filename, VOIDP palette)
 #else
-int DFPaddpal(filename, palette)
+intn DFPaddpal(filename, palette)
     char *filename;
     VOIDP palette;
 #endif
 {
     return(DFPputpal(filename, palette, 0, "a"));
-}
+}   /* end DFPaddpal() */
 
-
-/*-----------------------------------------------------------------------------
- * Name:    DFPnpals
- * Purpose: How many palettes are present in this file?
- * Inputs:  filename: name of HDF file
- * Returns: number of palettes on success, -1 on failure with DFerror set
- * Users:   HDF programmers, other routines and utilities
- * Invokes: DFPIopen, Hclose, Hnumber, Hfind
- *---------------------------------------------------------------------------*/
-
+/*--------------------------------------------------------------------------
+ NAME
+    DFPnpals -- determine # of palettes in a file
+ USAGE
+    intn DFPnpals(filename)
+        char *filename;         IN: name of HDF file
+ RETURNS
+    SUCCEED on success, FAIL on failure.
+ DESCRIPTION
+    Determines the number of unique palettes in a file.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int DFPnpals(char *filename)
+intn DFPnpals(char *filename)
 #else
-int DFPnpals(filename)
+intn DFPnpals(filename)
     char *filename;
 #endif
 {
@@ -249,23 +260,20 @@ int DFPnpals(filename)
     HEclear();
 
     /* should use reopen if same file as last time - more efficient */
-    file_id = DFPIopen(filename, DFACC_READ);
-    if (file_id==FAIL)
-        return FAIL;
+    if ((file_id = DFPIopen(filename, DFACC_READ))==FAIL)
+        HRETURN_ERROR(DFE_BADOPEN,FAIL);
 
-    nip8 = Hnumber(file_id, DFTAG_IP8);       /* count number of IPs */
-    if (nip8 == FAIL)
-       return(HDerr(file_id));
-    nlut = Hnumber(file_id, DFTAG_LUT);       /* count number of LUTs */
-    if (nlut == FAIL)
-       return(HDerr(file_id));
+    /* count number of IPs */
+    if ((nip8 = Hnumber(file_id, DFTAG_IP8))== FAIL)
+        return(HDerr(file_id));
+    /* count number of LUTs */
+    if ((nlut = Hnumber(file_id, DFTAG_LUT))== FAIL)
+        return(HDerr(file_id));
     npals = nip8 + nlut;
 
     /* Get space to store the palette offsets */
-    if((pal_off=(int32 *)HDgetspace(npals*sizeof(int32)))==NULL) {
-        HERROR(DFE_NOSPACE);
-        return(FAIL);
-      } /* end if */
+    if((pal_off=(int32 *)HDgetspace(npals*sizeof(int32)))==NULL)
+        HRETURN_ERROR(DFE_NOSPACE,FAIL);
 
     /* go through the IP8s */
     curr_pal=0;
@@ -293,22 +301,28 @@ int DFPnpals(filename)
     HDfreespace((VOIDP)pal_off);       /* free offsets */
 
     if (Hclose(file_id) == FAIL)
-        return FAIL;
+        HRETURN_ERROR(DFE_CANTCLOSE,FAIL);
 
     return(npals);
-}
+}   /* end DFPnpals() */
 
-/*-----------------------------------------------------------------------------
- * Name:    DFPreadref
- * Purpose: Set ref of palette to get next
- * Inputs:  filename: file to which this applies
- *          ref: reference number of next get
- * Returns: 0 on success, -1 on failure
- * Users:   HDF programmers, other routines and utilities
- * Invokes: DFPIopen, DFIfind, DFclose
- * Remarks: checks if palette with this ref exists
- *---------------------------------------------------------------------------*/
-
+/*--------------------------------------------------------------------------
+ NAME
+    DFPreadref -- set ref # of palette to read next
+ USAGE
+    intn DFPreadref(filename,ref)
+        char *filename;         IN: name of HDF file
+        uint16 ref;             IN: ref # of palette to read next
+ RETURNS
+    SUCCEED on success, FAIL on failure.
+ DESCRIPTION
+    Sets the ref # of the next palette to read from a file
+ GLOBAL VARIABLES
+    Refset
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
 intn DFPreadref(char *filename, uint16 ref)
 #else
@@ -317,103 +331,109 @@ intn DFPreadref(filename, ref)
     uint16 ref;
 #endif
 {
+    char *FUNC="DFPreadref";
     int32 file_id;
     int32 aid;
 
     HEclear();
 
-    file_id = DFPIopen(filename, DFACC_READ);
-    if (file_id == FAIL) return FAIL;
+    if ((file_id = DFPIopen(filename, DFACC_READ))== FAIL)
+        HRETURN_ERROR(DFE_BADOPEN,FAIL);
 
     aid = Hstartread(file_id, DFTAG_IP8, ref);
     if (aid == FAIL) {
-      aid = Hstartread(file_id, DFTAG_LUT, ref);
-      if(aid == FAIL) 
-        return(HDerr(file_id));
-    }
+        aid = Hstartread(file_id, DFTAG_LUT, ref);
+        if(aid == FAIL)
+            return(HDerr(file_id));
+      } /* end if */
 
     Hendaccess(aid);
     Refset = ref;
 
     return(Hclose(file_id));
-}
+}   /* end DFPreadref() */
 
-
-/*-----------------------------------------------------------------------------
- * Name:    DFPwriteref
- * Purpose: Set ref of palette to put next
- * Inputs:  filename: file to which this applies
- *          ref: reference number of next put
- * Returns: 0 on success, -1 on failure
- * Users:   HDF programmers, other routines and utilities
- * Invokes: none
- *---------------------------------------------------------------------------*/
-
-/* shut lint up */
-/* ARGSUSED */
+/*--------------------------------------------------------------------------
+ NAME
+    DFPwriteref -- set ref # of palette to write next
+ USAGE
+    intn DFPwriteref(filename,ref)
+        char *filename;         IN: name of HDF file
+        uint16 ref;             IN: ref # of palette to write next
+ RETURNS
+    SUCCEED on success, FAIL on failure.
+ DESCRIPTION
+    Sets the ref # of the next palette to write to a file
+ GLOBAL VARIABLES
+    Writeref
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int DFPwriteref(char *filename, uint16 ref)
+intn DFPwriteref(char *filename, uint16 ref)
 #else
-int DFPwriteref(filename, ref)
+intn DFPwriteref(filename, ref)
     char *filename;
     uint16 ref;
 #endif
 {
     Writeref = ref;
-    return SUCCEED;
-}
+    return(SUCCEED);
+}   /* end DFPwriteref() */
 
-
-
-/*-----------------------------------------------------------------------------
- * Name:    DFPrestart
- * Purpose: Do not remember info about file - get again from first palette
- * Inputs:  none
- * Returns: 0 on success
- * Users:   HDF programmers
- * Remarks: Just reset Lastfile to NULL
- *---------------------------------------------------------------------------*/
-
+/*--------------------------------------------------------------------------
+ NAME
+    DFPrestart -- restart reading/writing palettes from the start of a file
+ USAGE
+    intn DFPrestart(void)
+ RETURNS
+    SUCCEED on success, FAIL on failure.
+ DESCRIPTION
+    Restart reading/writing palettes to a file.
+ GLOBAL VARIABLES
+    Lastfile
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int DFPrestart(void)
+intn DFPrestart(void)
 #else
-int DFPrestart()
+intn DFPrestart()
 #endif
 {
-
     Lastfile[0] = '\0';
-    return SUCCEED;
-}
+    return(SUCCEED);
+}   /* end DFPrestart() */
 
-
-/*-----------------------------------------------------------------------------
- * Name:    DFPlastref
- * Purpose: Return last ref written or read
- * Inputs:  none
- * Globals: Lastref
- * Returns: ref on success, -1 on error with DFerror set
- * Users:   HDF users, utilities, other routines
- * Invokes: none
- * Method:  return Lastref
- * Remarks: none
- *---------------------------------------------------------------------------*/
-
+/*--------------------------------------------------------------------------
+ NAME
+    DFPlastref -- returns last ref # read/written
+ USAGE
+    uint16 DFPlastref(void)
+ RETURNS
+    ref # on on success, FAIL on failure.
+ DESCRIPTION
+    Return the last ref # read/written from a file.
+ GLOBAL VARIABLES
+    Lastref
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
 uint16 DFPlastref(void)
 #else
 uint16 DFPlastref()
 #endif
 {
-
     return(Lastref);
-}
-
-
+}   /* end DFPlastref() */
 
 /**************************************************************************/
 /*----------------------- Internal routines ------------------------------*/
 /**************************************************************************/
-
 
 /*-----------------------------------------------------------------------------
  * Name:    DFPIopen
@@ -427,30 +447,50 @@ uint16 DFPlastref()
  *          reopen a file, to avoid re-reading all the headers
  *---------------------------------------------------------------------------*/
 
+/*--------------------------------------------------------------------------
+ NAME
+    DFPIopen -- open/reopen file for palette interface
+ USAGE
+    int32 DFPIopen(filename,access)
+        char *filename;         IN: name of HDF file
+        intn access;            IN: type of access to open file with
+ RETURNS
+    HDF file handle on success, FAIL on failure.
+ DESCRIPTION
+    Open/reopen a file for the DFP interface to work with.
+ GLOBAL VARIABLES
+    Refset, Readref, Lastfile
+ COMMENTS, BUGS, ASSUMPTIONS
+    This is a hook for someday providing more efficient ways to
+    reopen a file, to avoid re-reading all the headers
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int32 DFPIopen(char *filename, int access)
+PRIVATE int32 DFPIopen(char *filename, intn access)
 #else
-int32 DFPIopen(filename, access)
+PRIVATE int32 DFPIopen(filename, access)
     char *filename;
-    int access;
+    intn access;
 #endif
 {
-
+    char *FUNC="DFPIopen";
     int32 file_id;
 
-        /* use reopen if same file as last time - more efficient */
+    /* use reopen if same file as last time - more efficient */
     if (HDstrncmp(Lastfile,filename,DF_MAXFNLEN) || (access==DFACC_CREATE)) {
                                     /* treat create as different file */
         if ((file_id = Hopen(filename, access, 0)) == FAIL)
-           return FAIL;
+            HRETURN_ERROR(DFE_BADOPEN,FAIL);
         Refset = 0;         /* no ref to get set for this file */
         Readref = 0;
-    } else
+      } /* end if */
+    else
         if ((file_id = Hopen(filename, access, 0)) == FAIL)
-           return FAIL;
+           HRETURN_ERROR(DFE_BADOPEN,FAIL);
 
-    HDstrncpy(Lastfile, filename, DF_MAXFNLEN);
     /* remember filename, so reopen may be used next time if same file */
+    HDstrncpy(Lastfile, filename, DF_MAXFNLEN);
 
     return(file_id);
-}
+}   /* end DFPIopen() */

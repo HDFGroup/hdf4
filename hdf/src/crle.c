@@ -40,7 +40,6 @@ static char RcsId[] = "@(#)$Revision$";
 /* General HDF includes */
 #include "hdf.h"
 #include "hfile.h"
-#include "herr.h"
 
 #define CRLE_MASTER
 #define CODER_CLIENT
@@ -107,8 +106,8 @@ PRIVATE int32 HCIcrle_init(access_rec)
     /* Initialize RLE state information */
     rle_info->rle_state=RLE_INIT;       /* start in initial state */
     rle_info->buf_pos=0;            /* start at the beginning of the buffer */
-    rle_info->last_byte=RLE_NIL;    /* start with no code in the last byte */
-    rle_info->second_byte=RLE_NIL;  /* start with no code here too */
+    rle_info->last_byte=(uintn)RLE_NIL;    /* start with no code in the last byte */
+    rle_info->second_byte=(uintn)RLE_NIL;  /* start with no code here too */
     rle_info->offset=0;             /* offset into the file */
 
     return(SUCCEED);
@@ -175,7 +174,7 @@ PRIVATE int32 HCIcrle_decode(info,length,buf)
             if(length>rle_info->buf_length)  /* still need more data */
                 dec_len=rle_info->buf_length;
             else        /* only grab "length" bytes */
-                dec_len=length;
+                dec_len=(intn)length;
 
             if(rle_info->rle_state==RLE_RUN)
                 HDmemset(buf,rle_info->last_byte,dec_len);  /* copy the run */
@@ -267,7 +266,7 @@ PRIVATE int32 HCIcrle_encode(info,length,buf)
                         if(HDputc((uint8)rle_info->last_byte,info->aid)==FAIL)
                             HRETURN_ERROR(DFE_WRITEERROR,FAIL);
                         rle_info->rle_state=RLE_INIT;
-                        rle_info->second_byte=rle_info->last_byte=RLE_NIL;
+                        rle_info->second_byte=rle_info->last_byte=(uintn)RLE_NIL;
                       } /* end if */
                   } /* end else */
                 buf++;
@@ -297,7 +296,7 @@ PRIVATE int32 HCIcrle_encode(info,length,buf)
                         if(Hwrite(info->aid,rle_info->buf_length,rle_info->buffer)==FAIL)
                             HRETURN_ERROR(DFE_WRITEERROR,FAIL);
                         rle_info->rle_state=RLE_INIT;
-                        rle_info->second_byte=rle_info->last_byte=RLE_NIL;
+                        rle_info->second_byte=rle_info->last_byte=(uintn)RLE_NIL;
                       } /* end if */
                   } /* end else */
                 buf++;
@@ -365,7 +364,7 @@ PRIVATE int32 HCIcrle_term(info)
             HRETURN_ERROR(DFE_INTERNAL,FAIL);
       } /* end switch */
     rle_info->rle_state=RLE_INIT;
-    rle_info->second_byte=rle_info->last_byte=RLE_NIL;
+    rle_info->second_byte=rle_info->last_byte=(uintn)RLE_NIL;
 
     return(SUCCEED);
 }   /* end HCIcrle_term() */

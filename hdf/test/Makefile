@@ -171,7 +171,7 @@ FOBJS = tr8f.o t24f.o tpf.o tanf.o tanfilef.o tsdstrf.o tsdntf.o \
 .f: $< $(HDFLIB)/libdf.a
 	$(FC) $(FFLAGS) $< -o $@ $(HDFLIB)/libdf.a
 
-all: testhdf fortest gentest
+all: testhdf fortest #gentest
 
 nofortran: testhdf
 

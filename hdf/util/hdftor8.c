@@ -22,7 +22,6 @@ static char RcsId[] = "@(#)$Revision$";
  */
 
 #include "hdf.h"
-#include "herr.h"
 
 #define PALETTE_SIZE	768	/* size of palette array */
 #define COLOR_SIZE	256	/* size of palette color array */

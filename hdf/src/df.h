@@ -33,8 +33,6 @@
 
 /* include DF (internal) header information */
 #include "hdf.h"
-#include "herr.h"
-/*#include "dfi.h"*/
 
 /*-------------------------------------------------------------------------*/
 /*                      Type declarations                                   */
@@ -208,4 +206,3 @@ DFerror;            /* Error code for DF routines */
 #define DFTOFID(df) (int32)(df->list)
 
 #endif /* DF_H */
-

@@ -95,7 +95,6 @@ Fortran stub functions:
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
-#include "herr.h"
 #include "dfsd.h"
 #include "hfile.h"
 
@@ -1658,7 +1657,7 @@ intn DFSDIsetnsdg_t(file_id,nsdghdr)
       {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, NULL);
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
 
 /* MMM:  Talk to Shiming and make sure the change made to the way ndgs
@@ -2009,7 +2008,7 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
       {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, NULL);
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
 
     /* read NDG into memory */
@@ -2560,7 +2559,7 @@ intn DFSDIputndg(file_id, ref, sdg)
       {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, NULL);
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
 
     /* set number type and subclass	*/

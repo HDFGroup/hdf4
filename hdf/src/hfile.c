@@ -46,13 +46,12 @@ static char RcsId[] = "@(#)$Revision$";
        Hnumber     -- count number of occurrances of tag/ref in file
        Hgetlibversion  -- return version info on current HDF library
        Hgetfileversion -- return version info on HDF file
-
+       Hfind       -- locate the next object of a search in an HDF file
 +*/
 
 #define HMASTER
 #include "hdf.h"
 #undef HMASTER
-#include "herr.h"
 #include "hfile.h"
 
 
@@ -99,11 +98,17 @@ extern funclist_t linked_funcs;
 
 extern funclist_t ext_funcs;
 
+/* Functions for accessing compressed data elements.  
+   For definition of the compressed data element, see hcomp.c. */
+
+extern funclist_t comp_funcs;
+
 /* Table of these function tables for accessing special elements.  The first
    member of each record is the speical code for that type of data element. */
 functab_t functab[] = {
     {SPECIAL_LINKED, &linked_funcs},
     {SPECIAL_EXT, &ext_funcs},
+    {SPECIAL_COMP, &comp_funcs},
     {0, NULL}                  /* terminating record; add new record */
                                /* before this line */
 };
@@ -111,15 +116,19 @@ functab_t functab[] = {
 /*
 ** Declaration of private functions.
 */
+#ifdef DELETE_FOR_40_RELEASE_IF_NOT_USED
 PRIVATE intn HIlock
   PROTO((int32 file_id));
+#endif
 
 PRIVATE intn HIunlock
   PROTO((int32 file_id));
 
+#ifdef DELETE_FOR_40_RELEASE_IF_NOT_USED
 PRIVATE intn HIchangedd
   PROTO((dd_t *datadd, ddblock_t *block, intn idx, int16 special,
 	 VOIDP special_info, funclist_t *special_func));
+#endif
 
 PRIVATE intn HIget_file_slot
   PROTO((char *path, char *FUNC));
@@ -521,13 +530,13 @@ int32 Hstartread(file_id, tag, ref)
 
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn Hnextread(int32 access_id, uint16 tag, uint16 ref, int origin)
+intn Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
 #else
 intn Hnextread(access_id, tag, ref, origin)
-    int32 access_id;           /* id of the read access record to modify */
-    uint16 tag;                        /* the tag to look for */
-    uint16 ref;                        /* the ref to look for */
-    int origin;                        /* where to start searching from */
+    int32 access_id;            /* id of the read access record to modify */
+    uint16 tag;                 /* the tag to look for */
+    uint16 ref;                 /* the ref to look for */
+    intn origin;                /* where to start searching from */
 #endif
 {
     char *FUNC="Hnextread";    /* for HERROR */
@@ -690,8 +699,40 @@ intn direction;
     *find_length=list[idx].length;
 
     return(SUCCEED);
-
 }   /* end Hfind() */
+
+/*--------------------------------------------------------------------------
+
+ NAME
+       Hexist -- locate an object in an HDF file
+ USAGE
+       intn Hfind(file_id ,search_tag, search_ref)
+       int32 file_id;           IN: file ID to search in
+       uint16 search_tag;       IN: the tag to search for
+                                    (can be DFTAG_WILDCARD)
+       uint16 search_ref;       IN: ref to search for
+                                    (can be DFREF_WILDCARD)
+ RETURNS
+       returns SUCCEED (0) if successful and FAIL (-1) otherwise
+ DESCRIPTION
+       Simple interface to Hfind which just determines if a given
+       tag/ref pair exists in a file.  Wildcards apply.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+        Hfind() does all validity checking, this is just a _very_
+        simple wrapper around it.
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn Hexist(int32 file_id, uint16 search_tag, uint16 search_ref)
+{
+    char *FUNC="Hexist";        /* for HERROR */
+    uint16 find_tag=0,find_ref=0;
+    int32 find_offset,find_length;
+
+    return(Hfind(file_id,search_tag,search_ref,&find_tag,&find_ref,
+            &find_offset,&find_length,DF_FORWARD));
+}   /* end Hexist() */
 
 /*--------------------------------------------------------------------------
 
@@ -1060,20 +1101,20 @@ intn Happendable(aid)
 
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn Hseek(int32 access_id, int32 offset, int origin)
+intn Hseek(int32 access_id, int32 offset, intn origin)
 #else
 intn Hseek(access_id, offset, origin)
-    int32 access_id;           /* access id */
-    int32 offset;              /* offset in this element to seek to */
-    int origin;                        /* origin in this elt to seek from */
+    int32 access_id;        /* access id */
+    int32 offset;           /* offset in this element to seek to */
+    intn origin;            /* origin in this elt to seek from */
 #endif
 {
     char *FUNC="Hseek";                /* for HERROR */
     accrec_t *access_rec;      /* access record */
 
     /* clear error stack and check validity of this access id */
-
     HEclear();
+
     access_rec = AID2REC(access_id);
     if (access_rec == (accrec_t *) NULL || !access_rec->used
         || (origin != DF_START && origin != DF_CURRENT && origin != DF_END))
@@ -1081,7 +1122,7 @@ intn Hseek(access_id, offset, origin)
 
     /* if special elt, use special function */
     if (access_rec->special)
-       return (*access_rec->special_func->seek)(access_rec, offset, origin);
+       return (intn)(*access_rec->special_func->seek)(access_rec, offset, origin);
 
     /* calculate real offset based on the origin and check for range */
     if (origin == DF_CURRENT)
@@ -1467,8 +1508,7 @@ int32 Hgetelement(file_id, tag, ref, data)
     Hendaccess(access_id);
 
     return(length);
-
-}   /* Hgetelement */
+}   /* Hgetelement() */
 
 /*--------------------------------------------------------------------------
 
@@ -1518,7 +1558,6 @@ int32 Hputelement(file_id, tag, ref, data, length)
     Hendaccess(access_id);
 
     return (ret);
-
 }   /* end Hputelement() */
 
 
@@ -2106,9 +2145,7 @@ int HDerr(file_id)
 
 ==========================================================================*/
 
-
-
-
+#ifdef DELETE_FOR_40_RELEASE_IF_NOT_USED
 /*--------------------------------------------------------------------------
  NAME
        HIchangedd -- update the internal contents of an AID
@@ -2164,6 +2201,7 @@ PRIVATE int HIchangedd(datadd, block, idx, special, special_info, special_func)
 
     return attached;
 }
+#endif
 
 
 /*--------------------------------------------------------------------------
@@ -2383,7 +2421,7 @@ VOIDP HIgetspinfo(access_rec, tag, ref)
 
 } /* HIgetspinfo */
 
-
+#ifdef DELETE_FOR_40_RELEASE_IF_NOT_USED
 /*--------------------------------------------------------------------------
  HIlock
 
@@ -2409,6 +2447,7 @@ PRIVATE int HIlock(file_id)
 
     return SUCCEED;
 }
+#endif
 
 /*--------------------------------------------------------------------------
  HIunlock
@@ -2602,7 +2641,6 @@ char string[];
 #endif
 {
     char *FUNC="Hgetlibversion";
-    int i;
 
     HEclear();
 
@@ -3297,14 +3335,12 @@ PRIVATE int HIupdate_version(file_id)
 int32 file_id;
 #endif
 {
-    /*
-    uint32 lmajorv, lminorv, lrelease;
-    */
+    /* uint32 lmajorv, lminorv, lrelease; */
     uint8 /*lstring[81],*/ lversion[LIBVER_LEN];
     filerec_t *file_rec;
-    int ret, i;
+    int32 ret;
+    int i;
     char *FUNC="Hupdate_version";
-
 
     HEclear();
 
@@ -3329,7 +3365,7 @@ int32 file_id;
     }
 
     ret = Hputelement(file_id, (uint16)DFTAG_VERSION, (uint16)1, lversion,
-		      (uint32)LIBVER_LEN);
+		      (int32)LIBVER_LEN);
 
     if (ret == SUCCEED) {
         file_rec->version.modified = 0;
@@ -3615,7 +3651,7 @@ mlseek(hdf_file_t rn, int32 n, intn m)
     
     if (noErr != (result = GetFPos(rn, &n)))
         return FAIL;
-    
+
     if (m == fsFromMark) {
         return(n);
     } else {

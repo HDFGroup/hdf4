@@ -18,7 +18,6 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "hdf.h"
 #include "hfile.h"
-#include "herr.h"
 
 #ifdef MAC
 /* this isn't worth putting in hdfi.h */

@@ -29,7 +29,6 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
-#include "herr.h"
 #include "jinclude.h"
 
 /* Static variables for JPEG compression (eventually these need to be stored */
@@ -1198,4 +1197,3 @@ intn DFCIunjpeg(file_id, tag, ref, image, xdim, ydim, scheme)
 
     return(SUCCEED);     /* we must be ok... */
 }   /* end DFCIunjpeg() */
-

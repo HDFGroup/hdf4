@@ -25,8 +25,6 @@
 #ifndef DFGR_H                      /* avoid re-inclusion */
 #define DFGR_H
 
-#include "hdf.h"
-
 /* description record: used to describe image data, palette data etc. */
 typedef struct {
     intn  ncomponents;  /* number of components */
@@ -48,7 +46,7 @@ typedef struct {
     int32   ypos;             /* Y position of image on screen */
     float32 aspectratio;      /* ratio of pixel height to width */
     float32 ccngamma;         /* gamma color correction parameter */ 
-    float32 ccnred[3];        /* red color correction parameter */ 
+    float32 ccnred[3];        /* red color correction parameter */
     float32 ccngrren[3];      /* green color correction parameter */ 
     float32 ccnblue[3];       /* blue color correction parameter */  
     float32 ccnwhite[3];      /* white color correction parameter */ 
@@ -69,4 +67,3 @@ extern int32 DFGRIopen
 #endif /* c_plusplus || __cplusplus */
 
 #endif /* DFGR_H */
-

@@ -53,7 +53,6 @@
 #define DFImemcopy      _DFImemcopy
 #define DFIseedDDs      _DFIseedDDs
 #define DFIstrncpy      _DFIstrncpy
-#define DFPIopen        _DFPIopen
 #define DFPgetpal       _DFPgetpal
 #define DFPlastref      _DFPlastref
 #define DFPnpals        _DFPnpals
@@ -178,4 +177,3 @@
 #define Hopen           _Hopen
 
 #endif  /* DFIVMS_H */
-

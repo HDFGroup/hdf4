@@ -48,12 +48,9 @@ static char RcsId[] = "@(#)$Revision$";
  *          dimension, compression, color compensation etc.
  *---------------------------------------------------------------------------*/
 
+#include "hdf.h"
 #include "dfgr.h"
-#include "herr.h"
 
-#if 0
-PRIVATE char   Grlastfile[DF_MAXFNLEN] = "";
-#endif
 PRIVATE char  *Grlastfile = NULL;
 PRIVATE uint8 *Grlutdata  = NULL;    /* points to lut, if in memory */
 PRIVATE intn   Grnewdata  = 0;       /* does Grread contain fresh data? */

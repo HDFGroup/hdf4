@@ -176,7 +176,7 @@ char    *fields;
                     order = vs->usym[j].order;
                     wlist->type[wlist->n]  = vs->usym[j].type;
                     wlist->order[wlist->n] = order;
-                    wlist->esize[wlist->n] = (int16) order * DFKNTsize(vs->usym[j].type | DFNT_NATIVE);
+                    wlist->esize[wlist->n] = (int16) (order * DFKNTsize((int32)vs->usym[j].type | DFNT_NATIVE));
                     wlist->isize[wlist->n] = order * vs->usym[j].isize;
                     wlist->ivsize+= (int16)(wlist->isize[wlist->n]);
                     wlist->n++;
@@ -193,7 +193,7 @@ char    *fields;
                         order = rstab[j].order;
                         wlist->type[wlist->n]  =  rstab[j].type;
                         wlist->order[wlist->n] =  order;
-                        wlist->esize[wlist->n] =  (int16) order * DFKNTsize(rstab[j].type | DFNT_NATIVE);
+                        wlist->esize[wlist->n] =  (int16) (order * DFKNTsize((int32)rstab[j].type | DFNT_NATIVE));
                         wlist->isize[wlist->n] =  order * rstab[j].isize;
                         wlist->ivsize+= (int16)(wlist->isize[wlist->n]);
                         wlist->n++;
@@ -608,4 +608,3 @@ int32 index;
     return ((int32) vs->wlist.order[index]);
 
 } /* VFfieldorder */
-

@@ -32,7 +32,6 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
-#include "herr.h"
 #include "hfile.h"
 
 #define MAX_GROUPS 8
@@ -164,9 +163,9 @@ int32 DFdiread(file_id, tag, ref)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFdiget(int32 list, uint16 *ptag, uint16 *pref)
+intn DFdiget(int32 list, uint16 *ptag, uint16 *pref)
 #else
-int DFdiget(list, ptag, pref)
+intn DFdiget(list, ptag, pref)
      int32  list;
      uint16 *ptag;
      uint16 *pref;
@@ -247,9 +246,9 @@ int32 DFdisetup(maxsize)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFdiput(int32 list, uint16 tag, uint16 ref)
+intn DFdiput(int32 list, uint16 tag, uint16 ref)
 #else
-int DFdiput(list, tag, ref)
+intn DFdiput(list, tag, ref)
      int32 list;
      uint16 tag, ref;
 #endif
@@ -285,16 +284,16 @@ int DFdiput(list, tag, ref)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFdiwrite(int32 file_id, int32 list, uint16 tag, uint16 ref)
+intn DFdiwrite(int32 file_id, int32 list, uint16 tag, uint16 ref)
 #else
-int DFdiwrite(file_id, list, tag, ref)
+intn DFdiwrite(file_id, list, tag, ref)
      int32 file_id;
      int32 list;
      uint16 tag, ref;
 #endif
 {
     char *FUNC="DFdiwrite";
-    int ret;                   /* return value */
+    int32 ret;                   /* return value */
     DIlist_ptr list_rec;
 
     if (!HDvalidfid(file_id))
@@ -310,5 +309,5 @@ int DFdiwrite(file_id, list, tag, ref)
     HDfreespace((VOIDP)list_rec->DIlist);
     HDfreespace((VOIDP)list_rec);
     Group_list[list & 0xffff] = NULL;  /* YUCK! BUG! */
-    return ret;
+    return (intn)ret;
 }

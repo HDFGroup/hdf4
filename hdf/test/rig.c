@@ -1054,7 +1054,7 @@ static uint8 FAR jpeg_24bit_j75[JPEGY][JPEGX][3]={
 static uint8 FAR jpeg_24bit_temp[JPEGY][JPEGX][3];
 
 
-#define ABS(x)  ((x)<0 ? (-x) : x)
+#define ABS(x)  ((int)(x)<0 ? (-x) : x)
 
 #ifdef PROTOTYPE
 intn fuzzy_memcmp(const void *s1,const void *s2,int32 len,intn fuzz_factor)
@@ -1069,7 +1069,7 @@ intn fuzz_factor;
 	const uint8 *t1=(const uint8 *)s1;
 	const uint8 *t2=(const uint8 *)s2;
 
-	while(ABS(*t2-*t1)<=fuzz_factor && len>0) {
+	while((int)ABS(*t2-*t1)<=fuzz_factor && len>0) {
 		t1++;
 		t2++;
 		len--;

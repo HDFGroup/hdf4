@@ -55,7 +55,6 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
-#include "herr.h"
 #include "hfile.h"
 #include "dfan.h"
 

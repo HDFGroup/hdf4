@@ -66,7 +66,7 @@ static char RcsId[] = "@(#)$Revision$";
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPES
+#ifdef PROTOTYPE
 int gen_bitio_test(VOID)
 #else
 int gen_bitio_test()
@@ -101,7 +101,7 @@ int gen_bitio_test()
     return(SUCCEED);
 }   /* end gen_bitio_test() */
 
-#ifdef PROTOTYPES
+#ifdef PROTOTYPE
 int main(int argc,char *argv[])
 #else
 int main(argc,argv)
@@ -110,4 +110,6 @@ char *argv[];
 #endif
 {
     gen_bitio_test();
+    exit(0);
 }   /* end main() */
+

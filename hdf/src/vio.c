@@ -341,11 +341,11 @@ int32   *size;  /* UNUSED, but retained for compatibility with vpackvs */
     if(vs->version <= VSET_OLD_TYPES)
         for (i = 0; i < vs->wlist.n; i++)   /* save the type */
             vs->wlist.type[i] = map_from_old_types(vs->wlist.type[i]);
-        
+
     /* --- EXTRA --- fill in the machine-dependent size fields */
     for (i = 0; i < vs->wlist.n; i++)
-        vs->wlist.esize[i] = (int16) vs->wlist.order[i] * DFKNTsize(vs->wlist.type[i] | DFNT_NATIVE);
-    
+        vs->wlist.esize[i] = (int16) (vs->wlist.order[i] * DFKNTsize((int32)vs->wlist.type[i] | (int32)DFNT_NATIVE));
+
 } /* vunpackvs */
 
 /* ---------------------------- vsdestroynode ------------------------- */
@@ -783,7 +783,6 @@ int32 vkey;
 int32 blk;
 #endif
 {
-    int32           status;
     int32           blksize, curr_size;
     vsinstance_t    *w;
     VDATA           *vs;
@@ -802,22 +801,13 @@ int32 blk;
 
     curr_size = vs->nvertices * vs->wlist.ivsize;
 
-#ifdef OLD_WAY
-    if(vs->nvertices && (curr_size > VDEFAULTBLKSIZE))
-        blksize = curr_size;
-    else
-        blksize = VDEFAULTBLKSIZE;
-
-    if(blk && blk > blksize) blksize = blk;
-#else
     if(blk>0)
-	blksize=blk;
+        blksize=blk;
     else
         if(vs->nvertices && (curr_size > VDEFAULTBLKSIZE))
             blksize = curr_size;
         else
             blksize = VDEFAULTBLKSIZE;
-#endif
 
     Hendaccess(vs->aid);
 
@@ -826,7 +816,6 @@ int32 blk;
         return FAIL;
 
     return SUCCEED;
-
 } /* VSappendable */
 
 /* ======================================================= */

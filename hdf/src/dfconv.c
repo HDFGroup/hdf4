@@ -116,7 +116,6 @@ static char RcsId[] = "@(#)$Revision$";
 #include <ctype.h>
 #define DFKMASTER  /* Define this for the prototypes for DFKnumin/out */
 #include "hdf.h"
-#include "herr.h"
 #include "hconv.h"
 
 /*
@@ -600,5 +599,4 @@ int16 access;
 /*****************************************************************************
  * Miscellaneous Other Conversion Routines
  *****************************************************************************/
-
 

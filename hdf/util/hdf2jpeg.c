@@ -18,7 +18,6 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "hdf.h"
 #include "hfile.h"
-#include "herr.h"
 
 /* Size of the file buffer to copy through */
 #define MAX_FILE_BUF    16384

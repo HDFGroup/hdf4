@@ -382,7 +382,7 @@ uint8        buf[];
 
     /* **EXTRA**  fill in the machine-dependent size fields */
     for (i=0;i<vs->wlist.n;i++)
-        vs->wlist.esize[i]=(int16)vs->wlist.order[i] * (VSIZEOF((int16)vs->wlist.type[i]));
+        vs->wlist.esize[i]=(int16)(vs->wlist.order[i] * VSIZEOF((int16)vs->wlist.type[i]));
 
 } /* oldunpackvs */
 

@@ -42,7 +42,7 @@ typedef struct {
 /* structure to hold RIG info */
 typedef struct {
     char    *cf;               /* color format */
-    int32   xpos;              /* X position of image on screen */      
+    int32   xpos;              /* X position of image on screen */
     int32   ypos;              /* Y position of image on screen */
     float32 aspectratio;       /* ratio of pixel height to width */
     float32 ccngamma;          /* gamma color correction parameters */
@@ -58,5 +58,10 @@ typedef struct {
     DFRdr   descmattechannel;  /* Description of matte? */
 } DFRrig;
 
-#endif /*DFRIG*/
+/* dimensions of raster-8 image */
+typedef struct R8dim {
+    uint16 xd;
+    uint16 yd;
+} R8dim;
 
+#endif /*DFRIG*/

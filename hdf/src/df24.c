@@ -40,269 +40,343 @@ static char RcsId[] = "@(#)$Revision$";
  *          dimension, compression, color compensation etc.
  *---------------------------------------------------------------------------*/
 
-
+#include "hdf.h"
 #include "dfgr.h"
-#include "herr.h"
 
-static int Newdata = 0;                /* does Readrig contain fresh data? */
-static int dimsset = 0;                /* have dimensions been set? */
+static intn Newdata = 0;            /* does Readrig contain fresh data? */
+static intn dimsset = 0;            /* have dimensions been set? */
 static int32 last_xdim = 0;
-static int32 last_ydim = 0;            /* .....gheesh.........*/
+static int32 last_ydim = 0;         /* .....gheesh.........*/
 
 #define LUT     0
 #define IMAGE   1
 
-
-/*-----------------------------------------------------------------------------
- * Name:    DF24getdims
- * Purpose: get dimensions of next image RIG
- * Inputs:  filename: name of HDF file
- *          pxdim, pydim: pointer to locations for returning x,y dimensions
- *          pil: location for returning interlace of image in file
- * Returns: 0 on success, -1 on failure with DFerror set
- *          *pxdim, *pydim, *pil set on success
- * Users:   HDF HLL (high-level library) users, utilities, other routines
- * Invokes: DFGRIgetdims
- * Remarks: none
- *---------------------------------------------------------------------------*/
-
+/*--------------------------------------------------------------------------
+ NAME
+    DF24getdims -- get dimensions of next image RIG
+ USAGE
+    intn DF24getdims(filename,pxdim,pydim,pil)
+        char *filename;         IN: the file to get retrieve dims. from
+        int32 *pxdim,*pydim;    OUT: ptrs to the X&Y dims retrieved
+        intn *pil;              OUT: ptr to the interlace for the image
+ RETURNS
+    SUCCEED on success, FAIL on failure.
+ DESCRIPTION
+    Gets the next image's dimensions and interlace from the file specified.
+ GLOBAL VARIABLES
+    last_xdim, last_ydim, Newdata
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int DF24getdims(char *filename, int32 *pxdim, int32 *pydim, int *pil)
+intn DF24getdims(char *filename, int32 *pxdim, int32 *pydim, intn *pil)
 #else
-int DF24getdims(filename, pxdim, pydim, pil)
+intn DF24getdims(filename, pxdim, pydim, pil)
     char *filename;
     int32 *pxdim, *pydim;
-    int *pil;
+    intn *pil;
 #endif
 {
-    int ncomps;
+    char *FUNC="DF24getdims";
+    intn ncomps;
 
     do {
         if (DFGRIgetdims(filename, pxdim, pydim, &ncomps, pil, IMAGE)<0)
-            return(FAIL);
+            HRETURN_ERROR(DFE_NODIM,FAIL);
     } while (ncomps!=3);
 
     last_xdim = *pxdim;
     last_ydim = *pydim;
     Newdata = 1;
-    return SUCCEED;
-}
+    return(SUCCEED);
+}   /* end DF24getdims() */
 
-/*-----------------------------------------------------------------------------
- * Name:    DF24reqil
- * Purpose: get next image with specified interlace
- * Inputs:  il: interlace to get next image with
- * Returns: 0 on success, -1 on failure with DFerror set
- * Users:   HDF HLL (high-level library) users, utilities, other routines
- * Invokes: DFGRIreqil
- * Remarks: none
- *---------------------------------------------------------------------------*/
-
+/*--------------------------------------------------------------------------
+ NAME
+    DF24reqil -- get next image with specified interlace
+ USAGE
+    intn DF24reqil(il)
+        intn il;            IN: the interlace requested for the next image
+ RETURNS
+    SUCCEED on success, FAIL on failure.
+ DESCRIPTION
+    Requests that the next image be returned in a particular interlace scheme.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int DF24reqil(int il)
+intn DF24reqil(intn il)
 #else
-int DF24reqil(il)
-    int il;
+intn DF24reqil(il)
+    intn il;
 #endif
 {
     return(DFGRIreqil(il, IMAGE));
-}
+}   /* end DF24reqil() */
 
-/*-----------------------------------------------------------------------------
- * Name:    DF24getimage
- * Purpose: get image from next RIG
- * Inputs:  filename: name of HDF file
- *          image: pointer to space to return image
- *          xdim, ydim: dimensions of space to return lut
- * Returns: 0 on success, -1 on failure with DFerror set
- * Users:   HDF HLL (high-level library) users, utilities, other routines
- * Invokes: DFGRIgetimlut
- * Remarks: space is assumed to be xdim * ydim * 3 bytes
- *---------------------------------------------------------------------------*/
-
+/*--------------------------------------------------------------------------
+ NAME
+    DF24getimage -- get image from next RIG
+ USAGE
+    intn DF24getimage(filename,image,xdim,ydim)
+        char *filename;     IN: file name to retrieve image from
+        VOIDP image;        OUT: buffer to store image in
+        int32 xdim,ydim;    IN: dimensions of image buffer
+ RETURNS
+    SUCCEED on success, FAIL on failure.
+ DESCRIPTION
+    Retrieves the next 24-bit image from a file.  The image is stored
+    according to the current interlace scheme and is wedged into the upper
+    left corner of the buffer.
+ GLOBAL VARIABLES
+    Newdata, last_xdim, last_ydim
+ COMMENTS, BUGS, ASSUMPTIONS
+    image buffer is assumed to be 3*xdim*ydim bytes in size.
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int DF24getimage(char *filename, VOIDP image, int32 xdim, int32 ydim)
+intn DF24getimage(char *filename, VOIDP image, int32 xdim, int32 ydim)
 #else
-int DF24getimage(filename, image, xdim, ydim)
+intn DF24getimage(filename, image, xdim, ydim)
     char *filename;
     VOIDP image;
     int32 xdim, ydim;
 #endif
 {
     char *FUNC="DF24getimage";
-    int ret, il;
+    intn ret, il;
     int32 tx, ty;
 
     HEclear();
 
-    if (!filename || !*filename || !image || (xdim<=0) || (ydim<=0)) {
-       HERROR(DFE_ARGS);
-        return FAIL;
-    }
+    if (!filename || !*filename || !image || (xdim<=0) || (ydim<=0))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     if (!Newdata && DF24getdims(filename, &tx, &ty, &il) == FAIL)
-       return FAIL;
+        HRETURN_ERROR(DFE_NODIM,FAIL);
 
     if (Newdata) {
-      tx = last_xdim;
-      ty = last_ydim;
-    }
+        tx = last_xdim;
+        ty = last_ydim;
+      } /* end if */
 
-    if ((tx > xdim) || (ty > ydim)) {
-       HERROR(DFE_ARGS);
-        return(FAIL);
-    }
+    if ((tx > xdim) || (ty > ydim))
+        HRETURN_ERROR(DFE_BADDIM,FAIL);
 
     ret = DFGRIgetimlut(filename, image, xdim, ydim, IMAGE, 0);
 
     Newdata = 0;
     return(ret);
-}
+}   /* end DF24getimage() */
 
-/*-----------------------------------------------------------------------------
- * Name:    DF24setdims
- * Purpose: set dimensions of image to write next
- * Inputs:  xdim, ydim: dimensions of image
- *          il: interlace of image
- * Returns: 0 on success, -1 on failure with DFerror set
- * Users:   HDF HLL (high-level library) users, utilities, other routines
- * Invokes: DFGRIsetdims
- * Remarks: none
- *---------------------------------------------------------------------------*/
-
+/*--------------------------------------------------------------------------
+ NAME
+    DF24setdims -- set dimensions of image to write next
+ USAGE
+    intn DF24setdims(xdim,ydim)
+        int32 xdim,ydim;    IN: the dimensions of the image to write next
+ RETURNS
+    SUCCEED on success, FAIL on failure.
+ DESCRIPTION
+    Sets the dimensions of the next image to write to a file.
+ GLOBAL VARIABLES
+    dimsset
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int DF24setdims(int32 xdim, int32 ydim)
+intn DF24setdims(int32 xdim, int32 ydim)
 #else
-int DF24setdims(xdim, ydim)
+intn DF24setdims(xdim, ydim)
     int32 xdim, ydim;
 #endif
 {
     dimsset = 1;
     return(DFGRIsetdims(xdim, ydim, 3, IMAGE));
-}
+}   /* end DF24setdims() */
 
-/*-----------------------------------------------------------------------------
- * Name:    DF24setil
- * Purpose: set interlace of image to write next
- * Inputs:  il: interlace of image
- * Returns: 0 on success, -1 on failure with DFerror set
- * Users:   HDF HLL (high-level library) users, utilities, other routines
- * Invokes: DFGRIsetil
- * Remarks: none
- *---------------------------------------------------------------------------*/
-
+/*--------------------------------------------------------------------------
+ NAME
+    DF24setil -- set interlace of image to write next
+ USAGE
+    intn DF24setil(il)
+        intn il;            IN: the interlace of the image to write next
+ RETURNS
+    SUCCEED on success, FAIL on failure.
+ DESCRIPTION
+    Sets the interlace of the next image to write to a file.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int DF24setil(int il)
+intn DF24setil(intn il)
 #else
-int DF24setil(il)
-    int il;
+intn DF24setil(il)
+    intn il;
 #endif
 {
     return(DFGRIsetil(il, IMAGE));
-}
+}   /* end DF24setil() */
 
-/*-----------------------------------------------------------------------------
- * Name:    DF24setcompress
- * Purpose: set compression scheme for 24-bit image
- * Inputs:
- *      type - the type of compression to perform on the next image
- *      cinfo - compression information structure
- * Returns: 0 on success, -1 on failure with DFerror set
- * Users:   HDF HLL (high-level library) users, utilities, other routines
- * Invokes: DFGRsetcompress
- * Remarks: none
- *---------------------------------------------------------------------------*/
-
+/*--------------------------------------------------------------------------
+ NAME
+    DF24setcompress -- set compression scheme for next 24-bit image
+ USAGE
+    intn DF24setcompress(type,cinfo)
+        int32 type;         IN: compression scheme for next image
+        comp_info *cinfo;   IN: additional compression information for
+                                certain compression schemes (currently only
+                                JPEG)
+ RETURNS
+    SUCCEED on success, FAIL on failure.
+ DESCRIPTION
+    Sets the compression scheme of the next image to write to a file.
+    A list of the different schemes may be found in the hcomp.h header
+    file.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int DF24setcompress(int32 type,comp_info *cinfo)
+intn DF24setcompress(int32 type,comp_info *cinfo)
 #else
-int DF24setcompress(type,cinfo)
+intn DF24setcompress(type,cinfo)
     int32 type;
     comp_info *cinfo;
 #endif
 {
     return(DFGRsetcompress(type, cinfo));
-}
+}   /* end DF24setcompress() */
 
-/*-----------------------------------------------------------------------------
- * Name:    DF24restart
- * Purpose: restart file
- * Inputs:
- * Returns: 0 on success, -1 on failure with DFerror set
- * Users:   HDF HLL (high-level library) users, utilities, other routines
- * Invokes: DFGRIrestart
- * Remarks: none
- *---------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------
+ NAME
+    DF24restart -- restart access to a file
+ USAGE
+    intn DF24restart(void)
+ RETURNS
+    SUCCEED on success, FAIL on failure.
+ DESCRIPTION
+    Restarts access to a file through the DF24 interface.  Next read/write
+    will start with the first 24-bit image in the file.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int DF24restart(void)
+intn DF24restart(void)
 #else
-int DF24restart()
+intn DF24restart()
 #endif
 {
-    return DFGRIrestart();
-}
+    return(DFGRIrestart());
+}   /* end DF24restart() */
 
-/*-----------------------------------------------------------------------------
- * Name:    DF24addimage
- * Purpose: Write out image
- * Inputs:  filename: name of HDF file
- *          image: image to write
- *          xdim, ydim: dimensions of array image
- * Returns: 0 on success, -1 on failure with DFerror set
- * Users:   HDF HLL (high-level library) users, utilities, other routines
- * Invokes: DFGRIaddimlut
- * Remarks: array image is assumed to be xdim * ydim * 3 bytes
- *---------------------------------------------------------------------------*/
-
+/*--------------------------------------------------------------------------
+ NAME
+    DF24addimage -- append 24-bit image to file
+ USAGE
+    intn DF24addimage(filename,image,xdim,ydim)
+        char *filename;     IN: name of HDF file to write to
+        VOIDP image;        IN: Pointer to image data
+        int32 xdim,ydim;    IN: Dimensions of image to write
+ RETURNS
+    SUCCEED on success, FAIL on failure.
+ DESCRIPTION
+    Appends a 24-bit raster image to an HDF file.  Will create the file
+    if it doesn't exist.
+ GLOBAL VARIABLES
+    dimsset
+ COMMENTS, BUGS, ASSUMPTIONS
+    Array image is assumed to be xdim * ydim * 3 bytes
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int DF24addimage(char *filename, VOIDP image, int32 xdim, int32 ydim)
+intn DF24addimage(char *filename, VOIDP image, int32 xdim, int32 ydim)
 #else
-int DF24addimage(filename, image, xdim, ydim)
+intn DF24addimage(filename, image, xdim, ydim)
     char *filename;
     VOIDP image;
     int32 xdim, ydim;
 #endif
 {
+    char *FUNC="DF24addimage";
+
     /* 0 == C */
     if (!dimsset && DFGRIsetdims(xdim, ydim, 3, IMAGE) == FAIL)
-       return FAIL;
+       HRETURN_ERROR(DFE_BADDIM,FAIL);
     dimsset = 0; /* reset to new rig */
 
     return(DFGRIaddimlut(filename, image, xdim, ydim, IMAGE, 0, 0));
-}
+}   /* end DF24addimage() */
 
+/*--------------------------------------------------------------------------
+ NAME
+    DF24putimage -- write 24-bit image to file
+ USAGE
+    intn DF24addimage(filename,image,xdim,ydim)
+        char *filename;     IN: name of HDF file to write to
+        VOIDP image;        IN: Pointer to image data
+        int32 xdim,ydim;    IN: Dimensions of image to write
+ RETURNS
+    SUCCEED on success, FAIL on failure.
+ DESCRIPTION
+    Writes a 24-bit raster image to a new HDF file.  Will overwrite existing
+    files if they exist.
+ GLOBAL VARIABLES
+    dimsset
+ COMMENTS, BUGS, ASSUMPTIONS
+    Array image is assumed to be xdim * ydim * 3 bytes
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int DF24putimage(char *filename, VOIDP image, int32 xdim, int32 ydim)
+intn DF24putimage(char *filename, VOIDP image, int32 xdim, int32 ydim)
 #else
-int DF24putimage(filename, image, xdim, ydim)
+intn DF24putimage(filename, image, xdim, ydim)
     char *filename;
     VOIDP image;
     int32 xdim, ydim;
 #endif
 {
+    char *FUNC="DF24putimage";
+
     /* 0 == C */
     if (!dimsset && DFGRIsetdims(xdim, ydim, 3, IMAGE) == FAIL)
-       return FAIL;
+       HRETURN_ERROR(DFE_BADDIM,FAIL);
     dimsset = 0; /* reset to new rig */
 
     return(DFGRIaddimlut(filename, image, xdim, ydim, IMAGE, 0, 1));
-}
+}   /* end DF24putimage() */
 
-
-/*-----------------------------------------------------------------------------
- * Name:    DF24nimages
- * Purpose: How many 24-bit raster images are present in this file?
- * Inputs:  filename: name of HDF file
- * Returns: number of images  on success, -1 on failure with DFerror set
- * Users:   HDF programmers, other routines and utilities
- * Invokes: DFGRIopen, Hclose, Hnumber, Hfind, Hoffset
- * Remarks: the number is the number of unique 24-bit images in the file.
- *---------------------------------------------------------------------------*/
-
+/*--------------------------------------------------------------------------
+ NAME
+    DF24nimages -- determines number of 24-bit raster images in a file
+ USAGE
+    intn DF24nimages(filename)
+        char *filename;     IN: name of HDF file to check
+ RETURNS
+    Number of images on success, FAIL on failure.
+ DESCRIPTION
+    Determines the number of unique 24-bit raster images in a file.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int DF24nimages(char *filename)
+intn DF24nimages(char *filename)
 #else
-int DF24nimages(filename)
+intn DF24nimages(filename)
     char *filename;
 #endif
 {
@@ -318,19 +392,16 @@ int DF24nimages(filename)
     HEclear();
 
     /* should use reopen if same file as last time - more efficient */
-    file_id = DFGRIopen(filename, DFACC_READ);
-    if (file_id == FAIL)
-       return FAIL;
+    if((file_id = DFGRIopen(filename, DFACC_READ))== FAIL)
+        HRETURN_ERROR(DFE_BADOPEN,FAIL);
 
     /* go through the RIGs looking for 24-bit images */
     nimages=0;
     find_tag=find_ref=0;
     while(Hfind(file_id,DFTAG_RIG,DFREF_WILDCARD,&find_tag,&find_ref,&find_off,&find_len,DF_FORWARD)==SUCCEED) {
         /* read RIG into memory */
-        if ((group_id=DFdiread(file_id, DFTAG_RIG,find_ref)) == FAIL) {
-            HERROR(DFE_INTERNAL);
-            return(FAIL);
-          } /* end if */
+        if ((group_id=DFdiread(file_id, DFTAG_RIG,find_ref)) == FAIL)
+            HRETURN_ERROR(DFE_INTERNAL,FAIL);
         while(!DFdiget(group_id, &elt_tag, &elt_ref)) {  /* get next tag/ref */
             if(elt_tag==DFTAG_ID) {     /* just look for ID tags to get the number of components */
                 if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL) {
@@ -348,52 +419,62 @@ int DF24nimages(filename)
                         nimages++;
                   } /* end if */
                 else
-                    return(FAIL);
+                    HRETURN_ERROR(DFE_GETELEM,FAIL);
               } /* end if */
           } /* end while */
       } /* end while */
 
     if (Hclose(file_id) == FAIL)
-       return FAIL;
+       HRETURN_ERROR(DFE_CANTCLOSE,FAIL);
     return(nimages);
 }   /* end DF24nimages() */
 
-/*-----------------------------------------------------------------------------
- * Name:    DF24readref
- * Purpose: Set ref of 24-rig to get next
- * Inputs:  filename: file to which this applies
- *          ref: reference number of next get
- * Returns: 0 on success, -1 on failure
- * Users:   HDF programmers, other routines and utilities
- * Invokes: DFGRreadref
- * Remarks: checks if 24-rig with this ref exists
- *---------------------------------------------------------------------------*/
-
+/*--------------------------------------------------------------------------
+ NAME
+    DF24readref -- set ref # of 24-bit RIG to read next
+ USAGE
+    intn DF24readref(filename,ref)
+        char *filename;     IN: name of HDF file
+        uint16 ref;         IN: ref # of next 24-bit RIG to read
+ RETURNS
+    SUCCEED on success, FAIL on failure.
+ DESCRIPTION
+    Sets the ref # of the next 24-bit RIG to read from a file.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int DF24readref(char *filename, uint16 ref)
+intn DF24readref(char *filename, uint16 ref)
 #else
-int DF24readref(filename, ref)
+intn DF24readref(filename, ref)
     char *filename;
     uint16 ref;
 #endif
 {
-    return (DFGRreadref(filename, ref));
-}
+    return(DFGRreadref(filename, ref));
+}   /* end DF24readref() */
 
-/*-----------------------------------------------------------------------------
- * Name:    DF24lastref
- * Purpose: Return reference number of last read or written RIG
- * Inputs:
- * Returns: Last reference number
- * Users:   HDF HLL (high-level library) users, utilities, other routines
- * Invokes: DFGRIlastref
- * Remarks: none
- *---------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------
+ NAME
+    DF24lastref -- return ref # of last read/written 24-bit RIG
+ USAGE
+    uint16 DF24lastref(void)
+ RETURNS
+    Last ref # on success, FAIL on failure.
+ DESCRIPTION
+    Returns the last ref # of a 24-bit RIG read to or written from a file.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
 uint16 DF24lastref(void)
 #else
 uint16 DF24lastref()
 #endif
 {
-    return DFGRIlastref();
-}
+    return(DFGRIlastref());
+}   /* end DF24lastref() */

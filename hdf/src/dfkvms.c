@@ -57,7 +57,6 @@ static char RcsId[] = "@(#)$Revision$";
 /*****************************************************************************/
 
 #include "hdf.h"
-#include "herr.h"
 #include "hconv.h"
 
 #if defined(VMS)

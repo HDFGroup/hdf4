@@ -540,6 +540,7 @@ typedef int32           HFILEID;
    functions that are used by application programs.  */
 
 #include "hcomp.h"
+#include "herr.h"
 #include "hproto.h"
 #include "vproto.h"
 
@@ -550,4 +551,3 @@ typedef int32           HFILEID;
 #define Vend(f)             Vfinish((f))
 
 #endif /* HDF_H */
-
