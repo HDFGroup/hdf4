@@ -114,8 +114,8 @@ DIFF_FLAGS = -w
 
 
 PROGRAM		= hrepack
-TESTPROG	= hrepacktst
-CHECKPROG       = hrepackck
+TESTPROG	= test_hrepack
+CHECKPROG       = hrepack_check
 BINFILES	= $(PROGRAM)
 #HDF_LIB         = @HDF_LIB@
 #HDF_INC         = @HDF_INC@
@@ -147,10 +147,10 @@ all::         FORCE
 	fi
 
 
-hrepacktst: 
+test_hrepack: 
 	$(CC) $(CFLAGS) -I$(HDF_INC) -I$(NETCDF_INC) -I$(HDIFF_INC) $(TESTFILES) $(LIBS) -o $(TESTPROG)
 
-hrepackck:
+hrepack_check:
 	$(CC) $(CFLAGS) -I$(HDF_INC) -I$(NETCDF_INC) -I$(HDIFF_INC) $(CHECKFILES) $(LIBS) -o $(CHECKPROG)
 
 

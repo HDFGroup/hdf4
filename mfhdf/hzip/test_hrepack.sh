@@ -82,9 +82,9 @@ TOOLTEST() {
 ##############################################################################
 
 
-# just run the program hrepacktst; this has several runs with 
+# just run the program test_hrepack; this has several runs with 
 # different compression and chunking options
-./hrepacktst
+./test_hrepack
 
 
 
