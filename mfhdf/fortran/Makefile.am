@@ -47,4 +47,4 @@ check:
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES = ftest.f jackets.c netcdf.inc netcdf.f90 *.nc *.hdf testdir/testext.hdf
+DISTCLEANFILES = ftest.f jackets.c netcdf.inc netcdf.f90 test.nc copy.nc *.hdf testdir/testext.hdf
