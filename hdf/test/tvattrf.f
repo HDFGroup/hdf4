@@ -43,11 +43,11 @@ C Output file: tvattrf.hdf
      +           ifn = 'tvattr.dat' ,
      +           ofn = 'tvattrf.hdf'
      +          )  
-      integer vsffidx, vsfsat, vsfscat, vsfnatt
-      integer vsffnat, vsffdat, vsfainf, vsfgatt
+      integer vsffidx, vsfsnat, vsfscat, vsfnats
+      integer vsffnas, vsffdat, vsfainf, vsfgnat
       integer vsfgcat, vsfisat, vfnflds
-      integer vfsatt, vfscatt, vfnatts
-      integer vffdatt, vfainfo, vfgatt, vfgcatt
+      integer vfsnatt, vfscatt, vfnatts
+      integer vffdatt, vfainfo, vfgnatt, vfgcatt
       integer vfgver
       integer hopen, hclose, vfatch, vfdtch, vfstart
       integer vfend, vsfatch, vsfdtch, vfgid, vsgver
@@ -110,12 +110,12 @@ C Open the file
          call MESSAGE(1, 'Wrong number of fields of vsname1')
          number_failed = number_failed + 1
       endif
-      nattrs = vsfnatt(vsid)
+      nattrs = vsfnats(vsid)
       if (nattrs .ne. 6) then
          call MESSAGE(1, 'Wrong number of total attrs for vsname1')
          number_failed = number_failed + 1
       endif
-      nattrs = vsffnat(vsid, ENTIRE_VDATA)
+      nattrs = vsffnas(vsid, ENTIRE_VDATA)
       if (nattrs .ne. 2) then
          call MESSAGE(1, 'Wrong number of attrs for vsname1')
          number_failed = number_failed + 1
@@ -150,7 +150,7 @@ C get the 1st attr of fld 0
          call MESSAGE(1, 'Wrong findex of fldname1 of  vsname1')
          number_failed = number_failed + 1
       endif
-      ret = vsfgatt(vsid, findex, aindex, iattrg)
+      ret = vsfgnat(vsid, findex, aindex, iattrg)
       call VERIFY(ret, 'vsfgatt1', number_failed)
       if (dabs(iattrg(1)-GATTR1) .gt. dabs(geps * GATTR1)) 
      +          then
@@ -189,21 +189,21 @@ C test vgroup routines
       endif
       ret = vfainfo(vgid,0,iattrnm,itype,icount,imsize)
       call VERIFY(ret, 'vfainfo',number_failed)
-      ret = vfgatt(vgid, 0, iattri)
-      call VERIFY(ret, 'vfgatt',number_failed)
+      ret = vfgnatt(vgid, 0, iattri)
+      call VERIFY(ret, 'vfgnatt',number_failed)
       if (iattri(1) .ne. 10032 .or. iattri(2) .ne. 10064)
      +      then
-         call MESSAGE(1, 'vfgatt failed.   ')
+         call MESSAGE(1, 'vfgnatt failed.   ')
          number_failed = number_failed + 1
       endif
 C get attname2
       ret = vffdatt(vgid, 'attname2')
       call VERIFY(ret, 'vffdatt',number_failed)
-      ret = vfgatt(vgid, ret, iattrs)
-      call VERIFY(ret, 'vfgatt',number_failed)
+      ret = vfgnatt(vgid, ret, iattrs)
+      call VERIFY(ret, 'vfgnatt',number_failed)
       if (iattrs(1) .ne. 16 .or. iattrs(2) .ne. 32)
      +       then
-         call MESSAGE(1, 'vfgatt failed.   ')
+         call MESSAGE(1, 'vfgnatt failed.   ')
          number_failed = number_failed + 1
       endif
 C finish reading existing attrs
@@ -222,9 +222,9 @@ C vgroup attrs
       vgid = vfatch(fid1, -1, 'w')
       call VERIFY(ret, 'vfatch', number_failed)
       ret = vfscatt(vgid, 'vgcattr0', DFNT_CHAR, 4, 'cat0')
-      call VERIFY(ret, 'vfsatt', number_failed)
-      ret = vfsatt(vgid,'vgattr1',DFNT_FLOAT32,1,RATTR1)
-      call VERIFY(ret, 'vfsatt', number_failed)
+      call VERIFY(ret, 'vfscatt', number_failed)
+      ret = vfsnatt(vgid,'vgattr1',DFNT_FLOAT32,1,RATTR1)
+      call VERIFY(ret, 'vfsnatt', number_failed)
       ret = vfdtch(vgid)
       call VERIFY(ret, 'vfdtch', number_failed)
 C vdata attrs
@@ -236,9 +236,9 @@ C vdata attrs
       ret = vsfscat(vsid, ENTIRE_VDATA, 'vscattr0', DFNT_CHAR, 3,
      +              'at2')
       call VERIFY(ret, 'vfsatt', number_failed)
-      ret = vsfsat(vsid, 0, 'vsattr1', DFNT_FLOAT32, 1, 
+      ret = vsfsnat(vsid, 0, 'vsattr1', DFNT_FLOAT32, 1, 
      +             RATTR1)
-      call VERIFY(ret, 'vsfsat', number_failed)
+      call VERIFY(ret, 'vsfsnat', number_failed)
       ret = vsfdtch(vsid) 
       call VERIFY(ret, 'vsfdtch', number_failed)
       ret = vfend(fid1)
@@ -264,7 +264,7 @@ C     +     .or. iattrc(3) .ne. '0') then
          call MESSAGE(1, 'Wrong values of char attr for vg')
          number_failed = number_failed + 1
       endif
-      ret = vfgatt(vgid, 1, iattrr)
+      ret = vfgnatt(vgid, 1, iattrr)
       call VERIFY(ret, 'vfgatt', number_failed)
       if (abs(iattrr(1)-RATTR1) .gt. abs(RATTR1*feps)) 
      +          then
@@ -288,7 +288,7 @@ C     +     .or. iattrc(3) .ne. '2') then
          number_failed = number_failed + 1
          print *, iattrc, 'at2'
       endif
-      ret = vsfgatt(vsid, 0, 0, iattrr)
+      ret = vsfgnat(vsid, 0, 0, iattrr)
       call VERIFY(ret, 'vsfgatt2', number_failed)
       if (abs(iattrr(1)-RATTR1) .gt. abs(RATTR1*feps)) 
      +          then
