@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/08/24 22:00:44  sxu
-Added TPU$EDIT as default editor for VMS
+Revision 1.4  1992/08/26 16:28:28  sxu
+Fixed a typo, eitor --> editor
 
+ * Revision 1.3  1992/08/24  22:00:44  sxu
+ * Added TPU$EDIT as default editor for VMS
+ *
  * Revision 1.2  1992/07/15  21:48:48  sxu
  * No change.
  *
@@ -133,7 +136,7 @@ int annotate(editor, ann)
     if (editor == NULL)
     {
         char *getenv();
-        eitor = getenv("EDITOR");
+        editor = getenv("EDITOR");
         if (editor == NULL) editor = "/usr/bin/ex";
     }
     if (fork() == 0)
