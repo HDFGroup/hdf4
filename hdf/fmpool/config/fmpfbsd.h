@@ -37,6 +37,7 @@
 #define HAVE_MIN_MAX
 #define HAVE_CDEFS_H
 #define __BIT_TYPES_DEFINED__
+#define	BYTE_ORDER  LITTLE_ENDIAN	
 
 #endif /* _FMPCONF_H */
 
