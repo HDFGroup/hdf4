@@ -1,9 +1,0 @@
-This directory contains four subdirectories and a README file.
-
-README -- This file.
-src -- contains all the unpacked source code for the HDF base 
-          library.
-jpeg -- The Independent JPEG Group's JPEG software jpeg release 5b.
-test -- a test suite to test the HDF library.
-util -- HDF utilities and test data files.
-
