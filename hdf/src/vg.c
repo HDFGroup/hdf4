@@ -871,16 +871,20 @@ char    * vgname;
     char  name[512];
     char * FUNC = "Vfind";
     
-    while ( -1L != (vgid=Vgetid(f, vgid)) ) {
-        vkey = Vattach(f,vgid,"r");
+    while ( -1L != (vgid = Vgetid(f, vgid)) ) {
+        vkey = Vattach(f, vgid, "r");
         if (vkey==FAIL)
             return(0);            /* error */
+
         Vgetname(vkey, name);
-        Vdetach (vkey);
         if (!HDstrcmp(vgname,name)) {
             ret_ref = VQueryref(vkey);
+            Vdetach (vkey);
             return (ret_ref);   /* found the vgroup */
-        } /* end if */
+        } /* else */
+
+        Vdetach(vkey);
+
     }
     return(0); /* not found */
     
