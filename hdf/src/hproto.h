@@ -66,6 +66,9 @@ extern      "C"
     extern intn Hseek
                 (int32 access_id, int32 offset, intn origin);
 
+    extern int32 Htell
+                (int32 access_id);
+
     extern int32 Hread
                 (int32 access_id, int32 length, VOIDP data);
 

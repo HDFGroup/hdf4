@@ -1773,6 +1773,37 @@ Hseek(int32 access_id, int32 offset, intn origin)
 }	/* Hseek() */
 
 /*--------------------------------------------------------------------------
+
+NAME
+   Htell -- report position of an access element in a data element
+USAGE
+   int32 Htell(access_id)
+       int32 access_id;        IN: id of access element
+RETURNS
+   returns FAIL (-1) on error, offset in data element otherwise
+DESCRIPTION
+    Reports the offset in bytes of an AID in a data element.  Analogous to
+    ftell().
+
+--------------------------------------------------------------------------*/
+int32
+Htell(int32 access_id)
+{
+	CONSTR(FUNC, "Htell");	/* for HERROR */
+	accrec_t   *access_rec;		/* access record */
+
+/* clear error stack and check validity of this access id */
+	HEclear();
+
+	access_rec = AID2REC(access_id);
+	if (access_rec == (accrec_t *) NULL || !access_rec->used)
+		HRETURN_ERROR(DFE_ARGS, FAIL);
+
+/* return the offset in the AID */
+    return((int32)access_rec->posn);
+}	/* Htell() */
+
+/*--------------------------------------------------------------------------
 NAME
    Hread -- read the next segment from data element
 USAGE
