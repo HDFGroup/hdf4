@@ -81,6 +81,18 @@ o A new file, ../release_notes/compile.txt, contains instructions on
   compiling applications on the supported platforms.  If you encounter
   problems with it, please let us know at hdfhelp@ncsa.uiuc.edu. 
 
+o SGI has changed some compiler default settings in the IRIX 6.2.
+  We decided to explicitly defined the settings of various ABI related
+  options.  For the 64 bits OS ("uname -s" returns IRIX64), HDF uses
+  "-64 -mips4" codes.  For the traditional 32 bits OS ("uname -s" returns
+  IRIX), HDF uses "-32 -mips2".  To use n32 mode in IRIX64, HDF uses
+  "-n32 -mips3" codes.  Note that in the previous release (4.0r2), HDF
+  uses only "-n32".  In IRIX 6.1 and before, "-n32" defaulted to
+  "-mips4" code but in IRIX 6.2, it defaults to mips3 or mips4 codes.
+  We decided to explicitedly set it to "-n32 -mips3".  Therefore,
+  applications linking with the HDF library must be compiled with
+  the same explicite ABI options.
+
 Platforms Tested:
 -----------------
 
@@ -100,7 +112,7 @@ HDF 4.1b1 has been tested on the following platforms:
   Solaris 2.5
   SunOS 4.1.3
   Windows NT/95 (C only)
-  YMP 803.2
+  YMP 9.0.2asC
 
 Known Problems:
 ---------------

@@ -1,4 +1,4 @@
-HDF4.1b
+HDF4.1b1
 =======
 1. If you opened a file in read only mode with the SD interface,
    it would create the file if the file did not exist. This has been fixed.
@@ -16,8 +16,8 @@ HDF4.1b
    then performed an SDendaccess, followed by a SDselect.
 8. HDF4.0r2 did not recognize JPEG images created by HDF 3.3r4.  This
    has been fixed.
-9. The compression tests no longer produce errors on IRIX 6.1, when 
-   the '-O' option is used.
+9. The newest SGI cc compiler (7.0) has eliminated the compression code
+   errors when '-O' option is used.
 
 HDF4.0r2
 ========

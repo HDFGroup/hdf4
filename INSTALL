@@ -33,6 +33,7 @@
   2.5.9 Fujitsu UXP/M-1800(Unix_System_V-4.0)
   2.5.10 SP2 Single node
   2.5.11 T3D Single node
+  2.5.12 IRIX 6.2
 
   2.6 Pablo Instrumentation
   2.7 File Cache(Beta release)
@@ -78,8 +79,8 @@
   Sun4(SunOS 4.1.3)           GCC 2.6.3      f77              X         X
   Sun4(Solaris 2.5)           CC SC3.0       f77              X         X
   SGI-Indy(IRIX5.3)           CC             f77              X         X
-  SGI-Indy(IRIX6.2_n32)       CC 7.0         F77 7.0          X         X
-  SGI-Indy(IRIX6.2_64)        CC 7.0         F77 7.0          X         X
+  SGI-Indy(IRIX6.2_n32)       CC 7.0         f77 7.0          X         X
+  SGI-Indy(IRIX6.2_64)        CC 7.0         f77 7.0          X         X
   HP9000/735(HPUX 9.03)       CC(A.09.77)    f77(09.16)       X         X
   Exemplar(HPUX 9.03)         -               -               -         -        
   Cray C90 (UNICOS 803.2)     -               -               -         - 
@@ -584,6 +585,24 @@
     To use it in the parallel processing environment on the T3D system,
     you must run the HDF code in only one designated process since HDF
     does not support concurrent access of the same HDF file.
+
+
+    2.5.12 IRIX 6.2
+    ---------------
+    SGI supports IRIX 6.2 on all their new machines.  4.1b1 version
+    is tested on various types of SGI machines running IRIX 6.2.
+    The configure script has been updated to work in three different
+    systems.
+
+    OS	   	ABI	Configure command	Code produced
+    --		--	-----------------	-------------
+    IRIX64	N64	./configure		-64  -mips4
+    IRIX64	N32	./configure irix6_32	-n32 -mips3
+    IRIX	O32	./configure		-32  -mips2
+
+    NB: Previously, "./configure irix6_32" produces -n32 -mips4 codes.
+    But SGI has changed the compiler defaults in IRIX 6.2.  We decided
+    to change the setting for it too.
 
 
 2.6 Pablo Instrumentation
