@@ -306,5 +306,21 @@ C
       integer mggattr     
       integer mgfndat    
 
+C
+C       Decls of ANxxx functions for Fortran multi-file AN interface
+C
+      integer afstart
+      integer affileinfo
+      integer afend       
+      integer afcreate
+      integer affcreate
+      integer afselect
+      integer afnumann
+      integer afannlist
+      integer afannlen
+      integer afwriteann
+      integer afreadann
+      integer afendacess
+
 C End of declarations
 
