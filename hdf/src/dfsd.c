@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1992/11/10 20:19:42  georgev
-Added routines DFSDwriteref, DFSDsetfillvalue, DFSDgetfillvalue
- DFSDwritefillvalue, DFSDwriteslab for writing hyperslabs
+Revision 1.7  1992/11/12 21:29:12  georgev
+DFSDgetfillvalue has been fixed
 
+ * Revision 1.6  1992/11/10  20:19:42  georgev
+ * Added routines DFSDwriteref, DFSDsetfillvalue, DFSDgetfillvalue
+ *  DFSDwritefillvalue, DFSDwriteslab for writing hyperslabs
+ *
  * Revision 1.5  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -3903,6 +3906,8 @@ DFSDgetfillvalue(fill_value)
     void *fill_value;
 #endif /* PROTOTYPE */
 {
+    int32 numtype;      /* current number type  */
+    int32 localNTsize;  /* size of this NT on as it is on this machine  */
     char *FUNC="DFSDgetfillvalue";
 
     /* Clear error stack  */
@@ -3911,9 +3916,13 @@ DFSDgetfillvalue(fill_value)
     /* Check if Readsdg is fresh  */
     if (Newdata < 0) 
         HRETURN_ERROR(DFE_BADCALL, FAIL);
-    
+
+    /* Get local number type size  */
+    numtype = Readsdg.numbertype;
+    localNTsize = DFKNTsize(numtype | DFNT_NATIVE);
+
     /* Set return fill value  */
-    fill_value = Readsdg.fill_value;
+    HDmemcpy(fill_value, Readsdg.fill_value, localNTsize);
     return SUCCEED;
 }
 
