@@ -57,10 +57,8 @@ static char RcsId[] = "@(#)$Revision$";
 
 
 /* Private routines */
-#ifndef USE_INLINE
 static BKT *mpool_bkt   __P((MPOOL *));
 static BKT *mpool_look  __P((MPOOL *, pageno_t));
-#endif
 static int  mpool_write __P((MPOOL *, BKT *));
 
 /*-----------------------------------------------------------------------------
@@ -1119,11 +1117,7 @@ DESCRIPTION
            that a user could inadvertently clobber the bucket element
            information by writing out of the page size bounds.
 ---------------------------------------------------------------------------- */
-#ifndef USE_INLINE
 static BKT *
-#else
-BKT *
-#endif
 mpool_bkt(mp)
   MPOOL *mp;  /* MPOOL cookie */
 {
@@ -1346,11 +1340,7 @@ RETURNS
 DESCRIPTION
    Private routine. Lookup a page in the cache and return pointer to it.
 ---------------------------------------------------------------------------- */
-#ifndef USE_INLINE
 static BKT *
-#else
-BKT *
-#endif
 mpool_look(mp, pgno)
   MPOOL *mp;    /* MPOOL cookie */
   pageno_t pgno;  /* page to look up in cache */
