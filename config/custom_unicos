@@ -31,10 +31,10 @@ CFLAGS='-O'
 # Location of the HDF home.  Must be an absolute path.
 HDF_HOME=`pwd`/..
 # Location of HDF include files.  Must be an absolute path.
-HDF_INC=-I${HDF_HOME}/hdf/include
+HDF_INC=-I${HDF_HOME}/hdf/src
 #
 # Location of HDF library file.  Must be an absolute path.
-HDF_LIB=${HDF_HOME}/hdf/lib/libdf.a
+HDF_LIB=${HDF_HOME}/hdf/src/libdf.a
 #
 # Location of JPEG library file.  Must be an absolute path.
 JPEG_LIB=${HDF_HOME}/hdf/jpeg/libjpeg.a
