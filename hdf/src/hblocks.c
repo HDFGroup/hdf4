@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.14  1993/10/06 20:27:27  koziol
-More compression fixed, and folded Doug's suggested change into VSappendable.
+Revision 1.14.2.1  1993/10/10 22:10:07  koziol
+Moved Tag descriptions into a header file.  Updated compression routines.
 
+ * Revision 1.14  1993/10/06  20:27:27  koziol
+ * More compression fixed, and folded Doug's suggested change into VSappendable.
+ *
  * Revision 1.13  1993/10/04  20:02:39  koziol
  * Updated error reporting in H-Layer routines, and added more error codes and
  * compression stuff.
@@ -1118,3 +1121,4 @@ int32 HLPendaccess(access_rec)
 
     return SUCCEED;
 }
+
