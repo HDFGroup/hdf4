@@ -55,8 +55,8 @@ int main(int ac,char **av)
     int32 * lonevs; /* array to store refs of all lone vdatas */
     int32 nlone; /* total number of lone vdatas */
     
-    char fields[50], vgname[50],vsname[50];
-    char  vgclass[50],vsclass[50]; 
+    char fields[FIELDNAMELENMAX], vgname[VGNAMELENMAX],vsname[VSNAMELENMAX];
+    char  vgclass[VGNAMELENMAX],vsclass[VSNAMELENMAX]; 
     const char *name;
     int32 fulldump = 0, start = 1;
     
@@ -264,7 +264,7 @@ int32 fmtdouble(char *x)
 
 int32 vsdumpfull(int32 vs)
 {
-    char vsname[100], fields[100];
+    char vsname[100], fields[FIELDNAMELENMAX];
     int32 j,i,t,interlace, nv, vsize;
     uint8 *bb, *b;
     VWRITELIST* w;
