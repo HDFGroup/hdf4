@@ -30,7 +30,7 @@ based?  Right now, it is zero based.
 
 */
 
-#include "mfsd.h"
+#include "mfhdf.h"
 #include "local_nc.h"
 #include "hfile.h"
 

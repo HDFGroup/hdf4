@@ -115,7 +115,7 @@ iarray.obj: ./local_nc.h
 iarray.obj: ./netcdf.h
 iarray.obj: ./alloc.h
 mfsd.obj: mfsd.c
-mfsd.obj: mfsd.h
+mfsd.obj: mfhdf.h
 mfsd.obj: local_nc.h
 putget.obj: putget.c
 putget.obj: ./local_nc.h
