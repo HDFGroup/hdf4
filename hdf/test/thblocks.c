@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1992/06/02 15:40:41  chouck
-Cleaned up output
+Revision 1.6  1992/06/22 23:04:42  chouck
+Removed calls to fork()
 
+ * Revision 1.5  1992/06/02  15:40:41  chouck
+ * Cleaned up output
+ *
  * Revision 1.4  1992/05/31  19:08:09  mfolk
  * Added uint8 * cast in line 91 for Convex.
  *
@@ -24,26 +27,12 @@ Cleaned up output
 
 #include "hdf.h"
 #define TESTFILE_NAME "t.hdf"
-static int shell = 0;
 uint8 outbuf[4096], inbuf[4096];
 
 #define CHECK(ret, val, where) \
 {if(ret == val) { fprintf(stderr, "%s failed, line %d, code %d\n", \
                           where, __LINE__, ret); \
                   HEprint(stderr, 0); exit(1);}}
-
-void do_shell()
-{
-    if (shell) {
-       puts("Spawning test shell.");
-       if (fork() > 0) {
-           execl("/bin/csh", "csh", (char*)0);
-       } else {
-           wait((int*)0);
-       }
-       puts("Returned from shell.");
-    }
-}
 
 int main(argc, argv)
     int argc;
@@ -57,9 +46,6 @@ int main(argc, argv)
     register int ret, i;
     intn errors = 0;
 
-    if (argc > 1 && strcmp(argv[1], "-shell") == 0) {
-       shell = 1;
-    }
     for (i=0; i<4096; i++) outbuf[i] = (char) (i % 256);
 
     printf("Creating a file %s\n", TESTFILE_NAME);
@@ -149,8 +135,6 @@ int main(argc, argv)
     printf("\nClosing and re-opening file %s\n", TESTFILE_NAME);
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
-
-    do_shell();
 
     fid = Hopen(TESTFILE_NAME, DFACC_ALL, 0);
     CHECK(fid, FAIL, "Hopen");
@@ -252,8 +236,6 @@ int main(argc, argv)
     ret = Hendaccess(aid2);
     CHECK(ret, FAIL, "Hendaccess");
 
-    do_shell();
-
     printf("\nOpen a second id for file %s\n", TESTFILE_NAME);
     fid1 = Hopen(TESTFILE_NAME, DFACC_READ, 0);
     CHECK(fid1, FAIL, "Hopen");
@@ -267,8 +249,6 @@ int main(argc, argv)
 
     ret = Hclose(fid1);
     CHECK(ret, FAIL, "Hclose");
-
-    do_shell();   
 
     if(errors) 
       fprintf(stderr, "\n\t>>> %d errors were encountered <<<\n\n");

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/06/01 18:57:55  chouck
-Cleaned up output so its clear what is going on
+Revision 1.5  1992/06/22 23:04:42  chouck
+Removed calls to fork()
 
+ * Revision 1.4  1992/06/01  18:57:55  chouck
+ * Cleaned up output so its clear what is going on
+ *
  * Revision 1.3  1992/05/31  15:13:55  mfolk
  * Added several casts (uint8 * and uint16) to keep Convex from complaining.
  *
@@ -21,7 +24,6 @@ Cleaned up output so its clear what is going on
 
 #include "hdf.h"
 #define TESTFILE_NAME "t.hdf"
-static int shell = 0;
 uint8 outbuf[4096], inbuf[4096];
 
 
@@ -29,19 +31,6 @@ uint8 outbuf[4096], inbuf[4096];
 {if(ret == val) { fprintf(stderr, "%s failed, line %d, code %d\n", \
                           where, __LINE__, ret); \
                   HEprint(stderr, 0); exit(1);}}
-
-void do_shell()
-{
-    if (shell) {
-       puts("Spawning test shell.");
-       if (fork() > 0) {
-           execl("/bin/csh", "csh", (char*)0);
-       } else {
-           wait((int*)0);
-       }
-       puts("Returned from shell.");
-    }
-}
 
 int main(argc, argv)
     int argc;
@@ -55,9 +44,6 @@ int main(argc, argv)
     int ret, i;
     intn errors = 0;
 
-    if (argc > 1 && strcmp(argv[1], "-shell") == 0) {
-       shell = 1;
-    }
     for (i=0; i<4096; i++) outbuf[i] = (char) (i % 256);
 
     printf("Creating base file %s\n", TESTFILE_NAME);
@@ -155,8 +141,6 @@ int main(argc, argv)
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
 
-    do_shell();
-
     printf("Closing and re-opening base file %s\n", TESTFILE_NAME);
     fid = Hopen(TESTFILE_NAME, DFACC_ALL, 0);
     CHECK(ret, FAIL, "Hopen");
@@ -235,8 +219,6 @@ int main(argc, argv)
     ret = Hendaccess(aid2);
     CHECK(ret, FAIL, "Hendaccess");
 
-    do_shell();
-
     fid1 = Hopen(TESTFILE_NAME, DFACC_READ, 0);
     CHECK(fid1, FAIL, "Hopen");
 
@@ -248,8 +230,6 @@ int main(argc, argv)
 
     ret = Hclose(fid1);
     CHECK(ret, FAIL, "Hclose");
-
-    do_shell();
 
     if(errors) 
       fprintf(stderr, "\n\t>>> %d errors were encountered <<<\n\n");

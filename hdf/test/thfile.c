@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/06/01 19:23:47  chouck
-Cleaned up output
+Revision 1.5  1992/06/22 23:04:42  chouck
+Removed calls to fork()
 
+ * Revision 1.4  1992/06/01  19:23:47  chouck
+ * Cleaned up output
+ *
  * Revision 1.3  1992/05/31  15:23:30  mfolk
  * Added uint8 * and uint16 casts to make Convex stop complaining.
  *
@@ -53,7 +56,6 @@ Cleaned up output
 
 #include "hdf.h"
 #define TESTFILE_NAME "t.hdf"
-static int shell = 0;
 uint8 outbuf[4096], inbuf[4096];
 
 
@@ -61,19 +63,6 @@ uint8 outbuf[4096], inbuf[4096];
 {if(ret == val) { fprintf(stderr, "%s failed, line %d, code %d\n", \
                           where, __LINE__, ret); \
                   HEprint(stderr, 0); exit(1);}}
-
-void do_shell()
-{
-    if (shell) {
-       puts("Spawning test shell.");
-       if (fork() > 0) {
-           execl("/bin/csh", "csh", (char*)0);
-       } else {
-           wait((int*)0);
-       }
-       puts("Returned from shell.");
-    }
-}
 
 int main(argc, argv)
     int argc;
@@ -87,9 +76,6 @@ int main(argc, argv)
     int ret, i;
     intn errors = 0;
 
-    if (argc > 1 && strcmp(argv[1], "-shell") == 0) {
-       shell = 1;
-    }
     for (i=0; i<4096; i++) outbuf[i] = (char) (i % 256);
 
     printf("Creating a file %s\n\n", TESTFILE_NAME);
@@ -131,8 +117,6 @@ int main(argc, argv)
 
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
-
-    do_shell();
 
     printf("\nClosing and re-opening file %s\n\n", TESTFILE_NAME);
     fid = Hopen(TESTFILE_NAME, DFACC_ALL, 0);
@@ -219,9 +203,6 @@ int main(argc, argv)
     ret = Hendaccess(aid2);
     CHECK(ret, FAIL, "Hendaccess");
     
-    do_shell();
-
-
     printf("Attempting to gain multiple access to file (is allowed)\n");
     fid1 = Hopen(TESTFILE_NAME, DFACC_READ, 0);
     if(fid1 == FAIL) {
@@ -237,8 +218,6 @@ int main(argc, argv)
 
     ret = Hclose(fid1);
     CHECK(ret, FAIL, "Hclose");
-
-    do_shell();
   
     if(errors) 
       fprintf(stderr, "\n\t>>> %d errors were encountered <<<\n\n");
