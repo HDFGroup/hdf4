@@ -931,4 +931,3 @@ EXTERN VOID jselmemmgr PROTO((external_methods_ptr emethods)); /* jmemmgr.c */
 
 
 #define RST0	0xD0		/* RST0 marker code */
-

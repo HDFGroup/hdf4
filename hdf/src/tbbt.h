@@ -6,7 +6,7 @@
  * 605 E. Springfield, Champaign IL 61820                                   *
  *                                                                          *
  * For conditions of distribution and use, see the accompanying             *
- * hdf/COPYING file.                                                        *
+ * hdf/COPYING file.                                                      *
  *                                                                          *
  ****************************************************************************/
 
@@ -50,7 +50,11 @@ struct tbbt_node {
   TBBT_LEAF  rcnt;      /* count of right children */
 # define  LeftCnt(node) ( (node)->lcnt )  /* Left descendants */
 # define  RightCnt(node) ( (node)->rcnt )  /* Left descendants */
+#if defined macintosh | defined THINK_C /* Macro substitution limit */
+# define  Cnt(node,s)   ( 1==(s) ? LeftCnt(node) : RightCnt(node) )
+#else  /* !macintosh */
 # define  Cnt(node,s)   ( LEFT==(s) ? LeftCnt(node) : RightCnt(node) )
+#endif /* !macintosh */
 #ifdef QAK
 # define  HasChild(n,s) ( TBBT_CHILD(s) & (n)->flags )
 # define  Heavy(n,s)    ( TBBT_HEAVY(s) & (n)->flags )

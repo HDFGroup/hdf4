@@ -28,10 +28,10 @@ CFLAGS=-g
 # CPPFLAGS=-DNDEBUG
 #
 # Location of HDF include files
-HDF_INC=-I/usr6/koziol/hdf/HDF_SLAB/hdf/include
+HDF_INC=-I/hdf/install/include
 #
 # Location of HDF library file
-HDF_LIB=/usr6/koziol/hdf/HDF_SLAB/hdf/lib/libdf.a
+HDF_LIB=/hdf/home/chouck/hdf/33/hdf/lib/libdf.a
 #
 # Installation prefix (default is `..'):
 # prefix=/usr/local/unidata

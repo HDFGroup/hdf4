@@ -214,16 +214,19 @@ test_ncvardef(path)
 	    break;
 	  case NC_LONG:
 	    {
-		long val, fillval;
+		nclong val, fillval;
                 val = 0;
                 fillval = 0;
                 fillval = FILL_LONG;
 		if (ncvarget1(cdfid, va_id[iv], where, (void *) &val) != -1) {
-		    if ((long) val != (long) fillval) {
-
+		    if ((nclong) val != (nclong) fillval) {
+                        nclong a, b;
 
 printf("\n\n Was expecting %d instead got a %d\n", fillval, val);
 printf("\n\n Was expecting %ld instead got a %ld\n", fillval, val);
+                        a = (nclong) val;
+                        b = (nclong) fillval;
+printf("\n\n After cast %ld %ld\n", a, b);
 
 			error("%s: unwritten long not FILL_LONG", pname);
 			nerrs++;

@@ -17,9 +17,9 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /*-----------------------------------------------------------------------------
- * File:     df24F.c
- * Purpose:  read and write 24-bit raster images
- * Invokes:  dfgr.c df24.c
+ * File:    df24F.c
+ * Purpose: read and write 24-bit raster images
+ * Invokes: dfgr.c df24.c
  * Contents: 
  *  d2reqil: use this interlace when returning image
  *  df24reqil: use this interlace when returning image
@@ -33,7 +33,6 @@ static char RcsId[] = "@(#)$Revision$";
  *  d2igimg: read in image
  *  d2iaimg: write out image
  *  d2lref: last ref number
- *  df24lastref: last ref number
  *  d2scomp: set compression to use (short name)
  *  df24setcompress: set compression to use (long name)
  *  d2sjpeg:  set JPEG parameters (short name)
@@ -266,26 +265,6 @@ nd2lref()
 }
 
 /*-----------------------------------------------------------------------------
- * Name:    df24lastref
- * Purpose: return last reference number 
- * Inputs:  
- * Returns: last ref number
- * Users:   HDF HLL (high-level library) users, utilities, other routines
- * Invokes: DFGRIrestart
- * Remarks: none
- *---------------------------------------------------------------------------*/
-
-    FRETVAL(intf)
-#ifdef PROTOTYPE
-ndf24lastref(void)
-#else
-ndf24lastref()
-#endif /* PROTOTYPE */
-{
-    return (DFGRIlastref());
-}
-
-/*-----------------------------------------------------------------------------
  * Name:    d2scomp
  * Purpose: set the compression to use when writing the next image
  * Inputs:
@@ -306,13 +285,13 @@ nd2scomp(scheme)
 intf *scheme;
 #endif /* PROTOTYPE */
 {
-    comp_info *cinfo;   /* Structure containing compression parameters */
+    comp_info cinfo;   /* Structure containing compression parameters */
 
     if(*scheme==COMP_JPEG) {  /* check for JPEG compression and set defaults */
-        cinfo->jpeg.quality=75;
-        cinfo->jpeg.force_baseline=1;
+        cinfo.jpeg.quality=75;
+        cinfo.jpeg.force_baseline=1;
       } /* end if */
-    return (DF24setcompress((int32)*scheme,cinfo));
+    return (DF24setcompress((int32)*scheme,&cinfo));
 }   /* end d2scomp() */
 
 /*-----------------------------------------------------------------------------
@@ -336,11 +315,11 @@ intf *quality;
 intf *force_baseline;
 #endif /* PROTOTYPE */
 {
-    comp_info *cinfo;   /* Structure containing compression parameters */
+    comp_info cinfo;   /* Structure containing compression parameters */
 
-    cinfo->jpeg.quality=(intn)*quality;
-    cinfo->jpeg.force_baseline=(intn)*force_baseline;
-    return (DF24setcompress((int32)COMP_JPEG,cinfo));
+    cinfo.jpeg.quality=(intn)*quality;
+    cinfo.jpeg.force_baseline=(intn)*force_baseline;
+    return (DF24setcompress((int32)COMP_JPEG,&cinfo));
 }   /* end d2sjpeg() */
 
 /*-----------------------------------------------------------------------------
@@ -449,13 +428,13 @@ ndf24scompress(scheme)
 intf *scheme;
 #endif /* PROTOTYPE */
 {
-    comp_info *cinfo;   /* Structure containing compression parameters */
+    comp_info cinfo;   /* Structure containing compression parameters */
 
     if(*scheme==COMP_JPEG) {  /* check for JPEG compression and set defaults */
-        cinfo->jpeg.quality=75;
-        cinfo->jpeg.force_baseline=1;
+        cinfo.jpeg.quality=75;
+        cinfo.jpeg.force_baseline=1;
       } /* end if */
-    return (DF24setcompress((int32)*scheme,cinfo));
+    return (DF24setcompress((int32)*scheme,&cinfo));
 }   /* end df24setcompress() */
 
 /*-----------------------------------------------------------------------------
@@ -479,11 +458,11 @@ intf *quality;
 intf *force_baseline;
 #endif /* PROTOTYPE */
 {
-    comp_info *cinfo;   /* Structure containing compression parameters */
+    comp_info cinfo;   /* Structure containing compression parameters */
 
-    cinfo->jpeg.quality=(intn)*quality;
-    cinfo->jpeg.force_baseline=(intn)*force_baseline;
-    return (DF24setcompress((int32)COMP_JPEG,cinfo));
+    cinfo.jpeg.quality=(intn)*quality;
+    cinfo.jpeg.force_baseline=(intn)*force_baseline;
+    return (DF24setcompress((int32)COMP_JPEG,&cinfo));
 }   /* end df24setjpeg() */
 
 /*-----------------------------------------------------------------------------

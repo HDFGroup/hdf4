@@ -1,0 +1,8 @@
+This directory contains the test suite for the basic library libdf.a.
+After running the make file at either the higher level or this level,
+you will find two executable programs, testhdf and fortest, in this 
+directory. Testhdf tests the C functions, while fortest the Fortran 
+interface. At the end of execution, each program reports how many 
+errors happened. Please contact us at hdfhelp@ncsa.uiuc.edu 
+if the test fails on your machine.
+

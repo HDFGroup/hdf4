@@ -102,7 +102,11 @@ char *argv[];
 	strcpy(cdlname, argv[0]);
     }
     yyin = fp;
+#ifdef VMS
+    return (1-yyparse());
+#else
     return (yyparse());
+#endif
 }
 
 usage()

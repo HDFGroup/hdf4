@@ -49,9 +49,6 @@ typedef struct {
 PRIVATE int32 HXIstaccess
     PROTO((accrec_t *access_rec, int16 access));
 
-/* Private buffer */
-PRIVATE uint8 *ptbuf = NULL;
-
 /* ext_funcs -- table of the accessing functions of the external
    data element function modules.  The position of each function in
    the table is standard */
@@ -82,15 +79,15 @@ funclist_t ext_funcs = {
 
 */
 #ifdef PROTOTYPE
-int32 HXcreate(int32 file_id, uint16 tag, uint16 ref, char *extern_file_name, int32 f_offset, int32 start_len)
+int32 HXcreate(int32 file_id, uint16 tag, uint16 ref, char *extern_file_name, int32 offset, int32 start_len)
 #else
-int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
+int32 HXcreate(file_id, tag, ref, extern_file_name, offset, start_len)
     int32 file_id;             /* file record id */
     uint16 tag, ref;           /* tag/ref of the special data element
                                   to create */
     char *extern_file_name;    /* name of external file to use as
                                   data element */
-    int32 f_offset,start_len;
+    int32 offset,start_len;
 #endif
 {
     char *FUNC="HXcreate";     /* for HERROR */
@@ -109,20 +106,12 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
     HEclear();
     file_rec = FID2REC(file_id);
     if (!file_rec || file_rec->refcount == 0 || !extern_file_name
-            || (f_offset<0) || SPECIALTAG(tag)
+            || (offset<0) || SPECIALTAG(tag)
             || (special_tag = MKSPECIALTAG(tag)) == DFTAG_NULL )
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     if (!(file_rec->access & DFACC_WRITE))
        HRETURN_ERROR(DFE_DENIED,FAIL);
-
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
-        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
-        if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, NULL);
-      }
 
     /* get a slot in the access records table */
     slot = HIget_access_slot();
@@ -197,7 +186,7 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
            HDfreespace((VOIDP)buf);
            HRETURN_ERROR(DFE_READERROR,FAIL);
        }
-       if (HI_SEEK(file_external, f_offset) == FAIL) {
+       if (HI_SEEK(file_external, offset) == FAIL) {
            access_rec->used = FALSE;
            HDfreespace((VOIDP)info);
            HDfreespace((VOIDP)buf);
@@ -217,7 +206,7 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
 
     info->attached = 1;
     info->file_external = file_external;
-    info->extern_offset = f_offset;
+    info->extern_offset = offset;
     info->extern_file_name = (char *)HDstrdup(extern_file_name);
     if (!info->extern_file_name) {
        access_rec->used = FALSE;
@@ -227,7 +216,7 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
 
     info->length_file_name = HDstrlen(extern_file_name);
     {
-       uint8 *p = ptbuf;
+       uint8 *p = tbuf;
        INT16ENCODE(p, SPECIAL_EXT);
        INT32ENCODE(p, info->length);
        INT32ENCODE(p, info->extern_offset);
@@ -243,7 +232,7 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
     dd->length = 14 + info->length_file_name;
     dd->tag = special_tag;
     dd->ref = ref;
-    if (HI_WRITE(file_rec->file, ptbuf, dd->length) == FAIL) {
+    if (HI_WRITE(file_rec->file, tbuf, dd->length) == FAIL) {
        HERROR(DFE_WRITEERROR);
        access_rec->used = FALSE;
        return FAIL;
@@ -313,14 +302,6 @@ PRIVATE int32 HXIstaccess(access_rec, access)
     if (!file_rec || file_rec->refcount == 0 || !(file_rec->access & access))
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
-        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
-        if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, NULL);
-      }
-
     /* intialize the access record */
     access_rec->special = SPECIAL_EXT;
     access_rec->posn = 0;
@@ -347,7 +328,7 @@ PRIVATE int32 HXIstaccess(access_rec, access)
            access_rec->used = FALSE;
            HRETURN_ERROR(DFE_SEEKERROR,FAIL);
        }
-       if (HI_READ(file_rec->file, ptbuf, 12) == FAIL) {
+       if (HI_READ(file_rec->file, tbuf, 12) == FAIL) {
            access_rec->used = FALSE;
            HRETURN_ERROR(DFE_READERROR,FAIL);
        }
@@ -358,7 +339,7 @@ PRIVATE int32 HXIstaccess(access_rec, access)
            HRETURN_ERROR(DFE_NOSPACE,FAIL);
        }
        {
-           uint8 *p = ptbuf;
+           uint8 *p = tbuf;
            INT32DECODE(p, info->length);
            INT32DECODE(p, info->extern_offset);
            INT32DECODE(p, info->length_file_name);
@@ -501,14 +482,6 @@ int32 HXPwrite(access_rec, length, data)
     if (length < 0)
        HRETURN_ERROR(DFE_RANGE,FAIL);
 
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
-        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
-        if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, NULL);
-      }
-
     /* write the data onto file */
     if (HI_SEEK(info->file_external,
 		access_rec->posn + info->extern_offset) == FAIL)
@@ -535,7 +508,7 @@ int32 HXPwrite(access_rec, length, data)
     access_rec->posn += length;
     if (access_rec->posn > info->length) {
        uint8 *p =      /* temp buffer ptr */
-           ptbuf;
+           tbuf;
        dd_t *info_dd =         /* dd of infromation element */
            &access_rec->block->ddlist[access_rec->idx];
        filerec_t *file_rec =   /* file record */
@@ -545,7 +518,7 @@ int32 HXPwrite(access_rec, length, data)
        INT32ENCODE(p, info->length);
        if (HI_SEEK(file_rec->file, info_dd->offset+2) == FAIL)
            HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-       if (HI_WRITE(file_rec->file, ptbuf, 4) == FAIL)
+       if (HI_WRITE(file_rec->file, tbuf, 4) == FAIL)
            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
     }
 

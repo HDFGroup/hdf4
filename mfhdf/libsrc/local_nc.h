@@ -17,6 +17,9 @@
 #endif
 
 #ifndef       NO_SYS_XDR_INC
+#ifdef VMS
+#    define  STDC_INCLUDES
+#endif   /* VMS */
 #include	<rpc/types.h>
 #include	<rpc/xdr.h>
 #else
@@ -165,15 +168,14 @@ extern char *cdf_routine_name ; /* defined in lerror.c */
                        /*  C D L 1 */
 #define	NCLINKMAGIC	0x43444c01
 
-/* if have HDF this will already be defined */
-#ifndef HDF
+#ifndef HDF /* HDF has already worked out if we have prototypes */
 #undef PROTO
 #ifndef NO_HAVE_PROTOTYPES 
 #   define	PROTO(x)	x
 #else
 #   define	PROTO(x)	()
 #endif
-#endif /* HDF */
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -462,8 +464,8 @@ extern int hdf_read_sds_cdf
     PROTO((XDR *,NC **));
 
 extern int NCgenio
-    PROTO((NC *handle,int varid,const int32 *start,const int32*count,
-        const int32 *stride,const int32 *imap,Void *values));
+    PROTO((NC *handle, int varid, const long *start, const long *count,
+        const long *stride, const long *imap,Void *values));
 
 extern int NC_var_shape
     PROTO((NC_var *var,NC_array *dims));

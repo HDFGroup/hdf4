@@ -70,10 +70,6 @@ typedef struct DF {
     DFdle *last_dle;		/* last_dle and last_dd are used in searches */
 				/* to indicate element returned */
 				/* by previous call to DFfind */
-    DFdd *up_dd;		/* DD of element being read/updated, */
-				/* used by DFstart */
-    uint16 last_tag;		/* Last tag searched for by DFfind */
-    uint16 last_ref;		/* Last reference number searched for */
     intn type;  /* 0= not in use, 1= normal, -1 = multiple */
 				/* this is a hook for when */
 				/* multiple files are open */
@@ -81,14 +77,18 @@ typedef struct DF {
 				/* 0=none, 1=r, 2=w, 3=r/w */
     intn changed;   /* True if anything in DDs modified */
 				/* since last write */
+    uint16 last_tag;		/* Last tag searched for by DFfind */
+    uint16 last_ref;		/* Last reference number searched for */
     intn last_dd;   /* see last_dle */
     intn defdds;    /* default numer of DD's in each block */
     intn up_access; /* access permissions to element being */
 				/* read/updated. Used by DFstart */
+    DFdd *up_dd;		/* DD of element being read/updated, */
+				/* used by DFstart */
     /* File handle is a file pointer or file descriptor depending on whether */
     /* we use buffered or unbuffered I/O.  But, since this structure is a */
     /* fake, it doesn't matter whether I/O is buffered or not. */
-    intn file;			/* file descriptor */
+    int file;			/* file descriptor */
 } DF;
 
 
@@ -98,10 +98,6 @@ typedef struct DFdata { /* structure for returning status information */
 
 /*--------------------------------------------------------------------------*/
 /*                          Procedure types                                 */
-
-#if defined c_plusplus || defined __cplusplus
-extern "C" {
-#endif /* c_plusplus || __cplusplus */
 
 /* prototypes for dfstubs.c */
 extern DF *DFopen
@@ -187,10 +183,6 @@ extern int32 DFIspaceleft
   PROTO((void));
 #endif /* PC */
 
-#if defined c_plusplus || defined __cplusplus
-}
-#endif /* c_plusplus || __cplusplus */
-
 /*--------------------------------------------------------------------------*/
 /*                          Global Variables                                */
 
@@ -208,4 +200,3 @@ DFerror;            /* Error code for DF routines */
 #define DFTOFID(df) (int32)(df->list)
 
 #endif /* DF_H */
-

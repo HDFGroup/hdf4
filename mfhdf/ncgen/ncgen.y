@@ -48,7 +48,7 @@ static int not_a_string;	/* whether last constant read was a string */
 static char termstring[MAXTRST]; /* last terminal string read */
 static double double_val;	/* last double value read */
 static float float_val;		/* last float value read */
-static long long_val;		/* last long value read */
+static nclong long_val;		/* last long value read */
 static short short_val;		/* last short value read */
 static char char_val;		/* last char value read */
 static char byte_val;		/* last byte value read */
@@ -62,7 +62,7 @@ static nc_type valtype;		/* type code for list of attribute values  */
 static char *char_valp;		/* pointers used to accumulate data values */
 static char *byte_valp;
 static short *short_valp;
-static long *long_valp;
+static nclong *long_valp;
 static float *float_valp;
 static double *double_valp;
 static void *rec_cur;		/* pointer to where next data value goes */
@@ -237,7 +237,7 @@ attdecl:        att
 		       char_valp = (char *) att_space;
 		       byte_valp = (char *) att_space;
 		       short_valp = (short *) att_space;
-		       long_valp = (long *) att_space;
+		       long_valp = (nclong *) att_space;
 		       float_valp = (float *) att_space;
 		       double_valp = (double *) att_space;
 		   }
@@ -389,7 +389,7 @@ datadecl:       avar
 			   short_valp = (short *) rec_start;
 			   break;
 			 case NC_LONG:
-			   long_valp = (long *) rec_start;
+			   long_valp = (nclong *) rec_start;
 			   break;
 			 case NC_FLOAT:
 			   float_valp = (float *) rec_start;
@@ -469,7 +469,7 @@ dconst:
 				   short_valp = (short *) rec_start;
 				   break;
 				 case NC_LONG:
-				   long_valp = (long *) rec_start;
+				   long_valp = (nclong *) rec_start;
 				   break;
 				 case NC_FLOAT:
 				   float_valp = (float *) rec_start;

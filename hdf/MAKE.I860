@@ -15,7 +15,10 @@
 #
 # ##################################################################
 #
-#           MAKEFILE for creating the HDF library, libdf.a, on SGIs
+#                   NCSA HDF Version 3.3 release Beta 1
+#                               November 1992
+#
+#           MAKEFILE for creating the HDF library, libdf.a,
 #
 # This makefile creates the following FORTRAN and C interfaces 
 # for HDF in a library called "libdf.a": 
@@ -54,22 +57,19 @@
 #   SUN, IBM6000, HP9000, MIPSEL (Dec Mips based machines), ...
 #
 
-# Define your sh shell
+#define your sh shell
 SHELL=/bin/sh
 
 # Define your machine type
-MACHINE=IRIS4
+MACHINE=I860
 
 # Define your C compiler and flags
 CC= cc
-CFLAGS= -D${MACHINE} -ansi -O
+CFLAGS= -D${MACHINE} 
 
 # Define your FORTRAN compiler
 FC= f77
 FFLAGS=
-
-# Define gl library
-GLLIB = -lgl_s
 
 # Location where the HDF include files are to be installed
 HDFINC= `pwd`/include
@@ -82,7 +82,7 @@ HDFBIN= `pwd`/bin
 
 # Name of library archiver and flags to send
 AR= ar
-ARFLAGS= rs
+ARFLAGS= r
 
 # Name of achive randomizer (use 'touch' if non-existant)
 RANLIB= touch
@@ -97,10 +97,19 @@ RMFLAGS= -f
 #
 
 HDF_FLAGS       = \
-        CC="$(CC)" CFLAGS="$(CFLAGS)" FC="$(FC)" FFLAGS="$(FFLAGS)" \
-        RANLIB="$(RANLIB)" AR="$(AR)" ARFLAGS="$(ARFLAGS)" RM="$(RM)" \
-        RMFLAGS="$(RMFLAGS)" MACHINE="$(MACHINE)" HDFLIB="$(HDFLIB)" \
-        HDFINC="$(HDFINC)" HDFBIN="$(HDFBIN)" GLLIB="$(GLLIB)"	
+        CC="$(CC)" \
+        CFLAGS="$(CFLAGS)" \
+        FC="$(FC)" \
+        FFLAGS="$(FFLAGS)" \
+        RANLIB="$(RANLIB)" \
+        AR="$(AR)" \
+        ARFLAGS="$(ARFLAGS)" \
+        RM="$(RM)" \
+        RMFLAGS="$(RMFLAGS)" \
+        MACHINE="$(MACHINE)" \
+        HDFLIB="$(HDFLIB)" \
+        HDFINC="$(HDFINC)" \
+	HDFBIN="$(HDFBIN)"	
 
 #
 #
@@ -142,13 +151,6 @@ clean:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
           SUBDIRS="src util test" _sub
 	$(RM) $(RMFLAGS) core *.log
-
-distclean:
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
-          SUBDIRS="src util test" _sub
-	$(RM) $(RMFLAGS) core *.log
-	$(RM) -rf bin lib include
-
 
 _sub:
 	@for dir in $(SUBDIRS); do \

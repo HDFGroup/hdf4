@@ -1,3 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
+/* $Id$ */
+
 /*
  * This file contains the HDF/netCDF based multi-file interface for SDSs
  */
@@ -21,6 +39,8 @@ status = SDreaddata(sdsid, ...);
 
 status = SDgetrange(sdsid, ...);
 
+ref    = SDgetrefnumber(sdsid);
+
 status = SDend(fid);
 
 Questions, should the index parameter to SDselect() be zero based or one
@@ -36,16 +56,13 @@ PRIVATE NC_dim * SDIget_dim
     PROTO((NC *handle, int32 id));
 
 /* Local function prototypes */
-PRIVATE NC * SDIhandle_from_id 
-    PROTO((int32 id, intn typ));
-PRIVATE NC_var * SDIget_var 
-    PROTO((NC *handle, int32 sdsid));
-PRIVATE intn SDIputattr 
-    PROTO((NC_array **ap, char *name, int32 nt, intn count, VOIDP data));
-PRIVATE int32 SDIgetcoordvar 
-    PROTO((NC *handle, NC_dim *dim, int32 id, int32 nt));
-PRIVATE int32 SDIfreevarAID 
-    PROTO((NC * handle, int32 index));
+PRIVATE NC * SDIhandle_from_id PROTO((int32 id, intn typ));
+PRIVATE NC_var * SDIget_var PROTO((NC *handle, int32 sdsid));
+PRIVATE intn SDIputattr PROTO((NC_array **ap, char *name, int32 nt,
+    intn count, VOIDP data));
+PRIVATE int32 SDIgetcoordvar PROTO((NC *handle, NC_dim *dim, int32 id,
+    int32 nt));
+PRIVATE int32 SDIfreevarAID PROTO((NC * handle, int32 index));
 PRIVATE intn SDIapfromid
     PROTO((int32 id, NC ** handlep, NC_array *** app));
 
@@ -209,9 +226,9 @@ int32 SDstart(name, HDFmode)
 
 */
 #ifdef PROTOTYPE
-int32 SDend(int32 id)
+intn SDend(int32 id)
 #else
-int32 SDend(id)
+intn SDend(id)
 int32 id;
 #endif
 {
@@ -260,7 +277,7 @@ int32 id;
 } /* SDend */
 
 
-/* ------------------------------- SDnumber ------------------------------- */
+/* ------------------------------- SDfileinfo ------------------------------- */
 /*
   Return the number of SDS-type objects and global attributes in the file
 
@@ -268,9 +285,9 @@ int32 id;
 
 */
 #ifdef PROTOTYPE
-int32 SDfileinfo(int32 fid, int32 *datasets, int32 *attrs)
+intn SDfileinfo(int32 fid, int32 *datasets, int32 *attrs)
 #else
-int32 SDfileinfo(fid, datasets, attrs)
+intn SDfileinfo(fid, datasets, attrs)
 int32   fid;
 int32 * datasets;
 int32 * attrs;
@@ -331,11 +348,11 @@ int32 * attrs;
 
 */
 #ifdef PROTOTYPE
-int32 SDselect(int32 fid, intn index)
+int32 SDselect(int32 fid, int32 index)
 #else
 int32 SDselect(fid, index)
 int32 fid;
-intn  index;
+int32  index;
 #endif
 {
     NC    *handle;
@@ -373,10 +390,10 @@ intn  index;
 
 */
 #ifdef PROTOTYPE
-int32 SDgetinfo(int32 sdsid, char *name, int32 *rank, int32 *dimsizes, 
+intn SDgetinfo(int32 sdsid, char *name, int32 *rank, int32 *dimsizes, 
                 int32 *nt, int32 *nattr)
 #else
-int32 SDgetinfo(sdsid, name, rank, dimsizes, nt, nattr)
+intn SDgetinfo(sdsid, name, rank, dimsizes, nt, nattr)
 int32 sdsid;
 char  *name;
 int32 *rank, *nt, *nattr, *dimsizes;
@@ -439,9 +456,9 @@ int32 *rank, *nt, *nattr, *dimsizes;
 
 */
 #ifdef PROTOTYPE
-int32 SDreaddata(int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data)
+intn SDreaddata(int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data)
 #else
-int32 SDreaddata(sdsid, start, stride, end, data)
+intn SDreaddata(sdsid, start, stride, end, data)
 int32 sdsid;
 int32 *start, *stride, *end;
 VOIDP data;
@@ -449,9 +466,8 @@ VOIDP data;
 {
 
     NC     * handle;
-    intn     varid;
-    int32    status;
-    NC_dim * dim = NULL;
+    intn    varid;
+    int32   status;
 #ifdef BIG_LONGS
     long     Start[MAX_VAR_DIMS], End[MAX_VAR_DIMS], Stride[MAX_VAR_DIMS];
 #else
@@ -466,34 +482,17 @@ VOIDP data;
         return FAIL;
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL) {
-        handle = SDIhandle_from_id(sdsid, DIMTYPE);
-        if(handle == NULL) 
-            return FAIL;
-        dim = SDIget_dim(handle, sdsid);
-    }
+    if(handle == NULL)
+        return FAIL;
 
     if(handle->vars == NULL)
         return FAIL;
 
     /* get ready to read */
     handle->xdrs->x_op = XDR_DECODE ;
-   
-    /* 
-     * figure out the index of the variable to write to
-     * the user might have passed us a dimension, in which
-     * case we want to write to its coordinate variable
-     */
-    if(dim) {
-
-        varid = SDIgetcoordvar(handle, dim, (int32)(sdsid & 0xffff), (int32) 0);
-
-    } else {
-        
-        /* oops, how do we know this ? */
-        varid = (intn)sdsid & 0xffff;
-
-    }
+    
+    /* oops, how do we know this ? */
+    varid = (intn)sdsid & 0xffff;
 
     /*
      * In general, (long) == int32 
@@ -535,8 +534,6 @@ VOIDP data;
 
 } /* SDreaddata */
 
-
-#if 0
 /* ---------------------------- SDgetrefnumber ---------------------------- */
 /*
 
@@ -570,8 +567,6 @@ int32 sdsid;
     return ((uint16) var->data_ref);
 
 } /* SDgetrefnumber */
-
-#endif /* 0 */
 
 /* ---------------------------- SDnametoindex ----------------------------- */
 /*
@@ -780,7 +775,7 @@ int32 nt, rank, *dimsizes;
         return(FAIL);
 
     /* fudge the name since its optional */
-    if(name == NULL)
+    if((name == NULL) || (name[0] == ' ') || (name[0] == '\0'))
         name = "DataSet";
 
     /* make fake dimensions which may or may not be over-ridden later */
@@ -936,7 +931,7 @@ intn  number;
   Return SUCCEED or FAIL
 
 */
-int32
+intn
 #ifdef PROTOTYPE
 SDsetdimname(int32 id, char *name)
 #else
@@ -1013,7 +1008,7 @@ char  * name;
   Return FAIL on error else SUCCEED
 
 */
-int32
+intn
 #ifdef PROTOTYPE
 SDendaccess(int32 id)
 #else
@@ -1191,16 +1186,23 @@ VOIDP pmax, pmin;
 
 } /* SDsetrange */
 
-
 /* ----------------------------- SDIapfromid ------------------------------ */
 /*
 
-  Given a ID figure out what the handle and attribute list pointer are for
-  that object
+ NAME
+	SDIapfromid -- get the attribute list
+ USAGE
+	int32 SDapfromid(id, handle, app)
+        int32        id;               IN:  object ID
+        NC       **  handlep;          IN:  handle for this file
+        NC_array *** app;  / yuk! /    OUT: attribute list
+ RETURNS
+        On error FAIL else SUCCEED.
+ DESCRIPTION
+        Given a ID figure out what the handle and attribute 
+        list pointer are for that object.
 
-  Return FAIL on error else SUCCEDD
-
-*/
+--------------------------------------------------------------------------- */
 PRIVATE
 intn
 #ifdef PROTOTYPE
@@ -1281,13 +1283,13 @@ NC_array *** app;
 */
 intn
 #ifdef PROTOTYPE
-SDsetattr(int32 id, char *name, int32 nt, intn count, VOIDP data)
+SDsetattr(int32 id, char *name, int32 nt, int32 count, VOIDP data)
 #else
 SDsetattr(id, name, nt, count, data)
 int32 id;
 char  *name;
 int32 nt;
-intn  count;
+int32  count;
 VOIDP data;
 #endif
 {
@@ -1337,13 +1339,13 @@ VOIDP data;
 */
 intn
 #ifdef PROTOTYPE
-SDattrinfo(int32 id, int32 index, char *name, int32 *nt, intn *count)
+SDattrinfo(int32 id, int32 index, char *name, int32 *nt, int32 *count)
 #else
 SDattrinfo(id, index, name, nt, count)
 int32 id, index;
 char  *name;
 int32 *nt;
-intn  *count;
+int32  *count;
 #endif
 {
 
@@ -1415,6 +1417,7 @@ VOIDP buf;
     NC_array *  ap;
     NC_array ** app;
     NC_attr  ** atp;
+    NC_var   *  var;
     NC       *  handle;
 
 #ifdef SDDEBUG
@@ -1422,7 +1425,7 @@ VOIDP buf;
 #endif
 
     /* sanity check args */
-    if(buf == NULL)
+    if((buf == NULL) || (index < 0))
         return FAIL;
     
     /* determine what type of ID we've been given */
@@ -1463,9 +1466,9 @@ VOIDP buf;
 
 */
 #ifdef PROTOTYPE
-int32 SDwritedata(int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data)
+intn SDwritedata(int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data)
 #else
-int32 SDwritedata(sdsid, start, stride, end, data)
+intn SDwritedata(sdsid, start, stride, end, data)
 int32 sdsid;
 int32 *start, *stride, *end;
 VOIDP data;
@@ -1473,9 +1476,8 @@ VOIDP data;
 {
 
     NC     * handle;
-    intn     varid;
-    int32    status;
-    NC_dim * dim = NULL;
+    intn    varid;
+    int32   status;
 #ifdef BIG_LONGS
     long     Start[MAX_VAR_DIMS], End[MAX_VAR_DIMS], Stride[MAX_VAR_DIMS];
 #else
@@ -1489,36 +1491,18 @@ VOIDP data;
     if((start == NULL) || (end == NULL) || (data == NULL))
         return FAIL;
 
-
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL) {
-        handle = SDIhandle_from_id(sdsid, DIMTYPE);
-        if(handle == NULL) 
-            return FAIL;
-        dim = SDIget_dim(handle, sdsid);
-    }
+    if(handle == NULL) 
+        return FAIL;
 
     if(handle->vars == NULL)
         return FAIL;
 
-    /* get ready to write */
+    /* get ready to read */
     handle->xdrs->x_op = XDR_ENCODE;
     
-    /* 
-     * figure out the index of the variable to write to
-     * the user might have passed us a dimension, in which
-     * case we want to write to its coordinate variable
-     */
-    if(dim) {
-
-        varid = SDIgetcoordvar(handle, dim, (int32)(sdsid & 0xffff), (int32) 0);
-
-    } else {
-        
-        /* oops, how do we know this ? */
-        varid = (intn)sdsid & 0xffff;
-
-    }
+    /* oops, how do we know this ? */
+    varid = (intn)sdsid & 0xffff;
 
     /*
      * In general, (long) == int32 
@@ -1571,9 +1555,9 @@ VOIDP data;
 
 */
 #ifdef PROTOTYPE
-int32 SDsetdatastrs(int32 sdsid, char *l, char *u, char *f, char *c)
+intn SDsetdatastrs(int32 sdsid, char *l, char *u, char *f, char *c)
 #else
-int32 SDsetdatastrs(sdsid, l, u, f, c)
+intn SDsetdatastrs(sdsid, l, u, f, c)
 int32 sdsid;
 char  *l, *u, *f, *c;
 #endif
@@ -1634,9 +1618,9 @@ char  *l, *u, *f, *c;
 
 */
 #ifdef PROTOTYPE
-int32 SDsetcal(int32 sdsid, float64 cal, float64 cale, float64 ioff, float64 ioffe, int32 nt)
+intn SDsetcal(int32 sdsid, float64 cal, float64 cale, float64 ioff, float64 ioffe, int32 nt)
 #else
-int32 SDsetcal(sdsid, cal, cale, ioff, ioffe, nt)
+intn SDsetcal(sdsid, cal, cale, ioff, ioffe, nt)
 int32 sdsid;
 float64 cal, cale, ioff, ioffe;
 int32 nt;
@@ -1695,9 +1679,9 @@ int32 nt;
 
 */
 #ifdef PROTOTYPE
-int32 SDsetfillvalue(int32 sdsid, VOIDP val)
+intn SDsetfillvalue(int32 sdsid, VOIDP val)
 #else
-int32 SDsetfillvalue(sdsid, val)
+intn SDsetfillvalue(sdsid, val)
 int32 sdsid;
 VOIDP val;
 #endif
@@ -1744,9 +1728,9 @@ VOIDP val;
 
 */
 #ifdef PROTOTYPE
-int32 SDgetfillvalue(int32 sdsid, VOIDP val)
+intn SDgetfillvalue(int32 sdsid, VOIDP val)
 #else
-int32 SDgetfillvalue(sdsid, val)
+intn SDgetfillvalue(sdsid, val)
 int32 sdsid;
 VOIDP val;
 #endif
@@ -1791,9 +1775,9 @@ VOIDP val;
 
 */
 #ifdef PROTOTYPE
-int32 SDgetdatastrs(int32 sdsid, char *l, char *u, char *f, char *c, intn len)
+intn SDgetdatastrs(int32 sdsid, char *l, char *u, char *f, char *c, intn len)
 #else
-int32 SDgetdatastrs(sdsid, l, u, f, c, len)
+intn SDgetdatastrs(sdsid, l, u, f, c, len)
 int32 sdsid;
 char *l, *u, *f, *c;
 intn len;
@@ -1873,9 +1857,9 @@ intn len;
 
 */
 #ifdef PROTOTYPE
-int32 SDgetcal(int32 sdsid, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, int32 *nt)
+intn SDgetcal(int32 sdsid, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, int32 *nt)
 #else
-int32 SDgetcal(sdsid, cal, cale, ioff, ioffe, nt)
+intn SDgetcal(sdsid, cal, cale, ioff, ioffe, nt)
 int32    sdsid;
 float64  *cal, *cale, *ioff, *ioffe;
 int32    *nt;
@@ -2025,9 +2009,9 @@ int32    id, nt;
 
 */
 #ifdef PROTOTYPE
-int32 SDsetdimstrs(int32 id, char *l, char *u, char *f)
+intn SDsetdimstrs(int32 id, char *l, char *u, char *f)
 #else
-int32 SDsetdimstrs(id, l, u, f)
+intn SDsetdimstrs(id, l, u, f)
 int32 id;
 char  *l, *u, *f;
 #endif
@@ -2135,9 +2119,9 @@ int32 index;
 
 */
 #ifdef PROTOTYPE
-int32 SDsetdimscale(int32 id, int32 count, int32 nt, VOIDP data)
+intn SDsetdimscale(int32 id, int32 count, int32 nt, VOIDP data)
 #else
-int32 SDsetdimscale(id, count, nt, data)
+intn SDsetdimscale(id, count, nt, data)
 int32 id;
 int32 count, nt;
 VOIDP data;
@@ -2205,9 +2189,9 @@ VOIDP data;
 
 */
 #ifdef PROTOTYPE
-int32 SDgetdimscale(int32 id, VOIDP data)
+intn SDgetdimscale(int32 id, VOIDP data)
 #else
-int32 SDgetdimscale(id, data)
+intn SDgetdimscale(id, data)
 int32 id;
 VOIDP data;
 #endif
@@ -2267,10 +2251,10 @@ VOIDP data;
 
 */
 #ifdef PROTOTYPE
-int32 SDdiminfo(int32 id, char *name, int32 *size, int32 *nt,
+intn SDdiminfo(int32 id, char *name, int32 *size, int32 *nt,
                 int32 *nattr)
 #else
-int32 SDdiminfo(id, name, size, nt, nattr)
+intn SDdiminfo(id, name, size, nt, nattr)
 int32 id;
 char  *name;
 int32 *nt, *nattr, *size;
@@ -2297,13 +2281,17 @@ int32 *nt, *nattr, *size;
     if(dim == NULL)
         return FAIL;
 
-    HDstrncpy(name, dim->name->values, dim->name->len);
-    name[dim->name->len] = '\0';
+    if(name != NULL) {
+        HDstrncpy(name, dim->name->values, dim->name->len);
+        name[dim->name->len] = '\0';
+    } else {
+        name = dim->name->values;
+    }
 
     *size  = dim->size;
 
     if(handle->vars) {
-        len = HDstrlen(name);
+        len = dim->name->len;
         dp = (NC_var**)handle->vars->values;
         for(ii = 0 ; ii < handle->vars->count ; ii++, dp++) {
             if( len == (*dp)->name->len &&
@@ -2336,9 +2324,9 @@ int32 *nt, *nattr, *size;
 
 */
 #ifdef PROTOTYPE
-int32 SDgetdimstrs(int32 id, char *l, char *u, char *f, intn len)
+intn SDgetdimstrs(int32 id, char *l, char *u, char *f, intn len)
 #else
-int32 SDgetdimstrs(id, l, u, f, len)
+intn SDgetdimstrs(id, l, u, f, len)
 int32 id;
 char  *l, *u, *f;
 intn  len;
@@ -2353,7 +2341,7 @@ intn  len;
     char     * name;
 
 #ifdef SDDEBUG
-    fprintf(stderr, "SDgetdatastrs: I've been called\n");
+    fprintf(stderr, "SDgetdimstrs: I've been called\n");
 #endif
     
     handle = SDIhandle_from_id(id, DIMTYPE);
@@ -2441,7 +2429,7 @@ intn  len;
   Return SUCCEED or FAIL
 
 */
-int32
+intn
 #ifdef PROTOTYPE
 SDsetexternalfile(int32 id, char *filename, int32 offset)
 #else
@@ -2528,26 +2516,17 @@ char  * attrname;
 {
 
     NC_array *  ap;
+    NC_array ** app;
     NC_attr  ** attr;
     NC_var   *  var;
     NC       *  handle;
     int32       attrid, len;
 
     /* determine what type of ID we've been given */
-    handle = NULL;
-    handle = SDIhandle_from_id(id, SDSTYPE);
-    if(handle != NULL) { /* was a variable ID */
-        var = SDIget_var(handle, id);
-        if(var == NULL)
-            return FAIL;
-        ap = var->attrs;
-    } else {
-        /* see if its a fidle ID */
-        handle = SDIhandle_from_id(id, CDFTYPE);
-        if(handle == NULL)
-            return FAIL;
-        ap = handle->attrs;
-    }
+    if(SDIapfromid(id, &handle, &app) == FAIL)
+        return FAIL;
+
+    ap = (*app);
 
     if(ap == NULL)
         return FAIL;
@@ -2690,5 +2669,59 @@ int32   id;
         return TRUE;
     else
         return FALSE;
+
+} /* SDisrecord */
+
+/* ----------------------------- SDiscoordvar ----------------------------- */
+/*
+
+  Return TRUE if the dataset in question is a coordinate variable
+
+*/
+intn
+#ifdef PROTOTYPE
+SDiscoordvar(int32 id)
+#else
+SDiscoordvar(id)
+int32   id;
+#endif
+{
+
+    NC       * handle;
+    NC_var   * var;
+    NC_dim   * dim;
+    int32      dimindex;
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDisrecord: I've been called\n");
+#endif
+    
+    handle = SDIhandle_from_id(id, SDSTYPE);
+    if(handle == NULL || !handle->is_hdf) 
+        return FALSE;
+
+    if(handle->vars == NULL)
+        return FALSE;
+
+    var = SDIget_var(handle, id);
+    if(var == NULL)
+        return FALSE;
+
+    if(var->assoc->count != 1)
+        return FALSE;
+
+    dimindex = var->assoc->values[0];
+
+    dim = SDIget_dim(handle, dimindex);
+    if(dim == NULL)
+        return FALSE;
+
+    if(var->name->len != dim->name->len)
+        return FALSE;
+
+    if(HDstrcmp(var->name->values, dim->name->values))
+        return FALSE;
+
+    return TRUE;
 
 } /* SDisrecord */

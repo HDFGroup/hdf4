@@ -8,16 +8,14 @@
 # * For conditions of distribution and use, see the accompanying             *
 # * hdf/COPYING file.                                                        *
 # *                                                                          *
-# ****************************************************************************
+# ***************************************************************************
 #
 # $Id$
 #
+#
 # ##################################################################
 #
-#                   NCSA HDF Version 3.3 release Beta 1
-#                               November 1992
-#
-#           MAKEFILE for creating the HDF library, libdf.a,
+#           MAKEFILE for creating the HDF library, libdf.a, on Suns
 #
 # This makefile creates the following FORTRAN and C interfaces 
 # for HDF in a library called "libdf.a": 
@@ -56,15 +54,15 @@
 #   SUN, IBM6000, HP9000, MIPSEL (Dec Mips based machines), ...
 #
 
-#define your sh shell
+# Define your sh shell
 SHELL=/bin/sh
 
 # Define your machine type
-MACHINE=NEXT
+MACHINE=SUN
 
 # Define your C compiler and flags
 CC= cc
-CFLAGS= -D${MACHINE} -ansi 
+CFLAGS= -D${MACHINE}  -O
 
 # Define your FORTRAN compiler
 FC= f77
@@ -81,10 +79,10 @@ HDFBIN= `pwd`/bin
 
 # Name of library archiver and flags to send
 AR= ar
-ARFLAGS= r
+ARFLAGS= ru
 
 # Name of achive randomizer (use 'touch' if non-existant)
-RANLIB= ranlib
+RANLIB= touch
 
 # Name of remove utility
 RM= /bin/rm
@@ -141,6 +139,10 @@ utilities:
 tests:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
           SUBDIRS="test" _sub
+
+testnofortran:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
+          SUBDIRS="src test" _sub message 
 
 #install:      $(INSTALL_DIRS)
 #	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
