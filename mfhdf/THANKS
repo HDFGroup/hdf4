@@ -1,5 +1,5 @@
 The NASA CDF data model, to which netCDF owes much, was developed by
-Michael Gough and Lloyd Trefethen.  Joe Fahle designed a C version for a
+Michael Gough and Lloyd Treinish.  Joe Fahle designed a C version for a
 CDF-like interface and discussions with Joe provided much of the
 inspiration for the original netCDF C interface.  The netCDF C library
 was written by Glenn Davis.  The nctest test suite, ncdump, ncgen, and
