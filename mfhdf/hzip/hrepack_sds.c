@@ -125,11 +125,7 @@ int copy_sds(int32 sd_in,
  }
 
  /* get chunk lengths */
- if (SDgetchunkinfo(sds_id, &chunk_def_in, &chunk_flags_in)==FAIL){
-  printf( "Could not get chunk info for SDS <%s>\n",path);
-  SDendaccess(sds_id);
-  return -1;
- }
+ SDgetchunkinfo(sds_id, &chunk_def_in, &chunk_flags_in);
 
  /* retrieve the compress info if so */
  if ( (HDF_CHUNK | HDF_COMP) == chunk_flags_in )
@@ -165,6 +161,10 @@ int copy_sds(int32 sd_in,
  comp_type   = comp_type_in;
  switch (comp_type_in)
   {
+
+  case COMP_CODE_NBIT:
+   printf("Nbit compression not supported in this version <%s>\n",path);
+   break;
   case COMP_CODE_NONE:
    break;
   case COMP_CODE_RLE:
@@ -399,6 +399,9 @@ int copy_sds(int32 sd_in,
    break;
   case COMP_CODE_DEFLATE:
    c_info.deflate.level = info;
+   break;
+  case COMP_CODE_NBIT:
+   comp_type = COMP_CODE_NONE;  /* not supported in thsi version */
    break;
   default:
    printf( "Error: Unrecognized compression code %d\n", comp_type);

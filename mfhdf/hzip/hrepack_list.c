@@ -536,8 +536,15 @@ void list_gr(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table
  char  name[MAX_GR_NAME]; /* name of an image */
  
  /* initialize the GR interface */
- gr_id  = GRstart (infile_id);
- gr_out = GRstart (outfile_id);
+ if ((gr_id  = GRstart (infile_id))==FAIL){
+  printf( "Could not start GR for <%s>\n",infname);
+  return;
+ }
+ if ((gr_out = GRstart (outfile_id))==FAIL){
+  printf( "Could not start GR for <%s>\n",outfname);
+  GRend (gr_id);
+  return;
+ }
  
  /* determine the contents of the file */
  if (GRfileinfo (gr_id, &n_rimages, &n_file_attrs)==FAIL){
@@ -621,8 +628,15 @@ void list_sds(char* infname,
  char  name[MAX_GR_NAME];      /* name of dataset */
  
  /* initialize the SD interface */
- sd_id  = SDstart (infname, DFACC_READ);
- sd_out = SDstart (outfname, DFACC_WRITE);
+ if ((sd_id  = SDstart (infname, DFACC_READ))==FAIL){
+  printf( "Could not start SD for <%s>\n",infname);
+  return;
+ }
+
+ if ((sd_out = SDstart (outfname, DFACC_WRITE))==FAIL){
+  printf( "Could not start GR for <%s>\n",outfname);
+  return;
+ }
  
  /* determine the number of data sets in the file and the number of file attributes */
  if (SDfileinfo (sd_id, &n_datasets, &n_file_attrs)==FAIL){
@@ -769,10 +783,17 @@ void list_glb(char* infname,char* outfname,int32 infile_id,int32 outfile_id,tabl
  * copy SDS global attributes
  *-------------------------------------------------------------------------
  */ 
- 
+
  /* initialize the SD interface */
- sd_id  = SDstart (infname, DFACC_READ);
- sd_out = SDstart (outfname, DFACC_WRITE);
+ if ((sd_id  = SDstart (infname, DFACC_READ))==FAIL){
+  printf( "Could not start SD for <%s>\n",infname);
+  return;
+ }
+
+ if ((sd_out = SDstart (outfname, DFACC_WRITE))==FAIL){
+  printf( "Could not start GR for <%s>\n",outfname);
+  return;
+ }
 
  /* determine the number of data sets in the file and the number of file attributes */
  if (SDfileinfo (sd_id, &n_datasets, &n_file_attrs)==FAIL){

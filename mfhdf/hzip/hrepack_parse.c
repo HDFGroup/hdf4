@@ -229,6 +229,8 @@ char* get_scomp(int code)
 {
  if (code==COMP_CODE_RLE)
   return "RLE";
+ else if (code==COMP_CODE_NBIT)
+  return "COMP_CODE_NBIT";
  else if (code==COMP_CODE_SKPHUFF)
   return "HUFF";
  else if (code==COMP_CODE_DEFLATE)
