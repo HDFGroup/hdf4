@@ -21,59 +21,90 @@
 ! $ !   These directories will not be created, you must create them
 ! $ !   by hand.
 ! $ !
-$ create/dir [.lib]
-$ create/dir [.include]
-$ create/dir [.bin]
-$ define/nolog hdf$src     mrlxp4$dka300:[folk.HDF33r3.hdf.src]   ! HDF src
-$ define/nolog hdf$util    mrlxp4$dka300:[folk.HDF33r3.hdf.util]  ! HDF utilities
-$ define/nolog hdf$test    mrlxp4$dka300:[folk.HDF33r3.hdf.test]  ! HDF test programs
-$ define/nolog hdf$lib     mrlxp4$dka300:[folk.HDF33r3.hdf.lib]df ! Location and name for lib
-$ define/nolog hdf$include mrlxp4$dka300:[folk.HDF33r3.hdf.include] ! Where to put includes
-$ define/nolog hdf$bin     mrlxp4$dka300:[folk.HDF33r3.hdf.bin]   ! Where to put executables
+$ create/dir [-.lib]
+$ create/dir [-.include]
+$ create/dir [-.bin]
+$ define/nolog hdf$src     mrlxp4$dka300:[folk.dev.hdf.src]   ! HDF src
+$ define/nolog hdf$util    mrlxp4$dka300:[folk.dev.hdf.util]  ! HDF utilities
+$ define/nolog hdf$test    mrlxp4$dka300:[folk.dev.hdf.test]  ! HDF test programs
+$ define/nolog jpeg$src    mrlxp4$dka300:[folk.dev.jpeg]  !
+$ define/nolog zlib$src    mrlxp4$dka300:[folk.dev.zlib]  !
+$ define/nolog hdf$lib     mrlxp4$dka300:[folk.dev.lib]df ! Location and name for lib
+$ define/nolog jpeg$lib     mrlxp4$dka300:[folk.dev.lib]df
+$ define/nolog zlib$lib     mrlxp4$dka300:[folk.dev.lib]df
+$ define/nolog hdf$include mrlxp4$dka300:[folk.dev.include] ! Where to put includes
+$ define/nolog hdf$bin     mrlxp4$dka300:[folk.dev.bin]   ! Where to put executables
 $ !
 $ define/nolog sys$clib sys$library:vaxcrtl
 $ !
-! $ ! Makefile for VAX/VMX systems.
-! $ !
-! $ ! Make full df lib (with fortran stubs)
+$ ! Makefile for VAX/VMX systems.
+$ !
+$ ! Make jpeg library
+$  type sys$input
+  ======== Building jpeg library =======
+$ set def jpeg$src
+$ copy jconfig.vms jconfig.h
+$ copy makefile.vms make.com
+$ @make
+$ copy libjpeg.olb hdf$lib
+$ copy jconfig.h hdf$include
+$ copy jerror.h hdf$include
+$ copy jmorecfg.h  hdf$include
+$ copy jpeglib.h  hdf$include
+$ delete *.obj;*
+$ delete *.exe;*
+$!
+$ ! Make gzip library
+$  type sys$input
+  ======== Building gzip library =======
+$ set def zlib$src
+$ copy make_vms.com make.com
+$ @make
+$ copy libz.olb hdf$lib
+$ copy zconf.h hdf$include
+$ copy zlib.h  hdf$include
+$ delete *.obj;*
+$ delete *.exe;*
+$ !
+$ ! Make full df lib (with fortran stubs)
 $ type sys$input
   ======== Building HDF 4.0 ========
-! $ !              
-! $ ! Build the base HDF library
-! $ !
+$ !              
+$ ! Build the base HDF library
+$ !
 $ set def hdf$src
 $ @MAKENOF
-! $ !
-! $ ! If you do not want to include the HDF Fortran interfaces, comment
-! $ !   out the following command.
-! $ !
+$ !
+$ ! If you do not want to include the HDF Fortran interfaces, comment
+$ !   out the following command.
+$ !
 $ @MAKEFS
-! $ !
-! $ ! Move the files to their correct destinations
-! $ !
+$ !
+$ ! Move the files to their correct destinations
+$ !
 $ copy df.olb hdf$lib
 $ copy *.h    hdf$include
 $ delete *.obj;*
 $ delete df.olb;*
-! $ !
-! $ ! Build the HDF utility programs
-! $ !
+$ !
+$ ! Build the HDF utility programs
+$ !
 $ set default hdf$util
 $ @MAKEUTIL
-! $ !
-! $ ! Move the HDF utilities to where they belong
-! $ !
+$ !
+$ ! Move the HDF utilities to where they belong
+$ !
 $ copy *.exe hdf$bin
 $ delete *.exe;*
 $ delete *.obj;*
-! $ !
+$ !
 $ @setuputils
-! $ !
-! $ ! Build the test programs
-! $ !
+$ !
+$ ! Build the test programs
+$ !
 $ set default hdf$test
 $ @MAKE
-! $ !
+$ !
 $ delete *.obj;*
 $ type sys$input
   ======== HDF 4.0 has now been built ========
