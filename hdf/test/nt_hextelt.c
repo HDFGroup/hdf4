@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/02/16 20:51:14  chouck
-Went back to using -ansi so needed to fix a few casting problems
+Revision 1.4  1993/03/17 21:29:43  chouck
+Updated external elements test and fixed syntax error in anfile test
 
+ * Revision 1.3  1993/02/16  20:51:14  chouck
+ * Went back to using -ansi so needed to fix a few casting problems
+ *
  * Revision 1.2  1993/01/27  22:41:25  briand
  * Fixed problem with compiling on RS6000.
  *
@@ -67,12 +70,12 @@ void test_hextelt()
 
     MESSAGE(5,printf("Writing object into base file\n"););
     ret = Hputelement(fid, (uint16) 1000, (uint16) 1, 
-                      (uint8 *) "element 1000 1 wrong",
-                      strlen("element 1000 1 wrong ") + 1);
+                      (uint8 *) "element 1000 1 wrong   ",
+                      strlen("element 1000 1 wrong") + 1);
     CHECK(ret, FAIL, "Hputelement");
 
     MESSAGE(5,printf("Promoting above object to external element in file #1\n"););
-    aid1 = HXcreate(fid, 1000, 1, "t1.hdf");
+    aid1 = HXcreate(fid, 1000, 1, "t1.hdf", (int32) 0, (int32) 0);
     CHECK(aid1, FAIL, "HXcreate");
 
     ret = Hseek(aid1, strlen("element 1000 1") + 1, DF_START);
@@ -89,7 +92,7 @@ void test_hextelt()
     CHECK(ret, FAIL, "Hendaccess");
 
     MESSAGE(5,printf("Creating an external element in file #2\n"););
-    aid1 = HXcreate(fid, 1000, 4, "t2.hdf");
+    aid1 = HXcreate(fid, 1000, 4, "t2.hdf", (int32) 0, (int32) 0);
     CHECK(aid1, FAIL, "HXcreate");
 
     MESSAGE(5,printf("Writing 2000 bytes to file #2\n"););
@@ -103,7 +106,7 @@ void test_hextelt()
     CHECK(ret, FAIL, "Hnewref");
 
     MESSAGE(5,printf("Creating an external element in file #3\n"););
-    aid1 = HXcreate(fid, 1000, 2, "t3.hdf");
+    aid1 = HXcreate(fid, 1000, 2, "t3.hdf", (int32) 0, (int32) 0);
     CHECK(aid1, FAIL, "HXcreate");
 
     MESSAGE(5,printf("Writing string 'element 1000 2' to file #3\n"););
@@ -114,7 +117,30 @@ void test_hextelt()
       exit(1);
     }
 
+    MESSAGE(5,printf("Creating an overlapping element\n"););
+    aid2 = HXcreate(fid, 1001, 2, "t3.hdf", (int32) 8, (int32) 4);
+    CHECK(aid2, FAIL, "HXcreate");
+
+    ret = Hgetelement(fid, (uint16) 1001, (uint16) 2, inbuf);
+    if(ret != 4) {
+      fprintf(stderr, "Incorrect element size returned from Hgetelement: %d\n",
+              ret);
+      HEprint(stderr, 0);
+      exit(1);
+    }
+
+    if(inbuf[0] != '1' ||
+       inbuf[1] != '0' ||
+       inbuf[2] != '0' ||
+       inbuf[3] != '0') {
+        MESSAGE(3,printf("One or more errors in overlapping element\n"););
+        errors++;
+    }
+
     ret = Hendaccess(aid1);
+    CHECK(ret, FAIL, "Hendaccess");
+
+    ret = Hendaccess(aid2);
     CHECK(ret, FAIL, "Hendaccess");
 
     MESSAGE(5,printf("Verifying data that was stored to file #2\n"););
@@ -135,7 +161,7 @@ void test_hextelt()
     }
 
     MESSAGE(5,printf("Creating an external element in file #4\n"););
-    aid1 = HXcreate(fid, 1020, 2, "t4.hdf");
+    aid1 = HXcreate(fid, 1020, 2, "t4.hdf", (int32) 0, (int32) 0);
     CHECK(aid1, FAIL, "HXcreate");
 
     MESSAGE(5,printf("Writing 4096 bytes to file #4\n"););
