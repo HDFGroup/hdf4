@@ -17,8 +17,9 @@ C      integer hestringc
       INTERFACE
         INTEGER FUNCTION hestringc(error_code, error_message, length)
           !MS$ATTRIBUTES C,reference,alias:'_HESTRINGC' :: hestringc
+          !DEC$ ATTRIBUTES reference :: error_message 
           integer error_code, length
-	    character*(*) error_message
+	  character*(*) error_message
         END FUNCTION hestringc
       END INTERFACE
       hestringf = hestringc(error_code, error_message,
@@ -34,18 +35,22 @@ C
 C Remarks: This routine always prints to the standard output.
 C-----------------------------------------------------------------------------*/
 
-      integer function heprntf(print_levels)
+      integer function heprntf(filename, print_levels)
 	!MS$if defined(BUILD_HDF_DLL)
 	!MS$attributes dllexport :: heprntf
 	!MS$endif
       integer print_levels 
+      character*(*) filename
 
       INTERFACE
-        INTEGER FUNCTION heprntc(print_levels)
+        INTEGER FUNCTION heprntc(filename, print_levels, namelen)
           !MS$ATTRIBUTES C,reference,alias:'_HEPRNTC' :: heprntc
+          !DEC$ ATTRIBUTES reference :: filename
           integer print_levels 
+          character*(*) filename
+          integer name_len
         END FUNCTION heprntc
       END INTERFACE
-      heprntf = heprntc(print_levels)
+      heprntf = heprntc(filename, print_levels, len(filename))
       return
       end

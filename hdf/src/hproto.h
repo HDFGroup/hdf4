@@ -2062,8 +2062,8 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
     HDFLIBAPI      FRETVAL(void) nheprnt
                 (intf  * print_levels);
 
-    HDFLIBAPI      FRETVAL(void) nheprntc
-                (intf  * print_levels);
+    HDFLIBAPI      FRETVAL(intf) nheprntc
+                (_fcd filename, intf  * print_levels, intf *namelen);
 
     HDFLIBAPI      FRETVAL(intf) nhestringc
 				(intf *error_code,_fcd error_message, intf *len);

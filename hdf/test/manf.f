@@ -323,12 +323,14 @@ C**************************************************************
       integer MAXLENLAB, MAXLEN_DESC
       parameter ( MAXLENLAB =    30,
      *            MAXLEN_DESC =  500 )
+      character*15 ERR_FILE
+      parameter (ERR_FILE = 'Fortran_err.dat')
 
       integer  inlablen, indesclen, ret
 
       integer affileinfo, afnumann, afannlist, afannlen
       integer afreadann, afstart, afend, afendaccess, hopen, hclose
-      integer hishdff, hestringf
+      integer hishdff, hestringf, heprntf
       character*80 error_message
 
       integer fileh, anh
@@ -380,7 +382,8 @@ C
 C *****  end of hishdff test
 C
 C *****start annotation access on file *****
-
+      fileh = hopen('nonexist', DFACC_READ,0)
+      ret = heprntf(ERR_FILE, 0)
       fileh = hopen(fname, DFACC_READ,0)
       ret = fileh
       call VRFY(ret, 'hopen', num_failed)
@@ -479,6 +482,8 @@ C ****** close file *******
       call VRFY(ret, 'afend', num_failed)
       ret = hclose(fileh)
       call VRFY(ret, 'hclose', num_failed)
+      ret = hclose(fileh)
+      ret = heprntf(ERR_FILE, 0)
 
 
       return

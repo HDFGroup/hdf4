@@ -158,15 +158,19 @@ C-----------------------------------------------------------------------------*/
 C-----------------------------------------------------------------------------
 C Name: heprntf
 C Purpose: prints values from the error stack 
-C Inputs:  print_levels - number of levels to print 
+C Inputs:  filename - name of the output file; if length of the
+C          filename is 0, then output goes to stdout.  
+C          print_levels - number of levels to print 
 C Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
 C
 C Remarks: This routine always prints to the standard output.
 C-----------------------------------------------------------------------------*/
 
-      integer function heprntf(print_levels)
+      integer function heprntf(filename, print_levels)
       integer print_levels 
+      character*(*) filename
+      
       integer heprntc
-      heprntf = heprntc(print_levels)
+      heprntf = heprntc(filename, print_levels,len(filename))
       return
       end

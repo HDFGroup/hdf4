@@ -39,19 +39,46 @@ static char RcsId[] = "@(#)$Revision$";
 /*-----------------------------------------------------------------------------
  * Name:    heprntc
  * Purpose: call HEprint to print error messages, starting from top of stack
- * Inputs:  print_levels: number of levels to print
- * Returns: 0 on success, FAIL on failure
+ * Inputs:  filename - name of the output file; if lenght is 0 then
+ *                     messages will be printied to stderr. 
+ *          print_levels: number of levels to print
+ *          namelen - length of the filname string
  * Users:   Fortran stub routine
  * Invokes: HEprint
- * Remarks: This routine has one less parameter than HEprint, because it
- *          doesn't allow the user to specify the stream to print to.
- *          Instead it prints automatically to stdout.
+ * Returns: 0 on success, FAIL on failure
  *---------------------------------------------------------------------------*/
 
-FRETVAL(VOID)
-nheprntc(intf * print_levels)
+FRETVAL(intf)
+
+#ifdef PROTOTYPE
+nheprntc(_fcd filename, intf * print_levels, intf *namelen)
+#else
+nheprntc(filename, print_levels, namelen)
+           _fcd  filename;
+           intf *print_levels; 
+           intf  *namelen;
+#endif /* PROTOTYPE */
+
 {
-    HEprint(stderr, *print_levels);
+    FILE *err_file;
+    char * c_name;
+    intn c_len;
+    int ret = 0;
+
+    c_len = *namelen;
+    if(c_len == 0) {
+                HEprint(stderr, *print_levels);
+                return(ret);
+    }
+    c_name = HDf2cstring(filename, c_len);
+    	if (!c_name) return(FAIL);
+    err_file = fopen(c_name, "a");
+    	if (!err_file) return(FAIL);
+    HEprint(err_file, *print_levels);
+    fclose(err_file);
+    HDfree(err_file);
+    return(ret);
+    
 }
 /*-----------------------------------------------------------------------------
  * Name: hestringc
@@ -82,7 +109,7 @@ nhestringc(error_code, error_message, len)
                 status = 0;
                 HDpackFstring(cstring,  _fcdtocp(error_message),  *len);
    }  
- 
+   HDfree(cstring); 
    return status;
  
  
