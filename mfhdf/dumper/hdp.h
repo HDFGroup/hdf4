@@ -90,10 +90,11 @@ typedef enum {DASCII, DBINARY} file_type_t;
 
 /* 'dumpsds' command option structure */
 typedef struct {
-	filter_t filter;		/* Which SDS to dump */
-	intn *filter_num;		/* A ref # or index to use as filter */
-	char *filter_str[MAXNAMELEN];	/* A name or class to use as filter */
-	content_t contents;		/* Which contents to dump */
+	filter_t filter;		/* Which data object to dump */
+	intn *filter_num;		/* ref #'s or indices to use as 
+					   filter */
+	char *filter_str[MAXNAMELEN];	/* names or classes to use as filter */
+	content_t contents;		/* What contents to dump */
 	intn dump_to_file;		/* Whether to dump to a filename */
 	file_type_t file_type;		/* What kind of data to dump to file */
 	char file_name[MAXNAMELEN];	/* Name of file to dump into */

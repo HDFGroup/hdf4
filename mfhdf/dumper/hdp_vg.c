@@ -290,8 +290,8 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
 	         fprintf(fp, "\nVgroup:%d\n", (int) i+1);
 		 fprintf(fp, "     tag = %d; reference = %d;\n",
 		         (int)vg_tag, (int)vg_ref);
-		 fprintf(fp, "     number of entries = %d;\n", (int) n); 
 		 fprintf(fp, "     name = %s; class = %s;\n", vgname, vgclass);
+		 fprintf(fp, "     number of entries = %d;\n", (int) n); 
 		 /* Read in all of the annotations. */
 		 len = DFANgetdesclen(file_name,vg_tag,vg_ref);
 		 if (len!=FAIL) {
@@ -410,7 +410,7 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp)
 	 VSdetach(vs);
       }
       else {
-	 name = HDgettagname((uint16) tag);
+	 name = HDgettagsname((uint16) tag);
 	 if (!name)
 	    name = "Unknown Tag";
          fprintf(fp, "     #%d (%s)\n", (int) t+1, name);
