@@ -24,8 +24,16 @@ extern "C" {
 
 int  is_reserved(char*vgroup_class);
 
-int  copy_sds(int32 sd_in,int32 sd_out,int32 tag,int32 ref,int32 vgroup_id_out_par,
-              char*group_name,options_t *options,table_t *table);
+int  copy_sds(int32 sd_in,
+              int32 sd_out,
+              int32 tag,
+              int32 ref,
+              int32 vgroup_id_out_par,
+              char*group_name,
+              options_t *options,
+              table_t *table,
+              int32 infile_id,
+              int32 outfile_id);
 
 int  copy_gr(int32 infile_id,
              int32 outfile_id,
@@ -84,15 +92,12 @@ int copy_vgroup_attrs(int32 vg_in,
                       char *path,
                       options_t *options);
 
-int copy_an_data(int32 infile_id,
-                 int32 outfile_id,
-                 int32 ref_in, 
-                 int32 tag_in,
-                 int32 ref_out, 
-                 int32 tag_out,
-                 ann_type type, 
-                 char *path, 
-                 options_t *options);
+
+int copy_an(int32 infile_id,int32 outfile_id,
+            int32 ref_in, int32 tag_in,
+            int32 ref_out, int32 tag_out,
+            char *path, options_t *options);
+
 
 int copy_vg_an(int32 infile_id,
                int32 outfile_id,

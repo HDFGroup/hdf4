@@ -54,7 +54,9 @@ int copy_sds(int32 sd_in,
              int32 vgroup_id_out_par, /* output parent group ID */
              char*path_name,          /* absolute path for input group name */
              options_t *options,
-             table_t *table)
+             table_t *table,
+             int32 infile_id,
+             int32 outfile_id)
 {
  intn  status_n;              /* returned status_n for functions returning an intn  */
  int32 status_32,             /* returned status_n for functions returning an int32 */
@@ -516,6 +518,12 @@ int copy_sds(int32 sd_in,
   }
  }
 
+ /* obtain the reference number of the new SDS using its identifier */
+ if ((sds_ref = SDidtoref (sds_out)) == FAIL) {
+  printf( "Failed to get new SDS reference in <%s>\n", path);
+  ret=-1;
+  goto out;
+ }
 
 /*-------------------------------------------------------------------------
  * add SDS to group
@@ -525,13 +533,6 @@ int copy_sds(int32 sd_in,
  /* add it to group, if present */
  if (vgroup_id_out_par) 
  {
-  /* obtain the reference number of the new SDS using its identifier */
-  if ((sds_ref = SDidtoref (sds_out)) == FAIL) {
-   printf( "Failed to get new SDS reference in <%s>\n", path);
-   ret=-1;
-   goto out;
-  }
-
   /* add the SDS to the vgroup. the tag DFTAG_NDG is used */
   if ((status_32 = Vaddtagref (vgroup_id_out_par, TAG_GRP_DSET, sds_ref)) == FAIL) {
    printf( "Failed to add new SDS to group <%s>\n", path);
@@ -539,6 +540,15 @@ int copy_sds(int32 sd_in,
    goto out;
   }
  }
+
+/*-------------------------------------------------------------------------
+ * copy ANs
+ *-------------------------------------------------------------------------
+ */ 
+ 
+ copy_an(infile_id,outfile_id,
+         ref,tag,sds_ref,tag, 
+         path,options);
 
 out:
  /* terminate access to the SDSs */
@@ -1189,13 +1199,13 @@ int  copy_gr(int32 infile_id,
  *-------------------------------------------------------------------------
  */ 
  
- copy_an_data(infile_id,outfile_id,
-              ref,tag,gr_ref,tag, 
-              AN_DATA_LABEL,path,options);
- copy_an_data(infile_id,outfile_id,
-              ref,tag,gr_ref,tag,
-              AN_DATA_DESC,path,options);
-
+ copy_an(infile_id,outfile_id,
+         ref,DFTAG_RIG,gr_ref,DFTAG_RIG, 
+         path,options);
+ copy_an(infile_id,outfile_id,
+         ref,DFTAG_RI,gr_ref,DFTAG_RI,
+         path,options);
+ 
 
 out:
  

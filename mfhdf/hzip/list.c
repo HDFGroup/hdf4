@@ -20,7 +20,7 @@
 
 void list_vg (char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
 void list_gr (char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
-void list_sds(char* infname,char* outfname,int32 infile_id,table_t *table,options_t *options);
+void list_sds(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
 void list_vs (char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
 void list_glb(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
 void list_an (char* infname,char* outfname,int32 infile_id,int32 outfile_id,options_t *options);
@@ -103,7 +103,7 @@ int list(char* infname, char* outfname, options_t *options)
  /* iterate tru HDF interfaces */
  list_vg (infname,outfname,infile_id,outfile_id,table,options);
  list_gr (infname,outfname,infile_id,outfile_id,table,options);
- list_sds(infname,outfname,infile_id,table,options);
+ list_sds(infname,outfname,infile_id,outfile_id,table,options);
  list_vs (infname,outfname,infile_id,outfile_id,table,options);
 	list_glb(infname,outfname,infile_id,outfile_id,table,options);
 	list_an (infname,outfname,infile_id,outfile_id,options);
@@ -306,7 +306,10 @@ void list_vg(char* infname,char* outfname,int32 infile_id,int32 outfile_id,
  *-------------------------------------------------------------------------
  */
 
-void vgroup_insert(char* infname,char* outfname,int32 infile_id,int32 outfile_id,
+void vgroup_insert(char* infname,
+                   char* outfname,
+                   int32 infile_id,
+                   int32 outfile_id,
                    int32 vgroup_id_out_par, /* output parent group ID */
                    char*path_name,          /* absolute path for input group name */          
                    int32* in_tags,          /* tag list for parent group */
@@ -439,7 +442,8 @@ void vgroup_insert(char* infname,char* outfname,int32 infile_id,int32 outfile_id
    sd_out = SDstart(outfname, DFACC_WRITE);
 
    /* copy dataset */
-   copy_sds(sd_id,sd_out,tag,ref,vgroup_id_out_par,path_name,options,table);
+   copy_sds(sd_id,sd_out,tag,ref,vgroup_id_out_par,path_name,options,table,
+            infile_id,outfile_id);
  
    status_n = SDend (sd_id);
    status_n = SDend (sd_out);
@@ -572,7 +576,12 @@ void list_gr(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table
  *-------------------------------------------------------------------------
  */
 
-void list_sds(char* infname,char* outfname,int32 infile_id,table_t *table,options_t *options)
+void list_sds(char* infname,
+              char* outfname,
+              int32 infile_id,
+              int32 outfile_id,
+              table_t *table,
+              options_t *options)
 {
  intn  status;                 /* status for functions returning an intn */
  int32 sd_id,                  /* SD interface identifier */
@@ -611,7 +620,8 @@ void list_sds(char* infname,char* outfname,int32 infile_id,table_t *table,option
   }
 
   /* copy SDS  */
-  copy_sds(sd_id,sd_out,TAG_GRP_DSET,sds_ref,0,NULL,options,table);
+  copy_sds(sd_id,sd_out,TAG_GRP_DSET,sds_ref,0,NULL,options,table,
+           infile_id,outfile_id);
      
   /* terminate access to the current dataset */
   status = SDendaccess (sds_id);
@@ -796,10 +806,6 @@ int copy_vgroup_attrs(int32 vg_in, int32 vg_out, char *path,options_t *options)
  }
  return 1;
 }
-
-
-
-
 
 /*-------------------------------------------------------------------------
  * Function: list_glb
@@ -1031,12 +1037,10 @@ int copy_vg_an(int32 infile_id,int32 outfile_id,int32 vgroup_id,int32 vgroup_id_
   return-1;
  }
 
- copy_an_data(infile_id,outfile_id,
-              ref_in,tag_in,ref_out,tag_out, 
-              AN_DATA_LABEL,path,options);
- copy_an_data(infile_id,outfile_id,
-              ref_in,tag_in,ref_out,tag_out,
-              AN_DATA_DESC,path,options);
+ copy_an(infile_id,outfile_id,
+         ref_in,tag_in,ref_out,tag_out, 
+         path,options);
+
  return 1;
 }
 
@@ -1081,15 +1085,12 @@ int copy_vs_an(int32 infile_id,int32 outfile_id,int32 vdata_id,int32 vdata_id_ou
   return-1;
  }
 
- copy_an_data(infile_id,outfile_id,
-              ref_in,tag_in,ref_out,tag_out, 
-              AN_DATA_LABEL,path,options);
- copy_an_data(infile_id,outfile_id,
-              ref_in,tag_in,ref_out,tag_out,
-              AN_DATA_DESC,path,options);
+ copy_an(infile_id,outfile_id,
+         ref_in,tag_in,ref_out,tag_out, 
+         path,options);
+
  return 1;
 }
-
 
 
 /*-------------------------------------------------------------------------
@@ -1102,10 +1103,15 @@ int copy_vs_an(int32 infile_id,int32 outfile_id,int32 vdata_id,int32 vdata_id_ou
  *-------------------------------------------------------------------------
  */
 
-int copy_an_data(int32 infile_id,int32 outfile_id,
-                 int32 ref_in, int32 tag_in,
-                 int32 ref_out, int32 tag_out,
-                 ann_type type, char *path, options_t *options) 
+int copy_an_data(int32 infile_id,
+                 int32 outfile_id,
+                 int32 ref_in, 
+                 int32 tag_in,
+                 int32 ref_out, 
+                 int32 tag_out,
+                 ann_type type, 
+                 char *path, 
+                 options_t *options) 
 {
  int32 an_id,         /* AN interface identifier */
        an_out,        /* AN interface identifier */
@@ -1196,6 +1202,36 @@ int copy_an_data(int32 infile_id,int32 outfile_id,
  return 1;
 }
 
+
+/*-------------------------------------------------------------------------
+ * Function: copy_an
+ *
+ * Purpose: copy DATA ANs (AN_DATA_LABEL and AN_DATA_DESC)
+ *
+ * Return: ok, 1, -1 not ok 
+ *
+ *-------------------------------------------------------------------------
+ */
+
+int copy_an(int32 infile_id,
+            int32 outfile_id,
+            int32 ref_in, 
+            int32 tag_in,
+            int32 ref_out, 
+            int32 tag_out,
+            char *path, 
+            options_t *options) 
+{
+
+ copy_an_data(infile_id,outfile_id,
+              ref_in,tag_in,ref_out,tag_out, 
+              AN_DATA_LABEL,path,options);
+ copy_an_data(infile_id,outfile_id,
+              ref_in,tag_in,ref_out,tag_out,
+              AN_DATA_DESC,path,options);
+
+ return 1;
+}
 
 
 

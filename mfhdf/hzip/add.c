@@ -44,7 +44,10 @@ unsigned char *image_data = 0;
  *-------------------------------------------------------------------------
  */
 
-void add_gr_ffile(char* name_file,char* gr_name,int32 file_id,int32 vgroup_id)
+void add_gr_ffile(char* name_file,
+                  char* gr_name,
+                  int32 file_id,
+                  int32 vgroup_id)
 {
  int32  gr_id,          /* GR interface identifier */
         ri_id,          /* raster image identifier */
@@ -171,7 +174,7 @@ void add_gr_ffile(char* name_file,char* gr_name,int32 file_id,int32 vgroup_id)
 #define Y_DIM_GR     4
 
 void add_gr(char* gr_name,           /* gr name */
-            int32 file_id,            /* file ID */
+            int32 file_id,           /* file ID */
             int32 vgroup_id,         /* group ID */
             int32 chunk_flags,       /* chunk flags */
             int32 comp_type,         /* compression flag */
@@ -336,7 +339,6 @@ void add_gr(char* gr_name,           /* gr name */
  {
   printf("Error: Could not close GR interface\n");
  }
- 
 
  /* add an annotation and label to the object */
  add_an(file_id, DFTAG_RI, gr_ref);
@@ -357,7 +359,8 @@ void add_gr(char* gr_name,           /* gr name */
  *-------------------------------------------------------------------------
  */
 
-void add_glb_attrs(char *fname,int32 file_id)
+void add_glb_attrs(char *fname,
+                   int32 file_id)
 {
  intn  status;                 /* status for functions returning an intn */
  int32 sd_id,                  /* SD interface identifier */
@@ -410,7 +413,7 @@ void add_glb_attrs(char *fname,int32 file_id)
  *-------------------------------------------------------------------------
  */
 
-void add_r8(char *fname,char* name_file,int32 vgroup_id)
+void add_r8(char *fname,char* name_file,int32 file_id, int32 vgroup_id)
 {
  intn   status_n;       /* returned status_n for functions returning an intn  */
  int32  status_32,      /* returned status_n for functions returning an int32 */
@@ -443,6 +446,9 @@ void add_r8(char *fname,char* name_file,int32 vgroup_id)
   /* add the image to the vgroup. the tag DFTAG_RIG is used */
   if (vgroup_id)
    status_32 = Vaddtagref (vgroup_id, TAG_GRP_IMAGE, ri_ref);
+
+  /* add an annotation and label to the object */
+  add_an(file_id, TAG_GRP_IMAGE, ri_ref);
  }
 
  if ( image_data )
@@ -470,7 +476,7 @@ void add_r8(char *fname,char* name_file,int32 vgroup_id)
  *-------------------------------------------------------------------------
  */
 
-void add_r24(char *fname,char* name_file,int32 vgroup_id)
+void add_r24(char *fname,char* name_file,int32 file_id, int32 vgroup_id)
 {
  intn   status_n;       /* returned status_n for functions returning an intn  */
  int32  status_32,      /* returned status_n for functions returning an int32 */
@@ -503,6 +509,9 @@ void add_r24(char *fname,char* name_file,int32 vgroup_id)
   /* add the image to the vgroup. the tag DFTAG_RIG is used */
   if (vgroup_id)
    status_32 = Vaddtagref (vgroup_id, TAG_GRP_IMAGE, ri_ref);
+
+  /* add an annotation and label to the object */
+  add_an(file_id, TAG_GRP_IMAGE, ri_ref);
  }
 
  if ( image_data )
@@ -541,6 +550,7 @@ void add_r24(char *fname,char* name_file,int32 vgroup_id)
 
 
 void add_sd(char *fname,             /* file name */
+            int32 file_id,           /* file ID */
             char* sds_name,          /* sds name */
             int32 vgroup_id,         /* group ID */
             int32 chunk_flags,       /* chunk flags */
@@ -694,6 +704,9 @@ void add_sd(char *fname,             /* file name */
  if (vgroup_id)
   status_32 = Vaddtagref (vgroup_id, TAG_GRP_DSET, sds_ref);
  
+ /* add an annotation and label to the object */
+ add_an(file_id, TAG_GRP_DSET, sds_ref);
+ 
  /* terminate access to the SDS */
  status_n = SDendaccess (sds_id);
  
@@ -721,6 +734,7 @@ void add_sd(char *fname,             /* file name */
  */
 
 void add_sd3d(char *fname,             /* file name */
+              int32 file_id,           /* file ID */
               char* sds_name,          /* sds name */
               int32 vgroup_id,         /* group ID */
               int32 chunk_flags,       /* chunk flags */
@@ -803,6 +817,9 @@ void add_sd3d(char *fname,             /* file name */
  /* add the SDS to the vgroup. the tag DFTAG_NDG is used */
  if (vgroup_id)
   status_32 = Vaddtagref (vgroup_id, TAG_GRP_DSET, sds_ref);
+
+ /* add an annotation and label to the object */
+ add_an(file_id, TAG_GRP_DSET, sds_ref);
  
  /* terminate access to the SDS */
  status_n = SDendaccess (sds_id);
