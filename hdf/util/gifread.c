@@ -80,7 +80,7 @@ BYTE    **MemGif2;       /* GIF image file input FILE stream */
 	for (i = 0 ; i < 6 ; i++) {
 		GifHead->HeaderDump[i] = *(*MemGif2)++;
 	}
-	if (strncmp((const char *)GifHead->HeaderDump , "GIF" , 3)) {
+	if (strncmp((char *)GifHead->HeaderDump , "GIF" , 3)) {
 		printf("The file does not appear to be a valid GIF file.\n");
 		exit(-1);
 	}
