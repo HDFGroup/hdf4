@@ -13,8 +13,9 @@ correctly. A 'make' followed by a 'make test' should build
 the libraries and run the tests.  This works for all 'UNIX'
 platforms including the HP and Cray.
 
-For CONVEX, you need to setenv for MACHINE (just type: 
-setenv MACHINE C3 ) before running ./configure. 
+For some older CONVEX systems where the command "uname" is missing,
+you need to setenv for MACHINE (just type: setenv MACHINE C3 )
+before running ./configure.
 
 For SGI R8000 running IRIX_6.0, currently we support 32-bit mode only.
 You need to add -32 option in CFLAGS and FFLAGS in CUSTOMIZE file.
