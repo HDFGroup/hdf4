@@ -2052,18 +2052,26 @@ nscchempty(id, flag)
     *flag = flag_c;
     return(status);
 }   
-/*-------------------------------------------------------------------------
+/*------------------------------------------------------------------------- 
  * Name:    scgcompress
  * Puporse: Call SDgetcompress 
  * Inputs:  id: SDS access id
  * Outputs: comp_type:  type of compression
  *                      COMP_CODE_NONE = 0
  *                      COMP_CODE_RLE  = 1
+ *                      COMP_CODE_NBIT = 2
  *                      COMP_CODE_SKPHUFF = 3
  *                      COMP_CODE_DEFLATE = 4
+ *          SKPHUFF:
  *          comp_prm[0] = skphuff_skp_size: size of individual elements for 
  *                            Adaptive Huffman compression algorithm
+ *          GZIP:
  *          comp_prm[0] = deflate_level:    GZIP  compression parameter
+ *          NBIT:
+ *          comp_prm[0] = nbit_sign_ext
+ *          comp_prm[1] = nbit_fill_one
+ *          comp_prm[2] = nbit_start_bit
+ *          comp_prm[3] = nbit_bit_len
  * Returns: 0 on success, -1 on failure with error set
  * Users:   HDF Fortran programmers          
  *-------------------------------------------------------------------------*/
@@ -2101,6 +2109,16 @@ nscchempty(id, flag)
          *comp_type = 1;
 	  ret = 0;
          break;
+
+       case COMP_CODE_NBIT:      /* NBIT encoding */
+          *comp_type = 2;
+          comp_prm[0] = c_info.nbit.sign_ext; 
+          comp_prm[1] = c_info.nbit.fill_one; 
+          comp_prm[2] = c_info.nbit.start_bit; 
+          comp_prm[3] = c_info.nbit.bit_len; 
+	  ret = 0;
+          break;
+
  
        case COMP_CODE_SKPHUFF:      /* Skipping Huffman encoding */
           *comp_type = 3;
