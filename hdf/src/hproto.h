@@ -75,7 +75,7 @@ extern intn HDputc
 extern int32 Hgetelement
   PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE *data));
 
-extern int Hputelement
+extern int32 Hputelement
   PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE *data, int32 length));
 
 extern int32 Hlength
@@ -228,8 +228,9 @@ extern int32 HXcreate
 ** from hcomp.c
 */
 extern int32 HCcreate
-    PROTO((int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
-        comp_coder_t coder_type));
+    PROTO((int32 file_id, uint16 tag, uint16 ref,
+        comp_model_t model_type, model_info *model_info,
+        comp_coder_t coder_type, comp_info *coder_info));
 
 /*
 ** from herr.c
