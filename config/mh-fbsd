@@ -3,7 +3,8 @@
 # Compiliers:
 # For gcc version
 CC=gcc
-CFLAGS=-ansi 
+CFLAGS=-ansi -Wall -pedantic -g
+#CFLAGS=-ansi
 #
 #Using ANSI compilier
 #CC=cc

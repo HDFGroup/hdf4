@@ -20,7 +20,7 @@
 #
 # Type of C compiler (default is `cc'):
 # Try 'gcc -ansi' if your cc is not ANSI compatible.
-CC='gcc -ansi'
+CC='gcc -ansi -g'
 #
 # C compiler flags (default is `-O'):
 #CFLAGS='-g'
