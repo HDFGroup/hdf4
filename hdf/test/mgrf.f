@@ -360,10 +360,7 @@ C     GR chunking and compression tests. Added by EIP 1/13/98
 C
 C     ----Chunking test
 C          creates the following files:
-C                       grch_no.hdf
-C                       grch_rl.hdf
-C                       grch_sk.hdf
-C                       grch_gz.hdf
+C                        GRchunked1.hdf
       err_grchunk = 0
       call test_grchunk(err_grchunk)
       if (err_grchunk .ne. 0) then
@@ -374,10 +371,7 @@ C                       grch_gz.hdf
 
 C     ----Chunking write/read test
 C          creates the following files:
-C                       grchwr_no.hdf
-C                       grchwr_rl.hdf
-C                       grchwr_sk.hdf
-C                       grchwr_gz.hdf
+C                        GRcompressed.hdf
       err_grwrchunk = 0
       call test_grwrchunk(err_grwrchunk)
       if (err_grwrchunk .ne. 0) then
@@ -389,10 +383,7 @@ C                       grchwr_gz.hdf
 C     ----Compression test
 C
 C          creates the following files:
-C                       gr_no.hdf
-C                       gr_rl.hdf
-C                       gr_sk.hdf
-C                       gr_gz.hdf
+C                        GRchunked2.hdf
       err_grcompress = 0
       call test_grcompress(err_grcompress)
       if (err_grcompress .ne. 0) then
@@ -410,7 +401,10 @@ C
       endif
       return
       end 
-
+CD
+CD----All lines started with CD should be deleted after GR bug that prevents
+CD----writing multiple images to the file is fixed.
+CD 
       subroutine test_grchunk( err_grchunk )
       implicit none
       integer N_COMP_TYPES, N_COMP_ARG, NCOMP
@@ -418,19 +412,20 @@ C
       parameter(N_COMP_TYPES = 4, N_COMP_ARG =1)
       parameter(NCOMP = 2, MFGR_INTERLACE_PIXEL = 0)
       integer ri_id(N_COMP_TYPES),
-     .        gr_id(N_COMP_TYPES),
-     .        file_id(N_COMP_TYPES)
+     .        gr_id,
+     .        file_id
       integer dims(2), start(2), edges(2), stride(2)
       integer err_grchunk
       integer i, j, status, il, k, i_comp, index
       integer flags, maxcache, nc_out
-      character*12 file(N_COMP_TYPES)
+      character*14 file
       character*12 name(N_COMP_TYPES)
+      integer n_images, n_file_attrs
 C
 C---GR interface functions
 C
       integer mgstart, mgcreat, mgwrimg, mgsnatt,
-     .        mgrdimg, mgselct, mgendac, mgend
+     .        mgrdimg, mgfinfo, mgn2ndx, mgselct, mgendac, mgend
 C
 C---GR chunking functions 
 C
@@ -488,33 +483,31 @@ C---Chunking dimension arrays
 C
       integer ch_dims(2), ch_dims_out(2)
 C
-C---We will write/read to four different files corresponding to the
-C   different compression types.
+C----We will write four images using different compression methods to
+C    one file.
+C
+       file = "GRchunked1.hdf"
 C
 C   No compresion
 C
-      file(1) = 'grch_no.hdf'
       name(1) = 'Nocomp_data'    
       comp_type(1) = COMP_CODE_NONE
       comp_type_out(1) = 0
 C
 C   RLE compresion
 C
-      file(2) = 'grch_rl.hdf'
       name(2) = 'Rlcomp_data'    
       comp_type(2) = COMP_CODE_RLE
       comp_type_out(2) = 1 
 C
 C   Adaptive Huffman compresion
 C
-      file(3) = 'grch_sk.hdf'
       name(3) = 'Hucomp_data'    
       comp_type(3) = COMP_CODE_SKPHUFF
       comp_type_out(3) = 1 
 C
 C   GZIP compression
 C
-      file(4) = 'grch_gz.hdf'
       name(4) = 'Gzcomp_data'    
       comp_type(4) = COMP_CODE_DEFLATE
       comp_type_out(4) = 1 
@@ -542,16 +535,24 @@ C
 C
 C   Main loop through different compression types
 C
+C
+C     Create and a file and initiate GR interface.
+C
+      file_id = hopen(file, DFACC_CREATE, 0)
+      if(file_id .le. 0) then
+         print *, 'hopen failed to create a file'
+         err_grchunk = err_grchunk +1
+         goto 2223
+      endif 
+      gr_id = mgstart(file_id)
+      if(gr_id .le. 0) then
+         print *, 'mgstart failed to initialise GR interface'
+         err_grchunk = err_grchunk +1
+         goto 2222
+      endif 
 
       do 1000 i_comp=1, N_COMP_TYPES
 C
-C     Create and open the file.
-C
-      file_id(i_comp) = hopen(file(i_comp), DFACC_CREATE, 0)
-C
-C     Initiate the GR interface.
-C
-      gr_id(i_comp) = mgstart(file_id(i_comp))
 
 C     Define the number of components and dimensions of the image.
 
@@ -561,8 +562,13 @@ C     Define the number of components and dimensions of the image.
 
 C     Create the data set.
 
-      ri_id(i_comp) = mgcreat(gr_id(i_comp), name(i_comp), NCOMP,
+      ri_id(i_comp) = mgcreat(gr_id, name(i_comp), NCOMP,
      .                        DFNT_INT16, il, dims)
+      if(ri_id(i_comp) .le. 0) then
+         print *, 'mgcreat failed to create ', i_comp, 'GR dataset'
+         err_grchunk = err_grchunk +1
+         goto 1000
+      endif
 
 C
 C---Set pixel value
@@ -624,10 +630,11 @@ C
          print *, 'mgendac failed for', i_comp, '-th data set'
          err_grchunk = err_grchunk +1
       endif 
+1000  continue
 C
 C     Terminate access to the GR interface.
 C
-      status = mgend(gr_id(i_comp))
+      status = mgend(gr_id)
       if(status .ne. 0) then
          print *, 'mgend failed for', i_comp, '-th data set'
          err_grchunk = err_grchunk +1
@@ -635,37 +642,68 @@ C
 C
 C     Close the file.
 C
-      status = hclose(file_id(i_comp))
+      status = hclose(file_id)
       if(status .ne. 0) then
          print *, 'hclose failed for', i_comp, '-th data set'
          err_grchunk = err_grchunk +1
       endif 
 
-1000  continue
 
 
-      do 2000 i_comp=1, N_COMP_TYPES
 C
 C     Open the file.
 C
-      file_id(i_comp) = hopen(file(i_comp), DFACC_READ, 0)
-      if(status .eq. -1) then
-         print *, 'hopen failed for', i_comp, '-th data set'
+      file_id = hopen(file, DFACC_READ, 0)
+      if(file_id .eq. -1) then
+         print *, 'hopen failed to access the file'
          err_grchunk = err_grchunk +1
+         goto 2223
       endif 
 C
 C     Initiate the GR interface and select first data set.
 C
-      gr_id(i_comp) = mgstart(file_id(i_comp))
-      if(status .eq. -1) then
+      gr_id = mgstart(file_id)
+      if(gr_id .eq. -1) then
          print *, 'mgstart failed for', i_comp, '-th data set'
          err_grchunk = err_grchunk +1
+         goto 2222
       endif 
-      index = 0
-      ri_id(i_comp) = mgselct(gr_id(i_comp), index)
-      if(status .eq. -1) then
+C
+C     Check that file contains 4 GR datasets and has 0 file attributes.
+C
+      status = mgfinfo(gr_id, n_images, n_file_attrs)
+      if(status .ne. 0) then
+         print *, 'mgfinfo failed '
+         err_grchunk = err_grchunk +1
+      goto 2222
+      endif 
+      if(n_images .ne. 4) then
+         print *, 'Wrong number of images returned '
+         err_grchunk = err_grchunk +1
+      goto 2222
+      endif 
+      if(n_file_attrs .ne. 0) then
+         print *, 'Wrong number of file attributes returned '
+         err_grchunk = err_grchunk +1
+      endif 
+
+      do 2000 i_comp=1, n_images
+C      ri_id(i_comp) = mgselct(gr_id(i_comp), index)
+C
+C     Find an index using image's name.
+C
+      index = mgn2ndx(gr_id, name(i_comp))
+      if(index .lt. 0 .or. index .gt. 3) then
+         print *, 'Wrong index range '
+         err_grchunk = err_grchunk +1
+      goto 2222
+      endif 
+
+      ri_id(i_comp) = mgselct(gr_id, index)
+      if(ri_id(i_comp) .eq. -1) then
          print *, 'mgselct failed for', i_comp, '-th data set'
          err_grchunk = err_grchunk +1
+         goto 1999
       endif 
 C
 C     Read the stored data to the image array.
@@ -719,23 +757,27 @@ C
          print *, 'mgendac failed for', i_comp, '-th data set'
          err_grchunk = err_grchunk +1
       endif 
+1999  continue
+C
+2000  continue
 C
 C     Terminate access to the GR interface.
 C
-      status = mgend(gr_id(i_comp))
+      status = mgend(gr_id)
       if(status .ne. 0) then
          print *, 'mgend failed for', i_comp, '-th data set'
          err_grchunk = err_grchunk +1
       endif 
+2222  continue
 C
 C     Close the file.
 C
-      status = hclose(file_id(i_comp))
+      status = hclose(file_id)
       if(status .ne. 0) then
          print *, 'hclose failed for', i_comp, '-th data set'
          err_grchunk = err_grchunk +1
       endif 
-2000  continue
+2223  continue
       return
       end
 C
@@ -748,12 +790,13 @@ C
       integer MFGR_INTERLACE_PIXEL
       parameter(NCOMP = 2, MFGR_INTERLACE_PIXEL = 0)
       integer ri_id(N_COMP_TYPES),
-     .        gr_id(N_COMP_TYPES),
-     .        file_id(N_COMP_TYPES)
+     .        gr_id,
+     .        file_id
       integer dims(2), start(2), edges(2), stride(2)
       integer i, j, k, status, il, i_comp, index
       integer err_grcompress
-      character*12 file(N_COMP_TYPES)
+C      character*12 file(N_COMP_TYPES)
+      character*16 file
       character*12 name(N_COMP_TYPES)
 C
 C---GR interface functions
@@ -814,28 +857,25 @@ C
 C
 C---We will write/read to four different files corresponding to the
 C   different compression types.
+      file = "GRcompressed.hdf"
 C
 C   No compresion
 C
-      file(1) = 'gr_no.hdf'
       name(1) = 'Nocomp_data'    
       comp_type(1) = COMP_CODE_NONE
 C
 C   RLE compresion
 C
-      file(2) = 'gr_rl.hdf'
       name(2) = 'Rlcomp_data'    
       comp_type(2) = COMP_CODE_RLE
 C
 C   Adaptive Huffman compresion
 C
-      file(3) = 'gr_sk.hdf'
       name(3) = 'Hucomp_data'    
       comp_type(3) = COMP_CODE_SKPHUFF
 C
 C   GZIP compression
 C
-      file(4) = 'gr_gz.hdf'
       name(4) = 'Gzcomp_data'    
       comp_type(4) = COMP_CODE_DEFLATE
 C
@@ -858,24 +898,26 @@ C
 C   Main loop through different compression types
 C
 
-      do 1000 i_comp=1, N_COMP_TYPES
 C
 C     Create and open the file.
 C
-      file_id(i_comp) = hopen(file(i_comp), DFACC_CREATE, 0)
-      if(file_id(i_comp) .eq. -1) then
+      file_id = hopen(file, DFACC_CREATE, 0)
+      if(file_id .eq. -1) then
          print *, 'hopen failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
       endif 
 C
 C     Initiate the GR interface.
 C
-      gr_id(i_comp) = mgstart(file_id(i_comp))
-      if(gr_id(i_comp) .eq. -1) then
-         print *, 'mgstart failed for', i_comp, '-th data set'
+C      gr_id(i_comp) = mgstart(file_id(i_comp))
+C      if(gr_id(i_comp) .eq. -1) then
+      gr_id = mgstart(file_id)
+      if(gr_id .eq. -1) then
+         print *, 'mgstart failed for', i_comp, '-th dataset' 
          err_grcompress = err_grcompress +1
       endif 
 
+      do 1000 i_comp=1, N_COMP_TYPES
 C     Define the number of components and dimensions of the image.
 
       il = MFGR_INTERLACE_PIXEL
@@ -884,7 +926,7 @@ C     Define the number of components and dimensions of the image.
 
 C     Create the data set.
 
-      ri_id(i_comp) = mgcreat(gr_id(i_comp), name(i_comp), NCOMP,
+      ri_id(i_comp) = mgcreat(gr_id, name(i_comp), NCOMP,
      .                        DFNT_INT16, il, dims)
       if(ri_id(i_comp) .eq. -1) then
          print *, 'mgcreat failed for', i_comp, '-th data set'
@@ -941,10 +983,11 @@ C
          print *, 'mgendac failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
       endif 
+1000  continue
 C
 C     Terminate access to the GR interface.
 C
-      status = mgend(gr_id(i_comp))
+      status = mgend(gr_id)
       if(status .ne. 0) then
          print *, 'mgend failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
@@ -952,41 +995,41 @@ C
 C
 C     Close the file.
 C
-      status = hclose(file_id(i_comp))
+      status = hclose(file_id)
       if(status .ne. 0) then
          print *, 'hclose failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
       endif 
 
-1000  continue
 
 
-      do 2000 i_comp=1, N_COMP_TYPES
 C
 C     Open the file.
 C
-      file_id(i_comp) = hopen(file(i_comp), DFACC_READ, 0)
-      if(file_id(i_comp) .eq. -1) then
+      file_id = hopen(file, DFACC_READ, 0)
+      if(file_id .eq. -1) then
          print *, 'hopen failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
       endif 
 C
 C     Initiate the GR interface and select first data set.
 C
-      gr_id(i_comp) = mgstart(file_id(i_comp))
-      if(gr_id(i_comp) .eq. -1) then
+      gr_id = mgstart(file_id)
+      if(gr_id .eq. -1) then
          print *, 'mgstart failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
       endif 
-      index = mgn2ndx(gr_id(i_comp), name(i_comp))
-      if(index .eq. -1) then
-         print *, 'mgn2ndx failed for', i_comp, '-th data set'
+      do 2000 i_comp=1, N_COMP_TYPES
+      index = mgn2ndx(gr_id, name(i_comp))
+      if(index .eq. -1 ) then
+         print *, 'mgn2ndx failed for',  name(i_comp), ' data set'
          err_grcompress = err_grcompress +1
       endif 
-      ri_id(i_comp) = mgselct(gr_id(i_comp), index)
+      ri_id(i_comp) = mgselct(gr_id, index)
       if(ri_id(i_comp) .eq. -1) then
          print *, 'mgselct failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
+         goto 1999
       endif 
 C
 C     Read the stored data to the image array.
@@ -1026,10 +1069,12 @@ C
          print *, 'mgendac failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
       endif 
+1999  continue
+2000  continue
 C
 C     Terminate access to the GR interface.
 C
-      status = mgend(gr_id(i_comp))
+      status = mgend(gr_id)
       if(status .ne. 0) then
          print *, 'mgend failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
@@ -1037,12 +1082,11 @@ C
 C
 C     Close the file.
 C
-      status = hclose(file_id(i_comp))
+      status = hclose(file_id)
       if(status .ne. 0) then
          print *, 'hclose failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
       endif 
-2000  continue
       return
       end
 
@@ -1056,18 +1100,19 @@ C
       parameter(N_COMP_TYPES = 4, N_COMP_ARG =1)
       parameter(NCOMP = 3, MFGR_INTERLACE_PIXEL = 0)
       integer ri_id(N_COMP_TYPES),
-     .        gr_id(N_COMP_TYPES),
-     .        file_id(N_COMP_TYPES)
+     .        gr_id,
+     .        file_id
       integer dims(2), start(2), edges(2), stride(2)
       integer err_grwrchunk
       integer i, j, status, il, k, i_comp, index
-      character*13 file(N_COMP_TYPES)
+C      character*13 file(N_COMP_TYPES)
+      character*14 file
       character*12 name(N_COMP_TYPES)
 C
 C---GR interface functions
 C
       integer mgstart, mgcreat, mgsnatt,
-     .        mgrdimg, mgselct, mgendac, mgend
+     .        mgrdimg, mgn2ndx, mgselct, mgendac, mgend, mgfinfo
 C
 C---GR chunking functions 
 C
@@ -1122,6 +1167,7 @@ C
        
       integer*2 image_data_out(NCOMP,X_LENGTH,Y_LENGTH)
       integer*2 data_arr(NCOMP,X_LENGTH,Y_LENGTH)
+      integer n_images, n_file_attrs
       equivalence (data_org(1), data_arr(1,1,1))
 C
 C---Default pixel value
@@ -1135,30 +1181,28 @@ C
 C---We will write/read to four different files corresponding to the
 C   different compression types.
 C
+C   We will try to write to one file gr_chunked.hdf
+       file = "GRchunked2.hdf"
 C   No compresion
 C
-      file(1) = 'grchwr_no.hdf'
       name(1) = 'Nocomp_data'    
       comp_type(1) = COMP_CODE_NONE
       comp_type_out(1) = 0
 C
 C   RLE compresion
 C
-      file(2) = 'grchwr_rl.hdf'
       name(2) = 'Rlcomp_data'    
       comp_type(2) = COMP_CODE_RLE
       comp_type_out(2) = 1 
 C
 C   Adaptive Huffman compresion
 C
-      file(3) = 'grchwr_sk.hdf'
       name(3) = 'Hucomp_data'    
       comp_type(3) = COMP_CODE_SKPHUFF
       comp_type_out(3) = 1 
 C
 C   GZIP compression
 C
-      file(4) = 'grchwr_gz.hdf'
       name(4) = 'Gzcomp_data'    
       comp_type(4) = COMP_CODE_DEFLATE
       comp_type_out(4) = 1 
@@ -1213,16 +1257,16 @@ C
 C
 C   Main loop through different compression types
 C
-
-      do 1000 i_comp=1, N_COMP_TYPES
 C
 C     Create and open the file.
 C
-      file_id(i_comp) = hopen(file(i_comp), DFACC_CREATE, 0)
 C
 C     Initiate the GR interface.
 C
-      gr_id(i_comp) = mgstart(file_id(i_comp))
+      file_id = hopen(file, DFACC_CREATE, 0)
+      gr_id = mgstart(file_id)
+
+      do 1000 i_comp=1, N_COMP_TYPES
 
 C     Define the number of components and dimensions of the image.
 
@@ -1232,7 +1276,7 @@ C     Define the number of components and dimensions of the image.
 
 C     Create the data set.
 
-      ri_id(i_comp) = mgcreat(gr_id(i_comp), name(i_comp), NCOMP,
+      ri_id(i_comp) = mgcreat(gr_id, name(i_comp), NCOMP,
      .                        DFNT_INT16, il, dims)
 
 C
@@ -1309,10 +1353,12 @@ C
          print *, 'mgendac failed for', i_comp, '-th data set'
          err_grwrchunk = err_grwrchunk +1
       endif 
+1000  continue
 C
 C     Terminate access to the GR interface.
 C
-      status = mgend(gr_id(i_comp))
+C      status = mgend(gr_id(i_comp))
+      status = mgend(gr_id)
       if(status .ne. 0) then
          print *, 'mgend failed for', i_comp, '-th data set'
          err_grwrchunk = err_grwrchunk +1
@@ -1320,37 +1366,60 @@ C
 C
 C     Close the file.
 C
-      status = hclose(file_id(i_comp))
+      status = hclose(file_id)
       if(status .ne. 0) then
          print *, 'hclose failed for', i_comp, '-th data set'
          err_grwrchunk = err_grwrchunk +1
       endif 
 
-1000  continue
-
-
-      do 2000 i_comp=1, N_COMP_TYPES
-C
-C     Open the file.
-C
-      file_id(i_comp) = hopen(file(i_comp), DFACC_READ, 0)
-      if(status .eq. -1) then
+      file_id = hopen(file, DFACC_READ, 0)
+      if(file_id .eq. -1) then
          print *, 'hopen failed for', i_comp, '-th data set'
          err_grwrchunk = err_grwrchunk +1
       endif 
 C
 C     Initiate the GR interface and select first data set.
 C
-      gr_id(i_comp) = mgstart(file_id(i_comp))
-      if(status .eq. -1) then
+      gr_id = mgstart(file_id)
+      if(gr_id .eq. -1) then
          print *, 'mgstart failed for', i_comp, '-th data set'
          err_grwrchunk = err_grwrchunk +1
       endif 
-      index = 0
-      ri_id(i_comp) = mgselct(gr_id(i_comp), index)
-      if(status .eq. -1) then
+C
+C     Find number of images in the file ( should be 4)
+C
+      status = mgfinfo(gr_id, n_images, n_file_attrs)
+      if(status .ne. 0) then
+         print *, 'mgfinfo failed '
+         err_grwrchunk = err_grwrchunk +1
+      goto 2222
+      endif 
+      if(n_images .ne. 4) then
+         print *, 'Wrong number of images returned '
+         err_grwrchunk = err_grwrchunk +1
+      goto 2222
+      endif 
+      if(n_file_attrs .ne. 0) then
+         print *, 'Wrong number of file attributes returned '
+         err_grwrchunk = err_grwrchunk +1
+      endif 
+
+      do 2000 i_comp=1, n_images 
+
+C
+C     Find an index using image's name.
+C
+      index = mgn2ndx(gr_id, name(i_comp))
+      if(index .lt. 0 .or. index .gt. 3) then
+         print *, 'Wrong index range '
+         err_grwrchunk = err_grwrchunk +1
+      goto 2222 
+      endif 
+      ri_id(i_comp) = mgselct(gr_id, index)
+      if( ri_id(i_comp) .eq. -1) then
          print *, 'mgselct failed for', i_comp, '-th data set'
          err_grwrchunk = err_grwrchunk +1
+         goto 2000 
       endif 
 C
 C     Read the stored data to the image array.
@@ -1408,10 +1477,14 @@ C
          print *, 'mgendac failed for', i_comp, '-th data set'
          err_grwrchunk = err_grwrchunk +1
       endif 
+1999  continue
+2000  continue
+
+2222  continue
 C
 C     Terminate access to the GR interface.
 C
-      status = mgend(gr_id(i_comp))
+      status = mgend(gr_id)
       if(status .ne. 0) then
          print *, 'mgend failed for', i_comp, '-th data set'
          err_grwrchunk = err_grwrchunk +1
@@ -1419,11 +1492,10 @@ C
 C
 C     Close the file.
 C
-      status = hclose(file_id(i_comp))
+      status = hclose(file_id)
       if(status .ne. 0) then
          print *, 'hclose failed for', i_comp, '-th data set'
          err_grwrchunk = err_grwrchunk +1
       endif 
-2000  continue
       return
       end
