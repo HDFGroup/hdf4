@@ -37,6 +37,7 @@ Supported Platforms
   CM5 (Sun Frontend)          GCC 2.6.3      f77 SC1.0        X         X
   CM5 (Parallel I/O)          CSTAR 7.2      CMF 2.2.11       X         X
   IBM RS6000/AIX v3.2         xlc            f77              X         X
+  IBM SP2 (single node)       xlc            f77              X         X
   DEC Alpha/Digital Unix v3.2 CC 3.11        f77              X         X
   DEC Alpha/OpenVMS AXP v6.2  DECC         DEC FORTRAN        X         X
   IBM PC - Intel Pentium
