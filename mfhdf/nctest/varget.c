@@ -29,8 +29,8 @@ test_ncvarget(path)
     int cdfid;			/* netcdf id */
     int iv;			/* variable id */
     struct cdfhc {		/* a hypercube with generic values */
-	long cor[MAX_NC_DIMS];	/* netcdf coordinates for lower corner */
-	long edg[MAX_NC_DIMS];	/* netcdf edge lengths to upper corner */
+	long cor[MAX_VAR_DIMS];	/* netcdf coordinates for lower corner */
+	long edg[MAX_VAR_DIMS];	/* netcdf edge lengths to upper corner */
 	void *vals;		/* pointer to block of values */
     } hc;			/* test hypercube */
     extern void *emalloc();	/* error-checking allocator */

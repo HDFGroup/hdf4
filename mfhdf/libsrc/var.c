@@ -636,7 +636,7 @@ int             outcdf;
 	}
 	else
 	{
-		long end[MAX_NC_DIMS] ;
+		long end[MAX_VAR_DIMS] ;
 		memcpy(end, invp->shape, ndims * sizeof(unsigned long)) ;
 		if(IS_RECVAR(invp))
 		{

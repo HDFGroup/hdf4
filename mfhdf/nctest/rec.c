@@ -24,7 +24,7 @@ numrecvars(ncid, recvarids)
     int ndims, iv, nvars;
     int nrecvars;
     int recdimid;
-    int dimids[MAX_NC_DIMS];
+    int dimids[MAX_VAR_DIMS];
 
     if (ncinquire(ncid, 0, &nvars, 0, &recdimid) == -1)
       return -1;
@@ -56,7 +56,7 @@ ncrecsize(ncid,vid)
     int recdimid;
     nc_type type;
     int ndims;
-    int dimids[MAX_NC_DIMS];
+    int dimids[MAX_VAR_DIMS];
     int id;
     long size;
 
@@ -228,7 +228,7 @@ dimsizes(ncid, varid, sizes)
 {
     int ndims;
     int id;
-    int dimids[MAX_NC_DIMS];
+    int dimids[MAX_VAR_DIMS];
 
     if (ncvarinq(ncid, varid, 0, 0, &ndims, dimids, 0) == -1)
       return -1;
@@ -255,8 +255,8 @@ recput(ncid, recnum, datap)
     int iv;
     int rvids[MAX_NC_VARS];
     int nrvars = numrecvars(ncid, rvids);
-    long start[MAX_NC_DIMS];
-    long edges[MAX_NC_DIMS];
+    long start[MAX_VAR_DIMS];
+    long edges[MAX_VAR_DIMS];
 
     if (nrvars == -1)
       return -1;
@@ -292,8 +292,8 @@ recget(ncid, recnum, datap)
     int iv;
     int rvids[MAX_NC_VARS];
     int nrvars = numrecvars(ncid, rvids);
-    long start[MAX_NC_DIMS];
-    long edges[MAX_NC_DIMS];
+    long start[MAX_VAR_DIMS];
+    long edges[MAX_VAR_DIMS];
 
     if (nrvars == -1)
       return -1;

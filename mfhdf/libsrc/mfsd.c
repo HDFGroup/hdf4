@@ -449,7 +449,7 @@ VOIDP data;
     NC     * handle;
     int32    varid, status;
 #ifdef BIG_LONGS
-    long     Start[MAX_NC_DIMS], End[MAX_NC_DIMS], Stride[MAX_NC_DIMS];
+    long     Start[MAX_VAR_DIMS], End[MAX_VAR_DIMS], Stride[MAX_VAR_DIMS];
 #else 
     int32    *Start, *End, *Stride;
 #endif
@@ -774,7 +774,7 @@ int32 nt, rank, *dimsizes;
             handle->dims = NC_new_array(NC_DIMENSION,(unsigned)1, (Void *)&newdim);
             if(handle->dims == NULL)
                 return FAIL;
-	} else if(handle->dims->count >= MAX_NC_DIMS) {
+	} else if(handle->dims->count >= MAX_VAR_DIMS) {
             return FAIL;
 	} else {
             if( NC_incr_array(handle->dims, (Void *)&newdim) == NULL)
@@ -1387,7 +1387,7 @@ VOIDP data;
     NC     * handle;
     int32    varid, status;
 #ifdef BIG_LONGS
-    long     Start[MAX_NC_DIMS], End[MAX_NC_DIMS], Stride[MAX_NC_DIMS];
+    long     Start[MAX_VAR_DIMS], End[MAX_VAR_DIMS], Stride[MAX_VAR_DIMS];
 #else 
     int32    *Start, *End, *Stride;
 #endif

@@ -30,12 +30,12 @@ test_ncvargetg(path)
     int cdfid;			/* netcdf id */
     int iv;			/* variable id */
     struct cdfhc {		/* a hypercube with generic values */
-	long cor[MAX_NC_DIMS];	/* netcdf coordinates for lower corner */
-	long edg[MAX_NC_DIMS];	/* netcdf edge lengths to upper corner */
+	long cor[MAX_VAR_DIMS];	/* netcdf coordinates for lower corner */
+	long edg[MAX_VAR_DIMS];	/* netcdf edge lengths to upper corner */
 	void *vals;		/* pointer to block of values */
     } hc;			/* test hypercube */
     extern void *emalloc();	/* error-checking allocator */
-    long strides[MAX_NC_DIMS];	/* external, I/O strides */
+    long strides[MAX_VAR_DIMS];	/* external, I/O strides */
 
     (void) fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 

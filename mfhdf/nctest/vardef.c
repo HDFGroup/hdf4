@@ -214,8 +214,7 @@ test_ncvardef(path)
                 fillval = 0;
                 fillval = FILL_LONG;
 		if (ncvarget1(cdfid, va_id[iv], where, (void *) &val) != -1) {
-		    if ((long) val != (long) fillval) {
-
+		    if (val != fillval) {
 
 printf("\n\n Was expecting %d instead got a %d\n", fillval, val);
 printf("\n\n Was expecting %ld instead got a %ld\n", fillval, val);
@@ -273,4 +272,5 @@ printf("\n\n Was expecting %ld instead got a %ld\n", fillval, val);
       (void) fprintf(stderr,"FAILED! ***\n");
     else
       (void) fprintf(stderr,"ok ***\n");
+
 }

@@ -1564,7 +1564,7 @@ Void **datap ;
 	int nrvars ;
 	NC_var *rvp[MAX_NC_VARS] ; 
 	int ii ;
-	long coords[MAX_NC_DIMS];
+	long coords[MAX_VAR_DIMS];
 	u_long offset ;
 	unsigned iocount ;
 

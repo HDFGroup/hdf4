@@ -49,7 +49,7 @@ struct {
 	char mnem[MAX_NC_NAME] ;
 	nc_type type ;
 	int ndims ;
-	int dims[MAX_NC_DIMS] ;
+	int dims[MAX_VAR_DIMS] ;
 	int num_attrs ;
 } vdesc[1] ;
 

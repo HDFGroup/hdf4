@@ -224,7 +224,7 @@ test_ncvarinq(path)
 
 
 struct cdfelm {			/* coordinates and generic value */
-    long coords[MAX_NC_DIMS];
+    long coords[MAX_VAR_DIMS];
     union generic {
 	char by;
 	char ch;
