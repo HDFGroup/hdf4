@@ -71,20 +71,6 @@ C
        vsfscat = vsfcsca(vsid, findex, attrnm, dtype,
      +         count, values, len(attrnm), len(values))
        end
-C --------------- vsfgcat -------------------------
-C    vsfgcat -- get a char type attribute for a vdata 
-C              or a field of a vdata
-C    VSgetattr -- vsfcgca -- vsfgcat
-C
-       integer function vsfgcat(vsid, findex,aindex,
-     +                     values)
-       integer vsid, findex, aindex
-       character*(*) values
-       integer vsfcgca
-     
-       vsfgcat = vsfcgca(vsid, findex, aindex, 
-     +         values,  len(values))
-       end
 C --------------- vsffdat -------------------------
 C    vsffdat -- find attribute of a vdata of a field
 C               of the vdata
@@ -123,17 +109,6 @@ C
 
        vfscatt = vfcscat(vgid, attrnm, dtype,count,
      +                  values, len(attrnm))
-       end
-C -------------- vfgcatt -------------------------
-C    vfgcatt -- get a char attr for a vgroup
-C    Vgetattr -- vfcgcat -- vfgcatt
-C
-       integer function vfgcatt(vgid, aindex, values)
-       integer vgid, aindex
-       character*(*) values
-       integer vfcgcat
-
-       vfgcatt = vfcgcat(vgid, aindex, values, len(values))
        end
 C --------------- vffdatt ---------------------
 C    vffdatt -- find an attribute of a vgroup

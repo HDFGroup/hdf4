@@ -94,13 +94,13 @@ nvsfcsca(intf *vsid, intf *findex, _fcd attrnm, intf *dtype,
 }
 
 /* -------------------------------------------------------
- * vsfnat -- get total number of attributes of a vdata and
+ * vsfnatt -- get total number of attributes of a vdata and
  *             its fields
- * VSnattr -- vsfnat
+ * VSnattr -- vsfnatt
  */
 
 FRETVAL(intf)
-nvsfnat(intf *vsid)
+nvsfnatt(intf *vsid)
 {
    intf ret;
 
@@ -167,12 +167,12 @@ nvsfainf(intf *vsid, intf *findex, intf *aindex, _fcd attrname,
 }
 
 /* ---------------------------------------------------------
- * vsfgat -- get values of a numeric attribute 
- * VSgetattr -- vsfgat
+ * vsfgatt -- get values of a numeric attribute 
+ * VSgetattr -- vsfgatt
  */
 
 FRETVAL(intf)
-nvsfgat(intf *vsid, intf *findex, intf *aindex, intf *values)
+nvsfgatt(intf *vsid, intf *findex, intf *aindex, intf *values)
 {
     intf ret;
     int32 cfindex;
@@ -185,27 +185,18 @@ nvsfgat(intf *vsid, intf *findex, intf *aindex, intf *values)
 
 /* --------------------------------------------------------
  * vsfcgca -- get values of a char type attribute 
- * VSgetattr -- vsfcgca -- vsfgcat
+ * VSgetattr -- vsfgcat
  */
 
 FRETVAL(intf)
-nvsfcgca(intf *vsid,intf *findex,intf *aindex,_fcd values,intf *lvalues)
+nvsfgcat(intf *vsid,intf *findex,intf *aindex,_fcd values)
 {
     intf ret;
     int32 cfindex;
-    int32 count, i;
-    char * buf;
 
-    buf = _fcdtocp(values);
     cfindex = (*findex == -1)? (int32)_HDF_ENTIRE_VDATA : *findex;
     ret = (intf )VSgetattr((int32) *vsid, cfindex, (int32) *aindex,
-                    (VOIDP) buf);
-    if (ret == FAIL) return(FAIL);
-    /* get the number of chars attribute has */
-    if (VSattrinfo((int32) *vsid, cfindex, (int32) *aindex, 
-        NULL, NULL, &count, NULL) == FAIL) return (FAIL); 
-    for (i = count; i < *lvalues; i++)
-        buf[i] = ' ';
+                    (VOIDP) _fcdtocp(values));
     return(ret);
 }
 
@@ -326,16 +317,15 @@ nvfgatt(intf *vgid, intf *aindex, intf *values)
 }
 
 /* --------------------------------------------------------
- * vfcgcat -- get values of a char type attribute 
- * Vgetattr -- vfcgcat -- vfgcatt
+ * vfgcatt -- get values of a char type attribute 
+ * Vgetattr -- vfgcatt
  */
 
 FRETVAL(intf)
-nvfcgcat(intf *vgid, intf *aindex, _fcd values, intf *lvalues)
+nvfgcatt(intf *vgid, intf *aindex, _fcd values)
 {
     intf ret;
     ret = (intf) Vgetattr((int32) *vgid,(int32) *aindex,(VOIDP) _fcdtocp(values));
-    ret = HDc2fstr((char *)_fcdtocp(values), *lvalues);
     return(ret);
 }
 
