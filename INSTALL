@@ -390,7 +390,7 @@
 
     2.5.6 PowerPC/68k(far/4i/8d)- Macintosh OS
     ------------------------------------------
-    *** NOT AVAILALE WITH THIS RELEASE ***
+    *** NOT AVAILABLE WITH THIS RELEASE ***
 
     The distribution was compiled/tested with MetroWerks Codewarrior(CW8).
     Only the base libraries{libdf.a,zlib.a,libjpeg.a,libmfhdf.a,libxdr.a}
@@ -766,11 +766,6 @@
 
     See the file `config.sub' for the possible values of each field.
 
-    One system that requires this is the T3D which has a front end of
-    other machine type. To configure properly for the T3D system, you
-    must type the following on the front end:
-
-          ./configure -v t3d
 
 2.10 Configure Options 
     ==================
