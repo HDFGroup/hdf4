@@ -15,6 +15,7 @@
 #define FORT_MAX_LINES	20	/* max lines in FORTRAN statement */
 #define	FORT_MAX_STMNT	66*FORT_MAX_LINES /* max chars in FORTRAN statement */
 #define C_MAX_STMNT	FORT_MAX_STMNT /* until we fix to break up C lines */
+#define STREQ(a, b)     (*(a) == *(b) && strcmp((a), (b)) == 0)
 
 extern struct dims {			/* dimensions */
     long size;
