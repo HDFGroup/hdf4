@@ -296,10 +296,12 @@ TEST dumpgr-11.out dumpgr grtdfui162.hdf
 # Test 12 shows that file attribute is printed
 TEST dumpgr-12.out dumpgr grtdfi322.hdf
 
-# Tests 13, 14, and 15 to test new option -p that prints palette
+# Tests 13, 14, and 15 test option -h, which was not included in any
+# of the previous tests, and the new options -p and -pd, printing palette
+# with or without palette information 
 TEST dumpgr-13.out dumpgr -p Image_with_Palette.hdf
 TEST dumpgr-14.out dumpgr -h Image_with_Palette.hdf
-TEST dumpgr-15.out dumpgr -r 2,4 -p -d Image_with_Palette.hdf
+TEST dumpgr-15.out dumpgr -r 2,4 -pd Image_with_Palette.hdf
 
 # Test 16: to test new option -s, printing data as stream
 TEST dumpgr-16.out dumpgr -r 6 -d -s grtdfui82.hdf

@@ -31,7 +31,7 @@ dumpgr_usage(intn  argc,
              char *argv[])
 {
     printf("Usage:\n");
-    printf("%s dumpgr [-a|-i <indices>|-r <refs>|-n <names>] [-m <interlace>] [-p] [-cdhvs] [-o <filename>] [-bx] <filelist>\n", argv[0]);
+    printf("%s dumpgr [-a|-i <indices>|-r <refs>|-n <names>] [-m <interlace>] [-dhvcs] [-p|-pd] [-o <filename>] [-bx] <filelist>\n", argv[0]);
     printf("\t-a\tDump all RIs in the file (default)\n");
     printf("\t-i <indices>\tDump the <indices>th RIs in the file \n");
     printf("\t-r <refs>\tDump the RIs with reference number <refs>\n");
@@ -39,10 +39,11 @@ dumpgr_usage(intn  argc,
     printf("\t-m <interlace>\tDump data in interlace mode <interlace= 0, 1, or 2>\n");
     printf("\t-c\tPrint space characters as they are, not \\digit\n");
     printf("\t-d\tDump data only, no tag/ref, formatted to input to hp2hdf\n");
-    printf("\t-h\tDump header only, no annotation for elements nor data\n");
+    printf("\t-h\tDump header only, no data - exclusive with -p and -pd\n");
     printf("\t-v\tDump everything including all annotations (default)\n");
     printf("\t-s\tDump data as a stream, i.e. do not add carriage returns\n");
-    printf("\t-p\tDump palette data\n");
+    printf("\t-p\tDump palette's information and data - exclusive with -h\n");
+    printf("\t-pd\tDump palette's data only - exclusive with -h\n");
     printf("\t-o <filename>\tOutput to file <filename>\n");
     printf("\t-b\tBinary format of output\n");
     printf("\t-x\tAscii text format of output (default)\n");
@@ -166,12 +167,19 @@ parse_dumpgr_opts(dump_info_t *dumpgr_opts,
              break;
 
          case 'p':   /* dump palette data */
-	     /* make sure -p is not also given */
+	     /* make sure -h is not also given */
 	     if( dumpgr_opts->contents == DHEADER )
 		ERROR_GOTO_0( "Option -h and -p must not be used together" );
 
              dumpgr_opts->print_pal = TRUE;
+
+	     /* if the current option is -pd, then pal data only is requested */
+	     if( argv[*curr_arg][2] == 'd' ) /* \0 if only -p */
+	     {
+		dumpgr_opts->contents = DDATA;
+	     }
              (*curr_arg)++;
+
              break;
 
          default:	/* invalid dumpgr option */
@@ -599,33 +607,33 @@ intn print_PaletteInfo(
          ERROR_GOTO_2( "in %s: GRgetnluts failed for raster image ID #%d",
                         "print_PaletteInfo", (int)ri_id);
 
-    /* if there are no palette data, print message for both cases:
-       header-only and verbose (data+header) */
-    if(num_pals==0) {
+   /* if there are no palette data, print message for both cases:
+      header-only and verbose (data+header) */
+   if(num_pals==0) {
         fprintf( fp, "\t No palette\n");
-    } /* end if */
-    else {
-       /* display each palette of an RI */
-       for( pal_index = 0; pal_index < num_pals; pal_index++ )
-       {
+   } /* end if */
+   else {
+      /* display each palette of an RI */
+      for( pal_index = 0; pal_index < num_pals; pal_index++ )
+      {
           /* Get the identifier of the palette attached to the image. */
-          pal_id = GRgetlutid (ri_id, pal_index);
-          if( pal_id == FAIL ) /* continue to the next palette */
+         pal_id = GRgetlutid (ri_id, pal_index);
+         if( pal_id == FAIL ) /* continue to the next palette */
              ERROR_CONT_2( "in %s: GRgetlutid failed for palette #%d",
                             "print_PaletteInfo", (int)pal_index);
 
-          /* Obtain and display information about the palette. */
-          status = GRgetlutinfo (pal_id, &n_comps, &data_type, &interlace_mode,
+         /* Obtain and display information about the palette. */
+         status = GRgetlutinfo (pal_id, &n_comps, &data_type, &interlace_mode,
                                 &n_entries);
-          if( status == FAIL ) /* continue to the next palette */
+         if( status == FAIL ) /* continue to the next palette */
              ERROR_CONT_2( "in %s: GRgetlutinfo failed for palette #%d",
                             "print_PaletteInfo", (int)pal_index);
 
-          /* if there are palette data, print header info */
-          fprintf (fp, "\t Palette: %d components; %d entries\n",
+         /* if there are palette data, print header info */
+         fprintf (fp, "\t Palette: %d components; %d entries\n",
                         (int)n_comps, (int)n_entries);
 
-       } /* end of for each palette */
+      } /* end of for each palette */
    } /* end else */
 
 done:
@@ -655,70 +663,81 @@ print_Palette(
          n_entries,
          interlace_mode;
    uint8 palette_data[N_ENTRIES][3];  /* static because of fixed size */
+   uint16 ri_ref;
    intn  status, ret_value = SUCCEED;
+
+   /* Get the ref# of the image, for displaying output */
+   ri_ref = GRidtoref(ri_id);
 
    /* Check the number of palettes */
    if((num_pals=GRgetnluts(ri_id))<0)
-         ERROR_GOTO_2( "in %s: GRgetnluts failed for raster image ID #%d",
-                        "print_PaletteInfo", (int)ri_id);
+         ERROR_GOTO_2( "in %s: GRgetnluts failed for raster image with ref#=%d",
+                        "print_Palette", (int)ri_ref);
 
-    /* if there are no palette data, print message for both cases:
-       header-only and verbose (data+header) */
-    if(num_pals==0) {
-        if( dumpgr_opts->contents != DDATA )
-            fprintf( fp, "\t No palette data\n");
-    } /* end if */
-    else {
-       /* display each palette of an RI */
-       for( pal_index = 0; pal_index < num_pals; pal_index++ )
-       {
-          /* Get the identifier of the palette attached to the image. */
-          pal_id = GRgetlutid (ri_id, pal_index);
-          if( pal_id == FAIL ) /* continue to the next palette */
-             ERROR_CONT_2( "in %s: GRgetlutid failed for palette #%d", 
+   /* if there are no palette data, print message for both cases:
+      header-only and verbose (data+header) */
+   if(num_pals==0) {
+      if( dumpgr_opts->contents != DDATA )
+         fprintf( fp, "\n\t Raster Image Ref. = %d\n\t No palette data\n", 
+			  (int)ri_ref);
+   } /* end if */
+   else {
+      /* display each palette of an RI */
+      for( pal_index = 0; pal_index < num_pals; pal_index++ )
+      {
+         /* Get the identifier of the palette attached to the image. */
+         pal_id = GRgetlutid (ri_id, pal_index);
+         if( pal_id == FAIL ) /* continue to the next palette */
+             ERROR_CONT_2( "in %s: GRgetlutid failed for palette #%d",
                             "print_Palette", (int)pal_index);
 
-          /* Obtain and display information about the palette. */
-          status = GRgetlutinfo (pal_id, &n_comps, &data_type, &interlace_mode,
-                                &n_entries);
-          if( status == FAIL ) /* continue to the next palette */
-             ERROR_CONT_2( "in %s: GRgetlutinfo failed for palette #%d", 
-                            "print_Palette", (int)pal_index);
-       
-          /* if there are palette data, print header info when not 
+         /* Read the palette data. */
+         status = GRreadlut (pal_id, (VOIDP)palette_data);
+         if( status == FAIL ) { /* continue to the next palette */
+             ERROR_CONT_2( "in %s: GRreadlut failed for palette #%d",
+                            "print_Palette", (int)pal_index); }
+
+         /* Obtain and display information about the palette. */
+         status = GRgetlutinfo (pal_id, &n_comps, &data_type, 
+				&interlace_mode, &n_entries);
+         if( status == FAIL ) /* continue to the next palette */
+             ERROR_CONT_2( "in %s: GRgetlutinfo failed for palette #%d",
+                           "print_Palette", (int)pal_index);
+
+         /* if there are palette data, print header info when not 
              data-only and print palette data when not header-only */
-          if( dumpgr_opts->contents != DDATA )
-             fprintf (fp, "\t Palette: %d components; %d entries\n", 
+	 switch (dumpgr_opts->contents)
+	 {
+	    /* Note that case DHEADER is not presented because option -h
+	       is not allowed with -p or -pd */
+	    case DVERBOSE:
+		 fprintf (fp, "\n\t Raster Image Ref. = %d\n", (int)ri_ref);
+		 fprintf (fp, "\t Palette: %d components; %d entries\n", 
                          (int)n_comps, (int)n_entries);
 
-          if( dumpgr_opts->contents != DHEADER )
-          {  /* not header only */
-             /* Read the palette data. */
-             status = GRreadlut (pal_id, (VOIDP)palette_data);
-             if( status == FAIL ) /* continue to the next palette */
-             {
-                ERROR_CONT_2( "in %s: GRreadlut failed for palette #%d", 
-                         "print_Palette", (int)pal_index);
-             }
+		 /* display the palette data with the title line and 
+		    indent the data with DATA_INDENT and DATA_CONT_INDENT */
+		 fprintf (fp, "\t Palette Data: \n");
+		 status = dumpfull(data_type, dumpgr_opts, n_entries*n_comps,
+		    	  palette_data, fp, DATA_INDENT, DATA_CONT_INDENT );
+                 if( status == FAIL )
+                    ERROR_GOTO_2( "in %s: dumpfull failed for palette #%d", 
+			     "print_Palette", (int)pal_index);
+		 break;
 
-             /* if printing data only, print palette data with no indentation */
-             if( dumpgr_opts->contents == DDATA )
-                status = dumpfull(data_type, dumpgr_opts, n_entries*n_comps, 
-                         palette_data, fp, 0, 0 );
-
-             /* display the palette data with the title line and indentation */
-             else
-             {
-                fprintf (fp, "\t Palette Data: \n");
-                status = dumpfull(data_type, dumpgr_opts, n_entries*n_comps, 
-                         palette_data, fp, DATA_INDENT, DATA_CONT_INDENT );
-             }
-             if( status == FAIL )
-                ERROR_GOTO_2( "in %s: dumpfull failed for palette #%d",
-                         "print_Palette", (int)ri_id );
-          }  /* not header only */
-       } /* end of for each palette */
-    } /* end else */
+	    case DDATA:
+		 /* print palette data with no title and indentation */
+		 status = dumpfull(data_type, dumpgr_opts, 
+			  n_entries*n_comps, palette_data, fp, 0, 0 );
+                 if( status == FAIL )
+                    ERROR_GOTO_2( "in %s: dumpfull failed for palette #%d",
+                         "print_Palette", (int)pal_index );
+		 break;
+	    default:
+		 printf("Unknown output type option \n" );
+	  } /* end switch */
+      } /* end for each palette */
+   } /* end else */
 
 done:
    if (ret_value == FAIL)
@@ -815,7 +834,6 @@ printGR_ASCII(
 			"printGR_ASCII", (int)ri_index );
 
          /* end access to the current image before going on to the next */
-	 /* BMR: can this check be skipped */
          if (FAIL == GRendaccess(ri_id))
             fprintf( stderr,"in %s: GRendaccess failed for %d'th RI",
 			"printGR_ASCII", (int)ri_index );
@@ -824,78 +842,84 @@ printGR_ASCII(
          continue; /* to the next image */
       }
 
-      /* print the current image as specified by user's options */
-      switch (dumpgr_opts->contents)
+      /* print image palette's info and data or data only depending on
+         the content's option (-pd or -p, taken care by print_Palette) */
+      if( dumpgr_opts->print_pal )  /* set when -p or -pd is given */
       {
-         case DVERBOSE:
-         case DHEADER:
-            nt_desc = HDgetNTdesc(nt);
-            if (NULL == nt_desc)
-               ERROR_BREAK_2( "in %s: HDgetNTdesc failed for %d'th RI",
-      			"printGR_ASCII", (int)ri_index, FAIL );
-
-            /* display image's info then free the buffer no longer needed */
-            fprintf(fp, "\n\t Image  Name = %s\n\t Index = ", name);
-            fprintf(fp, "%d\n\t Type= %s\n", (int)ri_index, nt_desc);
-
-            resetBuff(( VOIDP *) &nt_desc ); 
-
-            /* get the image's ref# from its id */
-            if ((ri_ref = GRidtoref(ri_id)) == FAIL)
-               ERROR_BREAK_2( "in %s: GRidtoref failed for %d'th RI",
-			"printGR_ASCII", (int)ri_index, FAIL );
-
-            /* print more image's info */
-            fprintf(fp, "\t width=%d; height=%d\n", (int) dimsizes[0], (int) dimsizes[1]);
-            fprintf(fp, "\t Ref. = %d\n", (int) ri_ref);
-            fprintf(fp, "\t ncomps = %d\n\t Interlace mode= %s\n",
-				(int) ncomps, Il_mode_text(il) );
-
-	    /* if palette data is not to be printed, print the palette
-	       info now so it won't be lost after the image data; currently,
-	       only 1 palette per image (second arg.) */
-            if( !dumpgr_opts->print_pal )
-		print_PaletteInfo( ri_id, 1, fp );
-
-            /* Print image attributes */
-            fprintf(fp, "\t Number of attributes = %d\n", (int) nattrs );
-            status = print_RIattrs(ri_id, ri_index, nattrs, fp, dumpgr_opts );
-            if( status == FAIL )
-		ERROR_BREAK_2( "in %s: Printing image's attributes failed for %d'th RI",
-			"printGR_ASCII", (int)ri_index, FAIL );
-
-            if (dumpgr_opts->contents == DHEADER)
-               break; /* break out for header only */
-
-         case DDATA:
-            if (dumpgr_opts->contents != DDATA)
-               fprintf(fp, "\t Data : \n");
-
-            if (ncomps > 0 && dimsizes[0] != 0)
-            {
-               /* print the current image's data */
-               status = grdumpfull( ri_id, dumpgr_opts, ncomps, dimsizes, nt, fp);
-               if ( status == FAIL )
-		  ERROR_BREAK_2( "in %s: Printing image's data failed for %d'th RI",
-			"printGR_ASCII", (int)ri_index, FAIL );
-            }
-            else
-            {
-               fprintf(fp, "\t\t No data written.\n");
-            }
-            break; /* data section */
-         default:
-            printf("Unknown output type option \n" );
-      } /* switch  on contents */
-
-      /* print image palette's info with/without data depending on the
-         content's option (-h, -d, or none, taken care by print_Palette) */
-      if( dumpgr_opts->print_pal )
          /* Note: currently only 1 pal assigned to an image, 2nd arg. */
          status = print_Palette( ri_id, 1, fp, dumpgr_opts );
 	 if( status == FAIL )
-	    ERROR_BREAK_2( "in %s: Printing image's palette failed for %d'th RI",
+	    ERROR_BREAK_2("in %s: Printing image's palette failed for RI #%d",
 			"printGR_ASCII", (int)ri_index, FAIL );
+      }
+      else /* only happen when neither -p nor -pd were given */
+      {
+
+         /* print the current image as specified by user's options */
+         switch (dumpgr_opts->contents)
+         {
+            case DVERBOSE:
+            case DHEADER:
+               nt_desc = HDgetNTdesc(nt);
+               if (NULL == nt_desc)
+                  ERROR_BREAK_2( "in %s: HDgetNTdesc failed for %d'th RI",
+      			"printGR_ASCII", (int)ri_index, FAIL );
+
+               /* display image's info then free the buffer no longer needed */
+               fprintf(fp, "\n\t Image  Name = %s\n\t Index = ", name);
+               fprintf(fp, "%d\n\t Type= %s\n", (int)ri_index, nt_desc);
+
+               resetBuff(( VOIDP *) &nt_desc ); 
+
+               /* get the image's ref# from its id */
+               if ((ri_ref = GRidtoref(ri_id)) == FAIL)
+                  ERROR_BREAK_2( "in %s: GRidtoref failed for %d'th RI",
+			"printGR_ASCII", (int)ri_index, FAIL );
+
+               /* print more image's info */
+               fprintf(fp, "\t width=%d; height=%d\n", (int) dimsizes[0], (int) dimsizes[1]);
+               fprintf(fp, "\t Ref. = %d\n", (int) ri_ref);
+               fprintf(fp, "\t ncomps = %d\n\t Interlace mode= %s\n",
+				(int) ncomps, Il_mode_text(il) );
+
+	       /* print the palette info now so it won't be lost after the 
+	          image data; currently, only 1 palette per image (2nd arg.) */
+	       status = print_PaletteInfo( ri_id, 1, fp );
+               if( status == FAIL )
+		   ERROR_BREAK_2( "in %s: Printing image's palette information failed for %d'th RI",
+			"printGR_ASCII", (int)ri_index, FAIL );
+
+               /* Print image attributes */
+               fprintf(fp, "\t Number of attributes = %d\n", (int) nattrs );
+               status = print_RIattrs(ri_id, ri_index, nattrs, fp, dumpgr_opts );
+               if( status == FAIL )
+		   ERROR_BREAK_2( "in %s: Printing image's attributes failed for %d'th RI",
+			"printGR_ASCII", (int)ri_index, FAIL );
+
+               if (dumpgr_opts->contents == DHEADER)
+                  break; /* break out for header only */
+
+            case DDATA:
+               if (dumpgr_opts->contents != DDATA)
+                  fprintf(fp, "\t Data : \n");
+
+               if (ncomps > 0 && dimsizes[0] != 0)
+               {
+                  /* print the current image's data */
+                  status = grdumpfull( ri_id, dumpgr_opts, ncomps, dimsizes, nt, fp);
+                  if ( status == FAIL )
+		     ERROR_BREAK_2( "in %s: Printing image's data failed for %d'th RI",
+			"printGR_ASCII", (int)ri_index, FAIL );
+               }
+               else
+               {
+                  fprintf(fp, "\t\t No data written.\n");
+               }
+               break; /* data section */
+            default:
+               printf("Unknown output type option \n" );
+         } /* switch  on contents */
+      } /* end if when neither -p nor -pd given */
 
       /* end access to the current image */
       if (FAIL == GRendaccess(ri_id))    
@@ -984,21 +1008,25 @@ intn printGR_BINARY(
          continue; /* to the next image */
       }
 
-      /* output data in binary format   */
-      if (ncomps > 0 && dimsizes[0] != 0)
-         /* print the current image's data */
-         status = grdumpfull(ri_id, dumpgr_opts, ncomps, dimsizes, nt, fp);
-         if ( status == FAIL )
-            ERROR_BREAK_2( "in %s: Printing image's data failed for %d'th RI",
-			"printGR_BINARY", (int)ri_index, FAIL );
-
-      /* print image palette's data print_Palette) */
+      /* print image palette's data */
       if( dumpgr_opts->print_pal )
+      {
          /* Note: currently only 1 pal assigned to an image, 2nd arg. */
          status = print_Palette( ri_id, 1, fp, dumpgr_opts );
          if ( status == FAIL )
             ERROR_BREAK_2( "in %s: Printing image's palette failed for %d'th RI",
 			"printGR_BINARY", (int)ri_index, FAIL );
+      }
+
+      /* output data in binary format if palette printing is not requested  */
+      else if (ncomps > 0 && dimsizes[0] != 0)
+      {
+         /* print the current image's data */
+         status = grdumpfull(ri_id, dumpgr_opts, ncomps, dimsizes, nt, fp);
+         if ( status == FAIL )
+            ERROR_BREAK_2( "in %s: Printing image's data failed for %d'th RI",
+			"printGR_BINARY", (int)ri_index, FAIL );
+      }
 
       /* end access to the current image */
       if (FAIL == GRendaccess(ri_id))
