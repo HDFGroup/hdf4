@@ -159,6 +159,23 @@ int diff_gr( int32 file1_id,
  }
 
 /*-------------------------------------------------------------------------
+ * match interlace 
+ * NOTE: GR images are always stored as pixel_interlace (0) on disk
+ *       that does not happen with images saved with the 
+ *       DF24 - Single-file 24-Bit Raster Image Interface,
+ *       where the interlace mode on disk can be 0, 1 or 2
+ *-------------------------------------------------------------------------
+ */
+ if ( interlace_mode1 != interlace_mode2 )
+ {
+  if (specp.verbose)
+  printf("Warning: different interlace mode: <%d> and <%d>\n", 
+   interlace_mode1,interlace_mode2);
+  interlace_mode1=interlace_mode2;
+ }
+
+
+/*-------------------------------------------------------------------------
  * get size 
  *-------------------------------------------------------------------------
  */
@@ -178,7 +195,7 @@ int diff_gr( int32 file1_id,
  data_size = dimsizes1[0]*dimsizes1[1]*ncomps1*eltsz;
 
 /*-------------------------------------------------------------------------
- * Read
+ * Read image 1
  *-------------------------------------------------------------------------
  */
  
@@ -199,6 +216,11 @@ int diff_gr( int32 file1_id,
   printf( "Could not read GR <%s>\n", gr1_name);
   goto out;
  }
+
+/*-------------------------------------------------------------------------
+ * Read image 2
+ *-------------------------------------------------------------------------
+ */
 
  /* alloc */
  if ((buf2 = (VOIDP) HDmalloc(data_size)) == NULL) {

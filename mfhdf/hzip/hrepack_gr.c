@@ -421,49 +421,6 @@ int  copy_gr(int32 infile_id,
   goto out;
  }
 
-
-#if 0
- {
-  VOIDP buf1=NULL;
-  int32 interlace_mode2;
-
-  status_n = GRgetiminfo(ri_out,gr_name,&n_comps,&dtype,&interlace_mode2,dimsizes,&n_attrs);
-
-  
-  /* alloc */
-  if ((buf1 = (VOIDP) HDmalloc(data_size)) == NULL) {
-   printf( "Failed to allocate %d elements of size %d\n", nelms, eltsz);
-   GRendaccess(ri_id);
-   if (path) free(path);
-   return-1;
-  }
-  
-  
-  /* set the interlace for reading  */
-  if ( GRreqimageil(ri_out, interlace_mode2) == FAIL ){
-   printf( "Could not set interlace for GR <%s>\n", path);
-   GRendaccess(ri_id);
-   if (path) free(path);
-   return-1;
-  }
-  
-  /* read data */
-  if (GRreadimage (ri_out, start, NULL, edges, buf1) == FAIL) {
-   printf( "Could not read GR <%s>\n", path);
-   GRendaccess(ri_id);
-   if (path) free(path);
-   return-1;
-  }
-  
-  {
-   int cmp = HDmemcmp(buf1,buf,data_size);
-  }
-   free(buf1);
- }
- 
-#endif
-
-
 /*-------------------------------------------------------------------------
  * copy attributes
  *-------------------------------------------------------------------------
@@ -542,6 +499,46 @@ int  copy_gr(int32 infile_id,
  copy_an(infile_id,outfile_id,
          ref,DFTAG_RI,gr_ref,DFTAG_RI,
          path,options);
+
+#if 1
+ {
+  VOIDP buf1=NULL;
+  int32 interlace_mode2;
+  int   cmp;
+
+  status_n = GRgetiminfo(ri_out,gr_name,&n_comps,&dtype,&interlace_mode2,dimsizes,&n_attrs);
+
+  
+  /* alloc */
+  if ((buf1 = (VOIDP) HDmalloc(data_size)) == NULL) {
+   printf( "Failed to allocate %d elements of size %d\n", nelms, eltsz);
+   GRendaccess(ri_id);
+   if (path) free(path);
+   return-1;
+  }
+  
+  
+  /* set the interlace for reading  */
+  if ( GRreqimageil(ri_out, interlace_mode2) == FAIL ){
+   printf( "Could not set interlace for GR <%s>\n", path);
+   GRendaccess(ri_id);
+   if (path) free(path);
+   return-1;
+  }
+  
+  /* read data */
+  if (GRreadimage (ri_out, start, NULL, edges, buf1) == FAIL) {
+   printf( "Could not read GR <%s>\n", path);
+   GRendaccess(ri_id);
+   if (path) free(path);
+   return-1;
+  }
+  
+   cmp = HDmemcmp(buf1,buf,data_size);
+   free(buf1);
+ }
+ 
+#endif
  
 
 out:

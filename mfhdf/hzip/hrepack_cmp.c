@@ -129,6 +129,22 @@ int  cmp_gr(int32 ri1_id, int32 ri2_id)
 
  printf( "Comparing GR <%s>: ", gr_name);
 
+ 
+/*-------------------------------------------------------------------------
+ * match interlace 
+ * NOTE: GR images are always stored as pixel_interlace (0) on disk
+ *       that does not happen with images saved with the 
+ *       DF24 - Single-file 24-Bit Raster Image Interface,
+ *       where the interlace mode on disk can be 0, 1 or 2
+ *-------------------------------------------------------------------------
+ */
+ if ( interlace_mode1 != interlace_mode2 )
+ {
+  printf("Warning: different interlace mode: <%d> and <%d>", 
+   interlace_mode1,interlace_mode2);
+  interlace_mode1=interlace_mode2;
+ }
+
 /*-------------------------------------------------------------------------
  * check for data size before printing
  *-------------------------------------------------------------------------
@@ -184,7 +200,7 @@ int  cmp_gr(int32 ri1_id, int32 ri2_id)
  }
 
  /* set the interlace for reading  */
- if ( GRreqimageil(ri2_id, interlace_mode2) == FAIL ){
+ if ( GRreqimageil(ri2_id, interlace_mode2 /*interlace_mode1*/) == FAIL ){
   printf( "Could not set interlace for GR\n");
   goto out;
  }

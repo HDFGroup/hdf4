@@ -46,6 +46,7 @@ unsigned char *image_data = 0;
 
 void add_gr_ffile(char* name_file,
                   char* gr_name,
+                  int32 interlace_mode,
                   int32 file_id,
                   int32 vgroup_id)
 {
@@ -55,7 +56,6 @@ void add_gr_ffile(char* name_file,
         start[2],       /* start position to write for each dimension */
         edges[2],       /* number of elements to be written along each dimension */
         dim_gr[2],      /* dimension sizes of the image array */
-        interlace_mode, /* interlace mode of the image */
         data_type;      /* data type of the image data */
  char   *srcdir = getenv("srcdir"); /* the source directory */
  char   data_file[512]="";          /* buffer to hold name of existing data file */
@@ -73,7 +73,6 @@ void add_gr_ffile(char* name_file,
  {
   /* set the data type, interlace mode, and dimensions of the image */
   data_type = DFNT_UINT8;
-  interlace_mode = MFGR_INTERLACE_PIXEL;
   dim_gr[0] = X_LENGTH;
   dim_gr[1] = Y_LENGTH;
   
@@ -413,7 +412,7 @@ void add_glb_attrs(char *fname,
  *-------------------------------------------------------------------------
  */
 
-void add_r8(char *fname,char* name_file,int32 file_id, int32 vgroup_id)
+void add_r8(char* image_file,char *fname,int32 file_id,int32 vgroup_id)
 {
  intn   status_n;       /* returned status_n for functions returning an intn  */
  int32  status_32,      /* returned status_n for functions returning an int32 */
@@ -427,7 +426,7 @@ void add_r8(char *fname,char* name_file,int32 file_id, int32 vgroup_id)
   strcpy(data_file, srcdir);
   strcat(data_file, "/");
  }
- strcat( data_file, name_file);
+ strcat( data_file, image_file);
  if ( read_data(data_file)>0)
  {
   /* add a palette */
@@ -476,7 +475,7 @@ void add_r8(char *fname,char* name_file,int32 file_id, int32 vgroup_id)
  *-------------------------------------------------------------------------
  */
 
-void add_r24(char *fname,char* name_file,int32 file_id, int32 vgroup_id)
+void add_r24(char* image_file,char *fname,int32 file_id,intn il,int32 vgroup_id)
 {
  intn   status_n;       /* returned status_n for functions returning an intn  */
  int32  status_32,      /* returned status_n for functions returning an int32 */
@@ -490,11 +489,11 @@ void add_r24(char *fname,char* name_file,int32 file_id, int32 vgroup_id)
   strcpy(data_file, srcdir);
   strcat(data_file, "/");
  }
- strcat( data_file, name_file);
+ strcat( data_file, image_file);
  if ( read_data(data_file)>0)
  {
   /* set pixel interlace */
-  status_n = DF24setil(DFIL_PIXEL);
+  status_n = DF24setil(il);
 
   /* write the image */
   status_n = DF24addimage(fname, image_data, X_LENGTH, Y_LENGTH);

@@ -21,6 +21,7 @@
 
 #define DATA_FILE1       "image8.txt"
 #define DATA_FILE2       "image24pixel.txt"
+#define DATA_FILE3       "image24plane.txt"
 char    *progname;     
 
 
@@ -208,15 +209,16 @@ int main(void)
  *-------------------------------------------------------------------------
  */ 
 
- add_r24(FILENAME,DATA_FILE2,file_id,vgroup_img_id);
- add_r24(FILENAME,DATA_FILE2,file_id,0);
+ add_r24(DATA_FILE2,FILENAME,file_id,DFIL_PIXEL,0); /* Pixel Interlacing */
+ add_r24(DATA_FILE3,FILENAME,file_id,DFIL_PLANE,0); /* Scan Plane Interlacing */
+
 
 /*-------------------------------------------------------------------------
  * add some RIS8 images to the file
  *-------------------------------------------------------------------------
  */ 
- add_r8(FILENAME,DATA_FILE1,file_id,vgroup_img_id);
- add_r8(FILENAME,DATA_FILE1,file_id,0);
+ add_r8(DATA_FILE1,FILENAME,file_id,vgroup_img_id);
+ add_r8(DATA_FILE1,FILENAME,file_id,0);
 
 
 /*-------------------------------------------------------------------------
@@ -255,14 +257,12 @@ int main(void)
 /*-------------------------------------------------------------------------
  * add some GR realistic images to the file
  * realistic data is read from ASCII files
- * duplicates are inserted in the groups "g1", "g2", "g3" and root
  *-------------------------------------------------------------------------
  */ 
 
- add_gr_ffile(DATA_FILE1,"gr1",file_id,vgroup1_id);
- add_gr_ffile(DATA_FILE2,"gr2",file_id,vgroup2_id);
- add_gr_ffile(DATA_FILE1,"gr3",file_id,vgroup3_id);
- add_gr_ffile(DATA_FILE2,"gr4",file_id,0);
+ add_gr_ffile(DATA_FILE1,"gr_8bit",0,file_id,0);
+ add_gr_ffile(DATA_FILE2,"gr_24bit",0,file_id,0);
+
 
 /*-------------------------------------------------------------------------
  * add some VS to the file
@@ -330,6 +330,20 @@ int main(void)
  in_chunk_lengths[2]=6;
 
 
+
+/*-------------------------------------------------------------------------
+ * test0:  
+ *-------------------------------------------------------------------------
+ */
+ TESTING("copying file with no options");
+ hrepack_init (&options,verbose);
+ hrepack(FILENAME,FILENAME_OUT,&options);
+ hrepack_end (&options);
+ if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+  goto out;
+ PASSED();
+
+
 /*-------------------------------------------------------------------------
  * test1:  
  *-------------------------------------------------------------------------
@@ -348,7 +362,6 @@ int main(void)
   goto out;
  PASSED();
 
-#if 1
 
 /*-------------------------------------------------------------------------
  * test2:  
@@ -553,7 +566,6 @@ int main(void)
  *-------------------------------------------------------------------------
  */
 
-#endif
  
  return 0;
 out:

@@ -93,6 +93,7 @@ int main(int argc, char **argv)
  
  /* free tables */
  hrepack_end(&options);
+
  return 0;
 }
 

@@ -37,9 +37,9 @@ extern "C" {
 void add_file_an (int32 file_id);
 void add_an(int32 file_id, int32 tag, int32 ref);
 void add_glb_attrs(char *fname,int32 file_id);
-void add_gr_ffile (char* name_file,char* gr_name,int32 file_id,int32 vgroup_id);
-void add_r8 (char *fname,char* name_file,int32 file_id, int32 vgroup_id);
-void add_r24(char *fname,char* name_file,int32 file_id, int32 vgroup_id);
+void add_gr_ffile (char* name_file,char* gr_name,int32 im,int32 file_id,int32 vgroup_id);
+void add_r8 (char* image_file,char *fname,int32 file_id,int32 vgroup_id);
+void add_r24(char* image_file,char *fname,int32 file_id,intn il,int32 vgroup_id);
 void add_vs (char* vs_name,int32 file_id,int32 vgroup_id);
 void add_sd (char *fname,
              int32 file_id,           /* file ID */
