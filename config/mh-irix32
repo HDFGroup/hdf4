@@ -20,7 +20,7 @@ VERSION  = 4.0
 #
 # Machine/OS: SGI/IRIX 6.x (32-bit mode)
 #
-# This uses the -n32 and -mips3 options.
+# This uses the -n32 options.
 # If you prefer other options like, you may change them in
 # the following CFLAGS and FFLAGS.
 # See also the netCDF section dealing with CPPFLAGS_HDF to
@@ -36,11 +36,11 @@ CC=cc
 # IRIX 6.1 has an error in its system include file, stdio.h,
 # that gives incorrect warning message when both "-n32" and "-ansi"
 # flags are used.
-CFLAGS=-ansi -n32 -mips3 -O -s
+CFLAGS=-ansi -n32 -O -s
 
 # Fortran compilier
 FC = f77
-FFLAGS =-n32 -mips3 -O -s
+FFLAGS =-n32 -O -s
 
 # Name of archive randomizer, usually ranlib (use 'true' if non-existant)
 RANLIB = true
@@ -112,7 +112,7 @@ CFLAGS_NETCDF =
 # CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DBIG_LONGS -std1
 #
 # for IRIX6(64-bit) 
-# CPPFLAGS_HDF  = -64 -mips4 $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DBIG_LONGS
+# CPPFLAGS_HDF  = -64 $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DBIG_LONGS
 #
 # for AIX
 # CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -D_ALL_SOURCE
@@ -121,7 +121,7 @@ CFLAGS_NETCDF =
 # CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DNO_STRERROR
 #
 # for IRIX6.x (32-bit mode).
-CPPFLAGS_HDF  = -n32 -mips3 $(FMPOOL_FLAGS) -DNDEBUG -DHDF
+CPPFLAGS_HDF  = -n32 $(FMPOOL_FLAGS) -DNDEBUG -DHDF
 #
 # normal
 #CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF
