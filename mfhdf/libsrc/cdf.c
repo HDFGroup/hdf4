@@ -806,12 +806,19 @@ NC_var **var;
   bufp = DFtbuf;
   rank = assoc->count;
   UINT16ENCODE(bufp, rank);
-  ip = assoc->values;
   for(i = 0; i < rank; i++) {
-      dp = (NC_dim **)handle->dims->values + *ip ;
-      val = (*dp)->size ;
+
+      val = (int32) (*var)->shape[i];
+
+      /* need to fake the size of the record dimension */
+      if(val == NC_UNLIMITED) {
+          if(handle->is_hdf)
+              val = (*var)->numrecs;
+          else
+              val = handle->numrecs;
+      }
+
       INT32ENCODE(bufp, val);
-      ip++;
   }
   
   /* "<=" used to put 1 data NT + rank scale NTs in buffer */
@@ -820,7 +827,7 @@ NC_var **var;
           UINT16ENCODE(bufp, DFTAG_NT);
           UINT16ENCODE(bufp, nt_ref);
       }   
-  /* write out NDD record */
+  /* write out SDD record */
   if(Hputelement(handle->hdf_file, DFTAG_SDD, ref, DFtbuf, (int32) (bufp-DFtbuf)) == FAIL)
       return FAIL;
   
@@ -833,8 +840,10 @@ NC_var **var;
   count++;
 
   /* Add a bogus tag so we know this NDG is really a variable */
+/*
   if (DFdiput(GroupID, BOGUS_TAG,(uint16) ref) == FAIL)
       return FAIL;
+*/
 
   /* write out NDG */
   if (DFdiwrite(handle->hdf_file, GroupID, DFTAG_NDG, (*var)->ndg_ref) < 0) 
