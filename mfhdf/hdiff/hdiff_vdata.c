@@ -79,7 +79,7 @@ vdata_diff(int32 fid1, int32 fid2, struct fspec specp,
     gfind = 1;
     break;
    }
-  }
+  } /* while vgid2  */
   
   for (i = 0; i < Vntagrefs(vg1); i++)
   {
@@ -258,6 +258,7 @@ vdata_diff(int32 fid1, int32 fid2, struct fspec specp,
       sfind = 1;
       break;
      }
+     VSdetach(vs2); /* we must detach */
     }  /* end of j loop */
     
     if (sfind == 1)

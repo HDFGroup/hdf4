@@ -12,6 +12,7 @@
 
 int hdiff(char *fname1, char *fname2, struct fspec fspec)
 {
+ intn  status_n;            
  int32 sdid1, sdid2;
 	int32 grid1, grid2;
  int32 fid1, fid2;
@@ -89,8 +90,8 @@ int hdiff(char *fname1, char *fname2, struct fspec fspec)
 	GRend(grid1);
 	GRend(grid2);
  
- Hclose(fid1);
- Hclose(fid2);
+ status_n=Hclose(fid1);
+ status_n=Hclose(fid2);
  
  return ret;
 }
