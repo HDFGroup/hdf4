@@ -1,3 +1,9 @@
+#
+# NOTE:  This file was generated on a machine where the size of
+#   local ints and floats is 4 bytes.  On machines with different
+#   sizes the 'vsize=X' entries will be different.
+#
+
 FULL DUMP
 
 FILE: egfhi.hdf
