@@ -46,6 +46,12 @@ PATH="/usr/local/bin:$PATH"
 ARCHIVES_default=/afs/ncsa/ftp/HDF/pub/outgoing/hdf4/snapshots
 ARCHIVES=$ARCHIVES_default
 
+# Where is the zlib library?
+# At NCSA, half of the machines have it in /usr/lib, the other half at
+# /usr/ncsa/lib.  Leave it unset.
+ZLIB_default=
+ZLIB=$ZLIB_default
+
 # What compression methods to use?
 METHODS="gzip bzip2"
 
@@ -106,6 +112,16 @@ while [ $# -gt 0 ] ; do
 	    set -x
 	    break
 	    ;;
+	zlib)
+	    shift
+	    if [ $# -lt 1 ]; then
+		echo "ZLIB information missing"
+		errcode=1
+		cmd="help"
+		break
+	    fi
+	    ZLIB="$1"
+	    ;;
 	archive)
 	    shift
 	    if [ $# -lt 1 ]; then
@@ -143,7 +159,7 @@ if [ "$cmd" = help ]; then
     set -
     cat <<EOF
 Usage: $PROGNAME [all] [checkout] [diff] [test] [srcdir] [release] [help]
-          [archive <arch_path>] [dir <dir>]
+          [zlib <zlib_path>] [archive <arch_path>] [dir <dir>]
 	  [op-configure <option>] [--<option>]
     all:      Run all commands (checkout, test & release)
               [Default is all]
@@ -164,6 +180,9 @@ Usage: $PROGNAME [all] [checkout] [diff] [test] [srcdir] [release] [help]
               [Default is hostname]
     help:     Print this message
     echo:     Turn on shell echo
+    zlib <zlib_path>:
+              Use <zlib_path> as the ZLIB locations
+              [Default is $ZLIB_default]
     archive <arch_path>:
               Use <arch_path> as the release ARCHIVE area
               [Default is $ARCHIVES_default]
@@ -179,7 +198,10 @@ EOF
     exit $errcode
 fi
 
-CONFIGURE="./configure $OP_CONFIGURE"
+# Setup the proper configure option (--with-zlib) to use zlib library
+# provide ZLIB is non-empty.
+ZLIB=${ZLIB:+"--with-zlib="$ZLIB}
+CONFIGURE="./configure $ZLIB $OP_CONFIGURE"
 
 # Execute the requests
 snapshot=yes
