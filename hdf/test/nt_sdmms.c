@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1993/01/27 22:41:30  briand
-Fixed problem with compiling on RS6000.
+Revision 1.3  1993/02/25 22:35:32  chouck
+Second DFSDgetcal() is *supposed* to return FAIL
 
+ * Revision 1.2  1993/01/27  22:41:30  briand
+ * Fixed problem with compiling on RS6000.
+ *
  * Revision 1.1  1993/01/27  22:04:34  briand
  * Converted test files to work with master test program: testhdf
  *
@@ -123,7 +126,7 @@ void test_sdmms()
     RESULT("DFSDsetNT");
 
     ret=DFSDsetdimscale(1, (int32)10, (void *)f32scale);
-    RESULT(DFSDsetdimscale);
+    RESULT("DFSDsetdimscale");
     ret=DFSDsetrange(&f32max, &f32min);
     RESULT("DFSDsetrange");
     ret=DFSDsetcal(cal1, cal2, cal3, cal4, cal5);
@@ -202,9 +205,13 @@ void test_sdmms()
     RESULT("DFSDgetdimscale");
     ret = DFSDgetrange(&ti8max, &ti8min);
     RESULT("DFSDgetrange");
-    ret = DFSDgetcal(&ical1,&ical2, &ical3, &ical4, &ical5);
-    RESULT("DFSDgetcal");
 
+    /* this test should return FAIL so that we can verify that 
+       when we don't store calibration info we don't get any 
+       info returned */
+    ret = DFSDgetcal(&ical1,&ical2, &ical3, &ical4, &ical5);
+    CHECK(ret, SUCCEED, "DFSDgetcal"); 
+   
     ret = DFSDgetdata("ntcheck.hdf", rank, dims, tui8);
     RESULT("DFSDgetdata");
     ret = DFSDgetdimscale(1, (int32)10, (void *)tui8scale);
