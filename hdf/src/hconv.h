@@ -38,7 +38,7 @@
 #define TEST1_luo8f
 #endif
 
-/* #define DUFF */
+#define DUFF
 #ifdef DUFF
 #define DUFF_sb4b
 
