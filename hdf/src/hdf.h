@@ -2,9 +2,19 @@
 $Header$
 
 $Log$
-Revision 1.16  1993/09/08 20:53:10  georgev
-Changed TBUF_SZ size for Mac only.
+Revision 1.19  1993/10/06 20:27:34  koziol
+More compression fixed, and folded Doug's suggested change into VSappendable.
 
+ * Revision 1.18  1993/09/30  19:05:04  koziol
+ * Added basic compressing functionality for special tags.
+ *
+ * Revision 1.17  1993/09/28  18:04:24  koziol
+ * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
+ * tag handling.  Added new compression special tag type.
+ *
+ * Revision 1.16  1993/09/08  20:53:10  georgev
+ * Changed TBUF_SZ size for Mac only.
+ *
  * Revision 1.15  1993/09/01  23:31:58  georgev
  * Added defines for THINK_C
  *
@@ -369,11 +379,12 @@ typedef struct {
 extern uint8 *tbuf;
 
 /* tags and refs */
-#define DFREF_WILDCARD 0
-#define DFTAG_WILDCARD 0
-#define DFTAG_NULL 1
-#define DFTAG_LINKED 20         /* check uniqueness */
-#define DFTAG_VERSION 30
+#define DFREF_WILDCARD      0
+#define DFTAG_WILDCARD      0
+#define DFTAG_NULL          1
+#define DFTAG_LINKED        20      /* linked-block special element */
+#define DFTAG_VERSION       30
+#define DFTAG_COMPRESSED    40      /* compressed special element */
 
 /* utility set */
 #define DFTAG_FID   ((uint16)100) /* File identifier */
@@ -440,10 +451,10 @@ extern uint8 *tbuf;
 #define DFTAG_VS     ((uint16)1963) /* Vdata Storage */
 
 /* compression schemes */
-#define DFTAG_RLE   ((uint16)11)    /* run length encoding */
-#define DFTAG_IMC   ((uint16)12)    /* IMCOMP compression alias */
-#define DFTAG_IMCOMP ((uint16)12)   /* IMCOMP compression */
-#define DFTAG_JPEG  ((uint16)13)    /* JPEG compression (24-bit data) */
+#define DFTAG_RLE       ((uint16)11)    /* run length encoding */
+#define DFTAG_IMC       ((uint16)12)    /* IMCOMP compression alias */
+#define DFTAG_IMCOMP    ((uint16)12)    /* IMCOMP compression */
+#define DFTAG_JPEG      ((uint16)13)    /* JPEG compression (24-bit data) */
 #define DFTAG_GREYJPEG  ((uint16)14)    /* JPEG compression (8-bit data) */
 
 /* Interlace schemes */
@@ -454,6 +465,7 @@ extern uint8 *tbuf;
 /* SPECIAL CODES */
 #define SPECIAL_LINKED 1
 #define SPECIAL_EXT 2
+#define SPECIAL_COMP 3
 
 /* PARAMETERS */
 
@@ -582,3 +594,4 @@ typedef int32           HFILEID;
 #define Vend(f)             Vfinish((f))
 
 #endif /* HDF_H */
+

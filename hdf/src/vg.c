@@ -5,9 +5,16 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.13  1993/08/19 16:45:47  chouck
-Added code and tests for multi-order Vdatas
+Revision 1.15  1993/09/30 19:05:25  koziol
+Added basic compressing functionality for special tags.
 
+ * Revision 1.14  1993/09/28  18:04:53  koziol
+ * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
+ * tag handling.  Added new compression special tag type.
+ *
+ * Revision 1.13  1993/08/19  16:45:47  chouck
+ * Added code and tests for multi-order Vdatas
+ *
  * Revision 1.12  1993/08/16  21:46:34  koziol
  * Wrapped in changes for final, working version on the PC.
  *
@@ -757,15 +764,6 @@ int32   asize;            /* input: size of idarray */
     /* -- increment its index in lonevdata if found -- */
     vgid = -1;
     while( -1L != (vgid = Vgetid (f, vgid))) { /* until no more vgroups */
-#ifdef OLD_WAY
-        vg = (VGROUP*) Vattach(f,vgid,"r");
-        for (i=0; i < Vntagrefs(vg); i++) {
-            Vgettagref (vg, i, &vstag, &vsid);
-            if (vstag == (int32) DFTAG_VH)
-                lonevdata[vsid]++;
-        }
-        Vdetach(vg);
-#else
         vkey = Vattach(f,vgid,"r");
         for (i=0; i< Vntagrefs(vkey); i++) {
             Vgettagref (vkey, i, &vstag, &vsid);
@@ -773,7 +771,6 @@ int32   asize;            /* input: size of idarray */
                 lonevdata[vsid]=0;
         }
         Vdetach(vkey);
-#endif
     }
 
 /* -- check in lonevdata: it's a lone vdata if its flag is still 1 -- */
@@ -817,11 +814,7 @@ int32   asize;            /* input: size of idarray */
     uint8       *lonevg; /* local wrk area: stores flags of vgroups */
 	int32		i;
 	int32 	vgid, vstag, id;
-#ifdef OLD_WAY
-	VGROUP 	* vg;
-#else
     int32 vkey;
-#endif
 	int32 	nlone; /* total number of lone vgroups */
 	char * FUNC = "Vlone";
 
@@ -841,16 +834,6 @@ int32   asize;            /* input: size of idarray */
 /* -- increment its index in lonevg if found -- */
     vgid = -1;
     while( -1L != (vgid = Vgetid (f, vgid))) {  /* until no more vgroups */
-#ifdef OLD_WAY
-        vg = (VGROUP*) Vattach(f,vgid,"r");
-        id = -1;
-        for (i=0; i< Vntagrefs(vg); i++) {
-            Vgettagref (vg, i, &vstag, &id);
-            if (vstag == DFTAG_VG)
-                lonevg[id]++;
-        }
-        Vdetach(vg);
-#else
         vkey = Vattach(f,vgid,"r");
         id = -1;
         for (i=0; i< Vntagrefs(vkey); i++) {
@@ -859,7 +842,6 @@ int32   asize;            /* input: size of idarray */
                 lonevg[id]=0;
         }
         Vdetach(vkey);
-#endif
     }
 
     /* -- check in lonevg: it's a lone vgroup if its flag is still 1 -- */
@@ -895,27 +877,16 @@ char    * vgname;
 {
   	int32 	vgid = -1;
     int32   ret_ref;
-#ifdef OLD_WAY
- 	VGROUP* 	vg;
-#else
     int32 vkey;
-#endif
   	char 		name[512];
 	char * 	FUNC = "Vfind";
 
     while ( -1L != (vgid=Vgetid(f, vgid)) ) {
-#ifdef OLD_WAY
-		vg = (VGROUP*) Vattach(f,vgid,"r");
-		if (vg==NULL) return(0); 			/* error */
-		Vgetname(vg, name);
-		Vdetach (vg);
-#else
         vkey = Vattach(f,vgid,"r");
         if (vkey==FAIL)
             return(0);            /* error */
         Vgetname(vkey, name);
         Vdetach (vkey);
-#endif
         if (!HDstrcmp(vgname,name)) {
             ret_ref = VQueryref(vkey);
             return (ret_ref);   /* found the vgroup */
@@ -942,27 +913,16 @@ char * vsname;
 {
   	int32 	vsid = -1;
     int32   ret_ref;
-#ifdef OLD_WAY
-  	VDATA * 	vs;
-#else
     int32 vkey;
-#endif
   	char 		name[512];
 	char * 	FUNC = "VSfind";
 
     while ( -1L != (vsid=VSgetid(f, vsid)) ) {
-#ifdef OLD_WAY
-		vs = (VDATA*) VSattach(f,vsid,"r");
-		if (vs==NULL) return(0); 			/* error */
-		VSgetname(vs, name);
-		VSdetach (vs);
-#else
         vkey = VSattach(f,vsid,"r");
         if (vkey==FAIL)
             return(0);            /* error */
         VSgetname(vkey, name);
         VSdetach (vkey);
-#endif
         if (!HDstrcmp(vsname, name)) {
             ret_ref = VSQueryref(vkey);
             return(ret_ref);  /* found the vdata */

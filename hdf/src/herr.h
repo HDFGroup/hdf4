@@ -2,9 +2,26 @@
 $Header$
 
 $Log$
-Revision 1.6  1993/07/13 20:45:02  chouck
-Fixed a few memory leaks
+Revision 1.11  1993/10/06 20:27:40  koziol
+More compression fixed, and folded Doug's suggested change into VSappendable.
 
+ * Revision 1.10  1993/10/04  20:02:49  koziol
+ * Updated error reporting in H-Layer routines, and added more error codes and
+ * compression stuff.
+ *
+ * Revision 1.9  1993/10/01  20:01:05  koziol
+ * Put "extern C" block around function prototypes for C++ compatibility.
+ *
+ * Revision 1.8  1993/09/30  19:05:10  koziol
+ * Added basic compressing functionality for special tags.
+ *
+ * Revision 1.7  1993/09/28  18:04:29  koziol
+ * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
+ * tag handling.  Added new compression special tag type.
+ *
+ * Revision 1.6  1993/07/13  20:45:02  chouck
+ * Fixed a few memory leaks
+ *
  * Revision 1.5  1993/04/06  17:23:37  chouck
  * Added Vset macros
  *
@@ -33,7 +50,7 @@ Fixed a few memory leaks
 *** to be included by all ".c" files
 +*/
 
-#ifndef HERROR
+#ifndef __HERR_H
 
 /* if these symbols are not provided by the compiler, we'll have to
    fake them.  These are used in HERROR for recording location of
@@ -57,13 +74,13 @@ Fixed a few memory leaks
    same assumptions as HERROR.  IN ADDITION, this macro causes
    a return from the calling routine */
 
-#define HRETURN_ERROR(err, ret_val) {HERROR(err); return(ret_val);}
+#define HRETURN_ERROR(err, ret_val) {HERROR(err); return(ret_val);} 
 
 /* HCLOSE_RETURN_ERROR macro, used to facilitate error reporting.  Makes
    same assumptions as HRETURN_ERROR.  IN ADDITION, this macro causes
    the file specified by the id "fid" to be closed */
 
-#define HCLOSE_RETURN_ERROR(hfid, err, ret_val) {HERROR(err); Hclose(hfid); return(ret_val);}
+#define HCLOSE_RETURN_ERROR(hfid, err, ret_val) {HERROR(err); Hclose(hfid); return(ret_val);} 
 
 #if 0
 /* Clear the error stack */
@@ -146,6 +163,16 @@ extern int32 error_top;
 #define DFE_SYMSIZE     -64 /* Too many symbols in users table */
 #define DFE_BADATTACH   -65 /* Cannot write to a previously attached VData */
 #define DFE_CANTDETACH  -66 /* Cannot detach a VData with access 'w' */
+#define DFE_CANTUPDATE  -67 /* Cannot update the DD block */
+#define DFE_CANTHASH    -68 /* Cannot add a DD to the hash table */
+#define DFE_CANTDELDD   -69 /* Cannot delete a DD in the file */
+#define DFE_CANTDELHASH -70 /* Cannot delete a DD from the hash table */
+#define DFE_BADMODEL    -71 /* Invalid compression model specified */
+#define DFE_BADCODER    -72 /* Invalid compression encoder specified */
+#define DFE_MODEL       -73 /* Error in modeling layer of compression */
+#define DFE_CODER       -74 /* Error in encoding layer of compression */
+#define DFE_CINIT       -75 /* Error in encoding initialization */
+#define DFE_CDECODE     -76 /* Error in decoding compressed data */
 
 #ifdef _H_ERR_MASTER_
 
@@ -158,76 +185,85 @@ typedef struct error_messages_t {
     char *str;
 } error_messages_t;
 
-PRIVATE struct error_messages_t error_messages[] =
+PRIVATE const error_messages_t error_messages[] =
 {
-{ DFE_NONE,        "No error"},
-{ DFE_FNF,         "File not found"},
-{ DFE_DENIED,      "Access to file denied"},
-{ DFE_ALROPEN,     "File already open"},
-{ DFE_TOOMANY,     "Too Many AID's or files open"},
-{ DFE_BADNAME,     "Bad file name on open"},
-{ DFE_BADACC,      "Bad file access mode"},
-{ DFE_BADOPEN,     "Error opening file"},
-{ DFE_NOTOPEN,     "File can't be closed; It isn't open"},
-{ DFE_CANTCLOSE,   "Unable to close file"},
-{ DFE_DFNULL,      "DF has a null pointer"},
-{ DFE_ILLTYPE,     "Internal error: DF has an illegal type"},
-{ DFE_UNSUPPORTED, "Feature not currently supported"},
-{ DFE_BADDDLIST,   "Internal error: The DD list is non-existent"},
-{ DFE_NOTDFFILE,   "This is not an HDF file"},
-{ DFE_SEEDTWICE,   "Internal error: The DD list is already seeded"},
-{ DFE_NOSPACE,     "Internal error: Out of space"},
-{ DFE_READERROR,   "Read error"},
-{ DFE_WRITEERROR,  "Write error"},
-{ DFE_SEEKERROR,   "Error performing seek operation"},
-{ DFE_NOFREEDD,    "There are no free DD's left"},
-{ DFE_BADTAG,      "Illegal WILDCARD tag"},
-{ DFE_BADREF,      "Illegal WILDCARD reference"},
-{ DFE_RDONLY,      "Attempt to write to read-only HDF file"},
-{ DFE_BADCALL,     "Calls in wrong order"},
-{ DFE_BADPTR,      "NULL ptr argument"},
-{ DFE_BADLEN,      "Invalid length specified"},
-{ DFE_BADSEEK,     "Attempt to seek past end of element"},
-{ DFE_NOMATCH,     "No (more) DDs which match specified tag/ref"},
-{ DFE_NOTINSET,    "Set contained unknown tag: ignored"},
-{ DFE_BADDIM,      "Negative or zero dimensions specified"},
-{ DFE_BADOFFSET,   "Illegal offset specified"},
-{ DFE_BADSCHEME,   "Unknown compression scheme specified"},
-{ DFE_NODIM,       "No dimension record associated with image"},
-{ DFE_NOTENOUGH,   "Space provided insufficient for size of data"},
-{ DFE_NOVALS,      "Values not available"},
-{ DFE_CORRUPT,     "File is corrupted"},
-{ DFE_BADFP,       "File contained an illegal floating point number"},
-{ DFE_NOREF,       "No more reference numbers are available"},
-{ DFE_BADDATATYPE, "Unknown or unavailable data type specified"},
-{ DFE_BADMCTYPE,   "Unknown or unavailable machine type specified"},
-{ DFE_BADNUMTYPE,  "Unknown or unavailable number type specified"},
-{ DFE_BADORDER,    "Unknown or illegal array order specified"},
-{ DFE_ARGS,        "Invalid arguments to routine"},
-{ DFE_INTERNAL,    "HDF Internal error"},
-{ DFE_DUPDD,       "Tag/ref is already used"},
-{ DFE_CANTMOD,     "Old element does not exist, cannot modify"},
-{ DFE_RANGE,       "Improper range for attempted access"},
-{ DFE_BADTABLE,    "The nsdg table is wrong"},
-{ DFE_BADSDG,      "Error processing an sdg"},
-{ DFE_BADNDG,      "Error processing an ndg"},
-{ DFE_BADFIELDS,   "Unable to parse fields string correctly"},
-{ DFE_NORESET,     "Can not reset this value"},
-{ DFE_NOVS,        "Could not find specified VS or VG in file"},
-{ DFE_VGSIZE,      "No more elements will fit in this VGroup"},
-{ DFE_DIFFFILES,   "Attempt to merge objects in different files"},
-{ DFE_VTAB,        "Element is not in VSet tables"},
-{ DFE_BADAID,      "Unable to create a new AID"},
-{ DFE_OPENAID,     "There are still active AIDs"},
-{ DFE_BADCONV,     "Don't know how to convert data type"},
-{ DFE_GENAPP,      "Generic application-level error"},
-{ DFE_CANTFLUSH,   "Cannot flush the changed DD back to the file"},
-{ DFE_BADTYPE,     "Incompatible type specified"},
-{ DFE_SYMSIZE,     "Too many symbols in table"},
-{ DFE_BADATTACH,   "Cannot write to a previously attached VData"},
-{ DFE_CANTDETACH,  "Cannot detach a VData with access 'w'"}
+{ DFE_NONE,         "No error"},
+{ DFE_FNF,          "File not found"},
+{ DFE_DENIED,       "Access to file denied"},
+{ DFE_ALROPEN,      "File already open"},
+{ DFE_TOOMANY,      "Too Many AID's or files open"},
+{ DFE_BADNAME,      "Bad file name on open"},
+{ DFE_BADACC,       "Bad file access mode"},
+{ DFE_BADOPEN,      "Error opening file"},
+{ DFE_NOTOPEN,      "File can't be closed; It isn't open"},
+{ DFE_CANTCLOSE,    "Unable to close file"},
+{ DFE_DFNULL,       "DF has a null pointer"},
+{ DFE_ILLTYPE,      "Internal error: DF has an illegal type"},
+{ DFE_UNSUPPORTED,  "Feature not currently supported"},
+{ DFE_BADDDLIST,    "Internal error: The DD list is non-existent"},
+{ DFE_NOTDFFILE,    "This is not an HDF file"},
+{ DFE_SEEDTWICE,    "Internal error: The DD list is already seeded"},
+{ DFE_NOSPACE,      "Internal error: Out of space"},
+{ DFE_READERROR,    "Read error"},
+{ DFE_WRITEERROR,   "Write error"},
+{ DFE_SEEKERROR,    "Error performing seek operation"},
+{ DFE_NOFREEDD,     "There are no free DD's left"},
+{ DFE_BADTAG,       "Illegal WILDCARD tag"},
+{ DFE_BADREF,       "Illegal WILDCARD reference"},
+{ DFE_RDONLY,       "Attempt to write to read-only HDF file"},
+{ DFE_BADCALL,      "Calls in wrong order"},
+{ DFE_BADPTR,       "NULL ptr argument"},
+{ DFE_BADLEN,       "Invalid length specified"},
+{ DFE_BADSEEK,      "Attempt to seek past end of element"},
+{ DFE_NOMATCH,      "No (more) DDs which match specified tag/ref"},
+{ DFE_NOTINSET,     "Set contained unknown tag: ignored"},
+{ DFE_BADDIM,       "Negative or zero dimensions specified"},
+{ DFE_BADOFFSET,    "Illegal offset specified"},
+{ DFE_BADSCHEME,    "Unknown compression scheme specified"},
+{ DFE_NODIM,        "No dimension record associated with image"},
+{ DFE_NOTENOUGH,    "Space provided insufficient for size of data"},
+{ DFE_NOVALS,       "Values not available"},
+{ DFE_CORRUPT,      "File is corrupted"},
+{ DFE_BADFP,        "File contained an illegal floating point number"},
+{ DFE_NOREF,        "No more reference numbers are available"},
+{ DFE_BADDATATYPE,  "Unknown or unavailable data type specified"},
+{ DFE_BADMCTYPE,    "Unknown or unavailable machine type specified"},
+{ DFE_BADNUMTYPE,   "Unknown or unavailable number type specified"},
+{ DFE_BADORDER,     "Unknown or illegal array order specified"},
+{ DFE_ARGS,         "Invalid arguments to routine"},
+{ DFE_INTERNAL,     "HDF Internal error"},
+{ DFE_DUPDD,        "Tag/ref is already used"},
+{ DFE_CANTMOD,      "Old element does not exist, cannot modify"},
+{ DFE_RANGE,        "Improper range for attempted access"},
+{ DFE_BADTABLE,     "The nsdg table is wrong"},
+{ DFE_BADSDG,       "Error processing an sdg"},
+{ DFE_BADNDG,       "Error processing an ndg"},
+{ DFE_BADFIELDS,    "Unable to parse fields string correctly"},
+{ DFE_NORESET,      "Can not reset this value"},
+{ DFE_NOVS,         "Could not find specified VS or VG in file"},
+{ DFE_VGSIZE,       "No more elements will fit in this VGroup"},
+{ DFE_DIFFFILES,    "Attempt to merge objects in different files"},
+{ DFE_VTAB,         "Element is not in VSet tables"},
+{ DFE_BADAID,       "Unable to create a new AID"},
+{ DFE_OPENAID,      "There are still active AIDs"},
+{ DFE_BADCONV,      "Don't know how to convert data type"},
+{ DFE_GENAPP,       "Generic application-level error"},
+{ DFE_CANTFLUSH,    "Cannot flush the changed DD back to the file"},
+{ DFE_BADTYPE,      "Incompatible type specified"},
+{ DFE_SYMSIZE,      "Too many symbols in table"},
+{ DFE_BADATTACH,    "Cannot write to a previously attached VData"},
+{ DFE_CANTDETACH,   "Cannot detach a VData with access 'w'"},
+{ DFE_CANTUPDATE,   "Cannot update the DD block"},
+{ DFE_CANTHASH,     "Cannot add a DD to the hash table"},
+{ DFE_CANTDELDD,    "Cannot delete a DD in the file"},
+{ DFE_CANTDELHASH,  "Cannot delete a DD from the hash table"},
+{ DFE_BADMODEL,     "Invalid compression model specified"},
+{ DFE_BADCODER,     "Invalid compression coder specified"},
+{ DFE_MODEL,        "Error in modeling layer of compression"},
+{ DFE_CODER,        "Error in encoding layer of compression"},
+{ DFE_CINIT,        "Error in encoding initialization"},
+{ DFE_CDECODE,      "Error in decoding compressed data"}
 };
 #endif /* _H_ERR_MASTER_ */
 
-#endif /* HERROR */
-
+#endif /* __HERR_H */

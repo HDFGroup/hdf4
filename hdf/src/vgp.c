@@ -5,9 +5,22 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.31  1993/09/16 17:19:48  chouck
-Allow duplicates in Vgroups unless NO_DUPLICATES is defined
+Revision 1.35  1993/09/30 19:05:30  koziol
+Added basic compressing functionality for special tags.
 
+ * Revision 1.34  1993/09/28  19:10:15  koziol
+ * Made Vinquire check parameter values for NULL before updating them.
+ *
+ * Revision 1.33  1993/09/28  18:44:36  koziol
+ * Fixed various things the Sun's pre-processor didn't like.
+ *
+ * Revision 1.32  1993/09/28  18:04:59  koziol
+ * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
+ * tag handling.  Added new compression special tag type.
+ *
+ * Revision 1.31  1993/09/16  17:19:48  chouck
+ * Allow duplicates in Vgroups unless NO_DUPLICATES is defined
+ *
  * Revision 1.30  1993/09/11  18:08:10  koziol
  * Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
  * cleaned up some goofy string manipulations in various places.
@@ -119,19 +132,25 @@ Allow duplicates in Vgroups unless NO_DUPLICATES is defined
 #include "hfile.h"
 
 PRIVATE int32 Load_vfile
-  PROTO((HFILEID f));
+    PROTO((HFILEID f));
 
 PRIVATE VOID Remove_vfile
-  PROTO((HFILEID f));
+    PROTO((HFILEID f));
+
+PRIVATE vginstance_t *vginstance
+    PROTO((HFILEID f, uint16 vgid));
+
+PRIVATE void vunpackvg
+    PROTO((VGROUP *vg, uint8 buf[]));
 
 PUBLIC intn vcompare
     PROTO((VOIDP k1,VOIDP k2,intn cmparg));
 
-PRIVATE vginstance_t *vginstance
-  PROTO((HFILEID f, uint16 vgid));
+PUBLIC VOID vdestroynode
+    PROTO((VOIDP n));
 
-PRIVATE void vunpackvg
-    PROTO((VGROUP *vg, uint8 buf[]));
+PUBLIC VOID vsdestroynode
+    PROTO((VOIDP n));
 
 /*
 * -------------------------------------------------------------------- 
@@ -185,21 +204,10 @@ HFILEID f;
     }
 
     /* load all the vg's  tag/refs from file */
-#ifdef OLD_WAY
-    vf->vgtabn    = -1;
-    vf->vgtabtail = &(vf->vgtab);
-    
-    vf->vgtab.ref      = -1;
-    vf->vgtab.nattach  = -1;
-    vf->vgtab.nentries = -1;
-    vf->vgtab.vg       = NULL;
-    vf->vgtab.next     = NULL;
-#else
     vf->vgtabn = 0;
     vf->vgtree = tbbtdmake(vcompare, sizeof(int32));
     if(vf->vgtree == NULL)
         return(FAIL);
-#endif
         
     stat = aid = Hstartread(f, DFTAG_VG,  DFREF_WILDCARD);
     while (stat != FAIL) {
@@ -210,11 +218,6 @@ HFILEID f;
             return(FAIL);
           }
           
-#ifdef OLD_WAY
-        vf->vgtabtail->next  = v;
-        vf->vgtabtail      = v;
-        v->next            = NULL;
-#else
         vf->vgtabn++;
         v->key      = (int32) VGSLOT2ID(f,ref); /* set the key for the node */
         v->ref      = (intn) ref;
@@ -222,29 +225,17 @@ HFILEID f;
         v->nattach  = 0;
         v->nentries = 0;
         tbbtdins(vf->vgtree,(VOIDP)v,NULL);    /* insert the vg instance in B-tree */
-#endif
         stat = Hnextread (aid, DFTAG_VG, DFREF_WILDCARD, DF_CURRENT);
 	}
     Hendaccess (aid);
 
     /* load all the vs's  tag/refs from file */
-#ifdef OLD_WAY
-	vf->vstabn    = -1;
-	vf->vstabtail = &(vf->vstab);
-
-	vf->vstab.ref      = -1;
-	vf->vstab.nattach  = -1;
-	vf->vstab.nvertices= -1;
-	vf->vstab.vs       = NULL;
-	vf->vstab.next     = NULL;
-#else
     vf->vstabn = 0;
     vf->vstree = tbbtdmake(vcompare, sizeof(int32));
     if(vf->vstree==NULL) {
         tbbtdfree(vf->vgtree, vdestroynode, NULL);
         return(FAIL);
       } /* end if */
-#endif
 
     stat = aid = Hstartread(f, VSDESCTAG,  DFREF_WILDCARD);
     while (stat != FAIL) {
@@ -256,11 +247,6 @@ HFILEID f;
             return(FAIL);
           }
           
-#ifdef OLD_WAY
-        vf->vstabtail->next  = w;
-        vf->vstabtail        = w;
-        w->next     = NULL;
-#else
         vf->vstabn++;
         w->key      = (int32) VSSLOT2ID(f,ref); /* set the key for the node */
         w->ref      = (intn) ref;
@@ -268,7 +254,6 @@ HFILEID f;
         w->nattach  = 0;
         w->nvertices= 0;
         tbbtdins(vf->vstree,(VOIDP)w,NULL);    /* insert the vg instance in B-tree */
-#endif
         stat = Hnextread (aid, VSDESCTAG, DFREF_WILDCARD, DF_CURRENT);
 	}
     Hendaccess (aid);
@@ -302,10 +287,6 @@ PRIVATE VOID Remove_vfile (f)
 HFILEID f;
 #endif
 {
-#ifdef OLD_WAY
-    vginstance_t *vginst, *vg1;
-    vsinstance_t *vsinst, *vs1;
-#endif
     vfile_t      *vf=NULL;
     char * FUNC = "Remove_vfile";
     
@@ -320,34 +301,8 @@ HFILEID f;
         return;
     }
 
-#ifdef OLD_WAY
-	/* free vstab and vgtab link-list entries */
-    vginst = vf->vgtab.next;
-    while (vginst) {
-        vg1 = vginst->next;
-        if (vginst->vg)  {
-            HDfreespace ((VOIDP)vginst->vg);
-            HDfreespace ((VOIDP)vginst);
-        }
-        vginst = vg1;
-    }
-
-    vsinst = vf->vstab.next;
-    while (vsinst) {
-        vs1 = vsinst->next; 
-        if (vsinst->vs) {
-            HDfreespace ((VOIDP)vsinst->vs);
-            HDfreespace ((VOIDP)vsinst);
-        }
-        vsinst = vs1; 
-    }
-
-    vf->vgtab.next = NULL;
-    vf->vstab.next = NULL;
-#else
     tbbtdfree(vf->vgtree, vdestroynode, NULL);
     tbbtdfree(vf->vstree, vsdestroynode, NULL);
-#endif
 }  /* Remove_vfile */
 
 /* ---------------------------- vcompare ------------------------- */
@@ -365,10 +320,6 @@ VOIDP k2;
 intn cmparg;
 #endif
 {
-#ifdef QAK
-printf("vcompare: k1=%d, k2=%d\n",(int)k1,(int)k2);
-printf("vcompare: *k1=%d, *k2=%d\n",*(int32 *)k1,*(int32 *)k2);
-#endif
     return((intn)((*(int32 *)k1) - (*(int32 *)k2)));  /* valid for integer keys */
 }  /* vcompare */
 
@@ -483,17 +434,11 @@ uint16  vgid;
     int32 key;
     char *FUNC = "vginstance";
   
-#ifdef QAK
-printf("vginstance(): f=%d vf=%p\n",(int)f,Get_vfile(f));
-#endif
     if (NULL== (vf = Get_vfile(f)))
         HRETURN_ERROR(DFE_FNF, NULL);
 
     /* tbbtdfind returns a pointer to the vginstance_t pointer */
     key=VGSLOT2ID(f,vgid);
-#ifdef QAK
-printf("vginstance(): key=%d\n",(int)key);
-#endif
     t=(VOIDP *)tbbtdfind(vf->vgtree,(VOIDP)&key,NULL);
     if(t!=NULL)
         return((vginstance_t *)*t);     /* return the actual vginstance_t ptr */
@@ -537,11 +482,6 @@ uint16  vgid;
 *		int16		ref[1..nvelt]		
 */
 /* ==================================================================== */
-
-#ifdef QAK
-#define INT16SIZE 2
-#define UINT16SIZE 2
-#endif
 
 /* ==================================================================== */
 /* 
@@ -724,9 +664,6 @@ char    *accesstype;    /* access mode */
         HRETURN_ERROR(DFE_BADACC, FAIL);
 
     if (vgid == -1) {           /******* create a NEW vg in vgdir ******/
-#ifdef QAK
-printf("Vattach, creating new VG in file\n");
-#endif
         if (access=='r') {
             HERROR(DFE_ARGS);
             return(FAIL);
@@ -773,11 +710,6 @@ printf("Vattach, creating new VG in file\n");
             return(FAIL);
         }
 
-#ifdef OLD_WAY
-        vf->vgtabtail->next = v;
-        vf->vgtabtail       = v;
-        v->next   = NULL;
-#else
         vf->vgtabn++;
         v->key      = (int32) VGSLOT2ID(f,vg->oref); /* set the key for the node */
         v->ref      = (intn) vg->oref;
@@ -785,16 +717,8 @@ printf("Vattach, creating new VG in file\n");
         v->nattach  = 1;
         v->nentries = 0;
         tbbtdins(vf->vgtree,(VOIDP)v,NULL);    /* insert the vg instance in B-tree */
-#endif
 
-#ifdef OLD_WAY
-        return(vg);
-#else
-#ifdef QAK
-tbbtdump(vf->vgtree,0);
-#endif
         return(v->key);     /* return key instead of VGROUP ptr */
-#endif
 	}
 	else { 		
           /******* access an EXISTING vg *********/
@@ -812,11 +736,7 @@ tbbtdump(vf->vgtree,0);
         if (v->vg != NULL) {
             v->nattach++;
 
-#ifdef OLD_WAY
-            return(v->vg);
-#else
             return(v->key);     /* return key instead of VGROUP ptr */
-#endif
         }
           
           /* else vg not attached, must fetch vg from file */
@@ -856,14 +776,7 @@ tbbtdump(vf->vgtree,0);
         v->nentries    = vg->nvelt;
         HDfreespace((VOIDP)vgpack);
           
-#ifdef OLD_WAY
-        return(vg);
-#else
-#ifdef QAK
-tbbtdump(vf->vgtree,0);
-#endif
         return(v->key);     /* return key instead of VGROUP ptr */
-#endif
 	}
 } /* Vattach */
 
@@ -901,7 +814,7 @@ int32 vkey;
         HEprint(stderr, 0);
         return;
     }
-  
+
   /* locate vg's index in vgtab */
     if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) {
         HERROR(DFE_NOVS);
@@ -915,9 +828,9 @@ int32 vkey;
         HEprint(stderr, 0);
         return;
     }
-  
+
   /* update vgroup to file if it has write-access */
-  
+
   /* if its marked flag is 1 */
   /* - OR - */
   /* if that vgroup is empty */
@@ -926,7 +839,7 @@ int32 vkey;
       vgpack = (uint8 *) HDgetspace((int32) sizeof(VGROUP) + vg->nvelt * 4);
       vpackvg(vg,vgpack,&vgpacksize);
 
-      /* 
+      /*
        *  For now attempt to blow away the old one.  This is a total HACK
        *    but the H-level needs to stabilize first
        */
@@ -938,25 +851,9 @@ int32 vkey;
       }
       HDfreespace((VOIDP)vgpack);
       vg->marked = 0;
-/*    return; */
     }
   }
-  
   v->nattach--;
-  
-  if (v->nattach > 0)
-    return;    /* ok */
-  
-  
-#ifdef OLD_WAY
-  v->vg = NULL;             /* detach vg from vgdir */
-  
-  HDfreespace((VOIDP)vg->tag);
-  HDfreespace((VOIDP)vg->ref);
-  HDfreespace((VOIDP)vg);
-#endif
-  
-  return; /* ok */
 } /* Vdetach */
 
 
@@ -1103,11 +1000,7 @@ char * field;
     register uintn  u;
     vginstance_t  * v;
     VGROUP *vg;
-#ifdef OLD_WAY
-    VDATA   *vs;
-#else
     int32 vskey;
-#endif
     char * FUNC = "Vflocate";
     
     if (!VALIDVGID(vkey)) {
@@ -1132,19 +1025,11 @@ char * field;
     for (u = 0; u < vg->nvelt; u++)  {
         if(vg->tag[u]!=VSDESCTAG)
             continue;
-#ifdef OLD_WAY
-        vs=(VDATA*)VSattach(vg->f,vg->ref[u],"r");
-        if(vs==NULL)
-            return(FAIL);
-        s=VSfexist(vs, field);
-        VSdetach(vs);
-#else
         vskey=VSattach(vg->f,vg->ref[u],"r");
         if(vskey==FAIL)
             return(FAIL);
         s=VSfexist(vskey, field);
         VSdetach(vskey);
-#endif
         if(s==1)
             return (vg->ref[u]); /* found. return vdata's ref */
     }
@@ -1592,9 +1477,6 @@ char        *vgname;
       } /* end if */
   
   /* locate vg's index in vgtab */
-#ifdef QAK
-printf("Vsetname(): vkey=%d, VFILE=%d, VSLOT=%d\n",vkey,VGID2VFILE(vkey),VGID2SLOT(vkey));
-#endif
     if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) {
         HERROR(DFE_NOVS);
         HEprint(stderr, 0);
@@ -1806,22 +1688,6 @@ int32   vgid;                   /* current vgid */
       } /* end if */
 
 	/* look in vgtab for vgid */
-#ifdef OLD_WAY
-	v = (vf->vgtab).next;
-	while(NULL != v) {
-        if(v->ref == (uint16)vgid)
-            break;
-		v = v->next;
-	}
-        if (v==NULL)
-            return (FAIL); /* none found */
-	else
-            if( v->next ==NULL)
-                return (FAIL); /* this is the last vg, no more after it */
-            else
-                return((v->next)->ref); /* success, return the next vg's ref */
-#else
-
     /* tbbtdfind returns a pointer to the vginstance_t pointer */
     key=VGSLOT2ID(f,vgid);
     t=(VOIDP *)tbbtdfind(vf->vgtree,(VOIDP)&key,NULL);
@@ -1835,7 +1701,6 @@ int32   vgid;                   /* current vgid */
             v=(vginstance_t *)*t;   /* get actual pointer to the vginstance_t */
             return(v->ref); /* rets 1st vgroup's ref */
           } /* end else */
-#endif
 } /* Vgetid */
 
 
@@ -2054,8 +1919,10 @@ char        *vgname;
         return(FAIL);
       } /* end if */
 
-    HDstrcpy(vgname, vg->vgname);
-    *nentries = vg->nvelt;
+    if(vgname!=NULL)
+        HDstrcpy(vgname, vg->vgname);
+    if(nentries!=NULL)
+        *nentries = vg->nvelt;
   
     return(SUCCEED);
 } /* Vinquire */

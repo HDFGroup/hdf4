@@ -5,9 +5,23 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.23  1993/09/21 00:58:37  georgev
-With the new HDstrdup() need casts on the Mac and Convex.
+Revision 1.27  1993/10/06 20:27:45  koziol
+More compression fixed, and folded Doug's suggested change into VSappendable.
 
+ * Revision 1.26  1993/10/04  20:02:56  koziol
+ * Updated error reporting in H-Layer routines, and added more error codes and
+ * compression stuff.
+ *
+ * Revision 1.25  1993/09/28  18:44:19  koziol
+ * Fixed various things the Sun's pre-processor didn't like.
+ *
+ * Revision 1.24  1993/09/28  18:04:36  koziol
+ * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
+ * tag handling.  Added new compression special tag type.
+ *
+ * Revision 1.23  1993/09/21  00:58:37  georgev
+ * With the new HDstrdup() need casts on the Mac and Convex.
+ *
  * Revision 1.22  1993/09/20  19:56:09  koziol
  * Updated the "special element" function pointer array to be a structure
  * of function pointers.  This way, function prototypes can be written for the
@@ -116,78 +130,6 @@ With the new HDstrdup() need casts on the Mac and Convex.
 			   Hgetlibversion() and Hgetfileversion() (public) and
 			   HIread_version() and HIupdate_version() (PRIVATE).
 +*/
-/*
- SOME EXAMPLES
-       Example 1.  To create a HDF file and write a data element into it in
-       one go:
-
-       int fileid;
-       int tag=100, ref;
-       char data[DATA_SIZE];
-
-       ..create a file with clobber, use default ndds..
-       fileid = Hopen("myfile.hdf", DF_CREATE, 0);
-       ..get a new ref..
-       ref = Hnewref(fileid);
-       Hputelement(fileid, tag, ref, data, DATA_SIZE);
-
-       Hclose(fileid);
-
-       Example 2.  To read a data element in one go:
-
-       int fileid;
-       int tag=100, ref=3;
-       long length;
-       char data[DATA_SIZE];
-
-       ..open the file with read only..
-       fileid = Hopen("myfile.hdf", DFACC_READ, 0);
-       ..check length of data element..
-       length = Hlength(fileid, tag, ref);
-       if (length > DATA_SIZE) routine_with_larger_buffer();
-       else
-           Hgetelement(fileid, tag, ref, data);
-
-       Example 3.  To write 2 data elements piece by piece
-
-       int fileid;
-       int acc1, acc2;
-       int tag1=100, tag2=200;
-       int ref1=1, ref2=3;
-       char buf1[1000], buf2[500];
-
-       fileid = Hopen("myfile.hdf", DF_CREATE, 0)
-       acc1 = Hstartwrite(fileid, tag1, ref1, ELT1_SIZE);
-       acc2 = Hstartwrite(fileid, tag2, ref2, ELT2_SIZE);
-
-       Hwrite(acc1, 1000L, buf1);
-       Hwrite(acc2, 500L, buf2);
-       ..fill buffers again..
-       Hwrite(acc1, 1000L, buf1);
-       ..etc..
-       Hendaccess(acc1);
-       Hendaccess(acc2);
-
-       Example 4.  To read 2 data element piece by piece
-
-       int fileid;
-       int acc1, acc2;
-       int tag1=100, tag2=200;
-       int ref1=1, ref2=3;
-       char buf1[1000], buf2[500];
-
-       fileid = Hopen("myfile.hdf", DFACC_READ, 0);
-       acc1 = Hstartread(fileid, tag1, ref1);
-       acc2 = Hstartread(fileid, tag2, ref2);
-
-       Hread(acc1, 1000L, buf1);
-       Hread(acc2, 500L, buf2);
-       ..do something with data read..
-       Hread(acc1, 1000L, buf1);
-       ..etc..
-       Hendaccess(acc1);
-       Hendaccess(acc2);
-*/
 
 #define HMASTER
 #include "hdf.h"
@@ -244,22 +186,27 @@ extern funclist_t linked_funcs;
 
 /* Functions for accessing external data elements, or data
    elements that are in some other files.  For definition of the external
-   data element, see hext.c. */
+   data element, see hextelt.c. */
 
 extern funclist_t ext_funcs;
 
+/* Functions for accessing compressed special data elements.
+   For definition of the compressed data element, see hcomp.c. */
+
+extern funclist_t comp_funcs;
+
 /* Table of these function tables for accessing special elements.  The first
    member of each record is the speical code for that type of data element. */
-
 functab_t functab[] = {
     {SPECIAL_LINKED, &linked_funcs},
     {SPECIAL_EXT, &ext_funcs},
+    {SPECIAL_COMP, &comp_funcs},
     {0, NULL}                  /* terminating record; add new record */
                                /* before this line */
 };
 
 /*
-** Declaration of private functions. 
+** Declaration of private functions.
 */
 PRIVATE int HIget_file_slot
   PROTO((char *path, char *FUNC));
@@ -331,7 +278,7 @@ int32 Hopen(path, access, ndds)
     char *path;                        /* Path of file to open */
     intn access;                       /* Access mode */
     int16 ndds;                        /* Number of dd's in each ddblock
-                                  if file is created */
+                                            if file is created */
 #endif
 {
     char *FUNC="Hopen";                /* For HERROR */
@@ -342,20 +289,15 @@ int32 Hopen(path, access, ndds)
     /* Clear errors and check args and all the boring stuff. */
 
     HEclear();
-    if (!path || ((access & DFACC_ALL) != access)) {
-       HERROR(DFE_ARGS);
-       return FAIL;
-    }
+    if (!path || ((access & DFACC_ALL) != access))
+       HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* Get a space to put the file information.
        HIget_file_slot() also copies path into the record. */
 
     slot = HIget_file_slot(path, FUNC);
-    if (slot == FAIL) {
-        /* The slots are full. */
-       HERROR(DFE_TOOMANY);
-       return FAIL;
-    }
+    if (slot == FAIL)   /* The slots are full. */
+       HRETURN_ERROR(DFE_TOOMANY,FAIL);
     file_rec = &(file_records[slot]);
 
     if (file_rec->refcount) {
@@ -363,10 +305,8 @@ int32 Hopen(path, access, ndds)
 
         /* If this request is to create a new file and file is still
           in use, return error. */
-       if (access == DFACC_CREATE) {
-           HERROR(DFE_ALROPEN);
-           return FAIL;
-       }
+       if (access == DFACC_CREATE)
+           HRETURN_ERROR(DFE_ALROPEN,FAIL);
 
        if ((access & DFACC_WRITE) && !(file_rec->access & DFACC_WRITE)) {
            /* If the request includes writing, and if original open does not
@@ -377,23 +317,19 @@ int32 Hopen(path, access, ndds)
            hdf_file_t f;
 
            f = HI_OPEN(file_rec->path, access);
-           if (OPENERR(f)) {
-               HERROR(DFE_DENIED);
-               return FAIL;
-           }
+           if (OPENERR(f))
+               HRETURN_ERROR(DFE_DENIED,FAIL);
 
            /* Replace file_rec->file with new file pointer and
               close old one. */
 
            if (HI_CLOSE(file_rec->file) == FAIL) {
                HI_CLOSE(f);
-               HERROR(DFE_CANTCLOSE);
-               return FAIL;
+               HRETURN_ERROR(DFE_CANTCLOSE,FAIL);
            }
            file_rec->file = f;
 #else /* NO_MULTI_OPEN */
-           HERROR(DFE_DENIED);
-           return FAIL;
+           HRETURN_ERROR(DFE_DENIED,FAIL);
 #endif /* NO_MULTI_OPEN */
        }
 
@@ -415,10 +351,8 @@ int32 Hopen(path, access, ndds)
                if (access & DFACC_WRITE) {
                    /* Seems like the file is not there, try to create it. */
                    new_file = TRUE;
-               } else {
-                   HERROR(DFE_BADOPEN);
-                   return FAIL;
-               }
+               } else
+                   HRETURN_ERROR(DFE_BADOPEN,FAIL);
            } else {
                /* Open existing file successfully. */
 
@@ -427,17 +361,15 @@ int32 Hopen(path, access, ndds)
                /* Check to see if file is a HDF file. */
 
                if (!HIvalid_magic(file_rec->file, FUNC)) {
-                   HERROR(DFE_NOTDFFILE);
                    HI_CLOSE(file_rec->file);
-                   return FAIL;
+                   HRETURN_ERROR(DFE_NOTDFFILE,FAIL);
                }
 
                /* Read in all the relevant data descriptor records. */
 
                if (HIfill_file_rec(file_rec, FUNC) == FAIL) {
-                   HERROR(DFE_BADOPEN);
                    HI_CLOSE(file_rec->file);
-                   return FAIL;
+                   HRETURN_ERROR(DFE_BADOPEN,FAIL);
                }
            }
        }
@@ -452,26 +384,18 @@ int32 Hopen(path, access, ndds)
         /* end version tags */
 
            file_rec->file = HI_CREATE(path);
-           if (OPENERR(file_rec->file)) {
-               HERROR(DFE_BADOPEN);
-               return FAIL;
-           }
+           if (OPENERR(file_rec->file))
+               HRETURN_ERROR(DFE_BADOPEN,FAIL);
 
            /* set up the newly created (and empty) file with
               the magic cookie and initial data descriptor records */
 
-           if (HI_WRITE(file_rec->file, HDFMAGIC, MAGICLEN) == FAIL) {
-               HERROR(DFE_WRITEERROR);
-               return FAIL;
-           }
-           if (HI_FLUSH(file_rec->file) == FAIL) {  /* flush the cookie */
-               HERROR(DFE_WRITEERROR);
-               return FAIL;
-           }
-           if (HIinit_file_dds(file_rec, ndds, FUNC) == FAIL) {
-               HERROR(DFE_WRITEERROR);
-               return FAIL;
-           }
+           if (HI_WRITE(file_rec->file, HDFMAGIC, MAGICLEN) == FAIL)
+               HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+           if (HI_FLUSH(file_rec->file) == FAIL)   /* flush the cookie */
+               HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+           if (HIinit_file_dds(file_rec, ndds, FUNC) == FAIL)
+               HRETURN_ERROR(DFE_WRITEERROR,FAIL);
            file_rec->maxref = 0;
            file_rec->access = new_file ? access | DFACC_READ : DFACC_ALL;
        }
@@ -481,7 +405,7 @@ int32 Hopen(path, access, ndds)
        /* Set up the new pointers for empty space */
        file_rec->null_block = file_rec->ddhead;
        file_rec->null_idx   = -1;
-       
+
        /* version tags */
        if (vtag == 1)
          HIupdate_version(FSLOT2ID(slot));
@@ -494,7 +418,7 @@ int32 Hopen(path, access, ndds)
     /* end version tags */
 
     return FSLOT2ID(slot);
-  }
+}
 
 /*--------------------------------------------------------------------------
  NAME
@@ -524,55 +448,52 @@ intn Hclose(file_id)
   char *FUNC="Hclose";       /* for HERROR */
   filerec_t *file_rec;       /* file record pointer */
   register tag_ref_list_ptr p, q;
-  
+
   /* convert file id to file rec and check for validity */
-  
+
   file_rec = FID2REC(file_id);
-  if (!file_rec || file_rec->refcount == 0) {
-    HERROR(DFE_ARGS);
-    return FAIL;
-  }
-  
+  if (!file_rec || file_rec->refcount == 0)
+    HRETURN_ERROR(DFE_ARGS,FAIL);
+
   /* version tags */
   if ((file_rec->refcount > 0) && (file_rec->version.modified == 1))
     HIupdate_version(file_id);
   /* end version tags */
-  
+
   /* decrease the reference count */
   if (--file_rec->refcount == 0) {
     ddblock_t *bl, *next;  /* current ddblock and next ddblock pointers.
                                   for freeing ddblock linked list*/
-    
+
     /* if file reference count is zero but there are still attached
        access elts, reject this close. */
-    
+
        if (file_rec->attach > 0) {
          file_rec->refcount++;
-         HERROR(DFE_OPENAID);
          HEreport("There are still %d active aids attached",file_rec->attach);
-         return FAIL;
+         HRETURN_ERROR(DFE_OPENAID,FAIL);
        }
-    
+
     /* otherwise, nothing should still be using this file, close it */
 #if 0
-       if (HI_CLOSE(file_rec->file) == FAIL) {
-         HERROR(DFE_CLOSE);
-         return FAIL;
-       }
+       if (HI_CLOSE(file_rec->file) == FAIL)
+         HRETURN_ERROR(DFE_CLOSE,FAIL);
 #else
     /* ignore any close error */
     HI_CLOSE(file_rec->file);
 #endif
-    
+
     /* free the ddblock linked list of this file record, the path name;
        and reset some variables */
-    
+
     for (bl = file_rec->ddhead; bl; bl = next) {
       next = bl->next;
-      if (bl->ddlist) HDfreespace((VOIDP) bl->ddlist);
-      if (bl) HDfreespace((VOIDP)bl);
+      if (bl->ddlist)
+        HDfreespace((VOIDP) bl->ddlist);
+      if (bl)
+        HDfreespace((VOIDP)bl);
     }
-    
+
     for(i = 0; i < HASH_MASK + 1; i++) {
       for(p = file_rec->hash[i]; p; p = q) {
         q = p->next;
@@ -580,12 +501,13 @@ intn Hclose(file_id)
       }
       file_rec->hash[i] = NULL;
     }
-    
+
     file_rec->ddhead = (ddblock_t *) NULL;
-    if (file_rec->path) HDfreespace(file_rec->path);
+    if (file_rec->path)
+        HDfreespace(file_rec->path);
     file_rec->path = (char *)NULL;
   }
-  
+
   return SUCCEED;
 } /* Hclose */
 
@@ -627,52 +549,40 @@ int32 Hstartread(file_id, tag, ref)
     accrec_t *access_rec;      /* access record */
 
     /* clear error stack */
-
     HEclear();
 
     /* convert file id to file record and check for validity */
-
     file_rec = FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0) {
-       HERROR(DFE_ARGS);
-       return FAIL;
-    }
+    if (!file_rec || file_rec->refcount == 0)
+       HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* get a slot in the access record array */
-
     slot = HIget_access_slot();
-    if (slot == FAIL) {
-       HERROR(DFE_TOOMANY);
-       return FAIL;
-    }
+    if (slot == FAIL)
+       HRETURN_ERROR(DFE_TOOMANY,FAIL);
     access_rec = &(access_records[slot]);
 
-#ifndef oldspecial
     /* convert tag to base form */
-
     tag = BASETAG(tag);
-#endif
 
     /* search for the data element in the dd lists of the file */
-
     access_rec->file_id = file_id;
     access_rec->block = file_rec->ddhead;
     access_rec->idx = -1;
-    if (HIlookup_dd(file_rec, tag, ref, &access_rec->block, &access_rec->idx) == FAIL) {
-       HERROR(DFE_NOMATCH);
+    access_rec->appendable=FALSE;   /* start data as non-appendable */
+    access_rec->flush=FALSE;        /* start data as not needing flushing */
+    if(HIlookup_dd(file_rec,tag,ref,&access_rec->block,&access_rec->idx)==FAIL) {
        access_rec->used = FALSE;
-       return FAIL;
+       HRETURN_ERROR(DFE_NOMATCH,FAIL);
     }
 
     /* if special data element, get the relevant special function table
        and run the START READ function on this element */
-
     if (SPECIALTAG(access_rec->block->ddlist[access_rec->idx].tag)) {
        access_rec->special_func = HIget_function_table(access_rec, FUNC);
        if (!access_rec->special_func) {
-           HERROR(DFE_INTERNAL);
            access_rec->used = FALSE;
-           return FAIL;
+           HRETURN_ERROR(DFE_INTERNAL,FAIL);
        }
        return (*access_rec->special_func->stread)(access_rec);
     }
@@ -681,8 +591,6 @@ int32 Hstartread(file_id, tag, ref)
     access_rec->posn = 0;
     access_rec->access = DFACC_READ;
     access_rec->special = 0;
-    access_rec->appendable=FALSE;   /* start data as non-appendable */
-    access_rec->flush=FALSE;        /* start data as not needing flushing */
     file_rec->attach++;
 
     return ASLOT2ID(slot);
@@ -733,33 +641,34 @@ intn Hnextread(access_id, tag, ref, origin)
     int32 idx;
 
     /* clear error stack and check validity of the access id */
-
     HEclear();
     access_rec = AID2REC(access_id);
-    if (access_rec == (accrec_t *) NULL || !access_rec->used ||
-       access_rec->access != DFACC_READ ||
-       (origin != DF_START && origin != DF_CURRENT)) {
-       HERROR(DFE_ARGS);
-       return FAIL;
-    }
+    if (access_rec == (accrec_t *) NULL || !access_rec->used
+            || access_rec->access != DFACC_READ
+            || (origin != DF_START && origin != DF_CURRENT)) 
+       HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* DF_END is NOT supported yet !!!! */
-
     file_rec = FID2REC(access_rec->file_id);
-    if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0) {
-        HERROR(DFE_INTERNAL);
-        return FAIL;
-    }
+    if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0)
+        HRETURN_ERROR(DFE_INTERNAL,FAIL);
 
     /*
-     * if access record used to point to an external element we 
+     * if access record used to point to an external element we
      * need to close the file before moving on
      */
     if(access_rec->special == SPECIAL_EXT) {
-        if(HXIcloseAID(access_rec) == FAIL) {
-            HERROR(DFE_CANTCLOSE);
-            return FAIL;
-        }
+        if(HXPcloseAID(access_rec) == FAIL)
+            HRETURN_ERROR(DFE_CANTCLOSE,FAIL);
+    }
+
+    /*
+     * if access record used to point to an compressed element we
+     * need to free the internal data structures before moving on
+     */
+    if(access_rec->special == SPECIAL_COMP) {
+        if(HCPcloseAID(access_rec) == FAIL)
+            HRETURN_ERROR(DFE_CANTCLOSE,FAIL);
     }
 
     if (origin == DF_START) {
@@ -775,33 +684,26 @@ intn Hnextread(access_id, tag, ref, origin)
     }
 
     /* go look for the dd */
-
-    if (HIlookup_dd(file_rec, tag, ref, &block, &idx) == FAIL) {
-       HERROR(DFE_NOMATCH);
-       return FAIL;
-    }
+    if (HIlookup_dd(file_rec, tag, ref, &block, &idx) == FAIL)
+       HRETURN_ERROR(DFE_NOMATCH,FAIL);
 
     /* found, so update the access record */
-
     access_rec->block = block;
     access_rec->idx = idx;
+    access_rec->appendable=FALSE;   /* start data as non-appendable */
+    access_rec->flush=FALSE;        /* start data as not needing flushing */
     if (SPECIALTAG(access_rec->block->ddlist[access_rec->idx].tag)) {
 
        /* special element, call special function to handle */
-
        access_rec->special_func = HIget_function_table(access_rec, FUNC);
-       if (!access_rec->special_func) {
-           HERROR(DFE_INTERNAL);
-           return FAIL;
-       }
+       if (!access_rec->special_func)
+           HRETURN_ERROR(DFE_INTERNAL,FAIL);
        HIunlock(access_rec->file_id); /* remove old attach to the file_rec */
        return (int)(*access_rec->special_func->stread)(access_rec);
     }
 
     access_rec->special = 0;
     access_rec->posn = 0;
-    access_rec->appendable=FALSE;   /* start data as non-appendable */
-    access_rec->flush=FALSE;        /* start data as not needing flushing */
 
     return SUCCEED;
 }   /* end Hnextread() */
@@ -867,18 +769,14 @@ intn direction;
 
     /* clear error stack and check validity of the access id */
     HEclear();
-    if(file_id == FAIL || search_ref>MAX_REF || find_tag==NULL ||
-            find_ref==NULL || find_offset==NULL || find_length==NULL ||
-            (direction != DF_FORWARD && direction != DF_BACKWARD)) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-      } /* end if */
+    if(file_id == FAIL || search_ref>MAX_REF || find_tag==NULL
+            || find_ref==NULL || find_offset==NULL || find_length==NULL
+            || (direction != DF_FORWARD && direction != DF_BACKWARD))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     file_rec = FID2REC(file_id);
-    if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0) {
-        HERROR(DFE_INTERNAL);
-        return(FAIL);
-      } /* end if */
+    if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0)
+        HRETURN_ERROR(DFE_INTERNAL,FAIL);
 
     if(*find_ref==0 && *find_tag==0) {  /* starting search */
         if(direction==DF_FORWARD) {     /* start at beginning of the DD list */
@@ -892,17 +790,13 @@ intn direction;
       } /* end if */
     else {      /* continue a search */
         /* get the block and index of the last tag/ref found, to continue */
-        if(HIlookup_dd(file_rec, *find_tag, *find_ref, &block, &idx)==FAIL) {
-            HERROR(DFE_NOMATCH);
-            return(FAIL);
-          } /* end if */
+        if(HIlookup_dd(file_rec, *find_tag, *find_ref, &block, &idx)==FAIL)
+            HRETURN_ERROR(DFE_NOMATCH,FAIL);
       } /* end else */
 
     /* Go get the next match in the given direction */
-    if(HIfind_dd(search_tag,search_ref,&block,&idx,direction)==FAIL) {
-        HERROR(DFE_NOMATCH);
-        return(FAIL);
-      } /* end if */
+    if(HIfind_dd(search_tag,search_ref,&block,&idx,direction)==FAIL)
+        HRETURN_ERROR(DFE_NOMATCH,FAIL);
 
     list=block->ddlist;         /* get a pointer to the DD list to look in */
     *find_tag=list[idx].tag;
@@ -968,30 +862,32 @@ intn Hinquire(access_id, pfile_id, ptag, pref, plength, poffset, pposn,
 
     HEclear();
     access_rec = AID2REC(access_id);
-    if (access_rec == (accrec_t *) NULL || !access_rec->used) {
-       HERROR(DFE_ARGS);
-       return FAIL;
-    }
+    if (access_rec == (accrec_t *) NULL || !access_rec->used)
+       HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* if special elt, let special functions handle it */
-
-    if (access_rec->special) {
-       return (int)(*access_rec->special_func->inquire)
-           (access_rec, pfile_id, ptag, pref, plength,
-            poffset, pposn, paccess, pspecial);
-    }
+    if (access_rec->special)
+       return (int)(*access_rec->special_func->inquire)(access_rec, pfile_id,
+            ptag, pref, plength, poffset, pposn, paccess, pspecial);
 
     /* get dd and fill in variables asked for (i.e. not NULL) */
-
     dd = &(access_rec->block->ddlist[access_rec->idx]);
-    if (pfile_id) *pfile_id = access_rec->file_id;
-    if (ptag) *ptag = dd->tag;
-    if (pref) *pref = dd->ref;
-    if (plength) *plength = dd->length;
-    if (poffset) *poffset = dd->offset;
-    if (pposn) *pposn = access_rec->posn;
-    if (paccess) *paccess = access_rec->access;
-    if (pspecial) *pspecial = 0;
+    if (pfile_id!=NULL)
+        *pfile_id = access_rec->file_id;
+    if (ptag!=NULL)
+        *ptag = dd->tag;
+    if (pref!=NULL)
+        *pref = dd->ref;
+    if (plength!=NULL)
+        *plength = dd->length;
+    if (poffset!=NULL)
+        *poffset = dd->offset;
+    if (pposn!=NULL)
+        *pposn = access_rec->posn;
+    if (paccess!=NULL)
+        *paccess = access_rec->access;
+    if (pspecial!=NULL)
+        *pspecial = 0;
 
     return SUCCEED;
 }   /* end Hinquire() */
@@ -1043,35 +939,28 @@ int32 Hstartwrite(file_id, tag, ref, length)
     /* clear error stack and check validity of file id */
     HEclear();
     file_rec = FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0) {
-       HERROR(DFE_ARGS);
-       return FAIL;
-    }
+    if (!file_rec || file_rec->refcount == 0)
+       HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* can write in this file? */
-    if (!(file_rec->access & DFACC_WRITE)) {
-       HERROR(DFE_DENIED);
-       return FAIL;
-    }
+    if (!(file_rec->access & DFACC_WRITE))
+       HRETURN_ERROR(DFE_DENIED,FAIL);
 
     /* get empty slot in access records */
     slot = HIget_access_slot();
-    if (slot == FAIL) {
-       HERROR(DFE_TOOMANY);
-       return FAIL;
-    }
+    if (slot == FAIL)
+       HRETURN_ERROR(DFE_TOOMANY,FAIL);
 
-#ifndef oldspecial
     /* convert tag to base form */
-
     tag = BASETAG(tag);
-#endif
 
     /* set up access record to look for the dd */
     access_rec = &(access_records[slot]);
     access_rec->file_id = file_id;
     access_rec->block = file_rec->ddhead;
     access_rec->idx = -1;
+    access_rec->appendable=FALSE;   /* start data as non-appendable */
+    access_rec->flush=FALSE;        /* start data as not needing flushing */
     if (HIlookup_dd(file_rec, tag, ref, &access_rec->block, &access_rec->idx)
             == FAIL) {  /* dd not found, so have to create new element */
 
@@ -1082,9 +971,8 @@ int32 Hstartwrite(file_id, tag, ref, length)
             access_rec->idx   = file_rec->null_idx;
         } else {     /* cannot find empty dd slot, so create new dd block */
            if (HInew_dd_block(file_rec, FILE_NDDS(file_rec), FUNC) == FAIL) {
-               HERROR(DFE_NOFREEDD);
                access_rec->used = FALSE;
-               return FAIL;
+               HRETURN_ERROR(DFE_NOFREEDD,FAIL);
            } else {     /* use dd slot in new dd block */
                access_rec->block = file_rec->ddlast;
                access_rec->idx = 0;
@@ -1094,16 +982,15 @@ int32 Hstartwrite(file_id, tag, ref, length)
         ddnew = TRUE;
         if(HIadd_hash_dd(file_rec, tag, ref, access_rec->block, access_rec->idx)
                 == FAIL)
-            return(FAIL);
+            HRETURN_ERROR(DFE_CANTHASH,FAIL);
 
     } else if (SPECIALTAG(access_rec->block->ddlist[access_rec->idx].tag)) {
 
        /* found, if this elt is special, let special function handle it */
        access_rec->special_func = HIget_function_table(access_rec, FUNC);
        if (!access_rec->special_func) {
-           HERROR(DFE_INTERNAL);
            access_rec->used = FALSE;
-           return FAIL;
+           HRETURN_ERROR(DFE_INTERNAL,FAIL);
        }
        return (*access_rec->special_func->stwrite)(access_rec);
     }
@@ -1112,11 +999,10 @@ int32 Hstartwrite(file_id, tag, ref, length)
 
     /* cannot write more bytes than are allocated for element */
     if (!ddnew && (access_rec->block->ddlist[access_rec->idx].length < length)) {
-        HERROR(DFE_BADLEN);
         HEreport("Values: old length %d   new length%d",
                 access_rec->block->ddlist[access_rec->idx].length, length);
         access_rec->used = FALSE;
-        return FAIL;
+        HRETURN_ERROR(DFE_BADLEN,FAIL);
     }
 
     if (ddnew) {    /* have to allocate new space in the file for the data */
@@ -1124,9 +1010,8 @@ int32 Hstartwrite(file_id, tag, ref, length)
 
        /* place the data element at the end of the file and record its offset */
        if (HI_SEEKEND(file_rec->file) == FAIL) {
-           HERROR(DFE_SEEKERROR);
            access_rec->used = FALSE;
-           return FAIL;
+           HRETURN_ERROR(DFE_SEEKERROR,FAIL);
        }
         offset = access_rec->block->ddlist[access_rec->idx].offset
             = HI_TELL(file_rec->file);
@@ -1134,14 +1019,12 @@ int32 Hstartwrite(file_id, tag, ref, length)
        /* reserve the space by marking the end of the element */
 
        if (HI_SEEK(file_rec->file, length-1+offset) == FAIL) {
-           HERROR(DFE_SEEKERROR);
            access_rec->used = FALSE;
-           return FAIL;
+           HRETURN_ERROR(DFE_SEEKERROR,FAIL);
        }
        if (HI_WRITE(file_rec->file, tbuf, 1) == FAIL) {
-           HERROR(DFE_WRITEERROR);
            access_rec->used = FALSE;
-           return FAIL;
+           HRETURN_ERROR(DFE_WRITEERROR,FAIL);
        }
 
        /* fill in dd record */
@@ -1156,17 +1039,14 @@ int32 Hstartwrite(file_id, tag, ref, length)
     if (HIupdate_dd(file_rec, access_rec->block,
                    access_rec->idx, FUNC) == FAIL) {
         access_rec->used = FALSE;
-        return FAIL;
+        HRETURN_ERROR(DFE_CANTUPDATE,FAIL);
     }
 
     /* update the access record, and the file record */
-
     access_rec->posn = 0;
     access_rec->access = DFACC_WRITE;
     access_rec->file_id = file_id;
     access_rec->special = 0;
-    access_rec->appendable=FALSE;   /* start data as non-appendable */
-    access_rec->flush=FALSE;        /* start data as not needing flushing */
     file_rec->attach++;
     if (ref > file_rec->maxref)
         file_rec->maxref = ref;
@@ -1242,23 +1122,18 @@ intn Happendable(aid)
     /* clear error stack and check validity of file id */
     HEclear();
 
-    if((access_rec=AID2REC(aid))==NULL) {   /* get the access_rec pointer */
-        HERROR(DFE_ARGS);
-        return FAIL;
-      } /* end if */
+    if((access_rec=AID2REC(aid))==NULL)    /* get the access_rec pointer */
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     file_id=access_rec->file_id;    /* get the file ID the AID is attached */
 
     file_rec = FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0) {
-        HERROR(DFE_ARGS);
-        return FAIL;
-    }
+    if (!file_rec || file_rec->refcount == 0)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* get the offset and length of the dataset */
     data_len=access_rec->block->ddlist[access_rec->idx].length; 
     data_off=access_rec->block->ddlist[access_rec->idx].offset;
-
 
     file_off=HI_TELL(file_rec->file);   /* get the current offset */
     HI_SEEKEND(file_rec->file);
@@ -1316,35 +1191,26 @@ intn Hseek(access_id, offset, origin)
 
     HEclear();
     access_rec = AID2REC(access_id);
-    if (access_rec == (accrec_t *) NULL || !access_rec->used ||
-       (origin != DF_START && origin != DF_CURRENT && origin != DF_END)) {
-       HERROR(DFE_ARGS);
-       return FAIL;
-    }
+    if (access_rec == (accrec_t *) NULL || !access_rec->used
+        || (origin != DF_START && origin != DF_CURRENT && origin != DF_END))
+       HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* if special elt, use special function */
-
-    if (access_rec->special) {
+    if (access_rec->special)
        return (*access_rec->special_func->seek)(access_rec, offset, origin);
-    }
 
     /* calculate real offset based on the origin and check for range */
-
-    if (origin == DF_CURRENT) offset += access_rec->posn;
-    if (origin == DF_END) offset +=
-       access_rec->block->ddlist[access_rec->idx].length;
+    if (origin == DF_CURRENT)
+        offset += access_rec->posn;
+    if (origin == DF_END)
+        offset += access_rec->block->ddlist[access_rec->idx].length;
     if (offset < 0 ||
             (!access_rec->appendable &&
             offset >= access_rec->block->ddlist[access_rec->idx].length)) {
-      HERROR(DFE_BADSEEK);
       HEreport("Tried to seek to %d (object length:  %d)", offset,
                access_rec->block->ddlist[access_rec->idx].length);
 
-      fprintf(stderr, "TAG/REF was %d %d\n", 
-              access_rec->block->ddlist[access_rec->idx].tag, 
-              access_rec->block->ddlist[access_rec->idx].ref);
-
-      return FAIL;
+      HRETURN_ERROR(DFE_BADSEEK,FAIL);
     }
 
     if(access_rec->appendable &&
@@ -1366,10 +1232,9 @@ intn Hseek(access_id, offset, origin)
         HI_SEEK(file_rec->file,file_off);   /* restore the previous position */
         if(data_len+data_off!=file_end) {    /* dataset at end? */
             access_rec->appendable=FALSE;
-              HERROR(DFE_BADSEEK);
               HEreport("Tried to seek to %d (object length:  %d)", offset,
                        access_rec->block->ddlist[access_rec->idx].length);
-              return FAIL;
+              HRETURN_ERROR(DFE_BADSEEK,FAIL);
           } /* end if */
       } /* end if */
 
@@ -1419,56 +1284,40 @@ int32 Hread(access_id, length, data)
 
     HEclear();
     access_rec = AID2REC(access_id);
-    if (access_rec == (accrec_t *) NULL || !access_rec->used ||
+    if (access_rec == (accrec_t *) NULL || !access_rec->used
 /*
-       access_rec->access != DFACC_READ || 
+       || access_rec->access != DFACC_READ
 */
-        !data) {
-       HERROR(DFE_ARGS);
-       return FAIL;
-    }
+        || data==NULL)
+       HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* special elt, so call special function */
-
-    if (access_rec->special) {
+    if (access_rec->special)
        return (*access_rec->special_func->read)(access_rec, length, data);
-    }
 
     /* check validity of file record */
     file_rec = FID2REC(access_rec->file_id);
-    if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0) {
-       HERROR(DFE_INTERNAL);
-       return FAIL;
-    }
+    if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0)
+       HRETURN_ERROR(DFE_INTERNAL,FAIL);
 
     /* get the dd of this data elt */
-
     dd = &(access_rec->block->ddlist[access_rec->idx]);
-    if (length < 0){
-       HERROR(DFE_BADSEEK);
-       return FAIL;
-    }
+    if (length < 0)
+       HRETURN_ERROR(DFE_BADSEEK,FAIL);
 
     /* seek to position to start reading and read in data */
-
-    if (HI_SEEK(file_rec->file, access_rec->posn + dd->offset) == FAIL) {
-       HERROR(DFE_SEEKERROR);
-       return FAIL;
-    }
+    if (HI_SEEK(file_rec->file, access_rec->posn + dd->offset) == FAIL)
+       HRETURN_ERROR(DFE_SEEKERROR,FAIL);
 
     /* length == 0 means to read to end of element,
        if read length exceeds length of elt, read till end of elt */
-
     if (length == 0 || length + access_rec->posn > dd->length)
        length = dd->length - access_rec->posn;
 
-    if (HI_READ(file_rec->file, data, length) == FAIL) {
-       HERROR(DFE_READERROR);
-       return FAIL;
-    }
+    if (HI_READ(file_rec->file, data, length) == FAIL)
+       HRETURN_ERROR(DFE_READERROR,FAIL);
 
     /* move the position of the access record */
-
     access_rec->posn += length;
 
     return length;
@@ -1515,11 +1364,9 @@ int32 Hwrite(access_id, length, data)
 
     HEclear();
     access_rec = AID2REC(access_id);
-    if (access_rec == (accrec_t *) NULL || !access_rec->used ||
-            access_rec->access != DFACC_WRITE || !data) {
-        HERROR(DFE_ARGS);
-        return FAIL;
-    }
+    if (access_rec == (accrec_t *) NULL || !access_rec->used
+            || access_rec->access != DFACC_WRITE || data==NULL)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* if special elt, call special function */
     if (access_rec->special)
@@ -1527,19 +1374,15 @@ int32 Hwrite(access_id, length, data)
 
     /* check validity of file record and get dd ptr */
     file_rec = FID2REC(access_rec->file_id);
-    if (!file_rec || file_rec->refcount == 0) {
-       HERROR(DFE_INTERNAL);
-       return FAIL;
-    }
+    if (!file_rec || file_rec->refcount == 0)
+       HRETURN_ERROR(DFE_INTERNAL,FAIL);
     dd = &(access_rec->block->ddlist[access_rec->idx]);
 
     /* check validity of length and write data.
        NOTE: it is an error to attempt write past the end of the elt */
     if (length <= 0 ||
-            (!access_rec->appendable && length + access_rec->posn > dd->length)) {
-       HERROR(DFE_BADSEEK);
-       return FAIL;
-    }
+            (!access_rec->appendable && length+access_rec->posn > dd->length))
+       HRETURN_ERROR(DFE_BADSEEK,FAIL);
 
     if(access_rec->appendable && length + access_rec->posn > dd->length) {
         int32 file_off;         /* offset in the file we are at currently */
@@ -1557,24 +1400,18 @@ int32 Hwrite(access_id, length, data)
         HI_SEEK(file_rec->file,file_off);   /* restore the previous position */
         if(data_len+data_off!=file_end) {    /* dataset at end? */
             access_rec->appendable=FALSE;
-            HERROR(DFE_BADSEEK);
-            return FAIL;
+            HRETURN_ERROR(DFE_BADSEEK,FAIL);
           } /* end if */
         dd->length=access_rec->posn+length;   /* update the DD length */
         access_rec->flush=TRUE; /* make certain the DD gets updated on disk */
       } /* end if */
 
-    if (HI_SEEK(file_rec->file, access_rec->posn + dd->offset) == FAIL) {
-       HERROR(DFE_SEEKERROR);
-       return FAIL;
-    }
-    if (HI_WRITE(file_rec->file, data, length) == FAIL) {
-       HERROR(DFE_WRITEERROR);
-       return FAIL;
-    }
+    if (HI_SEEK(file_rec->file, access_rec->posn + dd->offset) == FAIL)
+       HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+    if (HI_WRITE(file_rec->file, data, length) == FAIL)
+       HRETURN_ERROR(DFE_WRITEERROR,FAIL);
 
     /* update position of access in elt */
-
     access_rec->posn += length;
 
     return length;
@@ -1614,31 +1451,22 @@ int32 Hendaccess(access_id)
 
     /* check validity of access id */
     access_rec = AID2REC(access_id);
-    if (!access_rec || !access_rec->used) {
-       HERROR(DFE_ARGS);
-       return FAIL;
-    }
+    if (!access_rec || !access_rec->used)
+       HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* if special elt, call special function */
-
-    if (access_rec->special) {
+    if (access_rec->special)
        return (*access_rec->special_func->endaccess)(access_rec);
-    }
 
     /* check validity of file record */
-
     file_rec = FID2REC(access_rec->file_id);
-    if (!file_rec || file_rec->refcount == 0) {
-       HERROR(DFE_INTERNAL);
-       return FAIL;
-    }
+    if (!file_rec || file_rec->refcount == 0)
+       HRETURN_ERROR(DFE_INTERNAL,FAIL);
 
     /* update file and access records */
     if(access_rec->flush) { /* check whether to flush the assoc. DD */
-        if(HIupdate_dd(file_rec, access_rec->block, access_rec->idx, FUNC)==FAIL) {
-            HERROR(DFE_CANTFLUSH);
-            return FAIL;
-          } /* end if */
+        if(HIupdate_dd(file_rec, access_rec->block, access_rec->idx,FUNC)==FAIL)
+            HRETURN_ERROR(DFE_CANTFLUSH,FAIL);
       } /* end if */
 
     file_rec->attach--;
@@ -1685,23 +1513,19 @@ int32 Hgetelement(file_id, tag, ref, data)
     int32 ret;                 /* return code */
 
     /* clear error stack */
-
     HEclear();
 
     /* get the access record, get the length of the elt, read in data,
        and dispose of access record */
 
     access_id = Hstartread(file_id, tag, ref);
-    if (access_id == FAIL) {
-       HERROR(DFE_NOMATCH);
-       return FAIL;
-    }
-    Hinquire(access_id, (int32 *)NULL, (uint16 *)NULL, (uint16 *)NULL, &length,
-            (int32 *)NULL, (int32 *)NULL, (int16 *)NULL, (int16 *)NULL);
-    if ((ret = Hread(access_id, 0, data)) == FAIL) {
+    if (access_id == FAIL)
+       HRETURN_ERROR(DFE_NOMATCH,FAIL);
+
+    HQuerylength(access_id,&length);
+    if ((ret = Hread(access_id, 0, data)) == FAIL)
        HERROR(DFE_READERROR);
-    }
-    (void) Hendaccess(access_id);
+    Hendaccess(access_id);
 
     return (ret == FAIL) ? ret : length;
 }   /* Hgetelement() */
@@ -1744,20 +1568,16 @@ int Hputelement(file_id, tag, ref, data, length)
     int32 ret;                  /* return code */
 
     /* clear error stack */
-
     HEclear();
 
     /* get access record, write out data and dispose of access record */
-
     access_id = Hstartwrite(file_id, (uint16)tag, (uint16)ref, length);
-    if (access_id == FAIL) {
-       HERROR(DFE_NOMATCH);
-       return FAIL;
-    }
-    if ((ret = Hwrite(access_id, length, data)) == FAIL) {
+    if (access_id == FAIL)
+       HRETURN_ERROR(DFE_NOMATCH,FAIL);
+
+    if ((ret = Hwrite(access_id, length, data)) == FAIL)
        HERROR(DFE_WRITEERROR);
-    }
-    (void) Hendaccess(access_id);
+    Hendaccess(access_id);
 
     return (ret == length ? SUCCEED : FAIL);
 }   /* end Hputelement() */
@@ -1804,18 +1624,14 @@ int32 Hlength(file_id, tag, ref)
     /* get access record, inquire about lebngth and then dispose of
        access record */
     access_id = Hstartread(file_id, tag, ref);
-    if (access_id == FAIL) {
-       HERROR(DFE_ARGS);
-       return FAIL;
-    }
-    if ((ret = (int)Hinquire(access_id, (int32*)NULL, (uint16*)NULL,
-                  (uint16*)NULL,&length, (int32*)NULL, (int32*)NULL,
-                  (int16*)NULL, (int16*) NULL)) == FAIL) {
-       HERROR(DFE_INTERNAL);
-    }
-    (void) Hendaccess(access_id);
+    if (access_id == FAIL)
+       HRETURN_ERROR(DFE_ARGS,FAIL);
 
-    return (ret == FAIL) ? (int32) FAIL : length;
+    if ((ret = HQuerylength(access_id, &length)) == FAIL)
+       HERROR(DFE_INTERNAL);
+    Hendaccess(access_id);
+
+    return (ret == FAIL) ? ret : length;
 }   /* end Hlength() */
 
 /*--------------------------------------------------------------------------
@@ -1829,7 +1645,7 @@ int32 Hlength(file_id, tag, ref)
        uint16 ref;             IN: ref of data element
  RETURNS
        returns offset of data element if it is present in the file or FAIL (-1)
-       if it is not.  This should be used for debugging purposes only since 
+       if it is not.  This should be used for debugging purposes only since
        the user should not have to know the actual offset of a data element in a file.
 
        Like Hlength().  This could be sped up by not going through Hstartread()
@@ -1855,24 +1671,17 @@ int32 Hoffset(file_id, tag, ref)
     int ret;                   /* return code */
 
     /* clear error stack */
-
     HEclear();
 
     /* get access record, inquire offset, and dispose of access record */
-
     access_id = Hstartread(file_id, tag, ref);
-    if (access_id == FAIL) {
-       HERROR(DFE_ARGS);
-       return FAIL;
-    }
-    if ((ret = (int)Hinquire(access_id, (int32*)NULL, (uint16*)NULL,
-                       (uint16*)NULL, (int32*)NULL, &offset, (int32*)NULL,
-                       (int16*)NULL, (int16*) NULL)) == FAIL) {
+    if (access_id == FAIL)
+       HRETURN_ERROR(DFE_ARGS,FAIL);
+    if ((ret = HQueryoffset(access_id, &offset)) == FAIL)
        HERROR(DFE_INTERNAL);
-    }
-    (void) Hendaccess(access_id);
+    Hendaccess(access_id);
 
-    return (ret == FAIL) ? (int32) FAIL : offset;
+    return (ret == FAIL) ? ret : offset;
 }   /* end Hoffset() */
 
 /*--------------------------------------------------------------------------
@@ -1919,37 +1728,27 @@ int Hdupdd(file_id, tag, ref, old_tag, old_ref)
 
     HEclear();
     file_rec = FID2REC(file_id);
-    if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0) {
-       HERROR(DFE_ARGS);
-       return FAIL;
-    }
+    if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0)
+       HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* look for old dd and new dd in file record */
-
     new_block = block = file_rec->ddhead;
     new_idx = idx = -1;
-    if (HIlookup_dd(file_rec, old_tag, old_ref, &block, &idx) == FAIL) {
-       HERROR(DFE_NOMATCH);
-       return FAIL;
-    }
-    if (FAIL != HIlookup_dd(file_rec, tag, ref, &new_block, &new_idx)) {
-
-       /* dd already exist, cannot modify */
-
-       HERROR(DFE_DUPDD);
-       return FAIL;
-    }
+    if (HIlookup_dd(file_rec, old_tag, old_ref, &block, &idx) == FAIL)
+       HRETURN_ERROR(DFE_NOMATCH,FAIL);
+    /* dd already exist, cannot modify */
+    if (FAIL != HIlookup_dd(file_rec, tag, ref, &new_block, &new_idx))
+        HRETURN_ERROR(DFE_DUPDD,FAIL);
 
     /* look for empty dd to put new dd */
-
     new_block = file_rec->ddhead;
     new_idx = -1;
     if (HIlookup_dd(file_rec, (uint16)DFTAG_NULL, (uint16)DFTAG_WILDCARD,
                  &file_rec->null_block, &file_rec->null_idx) == FAIL) {
        if (HInew_dd_block(file_rec, FILE_NDDS(file_rec), FUNC) == FAIL) {
-           HERROR(DFE_NOFREEDD);
-           return FAIL;
-       } else {
+           HRETURN_ERROR(DFE_NOFREEDD,FAIL);
+	}
+       else {
            new_block = file_rec->ddlast;
            new_idx = 0;
        }
@@ -1968,7 +1767,7 @@ int Hdupdd(file_id, tag, ref, old_tag, old_ref)
 
     /* add the new thing to the hash table */
     if(HIadd_hash_dd(file_rec, tag, ref,  new_block, new_idx))
-      return FAIL;                     
+       HRETURN_ERROR(DFE_CANTHASH,FAIL);
 
     return HIupdate_dd(file_rec, new_block, new_idx, FUNC);
 }   /* end Hdupdd() */
@@ -1998,19 +1797,16 @@ int HIupdate_dd(file_rec, block, idx, FUNC)
        offset = block->prev->nextoffset + NDDS_SZ + OFFSET_SZ + (idx * DD_SZ);
 
     /* write in the updated dd */
-    if (HI_SEEK(file_rec->file, offset) == FAIL) {
-       HERROR(DFE_SEEKERROR);
-       return FAIL;
-    }
+    if (HI_SEEK(file_rec->file, offset) == FAIL)
+       HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+
     p = tbuf;
     UINT16ENCODE(p, block->ddlist[idx].tag);
     UINT16ENCODE(p, block->ddlist[idx].ref);
     INT32ENCODE(p, block->ddlist[idx].offset);
     INT32ENCODE(p, block->ddlist[idx].length);
-    if (HI_WRITE(file_rec->file, tbuf, DD_SZ) == FAIL) {
-       HERROR(DFE_WRITEERROR);
-       return FAIL;
-    }
+    if (HI_WRITE(file_rec->file, tbuf, DD_SZ) == FAIL)
+       HRETURN_ERROR(DFE_WRITEERROR,FAIL);
 
     return SUCCEED;
 }
@@ -2053,30 +1849,24 @@ int Hdeldd(file_id, tag, ref)
 
     HEclear();
     file_rec = FID2REC(file_id);
-    if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0 ||
-       tag == DFTAG_WILDCARD || ref == DFREF_WILDCARD) {
-       HERROR(DFE_ARGS);
-       return FAIL;
-    }
+    if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0
+            || tag == DFTAG_WILDCARD || ref == DFREF_WILDCARD)
+       HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* look for the deleted dd */
-    if (HIlookup_dd(file_rec, tag, ref, &block, &idx) == FAIL) {
-       HERROR(DFE_NOMATCH);
-       return FAIL;
-    }
+    if (HIlookup_dd(file_rec, tag, ref, &block, &idx) == FAIL)
+       HRETURN_ERROR(DFE_NOMATCH,FAIL);
 
     /* this may have thrown off our ending markers, reset to beginning */
-
     file_rec->null_block = file_rec->ddhead;
     file_rec->null_idx   = -1;
 
     /* mark the dd as empty and then update the file */
-
     block->ddlist[idx].tag = DFTAG_NULL;
 
     /* remove it from the hash table */
     if(HIdel_hash_dd(file_rec, tag, ref) == FAIL)
-      return FAIL;
+       HRETURN_ERROR(DFE_CANTDELHASH,FAIL);
 
     return HIupdate_dd(file_rec, block, idx, FUNC);
 }   /* end Hdeldd() */
@@ -2115,24 +1905,21 @@ uint16 Hnewref(file_id)
 
     HEclear();
     file_rec = FID2REC(file_id);
-    if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0) {
-       HERROR(DFE_ARGS);
-       return 0;
-    }
+    if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0)
+       HRETURN_ERROR(DFE_ARGS,0);
 
     /* if maxref of this file is still below the maximum,
        just return next number */
-    if (file_rec->maxref < MAX_REF) {
+    if (file_rec->maxref < MAX_REF)
        return ++(file_rec->maxref);
-    }
 
     /* otherwise, search for an empty ref */
 
     /* incredibly slow but unlikely situation */
-
     for (ref = 1; ref < MAX_REF; ref++) {
        ddblock_t *bl;
        int32 idx;
+
        bl = file_rec->ddhead;
        idx = -1;
        if (HIfind_dd((uint16)DFTAG_WILDCARD, ref, &bl, &idx, DF_FORWARD) == FAIL)
@@ -2242,13 +2029,11 @@ int32 Htrunc(aid, trunc_len)
 
     HEclear();
     access_rec = AID2REC(aid);
-    if (access_rec == (accrec_t *) NULL || !access_rec->used ||
-            access_rec->access != DFACC_WRITE) {
-        HERROR(DFE_ARGS);
-        return FAIL;
-    }
+    if (access_rec == (accrec_t *) NULL || !access_rec->used
+            || access_rec->access != DFACC_WRITE)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
-    /* Dunno about truncating special elements... */
+    /* Dunno about truncating special elements... -QAK */
 #ifdef OLD_WAY
     /* if special elt, call special function */
     if (access_rec->special)
@@ -2263,10 +2048,8 @@ int32 Htrunc(aid, trunc_len)
         access_rec->flush=TRUE; /* make certain the DD gets updated on disk */
         return(trunc_len);
       } /* end if */
-    else {
-        HERROR(DFE_BADLEN);
-        return FAIL;
-      } /* end else */
+    else
+        HRETURN_ERROR(DFE_BADLEN,FAIL);
 }   /* end Htrunc() */
 
 /*--------------------------------------------------------------------------
@@ -2312,7 +2095,7 @@ int Hsync(file_id)
        HERROR(DFE_INTERNAL);
        return FAIL;
     }
-  
+
     if(access_rec->flush) { /* check whether to flush the assoc. DD */
         if(HIupdate_dd(file_rec, access_rec->block, access_rec->idx, FUNC)==FAIL) {
             HERROR(DFE_CANTFLUSH);
@@ -2441,10 +2224,8 @@ PRIVATE int HIinit_file_dds(file_rec, ndds, FUNC)
     /* allocate the dd block in memory and initialize it */
 
     file_rec->ddhead = (ddblock_t *) HDgetspace(sizeof(ddblock_t));
-    if (file_rec->ddhead == (ddblock_t *) NULL) {
-       HERROR(DFE_NOSPACE);
-       return FAIL;
-    }
+    if (file_rec->ddhead == (ddblock_t *) NULL)
+       HRETURN_ERROR(DFE_NOSPACE,FAIL);
     block = file_rec->ddlast = file_rec->ddhead;
     block->prev = (ddblock_t *) NULL;
     block->ndds = ndds;
@@ -2452,7 +2233,6 @@ PRIVATE int HIinit_file_dds(file_rec, ndds, FUNC)
     block->nextoffset = 0;
 
     /* write first dd block to file */
-
     p = tbuf;
     INT16ENCODE(p, block->ndds);
     INT32ENCODE(p, (int32) 0);
@@ -2462,12 +2242,9 @@ PRIVATE int HIinit_file_dds(file_rec, ndds, FUNC)
     }
 
     /* allocate and initialize dd list */
-
     list = block->ddlist = (dd_t *) HDgetspace((uint32) ndds * sizeof(dd_t));
-    if (list == (dd_t *) NULL) {
-       HERROR(DFE_NOSPACE);
-       return FAIL;
-    }
+    if (list == (dd_t *) NULL)
+       HRETURN_ERROR(DFE_NOSPACE,FAIL);
     for (i = 0; i < ndds; i++) {
        list[i].tag = DFTAG_NULL;
        list[i].ref = 0;
@@ -2489,29 +2266,24 @@ PRIVATE int HIinit_file_dds(file_rec, ndds, FUNC)
        INT32ENCODE(p, (int32)0);
     }
     while (ndds > 0) {
-       if (HI_WRITE(file_rec->file, tbuf, n*DD_SZ) == FAIL) {
-           HERROR(DFE_WRITEERROR);
-           return FAIL;
-       }
+       if (HI_WRITE(file_rec->file, tbuf, n*DD_SZ) == FAIL)
+           HRETURN_ERROR(DFE_WRITEERROR,FAIL);
        ndds -= n;
        if (n > ndds) n = ndds;
     }
 
     /* write the version string */
 
-    /* commented out for version tags
-    if (HI_WRITE(file_rec->file, HDF_VERSION, HDstrlen(HDF_VERSION)) == FAIL) {
-        HERROR(DFE_WRITEERROR);
-       return FAIL;
-    }
-    end of commenting out for version tags */
+    /* commented out for version tags */
+#ifdef VERSIONTAGS
+    if (HI_WRITE(file_rec->file, HDF_VERSION, HDstrlen(HDF_VERSION)) == FAIL)
+        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+#endif  /* VERSIONTAGS */
 
     /* no dd's yet, so maximum ref is 0 */
-
     file_rec->maxref = 0;
 
     HDmemset(file_rec->hash, 0, sizeof(tag_ref_list_ptr) * (HASH_MASK+1));
-
     return SUCCEED;
 }
 
@@ -2535,20 +2307,16 @@ PRIVATE funclist_t *HIget_function_table(access_rec, FUNC)
 
     dd = &access_rec->block->ddlist[access_rec->idx];
     file_rec = FID2REC(access_rec->file_id);
-    if (HI_SEEK(file_rec->file, dd->offset) == FAIL) {
-       HERROR(DFE_SEEKERROR);
-       return NULL;
-    }
-    if (HI_READ(file_rec->file, tbuf, 2) == FAIL) {
-       HERROR(DFE_READERROR);
-       return NULL;
-    }
+    if (HI_SEEK(file_rec->file, dd->offset) == FAIL)
+       HRETURN_ERROR(DFE_SEEKERROR,NULL);
+    if (HI_READ(file_rec->file, tbuf, 2) == FAIL)
+       HRETURN_ERROR(DFE_READERROR,NULL);
 
     /* using special code, look up function table in associative table */
-
     {
        register int i;
        uint8 *p;
+
        p = tbuf;
        INT16DECODE(p, access_rec->special);
        for (i=0; functab[i].key != 0; i++) {
@@ -2581,11 +2349,11 @@ VOIDP HIgetspinfo(access_rec, tag, ref)
        and return special information */
 
     for (i=0; i< MAX_ACC; i++)
-       if (access_records + i != access_rec &&
-           access_records[i].used &&
-           access_records[i].file_id == access_rec->file_id &&
-           access_records[i].block->ddlist[access_records[i].idx].tag==tag &&
-           access_records[i].block->ddlist[access_records[i].idx].ref == ref)
+        if (access_records + i != access_rec
+            && access_records[i].used
+            && access_records[i].file_id == access_rec->file_id
+            && access_records[i].block->ddlist[access_records[i].idx].tag==tag
+            && access_records[i].block->ddlist[access_records[i].idx].ref == ref)
 
            return (VOIDP) access_records[i].special_info;
 
@@ -2608,12 +2376,9 @@ static int HIlock(file_id)
     char *FUNC="HIlock";       /* for HERROR */
 
     /* get file record and check validity */
-
     filerec_t *file_rec=FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0) {
-        HERROR(DFE_ARGS);
-        return FAIL;
-    }
+    if (!file_rec || file_rec->refcount == 0)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* lock the file record */
     file_rec->attach++;
@@ -2636,15 +2401,11 @@ static int HIunlock(file_id)
     char *FUNC="HIunlock";     /* for HERROR */
 
     /* get file record and validate */
-
     filerec_t *file_rec=FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0) {
-        HERROR(DFE_ARGS);
-        return FAIL;
-    }
+    if (!file_rec || file_rec->refcount == 0)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* unlock the file record */
-
     file_rec->attach--;
 
     return SUCCEED;
@@ -2671,10 +2432,9 @@ int Hnumber(file_id, tag)
     filerec_t *file_rec = FID2REC(file_id);
 
     HEclear();
-    if (!file_rec || file_rec->refcount == 0) {
-       HERROR(DFE_ARGS);
-       return FAIL;
-    }
+    if (!file_rec || file_rec->refcount == 0)
+       HRETURN_ERROR(DFE_ARGS,FAIL);
+
     block = file_rec->ddhead;
     idx = -1;
     for (;;) {
@@ -2853,10 +2613,8 @@ char string[];
     HEclear();
 
     file_rec = FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-    }
+    if (!file_rec || file_rec->refcount == 0)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     *majorv = file_rec->version.majorv;
     *minorv = file_rec->version.minorv;
@@ -2864,9 +2622,9 @@ char string[];
     HIstrncpy(string, file_rec->version.string, 81);
 
     if (majorv == 0) {
-        HERROR(DFE_NOMATCH);
-        return(FAIL);
-    } else
+        HRETURN_ERROR(DFE_NOMATCH,FAIL);
+    }
+    else
         return(SUCCEED);
 }
 
@@ -3090,16 +2848,14 @@ PRIVATE int HIget_file_slot(path, FUNC)
 
     }
 
-    if (slot == FAIL) {     /* No matching or free slot. */
-        HERROR(DFE_FNF);
-        return FAIL;
-      } /* end if */
+    if (slot == FAIL)      /* No matching or free slot. */
+        HRETURN_ERROR(DFE_FNF,FAIL);
 
     /* Fill empty slot with data. */
-
     file_records[slot].version_set = FALSE;
 
-    if (file_records[slot].path) HDfreespace(file_records[slot].path);
+    if (file_records[slot].path)
+        HDfreespace(file_records[slot].path);
     file_records[slot].path = (char *)HDstrdup(path);
     return file_records[slot].path ? slot : FAIL;
 }
@@ -3121,20 +2877,17 @@ PRIVATE bool HIvalid_magic(file, FUNC)
     char b[MAGICLEN];          /* Temporary buffer */
 
     /* Seek to beginning of the file. */
-
-    if (HI_SEEK(file, 0) == FAIL) {
-       HERROR(DFE_SEEKERROR);
-       return FALSE;
-    }
+    if (HI_SEEK(file, 0) == FAIL)
+       HRETURN_ERROR(DFE_SEEKERROR,FALSE);
 
     /* Read in magic cookie and compare. */
+    if (HI_READ(file, b, MAGICLEN) == FAIL)
+       HRETURN_ERROR(DFE_READERROR,FALSE);
 
-    if (HI_READ(file, b, MAGICLEN) == FAIL) {
-       HERROR(DFE_READERROR);
-       return FALSE;
-    }
-    if (NSTREQ(b, HDFMAGIC, MAGICLEN)) return TRUE;
-    else return FALSE;
+    if (NSTREQ(b, HDFMAGIC, MAGICLEN))
+        return TRUE;
+    else
+        return FALSE;
 }
 
 
@@ -3155,15 +2908,16 @@ int HIget_access_slot()
        Allocate dynamically and initialize*/
 
     if (!access_records) {
-       access_records = (accrec_t *) HDgetspace(MAX_ACC * sizeof(accrec_t));
-       if (!access_records)    return FAIL;
-       for (i = 0; i < MAX_ACC; i++)
-           access_records[i].used = FALSE;
+        access_records = (accrec_t *) HDgetspace(MAX_ACC * sizeof(accrec_t));
+        if (!access_records)
+            return FAIL;
+        for (i = 0; i < MAX_ACC; i++)
+            access_records[i].used = FALSE;
 
        /* use the first record */
 
-       access_records[0].used = TRUE;
-       return 0;
+        access_records[0].used = TRUE;
+        return 0;
     }
 
     /* return the first unused record */
@@ -3200,47 +2954,36 @@ int HInew_dd_block(file_rec, ndds, FUNC)
     int16 n;
 
     /* check integrity of file record */
-
-    if (!file_rec->ddhead || !file_rec->ddlast) {
-       HERROR(DFE_INTERNAL);
-       return FAIL;
-    }
+    if (!file_rec->ddhead || !file_rec->ddlast)
+       HRETURN_ERROR(DFE_INTERNAL,FAIL);
 
     /* allocate new dd block record and fill in data */
-
     block = (ddblock_t *) HDgetspace(sizeof(ddblock_t));
-    if (block == (ddblock_t *) NULL) {
-       HERROR(DFE_NOSPACE);
-       return FAIL;
-    }
+    if (block == (ddblock_t *) NULL)
+       HRETURN_ERROR(DFE_NOSPACE,FAIL);
     block->ndds = ndds;
     block->next = (ddblock_t *) NULL;
     block->nextoffset = 0;
 
     /* put the new dd block at the end of the file */
 
-    if (HI_SEEKEND(file_rec->file) == FAIL) {
-       HERROR(DFE_SEEKERROR);
-       return FAIL;
-    }
+    if (HI_SEEKEND(file_rec->file) == FAIL)
+       HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+
     nextoffset = HI_TELL(file_rec->file);
     p = tbuf;
     INT16ENCODE(p, block->ndds);
     INT32ENCODE(p, (int32)0);
-    if (HI_WRITE(file_rec->file, tbuf, NDDS_SZ+OFFSET_SZ) == FAIL) {
-       HERROR(DFE_WRITEERROR);
-       return FAIL;
-    }
+    if (HI_WRITE(file_rec->file, tbuf, NDDS_SZ+OFFSET_SZ) == FAIL)
+       HRETURN_ERROR(DFE_WRITEERROR,FAIL);
 
     /* set up the dd list of this dd block and put it in the file
        after the dd block header */
 
     p = tbuf;
     list = block->ddlist = (dd_t *) HDgetspace((uint32) ndds * sizeof(dd_t));
-    if (list == (dd_t *) NULL) {
-       HERROR(DFE_NOSPACE);
-       return FAIL;
-    }
+    if (list == (dd_t *) NULL)
+       HRETURN_ERROR(DFE_NOSPACE,FAIL);
     for (i = 0; i < ndds; i++) {
        list[i].tag = DFTAG_NULL;
        list[i].ref = 0;
@@ -3258,10 +3001,8 @@ int HInew_dd_block(file_rec, ndds, FUNC)
        INT32ENCODE(p, (int32)0);
     }
     while (ndds > 0) {
-       if (HI_WRITE(file_rec->file, tbuf, n*DD_SZ) == FAIL) {
-           HERROR(DFE_WRITEERROR);
-           return FAIL;
-       }
+       if (HI_WRITE(file_rec->file, tbuf, n*DD_SZ) == FAIL)
+           HRETURN_ERROR(DFE_WRITEERROR,FAIL);
        ndds -= n;
        if (n > ndds) n = ndds;
     }
@@ -3271,21 +3012,16 @@ int HInew_dd_block(file_rec, ndds, FUNC)
     file_rec->ddlast->nextoffset = nextoffset;
     block->prev = file_rec->ddlast;
     file_rec->ddlast->next = block;
-    if (file_rec->ddhead == file_rec->ddlast) {
+    if (file_rec->ddhead == file_rec->ddlast)
        offset = MAGICLEN + NDDS_SZ;
-    } else {
+    else
        offset = file_rec->ddlast->prev->nextoffset + NDDS_SZ;
-    }
     p = tbuf;
     INT32ENCODE(p, nextoffset);
-    if (HI_SEEK(file_rec->file, offset) == FAIL) {
-       HERROR(DFE_SEEKERROR);
-       return FAIL;
-    }
-    if (HI_WRITE(file_rec->file, tbuf, OFFSET_SZ) == FAIL) {
-       HERROR(DFE_WRITEERROR);
-       return FAIL;
-    }
+    if (HI_SEEK(file_rec->file, offset) == FAIL)
+       HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+    if (HI_WRITE(file_rec->file, tbuf, OFFSET_SZ) == FAIL)
+       HRETURN_ERROR(DFE_WRITEERROR,FAIL);
 
     /* update file record */
     file_rec->ddlast = file_rec->ddlast->next;
@@ -3312,95 +3048,80 @@ PRIVATE int HIfill_file_rec(file_rec, FUNC)
   register intn ndds, i, idx;     /* Temporary integers. */
 
   /* Alloc start of linked list of ddblocks. */
-  
+
   file_rec->ddhead = (ddblock_t *) HDgetspace(sizeof(ddblock_t));
-  if (file_rec->ddhead == (ddblock_t *) NULL) {
-    HERROR(DFE_NOSPACE);
-    return FAIL;
-  }
-  
+  if (file_rec->ddhead == (ddblock_t *) NULL)
+    HRETURN_ERROR(DFE_NOSPACE,FAIL);
+
   /* Only one elt in linked list so head is also last. */
-  
+
   file_rec->ddlast = file_rec->ddhead;
   file_rec->ddlast->next = (ddblock_t *) NULL;
   file_rec->ddlast->prev = (ddblock_t *) NULL;
-  
+
   /* The first ddblock always starts after the magic number.
      Set it up so that we start reading from there. */
-  
-  if (HI_SEEK(file_rec->file, MAGICLEN) == FAIL) {
-    HERROR(DFE_SEEKERROR);
-    return FAIL;
-  }
+
+  if (HI_SEEK(file_rec->file, MAGICLEN) == FAIL)
+    HRETURN_ERROR(DFE_SEEKERROR,FAIL);
 
   /* Blank out hash table */
   HDmemset(file_rec->hash, 0, sizeof(tag_ref_list_ptr) * (HASH_MASK+1));
 
   /* Read in the dd's one at a time and determine the max ref in the file
      at the same time. */
-  
+
   file_rec->maxref = 0;
   for (;;) {
-    
+
     /* Read in the start of this dd block.
        Read data consists of ndds (number of dd's in this block) and
        offset (offset to the next ddblock). */
-    
-    if (HI_READ(file_rec->file, tbuf, NDDS_SZ+OFFSET_SZ) == FAIL) {
-      HERROR(DFE_READERROR);
-      return FAIL;
-    }
-    
+
+    if (HI_READ(file_rec->file, tbuf, NDDS_SZ+OFFSET_SZ) == FAIL)
+      HRETURN_ERROR(DFE_READERROR,FAIL);
+
     /* Decode the numbers. */
-    
+
     p = tbuf;
     INT16DECODE(p, FILE_NDDS(file_rec));
-    if (FILE_NDDS(file_rec) <= 0) {
-      /* validity check */
-      
-      HERROR(DFE_CORRUPT);
-      return FAIL;
-    }
+    if (FILE_NDDS(file_rec) <= 0)   /* validity check */
+        HRETURN_ERROR(DFE_CORRUPT,FAIL);
     INT32DECODE(p, file_rec->ddlast->nextoffset);
-    
+
     /* Now that we know how many dd's are in this block,
        alloc memory for the records. */
-    
+
     file_rec->ddlast->ddlist =
       (dd_t *) HDgetspace((uint32)FILE_NDDS(file_rec) * sizeof(dd_t));
-    if (!file_rec->ddlast->ddlist) {
-      HERROR(DFE_NOSPACE);
-      return FAIL;
-    }
-    
+    if (!file_rec->ddlast->ddlist)
+      HRETURN_ERROR(DFE_NOSPACE,FAIL);
+
     /* Read in dd's. */
-    
     ndds = FILE_NDDS(file_rec);
-    
+
     /* Since the tbuf might not be large enough to read in all the dd's
        at once, we try to read in chunks as large as possible. */
-    
+
     /* n is number of dd's that could fit into tbuf at one time */
-    
     n = sizeof(int_tbuf) / DD_SZ;
     if (n > ndds)
       n = ndds;
-    
+
     /* Index of current dd in ddlist of this ddblock is 0. */
-    
+
     idx = 0;
-    
     while (ndds > 0) {
       /* ndds is the remaining number of dd's
          to be read in this block. */
-      
+
       /* Read in a chunk of dd's from the file. */
-      
+
       if (HI_READ(file_rec->file, tbuf, n * DD_SZ) == FAIL)
         HRETURN_ERROR(DFE_READERROR, FAIL);
 
       /* decode the dd's */
-      
+
       p = tbuf;
       for (i = 0; i < n; i++, idx++) {
         UINT16DECODE(p, file_rec->ddlast->ddlist[idx].tag);
@@ -3409,42 +3130,39 @@ PRIVATE int HIfill_file_rec(file_rec, FUNC)
         INT32DECODE(p, file_rec->ddlast->ddlist[idx].length);
         if (file_rec->maxref < file_rec->ddlast->ddlist[idx].ref)
           file_rec->maxref = file_rec->ddlast->ddlist[idx].ref;
-        
-        if(HIadd_hash_dd(file_rec, 
-                         file_rec->ddlast->ddlist[idx].tag, 
-                         file_rec->ddlast->ddlist[idx].ref, 
-                         file_rec->ddlast, 
-                         idx) == FAIL)
+
+        if(HIadd_hash_dd(file_rec, file_rec->ddlast->ddlist[idx].tag,
+                file_rec->ddlast->ddlist[idx].ref,
+                file_rec->ddlast, idx) == FAIL)
           return FAIL;
 
       }
-      
+
       /* number of remaining dd's in this ddblock */
-      
       ndds -= (intn)n;
       if (n > ndds)
         n = ndds;
     }
-    
+
     if (file_rec->ddlast->nextoffset != 0) {
       /* More ddblocks in the file */
-      
+
       /* extend the linked list */
-      
+
       file_rec->ddlast->next = (ddblock_t *) HDgetspace((uint32)sizeof(ddblock_t));
       if (file_rec->ddlast->next == (ddblock_t *) NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      
+
       /* set up the file so next read will be at the next ddblock */
-      
+
       if (HI_SEEK(file_rec->file, file_rec->ddlast->nextoffset) == FAIL)
         HRETURN_ERROR(DFE_SEEKERROR, FAIL);
-      
+
       file_rec->ddlast->next->prev = file_rec->ddlast;
       file_rec->ddlast = file_rec->ddlast->next;
       file_rec->ddlast->next = (ddblock_t *) NULL;
       file_rec->ddlast->ddlist = (dd_t *) NULL;
-      
+
     } else
       break;
   }
@@ -3490,22 +3208,20 @@ int32 file_id;
     HEclear();
 
     file_rec = FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-    }
+    if (!file_rec || file_rec->refcount == 0)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* copy in-memory version to file */
     Hgetlibversion(&(file_rec->version.majorv), &(file_rec->version.minorv),
     		   &(file_rec->version.release), file_rec->version.string);
 
     {
-	uint8 *p;
+    	uint8 *p;
 
-	p = lversion;
-	UINT32ENCODE(p, file_rec->version.majorv);
-	UINT32ENCODE(p, file_rec->version.minorv);
-	UINT32ENCODE(p, file_rec->version.release);
+    	p = lversion;
+    	UINT32ENCODE(p, file_rec->version.majorv);
+    	UINT32ENCODE(p, file_rec->version.minorv);
+    	UINT32ENCODE(p, file_rec->version.release);
         HIstrncpy((char*) p, file_rec->version.string, 80);
     }
 
@@ -3515,10 +3231,8 @@ int32 file_id;
     if (ret == SUCCEED) {
         file_rec->version.modified = 0;
         return(SUCCEED);
-    } else {
-        HERROR(DFE_INTERNAL);
-        return(FAIL);
-    }
+    } else
+        HRETURN_ERROR(DFE_INTERNAL,FAIL);
 }
 
 /*--------------------------------------------------------------------------
@@ -3551,24 +3265,19 @@ int32 file_id;
     uint8 fversion[LIBVER_LEN];
     char *FUNC="Hread_version";
 
-
     HEclear();
 
     file_rec = FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-    }
+    if (!file_rec || file_rec->refcount == 0)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
-    if (Hgetelement(file_id, (uint16)DFTAG_VERSION,
-                              (uint16)1, fversion) == FAIL) {
+    if(Hgetelement(file_id,(uint16)DFTAG_VERSION,(uint16)1,fversion) == FAIL) {
         file_rec->version.majorv = 0;
         file_rec->version.minorv = 0;
         file_rec->version.release = 0;
         HDstrcpy(file_rec->version.string, "");
         file_rec->version.modified = 0;
-        HERROR(DFE_INTERNAL);
-        return(FAIL);
+        HRETURN_ERROR(DFE_INTERNAL,FAIL);
     } else {
         uint8 *p;
 
@@ -3616,10 +3325,8 @@ intn  *attach;
     HEclear();
 
     file_rec = FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-    }
+    if (!file_rec || file_rec->refcount == 0)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     *fname  = file_rec->path;
     *access = file_rec->access;
@@ -3812,6 +3519,4 @@ mlseek(hdf_file_t rn, int32 n, intn m)
 
 }
 
-
 #endif /* MAC */
-

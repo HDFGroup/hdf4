@@ -5,9 +5,16 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1993/04/06 17:23:45  chouck
-Added Vset macros
+Revision 1.6  1993/09/30 19:05:33  koziol
+Added basic compressing functionality for special tags.
 
+ * Revision 1.5  1993/09/28  18:05:02  koziol
+ * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
+ * tag handling.  Added new compression special tag type.
+ *
+ * Revision 1.4  1993/04/06  17:23:45  chouck
+ * Added Vset macros
+ *
  * Revision 1.3  1993/03/29  16:50:41  koziol
  * Updated JPEG code to new JPEG 4 code.
  * Changed VSets to use Threaded-Balanced-Binary Tree for internal
@@ -104,11 +111,7 @@ char *  vsname, * vsclass;
 {
     int32 s;
     int32 ref;
-#ifdef OLD_WAY
-    VDATA * vs;
-#else
     int32 vs;
-#endif
     char * FUNC = "VHstoredatam";
     
     vs = VSattach (f,-1,"w");
@@ -161,13 +164,7 @@ char        * vgname, * vgclass;
 #endif
 {
     int32 ref, i, s;
-
-#ifdef OLD_WAY
-    VGROUP *	vg;
-#else
     int32 vg;
-#endif
-
     char * FUNC = "VHmakegroup";
 
     vg = Vattach (f, -1, "w");

@@ -2,9 +2,28 @@
 $Header$
 
 $Log$
-Revision 1.35  1993/09/15 19:41:16  georgev
-Added #define for Mac for local HDstrdup().
+Revision 1.41  1993/10/06 20:27:38  koziol
+More compression fixed, and folded Doug's suggested change into VSappendable.
 
+ * Revision 1.40  1993/10/01  20:01:02  koziol
+ * Put "extern C" block around function prototypes for C++ compatibility.
+ *
+ * Revision 1.39  1993/09/30  19:05:08  koziol
+ * Added basic compressing functionality for special tags.
+ *
+ * Revision 1.38  1993/09/28  18:04:26  koziol
+ * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
+ * tag handling.  Added new compression special tag type.
+ *
+ * Revision 1.37  1993/09/27  20:59:49  briand
+ * Added MIPSEL to the list for strdup
+ *
+ * Revision 1.36  1993/09/21  16:19:04  georgev
+ * Added an ansi cast to strlen().
+ *
+ * Revision 1.35  1993/09/15  19:41:16  georgev
+ * Added #define for Mac for local HDstrdup().
+ *
  * Revision 1.34  1993/09/11  21:00:25  koziol
  * Defined alternate HDstrdup routine for VMS and fixed a couple of HDstrdup
  * mistakes.
@@ -763,7 +782,7 @@ typedef long              intf;     /* size of INTEGERs in Fortran compiler */
 #ifdef WIN3
 #define FILELIB WINIO
 #else /* ! WIN3 */
-#ifdef defined PC386 /* !WIN3 */
+#ifdef PC386 /* !WIN3 */
 #define FILELIB UNIXBUFIO
 #else /* must be plain PC */
 #define FILELIB PCIO
@@ -1156,12 +1175,12 @@ extern uint8 FAR *DFtbuf;
 #  define HDstrcat(s1,s2)   (strcat((s1),(s2)))
 #  define HDstrcmp(s,t)     (strcmp((s),(t)))
 #  define HDstrcpy(s,d)     (strcpy((s),(d)))
-#  define HDstrlen(s)       (strlen(s))
+#  define HDstrlen(s)       (strlen((const char *)(s)))
 #  define HDstrncmp(s1,s2,n)    (strncmp((s1),(s2),(n)))
 #  define HDstrncpy(s1,s2,n)    (strncpy((s1),(s2),(n)))
 #  define HDstrchr(s,c)    (strchr((s),(c)))
 /* Can't use on PCs. strdup() uses malloc() and HDgetspace uses halloc() */
-#if !(defined VMS | (defined PC & !defined PC386) | defined macintosh)
+#if !(defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MIPSEL)
 #  define HDstrdup(s)      (strdup((s)))
 #endif /* !(VMS | PC) */
 #endif /* WIN3 */
@@ -1191,3 +1210,4 @@ extern uint8 FAR *DFtbuf;
 #define DFSDnumber DFSDndatasets
 
 #endif /* HDFI_H */
+

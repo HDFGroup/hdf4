@@ -83,19 +83,15 @@ uint16 ref;             /* ref of elt to read */
     HEclear();
 
     /* Try to get an AID */
-    if((aid=Hstartread(file_id,tag,ref))==FAIL) {
-        HERROR(DFE_BADAID);
-        return(FAIL);
-      } /* end if */
+    if((aid=Hstartread(file_id,tag,ref))==FAIL)
+        HRETURN_ERROR(DFE_BADAID,FAIL);
 
     /* get a slot in the access record array */
     bitslot=HIget_bitfile_slot();
-    if (bitslot == FAIL) {
-       HERROR(DFE_TOOMANY);
-       return FAIL;
-    }
-    bitfile_rec = &(bitfile_records[bitslot]);
+    if (bitslot == FAIL)
+       HRETURN_ERROR(DFE_TOOMANY,FAIL);
 
+    bitfile_rec = &(bitfile_records[bitslot]);
     bitfile_rec->acc_id=aid;
     bitfile_rec->mode='r';
     bitfile_rec->bytez=bitfile_rec->bytea+BITBUF_SIZE;
@@ -145,19 +141,14 @@ int32 length;           /* length of elt to write */
     HEclear();
 
     /* Try to get an AID */
-    if((aid=Hstartwrite(file_id,tag,ref,length))==FAIL) {
-        HERROR(DFE_BADAID);
-        return(FAIL);
-      } /* end if */
+    if((aid=Hstartwrite(file_id,tag,ref,length))==FAIL)
+        HRETURN_ERROR(DFE_BADAID,FAIL);
 
     /* get empty slot in bit-access records */
-    if((bitslot = HIget_bitfile_slot())==FAIL) {
-        HERROR(DFE_TOOMANY);
-        return(FAIL);
-      } /* end if */
+    if((bitslot = HIget_bitfile_slot())==FAIL)
+        HRETURN_ERROR(DFE_TOOMANY,FAIL);
 
     bitfile_rec = &(bitfile_records[bitslot]);
-
     bitfile_rec->acc_id=aid;
     bitfile_rec->mode='w';
     bitfile_rec->bytez=bitfile_rec->bytea+BITBUF_SIZE;
@@ -206,16 +197,12 @@ uint32 data;            /* Actual bits to output */
     /* clear error stack and check validity of file id */
     HEclear();
 
-    if(count<=0 || (bitfile_rec = BITID2REC(bitid))==NULL) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-      } /* end if */
+    if(count<=0 || (bitfile_rec = BITID2REC(bitid))==NULL)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* Check for write access */
-    if(bitfile_rec->mode!='w') {
-        HERROR(DFE_BADACC);
-        return(FAIL);
-      } /* end if */
+    if(bitfile_rec->mode!='w')
+        HRETURN_ERROR(DFE_BADACC,FAIL);
 
     if(count>32)
         count=32;
@@ -233,10 +220,8 @@ uint32 data;            /* Actual bits to output */
     *(bitfile_rec->bytep)=bitfile_rec->bits|data>>(count-=bitfile_rec->count);
     if(++bitfile_rec->bytep==bitfile_rec->bytez) {
         bitfile_rec->bytep=bitfile_rec->bytea;
-        if(Hwrite(bitfile_rec->acc_id,BITBUF_SIZE,bitfile_rec->bytea)==FAIL) {
-            HERROR(DFE_WRITEERROR);
-            return(FAIL);
-          } /* end if */
+        if(Hwrite(bitfile_rec->acc_id,BITBUF_SIZE,bitfile_rec->bytea)==FAIL)
+            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
       } /* end if */
 
     /* output any and all remaining whole bytes */
@@ -244,10 +229,8 @@ uint32 data;            /* Actual bits to output */
         *(bitfile_rec->bytep)=data>>(count-=BITNUM);
         if(++bitfile_rec->bytep==bitfile_rec->bytez) {
             bitfile_rec->bytep=bitfile_rec->bytea;
-            if(Hwrite(bitfile_rec->acc_id,BITBUF_SIZE,bitfile_rec->bytea)==FAIL) {
-                HERROR(DFE_WRITEERROR);
-                return(FAIL);
-              } /* end if */
+            if(Hwrite(bitfile_rec->acc_id,BITBUF_SIZE,bitfile_rec->bytea)==FAIL)
+                HRETURN_ERROR(DFE_WRITEERROR,FAIL);
           } /* end if */
       } /* end while */
 
@@ -300,16 +283,12 @@ uint32 *data;            /* Actual bits to output */
     /* clear error stack and check validity of file id */
     HEclear();
 
-    if(count<=0 || (bitfile_rec = BITID2REC(bitid))==NULL) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-      } /* end if */
+    if(count<=0 || (bitfile_rec = BITID2REC(bitid))==NULL)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* Check for write access */
-    if(bitfile_rec->mode!='r') {
-        HERROR(DFE_BADACC);
-        return(FAIL);
-      } /* end if */
+    if(bitfile_rec->mode!='r')
+        HRETURN_ERROR(DFE_BADACC,FAIL);
 
     if(count>32)    /* truncate the count if it's too large */
         count=32;
@@ -329,7 +308,7 @@ uint32 *data;            /* Actual bits to output */
         b=bitfile_rec->bits&maskc[bitfile_rec->count];
         b<<=(count-=bitfile_rec->count);
       } /* end if */
-	
+
     /* bring in as many whole bytes as the request allows */
     while(count>=BITNUM) {
         if(bitfile_rec->bytep==bitfile_rec->bytez) {
@@ -405,10 +384,8 @@ intn flushbit;              /* how to flush the bits */
 
     /* check validity of access id */
     bitfile_rec = BITID2REC(bitfile_id);
-    if (bitfile_rec==NULL || !bitfile_rec->used) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-      } /* end if */
+    if(bitfile_rec==NULL || !bitfile_rec->used)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     if(bitfile_rec->mode=='w') {
         if(flushbit!=(-1) && bitfile_rec->count<8)  /* only flush bits if asked and there are bits to flush */
@@ -447,10 +424,8 @@ PRIVATE int HIget_bitfile_slot()
         for(i=0; i<MAX_BITFILE; i++)
             bitfile_records[i].used=FALSE;
 
-        if((bitfile_records[0].bytea = (uint8 *) HDgetspace(BITBUF_SIZE)) == NULL) {
-            HERROR(DFE_NOSPACE);
-            return(FAIL);
-          } /* end if */
+        if((bitfile_records[0].bytea=(uint8 *)HDgetspace(BITBUF_SIZE))==NULL)
+            HRETURN_ERROR(DFE_NOSPACE,FAIL);
         bitfile_records[0].used=TRUE;  /* use the first record */
         return(0);
       } /* end if */
@@ -458,14 +433,11 @@ PRIVATE int HIget_bitfile_slot()
     /* return the first unused record */
     for(i=0; i<MAX_BITFILE; i++)
         if(!bitfile_records[i].used) {
-            if((bitfile_records[i].bytea = (uint8 *) HDgetspace(BITBUF_SIZE)) == NULL) {
-                HERROR(DFE_NOSPACE);
-                return(FAIL);
-              } /* end if */
+            if((bitfile_records[i].bytea=(uint8 *)HDgetspace(BITBUF_SIZE))==NULL)
+                HRETURN_ERROR(DFE_NOSPACE,FAIL);
             bitfile_records[i].used=TRUE;
             return(i);
           } /* end if */
 
     return FAIL;
 } /* HIget_bitfile_slot */
-

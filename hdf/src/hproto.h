@@ -2,10 +2,30 @@
 $Header$
 
 $Log$
-Revision 1.42  1993/09/11 21:00:29  koziol
-Defined alternate HDstrdup routine for VMS and fixed a couple of HDstrdup
-mistakes.
+Revision 1.48  1993/10/04 20:03:04  koziol
+Updated error reporting in H-Layer routines, and added more error codes and
+compression stuff.
 
+ * Revision 1.47  1993/10/01  20:01:11  koziol
+ * Put "extern C" block around function prototypes for C++ compatibility.
+ *
+ * Revision 1.46  1993/09/30  19:05:18  koziol
+ * Added basic compressing functionality for special tags.
+ *
+ * Revision 1.45  1993/09/28  19:06:55  koziol
+ * Fixed prototyping the Iris didn't like.
+ *
+ * Revision 1.44  1993/09/28  18:44:27  koziol
+ * Fixed various things the Sun's pre-processor didn't like.
+ *
+ * Revision 1.43  1993/09/28  18:04:44  koziol
+ * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
+ * tag handling.  Added new compression special tag type.
+ *
+ * Revision 1.42  1993/09/11  21:00:29  koziol
+ * Defined alternate HDstrdup routine for VMS and fixed a couple of HDstrdup
+ * mistakes.
+ *
  * Revision 1.41  1993/09/11  18:08:06  koziol
  * Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
  * cleaned up some goofy string manipulations in various places.
@@ -153,12 +173,12 @@ mistakes.
 #ifndef _H_PROTO
 #define _H_PROTO
 
-#ifdef __cplusplus
+#if defined c_plusplus || defined __cplusplus
 extern "C" {
-#endif
+#endif /* c_plusplus || __cplusplus */
 
 /*
-** from hfile.c 
+** from hfile.c
 */
 extern int32 Hopen 
   PROTO((char _HUGE *path, intn access, int16 ndds));
@@ -337,11 +357,11 @@ extern intn HDflush
 extern intn HDpackFstring
     PROTO((char _HUGE *src, char _HUGE *dest, intn len));
 
-/* 
-** from hblocks.c 
+/*
+** from hblocks.c
 */
 extern int32 HLcreate
-  PROTO((int32 file_id, uint16 tag, uint16 ref, int32 block_length, 
+  PROTO((int32 file_id, uint16 tag, uint16 ref, int32 block_length,
         int32 number_blocks));
 
 extern int HDinqblockinfo
@@ -349,65 +369,73 @@ extern int HDinqblockinfo
         int32 *number_blocks));
 
 /*
-** from hextelt.c 
+** from hextelt.c
 */
 extern int32 HXcreate
-  PROTO((int32 file_id, uint16 tag, uint16 ref, char _HUGE *extern_file_name, int32 f_offset, int32 start_len));
+    PROTO((int32 file_id, uint16 tag, uint16 ref, char _HUGE *extern_file_name,
+	    int32 f_offset, int32 start_len));
+
+/*
+** from hcomp.c
+*/
+extern int32 HCcreate
+    PROTO((int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
+        comp_coder_t coder_type));
 
 /*
 ** from herr.c
 */
 extern char _HUGE *HEstring
-  PROTO((int16 error_code));
+    PROTO((int16 error_code));
 
 extern VOID HEpush
-  PROTO((int16 error_code, char _HUGE *function_name, char _HUGE *file_name,
+    PROTO((int16 error_code, char _HUGE *function_name, char _HUGE *file_name,
         int line));
 
 #ifndef _H_ERR_MASTER_
 extern VOID HEreport
-  PROTO((char _HUGE *, ...));
+    PROTO((char _HUGE *, ...));
 #endif /* _H_ERR_MASTER_ */
 
 extern VOID HEprint
-  PROTO((FILE _HUGE *stream, int32 print_level));
+    PROTO((FILE _HUGE *stream, int32 print_level));
 
 extern int16 HEvalue
-  PROTO((int32 level));
+    PROTO((int32 level));
 
 extern VOID HEclear
-  PROTO((void));
+    PROTO((void));
 
 /*
 ** from dfcomp.c
 */
 extern int DFputcomp
-  PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE *image, int32 xdim,
-     int32 ydim, uint8 _HUGE *palette, uint8 _HUGE *newpal, int16 scheme,
-     comp_info *cinfo));
+    PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE *image,
+        int32 xdim, int32 ydim, uint8 _HUGE *palette, uint8 _HUGE *newpal,
+        int16 scheme, comp_info *cinfo));
 
 extern int DFgetcomp
-  PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE *image, int32 xdim,
-	 int32 ydim, uint16 scheme));
+    PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE *image,
+        int32 xdim, int32 ydim, uint16 scheme));
 
 /*
 ** from dfrle.c
 */
 extern int32 DFCIrle
-  PROTO((VOIDP buf, VOIDP bufto, int32 len));
+    PROTO((VOIDP buf, VOIDP bufto, int32 len));
 
 extern int32 DFCIunrle
-  PROTO((uint8 _HUGE *buf, uint8 *bufto, int32 outlen, int resetsave));
+    PROTO((uint8 _HUGE *buf, uint8 *bufto, int32 outlen, int resetsave));
 
 /*
-** from dfimcomp.c 
+** from dfimcomp.c
 */
 extern VOID DFCIimcomp
-  PROTO((int32 xdim, int32 ydim, uint8 _HUGE in[], uint8 _HUGE out[],
+    PROTO((int32 xdim, int32 ydim, uint8 _HUGE in[], uint8 _HUGE out[],
         uint8 _HUGE in_pal[], uint8 _HUGE out_pal[], int mode));
 
 extern VOID DFCIunimcomp
-  PROTO((int32 xdim, int32 ydim, uint8 _HUGE in[], uint8 _HUGE out[]));
+    PROTO((int32 xdim, int32 ydim, uint8 _HUGE in[], uint8 _HUGE out[]));
 
 /*
 ** from dfjpeg.c
@@ -429,87 +457,87 @@ extern intn DFCIunjpeg
 ** from dfgroup.c 
 */
 extern int32 DFdiread
-  PROTO((int32 file_id, uint16 tag, uint16 ref));
+    PROTO((int32 file_id, uint16 tag, uint16 ref));
 
 extern int DFdiget
-  PROTO((int32 list, uint16 _HUGE *ptag, uint16 _HUGE *pref));
+    PROTO((int32 list, uint16 _HUGE *ptag, uint16 _HUGE *pref));
 
 extern int32 DFdisetup
-  PROTO((int maxsize));
+    PROTO((int maxsize));
 
 extern int DFdiput
-  PROTO((int32 list, uint16 tag, uint16 ref));
+    PROTO((int32 list, uint16 tag, uint16 ref));
 
 extern int DFdiwrite
-  PROTO((int32 file_id, int32 list, uint16 tag, uint16 ref));
+    PROTO((int32 file_id, int32 list, uint16 tag, uint16 ref));
 
 /*
-** from dfp.c 
+** from dfp.c
 */
 extern intn DFPgetpal
-  PROTO((char _HUGE *filename, VOIDP palette));
+    PROTO((char _HUGE *filename, VOIDP palette));
 
 extern intn DFPputpal
-  PROTO((char _HUGE *filename, VOIDP palette, int overwrite, char _HUGE *filemode));
+    PROTO((char _HUGE *filename, VOIDP palette, int overwrite, char _HUGE *filemode));
 
 extern int DFPaddpal
-  PROTO((char _HUGE *filename, VOIDP palette));
+    PROTO((char _HUGE *filename, VOIDP palette));
 
 extern int DFPnpals
-  PROTO((char _HUGE *filename));
+    PROTO((char _HUGE *filename));
 
 extern intn DFPreadref
-  PROTO((char _HUGE *filename, uint16 ref));
+    PROTO((char _HUGE *filename, uint16 ref));
 
 extern int DFPwriteref
-  PROTO((char _HUGE *filename, uint16 ref));
+    PROTO((char _HUGE *filename, uint16 ref));
 
 extern int DFPrestart
-  PROTO((void));
+    PROTO((void));
 
 extern uint16 DFPlastref
-  PROTO((void));
+    PROTO((void));
 
 extern int32 DFPIopen
-  PROTO((char _HUGE *filename, int access));
+    PROTO((char _HUGE *filename, int access));
 
 /*
-** from dfr8.c 
+** from dfr8.c
 */
 extern int DFR8setcompress
-  PROTO((int32 scheme,comp_info *cinfo));
+    PROTO((int32 scheme,comp_info *cinfo));
 
 extern intn DFR8getdims
-  PROTO((char _HUGE *filename, int32 _HUGE *pxdim, int32 _HUGE *pydim,
+    PROTO((char _HUGE *filename, int32 _HUGE *pxdim, int32 _HUGE *pydim,
         int _HUGE *pispal));
 
 extern intn DFR8getimage
-  PROTO((char _HUGE *filename, uint8 _HUGE *image, int32 xdim, int32 ydim,
+    PROTO((char _HUGE *filename, uint8 _HUGE *image, int32 xdim, int32 ydim,
         uint8 _HUGE *pal));
 
 extern int DFR8setpalette
-  PROTO((uint8 _HUGE *pal));
+    PROTO((uint8 _HUGE *pal));
 
 extern int DFR8putimage
-  PROTO((char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim, uint16 compress));
+    PROTO((char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim, uint16 compress));
 
 extern int DFR8addimage
-  PROTO((char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim, uint16 compress));
+    PROTO((char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim, uint16 compress));
 
 extern int DFR8nimages
-  PROTO((char _HUGE *filename));
+    PROTO((char _HUGE *filename));
 
 extern intn DFR8readref
-  PROTO((char _HUGE *filename, uint16 ref));
+    PROTO((char _HUGE *filename, uint16 ref));
 
 extern int DFR8writeref
-  PROTO((char _HUGE *filename, uint16 ref));
+    PROTO((char _HUGE *filename, uint16 ref));
 
 extern int DFR8restart
-  PROTO((void));
+    PROTO((void));
 
 extern uint16 DFR8lastref
-  PROTO((void));
+    PROTO((void));
 
 /*
 ** from dfgr.c 
@@ -1883,8 +1911,8 @@ extern int DFUfptoimage
 #include "vproto.h"
 #endif /* PERM_OUT */
 
-#ifdef __cplusplus
+#if defined c_plusplus || defined __cplusplus
 }
-#endif
+#endif /* c_plusplus || __cplusplus */
 
 #endif /* _H_PROTO */

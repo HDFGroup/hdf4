@@ -5,9 +5,19 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.22  1993/09/02 21:15:50  chouck
-Was losing AIDs in VSappendable()
+Revision 1.25  1993/10/06 20:27:57  koziol
+More compression fixed, and folded Doug's suggested change into VSappendable.
 
+ * Revision 1.24  1993/09/30  19:05:35  koziol
+ * Added basic compressing functionality for special tags.
+ *
+ * Revision 1.23  1993/09/28  18:05:04  koziol
+ * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
+ * tag handling.  Added new compression special tag type.
+ *
+ * Revision 1.22  1993/09/02  21:15:50  chouck
+ * Was losing AIDs in VSappendable()
+ *
  * Revision 1.21  1993/08/19  16:45:49  chouck
  * Added code and tests for multi-order Vdatas
  *
@@ -101,63 +111,6 @@ PRIVATE VOID vunpackvs
 /* External (within Vset routines) variables */
 extern vfile_t vfile[];
 
-/* ---------------------- DFvsetopen --------------------------------------- */
-/*
-    DFvsetopen and DFvsetclose
-*/
-#ifdef QAK
-#undef Hopen
-#undef Hclose
-
-#undef DFopen
-#undef DFclose
-#endif
-
-#ifdef QAK
-#ifdef VMS /* Redefine Hopen and Hclose for VMS linker */
-#define Hclose _Hclose
-#define Hopen _Hopen 
-#endif /* VMS */
-
-#ifdef PROTOTYPE
-PUBLIC HFILEID  DFvsetopen (char *fname, int16 access, int16 defDDs)
-#else
-
-PUBLIC HFILEID  DFvsetopen (fname, access, defDDs)
-	char 		*fname;
-	int16		access, defDDs;
-
-#endif
-
-{
-	HFILEID	f;
-	char * FUNC = "DFvsetopen";
-
-    f = Hopen (fname, access, defDDs);
-    if(f == FAIL) return f;
-    Vinitialize (f);
-	return (f);
-}
-/* --------------------- DFvsetclose --------------------------------------- */
-#ifdef PROTOTYPE
-PUBLIC int32 DFvsetclose (HFILEID f)
-#else
-
-PUBLIC int32 DFvsetclose (f)
-	HFILEID	f;
-
-#endif
-
-{
-	int32 s;
-	char * FUNC = "DFvsetclose";
-
-	Vfinish(f);
-    s = Hclose(f);
-    return (s);
-}
-#endif
-
 /* ------------------------------------------------------------------ */
 /*
 * Looks thru vstab for vsid and return the addr of the vdata instance
@@ -166,7 +119,6 @@ PUBLIC int32 DFvsetclose (f)
 * RETURNS vsinstance_t pointer if ok.
 *
 */
-
 #ifdef PROTOTYPE
 vsinstance_t _HUGE * vsinstance (HFILEID f, uint16 vsid)
 #else
@@ -175,10 +127,6 @@ HFILEID f;
 uint16 vsid;
 #endif
 {
-#ifdef OLD_WAY
-    register uintn ref;
-    register vsinstance_t * w;
-#endif
     VOIDP *t;
     register vfile_t      * vf;
     int32 key;
@@ -187,17 +135,11 @@ uint16 vsid;
     if (NULL==(vf = Get_vfile(f)))
         HRETURN_ERROR(DFE_FNF, NULL);
   
-#ifdef OLD_WAY
-    ref = (uintn) vsid;
-    for(w = vf->vstab.next; w; w = w->next)
-        if (w->ref == ref) return(w);
-#else
     /* tbbtdfind returns a pointer to the vsinstance_t pointer */
     key=VSSLOT2ID(f,vsid);
     t=(VOIDP *)tbbtdfind(vf->vstree,(VOIDP)&key,NULL);
     if(t!=NULL)
         return((vsinstance_t *)*t);     /* return the actual vsinstance_t ptr */
-#endif
   
     HERROR(DFE_NOMATCH);
     return(NULL);
@@ -245,12 +187,6 @@ CONTENTS of VS stored in HDF file with tag VSDESCTAG:
 	char		vsname[VSNAMELENMAX]
 ****/
 
-
-#ifdef QAK
-#define INT16SIZE 2
-#define UINT16SIZE 2
-#define INT32SIZE 4
-#endif
 
 /* ------------------------------- vpackvs ----------------------------------- */
 /*
@@ -628,12 +564,6 @@ char *  accesstype;
         if ( NULL == (w = (vsinstance_t*) HDgetspace (sizeof(vsinstance_t))))
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
           
-#ifdef OLD_WAY
-        vf->vstabtail->next = w;
-        vf->vstabtail       = w;
-          
-        w->next      = NULL;
-#else
         vf->vstabn++;
         w->key       = (int32) VSSLOT2ID(f,vs->oref); /* set the key for the node */
         w->ref       = (intn) vs->oref;
@@ -643,13 +573,8 @@ char *  accesstype;
         tbbtdins(vf->vstree,(VOIDP)w,NULL);    /* insert the vs instance in B-tree */
           
         vs->instance = w;
-#endif
 
-#ifdef OLD_WAY
-        return (vs);
-#else
         return (w->key);
-#endif
 	} /* end of case where vsid is -1 */
 
 	/*  --------  VSID IS NON_NEGATIVE ------------- */
@@ -662,11 +587,7 @@ char *  accesstype;
         /* this vdata is already attached for 'r', ok to do so again */
         if (w->nattach && w->vs->access == 'r') {
             w->nattach++;
-#ifdef OLD_WAY
-            return (w->vs);
-#else
             return (w->key);
-#endif
           }
 
         if (w->vs) {    /* use existing vs record */
@@ -714,11 +635,7 @@ char *  accesstype;
         w->nvertices = vs->nvertices;
 
         HDfreespace((VOIDP)vspack);
-#ifdef OLD_WAY
-        return (vs);
-#else
         return (w->key);
-#endif
  	} /* end of case where vsid is positive, and "r"  */
 
 
@@ -774,12 +691,7 @@ char *  accesstype;
         w->nvertices = vs->nvertices;
 
         HDfreespace((VOIDP)vspack);
-#ifdef OLD_WAY
-        return (vs);
-#else
         return(w->key);
-#endif
-          
 	} /* end of case where vsid is positive, and "w"  */
     return (FAIL);
 } /* VSattach */
@@ -901,17 +813,17 @@ int32 vkey;
                   /* coalesce all VMBLOCKS into vwhole */
                   cursize = 0;
                   t = vs->vm;
-                  while (t != NULL) { 
+                  while (t != NULL) {
                     HDmemcpy(&vwhole[cursize], t->mem, t->n);
                     HDfreespace((VOIDP)t->mem);
                     cursize+= t->n;
-                    t = t->next; 
+                    t = t->next;
                   }
                   /* free all VMBLOCKS */
                   t = vs->vm;
                   while (t != NULL) { p = t; t = t->next; HDfreespace((VOIDP)p); }
                   vs->vm = (VMBLOCK*) NULL;
-                  
+
                   /* write out vwhole to file as 1 vdata */
                   stat = aid =Hstartwrite(vs->f,VSDATATAG,vs->oref, totalsize);
                   Hwrite(aid,  totalsize , vwhole);
@@ -920,13 +832,7 @@ int32 vkey;
                   /* END OF VMBLOCK VERSION */ 	}}
 #endif
 
-        Hendaccess (vs->aid);
-#ifdef OLD_WAY
-        w->vs = NULL; /* detach vs from vsdir */
-        HDfreespace ((VOIDP)vs);
-#endif
-	return;
-
+    Hendaccess (vs->aid);
 } /* VSdetach */
 
 /* -------------------------- VSappendable -------------------------------- */
@@ -975,12 +881,22 @@ int32 blk;
   
     curr_size = vs->nvertices * vs->wlist.ivsize;
 
+#ifdef OLD_WAY
     if(vs->nvertices && (curr_size > VDEFAULTBLKSIZE))
         blksize = curr_size;
     else
         blksize = VDEFAULTBLKSIZE;
 
     if(blk && blk > blksize) blksize = blk;
+#else
+    if(blk>0)
+	blksize=blk;
+    else
+        if(vs->nvertices && (curr_size > VDEFAULTBLKSIZE))
+            blksize = curr_size;
+        else
+            blksize = VDEFAULTBLKSIZE;
+#endif
 
     Hendaccess(vs->aid);
 
@@ -1020,31 +936,13 @@ HFILEID f;
         HRETURN_ERROR(DFE_FNF, FAIL);
 
 	if (vsid == -1) {
-#ifdef OLD_WAY
-        if (NULL == vf->vstab.next)
-            return (FAIL);
-        else
-            return((int32) (vf->vstab.next)->ref); /* rets 1st vdata's ref */
-#else
         if (NULL == (t=(VOIDP *)tbbtfirst((TBBT_NODE *)*(vf->vstree))))
             return (FAIL);
         else {
             w=(vsinstance_t *)*t;   /* get actual pointer to the vsinstance_t */
             return( w->ref); /* rets 1st vdata's ref */
           } /* end else */
-#endif
 	}
-
-#ifdef OLD_WAY
-	/* look in vstab  for vsid */
-    if ((w = vsinstance(f, (uint16) vsid)) == NULL)
-        HRETURN_ERROR(DFE_VTAB, FAIL);
-
-	if (w->next == NULL)
-        return(FAIL);         /* this is the last vdata, no more after it */
-	else
-        return( (int32) (w->next)->ref);  /* success, ret the next vdata's ref */
-#else
 
     /* tbbtdfind returns a pointer to the vsinstance_t pointer */
     key=VSSLOT2ID(f,vsid);
@@ -1058,8 +956,6 @@ HFILEID f;
             w=(vsinstance_t *)*t;   /* get actual pointer to the vsinstance_t */
             return(w->ref); /* rets vdata's ref */
           } /* end else */
-#endif
-
 } /* VSgetid */
 
 
