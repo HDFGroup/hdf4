@@ -12,10 +12,10 @@
  ****************************************************************************/
 
 #ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
+static char RcsId[] = "@(#)1.13";
 #endif
 
-/* $Id$ */
+/* dfkvms.c,v 1.13 1994/10/19 20:55:46 koziol Exp */
 
 /*------------------------------------------------------------------
  File:  dfkvms.c
@@ -39,6 +39,18 @@ static char RcsId[] = "@(#)$Revision$";
     These files used to be in dfconv.c, but it got a little too huge,
     so I broke them out into seperate files. - Q
 
+ Modifications:
+    Lawrence Fisher, Digital Equipment Corp, October 29, 1997
+    Added routines to support OpenVMS Alpha.  The default 64 bit floating point
+    type for OpenVMS Alpha is Vax G-Float, not Vax D-float, as a result the
+    VAX VMS designed conversion routines were in error.  Substituted
+    the OpenVMS routine CVT$FTOF (convert float to float) to optimize
+    throughput.
+
+    Lawrence Fisher, Digital Eqipment Corp, January 30th, 1998
+    Rewrote conversion routines to use OpenVMS routine CVT$CONVERT_FLOAT
+    to provide compatibility back to version 6.2 of OpenVMS Alpha.
+
  *------------------------------------------------------------------*/
 
 /*****************************************************************************/
@@ -61,6 +73,11 @@ static char RcsId[] = "@(#)$Revision$";
 #include "hconv.h"
 
 #if defined(VMS)
+#ifdef __ALPHA
+#include <cvt$routines.h>
+#include <cvtdef.h>
+
+#endif /* __ALPHA */
 
 /************************************************************/
 /* NUMBER CONVERSION ROUTINES FOR VAX ARCHITECTURES         */
@@ -101,6 +118,21 @@ DFKvi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
     for (i = 0; i < num_elm; i++)
       {
+#ifdef __ALPHA
+
+        {
+	uint32 *s1 = (uint32 *)source;
+        uint32 *d1 = (uint32 *)dest;
+        uint32 input = *s1;
+	uint32 output= *d1;
+/*          (void)cvt$ftof(&input,CVT$K_BIG_ENDIAN_IEEE_S,&output,CVT$K_VAX_F,0);
+*/
+	(void)CVT$CONVERT_FLOAT(&input,CVT$K_IEEE_S,&output,CVT$K_VAX_F,
+				CVT$M_ROUND_TO_NEAREST+CVT$M_BIG_ENDIAN);
+	*d1 = output;
+        }
+
+#else
 
           /* extract exponent */
           exp = (source[0] << 1) | (source[1] >> 7);
@@ -149,6 +181,7 @@ DFKvi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           else
               dest[0] = dest[1] = dest[2] = dest[3] = 0;
 
+#endif /* __ALPHA */
           source += source_stride;
           dest += dest_stride;
       }
@@ -237,6 +270,21 @@ DFKvo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
     for (i = 0; i < num_elm; i++)
       {
+#ifdef __ALPHA
+
+	 {
+	 uint32 *s1 = (uint32 *)source;
+	 uint32 *d1 = (uint32 *)dest;
+	 uint32 input = *s1;
+	 uint32 output = *d1;
+/*        
+(void)cvt$ftof(&input,CVT$K_VAX_F,&output,CVT$K_BIG_ENDIAN_IEEE_S,0); */
+	(void)CVT$CONVERT_FLOAT(&input,CVT$K_VAX_F,&output,CVT$K_IEEE_S,
+				CVT$M_ROUND_TO_NEAREST+CVT$M_BIG_ENDIAN);
+	 *d1 = output;
+	 }
+
+#else
 
           /* extract exponent */
           exp = (source[1] << 1) | (source[0] >> 7);
@@ -294,6 +342,8 @@ DFKvo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                 dest[2] = source[3];
                 dest[3] = source[2];
             }
+
+#endif /* __ALPHA */
 
           source += source_stride;
           dest += dest_stride;
@@ -434,6 +484,14 @@ DFKvi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
     for (i = 0; i < num_elm; i++)
       {
+#ifdef __ALPHA
+
+/*        
+(void)cvt$ftof(&source[0],CVT$K_BIG_ENDIAN_IEEE_T,&dest[0],CVT$K_VAX_G,0); */
+	(void)CVT$CONVERT_FLOAT(&source[0],CVT$K_IEEE_T,&dest[0],CVT$K_VAX_G,
+				CVT$M_ROUND_TO_NEAREST+CVT$M_BIG_ENDIAN);
+
+#else
         shipit: /* In VAX, bytes in a word are counted from right to left */
           {
               int j, k;
@@ -480,6 +538,8 @@ DFKvi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
           vd->sign = id.sign;
 
+#endif /* __ALPHA */
+
           source += source_stride;
           dest += dest_stride;
       }
@@ -525,6 +585,14 @@ DFKvo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     for (i = 0; i < num_elm; i++)
       {
 
+#ifdef __ALPHA
+
+/*        
+(void)cvt$ftof(&source[0],CVT$K_VAX_G,&dest[0],CVT$K_BIG_ENDIAN_IEEE_T,0); */
+	(void)CVT$CONVERT_FLOAT(&source[0],CVT$K_VAX_G,&dest[0],CVT$K_IEEE_T,
+				CVT$M_ROUND_TO_NEAREST+CVT$M_BIG_ENDIAN);
+
+#else
           vd = *((struct vax_double *) source);
 
           found = FALSE;
@@ -572,6 +640,8 @@ DFKvo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                 }
           }
 
+#endif /* __ALPHA */
+
           source += source_stride;
           dest += dest_stride;
       }
@@ -611,6 +681,21 @@ DFKlvi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
     for (i = 0; i < num_elm; i++)
       {
+
+#ifdef __ALPHA
+
+        {
+	uint32 *s1 = (uint32 *)source;
+        uint32 *d1 = (uint32 *)dest;
+        uint32 input = *s1;
+	uint32 output= *d1;
+/*          (void)cvt$ftof(&input,CVT$K_IEEE_S,&output,CVT$K_VAX_F,0); */
+	(void)CVT$CONVERT_FLOAT(&input,CVT$K_IEEE_S,&output,CVT$K_VAX_F,
+				CVT$M_ROUND_TO_NEAREST);
+	*d1 = output;
+        }
+
+#else
 
           /* extract exponent */
           exp = (source[3] << 1) | (source[2] >> 7);
@@ -658,6 +743,8 @@ DFKlvi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
             {
                 dest[0] = dest[1] = dest[2] = dest[3] = 0;
             }
+
+#endif /* __ALPHA */
 
           source += source_stride;
           dest += dest_stride;
@@ -748,6 +835,20 @@ DFKlvo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     for (i = 0; i < num_elm; i++)
       {
 
+#ifdef __ALPHA
+
+	 {
+	 uint32 *s1 = (uint32 *)source;
+	 uint32 *d1 = (uint32 *)dest;
+	 uint32 input = *s1;
+	 uint32 output = *d1;
+/*         (void)cvt$ftof(&input,CVT$K_VAX_F,&output,CVT$K_IEEE_S,0); */
+	(void)CVT$CONVERT_FLOAT(&input,CVT$K_VAX_F,&output,CVT$K_IEEE_S,
+				CVT$M_ROUND_TO_NEAREST);
+	 *d1 = output;
+	 }
+
+#else
           /* extract exponent */
           exp = (source[1] << 1) | (source[0] >> 7);
 
@@ -805,6 +906,7 @@ DFKlvo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                 dest[0] = source[2];
             }
 
+#endif /* __ALPHA */
           source += source_stride;
           dest += dest_stride;
       }
@@ -897,6 +999,13 @@ DFKlvi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
     for (i = 0; i < num_elm; i++)
       {
+#ifdef __ALPHA
+
+/*         (void)cvt$ftof(&source[0],CVT$K_IEEE_T,&dest[0],CVT$K_VAX_G,0); */
+	(void)CVT$CONVERT_FLOAT(&source[0],CVT$K_IEEE_T,&dest[0],CVT$K_VAX_G,
+				CVT$M_ROUND_TO_NEAREST);
+
+#else
           HDmemcpy(&(id), &source[4], 4);   /* swap the two 4-byte words */
           HDmemcpy(((uint8 *) &(id)) + 4, source, 4);
 
@@ -929,6 +1038,7 @@ DFKlvi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
           vd->sign = id.sign;
 
+#endif /* __ALPHA */
           source += source_stride;
           dest += dest_stride;
       }
@@ -974,6 +1084,13 @@ DFKlvo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     for (i = 0; i < num_elm; i++)
       {
 
+#ifdef __ALPHA
+
+/*         (void)cvt$ftof(&source[0],CVT$K_VAX_G,&dest[0],CVT$K_IEEE_T,0); */
+	(void)CVT$CONVERT_FLOAT(&source[0],CVT$K_VAX_G,&dest[0],CVT$K_IEEE_T,
+				CVT$M_ROUND_TO_NEAREST);
+
+#else
           vd = *((struct vax_double *) source);
 
           found = FALSE;
@@ -1007,6 +1124,8 @@ DFKlvo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
           HDmemcpy(dest, ((uint8 *) &(id)) + 4, 4);     /* swap the two 4-byte words */
           HDmemcpy(&dest[4], &(id), 4);
+
+#endif /* __ALPHA */
 
           source += source_stride;
           dest += dest_stride;
