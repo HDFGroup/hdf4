@@ -173,6 +173,8 @@ extern intn SDisdimval_bwcomp
 
 /*====================== Chunking Routines ================================*/
 
+#if 0 /* moved to hproto.h */
+
 /* Bit - flags used for SDsetchunk() and SDgetChunkInfo() */
 #define HDF_NONE    0x0
 #define HDF_CHUNK   0x1
@@ -208,6 +210,7 @@ typedef union hdf_chunk_def_u
 
 } HDF_CHUNK_DEF;
 
+#endif
 
 /******************************************************************************
  NAME
