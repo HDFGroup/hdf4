@@ -6,8 +6,8 @@
 #include <stdio.h>  /* NULL */
 #include "hdf.h"
 #define TBBT_INTERNALS
+#define WASTE_STACK
 #include "tbbt.h"
-
 #define   Alloc(cnt,typ)   (typ *) HDgetspace( (cnt) * sizeof(typ) )
 #define   Free(x)           (HDfreespace((VOIDP)x))
 
@@ -767,5 +767,20 @@ VOID     (*fk)(/* void *key */);  /* Routine to free key values */
     tbbtfree( &tree->root, fd, fk );
     Free( tree );
     return( NULL );
+}
+
+
+/* returns the number of nodes in the tree */
+#ifdef PROTOTYPE
+long tbbtcount(TBBT_TREE *tree)
+#else
+long tbbtcount(tree)
+TBBT_TREE *tree;                  /* Pointer to tree description record */
+#endif
+{
+    if(tree==NULL)
+        return(-1);
+    else
+	return(tree->count);
 }
 

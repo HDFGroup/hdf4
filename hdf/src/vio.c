@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.17  1993/07/14 20:53:04  chouck
-Plugged memory leak on Vdelete() and VSdelete()
+Revision 1.18  1993/07/15 01:26:26  koziol
+Final Whammy on the VSet memory Leak bug, mostly for maintenance purposes
 
+ * Revision 1.17  1993/07/14  20:53:04  chouck
+ * Plugged memory leak on Vdelete() and VSdelete()
+ *
  * Revision 1.16  1993/07/14  11:55:51  koziol
  * Fixed memory leaks in freeing trees
  *
@@ -1203,8 +1206,7 @@ int32 f;
 int32 vsid;
 #endif
 {
-    VDATA        * vd;
-    vsinstance_t * v;
+    VOIDP  	 v;
     vfile_t      * vf;
     VOIDP        * t;
     int32          key;
@@ -1227,15 +1229,9 @@ int32 vsid;
     if(t == NULL)
         return FAIL;
 
-    v = (vsinstance_t *) tbbtrem((TBBT_NODE **)vf->vstree, (TBBT_NODE *)t, NULL);
-
-    if(v) {
-        vd = (VDATA *)  v->vs;
-        HDfreespace((VOIDP) v);
-        if(vd)
-            HDfreespace((VOIDP) vd);
-    }
-
+    v = tbbtrem((TBBT_NODE **)vf->vstree, (TBBT_NODE *)t, NULL);
+    if(v) 
+        vsdestroynode((VOIDP)v);
 
     Hdeldd(f, DFTAG_VS, (uint16) vsid);
     Hdeldd(f, DFTAG_VH, (uint16) vsid);

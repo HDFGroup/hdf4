@@ -272,5 +272,8 @@ VOID tbbtdump
  *	 1 : Post-Order Traversal
  *	 0 : In-Order Traversal 
  */
-#endif /* TBBT_H */
 
+long tbbtcount
+	PROTO((TBBT_TREE *tree));
+
+#endif /* TBBT_H */

@@ -1,13 +1,16 @@
-#ifdef RCSID
+vifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
 /*
 $Header$
 
 $Log$
-Revision 1.21  1993/07/14 20:52:55  chouck
-Plugged memory leak on Vdelete() and VSdelete()
+Revision 1.22  1993/07/15 01:26:22  koziol
+Final Whammy on the VSet memory Leak bug, mostly for maintenance purposes
 
+ * Revision 1.21  1993/07/14  20:52:55  chouck
+ * Plugged memory leak on Vdelete() and VSdelete()
+ *
  * Revision 1.20  1993/07/14  11:55:47  koziol
  * Fixed memory leaks in freeing trees
  *
@@ -117,6 +120,7 @@ PRIVATE void vunpackvg
 
 
 PUBLIC vfile_t  vfile [MAX_VFILE] = {0};
+
 
 /* -------------------------- Load_vfile ------------------------ */
 /*
@@ -379,7 +383,11 @@ VOIDP n;
     }
 
     HDfreespace((VOIDP)n);
+<<<<<<< vgp.c
+    tree_size--;
+=======
 
+>>>>>>> 1.21
 }  /* vdestroynode */
 
 #ifdef NOTNEEDED
@@ -2128,8 +2136,7 @@ int32 vgid;
 #endif
 {
 
-    VGROUP       * vg;
-    vginstance_t * v;
+    VOIDP	   v;
     vfile_t      * vf;
     VOIDP        * t;
     int32          key;
@@ -2152,16 +2159,9 @@ int32 vgid;
     if(t == NULL)
         return FAIL;
 
-    v = (vginstance_t *) tbbtrem((TBBT_NODE **)vf->vgtree, (TBBT_NODE *)t, NULL);
-    if(v) {
-        vg = (VGROUP *)  v->vg;
-        HDfreespace((VOIDP) v);
-        if(vg) {
-            HDfreespace((VOIDP) vg->tag);
-            HDfreespace((VOIDP) vg->ref);
-            HDfreespace((VOIDP) vg);
-        }
-    }
+    v = tbbtrem((TBBT_NODE **)vf->vgtree, (TBBT_NODE *)t, NULL);
+    if(v) 
+        vdestroynode((VOIDP)v);
 
     Hdeldd(f, DFTAG_VG, (uint16) vgid);
 
