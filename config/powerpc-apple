@@ -28,8 +28,32 @@ fi
 if test "X-$F77" = "X-"; then
   F77=xlf
   F77_BASENAME=xlf
+
 else
-  F77_BASENAME=f95
+    case $F77 in
+        # The PGI and Intel compilers are automatically detected below
+        xlf*|f95*)
+            ;;
+
+        *)
+            # Figure out which compiler we are using: pgf90 or Absoft f95
+            RM='rm -f'
+            tmpfile=/tmp/cmpver.$$
+            $F77 -V >$tmpfile
+            if test -s "$tmpfile"; then 
+            #Absoft compiler f95 doesn't recognize -V flag; we will use
+            #the error message it produces to identify the compiler
+            #    if( grep -s 'Absoft' $tmpfile > /dev/null) then
+                if( grep -s 'ERROR: No input files' $tmpfile > /dev/null) then
+                    F77_BASENAME=f95
+                fi 
+                if( grep -s 'IBM XL' $tmpfile > /dev/null) then
+                    F77_BASENAME=xlf
+                fi 
+            fi
+            $RM $tmpfile
+            ;;
+    esac
 fi
 
 
