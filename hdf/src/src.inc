@@ -50,7 +50,7 @@ MFAN_HDRS=mfan.h
 MFGR_HDRS=mfgr.h
 
 CSRCS = $(HCSRCS) $(VCSRCS) $(DFCSRCS) $(MFCSRCS)
-HCSRCS=hfile.c herr.c hblocks.c hextelt.c hkit.c hdfalloc.c hcomp.c \
+HCSRCS=hfile.c herr.c hblocks.c hbuffer.c hextelt.c hkit.c hdfalloc.c hcomp.c \
     hbitio.c tbbt.c hdfalloc.c hcomp.c crle.c cnbit.c mstdio.c cnone.c \
     cskphuff.c cdeflate.c bitvect.c atom.c hfiledd.c dynarray.c linklist.c \
     glist.c hchunks.c mcache.c 
@@ -75,7 +75,7 @@ MFAN_CSRCS=mfan.c
 MFGR_CSRCS=mfgr.c
 
 COBJS = $(HCOBJS) $(VCOBJS) $(DFCOBJS) $(MFCOBJS)
-HCOBJS=hfile.o herr.o hblocks.o hextelt.o hkit.o hdfalloc.o hcomp.o \
+HCOBJS=hfile.o herr.o hblocks.o hbuffer.o hextelt.o hkit.o hdfalloc.o hcomp.o \
     hbitio.o tbbt.o crle.o cnbit.o mstdio.o cnone.o cskphuff.o cdeflate.o \
     bitvect.o atom.o hfiledd.o dynarray.o linklist.o glist.o hchunks.o mcache.o
 

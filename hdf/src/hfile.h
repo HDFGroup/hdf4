@@ -445,6 +445,9 @@ typedef struct sp_info_block_t
       int32       chunk_size;   /* logical size of chunks */
       int32       ndims;        /* number of dimensions */
       int32       *cdims;       /* array of chunk lengths for each dimension */
+
+      /* Buffered elements */
+      int32       buf_aid;      /* AID of element buffered */
   }
 sp_info_block_t;
 
@@ -553,6 +556,9 @@ extern      "C"
                 (filerec_t * file_rec, int32 block_offset, int32 block_size);
 
     HDFLIBAPI int32 HDget_special_info
+                (int32 access_id, sp_info_block_t * info_block);
+
+    HDFLIBAPI int32 HDset_special_info
                 (int32 access_id, sp_info_block_t * info_block);
 
     HDFLIBAPI intn HP_read
@@ -700,6 +706,39 @@ extern      "C"
                 (char *path);
 
 #endif  /* macintosh */
+
+/*
+   ** from hbuffer.c
+ */
+
+    HDFLIBAPI int32 HBPstread
+                (accrec_t * rec);
+
+    HDFLIBAPI int32 HBPstwrite
+                (accrec_t * rec);
+
+    HDFLIBAPI int32 HBPseek
+                (accrec_t * access_rec, int32 offset, int origin);
+
+    HDFLIBAPI int32 HBPinquire
+                (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
+               int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
+                 int16 *pspecial);
+
+    HDFLIBAPI int32 HBPread
+                (accrec_t * access_rec, int32 length, void * data);
+
+    HDFLIBAPI int32 HBPwrite
+                (accrec_t * access_rec, int32 length, const void * data);
+
+    HDFLIBAPI intn HBPendaccess
+                (accrec_t * access_rec);
+
+    HDFLIBAPI int32 HBPcloseAID
+                (accrec_t * access_rec);
+
+    HDFLIBAPI int32 HBPinfo
+                (accrec_t * access_rec, sp_info_block_t * info_block);
 
 /*
    ** from hfiledd.c

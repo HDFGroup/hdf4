@@ -129,6 +129,7 @@
 #define SPECIAL_COMP 3      /* Compressed */
 #define SPECIAL_VLINKED 4   /* Variable-length linked blocks */
 #define SPECIAL_CHUNKED 5   /* chunked element */
+#define SPECIAL_BUFFERED 6  /* Buffered element */
 
 #endif /* _HTAGS_H */
 

@@ -937,6 +937,9 @@ HCPstread(accrec_t * access_rec)
     compinfo_t *info;           /* information on the special element */
     int32       ret_value;      /* AID to return */
 
+#ifdef QAK
+printf("%s: check 1.0\n",FUNC);
+#endif /* QAK */
     if ((ret_value = HCIstaccess(access_rec, DFACC_READ)) == FAIL)
         HGOTO_ERROR(DFE_DENIED, FAIL);
     info = (compinfo_t *) access_rec->special_info;
@@ -976,6 +979,9 @@ HCPstwrite(accrec_t * access_rec)
     compinfo_t *info;               /* information on the special element */
     int32       ret_value;          /* AID to return */
 
+#ifdef QAK
+printf("%s: check 1.0\n",FUNC);
+#endif /* QAK */
     if ((ret_value = HCIstaccess(access_rec, DFACC_WRITE)) == FAIL)
         HGOTO_ERROR(DFE_DENIED, FAIL);
     info = (compinfo_t *) access_rec->special_info;
@@ -1025,12 +1031,18 @@ HCPseek(accrec_t * access_rec, int32 offset, intn origin)
     if (offset < 0)
         HGOTO_ERROR(DFE_RANGE, FAIL);
 
+#ifdef QAK
+printf("%s: check 1.0\n",FUNC);
+#endif /* QAK */
     info = (compinfo_t *) access_rec->special_info;
     if ((ret_value = (*(info->minfo.model_funcs.seek)) (access_rec, offset, origin)) == FAIL)
         HGOTO_ERROR(DFE_MODEL, FAIL);
 
     /* set the offset */
     access_rec->posn = offset;
+#ifdef QAK
+printf("%s: check 1.0: access_rec->posn=%d, info->length=%d\n",FUNC,(int)access_rec->posn,(int)info->length);
+#endif /* QAK */
 
 done:
     if(ret_value == FAIL)   
@@ -1073,12 +1085,18 @@ HCPread(accrec_t * access_rec, int32 length, void * data)
 
     info = (compinfo_t *) access_rec->special_info;
 
+#ifdef QAK
+printf("%s: length=%d, data=%p\n",FUNC,(int)length,data);
+#endif /* QAK */
     /* adjust length if it falls off the end of the element */
     if (length == 0)
         length = info->length - access_rec->posn;
     else if (length < 0 || access_rec->posn + length > info->length)
         HGOTO_ERROR(DFE_RANGE, FAIL);
 
+#ifdef QAK
+printf("%s: check 1.0: access_rec->posn=%d, info->length=%d\n",FUNC,(int)access_rec->posn,(int)info->length);
+#endif /* QAK */
     if ((*(info->minfo.model_funcs.read))(access_rec, length, data) == FAIL)
         HGOTO_ERROR(DFE_MODEL, FAIL);
 
@@ -1130,12 +1148,18 @@ HCPwrite(accrec_t * access_rec, int32 length, const void * data)
     if (length < 0)
         HRETURN_ERROR(DFE_RANGE, FAIL);
 
+#ifdef QAK
+printf("%s: length=%d\n",FUNC,(int)length);
+#endif /* QAK */
     info = (compinfo_t *) access_rec->special_info;
     if ((*(info->minfo.model_funcs.write)) (access_rec, length, data) == FAIL)
         HGOTO_ERROR(DFE_MODEL, FAIL);
 
     /* update access record, and information about special element */
     access_rec->posn += length;
+#ifdef QAK
+printf("%s: check 1.0: access_rec->posn=%d, info->length=%d\n",FUNC,(int)access_rec->posn,(int)info->length);
+#endif /* QAK */
     if (access_rec->posn > info->length)
       {
           int32       data_off;		/* offset of the data we are checking */
@@ -1153,6 +1177,9 @@ HCPwrite(accrec_t * access_rec, int32 length, const void * data)
           if (HP_write(file_rec, local_ptbuf, 4) == FAIL)     
               HGOTO_ERROR(DFE_WRITEERROR, FAIL);
       }     /* end if */
+#ifdef QAK
+printf("%s: check 2.0: access_rec->posn=%d, info->length=%d\n",FUNC,(int)access_rec->posn,(int)info->length);
+#endif /* QAK */
 
     ret_value=length;  /* return length of bytes written */
 

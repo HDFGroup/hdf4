@@ -161,6 +161,10 @@ extern funclist_t comp_funcs;
    For definition of the chunked data element, see hchunk.c. */
 #include "hchunks.h"
 
+/* Functions for accessing buffered data elements.
+   For definition of the buffered data element, see hbuffer.c. */
+extern funclist_t buf_funcs;
+
 /* Table of these function tables for accessing special elements.  The first
    member of each record is the speical code for that type of data element. */
 functab_t   functab[] =
@@ -172,12 +176,10 @@ functab_t   functab[] =
 #ifdef LATER
 	{SPECIAL_VLINKED, &vlnk_funcs},
 #endif /* LATER */
+	{SPECIAL_BUFFERED, &buf_funcs},
 	{0, NULL}					/* terminating record; add new record */
 			   /* before this line */
 };
-
-/* Prototypes - this needs to go in hproto.h */
-extern int32 HDset_special_info(int32 access_id, sp_info_block_t * info_block);
 
 /*
    ** Declaration of private functions.
@@ -827,6 +829,11 @@ Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
 
           case SPECIAL_CHUNKED:
             if (HMCPcloseAID(access_rec) == FAIL)
+              HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
+            break;
+  
+          case SPECIAL_BUFFERED:
+            if (HBPcloseAID(access_rec) == FAIL)
               HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
             break;
   

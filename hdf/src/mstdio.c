@@ -93,6 +93,9 @@ HCPmstdio_stread(accrec_t * access_rec)
     /* set the offset */
     info->minfo.model_info.stdio_info.pos = 0;
 
+#ifdef TESTING
+printf("%s(): info=%p\n", FUNC, info);
+#endif
     if ((*(info->cinfo.coder_funcs.stread)) (access_rec) == FAIL)
         HRETURN_ERROR(DFE_CODER, FAIL);
     return (SUCCEED);
@@ -127,18 +130,18 @@ HCPmstdio_stwrite(accrec_t * access_rec)
     info = (compinfo_t *) access_rec->special_info;
 
 #ifdef TESTING
-    printf("HCPmstdio_stwrite(): info=%p\n", info);
+printf("%s(): info=%p\n", FUNC, info);
 #endif
     /* set the offset */
     info->minfo.model_info.stdio_info.pos = 0;
 
 #ifdef TESTING
-    printf("HCPmstdio_stwrite(): before coder_funcs.write=%p\n", info->cinfo.coder_funcs.write);
+printf("%s(): before coder_funcs.write=%p\n", FUNC, info->cinfo.coder_funcs.write);
 #endif
     if ((*(info->cinfo.coder_funcs.stwrite)) (access_rec) == FAIL)
         HRETURN_ERROR(DFE_CODER, FAIL);
 #ifdef TESTING
-    printf("HCPmstdio_stwrite(): after coder_funcs.write=%p\n", info->cinfo.coder_funcs.write);
+printf("%s(): after coder_funcs.write=%p\n", FUNC, info->cinfo.coder_funcs.write);
 #endif
     return (SUCCEED);
 }   /* HCPmstdio_stwrite() */
@@ -257,12 +260,12 @@ HCPmstdio_write(accrec_t * access_rec, int32 length, const void * data)
     info->minfo.model_info.stdio_info.pos += length;
 
 #ifdef TESTING
-    printf("HCPmstdio_write(): before function ptr call func_ptr=%p\n", info->cinfo.coder_funcs.write);
+printf("%s(): before function ptr call func_ptr=%p\n", FUNC, info->cinfo.coder_funcs.write);
 #endif
     if ((ret = (*(info->cinfo.coder_funcs.write)) (access_rec, length, data)) == FAIL)
         HRETURN_ERROR(DFE_CODER, FAIL);
 #ifdef TESTING
-    printf("HCPmstdio_write(): after function ptr call\n");
+printf("%s(): after function ptr call, ret=%d\n",FUNC,(int)ret);
 #endif
     return (ret);
 }   /* HCPmstdio_write() */

@@ -459,6 +459,12 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 
 
 /*
+   ** from hbuffer.c
+ */
+    HDFLIBAPI intn HBconvert
+                (int32 aid);
+
+/*
    ** from herr.c
  */
     HDFLIBAPI const char *HEstring

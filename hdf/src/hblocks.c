@@ -190,7 +190,7 @@ funclist_t  linked_funcs =
     HLPwrite,
     HLPendaccess,
     HLPinfo,
-    NULL         /* no routine registerd */
+    NULL         /* no routine registered */
 };
 
 /* ------------------------------------------------------------------------
@@ -1131,7 +1131,7 @@ printf("%s: check 5, remaining=%d\n",FUNC,remaining);
                     &(t_link->block_list[block_idx]);
 
 #ifdef QAK
-printf("%s: check 6\n",FUNC);
+printf("%s: check 6, relative_posn=%d\n",FUNC,(int)relative_posn);
 #endif /* QAK */
                 access_id = Hstartread(access_rec->file_id, DFTAG_LINKED,
                                        current_block->ref);
