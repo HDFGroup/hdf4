@@ -132,9 +132,16 @@ typedef struct {
   count != len when a string is resized to something smaller
 
 */
+#ifdef HDF
+#define NC_compare_string(s1,s2) ((s1)->hash!=(s2)->hash ? 1 : HDstrcmp((s1)->values,(s2)->values))
+#endif /* HDF */
+
 typedef struct {
 	unsigned count ;
         unsigned len ; 
+#ifdef HDF
+    uint32 hash;        /* [non-perfect] hash value for faster comparisons */
+#endif /* HDF */
 	char *values ;
 } NC_string ;
 

@@ -8,6 +8,28 @@
 #include	"local_nc.h"
 #include	"alloc.h"
 
+#ifdef HDF
+static uint32 compute_hash(unsigned count, const char *str)
+{
+    uint32 ret=0;
+    uint32 temp;
+
+    while(count>sizeof(uint32))
+      {
+          HDmemcpy((VOIDP)&temp,(const VOIDP)str,sizeof(uint32));
+          ret+=temp;
+          str+=sizeof(uint32);
+          count-=sizeof(uint32);
+      } /* end while */
+    if(count>0)
+      {
+          temp=0;
+          HDmemcpy((VOIDP)&temp,(const VOIDP)str,count);
+          ret+=temp;
+      } /* end if */
+    return(ret);
+} /* end compute_hash() */
+#endif /* HDF */
 
 NC_string *
 NC_new_string(count, str)
@@ -31,6 +53,9 @@ const char *str ;
 		goto alloc_err ;
 	ret->count = count ;
         ret->len   = count ;
+#ifdef HDF
+    ret->hash=compute_hash(count,str);
+#endif /* HDF */
 	if(count != 0 ) /* allocate */
 	{
 		memlen = count + 1 ;
@@ -95,6 +120,9 @@ const char *str ;
         
         /* make sure len is always == to the string length */
         old->len = count ;
+#ifdef HDF
+    old->hash=compute_hash(count,str);
+#endif /* HDF */
 
 	return(old) ;
 }
