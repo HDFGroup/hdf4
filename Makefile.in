@@ -182,7 +182,7 @@ allnofortran:
           SUBDIRS="$(NETCDFDIR)" subdn
 
 testnofortran:
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=hdf-testnofortran \
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=test-hdfnofortran \
           SUBDIRS="$(HDFDIR)" subd
 	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=test \
           SUBDIRS="$(NETCDFDIR)" subdn

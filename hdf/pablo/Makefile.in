@@ -182,7 +182,7 @@ pablonofortran: $(HDFLIB)/libdf.a $(PCOBJS)
 	$(AR) rcuv libdf-inst.a $(HOBJS) $(PCOBJS)
 	$(RANLIB) libdf-inst.a
 
-nofortran: pablonofortran 
+nofortran: all 
 
 rebuild:
 	@$(MAKE) all $(HDF_FLAGS) FRC=force_rebuild
