@@ -108,6 +108,9 @@ extern int32 SDgetdimstrs
 extern int32 SDsetexternalfile
     PROTO((int32 id, char *filename, int32 offset));
 
+extern int32 SDfindattr
+    PROTO((int32 id, char *attrname));
+
 extern uint16 SDidtoref
     PROTO((int32 id));
 

@@ -14,6 +14,8 @@ static bool_t hdf_xdr_NCvdata
         VOIDP values));
 static bool_t hdf_xdr_NCv1data
     PROTO((NC *handle,NC_var *vp,u_long where,nc_type type,VOIDP values));
+static int32 hdf_get_vp_aid
+    PROTO((NC *handle, NC_var *vp));
 
 /*
  * If you use ./xdrstdio.c rather than ./xdrposix.c as
@@ -727,7 +729,7 @@ NC_var *vp;
   Return an AID for the current variable.  Return FALSE on error TRUE on success
 
 */
-int32
+static int32
 hdf_get_vp_aid(handle, vp)
 NC        * handle;
 NC_var    * vp;
@@ -736,7 +738,7 @@ NC_var    * vp;
     /* attach to proper data storage*/
     if(!vp->data_ref)
         vp->data_ref = hdf_get_data(handle, vp);
-        
+
     /*
      * Fail if there is no data
      */

@@ -20,6 +20,9 @@ static char mrcsid[] = "$Id$";
 /* #define NOBUF */
 #include <stdio.h>
 #include "netcdf.h"
+#ifdef HDF
+#include "hdf.h"
+#endif
 
 # define assert(ex) {if (!(ex)){fprintf(stderr,"Assertion failed: file %s, line %d\n", __FILE__, __LINE__);exit(1);}}
 
@@ -356,9 +359,14 @@ char sentence[NUM_RECS* SIZE_1 -1] =
 short shs[] = {97, 99} ;
 long birthday = 82555 ;
 #define M_E	2.7182818284590452354
-float e = M_E ;
+float e = (float)M_E ;
 double pinot = 3.25 ;
 double zed = 0.0 ;
+
+#if defined TEST_PC || defined TEST_WIN
+#include <stdio.h>
+FILE *dbg_file;
+#endif
 
 main()
 {
@@ -372,6 +380,11 @@ main()
 	long iilong ;
 	struct tcdfvar *tvp = testvars ;
 	union getret got ;
+
+#if defined TEST_PC || defined TEST_WIN
+    dbg_file=fopen("test.dbg","w+");
+#endif
+printf("Entering cdftest()\n");
 
 #ifdef MDEBUG
 	malloc_debug(2) ;
@@ -662,5 +675,8 @@ main()
 	ret = ncclose(id) ;
 	printf("re ncclose ret = %d\n", (int)ret) ;
 
+#if defined TEST_PC || defined TEST_WIN
+    fclose(dbg_file);
+#endif
 	return 0;
 }

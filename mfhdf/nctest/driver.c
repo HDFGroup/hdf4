@@ -17,12 +17,21 @@
    * permission.
    */
 
+#if defined TEST_PC || defined TEST_WIN
+#include <stdio.h>
+FILE *dbg_file;
+#endif
+
 int
 main()
 {
     extern int ncopts;		/* netCDF error options */
 
     static char testfile[] = "test.nc";
+
+#if defined TEST_PC || defined TEST_WIN
+    dbg_file=fopen("test.dbg","w+");
+#endif
 
 #ifdef MDEBUG
     malloc_debug(2);
@@ -97,6 +106,9 @@ main()
 
     test_nctypelen();
 
+#if defined TEST_PC || defined TEST_WIN
+    fclose(dbg_file);
+#endif
 #ifdef vms
 #define EXIT_SUCCESS 1
 #else

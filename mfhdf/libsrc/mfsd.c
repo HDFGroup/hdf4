@@ -34,9 +34,7 @@ based?  Right now, it is zero based.
 #include "local_nc.h"
 #include "hfile.h"
 
-extern NC *NC_check_id() ;
-
-NC_dim * SDIget_dim
+PRIVATE NC_dim * SDIget_dim
     PROTO((NC *handle, int32 id));
 
 
@@ -57,6 +55,7 @@ PRIVATE intn SDIputattr PROTO((NC_array **ap, char *name, int32 nt,
     intn count, VOIDP data));
 PRIVATE int32 SDIgetcoordvar PROTO((NC *handle, NC_dim *dim, int32 id,
     int32 nt));
+PRIVATE int32 SDIfreevarAID PROTO((NC * handle, int32 index));
 
 /* ---------------------------- SDIhandle_from_id ---------------------------- */
 /*
@@ -81,10 +80,10 @@ intn typ;
     tmp = (id >> 16) & 0xff;
     if(tmp != typ)
         return(NULL);
-    
+
     /* get the file from top 8 bits*/
     tmp = (id >> 24) & 0xff;
-    handle = NC_check_id(tmp);
+    handle = NC_check_id((int)tmp);
 
     return(handle);
 
@@ -232,13 +231,13 @@ int32 id;
     fprintf(stderr, "SDend: I've been called\n");
 #endif
 
-    cdfid = id & 0xffff;
+    cdfid = (intn)id & 0xffff;
 
 #ifndef SYNC_ON_EACC
 
     /* get the handle */
     handle = SDIhandle_from_id(id, CDFTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
         return FAIL;
 
     /* make sure we can write to the file */
@@ -287,7 +286,6 @@ int32 * attrs;
 {
 
     NC * handle;
-    intn cdfid;
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDnumber: I've been called\n");
@@ -459,10 +457,11 @@ VOIDP data;
 {
 
     NC     * handle;
-    int32    varid, status;
+    intn    varid;
+    int32   status;
 #ifdef BIG_LONGS
     long     Start[MAX_VAR_DIMS], End[MAX_VAR_DIMS], Stride[MAX_VAR_DIMS];
-#else 
+#else
     int32    *Start, *End, *Stride;
 #endif
 
@@ -474,7 +473,7 @@ VOIDP data;
         return FAIL;
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
         return FAIL;
 
     if(handle->vars == NULL)
@@ -484,7 +483,7 @@ VOIDP data;
     handle->xdrs->x_op = XDR_DECODE ;
     
     /* oops, how do we know this ? */
-    varid = sdsid & 0xffff;
+    varid = (intn)sdsid & 0xffff;
 
     /*
      * In general, (long) == int32 
@@ -517,13 +516,13 @@ VOIDP data;
     if(stride == NULL)
         status = NCvario(handle, varid, Start, End, (Void *)data);
     else
-        status = NCgenio(handle, varid, Start, End, Stride, NULL, (VOID *)data);
+        status = NCgenio(handle, varid, Start, End, Stride, NULL, (Void *)data);
 
     if(status == -1)
         return FAIL;
     else
         return SUCCEED;
-            
+
 } /* SDreaddata */
 
 /* ---------------------------- SDgetrefnumber ---------------------------- */
@@ -703,7 +702,7 @@ VOIDP pmax, pmin;
 /*
 
         --- create a new data set ---
-sdsid   = SDcreate(fid, name, numbertype, rank, dimsizes);  
+sdsid   = SDcreate(fid, name, numbertype, rank, dimsizes);
 
         --- associate a name with a dimension.  If a prev sdsid is ---
         --- provided then it is assumed that the current dimension is the ---
@@ -713,7 +712,7 @@ status  = SDsetdim(sdsid, dimnumber, dimname, [prev sdsid] );
         --- note that it will be possible to store values for a ---
         --- dimension without having to name it ---
 status  = SDsetdimvalues(sdsid, dimnumber, numbertype, count, data);
-        
+
         --- set the units and format strings ---
 status  = SDsetdimstrs(sdsid, dimnumber, unitstr, formatstr);
 
@@ -727,7 +726,7 @@ status  = SDendaccess(sdsid);
 /*
 
   Simulate a call to ncvardef without having to be in define mode
-  
+
   It looks like for the call to NC_new_var() we need to have dimension
   IDs already.  So I guess we should just create the fake dimensions
   now and when optional information comes in (i.e.  name, tying
@@ -751,7 +750,8 @@ int32 nt, rank, *dimsizes;
     NC      * handle;
     NC_var  * var;
     NC_dim  * newdim;
-    int32     sdsid, nctype;
+    int32     sdsid;
+    nc_type   nctype;
     char      dimname[MAX_NC_NAME];
     intn      i, num;
     intn    * dims;
@@ -782,30 +782,30 @@ int32 nt, rank, *dimsizes;
         num = (handle->dims ? handle->dims->count : 0);
         sprintf(dimname, "fakeDim%d", num);
 
-        newdim = (NC_dim *) NC_new_dim(dimname, dimsizes[i]); 
+        newdim = (NC_dim *) NC_new_dim(dimname, dimsizes[i]);
         if(newdim == NULL) return FAIL;
-        
+
         if(handle->dims == NULL) { /* first time */
             handle->dims = NC_new_array(NC_DIMENSION,(unsigned)1, (Void *)&newdim);
             if(handle->dims == NULL)
                 return FAIL;
-	} else if(handle->dims->count >= MAX_NC_DIMS) {
+	    } else if(handle->dims->count >= MAX_NC_DIMS) {
             return FAIL;
-	} else {
+	    } else {
             if( NC_incr_array(handle->dims, (Void *)&newdim) == NULL)
                 return FAIL;
-	}
+	    }
 
         dims[i] = (intn) handle->dims->count -1;
 
     }
-    
+
     /* create the actual variable */
-    nctype = hdf_unmap_type(nt);
-    var = (NC_var *) NC_new_var(name, nctype, rank, dims);
+    nctype = hdf_unmap_type((int)nt);
+    var = (NC_var *) NC_new_var(name, nctype, (int)rank, dims);
     if(var == NULL)
         return FAIL;
-    
+
     /* NC_new_var strips off "nativeness" add it back in if appropriate */
     var->HDFtype = nt;
     var->HDFsize = DFKNTsize(nt);
@@ -830,7 +830,7 @@ int32 nt, rank, *dimsizes;
     /* compute all of the shape information */
     if(NC_var_shape(var, handle->dims) == -1)
         return FAIL;
-    
+
     /* create a handle we can give back to the user */
     sdsid  = (((int32) fid) << 24) + (((int32) SDSTYPE) << 16);
     sdsid += handle->vars->count -1;
@@ -938,7 +938,7 @@ char  * name;
     NC_string * old, * new ;
     NC_array ** ap;
     int32       len, ii;
-	
+
 #ifdef SDDEBUG
     fprintf(stderr, "SDsetdimname: I've been called\n");
 #endif
@@ -958,7 +958,7 @@ char  * name;
     dp = (NC_dim**)handle->dims->values ;
     for(ii = 0 ; ii < handle->dims->count ; ii++, dp++) {
         if( len == (*dp)->name->len &&
-           HDstrncmp(name, (*dp)->name->values, len) == 0) {
+           HDstrncmp(name, (*dp)->name->values, (size_t)len) == 0) {
             if(dim != (*dp)) {
                 /* a dimension with this name already exists */
                 /* so change to point to it */
@@ -1085,7 +1085,7 @@ VOIDP    data;
 #endif
 
     if(*ap == NULL ) { /* first time */
-        attr = (NC_attr *) NC_new_attr(name,nt,count,data) ;
+        attr = (NC_attr *) NC_new_attr(name,(nc_type)nt,(unsigned)count,data) ;
         if(attr == NULL)
             return FAIL;
         *ap = NC_new_array(NC_ATTRIBUTE,(unsigned)1, (Void*)&attr) ;
@@ -1096,7 +1096,7 @@ VOIDP    data;
 
     if((atp = NC_findattr(ap, name)) != NULL) { /* name in use */
         old = *atp ;
-        *atp = (NC_attr *) NC_new_attr(name,nt,count,data);
+        *atp = (NC_attr *) NC_new_attr(name,(nc_type)nt,(unsigned)count,data);
         if(*atp == NULL) {
             *atp = old;
             return FAIL;
@@ -1110,7 +1110,7 @@ VOIDP    data;
     }
 
     /* just add it */
-    attr = (NC_attr *) NC_new_attr(name,nt,count,data);
+    attr = (NC_attr *) NC_new_attr(name,(nc_type)nt,(unsigned)count,data);
     if(attr == NULL)
         return FAIL;
     if(NC_incr_array((*ap), (Void *)&attr) == NULL)
@@ -1174,7 +1174,7 @@ VOIDP pmax, pmin;
     handle->flags |= NC_HDIRTY;
 
     return SUCCEED;
-    
+
 } /* SDsetrange */
 
 /* ------------------------------ SDsetattr ------------------------------- */
@@ -1198,12 +1198,11 @@ int32 nt;
 intn  count;
 VOIDP data;
 #endif
-{ 
+{
 
     NC_array **ap;
     NC_var   * var;
     NC       * handle;
-    int32      cdfid;
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDsetattr: I've been called\n");
@@ -1234,7 +1233,7 @@ VOIDP data;
         return FAIL;
     
     /* hand over to SDIputattr */
-    if(SDIputattr(ap, name, hdf_unmap_type(nt), count, data) == FAIL)
+    if(SDIputattr(ap, name, hdf_unmap_type((int)nt), count, data) == FAIL)
         return FAIL;
     
     /* make sure it gets reflected in the file */
@@ -1273,7 +1272,6 @@ intn  *count;
     NC_attr  **atp;
     NC_var   * var;
     NC       * handle;
-    int32      cdfid;
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDattrinfo: I've been called\n");
@@ -1349,7 +1347,6 @@ VOIDP buf;
     NC_attr  **atp;
     NC_var   * var;
     NC       * handle;
-    int32    * cdfid;
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDreadattr: I've been called\n");
@@ -1417,17 +1414,18 @@ VOIDP data;
 {
 
     NC     * handle;
-    int32    varid, status;
+    intn    varid;
+    int32   status;
 #ifdef BIG_LONGS
     long     Start[MAX_VAR_DIMS], End[MAX_VAR_DIMS], Stride[MAX_VAR_DIMS];
-#else 
+#else
     int32    *Start, *End, *Stride;
 #endif
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDwritedata: I've been called\n");
 #endif
-    
+
     if((start == NULL) || (end == NULL) || (data == NULL))
         return FAIL;
 
@@ -1442,7 +1440,7 @@ VOIDP data;
     handle->xdrs->x_op = XDR_ENCODE;
     
     /* oops, how do we know this ? */
-    varid = sdsid & 0xffff;
+    varid = (intn)sdsid & 0xffff;
 
     /*
      * In general, (long) == int32 
@@ -1880,7 +1878,8 @@ int32    id, nt;
 { 
 
     NC_string * name;
-    int32       ii, nctype, len;
+    int32       ii, len;
+    nc_type     nctype;
     NC_var   ** dp, *var;
     intn        dimindex;
 
@@ -1890,7 +1889,7 @@ int32    id, nt;
     dp = (NC_var**)handle->vars->values ;
     for(ii = 0 ; ii < handle->vars->count ; ii++, dp++) {
         if( len == (*dp)->name->len &&
-           HDstrncmp(name->values, (*dp)->name->values, len) == 0) {
+           HDstrncmp(name->values, (*dp)->name->values, (size_t)len) == 0) {
 
             /* see if we need to change the number type */
             
@@ -1898,7 +1897,7 @@ int32    id, nt;
 #ifdef SDDEBUG
                 fprintf(stderr, "SDIgetcoordvar redefining type\n");
 #endif
-                (*dp)->type = hdf_unmap_type(nt);
+                (*dp)->type = hdf_unmap_type((intn)nt);
                 (*dp)->HDFtype = nt;
                 
                 /* recompute all of the shape information */
@@ -1913,8 +1912,8 @@ int32    id, nt;
     /* create a new var with this dim as only coord */
     if(nt == 0) nt = DFNT_FLOAT32;
 
-    nctype = hdf_unmap_type(nt);
-    dimindex = id;
+    nctype = hdf_unmap_type((intn)nt);
+    dimindex = (intn)id;
     var = (NC_var *) NC_new_var(name->values, nctype, (unsigned)1, &dimindex);
     if(var == NULL)
         return FAIL;
@@ -1958,26 +1957,26 @@ char  *l, *u, *f;
 
     NC        * handle;
     NC_dim    * dim;
-    int32       varid;
+    intn        varid;
     NC_var    * var;
-	
+
 #ifdef SDDEBUG
     fprintf(stderr, "SDsetdimstrs: I've been called\n");
 #endif
 
     /* get the handle */
     handle = SDIhandle_from_id(id, DIMTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
         return FAIL;
 
     /* get the dimension structure */
     dim = SDIget_dim(handle, id);
     if(dim == NULL)
         return FAIL;
-    
+
     /* look for a variable with the same name */
-    varid = SDIgetcoordvar(handle, dim, id & 0xffff, 0);
-    if(varid == NULL)
+    varid = (intn)SDIgetcoordvar(handle, dim, (int32)(id & 0xffff), (int32)0);
+    if(varid == FAIL)
         return FAIL;
 
     /* get the variable object */
@@ -1986,18 +1985,18 @@ char  *l, *u, *f;
         return FAIL;
 
     /* set the attributes */
-    if(l) 
-        if(SDIputattr(&var->attrs, "long_name", NC_CHAR, 
+    if(l)
+        if(SDIputattr(&var->attrs, "long_name", NC_CHAR,
                       (intn) HDstrlen(l), l) == FAIL)
             return FAIL;
 
-    if(u) 
-        if(SDIputattr(&var->attrs, "units", NC_CHAR, 
+    if(u)
+        if(SDIputattr(&var->attrs, "units", NC_CHAR,
                       (intn) HDstrlen(u), u) == FAIL)
             return FAIL;
 
-    if(f) 
-        if(SDIputattr(&var->attrs, "format", NC_CHAR, 
+    if(f)
+        if(SDIputattr(&var->attrs, "format", NC_CHAR,
                       (intn) HDstrlen(f), f) == FAIL)
             return FAIL;
 
@@ -2015,6 +2014,7 @@ char  *l, *u, *f;
   Free the AID of the variable with index index
 
 */
+PRIVATE
 #ifdef PROTOTYPE
 int32 SDIfreevarAID(NC * handle, int32 index)
 #else
@@ -2038,7 +2038,7 @@ int32 index;
 
     var = (NC_var *) *ap;
 
-    if(var->aid != NULL && var->aid != FAIL)
+    if(var->aid != 0 && var->aid != FAIL)
         Hendaccess(var->aid);
 
     var->aid = FAIL;
@@ -2068,7 +2068,8 @@ VOIDP data;
 
     NC        * handle;
     NC_dim    * dim;
-    int32       varid, status;
+    int32       status;
+    intn        varid;
     long        start[1], end[1];
 	
 #ifdef SDDEBUG
@@ -2077,7 +2078,7 @@ VOIDP data;
 
     /* get the handle */
     handle = SDIhandle_from_id(id, DIMTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
         return FAIL;
 
     /* get the dimension structure */
@@ -2088,9 +2089,9 @@ VOIDP data;
     /* sanity check */
     if(count != dim->size)
         return FAIL;
-    
+
     /* look for a variable with the same name */
-    varid = SDIgetcoordvar(handle, dim, id & 0xffff, nt);
+    varid = (intn)SDIgetcoordvar(handle, dim, id & 0xffff, nt);
     if(varid == -1)
         return FAIL;
 
@@ -2136,7 +2137,8 @@ VOIDP data;
 
     NC        * handle;
     NC_dim    * dim;
-    int32       varid, status;
+    int32       status;
+    intn        varid;
     long        start[1], end[1];
 	
 #ifdef SDDEBUG
@@ -2155,7 +2157,7 @@ VOIDP data;
 
     /* look for a variable with the same name */
     /* assume type Float32 can be over-ridden later */
-    varid = SDIgetcoordvar(handle, dim, id & 0xffff, 0);
+    varid = (intn)SDIgetcoordvar(handle, dim, (int32)(id & 0xffff), (int32)0);
     if(varid == -1)
         return FAIL;
 
@@ -2295,7 +2297,7 @@ intn  len;
         dp = (NC_var**)handle->vars->values;
         for(ii = 0 ; ii < handle->vars->count ; ii++, dp++) {
             if( namelen == (*dp)->name->len &&
-               HDstrncmp(name, (*dp)->name->values, namelen) == 0)
+               HDstrncmp(name, (*dp)->name->values, (size_t)namelen) == 0)
                 {
                     var = (*dp);
                 }
@@ -2379,12 +2381,12 @@ int32   offset;
 #ifdef SDDEBUG
     fprintf(stderr, "SDsetexternalfile: I've been called\n");
 #endif
-    
+
     if(!filename || offset < 0)
         return FAIL;
 
     handle = SDIhandle_from_id(id, SDSTYPE);
-    if(handle == NULL || !handle->is_hdf) 
+    if(handle == NULL || !handle->is_hdf)
         return FAIL;
 
     if(handle->vars == NULL)
@@ -2396,10 +2398,10 @@ int32   offset;
 
     /* already exists */
     if(var->data_ref) {
-        
+
         /* no need to give a length since the element already exists */
-        status = HXcreate(handle->hdf_file, DATA_TAG, (uint16) var->data_ref,
-                          filename, offset, 0);
+        status = (intn)HXcreate(handle->hdf_file, (uint16)DATA_TAG, (uint16) var->data_ref,
+                          filename, offset, (int32)0);
 
     } else {
         int32   length;
@@ -2409,17 +2411,17 @@ int32   offset;
 
         /* element doesn't exist so we need a reference number */
         var->data_ref = Hnewref(handle->hdf_file);
-        if(var->data_ref == 0) 
+        if(var->data_ref == 0)
             return FAIL;
 
         /* need to give a length since the element does not exist yet */
-        status = HXcreate(handle->hdf_file, DATA_TAG, (uint16) var->data_ref,
+        status = (intn)HXcreate(handle->hdf_file, (uint16)DATA_TAG, (uint16) var->data_ref,
                           filename, offset, length);
 
     }
 
     if(status != FAIL) {
-        if((var->aid != NULL) && (var->aid != FAIL))
+        if((var->aid != 0) && (var->aid != FAIL))
             Hendaccess(var->aid);
         var->aid = status;
     }
@@ -2483,7 +2485,7 @@ char  * attrname;
     for(attrid = 0 ; attrid < ap->count ; attrid++, attr++)
 	{
             if( len == (*attr)->name->len &&
-               HDstrncmp(attrname, (*attr)->name->values, len) == 0)
+               HDstrncmp(attrname, (*attr)->name->values, (size_t)len) == 0)
 		{
                     return(attrid) ; /* found it */
 		}

@@ -7,21 +7,16 @@
 #         OS2 = 0     -> DOS
 #         OS2 = 1     -> OS/2
 
-OS2      = 0
+!INCLUDE ..\macros.mk
 
 AR       = LIB
-ARFLAGS  = 
-
-CC       = cl
-CFLAGS   = /c /AL /Za
+ARFLAGS  =
 
 LINK     = link
 LFLAGS   = /nod
 
-DESTDIR  = C:
-
 INCDIR   = .
-INCLUDES = /I$(INCDIR)
+INCLUDES = /I$(INCDIR) /I\hdf\hdf\include
 
 LIBDIR   = $(DESTDIR)\lib
 
@@ -31,7 +26,7 @@ OS2LIB    = os2.lib
 !ELSE
 OS2LIB    =
 !ENDIF
-LIBS     = $(XDRLIB) llibc7.lib $(OS2LIB)
+LIBS     = $(XDRLIB) llibe7.lib $(OS2LIB)
 
 XDROBJS  = xdr.obj xdrarray.obj xdrfloat.obj xdrstdio.obj byteordr.obj
 XDRLOBJS = -+xdr -+xdrarray -+xdrfloat -+xdrstdio -+byteordr

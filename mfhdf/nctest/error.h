@@ -5,10 +5,14 @@
  *********************************************************************/
 
 #undef PROTO
-#ifndef NO_HAVE_PROTOTYPES 
+#ifndef NO_HAVE_PROTOTYPES
 #   define	PROTO(x)	x
 #else
 #   define	PROTO(x)	()
+#endif
+
+#ifdef HDF
+#include "hdf.h"
 #endif
 
 #ifdef __cplusplus

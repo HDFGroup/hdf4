@@ -6,22 +6,17 @@
 #         OS2 = 0     -> DOS
 #         OS2 = 1     -> OS/2
 
-OS2      = 0
+!INCLUDE ..\macros.mk
 
 AR        = lib
 ARFLAGS   =
 
-CC        = cl
-CFLAGS    = /c /AL /Za
-
 LINK      = link
 LFLAGS    = /st:30000 /nod
 
-INCDIR1   = ..\libsrc 
+INCDIR1   = ..\libsrc
 INCDIR2   = ..\xdr
 INCLUDES  = /I$(INCDIR1) /I$(INCDIR2)
-
-DESTDIR   = C:
 
 BINDIR    = $(DESTDIR)\bin
 INCDIR    = $(DESTDIR)\include

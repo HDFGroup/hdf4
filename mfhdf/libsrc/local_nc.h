@@ -16,7 +16,7 @@
 #define FILENAME_MAX  255
 #endif
 
-#ifndef       NO_SYSTEM_XDR_INCLUDES
+#ifndef       NO_SYS_XDR_INC
 #include	<rpc/types.h>
 #include	<rpc/xdr.h>
 #else

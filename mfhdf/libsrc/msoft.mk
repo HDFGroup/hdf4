@@ -6,19 +6,16 @@
 #         OS2 = 0     -> DOS
 #         OS2 = 1     -> OS/2
 
-OS2      = 0
+!INCLUDE ..\macros.mk
 
 AR        = LIB
 ARFLAGS   =
 
-CC        = cl
-CFLAGS    = /c /AL /Za /Zg
-
 LINK      = link
 #LFLAGS    = /nod /st:3000
-LFLAGS    = /cod /nod /st:8000
+#LFLAGS    = /cod /nod /st:8000
+LFLAGS=/INFO /COD /ST:8192 /MAP:FULL /SEG:256
 
-DESTDIR   = C:
 LIBDIR    = $(DESTDIR)\lib
 
 HDFDIR    = \hdf\hdf
@@ -26,7 +23,7 @@ HDFDIR    = \hdf\hdf
 INCDIR    = ..\xdr
 INCLUDES  = /I$(INCDIR) /I$(HDFDIR)\include
 
-DEFINES  = /DSWAP /DNO_SYSTEM_XDR_INCLUDES /DDOS_FS
+DEFINES  = /DSWAP /DNO_SYS_XDR_INC /DDOS_FS
 
 NETCDFLIB = netcdf.lib
 CLIBS     = llibc7.lib oldnames.lib
@@ -61,7 +58,7 @@ LOBJS3 = -+hdfsds -+mfsd
 
 all:		$(NETCDFLIB)
 
-$(NETCDFLIB): netcdf.h $(COBJS) 
+$(NETCDFLIB): netcdf.h $(COBJS)
         $(AR) $@ $(ARFLAGS) $(LOBJS1),LIB.LST;
         $(AR) $@ $(ARFLAGS) $(LOBJS2),LIB.LST;
         $(AR) $@ $(ARFLAGS) $(LOBJS3),LIB.LST;
@@ -73,13 +70,15 @@ test:       cdftest.exe hdftest.exe FORCE
 FORCE:
 
 cdftest.exe: cdftest.obj $(NETCDFLIB)
-	$(LINK) $(LFLAGS) cdftest.obj,,,$(LIBS);
+	$(LINK) $(LFLAGS) @cdftest.lnk
+#	$(LINK) $(LFLAGS) cdftest.obj,,,$(LIBS),cdftest;
 
 hdftest.exe: hdftest.obj $(NETCDFLIB)
-    $(LINK) $(LFLAGS) hdftest.obj,,,$(LIBS);
+    $(LINK) $(LFLAGS) @hdftest.lnk
+#    $(LINK) $(LFLAGS) hdftest.obj,,,$(LIBS),hdftest;
 
 clean  :
-	rm -f *.obj *.map *.lst *.bak netcdf.lib cdftest.exe test.cdf
+	del *.obj *.map *.lst *.bak netcdf.lib *.exe test.cdf
 
 install : $(NETCDFLIB)
 	copy $(NETCDFLIB) $(LIBDIR)

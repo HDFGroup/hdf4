@@ -238,4 +238,8 @@ extern bool_t xdrrec_endofrecord();	/* make end of xdr record */
 extern bool_t xdrrec_skiprecord();	/* move to beginning of next record */
 extern bool_t xdrrec_eof();		/* true if no more input */
 
+#ifdef HDF
+#include "hdf.h"
+#endif /* HDF */
+
 #endif /* !__XDR_HEADER__ */

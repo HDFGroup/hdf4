@@ -6,21 +6,12 @@
 #         OS2 = 0     -> DOS
 #         OS2 = 1     -> OS/2
 
-OS2      = 0
-
-FORTRAN_NETCDF = 1
+!INCLUDE ..\macros.mk
 
 AR        = lib
-ARFLAGS   = 
+ARFLAGS   =
 
-ASM       = masm
-
-CC	      = cl
-CFLAGS    = /c /AL /Za
-
-!IF $(FORTRAN_NETCDF)
-F77       = fl
-FFLAGS    = /c /AL
+!IF $(FORT)
 FORTLIB   = llibfor7.lib
 FTEST     = ftest
 !ENDIF

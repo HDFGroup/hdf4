@@ -4,15 +4,18 @@
  *   $Header$
  *********************************************************************/
 
-/* 
- * In-memory structure holding netcdf structure for comparing with 
- * on-disk netcdf.  Whenever a disk netcdf is updated in the test 
- * package, this structure should be updated at the same time, to keep 
+/*
+ * In-memory structure holding netcdf structure for comparing with
+ * on-disk netcdf.  Whenever a disk netcdf is updated in the test
+ * package, this structure should be updated at the same time, to keep
  * them in sync.
  */
 
 
 #include <stdlib.h>
+#ifdef HDF
+#include "hdf.h"
+#endif
 #define ___ 0			/* marker for structure place-holder */
 #define BAD_TYPE  NC_UNSPECIFIED /* must be distinct from valid types */
 

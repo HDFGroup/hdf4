@@ -6,22 +6,17 @@
 #         OS2 = 0     -> DOS
 #         OS2 = 1     -> OS/2
 
-OS2      = 0
+!INCLUDE ..\macros.mk
 
 AR       = LIB
-ARFLAGS  = 
-
-CC        = cl
-CFLAGS	  = /c /AL /Za
+ARFLAGS  =
 
 LINK      = link
-LFLAGS    = /st:10000 /nod
+LFLAGS    = /st:10000 /SEG:256 /nod
 
 INCDIR    =  ..\libsrc
 HDFINCDIR =  \hdf\hdf\include
 INCLUDES  = /I$(INCDIR) /I$(HDFINCDIR)
-
-DESTDIR   = C:
 
 BINDIR    = $(DESTDIR)\bin
 LIBDIR    = $(DESTDIR)\lib
@@ -67,7 +62,8 @@ test:	$(GOAL) FORCE
 FORCE:
 
 $(GOAL): $(MAIN) $(NCTESTLIB) $(NETCDFLIB) $(XDRLIB)
-    $(LINK) $(LFLAGS) $(MAIN)+(vartests+cdftests+dimtests+atttests+misctest),$(GOAL),,@nctest.lnk;
+    $(LINK) $(LFLAGS) @nctest.lnk
+#    $(LINK) $(LFLAGS) $(MAIN)+(vartests+cdftests+dimtests+atttests+misctest),$(GOAL),,@nctest.lnk;
 #    $(LINK) $(LFLAGS) $(MAIN),$(GOAL),,@nctest.lnk;
 
 $(NCTESTLIB):	$(OBJS)

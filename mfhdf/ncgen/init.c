@@ -30,10 +30,10 @@ struct vars vars[MAX_NC_VARS];	/* should be a malloc'ed list, not an array */
 
 struct atts atts[MAX_NC_ATTS];	/* should be a malloc'ed list, not an array */
 
+extern void clearout();
+
 void
 init_netcdf() {			/* initialize global counts, flags */
-    extern void clearout();
-    
     clearout();			/* reset symbol table to empty */
     ndims = 0;
     nvars = 0;

@@ -6,18 +6,10 @@
 #         OS2 = 0     -> DOS
 #         OS2 = 1     -> OS/2
 
-OS2      = 0
-
-CC	  = cl
-CFLAGS	  = /c /AL /Za /DMSDOS
-
-F77	  = fl
-FFLAGS	  = /c /AL
+!INCLUDE ..\macros.mk
 
 LINK	  = link
 LFLAGS	  = /st:10000 /nod /noe
-
-DESTDIR   = C:
 
 INCDIR    = ..\libsrc
 INCLUDES  = /I$(INCDIR)
