@@ -443,6 +443,35 @@ extern int32 HXPcloseAID
     PROTO((accrec_t *access_rec));
 
 /*
+** from hbigext.c
+*/
+extern int32 HBPstread
+    PROTO((accrec_t *rec));
+
+extern int32 HBPstwrite
+    PROTO((accrec_t *rec));
+
+extern int32 HBPseek
+    PROTO((accrec_t *access_rec, int32 offset, int origin));
+
+extern int32 HBPread
+    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
+
+extern int32 HBPwrite
+    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
+
+extern int32 HBPinquire
+    PROTO((accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
+            int32 *plength, int32 *poffset,int32 *pposn, int16 *paccess,
+            int16 *pspecial));
+
+extern int32 HBPendaccess
+    PROTO((accrec_t *access_rec));
+
+extern int32 HBPcloseAID
+    PROTO((accrec_t *access_rec));
+
+/*
 ** from hcomp.c
 */
 

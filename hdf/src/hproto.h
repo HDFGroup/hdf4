@@ -252,6 +252,13 @@ extern int32 HCcreate
         comp_coder_t coder_type, comp_info _HUGE *c_info));
 
 /*
+** from hbigext.c
+*/
+extern int32 HBcreate
+    PROTO((int32 file_id, uint16 tag, uint16 ref, char _HUGE *extern_file_name,
+	    int32 f_offset, int32 start_len));
+
+/*
 ** from herr.c
 */
 extern char _HUGE *HEstring
