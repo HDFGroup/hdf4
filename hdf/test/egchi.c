@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/05/18 22:11:07  sxu
-modified constants for number types
+Revision 1.3  1992/05/29 19:13:01  mfolk
+Added int32 casts to make a couple of routines work with Convex.
 
+ * Revision 1.2  1992/05/18  22:11:07  sxu
+ * modified constants for number types
+ *
  * Revision 1.1  1992/03/01  22:29:07  dilg
  * Initial revision
  *
@@ -94,7 +97,7 @@ doit() {
 	int pid, cid; 		/* refs of vdatas */
 	int eid; 			/* empty vgroup's ref  */
 	int gid; 			/* vgroup's ref  */
-	int tags[10], refs[10];
+	int32 tags[10], refs[10];
 	char * CLASS = "EXAMPLE";
 
 	/* --- generate data here --- */
@@ -112,7 +115,8 @@ doit() {
 	cid  = VHstoredatam(f, "COLOR",(unsigned char*) cvals, NC, DFNT_INT32, "rgb colors", CLASS, 3);
 	if (cid  == -1) { printf(" VHstoredata store COLOR err. "); }
 
-	eid  = VHmakegroup (f, tags, refs, 0, "This is an EMPTY vgroup", CLASS);
+	eid  = VHmakegroup (f, tags, refs, (int32) 0, 
+                                       "This is an EMPTY vgroup", CLASS);
 	if (eid  == -1) { printf(" VHmakegroup err\n"); }
 
 	/* --- create a new vgroup to store the 2 vdatas , the empty vgroup 
@@ -123,7 +127,8 @@ doit() {
 		tags[2] = VGDESCTAG;  refs[2] = eid;
 		tags[3] = 7777 ;      refs[3] = 1;
 
-	gid  = VHmakegroup (f, tags, refs, 4, "here is a vset with 4 links", CLASS);
+	gid  = VHmakegroup (f, tags, refs, (int32) 4, 
+                                     "here is a vset with 4 links", CLASS);
 
 	if (eid  == -1) { printf(" VHmakegroup err\n"); }
 
