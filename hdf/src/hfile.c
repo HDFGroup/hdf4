@@ -4446,7 +4446,7 @@ mopen(char *name, intn flags)
    }
 
   /* check if we have a directory in path name */
-  if (strcmp(target_dir, ".") == 0)
+  if (HDstrcmp(target_dir, ".") == 0)
     { /* default to current directory */
         /* open current working directory */
         if ((cur_dirp = opendir(NULL)) == NULL)
