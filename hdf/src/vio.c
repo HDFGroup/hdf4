@@ -1,95 +1,9 @@
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.25  1993/10/06 20:27:57  koziol
-More compression fixed, and folded Doug's suggested change into VSappendable.
+/* $Id$ */
 
- * Revision 1.24  1993/09/30  19:05:35  koziol
- * Added basic compressing functionality for special tags.
- *
- * Revision 1.23  1993/09/28  18:05:04  koziol
- * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
- * tag handling.  Added new compression special tag type.
- *
- * Revision 1.22  1993/09/02  21:15:50  chouck
- * Was losing AIDs in VSappendable()
- *
- * Revision 1.21  1993/08/19  16:45:49  chouck
- * Added code and tests for multi-order Vdatas
- *
- * Revision 1.20  1993/08/16  21:46:43  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.19  1993/07/23  20:49:20  sxu
- * Changed 'void' to 'VOID' VSdump, Vinitialize, Vsetzap, Remove_vfile and unpackvs.
- *
- * Revision 1.18  1993/07/15  01:26:26  koziol
- * Final Whammy on the VSet memory Leak bug, mostly for maintenance purposes
- *
- * Revision 1.17  1993/07/14  20:53:04  chouck
- * Plugged memory leak on Vdelete() and VSdelete()
- *
- * Revision 1.16  1993/07/14  11:55:51  koziol
- * Fixed memory leaks in freeing trees
- *
- * Revision 1.15  1993/04/22  16:46:58  koziol
- * Fixed a type in VSappendable
- *
- * Revision 1.14  1993/04/22  16:05:54  chouck
- * Minor Vset fixes
- *
- * Revision 1.13  1993/04/19  22:48:36  koziol
- * General Code Cleanup to reduce/remove errors on the PC
- *
- * Revision 1.12  1993/04/15  19:18:48  koziol
- * Fixed bug introduced into the tbbt routines with the last bugfix (sigh)
- *
- * Revision 1.11  1993/04/14  23:09:59  koziol
- * Added counts to the tbbt trees and fixed a bug in VSdelete()
- *
- * Revision 1.10  1993/04/14  21:39:31  georgev
- * Had to add some VOIDP casts to some functions to make the compiler happy.
- *
- * Revision 1.9  1993/04/13  16:50:27  georgev
- * Casting problems on SGI's for two calls to the new balanced tree stuff.
- *
- * Revision 1.8  1993/04/08  18:33:59  chouck
- * Various Vset modifications (additions of Vdelete and VSdelete)
- *
- * Revision 1.7  1993/04/06  17:23:46  chouck
- * Added Vset macros
- *
- * Revision 1.6  1993/03/29  16:50:43  koziol
- * Updated JPEG code to new JPEG 4 code.
- * Changed VSets to use Threaded-Balanced-Binary Tree for internal
- * 	(in memory) representation.
- * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
- * 	to use 32-bit integer keys instead of pointers.
- * Backed out speedups for Cray, until I get the time to fix them.
- * Fixed a bunch of bugs in the little-endian support in DFSD.
- *
- * Revision 1.5  1993/01/19  05:56:27  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.4  1992/11/30  22:00:01  chouck
- * Added fixes for changing to Vstart and Vend
- *
- * Revision 1.3  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.2  1992/10/06  16:19:19  chouck
- * In Vdatas version 2 LCOAL_INTS were stored as 16bits, not 32bits so
- * map_from_old_types() was messing up.
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*****************************************************************************
 *
 * vio.c
