@@ -3843,16 +3843,16 @@ int32 flags;
     int32     *cdims     = NULL;     /* array of chunk lengths */
     int32      fill_val_len = 0;     /* fill value length */
     uint8      *fill_val    = NULL;  /* fill value */
-    uint8      default_fill_val = 0;  /* default fill value */
-    int32      ndims    = 0;          /* # dimensions i.e. rank */
-    uint8      nlevels  = 1;          /* default # levels is 1 */
-    uint8      platntsubclass;  /* the machine type of the current platform */
-    uint8      outntsubclass;   /* the data's machine type */
-    uintn      convert;         /* whether to convert or not */
-    static     int32 tBuf_size = 0; /* statc conversion buffer size */
-    static     int8  *tBuf = NULL; /* static buffer used for conversion */
-    intn       i;                     /* loop variable */
-    intn       status = SUCCEED;      /* return value */
+    uint8      default_fill_val = 0; /* default fill value */
+    int32      ndims    = 0;         /* # dimensions i.e. rank */
+    uint8      nlevels  = 1;         /* default # levels is 1 */
+    uint8      platntsubclass;       /* the machine type of the current platform */
+    uint8      outntsubclass;        /* the data's machine type */
+    uintn      convert;              /* whether to convert or not */
+    static     int32 tBuf_size = 0;  /* statc conversion buffer size */
+    static     VOID  *tBuf = NULL;   /* static buffer used for conversion */
+    intn       i;                    /* loop variable */
+    intn       status = SUCCEED;     /* return value */
 
 #ifdef CHK_DEBUG
     fprintf(stderr,"SDsetChunk: called  \n");
@@ -4004,7 +4004,7 @@ int32 flags;
           if(tBuf == NULL) 
               HDfree((VOIDP)tBuf);
           tBuf_size = fill_val_len;
-          tBuf      = (int8 *) HDmalloc(tBuf_size);
+          tBuf      = (VOID *) HDmalloc(tBuf_size);
           if(tBuf == NULL) 
             {
                 tBuf_size = 0;
@@ -4015,7 +4015,9 @@ int32 flags;
 
     if (convert)
       { /* convert fill value */
-        DFKnumout((uint8 *) fill_val, tBuf, (uint32) fill_val_len, 0, 0);        
+          /* set number type */
+          DFKsetNT(var->HDFtype);
+          DFKnumout((VOID *)fill_val, tBuf, (uint32) fill_val_len, 0, 0);        
 
         /* check to see already special.
            Error if already special since doubly special elements are
@@ -4374,7 +4376,9 @@ const VOID *datap;
 #endif
                             /* set number type */
                             DFKsetNT(var->HDFtype);
+                            /* convert it */
                             DFKnumout((VOID *)datap, tBuf, byte_count, 0, 0);
+                            /* write it out now */
                             status = HMCwriteChunk(var->aid, origin, tBuf);
                         } /* end if */
                       else 
@@ -4532,6 +4536,7 @@ VOID *datap;
         fprintf(stderr,"SDreadChunk: convert, var->HDFsize=%d, var->HDFtype=%d \n",
                 var->HDFsize, var->HDFtype);
 #endif
+                            /* read it in */
                             status = HMCreadChunk(var->aid, origin, tBuf);
                             /* set number type */
                             DFKsetNT(var->HDFtype);
