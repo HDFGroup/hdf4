@@ -37,6 +37,10 @@
 #endif
 #endif
 
+#ifdef macintosh
+#define INCLUDES_ARE_ANSI	/* Added for Mac, MPW does not define __STDC__ */
+#endif /* macintosh, MPW */
+
 /*
  * <stdio.h> is included to get the FILE typedef and NULL macro.
  * Note that the core portable-JPEG files do not actually do any I/O
