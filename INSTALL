@@ -61,8 +61,8 @@ Requirements
 
       * Fortran 77 compiler if you want Fortran support. See above
         table for platforms where Fortran is supported. You can
-        compile both libraries without fortran support by setting 
-        the fortran compiler variable 'FC = NONE' in the respective
+        compile both libraries without Fortran support by setting 
+        the Fortran compiler variable 'FC = NONE' in the respective
         makefile fragment(mh-<os>) found in the top-level 'config'
         directory($(toplevel)/config/mh-<os>).
 
@@ -250,6 +250,45 @@ Pablo Instrumentation
     After setting these values you must re-run  the toplevel 'configure' script. 
     Details on running configure can be found above in the section
     'General Configuration/Installation - Unix'.
+
+File Page Buffering(Beta release)
+=================================
+    This version of the distribution has preliminary support for file page
+    buffering. 
+
+*NOTE*: This version is NOT officially supported on all platforms
+        and has not been extensively tested. As such it is provided as is.
+        It will be supported officially in a later release.
+
+    The file page buffering allows the file to be mapped to user memory on 
+    a per page basis i.e a memory pool of the file. With regards to the 
+    file system, page sizes can be allocated based on the file system page-size 
+    or if the user wants in some multiple of the file system page-size. This 
+    allows for fewer pages to be managed along with accommodating the users file 
+    usage pattern.
+
+    The current version supports setting the page-size and number of pages
+    in the memory pool through user routines. The default is 8192 bytes for 
+    page-size and 1 for number of pages in the pool.
+
+    More detailed documentation on how to use the file page buffering version of
+    the HDF library can be found in the directory '$(toplevel)/release_notes'.
+    See the provided file '$(toplevel)/release_notes/page_buf.txt'
+
+    To enable the creation of a library using page buffering the following 
+    section in the makefile fragment($(toplevel)/config/mh-<os>) must be 
+    uncommented and set.
+
+    # ------------ Macros for Shared Memory File Buffer Pool(fmpool) ------
+    # Uncomment the following lines to enable shared memory file buffer pool
+    # version of the HDF core library libdf.a. Please read the
+    # documentation before enabling this feature.
+    #FMPOOL_FLAGS  = -DHAVE_FMPOOL
+
+    After setting these values you must re-run  the toplevel 'configure' script. 
+    Details on running configure can be found above in the section
+    'General Configuration/Installation - Unix'.
+
 
 Documentation
 =============
