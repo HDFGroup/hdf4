@@ -37,23 +37,24 @@ int         num_errs
 #endif /* FAR */
 #endif /* TEST_PC */
 
+/* Use %ld to print the value because long could cover most cases. */
 /* Used to make certain a return value _is_not_ a value */
 #define CHECK(ret, val, where) \
-do {if (Verbosity>9) printf("   Call to HDF routine: %15s at line %4d in %s returned %d \n",where,__LINE__,__FILE__,(int)ret);\
-if(ret == val) {printf("*** UNEXPECTED RETURN from %s is %d at line %4d in %s\n", where, (int)ret, __LINE__,__FILE__); num_errs++;} \
+do {if (Verbosity>9) printf("   Call to HDF routine: %15s at line %4d in %s returned %ld \n",where,__LINE__,__FILE__,ret);\
+if(ret == val) {printf("*** UNEXPECTED RETURN from %s is %ld at line %4d in %s\n", where, ret, __LINE__,__FILE__); num_errs++;} \
 } while(0)
 
 /* Used to make certain a return value _is_ a value */
 #define VERIFY(x, val, where) \
-do {if (Verbosity>9) printf("   Call to HDF routine: %15s at line %4d in %s had value %d \n",where,__LINE__,__FILE__,(int)x);\
-if(x != val) {printf("*** UNEXPECTED VALUE from %s is %d at line %4d in %s\n", where, (int)x,__LINE__,__FILE__); num_errs++;} \
+do {if (Verbosity>9) printf("   Call to HDF routine: %15s at line %4d in %s had value %ld \n",where,__LINE__,__FILE__,x);\
+if(x != val) {printf("*** UNEXPECTED VALUE from %s is %ld at line %4d in %s\n", where, x,__LINE__,__FILE__); num_errs++;} \
 } while(0)
 
 #define RESULT(a) \
 do { \
-if (Verbosity>8) printf("   Call to HDF routine: %15s at line %4d in %s returned %d \n",a,__LINE__,__FILE__,(int)ret); \
+if (Verbosity>8) printf("   Call to HDF routine: %15s at line %4d in %s returned %ld \n",a,__LINE__,__FILE__,ret); \
 if (Verbosity>9) HEprint(stdout,0); \
-if(ret == FAIL) {printf("*** UNEXPECTED RETURN from %s is %d at line %4d in %s\n", a, (int)ret,__LINE__,__FILE__); num_errs++;} \
+if(ret == FAIL) {printf("*** UNEXPECTED RETURN from %s is %ld at line %4d in %s\n", a, ret,__LINE__,__FILE__); num_errs++;} \
 } while(0)
 
 #define MESSAGE(v,a) {if (Verbosity>v) {a}}
