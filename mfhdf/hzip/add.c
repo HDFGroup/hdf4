@@ -46,9 +46,7 @@ unsigned char *image_data = 0;
 
 void add_gr_ffile(char* name_file,char* gr_name,int32 file_id,int32 vgroup_id)
 {
- intn   status_n;       /* returned status_n for functions returning an intn  */
- int32  status_32,      /* returned status_n for functions returning an int32 */
-        gr_id,          /* GR interface identifier */
+ int32  gr_id,          /* GR interface identifier */
         ri_id,          /* raster image identifier */
         gr_ref,         /* reference number of the GR image */
         start[2],       /* start position to write for each dimension */
@@ -75,24 +73,38 @@ void add_gr_ffile(char* name_file,char* gr_name,int32 file_id,int32 vgroup_id)
   interlace_mode = MFGR_INTERLACE_PIXEL;
   dim_gr[0] = X_LENGTH;
   dim_gr[1] = Y_LENGTH;
-
+  
+  
   /* initialize the GR interface */
-  gr_id = GRstart (file_id);
+  if ((gr_id = GRstart (file_id))== FAIL)
+  {
+   printf("Error: Could not start GR interface\n");
+  }
   
   /* create the raster image array */
-  ri_id = GRcreate (gr_id, gr_name, N_COMPS, data_type, interlace_mode, dim_gr);
+  if ((ri_id = GRcreate (gr_id, gr_name, N_COMPS, data_type, interlace_mode, dim_gr))== FAIL)
+  {
+   printf("Error: Could not create GR <%s>\n", gr_name);
+  }
   
   /* define the size of the data to be written */
   start[0] = start[1] = 0;
   edges[0] = X_LENGTH;
   edges[1] = Y_LENGTH;
   
+  
   /* write the data in the buffer into the image array */
-  status_n = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)image_data);
+  if (GRwriteimage(ri_id, start, NULL, edges, (VOIDP)image_data)==FAIL)
+  {
+   printf("Error: Could not write GR <%s>\n", gr_name);
+  }
 
   /* assign an attribute to the SDS */
   n_values = 2;
-  status_n = GRsetattr(ri_id, "Myattr", DFNT_UINT8, n_values, (VOIDP)attr_values);
+  if(GRsetattr(ri_id, "Myattr", DFNT_UINT8, n_values, (VOIDP)attr_values)==FAIL)
+  {
+   printf("Error: Could not write attributes for GR <%s>\n", gr_name);
+  }
   
   /* obtain the reference number of the GR using its identifier */
   gr_ref = GRidtoref (ri_id);
@@ -104,15 +116,24 @@ void add_gr_ffile(char* name_file,char* gr_name,int32 file_id,int32 vgroup_id)
   
   /* add the GR to the vgroup. the tag DFTAG_RIG is used */
   if (vgroup_id)
-   status_32 = Vaddtagref (vgroup_id, TAG_GRP_IMAGE, gr_ref);
+   if (Vaddtagref (vgroup_id, TAG_GRP_IMAGE, gr_ref)==FAIL)
+   {
+    printf("Error: Could not add GR <%s> to group\n", gr_name);
+   }
+   
+   /* terminate access to the raster image */
+   if (GRendaccess (ri_id)==FAIL)
+   {
+    printf("Error: Could not close GR <%s>\n", gr_name);
+   }
+   
+   /* terminate access to the GR interface */
+   if (GRend (gr_id)==FAIL)
+   {
+    printf("Error: Could not close GR interface\n");
+   }
 
-  /* terminate access to the raster image */
-  status_n = GRendaccess (ri_id);
-
-  /* terminate access to the GR interface */
-  status_n = GRend (gr_id);
-
- }
+ }  /* read data */
 
  if ( image_data )
  {
@@ -139,8 +160,8 @@ void add_gr_ffile(char* name_file,char* gr_name,int32 file_id,int32 vgroup_id)
  */
 
 /* dimensions of image */
-#define X_DIM_GR     10
-#define Y_DIM_GR     20
+#define X_DIM_GR     6
+#define Y_DIM_GR     4
 
 void add_gr(char* gr_name,           /* gr name */
             int32 file_id,            /* file ID */
@@ -149,9 +170,7 @@ void add_gr(char* gr_name,           /* gr name */
             int32 comp_type,         /* compression flag */
             comp_info *comp_info     /* compression structure */ )
 {
- intn   status_n;       /* returned status_n for functions returning an intn  */
- int32  status_32,      /* returned status_n for functions returning an int32 */
-        gr_id,          /* GR interface identifier */
+ int32  gr_id,          /* GR interface identifier */
         ri_id,          /* raster image identifier */
         gr_ref,         /* reference number of the GR image */
         start[2],       /* start position to write for each dimension */
@@ -160,16 +179,21 @@ void add_gr(char* gr_name,           /* gr name */
         interlace_mode, /* interlace mode of the image */
         data_type,      /* data type of the image data */
         data[Y_DIM_GR][X_DIM_GR];
- int     i, j, ncomps=1;
+ int    i, j, n=0, ncomps=1;
  HDF_CHUNK_DEF chunk_def;           /* Chunking definitions */ 
  int32         pixels_per_scanline;
- 
  
  /* set the data type, interlace mode, and dimensions of the image */
  data_type = DFNT_UINT32;
  interlace_mode = MFGR_INTERLACE_PIXEL;
  dim_gr[0] = Y_DIM_GR;
  dim_gr[1] = X_DIM_GR;
+
+ /* data set data initialization */
+ for (j = 0; j < Y_DIM_GR; j++) {
+  for (i = 0; i < X_DIM_GR; i++)
+   data[j][i] = n++;
+ }
 
  /*define some compression specific parameters */
  switch(comp_type)
@@ -199,37 +223,74 @@ void add_gr(char* gr_name,           /* gr name */
   break;
  }
  
- /* Define chunk's dimensions */
- chunk_def.chunk_lengths[0] = Y_DIM_GR/2;
- chunk_def.chunk_lengths[1] = X_DIM_GR/2;
- /* To use chunking with RLE, Skipping Huffman, and GZIP compression */
- chunk_def.comp.chunk_lengths[0] = Y_DIM_GR/2;
- chunk_def.comp.chunk_lengths[1] = X_DIM_GR/2;
- 
- /* GZIP compression, set compression type, flag and deflate level*/
- chunk_def.comp.comp_type = COMP_CODE_DEFLATE;
- chunk_def.comp.cinfo.deflate.level = 6;             
-
- /* data set data initialization */
- for (j = 0; j < Y_DIM_GR; j++) {
-  for (i = 0; i < X_DIM_GR; i++)
-   data[j][i] = (i + j) + 1;
+ /* initialize the GR interface */
+ if ((gr_id = GRstart (file_id))== FAIL)
+ {
+  printf("Error: Could not start GR interface\n");
  }
  
- /* initialize the GR interface */
- gr_id = GRstart (file_id);
- 
  /* create the raster image array */
- ri_id = GRcreate (gr_id, gr_name, ncomps, data_type, interlace_mode, dim_gr);
+ if ((ri_id = GRcreate (gr_id, gr_name, ncomps, data_type, interlace_mode, dim_gr))== FAIL)
+ {
+  printf("Error: Could not create GR <%s>\n", gr_name);
+ }
 
  /* set chunk */
  if ( (chunk_flags == HDF_CHUNK) || (chunk_flags == (HDF_CHUNK | HDF_COMP)) )
-  status_n = SDsetchunk (gr_id, chunk_def, chunk_flags);
+ {
+  /* Define chunk's dimensions */
+  chunk_def.chunk_lengths[0] = Y_DIM_GR/2;
+  chunk_def.chunk_lengths[1] = X_DIM_GR/2;
+  /* To use chunking with RLE, Skipping Huffman, and GZIP compression */
+  chunk_def.comp.chunk_lengths[0] = Y_DIM_GR/2;
+  chunk_def.comp.chunk_lengths[1] = X_DIM_GR/2;
+
+  /*define some compression specific parameters */
+  switch(comp_type)
+  {
+  case COMP_CODE_RLE:
+   chunk_def.comp.comp_type = COMP_CODE_RLE;
+   break;
+   
+  case COMP_CODE_SKPHUFF:
+   chunk_def.comp.comp_type = COMP_CODE_SKPHUFF;
+   chunk_def.comp.cinfo.skphuff.skp_size = 1;
+   break;
+   
+  case COMP_CODE_DEFLATE:
+   /* GZIP compression, set compression type, flag and deflate level*/
+   chunk_def.comp.comp_type = COMP_CODE_DEFLATE;
+   chunk_def.comp.cinfo.deflate.level = 6;
+   break;
+   
+  case COMP_CODE_SZIP:
+   pixels_per_scanline = dim_gr[1];
+   chunk_def.comp.cinfo.szip.pixels = dim_gr[0]*dim_gr[1];
+   chunk_def.comp.cinfo.szip.pixels_per_block = 2;
+   if(pixels_per_scanline >=2048)
+    chunk_def.comp.cinfo.szip.pixels_per_scanline = 512;
+   else
+    chunk_def.comp.cinfo.szip.pixels_per_scanline = dim_gr[1];
+   chunk_def.comp.cinfo.szip.options_mask = NN_OPTION_MASK;
+   chunk_def.comp.cinfo.szip.options_mask |= RAW_OPTION_MASK;
+   chunk_def.comp.cinfo.szip.bits_per_pixel = 32;
+   break;
+  }
+  if(GRsetchunk (ri_id, chunk_def, chunk_flags)==FAIL)
+  {
+   printf("Error: Could not set chunk for GR <%s>\n", gr_name);
+  }
+ }
  
  /* use compress without chunk-in */
  else if ( (chunk_flags==HDF_NONE || chunk_flags==HDF_CHUNK) && 
-            comp_type>COMP_CODE_NONE && comp_type<COMP_CODE_INVALID)
-  status_n = SDsetcompress (gr_id, comp_type, comp_info); 
+  comp_type>COMP_CODE_NONE && comp_type<COMP_CODE_INVALID)
+ {
+  if(GRsetcompress (ri_id, comp_type, comp_info)==FAIL)
+  {
+   printf("Error: Could not set compress for GR <%s>\n", gr_name);
+  }
+ }
 
  
  /* define the size of the data to be written */
@@ -238,7 +299,10 @@ void add_gr(char* gr_name,           /* gr name */
  edges[1] = X_DIM_GR;
  
  /* write the data in the buffer into the image array */
- status_n = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)data);
+ if (GRwriteimage(ri_id, start, NULL, edges, (VOIDP)data)==FAIL)
+ {
+  printf("Error: Could not set write GR <%s>\n", gr_name);
+ }
    
  /* obtain the reference number of the GR using its identifier */
  gr_ref = GRidtoref (ri_id);
@@ -249,13 +313,22 @@ void add_gr(char* gr_name,           /* gr name */
  
  /* add the GR to the vgroup. the tag DFTAG_RIG is used */
  if (vgroup_id)
-  status_32 = Vaddtagref (vgroup_id, TAG_GRP_IMAGE, gr_ref);
+  if (Vaddtagref (vgroup_id, TAG_GRP_IMAGE, gr_ref)==FAIL)
+  {
+   printf("Error: Could not add GR <%s> to group\n", gr_name);
+  }
  
  /* terminate access to the raster image */
- status_n = GRendaccess (ri_id);
+ if (GRendaccess (ri_id)==FAIL)
+ {
+  printf("Error: Could not close GR <%s>\n", gr_name);
+ }
  
  /* terminate access to the GR interface */
- status_n = GRend (gr_id);
+ if (GRend (gr_id)==FAIL)
+ {
+  printf("Error: Could not close GR interface\n");
+ }
  
  
 }
