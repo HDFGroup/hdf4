@@ -8,7 +8,7 @@ INCLUDES=-I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/port     \
          -I../libsrc
 DEFINES=-DNDEBUG -DHDF
-CPPFLAGS=$(INCLUDES) $(DEFINES) @CPPFLAGS@
+AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 
 #############################################################################
 ##                          Programs to build                              ##
@@ -44,7 +44,11 @@ man1_MANS = ncgen.1
 
 NCDUMP=../ncdump/ncdump
 
+if HDF_BUILD_FORTRAN
 check: ncgen $(srcdir)/test0.cdl b-check c-check f-check
+else
+check: ncgen $(srcdir)/test0.cdl b-check c-check
+endif
 
 ## Test the "-b" option of ncgen
 b-check:	ncgen $(srcdir)/test0.cdl test1.cdl
@@ -66,6 +70,7 @@ c-check:	test2.cdl ctest0
 	  echo "*** ncgen -c test failed  ***";                             \
 	fi
 
+if HDF_BUILD_FORTRAN
 ## Test the "-f" option of ncgen
 f-check:	test1.cdl ftest0
 	./ftest0
@@ -79,6 +84,7 @@ f-check:	test1.cdl ftest0
 ftest0:		ncgen test0.cdl netcdf.inc
 	./ncgen -f -o ftest0.nc $(srcdir)/test0.cdl > test0.f
 	$(F77) $(FFLAGS) -o $@ test0.f $(LDFLAGS) $(ncgen_LDADD) $(LIBS)
+endif
 
 netcdf.inc:
 	ln -s ../fortran/$@ .

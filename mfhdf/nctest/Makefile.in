@@ -52,7 +52,7 @@ CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
-CPPFLAGS = @CPPFLAGS@ $(INCLUDES) $(DEFINES)
+CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
@@ -68,6 +68,8 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 F77 = @F77@
 FFLAGS = @FFLAGS@
+HDF_BUILD_FORTRAN_FALSE = @HDF_BUILD_FORTRAN_FALSE@
+HDF_BUILD_FORTRAN_TRUE = @HDF_BUILD_FORTRAN_TRUE@
 HDF_BUILD_XDR_FALSE = @HDF_BUILD_XDR_FALSE@
 HDF_BUILD_XDR_TRUE = @HDF_BUILD_XDR_TRUE@
 INSTALL_DATA = @INSTALL_DATA@
@@ -145,6 +147,7 @@ INCLUDES = -I$(top_srcdir)/hdf/src        \
          -I../libsrc
 
 DEFINES = -DNDEBUG -DHDF
+AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
 
 
 #############################################################################
@@ -152,6 +155,7 @@ DEFINES = -DNDEBUG -DHDF
 TESTS = nctest
 check_PROGRAMS = nctest
 
+# Information for building the "ncgen" program
 nctest_SOURCES = add.c atttests.c cdftests.c dimtests.c driver.c emalloc.c  \
                  error.c misctest.c rec.c slabs.c val.c varget_unlim.c      \
                  varget.c vargetg.c varput.c varputg.c vardef.c vartests.c  \
