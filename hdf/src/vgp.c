@@ -881,7 +881,7 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
 
     /* convert file id to file record and check for write-permission */
     file_rec = HAatom_object(f);
-    if(file_rec==NULL || acc_mode=='w' && !(file_rec->access&DFACC_WRITE))
+    if((file_rec==NULL || acc_mode=='w') && !(file_rec->access&DFACC_WRITE))
         HGOTO_ERROR(DFE_BADACC, FAIL);
 
     if (vgid == -1)
