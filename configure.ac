@@ -114,6 +114,23 @@ dnl ======================================================================
 dnl Checks for libraries
 dnl ======================================================================
 
+dnl ----------------------------------------------------------------------
+dnl Fake --with-xxx option to allow us to create a help message for the
+dnl following --with-xxx options which can take either a =DIR or =INC,LIB
+dnl specifier.
+dnl
+AC_ARG_WITH([fnord],
+  [
+ For the following --with-xxx options, you can specify where the header
+ files and libraries are in two different ways:
+
+    --with-xxx=INC,LIB - Specify individually the include directory and
+                         library directory separated by a comma
+    --with-xxx=DIR     - Specify only the directory which contains the
+                         include/ and lib/ subdirectories
+  ])
+
+dnl ----------------------------------------------------------------------
 dnl Is the GNU zlib present? It has a header file `zlib.h' and a library
 dnl `-lz' and their locations might be specified with the `--with-zlib'
 dnl command-line switch. The value is an include path and/or a library path.
@@ -178,6 +195,7 @@ case "$withval" in
     ;;
 esac
 
+dnl ----------------------------------------------------------------------
 dnl Is the JPEG library present?
 AC_ARG_WITH([jpeg],
             [AC_HELP_STRING([--with-jpeg=DIR],
@@ -239,6 +257,7 @@ case "$withval" in
     ;;
 esac
 
+dnl ----------------------------------------------------------------------
 dnl Is the SZip library present?
 AC_ARG_WITH([szlib],
             [AC_HELP_STRING([--with-szlib=DIR],
@@ -300,6 +319,7 @@ case "$withval" in
     ;;
 esac
 
+dnl ----------------------------------------------------------------------
 dnl Is XDR support present? The TRY_LINK info was gotten from the
 dnl mfhdf/libsrc/local_nc.c file.
 AC_MSG_CHECKING([for xdr library support])
@@ -330,6 +350,9 @@ dnl ======================================================================
 dnl Checks for header files
 dnl ======================================================================
 
+dnl Always put the /usr/include/rpc directory first in the search list.
+CPPFLAGS="-I/usr/include/rpc $CPPFLAGS"
+
 AC_HEADER_STDC
 
 dnl ======================================================================
@@ -356,6 +379,12 @@ AC_CHECK_SIZEOF([int*])
 
 if test $ac_cv_sizeof_intp -ge 8; then
   CPPFLAGS="$CPPFLAGS -DBIG_LONGS"
+
+  dnl Define super secret special flag for AIX machines in 64-bit mode.
+  case "${host}" in
+    *-ibm-aix*) CPPFLAGS="$CPPFLAGS -DAIX5L64" ;;
+    *)          ;;
+  esac
 fi
 
 AC_C_BIGENDIAN([], [CPPFLAGS="$CPPFLAGS -DSWAP"])
@@ -508,7 +537,7 @@ AC_CONFIG_FILES([Makefile
                  mfhdf/hdfimport/Makefile
                  mfhdf/hdfimport/testutil.sh
                  mfhdf/hdiff/Makefile
-                 mfhdf/hzip/Makefile
+                 mfhdf/hrepack/Makefile
                  mfhdf/libsrc/Makefile
                  mfhdf/ncdump/Makefile
                  mfhdf/ncgen/Makefile

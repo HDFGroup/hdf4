@@ -880,6 +880,15 @@ Optional Features:
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+
+ For the following --with-xxx options, you can specify where the header
+ files and libraries are in two different ways:
+
+    --with-xxx=INC,LIB - Specify individually the include directory and
+                         library directory separated by a comma
+    --with-xxx=DIR     - Specify only the directory which contains the
+                         include/ and lib/ subdirectories
+
   --with-zlib=DIR         Use zlib library [default=yes]
   --with-jpeg=DIR         Use jpeg library [default=yes]
   --with-szlib=DIR        Use szlib library [default=yes]
@@ -3209,7 +3218,7 @@ fi
 
 
 # Provide some information about the compiler.
-echo "$as_me:3212:" \
+echo "$as_me:3221:" \
      "checking for Fortran 77 compiler version" >&5
 ac_compiler=`set X $ac_compile; echo $2`
 { (eval echo "$as_me:$LINENO: \"$ac_compiler --version </dev/null >&5\"") >&5
@@ -4397,6 +4406,13 @@ fi
 
 
 
+
+
+# Check whether --with-fnord or --without-fnord was given.
+if test "${with_fnord+set}" = set; then
+  withval="$with_fnord"
+
+fi;
 
 
 # Check whether --with-zlib or --without-zlib was given.
@@ -6158,6 +6174,8 @@ case "$host" in
 esac
 
 
+CPPFLAGS="-I/usr/include/rpc $CPPFLAGS"
+
 echo "$as_me:$LINENO: checking for ANSI C header files" >&5
 echo $ECHO_N "checking for ANSI C header files... $ECHO_C" >&6
 if test "${ac_cv_header_stdc+set}" = set; then
@@ -7059,6 +7077,11 @@ _ACEOF
 
 if test $ac_cv_sizeof_intp -ge 8; then
   CPPFLAGS="$CPPFLAGS -DBIG_LONGS"
+
+    case "${host}" in
+    *-ibm-aix*) CPPFLAGS="$CPPFLAGS -DAIX5L64" ;;
+    *)          ;;
+  esac
 fi
 
 echo "$as_me:$LINENO: checking whether byte ordering is bigendian" >&5
@@ -7428,7 +7451,7 @@ for config_file in $src_files; do
   fi
 done
 
-                                                                                                                                                                                                                            ac_config_files="$ac_config_files Makefile hdf/Makefile hdf/src/Makefile hdf/test/Makefile hdf/util/Makefile hdf/util/testutil.sh man/Makefile mfhdf/Makefile mfhdf/dumper/Makefile mfhdf/dumper/testhdp.sh mfhdf/fortran/Makefile mfhdf/hdfimport/Makefile mfhdf/hdfimport/testutil.sh mfhdf/hdiff/Makefile mfhdf/hzip/Makefile mfhdf/libsrc/Makefile mfhdf/ncdump/Makefile mfhdf/ncgen/Makefile mfhdf/nctest/Makefile mfhdf/pablo/Makefile mfhdf/port/Makefile mfhdf/xdr/Makefile"
+                                                                                                                                                                                                                            ac_config_files="$ac_config_files Makefile hdf/Makefile hdf/src/Makefile hdf/test/Makefile hdf/util/Makefile hdf/util/testutil.sh man/Makefile mfhdf/Makefile mfhdf/dumper/Makefile mfhdf/dumper/testhdp.sh mfhdf/fortran/Makefile mfhdf/hdfimport/Makefile mfhdf/hdfimport/testutil.sh mfhdf/hdiff/Makefile mfhdf/hrepack/Makefile mfhdf/libsrc/Makefile mfhdf/ncdump/Makefile mfhdf/ncgen/Makefile mfhdf/nctest/Makefile mfhdf/pablo/Makefile mfhdf/port/Makefile mfhdf/xdr/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -8032,7 +8055,7 @@ do
   "mfhdf/hdfimport/Makefile" ) CONFIG_FILES="$CONFIG_FILES mfhdf/hdfimport/Makefile" ;;
   "mfhdf/hdfimport/testutil.sh" ) CONFIG_FILES="$CONFIG_FILES mfhdf/hdfimport/testutil.sh" ;;
   "mfhdf/hdiff/Makefile" ) CONFIG_FILES="$CONFIG_FILES mfhdf/hdiff/Makefile" ;;
-  "mfhdf/hzip/Makefile" ) CONFIG_FILES="$CONFIG_FILES mfhdf/hzip/Makefile" ;;
+  "mfhdf/hrepack/Makefile" ) CONFIG_FILES="$CONFIG_FILES mfhdf/hrepack/Makefile" ;;
   "mfhdf/libsrc/Makefile" ) CONFIG_FILES="$CONFIG_FILES mfhdf/libsrc/Makefile" ;;
   "mfhdf/ncdump/Makefile" ) CONFIG_FILES="$CONFIG_FILES mfhdf/ncdump/Makefile" ;;
   "mfhdf/ncgen/Makefile" ) CONFIG_FILES="$CONFIG_FILES mfhdf/ncgen/Makefile" ;;
