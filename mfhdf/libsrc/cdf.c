@@ -1222,15 +1222,19 @@ NC **handlep;
               if(
                   thash==*thashptr && tsize==*tsizeptr &&
                   NC_compare_string((*dims)->name,(*dims1)->name)==0
-                  )
+                  ) {
                   done = TRUE;
+                  break;
+              }
               tsizeptr++;
               thashptr++;
 #else /* HDF */
               if((*dims1)->size == (*dims)->size &&
                  HDstrcmp((*dims)->name->values, 
-                          (*dims1)->name->values) == 0)
-                  done = TRUE;
+                          (*dims1)->name->values) == 0)  {
+                    done = TRUE;
+                    break;
+              }
 #endif /* HDF */
               dims1++;
           }
