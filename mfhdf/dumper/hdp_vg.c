@@ -271,7 +271,7 @@ resetVG( int32 *vg_id,
    {
       if( FAIL == Vdetach( *vg_id ))
          fprintf(stderr,"Failure in resetVG: Vdetach failed for vg_id(%d) in file %s\n",
-                    (int) vg_id, curr_file_name );
+                    *vg_id, curr_file_name );
       *vg_id = FAIL;
    }
 }  /* end of resetVG */
