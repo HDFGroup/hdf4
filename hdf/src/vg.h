@@ -118,7 +118,7 @@ struct vgroup_desc
    *  -----------------------------------------------
  */
 
-#define USYMMAX 36  /* max user-defined symbols allowed */
+/* #define USYMMAX 36  */  /* max user-defined symbols allowed */
 
 struct vdata_desc
   {
@@ -132,7 +132,8 @@ struct vdata_desc
       VWRITELIST  wlist;
       VREADLIST   rlist;
       int16       nusym;
-      SYMDEF      usym[USYMMAX];
+      SYMDEF      usym[VSFIELDMAX];
+/*      SYMDEF      usym[USYMMAX];    */
       intn        marked;       /* =1 if new info has been added to vdata */
       intn        islinked;     /* =1 if vdata is a linked-block in file */
 
