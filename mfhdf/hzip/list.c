@@ -30,11 +30,6 @@ void vgroup_insert(char* infname, char* outfname,
                    int32 vgroup_id_out, char*path_name, 
                    int32* tags, int32* refs, int npairs, 
                    table_t *table, options_t *options);
-int copy_vgroup_attrs(int32 vg_in, int32 vg_out, char *path,options_t *options);
-int copy_an_data(int32 infile_id,int32 outfile_id,int32 id_in,int32 id_out, 
-                 ann_type type,char *path,options_t *options,int is_label);
-
-
 
 
 
@@ -250,10 +245,7 @@ void list_vg(char* infname,char* outfname,int32 infile_id,int32 outfile_id,
     }
 
     copy_vgroup_attrs(vgroup_id,vgroup_id_out,vgroup_name,options);
-    copy_an_data(infile_id,outfile_id,vgroup_id,vgroup_id_out, 
-                 AN_DATA_LABEL,vgroup_name,options,TRUE);
-    copy_an_data(infile_id,outfile_id,vgroup_id,vgroup_id_out, 
-                 AN_DATA_DESC,vgroup_name,options,FALSE);
+    copy_vg_an(infile_id,outfile_id,vgroup_id,vgroup_id_out,vgroup_name,options);
 
     if (options->verbose)
     printf(PFORMAT,"","",vgroup_name);    
@@ -402,10 +394,7 @@ void vgroup_insert(char* infname,char* outfname,int32 infile_id,int32 outfile_id
    }
 
    copy_vgroup_attrs(vgroup_id, vgroup_id_out,path,options);
-   copy_an_data(infile_id,outfile_id,vgroup_id,vgroup_id_out, 
-                 AN_DATA_LABEL,path,options,TRUE);
-   copy_an_data(infile_id,outfile_id,vgroup_id,vgroup_id_out, 
-                 AN_DATA_DESC,path,options,FALSE);
+   copy_vg_an(infile_id,outfile_id,vgroup_id,vgroup_id_out,path,options);
    
    /* insert the created vgroup into its parent */
    vg_index = Vinsert (vgroup_id_out_par, vgroup_id_out);
@@ -475,7 +464,8 @@ void vgroup_insert(char* infname,char* outfname,int32 infile_id,int32 outfile_id
    gr_out = GRstart(outfile_id);
 
    /* copy GR  */
-   copy_gr(gr_id,gr_out,tag,ref,vgroup_id_out_par,path_name,options,table);
+   copy_gr(infile_id,outfile_id,gr_id,gr_out,tag,ref,vgroup_id_out_par,
+           path_name,options,table);
 
    status_n = GRend (gr_id);
    status_n = GRend (gr_out);
@@ -558,7 +548,7 @@ void list_gr(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table
   }
 
   /* copy GR  */
-  copy_gr(gr_id,gr_out,DFTAG_RI,gr_ref,0,NULL,options,table);
+  copy_gr(infile_id,outfile_id,gr_id,gr_out,DFTAG_RI,gr_ref,0,NULL,options,table);
 
   /* terminate access to the current raster image */
   status = GRendaccess (ri_id);
@@ -1002,6 +992,107 @@ void list_an(char* infname,char* outfname,int32 infile_id,int32 outfile_id,optio
 
 
 /*-------------------------------------------------------------------------
+ * Function: copy_vg_an
+ *
+ * Purpose: copy Vgroup ANs
+ *
+ * Return: ok, 1, -1 not ok 
+ *
+ *-------------------------------------------------------------------------
+ */
+
+int copy_vg_an(int32 infile_id,int32 outfile_id,int32 vgroup_id,int32 vgroup_id_out, 
+               char *path,options_t *options) 
+{
+ int32 ref_in,
+       tag_in,
+       ref_out,
+       tag_out;
+
+ if ( options->trip==0 ) 
+ {
+  return 1;
+ }
+
+ if ((ref_in = VQueryref(vgroup_id))==FAIL){
+  printf( "Failed to get ref for <%s>\n", path);
+  return-1;
+ }
+ if ((tag_in = VQuerytag(vgroup_id))==FAIL){
+  printf( "Failed to get tag for <%s>\n", path);
+  return-1;
+ }
+ if ((ref_out = VQueryref(vgroup_id_out))==FAIL){
+  printf( "Failed to get ref for <%s>\n", path);
+  return-1;
+ }
+ if ((tag_out = VQuerytag(vgroup_id_out))==FAIL){
+  printf( "Failed to get tag for <%s>\n", path);
+  return-1;
+ }
+
+ copy_an_data(infile_id,outfile_id,
+              ref_in,tag_in,ref_out,tag_out, 
+              AN_DATA_LABEL,path,options);
+ copy_an_data(infile_id,outfile_id,
+              ref_in,tag_in,ref_out,tag_out,
+              AN_DATA_DESC,path,options);
+ return 1;
+}
+
+
+/*-------------------------------------------------------------------------
+ * Function: copy_vs_an
+ *
+ * Purpose: copy Vdata ANs
+ *
+ * Return: ok, 1, -1 not ok 
+ *
+ *-------------------------------------------------------------------------
+ */
+
+int copy_vs_an(int32 infile_id,int32 outfile_id,int32 vdata_id,int32 vdata_id_out, 
+               char *path,options_t *options) 
+{
+ int32 ref_in,
+       tag_in,
+       ref_out,
+       tag_out;
+
+ if ( options->trip==0 ) 
+ {
+  return 1;
+ }
+
+ if ((ref_in = VSQueryref(vdata_id))==FAIL){
+  printf( "Failed to get ref for <%s>\n", path);
+  return-1;
+ }
+ if ((tag_in = VSQuerytag(vdata_id))==FAIL){
+  printf( "Failed to get tag for <%s>\n", path);
+  return-1;
+ }
+ if ((ref_out = VSQueryref(vdata_id_out))==FAIL){
+  printf( "Failed to get ref for <%s>\n", path);
+  return-1;
+ }
+ if ((tag_out = VSQuerytag(vdata_id_out))==FAIL){
+  printf( "Failed to get tag for <%s>\n", path);
+  return-1;
+ }
+
+ copy_an_data(infile_id,outfile_id,
+              ref_in,tag_in,ref_out,tag_out, 
+              AN_DATA_LABEL,path,options);
+ copy_an_data(infile_id,outfile_id,
+              ref_in,tag_in,ref_out,tag_out,
+              AN_DATA_DESC,path,options);
+ return 1;
+}
+
+
+
+/*-------------------------------------------------------------------------
  * Function: copy_an_data
  *
  * Purpose: copy DATA ANs
@@ -1011,8 +1102,10 @@ void list_an(char* infname,char* outfname,int32 infile_id,int32 outfile_id,optio
  *-------------------------------------------------------------------------
  */
 
-int copy_an_data(int32 infile_id,int32 outfile_id,int32 id_in,int32 id_out, 
-                 ann_type type,char *path,options_t *options, int is_label) 
+int copy_an_data(int32 infile_id,int32 outfile_id,
+                 int32 ref_in, int32 tag_in,
+                 int32 ref_out, int32 tag_out,
+                 ann_type type, char *path, options_t *options) 
 {
  int32 an_id,         /* AN interface identifier */
        an_out,        /* AN interface identifier */
@@ -1020,12 +1113,10 @@ int copy_an_data(int32 infile_id,int32 outfile_id,int32 id_in,int32 id_out,
        ann_out,       /* an annotation identifier */
        i,             /* position of an annotation */
        ann_length,    /* length of the text in an annotation */
-       n_anno,
-       ref_in,
-       tag_in,
-       ref_out,
-       tag_out;
+       n_anno;
+       
  char *buf;           /* buffer to hold the read annotation */
+ int  is_label= (type==AN_DATA_LABEL)?1:0;
 
  if ( options->trip==0 ) 
  {
@@ -1035,23 +1126,6 @@ int copy_an_data(int32 infile_id,int32 outfile_id,int32 id_in,int32 id_out,
  /* Initialize the AN interface  */
  an_id  = ANstart (infile_id);
  an_out = ANstart (outfile_id);
-
- if ((ref_in = VQueryref(id_in))==FAIL){
-  printf( "Failed to get ref for <%s>\n", path);
-  return-1;
- }
- if ((tag_in = VQuerytag(id_in))==FAIL){
-  printf( "Failed to get tag for <%s>\n", path);
-  return-1;
- }
- if ((ref_out = VQueryref(id_out))==FAIL){
-  printf( "Failed to get ref for <%s>\n", path);
-  return-1;
- }
- if ((tag_out = VQuerytag(id_out))==FAIL){
-  printf( "Failed to get tag for <%s>\n", path);
-  return-1;
- }
 
  /* Get the number of ANs in this object  */
  if((n_anno = ANnumann(an_id,type,(uint16)tag_in,(uint16)ref_in))==FAIL) {

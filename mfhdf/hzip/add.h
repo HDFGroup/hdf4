@@ -34,7 +34,8 @@ extern "C" {
 
 
 /* write data */
-void add_an (int32 file_id);
+void add_file_an (int32 file_id);
+void add_an(int32 file_id, int32 tag, int32 ref);
 void add_glb_attrs(char *fname,int32 file_id);
 void add_gr_ffile (char* name_file,char* gr_name,int32 file_id,int32 vgroup_id);
 void add_r8 (char *fname,char* name_file,int32 vgroup_id);

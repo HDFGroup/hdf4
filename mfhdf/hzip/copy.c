@@ -740,7 +740,9 @@ int copy_vdata_attribute(int32 in, int32 out, int32 findex, intn attrindex)
  *-------------------------------------------------------------------------
  */
 
-int  copy_gr(int32 gr_in,
+int  copy_gr(int32 infile_id,
+             int32 outfile_id,
+             int32 gr_in,
              int32 gr_out,
              int32 tag,               /* tag of input GR */
              int32 ref,               /* ref of input GR */
@@ -1164,6 +1166,11 @@ int  copy_gr(int32 gr_in,
   } /* SUCCEED */
  } /* has_pal==1 */
 
+ 
+ /* obtain the reference number of the new SDS using its identifier */
+ if ((gr_ref = GRidtoref (ri_out)) == FAIL) {
+  printf( "Failed to get new GR reference in <%s>\n", path);
+ }
 
 /*-------------------------------------------------------------------------
  * add GR to group, if needed
@@ -1171,16 +1178,23 @@ int  copy_gr(int32 gr_in,
  */ 
  if (vgroup_id_out_par) 
  {
-  /* obtain the reference number of the new SDS using its identifier */
-  if ((gr_ref = GRidtoref (ri_out)) == FAIL) {
-   printf( "Failed to get new GR reference in <%s>\n", path);
-  }
-
   /* add the GR to the vgroup. the tag DFTAG_RIG is used */
   if ((status_32 = Vaddtagref (vgroup_id_out_par, TAG_GRP_IMAGE, gr_ref)) == FAIL) {
    printf( "Failed to add new GR to group <%s>\n", path);
   }
  }
+
+/*-------------------------------------------------------------------------
+ * copy ANs
+ *-------------------------------------------------------------------------
+ */ 
+ 
+ copy_an_data(infile_id,outfile_id,
+              ref,tag,gr_ref,tag, 
+              AN_DATA_LABEL,path,options);
+ copy_an_data(infile_id,outfile_id,
+              ref,tag,gr_ref,tag,
+              AN_DATA_DESC,path,options);
 
 
 out:
@@ -1449,6 +1463,13 @@ int copy_vs( int32 infile_id,
    printf( "Failed to add new VS to group <%s>\n", path);
   }
  }
+
+/*-------------------------------------------------------------------------
+ * copy ANs
+ *-------------------------------------------------------------------------
+ */ 
+
+ copy_vs_an(infile_id,outfile_id,vdata_id,vdata_out,path,options);
  
 out:
  /* terminate access to the VSs */
@@ -1478,7 +1499,7 @@ out:
  *-------------------------------------------------------------------------
  */
 
-char * get_path(char*path_name, char*obj_name) 
+char *get_path(char*path_name, char*obj_name) 
 {
  char *path=NULL;
  /* initialize path */
