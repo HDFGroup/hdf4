@@ -941,7 +941,7 @@ nvfindc(HFILEID * f, _fcd name, intf * namelen)
 /* ------------------------------------------------------------------ */
 /*
    **  gets the ref # of a vgroup for a given class
-   **  related: Vfindclass--vfclassc--VFNDCLS
+   **  related: Vfindclass--vfndclsc--VFNDCLS
  */
 
 FRETVAL(intf)

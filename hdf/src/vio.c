@@ -662,7 +662,8 @@ VDATA *VSPgetinfo(HFILEID f,uint16 ref)
 {
     CONSTR(FUNC, "VSPgetinfo");
 	VDATA 		*vs;  			 /* new vdata to be returned */
-    int32       vh_length;      /* length of the vdata header */
+/*    int32       vh_length;   int32 is mismatches Vhbuf's type -- uint32 */
+        size_t vh_length;     /* length of the vdata header */
     VDATA *ret_value = NULL; /* FAIL */
  
     if ((vs = VSIget_vdata_node()) == NULL)

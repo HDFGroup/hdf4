@@ -928,7 +928,8 @@ VGROUP *VPgetinfo(HFILEID f,uint16 ref)
 {
     CONSTR(FUNC, "VPgetinfo");
     VGROUP         *vg;
-    intn          len;
+/*    intn          len;    intn mismatches Vgbufsize type -- uint32 */
+    size_t          len;
     VGROUP *ret_value = NULL; /* FAIL */
           
     HEclear();
