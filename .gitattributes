@@ -1,5 +1,15 @@
 * text=auto !eol
 hdf/test/litend.dat -text svneol=unset#application/octet-stream
+hdf/util/testfiles/head.r24.Z -text
+hdf/util/testfiles/palette.raw -text
+hdf/util/testfiles/storm110.hdf -text
+hdf/util/testfiles/storm110.raw -text svneol=unset#application/octet-stream
+hdf/util/testfiles/storm120.hdf -text
+hdf/util/testfiles/storm120.raw -text svneol=unset#application/octet-stream
+hdf/util/testfiles/storm130.hdf -text
+hdf/util/testfiles/storm130.raw -text svneol=unset#application/octet-stream
+hdf/util/testfiles/storm140.raw -text svneol=unset#application/octet-stream
+hdf/util/testfiles/test.cdf -text
 mfhdf/libsrc/test.nc -text
 mfhdf/libsrc/test_cdf.sav -text
 mfhdf/nctest/test.nc -text
