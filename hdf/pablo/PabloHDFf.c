@@ -61,7 +61,7 @@ extern int HDFendIOTrace(VOID);
 #endif /* PABLO_FNAMES */
 
 FRETVAL(intf)
-nihinitiotrace(_fcd traceFileNname, intf * detail, intf * lifetime, 
+nihinitiotrace(_fcd traceFileName, intf * detail, intf * lifetime, 
                intf * timeWindow, float64 * timeWindowSize, intf * regionTrace,
                intf * regionSize, uint16 * procTraceMask, intf * namelen)
 {
@@ -69,8 +69,9 @@ nihinitiotrace(_fcd traceFileNname, intf * detail, intf * lifetime,
     intf  ret;
 
     fn = HDf2cstring(traceFileName, (intn) *namelen);
-    ret = (intf) HDFinitIOTrace(fn,detail,lifetime,timeWindow,timeWindowSize,
-                                regionTrace,regionSize,procTraceMask);
+    ret = (intf) HDFinitIOTrace(fn,(intn)*detail,(intn)*lifetime,(intn)*timeWindow,
+                                (float64)*timeWindowSize,(intn)*regionTrace,
+                                (intn)*regionSize,(uint16)*procTraceMask);
     HDfree(fn);
     return (ret);
 } /* nihiotrace() */
