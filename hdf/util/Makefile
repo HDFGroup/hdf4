@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.7  1992/08/12 15:58:11  sxu
+# Revision 1.8  1992/08/14 20:11:36  sxu
+# Added -lgl_s and -cckr (or -ansi) for SGI
+#
+# Revision 1.7  1992/08/12  15:58:11  sxu
 # Removed redundant -I for CONVEX
 #
 # Revision 1.6  1992/08/05  21:27:55  chouck
@@ -44,17 +47,26 @@ MACHINE = SUN
 #MACHINE = PC
 #MACHINE = HP9000
 
+RM=/bin/rm
+RMFLAGS=-f
+
 HDFLIB = ../lib
 HDFINC = ../include
 HDFBIN = ../bin
+#For IRIS4, include libgl_s.a
+#GLLIB = -lgl_s
+GLLIB = 
 
 CFLAGS = -D$(MACHINE) -I$(HDFINC) 
 
 # ==> For Convex, specify CFLAGS as follows:
 # CFLAGS=  -g -D$(MACHINE) -D__STDC__
 
+# ==> For IRIS4, specify CFLAGS as follows:
+#CFLAGS=  -g -D$(MACHINE) -cckr
+
 .c.o: he.h he_proto.h
-	$(CC) -c $(CFLAGS) -I$(HDFINC) $(HDFLIB)/libdf.a $<
+	$(CC) -c $(CFLAGS) -I$(HDFINC) $(HDFLIB)/libdf.a $(GLLAB)  $<
 
 all: hdfed utils
 	-mkdir $(HDFBIN)
@@ -66,9 +78,9 @@ hdfed: he.h he_proto.h $(HEOBJ)
 	$(CC) $(CFLAGS) -I$(HDFINC) $(HEOBJ) $(HDFLIB)/libdf.a -o hdfed
 
 .c: $(HDFLIB)/libdf.a
-	cc $(CFLAGS) -I$(HDFINC) $< -o $@ $(HDFLIB)/libdf.a
+	cc $(CFLAGS) -I$(HDFINC) $< -o $@ $(HDFLIB)/libdf.a $(GLLIB)
 
 utils: $(UTILS)
 
 clean:
-	-$(RM) $(RMFLAGS) *.o
+	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed
