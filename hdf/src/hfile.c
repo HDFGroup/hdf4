@@ -4206,7 +4206,7 @@ PRIVATE int32 hdft = 1600085855L; /* equal to '_HDF' in ascii */
 /* The routines have been updated for HFS */
 
 /* NOTE:
- * The following routines are utility routines that done not
+ * The following routines are utility routines that do not
  * have to reside here but since the Mac routines are the
  * only ones that use them, they reside here..
  */
@@ -4447,18 +4447,18 @@ mopen(char *name, intn flags)
   switch(flags)
     {
     case DFACC_READ:
-         perm = '1'; /* fsRdPermread permission */
+         perm = fsRdPerm; /* fsRdPerm read permission */
       break;
     case DFACC_WRITE:
-         perm = '2'; /* fsWrPerm - write permission */
+         perm = fsWrPerm; /* fsWrPerm - write permission */
       break;
     case DFACC_CREATE:
     case DFACC_RDWR:
     case DFACC_ALL:
-         perm = '3'; /* fsRdWrPerm - exclusive read/write permission */
+         perm = fsRdWrPerm; /* fsRdWrPerm - exclusive read/write permission */
       break;
     default:
-         perm = '1'; /* fsRdPermread permission */
+         perm = fsRdPerm; /* fsRdPerm read permission */
       break;
     } /* end switch 'flags' */
 
