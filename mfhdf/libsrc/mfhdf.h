@@ -28,7 +28,7 @@
 #endif /* OLD_WAY */
 
 #if defined(_MSC_VER) && !defined(_MFHDFLIB_) && !defined(_HDFLIB_)	/* Auto-link when possible */
-#	define MFHDF_LIB_VER	"412"
+#	define MFHDF_LIB_VER	"413"
 #	if !defined(_DEBUG)
 #		if !defined(_HDFDLL_)
 #			define MFHDF_LIB_NAME	"HM" MFHDF_LIB_VER ".lib"
