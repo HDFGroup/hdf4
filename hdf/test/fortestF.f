@@ -109,26 +109,6 @@ C Parse command types
 	endif
 
 C run the command
-	if (test .EQ. "slab1") then
-	    call slab1wf(retcode)
-	    return
-	endif
-
-	if (test .EQ. "slab2") then
-	    call slab2wf(retcode)
-	    return
-	endif
-
-	if (test .EQ. "slab3") then
-	    call slab3wf(retcode)
-	    return
-	endif
-
-	if (test .EQ. "slab4") then
-	    call slab4wf(retcode)
-	    return
-	endif
-
 	if (test .EQ. "slab") then
 	    call slabwf(retcode)
 	    return

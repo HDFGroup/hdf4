@@ -91,10 +91,6 @@ main(int argc, char *argv[])
     printf("HDF Library Version: %u.%ur%u, %s\n\n",
         (unsigned) lmajor, (unsigned) lminor, (unsigned) lrelease, lstring);
 
-    num_tests=InitTest("slab1", "slab1wf", "");
-    num_tests=InitTest("slab2", "slab2wf", "");
-    num_tests=InitTest("slab3", "slab3wf", "");
-    num_tests=InitTest("slab4", "slab4wf", "");
     num_tests=InitTest("slab", "slabwf", "");
     num_tests=InitTest("r24", "t24f", "");
     num_tests=InitTest("an", "tanf", "");
