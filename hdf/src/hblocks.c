@@ -422,7 +422,7 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
     uint16      link_ref;       /* the ref of the link structure
                                    (block table) */
     int32       dd_aid;         /* AID for writing the special info */
-    uint16      new_data_tag, new_data_ref=0;  /* Tag/ref of the new data in the file */
+    uint16      new_data_tag=DFTAG_NULL, new_data_ref=0;  /* Tag/ref of the new data in the file */
     uint16      data_tag, data_ref;  /* Tag/ref of the data in the file */
     int32       data_len;		/* length of the data we are checking */
     int32       data_off;		/* offset of the data we are checking */
@@ -501,9 +501,6 @@ printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_bloc
     info = (linkinfo_t *) access_rec->special_info;
     info->attached = 1;
     info->length = (no_data ? 0 : data_len);
-#ifdef QAK
-printf("%s: data_len=%ld, block_length=%ld, number_blocks=%ld\n",FUNC,data_len,block_length,number_blocks);
-#endif /* QAK */
     info->first_length = (no_data ? 0 : data_len);
     info->block_length = block_length;
     info->number_blocks = number_blocks;
@@ -530,7 +527,7 @@ printf("%s: data_len=%ld, block_length=%ld, number_blocks=%ld\n",FUNC,data_len,b
         HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
     /* allocate info structure and file it in */
-    if ((info->link = HLInewlink(file_id, number_blocks, link_ref, (uint16)(no_data ? 0 : data_ref))) ==NULL)
+    if ((info->link = HLInewlink(file_id, number_blocks, link_ref, (uint16)(no_data ? 0 : new_data_ref))) ==NULL)
         HGOTO_ERROR(DFE_CANTLINK, FAIL);
 
     /* update access record and file record */
