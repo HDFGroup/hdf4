@@ -37,10 +37,11 @@ static intn drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc,
 void dumprig_usage(intn argc,char *argv[])
 {
 	printf("Usage:\n");
-	printf("%s dumprig [-a|-i <index>|-m <8|24>|-r <ref>] [-dhv] [-o <filename> [-bx]] <filelist>\n",argv[0]);
+	printf("%s dumprig [-a|-i <index>|-m <n-bit>|-r <ref>] [-dhv] [-o <filename> [-bx]] <filelist>\n",argv[0]);
 	printf("\t-a\tDump all RIGs in the file (default)\n");
 	printf("\t-i <index>\tDump the <index>th RIG in the file \n");
-	printf("\t-m <8|24>\tDump the 8- or 24-bit RIGs only \n");
+	printf("\t-m <n-bit>\tDump the 8- or 24-bit RIGs only, <n-bit> may be
+                            8 or 24 \n");
 	printf("\t-r <ref>\tDump the RIG with reference number <ref>\n");
 	printf("\t-d\tDump data only, no tag/ref \n");
 	printf("\t-h\tDump header only, no annotation for elements nor data\n");
