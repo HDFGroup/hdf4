@@ -80,6 +80,7 @@ case "${host}" in
   *-convex-bsd*)          host_makefile_frag=config/mh-convex ;;
   *-cray-unicos*)         host_makefile_frag=config/mh-unicos ;;
   *-cm5-*)                host_makefile_frag=config/mh-cm5 ;;
+  *-mac-*)                host_makefile_frag=config/mh-mac ;;
 esac
 fi
 
@@ -147,6 +148,7 @@ case "${host}" in
   *-convex-bsd*)          files="mfhdf/libsrc/config/netcdf-convex.h mfhdf/fortran/config/jackets-convex.c mfhdf/fortran/config/netcdf-convex.inc mfhdf/fortran/config/ftest-convex.f" ;;
   *-cray-unicos*)         files="mfhdf/libsrc/config/netcdf-unicos.h mfhdf/fortran/config/jackets-unicos.c mfhdf/fortran/config/netcdf-unicos.inc mfhdf/fortran/config/ftest-unicos.f" ;;
   *-cm5-*)		  files="mfhdf/libsrc/config/netcdf-cm5.h mfhdf/fortran/config/jackets-cm5.c mfhdf/fortran/config/netcdf-cm5.inc mfhdf/fortran/config/ftest-cm5.f" ;;
+  *-mac-*)		  files="mfhdf/libsrc/config/netcdf-mac.h mfhdf/fortran/config/jackets-mac.c mfhdf/fortran/config/netcdf-mac.inc mfhdf/fortran/config/ftest-mac.f" ;;
 esac
 fi
 

@@ -46,6 +46,7 @@ case "${host}" in
   *-convex-bsd*)          host_makefile_frag=config/mh-convex ;;
   *-cray-unicos*)         host_makefile_frag=config/mh-unicos ;;
   *-cm5-*)		  host_makefile_frag=config/mh-cm5 ;;
+  *-mac-*)		  host_makefile_frag=config/mh-mac ;;
 esac
 fi
 
@@ -113,6 +114,7 @@ case "${host}" in
   *-convex-bsd*)          files=config/jconvex.h ;;
   *-cray-unicos*)         files=config/junicos.h ;;
   *-cm5-*)		  files=config/jcm5.h ;;
+  *-mac-*)		  files=config/jmac.h ;;
 esac
 fi
 
@@ -123,6 +125,15 @@ if [ ! -f ${srcdir}/${files} ]; then
     exit 1
 fi
 
+
+# Now for Mac and PC configurations we want to copy and not use symbolic
+# links
+if [ -d ${srcdir}/config ]; then
+case "${host}" in
+  *-mac-*)             symbolic_link="cp -p" ;;
+  *-win-*)             symbolic_link="cp -p" ;;
+esac
+fi
 
 # post-target:
 

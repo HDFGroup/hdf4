@@ -46,6 +46,7 @@ case "${host}" in
   *-convex-bsd*)          host_makefile_frag=config/mh-convex ;;
   *-cray-unicos*)         host_makefile_frag=config/mh-unicos ;;
   *-cm5-*)		  host_makefile_frag=config/mh-cm5 ;;
+  *-mac-*)		  host_makefile_frag=config/mh-mac ;;
 esac
 fi
 
@@ -113,6 +114,7 @@ case "${host}" in
   *-convex-bsd*)          files=config/fmpconvex.h ;;
   *-cray-unicos*)         files=config/fmpunicos.h ;;
   *-cm5-*)		  files=config/fmpcm5.h ;;
+  *-mac-*)		  files=config/fmpmac.h ;;
 esac
 fi
 
