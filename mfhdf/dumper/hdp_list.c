@@ -79,7 +79,8 @@ parse_list_opts(list_info_t * list_opts,
 
     for (; curr_arg < argc; curr_arg++)
       {
-          if (argv[curr_arg][0] == '-' || argv[curr_arg][0] == '/')
+/* BMR: if (argv[curr_arg][0] == '-' || argv[curr_arg][0] == '/') why??? */
+          if (argv[curr_arg][0] == '-' )
             {
                 ret++;
                 switch (argv[curr_arg][1])
@@ -1111,7 +1112,7 @@ printfilever(int32 file_id)
 	    (unsigned)major, (unsigned)minor, (unsigned)release, string);
       }
     else
-        printf("(Does not have libraray version information)\n");
+        printf("(Does not have library version information)\n");
 }
 
 /* low level object listing routine for HDF file */
