@@ -4,6 +4,7 @@
 
 # initialize errors variable
 errors=0
+haserr=0
 
 # setup hdfed command which is used often
 HDFED='./hdfed'
@@ -29,6 +30,7 @@ echo "** hdf24to8 or hdftor8 is not available ***"
 fi
 
 if [ $errors -eq 1 ]; then
+  haserr=1
   echo " ********* NOTE ***************"
   echo " hdf24to8 might have failed ***"
   echo " The above errors could be formatting "
@@ -41,6 +43,8 @@ if [ $errors -eq 1 ]; then
   echo " ./hdf24to8 head.r24 head8.hdf "
   echo " ./hdftor8 head8.hdf "
   echo " cmp img001-263.328 head.r8 " 
+  echo " ******* END NOTE *************"
+  echo ""
   errors=0
 fi
 
@@ -57,6 +61,7 @@ echo "** hdfed not available ***"
 fi
 
 if [ $errors -eq 1 ]; then
+  haserr=1
    echo " ********* NOTE ***************"
    echo " hdfed might have failed ***"
   echo " The above errors could be formatting "
@@ -67,6 +72,8 @@ if [ $errors -eq 1 ]; then
    echo "cp testfiles/storm110.hdf testfiles/ntcheck.hdf . "
    echo "$HDFEDCMD < hdfed.input1 >& hdfed.tmp "
    echo "diff hdfed.tmp hdfed.out1 "
+  echo " ******* END NOTE *************"
+  echo ""
    errors=0
 fi
 
@@ -84,6 +91,7 @@ echo "** ristosds or hdfed not available ***"
 fi
 
 if [ $errors -eq 1 ]; then
+  haserr=1
   echo " ********* NOTE ***************"
   echo " ristosds might have failed ***"
   echo " The above errors could be formatting "
@@ -95,6 +103,8 @@ if [ $errors -eq 1 ]; then
   echo "./ristosds storm*.hdf -o storm.hdf "
   echo "$HDFEDCMD < ristosds.input1 >& hdfed.tmp1 "
   echo " diff  hdfed.tmp1 ristosds.out1"
+  echo " ******* END NOTE *************"
+  echo ""
   errors=0
 fi
 
@@ -115,6 +125,7 @@ echo "** hdfpack or hdfls not available ***"
 fi
 
 if [ $errors -eq 1 ]; then
+  haserr=1
     echo " ********* NOTE ***************"
     echo " hdfpack might have failed ***"
   echo " The above errors could be formatting "
@@ -128,6 +139,8 @@ if [ $errors -eq 1 ]; then
     echo "./hdfls test.hdf >& hdfls.tmp1 "
     echo "./hdfls test.pck >>& hdfls.tmp1 "
     echo " diff hdfls.tmp1 hdfpack.out1 "
+  echo " ******* END NOTE *************"
+  echo ""
     errors=0
 fi
 
@@ -145,6 +158,7 @@ echo "** hdftopal or paltohdf not available ***"
 fi
 
 if [ $errors -eq 1 ]; then
+  haserr=1
   echo " ********* NOTE ***************"
     echo " hdftopal or paltohdf might have failed ***"
   echo " The above errors could be formatting "
@@ -156,6 +170,8 @@ if [ $errors -eq 1 ]; then
     echo "./paltohdf palette.raw palette.hdf "
     echo "./hdftopal palette.hdf palette.raw.new "
     echo "cmp palette.raw palette.raw.new "
+  echo " ******* END NOTE *************"
+  echo ""
    errors=0
 fi
 
@@ -179,6 +195,7 @@ echo "** r8tohdf, hdftor8 or hdfls not available ***"
 fi
 
 if [ $errors -eq 1 ]; then
+  haserr=1
   echo " ********* NOTE ***************"
     echo " r8tohdf or hdftor8 might have failed ***"
   echo " The above errors could be formatting "
@@ -196,6 +213,8 @@ if [ $errors -eq 1 ]; then
     echo "cmp img002-057.057  storm120.raw "
     echo "cmp img003-057.057  storm130.raw "
     echo "cmp img004-057.057  storm140.raw "
+  echo " ******* END NOTE *************"
+  echo ""
    errors=0
 fi
 
@@ -215,6 +234,7 @@ echo "** hdfcomp or hdfls not available ***"
 fi
 
 if [ $errors -eq 1 ]; then
+  haserr=1
   echo " ********* NOTE ***************"
     echo " hdfcomp might have failed ***"
   echo " The above errors could be formatting "
@@ -228,6 +248,8 @@ if [ $errors -eq 1 ]; then
     echo "./hdfls -l allstorms.hdf >& hdfls.tmp3 "
     echo "./hdfls -l allcomp.hdf >>& hdfls.tmp3 "
     echo "diff hdfls.tmp3 hdfcomp.out1 "
+  echo " ******* END NOTE *************"
+  echo ""
    errors=0
 fi
 
@@ -247,6 +269,7 @@ echo "** jpeg2hdf, hdf2jpeg or hdfls  not available ***"
 fi
 
 if [ $errors -eq 1 ]; then
+  haserr=1
   echo " ********* NOTE ***************"
     echo " jpeg2hdf or hdf2jpeg might have failed ***"
   echo " The above errors could be formatting "
@@ -260,6 +283,8 @@ if [ $errors -eq 1 ]; then
     echo "./hdfls -l jpeg.hdf >& hdfls.tmp4 "
     echo "diff hdfls.tmp4 jpeg2hdf.out1 "
     echo "cmp jpeg_img.jpg jpeg2.jpg "
+  echo " ******* END NOTE *************"
+  echo ""
    errors=0
 fi
 
@@ -293,6 +318,7 @@ echo "** fp2hdf, hdfed or hdfls not available ***"
 fi
 
 if [ $errors -eq 1 ]; then
+  haserr=1
   echo " ********* NOTE ***************"
   echo " fp2hdf might have failed ***"
   echo " The above errors could be formatting "
@@ -320,11 +346,14 @@ if [ $errors -eq 1 ]; then
   echo " diff hdfls.tmp5 fp2hdf.out1 "
   echo " $HDFEDCMD < fp2hdf.input1 >& hdfed.tmp6 "
   echo " diff hdfed.tmp6 fp2hdf.out2 "
+  echo " ******* END NOTE *************"
+  echo ""
+  errors=0
 fi
 
 #
 # Check errors result
-if [ $errors -eq 0 ]; then
+if [ $haserr -eq 0 ]; then
     echo "======================="
     echo "Utilities tests passed."
     echo "======================="
