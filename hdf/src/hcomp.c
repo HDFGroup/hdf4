@@ -123,7 +123,8 @@ funclist_t comp_funcs={
     HCPinquire,
     HCPread,
     HCPwrite,
-    HCPendaccess
+    HCPendaccess,
+    HCPinfo,
 };
 
 /*--------------------------------------------------------------------------
@@ -1305,3 +1306,46 @@ int32 HCPcloseAID(access_rec)
 
     return(SUCCEED);
 }   /* end HCPcloseAID() */
+
+/* ------------------------------- HCPinfo -------------------------------- */
+/*
+
+ NAME
+	HCPinfo -- return info about a compressed element
+ USAGE
+	int32 HCPinfo(access_rec, info_block)
+        accrec_t        *  access_rec; 
+                                IN: access record of access element
+        sp_info_block_t * info_block; 
+                                OUT: information about the special element 
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Return information about the given compressed element.  Info_block is
+        assumed to be non-NULL.
+
+--------------------------------------------------------------------------- */
+#ifdef PROTOTYPE
+int32 HCPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
+#else
+int32 HCPinfo(access_rec, info_block)
+     accrec_t        * access_id;   /* access id */
+     sp_info_block_t * info_block   /* info_block to fill */
+#endif
+{
+    char *FUNC="HXPinfo";      /* for HERROR */
+    compinfo_t *info =         /* special information record */
+       (compinfo_t *)access_rec->special_info;
+
+    /* validate access record */
+    if (access_rec->special != SPECIAL_COMP)
+        HRETURN_ERROR(DFE_INTERNAL,FAIL);
+    
+    /* fill in the info_block */
+    info_block->key = SPECIAL_COMP;
+
+    info_block->compression_flag = 5; /* I dunno */
+
+    return SUCCEED;
+
+} /* HCPinfo */

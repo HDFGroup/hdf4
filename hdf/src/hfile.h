@@ -19,6 +19,7 @@
 #ifndef HFILE_H
 #define HFILE_H
 
+/* ------------------------------ Constants ------------------------------- */
 /* Maximum number of files (number of slots for file records) */
 #ifndef MAX_FILE
 #ifdef PC
@@ -37,7 +38,29 @@
 #define MAGICLEN 4             /* length */
 #define HDFMAGIC "\016\003\023\001" /* ^N^C^S^A */
 
-/* version tags */
+/* sizes of elements in a file.  This is necessary because
+   the size of variables need not be the same as in the file
+   (cannot use sizeof) */
+#define DD_SZ 12               /* 2+2+4+4 */
+#define NDDS_SZ 2
+#define OFFSET_SZ 4
+
+/* ndds (number of dd's in a block) default,
+   so user need not specify */
+#ifndef DEF_NDDS
+#   define DEF_NDDS 16
+#endif /* DEF_NDDS */
+
+/* ndds minimum, to prevent excessive overhead of very small dd-blocks */
+#ifndef MIN_NDDS
+#   define MIN_NDDS 4
+#endif /* MIN_NDDS */
+
+/* largest number that will fit into 16-bit word ref variable */
+#define MAX_REF ((uint16)32767)
+
+
+/* ----------------------------- Version Tags ----------------------------- */
 /* Library version numbers */
 
 #define LIBVER_MAJOR	4
@@ -48,6 +71,8 @@
 #define LIBVER_LEN	92	/* 4+4+4+80 = 92 */
 /* end of version tags */
 
+
+/* -------------------------- File I/O Functions -------------------------- */
 /* FILELIB -- file library to use for file access: 1 stdio, 2 fcntl
    default to stdio library i.e. UNIX buffered I/O */
 
@@ -156,6 +181,8 @@ typedef HFILE hdf_file_t;
 #   define OPENERR(f)           ((f) == (HFILE)HFILE_ERROR)
 #endif /* FILELIB == WINIO */
 
+
+/* ----------------------- Internal Data Structures ----------------------- */
 /* The internal structure used to keep track of the files opened: an
    array of filerec_t structures, each has a linked list of ddblock_t.
    Each ddblock_t struct points to an array of dd_t structs. */
@@ -243,6 +270,27 @@ typedef struct accrec_t {
     struct funclist_t *special_func; /* ptr to special function? */
 } accrec_t;
 
+/* this type is returned to applications programs or other special 
+   interfaces when they need to know information about a given 
+   special element.  This is all information that would not be returned
+   via Hinquire().  This should probably be a union of structures. */
+typedef struct sp_info_block_t {
+    int16       key;            /* type of special element this is */
+    
+    /* external elements */
+    int32       offset;            /* offset in the file */
+    char      * path;              /* file name - should not be freed by user */
+
+    /* linked blocks */
+    int32       first_len;         /* length of first block */
+    int32       block_len;         /* length of standard block */
+    int32       nblocks;           /* number of blocks per chunk */
+
+    /* compressed elements */
+    int32       compression_flag;  /* compression type */
+
+} sp_info_block_t;
+
 /* a function table record for accessing special data elements.
    special data elements of a key could be accessed through the list
    of functions in array pointed to by tab. */
@@ -257,6 +305,8 @@ typedef struct funclist_t {
     int32 (*read)    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
     int32 (*write)   PROTO((accrec_t *access_rec, int32 length, const VOIDP data));
     int32 (*endaccess) PROTO((accrec_t *access_rec));
+    int32 (*info)    PROTO((accrec_t *access_rec, sp_info_block_t * info));
+    int32 (*reset)   PROTO((accrec_t *access_rec, sp_info_block_t * info));
 } funclist_t;
 
 typedef struct functab_t {
@@ -264,29 +314,8 @@ typedef struct functab_t {
     funclist_t *tab;            /* table of accessing functions */
 } functab_t;
 
-/* sizes of elements in a file.  This is necessary because
-   the size of variables need not be the same as in the file
-   (cannot use sizeof) */
-#define DD_SZ 12               /* 2+2+4+4 */
-#define NDDS_SZ 2
-#define OFFSET_SZ 4
 
-/* ndds (number of dd's in a block) default,
-   so user need not specify */
-#ifndef DEF_NDDS
-#   define DEF_NDDS 16
-#endif /* DEF_NDDS */
-
-/* ndds minimum, to prevent excessive overhead of very small dd-blocks */
-#ifndef MIN_NDDS
-#   define MIN_NDDS 4
-#endif /* MIN_NDDS */
-
-/* largest number that will fit into 16-bit word ref variable */
-#define MAX_REF ((uint16)32767)
-
-/* macros */
-
+/* ---------------------- ID Types and Manipulation ----------------------- */
 /* each id, what ever the type, will be represented with a 32-bit word,
    the most-significant 16 bits is a number unique for type.  The less-
    significant 16 bits is an id unique to each type; in this, we use the
@@ -316,6 +345,7 @@ typedef struct functab_t {
 
 #define NO_ID     (uint32) 0
 
+/* --------------------------- Special Elements --------------------------- */
 /* The HDF tag space is divided as follows based on the 2 highest bits:
    00: NCSA reserved ordinary tags
    01: NCSA reserved special tags
@@ -336,6 +366,8 @@ typedef struct functab_t {
 #define MKSPECIALTAG(t) ((~(t) & 0x8000) ? ((t) | 0x4000) : DFTAG_NULL)
 #endif /*SPECIAL_TABLE */
 
+
+/* ----------------------- Library-Global Variables ----------------------- */
 /* access records array.  defined in hfile.c */
 extern accrec_t *access_records;
 
@@ -349,6 +381,8 @@ extern filerec_t file_records[];
 /* */
 #define FILE_NDDS(file_rec) ((file_rec)->ddlast->ndds)
 
+
+/* -------------------------- H-Layer Prototypes -------------------------- */
 /* 
 ** Functions to get information of special elt from other access records.
 **   defined in hfile.c
@@ -419,6 +453,10 @@ extern int32 HLPinquire
 extern int32 HLPendaccess
     PROTO((accrec_t *access_rec));
 
+extern int32 HLPinfo
+    PROTO((accrec_t * access_rec, sp_info_block_t * info_block));
+
+
 /*
 ** from hextelt.c
 */
@@ -447,6 +485,13 @@ extern int32 HXPendaccess
 
 extern int32 HXPcloseAID
     PROTO((accrec_t *access_rec));
+
+extern int32 HXPinfo
+    PROTO((accrec_t *access_rec, sp_info_block_t * info_block));
+
+extern int32 HXPreset
+    PROTO((accrec_t *access_rec, sp_info_block_t * info_block));
+
 
 /*
 ** from hbigext.c
@@ -477,6 +522,9 @@ extern int32 HBPendaccess
 extern int32 HBPcloseAID
     PROTO((accrec_t *access_rec));
 
+extern int32 HBPinfo
+    PROTO((accrec_t *access_rec, sp_info_block_t * info_block));
+
 /*
 ** from hcomp.c
 */
@@ -506,6 +554,9 @@ extern int32 HCPendaccess
 
 extern int32 HCPcloseAID
     PROTO((accrec_t *access_rec));
+
+extern int32 HCPinfo
+    PROTO((accrec_t *access_rec, sp_info_block_t * info_block));
 
 #ifdef MAC
 extern hdf_file_t mopen

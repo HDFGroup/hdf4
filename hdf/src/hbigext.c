@@ -65,6 +65,7 @@ funclist_t bigext_funcs = {
     HBPread,
     HBPwrite,
     HBPendaccess,
+    HBPinfo,
 };
 
 
@@ -806,3 +807,48 @@ accrec_t *access_rec;
     return SUCCEED;
 } /* HBPcloseAID */
 
+/* ------------------------------- HBPinfo -------------------------------- */
+/*
+
+ NAME
+	HBPinfo -- return info about a big external element
+ USAGE
+	int32 HXPinfo(access_rec, info_block)
+        accrec_t        * access_rec;        
+                                IN: access record of element
+        sp_info_block_t * info_block; 
+                                OUT: information about the special element 
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Return information about the given big external element.  
+        Info_block is assumed to be non-NULL.  Do not make a copy 
+        of the path, just have the info_block copy point to our 
+        local copy.
+
+--------------------------------------------------------------------------- */
+#ifdef PROTOTYPE
+int32 HBPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
+#else
+int32 HBPinfo(access_rec, info_block)
+     accrec_t        * access_rec;  /* access record */
+     sp_info_block_t * info_block   /* info_block to fill */
+#endif
+{
+    char *FUNC="HXPinfo";      /* for HERROR */
+    extinfo_t *info =         /* special information record */
+       (extinfo_t *)access_rec->special_info;
+
+    /* validate access record */
+    if (access_rec->special != SPECIAL_BIGEXT)
+        HRETURN_ERROR(DFE_INTERNAL,FAIL);
+    
+    /* fill in the info_block */
+    info_block->key = SPECIAL_BIGEXT;
+
+    info_block->offset    = info->extern_offset;
+    info_block->path      = info->extern_file_name;
+
+    return SUCCEED;
+
+} /* HBPinfo */

@@ -3590,49 +3590,103 @@ int32 block_size;
     return(SUCCEED);
 }   /* HPfreediskblock() */
 
-/* ----------------------------------------------------------------------- 
+
+/*--------------------------------------------------------------------------
 
  NAME
-	Hfidinquire --- Inquire about a file indentifier(ID)
+       HDget_special_info -- get information about a special element
  USAGE
-	int Hfidinquire(file_id, fname, access, attach)
-	int32    file_id;        IN: handle of file
-        char  ** fname;          OUT: path of file
-        intn   * access;         OUT: mode file is opened with 
-        intn   * attach;         OUT: number of active AIDs
+       intn HDget_special_info(access_id, info_block)
+       int32 access_id;        IN: id of READ access element
+       sp_info_block_t * info_block; 
+                               OUT: information about the special element
  RETURNS
-	returns SUCCEED (0) if successful and FAIL (-1) if failed.
+       SUCCEED / FAIL
  DESCRIPTION
-        Gets the complete path name, acces mode, and number of data element
-        access identifiers associated with the file identifier.
+       Fill in the given info_block with information about the special
+       element.  Return FAIL if it is not a speical element AND set
+       the 'key' field to FAIL in info_block.
 
--------------------------------------------------------------------------*/
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn Hfidinquire(int32 file_id, char **fname, intn *acc_mode, intn *attach)
+int32 HDget_special_info(int32 access_id, sp_info_block_t * info_block)
 #else
-intn Hfidinquire(file_id, fname, acc_mode, attach)
-int32 file_id;
-char  **fname;
-intn  *acc_mode;
-intn  *attach;
+int32 HDget_special_info(access_id, info_block)
+     int32             access_id;   /* access id */
+     sp_info_block_t * info_block   /* info_block to fill */
 #endif
 {
-    filerec_t *file_rec;
-    CONSTR(FUNC,"Hfidinquire");
+    char *FUNC="HDget_special_info";  /* for HERROR */
+    filerec_t *file_rec;              /* file record */
+    accrec_t *access_rec;             /* access record */
 
+    /* clear error stack and check validity of access id */
     HEclear();
-
-    file_rec = FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0)
+    access_rec = AID2REC(access_id);
+    if (access_rec == (accrec_t *) NULL || 
+        !access_rec->used || 
+        info_block == NULL)
         HRETURN_ERROR(DFE_ARGS,FAIL);
+    
+    /* special elt, so call special function */
+    if (access_rec->special)
+        return (*access_rec->special_func->info)(access_rec, info_block);
+    
+    /* else is not special so FAIL */
 
-    *fname  = file_rec->path;
-    *acc_mode = file_rec->access;
-    *attach = file_rec->attach;
+    info_block->key = FAIL;
+    return FAIL;
 
-    return SUCCEED;
+} /* HDget_special_info */
 
-} /* Hfidinquire */
+
+/*--------------------------------------------------------------------------
+
+ NAME
+       HDset_special_info -- reset information about a special element
+ USAGE
+       intn HDet_special_info(access_id, info_block)
+       int32 access_id;        IN: id of READ access element
+       sp_info_block_t * info_block; 
+                               IN: information about the special element
+ RETURNS
+       SUCCEED / FAIL
+ DESCRIPTION
+       Attempt to replace the special information for the given element
+       with new information.  This routine should be used to rename
+       external elements for example.  Doing things like changing the
+       blocking of a linekd block element are beyond the scope of this
+       routine.
+
+--------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+int32 HDset_special_info(int32 access_id, sp_info_block_t * info_block)
+#else
+int32 HDset_special_info(access_id, info_block)
+     int32             access_id;   /* access id */
+     sp_info_block_t * info_block   /* new special information */
+#endif
+{
+    char *FUNC="HDset_special_info";  /* for HERROR */
+    filerec_t *file_rec;              /* file record */
+    accrec_t *access_rec;             /* access record */
+
+    /* clear error stack and check validity of access id */
+
+    access_rec = AID2REC(access_id);
+    if (access_rec == (accrec_t *) NULL || 
+        !access_rec->used || 
+        info_block == NULL)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
+    
+    /* special elt, so call special function */
+    if (access_rec->special)
+        return (*access_rec->special_func->reset)(access_rec, info_block);
+    
+    /* else is not special so fail */
+    return FAIL;
+
+} /* HDset_special_info */
 
 
 /* -------------------------- MAC Specific Stuff -------------------------- */

@@ -42,16 +42,14 @@ typedef struct {
     int32 extern_offset;
     int32 length;              /* length of this element */
     int32 length_file_name;    /* length of the external file name */
-    hdf_file_t file_external;      /* external file descriptor */
+    hdf_file_t file_external;  /* external file descriptor */
     char *extern_file_name;    /* name of the external file */
+    intn  file_open;           /* has the file been opened yet ? */
 } extinfo_t;
 
 /* forward declaration of the functions provided in this module */
 PRIVATE int32 HXIstaccess
-    PROTO((accrec_t *access_rec, int16 acc_mode));
-
-/* Private buffer */
-PRIVATE uint8 *ptbuf = NULL;
+    PROTO((accrec_t *access_rec, int16 access));
 
 /* ext_funcs -- table of the accessing functions of the external
    data element function modules.  The position of each function in
@@ -65,6 +63,8 @@ funclist_t ext_funcs = {
     HXPread,
     HXPwrite,
     HXPendaccess,
+    HXPinfo,
+    HXPreset,
 };
 
 
@@ -122,6 +122,7 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, offset, start_len)
     extinfo_t *info;           /* special element information */
     dd_t *data_dd;             /* dd of existing regular element */
     uint16 special_tag;                /* special version of tag */
+    uint8 ptbuf[TBUF_SZ];      /* temp working buffer */
 
     /* clear error stack and validate args */
     HEclear();
@@ -133,14 +134,6 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, offset, start_len)
 
     if (!(file_rec->access & DFACC_WRITE))
        HRETURN_ERROR(DFE_DENIED,FAIL);
-
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
-        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
-        if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
 
     /* get a slot in the access records table */
     slot = HIget_access_slot();
@@ -234,6 +227,7 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, offset, start_len)
     }
 
     info->attached = 1;
+    info->file_open = TRUE;
     info->file_external = file_external;
     info->extern_offset = offset;
     info->extern_file_name = (char *)HDstrdup(extern_file_name);
@@ -343,19 +337,13 @@ PRIVATE int32 HXIstaccess(access_rec, acc_mode)
     dd_t *info_dd;             /* dd of the special information element */
     extinfo_t *info;           /* special element information */
     filerec_t *file_rec;       /* file record */
+    uint8 ptbuf[TBUF_SZ];      /* working buffer */
 
     /* get file record and validate */
     file_rec = FID2REC(access_rec->file_id);
     if (!file_rec || file_rec->refcount == 0 || !(file_rec->access & acc_mode))
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL) {
-        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
-        if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
-    
     /* intialize the access record */
     access_rec->special = SPECIAL_EXT;
     access_rec->posn = 0;
@@ -410,11 +398,18 @@ PRIVATE int32 HXIstaccess(access_rec, acc_mode)
            HRETURN_ERROR(DFE_READERROR,FAIL);
        }
        info->extern_file_name[info->length_file_name] = '\0';
+
+       /* delay file opening until needed */
+       info->file_open = FALSE;
+
+#if 0
        info->file_external = HI_OPEN(info->extern_file_name, acc_mode);
        if (OPENERR(info->file_external)) {
            access_rec->used = FALSE;
            HRETURN_ERROR(DFE_BADOPEN,FAIL);
        }
+#endif /* 0 */
+
        info->attached = 1;
     }
 
@@ -559,11 +554,23 @@ int32 HXPread(access_rec, length, data)
        HRETURN_ERROR(DFE_RANGE,FAIL);
 
     /* adjust length if it falls off the end of the element */
-    if (length == 0)
+    if ((length == 0) || (access_rec->posn + length > info->length))
         length = info->length - access_rec->posn;
     else
-        if (length < 0 || access_rec->posn + length > info->length)
+        if(length < 0)
            HRETURN_ERROR(DFE_RANGE,FAIL);
+
+    /* see if the file is open, if not open it */
+    if(!info->file_open) {
+        info->file_external = HI_OPEN(info->extern_file_name, access_rec->access);
+        if (OPENERR(info->file_external)) {
+            access_rec->used = FALSE;
+            HERROR(DFE_BADOPEN);
+            HEreport("Could not find external file %s\n", info->extern_file_name);
+            return(FAIL);
+        }
+        info->file_open = TRUE;
+    }
 
     /* read it in from the file */
     if (HI_SEEK(info->file_external,access_rec->posn+info->extern_offset)==FAIL)
@@ -592,7 +599,10 @@ int32 HXPread(access_rec, length, data)
  RETURNS
         The number of bytes written or FAIL on error
  DESCRIPTION
-        Write out some data to an external file
+        Write out some data to an external file.  
+
+        It looks like this will allow us to write to a file even if we only 
+        have a read AID for it.   Is that really the behavior that we want?
 
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
@@ -604,6 +614,7 @@ int32 HXPwrite(access_rec, length, data)
     const VOIDP data;                        /* data buffer */
 #endif
 {
+    uint8 ptbuf[TBUF_SZ];      /* temp buffer */
     CONSTR(FUNC,"HXPwrite");     /* for HERROR */
     extinfo_t *info =          /* information on the special element */
        (extinfo_t*)(access_rec->special_info);
@@ -612,12 +623,17 @@ int32 HXPwrite(access_rec, length, data)
     if (length < 0)
        HRETURN_ERROR(DFE_RANGE,FAIL);
 
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL) {
-        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
-        if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
+    /* see if the file is open, if not open it */
+    if(!info->file_open) {
+        info->file_external = HI_OPEN(info->extern_file_name, access_rec->access);
+        if (OPENERR(info->file_external)) {
+            access_rec->used = FALSE;
+            HERROR(DFE_BADOPEN);
+            HEreport("Could not find external file %s\n", info->extern_file_name);
+            return(FAIL);
+        }
+        info->file_open = TRUE;
+    }
 
     /* write the data onto file */
     if (HI_SEEK(info->file_external,
@@ -776,7 +792,7 @@ int32 HXPendaccess(access_rec)
  NAME
 	HXPcloseAID -- close file but keep AID active
  USAGE
-	int32 HXPcloseAID(access_rec)
+        int32 HXPcloseAID(access_rec)
         access_t * access_rec;      IN:  access record of file to close
  RETURNS
         SUCCEED / FAIL
@@ -806,11 +822,154 @@ accrec_t *access_rec;
        If no more references to that, free the record */
 
     if (--(info->attached) == 0) {
-       HI_CLOSE(info->file_external);
+       if(info->file_open)
+           HI_CLOSE(info->file_external);
        HDfreespace((VOIDP) info->extern_file_name);
        HDfreespace((VOIDP) info);
     }
 
     return SUCCEED;
 } /* HXPcloseAID */
+
+/* ------------------------------- HXPinfo -------------------------------- */
+/*
+
+ NAME
+	HXPinfo -- return info about an external element
+ USAGE
+	int32 HXPinfo(access_rec, info_block)
+        accrec_t        * access_rec;
+                                IN: access record of element
+        sp_info_block_t * info_block; 
+                                OUT: information about the special element 
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Return information about the given external element.  Info_block is
+        assumed to be non-NULL.  Do not make a copy of the path, just have
+        the info_block copy point to our local copy.
+
+--------------------------------------------------------------------------- */
+#ifdef PROTOTYPE
+int32 HXPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
+#else
+int32 HXPinfo(accrec_rec, info_block)
+     accrec_t        * access_id;   /* access id */
+     sp_info_block_t * info_block   /* info_block to fill */
+#endif
+{
+    char *FUNC="HXPinfo";      /* for HERROR */
+    extinfo_t *info =         /* special information record */
+       (extinfo_t *)access_rec->special_info;
+
+    /* validate access record */
+    if (access_rec->special != SPECIAL_EXT)
+        HRETURN_ERROR(DFE_INTERNAL,FAIL);
+    
+    /* fill in the info_block */
+    info_block->key = SPECIAL_EXT;
+
+    info_block->offset    = info->extern_offset;
+    info_block->path      = info->extern_file_name;
+
+    return SUCCEED;
+
+} /* HXPinfo */
+
+
+/* ------------------------------- HXPreset ------------------------------- */
+/*
+
+ NAME
+	HXPreset -- replace the current external info with new info
+ USAGE
+	int32 HXPreset(access_rec, info_block)
+        accrec_t        * access_rec;
+                                IN: access record of element
+        sp_info_block_t * info_block; 
+                                IN: information about the special element 
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Reset information about the given external element.  Info_block is
+        assumed to be non-NULL. 
+
+        Basically, what this routine does is throw out the old file 
+        information for a special element and replaces it with a new
+        file name.  This is useful for when a file has changed places.
+        The offset and length are assumed to be the same.
+
+--------------------------------------------------------------------------- */
+#ifdef PROTOTYPE
+int32 HXPreset(accrec_t * access_rec, sp_info_block_t * info_block)
+#else
+int32 HXPreset(accrec_rec, info_block)
+     accrec_t        * access_id;   /* access id */
+     sp_info_block_t * info_block   /* info_block to fill */
+#endif
+{
+    char      * FUNC="HXPreset"; /* for HERROR */
+    dd_t      * dd;              /* dd of existing external element record */
+    filerec_t * file_rec;        /* file record */ 
+    uint8       ptbuf[TBUF_SZ];  /* temp buffer */
+    extinfo_t * info =           /* special information record */
+       (extinfo_t *)access_rec->special_info;
+
+    /* validate access record -- make sure is already external element */
+    if (access_rec->special != SPECIAL_EXT)
+        HRETURN_ERROR(DFE_INTERNAL,FAIL);
+
+    /* just replace with other external element info for now  */
+    /* (i.e., this can not change the type of special element */
+    if(info_block->key != SPECIAL_EXT)
+        HRETURN_ERROR(DFE_INTERNAL,FAIL);
+
+    /* check validity of file record */
+    file_rec = FID2REC(access_rec->file_id);
+    if (!file_rec || file_rec->refcount == 0)
+        HRETURN_ERROR(DFE_INTERNAL,FAIL);
+    
+    /* get the DD of the existing special element record */
+    dd = &access_rec->block->ddlist[access_rec->idx];
+
+    /* update our internal pointers */
+    info->extern_offset    = info_block->offset;
+    info->extern_file_name = (char *)HDstrdup(info_block->path);
+    if (!info->extern_file_name) 
+        HRETURN_ERROR(DFE_NOSPACE,FAIL);
+    info->length_file_name = HDstrlen(info->extern_file_name);
+
+    /* 
+     * delete the existing tag / ref object 
+     * accomplish this by changing the offset and length of the existing
+     *  special element DD and writing it in a new place
+     */
+    dd->length = 14 + info->length_file_name;
+    if((dd->offset = HPgetdiskblock(file_rec, dd->length, TRUE))==FAIL)
+        HRETURN_ERROR(DFE_INTERNAL,FAIL);
+
+    /* write the new external file record */
+    {
+        uint8 *p = ptbuf;
+        INT16ENCODE(p, SPECIAL_EXT);
+        INT32ENCODE(p, info->length);
+        INT32ENCODE(p, info->extern_offset);
+        INT32ENCODE(p, info->length_file_name);
+        HDstrcpy((char *) p, (char *)info->extern_file_name);
+    }
+
+    /* write out the new external file record */
+    if (HI_WRITE(file_rec->file, ptbuf, dd->length) == FAIL) {
+        HERROR(DFE_WRITEERROR);
+        access_rec->used = FALSE;
+        return FAIL;
+    }
+    
+    /* update the DD block in the file */
+    if(HIupdate_dd(file_rec, access_rec->block, access_rec->idx, FUNC) == FAIL)
+        return FAIL;
+
+    return SUCCEED;
+
+} /* HXPreset */
 

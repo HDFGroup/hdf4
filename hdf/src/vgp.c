@@ -641,7 +641,7 @@ const char    *accesstype;    /* access mode */
            * vg already attached.  inc nattach and return existing ptr
            */
         if (v->vg != NULL) {
-            v->vg->access = MAX(v->vg->access, access);
+            v->vg->access = MAX(v->vg->access, acc_mode);
             v->nattach++;
             return(v->key);     /* return key instead of VGROUP ptr */
         }

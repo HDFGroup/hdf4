@@ -97,6 +97,7 @@ funclist_t linked_funcs = {
     HLPread,
     HLPwrite,
     HLPendaccess,
+    HLPinfo
 };
 
 
@@ -1353,3 +1354,47 @@ int32 HLPendaccess(access_rec)
     return SUCCEED;
 } /* HLPendaccess */
 
+/* ------------------------------- HLPinfo -------------------------------- */
+/*
+
+ NAME
+	HLPinfo -- return info about a linked block element
+ USAGE
+	int32 HLPinfo(access_rec, info_block)
+        access_t        * access_rec;   
+                                IN: access record of access element
+        sp_info_block_t * info_block; 
+                                OUT: information about the special element 
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Return information about the given linked block.  Info_block is
+        assumed to be non-NULL.
+
+--------------------------------------------------------------------------- */
+#ifdef PROTOTYPE
+int32 HLPinfo(accrec_t *access_rec, sp_info_block_t * info_block)
+#else
+int32 HLPinfo(access_rec, info_block)
+     accrec_t        * access_rec;   /* access record */
+     sp_info_block_t * info_block    /* info_block to fill */
+#endif
+{
+    char *FUNC="HLPinfo";      /* for HERROR */
+    linkinfo_t *info =         /* special information record */
+       (linkinfo_t *)access_rec->special_info;
+
+    /* validate access record */
+    if (access_rec->special != SPECIAL_LINKED)
+        HRETURN_ERROR(DFE_INTERNAL,FAIL);
+    
+    /* fill in the info_block */
+    info_block->key = SPECIAL_LINKED;
+
+    info_block->first_len = info->first_length;
+    info_block->block_len = info->block_length;
+    info_block->nblocks   = info->number_blocks;
+
+    return SUCCEED;
+
+} /* HLPinfo */

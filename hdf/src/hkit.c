@@ -544,4 +544,3 @@ const char _HUGE *HDgettagname(tag)
 	    return(tag_descriptions[i].desc);
     return(NULL);
 }
-
