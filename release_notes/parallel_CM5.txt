@@ -1,13 +1,12 @@
 CM5 Parallel I/O Extension
 
-    An extension using the parallel I/O in CM5 is added to the SDS
-    interface.  Initial tests have resulted in about 25 MBytes/second
-    IO throughput using the SDA (Scalable Disk Array) file system. The
-    library provides interfaces for both C* and CMF programming
-    languages.
+    Tests of the CM5 parallel I/O extension of the SDS interface 
+    have resulted in about a 25 MBytes/second IO throughput using the 
+    SDA (Scalable Disk Array) file system. The library provides 
+    interfaces for both C* and CMF programming languages.
 
     Read the section "Installing HDF Libraries With CM5 Parallel I/O
-    Extension" for specific installation instructions.
+    Extension" below for specific installation instructions.
 
     The parallel I/O interface requires the scientific dataset be
     stored as external elements and the I/O access type be set to
@@ -19,9 +18,9 @@ CM5 Parallel I/O Extension
     directory also contains a Makefile showing how to compile and link
     in the runtime libraries.
 
-    New options have been added to hdfls and hdfpack to handle them. A
-    new utility program, hdfunpac, is created for external files
-    handling too. See the man pages for details.
+    The hdfls and hdfpack utilities have options to handle them. The
+    hdfunpac utility is used for external file handling also.
+    See the man pages for details.
 
     A note: C* does not support the "nopadding" option that CMF does.
     CMF programs compiled with "-nopadding" (default is padding) do
