@@ -145,7 +145,7 @@ VSsetfields(int32 vkey, const char *fields)
     intn j, i;
     int16       order;
     int32       value;
-    VREADLIST  *rlist;
+    DYN_VREADLIST  *rlist;
     DYN_VWRITELIST *wlist;
     vsinstance_t *w;
     VDATA      *vs;
@@ -314,6 +314,13 @@ VSsetfields(int32 vkey, const char *fields)
       {
           rlist = &(vs->rlist);
           rlist->n = 0;
+          if(rlist->item!=NULL)
+              HDfree(rlist->item);
+          rlist->item=NULL;
+
+          /* Allocate enough space for the read list */
+          if((rlist->item=(intn *)HDmalloc(sizeof(intn)*(ac)))==NULL)
+              HRETURN_ERROR(DFE_NOSPACE, FAIL);
           for (i = 0; i < ac; i++)
             {
                 found = FALSE;

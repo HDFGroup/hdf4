@@ -143,7 +143,7 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
     uint8 *b1, *b2;
     int32       i, j, nv, offset, type;
     DYN_VWRITELIST *w;
-    VREADLIST  *r;
+    DYN_VREADLIST  *r;
     int32       uvsize;         /* size of "element" as NEEDED by user */
     vsinstance_t *wi;
     VDATA      *vs;

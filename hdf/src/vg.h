@@ -107,12 +107,21 @@ typedef struct dyn_write_struct
   }
 DYN_VWRITELIST;
 
+#ifdef OLD_WAY
 typedef struct read_struct
   {
       intn        n;            /* # fields to read */
       intn        item[VSFIELDMAX];     /* index into vftable_struct */
   }
 VREADLIST;
+#endif /* OLD_WAY */
+
+typedef struct dyn_read_struct
+  {
+      intn        n;            /* # fields to read */
+      intn        *item;        /* index into vftable_struct */
+  }
+DYN_VREADLIST;
 
 /*
    *  -----------------------------------------------
@@ -156,7 +165,7 @@ struct vdata_desc
       int16       interlace;    /* S  interlace as in file */
       int32       nvertices;    /* S  #vertices in this vdata */
       DYN_VWRITELIST  wlist;
-      VREADLIST   rlist;
+      DYN_VREADLIST   rlist;
       int16       nusym;
       SYMDEF      usym[VSFIELDMAX];
 /*      SYMDEF      usym[USYMMAX];    */

@@ -380,6 +380,9 @@ vsdestroynode(VOIDP n)
         HDfree(vs->wlist.order);
         HDfree(vs->wlist.esize);
 
+        if(vs->rlist.item!=NULL)
+            HDfree(vs->rlist.item);
+
         HDfree((VOIDP) vs);
       } /* end if */
 
@@ -412,13 +415,16 @@ VDATA _HUGE *VSPgetinfo(HFILEID f,uint16 ref)
     char * FUNC = "VSPgetinfo";
 	VDATA 		*vs;  			 /* new vdata to be returned */
     uint8       *vspack;
+    int32       vh_length;      /* length of the vdata header */
  
     /* allocate space for vs,  & zero it out  */
     if ( (vs=(VDATA*) HDmalloc (sizeof(VDATA))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, NULL);
  
     /* need to fetch from file */
-    if ( (vspack= (uint8 *) HDmalloc (sizeof(VWRITELIST))) == NULL)
+    if ((vh_length= Hlength (f,DFTAG_VH,ref))==FAIL)
+        HRETURN_ERROR(DFE_BADLEN, NULL);
+    if ( (vspack= (uint8 *) HDmalloc (vh_length)) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, NULL);
     if (Hgetelement(f,DFTAG_VH,ref,vspack) == FAIL) {
         HDfree((VOIDP)vspack);
@@ -426,6 +432,7 @@ VDATA _HUGE *VSPgetinfo(HFILEID f,uint16 ref)
       } /* end if */
  
     vs->wlist.n = vs->rlist.n = 0;
+    vs->rlist.item=NULL;
  
     /* unpack the vs, then init all other fields in it */
     vunpackvs (vs,vspack);
@@ -537,6 +544,7 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
 
           vs->nvertices = 0;
           vs->wlist.n = vs->rlist.n = 0;
+          vs->rlist.item=NULL;
           vs->islinked = FALSE;
           vs->nusym = 0;
 
@@ -619,6 +627,7 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
 	    }	
 
 	  vs->wlist.n = vs->rlist.n = 0;
+      vs->rlist.item=NULL;
 
 	  /* unpack the vs, then init all other fields in it */
 	  vunpackvs(vs, vspack);
@@ -683,6 +692,7 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
 	    }	/* end if */
 
 	  vs->wlist.n = vs->rlist.n = 0;
+      vs->rlist.item=NULL;
 	  vs->nusym = 0;
 
 	  /* unpack the vs, then init all other fields in it */
