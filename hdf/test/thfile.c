@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/05/31 15:23:30  mfolk
-Added uint8 * and uint16 casts to make Convex stop complaining.
+Revision 1.4  1992/06/01 19:23:47  chouck
+Cleaned up output
 
+ * Revision 1.3  1992/05/31  15:23:30  mfolk
+ * Added uint8 * and uint16 casts to make Convex stop complaining.
+ *
  * Revision 1.2  1992/05/28  14:24:01  chouck
  * Added casts for calls to Hinquire()
  *
@@ -53,6 +56,12 @@ Added uint8 * and uint16 casts to make Convex stop complaining.
 static int shell = 0;
 uint8 outbuf[4096], inbuf[4096];
 
+
+#define CHECK(ret, val, where) \
+{if(ret == val) { fprintf(stderr, "%s failed, line %d, code %d\n", \
+                          where, __LINE__, ret); \
+                  HEprint(stderr, 0); exit(1);}}
+
 void do_shell()
 {
     if (shell) {
@@ -76,165 +85,164 @@ int main(argc, argv)
     uint16 tag, ref;
     int16 access, special;
     int ret, i;
+    intn errors = 0;
 
     if (argc > 1 && strcmp(argv[1], "-shell") == 0) {
        shell = 1;
     }
     for (i=0; i<4096; i++) outbuf[i] = (char) (i % 256);
 
-    printf("Creating a file %s\n", TESTFILE_NAME);
+    printf("Creating a file %s\n\n", TESTFILE_NAME);
     fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);
-    printf("fid from Hopen is %d\n", fid);
+    CHECK(fid, FAIL, "Hopen");
 
-    puts("checking newref");
     ret = Hnewref(fid);
-    printf("newref is %d\n", ret);
+    CHECK(ret, FAIL, "Hnewref");
 
-    puts("putting some data elements into the file.");
-    puts("Data element 100 1");
+    printf("Reading / Writing to file\n");
     ret = Hputelement(fid, (uint16) 100, 1, 
                       (uint8 *) "testing 100 1", strlen("testing 100 1")+1);
-    printf("ret from Hputelement is %d\n",(uint16)  ret);
+    CHECK(ret, FAIL, "Hputelement");
 
-    puts("Putting data element 100 4");
     ret = Hputelement(fid, (uint16) 100, (uint16) 4, outbuf, 2000);
-    printf("ret from Hputelement is %d\n", ret);
+    CHECK(ret, FAIL, "Hputelement");
 
-    puts("checking newref");
     ret = Hnewref(fid);
-    printf("newref is %d\n", ret);
+    CHECK(ret, FAIL, "Hnewref");
 
-    puts("putting data element 103 2");
     ret = Hputelement(fid, (uint16) 103, (uint16) 2, 
-                         (uint8 *) "element 103 2", strlen("element 103 2")+1);
-    printf("ret from Hputelement is %d\n", ret);
-    puts("getting data element 100 4");
+                      (uint8 *) "element 103 2", strlen("element 103 2")+1);
+    CHECK(ret, FAIL, "Hputlement");
+
     ret = Hgetelement(fid, (uint16) 100, (uint16) 4, inbuf);
-    printf("ret from Hgetelement is %d\n", ret);
+    if(ret != 2000) {
+      fprintf(stderr, "Hgetelement returned wrong count: %d\n", ret);
+      errors++;
+    }
+
     for (i=0; i<ret; i++) {
        if (inbuf[i] != outbuf[i])
            printf("Wrong data at %d, out %d in %d\n", i, outbuf[i], inbuf[i]);
        inbuf[i] = '\0';
     }
 
-    puts("putting data element 102 2");
     ret = Hputelement(fid, 102, 2, outbuf, 4096);
-    printf("ret from Hputelement is %d\n", ret);
+    CHECK(ret, FAIL, "Hputlement");
 
-    puts("Closing the file.");
     ret = Hclose(fid);
-    printf("ret from Hclose is %d\n", ret);
+    CHECK(ret, FAIL, "Hclose");
 
     do_shell();
 
-    puts("Opening a file with DFACC_ALL");
+    printf("\nClosing and re-opening file %s\n\n", TESTFILE_NAME);
     fid = Hopen(TESTFILE_NAME, DFACC_ALL, 0);
-    printf("fid from Hopen is %d\n", fid);
+    CHECK(fid, FAIL, "Hopen");
 
-    puts("checking newref");
     ret = Hnewref(fid);
-    printf("newref is %d\n", ret);
+    CHECK(ret, FAIL, "Hnewref");
 
-    puts("starting read 100 1");
     aid1 = Hstartread(fid, 100, 1);
-    printf("aid1 from Hstartread is %d\n", aid1);
+    CHECK(aid1, FAIL, "Hstartread");
 
-    puts("inquiring about access element");
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                   &access, &special);
-    printf("ret from Hinquire is %d\n", ret);
-    printf("fileid %d tag %d ref %d length %d offset %d posn %d\n\
- access %d special %d\n",
-          fileid, tag, ref, length, offset, posn, access, special);
+    CHECK(ret, FAIL, "Hinquire");
 
-    puts("Reading entire data element");
+    printf("Verifying data\n\n");
     ret = Hread(aid1, length, inbuf);
-    printf("ret from Hread is %d\n", ret);
-    printf("data is :%s:\n", inbuf);
+    if(ret != 14) {
+      fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", ret);
+      errors++;
+    }
 
-    puts("checking newref");
+    if(strcmp(inbuf, "testing 100 1")) {
+      fprintf(stderr, "ERROR: Hread returned the wrong data\n");
+      fprintf(stderr, "\t       Is: %s\n", inbuf);
+      fprintf(stderr, "\tShould be: testing 100 1\n");
+      errors++;
+    }
+
     ret = Hnewref(fid);
-    printf("newref is %d\n", ret);
+    CHECK(ret, FAIL, "Hnewref");
 
-    puts("searching nextread of 100 WILDCARD using DF_CURRENT");
+    printf("Testing a number of searching schemes\n\n");
     ret = Hnextread(aid1, 100, DFREF_WILDCARD, DF_CURRENT);
-    printf("ret from Hnextread is %d\n", ret);
+    CHECK(ret, FAIL, "Hnextread");
 
-    puts("inquiring about access element");
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                   &access, &special);
-    printf("ret from Hinquire is %d\n", ret);
-    printf("fileid %d tag %d ref %d length %d offset %d posn %d\n\
- access %d special %d\n",
-          fileid, tag, ref, length, offset, posn, access, special);
+    CHECK(ret, FAIL, "Hinquire");
 
-    puts("searching nextread of 100 WILDCARD using DF_CURRENT");
-    puts("expect failure");
     ret = Hnextread(aid1, 100, DFREF_WILDCARD, DF_CURRENT);
-    printf("ret from Hnextread is %d\n", ret);
+    if(ret != FAIL) {
+      fprintf(stderr, "ERROR: Found a non-existant element at line %d\n", 
+              __LINE__);
+      errors++;
+    }
 
-    puts("searching nextread of WILDCARD WILDCARD using DF_START");
     ret = Hnextread(aid1, DFTAG_WILDCARD, DFREF_WILDCARD, DF_START);
-    printf("ret from Hnextread is %d\n", ret);
+    CHECK(ret, FAIL, "Hnextread");
 
-    puts("inquiring about access element");
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                   &access, &special);
-    printf("ret from Hinquire is %d\n", ret);
-    printf("fileid %d tag %d ref %d length %d offset %d posn %d\n\
- access %d special %d\n",
-          fileid, tag, ref, length, offset, posn, access, special);
+    CHECK(ret, FAIL, "Hinquire");
 
-    puts("searching nextread of WILDCARD 3 using DF_CURRENT");
-    puts("expect a failure");
     ret = Hnextread(aid1, DFTAG_WILDCARD, 3, DF_CURRENT);
-    printf("ret from Hnextread is %d\n", ret);
+    if(ret != FAIL) {
+      fprintf(stderr, "ERROR: Found a non-existant element at line %d\n", 
+              __LINE__);
+      errors++;
+    }
 
-    puts("searching nextread of WILDCARD 2 using DF_CURRENT");
     ret = Hnextread(aid1, DFTAG_WILDCARD, 2, DF_CURRENT);
-    printf("ret from Hnextread is %d\n", ret);
+    CHECK(ret, FAIL, "Hnextread");
 
-    puts("inquiring about access element");
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                   &access, &special);
-    printf("ret from Hinquire is %d\n", ret);
-    printf("fileid %d tag %d ref %d length %d offset %d posn %d\n\
- access %d special %d\n",
-          fileid, tag, ref, length, offset, posn, access, special);
+    CHECK(ret, FAIL, "Hinquire");
 
-    puts("starting write on old data element 100 1");
     aid2 = Hstartwrite(fid, 100, 1, 4);
-    printf("aid from Hstartwrite is %d\n", aid1);
+    if(aid2 == FAIL) {
+      fprintf(stderr, "ERROR: was not allowed to startwrite on existing object\n");
+      errors++;
+    }
 
-    puts("writing ABCD into data element");
     ret = Hwrite(aid1, 4, (uint8 *) "ABCD");
-    printf("ret from Hwrite is %d\n");
+    if(ret != FAIL) {
+      fprintf(stderr, "ERROR: was allowed to write to read access object\n");
+      errors++;
+    }
 
-    puts("ending read access element");
     ret = Hendaccess(aid1);
-    printf("ret from Hendaccess is %d\n");
+    CHECK(ret, FAIL, "Hendaccess");
 
-    puts("ending write access element");
     ret = Hendaccess(aid2);
-    printf("ret from Hendaccess is %d\n");
-
+    CHECK(ret, FAIL, "Hendaccess");
+    
     do_shell();
 
-    puts("Opening a file.");
+
+    printf("Attempting to gain multiple access to file (is allowed)\n");
     fid1 = Hopen(TESTFILE_NAME, DFACC_READ, 0);
-    printf("fid1 from Hopen is %d\n", fid1);
+    if(fid1 == FAIL) {
+      fprintf(stderr, "ERROR: Failed to have two concurrent access to file\n");
+      errors++;
+    }
 
-    puts("checking newref of fid1");
     ret = Hnewref(fid1);
-    printf("newref is %d\n", ret);
+    CHECK(ret, FAIL, "Hnewref");
 
-    puts("Closing the file fid");
     ret = Hclose(fid);
-    printf("ret from Hclose is %d\n", ret);
+    CHECK(ret, FAIL, "Hclose");
 
-    puts("Closing the file fid1");
     ret = Hclose(fid1);
-    printf("ret from Hclose is %d\n", ret);
+    CHECK(ret, FAIL, "Hclose");
 
     do_shell();
+  
+    if(errors) 
+      fprintf(stderr, "\n\t>>> %d errors were encountered <<<\n\n");
+    else
+      fprintf(stderr, "\n\t>>> All tests passed <<< \n\n");
+
 }
