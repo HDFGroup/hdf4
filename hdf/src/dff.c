@@ -105,7 +105,7 @@ static char RcsId[] = "@(#)$Revision$";
  * Method:  Convert filename to C string, call DFopen
  * Note: DFopen actually return *DF.  In machines that a pointer
  *       is bigger than a Fortran INTEGER, this routine would fail.
- *       This is a design error and has easy portable solution.
+ *       This is a design error and has no easy portable solution.
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
@@ -115,6 +115,7 @@ ndfiopen(_fcd name, intf * acc_mode, intf * defdds, intf * namelen)
     intf        ret;
 
     fn = DFIf2cstring(name, (intn) *namelen);
+    /* For compiler warning, see note above. */
     ret = (intf) DFopen(fn, (intn) *acc_mode, (intn) *defdds);
     HDfree((VOIDP) fn);
     return (ret);
