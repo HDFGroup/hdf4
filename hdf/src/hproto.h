@@ -229,8 +229,8 @@ extern int32 HXcreate
 */
 extern int32 HCcreate
     PROTO((int32 file_id, uint16 tag, uint16 ref,
-        comp_model_t model_type, model_info *model_info,
-        comp_coder_t coder_type, comp_info *coder_info));
+        comp_model_t model_type, model_info _HUGE *m_info,
+        comp_coder_t coder_type, comp_info _HUGE *c_info));
 
 /*
 ** from herr.c
