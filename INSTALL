@@ -2,9 +2,7 @@ Installing HDF/netCDF
 =====================
 
     For compiling and installing HDF/netCDF libraries,tests and
-    utilities on a system, please follow these instructions. This
-    document is still under construction and certain sections are
-    incomplete.
+    utilities on a system, please follow these instructions. 
 
 Supported Platforms
 ===================
@@ -15,8 +13,10 @@ Supported Platforms
   Sun4(Solaris 2.3)           CC SC3.0       f77 SC3.0        X         X
   SGI-?(IRIX4.0.2)            CC             f77              X         X
   SGI-Indy(IRIX5.3)           CC             f77              X         X
+  SGI-Indy(IRIX6.0_32)        CC             f77              X         X
   HP9000/735(HPUX 9.03)       CC             f77              X         X
   Convex C3880(ConvexOS 11.0) CC v5.0        fc v8.0          X         X
+  Convex Exemplar(HPUX)       CC             f77              X         X
   Cray C90 (UNICOS 803.2)     CC             cf77             X         X(C only)
   CM5 (Sun Frontend)          GCC 2.6.3      f77 SC1.0        X         X
   CM5 (Parallel I/O)          CSTAR 7.1.1    CMF 2.2.11       X         X
@@ -35,7 +35,7 @@ Supported Platforms
   Fujitsu VP/UXPM               
   Intel i860                    
   VMS/VMS                       
-    
+   
 Requirements
 ============
 

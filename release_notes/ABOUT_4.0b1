@@ -65,7 +65,6 @@ CONTENTS
  
             ./JPEG_v5b.txt 
 
-
      The JPEG library will need to be linked with a user's 
      applications whether they are compressed with JPEG or not.
 
@@ -153,10 +152,10 @@ CONTENTS
 
 3. HDF4.0 Beta 1 has been tested on the following systems:
 SunOS 4.1.3, SunOS 5.3 (Solaris 2.3), Linux, SGI/IRIX5.3, 
-SGI Power Challenge/IRIX6.0 (32-bit mode only), 
-HP/UX 9.01, IBM RS6000/AIX (C only), C3880/ConvexOS,11.0, 
-DEC alpha/OSF (C only), DecStation/MIPSEL (C only), CM5,
-Cray C90, Free BSD 2.0, and Windows NT. See the INSTALL 
+SGI Power Challenge/IRIX6.0 (32-bit mode only), HP/UX 9.01, 
+IBM RS6000/AIX (C only), C3880/ConvexOS,11.0, CM5, Cray C90,
+DEC alpha/OSF (C only), DecStation/MIPSEL (C only), Windows NT,
+Free BSD 2.0, and Convex Exemplar/HPUX. See the INSTALL 
 file at the top level of HDF4.0b1 for more details.
 
 4. Installing HDF4.0 Beta 1 on Windows NT and Windows 95
