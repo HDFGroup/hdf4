@@ -26,7 +26,7 @@ File Page Buffering(Beta release)
 
     Routines:(The names may change in the future...)
     -------------------------------------------------
-    MPset(int pagesize, int maxcache, int flags)
+    Hmpset(int pagesize, int maxcache, int flags)
     --------------------------------------------
     o  Set the pagesize and maximum number of pages to cache on the next
        open/create of a file. A pagesize that is a power of 2 is recommended.
@@ -39,7 +39,7 @@ File Page Buffering(Beta release)
        in memory otherwise pass in zero. In this case the value for 'maxcache'
        is ignored. 
  
-    MPget(int *pagesize, int *maxcache, int flags)
+    Hmpget(int *pagesize, int *maxcache, int flags)
     ----------------------------------------------
     o   This gets the last pagesize and maximum number of pages cached for
         the last open/create of a file. The 'flags' variable is not used.
