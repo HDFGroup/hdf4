@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.4  1992/08/05 21:47:57  chouck
+# Revision 1.5  1992/08/26 16:02:53  sxu
+# Added SHELL=/bin/sh
+#
+# Revision 1.4  1992/08/05  21:47:57  chouck
 # Fixed a couple naming convention problems
 #
 # Revision 1.3  1992/08/05  21:27:30  chouck
@@ -61,7 +64,8 @@
 #   SUN, IBM6000, HP9000, MIPSEL (Dec Mips based machines), ...
 #
 
-
+#define your sh shell
+SHELL=/bin/sh
 
 # Define your machine type
 MACHINE=SUN
