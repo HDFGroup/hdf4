@@ -2,8 +2,16 @@ $! --------------------------------------------------------------------------
 $! For making HDP.EXE on VMS.
 $! --------------------------------------------------------------------------
 $!
-$
-$ ccc := cc /opt/nodebug/define=(HDF,NO_SYS_XDR_INC)/nolist -
+$!
+$ if f$getsyi("arch_name") .eqs. "VAX"
+$ then 
+$ ccopt = "/DECC/STANDARD=VAXC"
+$ define/nolog sys$clib sys$library:deccrtl
+$ else
+$ ccopt = ""
+$ define/nolog sys$clib sys$library:vaxcrtl
+$ endif
+$ ccc := cc 'ccopt /opt/nodebug/define=(HDF,NO_SYS_XDR_INC)/nolist -
             /include=([-.libsrc],[-.xdr],[--.hdf.src], -
             [--.hdf.jpeg], [--.hdf.zlib]) 
 $
@@ -31,5 +39,5 @@ $ link/nodebug/notraceback/exe=hdp.exe -
     [--.lib]mfhdf/lib,[--.hdf.src]df/lib,[--.hdf.jpeg]libjpeg.olb/lib,  -
     [--.hdf.zlib]libz.olb/lib, -
     sys$input/opt
-        sys$library:vaxcrtl/lib
+        sys$clib/lib
 

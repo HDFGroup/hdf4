@@ -15,17 +15,24 @@ $! Makefile for VAX/VMX systems.
 $!
 $! Make a no-fortran-stub HDF library
 $!
-$ ccc := cc/noopt/debug/include=([-.jpeg],[-.zlib])/define=VMS
+$ if f$getsyi("arch_name") .eqs. "VAX"
+$ then 
+$ ccopt = "/DECC/STANDARD=VAXC"
+$ else
+$ ccopt = ""
+$ endif
+$ ccc := cc 'ccopt /opt/nodebug/include=([-.jpeg],[-.zlib])/define=VMS
 $ type sys$input
 	Creating base HDF library
-
+$!
 $ cobj="df24,dfan,dfcomp, dfgr, dfgroup, dfimcomp, dfp, dfr8, dfsd, "+-
 "dfstubs, dfutil,hblocks, herr, hextelt, hfile, hkit, vg, vgp, vhi, "+-
 "vio, vparse, vrw, vsfld, dfconv, vconv, dfrle, dfjpeg, dfunjpeg, "+-
 "dfufp2i,dfknat,dfkswap,dfkcray, dfkvms, dfkconv, dfkfuji,hbitio, "+-
 "tbbt,hdfalloc,mfgr,cdeflate,cnbit,cnone,crle,cskphuff,hcomp,mfan," +-
-"mstdio,atom, bitvect, dynarray, hfiledd, glist "
-
+"mstdio,atom, bitvect, dynarray, hfiledd, glist,hchunks,mcache, " +- 
+"vattr"
+$!
 $ ccc 'cobj 
 $ library/create []df  'cobj
 $ type sys$input

@@ -3,8 +3,17 @@ $! For making NCGEN.EXE on VMS.
 $! --------------------------------------------------------------------------
 $!
 $! $Id$
-$
-$ ccc := cc /opt/nodebug/include=([--.include],[--.hdf.src], -
+$!
+$ if f$getsyi("arch_name") .eqs. "VAX"
+$ then 
+$ ccopt = "/DECC/STANDARD=VAXC"
+$ define/nolog sys$clib sys$library:deccrtl
+$ else
+$ ccopt = ""
+$ define/nolog sys$clib sys$library:vaxcrtl
+$ endif
+$ ccc := cc 'ccopt  -
+       /opt/nodebug/include=([--.include],[--.hdf.src], -
      [--.hdf.jpeg],[--.hdf.zlib], sys$library)/nolist    -
      /define=(HDF,VMS,NO_SYS_XDR_INC)
 $
@@ -38,4 +47,4 @@ $ link/nodebug/notraceback/exe=NCGEN.exe -
     [--.hdf.jpeg]libjpeg.olb/lib, -
     [--.hdf.zlib]libz.olb/lib, -
     sys$input/opt
-	sys$library:vaxcrtl/lib
+	sys$clib/lib

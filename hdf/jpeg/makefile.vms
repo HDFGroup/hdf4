@@ -23,8 +23,14 @@ $       OPT = ""
 $   Else
 $       OPT = ",Sys$Disk:[]makvms.opt/Option"
 $ EndIf
-$ 
-$ DoCompile := CC /NoDebug /Optimize /NoList
+$
+$ if f$getsyi("arch_name") .eqs. "VAX" 
+$  then
+$    ccopt = "/DECC/STANDARD=VAXC"
+$  else 
+$    ccopt = ""
+$ endif
+$ DoCompile := CC 'ccopt /NoDebug /Optimize /NoList
 $!
 $ DoCompile jcapimin.c
 $ DoCompile jcapistd.c

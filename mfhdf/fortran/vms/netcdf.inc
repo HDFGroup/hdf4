@@ -31,7 +31,10 @@ c
 c     Functions in the FORTRAN interface
 c     These declarations may cause "unused variable" warnings
       integer nccre, ncopn, ncddef, ncdid, ncvdef, ncvid, nctlen
-
+      integer ncsfil
+      external nccre, ncopn, ncddef, ncdid, ncvdef, ncvid, nctlen
+      external ncsfil
+        
       integer NCRDWR,NCCREAT,NCEXCL,NCINDEF,NCNSYNC,NCHSYNC
       integer NCNDIRTY,NCHDIRTY,NCLINK,NCNOWRIT,NCWRITE
       integer NCCLOB,NCNOCLOB,NCGLOBAL,NCFILL,NCNOFILL

@@ -3,8 +3,19 @@ $! For making NCDUMP.EXE on VMS.
 $! --------------------------------------------------------------------------
 $!
 $! $Id$
-$
-$ ccc := cc /opt/nodebug/define=(HDF,VMS,NO_SYS_XDR_INC)/nolist -
+$!
+$ if f$getsyi("arch_name") .eqs. "VAX"
+$ then 
+$ ccopt = "/DECC/STANDARD=VAXC"
+$ define/nolog sys$clib sys$library:deccrtl
+$ getopt = ""
+$ else
+$ ccopt = ""
+$ define/nolog sys$clib sys$library:vaxcrtl
+$ getopt = "getopt.obj, "
+$ endif
+$ ccc := cc 'ccopt /opt/nodebug -
+           /define=(HDF,VMS,NO_SYS_XDR_INC)/nolist -
             /include=([-.libsrc],[-.xdr],[--.hdf.src], -
             [--.hdf.jpeg], [--.hdf.zlib]) 
 $
@@ -14,11 +25,11 @@ $ ccc NCDUMP.C
 $ ccc VARDATA.C
 $
 $ link/nodebug/exe=NCDUMP.exe -
-    getopt.obj, -
-    dumplib.obj, -
+    'getopt   dumplib.obj, -
     ncdump.obj, -
     vardata.obj, -
-    [--.lib]mfhdf/lib,[--.hdf.src]df/lib,[--.hdf.jpeg]libjpeg.olb/lib,  -
+    [--.lib]mfhdf/lib,[--.hdf.src]df/lib, -
+    [--.hdf.jpeg]libjpeg.olb/lib,  -
     [--.hdf.zlib]libz.olb/lib, -
     sys$input/opt
-        sys$library:vaxcrtl/lib
+        sys$clib/lib
