@@ -105,7 +105,7 @@ intn GRreqimageil(int32 riid,intn il)
 
 int32 GRgetlutid(int32 riid,int32 index)
     - Get a palette id ('palid') for an RI.
-intn GRgetlutinfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
+intn GRgetlutinfo(int32 riid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
     - Gets information about a palette.
 intn GRwritelut(int32 riid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP data)
     - Writes out a palette for an RI.
@@ -2157,41 +2157,23 @@ intn GRreqimageil(int32 riid,intn il)
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
+    Currently only supports one LUT per image, at index 0 and LUTID==RIID.
+
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32 GRgetlutid(int32 riid,int32 lut_index)
 {
     CONSTR(FUNC, "GRgetlutid");   /* for HERROR */
-    int32 gr_idx;               /* index into the gr_tab array */
-    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
-    ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    VOIDP *t;                   /* temp. ptr to the image found */
-    int32 index;                /* index of the RI in the GR */
 
     /* clear error stack and check validity of args */
     HEclear();
 
     /* check the validity of the RI ID */
-    if(!VALIDRIID(riid))
+    if(!VALIDRIID(riid) || lut_index!=0)
         HRETURN_ERROR(DFE_ARGS, FAIL);
     
-    /* Get the array index for the grid */
-    gr_idx=RIID2GRID(riid);
-    gr_ptr=gr_tab[gr_idx];
-
-    /* check the index range validity */
-    index=RIID2SLOT(riid);
-    if(index<0 || index>=gr_ptr->gr_count)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
-
-    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
-    ri_ptr=(ri_info_t *)*t;
-
-/* QAK */
-
-    return(SUCCEED);
+    return(riid);
 } /* end GRgetlutid() */
 
 /*--------------------------------------------------------------------------
@@ -2221,7 +2203,7 @@ int32 GRgetlutid(int32 riid,int32 lut_index)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn GRgetlutinfo(int32 lutid,char *name,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
+intn GRgetlutinfo(int32 lutid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
 {
     CONSTR(FUNC, "GRgetlutinfo");   /* for HERROR */
     int32 gr_idx;               /* index into the gr_tab array */
@@ -2233,25 +2215,31 @@ intn GRgetlutinfo(int32 lutid,char *name,int32 *ncomp,int32 *nt,int32 *il,int32 
     /* clear error stack and check validity of args */
     HEclear();
 
-#ifdef QAK
     /* check the validity of the RI ID */
-    if(!VALIDRIID(riid))
+    if(!VALIDRIID(lutid))
         HRETURN_ERROR(DFE_ARGS, FAIL);
     
     /* Get the array index for the grid */
-    gr_idx=RIID2GRID(riid);
+    gr_idx=RIID2GRID(lutid);
     gr_ptr=gr_tab[gr_idx];
 
     /* check the index range validity */
+    index=RIID2SLOT(lutid);
     if(index<0 || index>=gr_ptr->gr_count)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
         HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
-#endif /* QAK */
 
-/* QAK */
+    if(ncomp!=NULL)
+        *ncomp=ri_ptr->lut_dim.ncomps;
+    if(nt!=NULL)
+        *nt=ri_ptr->lut_dim.nt;
+    if(il!=NULL)
+        *il=ri_ptr->lut_dim.il;
+    if(nentries!=NULL)  /* xdim for LUTs is the number of entries */
+        *nentries=ri_ptr->lut_dim.xdim;
 
     return(SUCCEED);
 } /* end GRgetlutinfo() */
@@ -2284,9 +2272,10 @@ intn GRgetlutinfo(int32 lutid,char *name,int32 *ncomp,int32 *nt,int32 *il,int32 
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn GRwritelut(int32 lutid,char *name,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP data)
+intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP data)
 {
     CONSTR(FUNC, "GRwritelut");   /* for HERROR */
+    int32 hdf_file_id;          /* file ID from Hopen */
     int32 gr_idx;               /* index into the gr_tab array */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
@@ -2296,25 +2285,61 @@ intn GRwritelut(int32 lutid,char *name,int32 ncomps,int32 nt,int32 il,int32 nent
     /* clear error stack and check validity of args */
     HEclear();
 
-#ifdef QAK
-    /* check the validity of the RI ID */
-    if(!VALIDRIID(riid))
+    /* check the validity of the args (how to check il?) */
+    if(!VALIDRIID(lutid) || ncomps<1 || (DFKNTsize(nt)==FAIL)
+            || nentries<1 || data==NULL)
         HRETURN_ERROR(DFE_ARGS, FAIL);
     
     /* Get the array index for the grid */
-    gr_idx=RIID2GRID(riid);
+    gr_idx=RIID2GRID(lutid);
     gr_ptr=gr_tab[gr_idx];
+    hdf_file_id=gr_ptr->hdf_file_id;
 
     /* check the index range validity */
+    index=RIID2SLOT(lutid);
     if(index<0 || index>=gr_ptr->gr_count)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
         HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
-#endif /* QAK */
 
-/* QAK */
+    /* Check if this is compatible with older-style palettes */
+    if(ncomps==3 && nt==DFNT_UINT8 && il==MFGR_INTERLACE_PIXEL && nentries==256)
+      {
+          /* Check if LUT exists already */
+          if(ri_ptr->lut_tag!=DFTAG_NULL && ri_ptr->lut_ref!=DFTAG_NULL)
+            {   /* LUT already exists */
+                if(Hputelement(hdf_file_id,ri_ptr->lut_tag,ri_ptr->lut_ref,
+                        data,ncomps*nentries*DFKNTsize(nt))==FAIL)
+                    HRETURN_ERROR(DFE_PUTELEM,FAIL);
+            } /* end if */
+          else
+            {   /* LUT does not exist */
+                ri_ptr->lut_tag=DFTAG_LUT;
+                ri_ptr->lut_ref=Hnewref(hdf_file_id);
+                ri_ptr->lut_dim.dim_ref=DFTAG_NULL;
+                ri_ptr->lut_dim.xdim=256;
+                ri_ptr->lut_dim.ydim=1;
+                ri_ptr->lut_dim.ncomps=3;
+                ri_ptr->lut_dim.nt=DFNT_UINT8;
+                ri_ptr->lut_dim.file_nt_subclass=DFNTF_HDFDEFAULT;
+                ri_ptr->lut_dim.il=MFGR_INTERLACE_PIXEL;
+                ri_ptr->lut_dim.nt_tag=DFTAG_NULL;
+                ri_ptr->lut_dim.nt_ref=DFTAG_NULL;
+                ri_ptr->lut_dim.comp_tag=DFTAG_NULL;
+                ri_ptr->lut_dim.comp_ref=DFTAG_NULL;
+                if(Hputelement(hdf_file_id,ri_ptr->lut_tag,ri_ptr->lut_ref,
+                        data,ncomps*nentries*DFKNTsize(nt))==FAIL)
+                    HRETURN_ERROR(DFE_PUTELEM,FAIL);
+
+                ri_ptr->meta_modified=TRUE;
+            } /* end else */
+      } /* end if */
+    else
+      {     /* currently, we are not going to support non-standard palettes */
+          HRETURN_ERROR(DFE_UNSUPPORTED,FAIL);
+      } /* end else */
 
     return(SUCCEED);
 } /* end GRwritelut() */
@@ -2345,6 +2370,7 @@ intn GRwritelut(int32 lutid,char *name,int32 ncomps,int32 nt,int32 il,int32 nent
 intn GRreadlut(int32 lutid,VOIDP data)
 {
     CONSTR(FUNC, "GRreadlut");   /* for HERROR */
+    int32 hdf_file_id;          /* file ID from Hopen */
     int32 gr_idx;               /* index into the gr_tab array */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
@@ -2354,25 +2380,29 @@ intn GRreadlut(int32 lutid,VOIDP data)
     /* clear error stack and check validity of args */
     HEclear();
 
-#ifdef QAK
     /* check the validity of the RI ID */
-    if(!VALIDRIID(riid))
+    if(!VALIDRIID(lutid) || data==NULL)
         HRETURN_ERROR(DFE_ARGS, FAIL);
     
     /* Get the array index for the grid */
-    gr_idx=RIID2GRID(riid);
+    gr_idx=RIID2GRID(lutid);
     gr_ptr=gr_tab[gr_idx];
+    hdf_file_id=gr_ptr->hdf_file_id;
 
     /* check the index range validity */
+    index=RIID2SLOT(lutid);
     if(index<0 || index>=gr_ptr->gr_count)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
         HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
-#endif /* QAK */
 
-/* QAK */
+    if(ri_ptr->lut_tag!=DFTAG_NULL && ri_ptr->lut_ref!=DFTAG_NULL)
+      {
+          if(Hgetelement(hdf_file_id,ri_ptr->lut_tag,ri_ptr->lut_ref,data)==FAIL)
+              HRETURN_ERROR(DFE_GETELEM,FAIL);
+      } /* end if */
 
     return(SUCCEED);
 } /* end GRreadlut() */
@@ -2422,6 +2452,7 @@ intn GRsetexternalfile(int32 riid,char *filename,int32 offset)
     gr_ptr=gr_tab[gr_idx];
 
     /* check the index range validity */
+    index=RIID2SLOT(riid);
     if(index<0 || index>=gr_ptr->gr_count)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
@@ -2429,7 +2460,13 @@ intn GRsetexternalfile(int32 riid,char *filename,int32 offset)
         HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
-/* QAK */
+    if((ri_ptr->ext_name=(char *)HDmalloc(HDstrlen(filename)+1))==NULL)
+        HRETURN_ERROR(DFE_NOSPACE,FAIL);
+
+    /* Mark the image as external and cache parameters */
+    ri_ptr->ext_img=TRUE;
+    HDstrcpy(ri_ptr->ext_name,filename);
+    ri_ptr->ext_offset=offset;
 
     return(SUCCEED);
 } /* end GRsetexternalfile() */
@@ -2473,7 +2510,8 @@ intn GRsetaccesstype(int32 riid,uintn accesstype)
     HEclear();
 
     /* check the validity of the RI ID */
-    if(!VALIDRIID(riid))
+    if(!VALIDRIID(riid) || (accesstype!=DFACC_DEFAULT && accesstype!=DFACC_SERIAL
+            && accesstype!=DFACC_PARALLEL))
         HRETURN_ERROR(DFE_ARGS, FAIL);
     
     /* Get the array index for the grid */
@@ -2481,6 +2519,7 @@ intn GRsetaccesstype(int32 riid,uintn accesstype)
     gr_ptr=gr_tab[gr_idx];
 
     /* check the index range validity */
+    index=RIID2SLOT(riid);
     if(index<0 || index>=gr_ptr->gr_count)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
@@ -2488,7 +2527,8 @@ intn GRsetaccesstype(int32 riid,uintn accesstype)
         HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
-/* QAK */
+    ri_ptr->acc_img=TRUE;
+    ri_ptr->acc_type=accesstype;
 
     return(SUCCEED);
 } /* end GRsetaccesstype() */
@@ -2539,6 +2579,7 @@ intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo)
     gr_ptr=gr_tab[gr_idx];
 
     /* check the index range validity */
+    index=RIID2SLOT(riid);
     if(index<0 || index>=gr_ptr->gr_count)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
@@ -2546,7 +2587,9 @@ intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo)
         HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
-/* QAK */
+    ri_ptr->comp_img=TRUE;
+    ri_ptr->comp_type=comp_type;
+    HDmemcpy(&(ri_ptr->cinfo),cinfo,sizeof(comp_info));
 
     return(SUCCEED);
 } /* end GRsetcompress() */
@@ -2591,6 +2634,7 @@ intn GRsetattr(int32 id,char *name,int32 attr_nt,int32 count,VOIDP data)
     TBBT_TREE *search_tree;     /* attribute tree to search through */
     at_info_t *at_ptr;          /* ptr to the attribute to work with */
     int32 at_size;              /* size in bytes of the attribute data */
+    int32 *update_count;        /* pointer to the count of attributes in a tree */
     uintn *update_flag;         /* pointer to the flag to indicate an attribute tree is changed */
     uintn found=FALSE;          /* boolean for indicating the attribute exists already */
 
@@ -2611,6 +2655,7 @@ intn GRsetattr(int32 id,char *name,int32 attr_nt,int32 count,VOIDP data)
           hdf_file_id=gr_ptr->hdf_file_id;
           search_tree=gr_ptr->gattree;
           update_flag=&(gr_ptr->gattr_modified);
+          update_count=&(gr_ptr->gattr_count);
       } /* end if */
     else if(VALIDRIID(id))
       {
@@ -2630,10 +2675,12 @@ intn GRsetattr(int32 id,char *name,int32 attr_nt,int32 count,VOIDP data)
           hdf_file_id=gr_ptr->hdf_file_id;
           search_tree=ri_ptr->lattree;
           update_flag=&(ri_ptr->attr_modified);
+          update_count=&(ri_ptr->lattr_count);
       } /* end if */
     else    /* shouldn't get here, but what the heck... */
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
+    /* Search for an attribute with the same name */
     if((t = (VOIDP *) tbbtfirst((TBBT_NODE *)search_tree))==NULL)
         HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
     do {
@@ -2686,7 +2733,8 @@ intn GRsetattr(int32 id,char *name,int32 attr_nt,int32 count,VOIDP data)
                   {
                       if(at_ptr->data!=NULL)
                           HDfree(at_ptr->data);
-                      at_ptr->data=(VOIDP)HDmalloc(new_at_size);
+                      if((at_ptr->data=(VOIDP)HDmalloc(new_at_size))==NULL)
+                          HRETURN_ERROR(DFE_NOSPACE,FAIL);
                   } /* end if */
                 HDmemcpy(at_ptr->data,data,new_at_size);
 
@@ -2698,31 +2746,46 @@ intn GRsetattr(int32 id,char *name,int32 attr_nt,int32 count,VOIDP data)
       } /* end if */
     else    /* a new attribute */
       {
-      } /* end else */
+        if((at_ptr=(at_info_t *)HDmalloc(sizeof(at_info_t)))==NULL)
+            HRETURN_ERROR(DFE_NOSPACE,FAIL);
 
-#ifdef QAK
-    /* Write out the attribute data */
-    if (attr_ptr->ref==DFTAG_NULL)  /* create a new attribute */
-      {
-        if((attr_ptr->ref=VHstoredata(hdf_file_id,attr_ptr->name,attr_ptr->data,
-                attr_ptr->len,attr_ptr->nt,RIGATTRNAME,RIGATTRCLASS))==(uint16)FAIL)
-            HRETURN_ERROR(DFE_VSCANTCREATE,FAIL);
-        attr_ptr->new=TRUE;
-      } /* end if */
-    else    /* update an existing one */
-      {
-        int32 AttrID;       /* attribute Vdata id */
+        /* Fill in fields for the new attribute */
+        at_ptr->index=*update_count++;  /* get the index and update the tree's count */
+        at_ptr->nt=attr_nt;
+        at_ptr->len=count;
 
-        if((AttrID=VSattach(hdf_file_id,attr_ptr->ref,"w"))==FAIL)
-            HRETURN_ERROR(DFE_CANTATTACH,FAIL);
-        if(VSsetfields(AttrID,attr_ptr->name)==FAIL)
-            HRETURN_ERROR(DFE_BADFIELDS,FAIL);
-        if(VSwrite(AttrID,attr_ptr->data,attr_ptr->len,FULL_INTERLACE)==FAIL)
-            HRETURN_ERROR(DFE_VSWRITE,FAIL);
-        if(VSdetach(AttrID)==FAIL)
-            HRETURN_ERROR(DFE_CANTDETACH,FAIL);
+        /* allocate space for the attribute name & copy it */
+        if((at_ptr->name=(char *)HDmalloc(HDstrlen(name)+1))==NULL)
+            HRETURN_ERROR(DFE_NOSPACE,FAIL);
+        HDstrcpy(at_ptr->name,name);
+
+        /* calc. the attr size to see if it is worth caching */
+        at_size=at_ptr->len*DFKNTsize(at_ptr->nt);
+        if(at_size<gr_ptr->attr_cache)
+          { /* cacheable */
+              /* allocate space for the attribute name & copy it */
+              if((at_ptr->data=(char *)HDmalloc(at_size))==NULL)
+                  HRETURN_ERROR(DFE_NOSPACE,FAIL);
+              HDmemcpy(at_ptr->data,data,at_size);
+              at_ptr->data_modified=TRUE;
+              at_ptr->ref=DFTAG_NULL;
+          } /* end if */
+        else
+          { /* non-cacheable */
+              if((at_ptr->ref=VHstoredata(hdf_file_id,at_ptr->name,data,
+                      at_ptr->len,at_ptr->nt,RIGATTRNAME,RIGATTRCLASS))==(uint16)FAIL)
+                  HRETURN_ERROR(DFE_VSCANTCREATE,FAIL);
+              at_ptr->data=NULL;
+              at_ptr->data_modified=FALSE;
+          } /* end else */
+        at_ptr->new=TRUE;
+
+        /* Add the attribute to the attribute tree */
+        tbbtdins(search_tree, (VOIDP)at_ptr, NULL);
+
+        /* flag the attribute tree as being modified */
+        *update_flag=TRUE;
       } /* end else */
-#endif /* QAK */
 
     return(SUCCEED);
 } /* end GRsetattr() */
@@ -3020,16 +3083,13 @@ API functions to finish:
     GRwriteimage
     GRreadimage
     GRendaccess
-    GRgetlutid
-    GRgetlutinfo
-    GRwritelut
-    GRreadlut
-    GRsetexternalfile
-    GRsetaccesstype
-    GRsetcompress
-    GRsetattr
 
 Misc. stuff left to do:
+    Deal with special elements for images
+
+Features not supported:
     Add in full support for multiple palettes with each RI.
+    Add in support for named palettes with each RI.
+    Add in support for palettes with non-standard formats.
 
 */

@@ -1998,10 +1998,10 @@ extern intn GRreqimageil(int32 riid,intn il);
 
 extern int32 GRgetlutid(int32 riid,int32 index);
 
-extern intn GRgetlutinfo(int32 riid,char *name,int32 *ncomp,int32 *nt,
+extern intn GRgetlutinfo(int32 riid,int32 *ncomp,int32 *nt,
     int32 *il,int32 *nentries);
 
-extern intn GRwritelut(int32 riid,char *name,int32 ncomps,int32 nt,
+extern intn GRwritelut(int32 riid,int32 ncomps,int32 nt,
     int32 il,int32 nentries,VOIDP data);
 
 extern intn GRreadlut(int32 lutid,VOIDP data);

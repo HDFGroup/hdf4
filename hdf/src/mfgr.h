@@ -138,7 +138,7 @@ typedef struct ri_info {
     uint16  img_tag,img_ref;    /* tag & ref of the image data */
     uint16  lut_tag,lut_ref;    /* tag & ref of the palette data */
     gr_interlace_t im_il;       /* interlace of image when next read (default PIXEL) */
-    gr_interlace_t lut_il;      /* interlace of LUT when next read (default PIXEL) */
+    gr_interlace_t lut_il;      /* interlace of LUT when next read */
     uintn data_modified;        /* whether the image or palette data has been modified */
     uintn meta_modified;        /* whether the image or palette meta-info has been modified */
     uintn attr_modified;        /* whether the attributes have been modified */
@@ -146,6 +146,14 @@ typedef struct ri_info {
     int32   lattr_count;        /* # of local attr entries in ri_info so far */
     TBBT_TREE *lattree;         /* Root of the local attribute B-Tree */
     intn access;                /* the number of times this image has been selected */
+    uintn comp_img;             /* whether to compress image data */
+    int32 comp_type;            /* compression type */
+    comp_info cinfo;            /* compression information */
+    uintn ext_img;              /* whether to make image data external */
+    char *ext_name;             /* name of the external file */
+    int32 ext_offset;           /* offset in the external file */
+    uintn acc_img;              /* whether to make image data a different access type */
+    uintn acc_type;             /* type of access-mode to get image data with */
 } ri_info_t;
 
 #endif /* MFGR_MASTER */
