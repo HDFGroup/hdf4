@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.7  1993/01/26 19:42:14  koziol
+# Revision 1.8  1993/02/16 18:26:17  chouck
+# Added JPeg files to 'make saber' option
+#
+# Revision 1.7  1993/01/26  19:42:14  koziol
 # Added support for reading and writing Little-Endian data on all
 # platforms.  This has been tested on: Cray, Sun, and PCs so far.
 #
@@ -187,7 +190,7 @@ nofortran: libnofortran install_it
 libnostub: nofortran
 
 saber:
-	#load -D$(MACHINE) $(CSRCS) $(TSRCS) -lc
+	#load -D$(MACHINE) $(CSRCS) $(TSRCS) $(JCSRCS) -lc
 
 hfile.o: hfile.h hdf.h herr.h hdfi.h
 
