@@ -173,6 +173,12 @@ hdf-test:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
           SUBDIRS="src fmpool pablo test" subd
 
+hdf-testnofortran:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
+          SUBDIRS="jpeg" subd
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
+          SUBDIRS="src fmpool pablo test" subd
+
 testnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd 
