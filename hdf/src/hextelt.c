@@ -42,6 +42,7 @@ typedef struct {
     int32 extern_offset;
     int32 length;              /* length of this element */
     int32 length_file_name;    /* length of the external file name */
+    int32 para_extfile_id;	/* parallel ID of the external file */
     hdf_file_t file_external;  /* external file descriptor */
     char *extern_file_name;    /* name of the external file */
     intn  file_open;           /* has the file been opened yet ? */
@@ -296,6 +297,94 @@ int32 HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_na
 }
 
 
+/* ------------------------------------------------------------------------ 
+
+ NAME
+	HXsetaccesstype -- create an external element
+ USAGE
+	intn HXsetaccesstype(file_id, tag, ref, ext_name, offset, len)
+        int32  file_id;      IN: file ID for HDF file
+        int16  tag;          IN: tag number for external elem
+        int16  ref;          IN: ref number for external elem
+        char * ext_name;     IN: external file name
+        int32  offset;       IN: offset where elem should start in ext file
+        int32  len;          IN: current len of element if already in
+                                 ext file (see desc below)
+ RETURNS
+        returns AID to external element or FAIL
+ DESCRIPTION
+        Create a data element in an external file.  If that 
+        file already exists, we will simply *modify* that file, 
+        not delete it and start over.  Offset and start_len 
+        are for encapsulating data that already exists in a 
+        seperate file so that it can be referenced from the HDF file.
+
+        If the objext we are writing out already exists in an 
+        HDF file and is "promoted" then the start_len is ignored
+        since we already know its current length.  However, offset
+        is still respected
+
+        Return an AID to the newly created external element, FAIL 
+        on error.
+
+--------------------------------------------------------------------------*/ 
+intn HXsetaccesstype(accrec_t *access_rec, uintn accesstype)
+{
+    char *FUNC="HXsetaccesstype";     /* for HERROR */
+    filerec_t *file_rec;       /* file record */
+    hdf_file_t file_external;      /* external file descriptor */
+    int32 para_extfile_id;      /* parallel external file id */
+    extinfo_t *info;           /* special element information */
+
+    /* clear error stack and validate args */
+    HEclear();
+    /* sanity check */
+    if (!access_rec)
+       HRETURN_ERROR(DFE_ARGS,FAIL);
+
+    /* set up the special element information and write it to file */
+    info = (extinfo_t *) access_rec->special_info;
+    if (!info) {
+       access_rec->used = FALSE;
+       printf("What error to return?\n");
+       HRETURN_ERROR(DFE_NOSPACE,FAIL);
+    }
+
+    /* Not sure what to do here */
+    /* Open the external file for the correct access type */
+    switch (access_rec->access_type) {
+    case DFACC_SERIAL:
+	file_external = HI_OPEN(info->extern_file_name, DFACC_WRITE);
+	if (OPENERR(file_external)) {
+	    file_external = HI_CREATE(info->extern_file_name);
+	    if(OPENERR(file_external)) {
+		access_rec->used = FALSE;
+		HRETURN_ERROR(DFE_BADOPEN,FAIL);
+	    }
+	}
+	info->file_external = file_external;
+	break;
+#ifdef CM5
+    case DFACC_PARALLEL:
+        para_extfile_id = CM_OPEN(info->extern_file_name, DFACC_WRITE);
+	if (para_extfile_id == FAIL) {
+	    para_extfile_id = CM_CREATE(info->extern_file_name);
+	    if (para_extfile_id == FAIL) {
+		access_rec->used = FALSE;
+		HRETURN_ERROR(DFE_BADOPEN,FAIL);
+	    }
+	}
+	info->para_extfile_id = para_extfile_id;
+	break;
+#endif
+    otherwise:
+	HRETURN_ERROR(DFE_BADOPEN,FAIL);
+    }
+
+    return SUCCEED;
+}
+
+
 /* ----------------------------- HXIstaccess ------------------------------ */
 /*
 
@@ -533,10 +622,23 @@ int32 HXPread(accrec_t *access_rec, int32 length, VOIDP data)
     }
 
     /* read it in from the file */
+#ifdef CM5
+    if (access_rec->access_type == DFACC_PARALLEL){
+	/* parallel access handling */
+	if (CM_SEEK(info->para_extfile_id,access_rec->posn+info->extern_offset)==FAIL)
+	   HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+	if (CM_READ(info->para_extfile_id, data, length) == FAIL) {
+           HRETURN_ERROR(DFE_READERROR, FAIL);
+	}
+    }
+    else
+#endif
+    {
     if (HI_SEEK(info->file_external,access_rec->posn+info->extern_offset)==FAIL)
        HRETURN_ERROR(DFE_SEEKERROR,FAIL);
     if (HI_READ(info->file_external, data, length) == FAIL)
        HRETURN_ERROR(DFE_READERROR,FAIL);
+    }
 
     /* adjust access position */
     access_rec->posn += length;
@@ -589,6 +691,19 @@ int32 HXPwrite(accrec_t *access_rec, int32 length, const VOIDP data)
     }
 
     /* write the data onto file */
+#ifdef CM5
+    if (access_rec->access_type == DFACC_PARALLEL){
+	/* parallel access handling */
+	if (CM_SEEK(info->para_extfile_id,
+		    access_rec->posn + info->extern_offset) == FAIL)
+	   HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+	if (CM_WRITE(info->para_extfile_id, data, length) == FAIL) {
+           HRETURN_ERROR(DFE_DENIED, FAIL);
+	}
+    }
+    else
+#endif
+    {
     if (HI_SEEK(info->file_external,
 		access_rec->posn + info->extern_offset) == FAIL)
        HRETURN_ERROR(DFE_SEEKERROR,FAIL);
@@ -608,6 +723,7 @@ int32 HXPwrite(accrec_t *access_rec, int32 length, const VOIDP data)
        /* if okay, substitute the file descriptor */
 
        info->file_external = f;
+    }
     }
 
     /* update access record, and information about special elelemt */
