@@ -475,6 +475,10 @@ case $basic_machine in
 	sun386 | sun386i | roadrunner)
 		basic_machine=i386-sun
 		;;
+	CM5)
+		basic_machine=sparc-cm5
+		os=-sunos4
+		;;
 	symmetry)
 		basic_machine=i386-sequent
 		os=-dynix
