@@ -229,199 +229,143 @@ TAGS: $(SRCS) $(HDRS)
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 
-jbsmooth.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jbsmooth.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jbsmooth.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jbsmooth.o: /usr/include/string.h jconfig.h jpegdata.h
-jcarith.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jcarith.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jcarith.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jcarith.o: /usr/include/string.h jconfig.h jpegdata.h
-jccolor.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jccolor.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jccolor.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jccolor.o: /usr/include/string.h jconfig.h jpegdata.h
-jcdeflts.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jcdeflts.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jcdeflts.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jcdeflts.o: /usr/include/string.h jconfig.h jpegdata.h
-jcexpand.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jcexpand.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jcexpand.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jcexpand.o: /usr/include/string.h jconfig.h jpegdata.h
-jchuff.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jchuff.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jchuff.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jchuff.o: /usr/include/string.h jconfig.h jpegdata.h
-jcmaster.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jcmaster.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jcmaster.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jcmaster.o: /usr/include/string.h jconfig.h jpegdata.h
-jcmcu.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h
-jcmcu.o: hproto.h vproto.h /usr/include/sys/types.h
-jcmcu.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jcmcu.o: /usr/include/string.h jconfig.h jpegdata.h
-jcpipe.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jcpipe.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jcpipe.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jcpipe.o: /usr/include/string.h jconfig.h jpegdata.h
-jcsample.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jcsample.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jcsample.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jcsample.o: /usr/include/string.h jconfig.h jpegdata.h
-jdarith.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jdarith.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jdarith.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jdarith.o: /usr/include/string.h jconfig.h jpegdata.h
-jdcolor.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jdcolor.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jdcolor.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jdcolor.o: /usr/include/string.h jconfig.h jpegdata.h
-jddeflts.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jddeflts.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jddeflts.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jddeflts.o: /usr/include/string.h jconfig.h jpegdata.h
-jdhuff.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jdhuff.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jdhuff.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jdhuff.o: /usr/include/string.h jconfig.h jpegdata.h
-jdmaster.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jdmaster.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jdmaster.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jdmaster.o: /usr/include/string.h jconfig.h jpegdata.h
-jdmcu.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h
-jdmcu.o: hproto.h vproto.h /usr/include/sys/types.h
-jdmcu.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jdmcu.o: /usr/include/string.h jconfig.h jpegdata.h
-jdpipe.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jdpipe.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jdpipe.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jdpipe.o: /usr/include/string.h jconfig.h jpegdata.h
-jdsample.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jdsample.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jdsample.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jdsample.o: /usr/include/string.h jconfig.h jpegdata.h
-jerror.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jerror.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jerror.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jerror.o: /usr/include/string.h jconfig.h jpegdata.h
-jquant1.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jquant1.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jquant1.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jquant1.o: /usr/include/string.h jconfig.h jpegdata.h
-jquant2.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jquant2.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jquant2.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jquant2.o: /usr/include/string.h jconfig.h jpegdata.h
-jfwddct.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jfwddct.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jfwddct.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jfwddct.o: /usr/include/string.h jconfig.h jpegdata.h
-jrevdct.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jrevdct.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jrevdct.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jrevdct.o: /usr/include/string.h jconfig.h jpegdata.h
-jutils.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jutils.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jutils.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jutils.o: /usr/include/string.h jconfig.h jpegdata.h
-jmemmgr.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jmemmgr.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jmemmgr.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jmemmgr.o: /usr/include/string.h jconfig.h jpegdata.h jmemsys.h
-jmemsys.o: jinclude.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-jmemsys.o: herr.h hproto.h vproto.h /usr/include/sys/types.h
-jmemsys.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-jmemsys.o: /usr/include/string.h jconfig.h jpegdata.h
-hfile.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+jbsmooth.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
+jbsmooth.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
+jcarith.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
+jcarith.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
+jccolor.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
+jccolor.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
+jcdeflts.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
+jcdeflts.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
+jcexpand.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
+jcexpand.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
+jchuff.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
+jchuff.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
+jcmaster.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
+jcmaster.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
+jcmcu.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h herr.h
+jcmcu.o: hproto.h vproto.h jconfig.h jpegdata.h
+jcpipe.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
+jcpipe.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
+jcsample.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
+jcsample.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
+jdarith.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
+jdarith.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
+jdcolor.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
+jdcolor.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
+jddeflts.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
+jddeflts.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
+jdhuff.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
+jdhuff.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
+jdmaster.o: jinclude.h hdf.h hdfi.h  hbitio.h hcomp.h
+jdmaster.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
+jdmcu.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h herr.h
+jdmcu.o: hproto.h vproto.h jconfig.h jpegdata.h
+jdpipe.o: jinclude.h hdf.h hdfi.h  hbitio.h hcomp.h
+jdpipe.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
+jdsample.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
+jdsample.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
+jerror.o: jinclude.h hdf.h hdfi.h  hbitio.h hcomp.h
+jerror.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
+jquant1.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
+jquant1.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
+jquant2.o: jinclude.h hdf.h hdfi.h  hbitio.h hcomp.h
+jquant2.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
+jfwddct.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
+jfwddct.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
+jrevdct.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
+jrevdct.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
+jutils.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
+jutils.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
+jmemmgr.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
+jmemmgr.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h jmemsys.h
+jmemsys.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
+jmemsys.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
+hfile.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 hfile.o: vproto.h hfile.h
-herr.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
-herr.o: vproto.h /usr/include/varargs.h
-hblocks.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+herr.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+herr.o: vproto.h 
+hblocks.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 hblocks.o: vproto.h hfile.h
-hextelt.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+hextelt.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 hextelt.o: vproto.h hfile.h
-hkit.o: /usr/include/ctype.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h
+hkit.o: hdf.h hdfi.h hbitio.h
 hkit.o: hcomp.h herr.h hproto.h vproto.h hfile.h hkit.h
-dfan.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+dfan.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfan.o: vproto.h hfile.h dfan.h
-dfr8.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+dfr8.o: hdf.h hdfi.h  hbitio.h hcomp.h herr.h hproto.h
 dfr8.o: vproto.h dfrig.h
-dfcomp.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+dfcomp.o: hdf.h hdfi.h  hbitio.h hcomp.h herr.h hproto.h
 dfcomp.o: vproto.h
-dfrle.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+dfrle.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfrle.o: vproto.h
-dfimcomp.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h
+dfimcomp.o: hdf.h hdfi.h  hbitio.h hcomp.h herr.h
 dfimcomp.o: hproto.h vproto.h
-dfjpeg.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
-dfjpeg.o: vproto.h jinclude.h /usr/include/sys/types.h
-dfjpeg.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-dfjpeg.o: /usr/include/string.h jconfig.h jpegdata.h
-dfunjpeg.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h
-dfunjpeg.o: hproto.h vproto.h jinclude.h /usr/include/sys/types.h
-dfunjpeg.o: /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h
-dfunjpeg.o: /usr/include/string.h jconfig.h jpegdata.h
-dfp.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+dfjpeg.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+dfjpeg.o: vproto.h jinclude.h jconfig.h jpegdata.h
+dfunjpeg.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h
+dfunjpeg.o: hproto.h vproto.h jinclude.h jconfig.h jpegdata.h
+dfp.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfp.o: vproto.h hfile.h
-dfgr.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+dfgr.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfgr.o: vproto.h dfgr.h
-df24.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+df24.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 df24.o: vproto.h dfgr.h
-dfsd.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+dfsd.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfsd.o: vproto.h dfsd.h hfile.h
-dfgroup.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+dfgroup.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfgroup.o: vproto.h hfile.h
-dfconv.o: /usr/include/ctype.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h
+dfconv.o: hdf.h hdfi.h hbitio.h
 dfconv.o: hcomp.h herr.h hproto.h vproto.h hconv.h
-dfufp2i.o: /usr/include/ctype.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h
+dfufp2i.o: hdf.h hdfi.h hbitio.h
 dfufp2i.o: hcomp.h herr.h hproto.h vproto.h dfufp2i.h dfsd.h
-vg.o: vg.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+vg.o: vg.h hdf.h hdfi.h  hbitio.h hcomp.h herr.h hproto.h
 vg.o: vproto.h tbbt.h
-vrw.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+vrw.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 vrw.o: vproto.h vg.h tbbt.h hfile.h
-vio.o: vg.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h
+vio.o: vg.h hdf.h hdfi.h  hbitio.h hcomp.h herr.h
 vio.o: hproto.h vproto.h tbbt.h hfile.h
-vparse.o: vg.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h
+vparse.o: vg.h hdf.h hdfi.h hbitio.h hcomp.h herr.h
 vparse.o: hproto.h vproto.h tbbt.h
-vconv.o: vg.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h
+vconv.o: vg.h hdf.h hdfi.h hbitio.h hcomp.h herr.h
 vconv.o: hproto.h vproto.h tbbt.h
-vsfld.o: vg.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h
+vsfld.o: vg.h hdf.h hdfi.h hbitio.h hcomp.h herr.h
 vsfld.o: hproto.h vproto.h tbbt.h
-vgp.o: vg.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h
+vgp.o: vg.h hdf.h hdfi.h hbitio.h hcomp.h herr.h
 vgp.o: hproto.h vproto.h tbbt.h hfile.h
-vhi.o: vg.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h
+vhi.o: vg.h hdf.h hdfi.h hbitio.h hcomp.h herr.h
 vhi.o: hproto.h vproto.h tbbt.h
-dfutil.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+dfutil.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfutil.o: vproto.h
-dfstubs.o: dfstubs.h df.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h
-dfstubs.o: herr.h hproto.h vproto.h /usr/include/ctype.h
-dfknat.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+dfstubs.o: dfstubs.h df.h hdf.h hdfi.h hbitio.h hcomp.h
+dfstubs.o: herr.h hproto.h vproto.h 
+dfknat.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfknat.o: vproto.h hconv.h
-dfkswap.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+dfkswap.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfkswap.o: vproto.h hconv.h
-dfkcray.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+dfkcray.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfkcray.o: vproto.h hconv.h
-dfkvms.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+dfkvms.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfkvms.o: vproto.h hconv.h
-dfkconv.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+dfkconv.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfkconv.o: vproto.h hconv.h
-dfkfuji.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+dfkfuji.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfkfuji.o: vproto.h hconv.h
-hbitio.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+hbitio.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 hbitio.o: vproto.h hfile.h
-tbbt.o: /usr/include/stdio.h hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+tbbt.o:  hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 tbbt.o: vproto.h tbbt.h
-hdfalloc.o: /usr/include/ctype.h hdf.h hdfi.h /usr/include/stdio.h hbitio.h
+hdfalloc.o: hdf.h hdfi.h  hbitio.h
 hdfalloc.o: hcomp.h herr.h hproto.h vproto.h hfile.h
-hcomp.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+hcomp.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 hcomp.o: vproto.h hfile.h hcompi.h mstdio.h cnone.h crle.h cnbit.h
-crle.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+crle.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 crle.o: vproto.h hfile.h hcompi.h mstdio.h cnone.h crle.h cnbit.h
-cnbit.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+cnbit.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 cnbit.o: vproto.h hfile.h hcompi.h mstdio.h cnone.h crle.h cnbit.h
-mstdio.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+mstdio.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 mstdio.o: vproto.h hfile.h hcompi.h mstdio.h cnone.h crle.h cnbit.h
-hbigext.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+hbigext.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 hbigext.o: vproto.h hfile.h
-cnone.o: hdf.h hdfi.h /usr/include/stdio.h hbitio.h hcomp.h herr.h hproto.h
+cnone.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 cnone.o: vproto.h hfile.h hcompi.h mstdio.h cnone.h crle.h cnbit.h
