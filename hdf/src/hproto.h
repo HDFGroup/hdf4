@@ -2040,14 +2040,18 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #   define HERR_FNAMES
 #ifdef DF_CAPFNAMES
 #   define nheprnt   FNAME(HEPRNT)
+#   define nhestringc FNAME(HESTRINGC)
 #else
 #   define nheprnt   FNAME(heprnt)
+#   define nhestringc FNAME(HESTRINGC)
 #endif                          /* DF_CAPFNAMES */
 #endif                          /* HERR_FNAMES */
 
     HDFLIBAPI      FRETVAL(void) nheprnt
                 (intf  * print_levels);
 
+    HDFLIBAPI      FRETVAL(intf) nhestringc
+				(intf *error_code,_fcd error_message, intf *len);
 /*
    ** from hfileF.c
  */
@@ -2885,7 +2889,7 @@ HDFLIBAPI intn GRgetchunkinfo
      HDF_CHUNK_DEF *chunk_def, /* IN/OUT: chunk definition */
      int32 *flags              /* IN/OUT: flags */);
 
-#if 0 /* commented out for now -GV */
+//#if 0 /* commented out for now -GV */
 
 /******************************************************************************
  NAME
@@ -2937,7 +2941,7 @@ HDFLIBAPI intn GRreadchunk
      int32 *origin,    /* IN: origin of chunk to read */
      void  *datap      /* IN/OUT: buffer for data */);
 
-#endif /* commented out for now -GV */
+//#endif /* commented out for now -GV */
 
 /******************************************************************************
 NAME
