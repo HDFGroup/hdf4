@@ -77,7 +77,7 @@ vsinstance_t _HUGE *
 vsinstance(HFILEID f, uint16 vsid)
 {
     VOIDP      *t;
-    register vfile_t *vf;
+    vfile_t *vf;
     int32       key;
     CONSTR(FUNC, "vsinstance");
 
@@ -165,8 +165,8 @@ CONTENTS of VS stored in HDF file with tag DFTAG_VH:
 void
 vpackvs(VDATA * vs, uint8 buf[], int32 *size)
 {
-    register int32 i;
-    register uint8 *bb;
+    int32 i;
+    uint8 *bb;
 
     bb = &buf[0];
 

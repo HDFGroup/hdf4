@@ -883,7 +883,7 @@ put_color_map(decompress_info_ptr cinfo, int num_colors,
     uint8      *img_pal,        /* Pointer to an array to store the palette in */
                *tmp_pal;
     intn        i;              /* local counting variable */
-    register JSAMPROW ptr0, ptr1, ptr2;
+    JSAMPROW ptr0, ptr1, ptr2;
 
     tmp_pal = img_pal = HDgetspace(768);
     if (img_pal == NULL)
@@ -939,9 +939,9 @@ put_pixel_rows(decompress_info_ptr cinfo, int num_rows, JSAMPIMAGE pixel_data)
     /* This example shows how you might write full-color RGB data (3 components)
      * to an output file in which the data is stored 3 bytes per pixel.
      */
-    register JSAMPROW ptr0, ptr1, ptr2;
-    register long col;
-    register int row;
+    JSAMPROW ptr0, ptr1, ptr2;
+    long col;
+    int row;
 
     if (img_scheme == DFTAG_JPEG)
       {     /* check for 24-bit image */

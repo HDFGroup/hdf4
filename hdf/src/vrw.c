@@ -107,12 +107,12 @@ VSseek(int32 vkey, int32 eltpos)
 int32 
 VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
 {
-    register intn isize = 0;
-    register intn order = 0;
-    register intn index = 0;
-    register int16 esize = 0;
-    register int16 hsize = 0;
-    register uint8 *b1, *b2;
+    intn isize = 0;
+    intn order = 0;
+    intn index = 0;
+    int16 esize = 0;
+    int16 hsize = 0;
+    uint8 *b1, *b2;
     int32       i, j, nv, offset, type;
     VWRITELIST *w;
     VREADLIST  *r;
@@ -325,11 +325,11 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
 int32 
 VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
 {
-    register intn isize = 0;
-    register intn order = 0;
-    register intn index = 0;
-    register int16 esize = 0;
-    register uint8 *src, *dest, *Src;
+    intn isize = 0;
+    intn order = 0;
+    intn index = 0;
+    int16 esize = 0;
+    uint8 *src, *dest, *Src;
 
     int32       j, type, offset;
     int16       special;

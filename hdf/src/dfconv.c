@@ -473,7 +473,7 @@ int
 DFconvert(uint8 *source, uint8 *dest, int ntype, int sourcetype, int desttype,
           int32 size)
 {
-    register uint32 num_elm;
+    uint32 num_elm;
     CONSTR(FUNC, "DFconvert");
 
     HEclear();

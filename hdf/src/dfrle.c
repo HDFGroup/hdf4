@@ -43,10 +43,10 @@ static char RcsId[] = "@(#)$Revision$";
 int32
 DFCIrle(VOIDP buf, VOIDP bufto, int32 len)
 {
-    register uint8 *p;
-    register uint8 *q;
-    register uint8 *cfoll;
-    register uint8 *clead;
+    uint8 *p;
+    uint8 *q;
+    uint8 *cfoll;
+    uint8 *clead;
     uint8      *begp;
     int32       i;
 
@@ -121,9 +121,9 @@ DFCIrle(VOIDP buf, VOIDP bufto, int32 len)
 int32
 DFCIunrle(uint8 *buf, uint8 *bufto, int32 outlen, int resetsave)
 {
-    register int cnt;
-    register uint8 *p;
-    register uint8 *q;
+    int cnt;
+    uint8 *p;
+    uint8 *q;
     uint8      *endp;
     static uint8 save[255], *savestart = NULL, *saveend = NULL;
     /* save has a list of decompressed bytes not returned in

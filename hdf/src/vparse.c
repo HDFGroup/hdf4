@@ -63,15 +63,15 @@ int32
 scanattrs(const char *attrs, int32 *attrc, char ***attrv)
 
 {
-    register char *s, *s0, *ss;
-    register intn slen, len;
+    char *s, *s0, *ss;
+    intn slen, len;
 #if defined(macintosh) | defined(THINK_C) | defined(DMEM)   /* Dynamic memory */
     CONSTR(FUNC, "scanattrs");
 #endif
     char       *saved_string = (char *) HDstrdup((char *) attrs);
 
 #if defined(macintosh) | defined(THINK_C) | defined(DMEM)   /* Dynamic memory */
-    register intn i;
+    intn i;
 
     /* Lets allocate space for ptrs to tokens and tokens */
     if (symptr == NULL)

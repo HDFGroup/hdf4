@@ -897,7 +897,7 @@ HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
       }
 
     {
-        register int32 i;
+        int32 i;
         uint8      *p = buffer;
 
         UINT16DECODE(p, new_link->nextref);
@@ -1012,7 +1012,7 @@ HLPread(accrec_t * access_rec, int32 length, VOIDP datap)
       }
 
     {
-        register int32 i;
+        int32 i;
 
         for (i = 0; i < block_idx / info->number_blocks; i++)
           {
@@ -1026,7 +1026,7 @@ HLPread(accrec_t * access_rec, int32 length, VOIDP datap)
     /* found the starting block, now read in the data */
     do
       {
-          register int32 remaining =    /* remaining data in current block */
+          int32 remaining =    /* remaining data in current block */
           current_length - relative_posn;
 
           /* read in the data in this block */
@@ -1052,7 +1052,7 @@ HLPread(accrec_t * access_rec, int32 length, VOIDP datap)
           else
             {   /*if block is missing, fill this part of buffer with zero's */
 #ifdef OLD_WAY
-                register int32 i;
+                int32 i;
 
                 for (i = 0; i < remaining; i++)
                     data[i] = '\0';
@@ -1146,7 +1146,7 @@ HLPwrite(accrec_t * access_rec, int32 length, const VOIDP datap)
     {
         /* follow the links of block tables and create missing
            block tables along the way */
-        register int32 num_links;   /* number of links to follow */
+        int32 num_links;   /* number of links to follow */
 
         for (num_links = block_idx / info->number_blocks; num_links > 0; num_links--)
           {
@@ -1372,7 +1372,7 @@ HLInewlink(int32 file_id, int32 number_blocks,
           HRETURN_ERROR(DFE_WRITEERROR, NULL);
       }
     {   /* CC */
-        register int32 i;       /* temp int index */
+        int32 i;       /* temp int index */
         uint8      *p;          /* temp buffer ptr */
 
         p = buf = (uint8 *) HDgetspace((uint32) (2 + 2 * number_blocks));

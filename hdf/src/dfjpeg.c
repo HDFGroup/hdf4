@@ -621,8 +621,8 @@ get_input_row(compress_info_ptr cinfo, JSAMPARRAY pixel_row)
      * from an input file in which the data is stored 3 bytes per pixel
      * in left-to-right, top-to-bottom order.
      */
-    register JSAMPROW ptr0, ptr1, ptr2;
-    register long col;
+    JSAMPROW ptr0, ptr1, ptr2;
+    long col;
 
     if (img_scheme == DFTAG_JPEG)
       {     /* 24-bit images */

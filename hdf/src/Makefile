@@ -283,3 +283,5 @@ cnone.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 cnone.o: vproto.h hfile.h hcompi.h mstdio.h cnone.h $(FRC)
 cskphuff.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 cskphuff.o: vproto.h hfile.h hcompi.h mstdio.h cskphuff.h $(FRC)
+hblocks.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+hblocks.o: vproto.h hfile.h $(FRC)

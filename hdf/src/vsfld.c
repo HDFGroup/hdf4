@@ -142,7 +142,7 @@ VSsetfields(int32 vkey, const char *fields)
 {
     char      **av;
     int32       ac, found;
-    register intn j, i;
+    intn j, i;
     int16       order;
     int32       value;
     VREADLIST  *rlist;
@@ -294,7 +294,7 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
     int32       ac;
     char       *ss;
     int16       usymid, replacesym;
-    register intn j;
+    intn j;
     vsinstance_t *w;
     VDATA      *vs;
     CONSTR(FUNC, "VSfdefine");

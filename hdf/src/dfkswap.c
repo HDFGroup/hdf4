@@ -69,7 +69,7 @@ DFKsb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 {
     int         fast_processing = 0;    /* Default is not fast processing */
     int         in_place = 0;   /* Inplace must be detected */
-    register uint32 i;
+    uint32 i;
     uint8       buf[2];         /* Inplace processing buffer */
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
@@ -149,7 +149,7 @@ DFKsb4b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 {
     int         fast_processing = 0;    /* Default is not fast processing */
     int         in_place = 0;   /* Inplace must be detected */
-    register uint32 i;
+    uint32 i;
     uint8       buf[4];         /* Inplace processing buffer */
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
@@ -204,7 +204,7 @@ DFKsb4b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 #endif
                 }
 #else  /* DUFF_sb4b */
-              register uint32 n = (num_elm + 7) / 8;
+              uint32 n = (num_elm + 7) / 8;
 
               switch (num_elm % 8)
                 {
@@ -328,7 +328,7 @@ DFKsb8b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 {
     int         fast_processing = 0;    /* Default is not fast processing */
     int         in_place = 0;   /* Inplace must be detected */
-    register uint32 i;
+    uint32 i;
     uint8       buf[8];         /* Inplace processing buffer */
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;

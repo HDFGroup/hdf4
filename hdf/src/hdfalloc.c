@@ -110,7 +110,7 @@ HDmemfill(VOIDP dest, const VOIDP src, uint32 item_size, uint32 num_items)
  NAME
     HIstrncpy -- string copy with termination
  USAGE
-    char *HIstrncpy(register char *dest,register char *source,int32 len)
+    char *HIstrncpy(char *dest,char *source,int32 len)
         char *dest;             OUT: location to place string
         char *source;           IN: location of string to copy
         int32 len;              IN: mas. length of dest. string
@@ -127,7 +127,7 @@ HDmemfill(VOIDP dest, const VOIDP src, uint32 item_size, uint32 num_items)
  REVISION LOG
 --------------------------------------------------------------------------*/
 char _HUGE *
-HIstrncpy(register char *dest, register const char *source, int32 len)
+HIstrncpy(char *dest, const char *source, int32 len)
 {
     char       *destp;
 

@@ -1314,7 +1314,7 @@ DF         *dfile;
           CKWRITE(&ddh, sizeof(DFddh), 1, dfile->file, NULL);
 #else  /*DF_STRUCTOK */
           {
-              register char *p;
+              char *p;
               p = MYtbuf;
               INT16WRITE(p, ddh.dds);
               INT32WRITE(p, ddh.next);
@@ -1327,7 +1327,7 @@ DF         *dfile;
                 CKWRITE(&dd, sizeof(DFdd), 1, dfile->file, NULL);
 #else  /*DF_STRUCTOK */
                 {
-                    register char *p;
+                    char *p;
                     p = MYtbuf;
                     UINT16WRITE(p, dd.tag);
                     UINT16WRITE(p, dd.tag);

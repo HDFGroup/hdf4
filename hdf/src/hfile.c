@@ -181,6 +181,10 @@ extern funclist_t comp_funcs;
    data element, see hbigext.c. */
 extern funclist_t bigext_funcs;
 
+/* Functions for accessing variable-length linked block data elements
+   For definition of the big external data element, see hvblocks.c. */
+extern funclist_t vlnk_funcs;
+
 /* Table of these function tables for accessing special elements.  The first
    member of each record is the speical code for that type of data element. */
 functab_t   functab[] =
@@ -189,6 +193,7 @@ functab_t   functab[] =
     {SPECIAL_EXT, &ext_funcs},
     {SPECIAL_COMP, &comp_funcs},
     {SPECIAL_BIGEXT, &bigext_funcs},
+    {SPECIAL_VLINKED, &vlnk_funcs},
     {0, NULL}                   /* terminating record; add new record */
                    /* before this line */
 };
@@ -462,10 +467,10 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
 intn
 Hclose(int32 file_id)
 {
-    register intn i;
+    intn i;
     CONSTR(FUNC, "Hclose");     /* for HERROR */
     filerec_t  *file_rec;       /* file record pointer */
-    register tag_ref_list_ptr p, q;
+    tag_ref_list_ptr p, q;
     ddblock_t  *bl, *next;    /* current ddblock and next ddblock pointers.
                                   for freeing ddblock linked list */
 
@@ -702,8 +707,8 @@ Hinquire(int32 access_id, int32 *pfile_id, uint16 *ptag, uint16 *pref,
          int16 *pspecial)
 {
     CONSTR(FUNC, "Hinquire");   /* for HERROR */
-    register accrec_t *access_rec;  /* access record */
-    register dd_t *dd;          /* dd of access record */
+    accrec_t *access_rec;  /* access record */
+    dd_t *dd;          /* dd of access record */
 
     /* clear error stack and check validity of access id */
 
@@ -1608,16 +1613,14 @@ Happendable(int32 aid)
         access_rec->appendable = TRUE;
     else 
       { /* not appendable in the quick'n'dirty way, use linked blocks now */
-	if(HLconvert(aid,HDF_APPENDABLE_BLOCK_LEN,HDF_APPENDABLE_BLOCK_NUM)==FAIL)
+        if(HLconvert(aid,HDF_APPENDABLE_BLOCK_LEN,HDF_APPENDABLE_BLOCK_NUM)==FAIL)
             access_rec->appendable = FALSE;
-	else /* HLconvert() worked */
+        else /* HLconvert() worked */
             access_rec->appendable = TRUE;
       } /* end else */
 #endif /* !OLD_WAY */
-    if (access_rec->appendable)     /* return an appropriate status */
-        return (SUCCEED);
-    else
-        return (FAIL);
+    /* return an appropriate status */
+    return(access_rec->appendable ? SUCCEED : FAIL);
 #else /* OLD_WAY2 */
     /* just indicate that the data should be appendable, and only convert */
     /* it when actually asked to modify the data */
@@ -1625,6 +1628,52 @@ Happendable(int32 aid)
     return (SUCCEED);
 #endif /* OLD_WAY2 */
 }   /* end Happendable */
+
+/*--------------------------------------------------------------------------
+ NAME
+       HPisappendable -- Check whether a data set can be appended to without the
+        use of linked blocks
+ USAGE
+       intn HPisappendable(aid)
+       int32 aid;              IN: aid of the dataset to check appendable
+ RETURNS
+       returns SUCCEED if dataset is allowed to be appendable, FAIL otherwise
+ DESCRIPTION
+       If a dataset is at the end of a file, allow Hwrite()s to write
+       past the end of a file.  Allows expanding datasets without the use
+       of linked blocks.
+
+--------------------------------------------------------------------------*/
+intn
+HPisappendable(int32 aid)
+{
+
+    CONSTR(FUNC, "HPisappendable");    /* for HERROR */
+    accrec_t   *access_rec;     /* access record */
+    filerec_t  *file_rec;       /* file record */
+    int32       data_len;       /* length of the data we are checking */
+    int32       data_off;       /* offset of the data we are checking */
+
+    /* clear error stack and check validity of file id */
+    HEclear();
+    if ((access_rec = AID2REC(aid)) == NULL)   /* get the access_rec pointer */
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    file_rec = FID2REC(access_rec->file_id);
+    if (BADFREC(file_rec))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    /* get the offset and length of the dataset */
+    data_len = access_rec->block->ddlist[access_rec->idx].length;
+    data_off = access_rec->block->ddlist[access_rec->idx].offset;
+#ifdef TESTING
+    printf("%s: file_rec->f_end_off=%d\n",FUNC,file_rec->f_end_off);
+#endif
+    if (data_len + data_off == file_rec->f_end_off)  /* dataset at end? */
+        return(SUCCEED);
+    else 
+        return(FAIL);
+}   /* end HPisappendable */
 
 /*--------------------------------------------------------------------------
 
@@ -2844,8 +2893,8 @@ HIinit_file_dds(filerec_t * file_rec, int16 ndds, char *FUNC)
     ddblock_t  *block;          /* dd block to intialize */
     uint8      *p;              /* temp buffer ptr */
     dd_t       *list;           /* list of dd */
-    register int i;             /* temp ints */
-    register int16 n;
+    int i;             /* temp ints */
+    int16 n;
 
     /* 'reasonablize' the value of ndds.  0 means use default */
     if (0 == ndds)
@@ -3039,7 +3088,7 @@ HIget_function_table(accrec_t * access_rec, char *FUNC)
     dd_t         *dd;             /* ptr to current dd */
     filerec_t    *file_rec;       /* file record */
     uint8        *p;              /* tmp buf */
-    register int i;               /* loop index */
+    int i;               /* loop index */
 
     /* read in the special code in the special elt */
     dd = &access_rec->block->ddlist[access_rec->idx];
@@ -3087,7 +3136,7 @@ HIget_function_table(accrec_t * access_rec, char *FUNC)
 VOIDP
 HIgetspinfo(accrec_t * access_rec, uint16 tag, uint16 ref)
 {
-    register int i;             /* temp index */
+    int i;             /* temp index */
 
     /* search access records for the matching dd,
        and return special information */
@@ -3225,7 +3274,7 @@ PRIVATE special_table_t special_table[] =
 uint16
 HDmake_special_tag(uint16 tag)
 {
-    register int i;
+    int i;
 
     if (~tag & 0x8000)
         return ((uint16) (tag | 0x4000));
@@ -3242,7 +3291,7 @@ HDmake_special_tag(uint16 tag)
 intn
 HDis_special_tag(uint16 tag)
 {
-    register int i;
+    int i;
 
     if (~tag & 0x8000)
         return (tag & 0x4000) ? TRUE : FALSE;
@@ -3259,7 +3308,7 @@ HDis_special_tag(uint16 tag)
 uint16
 HDbase_tag(uint16 tag)
 {
-    register int i;
+    int i;
 
     if (~tag & 0x8000)
         return ((uint16) (tag & ~0x4000));
@@ -3845,7 +3894,7 @@ HIfill_file_rec(filerec_t * file_rec, char *FUNC)
 {
     uint8      *p;              /* Temporary pointer. */
     int32       n;
-    register intn ndds, i, idx; /* Temporary integers. */
+    intn ndds, i, idx; /* Temporary integers. */
     uint32      end_off = 0;    /* offset of the end of the file */
 
     /* Alloc start of linked list of ddblocks. */

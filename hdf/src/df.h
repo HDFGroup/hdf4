@@ -175,7 +175,7 @@ extern      "C"
                 (DF * dfile);
 
     extern int  DFImemcopy
-                (char *from, char *to, register int length);
+                (char *from, char *to, int length);
 
     extern void *DFIgetspace
                 (uint32 qty);

@@ -133,8 +133,8 @@ HIlookup_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
 #ifdef LATER
     CONSTR(FUNC, "HIlookup_dd");    /* for HERROR */
 #endif
-    register intn tag, ref, key, i;
-    register tag_ref_list_ptr p;
+    intn tag, ref, key, i;
+    tag_ref_list_ptr p;
     tag_ref_ptr o_ptr;
 
     if (look_tag == DFTAG_WILDCARD || look_ref == DFREF_WILDCARD)
@@ -205,8 +205,8 @@ HIadd_hash_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
               ddblock_t * pblock, int32 pidx)
 {
     CONSTR(FUNC, "HIadd_hash_dd");  /* for HERROR */
-    register intn tag, ref, key, i;
-    register tag_ref_list_ptr p, where;
+    intn tag, ref, key, i;
+    tag_ref_list_ptr p, where;
 
     if (look_tag == DFTAG_NULL)
         return SUCCEED;
@@ -270,8 +270,8 @@ HIdel_hash_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref)
 #ifdef LATER
     CONSTR(FUNC, "HIdel_hash_dd");  /* for HERROR */
 #endif
-    register intn tag, ref, key, i;
-    register tag_ref_list_ptr p;
+    intn tag, ref, key, i;
+    tag_ref_list_ptr p;
 
     tag = (intn) look_tag;
     ref = (intn) look_ref;
@@ -329,9 +329,9 @@ int
 HIfind_dd(uint16 look_tag, uint16 look_ref, ddblock_t ** pblock, int32 *pidx,
           intn direction)
 {
-    register intn idx;          /* index into ddlist of current dd searched */
-    register ddblock_t *block;  /* ptr to current ddblock searched */
-    register dd_t *list;        /* ptr to current ddlist searched */
+    intn idx;          /* index into ddlist of current dd searched */
+    ddblock_t *block;  /* ptr to current ddblock searched */
+    dd_t *list;        /* ptr to current ddlist searched */
 
     uint16      special_tag;    /* corresponding special tag */
 

@@ -69,7 +69,7 @@ DFKnb1b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 {
     int         fast_processing = 0;
     int         in_place = 0;
-    register uint32 i;
+    uint32 i;
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
     CONSTR(FUNC, "DFKnb1b");
@@ -127,7 +127,7 @@ DFKnb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 {
     int         fast_processing = 0;    /* Default is not fast processing */
     int         in_place = 0;   /* Inplace must be detected */
-    register uint32 i;
+    uint32 i;
     uint8       buf[2];         /* Inplace processing buffer */
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
@@ -194,7 +194,7 @@ DFKnb4b(VOIDP s, VOIDP d, uint32 num_elm,
 {
     int         fast_processing = 0;    /* Default is not fast processing */
     int         in_place = 0;   /* Inplace must be detected */
-    register uint32 i;
+    uint32 i;
     uint8       buf[4];         /* Inplace processing buffer */
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
@@ -269,7 +269,7 @@ DFKnb8b(VOIDP s, VOIDP d, uint32 num_elm,
 {
     int         fast_processing = 0;    /* Default is not fast processing */
     int         in_place = 0;   /* Inplace must be detected */
-    register uint32 i;
+    uint32 i;
     uint8       buf[8];         /* Inplace processing buffer */
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;

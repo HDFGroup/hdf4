@@ -30,7 +30,7 @@
   if (nt==DFNT_FLOAT) {\
     if ((st==DFNTF_IEEE && dt==DFNTF_PC) ||\
         (st==DFNTF_PC && dt==DFNTF_IEEE)) {\
-      register int32 i;\
+      int32 i;\
       for (i=0;i<sz*4;i+=4) {\
         d[i] = s[i+3];\
         d[i+1] = s[i+2];\
@@ -40,8 +40,8 @@
       status=0;\
     } else {\
       if (st==DFNTF_PC) {\
-        register int i;\
-        register char t;\
+        int i;\
+        char t;\
         for (i=0;i<sz*4;i+=4) {\
           t = s[i];\
           s[i] = s[i+3];\
@@ -66,8 +66,8 @@
         status = -1;\
       }\
       if (dt==DFNTF_PC) {\
-        register int i;\
-        register char t;\
+        int i;\
+        char t;\
         for (i=0;i<sz*4;i+=4) {\
           t = d[i];\
           d[i] = d[i+3];\
@@ -78,8 +78,8 @@
         }\
       }\
       if ((stype)==DFNTF_PC) {\
-        register int i;\
-        register char t;\
+        int i;\
+        char t;\
         for (i=0;i<sz*4;i+=4) {\
           t = s[i];\
           s[i] = s[i+3];\

@@ -78,7 +78,7 @@ DFKvi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
         uint32 dest_stride)
 {
     int         in_place = 0;   /* Inplace must be detected */
-    register uint32 i;
+    uint32 i;
     uint8       buf[4];         /* Inplace processing buffer */
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
@@ -129,7 +129,7 @@ DFKvi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
             }
           else if (source[1] & 0x60)
             {   /* denormalized value */
-                register int shft;
+                int shft;
 
                 shft = (source[1] & 0x40) ? 1 : 2;  /* shift needed to normalize */
                 /* shift mantissa */
@@ -178,7 +178,7 @@ DFKvi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
             }
           else if (in[i].c[1] & 0x60)
             {   /* denormalized value */
-                register int shft;
+                int shft;
 
                 /* shift needed to normalize */
                 shft = (in[i].c[1] & 0x40) ? 1 : 2;
@@ -214,7 +214,7 @@ DFKvo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
         uint32 dest_stride)
 {
     int         in_place = 0;   /* Inplace must be detected */
-    register uint32 i;
+    uint32 i;
     uint8       buf[4];         /* Inplace processing buffer */
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
@@ -263,7 +263,7 @@ DFKvo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
             }
           else if (exp)
             {
-                register intn shft;
+                intn shft;
                 /*
                  * denormalized number
                  */
@@ -321,7 +321,7 @@ DFKvo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
             }
           else if (exp)
             {   /* denormalized number */
-                register int shft;
+                int shft;
 
                 /* keep sign, zero exponent */
                 out[i].c[0] = in[i].c[1] & (uint8) 0x80;
@@ -406,7 +406,7 @@ DFKvi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
         uint32 dest_stride)
 {
     int         in_place = 0;   /* Inplace must be detected */
-    register uint32 i;
+    uint32 i;
     uint8       buf[4];         /* Inplace processing buffer */
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
@@ -436,7 +436,7 @@ DFKvi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
       {
         shipit: /* In VAX, bytes in a word are counted from right to left */
           {
-              register int j, k;
+              int j, k;
               uint8      *bufi, *i3e;
 
               i3e = source;
@@ -496,7 +496,7 @@ DFKvo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
         uint32 dest_stride)
 {
     int         in_place = 0;   /* Inplace must be detected */
-    register intn i;
+    intn i;
     uint8       buf[4];         /* Inplace processing buffer */
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
@@ -558,7 +558,7 @@ DFKvo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
         shipit: /* In VAX the bytes in a word are counted from right to left */
           {
-              register int j, k;
+              int j, k;
               uint8      *i3e, *bufo;
 
               i3e = (uint8 *) &(id);
@@ -588,7 +588,7 @@ DFKlvi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
          uint32 dest_stride)
 {
     int         in_place = 0;   /* Inplace must be detected */
-    register uint32 i;
+    uint32 i;
     uint8       buf[4];         /* Inplace processing buffer */
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
@@ -639,7 +639,7 @@ DFKlvi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
             }
           else if (source[2] & 0x60)
             {   /* denormalized value */
-                register int shft;
+                int shft;
 
                 shft = (source[2] & 0x40) ? 1 : 2;  /* shift needed to normalize */
                 /* shift mantissa */
@@ -688,7 +688,7 @@ DFKlvi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
             }
           else if (in[i].c[1] & 0x60)
             {   /* denormalized value */
-                register int shft;
+                int shft;
 
                 /* shift needed to normalize */
                 shft = (in[i].c[1] & 0x40) ? 1 : 2;
@@ -724,7 +724,7 @@ DFKlvo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
          uint32 dest_stride)
 {
     int         in_place = 0;   /* Inplace must be detected */
-    register uint32 i;
+    uint32 i;
     uint8       buf[4];         /* Inplace processing buffer */
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
@@ -773,7 +773,7 @@ DFKlvo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
             }
           else if (exp)
             {
-                register intn shft;
+                intn shft;
                 /*
                  * denormalized number
                  */
@@ -831,7 +831,7 @@ DFKlvo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
             }
           else if (exp)
             {   /* denormalized number */
-                register int shft;
+                int shft;
 
                 /* keep sign, zero exponent */
                 out[i].c[0] = in[i].c[1] & (uint8) 0x80;
@@ -869,7 +869,7 @@ DFKlvi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
          uint32 dest_stride)
 {
     int         in_place = 0;   /* Inplace must be detected */
-    register uint32 i;
+    uint32 i;
     uint8       buf[4];         /* Inplace processing buffer */
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
@@ -945,7 +945,7 @@ DFKlvo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
          uint32 dest_stride)
 {
     int         in_place = 0;   /* Inplace must be detected */
-    register intn i;
+    intn i;
     uint8       buf[4];         /* Inplace processing buffer */
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;

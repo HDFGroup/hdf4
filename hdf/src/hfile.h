@@ -107,8 +107,13 @@ typedef FILE *hdf_file_t;
                                 fopen((p), "r+", "mbc=64") : \
                                 fopen((p), "r", "mbc=64"))
 #else  /*  !VMS  */
+#ifdef PC386
+#   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
+                                fopen((p), "rb+") : fopen((p), "rb"))
+#else /* !PC386 */
 #   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
                                 fopen((p), "r+") : fopen((p), "r"))
+#endif /* PC386 */
 #endif /* !VMS */
 #ifdef PC386
 #   define HI_CREATE(p)        (fopen((p), "wb+"))
@@ -406,6 +411,12 @@ typedef struct accrec_t
   }
 accrec_t;
 
+/* Convenience Macros to access the DD for an access record */
+#define ACCREC_TAG(a) ((a)->block->ddlist[(a)->idx].tag)
+#define ACCREC_REF(a) ((a)->block->ddlist[(a)->idx].ref)
+#define ACCREC_OFF(a) ((a)->block->ddlist[(a)->idx].offset)
+#define ACCREC_LEN(a) ((a)->block->ddlist[(a)->idx].length)
+
 /* this type is returned to applications programs or other special
    interfaces when they need to know information about a given
    special element.  This is all information that would not be returned
@@ -427,6 +438,9 @@ typedef struct sp_info_block_t
       int32       comp_type;    /* compression type */
       int32       model_type;   /* model type */
       int32       comp_size;    /* size of compressed information */
+
+      /* variable-length linked blocks */
+      int32       min_block;    /* the minimum block size */
 
   }
 sp_info_block_t;
@@ -706,6 +720,36 @@ extern      "C"
                 (accrec_t * access_rec);
 
     extern int32 HCPinfo
+                (accrec_t * access_rec, sp_info_block_t * info_block);
+
+/*
+   ** from hvblocks.c
+ */
+
+    extern int32 HVPstread
+                (accrec_t * rec);
+
+    extern int32 HVPstwrite
+                (accrec_t * rec);
+
+    extern int32 HVPseek
+                (accrec_t * access_rec, int32 offset, int origin);
+
+    extern int32 HVPinquire
+                (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
+               int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
+                 int16 *pspecial);
+
+    extern int32 HVPread
+                (accrec_t * access_rec, int32 length, VOIDP data);
+
+    extern int32 HVPwrite
+                (accrec_t * access_rec, int32 length, const VOIDP data);
+
+    extern intn HVPendaccess
+                (accrec_t * access_rec);
+
+    extern int32 HVPinfo
                 (accrec_t * access_rec, sp_info_block_t * info_block);
 
 #ifdef MAC

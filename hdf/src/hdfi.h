@@ -344,8 +344,8 @@ typedef signed char        int8;
 typedef unsigned char      uint8;
 typedef short int          int16;
 typedef unsigned short int uint16;
-typedef long int           int32;
-typedef unsigned long int  uint32;
+typedef int                int32;
+typedef unsigned int       uint32;
 typedef int                intn;
 typedef unsigned int       uintn;
 typedef float              float32;
@@ -635,7 +635,6 @@ typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 #define _fcdtocp(desc) (desc)
 void exit(int status);
 
-#define register   /* don't mess with the MAC compiler's register allocation */
 #define FILELIB MACIO
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
@@ -749,8 +748,6 @@ typedef long              intf;     /* size of INTEGERs in Fortran compiler */
 #define DF_CAPFNAMES
 #endif
 #define _fcdtocp(desc) (desc)
-
-#define register    /* don't mess with the PC compiler's register allocation */
 
 #ifdef WINNT
 #define FILELIB WINNTIO

@@ -185,7 +185,7 @@ extern      "C"
                 (VOIDP dest, const VOIDP src, uint32 item_size, uint32 num_items);
 
     extern char _HUGE *HIstrncpy
-                (register char _HUGE * dest, register const char _HUGE * source, int32 len);
+                (char _HUGE * dest, const char _HUGE * source, int32 len);
 
     extern int32 HDspaceleft
                 (void);
@@ -279,6 +279,12 @@ extern      "C"
     extern int32 HBcreate
                 (int32 file_id, uint16 tag, uint16 ref, const char _HUGE * extern_file_name,
                  int32 offset, int32 start_len);
+
+/*
+   ** from hvblocks.c
+ */
+    extern int32 HVcreate
+                (int32 file_id, uint16 tag, uint16 ref);
 
 /*
    ** from herr.c

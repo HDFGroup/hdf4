@@ -439,8 +439,8 @@ vexistvg(HFILEID f, uint16 vgid)
 void
 vpackvg(VGROUP * vg, uint8 buf[], int32 *size)
 {
-    register uint16 i;
-    register uint8 *bb;
+    uint16 i;
+    uint8 *bb;
 #ifdef LATER
     CONSTR(FUNC, "vpackvg");
 #endif
@@ -503,9 +503,9 @@ vpackvg(VGROUP * vg, uint8 buf[], int32 *size)
 PRIVATE void
 vunpackvg(VGROUP * vg, uint8 buf[], uintn len)
 {
-    register uint8 *bb;
-    register uintn u;
-    register uint16 uint16var;
+    uint8 *bb;
+    uintn u;
+    uint16 uint16var;
 #ifdef LATER
     CONSTR(FUNC, "vunpackvg");
 #endif
@@ -803,7 +803,7 @@ Vinsert(int32 vkey, int32 insertkey)
     vginstance_t *v;
     vsinstance_t *w;
     vginstance_t *x;
-    register uintn u;
+    uintn u;
     CONSTR(FUNC, "Vinsert");
     uint16      newtag = 0, newref = 0;
     int32       newfid;
@@ -886,7 +886,7 @@ int32
 Vflocate(int32 vkey, char *field)
 {
     int32       s;
-    register uintn u;
+    uintn u;
     vginstance_t *v;
     VGROUP     *vg;
     int32       vskey;
@@ -929,8 +929,8 @@ Vflocate(int32 vkey, char *field)
 intn
 Vinqtagref(int32 vkey, int32 tag, int32 ref)
 {
-    register uintn u;
-    register uint16 ttag, rref;
+    uintn u;
+    uint16 ttag, rref;
     vginstance_t *v;
     VGROUP     *vg;
     CONSTR(FUNC, "Vinqtagref");
@@ -1306,8 +1306,8 @@ Vsetclass(int32 vkey, const char *vgclass)
 intn
 Visvg(int32 vkey, int32 id)
 {
-    register uintn u;
-    register uint16 ID;
+    uintn u;
+    uint16 ID;
     vginstance_t *v;
     VGROUP     *vg;
     CONSTR(FUNC, "Visvg");
@@ -1344,7 +1344,7 @@ Visvg(int32 vkey, int32 id)
 intn
 Visvs(int32 vkey, int32 id)
 {
-    register intn i;
+    intn i;
     vginstance_t *v;
     VGROUP     *vg;
     CONSTR(FUNC, "VSisvs");
@@ -1454,7 +1454,7 @@ Vgetid(HFILEID f, int32 vgid)
 int32
 Vgetnext(int32 vkey, int32 id)
 {
-    register uintn u;
+    uintn u;
     vginstance_t *v;
     VGROUP     *vg;
     CONSTR(FUNC, "Vgetnext");

@@ -437,7 +437,7 @@ Hbitread(int32 bitid, intn count, uint32 *data)
 {
     CONSTR(FUNC, "Hbitread");   /* for HERROR */
     bitrec_t   *bitfile_rec;    /* access record */
-    register uint32 l;
+    uint32 l;
     uint32      b = 0;          /* bits to return */
     uint16      orig_count;     /* the original number of bits to read in */
     int32       n;

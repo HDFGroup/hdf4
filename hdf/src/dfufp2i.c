@@ -388,10 +388,10 @@ printoutput(Output * out)
 int
 convert_interp(Input * in, Output * out)
 {
-    register int j, theval;
+    int j, theval;
     float32    *f, *dxs, *dys, *xv, *yv, *lim, delx, dely, pt, xrange, yrange,
                 range, zy, *z1, *z2, *z3, *z4, z;
-    register uint8 *p;
+    uint8 *p;
     uint8      *xinc;
     int32       i, *yoffs;
 
@@ -562,9 +562,9 @@ convert_interp(Input * in, Output * out)
 int
 pixrep_scaled(Input * in, Output * out)
 {
-    register int32 j;
+    int32 j;
     float      *data, range, ratio;
-    register uint8 *image, *prevrow;
+    uint8 *image, *prevrow;
     uint8      *pixvals;
     int32       i, theval, *hoffsets, *voffsets, prevoffset;
 
@@ -689,7 +689,7 @@ pixrep_simple(Input * in, Output * out)
 {
     int32       i, j;
     uint8       raster_val;
-    register uint8 *image, *row_buf;
+    uint8 *image, *row_buf;
     float32    *in_row_ptr, *in_buf;
     float32     ratio, delh, delv, hblockend, vblockend;
 

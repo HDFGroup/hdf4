@@ -109,7 +109,7 @@ PRIVATE VOID DFKswap
 PRIVATE     VOID
 DFKswap(VOIDP s, VOIDP d, uintn elem_size, uintn num_elem)
 {
-    register uintn i;
+    uintn i;
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
     unsigned long *lp_dest, *lp_src;
@@ -208,7 +208,7 @@ int
 DFKui2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
         uint32 dest_stride)
 {
-    register uint32 i;
+    uint32 i;
     int         fast_processing = 0;
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
@@ -529,7 +529,7 @@ int
 DFKui2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
         uint32 dest_stride)
 {
-    register uint32 i;
+    uint32 i;
     int         fast_processing = 0;
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
@@ -604,7 +604,7 @@ int
 DFKuo2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
         uint32 dest_stride)
 {
-    register uintn i;
+    uintn i;
     int         fast_processing = 0;
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
@@ -849,7 +849,7 @@ int
 DFKuo2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
         uint32 dest_stride)
 {
-    register uintn i;
+    uintn i;
     int         fast_processing = 0;
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
@@ -907,7 +907,7 @@ DFKui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
         uint32 dest_stride)
 {
     int         fast_processing = 0;
-    register uint32 i;
+    uint32 i;
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
     long       *lptr_dest = (long *) dest;
@@ -1133,7 +1133,7 @@ DFKui4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
         uint32 dest_stride)
 {
     int         fast_processing = 0;
-    register uint32 i;
+    uint32 i;
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
     long       *lptr_dest = (long *) dest;
@@ -1204,7 +1204,7 @@ DFKuo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
         uint32 dest_stride)
 {
     int         fast_processing = 0;
-    register uintn i;
+    uintn i;
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
     long       *lp_dest;
@@ -1364,7 +1364,7 @@ DFKuo4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
         uint32 dest_stride)
 {
     int         fast_processing = 0;
-    register uintn i;
+    uintn i;
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
     long       *lp_dest;
@@ -1832,7 +1832,7 @@ int
 DFKlui2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
          uint32 dest_stride)
 {
-    register uint32 i;
+    uint32 i;
     int         fast_processing = 0;
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
@@ -2262,7 +2262,7 @@ int
 DFKlui2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
          uint32 dest_stride)
 {
-    register uint32 i;
+    uint32 i;
     int         fast_processing = 0;
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
@@ -2354,7 +2354,7 @@ int
 DFKluo2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
          uint32 dest_stride)
 {
-    register uint32 i;
+    uint32 i;
     int         fast_processing = 0;
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
@@ -2698,7 +2698,7 @@ int
 DFKluo2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
          uint32 dest_stride)
 {
-    register uint32 i;
+    uint32 i;
     int         fast_processing = 0;
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
@@ -2781,7 +2781,7 @@ DFKlui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
          uint32 dest_stride)
 {
     int         fast_processing = 0;
-    register uint32 i;
+    uint32 i;
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
     long       *lptr_dest = (long *) dest;
@@ -3145,7 +3145,7 @@ DFKlui4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
          uint32 dest_stride)
 {
     int         fast_processing = 0;
-    register uint32 i;
+    uint32 i;
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
     long       *lptr_dest = (long *) dest;
@@ -3235,7 +3235,7 @@ DFKluo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
          uint32 dest_stride)
 {
     int         fast_processing = 0;
-    register uintn i;
+    uintn i;
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
     unsigned long *lp_dest;
@@ -3304,7 +3304,7 @@ DFKluo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
             }
 #endif
 #else  /* DUFF_luo4i */
-          register uintn n;
+          uintn n;
           int         odd_man_out = 0;  /* By default there are even num_elm */
           uintn       orig_num_elm = num_elm;
 
@@ -3526,7 +3526,7 @@ DFKluo4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
          uint32 dest_stride)
 {
     int         fast_processing = 0;
-    register uintn i;
+    uintn i;
     uint8      *source = (uint8 *) s;
     uint8      *dest = (uint8 *) d;
     unsigned long *lp_dest;
