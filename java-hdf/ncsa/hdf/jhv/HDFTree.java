@@ -77,12 +77,8 @@ public class HDFTree extends Panel implements MouseListener, AdjustmentListener
     int tx=0;
     int ty=0;
 
-
     /** create new HDF tree */
-    public HDFTree()
-    {  
-        initialize();
-    }
+    public HDFTree() { initialize(); }
 
     /**
      * create the new HDF Tree with specified tree style 
@@ -103,7 +99,7 @@ public class HDFTree extends Panel implements MouseListener, AdjustmentListener
         selectedNode = null;
 
         // add vertical & horizintal scrollbar
-        addScrollbar();        
+        addScrollbar();
         addMouseListener(this);
     }
 
@@ -290,6 +286,8 @@ public class HDFTree extends Panel implements MouseListener, AdjustmentListener
 
     public void adjustmentValueChanged(AdjustmentEvent e)
     {
+        //System.out.println("HDFTree.adjustmentValueChanged()");
+
         int arg = e.getAdjustmentType();
         Scrollbar target = (Scrollbar) e.getAdjustable();
 
@@ -377,12 +375,23 @@ public class HDFTree extends Panel implements MouseListener, AdjustmentListener
 
     public synchronized  void setBounds(int x, int y, int w, int h)
     { 
+        //System.out.println("HDFTree.setBounds()");
+
         super.setBounds(x, y, w, h);
-    
-        if (getSize().width > CELLSIZE) {
-            treeVScrollbar.setValues(treeVOffset,(getSize().height/CELLSIZE),
-                0, displayedVector.size());
-            treeVScrollbar.setBlockIncrement(getSize().height/CELLSIZE);
+        Dimension d = getSize();
+        int visible = d.height/CELLSIZE;
+        int treeSize = displayedVector.size();
+
+        if (d.width > CELLSIZE)
+        {
+            // fix the bug that the vertical scrollbar does not roll up
+            // if the visible tree size is samller than tree panel size
+            // while the top part of the tree is hidden
+            // Peter Cao, June 8, 1998
+            //treeVScrollbar.setValues(treeVOffset,visible, 0, treeSize);
+            treeVScrollbar.setValues(treeVOffset,visible, 0,
+                treeVOffset+Math.max(treeSize,visible));
+            treeVScrollbar.setBlockIncrement(visible);
       
             // resize horizontal scrollbar
             setHScrollValue();
@@ -579,15 +588,11 @@ public class HDFTree extends Panel implements MouseListener, AdjustmentListener
 
         Dimension d = getSize();
 
-            if (offScreenImage == null) {
-            // offScreenImage not created; create it.
-            offScreenImage = createImage(d.width*5, d.height*5);        
-
-            // get the off-screen graphics context    
+        if (offScreenImage == null)
+        {
+            offScreenImage = createImage(d.width*5, d.height*5);
             offGraphics    = offScreenImage.getGraphics();
-        
-            // set the font for offGraphics
-            offGraphics.setFont(getFont());         
+            offGraphics.setFont(getFont());
         }
 
         // paint the background on the off-screen graphics context

@@ -11,6 +11,7 @@
 
 package ncsa.hdf.message;
 
+import ncsa.hdf.hdflib.HDFLibrary;
 import ncsa.hdf.util.Queue;
 
 /**
@@ -63,9 +64,9 @@ public class HDFHierarchy extends HDFObject
      */
     public void service()
     {
+        this.hdf =  new HDFLibrary();
         HDFAnalyse analyseHdf   = new HDFAnalyse();
-        analyseHdf.getHdfObject(hdfFilename, nodeQueue);
-
+        analyseHdf.getHdfObject(filename, nodeQueue);
         addNodeInformation(nodeQueue);
     }
 
@@ -100,44 +101,43 @@ public class HDFHierarchy extends HDFObject
         {
             // get one node from the Queue
             node = (HDFObjectNode)hdfQueue.elementAt(i);
+
+            if (!node.hasChild()) continue;
+
             switch(node.type)
             {
                 case HDFObjectNode.RIS8:
-                    try { information = HDFRIS8.readInfo (hdf, hdfFilename, node); }
+                    try { information = HDFRIS8.readInfo (hdf, filename, node); }
                     catch (Exception e) {}
                     break;
                 case HDFObjectNode.RIS24:
-                    try { information = HDFRIS24.readInfo (hdf, hdfFilename, node); }
+                    try { information = HDFRIS24.readInfo (hdf, filename, node); }
                     catch (Exception e) {}
                     break;
                 case HDFObjectNode.SDS:
                 case HDFObjectNode.SDSDATASET:
-                    try { information = HDFSDS.readInfo (hdf, hdfFilename, node); }
+                    try { information = HDFSDS.readInfo (hdf, filename, node); }
                     catch (Exception e) {}
                     break;
                 case HDFObjectNode.GR:
                 case HDFObjectNode.GRDATASET:
-                    try { information = HDFGR.readInfo (hdf, hdfFilename, node); }
+                    try { information = HDFGR.readInfo (hdf, filename, node); }
                     catch (Exception e) {}
                     break;
-                case HDFObjectNode.Vdata:
-                    try { information = HDFVdata.readInfo (hdf, hdfFilename, node); }
-                    catch (Exception e) {}
-                    break;
+                //case HDFObjectNode.Vdata:
+                //    try { information = HDFVdata.readInfo (hdf, filename, node); }
+                //    catch (Exception e) {}
+                //    break;
                 case  HDFObjectNode.Vgroup:
-                    try { information = HDFVgroup.readInfo (hdf, hdfFilename, node); }
+                    try { information = HDFVgroup.readInfo (hdf, filename, node); }
                     catch (Exception e) {}
                     break;
             }
             node.information = information;
 
-            // no information for leaf nodes
-            if (node.child != null)
-            {
-                subQueue = (Queue) (node.child);
-                addNodeInformation(subQueue);
-            }
-        } 
+            subQueue = (Queue) (node.child);
+            addNodeInformation(subQueue);
+        }
     }  
 
 }

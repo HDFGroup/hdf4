@@ -68,8 +68,8 @@ public class Editor extends Dialog implements ActionListener
         cancelButton.addActionListener(this);
         buttonPanel = new Panel();
         buttonPanel.setLayout(new GridBagLayout());
-        this.constrain(okButton,buttonPanel,0,0,1,1,fN,dC,1,0,5,5,0,0);
-        this.constrain(cancelButton,buttonPanel,1,0,1,1,fN,dC,0,0,0,5,0,120);
+        this.constrain(okButton,    buttonPanel,0,0,1,1,fN,dC,1,0,5,5,0,0);
+        this.constrain(cancelButton,buttonPanel,1,0,1,1,fN,dC,0,0,5,5,0,120);
     }
   
    

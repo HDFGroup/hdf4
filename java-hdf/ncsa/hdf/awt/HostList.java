@@ -190,6 +190,7 @@ public class HostList extends OutlinePanel
                 fEditItem.setEnabled(true);
 
             String newEntry = fEnterDomain.getText().trim();
+	if (newEntry.length() > 0)  {
             String prefix = newEntry.substring(0, 7);
 
             if (javaWebServer.getState())
@@ -212,6 +213,8 @@ public class HostList extends OutlinePanel
                     clean();
                 }
             }
+	} else {
+                message.setText("ERROR: no selected item to be added"); }
         }
         else if (source == fEditItem)
         {

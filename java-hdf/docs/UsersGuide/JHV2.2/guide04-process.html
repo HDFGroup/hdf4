@@ -1,0 +1,228 @@
+<HTML>
+<HEAD><TITLE>JHV User's Guide: Image Processing</TITLE></HEAD>
+
+<!-- BEGIN OF THE BODY -->
+<BODY>
+
+<a href="index.html">[Index]</a>
+<a href="guide03-window.html">[Prev]</a>
+<a href="guide05-analysis.html">[Next]</a>
+<a href="guide10-ascii2hdf.html">[Bottom]</a>
+<p><hr noshade size=1>
+
+<H1> Chapter 5: Image Processing </H1>
+To facilitate image processing, JHV can apply a number of standard image 
+processing algorithms similar to thos provided by the
+popular 
+<a href="http://is.rice.edu/~shel/xv-3.10a/">
+'xv' </a> 
+utility.  These algorithms are available from the <b>Palette</b>, 
+<b>Image</b>, <b>Filter</b>, and <b>Contour</b> menus. 
+Palette editing is discussed in detail in a later chapter; the other tools are 
+discussed here.
+<p>
+<table width=100%>
+<tr><td valign=top>
+  <A HREF="#guide04-edit"> 5.1 Image Editing</A> 
+  <br><A HREF="#guide04-filter"> 5.2 Image Filtering</A> 
+  <br><A HREF="#guide04-contour"> 5.3 Image Contour</A> 
+</td><td valign=top>
+  <a href="guide09-palette.html">10 Palette Editor</a>; 
+</td></tr>
+</table>
+<p> 
+Image processing computation may take a long time to complete, depending on 
+the size of the image and the speed of the computer. 
+
+<p><hr noshade size=1>
+
+<a name="guide04-edit"></a>
+<h2>5.1 Image Editing</h2>
+<p>The image menu allows you to modify the data range, change RGB balance in
+the image, and set the image brightness and contrast, and prepare a negative 
+copy of the image.
+<DL>
+  <DD>
+    <TABLE border="1" cellpadding="5" bgcolor="#C0C0C0">
+      <TR><TD>Range Modification
+      <TR><TD>RGB Banlance
+      <BR>Brightness/Contrast
+      <BR>Negative
+    </TABLE>
+</DL>
+
+<DL>
+
+  <DT><b>Range Modification</b>
+  <DD><b>Range Modification</b> allows you to change the range of the data set. 
+      <p>
+      Selecting <b>Range Modification</b> opens a data range dialog box,
+      labeled "New SDS Image Control" in the accompanying illustration.
+      Slide the data range slidebars in the dialog box to specify new maximum 
+      and minimum values for the display.  Values outside of the range will be
+      set (pinned) to the nearer of the range bounds.  Modifying the data range 
+      will usually change the color of the image and produce special image 
+      effects. 
+      <p>
+      The following figure illustrates range modification of an SDS.  The 
+      original data range is [202, 21412]; the modified range is [2092, 14692].
+      <P>
+      <center>
+      <IMG SRC="images/data-range.gif">
+      <BR>Figure 5.1 Modification of image data range
+      </center>
+  <DT><b>RGB Balance</b>
+  <DD><b>RGB Balance</b> allows you to adjust the RGB color balance, including 
+      the brightness and darkness of component colors.  Red, green, and blue 
+      can be adjusted synchronously or independently.
+      <p>
+      Select <b>RGB Balance</b> to open the RGB balance dialog box.  
+      The <b>RGB</b>, <b>Red</b>, <b>Green</b>, and <b>Blue</b> slidebars 
+      increase the corresponding color values by the selected amount (see 
+      below).  Each time an adjustment is made, the specified value is added 
+      to each image pixel's color value.  The maximum resulting value for a 
+      color component is 255 and the minimum value is 0; invalid results 
+      are truncated.  Note that the <b>RGB</b> slidebar adjusts all three
+      colors synchronously.  
+      <P>
+      <center>
+      <IMG SRC="images/rgb-balance.gif">
+      <br>Figure 5.2 RGB color balance control panel
+      </center>
+      <p>
+      Changes to pixel RGB values are based on a minimum value of 0 and a 
+      maximum value of 255.  The indicated percentage increase is a percentage 
+      of that maximum value.  For instance, assume that a pixel has the value 
+      RGB (10, 10, 10) and that you move the <b>Red</b> slidebar to 4% while 
+      leaving the other slidebars at 0.  This will add 4% of 255, or 10, to
+      the pixel's red component, resulting in a value of RGB (20, 10, 10).
+      <P>
+  <DT><b>Brightness/Contrast</b>
+  <DD><b>Brightness/Contrast</b> allows you to adjust the brightness and/or 
+      contrast of an image.  Contrast is increased by darkening darker pixels 
+      and brightening brighter ones and reduced by the reverse process, 
+      brightening darker pixels and darkening brighter ones.
+      <p>
+      <center>
+      <IMG SRC="images/contrast.gif">
+      <br>Figure 5.3 Image brightness/contrast dialog box
+      </center>
+      <P>
+      Selecting <b>Brightness/Contrast</b> opens the brightness/contrast 
+      dialog box.  Select the appropriate channel (<b>Red</b>, <b>Green</b>, 
+      <b>Blue</b>, or <b>All</b>), and set the brightness and/or contrast 
+      adjustments.  Upon completion, click on <b>Preview</b> to view the 
+      current changes without terminating the dialog.  If you are ready to 
+      terminate the dialog, click on <b>Cancel</b> to discard any brightness 
+      or contrast changes you have made or <b>Confirm</b> to confirm them.
+      <P>
+  <DT><b>Negative</b>
+  <DD><b>Negative</b> transforms a color or grayscale image into its 
+      photographic negative by computing the approximate complement of each 
+      pixel.
+</DL>
+
+<a name=guide04-filter></a>
+<h2>5.2 Image Filtering </h2>
+JHV provides several filters that let you apply special effects to images. 
+For example, you can smooth or sharpen images, add or reduce noise (change
+pixel color values by small and random amounts), or emboss and polarize images.
+You can also produce many interesting visual effects through combined filtering 
+operations. These image filtering algorithms are adapted from the popular 
+<code>xv</code> utility.
+<DL>
+  <DT><DD>
+    <TABLE border="1" cellpadding="5" bgcolor="#C0C0C0">
+      <TR><TD>Smooth
+      <BR>Sharpen
+      <BR>Add Noise
+      <BR>Find Edge
+      <BR>Flip (Horizontal)
+      <BR>Flip (Vertical)
+      <BR>Emboss
+      <BR>Polarize
+      <BR>Rotate
+    </TABLE>
+</DL>
+
+<DL>
+  <DT><B>Smooth</B> 
+  <DD>Evens out the noise and small features of an image, thus emphasizing
+      larger features and reducing jagged or uneven edges.  (<b>Smooth</b> runs 
+      a convolution over each plane (r,g,b) of the image, using an <i>n*n</i> 
+      convolution mask consisting of all 1's. This has the effect of replacing 
+      each pixel with the average value of all the pixels in the <i>n*n</i> 
+      rectangle centered around the pixel in question.)
+      <P>
+  <DT><B>Sharpen</B>
+  <DD>Highlights edges, lines, and borders.  (<b>Sharpen</b> runs an 
+      edge-sharpening algorithm on the image, which attempts to maximize 
+      contrast between adjacent pixels.)
+      <P>
+  <DT><B>Add Noise</B>
+  <DD>Adds a small random amount to the color value of each pixel in the image.  
+      <P>
+  <DT><B>Find Edge</B>
+  <DD>Locates horizontal and vertical edges.  (<B>Find Edge</B> runs a 
+      convolution using a pair of convolutions, one which detects horizontal 
+      edges, and one for vertical edges.) 
+      <P>
+  <DT><B>Flip (Horizontal)</B> and <B>Flip (Vertical)</B> 
+  <DD>Flips the image horizontally or vertically. 
+      <P>
+  <DT><B>Emboss</B>
+  <DD>Produces a pseudo-3D embossed effect.  (<B>Emboss</B> uses a variation 
+      of the edge detection algorithm.)
+      <P>
+  <DT><B>Polarize</B>
+  <DD>Creates a polarized image. (The polarized image is generated through a 
+      polar interpretation of the row and column scaling information. The row 
+      scale is treated as a set of radius, and the column scale as a set of 
+      angle values in the range 0 to 2*PI radians. )
+      <P>
+  <DT><B>Rotate</B>
+  <DD>Rotates the image 90 degrees counterclockwise.
+
+</DL>
+
+<a name=guide04-contour></a>
+<h2>5.3 Image Contour </h2>
+<p>The <b>Contour</b> commands create a contour plot from an image. 
+The contour lines are drawn in 3, 5, or 9 levels, which are equally spaced 
+in the range of the data.
+<DL>
+  <DT><DD>
+    <TABLE border="1" cellpadding="5" bgcolor="#C0C0C0">
+      <TR><TD>Level 3
+      <BR>Level 5
+      <BR>Level 9
+    </TABLE>
+</DL>
+The following figure illustrates an image contour. The left image is the 
+original; the right image is a contour plot with level 5.
+<p>
+<center>
+<IMG SRC="images/contour.gif">
+<br>Figure 5.4 Image contour
+</center>
+
+
+<!-- BEGIN OF FOOTER INFO -->
+<P><hr noshade size=1>
+<a href="index.html">[Index]</a>
+<a href="guide03-window.html">[Prev]</a>
+<a href="guide05-analysis.html">[Next]</a>
+<a href="guide10-ascii2hdf.html">[Bottom]</a>
+<p><hr noshade size=1>
+<font face="arial,helvetica" size="-1">
+  <a href="http://www.ncsa.uiuc.edu/">
+  <img border=0 src=http://www.ncsa.uiuc.edu/Images/NCSAhome/footerlogo.gif alt="NCSA"><br> The National Center for Supercomputing Applications</A><br>
+  <a href="http://www.uiuc.edu/">University of Illinois at Urbana-Champaign</a><br>
+<p><A HREF="mailto:hdfhelp@ncsa.uiuc.edu">hdfhelp@ncsa.uiuc.edu</A>
+</FONT>
+<!- END OF FOOTER INFO -->
+
+</BODY>
+</HTML>
+
+

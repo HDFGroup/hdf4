@@ -60,7 +60,7 @@ jint vdata_id,
 jobjectArray fields)  /* OUT: String */
 {
 	intn rval;
-	char *flds;
+	char flds[4096];
 	jstring rstring;
 	jclass jc;
 	jobject o;
@@ -125,7 +125,7 @@ jint vdata_id,
 jstring vdata_name)  /* OUT: String */
 {
 	intn rval;
-	char *nm;
+	char nm[VSNAMELENMAX];
 	jstring rstring;
 	jclass jc;
 	jobject o;

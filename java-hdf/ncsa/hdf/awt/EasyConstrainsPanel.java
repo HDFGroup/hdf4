@@ -24,7 +24,9 @@ package ncsa.hdf.awt;
 import java.awt.*;
 import java.awt.event.*;
 
-public class EasyConstrainsPanel extends Panel implements KeyListener, MouseListener  
+public class EasyConstrainsPanel
+    extends Panel
+    implements KeyListener, MouseListener
 {
     // This is the background to be used by all joule applications and applets.
    

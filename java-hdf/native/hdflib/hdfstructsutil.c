@@ -18,6 +18,7 @@
  *
  */
 #include "hdf.h"
+#include "mfhdf.h"
 #include "hfile.h"
 #include "hcomp.h"
 

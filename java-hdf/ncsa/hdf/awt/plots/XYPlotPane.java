@@ -19,10 +19,12 @@ import  java.util.Vector;
 import  java.awt.event.*;
 
 // XY-plot implementation
-public class XYPlotPane extends Canvas implements MouseListener {
-
+public class XYPlotPane
+    extends Canvas
+    implements MouseListener
+{
 	// control class
-	XYPlot 		plotCtr;
+	XYPlot plotCtr;
 
 	// data being ploted (same as what plotCtr has)
 	double  data[][];
@@ -80,7 +82,7 @@ public class XYPlotPane extends Canvas implements MouseListener {
 	// set font
 	// Create the new font for displaying the  data correctly 
     	// in the specified canvas within the scrollbar
-    	Font dataFont        = new Font("Fixed", Font.PLAIN, 14);
+    	Font dataFont = new Font("Fixed", Font.PLAIN, 14);
 
 	int  fontWidth = 14;
 	int  fontHeight= 15;

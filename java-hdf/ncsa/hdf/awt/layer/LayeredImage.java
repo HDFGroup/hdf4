@@ -30,7 +30,7 @@ public class LayeredImage extends Frame
 {
     List imageList;
     ScrollPane scrollPanel;
-    Label layerLabel, listLabel, selectedImageLabel;
+    Label listLabel, selectedImageLabel;
     Button dismissButton, applyButton, tansparentButton;
     TextArea imageLayersInfo;
 
@@ -66,19 +66,13 @@ public class LayeredImage extends Frame
         setSize(getInsets().left + getInsets().right + 577,
                 getInsets().top + getInsets().bottom + 398);
 
-        // layer label
-        layerLabel = new java.awt.Label("Image Layer:");
-        layerLabel.setBounds(getInsets().left + 12,
-                           getInsets().top  + 12,264,36);
-        add(layerLabel);
-
         scrollPanel = new java.awt.ScrollPane();
         scrollPanel.setBounds(getInsets().left + 12,
-                            getInsets().top  + 48,350,336);
+                            getInsets().top  + 12,350,376);
         add(scrollPanel);
 
         // image list label
-        listLabel = new java.awt.Label("Raster Images: ");
+        listLabel = new java.awt.Label("Raster Images");
         listLabel.setBounds(getInsets().left + 384,
                           getInsets().top  + 12,168,36);
         add(listLabel);
@@ -90,17 +84,18 @@ public class LayeredImage extends Frame
                           getInsets().top  + 48,166,110);
 
         // image layers info label
-        Label        imageLayersInfoLabel = new Label("Image Layer Info:");
+        Label        imageLayersInfoLabel = new Label("Selected Images");
         add(imageLayersInfoLabel);
         imageLayersInfoLabel.setBounds( getInsets().left + 384,
-                                          getInsets().top  + 156,166,20);
+                                          getInsets().top  + 160,166,20);
     
         // image layers info
         imageLayersInfo = new TextArea("",5,0,TextArea.SCROLLBARS_VERTICAL_ONLY);
         imageLayersInfo.setEditable(false);
         add(imageLayersInfo);
         imageLayersInfo.setBounds(getInsets().left + 384,
-                                    getInsets().top  + 176,166,86);
+                                    getInsets().top  + 180,166,86);
+
 
         // selected image  label
         selectedImageLabel = new java.awt.Label("Layer: 0(image)");
@@ -108,7 +103,7 @@ public class LayeredImage extends Frame
         selectedImageLabel.setBounds(getInsets().left + 384,
                                        getInsets().top  + 270,170,26);
         add(selectedImageLabel);
-    
+
         Label label = new Label("Background");
         label.setBounds(getInsets().left+384,getInsets().top+300,70,25);
         add(label);
@@ -129,11 +124,11 @@ public class LayeredImage extends Frame
         add(filterSlider);
 
         applyButton = new java.awt.Button("Apply");
-        applyButton.setBounds(getInsets().left+384,getInsets().top+360,70,25);
+        applyButton.setBounds(getInsets().left+384,getInsets().top+362,70,25);
         add(applyButton);
 
         dismissButton = new java.awt.Button("Dismiss");
-        dismissButton.setBounds(getInsets().left+480,getInsets().top+360,70,25);
+        dismissButton.setBounds(getInsets().left+480,getInsets().top+362,70,25);
         add(dismissButton);
 
         // listener
@@ -151,28 +146,17 @@ public class LayeredImage extends Frame
     }
 
     public LayeredImage() {
-        this("Overlay Image");
+        this("Image Overlay");
     }
 
     public void setLayeredImage(LayeredImageInfo imagesInfo[])
     {
-        
         // image info
         this.imagesInfo = imagesInfo;
         imageList.removeAll();
         // add to list
         for (int kk=0; kk<imagesInfo.length; kk++) 
             imageList.add(imagesInfo[kk].getName());
-    
-        // default selection
-        imageList.select(0);
-        // create new ItemEvent
-        ItemEvent evt = new ItemEvent(  imageList, ItemEvent.ITEM_FIRST,
-                                        imageList.getSelectedItem(), 
-                                        ItemEvent.SELECTED);
-
-        // fire it up
-        imageList.dispatchEvent(evt);
     }
 
     public int getImageIndex() {
@@ -213,9 +197,8 @@ public class LayeredImage extends Frame
      */
     public void itemStateChanged(ItemEvent e)
     {
-        Object target = e.getSource();
-        if (target instanceof List)
-            handleListEvent((List)target);
+        if (e.getSource() instanceof List)
+            handleListEvent(e);
     }
 
     /** button event handling 
@@ -240,79 +223,51 @@ public class LayeredImage extends Frame
             layerPane.updateLayerFilter(getImageIndex(), filter);
         }
     }
-    
-    public void handleListEvent(List target)
+
+    public void handleListEvent(ItemEvent e)
     {
-        // current select state
-        boolean selectState = true;
-    
-        // current selected items
-        int[] selects = imageList.getSelectedIndexes();
-    
-        int selectedIndex   = -1;
-        int deselectedIndex = -1;
-    
-        if (selects.length > selected.length)
+        List target = (List) e.getSource();
+
+        // only deal with the imageList so far
+        if (target != imageList) return;
+
+        selected = imageList.getSelectedIndexes();
+
+        int changedItemIndex = ((Integer)e.getItem()).intValue();
+
+        if (e.getStateChange() == ItemEvent.DESELECTED)
         {
-            selectState = true;
-            for (int i=0; i<selects.length; i++)
-            {
-                boolean found = false;
-                for (int j=0; j<selected.length; j++)  
-                    if (selects[i] == selected[j])
-                        found = true;
-                if (!found)
-                {
-                    selectedIndex = selects[i];
-                    break;
-                }
-            }
+            layerPane.removeImage(changedItemIndex);
+            if (selected.length > 0)
+                selectImage = selected[0];
+            else
+                selectImage = -1;
         }
         else
         {
-            selectState = false;
-    
-            for (int i=0; i<selected.length; i++)
-            {
-                boolean found = false;
-                for (int j=0; j<selects.length; j++)  
-                    if (selected[i] == selects[j])
-                        found = true;
-                if (!found)
-                {
-                    deselectedIndex = selected[i];
-                   break;
-                }
-            }
+            layerPane.addImage(imagesInfo[changedItemIndex], changedItemIndex);
+            selectImage = changedItemIndex;
         }
-    
-        // confirm selected item 
-        if (!selectState)
-            layerPane.removeImage(deselectedIndex);   
-        else if (selectedIndex < imagesInfo.length)
-            layerPane.addImage(imagesInfo[selectedIndex], selectedIndex);
+
         scrollPanel.doLayout();
-        
-        // current select index
-        selectImage = selectedIndex;
-    
+
         // modify the selectedimageLabel
-        String lab = "Active Layer: ";
-        if (selectImage>=0) 
-            lab = "Active " + imagesInfo[selectImage].getLayerInfo();
-    
+        String lab = "Top Layer";
+        if (selectImage >= 0)
+        {
+            lab = "Top " + imagesInfo[selectImage].getLayerInfo();
+            layerPane.setTopImageIndex(selectImage);
+        }
+
         imageLayersInfo.setText(getImagesLayerInfo());
-    
+
         // reset the label message
         selectedImageLabel.setText(lab);
-    
+
         layerPane.repaint();
-    
-        // keep current selected items
-        selected = selects;
-            
+
     }
-    
+
     public void unselectAll ()
     {
         int imgNumber = imageList.getItemCount();

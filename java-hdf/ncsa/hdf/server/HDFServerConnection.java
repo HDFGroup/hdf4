@@ -66,7 +66,7 @@ public class HDFServerConnection extends Thread
         serveRequest(theSocket);
         try { theSocket.close(); } catch (Exception e) {;}
         stop();
-        System.gc(); // clean up used memory
+        //System.gc(); // clean up used memory
     }
 
     /**
@@ -90,7 +90,7 @@ public class HDFServerConnection extends Thread
             while ( (message = (HDFMessage) input.readObject()) != null)
             {
                 if      ( (hdfObject = new HDFFileList()).isMe(message) );
-                else if ( (hdfObject = new HDFHierarchy()).isMe(message) );
+                else if ( (hdfObject = new HDFHierarchy()).isMe(message));
                 else if ( (hdfObject = new HDFAnnotation()).isMe(message) );
                 else if ( (hdfObject = new HDFRIS8()).isMe(message) );
                 else if ( (hdfObject = new HDFRIS24()).isMe(message) );

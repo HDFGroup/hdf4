@@ -19,8 +19,9 @@ import ncsa.hdf.util.Queue;
     * @author HDF group, NCSA
     */
 
-  public class HDFObjectNode implements java.io.Serializable, Cloneable{
-	
+  public class HDFObjectNode
+      implements java.io.Serializable, Cloneable
+  {
 	/** define the type of HDF object */
 	public static final  int    Annotation =  1;
 	public static final  int    Palette    = Annotation + 1;
@@ -89,8 +90,12 @@ import ncsa.hdf.util.Queue;
         /** the image plane number for animated image */
         public int plane = 1;
 
-        /** the orientation and slice selection of SDS image */
+        /** the orientation and slice selection of SDS image
+            sdsSelection[0] = slice orentation,
+            sdsSelection[1] = the number of slice plane
+        */
         public int sdsSelection[] = null;
+
 
    /** the new HDF object */
 

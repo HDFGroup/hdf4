@@ -63,6 +63,10 @@ public byte[] emptyBytes(){
 /**
  *  Given a Java array of numbers, convert it to a one-dimensional
  *  array of bytes in correct native order.
+ *
+ *  @exception ncsa.hdf.hdflib.HDFException 
+ *             thrown for errors: 
+ *		object is not array:  HDFJavaException
  */
 public byte[] byteify() throws HDFException{
 
@@ -177,6 +181,10 @@ ex.printStackTrace();
 /**
  *  Given a one-dimensional array of numbers, convert it to a java
  *  array of the shape and size passed to the constructor.
+ *
+ *  @exception ncsa.hdf.hdflib.HDFException 
+ *             thrown for errors: 
+ *		object not an array:  HDFJavaException 
  */
 public Object arrayify(byte[] bytes) throws HDFException {
 

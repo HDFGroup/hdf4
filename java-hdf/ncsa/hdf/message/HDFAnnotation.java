@@ -65,7 +65,8 @@ public class HDFAnnotation extends HDFObject
      */
     public void service()
     {
-        try { annotation = getAnnotation (hdfFilename, nodeObject); }
+        this.hdf =  new HDFLibrary();
+        try { annotation = getAnnotation (filename, nodeObject); }
         catch (Exception e) { annotation = "ERROR: exception in HDFAnnotation.getAnnotation()"; }
     }
 
@@ -85,6 +86,11 @@ public class HDFAnnotation extends HDFObject
      *  @param filename   the string of the hdf file name
      *  @param node       the HDFObjectNode
      *  @return           the string containing the annotation information
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      */
     private String getAnnotation (String filename, HDFObjectNode node)
         throws HDFException

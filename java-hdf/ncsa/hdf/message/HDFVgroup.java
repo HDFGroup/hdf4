@@ -59,7 +59,15 @@ public class HDFVgroup extends HDFObject
     /**
      *  serve the client request on the server
      */
-    public void service() { }
+    public void service()
+    {
+        this.hdf =  new HDFLibrary();
+        try { information = readInfo(hdf, filename,nodeObject); }
+        catch (Exception ex)
+        {
+            information = "ERROR in HDFGroup.service(): " + ex.toString();
+        }
+    }
 
     /**
      *  process the message received from the server
@@ -78,6 +86,11 @@ public class HDFVgroup extends HDFObject
      *  @param hdf        the HDFLibrary
      *  @param node       the HDFObjectNode
      *  @return           the string containing the Vgroup information
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      */
     public static String readInfo (HDFLibrary hdf, String filename,
         HDFObjectNode node) throws HDFException

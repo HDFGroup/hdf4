@@ -1,0 +1,265 @@
+<HTML>
+<HEAD><TITLE>JHV User's Guide: ASCII Data Format</TITLE></HEAD>
+
+<!-- BEGIN OF THE BODY -->
+<BODY>
+
+<a href="index.html">[Index]</a>
+<a href="guide10a-ascii.html">[Prev]</a>
+[Next]
+[Bottom]</a>
+<p><hr noshade size=1>
+
+<H1> Appendix A: Specification of the <br>HDF ASCII Interchange Format (HAIF) </H1>
+<DL>
+  <DT><A HREF="#guide10-introduction"> A.1 Introduction</A> 
+  <DT><A HREF="#guide10-format"> A.2 Specification of the HDF ASCII Interchange Format</A> 
+  <DT><A HREF="#guide10-example"> A.3 An Example</A> 
+</DL> 
+
+<p>
+<p><hr noshade size=1>
+
+<A NAME="guide10-introduction"</A>
+<H2>A.1 Introduction</H2>
+Many times it is useful to extract data from an HDF file, and store
+it in a simple ASCII format suitable for use by scripts and programs.
+For instance, it is often desireable to select a subset of an
+array or table, and save it as tab-delimited columns, suitable for
+use with a standard spreadsheet such as Microsoft Excel.
+
+<p>
+To facilitate this function, the NCSA HDF group has defined a standard
+format, the HDF ASCII Interchange Format (HAIF)
+which will be used by all of our tools that support this
+feature.
+We will provide Java classes and other tools that generate and
+interpret this format.
+The first such tool is the Java HDF Viewer (JHV). 
+
+<p>
+<b>Note:</b>
+The HAIF is a simple format, intended for the limited purpose described
+above.
+<i>This format does not provide all the features of HDF, nor
+will it be practically useful for unintended uses.</i>
+In particular, the user should be aware that this format will
+not conveniently or efficiently support:
+
+<ul>
+<li>
+access to data of greater than 2 dimensions 
+<li>
+multi-megabyte datasets
+<li>
+subsetting, subsampling, chunking, or compression
+</ul>
+
+<A NAME="guide10-format"</A>
+<H2>A.2 Specification of the HDF ASCII Interchange Format</H2>
+<p>
+The HDF ASCII Interchange Format (HAIF) is a structured format
+for unabiguously storing and reading HDF objects.
+Almost every kind of data object that can be stored in HDF 
+can be stored in the HAIF.
+This document specifies the HAIF. 
+
+<h3>General Format</h3>
+<p>If the input file format is ASCII text, it must have the following 
+input fields. 
+Items in <b>[]</b> are optional and required only by some
+kinds of data objects. 
+
+<pre>
+  format
+  name
+  [dimension]
+  dim_1
+  dim_2
+  [...]
+  [dim_k]
+  data_type  [col_type2   col_type3 ...]
+  [col_name1  col_name2   col_name3 ...]
+  [col_order1 col_oreder2 col_order3 ...]
+  data1 data2 data3 ...
+  ...
+</pre>
+
+<p>
+Where the fields are defined as follows:
+<dl>
+<DT><code>format</code>
+<dd>Data format (<code>HDF_ANNOTATION</code>, <code>HDF_RASTER</code>, 
+    <code>HDF_SDS</code>, <code>HDF_VDATA</code>).
+<DT><code>name</code>
+<dd>The name of the data set.
+<DT><code>dim_1</code>
+<dd>The size of the first dimension.
+<DT><code>dim_2</code>
+<dd>The size of the second dimension.
+<DT><code>data_type</code>
+<dd>The name of the data set.
+<DT><code>name</code>
+<dd>The type(s) of data (<code>HDF_CHAR</code>, <code>HDF_INT8</code>, 
+    <code>HDF_UINT8</code>, <code>HDF_INT16</code>, <code>HDF_UINT16</code>, 
+    <code>HDF_INT32</code>, <code>HDF_UINT32</code>, <code>HDF_INT64</code>, 
+    <code>HDF_UINT64</code>, <code>HDF_FLOAT32</code>, <code>HDF_FLOAT64</code>).
+<DT><code>col_name1  col_name2   col_name3 ...</code>
+<dd>Names of columns, required by Vdata.
+<DT><code>col_order1 col_oreder2 col_order3 ...</code>
+<dd>Data orders of columns, required by Vdata.
+<DT><code>data1 data2 data3 ...</code>
+<dd>The actual data.
+</DL>
+
+<p>
+<h3>Formats of Data Objects</h3>
+<p>Each type of data object has its own required fields. 
+The following table gives the data formats for HDF Annotation, 
+Raster Image, SDS and Vdata objects.
+<table border cols=4 width=80%>
+<th>Annotation<th>Raster Image<th>SDS<th>Vdata
+<tr>
+<td>
+    HDF_ANNOTATION<br>
+    annotation<br>
+<td align=top>
+    HDF_RIS8/HDF_RIS24/HDF_GR<br>
+    name<br>
+    image_height<br>
+    image_width<br>
+    data_type<br>
+    data1 data2 ...<br>
+<td>
+    HDF_SDS	     <br>
+    name<br>
+    rank<br>
+    dim[0]<br>
+    ...<br>
+    dim[rank-1]<br>
+    type<br>
+    data1 data2 ...<br>
+<td>
+    HDF_VDATA<br>
+    name<br>
+    no. of records<br>
+    no. of fields<br>
+    field types<br>
+    field names<br>
+    field orders<br>
+    data1 data2 ...<br>
+</tr>
+</table>
+
+<A NAME="guide10-example"</A>
+<H2>A.3 An Example</H2>
+The following example contains five data objects: a file annotation, 
+two raster images, an SDS, and a Vdata table.
+
+<pre>
+HDF_ANNOTATION
+This is a test file.
+This ASCII file contains two GR images,
+one SDS, and one Vdata table.
+
+HDF_RIS8
+Image 1 
+5
+5
+UINT8 
+10 20 30 40 50
+11 21 31 41 51
+12 22 32 42 52
+13 23 33 43 53
+14 24 34 44 54
+
+HDF_GR
+Image 2 
+5
+5
+FLOAT32 
+10.0 20.0 30.0 40.0 50.0
+11.0 21.0 31.0 41.0 51.0
+12.0 22.0 32.0 42.0 52.0
+13.0 23.0 33.0 43.0 53.0
+14.0 24.0 34.0 44.0 54.0
+
+HDF_SDS
+Test SDS
+4
+2
+2
+5
+5
+FLOAT32
+1.111 1.112 1.113 1.114 1.115
+1.121 1.122 1.123 1.123 1.125
+1.131 1.133 1.134 1.134 1.135
+1.141 1.142 1.143 1.144 1.145
+1.151 1.152 1.153 1.154 1.155
+1.211 1.212 1.213 1.214 1.215
+1.221 1.222 1.223 1.223 1.225
+1.231 1.233 1.234 1.234 1.235
+1.241 1.242 1.243 1.244 1.245
+1.251 1.252 1.253 1.254 1.255
+2.111 2.112 2.113 2.114 2.115
+2.121 2.122 2.123 2.123 2.125
+2.131 2.133 2.134 2.134 2.135
+2.141 2.142 2.143 2.144 2.145
+2.151 2.152 2.153 2.154 2.155
+2.211 2.212 2.213 2.214 2.215
+2.221 2.222 2.223 2.223 2.225
+2.231 2.233 2.234 2.234 2.235
+2.241 2.242 2.243 2.244 2.245
+2.251 2.252 2.253 2.254 2.255
+
+HDF_VDATA
+Test Vdata
+20
+7
+CHAR8     INT16 INT32   FLOAT32    CHAR8      INT32         FLOAT32              
+Character Short Integer Float      String     Integer_Array Float_Array          
+1         1     1       1          10         4             2                    
+T         0     0       0.1        MXUSQEQLKD 0 1 2 3       9.664938 69.680336   
+L         1     10      9.40666    UIRUFIGBRE 0 1 2 3       2.7655008 68.7495    
+P         2     20      2.333204   QKAWUITQSX 0 1 2 3       30.750593 52.72032   
+Q         3     30      12.411581  KIWBYPUUON 0 1 2 3       57.724598 98.232124  
+E         4     40      62.24897   YOJLVFQWLI 0 1 2 3       22.25887 20.134      
+S         5     50      32.764236  CXEXMMDXKP 0 1 2 3       12.895663 32.894978  
+L         6     60      82.766525  ASHDUCGCCJ 0 1 2 3       32.652016 2.5141788  
+E         7     70      29.776112  OKLOIKKCOK 0 1 2 3       42.52368 16.930979   
+W         8     80      122.28739  LEDLTAXDWO 0 1 2 3       92.989006 2.335157   
+D         9     90      70.87407   JXIDYILSKJ 0 1 2 3       88.31287 62.97705    
+X         10    100     188.73654  BUKJKXYIPV 0 1 2 3       78.15055 32.27772    
+R         11    110     22.491457  FKGNLNWNGM 0 1 2 3       78.551674 40.73911   
+W         12    120     147.20348  LQJWDSMCIR 0 1 2 3       10.464083 52.854168  
+F         13    130     199.45923  DSVUFRNWBG 0 1 2 3       66.23777 90.11705    
+R         14    140     37.88339   ULWJLEAGED 0 1 2 3       2.6287615 67.433266  
+O         15    150     166.89705  FPEWXXOOHQ 0 1 2 3       52.203053 2.8297963  
+T         16    160     118.7182   PXBGBBPVBR 0 1 2 3       72.840485 22.365297  
+K         17    170     308.60443  EUCUGXBDQH 0 1 2 3       12.23866 76.54023    
+P         18    180     78.33775   PUFKLDFLON 0 1 2 3       92.41686 8.207025    
+P         19    190     22.951778  IYKNMVXOTK 0 1 2 3       32.219948 39.98024   
+
+</pre>
+
+<!-- BEGIN OF FOOTER INFO -->
+
+<P><hr noshade size=1>
+<a href="index.html">[Index]</a>
+<a href="guide10a-ascii.html">[Prev]</a>
+[Next]
+[Bottom]</a>
+
+<p><hr noshade size=1>
+<font face="arial,helvetica" size="-1">
+  <a href="http://www.ncsa.uiuc.edu/">
+  <img border=0 src=http://www.ncsa.uiuc.edu/Images/NCSAhome/footerlogo.gif alt="NCSA"><br> The National Center for Supercomputing Applications</A><br>
+  <a href="http://www.uiuc.edu/">University of Illinois at Urbana-Champaign</a><br>
+<p><A HREF="mailto:hdfhelp@ncsa.uiuc.edu">hdfhelp@ncsa.uiuc.edu</A>
+</FONT>
+<!- END OF FOOTER INFO -->
+
+</BODY>
+</HTML>
+

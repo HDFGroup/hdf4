@@ -2,34 +2,33 @@
                ----------------------------------------------
 
 ***************************************************************************
-
   CONTENTS
   --------
   1. Contents of this release
 
-  2. Obtaining the latest version
+  2. Obtaining and installing the latest version
 
-  3. Installing the HDF Java API and JHV
+  3. Building  the HDF Java products from source
+
   3.1 Supported Platforms
-  3.2 Software Requirements
 
-  3.3 General Configuration/Installation - Unix
-  3.3.1 Overview
-  3.3.2 Layout of distribution
-  3.3.3 Layout of configuration files
-  3.4.4 Running configure
-  3.4.5 Compiling, Testing and Installing
+  3.2 General Configuration/Installation - Unix
+  3.2.1 Overview
+  3.2.2 Layout of distribution
+  3.2.3 Layout of configuration files
+  3.2.4 Running configure
+  3.2.5 Compiling and Installing
+  3.2.6 Installation Location
 
-  3.5 Installation Location
-
-  4 Platform-specific Notes
+  4. Platform-specific Notes
   4.1 Windows '95 or Windows NT
-  4.2 HPUX
+  4.2 Irix 6.x
   4.3 Linux
-  4.4 Other platforms
-  4.4.1  Compiling for a new platform
+  4.4 HPUX 10.20
+  4.5 MacOS
+  4.6 Other platforms
 
-  5. Man pages (javadoc)
+  5. Man pages (javadoc) and User's Guide
 
   6. Documentation and Release Notes
 
@@ -44,16 +43,11 @@
 This package contains the complete Java interface for the
 HDF 4.1r2 library, and the Java HDF Viewer application.
 
-** Note:  The JHI will not compile with the HDF 4.1.r1 due to a 
-slight change in the include files.  Be sure the Makefile points
-to the current version of HDF.  **
-
   Java HDF Interface (JHI) :
 
        The Java interface for HDF consists of two parts:
-            1. Java classes to interface with the standard HDF library, 
-               including 'native methods' and support for Java Exceptions, 
-               and data conversion.
+            1. Java classes to interface, including 'native methods'
+               and support for Java Exceptions, and data conversion.
             2. C-library that uses the Java Native Method Interface
                (JNI) to implement the Java calls to the HDF library.
 
@@ -64,8 +58,9 @@ to the current version of HDF.  **
        Note that this is an interface to the regular HDF library,
        it is NOT an implementation of HDF written in Java.
 
-       The Java Interface to HDF requires Java JDK 1.1.1 or above.
-       This cannot be used with JDK 1.02.
+       The Java Interface to HDF requires Java JDK 1.1.3 or above.
+       This cannot be used with JDK 1.02, and has not been tested
+       with JDK 1.2.
 
   Java HDF Viewer (JHV):
 
@@ -77,20 +72,59 @@ to the current version of HDF.  **
 
      http://hdf.ncsa.uiuc.edu/java-hdf-html/
 
-2. Obtaining the latest version
-   ============================
+2. Obtaining and Installing JHI and JHV
+   ====================================
 
     The most recent version of the distribution can be obtained from
     the NCSA ftp archive site at:
 
        ftp://ftp.ncsa.uiuc.edu/HDF/Java
 
-    To obtain the latest version of Java, see the web pages at:
+    The Java products are available in several ready-to-run versions.
+    See the web page at:
+    
+         http://hdf.ncsa.uiuc.edu/java-hdf-html/download.html
+    
+    If Java is not installed, select the self-contained 'JRE' 
+    version for the platform.
+    
+    If the JDK or other Java runtime is installed, then select 
+    the self-installing script or pre-compiled version for the
+    platform.
+    
+    If Java and C compilers are available, the full source
+    can be compiled, as discussed below.
 
-       http://java.sun.com/products/jdk/jdk-ports.html
+    This software must be compiled with the HDF 4.1r2 library.  If HDF 
+    is already installed, it is probably not necessary to install or 
+    compile it again.  To obtain the HDF library, see:
 
-3. Installing JHI and JHV
-   ======================
+       http://hdf.ncsa.uiuc.edu/
+
+    or send email to hdfhelp@ncsa.uiuc.edu.
+
+    To obtain the latest version of Java, see the web pages for your
+    platform(s), as suggested below.
+
+    The HDF Java Products have been compiled and tested on the following 
+    platforms:
+  
+    Platform(OS)           Java Development Kit Version
+    ------------           ---------------------------- 
+    Solaris 2.5        	   1.1.6   (http://java.sun.com/products/jdk/)
+    SGI IRIX5.3   	   1.1.3   (http://www.sgi.com/Products/Evaluation/#jdk)
+    SGI IRIX6.2   	   1.1.5   (http://www.sgi.com/Products/Evaluation/#jdk)
+    IBM PC - Intel Pentium
+  	Solarisx86         1.1.6   (http://java.sun.com/products/jdk/)
+  	Linux		   1.1.6   (http://substance.blackdown.org/java-linux.html)
+    Windows NT/95          1.1.6   (http://java.sun.com/products/jdk/,
+  					many others)
+  
+    For information about other platforms please see the section below called
+    'Platform-specific Notes'.
+
+3.  Building the HDF Java Products from source
+    ==========================================
 
     For compiling and installing the Java HDF API and JHV
     on a system, please follow these instructions. 
@@ -98,46 +132,42 @@ to the current version of HDF.  **
 3.1 Supported Platforms
     ===================
 
-  This product requires Java Development Kit JDK 1.1.1 or above.
-  Not all platforms support Java at this level yet, and we have
-  not tested all platforms that have JDK 1.1.
-  
-  For PLATFORM specific NOTES see the section below called
-  'Platform-specific Notes'.
-
-  The platforms for which the NCSA Java products have been
-  successfully compiled and tested are:
-
-  Platform(OS)            
-  ------------           
-  Sun4(Solaris 2.5)     
-  SGI-Indy(IRIX5.3)    
-  SGI-Indy(IRIX6.2)   
-  IBM PC - Intel Pentium
-     Windows NT/95  
-     Linux           
-     Solarisx86 (2.5) 
-
-3.2  Software Requirements:
-     ======================
-
-  This software must be compiled with the HDF 4.1r2 library.  If
-  HDF is already installed, it is probably not necessary to install 
-  or compile it again.  However, it is necessary to generate the
-  Java loadable version of the HDF library.
-
-  This product requires Java JDK 1.1 or above to compile.  It will
-  not work with JDK 1.02.
-
-  To obtain the latest version of Java, see the web pages at:
-       http://java.sun.com/products/jdk/1.1/ or
-       http://java.sun.com/products/jdk/jdk-ports.html
+    This product requires Java Development Kit JDK 1.1.3 or above.
+    Not all platforms support Java at this level yet, and we have
+    not tested all platforms that have JDK 1.1.
+    
+    This software must be compiled with the HDF 4.1r2 library.  If HDF 
+    is already installed, it is probably not necessary to install or 
+    compile it again.  To obtain the HDF library, see:
+    
+        http://hdf.ncsa.uiuc.edu/
+    
+    or send email to: 
+    
+        hdfhelp@ncsa.uiuc.edu.
+    
+    For PLATFORM specific NOTES see the section below called
+    'Platform-specific Notes'.
+    
+    The platforms for which the NCSA Java products have been
+    compiled and tested are:
+    
+    Platform(OS)            C-Compiler  	  JDK
+    ------------            ----------            ---
+    Solaris 2.5             CC 4.0, GCC 2.7.2.1	  1.1.6
+    SGI IRIX 5.3            CC 3.19, GCC 2.7.2.1  1.1.3
+    SGI IRIX 6.2            CC 6.2 		  1.1.5
+    IBM PC - Intel Pentium
+         Solarisx86 (2.5)   GCC 2.7.2.1 	  1.1.6
+         Linux              GCC 2.7.2.1 	  1.1.6
+    
+    Windows NT/95           Visual C++ 4.2	  1.1.6
 
 
-3.3 General Configuration/Installation - Unix
+3.2 General Configuration/Installation - Unix
     =========================================
 
-    3.3.1 Overview
+    3.2.1 Overview
     --------------        
     This distribution uses a gnu 'configure' script to guess the
     correct configuration.
@@ -156,10 +186,10 @@ to the current version of HDF.  **
     As this is a relatively complex configuration, it is recommended
     that you inspect the Makefiles to make sure they are correct.
 
-   3.3.2 Layout of the distribution
-   --------------------------------
+    3.2.2 Layout of the distribution
+    --------------------------------
 
-   There are eight subdirectories in this directory:
+    There are eight subdirectories in this directory:
 
      Config -- contains support for the configure script
 
@@ -167,6 +197,8 @@ to the current version of HDF.  **
      bin    -- the jhv invocation script
      lib    -- the directory for the compiled classes, native libraries
                and icons used for the jhv browser
+     docs   -- the directory for the users guide and javadoc documentation 
+               pages
      samples -- some sample hdf files
      ncsa   -- source codes for the java class packages including ncsa.hdf.awt,
                ncsa.hdf.hdflib, ncsa.hdf.io, ncsa.hdf.jhv, ncsa.hdf.message,
@@ -174,10 +206,10 @@ to the current version of HDF.  **
                are in the documentation pages.
      native -- source for the native (C) support for the java classes.
                This includes the Java HDF API (hdflib) and support
-               for the jhv (jhvlib).
+               for the jhv.
  
 
-    3.3.3 Layout of configuration files
+    3.2.3 Layout of configuration files
     -----------------------------------
     The following shows the layout of the files used in the configuration
     of the HDF Java API and JHV distribution.
@@ -196,7 +228,7 @@ to the current version of HDF.  **
                 bin/jhv.in  (used to generate the 'jhv' script)
 
 
-    3.3.4 Running configure
+    3.2.4 Running configure
     -----------------------
     To build both of the libraries contained in this directory,
     run the ``configure'' script in $(toplevel), e.g.:
@@ -212,7 +244,7 @@ to the current version of HDF.  **
     configuration.  If you want to change the configuration, delete
     the file 'cache.config' and run 'configure' again.
 
-    3.3.4 Compiling, Testing and Installing
+    3.2.5 Compiling and Installing
     ---------------------------------------
     To compile the Java HDF library and JHV type:
 
@@ -222,16 +254,22 @@ to the current version of HDF.  **
 
         make help
 
-    To install the libraries, utilities, includes and man pages type: e.g.
+    To install the libraries, classes, and browser pages type: 
 
         make install
 
-    To create the 'javadoc' pages, type:
+    To install the javadoc man pages, type:
 
-	make javadocs
+	make install-javadoc
 
+    To install the User's Guide, type:
 
-    3.3.5 Installation Location
+	make install-ug
+
+    This will also configure the JHV to use the User's Guide from local
+    disk, rather than from the HDF web server.
+
+    3.2.6 Installation Location
     ---------------------------
 
     The 'configure' script asks for the location of where to install
@@ -256,72 +294,58 @@ to the current version of HDF.  **
     Windows NT machine.  The build procedure depends on your compile
     environment.
 
-    4.2 HPUX
+    For more information about install the Java HDF Products, please
+    read the ReadmeWindows file.
+
+    4.2  Irix 6.x
+    -------------
+    The JHV 2.2 bundled with JRE works for any Irix 6.x system.
+
+    The pre-compiled versions of the JHV can be executed on any
+    Irix6.x system with JDK 1.1.6.
+
+    The JHV 2.2 can be compiled for Irix 6.x with the following 
+    configuration:
+        * JDK 1.1.6
+        * HDF 4.1r2 irix6.2 and irix64_6.4-n32.  (Irix64_6.4-64 does 
+          NOT work)
+
+    Other configurations can be made to work by rebuilding the JHV
+    and/or the HDF library.  See:
+
+       http://hdf.ncsa.uiuc.edu/java-hdf-html/irix.html
+
+    4.3 HPUX
     --------
     The NCSA Java products are not currently available for HPUX.
 
-    Java JDK 1.1 is not available for HPUX 9.0x, only for HPUX 10.20.
+    Java JDK 1.1 is not supported for HPUX 9.x. 
 
     In order to use native code from Java, the library must be compiled
-    as a dynamically loadable library.  Unfortunately, no dynamically
-    loadable version of HDF is available for HPUX 10.20, so the Java
-    HDF products are not available for HPUX systems.
+    as a dynamically loadable library.  The HDF library is not available
+    as a dynamic library for 10.20.  Furthermore, experiments 
+    suggest that the HDF library may be too large to link to
+    Java applications.
 
-    4.3 Linux
+    For these reasons, the HDF Java products are not available 
+    for HPUX systems.
+
+    4.4 MacOS
     ---------
-    The NCSA Java products require the latest patched release of the
-    JDK, JDK 1.1.3v2-1.  See: 
-        http://www.blackdown.org/java-linux.html
+    HDF 4.1r2 and JDK 1.1 are available for the MacOS, and the HDF 
+    Java Products should work.  This port has not been completed
+    at the time of this release.
 
-    4.4 Other Platforms
+    4.5 Other Platforms
     -------------------
 
-    The HDF Java products should work for any platform that meets the
-    two requirements:
+    There are many Unix platforms which support JDK 1.1, including
+    AIX and DEC/OSF.  The NCSA Java products should work on 
+    all these platforms, but have not been tested on them.
 
-       1.  The HDF 4.2r3 library must run on the platform
-       2.  JDK 1.1 or later must be available
 
-    The web page at:
-
-       http://java.sun.com/products/jdk/jdk-ports.html
-
-    lists many platforms which support JDK 1.1, including
-    Macintosh, AIX, DEC/OSF, and DEC VMS.  The NCSA Java products 
-    should theoretically work on all these platforms, but we have 
-    not actually tested them.
-
-    4.4.1  Compiling for a new platform
-    -----------------------------------
-
-    The Java HDF Interface links to the HDF library using the Java
-    Native Interface.  On most platforms, this requires that the HDF 
-    library be linked so that it can be dynamically linked by the
-    Java runtime.  The details of how to link the C library are
-    platform dependent.
-
-    The compiler switches for the platforms tested at NCSA are in the
-    files "configure.in" and "configure".  E.g., for solaris, the 
-    following options are set:
-
-	LD=$CC; LDOPT=-G; SLEXT="so";
-        COPT=-G; JAVAINC2=$JAVAINC/solaris ; JAVATARG=solaris;;
-
-    For this platform, the linker program is set, the options (in 
-    this case '-G' generates a dynamic library), and the shared library
-    extension (in this case, the files are called '*.so') and the
-    location of the JNI C header files (JAVAINC2). 
-
-    For a new platform, the Makefile needs to be changed to use the
-    appropriate settings and paths.  It may be necessary to consult
-    the vendor's documentation to determine these parameters.
-
-    It may also be necessary to adjust the JAVAINC, JAVALIB,
-    and CLASSPATH variables in the Makefile, so that they
-    point to the required Java support on the platform.
-
-5. Man pages (javadoc)
-   ===================
+5. Man pages (javadoc) and User's Guide
+   ====================================
 
     The `javadoc' utility was used to automatically create manual
     pages for the NCSA HDF Java products.  The javadoc pages are
@@ -339,8 +363,15 @@ to the current version of HDF.  **
 
        http://hdf.ncsa.uiuc.edu/java-hdf-html/
 
-   The general HDF 4.1r2 documentation can be found on the NCSA ftp 
-   server in the directory /HDF/Documentation/HDF4.1r2/.  The
+   The JHV User's Guide is available at:
+
+       http://hdf.ncsa.uiuc.edu/java-hdf-html/jhv/UsersGuide/JHV2.2/index.html
+
+   The User's Guide is included in the distribution, and can be viewed
+   by selecting from the "Help" menu.
+
+   The general HDF 4.1r1 documentation can be found on the NCSA ftp 
+   server in the directory /HDF/Documentation/HDF4.1r1/.  The
    HDF home page is at:
 
       http://hdf.ncsa.uiuc.edu/
@@ -352,10 +383,10 @@ to the current version of HDF.  **
 
        hdf-java@ncsa.uiuc.edu   --  Java and HDF discussion, help, availability
        hdfnews@ncsa.uiuc.edu   --  HDF announcments
-       hdfhelp@ncsa.uiuc.edu   --  HDF help, availability
 
    If you would like to be added to or removed from these email lists, 
-   contact us at:
+   or if you have questions or concerns reguarding the HDF Java Products,
+   please contact us at:
 
       hdfhelp@ncsa.uiuc.edu
 

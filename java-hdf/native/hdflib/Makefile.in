@@ -11,7 +11,7 @@
  #****************************************************************************/
 
 
-CC = @CC@   
+CC = @CC@ @COPT@
 
 JHVINSTALLDIR=@JHVINST@
 
@@ -49,7 +49,7 @@ all:  libhdf
 
 libhdf: $(OBJECTS)
 	-mkdir -p $(LIBDIR);
-	$(LD) $(LDOPT) $(OBJECTS) $(LIBS) -o $(LIBDIR)/libhdf.$(SLEXT)
+	$(LD) $(LDOPT) -o $(LIBDIR)/libhdf.$(SLEXT) $(LDOPT2) $(OBJECTS) $(LIBS)
 
 clean:
 	rm -f *.o so_locations $(LIBDIR)/libhdf.$(SLEXT)

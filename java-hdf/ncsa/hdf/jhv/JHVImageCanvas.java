@@ -1,4 +1,4 @@
- /****************************************************************************
+/*****************************************************************************
  * NCSA HDF                                                                 *
  * National Comptational Science Alliance                                   *
  * University of Illinois at Urbana-Champaign                               *
@@ -16,6 +16,7 @@ import java.util.Hashtable;
 import java.awt.image.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.lang.reflect.Array;
 
 import ncsa.hdf.hdflib.*;
 import ncsa.hdf.awt.palette.*;
@@ -32,8 +33,10 @@ import ncsa.hdf.message.*;
   * implemented in seprate package -xlu 7/97 */
 
 /** The image will be display on this canvas */
-public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
-    Runnable, MouseListener, MouseMotionListener {
+public class JHVImageCanvas
+    extends Canvas
+    implements PaletteEditorAdapter, MouseListener, MouseMotionListener
+{
 
     /** the frame to involve the image canvas component */
     JHVImageFrame imageFrame;
@@ -69,7 +72,8 @@ public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
     // dataset dimension  scale information
     Object xscale;
     Object yscale;
-    int scaleDataType;
+    int xscaleType;
+    int yscaleType;
 
     boolean dataRangeFlag = false;
 
@@ -81,10 +85,10 @@ public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
 
     /**   the total number of image */
     int numberOfImage = 1;
-  
+
     /** current displayed image number */
     int imageNumber = 1;
-  
+
     /** canvas size */
     int canvasWidth, canvasHeight;
 
@@ -93,7 +97,7 @@ public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
 
     /** information for image canvas */
     static String infoStr = "Image Canvas";
-          
+
     /** variables for duble-buffer  */
     Image offScreenImage = null;
     Graphics offGraphics;
@@ -109,37 +113,37 @@ public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
 
     /** the first coordinate value  of the displayed image */
     int startx = 1, starty = 1;
-    
+
     /** translated variable for scroll panel */
     int tx=0,  ty=0;       // offset translate ..
-    
+
     /** Scrollbar of the image canvas */
     Scrollbar hScrollbar, vScrollbar;
-    
+
     /** the indicator that the mouse has been draged */
     boolean  dragFlag  =  false;
 
     /** the indicator of the mouse position */
     boolean mouseOnImageFlag = false;
-    
+
     /** the rectangle of the valid draged area */
     Rectangle  dragArea;
 
     /** the rectangle of the current draged area */
     Rectangle  currentDragArea;
-        
+
     /** the draged image area */
     Rectangle  imageArea = new Rectangle();
-    
+
     /** the dataset  range for the selected area */
     Rectangle  datasetRange;
-    
+
     /** the mouse position */
     int mx = 0, my = 0;
-    
+
     /** draw the subset area flag */
     boolean  drawSubsetFlag = false;
-    
+
     /** draw subset area */
     Rectangle  drawSubsetArea = new Rectangle();
 
@@ -175,7 +179,7 @@ public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
 
     // plot of  histogram and radial plot
     XYPlot aPlot, hPlot;
-   
+
     // sds slice info.
     SDSDimInfo sliceInfo;
 
@@ -234,7 +238,7 @@ public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
             }
         } catch (HDFException e) {};
 
-        System.gc();
+        //System.gc();
 
         // set orignal image source
         imageSources = new ImageProducer[numberOfImage];
@@ -508,52 +512,15 @@ public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
         switch(node.type) {
             case HDFObjectNode.RIS8:
             case HDFObjectNode.RIS24:
-                retImage = images[planeNumber-1];
-                 break;
             case HDFObjectNode.GRDATASET:
-                 retImage = images[planeNumber-1];
-                 break;
             case HDFObjectNode.SDSDATASET:
                  retImage = images[planeNumber-1];
                  break;
-            case HDFObjectNode.Vdata:
-            case HDFObjectNode.Vgroup:
+            default:
                  break;
         }
 
-        // set image frame
-        setImageFrame(planeNumber);
-
         return retImage;
-    }
-
-    /** which action will be taken
-     * @param actFlag the action flag
-     */
-    public void setAction(int actFlag) {
-        // set action 
-        this.actionFlag = actFlag;
-    
-        // the status of the current thread
-        if (killer == null) {
-            start();
-        } else {
-            stop();
-            start();
-        }
-    }
-  
-
-    /** set up the image anamination speed(delay time between the image display) 
-     * @param sp  the delay time 
-     */
-    public void setSpeeds(int sp) {
-
-        // set speed for animation
-        if (sp <= 0)  sp = 0;
-        else if (sp >= 1000) sp = 1000;
-
-        this.speed = sp;
     }
 
     /** Reshapes the Component to the specified bounding box. */
@@ -581,7 +548,7 @@ public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
      * @param obj HDF Object Node
      */
     public void setHDFObjectNode(HDFObjectNode node) {
-        this.node = node; 
+        this.node = node;
     }
   
   /** Adjust the Horizontal Scrollbar value by the specifyed  width. */
@@ -617,21 +584,21 @@ public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
     
     //"visible" arg to setValues() has no effect after scrollbar is visible.
     hScrollbar.setBlockIncrement(p);
-  
+
     return;
   }
-  
+
 
   /** Adjust the Vertical Scrollbar value by the specifyed  width. */
   void setVScrollValue() {
-    
+
     int canvasHeight = getSize().height;
-    
+
     // canvas is valid?
     if (canvasHeight <= 0) {
       return;
     }
-    
+
     //Shift everything to the top if we're displaying empty space
     //on the top side.
     if ((ty + canvasHeight) > imageHeight) {
@@ -641,122 +608,23 @@ public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
       }
       ty = newty;
     }
-    
+
     int p = (int)(canvasHeight * 0.9);
     int m = (int)(imageHeight - (canvasHeight - p) + 2);
     vScrollbar.setValues(//draw the part of the image that starts at this y:
-                         ty, 
+                         ty,
                          //amount to scroll for a "page":
                          p,
                          //minimum image y to specify:
                          0,
                          //maximum image y to specify:
                          m);
-    
+
     //"visible" arg to setValues() has no effect after scrollbar is visible.
     vScrollbar.setBlockIncrement(p);
-    
+
     return;
   }
-
-  /**
-   * Called to start the applet. You never need to call this method
-   * directly, it is called when the applet's document is visited.
-   * @see java.applet.Applet#start
-   */
-  public void start() {
-
-    if (killer == null) {    
-      killer = new Thread(this);
-      killer.start();
-    }
-  }
-
-  /**
-   * Called to stop the applet. It is called when the applet's document is
-   * no longer on the screen. It is guaranteed to be called before destroy()
-   * is called. You never need to call this method directly.
-   * @see java.applet.Applet#stop
-   */
-  public void stop() {
-    if (killer != null) {
-      killer.stop();
-    }
-    killer = null;
-  }
-
-  // delay n seconds 
-  public void delay(int n) {
-        try {
-                Thread.sleep(n);
-        } catch (Exception e) {};
-  }
-
-  /**
-   * java.lang.Runnable stuff
-   */
-  public void run()  {
-                           
-    int currentPlaneNumber = imageNumber;
-    
-    while (killer != null ) {
-      // "Forward" action
-      if (actionFlag == imageFrame.FORWARD) {
-        
-        ++currentPlaneNumber;
-        if (currentPlaneNumber > numberOfImage)
-          currentPlaneNumber = 1;
-        
-        try {
-          // get previous image
-          image = images[currentPlaneNumber-1];
-                    
-          // set image number
-          imageNumber = currentPlaneNumber;
-          imageFrame.numPlane = currentPlaneNumber;
-
-          // set image for hdfCanvas
-          // app.hdfCanvas.setImage(image);
-          
-          // set image for current canvas
-          setImage(image);
-
-          // wait a minute
-          Thread.sleep(10);
-          Thread.sleep(speed);
-          
-        } catch (Exception e) {};
-      }
-
-      // "Backward action"
-      if (actionFlag == imageFrame.BACKWARD) {
-        
-        --currentPlaneNumber;
-        if (currentPlaneNumber < 1)
-          currentPlaneNumber = numberOfImage;
-        
-        try {
-          // get previous image
-          image = images[currentPlaneNumber-1];
-
-          // set image number
-          imageNumber = currentPlaneNumber;
-            imageFrame.numPlane = currentPlaneNumber;
-
-          // set image for hdfCanvas
-          // app.hdfCanvas.setImage(image);
-          
-          // set image for current canvas
-          setImage(image);
-
-          // wait a minute
-          Thread.sleep(10);
-          Thread.sleep(speed);
-          
-        } catch (Exception e) {};
-      } 
-    } 
-  } 
 
   /**
    * Updates the component. This method is called in
@@ -1054,18 +922,18 @@ public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
     currentDragArea = new Rectangle(x+tx, y+ty, 0,0);
     // check to see if the mouse is on the image        
     checkMousePosition(x,y);
-    if (imagePlotMode == JHVImageFrame.RADIAL_PLOT)  // radial plots
-        if (mouseOnImageFlag)  // radial plots test
-                    radialPlots(new Rectangle(0,y-starty+ty,1, 0 )); 
+
+    if (imagePlotMode == JHVImageFrame.RADIAL_PLOT && mouseOnImageFlag)
+             radialPlots(new Rectangle(0,y-starty+ty,1, 0 ));
     else if (imagePlotMode == JHVImageFrame.HISTOGRAM_PLOT)
              plotHistogram(new Rectangle(1,1));
-    
   }
-  
+
 
    // make a radial plot for a selectd line of an image,
    // the horizontal line looks like (x,y, x+w, y)
    void radialPlots(Rectangle rect) {
+     //System.out.println("JHVImageCanvas.radialPlots()");
 
      // working on horizontal line
      try {
@@ -1079,13 +947,15 @@ public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
         int firstPos = 0;
 
         for (int i=x; i<x+rect.width; i++) {
-            double retDat = (double)getData(i, y);
+            float retDat = (float)getData(i, y);
             rArray[i-x] = retDat;
         }
 
-        for (int k =0; k<rect.width; k++) {
-            pArray[1][k] = (double)rArray[k];
-            pArray[0][k] = (double)(k+x);
+        for (int k =0; k<rect.width; k++)
+        {
+            pArray[1][k] = (float)rArray[k];
+            if (xscale == null) pArray[0][k] = (float)(k+x);
+            else pArray[0][k] = Array.getDouble(xscale, k+x);
         }
 
         int fx = subsetRange.x;
@@ -1096,7 +966,7 @@ public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
         xStr = xStr + Integer.toString(x+w+fx-1) + "," + Integer.toString(y+fy) + ")";
 
         if (aPlot==null)  {
-           aPlot= new XYPlot(new Frame(), "Radial Plot", pArray);
+           aPlot= new XYPlot(new Frame(), "X-Y Plot", pArray);
            new Dialog(imageFrame, "what");
         }
         else {
@@ -1104,16 +974,26 @@ public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
            aPlot.show();
         }
 
+       // add dimmension scales
+        if (xscale!=null)
+        {
+            double xmin = Math.min(Array.getDouble(xscale, x), Array.getDouble(xscale, x+rect.width-1));
+            double xmax = Math.max(Array.getDouble(xscale, x), Array.getDouble(xscale, x+rect.width-1));
+            aPlot.setXAxisRange(xmin, xmax);
+        }
+
         aPlot.setXAxisTag(xStr);
         aPlot.setYAxisTag("No Value");
         aPlot.setYAxisRange(0,0);
 
-        if (dispImageDataMode == JHVImageFrame.PIXEL_VALUE)
+        if (dispImageDataMode != JHVImageFrame.DIGIT_VALUE)
         {
+           // pixel value
+           dispImageDataMode = JHVImageFrame.PIXEL_VALUE;
            aPlot.setYAxisTag("Pixel Value");
            aPlot.setYAxisRange(0,255);
         }
-        else if (dispImageDataMode == JHVImageFrame.DIGIT_VALUE)
+        else
         {
             aPlot.setYAxisTag("Digital Value");
             if (dataRangeFlag)
@@ -1162,10 +1042,6 @@ public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
 
         double maxVal = max;
         double minVal = min;
-        if  (maxVal == minVal) {
-            maxVal = 255;
-            minVal = 0;
-        }
         // scale value of x-axis of histogram
         for (int k =0; k<256; k++) {
                 if (dispImageDataMode != JHVImageFrame.DIGIT_VALUE)
@@ -1212,7 +1088,6 @@ public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
            hPlot.setXAxisRange(0,255);
            hPlot.setXAxisTag("Pixel Value");
         }
-
         hPlot.setYAxisTag("Number of Pixels");
         hPlot.setPlotMode(XYPlotPane.HISTOGRAM);
 
@@ -1322,7 +1197,7 @@ public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
       // setShowCoordinate(true);
          
      // change the cursor type to "cross" if possible to show the coordinate
-     ((Component)imageFrame).setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));    
+     //((Component)imageFrame).setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));    
 
     }
     else {
@@ -1332,7 +1207,7 @@ public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
               // setShowCoordinate(false);
          
              // change the cursor type to "default" if possible to show the coordinate
-               ((Component)imageFrame).setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+              // ((Component)imageFrame).setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
 
     // keep current mouse position.
@@ -1386,7 +1261,7 @@ public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
     
     // change the cursor type to "cross" if possible to show the coordinate
     // if (showCoordinate)
-    ((Component) imageFrame).setCursor(new Cursor(Cursor.DEFAULT_CURSOR));    
+    //((Component) imageFrame).setCursor(new Cursor(Cursor.DEFAULT_CURSOR));    
     
       // set show coordinate flag
     // setShowCoordinate(false);
@@ -1396,13 +1271,7 @@ public class JHVImageCanvas extends Canvas implements PaletteEditorAdapter,
 public void makeSpreadsheet() {
 
     if ((dragFlag) && (datasetRange != null)) {
-    
-        // read the current image's raw dataset 
-        if (lastModifiedNumber != imageNumber)
-        {
-            try {readSDS(imageNumber);}
-            catch(Exception ex) {}
-        }
+        updateSDSdata();
 
         // open the seprate spreadsheet
         new JHVDataFrame(imageFrame, datasetRange);
@@ -1413,7 +1282,7 @@ public void makeSpreadsheet() {
   * @ param rect the rectangle to redraw
   */
 public void drawRectangle(Rectangle rect) {
-    
+
     // set draw subset area flag
     drawSubsetFlag = true;
     // set draw rectangle area
@@ -1467,42 +1336,33 @@ public void drawRectangle(Rectangle rect) {
         this.showCoordinate = bvalue;
     }
 
-  /** Return the coordinate data
-   */
-  float  getData(int x, int y) throws HDFException {
-  
-   float retDat;
-     
-   // get the first address to get the raw data from hdfData
-   int firstPos = 0;
+    /** Return the coordinate data
+     */
+    float  getData(int x, int y) throws HDFException
+    {
+        float retDat = 0;
 
-   // digital value display
-   if (dispImageDataMode == JHVImageFrame.DIGIT_VALUE)  
-        retDat = getData(hdfData,hdfDataType,x,y);
-   else if (dispImageDataMode == JHVImageFrame.PIXEL_VALUE) {
-          
-   // the image dataset range
-   int w = getImageWidth();
-   int h = getImageHeight();
+        // digital value display
+        if (dispImageDataMode == JHVImageFrame.DIGIT_VALUE)
+            return getData(hdfData,hdfDataType,x,y);
 
-    // first extract number position by row
-    int pos = (y * w + x);
+        // pixel value display
+        if (dispImageDataMode == JHVImageFrame.PIXEL_VALUE)
+        {
+            int w = getImageWidth();
+            int h = getImageHeight();
+            int pos = (y * w + x);
+            retDat = (float)((byte)imageData[pos]);
+            if (retDat < 0)  retDat += 256.0;
+        }
 
-    // adjust the pos.
-    pos += firstPos;
-    retDat = (float)((byte)imageData[pos]);
-
-    // convert to positive if the number is negative
-    if (retDat < 0)  retDat += 256.0f;
-
-   } else retDat = 0.0f;
-
-   return retDat;
-  }
+        return retDat;
+    }
 
   /** Return the coordinate data
    */
-  float  getData(Object data, int nt, int x, int y) throws HDFException {
+  float  getData(Object data, int nt, int x, int y)
+  throws HDFException {
 
    float retDat;
     
@@ -1532,7 +1392,7 @@ public void drawRectangle(Rectangle rect) {
    */
   float  getScaleData(Object data, int nt, int pos) throws HDFException {
 
-        return ImageDataConverter.getData(data,nt,pos);  
+        return ImageDataConverter.getData(data,nt,pos);
   }
 
 
@@ -1548,17 +1408,23 @@ public void drawRectangle(Rectangle rect) {
         float coorData = getData(x+tx-startx, y+ty-starty);
         int cx = x+tx-startx+subsetRange.x;
         int cy = y+ty-starty+subsetRange.y;
+        String dataStr = Integer.toString((int)coorData);
+
+        if (dispImageDataMode == JHVImageFrame.DIGIT_VALUE)
+            if (hdfDataType==HDFConstants.DFNT_FLOAT32 ||
+                hdfDataType==HDFConstants.DFNT_FLOAT64 )
+                dataStr = Float.toString(coorData);
 
         if (xscale==null) { // not found dimension scale value
             retStr[0] = "Coordinates: " + cx + ", " + cy;
-            retStr[1] = "Value:       " + coorData;
+            retStr[1] = "Value:       " + dataStr;
             retStr[2] = "";
         }
         else {
             retStr[0] = "Coordinates: " + cx + ", " + cy;
-            retStr[1] = "Dim Scales:  " + getScaleData(xscale,scaleDataType,cx)
-                + ", " + getScaleData(yscale,scaleDataType,cy);
-            retStr[2] = "Value:       " + coorData;
+            retStr[1] = "Dim Scales:  " + getScaleData(xscale,xscaleType,cx)
+                + ", " + getScaleData(yscale,yscaleType,cy);
+            retStr[2] = "Value:       " + dataStr;
         }
         return retStr;
     }
@@ -1799,17 +1665,14 @@ public void drawRectangle(Rectangle rect) {
         return this.images;
   }
 
-  // set image frame
-  public void setImageFrame(int frame) {
-     if (imageFrame!=null) {
-        String dispStr = Integer.toString(frame);
-        imageFrame.imgField.setText(dispStr);
-     }
-  }
-
     /**
      *  read and display SDS images for animation
      *  @auther  Peter Cao (xcao@ncsa.uiuc.edu)
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      */
     public void readSDSImages() throws HDFException
     {
@@ -1830,56 +1693,56 @@ public void drawRectangle(Rectangle rect) {
         for (int i=1; i<numberOfImage; i++)
             images[i] = createRasterImage(imageByteData[i-1],imageWidth,imageHeight,imagePalette,1);
         node.plane = 1;
-
-        // repaint image
         setImage(images[0]);
-
-        // clear up unused spaces
-        sds = null;
-
     }
 
     /**
      *  display the 8 bit raster image
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *  @auther   Peter Cao  (xcao@ncsa.uiuc.edu)
      */
     public void readRIS8() throws HDFException
     {
         // added by Peter Cao on 10-6-97 for remote access
         //HDFRIS8 ris8 = (HDFRIS8) node.hdfObject;
+
         HDFRIS8 ris8 = (HDFRIS8) app.getHDFObject(node);
-        Object ris8Data = ris8.getImageData();
+        Object ris8Data = ris8.getData();
         int[] imageArgv = ris8.getImageArgv();
         int dataType = imageArgv[1];
         Dimension imageSize = ris8.getCurrentImageSize();
         int w = imageSize.width;
         int h = imageSize.height;
         imageData = new byte[w*h];
-        //double minmax[] = {Double.MAX_VALUE, Double.MIN_VALUE};
-        HDFObject.object2byte(ris8Data, dataType, null, 0, imageData);
-        imagePalette = ris8.getImagePalette();
+        double minmax[] = {0, 0};
+        ris8.object2byte(ris8Data, dataType, minmax, 0, imageData);
+        min = minmax[0];
+        max = minmax[1];
 
-        // set image palette
-        if (imagePalette == null)
-        {
-            imagePalette  = new byte[256*3];
-            for (int i=0; i<256; i++)
-                for (int j=0; j<3; j++)  
-                    imagePalette[i*3+j] = (byte)i;
-        }
-
-        // set raw data
-        hdfData = imageData;
-        hdfDataType = HDFConstants.DFNT_UINT8;
+        this.imagePalette = ris8.getImagePalette();
+        if (this.imagePalette == null)
+            this.imagePalette = HDFObject.createRainbowPalette();
 
         setNumberOfImage(1);
         images = new Image[1];
-        images[0] = createRasterImage(imageData, imageWidth, imageHeight, imagePalette,1);          
+        images[0] = createRasterImage(imageData,imageWidth,imageHeight,imagePalette,1);
         setImage(images[0]);
+
+        this.hdfData = imageData;
+        this.hdfDataType = imageArgv[1];
     }
 
     /**
-     * read 24-raster  image data from the HDF file 
+     * read 24-raster  image data from the HDF file
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      * @auther  Peter Cao (xcao@ncsa.uiuc.edu)
      */
     public void readRIS24() throws HDFException
@@ -1887,7 +1750,7 @@ public void drawRectangle(Rectangle rect) {
         // added by Peter Cao on 10-6-97 for remote access
         //HDFRIS24 ris24 = (HDFRIS24) node.hdfObject;
         HDFRIS24 ris24 = (HDFRIS24) app.getHDFObject(node);
-        Object ris24Data = ris24.getImageData();
+        Object ris24Data = ris24.getData();
         int[] imageArgv = ris24.getImageArgv();
         int dataType = imageArgv[1];
         Dimension imageSize = ris24.getCurrentImageSize();
@@ -1895,29 +1758,28 @@ public void drawRectangle(Rectangle rect) {
         int h = imageSize.height;
         //imageData = new byte[w*h*3];
         imageData = new byte[w*h];
-        //double minmax[] = {Double.MAX_VALUE, Double.MIN_VALUE};
+        double minmax[] = {0, 0};
         HDFObject.object2byte(ris24Data, dataType, null, 0, imageData);
-        imagePalette = ris24.getImagePalette();
-        hdfData = imageData;
-        hdfDataType = HDFConstants.DFNT_UINT8;
+        min = minmax[0];
+        max = minmax[1];
 
+        imagePalette = ris24.getImagePalette();
         setNumberOfImage(1);
         images = new Image[1];
         images[0] = createRasterImage(imageData, imageWidth, imageHeight, imagePalette,1);
         setImage(images[0]);
 
-        /*
-        setNumberOfImage(3);
-        images = new Image[3];
-
-        for (int i=1; i<=3 ;i++)
-          images[i-1] = createRasterImage(imageData, imageWidth, imageHeight, imagePalette,i);
-        setImage(images[0]);
-        */
+        this.hdfData = imageData;
+        this.hdfDataType = imageArgv[1];
     }
 
     /**
      * read and display the GR image
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      * @auther Peter Cao (xcao@ncsa.uiuc.edu)
      */
     public void readGR() throws HDFException
@@ -1927,15 +1789,13 @@ public void drawRectangle(Rectangle rect) {
         node.isPreview = false;
         node.selectedRange = subsetRange;
         HDFGR gr = (HDFGR)app.getHDFObject(node);
-        Object grData = gr.getImageData();
-        hdfData = grData;
+        Object grData = gr.getData();
         imagePalette = gr.getImagePalette();
         int imageArgv[] = gr.getImageArgv();
         int dataType = imageArgv[1];
         node.isPreview = true;
         node.selectedRange = new Rectangle();
- 
-        this.hdfDataType = imageArgv[1];
+
         setNumberOfImage(imageArgv[0]);
         images = new Image[imageArgv[0]];
         int w = imageWidth;
@@ -1943,31 +1803,43 @@ public void drawRectangle(Rectangle rect) {
         imageData = new byte[w*h];
 
         images = new Image[numberOfImage];
-        for (int i=1; i<=numberOfImage ;i++)
+        double minmax[] = {0,0};
+        HDFObject.object2byte(grData, dataType, minmax, 0, imageData);
+        images[0] = createRasterImage(imageData,imageWidth,imageHeight,imagePalette,1);
+        min = minmax[0];
+        max = minmax[1];
+        for (int i=1; i < numberOfImage; i++)
         {
-            HDFObject.object2byte(grData, dataType, null, w*h*(i-1), imageData);
-            images[i-1] = createRasterImage(imageData,imageWidth,imageHeight,imagePalette,1);
+            HDFObject.object2byte(grData, dataType, null, w*h*i, imageData);
+            images[i] = createRasterImage(imageData,imageWidth,imageHeight,imagePalette,1);
         }
-
-        // repaint image
         setImage(images[0]);
+        this.hdfData = grData;
+        this.hdfDataType = imageArgv[1];
     }
 
     /**
      *  read and display SDS image for a given plane
      *
      *  @param   plane  The plane number of the image
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *  @auther  Peter Cao (xcao@ncsa.uiuc.edu)
-     */ 
+     */
     public void readSDS(int plane) throws HDFException
     {
         // added by Peter Cao on 10-10-97 for remote access
         ncsa.hdf.message.HDFSDS sds = null;
-        imageData = new byte[imageHeight*imageWidth];
+        int h=imageHeight, w=imageWidth;
+        imageData = new byte[h*w];
         Object sdsData = null;
         boolean cvFlag = false;
         int imageArgv[] = null;
         int dataType = -1;
+        int rank = 0;
 
         // the first call to the server will set the number of images
         node.isPreview = false;
@@ -1975,15 +1847,80 @@ public void drawRectangle(Rectangle rect) {
         node.plane = plane;
         sds = (ncsa.hdf.message.HDFSDS) app.getHDFObject(node);
         imagePalette = sds.getImagePalette();
-        sdsData = sds.getImageData();
+        sdsData = sds.getData();
         double range[] = sds.getDataRange();
+        if (range==null)
+        {
+            range = new double[2];
+            range[0] = 0;
+            range[1] = 0;
+        }
         imageArgv = sds.getImageArgv();
         dataType = imageArgv[1];
+        rank = imageArgv[2];
         ncsa.hdf.message.HDFObject.object2byte(sdsData, dataType, range, imageData);
+        min = range[0];
+        max = range[1];
         setNumberOfImage(imageArgv[0]);
-        this.hdfDataType = imageArgv[1];
-        hdfData = sdsData;
         lastModifiedNumber = imageNumber;
+
+        Object[] dimScales = sds.getDimScales();
+        int[] dimTypes = sds.getDimTypes();
+        int orentation = 0;
+        if (node.sdsSelection != null) orentation = node.sdsSelection[0];
+        boolean setX=false, setY=false;
+        Object theObject = null;
+
+        if (dimScales == null || !dimScales.getClass().isArray() )
+        {
+            yscale = null;
+            xscale = null;
+        }
+        else if (orentation == 0)
+        {
+            yscale = dimScales[rank-2];
+            xscale = dimScales[rank-1];
+            yscaleType = dimTypes[rank-2];
+            xscaleType = dimTypes[rank-1];
+        }
+        else if (orentation == 1)
+        {
+            yscale = dimScales[0];
+            xscale = dimScales[2];
+            yscaleType = dimTypes[0];
+            xscaleType = dimTypes[2];
+        }
+        else
+        {
+            yscale = dimScales[0];
+            xscale = dimScales[1];
+            yscaleType = dimTypes[0];
+            xscaleType = dimTypes[1];
+        }
+
+        try
+        {
+            if (Array.getLength(yscale)<h ||
+                Array.get(yscale, 0).equals(Array.get(yscale, h-1)) )
+                yscale = null;
+            if (Array.getLength(xscale)<w ||
+                Array.get(xscale, 0).equals(Array.get(xscale, w-1)) )
+                xscale = null;
+        } catch (Exception e) {}
+
+        this.hdfData = sdsData;
+        this.hdfDataType = imageArgv[1];
+    }
+
+    /** update the SDS data */
+    public void updateSDSdata()
+    {
+        // read the current image's raw dataset
+        if (lastModifiedNumber != imageNumber)
+        {
+            try {readSDS(imageNumber);}
+            catch(Exception ex) {}
+        }
     }
 
 }

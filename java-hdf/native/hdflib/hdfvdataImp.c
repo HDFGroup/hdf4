@@ -490,7 +490,7 @@ jstring hdfclassname)
 
 	(*env)->ReleaseStringUTFChars(env,hdfclassname,string);
 
-	return;
+	return rval;
 
 }
 

@@ -605,7 +605,6 @@ jbyteArray fill_value)  /* OUT: some kind of number? */
 		(*env)->ReleaseByteArrayElements(env,fill_value,dat,JNI_COMMIT); /* write back */
 		return JNI_TRUE;
 	}
-	return JNI_FALSE;
 }
 
 JNIEXPORT jboolean JNICALL Java_ncsa_hdf_hdflib_HDFDeprecated_DFSDgetNT 

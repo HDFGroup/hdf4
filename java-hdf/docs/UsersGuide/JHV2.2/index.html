@@ -1,0 +1,182 @@
+<HTML>
+<HEAD><TITLE>JHV User's Guide</TITLE></HEAD>
+
+<!-- BEGIN OF THE BODY -->
+<BODY>
+
+<center>
+<H1>Java<sup><font size=-2>TM</font></sup> HDF Viewer (JHV)<br>User's Guide</H1>
+<h3>Version 2.2<br>August 1998</h3>
+</center>
+<br>
+<br>
+<hr>
+
+<p>
+The Java<sup><font size=-4>TM</font></sup> HDF Viewer (JHV) is a graphic utility 
+designed for easily viewing the contents of HDF files.
+<P>
+This document provides the following information:
+<ul>
+<li>User instructions for JHV Version 2.2
+<li>A discussion of the basic types of HDF data objects --
+    for those unfamiliar with HDF, the Hierarchical Data Format
+</ul>
+Details of HDF library and its APIs are available from 
+<A HREF="http://hdf.ncsa.uiuc.edu/">The NCSA HDF Home Page</A> 
+(at <code>http://hdf.ncsa.uiuc.edu/</code>).
+
+<p><hr noshade size=1>
+<h2>Table of Contents</h2>
+
+<DL>
+<DT>  <A HREF="guide00-introduction.html"> 1 Introduction</A>
+  <dd><A HREF="guide00-introduction.html#guide00-overview"> 1.1 Overview</A>
+  <dd><A HREF="guide00-introduction.html#guide00-features"> 1.2 JHV Features</A>
+  <dd><A HREF="guide00-introduction.html#guide00-limitations"> 1.3 Limitations</A>
+  <dd><A HREF="guide00-introduction.html#guide00-requirements"> 1.4 System 
+               Requirements</A>
+  <dd><A HREF="guide00-introduction.html#guide00-installation"> 1.5 Installing 
+               and Running JHV</A>
+
+<p>
+<DT>  <A HREF="guide01-start.html"> 2 Getting Started</A>
+  <dd><A HREF="guide02-start.html#guide01-start"> 2.1 Starting the Program</A> 
+  <dd><A HREF="guide02-start.html#guide01-load"> 2.2 Loading a File</A> 
+  <dd><A HREF="guide02-start.html#guide01-message"> 2.3 Displaying Information</A> 
+  <dd><A HREF="guide02-start.html#guide01-option"> 2.4 Setting the View Options</A> 
+  <dd><A HREF="guide02-start.html#guide01-guide"> 2.5 Viewing the Online Guide</A> 
+
+<p>
+<DT>  <A HREF="guide02-objects.html"> 3 Opening HDF Data Objects</A>
+  <dd><A HREF="guide01-objects.html#guide02-annotation"> 3.1 File and Data 
+               Object Annotations</A> 
+  <dd><A HREF="guide01-objects.html#guide02-ri"> 3.2 Raster Images</A> 
+  <dd><A HREF="guide01-objects.html#guide02-sds"> 3.3 Scientific Data Sets</A> 
+  <dd><A HREF="guide01-objects.html#guide02-vdata"> 3.4 Vdatas, or Tables</A> 
+  <dd><A HREF="guide01-objects.html#guide02-vgroup"> 3.5 Vgroups</A> 
+
+<p>
+<DT>  <A HREF="guide03-window.html"> 4 Manipulating Images in the Image Window</A>
+  <dd><A HREF="guide03-window.html#guide03-window"> 4.1 The Image Window</A> 
+  <dd><A HREF="guide03-window.html#guide03-open"> 4.2 Opening the Image Window</A> 
+  <dd><A HREF="guide03-window.html#guide03-menu"> 4.3 Menu Commands</A> 
+  <dd><A HREF="guide03-window.html#guide03-image"> 4.4 Image and Zoom Panels</A> 
+  <dd><A HREF="guide03-window.html#guide03-button"> 4.5 Control Buttons</A> 
+
+<p>
+<DT>  <A HREF="guide04-process.html"> 5 Image Processing</A>
+  <dd><A HREF="guide04-process.html#guide04-edit"> 5.1 Image Editing</A> 
+  <dd><A HREF="guide04-process.html#guide04-filter"> 5.2 Image Filtering</A> 
+  <dd><A HREF="guide04-process.html#guide04-contour"> 5.3 Image Contour</A> 
+
+<p>
+<DT>  <A HREF="guide05-analysis.html"> 6 Image and Data Analysis</a>
+  <dd><A HREF="guide05-analysis.html#guide05-value"> 6.1 Image Values</A> 
+  <dd><A HREF="guide05-analysis.html#guide05-xy"> 6.2 X-Y Plots</A> 
+  <dd><A HREF="guide05-analysis.html#guide05-histogram"> 6.3 Histograms</A> 
+  <dd><A HREF="guide05-analysis.html#guide05-data"> 6.3 Data Transformations</A> 
+
+<p>
+<DT>  <A HREF="guide06-animation.html"> 7 Animation</a>
+  <dd><A HREF="guide06-animation.html#guide06-window"> 7.1 Opening the 
+               Animation Window</A> 
+  <dd><A HREF="guide06-animation.html#guide06-option"> 7.2 Animation Options 
+               and Color Management</A> 
+
+<p>
+<DT>  <A HREF="guide07-layer.html"> 8 Image Overlays</a>
+  <dd><A HREF="guide07-layer.html#guide07-window"> 8.1 Opening the Image 
+               Overlay Window</A> 
+  <dd><A HREF="guide07-layer.html#guide07-option"> 8.2 Overlay Options</A> 
+
+<p>
+<DT>  <A HREF="guide08-spreadsheet.html"> 9 Spreadsheets and Plots</a>
+  <dd><A HREF="guide08-spreadsheet.html#guide08-image"> 9.1 Image Spreadsheets</A> 
+  <dd><A HREF="guide08-spreadsheet.html#guide08-vdata"> 9.2 Vdata Spreadsheets</A> 
+  <dd><A HREF="guide08-spreadsheet.html#guide08-plot"> 9.3 Vdata X-Y Plots</A> 
+
+<p>
+<DT>  <A HREF="guide09-palette.html"> 10 The Palette Editor</a>
+  <dd><A HREF="guide09-palette.html#guide09-window"> 10.1 Palette Editor Window</A> 
+  <dd><A HREF="guide09-palette.html#guide09-menu"> 10.2 Palette Menu</A> 
+  <dd><A HREF="guide09-palette.html#guide09-option"> 10.3 Palette Options</A>
+  <dd><A HREF="guide09-palette.html#guide09-palette"> 10.4 Saving a New Color 
+               Palette</A>
+<p>
+<DT>  <A HREF="guide10a-ascii.html"> 11 Using ASCII HDF Files, or Text Files</a>
+  <dd><A HREF="guide10a-ascii.html#guide10a-workascii"> 11.1 Reading, Writing, 
+               and Working with ASCII Files</A> 
+  <dd><A HREF="guide10a-ascii.html#guide10a-convert"> 11.2 Converting an ASCII 
+               File to an HDF File</A> 
+
+<p>
+<DT>  <A HREF="guide10-ascii2hdf.html"> Appendix A: Specification of the HDF ASCII 
+               Interchange Format (HAIF)</a>
+  <dd><A HREF="guide10-ascii2hdf.html#guide10-introduction"> A.1 Introduction</A> 
+  <dd><A HREF="guide10-ascii2hdf.html#guide10-format"> A.2 Specification of the 
+               HDF ASCII Interchange Format</A> 
+  <dd><A HREF="guide10-ascii2hdf.html#guide10-example"> A.3 An Example</A>  
+</DL>
+
+
+<p><hr noshade size=1>
+<h2>List of Figures</h2>
+
+<ul>
+  <LI><A HREF="images/jhv-frame.gif"> Figure 2.1 The JHV main window </A> 
+  <LI><A HREF="images/file-manager.gif"> Figure 2.2 Local file manager (Windows 95)</A> 
+  <LI><A HREF="images/annotation.gif"> Figure 2.3 A file annotation displayed in the 
+               message window</A> 
+  <LI><A HREF="images/annotation.gif"> Figure 3.1 A file description displayed in the 
+               message window</A> 
+  <LI><A HREF="images/gr-attribute.gif"> Figure 3.2 General raster image attributes 
+               displayed in the message window</A> 
+  <LI><A HREF="images/gr-image.gif"> Figure 3.3 GR preview image in the main window; 
+               full image and zoomed subset in the image window</A> 
+  <LI><A HREF="images/sds-attribute.gif"> Figure 3.4 SDS attributes displayed in the 
+               message window</A> 
+  <LI><A HREF="images/sds-image.gif"> Figure 3.5 SDS preview image in the main window; 
+               full image and zoomed subset in the image window</A> 
+  <LI><A HREF="images/vdata-spreadsheet.gif"> Figure 3.6 A Vdata spreadsheet</A> 
+  <LI><A HREF="images/vgroup.gif"> Figure 3.7 A Vgroup</A> 
+  <LI><A HREF="images/image-window.gif"> Figure 4.1 The JHV image window</A> 
+  <LI><A HREF="images/data-range.gif"> Figure 5.1 Modification of image data range</A> 
+  <LI><A HREF="images/rgb-balance.gif"> Figure 5.2 RGB color balance control panel</A> 
+  <LI><A HREF="images/contrast.gif"> Figure 5.3 Image brightness/contrast control panel</A>
+  <LI><A HREF="images/contour.gif"> Figure 5.4 Image contour</A> 
+  <LI><A HREF="images/image-value.gif"> Figure 6.1 Image values</A> 
+  <LI><A HREF="images/image-xy-plot.gif"> Figure 6.2 An X-Y plot</A> 
+  <LI><A HREF="images/histogram.gif"> Figure 6.3 A histogram</A> 
+  <LI><A HREF="images/data-conversion.gif"> Figure 6.4 Data transformation 
+               control panel</A> 
+  <LI><A HREF="images/slice-selection.gif"> Figure 7.1 The animation window</A> 
+  <LI><A HREF="images/animation.gif"> Figure 7.2 The slice selection window</A> 
+  <LI><A HREF="images/overlay.gif"> Figure 8.1 The image overlay window</A> 
+  <LI><A HREF="images/transparent.gif"> Figure 8.2 Overlaid image stack before 
+               and after rendering the background of the top image transparent</A> 
+  <LI><A HREF="images/opaque.gif"> Figure 8.3 An example of image opacity</A> 
+  <LI><A HREF="images/image-spreadsheet.gif"> Figure 9.1 An image spreadsheet</A> 
+  <LI><A HREF="images/interpolate.gif"> Figure 9.2 Image interpolation</A> 
+  <LI><A HREF="images/vdata-spreadsheet.gif"> Figure 9.3 A Vdata spreadsheet</A> 
+  <LI><A HREF="images/vdata-plot.gif"> Figure 9.4 A Vdata X-Y plot</A> 
+  <LI><A HREF="images/palette.gif"> Figure 10.1 The palette editor</A> 
+  <LI><A HREF="images/palette-change.gif"> Figure 10.2 The color panel</A> 
+
+</ul>
+
+
+<!-- BEGIN OF FOOTER INFO -->
+<P><hr noshade size=1>
+<font face="arial,helvetica" size="-1">
+  <a href="http://www.ncsa.uiuc.edu/">
+  <img border=0 src=http://www.ncsa.uiuc.edu/Images/NCSAhome/footerlogo.gif alt="NCSA"><br> The National Center for Supercomputing Applications</A><br>
+  <a href="http://www.uiuc.edu/">University of Illinois at Urbana-Champaign</a><br>
+<p><A HREF="mailto:hdfhelp@ncsa.uiuc.edu">hdfhelp@ncsa.uiuc.edu</A>
+</FONT>
+<!- END OF FOOTER INFO -->
+
+</BODY>
+</HTML>
+
+

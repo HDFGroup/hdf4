@@ -1,7 +1,7 @@
 @ECHO OFF
 
 @REM set up your java home directory. You need java 1.1.1 or above.
-@SET JAVAHOME=c:\jdk1.1.5
+@SET JAVAHOME=c:\jdk
 
 @REM set up your JHV home directory.
 @SET JHVHOME=.
@@ -27,6 +27,7 @@ GOTO :BUILD
 @GOTO :END
 
 :BUILD
+del %JHVHOME%\classes
 mkdir %JHVHOME%\classes
 SET CLASSPATH=%JAVAHOME%\lib;%JHVHOME%\classes
 @CLS
@@ -35,8 +36,6 @@ SET CLASSPATH=%JAVAHOME%\lib;%JHVHOME%\classes
 
 %JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\hdflib\*.java
 %JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\util\*.java
-%JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\util\decoder\*.java
-%JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\util\encoder\*.java
 %JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\awt\event\*.java
 %JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\awt\*.java
 %JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\awt\image\*.java
@@ -45,11 +44,21 @@ SET CLASSPATH=%JAVAHOME%\lib;%JHVHOME%\classes
 %JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\awt\plots\*.java
 %JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\awt\layer\*.java
 %JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\message\*.java
+%JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\io\*.java
 %JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\jhv\*.java
+%JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\server\HDFServerConnection.java
+%JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\server\HDFServer_njsdk.java
 
-REM @ECHO need JSDK classes to compile the ncsa.hdf.server package
-REM SET CLASSPATH=%JAVAHOME%\lib;%JHVHOME%\classes;C:\Jsdk\lib\classes.zip
-REM %JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\server\*.java
+@ECHO need JSDK classes to compile the servlet classses package
+SET CLASSPATH=%JAVAHOME%\lib;%JHVHOME%\classes;C:\Jsdk\lib\classes.zip
+%JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\server\FileServlet.java
+%JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\server\HDFServer.java
 
 @ECHO compiling is done
+
+@ECHO packing, please wait ....
+cd %JHVHOME%\classes
+delete %JHVHOME%\lib\classes.zip
+%JAVAHOME%\bin\jar -cvf %JHVHOME%\lib\classes.zip ncsa
+
 :END

@@ -74,68 +74,118 @@ public class ImageAnimation  extends Frame
 
 		setLayout(null);
 		addNotify();
-		setSize(getInsets().left + getInsets().right + 736,
-		        getInsets().top + getInsets().bottom + 454);
-
-		// amimated image label
-		animatedImageLabel = new java.awt.Label("Animated Image:");
-		animatedImageLabel.setBounds(getInsets().left + 12,
-					     getInsets().top + 12,144,24);
-		animatedImageLabel.setFont(new Font("TimesRoman", Font.BOLD, 16));
-		// animatedImageLabel.setBackground(new Color(12632256));
-		add(animatedImageLabel);
+		setSize(getInsets().left + getInsets().right + 725,
+		        getInsets().top + getInsets().bottom + 420);
 
 		// animated images panel
 		animatedPane = new java.awt.ScrollPane();
 		animatedPane.setBounds(getInsets().left + 12,
-				       getInsets().top + 48,360,384);
+				       getInsets().top + 12,400,400);
 		add(animatedPane);
 
-		// animated image list label	
-		animatedImageListLabel = new java.awt.Label("Animated Image List:");
-		animatedImageListLabel.setBounds(getInsets().left + 396,
-						 getInsets().top + 12,180,24);
+		// animated image list label
+
+		animatedImageListLabel = new java.awt.Label("Animated Images");
+		animatedImageListLabel.setBounds(getInsets().left + 420,
+						 getInsets().top + 12,200,24);
 		animatedImageListLabel.setFont(new Font("TimesRoman", Font.BOLD, 16));
 		add(animatedImageListLabel);
-	
+
 		// animated images list
 		imageList = new java.awt.List(0,true); 
 		add(imageList);
-		imageList.setBounds(getInsets().left + 408,
-				    getInsets().top + 48,300,180);
+		imageList.setBounds(getInsets().left + 420,
+				    getInsets().top + 40,295,200);
 
 		// select all buttons		
 		selectAllButton = new java.awt.Button("Select All");
-		selectAllButton.setBounds(getInsets().left + 408,
-					  getInsets().top + 248,74,32);
+		selectAllButton.setBounds(getInsets().left + 420,
+					  getInsets().top + 250,70,25);
 		selectAllButton.setFont(new Font("TimesRoman", Font.BOLD, 12));
 		add(selectAllButton);
 
 		// unselect all button
 		unselectAllButton = new java.awt.Button("Unselect All");
-		unselectAllButton.setBounds(getInsets().left + 524,
-					    getInsets().top + 248,74,32);
+		unselectAllButton.setBounds(getInsets().left + 495,
+					    getInsets().top + 250,70,25);
 		unselectAllButton.setFont(new Font("TimesRoman", Font.BOLD, 12));
 		add(unselectAllButton);
 
+		// stop
+		stopButton = new java.awt.Button("Stop");
+		stopButton.setBounds(getInsets().left + 570,
+				     getInsets().top + 250,70,25);
+		stopButton.setFont(new Font("TimesRoman", Font.BOLD, 10));
+		add(stopButton);
+
 		// dismiss button
 		dismissButton = new java.awt.Button("Dismiss");
-		dismissButton.setBounds(getInsets().left + 628,
-					getInsets().top + 248,74,32);
+		dismissButton.setBounds(getInsets().left + 645,
+					getInsets().top + 250,70,25);
 		dismissButton.setFont(new Font("TimesRoman", Font.BOLD, 12));
 		add(dismissButton);
-	
-		// animated operation label	
-		animatedOperationLabel = new java.awt.Label("Animated Operations:");
-		animatedOperationLabel.setBounds(getInsets().left + 408,
-						 getInsets().top + 298,108,36);
-		animatedOperationLabel.setFont(new Font("TimesRoman", Font.PLAIN, 12));
-		add(animatedOperationLabel);
-	
-		// animated operation choices	
+
+		// backward
+		backwardButton = new java.awt.Button("Backward");
+		backwardButton.setBounds(getInsets().left + 420,
+					 getInsets().top + 285,70,25);
+		backwardButton.setFont(new Font("TimesRoman", Font.BOLD, 10));
+		add(backwardButton);
+
+		// previous
+		previousButton = new java.awt.Button("Previous");
+		previousButton.setBounds(getInsets().left + 495,
+					 getInsets().top + 285,70,25);
+		previousButton.setFont(new Font("TimesRoman", Font.BOLD, 10));
+		add(previousButton);
+
+		// next
+		nextButton = new java.awt.Button("Next");
+		nextButton.setBounds(getInsets().left + 570,
+				     getInsets().top + 285,70,25);
+		nextButton.setFont(new Font("TimesRoman", Font.BOLD, 10));
+		add(nextButton);
+
+		// foreward
+		forewardButton = new java.awt.Button("Foreward");
+		forewardButton.setBounds(getInsets().left + 645,
+					 getInsets().top + 285,70,25);
+		forewardButton.setFont(new Font("TimesRoman", Font.BOLD, 10));
+		add(forewardButton);
+
+		// selected image frame number:
+		Label animatedImageFrameLabel = new java.awt.Label("Frame(s):");
+		animatedImageFrameLabel.setBounds(getInsets().left + 420,
+						  getInsets().top + 320,70,25);
+		animatedImageFrameLabel.setFont(new Font("TimesRoman", Font.BOLD, 12));
+		add(animatedImageFrameLabel);
+
+		// select image slider
+		selectedImageSlider = new Slider();
+		selectedImageSlider.setBounds(getInsets().left + 495,
+					      getInsets().top + 320,220,25);
+		add(selectedImageSlider);
+		selectedImageSlider.setDispMode(Slider.SLIDERVALUE);
+
+		// animated images speed
+		Label animatedImageSpeedLabel = new java.awt.Label("Speed (ms):");
+		animatedImageSpeedLabel.setBounds(getInsets().left + 420,
+						  getInsets().top + 355,70,25);
+		animatedImageSpeedLabel.setFont(new Font("TimesRoman", Font.BOLD, 12));
+		add(animatedImageSpeedLabel);
+
+		// speed slider
+		animatedSpeed = new Slider();
+		animatedSpeed.setBounds(getInsets().left + 495,
+					getInsets().top + 355,220,25);
+		add(animatedSpeed);
+		animatedSpeed.setDispMode(Slider.SLIDERVALUE);
+		animatedSpeed.setSliderRange(91d, 1000d);
+
+		// animated operation choices
 		animatedModeChoice = new Choice();
-		animatedModeChoice.setBounds(getInsets().left + 526,
-						  getInsets().top + 306,70,30);
+		animatedModeChoice.setBounds(getInsets().left + 420,
+						  getInsets().top + 390,90,25);
 		animatedModeChoice.setFont(new Font("TimesRoman", Font.BOLD, 12));
 		add(animatedModeChoice);
 
@@ -143,85 +193,20 @@ public class ImageAnimation  extends Frame
 		animatedModeChoice.add("Loop  ");
 		animatedModeChoice.add("Single");
 		animatedModeChoice.add("Bounce");
-	
+
 		// set palette
-		paletteApply = new Button("Palette");
-		paletteApply.setBounds( getInsets().left+ 600,
-					getInsets().top + 306,50,24);
+		paletteApply = new Button("Edit Palette");
+		paletteApply.setBounds( getInsets().left+ 523,
+					getInsets().top + 390,90,25);
 		paletteApply.setFont(new Font("TimesRoman", Font.PLAIN, 12));
 		add(paletteApply);
-	
+
 		// update palette
-		paletteUpdate = new Button("Update");
-		paletteUpdate.setBounds( getInsets().left+ 650,
-					getInsets().top + 306,50,24);
+		paletteUpdate = new Button("Update Palette");
+		paletteUpdate.setBounds( getInsets().left+ 625,
+					getInsets().top + 390,90,25);
 		paletteUpdate.setFont(new Font("TimesRoman", Font.PLAIN, 12));
 		add(paletteUpdate);
-
-		// animated operation button
-		// backward
-		backwardButton = new java.awt.Button("Backward");
-		backwardButton.setBounds(getInsets().left + 408,
-					 getInsets().top + 336,52,32);
-		backwardButton.setFont(new Font("TimesRoman", Font.BOLD, 10));
-		add(backwardButton);
-
-		// previous
-		previousButton = new java.awt.Button("Previous");
-		previousButton.setBounds(getInsets().left + 468,
-					 getInsets().top + 336,52,32);
-		previousButton.setFont(new Font("TimesRoman", Font.BOLD, 10));
-		add(previousButton);
-
-		// stop
-		stopButton = new java.awt.Button("Stop");
-		stopButton.setBounds(getInsets().left + 528,
-				     getInsets().top + 336,52,32);
-		stopButton.setFont(new Font("TimesRoman", Font.BOLD, 10));
-		add(stopButton);
-
-		// next
-		nextButton = new java.awt.Button("Next");
-		nextButton.setBounds(getInsets().left + 588,
-				     getInsets().top + 336,52,32);
-		nextButton.setFont(new Font("TimesRoman", Font.BOLD, 10));
-		add(nextButton);
-
-		// foreward
-		forewardButton = new java.awt.Button("Foreward");
-		forewardButton.setBounds(getInsets().left + 648,
-					 getInsets().top + 336,52,32);
-		forewardButton.setFont(new Font("TimesRoman", Font.BOLD, 10));
-		add(forewardButton);
-	
-		// selected image frame number:
-		Label animatedImageFrameLabel = new java.awt.Label("Frame(s):");
-		animatedImageFrameLabel.setBounds(getInsets().left + 408,
-						  getInsets().top + 380,80,24);
-		animatedImageFrameLabel.setFont(new Font("TimesRoman", Font.BOLD, 12));
-		add(animatedImageFrameLabel);
-
-		// select image slider	
-		selectedImageSlider = new Slider();
-		selectedImageSlider.setBounds(getInsets().left + 500,
-					      getInsets().top + 380,200,20);
-		add(selectedImageSlider);
-		selectedImageSlider.setDispMode(Slider.SLIDERVALUE);
-
-		// animated images speed
-		Label animatedImageSpeedLabel = new java.awt.Label("Speeds of 1/1000th (s):");
-		animatedImageSpeedLabel.setBounds(getInsets().left + 408,
-						  getInsets().top + 408,120,24);
-		animatedImageSpeedLabel.setFont(new Font("TimesRoman", Font.BOLD, 12));
-		add(animatedImageSpeedLabel);
-			
-		// speed slider
-		animatedSpeed = new Slider();
-		animatedSpeed.setBounds(getInsets().left + 540,
-					getInsets().top + 408,160,20);
-		add(animatedSpeed);
-		animatedSpeed.setDispMode(Slider.SLIDERVALUE);
-		animatedSpeed.setSliderRange(91d, 1000d);
 
 		setTitle("Image Animation");
 		setResizable(false);
@@ -237,7 +222,7 @@ public class ImageAnimation  extends Frame
 		stopButton.addActionListener(this);
 		nextButton.addActionListener(this);
 		forewardButton.addActionListener(this);
-	
+
 		// palette apply
 		paletteApply.addActionListener(this);
 		paletteUpdate.addActionListener(this);
@@ -259,7 +244,7 @@ public class ImageAnimation  extends Frame
 		// scrollPane
 		animatedImagePane = new AnimatedImagePane();
 		animatedPane.add(animatedImagePane, this, 0);
-		
+
 		// set component visable
 		showComponent();
 	}
@@ -273,7 +258,7 @@ public class ImageAnimation  extends Frame
     // Shows animation window
     public void showComponent() {
 
-    	setLocation(50, 50);
+    	//setLocation(50, 50);
 	invalidate();
 
 	// force not ot resize component
@@ -458,12 +443,12 @@ public class ImageAnimation  extends Frame
  		dispose();
 	}
 
-	if ("Palette".equals(arg)) { // palette editor for current image
+	if ("Edit Palette".equals(arg)) { // palette editor for current image
  
 	   // do sth. about image palette here
 	   animatedImagePane.openNewPalette();
 	}	
-	else if ("Update".equals(arg)) { // update pallete
+	else if ("Update Palette".equals(arg)) { // update pallete
  
 	   // do sth. about image palette here
 	   animatedImagePane.setNewPalette();

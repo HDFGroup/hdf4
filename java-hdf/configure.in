@@ -34,6 +34,7 @@ fi
 until test $FOUND_HDF -eq 1  ; do
 echo "looking for HDF library"
 AC_PATH_PROG(HDFL,libdf.a,,$HERE/../NewHDF/lib:$HERE/lib:/usr/lib:/usr/local/lib,)
+if test -z "$HDFL" ; then
 while test -z "$HDFL" ; do
 	/bin/echo $ac_n "Please enter the path for the HDF libraries (e.g., /usr/local): "
 	read HL
@@ -41,6 +42,18 @@ while test -z "$HDFL" ; do
 		HDFL=$HL/lib/libdf.a
 	fi
 done
+else
+	/bin/echo $ac_n "Do you want to use the HDF libraries from "$HDFL"? (y/n)  y "
+	read ANS
+	if test "$ANS" = "n" ; then
+		HDFL=""
+		/bin/echo $ac_n "Please enter the path for the HDF libraries (e.g., /usr/local): "
+		read HL
+		if test \( ! -z "$HL" \) ; then
+			HDFL=$HL/lib/libdf.a
+		fi
+	fi
+fi
 if test -f "$HDFL" ; then
 	HDFLIB=`dirname $HDFL`
 	HL=`dirname $HDFLIB`
@@ -60,7 +73,7 @@ if test -f "$HDFL" ; then
 	FOUND_HDF=1	
 else
 	echo $HDFL " is not a file:  the HDF path is probably incorrect"
-	echo $ac_n "Enter a new path? (y/n)[y]"?
+	echo $ac_n "Enter a new path? (y/n) y "?
 	read ANS
 	if test $ANS != "y" ; then
 		exit 0
@@ -78,13 +91,11 @@ JAVABINPATH_FOUND=1
 AC_CACHE_CHECK("java",ac_cv_prog_JAVA,JAVABINPATH_FOUND=0)
 AC_CACHE_CHECK("javac",ac_cv_prog_JAVAC,JAVABINPATH_FOUND=0)
 AC_CACHE_CHECK("javadoc",ac_cv_prog_JAVADOC,JAVABINPATH_FOUND=0)
-AC_CACHE_CHECK("javadoc images",ac_cv_prog_JAVADOC_IMAGES,JAVABINPATH_FOUND=0)
 AC_CACHE_CHECK("jar",ac_cv_prog_JAR,JAVABINPATH_FOUND=0)
 if test $JAVABINPATH_FOUND -eq 1; then
 	JAVA=$ac_cv_prog_JAVA;
 	JAVAC=$ac_cv_prog_JAVAC;
 	JAVADOC=$ac_cv_prog_JAVADOC;
-	JAVADOC_IMAGES=$ac_cv_prog_JAVADOC_IMAGES;
 	JAR=$ac_cv_prog_JAR;
 fi
 
@@ -114,14 +125,12 @@ fi
 JAVA=$JAVAPATH/java
 JAVAC=$JAVAPATH/javac
 JAVADOC=$JAVAPATH/javadoc
-JAVADOC_IMAGES=$JAVAPATH/images
 JAR=$JAVAPATH/jar
 dnl do the caching...
 echo "Using Java binaries from: "$JAVAPATH
 ac_cv_prog_JAVA=$JAVA;
 ac_cv_prog_JAVAC=$JAVAC;
 ac_cv_prog_JAVADOC=$JAVADOC;
-ac_cv_prog_JAVADOC_IMAGES=$JAVADOC_IMAGES;
 ac_cv_prog_JAR=$JAR;
 JAVABINPATH_FOUND=1
 done
@@ -203,60 +212,52 @@ CLASSPATH="$JAVACLASSES":"$HERE"
 
 
 SERVERCLASSES=""
-
-JAVASERVERPATH_FOUND=0
+#JAVASERVERPATH_FOUND=1
+#AC_CACHE_CHECK("java server extension",ac_cv_lib_JAVASERVERPATH,JAVASERVERPATH_FOUND=0)
+#if test $JAVASERVERPATH_FOUND -eq 1; then
+#	JAVASERVERPATH=$ac_cv_lib_JAVASERVERPATH;
+#	CLASSPATH="$JAVASERVERPATH":"$CLASSPATH"
+#	SERVERCLASSES="ncsa/hdf/server/FileServlet.class ncsa/hdf/server/HDFServer.class "
 #
-# commented out for now -- not advertised in this release
+#fi
 #
-# JAVASERVERPATH_FOUND=1
-# AC_CACHE_CHECK("java server extension",ac_cv_lib_JAVASERVERPATH,JAVASERVERPATH_FOUND=0)
-# if test $JAVASERVERPATH_FOUND -eq 1; then
-# 	JAVASERVERPATH=$ac_cv_lib_JAVASERVERPATH;
-# 	CLASSPATH="$JAVASERVERPATH":"$CLASSPATH"
-# 	SERVERCLASSES="ncsa/hdf/server/FileServlet.class ncsa/hdf/server/HDFServer.class "
-# 
-# fi
-# 
-# WANT_SERVER=0;
-# if test $JAVASERVERPATH_FOUND -ne 1; then
-# 	echo "Do you want to use the HDF Java Servelet (requires the Java Server Extension)? [y/n]"
-# 	read USE_SERVER
-# 	case $USE_SERVER in
-# 	"y")
-# 		WANT_SERVER=1;;
-# 	*)
-# 		WANT_SERVER=0;;
-# 	esac
-# fi
-# 
-# if test $WANT_SERVER -eq 1; then
-# 
-# until test $JAVASERVERPATH_FOUND -eq 1 ; do
-# 	JAVASERVER=""
-# 	while test -z "$JAVASERVER" ; do
-# 		echo "Please type the CLASSPATH of the JDK 1.1 Java Server Extension classes "
-# 		echo "(e.g., /usr/java/JDSK/classes.zip)? "
-# 		read JAVASERVER
-# 		BNAME=`basename $JAVASERVER`
-# 		if test $BNAME = "classes.zip" ; then
-# 			if test -f $JAVASERVER ; then
-# 				JAVASERVERPATH_FOUND=1
-# 			fi
-# 		elif test $BNAME = "classes" ; then
-# 			if test -d $JAVASERVER ; then
-# 				JAVASERVERPATH_FOUND=1
-# 			fi 
-# 		fi
-# 	done 
-# done
-# SERVERCLASSES="ncsa/hdf/server/FileServlet.class ncsa/hdf/server/HDFServer.class "
-# echo "Adding Java classes from "$JAVASERVER" to CLASSPATH"
-# CLASSPATH="$JAVASERVER":"$CLASSPATH";
-# ac_cv_lib_JAVASERVERPATH=$JAVASERVER;
-# fi
+#WANT_SERVER=0;
+#if test $JAVASERVERPATH_FOUND -ne 1; then
+#	echo "Do you want to use the HDF Java Servelet (requires the Java Server Extension)? (y/n) n"
+#	read USE_SERVER
+#	case $USE_SERVER in
+#	"y")
+#		WANT_SERVER=1;;
+#	*)
+#		WANT_SERVER=0;;
+#	esac
+#fi
 #
-#  end of server feature
+#if test $WANT_SERVER -eq 1; then
 #
+#until test $JAVASERVERPATH_FOUND -eq 1 ; do
+#	JAVASERVER=""
+#	while test -z "$JAVASERVER" ; do
+#		echo "Please type the CLASSPATH of the JDK 1.1 Java Server Extension classes "
+#		echo "(e.g., /usr/java/JDSK/classes.zip)? "
+#		read JAVASERVER
+#		BNAME=`basename $JAVASERVER`
+#		if test $BNAME = "classes.zip" ; then
+#			if test -f $JAVASERVER ; then
+#				JAVASERVERPATH_FOUND=1
+#			fi
+#		elif test $BNAME = "classes" ; then
+#			if test -d $JAVASERVER ; then
+#				JAVASERVERPATH_FOUND=1
+#			fi 
+#		fi
+#	done 
+#done
+#SERVERCLASSES="ncsa/hdf/server/FileServlet.class ncsa/hdf/server/HDFServer.class "
+#echo "Adding Java classes from "$JAVASERVER" to CLASSPATH"
+#CLASSPATH="$JAVASERVER":"$CLASSPATH";
+#ac_cv_lib_JAVASERVERPATH=$JAVASERVER;
+#fi
 
 echo "CLASSPATH is "$CLASSPATH
 
@@ -285,7 +286,7 @@ until test $JAVAINCPATH_FOUND -eq 1 ; do
 	else
 		"Warning:  "$JAVAINC"/jni.h is not found; this might not be JDK 1.1.x"
 		echo "This product requres JDK 1.1"
-		echo "Do you want to quit now to check that JDK 1.1 is correctly installed? (y/n)[y]"?
+		echo "Do you want to quit now to check that JDK 1.1 is correctly installed? (y/n) y "?
 		read ANS
 		if test $ANS != "n" ; then
 			exit 0
@@ -377,10 +378,11 @@ COPT=-G; JAVAINC2=$JAVAINC/solaris; JAVATARG=i386 ;;
 COPT=-G; JAVAINC2=$JAVAINC/solaris ; JAVATARG=solaris;;
 mips*-sgi-irix5*) LD=$CC; LDOPT=-shared; SLEXT="so";
 COPT=-shared ; JAVAINC2=$JAVAINC/irix; JAVATARG=irix;;
-mips*-sgi-irix6*) LD=$CC; LDOPT=-shared; SLEXT="so";
-COPT=-shared ; JAVAINC2=$JAVAINC/irix; JAVATARG=irix;;
+mips*-sgi-irix6*) LD=ld; LDOPT="-n32 -shared";
+LDOPT2="-check_registry /usr/lib/so_locations"; SLEXT="so";
+COPT="-n32 -shared" ; JAVAINC2=$JAVAINC/irix; JAVATARG=irix;;
 *-pc-linux*) LD=$CC; LDOPT=-shared; SLEXT="so";
-COPT=-shared ; JAVAINC2=$JAVAINC/genunix; JAVATARG=linux-elf;;
+COPT="-shared -DUNIX386" ; JAVAINC2=$JAVAINC/genunix; JAVATARG=linux-elf;;
 *) LD=$CC; LDOPT=-G; SLEXT="so";
 COPT=-shared; JAVAINC2=$JAVAINC/$target; JAVATARG=$TARGET ;;
 esac
@@ -389,6 +391,7 @@ AC_SUBST(PWD)
 AC_SUBST(EXTRA_CFLAGS)
 AC_SUBST(LD)
 AC_SUBST(LDOPT)
+AC_SUBST(LDOPT2)
 AC_SUBST(SLEXT)
 AC_SUBST(COPT)
 AC_SUBST(RM)
@@ -396,7 +399,6 @@ AC_SUBST(FIND)
 AC_SUBST(JAVA)
 AC_SUBST(JAVAC)
 AC_SUBST(JAVADOC)
-AC_SUBST(JAVADOC_IMAGES)
 AC_SUBST(JAVAINC)
 AC_SUBST(JAVAINC2)
 AC_SUBST(JAVALIB)
@@ -413,4 +415,4 @@ AC_SUBST(JAVASERVERPATH)
 AC_SUBST_FILE(VERSION)
 VERSION=./VERSION
 
-AC_OUTPUT(Makefile native/Makefile native/hdflib/Makefile bin/jhv)
+AC_OUTPUT(Makefile native/Makefile native/hdflib/Makefile bin/jhv bin/jhv_jre)

@@ -16,6 +16,7 @@ import java.lang.Thread;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.lang.reflect.Array;
 
 import ncsa.hdf.hdflib.*;
 import ncsa.hdf.awt.image.*;
@@ -26,10 +27,10 @@ import ncsa.hdf.message.*;
 
 /* This class will create the spreadsheet to display the dataset value. 
  * Port to jdk-1.1 by apu. 
- * @version  1.00 
+ * @version  1.00
  * @auther   Xinjian Lu
  */
-public class JHVDataFrame extends Frame implements AdjustmentListener, 
+public class JHVDataFrame extends Frame implements AdjustmentListener,
   ActionListener,
   ItemListener{
   
@@ -40,7 +41,7 @@ public class JHVDataFrame extends Frame implements AdjustmentListener,
     JHVImageCanvas  imgCanvas;
     
     /** the canvas of the  displayed data */
-    JHVDataCanvas	  dataCanvas;
+    JHVDataCanvas dataCanvas;
     
     /** the canvas to display the dimension scale value of the dataset */ 
     JHVDataRangeCanvas	rowInfoCanvas,  colnumInfoCanvas;
@@ -108,7 +109,7 @@ public class JHVDataFrame extends Frame implements AdjustmentListener,
     setLayout(new BorderLayout());
 
     // spreadsheet panel
-    Panel	sPanel = new Panel();
+    Panel sPanel = new Panel();
     sPanel.setLayout(new BorderLayout());	
 	
     // Horizontal & vertical Scrollbar 
@@ -187,8 +188,8 @@ public class JHVDataFrame extends Frame implements AdjustmentListener,
     dataCanvas.repaint();
     
     // show component of the frame
-    //setVisible(true);
-    pack();
+    setVisible(true);
+    //pack();
     setSize(3*256, 2*256);
     show();
     
@@ -323,23 +324,20 @@ public class JHVDataFrame extends Frame implements AdjustmentListener,
 
 /** This class is the implementation of the spreadsheet of the HDF object */
 class JHVDataCanvas extends Canvas
-                   implements MouseListener, MouseMotionListener {
+    implements MouseListener, MouseMotionListener
+{
 
   // the frame of the spreadsheet
   JHVDataFrame	datFrame;
 
   // who is the object ancestor?
-  JHV		app;
+  JHV app;
 
   // the image canvas that the spreadsheet will communicate with
-  JHVImageCanvas	imgCanvas;
+  JHVImageCanvas imgCanvas;
    
-  // dataset value of the selected image area on the image
-  // take the data  to be as float so it can be easilly processed 
-  float[][]       data = null;
-
   // the generated image from the selected area of the spreadsheet
-  Image           image = null;
+  Image image = null;
 
   /** the image that is the duplicate pixel value of the subset of the orignal image */
   Image  defaultImage = null;
@@ -348,11 +346,11 @@ class JHVDataCanvas extends Canvas
   Image  interpolateImage = null;
   
   // the image width & width
-  int		imgWidth,imgHeight;
+  int imgWidth,imgHeight;
 	
   // the current canvas size
-  int           canvasWidth ;
-  int           canvasHeight;
+  int canvasWidth ;
+  int canvasHeight;
     
   // the cell size of the spreadsheet
   public  static  Rectangle CellRect = null ;
@@ -371,19 +369,19 @@ class JHVDataCanvas extends Canvas
 
   // Create the new font for displaying the  data correctly 
   // in the specified canvas within the scrollbar
-  Font dataFont        = new Font("Times", Font.PLAIN, defaultFontSize);
+  Font dataFont = new Font("Times", Font.PLAIN, defaultFontSize);
 
   // default font width & height
   public static   int fontWidth = 14;
   public static   int fontHeight= 15;
 
   // Flicker-free update with translation by scrollbars
-  Image 		offScreenImage = null;
-  Dimension 	offscreensize;		
-  Graphics 	offGraphics;
+  Image  offScreenImage = null;
+  Dimension offscreensize;
+  Graphics  offGraphics;
 
   // the indicator of the mouse that had been draged, pressed.
-  boolean		dragFlag=false;
+  boolean dragFlag=false;
 
   //  the indicator of the spreadsheet frame
   boolean frameDisplayed = false;
@@ -425,7 +423,7 @@ class JHVDataCanvas extends Canvas
     datFrame = frame;
 
     // set the applet wich the current object belongs to
-    app      = frame.imgCanvas.app;
+    app = frame.imgCanvas.app;
 
     //set the image canvas associated with data canvas
     imgCanvas= frame.imgCanvas;
@@ -441,8 +439,6 @@ class JHVDataCanvas extends Canvas
     // set the dataset range
     datasetRange.setBounds(rect.x,rect.y,rect.width,rect.height);
 
-    // prepare the spreadsheet data
-    getSpreadsheetData();
     this.addMouseListener(this);
     this.addMouseMotionListener(this);
   }
@@ -477,300 +473,127 @@ class JHVDataCanvas extends Canvas
     }
   }
 
-  /** Prepare the spreadsheet data.  */
-  public  void getSpreadsheetData() {
-	
-	getSpreadsheetData((Object)imgCanvas.hdfData,(int)imgCanvas.hdfDataType);   
-  } 
+    /** draw the spreadsheet */
+    public synchronized void paint(Graphics g)
+    {
+        Color bColor = getBackground();
+        Color gColor = g.getColor();
+        int w = getSize().width;
+        int h = getSize().height;
+        cellNumberByColnum = w / CellRect.width;
+        cellNumberByRow    = h / CellRect.height;
 
-  /** Prepare the spreadsheet data.  */
-  public  void getSpreadsheetData(byte[] hdfData, int nt) {
+        // repaint the info panel
+        datFrame.rowInfoCanvas.init(h-2);
+        datFrame.colnumInfoCanvas.init(w-2);
 
-    HDFNativeData convert = new HDFNativeData();
- 
-    // specify the data size
-    data = null;
-    data = new float[datasetRange.height][datasetRange.width];
+        int startx = 1;
+        int starty = 1;
+        g.drawRect(startx,starty,w-2,h-2);
+
+        // draw the selected area
+        if (drawFlag)
+        {
+            g.setColor(Color.cyan);
+            if (drawRectangle != null)
+                g.fillRect(drawRectangle.x, drawRectangle.y,
+                drawRectangle.width-1, drawRectangle.height-1);
+        }
+
+        g.setColor(Color.lightGray);
     
-    // data type of the raw data
-    int datatype = nt;
+        // draw horizontal grid
+        startx = 1;
+        starty = 1;
+        for (int i=1; i<= cellNumberByRow; i++)
+        {
+            starty += CellRect.height;
+            g.draw3DRect(startx+1, starty+1, w-3, 1, true);
+        }
+	
+        // draw vertical grid
+        startx = 1;
+        starty = 1;
+        for (int i=1; i<= cellNumberByColnum; i++)
+        {
+            startx += CellRect.width;
+            g.draw3DRect(startx+1, starty+1, 1, h-3, true);
+        }
 
-    if ((datatype & HDFConstants.DFNT_LITEND) != 0) {
-	datatype -= HDFConstants.DFNT_LITEND;
+        // draw the number
+        g.setColor(gColor);
+        int datatype = imgCanvas.hdfDataType;
+        Object hdfData = (Object)imgCanvas.hdfData;
+        int datasize = 1;
+        int firstPos = 0;
+        int pos = 0;
+
+        if ((datatype & HDFConstants.DFNT_LITEND) != 0)
+            datatype -= HDFConstants.DFNT_LITEND;
+
+        w = imgCanvas.imageWidth;
+        h = imgCanvas.imageHeight;
+        if (imgCanvas.node.type == HDFObjectNode.GRDATASET)
+             firstPos = w*h*(imgCanvas.imageNumber-1);
+
+        for (int i =0; i<cellNumberByRow; i++)
+        {
+            pos = ((datasetRange.y+vOffset+i)*w+(datasetRange.x ))*datasize;
+            pos += firstPos+hOffset;
+            for (int j=0; j<=cellNumberByColnum; j++)
+            {
+                startx = CellRect.width * j + 4;
+                starty = CellRect.height * (i+1) ;
+                if ( ((vOffset+i) >= datasetRange.height) ||
+                     ((hOffset+j) >= datasetRange.width) )
+                    continue;
+                switch(datatype)
+                {
+                    // byte data
+                    case HDFConstants.DFNT_CHAR:
+                    case HDFConstants.DFNT_UCHAR8:
+                    case HDFConstants.DFNT_UINT8:
+                        byte[] data8 = (byte[])hdfData;
+                        short theNumber = (short)data8[pos];
+                        if (theNumber < 0) theNumber += 256;
+                        g.drawString(Short.toString(theNumber), startx, starty);
+                        break;
+                    // 8-bit interger
+                    case HDFConstants.DFNT_INT8:
+                        byte[] data8i = (byte[])hdfData;
+                        g.drawString(Byte.toString(data8i[pos]), startx, starty);
+                        break;
+                    // 16-bit short integer
+                    case HDFConstants.DFNT_INT16:
+                    case HDFConstants.DFNT_UINT16:
+                        short[] data16 = (short[])hdfData;
+                        g.drawString(Short.toString(data16[pos]), startx, starty);
+                        break;
+                    // 32-bit integer
+                    case HDFConstants.DFNT_INT32:
+                    case HDFConstants.DFNT_UINT32:
+                        int[] data32 = (int[])hdfData;
+                        g.drawString(Integer.toString(data32[pos]), startx, starty);
+                        break;
+                    // 32-bit floating point
+                    case HDFConstants.DFNT_FLOAT32:
+                        float[] data32f = (float[])hdfData;
+                        g.drawString(Float.toString(data32f[pos]), startx, starty);
+                        break;
+                    // 64-bit floating point
+                    case HDFConstants.DFNT_FLOAT64:
+                        double[] data64 = (double[])hdfData;
+                        g.drawString(Double.toString(data64[pos]), startx, starty);
+                        break;
+                    default:
+                } // switch(datatype)
+
+                // move to the next cell
+                pos += datasize;
+            } // for (int j=0; j<=cellNumberByColnum; j++)
+        } //for (int i =0; i<cellNumberByRow; i++)
+
     }
-    // data size for the original data based on the data number type
-        int datasize = 0;
-	try { datasize = HDFLibrary.DFKNTsize(datatype);
-	} catch (HDFException e) {}
-    
-    // the image dataset range
-    int w = imgCanvas.imageWidth;
-    int h = imgCanvas.imageHeight;
-
-    // get the first address to get the raw data from hdfData
-    int firstPos = 0;
-    if ((imgCanvas.node.type == HDFObjectNode.RIS24) ||
-        (imgCanvas.node.type == HDFObjectNode.GRDATASET)) 
-         // adjust the first data position
-         firstPos = w * h * datasize * (imgCanvas.imageNumber - 1);
- 
-    // extract the dataset to be processed
-    for (int i=0; i<datasetRange.height; i++) {
-	
-      // first extract number position by row
-      int pos = ((datasetRange.y  + i) * w + (datasetRange.x )) * datasize;
-
-      // adjust the pos.
-      pos += firstPos;
-	
-      for (int j=0; j<datasetRange.width; j++) {
-	
-	switch(datatype) {
-	// one bit char
-	case HDFConstants.DFNT_CHAR:
-	case HDFConstants.DFNT_UCHAR8:
-	case HDFConstants.DFNT_UINT8:
-	  data[i][j] = (float)((byte)hdfData[pos]);
-	  // convert to positive if the number is negative 
-	  if (data[i][j] < 0)  
-	     data[i][j] += 256.0f;	
-	  break;
-		
-	// signed integer (byte)	
-	case HDFConstants.DFNT_INT8:
-	  
-	  data[i][j] = (float)((byte)hdfData[pos]);
-	  break;
-	  
-        // short	
-	case HDFConstants.DFNT_INT16:
-	case HDFConstants.DFNT_UINT16:
-	      
-		Short shval = new Short(convert.byteToShort(hdfData,pos));
-		data[i][j] = shval.floatValue();
-	  break;
-	    
-	case HDFConstants.DFNT_INT32:
-	case HDFConstants.DFNT_UINT32:
-		
-		Integer ival = new Integer(convert.byteToInt(hdfData,pos));
-		data[i][j] = ival.floatValue();
-	  break;
-		  
-	//case HDFConstants.DFNT_FLOAT:
-	case HDFConstants.DFNT_FLOAT32:
-	
-		Float fval = new Float(convert.byteToFloat(hdfData,pos));
-		data[i][j] = fval.floatValue();
-	  break;
-	    
-	//case HDFConstants.DFNT_DOUBLE:
-	case HDFConstants.DFNT_FLOAT64:
-	
-		Double dval = new Double(convert.byteToDouble(hdfData,pos));
-		data[i][j] = dval.floatValue();
-	  break;
-	
-	default:
-	  data[i][j] = 0;
-	}
-	    
-	// position moved
-	pos += datasize;
-	    
-      }
-    } 
-    
-  } 
-
- /** Prepare the spreadsheet data.  */
-  public  void getSpreadsheetData(Object hdfData, int nt) {
- 
-    // specify the data size
-    data = null;
-    data = new float[datasetRange.height][datasetRange.width];
-    
-    // data type of the raw data
-    int datatype = imgCanvas.hdfDataType;
-
-    if ((datatype & HDFConstants.DFNT_LITEND) != 0) {
-	datatype -= HDFConstants.DFNT_LITEND;
-    }
-
-    int datasize = 1;
-
-    int w = imgCanvas.imageWidth;
-    int h = imgCanvas.imageHeight;
-
-    // get the first address to get the raw data from hdfData
-    int firstPos = 0;
-    if ((imgCanvas.node.type == HDFObjectNode.RIS24) ||
-        (imgCanvas.node.type == HDFObjectNode.GRDATASET)) 
-         // adjust the first data position
-         firstPos = w * h * datasize * (imgCanvas.imageNumber - 1);
- 
-    // extract the dataset to be processed
-    for (int i=0; i<datasetRange.height; i++) {
-	
-      // first extract number position by row
-      int pos = ((datasetRange.y  + i) * w + (datasetRange.x )) * datasize;
-
-      // adjust the pos.
-      pos += firstPos;
-	
-      for (int j=0; j<datasetRange.width; j++) {
-	
-	switch(datatype) {
-	// one bit char
-	case HDFConstants.DFNT_CHAR:
-	case HDFConstants.DFNT_UCHAR8:
-	case HDFConstants.DFNT_UINT8:
-	  byte bdat[] = (byte[])hdfData;
-	  data[i][j] = (float)(bdat[pos]);
-	  // convert to positive if the number is negative 
-	  if (data[i][j] < 0)  
-	     data[i][j] += 256.0f;	
-	  break;
-		
-	// signed integer (byte)	
-	case HDFConstants.DFNT_INT8:
-	  byte bidat[] = (byte[])hdfData;
-	  data[i][j] = (float)(bidat[pos]);
-	  break;
-	  
-        // short	
-	case HDFConstants.DFNT_INT16:
-	case HDFConstants.DFNT_UINT16:
-	        short sdat[] = (short[])hdfData;
-		data[i][j] = (float)sdat[pos];
-		// Short shval = new Short(convert.byteToShort(hdfData,pos));
-		// data[i][j] = shval.floatValue();
-	  break;
-	    
-	case HDFConstants.DFNT_INT32:
-	case HDFConstants.DFNT_UINT32:
-		int idat[] = (int[])hdfData;
-		data[i][j] = (float)idat[pos];
-		// Integer ival = new Integer(convert.byteToInt(hdfData,pos));
-		// data[i][j] = ival.floatValue();
-	  break;
-		  
-	//case HDFConstants.DFNT_FLOAT:
-	case HDFConstants.DFNT_FLOAT32:
-		float fdat[] = (float[])hdfData;
-		data[i][j] = (float)fdat[pos];
-		// Float fval = new Float(convert.byteToFloat(hdfData,pos));
-		// data[i][j] = fval.floatValue();
-	  break;
-	    
-	//case HDFConstants.DFNT_DOUBLE:
-	case HDFConstants.DFNT_FLOAT64:
-		double ddat[] = (double[])hdfData;
-		data[i][j] = (float)ddat[pos];	
-		// Double dval = new Double(convert.byteToDouble(hdfData,pos));
-		// data[i][j] = dval.floatValue();
-	  break;
-	
-	default:
-	  data[i][j] = 0;
-	}
-	    
-	// position moved
-	pos += datasize;
-	    
-      }
-    } 
-    
-  } 
-
-  /** draw the spreadsheet */
-  public synchronized void paint(Graphics g) {
-
-    // get background color
-    Color bColor = getBackground();
-
-    // get current graphics color 
-    Color gColor = g.getColor();
-    
-    // get current canvas size
-    int w = getSize().width;
-    int h = getSize().height;
-    
-    // compute the current lines & colnums based on the canvas size
-    cellNumberByColnum = w / CellRect.width  ;
-    cellNumberByRow    = h / CellRect.height ;
-    
-    //g.translate(-tx,-ty);
-
-    // repaint the info panel
-    datFrame.rowInfoCanvas.init(h-2);
-    datFrame.colnumInfoCanvas.init(w-2);
-    
-    int startx = 1;
-    int starty = 1;
-	
-    // draw the rectangle
-    g.drawRect(startx,starty,w-2,h-2);
-
-    // draw the selected area
-    if (drawFlag) {
-      // set background color
-      g.setColor(Color.cyan);
-
-      // draw cell
-      if (drawRectangle != null)
-	g.fillRect(drawRectangle.x, drawRectangle.y, 
-		   drawRectangle.width-1, drawRectangle.height-1);
-    }
-
-    // set color
-    g.setColor(Color.lightGray);
-    
-    // draw grid
-    startx = 1;
-    starty = 1;
-   	
-    // draw the grid (Horizontal)
-    for (int i=1; i<= cellNumberByRow; i++) {
-      starty += CellRect.height;
-      //g.drawLine(startx+1, starty+1, w-3, starty+1);
-      g.draw3DRect(startx+1, starty+1, w-3, 1, true);
-    }
-	
-    startx = 1;
-    starty = 1;
-    // draw the grid (Vertical)
-    for (int i=1; i<= cellNumberByColnum; i++) {
-      startx += CellRect.width;
-      g.draw3DRect(startx+1, starty+1, 1, h-3, true);
-    }  
-    
-    // reset the color
-    g.setColor(gColor);
-  	
-    for (int i =0; i<cellNumberByRow; i++) {
-      for (int j=0; j<=cellNumberByColnum; j++) {
-	// display position
-	startx = CellRect.width * j + 4;
-	starty = CellRect.height * (i+1) ;
-	
-	// display float number
-	float dispNumber = 0;
-	if (((vOffset+i) < datasetRange.height) &&
-	    ((hOffset+j) < datasetRange.width))    {
-		
-	  // assign value
-	  dispNumber = data[vOffset+i][hOffset+j];
-         
-	  g.drawString(Float.toString(dispNumber), startx, starty);
-		
-	}
-	else
-	  continue; 
-      }
-    } 
-
-  }
 
   /**
    * Updates the component. This method is called in
@@ -1767,7 +1590,6 @@ class JHVDataRangeCanvas extends Canvas {
   Graphics 	offGraphics;
 
   // dimension scale info.
-  int		nt;
   Object	xscale;
   Object	yscale;
   boolean	scaleFlag = false;
@@ -1787,18 +1609,17 @@ class JHVDataRangeCanvas extends Canvas {
     orientation = direction;
 
     // set the current used font
-    font 	    = frame.dataCanvas.dataFont;
+    font = frame.dataCanvas.dataFont;
 
     // Sets the font of the component.
     setFont(font);
 
     // dimension scale info.
-    nt  = datFrame.imgCanvas.scaleDataType;
     xscale = datFrame.imgCanvas.xscale;
     yscale = datFrame.imgCanvas.yscale;
     scaleFlag = ((xscale!=null)&&(yscale!=null));
 
-    if (scaleFlag)	scaleFactor = 2;
+    if (scaleFlag) scaleFactor = 2;
     // initialize 
     init();
   }
@@ -1853,6 +1674,8 @@ class JHVDataRangeCanvas extends Canvas {
 
     // cell size of the spreadsheet
     Rectangle rect = datFrame.dataCanvas.CellRect;
+
+    //double fscale = 0;
   
     // the row and colnum of the current spreadsheet
     int rowNumber  = datFrame.dataCanvas.cellNumberByRow;
@@ -1872,16 +1695,16 @@ class JHVDataRangeCanvas extends Canvas {
       int kk = datFrame.dataCanvas.hOffset + 
 	datFrame.dataCanvas.datasetRange.x +
 	datFrame.imgCanvas.subsetRange.x ;
-      
-      for (int i=0; i<=colNumber; i++)  
+
+      for (int i=0; i<=colNumber; i++)
 	if ((datFrame.dataCanvas.hOffset + i) <
 	    datFrame.dataCanvas.datasetRange.width)  {
 	  x = rectLen*scaleFactor + rect.width*i + 4;
 	  // g.drawString(Integer.toString(kk+i),x, 20);
 
 	  if (scaleFlag) { // draw scale
-		float fscale = ImageDataConverter.getData(xscale,nt,kk+i);
-		g.drawString(Float.toString(fscale),x, 20);
+		//fscale = ImageDataConverter.getData(xscale,nt,kk+i);
+		g.drawString((Array.get(xscale, kk+i)).toString(),x, 20);
 	  }
 	  else
 	  	g.drawString(Integer.toString(kk+i),x, 20);
@@ -1901,15 +1724,15 @@ class JHVDataRangeCanvas extends Canvas {
       int kk = datFrame.dataCanvas.vOffset + 
 	datFrame.dataCanvas.datasetRange.y + 
 	datFrame.imgCanvas.subsetRange.y ;
-      
+
       for (int i=1; i<=rowNumber; i++)  
 	if ((datFrame.dataCanvas.vOffset + i) <=
 	    datFrame.dataCanvas.datasetRange.height)  {
 	  y = rect.height*i;
 
 	  if (scaleFlag) {
-		float fscale = ImageDataConverter.getData(yscale,nt,kk+i-1);
-		g.drawString(Float.toString(fscale),1,y);
+		//fscale = ImageDataConverter.getData(yscale,nt,kk+i-1);
+		g.drawString((Array.get(yscale, kk+i-1)).toString(),1,y);
 	  }
 	  else
 		g.drawString(Integer.toString(kk+i-1), 1, y);

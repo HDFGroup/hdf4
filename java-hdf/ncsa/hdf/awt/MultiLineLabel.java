@@ -27,7 +27,9 @@ import java.util.StringTokenizer;
  * @version 1.0, 01/13/98
  * @author Peter Cao (xcao@ncsa.uiuc.edu)
  */
-public class MultiLineLabel extends Canvas {
+public class MultiLineLabel
+    extends Canvas
+{
     public static final int LEFT = 0; // Alignment constants
     public static final int CENTER = 1;
     public static final int RIGHT = 2;
@@ -41,7 +43,7 @@ public class MultiLineLabel extends Canvas {
     protected int max_width;            // The width of the widest line
     protected int alignment = LEFT;     // The alignment of the text.
     protected Image logo = null;        // The logo
-    protected int logo_w=0, logo_h=0; // The logo width and height
+    protected int logo_w=0, logo_h=0;   // The logo width and height
 
     // Here are four versions of the cosntrutor.
     // Break the message up into separate lines.
@@ -52,16 +54,19 @@ public class MultiLineLabel extends Canvas {
         this.margin_height = margin_height;
         this.alignment = alignment;
     }
+
     public MultiLineLabel(String message, int margin_width, int margin_height) {
         this(message, margin_width, margin_height, LEFT);
     }
+
     public MultiLineLabel(String message, int alignment) {
         this(message, 10, 10, alignment);
     }
+
     public MultiLineLabel(String message) {
         this(message, 10, 10, LEFT);
     }
-    
+
     // This method breaks a specified message up into an array of lines.
     // It uses the StringTokenizer utility class.
     protected void newLabel(String message) {
@@ -133,15 +138,15 @@ public class MultiLineLabel extends Canvas {
     // This method is called by a layout manager when it wants to
     // know how big we'd like to be.
     public Dimension getPreferredSize() {
-        return new Dimension(max_width+2*margin_width+logo_w,
-        Math.max(num_lines*line_height+2*margin_height, logo_h));
+        return new Dimension(max_width+2*margin_width+Math.max(50,logo_w),
+        Math.max(num_lines*line_height+2*margin_height, Math.max(50,logo_h)));
     }
     
     // This method is called when the layout manager wants to know
     // the bare minimum amount of space we need to get by.
     public Dimension getMinimumSize() {
-        return new Dimension(max_width+logo_w,
-        Math.max(num_lines * line_height, logo_h));
+        return new Dimension(max_width+Math.max(50,logo_w),
+        Math.max(num_lines * line_height, Math.max(50,logo_h)));
     }
     
     // This method draws the message (applets use the same method).
@@ -160,7 +165,7 @@ public class MultiLineLabel extends Canvas {
         for(int i = 0; i < num_lines; i++, y += line_height) {
             switch(alignment) {
             case LEFT:
-                x = margin_width+logo_w+5; break;
+                x = margin_width+Math.max(50,logo_w)+5; break;
             case CENTER:
             default:
                 x = (d.width - line_widths[i]-logo_w)/2; break;

@@ -70,7 +70,7 @@ jint access)
 			if (jc == NULL) {
 				return -1; /* exception is raised */
 			}
-			(*env)->ThrowNew(env,jc,HEstring(errval));
+			(*env)->ThrowNew(env,jc,HEstring((int16)errval));
 		}
 		return -1;
 	}

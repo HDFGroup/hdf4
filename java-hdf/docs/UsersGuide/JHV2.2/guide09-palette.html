@@ -1,0 +1,134 @@
+<HTML>
+<HEAD><TITLE>JHV User's Guide: Palette Editor</TITLE></HEAD>
+
+<!-- BEGIN OF THE BODY -->
+<BODY>
+
+<a href="index.html">[Index]</a>
+<a href="guide08-spreadsheet.html">[Prev]</a>
+<a href="guide10a-ascii.html">[Next]</a>
+<a href="guide10-ascii2hdf.html">[Bottom]</a>
+<p><hr noshade size=1>
+
+<H1> Chapter 10: The Palette Editor </H1>
+The palette editor is a tool to change image colors. The color palette displays 
+the color values for the current foreground and background colors. Changing the 
+palette will change the color of the image.  The palette editor uses the 
+RGB (red, green and blue) model to store image colors. Using this model, each of 
+the 256 colors is stored as some blend of varying quantities of red, green, and 
+blue. Any or all of the three components can be changed for any pixel, changing 
+the color displayed for that pixel. 
+<DL>
+  <DT><A HREF="#guide09-window"> 10.1 Palette Editor Window</A> 
+  <DT><A HREF="#guide09-menu"> 10.2 Palette Menu</A> 
+  <DT><A HREF="#guide09-option"> 10.3 Palette Options</A>
+  <DT><A HREF="#guide09-palette"> 10.4 Saving a New Color Palette</A>
+</DL> 
+<p><hr noshade size=1>
+
+<a name=guide09-window></a>
+<h2>10.1 Palette Editor Window</h2>
+<p>To start the palette editor, you can either select <b>New Palette</b> 
+from the <b>Palette</b> menu in the image window, or press the 
+<b>Palette</b> button in the animation window.  Either action will open 
+the palette editor window.
+<p>
+The palette editor window provides several features for palette control. 
+The <b>Undo</b> button, on the left, can be used at any point to revert 
+to the original palette settings.  Four color panels appear in the middle 
+of the window: the edited color panel, the red color panel, the green 
+color panel, and the blue color panel.  To the right are several control 
+and selection buttons: <b>flip</b>, <b>fiddle</b>, <b>random</b>, 
+<b>point</b>, and <b>line</b>.
+<p>
+<center>
+<IMG SRC="images/palette.gif">
+<br>Figure 10.1 The palette editor
+</center>
+
+<a name=guide09-menu></a>
+<h2>10.2 Palette Menu</h2>
+<P>The palette editor provides several predefined color scales. You can 
+select a predefined color scale from the palette menu in the palette 
+editor and modify it to make the best color palette for the image.
+<DL>
+<DT><DD>
+  <TABLE border="1" cellpadding="5" bgcolor="#C0C0C0">
+    <TR><TD>GrayScale
+    <BR>GrayScale-Banded
+    <BR>GrayScale-Inverted
+    <BR>Rainbow
+    <BR>Rainbow-Banded
+    <BR>Rainbow-Inverted
+    <BR>Rainbow-Striped
+  </TABLE>
+</DL>
+
+<DL>
+<DT><DD><b>Grayscale</b> accepts the grayscale built-in palette for 
+    the current image.
+<DT><DD><b>Grayscale-banded</b> is another type of grayscale palette.
+<DT><DD><b>Rainbow</b> is a linear hue ramp from purple to red at 
+    maximum saturation and value.
+<DT><DD><b>Rainbow-banded</b> is another type of rainbow palette.
+</DL>
+
+<a name=guide09-option></a>
+<h2>10.3 Palette Options</h2>
+
+<DL>
+
+<DT><DD>Each color panel has a <b>Point</b> and a <b>Line</b> button. 
+The default setting is <b>Point</b>, allowing you to move the cursor 
+on the panel and change the color table point by point. <b>Line</b>
+allows you to change the color table line by line. The following is 
+an example of changing color by line and by point.
+  <p>
+  <center>
+  <IMG SRC="images/palette-change.gif">
+  <br>Figure 10.2 Color panel
+  </center>
+  
+  <DT><DD><b>Undo</b> recovers the palette table from all the changes 
+    and restores the original color values.
+
+  <DT><DD><b>Fiddle</B> is used to squeeze or expand the color table. 
+    To squeeze or expand the color table, first select <b>Fiddle</b>, 
+    then move the cursor up or down on the color panels.
+
+  <DT><DD><b>Flip</b> flips the color table. It replaces the first 
+    value in the selected interval with the last value for each 
+    displayed component, second value with the next to last, and so on.
+
+  <DT><DD><b>Random</b> randomly sets the palette values. To select 
+    random palette values, first make sure that <b>Fiddle</b> is 
+    unselected, and then select <b>Random</b>.
+
+</DL>
+
+<a name=guide09-palette></a>
+<h2>10.4 Saving a New Color Palette</h2>
+To save a new color palette and attach it to an image, select 
+<b>Set Palette</b> from the image window <b>Palette</b> menu 
+before closing the palette editor.
+
+
+<!-- BEGIN OF FOOTER INFO -->
+<P><hr noshade size=1>
+<a href="index.html">[Index]</a>
+<a href="guide08-spreadsheet.html">[Prev]</a>
+<a href="guide10a-ascii.html">[Next]</a>
+<a href="guide10-ascii2hdf.html">[Bottom]</a>
+<p><hr noshade size=1>
+<font face="arial,helvetica" size="-1">
+  <a href="http://www.ncsa.uiuc.edu/">
+  <img border=0 src=http://www.ncsa.uiuc.edu/Images/NCSAhome/footerlogo.gif alt="NCSA"><br> The National Center for Supercomputing Applications</A><br>
+  <a href="http://www.uiuc.edu/">University of Illinois at Urbana-Champaign</a><br>
+<p><A HREF="mailto:hdfhelp@ncsa.uiuc.edu">hdfhelp@ncsa.uiuc.edu</A>
+</FONT>
+<!- END OF FOOTER INFO -->
+
+</BODY>
+</HTML>
+
+

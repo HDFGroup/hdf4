@@ -134,11 +134,9 @@ public class HDFTreeNode extends TreeNode
      */
     public void expandCollapse(HDFTree tree)
     {
-        int fid = applet_.fid;
         super.expandCollapse(tree);
         eraseImage();
         HDFObjectNode  node = (HDFObjectNode)(tree.selectedNode.userObject);
-
         applet_.jhvFrame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         dispMessage(node.information);
 
@@ -190,12 +188,19 @@ public class HDFTreeNode extends TreeNode
     {
         JHV jhv = this.applet_;
         eraseImage();
-        
+
         jhv.jhvFrame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         node = (HDFObjectNode)(tree.selectedNode.userObject);
         node.preferedImageSize = PREFEREDIMAGESIZE;
         jhv.hdfCanvas.setObject(node);
         HDFObject hdfObject = jhv.getHDFObject(node);
+
+        String info = hdfObject.getInformation();
+        if (info!=null)
+        {
+            info = info.trim();
+            if (info.length()>0) jhv.infoText.setText(info);
+        }
 
         try
         {
@@ -232,7 +237,7 @@ public class HDFTreeNode extends TreeNode
                     break;
                 case HDFObjectNode.Vdata:
                     HDFVdata vdata = (HDFVdata) hdfObject;
-                    if (jhv.vdataFrameDisplayed)
+                    if (jhv.vdataFrameDisplayed && jhv.vdataFrame != null)
                         jhv.vdataFrame.setup(jhv, vdata);
                     else
                     {
@@ -244,10 +249,10 @@ public class HDFTreeNode extends TreeNode
                     break;
             }
         }
-        catch (Exception ex) {}
+        catch (Exception ex) { jhv.jhvFrame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));}
         jhv.jhvFrame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         
-        System.gc();
+        //System.gc();
     }
 
     /**
@@ -271,11 +276,9 @@ public class HDFTreeNode extends TreeNode
     public void dispHdfRis8(HDFObject hdfObject)
     {
         //System.out.println("HDFTreeNode::dispHdfRis8()");
-
         HDFRIS8 ris8 = (HDFRIS8) hdfObject;
         byte[] imagePalette = ris8.getImagePalette();
-        Object ris8Data = ris8.getImageData();
-
+        Object ris8Data = ris8.getData();
         int imageArgv[] = ris8.getImageArgv();
         int dataType = imageArgv[1];
         Dimension imageSize = ris8.getCurrentImageSize();
@@ -288,7 +291,7 @@ public class HDFTreeNode extends TreeNode
 
         if (img != null)
         {
-            applet_.hdfCanvas.setOriginalImageSize(imageSize.width,imageSize.height);
+            applet_.hdfCanvas.setOriginalImageSize(w,h);
             applet_.hdfCanvas.setImage(img, palImage);
             applet_.hdfCanvas.repaint();
         }
@@ -305,7 +308,7 @@ public class HDFTreeNode extends TreeNode
         HDFRIS24 ris24 = (HDFRIS24) hdfObject;
         byte[] imagePalette = ris24.getImagePalette();
 
-        Object ris24Data = ris24.getImageData();
+        Object ris24Data = ris24.getData();
         int imageArgv[] = ris24.getImageArgv();
         int dataType = imageArgv[1];
         Dimension imageSize = ris24.getCurrentImageSize();
@@ -319,7 +322,7 @@ public class HDFTreeNode extends TreeNode
         if (img != null)
         {
             applet_.hdfCanvas.setOriginalImageSize(w,h);
-            applet_.hdfCanvas.setImage(img);
+            applet_.hdfCanvas.setImage(img,palImage);
             applet_.hdfCanvas.repaint();
         }
     }
@@ -334,7 +337,7 @@ public class HDFTreeNode extends TreeNode
     {
         HDFGR gr = (HDFGR) hdfObject;
         byte[] imagePalette = gr.getImagePalette();
-        Object grData = gr.getImageData();
+        Object grData = gr.getData();
         int imageArgv[] = gr.getImageArgv();
         int dataType = imageArgv[1];
         Dimension imageSize = gr.getCurrentImageSize();
@@ -367,9 +370,11 @@ public class HDFTreeNode extends TreeNode
      */
     public void dispHdfSDS(HDFObject hdfObject)
     {
+        //System.out.println("HDFTreeNode.dispHdfSDS()");
+
         HDFSDS sds = (HDFSDS) hdfObject;
         byte[] imagePalette = sds.getImagePalette();
-        Object sdsData = sds.getImageData();
+        Object sdsData = sds.getData();
         int imageArgv[] = sds.getImageArgv();
         int dataType = imageArgv[1];
         Dimension imageSize = sds.getCurrentImageSize();
@@ -482,7 +487,7 @@ public class HDFTreeNode extends TreeNode
             theNode = (HDFObjectNode)children.elementAt(i);
             ris8 = (HDFRIS8)applet_.getHDFObject(theNode);
             imagePalette = ris8.getImagePalette();
-            ris8Data = ris8.getImageData();
+            ris8Data = ris8.getData();
             imageArgv = ris8.getImageArgv();
             dataType = imageArgv[1];
             imageSize = ris8.getCurrentImageSize();
@@ -500,5 +505,6 @@ public class HDFTreeNode extends TreeNode
         else if (viewType == JHV.LAYER)
             applet_.layeredImages = new JHVLayeredImage(images);
     }
+
 
 }

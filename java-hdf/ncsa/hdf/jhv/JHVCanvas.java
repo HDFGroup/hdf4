@@ -36,13 +36,16 @@ import ncsa.hdf.message.*;
 
 /** This class define the image canvas. When click the hdf node, the image can
  *  be painted on this canvas */
-public class JHVCanvas extends Canvas implements MouseListener, 
-                                                 MouseMotionListener {
+public class JHVCanvas
+  extends Canvas
+  implements MouseListener, MouseMotionListener
+{
  
-  JHV		app;
+  JHV app;
+  JHVImageFrame imageFrame;
   
-  Image 	  	currentImage;
-  Image           currentPaletteImage;
+  Image currentImage;
+  Image currentPaletteImage;
   
   HDFObjectNode	node;
   
@@ -249,12 +252,6 @@ public class JHVCanvas extends Canvas implements MouseListener,
       g.drawString(infoStr, x, y);
 
     } else {
-      // draw the frame
-      // setBackground(Color.black);
-
-      //g.setColor(Color.red);
-
-      //g.drawRect(0,0,getSize().width, getSize().height);
       g.setColor(Color.white);
       g.draw3DRect(1,1,getSize().width-2,getSize().height-2,false);
 	
@@ -285,15 +282,6 @@ public class JHVCanvas extends Canvas implements MouseListener,
 		    this);
       }
       
-      // make annotation for image
-      if ((mouseOnImageFlag) && (node != null)) {
-	
-	mouseOnImageFlag  = false;
-	
-	// write info. on the top of the image
-	writeInfo(g, mx, my, "Highlight image");
-	
-      }
     }
   
     // set the image range
@@ -389,7 +377,7 @@ public class JHVCanvas extends Canvas implements MouseListener,
     
     // draw the current frame to the off-screen 
     paint(offGraphics);
-    
+
     //then draw the image to the on-screen 
     g.drawImage(offScreenImage, 0, 0, null);
     
@@ -448,25 +436,7 @@ public class JHVCanvas extends Canvas implements MouseListener,
     	repaint();
   }
 
-  /**
-   * Called if the mouse moves (the mouse button is up)
-   * @param evt the event
-   * @param x the x coordinate
-   * @param y the y coordinate
-   * @see java.awt.Component#mouseMove
-   */
-
-  public void mouseMoved(MouseEvent me)
-  {
-    int x = me.getX();
-    int y = me.getY();
- 
-    // check mouse position, then do something to that.
-    checkMousePosition(x,y);
-    repaint();
-  }
-						   
-
+  public void mouseMoved(MouseEvent me) {}
   public void mouseClicked(MouseEvent me) {}
 
   public void mousePressed(MouseEvent me) {
@@ -576,10 +546,11 @@ public class JHVCanvas extends Canvas implements MouseListener,
       // JHVImageFrame frame = new JHVImageFrame(this);
       int totalArea = subsetRange.width*subsetRange.height;
       if ( totalArea > 0 ) {
-          JHVImageFrame frame = new JHVImageFrame(this, getSliceInfo(), subsetRange);
-          frame.popup();
+          if (imageFrame != null) imageFrame.close();
+          imageFrame = new JHVImageFrame(this, getSliceInfo(), subsetRange);
+          imageFrame.popup();
       }
-      
+
       // set cursor type to "DEFAULT_CURSOR"
       ((Component)app.jhvFrame).setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       
@@ -660,8 +631,6 @@ public class JHVCanvas extends Canvas implements MouseListener,
    public void setDataRange(double[] range) {
 	this.range = range;
   }
-
- 
 
  public double getMaxValue() {
 	if (range != null)

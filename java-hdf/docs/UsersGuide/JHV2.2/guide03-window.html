@@ -1,0 +1,237 @@
+<HTML>
+<HEAD><TITLE>JHV User's Guide: Image Window</TITLE></HEAD>
+
+<!-- BEGIN OF THE BODY -->
+<BODY>
+
+<a href="index.html">[Index]</a>
+<a href="guide02-start.html">[Prev]</a>
+<a href="guide04-process.html">[Next]</a>
+<a href="guide10-ascii2hdf.html">[Bottom]</a>
+<p><hr noshade size=1>
+
+<H1> Chapter 4: Manipulating Images in the Image Window </H1>
+<p>The image window provides the tools for displaying and processing images and 
+for saving data. This chapter introduces the basic components of the image 
+window; chapters 5 through 10 cover the details of image processing and analysis, 
+animation and overlays, spreadsheet usage, and palette editing.
+<p>
+<table width=100%>
+<tr><td valign=top>
+  <A HREF="#guide03-window"> 4.1 The Image Window</A> 
+  <br><A HREF="#guide03-open"> 4.2 Opening the Image Window</A> 
+  <br><A HREF="#guide03-menu"> 4.3 Menu Commands</A> 
+  <br><A HREF="#guide03-image"> 4.4 Image and Zoom Panels</A> 
+  <br><A HREF="#guide03-button"> 4.5 Control Buttons</A> 
+</td><td valign=top>
+  <a href="guide04-process.html">5 Image Processing</a> 
+  <br><a href="guide05-analysis.html">6 Image Analysis</a>
+  <br><a href="guide06-animation.html">7 Animation</a> 
+</td><td valign=top>
+  <a href="guide07-layer.html">8 Image Overlays</a>
+  <br><a href="guide08-spreadsheet.html">9 Spreadsheets</a>
+  <br><a href="guide09-palette.html">10 Palette Editor</a>
+</td></tr>
+</table> 
+
+<P><hr noshade size=1>
+
+<A name="guide03-window"></A>
+<h2>4.1 The Image Window</h2>
+Upon viewing a compressed preview image in the main window, you can 
+select the entire image or a subsampled portion for more detailed viewing 
+in the image window.  The image window also provides access to the tools 
+for processing and manipulating images and for saving data. 
+<p>
+The image window consists of the following components and panels: 
+<dl>
+  <dt>Menubar
+    <dd>Provides access to tools for displaying and editing images.
+  <dt>Image panel
+    <dd>Displays the image or subsample, as selected from the preview image.
+  <dt>Zoom panel
+    <dd>Displays an area selected from the image panel with a zoom factor 
+        of 1x, 2x, 5x, 8x, or 10x.
+  <dt>Control buttons
+    <dd>Control the display of spreadsheets or animations.
+  <dt>Status bar
+    <dd>Displays various staus messages.
+</dl>
+
+<P>
+<center>
+<IMG SRC="images/image-window.gif">
+<br>Figure 4.1 The JHV image window
+</center>
+
+<a name="guide03-open"></a>
+<h2>4.2 Opening the Image Window</h2>
+The image window opens automatically when you indicate what portion of 
+the image you want to see in detail.  To view the entire image, simply 
+click on the preview image in the main window.  For a detailed view of 
+a portion of the previewed image or data, drag the mouse to highlight 
+the desired subsample. The selected image or subsample will automatically 
+appear in the image window in full resolution. 
+<p>
+
+
+<a name="guide03-menu"></a>
+<h2>4.3 Menu Commands</h2>
+The image window menu bar provides access to several tools for viewing, 
+manipulating, editing, and saving images and data.
+
+<DL>
+
+  <DT><b>File menu</b>
+  <DD>
+    <TABLE border="1" cellpadding="5" bgcolor="#C0C0C0">
+      <TR><TD>Save As HDF
+      <BR>Save As Text
+      <TR><TD>Close
+    </TABLE>
+    <p>
+    <B>Save As HDF</B> saves the current data to a new HDF file, 
+    preserving the data type.
+    <p>
+    <b>Save As Text</B> saves the current data into a new ASCII file, which
+    will adhere to the 
+    <a href=guide10-ascii2hdf.html>HDF-ASCII Interchange Format</a>.
+    <p>
+    <b>Close</b> closes the image window.
+
+  <p>
+  <DT><b>Edit menu</b> 
+  <DD>
+    <TABLE border="1" cellpadding="5" bgcolor="#C0C0C0">
+      <TR><TD>Undo All
+      <TR><TD>Undo
+    </TABLE>
+    <p>
+    <B>Undo All</b> undoes all the changes that have been made to the 
+    current image. 
+    <p>
+    <b>Undo</b> undoes the most recent change that has been made to the 
+    current image.
+
+  <p>
+  <DT><b>View menu</b> 
+  <DD>
+    <TABLE border="1" cellpadding="5" bgcolor="#C0C0C0">
+      <TR><TD>Default
+      <BR>Digital Value
+      <BR>Pixel Value
+      <TR><TD>No Plot
+      <br>X-Y Plot
+      <br>Histogram
+    </TABLE>
+    <p>
+    <B>Default</B> hides the data value.
+ 
+    <p>
+    <b>Digital Value</b> displays the value of the <i>data</I> under mouse pointer.
+    <p>
+    <b>Pixel Value</b> displays the value of the <i>pixel</i> under the mouse pointer.
+    <p>
+    <b>No Plot</b> disables the plot display.
+    <p>
+    <b>X-Y Plot</b> creates an X-Y plot of image values (pixel or digital value) 
+    along the line crossing the horizontal axis.
+    <p>
+    <b>Histogram</b> creates a plot of the distribution of image values for the 
+    selected image area.
+
+  <p>
+  <DT><b>Palette menu</b> 
+  <DD>
+    <TABLE border="1" cellpadding="5" bgcolor="#C0C0C0">
+      <TR><TD>New Palette
+      <TR><TD>Set Palette
+    </TABLE>
+    <p>
+    <B>New Palette</b> opens the palette editor to create a new 
+    color lookup table for the current image.
+    <p>
+    <b>Set Palette</b> applies the current color lookup table to the 
+    images in the current display.
+
+  <p>
+  <DT><b>Image, Filter, and Contour menus</b> 
+
+  <DD>These menus provide access to the image processing tools and are 
+      discussed in <a href="guide04-process.html">Chapter 5: Image Processing</a>.
+
+  <p>
+  <DT><b>Data menu</b> 
+  <DD>
+    <TABLE border="1" cellpadding="5" bgcolor="#C0C0C0">
+      <TR><TD>Show Statistics
+      <TR><TD>Convert Data
+    </TABLE>
+    <p>
+    <B>Show Statistics</b> displays the basic statistics of the current image 
+    or data.
+    <p>
+    <b>Convert Data</b> converts the current data with the general power 
+    function Y = a + b*X^c.
+    The converted data can be save to an HDF or HAIF file.
+
+</DL>
+
+<a name="guide03-image"></a>
+<h2>4.4 Image and Zoom Panels</h2>
+<P>The selected image and selected close-ups, or <em>zoom</em>ed images,
+appear in the image and zoom panels in the center of the image window.
+
+<DL>
+  <DT><b>Image panel</b>
+  <DD>The image panel, on the left, displays the selected image at
+      full resolution.
+      <p>
+  <DT><b>Zoom panel</b>
+  <DD>The zoom panel, on the right, displays the details of a specific area 
+      of the image. Select a zoom factor, then drag the mouse on the image; 
+      the selected image area will appear in the zoom panel at the
+      selected zoom factor.
+</DL>
+
+<a name="guide03-button"></a>
+<h2>4.5 Control Buttons </h2>
+
+<DL>
+  <DT><b>Spreadsheet</b>
+  <DD>Displays the data for the selected image area.
+      See <a href=guide08-spreadsheet.html>Spreadsheet</a> for details.
+      <p>
+  <DT><b>Animation</b>
+  <DD>Opens the animation window, allowing you to "play" a 
+      sequence of 2D image slices that make up a 3D image.
+      See <a href=guide06-animation.html>Animation</a> for details.
+      <p>
+  <DT><b>Next</b> and <b>Previous</b>
+  <DD>Display the next 2D image in the sequence and the preceding 2D image,
+      respectively.
+      <p>
+  <DT><b>Dismiss</b>
+  <DD>Closes the image window.
+
+</DL>
+
+<!-- BEGIN OF FOOTER INFO -->
+<P><hr noshade size=1>
+<a href="index.html">[Index]</a>
+<a href="guide02-start.html">[Prev]</a>
+<a href="guide04-process.html">[Next]</a>
+<a href="guide10-ascii2hdf.html">[Bottom]</a>
+<p><hr noshade size=1>
+<font face="arial,helvetica" size="-1">
+  <a href="http://www.ncsa.uiuc.edu/">
+  <img border=0 src=http://www.ncsa.uiuc.edu/Images/NCSAhome/footerlogo.gif alt="NCSA"><br> The National Center for Supercomputing Applications</A><br>
+  <a href="http://www.uiuc.edu/">University of Illinois at Urbana-Champaign</a><br>
+<p><A HREF="mailto:hdfhelp@ncsa.uiuc.edu">hdfhelp@ncsa.uiuc.edu</A>
+</FONT>
+<!- END OF FOOTER INFO -->
+
+</BODY>
+</HTML>
+
+

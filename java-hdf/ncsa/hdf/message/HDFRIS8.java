@@ -62,7 +62,8 @@ public class HDFRIS8 extends HDFGR
     public void service()
     {
         //System.out.println("HDFRIS8::service()");
-        try { information = getRis8 (hdfFilename, nodeObject); }
+        this.hdf =  new HDFLibrary();
+        try { information = getRis8 (filename, nodeObject); }
         catch (Exception e) { information = "ERROR: exception in HDFRIS8.getRis8()"; }
     }
 
@@ -73,6 +74,11 @@ public class HDFRIS8 extends HDFGR
      *  @param filename   the string of the hdf file name
      *  @param node       the HDFObjectNode
      *  @return           the string containing the 8-bit raster image information
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      */
     public static String readInfo (HDFLibrary hdf, String filename,
         HDFObjectNode node) throws HDFException
@@ -112,6 +118,11 @@ public class HDFRIS8 extends HDFGR
      *  @param filename   the string of the hdf file name
      *  @param node       the HDFObjectNode
      *  @return           the error message or HDFRIS8 information
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      */
     private String getRis8 (String filename, HDFObjectNode node)
         throws HDFException
@@ -125,9 +136,8 @@ public class HDFRIS8 extends HDFGR
         boolean hasPalette   = false;
         int     imageWidth   = 0;
         int     imageHeight  = 0;
-        byte[]  imageData    = null;
+        byte[]  data    = null;
         byte[]  imagePalette = null;
-        int     imageNumber  = 1;
 
         if ( !hdf.DFR8readref(filename, ref) )
             return ("ERROR: native call to HDFLibrary.DFR8readref() failed.");
@@ -135,24 +145,22 @@ public class HDFRIS8 extends HDFGR
         // get HDF image information
         if ( !hdf.DFR8getdims(filename,argv,argB) )
             return ("ERROR: native call to HDFLibrary.DFR8getdims() failed.");
-
         hasPalette   = argB[0];
         imageWidth   = argv[0];
         imageHeight  = argv[1];
-        imageData    = new byte[imageWidth*imageHeight];
+        data    = new byte[imageWidth*imageHeight];
         imagePalette = new byte[256*3];
 
         // read the image
-        if ( !hdf.DFR8getimage(filename, imageData,imageWidth,imageHeight,imagePalette) )
+        if ( !hdf.DFR8getimage(filename, data,imageWidth,imageHeight,imagePalette) )
         {
             return ("ERROR: native call to HDFLibrary.DFR8getimage() failed.");
         }
-
         this.originalImageSize = new Dimension(imageWidth, imageHeight);
         this.selectedImageSize = new Dimension(imageWidth, imageHeight);
-        this.imageData = imageData;
+        this.data = data;
         this.imagePalette = imagePalette;
-        int temp[] = {imageNumber, HDFConstants.DFNT_UINT8};
+        int temp[] = {1, HDFConstants.DFNT_UINT8};
         this.imageArgv = temp;
 
         return "";

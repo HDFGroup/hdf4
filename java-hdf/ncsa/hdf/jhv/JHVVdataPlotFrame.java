@@ -963,7 +963,8 @@ public class JHVVdataPlotFrame  extends Frame
     plotCanvas.repaint();
     
     // show component of the frame
-    pack();
+    //pack();
+    setVisible(true);
     setSize(500,400);
     show();
     

@@ -617,6 +617,7 @@ else
   echo "$ac_t""no" 1>&6
 fi
 
+if test -z "$HDFL" ; then
 while test -z "$HDFL" ; do
 	/bin/echo $ac_n "Please enter the path for the HDF libraries (e.g., /usr/local): "
 	read HL
@@ -624,6 +625,18 @@ while test -z "$HDFL" ; do
 		HDFL=$HL/lib/libdf.a
 	fi
 done
+else
+	/bin/echo $ac_n "Do you want to use the HDF libraries from "$HDFL"? (y/n)  y "
+	read ANS
+	if test "$ANS" = "n" ; then
+		HDFL=""
+		/bin/echo $ac_n "Please enter the path for the HDF libraries (e.g., /usr/local): "
+		read HL
+		if test \( ! -z "$HL" \) ; then
+			HDFL=$HL/lib/libdf.a
+		fi
+	fi
+fi
 if test -f "$HDFL" ; then
 	HDFLIB=`dirname $HDFL`
 	HL=`dirname $HDFLIB`
@@ -643,7 +656,7 @@ if test -f "$HDFL" ; then
 	FOUND_HDF=1	
 else
 	echo $HDFL " is not a file:  the HDF path is probably incorrect"
-	echo $ac_n "Enter a new path? (y/n)y"?
+	echo $ac_n "Enter a new path? (y/n) y "?
 	read ANS
 	if test $ANS != "y" ; then
 		exit 0
@@ -659,7 +672,7 @@ ac_cv_lib_HDFINC=$HDFINC
 echo "This product requires Java JDK 1.1.x"
 JAVABINPATH_FOUND=1
 echo $ac_n "checking "java"""... $ac_c" 1>&6
-echo "configure:663: checking "java"" >&5
+echo "configure:676: checking "java"" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_JAVA'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -668,7 +681,7 @@ fi
 
 echo "$ac_t""$ac_cv_prog_JAVA" 1>&6
 echo $ac_n "checking "javac"""... $ac_c" 1>&6
-echo "configure:672: checking "javac"" >&5
+echo "configure:685: checking "javac"" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_JAVAC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -677,7 +690,7 @@ fi
 
 echo "$ac_t""$ac_cv_prog_JAVAC" 1>&6
 echo $ac_n "checking "javadoc"""... $ac_c" 1>&6
-echo "configure:681: checking "javadoc"" >&5
+echo "configure:694: checking "javadoc"" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_JAVADOC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -685,17 +698,8 @@ else
 fi
 
 echo "$ac_t""$ac_cv_prog_JAVADOC" 1>&6
-echo $ac_n "checking "javadoc images"""... $ac_c" 1>&6
-echo "configure:690: checking "javadoc images"" >&5
-if eval "test \"`echo '$''{'ac_cv_prog_JAVADOC_IMAGES'+set}'`\" = set"; then
-  echo $ac_n "(cached) $ac_c" 1>&6
-else
-  JAVABINPATH_FOUND=0
-fi
-
-echo "$ac_t""$ac_cv_prog_JAVADOC_IMAGES" 1>&6
 echo $ac_n "checking "jar"""... $ac_c" 1>&6
-echo "configure:699: checking "jar"" >&5
+echo "configure:703: checking "jar"" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_JAR'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -707,7 +711,6 @@ if test $JAVABINPATH_FOUND -eq 1; then
 	JAVA=$ac_cv_prog_JAVA;
 	JAVAC=$ac_cv_prog_JAVAC;
 	JAVADOC=$ac_cv_prog_JAVADOC;
-	JAVADOC_IMAGES=$ac_cv_prog_JAVADOC_IMAGES;
 	JAR=$ac_cv_prog_JAR;
 fi
 
@@ -737,13 +740,11 @@ fi
 JAVA=$JAVAPATH/java
 JAVAC=$JAVAPATH/javac
 JAVADOC=$JAVAPATH/javadoc
-JAVADOC_IMAGES=$JAVAPATH/images
 JAR=$JAVAPATH/jar
 echo "Using Java binaries from: "$JAVAPATH
 ac_cv_prog_JAVA=$JAVA;
 ac_cv_prog_JAVAC=$JAVAC;
 ac_cv_prog_JAVADOC=$JAVADOC;
-ac_cv_prog_JAVADOC_IMAGES=$JAVADOC_IMAGES;
 ac_cv_prog_JAR=$JAR;
 JAVABINPATH_FOUND=1
 done
@@ -751,7 +752,7 @@ done
 echo "Checking other java directories..."
 JAVALIBPATH_FOUND=1
 echo $ac_n "checking "java support libraries"""... $ac_c" 1>&6
-echo "configure:755: checking "java support libraries"" >&5
+echo "configure:756: checking "java support libraries"" >&5
 if eval "test \"`echo '$''{'ac_cv_lib_JAVALIB'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -796,7 +797,7 @@ ac_cv_lib_JAVALIB=$JAVALIB
 JAVACLASSES=""
 JAVACLASSPATH_FOUND=1
 echo $ac_n "checking "java classes"""... $ac_c" 1>&6
-echo "configure:800: checking "java classes"" >&5
+echo "configure:801: checking "java classes"" >&5
 if eval "test \"`echo '$''{'ac_cv_lib_JAVACLASSES'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -841,60 +842,52 @@ CLASSPATH="$JAVACLASSES":"$HERE"
 
 
 SERVERCLASSES=""
-
-JAVASERVERPATH_FOUND=0
+#JAVASERVERPATH_FOUND=1
+#AC_CACHE_CHECK("java server extension",ac_cv_lib_JAVASERVERPATH,JAVASERVERPATH_FOUND=0)
+#if test $JAVASERVERPATH_FOUND -eq 1; then
+#	JAVASERVERPATH=$ac_cv_lib_JAVASERVERPATH;
+#	CLASSPATH="$JAVASERVERPATH":"$CLASSPATH"
+#	SERVERCLASSES="ncsa/hdf/server/FileServlet.class ncsa/hdf/server/HDFServer.class "
 #
-# commented out for now -- not advertised in this release
+#fi
 #
-# JAVASERVERPATH_FOUND=1
-# AC_CACHE_CHECK("java server extension",ac_cv_lib_JAVASERVERPATH,JAVASERVERPATH_FOUND=0)
-# if test $JAVASERVERPATH_FOUND -eq 1; then
-# 	JAVASERVERPATH=$ac_cv_lib_JAVASERVERPATH;
-# 	CLASSPATH="$JAVASERVERPATH":"$CLASSPATH"
-# 	SERVERCLASSES="ncsa/hdf/server/FileServlet.class ncsa/hdf/server/HDFServer.class "
-# 
-# fi
-# 
-# WANT_SERVER=0;
-# if test $JAVASERVERPATH_FOUND -ne 1; then
-# 	echo "Do you want to use the HDF Java Servelet (requires the Java Server Extension)? [y/n]"
-# 	read USE_SERVER
-# 	case $USE_SERVER in
-# 	"y")
-# 		WANT_SERVER=1;;
-# 	*)
-# 		WANT_SERVER=0;;
-# 	esac
-# fi
-# 
-# if test $WANT_SERVER -eq 1; then
-# 
-# until test $JAVASERVERPATH_FOUND -eq 1 ; do
-# 	JAVASERVER=""
-# 	while test -z "$JAVASERVER" ; do
-# 		echo "Please type the CLASSPATH of the JDK 1.1 Java Server Extension classes "
-# 		echo "(e.g., /usr/java/JDSK/classes.zip)? "
-# 		read JAVASERVER
-# 		BNAME=`basename $JAVASERVER`
-# 		if test $BNAME = "classes.zip" ; then
-# 			if test -f $JAVASERVER ; then
-# 				JAVASERVERPATH_FOUND=1
-# 			fi
-# 		elif test $BNAME = "classes" ; then
-# 			if test -d $JAVASERVER ; then
-# 				JAVASERVERPATH_FOUND=1
-# 			fi 
-# 		fi
-# 	done 
-# done
-# SERVERCLASSES="ncsa/hdf/server/FileServlet.class ncsa/hdf/server/HDFServer.class "
-# echo "Adding Java classes from "$JAVASERVER" to CLASSPATH"
-# CLASSPATH="$JAVASERVER":"$CLASSPATH";
-# ac_cv_lib_JAVASERVERPATH=$JAVASERVER;
-# fi
+#WANT_SERVER=0;
+#if test $JAVASERVERPATH_FOUND -ne 1; then
+#	echo "Do you want to use the HDF Java Servelet (requires the Java Server Extension)? (y/n) n"
+#	read USE_SERVER
+#	case $USE_SERVER in
+#	"y")
+#		WANT_SERVER=1;;
+#	*)
+#		WANT_SERVER=0;;
+#	esac
+#fi
 #
-#  end of server feature
+#if test $WANT_SERVER -eq 1; then
 #
+#until test $JAVASERVERPATH_FOUND -eq 1 ; do
+#	JAVASERVER=""
+#	while test -z "$JAVASERVER" ; do
+#		echo "Please type the CLASSPATH of the JDK 1.1 Java Server Extension classes "
+#		echo "(e.g., /usr/java/JDSK/classes.zip)? "
+#		read JAVASERVER
+#		BNAME=`basename $JAVASERVER`
+#		if test $BNAME = "classes.zip" ; then
+#			if test -f $JAVASERVER ; then
+#				JAVASERVERPATH_FOUND=1
+#			fi
+#		elif test $BNAME = "classes" ; then
+#			if test -d $JAVASERVER ; then
+#				JAVASERVERPATH_FOUND=1
+#			fi 
+#		fi
+#	done 
+#done
+#SERVERCLASSES="ncsa/hdf/server/FileServlet.class ncsa/hdf/server/HDFServer.class "
+#echo "Adding Java classes from "$JAVASERVER" to CLASSPATH"
+#CLASSPATH="$JAVASERVER":"$CLASSPATH";
+#ac_cv_lib_JAVASERVERPATH=$JAVASERVER;
+#fi
 
 echo "CLASSPATH is "$CLASSPATH
 
@@ -903,7 +896,7 @@ echo "CLASSPATH is "$CLASSPATH
 JAVAINC=""
 JAVAINCPATH_FOUND=1
 echo $ac_n "checking "java support library headers"""... $ac_c" 1>&6
-echo "configure:907: checking "java support library headers"" >&5
+echo "configure:900: checking "java support library headers"" >&5
 if eval "test \"`echo '$''{'ac_cv_lib_JAVAINC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -931,7 +924,7 @@ until test $JAVAINCPATH_FOUND -eq 1 ; do
 	else
 		"Warning:  "$JAVAINC"/jni.h is not found; this might not be JDK 1.1.x"
 		echo "This product requres JDK 1.1"
-		echo "Do you want to quit now to check that JDK 1.1 is correctly installed? (y/n)y"?
+		echo "Do you want to quit now to check that JDK 1.1 is correctly installed? (y/n) y "?
 		read ANS
 		if test $ANS != "n" ; then
 			exit 0
@@ -952,7 +945,7 @@ fi
 JHVINST_FOUND=1
 if test -z "$JHVINST" ; then
 echo $ac_n "checking "JHV install directory"""... $ac_c" 1>&6
-echo "configure:956: checking "JHV install directory"" >&5
+echo "configure:949: checking "JHV install directory"" >&5
 if eval "test \"`echo '$''{'ac_cv_lib_JHVINST'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -995,7 +988,7 @@ do
 # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:999: checking for $ac_word" >&5
+echo "configure:992: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_AWK'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1026,7 +1019,7 @@ done
 # Extract the first word of "gcc", so it can be a program name with args.
 set dummy gcc; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:1030: checking for $ac_word" >&5
+echo "configure:1023: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_CC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1055,7 +1048,7 @@ if test -z "$CC"; then
   # Extract the first word of "cc", so it can be a program name with args.
 set dummy cc; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:1059: checking for $ac_word" >&5
+echo "configure:1052: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_CC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1103,7 +1096,7 @@ fi
 fi
 
 echo $ac_n "checking whether the C compiler ($CC $CFLAGS $LDFLAGS) works""... $ac_c" 1>&6
-echo "configure:1107: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) works" >&5
+echo "configure:1100: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) works" >&5
 
 ac_ext=c
 # CFLAGS is not in ac_cpp because -g, -O, etc. are not valid cpp options.
@@ -1113,11 +1106,11 @@ ac_link='${CC-cc} -o conftest $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS 
 cross_compiling=$ac_cv_prog_cc_cross
 
 cat > conftest.$ac_ext <<EOF
-#line 1117 "configure"
+#line 1110 "configure"
 #include "confdefs.h"
 main(){return(0);}
 EOF
-if { (eval echo configure:1121: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest; then
+if { (eval echo configure:1114: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest; then
   ac_cv_prog_cc_works=yes
   # If we can't run a trivial program, we are probably using a cross compiler.
   if (./conftest; exit) 2>/dev/null; then
@@ -1137,12 +1130,12 @@ if test $ac_cv_prog_cc_works = no; then
   { echo "configure: error: installation or configuration problem: C compiler cannot create executables." 1>&2; exit 1; }
 fi
 echo $ac_n "checking whether the C compiler ($CC $CFLAGS $LDFLAGS) is a cross-compiler""... $ac_c" 1>&6
-echo "configure:1141: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) is a cross-compiler" >&5
+echo "configure:1134: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) is a cross-compiler" >&5
 echo "$ac_t""$ac_cv_prog_cc_cross" 1>&6
 cross_compiling=$ac_cv_prog_cc_cross
 
 echo $ac_n "checking whether we are using GNU C""... $ac_c" 1>&6
-echo "configure:1146: checking whether we are using GNU C" >&5
+echo "configure:1139: checking whether we are using GNU C" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_gcc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1151,7 +1144,7 @@ else
   yes;
 #endif
 EOF
-if { ac_try='${CC-cc} -E conftest.c'; { (eval echo configure:1155: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; } | egrep yes >/dev/null 2>&1; then
+if { ac_try='${CC-cc} -E conftest.c'; { (eval echo configure:1148: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; } | egrep yes >/dev/null 2>&1; then
   ac_cv_prog_gcc=yes
 else
   ac_cv_prog_gcc=no
@@ -1166,7 +1159,7 @@ if test $ac_cv_prog_gcc = yes; then
   ac_save_CFLAGS="$CFLAGS"
   CFLAGS=
   echo $ac_n "checking whether ${CC-cc} accepts -g""... $ac_c" 1>&6
-echo "configure:1170: checking whether ${CC-cc} accepts -g" >&5
+echo "configure:1163: checking whether ${CC-cc} accepts -g" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_cc_g'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1204,7 +1197,7 @@ fi
 # SVR4 /usr/ucb/install, which tries to use the nonexistent group "staff"
 # ./install, which can be erroneously created by make from ./install.sh.
 echo $ac_n "checking for a BSD compatible install""... $ac_c" 1>&6
-echo "configure:1208: checking for a BSD compatible install" >&5
+echo "configure:1201: checking for a BSD compatible install" >&5
 if test -z "$INSTALL"; then
 if eval "test \"`echo '$''{'ac_cv_path_install'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -1254,7 +1247,7 @@ test -z "$INSTALL_PROGRAM" && INSTALL_PROGRAM='${INSTALL}'
 test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
 
 echo $ac_n "checking whether ${MAKE-make} sets \${MAKE}""... $ac_c" 1>&6
-echo "configure:1258: checking whether ${MAKE-make} sets \${MAKE}" >&5
+echo "configure:1251: checking whether ${MAKE-make} sets \${MAKE}" >&5
 set dummy ${MAKE-make}; ac_make=`echo "$2" | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_prog_make_${ac_make}_set'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -1283,7 +1276,7 @@ fi
 # Extract the first word of "ranlib", so it can be a program name with args.
 set dummy ranlib; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:1287: checking for $ac_word" >&5
+echo "configure:1280: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_RANLIB'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1312,7 +1305,7 @@ fi
 # Extract the first word of "rm", so it can be a program name with args.
 set dummy rm; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:1316: checking for $ac_word" >&5
+echo "configure:1309: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_RM'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1344,7 +1337,7 @@ fi
 # Extract the first word of "find", so it can be a program name with args.
 set dummy find; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:1348: checking for $ac_word" >&5
+echo "configure:1341: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_FIND'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1375,7 +1368,7 @@ fi
 
 
 echo $ac_n "checking for main in -lm""... $ac_c" 1>&6
-echo "configure:1379: checking for main in -lm" >&5
+echo "configure:1372: checking for main in -lm" >&5
 ac_lib_var=`echo m'_'main | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -1383,14 +1376,14 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lm  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 1387 "configure"
+#line 1380 "configure"
 #include "confdefs.h"
 
 int main() {
 main()
 ; return 0; }
 EOF
-if { (eval echo configure:1394: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest; then
+if { (eval echo configure:1387: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest; then
   rm -rf conftest*
   eval "ac_cv_lib_$ac_lib_var=yes"
 else
@@ -1418,7 +1411,7 @@ else
 fi
 
 echo $ac_n "checking for main in -lnsl""... $ac_c" 1>&6
-echo "configure:1422: checking for main in -lnsl" >&5
+echo "configure:1415: checking for main in -lnsl" >&5
 ac_lib_var=`echo nsl'_'main | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -1426,14 +1419,14 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lnsl  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 1430 "configure"
+#line 1423 "configure"
 #include "confdefs.h"
 
 int main() {
 main()
 ; return 0; }
 EOF
-if { (eval echo configure:1437: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest; then
+if { (eval echo configure:1430: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest; then
   rm -rf conftest*
   eval "ac_cv_lib_$ac_lib_var=yes"
 else
@@ -1462,7 +1455,7 @@ fi
 
 
 echo $ac_n "checking how to run the C preprocessor""... $ac_c" 1>&6
-echo "configure:1466: checking how to run the C preprocessor" >&5
+echo "configure:1459: checking how to run the C preprocessor" >&5
 # On Suns, sometimes $CPP names a directory.
 if test -n "$CPP" && test -d "$CPP"; then
   CPP=
@@ -1477,13 +1470,13 @@ else
   # On the NeXT, cc -E runs the code through the compiler's parser,
   # not just through cpp.
   cat > conftest.$ac_ext <<EOF
-#line 1481 "configure"
+#line 1474 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:1487: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:1480: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out`
 if test -z "$ac_err"; then
   :
@@ -1494,13 +1487,13 @@ else
   rm -rf conftest*
   CPP="${CC-cc} -E -traditional-cpp"
   cat > conftest.$ac_ext <<EOF
-#line 1498 "configure"
+#line 1491 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:1504: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:1497: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out`
 if test -z "$ac_err"; then
   :
@@ -1523,12 +1516,12 @@ fi
 echo "$ac_t""$CPP" 1>&6
 
 echo $ac_n "checking for ANSI C header files""... $ac_c" 1>&6
-echo "configure:1527: checking for ANSI C header files" >&5
+echo "configure:1520: checking for ANSI C header files" >&5
 if eval "test \"`echo '$''{'ac_cv_header_stdc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1532 "configure"
+#line 1525 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 #include <stdarg.h>
@@ -1536,7 +1529,7 @@ else
 #include <float.h>
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:1540: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:1533: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out`
 if test -z "$ac_err"; then
   rm -rf conftest*
@@ -1553,7 +1546,7 @@ rm -f conftest*
 if test $ac_cv_header_stdc = yes; then
   # SunOS 4.x string.h does not declare mem*, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 1557 "configure"
+#line 1550 "configure"
 #include "confdefs.h"
 #include <string.h>
 EOF
@@ -1571,7 +1564,7 @@ fi
 if test $ac_cv_header_stdc = yes; then
   # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 1575 "configure"
+#line 1568 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 EOF
@@ -1592,7 +1585,7 @@ if test "$cross_compiling" = yes; then
   :
 else
   cat > conftest.$ac_ext <<EOF
-#line 1596 "configure"
+#line 1589 "configure"
 #include "confdefs.h"
 #include <ctype.h>
 #define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
@@ -1603,7 +1596,7 @@ if (XOR (islower (i), ISLOWER (i)) || toupper (i) != TOUPPER (i)) exit(2);
 exit (0); }
 
 EOF
-if { (eval echo configure:1607: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest && (./conftest; exit) 2>/dev/null
+if { (eval echo configure:1600: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest && (./conftest; exit) 2>/dev/null
 then
   :
 else
@@ -1630,17 +1623,17 @@ for ac_hdr in fcntl.h limits.h sys/time.h unistd.h
 do
 ac_safe=`echo "$ac_hdr" | sed 'y%./+-%__p_%'`
 echo $ac_n "checking for $ac_hdr""... $ac_c" 1>&6
-echo "configure:1634: checking for $ac_hdr" >&5
+echo "configure:1627: checking for $ac_hdr" >&5
 if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1639 "configure"
+#line 1632 "configure"
 #include "confdefs.h"
 #include <$ac_hdr>
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:1644: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:1637: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out`
 if test -z "$ac_err"; then
   rm -rf conftest*
@@ -1668,12 +1661,12 @@ done
 
 
 echo $ac_n "checking for working const""... $ac_c" 1>&6
-echo "configure:1672: checking for working const" >&5
+echo "configure:1665: checking for working const" >&5
 if eval "test \"`echo '$''{'ac_cv_c_const'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1677 "configure"
+#line 1670 "configure"
 #include "confdefs.h"
 
 int main() {
@@ -1722,7 +1715,7 @@ ccp = (char const *const *) p;
 
 ; return 0; }
 EOF
-if { (eval echo configure:1726: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:1719: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   ac_cv_c_const=yes
 else
@@ -1743,12 +1736,12 @@ EOF
 fi
 
 echo $ac_n "checking for size_t""... $ac_c" 1>&6
-echo "configure:1747: checking for size_t" >&5
+echo "configure:1740: checking for size_t" >&5
 if eval "test \"`echo '$''{'ac_cv_type_size_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1752 "configure"
+#line 1745 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
@@ -1776,12 +1769,12 @@ EOF
 fi
 
 echo $ac_n "checking whether time.h and sys/time.h may both be included""... $ac_c" 1>&6
-echo "configure:1780: checking whether time.h and sys/time.h may both be included" >&5
+echo "configure:1773: checking whether time.h and sys/time.h may both be included" >&5
 if eval "test \"`echo '$''{'ac_cv_header_time'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1785 "configure"
+#line 1778 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #include <sys/time.h>
@@ -1790,7 +1783,7 @@ int main() {
 struct tm *tp;
 ; return 0; }
 EOF
-if { (eval echo configure:1794: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:1787: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   ac_cv_header_time=yes
 else
@@ -1814,12 +1807,12 @@ fi
 for ac_func in gettimeofday
 do
 echo $ac_n "checking for $ac_func""... $ac_c" 1>&6
-echo "configure:1818: checking for $ac_func" >&5
+echo "configure:1811: checking for $ac_func" >&5
 if eval "test \"`echo '$''{'ac_cv_func_$ac_func'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1823 "configure"
+#line 1816 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char $ac_func(); below.  */
@@ -1842,7 +1835,7 @@ $ac_func();
 
 ; return 0; }
 EOF
-if { (eval echo configure:1846: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest; then
+if { (eval echo configure:1839: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest; then
   rm -rf conftest*
   eval "ac_cv_func_$ac_func=yes"
 else
@@ -1895,7 +1888,7 @@ else { echo "configure: error: can not run $ac_config_sub" 1>&2; exit 1; }
 fi
 
 echo $ac_n "checking host system type""... $ac_c" 1>&6
-echo "configure:1899: checking host system type" >&5
+echo "configure:1892: checking host system type" >&5
 
 host_alias=$host
 case "$host_alias" in
@@ -1916,7 +1909,7 @@ host_os=`echo $host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 echo "$ac_t""$host" 1>&6
 
 echo $ac_n "checking target system type""... $ac_c" 1>&6
-echo "configure:1920: checking target system type" >&5
+echo "configure:1913: checking target system type" >&5
 
 target_alias=$target
 case "$target_alias" in
@@ -1934,7 +1927,7 @@ target_os=`echo $target | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 echo "$ac_t""$target" 1>&6
 
 echo $ac_n "checking build system type""... $ac_c" 1>&6
-echo "configure:1938: checking build system type" >&5
+echo "configure:1931: checking build system type" >&5
 
 build_alias=$build
 case "$build_alias" in
@@ -1969,10 +1962,11 @@ COPT=-G; JAVAINC2=$JAVAINC/solaris; JAVATARG=i386 ;;
 COPT=-G; JAVAINC2=$JAVAINC/solaris ; JAVATARG=solaris;;
 mips*-sgi-irix5*) LD=$CC; LDOPT=-shared; SLEXT="so";
 COPT=-shared ; JAVAINC2=$JAVAINC/irix; JAVATARG=irix;;
-mips*-sgi-irix6*) LD=$CC; LDOPT=-shared; SLEXT="so";
-COPT=-shared ; JAVAINC2=$JAVAINC/irix; JAVATARG=irix;;
+mips*-sgi-irix6*) LD=ld; LDOPT="-n32 -shared";
+LDOPT2="-check_registry /usr/lib/so_locations"; SLEXT="so";
+COPT="-n32 -shared" ; JAVAINC2=$JAVAINC/irix; JAVATARG=irix;;
 *-pc-linux*) LD=$CC; LDOPT=-shared; SLEXT="so";
-COPT=-shared ; JAVAINC2=$JAVAINC/genunix; JAVATARG=linux-elf;;
+COPT="-shared -DUNIX386" ; JAVAINC2=$JAVAINC/genunix; JAVATARG=linux-elf;;
 *) LD=$CC; LDOPT=-G; SLEXT="so";
 COPT=-shared; JAVAINC2=$JAVAINC/$target; JAVATARG=$TARGET ;;
 esac
@@ -2118,7 +2112,7 @@ done
 ac_given_srcdir=$srcdir
 ac_given_INSTALL="$INSTALL"
 
-trap 'rm -fr `echo "Makefile native/Makefile native/hdflib/Makefile bin/jhv" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
+trap 'rm -fr `echo "Makefile native/Makefile native/hdflib/Makefile bin/jhv bin/jhv_jre" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
 EOF
 cat >> $CONFIG_STATUS <<EOF
 
@@ -2177,12 +2171,12 @@ s%@PWD@%$PWD%g
 s%@EXTRA_CFLAGS@%$EXTRA_CFLAGS%g
 s%@LD@%$LD%g
 s%@LDOPT@%$LDOPT%g
+s%@LDOPT2@%$LDOPT2%g
 s%@SLEXT@%$SLEXT%g
 s%@COPT@%$COPT%g
 s%@JAVA@%$JAVA%g
 s%@JAVAC@%$JAVAC%g
 s%@JAVADOC@%$JAVADOC%g
-s%@JAVADOC_IMAGES@%$JAVADOC_IMAGES%g
 s%@JAVAINC@%$JAVAINC%g
 s%@JAVAINC2@%$JAVAINC2%g
 s%@JAVALIB@%$JAVALIB%g
@@ -2238,7 +2232,7 @@ EOF
 
 cat >> $CONFIG_STATUS <<EOF
 
-CONFIG_FILES=\${CONFIG_FILES-"Makefile native/Makefile native/hdflib/Makefile bin/jhv"}
+CONFIG_FILES=\${CONFIG_FILES-"Makefile native/Makefile native/hdflib/Makefile bin/jhv bin/jhv_jre"}
 EOF
 cat >> $CONFIG_STATUS <<\EOF
 for ac_file in .. $CONFIG_FILES; do if test "x$ac_file" != x..; then

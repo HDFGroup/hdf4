@@ -1,0 +1,82 @@
+
+			  Installing JHV 2.2
+                          -------------------
+			
+	1) Ensure JDK 1.1.x is Installed If Necessary
+	2) Unpack the Distribution
+	3) The Installed Files
+	4) To Set Up and Run the JHV program
+	5) For HELP
+
+For general information about the Java HDF Products, please
+read the README file and the Java HDF Web Pages,
+   http://hdf.ncsa.uiuc.edu/java-hdf-html/
+
+1) Ensure JDK 1.1.x is Installed if Necessary
+   The bundled version of the JHV includes the Java Runtime 
+   Environment (JRE), which will run without any additional
+   software.
+
+   The ready-to-run version of the JHV requires JDK 1.1.6 or 
+   equivalent.  The many be optained from: 
+       http://www.javasoft.com/products/JDK/index.html
+
+2)  Unpacke the Distribution
+
+   The JHV 2.2 is distributed in a single ZIP file.  The fies 
+   should be extracted into a directory, the "JHV home directory".
+
+3) The Installed Files
+   The JHV home directory contains the pre-compiled binary 
+   distribution for the HDF Java Products, compiled on a 
+   Windows 95 running Windows 95/NT.  It includes the full 
+   HDF 4.1r2 library for Windows 95/NT.
+
+   The JHV directory is organized as follows:
+
+     bin/
+        jhv.bat         - The batch file to run the JHV.
+                          You may need to modify this file to set
+                          JAVAHOME and JHVHOME
+     docs/
+        UsersGuide      - The JHV User's Guide
+
+     lib/
+        jhv.props       - The JHV property file,
+                          You may need to eidt this file to change default properties
+                          e.g. jhv.guide=file:///C|/jhv/docs/UserGuide/jhv2.2/index.html
+        classes.zip     - File containing all of the Java classes  
+                          used by the Java Products
+        hdficons/       - Directory containing GIF files used by JHV
+        win95/hdf.dll   - HDF 4.1r2 library and Java wrapper C code
+                          for Windows 95/NT      
+
+     samples/           - Sample HDF files to use with JHV
+
+     Jre/               - The Java Runtime Environment, for JRE version only
+
+4) To Set Up and Run the JHV Program
+    The following steps are required to run JHV on a Windows 95/NT system: 
+        1.Set the variable JHVHOME in the JHV batch file jhv.bat (in your_jhv_home\bin). The default JHVHOME is "..". If you run JHV from a directory other than your_JHV_home/bin, you need to set your JHVHOME. e.g. "SET JHVHOME=C:\JHV". 
+        2.If needed, set the variable JAVAHOME. JAVAHOME is not needed for the JRE version. 
+        3.Create a shortcut to the JHV executable, if desired. 
+        4.Start JHV by double-clicking on the executable icon or on the shortcut, or by typing jhv at
+          the DOS command prompt. 
+     If you get the error message "Out of environment space" when running jhv.bat under Windows
+     95, you need to set the Initial Environment memory allocated to the command line to 4096 bytes
+     as follows: 
+        1.Open the Windows Explorer. 
+        2.Open the JHV home directory. 
+        3.Open the bin directory. 
+        4.Right click on the jhv.bat icon. 
+        5.Select Properties from the menu. 
+        6.Click the Memory tab. 
+        7.Find Initial Environment. 
+        8.Click the arrow next to the field. 
+        9.Scroll to and select 4096. 
+       10.Click OK . 
+
+5) For HELP
+   Please send questions, comments, and suggestions to:
+             hdfhelp@ncsa.uiuc.edu
+

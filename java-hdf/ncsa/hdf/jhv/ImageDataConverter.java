@@ -1047,53 +1047,13 @@ public class ImageDataConverter {
 	    blue[i] = (byte)values[i*3+2];
 	}
 
-	return new IndexColorModel(8, 256, red, green, blue);	
- }
-
- // declare dataset object
- public static Object defineDataObject(int nt, int dataSize) {
-
-	Object data = null;  
-	int dt = nt;
-    	if ((dt & HDFConstants.DFNT_LITEND) != 0) 
-      		dt -= HDFConstants.DFNT_LITEND;
- 
-        switch(dt)
-        {
-            // one byte data
-            case HDFConstants.DFNT_CHAR:
-            case HDFConstants.DFNT_UCHAR8:
-            case HDFConstants.DFNT_UINT8:
-            case HDFConstants.DFNT_INT8:
-                data = new byte[dataSize];  
-                break;
-            // short        
-            case HDFConstants.DFNT_INT16:
-            case HDFConstants.DFNT_UINT16:
-                data = new short[dataSize];  
-                break;
-            case HDFConstants.DFNT_INT32:
-            case HDFConstants.DFNT_UINT32:
-                data = new int[dataSize];  
-                break;
-            case HDFConstants.DFNT_INT64:
-            case HDFConstants.DFNT_UINT64:
-                data = new long[dataSize];  
-                break;
-            case HDFConstants.DFNT_FLOAT32:
-                data = new float[dataSize];  
-                break;
-            case HDFConstants.DFNT_FLOAT64:
-                data = new double[dataSize];  
-                break;
-	}
-	return (Object)data;
+	return new IndexColorModel(8, 256, red, green, blue);
  }
 
   // Return the  data by index
   public static float  getData(Object data, int nt, int pos)  {
 
-    float retDat = 0; 
+    float retDat = 0;
     int dt = nt;
     if ((dt & HDFConstants.DFNT_LITEND) != 0) {
       dt -= HDFConstants.DFNT_LITEND;
@@ -1109,7 +1069,7 @@ public class ImageDataConverter {
 	  retDat = (float)(bdat[pos]);
 	  // convert to positive if the number is negative 
 	  if (retDat < 0)  
-	     retDat += 256.0f;	
+	     retDat += 256.0;
 	  break;
 		
 	// signed integer (byte)	
@@ -1134,7 +1094,7 @@ public class ImageDataConverter {
 	//case HDFConstants.DFNT_FLOAT:
 	case HDFConstants.DFNT_FLOAT32:
 	  float fdat[] = (float[])data;
-	  retDat = fdat[pos];
+	  retDat = (float)fdat[pos];
 	  break;
 	    
 	//case HDFConstants.DFNT_DOUBLE:
@@ -1150,68 +1110,4 @@ public class ImageDataConverter {
    return retDat;
   }
 
-  // Return the  data by index
-  public static float  getData(byte[] data, int nt, int pos)  throws HDFException{
-    // instance of HDFNativeData
-    HDFNativeData convert = new HDFNativeData();
-
-    float retDat = 0; 
-
-    int dt = nt;
-    if ((dt & HDFConstants.DFNT_LITEND) != 0) {
-      dt -= HDFConstants.DFNT_LITEND;
-    }
-    switch(dt) {
-
-	// one bit char
-	case HDFConstants.DFNT_CHAR:
-	case HDFConstants.DFNT_UCHAR8:
-	case HDFConstants.DFNT_UINT8:
-	  retDat = (float)(data[pos]);
-	  // convert to positive if the number is negative 
-	  if (retDat < 0)  
-	     retDat += 256.0f;	
-	  break;
-		
-	// signed integer (byte)	
-	case HDFConstants.DFNT_INT8:
-	  
-	  retDat = (float)(data[pos]);
-	  break;
-	  
-        // short	
-	case HDFConstants.DFNT_INT16:
-	case HDFConstants.DFNT_UINT16:
-	      
-	  Short shval = new Short(convert.byteToShort(data,pos));
-	  retDat = shval.floatValue();
-	  break;
-	    
-	case HDFConstants.DFNT_INT32:
-	case HDFConstants.DFNT_UINT32:
-		
-	  Integer ival = new Integer(convert.byteToInt(data,pos));
-	  retDat = ival.floatValue();
-	  break;
-		  
-	//case HDFConstants.DFNT_FLOAT:
-	case HDFConstants.DFNT_FLOAT32:
-	
-	  Float fval = new Float(convert.byteToFloat(data,pos));
-	  retDat = fval.floatValue();
-	  break;
-	    
-	//case HDFConstants.DFNT_DOUBLE:
-	case HDFConstants.DFNT_FLOAT64:
-	
-	  Double dval = new Double(convert.byteToDouble(data,pos));
-	  retDat = dval.floatValue();
-	  break;
-	
-	default:
-	  retDat = 0;
-    }
-  
-    return retDat;
-  }
 }

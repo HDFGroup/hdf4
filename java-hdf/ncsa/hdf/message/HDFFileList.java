@@ -14,6 +14,7 @@ package ncsa.hdf.message;
 import java.util.Vector;
 import java.io.File;
 
+import ncsa.hdf.hdflib.HDFLibrary;
 import ncsa.hdf.util.Tools;
 
 /**
@@ -72,7 +73,8 @@ public class HDFFileList extends HDFObject
     public void service()
     {
         //System.out.println("HDFFileList.service()");
-        fileNames = getFileList(hdfFilename);
+        this.hdf =  new HDFLibrary();
+        fileNames = getFileList(filename);
     }
 
     /**

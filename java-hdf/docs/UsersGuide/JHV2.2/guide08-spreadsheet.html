@@ -1,0 +1,177 @@
+<HTML>
+<HEAD><TITLE>JHV User's Guide: Spreadsheet</TITLE></HEAD>
+
+<!-- BEGIN OF THE BODY -->
+<BODY>
+
+<a href="index.html">[Index]</a>
+<a href="guide07-layer.html">[Prev]</a>
+<a href="guide09-palette.html">[Next]</a>
+<a href="guide10-ascii2hdf.html">[Bottom]</a>
+<p><hr noshade size=1>
+
+<H1> Chapter 9: Spreadsheets and Plots </H1>
+A JHV spreadsheet is designed to display the raw data of an image or a 
+Vdata table.  The spreadsheet displays data that can be defined in terms of 
+three variables: <i>two independent variables which correspond to the row 
+and column labels, and a dependent variable, which has a value at every 
+point.</i>  JHV supports two types of spreadsheet: image spreadsheets and 
+Vdata spreadsheets.  An image spreadsheet is created from an image which 
+represents an HDF raster image or an SDS data array.  A Vdata spreadsheet 
+is a table which displays a Vdata.
+<DL>
+  <DT><A HREF="#guide08-image"> 9.1 Image Spreadsheets</A> 
+  <DT><A HREF="#guide08-vdata"> 9.2 Vdata Spreadsheets</A> 
+  <DT><A HREF="#guide08-plot"> 9.3 Vdata X-Y Plots</A> 
+</DL> 
+<p><hr noshade size=1>
+
+<a name=guide08-image></a>
+<h2>9.1 Image Spreadsheets</h2>
+<p>JHV has the ability to generate a spreadsheet from an image. Select a 
+subset area from the image in the image window and click the spreadsheet 
+button to create a spreadsheet containing the data of the selected 
+image area.
+<p>
+<center>
+<IMG SRC="images/image-spreadsheet.gif">
+<br>Figure 9.1 An image spreadsheet
+</center>
+
+<P> 
+The current image spreadsheet supports a <b>Make Image</b> action. 
+<b>Make Image</b> creates an image from the spreadsheet. There are two 
+parameters associated with creating an image from a spreadsheet: 
+an expansion factor and interpolation.
+
+<DL>
+  <DT><b>Expansion factor </b>
+  <DD>The expansion factor determines the magnification of the image created 
+      from the spreadsheet.  The factor values are integers such as 1, 2, 3, 
+      and so on. An image with expansion factor 1 is the same size as the 
+      original selected image area.  An image with expansion factor 2 will be 
+      double the original image size, and so forth. Larger expansion factors 
+      will produce lower resolution images with a jagged appearance.
+  <p>
+  <DT><b>Interpolation </b>
+  <DD>The interpolation option attempts to choose color values that better 
+      preserve the quality and detail in the original image. Interpolation is 
+      very useful when you create an image with a larger expansion factor. 
+      A large expansion factor with no imterpolation will yield a jagged 
+      appearance because the resolution does not increase with the magnification 
+      of the image.  Interpolation produces an image with the resolution of 
+      the original image even for larger expansion factors.  In the following 
+      figure, two images have been created from the same spreadsheet with 
+      expansion factor 10. The left image, with a jagged appearance, was 
+      created without interpolation. The image on the right, with a smoother 
+      appearance, was created with interpolation.
+  <p>
+  <center>
+  <IMG SRC="images/interpolate.gif">
+  <br>Figure 9.2 Image interpolation
+  </center>
+</DL>
+
+<a name=guide08-vdata></a>
+<h2>9.2 Vdata Spreadsheets</h2>
+A Vdata object is a table in which each row has the same structure and 
+each column contains data of the same data type.  A column can be any of 
+data type, such as character, integer, floating point, or an array of 
+these types.  Therefore, a cell in a Vdata table can be an array.  
+Elements may be cut off in display if a cell is an array. 
+<p>
+To open a Vdata spreadsheet, click on a Vdata object icon in the 
+HDF hierarchical tree in the main window.  The spreadsheet will appear 
+in a spreadsheet window.
+<p>
+The spreadsheet window <b>File</b> menu offers three commands: 
+<dl>
+<dt><b>Save AS HDF</b>
+  <dd>Saves the current Vdata into a new HDF file. 
+<dt><b>Save AS Text</b>
+  <dd>Saves the Vdata into a new ASCII file.
+<dt><b>Close</b>
+  <dd>Closes the spreadsheet window. 
+</dl>
+
+<p>
+<center>
+<IMG SRC="images/vdata-spreadsheet.gif">
+<br>Figure 9.3 A Vdata spreadsheet
+</center>
+
+<a name=guide08-plot></a>
+<h2>9.3 Vdata X-Y Plots</h2>
+Clicking on a column with numeric data in a Vdata spreadsheet opens a 
+plot window with the column values plotted against the row index numbers. 
+Clicking on another column adds that column to the plot.  The Vdata 
+spreadsheet cannot create plots for columns containing arrays or 
+character data.  
+<p>The following is an example of Vdata plot with two columns (Integer 
+and Float) plotted against the row index.
+<p>
+<center>
+<IMG SRC="images/vdata-plot.gif">
+<br>Figure 9.4 A Vdata X-Y plot
+</center>
+
+<P>The Vdata plot window offers three menus:
+
+<DL>
+  <DT><b>Option menu</b>
+  <DD>
+    <TABLE border="1" cellpadding="5" bgcolor="#C0C0C0">
+      <TR><TD>Line-Plot
+      <BR>XY-Plot
+    </TABLE>
+  <p>
+  The <b>Option</b> menu contains two commands: 
+  <b>Line-Plot</b> and <b>XY-Plot</b>. A line-plot is a 
+  2D plot in which columns (vertical axis) are plotted against 
+  the row index (horizontal axis). An X-Y plot is a plot in 
+  which columns are plotted against the first selected column.
+
+  <p>
+  <DT><b>View menu</b>
+  <DD>
+    <TABLE border="1" cellpadding="5" bgcolor="#C0C0C0">
+      <TR><TD>Zoom In
+      <BR>Zoom Out
+    </TABLE>
+  <p>
+  The <b>View</b> menu provides zooming in and zooming out functions. 
+  <b>Zoom In</b> decreases the range of visible rows in the plot;
+  <b>Zoom Out</b> increases the visible range.
+
+  <p>
+  <DT><b>Style menu</b>
+  <DD>
+    <TABLE border="1" cellpadding="5" bgcolor="#C0C0C0">
+      <TR><TD>Line
+      <BR>Scatter
+    </TABLE>
+  <p>
+  The <b>Line</b> style provides a line plot.  With the <b>Scatter</b> 
+  style, column values are scattered on the plot.
+
+</DL>
+
+<!-- BEGIN OF FOOTER INFO -->
+<P><hr noshade size=1>
+<a href="index.html">[Index]</a>
+<a href="guide07-layer.html">[Prev]</a>
+<a href="guide09-palette.html">[Next]</a>
+<a href="guide10-ascii2hdf.html">[Bottom]</a>
+<p><hr noshade size=1>
+<font face="arial,helvetica" size="-1">
+  <a href="http://www.ncsa.uiuc.edu/">
+  <img border=0 src=http://www.ncsa.uiuc.edu/Images/NCSAhome/footerlogo.gif alt="NCSA"><br> The National Center for Supercomputing Applications</A><br>
+  <a href="http://www.uiuc.edu/">University of Illinois at Urbana-Champaign</a><br>
+<p><A HREF="mailto:hdfhelp@ncsa.uiuc.edu">hdfhelp@ncsa.uiuc.edu</A>
+</FONT>
+<!- END OF FOOTER INFO -->
+
+</BODY>
+</HTML>
+
+

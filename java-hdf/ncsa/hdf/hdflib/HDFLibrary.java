@@ -213,7 +213,7 @@ import java.util.*;
  *  The Java interface passes these as instances of subclasses
  *  of class HDFCompInfo and HDFChunkInfo respectively.
  *
- *  <p><b> See: :\b><a href="ncsa.hdf.hdflib.HDFChunkInfo.html">
+ *  <p><b> See: </b><a href="ncsa.hdf.hdflib.HDFChunkInfo.html">
  *  ncsa.hdf.hdflib.HDFChunkInfo</a>,
  *  and
  *  <p><a href="ncsa.hdf.hdflib.HDFCompInfo.html">
@@ -262,6 +262,10 @@ public class HDFLibrary {
      *  and release number of the file.  
      *  @param string <b>OUT</b>: String[1], the version string
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *  @return the major, minor, and release number are returned
      * in the array of ints, and a string is returned in the string.
      */
@@ -275,6 +279,10 @@ public class HDFLibrary {
      *
      *  @return the major, minor, and release number are returned
      * in the array of ints, and a string is returned in the string.
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
      */
     public native boolean Hgetlibversion(int[] vers, 
 		String []string) throws HDFException;
@@ -297,6 +305,11 @@ public class HDFLibrary {
      *  @return four integer parameters: 
      *  info[0] = n_file_label, info[1] = n_file_desc,   
      *  info[2] = n_data_label, info[3] = n_data_desc 
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      */
     public native boolean ANfileinfo(int an_id, int [] info) throws HDFException;
 
@@ -317,6 +330,11 @@ public class HDFLibrary {
      *  The array must be long enough to hold the number of annotations
      *  returned by ANnumann
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  @return an array of integers, which are the identifiers of
      *  the annotations
      */
@@ -330,6 +348,11 @@ public class HDFLibrary {
      *  @param annbuf <b>OUT</b>: String[1], the annotation
      *  is returned as annbuf[0].
      *  @param tag <b>IN</b>: int, the maximum length of the string.
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  @return an annotation string: annbuf[0] = the annotation
      */
@@ -347,6 +370,11 @@ public class HDFLibrary {
      *  @param type <b>IN</b>: the type of the annotation
      *  @param tagref <b>OUT</b>: short[2], the tag and ref of the annotation
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  @return the tag and ref:  tagref[0] = tag, tagref[1] = ref
      */
     public native int ANget_tagref(int an_id, int index,  int type, short[] tagref) throws HDFException;
@@ -354,6 +382,11 @@ public class HDFLibrary {
     /**
      *  @param an_id <b>IN</b>: the AN interface id, returned by ANstart
      *  @param tagref <b>OUT</b>: short[2], the tag and ref of the annotation
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  @return the tag and ref:  tagref[0] = tag, tagref[1] = ref
      */
@@ -378,6 +411,11 @@ public class HDFLibrary {
      *  @param palette <b>IN</b>: byte[] the palette
      *  @param overwrite <b>IN</b>: boolean, converted to 1 == true, 0 == false
      *  to call the HDF library
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      */
     public boolean DFPputpal (String filename, byte[] palette, boolean overwrite, String filemode)
 	 throws HDFException{
@@ -404,6 +442,11 @@ public class HDFLibrary {
      *  @param grid <b>IN</b>: the GR interface id, returned by GRstart
      *  @param args <b>OUT</b>: int[2], n_datasets and n_file_attrs
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  @return the file info:  args[0] = n_datasets, args[1] = n_file_attrs
      */
     public native boolean GRfileinfo(int grid, int [] args) throws HDFException;
@@ -412,6 +455,11 @@ public class HDFLibrary {
      *  @param sdsid <b>IN</b>: the SD identifier returned by SDselect
      *  @param c_info <b>OUT</b>: HDFChunkInfo, the chunking info
      *  @param flag <b>OUT</b>: int[1], the type of chunking
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  @return c_info contains information about the chunking method,
      *  flags[0] == the chunking flags
@@ -436,6 +484,11 @@ public class HDFLibrary {
      *          number of attributes assigned to the image
      *  @param args <b>OUT</b>: int[2], dim_sizes
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  @return the file info:  String[0] = gr_name, args[0] = ncomp, 
      *  args[1] = data_type, args[2] = interlace, args[3] = num_attrs
      *
@@ -451,6 +504,11 @@ public class HDFLibrary {
      *  @param stride <b>IN</b>: int[], stride
      *  @param count <b>IN</b>: int[], count
      *  @param data <b>OUT</b>: byte[], data
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  @return the the data in the form of a continous array of
      *  bytes.  
@@ -468,6 +526,11 @@ public class HDFLibrary {
      *  @param count <b>IN</b>: int[], count
      *  @param theData <b>OUT</b>: Object, a Java array of appropriate
      *  type, dimensions, and size.
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  @return the the data in the Java array.
      *
@@ -517,15 +580,25 @@ public class HDFLibrary {
      *            Interlace mode of the stored palette data,
      *            Number of color lookup table entries in the palette.
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  @return the palette info:  args[0] = ncomp, args[1] = data_type,
      *  args[2] = interlace, args[3] = num_entries
      *
      */
-    public native boolean  GRgetlutinfo( int lutid, int[] argv);
+    public native boolean  GRgetlutinfo( int lutid, int[] argv) throws HDFException;
 
     /**
      *  @param lutid <b>IN</b>: the palette identifier returned by GRgetlutid
      *  @param data <b>OUT</b>: byte[], palette data, in bytes
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  @return the palette data:  as bytes
      *
@@ -537,6 +610,11 @@ public class HDFLibrary {
     /**
      *  @param lutid <b>IN</b>: the palette identifier returned by GRgetlutid
      *  @param theData <b>OUT</b>: Object, palette data, an Java array
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  @return the palette data:  as a Java array
      *
@@ -561,6 +639,11 @@ public class HDFLibrary {
      *  @param name <b>OUT</b>: String[1], the name of the attribute
      *  @param argv <b>OUT</b>: int[2], the type and length of the
      *  attribute
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *  
      *  @return the name, type, and lenght of the attribute:  
      *  name[0] = name, argv[0] = data_type, argv[1] = length
@@ -572,6 +655,11 @@ public class HDFLibrary {
      *  @param id <b>IN</b>: the GR identifier returned by GRstart
      *  @param data <b>OUT</b>: byte[], attribute data, in bytes
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  @return the attribute data:  as bytes
      *
      *  <p><b>NOTE:</b> to read into a Java 1D array use the alternative
@@ -582,6 +670,11 @@ public class HDFLibrary {
     /**
      *  @param id <b>IN</b>: the GR identifier returned by GRstart
      *  @param theData <b>OUT</b>: Object, attribute data, an Java array
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  @return the attribute data:  as a Java array
      *
@@ -615,6 +708,11 @@ public class HDFLibrary {
      *  @param count <b>IN</b>: the length the data (lenght of 'values')
      *  @param values <b>IN</b>: the the attribute to write -- A String
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  <p><b>NOTE:</b>This routine writes a attribute that is
      *  a String.  Alternative methods write data of other types.
      */
@@ -628,6 +726,11 @@ public class HDFLibrary {
      *  @param count <b>IN</b>: the length the data (lenght of 'values')
      *  @param values <b>IN</b>: the the attribute to write -- in an
      *  array of bytes
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>NOTE:</b>This routine writes the attribute as an array
      *  of bytes.  <b>DO NOT USE THIS TO WRITE A STRING.</b>  This
@@ -644,6 +747,11 @@ public class HDFLibrary {
      *  @param count <b>IN</b>: the length the data (lenght of 'values')
      *  @param values <b>IN</b>: Object -- the value to be written,
      *  a Java array of numbers.
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>NOTE:</b>This routine converts the Java array to bytes
      *  then writes it.
@@ -663,6 +771,11 @@ public class HDFLibrary {
      *  @param c_info <b>IN</b>: HDFChunkInfo, the chunking info
      *  @param flags <b>IN</b>: the type of chunking
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  <p><b>NOTE:</b>The chunking algorithm-specific information is
      *  passed in an appropriate sub-class of HDFChunkInfo.
      */
@@ -674,6 +787,11 @@ public class HDFLibrary {
      *  @param ri_id <b>IN</b>: the GR identifier returned by GRstart
      *  @param comp_type <b>IN</b>: the type of compression
      *  @param c_info <b>IN</b>: HDFCompInfo, the compression info
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>NOTE:</b>The compression algorithm specific information is
      *  passed in an appropriate sub-class of HDFCompInfo.
@@ -689,12 +807,17 @@ public class HDFLibrary {
      *  @param count <b>IN</b>: int[], count
      *  @param data <b>IN</b>: byte[], data to be written
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  <p><b>NOTE:</b> to write from a Java 2D array use the alternative
      *  routine below.
      */
 
     public native boolean GRwriteimage(int grid, int [] start, int[] stride, 
-    	int[] edge, byte[] data);
+    	int[] edge, byte[] data) throws HDFException;
 
     /**
      *  @param grid <b>IN</b>: the GR interface id, returned by GRstart
@@ -703,6 +826,11 @@ public class HDFLibrary {
      *  @param count <b>IN</b>: int[], count
      *  @param theData <b>IN</b>: Object, a Java array of appropriate
      *  type, dimensions, and size.
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>Note:</b> converts the Java array to a contiguous
      *  block of bytes appropriate for C, and then writes the bytes.
@@ -726,6 +854,11 @@ public class HDFLibrary {
      *  @param num_entries <b>IN</b>: int, number of entries
      *  @param data <b>IN</b>: byte[], palette data to be written--as bytes
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  <p><b>NOTE:</b> to write from a Java array of numbers use 
      *  the alternative routine below.
      */
@@ -741,6 +874,11 @@ public class HDFLibrary {
      *  @param num_entries <b>IN</b>: int, number of entries
      *  @param data <b>IN</b>: Object, palette data to be written, any
      *  number type.
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>Note:</b> converts the Java array to a contiguous
      *  block of bytes appropriate for C, and then writes the bytes.
@@ -779,6 +917,11 @@ public class HDFLibrary {
      *          Number of datasets in the file,
      *          Number of global attributes in the file
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  @return the file info:  argv[0] = n_datasets, argv[1] = n_file_attrs
      */
     public native boolean SDfileinfo(int sdid, int[] argv) throws HDFException;
@@ -796,6 +939,11 @@ public class HDFLibrary {
      *         number of "netCDF-style" attributes for this dataset
      *  @param args <b>OUT</b>: int[(rank)], sizes of dimensions
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  @return the file info:  name[0] = gr_name, args[0] = rank, 
      *  args[1] = data_type, args[2] = nattrs, dim_sizes[] = dimensions
      *
@@ -811,6 +959,11 @@ public class HDFLibrary {
      *  @param stride <b>IN</b>: int[], stride
      *  @param count <b>IN</b>: int[], count
      *  @param data <b>OUT</b>: byte[], data
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  @return the the data in the form of a continous array of
      *  bytes.  
@@ -828,6 +981,11 @@ public class HDFLibrary {
      *  @param count <b>IN</b>: int[], count
      *  @param theData <b>OUT</b>: Object, a Java array of appropriate
      *  type, dimensions, and size.
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  @return the the data in the Java array.
      *
@@ -856,6 +1014,11 @@ public class HDFLibrary {
      *  @param argv <b>OUT</b>: int[3], size of the name string, 
      *  number type of data in the array, # attributes for the dimension
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  @return name[0] = name, argv[0] = count, argv[1] = data_type, 
      *  argv[2] = nattr
      */
@@ -873,6 +1036,11 @@ public class HDFLibrary {
      *  @param argv <b>OUT</b>: int[2],  number type of the attribute,
      *  number of values in the attribute
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  @return name[0] = attr_name, argv[0] = data_type,
      *  argv[1] = count
      */
@@ -882,6 +1050,11 @@ public class HDFLibrary {
      *  @param id <b>IN</b>: id of a file, SDS, or dimension
      *  @param index <b>IN</b>: index of the attribute
      *  @param data <b>OUT</b>: byte[], data
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  @return the the data in the form of a continous array of
      *  bytes.  
@@ -896,6 +1069,11 @@ public class HDFLibrary {
      *  @param index <b>IN</b>: index of the attribute
      *  @param theData <b>OUT</b>: Object, a Java array of appropriate
      *  type, dimensions, and size.
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  @return the the data in the Java array.
      *
@@ -933,6 +1111,11 @@ public class HDFLibrary {
      *          offset error
      *  @param NT <b>OUT</b>: int[1],  number type of uncalibrated data
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  @return argv[0] = cal, argv[1] = cal_err,
      *  argv[2] = offset, argv[3] = offset_err,
      *  NT[0] = data_type
@@ -949,6 +1132,11 @@ public class HDFLibrary {
      *  @param len <b>IN</b>: int,  max len of string (not needed by
      *  Java -- the HDFLibrary interface will handle this)
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  @return strings[0] = label, strings[1] = unit,
      *  strings[2] = format, strings[3] = coordsys,
      */
@@ -964,6 +1152,11 @@ public class HDFLibrary {
      *  @param len <b>IN</b>: int,  max len of string (not needed by
      *  Java -- the HDFLibrary interface will handle this)
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  @return strings[0] = label, strings[1] = unit,
      *  strings[2] = format
      */
@@ -973,6 +1166,11 @@ public class HDFLibrary {
     /**
      *  @param dimid <b>IN</b>: id of a dimension as returned by SDgetdimid
      *  @param data <b>OUT</b>: byte[], data
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  @return the the data in the form of a continous array of
      *  bytes.  
@@ -986,6 +1184,11 @@ public class HDFLibrary {
      *  @param dimid <b>IN</b>: id of a dimension as returned by SDgetdimid
      *  @param theData <b>OUT</b>: Object, a Java array of appropriate
      *  type and size.
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  @return the the data in the Java array.
      *
@@ -1007,6 +1210,11 @@ public class HDFLibrary {
      *  @param sdsid <b>IN</b>: id of the SDS as returned by SDselect
      *  @param fillValue <b>OUT</b>: byte[], data
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  @return the the fill value in the form of a continous array of
      *  bytes.
      * 
@@ -1019,6 +1227,11 @@ public class HDFLibrary {
      *  @param sdsid <b>IN</b>: id of the SDS as returned by SDselect
      *  @param theFillValue <b>OUT</b>: Object[1], one object of
      *  appropriate type
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  @return the the data in the Java array: theFillValue[0] = fillValue
      *
@@ -1107,6 +1320,11 @@ public class HDFLibrary {
      *  @param max <b>OUT</b>: byte[], max value, as bytes
      *  @param max <b>OUT</b>: byte[], max value, as bytes
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  @return the the max and min values in the form of a continous array of
      *  bytes.
      * 
@@ -1119,6 +1337,11 @@ public class HDFLibrary {
      *  @param sdsid <b>IN</b>: id of the SDS as returned by SDselect
      *  @param maxmin <b>OUT</b>: double[2], the max and min values
      *  converted to doubles
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  @return the the data in the Java array: maxmin[0] = max,
      *  maxmin[1] = min
@@ -1276,6 +1499,11 @@ public class HDFLibrary {
      *  @param data <b>IN</b>: byte[], the values, in an array of
      *  bytes.
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  <p><b>Note:</b> the calling program must assure that the
      *  data is correctly formatted for C.  To write an array
      *  of Java objects, use the alternative routine below.
@@ -1288,6 +1516,11 @@ public class HDFLibrary {
      *  @param number_type <b>IN</b>: number type of the values
      *  @param theData <b>OUT</b>: Object, a Java array of appropriate
      *  type and size.
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>Note:</b> converts the Java array to an array of
      *  bytes, and writes the bytes.
@@ -1311,6 +1544,11 @@ public class HDFLibrary {
      *  @param fill_bal <b>IN</b>: byte[], the fill values in an array of
      *  bytes.
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  <p><b>Note:</b> the calling program must assure that the
      *  data is correctly formatted for C.  To set the fill value
      *  with a Java object, use the alternative routine below.
@@ -1321,6 +1559,11 @@ public class HDFLibrary {
      *  @param sds_id <b>IN</b>: id of a dataset
      *  @param the_fill_val <b>IN</b>: Object, a Java object of appropriate
      *  type 
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>Note:</b> converts the Java array to an array of
      *  bytes, and writes the bytes.
@@ -1339,6 +1582,11 @@ public class HDFLibrary {
      *  @param max <b>IN</b>: byte[], the max value in an array of bytes
      *  @param min <b>IN</b>: byte[], the min value in an array of bytes
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  <p><b>Note:</b> the calling program must assure that the
      *  data is correctly formatted for C.  To set the max and min value
      *  with Java objects, use the alternative routine below.
@@ -1349,6 +1597,11 @@ public class HDFLibrary {
      *  @param sds_id <b>IN</b>: id of a dataset
      *  @param max <b>IN</b>: Object, a Java object of appropriate type 
      *  @param min <b>IN</b>: Object, a Java object of appropriate type 
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>Note:</b> converts the Java array to an array of
      *  bytes, and writes the bytes.
@@ -1373,6 +1626,11 @@ public class HDFLibrary {
      *  @param count <b>IN</b>: int[], count
      *  @param data <b>IN</b>: byte[], data in an array of bytes
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  <p><b>NOTE:</b> to write from a Java array use the alternative
      *  routine below.
      */
@@ -1386,6 +1644,11 @@ public class HDFLibrary {
      *  @param count <b>IN</b>: int[], count
      *  @param theData <b>IN</b>: Object, a Java array of appropriate
      *  type, dimensions, and size.
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>Note:</b> converts to the Java array to a contiguous
      *  array of bytes and then writes to the file.
@@ -1407,6 +1670,11 @@ public class HDFLibrary {
      *  @param comp_type <b>IN</b>: the type of compression
      *  @param c_info <b>IN</b>: HDFCompInfo, the compression info
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  <p><b>NOTE:</b>The compression algorithm specific information is
      *  passed in an appropriate sub-class of HDFCompInfo.
      */
@@ -1420,6 +1688,11 @@ public class HDFLibrary {
      *  @param sdsid:  <b>IN</b>: the SD id
      *  @param fill_enable:  <b>IN</b>:  boolean, true calls library with 
      *  SD_FILL, false calls library with SD_NOFILL
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      */
     public boolean SDsetfillmode( int sdsid, boolean fill_enable ) throws HDFException
 	{
@@ -1444,6 +1717,11 @@ public class HDFLibrary {
      *  @param c_info <b>IN</b>: HDFChunkInfo, the chunking info
      *  @param flags <b>IN</b>: the type of chunking
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  <p><b>NOTE:</b>The chunking algorithm-specific information is
      *  passed in an appropriate sub-class of HDFChunkInfo.
      */
@@ -1454,6 +1732,11 @@ public class HDFLibrary {
      *  @param sdsid <b>IN</b>: the SD identifier returned by SDselect
      *  @param c_info <b>OUT</b>: HDFChunkInfo, the chunking info
      *  @param flags <b>OUT</b>: int[1], the type of chunking
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  @return c_info contains information about the chunking method,
      *  flags[0] == the chunking flags
@@ -1469,6 +1752,11 @@ public class HDFLibrary {
      *  @param origin <b>IN</b>: int[], origin
      *  @param data <b>OUT</b>: byte[], the data in an array of bytes
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  <p><b>NOTE:</b> to read into a Java array use the alternative
      *  routine below.
      */
@@ -1479,6 +1767,11 @@ public class HDFLibrary {
      *  @param origin <b>IN</b>: int[], origin
      *  @param theData <b>IN</b>: Object, a Java array of appropriate
      *  type, dimensions, and size.
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>Note:</b> reads the data as a contiguous
      *  array of bytes and then converts it to an appropriate Java object.
@@ -1501,6 +1794,11 @@ public class HDFLibrary {
      *  @param origin <b>IN</b>: int[], origin
      *  @param data <b>IN</b>: byte[], data to be written, in an array of bytes
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  <p><b>NOTE:</b> to write from a Java array use the alternative
      *  routine below.
      */
@@ -1511,6 +1809,11 @@ public class HDFLibrary {
      *  @param origin <b>IN</b>: int[], origin
      *  @param theData <b>IN</b>: Object, a Java array of appropriate
      *  type, dimensions, and size.
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>Note:</b> converts to the Java array to a contiguous
      *  array of bytes and then writes to the file.
@@ -1548,6 +1851,11 @@ public class HDFLibrary {
      *  @param vdata_name <b>IN</b>: String, the name of the Vdata
      *  @param vdata_class <b>IN</b>: String, the class of the Vdata
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  <p><b>NOTE:</b> to write from a Java array use the alternative
      *  routine below.
      */
@@ -1563,6 +1871,11 @@ public class HDFLibrary {
      *  @param data_type <b>IN</b>: int, the number type of the data
      *  @param vdata_name <b>IN</b>: String, the name of the Vdata
      *  @param vdata_class <b>IN</b>: String, the class of the Vdata
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>Note:</b> converts to the Java array to a contiguous
      *  array of bytes and then writes to the file.
@@ -1589,6 +1902,11 @@ public class HDFLibrary {
      *  @param vdata_class <b>IN</b>: String, the class of the Vdata
      *  @param order <b>IN</b>: int, the number of components per field
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  <p><b>NOTE:</b> to write from a Java array use the alternative
      *  routine below.
      */
@@ -1606,6 +1924,11 @@ public class HDFLibrary {
      *  @param vdata_name <b>IN</b>: String, the name of the Vdata
      *  @param vdata_class <b>IN</b>: String, the class of the Vdata
      *  @param order <b>IN</b>: int, the number of components per field
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>Note:</b> converts to the Java array to a contiguous
      *  array of bytes and then writes to the file.
@@ -1628,6 +1951,11 @@ public class HDFLibrary {
    /**
     *  @param vdata_id, <b>IN</b>, vdata id  as returned by VSattach
     *  @param n_records, <b>OUT</b>, int[1], the number of records in the vdata
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
     *
     *  @return  n_records[0] == the number of records
     */
@@ -1636,6 +1964,11 @@ public class HDFLibrary {
    /**
     *  @param vdata_id, <b>IN</b>, vdata id  as returned by VSattach
     *  @param fields, <b>OUT</b>, String[1], the names of the fields
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
     *
     *  @return  fields[0] == a comma delimited string with the names
     *  of the fields.
@@ -1645,6 +1978,11 @@ public class HDFLibrary {
    /**
     *  @param vdata_id, <b>IN</b>, vdata id  as returned by VSattach
     *  @param interlace, <b>OUT</b>, int[1], the interlace mode,
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
     *
     *  @return  interlace[0] == the number of records,
     *  HDFConstants.FULL_INTERLACE or HDFConstants.NO_INTERLACE
@@ -1654,6 +1992,11 @@ public class HDFLibrary {
    /**
     *  @param vdata_id, <b>IN</b>, vdata id  as returned by VSattach
     *  @param vdata_name, <b>OUT</b>, String[1], the name of the vdata
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
     *
     *  @return  vdata_name[0] == the name
     */
@@ -1666,6 +2009,11 @@ public class HDFLibrary {
    /**
     *  @param vdata_id, <b>IN</b>, vdata id  as returned by VSattach
     *  @param vdata_size, <b>OUT</b>, int[1], the size of the vdata
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
     *
     *  @return  vdata_size[0] == Native size, in bytes, of a record in the vdata
     */
@@ -1680,6 +2028,11 @@ public class HDFLibrary {
    /**
     *  @param vdata_id, <b>IN</b>, vdata id  as returned by VSattach
     *  @param hdfclassname, <b>OUT</b>, String[1], the class name of the vdata
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
     *
     *  @return  vdata_class[0] == the class name
     */
@@ -1688,6 +2041,11 @@ public class HDFLibrary {
    /**
     *  @param vdata_id, <b>IN</b>, vdata id  as returned by VSattach
     *  @param hdfname, <b>OUT</b>, String[1], the name of the vdata
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
     *
     *  @return  hdfname[0] == the name
     */
@@ -1705,6 +2063,11 @@ public class HDFLibrary {
    /**
     *  @param vdata_id, <b>IN</b>, vdata id  as returned by VSattach
     *  @param fieldname, <b>OUT</b>, String[1], the names of the fields
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
     *
     *  @return  fieldname[0] == a comma delimited string with the names
     *  of the fields.
@@ -1717,6 +2080,11 @@ public class HDFLibrary {
     *  @param vdata_id, <b>IN</b>, vdata id  as returned by VSattach
     *  @param iargs, <b>OUT</b>, int[3], n_records, interlace, vdata_size
     *  @param sargs, <b>OUT</b>, String[2], names the dataset, fields
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
     *
     *  @return iargs[0] = n_records, iargs[1] = interlace, iargs[2] = vdata_size,
     *  sargs[0] = vdata_name, sargs[1] = comma delimited list of fields
@@ -1731,6 +2099,11 @@ public class HDFLibrary {
     *  @param ref_array, <b>OUT</b>, int[?], the refs
     *  @param buffersize, <b>IN</b>, int, the max number of refs to
     *  return.
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
     *
     *  @return ref_array contains refs.  The Java API ignores the buffersize
     *  argument, returns as many as possible.
@@ -1743,6 +2116,11 @@ public class HDFLibrary {
      *  @param nrecord <b>IN</b>: int, number of records
      *  @param interlace <b>IN</b>: int, interlace
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  <p><b>NOTE:</b> to read into a Java array use the alternative
      *  routine below.
      */
@@ -1754,6 +2132,11 @@ public class HDFLibrary {
      *  type, dimensions, and size.
      *  @param nrecord <b>IN</b>: int, number of records
      *  @param interlace <b>IN</b>: int, interlace
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>Note:</b> reads the data as a contiguous
      *  array of bytes and then converts it to an appropriate Java object.
@@ -1796,6 +2179,11 @@ public class HDFLibrary {
      *  @param n_records <b>IN</b>: int, number of records
      *  @param interlace <b>IN</b>: int, interlace
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  <p><b>NOTE:</b> to write a Java array use the alternative
      *  routine below.
      */
@@ -1807,6 +2195,11 @@ public class HDFLibrary {
      *  type, dimensions, and size.
      *  @param n_records <b>IN</b>: int, number of records
      *  @param interlace <b>IN</b>: int, interlace
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>Important Note:</b> This interface only supports
      *  records which are all of the same numeric type, with
@@ -1842,6 +2235,11 @@ public class HDFLibrary {
      *  @param hdfclassname <b>OUT</b>: String[1], the HDF class of
      *  the vgroup.
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  @return hdfclassname[0] == the hdf class.
      */
     public  native  void Vgetclass(int vgroup_id, String[] hdfclassname) throws HDFException;
@@ -1850,6 +2248,11 @@ public class HDFLibrary {
      *  @param vgroup_id <b>IN</b>: the Vgroup id
      *  @param hdfname <b>OUT</b>: String[1], the name of
      *  the vgroup.
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  @return hdfname[0] == the name
      */
@@ -1866,6 +2269,11 @@ public class HDFLibrary {
      *  @param arraysize <b>IN</b>: int, the number of tags/refs to
      *  return
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  @return  tags[] = tags for objects 0 - n, refs[] = refs for
      *  objects 0 - n
      */
@@ -1877,6 +2285,11 @@ public class HDFLibrary {
      *  @param index <b>IN</b>: the index of the object
      *  @param tags <b>OUT</b>: int[1], the tag for the object
      *  @param refs <b>OUT</b>: int[1], the ref for the object
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  @return  tags[0] = tag for object #index, refs[0] = ref for
      *  objects #index
@@ -1892,6 +2305,11 @@ public class HDFLibrary {
      *  @param ref_array <b>OUT</b>: int[], the refs for Vdata not part
      *  of Vgroups
      *  @param buffersize <b>IN</b>: the max size of the ref_array
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  @return  ref_array[] = refs 0 - ...
      */
@@ -1911,6 +2329,11 @@ public class HDFLibrary {
      *  @param vgroup_id <b>IN</b>: the Vgroup id
      *  @param n_entries <b>OUT</b>: int[1], the number of objects in the Vgroup
      *  @param vgroup_name <b>OUT</b>: String[1], the name of the Vgroup
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  @return n_entries[0] = number of entries, vgroup_name[0] = the name
      */
@@ -1933,6 +2356,11 @@ public class HDFLibrary {
      *         Number of values in the target attribute,
      *         Size, in bytes, of the values of the target attribute,
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  @return name[0] = name, argv[0] = data_type, argv[1] = count,
      *  argv[2] = size
      */
@@ -1944,6 +2372,11 @@ public class HDFLibrary {
      *  @param id <b>IN</b>: the Vdata id
      *  @param index <b>IN</b>: the index of the attribute
      *  @param data <b>OUT</b>: byte[], the data in an array of bytes
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>NOTE:</b> to read into a Java array use the alternative
      *  routine below.
@@ -1957,6 +2390,11 @@ public class HDFLibrary {
      *  @param index <b>IN</b>: the index of the attribute
      *  @param theData <b>OUT</b>: Object, a Java array of appropriate
      *  type, dimensions, and size.
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>Note:</b> reads the data as a contiguous
      *  array of bytes and then converts it to an appropriate Java object.
@@ -1990,6 +2428,11 @@ public class HDFLibrary {
      *  @param count <b>IN</b>: the number of values
      *  @param data <b>IN</b>: byte[], the data in an array of bytes
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  <p><b>NOTE:</b> to write into a Java array use the alternative
      *  routine below.
      */
@@ -2003,6 +2446,11 @@ public class HDFLibrary {
      *  @param count <b>IN</b>: the number of values
      *  @param theData <b>IN</b>: Object, a Java array of appropriate
      *  type, dimensions, and size.
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>Note:</b> converts the data to a contiguous
      *  array of bytes and then converts writes it.
@@ -2026,6 +2474,11 @@ public class HDFLibrary {
      *         Number of values in the target attribute,
      *         Size, in bytes, of the values of the target attribute,
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  @return name[0] = name, argv[0] = data_type, argv[1] = count,
      *  argv[2] = size
      */
@@ -2035,6 +2488,11 @@ public class HDFLibrary {
      *  @param id <b>IN</b>: the Vdata id
      *  @param name <b>IN</b>: the name of the attribute
      *  @param findex <b>IN</b>: int[1], the index of the attribute
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  @return findex[0] = the index
      */
@@ -2050,6 +2508,11 @@ public class HDFLibrary {
      *  @param attr_index <b>IN</b>: the index of the attribute
      *  @param data <b>OUT</b>: byte[], the data in an array of bytes
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  <p><b>NOTE:</b> to read into a Java array use the alternative
      *  routine below.
      *
@@ -2063,6 +2526,11 @@ public class HDFLibrary {
      *  @param attr_index <b>IN</b>: the index of the attribute
      *  @param theData <b>OUT</b>: Object, a Java array of appropriate
      *  type, dimensions, and size.
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>Note:</b> reads the data as a contiguous
      *  array of bytes and then converts it to an appropriate Java object.
@@ -2093,6 +2561,11 @@ public class HDFLibrary {
      *  @param count <b>IN</b>: the number of values
      *  @param value <b>IN</b>: Strin, the data in an String
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  <p><b>NOTE:</b> to write from a Java array use the alternative
      *  routine below.
      */
@@ -2106,6 +2579,11 @@ public class HDFLibrary {
      *  @param data_type <b>IN</b>: int, the number_type of the attribute
      *  @param count <b>IN</b>: the number of values
      *  @param values <b>IN</b>: byte[], the data in an array of bytes
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>NOTE:</b> to write into a Java array use the alternative
      *  routine below.
@@ -2121,6 +2599,11 @@ public class HDFLibrary {
      *  @param count <b>IN</b>: the number of values
      *  @param theData <b>IN</b>: Object, a Java array of appropriate
      *  type, dimensions, and size.
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>Note:</b> converts the data to a contiguous
      *  array of bytes and then converts writes it.
@@ -2139,6 +2622,11 @@ public class HDFLibrary {
      *  @param filename <b>IN</b>: String, the file
      *  @param argv <b>OUT</b>: int[3], the width, height, and interlace mode
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  @return argv[0] = width, argv[1] = height, argv[2] = interlace
      */
     public native boolean DF24getdims(String fileName, int[] argv) throws HDFException;
@@ -2151,6 +2639,11 @@ public class HDFLibrary {
      *  bytes
      *  @param width <b>IN</b>: int, the width of the image
      *  @param height <b>IN</b>: int, the height of the image
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>NOTE:</b> to read into a Java array use the alternative
      *  routine below.
@@ -2166,6 +2659,11 @@ public class HDFLibrary {
      *  array of appropriate size and type
      *  @param width <b>IN</b>: int, the width of the image
      *  @param height <b>IN</b>: int, the height of the image
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>Note:</b> reads the data as a contiguous
      *  array of bytes and then converts it to an appropriate Java object.
@@ -2201,6 +2699,11 @@ public class HDFLibrary {
      *  @param width <b>IN</b>: int, the width of the image
      *  @param height <b>IN</b>: int, the height of the image
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  <p><b>NOTE:</b> to write from a Java array use the alternative
      *  routine below.
      */
@@ -2213,6 +2716,11 @@ public class HDFLibrary {
      *  array of appropriate size and type
      *  @param width <b>IN</b>: int, the width of the image
      *  @param height <b>IN</b>: int, the height of the image
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>Note:</b> converts the data into a contiguous
      *  array of bytes and then writes it to the file
@@ -2234,6 +2742,11 @@ public class HDFLibrary {
      *  @param width <b>IN</b>: int, the width of the image
      *  @param height <b>IN</b>: int, the height of the image
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  <p><b>NOTE:</b> to write from a Java array use the alternative
      *  routine below.
      */
@@ -2246,6 +2759,11 @@ public class HDFLibrary {
      *  array of appropriate size and type
      *  @param width <b>IN</b>: int, the width of the image
      *  @param height <b>IN</b>: int, the height of the image
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>Note:</b> converts the data into a contiguous
      *  array of bytes and then writes it to the file
@@ -2264,6 +2782,11 @@ public class HDFLibrary {
     /**
      *  @param type <b>IN</b>: int, the type of compression
      *  @param cinfo <b>IN</b>: HDFCompInfo, the compression parameters
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      */
      public native boolean DF24setcompress(int type, HDFCompInfo cinfo) throws HDFException;
  
@@ -2275,6 +2798,11 @@ public class HDFLibrary {
      *  @param filename <b>IN</b>: String, the file
      *  @param argv <b>OUT</b>: int[2], the width and height
      *  @param haspalette <b>OUT</b>: boolean[1], has a palette
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  @return argv[0] = width, argv[1] = height, haspalette[0] = palette
      */
@@ -2289,6 +2817,11 @@ public class HDFLibrary {
      *  @param width <b>IN</b>: int, the width of the image
      *  @param height <b>IN</b>: int, the height of the image
      *  @param palette <b>OUT</b>: byte[], the color look up table
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>NOTE:</b> to read into a Java array use the alternative
      *  routine below.
@@ -2306,6 +2839,11 @@ public class HDFLibrary {
      *  @param width <b>IN</b>: int, the width of the image
      *  @param height <b>IN</b>: int, the height of the image
      *  @param palette <b>OUT</b>: byte[], the color look up table
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>Note:</b> reads the data as a contiguous
      *  array of bytes and then converts it to an appropriate Java object.
@@ -2343,6 +2881,11 @@ public class HDFLibrary {
      *  @param height <b>IN</b>: int, the height of the image
      *  @param compress <b>IN</b>: short, the type of compression
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  <p><b>NOTE:</b> to write from a Java array use the alternative
      *  routine below.
      */
@@ -2356,6 +2899,11 @@ public class HDFLibrary {
      *  @param width <b>IN</b>: int, the width of the image
      *  @param height <b>IN</b>: int, the height of the image
      *  @param compress <b>IN</b>: short, the type of compression
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>Note:</b> converts the data into a contiguous
      *  array of bytes and then writes it to the file
@@ -2378,6 +2926,11 @@ public class HDFLibrary {
      *  @param height <b>IN</b>: int, the height of the image
      *  @param compress <b>IN</b>: short, the type of compression
      *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
+     *
      *  <p><b>NOTE:</b> to write from a Java array use the alternative
      *  routine below.
      */
@@ -2391,6 +2944,11 @@ public class HDFLibrary {
      *  @param width <b>IN</b>: int, the width of the image
      *  @param height <b>IN</b>: int, the height of the image
      *  @param compress <b>IN</b>: short, the type of compression
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *
      *  <p><b>Note:</b> converts the data into a contiguous
      *  array of bytes and then writes it to the file
@@ -2408,11 +2966,21 @@ public class HDFLibrary {
     /**
      *  @param type <b>IN</b>: int, the type of compression
      *  @param cinfo <b>IN</b>: HDFCompInfo, the compression parameters
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      */
      public native boolean DFR8setcompress(int type, HDFCompInfo cinfo) throws HDFException;
  
     /**
      *  @param palref <b>OUT</b>: short[1], the HDF ref of the palette
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      *  
      *  @return palref[0] = the ref of the palette
      */

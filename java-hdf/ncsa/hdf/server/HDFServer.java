@@ -177,7 +177,7 @@ public class HDFServer extends FileServlet implements Runnable
         if (message != null)
         {
             if      ( (hdfObject = new HDFFileList()).isMe(message) );
-            else if ( (hdfObject = new HDFHierarchy()).isMe(message) );
+            else if ( (hdfObject = new HDFHierarchy()).isMe(message));
             else if ( (hdfObject = new HDFAnnotation()).isMe(message) );
             else if ( (hdfObject = new HDFRIS8()).isMe(message) );
             else if ( (hdfObject = new HDFRIS24()).isMe(message) );
@@ -195,7 +195,7 @@ public class HDFServer extends FileServlet implements Runnable
             output.writeObject (message);
         }
         output.close();
-        System.gc(); // clean up used memory
+        //System.gc(); // clean up used memory
     }
 
 

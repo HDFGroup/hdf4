@@ -1,0 +1,151 @@
+<HTML>
+<HEAD><TITLE>JHV User's Guide: Animation</TITLE></HEAD>
+
+<!-- BEGIN OF THE BODY -->
+<BODY>
+
+<a href="index.html">[Index]</a>
+<a href="guide05-analysis.html">[Prev]</a>
+<a href="guide07-layer.html">[Next]</a>
+<a href="guide10-ascii2hdf.html">[Bottom]</a>
+<p><hr noshade size=1>
+
+<H1> Chapter 7: Animation </H1>
+JHV presents 3D images as a series of 2D cross-sectional slices cut 
+along a user-selected axis.  The animation tools enable you to view the 
+3D image by playing the sequence of 2D images as an animation.
+<DL>
+  <DT><A HREF="#guide06-window"> 7.1 Opening the Animation Window</A> 
+  <DT><A HREF="#guide06-option"> 7.2 Animation Options and Color Management</A> 
+</DL> 
+<p><hr noshade size=1>
+
+<a name=guide06-window></a>
+<h2>7.1 Opening the Animation Window </h2>
+<P>Animations can be prepared from two types of data sets:
+<ul>
+<li>Sets of sequential, 8-bit, 2D raster images
+<li>3D SDS arrays
+</ul>
+
+<DL>
+  <DT><b>8-bit raster images</b>
+  <DD>To display 8-bit raster images in animation, first set <b>Animation</b> 
+      from the main window <b>View</b> menu, then click on a folder containing 
+      a set of 8-bit raster images.  The animation window will appear, with the 
+      animation panel on the left and a control panel on the right.
+
+      <P>
+      <center>
+      <IMG SRC="images/animation.gif">
+      <br>Figure 7.1 The animation window
+      </center>
+
+  <DT><b>3D SDS arrays</b>
+  <DD>A 3D SDS array is presented by first <em>slicing</em> the data set  
+      along a user-selected axis.  Each slice is viewed as a separate 
+      2D image and the sequence of slices represents the full 3D image.
+      <P>
+      <center>
+      <IMG SRC="images/slice-selection.gif">
+      <BR>Figure 7.2 Slice Selection Window
+      </center>
+      <p>
+      When you first select a 3D SDS, JHV will present a slice-selection window.
+      Choose the X-, Y-, or Z-axis.  The <b>Slice Selection</b> field to the
+      right of the <b>X Slice</b> button will state how many slices will be
+      created; the text window displays the number of the current slice, which
+      is displayed in the image preview panel.  You can select a slice with the 
+      slidebar or by typing a valid entry, a number within the range specified
+      in the <b>Slice Selection</b> field, in the text window.
+<p>
+<B>Warning:</b>  <i>The user should be aware that animation through the array in any order other than the natural storage order will be slower, possibly 
+very much lower.</i>
+      <p>
+      Click on the preview image to open the image window.  Click on the 
+      image window <b>Animation</b> button to open the animation window 
+      illustrated in Figure 7.1.
+</DL>
+
+<a name=guide06-option></a>
+<a name=guide06-color></a>
+<h2>7.2 Animation Options and Color Management</h2>
+JHV provides several tools for structuring and manipulating animations.  
+These are controlled through the image selection window, buttons, 
+slidebars, and a pull-down menu inthe right half the animation window:
+<dl>
+  <dt>Image selection window
+    <dd>Click on individual images, or slices, to select them for the 
+        animation.
+    <br>
+  <dt><b>Select All</b>
+    <dd>Selects all elements listed in the image selection window.
+    <br>
+  <dt><b>Unselect All</b>
+    <dd>Deletes all elements listed in the image selection window from the 
+        animation list.
+    <br>
+  <dt><b>Forward</b> and <b>Backward</b>
+    <dd>These buttons play the animation forward or backward.
+    <br>
+  <dt><b>Next</b> and <b>Previous</b>
+    <dd>These buttons display the next or previous image in the 
+        animation sequence.
+    <br>
+  <dt><b>Stop</b>
+    <dd>Stops the animation.
+    <br>
+  <dt><b>Dismiss</b>
+    <dd>Closes the animation window.
+    <br>
+  <dt><b>Frame(s):</b> (a slidebar)
+    <dd>Displays the selected image in the sequence.
+    <br>
+  <dt><b>Speed (ms):</b> (a slidebar)
+    <dd>Sets the speed at which the animation is played.
+    <br>
+  <dt><b>Loop</b>, <b>Single</b>, and <b>Bounce</b> (in a pull-down menu 
+      at the bottom of the window)
+    <dd>Sets the type of animation to be played.  
+        <br>
+        <b>Loop</b> plays the animation in a repeating loop, always 
+        running in the same direction.  
+        <br>
+        <b>Bounce</b> plays the animation repeatedly, but changing 
+        direction each time it is played -- forward once, then backward, 
+        then forward, etc.
+        <br>
+        <b>Single</b> plays the animation one time.  
+</dl>
+
+<p>
+There are also two buttons for accessing the JHV color management tools:
+<dl>
+  <dt><b>Edit Palette</b>
+    <dd>Opens the palette editor.
+    <br>
+  <dt><b>Update Palette</b>
+    <dd>Updates the images with the new palette from the palette editor.  
+        (Performs the same action as <b>Set Palette</b> on the image 
+        window <b>Palette</b> menu.)
+</dl>
+
+<!-- BEGIN OF FOOTER INFO -->
+<P><hr noshade size=1>
+<a href="index.html">[Index]</a>
+<a href="guide05-analysis.html">[Prev]</a>
+<a href="guide07-layer.html">[Next]</a>
+<a href="guide10-ascii2hdf.html">[Bottom]</a>
+<p><hr noshade size=1>
+<font face="arial,helvetica" size="-1">
+  <a href="http://www.ncsa.uiuc.edu/">
+  <img border=0 src=http://www.ncsa.uiuc.edu/Images/NCSAhome/footerlogo.gif alt="NCSA"><br> The National Center for Supercomputing Applications</A><br>
+  <a href="http://www.uiuc.edu/">University of Illinois at Urbana-Champaign</a><br>
+<p><A HREF="mailto:hdfhelp@ncsa.uiuc.edu">hdfhelp@ncsa.uiuc.edu</A>
+</FONT>
+<!- END OF FOOTER INFO -->
+
+</BODY>
+</HTML>
+
+

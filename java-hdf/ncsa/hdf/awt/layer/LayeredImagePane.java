@@ -26,10 +26,10 @@ import ncsa.hdf.awt.image.*;
 public class LayeredImagePane extends Canvas implements MouseListener{
 
 	private Hashtable imageLayers;
+        int topImage;
 	Dimension panelSize;
   	Image offScreenImage;
   	Graphics offGraphics;
-        int topImage;
         Color imageBackground;
         LayeredImage layeredImage;
 
@@ -239,13 +239,18 @@ public class LayeredImagePane extends Canvas implements MouseListener{
 
     public Color getImageBackground() { return imageBackground; }
 
+    public void setTopImageIndex(int top) { topImage = top; }
+
     public void mouseClicked(MouseEvent e)
     {
         Point p = e.getPoint();
         Color theColor = null;
         LayeredImageInfo info = getLayeredImageInfo(topImage);
+        if (info == null) return;
 
         Image image = info.getImage();
+        if (image == null) return;
+
         int w = image.getWidth(this);
         int h = image.getHeight(this);
 

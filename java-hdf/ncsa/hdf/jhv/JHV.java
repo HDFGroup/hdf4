@@ -25,6 +25,7 @@ import ncsa.hdf.util.*;
 import ncsa.hdf.awt.*;
 import ncsa.hdf.awt.image.*;
 import ncsa.hdf.message.*;
+import ncsa.hdf.io.ASCII2HDF;
 
 /**
  * JHV  displays the HDF tree structure and data content
@@ -41,10 +42,11 @@ import ncsa.hdf.message.*;
  */
 public class JHV extends Applet implements ActionListener,ItemListener {
 
-    // thiese lines may be deleted after the recoding is done
-    //static { System.loadLibrary("hdf"); }
-    int fid;
+    /** indicator for remote access */
     boolean isSuppportRemoteAccess = false;
+
+    /** the local property file name */
+    public static final String USER_PROPS = "jhv.props";
 
     /** the user's display level */
     public static final int USER      = 0;
@@ -65,10 +67,13 @@ public class JHV extends Applet implements ActionListener,ItemListener {
     public static char[] nl = {13, 10};
 
     /** the new line charactor */
-    public static String NL = new String(nl);
+    public static final String NL = new String(nl);
 
-    /** the host header in the configuration file */
-    public static String HOSTHEADER = "Server";
+    /** data delimiter */
+    public static String delimiter = "\t";
+
+    /** hold the user properties */
+    Properties props = null;
 
     /** the frame to hold this viewer */
     Frame jhvFrame;
@@ -82,7 +87,7 @@ public class JHV extends Applet implements ActionListener,ItemListener {
     /** canvas to display the preview HDF image */
     JHVCanvas hdfCanvas;
 
-    JHVCanvas hdfIconCanvas;
+    //JHVCanvas hdfIconCanvas;
     
     /** the HDF logo */
     Image  hdfIcon = null;
@@ -111,6 +116,9 @@ public class JHV extends Applet implements ActionListener,ItemListener {
     /** the hdf Vgroup icon */
     Image  vgImg= null;
 
+    /** the warngin icon */
+    Image  warningIcon= null;
+
     /** indicating if icons are loaded */
     boolean iconLoaded = false;
 
@@ -120,11 +128,11 @@ public class JHV extends Applet implements ActionListener,ItemListener {
     /** the hdf file name */
     String hdfFile;
 
-    /** the queue to store the hdf object */
-    public  Queue hdfObjQueue = null;
+    /** the ascii file name */
+    String asciiFile;
 
-    /** the generic hdf object */
-    public HDFLibrary hdf;
+    /** the queue to store the hdf object */
+    Queue hdfObjQueue = null;
 
     // variables for duble-buffer
     Image offScreenImage = null;
@@ -139,9 +147,8 @@ public class JHV extends Applet implements ActionListener,ItemListener {
     /** the jhv incon directory */
     String jhvIconDir = ".";
 
-    /** the name of jhv configuration file */
-    String configFilename = "jhv.ini";
-    
+    String uHome = null;
+
     /** indicating if the JHV starts as an applet */
     boolean isApplet = false;
     
@@ -179,6 +186,12 @@ public class JHV extends Applet implements ActionListener,ItemListener {
     /** the server host menu */
     private Menu hostMenu;
 
+    /** indicates if the file is a hdf file or not */
+    private boolean isHDF = true;
+
+    /** the file save menuitem */
+    private MenuItem menuSave = null;
+
     /**
      * It is called automatically by the system the application is started.
      */
@@ -186,10 +199,13 @@ public class JHV extends Applet implements ActionListener,ItemListener {
     {
         // create new jhv object
         JHV jhv = new JHV();
+        Frame frame = new Frame("HDF Viewer");
+        jhv.setJHVFrame(frame);
 
         String tmpHDFFile = "";
         File tmpFile = null;
         jhv.jhvIconDir = "";
+
         for (int i = 0; i < args.length; i++) {
             if ("-jhvpath".equalsIgnoreCase(args[i])) {
  	        try {
@@ -208,41 +224,66 @@ public class JHV extends Applet implements ActionListener,ItemListener {
                 catch (Exception e) {}
             } else {
 		if (args[i] != null)
-		   tmpHDFFile = new String(args[2]);
+		   tmpHDFFile = new String(args[i]);
 	    }
         }
 
+        jhv.props = new Properties();
+	String libDir = null;
+        tmpFile = new File(jhv.jhvDir);
+	libDir = tmpFile.getParent();
+        String propsfile = libDir + File.separator + "lib" + File.separator +JHV.USER_PROPS;
+        try {
+            FileInputStream fis = new FileInputStream(propsfile);
+            jhv.props.load(fis);
+            fis.close();
+        } catch (Exception e) {}
+//{System.out.println("Exception reading system properties "+e.getMessage());}
+
+	jhv.uHome = System.getProperty("user.home");
+	propsfile = jhv.uHome + File.separator + JHV.USER_PROPS;
+        try {
+            FileInputStream fis = new FileInputStream(propsfile);
+            jhv.props.load(fis);
+            fis.close();
+        } catch (Exception e) {
+		jhv.uHome = null;
+/*System.out.println("Exception reading user properties "+ e.getMessage());*/}
+
         if (jhv.jhvIconDir == null || jhv.jhvIconDir.length() < 1 )
             jhv.jhvIconDir = jhv.jhvDir+File.separator+"lib"+File.separator+"hdficons";
-        jhv.cDir = jhv.jhvDir;
 
+        jhv.cDir = "."; //jhv.jhvDir;
         jhv.init(tmpHDFFile);
 
-        Frame frame = new Frame("HDF Viewer");
         WindowListener adapter = new WindowAdapter()
-        { public void windowClosing(WindowEvent e) {System.exit(0);} };
+        {
+            public void windowClosing(WindowEvent e)
+            {
+                System.exit(0);
+            }
+        };
         frame.addWindowListener(adapter);
         frame.setLayout(new BorderLayout());
-        frame.setMenuBar(jhv.createHdbMenuBar());
+        frame.setMenuBar(jhv.createMenuBar());
         frame.add("Center", jhv);
-        frame.pack();
-        frame.setSize(600,500);
+        frame.setVisible(true);
+        frame.setSize(600,450);
         frame.show();
-        jhv.setJHVFrame(frame);
     }
 
     /**
      * Initialize jhv with specified hdf file
      * @param hdffile  the name of hdf file
      */
-    public void init(String hdffile) {
+    public void init(String hdffile)
+    {
+        //System.out.println("JHV.init( "+hdffile+")");
 
+        String dlm = props.getProperty("data.delimiter");
+        if (dlm !=null) delimiter = dlm;
         hdfFile = new String(hdffile);
-
-        // create a HDFTree control
         hdfTree = new HDFTree();
-
-        // set layout manager
         setLayout(new BorderLayout());
 
         // information panel
@@ -264,6 +305,7 @@ public class JHV extends Applet implements ActionListener,ItemListener {
             String sdsStr= new String(jhvIconDir+"/sds.gif");
             String vdStr = new String(jhvIconDir+"/vdata.gif");
             String vgStr = new String(jhvIconDir+"/vgroup.gif");
+            String wnStr = new String(jhvIconDir+"/warning.gif");
 
             lDefault = toolkit.getImage(defaultImg );
             lFile    = toolkit.getImage(fileImg    );
@@ -273,24 +315,44 @@ public class JHV extends Applet implements ActionListener,ItemListener {
             risImg = toolkit.getImage( risStr);
             sdsImg = toolkit.getImage( sdsStr);
             vdImg  = toolkit.getImage(  vdStr);
-            vgImg  = toolkit.getImage(  vgStr);
+            warningIcon  = toolkit.getImage(  wnStr);
         }
-
-        //setup(hdfFile);
 
         // orgnize the panel
         add("Center",createDisplayPanel());
 
-        // resize the default size for the HDF Browser
-        setSize(600,400);
-
-        // display hdf icon
-        hdfIconCanvas.setSize(32,32);
-        hdfIconCanvas.setImageSize(30,30);
-        hdfIconCanvas.setImage(hdfIcon);
+        // set the frame incon only if the image exists
+        if ((new File(jhvIconDir+File.separator+"hdf.gif")).exists())
+            jhvFrame.setIconImage(hdfIcon);
 
         // get the initialized tree structure
         hdfTree.refresh();
+
+        File tmpFile = null;
+        try {
+            tmpFile = new File (hdfFile);
+        } catch (Exception ex) { return; }
+
+	String curDir = null;
+        if (tmpFile.isDirectory())
+        {
+            curDir = tmpFile.getPath();
+            return;
+        } else cDir = tmpFile.getParent();
+        if (curDir != null) cDir = curDir;
+        if (hdfFile !=null && hdfFile.length() > 1)
+        {
+            setup(hdfFile);
+	    hdfTree.resetTreeOffset();
+	    hdfTree.refresh();
+            hdfCanvas.setImage(null);
+            hdfCanvas.repaint();
+        }
+    }
+
+    public Properties getProperties()
+    {
+        return props;
     }
 
     /**
@@ -307,7 +369,7 @@ public class JHV extends Applet implements ActionListener,ItemListener {
 
         // load file from a typed in name
         if (source.equals(hdfFileText) ||
-            arg.equals("Load File") )
+            arg.equals("Open File") )
         {
             hdfFile = hdfFileText.getText().trim();
             int portIndex = -1;
@@ -433,12 +495,22 @@ public class JHV extends Applet implements ActionListener,ItemListener {
         }
 
         // exit JHV
-        else if (arg.equals("Exit")) {
+        else if (arg.equals("Exit"))
+        {
+            //remove the old temperal hdf file
+            if (!isHDF)
+            {
+                File tmpFile = new File (asciiFile);
+                String name = new String(tmpFile.getParent()+File.separator+"."+tmpFile.getName()+".hdf");
+                try { (new File (name)).delete(); }
+                catch (Exception ex) {}
+            }
+
             System.exit(0);
         }
 
         // edit remote host list
-        else if (arg.equals("Remote Host"))
+        else if (arg.equals("HDF Server"))
         {
             HostEditor hostEditor = new HostEditor(jhvFrame, hostList);
             if (hostEditor.isChanged())
@@ -453,11 +525,26 @@ public class JHV extends Applet implements ActionListener,ItemListener {
         // display JHV version information
         else if (arg.equals("About")) {
             String about = "Java HDF Viewer\n"+
-                              "Version 2.1\n"+
-                              "Copyright "+'\u00a9'+" 1998 NCSA";
+                           "Version 2.2\n"+
+                           "Copyright "+'\u00a9'+" 1998 NCSA\n"+
+                           "All rights reserved";
 
-            InfoDialog id = new InfoDialog(jhvFrame, "About JHV", about, hdfIcon);
+            InfoDialog id = new InfoDialog(jhvFrame, "About JHV", about, hdfIcon, false);
             id.show();
+        }
+
+        // save hdf file
+        else if (arg.equals("Convert To HDF File"))
+        {
+            try { save(); }
+            catch (Exception ex) { infoText.setText(ex.getMessage()); }
+        }
+
+        // open online user's guide
+        else if (arg.equals("Online Guide"))
+        {
+            try { openOnlineGuide(); }
+            catch (Exception ex) { infoText.setText(ex.getMessage()); }
         }
 
         // for futher implementation
@@ -472,9 +559,13 @@ public class JHV extends Applet implements ActionListener,ItemListener {
      *  when a new file is selected.
      *  @param hdfFileName  the name of the hdf file
      */
-    public void setup(String hdfFileName) {
-    
-        System.gc();
+    public void setup(String hdfFileName)
+    {
+        //System.out.println("JHV.setup()");
+
+        //System.gc();
+        if ( (new File (hdfFileName)).isDirectory())
+            return;
 
         jhvFrame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         Vector hdfObjVec = new Vector();
@@ -484,12 +575,50 @@ public class JHV extends Applet implements ActionListener,ItemListener {
         else hdfObjQueue.removeAllElements();
         hdfTree.removeAllTreeNodes();
 
+        //remove the old temporary hdf file
+        if (!isHDF)
+        {
+            File tmpFile = new File (asciiFile);
+            String name = new String(tmpFile.getParent()+File.separator+".~"+tmpFile.getName()+".hdf");
+            try { (new File (name)).delete(); }
+            catch (Exception e) {}
+        }
+
         this.hdfFile = hdfFileName;
+
+
+        // check if the file is an hdf file
+        // if not, convert the file to hdf file first
+        if (HDFObject.isHDF(hdfFile))
+        {
+            isHDF = true;
+            if (menuSave != null) menuSave.setEnabled(false);
+        }
+        else
+        {
+            isHDF = false;
+            if (menuSave != null) menuSave.setEnabled(true);
+            asciiFile = hdfFile;
+            File tmpFile = new File (asciiFile);
+            hdfFile = new String(tmpFile.getParent()+File.separator+".~"+tmpFile.getName()+".hdf");
+            ASCII2HDF converter = null;
+            try { converter = new ASCII2HDF(asciiFile, hdfFile); }
+            catch (Exception e) {}
+            if (converter != null) converter.convert();
+        }
+
         try {
             HDFHierarchy hierarchy = (HDFHierarchy) getHDFObject(null);
             hdfObjQueue = hierarchy.getQueue();
         }
         catch (Exception e){jhvFrame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));}
+
+        if ( hdfObjQueue==null || hdfObjQueue.size()<1 )
+        {
+            jhvFrame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            return;
+        }
+
         extractHdfObj(hdfObjQueue, hdfObjVec);
 
         // add the TreeNodes to the tree.
@@ -549,78 +678,40 @@ public class JHV extends Applet implements ActionListener,ItemListener {
      *  create the new display panel for JHV
      *  @return the panel for HDF Browser
      */
-    public Panel createDisplayPanel() {
-    
+    public Panel createDisplayPanel()
+    {
         Panel dispPanel = new Panel();
         dispPanel.setLayout(new BorderLayout());
-    
-        // hdf hierarchy tree canvas & HDF canvas
+
+        // HDF file text field and file button
+        hdfFileText = new TextField("No File Selected");
+        if (hdfFile != null) hdfFileText.setText(hdfFile);
+        hdfFileText.addActionListener(this);
+        Button fileButton = new Button("Open File");
+        fileButton.addActionListener(this);
+        EasyConstrainsPanel panel0 = new EasyConstrainsPanel();
+        panel0.setBackground(Color.lightGray);
+        GridBagLayout gridBagLayout0 = new GridBagLayout();
+        panel0.setLayout(gridBagLayout0);
+        panel0.setConstraints(fileButton, 0, 0, 1, 1
+            ,GridBagConstraints.NONE, GridBagConstraints.WEST, 0.0, 0.0);
+        panel0.setConstraints(hdfFileText, 1, 0, 1, 1
+            ,GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST, 1.0, 0.0);
+
+        //add the hdftree and the preview image canvas
         Panel  panel1 = new Panel();
         panel1.setLayout(new GridLayout(1, 2));
-        
-        // create hdf canvas;
         hdfCanvas = new JHVCanvas(this);
-      
-        Panel title = new Panel();
-        title.setLayout(new BorderLayout());
-        hdfIconCanvas = new JHVCanvas();
-        
-        title.add("West",  hdfIconCanvas);
-        title.add("Center",new Label("Hierarchy of the HDF", Label.CENTER));
-        
-        // hdf tree panel
-        Panel hdfTreePanel = new Panel();
-        hdfTreePanel.setLayout(new BorderLayout());
-        hdfTreePanel.add("North", title);
-        hdfTreePanel.add("Center", hdfTree);
+        panel1.add(hdfTree);
+        panel1.add(hdfCanvas);
 
-        panel1.add(hdfTreePanel);
-        panel1.add(hdfCanvas = new JHVCanvas(this));
-        
-        // control panel (middle)
-        Panel panel2 = new Panel();
-        
-        // botton or label
-        Panel panel2_right = new Panel();
-        panel2_right.setLayout(new FlowLayout(FlowLayout.CENTER));
-        panel2_right.add(new Label(""));
-        
-        Button LoadFileButton = new Button("Load File");
-        Button CleanButton = new Button("Clean");
-        LoadFileButton.addActionListener(this);
-        CleanButton.addActionListener(this);
-        panel2_right.add(LoadFileButton);
-        panel2_right.add(CleanButton);
+        // do not add textfiled for Mac machine
+        if (!isMac())
+            dispPanel.add("North", panel0);
 
-        panel2.setLayout(new BorderLayout());
-        
-        // HDF file text field
-        if (hdfFile != null) {
-            hdfFileText = new TextField(hdfFile);
-        } else {
-            hdfFileText = new TextField("No File Selected");
-        }
-        hdfFileText.addActionListener(this);
-         
-        panel2.add("Center", hdfFileText);
-        panel2.add("East",   panel2_right);
-        
-        // info
-        Panel panel3 = new Panel();
-        panel3.setLayout(new BorderLayout());
-        panel3.add("Center", infoText);
-        
-        // main panel
-        Panel panel4 = new Panel();
-        panel4.setLayout(new BorderLayout());
-        panel4.add("North", panel2);
-        panel4.add("Center",panel3);
-        
-        // display panel
-        dispPanel.setLayout(new GridLayout(0,1));
-        dispPanel.add("North", panel1);
-        dispPanel.add("Center",panel4);
-        
+        dispPanel.add("Center", panel1);
+        dispPanel.add("South", infoText);
+
         return dispPanel;
     }
 
@@ -630,6 +721,14 @@ public class JHV extends Applet implements ActionListener,ItemListener {
         if (osName == null) return false;
         return  (osName.toLowerCase().startsWith("mac")) ;
     }
+
+    /** Is the current platform Windows 95/NT */
+    public  boolean isWin() {
+        String osName = System.getProperty("os.name");
+        if (osName == null) return false;
+        return  (osName.toLowerCase().startsWith("win")) ;
+    }
+
 
     /** Is local access */
     public  boolean isLocal() { return isLocal; }
@@ -659,7 +758,7 @@ public class JHV extends Applet implements ActionListener,ItemListener {
     }
 
     /** create menubar for jhv viewer */
-    public MenuBar createHdbMenuBar() {
+    public MenuBar createMenuBar() {
 
         MenuBar  jhvMenuBar = new MenuBar();
         jhvMenuBar.add(createFileMenu("File"));
@@ -675,7 +774,7 @@ public class JHV extends Applet implements ActionListener,ItemListener {
      * @param menuTitle the menu title
      */
     public Menu createFileMenu(String  menuTitle) {
-    
+
         Menu fileMenu = new Menu(menuTitle);
 	MenuItem menuOpen = new MenuItem("Open Local File",new MenuShortcut(KeyEvent.VK_O));
 	menuOpen.addActionListener(this);
@@ -683,20 +782,22 @@ public class JHV extends Applet implements ActionListener,ItemListener {
 
         if (isSuppportRemoteAccess)
         {
-            String configPath = jhvDir+File.separator;
-            hostList = readHosts(configPath+configFilename);
-            if (hostList.getItemCount()<1)
-            {
-                configPath += "bin"+File.separator;
-                hostList = readHosts(configPath+configFilename);
-            }
-            configFilename = configPath+configFilename;
+            try {
+                setHostList(props.getProperty("hdf.server"));
+            } catch (Exception ex) {}
             hostMenu = new Menu("Open Remote File");
             hostMenu.addActionListener(this);
             fileMenu.addSeparator();
             fileMenu.add(hostMenu);
             addHostMenuItems();
         }
+
+        menuSave = new MenuItem("Convert To HDF File",new MenuShortcut(KeyEvent.VK_S));
+        if (isHDF) menuSave.setEnabled(false);
+        else menuSave.setEnabled(true);
+	menuSave.addActionListener(this);
+        fileMenu.addSeparator();
+        fileMenu.add(menuSave);
 
 	MenuItem menuExit = new MenuItem("Exit",new MenuShortcut(KeyEvent.VK_E));
 	menuExit.addActionListener(this);
@@ -716,17 +817,14 @@ public class JHV extends Applet implements ActionListener,ItemListener {
 
         Menu menu = new Menu(title);
 	MenuItem pref = new MenuItem("Preferences");
-	MenuItem edit = new MenuItem("Remote Host");
-	MenuItem server = new MenuItem("Local Server");
+	MenuItem edit = new MenuItem("HDF Server");
 
 	pref.addActionListener(this);
 	edit.addActionListener(this);
-	server.addActionListener(this);
 
         menu.add(pref);
         menu.addSeparator();
         menu.add(edit);
-        menu.add(server);
 
         return menu;
     }
@@ -763,10 +861,13 @@ public class JHV extends Applet implements ActionListener,ItemListener {
     public Menu createHelpMenu(String  title) {
 
         Menu menu = new Menu(title);
+	MenuItem online = new MenuItem("Online Guide");
+	online.addActionListener(this);
+        menu.add(online);
+        menu.addSeparator();
 	MenuItem about = new MenuItem("About");
 	about.addActionListener(this);
         menu.add(about);
-        menu.addSeparator();
 
         return menu;
     }
@@ -869,21 +970,21 @@ public class JHV extends Applet implements ActionListener,ItemListener {
     /** opens a local file */
     public void openFile()
     {
-
         this.isLocal = true;
-        FileDialog fd = new FileDialog(getFrame(), "HDF File");
+        Frame parent = getFrame();
+        if (parent==null) parent = jhvFrame;
+        if (parent==null) parent = new Frame("");
+
+        FileDialog fd = new FileDialog(parent, "HDF File");
 
         fd.setDirectory(cDir);
         fd.show();
 
         hdfFile = null;
 
-        String separator = System.getProperty("file.separator");
+        String separator = File.separator;
         if ((fd.getDirectory() != null) && (fd.getFile() != null)) {
-            if (isMac())
-                hdfFile = fd.getDirectory() + separator + fd.getFile();
-            else
-                hdfFile = fd.getDirectory() + fd.getFile();
+            hdfFile = fd.getDirectory() + fd.getFile();
             cDir = fd.getDirectory();
 
         } else {
@@ -939,12 +1040,13 @@ public class JHV extends Applet implements ActionListener,ItemListener {
         } // end of (target instanceof CheckboxMenuItem)
     }
 
-    public void setHostList(List list) { this.hostList = list; }
     public List getHostList() { return hostList; }
 
     // add hosts into the host menu
     public void addHostMenuItems()
     {
+        if (hostList==null) return;
+        
         int length = hostList.getItemCount();
         for (int i=0; i<length; i++)
         {
@@ -967,6 +1069,29 @@ public class JHV extends Applet implements ActionListener,ItemListener {
     }
 
     /**
+     *  set up HDF server hosts from the user properties
+     *  @param hosts  the string of hosts separated by space
+     */
+    public void setHostList(String hosts)
+    {
+        List list = new List();
+        String separator = " ";
+        String theHost = hosts.trim();
+
+        int index = theHost.indexOf(separator);
+        while (index >0)
+        {
+           list.addItem(theHost.substring(0, index));
+           theHost = theHost.substring(index+1).trim();
+           index = theHost.indexOf(separator);
+        }
+        if (theHost.length() > 1) list.addItem(theHost.trim());
+
+        this.hostList = list;
+
+    }
+
+    /**
      *  updates the current host list and change the configuration file
      *  @param list  the new list of server hosts
      */
@@ -975,105 +1100,56 @@ public class JHV extends Applet implements ActionListener,ItemListener {
         removeHostMenuItems();
         hostList = list;
         addHostMenuItems();
-        writeHosts(configFilename, list);
-    }
-
-    /** 
-     *  reads server host list from jhv configuration file
-     *  
-     *  @param filename  The name of the configuration file
-     *  @param config    The configurations except the server hosts
-     *  @return          The list of server hosts
-     */
-    public List readHosts(String filename)
-    {
-        RandomAccessFile raf = null;
-        List hosts = new List();
-        String line = new String();
-        long pos = 0;
-        long length = 0;
-
-        // Read the config file.
-        try {
-            raf = new RandomAccessFile(filename, "r");
-            length = raf.length();
-        }
-        catch (IOException e) { return hosts;}
-
-        while (pos < length)
-        {
-            try { line = raf.readLine(); }
-            catch (IOException e) { return hosts;}
-
-             // read hosts
-            line = line.trim();
-            if (line.startsWith(HOSTHEADER))
-                 hosts.addItem(line.substring(HOSTHEADER.length()).trim());
-            try{ pos = raf.getFilePointer(); }
-            catch (IOException e) { return hosts;}
-        }
-        try { raf.close(); }
-        catch (IOException e) {}
-
-        return hosts;
+        //writeHosts(jhvDir+File.separator+USER_PROPS, list);
+	if (uHome != null) {
+        writeHosts(uHome+File.separator+USER_PROPS, list);
+	} else {
+        writeHosts(jhvDir+File.separator+"lib"+File.separator+USER_PROPS, list);
+	}
     }
 
     /**
-     *  writes the server host list into the jhv configuration file
-     *  which also deletes the old host list from the configuration file
+     *  writes the server host list into the user property file
+     *  which also deletes the old host list the user property file
      *
      *  @param filename  The name of the configuration file
      *  @param hosts     The list of server hosts
      */
     public void writeHosts(String filename, List hosts)
     {
-        RandomAccessFile raf = null;
-        String config = new String(); //The configurations except the server hosts
-        String line = new String();
-        String hostStr = "";
-        File configFile = null;       // the current configuration file
-        File backupFile = null;       // the backup of the original configuration file
-        long pos = 0;
-        long length = 0;
-
+        if (hosts==null) return;
         int n_hosts = hosts.getItemCount();
-        for (int i=0; i<n_hosts; i++) {
-            hostStr += HOSTHEADER+" "+hosts.getItem(i) + NL;
-        }
-        // Read the config file.
-        try {
-            raf = new RandomAccessFile(filename, "r");
-            length = raf.length();
-            while (pos < length)
-            {
-                line = raf.readLine().trim();
-                if (!line.startsWith(HOSTHEADER))
-                   config += line + NL;
-                pos = raf.getFilePointer();
-            }
-            raf.close();
-        }
-        catch (IOException e) {}
+        if (n_hosts < 1) return;
+
+	Properties ptmp = new Properties();
 
         try {
-            configFile = new File(filename);
-            backupFile = new File(filename+".bak");
+            FileInputStream fis = new FileInputStream(filename);
+            ptmp.load(fis);
+            fis.close();
+        } catch (Exception e) {
+/*System.out.println("Exception reading system properties "+e.getMessage());*/
+        infoText.setText("Cannot read properties file to update: "+filename);
+	}
+
+        String separator = " ";
+        String hostStr = hosts.getItem(0);
+        for (int i=1; i<n_hosts; i++) {
+            hostStr += separator+hosts.getItem(i);
         }
-        catch (NullPointerException e) { return;}
+        ptmp.put("hdf.server", hostStr);
 
-        backupFile.delete();
-        configFile.renameTo(new File(filename+".bak"));
-
-        // write the config file.
         try {
-            raf = new RandomAccessFile(filename, "rw");
-            raf.writeBytes(config);
-            raf.writeBytes(hostStr);
-        }
-        catch (IOException e) { return; }
+            FileOutputStream fos = new FileOutputStream(filename);
+            String header = "hdf.server modified on";
+            ptmp.save(fos, header);
+            fos.close();
+        } catch (Exception e) {
+            infoText.setText("Cannot update properties file: "+filename);
+	    return;
+	}
+        infoText.setText("Updated properties file: "+filename);
 
-        try { raf.close(); }
-        catch (IOException e) { }
     }
 
     /**
@@ -1104,12 +1180,26 @@ public class JHV extends Applet implements ActionListener,ItemListener {
     public HDFObject getHDFObject(String host, int port, String filename,
         HDFObjectNode node)
     {
+        //System.out.println("JHV.getHDFObject()");
+
         Socket server = null;
         ObjectOutputStream output = null;
         ObjectInputStream input = null;
         HDFObject hdfObject = null;
         HDFMessage message = null;
 
+        if (isMac())
+        {
+            filename = filename.replace('\\', ':');
+            filename = filename.replace('/', ':');
+            if (filename.charAt(0) == ':')
+                filename = filename.substring(1);
+            else
+                filename = ':'+filename;
+        }
+
+        //if (!isHDF) hdfObject = new HDFASCII (node, filename);
+        //else if  (node == null)
         if  (node == null)
             hdfObject = new HDFHierarchy (node, filename);
         else if  (node.type == HDFObjectNode.Annotation)
@@ -1130,6 +1220,8 @@ public class JHV extends Applet implements ActionListener,ItemListener {
             hdfObject = new HDFSDS(node, filename);
         else if  (node.type == HDFObjectNode.Vdata)
             hdfObject = new HDFVdata(node, filename);
+        else if  (node.type == HDFObjectNode.Vgroup)
+            hdfObject = new HDFVgroup(node, filename);
         else return hdfObject;
 
         // serve local file
@@ -1137,6 +1229,7 @@ public class JHV extends Applet implements ActionListener,ItemListener {
         {
             if (filename != null && filename.length() > 0)
                 hdfObject.service();
+
             return hdfObject;
         }
 
@@ -1174,5 +1267,164 @@ public class JHV extends Applet implements ActionListener,ItemListener {
         return hdfObject;
     }
 
+    public boolean isHDF() {return isHDF; }
+    
+    /** save the data into HDF file or ASCII file */
+    public void save()
+    {
+        // get the output file name
+        FileDialog fd = new FileDialog(jhvFrame, "Save HDF File", FileDialog.SAVE);
+        fd.setDirectory(cDir);
+        fd.show();
+        String theFile = fd.getFile();
+        if (theFile == null) return;
+        theFile = theFile.trim();
+        String dir = fd.getDirectory();
+        String fullname = dir + theFile;
 
+        String warning = null;
+        InfoDialog id = null;
+        File outFile = new File(fullname);
+
+        if (outFile.exists() ) {
+            if (!outFile.canWrite())
+            {
+                warning = fullname+"\n"+ "This file is read only.\n"+ "File save failed.";
+                infoText.setText(warning);
+                id = new InfoDialog(jhvFrame, fd.getTitle(), warning, warningIcon, false);
+                id.show();
+                return;
+            }
+        }
+
+        if (fullname.equals(hdfFile))
+        {
+            warning = fullname+"\n"+
+                "This file is currently in use.\n"+
+                "Overwriting the file causes inconsistency.\n"+
+                "The JHV may not work until the file is reloaded.\n" +
+                "  \n"+
+                "Replace working file ?";
+            infoText.setText(warning);
+            id = new InfoDialog(jhvFrame, fd.getTitle(), warning, warningIcon, true);
+            id.setlabels("  Yes  ", "   No   ");
+            id.show();
+            if (!id.clickedOkButton()) return;
+        }
+        else if (!isMac() && !isWin())
+        {
+	if (outFile.exists()) {
+            warning = fullname+"\n"+
+                "This file already exists.\n"+
+                "  \n"+
+                "Replace existing file ?";
+            infoText.setText(warning);
+            id = new InfoDialog(jhvFrame, fd.getTitle(), warning, warningIcon, true);
+            id.setlabels("  Yes  ", "   No   ");
+            id.show();
+            if (!id.clickedOkButton()) return;
+	}
+        }
+
+        // reset the current working directory in JHV
+        cDir = dir;
+
+        if (outFile.exists()) outFile.delete();
+
+        (new File(hdfFile)).renameTo(outFile);
+        infoText.setText("Convert file to "+fullname+" successful.");
+        setup(fullname);
+    }
+
+    /**
+     *  Open online user's guide
+     */
+    public void openOnlineGuide()
+    {
+        boolean findBrowser = false;
+        Runtime rt = Runtime.getRuntime();
+        String command = "";
+        String ugURL = "";
+        String thePath = "";
+        List bPathList = new List();
+
+        // add browser path from the JHV property file
+        if (props != null)
+        {
+            thePath = props.getProperty("browser.path");
+            ugURL = props.getProperty("jhv.guide");
+        }
+
+        if (thePath != null)
+            bPathList.add(thePath);
+
+        if (ugURL == null || ugURL.length() <= 0)
+            ugURL = "http://hdf.ncsa.uiuc.edu/java-hdf-html/jhv/UsersGuide/JHV2.2/";
+
+        // add browser path from system call "which netscape"
+        try {
+            BufferedReader d = new BufferedReader(new InputStreamReader(
+                rt.exec("which netscape").getInputStream()));
+            thePath = "";
+
+            while (thePath != null)
+            {
+                if (thePath.length() > 0)
+                    bPathList.add(thePath);
+                thePath = d.readLine();
+            }
+
+            d.close();
+        } catch (Exception e) {}
+
+        // add default browser path
+        bPathList.add("C:\\Program Files\\Netscape\\Communicator\\Program\\netscape.exe");
+        bPathList.add("c:\\program files\\netscape\\navigator\\program\\netscape.exe");
+        bPathList.add("c:\\program files\\Microsoft Internet\\Iexplore.exe");
+        bPathList.add("c:\\winnt\\explorer.exe");
+        bPathList.add("/usr/sbin/netscape");
+        bPathList.add("/usr/bin/X11/netscape");
+        bPathList.add("/usr/local/bin/netscape");
+        bPathList.add("/usr/local/netscape/netscape");
+
+        int length = bPathList.getItemCount();
+        for (int i = 0;i<length;i++)
+        {
+            thePath = bPathList.getItem(i);
+            if ((new File(thePath)).isFile())
+            {
+                command = thePath;
+                findBrowser = true;
+                break;
+            }
+        }
+
+        InfoDialog  id;
+        String warning = "Could not load web browser.\n"+
+            "\nEnter your browser path\n"+
+            "e.g. c:\\program files\\Microsoft Internet\\Iexplore.exe\n"+
+            "        /usr/local/bin/netscape\n";
+
+        if (!findBrowser)
+        {
+            id = new InfoDialog(jhvFrame, "Web Browser",
+                    warning, warningIcon, true, true);
+            id.show();
+
+            if (id.clickedOkButton())
+                command = id.getTextField().getText();
+            else
+                return;
+        }
+
+        thePath = command;
+        command += " "+ugURL;
+        try { rt.exec(command); }
+        catch (IOException ex)
+        {
+            warning = "Could not load web browser from \n"+ thePath+"\n";
+            infoText.setText(warning);
+        }
+
+    }
 }

@@ -60,7 +60,8 @@ public class HDFRIS24 extends HDFGR
      */
     public void service()
     {
-        try { information = getRis24 (hdfFilename, nodeObject); }
+        this.hdf =  new HDFLibrary();
+        try { information = getRis24 (filename, nodeObject); }
         catch (Exception e) { information = "ERROR: exception in HDFRIS24.getRis24()"; }
     }
 
@@ -71,6 +72,11 @@ public class HDFRIS24 extends HDFGR
      *  @param filename   the string of the hdf file name
      *  @param node       the HDFObjectNode
      *  @return           the string the HDF 24-bit raster image information
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      */
     public static String readInfo (HDFLibrary hdf, String filename,
         HDFObjectNode node) throws HDFException
@@ -106,6 +112,11 @@ public class HDFRIS24 extends HDFGR
      *  @param filename   the string of the hdf file name
      *  @param node       the HDFObjectNode
      *  @return           the error message or HDFRIS24 information
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      */
     private String getRis24 (String filename, HDFObjectNode node)
         throws HDFException
@@ -120,7 +131,7 @@ public class HDFRIS24 extends HDFGR
         {
             return ("ERROR: native call to HDFLibrary.DF24readref() failed.");
         }
-    
+
         // get HDF image information
         if ( !hdf.DF24getdims(filename,argv) )
         {
@@ -130,7 +141,7 @@ public class HDFRIS24 extends HDFGR
         int imageWidth      = argv[0];
         int imageHeight     = argv[1];
         int  interlace      = argv[2];
-        byte[] imageData    = new byte[imageWidth*imageHeight*3];
+        byte[] data    = new byte[imageWidth*imageHeight*3];
         /*
         byte[] imagePalette = new byte[256*3];
         for (int i=0; i<256; i++)
@@ -143,7 +154,7 @@ public class HDFRIS24 extends HDFGR
         hdf.DF24reqil(HDFConstants.MFGR_INTERLACE_COMPONENT);
 
         // read the image
-        if ( !hdf.DF24getimage(filename, imageData,imageWidth, imageHeight) )
+        if ( !hdf.DF24getimage(filename, data,imageWidth, imageHeight) )
         {
             return ("ERROR: native call to HDFLibrary.DF24getimage() failed.");
         }
@@ -151,8 +162,8 @@ public class HDFRIS24 extends HDFGR
         this.originalImageSize = new Dimension(imageWidth, imageHeight);
         this.selectedImageSize = this.originalImageSize;
         this.imagePalette = new byte[256*3];
-        this.imageData = byte24to8(imageData, imageWidth, imageHeight, this.imagePalette);
-        //this.imageData = imageData;
+        this.data = byte24to8(data, imageWidth, imageHeight, this.imagePalette);
+        //this.data = data;
         int temp[] = {1, HDFConstants.DFNT_UINT8};
         this.imageArgv = temp;
         return "";
@@ -200,7 +211,15 @@ public class HDFRIS24 extends HDFGR
             g = p24[size+i];
             b = p24[2*size+i];
 
-            p8[i] = (byte)((((r&rmask)>>rshift)|((g&gmask)>>gshift)|((b&bmask)>>bshift)));
+            p8[i] = (byte)( (r&(rmask>>rshift))|
+                            (g&(gmask>>gshift))|
+                            (b&(bmask>>bshift)) );
+            //p8[i] = (byte)((((r&rmask)>>rshift)|
+            //                ((g&gmask)>>gshift)|
+            //                ((b&bmask)>>bshift)));
+
+//System.out.println(r +" "+g+" "+b);
+
         }
 
 

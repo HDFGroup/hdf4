@@ -1,0 +1,313 @@
+<HTML>
+<HEAD><TITLE>JHV User's Guide: HDF Data Objects</TITLE></HEAD>
+
+<!-- BEGIN OF THE BODY -->
+<BODY>
+
+<a href="index.html">[Index]</a>
+<a href="guide01-start.html">[Prev]</a>
+<a href="guide03-window.html">[Next]</a>
+<a href="guide10-ascii2hdf.html">[Bottom]</a>
+<p><hr noshade size=1>
+
+<H1> Chapter 3: Opening HDF Data Objects </H1>
+HDF is a library and platform independent data format for the storage and 
+exchange of scientific data.  HDF files may contain many types of information 
+that a scientist might need.  
+<p>
+JHV can be used to view several types of HDF data objects.  Due the differing 
+natures of these types of data sets, the manner in which they open for display
+differs from one type to another.  For example, an 8-bit raster image will open 
+a preview copy of the image, a 3D SDS first asks how the data is to be sliced for 
+viewing, and a Vdata opens as a data table.  This chapter describes opening each
+of the data types in a JHV session.
+<P>
+Currently JHV can be used with five types of HDF objects:
+<DL>
+  <DT><A HREF="#guide02-annotation"> 3.1 File and Data Object Annotations</A> 
+  <DT><A HREF="#guide02-ri"> 3.2 Raster Images</A> 
+  <DT><A HREF="#guide02-sds"> 3.3 Scientific Data Sets</A> 
+  <DT><A HREF="#guide02-vdata"> 3.4 Vdatas, ot Tables</A> 
+  <DT><A HREF="#guide02-vgroup"> 3.5 Vgroups</A> 
+</DL> 
+<p>
+The last four types of data above are the essential data sets; HDF was 
+created to store these types of information in a widely-accessible format.
+Annotations, the first item, are a fundamentally different sort of data; they 
+exist solely to describe the data stored in the HDF file.
+<p>
+Complete information regarding these data structures is available from 
+<A HREF=http://hdf.ncsa.uiuc.edu/>The HDF Home Page.</A>
+
+<p><hr noshade size=1>
+
+<A NAME="guide02-annotation"</A>
+<H2>3.1 File and Data Object Annotations</H2>
+HDF annotations are text strings used to describe a file or any of the 
+data elements the HDF file contains. 
+<p>
+Annotations come in two forms; labels and descriptions. 
+<em>Labels</em> are short annotations used for assigning things like titles 
+or time stamps to a file or its data objects.  <em>Descriptions</em> are 
+longer annotations; they typically contain more extensive information, such 
+as a source code module or mathematical formulae. 
+<p>
+There are also two types of annotations:  file annotations and data object
+annotations.  A <em>file annotation</em> describes an entire HDF file.
+A <em>data object annotation</em> describes a particular data object within
+the file.
+<p>File and data object annotations can each be either labels or descriptions.  
+Thus an annotation might be a file label, a file description, an object label, 
+or an object description.
+<CENTER>
+<IMG SRC="images/annotation.gif">
+<br>Figure 3.1 A <em>file description</em>, one sort of annotation, displayed in 
+the message window
+</CENTER>
+<p>
+
+<A NAME="guide02-ri"</A>
+<H2>3.2 Raster Images</H2>
+<p>The <em>general raster</em>, or <em>GR</em>, data model is designed to 
+provide a flexible means of storing raster image data, including 8-bit raster 
+or 24-bit raster images.  Raster image data is stored in a two-dimensional 
+array and attributes may be associated with the image, the file, or both. 
+Palettes (also known as CLUTs or color look-up tables) and compression method 
+information can also be associated with an image.
+<p>
+For backward compatibility, the HDF library allows users to access images as 
+a generic raster image or as an 8-bit or 24-bit raster image. In such a case, 
+the image is stored once, but under two identities; JHV will show two objects 
+in the hierarchy, although there is really only one image in the file.
+
+<DL>
+  <DT><b>GR object annotation</b>
+  <DD>A GR object annotation contains information about the image. 
+      The information can be displayed in the text area by clicking the object 
+      folder. The following is an example of a GR object annotation.
+  <p>
+  <TABLE width = 360 BORDER=0 bgcolor="#FFF999" cols=1 cellspacing=0 >
+  <tr><TD width = 360 bgcolor="#FFF999">
+  <pre> 
+  Image Name : Raster Image #1
+  Image Index: 1
+  Image Size : 625 by 271
+  Data Number Type: 8-bit unsigned char
+  Num of Components: 1
+  Interlace  : 0
+  Num of Attributes: 0
+  </pre>
+  </td></tr> 
+  </TABLE><p>
+
+  <DT><B>GR data attributes</B>
+  <DD>Attributes are defined by the calling program to contain auxiliary 
+      information about a file, an image, or both. Click the attribute 
+      object icon in the hierarchical tree to view the data attributes. 
+      The data attributes are displayed in Name/Value format in the message 
+      window.
+  <p>
+  <CENTER>
+  <IMG SRC="images/gr-attribute.gif">
+  <br>Figure 3.2 General raster image attributes displayed in the message window
+  </CENTER>
+
+  <DT><b>GR preview image</b> 
+  <DD>JHV has a limited image display capability.  When you select an image, 
+      JHV will first present a compressed preview of the image in the fixed-size
+      preview image window.  You can then select subsamples of the image for 
+      further display.  Note that the entire image is displayed in the preview
+      window when the image is the same size or smaller than the window.
+  <p>To examine a portion of the image at greater resolution (up to the 
+     resolution of the original image), drag the mouse on the preview image to 
+     select a subsample or click on the image to select the full image. 
+     The selected subsample will be displayed in a separate image window.
+  <p>
+  <CENTER>
+  <IMG SRC="images/gr-image.gif">
+  <br>Figure 3.3 GR preview image in the main window (upper panels); 
+      selected full image and zoomed subset in the image window 
+      (lower panels and described in a later chapter)
+  </CENTER>
+
+</DL>
+
+
+<A NAME="guide02-sds"</A>
+<H2>3.3 Scientific Data Set</H2>
+The <em>scientific data set</em> model, or <em>SDS</em>, supports four 
+primary data objects: arrays, dimensions, dimension scales, and dimension 
+attributes. The fundamental object of the model is the SDS array; the 
+remaining objects describe the array.
+<p>
+JHV can display 2- or 3-dimensional SDS arrays. A 2D array is displayed 
+as a single image; a 3D array is displayed as an animated sequence of 
+2D images sliced along the third axis.  
+See <a href="guide06-animation.html">Chapter 7, Animations</A>, for 
+further information.
+
+<DL>
+
+  <DT><B>SDS object information</B>
+  <DD>SDS object information is a description of the SDS object data. Click the SDS object folder to view the object information. Below is an example of SDS object information.
+  <p>
+  <TABLE width = 360 BORDER=0 bgcolor="#FFF999" cols=1 cellspacing=0 >
+  <tr><TD width = 360 bgcolor="#FFF999">
+  <pre>
+  Dataset name         : Data-Set-2
+  Rank                 : 3, 128 X 128 X 65
+  Data number type     : 16-bit signed integer
+  Number of Attributes : 6
+  </pre>
+  </td></tr> 
+  </TABLE>
+
+  <P>
+  <DT><B>SDS data attributes</B>
+  <DD>Attributes describe the nature and/or intended usage of the object 
+      they are attached to.  The object may be a file, an SDS, or a dimension.
+      JHV displays the data attributes in Name/Value format in the message window.
+  <p>
+  <CENTER>
+  <IMG SRC="images/sds-attribute.gif">
+  <br>Figure 3.4 SDS attributes displayed in the message window
+  </CENTER>
+
+  <DT><B>SDS preview image</B> 
+  <DD>An SDS preview image is a compressed image created from SDS array. 
+      <p>
+      A 2D SDS array is displayed as a 2D image in the preview image panel. 
+      <p>
+      A 3D SDS array is displayed as a sequence of 2D images; each 2D image 
+      is a slice of the 3D image taken along an axis selected by the user.
+      These 2D images can be viewed singly or as an animated sequence.
+      See <a href="guide06-animation.html">Chapter 7, Animations</A>, for 
+      further information.
+  <p>
+  <CENTER>
+  <IMG SRC="images/sds-image.gif">
+  <br>Figure 2.5 SDS Preview Image
+  </CENTER>
+
+</DL>
+
+<A NAME="guide02-vdata"</A>
+<H2>3.4 Vdatas, or Tables</H2>
+An HDF Vdata object is a collection of records whose values are stored in 
+fixed-length fields. Thus, a vdata is like a table in which each row has the 
+same structure and each column contains data of the same type. The Vdata 
+model allows multiple entries per field; the number of entries or components 
+in a field is called the <em>order</em> of the field. 
+
+<DL>
+  <DT><B>Vdata information</b>
+  <DD>Information regarding a vdata object includes record number, field name, 
+      field order, field type, and so forth. This information is displayed in 
+      the JHV message window when you click on the vdata object folder. The 
+      following is an example of such vdata information:
+  <P>
+  <TABLE width = 300 BORDER=0 bgcolor="#FFF999" cols=1 cellspacing=0 >
+  <tr><TD width = 300 bgcolor="#FFF999">
+  <pre> 
+  VStag         : 1963
+  ref           : 2
+  Vdata Class   : Data
+  Vdata Name    : Sea Ice Motion Vectors - 17766010
+  Vdata records : 291
+  Interlace     : 0
+  Field number  : 8
+  Field list    : REFLAT,REFLON,DSPLAT,DSPLON,DELTAX,DELTAY,ROTANGLE,MATCH
+  Record size   : 45 bytes
+  Field name     Field order    Field type
+  REFLAT         1              64-bit floating point
+  REFLON         1              64-bit floating point
+  DSPLAT         1              64-bit floating point
+  DSPLON         1              64-bit floating point
+  DELTAX         1              32-bit floating point
+  DELTAY         1              32-bit floating point
+  ROTANGLE       1              32-bit floating point
+  MATCH          1              8-bit unsigned integer
+  </pre>
+  </td></tr>
+  </TABLE>
+
+  <P>
+  <DT><b>Vdata table</b>
+  <DD>JHV displays a Vdata table as a 
+      <a href="guide08-spreadsheet.html">spreadsheet</a> with columns 
+      and rows representing the Vdata fields and records respectively. 
+      The JHV spreadsheet functionality is somewhat limited, 
+      supporting only plot and save functions.
+  <p>
+  <CENTER>
+  <IMG SRC="images/vdata-spreadsheet.gif">
+  <br>Figure 3.6 A Vdata spreadsheet
+  </CENTER>
+
+</DL>
+
+<A NAME="guide02-vgroup"</A>
+<H2>3.5 Vgroups</H2>
+An HDF vgroup object is a structure designed to associate related objects.  
+The general structure of Vgroups is similar to the Unix file system of 
+directories, subdirectories, and files in that a Vgroup may contain 
+references to other Vgroups and/or to data objects.  Any HDF object can 
+be included within a Vgroup.
+<p>
+<CENTER>
+<IMG SRC="images/vgroup.gif">
+<br>Figure 3.7 A Vgroup
+</CENTER>
+
+<DL>
+
+  <DT><b>Vgroup information</b>
+  <DD>Vgroup information is displayed by clicking on a Vgroup folder in 
+      the displayed file hierarchy. The following example shows that the 
+      current HDF file contains two Vgroups, 
+      <code>AVHRR 1KM Global 10 day Composite</code> and 
+      <code>avhrr-ndvi-060192.hdf</code>.
+  <p>
+
+  <TABLE width = 310 BORDER=0 bgcolor="#FFF999" cols=1 cellspacing=0 >
+  <tr><TD width = 310 bgcolor="#FFF999">
+  <pre> 
+  Tag/Ref: 1965/2
+  Name: AVHRR 1KM Global 10 day Composite
+  Class Name: PlanetaryGrid
+  Entries: 2
+  Tag/Ref: 1965/42
+  Name: avhrr-ndvi-060192.hdf
+  Class Name: CDF0.0
+  Entries: 5
+  </pre>
+  </td></tr>  
+  </TABLE>
+  
+  <P>
+  <DT><b>Vgroup data</b>
+  <DD>A Vgroup data object is usually a Vdata or an SDS data set. 
+      Clicking on a Vgroup object node opens the Vgroup object in
+      the appropriate <A HREF=#guide02-vdata>vdata</a> or 
+      <A HREF=#guide02-sds>sds</a> mode.
+</UL>
+
+<!-- BEGIN OF FOOTER INFO -->
+<P><hr noshade size=1>
+<a href="index.html">[Index]</a>
+<a href="guide01-start.html">[Prev]</a>
+<a href="guide03-window.html">[Next]</a>
+<a href="guide10-ascii2hdf.html">[Bottom]</a>
+<p><hr noshade size=1>
+
+<font face="arial,helvetica" size="-1">
+  <a href="http://www.ncsa.uiuc.edu/">
+  <img border=0 src=http://www.ncsa.uiuc.edu/Images/NCSAhome/footerlogo.gif alt="NCSA"><br> The National Center for Supercomputing Applications</A><br>
+  <a href="http://www.uiuc.edu/">University of Illinois at Urbana-Champaign</a><br>
+<p><A HREF="mailto:hdfhelp@ncsa.uiuc.edu">hdfhelp@ncsa.uiuc.edu</A>
+</FONT>
+<!- END OF FOOTER INFO -->
+
+</BODY>
+</HTML>
+

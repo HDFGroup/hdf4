@@ -45,7 +45,7 @@ public class HDFVdata extends HDFObject
     private int[] fieldTypes;
 
     /** the 2-D array of vdata */
-    private String[][] vdata;
+    //private String[][] vdata;
 
     /** the vdata name */
     private String vdataName;
@@ -61,7 +61,7 @@ public class HDFVdata extends HDFObject
         fieldNames = null;
         fieldOrders = null;
         fieldTypes = null;
-        vdata = null;
+        //vdata = null;
         vdataName = null;
     }
 
@@ -79,7 +79,7 @@ public class HDFVdata extends HDFObject
         fieldNames = null;
         fieldOrders = null;
         fieldTypes = null;
-        vdata = null;
+        //vdata = null;
         vdataName = null;
     }
 
@@ -98,7 +98,7 @@ public class HDFVdata extends HDFObject
         if ( fieldNames != null ) message.put("fieldNames", fieldNames);
         if ( fieldOrders != null ) message.put("fieldOrders", fieldOrders);
         if ( fieldTypes != null ) message.put("fieldTypes", fieldTypes);
-        if ( vdata != null ) message.put("vdata", vdata);
+        if ( data != null ) message.put("data", data);
         if ( vdataName != null ) message.put("vdataName", vdataName);
          return message;
     }
@@ -108,7 +108,8 @@ public class HDFVdata extends HDFObject
      */
     public void service()
     {
-        try { information = getVdata (hdfFilename, nodeObject); }
+        this.hdf =  new HDFLibrary();
+        try { information = getVdata (filename, nodeObject); }
         catch (Exception e) { information = "ERROR: exception in HDFVdata.getVdata()"; }
     }
 
@@ -125,7 +126,7 @@ public class HDFVdata extends HDFObject
         fieldNames = (String[]) message.get("fieldNames");
         fieldOrders = (int[]) message.get("fieldOrders");
         fieldTypes = (int[]) message.get("fieldTypes");
-        vdata = (String[][]) message.get("vdata");
+        data = (Object) message.get("data");
         vdataName = (String) message.get("vdataName");
     }
 
@@ -136,6 +137,11 @@ public class HDFVdata extends HDFObject
      *  @param filename   the string of the hdf file name
      *  @param node       the HDFObjectNode
      *  @return           the string containing the HDF Vdata image information
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      */
     public static String readInfo (HDFLibrary hdf, String filename,
         HDFObjectNode node) throws HDFException
@@ -149,12 +155,12 @@ public class HDFVdata extends HDFObject
         }
         hdf.Vstart(fid);
 
-        int vdata_ref = -1;         
+        int vdata_ref = -1;
         int [] n = new int[1];
         int vdNumber = hdf.VSlone(fid,n,0);
         int refArray[] = new int[vdNumber];
         int refNum;
-   
+
         if  ( (refNum = hdf.VSlone(fid, refArray, vdNumber)) > 0 )
         {
             // each of vdata (lonely)
@@ -162,7 +168,7 @@ public class HDFVdata extends HDFObject
             {
                 vdata_ref = refArray[i];
                 int vstag = HDFConstants.DFTAG_VS;
-                int vdata_id = hdf.VSattach(fid, vdata_ref, "r"); 
+                int vdata_id = hdf.VSattach(fid, vdata_ref, "r");
                 String className = new String("");
                 String s[] = new String[1];
                 s[0] = className;
@@ -172,7 +178,7 @@ public class HDFVdata extends HDFObject
                 s[0] = name;
                 hdf.VSgetname (vdata_id,s);
                 name = s[0];
-    
+
                 if ( className.indexOf("_HDF_CHK_TBL_0") == -1 )
                 {
                     info = info.concat("\nVStag         : " + vstag);
@@ -189,7 +195,7 @@ public class HDFVdata extends HDFObject
                     flist = s[0];
 
                     info = info.concat("\nField number  : " + fieldNumber);
-                    info = info.concat("\nField list    : " +  flist);       
+                    info = info.concat("\nField list    : " +  flist);
                     info = info.concat("\nRecord size   : " + hdf.VSsizeof(vdata_id,flist) + " bytes");
 
                     // Check to see if this vdata is alone? ....
@@ -209,12 +215,12 @@ public class HDFVdata extends HDFObject
                         String fTypeName = hdf.HDgetNTdesc(fType);
 
                         info = info +"\n" + fName + fOrder + fTypeName;
-                    } 
+                    }
                     hdf.VSdetach(vdata_id);
                 }
             }
         }
-    
+
         hdf.Vend(fid);
         hdf.Hclose(fid);
         return (info);
@@ -226,6 +232,11 @@ public class HDFVdata extends HDFObject
      *  @param filename   the string of the hdf file name
      *  @param node       the HDFObjectNode
      *  @return           the error message
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      */
     private String getVdata (String filename, HDFObjectNode node)
         throws HDFException
@@ -294,8 +305,14 @@ public class HDFVdata extends HDFObject
      *  @param  records    The selected Vdata records
      *  @param  fields     The selected Vdata fields
      *  @return            The error message
+     *
+     *  @exception ncsa.hdf.hdflib.HDFException 
+     *             should be thrown for errors in the
+     *             HDF library call, but is not yet implemented.
+     *
      */
-    private String getSpreadsheetData(int vdata_id, int[] records, int[] fields) throws HDFException
+    private String getSpreadsheetData(int vdata_id, int[] records, int[] fields)
+        throws HDFException
     {
         int numberOfFields = fields.length;
         int numberOfRecords = records[1]-records[0]+1;
@@ -304,234 +321,219 @@ public class HDFVdata extends HDFObject
         int[] vdataFieldOrder = new int[numberOfFields];
         int[] vdataFieldType = new int[numberOfFields];
         String vdataName= "";
+        Object[] data = new Object[numberOfFields];
 
-
-        // vdata name
+        // get the vdata name
         String[] s = new String[1];
         s[0] = vdataName;
         hdf.VSgetname(vdata_id,s);
         vdataName = s[0];
 
-        // get name, type and order for each field
+        // get fields names, types and orders
         for (int i=0; i < numberOfFields; i++)
         {
-            // get field name
             vdataFieldName[i] = new String(hdf.VFfieldname(vdata_id,i));
-
-            // data type of a specified field
             vdataFieldType[i] = hdf.VFfieldtype(vdata_id,i);
-            if ( vdataFieldType[i] == HDFConstants.FAIL )
-                return ("ERROR: native call to HDFLibrary.VFfieldtype() failed");
-
-            // order of a specified field
             vdataFieldOrder[i] = hdf.VFfieldorder(vdata_id,i);
-            if ( vdataFieldOrder[i] == HDFConstants.FAIL)
-                return ("ERROR: native call to HDFLibrary.VFfieldorder() failed");
         }
 
-        int rows = 0;
-        int count = records[1] -records[0] + 1;
-
-        int  dataType, order, datasize, readNum, dispNumber;
-        String tmpStr="";
-        boolean status;
+        String dataStr="";
+        boolean status = false;
+        int  rows=0, dataType, order, datasize, dispNumber;
 
 	// for each field of a vdata
-	for (int i=0; i< numberOfFields; i++) {
+	for (int i=0; i< numberOfFields; i++)
+        {
+            dataType = vdataFieldType[i];
+            order = vdataFieldOrder[i];
 
-	    // specify read vdata size
-	    dataType = vdataFieldType[i];
-	    if ((dataType & HDFConstants.DFNT_LITEND) != 0)
-	       dataType -= HDFConstants.DFNT_LITEND;
-	    order = vdataFieldOrder[i];
-	    datasize = 1;
-	    readNum = 0;
-	    tmpStr="";
+            if ((dataType & HDFConstants.DFNT_LITEND) != 0)
+                dataType -= HDFConstants.DFNT_LITEND;
 
-	    if (order>0) {
+            datasize = 1;
+            dataStr="";
 
-                dispNumber = order;
+            if (order>0)
+            {
+                // display only the first three elements in an array;
+                //if ((order>3) && (dataType != HDFConstants.DFNT_CHAR8))
+                //   dispNumber = 3;
+                //else dispNumber = order;
 
-		// hdf.VSseek(vdata_id, kk-1);
-		hdf.VSseek(vdata_id, 0);
+                hdf.VSseek(vdata_id, 0);
 
-		status = hdf.VSsetfields(vdata_id, vdataFieldName[i]);
-		    
-		datasize = order * hdf.DFKNTsize(dataType) * count;
+                // Specify the fields to be accessed
+                status = hdf.VSsetfields(vdata_id, vdataFieldName[i]);
 
-		// assume repeat number is less than 3 -- only display
-		//   first 3 fields
+                //datasize = order*hdf.DFKNTsize(dataType)*numberOfRecords;
+                datasize = order*numberOfRecords;
 
-	        if ((order>3) && (dataType != HDFConstants.DFNT_CHAR8))
-	           dispNumber = 3;
-	
-		// organize data
-		switch(dataType) {
-		case HDFConstants.DFNT_CHAR:  
-		case HDFConstants.DFNT_UCHAR8:
+                // organize data
+                int interlace = HDFConstants.FULL_INTERLACE;
+                switch(dataType)
+                {
+                    // string
+                    case HDFConstants.DFNT_CHAR:
+                    case HDFConstants.DFNT_UCHAR8:
+                        /*
+                        byte[] bdat = new byte[datasize];
+                        readNum = hdf.VSread(vdata_id, bdat, numberOfRecords, interlace);
+                        rows=0;
+                        for (int kk=records[0]; kk<=records[1]; kk++, rows++)
+                            vdata[rows][i] = new String(bdat,order*rows,order);
+                        */
+                    case HDFConstants.DFNT_UINT8:
+                    case HDFConstants.DFNT_INT8:
+                        byte[] bdata = new byte[datasize];
+                        hdf.VSread(vdata_id, (Object)bdata, numberOfRecords, interlace);
+                        data[i] = bdata;
+                        break;
 
-			// this is assumed to be a string
-			byte[] bdat = new byte[datasize];
-			readNum = hdf.VSread(vdata_id, bdat, count, HDFConstants.FULL_INTERLACE);
-			rows=0;
-			for (int kk=records[0];
-     				 kk<=records[1]; kk++, rows++)  
-			    vdata[rows][i] = new String(bdat,order*rows,order);
-			break;
-		    
-		case HDFConstants.DFNT_UINT8: 
-		case HDFConstants.DFNT_INT8: {
-			// signed integer (byte) array
-			byte[] sbdat = new byte[datasize];
-			readNum = hdf.VSread(vdata_id, sbdat, count, HDFConstants.FULL_INTERLACE);
+                    /*
+                    case HDFConstants.DFNT_UINT8:
+                    case HDFConstants.DFNT_INT8:
+                        byte[] sbdat = new byte[datasize];
+                        readNum = hdf.VSread(vdata_id, sbdat, numberOfRecords,interlace);
+                        rows=0;
+                        for (int kk=records[0]; kk<=records[1]; kk++, rows++)
+                        {
+                            dataStr="";
+                            for (int j=0; j<dispNumber; j++)
+                            {
+                                int tmpVal = (int)((byte)sbdat[j+rows*order]);
+                                if ((dataType == HDFConstants.DFNT_UINT8) && (tmpVal <0))
+                                    tmpVal += 256;
+                                dataStr += Integer.toString(tmpVal) +"  ";
+                            }
 
-			rows=0;
-			for (int kk=records[0];
-     				 kk<=records[1]; kk++, rows++)  { 
+                            if (vdataFieldOrder[i]>dispNumber)
+                                dataStr += "...";
+                            vdata[rows][i] = new String(dataStr);
+                        }
+                    */
+                    case HDFConstants.DFNT_INT16:
+                    case HDFConstants.DFNT_UINT16:
+                        /*
+                        short[] sdat = new short[order*numberOfRecords];
+                        readNum = hdf.VSread(vdata_id, sdat, numberOfRecords, interlace);
+                        rows=0;
+                        for (int kk=records[0]; kk<=records[1]; kk++, rows++)
+                        {
+                            dataStr="";
+                            int pos = 0;
+                            for (int j=0; j<dispNumber; j++)
+                            {
+                                int tmpVal = (int)sdat[j+order*rows];
+                                if ((dataType == HDFConstants.DFNT_UINT16) && (tmpVal <0))
+                                    tmpVal += 65536;
+                                dataStr += Integer.toString(tmpVal) +"  ";
+                            }
 
-			tmpStr="";
-			for (int j=0; j<dispNumber; j++) {
-			    int tmpVal = (int)((byte)sbdat[j+rows*order]);
-			    if ((dataType == HDFConstants.DFNT_UINT8) && (tmpVal <0)) {
-				tmpVal += 256;
-			    }
-			    tmpStr += Integer.toString(tmpVal) +"  ";
-			}
+                            if (vdataFieldOrder[i]>dispNumber)
+                                dataStr += "...";
 
-			if (vdataFieldOrder[i]>3)
-			   tmpStr += "...";
+                            vdata[rows][i] = new String(dataStr);
+                        }
+                        */
+                        short[] sdata = new short[datasize];
+                        hdf.VSread(vdata_id, (Object)sdata, numberOfRecords,interlace);
+                        data[i] = sdata;
+                        break;
 
-			vdata[rows][i] = new String(tmpStr);
-			}
+                    case HDFConstants.DFNT_INT32:
+                    case HDFConstants.DFNT_UINT32:
+                        /*
+                        dataStr="";
+                        int[] idat = new int[order*numberOfRecords];
+                        hdf.VSread(vdata_id, idat, numberOfRecords, interlace);
+                        rows=0;
+                        for (int kk=records[0]; kk<=records[1]; kk++, rows++)
+                        {
+                            dataStr="";
+                            for (int j=0; j<dispNumber; j++)
+                            {
+                                int tmpVal = idat[j+order*rows];
+                                if ((dataType == HDFConstants.DFNT_UINT32) && (tmpVal <0))
+                                    tmpVal += 4294967296L;
+                                dataStr += Integer.toString(tmpVal) +"  ";
+                            }
 
-			break;
-		    }
-			    
-		case HDFConstants.DFNT_INT16:
-		case HDFConstants.DFNT_UINT16:
-		    {
-			// short array
-			short[] sdat = new short[order*count];
-			readNum = hdf.VSread(vdata_id, sdat, count, HDFConstants.FULL_INTERLACE);
+                            if (vdataFieldOrder[i]>dispNumber)
+                                dataStr += "...";
 
-			rows=0;
-			for (int kk=records[0];
-     				 kk<=records[1]; kk++, rows++)  {
+                            vdata[rows][i] = new String(dataStr);
+                        }
+                        */
+                        int[] idata = new int[datasize];
+                        hdf.VSread(vdata_id, (Object)idata, numberOfRecords,interlace);
+                        data[i] = idata;
+                        break;
 
-			tmpStr="";
-			int pos = 0;
-			for (int j=0; j<dispNumber; j++) {
-			    int tmpVal = (int)sdat[j+order*rows];
+                    case HDFConstants.DFNT_FLOAT:
+                    //case HDFConstants.DFNT_FLOAT32:
+                        /*
+                        float[] fdat = new float[order*numberOfRecords];
+                        hdf.VSread(vdata_id, fdat, numberOfRecords, interlace);
+                        rows=0;
+                        for (int kk=records[0]; kk<=records[1]; kk++, rows++)
+                        {
+                            dataStr="";
+                            for (int j=0; j<dispNumber; j++)
+                            {
+                                float tmpVal = fdat[j+order*rows];
+                                dataStr += Float.toString(tmpVal) +"  ";
+                            }
 
-			    if ((dataType == HDFConstants.DFNT_UINT16) && (tmpVal <0)) {
-				tmpVal += 65536;
-			    }
+                            if (vdataFieldOrder[i]>dispNumber)
+                               dataStr += "...";
 
-			    tmpStr += Integer.toString(tmpVal) +"  ";
-			}			
+                            vdata[rows][i] = new String(dataStr);
+                        }
+                        */
+                        float[] fdata = new float[datasize];
+                        hdf.VSread(vdata_id, (Object)fdata, numberOfRecords,interlace);
+                        data[i] = fdata;
+                        break;
 
-			if (vdataFieldOrder[i]>3)
-			   tmpStr += "...";
+                    case HDFConstants.DFNT_DOUBLE:
+                    //case HDFConstants.DFNT_FLOAT64:
+                        /*
+                        double[] ddat = new double[order*numberOfRecords];
+                        hdf.VSread(vdata_id, ddat, numberOfRecords, interlace);
+                        rows = 0;
+                        for (int kk=records[0]; kk<=records[1]; kk++, rows++)
+                        {
+                            dataStr="";
+                            for (int j=0; j<dispNumber; j++)
+                            {
+                                double tmpVal =ddat[j+order*rows];
+                                dataStr += Double.toString(tmpVal) +"  ";
+                            }
 
-			vdata[rows][i] = new String(tmpStr);
-			}
+                            if (vdataFieldOrder[i]>dispNumber)
+                               dataStr += "...";
 
-			break;
-		    }		    
-		case HDFConstants.DFNT_INT32:
-		case HDFConstants.DFNT_UINT32:
-		    {
-			// integer	
-			tmpStr="";
-			int[] idat = new int[order*count];
-			readNum = hdf.VSread(vdata_id, idat, count, HDFConstants.FULL_INTERLACE);
+                            vdata[rows][i] = new String(dataStr);
+                        }
+                        */
+                        double[] ddata = new double[datasize];
+                        hdf.VSread(vdata_id, (Object)ddata, numberOfRecords,interlace);
+                        data[i] = ddata;
+                        break;
 
-			rows=0;
-			for (int kk=records[0];
-     				 kk<=records[1]; kk++, rows++)  { 
-			tmpStr="";
-			for (int j=0; j<dispNumber; j++) {
-			    int tmpVal = idat[j+order*rows];
-			    if ((dataType == HDFConstants.DFNT_UINT32) && (tmpVal <0))  			
-				tmpVal += 4294967296L;
-		    
-			    tmpStr += Integer.toString(tmpVal) +"  ";
-			}
-		        
-			if (vdataFieldOrder[i]>3)
-			   tmpStr += "...";
-
-			vdata[rows][i] = new String(tmpStr);
-			}
-
-			break;
-		    }
-		
-		        
-		case HDFConstants.DFNT_FLOAT:
-		//case HDFConstants.DFNT_FLOAT32:
-			// Float	
-		    {
-			 
-			float[] fdat = new float[order*count];
-			readNum = hdf.VSread(vdata_id, fdat, count, HDFConstants.FULL_INTERLACE);
-			rows=0;
-			for (int kk=records[0];
-     				 kk<=records[1]; kk++, rows++)  { 
-			tmpStr="";
-			for (int j=0; j<dispNumber; j++) {
-			    float tmpVal = fdat[j+order*rows];
-			    tmpStr += Float.toString(tmpVal) +"  ";
-			}
-			        
-			if (vdataFieldOrder[i]>3)
-			   tmpStr += "...";
-	    		
-		        vdata[rows][i] = new String(tmpStr);
-			}
-
-			break;
-		    }
-          
-		case HDFConstants.DFNT_DOUBLE:
-		//case HDFConstants.DFNT_FLOAT64:
-		    {
-			// Double	
-			// tmpStr="";
-			double[] ddat = new double[order*count];
-			readNum = hdf.VSread(vdata_id, ddat, count, HDFConstants.FULL_INTERLACE);
-
-			rows = 0;
-			for (int kk=records[0];
-     				 kk<=records[1]; kk++, rows++)  { 
-			tmpStr="";
-			for (int j=0; j<dispNumber; j++) {
-			    
-			    double tmpVal =ddat[j+order*rows];
-			    tmpStr += Double.toString(tmpVal) +"  ";
-			}
-		        
-			if (vdataFieldOrder[i]>3)
-			   tmpStr += "...";
-
-		        vdata[rows][i] = new String(tmpStr);
-			}
-
-			break;
-		    }
-		
-		default:
-		    vdata[rows][i] = new String("");
-		}		
-	    }	    
-	}
+                    default:
+                        //vdata[rows][i] = new String("");
+                        data[i] = new byte[1];
+                }
+            }
+        }
 
         this.records = records;
         this.fields = fields;
         this.fieldNames = vdataFieldName;
         this.fieldOrders = vdataFieldOrder;
         this.fieldTypes = vdataFieldType;
-        this.vdata = vdata;
+        this.data = data;
         this.vdataName = vdataName;
         return "";
     }
@@ -552,7 +554,7 @@ public class HDFVdata extends HDFObject
     public int[] getFieldTypes() { return fieldTypes; }
 
     /** return the Vdata */
-    public String[][] getVdata() { return vdata; }
+    //public String[][] getVdata() { return vdata; }
 
     /** return the name of the Vdata */
     public String getVdataName() { return vdataName; }

@@ -23,20 +23,20 @@ import ncsa.hdf.hdflib.*;
 class JHVVdataCanvas extends Canvas implements MouseListener{
     
     // the frame of the spreadsheet
-    JHVVdataFrame	vdataFrame;
+    JHVVdataFrame vdataFrame;
    
     // An HDF vdata value  
-    String[][]       vdata = null;
+    Object[] hdfData = null;
 
     // variables related to HDF Vdata
     int vdata_id;
  
     // vdata fields list
-    String[]   selectedVdataFieldName = null;
+    String[] selectedVdataFieldName = null;
     
     // the current canvas size
-    int           canvasWidth ;
-    int           canvasHeight;
+    int canvasWidth ;
+    int canvasHeight;
     
     // the cell size of the spreadsheet
     public  static  Rectangle CellRect = null ;
@@ -45,30 +45,30 @@ class JHVVdataCanvas extends Canvas implements MouseListener{
     public  Rectangle[]  vdataCellRect = null;
    
     // spreadsheet width totally
-    public   int  spreadsheetWidth = 0;
+    public int spreadsheetWidth = 0;
     
     // how many lines?
-    public  static  int cellNumberByRow;
+    public static int cellNumberByRow;
     
     // how many colnums?
-    public  static  int cellNumberByColnum;
+    public static int cellNumberByColnum;
     
     // 10 digits display for each cell 
-    public  static  int NumberLength = 18;
+    public  static int NumberLength = 14;
     
     // create the new font with the specified font size
     public static   int defaultFontSize = 14;
     
     // Create the new font for displaying the  data correctly 
     // in the specified canvas within the scrollbar
-    Font dataFont        = new Font("Times", Font.PLAIN, defaultFontSize);
+    Font dataFont = new Font("Times", Font.PLAIN, defaultFontSize);
     
     // default font width & height
     public static   int fontWidth = 14;
     public static   int fontHeight= 15;
     
     // Flicker-free update with translation by scrollbars
-    Image 		offScreenImage = null;
+    Image offScreenImage = null;
     Dimension 	offscreensize;		
     Graphics 	offGraphics;
      
@@ -123,65 +123,55 @@ class JHVVdataCanvas extends Canvas implements MouseListener{
     /** Calculate each cell size by row of a spreadsheet based on provided
      *  HDF vdata.  That is metedata associated with different order.
      */
-    public void calculateCellSize() {
+    public void calculateCellSize()
+    {
+        // compute spreadsheet width
+        spreadsheetWidth  = 0;
 
-	// compute spreadsheet width
-	spreadsheetWidth  = 0;
+        // set cell size based on the current selected font.
+        CellRect = new Rectangle(NumberLength*(fontWidth+1), fontHeight + 4);
 
-	// set cell size based on the current selected font.
-	CellRect = new Rectangle(NumberLength*(fontWidth+1), fontHeight + 4);
-
-	int   size = Math.max(vdataFrame.numberOfFields,
-	                       vdataFrame.selectedVdataFieldsNumber);
+        int size = Math.max(vdataFrame.numberOfFields, vdataFrame.selectedVdataFieldsNumber);
 	
-	// big enough ?
-	vdataCellRect = new Rectangle[size];
+        // big enough ?
+        vdataCellRect = new Rectangle[size];
     
-	// for each field
-	for (int i=0; i<vdataFrame.selectedVdataFieldsNumber; i++) {
-	
-	    // get selected field index
-	    int index = vdataFrame.selectedVdataFields[i];
-	    
-	    int datatype = vdataFrame.vdataFieldDatatype[index];
-	    if ((datatype & HDFConstants.DFNT_LITEND) != 0) {
-		datatype -= HDFConstants.DFNT_LITEND;
-	    }
-	    int order    = vdataFrame.vdataFieldOrder[index];
-	    String fldName = vdataFrame.vdataFieldName[index];
-	
-    	    // assume repeat number is less than 3
-	    if ((order>3) && (datatype != HDFConstants.DFNT_CHAR8)) // &&(dataType != HDFConstants.DFNT_UINT8) )	                      
-	       order = 3;
+        // for each field
+        for (int i=0; i<vdataFrame.selectedVdataFieldsNumber; i++)
+        {
+            // get selected field index
+            int index = vdataFrame.selectedVdataFields[i];
+            int datatype = vdataFrame.vdataFieldDatatype[index];
 
-	    if ((datatype != HDFConstants.DFNT_CHAR8) && 
-	        (datatype != HDFConstants.DFNT_UCHAR8)) {
-	    
-		// set cell size based on the current selected font.
-		int numLength = NumberLength; // default
-		if ((datatype == HDFConstants.DFNT_INT8)  ||
-		    (datatype == HDFConstants.DFNT_UINT8)  ||
-		    (datatype == HDFConstants.DFNT_INT16)  ||
-		    (datatype == HDFConstants.DFNT_UINT16) )
-		   numLength /= 2;
 
-		else if ((datatype == HDFConstants.DFNT_FLOAT32)  ||
-		        (datatype == HDFConstants.DFNT_FLOAT64) )		   
-		      numLength += 2;
+            if ((datatype & HDFConstants.DFNT_LITEND) != 0)
+                datatype -= HDFConstants.DFNT_LITEND;
 
-		int len = Math.max(order * numLength, fldName.length());
-		//int len = Math.max(order * NumberLength, fldName.length());
-	     
-	        //if (order > 2) 
-	        //   vdataCellRect[i] = new Rectangle(len*(fontWidth+1)/2, fontHeight + 4);
-	        // else
-		   vdataCellRect[i] = new Rectangle(len*(fontWidth+1), fontHeight + 4);
-	    }
-	    else {
-		// char
-		int len = Math.max(order, fldName.length());	
-		vdataCellRect[i] = new Rectangle( len * (fontWidth+1), fontHeight + 4);
-	    }
+            int order = 1;
+            String fldName = vdataFrame.vdataFieldName[index];
+            int numLength = NumberLength; // default
+
+/*
+            if ((datatype == HDFConstants.DFNT_CHAR8) ||
+                (datatype == HDFConstants.DFNT_UCHAR8))
+            {
+                numLength = 1;
+                order = vdataFrame.vdataFieldOrder[index];
+            }
+
+            else if ((datatype == HDFConstants.DFNT_INT8)  ||
+                (datatype == HDFConstants.DFNT_UINT8)  ||
+                (datatype == HDFConstants.DFNT_INT16)  ||
+                (datatype == HDFConstants.DFNT_UINT16) )
+                numLength /= 2;
+
+            else if ((datatype == HDFConstants.DFNT_FLOAT32)  ||
+                (datatype == HDFConstants.DFNT_FLOAT64) )
+                numLength += 2;
+*/
+            int len = Math.max(order*numLength, fldName.length())+2;
+            vdataCellRect[i] = new Rectangle(len*(fontWidth+1), fontHeight + 4);
+
 	    // compute spreadsheet width
 	    spreadsheetWidth += vdataCellRect[i].width;
 	}
@@ -335,7 +325,7 @@ class JHVVdataCanvas extends Canvas implements MouseListener{
 	    ((hOffset+j) < (vdataFrame.selectedVdataFieldsNumber)))    {
 		
 	  // assign value
-	  dispStr = vdata[vOffset+i][hOffset+j];
+	  dispStr = object2String(vOffset+i,hOffset+j);
    	  g.drawString(dispStr, startx + 4, starty);
 		
 	}
@@ -494,7 +484,7 @@ class JHVVdataCanvas extends Canvas implements MouseListener{
 
     // specify the dimension for the cells
     cells = null;
-    cells = new Rectangle[cellNumberByRow][cellNumberByColnum+1];
+    cells = new Rectangle[Math.max(0,cellNumberByRow)][cellNumberByColnum+1];
     
     int starty = 2;
     for (int i=0; i<cellNumberByRow; i++ ) {
@@ -720,13 +710,19 @@ int m = (int)(height - (canvasHeight - p));
     boolean  drawColnumFlag = true;
 
     if ( selectedColnum > -1) { // valid selection
-   
-      // forget the field which contains of more then one data number
-      // int dt = vdataFrame.vdataFieldDatatype[selectedColnum];
-      int order = vdataFrame.vdataFieldOrder[selectedColnum];
-      if (order>=2) return;
 
-      if (plotData[selectedColnum] != null) {	// basic information   
+      // do not draw plot for characters
+      int dt = vdataFrame.vdataFieldDatatype[selectedColnum];
+      if ( dt==HDFConstants.DFNT_CHAR ||
+           dt==HDFConstants.DFNT_UCHAR )
+          return;
+
+
+      // do not draw plot for data with order >1
+      int order = vdataFrame.vdataFieldOrder[selectedColnum];
+      if (order > 1) return;
+
+      if (plotData[selectedColnum] != null) {	// basic information
 	   drawColnumFlag = plotData[selectedColnum].drawColnumFlag;
 	   plotData[selectedColnum].drawColnumFlag = !drawColnumFlag;
 
@@ -817,24 +813,59 @@ int m = (int)(height - (canvasHeight - p));
 	double tmpData[][] = null;
 	tmpData = new double[mColnum.size()+1][dataNumber];
 
-	String tmpStr[]    = new String[8];
-
 	// organize data
 	for (int i=0; i<dataNumber; i++) {  // for x & y
 	    tmpData[0][i] =  (double) (vOffset + i + 1);
 
 	    // for each selected colnum
-	    for (int kk=0; kk<mColnum.size(); kk++) {
-
-	      try {
-	        // selectedColnum ?
+	    for (int kk=0; kk<mColnum.size(); kk++)
+            {
 	    	int selectedColnum = ((Integer)(mColnum.elementAt(kk))).intValue();
-		String valStr = (String)vdata[vOffset+i][selectedColnum].trim();
-	    	tmpData[kk+1][i]   = Double.valueOf(valStr).doubleValue();
-	      } 
-	      catch (Exception e) { tmpData[kk+1][i] = 0.0; };
-	    }
-	}
+                int dataType = vdataFrame.vdataFieldDatatype[selectedColnum];
+                switch(dataType)
+                {
+                    // string
+                    case HDFConstants.DFNT_CHAR:
+                    case HDFConstants.DFNT_UCHAR8:
+                        byte[] bdata = (byte[])hdfData[selectedColnum];
+                        tmpData[kk+1][i] = (double) bdata[vOffset+i];
+                        break;
+        
+                    case HDFConstants.DFNT_UINT8:
+                    case HDFConstants.DFNT_INT8:
+                        byte[] sbdata = (byte[])hdfData[selectedColnum];
+                        tmpData[kk+1][i] = (double) sbdata[vOffset+i];
+                        break;
+        
+                    case HDFConstants.DFNT_INT16:
+                    case HDFConstants.DFNT_UINT16:
+                        short[] sdata = (short[])hdfData[selectedColnum];
+                        tmpData[kk+1][i] = (double) sdata[vOffset+i];
+                        break;
+        
+                    case HDFConstants.DFNT_INT32:
+                    case HDFConstants.DFNT_UINT32:
+                        int[] idata = (int[])hdfData[selectedColnum];
+                        tmpData[kk+1][i] = (double) idata[vOffset+i];
+                        break;
+        
+                    case HDFConstants.DFNT_FLOAT:
+                    //case HDFConstants.DFNT_FLOAT32:
+                        float[] fdata = (float[])hdfData[selectedColnum];
+                        tmpData[kk+1][i] = (double) fdata[vOffset+i];
+                        break;
+        
+                    case HDFConstants.DFNT_DOUBLE:
+                    //case HDFConstants.DFNT_FLOAT64:
+                        double[] ddata = (double[])hdfData[selectedColnum];
+                        tmpData[kk+1][i] = (double) ddata[vOffset+i];
+                        break;
+        
+                    default:
+                } // switch
+            } // for (int kk=0; kk<mColnum.size(); kk++) {
+	}  //	for (int i=0; i<dataNumber; i++) {
+
 	if (!plotFrameDisplayed) {
 
 	   // set frame displayed
@@ -843,21 +874,22 @@ int m = (int)(height - (canvasHeight - p));
 	   // display  plot
 	   plotFrame = new JHVVdataPlotFrame(this,tmpData);
 	}
-	else { // reset data 
-	   
+	else { // reset data
+
 	   // set data
 	   plotFrame.plotCanvas.setData(tmpData);
 	}
-	
-	if (findDataRangeFlag) { 
+
+	if (findDataRangeFlag) {
 	   resetDataRange();
 
+  	  String tmpStr[] = new String[8];
           // for each selected colnum
 	  for (int kk=0; kk<mColnum.size(); kk++) {
 
 	    // selectedColnum ?
 	    int selectedColnum = ((Integer)(mColnum.elementAt(kk))).intValue();
-	    tmpStr[kk]         =  vdataFrame.vdataFieldName[selectedColnum];	
+	    tmpStr[kk]         =  vdataFrame.vdataFieldName[selectedColnum];
 	  }
 
           // set annotation
@@ -869,12 +901,12 @@ int m = (int)(height - (canvasHeight - p));
  /** Check zoom factor
    */
   public boolean canMakeZoom( int zoomFactor ) {
-  
+
 	boolean retValue = true;
 
  	//  vdata xy-plot
 	int  dataNumber = cellNumberByRow;
-	
+
 	// adjust data number by zoom factor
 	if (zoomFactor > 0) {  // zoom-in
 	   for (int kk=0; kk<zoomFactor; kk++)
@@ -884,11 +916,11 @@ int m = (int)(height - (canvasHeight - p));
 	   if (zoomFactor < 0)  // zoom-out
 	      for (int kk=0; kk<(-zoomFactor); kk++)
 		  dataNumber *= 2;
-		
-	}	   
- 
+
+	}
+
 	// adjust data number
-	if  ((vOffset+dataNumber) > 2*vdataFrame.selectedVdataRecordsNumber) 
+	if  ((vOffset+dataNumber) > 2*vdataFrame.selectedVdataRecordsNumber)
 	    retValue = false;
 
 	// make sure it can be zoomed in.
@@ -898,28 +930,90 @@ int m = (int)(height - (canvasHeight - p));
 	return retValue;
   }
 
-    /** Get data range by specify field number */
-    public double[] getDataRange(int selectedColnum) {
+    /** Get data range of a specific field */
+    public double[] getDataRange(int col)
+    {
+        double min  = Double.MAX_VALUE;
+        double max  = -min;
+        double range[] = {min, min};
 
-	double range[] = new double[2];
-	
-  	// selected colnum data range for whole dataset
-	double min  = Double.MAX_VALUE;
-	double max  = -min;
-	if ( selectedColnum < 0) {
-	   range[0] = range[1] = min;
-	   return range;
-	}
-	for (int kk=0; kk<vdataFrame.selectedVdataRecordsNumber; kk++) {
-	  double tmp = 0;
-	  try {
-	    String valStr = (String)vdata[kk][selectedColnum].trim();
-	    tmp = Double.valueOf(valStr).doubleValue();
-	  } catch (Exception e) { tmp  = 0; };
-	  min = Math.min(tmp,min);
-	  max = Math.max(tmp,max);	  
-	}
-	
+        if ( col < 0) return range;
+
+        double tmp = 0;
+        int dataType = vdataFrame.vdataFieldDatatype[col];
+        int nRecords = vdataFrame.selectedVdataRecordsNumber;
+
+        switch(dataType)
+        {
+            // string
+            case HDFConstants.DFNT_CHAR:
+            case HDFConstants.DFNT_UCHAR8:
+                byte[] bdata = (byte[])hdfData[col];
+                for (int i=0; i<nRecords; i++)
+                {
+                   tmp = (double) bdata[i];
+                   min = Math.min(tmp, min);
+                   max = Math.max(tmp, max);
+                }
+                break;
+
+            case HDFConstants.DFNT_UINT8:
+            case HDFConstants.DFNT_INT8:
+                byte[] sbdata = (byte[])hdfData[col];
+                for (int i=0; i<nRecords; i++)
+                {
+                   tmp = (double) sbdata[i];
+                   min = Math.min(tmp, min);
+                   max = Math.max(tmp, max);
+                }
+                break;
+
+            case HDFConstants.DFNT_INT16:
+            case HDFConstants.DFNT_UINT16:
+                short[] sdata = (short[])hdfData[col];
+                for (int i=0; i<nRecords; i++)
+                {
+                   tmp = (double) sdata[i];
+                   min = Math.min(tmp, min);
+                   max = Math.max(tmp, max);
+                }
+                break;
+
+            case HDFConstants.DFNT_INT32:
+            case HDFConstants.DFNT_UINT32:
+                int[] idata = (int[])hdfData[col];
+                for (int i=0; i<nRecords; i++)
+                {
+                   tmp = (double) idata[i];
+                   min = Math.min(tmp, min);
+                   max = Math.max(tmp, max);
+                }
+                break;
+
+            case HDFConstants.DFNT_FLOAT:
+            //case HDFConstants.DFNT_FLOAT32:
+                float[] fdata = (float[])hdfData[col];
+                for (int i=0; i<nRecords; i++)
+                {
+                   tmp = (double) fdata[i];
+                   min = Math.min(tmp, min);
+                   max = Math.max(tmp, max);
+                }
+                break;
+
+            case HDFConstants.DFNT_DOUBLE:
+            //case HDFConstants.DFNT_FLOAT64:
+                double[] ddata = (double[])hdfData[col];
+                for (int i=0; i<nRecords; i++)
+                {
+                   tmp = (double) ddata[i];
+                   min = Math.min(tmp, min);
+                   max = Math.max(tmp, max);
+                }
+                break;
+
+            default:
+        }
 	range[0] = min;
 	range[1] = max;
 
@@ -1018,7 +1112,7 @@ int m = (int)(height - (canvasHeight - p));
         calculateCellSize();
         
         selectedVdataFieldName = vdataObject.getFieldNames();
-        vdata =  vdataObject.getVdata();
+        hdfData =  (Object[])vdataObject.getData();
 
         // set draw flag
         drawFlag       = false;
@@ -1057,5 +1151,120 @@ int m = (int)(height - (canvasHeight - p));
         if (plotFrame != null)
            destroyXYPlot();
 
-    }     
+    }
+
+    /**
+     *   converts the data object of a vadata cell into a string
+     *
+     *  @param row  the row index of the vdata table
+     *  @param col  the column index of the vdata table
+     *  @return the string of the data
+     */
+    private String object2String(int row, int col)
+    {
+        String theString = "";
+        int order = vdataFrame.vdataFieldOrder[col];
+        int dataType = vdataFrame.vdataFieldDatatype[col];
+
+        switch(dataType)
+        {
+            // string
+            case HDFConstants.DFNT_CHAR:
+            case HDFConstants.DFNT_UCHAR8:
+                byte[] bdata = (byte[])hdfData[col];
+                theString = new String(bdata,order*row,order);
+                break;
+
+            case HDFConstants.DFNT_UINT8:
+            case HDFConstants.DFNT_INT8:
+                byte[] sbdata = (byte[])hdfData[col];
+                theString="";
+                for (int j=0; j<order; j++)
+                {
+                    int tmpVal = (int)((byte)sbdata[j+row*order]);
+                    if ((dataType == HDFConstants.DFNT_UINT8) && (tmpVal <0))
+                        tmpVal += 256;
+                    theString += Integer.toString(tmpVal) +" ";
+                    if (theString.length() > NumberLength)
+                    {
+                        j = order;
+                        theString += "...";
+                    }
+                }
+                break;
+
+            case HDFConstants.DFNT_INT16:
+            case HDFConstants.DFNT_UINT16:
+                short[] sdata = (short[])hdfData[col];
+                theString="";
+                for (int j=0; j<order; j++)
+                {
+                    int tmpVal = (int)sdata[j+order*row];
+                    if ((dataType == HDFConstants.DFNT_UINT16) && (tmpVal <0))
+                        tmpVal += 65536;
+                    theString += Integer.toString(tmpVal) +" ";
+                    if (theString.length() > NumberLength)
+                    {
+                        j = order;
+                        theString += "...";
+                    }
+                }
+                break;
+
+            case HDFConstants.DFNT_INT32:
+            case HDFConstants.DFNT_UINT32:
+                int[] idata = (int[])hdfData[col];
+                theString="";
+                for (int j=0; j<order; j++)
+                {
+                    int tmpVal = idata[j+order*row];
+                    if ((dataType == HDFConstants.DFNT_UINT32) && (tmpVal <0))
+                        tmpVal += 4294967296L;
+                    theString += Integer.toString(tmpVal) +" ";
+                    if (theString.length() > NumberLength)
+                    {
+                        j = order;
+                        theString += "...";
+                    }
+                }
+                break;
+
+            case HDFConstants.DFNT_FLOAT:
+            //case HDFConstants.DFNT_FLOAT32:
+                float[] fdata = (float[])hdfData[col];
+                theString="";
+                for (int j=0; j<order; j++)
+                {
+                    float tmpVal = fdata[j+order*row];
+                    theString += Float.toString(tmpVal) +" ";
+                    if (theString.length() > NumberLength)
+                    {
+                        j = order;
+                        theString += "...";
+                    }
+                }
+                break;
+
+            case HDFConstants.DFNT_DOUBLE:
+            //case HDFConstants.DFNT_FLOAT64:
+                double[] ddata = (double[])hdfData[col];
+                theString="";
+                for (int j=0; j<order; j++)
+                {
+                    double tmpVal =ddata[j+order*row];
+                    theString += Double.toString(tmpVal) +" ";
+                    if (theString.length() > NumberLength)
+                    {
+                        j = order;
+                        theString += "...";
+                    }
+                }
+                break;
+
+            default:
+                theString = "";
+        }
+
+        return theString;
+    }
 }
