@@ -1277,11 +1277,11 @@ DFANIputann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
     }
 
   /*
-   * if annotation exists, delete it and rewrite new annotation
+   * if annotation exists, reuse tag/ref and rewrite new annotation
    */
   if (newflag == 0)
     {     /* does prev annotation exist? */
-      if (Hdeldd(file_id, anntag, annref) == FAIL)
+      if (HDreuse_tagref(file_id, anntag, annref) == FAIL)
         {
           Hclose(file_id);
           HEreport("Unable to replace old annotation");
