@@ -146,6 +146,10 @@ CFLAGS=  -g -D${MACHINE}
 HDFLIB=../lib
 HDFSRC=../src
 
+# ==> where is your JPEG library (libjpeg.a) located?
+JPEGLIB=../jpeg
+JPEGINC=../jpeg
+
 RM=/bin/rm
 RMFLAGS=-f
 
@@ -157,6 +161,9 @@ CTESTS= rig.o sdstr.o blocks.o an.o anfile.o extelt.o file.o file1.o vers.o \
 	sdmms.o sdnmms.o slab.o litend.o tvset.o comp.o bitio.o tree.o conv.o \
 	nbit.o testhdf.o
 
+FSRCS= tr8f.f t24f.f tpf.f tanf.f tanfilef.f tsdstrf.f tsdntf.f tsdnntf.f \
+        tsdmmsf.f tsdnmmsf.f tstubsf.f \
+        slabwf.f slab1wf.f slab2wf.f slab3wf.f slab4wf.f
 FTESTS= tr8f t24f tpf tanf tanfilef tsdstrf tsdntf tsdnntf \
         tsdmmsf tsdnmmsf tstubsf \
         slabwf slab1wf slab2wf slab3wf slab4wf
@@ -165,12 +172,23 @@ FOBJS = tr8f.o t24f.o tpf.o tanf.o tanfilef.o tsdstrf.o tsdntf.o \
         tsdnntf.o tsdmmsf.o tsdnmmsf.o tstubsf.o fortest.o \
         slabwf.o slab1wf.o slab2wf.o slab3wf.o slab4wf.o 
 
-.f: $< $(HDFLIB)/libdf.a
-	$(FC) $(FFLAGS) $< -o $@ $(HDFLIB)/libdf.a
+$(FTESTS): $(FSRCS)
+	$(FC) $(FFLAGS) $< -o $@ $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
+
+$(FTESTS): $(FRC)
 
 all: testhdf fortest gentest
 
 nofortran: testhdf gentest
+
+rebuild:
+	@$(MAKE) all $(HDF_FLAGS) FRC=force_rebuild
+
+rebuildnofortran:
+	@$(MAKE) nofortran $(MFLAGS) $(HDF_FLAGS) FRC=force_rebuild
+
+# Leave this target blank with no actions, the rebuild macros above depend on it
+force_rebuild:
 
 debug: ptesthdf
 
@@ -178,25 +196,27 @@ debug: ptesthdf
 #	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
 #
 .c.o: 
-	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
+	 $(CC) $(CFLAGS) -c -I$(HDFINC) -I$(JPEGINC) $*.c 
+
+$(CTESTS) $(TESTF) $(FTESTS): $(FRC)
 
 qtesthdf: $(CTESTS) $(HDFLIB)/libdf.a
-	quantify $(CC) $(CFLAGS) -o qtesthdf $(CTESTS) $(HDFSRC)/libdf.a
+	quantify $(CC) $(CFLAGS) -o qtesthdf $(CTESTS) $(HDFSRC)/libdf.a $(JPEGLIB)/libjpeg.a
 
 ptesthdf: $(CTESTS) $(HDFLIB)/libdf.a
-	purify $(CC) $(CFLAGS) -o ptesthdf $(CTESTS) $(HDFSRC)/libdf.a
+	purify $(CC) $(CFLAGS) -o ptesthdf $(CTESTS) $(HDFSRC)/libdf.a $(JPEGLIB)/libjpeg.a
 
 testhdf.tc: $(CTESTS) $(HDFLIB)/libdf.a
-	proof $(CC) $(CFLAGS) -o testhdf.tc $(CTESTS) $(HDFLIB)/libdf.a
+	proof $(CC) $(CFLAGS) -o testhdf.tc $(CTESTS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
 
 testhdf: $(CTESTS) $(HDFLIB)/libdf.a
-	$(CC) $(CFLAGS) -o testhdf $(CTESTS) $(HDFLIB)/libdf.a
+	$(CC) $(CFLAGS) -o testhdf $(CTESTS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
 
 fortest: $(FTESTS) $(HDFLIB)/libdf.a fortest.o
-	$(CC) $(CFLAGS) -o fortest $(TESTF) $(HDFLIB)/libdf.a
+	$(CC) $(CFLAGS) -o fortest $(TESTF) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
 
 gentest: gentest.c $(HDFLIB)/libdf.a
-	$(CC) $(CFLAGS) -I$(HDFINC) gentest.c -o gentest $(HDFLIB)/libdf.a
+	$(CC) $(CFLAGS) -I$(HDFINC) gentest.c -o gentest $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
 
 ftests: $(FTESTS)
 
