@@ -470,7 +470,7 @@ AC_ARG_ENABLE(production,
                               [Determines how to run the compiler.])])
 
 case "X-$enable_production" in
-  X-yes)
+  X-|X-yes)
     AC_MSG_RESULT([production])
 
     dnl Remove the "-g" flag from compile line if it's in there.
@@ -509,7 +509,7 @@ case "X-$enable_production" in
     FFLAGS="$FFLAGS $PROD_FFLAGS"
     CPPFLAGS="$CPPFLAGS $PROD_CPPFLAGS"
     ;;
-  X-|X-no)
+  X-no)
     AC_MSG_RESULT([development])
     CFLAGS="$CFLAGS $DEBUG_CFLAGS"
     FFLAGS="$FFLAGS $DEBUG_FFLAGS"
