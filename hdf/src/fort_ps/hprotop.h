@@ -2036,13 +2036,7 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
     extern      FRETVAL(intf) nhclose
                 (intf  * file_id);
 
-    extern      FRETVAL(intf) nhiclose
-                (intf  * file_id);
-
     extern	FRETVAL(intf) nhnumber
-		(int32 file_id, uint16 tag);
-
-    extern	FRETVAL(intf) nhinumbr
 		(int32 file_id, uint16 tag);
 
     extern	FRETVAL(intf) nhxisdir
@@ -3594,6 +3588,13 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 
     extern      FRETVAL(intf) nvadtrc
                 (intf  * vkey, intf  * tag, intf  * ref);
+
+/* PowerStation */
+    extern      FRETVAL(intf) nvfistart
+                (intf * fid);
+
+    extern      FRETVAL(intf) nvfiend
+                (intf * fid);
 
     extern      FRETVAL(intf) nvsiqnelt
                 (intf * vkey, intf *nelt);
