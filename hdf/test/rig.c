@@ -1142,7 +1142,7 @@ void test_r24()
     ret = DF24getdims(TESTFILE, &xd, &yd, &il);
     RESULT("DF24getdims");
 if(ret==FAIL)
-    HEreport(stderr,0);
+    HEprint(stderr,0);
 
     if((xd != XSIZE) || (yd != YSIZE) || il != 0) {
         fprintf(stderr, "Returned meta-data is wrong for image 0\n");
