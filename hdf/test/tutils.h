@@ -57,4 +57,12 @@ if(ret == FAIL) {printf("*** UNEXPECTED RETURN from %s is %ld at line %4d in %s\
 #define TEST_STR	"Test"
 #define CLEAN_STR	"Cleanup"
 
+/* System command to use for Cleanup */
+#ifdef VMS
+#define CLEAN_CMD	"delete *.hdf;*"
+#else
+/* default is Unix */
+#define CLEAN_CMD	"rm -f *.hdf"
+#endif
+
 #endif /* _TUTILS_H */

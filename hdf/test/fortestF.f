@@ -10,6 +10,7 @@ C Interface to invoke tests for HDF Fortran interfaces.
 
 C Default to cleanup *.hdf files and set verbosity to default value
 	CleanUp = .TRUE.
+	CleanUpCMD = 'rm -f *.hdf'
 	Verbosity = VERBO_DEF
 
 	print *, '==========================================='
@@ -31,9 +32,7 @@ C Default to cleanup *.hdf files and set verbosity to default value
 	endif
 	print *, '====================================='
 
-C   For VMS un-comment next line
-C       if (CleanUp) call system('delete *.hdf;*')
-	if (CleanUp) call system('rm -f *.hdf')
+	if (CleanUp) call system(CleanUpCMD)
 
 	stop
 	end
@@ -44,6 +43,9 @@ C Currently taking it from standard input.
 C If EOF encounters, set retcode = 1.  Else retcode = 0.
 C
 	subroutine getcmd(cmd, test, retcode)
+	implicit none
+	include 'fortest.inc'
+	
 	character*(*) cmd, test
 	integer retcode
 
@@ -72,7 +74,9 @@ C	print *, 'inline=', inline
 
 50	test = inline(i:linelen)
 
-C	print * , 'cmd=', cmd, ', test=', test
+	if (Verbosity .ge. VERBO_HI) then
+	    print * , 'cmd=', cmd, ', test=', test
+	endif
 
 	retcode = 0
 	return
@@ -88,41 +92,58 @@ C Run the Fortran test command.
 C
 	subroutine runcmd(cmd, param, retcode)
 	implicit none
-	character*(*) cmd, param
-
 	include 'fortest.inc'
 	
+	character*(*) cmd, param
+
 	integer retcode
 C
 	retcode = 0
 
 C Parse command types
-	if (cmd .EQ. 'Verbosity') then
+C
+C Verbosity level command
+	if (cmd .EQ. 'Verbosity' .OR. cmd .EQ. 'verbosity') then
 	    Verbosity = index('0123456789', param(1:1)) - 1
 	    return
 	endif
 	    
-	if (cmd .EQ. 'Cleanup') then
-	    CleanUp = .FALSE.
+
+C Cleanup command
+C If param is Yes/No, it directs to delete the *.hdf or not.
+C If param is not Yes/No, it represents the system command to delete
+C    the *.hdf.  (NB: specifying system command does not imply
+C    to Cleanup, i.e., it does not current CleanUp setting.
+C
+	if (cmd .EQ. 'Cleanup' .OR. cmd .EQ. 'cleanup') then
+	    if (param .EQ. 'No' .OR. param .EQ. 'no') then
+		CleanUp = .FALSE.
+	    else if (param .EQ. 'Yes' .OR. param .EQ. 'yes') then
+		CleanUp = .TRUE.
+	    else
+		CleanUpCMD = param
+	    endif
 	    return
 	endif
 	    
 C	print *, '====================================='
 C	print *, cmd, param
 C	print *, '====================================='
-	if (cmd .EQ. 'Skip') then
+
+C Skip command
+	if (cmd .EQ. 'Skip' .OR. cmd .EQ. 'skip') then
 	    call ptestban('Skipping', param)
 	    return
 	endif
 
-	if (cmd .NE. 'Test') then
+	if (cmd .NE. 'Test' .AND. cmd .NE. 'test') then
 	    print *, 'Unknown Command: ', cmd, param
 	    print *, 'Try one of "Skip", "Test", "Verbosity" or "Cleanup"'
 	    retcode = -1
 	    return
 	endif
 
-C run the command
+C Test command
 	if (param .EQ. 'slab') then
 	    call slabwf(retcode)
 	    return

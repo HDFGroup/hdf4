@@ -370,7 +370,7 @@ testhdf: $(COBJS) $(HDFLIB)/libdf.a
 fortestF: $(FOBJS) $(HDFLIB)/libdf.a
 	$(FC) $(FFLAGS) -o $@ $(FOBJS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
 
-fortest: $(HDFLIB)/libdf.a fortest.c
+fortest: $(HDFLIB)/libdf.a fortest.c $(CHDRS)
 	$(CC) $(ALL_CFLAGS) -o fortest fortest.c $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
 
 gentest: gentest.c $(HDFLIB)/libdf.a

@@ -17,14 +17,22 @@ in fortest.arg contains a command and a parameter.
 
 	Test		Name		Test <Name>
 	Skip		Name		Skip test <Name>
-	Cleanup		Integer		Do not cleanup *.hdf files
+	Cleanup		String		How to cleanup *.hdf
 	Verbosity	Integer		Verbosity = <Integer>
-
 
 "fortest" then invokes "fortestF" with "fortest.arg" as input.
 
+Cleanup Commands
+----------------
+If <String> is Yes/No, it directs to delete the *.hdf or not.
+If <String> is not Yes/No, it represents the system command to delete
+    the *.hdf.  (NB: specifying system command does not imply
+    to Cleanup, i.e., it does not current CleanUp setting.
+
+
 
 Verbosity convention
+--------------------
 
 The higher the verbosity value, the more information printed.
 So, output for higher verbosity also include output of all lower

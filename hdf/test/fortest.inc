@@ -3,8 +3,9 @@ C Common block definiton to be included by fortestF.f modules.  If your
 C fortran compile cannot do include, you need to replace each include
 C statement with this file.
 
-	common CleanUp, Verbosity
+	common CleanUp, Verbosity, CleanUpCMD
 	logical CleanUp
+	character*80	CleanUpCMD
 	integer Verbosity
 C
 C Predefined verbosity levels.

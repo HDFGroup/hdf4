@@ -117,7 +117,11 @@ main(int argc, char *argv[])
 	return(-1);
     }
 
+    /* Default setting */
     Verbosity = 3;  /* Default Verbosity is Low */
+    /* setup Cleanup Command */
+    fprintf(cmdfile, "%s %s\n", CLEAN_STR, CLEAN_CMD);
+
     for (CLLoop = 1; CLLoop < argc; CLLoop++)
       {
           if ((argc > CLLoop + 1) && ((HDstrcmp(argv[CLLoop], "-verbose") == 0) ||
@@ -168,7 +172,7 @@ main(int argc, char *argv[])
                                   (HDstrcmp(argv[CLLoop], "-c") == 0)))
             {
                 CleanUp = 0;
-		fprintf(cmdfile, "%s %d\n", CLEAN_STR, CleanUp);
+		fprintf(cmdfile, "%s %s\n", CLEAN_STR, "No");
             }
           if ((argc > CLLoop + 1) && ((HDstrcmp(argv[CLLoop], "-exclude") == 0) ||
                                       (HDstrcmp(argv[CLLoop], "-x") == 0)))
