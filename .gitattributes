@@ -121,6 +121,7 @@ mfhdf/dumper/grtdfui83.hdf -text
 mfhdf/dumper/grtdfui84.hdf -text
 mfhdf/dumper/star.hdf -text
 mfhdf/dumper/swf32.hdf -text
+mfhdf/dumper/swf32_fileattr.hdf -text
 mfhdf/dumper/swi16.hdf -text
 mfhdf/dumper/swi8.hdf -text
 mfhdf/dumper/tdata.hdf -text

@@ -201,6 +201,7 @@ TEST dumpsds-4.out dumpsds -n Time swf32.hdf
 TEST dumpsds-5.out dumpsds -n fakeDim0,Data-Set-2 swf32.hdf
 TEST dumpsds-6.out dumpsds -r 3,2 swf32.hdf
 TEST dumpsds-7.out dumpsds -r 3,2 -d swf32.hdf
+TEST dumpsds-8.out dumpsds -h swf32_fileattr.hdf
 else
 MESG 3 "$TestName <<<SKIPPED>>>"
 fi
