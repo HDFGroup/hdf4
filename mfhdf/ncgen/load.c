@@ -116,21 +116,33 @@ load_netcdf(rec_start)	/* write out record from in-memory structure */
 #define fpr    (void) fprintf
 
 /*
- * Like sprintf(ss, "%#.16g", dd) except we remove trailing zero but not
- * trailing decimal point.
+ * Remove trailing zeros (after decimal point) but not trailing decimal
+ * point from ss, a string representation of a floating-point number that
+ * might include an exponent part.
  */
-char *
-sdprintf(ss, dd)
-     char *ss;			/* returned string representing dd */
-     double dd;
+    static void
+    tztrim(ss)
+char *ss;			/* returned string representing dd */
 {
-    char *cp;
+    char *cp, *ep;
     
-    sprintf(ss, "%#.16g", dd);
-    cp = ss + strlen(ss) - 1;
+    cp = ss;
+    if (*cp == '-')
+        cp++;
+    while(isdigit((int)*cp) || *cp == '.')
+        cp++;
+    if (*--cp == '.')
+        return;
+    ep = cp+1;
     while (*cp == '0')
-      *cp-- = '\0';
-    return ss;
+        cp--;
+    cp++;
+    if (cp == ep)
+        return;
+    while (*ep)
+        *cp++ = *ep++;
+    *cp = '\0';
+    return;
 }
 
 
@@ -240,7 +252,8 @@ gen_load_c(rec_start)
 			sprintf(s2, "%.8g, ", *floatvalp++);
 		    break;
 		  case NC_DOUBLE:
-			sdprintf(s2, *doublevalp++);
+                        sprintf(s2, "%#.16g", *doublevalp++);
+                        tztrim(s2);
 			strcat(s2, ", ");
 		    break;
 		}
@@ -268,8 +281,9 @@ gen_load_c(rec_start)
 			sprintf(s2, "%.8g", *floatvalp);
 		    break;
 		  case NC_DOUBLE:
-			sdprintf(s2, *doublevalp++);
-		    break;
+ 			sprintf(s2, "%#.16g", *doublevalp++);
+			tztrim(s2);
+                        break;
 		}
 		stmnt_len += strlen(s2);
 		if (stmnt_len < C_MAX_STMNT)
@@ -327,7 +341,8 @@ gen_load_c(rec_start)
 	    break;
 	  case NC_DOUBLE:
 	    doublevalp = (double *) rec_start;
-	    sdprintf(s2, *doublevalp++);
+ 	    sprintf(s2, "%#.16g", *doublevalp++);
+ 	    tztrim(s2);
 	    strcat(stmnt, s2);
 	    break;
 	}
@@ -465,11 +480,13 @@ gen_load_fortran(rec_start)  /* make Fortran to put record */
 	  case NC_DOUBLE:
 	    doublevalp = (double *) rec_start;
 	    for (ival = 0; ival < var_len-1; ival++) {
-		sdprintf(s2, *doublevalp++);
+ 		sprintf(s2, "%#.16g", *doublevalp++);
+ 		tztrim(s2);
 		fstrcat(s2, ", ", &stmnt_len);
 		fstrcat(stmnt, s2, &stmnt_len);
 	    }
-	    sdprintf(s2, *doublevalp++);
+ 	    sprintf(s2, "%#.16g", *doublevalp++);
+ 	    tztrim(s2);
 	    fstrcat(stmnt, s2, &stmnt_len);
 	    break;
 	}
