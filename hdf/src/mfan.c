@@ -2167,7 +2167,7 @@ ANcreatef(int32 file_id, ann_type type)
  RETURNS
         An ID to an annotation type which can either be a label or description 
  DESCRIPTION
-        The position index is 1 based
+        The position index is ZERO based
 --------------------------------------------------------------------------- */
 EXPORT int32
 ANselect(int32 file_id, int32 index, ann_type type)
@@ -2229,6 +2229,12 @@ ANselect(int32 file_id, int32 index, ann_type type)
     ann_entry = (ANentry *) rb_val(entry); 
 
 #else  /* use tbbt */
+
+  /* check index and adjust to 1 based for tbbtindx()*/
+  if(index >= 0 && index <= file_entry->an_num[type])
+    index++;
+  else
+    HE_REPORT_RETURN("bad index", FAIL);
 
   /* find 'index' entry */
   if ((entry = tbbtindx((TBBT_NODE *)*(file_entry->an_tree[type]), index)) == NULL)

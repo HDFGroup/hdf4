@@ -194,7 +194,7 @@ naffcreate(intf *file_id, intf *atype)
  * Inputs:  file_id: file handle
  *          index:   index for particular annoation type. Usually based on
  *                   number of a particular type obtained from affileinfo()call.
- *                   1 based.
+ *                   ZERO based.
  *          atype:   annotation type AN_FILE_LABEL, AN_FILE_DESC, AN_DATA_LABEL
  *                   AN_DATA_DESC
  * Returns: see ANselect()
