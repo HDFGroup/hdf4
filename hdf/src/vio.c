@@ -811,11 +811,12 @@ VSappendable(int32 vkey, int32 blk)
     if ((vs == NULL) || (vs->otag != VSDESCTAG))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    curr_size = vs->nvertices * vs->wlist.ivsize;
+    if(vs->nvertices!=0)
+        curr_size = vs->nvertices * vs->wlist.ivsize;
 
     if (blk > 0)
         blksize = blk;
-    else if (vs->nvertices && (curr_size > VDEFAULTBLKSIZE))
+    else if (vs->nvertices!=0 && (curr_size > VDEFAULTBLKSIZE))
         blksize = curr_size;
     else
         blksize = VDEFAULTBLKSIZE;
