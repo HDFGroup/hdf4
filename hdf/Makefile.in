@@ -76,7 +76,8 @@ infodir = $(prefix)/info
 PACKAGE	 = HDF
 VERSION  = 4.0
 
-MANIFEST = Makefile.in
+MANIFEST = $(DISTFILES)
+DISTFILES = Makefile.in COPYING build.inc
 
 SUBDIRS= src jpeg test util
 
@@ -103,6 +104,14 @@ HDF_FLAGS       = \
 #        HDFLIB="$(HDFLIB)" 
 #        HDFINC="$(HDFINC)" 
 #	HDFBIN="$(HDFBIN)"	
+
+LOCAL_MACROS  = CC="$(CC)" \
+	CFLAGS="$(CFLAGS)" \
+	CPP="$(CPP)" \
+	CPPFLAGS="$(CPPFLAGS)" \
+	exec_prefix="$(exec_prefix)" \
+	FC="$(FC)" \
+	prefix="$(prefix)"
 
 #
 #
@@ -136,26 +145,32 @@ allnostub: allnofortran
 
 libs:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="src jpeg" subd
+          SUBDIRS="src" subd
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
+          SUBDIRS="jpeg" subd
 
 libdf:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
           SUBDIRS="src" subd
 
 libjpeg:
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd
 
 utilities:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
+          SUBDIRS="jpeg" subd
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="src jpeg util" subd
+          SUBDIRS="src util" subd
 
 hdf-test:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
+          SUBDIRS="jpeg" subd
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="src jpeg test" subd
+          SUBDIRS="src test" subd
 
 testnofortran:
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
           SUBDIRS="src test" subd message 
@@ -179,15 +194,17 @@ install:
           SUBDIRS="util" subd
 
 perfs:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
+          SUBDIRS="jpeg" subd
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="src jpeg perf" subd
+          SUBDIRS="src perf" subd
 
 #install:      $(INSTALL_DIRS)
 #	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
 #          SUBDIRS="src util test" subd
 
 debug:
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=debug \
           SUBDIRS="src test" subd message 
