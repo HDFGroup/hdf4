@@ -5730,10 +5730,10 @@ PRIVATE int32 hdfc = 1061109567L; /* equal to 4 '?' in a row in ascii */
                                   /* yes, I am deliberately avoiding the trigraph :-) */
 PRIVATE int32 hdft = 1600085855L; /* equal to '_HDF' in ascii */
 
-#ifndef OLD_WAY
+#ifndef MAC_OLD_WAY
 /* The routines have been updated for HFS */
 
-PRIVATE StringPtr pname; /* Pacal pointer to file name */
+PRIVATE Str255 pname; /* Pacal pointer to file name */
 
 hdf_file_t
 mopen(char *name, intn flags)
@@ -5747,7 +5747,8 @@ mopen(char *name, intn flags)
   FInfo       fndrInfo;
   char        perm;
 
-  pname = c2pstr(name); /* Convert C string to Pascal string */
+  HDstrcpy((char *) pname, (char *) name);
+  c2pstr((char *)pname); /* Convert C string to Pascal string */
 
   /* get the info on the default volume */
 #if 0 
@@ -5827,7 +5828,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef MAC_DEBUG
+  fprintf(stdout,"mopen: opened/created file %s\n",name);
+#endif
   return (ret_value);
 } /* mopen() */
 
@@ -5952,7 +5955,8 @@ mstat(char *path)
   long        fBytes;
   intn        ret_value;
 
-  pname = c2pstr(path); /* Convert C string to Pascal string */
+  HDstrcpy((char *) pname, (char *) path);
+  c2pstr((char *)pname); /* Convert C string to Pascal string */
 
   /* get the info on the default volume */
 #if 0
@@ -5982,11 +5986,15 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef MAC_DEBUG
+  fprintf(stdout,"mstat: opened file %s\n",path);
+#endif
   return (ret_value);
 } /* mstat() */
 
-#else /* OLD_WAY */
+#else /* MAC_OLD_WAY */
+
+PRIVATE Str255 pname; /* Pacal pointer to file name */
 
 #ifdef MPW
 hdf_file_t
@@ -6015,13 +6023,13 @@ mopen(char *name, intn flags)
 
   if (flags & O_CREAT)	/* and truncate it */
     SetEOF(rn, 0);
-
+#ifdef MAC_DEBUG
+  fprintf(stdout,"mopen: opened/created file %s\n",name);
+#endif
   return (rn);
 }
 
 #else /* ! MPW */
-
-PRIVATE Str255 pname;
 
 hdf_file_t
 mopen(char *name, intn flags)
@@ -6053,6 +6061,9 @@ mopen(char *name, intn flags)
   if (flags & O_CREAT)	/* and truncate it */
     SetEOF(rn, 0L);
 
+#ifdef MAC_DEBUG
+  fprintf(stdout,"mopen: opened/created file %s\n",name);
+#endif
   return (rn);
 }
 
@@ -6159,7 +6170,52 @@ mlseek(hdf_file_t rn, int32 n, intn m)
     }
 
 }
-#endif /* OLD_WAY */
+
+intn
+mstat(char *path)
+{
+  short       volRefNum;
+  FSSpec      sfFile;
+  OSErr       result;
+  Str255      volName;
+  long        fBytes;
+  intn        ret_value;
+
+  HDstrcpy((char *) pname, (char *) path);
+  c2pstr((char *)pname); /* Convert C string to Pascal string */
+
+  /* get the info on the default volume */
+  if ((result = GetVol(NULL, &volRefNum)) != noErr)
+   {
+     ret_value = FAIL;
+     goto done;
+   }
+
+  /* Create FSSpec record for file */
+  result = FSMakeFSSpec(volRefNum,0,pname, &sfFile);
+
+ /* Does file exist */
+ if (result != fnfErr)
+  { /* file exists*/
+    ret_value = 0;
+  }
+ else
+    ret_value = FAIL;
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+#ifdef MAC_DEBUG
+  fprintf(stdout,"mstat: opened file %s\n",path);
+#endif
+  return (ret_value);
+} /* mstat() */
+
+#endif /* MAC_OLD_WAY */
 
 #endif /* MAC */
 /* --------------------- (end of) MAC Specific Stuff ---------------------- */
