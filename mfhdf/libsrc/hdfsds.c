@@ -525,9 +525,9 @@ intn hdf_read_ndgs(handle)
                  *    dimension names
                  */
                 /*
-                  if this dimension already exists, set this_dim to
-                  its index else do nothing
-                  */
+                 *  if this dimension already exists, set this_dim to
+                 *  its index else do nothing
+                 */
                 for(i = 0; i < current_dim; i++)
                     if(strcmp(dims[i]->name->values, tmpname) == 0) {
                         /* found it */
@@ -550,6 +550,10 @@ intn hdf_read_ndgs(handle)
                     }
                     new_dim  = TRUE;
                 }
+
+                /*
+                 * hmmm, this will blow away the old dim record...
+                 */
                 dims[this_dim] = NC_new_dim(tmpname, dimsizes[dim]);
                 
                 /* 
@@ -564,8 +568,10 @@ intn hdf_read_ndgs(handle)
                 /*
                  * Look at the scale NTs since the scales may have different number 
                  *   types
+                 * Promote the dimension to a variable, but only if it has meta-data
+                 *   stored with it.
                  */
-                if(new_dim) {
+                if(new_dim && scalebuf && scalebuf[dim]) {
                     vars[current_var] = NC_new_var(tmpname, 
                                                    hdf_unmap_type(scaletypes[dim]),
                                                    1, 
