@@ -594,52 +594,44 @@ intn print_PaletteInfo(
          interlace_mode;
    intn  status, ret_value = SUCCEED;
 
-   /* display each palette of an RI */
-   for( pal_index = 0; pal_index < num_pals; pal_index++ )
-   {
-      /* Get the identifier of the palette attached to the image. */
-      pal_id = GRgetlutid (ri_id, pal_index);
-      if( pal_id == FAIL ) /* continue to the next palette */
-         ERROR_CONT_2( "in %s: GRgetlutid failed for palette #%d",
-                        "print_PaletteInfo", (int)pal_index);
+   /* Check the number of palettes */
+   if((num_pals=GRgetnluts(ri_id))<0)
+         ERROR_GOTO_2( "in %s: GRgetnluts failed for raster image ID #%d",
+                        "print_PaletteInfo", (int)ri_id);
 
-/* Changed to reflect GRgetlutinfo returning FAIL when there is no palette
- * for a RIG - QAK 2/1/01
- */
-#ifdef OLD_WAY
-      /* Obtain and display information about the palette. */
-      status = GRgetlutinfo (pal_id, &n_comps, &data_type, &interlace_mode,
-                            &n_entries);
-      if( status == FAIL ) /* continue to the next palette */
-         ERROR_CONT_2( "in %s: GRgetlutinfo failed for palette #%d",
-                        "print_PaletteInfo", (int)pal_index);
+    /* if there are no palette data, print message for both cases:
+       header-only and verbose (data+header) */
+    if(num_pals==0) {
+        fprintf( fp, "\t No palette\n");
+    } /* end if */
+    else {
+       /* display each palette of an RI */
+       for( pal_index = 0; pal_index < num_pals; pal_index++ )
+       {
+          /* Get the identifier of the palette attached to the image. */
+          pal_id = GRgetlutid (ri_id, pal_index);
+          if( pal_id == FAIL ) /* continue to the next palette */
+             ERROR_CONT_2( "in %s: GRgetlutid failed for palette #%d",
+                            "print_PaletteInfo", (int)pal_index);
 
-      /* if there are no palette data, print message for both cases:
-         header-only and verbose (data+header) */
-      if( n_entries <= 0 )
-         fprintf( fp, "\t No palette\n");
+          /* Obtain and display information about the palette. */
+          status = GRgetlutinfo (pal_id, &n_comps, &data_type, &interlace_mode,
+                                &n_entries);
+          if( status == FAIL ) /* continue to the next palette */
+             ERROR_CONT_2( "in %s: GRgetlutinfo failed for palette #%d",
+                            "print_PaletteInfo", (int)pal_index);
 
-      /* else, if there are palette data, print header info */
-      else /* have palette data */
-         fprintf (fp, "\t Palette: %d components; %d entries\n",
+          /* if there are palette data, print header info */
+          fprintf (fp, "\t Palette: %d components; %d entries\n",
                         (int)n_comps, (int)n_entries);
-#else /* OLD_WAY */
-      /* Obtain and display information about the palette. */
-      status = GRgetlutinfo (pal_id, &n_comps, &data_type, &interlace_mode,
-                            &n_entries);
-      /* if there are no palette data, print message for both cases:
-         header-only and verbose (data+header) */
-      if( status == FAIL )
-         fprintf( fp, "\t No palette\n");
 
-      /* else, if there are palette data, print header info */
-      else /* have palette data */
-         fprintf (fp, "\t Palette: %d components; %d entries\n",
-                        (int)n_comps, (int)n_entries);
-#endif /* OLD_WAY */
+       } /* end of for each palette */
+   } /* end else */
 
-   } /* end of for each palette */
-
+done:
+   if (ret_value == FAIL)
+   { /* Failure cleanup */
+   }
    return( ret_value );
 }  /* end of print_PaletteInfo */
 
@@ -665,82 +657,69 @@ print_Palette(
    uint8 palette_data[N_ENTRIES][3];  /* static because of fixed size */
    intn  status, ret_value = SUCCEED;
 
-   /* display each palette of an RI */
-   for( pal_index = 0; pal_index < num_pals; pal_index++ )
-   {
-      /* Get the identifier of the palette attached to the image. */
-      pal_id = GRgetlutid (ri_id, pal_index);
-      if( pal_id == FAIL ) /* continue to the next palette */
-         ERROR_CONT_2( "in %s: GRgetlutid failed for palette #%d", 
-			"print_Palette", (int)pal_index);
+   /* Check the number of palettes */
+   if((num_pals=GRgetnluts(ri_id))<0)
+         ERROR_GOTO_2( "in %s: GRgetnluts failed for raster image ID #%d",
+                        "print_PaletteInfo", (int)ri_id);
 
-/* Changed to reflect GRgetlutinfo returning FAIL when there is no palette
- * for a RIG - QAK 2/1/01
- */
-#ifdef OLD_WAY
-      /* Obtain and display information about the palette. */
-      status = GRgetlutinfo (pal_id, &n_comps, &data_type, &interlace_mode,
-                            &n_entries);
-      if( status == FAIL ) /* continue to the next palette */
-         ERROR_CONT_2( "in %s: GRgetlutinfo failed for palette #%d", 
-			"print_Palette", (int)pal_index);
-   
-      /* if there are no palette data, print message for both cases:   
-         header-only and verbose (data+header) */
-      if( n_entries <= 0 )
-      {
-         if( dumpgr_opts->contents != DDATA )
+    /* if there are no palette data, print message for both cases:
+       header-only and verbose (data+header) */
+    if(num_pals==0) {
+        if( dumpgr_opts->contents != DDATA )
             fprintf( fp, "\t No palette data\n");
-      }
-#else /* OLD_WAY */
-      /* Obtain and display information about the palette. */
-      status = GRgetlutinfo (pal_id, &n_comps, &data_type, &interlace_mode,
-                            &n_entries);
-   
-      /* if there are no palette data, print message for both cases:   
-         header-only and verbose (data+header) */
-      if( status == FAIL )
-      {
-         if( dumpgr_opts->contents != DDATA )
-            fprintf( fp, "\t No palette data\n");
-      }
-#endif /* OLD_WAY */
-      /* else, if there are palette data, print header info when not 
-         data-only and print palette data when not header-only */
-      else /* have palette data */
-      {
-         if( dumpgr_opts->contents != DDATA )
-            fprintf (fp, "\t Palette: %d components; %d entries\n", 
-			(int)n_comps, (int)n_entries);
+    } /* end if */
+    else {
+       /* display each palette of an RI */
+       for( pal_index = 0; pal_index < num_pals; pal_index++ )
+       {
+          /* Get the identifier of the palette attached to the image. */
+          pal_id = GRgetlutid (ri_id, pal_index);
+          if( pal_id == FAIL ) /* continue to the next palette */
+             ERROR_CONT_2( "in %s: GRgetlutid failed for palette #%d", 
+                            "print_Palette", (int)pal_index);
 
-         if( dumpgr_opts->contents != DHEADER )
-         {  /* not header only */
-            /* Read the palette data. */
-            status = GRreadlut (pal_id, (VOIDP)palette_data);
-            if( status == FAIL ) /* continue to the next palette */
-            {
-               ERROR_CONT_2( "in %s: GRreadlut failed for palette #%d", 
-			"print_Palette", (int)pal_index);
-            }
+          /* Obtain and display information about the palette. */
+          status = GRgetlutinfo (pal_id, &n_comps, &data_type, &interlace_mode,
+                                &n_entries);
+          if( status == FAIL ) /* continue to the next palette */
+             ERROR_CONT_2( "in %s: GRgetlutinfo failed for palette #%d", 
+                            "print_Palette", (int)pal_index);
+       
+          /* if there are palette data, print header info when not 
+             data-only and print palette data when not header-only */
+          if( dumpgr_opts->contents != DDATA )
+             fprintf (fp, "\t Palette: %d components; %d entries\n", 
+                         (int)n_comps, (int)n_entries);
 
-	    /* if printing data only, print palette data with no indentation */
-	    if( dumpgr_opts->contents == DDATA )
-               status = dumpfull(data_type, dumpgr_opts, n_entries*n_comps, 
-			palette_data, fp, 0, 0 );
+          if( dumpgr_opts->contents != DHEADER )
+          {  /* not header only */
+             /* Read the palette data. */
+             status = GRreadlut (pal_id, (VOIDP)palette_data);
+             if( status == FAIL ) /* continue to the next palette */
+             {
+                ERROR_CONT_2( "in %s: GRreadlut failed for palette #%d", 
+                         "print_Palette", (int)pal_index);
+             }
 
-            /* display the palette data with the title line and indentation */
-	    else
-	    {
-               fprintf (fp, "\t Palette Data: \n");
-               status = dumpfull(data_type, dumpgr_opts, n_entries*n_comps, 
-			palette_data, fp, DATA_INDENT, DATA_CONT_INDENT );
-	    }
-            if( status == FAIL )
-               ERROR_GOTO_2( "in %s: dumpfull failed for palette #%d",
-			"print_Palette", (int)ri_id );
-         }  /* not header only */
-      } /* have palette data */
-   } /* end of for each palette */
+             /* if printing data only, print palette data with no indentation */
+             if( dumpgr_opts->contents == DDATA )
+                status = dumpfull(data_type, dumpgr_opts, n_entries*n_comps, 
+                         palette_data, fp, 0, 0 );
+
+             /* display the palette data with the title line and indentation */
+             else
+             {
+                fprintf (fp, "\t Palette Data: \n");
+                status = dumpfull(data_type, dumpgr_opts, n_entries*n_comps, 
+                         palette_data, fp, DATA_INDENT, DATA_CONT_INDENT );
+             }
+             if( status == FAIL )
+                ERROR_GOTO_2( "in %s: dumpfull failed for palette #%d",
+                         "print_Palette", (int)ri_id );
+          }  /* not header only */
+       } /* end of for each palette */
+    } /* end else */
+
 done:
    if (ret_value == FAIL)
    { /* Failure cleanup */

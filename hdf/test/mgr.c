@@ -2883,12 +2883,38 @@ test_mgr_lut_a(int flag)
         ret=GRgetiminfo(riid,name,&ncomp,&nt,&il,dimsizes,&n_attr);
         CHECK(ret,FAIL,"GRgetiminfo");
 
+        /* Get the number of palettes */
+        ret=GRgetnluts(riid);
+        VERIFY(ret,0,"GRgetnluts");
+
         lutid=GRgetlutid(riid,0);
         CHECK(lutid,FAIL,"GRgetlutid");
         
         /* Get the Palette information */
         ret=GRgetlutinfo(lutid,&pal_ncomp,&pal_nt,&pal_il,&pal_entries);
-        VERIFY(ret,FAIL,"GRgetlutinfo");
+        CHECK(ret,FAIL,"GRgetlutinfo");
+
+        /* Check the palette values, they should all be "nil" values */
+        if(pal_ncomp!=0)
+          {
+              MESSAGE(3, printf("Error! Incorrect palette components\n"););
+              num_errs++;
+          } /* end if */
+        if(pal_nt!=DFNT_NONE)
+          {
+              MESSAGE(3, printf("Error! Incorrect palette number-type\n"););
+              num_errs++;
+          } /* end if */
+        if(pal_il!=(-1))
+          {
+              MESSAGE(3, printf("Error! Incorrect palette interlace, pal_il=%d\n",(int)pal_il););
+              num_errs++;
+          } /* end if */
+        if(pal_entries!=0)
+          {
+              MESSAGE(3, printf("Error! Incorrect palette # of entries\n"););
+              num_errs++;
+          } /* end if */
 
         /* Set the palette components */
         pal_ncomp=3;
