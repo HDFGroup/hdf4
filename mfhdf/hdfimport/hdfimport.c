@@ -1145,7 +1145,7 @@ gint32(char *infile, FILE * strm, int32 *ival, struct Input *in)
       }
     else
       {
-          if (fread((char *) ival, sizeof(int), 1, strm) != 1)
+          if (fread((char *) ival, sizeof(int32), 1, strm) != 1)
             {
                 (void) fprintf(stderr, err1, infile);
                 goto err;

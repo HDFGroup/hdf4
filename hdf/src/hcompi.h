@@ -57,6 +57,7 @@ comp_model_info_t;
 #include "cnbit.h"  /* N-bit encoding header */
 #include "cskphuff.h"   /* Skipping huffman encoding header */
 #include "cdeflate.h"   /* gzip 'deflate' encoding header */
+#include "cszip.h"   /* szip encoding header */
 
 typedef struct comp_coder_info_tag
   {
@@ -68,6 +69,8 @@ typedef struct comp_coder_info_tag
             comp_coder_nbit_info_t nbit_info;   /* N-bit coding info */
             comp_coder_skphuff_info_t skphuff_info;     /* Skipping huffman coding info */
             comp_coder_deflate_info_t deflate_info;   /* gzip 'deflate' coding info */
+	    comp_coder_szip_info_t szip_info;   /* szip coding info */
+
         }
       coder_info;
       funclist_t  coder_funcs;  /* functions to perform encoding */

@@ -1,3 +1,4 @@
+
 /**********************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -429,8 +430,8 @@ print_GRattrs(
    for (attr_index = 0; attr_index < n_file_attrs; attr_index++)
    {
       /* get the current attr's name, number type, and number of values */
-      ret_value = GRattrinfo(gr_id, attr_index, attr_name, &attr_nt, &attr_count);
-      if (FAIL == ret_value ) /* to the next attribute */
+      status = GRattrinfo(gr_id, attr_index, attr_name, &attr_nt, &attr_count);
+      if (FAIL == status ) /* to the next attribute */
          ERROR_CONT_2( "in %s: GRattrinfo failed for %d'th attribute", 
 			"print_GRattrs", (int)attr_index );
 
@@ -1107,13 +1108,15 @@ dgr(	dump_info_t *dumpgr_opts,
 
    /* check for missing input file name */
    if( curr_arg >= argc )
-      ERROR_GOTO_0( "Missing input file name.  Please try again.\n" );
+      ERROR_GOTO_0( "Missing input file name.  Please try again" );
 
    /* going through each input file, open the file, try to compose the list
       of indices of the images in the file that are requested, then read and
       display information and data of each image in the specified manner */
    while (curr_arg < argc)
    {
+      intn isHDF = TRUE;  /* FALSE, if current file is not HDF file */
+
       HDstrcpy(file_name, argv[curr_arg]);   /* get file name */
       HDstrcpy( dumpgr_opts->ifile_name, file_name ); /* record file name */
       curr_arg++;   /* forward the pointer to the current argument */
@@ -1123,18 +1126,36 @@ dgr(	dump_info_t *dumpgr_opts,
          help avoiding the chore at every one of those instances */ 
       closeGR( &file_id, &gr_id, &gr_chosen ); 
 
+      /* Print an informative message and skip this file if it is not 
+         an HDF file */
+      isHDF = Hishdf(file_name);
+      if (isHDF == FALSE)
+      {
+         /* if there are no more files to be processed, print error
+            message, then returns with FAIL */
+         if( curr_arg == argc )
+            {ERROR_GOTO_1( "in dgr: %s is not an HDF file", file_name);}
+         else /* print message, then continue processing the next file */
+            {ERROR_CONT_1( "in dgr: %s is not an HDF file", file_name);}
+      }
+
       /* open current hdf file for processing */
       file_id = Hopen(file_name, DFACC_RDONLY, 0);
       if (file_id == FAIL)
-         ERROR_CONT_1( "in dgr: Hopen failed for file %s\n", file_name);
-
-      /* initiate the GR interface */
-      gr_id = GRstart(file_id);
-      if (FAIL == gr_id) /* to the next file */
       {
-HEprint( stderr, 0 );  /* what is this??? BMR - 7/14/00 */
-         ERROR_CONT_1( "in dgr: GRstart failed for file %s\n", file_name);
+         /* if there are no more files to be processed, print error
+            message, then returns with FAIL */
+         if( curr_arg == argc )
+            {ERROR_GOTO_1( "in dgr: Failure in opening file %s", file_name);}
+         else /* print message, then continue processing the next file */
+            ERROR_CONT_1( "in dgr: Failure in opening file %s", file_name );
       }
+
+      /* initiate GR interface, if fail, probably something fatal, returns
+         with FAIL */
+      gr_id = GRstart(file_id);
+      if (FAIL == gr_id)
+         ERROR_GOTO_1( "in dgr: GRstart failed for file %s", file_name);
 
       /* BMR: compose the list of indices of RIs to be processed in the current
          file: gr_chosen is the list and return the number of items in it */
@@ -1151,7 +1172,7 @@ HEprint( stderr, 0 );  /* what is this??? BMR - 7/14/00 */
          used to print file attributes */
       status = GRfileinfo(gr_id, &ndsets, &nglb_attrs);
       if (status == FAIL) /* to the next file */
-         ERROR_CONT_1( "in dgr: GRfileinfo failed for file %s\n", file_name);
+         ERROR_CONT_1( "in dgr: GRfileinfo failed for file %s", file_name);
 
       fp = stdout;  /* assume that output option is not given */
 
@@ -1191,7 +1212,7 @@ HEprint( stderr, 0 );  /* what is this??? BMR - 7/14/00 */
                status = printGR_ASCII( gr_id, dumpgr_opts, ndsets, 
                                        gr_chosen, num_ri_chosen, fp );
                if( status == FAIL ) /* to the next file */
-                  ERROR_BREAK_1( "in dgr: printGR_ASCII failed for file %s\n", 
+                  ERROR_BREAK_1( "in dgr: printGR_ASCII failed for file %s", 
                                     file_name, FAIL );
             }
             else
@@ -1216,7 +1237,7 @@ HEprint( stderr, 0 );  /* what is this??? BMR - 7/14/00 */
             status = printGR_BINARY( gr_id, dumpgr_opts, num_ri_chosen, ndsets, 
                                gr_chosen, fp );
             if( status == FAIL )
-               ERROR_BREAK_1( "in dgr: printGR_BINARY failed for file %s\n", 
+               ERROR_BREAK_1( "in dgr: printGR_BINARY failed for file %s", 
                                  file_name, FAIL );
             break; /* BINARY */
 
@@ -1249,7 +1270,7 @@ do_dumpgr(intn        curr_arg,
           intn        help)
 {
    dump_info_t dumpgr_opts;	/* dumpgr options */
-   intn ret_value = SUCCEED;
+   intn status, ret_value = SUCCEED;
 
    /* initialize the structure that holds user's options and inputs */
    init_dump_opts(&dumpgr_opts);
@@ -1265,22 +1286,21 @@ do_dumpgr(intn        curr_arg,
    if( curr_arg >= argc )
    {
       dumpgr_usage(argc, argv);
-      ret_value = FAIL; /* return status to caller */
-      goto done;
+      ERROR_GOTO_0( "in do_dumpgr: command is incomplete");
    }		/* end if */
 
    /* parse the user's command and store the inputs in dumpgr_opts */
-   ret_value = parse_dumpgr_opts( &dumpgr_opts, &curr_arg, argc, argv );
-   if( ret_value == FAIL )
+   status = parse_dumpgr_opts( &dumpgr_opts, &curr_arg, argc, argv );
+   if( status == FAIL )
    {
       dumpgr_usage(argc, argv);
-      goto done;  /* skip dgr */
+      ERROR_GOTO_0( "in do_dumpgr: parse_dumpgr_opts is unable to parse command");
    }
 
    /* display data and information as specified in dumpgr_opts */
-   ret_value = dgr( &dumpgr_opts, curr_arg, argc, argv );
-   if( ret_value == FAIL )
-      ERROR_GOTO_0( "in do_dumpgr\n" );
+   status = dgr( &dumpgr_opts, curr_arg, argc, argv );
+   if( status == FAIL )
+      ERROR_GOTO_0( "in do_dumpgr: dgr failed" );
 
 done:
    if (ret_value == FAIL)

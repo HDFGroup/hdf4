@@ -18,8 +18,7 @@
  *
  * Description:
  *      This program creates binary and text input files that can be
- *      used to test the hdfimport program.  [Note: the 32-bit floating
- *      point files are omitted for Cray (UNICOS) systems]
+ *      used to test the hdfimport program.  
  *
  *      June 1, 1990
  *      Bob Weaver, baw@inel.gov
@@ -279,9 +278,8 @@ main(int argc, char * argv[] )
      * binary 32-bit file - rank 2 & 3
      */
 
-#ifndef UNICOS
     sp = fopen("cb32r2", "w");
-    (void) fwrite(fp32, sizeof(int), 1, sp);
+    (void) fwrite(fp32, strlen(fp32), 1, sp);
     (void) fwrite((char *) &ione, sizeof(int), 1, sp);
     (void) fwrite((char *) &nrow, sizeof(int), 1, sp);
     (void) fwrite((char *) &ncol, sizeof(int), 1, sp);
@@ -298,7 +296,7 @@ main(int argc, char * argv[] )
     (void) fclose(sp);
 
     sp = fopen("cb32i2", "w");
-    (void) fwrite(in32, sizeof(int), 1, sp);
+    (void) fwrite(in32, strlen(in32), 1, sp);
     (void) fwrite((char *) &ione, sizeof(int), 1, sp);
     (void) fwrite((char *) &nrow, sizeof(int), 1, sp);
     (void) fwrite((char *) &ncol, sizeof(int), 1, sp);
@@ -315,7 +313,7 @@ main(int argc, char * argv[] )
     (void) fclose(sp);
 
     sp = fopen("cb16i2", "w");
-    (void) fwrite(in16, sizeof(int), 1, sp);
+    (void) fwrite(in16, strlen(in16), 1, sp);
     (void) fwrite((char *) &ione, sizeof(int), 1, sp);
     (void) fwrite((char *) &nrow, sizeof(int), 1, sp);
     (void) fwrite((char *) &ncol, sizeof(int), 1, sp);
@@ -332,7 +330,7 @@ main(int argc, char * argv[] )
     (void) fclose(sp);
     
      sp = fopen("cb8i2", "w");
-    (void) fwrite(in8, sizeof(int), 1, sp);
+    (void) fwrite(in8, strlen(in8), 1, sp);
     (void) fwrite((char *) &ione, sizeof(int), 1, sp);
     (void) fwrite((char *) &nrow, sizeof(int), 1, sp);
     (void) fwrite((char *) &ncol, sizeof(int), 1, sp);
@@ -349,7 +347,7 @@ main(int argc, char * argv[] )
     (void) fclose(sp);
 
     sp = fopen("cb32r3", "w");
-    (void) fwrite(fp32, sizeof(int), 1, sp);
+    (void) fwrite(fp32, strlen(fp32), 1, sp);
     (void) fwrite((char *) &npln, sizeof(int), 1, sp);
     (void) fwrite((char *) &nrow, sizeof(int), 1, sp);
     (void) fwrite((char *) &ncol, sizeof(int), 1, sp);
@@ -369,7 +367,7 @@ main(int argc, char * argv[] )
     (void) fclose(sp);
     
      sp = fopen("cb32i3", "w");
-    (void) fwrite(in32, sizeof(int), 1, sp);
+    (void) fwrite(in32, strlen(in32), 1, sp);
     (void) fwrite((char *) &npln, sizeof(int), 1, sp);
     (void) fwrite((char *) &nrow, sizeof(int), 1, sp);
     (void) fwrite((char *) &ncol, sizeof(int), 1, sp);
@@ -389,7 +387,7 @@ main(int argc, char * argv[] )
     (void) fclose(sp);
     
      sp = fopen("cb16i3", "w");
-    (void) fwrite(in16, sizeof(int), 1, sp);
+    (void) fwrite(in16, strlen(in16), 1, sp);
     (void) fwrite((char *) &npln, sizeof(int), 1, sp);
     (void) fwrite((char *) &nrow, sizeof(int), 1, sp);
     (void) fwrite((char *) &ncol, sizeof(int), 1, sp);
@@ -409,7 +407,7 @@ main(int argc, char * argv[] )
     (void) fclose(sp);
     
      sp = fopen("cb8i3", "w");
-    (void) fwrite(in8, sizeof(int), 1, sp);
+    (void) fwrite(in8, strlen(in8), 1, sp);
     (void) fwrite((char *) &npln, sizeof(int), 1, sp);
     (void) fwrite((char *) &nrow, sizeof(int), 1, sp);
     (void) fwrite((char *) &ncol, sizeof(int), 1, sp);
@@ -428,14 +426,12 @@ main(int argc, char * argv[] )
                           sp);
     (void) fclose(sp);
   
-#endif
-
     /*
      * binary 64-bit file - rank 2 & 3
      */
 
     sp = fopen("cb64r2", "w");
-    (void) fwrite(fp64, sizeof(int), 1, sp);
+    (void) fwrite(fp64, strlen(fp64), 1, sp);
     (void) fwrite((char *) &ione, sizeof(int), 1, sp);
     (void) fwrite((char *) &nrow, sizeof(int), 1, sp);
     (void) fwrite((char *) &ncol, sizeof(int), 1, sp);
@@ -452,7 +448,7 @@ main(int argc, char * argv[] )
     (void) fclose(sp);
 
     sp = fopen("cb64r3", "w");
-    (void) fwrite(fp64, sizeof(int), 1, sp);
+    (void) fwrite(fp64, strlen(fp64), 1, sp);
     (void) fwrite((char *) &npln, sizeof(int), 1, sp);
     (void) fwrite((char *) &nrow, sizeof(int), 1, sp);
     (void) fwrite((char *) &ncol, sizeof(int), 1, sp);

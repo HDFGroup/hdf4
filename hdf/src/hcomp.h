@@ -41,6 +41,7 @@ typedef enum
       COMP_CODE_NBIT,           /* for N-bit encoding */
       COMP_CODE_SKPHUFF,        /* for Skipping huffman encoding */
       COMP_CODE_DEFLATE,        /* for gzip 'deflate' encoding */
+      COMP_CODE_SZIP,		/* for szip encoding - trying szip 4/15/02 */
       COMP_CODE_INVALID,        /* invalid last code, for range checking */
       COMP_CODE_JPEG            /* _Ugly_ hack to allow JPEG images to be created with GRsetcompress */
   }
@@ -121,6 +122,17 @@ typedef union tag_comp_info
             intn    level;   /* how hard to work when compressing the data */
         }
       deflate;
+      struct
+        {
+	    int32 bits_per_pixel;
+            int32 compression_mode;
+            int32 options_mask;
+            int32 pixels;
+            int32 pixels_per_block;
+            int32 pixels_per_scanline;
+         }
+       szip;  /* for szip encoding - trying szip 4/15/02 */
+
   }
 comp_info;
 

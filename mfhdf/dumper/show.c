@@ -57,7 +57,7 @@ dumpvd(int32       vd,
     int32       cn = 0;
     int32       ret_value = SUCCEED;
 
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
 	/* macintosh cannot handle >32K locals */
     char *fields = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
     char *flds = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
@@ -151,6 +151,7 @@ dumpvd(int32       vd,
           switch (w->type[i])
             {
             case DFNT_CHAR:
+	    case DFNT_UCHAR:
                 vfmtfn[i] = fmtchar;
                 break;
 
@@ -456,7 +457,7 @@ done:
               HDfree((VOIDP)bb);
       }
     /* Normal cleanup */
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
    if(fields != NULL)
    {
       HDfree(fields);
@@ -497,7 +498,7 @@ dumpattr(int32 vid,
     intn          status;
     intn          ret_value = SUCCEED;
 
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
 	/* macintosh cannot handle >32K locals */
     char *name = (char *)HDmalloc((FIELDNAMELENMAX+1) * sizeof(char));
     uint8 *attrbuf = (uint8 *)HDmalloc((BUFFER) * sizeof(uint8));
@@ -679,7 +680,7 @@ done:
               HDfree(buf);
       }
     /* Normal cleanup */
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
    if(name != NULL)
    {
       HDfree(name);

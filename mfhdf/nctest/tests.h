@@ -78,6 +78,9 @@ extern void	test_ncvarputg	PROTO((
 extern void	test_ncvargetg	PROTO((
 				       char*
 				       ));
+extern void	test_ncvarget_unlim	PROTO((
+				       char*
+				       ));
 extern void	test_ncrecinq	PROTO((
 				       char*
 				       ));

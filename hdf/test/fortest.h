@@ -22,15 +22,18 @@
 #ifdef DF_CAPFNAMES
 #  define ngetverb      FNAME(GETVERB)
 #  define nhisystem       FNAME(HISYSTEM)
+#  define nfixnamec        FNAME(FIXNAMEC) 
 #else  /* !DF_CAPFNAMES */
 #  define ngetverb      FNAME(getverb)
 #  define nhisystem       FNAME(hisystem)
+#  define nfixnamec        FNAME(fixnamec) 
 #endif /* DF_CAPFNAMES */
 
 /* FORTRAN support C-stubs for FORTRAN interface tests */
 
 extern FRETVAL(intf) ngetverb(void);
 extern FRETVAL(intf) nhisystem(_fcd cmd, intf *cmdlen);
+extern FRETVAL(intf) nfixname(_fcd name, intf *name_len, _fcd name_out, intf *name_len_out);
 
 #endif /* __FORTEST_H */
 

@@ -531,7 +531,7 @@ void print_fields( char *fields,
           count = 0;
    char  *ptr, *tempPtr,
           fldname[MAXNAMELEN],
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__) 
 
    /* Lets allocate space for tmpflds */
    *tempflds = (char *)HDmalloc(VSFIELDMAX * FIELDNAMELENMAX * sizeof(char *));
@@ -548,31 +548,38 @@ void print_fields( char *fields,
    else
    { /* there are fields to print */
       fprintf(fp, "%s[", field_title );
-      HDstrcpy(tempflds, fields);
-      ptr = tempflds;
+      HDstrcpy(tempflds, fields);	/* tempflds can be manipulated */
+      ptr = tempflds;			/* traverse tempflds with ptr */
+
+      /* traverse the temporary fieldname list to obtain and print each
+       * field name; use ',' to locate individual field names, and each 
+       * line should not exceed 50 characters beside the alignment */
       for (i = 0; !lastItem; i++)
       {
-         tempPtr = HDstrchr(ptr, ',');
+         tempPtr = HDstrchr(ptr, ',');  /* locate next separator */
          if (tempPtr == NULL)
-            lastItem = 1;
+            lastItem = 1;	/* set flag for end of list */
          else
-            *tempPtr = '\0';
-         HDstrcpy(fldname, ptr);
-         count += HDstrlen(fldname);
+            *tempPtr = '\0';	/* change ',' to null to obtain field name */
+         HDstrcpy(fldname, ptr);	/* obtain current field name */
+         count += HDstrlen(fldname);	/* increment current # of chars on line */
          if (count > 50)
          {
-            fprintf(fp, "%s", field_title );
-            count = 0;
+	    /* print alignment for the subsequent lines */
+            fprintf(fp, "\n\t          ");
+
+	    /* include the skipped field from previous line */
+            count = HDstrlen(fldname);  
          }
-         fprintf(fp, "%s", fldname);
+         fprintf(fp, "%s", fldname);  /* print the current field name */
          if (!lastItem)
-            fprintf(fp, ", ");
-         ptr = tempPtr + 1;
-      }  /* end of if skip */
+            fprintf(fp, ", ");	/* print a comma if it's not the last field name */
+         ptr = tempPtr + 1;	/* move ptr beyond last field name */
+      }  /* end of for loop */
       fprintf(fp, "];\n");
    }  /* there are fields to print */
    
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
    if(tempflds != NULL)
    {
       HDfree(tempflds);
@@ -979,7 +986,7 @@ vgdumpfull(int32        vg_id,
     char  *file_name = dumpvg_opts->ifile_name;
     intn   status, ret_value = SUCCEED;
 
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
 	/* macintosh cannot handle >32K locals */
    char *fields = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
    CHECK_ALLOC( fields, "*fields", "vgdumpfull" );
@@ -1170,7 +1177,7 @@ done:
             }
       }
     /* Normal cleanup */
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
    if(fields != NULL)
    {
       HDfree(fields);
@@ -1221,6 +1228,7 @@ dvg(dump_info_t *dumpvg_opts,
       and display them */
    while (curr_arg < argc)
    {
+      intn isHDF = TRUE;  /* FALSE, if current file is not HDF file */
       intn skipfile = FALSE;  /* skip the current file when some severe */
            /* failure occurs; otherwise, the list of nodes is not */
            /* completely prepared and will cause a crash in display */
@@ -1232,6 +1240,19 @@ dvg(dump_info_t *dumpvg_opts,
       /* there are times a failure causes continuation without proper
          cleanup, so closeVG ensures of that */
       closeVG( &file_id, &vg_chosen, file_name );
+
+      /* Print an informative message and skip this file if it is not
+         an HDF file */
+      isHDF = Hishdf(file_name);
+      if (isHDF == FALSE)
+      {
+         /* if there are no more files to be processed, print error
+            message, then returns with FAIL */
+         if( curr_arg == argc )
+            {ERROR_GOTO_1( "in dvg: %s is not an HDF file", file_name);}
+         else /* print message, then continue processing the next file */
+            {ERROR_CONT_1( "in dvg: %s is not an HDF file", file_name);}
+      }
 
       /* open current hdf file with error check, if fail, go to next file */
       file_id = Hopen(file_name, DFACC_READ, 0);
@@ -1246,9 +1267,10 @@ dvg(dump_info_t *dumpvg_opts,
             ERROR_CONT_1( "in dvg: Failure in opening file %s", file_name );
       }
 
-      /* initiate VG interface; if fail, close hdf file & go to next file */
+      /* initiate VG interface; if fail, probably something fatal, returns 
+	 with FAIL */
       if (FAIL == Vstart(file_id))
-         ERROR_CONT_1( "in dvg: Vstart failed for file %s\n", file_name);
+         ERROR_GOTO_1( "in dvg: Vstart failed for file %s\n", file_name);
 
       /* compose the list of indices of vgroups to be processed in the current
       file and return the number of items in the list */

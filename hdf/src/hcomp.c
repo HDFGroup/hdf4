@@ -188,28 +188,46 @@ HCIinit_coder(int16 acc_mode, comp_coder_info_t * cinfo, comp_coder_t coder_type
               if(c_info->skphuff.skp_size<1)
                   HRETURN_ERROR(DFE_BADCODER, FAIL)
 
-              cinfo->coder_type = COMP_CODE_SKPHUFF;    /* set the coding type */
-              cinfo->coder_funcs = cskphuff_funcs;  /* set the skipping huffman func. ptrs */
+              /* set the coding type and the skipping huffman func. ptrs */
+              cinfo->coder_type = COMP_CODE_SKPHUFF;
+              cinfo->coder_funcs = cskphuff_funcs;
 
               /* copy encoding info */
               cinfo->coder_info.skphuff_info.skip_size = c_info->skphuff.skp_size;
               break;
 
           case COMP_CODE_DEFLATE:   /* gzip 'deflate' encoding */
-   /* valid deflate levels are from 0 to 9, this error checking
-      caused the problem in HDF4r1.2 , fixed by Apu Kapadia    
-              if(c_info->deflate.level<1 || c_info->deflate.level>9)
-   */
+	      /* valid deflate levels are from 0 to 9, this error checking
+		 caused the problem in HDF4r1.2 , fixed by Apu Kapadia    
+	      if(c_info->deflate.level<1 || c_info->deflate.level>9)
+	      */
               if(c_info->deflate.level<0 || c_info->deflate.level>9)
                   HRETURN_ERROR(DFE_BADCODER, FAIL)
 
-              cinfo->coder_type = COMP_CODE_DEFLATE;    /* set the coding type */
-              cinfo->coder_funcs = cdeflate_funcs;  /* set the gzip 'deflate' func. ptrs */
+              /* set the coding type and the gzip 'deflate' func. ptrs */
+              cinfo->coder_type = COMP_CODE_DEFLATE;
+              cinfo->coder_funcs = cdeflate_funcs;
 
               /* copy encoding info */
               if(acc_mode&DFACC_WRITE)
                   cinfo->coder_info.deflate_info.deflate_level = c_info->deflate.level;
               break;
+
+#ifdef H4_HAVE_LIBSZ
+           case COMP_CODE_SZIP:
+              /* set the coding type and the szip func. ptrs */
+              cinfo->coder_type = COMP_CODE_SZIP;
+              cinfo->coder_funcs = cszip_funcs;
+
+              /* copy encoding info */
+              cinfo->coder_info.szip_info.pixels = c_info->szip.pixels;
+              cinfo->coder_info.szip_info.bits_per_pixel = c_info->szip.bits_per_pixel;
+              cinfo->coder_info.szip_info.pixels_per_block = c_info->szip.pixels_per_block;
+              cinfo->coder_info.szip_info.pixels_per_scanline = c_info->szip.pixels_per_scanline;
+              cinfo->coder_info.szip_info.options_mask = c_info->szip.options_mask;
+              break;
+
+#endif /* H4_HAVE_LIBSZ */
 
           default:
               HRETURN_ERROR(DFE_BADCODER, FAIL)
@@ -306,17 +324,21 @@ HCPquery_encode_header(comp_model_t model_type, model_info * m_info,
     /* add any additional information needed for coding type */
     switch (coder_type)
       {
-          case COMP_CODE_NBIT:      /* N-bit coding needs 16 bytes of info */
+          case COMP_CODE_NBIT:    /* N-bit coding needs 16 bytes of info */
               coder_len+=16;
               break;
 
-          case COMP_CODE_SKPHUFF:   /* Skipping Huffman coding needs 8 bytes of info */
+          case COMP_CODE_SKPHUFF: /* Skipping Huffman coding needs 8 bytes of info */
               coder_len+=8;
               break;
 
-          case COMP_CODE_DEFLATE:   /* Deflation coding stores deflation level */
+          case COMP_CODE_DEFLATE: /* Deflation coding stores deflation level */
               coder_len+=2;
               break;
+
+          case COMP_CODE_SZIP:   /* Szip coding ...? */
+	      coder_len += 14;
+	      break;
 
           default:      /* no additional information needed */
               break;
@@ -412,6 +434,14 @@ HCPencode_header(uint8 *p, comp_model_t model_type, model_info * m_info,
 
               /* specify deflation level */
               UINT16ENCODE(p, (uint16) c_info->deflate.level);
+              break;
+
+          case COMP_CODE_SZIP:  /* Szip coding ...? */
+              UINT32ENCODE(p, (uint32) c_info->szip.pixels);
+              UINT32ENCODE(p, (uint32) c_info->szip.pixels_per_scanline);
+              UINT32ENCODE(p, (uint32) c_info->szip.options_mask);
+              *p++ = (uint8) c_info->szip.bits_per_pixel;
+              *p++ = (uint8) c_info->szip.pixels_per_block;
               break;
 
           default:      /* no additional information needed */
@@ -523,6 +553,16 @@ HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info * m_info,
               }     /* end case */
               break;
 
+          case COMP_CODE_SZIP:   /* Szip coding stores the following values*/
+	      {
+                  UINT32DECODE(p, c_info->szip.pixels);
+                  UINT32DECODE(p, c_info->szip.pixels_per_scanline);
+                  UINT32DECODE(p, c_info->szip.options_mask);
+                  c_info->szip.bits_per_pixel = *p++;
+                  c_info->szip.pixels_per_block = *p++;
+	      }
+              break;
+
           default:      /* no additional information needed */
               break;
       }     /* end switch */
@@ -606,6 +646,14 @@ HCIwrite_header(atom_t file_id, compinfo_t * info, uint16 special_tag, uint16 re
               UINT32ENCODE(p, (uint32) info->cinfo.coder_info.skphuff_info.skip_size);
               /* specify # of bytes compressed (not used currently) */
               UINT32ENCODE(p, (uint32) info->cinfo.coder_info.skphuff_info.skip_size);
+              break;
+
+          case COMP_CODE_SZIP:
+              UINT32ENCODE(p, (uint32) c_info->szip.pixels);
+              UINT32ENCODE(p, (uint32) c_info->szip.pixels_per_scanline);
+              UINT32ENCODE(p, (uint32) c_info->szip.options_mask);
+              UINT8ENCODE(p, (uint8) c_info->szip.bits_per_pixel);
+              UINT8ENCODE(p, (uint8) c_info->szip.pixels_per_block);
               break;
 
           default:      /* no additional information needed */
@@ -929,9 +977,15 @@ HCgetcompress(int32 file_id,
 
     /* flag the error when attempting to get compression info on a
        non-compressed element */
-    else
+    else 
+    /* EIP 9/16/03  Fail but return compression type COMP_CODE_NONE
+       instead of junk in this case.
+    */
+     {
+        /*Mac OSX screams here (comp_coder_t)*comp_type = COMP_CODE_NONE; */
+        *comp_type = COMP_CODE_NONE; 
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+     }
     /* end access to the aid appropriately */
     if (Hendaccess(aid)== FAIL)
         HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
@@ -942,7 +996,9 @@ done:
        /* end access to the aid if it's been accessed */
         if (aid != 0)
             if (Hendaccess(aid)== FAIL)
-                HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+       /* EIP 9/16/03 This causes infinite loop since HGOTO_ERROR has goto done in it 
+                HGOTO_ERROR(DFE_CANTENDACCESS, FAIL); Replaced with HERROR call*/
+                HERROR(DFE_CANTENDACCESS);
     } /* end if */
 
   /* Normal function cleanup */

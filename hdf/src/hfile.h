@@ -47,9 +47,9 @@
 /* Library version numbers */
 
 #define LIBVER_MAJOR    4
-#define LIBVER_MINOR    1 
-#define LIBVER_RELEASE  5 
-#define LIBVER_STRING   "Post NCSA HDF Version 4.1 Release 5, November 5, 2001"
+#define LIBVER_MINOR    2 
+#define LIBVER_RELEASE  0 
+#define LIBVER_STRING   "NCSA HDF Version 4.2 Release 0, December 2, 2003"
 #define LIBVSTR_LEN    80   /* length of version string  */
 #define LIBVER_LEN  92      /* 4+4+4+80 = 92 */
 /* end of version tags */
@@ -337,10 +337,10 @@ typedef struct tag_info_str
 /* For determining what the last file operation was */
 typedef enum
   {
-      OP_UNKNOWN = 0,   /* Don't know what the last operation was (after fopen frex) */
-      OP_SEEK,          /* Last operation was a seek */
-      OP_WRITE,         /* Last operation was a write */
-      OP_READ           /* Last operation was a read */
+      H4_OP_UNKNOWN = 0,   /* Don't know what the last operation was (after fopen frex) */
+      H4_OP_SEEK,          /* Last operation was a seek */
+      H4_OP_WRITE,         /* Last operation was a write */
+      H4_OP_READ           /* Last operation was a read */
   }
 fileop_t;
 

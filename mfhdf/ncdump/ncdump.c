@@ -18,6 +18,8 @@
 static const char * type_name(nc_type type);
 
 char *progname;
+struct ncdim dims[MAX_NC_DIMS]; /* dimensions */
+long vdims[MAX_NC_DIMS];	/* dimension sizes for a single variable */
 
 static void
 usage()
@@ -248,7 +250,9 @@ pr_att_vals(type, len, vals)
  */
 char *fixstr(char *str)
 {
+#ifndef __GNUC__ 
     char *strdup(const char *);
+#endif  /* linux */
 	char *new_str, *ptr;
 
 	if (!str)
@@ -269,9 +273,10 @@ char *fixstr(char *str)
 }
 
 static void
-do_ncdump(path, specp)
-     char *path;
+do_ncdump(char *path, struct fspec* specp)
+/*     char *path;
      struct fspec* specp;
+*/
 {
 	int ndims;			/* number of dimensions */
 	int nvars;			/* number of variables */
@@ -279,8 +284,6 @@ do_ncdump(path, specp)
 	int xdimid;			/* id of unlimited dimension */
 	int dimid;			/* dimension id */
 	int varid;			/* variable id */
-	struct ncdim dims[MAX_NC_DIMS]; /* dimensions */
-	long vdims[MAX_NC_DIMS];	/* dimension sizes for a single variable */
 	struct ncvar var;		/* variable */
 	struct ncatt att;		/* attribute */
 	int id;				/* dimension number per variable */

@@ -43,10 +43,6 @@ Third Party Software Requirements:
 
  2. ZLIB 1.1.3(libz.a) distribution.  
 
- Both of these distributions are included with this distribution
- in 'hdf/jpeg' and 'hdf/zlib'. The HDF/mfhdf base distribution
- in known to work with these versions only.
-
 System Requirements
 -------------------
  To build the HDF library from source, you need:

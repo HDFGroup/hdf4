@@ -284,8 +284,8 @@ main(int argc, char *argv[])
  */
     qsort((char *) dlist, (size_t)num_desc, sizeof(*dlist), desc_comp);
 
-    oldoff = -1;
-    oldlen = -1;
+    oldoff = -2;
+    oldlen = -2;
     for (i = 0; i < num_desc; i++)
       {
           if (((dlist[i].tag != DFTAG_NULL) && (dlist[i].tag != DFTAG_VERSION))
@@ -531,7 +531,8 @@ merge_blocks(mydd_t * dd, int32 infile, int32 outfile)
           HERROR(DFE_GENAPP);
           hdferror();
       }
-    outaid = Hstartwrite(outfile, BASETAG(dd->tag), dd->ref, dd->length);
+
+    outaid = Hstartaccess(outfile,BASETAG(dd->tag),dd->ref,DFACC_WRITE);
     if (outaid == FAIL)
       {
           HERROR(DFE_GENAPP);

@@ -1,4 +1,4 @@
-HDF4.1r6
+HDF4.2r0-Beta
 ========
 1. "hdp dumpgr" and "hdp dumpsds" have two new options:
         -g to suppress the data of global (or file) attributes
@@ -24,6 +24,17 @@ HDF4.1r6
 7. hdf2gif failed when a user tried it on JPEG compressed images. (Bug #601).
    The problem is now fixed. An error message is displayed if the image is not
    8-bit. If the image is 24-bit, the message suggests using hdf2jpeg.
+
+8. ncdump failed to read NetCDF files 3.5 when there were more than one variable
+   with unlimited dimensions. Fixed.
+
+9. NetCDF part of the HDF4 Library was not ported to Compaq True64 system. Fixed.
+
+10. The hdp commands dumpsds, dumpgr, dumpvd, and dumpvg now display an 
+    informative message when a non-HDF file is given as input. (Bug #817)
+
+11. The compilation warnings and error on the macro HDFclose are fixed.
+    (Bug #818)
 
 HDF4.1r5
 ========

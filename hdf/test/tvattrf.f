@@ -39,6 +39,8 @@ C Output file: tvattrf.hdf
 
       integer number_failed
 
+      integer len_in
+      character*1024 ifn_out
       character*20 myname, ifn, ofn
       parameter (myname = 'vattrf',
      +           ifn = 'tvattr.dat' ,
@@ -57,6 +59,7 @@ C Output file: tvattrf.hdf
       integer nattrs, itype, icount, imsize, vsver
       integer fid1, vsid, vgid, vsref, vgref
       integer ret, findex, vsbuf, aindex
+      integer fixname
 C
 C iattri is for int32 values
 C iattrs is for int16 values
@@ -95,7 +98,9 @@ C iattrg, GATTR1 are for float64 values
       call ptestban('Testing', myname)
 C      number_failed = 0
 C Open the file 
-      fid1 = hopen(ifn, DFACC_RDWR, 0)
+      len_in = len(ifn_out)
+      ret = fixname(ifn, ifn_out, len_in)
+      fid1 = hopen(ifn_out(1:len_in), DFACC_RDWR, 0)
       call VRFY(fid1, 'hopen', number_failed)
       ret = vfstart(fid1)
       call VRFY(ret, 'vfstart', number_failed)
