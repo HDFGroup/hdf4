@@ -3712,7 +3712,7 @@ int32  block_size;
  USAGE
         intn SDsetfillmode(sd_id, fillmode)
         int32 sd_id;           IN: HDF file ID, returned from SDstart
-        int32 fillmode;        IN: Desired fill mode for the file,
+        intn fillmode;        IN: Desired fill mode for the file,
                                    either SD_FILL or SD_NOFILL.
                                    SD_FILL is the default mode.
  RETURNS
@@ -3722,11 +3722,11 @@ int32  block_size;
 --------------------------------------------------------------------------- */
 intn
 #ifdef PROTOTYPE
-SDsetfillmode(int32 sd_id, int32 fillmode)
+SDsetfillmode(int32 sd_id, intn fillmode)
 #else
 SDsetfillmode(sd_id, fillmode)
 int32 sd_id;
-int32  fillmode;
+intn  fillmode;
 #endif
 {
     NC     *handle;

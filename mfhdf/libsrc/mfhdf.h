@@ -111,7 +111,7 @@ extern intn SDgetfillvalue
     (int32 sdsid, VOIDP val);
 
 extern intn SDsetfillmode
-    (int32 id, int32 fillmode);
+    (int32 id, intn fillmode);
 
 extern intn SDgetdatastrs
     (int32 sdsid, char *l, char *u, char *f, char *c, intn len);
