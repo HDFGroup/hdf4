@@ -45,6 +45,8 @@ New Features and Changes:
 
     Library
     ========= 
+    * New API SDidtype was added to the library (bug #766)
+                                               01/23/05 EIP for BMR
    
     Utilities
     ========= 
@@ -56,6 +58,7 @@ Support for new platforms and compilers
                                                                        12/07/2004 EIP
      * Absoft Fortran compiler f95 version 8.2 is supported on Linux 2.4 
                                                                        12/07/2004 EIP
+     * PGI C and Fortran compilers are supported on Linux 2.4 
 
 
 Bugs fixed since HDF4.2r0
@@ -63,6 +66,12 @@ Bugs fixed since HDF4.2r0
 
  * Library failed to compile in presence of the NetCDF library; fixed
                                             11/22/04 EIP
+ * h4fc couldn't create object files; fixed 
+
+                                            01/23/05 EIP
+ * When rank of SDS is 0, some SD APIs give segmentation fault (bug 1045);
+   fixed
+                                            01/23/05 EIP fro BMR
 
 
 Documentation
