@@ -278,6 +278,7 @@ typedef struct accrec_t {
     intn used;                  /* whether the access record is used */
     int16 access;               /* access codes */
     int16 special;              /* special element ? */
+    uintn access_type;		/* I/O access type: serial/parallel/... */
     int32 file_id;              /* id of attached file */
     int32 idx;                  /* index of dd into *block */
     int32 posn;                 /* seek position with respect to */
