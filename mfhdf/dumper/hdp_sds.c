@@ -1106,6 +1106,8 @@ do_dumpsds(intn  curr_arg,
     dump_info_t dumpsds_opts;	/* dumpsds options */
     intn status, ret_value = SUCCEED;
 
+    /* initialize the structure that holds user's options and inputs */                                     init_dump_opts(&dumpsds_opts);        
+
    /* command line: hdp help */
    if (help == TRUE)
    {
@@ -1120,9 +1122,6 @@ do_dumpsds(intn  curr_arg,
       ret_value = FAIL; /* so caller can be traced in debugging */
       goto done;
    }            /* end if */
-
-   /* initialize the structure that holds user's options and inputs */
-   init_dump_opts(&dumpsds_opts);
 
    /* parse the user's command and store the inputs in dumpsds_opts */
    status = parse_dumpsds_opts( &dumpsds_opts, &curr_arg, argc, argv );
