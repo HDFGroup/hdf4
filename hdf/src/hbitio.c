@@ -589,8 +589,11 @@ intn bit_offset;
 #ifdef TESTING
 printf("Hbitseek(): bitid=%d byte_offset=%d, bit_offset=%d\n",bitid,byte_offset,bit_offset);
 #endif
-    if(byte_offset<0 || bit_offset<0 || byte_offset>bitfile_rec->max_offset
-            || bit_offset>(BITNUM-1) || (bitfile_rec = BITID2REC(bitid))==NULL)
+    if((bitfile_rec = BITID2REC(bitid)) == NULL)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
+
+    if(byte_offset < 0 || bit_offset < 0 || byte_offset > bitfile_rec->max_offset
+            || bit_offset>(BITNUM-1))
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
     if(bitfile_rec->mode=='w')
