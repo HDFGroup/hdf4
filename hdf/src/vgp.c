@@ -98,7 +98,7 @@ HFILEID f;
         if (vfile == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
         /* zero the space */
-        vfile = memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+        vfile = (vfile_t *)memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
       }
 
     /* allocate a new vfile_t structure */
@@ -201,7 +201,7 @@ HFILEID f;
         if (vfile == NULL)
           HERROR(DFE_NOSPACE);
         /* zero the space */
-        vfile = memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+        vfile = (vfile_t *)memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
       }
 
     /* Figure out what file to work on */
@@ -355,7 +355,7 @@ uint16  vgid;
         if (vfile == NULL)
           HRETURN_ERROR(DFE_NOSPACE, NULL);
         /* zero the space */
-        vfile = memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+        vfile = (vfile_t *)memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
       }
 
     if (NULL== (vf = Get_vfile(f)))
@@ -577,7 +577,7 @@ char    *accesstype;    /* access mode */
         if (vfile == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
         /* zero the space */
-        vfile = memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+        vfile = (vfile_t *)memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
       }
 
     if (f == FAIL)
@@ -1450,7 +1450,7 @@ int32   vgid;                   /* current vgid */
         if (vfile == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
         /* zero the space */
-        vfile = memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+        vfile = (vfile_t *)memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
       }
 
     if (NULL==(vf = Get_vfile(f)))
@@ -1788,7 +1788,7 @@ int32 vgid;
         if (vfile == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
         /* zero the space */
-        vfile = memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+        vfile = (vfile_t *)memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
       }
 
     if (NULL==(vf = Get_vfile(f)))
