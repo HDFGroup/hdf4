@@ -56,6 +56,7 @@ case "${host}" in
   *-hp-hpux*)             host_makefile_frag=config/mh-hpux ;;
   *-convex-bsd*)          host_makefile_frag=config/mh-convex ;;
   *-cray-unicos*)         host_makefile_frag=config/mh-unicos ;;
+  *-cm5-*)		  host_makefile_frag=config/mh-cm5 ;;
 esac
 fi
 
@@ -120,6 +121,7 @@ case "${host}" in
   *-hp-hpux*)             files=config/custom_hpux ;;
   *-convex-bsd*)          files=config/custom_convex ;;
   *-cray-unicos*)         files=config/custom_unicos ;;
+  *-cm5-*)		  files=config/custom_cm5 ;;
 esac
 fi
 

@@ -52,7 +52,7 @@
 #   down from the top level HDF makefile
 #
 #
-#### Start of system configuration section. ####
+### Start of system configuration section. ####
 # Set shell so we know what it is
 SHELL = /bin/sh
 
@@ -119,6 +119,12 @@ libdir = $(prefix)/lib
 # Directory in which to install documentation info files.
 infodir = $(prefix)/info
 
+# Cstar objects for CM5 parallel I/O
+# CMOBJS is set in the makefile fragments section
+CMSRCS=cmextelt.cs
+CMOBJS=
+
+
 #### ----- host and target specific makefile fragments come in here.-------
 ### ------------------- end of makefile fragments -------------------------
 
@@ -163,21 +169,25 @@ include src.inc
 .f.o:
 	$(FC) $(FFLAGS) -c $<
 
+# Should use a more general definition for the following.
+cmextelt.o: cmextelt.cs
+	$(CS) $(CSFLAGS) -c cmextelt.cs
+
 .PHONY : all nofortran libnostub clean distclean debug saber lint
 
 #all: libdf.a .installed
 all: libdf.a 
 
-libdf.a: $(COBJS) $(FOBJS) #$(JOBJS)
+libdf.a: $(COBJS) $(FOBJS) $(CMOBJS) #$(JOBJS)
 	-$(RM) libdf.a
 #	$(AR) $(ARFLAGS) libdf.a `lorder '$(COBJS) $(FOBJS)' | tsort `
-	$(AR) $(ARFLAGS) libdf.a $(COBJS) $(FOBJS)
+	$(AR) $(ARFLAGS) libdf.a $(COBJS) $(FOBJS) $(CMOBJS)
 	$(RANLIB) libdf.a
 
-libnofortran: $(COBJS) #$(JOBJS) 
+libnofortran: $(COBJS) $(CMOBJS) #$(JOBJS) 
 	-$(RM) libdf.a
 #	$(AR) $(ARFLAGS) libdf.a `lorder $(COBJS) | tsort `
-	$(AR) $(ARFLAGS) libdf.a $(COBJS)
+	$(AR) $(ARFLAGS) libdf.a $(COBJS) $(CMOBJS)
 	$(RANLIB) libdf.a
 
 #libnostub nofortran: libnofortran .finstalled
@@ -285,6 +295,8 @@ hblocks.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 hblocks.o: vproto.h hfile.h $(FRC)
 hextelt.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 hextelt.o: vproto.h hfile.h $(FRC)
+cmextelt.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+cmextelt.o: vproto.h hfile.h $(FRC)
 hkit.o: hdf.h hdfi.h hbitio.h
 hkit.o: hcomp.h herr.h hproto.h vproto.h hfile.h hkit.h $(FRC)
 dfan.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
