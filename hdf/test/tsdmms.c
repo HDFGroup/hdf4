@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/07/08 22:05:20  sxu
-Changed DFSDgetmaxmin() to DFSDgetrange().
-Changed DFSDsetmaxmin() to DFSDsetrange().
+Revision 1.4  1992/08/27 22:19:29  chouck
+Added test for calibration tags
 
+ * Revision 1.3  1992/07/08  22:05:20  sxu
+ * Changed DFSDgetmaxmin() to DFSDgetrange().
+ * Changed DFSDsetmaxmin() to DFSDsetrange().
+ *
  * Revision 1.2  1992/05/31  15:25:21  mfolk
  * Changed declaration of rank and dims[2] to int32 for Convex.
  *
@@ -54,9 +57,15 @@ uint32 ui32scale[10], tui32scale[10];
 uint32 ui32max = 999999999, ui32min = 0;
 uint32 tui32max, tui32min;
 
+float64 cal1, cal2, cal3, cal4;
+int32   cal5;
+
+float64 ical1, ical2, ical3, ical4;
+int32   ical5;
+
 int main()
 {
-    int i, j, err, err1, err2, err3;
+    int i, j, err, err1, err2, err3, err4;
     int32 rank, dims[2];
     int number_failed = 0;
 
@@ -93,16 +102,23 @@ int main()
 	ui32scale[i] = (i * 40) + j;	/* range: 0 ~ 4-billion */
     }
 
+    cal1 = 10.0;
+    cal2 =  0.0;
+    cal3 = 27.0;
+    cal4 =  1.5;
+    cal5 = DFNT_INT16;
+
     DFSDsetdims(rank, dims);
 
     printf("Writing arrays to single file...\n");
     DFSDsetNT(DFNT_FLOAT32);
     err3=DFSDsetdimscale(1, (int32)10, (void *)f32scale);
     err2=DFSDsetrange(&f32max, &f32min);
-    err = DFSDadddata("ntcheck.hdf", rank, dims, f32);
-    if (err3==FAIL || err2==FAIL || err==FAIL) 
+    err4=DFSDsetcal(cal1, cal2, cal3, cal4, cal5);
+    err = DFSDputdata("ntcheck.hdf", rank, dims, f32);
+    if (err3==FAIL || err2==FAIL || err==FAIL || err4==FAIL) 
         number_failed++;
-    printf("%d, %d, %d\n", err3, err2, err);
+    printf("%d, %d, %d, %d\n", err3, err2, err, err4);
 
     DFSDsetNT(DFNT_INT8);
     err3=DFSDsetdimscale(1, (int32)10, (void *)i8scale);
@@ -157,16 +173,18 @@ int main()
     err = DFSDgetdata("ntcheck.hdf", rank, dims, tf32);
     err2 = DFSDgetdimscale(1, (int32)10, (void *)tf32scale);
     err3 = DFSDgetrange(&tf32max, &tf32min);
-    if (err3==FAIL || err2==FAIL || err==FAIL) 
+    err4 = DFSDgetcal(&ical1,&ical2, &ical3, &ical4, &ical5);
+    if (err3==FAIL || err2==FAIL || err==FAIL || err4==FAIL) 
         number_failed++;
-    printf("%d, %d, %d\n", err3, err2, err);
+    printf("%d, %d, %d, %d\n", err3, err2, err, err4);
 
     err = DFSDgetdata("ntcheck.hdf", rank, dims, ti8);
     err2 = DFSDgetdimscale(1, (int32)10, (void *)ti8scale);
     err3 = DFSDgetrange(&ti8max, &ti8min);
-    if (err3==FAIL || err2==FAIL || err==FAIL) 
+    err4 = DFSDgetcal(&ical1,&ical2, &ical3, &ical4, &ical5);
+    if (err3==FAIL || err2==FAIL || err==FAIL || err4 != FAIL) 
         number_failed++;
-    printf("%d, %d, %d\n", err, err2, err3);
+    printf("%d, %d, %d, %d\n", err, err2, err3, err4 + 1);
 
     err = DFSDgetdata("ntcheck.hdf", rank, dims, tui8);
     err2 = DFSDgetdimscale(1, (int32)10, (void *)tui8scale);
@@ -230,6 +248,19 @@ int main()
 	printf(">>> Test failed for float32 max/min.\n");
     else 
 	printf("Test passed for float32 max/min.\n");
+
+    if((cal1 != ical1) ||
+       (cal2 != ical2) ||
+       (cal3 != ical3) ||
+       (cal4 != ical4) ||
+       (cal5 != ical5))
+        {
+            printf(">>> Test failed for float32 calibration.\n");
+            printf(" Is %f %f %f %f %d\n", ical1, ical2, ical3, ical4, ical5);
+            printf(" sld be %f %f %f %f %d\n", cal1, cal2, cal3, cal4, cal5);
+        }
+    else 
+	printf("Test passed for float32 calibration.\n");
 
     err = 0;
     err1 = 0;
