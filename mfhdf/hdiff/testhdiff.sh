@@ -34,10 +34,10 @@ TESTING() {
 # non-zero value.
 #
 TOOLTEST() {
-#   expect="$srcdir/testfiles/$1"
-   expect="testfiles/$1"
-   actual="testfiles/`basename $1 .txt`.out"
-   actual_err="testfiles/`basename $1 .txt`.err"
+   expect="$srcdir/testfiles/$1"
+#   expect="testfiles/$1"
+   actual="$srcdir/testfiles/`basename $1 .txt`.out"
+   actual_err="$srcdir/testfiles/`basename $1 .txt`.err"
    shift
 
    # Run test.
