@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.9  1992/05/27 21:55:34  chouck
+# Revision 1.10  1992/05/28 17:33:57  chouck
+# Make clean wipes out all *.hdf* files
+#
+# Revision 1.9  1992/05/27  21:55:34  chouck
 # Added 'make clean'
 #
 # Revision 1.8  1992/05/18  22:11:07  sxu
@@ -118,8 +121,6 @@
 # "HOBJS=" and "HSRCS=" below.
 #
 # To remove all object files created by this makefile, enter "make clean"
-#
-# To remove ALL files created by this makefile, enter "make cleanup"
 #
 # ##################################################################
 #
@@ -274,4 +275,4 @@ thextelt:     thextelt.c
 
 
 clean:
-	rm -f $(CTESTS) $(HTESTS)
+	rm -f $(CTESTS) $(HTESTS) $(FTESTS) *.hdf*
