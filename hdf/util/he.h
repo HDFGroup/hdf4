@@ -27,6 +27,9 @@
 #if defined (IBM6000) || defined (SUN)
 #include <unistd.h>
 #endif /* Unix std libs */
+#if defined HAVE_UNISTD_H
+#include <unistd.h>
+#endif
 
 #ifdef DEBUG
 #define ASSERT(e) {if(!(e)){fprintf(stderr,"Assertion failed: file %s, line %d\n",__FILE__,__LINE__);exit(1);}}

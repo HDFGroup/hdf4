@@ -299,6 +299,8 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
+#define HAVE_UNISTD_H  /* unistd.h - close, fork,..etc */
+
 #   define BSD
 #include <limits.h>
 #include <string.h>

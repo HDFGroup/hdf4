@@ -65,9 +65,6 @@ static char RcsId[] = "@(#)$Revision$";
  * file.
  *****************************************************************************/
 /* ------ he.c ------- main() main HDF interfacing routines */
-#if defined _POSIX_SOURCE
-#include <unistd.h>
-#endif
 
 #include "he.h"
 #if defined PC & !(defined UNIX386 | defined PC386)
