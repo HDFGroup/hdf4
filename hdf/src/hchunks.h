@@ -159,6 +159,9 @@ extern      "C"
          int32 *origin,    /* IN: origin of chunk to write */
          const VOID *datap /* IN: buffer for data */);
 
+    extern int32 HMCPcloseAID
+        (accrec_t *access_rec /* IN:  access record of file to close */);
+
 /* Library Private */
 #ifdef _HCHUNKS_MAIN_
 /* Private to 'hchunks.c' */
@@ -192,9 +195,6 @@ extern      "C"
         (accrec_t * access_rec, /* IN: access record to mess with */
          int32 length,          /* IN: number of bytes to write */
          const VOIDP data       /* IN: buffer for data */);
-
-    extern int32 HMCPcloseAID
-        (accrec_t *access_rec /* IN:  access record of file to close */);
 
     extern intn HMCPendaccess
         (accrec_t * access_rec /* IN:  access record to close */);
