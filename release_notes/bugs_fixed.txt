@@ -1,3 +1,16 @@
+HDF4.0r1
+========
+1. Fixed Fortran character string hanling under UNICOS. 
+2. Added checks on the return values of HDmalloc calls. 
+3. The automatic test of hdf utilities (in hdf/util/) 
+   is added to the Makefile and will be executed by 
+   'make test' at the top level. 
+4. Thanks to Mark W. Dalton for his contribution to the fix
+   of the adaptive Huffman compression on the CRAY YMP. 
+   His fix is merged into 4.0r1.
+5. Added check in SDsetattr() to make sure that the argument 
+   'count' < MAX_ORDER.
+
 HDF4.0b2
 ========
 1. To avoid conflicts with C++, field name 'new' in vgroup_desc 
