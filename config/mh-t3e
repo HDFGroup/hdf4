@@ -1,4 +1,4 @@
-# $Id$
+# mh-t3d,v 1.4 1996/07/09 14:33:56 acheng Exp
 
 # You can override the following variables here
 #
@@ -24,14 +24,13 @@ VERSION  = 4.0
 #CFLAGS=-ansi 
 #
 #Using ANSI compilier
+#T3D installation need to set $TARGET to CRAY-T3D.
 CC=cc
-CFLAGS=-Tcray-t3d -X1
+CFLAGS=-X 1
 
 # Fortran compilier
-#FC = cf77
-# disable fortran support
-FC = NONE
-FFLAGS =-Ccray-t3d
+FC = f90
+FFLAGS =-X 1
 
 # Name of achive randomizer, usually ranlib (use 'true' if non-existant)
 RANLIB = true
