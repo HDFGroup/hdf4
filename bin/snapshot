@@ -228,7 +228,7 @@ if [ "$cmd" = "all" -o -n "$cmdcheckout" ]; then
 	exit 1
     fi
     # Check out the current version from CVS
-    (cd $BASEDIR; cvs -Q co -dP current ${CVSVERSION} hdf4 ) || exit 1
+    (cd $BASEDIR; cvs -Q co -P -d current ${CVSVERSION} hdf4 ) || exit 1
 fi # Do CVS checkout
 
 
