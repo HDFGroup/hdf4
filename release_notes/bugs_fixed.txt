@@ -1,3 +1,17 @@
+HDF4.1r2
+========
+1. The hdp utility can now dump data properly to a binary file (using
+   the -b option).
+2. HDF no longer core dumps when reading a NetCDF file.
+3. On VMS, HDF now supports little-endian G_FLOAT representation
+   for double precision values.
+4. The SD interface can now properly handle writing to a one-dimensional
+   array that is unlimited.
+5. The SD interface can now properly handle attributes with a data type
+   of Little Endian.
+6. HDF will no longer fail if you write data to a vdata that had no data 
+   written to it when it was first created.
+
 HDF4.1r1
 ========
 1. A bug was fixed where you would receive an error if you changed the 
