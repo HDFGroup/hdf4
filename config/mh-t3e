@@ -28,7 +28,9 @@ CC=cc
 CFLAGS=-Tcray-t3d -X1
 
 # Fortran compilier
-FC = cf77
+#FC = cf77
+# disable fortran support
+FC = NONE
 FFLAGS =-Ccray-t3d
 
 # Name of achive randomizer, usually ranlib (use 'true' if non-existant)
