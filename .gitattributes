@@ -1,7 +1,7 @@
 * text=auto !eol
 /Win32full.zip -text svneol=unset#application/octet-stream
 /Win32min.zip -text
-/Win32nof.zip -text svneol=unset#application/octet-stream
+/Win32nof.zip -text
 hdf/jpeg/jpeglib.project -text
 hdf/jpeg/testimg.gif -text
 hdf/jpeg/testimg.jpg -text
