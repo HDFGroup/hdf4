@@ -27,7 +27,7 @@
   2.5.3 Solaris(2.5.1) on INTEL(x86)
   2.5.4 OpenVMS AXP and OpenVMS VAX
   2.5.5 Windows '95 or Windows NT
-  2.5.6 PowerPC - Macintosh OS
+  2.5.6 Macintosh OS - Power PC
   2.5.7 Exemplar (HP-UX 9.03)
   2.5.8 SP2 Single node
   2.5.9 T3E Single node
@@ -389,11 +389,12 @@
     -------------------------------
     *** NOT AVAILABLE WITH THIS RELEASE ***
 
-    2.5.6 PowerPC - Macintosh OS
+    2.5.6 Macintosh OS - Power PC
     ------------------------------------------
 
-    The distribution was compiled/tested with MetroWerks Codewarrior(CW8).
-    Only the base libraries{libdf.a,zlib.a,libjpeg.a,libmfhdf.a,libxdr.a}
+    The distribution was compiled/tested with MetroWerks Codewarrior(CW Pro1).
+    Only the base libraries{jpeg.PPC.lib, z.PPC.lib, hdflib.PPC.lib,
+    xdr.PPC.lib and mfhdf.PPC.lib}
     were compiled and tested on the PowerPC without Fortran support.
 
     *NO* Fortran support is included in this distribution.
@@ -407,8 +408,8 @@
     *********************
     1. The test programs are SIOUX applications.
     
-    2. When testing 'testhdf' in 'hdf/test' directory make sure
-       that a directory called 'testdir' exists in the 'hdf/test'.
+    2. When testing 'testhdf' in the 'hdf/test' directory make sure
+       that a directory called 'testdir' exists in 'hdf/test'.
        This directory is used in the external element test.
 
     3. You need at least 8MB of memory to run most of the test programs.
@@ -416,7 +417,7 @@
 
     2.5.6.2 Building the Distribution
     *********************************
-    The distribution needs to be built in the order specified below.
+    The distribution  and tests need to be built in the order specified below.
     Codewarrior Projects with the targets for Power PC and 68K can be 
     found in the following directories:
  
@@ -432,6 +433,7 @@
                 hdf/test/testdir(need to create this if it does not exist)
     
                 mfhdf/xdr/xdrlib.project.hqx
+                mfhdf/xdr/xdrtest.project.hqx
 
                 mfhdf/libsrc/mfhdflib.project.hqx
                              cdftest.project.hqx
@@ -439,7 +441,7 @@
 
                 mfhdf/nctest/nctest.project.hqx
 
-    Note that only PPC version of the libraries are supported.
+    Note that only the PPC version of the libraries and tests are supported.
 
     2.5.6.3 Testing the Distribution
     ********************************
@@ -447,7 +449,7 @@
       
        1. hdf/test/testhdf
           Note:
-           When testing 'testhdf' in 'hdf/test' directory make sure
+           When testing 'testhdf' in the 'hdf/test' directory make sure
            that a directory called 'testdir' exists in the 'hdf/test'.
            This directory is used in the external element test.
 
@@ -464,6 +466,30 @@
            the file mfhdf/libsrc/testout.sav
 
        5. mfhdf/nctest/nctest
+
+    2.5.6.4 Building utilities  
+    ********************************
+
+    Codewarrior Projects for utilities can be found in the following
+    directories:
+ 
+           
+    $(toplevel)/
+                mfhdf/dumper/hdp/hdp.project.hqx
+
+                hdf/util/fp2hdf/fp2hdf.project.hqx
+                         hdf24to8/hdf24to8.project.hqx
+                         hdfcomp/hdfcomp.project.hqx
+                         hdfed/hdfed.project.hqx
+                         hdfls/hdfls.project.hqx
+                         hdfls/hdfls.project.hqx
+                         hdfpack/hdfpack.project.hqx
+                         hdftoPal/hdftopal.project.hqx
+                         hdftoR8/hdftoR8.project.hqx
+                         vshow/vshow.project.hqx
+                         PalToHDF/PalToHDF.project.hqx
+                         R8ToHDF/R8ToHDF.project.hqx 
+                         RISToHDF/RISToHDF.project.hqx
 
     2.5.7 Exemplar
     --------------
