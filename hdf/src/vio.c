@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1993/04/08 18:33:59  chouck
-Various Vset modifications (additions of Vdelete and VSdelete)
+Revision 1.9  1993/04/13 16:50:27  georgev
+Casting problems on SGI's for two calls to the new balanced tree stuff.
 
+ * Revision 1.8  1993/04/08  18:33:59  chouck
+ * Various Vset modifications (additions of Vdelete and VSdelete)
+ *
  * Revision 1.7  1993/04/06  17:23:46  chouck
  * Added Vset macros
  *
@@ -1172,7 +1175,7 @@ int32 vsid;
     if(t == NULL)
         return FAIL;
 
-    tmp = tbbtrem(vf->vstree, (VOIDP)t, NULL);
+    tmp = tbbtrem((TBBT_NODE **)vf->vstree, (VOIDP)t, NULL);
     if(tmp) 
         HDfreespace(tmp);
 
