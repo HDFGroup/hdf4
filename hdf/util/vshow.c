@@ -26,9 +26,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/02/29 18:58:36  sxu
-add header
+Revision 1.3  1992/03/01 20:11:02  dilg
+Changed #include <*> to #include "*" for all includes.  Closed un-closed
+comments.
 
+ * Revision 1.2  1992/02/29  18:58:36  sxu
+ * add header
+ *
  * Revision 1.1  1992/02/28  17:00:00  likkai
  * Initial revision
  *
@@ -48,7 +52,7 @@ add header
 *
 ******************************************************************************/
 
-#include <vg.h>
+#include "vg.h"
 
 static int condensed;
 static char sbuf[80]; /* message buffer */
