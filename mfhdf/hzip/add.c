@@ -13,6 +13,7 @@
 
 #include "hdf.h"
 #include "mfhdf.h"
+
 #include "hzip.h"
 #include "pal_rgb.h"
 #include "add.h"
@@ -344,6 +345,39 @@ void add_sd(char *fname,             /* file name */
  float64 data_Y[Y_DIM];             /* Y dimension dimension scale */
  int     i, j;
  HDF_CHUNK_DEF chunk_def;           /* Chunking definitions */ 
+ int32         pixels_per_scanline;
+
+ /* set the size of the SDS's dimension */
+ dim_sds[0] = Y_DIM;
+ dim_sds[1] = X_DIM;
+
+ /*define some compression specific parameters */
+ switch(comp_type)
+ {
+ case COMP_CODE_RLE:
+  break;
+
+ case COMP_CODE_SKPHUFF:
+  comp_info->skphuff.skp_size = 1;
+  break;
+
+ case COMP_CODE_DEFLATE:
+  comp_info->deflate.level = 6;
+  break;
+  
+ case COMP_CODE_SZIP:
+  pixels_per_scanline = dim_sds[1];
+  comp_info->szip.pixels = dim_sds[0]*dim_sds[1];
+  comp_info->szip.pixels_per_block = 2;
+  if(pixels_per_scanline >=2048)
+   comp_info->szip.pixels_per_scanline = 512;
+  else
+   comp_info->szip.pixels_per_scanline = dim_sds[1];
+  comp_info->szip.options_mask = NN_OPTION_MASK;
+  comp_info->szip.options_mask |= RAW_OPTION_MASK;
+  comp_info->szip.bits_per_pixel = 32;
+  break;
+ }
  
  /* Define chunk's dimensions */
  chunk_def.chunk_lengths[0] = Y_DIM/2;
@@ -367,10 +401,6 @@ void add_sd(char *fname,             /* file name */
 
  /* initialize the SD interface */
  sd_id = SDstart (fname, DFACC_WRITE);
- 
- /* set the size of the SDS's dimension */
- dim_sds[0] = Y_DIM;
- dim_sds[1] = X_DIM;
  
  /* create the SDS */
  sds_id = SDcreate (sd_id, sds_name, DFNT_INT32, rank, dim_sds);
@@ -488,6 +518,7 @@ void add_sd3d(char *fname,             /* file name */
         data[Z_DIM][Y_DIM][X_DIM];
  int    i, j, k;
  HDF_CHUNK_DEF chunk_def;           /* Chunking definitions */ 
+ 
  
  /* Define chunk's dimensions */
  chunk_def.chunk_lengths[0] = Z_DIM/2;

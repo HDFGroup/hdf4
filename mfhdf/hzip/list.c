@@ -115,7 +115,7 @@ int list(char* infname, char* outfname, options_t *options)
  if ((status_n = Hclose (infile_id)) == FAIL )
   printf( "Failed to close file <%s>\n", infname);
  if ((status_n = Hclose (outfile_id)) == FAIL )
-  printf( "Failed to close file <%s>\n", infname);
+  printf( "Failed to close file <%s>\n", outfname);
 
 #if !defined (ONE_TABLE)
 

@@ -33,9 +33,12 @@ int  options_get_info(options_t      *options,     /* global options */
                       int            *info,        /* compression info OUT */
                       comp_coder_t   *comp_type,   /* compression type OUT  */
                       int            rank,         /* rank of object IN */
-                      char           *path         /* path of object IN */
+                      char           *path,        /* path of object IN */
+                      int32          *dimsizes,    /* dimensions (for SZIP), IN */
+                      int32          dtype         /* numeric type (for SZIP), IN */
                       );
 
+int  set_szip(int32 rank, int32 *dimsizes, int32 dtype, comp_info *c_info);
 
 /*-------------------------------------------------------------------------
  * Function: copy_sds
@@ -146,11 +149,15 @@ int copy_sds(int32 sd_in,
    break;
   case COMP_CODE_SKPHUFF:
    chunk_def_in.comp.comp_type              = COMP_CODE_SKPHUFF;
-   chunk_def_in.comp.cinfo.skphuff.skp_size = c_info_in.skphuff.skp_size;
+   chunk_def_in.comp.cinfo.skphuff          = c_info_in.skphuff;
    break;
   case COMP_CODE_DEFLATE:
    chunk_def_in.comp.comp_type              = COMP_CODE_DEFLATE;
-   chunk_def_in.comp.cinfo.deflate.level    = c_info_in.deflate.level;
+   chunk_def_in.comp.cinfo.deflate          = c_info_in.deflate;
+   break;
+  case COMP_CODE_SZIP:
+   chunk_def_in.comp.comp_type              = COMP_CODE_SZIP;
+   chunk_def_in.comp.cinfo.szip             = c_info_in.szip;
    break;
   default:
    printf("Error: Unrecognized compression code in %d <%s>\n",comp_type_in,path);
@@ -165,13 +172,20 @@ int copy_sds(int32 sd_in,
  comp_type   = comp_type_in;
  switch (comp_type_in)
   {
+  case COMP_CODE_NONE:
+   break;
   case COMP_CODE_RLE:
+   break;
+  case COMP_CODE_SZIP:
    break;
   case COMP_CODE_SKPHUFF:
    info  = c_info_in.skphuff.skp_size;
    break;
   case COMP_CODE_DEFLATE:
    info  = c_info_in.deflate.level;
+   break;
+  default:
+   printf("Error: Unrecognized compression code in %d <%s>\n",comp_type,path);
    break;
   };
  chunk_flags = chunk_flags_in;
@@ -194,12 +208,18 @@ int copy_sds(int32 sd_in,
    break;
   case COMP_CODE_SKPHUFF:
    chunk_def.comp.comp_type              = COMP_CODE_SKPHUFF;
-   chunk_def.comp.cinfo.skphuff.skp_size = c_info_in.skphuff.skp_size;
+   chunk_def.comp.cinfo.skphuff          = c_info_in.skphuff;
    break;
   case COMP_CODE_DEFLATE:
    chunk_def.comp.comp_type              = COMP_CODE_DEFLATE;
-   chunk_def.comp.cinfo.deflate.level    = c_info_in.deflate.level;
+   chunk_def.comp.cinfo.deflate         = c_info_in.deflate;
    break;
+  case COMP_CODE_SZIP:
+   chunk_def.comp.comp_type              = COMP_CODE_SZIP;
+   chunk_def.comp.cinfo.szip             = c_info_in.szip;
+   break;
+  default:
+   printf("Error: Unrecognized compression code in %d <%s>\n",comp_type_in,path);
   };
  }
 
@@ -220,8 +240,10 @@ int copy_sds(int32 sd_in,
                    &info,        /* compression info OUT */
                    &comp_type,   /* compression type OUT  */
                    rank,         /* rank of object IN */
-                   path          /* path of object IN */
-                   );
+                   path,         /* path of object IN */
+                   dimsizes,     /* dimensions (for SZIP), IN */
+                   dtype         /* numeric type ( for SZIP), IN */
+                    );
  } /* check inspection mode */
 
 
@@ -248,7 +270,7 @@ int copy_sds(int32 sd_in,
  * check for objects too small
  *-------------------------------------------------------------------------
  */
- if ( have_info && options->trip>0  && nelms*eltsz<options->threshold )
+ if ( have_info==1 && options->trip>0  && nelms*eltsz<options->threshold )
  {
   /* reset to the original values . we don't want to uncompress if it was */
   chunk_flags=chunk_flags_in;
@@ -345,6 +367,14 @@ int copy_sds(int32 sd_in,
   /* setup compression factors */
   switch(comp_type) 
   {
+  case COMP_CODE_SZIP:
+   if (set_szip (rank,dimsizes,dtype,&c_info)==FAIL)
+   {
+    printf( "Error: Failed to set SZIP compression for <%s>\n", path);
+    ret=-1;
+    goto out;
+   }
+   break;
   case COMP_CODE_RLE:         
    break;
   case COMP_CODE_SKPHUFF:     
@@ -788,24 +818,30 @@ int  copy_gr(int32 gr_in,
   chunk_def_in.comp.comp_type=comp_type_in;
   switch (comp_type_in)
   {
+   case COMP_CODE_NONE:
+   break;
+  case COMP_CODE_SZIP:
+   chunk_def_in.comp.comp_type              = COMP_CODE_SZIP;
+   chunk_def_in.comp.cinfo.szip             = c_info_in.szip;
+   break;
   case COMP_CODE_RLE:
    chunk_def_in.comp.comp_type              = COMP_CODE_RLE;
    break;
   case COMP_CODE_SKPHUFF:
    chunk_def_in.comp.comp_type              = COMP_CODE_SKPHUFF;
-   chunk_def_in.comp.cinfo.skphuff.skp_size = c_info_in.skphuff.skp_size;
+   chunk_def_in.comp.cinfo.skphuff          = c_info_in.skphuff;
    break;
   case COMP_CODE_DEFLATE:
    chunk_def_in.comp.comp_type              = COMP_CODE_DEFLATE;
-   chunk_def_in.comp.cinfo.deflate.level    = c_info_in.deflate.level;
+   chunk_def_in.comp.cinfo.deflate          = c_info_in.deflate;
    break;
   case COMP_CODE_JPEG:
-   chunk_def_in.comp.comp_type                 = COMP_CODE_JPEG;
-   chunk_def_in.comp.cinfo.jpeg.quality        = c_info_in.jpeg.quality;
-   chunk_def_in.comp.cinfo.jpeg.force_baseline = c_info_in.jpeg.force_baseline;
+   chunk_def_in.comp.comp_type              = COMP_CODE_JPEG;
+   chunk_def_in.comp.cinfo.jpeg             = c_info_in.jpeg;
    break;
   default:
-   printf("Error: Unrecognized compression code in %d <%s>\n",comp_type_in,path);
+   printf("Error: Unrecognized compression code <%d> in <%s>\n",comp_type_in,path);
+   break;
   };
  }
 
@@ -817,6 +853,8 @@ int  copy_gr(int32 gr_in,
  comp_type   = comp_type_in;
  switch (comp_type_in)
   {
+  case COMP_CODE_SZIP:
+   break;
   case COMP_CODE_RLE:
    break;
   case COMP_CODE_SKPHUFF:
@@ -844,21 +882,29 @@ int  copy_gr(int32 gr_in,
   chunk_def.comp.comp_type=comp_type_in;
   switch (comp_type_in)
   {
+   case COMP_CODE_NONE:
+   break;
+  case COMP_CODE_SZIP:
+   chunk_def.comp.comp_type              = COMP_CODE_SZIP;
+   chunk_def.comp.cinfo.szip             = c_info_in.szip;
+   break;
   case COMP_CODE_RLE:
    chunk_def.comp.comp_type              = COMP_CODE_RLE;
    break;
   case COMP_CODE_SKPHUFF:
    chunk_def.comp.comp_type              = COMP_CODE_SKPHUFF;
-   chunk_def.comp.cinfo.skphuff.skp_size = c_info_in.skphuff.skp_size;
+   chunk_def.comp.cinfo.skphuff          = c_info_in.skphuff;
    break;
   case COMP_CODE_DEFLATE:
    chunk_def.comp.comp_type              = COMP_CODE_DEFLATE;
-   chunk_def.comp.cinfo.deflate.level    = c_info_in.deflate.level;
+   chunk_def.comp.cinfo.deflate          = c_info_in.deflate;
    break;
   case COMP_CODE_JPEG:
-   chunk_def.comp.comp_type                 = COMP_CODE_JPEG;
-   chunk_def.comp.cinfo.jpeg.quality        = c_info_in.jpeg.quality;
-   chunk_def.comp.cinfo.jpeg.force_baseline = c_info_in.jpeg.force_baseline;
+   chunk_def.comp.comp_type              = COMP_CODE_JPEG;
+   chunk_def.comp.cinfo.jpeg             = c_info_in.jpeg;
+   break;
+  default:
+   printf("Error: Unrecognized compression code <%d> in <%s>\n",comp_type_in,path);
    break;
   };
  }
@@ -881,7 +927,9 @@ int  copy_gr(int32 gr_in,
                    &info,        /* compression info OUT */
                    &comp_type,   /* compression type OUT  */
                    rank,         /* rank of object IN */
-                   path          /* path of object IN */
+                   path,         /* path of object IN */
+                   dimsizes,     /* dimensions (for SZIP), IN */
+                   dtype         /* numeric type ( for SZIP), IN */
                    );
  } /* check inspection mode */
 
@@ -1029,6 +1077,8 @@ int  copy_gr(int32 gr_in,
   /* setup compression factors */
   switch(comp_type) 
   {
+  case COMP_CODE_SZIP:         
+   break;
   case COMP_CODE_RLE:         
    break;
   case COMP_CODE_SKPHUFF:     
@@ -1390,7 +1440,6 @@ int copy_vs( int32 infile_id,
   }
  }
  
- 
 out:
  /* terminate access to the VSs */
  status_32 = VSdetach (vdata_id);
@@ -1568,12 +1617,15 @@ int  options_get_info(options_t      *options,     /* global options */
                       int            *info,        /* compression info OUT */
                       comp_coder_t   *comp_type,   /* compression type OUT  */
                       int            rank,         /* rank of object IN */
-                      char           *path         /* path of object IN */
+                      char           *path,        /* path of object IN */
+                      int32          *dimsizes,    /* dimensions (for SZIP), IN */
+                      int32          dtype         /* numeric type (for SZIP), IN */
                       )
 {
 
  obj_info_t *obj=NULL; /* check if we have info for this object */
  int         i;
+ comp_info   c_info; /* for SZIP default values */
  
 /*-------------------------------------------------------------------------
  * CASE 1: chunk==ALL comp==SELECTED 
@@ -1618,6 +1670,18 @@ int  options_get_info(options_t      *options,     /* global options */
     chunk_def->comp.comp_type = obj->comp.type;
     switch (obj->comp.type)
     {
+    case COMP_CODE_NONE:
+     break;
+     
+    case COMP_CODE_SZIP:
+     if (set_szip (rank,dimsizes,dtype,&c_info)==FAIL)
+     {
+      printf( "Error: Failed to get SZIP compression for <%s>\n", path);
+      return -1;
+     }
+     chunk_def->comp.cinfo = c_info;
+ 
+     break;
     case COMP_CODE_RLE:
      break;
     case COMP_CODE_SKPHUFF:
@@ -1629,8 +1693,11 @@ int  options_get_info(options_t      *options,     /* global options */
     case COMP_CODE_JPEG:
      chunk_def->comp.cinfo.jpeg.quality        = obj->comp.info;
      chunk_def->comp.cinfo.jpeg.force_baseline = 1;
-    break;
-    };
+     break;
+    default:
+      printf("Error: Unrecognized compression code in %d <%s>\n",obj->comp.type,path);
+     break;
+    }; /*switch */
     for (i = 0; i < rank; i++) 
     {
      /* To use chunking with RLE, Skipping Huffman, and GZIP compression */
@@ -1681,6 +1748,18 @@ int  options_get_info(options_t      *options,     /* global options */
      chunk_def->comp.comp_type = *comp_type;
      switch (*comp_type)
      {
+     case COMP_CODE_NONE:
+      break;
+
+     case COMP_CODE_SZIP:
+      if (set_szip (rank,dimsizes,dtype,&c_info)==FAIL)
+      {
+       printf( "Error: Failed to get SZIP compression for <%s>\n", path);
+       return -1;
+      }
+      chunk_def->comp.cinfo = c_info;
+      
+      break;
      case COMP_CODE_RLE:
       break;
      case COMP_CODE_SKPHUFF:
@@ -1692,6 +1771,9 @@ int  options_get_info(options_t      *options,     /* global options */
      case COMP_CODE_JPEG:
       chunk_def->comp.cinfo.jpeg.quality        = obj->comp.info;
       chunk_def->comp.cinfo.jpeg.force_baseline = 1;
+     break;
+     default:
+      printf("Error: Unrecognized compression code in %d <%s>\n",*comp_type,path);
      break;
      };
     }
@@ -1742,6 +1824,17 @@ int  options_get_info(options_t      *options,     /* global options */
    chunk_def->comp.comp_type = *comp_type;
    switch (*comp_type)
    {
+   case COMP_CODE_NONE:
+    break;
+    
+   case COMP_CODE_SZIP:
+    if (set_szip (rank,dimsizes,dtype,&c_info)==FAIL)
+    {
+     printf( "Error: Failed to get SZIP compression for <%s>\n", path);
+     return -1;
+    }
+    chunk_def->comp.cinfo = c_info;
+    
    case COMP_CODE_RLE:
     break;
    case COMP_CODE_SKPHUFF:
@@ -1753,6 +1846,9 @@ int  options_get_info(options_t      *options,     /* global options */
    case COMP_CODE_JPEG:
     chunk_def->comp.cinfo.jpeg.quality        = *info;;
     chunk_def->comp.cinfo.jpeg.force_baseline = 1;
+    break;
+   default:
+    printf("Error: Unrecognized compression code in %d <%s>\n",*comp_type,path);
     break;
    };
   }
@@ -1793,6 +1889,17 @@ int  options_get_info(options_t      *options,     /* global options */
    chunk_def->comp.comp_type = *comp_type;
    switch (*comp_type)
    {
+   case COMP_CODE_NONE:
+    break;
+    
+   case COMP_CODE_SZIP:
+    if (set_szip (rank,dimsizes,dtype,&c_info)==FAIL)
+    {
+     printf( "Error: Failed to get SZIP compression for <%s>\n", path);
+     return -1;
+    }
+    chunk_def->comp.cinfo = c_info;
+
    case COMP_CODE_RLE:
     break;
    case COMP_CODE_SKPHUFF:
@@ -1805,6 +1912,9 @@ int  options_get_info(options_t      *options,     /* global options */
     chunk_def->comp.cinfo.jpeg.quality        = *info;;
     chunk_def->comp.cinfo.jpeg.force_baseline = 1;
     break;
+   default:
+    printf("Error: Unrecognized compression code in %d <%s>\n",*comp_type,path);
+    break;
    };
   }
  } /* else if */
@@ -1815,7 +1925,68 @@ int  options_get_info(options_t      *options,     /* global options */
 
 
 
+/*-------------------------------------------------------------------------
+ * Function: set_szip
+ *
+ * Purpose: utility to set SZIP parameters
+ *
+ * Return: 0 for OK, 1 otherwise
+ *
+ * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
+ *
+ * Date: August 11, 2003
+ *
+ *-------------------------------------------------------------------------
+ */
 
+int set_szip(int32 rank, int32 *dim_sizes, int32 dtype, comp_info *c_info)
+{
+ int32	pixels_per_scanline;
+ int   i;
+
+ pixels_per_scanline               = dim_sizes[rank-1];
+ c_info->szip.pixels               = 1;
+ for ( i = 0; i < rank; i++)
+ {
+  c_info->szip.pixels             *= dim_sizes[i];
+ }
+ c_info->szip.pixels_per_block     = 2;
+ if(pixels_per_scanline >=2048)
+  c_info->szip.pixels_per_scanline = 512;
+ else
+  c_info->szip.pixels_per_scanline = dim_sizes[rank-1];
+ 
+ c_info->szip.options_mask = NN_OPTION_MASK;
+ c_info->szip.options_mask |= RAW_OPTION_MASK;
+ 
+ switch(dtype) 
+ {
+ case DFNT_INT8:
+ case DFNT_UINT8:
+ case DFNT_UCHAR8:
+  c_info->szip.bits_per_pixel = 8;
+  break;
+ case DFNT_INT16:
+ case DFNT_UINT16:
+  c_info->szip.bits_per_pixel = 16;
+  break;
+ case DFNT_INT32:
+ case DFNT_UINT32:
+  c_info->szip.bits_per_pixel = 32;
+  break;
+ case DFNT_FLOAT:
+  c_info->szip.bits_per_pixel = 32;
+  break;
+ case DFNT_DOUBLE:
+  c_info->szip.bits_per_pixel = 64;
+  break;
+ default:
+  printf("Error: Bad numeric type <%d> in SZIP\n",dtype);
+  return -1;
+ }
+
+ return 0;
+}
 
 
 

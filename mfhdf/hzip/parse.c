@@ -163,6 +163,15 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
      exit(1);
     }
    }
+   else if (HDstrcmp(scomp,"SZIP")==0)
+   {
+    comp->type=COMP_CODE_SZIP;
+    if (m>0){ /*SZIP does not have parameter */
+     if (obj_list) free(obj_list);
+     printf("Input Error: Extra compression parameter in SZIP <%s>\n",str);
+     exit(1);
+    }
+   }
    else {
     if (obj_list) free(obj_list);
     printf("Input Error: Invalid compression type in <%s>\n",str);
@@ -198,6 +207,8 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
     exit(1);
    }
    break;
+  case COMP_CODE_SZIP:
+   break;
   };
 
  return obj_list;
@@ -224,10 +235,14 @@ char* get_scomp(int code)
   return "GZIP";
  else if (code==COMP_CODE_JPEG)
   return "JPEG";
+ else if (code==COMP_CODE_SZIP)
+  return "SZIP";
  else if (code==COMP_CODE_NONE)
   return "NONE";
- else
-  return "Input Error in compression type";
+ else {
+  printf("Input Error in compression type\n");
+  exit(1);
+ }
 } 
 
 
