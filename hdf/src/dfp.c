@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/04/22 23:00:03  koziol
-Changed DFR8nimages, DFPnpals to report the correct number of images
-and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
+Revision 1.6  1993/05/04 18:55:29  georgev
+Fixed a minor cast problem on the Mac.
 
+ * Revision 1.5  1993/04/22  23:00:03  koziol
+ * Changed DFR8nimages, DFPnpals to report the correct number of images
+ * and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
+ *
  * Revision 1.3  1993/01/19  05:54:47  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -294,7 +297,7 @@ int DFPnpals(filename)
           } /* end for */
       } /* end for */
 
-    HDfreespace(pal_off);       /* free offsets */
+    HDfreespace((VOIDP)pal_off);       /* free offsets */
 
     if (Hclose(file_id) == FAIL)
         return FAIL;

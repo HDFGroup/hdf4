@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.18  1993/04/19 22:48:32  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.19  1993/05/04 18:56:24  georgev
+Fixed a minor cast problem on the Mac.
 
+ * Revision 1.18  1993/04/19  22:48:32  koziol
+ * General Code Cleanup to reduce/remove errors on the PC
+ *
  * Revision 1.17  1993/04/15  19:18:45  koziol
  * Fixed bug introduced into the tbbt routines with the last bugfix (sigh)
  *
@@ -2129,7 +2132,7 @@ int32 vgid;
     if(t == NULL)
         return FAIL;
 
-    tmp = tbbtrem((TBBT_NODE **)vf->vgtree, (VOIDP)t, NULL);
+    tmp = tbbtrem((TBBT_NODE **)vf->vgtree, (TBBT_NODE *)t, NULL);
     if(tmp) 
         HDfreespace((VOIDP)tmp);
 

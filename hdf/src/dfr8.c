@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.9  1993/04/22 23:00:05  koziol
-Changed DFR8nimages, DFPnpals to report the correct number of images
-and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
+Revision 1.10  1993/05/04 18:55:56  georgev
+Fixed a minor cast problem on the Mac.
 
+ * Revision 1.9  1993/04/22  23:00:05  koziol
+ * Changed DFR8nimages, DFPnpals to report the correct number of images
+ * and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
+ *
  * Revision 1.7  1993/03/29  16:47:32  koziol
  * Updated JPEG code to new JPEG 4 code.
  * Changed VSets to use Threaded-Balanced-Binary Tree for internal
@@ -883,7 +886,7 @@ int DFR8nimages(filename)
           } /* end for */
       } /* end for */
 
-    HDfreespace(img_off);       /* free offsets */
+    HDfreespace((VOIDP)img_off);       /* free offsets */
     if (Hclose(file_id) == FAIL)
        return FAIL;
     return(nimages);
