@@ -207,7 +207,15 @@ int mode ;
             /* see if the file exists */
             if(mode == NC_NOCLOBBER) {
                 if((int) Hishdf((char *) name))
-                    return (NULL);
+                  { /* Need to free allocated structures */
+                    NC_free_xcdf(cdf) ;
+#ifndef macintosh /* We don't handle xdr files yet */
+                    xdr_destroy(cdf->xdrs) ;
+#endif /* !macintosh */
+                    Free(cdf->xdrs) ;
+                    Free(cdf) ;
+                    return(NULL);
+                  }
                 hdf_mode = DFACC_RDWR;
             }
                 
