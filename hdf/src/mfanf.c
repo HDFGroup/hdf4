@@ -313,7 +313,7 @@ nafwriteann(intf *an_id,_fcd *ann, intf *annlen)
   CONSTR(FUNC, "afwriteann");
 #endif /* LATER */
 
-  return (intf)ANwriteann((int32)*an_id,(char8 *) _fcdtocp(ann), (int32) *annlen);
+  return (intf)ANwriteann((int32)*an_id,(char *) _fcdtocp(ann), (int32) *annlen);
 } /* nafwriteann() */
 
 /*-----------------------------------------------------------------------------
@@ -333,7 +333,7 @@ nafreadann(intf *an_id,_fcd *ann, intf *maxlen)
   CONSTR(FUNC, "afreadann");
 #endif /* LATER */
 
-  return (intf)ANreadann((int32)*an_id,(char8 *) _fcdtocp(ann), (int32) *maxlen);
+  return (intf)ANreadann((int32)*an_id,(char *) _fcdtocp(ann), (int32) *maxlen);
 } /* nafreadann() */
 
 /*-----------------------------------------------------------------------------

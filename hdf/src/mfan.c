@@ -1150,7 +1150,7 @@ ANIannlen(int32 ann_id)
  USAGE
        intn ANIgetann(ann_id, ann, maxlen)
        int32 ann_id;   IN: annotation id (handle)
-       char8 *ann;     OUT: space to return annotation in
+       char *ann;     OUT: space to return annotation in
        int32 maxlen;   IN: size of space to return annotation in
  RETURNS
        SUCCEED (0) if successful and FAIL (-1) otherwise
@@ -1164,7 +1164,7 @@ ANIannlen(int32 ann_id)
  REVISION LOG
  *------------------------------------------------------------------------*/
 PRIVATE intn
-ANIreadann(int32 ann_id, char8 *ann, int32 maxlen)
+ANIreadann(int32 ann_id, char *ann, int32 maxlen)
 {
     CONSTR(FUNC, "ANIreadann");
 #ifdef HAVE_RBTREE
@@ -1306,7 +1306,7 @@ ANIreadann(int32 ann_id, char8 *ann, int32 maxlen)
  USAGE
        intn ANIwriteann(ann_id, ann, ann_len)
        char *ann_id;   IN: annotation id
-       char8 *ann;     IN: annotation to write
+       char *ann;     IN: annotation to write
        int32 ann_len;  IN: length of annotation
 
  RETURNS
@@ -1321,7 +1321,7 @@ ANIreadann(int32 ann_id, char8 *ann, int32 maxlen)
  REVISION LOG
  *------------------------------------------------------------------------*/
 PRIVATE intn
-ANIwriteann(int32 ann_id, char8 *ann, int32 ann_len)
+ANIwriteann(int32 ann_id, char *ann, int32 ann_len)
 {
     CONSTR(FUNC, "ANIwriteann");
 #ifdef HAVE_RBTREE
@@ -2349,7 +2349,7 @@ ANannlen(int32 ann_id)
  USAGE
        intn ANwriteann(ann_id, ann, ann_len)
        char *ann_id;   IN: annotation id
-       char8 *ann;     IN: annotation to write
+       char *ann;     IN: annotation to write
        int32 ann_len;  IN: length of annotation
 
  RETURNS
@@ -2364,7 +2364,7 @@ ANannlen(int32 ann_id)
  REVISION LOG
  *------------------------------------------------------------------------*/
 EXPORT int32
-ANwriteann(int32 ann_id, char8 *ann, int32 annlen)
+ANwriteann(int32 ann_id, char *ann, int32 annlen)
 {
 #ifdef LATER
   CONSTR(FUNC, "ANwriteann");    /* for HERROR */
@@ -2379,7 +2379,7 @@ ANwriteann(int32 ann_id, char8 *ann, int32 annlen)
  USAGE
        intn ANreadann(ann_id, ann, maxlen)
        int32 ann_id;   IN: annotation id (handle)
-       char8 *ann;     OUT: space to return annotation in
+       char *ann;     OUT: space to return annotation in
        int32 maxlen;   IN: size of space to return annotation in
  RETURNS
        SUCCEED (0) if successful and FAIL (-1) otherwise
@@ -2393,7 +2393,7 @@ ANwriteann(int32 ann_id, char8 *ann, int32 annlen)
  REVISION LOG
  *------------------------------------------------------------------------*/
 EXPORT int32
-ANreadann(int32 ann_id, char8 *ann, int32 maxlen)
+ANreadann(int32 ann_id, char *ann, int32 maxlen)
 {
 #ifdef LATER
   CONSTR(FUNC, "ANreadann");    /* for HERROR */
