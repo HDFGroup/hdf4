@@ -59,6 +59,8 @@ TBBT_NODE *tbbtfirst( root )
   TBBT_NODE *root;
 #endif
 {
+	if(root==NULL)
+		return(NULL);
     return(  tbbt_end( root, LEFT )  );
 }
 
@@ -69,6 +71,8 @@ TBBT_NODE *tbbtlast( root )
   TBBT_NODE *root;
 #endif
 {
+	if(root==NULL)
+		return(NULL);
     return(  tbbt_end( root, RIGHT )  );
 }
 
@@ -119,6 +123,8 @@ TBBT_NODE *tbbtnext( node )
 TBBT_NODE *node;
 #endif
 {
+	if(node==NULL)
+		return(NULL);
     return(  tbbt_nbr( node, RIGHT )  );
 }
 
@@ -130,6 +136,8 @@ TBBT_NODE *tbbtprev( node )
 TBBT_NODE *node;
 #endif
 {
+	if(node==NULL)
+		return(NULL);
     return(  tbbt_nbr( node, LEFT )  );
 }
 
@@ -152,6 +160,8 @@ TBBT_NODE *tbbtfind( root, key, compar, arg, pp )
     TBBT_NODE *parent= NULL;
     intn       cmp= 1;
 
+	if(root==NULL)
+		return(NULL);
     if(ptr) {
         intn side;
 
@@ -179,6 +189,8 @@ VOIDP          key;   /* Pointer to key value to find node with */
 TBBT_NODE    **pp;    /* Address of buffer for pointer to parent node */
 #endif
 {
+	if(tree==NULL)
+		return(NULL);
     return(  tbbtfind( tree->root, key, tree->compar, tree->cmparg, pp )  );
 }
 
@@ -509,6 +521,8 @@ intn           arg;   /* Third argument for (*compar)() */
     intn cmp;
     TBBT_NODE *ptr, *parent;
 
+	if(root==NULL)
+		return(NULL);
     if(NULL != tbbtfind( *root, (key ? key : item), compar, arg, &parent )
             || NULL == ( ptr= Alloc(1,TBBT_NODE) ) )
         return( NULL );
@@ -550,6 +564,8 @@ VOIDP     key;       /* Pointer to key value for new node (or NULL) */
 {
     TBBT_NODE *ret_node; /* the node to return */
 
+	if(tree==NULL)
+		return(NULL);
     ret_node=tbbtins( &(tree->root), item, key, tree->compar, tree->cmparg );
     if(ret_node!=NULL)
 	tree->count++;
@@ -582,7 +598,7 @@ VOIDP tbbtrem( root, node, kp )
   intn  side;       /* `leaf' is `side' child of `par' */
   VOIDP data;       /* Saved pointer to data item of deleted node */
 
-    if(  NULL == node  )
+    if( NULL==root || NULL == node  )
         return( NULL ); /* Argument couldn't find node to delete */
     data= node->data;   /* Save pointer to data item to be returned at end */
     if(  NULL != kp  )
@@ -869,6 +885,9 @@ VOID tbbtprint(node)
 TBBT_NODE *node;
 #endif
 {
+	if(node==NULL)
+		return;
+
 	printf("node=%p, key=%p, data=%p, flags=%x\n",node,node->key,node->data,node->flags);
 	printf("Lcnt=%d, Rcnt=%d\n",node->lcnt,node->rcnt);
 printf("*key=%d\n",*(int32 *)(node->key));
@@ -922,12 +941,15 @@ TBBT_TREE *tree;
 intn method;
 #endif
 {
+	if(tree==NULL)
+		return;
+
     if(*(TBBT_NODE **)tree!=NULL) {
         printf("Number of nodes in the tree: %ld\n",tree->count);
-	tbbt1dump(tree->root,method);
+	    tbbt1dump(tree->root,method);
       } /* end if */
     else
-	printf("Tree is empty\n");
+	    printf("Tree is empty\n");
 }	/* end tbbtdump() */
 
 /* Always returns NULL */
@@ -940,6 +962,9 @@ VOID     (*fd)(/* void *item */); /* Routine to free data items */
 VOID     (*fk)(/* void *key */);  /* Routine to free key values */
 #endif
 {
+	if(tree==NULL)
+		return(NULL);
+
     tbbtfree( &tree->root, fd, fk );
     Free( tree );
     return( NULL );
@@ -957,5 +982,5 @@ TBBT_TREE *tree;                  /* Pointer to tree description record */
     if(tree==NULL)
         return(-1);
     else
-	return(tree->count);
+        return(tree->count);
 }

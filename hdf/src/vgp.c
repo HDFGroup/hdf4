@@ -90,28 +90,25 @@ HFILEID f;
     char * FUNC = "Load_vfile";
     
     /* allocate a new vfile_t structure */
-    vf = Get_vfile(f);
-    if(!vf)
+    if((vf = Get_vfile(f))==NULL)
         return FAIL;
 
     /* the file is already loaded (opened twice) do nothing */
-    if(vf->access++) {
+    if(vf->access++) 
         return SUCCEED;
-    }
 
     /* load all the vg's  tag/refs from file */
     vf->vgtabn = 0;
     vf->vgtree = tbbtdmake(vcompare, sizeof(int32));
     if(vf->vgtree == NULL)
-        return(FAIL);
+        HRETURN_ERROR(DFE_NOSPACE,FAIL);
         
     stat = aid = Hstartread(f, DFTAG_VG,  DFREF_WILDCARD);
     while (stat != FAIL) {
         HQuerytagref (aid, &tag, &ref);
         if (NULL== (v = (vginstance_t*) HDgetspace (sizeof(vginstance_t)))) {
-            HERROR(DFE_NOSPACE);
             tbbtdfree(vf->vgtree, vdestroynode, NULL);
-            return(FAIL);
+        	HRETURN_ERROR(DFE_NOSPACE,FAIL);
           }
           
         vf->vgtabn++;
@@ -130,17 +127,16 @@ HFILEID f;
     vf->vstree = tbbtdmake(vcompare, sizeof(int32));
     if(vf->vstree==NULL) {
         tbbtdfree(vf->vgtree, vdestroynode, NULL);
-        return(FAIL);
+        HRETURN_ERROR(DFE_NOSPACE,FAIL);
       } /* end if */
 
     stat = aid = Hstartread(f, VSDESCTAG,  DFREF_WILDCARD);
     while (stat != FAIL) {
         HQuerytagref (aid, &tag, &ref);
         if (NULL == (w = (vsinstance_t*) HDgetspace (sizeof(vsinstance_t)))) {
-            HERROR(DFE_NOSPACE);
             tbbtdfree(vf->vgtree, vdestroynode, NULL);
             tbbtdfree(vf->vstree, vsdestroynode, NULL);
-            return(FAIL);
+        	HRETURN_ERROR(DFE_NOSPACE,FAIL);
           }
           
         vf->vstabn++;
@@ -187,18 +183,17 @@ HFILEID f;
     char * FUNC = "Remove_vfile";
     
     /* Figure out what file to work on */
-    vf = Get_vfile(f);
-    
-    if(vf == NULL)
+    if((vf = Get_vfile(f)) == NULL)
         return;
     
     /* someone still has an active pointer to this file */
-    if(--vf->access) {
+    if(--vf->access) 
         return;
-    }
 
     tbbtdfree(vf->vgtree, vdestroynode, NULL);
     tbbtdfree(vf->vstree, vsdestroynode, NULL);
+
+	HDmemset(vf,0,sizeof(vfile_t);	/* reset values of structure */
 }  /* Remove_vfile */
 
 /* ---------------------------- vcompare ------------------------- */
