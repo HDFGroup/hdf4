@@ -312,7 +312,7 @@ print_file_desc(const char *fname, int32 an_id)
     int32       sd_fid;
     int32       len; 
     char       *desc = NULL;
-    file_type_t ft;
+    file_type_t ft = DASCII;
 
     int32 ann_id, i;
     int32 n_file_label;
