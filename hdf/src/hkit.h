@@ -49,7 +49,8 @@ PRIVATE const tag_descript_t tag_descriptions[] =
     {DFTAG_NULL, string(DFTAG_NULL), "No Data"},
     {DFTAG_LINKED, string(DFTAG_LINKED), "Linked Blocks Indicator"},
     {DFTAG_VERSION, string(DFTAG_VERSION), "Version Descriptor"},
-  {DFTAG_COMPRESSED, string(DFTAG_COMPRESSED), "Compressed Data Indicator"},
+    {DFTAG_COMPRESSED, string(DFTAG_COMPRESSED), "Compressed Data Indicator"},
+    {DFTAG_CHUNK, string(DFTAG_CHUNK), "Data Chunk"},
 
 /* utility set */
     {DFTAG_FID, string(DFTAG_FID), "File Identifier"},
