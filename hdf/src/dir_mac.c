@@ -234,6 +234,15 @@ hopendir(char *dirname, short vRefNum, long dirID)
 	HLock((char **)curh);
 	cur		= *curh;
 
+        /* Make sure the path ends in a ':' */
+        if (dirname != nil)             {
+                while ((iswhitespace(dirname[dirname[0]])) && (dirname[0] > 0))
+                        dirname[0]--;
+
+                if ((dirname[dirname[0]] != ':') && (dirname[0]<255)
+                        dirname[++dirname[0]] = ':';
+        }
+
 	/*	If we're supposed to open anything but the current directory, set the current
 	 *	working directory to the desired directory.
 	 */
