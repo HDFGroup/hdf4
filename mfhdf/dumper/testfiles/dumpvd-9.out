@@ -1,9 +1,6 @@
 #############################
 Expected output for './hdp dumpvd -f STATION_NAME,FLOATS -d tvset.hdf'
 #############################
-   number of attributes = 0 
-   number of attributes = 0 
-   number of attributes = 0 
 a b  15.500000   
 c d  16.000000   
 e f  16.500000   
