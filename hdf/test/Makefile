@@ -27,7 +27,7 @@ RMFLAGS=-f
 
 CTESTS= nt_rig.o nt_sdstr.o nt_hblocks.o nt_an.o nt_anfile.o \
         nt_hextelt.o nt_hfile.o nt_hfile1.o nt_vers.o nt_sdmms.o \
-        nt_sdnmms.o testhdf.o
+        nt_sdnmms.o nt_slab.o testhdf.o
 
 FTESTS= tr8f t24f tpf tanf tanfilef tsdstrf tsdntf tsdnntf \
         tsdmmsf tsdnmmsf tstubsf 
@@ -38,6 +38,7 @@ FOBJS = tr8f.o t24f.o tpf.o tanf.o tanfilef.o tsdstrf.o tsdntf.o \
 #        slabwf.o slab1wf.o slab2wf.o slab3wf.o slab4wf.o 
 #        tsdmms tsdnmms tsdnnt tsdnt tan \
 #        tanfile tstubs tv1 tv2 tvers egchi
+
 
 .f: $< $(HDFLIB)/libdf.a
 	$(FC) $(FFLAGS) $< -o $@ $(HDFLIB)/libdf.a
@@ -71,7 +72,7 @@ egchi.o: ../src/vg.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
 egchi.o: ../src/hcomp.h ../src/hproto.h ../src/herr.h /usr/include/ctype.h
 egchi.o: ../src/vproto.h
 fortest.o: ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h ../src/hcomp.h
-fortest.o: ../src/hproto.h tfproto.h tutils.h
+fortest.o: ../src/hproto.h tproto.h tutils.h
 nt_an.o: tproto.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
 nt_an.o: ../src/hcomp.h ../src/hproto.h tutils.h
 nt_anfile.o: tproto.h ../src/hdf.h ../src/hdfi.h /usr/include/stdio.h
