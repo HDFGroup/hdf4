@@ -56,6 +56,9 @@ static int32 fmtint
 static int32 fmtfloat
             (char *x);
 
+static int32 fmtulong
+            (char *x);
+
 static int32 fmtlong
             (char *x);
 
@@ -336,6 +339,15 @@ fmtfloat(char *x)
 }
 
 static int32
+fmtulong(char *x)
+{
+    unsigned    l = 0;
+    HDmemcpy(&l, x, sizeof(int32));
+    cn += printf("%u", l);
+    return (1);
+}
+
+static int32
 fmtlong(char *x)
 {
     long        l = 0;
@@ -453,6 +465,9 @@ vsdumpfull(int32 vs)
                     break;
 
                 case DFNT_UINT32:
+                      fmtfn[i] = fmtulong;
+                      break;
+
                 case DFNT_INT32:
                     fmtfn[i] = fmtlong;
                     break;
@@ -652,6 +667,8 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
                       fmtfn = fmtshort;
                       break;
                  case DFNT_UINT32:
+                      fmtfn = fmtulong;
+                      break;
                  case DFNT_INT32:
                       fmtfn = fmtlong;
                       break;
@@ -761,6 +778,8 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
                   fmtfn = fmtshort;
                   break;
              case DFNT_UINT32:
+                  fmtfn = fmtulong;
+                  break;
              case DFNT_INT32:
                   fmtfn = fmtlong;
                   break;
