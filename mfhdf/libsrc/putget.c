@@ -751,7 +751,7 @@ uint32    count;
          */
         if(vp->data_ref == NULL) 
             if(handle->hdf_mode == DFACC_RDONLY) {
-                if(vp->data_tag == DFTAG_SDS) 
+                if(vp->data_tag == DATA_TAG)
                     HDmemset(values, (char) 0, count * vp->szof);
                 return TRUE;
             } else {
