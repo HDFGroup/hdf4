@@ -180,7 +180,7 @@ USAGE
    int32 vkey;       IN: vdata key
    int32 interlace;  IN: interlace for storing data in an HDF file.
 RETURNS
-   On success returns SUCCESS, returns FAIL on error.
+   SUCCEED/FAIL
 DESCRIPTION
    The interlace may be one of FULL_INTERLACE or NO_INTERLACE.
 --------------------------------------------------------------------*/
@@ -443,7 +443,7 @@ USAGE
    int32 vkey;    IN: vdata key.
    char *vsname;  IN: name for the vdata.
 RETURNS
-   No Return values.
+   SUCCEED/FAIL
 DESCRIPTION
    Truncates name to max length of VSNAMELENMAX
 ----------------------------------------------------------*/
@@ -485,7 +485,7 @@ USAGE
    int32 vkey;    IN: vdata key.
    char *vsclass;  IN: class name for the vdata.
 RETURNS
-   No Return values.
+   SUCCEED/FAIL
 DESCRIPTION
    Truncates class name to max length of VSNAMELENMAX
 ----------------------------------------------------------*/
@@ -527,7 +527,7 @@ USAGE
    int32 vkey;    IN: vdata key.
    char *vsname;  OUT: storage for vdata name. 
 RETURNS
-   No Return values.
+   SUCCEED/FAIL
 DESCRIPTION
 ----------------------------------------------------------*/
 int32 
@@ -560,7 +560,7 @@ USAGE
    int32 vkey;      IN: vdata key.
    char *vsclass;  OUT: class name for the vdata.
 RETURNS
-   No Return values.
+   SUCCEED/FAIL
 DESCRIPTION
 ---------------------------------------------------------- */
 int32 
@@ -598,7 +598,7 @@ USAGE
                            machine. 
    char *vsname;      OUT: vdata's name.
 RETURNS
-   Returns FAIL if error;       Returns 1 if ok.
+   SUCCEED/FAIL
 
 ------------------------------------------------------------------------*/
 intn 
