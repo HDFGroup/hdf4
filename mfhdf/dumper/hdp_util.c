@@ -513,7 +513,7 @@ sort_obj_list(objlist_t * o_list, sort_t sort_type)
 
 /* Misc. utility functions */
 int 
-int32_compare(const VOIDP a, const VOIDP b)
+int32_compare(const void *a, const void *b)
 {
 	if (*(const int32 *) a > *(const int32 *) b)
 		return (1);
