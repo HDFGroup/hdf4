@@ -111,7 +111,7 @@ vfprintf(stream, fmt, va_alist)
  *         nc_serror("process %d in state %s",pid,state);
  */
 void
-#ifndef(NO_STDARG)
+#ifndef NO_STDARG
 nc_serror(char *fmt, ...)
 #else
 /*VARARGS1*/
@@ -178,7 +178,7 @@ nc_serror(fmt, va_alist)
  *         NCadvise(NC_NOERR, "just advice");
  *         NCadvise(NC_EBADID, "%d is not a valid cdf id", cdfid);
  */
-#ifndef(NO_STDARG)
+#ifndef NO_STDARG
 void
 NCadvise(int err, char *fmt,...)
 #else
