@@ -2390,8 +2390,13 @@ printf("%s: check 6.5, creating new image and need to fill it, ri_ptr->fill_valu
                           /* Try to find a fill value attribute */
                           if((at_index=GRfindattr(riid,FILL_ATTR))!=FAIL)
                             { /* Found a fill value attribute */
-                                if(GRgetattr(riid,at_index,fill_pixel)==FAIL)
+                                if((ri_ptr->fill_value=(VOIDP)HDmalloc(pixel_mem_size))==NULL)
+                                    HGOTO_ERROR(DFE_NOSPACE,FAIL);
+                                if(GRgetattr(riid,at_index,ri_ptr->fill_value)==FAIL)
                                     HGOTO_ERROR(DFE_BADATTR,FAIL);
+                                DFKconvert(ri_ptr->fill_value,fill_pixel,
+                                      ri_ptr->img_dim.nt,ri_ptr->img_dim.ncomps,
+                                      DFACC_WRITE,0,0);
                             } /* end if */
                           else
                               HDmemset(fill_pixel,0,pixel_disk_size);
