@@ -619,6 +619,27 @@ intn SDPfreebuf()
     return(SUCCEED);
 }
 
+/* ------------------------------ SDIresizebuf ------------------------------ */
+/*
+    Resize a temporary buffer to the proper size
+*/
+intn SDIresizebuf(VOIDP *buf,int32 *buf_size,int32 size_wanted)
+{
+    if(*buf_size < size_wanted)
+      {
+        if(*buf)
+            HDfree((VOIDP)*buf);
+        *buf_size = size_wanted;
+        *buf = (VOIDP)HDmalloc(size_wanted);
+        if (*buf == NULL) 
+          {
+            *buf_size=0;
+            return(FAIL);
+          } /* end if */
+      } /* end if */
+    return(SUCCEED);
+} /* end SDIresizebuf() */
+
 #define MAX_SIZE 1000000
 
 /* ------------------------- hdf_get_data ------------------- */
@@ -697,16 +718,9 @@ NC_var *vp;
     to_do   = chunk_size / vp->HDFsize;     /* number of values in a chunk */
     
     len = to_do * vp->szof;                 /* size of buffer for fill values */
-    if (tValues_size < len ) {
-        if (tValues) HDfree((VOIDP)tValues);
-        tValues_size = len;
-        tValues = HDmalloc(len);
-        if (tValues == NULL)
-          {
-           tValues_size=0;
-           return FALSE;
-          } /* end if */
-    }
+    if (SDIresize((VOIDP *)&tValues,&tValues_size,len)==FAIL)
+        return(FALSE);
+
     byte_count = to_do * vp->HDFsize;       /* external buffer size */
 
     if ((handle->flags & NC_NOFILL) == 0) { /* fill the array */
@@ -741,17 +755,9 @@ NC_var *vp;
     if(vp->aid == FAIL) return FALSE;
 
     if ((handle->flags & NC_NOFILL) == 0) { /* fill the array */
-    /* make sure our tmp buffer is big enough to hold everything */
-        if(tBuf_size < byte_count) {
-            if(tBuf) HDfree((VOIDP)tBuf);
-            tBuf_size = byte_count;
-            tBuf = (int8 *) HDmalloc(byte_count);
-            if (tBuf == NULL) 
-              {
-                tBuf_size=0;
-                return FALSE;
-              } /* end if */
-        }
+        /* make sure our tmp buffer is big enough to hold everything */
+        if(SDIresizebuf((VOIDP *)&tBuf,&tBuf_size,byte_count)==FAIL)
+            return(FALSE);
 
     /*
      * Do numerical conversions
@@ -972,15 +978,8 @@ uint32    count;
 
     /* make sure our tmp buffer is big enough to hold everything */
     if(convert && ((tBuf_size < byte_count) || tBuf_size<where)) {
-        if(tBuf) 
-            HDfree((VOIDP)tBuf);
-        tBuf_size = MAX(byte_count,where);
-        tBuf = (int8 *) HDmalloc(tBuf_size);
-        if(tBuf == NULL) 
-          {
-            tBuf_size=0;
-            return FALSE;
-          } /* end if */
+        if(SDIresizebuf((VOIDP *)&tBuf,&tBuf_size,MAX(byte_count,where))==FAIL)
+            return(FALSE);
       } /* end if */
 #ifdef DEBUG
     fprintf(stderr, "hdf_xdr_NCvdata: tBuf_size=%d, tBuf=%p\n",(int)tBuf_size,tBuf);
@@ -1029,45 +1028,43 @@ uint32    count;
       { /* fill in the lead sequence of bytes with the fill values */
         if((handle->flags & NC_NOFILL)==0 || isspecial==SPECIAL_COMP)
           {
-            /* make sure our tmp buffer is big enough to hold everything */
-            if(tBuf_size<where) {
-                if(tBuf) 
-                    HDfree((VOIDP)tBuf);
-                tBuf_size = where;
-                tBuf = (int8 *) HDmalloc(tBuf_size);
-                if(tBuf == NULL) 
-                  {
-                    tBuf_size=0;
-                    return FALSE;
-                  } /* end if */
-              } /* end if */
+            int32 buf_size=where,
+                chunk_size;
+            uint8 *write_buf;
 
-#ifdef DEBUG
-        fprintf(stderr, "hdf_xdr_NCvdata: Check 1.0, attr=%p, (*attr)->data->values=%p, vp->szof=%d, vp->HDFsize=%d\n",attr,(*attr)->data->values,(int)vp->szof,(int)vp->HDFsize);
-#endif
+            /* Make certain we don't try to write too large of a chunk at a time */
+            chunk_size=MIN(buf_size,MAX_SIZE);
+
+            /* make sure our tmp buffer is big enough to hold everything */
+            if(SDIresizebuf((VOIDP *)&tBuf,&tBuf_size,chunk_size)==FAIL)
+                return(FALSE);
+            if(SDIresizebuf((VOIDP *)&tValues,&tValues_size,chunk_size)==FAIL)
+                return(FALSE);
+
             /* Fill the temporary buffer with the fill-value */
             if(attr != NULL)
-                HDmemfill(tBuf,(*attr)->data->values,vp->szof,(where/vp->HDFsize));
+                HDmemfill(tBuf,(*attr)->data->values,vp->szof,(chunk_size/vp->HDFsize));
             else 
-                NC_arrayfill((VOIDP)tBuf, where, vp->type);
+                NC_arrayfill((VOIDP)tBuf, chunk_size, vp->type);
 
-#ifdef DEBUG
-        fprintf(stderr, "hdf_xdr_NCvdata: Check 1.2\n");
-#endif
             /* convert the fill-values, if necessary */
             if(convert) {
                 DFKsetNT(vp->HDFtype); /* added back here -GV */
-                DFKnumout((uint8 *) tBuf, tBuf, (uint32) (where/vp->HDFsize), 0, 0);
+                DFKnumout((uint8 *) tValues, tBuf, (uint32) (chunk_size/vp->HDFsize), 0, 0);
+                write_buf=(uint8 *)tValues;
               } /* end if */
+            else
+                write_buf=(uint8 *)tBuf;
 
-#ifdef DEBUG
-        fprintf(stderr, "hdf_xdr_NCvdata: Check 1.4\n");
-#endif
-            /* Write the fill-values out */
-            status = Hwrite(vp->aid, where, (uint8 *) tBuf);
-#ifdef DEBUG
-    fprintf(stderr, "hdf_xdr_NCvdata: filled first empty chunk, status=%d\n",(int)status);
-#endif
+            do {
+                /* Write the fill-values out */
+                status = Hwrite(vp->aid, chunk_size, write_buf);
+
+                /* reduce the bytes to write */
+                buf_size-=chunk_size;
+                chunk_size=MIN(buf_size,MAX_SIZE);
+             } while (buf_size>0);
+
           } /* end if */
         else
           { /* don't write fill values, just seek to the correct location */
@@ -1133,33 +1130,42 @@ CM_HDFtype = vp->HDFtype;
       {
         if((handle->flags & NC_NOFILL)==0 || isspecial==SPECIAL_COMP)
           {
+            int32 buf_size=bytes_left,
+                chunk_size;
+            uint8 *write_buf;
+
+            /* Make certain we don't try to write too large of a chunk at a time */
+            chunk_size=MIN(buf_size,MAX_SIZE);
+
             /* make sure our tmp buffer is big enough to hold everything */
-            if(tBuf_size < bytes_left) {
-                if(tBuf) 
-                    HDfree((VOIDP)tBuf);
-                tBuf_size = bytes_left;
-                tBuf = (int8 *) HDmalloc(tBuf_size);
-                if(tBuf == NULL) 
-                  {
-                    tBuf_size=0;
-                    return FALSE;
-                  } /* end if */
-              } /* end if */
+            if(SDIresizebuf((VOIDP *)&tBuf,&tBuf_size,chunk_size)==FAIL)
+                return(FALSE);
+            if(SDIresizebuf((VOIDP *)&tValues,&tValues_size,chunk_size)==FAIL)
+                return(FALSE);
 
             /* Fill the temporary buffer with the fill-value */
             if(attr != NULL)
-                HDmemfill(tBuf,(*attr)->data->values,vp->szof,(bytes_left/vp->HDFsize));
+                HDmemfill(tBuf,(*attr)->data->values,vp->szof,(chunk_size/vp->HDFsize));
             else 
-                NC_arrayfill((VOIDP)tBuf, bytes_left, vp->type);
+                NC_arrayfill((VOIDP)tBuf, chunk_size, vp->type);
 
             /* convert the fill-values, if necessary */
             if(convert) {
                 DFKsetNT(vp->HDFtype); /* added back here -GV */
-                DFKnumout((uint8 *) tBuf, tBuf, (uint32) (bytes_left/vp->HDFsize), 0, 0);
+                DFKnumout((uint8 *) tValues, tBuf, (uint32) (chunk_size/vp->HDFsize), 0, 0);
+                write_buf=(uint8 *)tValues;
               } /* end if */
+            else
+                write_buf=(uint8 *)tBuf;
 
-            /* Write the fill-values out */
-            status = Hwrite(vp->aid, bytes_left, (uint8 *) tBuf);
+            do {
+                /* Write the fill-values out */
+                status = Hwrite(vp->aid, chunk_size, write_buf);
+
+                /* reduce the bytes to write */
+                buf_size-=chunk_size;
+                chunk_size=MIN(buf_size,MAX_SIZE);
+             } while (buf_size>0);
           } /* end if */
       } /* end if */
 
@@ -1255,18 +1261,8 @@ uint32    count;
     
     /* make sure our tmp buffer is big enough to hold everything */
     byte_count = count * vp->HDFsize;
-    if(tBuf_size < byte_count) {
-        if(tBuf) 
-            HDfree((VOIDP)tBuf);
-        tBuf_size = byte_count;
-        tBuf = (int8 *) HDmalloc(tBuf_size);
-        if(tBuf == NULL) 
-          {
-            tBuf_size=0;
-            return FALSE;
-          } /* end if */
-    }
-    
+    if(SDIresizebuf((VOIDP *)&tBuf,&tBuf_size,byte_count)==FAIL)
+        return(FALSE);
 
 #ifdef DEBUG
     fprintf(stderr, "\tbyte_count %d   vp->HDFsize %d\n", byte_count, vp->HDFsize);
