@@ -134,7 +134,7 @@ void usage()
  printf("\t\t       HUFF, the skip-size\n");
  printf("\t\t       GZIP, the deflation level\n");
  printf("\t\t       JPEG, the quality factor\n");
- printf("\t\t       SZIP \n");
+ printf("\t\t       SZIP, pixels per block\n");
  printf("  [-c 'chunk_info'] Apply chunking. 'chunk_info' is a string with the format\n");
  printf("\t\t     <object list>:<chunk information>\n");
  printf("\t\t       <object list> is a comma separated list of object names\n");

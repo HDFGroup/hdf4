@@ -173,6 +173,7 @@ int  copy_gr(int32 infile_id,
  default:
   break;
   case COMP_CODE_SZIP:
+   info  = c_info_in.szip.pixels_per_block;
    break;
   case COMP_CODE_RLE:
    break;
@@ -402,10 +403,8 @@ int  copy_gr(int32 infile_id,
   switch(comp_type) 
   {
    case COMP_CODE_SZIP:
-   if (set_szip (rank,dimsizes,dtype,n_comps,&c_info)==FAIL)
+   if (set_szip (rank,dimsizes,dtype,n_comps,info,&c_info)==FAIL)
    {
-    printf( "Warning: SZIP compression cannot be set for <%s>. \
-     Using no compression \n", path);
     comp_type=COMP_CODE_NONE;
    }
    break;

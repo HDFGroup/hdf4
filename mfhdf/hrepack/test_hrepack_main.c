@@ -437,7 +437,7 @@ int main(void)
  */
  TESTING("compressing SDS SELECTED with SZIP, chunking SELECTED");
  hrepack_init (&options,verbose);
- hrepack_addcomp("dset4:SZIP",&options);
+ hrepack_addcomp("dset4:SZIP 8",&options);
  hrepack_addchunk("dset4:10x8",&options);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
@@ -486,7 +486,7 @@ int main(void)
  hrepack_addcomp("dset4:GZIP 9",&options);
  hrepack_addcomp("dset5:RLE",&options);
  hrepack_addcomp("dset6:HUFF 2",&options);
- hrepack_addcomp("dset7:SZIP",&options);
+ hrepack_addcomp("dset7:SZIP 8",&options);
  hrepack_addchunk("dset4:10x8",&options);
  hrepack_addchunk("dset5:10x8",&options);
  hrepack_addchunk("dset6:10x8",&options);
@@ -520,7 +520,7 @@ int main(void)
  hrepack_addcomp("dset4:GZIP 9",&options);
  hrepack_addcomp("dset5:RLE",&options);
  hrepack_addcomp("dset6:HUFF 2",&options);
- hrepack_addcomp("dset7:SZIP",&options);
+ hrepack_addcomp("dset7:SZIP 4",&options);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
  if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
