@@ -1221,12 +1221,10 @@ extern uint8 FAR *DFtbuf;
 #endif
 
 /* Old-style memory allocation function aliases -QAK */
-#ifdef QAK
 #define HDgetspace HDmalloc
 #define HDclearspace HDcalloc
 #define HDregetspace HDrealloc
 #define HDfreespace HDfree
-#endif /* QAK */
 
 /**************************************************************************
 *  Allocation functions defined differently for PC's under MS-DOS and Windows
