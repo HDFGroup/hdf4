@@ -432,7 +432,6 @@ int cdfid ;
         }
 #endif
 
-
 	/* find first available id */
 	for(id = 0 ; id < _ncdf; id++)
 		if( _cdfs[id] == NULL) break ;
@@ -734,7 +733,7 @@ NC *handle ;
                 strcpy(realpath, stash->path) ;
 
                 /* close stash */
-                NC_free_cdf(stash) ;
+/*                NC_free_cdf(stash) ; */
 #ifdef DOS_FS
                 xdr_destroy(handle->xdrs) ; /* close handle */
                 if( remove(realpath) != 0 )
