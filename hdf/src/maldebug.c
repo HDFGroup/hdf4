@@ -91,11 +91,7 @@ MEMHDR;
 
 /* Alignment macros */
 /* ---------------- */
-#if defined(PC)
-#define ALIGN_SIZE sizeof(unsigned char)
-#else
 #define ALIGN_SIZE sizeof(double)
-#endif
 
 #define HDR_SIZE sizeof(MEMHDR)
 
@@ -405,11 +401,6 @@ mem_HDfree(
     uintn       i;
 #endif
     char       *FUNC = "HDfree";
-
-#ifdef PC
-    if (ptr == NULL)
-        return (HDfree(ptr));
-#endif
 
 /* Convert client pointer to header pointer */
 /* ---------------------------------------- */

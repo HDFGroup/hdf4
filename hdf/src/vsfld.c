@@ -82,18 +82,18 @@ VSsetfields(int32 vkey, const char *fields)
     DYN_VWRITELIST *wlist;
     vsinstance_t *w;
     VDATA      *vs;
-    intn       ret_value = SUCCEED;
+    intn       ret_value = FAIL;
     CONSTR(FUNC, "VSsetfields");
 
 #ifdef HAVE_PABLO
     TRACE_ON(VS_mask, ID_VSsetfields);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vs's index in vstab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
@@ -239,8 +239,7 @@ VSsetfields(int32 vkey, const char *fields)
                 j += wlist->isize[i];
             }
 
-          ret_value = (SUCCEED);     /* ok */
-          goto done;
+          HGOTO_DONE(SUCCEED); /* OK */
       }     /* writing to empty vdata */
 
     /*
@@ -273,12 +272,8 @@ VSsetfields(int32 vkey, const char *fields)
                 if (!found)     /* field does not exist - error */
                     HGOTO_ERROR(DFE_BADFIELDS, FAIL);
             }
-
-          ret_value =  (SUCCEED);
-          goto done;
+        ret_value=SUCCEED;
       }     /* setting read list */
-
-    ret_value = (FAIL);
 
 done:
   if(ret_value == FAIL)   
@@ -316,11 +311,11 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
     TRACE_ON(VS_mask, ID_VSfdefine);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vs's index in vstab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
@@ -371,8 +366,8 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
             }
           else
             {
-          if((tmp_sym=(SYMDEF *) HDrealloc((VOIDP)tmp_sym,sizeof(SYMDEF)*(usymid+1)))==NULL)
-              HGOTO_ERROR(DFE_NOSPACE,FAIL);
+              if((tmp_sym=(SYMDEF *) HDrealloc((VOIDP)tmp_sym,sizeof(SYMDEF)*(usymid+1)))==NULL)
+                  HGOTO_ERROR(DFE_NOSPACE,FAIL);
             }
           vs->usym=tmp_sym;
       } /* end else */
@@ -421,14 +416,11 @@ VFnfields(int32 vkey)
     TRACE_ON(VF_mask, ID_VFnfields);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVSID(vkey))
-      {
-          HERROR(DFE_ARGS);
-          return (FAIL);
-      }
+    if (HAatom_group(vkey)!=VSIDGROUP)
+        HGOTO_ERROR(DFE_ARGS,FAIL);
 
     /* locate vs's index in vstab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
       HGOTO_ERROR(DFE_NOVS,FAIL);
 
     vs = w->vs;
@@ -471,11 +463,11 @@ VFfieldname(int32 vkey, int32 index)
     TRACE_ON(VF_mask, ID_VFfieldname);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
       HGOTO_ERROR(DFE_ARGS,NULL);
 
     /* locate vs's index in vstab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
       HGOTO_ERROR(DFE_NOVS,NULL);
 
     vs = w->vs;
@@ -516,11 +508,11 @@ VFfieldtype(int32 vkey, int32 index)
     TRACE_ON(VF_mask, ID_VFfieldtype);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
       HGOTO_ERROR(DFE_ARGS,FAIL);
 
     /* locate vs's index in vstab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
       HGOTO_ERROR(DFE_NOVS,FAIL);
 
     vs = w->vs;
@@ -561,11 +553,11 @@ VFfieldisize(int32 vkey, int32 index)
     TRACE_ON(VF_mask, ID_VFfieldisize);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
       HGOTO_ERROR(DFE_ARGS,FAIL);
 
     /* locate vs's index in vstab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
       HGOTO_ERROR(DFE_NOVS,FAIL);
 
     vs = w->vs;
@@ -606,11 +598,11 @@ VFfieldesize(int32 vkey, int32 index)
     TRACE_ON(VF_mask, ID_VFfieldesize);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
       HGOTO_ERROR(DFE_ARGS,FAIL);
 
     /* locate vs's index in vstab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
       HGOTO_ERROR(DFE_NOVS,FAIL);
 
     vs = w->vs;
@@ -651,11 +643,11 @@ VFfieldorder(int32 vkey, int32 index)
     TRACE_ON(VF_mask, ID_VFfieldorder);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
       HGOTO_ERROR(DFE_ARGS,FAIL);
 
     /* locate vs's index in vstab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
       HGOTO_ERROR(DFE_NOVS,FAIL);
 
     vs = w->vs;
@@ -717,11 +709,11 @@ intn VSsetexternalfile(int32 vkey, char *filename, int32 offset)
     if(!filename || offset < 0)
 	HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
 	    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vs's index in vstab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;

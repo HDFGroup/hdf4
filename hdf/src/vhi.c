@@ -58,11 +58,12 @@ VHstoredata(HFILEID f, char *field, uint8 buf[], int32 n, int32 datatype,
             char *vsname, char *vsclass)
 
 {
-    int32       order = 1;
-    int32       ret_value;
 #ifdef LATER
     CONSTR(FUNC, "VHstoredata");
 #endif
+    int32       order = 1;
+    int32       ret_value;
+
 #ifdef HAVE_PABLO
     TRACE_ON(VH_mask, ID_VHstoredata);
 #endif /* HAVE_PABLO */
@@ -102,10 +103,10 @@ VHstoredata(HFILEID f, char *field, uint8 buf[], int32 n, int32 datatype,
 int32
 VHstoredatam(HFILEID f, char *field, uint8 buf[], int32 n, int32 datatype, char *vsname, char *vsclass, int32 order)
 {
+    CONSTR(FUNC, "VHstoredatam");
     int32       ref;
     int32       vs;
     int32       ret_value = SUCCEED;
-    CONSTR(FUNC, "VHstoredatam");
 
 #ifdef HAVE_PABLO
     TRACE_ON(VH_mask, ID_VHstoredatam);

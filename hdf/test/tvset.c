@@ -60,7 +60,11 @@ write_vset_stuff(void)
           return FAIL;
       }
 
-    Vstart(fid);
+    if (Vstart(fid) == FAIL)
+      {
+          num_errs++;
+          return FAIL;
+      }
 
     /*
 
@@ -183,10 +187,18 @@ write_vset_stuff(void)
 
     /* Float32 Vdata */
     vs1 = VSattach(fid, -1, "w");
+    CHECK(vs1,FAIL,"VSattach");
+
     name = "Float Vdata";
-    VSsetname(vs1, name);
-    VSsetclass(vs1, "Test object");
-    VSfdefine(vs1, FIELD1, DFNT_FLOAT32, 1);
+    status=VSsetname(vs1, name);
+    CHECK(status,FAIL,"VSsetname");
+
+    status=VSsetclass(vs1, "Test object");
+    CHECK(status,FAIL,"VSsetclass");
+
+    status=VSfdefine(vs1, FIELD1, DFNT_FLOAT32, 1);
+    CHECK(status,FAIL,"VSfdefine");
+
     status = VSsetfields(vs1, FIELD1);
     if (status == FAIL)
       {

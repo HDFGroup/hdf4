@@ -105,7 +105,7 @@ PRIVATE int32 HCIread_header
              compinfo_t * info, comp_info * c_info, model_info * m_info);
 
 PRIVATE int32 HCIwrite_header
-            (accrec_t * access_rec, compinfo_t * info, uint16 special_tag, uint16 ref);
+            (atom_t file_id, compinfo_t * info, uint16 special_tag, uint16 ref);
 
 PRIVATE int32 HCIinit_model
             (comp_model_info_t * minfo, comp_model_t model_type,
@@ -177,10 +177,6 @@ HCIinit_coder(comp_coder_info_t * cinfo, comp_coder_t coder_type,
               cinfo->coder_info.nbit_info.fill_one = c_info->nbit.fill_one;
               cinfo->coder_info.nbit_info.mask_off = c_info->nbit.start_bit;
               cinfo->coder_info.nbit_info.mask_len = c_info->nbit.bit_len;
-#ifdef TESTING
-              printf("HCIinit_coder(): nt=%d, sign_ext=%d, fill_one=%d, start_bit=%d, bit_len=%d\n", c_info->nbit.nt, c_info->nbit.sign_ext, c_info->nbit.fill_one, c_info->nbit.start_bit, c_info->nbit.bit_len);
-              printf("HCIinit_coder(): coder_funcs.write=%p\n", cinfo->coder_funcs.write);
-#endif
               if ((cinfo->coder_info.nbit_info.nt_size
                    = DFKNTsize(cinfo->coder_info.nbit_info.nt)) == FAIL)
                   HRETURN_ERROR(DFE_BADNUMTYPE, FAIL);
@@ -256,7 +252,7 @@ HCIinit_model(comp_model_info_t * minfo, comp_model_t model_type,
     HCIwrite_header -- Write the compression header info to a file
  USAGE
     int32 HCIwrite_header(access_rec,info,special_tag,ref)
-    accrec_t *access_rec;   IN: ptr to the access element record
+    atom_t file_id;         IN: File ID of the file to write the header to
     compinfo_t *info;       IN: ptr the compression information
     uint16 special_tag,ref; IN: the tag/ref of the compressed element
 
@@ -271,7 +267,7 @@ HCIinit_model(comp_model_info_t * minfo, comp_model_t model_type,
  REVISION LOG
 --------------------------------------------------------------------------*/
 PRIVATE int32
-HCIwrite_header(accrec_t * access_rec, compinfo_t * info, uint16 special_tag, uint16 ref)
+HCIwrite_header(atom_t file_id, compinfo_t * info, uint16 special_tag, uint16 ref)
 {
     CONSTR(FUNC, "HCIwrite_header");    /* for HERROR */
     int32       dd_aid;         /* AID for writing the special info */
@@ -299,10 +295,6 @@ HCIwrite_header(accrec_t * access_rec, compinfo_t * info, uint16 special_tag, ui
     switch (info->cinfo.coder_type)
       {
           case COMP_CODE_NBIT:      /* N-bit coding needs info */
-#ifdef TESTING
-              printf("HCIwrite_header(): nt=%d, sign_ext=%d, fill_one=%d, start_bit=%d, bit_len=%d\n", info->cinfo.coder_info.nbit_info.nt, info->cinfo.coder_info.nbit_info.sign_ext, info->cinfo.coder_info.nbit_info.fill_one, info->cinfo.coder_info.nb
-it_info.mask_off, info->cinfo.coder_info.nbit_info.mask_len);
-#endif
               /* specify number-type of N-bit data */
               INT32ENCODE(p, info->cinfo.coder_info.nbit_info.nt);
               /* next is the flag to indicate whether to sign extend */
@@ -328,7 +320,7 @@ it_info.mask_off, info->cinfo.coder_info.nbit_info.mask_len);
 
     
     /* write the special info structure to fill */
-    if((dd_aid=Hstartaccess(access_rec->file_id,special_tag,ref,DFACC_ALL))==FAIL)
+    if((dd_aid=Hstartaccess(file_id,special_tag,ref,DFACC_ALL))==FAIL)
         HGOTO_ERROR(DFE_CANTACCESS, FAIL);
     if (Hwrite(dd_aid, p-local_ptbuf, local_ptbuf) == FAIL)
         HGOTO_ERROR(DFE_WRITEERROR, FAIL);
@@ -501,9 +493,9 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
 
     /* clear error stack and validate args */
     HEclear();
-    file_rec = FID2REC(file_id);
+    file_rec = HAatom_object(file_id);
     if (BADFREC(file_rec) || SPECIALTAG(tag)
-        || (special_tag = MKSPECIALTAG(tag)) == DFTAG_NULL)
+            || (special_tag = MKSPECIALTAG(tag)) == DFTAG_NULL)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     /* chech for access permission */
@@ -511,10 +503,8 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
         HRETURN_ERROR(DFE_DENIED, FAIL);
 
     /* get a slot in the access records table */
-    if (FAIL == (slot = HIget_access_slot()))
+    if (NULL == (access_rec = HIget_access_rec()))
         HRETURN_ERROR(DFE_TOOMANY, FAIL);
-
-    access_rec = &access_records[slot];
 
     /* search for identical dd */
     if ((data_id=HTPselect(file_rec,tag,ref))!=FAIL)
@@ -522,14 +512,16 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
           /* Check if the element is already special */
           if (HTPis_special(data_id)==TRUE)
             {
-                HTPendaccess(data_id);
+                if (HTPendaccess(data_id) == FAIL)
+                    HGOTO_ERROR(DFE_CANTFLUSH, FAIL);
                 HGOTO_ERROR(DFE_CANTMOD, FAIL);
             }   /* end if */
           
           /* get the info for the dataset */
           if(HTPinquire(data_id,NULL,NULL,NULL,&data_len)==FAIL)
             {
-                HTPendaccess(data_id);
+                if (HTPendaccess(data_id) == FAIL)
+                    HGOTO_ERROR(DFE_CANTFLUSH, FAIL);
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
             } /* end if */
       } /* end if */
@@ -548,7 +540,7 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
     HCIinit_model(&(info->minfo), model_type, m_info);
     HCIinit_coder(&(info->cinfo), coder_type, c_info);
 
-    if (HCIwrite_header(access_rec, info, special_tag, ref) == FAIL)
+    if (HCIwrite_header(file_id, info, special_tag, ref) == FAIL)
           HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
     /* update access record and file record */
@@ -597,13 +589,13 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
               HGOTO_ERROR(DFE_CANTDELDD, FAIL);
       }     /* end if */
 
-    ret_value=ASLOT2ID(slot);
+    ret_value=HAregister_atom(AIDGROUP,access_rec);
 
 done:
     if(ret_value == FAIL)   
       { /* Error condition cleanup */
         if(access_rec!=NULL)
-            access_rec->used = FALSE;
+            HDfree(access_rec);
         if(info!=NULL)
             HDfree((VOIDP) info);
       } /* end if */
@@ -640,7 +632,7 @@ HCIstaccess(accrec_t * access_rec, int16 acc_mode)
     int32       ret_value=SUCCEED;
 
     /* get file record and validate */
-    file_rec = FID2REC(access_rec->file_id);
+    file_rec = HAatom_object(access_rec->file_id);
     if (BADFREC(file_rec) || !(file_rec->access & acc_mode))
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
@@ -665,7 +657,7 @@ HCIstaccess(accrec_t * access_rec, int16 acc_mode)
 
     file_rec->attach++;
 
-    ret_value=ASLOT2ID(access_rec - access_records);
+    ret_value=HAregister_atom(AIDGROUP,access_rec);
 
 done:
     if(ret_value == FAIL)   
@@ -699,21 +691,22 @@ HCPstread(accrec_t * access_rec)
 {
     CONSTR(FUNC, "HCPstread");  /* for HERROR */
     compinfo_t *info;           /* information on the special element */
-    int32       aid;            /* AID to return */
-    int32       ret;
+    int32       ret_value;      /* AID to return */
 
-    if ((aid = HCIstaccess(access_rec, DFACC_READ)) == FAIL)
-      {
-          access_rec->used = FALSE;
-          HRETURN_ERROR(DFE_DENIED, FAIL);
-      }     /* end if */
+    if ((ret_value = HCIstaccess(access_rec, DFACC_READ)) == FAIL)
+        HGOTO_ERROR(DFE_DENIED, FAIL);
     info = (compinfo_t *) access_rec->special_info;
-    if ((ret = (*(info->minfo.model_funcs.stread)) (access_rec)) == FAIL)
-      {
-          access_rec->used = FALSE;
-          HRETURN_ERROR(DFE_MODEL, FAIL);
-      }     /* end if */
-    return (aid);
+    if ((*(info->minfo.model_funcs.stread)) (access_rec) == FAIL)
+        HGOTO_ERROR(DFE_MODEL, FAIL);
+
+done:
+    if(ret_value == FAIL)   
+      { /* Error condition cleanup */
+
+      } /* end if */
+
+    /* Normal function cleanup */
+    return ret_value; 
 }   /* end HCPstread() */
 
 /*--------------------------------------------------------------------------
@@ -736,22 +729,23 @@ int32
 HCPstwrite(accrec_t * access_rec)
 {
     CONSTR(FUNC, "HCPstwrite");     /* for HERROR */
-    compinfo_t *info;           /* information on the special element */
-    int32       aid;            /* AID to return */
-    int32       ret;
+    compinfo_t *info;               /* information on the special element */
+    int32       ret_value;          /* AID to return */
 
-    if ((aid = HCIstaccess(access_rec, DFACC_WRITE)) == FAIL)
-      {
-          access_rec->used = FALSE;
-          HRETURN_ERROR(DFE_DENIED, FAIL);
-      }     /* end if */
+    if ((ret_value = HCIstaccess(access_rec, DFACC_WRITE)) == FAIL)
+        HGOTO_ERROR(DFE_DENIED, FAIL);
     info = (compinfo_t *) access_rec->special_info;
-    if ((ret = (*(info->minfo.model_funcs.stwrite)) (access_rec)) == FAIL)
-      {
-          access_rec->used = FALSE;
-          HRETURN_ERROR(DFE_MODEL, FAIL);
-      }     /* end if */
-    return (aid);
+    if ((*(info->minfo.model_funcs.stwrite)) (access_rec) == FAIL)
+        HGOTO_ERROR(DFE_MODEL, FAIL);
+
+done:
+    if(ret_value == FAIL)   
+      { /* Error condition cleanup */
+
+      } /* end if */
+
+    /* Normal function cleanup */
+    return ret_value; 
 }   /* end HCPstwrite() */
 
 /*--------------------------------------------------------------------------
@@ -777,7 +771,7 @@ HCPseek(accrec_t * access_rec, int32 offset, intn origin)
 {
     CONSTR(FUNC, "HCPseek");    /* for HERROR */
     compinfo_t *info;           /* information on the special element */
-    int32       ret;
+    int32       ret_value;
 
     /* Adjust offset according to origin.  There is no upper bound to posn */
     if (origin == DF_CURRENT)
@@ -785,16 +779,23 @@ HCPseek(accrec_t * access_rec, int32 offset, intn origin)
     if (origin == DF_END)
         offset += ((compinfo_t *) (access_rec->special_info))->length;
     if (offset < 0)
-        HRETURN_ERROR(DFE_RANGE, FAIL);
+        HGOTO_ERROR(DFE_RANGE, FAIL);
 
     info = (compinfo_t *) access_rec->special_info;
-    if ((ret = (*(info->minfo.model_funcs.seek)) (access_rec, offset, origin)) == FAIL)
-        HRETURN_ERROR(DFE_MODEL, FAIL);
+    if ((ret_value = (*(info->minfo.model_funcs.seek)) (access_rec, offset, origin)) == FAIL)
+        HGOTO_ERROR(DFE_MODEL, FAIL);
 
     /* set the offset */
     access_rec->posn = offset;
 
-    return (ret);
+done:
+    if(ret_value == FAIL)   
+      { /* Error condition cleanup */
+
+      } /* end if */
+
+    /* Normal function cleanup */
+    return ret_value; 
 }   /* end HCPseek() */
 
 /*--------------------------------------------------------------------------
@@ -820,10 +821,11 @@ HCPread(accrec_t * access_rec, int32 length, VOIDP data)
 {
     CONSTR(FUNC, "HCPread");    /* for HERROR */
     compinfo_t *info;           /* information on the special element */
+    int32       ret_value;
 
     /* validate length */
     if (length < 0)
-        HRETURN_ERROR(DFE_RANGE, FAIL);
+        HGOTO_ERROR(DFE_RANGE, FAIL);
 
     info = (compinfo_t *) access_rec->special_info;
 
@@ -831,15 +833,24 @@ HCPread(accrec_t * access_rec, int32 length, VOIDP data)
     if (length == 0)
         length = info->length - access_rec->posn;
     else if (length < 0 || access_rec->posn + length > info->length)
-        HRETURN_ERROR(DFE_RANGE, FAIL);
+        HGOTO_ERROR(DFE_RANGE, FAIL);
 
     if ((*(info->minfo.model_funcs.read))(access_rec, length, data) == FAIL)
-        HRETURN_ERROR(DFE_MODEL, FAIL);
+        HGOTO_ERROR(DFE_MODEL, FAIL);
 
     /* adjust access position */
     access_rec->posn += length;
 
-    return (length);
+    ret_value=length;
+
+done:
+    if(ret_value == FAIL)   
+      { /* Error condition cleanup */
+
+      } /* end if */
+
+    /* Normal function cleanup */
+    return ret_value; 
 }   /* end HCPread() */
 
 /*--------------------------------------------------------------------------
@@ -868,7 +879,8 @@ HCPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
     uint8       local_ptbuf[4];
     uint8       *p = local_ptbuf;  /* temp buffer ptr */
     filerec_t   *file_rec =     /* file record */
-                           FID2REC(access_rec->file_id);  
+                           HAatom_object(access_rec->file_id);  
+    int32       ret_value;
 
     /* validate length */
     if (length < 0)
@@ -876,7 +888,7 @@ HCPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
 
     info = (compinfo_t *) access_rec->special_info;
     if ((*(info->minfo.model_funcs.write)) (access_rec, length, data) == FAIL)
-        HRETURN_ERROR(DFE_MODEL, FAIL);
+        HGOTO_ERROR(DFE_MODEL, FAIL);
 
     /* update access record, and information about special element */
     access_rec->posn += length;
@@ -886,19 +898,28 @@ HCPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
 
           /* get the info for the dataset */
           if(HTPinquire(access_rec->ddid,NULL,NULL,&data_off,NULL)==FAIL)
-              HRETURN_ERROR(DFE_INTERNAL, FAIL);
+              HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
           info->length = access_rec->posn;
 
           INT32ENCODE(p, info->length);
           if (HPseek(file_rec, data_off + 4) == FAIL)
-              HRETURN_ERROR(DFE_SEEKERROR, FAIL);
+              HGOTO_ERROR(DFE_SEEKERROR, FAIL);
           /* re-write un-comp. len */
           if (HPwrite(file_rec, local_ptbuf, 4) == FAIL)     
-              HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+              HGOTO_ERROR(DFE_WRITEERROR, FAIL);
       }     /* end if */
 
-    return (length);  /* return length of bytes written */
+    ret_value=length;  /* return length of bytes written */
+
+done:
+    if(ret_value == FAIL)   
+      { /* Error condition cleanup */
+
+      } /* end if */
+
+    /* Normal function cleanup */
+    return ret_value; 
 }   /* end HCPwrite() */
 
 /*--------------------------------------------------------------------------
@@ -982,12 +1003,12 @@ intn
 HCPendaccess(accrec_t * access_rec)
 {
     CONSTR(FUNC, "HCPendaccess");   /* for HERROR */
-    filerec_t  *file_rec = FID2REC(access_rec->file_id);    /* file record */
+    filerec_t  *file_rec = HAatom_object(access_rec->file_id);    /* file record */
     intn      ret_value = SUCCEED;
 
     /* validate file record */
     if (BADFREC(file_rec))
-        HRETURN_ERROR(DFE_INTERNAL, FAIL);
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* close the file pointed to by this access rec */
     HCPcloseAID(access_rec);
@@ -1000,7 +1021,7 @@ HCPendaccess(accrec_t * access_rec)
     file_rec->attach--;
 
     /* free the access record */
-    access_rec->used = FALSE;
+    HDfree(access_rec);
 
 done:
   if(ret_value == FAIL)   

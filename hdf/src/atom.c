@@ -31,6 +31,7 @@ DESIGN
     in an enum (called group_t) in atom.h.
 
 BUGS/LIMITATIONS
+    Can't interate over the atoms in a group.
 
 LOCAL ROUTINES
   HAIfind_atom      - Returns a pointer to an atom_info_t from a atom ID
@@ -42,6 +43,7 @@ EXPORTED ROUTINES
   HAatom_object     - Get the object for an atom
   HAatom_group      - Get the group for an atom
   HAremove_atom     - Remove an atom from a group
+  HAsearch_atom     - Search a group for a particular object
  Atom Group Functions:
   HAinit_group      - Initialize a group to store atoms in
   HAdestroy_group   - Destroy an atomic group
@@ -97,6 +99,20 @@ intn HAinit_group(group_t grp,      /* IN: Group to initialize */
     HEclear();
     if((grp<=BADGROUP || grp>=MAXGROUP) && hash_size>0)
         HGOTO_ERROR(DFE_ARGS, FAIL);
+
+#ifdef HASH_SIZE_POWER_2
+    /* If anyone knows a faster test for a power of two, please change this silly code -QAK */
+    if(!(hash_size==2 || hash_size==4 || hash_size==8 || hash_size==16
+            || hash_size==32 || hash_size==64 || hash_size==128 || hash_size==256
+            || hash_size==512 || hash_size==1024 || hash_size==2048
+            || hash_size==4096 || hash_size==8192 || hash_size==16374
+            || hash_size==32768 || hash_size==65536 || hash_size==131072
+            || hash_size==262144 || hash_size==524288 || hash_size==1048576
+            || hash_size==2097152 || hash_size==4194304 || hash_size==8388608
+            || hash_size==16777216 || hash_size==33554432 || hash_size==67108864
+            || hash_size==134217728 || hash_size==268435456))
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+#endif /* HASH_SIZE_POWER_2 */
 
     if(atom_group_list[grp]==NULL)
       {     /* Allocate the group information */
@@ -174,7 +190,19 @@ intn HAdestroy_group(group_t grp       /* IN: Group to destroy */
 
     /* Decrement the number of users of the atomic group */
     if((--(grp_ptr->count))==0)
+      {
+#ifdef ATOMS_ARE_CACHED
+        uintn i;
+
+        for(i=0; i<ATOM_CACHE_SIZE; i++)
+            if(ATOM_TO_GROUP(atom_id_cache[i])==grp)
+              {
+                atom_id_cache[i]=(-1);
+                atom_obj_cache[i]=NULL;
+              } /* end if */
+#endif /* ATOMS_ARE_CACHED */
         HDfree(grp_ptr->atom_list);
+      } /* end if */
 
 done:
   if(ret_value == FAIL)   
@@ -279,6 +307,9 @@ VOIDP HAatom_object(atom_t atm   /* IN: Atom to retrieve object for */
 )
 {
     CONSTR(FUNC, "HAatom_object");	/* for HERROR */
+#ifdef ATOMS_ARE_CACHED
+    uintn i;                        /* local counter */
+#endif /* ATOMS_ARE_CACHED */
     atom_info_t *atm_ptr=NULL;      /* ptr to the new atom */
     VOIDP ret_value=NULL;
 
@@ -287,6 +318,28 @@ VOIDP HAatom_object(atom_t atm   /* IN: Atom to retrieve object for */
 #endif /* HAVE_PABLO */
 
     HEclear();
+
+#ifdef ATOMS_ARE_CACHED
+    /* Look for the atom in the cache first */
+    for(i=0; i<ATOM_CACHE_SIZE; i++)
+        if(atom_id_cache[i]==atm)
+          {
+            ret_value=atom_obj_cache[i];
+            if(i>0)
+              { /* Implement a simple "move forward" caching scheme */
+                atom_t t_atom=atom_id_cache[i-1];
+                VOIDP  t_obj=atom_obj_cache[i-1];
+
+                atom_id_cache[i-1]=atom_id_cache[i];
+                atom_obj_cache[i-1]=atom_obj_cache[i];
+                atom_id_cache[i]=t_atom;
+                atom_obj_cache[i]=t_obj;
+              } /* end if */
+            HGOTO_DONE(ret_value);
+          } /* end if */
+#endif /* ATOMS_ARE_CACHED */
+
+    /* General lookup of the atom */
     if((atm_ptr=HAIfind_atom(atm))==NULL)
         HGOTO_ERROR(DFE_INTERNAL, NULL);
 
@@ -368,6 +421,9 @@ VOIDP HAremove_atom(atom_t atm   /* IN: Atom to remove */
         *last_atm;                  /* ptr to the last atom */
     group_t grp;                    /* atom's atomic group */
     uintn hash_loc;                 /* atom's hash table location */
+#ifdef ATOMS_ARE_CACHED
+    uintn i;                        /* local counting variable */
+#endif /* ATOMS_ARE_CACHED */
     VOIDP ret_value=NULL;
 
 #ifdef HAVE_PABLO
@@ -410,6 +466,17 @@ VOIDP HAremove_atom(atom_t atm   /* IN: Atom to remove */
     else    /* couldn't find the atom in the proper place */
         HGOTO_ERROR(DFE_INTERNAL, NULL);
     
+#ifdef ATOMS_ARE_CACHED
+    /* Delete object from cache */
+    for(i=0; i<ATOM_CACHE_SIZE; i++)
+        if(atom_id_cache[i]==atm)
+          {
+            atom_id_cache[i]=(-1);
+            atom_obj_cache[i]=NULL;
+            break;  /* we assume there is only one instance in the cache */
+          } /* end if */
+#endif /* ATOMS_ARE_CACHED */
+
 done:
   if(ret_value == NULL)   
     { /* Error condition cleanup */
@@ -423,6 +490,69 @@ done:
 
   return ret_value;
 }   /* end HAremove_atom() */
+
+/******************************************************************************
+ NAME
+     HAsearch_atom - Search for an object in a group and get it's pointer.
+
+ DESCRIPTION
+    Searchs for an object in a group and returns the pointer to it.
+    This routine calls the function pointer passed in for each object in the
+    group until it finds a match.  Currently there is no way to resume a
+    search.
+
+ RETURNS
+    Returns pointer an atom's object if successful and NULL otherwise
+
+*******************************************************************************/
+VOIDP HAsearch_atom(group_t grp,        /* IN: Group to search for the object in */
+    HAsearch_func_t func,               /* IN: Ptr to the comparison function */
+    const VOIDP key                     /* IN: pointer to key to compare against */
+)
+{
+    CONSTR(FUNC, "HAsearch_atom");	/* for HERROR */
+    atom_group_t *grp_ptr=NULL;     /* ptr to the atomic group */
+    atom_info_t *atm_ptr=NULL;      /* ptr to the new atom */
+    intn i;                         /* local counting variable */
+    VOIDP ret_value=NULL;
+
+#ifdef HAVE_PABLO
+    TRACE_ON(HA_mask, ID_HAsearch_atom);
+#endif /* HAVE_PABLO */
+
+    HEclear();
+    if(grp<=BADGROUP || grp>=MAXGROUP)
+        HGOTO_ERROR(DFE_ARGS, NULL);
+
+    grp_ptr=atom_group_list[grp];
+    if(grp_ptr==NULL || grp_ptr->count<=0)
+        HGOTO_ERROR(DFE_INTERNAL, NULL);
+
+    /* Start at the beginning of the array */
+    for(i=0; i<grp_ptr->hash_size; i++)
+      {
+        atm_ptr=grp_ptr->atom_list[i];
+        while(atm_ptr!=NULL)
+          {
+              if((*func)(atm_ptr->obj_ptr,key))
+                  HGOTO_DONE(atm_ptr->obj_ptr); /* found the item we are looking for */
+              atm_ptr=atm_ptr->next;
+          } /* end while */
+      } /* end for */
+
+done:
+  if(ret_value == NULL)
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(HA_mask, ID_HAsearch_atom);
+#endif /* HAVE_PABLO */
+
+  return ret_value;
+}   /* end HAsearch_atom() */
 
 /******************************************************************************
  NAME
@@ -467,6 +597,11 @@ static atom_info_t *HAIfind_atom(atom_t atm   /* IN: Atom to retrieve atom for *
           atm_ptr=atm_ptr->next;
       } /* end while */
     ret_value=atm_ptr;
+
+#ifdef ATOMS_ARE_CACHED
+    atom_id_cache[ATOM_CACHE_SIZE-1]=atm;
+    atom_obj_cache[ATOM_CACHE_SIZE-1]=atm_ptr->obj_ptr;
+#endif /* ATOMS_ARE_CACHED */
 
 done:
   if(ret_value == NULL)   

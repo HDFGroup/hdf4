@@ -28,165 +28,165 @@ static char RcsId[] = "$Id$";
 #include "tutils.h"
 
 /* Internal variables */
-static int32 FAR rank = 3;
+static int32  rank = 3;
 
-static float64 FAR maxf64 = 123.0;
-static float64 FAR minf64 = -1.0;
-static float64 FAR fillf64 = 1.0;
+static float64  maxf64 = 123.0;
+static float64  minf64 = -1.0;
+static float64  fillf64 = 1.0;
 
-static float32 FAR maxf32 = (float32) 123.0;
-static float32 FAR minf32 = (float32) -1.0;
-static float32 FAR fillf32 = (float32) 1.0;
+static float32  maxf32 = (float32) 123.0;
+static float32  minf32 = (float32) -1.0;
+static float32  fillf32 = (float32) 1.0;
 
-#if !((defined PC & !(defined PC386 | defined UNIX386)) | defined CRAYMPP)
-static intn FAR maxin = 123;
-static intn FAR minin = -1;
-static intn FAR fillin = 1;
+#if !(defined CRAYMPP)
+static intn  maxin = 123;
+static intn  minin = -1;
+static intn  fillin = 1;
 
-static uintn FAR maxuin = 123;
-static uintn FAR minuin = 2;
-static uintn FAR filluin = 1;
+static uintn  maxuin = 123;
+static uintn  minuin = 2;
+static uintn  filluin = 1;
 #endif
 
-static int32 FAR maxi32 = 123;
-static int32 FAR mini32 = -1;
-static int32 FAR filli32 = 1;
+static int32  maxi32 = 123;
+static int32  mini32 = -1;
+static int32  filli32 = 1;
 
-static uint32 FAR maxui32 = 123;
-static uint32 FAR minui32 = 2;
-static uint32 FAR fillui32 = 1;
+static uint32  maxui32 = 123;
+static uint32  minui32 = 2;
+static uint32  fillui32 = 1;
 
-static int16 FAR maxi16 = 123;
-static int16 FAR mini16 = -1;
-static int16 FAR filli16 = 1;
+static int16  maxi16 = 123;
+static int16  mini16 = -1;
+static int16  filli16 = 1;
 
-static uint16 FAR maxui16 = 123;
-static uint16 FAR minui16 = 2;
-static uint16 FAR fillui16 = 1;
+static uint16  maxui16 = 123;
+static uint16  minui16 = 2;
+static uint16  fillui16 = 1;
 
-static int8 FAR maxi8 = 123;
-static int8 FAR mini8 = -1;
-static int8 FAR filli8 = 1;
+static int8  maxi8 = 123;
+static int8  mini8 = -1;
+static int8  filli8 = 1;
 
-static uint8 FAR maxui8 = 123;
-static uint8 FAR minui8 = 2;
-static uint8 FAR fillui8 = 1;
+static uint8  maxui8 = 123;
+static uint8  minui8 = 2;
+static uint8  fillui8 = 1;
 
 /* Dimensions of slab */
-static int32 FAR size_dims[3] =
+static int32  size_dims[3] =
 {2, 3, 4};                      /* size of slab dims */
-static int32 FAR start_dims[3] =
+static int32  start_dims[3] =
 {1, 1, 1};                      /* starting dims  */
-static int32 FAR stride[3] =
+static int32  stride[3] =
 {0, 0, 0};
-static int32 FAR d_dims[3] =
+static int32  d_dims[3] =
 {0, 0, 0};
 
 /* luf for planes, rows and cols  */
-static const char FAR *lpln = "Time";
-static const char FAR *upln = "Second";
-static const char FAR *fpln = "Int32";
-static const char FAR *lrow = "Line";
-static const char FAR *urow = "Inch";
-static const char FAR *frow = "Int16";
-static const char FAR *lcol = "Column";
-static const char FAR *ucol = "Cm";
-static const char FAR *fcol = "Int32";
+static const char  *lpln = "Time";
+static const char  *upln = "Second";
+static const char  *fpln = "Int32";
+static const char  *lrow = "Line";
+static const char  *urow = "Inch";
+static const char  *frow = "Int16";
+static const char  *lcol = "Column";
+static const char  *ucol = "Cm";
+static const char  *fcol = "Int32";
 
 /* scales for planes, rows, and cols */
-static float64 FAR scplnf64[2] =
+static float64  scplnf64[2] =
 {0.0, 100.0};
-static float64 FAR scrowf64[3] =
+static float64  scrowf64[3] =
 {0.0, 10.0, 20.0};
-static float64 FAR sccolf64[4] =
+static float64  sccolf64[4] =
 {0.0, 1.0, 2.0, 3.0};
 
-static float32 FAR scplnf32[2] =
+static float32  scplnf32[2] =
 {(float32) 0.0, (float32) 100.0};
-static float32 FAR scrowf32[3] =
+static float32  scrowf32[3] =
 {(float32) 0.0, (float32) 10.0, (float32) 20.0};
-static float32 FAR sccolf32[4] =
+static float32  sccolf32[4] =
 {(float32) 0.0, (float32) 1.0, (float32) 2.0, (float32) 3.0};
 
-#if !((defined PC & !(defined PC386 | defined UNIX386)) | defined CRAYMPP)
-static intn FAR scplnin[2] =
+#if !(defined CRAYMPP)
+static intn  scplnin[2] =
 {0, 100};
-static intn FAR scrowin[3] =
+static intn  scrowin[3] =
 {0, 10, 20};
-static intn FAR sccolin[4] =
+static intn  sccolin[4] =
 {0, 1, 2, 3};
 
-static uintn FAR scplnuin[2] =
+static uintn  scplnuin[2] =
 {0, 100};
-static uintn FAR scrowuin[3] =
+static uintn  scrowuin[3] =
 {0, 10, 20};
-static uintn FAR sccoluin[4] =
+static uintn  sccoluin[4] =
 {0, 1, 2, 3};
 #endif
 
-static int32 FAR scplni32[2] =
+static int32  scplni32[2] =
 {0, 100};
-static int32 FAR scrowi32[3] =
+static int32  scrowi32[3] =
 {0, 10, 20};
-static int32 FAR sccoli32[4] =
+static int32  sccoli32[4] =
 {0, 1, 2, 3};
 
-static uint32 FAR scplnui32[2] =
+static uint32  scplnui32[2] =
 {0, 100};
-static uint32 FAR scrowui32[3] =
+static uint32  scrowui32[3] =
 {0, 10, 20};
-static uint32 FAR sccolui32[4] =
+static uint32  sccolui32[4] =
 {0, 1, 2, 3};
 
-static int16 FAR scplni16[2] =
+static int16  scplni16[2] =
 {0, 100};
-static int16 FAR scrowi16[3] =
+static int16  scrowi16[3] =
 {0, 10, 20};
-static int16 FAR sccoli16[4] =
+static int16  sccoli16[4] =
 {0, 1, 2, 3};
 
-static uint16 FAR scplnui16[2] =
+static uint16  scplnui16[2] =
 {0, 100};
-static uint16 FAR scrowui16[3] =
+static uint16  scrowui16[3] =
 {0, 10, 20};
-static uint16 FAR sccolui16[4] =
+static uint16  sccolui16[4] =
 {0, 1, 2, 3};
 
-static int8 FAR scplni8[2] =
+static int8  scplni8[2] =
 {0, 100};
-static int8 FAR scrowi8[3] =
+static int8  scrowi8[3] =
 {0, 10, 20};
-static int8 FAR sccoli8[4] =
+static int8  sccoli8[4] =
 {0, 1, 2, 3};
 
-static uint8 FAR scplnui8[2] =
+static uint8  scplnui8[2] =
 {0, 100};
-static uint8 FAR scrowui8[3] =
+static uint8  scrowui8[3] =
 {0, 10, 20};
-static uint8 FAR sccolui8[4] =
+static uint8  sccolui8[4] =
 {0, 1, 2, 3};
 
 /* Slabs for slabw(), slab1w(), slab2w() */
-static float32 FAR slabw1[1][1][3] =
+static float32  slabw1[1][1][3] =
 {
     {
         {(float32) 110.0, (float32) 111.0, (float32) 112.0}}};
-static float32 FAR slabw2[2][1][3] =
+static float32  slabw2[2][1][3] =
 {
     {
         {(float32) 20.0, (float32) 21.0, (float32) 22.0}},
     {
         {(float32) 120.0, (float32) 121.0, (float32) 122.0}}};
-static float32 FAR slabw3[1][2][3] =
+static float32  slabw3[1][2][3] =
 {
     {
         {(float32) 0.0, (float32) 1.0, (float32) 2.0},
         {(float32) 10.0, (float32) 11.0, (float32) 12.0}}};
-static float32 FAR slabw4[1][1][3] =
+static float32  slabw4[1][1][3] =
 {
     {
         {(float32) 100.0, (float32) 101.0, (float32) 102.0}}};
-static float32 FAR slabw5[2][3][1] =
+static float32  slabw5[2][3][1] =
 {
     {
         {(float32) 3.0},
@@ -197,26 +197,26 @@ static float32 FAR slabw5[2][3][1] =
         {(float32) 113.0},
         {(float32) 123.0}}};
 
-static float64 FAR slabw1f64[1][1][3] =
+static float64  slabw1f64[1][1][3] =
 {
     {
         {110.0, 111.0, 112.0}}};
-static float64 FAR slabw2f64[2][1][3] =
+static float64  slabw2f64[2][1][3] =
 {
     {
         {20.0, 21.0, 22.0}},
     {
         {120.0, 121.0, 122.0}}};
-static float64 FAR slabw3f64[1][2][3] =
+static float64  slabw3f64[1][2][3] =
 {
     {
         {0.0, 1.0, 2.0},
         {10.0, 11.0, 12.0}}};
-static float64 FAR slabw4f64[1][1][3] =
+static float64  slabw4f64[1][1][3] =
 {
     {
         {100.0, 101.0, 102.0}}};
-static float64 FAR slabw5f64[2][3][1] =
+static float64  slabw5f64[2][3][1] =
 {
     {
         {3.0},
@@ -227,27 +227,27 @@ static float64 FAR slabw5f64[2][3][1] =
         {113.0},
         {123.0}}};
 
-#if !((defined PC & !(defined PC386 | defined UNIX386)) | defined CRAYMPP)
-static intn FAR slabw1in[1][1][3] =
+#if !(defined CRAYMPP)
+static intn  slabw1in[1][1][3] =
 {
     {
         {110, 111, 112}}};
-static intn FAR slabw2in[2][1][3] =
+static intn  slabw2in[2][1][3] =
 {
     {
         {20, 21, 22}},
     {
         {120, 121, 122}}};
-static intn FAR slabw3in[1][2][3] =
+static intn  slabw3in[1][2][3] =
 {
     {
         {0, 1, 2},
         {10, 11, 12}}};
-static intn FAR slabw4in[1][1][3] =
+static intn  slabw4in[1][1][3] =
 {
     {
         {100, 101, 102}}};
-static intn FAR slabw5in[2][3][1] =
+static intn  slabw5in[2][3][1] =
 {
     {
         {3},
@@ -258,26 +258,26 @@ static intn FAR slabw5in[2][3][1] =
         {113},
         {123}}};
 
-static uintn FAR slabw1uin[1][1][3] =
+static uintn  slabw1uin[1][1][3] =
 {
     {
         {110, 111, 112}}};
-static uintn FAR slabw2uin[2][1][3] =
+static uintn  slabw2uin[2][1][3] =
 {
     {
         {20, 21, 22}},
     {
         {120, 121, 122}}};
-static uintn FAR slabw3uin[1][2][3] =
+static uintn  slabw3uin[1][2][3] =
 {
     {
         {0, 1, 2},
         {10, 11, 12}}};
-static uintn FAR slabw4uin[1][1][3] =
+static uintn  slabw4uin[1][1][3] =
 {
     {
         {100, 101, 102}}};
-static uintn FAR slabw5uin[2][3][1] =
+static uintn  slabw5uin[2][3][1] =
 {
     {
         {3},
@@ -289,26 +289,26 @@ static uintn FAR slabw5uin[2][3][1] =
         {123}}};
 #endif
 
-static int32 FAR slabw1i32[1][1][3] =
+static int32  slabw1i32[1][1][3] =
 {
     {
         {110, 111, 112}}};
-static int32 FAR slabw2i32[2][1][3] =
+static int32  slabw2i32[2][1][3] =
 {
     {
         {20, 21, 22}},
     {
         {120, 121, 122}}};
-static int32 FAR slabw3i32[1][2][3] =
+static int32  slabw3i32[1][2][3] =
 {
     {
         {0, 1, 2},
         {10, 11, 12}}};
-static int32 FAR slabw4i32[1][1][3] =
+static int32  slabw4i32[1][1][3] =
 {
     {
         {100, 101, 102}}};
-static int32 FAR slabw5i32[2][3][1] =
+static int32  slabw5i32[2][3][1] =
 {
     {
         {3},
@@ -319,26 +319,26 @@ static int32 FAR slabw5i32[2][3][1] =
         {113},
         {123}}};
 
-static uint32 FAR slabw1ui32[1][1][3] =
+static uint32  slabw1ui32[1][1][3] =
 {
     {
         {110, 111, 112}}};
-static uint32 FAR slabw2ui32[2][1][3] =
+static uint32  slabw2ui32[2][1][3] =
 {
     {
         {20, 21, 22}},
     {
         {120, 121, 122}}};
-static uint32 FAR slabw3ui32[1][2][3] =
+static uint32  slabw3ui32[1][2][3] =
 {
     {
         {0, 1, 2},
         {10, 11, 12}}};
-static uint32 FAR slabw4ui32[1][1][3] =
+static uint32  slabw4ui32[1][1][3] =
 {
     {
         {100, 101, 102}}};
-static uint32 FAR slabw5ui32[2][3][1] =
+static uint32  slabw5ui32[2][3][1] =
 {
     {
         {3},
@@ -349,26 +349,26 @@ static uint32 FAR slabw5ui32[2][3][1] =
         {113},
         {123}}};
 
-static int16 FAR slabw1i16[1][1][3] =
+static int16  slabw1i16[1][1][3] =
 {
     {
         {110, 111, 112}}};
-static int16 FAR slabw2i16[2][1][3] =
+static int16  slabw2i16[2][1][3] =
 {
     {
         {20, 21, 22}},
     {
         {120, 121, 122}}};
-static int16 FAR slabw3i16[1][2][3] =
+static int16  slabw3i16[1][2][3] =
 {
     {
         {0, 1, 2},
         {10, 11, 12}}};
-static int16 FAR slabw4i16[1][1][3] =
+static int16  slabw4i16[1][1][3] =
 {
     {
         {100, 101, 102}}};
-static int16 FAR slabw5i16[2][3][1] =
+static int16  slabw5i16[2][3][1] =
 {
     {
         {3},
@@ -379,26 +379,26 @@ static int16 FAR slabw5i16[2][3][1] =
         {113},
         {123}}};
 
-static uint16 FAR slabw1ui16[1][1][3] =
+static uint16  slabw1ui16[1][1][3] =
 {
     {
         {110, 111, 112}}};
-static uint16 FAR slabw2ui16[2][1][3] =
+static uint16  slabw2ui16[2][1][3] =
 {
     {
         {20, 21, 22}},
     {
         {120, 121, 122}}};
-static uint16 FAR slabw3ui16[1][2][3] =
+static uint16  slabw3ui16[1][2][3] =
 {
     {
         {0, 1, 2},
         {10, 11, 12}}};
-static uint16 FAR slabw4ui16[1][1][3] =
+static uint16  slabw4ui16[1][1][3] =
 {
     {
         {100, 101, 102}}};
-static uint16 FAR slabw5ui16[2][3][1] =
+static uint16  slabw5ui16[2][3][1] =
 {
     {
         {3},
@@ -409,26 +409,26 @@ static uint16 FAR slabw5ui16[2][3][1] =
         {113},
         {123}}};
 
-static int8 FAR slabw1i8[1][1][3] =
+static int8  slabw1i8[1][1][3] =
 {
     {
         {110, 111, 112}}};
-static int8 FAR slabw2i8[2][1][3] =
+static int8  slabw2i8[2][1][3] =
 {
     {
         {20, 21, 22}},
     {
         {120, 121, 122}}};
-static int8 FAR slabw3i8[1][2][3] =
+static int8  slabw3i8[1][2][3] =
 {
     {
         {0, 1, 2},
         {10, 11, 12}}};
-static int8 FAR slabw4i8[1][1][3] =
+static int8  slabw4i8[1][1][3] =
 {
     {
         {100, 101, 102}}};
-static int8 FAR slabw5i8[2][3][1] =
+static int8  slabw5i8[2][3][1] =
 {
     {
         {3},
@@ -439,26 +439,26 @@ static int8 FAR slabw5i8[2][3][1] =
         {113},
         {123}}};
 
-static uint8 FAR slabw1ui8[1][1][3] =
+static uint8  slabw1ui8[1][1][3] =
 {
     {
         {110, 111, 112}}};
-static uint8 FAR slabw2ui8[2][1][3] =
+static uint8  slabw2ui8[2][1][3] =
 {
     {
         {20, 21, 22}},
     {
         {120, 121, 122}}};
-static uint8 FAR slabw3ui8[1][2][3] =
+static uint8  slabw3ui8[1][2][3] =
 {
     {
         {0, 1, 2},
         {10, 11, 12}}};
-static uint8 FAR slabw4ui8[1][1][3] =
+static uint8  slabw4ui8[1][1][3] =
 {
     {
         {100, 101, 102}}};
-static uint8 FAR slabw5ui8[2][3][1] =
+static uint8  slabw5ui8[2][3][1] =
 {
     {
         {3},
@@ -469,105 +469,105 @@ static uint8 FAR slabw5ui8[2][3][1] =
         {113},
         {123}}};
 /* Slabs for slab3w() */
-static float32 FAR slab1[1][1][1] =
+static float32  slab1[1][1][1] =
 {
     {
         {(float32) 0.0}}};
-static float32 FAR slab2[1][1][1] =
+static float32  slab2[1][1][1] =
 {
     {
         {(float32) 1.0}}};
-static float32 FAR slab3[1][1][1] =
+static float32  slab3[1][1][1] =
 {
     {
         {(float32) 2.0}}};
-static float32 FAR slab4[1][1][1] =
+static float32  slab4[1][1][1] =
 {
     {
         {(float32) 3.0}}};
-static float32 FAR slab5[1][1][1] =
+static float32  slab5[1][1][1] =
 {
     {
         {(float32) 10.0}}};
-static float32 FAR slab6[1][1][1] =
+static float32  slab6[1][1][1] =
 {
     {
         {(float32) 11.0}}};
-static float32 FAR slab7[1][1][1] =
+static float32  slab7[1][1][1] =
 {
     {
         {(float32) 12.0}}};
-static float32 FAR slab8[1][1][1] =
+static float32  slab8[1][1][1] =
 {
     {
         {(float32) 13.0}}};
-static float32 FAR slab9[1][1][1] =
+static float32  slab9[1][1][1] =
 {
     {
         {(float32) 20.0}}};
-static float32 FAR slab10[1][1][1] =
+static float32  slab10[1][1][1] =
 {
     {
         {(float32) 21.0}}};
-static float32 FAR slab11[1][1][1] =
+static float32  slab11[1][1][1] =
 {
     {
         {(float32) 22.0}}};
-static float32 FAR slab12[1][1][1] =
+static float32  slab12[1][1][1] =
 {
     {
         {(float32) 23.0}}};
-static float32 FAR slab13[1][1][1] =
+static float32  slab13[1][1][1] =
 {
     {
         {(float32) 100.0}}};
-static float32 FAR slab14[1][1][1] =
+static float32  slab14[1][1][1] =
 {
     {
         {(float32) 101.0}}};
-static float32 FAR slab15[1][1][1] =
+static float32  slab15[1][1][1] =
 {
     {
         {(float32) 102.0}}};
-static float32 FAR slab16[1][1][1] =
+static float32  slab16[1][1][1] =
 {
     {
         {(float32) 103.0}}};
-static float32 FAR slab17[1][1][1] =
+static float32  slab17[1][1][1] =
 {
     {
         {(float32) 110.0}}};
-static float32 FAR slab18[1][1][1] =
+static float32  slab18[1][1][1] =
 {
     {
         {(float32) 111.0}}};
-static float32 FAR slab19[1][1][1] =
+static float32  slab19[1][1][1] =
 {
     {
         {(float32) 112.0}}};
-static float32 FAR slab20[1][1][1] =
+static float32  slab20[1][1][1] =
 {
     {
         {(float32) 113.0}}};
-static float32 FAR slab21[1][1][1] =
+static float32  slab21[1][1][1] =
 {
     {
         {(float32) 120.0}}};
-static float32 FAR slab22[1][1][1] =
+static float32  slab22[1][1][1] =
 {
     {
         {(float32) 121.0}}};
-static float32 FAR slab23[1][1][1] =
+static float32  slab23[1][1][1] =
 {
     {
         {(float32) 122.0}}};
-static float32 FAR slab24[1][1][1] =
+static float32  slab24[1][1][1] =
 {
     {
         {(float32) 123.0}}};
 
 /* data array in memory  */
-static float32 FAR fdata[2][3][4] =
+static float32  fdata[2][3][4] =
 {
     {
         {(float32) 0.0, (float32) 1.0, (float32) 2.0, (float32) 3.0},
@@ -577,7 +577,7 @@ static float32 FAR fdata[2][3][4] =
         {(float32) 100.0, (float32) 101.0, (float32) 102.0, (float32) 103.0},
         {(float32) 110.0, (float32) 111.0, (float32) 112.0, (float32) 113.0},
      {(float32) 120.0, (float32) 121.0, (float32) 122.0, (float32) 123.0}}};
-static float64 FAR f64data[2][3][4] =
+static float64  f64data[2][3][4] =
 {
     {
         {0.0, 1.0, 2.0, 3.0},
@@ -587,8 +587,8 @@ static float64 FAR f64data[2][3][4] =
         {100.0, 101.0, 102.0, 103.0},
         {110.0, 111.0, 112.0, 113.0},
         {120.0, 121.0, 122.0, 123.0}}};
-#if !((defined PC & !(defined PC386 | defined UNIX386)) | defined CRAYMPP)
-static intn FAR indata[2][3][4] =
+#if !(defined CRAYMPP)
+static intn  indata[2][3][4] =
 {
     {
         {0, 1, 2, 3},
@@ -598,7 +598,7 @@ static intn FAR indata[2][3][4] =
         {100, 101, 102, 103},
         {110, 111, 112, 113},
         {120, 121, 122, 123}}};
-static uintn FAR uindata[2][3][4] =
+static uintn  uindata[2][3][4] =
 {
     {
         {0, 1, 2, 3},
@@ -609,7 +609,7 @@ static uintn FAR uindata[2][3][4] =
         {110, 111, 112, 113},
         {120, 121, 122, 123}}};
 #endif
-static int32 FAR i32data[2][3][4] =
+static int32  i32data[2][3][4] =
 {
     {
         {0, 1, 2, 3},
@@ -619,7 +619,7 @@ static int32 FAR i32data[2][3][4] =
         {100, 101, 102, 103},
         {110, 111, 112, 113},
         {120, 121, 122, 123}}};
-static uint32 FAR ui32data[2][3][4] =
+static uint32  ui32data[2][3][4] =
 {
     {
         {0, 1, 2, 3},
@@ -629,7 +629,7 @@ static uint32 FAR ui32data[2][3][4] =
         {100, 101, 102, 103},
         {110, 111, 112, 113},
         {120, 121, 122, 123}}};
-static int16 FAR i16data[2][3][4] =
+static int16  i16data[2][3][4] =
 {
     {
         {0, 1, 2, 3},
@@ -639,7 +639,7 @@ static int16 FAR i16data[2][3][4] =
         {100, 101, 102, 103},
         {110, 111, 112, 113},
         {120, 121, 122, 123}}};
-static uint16 FAR ui16data[2][3][4] =
+static uint16  ui16data[2][3][4] =
 {
     {
         {0, 1, 2, 3},
@@ -649,7 +649,7 @@ static uint16 FAR ui16data[2][3][4] =
         {100, 101, 102, 103},
         {110, 111, 112, 113},
         {120, 121, 122, 123}}};
-static int8 FAR i8data[2][3][4] =
+static int8  i8data[2][3][4] =
 {
     {
         {0, 1, 2, 3},
@@ -659,7 +659,7 @@ static int8 FAR i8data[2][3][4] =
         {100, 101, 102, 103},
         {110, 111, 112, 113},
         {120, 121, 122, 123}}};
-static uint8 FAR ui8data[2][3][4] =
+static uint8  ui8data[2][3][4] =
 {
     {
         {0, 1, 2, 3},
@@ -670,19 +670,19 @@ static uint8 FAR ui8data[2][3][4] =
         {110, 111, 112, 113},
         {120, 121, 122, 123}}};
 /* Output files */
-static const char FAR *swf32 = "swf32.hdf";
-static const char FAR *swf64 = "swf64.hdf";
-static const char FAR *swin = "swin.hdf";
-static const char FAR *swuin = "swuin.hdf";
-static const char FAR *swi32 = "swi32.hdf";
-static const char FAR *swui32 = "swui32.hdf";
-static const char FAR *swi16 = "swi16.hdf";
-static const char FAR *swui16 = "swui16.hdf";
-static const char FAR *swi8 = "swi8.hdf";
-static const char FAR *swui8 = "swui8.hdf";
-static const char FAR *sw1 = "s1w.hdf";
-static const char FAR *sw3 = "s3w.hdf";
-static const char FAR *sw4 = "s4w.hdf";
+static const char  *swf32 = "swf32.hdf";
+static const char  *swf64 = "swf64.hdf";
+static const char  *swin = "swin.hdf";
+static const char  *swuin = "swuin.hdf";
+static const char  *swi32 = "swi32.hdf";
+static const char  *swui32 = "swui32.hdf";
+static const char  *swi16 = "swi16.hdf";
+static const char  *swui16 = "swui16.hdf";
+static const char  *swi8 = "swi8.hdf";
+static const char  *swui8 = "swui8.hdf";
+static const char  *sw1 = "s1w.hdf";
+static const char  *sw3 = "s3w.hdf";
+static const char  *sw4 = "s4w.hdf";
 
 /*
    ** Write data set to slabw.hdf as 5 hyperslabs.
@@ -995,7 +995,7 @@ slabwf64(void)
     return (int) num_err;
 }
 
-#if !((defined PC & !(defined PC386 | defined UNIX386)) | defined CRAYMPP)
+#if !(defined CRAYMPP)
 /*
    ** Write intn data set to slabwin.hdf as 5 hyperslabs.
  */
@@ -2854,7 +2854,7 @@ test_slab(void)
 {
     num_errs += slabwf32();
     num_errs += slabwf64();
-#if !((defined PC & !(defined PC386 | defined UNIX386)) | defined CRAYMPP)
+#if !(defined CRAYMPP)
     num_errs += slabwin();
     num_errs += slabwuin();
 #else

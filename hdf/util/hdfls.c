@@ -27,11 +27,7 @@ void        qsort(void *base, size_t nmemb, size_t size,
                   int         (*compar) (const void *, const void *));
 #endif
 
-#ifdef PC
-#define MAXBUFF 2048
-#else
 #define MAXBUFF 8192
-#endif
 
 dd_t       *desc_buf;
 

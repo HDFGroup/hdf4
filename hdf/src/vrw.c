@@ -112,11 +112,11 @@ VSseek(int32 vkey, int32 eltpos)
     TRACE_ON(VS_mask, ID_VSseek);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vs's index in vstab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
@@ -175,18 +175,18 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
     TRACE_ON(VS_mask, ID_VSread);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vs's index in vstab */
-    if (NULL == (wi = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (wi = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = wi->vs;
     if (vs == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    if ((vs->aid == NO_ID) || (vs->nvertices == 0))
+    if ((vs->aid == 0) || (vs->nvertices == 0))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if (vexistvs(vs->f, vs->oref) == FAIL)
@@ -217,8 +217,7 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
       {
           HERROR(DFE_READERROR);
           HEreport("Tried to read %d, only read %d", nelt * hsize, nv);
-          ret_value = FAIL;
-          goto done;
+          HGOTO_DONE(FAIL);
       }
 
     /*
@@ -250,8 +249,7 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
 
           DFKnumin(b2, b1, (uint32) w->order[0] * nelt, 0, 0);
 
-          ret_value = (nelt);
-          goto done;
+          HGOTO_DONE(nelt);
       }     /* case (e) */
 
     /* ----------------------------------------------------------------- */
@@ -419,11 +417,11 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
     TRACE_ON(VS_mask, ID_VSwrite);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vs's index in vstab */
-    if (NULL == (wi = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (wi = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = wi->vs;
@@ -442,8 +440,7 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
       {
           HERROR(DFE_NOVS);
           HEreport("No fields set for writing");
-          ret_value = (FAIL);
-          goto done;
+          HGOTO_DONE(FAIL);
       }
 
     if (interlace != NO_INTERLACE && interlace != FULL_INTERLACE)
@@ -612,11 +609,11 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
 	  /* alloc space (Vtbuf) for writing out the data */
 	  if (Vtbufsize < (uint32) total_bytes)
 	    {
-		Vtbufsize = total_bytes;
-		if (Vtbuf)
-		    HDfree((VOIDP) Vtbuf);
-		if ((Vtbuf = (uint8 *) HDmalloc(Vtbufsize)) == NULL)
-		    HGOTO_ERROR(DFE_NOSPACE, FAIL);
+          Vtbufsize = total_bytes;
+          if (Vtbuf)
+              HDfree((VOIDP) Vtbuf);
+          if ((Vtbuf = (uint8 *) HDmalloc(Vtbufsize)) == NULL)
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
 	    }
 
 	  /* ----------------------------------------------------------------- */

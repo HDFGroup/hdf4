@@ -82,7 +82,7 @@ DESCRIPTION
    default message is returned.
 
 ---------------------------------------------------------------------------*/
-const char _HUGE *
+const char *
 HEstring(hdf_err_code_t error_code)
 {
     int         i;              /* temp int index */

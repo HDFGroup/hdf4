@@ -26,8 +26,6 @@
 #ifndef __HCOMP_H
 #define __HCOMP_H
 
-#include "hlimits.h"
-
 /* For determining which type of modeling is being done */
 typedef enum
   {

@@ -32,25 +32,14 @@ static char RcsId[] = "@(#)$Revision$";
 #else
 #define     MAX_REF_TESTED MAX_REF
 #endif
-static int32 FAR files[BIG];
-static int32 FAR accs[BIG];
+static int32  files[BIG];
+static int32  accs[BIG];
 
 void
 test_file_limits()
 {
     int         i;
     int32       ret;
-#ifdef QAK
-    int32      *files, *accs;
-
-    files = HDmalloc(BIG * sizeof(int32));
-    accs = HDmalloc(BIG * sizeof(int32));
-    if (!files || !accs)
-      {
-          fprintf(stderr, "Out of memory!\n");
-          exit(1);
-      }
-#endif
 
     MESSAGE(5, puts("Opening many files of same name");
         );
@@ -127,10 +116,6 @@ test_file_limits()
         );
 
     ret = Hclose(files[0]);
-#ifdef QAK
-    HDfree((VOIDP) files);
-    HDfree((VOIDP) accs);
-#endif
 } /* end test_file_limits() */
 
 void
@@ -189,62 +174,63 @@ test_ref_limits()
 
             } /* end for */
           Hclose(fid);
-      } /* end if */
 
-    MESSAGE(7, printf("Verifying data\n"););
-    
-    /* Check the data written earlier */
-    fid=Hopen(TESTREF_NAME, DFACC_READ, 0);
-    CHECK(fid, FAIL, "Hopen");
+        MESSAGE(7, printf("Verifying data\n"););
+        
+        /* Check the data written earlier */
+        fid=Hopen(TESTREF_NAME, DFACC_READ, 0);
+        CHECK(fid, FAIL, "Hopen");
 
-    if(fid!=FAIL)
-      {
-          uint16 ref;
-          int32 aid;
-          int32 data;
-          int32 ret;
+        if(fid!=FAIL)
+          {
+              uint16 ref;
+              int32 aid1,aid2;
+              int32 data;
+              int32 ret;
 
-          /* Read in data from tag1 */
-          aid=Hstartread(fid,tag1,DFREF_WILDCARD);
-          CHECK(aid, FAIL, "Hstartread");
-          ret=Hread(aid,sizeof(int32),&data);
-          CHECK(ret, FAIL, "Hread");
-          ret=Hinquire(aid,NULL,NULL,&ref,NULL,NULL,NULL,NULL,NULL);
-          CHECK(ret, FAIL, "Hinquire");
-          VERIFY((uint16)data,ref,"Hread");
+              /* Read in data from tag1 */
+              aid1=Hstartread(fid,tag1,DFREF_WILDCARD);
+              CHECK(aid1, FAIL, "Hstartread");
+              ret=Hread(aid1,sizeof(int32),&data);
+              CHECK(ret, FAIL, "Hread");
+              ret=Hinquire(aid1,NULL,NULL,&ref,NULL,NULL,NULL,NULL,NULL);
+              CHECK(ret, FAIL, "Hinquire");
+              VERIFY((uint16)data,ref,"Hread");
 
-          while(Hnextread(aid,tag1,DFTAG_WILDCARD,DF_CURRENT)!=FAIL)
-            {
-                ret=Hread(aid,sizeof(int32),&data);
-                CHECK(ret, FAIL, "Hread");
-                ret=Hinquire(aid,NULL,NULL,&ref,NULL,NULL,NULL,NULL,NULL);
-                CHECK(ret, FAIL, "Hinquire");
-                VERIFY((uint16)data,ref,"Hread");
-            } /* end while */
-          ret=Hendaccess(aid);
-          CHECK(ret, FAIL, "Hendaccess");
+              /* Read in data from tag2 */
+              aid2=Hstartread(fid,tag2,DFREF_WILDCARD);
+              CHECK(aid2, FAIL, "Hstartread");
+              ret=Hread(aid2,sizeof(int32),&data);
+              CHECK(ret, FAIL, "Hread");
+              ret=Hinquire(aid2,NULL,NULL,&ref,NULL,NULL,NULL,NULL,NULL);
+              CHECK(ret, FAIL, "Hinquire");
+              VERIFY((uint32)data,(((uint32)ref)<<16),"Hread");
 
-          /* Read in data from tag2 */
-          aid=Hstartread(fid,tag2,DFREF_WILDCARD);
-          CHECK(aid, FAIL, "Hstartread");
-          ret=Hread(aid,sizeof(int32),&data);
-          CHECK(ret, FAIL, "Hread");
-          ret=Hinquire(aid,NULL,NULL,&ref,NULL,NULL,NULL,NULL,NULL);
-          CHECK(ret, FAIL, "Hinquire");
-          VERIFY((uint32)data,(((uint32)ref)<<16),"Hread");
+              while(Hnextread(aid1,tag1,DFTAG_WILDCARD,DF_CURRENT)!=FAIL)
+                {
+                    ret=Hread(aid1,sizeof(int32),&data);
+                    CHECK(ret, FAIL, "Hread");
+                    ret=Hinquire(aid1,NULL,NULL,&ref,NULL,NULL,NULL,NULL,NULL);
+                    CHECK(ret, FAIL, "Hinquire");
+                    VERIFY((uint16)data,ref,"Hread");
 
-          while(Hnextread(aid,tag2,DFTAG_WILDCARD,DF_CURRENT)!=FAIL)
-            {
-                ret=Hread(aid,sizeof(int32),&data);
-                CHECK(ret, FAIL, "Hread");
-                ret=Hinquire(aid,NULL,NULL,&ref,NULL,NULL,NULL,NULL,NULL);
-                CHECK(ret, FAIL, "Hinquire");
-                VERIFY((uint32)data,(((uint32)ref)<<16),"Hread");
-            } /* end while */
-          ret=Hendaccess(aid);
-          CHECK(ret, FAIL, "Hendaccess");
+                  if(Hnextread(aid2,tag2,DFTAG_WILDCARD,DF_CURRENT)!=FAIL)
+                    {
+                        ret=Hread(aid2,sizeof(int32),&data);
+                        CHECK(ret, FAIL, "Hread");
+                        ret=Hinquire(aid2,NULL,NULL,&ref,NULL,NULL,NULL,NULL,NULL);
+                        CHECK(ret, FAIL, "Hinquire");
+                        VERIFY((uint32)data,(((uint32)ref)<<16),"Hread");
+                    } /* end while */
+                } /* end while */
+              ret=Hendaccess(aid1);
+              CHECK(ret, FAIL, "Hendaccess");
 
-          Hclose(fid);
+              ret=Hendaccess(aid2);
+              CHECK(ret, FAIL, "Hendaccess");
+
+              Hclose(fid);
+          } /* end if */
       } /* end if */
 } /* end test_ref_limits() */
 

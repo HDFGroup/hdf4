@@ -19,7 +19,6 @@
 #ifndef HFILE_H
 #define HFILE_H
 
-#include "hlimits.h"
 #include "tbbt.h"
 #include "bitvect.h"
 #include "atom.h"
@@ -70,24 +69,12 @@ typedef FILE *hdf_file_t;
 #   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
                                 fopen((p), "r+", "mbc=64") : \
                                 fopen((p), "r", "mbc=64"))
+#   define HI_CREATE(p)        (fopen((p), "w+", "mbc=64"))
 #else  /*  !VMS  */
-#ifdef PC386
 #   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
                                 fopen((p), "rb+") : fopen((p), "rb"))
-#else /* !PC386 */
-#   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
-                                fopen((p), "r+") : fopen((p), "r"))
-#endif /* PC386 */
-#endif /* !VMS */
-#ifdef PC386
 #   define HI_CREATE(p)        (fopen((p), "wb+"))
-#else  /* PC386 */
-#ifdef VMS
-#   define HI_CREATE(p)        (fopen((p), "w+", "mbc=64"))
-#else
-#   define HI_CREATE(p)        (fopen((p), "w+"))
 #endif /* VMS */
-#endif /* PC386 */
 #   define HI_READ(f, b, n)    (((n) == fread((b), 1, (size_t)(n), (f))) ? \
                                 SUCCEED : FAIL)
 #   define HI_WRITE(f, b, n)   (((n) == fwrite((b), 1, (size_t)(n), (f))) ? \
@@ -384,7 +371,9 @@ typedef struct accrec_t
       intn        appendable;   /* whether appends to the data are allowed */
       intn        special;      /* special element ? */
       intn        new_elem;     /* is a new element (i.e. no length set yet) */
+#ifdef OLD_WAY
       intn        used;         /* whether the access record is used */
+#endif /* OLD_WAY */
       
       uint32      access;       /* access codes */
       uintn       access_type;  /* I/O access type: serial/parallel/... */
@@ -469,35 +458,7 @@ functab_t;
 #define GRIDTYPE  11    /* for GR access */
 #define RIIDTYPE  12    /* for RI access */
 
-/* Translate file SLOT to file ID */
-#define FSLOT2ID(s) ((int32)((((uint32)FIDTYPE & 0xffff) << 16)|((s) & 0xffff)))
-
-/* Checks if valid file ID */
-#define VALIDFID(i) (((((uint32)(i) >> 16) & 0xffff) == FIDTYPE) && \
-                     (((uint32)(i) & 0xffff) < MAX_FILE))
-/* Translate file ID to file SLOT */
-#define FID2SLOT(i) (VALIDFID(i) ? (uint32)(i) & 0xffff : -1)
-
-/* Translate file ID to file RECORD */
-#define FID2REC(i)  ((VALIDFID(i) ? &(file_records[(uint32)(i) & 0xffff]) : \
-                      NULL))
 #define BADFREC(r)  ((r)==NULL || (r)->refcount==0)
-
-/* Translate access SLOT to access ID */
-#define ASLOT2ID(s) ((((uint32)AIDTYPE & 0xffff) << 16) | ((s) & 0xffff))
-
-/* Verify valid access ID */
-#define VALIDAID(i) (((((uint32)(i) >> 16) & 0xffff) == AIDTYPE) && \
-                     (((uint32)(i) & 0xffff) < MAX_ACC) && \
-                     (access_records))
-/* Translate access ID to access SLOT */ 
-#define AID2SLOT(i) (VALIDAID(i) ? (uint32)(i) & 0xffff : -1)
-
-/* Translate access ID to access RECORD */
-#define AID2REC(i)  ((VALIDAID(i) ? &(access_records[(uint32)(i) & 0xffff]) : \
-                     NULL))
-
-#define NO_ID     (uint32) 0
 
 /* --------------------------- Special Elements --------------------------- */
 /* The HDF tag space is divided as follows based on the 2 highest bits:
@@ -523,17 +484,6 @@ functab_t;
 #define MKSPECIALTAG(t) (uint16)((~(t) & 0x8000) ? ((t) | 0x4000) : DFTAG_NULL)
 #endif /*SPECIAL_TABLE */
 
-/* ----------------------- Library-Global Variables ----------------------- */
-/* access records array.  defined in hfile.c */
-extern accrec_t *access_records;
-
-/* file records array.  defined in hfile.c */
-#if defined(macintosh) || defined(MAC) || defined (__MWERKS__) ||defined(SYMANTEC_C) || defined(DMEM)  /* Dynamic memory */
-extern filerec_t *file_records;
-#else  /* !macintosh */
-extern filerec_t file_records[];
-#endif /* !macintosh */
-
 /* -------------------------- H-Layer Prototypes -------------------------- */
 /*
    ** Functions to get information of special elt from other access records.
@@ -547,11 +497,17 @@ extern      "C"
 {
 #endif                          /* c_plusplus || __cplusplus */
 
-    extern int  HIget_access_slot
+    extern accrec_t *HIget_access_rec
                 (void);
 
     extern VOIDP HIgetspinfo
                 (accrec_t * access_rec);
+
+    extern intn HPcompare_filerec_path
+                (const VOIDP obj, const VOIDP key);
+
+    extern intn HPcompare_accrec_tagref
+                (const VOIDP rec1, const VOIDP rec2);
 
     extern int32 HPgetdiskblock
                 (filerec_t * file_rec, int32 block_size, intn moveto);

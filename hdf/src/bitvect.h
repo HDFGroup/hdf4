@@ -39,7 +39,7 @@ typedef enum {BV_FALSE=0, BV_TRUE=1} bv_bool;
 #define BV_DEFAULT_BITS 128
 
 /* Define the size of the chunks bits are allocated in */
-#define BV_CHUNK_SIZE 16
+#define BV_CHUNK_SIZE 64
 
 /* Create the external interface data structures needed */
 typedef struct bv_struct_tag *bv_ptr;

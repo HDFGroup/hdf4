@@ -828,7 +828,7 @@ nvslonec(HFILEID * f, intf * idarray, intf * asize)
  */
 
 FRETVAL(intf)
-nvfindc(HFILEID _HUGE * f, _fcd name, intf _HUGE * namelen)
+nvfindc(HFILEID * f, _fcd name, intf * namelen)
 {
     char *tmp_name;
     intf ret;
@@ -849,7 +849,7 @@ nvfindc(HFILEID _HUGE * f, _fcd name, intf _HUGE * namelen)
  */
 
 FRETVAL(intf)
-nvfndclsc(HFILEID _HUGE * f, _fcd vgclass, intf _HUGE * classlen)
+nvfndclsc(HFILEID * f, _fcd vgclass, intf * classlen)
 {
     char *t_class;
     intf ret;
@@ -1019,7 +1019,7 @@ nvntrc(intf * vkey)
  */
 
 FRETVAL(intf)
-nvnrefs(intf _HUGE * vkey, intf _HUGE *tag)
+nvnrefs(intf * vkey, intf *tag)
 {
     return((intf) Vnrefs((int32)*vkey, (int32)*tag));
 } /* end nvnrefs() */
@@ -1031,7 +1031,7 @@ nvnrefs(intf _HUGE * vkey, intf _HUGE *tag)
  */
 
 FRETVAL(intf)
-nvqref(intf _HUGE * vkey)
+nvqref(intf * vkey)
 {
     return((intf) VQueryref((int32)*vkey));
 } /* end nvqref() */
@@ -1043,7 +1043,7 @@ nvqref(intf _HUGE * vkey)
  */
 
 FRETVAL(intf)
-nvqtag(intf _HUGE * vkey)
+nvqtag(intf * vkey)
 {
     return((intf) VQuerytag((int32)*vkey));
 } /* end nvqtag() */

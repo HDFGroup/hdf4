@@ -23,24 +23,6 @@
 #ifndef __HBITIO_H
 #define __HBITIO_H
 
-#include "hlimits.h"
-
-#if 0
-/* maximum number of bitfile access elements */
-/* (can be less than the MAX_ACC defined in hfile.h, but never greater) */
-#ifndef MAX_BITFILE
-#   define MAX_BITFILE 16
-#endif
-#endif
-
-#define SLOT2BITID(s) ((((uint32)BITTYPE & 0xffff) << 16) | ((s) & 0xffff))
-#define VALIDBITID(i) (((((uint32)(i) >> 16) & 0xffff) == BITTYPE) && \
-                    (((uint32)(i) & 0xffff) < MAX_BITFILE))
-#define BITID2SLOT(i) (VALIDBITID(i) ? (uint32)(i) & 0xffff : -1)
-#define BITID2REC(i) ((VALIDBITID(i) ? &(bitfile_records[(uint32)(i)&0xffff]) \
-                    : NULL))
-#define BITREC2ID(b) (b->bit_id)
-
 /* Define the number of elements in the buffered array */
 #define BITBUF_SIZE 4096
 /* Macro to define the number of bits cached in the 'bits' variable */
@@ -52,15 +34,6 @@ typedef struct bitrec_t
   {
       int32       acc_id;       /* Access ID for H layer I/O routines */
       int32       bit_id;       /* Bitfile ID for internal use */
-      intn        used;         /* whether this record is in use */
-#ifdef OLD_WAY
-      uint32      block_offset, /* offset of the current buffered block in the dataset */
-                  max_offset,   /* offset of the last byte written to the dataset */
-                  byte_offset;  /* offset of the current byte in the dataset */
-
-      uintn       count,        /* bit count to next boundary */
-                  buf_read;     /* number of bytes read into buffer (necessary for random I/O) */
-#else /* !OLD_WAY */
   /* Note that since HDF has signed 32bit offset limit we need to change this to signed
      since the get passed to Hxxx calls which take signed 32bit arguments */
       int32      block_offset, /* offset of the current buffered block in the dataset */
@@ -69,7 +42,6 @@ typedef struct bitrec_t
 
       intn       count,        /* bit count to next boundary */
                  buf_read;     /* number of bytes read into buffer (necessary for random I/O) */
-#endif /* !OLD_WAY */
       uint8       access;       /* What the access on this file is ('r', 'w', etc..) */
       uint8       mode;         /* how are we interacting with the data now ('r', 'w', etc) */
       uint8       bits;         /* extra bit buffer, 0..BITNUM-1 bits */
@@ -106,5 +78,8 @@ const uint32 maskl[33]
  0x1fffffff, 0x3fffffff, 0x7fffffff, 0xffffffff}
 #endif
            ;
+
+/* Function-like Macros */
+#define Hputbit(bitid,bit) ((Hbitwrite(bitid,1,(uint32)bit)==FAIL) ? FAIL : SUCCEED)
 
 #endif /* __HBITIO_H */

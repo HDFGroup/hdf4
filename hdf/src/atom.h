@@ -26,17 +26,33 @@
 #ifndef __ATOM_H
 #define __ATOM_H
 
+/* Atom Features control */
+/* Define the following macro for fast hash calculations (but limited hash sizes) */
+#define HASH_SIZE_POWER_2
+
+/* Define the following macro for atom caching over all the atoms */
+#define ATOMS_ARE_CACHED
+
 #include "hdf.h"
 
 /* Group values allowed */
 typedef enum {BADGROUP=(-1),    /* Invalid Group */
 DDGROUP=0,                  /* Group ID for DD objects */
-AIDGROUP=1,                 /* Group ID for AID objects */
+AIDGROUP=1,                 /* Group ID for access ID objects */
+FIDGROUP=2,                 /* Group ID for file ID objects */
+VGIDGROUP=3,                /* Group ID for Vgroup ID objects */
+VSIDGROUP=4,                /* Group ID for Vdata ID objects */
+GRIDGROUP=5,                /* Group ID for GR ID objects */
+RIIDGROUP=6,                /* Group ID for RI ID objects */
+BITIDGROUP=7,               /* Group ID for Bitfile ID objects */
 MAXGROUP                    /* Highest group in group_t (Invalid as true group) */
 } group_t;
 
 /* Type of atoms to return to users */
 typedef int32 atom_t;
+
+/* Type of the function to compare objects & keys */
+typedef intn (*HAsearch_func_t)(const VOIDP obj, const VOIDP key);
 
 #if defined ATOM_MASTER | defined ATOM_TESTER
 
@@ -48,11 +64,21 @@ typedef int32 atom_t;
 #define ATOM_BITS   28
 #define ATOM_MASK   0x0FFFFFFF
 
+#ifdef ATOMS_ARE_CACHED
+/* # of previous atoms cached */
+#define ATOM_CACHE_SIZE 4
+#endif /* ATOMS_ARE_CACHED */
+
 /* Map an atom to a Group number */
 #define ATOM_TO_GROUP(a)    ((((atom_t)(a))>>((sizeof(atom_t)*8)-GROUP_BITS))&GROUP_MASK)
 
+#ifdef HASH_SIZE_POWER_2
+/* Map an atom to a hash location (assumes s is a power of 2 and smaller than the ATOM_MASK constant) */
+#define ATOM_TO_LOC(a,s)    ((atom_t)(a)&((s)-1))
+#else /* HASH_SIZE_POWER_2 */
 /* Map an atom to a hash location */
 #define ATOM_TO_LOC(a,s)    (((atom_t)(a)&ATOM_MASK)%(s))
+#endif /* HASH_SIZE_POWER_2 */
 
 /* Combine a Group number and an atom index into an atom */
 #define MAKE_ATOM(g,i)      ((((atom_t)(g)&GROUP_MASK)<<((sizeof(atom_t)*8)-GROUP_BITS))|((atom_t)(i)&ATOM_MASK))
@@ -81,6 +107,12 @@ static atom_group_t *atom_group_list[MAXGROUP]={NULL};
 
 /* Pointer to the atom node free list */
 static atom_info_t *atom_free_list=NULL;
+
+#ifdef ATOMS_ARE_CACHED
+/* Array of pointers to atomic groups */
+static atom_t atom_id_cache[ATOM_CACHE_SIZE]={-1,-1,-1,-1};
+static VOIDP atom_obj_cache[ATOM_CACHE_SIZE]={NULL};
+#endif /* ATOMS_ARE_CACHED */
 
 #endif /* ATOM_MASTER */
 
@@ -187,6 +219,25 @@ group_t HAatom_group(atom_t atm   /* IN: Atom to retrieve group for */
 
 *******************************************************************************/
 VOIDP HAremove_atom(atom_t atm   /* IN: Atom to remove */
+);
+
+/******************************************************************************
+ NAME
+     HAsearch_atom - Search for an object in a group and get it's pointer.
+
+ DESCRIPTION
+    Searchs for an object in a group and returns the pointer to it.
+    This routine calls the function pointer passed in for each object in the
+    group until it finds a match.  Currently there is no way to resume a
+    search.
+
+ RETURNS
+    Returns pointer an atom's object if successful and NULL otherwise
+
+*******************************************************************************/
+VOIDP HAsearch_atom(group_t grp,        /* IN: Group to search for the object in */
+    HAsearch_func_t func,               /* IN: Ptr to the comparison function */
+    const VOIDP key                     /* IN: pointer to key to compare against */
 );
 
 /******************************************************************************

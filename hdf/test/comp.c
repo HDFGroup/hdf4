@@ -91,20 +91,20 @@ int32       test_ntypes[] =
 /* outbuf #2 is a fibonacci sequence (very hard to compress) */
 /* outbuf #3 is random data (also hard to compress) */
 /* outbuf #4 is random in the low byte and mostly static in the upper byte(s) */
-static int8 FAR *outbuf_int8[NUM_OUTBUFS];
-static uint8 FAR *outbuf_uint8[NUM_OUTBUFS];
-static int16 FAR *outbuf_int16[NUM_OUTBUFS];
-static uint16 FAR *outbuf_uint16[NUM_OUTBUFS];
-static int32 FAR *outbuf_int32[NUM_OUTBUFS];
-static uint32 FAR *outbuf_uint32[NUM_OUTBUFS];
+static int8  *outbuf_int8[NUM_OUTBUFS];
+static uint8  *outbuf_uint8[NUM_OUTBUFS];
+static int16  *outbuf_int16[NUM_OUTBUFS];
+static uint16  *outbuf_uint16[NUM_OUTBUFS];
+static int32  *outbuf_int32[NUM_OUTBUFS];
+static uint32  *outbuf_uint32[NUM_OUTBUFS];
 
 /* only need one input buffer per type of data */
-static int8 FAR *inbuf_int8;
-static uint8 FAR *inbuf_uint8;
-static int16 FAR *inbuf_int16;
-static uint16 FAR *inbuf_uint16;
-static int32 FAR *inbuf_int32;
-static uint32 FAR *inbuf_uint32;
+static int8  *inbuf_int8;
+static uint8  *inbuf_uint8;
+static int16  *inbuf_int16;
+static uint16  *inbuf_uint16;
+static int32  *inbuf_int32;
+static uint32  *inbuf_uint32;
 
 /* local function prototypes */
 static void init_model_info(comp_model_t m_type, model_info * m_info,

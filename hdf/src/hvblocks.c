@@ -135,9 +135,6 @@ LOCAL ROUTINES
 
 #include "hdf.h"
 #include "hfile.h"
-#ifdef PURIFY
-#include "purify.h"
-#endif /* PURIFY */
 
 /* block_t - record of a stream block. contains the tag, ref & length of the
    data elt that forms the linked block */
@@ -908,9 +905,6 @@ HVPread(accrec_t * access_rec, int32 length, VOIDP datap)
     int32       bytes_read = 0; /* total # bytes read for this call of HLIread */
 
     /* validate length */
-#ifdef PURIFY
-purify_printf("length=%d, info->length=%d, access_rec->posn=%d\n",(int)length,(int)info->length,(int)access_rec->posn);
-#endif /* PURIFY */
     if (length == 0) {
         length = info->length - access_rec->posn;
       } /* end if */
@@ -940,10 +934,6 @@ purify_printf("length=%d, info->length=%d, access_rec->posn=%d\n",(int)length,(i
 
     /* search for correct block */
     block_idx=0;
-#ifdef PURIFY
-purify_printf("relative_posn=%d, t_link->num_blocks=%d\n",(int)relative_posn,(int)t_link->num_blocks);
-purify_printf("length=%d, t_link->block_len=%d\n",(int)length,(int)t_link->block_len);
-#endif /* PURIFY */
     while(relative_posn>t_link->block_list[block_idx].len)
       {
         relative_posn-=t_link->block_list[block_idx].len;

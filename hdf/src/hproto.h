@@ -62,7 +62,7 @@ extern      "C"
    ** from hfile.c
  */
     extern int32 Hopen
-                (const char _HUGE *path, intn acc_mode, int16 ndds);
+                (const char *path, intn acc_mode, int16 ndds);
 
     extern intn Hclose
                 (int32 file_id);
@@ -77,9 +77,9 @@ extern      "C"
                 (int32 file_id, uint16 search_tag, uint16 search_ref);
 
     extern intn Hinquire
-                (int32 access_id, int32 _HUGE * pfile_id, uint16 _HUGE * ptag,
-          uint16 _HUGE * pref, int32 _HUGE * plength, int32 _HUGE * poffset,
-        int32 _HUGE * pposn, int16 _HUGE * paccess, int16 _HUGE * pspecial);
+                (int32 access_id, int32 * pfile_id, uint16 * ptag,
+          uint16 * pref, int32 * plength, int32 * poffset,
+        int32 * pposn, int16 * paccess, int16 * pspecial);
 
     extern int32 Hstartwrite
                 (int32 file_id, uint16 tag, uint16 ref, int32 length);
@@ -121,10 +121,10 @@ extern      "C"
                 (uint8 c, int32 access_id);
 
     extern int32 Hgetelement
-                (int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE * data);
+                (int32 file_id, uint16 tag, uint16 ref, uint8 * data);
 
     extern int32 Hputelement
-                (int32 file_id, uint16 tag, uint16 ref, const uint8 _HUGE * data, int32 length);
+                (int32 file_id, uint16 tag, uint16 ref, const uint8 * data, int32 length);
 
     extern int32 Hlength
                 (int32 file_id, uint16 tag, uint16 ref);
@@ -139,32 +139,14 @@ extern      "C"
                 (int32 file_id, intn cache_on);
 
     extern intn Hgetlibversion
-                (uint32 _HUGE * majorv, uint32 _HUGE * minorv,
-                 uint32 _HUGE * releasev, char _HUGE * string);
+                (uint32 * majorv, uint32 * minorv,
+                 uint32 * releasev, char * string);
 
     extern intn Hgetfileversion
-                (int32 file_id, uint32 _HUGE * majorv, uint32 _HUGE * minorv,
-                 uint32 _HUGE * release, char _HUGE * string);
+                (int32 file_id, uint32 * majorv, uint32 * minorv,
+                 uint32 * release, char * string);
 
     extern intn Hsetaccesstype(int32 access_id, uintn accesstype);
-
-
-#if defined WIN3
-    extern int32 HDfreadbig
-                (VOIDP buffer, int32 size, HFILE fp);
-
-    extern int32 HDfwritebig
-                (VOIDP buffer, int32 size, HFILE fp);
-
-#else                           /* !WIN3 */
-#if defined PC
-    extern int32 HDfreadbig
-                (VOIDP buffer, int32 size, FILE _HUGE * fp);
-
-    extern int32 HDfwritebig
-                (VOIDP buffer, int32 size, FILE _HUGE * fp);
-#endif                          /* PC */
-#endif                          /* !WIN3 */
 
     extern uint16 HDmake_special_tag
                 (uint16 tag);
@@ -181,31 +163,31 @@ extern      "C"
     extern intn HDvalidfid
                 (int32 file_id);
 
-    extern const char _HUGE *HDgettagdesc
+    extern const char *HDgettagdesc
                 (uint16 tag);
 
-    extern char _HUGE *HDgettagsname
+    extern char *HDgettagsname
                 (uint16 tag);
 
     extern intn HDgettagnum
                 (const char *tag_name);
 
-    extern char _HUGE *HDgetNTdesc
+    extern char *HDgetNTdesc
                 (int32 nt);
 
-    extern const char _HUGE *HDfidtoname
+    extern const char *HDfidtoname
                 (int32 fid);
 
     extern intn Hishdf
-                (const char _HUGE * filename);
+                (const char * filename);
 
     extern intn Hfidinquire
-                (int32 file_id, char _HUGE ** fname, intn _HUGE * acc_mode,
-                 intn _HUGE * attach);
+                (int32 file_id, char ** fname, intn * acc_mode,
+                 intn * attach);
     
     extern intn Hshutdown(void);
 
-    extern void HDFend(void);
+    extern void HPend(void);
 
 /*
    ** from hfiledd.c
@@ -342,13 +324,13 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
     extern VOIDP HDmemfill
                 (VOIDP dest, const VOIDP src, uint32 item_size, uint32 num_items);
 
-    extern char _HUGE *HIstrncpy
-                (char _HUGE * dest, const char _HUGE * source, int32 len);
+    extern char *HIstrncpy
+                (char * dest, const char * source, int32 len);
 
     extern int32 HDspaceleft
                 (void);
 
-#if (defined PC && !defined PC386) || defined MALLOC_CHECK
+#if defined MALLOC_CHECK
     extern VOIDP HDmalloc
                 (uint32 qty);
 
@@ -361,46 +343,25 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
     extern void HDfree
                 (VOIDP ptr);
 
-#endif                          /* (defined PC && !defined PC386) || defined MALLOC_CHECK */
+#endif /* defined MALLOC_CHECK */
 
-#if defined PC & !defined PC386
-    extern VOIDP fmemcpy_big
-                (VOIDP dest, const VOIDP source, uint32 len);
-
-    extern VOIDP fmemset_big
-                (VOIDP dest, intn c, uint32 len);
-
-    extern intn fmemcmp_big
-                (VOIDP s1, VOIDP s2, uint32 len);
-
-    extern VOIDP memcpy_big
-                (VOIDP dest, VOIDP source, uint32 len);
-
-    extern VOIDP memset_big
-                (VOIDP dest, intn c, uint32 len);
-
-    extern intn memcmp_big
-                (VOIDP s1, VOIDP s2, uint32 len);
-
-#endif                          /* WIN3 | PC */
-
-#if defined VMS || (defined PC && !defined PC386) || defined macintosh || defined MAC || defined __MWERKS__ || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000
+#if defined VMS || defined macintosh || defined MAC || defined __MWERKS__ || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000
     extern char *HDstrdup
                 (const char *s);
 
 #endif
 
     extern intn HDc2fstr
-                (char _HUGE * str, intn len);
+                (char * str, intn len);
 
-    extern char _HUGE *HDf2cstring
+    extern char *HDf2cstring
                 (_fcd fdesc, intn len);
 
     extern intn HDflush
                 (int32 file_id);
 
     extern intn HDpackFstring
-                (char _HUGE * src, char _HUGE * dest, intn len);
+                (char * src, char * dest, intn len);
 
 /*
    ** from hblocks.c
@@ -420,7 +381,7 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
    ** from hextelt.c
  */
     extern int32 HXcreate
-                (int32 file_id, uint16 tag, uint16 ref, const char _HUGE * extern_file_name,
+                (int32 file_id, uint16 tag, uint16 ref, const char * extern_file_name,
                  int32 offset, int32 start_len);
 
     extern intn HXsetcreatedir
@@ -437,8 +398,8 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
  */
     extern int32 HCcreate
                 (int32 file_id, uint16 tag, uint16 ref,
-                 comp_model_t model_type, model_info _HUGE * m_info,
-                 comp_coder_t coder_type, comp_info _HUGE * c_info);
+                 comp_model_t model_type, model_info * m_info,
+                 comp_coder_t coder_type, comp_info * c_info);
 
 /*
    ** from hvblocks.c
@@ -449,20 +410,18 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 /*
    ** from herr.c
  */
-    extern const char _HUGE *HEstring
+    extern const char *HEstring
                 (hdf_err_code_t error_code);
 
     extern VOID HEpush
-                (hdf_err_code_t error_code, const char _HUGE * function_name,
-                 const char _HUGE * file_name, intn line);
+                (hdf_err_code_t error_code, const char * function_name,
+                 const char * file_name, intn line);
 
-/* #ifndef _H_ERR_MASTER_ */
     extern VOID HEreport
-                (const char _HUGE *,...);
-    /* #endif *//* _H_ERR_MASTER_ */
+                (const char *,...);
 
     extern VOID HEprint
-                (FILE _HUGE * stream, int32 print_level);
+                (FILE * stream, int32 print_level);
 
     extern int16 HEvalue
                 (int32 level);
@@ -496,9 +455,6 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
     extern intn Hgetbit
                 (int32 bitid);
 
-    extern intn Hputbit
-                (int32 bitid, intn bit);
-
     extern int32 Hendbitaccess
                 (int32 bitfile_id, intn flushbit);
 
@@ -508,12 +464,12 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
    ** from dfcomp.c
  */
     extern intn DFputcomp
-                (int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE * image,
-        int32 xdim, int32 ydim, uint8 _HUGE * palette, uint8 _HUGE * newpal,
+                (int32 file_id, uint16 tag, uint16 ref, uint8 * image,
+        int32 xdim, int32 ydim, uint8 * palette, uint8 * newpal,
                  int16 scheme, comp_info * cinfo);
 
     extern int  DFgetcomp
-                (int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE * image,
+                (int32 file_id, uint16 tag, uint16 ref, uint8 * image,
                  int32 xdim, int32 ydim, uint16 scheme);
 
 /*
@@ -523,17 +479,17 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (VOIDP buf, VOIDP bufto, int32 len);
 
     extern int32 DFCIunrle
-                (uint8 _HUGE * buf, uint8 *bufto, int32 outlen, int resetsave);
+                (uint8 * buf, uint8 *bufto, int32 outlen, int resetsave);
 
 /*
    ** from dfimcomp.c
  */
     extern VOID DFCIimcomp
-                (int32 xdim, int32 ydim, uint8 _HUGE in[], uint8 _HUGE out[],
-                 uint8 _HUGE in_pal[], uint8 _HUGE out_pal[], int mode);
+                (int32 xdim, int32 ydim, uint8 in[], uint8 out[],
+                 uint8 in_pal[], uint8 out_pal[], int mode);
 
     extern VOID DFCIunimcomp
-                (int32 xdim, int32 ydim, uint8 _HUGE in[], uint8 _HUGE out[]);
+                (int32 xdim, int32 ydim, uint8 in[], uint8 out[]);
 
 /*
    ** from dfjpeg.c
@@ -558,7 +514,7 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (int32 file_id, uint16 tag, uint16 ref);
 
     extern intn DFdiget
-                (int32 list, uint16 _HUGE * ptag, uint16 _HUGE * pref);
+                (int32 list, uint16 * ptag, uint16 * pref);
 
     extern intn DFdinobj
                 (int32 list);
@@ -576,22 +532,22 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
    ** from dfp.c
  */
     extern intn DFPgetpal
-                (const char _HUGE * filename, VOIDP palette);
+                (const char * filename, VOIDP palette);
 
     extern intn DFPputpal
-                (const char _HUGE * filename, const VOIDP palette, intn overwrite, const char _HUGE * filemode);
+                (const char * filename, const VOIDP palette, intn overwrite, const char * filemode);
 
     extern intn DFPaddpal
-                (const char _HUGE * filename, const VOIDP palette);
+                (const char * filename, const VOIDP palette);
 
     extern intn DFPnpals
-                (const char _HUGE * filename);
+                (const char * filename);
 
     extern intn DFPreadref
-                (const char _HUGE * filename, uint16 ref);
+                (const char * filename, uint16 ref);
 
     extern intn DFPwriteref
-                (const char _HUGE * filename, uint16 ref);
+                (const char * filename, uint16 ref);
 
     extern intn DFPrestart
                 (void);
@@ -606,30 +562,30 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (int32 scheme, comp_info * cinfo);
 
     extern intn DFR8getdims
-                (const char _HUGE * filename, int32 _HUGE * pxdim, int32 _HUGE * pydim,
-                 int _HUGE * pispal);
+                (const char * filename, int32 * pxdim, int32 * pydim,
+                 int * pispal);
 
     extern intn DFR8getimage
-                (const char _HUGE * filename, uint8 _HUGE * image, int32 xdim, int32 ydim,
-                 uint8 _HUGE * pal);
+                (const char * filename, uint8 * image, int32 xdim, int32 ydim,
+                 uint8 * pal);
 
     extern intn DFR8setpalette
-                (uint8 _HUGE * pal);
+                (uint8 * pal);
 
     extern intn DFR8putimage
-                (const char _HUGE * filename, VOIDP image, int32 xdim, int32 ydim, uint16 compress);
+                (const char * filename, VOIDP image, int32 xdim, int32 ydim, uint16 compress);
 
     extern intn DFR8addimage
-                (const char _HUGE * filename, VOIDP image, int32 xdim, int32 ydim, uint16 compress);
+                (const char * filename, VOIDP image, int32 xdim, int32 ydim, uint16 compress);
 
     extern intn DFR8nimages
-                (const char _HUGE * filename);
+                (const char * filename);
 
     extern intn DFR8readref
-                (const char _HUGE * filename, uint16 ref);
+                (const char * filename, uint16 ref);
 
     extern intn DFR8writeref
-                (const char _HUGE * filename, uint16 ref);
+                (const char * filename, uint16 ref);
 
     extern intn DFR8restart
                 (void);
@@ -645,24 +601,24 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
    ** from dfgr.c
  */
     extern intn DFGRgetlutdims
-                (const char _HUGE * filename, int32 _HUGE * pxdim, int32 _HUGE * pydim,
-                 intn _HUGE * pncomps, intn _HUGE * pil);
+                (const char * filename, int32 * pxdim, int32 * pydim,
+                 intn * pncomps, intn * pil);
 
     extern intn DFGRreqlutil
                 (intn il);
 
     extern intn DFGRgetlut
-                (const char _HUGE * filename, VOIDP lut, int32 xdim, int32 ydim);
+                (const char * filename, VOIDP lut, int32 xdim, int32 ydim);
 
     extern intn DFGRgetimdims
-                (const char _HUGE * filename, int32 _HUGE * pxdim, int32 _HUGE * pydim,
-                 intn _HUGE * pncomps, intn _HUGE * pil);
+                (const char * filename, int32 * pxdim, int32 * pydim,
+                 intn * pncomps, intn * pil);
 
     extern intn DFGRreqimil
                 (intn il);
 
     extern intn DFGRgetimage
-                (const char _HUGE * filename, VOIDP image, int32 xdim, int32 ydim);
+                (const char * filename, VOIDP image, int32 xdim, int32 ydim);
 
     extern intn DFGRsetcompress
                 (int32 scheme, comp_info * cinfo);
@@ -674,32 +630,32 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (VOIDP lut, int32 xdim, int32 ydim);
 
     extern intn DFGRaddlut
-                (const char _HUGE * filename, VOIDP lut, int32 xdim, int32 ydim);
+                (const char * filename, VOIDP lut, int32 xdim, int32 ydim);
 
     extern intn DFGRsetimdims
                 (int32 xdim, int32 ydim, intn ncomps, intn il);
 
     extern intn DFGRaddimage
-                (const char _HUGE * filename, VOIDP image, int32 xdim, int32 ydim);
+                (const char * filename, VOIDP image, int32 xdim, int32 ydim);
 
     extern intn DFGRputimage
-                (const char _HUGE * filename, VOIDP image, int32 xdim, int32 ydim);
+                (const char * filename, VOIDP image, int32 xdim, int32 ydim);
 
     extern intn DFGRreadref
-                (const char _HUGE * filename, uint16 ref);
+                (const char * filename, uint16 ref);
 
     extern uint16 DFGRIlastref
                 (void);
 
     extern intn DFGRIgetdims
-                (const char _HUGE * filename, int32 _HUGE * pxdim, int32 _HUGE * pydim,
-                 intn _HUGE * pncomps, intn _HUGE * pil, intn type);
+                (const char * filename, int32 * pxdim, int32 * pydim,
+                 intn * pncomps, intn * pil, intn type);
 
     extern intn DFGRIreqil
                 (intn il, intn type);
 
     extern intn DFGRIgetimlut
-                (const char _HUGE * filename, VOIDP imlut, int32 xdim, int32 ydim, intn type,
+                (const char * filename, VOIDP imlut, int32 xdim, int32 ydim, intn type,
                  intn isfortran, int *compressed, uint16 *compr_type, int *has_pal);
 
     extern intn DFGRIsetdims
@@ -712,7 +668,7 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (void);
 
     extern intn DFGRIaddimlut
-                (const char _HUGE * filename, VOIDP imlut, int32 xdim, int32 ydim, intn type,
+                (const char * filename, VOIDP imlut, int32 xdim, int32 ydim, intn type,
                  intn isfortran, intn newfile);
 
     extern intn DFGRPshutdown(void);
@@ -721,14 +677,14 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
    ** from df24.c
  */
     extern intn DF24getdims
-                (const char _HUGE * filename, int32 _HUGE * pxdim, int32 _HUGE * pydim,
-                 intn _HUGE * pil);
+                (const char * filename, int32 * pxdim, int32 * pydim,
+                 intn * pil);
 
     extern intn DF24reqil
                 (intn il);
 
     extern intn DF24getimage
-                (const char _HUGE * filename, VOIDP image, int32 xdim, int32 ydim);
+                (const char * filename, VOIDP image, int32 xdim, int32 ydim);
 
     extern intn DF24setdims
                 (int32 xdim, int32 ydim);
@@ -743,16 +699,16 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (void);
 
     extern intn DF24addimage
-                (const char _HUGE * filename, VOIDP image, int32 xdim, int32 ydim);
+                (const char * filename, VOIDP image, int32 xdim, int32 ydim);
 
     extern intn DF24putimage
-                (const char _HUGE * filename, VOIDP image, int32 xdim, int32 ydim);
+                (const char * filename, VOIDP image, int32 xdim, int32 ydim);
 
     extern intn DF24nimages
-                (const char _HUGE * filename);
+                (const char * filename);
 
     extern intn DF24readref
-                (const char _HUGE * filename, uint16 ref);
+                (const char * filename, uint16 ref);
 
     extern uint16 DF24lastref
                 (void);
@@ -762,50 +718,50 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
  */
 
     extern int32 DFANgetlablen
-                (const char _HUGE * filename, uint16 tag, uint16 ref);
+                (const char * filename, uint16 tag, uint16 ref);
 
     extern intn DFANgetlabel
-                (const char _HUGE * filename, uint16 tag, uint16 ref, char _HUGE * label,
+                (const char * filename, uint16 tag, uint16 ref, char * label,
                  int32 maxlen);
 
     extern int32 DFANgetdesclen
-                (const char _HUGE * filename, uint16 tag, uint16 ref);
+                (const char * filename, uint16 tag, uint16 ref);
 
     extern intn DFANgetdesc
-                (const char _HUGE * filename, uint16 tag, uint16 ref, char _HUGE * desc,
+                (const char * filename, uint16 tag, uint16 ref, char * desc,
                  int32 maxlen);
 
     extern int32 DFANgetfidlen
                 (int32 file_id, intn isfirst);
 
     extern int32 DFANgetfid
-                (int32 file_id, char _HUGE * id, int32 maxlen, intn isfirst);
+                (int32 file_id, char * id, int32 maxlen, intn isfirst);
 
     extern int32 DFANgetfdslen
                 (int32 file_id, intn isfirst);
 
     extern int32 DFANgetfds
-                (int32 file_id, char _HUGE * desc, int32 maxlen, intn isfirst);
+                (int32 file_id, char * desc, int32 maxlen, intn isfirst);
 
     extern intn DFANputlabel
-                (const char _HUGE * filename, uint16 tag, uint16 ref, char _HUGE * label);
+                (const char * filename, uint16 tag, uint16 ref, char * label);
 
     extern intn DFANputdesc
-                (const char _HUGE * filename, uint16 tag, uint16 ref, char _HUGE * desc,
+                (const char * filename, uint16 tag, uint16 ref, char * desc,
                  int32 desclen);
 
     extern intn DFANaddfid
-                (int32 file_id, char _HUGE * id);
+                (int32 file_id, char * id);
 
     extern intn DFANaddfds
-                (int32 file_id, char _HUGE * desc, int32 desclen);
+                (int32 file_id, char * desc, int32 desclen);
 
     extern uint16 DFANlastref
                 (void);
 
     extern intn DFANlablist
-                (const char _HUGE * filename, uint16 tag, uint16 _HUGE reflist[],
-         char _HUGE * labellist, intn listsize, intn maxlen, intn startpos);
+                (const char * filename, uint16 tag, uint16 reflist[],
+         char * labellist, intn listsize, intn maxlen, intn startpos);
 
     extern intn DFANclear
                 (void);
@@ -820,29 +776,29 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (int type, uint16 annref, uint16 datatag, uint16 dataref);
 
     extern int32 DFANIgetannlen
-                (const char _HUGE * filename, uint16 tag, uint16 ref, int type);
+                (const char * filename, uint16 tag, uint16 ref, int type);
 
     extern intn DFANIgetann
-                (const char _HUGE * filename, uint16 tag, uint16 ref, uint8 _HUGE * ann,
+                (const char * filename, uint16 tag, uint16 ref, uint8 * ann,
                  int32 maxlen, int type);
 
     extern intn DFANIputann
-                (const char _HUGE * filename, uint16 tag, uint16 ref, uint8 _HUGE * ann,
+                (const char * filename, uint16 tag, uint16 ref, uint8 * ann,
                  int32 annlen, int type);
 
     extern int  DFANIlablist
-                (const char _HUGE * filename, uint16 tag, uint16 _HUGE reflist[],
-            uint8 _HUGE * labellist, int listsize, int maxlen, int startpos,
+                (const char * filename, uint16 tag, uint16 reflist[],
+            uint8 * labellist, int listsize, int maxlen, int startpos,
                  int isfortran);
 
     extern int  DFANIaddfann
-                (int32 file_id, char _HUGE * ann, int32 annlen, int type);
+                (int32 file_id, char * ann, int32 annlen, int type);
 
     extern int32 DFANIgetfannlen
                 (int32 file_id, int type, int isfirst);
 
     extern int32 DFANIgetfann
-                (int32 file_id, char _HUGE * ann, int32 maxlen, int type, int isfirst);
+                (int32 file_id, char * ann, int32 maxlen, int type, int isfirst);
 
     extern intn DFANPshutdown(void);
 
@@ -851,19 +807,19 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
  */
 
     extern int  DFSDgetdims
-                (const char _HUGE * filename, intn _HUGE * prank, int32 _HUGE sizes[], intn maxrank);
+                (const char * filename, intn * prank, int32 sizes[], intn maxrank);
 
     extern int  DFSDgetdatastrs
-                (char _HUGE * label, char _HUGE * unit, char _HUGE * format, char _HUGE * coordsys);
+                (char * label, char * unit, char * format, char * coordsys);
 
     extern int  DFSDgetdimstrs
-                (int dim, char _HUGE * label, char _HUGE * unit, char _HUGE * format);
+                (int dim, char * label, char * unit, char * format);
 
     extern int  DFSDgetdatalen
-                (int _HUGE * llabel, int _HUGE * lunit, int _HUGE * lformat, int _HUGE * lcoordsys);
+                (int * llabel, int * lunit, int * lformat, int * lcoordsys);
 
     extern int  DFSDgetdimlen
-                (int dim, int _HUGE * llabel, int _HUGE * lunit, int _HUGE * lformat);
+                (int dim, int * llabel, int * lunit, int * lformat);
 
     extern int  DFSDgetdimscale
                 (intn dim, int32 maxsize, VOIDP scale);
@@ -872,20 +828,20 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (VOIDP pmax, VOIDP pmin);
 
     extern int  DFSDgetdata
-                (const char _HUGE * filename, intn rank, int32 _HUGE maxsizes[], VOIDP data);
+                (const char * filename, intn rank, int32 maxsizes[], VOIDP data);
 
     extern int  DFSDsetlengths
                 (int maxlen_label, int maxlen_unit, int maxlen_format,
                  int maxlen_coordsys);
 
     extern int  DFSDsetdims
-                (intn rank, int32 _HUGE dimsizes[]);
+                (intn rank, int32 dimsizes[]);
 
     extern int  DFSDsetdatastrs
-                (const char _HUGE * label, const char _HUGE * unit, const char _HUGE * format, const char _HUGE * coordsys);
+                (const char * label, const char * unit, const char * format, const char * coordsys);
 
     extern int  DFSDsetdimstrs
-                (int dim, const char _HUGE * label, const char _HUGE * unit, const char _HUGE * format);
+                (int dim, const char * label, const char * unit, const char * format);
 
     extern int  DFSDsetdimscale
                 (intn dim, int32 dimsize, VOIDP scale);
@@ -894,16 +850,16 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (VOIDP maxi, VOIDP mini);
 
     extern int  DFSDputdata
-                (const char _HUGE * filename, intn rank, int32 _HUGE dimsizes[], VOIDP data);
+                (const char * filename, intn rank, int32 dimsizes[], VOIDP data);
 
     extern int  DFSDadddata
-                (const char _HUGE * filename, intn rank, int32 _HUGE dimsizes[], VOIDP data);
+                (const char * filename, intn rank, int32 dimsizes[], VOIDP data);
 
     extern int  DFSDrestart
                 (void);
 
     extern int32 DFSDndatasets
-                (char _HUGE * filename);
+                (char * filename);
 
     extern int  DFSDclear
                 (void);
@@ -912,17 +868,17 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (void);
 
     extern int  DFSDreadref
-                (char _HUGE * filename, uint16 ref);
+                (char * filename, uint16 ref);
 
     extern int  DFSDgetslice
-                (const char _HUGE * filename, int32 _HUGE winst[], int32 _HUGE windims[], VOIDP data,
-                 int32 _HUGE dims[]);
+                (const char * filename, int32 winst[], int32 windims[], VOIDP data,
+                 int32 dims[]);
 
     extern int  DFSDstartslice
-                (const char _HUGE * filename);
+                (const char * filename);
 
     extern int  DFSDputslice
-                (int32 _HUGE winend[], VOIDP data, int32 _HUGE dims[]);
+                (int32 winend[], VOIDP data, int32 dims[]);
 
     extern int  DFSDendslice
                 (void);
@@ -934,21 +890,21 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (int arrayorder);
 
     extern int  DFSDgetNT
-                (int32 _HUGE * pnumbertype);
+                (int32 * pnumbertype);
 
     extern intn DFSDpre32sdg
-                (char _HUGE * filename, uint16 ref, intn _HUGE * ispre32);
+                (char * filename, uint16 ref, intn * ispre32);
 
     extern int  DFSDsetcal
                 (float64 cal, float64 cal_err, float64 ioff,
                  float64 ioff_err, int32 cal_nt);
 
     extern int  DFSDgetcal
-                (float64 _HUGE * pcal, float64 _HUGE * pcal_err, float64 _HUGE * pioff,
-                 float64 _HUGE * pioff_err, int32 _HUGE * cal_nt);
+                (float64 * pcal, float64 * pcal_err, float64 * pioff,
+                 float64 * pioff_err, int32 * cal_nt);
 
     extern int  DFSDwriteref
-                (const char _HUGE * filename, uint16 ref);
+                (const char * filename, uint16 ref);
 
     extern int  DFSDsetfillvalue
                 (VOIDP fill_value);
@@ -957,18 +913,18 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (VOIDP fill_value);
 
     extern int  DFSDstartslab
-                (const char _HUGE * filename);
+                (const char * filename);
 
     extern int  DFSDwriteslab
-                (int32 _HUGE start[], int32 _HUGE stride[], int32 _HUGE count[],
+                (int32 start[], int32 stride[], int32 count[],
                  VOIDP data);
 
     extern int  DFSDendslab
                 (void);
 
     extern int  DFSDreadslab
-                (const char *filename, int32 _HUGE start[], int32 _HUGE slab_size[],
-             int32 _HUGE stride[], VOIDP buffer, int32 _HUGE buffer_size[]);
+                (const char *filename, int32 start[], int32 slab_size[],
+             int32 stride[], VOIDP buffer, int32 buffer_size[]);
 
     extern intn DFSDPshutdown(void);
 
@@ -1253,21 +1209,21 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #endif                          /* DFAN_FNAMES */
 
     extern      FRETVAL(intf) ndaiganl
-                (_fcd filename, intf _HUGE * tag, intf _HUGE * ref, intf _HUGE * type,
-                 intf _HUGE * fnlen);
+                (_fcd filename, intf * tag, intf * ref, intf * type,
+                 intf * fnlen);
 
     extern      FRETVAL(intf) ndaigann
-                (_fcd filename, intf _HUGE * tag, intf _HUGE * ref, _fcd annotation,
-                 intf _HUGE * maxlen, intf _HUGE * type, intf _HUGE * fnlen);
+                (_fcd filename, intf * tag, intf * ref, _fcd annotation,
+                 intf * maxlen, intf * type, intf * fnlen);
 
     extern      FRETVAL(intf) ndaipann
-                (_fcd filename, intf _HUGE * tag, intf _HUGE * ref, _fcd annotation,
-                 intf _HUGE * annlen, intf _HUGE * type, intf _HUGE * fnlen);
+                (_fcd filename, intf * tag, intf * ref, _fcd annotation,
+                 intf * annlen, intf * type, intf * fnlen);
 
     extern      FRETVAL(intf) ndailist
-                (_fcd filename, intf _HUGE * tag, intf _HUGE reflist[], _fcd labellist,
-          intf _HUGE * listsize, intf _HUGE * maxlen, intf _HUGE * startpos,
-                 intf _HUGE * fnlen);
+                (_fcd filename, intf * tag, intf reflist[], _fcd labellist,
+          intf * listsize, intf * maxlen, intf * startpos,
+                 intf * fnlen);
 
     extern      FRETVAL(intf) ndalref
                 (void);
@@ -1279,37 +1235,37 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (void);
 
     extern      FRETVAL(intf) ndfanaddfds
-                (intf _HUGE * dfile, _fcd desc, intf _HUGE * desclen);
+                (intf * dfile, _fcd desc, intf * desclen);
 
     extern      FRETVAL(intf) ndfangetfidlen
-                (intf _HUGE * dfile, intf _HUGE * isfirst);
+                (intf * dfile, intf * isfirst);
 
     extern      FRETVAL(intf) ndfangetfdslen
-                (intf _HUGE * dfile, intf _HUGE * isfirst);
+                (intf * dfile, intf * isfirst);
 
     extern      FRETVAL(intf) ndfangetfid
-                (intf _HUGE * dfile, _fcd id, intf _HUGE * maxlen, intf _HUGE * isfirst);
+                (intf * dfile, _fcd id, intf * maxlen, intf * isfirst);
 
     extern      FRETVAL(intf) ndfangetfds
-                (intf _HUGE * dfile, _fcd id, intf _HUGE * maxlen, intf _HUGE * isfirst);
+                (intf * dfile, _fcd id, intf * maxlen, intf * isfirst);
 
     extern      FRETVAL(intf) ndaafds
-                (intf _HUGE * dfile, _fcd desc, intf _HUGE * desclen);
+                (intf * dfile, _fcd desc, intf * desclen);
 
     extern      FRETVAL(intf) ndagfidl
-                (intf _HUGE * dfile, intf _HUGE * isfirst);
+                (intf * dfile, intf * isfirst);
 
     extern      FRETVAL(intf) ndagfdsl
-                (intf _HUGE * dfile, intf _HUGE * isfirst);
+                (intf * dfile, intf * isfirst);
 
     extern      FRETVAL(intf) ndagfid
-                (intf _HUGE * dfile, _fcd id, intf _HUGE * maxlen, intf _HUGE * isfirst);
+                (intf * dfile, _fcd id, intf * maxlen, intf * isfirst);
 
     extern      FRETVAL(intf) ndagfds
-                (intf _HUGE * dfile, _fcd id, intf _HUGE * maxlen, intf _HUGE * isfirst);
+                (intf * dfile, _fcd id, intf * maxlen, intf * isfirst);
 
     extern      FRETVAL(intf) ndaiafid
-                (intf _HUGE * dfile, _fcd id, intf _HUGE * idlen);
+                (intf * dfile, _fcd id, intf * idlen);
 
 /*
    ** from dfr8F.c
@@ -1362,29 +1318,29 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (void);
 
     extern      FRETVAL(intf) nd8igdim
-                (_fcd filename, intf _HUGE * xdim, intf _HUGE * ydim, intf _HUGE * ispal,
-                 intf _HUGE * lenfn);
+                (_fcd filename, intf * xdim, intf * ydim, intf * ispal,
+                 intf * lenfn);
 
     extern      FRETVAL(intf) nd8igimg
-                (_fcd filename, _fcd image, intf _HUGE * xdim, intf _HUGE * ydim,
-                 _fcd pal, intf _HUGE * lenfn);
+                (_fcd filename, _fcd image, intf * xdim, intf * ydim,
+                 _fcd pal, intf * lenfn);
 
     extern      FRETVAL(intf) nd8ipimg
-                (_fcd filename, _fcd image, intf _HUGE * xdim, intf _HUGE * ydim,
-                 intf _HUGE * compress, intf _HUGE * lenfn);
+                (_fcd filename, _fcd image, intf * xdim, intf * ydim,
+                 intf * compress, intf * lenfn);
 
     extern      FRETVAL(intf) nd8iaimg
-                (_fcd filename, _fcd image, intf _HUGE * xdim, intf _HUGE * ydim,
-                 intf _HUGE * compress, intf _HUGE * lenfn);
+                (_fcd filename, _fcd image, intf * xdim, intf * ydim,
+                 intf * compress, intf * lenfn);
 
     extern      FRETVAL(intf) nd8irref
-                (_fcd filename, intf _HUGE * ref, intf _HUGE * fnlen);
+                (_fcd filename, intf * ref, intf * fnlen);
 
     extern      FRETVAL(intf) nd8iwref
-                (_fcd filename, intf _HUGE * ref, intf _HUGE * fnlen);
+                (_fcd filename, intf * ref, intf * fnlen);
 
     extern      FRETVAL(intf) nd8inims
-                (_fcd filename, intf _HUGE * fnlen);
+                (_fcd filename, intf * fnlen);
 
     extern      FRETVAL(intf) nd8lref
                 (void);
@@ -1529,16 +1485,16 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #endif                          /* DFSD_FNAMES */
 
     extern      FRETVAL(intf) ndsgdisc
-                (intf _HUGE * dim, intf _HUGE * maxsize, VOIDP scale);
+                (intf * dim, intf * maxsize, VOIDP scale);
 
     extern      FRETVAL(intf) ndsgrang
                 (VOIDP pmax, VOIDP pmin);
 
     extern      FRETVAL(intf) ndssdims
-                (intf _HUGE * rank, intf _HUGE dimsizes[]);
+                (intf * rank, intf dimsizes[]);
 
     extern      FRETVAL(intf) ndssdisc
-                (intf _HUGE * dim, intf _HUGE * dimsize, VOIDP scale);
+                (intf * dim, intf * dimsize, VOIDP scale);
 
     extern      FRETVAL(intf) ndssrang
                 (VOIDP max, VOIDP min);
@@ -1547,84 +1503,84 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (void);
 
     extern      FRETVAL(intf) ndsslens
-                (intf _HUGE * maxlen_label, intf _HUGE * maxlen_unit,
-                 intf _HUGE * maxlen_format, intf _HUGE * maxlen_coordsys);
+                (intf * maxlen_label, intf * maxlen_unit,
+                 intf * maxlen_format, intf * maxlen_coordsys);
 
     extern      FRETVAL(intf) ndsgdiln
-                (intf _HUGE * dim, intf _HUGE * llabel, intf _HUGE * lunit,
-                 intf _HUGE * lformat);
+                (intf * dim, intf * llabel, intf * lunit,
+                 intf * lformat);
 
     extern      FRETVAL(intf) ndsgdaln
-                (intf _HUGE * llabel, intf _HUGE * lunit, intf _HUGE * lformat,
-                 intf _HUGE * lcoordsys);
+                (intf * llabel, intf * lunit, intf * lformat,
+                 intf * lcoordsys);
 
     extern      FRETVAL(intf) ndsfirst
                 (void);
 
     extern      FRETVAL(intf) ndspslc
-                (intf _HUGE windims[], VOIDP data, intf _HUGE dims[]);
+                (intf windims[], VOIDP data, intf dims[]);
 
     extern      FRETVAL(intf) ndseslc
                 (void);
 
     extern      FRETVAL(intf) ndssnt
-                (intf _HUGE * numbertype);
+                (intf * numbertype);
 
     extern      FRETVAL(intf) ndsgnt
-                (intf _HUGE * pnumbertype);
+                (intf * pnumbertype);
 
     extern      FRETVAL(intf) ndsigdim
-                (_fcd filename, intf _HUGE * prank, intf _HUGE sizes[],
-                 intf _HUGE * maxrank, intf _HUGE * lenfn);
+                (_fcd filename, intf * prank, intf sizes[],
+                 intf * maxrank, intf * lenfn);
 
     extern      FRETVAL(intf) ndsigdat
-                (_fcd filename, intf _HUGE * rank, intf _HUGE maxsizes[],
-                 VOIDP data, intf _HUGE * fnlen);
+                (_fcd filename, intf * rank, intf maxsizes[],
+                 VOIDP data, intf * fnlen);
 
     extern      FRETVAL(intf) ndsipdat
-                (_fcd filename, intf _HUGE * rank, intf _HUGE dimsizes[],
-                 VOIDP data, intf _HUGE * fnlen);
+                (_fcd filename, intf * rank, intf dimsizes[],
+                 VOIDP data, intf * fnlen);
 
     extern      FRETVAL(intf) ndsiadat
-                (_fcd filename, intf _HUGE * rank, intf _HUGE dimsizes[],
-                 VOIDP data, intf _HUGE * fnlen);
+                (_fcd filename, intf * rank, intf dimsizes[],
+                 VOIDP data, intf * fnlen);
 
     extern      FRETVAL(intf) ndsigslc
-                (_fcd filename, intf _HUGE winst[], intf _HUGE windims[],
-                 VOIDP data, intf _HUGE dims[], intf _HUGE * fnlen);
+                (_fcd filename, intf winst[], intf windims[],
+                 VOIDP data, intf dims[], intf * fnlen);
 
     extern      FRETVAL(intf) ndsisslc
-                (_fcd filename, intf _HUGE * fnlen);
+                (_fcd filename, intf * fnlen);
 
     extern      FRETVAL(intf) ndsirref
-                (_fcd filename, intf _HUGE * ref, intf _HUGE * fnlen);
+                (_fcd filename, intf * ref, intf * fnlen);
 
     extern      FRETVAL(intf) ndslref
                 (void);
 
     extern      FRETVAL(intf) ndsinum
-                (_fcd filename, intf _HUGE * len);
+                (_fcd filename, intf * len);
 
     extern      FRETVAL(intf) ndsip32s
-                (_fcd filename, intf _HUGE * ref, intf _HUGE * ispre32, intf _HUGE * len);
+                (_fcd filename, intf * ref, intf * ispre32, intf * len);
 
     extern      FRETVAL(intf) ndfsdgetdatastrs
                 (_fcd label, _fcd unit, _fcd format, _fcd coordsys);
 
     extern      FRETVAL(intf) ndfsdgetdimstrs
-                (intf _HUGE * dim, _fcd label, _fcd unit, _fcd format);
+                (intf * dim, _fcd label, _fcd unit, _fcd format);
 
     extern      FRETVAL(intf) ndfsdgetdimscale
-                (intf _HUGE * dim, intf _HUGE * maxsize, VOIDP scale);
+                (intf * dim, intf * maxsize, VOIDP scale);
 
     extern      FRETVAL(intf) ndfsdgetrange
                 (VOIDP pmax, VOIDP pmin);
 
     extern      FRETVAL(intf) ndfsdsetdims
-                (intf _HUGE * rank, intf _HUGE dimsizes[]);
+                (intf * rank, intf dimsizes[]);
 
     extern      FRETVAL(intf) ndfsdsetdimscale
-                (intf _HUGE * dim, intf _HUGE * dimsize, VOIDP scale);
+                (intf * dim, intf * dimsize, VOIDP scale);
 
     extern      FRETVAL(intf) ndfsdsetrange
                 (VOIDP max, VOIDP min);
@@ -1633,62 +1589,62 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (void);
 
     extern      FRETVAL(intf) ndfsdsetlengths
-                (intf _HUGE * maxlen_label, intf _HUGE * maxlen_unit,
-                 intf _HUGE * maxlen_format, intf _HUGE * maxlen_coordsys);
+                (intf * maxlen_label, intf * maxlen_unit,
+                 intf * maxlen_format, intf * maxlen_coordsys);
 
     extern      FRETVAL(intf) ndfsdgetdimlen
-                (intf _HUGE * dim, intf _HUGE * llabel, intf _HUGE * lunit,
-                 intf _HUGE * lformat);
+                (intf * dim, intf * llabel, intf * lunit,
+                 intf * lformat);
 
     extern      FRETVAL(intf) ndfsdgetdatalen
-                (intf _HUGE * llabel, intf _HUGE * lunit, intf _HUGE * lformat,
-                 intf _HUGE * lcoordsys);
+                (intf * llabel, intf * lunit, intf * lformat,
+                 intf * lcoordsys);
 
     extern      FRETVAL(intf) ndfsdrestart
                 (void);
 
     extern      FRETVAL(intf) ndfsdputslice
-                (intf _HUGE windims[], VOIDP data, intf _HUGE dims[]);
+                (intf windims[], VOIDP data, intf dims[]);
 
     extern      FRETVAL(intf) ndfsdendslice
                 (void);
 
     extern      FRETVAL(intf) ndfsdsetnt
-                (intf _HUGE * numbertype);
+                (intf * numbertype);
 
     extern      FRETVAL(intf) ndfsdgetnt
-                (intf _HUGE * pnumbertype);
+                (intf * pnumbertype);
 
     extern      FRETVAL(intf) ndfsdlastref
                 (void);
 
     extern      FRETVAL(intf) ndsisdis
-                (intf _HUGE * dim, _fcd flabel, _fcd funit, _fcd fformat,
-             intf _HUGE * llabel, intf _HUGE * lunit, intf _HUGE * lformat);
+                (intf * dim, _fcd flabel, _fcd funit, _fcd fformat,
+             intf * llabel, intf * lunit, intf * lformat);
 
     extern      FRETVAL(intf) ndsigdis
-                (intf _HUGE * dim, _fcd label, _fcd unit, _fcd format,
-             intf _HUGE * llabel, intf _HUGE * lunit, intf _HUGE * lformat);
+                (intf * dim, _fcd label, _fcd unit, _fcd format,
+             intf * llabel, intf * lunit, intf * lformat);
 
     extern      FRETVAL(intf) ndsisdas
                 (_fcd flabel, _fcd funit, _fcd fformat, _fcd fcoordsys,
-            intf _HUGE * isfortran, intf _HUGE * llabel, intf _HUGE * lunit,
-                 intf _HUGE * lformat, intf _HUGE * lcoordsys);
+            intf * isfortran, intf * llabel, intf * lunit,
+                 intf * lformat, intf * lcoordsys);
 
     extern      FRETVAL(intf) ndsigdas
-                (_fcd label, _fcd unit, _fcd format, _fcd coordsys, intf _HUGE * llabel,
-             intf _HUGE * lunit, intf _HUGE * lformat, intf _HUGE * lcoord);
+                (_fcd label, _fcd unit, _fcd format, _fcd coordsys, intf * llabel,
+             intf * lunit, intf * lformat, intf * lcoord);
 
     extern      FRETVAL(intf) ndsscal
-                (float64 _HUGE * cal, float64 _HUGE * cal_err, float64 _HUGE * ioff,
-                 float64 _HUGE * ioff_err, intf _HUGE * cal_type);
+                (float64 * cal, float64 * cal_err, float64 * ioff,
+                 float64 * ioff_err, intf * cal_type);
 
     extern      FRETVAL(intf) ndsgcal
-                (float64 _HUGE * cal, float64 _HUGE * cal_err, float64 _HUGE * ioff,
-                 float64 _HUGE * ioff_err, intf _HUGE * cal_type);
+                (float64 * cal, float64 * cal_err, float64 * ioff,
+                 float64 * ioff_err, intf * cal_type);
 
     extern      FRETVAL(intf) ndswref
-                (_fcd filename, intf _HUGE * fnlen, intf _HUGE * ref);
+                (_fcd filename, intf * fnlen, intf * ref);
 
     extern      FRETVAL(intf) ndssfill
                 (VOIDP fill_value);
@@ -1697,11 +1653,11 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (VOIDP fill_value);
 
     extern      FRETVAL(intf) ndssslab
-                (_fcd filename, intf _HUGE * fnlen);
+                (_fcd filename, intf * fnlen);
 
     extern      FRETVAL(intf) ndswslab
-                (intf _HUGE start[], intf _HUGE stride[],
-                 intf _HUGE cont[], VOIDP data);
+                (intf start[], intf  stride[],
+                 intf  cont[], VOIDP data);
 
     extern      FRETVAL(intf) ndseslab
                 (void);
@@ -1746,20 +1702,20 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #endif                          /* DFP_FNAMES */
 
     extern      FRETVAL(intf) ndpigpal
-                (_fcd filename, _fcd pal, intf _HUGE * fnlen);
+                (_fcd filename, _fcd pal, intf  * fnlen);
 
     extern      FRETVAL(intf) ndpippal
-                (_fcd filename, _fcd pal, intf _HUGE * overwrite, _fcd filemode,
-                 intf _HUGE * fnlen);
+                (_fcd filename, _fcd pal, intf  * overwrite, _fcd filemode,
+                 intf  * fnlen);
 
     extern      FRETVAL(intf) ndpinpal
-                (_fcd filename, intf _HUGE * fnlen);
+                (_fcd filename, intf  * fnlen);
 
     extern      FRETVAL(intf) ndpirref
-                (_fcd filename, uint16 _HUGE * ref, intf _HUGE * fnlen);
+                (_fcd filename, uint16  * ref, intf  * fnlen);
 
     extern      FRETVAL(intf) ndpiwref
-                (_fcd filename, uint16 _HUGE * ref, intf _HUGE * fnlen);
+                (_fcd filename, uint16  * ref, intf  * fnlen);
 
     extern      FRETVAL(intf) ndprest
                 (void);
@@ -1820,46 +1776,46 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #endif                          /* DF24_FNAMES */
 
     extern      FRETVAL(intf) nd2reqil
-                (intf _HUGE * il);
+                (intf  * il);
 
     extern      FRETVAL(intf) nd2sdims
-                (intf _HUGE * xdim, intf _HUGE * ydim);
+                (intf  * xdim, intf  * ydim);
 
     extern      FRETVAL(intf) nd2igdim
-                (_fcd filename, intf _HUGE * pxdim, intf _HUGE * pydim, intf _HUGE * pil,
-                 intf _HUGE * fnlen);
+                (_fcd filename, intf  * pxdim, intf  * pydim, intf  * pil,
+                 intf  * fnlen);
 
     extern      FRETVAL(intf) nd2igimg
-                (_fcd filename, _fcd image, intf _HUGE * xdim, intf _HUGE * ydim,
-                 intf _HUGE * fnlen);
+                (_fcd filename, _fcd image, intf  * xdim, intf  * ydim,
+                 intf  * fnlen);
 
     extern      FRETVAL(intf) nd2iaimg
-                (_fcd filename, _fcd image, intf _HUGE * xdim, intf _HUGE * ydim,
-                 intf _HUGE * fnlen, intf _HUGE * newfile);
+                (_fcd filename, _fcd image, intf  * xdim, intf  * ydim,
+                 intf  * fnlen, intf  * newfile);
 
     extern      FRETVAL(intf) nd2setil
-                (intf _HUGE * il);
+                (intf  * il);
 
     extern      FRETVAL(intf) nd2first
                 (void);
 
     extern      FRETVAL(intf) ndf24reqil
-                (intf _HUGE * il);
+                (intf  * il);
 
     extern      FRETVAL(intf) ndf24setdims
-                (intf _HUGE * xdim, intf _HUGE * ydim);
+                (intf  * xdim, intf  * ydim);
 
     extern      FRETVAL(intf) ndf24setil
-                (intf _HUGE * il);
+                (intf  * il);
 
     extern      FRETVAL(intf) ndf24restart
                 (void);
 
     extern      FRETVAL(intf) nd2irref
-                (_fcd filename, intf _HUGE * ref, intf _HUGE * fnlen);
+                (_fcd filename, intf  * ref, intf  * fnlen);
 
     extern      FRETVAL(intf) nd2inimg
-                (_fcd filename, intf _HUGE * fnlen);
+                (_fcd filename, intf  * fnlen);
 
     extern      FRETVAL(intf) nd2lref
                 (void);
@@ -1927,68 +1883,63 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #endif                          /* DF_FNAMES */
 
     extern      FRETVAL(intf) ndfiopen
-                (_fcd name, intf _HUGE * acc_mode, intf _HUGE * defdds, intf _HUGE * namelen);
+                (_fcd name, intf  * acc_mode, intf  * defdds, intf  * namelen);
 
     extern      FRETVAL(intf) ndfclose
-                (intf _HUGE * dfile);
+                (intf  * dfile);
 
     extern      FRETVAL(intf) ndfdesc
-                (intf _HUGE * dfile, intf _HUGE ptr[][4], intf _HUGE * begin,
-                 intf _HUGE * num);
+                (intf  * dfile, intf  ptr[][4], intf  * begin,
+                 intf  * num);
 
     extern      FRETVAL(intf) ndfdup
-                (intf _HUGE * dfile, intf _HUGE * tag, intf _HUGE * ref, intf _HUGE * otag,
-                 intf _HUGE * oref);
+                (intf  * dfile, intf  * tag, intf  * ref, intf  * otag,
+                 intf  * oref);
 
     extern      FRETVAL(intf) ndfdel
-                (intf _HUGE * dfile, intf _HUGE * tag, intf _HUGE * ref);
+                (intf  * dfile, intf  * tag, intf  * ref);
 
     extern      FRETVAL(intf) ndfiaccess
-                (intf _HUGE * dfile, intf _HUGE * tag, intf _HUGE * ref, _fcd acc_mode, intf _HUGE * acclen);
+                (intf  * dfile, intf  * tag, intf  * ref, _fcd acc_mode, intf  * acclen);
 
     extern      FRETVAL(intf) ndfstart
-                (intf _HUGE * dfile, intf _HUGE * tag, intf _HUGE * ref, char _HUGE * acc_mode);
+                (intf  * dfile, intf  * tag, intf  * ref, char  * acc_mode);
 
     extern      FRETVAL(intf) ndfread
-                (intf _HUGE * dfile, _fcd ptr, intf _HUGE * len);
+                (intf  * dfile, _fcd ptr, intf  * len);
 
     extern      FRETVAL(intf) ndfseek
-                (intf _HUGE * dfile, intf _HUGE * offset);
+                (intf  * dfile, intf  * offset);
 
     extern      FRETVAL(intf) ndfwrite
-                (intf _HUGE * dfile, _fcd ptr, intf _HUGE * len);
+                (intf  * dfile, _fcd ptr, intf  * len);
 
     extern      FRETVAL(intf) ndfupdate
-                (intf _HUGE * dfile);
+                (intf  * dfile);
 
     extern      FRETVAL(intf) ndfget
-                (intf _HUGE * dfile, intf _HUGE * tag, intf _HUGE * ref, _fcd ptr);
+                (intf  * dfile, intf  * tag, intf  * ref, _fcd ptr);
 
     extern      FRETVAL(intf) ndfput
-                (intf _HUGE * dfile, intf _HUGE * tag, intf _HUGE * ref, _fcd ptr, intf _HUGE * len);
+                (intf  * dfile, intf  * tag, intf  * ref, _fcd ptr, intf  * len);
 
     extern      FRETVAL(intf) ndfsfind
-                (intf _HUGE * dfile, intf _HUGE * tag, intf _HUGE * ref);
+                (intf  * dfile, intf  * tag, intf  * ref);
 
     extern      FRETVAL(intf) ndffind
-                (intf _HUGE * dfile, intf _HUGE * itag, intf _HUGE * iref, intf _HUGE * len);
+                (intf  * dfile, intf  * itag, intf  * iref, intf  * len);
 
     extern      FRETVAL(intf) ndferrno
                 (void);
 
     extern      FRETVAL(intf) ndfnewref
-                (intf _HUGE * dfile);
+                (intf  * dfile);
 
     extern      FRETVAL(intf) ndfnumber
-                (intf _HUGE * dfile, intf _HUGE * tag);
-
-#ifdef TEMP_OUT
-    extern      FRETVAL(intf) ndfstat
-                (intf _HUGE * dfile, DFdata _HUGE * dfinfo);
-#endif
+                (intf  * dfile, intf  * tag);
 
     extern      FRETVAL(intf) ndfiishdf
-                (_fcd name, intf _HUGE * namelen);
+                (_fcd name, intf  * namelen);
 
 /*
    ** from dfutil.c
@@ -2011,10 +1962,10 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #endif                          /* DFUTIL_FNAMES */
 
     extern      FRETVAL(intf) ndfindnr
-                (intf _HUGE * dfile, intf _HUGE * tag, intf _HUGE * lref);
+                (intf  * dfile, intf  * tag, intf  * lref);
 
     extern      FRETVAL(intf) ndffindnextref
-                (intf _HUGE * dfile, intf _HUGE * tag, intf _HUGE * lref);
+                (intf  * dfile, intf  * tag, intf  * lref);
 
 /*
    ** from herrF.c
@@ -2029,7 +1980,7 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #endif                          /* HERR_FNAMES */
 
     extern      FRETVAL(VOID) nheprnt
-                (intf _HUGE * print_levels);
+                (intf  * print_levels);
 
 /*
    ** from hfileF.c
@@ -2052,10 +2003,10 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #endif                          /* HFILE_FNAMES */
 
     extern      FRETVAL(intf) nhiopen
-                (_fcd name, intf _HUGE * acc_mode, intf _HUGE * defdds, intf _HUGE * namelen);
+                (_fcd name, intf  * acc_mode, intf  * defdds, intf  * namelen);
 
     extern      FRETVAL(intf) nhclose
-                (intf _HUGE * file_id);
+                (intf  * file_id);
 
     extern	FRETVAL(intf) nhnumber
 		(int32 file_id, uint16 tag);
@@ -2079,22 +2030,17 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #endif                          /* DFUFP2I_FNAMES */
 
     extern      FRETVAL(int) nduif2i
-                (int32 _HUGE * hdim, int32 _HUGE * vdim, float32 _HUGE * max,
-        float32 _HUGE * min, float32 _HUGE hscale[], float32 _HUGE vscale[],
-                 float32 _HUGE data[], _fcd palette, _fcd outfile,
-              int _HUGE * ct_method, int32 _HUGE * hres, int32 _HUGE * vres,
-                 int _HUGE * compress, int _HUGE * lenfn);
+                (int32  * hdim, int32  * vdim, float32  * max,
+        float32  * min, float32  hscale[], float32  vscale[],
+                 float32  data[], _fcd palette, _fcd outfile,
+              int  * ct_method, int32  * hres, int32  * vres,
+                 int  * compress, int  * lenfn);
 
     extern int  DFUfptoimage
                 (int32 hdim, int32 vdim, float32 max, float32 min,
-       float32 _HUGE * hscale, float32 _HUGE * vscale, float32 _HUGE * data,
-                 uint8 _HUGE * palette, char _HUGE * outfile, int ct_method,
+       float32  * hscale, float32  * vscale, float32  * data,
+                 uint8  * palette, char  * outfile, int ct_method,
                  int32 hres, int32 vres, int compress);
-
-/* temp. fix for circular includes with vsets */
-#ifdef PERM_OUT
-#include "vproto.h"
-#endif                          /* PERM_OUT */
 
 /* for Multi-file fortran Annotation inteface */
 #ifndef MFAN_FNAMES
@@ -2394,6 +2340,8 @@ extern intn GRgetattr(int32 id,int32 index,VOIDP data);
 
 extern int32 GRfindattr(int32 id,char *name);
 
+extern intn GRPshutdown(void);
+
 /* For Pablo wrapper functions */
 
 #if defined HAVE_PABLO || defined PABLO
@@ -2498,10 +2446,10 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
                 (HFILEID f);
 
     extern int32 vcheckcompat
-                (char _HUGE * fs);
+                (char  * fs);
 
     extern int32 vmakecompat
-                (char _HUGE * fs);
+                (char  * fs);
 
 /*
    ** from vg.c
@@ -2516,50 +2464,50 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
                 (int32 vkey, int32 interlace);
 
     extern int32 VSgetfields
-                (int32 vkey, char _HUGE * fields);
+                (int32 vkey, char  * fields);
 
     extern intn VSfexist
-                (int32 vkey, char _HUGE * fields);
+                (int32 vkey, char  * fields);
 
     extern int32 VSsizeof
-                (int32 vkey, char _HUGE * fields);
+                (int32 vkey, char  * fields);
 
     extern VOID VSdump
                 (int32 vkey);
 
     extern int32 VSsetname
-                (int32 vkey, const char _HUGE * vsname);
+                (int32 vkey, const char  * vsname);
 
     extern int32 VSsetclass
-                (int32 vkey, const char _HUGE * vsclass);
+                (int32 vkey, const char  * vsclass);
 
     extern int32 VSgetname
-                (int32 vkey, char _HUGE * vsname);
+                (int32 vkey, char  * vsname);
 
     extern int32 VSgetclass
-                (int32 vkey, char _HUGE * vsclass);
+                (int32 vkey, char  * vsclass);
 
     extern intn VSinquire
-                (int32 vkey, int32 _HUGE * nelt, int32 _HUGE * interlace,
-           char _HUGE * fields, int32 _HUGE * eltsize, char _HUGE * vsname);
+                (int32 vkey, int32  * nelt, int32  * interlace,
+           char  * fields, int32  * eltsize, char  * vsname);
 
     extern int32 VSlone
-                (HFILEID f, int32 _HUGE * idarray, int32 asize);
+                (HFILEID f, int32  * idarray, int32 asize);
 
     extern int32 Vlone
-                (HFILEID f, int32 _HUGE * idarray, int32 asize);
+                (HFILEID f, int32  * idarray, int32 asize);
 
     extern int32 Vfind
-                (HFILEID f, const char _HUGE * vgname);
+                (HFILEID f, const char  * vgname);
 
     extern int32 VSfind
-                (HFILEID f, const char _HUGE * vsname);
+                (HFILEID f, const char  * vsname);
 
     extern int32 Vfindclass
-                (HFILEID f, const char _HUGE * vgclass);
+                (HFILEID f, const char  * vgclass);
 
     extern int32 VSfindclass
-                (HFILEID f, const char _HUGE * vsclass);
+                (HFILEID f, const char  * vsclass);
 
     extern VOID Vsetzap
                 (void);
@@ -2595,7 +2543,7 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
                 (HFILEID f, uint16 vgid);
 
     extern int32 Vattach
-                (HFILEID f, int32 vgid, const char _HUGE * accesstype);
+                (HFILEID f, int32 vgid, const char  * accesstype);
 
     extern int32 Vdetach
                 (int32 vkey);
@@ -2605,7 +2553,7 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
     /* note: 2nd arg of Vinsert can also be (VGROUP *) */
 
     extern int32 Vflocate
-                (int32 vkey, char _HUGE * field);
+                (int32 vkey, char  * field);
 
     extern intn Vinqtagref
                 (int32 vkey, int32 tag, int32 ref);
@@ -2617,10 +2565,10 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
                 (int32 vkey,int32 tag);
 
     extern int32 Vgettagrefs
-                (int32 vkey, int32 _HUGE tagarray[], int32 _HUGE refarray[], int32 n);
+                (int32 vkey, int32  tagarray[], int32  refarray[], int32 n);
 
     extern intn Vgettagref
-                (int32 vkey, int32 which, int32 _HUGE * tag, int32 _HUGE * ref);
+                (int32 vkey, int32 which, int32  * tag, int32  * ref);
 
     extern int32 VQueryref
                 (int32 vkey);
@@ -2635,10 +2583,10 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
                 (HFILEID f, int32 vgid);
 
     extern int32 Vsetname
-                (int32 vkey, const char _HUGE * vgname);
+                (int32 vkey, const char  * vgname);
 
     extern int32 Vsetclass
-                (int32 vkey, const char _HUGE * vgclass);
+                (int32 vkey, const char  * vgclass);
 
     extern intn Visvg
                 (int32 vkey, int32 id);
@@ -2653,13 +2601,13 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
                 (int32 vkey, int32 id);
 
     extern int32 Vgetname
-                (int32 vkey, char _HUGE * vgname);
+                (int32 vkey, char  * vgname);
 
     extern int32 Vgetclass
-                (int32 vkey, char _HUGE * vgclass);
+                (int32 vkey, char  * vgclass);
 
     extern intn Vinquire
-                (int32 vkey, int32 _HUGE * nentries, char _HUGE * vgname);
+                (int32 vkey, int32  * nentries, char  * vgname);
 
     extern int32 Vdelete
                 (int32 f, int32 ref);
@@ -2670,22 +2618,22 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
    ** from vparse.c
  */
     extern int32 scanattrs
-                (const char _HUGE * attrs, int32 _HUGE * attrc, char _HUGE *** attrv);
+                (const char  * attrs, int32  * attrc, char  *** attrv);
 
 /*
    ** from vhi.c
  */
     extern int32 VHstoredata
-                (HFILEID f, char _HUGE * field, uint8 _HUGE buf[], int32 n, int32 datatype,
-                 char _HUGE * vsname, char _HUGE * vsclass);
+                (HFILEID f, char  * field, uint8  buf[], int32 n, int32 datatype,
+                 char  * vsname, char  * vsclass);
 
     extern int32 VHstoredatam
-                (HFILEID f, char _HUGE * field, uint8 _HUGE buf[], int32 n, int32 datatype,
-                 char _HUGE * vsname, char _HUGE * vsclass, int32 order);
+                (HFILEID f, char  * field, uint8  buf[], int32 n, int32 datatype,
+                 char  * vsname, char  * vsclass, int32 order);
 
     extern int32 VHmakegroup
-                (HFILEID f, int32 _HUGE tagarray[], int32 _HUGE refarray[], int32 n, char _HUGE * vgname,
-                 char _HUGE * vgclass);
+                (HFILEID f, int32  tagarray[], int32  refarray[], int32 n, char  * vgname,
+                 char  * vgclass);
 
 /*
    ** from vio.c
@@ -2698,7 +2646,7 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
                 (VOIDP n);
 
     extern int32 VSattach
-                (HFILEID f, int32 vsref, const char _HUGE * accesstype);
+                (HFILEID f, int32 vsref, const char  * accesstype);
 
     extern int32 VSdetach
                 (int32 vkey);
@@ -2726,10 +2674,10 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
  */
 
     extern intn VSsetfields
-                (int32 vkey, const char _HUGE * fields);
+                (int32 vkey, const char  * fields);
 
     extern intn VSfdefine
-                (int32 vkey, const char _HUGE * field, int32 localtype, int32 order);
+                (int32 vkey, const char  * field, int32 localtype, int32 order);
 
     extern int32 VFnfields
                 (int32 vkey);
@@ -2762,10 +2710,10 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
                 (int32 vkey, int32 eltpos);
 
     extern int32 VSread
-                (int32 vkey, uint8 _HUGE buf[], int32 nelt, int32 interlace);
+                (int32 vkey, uint8  buf[], int32 nelt, int32 interlace);
 
     extern int32 VSwrite
-                (int32 vkey, uint8 _HUGE buf[], int32 nelt, int32 interlace);
+                (int32 vkey, uint8  buf[], int32 nelt, int32 interlace);
 
 /*
    ** from vgF.c
@@ -2920,206 +2868,206 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 #endif                          /* VG_FNAMES */
 
     extern      FRETVAL(intf) ndfivopn
-                (_fcd filename, intf _HUGE * acc_mode, intf _HUGE * defdds, intf _HUGE * namelen);
+                (_fcd filename, intf  * acc_mode, intf  * defdds, intf  * namelen);
 
     extern      FRETVAL(intf) ndfvclos
-                (intf _HUGE * file_id);
+                (intf  * file_id);
 
     extern      FRETVAL(intf) nvatchc
-                (HFILEID _HUGE * f, intf _HUGE * vgid, _fcd accesstype);
+                (HFILEID  * f, intf  * vgid, _fcd accesstype);
 
     extern      FRETVAL(intf) nvdtchc
-                (intf _HUGE * vkey);
+                (intf  * vkey);
 
     extern      FRETVAL(intf) nvgnamc
-                (intf _HUGE * vkey, _fcd vgname);
+                (intf  * vkey, _fcd vgname);
 
     extern      FRETVAL(intf) nvgclsc
-                (intf _HUGE * vkey, _fcd vgclass);
+                (intf  * vkey, _fcd vgclass);
 
     extern      FRETVAL(intf) nvinqc
-                (intf _HUGE * vkey, intf _HUGE * nentries, _fcd vgname);
+                (intf  * vkey, intf  * nentries, _fcd vgname);
 
     extern      FRETVAL(intf) nvdelete
-                (intf _HUGE *f, intf _HUGE * vkey);
+                (intf  *f, intf  * vkey);
 
     extern      FRETVAL(intf) nvgidc
-                (HFILEID _HUGE * f, intf _HUGE * vgid);
+                (HFILEID  * f, intf  * vgid);
 
     extern      FRETVAL(intf) nvgnxtc
-                (intf _HUGE * vkey, intf _HUGE * id);
+                (intf  * vkey, intf  * id);
 
     extern      FRETVAL(intf) nvsnamc
-                (intf _HUGE * vkey, _fcd vgname, intf _HUGE * vgnamelen);
+                (intf  * vkey, _fcd vgname, intf  * vgnamelen);
 
     extern      FRETVAL(intf) nvsclsc
-                (intf _HUGE * vkey, _fcd vgclass, intf _HUGE * vgclasslen);
+                (intf  * vkey, _fcd vgclass, intf  * vgclasslen);
 
     extern      FRETVAL(intf) nvinsrtc
-                (intf _HUGE * vkey, intf _HUGE * vobjptr);
+                (intf  * vkey, intf  * vobjptr);
 
     extern      FRETVAL(intf) nvisvgc
-                (intf _HUGE * vkey, intf _HUGE * id);
+                (intf  * vkey, intf  * id);
 
     extern      FRETVAL(intf) nvisvsc
-                (intf _HUGE * vkey, intf _HUGE * id);
+                (intf  * vkey, intf  * id);
 
     extern      FRETVAL(intf) nvsatchc
-                (HFILEID _HUGE * f, intf _HUGE * vsref, _fcd accesstype);
+                (HFILEID  * f, intf  * vsref, _fcd accesstype);
 
     extern      FRETVAL(intf) nvsdtchc
-                (intf _HUGE * vkey);
+                (intf  * vkey);
 
     extern      FRETVAL(intf) nvsqref
-                (intf _HUGE * vkey);
+                (intf  * vkey);
 
     extern      FRETVAL(intf) nvsqtag
-                (intf _HUGE * vkey);
+                (intf  * vkey);
 
     extern      FRETVAL(intf) nvsgver
-                (intf _HUGE * vkey);
+                (intf  * vkey);
 
     extern      FRETVAL(intf) nvsseekc
-                (intf _HUGE * vkey, intf _HUGE * eltpos);
+                (intf  * vkey, intf  * eltpos);
 
     extern      FRETVAL(intf) nvsgnamc
-                (intf _HUGE * vkey, _fcd vsname);
+                (intf  * vkey, _fcd vsname);
 
     extern      FRETVAL(intf) nvsgclsc
-                (intf _HUGE * vkey, _fcd vsclass);
+                (intf  * vkey, _fcd vsclass);
 
     extern      FRETVAL(intf) nvsinqc
-                (intf _HUGE * vkey, intf _HUGE * nelt, intf _HUGE * interlace,
-                 _fcd fields, intf _HUGE * eltsize, _fcd vsname);
+                (intf  * vkey, intf  * nelt, intf  * interlace,
+                 _fcd fields, intf  * eltsize, _fcd vsname);
 
     extern      FRETVAL(intf) nvsfexc
-                (intf _HUGE * vkey, _fcd fields, intf _HUGE * fieldslen);
+                (intf  * vkey, _fcd fields, intf  * fieldslen);
 
     extern      FRETVAL(intf) nvsfndc
-                (HFILEID _HUGE * f, _fcd name, intf _HUGE * namelen);
+                (HFILEID  * f, _fcd name, intf  * namelen);
 
     extern      FRETVAL(intf) nvsgidc
-                (HFILEID _HUGE * f, intf _HUGE * vsref);
+                (HFILEID  * f, intf  * vsref);
 
     extern      FRETVAL(intf) nvsdltc
-                (HFILEID _HUGE * f, intf _HUGE * vsref);
+                (HFILEID  * f, intf  * vsref);
 
     extern      FRETVAL(intf) nvsapp
-                (intf _HUGE * vkey, intf _HUGE *blk);
+                (intf  * vkey, intf  *blk);
 
     extern      FRETVAL(intf) nvssnamc
-                (intf _HUGE * vkey, _fcd vsname, intf _HUGE * vsnamelen);
+                (intf  * vkey, _fcd vsname, intf  * vsnamelen);
 
     extern      FRETVAL(intf) nvssclsc
-                (intf _HUGE * vkey, _fcd vsclass, intf _HUGE * vsclasslen);
+                (intf  * vkey, _fcd vsclass, intf  * vsclasslen);
 
     extern      FRETVAL(intf) nvssfldc
-                (intf _HUGE * vkey, _fcd fields, intf _HUGE * fieldslen);
+                (intf  * vkey, _fcd fields, intf  * fieldslen);
 
     extern      FRETVAL(intf) nvssintc
-                (intf _HUGE * vkey, intf _HUGE * interlace);
+                (intf  * vkey, intf  * interlace);
 
     extern      FRETVAL(intf) nvsfdefc
-                (intf _HUGE * vkey, _fcd field, intf _HUGE * localtype,
-                 intf _HUGE * order, intf _HUGE * fieldlen);
+                (intf  * vkey, _fcd field, intf  * localtype,
+                 intf  * order, intf  * fieldlen);
 
     extern      FRETVAL(intf) nvssextfc
-                (intf _HUGE * vkey, _fcd fname, intf _HUGE * offset,
-                 intf _HUGE * fnamelen);
+                (intf  * vkey, _fcd fname, intf  * offset,
+                 intf  * fnamelen);
 
     extern      FRETVAL(intf) nvfnflds
-                (intf _HUGE * vkey);
+                (intf  * vkey);
 
     extern      FRETVAL(intf) nvffname
-                (intf _HUGE * vkey, intf _HUGE *index, _fcd fname);
+                (intf  * vkey, intf  *index, _fcd fname);
 
     extern      FRETVAL(intf) nvfftype
-                (intf _HUGE * vkey, intf _HUGE *index);
+                (intf  * vkey, intf  *index);
 
     extern      FRETVAL(intf) nvffisiz
-                (intf _HUGE * vkey, intf _HUGE *index);
+                (intf  * vkey, intf  *index);
 
     extern      FRETVAL(intf) nvffesiz
-                (intf _HUGE * vkey, intf _HUGE *index);
+                (intf  * vkey, intf  *index);
 
     extern      FRETVAL(intf) nvffordr
-                (intf _HUGE * vkey, intf _HUGE *index);
+                (intf  * vkey, intf  *index);
 
     extern      FRETVAL(intf) nvsreadc
-                (intf _HUGE * vkey, uint8 _HUGE * buf, intf _HUGE * nelt,
-                 intf _HUGE * interlace);
+                (intf  * vkey, uint8  * buf, intf  * nelt,
+                 intf  * interlace);
 
     extern      FRETVAL(intf) nvswritc
-                (intf _HUGE * vkey, uint8 _HUGE * buf, intf _HUGE * nelt,
-                 intf _HUGE * interlace);
+                (intf  * vkey, uint8  * buf, intf  * nelt,
+                 intf  * interlace);
 
     extern      FRETVAL(intf) nvsgintc
-                (intf _HUGE * vkey);
+                (intf  * vkey);
 
     extern      FRETVAL(intf) nvseltsc
-                (intf _HUGE * vkey);
+                (intf  * vkey);
 
     extern      FRETVAL(intf) nvsgfldc
-                (intf _HUGE * vkey, _fcd fields);
+                (intf  * vkey, _fcd fields);
 
     extern      FRETVAL(intf) nvssizc
-                (intf _HUGE * vkey, _fcd fields, intf _HUGE * fieldslen);
+                (intf  * vkey, _fcd fields, intf  * fieldslen);
 
     extern      FRETVAL(intf) nventsc
-                (HFILEID _HUGE * f, intf _HUGE * vgid);
+                (HFILEID  * f, intf  * vgid);
 
     extern      FRETVAL(intf) nvlonec
-                (HFILEID _HUGE * f, intf _HUGE * idarray, intf _HUGE * asize);
+                (HFILEID  * f, intf  * idarray, intf  * asize);
 
     extern      FRETVAL(intf) nvslonec
-                (HFILEID _HUGE * f, intf _HUGE * idarray, intf _HUGE * asize);
+                (HFILEID  * f, intf  * idarray, intf  * asize);
 
     extern      FRETVAL(intf) nvfindc
-                (HFILEID _HUGE * f, _fcd name, intf _HUGE * namelen);
+                (HFILEID  * f, _fcd name, intf  * namelen);
 
     extern      FRETVAL(intf) nvfndclsc
-                (HFILEID _HUGE * f, _fcd vgclass, intf _HUGE * classlen);
+                (HFILEID  * f, _fcd vgclass, intf  * classlen);
 
     extern      FRETVAL(intf) nvhsdc
-                (HFILEID _HUGE * f, _fcd field, uint8 _HUGE * buf, intf _HUGE * n, intf _HUGE * datatype,
-    _fcd vsname, _fcd vsclass, intf _HUGE * fieldlen, intf _HUGE * vsnamelen,
-                 intf _HUGE * vsclasslen);
+                (HFILEID  * f, _fcd field, uint8  * buf, intf  * n, intf  * datatype,
+    _fcd vsname, _fcd vsclass, intf  * fieldlen, intf  * vsnamelen,
+                 intf  * vsclasslen);
 
     extern      FRETVAL(intf) nvhsdmc
-                (HFILEID _HUGE * f, _fcd field, uint8 _HUGE * buf, intf _HUGE * n, intf _HUGE * datatype,
-       _fcd vsname, _fcd vsclass, intf _HUGE * order, intf _HUGE * fieldlen,
-                 intf _HUGE * vsnamelen, intf _HUGE * vsclasslen);
+                (HFILEID  * f, _fcd field, uint8  * buf, intf  * n, intf  * datatype,
+       _fcd vsname, _fcd vsclass, intf  * order, intf  * fieldlen,
+                 intf  * vsnamelen, intf  * vsclasslen);
 
     extern      FRETVAL(intf) nvhmkgpc
-                (HFILEID _HUGE * f, intf _HUGE * tagarray, intf _HUGE * refarray, intf _HUGE * n,
-                 _fcd vgname, _fcd vgclass, intf _HUGE * vgnamelen, intf _HUGE * vgclasslen);
+                (HFILEID  * f, intf  * tagarray, intf  * refarray, intf  * n,
+                 _fcd vgname, _fcd vgclass, intf  * vgnamelen, intf  * vgclasslen);
 
     extern      FRETVAL(intf) nvflocc
-                (intf _HUGE * vkey, _fcd field, intf _HUGE * fieldlen);
+                (intf  * vkey, _fcd field, intf  * fieldlen);
 
     extern      FRETVAL(intf) nvinqtrc
-                (intf _HUGE * vkey, intf _HUGE * tag, intf _HUGE * ref);
+                (intf  * vkey, intf  * tag, intf  * ref);
 
     extern      FRETVAL(intf) nvntrc
-                (intf _HUGE * vkey);
+                (intf  * vkey);
 
     extern      FRETVAL(intf) nvnrefs
-                (intf _HUGE * vkey, intf _HUGE *tag);
+                (intf  * vkey, intf  *tag);
 
     extern      FRETVAL(intf) nvqref
-                (intf _HUGE * vkey);
+                (intf  * vkey);
 
     extern      FRETVAL(intf) nvqtag
-                (intf _HUGE * vkey);
+                (intf  * vkey);
 
     extern      FRETVAL(intf) nvgttrsc
-                (intf _HUGE * vkey, intf _HUGE * tagarray, intf _HUGE * refarray, intf _HUGE * n);
+                (intf  * vkey, intf  * tagarray, intf  * refarray, intf  * n);
 
     extern      FRETVAL(intf) nvgttrc
-                (intf _HUGE * vkey, intf _HUGE * which, intf _HUGE * tag, intf _HUGE * ref);
+                (intf  * vkey, intf  * which, intf  * tag, intf  * ref);
 
     extern      FRETVAL(intf) nvadtrc
-                (intf _HUGE * vkey, intf _HUGE * tag, intf _HUGE * ref);
+                (intf  * vkey, intf  * tag, intf  * ref);
 
 #if defined c_plusplus || defined __cplusplus
 }

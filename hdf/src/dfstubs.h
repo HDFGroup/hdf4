@@ -31,9 +31,9 @@
 #include "df.h"
 #undef DFMASTER
 
-#if !defined(__GNUC__) & !defined(CONVEX) & !defined(VMS) & !defined(PC)
+#if !defined(__GNUC__) & !defined(CONVEX) & !defined(VMS)
 #include <memory.h>
-#endif /* !__GNUC__ & !CONVEX & !VMS & !PC */
+#endif /* !__GNUC__ & !CONVEX & !VMS */
 
 #define DFACC_APPEND    8
 #define DFEL_ABSENT 0
@@ -55,8 +55,6 @@ PRIVATE int32 DFelseekpos = 0;
 PRIVATE uint16 acc_tag = 0;
 PRIVATE uint16 acc_ref = 0;
 PRIVATE char *DFelement = NULL;
-
-/* extern DF *makedf(); */
 
 #if defined c_plusplus || defined __cplusplus
 extern      "C"

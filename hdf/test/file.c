@@ -52,7 +52,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define TESTFILE_NAME "t.hdf"
 #define BUF_SIZE        4096
 
-static uint8 FAR outbuf[BUF_SIZE], FAR inbuf[BUF_SIZE];
+static uint8  outbuf[BUF_SIZE],  inbuf[BUF_SIZE];
 
 void
 test_hfile()

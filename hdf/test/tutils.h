@@ -29,14 +29,6 @@ int         num_errs
 #endif
            ;
 
-#ifdef TEST_PC
-#define FAR far
-#else
-#ifndef FAR
-#define FAR     /* */
-#endif /* FAR */
-#endif /* TEST_PC */
-
 /* Use %ld to print the value because long could cover most cases. */
 /* Used to make certain a return value _is_not_ a value */
 #define CHECK(ret, val, where) \

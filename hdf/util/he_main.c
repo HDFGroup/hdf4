@@ -67,7 +67,7 @@ static char RcsId[] = "@(#)$Revision$";
 /* ------ he.c ------- main() main HDF interfacing routines */
 
 #include "he.h"
-#if defined PC & !(defined UNIX386 | defined PC386)
+#ifndef HP9000
 #include <process.h>
 #endif
 
@@ -136,10 +136,6 @@ main(int argc, char *argv[])
       }
 
     /* if there is a file name given in the command line, open it */
-
-#ifdef PC
-    backup = FALSE;
-#endif /* PC */
 
     if (fileName)
         he_status = openFile(fileName, backup);

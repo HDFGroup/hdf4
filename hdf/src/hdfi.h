@@ -57,31 +57,27 @@
 #define UNIXUNBUFIO 1
 #define UNIXBUFIO   2
 #define MACIO       3
-#define PCIO        4
-#define WINIO       5
+#define PCIO        4    /* 16-bit MS-DOS File I/O */
+#define WINIO       5    /* 16-bit Windows File I/O */
 #define PAGEBUFIO   6    /* page buffering - fmpool */
+#define WINNTIO     7    /* 32-bit Windows File I/O */
 
 /* IBM RS6000 AIX hack */
 #if defined(IBM6000) || defined(_AIX)
 #define _POSIX_SOURCE
 #endif 
 
-/* STDIO and STDLIB includes */
+/* Standard header files needed all the time */
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
+#include <string.h>
 
 /* PABLO support files */
 #ifdef HAVE_PABLO
 #define IOTRACE
 #include "IOTrace.h"
 #endif  /* HAVE_PABLO */
-
-/* For x86 archtectures */
-#if defined TEST_PC || defined TEST_WIN
-#define FAR far
-#else
-#define FAR /* */
-#endif
 
 /*-------------------------------------------------------------------------
  * Define options for each platform
@@ -107,8 +103,6 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
-#include <limits.h>
-#include <string.h>
 #include <unistd.h>
 #include <ctype.h>
 #include <sys/time.h>
@@ -131,11 +125,10 @@ typedef unsigned int      uintn;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef float             float32;
 typedef double            float64;
-#define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #ifdef  HAVE_FMPOOL
-#define FILELIB PABEBUFIO  /* enable page buffering */
+#define FILELIB PAGEBUFIO  /* enable page buffering */
 #else
 #define FILELIB UNIXBUFIO
 #endif
@@ -165,8 +158,6 @@ Please check your Makefile.
 
 #   define BSD
 #define DUMBCC 	/* because it is.  for later use in macros */
-#include <limits.h>
-#include <string.h>
 #ifndef __GNUC__
 #include <memory.h>
 #endif /* __GNUC__ */
@@ -190,7 +181,6 @@ typedef unsigned int      uintn;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef float             float32;
 typedef double            float64;
-#define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #ifdef  HAVE_FMPOOL
@@ -228,7 +218,6 @@ Please check your Makefile.
 
 #   define BSD
 
-#include <string.h>
 #ifndef __GNUC__
 #include <memory.h>
 #endif /* __GNUC__ */
@@ -251,7 +240,6 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-#define _HUGE              /* This should only be defined to a value on the PC */
 /* #define FNAME_POST_UNDERSCORE */
 #define _fcdtocp(desc) (desc)
 #ifdef  HAVE_FMPOOL
@@ -287,8 +275,6 @@ Please check your Makefile.
 #define HAVE_UNISTD_H  /* unistd.h - close, fork,..etc */
 
 #   define BSD
-#include <limits.h>
-#include <string.h>
 #ifndef __GNUC__
 #include <memory.h>
 #endif /* __GNUC__ */
@@ -311,7 +297,6 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-#define _HUGE              /* This should only be defined to a value on the PC */
 #define _fcdtocp(desc) (desc)
 #ifdef  HAVE_FMPOOL
 #define FILELIB PAGEBUFIO  /* enable page buffering */
@@ -342,8 +327,6 @@ Please check your Makefile.
 #define GOT_MACHINE 1
 
 #   define BSD
-#include <string.h>
-#include <limits.h>
 #ifndef __GNUC__
 #include <memory.h>
 #endif /* __GNUC__ */
@@ -366,7 +349,6 @@ typedef unsigned int       uintn;
 typedef float              float32;
 typedef double             float64;
 typedef int                intf;     /* size of INTEGERs in Fortran compiler */
-#define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #ifdef  HAVE_FMPOOL
@@ -399,8 +381,6 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 
-#include <string.h>
-#include <limits.h>
 #include <memory.h>
 #include <fortran.h>
 #ifndef O_RDONLY
@@ -429,7 +409,6 @@ typedef float           float32;
 typedef double          float64;
 typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 
-#define _HUGE              /* This should only be defined to a value on the PC */
 #define DF_CAPFNAMES            /* fortran names are in all caps */
 #ifdef  HAVE_FMPOOL
 #define FILELIB PAGEBUFIO  /* enable page buffering */
@@ -517,9 +496,6 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 #include <file.h>               /* for unbuffered i/o stuff */
-#include <limits.h>
-#include <stdlib.h>
-#include <string.h> 
 #include <sys/stat.h>
 #define DF_MT              DFMT_VAX
 typedef void               VOID;
@@ -543,7 +519,6 @@ typedef unsigned int       uintn;
 typedef float              float32;
 typedef double             float64;
 typedef int                intf;     /* size of INTEGERs in Fortran compiler */
-#define _HUGE              /* This should only be defined to a value on the PC */
 #define _fcdtocp(desc)  ((char *) *((char **) &desc[4]))
 
 /* 
@@ -576,8 +551,6 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
-#include <string.h>
-#include <limits.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 /* For Convex machines with native format floats */
@@ -602,7 +575,6 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-#define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #ifdef  HAVE_FMPOOL
@@ -640,8 +612,6 @@ Please check your Makefile.
 #define DUMBCC 	/* because it is.  for later use in macros */
 #endif /* __GNUC__ */
 
-#include <limits.h>
-#include <string.h>
 #include <sys/types.h>
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #include <sys/stat.h>
@@ -662,7 +632,6 @@ typedef unsigned int    uintn;
 typedef float           float32;
 typedef double          float64;
 typedef int             intf;     /* size of INTEGERs in Fortran compiler */
-#define _HUGE              /* This should only be defined to a value on the PC */
 #define _fcdtocp(desc) (desc)
 #define FNAME_POST_UNDERSCORE
 #ifdef  HAVE_FMPOOL
@@ -690,11 +659,7 @@ Please check your Makefile.
 
 #include <memory.h>             /* malloc stuff for MPW */
 #include <fcntl.h>              /* unbuffered I/O stuff for MPW */
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>             /* for INT_MIN, etc. in hbitio.c */
 #ifdef __MWERKS__  /* Metrowerks */
-#include <stdio.h>
 #include <sioux.h>
 #include <console.h>
 #endif
@@ -726,7 +691,6 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-#define _HUGE              /* This should only be defined to a value on the PC */
 #define _fcdtocp(desc) (desc)
 void exit(int status);
 
@@ -743,39 +707,33 @@ void exit(int status);
 
 /* Metrowerks compilier defines some PC stuff so need to exclude this on the MAC */
 #if !(defined(__MWERKS__) || defined(MAC))
-#if defined WIN3 || defined __WINDOWS__ || defined _WINDOWS || defined WINNT || defined WIN32
-#if defined WIN32 || defined WINNT
-#define PC386
-#else /* WINNT */
-#ifndef WIN3
-#define WIN3
-#endif  /* WIN3 */
-#define PC
-#endif /* WINNT */
-#endif  /* WIN3 */
 
-#if defined PC || defined MSDOS || defined M_I86 || defined M_I386 || defined PC386 || defined __i386 || defined UNIX386
-#ifndef PC
-#define PC
-#endif /* PC */
-
-#if !defined PC386 && (defined M_I386 || defined unix || defined __unix)
-#define PC386
-#endif /* M_I386 && !PC386 */
+#if defined INTEL86 || defined M_I86 || defined M_I386 || defined DOS386 || defined __i386 || defined UNIX386
+#ifndef INTEL86
+#define INTEL86
+#endif /* INTEL86 */
 
 #if !defined UNIX386 && (defined unix || defined __unix)
 #define UNIX386
 #endif /* UNIX386 */
+
+#if !defined DOS386 && defined M_I386
+#define DOS386
+#endif /* M_I386 && !DOS386 */
+
+#if defined _WINDOWS || defined WIN32
+#define WIN386
+#endif  /* _WINDOWS | WIN32 */
+
+#if defined WIN386 || defined DOS386 || defined UNIX386
+#define INTEL386
+#endif /* WIN386 | DOS386 | UNIX386 */
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
 Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
-
-#if !defined TEST_PC && !defined TEST_WIN && !defined UNIX386
-#undef FAR
-#endif
 
 #include <fcntl.h>
 #ifdef UNIX386
@@ -789,35 +747,25 @@ Please check your Makefile.
 #include <conio.h>          /* for debugging getch() calls */
 #include <malloc.h>
 #endif /* UNIX386 */
-#include <string.h>         /* for vaious string functions */
-#include <limits.h>         /* for UINT_MAX used in various places */
-#include <stdlib.h>
 #include <ctype.h>          /* for character macros */
 #ifdef __WATCOMC__
 #include <stddef.h>         /* for the 'fortran' pragma */
 #endif
-#if defined WIN3 || defined WINNT || defined WIN32
+#if defined WIN386
 #ifndef GMEM_MOVEABLE       /* check if windows header is already included */
 #include <windows.h>        /* include the windows headers */
-#if defined WINNT || defined WIN32
 #include <winnt.h>
 #define HAVE_BOOLEAN
-#endif /* WINNT | WIN32 */
-#endif
-#endif /* WIN3 || WINNT || WIN32*/
+#endif /* GMEM_MOVEABLE */
+#endif /* WIN386 */
 
 #define DF_MT             DFMT_PC
 
 #ifndef VOID    /* The stupid windows.h header file uses a #define instead of a typedef */
 typedef void              VOID;
 #endif  /* end VOID */
-#ifndef PC386
-typedef void              huge *VOIDP;
-typedef char              huge *_fcd;
-#else   /* PC386 */
 typedef void *            VOIDP;
 typedef char *            _fcd;
-#endif  /* PC386 */
 typedef char              char8;
 typedef unsigned char     uchar8;
 typedef char              int8;
@@ -831,62 +779,34 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef long              intf;     /* size of INTEGERs in Fortran compiler */
-#ifndef PC386
-/* used to force the prototypes in hproto.h to use huge pointers */
-#define _HUGE              huge
-#else   /* PC386 */
-#define _HUGE              /* This should only be defined to a value on the PC */
-#endif  /* PC386 */
 
 #if defined UNIX386
 #define FNAME_POST_UNDERSCORE
-#elif defined PC386
+#elif defined INTEL386
 #define DF_CAPFNAMES
 #endif
 #define _fcdtocp(desc) (desc)
 
-#if defined WINNT || defined WIN32
+#if defined WIN386
 #define FILELIB WINNTIO
 #else
-#ifdef WIN3
-#define FILELIB WINIO
-#else /* ! WIN3 */
-#ifdef PC386 /* !WIN3 */
 #ifdef  HAVE_FMPOOL
 #define FILELIB PAGEBUFIO  /* enable page buffering */
 #else
 #define FILELIB UNIXBUFIO
 #endif
-#else /* must be plain PC */
-#define FILELIB PCIO
-#endif /* PC */
-#endif /* WIN3 */
-#endif /* WINNT */
+#endif /* WIN386 */
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
 /* Determine the memory manager we are going to use. Valid values are: */
 /*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
 /*  what each does */
-#ifndef PC386
-#define JMEMSYS         MEM_DOS
-#else   /* PC386 */
 #define JMEMSYS         MEM_ANSI
-#endif  /* PC386 */
-
 #define HAVE_STDC
 #define INCLUDES_ARE_ANSI
 
-#ifdef TEST_WIN
-#ifdef stderr
-#undef stderr
-#endif  /* stderr */
-extern FILE *dbg_file;
-#define stderr dbg_file
-#define stdout dbg_file
-#endif  /* TEST_WIN */
-
-#endif /* PC */
+#endif /* INTEL86 */
 #endif /* !(defined(__MWERKS__) || defined(MAC)) */
 
 #if defined(NEXT) || defined(NeXT)
@@ -901,8 +821,6 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
-#include <string.h>
-#include <limits.h>
 #define isascii(c)  (isprint(c) || iscntrl(c))
 #ifndef __GNUC__
 #include <memory.h>
@@ -926,7 +844,6 @@ typedef unsigned int      uintn;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef float             float32;
 typedef double            float64;
-#define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #ifdef  HAVE_FMPOOL
@@ -955,7 +872,6 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
-#include <string.h>
 #ifndef __GNUC__
 #include <memory.h>
 #endif /* __GNUC__ */
@@ -982,7 +898,6 @@ typedef unsigned int      uintn;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef float             float32;
 typedef double            float64;
-#define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
@@ -1008,7 +923,6 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
-#include <string.h>
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #include <sys/stat.h>
 #define DF_MT             DFMT_ALPHA
@@ -1030,7 +944,6 @@ typedef unsigned int      uintn;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef float             float32;
 typedef double            float64;
-#define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #ifdef  HAVE_FMPOOL
@@ -1065,8 +978,6 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 
-#include <string.h>
-#include <limits.h>
 #include <memory.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -1087,7 +998,6 @@ typedef unsigned int       uintn;
 typedef int                intf;     /* size of INTEGERs in Fortran compiler */
 typedef float              float32;
 typedef double             float64;
-#define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
@@ -1113,7 +1023,6 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 
-#include <limits.h>
 #include <sys/types.h>
 #include <sys/file.h>           /* for unbuffered i/o stuff */
 #include <sys/stat.h>
@@ -1135,7 +1044,6 @@ typedef unsigned int    uintn;
 typedef float           float32;
 typedef double          float64;
 typedef int             intf;     /* size of INTEGERs in Fortran compiler */
-#define _HUGE              /* This should only be defined to a value on the PC */
 #define _fcdtocp(desc) (desc)
 #define FNAME_POST_UNDERSCORE
 #define FILELIB UNIXBUFIO
@@ -1210,9 +1118,9 @@ correctly.
 *                   Conversion Routine Pointers
 ***************************************************************************/
 #    ifndef DFKMASTER
-extern int (*DFKnumin)(void _HUGE * source, void _HUGE * dest, uint32 num_elm,
+extern int (*DFKnumin)(void * source, void * dest, uint32 num_elm,
             uint32 source_stride,uint32 dest_stride);
-extern int (*DFKnumout)(void _HUGE * source, void _HUGE * dest, uint32 num_elm,
+extern int (*DFKnumout)(void * source, void * dest, uint32 num_elm,
             uint32 source_stride,uint32 dest_stride);
 #     endif /* DFKMASTER */
 
@@ -1238,12 +1146,7 @@ extern int (*DFKnumout)(void _HUGE * source, void _HUGE * dest, uint32 num_elm,
 #endif /* ABSOFT */
 #endif
 
-#if defined(PC) && !defined(PC386)   /* with MS Fortran */
-#   define FCALLKEYW    __fortran
-#   define FRETVAL(x)   x __fortran
-#endif
-
-#ifndef FRETVAL /* !MAC && !PC */
+#ifndef FRETVAL /* !MAC */
 #   define FCALLKEYW    /*NONE*/
 #   define FRETVAL(x)   x
 #endif
@@ -1293,7 +1196,7 @@ extern int (*DFKnumout)(void _HUGE * source, void _HUGE * dest, uint32 num_elm,
 #ifdef DUMBCC
 #define CONSTR(v,s) char *v=s
 #else
-#define CONSTR(v,s) const char v[]=s
+#define CONSTR(v,s) static const char v[]=s
 #endif
 
 /* Old-style memory allocation function aliases -QAK */
@@ -1303,32 +1206,21 @@ extern int (*DFKnumout)(void _HUGE * source, void _HUGE * dest, uint32 num_elm,
 #define HDfreespace HDfree
 
 /**************************************************************************
-*  Allocation functions defined differently for PC's under MS-DOS and Windows
+*  Allocation functions defined differently 
 **************************************************************************/
-#if !(defined PC & !defined PC386) & !defined MALLOC_CHECK
+#if !defined MALLOC_CHECK
 #  define HDmalloc(s)      (malloc((size_t)s))
 #  define HDcalloc(a,b)    (calloc((size_t)a,(size_t)b))
 #  define HDfree(p)        (free((void*)p))
 #  define HDrealloc(p,s)   (realloc((void*)p,(size_t)s))
-#endif /* PC & !defined PC386 */
+#endif /* !defined MALLOC_CHECK */
 /* Macro to free space and clear pointer to NULL */
 #define HDfreenclear(p) { if((p)!=NULL) HDfree(p); p=NULL; }
 
 /**************************************************************************
-*  String functions defined differently under MS Windows
+*  String functions defined differently 
 **************************************************************************/
 
-#ifdef WIN3
-#  define HDstrcat(s1,s2)   (_fstrcat((s1),(s2)))
-#  define HDstrcmp(s,t)     (_fstrcmp((s),(t)))
-#  define HDstrcpy(s,d)     (_fstrcpy((s),(d)))
-#  define HDstrlen(s)       (_fstrlen(s))
-#  define HDstrncmp(s1,s2,n)    (_fstrncmp((s1),(s2),(n)))
-#  define HDstrncpy(s1,s2,n)    (_fstrncpy((s1),(s2),(n)))
-#  define HDstrchr(s,c)     (_fstrchr((s),(c)))
-#  define HDstrrchr(s,c)    (_fstrrchr((s),(c)))
-#  define HDstrtol(s,e,b)   (_fstrtol((s),(e),(b)))
-#else
 #  define HDstrcat(s1,s2)   (strcat((s1),(s2)))
 #  define HDstrcmp(s,t)     (strcmp((s),(t)))
 #  define HDstrcpy(s,d)     (strcpy((s),(d)))
@@ -1338,32 +1230,19 @@ extern int (*DFKnumout)(void _HUGE * source, void _HUGE * dest, uint32 num_elm,
 #  define HDstrchr(s,c)         (strchr((s),(c)))
 #  define HDstrrchr(s,c)        (strrchr((s),(c)))
 #  define HDstrtol(s,e,b)       (strtol((s),(e),(b)))
-/* Can't use on PCs. strdup() uses malloc() and HDmalloc uses halloc() */
-#if !(defined VMS || (defined PC && !defined PC386) || defined macintosh || defined MAC || defined __MWERKS__ || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000)
+/* non-standard function, not defined on the following mahcines - */
+#if !(defined VMS || defined macintosh || defined MAC || defined __MWERKS__ || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000)
 #  define HDstrdup(s)      ((char *)strdup((const char *)(s)))
-#endif /* !(VMS | PC) */
-#endif /* WIN3 */
+#endif /* !(VMS | etc..) */
 
 
 /**************************************************************************
-*  Memory functions defined differently under MS Windows
+*  Memory functions defined differently
 **************************************************************************/
 
-#if defined PC & !defined PC386
-#   ifdef WIN3
-#       define HDmemcpy(dst,src,n)   (fmemcpy_big((dst),(src),(n)))
-#       define HDmemset(dst,c,n)     (fmemset_big((dst),(c),(n)))
-#       define HDmemcmp(dst,src,n)   (fmemcmp_big((dst),(src),(n)))
-#   else    /* !WIN3 */
-#       define HDmemcpy(dst,src,n)   (memcpy_big((dst),(src),(n)))
-#       define HDmemset(dst,c,n)     (memset_big((dst),(c),(n)))
-#       define HDmemcmp(dst,src,n)   (memcmp_big((dst),(src),(n)))
-#   endif   /* WIN3 */
-#else   /* !WIN & !PC */
 # define HDmemcpy(dst,src,n)   (memcpy((void *)(dst),(const void *)(src),(size_t)(n)))
 # define HDmemset(dst,c,n)     (memset((void *)(dst),(intn)(c),(size_t)(n)))
 # define HDmemcmp(dst,src,n)   (memcmp((const void *)(dst),(const void *)(src),(size_t)(n)))
-#endif /* WIN3 | PC */
 
 
 /**************************************************************************
@@ -1377,6 +1256,7 @@ extern int (*DFKnumout)(void _HUGE * source, void _HUGE * dest, uint32 num_elm,
 #define HDgetenv(s1)            (getenv(s1))
 #define HDputenv(s1)            (putenv(s1))
 #define HDltoa(v)               (ltoa(v))
+#define HDatexit(f)             (atexit(f))
 
 /* Compatibility #define for V3.3, should be taken out by v4.0 - QAK */
 #define DFSDnumber DFSDndatasets

@@ -109,7 +109,44 @@ PRIVATE void vunpackvg
    * --------------------------------------------------------------------
  */
 
-vfile_t *vfile = NULL;
+TBBT_TREE *vtree=NULL;
+
+/* -------------------------- Get_vfile ------------------------ */
+/*
+   Looks in the TBBT vtree for the file ID of the file.
+   Returns a pointer to the vfile_t for that file on success, otherwise NULL.
+ */
+vfile_t *
+Get_vfile(HFILEID f)
+{
+    VOIDP *t;       /* vfile_t pointer from tree */
+    int32 key=(int32)f;
+
+    t = (VOIDP *) tbbtdfind(vtree, (VOIDP) &key, NULL);
+    return((vfile_t *)(t==NULL ? NULL : *t));
+} /* end Get_vfile() */
+
+        
+/* -------------------------- New_vfile ------------------------ */
+/*
+   Creates vfile_t structure and adds it to the tree
+   Returns a pointer to the vfile_t for that file on success, otherwise NULL.
+ */
+PRIVATE vfile_t *
+New_vfile(HFILEID f)
+{
+    vfile_t *v;
+    
+    /* Allocate the vfile_t structure */
+    if (NULL == (v = (vfile_t *) HDcalloc(1,sizeof(vfile_t))))
+      return(NULL);
+
+    /* Assign the file ID & insert into the tree */
+    v->f=f;
+    tbbtdins(vtree, (VOIDP) v, NULL);    /* insert the vg instance in B-tree */
+
+    return(v);
+} /* end New_vfile() */
 
 /* -------------------------- Load_vfile ------------------------ */
 /*
@@ -124,35 +161,35 @@ vfile_t *vfile = NULL;
 PRIVATE intn
 Load_vfile(HFILEID f)
 {
+    CONSTR(FUNC, "Load_vfile");
     vfile_t    *vf;
     vginstance_t *v;
     vsinstance_t *w;
     int32       aid, ret;
     uint16      tag, ref;
     intn        ret_value = SUCCEED;
-    CONSTR(FUNC, "Load_vfile");
 
+    HEclear();
     /* Check if vfile buffer has been allocated */
-    if (vfile == NULL)
+    if (vtree == NULL)
       {
-          vfile = (vfile_t *) HDmalloc(MAX_VFILE * sizeof(vfile_t));
-          if (vfile == NULL)
+          vtree = tbbtdmake(vcompare, sizeof(int32));
+          if (vtree == NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-          /* zero the space */
-          HDmemset(vfile, 0, (MAX_VFILE * sizeof(vfile_t)));
+          /* Initialize the atom groups for Vdatas and Vgroups */
+          HAinit_group(VSIDGROUP,VATOM_HASH_SIZE);
+          HAinit_group(VGIDGROUP,VATOM_HASH_SIZE);
       }
 
-    /* allocate a new vfile_t structure */
+    /* Grab the existing vfile_t structure first, otherwise create a new one */
     if ((vf = Get_vfile(f)) == NULL)
-        HGOTO_ERROR(DFE_FNF, FAIL);
+        if ((vf = New_vfile(f)) == NULL)
+            HGOTO_ERROR(DFE_FNF, FAIL);
 
     /* the file is already loaded (opened twice) do nothing */
     if (vf->access++)
-      {
-        ret_value = SUCCEED;
-        goto done;
-      }
+        HGOTO_DONE(SUCCEED);
 
     /* load all the vg's  tag/refs from file */
     vf->vgtabn = 0;
@@ -171,7 +208,7 @@ Load_vfile(HFILEID f)
             }
 
           vf->vgtabn++;
-          v->key = (int32) VGSLOT2ID(f, ref);   /* set the key for the node */
+          v->key = (int32) ref;   /* set the key for the node */
           v->ref = (intn) ref;
           v->vg = VPgetinfo(f,ref);  /* get the header information */
           v->nattach = 0;
@@ -202,7 +239,7 @@ Load_vfile(HFILEID f)
             }
 
           vf->vstabn++;
-          w->key = (int32) VSSLOT2ID(f, ref);   /* set the key for the node */
+          w->key = (int32) ref;   /* set the key for the node */
           w->ref = (intn) ref;
           w->vs = VSPgetinfo(f,ref);  /* get the header information */
           w->nattach = 0;
@@ -243,12 +280,14 @@ done:
 PRIVATE intn
 Remove_vfile(HFILEID f)
 {
+    CONSTR(FUNC, "Remove_vfile");
+    VOIDP      *t;
     vfile_t    *vf = NULL;
     intn       ret_value = SUCCEED;
-    CONSTR(FUNC, "Remove_vfile");
 
+    HEclear();
     /* Check if vfile buffer has been allocated */
-    if (vfile == NULL)
+    if (vtree == NULL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* Figure out what file to work on */
@@ -257,17 +296,19 @@ Remove_vfile(HFILEID f)
 
     /* someone still has an active pointer to this file */
     if (--vf->access)
-      {
-        ret_value = (SUCCEED);
-        goto done;
-      }
+        HGOTO_DONE(SUCCEED);
 
     /* clear out the tbbt's */
     tbbtdfree(vf->vgtree, vdestroynode, NULL);
     tbbtdfree(vf->vstree, vsdestroynode, NULL);
 
-    HDmemset(vf, 0, sizeof(vfile_t));   /* reset values of structure */
+    /* Find the node in the tree */
+    if (( t = (VOIDP *) tbbtdfind(vtree, (VOIDP) &f, NULL)) == NULL)
+        HGOTO_DONE(FAIL);
 
+    /* Delete the node and free the vfile_t stucture */
+    vf = tbbtrem((TBBT_NODE **) vtree, (TBBT_NODE *) t, NULL);
+    HDfree(vf);
 
 done:
   if(ret_value == FAIL)   
@@ -289,13 +330,10 @@ done:
 intn
 vcompare(VOIDP k1, VOIDP k2, intn cmparg)
 {
-  intn  ret_value;
   /* shut compiler up */
   cmparg = cmparg;
 
-  ret_value = ((intn) ((*(int32 *) k1) - (*(int32 *) k2)));    /* valid for integer keys */
-
-  return ret_value;
+  return (intn) ((*(int32 *)k1) - (*(int32 *)k2));    /* valid for integer keys */
 }   /* vcompare */
 
 /* ---------------------------- vprint ------------------------- */
@@ -333,6 +371,24 @@ vdestroynode(VOIDP n)
 
 }   /* vdestroynode */
 
+/* ---------------------------- vfdestroynode ------------------------- */
+/*
+   Frees B-Tree vfile_t nodes
+
+   *** Only called by B-tree routines, should _not_ be called externally ***
+ */
+VOID
+vfdestroynode(VOIDP n)
+{
+    vfile_t      *vf=(vfile_t *)n;
+
+    /* clear out the tbbt's */
+    tbbtdfree(vf->vgtree, vdestroynode, NULL);
+    tbbtdfree(vf->vstree, vsdestroynode, NULL);
+
+    HDfree(vf);
+}   /* vfdestroynode */
+
 #ifdef NOTNEEDED
 /* ---------------------------- vtfreekey ------------------------- */
 /*
@@ -352,16 +408,14 @@ vtfreekey(VOIDP k)
 intn
 Vinitialize(HFILEID f)
 {
-  intn   ret_value = SUCCEED;
-  CONSTR(FUNC, "Vinitialize");
+    CONSTR(FUNC, "Vinitialize");
+    intn   ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
   TRACE_ON(V_mask, ID_Vinitialize);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDFID(f))
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    HEclear();
     if (Load_vfile(f) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
@@ -384,16 +438,14 @@ done:
 intn
 Vfinish(HFILEID f)
 {
-  intn    ret_value = SUCCEED;
   CONSTR(FUNC, "Vfinish");
+  intn    ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
   TRACE_ON(V_mask, ID_Vfinish);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDFID(f))
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    HEclear();
     if (Remove_vfile(f) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
@@ -411,7 +463,7 @@ done:
   return ret_value;
 }
 
-/* ---------------------------- vginstance ----------------------------- */
+/* ---------------------------- vginst ----------------------------- */
 /*
    * Looks thru vgtab for vgid and return the addr of the vg instance
    * where vgid is found.
@@ -420,29 +472,20 @@ done:
    *
  */
 vginstance_t *
-vginstance(HFILEID f, uint16 vgid)
+vginst(HFILEID f, uint16 vgid)
 {
+    CONSTR(FUNC, "vginstance");
     VOIDP      *t;
     vfile_t    *vf;
     int32       key;
     vginstance_t *ret_value;
-    CONSTR(FUNC, "vginstance");
 
-    /* Check if vfile buffer has been allocated */
-    if (vfile == NULL)
-      {
-          vfile = (vfile_t *) HDmalloc(MAX_VFILE * sizeof(vfile_t));
-          if (vfile == NULL)
-              HGOTO_ERROR(DFE_NOSPACE, NULL);
-          /* zero the space */
-          vfile = (vfile_t *) HDmemset(vfile, 0, (MAX_VFILE * sizeof(vfile_t)));
-      }
-
+    HEclear();
     if (NULL == (vf = Get_vfile(f)))
         HGOTO_ERROR(DFE_FNF, NULL);
 
     /* tbbtdfind returns a pointer to the vginstance_t pointer */
-    key = VGSLOT2ID(f, vgid);
+    key = (int32)vgid;
     t = (VOIDP *) tbbtdfind(vf->vgtree, (VOIDP) &key, NULL);
     if (t != NULL)
       {
@@ -461,7 +504,7 @@ done:
   /* Normal function cleanup */
 
   return ret_value;
-}   /* vginstance */
+}   /* vginst */
 
 /* ------------------------ vexistvg --------------------------- */
 /*
@@ -472,12 +515,12 @@ done:
 int32
 vexistvg(HFILEID f, uint16 vgid)
 {
-  int32   ret_value;
+    int32   ret_value;
 #ifdef LATER
     CONSTR(FUNC, "vexistvg");
 #endif
 
-    if (NULL == (vginstance_t *) vginstance(f, vgid))
+    if (NULL == (vginstance_t *) vginst(f, vgid))
         ret_value = (FAIL);
     else
         ret_value =  (TRUE);
@@ -511,11 +554,11 @@ vexistvg(HFILEID f, uint16 vgid)
 void
 vpackvg(VGROUP * vg, uint8 buf[], int32 *size)
 {
-    uint16 i;
-    uint8 *bb;
 #ifdef LATER
     CONSTR(FUNC, "vpackvg");
 #endif
+    uint16 i;
+    uint8 *bb;
 
     bb = &buf[0];
 
@@ -576,12 +619,12 @@ vpackvg(VGROUP * vg, uint8 buf[], int32 *size)
 PRIVATE void
 vunpackvg(VGROUP * vg, uint8 buf[], intn len)
 {
-    uint8 *bb;
-    uintn u;
-    uint16 uint16var;
 #ifdef LATER
     CONSTR(FUNC, "vunpackvg");
 #endif
+    uint8 *bb;
+    uintn u;
+    uint16 uint16var;
 
     /* '5' is a magic number, the exact amount of space for 2 uint16's */
     /* the magic number _should_ be '4', but the size of the Vgroup */
@@ -651,14 +694,15 @@ vunpackvg(VGROUP * vg, uint8 buf[], intn len)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VGROUP _HUGE *VPgetinfo(HFILEID f,uint16 ref)
+VGROUP *VPgetinfo(HFILEID f,uint16 ref)
 {
     CONSTR(FUNC, "VPgetinfo");
 	VGROUP         *vg;
     uint8          *vgpack;
     intn          len;
-    VGROUP _HUGE *ret_value = NULL; /* FAIL */
+    VGROUP *ret_value = NULL; /* FAIL */
           
+    HEclear();
     /* Find out how long the VGroup information is */
     if (( len = Hlength(f, DFTAG_VG, (uint16) ref)) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL,NULL);
@@ -720,31 +764,22 @@ done:
 int32
 Vattach(HFILEID f, int32 vgid, const char *accesstype)
 {
+    CONSTR(FUNC, "Vattach");
     VGROUP     *vg;
     int16       acc_mode;
     vginstance_t *v;
     vfile_t    *vf;
     filerec_t  *file_rec;       /* file record */
-    int32       ret_value = SUCCEED;
-    CONSTR(FUNC, "Vattach");
+    atom_t      ret_value = FAIL;
 
 #ifdef HAVE_PABLO
   TRACE_ON(V_mask, ID_Vattach);
 #endif /* HAVE_PABLO */
 
-    /* Check if vfile buffer has been allocated */
-    if (vfile == NULL)
-      {
-          vfile = (vfile_t *) HDmalloc(MAX_VFILE * sizeof(vfile_t));
-          if (vfile == NULL)
-              HGOTO_ERROR(DFE_NOSPACE, FAIL);
-          /* zero the space */
-          vfile = (vfile_t *) HDmemset(vfile, 0, (MAX_VFILE * sizeof(vfile_t)));
-      }
-
+    HEclear();
     if (f == FAIL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-    if (NULL == (vf = Get_vfile(f)))
+    if ((vf = Get_vfile(f))==NULL)
         HGOTO_ERROR(DFE_FNF, FAIL);
 
     if (tolower(accesstype[0]) == 'r')
@@ -755,7 +790,7 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
         HGOTO_ERROR(DFE_BADACC, FAIL);
 
     /* convert file id to file record and check for write-permission */
-    file_rec = FID2REC(f);
+    file_rec = HAatom_object(f);
     if(acc_mode=='w' && !(file_rec->access&DFACC_WRITE))
         HGOTO_ERROR(DFE_BADACC, FAIL);
 
@@ -800,44 +835,39 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
           vf->vgtabn++;
-          v->key = (int32) VGSLOT2ID(f, vg->oref);  /* set the key for the node */
+          v->key = (int32) vg->oref;  /* set the key for the node */
           v->ref = (intn) vg->oref;
           v->vg = vg;
           v->nattach = 1;
           v->nentries = 0;
           tbbtdins(vf->vgtree, (VOIDP) v, NULL);    /* insert the vg instance in B-tree */
 
-          ret_value = (v->key);  /* return key instead of VGROUP ptr */
-          goto done;
+          ret_value=HAregister_atom(VGIDGROUP,v);
       }
     else
       {
           /******* access an EXISTING vg *********/
-          if (NULL == (v = vginstance(f, (uint16) vgid)))
+          if (NULL == (v = vginst(f, (uint16) vgid)))
               HGOTO_ERROR(DFE_NOMATCH, FAIL);
 
-          /*
-           * vg already attached.  inc nattach and return existing ptr
-           */
-
+          /* vg already attached.  inc nattach and return existing ptr */
           if (v->nattach > 0)
             {
                 v->vg->access = MAX(v->vg->access, acc_mode);
                 v->nattach++;
-                ret_value = (v->key);    /* return key instead of VGROUP ptr */
-                goto done;
             }
+          else
+            {
+              vg=v->vg;
+              vg->access = acc_mode;
+              vg->marked = 0;
 
-          vg=v->vg;
-          vg->access = acc_mode;
-          vg->marked = 0;
+              /* attach vg to file's vgtab at the vg instance v */
+              v->nattach = 1;
+              v->nentries = vg->nvelt;
+            } /* end else */
 
-          /* attach vg to file's vgtab at the vg instance v */
-          v->nattach = 1;
-          v->nentries = vg->nvelt;
-
-          ret_value = (v->key);  /* return key instead of VGROUP ptr */
-          goto done;
+          ret_value=HAregister_atom(VGIDGROUP,v);
       }
 
 done:
@@ -873,22 +903,23 @@ done:
 int32
 Vdetach(int32 vkey)
 {
+    CONSTR(FUNC, "Vdetach");
     VGROUP     *vg;
     int32       vgpacksize;
     uint8      *vgpack;
     vginstance_t *v;
     int32      ret_value = SUCCEED;
-    CONSTR(FUNC, "Vdetach");
 
 #ifdef HAVE_PABLO
   TRACE_ON(V_mask, ID_Vdetach);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVGID(vkey))
+    HEclear();
+    if (HAatom_group(vkey)!=VGIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (v = (vginstance_t *) vginstance(VGID2VFILE(vkey), (uint16) VGID2SLOT(vkey))))
+    if (NULL == (v = (vginstance_t *)HAremove_atom(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vg = v->vg;
@@ -900,9 +931,8 @@ Vdetach(int32 vkey)
       /* no reason to check for access... (I hope) -QAK */
       if (vg->marked == 1)
         {
-            vgpack = (uint8 *) HDmalloc((uint32) sizeof(VGROUP) + vg->nvelt * 4 + 1);
-	    if (!vgpack)
-		HGOTO_ERROR(DFE_NOSPACE, FAIL);
+            if (( vgpack = (uint8 *) HDmalloc((uint32) sizeof(VGROUP) + vg->nvelt * 4 + 1))==NULL)
+                HGOTO_ERROR(DFE_NOSPACE, FAIL);
             vpackvg(vg, vgpack, &vgpacksize);
 
             /*
@@ -949,12 +979,10 @@ done:
 int32
 Vinsert(int32 vkey, int32 insertkey)
 {
+    CONSTR(FUNC, "Vinsert");
     VGROUP     *vg;
     vginstance_t *v;
-    vsinstance_t *w;
-    vginstance_t *x;
     uintn u;
-    CONSTR(FUNC, "Vinsert");
     uint16      newtag = 0, newref = 0;
     int32       newfid;
     int32       ret_value = SUCCEED;
@@ -963,11 +991,12 @@ Vinsert(int32 vkey, int32 insertkey)
   TRACE_ON(V_mask, ID_Vinsert);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVGID(vkey))
+    HEclear();
+    if (HAatom_group(vkey)!=VGIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (v = (vginstance_t *) vginstance(VGID2VFILE(vkey), (uint16) VGID2SLOT(vkey))))
+    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vg = v->vg;
@@ -981,32 +1010,36 @@ Vinsert(int32 vkey, int32 insertkey)
       HGOTO_ERROR(DFE_ARGS,FAIL);
 
     newfid = FAIL;
-    if (VALIDVSID(insertkey))
+    if (HAatom_group(insertkey)==VSIDGROUP)
       {   /* locate vs's index in vstab */
-	  if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(insertkey), (uint16) VSID2SLOT(insertkey))))
-	      HGOTO_ERROR(DFE_NOVS, FAIL);
+        vsinstance_t *w;
 
-	  if (w->vs == NULL)
-	      HGOTO_ERROR(DFE_ARGS, FAIL);
+        if (NULL == (w = (vsinstance_t *) HAatom_object(insertkey)))
+            HGOTO_ERROR(DFE_NOVS, FAIL);
 
-	  newtag = DFTAG_VH;
-	  newref = w->vs->oref;
-	  newfid = w->vs->f;
+        if (w->vs == NULL)
+            HGOTO_ERROR(DFE_ARGS, FAIL);
+
+        newtag = DFTAG_VH;
+        newref = w->vs->oref;
+        newfid = w->vs->f;
       }
     else
       {
-	  if (VALIDVGID(insertkey))
-	    {   /* locate vs's index in vgtab */
-		if (NULL == (x = (vginstance_t *) vginstance(VGID2VFILE(insertkey), (uint16) VGID2SLOT(insertkey))))
-		    HGOTO_ERROR(DFE_NOVS, FAIL);
+        vginstance_t *x;
 
-		if (x->vg == NULL)
-		    HGOTO_ERROR(DFE_ARGS, FAIL);
+        if (HAatom_group(insertkey)==VGIDGROUP)
+          {   /* locate vs's index in vgtab */
+            if (NULL == (x = (vginstance_t *) HAatom_object(insertkey)))
+                HGOTO_ERROR(DFE_NOVS, FAIL);
 
-		newtag = DFTAG_VG;
-		newref = x->vg->oref;
-		newfid = x->vg->f;
-	    }
+            if (x->vg == NULL)
+                HGOTO_ERROR(DFE_ARGS, FAIL);
+
+            newtag = DFTAG_VG;
+            newref = x->vg->oref;
+            newfid = x->vg->f;
+          }
       }
 
     /* make sure we found something */
@@ -1050,19 +1083,19 @@ done:
 int32
 Vflocate(int32 vkey, char *field)
 {
-    int32       s;
+    CONSTR(FUNC, "Vflocate");
     uintn u;
     vginstance_t *v;
     VGROUP     *vg;
     int32       vskey;
     int32       ret_value = SUCCEED;
-    CONSTR(FUNC, "Vflocate");
 
-    if (!VALIDVGID(vkey))
+    HEclear();
+    if (HAatom_group(vkey)!=VGIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (v = (vginstance_t *) vginstance(VGID2VFILE(vkey), (uint16) VGID2SLOT(vkey))))
+    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vg = v->vg;
@@ -1071,21 +1104,17 @@ Vflocate(int32 vkey, char *field)
 
     for (u = 0; u < vg->nvelt; u++)
       {
+          intn       s;
+
           if (vg->tag[u] != VSDESCTAG)
               continue;
           vskey = VSattach(vg->f, vg->ref[u], "r");
           if (vskey == FAIL)
-            {
-              ret_value = (FAIL);
-              goto done;
-            }
+              HGOTO_DONE(FAIL);
           s = VSfexist(vskey, field);
           VSdetach(vskey);
           if (s == 1)
-            {
-              ret_value = (vg->ref[u]);  /* found. return vdata's ref */
-              goto done;
-            }
+              HGOTO_DONE(vg->ref[u]);  /* found. return vdata's ref */
       }
 
     ret_value = (FAIL);  /* field not found */
@@ -1111,22 +1140,23 @@ done:
 intn
 Vinqtagref(int32 vkey, int32 tag, int32 ref)
 {
+    CONSTR(FUNC, "Vinqtagref");
     uintn u;
     uint16 ttag, rref;
     vginstance_t *v;
     VGROUP     *vg;
-    intn       ret_value = TRUE;
-    CONSTR(FUNC, "Vinqtagref");
+    intn       ret_value = FALSE;
 
 #ifdef HAVE_PABLO
   TRACE_ON(V_mask, ID_Vinqtagref);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVGID(vkey))
+    HEclear();
+    if (HAatom_group(vkey)!=VGIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FALSE);
 
     /* locate vg's index in vgtab */
-    if (NULL == (v = (vginstance_t *) vginstance(VGID2VFILE(vkey), (uint16) VGID2SLOT(vkey))))
+    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FALSE);
 
     vg = v->vg;
@@ -1137,12 +1167,7 @@ Vinqtagref(int32 vkey, int32 tag, int32 ref)
 
     for (u = 0; u < vg->nvelt; u++)
         if ((ttag == vg->tag[u]) && (rref == vg->ref[u]))
-          {
-            ret_value = (TRUE);  /* exist */
-            goto done;
-          }
-
-    ret_value = (FALSE);     /* does not exist */
+          HGOTO_DONE(TRUE);
 
 done:
   if(ret_value == FALSE)   
@@ -1167,20 +1192,21 @@ done:
 int32
 Vntagrefs(int32 vkey)
 {
+    CONSTR(FUNC, "Vntagrefs");
     vginstance_t *v;
     VGROUP     *vg;
     int32      ret_value = SUCCEED;
-    CONSTR(FUNC, "Vntagrefs");
 
 #ifdef HAVE_PABLO
   TRACE_ON(V_mask, ID_Vntagrefs);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVGID(vkey))
+    HEclear();
+    if (HAatom_group(vkey)!=VGIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (v = (vginstance_t *) vginstance(VGID2VFILE(vkey), (uint16) VGID2SLOT(vkey))))
+    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vg = v->vg;
@@ -1216,15 +1242,15 @@ Vnrefs(int32 vkey,int32 tag)
     vginstance_t *v;
     VGROUP     *vg;
     uint16 ttag=(uint16)tag;    /* alias for faster comparison */
-    int32 count=0;              /* number of matching tags in the Vgroup */
     uintn u;                    /* local counting variable */
-    int32     ret_value = SUCCEED;
+    int32     ret_value = 0;
 
-    if (!VALIDVGID(vkey))
+    HEclear();
+    if (HAatom_group(vkey)!=VGIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (v = (vginstance_t *) vginstance(VGID2VFILE(vkey), (uint16) VGID2SLOT(vkey))))
+    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vg = v->vg;
@@ -1233,9 +1259,7 @@ Vnrefs(int32 vkey,int32 tag)
 
     for (u = 0; u < vg->nvelt; u++)
         if (ttag == vg->tag[u])
-            count++;
-
-    ret_value = (count);
+            ret_value++;
 
 done:
   if(ret_value == FAIL)   
@@ -1262,21 +1286,22 @@ done:
 int32
 Vgettagrefs(int32 vkey, int32 tagarray[], int32 refarray[], int32 n)
 {
+    CONSTR(FUNC, "Vgettagrefs");
     int32       i;
     vginstance_t *v;
     VGROUP     *vg;
     int32      ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgettagrefs");
 
 #ifdef HAVE_PABLO
   TRACE_ON(V_mask, ID_Vgettagrefs);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVGID(vkey))
+    HEclear();
+    if (HAatom_group(vkey)!=VGIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (v = (vginstance_t *) vginstance(VGID2VFILE(vkey), (uint16) VGID2SLOT(vkey))))
+    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vg = v->vg;
@@ -1322,20 +1347,21 @@ done:
 intn
 Vgettagref(int32 vkey, int32 which, int32 *tag, int32 *ref)
 {
+    CONSTR(FUNC, "Vgettagref");
     vginstance_t *v;
     VGROUP     *vg;
     intn       ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgettagref");
 
 #ifdef HAVE_PABLO
   TRACE_ON(V_mask, ID_Vgettagref);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVGID(vkey))
+    HEclear();
+    if (HAatom_group(vkey)!=VGIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (v = (vginstance_t *) vginstance(VGID2VFILE(vkey), (uint16) VGID2SLOT(vkey))))
+    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vg = v->vg;
@@ -1370,16 +1396,17 @@ done:
 int32
 VQuerytag(int32 vkey)
 {
+    CONSTR(FUNC, "Vgettagref");
     vginstance_t *v;
     VGROUP     *vg;
     int32      ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgettagref");
 
-    if (!VALIDVGID(vkey))
+    HEclear();
+    if (HAatom_group(vkey)!=VGIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (v = (vginstance_t *) vginstance(VGID2VFILE(vkey), (uint16) VGID2SLOT(vkey))))
+    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vg = v->vg;
@@ -1407,16 +1434,17 @@ done:
 int32
 VQueryref(int32 vkey)
 {
+    CONSTR(FUNC, "Vgettagref");
     vginstance_t *v;
     VGROUP     *vg;
     int32     ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgettagref");
 
-    if (!VALIDVGID(vkey))
+    HEclear();
+    if (HAatom_group(vkey)!=VGIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (v = (vginstance_t *) vginstance(VGID2VFILE(vkey), (uint16) VGID2SLOT(vkey))))
+    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vg = v->vg;
@@ -1448,21 +1476,22 @@ done:
 int32
 Vaddtagref(int32 vkey, int32 tag, int32 ref)
 {
+    CONSTR(FUNC, "Vaddtagref");
     vginstance_t *v;
     VGROUP     *vg;
+    intn        i;
     int32      ret_value = SUCCEED;
-    intn       i;
-    CONSTR(FUNC, "Vaddtagref");
 
 #ifdef HAVE_PABLO
   TRACE_ON(V_mask, ID_Vaddtagref);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVGID(vkey))
+    HEclear();
+    if (HAatom_group(vkey)!=VGIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (v = (vginstance_t *) vginstance(VGID2VFILE(vkey), (uint16) VGID2SLOT(vkey))))
+    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vg = v->vg;
@@ -1503,6 +1532,7 @@ vinsertpair(VGROUP * vg, uint16 tag, uint16 ref)
     CONSTR(FUNC, "vinsertpair");
     int32    ret_value = SUCCEED;
 
+    HEclear();
     if (vg->nvelt >= (uintn) vg->msize)
       {
           vg->msize *= 2;
@@ -1545,14 +1575,15 @@ done:
 int32
 Ventries(HFILEID f, int32 vgid)
 {
+    CONSTR(FUNC, "Ventries");
     vginstance_t *v;
     int32      ret_value = SUCCEED;
-    CONSTR(FUNC, "Ventries");
 
+    HEclear();
     if (vgid < 1)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    if((v=vginstance(f,(uint16)vgid))==NULL)
+    if((v=vginst(f,(uint16)vgid))==NULL)
         HGOTO_ERROR(DFE_NOMATCH,FAIL);          /* error */
 
     ret_value = (v->vg->nvelt);
@@ -1580,20 +1611,21 @@ done:
 int32
 Vsetname(int32 vkey, const char *vgname)
 {
+    CONSTR(FUNC, "Vsetname");
     vginstance_t *v;
     VGROUP     *vg;
     int32      ret_value = SUCCEED;
-    CONSTR(FUNC, "Vsetname");
 
 #ifdef HAVE_PABLO
   TRACE_ON(V_mask, ID_Vsetname);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVGID(vkey) || vgname==NULL)
+    HEclear();
+    if (HAatom_group(vkey)!=VGIDGROUP || vgname==NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (v = (vginstance_t *) vginstance(VGID2VFILE(vkey), (uint16) VGID2SLOT(vkey))))
+    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vg = v->vg;
@@ -1631,20 +1663,21 @@ done:
 int32
 Vsetclass(int32 vkey, const char *vgclass)
 {
+    CONSTR(FUNC, "Vsetclass");
     vginstance_t *v;
     VGROUP     *vg;
     int32      ret_value = SUCCEED;
-    CONSTR(FUNC, "Vsetclass");
 
 #ifdef HAVE_PABLO
   TRACE_ON(V_mask, ID_Vsetclass);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVGID(vkey))
+    HEclear();
+    if (HAatom_group(vkey)!=VGIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (v = (vginstance_t *) vginstance(VGID2VFILE(vkey), (uint16) VGID2SLOT(vkey))))
+    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vg = v->vg;
@@ -1680,19 +1713,20 @@ done:
 intn
 Visvg(int32 vkey, int32 id)
 {
+    CONSTR(FUNC, "Visvg");
     uintn u;
     uint16 ID;
     vginstance_t *v;
     VGROUP     *vg;
-    intn      ret_value = TRUE;
-    CONSTR(FUNC, "Visvg");
+    intn      ret_value = FALSE;
 
-    if (!VALIDVGID(vkey))
-        HGOTO_ERROR(DFE_ARGS, FALSE);
+    HEclear();
+    if (HAatom_group(vkey)!=VGIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (v = (vginstance_t *) vginstance(VGID2VFILE(vkey), (uint16) VGID2SLOT(vkey))))
-        HGOTO_ERROR(DFE_NOVS, FALSE);
+    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vg = v->vg;
     if (vg == NULL)
@@ -1703,12 +1737,7 @@ Visvg(int32 vkey, int32 id)
     for (u = 0; u < vg->nvelt; u++)
         if (vg->ref[u] == ID &&     /* if the ids match, */
             vg->tag[u] == DFTAG_VG)     /* and it is a vgroup */
-          {
-            ret_value =  (TRUE);
-            goto done;
-          }
-
-    ret_value = (FALSE);
+                HGOTO_DONE(TRUE);
 
 done:
   if(ret_value == FALSE)   
@@ -1732,17 +1761,18 @@ done:
 intn
 Visvs(int32 vkey, int32 id)
 {
+    CONSTR(FUNC, "VSisvs");
     intn i;
     vginstance_t *v;
     VGROUP     *vg;
-    intn       ret_value = TRUE;
-    CONSTR(FUNC, "VSisvs");
+    intn       ret_value = FALSE;
 
-    if (!VALIDVGID(vkey))
+    HEclear();
+    if (HAatom_group(vkey)!=VGIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FALSE);
 
     /* locate vg's index in vgtab */
-    if (NULL == (v = (vginstance_t *) vginstance(VGID2VFILE(vkey), (uint16) VGID2SLOT(vkey))))
+    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FALSE);
 
     vg = v->vg;
@@ -1752,11 +1782,7 @@ Visvs(int32 vkey, int32 id)
     i = vg->nvelt;
     while (i)
         if (vg->ref[--i] == (uint16) id && vg->tag[i] == VSDESCTAG)
-          {
-            ret_value = (TRUE);
-            goto done;
-          }
-    ret_value = (FALSE);
+          HGOTO_DONE(TRUE);
 
 done:
   if(ret_value == FALSE)   
@@ -1785,29 +1811,20 @@ done:
 int32
 Vgetid(HFILEID f, int32 vgid)
 {
+    CONSTR(FUNC, "Vgetid");
     vginstance_t *v;
     vfile_t    *vf;
     VOIDP      *t;
     int32       key;
     int32       ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgetid");
 
 #ifdef HAVE_PABLO
   TRACE_ON(V_mask, ID_Vgetid);
 #endif /* HAVE_PABLO */
 
+    HEclear();
     if (vgid < -1)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    /* Check if vfile buffer has been allocated */
-    if (vfile == NULL)
-      {
-          vfile = (vfile_t *) HDmalloc(MAX_VFILE * sizeof(vfile_t));
-          if (vfile == NULL)
-              HGOTO_ERROR(DFE_NOSPACE, FAIL);
-          /* zero the space */
-          vfile = (vfile_t *) HDmemset(vfile, 0, (MAX_VFILE * sizeof(vfile_t)));
-      }
 
     if (NULL == (vf = Get_vfile(f)))
         HGOTO_ERROR(DFE_FNF, FAIL);
@@ -1822,14 +1839,13 @@ Vgetid(HFILEID f, int32 vgid)
           else
             {
                 v = (vginstance_t *) * t;   /* get actual pointer to the vginstance_t */
-                ret_value = (v->ref);    /* rets 1st vgroup's ref */
-                goto done;
+                HGOTO_DONE(v->ref); /* rets 1st vgroup's ref */
             }   /* end else */
       }     /* end if */
 
     /* look in vgtab for vgid */
     /* tbbtdfind returns a pointer to the vginstance_t pointer */
-    key = VGSLOT2ID(f, vgid);
+    key = (int32)vgid;
     t = (VOIDP *) tbbtdfind(vf->vgtree, (VOIDP) &key, NULL);
     if (t == NULL ||
         t == (VOIDP *) tbbtlast((TBBT_NODE *) * (vf->vgtree)))  /* couldn't find the old vgid */
@@ -1839,7 +1855,7 @@ Vgetid(HFILEID f, int32 vgid)
     else
       {
           v = (vginstance_t *) * t;     /* get actual pointer to the vginstance_t */
-          ret_value = (v->ref);  /* rets 1st vgroup's ref */
+          ret_value = (v->ref);  /* rets next vgroup's ref */
       }     /* end else */
 
 done:
@@ -1877,17 +1893,18 @@ done:
 int32
 Vgetnext(int32 vkey, int32 id)
 {
+    CONSTR(FUNC, "Vgetnext");
     uintn u;
     vginstance_t *v;
     VGROUP     *vg;
-    int32      ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgetnext");
+    int32      ret_value = FAIL;
 
-    if (!VALIDVGID(vkey) || id < (-1))
+    HEclear();
+    if (HAatom_group(vkey)!=VGIDGROUP || id < (-1))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (v = (vginstance_t *) vginstance(VGID2VFILE(vkey), (uint16) VGID2SLOT(vkey))))
+    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vg = v->vg;
@@ -1896,18 +1913,12 @@ Vgetnext(int32 vkey, int32 id)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if (vg->nvelt == 0)
-      {
-        ret_value = (FAIL);  /* nothing in vg */
-        goto done;
-      }
+        HGOTO_DONE(FAIL);
 
     if (id == -1)
       {
           if ((vg->tag[0] == DFTAG_VG) || (vg->tag[0] == VSDESCTAG))
-            {
-              ret_value = (vg->ref[0]);  /* id of first entry */
-              goto done;
-            }
+              HGOTO_DONE(vg->ref[0]);  /* id of first entry */
       }     /* end if */
 
     /* look in vg for id */
@@ -1918,26 +1929,21 @@ Vgetnext(int32 vkey, int32 id)
                 {
                     if (u == (vg->nvelt - 1))
                       {
-                        ret_value = (FAIL);
-                        goto done;
-                      }
+                        HGOTO_DONE(FAIL);
+                      } /* end if */
                     else
                       {
                           if ((vg->tag[u + 1] == DFTAG_VG) || (vg->tag[u + 1] == VSDESCTAG))
                             {
-                              ret_value = (vg->ref[u + 1]);  /* return the id of next entry */
-                              goto done;
+                              HGOTO_DONE(vg->ref[u + 1]);  /* return the id of next entry */
                             }
                           else
                             {
-                              ret_value = (FAIL);
-                              goto done;
+                              HGOTO_DONE(FAIL);
                             }
                       }     /* end else */
                 }   /* end if */
           }     /* end if */
-
-    ret_value = (FAIL);
 
 done:
   if(ret_value == FAIL)   
@@ -1962,20 +1968,21 @@ done:
 int32
 Vgetname(int32 vkey, char *vgname)
 {
+    CONSTR(FUNC, "Vgetname");
     vginstance_t *v;
     VGROUP     *vg;
     int32      ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgetname");
 
 #ifdef HAVE_PABLO
   TRACE_ON(V_mask, ID_Vgetname);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVGID(vkey) || vgname == NULL)
+    HEclear();
+    if (HAatom_group(vkey)!=VGIDGROUP || vgname==NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (v = (vginstance_t *) vginstance(VGID2VFILE(vkey), (uint16) VGID2SLOT(vkey))))
+    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vg = v->vg;
@@ -2010,20 +2017,21 @@ done:
 int32
 Vgetclass(int32 vkey, char *vgclass)
 {
+    CONSTR(FUNC, "Vgetclass");
     vginstance_t *v;
     VGROUP     *vg;
     int32      ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgetclass");
 
 #ifdef HAVE_PABLO
   TRACE_ON(V_mask, ID_Vgetclass);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVGID(vkey) || vgclass == NULL)
+    HEclear();
+    if (HAatom_group(vkey)!=VGIDGROUP || vgclass==NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (v = (vginstance_t *) vginstance(VGID2VFILE(vkey), (uint16) VGID2SLOT(vkey))))
+    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vg = v->vg;
@@ -2064,20 +2072,21 @@ done:
 intn
 Vinquire(int32 vkey, int32 *nentries, char *vgname)
 {
+    CONSTR(FUNC, "Vinquire");
     vginstance_t *v;
     VGROUP     *vg;
     intn    ret_value = SUCCEED;
-    CONSTR(FUNC, "Vinquire");
 
 #ifdef HAVE_PABLO
   TRACE_ON(V_mask, ID_Vinquire);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVGID(vkey))
+    HEclear();
+    if (HAatom_group(vkey)!=VGIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (v = (vginstance_t *) vginstance(VGID2VFILE(vkey), (uint16) VGID2SLOT(vkey))))
+    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vg = v->vg;
@@ -2135,21 +2144,15 @@ done:
 HFILEID
 Vopen(char *path, intn acc_mode, int16 ndds)
 {
-#ifdef LATER
     CONSTR(FUNC, "Vopen");
-#endif
-    HFILEID    ret_value;
-    HFILEID     f;
+    HFILEID    ret_value=SUCCEED;
 
-    f = Hopen(path, acc_mode, ndds);
-    if (f == FAIL)
-      {
-        ret_value = (FAIL);
-        goto done;
-      }
+    HEclear();
+    if (Hopen(path, acc_mode, ndds)== FAIL)
+      HGOTO_ERROR(DFE_BADOPEN,FAIL);
 
-    Vinitialize(f);
-    ret_value = (f);
+    if(Vinitialize(ret_value)==FAIL)
+      HGOTO_ERROR(DFE_CANTINIT,FAIL);
 
 done:
   if(ret_value == FAIL)   
@@ -2208,47 +2211,31 @@ Vclose(HFILEID f)
 int32
 Vdelete(int32 f, int32 vgid)
 {
+    CONSTR(FUNC, "Vdelete");
     VOIDP       v;
     vfile_t    *vf;
     VOIDP      *t;
     int32       key;
     filerec_t  *file_rec;       /* file record */
     int32       ret_value = SUCCEED;
-    CONSTR(FUNC, "Vdelete");
 
+    HEclear();
     if (vgid < 0)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* convert file id to file record and check for write-permission */
-    file_rec = FID2REC(f);
+    file_rec = HAatom_object(f);
     if(!(file_rec->access&DFACC_WRITE))
         HGOTO_ERROR(DFE_BADACC, FAIL);
-
-    /* Check if vfile buffer has been allocated */
-    if (vfile == NULL)
-      {
-          vfile = (vfile_t *) HDmalloc(MAX_VFILE * sizeof(vfile_t));
-          if (vfile == NULL)
-              HGOTO_ERROR(DFE_NOSPACE, FAIL);
-          /* zero the space */
-          vfile = (vfile_t *) HDmemset(vfile, 0, (MAX_VFILE * sizeof(vfile_t)));
-      }
 
     if (NULL == (vf = Get_vfile(f)))
         HGOTO_ERROR(DFE_FNF, FAIL);
 
-    key = VGSLOT2ID(f, vgid);
+    key = (int32)vgid;
+    if (( t = (VOIDP *) tbbtdfind(vf->vgtree, (VOIDP) &key, NULL))== NULL)
+      HGOTO_DONE(FAIL);
 
-    t = (VOIDP *) tbbtdfind(vf->vgtree, (VOIDP) &key, NULL);
-
-    if (t == NULL)
-      {
-        ret_value = (FAIL);
-        goto done;
-      }
-
-    v = tbbtrem((TBBT_NODE **) vf->vgtree, (TBBT_NODE *) t, NULL);
-    if (v)
+    if(( v = tbbtrem((TBBT_NODE **) vf->vgtree, (TBBT_NODE *) t, NULL))!=NULL)
         vdestroynode((VOIDP) v);
 
     Hdeldd(f, DFTAG_VG, (uint16) vgid);
@@ -2283,10 +2270,16 @@ done:
 --------------------------------------------------------------------------*/
 intn VPshutdown(void)
 {
-    if(vfile!=NULL)
+    if(vtree!=NULL)
       {
-          HDfree(vfile);
-          vfile=NULL;
+          /* Free the vfile tree */
+          tbbtdfree(vtree, vfdestroynode, NULL);
+
+          /* Destroy the atom groups for Vdatas and Vgroups */
+          HAdestroy_group(VSIDGROUP);
+          HAdestroy_group(VGIDGROUP);
+
+          vtree=NULL;
       } /* end if */
     return(SUCCEED);
 } /* end VPshutdown() */

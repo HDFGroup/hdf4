@@ -7,16 +7,19 @@ VERSION  = 4.0
 #
 # Compiliers:
 # For gcc version
-#CC=gcc
+CC=gcc
 #CFLAGS=-ansi -O
+CFLAGS=-ansi -O -g
 #
 #Using HP-ANSI compilier also needs LIBSX = -lm(see below)
-CC=cc
-CFLAGS=-Aa -D_HPUX_SOURCE -O 
+#CC=cc
+#CFLAGS=-Aa -D_HPUX_SOURCE -O -s
+#CFLAGS=-Aa -D_HPUX_SOURCE -g 
 
 # Fortran compilier, possible values fort77, f77, cf77 and fc
 FC = f77
-FFLAGS = -O
+#FFLAGS = -O -s
+FFLAGS = -g
 
 # Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
 RANLIB = ranlib

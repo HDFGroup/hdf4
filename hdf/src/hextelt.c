@@ -90,7 +90,7 @@ EXPORTED ROUTINES
 #define DIR_SEPC  58  /* Integer value of ':' */
 #define DIR_SEPS  ":"
 #else /* not Macintosh */
-#if defined WIN32
+#if defined WIN386 | defined DOS386
 /* DOS-Windows seperator */
 #define DIR_SEPC  92  /* Integer value of '\' */
 #define DIR_SEPS  "\\"
@@ -104,7 +104,7 @@ EXPORTED ROUTINES
 #define DIR_SEPC  47  /* Integer value of '/' */
 #define DIR_SEPS  "/"
 #endif /* !VMS */
-#endif /* !WIN32 */
+#endif /* !WIN386 & !DOS386 */
 #endif /* !Macintosh */
 
 /* directory path seperator from other directory paths */
@@ -214,7 +214,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
 #endif /* HAVE_PABLO */
     /* clear error stack and validate args */
     HEclear();
-    file_rec = FID2REC(file_id);
+    file_rec = HAatom_object(file_id);
     if (BADFREC(file_rec) || !extern_file_name || (offset < 0) || SPECIALTAG(tag)
         || (special_tag = MKSPECIALTAG(tag)) == DFTAG_NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -222,11 +222,10 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     if (!(file_rec->access & DFACC_WRITE))
         HGOTO_ERROR(DFE_DENIED, FAIL);
 
-    /* get a slot in the access records table */
-    slot = HIget_access_slot();
-    if (slot == FAIL)
+    /* get a access records */
+    access_rec = HIget_access_rec();
+    if (access_rec == NULL)
         HGOTO_ERROR(DFE_TOOMANY, FAIL);
-    access_rec = &access_records[slot];
 
     /* search for identical dd */
     if ((data_id=HTPselect(file_rec,tag,ref))!=FAIL)
@@ -356,13 +355,13 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     access_rec->appendable   = FALSE;     /* start data as non-appendable */
     file_rec->attach++;
 
-    ret_value = ASLOT2ID(slot);  /* return access id */
+    ret_value = HAregister_atom(AIDGROUP,access_rec);  /* return access id */
 
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
         if(access_rec!=NULL)
-            access_rec->used = FALSE;
+            HDfree(access_rec);
         if(info!=NULL)
             HDfree((VOIDP) info);
         if(fname!=NULL)
@@ -399,25 +398,21 @@ HXPsetaccesstype(accrec_t * access_rec)
     int32       para_extfile_id;    /* parallel external file id */
 #endif /* CM5 */
     extinfo_t  *info;           /* special element information */
-    char	*fname;
+    char	*fname=NULL;
     intn       ret_value = SUCCEED;
 
     /* clear error stack and validate args */
     HEclear();
 
     /* sanity check */
-    if (!access_rec)
+    if (access_rec==NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    info = (extinfo_t *) access_rec->special_info;
-    if (!info)
-      {
-          access_rec->used = FALSE;
-          HGOTO_ERROR(DFE_NOSPACE, FAIL);
-      }
+    if (( info = (extinfo_t *) access_rec->special_info)==NULL)
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* build the customized external file name. */
-    if (!(fname = HXIbuildfilename(info->extern_file_name, DFACC_OLD)))
+    if ((fname = HXIbuildfilename(info->extern_file_name, DFACC_OLD))==NULL)
         HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
     /* Open the external file for the correct access type */
@@ -429,15 +424,12 @@ HXPsetaccesstype(accrec_t * access_rec)
                 {
                     file_external = HI_CREATE(fname);
                     if (OPENERR(file_external))
-                      {
-                          access_rec->used = FALSE;
-                          HDfree(fname);
-                          HGOTO_ERROR(DFE_BADOPEN, FAIL);
-                      }
+                        HGOTO_ERROR(DFE_BADOPEN, FAIL);
                 }
 	      HDfree(fname);
               info->file_external = file_external;
               break;
+              
 #ifdef CM5
           case DFACC_PARALLEL:
               para_extfile_id = CM_OPEN(fname, DFACC_WRITE);
@@ -445,25 +437,22 @@ HXPsetaccesstype(accrec_t * access_rec)
                 {
                     para_extfile_id = CM_CREATE(fname);
                     if (para_extfile_id == FAIL)
-                      {
-                          access_rec->used = FALSE;
-			  HDfree(fname);
-                          HGOTO_ERROR(DFE_BADOPEN, FAIL);
-                      }
+                        HGOTO_ERROR(DFE_BADOPEN, FAIL);
                 }
-	      HDfree(fname);
+              HDfree(fname);
               info->para_extfile_id = para_extfile_id;
               break;
 
 #endif /* CM5 */
           default:
-	      HDfree(fname);
               HGOTO_ERROR(DFE_BADOPEN, FAIL);
       }
 
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
+        if(fname!=NULL)
+            HDfree(fname);
 
     } /* end if */
 
@@ -501,7 +490,7 @@ HXIstaccess(accrec_t * access_rec, int16 acc_mode)
     int32       ret_value = SUCCEED;
 
     /* get file record and validate */
-    file_rec = FID2REC(access_rec->file_id);
+    file_rec = HAatom_object(access_rec->file_id);
     if (BADFREC(file_rec) || !(file_rec->access & acc_mode))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -553,12 +542,13 @@ HXIstaccess(accrec_t * access_rec, int16 acc_mode)
       }
 
     file_rec->attach++;
-    ret_value = ASLOT2ID(access_rec - access_records);
+    ret_value = HAregister_atom(AIDGROUP,access_rec);
 
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
-        access_rec->used = FALSE;
+        if(access_rec!=NULL)
+            HDfree(access_rec);
     } /* end if */
 
   /* Normal function cleanup */
@@ -631,8 +621,8 @@ DESCRIPTION
 int32
 HXPseek(accrec_t * access_rec, int32 offset, int origin)
 {
-  int32     ret_value = SUCCEED;
-  CONSTR(FUNC, "HXPseek");    /* for HERROR */
+    int32     ret_value = SUCCEED;
+    CONSTR(FUNC, "HXPseek");    /* for HERROR */
 
     /* Adjust offset according to origin.
        there is no upper bound to posn */
@@ -698,25 +688,23 @@ HXPread(accrec_t * access_rec, int32 length, VOIDP data)
 
     /* see if the file is open, if not open it */
     if (!info->file_open)
-    {
-	char	*fname;
+      {
+        char	*fname;
 
-	/* build the customized external file name. */
-	if (!(fname = HXIbuildfilename(info->extern_file_name, DFACC_OLD)))
-	    HGOTO_ERROR(DFE_BADOPEN, FAIL);
+        /* build the customized external file name. */
+        if ((fname = HXIbuildfilename(info->extern_file_name, DFACC_OLD))==NULL)
+            HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
-	info->file_external = HI_OPEN(fname, access_rec->access);
-	HDfree(fname);
-	if (OPENERR(info->file_external))
-	{
-	    access_rec->used = FALSE;
-	    HERROR(DFE_BADOPEN);
-	    HEreport("Could not find external file %s\n", info->extern_file_name);
-	    ret_value = FAIL;
-            goto done;
-	}
-	info->file_open = TRUE;
-    }
+        info->file_external = HI_OPEN(fname, access_rec->access);
+        HDfree(fname);
+        if (OPENERR(info->file_external))
+          {
+            HERROR(DFE_BADOPEN);
+            HEreport("Could not find external file %s\n", info->extern_file_name);
+            HGOTO_DONE(FAIL);
+          }
+        info->file_open = TRUE;
+      }
 
     /* read it in from the file */
 #ifdef CM5
@@ -726,9 +714,7 @@ HXPread(accrec_t * access_rec, int32 length, VOIDP data)
           if (CM_SEEK(info->para_extfile_id, access_rec->posn + info->extern_offset) == FAIL)
               HGOTO_ERROR(DFE_SEEKERROR, FAIL);
           if (CM_READ(info->para_extfile_id, data, length) == FAIL)
-            {
-                HGOTO_ERROR(DFE_READERROR, FAIL);
-            }
+              HGOTO_ERROR(DFE_READERROR, FAIL);
       }
     else
 #endif
@@ -782,7 +768,7 @@ HXPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
                     (extinfo_t *) (access_rec->special_info);
     uint8      *p =local_ptbuf;/* temp buffer ptr */
     filerec_t  *file_rec =     /* file record */
-                          FID2REC(access_rec->file_id);
+                          HAatom_object(access_rec->file_id);
     int32      ret_value = SUCCEED;
 
     /* validate length */
@@ -795,18 +781,17 @@ HXPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
         char *fname;
 
         /* build the customized external file name. */
-        if (!(fname = HXIbuildfilename(info->extern_file_name, DFACC_OLD)))
+        if ((fname = HXIbuildfilename(info->extern_file_name, DFACC_OLD))==NULL)
             HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
         info->file_external = HI_OPEN(fname, access_rec->access);
         HDfree(fname);
         if (OPENERR(info->file_external))
-            {
-                HERROR(DFE_BADOPEN);
-                HEreport("Could not find external file %s\n", info->extern_file_name);
-                ret_value = FAIL;
-                goto done;
-            }
+          {
+            HERROR(DFE_BADOPEN);
+            HEreport("Could not find external file %s\n", info->extern_file_name);
+            HGOTO_DONE(FAIL);
+          }
         info->file_open = TRUE;
     }
 
@@ -824,20 +809,20 @@ HXPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
     else
 #endif /* CM5 */
       {
-          if (HI_SEEK(info->file_external,
-                  access_rec->posn + info->extern_offset) == FAIL)
+          if (HI_SEEK(info->file_external, access_rec->posn + info->extern_offset) == FAIL)
               HGOTO_ERROR(DFE_SEEKERROR, FAIL);
           if (HI_WRITE(info->file_external, data, length) == FAIL)
             {
             /* this external file might not be opened with write permission,
                reopen the file and try again */
                 hdf_file_t  f = HI_OPEN(info->extern_file_name, DFACC_WRITE);
+                
                 if (OPENERR(f) ||
-                HI_SEEK(f, access_rec->posn + info->extern_offset) == FAIL ||
+                    HI_SEEK(f, access_rec->posn + info->extern_offset) == FAIL ||
                     HI_WRITE(f, data, length) == FAIL)
                   {
-                      HI_CLOSE(f);
-                      HGOTO_ERROR(DFE_DENIED, FAIL);
+                    HI_CLOSE(f);
+                    HGOTO_ERROR(DFE_DENIED, FAIL);
                   }
                 HI_CLOSE(info->file_external);
 
@@ -868,7 +853,6 @@ HXPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
-        access_rec->used = FALSE;
 
     } /* end if */
 
@@ -963,7 +947,7 @@ HXPendaccess(accrec_t * access_rec)
 {
     CONSTR(FUNC, "HXPendaccess");   /* for HERROR */
     filerec_t  *file_rec =      /* file record */
-    FID2REC(access_rec->file_id);
+        HAatom_object(access_rec->file_id);
     intn     ret_value = SUCCEED;
 
     /* close the file pointed to by this access rec */
@@ -981,13 +965,13 @@ HXPendaccess(accrec_t * access_rec)
     file_rec->attach--;
 
     /* free the access record */
-    access_rec->used = FALSE;
+    HDfree(access_rec);
 
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
-	if(access_rec!=NULL)
-		access_rec->used=FALSE;
+      if(access_rec!=NULL)
+          HDfree(access_rec);
 
     } /* end if */
 
@@ -1135,7 +1119,7 @@ HXPreset(accrec_t * access_rec, sp_info_block_t * info_block)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* check validity of file record */
-    file_rec = FID2REC(access_rec->file_id);
+    file_rec = HAatom_object(access_rec->file_id);
     if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
@@ -1176,7 +1160,7 @@ HXPreset(accrec_t * access_rec, sp_info_block_t * info_block)
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
-      access_rec->used = FALSE;
+
     } /* end if */
 
   /* Normal function cleanup */

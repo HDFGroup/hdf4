@@ -180,19 +180,11 @@ putRaster(const char *template, int32 xdim, int32 ydim, int imageNumber,
     if (verbose)
         printf("Writing into image file : %s\n", fileName);
 
-#ifdef PC
     if ((fd = fopen(fileName, "wb")) == NULL)
       {
           puts("Unable to open file. Exiting...");
           exit(1);
       }
-#else
-    if ((fd = fopen(fileName, "w")) == NULL)
-      {
-          puts("Unable to open file. Exiting...");
-          exit(1);
-      }
-#endif
     if (fwrite(image, (int) xdim, (int) ydim, fd) != (unsigned) ydim)
       {
           puts("Unable to write to file. Exiting...");
@@ -231,19 +223,11 @@ putPalette(const char *template, int imageNumber, uint8 *palette)
     if (verbose)
         printf("Writing into palette file : %s\n", fileName);
 
-#ifdef PC
     if ((fd = fopen(fileName, "wb")) == NULL)
       {
           puts("Unable to open file. Exiting...");
           exit(1);
       }
-#else
-    if ((fd = fopen(fileName, "w")) == NULL)
-      {
-          puts("Unable to open file. Exiting...");
-          exit(1);
-      }
-#endif
 
     for (i = 0; i < COLOR_SIZE; i++)
       {

@@ -36,11 +36,11 @@ typedef struct DFSsdg
   {
       DFdi        data;         /* tag/ref of data in file */
       intn        rank;         /* number of dimensions */
-      int32 _HUGE *dimsizes;    /* dimensions of data */
-      char _HUGE *coordsys;
-      char _HUGE *dataluf[3];   /* label/unit/format of data */
-      char _HUGE **dimluf[3];   /* label/unit/format for each dim */
-      uint8 _HUGE **dimscales;  /* scales for each dimension */
+      int32 *dimsizes;    /* dimensions of data */
+      char *coordsys;
+      char *dataluf[3];   /* label/unit/format of data */
+      char **dimluf[3];   /* label/unit/format for each dim */
+      uint8 **dimscales;  /* scales for each dimension */
       uint8       max_min[16];  /* max, min values of data, */
       /*  currently atmost 8 bytes each   */
       int32       numbertype;   /* default is float32      */
@@ -81,53 +81,53 @@ extern      "C"
 #endif                          /* c_plusplus || __cplusplus */
 
     extern int32 DFSDIopen
-                (const char _HUGE * filename, int acc_mode);
+                (const char * filename, int acc_mode);
 
     extern int  DFSDIsdginfo
                 (int32 file_id);
 
     extern int  DFSDIclear
-                (DFSsdg _HUGE * sdg);
+                (DFSsdg * sdg);
 
     extern int  DFSDIclearNT
-                (DFSsdg _HUGE * sdg);
+                (DFSsdg * sdg);
 
     extern int  DFSDIgetdata
-                (const char _HUGE * filename, intn rank, int32 _HUGE maxsizes[], VOIDP data,
+                (const char * filename, intn rank, int32 maxsizes[], VOIDP data,
                  int isfortran);
 
     extern int  DFSDIputdata
-                (const char _HUGE * filename, intn rank, int32 _HUGE * dimsizes, VOIDP data,
+                (const char * filename, intn rank, int32 * dimsizes, VOIDP data,
                  int accmode, int isfortran);
 
     extern int  DFSDIgetslice
-                (const char _HUGE * filename, int32 _HUGE winst[], int32 _HUGE windims[], VOIDP data,
-                 int32 _HUGE dims[], int isfortran);
+                (const char * filename, int32 winst[], int32 windims[], VOIDP data,
+                 int32 dims[], int isfortran);
 
     extern int  DFSDIputslice
-                (int32 _HUGE windims[], VOIDP data, int32 _HUGE dims[], int isfortran);
+                (int32 windims[], VOIDP data, int32 dims[], int isfortran);
 
     extern int  DFSDIendslice
                 (int isfortran);
 
     extern intn DFSDIrefresh
-                (char _HUGE * filename);
+                (char * filename);
 
     extern int  DFSDIisndg
-                (intn _HUGE * isndg);
+                (intn * isndg);
 
     extern int  DFSDIgetrrank
-                (intn _HUGE * rank);
+                (intn * rank);
 
     extern int  DFSDIgetwrank
-                (intn _HUGE * rank);
+                (intn * rank);
 
     extern int  DFSDIsetdimstrs
-                (int dim, const char _HUGE * label, const char _HUGE * unit, const char _HUGE * format);
+                (int dim, const char * label, const char * unit, const char * format);
 
     extern int  DFSDIsetdatastrs
-                (const char _HUGE * label, const char _HUGE * unit, const char _HUGE * format,
-                 const char _HUGE * coordsys);
+                (const char * label, const char * unit, const char * format,
+                 const char * coordsys);
 
 #if defined c_plusplus || defined __cplusplus
 }

@@ -146,7 +146,8 @@ AUTHOR
    Quincey Koziol
 
 MODIFICATION HISTORY
-   10/20/94  - Starting writing specs & coding prototype
+   10/20/95  - Starting writing specs & coding prototype
+    3/ 8/96  - Modifications to remove compiled limits on the # of files
  */
 
 #define MFGR_MASTER
@@ -155,6 +156,13 @@ MODIFICATION HISTORY
 /* Local pre-processor macros */
 #define XDIM    0
 #define YDIM    1
+
+/*
+   * --------------------------------------------------------------------
+   * PRIVATE  data structure and routines.
+   * --------------------------------------------------------------------
+ */
+static TBBT_TREE *gr_tree=NULL;
 
 /*--------------------------------------------------------------------------
  NAME
@@ -185,6 +193,24 @@ intn rigcompare(VOIDP k1, VOIDP k2, intn cmparg)
 
     return ((intn) ((*(int32 *) k1) - (*(int32 *) k2)));    /* valid for integer keys */
 }   /* rigcompare */
+
+/* ---------------------------- GRIgrdestroynode ------------------------- */
+/*
+   Frees B-Tree gr_info_t nodes
+
+   *** Only called by B-tree routines, should _not_ be called externally ***
+ */
+VOID
+GRIgrdestroynode(VOIDP n)
+{
+    gr_info_t      *gr_ptr=(gr_info_t *)n;
+
+    /* clear out the tbbt's */
+    tbbtdfree(gr_ptr->grtree, GRIridestroynode, NULL);
+    tbbtdfree(gr_ptr->gattree, GRIattrdestroynode, NULL);
+
+    HDfree(gr_ptr);
+}   /* GRIgrdestroynode */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -255,36 +281,42 @@ VOID GRIridestroynode(VOIDP n)
     HDfree(ri_ptr);
 }   /* GRIridestroynode */
        
-/*--------------------------------------------------------------------------
- NAME
-    GRIget_empty_tab
- PURPOSE
-    Get the first blank entry in the GR table of id's
- USAGE
-    int32 GRIget_empty_tab(hdf_file_id)
-        int32 hdf_file_id;          IN: file ID from Hopen
- RETURNS
-    Return grid on success or FAIL
- DESCRIPTION
-    Gets the next blank entry in the GR table of id's and returns it to
-    the calling function.  This is generally only useful for routines that
-    start up the interface.  This routine was written so that the size of the
-    table could be dynamicly adjusted, instead of just being a static size.
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
---------------------------------------------------------------------------*/
-static int32 GRIget_empty_tab(int32 hdf_file_id)
+/* -------------------------- Get_grfile ------------------------ */
+/*
+   Looks in the TBBT gr_tree for the file ID of a file.
+   Returns a pointer to the gr_info_t for that file on success, otherwise NULL.
+ */
+PRIVATE gr_info_t *
+Get_grfile(HFILEID f)
 {
-    uintn u;    /* local counting variable */
+    VOIDP *t;       /* vfile_t pointer from tree */
+    int32 key=(int32)f;
 
-    /* search for the first open GR descriptor and return it */
-    for(u=0; u<MAX_GR_FILES; u++)
-        if(gr_tab[u]==NULL)
-            return((int32)u);
-    return(FAIL);
-} /* end GRIget_empty_tab() */
+    t = (VOIDP *) tbbtdfind(gr_tree, (VOIDP) &key, NULL);
+    return((gr_info_t *)(t==NULL ? NULL : *t));
+} /* end Get_grfile() */
+
+        
+/* -------------------------- New_grfile ------------------------ */
+/*
+   Creates gr_info_t structure and adds it to the tree
+   Returns a pointer to the gr_info_t for that file on success, otherwise NULL.
+ */
+PRIVATE gr_info_t *
+New_grfile(HFILEID f)
+{
+    gr_info_t *g;
+    
+    /* Allocate the gr_info_t structure */
+    if (NULL == (g = (gr_info_t *) HDcalloc(1,sizeof(gr_info_t))))
+      return(NULL);
+
+    /* Assign the file ID & insert into the tree */
+    g->hdf_file_id=f;
+    tbbtdins(gr_tree, (VOIDP) g, NULL);    /* insert the vg instance in B-tree */
+
+    return(g);
+} /* end New_grfile() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -832,6 +864,7 @@ for (i = 0; i < curr_image; i++)
                                         } /* end switch */
                                   } /* end for */
                               new_image->index=gr_ptr->gr_count;
+                              new_image->gr_ptr=gr_ptr; /* point up the tree */
                               tbbtdins(gr_ptr->grtree, (VOIDP) new_image, NULL);    /* insert the new image into B-tree */ 
                               gr_ptr->gr_count++;
                             } /* end if */
@@ -980,6 +1013,7 @@ for (i = 0; i < curr_image; i++)
                                   } /* end switch */
                             } /* end while */
                         new_image->index=gr_ptr->gr_count;
+                        new_image->gr_ptr=gr_ptr; /* point up the tree */
                         tbbtdins(gr_ptr->grtree, (VOIDP) new_image, NULL);    /* insert the new image into B-tree */ 
                         gr_ptr->gr_count++;
                       } /* end case */
@@ -1067,6 +1101,7 @@ for (i = 0; i < curr_image; i++)
                                 new_image->lut_tag=new_image->lut_ref=DFREF_WILDCARD;
 
                         new_image->index=gr_ptr->gr_count;
+                        new_image->gr_ptr=gr_ptr; /* point up the tree */
                         tbbtdins(gr_ptr->grtree, (VOIDP) new_image, NULL);    /* insert the new image into B-tree */ 
                         gr_ptr->gr_count++;
                       } /* end case */
@@ -1324,16 +1359,27 @@ int32 GRstart(int32 hdf_file_id)
     HEclear();
 
     /* check the validity of the file ID */
-    if(!VALIDFID(hdf_file_id))
+    if(!HDvalidfid(hdf_file_id))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* get a GR id */
-    if((next_gr=GRIget_empty_tab(hdf_file_id))==FAIL)
-        HGOTO_ERROR(DFE_TABLEFULL,FAIL);
+    /* Check if GR file tree has been allocated */
+    if (gr_tree == NULL)
+      {
+          if ((gr_tree = tbbtdmake(rigcompare, sizeof(int32))) == NULL)
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-    /* allocate space for the GR information for this file */
-    if((gr_ptr=(gr_info_t *)HDmalloc(sizeof(gr_info_t)))==NULL)
-        HGOTO_ERROR(DFE_NOSPACE,FAIL);
+          /* Initialize the atom groups for GRs and RIs */
+          HAinit_group(GRIDGROUP,GRATOM_HASH_SIZE);
+          HAinit_group(RIIDGROUP,GRATOM_HASH_SIZE);
+      } /* end if */
+
+    /* Grab the existing gr_info_t structure first, otherwise create a new one */
+    if ((gr_ptr = Get_grfile(hdf_file_id)) == NULL)
+        if ((gr_ptr = New_grfile(hdf_file_id)) == NULL)
+            HGOTO_ERROR(DFE_FNF, FAIL);
+
+    if (gr_ptr->access++)
+        HGOTO_DONE(SUCCEED);
 
     /* Fire up the Vset interface */
     if(Vstart(hdf_file_id)==FAIL)
@@ -1359,17 +1405,14 @@ int32 GRstart(int32 hdf_file_id)
     if(GRIget_image_list(hdf_file_id,gr_ptr)==FAIL)
         HGOTO_ERROR(DFE_INTERNAL,FAIL);
 
-    /* assign the image info to the GR table */
-    gr_tab[next_gr]=gr_ptr;
+    /* Return handle to the GR interface to the user */
+    ret_value=HAregister_atom(GRIDGROUP,gr_ptr);
 
 #ifdef QAK
 /* Dump the tree */
 printf("%s: id=%ld\n",FUNC,(long)GRSLOT2ID(hdf_file_id,next_gr));
 tbbtdump(gr_ptr->gattree,0);
 #endif /* QAK */
-
-    /* Return handle to the GR interface to the user */
-    ret_value = ((int32)GRSLOT2ID(hdf_file_id,next_gr));
 
 done:
   if(ret_value == FAIL)   
@@ -1408,7 +1451,7 @@ done:
 intn GRfileinfo(int32 grid,int32 *n_datasets,int32 *n_attrs)
 {
     CONSTR(FUNC, "GRfileinfo");    /* for HERROR */
-    int32 gr_idx;   /* index into the gr_tab array */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for a file */
     intn  ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -1418,17 +1461,18 @@ intn GRfileinfo(int32 grid,int32 *n_datasets,int32 *n_attrs)
     HEclear();
 
     /* check the validity of the GR ID */
-    if(!VALIDGRID(grid))
+    if (HAatom_group(grid)!=GRIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
-    /* Get the array index for the grid */
-    gr_idx=GRID2SLOT(grid);
+    /* locate GR's object in hash table */
+    if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(grid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
 /* Get the number of datasets & global attributes from the memory structures */
     if(n_datasets!=NULL)
-        *n_datasets=gr_tab[gr_idx]->gr_count;
+        *n_datasets=gr_ptr->gr_count;
     if(n_attrs!=NULL)
-        *n_attrs=gr_tab[gr_idx]->gattr_count;
+        *n_attrs=gr_ptr->gattr_count;
         
 done:
   if(ret_value == FAIL)   
@@ -1847,6 +1891,7 @@ intn GRend(int32 grid)
     int32 GroupID;              /* VGroup ID for the GR group */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     filerec_t *file_rec;        /* File record */
+    VOIDP      *t;
     intn   ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -1856,14 +1901,18 @@ intn GRend(int32 grid)
     HEclear();
 
     /* check the validity of the GR ID */
-    if(!VALIDGRID(grid))
+    if (HAatom_group(grid)!=GRIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
-    /* Get the array index for the grid */
-    gr_idx=GRID2SLOT(grid);
-    gr_ptr=gr_tab[gr_idx];
+    /* locate GR's object in hash table */
+    if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(grid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+
+    if (--gr_ptr->access)
+        HGOTO_DONE(SUCCEED);
+
     hdf_file_id=gr_ptr->hdf_file_id;
-    file_rec = FID2REC(hdf_file_id);
+    file_rec = HAatom_object(hdf_file_id);
 
     if(((file_rec->access)&DFACC_WRITE)!=0)
       {
@@ -2049,9 +2098,14 @@ printf("%s: GroupID=%ld\n",FUNC,(long)GroupID);
     tbbtdfree(gr_ptr->grtree, GRIridestroynode, NULL);
     tbbtdfree(gr_ptr->gattree, GRIattrdestroynode, NULL);
 
-    /* Close down the entry for this file in the GR table */
+    /* Close down the entry for this file in the GR tree */
+    /* Find the node in the tree */
+    if (( t = (VOIDP *) tbbtdfind(gr_tree, (VOIDP) &hdf_file_id, NULL)) == NULL)
+        HGOTO_DONE(FAIL);
+
+    /* Delete the node and free the gr_info_t stucture */
+    tbbtrem((TBBT_NODE **) gr_tree, (TBBT_NODE *) t, NULL);
     HDfree(gr_ptr);
-    gr_tab[gr_idx]=NULL;
 
     /* Close down the Vset routines we started */
     if(Vend(hdf_file_id)==FAIL)
@@ -2108,12 +2162,12 @@ int32 GRselect(int32 grid,int32 index)
     HEclear();
 
     /* check the validity of the GR ID */
-    if(!VALIDGRID(grid))
+    if (HAatom_group(grid)!=GRIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
-    /* Get the array index for the grid */
-    gr_idx=GRID2SLOT(grid);
-    gr_ptr=gr_tab[gr_idx];
+    /* locate GR's object in hash table */
+    if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(grid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     /* check the index range validity */
     if(!VALIDRIINDEX(index,gr_ptr))
@@ -2125,7 +2179,7 @@ int32 GRselect(int32 grid,int32 index)
 
     ri_ptr->access++;
 
-    ret_value = (RISLOT2ID(gr_idx,index));
+    ret_value=HAregister_atom(RIIDGROUP,ri_ptr);
 
 done:
   if(ret_value == FAIL)   
@@ -2185,14 +2239,15 @@ int32 GRcreate(int32 grid,char *name,int32 ncomp,int32 nt,int32 il,int32 dimsize
     HEclear();
 
     /* check the validity of the args */
-    if(!VALIDGRID(grid) || name==NULL || ncomp<1 || (il!=MFGR_INTERLACE_PIXEL
-            && il!=MFGR_INTERLACE_LINE && il!=MFGR_INTERLACE_COMPONENT)
-            || dimsizes==NULL || dimsizes[0]<=0 || dimsizes[1]<=0)
+    if (HAatom_group(grid)!=GRIDGROUP || name==NULL || ncomp<1
+            || (il!=MFGR_INTERLACE_PIXEL && il!=MFGR_INTERLACE_LINE 
+            && il!=MFGR_INTERLACE_COMPONENT) || dimsizes==NULL 
+            || dimsizes[0]<=0 || dimsizes[1]<=0)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
-    /* Get the array index for the grid */
-    gr_idx=GRID2SLOT(grid);
-    gr_ptr=gr_tab[gr_idx];
+    /* locate GR's object in hash table */
+    if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(grid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     /* Allocate space for the new image information */
     if((ri_ptr=(ri_info_t *)HDmalloc(sizeof(ri_info_t)))==NULL)
@@ -2216,6 +2271,7 @@ int32 GRcreate(int32 grid,char *name,int32 ncomp,int32 nt,int32 il,int32 dimsize
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 #endif /* OLD_WAY */
     ri_ptr->rig_ref=DFREF_WILDCARD;
+    ri_ptr->gr_ptr=gr_ptr;
     ri_ptr->img_dim.dim_ref=DFREF_WILDCARD;
     ri_ptr->img_dim.xdim=dimsizes[XDIM];
     ri_ptr->img_dim.ydim=dimsizes[YDIM];
@@ -2251,7 +2307,7 @@ int32 GRcreate(int32 grid,char *name,int32 ncomp,int32 nt,int32 il,int32 dimsize
     gr_ptr->gr_modified=TRUE;
     gr_ptr->gr_count++;
 
-    ret_value = (RISLOT2ID(gr_idx,ri_ptr->index));
+    ret_value=HAregister_atom(RIIDGROUP,ri_ptr);
 
 done:
   if(ret_value == FAIL)   
@@ -2303,22 +2359,19 @@ int32 GRnametoindex(int32 grid,char *name)
     HEclear();
 
     /* check the validity of the GR ID */
-    if(!VALIDGRID(grid) || name==NULL)
+    if (HAatom_group(grid)!=GRIDGROUP || name==NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
-    /* Get the array index for the grid */
-    gr_idx=GRID2SLOT(grid);
-    gr_ptr=gr_tab[gr_idx];
+    /* locate GR's object in hash table */
+    if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(grid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     if((t = (VOIDP *) tbbtfirst((TBBT_NODE *)* (gr_ptr->grtree)))==NULL)
         HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     do {
         ri_ptr=(ri_info_t *)*t;
         if(ri_ptr!=NULL && HDstrcmp(ri_ptr->name,name)==0)  /* ie. the name matches */
-          {
-            ret_value =(ri_ptr->index);
-            goto done;
-          }
+            HGOTO_DONE(ri_ptr->index);
     } while((t= (VOIDP *) tbbtnext((TBBT_NODE *)t))!=NULL);
 
     ret_value = (FAIL);
@@ -2384,21 +2437,13 @@ intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
     HEclear();
 
     /* check the validity of the RI ID */
-    if(!VALIDRIID(riid))
+    if (HAatom_group(riid)!=RIIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
-    /* Get the array index for the grid */
-    gr_idx=RIID2GRID(riid);
-    gr_ptr=gr_tab[gr_idx];
-
-    /* check the index range validity */
-    index=RIID2SLOT(riid);
-    if(!VALIDRIINDEX(index,gr_ptr))
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
-    ri_ptr=(ri_info_t *)*t;
+    /* locate RI's object in hash table */
+    if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+    gr_ptr=ri_ptr->gr_ptr;
 
     if(name!=NULL)
         HDstrcpy(name, ri_ptr->name);
@@ -2474,12 +2519,9 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
 {
     CONSTR(FUNC, "GRwriteimage");   /* for HERROR */
     int32 hdf_file_id;          /* HDF file ID */
-    int32 gr_idx;               /* index into the gr_tab array */
     int32 stride[2];            /* pointer to the stride array */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    VOIDP *t;                   /* temp. ptr to the image found */
-    int32 index;                /* index of the RI in the GR */
     intn solid_block=FALSE;     /* whether the image data is a solid block of data */
     intn whole_image=FALSE;     /* whether we are writing out the whole image */
     VOIDP *img_data;            /* pointer to the converted image data to write */
@@ -2501,7 +2543,7 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
 printf("%s: check 1\n",FUNC);
 #endif /* QAK */
     /* check the basic validity of the args (stride is OK to be NULL) */
-    if(!VALIDRIID(riid) || start==NULL /* || in_stride==NULL */ || count==NULL
+    if (HAatom_group(riid)!=RIIDGROUP || start==NULL /* || in_stride==NULL */ || count==NULL
             || data==NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
@@ -2530,19 +2572,11 @@ printf("%s: count={%ld,%ld}\n",FUNC,(long)count[XDIM],(long)count[YDIM]);
 printf("%s: data=%p\n",FUNC,data);
 #endif /* QAK */
 
-    /* Get the array index for the grid */
-    gr_idx=RIID2GRID(riid);
-    gr_ptr=gr_tab[gr_idx];
+    /* locate RI's object in hash table */
+    if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+    gr_ptr=ri_ptr->gr_ptr;
     hdf_file_id=gr_ptr->hdf_file_id;
-
-    /* check the index range validity */
-    index=RIID2SLOT(riid);
-    if(!VALIDRIINDEX(index,gr_ptr))
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
-    ri_ptr=(ri_info_t *)*t;
 
 #ifdef QAK
 printf("%s: stride[XDIM,YDIM]=%ld, %ld\n",FUNC,stride[XDIM],stride[YDIM]);
@@ -3076,11 +3110,8 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOI
 {
     CONSTR(FUNC, "GRreadimage");   /* for HERROR */
     int32 hdf_file_id;          /* HDF file ID */
-    int32 gr_idx;               /* index into the gr_tab array */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    VOIDP *t;                   /* temp. ptr to the image found */
-    int32 index;                /* index of the RI in the GR */
     int32 stride[2];            /* pointer to the stride array */
     intn solid_block=FALSE;     /* whether the image data is a solid block of data */
     intn whole_image=FALSE;     /* whether we are writing out the whole image */
@@ -3098,7 +3129,7 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOI
     HEclear();
 
     /* check the basic validity of the args (stride is OK to be NULL) */
-    if(!VALIDRIID(riid) || start==NULL /* || in_stride==NULL */ || count==NULL
+    if (HAatom_group(riid)!=RIIDGROUP || start==NULL /* || in_stride==NULL */ || count==NULL
             || data==NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
@@ -3123,19 +3154,11 @@ fprintf(stderr,"%s: stride={%ld,%ld}\n",FUNC,(long)stride[XDIM],(long)stride[YDI
 fprintf(stderr,"%s: count={%ld,%ld}\n",FUNC,(long)count[XDIM],(long)count[YDIM]);
 fprintf(stderr,"%s: data=%p\n",FUNC,data);
 #endif /* QAK */
-    /* Get the array index for the grid */
-    gr_idx=RIID2GRID(riid);
-    gr_ptr=gr_tab[gr_idx];
+    /* locate RI's object in hash table */
+    if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+    gr_ptr=ri_ptr->gr_ptr;
     hdf_file_id=gr_ptr->hdf_file_id;
-
-    /* check the index range validity */
-    index=RIID2SLOT(riid);
-    if(!VALIDRIINDEX(index,gr_ptr))
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
-    ri_ptr=(ri_info_t *)*t;
 
     if(stride[XDIM]==1 && stride[YDIM]==1)
       { /* solid block of data */
@@ -3366,11 +3389,7 @@ done:
 intn GRendaccess(int32 riid)
 {
     CONSTR(FUNC, "GRendaccess");   /* for HERROR */
-    int32 gr_idx;               /* index into the gr_tab array */
-    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    VOIDP *t;                   /* temp. ptr to the image found */
-    int32 index;                /* index of the RI in the GR */
     intn  ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -3380,21 +3399,12 @@ intn GRendaccess(int32 riid)
     HEclear();
 
     /* check the validity of the RI ID */
-    if(!VALIDRIID(riid))
+    if (HAatom_group(riid)!=RIIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
-    /* Get the array index for the grid */
-    gr_idx=RIID2GRID(riid);
-    gr_ptr=gr_tab[gr_idx];
-
-    /* check the index range validity */
-    index=RIID2SLOT(riid);
-    if(!VALIDRIINDEX(index,gr_ptr))
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
-    ri_ptr=(ri_info_t *)*t;
+    /* locate RI's object in hash table */
+    if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     if(!(ri_ptr->access>0))
         HGOTO_ERROR(DFE_CANTENDACCESS,FAIL);
@@ -3448,11 +3458,7 @@ done:
 uint16 GRidtoref(int32 riid)
 {
     CONSTR(FUNC, "GRidtoref");   /* for HERROR */
-    int32 gr_idx;               /* index into the gr_tab array */
-    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    VOIDP *t;                   /* temp. ptr to the image found */
-    int32 index;                /* index of the RI in the GR */
     uint16  ret_value = 0; /* FAIL? */
 
 #ifdef HAVE_PABLO
@@ -3462,21 +3468,12 @@ uint16 GRidtoref(int32 riid)
     HEclear();
 
     /* check the validity of the RI ID */
-    if(!VALIDRIID(riid))
+    if (HAatom_group(riid)!=RIIDGROUP)
         HGOTO_ERROR(DFE_ARGS, (uint16)FAIL);
     
-    /* Get the array index for the grid */
-    gr_idx=RIID2GRID(riid);
-    gr_ptr=gr_tab[gr_idx];
-
-    /* check the index range validity */
-    index=RIID2SLOT(riid);
-    if(!VALIDRIINDEX(index,gr_ptr))
-        HGOTO_ERROR(DFE_ARGS, (uint16)FAIL);
-
-    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HGOTO_ERROR(DFE_RINOTFOUND,(uint16)FAIL);
-    ri_ptr=(ri_info_t *)*t;
+    /* locate RI's object in hash table */
+    if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
 #ifdef OLD_WAY
     ret_value = (ri_ptr->ri_ref!=DFREF_WILDCARD ? ri_ptr->ri_ref : ri_ptr->rig_ref);
@@ -3531,7 +3528,6 @@ done:
 int32 GRreftoindex(int32 grid,uint16 ref)
 {
     CONSTR(FUNC, "GRreftoindex");   /* for HERROR */
-    int32 gr_idx;               /* index into the gr_tab array */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
@@ -3544,22 +3540,19 @@ int32 GRreftoindex(int32 grid,uint16 ref)
     HEclear();
 
     /* check the validity of the RI ID */
-    if(!VALIDGRID(grid))
+    if (HAatom_group(grid)!=GRIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
-    /* Get the array index for the grid */
-    gr_idx=GRID2SLOT(grid);
-    gr_ptr=gr_tab[gr_idx];
+    /* locate GR's object in hash table */
+    if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(grid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     if((t = (VOIDP *) tbbtfirst((TBBT_NODE *) *(gr_ptr->grtree)))==NULL)
         HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     do {
         ri_ptr=(ri_info_t *)*t;
         if(ri_ptr!=NULL && ri_ptr->ri_ref==ref)  /* the ref matches */
-          {
-            ret_value =(ri_ptr->index);
-            goto done;
-          }
+            HGOTO_DONE(ri_ptr->index);
     } while((t= (VOIDP *) tbbtnext((TBBT_NODE *)t))!=NULL);
 
     ret_value = (FAIL);
@@ -3607,11 +3600,7 @@ done:
 intn GRreqlutil(int32 riid,intn il)
 {
     CONSTR(FUNC, "GRreqlutil");   /* for HERROR */
-    int32 gr_idx;               /* index into the gr_tab array */
-    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    VOIDP *t;                   /* temp. ptr to the image found */
-    int32 index;                /* index of the RI in the GR */
     intn  ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -3621,22 +3610,13 @@ intn GRreqlutil(int32 riid,intn il)
     HEclear();
 
     /* check the validity of the RI ID */
-    if(!VALIDRIID(riid) || il<(intn)MFGR_INTERLACE_PIXEL ||
+    if (HAatom_group(riid)!=RIIDGROUP || il<(intn)MFGR_INTERLACE_PIXEL ||
             il>(intn)MFGR_INTERLACE_COMPONENT)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
-    /* Get the array index for the grid */
-    gr_idx=RIID2GRID(riid);
-    gr_ptr=gr_tab[gr_idx];
-
-    /* check the index range validity */
-    index=RIID2SLOT(riid);
-    if(!VALIDRIINDEX(index,gr_ptr))
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
-    ri_ptr=(ri_info_t *)*t;
+    /* locate RI's object in hash table */
+    if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     /* Assign interlacing scheme */
     ri_ptr->lut_il=(gr_interlace_t)il;   
@@ -3684,11 +3664,7 @@ done:
 intn GRreqimageil(int32 riid,intn il)
 {
     CONSTR(FUNC, "GRreqimageil");   /* for HERROR */
-    int32 gr_idx;               /* index into the gr_tab array */
-    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    VOIDP *t;                   /* temp. ptr to the image found */
-    int32 index;                /* index of the RI in the GR */
     intn  ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -3698,22 +3674,13 @@ intn GRreqimageil(int32 riid,intn il)
     HEclear();
 
     /* check the validity of the RI ID */
-    if(!VALIDRIID(riid) || il<(intn)MFGR_INTERLACE_PIXEL ||
+    if (HAatom_group(riid)!=RIIDGROUP || il<(intn)MFGR_INTERLACE_PIXEL ||
             il>(intn)MFGR_INTERLACE_COMPONENT)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
-    /* Get the array index for the grid */
-    gr_idx=RIID2GRID(riid);
-    gr_ptr=gr_tab[gr_idx];
-
-    /* check the index range validity */
-    index=RIID2SLOT(riid);
-    if(!VALIDRIINDEX(index,gr_ptr))
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
-    ri_ptr=(ri_info_t *)*t;
+    /* locate RI's object in hash table */
+    if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     /* Assign interlacing scheme */
     ri_ptr->im_il=(gr_interlace_t)il;   
@@ -3768,7 +3735,7 @@ int32 GRgetlutid(int32 riid,int32 lut_index)
     HEclear();
 
     /* check the validity of the RI ID */
-    if(!VALIDRIID(riid) || lut_index!=0)
+    if (HAatom_group(riid)!=RIIDGROUP || lut_index!=0)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
     ret_value =(riid);
@@ -3815,11 +3782,7 @@ done:
 intn GRgetlutinfo(int32 lutid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
 {
     CONSTR(FUNC, "GRgetlutinfo");   /* for HERROR */
-    int32 gr_idx;               /* index into the gr_tab array */
-    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    VOIDP *t;                   /* temp. ptr to the image found */
-    int32 index;                /* index of the RI in the GR */
     intn  ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -3829,21 +3792,12 @@ intn GRgetlutinfo(int32 lutid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
     HEclear();
 
     /* check the validity of the RI ID */
-    if(!VALIDRIID(lutid))
+    if (HAatom_group(lutid)!=RIIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
-    /* Get the array index for the grid */
-    gr_idx=RIID2GRID(lutid);
-    gr_ptr=gr_tab[gr_idx];
-
-    /* check the index range validity */
-    index=RIID2SLOT(lutid);
-    if(!VALIDRIINDEX(index,gr_ptr))
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
-    ri_ptr=(ri_info_t *)*t;
+    /* locate LUT's object in hash table */
+    if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(lutid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     if(ri_ptr->lut_ref==DFREF_WILDCARD) /* check for no palette defined currently */
       {
@@ -3912,11 +3866,7 @@ intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP 
 {
     CONSTR(FUNC, "GRwritelut");   /* for HERROR */
     int32 hdf_file_id;          /* file ID from Hopen */
-    int32 gr_idx;               /* index into the gr_tab array */
-    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    VOIDP *t;                   /* temp. ptr to the image found */
-    int32 index;                /* index of the RI in the GR */
     intn  ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -3926,23 +3876,14 @@ intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP 
     HEclear();
 
     /* check the validity of the args (how to check il?) */
-    if(!VALIDRIID(lutid) || ncomps<1 || (DFKNTsize(nt)==FAIL)
+    if (HAatom_group(lutid)!=RIIDGROUP || ncomps<1 || (DFKNTsize(nt)==FAIL)
             || nentries<1 || data==NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
-    /* Get the array index for the grid */
-    gr_idx=RIID2GRID(lutid);
-    gr_ptr=gr_tab[gr_idx];
-    hdf_file_id=gr_ptr->hdf_file_id;
-
-    /* check the index range validity */
-    index=RIID2SLOT(lutid);
-    if(!VALIDRIINDEX(index,gr_ptr))
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
-    ri_ptr=(ri_info_t *)*t;
+    /* locate LUT's object in hash table */
+    if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(lutid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+    hdf_file_id=ri_ptr->gr_ptr->hdf_file_id;
 
     /* Check if this is compatible with older-style palettes */
     if(ncomps==3 && nt==DFNT_UINT8 && il==MFGR_INTERLACE_PIXEL && nentries==256)
@@ -4021,11 +3962,7 @@ intn GRreadlut(int32 lutid,VOIDP data)
 {
     CONSTR(FUNC, "GRreadlut");   /* for HERROR */
     int32 hdf_file_id;          /* file ID from Hopen */
-    int32 gr_idx;               /* index into the gr_tab array */
-    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    VOIDP *t;                   /* temp. ptr to the image found */
-    int32 index;                /* index of the RI in the GR */
     intn  ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -4035,22 +3972,13 @@ intn GRreadlut(int32 lutid,VOIDP data)
     HEclear();
 
     /* check the validity of the RI ID */
-    if(!VALIDRIID(lutid) || data==NULL)
+    if (HAatom_group(lutid)!=RIIDGROUP || data==NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
-    /* Get the array index for the grid */
-    gr_idx=RIID2GRID(lutid);
-    gr_ptr=gr_tab[gr_idx];
-    hdf_file_id=gr_ptr->hdf_file_id;
-
-    /* check the index range validity */
-    index=RIID2SLOT(lutid);
-    if(!VALIDRIINDEX(index,gr_ptr))
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
-    ri_ptr=(ri_info_t *)*t;
+    /* locate LUT's object in hash table */
+    if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(lutid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+    hdf_file_id=ri_ptr->gr_ptr->hdf_file_id;
 
     if(ri_ptr->lut_tag!=DFTAG_NULL && ri_ptr->lut_ref!=DFREF_WILDCARD)
       {
@@ -4121,11 +4049,7 @@ done:
 intn GRsetexternalfile(int32 riid,char *filename,int32 offset)
 {
     CONSTR(FUNC, "GRsetexternalfile");   /* for HERROR */
-    int32 gr_idx;               /* index into the gr_tab array */
-    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    VOIDP *t;                   /* temp. ptr to the image found */
-    int32 index;                /* index of the RI in the GR */
     intn  ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -4135,21 +4059,12 @@ intn GRsetexternalfile(int32 riid,char *filename,int32 offset)
     HEclear();
 
     /* check the validity of the RI ID */
-    if(!VALIDRIID(riid))
+    if (HAatom_group(riid)!=RIIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
-    /* Get the array index for the grid */
-    gr_idx=RIID2GRID(riid);
-    gr_ptr=gr_tab[gr_idx];
-
-    /* check the index range validity */
-    index=RIID2SLOT(riid);
-    if(!VALIDRIINDEX(index,gr_ptr))
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
-    ri_ptr=(ri_info_t *)*t;
+    /* locate RI's object in hash table */
+    if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     if((ri_ptr->ext_name=(char *)HDmalloc(HDstrlen(filename)+1))==NULL)
         HGOTO_ERROR(DFE_NOSPACE,FAIL);
@@ -4201,11 +4116,7 @@ done:
 intn GRsetaccesstype(int32 riid,uintn accesstype)
 {
     CONSTR(FUNC, "GRsetaccesstype");   /* for HERROR */
-    int32 gr_idx;               /* index into the gr_tab array */
-    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    VOIDP *t;                   /* temp. ptr to the image found */
-    int32 index;                /* index of the RI in the GR */
     intn  ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -4215,22 +4126,13 @@ intn GRsetaccesstype(int32 riid,uintn accesstype)
     HEclear();
 
     /* check the validity of the RI ID */
-    if(!VALIDRIID(riid) || (accesstype!=DFACC_DEFAULT && accesstype!=DFACC_SERIAL
+    if (HAatom_group(riid)!=RIIDGROUP || (accesstype!=DFACC_DEFAULT && accesstype!=DFACC_SERIAL
             && accesstype!=DFACC_PARALLEL))
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
-    /* Get the array index for the grid */
-    gr_idx=RIID2GRID(riid);
-    gr_ptr=gr_tab[gr_idx];
-
-    /* check the index range validity */
-    index=RIID2SLOT(riid);
-    if(!VALIDRIINDEX(index,gr_ptr))
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
-    ri_ptr=(ri_info_t *)*t;
+    /* locate RI's object in hash table */
+    if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     /* Mark the image as having an access-mode and cache args */
     ri_ptr->acc_img=TRUE;
@@ -4277,11 +4179,7 @@ done:
 intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo)
 {
     CONSTR(FUNC, "GRsetcompress");   /* for HERROR */
-    int32 gr_idx;               /* index into the gr_tab array */
-    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    VOIDP *t;                   /* temp. ptr to the image found */
-    int32 index;                /* index of the RI in the GR */
     intn  ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -4291,21 +4189,12 @@ intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo)
     HEclear();
 
     /* check the validity of the RI ID */
-    if(!VALIDRIID(riid))
+    if (HAatom_group(riid)!=RIIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
-    /* Get the array index for the grid */
-    gr_idx=RIID2GRID(riid);
-    gr_ptr=gr_tab[gr_idx];
-
-    /* check the index range validity */
-    index=RIID2SLOT(riid);
-    if(!VALIDRIINDEX(index,gr_ptr))
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
-    ri_ptr=(ri_info_t *)*t;
+    /* locate RI's object in hash table */
+    if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     /* Mark the image as being compressed and cache args */
     ri_ptr->comp_img=TRUE;
@@ -4382,18 +4271,18 @@ printf("%s: entering\n",FUNC);
 printf("%s: id=%ld, name=%p, data=%p, count=%ld\n",FUNC,(long)id,name,data,(long)count);
 #endif /* QAK */
     /* check the validity of the args */
-    if((!VALIDRIID(id) && !VALIDGRID(id)) || data==NULL || name==NULL
-            || count<=0 || (DFKNTsize(attr_nt)==FAIL))
+    if (HAatom_group(id)!=RIIDGROUP && HAatom_group(id)!=GRIDGROUP || data==NULL || name==NULL
+            || count<=0 || DFKNTsize(attr_nt)==FAIL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
-    if(VALIDGRID(id))
+    if (HAatom_group(id)==GRIDGROUP)
       {
 #ifdef QAK
 printf("%s: got a GRID\n",FUNC);
 #endif /* QAK */
-          /* Get the array index for the grid */
-          gr_idx=GRID2SLOT(id);
-          gr_ptr=gr_tab[gr_idx];
+          /* locate GR's object in hash table */
+          if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(id)))
+              HGOTO_ERROR(DFE_NOVS, FAIL);
 
           hdf_file_id=gr_ptr->hdf_file_id;
           search_tree=gr_ptr->gattree;
@@ -4403,28 +4292,26 @@ printf("%s: gr_ptr->gattr_count=%ld\n",FUNC,(long)gr_ptr->gattr_count);
 #endif /* QAK */
           update_count=&(gr_ptr->gattr_count);
       } /* end if */
-    else if(VALIDRIID(id))
+    else if (HAatom_group(id)==RIIDGROUP)
       {
           /* Need this flag for later */
           is_riid=TRUE;
 
 #ifdef QAK
-printf("%s: got a RIID\n",FUNC);
+printf("%s: got a RIID, riid=%lx\n",FUNC,(long unsigned)id);
 #endif /* QAK */
-          /* Get the array index for the grid */
-          gr_idx=RIID2GRID(id);
-          gr_ptr=gr_tab[gr_idx];
-
-          /* check the index range validity */
-          ri_index=RIID2SLOT(id);
-          if(!VALIDRIINDEX(ri_index,gr_ptr))
-              HGOTO_ERROR(DFE_ARGS, FAIL);
-
-          if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &ri_index, NULL))==NULL)
-              HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
-          ri_ptr=(ri_info_t *)*t;
+          /* locate RI's object in hash table */
+          if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(id)))
+              HGOTO_ERROR(DFE_NOVS, FAIL);
+          gr_ptr=ri_ptr->gr_ptr;
+#ifdef QAK
+printf("%s: got a RIID, ri_ptr=%p, gr_ptr=%p\n",FUNC,ri_ptr,gr_ptr);
+#endif /* QAK */
 
           hdf_file_id=gr_ptr->hdf_file_id;
+#ifdef QAK
+printf("%s: hdf_file_id=%lx\n",FUNC,(long unsigned)hdf_file_id);
+#endif /* QAK */
           search_tree=ri_ptr->lattree;
           update_flag=&(ri_ptr->attr_modified);
           update_count=&(ri_ptr->lattr_count);
@@ -4555,6 +4442,9 @@ printf("%s:1: gr_ptr->gattr_count=%ld\n",FUNC,(long)gr_ptr->gattr_count);
           } /* end if */
         else
           { /* non-cacheable */
+#ifdef QAK
+printf("%s: hdf_file_id=%lx\n",FUNC,(long unsigned)hdf_file_id);
+#endif /* QAK */
               if((at_ptr->ref=(uint16)VHstoredata(hdf_file_id,at_ptr->name,data,
                       at_ptr->len,at_ptr->nt,RIGATTRNAME,RIGATTRCLASS))==(uint16)FAIL)
                   HGOTO_ERROR(DFE_VSCANTCREATE,FAIL);
@@ -4645,40 +4535,31 @@ intn GRattrinfo(int32 id,int32 index,char *name,int32 *attr_nt,int32 *count)
     HEclear();
 
     /* check the validity of the ID, the index is checked below */
-    if(!VALIDRIID(id) && !VALIDGRID(id))
+    if (HAatom_group(id)!=RIIDGROUP && HAatom_group(id)!=GRIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
-    if(VALIDGRID(id))
+    if (HAatom_group(id)==GRIDGROUP)
       {
 #ifdef QAK
 printf("%s: found a GRID\n",FUNC);
 #endif /* QAK */
-          /* Get the array index for the grid */
-          gr_idx=GRID2SLOT(id);
-          gr_ptr=gr_tab[gr_idx];
+          /* locate GR's object in hash table */
+          if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(id)))
+              HGOTO_ERROR(DFE_NOVS, FAIL);
 
           if(index<0 || index>=gr_ptr->gattr_count)
               HGOTO_ERROR(DFE_ARGS, FAIL);
 
           search_tree=gr_ptr->gattree;
       } /* end if */
-    else if(VALIDRIID(id))
+    else if (HAatom_group(id)==RIIDGROUP)
       {
 #ifdef QAK
 printf("%s: found a RIID\n",FUNC);
 #endif /* QAK */
-          /* Get the array index for the grid */
-          gr_idx=RIID2GRID(id);
-          gr_ptr=gr_tab[gr_idx];
-
-          /* check the index range validity */
-          ri_index=RIID2SLOT(id);
-          if(!VALIDRIINDEX(ri_index,gr_ptr))
-              HGOTO_ERROR(DFE_ARGS, FAIL);
-
-          if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &ri_index, NULL))==NULL)
-              HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
-          ri_ptr=(ri_info_t *)*t;
+          /* locate RI's object in hash table */
+          if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(id)))
+              HGOTO_ERROR(DFE_NOVS, FAIL);
 
           if(index<0 || index>=ri_ptr->lattr_count)
               HGOTO_ERROR(DFE_ARGS, FAIL); 
@@ -4756,45 +4637,36 @@ intn GRgetattr(int32 id,int32 index,VOIDP data)
     HEclear();
 
     /* check the validity of the ID & data ptr, the index is checked below */
-    if((!VALIDRIID(id) && !VALIDGRID(id)) || data==NULL)
+    if ((HAatom_group(id)!=RIIDGROUP && HAatom_group(id)!=GRIDGROUP) || data==NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
-    if(VALIDGRID(id))
+    if (HAatom_group(id)==GRIDGROUP)
       {
-          /* Get the array index for the grid */
-          gr_idx=GRID2SLOT(id);
-          gr_ptr=gr_tab[gr_idx];
+          /* locate GR's object in hash table */
+          if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(id)))
+              HGOTO_ERROR(DFE_NOVS, FAIL);
 
           if(index<0 || index>=gr_ptr->gattr_count)
               HGOTO_ERROR(DFE_ARGS, FAIL);
 
-          hdf_file_id=gr_ptr->hdf_file_id;
           search_tree=gr_ptr->gattree;
       } /* end if */
-    else if(VALIDRIID(id))
+    else if (HAatom_group(id)==RIIDGROUP)
       {
-          /* Get the array index for the grid */
-          gr_idx=RIID2GRID(id);
-          gr_ptr=gr_tab[gr_idx];
-
-          /* check the index range validity */
-          ri_index=RIID2SLOT(id);
-          if(!VALIDRIINDEX(ri_index,gr_ptr))
-              HGOTO_ERROR(DFE_ARGS, FAIL);
-
-          if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &ri_index, NULL))==NULL)
-              HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
-          ri_ptr=(ri_info_t *)*t;
+          /* locate RI's object in hash table */
+          if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(id)))
+              HGOTO_ERROR(DFE_NOVS, FAIL);
+          gr_ptr=ri_ptr->gr_ptr;
 
           if(index<0 || index>=ri_ptr->lattr_count)
               HGOTO_ERROR(DFE_ARGS, FAIL);
 
-          hdf_file_id=gr_ptr->hdf_file_id;
           search_tree=ri_ptr->lattree;
       } /* end if */
     else    /* shouldn't get here, but what the heck... */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
+    hdf_file_id=gr_ptr->hdf_file_id;
     if((t = (VOIDP *) tbbtdfind(search_tree, (VOIDP) &index, NULL))==NULL)
         HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     at_ptr=(at_info_t *)*t;
@@ -4883,31 +4755,23 @@ int32 GRfindattr(int32 id,char *name)
     HEclear();
 
     /* check the validity of the RI ID */
-    if(!VALIDRIID(id) && !VALIDGRID(id))
+    if (HAatom_group(id)!=RIIDGROUP && HAatom_group(id)!=GRIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
-    if(VALIDGRID(id))
+    if (HAatom_group(id)==GRIDGROUP)
       {
-          /* Get the array index for the grid */
-          gr_idx=GRID2SLOT(id);
-          gr_ptr=gr_tab[gr_idx];
+          /* locate GR's object in hash table */
+          if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(id)))
+              HGOTO_ERROR(DFE_NOVS, FAIL);
 
           search_tree=gr_ptr->gattree;
       } /* end if */
-    else if(VALIDRIID(id))
+    else if (HAatom_group(id)==RIIDGROUP)
       {
-          /* Get the array index for the grid */
-          gr_idx=RIID2GRID(id);
-          gr_ptr=gr_tab[gr_idx];
+          /* locate RI's object in hash table */
+          if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(id)))
+              HGOTO_ERROR(DFE_NOVS, FAIL);
 
-          /* check the index range validity */
-          index=RIID2SLOT(id);
-          if(!VALIDRIINDEX(index,gr_ptr))
-              HGOTO_ERROR(DFE_ARGS, FAIL);
-
-          if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-              HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
-          ri_ptr=(ri_info_t *)*t;
           search_tree=ri_ptr->lattree;
       } /* end if */
     else    /* shouldn't get here, but what the heck... */
@@ -4918,10 +4782,7 @@ int32 GRfindattr(int32 id,char *name)
     do {
         at_ptr=(at_info_t *)*t;
         if(at_ptr!=NULL && HDstrcmp(at_ptr->name,name)==0)  /* ie. the name matches */
-          {
-            ret_value = (at_ptr->index);
-            goto done;
-          }
+            HGOTO_DONE(at_ptr->index);
     } while((t= (VOIDP *) tbbtnext((TBBT_NODE *)t))!=NULL);
 
     ret_value = (FAIL);
@@ -4938,6 +4799,39 @@ done:
 #endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRfindattr() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRPshutdown
+ PURPOSE
+    Terminate various static buffers.
+ USAGE
+    intn GRPshutdown()
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+    Free various buffers allocated in the GR routines.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    Should only ever be called by the "atexit" function HDFend
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn GRPshutdown(void)
+{
+    if(gr_tree!=NULL)
+      {
+          /* Free the vfile tree */
+          tbbtdfree(gr_tree, GRIgrdestroynode, NULL);
+
+          /* Destroy the atom groups for Vdatas and Vgroups */
+          HAdestroy_group(GRIDGROUP);
+          HAdestroy_group(RIIDGROUP);
+
+          gr_tree=NULL;
+      } /* end if */
+    return(SUCCEED);
+} /* end GRPshutdown() */
 
 /*
 

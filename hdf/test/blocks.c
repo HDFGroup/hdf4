@@ -23,7 +23,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #define HLCONVERT_TAG 1500
 
-static uint8 FAR outbuf[BUFSIZE], FAR inbuf[BUFSIZE];
+static uint8  outbuf[BUFSIZE],  inbuf[BUFSIZE];
 
 void
 test_hblocks()
@@ -150,7 +150,6 @@ test_hblocks()
 
     aid1 = Hstartread(fid, 1000, 1);
     CHECK(aid1, FAIL, "Hstartread");
-HEprint(stderr,0);
 
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
@@ -299,7 +298,7 @@ HEprint(stderr,0);
     ret = Hendaccess(aid);
     CHECK(ret, FAIL, "Hendaccess");
 
-    ret = Hclose(fid1);
+    ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
 
     if (HDmemcmp(inbuf, outbuf, 512))

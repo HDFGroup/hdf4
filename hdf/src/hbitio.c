@@ -36,7 +36,7 @@ EXPORTED ROUTINES
    Hendbitaccess  - close off access to a bitfile dataset
 LOCAL ROUTINES
    HIbitflush         - flush the bits out to a writable bitfile
-   HIget_bitfile_slot - get a free bitfile record slot
+   HIget_bitfile_rec  - get a free bitfile record 
    HIread2write       - switch from reading bits to writing them
    HIwrite2read       - switch from writing bits to reading them
 AUTHOR
@@ -51,20 +51,18 @@ MODIFICATION HISTORY
 
 /* Local Variables */
 
-/* Array of records of information on each bitfile element.
-   These will contain information like how to access the data element,
-   where in the data element the current access should start from, etc.
-   Allocated dynamically.
-   See hbitio.h for definition. */
-static struct bitrec_t *bitfile_records = NULL;
+/* Whether we've installed the library termination function yet for this interface */
+PRIVATE intn library_terminate = FALSE;
 
 /* Local Function Declarations */
-PRIVATE int HIget_bitfile_slot(void);
+PRIVATE bitrec_t * HIget_bitfile_rec(void);
 
 PRIVATE intn HIbitflush(bitrec_t * bitfile_rec, intn flushbit, intn writeout);
 
 PRIVATE intn HIwrite2read(bitrec_t * bitfile_rec);
 PRIVATE intn HIread2write(bitrec_t * bitfile_rec);
+
+PRIVATE intn HIbitstart(void);
 
 /* #define TESTING */
 /* Actual Function Definitions */
@@ -91,24 +89,29 @@ int32
 Hstartbitread(int32 file_id, uint16 tag, uint16 ref)
 {
     CONSTR(FUNC, "Hstartbitread");  /* for HERROR */
-    int         bitslot;        /* slot in bit-access record array */
     int32       aid;            /* Access ID for the bit-level routines to use */
     struct bitrec_t *bitfile_rec;   /* Pointer to the bitfile record */
+    int32       ret_value;          /* return bit ID */
 
     /* clear error stack */
     HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(HIbitstart()==FAIL)
+            HRETURN_ERROR(DFE_CANTINIT, FAIL);
 
     /* Try to get an AID */
     if ((aid = Hstartread(file_id, tag, ref)) == FAIL)
         HRETURN_ERROR(DFE_BADAID, FAIL);
 
     /* get a slot in the access record array */
-    if ((bitslot = HIget_bitfile_slot()) == FAIL)
+    if ((bitfile_rec = HIget_bitfile_rec()) == NULL)
         HRETURN_ERROR(DFE_TOOMANY, FAIL);
 
-    bitfile_rec = &(bitfile_records[bitslot]);
     bitfile_rec->acc_id = aid;
-    bitfile_rec->bit_id = SLOT2BITID(bitslot);
+    ret_value= HAregister_atom(BITIDGROUP,bitfile_rec);
+    bitfile_rec->bit_id=ret_value;
     if (HQuerylength(aid, &bitfile_rec->max_offset) == FAIL)
         HRETURN_ERROR(DFE_INTERNAL, FAIL);
     bitfile_rec->byte_offset = 0;
@@ -137,7 +140,7 @@ Hstartbitread(int32 file_id, uint16 tag, uint16 ref)
     bitfile_rec->block_offset = 0;
     bitfile_rec->count = 0;
 
-    return SLOT2BITID(bitslot);
+    return(ret_value);
 }   /* Hstartbitread() */
 
 /*--------------------------------------------------------------------------
@@ -165,13 +168,18 @@ int32
 Hstartbitwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
 {
     CONSTR(FUNC, "Hstartbitwrite");     /* for HERROR */
-    int         bitslot;        /* free access records array slot */
     bitrec_t   *bitfile_rec;    /* access record */
     int32       aid;            /* Access ID for the bit-level routines to use */
     intn        exists;         /* whether dataset exists already */
+    int32       ret_value;          /* return bit ID */
 
     /* clear error stack and check validity of file id */
     HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(HIbitstart()==FAIL)
+            HRETURN_ERROR(DFE_CANTINIT, FAIL);
 
     exists = (Hexist(file_id, tag, ref) == SUCCEED) ? TRUE : FALSE;
 
@@ -180,12 +188,12 @@ Hstartbitwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
         HRETURN_ERROR(DFE_BADAID, FAIL);
 
     /* get empty slot in bit-access records */
-    if ((bitslot = HIget_bitfile_slot()) == FAIL)
+    if ((bitfile_rec = HIget_bitfile_rec()) == NULL)
         HRETURN_ERROR(DFE_TOOMANY, FAIL);
 
-    bitfile_rec = &(bitfile_records[bitslot]);
     bitfile_rec->acc_id = aid;
-    bitfile_rec->bit_id = SLOT2BITID(bitslot);
+    ret_value= HAregister_atom(BITIDGROUP,bitfile_rec);
+    bitfile_rec->bit_id=ret_value;
     bitfile_rec->byte_offset = 0;
     bitfile_rec->block_offset = 0;
     if (exists == TRUE)
@@ -219,7 +227,7 @@ Hstartbitwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
     bitfile_rec->count = BITNUM;
     bitfile_rec->bits = 0;
 
-    return SLOT2BITID(bitslot);
+    return ret_value;
 }   /* end Hstartbitwrite() */
 
 /*--------------------------------------------------------------------------
@@ -250,7 +258,7 @@ Hbitappendable(int32 bitid)
     /* clear error stack and check validity of file id */
     HEclear();
 
-    if ((bitfile_rec = BITID2REC(bitid)) == NULL)
+    if ((bitfile_rec = HAatom_object(bitid)) == NULL)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     /* Check for write access */
@@ -294,7 +302,7 @@ Hbitwrite(int32 bitid, intn count, uint32 data)
     /* clear error stack and check validity of file id */
     HEclear();
 
-    if (count <= 0 || (bitfile_rec = BITID2REC(bitid)) == NULL)
+    if (count <= 0 || (bitfile_rec = HAatom_object(bitid)) == NULL)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     /* Check for write access */
@@ -424,7 +432,7 @@ Hbitread(int32 bitid, intn count, uint32 *data)
     /* clear error stack and check validity of file id */
     HEclear();
 
-    if (count <= 0 || (bitfile_rec = BITID2REC(bitid)) == NULL)
+    if (count <= 0 || (bitfile_rec = HAatom_object(bitid)) == NULL)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     /* Check for write access */
@@ -544,7 +552,7 @@ Hbitseek(int32 bitid, int32 byte_offset, intn bit_offset)
     HEclear();
 
     if (byte_offset < 0 || bit_offset < 0 || bit_offset > (BITNUM - 1)
-        || (bitfile_rec = BITID2REC(bitid)) == NULL
+        || (bitfile_rec = HAatom_object(bitid)) == NULL
         || byte_offset > bitfile_rec->max_offset)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
@@ -634,6 +642,7 @@ Hgetbit(int32 bitid)
             return ((intn) data);
 }   /* end Hgetbit() */
 
+#ifdef OLD_WAY
 /*--------------------------------------------------------------------------
 
  NAME
@@ -661,6 +670,7 @@ Hputbit(int32 bitid, intn bit)
         HRETURN_ERROR(DFE_BITWRITE, FAIL)
             return (SUCCEED);
 }   /* end Hputbit() */
+#endif /* OLD_WAY */
 
 /*--------------------------------------------------------------------------
 
@@ -694,18 +704,69 @@ Hendbitaccess(int32 bitfile_id, intn flushbit)
     bitrec_t   *bitfile_rec;    /* bitfile record */
 
     /* check validity of access id */
-    bitfile_rec = BITID2REC(bitfile_id);
-    if (bitfile_rec == NULL || !bitfile_rec->used)
+    bitfile_rec = HAatom_object(bitfile_id);
+    if (bitfile_rec == NULL)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     if (bitfile_rec->mode == 'w')
         if (HIbitflush(bitfile_rec, flushbit, TRUE) == FAIL)
-            HERROR(DFE_WRITEERROR);
+            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
     HDfree((VOIDP) bitfile_rec->bytea);    /* free the space for the buffer */
-    bitfile_rec->used = FALSE;
 
-    return (Hendaccess(bitfile_rec->acc_id));
+    if(HAremove_atom(bitfile_id)==NULL) 
+        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+    if(Hendaccess(bitfile_rec->acc_id)==FAIL)
+        HRETURN_ERROR(DFE_CANTENDACCESS,FAIL);
+    HDfree(bitfile_rec);
+
+    return (SUCCEED);
 }   /* end Hendbitaccess() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    HIbitstart
+ PURPOSE
+    Bit I/O initialization routine
+ USAGE
+    intn HIbitstart()
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+    One-time initialization of the interface
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+PRIVATE intn HIbitstart(void)
+{
+    CONSTR(FUNC, "HIbitstart");    /* for HERROR */
+    intn        ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+  TRACE_ON(H_mask, ID_HIbitstart);
+#endif /* HAVE_PABLO */
+
+    /* Don't call this routine again... */
+    library_terminate = TRUE;
+
+    /* Create the file ID and access ID groups */
+    if(HAinit_group(BITIDGROUP,16)==FAIL)
+      HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(H_mask, ID_HIbitstart);
+#endif /* HAVE_PABLO */
+
+    return(ret_value);
+} /* end HIbitstart() */
 
 /*--------------------------------------------------------------------------
 
@@ -775,41 +836,20 @@ HIbitflush(bitrec_t * bitfile_rec, intn flushbit, intn writeout)
 }   /* HIbitflush */
 
 /*--------------------------------------------------------------------------
- HIget_bitfile_slot - get a free bitfile record slot
+ HIget_bitfile_rec - get a new bitfile record 
 --------------------------------------------------------------------------*/
-PRIVATE int
-HIget_bitfile_slot(void)
+PRIVATE bitrec_t *
+HIget_bitfile_rec(void)
 {
-    int         i;              /* temp index */
-    CONSTR(FUNC, "HIget_bitfile_slot");
+    CONSTR(FUNC, "HIget_bitfile_rec");
+    bitrec_t *ret_value=NULL;
 
-    /* Access records not allocated yet, allocate dynamically and initialize */
-    if (!bitfile_records)
-      {
-          bitfile_records = (bitrec_t *) HDmalloc(MAX_BITFILE * sizeof(bitrec_t));
-          if (!bitfile_records)
-              return FAIL;
-          for (i = 0; i < MAX_BITFILE; i++)
-              bitfile_records[i].used = FALSE;
+    ret_value = (bitrec_t *) HDcalloc(1, sizeof(bitrec_t));
+    if ((ret_value->bytea = (uint8 *) HDmalloc(BITBUF_SIZE)) == NULL)
+        HRETURN_ERROR(DFE_NOSPACE, NULL);
 
-          if ((bitfile_records[0].bytea = (uint8 *) HDmalloc(BITBUF_SIZE)) == NULL)
-              HRETURN_ERROR(DFE_NOSPACE, FAIL);
-          bitfile_records[0].used = TRUE;   /* use the first record */
-          return (0);
-      }     /* end if */
-
-    /* return the first unused record */
-    for (i = 0; i < MAX_BITFILE; i++)
-        if (!bitfile_records[i].used)
-          {
-              if ((bitfile_records[i].bytea = (uint8 *) HDmalloc(BITBUF_SIZE)) == NULL)
-                  HRETURN_ERROR(DFE_NOSPACE, FAIL);
-              bitfile_records[i].used = TRUE;
-              return (i);
-          }     /* end if */
-
-    return FAIL;
-}   /* HIget_bitfile_slot */
+    return ret_value;
+}   /* HIget_bitfile_rec */
 
 /*--------------------------------------------------------------------------
 
@@ -893,11 +933,9 @@ HIwrite2read(bitrec_t * bitfile_rec)
 --------------------------------------------------------------------------*/
 intn HPbitshutdown(void)
 {
-    if(bitfile_records!=NULL)
-      {
-          HDfree(bitfile_records);
-          bitfile_records=NULL;
-      } /* end if */
+    /* Shutdown the file ID atom group */
+    HAdestroy_group(BITIDGROUP);
+
     return(SUCCEED);
 } /* end HPbitshutdown() */
 

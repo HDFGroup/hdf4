@@ -82,11 +82,7 @@ rawpalconv(char *hdffile, char *rawpalfile)
           blues[j] = *p++;
       }
 
-#ifdef PC
-    fp = fopen(rawpalfile, "wb");   /* open in binary mode on PC */
-#else
-    fp = fopen(rawpalfile, "w");
-#endif
+    fp = fopen(rawpalfile, "wb");
     if (fp == NULL)
       {
           printf("Error opening raw palette file %s\n", rawpalfile);

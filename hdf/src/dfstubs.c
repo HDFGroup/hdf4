@@ -1354,9 +1354,7 @@ DF         *dfile;
               HDmemcpy((char *) &dle->dd[j], (char *) &dd, sizeof(DFdd));
           return (&(dle->dd[0]));
       }
-#ifdef PC
     return (NULL);  /* dummy, for return value checking */
-#endif /*PC */
 }
 
 /* Simplified version without the overhead.  This is useful if you */
@@ -1446,23 +1444,6 @@ DFIerr(DF * dfile)
 #ifndef IBM6000
 #include <ctype.h>
 #endif
-
-#if defined(PC) & !defined(PC386)
-#ifdef WIN3
-int32
-DFIspaceleft(void)
-{
-/* return the largest amount of memory Windows can give us */
-    return (GlobalCompact(0));
-}
-#else  /* WIN3 */
-int32
-DFIspaceleft(void)
-{
-    return (HDspaceleft());
-}
-#endif /* WIN3 */
-#endif /* PC */
 
 void       *
 DFIgetspace(uint32 qty)

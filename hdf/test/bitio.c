@@ -67,11 +67,11 @@ static char RcsId[] = "@(#)$Revision$";
 #define BITIO_TAG_2     2500
 #define BITIO_REF_2     2500
 
-static uint8 FAR outbuf[BUFSIZE], FAR inbuf[DATASIZE];
+static uint8  outbuf[BUFSIZE],  inbuf[DATASIZE];
 
-static uint32 FAR outbuf2[BUFSIZE], FAR inbuf2[BUFSIZE], FAR totbits[BUFSIZE];
+static uint32  outbuf2[BUFSIZE],  inbuf2[BUFSIZE],  totbits[BUFSIZE];
 
-static uint32 FAR maskbuf[] =
+static uint32  maskbuf[] =
 {
     0x00000000,
     0x00000001, 0x00000003, 0x00000007, 0x0000000f,

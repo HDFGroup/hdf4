@@ -229,7 +229,7 @@ test_nbit2(int32 fid)
                     COMP_CODE_NBIT, &c_info);
     CHECK(aid1, FAIL, "HCcreate");
 
-    ret = Hwrite(aid1, NBIT_SIZE2, (uint8 FAR *) outbuf);
+    ret = Hwrite(aid1, NBIT_SIZE2, (uint8  *) outbuf);
     if (ret != NBIT_SIZE2)
       {
           fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__, (int) ret);
@@ -242,7 +242,7 @@ test_nbit2(int32 fid)
 
     MESSAGE(5, printf("Verifying data\n");
         );
-    ret = Hgetelement(fid, NBIT_TAG2, (uint16) ref1, (uint8 FAR *) inbuf);
+    ret = Hgetelement(fid, NBIT_TAG2, (uint16) ref1, (uint8  *) inbuf);
     if (ret != NBIT_SIZE2)
       {
           HEprint(stderr, 0);
@@ -699,7 +699,7 @@ test_nbit8(int32 fid)
                     COMP_CODE_NBIT, &c_info);
     CHECK(aid1, FAIL, "HCcreate");
 
-    ret = Hwrite(aid1, NBIT_SIZE8, (uint8 FAR *) outbuf);
+    ret = Hwrite(aid1, NBIT_SIZE8, (uint8  *) outbuf);
     if (ret != NBIT_SIZE8)
       {
           fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__, (int) ret);
@@ -712,7 +712,7 @@ test_nbit8(int32 fid)
 
     MESSAGE(5, printf("Verifying data\n");
         );
-    ret = Hgetelement(fid, NBIT_TAG8, (uint16) ref1, (uint8 FAR *) inbuf);
+    ret = Hgetelement(fid, NBIT_TAG8, (uint16) ref1, (uint8  *) inbuf);
     if (ret != NBIT_SIZE8)
       {
           HEprint(stderr, 0);

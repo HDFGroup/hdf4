@@ -45,12 +45,7 @@
 #endif /* DEBUG */
 
 #define HE_ARG_SZ 30
-#ifdef PC
-#define HE_DESC_SZ 512
-#else
 #define HE_DESC_SZ 8192
-#endif
-
 #define HE_COLOR_SZ 256
 #define HE_PALETTE_SZ 768
 #define HE_BUF_SZ 1024

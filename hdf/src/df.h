@@ -189,11 +189,6 @@ extern      "C"
     extern char *DFIf2cstring
                 (_fcd fdesc, intn len);
 
-#ifdef PC
-    extern int32 DFIspaceleft
-                (void);
-#endif                          /* PC */
-
 /* prototypes for dfconv.c */
     extern int  DFconvert
                 (uint8 *source, uint8 *dest, int ntype, int sourcetype, int desttype, int32 size);
@@ -208,11 +203,7 @@ extern      "C"
 #ifndef DFMASTER
 extern
 #endif                          /*DFMASTER */
-int
-#if defined(PC) & !defined(PC386)
-            far
-#endif                          /* PC */
-            DFerror;            /* Error code for DF routines */
+int DFerror;            /* Error code for DF routines */
 
 #define DFSETERR(error) (DFerror=(DFerror?DFerror:error))
 

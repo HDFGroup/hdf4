@@ -195,42 +195,10 @@
 #define DF_WRITE(a,b,c,d) fwrite(a,b,c,d)
 #define DF_FLUSH(a) fflush(a)
 #define DF_OPENERR(f)   (!(f))
-#ifdef PC
 #define DF_RDACCESS "rb"
 #define DF_WRACCESS "rb+"
-#else  /*PC */
-#define DF_RDACCESS "r"
-#define DF_WRACCESS "r+"
-#endif /*PC */
 
 #else  /*DF_BUFFIO         unbuffered i/o */
-#ifdef PC
-#ifdef WIN3
-#define DF_OPEN(x,y) _lopen((LPSTR)(x),(int)(y))
-#define DF_CLOSE(x) _lclose((int)(x))
-#define DF_SEEK(x,y,z) _llseek((int)(x),(LONG)(y),(int)(z))
-#define DF_SKEND(x,y,z) _llseek((int)(x),(LONG)(-1*(y)),(int)(z))
-#define DF_TELL(x) _llseek((int)(x),(LONG)0L,(int)1)
-#define DF_READ(a,b,c,d) _lread((int)(d),(LPSTR)(a),(WORD)((WORD)(b)*(WORD)(c)))
-#define DF_WRITE(a,b,c,d) _lwrite((int)(d),(LPSTR)(a),(WORD)((WORD)(b)*(WORD)(c)))
-#define DF_OPENERR(f)   ((f) == -1)
-#define DF_FLUSH(a)     /* no need to flush */
-#define DF_RDACCESS OF_READ
-#define DF_WRACCESS OF_READWRITE
-#else
-#define DF_OPEN(x,y) open(x,y,S_IWRITE|S_IREAD)
-#define DF_CLOSE(x) close(x)
-#define DF_SEEK(x,y,z) lseek(x,y,z)
-#define DF_SKEND(x,y,z) lseek(x,-1*y,z)
-#define DF_TELL(x) lseek(x,0L,1)
-#define DF_READ(a,b,c,d) read(d,a,b*c)
-#define DF_WRITE(a,b,c,d) write(d,a,b*c)
-#define DF_OPENERR(f)   ((f) == -1)
-#define DF_FLUSH(a)     /* no need to flush */
-#define DF_RDACCESS O_RDONLY | O_BINARY
-#define DF_WRACCESS O_RDWR | O_BINARY
-#endif
-#else
 #define DF_OPEN(x,y) open(x,y)
 #define DF_CLOSE(x) close(x)
 #define DF_SEEK(x,y,z) lseek(x,y,z)
@@ -242,15 +210,8 @@
 #define DF_FLUSH(a)     /* no need to flush */
 #define DF_RDACCESS O_RDONLY
 #define DF_WRACCESS O_RDWR
-#endif /* PC */
 #endif /* DF_BUFFIO */
 #endif /* !MAC */
-
-    /* if not allocating memory dynamically, need buffer for compression */
-#ifndef DF_DYNAMIC
-#define DF_TBUF
-#define DF_TBUFSZ   10000   /* buffer size */
-#endif /*DF_DYNAMIC */
 
 #ifndef FILE
 #include <stdio.h>

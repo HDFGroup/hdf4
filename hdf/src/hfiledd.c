@@ -92,7 +92,6 @@ MODIFICATION HISTORY
 
 #include "hdf.h"
 #include "hfile.h"
-#include <stddef.h>
 
 /* Private routines */
 static intn HTIfind_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
@@ -111,9 +110,9 @@ static intn HTIunregister_tag_ref(filerec_t * file_rec, dd_t *dd_ptr);
 
 /* Local definitions */
 /* The initial size of a ref dynarray */
-#define REF_DYNARRAY_START  16
+#define REF_DYNARRAY_START  64
 /* The increment of a ref dynarray */
-#define REF_DYNARRAY_INCR   16
+#define REF_DYNARRAY_INCR   256
 
 /******************************************************************************
  NAME
@@ -687,21 +686,18 @@ done:
 intn HTPendaccess(atom_t ddid           /* IN: DD id to end access to */
 )
 {
-#ifdef LATER
     CONSTR(FUNC, "HTPendaccess"); /* for HERROR */
-#endif /* LATER */
     int32 ret_value=SUCCEED;
 
     /* Chuck the atom */
-    HAremove_atom(ddid);
+    if(HAremove_atom(ddid)==NULL)
+        HGOTO_DONE(FAIL);
 
-#ifdef LATER
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-#endif /* LATER */
 
   /* Normal function cleanup */
 
@@ -753,7 +749,8 @@ intn HTPdelete(atom_t ddid              /* IN: DD id to delete */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* Destroy everything */
-    HAremove_atom(ddid);
+    if(HAremove_atom(ddid)==NULL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
   if(ret_value == FAIL)   
@@ -937,7 +934,7 @@ intn Hdupdd(int32 file_id,      /* IN: File ID the tag/refs are in */
 
     /* clear error stack and check validity of file id */
     HEclear();
-    file_rec = FID2REC(file_id);
+    file_rec = HAatom_object(file_id);
     if (BADFREC(file_rec))
       HGOTO_ERROR(DFE_ARGS, FAIL);
   
@@ -999,7 +996,7 @@ int32 Hnumber(int32 file_id,    /* IN: File ID the tag/refs are in */
     CONSTR(FUNC, "Hnumber");
     uintn       all_cnt;
     uintn       real_cnt;
-    filerec_t  *file_rec = FID2REC(file_id);
+    filerec_t  *file_rec = HAatom_object(file_id);
     int32 ret_value=SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -1058,7 +1055,7 @@ uint16 Hnewref(int32 file_id        /* IN: File ID the tag/refs are in */
 
     /* clear error stack and check validity of file record id */
     HEclear();
-    file_rec = FID2REC(file_id);
+    file_rec = HAatom_object(file_id);
     if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, 0);
   
@@ -1127,7 +1124,7 @@ uint16 Htagnewref(int32 file_id,    /* IN: File ID the tag/refs are in */
 
     /* clear error stack and check validity of file record id */
     HEclear();
-    file_rec = FID2REC(file_id);
+    file_rec = HAatom_object(file_id);
     if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, 0);
   
@@ -1201,7 +1198,7 @@ intn Hfind(int32 file_id,       /* IN: file ID to search in */
         || (direction != DF_FORWARD && direction != DF_BACKWARD))
       HGOTO_ERROR(DFE_ARGS, FAIL);
   
-    file_rec = FID2REC(file_id);
+    file_rec = HAatom_object(file_id);
     if (BADFREC(file_rec))
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
   
@@ -1267,7 +1264,7 @@ intn Hdeldd(int32 file_id, uint16 tag, uint16 ref)
 
   /* clear error stack and check validity of file record id */
   HEclear();
-  file_rec = FID2REC(file_id);
+  file_rec = HAatom_object(file_id);
   if (BADFREC(file_rec) || tag == DFTAG_WILDCARD || ref == DFREF_WILDCARD)
     HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -1293,6 +1290,7 @@ done:
   return ret_value;
 }	/* end Hdeldd */
 
+#ifdef DEBUGGING
 /*--------------------------------------------------------------------------
  NAME
     HTPdump_dds -- Dump out the dd information for a file
@@ -1315,7 +1313,7 @@ intn HTPdump_dds(int32 file_id, FILE *fout)
 
   /* clear error stack and check validity of file record id */
   HEclear();
-  file_rec = FID2REC(file_id);
+  file_rec = HAatom_object(file_id);
   if (BADFREC(file_rec))
     HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -1403,6 +1401,7 @@ done:
 
   return ret_value;
 }	/* HTPdump_dds */
+#endif /* DEBUGGING */
 
 
 

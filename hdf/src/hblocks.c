@@ -241,7 +241,7 @@ HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length,
 
     /* clear error stack and validate file record id */
     HEclear();
-    file_rec = FID2REC(file_id);
+    file_rec = HAatom_object(file_id);
     if (BADFREC(file_rec) || block_length < 0 || number_blocks < 0
         || SPECIALTAG(tag)
         || (special_tag = MKSPECIALTAG(tag)) == DFTAG_NULL)
@@ -250,12 +250,9 @@ HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length,
     if (!(file_rec->access & DFACC_WRITE))
         HGOTO_ERROR(DFE_DENIED, FAIL);
 
-    /* get empty slot in access records */
-    slot = HIget_access_slot();
-    if (slot == FAIL)
+    access_rec = HIget_access_rec();
+    if (access_rec == NULL)
         HGOTO_ERROR(DFE_TOOMANY, FAIL);
-
-    access_rec = &access_records[slot];
 
     /* search for identical dd */
     if ((data_id=HTPselect(file_rec,tag,ref))!=FAIL)
@@ -344,13 +341,13 @@ HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length,
     access_rec->appendable = FALSE;     /* start data as non-appendable */
     file_rec->attach++;
 
-    ret_value = ASLOT2ID(slot);
+    ret_value=HAregister_atom(AIDGROUP,access_rec);
 
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
         if(access_rec!=NULL)
-            access_rec->used = FALSE;
+            HDfree(access_rec);
     } /* end if */
 
   /* Normal function cleanup */
@@ -426,15 +423,15 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
     HEclear();
 
     /* start checking the func. args */
-    if (!VALIDAID(aid) || block_length < 0 || number_blocks < 0)
+    if (HAatom_group(aid)!=AIDGROUP || block_length < 0 || number_blocks < 0)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* get the access_rec pointer */
-    if ((access_rec = AID2REC(aid)) == NULL)    
+    if ((access_rec = HAatom_object(aid)) == NULL)    
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     file_id = access_rec->file_id;
-    file_rec = FID2REC(file_id);
+    file_rec = HAatom_object(file_id);
     if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -522,7 +519,7 @@ done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
         if(access_rec!=NULL)
-          access_rec->used = FALSE;
+            HDfree(access_rec);
 
     } /* end if */
 
@@ -566,7 +563,7 @@ HDinqblockinfo(int32 aid, int32 *length, int32 *first_length,
     CONSTR(FUNC, "HDinqblockinfo");
 
     HEclear();
-    if ((arec = AID2REC(aid)) == (accrec_t *) NULL)
+    if ((arec = HAatom_object(aid)) == (accrec_t *) NULL)
         HGOTO_ERROR(DFE_BADAID, FAIL);
 
     if (arec->special != SPECIAL_LINKED)
@@ -622,7 +619,7 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
     int32       ret_value = SUCCEED;
 
     /* validate file record id */
-    file_rec = FID2REC(access_rec->file_id);
+    file_rec = HAatom_object(access_rec->file_id);
     if (BADFREC(file_rec) || !(file_rec->access & acc_mode))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -672,7 +669,7 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
       {
           ((linkinfo_t *) access_rec->special_info)->attached++;
           file_rec->attach++;
-          ret_value = ASLOT2ID(access_rec - access_records);
+          ret_value = HAregister_atom(AIDGROUP,access_rec);
           goto done; /* we are done */
       }
 
@@ -748,7 +745,7 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
     info->attached = 1;
     file_rec->attach++;
 
-    ret_value = ASLOT2ID(access_rec - access_records);
+    ret_value = HAregister_atom(AIDGROUP,access_rec);
 
 done:
   if(ret_value == FAIL)   
@@ -1103,7 +1100,7 @@ HLPwrite(accrec_t * access_rec, int32 length, const VOIDP datap)
     CONSTR(FUNC, "HLPwrite");   /* for HERROR */
     uint8      *data = (uint8 *) datap;
     filerec_t  *file_rec =      /* file record */
-    FID2REC(access_rec->file_id);
+        HAatom_object(access_rec->file_id);
     int32       dd_aid;         /* AID for writing the special info */
     uint16      data_tag, data_ref;  /* Tag/ref of the data in the file */
     linkinfo_t *info =          /* linked blocks information record */
@@ -1547,7 +1544,7 @@ HLPendaccess(accrec_t * access_rec)
     linkinfo_t *info =          /* special information record */
         (linkinfo_t *) access_rec->special_info;
     filerec_t  *file_rec =      /* file record */
-        FID2REC(access_rec->file_id);
+        HAatom_object(access_rec->file_id);
     intn      ret_value = SUCCEED;
 
     /* detach the special information record.
@@ -1577,7 +1574,7 @@ HLPendaccess(accrec_t * access_rec)
     file_rec->attach--;
 
     /* free the access record */
-    access_rec->used = FALSE;
+    HDfree(access_rec);
 
 done:
   if(ret_value == FAIL)   

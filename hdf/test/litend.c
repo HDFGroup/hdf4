@@ -29,14 +29,14 @@ static char RcsId[] = "@(#)$Revision$";
 /* close enough */
 #define FLOAT64_FUDGE  ((float64)0.00000001)
 
-static int8 FAR cdata_i8[CDIM_Y][CDIM_X];
-static uint8 FAR cdata_u8[CDIM_Y][CDIM_X];
-static int16 FAR cdata_i16[CDIM_Y][CDIM_X];
-static uint16 FAR cdata_u16[CDIM_Y][CDIM_X];
-static int32 FAR cdata_i32[CDIM_Y][CDIM_X];
-static uint32 FAR cdata_u32[CDIM_Y][CDIM_X];
-static float32 FAR cdata_f32[CDIM_Y][CDIM_X];
-static float64 FAR cdata_f64[CDIM_Y][CDIM_X];
+static int8  cdata_i8[CDIM_Y][CDIM_X];
+static uint8  cdata_u8[CDIM_Y][CDIM_X];
+static int16  cdata_i16[CDIM_Y][CDIM_X];
+static uint16  cdata_u16[CDIM_Y][CDIM_X];
+static int32  cdata_i32[CDIM_Y][CDIM_X];
+static uint32  cdata_u32[CDIM_Y][CDIM_X];
+static float32  cdata_f32[CDIM_Y][CDIM_X];
+static float64  cdata_f64[CDIM_Y][CDIM_X];
 
 VOID
 init_cdata(void)

@@ -87,7 +87,7 @@ int
 annotate(char *editor, int ann)
 {
 
-#if !defined MAC && !defined PC
+#if !defined MAC && !defined WIN386
 
     int32       len;            /* length of annotation */
     char       *buf;            /* annotation buffer */
@@ -209,7 +209,7 @@ annotate(char *editor, int ann)
 
     return 1;
 
-#endif /* ndef MAC & PC */
+#endif /* ndef MAC & WIN386 */
 
 }
 

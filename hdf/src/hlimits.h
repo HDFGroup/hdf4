@@ -35,12 +35,6 @@
 #endif /* !macintosh */
 #endif
 
-/*****************************************************************
-*  Create DFtbuf: a temporary buffer used when a small amount of
-*  memory is needed, as when small conversions are done
-******************************************************************/
-#define DF_TBUFSZ       512     /* buffer size can be smaller */
-
 /*  File name max length (old annotations)  */
 #define DF_MAXFNLEN     256
 
@@ -81,26 +75,13 @@
 /* ------------------------- Constants for hfile.c --------------------- */
 /* Maximum number of files (number of slots for file records) */
 #ifndef MAX_FILE
-#if defined PC && !(defined PC386 || defined UNIX386)
-#   define MAX_FILE    8
-#else  /* !PC */
 #   define MAX_FILE   32
-#endif /* !PC */
 #endif /* MAX_FILE */
 
 /* Maximum length of external filename(s) (used in hextelt.c) */
 #ifndef MAX_PATH_LEN
-#if defined PC && !(defined PC386 || defined UNIX386)
-#define MAX_PATH_LEN      256
-#else  /* non-DOS systems */
 #define MAX_PATH_LEN     1024
-#endif /* PATH_LEN defines */
 #endif /* MAX_PATH_LEN */
-
-/* Maximum number of access elements */
-#ifndef MAX_ACC
-#   define MAX_ACC 256
-#endif /* MAX_ACC */
 
 /* ndds (number of dd's in a block) default,
    so user need not specify */
@@ -128,12 +109,6 @@
 
 /* ------------------------- Constants for Vxx interface --------------------- */
 
-/* maximum number of files (number of slots for file records in Vxx interface) 
-*  based on Hxx interface defintion of MAX_FILE */
-#ifndef MAX_VFILE
-#   define MAX_VFILE MAX_FILE
-#endif
-
 /*
  * Private conversion buffer stuff
  * VDATA_BUFFER_MAX is the largest buffer that can be allocated for
@@ -149,13 +124,6 @@
 
 #define DFS_MAXLEN 255       /*  Max length of label/unit/format strings */
 #define DFSD_MAXFILL_LEN 16  /* Current max length for fill_value space */
-
-/* --------------------- Constants for HBITIO interface --------------------- */
-/* maximum number of bitfile access elements */
-/* (can be less than the MAX_ACC defined in hfile.h, but never greater) */
-#ifndef MAX_BITFILE
-#   define MAX_BITFILE MAX_ACC
-#endif
 
 /* ----------------- Constants for COMPRESSION interface --------------------- */
 

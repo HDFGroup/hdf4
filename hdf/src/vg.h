@@ -30,7 +30,6 @@
 #define _VG_H
 
 #include "hdf.h"
-#include "hlimits.h"
 #include "hfile.h"
 
 /* Include file for Threaded, Balanced Binary Tree implementation */
@@ -205,6 +204,8 @@ vsinstance_t;
 
 typedef struct vfiledir_struct
   {
+      int32            f;       /* HDF File ID */
+
       int32       vgtabn;       /* # of vg entries in vgtab so far */
       TBBT_TREE  *vgtree;       /* Root of VGroup B-Tree */
 
@@ -214,33 +215,8 @@ typedef struct vfiledir_struct
   }
 vfile_t;
 
-/*
- * NOTE:  People at large should not use this macro as they do not
- *        have access to vfile[]
- */
-#define Get_vfile(f) (f>=0 ? (&vfile[(f & 0xffff)]) : NULL)
-
-#define VGIDTYPE  8     /* Also defined in hfile.h */
-#define VSIDTYPE  9     /* Also defined in hfile.h */
-
-/* VGID and VSID's are composed of the following fields:    */
-/*      Top 8 Bits: VGID/VSID constant (for identification) */
-/*      Next 8 Bits: File ID (can be used for Get_vfile)     */
-/*      Bottom 16 Bits: ID for the individual VGroup/VSet   */
-
-#define VGSLOT2ID(f,s) ( (((uint32)f & 0xff) << 16) | \
-                    (((uint32)VGIDTYPE & 0xff) << 24) | ((s) & 0xffff) )
-#define VALIDVGID(i) (((((uint32)(i) >> 24) & 0xff) == VGIDTYPE) && \
-                    ((((uint32)(i) >> 16)  & 0xff) < MAX_VFILE))
-#define VGID2SLOT(i) (VALIDVGID(i) ? (uint32)(i) & 0xffff :(uintn)-1)
-#define VGID2VFILE(i) (VALIDVGID(i) ? ((uint32)(i) >> 16) & 0xff : (uintn)-1)
-
-#define VSSLOT2ID(f,s) ( (((uint32)f & 0xff) << 16) | \
-                    (((uint32)VSIDTYPE & 0xff) << 24) | ((s) & 0xffff) )
-#define VALIDVSID(i) (((((uint32)(i) >> 24) & 0xff) == VSIDTYPE) && \
-                    ((((uint32)(i) >> 16)  & 0xff) < MAX_VFILE))
-#define VSID2SLOT(i) (VALIDVSID(i) ? (uint32)(i) & 0xffff : (uintn)-1)
-#define VSID2VFILE(i) (VALIDVSID(i) ? ((uint32)(i) >> 16) & 0xff : (uintn)-1)
+/* Size of the atom hash table */
+#define VATOM_HASH_SIZE 256
 
 /* .................................................................. */
 #define VSET_VERSION   3    /* DO NOT CHANGE!! */
@@ -256,28 +232,30 @@ extern      "C"
 /*
  * Routines public to the VSet layer
  */
-    extern vsinstance_t _HUGE *vsinstance
+    extern vfile_t *Get_vfile(HFILEID f);
+
+    extern vsinstance_t *vsinst
                 (HFILEID f, uint16 vsid);
 
-    extern vginstance_t _HUGE *vginstance
+    extern vginstance_t *vginst
             (HFILEID f, uint16 vgid);
 
-    extern DYN_VWRITELIST _HUGE *vswritelist
+    extern DYN_VWRITELIST *vswritelist
                 (int32 vskey);
 
     extern void vpackvg
-                (VGROUP _HUGE * vg, uint8 _HUGE buf[], int32 _HUGE * size);
+                (VGROUP * vg, uint8 buf[], int32 * size);
 
     extern int32 vinsertpair
-                (VGROUP _HUGE * vg, uint16 tag, uint16 ref);
+                (VGROUP * vg, uint16 tag, uint16 ref);
 
     extern void vpackvs
-                (VDATA _HUGE * vs, uint8 _HUGE buf[], int32 _HUGE * size);
+                (VDATA * vs, uint8 buf[], int32 * size);
 
-    extern VGROUP _HUGE *VPgetinfo
+    extern VGROUP *VPgetinfo
                 (HFILEID f,uint16 ref);
 
-    extern VDATA _HUGE *VSPgetinfo
+    extern VDATA *VSPgetinfo
                 (HFILEID f,uint16 ref);
 
     extern int16 map_from_old_types

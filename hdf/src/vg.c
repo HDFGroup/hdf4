@@ -106,11 +106,11 @@ VSelts(int32 vkey)
   TRACE_ON(VS_mask, ID_VSelts);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
@@ -156,11 +156,11 @@ VSgetinterlace(int32 vkey)
   TRACE_ON(VS_mask, ID_VSgetinterlace);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
@@ -207,11 +207,11 @@ VSsetinterlace(int32 vkey, int32 interlace)
   TRACE_ON(VS_mask, ID_VSsetinterlace);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
@@ -227,7 +227,7 @@ VSsetinterlace(int32 vkey, int32 interlace)
     if (interlace == FULL_INTERLACE || interlace == NO_INTERLACE)
       {
           vs->interlace = (int16) interlace;
-          ret_value = TRUE;    /* ok */
+          ret_value = SUCCEED;    /* ok */
       }
     else
         ret_value = FAIL;
@@ -271,11 +271,11 @@ VSgetfields(int32 vkey, char *fields)
   TRACE_ON(VS_mask, ID_VSgetfields);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
@@ -334,11 +334,11 @@ VSfexist(int32 vkey, char *fields)
   TRACE_ON(VS_mask, ID_VSfexist);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (wi = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (wi = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = wi->vs;
@@ -373,10 +373,7 @@ VSfexist(int32 vkey, char *fields)
 #endif /* VDATA_FIELDS_ALL_UPPER */
             }
           if (!found)
-            {
-              ret_value = FAIL;
-              goto done;
-            }
+            HGOTO_DONE(FAIL);
       }
 
     ret_value = TRUE;
@@ -423,11 +420,11 @@ VSsizeof(int32 vkey, char *fields)
   TRACE_ON(VS_mask, ID_VSsizeof);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
@@ -437,26 +434,26 @@ VSsizeof(int32 vkey, char *fields)
     totalsize = 0;
     if (fields == NULL)
       {   /* count fieldsizes in vs */
-	  for (j = 0; j < vs->wlist.n; j++)	
-	      totalsize += vs->wlist.esize[j];
+        for (j = 0; j < vs->wlist.n; j++)	
+            totalsize += vs->wlist.esize[j];
       }		
     else
       {
-	  if ((scanattrs(fields, &ac, &av) < 0) || (ac < 1))
-	      HGOTO_ERROR(DFE_ARGS, FAIL);
-	  for (i = 0; i < ac; i++)
-	    {   /* check fields in vs */
-		for (found = 0, j = 0; j < vs->wlist.n; j++)	
-		    if (!HDstrcmp(av[i], vs->wlist.name[j]))
-		      {
-			  totalsize += vs->wlist.esize[j];
-			  found = 1;
-			  break;
-		      }
+        if ((scanattrs(fields, &ac, &av) < 0) || (ac < 1))
+            HGOTO_ERROR(DFE_ARGS, FAIL);
+        for (i = 0; i < ac; i++)
+          {   /* check fields in vs */
+            for (found = 0, j = 0; j < vs->wlist.n; j++)	
+                if (!HDstrcmp(av[i], vs->wlist.name[j]))
+                  {
+                    totalsize += vs->wlist.esize[j];
+                    found = 1;
+                    break;
+                  }
 
-		if (!found)
-		    HGOTO_ERROR(DFE_ARGS, FAIL);
-	    }	/* end for */
+            if (!found)
+                HGOTO_ERROR(DFE_ARGS, FAIL);
+          }	/* end for */
       }		/* end else */
     ret_value = (totalsize);
 
@@ -514,11 +511,11 @@ VSsetname(int32 vkey, const char *vsname)
   TRACE_ON(VS_mask, ID_VSsetname);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
@@ -573,11 +570,11 @@ VSsetclass(int32 vkey, const char *vsclass)
   TRACE_ON(VS_mask, ID_VSsetclass);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
@@ -630,11 +627,11 @@ VSgetname(int32 vkey, char *vsname)
   TRACE_ON(VS_mask, ID_VSgetname);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
@@ -680,11 +677,11 @@ VSgetclass(int32 vkey, char *vsclass)
   TRACE_ON(VS_mask, ID_VSgetclass);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
@@ -796,9 +793,8 @@ VSlone(HFILEID f, int32 *idarray, int32 asize)
 #endif /* HAVE_PABLO */
 
     /* -- allocate space for vdata refs, init to zeroes -- */
-    if (NULL == (lonevdata = (uint8 *) HDmalloc(65000L * sizeof(uint8))))
-                    HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    HDmemset(lonevdata, 0, 65000L * sizeof(uint8));
+    if (NULL == (lonevdata = (uint8 *) HDcalloc(MAX_REF , sizeof(uint8))))
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* -- look for all vdatas in the file, and flag (1) each -- */
     vsid = -1;
@@ -810,26 +806,26 @@ VSlone(HFILEID f, int32 *idarray, int32 asize)
     vgid = -1;
     while (-1L != (vgid = Vgetid(f, vgid)))
       {     /* until no more vgroups */
-          vkey = Vattach(f, vgid, "r");
-          for (i = 0; i < Vntagrefs(vkey); i++)
-            {
-                Vgettagref(vkey, i, &vstag, &vsid);
-                if (vstag == (int32) DFTAG_VH)
-                    lonevdata[vsid] = 0;
-            }
-          Vdetach(vkey);
+        vkey = Vattach(f, vgid, "r");
+        for (i = 0; i < Vntagrefs(vkey); i++)
+          {
+            Vgettagref(vkey, i, &vstag, &vsid);
+            if (vstag == (int32) DFTAG_VH)
+                lonevdata[vsid] = 0;
+          }
+        Vdetach(vkey);
       }
 
     /* -- check in lonevdata: it's a lone vdata if its flag is still 1 -- */
     nlone = 0;
-    for (i = 0; i < 65000; i++)
+    for (i = 0; i < MAX_REF; i++)
       {
-          if (lonevdata[i])
-            {
-                if (nlone < asize)  /* insert into idarray up till asize */
-                    idarray[nlone] = i;
-                nlone++;
-            }
+        if (lonevdata[i])
+          {
+            if (nlone < asize)  /* insert into idarray up till asize */
+                idarray[nlone] = i;
+            nlone++;
+          }
       }
     HDfree((VOIDP) lonevdata);
 
@@ -880,9 +876,8 @@ Vlone(HFILEID f, int32 *idarray, int32 asize)
 #endif /* HAVE_PABLO */
 
     /* -- allocate space for vgroup refs, init to zeroes -- */
-    if (NULL == (lonevg = (uint8 *) HDmalloc(65000L * sizeof(uint8))))
-                    HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    HDmemset(lonevg, 0, 65000L * sizeof(uint8));
+    if (NULL == (lonevg = (uint8 *) HDcalloc(MAX_REF , sizeof(uint8))))
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* -- look for all vgroups in the file, and flag (1) each -- */
     id = -1;
@@ -894,27 +889,27 @@ Vlone(HFILEID f, int32 *idarray, int32 asize)
     vgid = -1;
     while (-1L != (vgid = Vgetid(f, vgid)))
       {     /* until no more vgroups */
-          vkey = Vattach(f, vgid, "r");
-          id = -1;
-          for (i = 0; i < Vntagrefs(vkey); i++)
-            {
-                Vgettagref(vkey, i, &vstag, &id);
-                if (vstag == DFTAG_VG)
-                    lonevg[id] = 0;
-            }
-          Vdetach(vkey);
+        vkey = Vattach(f, vgid, "r");
+        id = -1;
+        for (i = 0; i < Vntagrefs(vkey); i++)
+          {
+            Vgettagref(vkey, i, &vstag, &id);
+            if (vstag == DFTAG_VG)
+                lonevg[id] = 0;
+          }
+        Vdetach(vkey);
       }
 
     /* -- check in lonevg: it's a lone vgroup if its flag is still 1 -- */
     nlone = 0;
-    for (i = 0; i < 65000; i++)
+    for (i = 0; i < MAX_REF; i++)
       {
-          if (lonevg[i])
-            {
-                if (nlone < asize)  /* insert into idarray up till asize */
-                    idarray[nlone] = i;
-                nlone++;
-            }
+        if (lonevg[i])
+          {
+            if (nlone < asize)  /* insert into idarray up till asize */
+                idarray[nlone] = i;
+            nlone++;
+          }
       }
     HDfree((VOIDP) lonevg);
 
@@ -951,7 +946,7 @@ Vfind(HFILEID f, const char *vgname)
 {
     int32       vgid = -1;
     vginstance_t    * v;
-    int32       ret_value = SUCCEED;
+    int32       ret_value = 0;
 #ifdef LATER
     CONSTR(FUNC, "Vfind");
 #endif
@@ -962,19 +957,11 @@ Vfind(HFILEID f, const char *vgname)
 
     while (-1L != (vgid = Vgetid(f, vgid)))
       {
-        if((v=vginstance(f,(uint16)vgid))==NULL)
-          {
-            ret_value = 0;          /* error */
-            goto done;
-          }
+        if((v=vginst(f,(uint16)vgid))==NULL)
+            HGOTO_DONE(0);
         if (!HDstrcmp(vgname, v->vg->vgname)) 
-          {
-            ret_value = ((int32)(v->vg->oref));  /* found the vdata */
-            goto done;
-          }
+            HGOTO_DONE((int32)(v->vg->oref));  /* found the vdata */
       }
-
-    ret_value =  0;		/* not found */
 
 done:
   if(ret_value == 0)   
@@ -1007,7 +994,7 @@ VSfind(HFILEID f, const char *vsname)
 {
     int32       vsid = -1;
     vsinstance_t    * v;
-    int32 ret_value = SUCCEED;
+    int32 ret_value = 0;
 #ifdef LATER
     CONSTR(FUNC, "VSfind");
 #endif
@@ -1018,19 +1005,11 @@ VSfind(HFILEID f, const char *vsname)
 
     while (-1L != (vsid = VSgetid(f, vsid)))
       {
-        if((v=vsinstance(f,(uint16)vsid))==NULL)
-          {
-            ret_value = (0);          /* error */
-            goto done;
-          }
+        if((v=vsinst(f,(uint16)vsid))==NULL)
+            HGOTO_DONE(0);
         if (!HDstrcmp(vsname, v->vs->vsname)) 
-          {
-            ret_value = ((int32)(v->vs->oref));  /* found the vdata */
-            goto done;
-          }
+            HGOTO_DONE((int32)(v->vs->oref));  /* found the vdata */
       }
-
-    ret_value = (0);     /* not found */
 
 done:
   if(ret_value == 0)   
@@ -1063,7 +1042,7 @@ Vfindclass(HFILEID f, const char *vgclass)
 {
     int32       vgid = -1;
     vginstance_t    * v;
-    int32       ret_value = SUCCEED;
+    int32       ret_value = 0;
 #ifdef LATER
     CONSTR(FUNC, "Vfind");
 #endif
@@ -1074,19 +1053,11 @@ Vfindclass(HFILEID f, const char *vgclass)
 
     while (-1L != (vgid = Vgetid(f, vgid)))
       {
-        if((v=vginstance(f,(uint16)vgid))==NULL)
-          {
-            ret_value =(0);          /* error */
-            goto done;
-          }
+        if((v=vginst(f,(uint16)vgid))==NULL)
+            HGOTO_DONE(0);
         if (!HDstrcmp(vgclass, v->vg->vgclass)) 
-          {
-            ret_value =((int32)(v->vg->oref));  /* found the vgroup */
-            goto done;
-          }
+            HGOTO_DONE((int32)(v->vg->oref));  /* found the vgroup */
       }
-
-    ret_value = (0);		/* not found */
 
 done:
   if(ret_value == 0)   
@@ -1119,7 +1090,7 @@ VSfindclass(HFILEID f, const char *vsclass)
 {
     int32       vsid = -1;
     vsinstance_t    * v;
-    int32       ret_value = SUCCEED;
+    int32       ret_value = 0;
 #ifdef LATER
     CONSTR(FUNC, "VSfind");
 #endif
@@ -1129,19 +1100,11 @@ VSfindclass(HFILEID f, const char *vsclass)
 
     while (-1L != (vsid = VSgetid(f, vsid)))
       {
-        if((v=vsinstance(f,(uint16)vsid))==NULL)
-          {
-            ret_value = (0);          /* error */
-            goto done;
-          }
+        if((v=vsinst(f,(uint16)vsid))==NULL)
+            HGOTO_DONE(0);          /* error */
         if (!HDstrcmp(vsclass, v->vs->vsclass)) 
-          {
-            ret_value =((int32)(v->vs->oref));  /* found the vdata */
-            goto done;
-          }
+            HGOTO_DONE((int32)(v->vs->oref));  /* found the vdata */
       }
-
-    ret_value = (0);     /* not found */
 
 done:
   if(ret_value == 0)   

@@ -131,11 +131,7 @@ palconv(char *palfile)
     FILE       *fp;
     int         j, ret;
 
-#ifdef PC
     fp = fopen(palfile, "rb");
-#else
-    fp = fopen(palfile, "r");
-#endif
     if (fp == NULL)
       {
           printf(" Error opening palette file %s\n", palfile);
@@ -170,19 +166,11 @@ imconv(char *outfile, char *imfile, uint16 compress)
     char       *space;
     FILE       *fp;
 
-#ifdef PC
     if ((fp = fopen(imfile, "rb")) == NULL)
       {
           printf("Error opening image file\n");
           exit(1);
       }
-#else
-    if ((fp = fopen(imfile, "r")) == NULL)
-      {
-          printf("Error opening image file\n");
-          exit(1);
-      }
-#endif
 
     if ((space = (char *) HDmalloc((uint32) xdim * ydim)) == NULL)
       {

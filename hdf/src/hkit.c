@@ -77,7 +77,7 @@ DESCRIPTION
    to the user to free this string.
 
 ---------------------------------------------------------------------------*/
-char _HUGE *
+char *
 HDf2cstring(_fcd fdesc, intn len)
 {
     CONSTR(FUNC, "HDf2cstring");  /* for HERROR */
@@ -156,7 +156,7 @@ HDflush(int32 file_id)
 #if !(defined (MAC) || defined (macintosh) || defined(__MWERKS__) || defined (SYMANTEC_C))
     filerec_t  *file_rec;
 
-    file_rec = FID2REC(file_id);
+    file_rec = HAatom_object(file_id);
     if (BADFREC(file_rec))
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
@@ -179,7 +179,7 @@ DESCRIPTION
    Map a tag to a statically allocated text description of it.
 
 ---------------------------------------------------------------------------*/
-const char _HUGE *
+const char *
 HDgettagdesc(uint16 tag)
 {
     intn        i;
@@ -204,7 +204,7 @@ DESCRIPTION
    Checks for special elements now.
 
 --------------------------------------------------------------------------- */
-char _HUGE *
+char *
 HDgettagsname(uint16 tag)
 {
     CONSTR(FUNC, "HDgettagsname");  /* for HERROR */
@@ -276,7 +276,7 @@ DESCRIPTION
    Map a number-type to a dynamically allocated text description of it.
 
 ---------------------------------------------------------------------------*/
-char _HUGE *
+char *
 HDgetNTdesc(int32 nt)
 {
     CONSTR(FUNC, "HDgetNTdesc");    /* for HERROR */
@@ -324,7 +324,7 @@ HDgetNTdesc(int32 nt)
 NAME
    HDfidtoname -- return the filename the file ID corresponds to
 USAGE
-   const char _HUGE * HDfidtoname(fid)
+   const char * HDfidtoname(fid)
    int32 fid;            IN: file ID
 RETURNS
    SUCCEED - pointer to filename / FAIL - NULL
@@ -334,55 +334,15 @@ DESCRIPTION
    newer interfaces which use file IDs.
 
 ---------------------------------------------------------------------------*/
-const char _HUGE *
+const char *
 HDfidtoname(int32 file_id)
 {
     CONSTR(FUNC, "HDfidtoname");    /* for HERROR */
     filerec_t  *file_rec;
 
-    if ((file_rec = FID2REC(file_id)) == NULL)
+    if ((file_rec = HAatom_object(file_id)) == NULL)
         HRETURN_ERROR(DFE_ARGS, NULL);
 
     return (file_rec->path);
 }   /* HDfidtoname */
-
-/*--------------------------------------------------------------------------
- NAME
-    HDFend
- PURPOSE
-    Terminate various static buffers and shutdown the library.
- USAGE
-    intn HDFend()
- RETURNS
-    Returns SUCCEED/FAIL
- DESCRIPTION
-    Walk through the shutdown routines for the various interfaces and 
-    terminate them all.
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
-    Should only ever be called by the "atexit" function, or real power-users.
- EXAMPLES
- REVISION LOG
---------------------------------------------------------------------------*/
-void HDFend(void)
-{
-#ifdef LATER
-    CONSTR(FUNC, "HDFend");    /* for HERROR */
-#endif /* LATER */
-
-    /* can't issue errors if you're free'ing the error stack. */
-    VSPfreebuf();
-    VPshutdown();
-    DFSDPshutdown();
-    DFR8Pshutdown();
-    DFANPshutdown();
-    DFGRPshutdown();
-    ANdestroy();
-    HPbitshutdown();
-    HXPshutdown();
-    Hshutdown();
-    HEshutdown();
-    HAshutdown();
-    tbbt_shutdown();
-} /* end HDFend() */
 

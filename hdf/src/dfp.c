@@ -42,7 +42,7 @@ PRIVATE uint16 Lastref = 0;     /* Last ref read/written */
 PRIVATE char Lastfile[DF_MAXFNLEN] = "";    /* last file opened */
 
 PRIVATE int32 DFPIopen
-            (const char _HUGE * filename, intn acc_mode);
+            (const char * filename, intn acc_mode);
 
 /*--------------------------------------------------------------------------
  NAME

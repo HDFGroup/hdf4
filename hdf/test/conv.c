@@ -63,7 +63,7 @@ typedef int clock_t;
 #ifdef UNICOS
 #define TEST_SIZE 1000001
 #else
-#if defined PC | defined macintosh
+#if defined macintosh
 #define TEST_SIZE 8001  /* so that 8*8000<=64K */
 #else
 #define TEST_SIZE 100001

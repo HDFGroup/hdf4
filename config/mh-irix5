@@ -7,7 +7,8 @@
 #
 #Using ANSI compilier
 CC=cc
-CFLAGS=-ansi -O -s
+#CFLAGS=-ansi -O -s
+CFLAGS=-ansi -g
 
 # Fortran compilier
 FC = f77

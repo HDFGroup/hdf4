@@ -59,9 +59,6 @@ PRIVATE VOID vunpackvs
 
 /* vpackvs is prototyped in vg.h since vconv.c needs to call it */
 
-/* External (within Vset routines) variables */
-extern vfile_t *vfile;
-
 /* ------------------------------------------------------------------ */
 /*
    * Looks thru vstab for vsid and return the addr of the vdata instance
@@ -70,37 +67,23 @@ extern vfile_t *vfile;
    * RETURNS vsinstance_t pointer if ok.
    *
  */
-vsinstance_t _HUGE *
-vsinstance(HFILEID f, uint16 vsid)
+vsinstance_t *
+vsinst(HFILEID f, uint16 vsid)
 {
+    CONSTR(FUNC, "vsinstance");
     VOIDP      *t;
     vfile_t *vf;
     int32       key;
-    vsinstance_t _HUGE *ret_value = NULL; /* FAIL */
-    CONSTR(FUNC, "vsinstance");
-
-    /* Check if vfile buffer has been allocated */
-    if (vfile == NULL)
-      {
-          vfile = (vfile_t *) HDmalloc(MAX_VFILE * sizeof(vfile_t));
-          if (vfile == NULL)
-              HGOTO_ERROR(DFE_NOSPACE, NULL);
-      }
+    vsinstance_t *ret_value = NULL; /* FAIL */
 
     if (NULL == (vf = Get_vfile(f)))
         HGOTO_ERROR(DFE_FNF, NULL);
 
     /* tbbtdfind returns a pointer to the vsinstance_t pointer */
-    key = VSSLOT2ID(f, vsid);
-    t = (VOIDP *) tbbtdfind(vf->vstree, (VOIDP) &key, NULL);
-    if (t != NULL)
-      {
-        ret_value = ((vsinstance_t *) * t);  /* return the actual vsinstance_t ptr */
-        goto done;
-      }
-
-    HERROR(DFE_NOMATCH);
-    ret_value = (NULL);
+    key = (int32)vsid;
+    if (( t = (VOIDP *) tbbtdfind(vf->vstree, (VOIDP) &key, NULL))== NULL)
+        HGOTO_ERROR(DFE_NOMATCH,NULL);
+    ret_value = ((vsinstance_t *) * t);  /* return the actual vsinstance_t ptr */
 
 done:
   if(ret_value == NULL)   
@@ -123,14 +106,7 @@ done:
 int32
 vexistvs(HFILEID f, uint16 vsid)
 {
-  int32  ret_value;
-
-    if (NULL == vsinstance(f, vsid))
-        ret_value = (FAIL);
-    else
-        ret_value = (TRUE);
-
-  return ret_value;
+  return ((NULL==vsinst(f, vsid)) ? FAIL : TRUE);
 }   /* vexistvs */
 
 /* ------------------------------------------------------------------ */
@@ -390,13 +366,13 @@ vsdestroynode(VOIDP n)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VDATA _HUGE *VSPgetinfo(HFILEID f,uint16 ref)
+VDATA *VSPgetinfo(HFILEID f,uint16 ref)
 {
-    char * FUNC = "VSPgetinfo";
+    CONSTR(FUNC, "VSPgetinfo");
 	VDATA 		*vs;  			 /* new vdata to be returned */
     uint8       *vspack;
     int32       vh_length;      /* length of the vdata header */
-    VDATA _HUGE *ret_value = NULL; /* FAIL */
+    VDATA *ret_value = NULL; /* FAIL */
  
     /* allocate space for vs,  & zero it out  */
     if ( (vs=(VDATA*) HDmalloc (sizeof(VDATA))) == NULL)
@@ -493,24 +469,16 @@ done:
 int32 
 VSattach(HFILEID f, int32 vsid, const char *accesstype)
 {
+    CONSTR(FUNC, "VSattach");
     VDATA      *vs;             /* new vdata to be returned */
     int32       acc_mode;
     vsinstance_t *w;
     vfile_t    *vf;
-    int32      ret_value = SUCCEED;
-    CONSTR(FUNC, "VSattach");
+    int32      ret_value = FAIL;
 
 #ifdef HAVE_PABLO
     TRACE_ON(VS_mask, ID_VSattach);
 #endif /* HAVE_PABLO */
-
-    /* Check if vfile buffer has been allocated */
-    if (vfile == NULL)
-      {
-          vfile = (vfile_t *) HDmalloc(MAX_VFILE * sizeof(vfile_t));
-          if (vfile == NULL)
-              HGOTO_ERROR(DFE_NOSPACE, FAIL);
-      }
 
     if ((f == FAIL) || (vsid < -1))
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -570,7 +538,7 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
           vf->vstabn++;
-          w->key = (int32) VSSLOT2ID(f, vs->oref);  /* set the key for the node */
+          w->key = (int32) vs->oref;  /* set the key for the node */
           w->ref = (intn) vs->oref;
           w->vs = vs;
           w->nattach = 1;
@@ -578,75 +546,58 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
           tbbtdins(vf->vstree, (VOIDP) w, NULL);    /* insert the vs instance in B-tree */
 
           vs->instance = w;
-
-          /* Make VData appendable by default */
-          if (FAIL == VSappendable(w->key,VDEFAULTBLKSIZE))
-              HGOTO_ERROR(DFE_INTERNAL, FAIL);
-
-          ret_value = (w->key);
-          goto done;
       }     /* end of case where vsid is -1 */
+    else
+      { /*  --------  VSID IS NON_NEGATIVE ------------- */
+        if (NULL == (w = vsinst(f, (uint16) vsid)))
+            HGOTO_ERROR(DFE_VTAB, FAIL);
 
-    /*  --------  VSID IS NON_NEGATIVE ------------- */
-    if (acc_mode == 'r')
-      {     /* reading an existing vdata */
+        if (acc_mode == 'r')
+          {     /* reading an existing vdata */
+              /* this vdata is already attached for 'r', ok to do so again */
+              if (w->nattach && w->vs->access == 'r')
+                  w->nattach++;
+              else
+                {
+                  vs = w->vs;
 
-          if (NULL == (w = vsinstance(f, (uint16) vsid)))
-              HGOTO_ERROR(DFE_VTAB, FAIL);
+                  vs->access = 'r';
+                  vs->aid = Hstartread(vs->f, VSDATATAG, vs->oref);
+                  if (vs->aid == FAIL)
+                    HGOTO_ERROR(DFE_BADAID, FAIL);
 
-	  /* this vdata is already attached for 'r', ok to do so again */
-	  if (w->nattach && w->vs->access == 'r')
-	    {
-		w->nattach++;
-		ret_value = (w->key);
-                goto done;
-	    }
+                  vs->instance = w;
 
-		vs = w->vs;
+                  /* attach vs to vsdir  at the vdata instance w */
+                  w->nattach = 1;
+                  w->nvertices = vs->nvertices;
+                } /* end else */
+          }		/* end of case where vsid is positive, and "r"  */
+        else
+          {		/* writing to an existing vdata */
+              if (w->nattach)	/* vdata previously attached before */
+                  HGOTO_ERROR(DFE_BADATTACH, FAIL);
 
-	  vs->access = 'r';
-	  vs->aid = Hstartread(vs->f, VSDATATAG, vs->oref);
-	  if (vs->aid == FAIL)
-		HGOTO_ERROR(DFE_BADAID, FAIL);
+              vs = w->vs;
 
-	  vs->instance = w;
+              vs->access = 'w';
+              vs->aid = Hstartwrite(vs->f, VSDATATAG, vs->oref, 0);
+              if (vs->aid == FAIL)
+                HGOTO_ERROR(DFE_BADAID, FAIL);
 
-	  /* attach vs to vsdir  at the vdata instance w */
-	  w->nattach = 1;
-	  w->nvertices = vs->nvertices;
+              vs->instance = w;
 
-	  ret_value = (w->key);
-          goto done;
-      }		/* end of case where vsid is positive, and "r"  */
+              /* attach vs to vsdir  at the vdata instance w */
+              w->nattach = 1;
+              w->nvertices = vs->nvertices;
+          }		/* end of case where vsid is positive, and "w"  */
+      } /* end else */
 
-    if (acc_mode == 'w')
-      {		/* writing to an existing vdata */
+    ret_value = HAregister_atom(VSIDGROUP,w);
 
-	  if ((w = vsinstance(f, (uint16) vsid)) == NULL)
-	      HGOTO_ERROR(DFE_VTAB, FAIL);
-
-	  if (w->nattach)	/* vdata previously attached before */
-	      HGOTO_ERROR(DFE_BADATTACH, FAIL);
-
-		vs = w->vs;
-
-	  vs->access = 'w';
-	  vs->aid = Hstartwrite(vs->f, VSDATATAG, vs->oref, 0);
-	  if (vs->aid == FAIL)
-		HGOTO_ERROR(DFE_BADAID, FAIL);
-
-	  vs->instance = w;
-
-	  /* attach vs to vsdir  at the vdata instance w */
-	  w->nattach = 1;
-	  w->nvertices = vs->nvertices;
-
-	  ret_value = (w->key);
-          goto done;
-      }		/* end of case where vsid is positive, and "w"  */
-
-    ret_value = (FAIL);
-
+    /* Make VDatas appendable by default */
+    if (FAIL == VSappendable(ret_value,VDEFAULTBLKSIZE))
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
@@ -694,37 +645,25 @@ VSdetach(int32 vkey)
     TRACE_ON(VS_mask, ID_VSdetach);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
-
     if ((vs == NULL) || (vs->otag != VSDESCTAG))
-      {
-          HERROR(DFE_ARGS);
-          ret_value = (FAIL);
-          goto done;
-      }
+      HGOTO_ERROR(DFE_ARGS,FAIL);
 
     w->nattach--;
 
     /* --- case where access was 'r' --- */
     if (vs->access == 'r')
       {
-	  if (w->nattach == 0)
-	    {
-		Hendaccess(vs->aid);
-/*
-   not needed if we free all the time
-   vs->aid = NO_ID;
- */
-            }
-          ret_value = (SUCCEED);
-          goto done;
+          if (w->nattach == 0)
+              Hendaccess(vs->aid);
+          HGOTO_DONE(SUCCEED);
       }
 
     /* --- case where access was 'w' --- */
@@ -733,14 +672,14 @@ VSdetach(int32 vkey)
 
     if (vs->marked)
       {	  /* if marked , write out vdata's VSDESC to file */
-	  if ((vspack = (uint8 *) HDmalloc(sizeof(VWRITELIST) + 1)) == NULL)
-	      HGOTO_ERROR(DFE_NOSPACE, FAIL);
-	  vpackvs(vs, vspack, &vspacksize);
-	  ret = Hputelement(vs->f, VSDESCTAG, vs->oref, vspack, vspacksize);
-	  HDfree((VOIDP) vspack);
-	  if (ret == FAIL)
-	      HGOTO_ERROR(DFE_WRITEERROR, FAIL);
-	  vs->marked = 0;
+        if ((vspack = (uint8 *) HDmalloc(sizeof(VWRITELIST) + 1)) == NULL)
+            HGOTO_ERROR(DFE_NOSPACE, FAIL);
+        vpackvs(vs, vspack, &vspacksize);
+        ret = Hputelement(vs->f, VSDESCTAG, vs->oref, vspack, vspacksize);
+        HDfree((VOIDP) vspack);
+        if (ret == FAIL)
+            HGOTO_ERROR(DFE_WRITEERROR, FAIL);
+        vs->marked = 0;
       }
 
     /* remove all defined symbols */
@@ -789,11 +728,11 @@ VSappendable(int32 vkey, int32 blk)
     TRACE_ON(VS_mask, ID_VSappendable);
 #endif /* HAVE_PABLO */
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vs's index in vstab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
@@ -819,7 +758,7 @@ VSappendable(int32 vkey, int32 blk)
         ret_value = FAIL;
 #else /* OLD_WAY */
     if(vs->aid==0)
-        ret_value=vs->aid = Hstartaccess(vs->f, VSDATATAG, vs->oref, DFACC_RDWR|DFACC_APPENDABLE);
+        vs->aid = Hstartaccess(vs->f, VSDATATAG, vs->oref, DFACC_RDWR|DFACC_APPENDABLE);
     else
         ret_value = Happendable(vs->aid);
 #endif /* OLD_WAY */
@@ -860,14 +799,6 @@ VSgetid(HFILEID f, int32 vsid)
     TRACE_ON(VS_mask, ID_VSgetid);
 #endif /* HAVE_PABLO */
 
-    /* Check if vfile buffer has been allocated */
-    if (vfile == NULL)
-      {
-          vfile = (vfile_t *) HDmalloc(MAX_VFILE * sizeof(vfile_t));
-          if (vfile == NULL)
-              HGOTO_ERROR(DFE_NOSPACE, FAIL);
-      }
-
     if (vsid < -1)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     if (NULL == (vf = Get_vfile(f)))
@@ -875,21 +806,19 @@ VSgetid(HFILEID f, int32 vsid)
 
     if (vsid == -1)
       {
-          if (NULL == (t = (VOIDP *) tbbtfirst((TBBT_NODE *) * (vf->vstree))))
-            {
-              ret_value = (FAIL);
-              goto done;
-            }
-          else
-            {
-                w = (vsinstance_t *) * t;   /* get actual pointer to the vsinstance_t */
-                ret_value = (w->ref);    /* rets 1st vdata's ref */
-                goto done;
-            }   /* end else */
+        if (NULL == (t = (VOIDP *) tbbtfirst((TBBT_NODE *) * (vf->vstree))))
+          {
+            HGOTO_DONE(FAIL);
+          }
+        else
+          {
+              w = (vsinstance_t *) * t;   /* get actual pointer to the vsinstance_t */
+              HGOTO_DONE(w->ref);    /* rets 1st vdata's ref */
+          }   /* end else */
       }
 
     /* tbbtdfind returns a pointer to the vsinstance_t pointer */
-    key = VSSLOT2ID(f, vsid);
+    key = (int32)vsid;
     t = (VOIDP *) tbbtdfind(vf->vstree, (VOIDP) &key, NULL);
     if (t == NULL)  /* couldn't find the old vsid */
         ret_value = (FAIL);
@@ -929,11 +858,11 @@ VSQuerytag(int32 vkey)
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VSQuerytag");
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
       HGOTO_ERROR(DFE_ARGS,FAIL);
 
     /* locate vs's index in vstab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
       HGOTO_ERROR(DFE_NOVS,FAIL);
 
     vs = w->vs;
@@ -966,11 +895,11 @@ VSQueryref(int32 vkey)
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VSQueryref");
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
       HGOTO_ERROR(DFE_ARGS,FAIL);
 
     /* locate vs's index in vstab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
       HGOTO_ERROR(DFE_NOVS,FAIL);
 
     vs = w->vs;
@@ -991,19 +920,19 @@ done:
 }	/* VSQueryref */
 
 /* -------------- Return the writelist of a VData----------------- */
-DYN_VWRITELIST _HUGE *
+DYN_VWRITELIST *
 vswritelist(int32 vkey)
 {
     vsinstance_t *w;
     VDATA      *vs;
-    DYN_VWRITELIST _HUGE *ret_value = NULL; /* FAIL */
+    DYN_VWRITELIST *ret_value = NULL; /* FAIL */
     CONSTR(FUNC, "VSgetversion");
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, NULL);
 
     /* locate vs's index in vstab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, NULL);
 
     vs = w->vs;
@@ -1033,11 +962,11 @@ VSgetversion(int32 vkey)
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VSgetversion");
 
-    if (!VALIDVSID(vkey))
+    if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, 0);
 
     /* locate vs's index in vstab */
-    if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, 0);
 
     vs = w->vs;
@@ -1083,26 +1012,12 @@ VSdelete(int32 f, int32 vsid)
     if (vsid < -1)
       HGOTO_ERROR(DFE_ARGS,FAIL);
 
-    /* Check if vfile buffer has been allocated */
-    if (vfile == NULL)
-      {
-          vfile = (vfile_t *) HDmalloc(MAX_VFILE * sizeof(vfile_t));
-          if (vfile == NULL)
-              HGOTO_ERROR(DFE_NOSPACE, FAIL);
-      }
-
     if (NULL == (vf = Get_vfile(f)))
       HGOTO_ERROR(DFE_FNF,FAIL);
 
-    key = VSSLOT2ID(f, vsid);
-
-    t = (VOIDP *) tbbtdfind(vf->vstree, (VOIDP) &key, NULL);
-
-    if (t == NULL)
-      {
-        ret_value = FAIL;
-        goto done;
-      }
+    key = vsid;
+    if (( t = (VOIDP *) tbbtdfind(vf->vstree, (VOIDP) &key, NULL))== NULL)
+        HGOTO_DONE(FAIL);
 
     v = tbbtrem((TBBT_NODE **) vf->vstree, (TBBT_NODE *) t, NULL);
     if (v)

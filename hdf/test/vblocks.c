@@ -27,7 +27,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #define HVCONVERT_TAG 1500
 
-static uint8 FAR outbuf[BUFSIZE], FAR inbuf[BUFSIZE];
+static uint8  outbuf[BUFSIZE],  inbuf[BUFSIZE];
 
 /* Tests:
     create new vblock

@@ -457,6 +457,8 @@ hbitio.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 hbitio.o: hfile.h $(FRC)
 tbbt.o:  hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 tbbt.o: tbbt.h $(FRC)
+atom.o:  hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+atom.o: atom.h $(FRC)
 hdfalloc.o: hdf.h hlimits.h hdfi.h  hbitio.h
 hdfalloc.o: hcomp.h herr.h hproto.h hfile.h $(FRC)
 hcomp.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h

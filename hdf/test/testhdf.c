@@ -54,10 +54,6 @@ static int  Index = 0;
 /* ANY new test needs to have a prototype in tproto.h */
 #include "tproto.h"
 
-#ifdef TEST_PC
-FILE       *dbg_file;
-#endif
-
 struct TestStruct
   {
       int         NumErrors;
@@ -66,7 +62,7 @@ struct TestStruct
       char        Name[16];
                   VOID(*Call) ();
   }
-FAR         Test[MAXNUMOFTESTS];
+         Test[MAXNUMOFTESTS];
 
 void
 InitTest(const char *TheName, VOID(*TheCall) (), const char *TheDescr)
@@ -126,10 +122,6 @@ main(int argc, char *argv[])
     int         ret;
     uint32      lmajor, lminor, lrelease;
     char        lstring[81];
-
-#ifdef TEST_PC
-    dbg_file = fopen("test.dbg", "w+");
-#endif
 
 #if defined __MWERKS__
     argc = ccommand(&argv);
@@ -322,16 +314,13 @@ main(int argc, char *argv[])
       {
           MESSAGE(2, printf("\nCleaning Up...\n\n");
               );
-#if defined PC && !defined UNIX386
+#if !(defined DOS386 | defined WIN386)
+          system("rm -f *.hdf *.tmp");
+#else   /* OLD_WAY */
           remove("*.hdf");
           remove("*.tmp");
-#else   /* OLD_WAY */
-          system("rm -f *.hdf *.tmp");
 #endif  /* OLD_WAY */
       }     /* end if */
-#ifdef TEST_PC
-    fclose(dbg_file);
-#endif
     exit(0);
     return (0);
 }   /* end main() */
