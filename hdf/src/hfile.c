@@ -14,7 +14,7 @@
 static char RcsId[] = "@(#)$Revision$";
 #endif
 
-/* $Id$  */
+/* $Id$ */
 
 /*LINTLIBRARY*/
 /*+
@@ -108,7 +108,6 @@ extern funclist_t comp_funcs;
 functab_t functab[] = {
     {SPECIAL_LINKED, &linked_funcs},
     {SPECIAL_EXT, &ext_funcs},
-    {SPECIAL_COMP, &comp_funcs},
     {0, NULL}                  /* terminating record; add new record */
                                /* before this line */
 };
@@ -1211,8 +1210,8 @@ int32 Hread(access_id, length, data)
     
     /* special elt, so call special function */
     if (access_rec->special)
-        return (*access_rec->special_func->read)(access_rec, length, data);
-    
+        return (*access_rec->special_func->read)(access_rec, length, (VOIDP) data);
+
     /* check validity of file record */
     file_rec = FID2REC(access_rec->file_id);
     if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0)
@@ -1287,7 +1286,7 @@ int32 Hwrite(access_id, length, data)
 
     /* if special elt, call special function */
     if (access_rec->special)
-       return (*access_rec->special_func->write)(access_rec, length, data);
+       return (*access_rec->special_func->write)(access_rec, length, (VOIDP)data);
 
     /* check validity of file record and get dd ptr */
     file_rec = FID2REC(access_rec->file_id);
@@ -2541,6 +2540,13 @@ int Hnumber(file_id, tag)
   
 */
 
+/*
+  The functionality of these routines is covered by the SPECIALTAG,
+  MKSPECIALTAG and BASETAG macros
+*/
+
+#ifdef SPECIAL_TABLE
+
 typedef struct special_table_t {
     uint16 tag;
     uint16 special_tag;
@@ -2615,6 +2621,7 @@ uint16 HDbase_tag(tag)
     return tag;                        /* return itself */
 }
 
+#endif /* SPECIAL_TABLE */
 
 /*--------------------------------------------------------------------------
 
@@ -2641,6 +2648,7 @@ char string[];
 #endif
 {
     char *FUNC="Hgetlibversion";
+    int i;
 
     HEclear();
 
@@ -3338,8 +3346,7 @@ int32 file_id;
     /* uint32 lmajorv, lminorv, lrelease; */
     uint8 /*lstring[81],*/ lversion[LIBVER_LEN];
     filerec_t *file_rec;
-    int32 ret;
-    int i;
+    int ret, i;
     char *FUNC="Hupdate_version";
 
     HEclear();

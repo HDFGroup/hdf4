@@ -312,16 +312,29 @@ typedef struct functab_t {
                      (((uint32)(i) & 0xffff) < MAX_ACC) && \
                      (access_records))
 #define AID2SLOT(i) (VALIDAID(i) ? (uint32)(i) & 0xffff : -1)
-#define AID2REC(i)  ((VALIDAID(i) ? &(access_records[(uint32)(i) & 0xffff]) :\
-                     NULL))
-#define NO_ID       (uint32) 0
+#define AID2REC(i) ((VALIDAID(i) ? &(access_records[(uint32)(i) & 0xffff]) : NULL))
 
-/* a tag is special if its tag belongs to a special set.  This test can be
-   just ((t)==SPECIAL1 || (t)==SPECIAL2), or a full blown function.
-   right now, no special tags yet */
-#define BASETAG(t)      (HDbase_tag(t))
-#define SPECIALTAG(t)   (HDis_special_tag(t))
+#define NO_ID     (uint32) 0
+
+/* The HDF tag space is divided as follows based on the 2 highest bits:
+   00: NCSA reserved ordinary tags
+   01: NCSA reserved special tags
+   10, 11: User tags.
+
+   It is relatively cheap to operate with special tags within the NCSA
+   reserved tags range. For users to specify special tags and their
+   corresponding ordinary tag, the pair has to be added to the
+   special_table in hfile.c and SPECIAL_TABLE must be defined. */
+
+#ifdef SPECIAL_TABLE
+#define BASETAG(t) (HDbase_tag(t))
+#define SPECIALTAG(t) (HDis_special_tag(t))
 #define MKSPECIALTAG(t) (HDmake_special_tag(t))
+#else
+#define BASETAG(t)      ((~(t) & 0x8000) ? ((t) & ~0x4000) : (t))
+#define SPECIALTAG(t)   ((~(t) & 0x8000) && ((t) & 0x4000))
+#define MKSPECIALTAG(t) ((~(t) & 0x8000) ? ((t) | 0x4000) : DFTAG_NULL)
+#endif /*SPECIAL_TABLE */
 
 /* access records array.  defined in hfile.c */
 extern accrec_t *access_records;
