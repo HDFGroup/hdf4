@@ -20,8 +20,13 @@
 #include	<rpc/types.h>
 #include	<rpc/xdr.h>
 #else
-#include      <types.h> /* "../xdr/types.h" */
-#include      <xdr.h>  /* "../xdr/xdr.h" */
+#ifdef macintosh /* For the mac renamed "types.h" to "rtypes.h" 
+                    because we don't want it to pick up the system one */
+#include      "rtypes.h" /* "../xdr/rtypes.h" */
+#else /* !macintosh */
+#include      <types.h>  /* "../xdr/types.h" */
+#endif /* !macintosh */
+#include      <xdr.h>    /* "../xdr/xdr.h" */
 #endif /* !NO_SYSTEM_XDR_INCLUDES */
 
 #include	"netcdf.h" /* needed for defs of nc_type, ncvoid, ... */
