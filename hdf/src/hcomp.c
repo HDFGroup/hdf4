@@ -448,8 +448,10 @@ printf("HCIread_header(): nt=%d, sign_ext=%d, fill_one=%d, start_bit=%d, bit_len
     int32 HCcreate(id,tag,ref,model_type,coder_type)
         int32 id;            IN: the file id to create the data in
         uint16 tag,ref;      IN: the tag/ref pair which is to be compressed
-        intn model_type;     IN: the type of modeling to use
-        intn coder_type;     IN: the type of encoding to use
+        comp_model_t model_type;     IN: the type of modeling to use
+	model_info *m_info;  IN: Information needed for the modeling type chosen
+        comp_coder_t coder_type;     IN: the type of encoding to use
+	coder_info *c_info;  IN: Information needed for the encoding type chosen
 
  RETURNS
     Return an AID to the newly created compressed element, FAIL on error.
