@@ -65,9 +65,6 @@ CFLAGS= -ansi -O
 FC= f77
 FFLAGS=
 
-# Define gl library
-GLLIB = -lgl_s
-
 # Location where the HDF include files are to be installed
 HDFINC= `pwd`/include
 
