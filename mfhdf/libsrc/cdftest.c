@@ -30,9 +30,9 @@ static char mrcsid[] = "Id: cdftest.c,v 1.11 1994/01/10 23:07:27 chouck Exp ";
 
 # define assert(ex) {if (!(ex)){fprintf(stderr,"Assertion failed: file %s, line %d\n", __FILE__, __LINE__);exit(1);}}
 
-#define MAXSHORT	32767
-#define MAXLONG		2147483647
-#define  MAXBYTE	127
+#define CDFMAXSHORT	32767
+#define CDFMAXLONG		2147483647
+#define  CDFMAXBYTE	127
 
 /*   #ifdef PC  */
 /* For CRAYMPP, an explicit include <errno.h> uses the task-local memory */
@@ -177,23 +177,23 @@ struct tcdfvar {
 } testvars[]  = {
 #define Byte_id 0
 	{ "Byte", NC_BYTE, "Byte sized integer variable",
-		-MAXBYTE, MAXBYTE, -MAXBYTE, MAXBYTE , "ones",
+		-CDFMAXBYTE, CDFMAXBYTE, -CDFMAXBYTE, CDFMAXBYTE , "ones",
 			2, {0,1,DONT_CARE} },
 #define Short_id 1
 	{ "Short", NC_SHORT, "Short variable",
-		-MAXSHORT, MAXSHORT, -MAXSHORT, MAXSHORT , "ones",
+		-CDFMAXSHORT, CDFMAXSHORT, -CDFMAXSHORT, CDFMAXSHORT , "ones",
 			2, {0, 2, DONT_CARE }},
 #define Long_id 2
 	{ "Long", NC_LONG, "Long Integer variable",
-		-MAXLONG, MAXLONG, -MAXLONG, MAXLONG, "ones",
+		-CDFMAXLONG, CDFMAXLONG, -CDFMAXLONG, CDFMAXLONG, "ones",
 			2, {1, 2, DONT_CARE}},
 #define Float_id 3
 	{ "Float", NC_FLOAT, "Single Precision Floating Point variable",
-		-MAXLONG, MAXLONG, -MAXLONG, MAXLONG, "flots",
+		-CDFMAXLONG, CDFMAXLONG, -CDFMAXLONG, CDFMAXLONG, "flots",
 			3, {0, 1, 2 }},
 #define Double_id 4
 	{ "Double", NC_DOUBLE, "Double Precision Floating Point variable",
-		-MAXLONG, MAXLONG, -MAXLONG, MAXLONG, "dflots",
+		-CDFMAXLONG, CDFMAXLONG, -CDFMAXLONG, CDFMAXLONG, "dflots",
 			3, {0, 1, 2 }},
 } ;
 #define	NUM_TESTVARS	5
