@@ -108,7 +108,7 @@ DIFF_FLAGS = -w
 ### ------------------- end of makefile fragments -------------------------
 # ############# End of system configuration section. ###############
 
-MANUALS		= netcdf.3 netcdf.3f
+MANUALS		= 
 INFOS		= guide.info
 MANIFEST = $(DISTFILES)
 DISTFILES	= README Makefile.in \
