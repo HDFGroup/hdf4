@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.8  1993/02/16 18:26:17  chouck
+# Revision 1.9  1993/02/16 19:19:37  koziol
+# Deleted obsolete JPEG file from JINCS line
+#
+# Revision 1.8  1993/02/16  18:26:17  chouck
 # Added JPeg files to 'make saber' option
 #
 # Revision 1.7  1993/01/26  19:42:14  koziol
@@ -147,7 +150,7 @@ JCSRCS= jbsmooth.c jcarith.c jccolor.c jcdeflts.c jcexpand.c jchuff.c \
         jrdjfif.c jrdgif.c jrdppm.c jrdrle.c jrdtarga.c jwrjfif.c jwrgif.c \
         jwrppm.c jwrrle.c jwrtarga.c jmemsys.c
 
-JINCS= jinclude.h jconfig.h jpegdata.h jversion.h jmemsys.h egetopt.c
+JINCS= jinclude.h jconfig.h jpegdata.h jversion.h jmemsys.h 
 
 # objectfiles common to both JPEG compression and decompression
 COMOBJECTS= jutils.o jerror.o jmemmgr.o jmemsys.o 
