@@ -100,6 +100,14 @@
  * Define options for each platform
  *-------------------------------------------------------------------------*/
 
+/*
+ * Meaning of each defined macros (not completed yet)
+ *
+ * BIG_LONGS--Define when long is not "equal" to int32.  True in cases
+ *      where (int32 *) is not compatible with (long *).  Should
+ *      be renamed as LONGNEINT32.
+ */
+
 #if (defined(SUN) || defined(sun) || defined(__sun__) || defined(__SUNPRO_C)) & !defined(__i386)
 #ifdef __STDC__
 #define ANSISUN
@@ -339,6 +347,14 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 #define IRIX
 #endif
 
+#if (_MIPS_SZLONG == 64)
+/* IRIX 64 bits objects.  It is nearly the same as the conventional
+ * 32 bits objects.  Let them share IRIX definitions for now.
+ */
+#define IRIX64
+#endif
+
+
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
 Please check your Makefile.
@@ -376,6 +392,10 @@ typedef long               hdf_pint_t;   /* an integer the same size as a pointe
 #else
 #define FILELIB UNIXBUFIO
 #endif
+#ifdef IRIX64
+#define BIG_LONGS
+#endif
+
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
