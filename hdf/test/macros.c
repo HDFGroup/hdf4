@@ -63,7 +63,7 @@ test_macros(void)
 		if (errors1 == 0) {
 			printf("UNSIGNED INTEGER16: SUCCESSFUL\n");
 		} else {
-			printf("UNSIGNED INTEGER16: %s ERRORS\n",errors1);
+			printf("UNSIGNED INTEGER16: %d ERRORS\n",errors1);
 		}
 	}
 
@@ -95,7 +95,7 @@ test_macros(void)
 		if (errors2 == 0) {
 			printf("SIGNED INTEGER16: SUCCESSFUL\n");
 		} else {
-			printf("SIGNED INTEGER16: %s ERRORS\n",errors2);
+			printf("SIGNED INTEGER16: %d ERRORS\n",errors2);
 		}
 	}
 
@@ -110,14 +110,14 @@ test_macros(void)
 
 		if ( old32u != new32u ) {
 			if (Verbosity > 8) {
-				printf("old32u = %d, %x\n", old32u, old32u);
+				printf("old32u = %u, %x\n", (unsigned)old32u, (unsigned)old32u);
 				printf("str: ");
 				p = (signed char *) &str32u;
 				for (i=0; i<sizeof(uint32); i++){
 					printf("%x ", 0xff & *p++);
 				}
 				printf("\n");
-				printf("new32u = %d, %x\n", new32u, new32u);
+				printf("new32u = %u, %x\n", (unsigned)new32u, (unsigned)new32u);
 				printf("\n");
 			}
 			errors3++;
@@ -127,7 +127,7 @@ test_macros(void)
 		if (errors3 == 0) {
 			printf("UNSIGNED INTEGER32: SUCCESSFUL\n");
 		} else {
-			printf("UNSIGNED INTEGER32: %s ERRORS\n",errors3);
+			printf("UNSIGNED INTEGER32: %d ERRORS\n",errors3);
 		}
 	}
 
@@ -142,14 +142,14 @@ test_macros(void)
 
 		if ( old32 != new32 ) {
 			if (Verbosity > 8) {
-				printf("old32 = %d, %x\n", old32, old32);
+				printf("old32 = %d, %x\n", (int)old32, (unsigned)old32);
 				printf("str: ");
 				p = (signed char *) &str32;
 				for (i=0; i<sizeof(int32); i++){
 					printf("%x ", 0xff & *p++);
 				}
 				printf("\n");
-				printf("new32 = %d, %x\n", new32, new32);
+				printf("new32 = %d, %x\n", (int)new32, (unsigned)new32);
 				printf("\n");
 			}
 			errors4++;
@@ -159,7 +159,7 @@ test_macros(void)
 		if (errors4 == 0) {
 			printf("SIGNED INTEGER32: SUCCESSFUL\n");
 		} else {
-			printf("SIGNED INTEGER32: %s ERRORS\n",errors4);
+			printf("SIGNED INTEGER32: %d ERRORS\n",errors4);
 		}
 	}
 
