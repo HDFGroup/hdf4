@@ -17,7 +17,6 @@ File types can be determined by their extensions:
 
 head.r24      - isosurface rendering of human head
 palette.raw   - contains a raw palette
-greypal.raw   - contains a raw grey-scale palette
 storm110.raw  - raw image of data from storm simulation
 storm120.raw  - raw image of data from storm simulation
 storm130.raw  - raw image of data from storm simulation
