@@ -1,0 +1,76 @@
+.TH SDSETDIMVAL_COMP 3 "November 1995" "NCSA HDF 4.0"
+.ft B
+#include <mfhdf.h>
+.TP
+intn SDsetdimval_comp(int32 dimid, intn comp_mode)
+.sp
+.I  dimid
+	IN: dimension ID, returned from SDgetdimid
+.I comp_mode
+        IN: backward compatibility:
+               SD_DIMVAL_BW_COMP -- compatible
+               SD_DIMVAL_BW_INCOMP -- incompatible.
+.TP
+Purpose
+Set the backward compatibility mode of a dimension record for
+next write of that dimension.
+
+.TP
+Return value
+Return SUCCEED if no error, else FAIL.
+
+.TP
+Description
+SDsetdimval sets the backward compatibility of a dimension record
+for the next write of that dimension. The default mode is backward 
+compatible for HDF4.0b2 and will be changed to incompatible in 
+HDF4.0r2. 
+
+Unlimited dimension is always backward compatible. SDsetdimval_comp 
+takes no action for unlimited dimension. 
+
+In HDF4.0b1 and previous releases a dimension record was represented
+by a vgroup which contains a vdata. The vdata has <dimension size> 
+number of elements and the values of the elements are fake values
+from 0, 1, 2, ... , <dimension size> -1. The vdata has class 
+"DimVal0.0".
+
+Starting from HDF4.0b2 a new version of dimension vdata will be 
+created, which has only 1 element and the value of that element 
+is the <dimension size>. The new version of vdata has class 
+"DimVal0.1". 
+
+If SD_DIMVAL_BW_INCOMP is used to set incompatible mode, 
+only the vdata of "DimVal0.1" will be written to the hdf file. 
+The dimension vgroup has only the "DimVal0.1" vdata. 
+Tools using HDF4.0b1 or older version can not understand this 
+version of dimension value, therefore can not read the SDS. 
+
+SDsetdimval_comp(dimid, SD_DIMVAL_BW_COMP) sets compatible mode.
+Both vdatas of "DimVal0.0" and of "DimVal0.1" will be written to 
+the hdf file. The dimension vgroup has two vdatas, "DimVal0.0" 
+and "DimVal0.1". Tools compiled with HDF4.0b1 or older HDF 
+libraries can read dimension information from "DimVal0.0" 
+dimension vdata. 
+
+SDsetdimval_comp can be called any time between SDstart and SDend.
+The current call overrides the mode set by previous calls. 
+
+.TP
+Examples
+
+Assuming the following,
+.nf
+        dimid=SDgetdimid(sdid, 0);
+        status = SDsetdimval_comp(dimid, SD_DIMVAL_BW_INCOMP);
+.fi
+
+.TP
+FORTRAN 
+No available yet.
+.br
+
+     See Also
+
+              SDisdimval_bwcomp 
+
