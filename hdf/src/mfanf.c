@@ -307,7 +307,7 @@ nafannlen(intf *an_id)
  * Invokes: ANwriteann()
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nafwriteann(intf *an_id,_fcd *ann, intf *annlen)
+nafwriteann(intf *an_id,_fcd ann, intf *annlen)
 {
 #ifdef LATER
   CONSTR(FUNC, "afwriteann");
@@ -327,7 +327,7 @@ nafwriteann(intf *an_id,_fcd *ann, intf *annlen)
  * Invokes: ANreadann()
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nafreadann(intf *an_id,_fcd *ann, intf *maxlen)
+nafreadann(intf *an_id,_fcd ann, intf *maxlen)
 {
 #ifdef LATER
   CONSTR(FUNC, "afreadann");

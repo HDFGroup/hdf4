@@ -1952,10 +1952,10 @@ extern FRETVAL(intf)
 nafannlen(intf *an_id);
 
 extern FRETVAL(intf)
-nafwriteann(intf *an_id,_fcd *ann, intf *annlen);
+nafwriteann(intf *an_id,_fcd ann, intf *annlen);
 
 extern FRETVAL(intf)
-nafreadann(intf *an_id,_fcd *ann, intf *maxlen);
+nafreadann(intf *an_id,_fcd ann, intf *maxlen);
 
 extern FRETVAL(intf)
 nafendaccess(intf *an_id);
