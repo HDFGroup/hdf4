@@ -64,6 +64,7 @@
 
 #if (FILELIB == UNIXBUFIO)
 /* using C buffered file I/O routines to access files */
+#include <stdio.h>
 typedef FILE *hdf_file_t;
 #ifdef VMS
 /* For VMS, use "mbc=64" to improve performance     */
@@ -72,7 +73,7 @@ typedef FILE *hdf_file_t;
                                 fopen((p), "r", "mbc=64"))
 #   define HI_CREATE(p)        (fopen((p), "w+", "mbc=64"))
 #else  /*  !VMS  */
-#if defined SUN && define (__GNUC__)
+#if defined SUN && defined (__GNUC__)
 #   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
                                 fopen((p), "r+") : fopen((p), "r"))
 #   define HI_CREATE(p)        (fopen((p), "w+"))
