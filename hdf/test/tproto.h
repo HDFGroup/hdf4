@@ -40,6 +40,7 @@ void        test_vspack(void);
 void        test_comp(void);
 void        test_bitio(void);
 void        test_tbbt(void);
+void        test_macros(void);
 void        test_conv(void);
 void        test_nbit(void);
 void        test_hvblocks(void);
