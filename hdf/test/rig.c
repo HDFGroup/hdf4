@@ -1,7 +1,7 @@
 #include "tproto.h"
 
-#define XSIZE 10
-#define YSIZE 10
+#define XSIZE 13
+#define YSIZE 15
 #define TESTFILE "tdf24.hdf"
  
 extern int num_errs;
@@ -812,17 +812,17 @@ void test_r24()
     int32 xd, yd;
     int il;
     int Error;
-    char buf[XSIZE][YSIZE][3];
-    char buf1[XSIZE][3][YSIZE];
-    char buf2[3][XSIZE][YSIZE];
-    char in[XSIZE][YSIZE][3];
-    char in1[XSIZE][3][YSIZE];
-    char in2[3][XSIZE][YSIZE];
+    char buf[YSIZE][XSIZE][3];
+    char buf1[YSIZE][3][XSIZE];
+    char buf2[3][YSIZE][XSIZE];
+    char in[YSIZE][XSIZE][3];
+    char in1[YSIZE][3][XSIZE];
+    char in2[3][YSIZE][XSIZE];
     int i,j,ret;
     uint16 ref0, ref1, ref2;
 
-    for (i=0; i < XSIZE; i++)
-       for (j=0; j < YSIZE; j++) {
+    for (i=0; i < YSIZE; i++)
+       for (j=0; j < XSIZE; j++) {
            buf[i][j][0] = buf[i][j][1] = buf[i][j][2] = (char)(i + j);
            buf1[i][0][j] = buf1[i][1][j] = buf1[i][2][j] = (char)(i | j);
            buf2[0][i][j] = buf2[1][i][j] = buf2[2][i][j] = (char)(i ^ j);
@@ -872,8 +872,8 @@ void test_r24()
     ret = DF24getimage(TESTFILE,(VOIDP)in, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
-     for (i=0; i< XSIZE; i++)
-       for (j=0; j< YSIZE; j++)
+     for (i=0; i< YSIZE; i++)
+       for (j=0; j< XSIZE; j++)
            if (in[i][j][0] != buf[i][j][0]
                || in[i][j][1] != buf[i][j][1]
                || in[i][j][2] != buf[i][j][2]) {
@@ -903,8 +903,8 @@ void test_r24()
     ret = DF24getimage(TESTFILE,(VOIDP)in, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
-     for (i=0; i< XSIZE; i++)
-       for (j=0; j< YSIZE; j++)
+     for (i=0; i< YSIZE; i++)
+       for (j=0; j< XSIZE; j++)
            if (in[i][j][0] != buf1[i][0][j]
                || in[i][j][1] != buf1[i][1][j]
                || in[i][j][2] != buf1[i][2][j]) {
@@ -935,8 +935,8 @@ void test_r24()
     ret = DF24getimage(TESTFILE,(VOIDP)in, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
-     for (i=0; i< XSIZE; i++)
-       for (j=0; j< YSIZE; j++)
+     for (i=0; i< YSIZE; i++)
+       for (j=0; j< XSIZE; j++)
            if (in[i][j][0] != buf2[0][i][j]
                || in[i][j][1] != buf2[1][i][j]
                || in[i][j][2] != buf2[2][i][j]) {
@@ -973,8 +973,8 @@ void test_r24()
     ret = DF24getimage(TESTFILE,(VOIDP)in1, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
-     for (i=0; i< XSIZE; i++)
-       for (j=0; j< YSIZE; j++)
+     for (i=0; i< YSIZE; i++)
+       for (j=0; j< XSIZE; j++)
            if (in1[i][0][j] != buf[i][j][0]
                || in1[i][1][j] != buf[i][j][1]
                || in1[i][2][j] != buf[i][j][2]) {
@@ -999,8 +999,8 @@ void test_r24()
     ret = DF24getimage(TESTFILE,(VOIDP)in1, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
-     for (i=0; i< XSIZE; i++)
-       for (j=0; j< YSIZE; j++)
+     for (i=0; i< YSIZE; i++)
+       for (j=0; j< XSIZE; j++)
            if (in1[i][0][j] != buf1[i][0][j]
                || in1[i][1][j] != buf1[i][1][j]
                || in1[i][2][j] != buf1[i][2][j]) {
@@ -1025,8 +1025,8 @@ void test_r24()
     ret = DF24getimage(TESTFILE,(VOIDP)in1, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
-     for (i=0; i< XSIZE; i++)
-       for (j=0; j< YSIZE; j++)
+     for (i=0; i< YSIZE; i++)
+       for (j=0; j< XSIZE; j++)
            if (in1[i][0][j] != buf2[0][i][j]
                || in1[i][1][j] != buf2[1][i][j]
                || in1[i][2][j] != buf2[2][i][j]) {
@@ -1058,8 +1058,8 @@ void test_r24()
     ret = DF24getimage(TESTFILE,(VOIDP)in2, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
-     for (i=0; i< XSIZE; i++)
-       for (j=0; j< YSIZE; j++)
+     for (i=0; i< YSIZE; i++)
+       for (j=0; j< XSIZE; j++)
            if (in2[0][i][j] != buf[i][j][0]
                || in2[1][i][j] != buf[i][j][1]
                || in2[2][i][j] != buf[i][j][2]) {
@@ -1082,8 +1082,8 @@ void test_r24()
 
     ret = DF24getimage(TESTFILE,(VOIDP)in2, XSIZE, YSIZE);
     RESULT("DF24getimage");
-     for (i=0; i< XSIZE; i++)
-       for (j=0; j< YSIZE; j++)
+     for (i=0; i< YSIZE; i++)
+       for (j=0; j< XSIZE; j++)
            if (in2[0][i][j] != buf1[i][0][j]
                || in2[1][i][j] != buf1[i][1][j]
                || in2[2][i][j] != buf1[i][2][j]) {
@@ -1108,8 +1108,8 @@ void test_r24()
     ret = DF24getimage(TESTFILE,(VOIDP)in2, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
-     for (i=0; i< XSIZE; i++)
-       for (j=0; j< YSIZE; j++)
+     for (i=0; i< YSIZE; i++)
+       for (j=0; j< XSIZE; j++)
            if (in2[0][i][j] != buf2[0][i][j]
                || in2[1][i][j] != buf2[1][i][j]
                || in2[2][i][j] != buf2[2][i][j]) {
@@ -1312,12 +1312,12 @@ void test_r8()
 		exit(1);	
 	}
 
-    for(x=0;x<XD1;x++)
-       for (y=0;y<YD1;y++)
-           im1[x * XD1 + y] = (uint8)(x+y);
-    for(x=0;x<XD2;x++)
-       for(y=0;y<YD2;y++)
-           im2[x * XD2 + y] = (uint8)((2*x+y)-256*((2*x+y)/256));
+    for(y=0;y<YD1;y++)
+       for (x=0;x<XD1;x++)
+           im1[y * XD1 + x] = (uint8)(x+y);
+    for(y=0;y<YD2;y++)
+       for(x=0;x<XD2;x++)
+           im2[y * XD2 + x] = (uint8)((2*x+y)-256*((2*x+y)/256));
     for (x=0;x<256;x++) {
        pal1[3*x] = (uint8)x;
        pal1[3*x + 1] = (uint8)x;
