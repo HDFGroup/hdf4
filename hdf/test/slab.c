@@ -1003,7 +1003,7 @@ slabwf64(void)
 }
 
 /*
-   ** Write intn data set to slabwin.hdf as 5 hyperslabs.
+   ** Write int32 data set as native data type to slabwin.hdf as 5 hyperslabs.
  */
 static int
 slabwin(void)
@@ -1160,7 +1160,7 @@ slabwin(void)
 }
 
 /*
-   ** Write uintn data set to slabwuin.hdf as 5 hyperslabs.
+   ** Write uint32 data set as native data type to slabwuin.hdf as 5 hyperslabs.
  */
 static int
 slabwuin(void)
