@@ -3824,6 +3824,141 @@ test_mgr_r24(int flag)
 
 }   /* end test_mgr_r24() */
 
+#define GR_R8FILE    "gr_r8.hdf"
+#define GR_R8XDIM      8
+#define GR_R8YDIM      10
+
+/* Sub-tests for test_mgr_r8() */
+static void test_mgr_r8_a(int flag)
+{
+    int32 fid;              /* HDF file ID */
+    int32 grid;             /* GRID for the interface */
+    int32 ret;              /* generic return value */
+    uint8 palette[256][3];
+    uint8 picture[GR_R8YDIM][GR_R8XDIM];
+    intn i,j;               /* indices */
+
+/* A - Write/Read DF8 image with palette */
+    MESSAGE(8, printf("Operate on DF8 images\n"););
+
+    /* initialize the palette */
+    for (i = 0; i < 256; i++)
+    {
+        for (j = 0; j < 3; j++)
+        {
+            palette[i][j] = i;
+        }
+    }
+
+    /* initialize the image */
+    for (j = 0; j < GR_R8XDIM; j++)
+    {
+        for (i = 0; i < GR_R8YDIM; i++)
+        {
+            picture[i][j] = i+j;
+        }
+    }
+
+    /* Write out the test data */
+    ret = DFR8setpalette((VOIDP) palette);
+    CHECK(ret,FAIL,"DFR8setpalette");
+    ret = DFR8putimage(GR_R8FILE, (VOIDP) picture, GR_R8XDIM, GR_R8YDIM, COMP_RLE);
+    CHECK(ret,FAIL,"DFR8putimage");
+
+    /* Open up the existing datafile and get the image information from it */
+    fid=Hopen(GR_R8FILE,DFACC_READ,0);
+    CHECK(fid,FAIL,"Hopen");
+
+    /* Initialize the GR interface */
+    grid=GRstart(fid);
+    CHECK(grid,FAIL,"GRstart");
+
+    {
+        int32 riid;     /* RI ID for the image */
+        int32 pal_id;     /* Palette ID for the LUT */
+        int32 dims[2]={GR_R8XDIM,GR_R8YDIM};    /* dimensions for the empty image */
+        uint8 image[GR_R8YDIM][GR_R8XDIM]; /* space for the image data */
+        uint8 image0[GR_R8YDIM][GR_R8XDIM]; /* space for the image data */
+        int32 start[2];     /* start of image data to grab */
+        int32 stride[2];    /* stride of image data to grab */
+        int32 ncomp;        /* Number of components in the DFR8 image */
+        int32 nt;           /* Number-type of the DFR8 image */
+        int32 dimsizes[2];  /* Dimensions of the DFR8 image */
+        int32 interlace;    /* Palette interlace */
+        int32 num_entries;  /* Number of palette entries */
+
+        /* Initialize data we are expecting to read in */
+        for(i=0; i<GR_R8YDIM; i++)
+            for(j=0; j<GR_R8XDIM; j++)
+                image[i][j]=i+j;
+
+        /* Get the first image in this file */
+        riid=GRselect(grid,0);
+        CHECK(riid,FAIL,"GRselect");
+
+        /* Check the image information */
+        ret=GRgetiminfo(riid,NULL,&ncomp,&nt,NULL,dimsizes,NULL);
+        CHECK(ret,FAIL,"GRgetiminfo");
+        VERIFY(ncomp,1,"GRgetiminfo");
+        VERIFY(nt,DFNT_UCHAR8,"GRgetiminfo");
+        VERIFY(dimsizes[0],dims[0],"GRgetiminfo");
+        VERIFY(dimsizes[1],dims[1],"GRgetiminfo");
+
+        /* Read the whole image in */
+        start[0]=start[1]=0;
+        stride[0]=stride[1]=1;
+        ret=GRreadimage(riid,start,stride,dims,image0);
+        CHECK(ret,FAIL,"GRreadimage");
+
+        /* Verify correct image contents */
+        if(HDmemcmp(image,image0,GR_R8YDIM*GR_R8XDIM)!=0) {
+            MESSAGE(3, printf("Error reading data for DF8 image\n"););
+            num_errs++;
+        } /* end if */
+
+        pal_id = GRgetlutid(riid, 0);
+        CHECK(pal_id,FAIL,"GRgetlutid");
+
+        ncomp=nt=0;
+        ret = GRgetlutinfo(pal_id, &ncomp, &nt, &interlace, &num_entries);
+        CHECK(ret,FAIL,"GRgetlutinfo");
+        VERIFY(ncomp,3,"GRgetlutinfo");
+        VERIFY(nt,DFNT_UINT8,"GRgetlutinfo");
+        VERIFY(interlace,0,"GRgetlutinfo");
+        VERIFY(num_entries,256,"GRgetlutinfo");
+
+        /* Close the empty image */
+        ret=GRendaccess(riid);
+        CHECK(ret,FAIL,"GRendaccess");
+    }
+    
+    /* Shut down the GR interface */
+    ret=GRend(grid);
+    CHECK(ret,FAIL,"GRend");
+
+    /* Close the file */
+    ret=Hclose(fid);
+    CHECK(ret,FAIL,"Hclose");
+} /* end test_mgr_r8_a() */
+
+/****************************************************************
+**
+**  test_mgr_r8(): Multi-file Raster/DF8 Compatibility Tests
+** 
+**  VIII. Multi-File Raster/DF8 Compatibility Tests
+**      A. Read/Write DF8 Image with palette
+** 
+****************************************************************/
+static void
+test_mgr_r8(int flag)
+{
+    /* Output message about test being performed */
+    MESSAGE(6, printf("Testing Multi-file Raster/DF8 Compatibility\n"););
+
+    test_mgr_r8_a(flag);
+
+}   /* end test_mgr_r8() */
+
 #ifdef LATER
 #define GR_DFPFILE    "gr_pal.hdf"
 
@@ -3973,6 +4108,7 @@ test_mgr(void)
     test_mgr_old(0);
     test_mgr_compress(0);
     test_mgr_r24(0);
+    test_mgr_r8(0);
 #ifdef LATER
     test_mgr_pal(0);    /* read in old-style DFP palette tests */
 #endif /* LATER */
