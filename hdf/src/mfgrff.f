@@ -173,3 +173,202 @@ C------------------------------------------------------------------------------
       return
       end
 
+C-------------------------------------------------------------------------
+C        Name:      mggichnk
+C        Purpose:   get Info on GR 
+C        Inputs:    riid       - access ID to GR
+C        Outputs:   dim_length - chunk dimensions (if any)
+C                   comp_type: 
+C                               -1 - GR is non-chunked
+C                                0 - GR is chunked without compression
+C                                1 - GR is chunked and compressed 
+C        Returns:   0 on success, -1 on failure
+C        Calls:     mgcgichnk (C stub for GRgetchunkinfo function)
+C-------------------------------------------------------------------------
+
+         INTEGER function mggichnk(riid, dim_length, comp_type)
+
+         INTEGER riid, dim_length(*), comp_type
+         INTEGER mgcgichnk 
+
+
+         mggichnk = mgcgichnk(riid, dim_length, comp_type)
+         return
+         end
+
+           
+C THIS FUNCTION IS COMMENTED OUT. C version does not work
+C                  EIP 12/29/97 
+C-------------------------------------------------------------------------
+C        Name:      mgrcchnk
+C        Purpose:   read the specified chunk of CHARACTER data to the GR 
+C        Inputs:    riid      - access ID to GR
+C                   start     - chunk coordinates 
+C                   char_data - buffer the data will be read into  
+C        Returns:   0 on success, -1 on failure
+C        Calls:     mgcrcchnk (C stub for GRreadchunk function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+C
+C         INTEGER function mgrcchnk(riid, start, char_data)
+C
+C         INTEGER riid, start(*)
+C         CHARACTER*(*) char_data(*)
+C         INTEGER mgcrcchnk 
+C
+C         mgrcchnk = mgcrcchnk(riid, start, char_data) 
+C
+C         return 
+C         end
+C
+C           
+C THIS FUNCTION IS COMMENTED OUT. C version does not work
+C                  EIP 12/29/97 
+C-------------------------------------------------------------------------
+C        Name:      mgrchnk
+C        Purpose:   read the specified chunk of NUMERIC data to the GR 
+C        Inputs:    riid     - access ID to GR
+C                   start    - chunk coordinates 
+C                   num_data - buffer the  numeric data will be read into  
+C        Returns:   0 on success, -1 on failure
+C        Calls:     mgcrchnk (C stub for GRreadchunk function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+C
+C         INTEGER function mgrchnk(riid, start, num_data)
+C
+C         INTEGER riid, start(*), num_data(*)
+C         INTEGER mgcrchnk 
+C
+C         mgrchnk = mgcrchnk(riid, start, num_data) 
+C
+C         return 
+C         end
+C
+C           
+C-------------------------------------------------------------------------
+C        Name:      mgscchnk
+C        Purpose:   set the maximum number of chunks to cache
+C        Inputs:    riid     - access ID to GR
+C                   maxcache - max number of chunks to cache 
+C                   flags    - flags =0, HDF_CACHEALL
+C                              Currently only 0 can be passed.
+C        Returns:   0 on success, -1 on failure
+C        Calls:     mgcscchnk (C stub for GRsetchunkcache function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function mgscchnk(riid, maxcache, flags)
+C
+         INTEGER riid, maxcache, flags 
+         INTEGER mgcscchnk 
+C
+         mgscchnk = mgcscchnk(riid, maxcache, flags) 
+C
+         return 
+         end
+
+           
+
+C-------------------------------------------------------------------------
+C        Name:      mgschnk
+C        Purpose:   make the GR a chunked GR 
+C        Inputs:    riid       - access ID to GR
+C                   dim_length - chunk dimensions
+C                   comp_type  - type of compression         
+C                   comp_prm   - compression parameters array
+C                   Huffman:   comp_prm(1) = skphuff_skp_size
+C                   GZIP:      comp_prm(1) = deflate_level       
+C                                      
+C        Returns:   0 on success, -1 on failure
+C        Calls:     mgcschnk (C stub for GRsetchunk function)
+C-------------------------------------------------------------------------
+
+         INTEGER function mgschnk(riid, dim_length, comp_type,
+     .                            comp_prm)
+
+         INTEGER riid, dim_length(*), comp_type, comp_prm(*)
+         INTEGER mgcschnk 
+         mgschnk = mgcschnk(riid, dim_length, comp_type,
+     .                      comp_prm)
+         return
+         end
+
+           
+C THIS FUNCTION IS COMMENTED OUT. C version does not work
+C                  EIP 12/29/97 
+C-------------------------------------------------------------------------
+C        Name:      mgwcchnk
+C        Purpose:   write the specified chunk of CHARACTER data to the GR 
+C        Inputs:    riid      - access ID to GR
+C                   start     - chunk coordinates 
+C                   char_data - buffer containing  data to be written  
+C        Returns:   0 on success, -1 on failure
+C        Calls:     mgcwcchnk (C stub for GRwritechunk function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+C
+C         INTEGER function mgwcchnk(riid, start, char_data)
+C
+C         INTEGER riid, start(*) 
+C         CHARACTER*(*) char_data(*)
+C         INTEGER mgcwcchnk 
+C
+C         mgwcchnk = mgcwcchnk(riid, start, char_data) 
+C
+C         return 
+C         end
+
+C THIS FUNCTION IS COMMENTED OUT. C version does not work
+C                  EIP 12/29/97 
+C-------------------------------------------------------------------------
+C        Name:      mgwchnk
+C        Purpose:   write the specified chunk of NUMERIC data to the GR 
+C        Inputs:    riid     - access ID to GR
+C                   start    - chunk coordinates 
+C                   num_data - buffer containing data to be written  
+C        Returns:   0 on success, -1 on failure
+C        Calls:     mgcwchnk (C stub for GRwritechunk function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+C
+C         INTEGER function mgwchnk(riid, start, num_data)
+C
+C         INTEGER riid, start(*), num_data(*)
+C         INTEGER mgcwchnk 
+C
+C         mgwchnk = mgcwchnk(riid, start, num_data) 
+C
+C         return 
+C         end
+
+           
+C-------------------------------------------------------------------------
+C        Name:      mgscompress
+C        Purpose:   compress GR 
+C        Inputs:    riid      - access ID to GR
+C                   comp_type - type of compression
+C                   supports the following compression types:
+C                            ( see hcomp.h  file) 
+C                            COMP_CODE_NONE = 0
+C                            COMP_CODE_RLE =1
+C                            COMP_CODE_SKPHUFF = 3
+C                            COMP_CODE_DEFLATE = 4
+C                   comp_prm  - compression parameters array
+C                   Huffman:   comp_prm(1) = skphuff_skp_size
+C                   GZIP:      comp_prm(1) = deflate_level       
+C        Returns:   0 on success, -1 on failure
+C        Calls:     mgcscompress (C stub for GRsetcompress function)
+C-------------------------------------------------------------------------
+
+         INTEGER function mgscompress(riid, comp_type, comp_prm)
+
+         INTEGER riid, comp_type
+         INTEGER mgcscompress 
+
+         mgscompress = mgcscompress(riid, comp_type,
+     .                              comp_prm)
+         return
+         end
+
+           
