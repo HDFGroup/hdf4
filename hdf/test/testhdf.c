@@ -154,14 +154,14 @@ main(int argc, char *argv[])
     InitTest("8bit", test_r8, "8BIT RASTER IMAGE INTERFACE");
     InitTest("pal", test_pal, "PALETTE INTERFACE");
     InitTest("24bit", test_r24, "24BIT RASTER IMAGE INTERFACE");
-    InitTest("anot", test_an, "ANNOTATIONS");
-    InitTest("anfile", test_anfile, "FILE ANNOTATIONS");
-    InitTest("manot", test_man, "MULTI-ANNOTATIONS");
     InitTest("conv", test_conv, "CONVERSION INTERFACE");
     InitTest("sdmms", test_sdmms, "SDMMS");
     InitTest("sdnmms", test_sdnmms, "SDNMMS");
     InitTest("sdstr", test_tsdstr, "DATASTRINGS");
     InitTest("slabs", test_slab, "HYPERSLAB INTERFACE");
+    InitTest("anot", test_an, "ANNOTATIONS");
+    InitTest("anfile", test_anfile, "FILE ANNOTATIONS");
+    InitTest("manot", test_man, "MULTI-ANNOTATIONS");
     InitTest("nbit", test_nbit, "N-Bit Dataset Interface");
     InitTest("litend", test_litend, "LITTLE-ENDIAN INTERFACE");
     InitTest("vset", test_vsets, "VSET InterfaceTest");
