@@ -133,6 +133,9 @@ extern int32 SDreftoindex
 extern int32 SDisrecord
     PROTO((int32 id));
 
+extern int32 SDiscoordvar
+    PROTO((int32 id));
+
 /* Define the FORTRAN names */
 
 #ifndef MFSD_FNAMES

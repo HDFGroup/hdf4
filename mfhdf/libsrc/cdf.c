@@ -1404,8 +1404,11 @@ int32  vg;
                       
                       /*
                        * Now figure out how many recs have been written
+                       * For a while there was a -1 at the end of this
+                       *   equation.  I don't remember why its there
+                       *   (4-Nov-93)
                        */
-                      vp->numrecs = data_count / vp->dsizes[0] - 1; 
+                      vp->numrecs = data_count / vp->dsizes[0]; 
                       
 #ifdef DEBUG
                       fprintf(stderr, "I have set numrecs to %d\n", vp->numrecs);
