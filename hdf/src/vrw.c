@@ -132,8 +132,11 @@ int32   interlace;
 uint8    buf[];
 #endif
 {
-    register intn isize, order, index;
-    register int16 esize,hsize;
+    register intn isize = 0;
+    register intn order = 0;
+    register intn index = 0;
+    register int16 esize = 0;
+    register int16 hsize = 0;
     register uint8   *b1,*b2;
 	int32 			i,j, nv, offset, type;
 	VWRITELIST 		*w;
@@ -406,8 +409,11 @@ int32       interlace;
 uint8        buf[];
 #endif
 {
-    register intn  isize, order, index;
-    register int16 esize,hsize;
+    register intn  isize = 0;
+    register intn  order = 0;
+    register intn  index = 0;
+    register int16 esize = 0;
+    register int16 hsize = 0;
     register uint8 *b1,*b2;
 /*
     register uint8   *tbuf;
