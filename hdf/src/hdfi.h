@@ -1,3 +1,15 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 /* $Id$ */
 
 #ifndef HDFI_H
@@ -947,12 +959,14 @@ extern int (*DFKnumout)();
 *  memory is needed, as when small conversions are done
 ******************************************************************/
 #define DF_TBUFSZ       512     /* buffer size can be smaller */
+#if 0 /* replaced with dynamic memory calls */
 #ifdef  HMASTER
     int    FAR int_DFtbuf[DF_TBUFSZ]; /* int declaration to force word boundary */
     uint8  FAR *DFtbuf = (uint8 *) int_DFtbuf;
 #else /* !HMASTER */
 extern uint8 FAR *DFtbuf;
 #endif /*HMASTER*/
+#endif 
 
 /*----------------------------------------------------------------
 ** MACRO FCALLKEYW for any special fortran-C stub keyword
