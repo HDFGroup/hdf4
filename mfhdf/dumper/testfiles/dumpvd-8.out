@@ -5,7 +5,7 @@ File name: tvset.hdf
 
 Vdata: 3
    tag = 1962; reference = 1238;
-   number of records = 10; interlace = 0;
+   number of records = 10; interlace = FULL_INTERLACE (0);
    fields = [STATION_NAME, VALUES, FLOATS];
    record size (in bytes) = 18;
    name = Multi-Order Vdata; class = No class specified;

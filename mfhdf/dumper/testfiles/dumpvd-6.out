@@ -5,7 +5,7 @@ File name: tvset.hdf
 
 Vdata: 0
    tag = 1962; reference = 1235;
-   number of records = 100; interlace = 0;
+   number of records = 100; interlace = FULL_INTERLACE (0);
    fields = [FIELD_name_HERE];
    record size (in bytes) = 4;
    name = Float Vdata; class = Test object;

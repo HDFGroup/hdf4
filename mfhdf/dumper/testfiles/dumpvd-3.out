@@ -5,7 +5,7 @@ File name: tvset.hdf
 
 Vdata: 3
    tag = 1962; reference = 1238;
-   number of records = 10; interlace = 0;
+   number of records = 10; interlace = FULL_INTERLACE (0);
    fields = [STATION_NAME, VALUES, FLOATS];
    record size (in bytes) = 18;
    name = Multi-Order Vdata; class = No class specified;
@@ -26,10 +26,10 @@ Loc.     Data
 
 Vdata: 4
    tag = 1962; reference = 1239;
-   number of records = 1; interlace = 0;
+   number of records = 1; interlace = FULL_INTERLACE (0);
    fields = [A];
    record size (in bytes) = 1;
-   name = VdataLoop-0; class = ;
+   name = VdataLoop-0; class = <Undefined>;
    number of attributes = 0 
 - field index 0: [A], type=4, order=1
    number of attributes = 0 
@@ -38,10 +38,10 @@ Loc.     Data
 
 Vdata: 16
    tag = 1962; reference = 1251;
-   number of records = 1; interlace = 0;
+   number of records = 1; interlace = FULL_INTERLACE (0);
    fields = [A];
    record size (in bytes) = 1;
-   name = VdataLoop-12; class = ;
+   name = VdataLoop-12; class = <Undefined>;
    number of attributes = 0 
 - field index 0: [A], type=4, order=1
    number of attributes = 0 
@@ -50,10 +50,10 @@ Loc.     Data
 
 Vdata: 17
    tag = 1962; reference = 1252;
-   number of records = 1; interlace = 0;
+   number of records = 1; interlace = FULL_INTERLACE (0);
    fields = [A];
    record size (in bytes) = 1;
-   name = VdataLoop-13; class = ;
+   name = VdataLoop-13; class = <Undefined>;
    number of attributes = 0 
 - field index 0: [A], type=4, order=1
    number of attributes = 0 

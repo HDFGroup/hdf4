@@ -5,7 +5,7 @@ File name: tvset.hdf
 
 Vdata: 1
    tag = 1962; reference = 1236;
-   number of records = 100; interlace = 0;
+   number of records = 100; interlace = FULL_INTERLACE (0);
    fields = [DIFFERENT_FIELD_NAME];
    record size (in bytes) = 8;
    name = Integer Vdata; class = Test object;
@@ -42,7 +42,7 @@ Loc.     Data
 
 Vdata: 2
    tag = 1962; reference = 1237;
-   number of records = 100; interlace = 0;
+   number of records = 100; interlace = FULL_INTERLACE (0);
    fields = [A, B];
    record size (in bytes) = 8;
    name = Mixed Vdata; class = No class specified;
