@@ -6,8 +6,9 @@
 This file briefly summarizes how to use the instrumented version of
 HDF and the Pablo performance data capture libraries to gather data
 about I/O behavior and procedure execution times.  More detailed
-documentation is provided in a PostScript Pablo.ps.
-
+documentation is provided in a PostScript Pablo.ps. The same information
+is also provided in Microsoft Word format in Pablo.doc and in PDF format in
+Pablo.pdf.
 				 ---
 
 The Pablo software, including the performance data capture libraries
@@ -40,7 +41,8 @@ C:
 			        traceType = 0, no trace file is produced
 				          = 1, perform Runtime Tracing
 					  = 2, perform Summary Tracing
-	(see the document Pablo.ps for further information)
+	(see the document Pablo.ps, Pablo.doc or Pablo.pdf for further 
+         information)
 
 	Purpose		Initializes tracing.
 
@@ -57,7 +59,8 @@ C:
 			packet of information for each traced routine 
 			summarizing all calls to that procedure.
 	
-			See Pablo.ps for further explanation.
+			See Pablo.ps, Pablo.pdf, or Pablo.doc for further 
+			explanation.
 
 	Example		#include "ProcMasks.h"
 
