@@ -19,6 +19,11 @@ The utilities are:
 
     . hdfed -- hdf file editor
 
+    . hdfunpac - unpacks an HDF file by exporting the scientific
+                 data elements (DFTAG_SD) to external object
+                 elements.  This is a utility for external file
+                 handling for the parallel I/O interface on the CM5.
+
     . paltohdf -- converts a raw palette to hdf
 
     . r8tohdf -- converts 8-bit raster images to hdf
@@ -26,18 +31,15 @@ The utilities are:
     . ristosds -- converts a series of raster image hdf files into a
                   single 3D sds hdf file. 
 
-    . vcompat -- converts hdf vset v1.0 files to v2.0
-
     . vmake -- creates vsets 
 
     . vshow -- dumps out vsets in an hdf file
 
-    . jpegtohdf -- converts jpeg images to hdf raster images
+    . jpeg2hdf -- converts jpeg images to hdf raster images
 
-    . hdftojpeg -- converts hdf raster images to jpeg images
+    . hdf2jpeg -- converts hdf raster images to jpeg images
 
     . fp2hdf -- converts 2D and 3D floating point data sets into HDF SDS.
 
 
-Hdfrseq, which displays images, has been moved to /HDF/contrib/NCSA/hdfrseq/.
 
