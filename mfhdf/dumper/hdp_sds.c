@@ -33,11 +33,13 @@ dumpsds_usage(intn argc,
     printf("\t-i <indices>\tDump the SDSs at positions listed in <indices>\n");
     printf("\t-r <refs>\tDump the SDSs with reference number listed in <refs>\n");
     printf("\t-n <names>\tDump the SDSs with name listed in <names>\n");
-    printf("\t-c\tPrint space characters as they are, not \\digit\n");
     printf("\t-d\tDump data only, no tag/ref, formatted to input to hp2hdf\n");
     printf("\t-h\tDump header only, no annotation for elements nor data\n");
     printf("\t-v\tDump everything including all annotations (default)\n");
-    printf("\t-s\tDo not add a carriage return to a long data line\n");
+    printf("\t-c\tPrint space characters as they are, not \\digit\n");
+    printf("\t-g\tDo not print data of file (global) attributes\n");
+    printf("\t-l\tDo not print data of local attributes\n");
+    printf("\t-s\tDo not add carriage return to a long line - dump it as a stream\n");
     printf("\t-o <filename>\tOutput to file <filename>\n");
     printf("\t-b\tBinary format of output\n");
     printf("\t-x\tAscii text format of output (default)\n");
@@ -119,6 +121,16 @@ parse_dumpsds_opts(dump_info_t *dumpsds_opts,
 
          case 'c':	/* print space characters as they are, not \digit */
                 dumpsds_opts->clean_output = TRUE;
+                (*curr_arg)++;
+                break;
+
+         case 'g':	/* suppress file (global) attr data, print its header */
+                dumpsds_opts->no_gattr_data = TRUE;
+                (*curr_arg)++;
+                break;
+
+         case 'l':	/* suppress local attr data, only print its header */
+                dumpsds_opts->no_lattr_data = TRUE;
                 (*curr_arg)++;
                 break;
 
@@ -442,11 +454,7 @@ done:
     return ret_value;
 } /* end of get_SDSindex_list */
 
-/* Displays all SD file attributes 
-   Note: the reason for dumpsds_opts is not passed for ft and no_cret
-   is print_SDattrs is also called by a function of hdp list, which has 
-   a different option structure than all the dump commands, 
-   list_info_t vs. dump_info_t */
+/* Displays all SD file attributes */
 intn
 print_SDattrs( int32 sd_id,
                FILE *fp,
@@ -473,29 +481,6 @@ print_SDattrs( int32 sd_id,
          ERROR_CONT_2( "in %s: SDattrinfo failed for %d'th attribute", 
 			"print_SDattrs", (int)attr_index );
      
-      /* to be sure that attr_buf is free before reuse since sometimes we
-         have to break the current loop and continue to the next item */
-      resetBuff( &attr_buf );
-
-      /* calculate the buffer size of the attribute using the number of
-         values in the attribute and its value size */
-      attr_buf_size = DFKNTsize(attr_nt) * attr_count;
-
-      /* make sure we are not allocating 0 elements */
-      CHECK_POS( attr_buf_size, "attr_buf_size", "print_SDattrs" );
-
-      /* allocate space for the attribute's values */
-      attr_buf = (VOIDP) HDmalloc(attr_buf_size);
-
-      /* if allocation fails, handle the failure */
-      CHECK_ALLOC( attr_buf, "attr_buf", "print_SDattrs" );
-
-      /* read the values of the attribute into the buffer attr_buf */
-      status = SDreadattr(sd_id, attr_index, attr_buf);
-      if( status == FAIL )
-         ERROR_CONT_2( "in %s: SDreadattr failed for %d'th attribute", 
-			"print_SDattrs", (int)attr_index );
-
       /* get number type description of the attribute */
       attr_nt_desc = HDgetNTdesc(attr_nt);
       if (attr_nt_desc == NULL)
@@ -510,37 +495,59 @@ print_SDattrs( int32 sd_id,
          printed = TRUE;
       }
 
-      /* display the attribute's information then free buffer */
+      /* display the attribute's information */
       fprintf(fp,"\t Attr%i: Name = %s\n", (int) attr_index, attr_name);
       fprintf(fp,"\t\t Type = %s \n\t\t Count= %i\n", attr_nt_desc, (int) attr_count);
       resetBuff(( VOIDP *) &attr_nt_desc );
 
-      /* display the attribute's values */
-      /* Note that filetype is DASCII since binary format does not contain
-         these information - it's data only */
-      fprintf(fp,"\t\t Value = ");
+      /* display the attribute's values unless user chose to suppress them */
+      if( dumpsds_opts->no_gattr_data == FALSE )
+      {
+         /* to be sure that attr_buf is free before reuse since sometimes we
+            have to break the current loop and continue to the next item */
+         resetBuff( &attr_buf );
 
-      /* if the user wishes to have clean output, i.e. option -c is selected */
-      /* Note that this option is only applicable to DFNT_CHAR type, the
-	 option will be ignored for other types */
-      if( dumpsds_opts->clean_output && attr_nt == DFNT_CHAR )
-      {
-         status = dumpclean(attr_nt, dumpsds_opts, attr_count, attr_buf, fp);
-         if( status == FAIL )
-            ERROR_CONT_2( "in %s: dumpclean failed for %d'th attribute", 
+	 /* calculate the buffer size of the attribute using the number of
+	    values in the attribute and its value size */
+	 attr_buf_size = DFKNTsize(attr_nt) * attr_count;
+
+	 /* make sure we are not allocating 0 elements */
+	 CHECK_POS( attr_buf_size, "attr_buf_size", "print_SDattrs" );
+
+	 /* allocate space for the attribute's values */
+	 attr_buf = (VOIDP) HDmalloc(attr_buf_size);
+
+	 /* if allocation fails, handle the failure */
+	 CHECK_ALLOC( attr_buf, "attr_buf", "print_SDattrs" );
+
+	 /* read the values of the attribute into the buffer attr_buf */
+	 status = SDreadattr(sd_id, attr_index, attr_buf);
+	 if( status == FAIL )
+	    ERROR_CONT_2( "in %s: SDreadattr failed for %d'th attribute", 
 			"print_SDattrs", (int)attr_index );
-      }
-      else  /* show tab, lf, null char... in octal as \011, \012, \000... */
-      {
-         status = dumpfull(attr_nt, dumpsds_opts, attr_count, attr_buf, fp,
+
+	 fprintf( fp,"\t\t Value = ");
+
+	 /* if the user wishes to have clean output, i.e. option -c is 
+	    selected - Note that this option is only applicable to DFNT_CHAR 
+	    type, the option will be ignored for other types */
+	 if( dumpsds_opts->clean_output && attr_nt == DFNT_CHAR )
+	 {
+	    status = dumpclean(attr_nt, dumpsds_opts, attr_count, attr_buf, fp);
+	    if( status == FAIL )
+		ERROR_CONT_2( "in %s: dumpclean failed for %d'th attribute", 
+			"print_SDattrs", (int)attr_index );
+	 }
+	 else  /* show tab, lf, null char... in octal as \011, \012, \000... */
+	 {
+	    status = dumpfull(attr_nt, dumpsds_opts, attr_count, attr_buf, fp,
 				ATTR_INDENT, ATTR_CONT_INDENT );
-         if( status == FAIL )
-            ERROR_CONT_2( "in %s: dumpfull failed for %d'th attribute", 
+	    if( status == FAIL )
+		ERROR_CONT_2( "in %s: dumpfull failed for %d'th attribute", 
 			"print_SDattrs", (int)attr_index );
-      }
-
-      resetBuff( &attr_buf );  /* free buffer and reset it to NULL */
-   }/* for each file attribute */
+	 }
+      }  /* end of if no file attributes */
+   }  /* for each file attribute */
 
    return( ret_value );
 }   /* end of print_SDattrs */
@@ -570,10 +577,6 @@ print_SDSattrs( int32 sds_id,
          ERROR_CONT_2( "in %s: SDattrinfo failed for %d'th attribute", 
 			"print_SDSattrs", (int)attr_index );
 
-      /* to be sure that attr_buf is free before reuse since sometimes we
-         have to break the current loop and continue to the next item */
-      resetBuff( &attr_buf );
-
       /* calculate the buffer size of the attribute using the number of
          values in the attribute and its value size */
       attr_buf_size = DFKNTsize(attr_nt|DFNT_NATIVE) * attr_count;
@@ -581,53 +584,58 @@ print_SDSattrs( int32 sds_id,
       /* make sure we are not allocating 0 elements */
       CHECK_POS( attr_buf_size, "attr_buf_size", "print_SDSattrs" );
 
-      /* allocate space for attribute's values */
-      attr_buf = (VOIDP) HDmalloc(attr_buf_size);
-      CHECK_ALLOC( attr_buf, "attr_buf", "print_SDSattrs" );
-
-      /* read the values of the attribute into buffer attr_buf */
-      status = SDreadattr(sds_id, attr_index, attr_buf);
-      if (status == FAIL)
-         ERROR_CONT_2( "in %s: SDreadattr failed for %d'th attribute", 
-			"print_SDSattrs", (int)attr_index );
-
       /* get number type description of the attribute */
       attr_nt_desc = HDgetNTdesc(attr_nt);
       if (attr_nt_desc == NULL)
          ERROR_CONT_2( "in %s: HDgetNTdesc failed for %d'th attribute", 
 			"print_SDSattrs", (int)attr_index );
 
-      /* display the attribute's information then free the buffer */
+      /* display the attribute's information */
       fprintf(fp, "\t Attr%d: Name = %s\n", (int) attr_index, attr_name);
       fprintf(fp, "\t\t Type = %s \n\t\t Count= %d\n", 
 			attr_nt_desc, (int) attr_count);
+
+      /* free buffer and reset it to NULL */
       resetBuff((VOIDP *) &attr_nt_desc );
 
-      /* display the attribute's values then free buffer */
-      /* Note that filetype is DASCII since binary format does not contain
-         these information - it's data only */
-      fprintf(fp, "\t\t Value = ");
+      /* display the attribute's values unless user chose to suppress them */
+      if( dumpsds_opts->no_lattr_data == FALSE )
+      {
+         /* to be sure that attr_buf is free before reuse since sometimes we
+            have to break the current loop and continue to the next item */
+         resetBuff( &attr_buf );
 
-      /* if the user wishes to have clean output, i.e. option -c is selected */
-      /* Note that this option is only applicable to DFNT_CHAR type, the
-	 option will be ignored in other types */
-      if( dumpsds_opts->clean_output && attr_nt == DFNT_CHAR )
-      {
-         status = dumpclean(attr_nt, dumpsds_opts, attr_count, attr_buf, fp);
-         if( status == FAIL )
-            ERROR_CONT_2( "in %s: dumpclean failed for %d'th attribute", 
+	 /* allocate space for attribute's values */
+	 attr_buf = (VOIDP) HDmalloc(attr_buf_size);
+	 CHECK_ALLOC( attr_buf, "attr_buf", "print_SDSattrs" );
+
+	 /* read the values of the attribute into buffer attr_buf */
+	 status = SDreadattr(sds_id, attr_index, attr_buf);
+	 if (status == FAIL)
+            ERROR_CONT_2( "in %s: SDreadattr failed for %d'th attribute", 
 			"print_SDSattrs", (int)attr_index );
-      }
-      else  /* show tab, lf, null char... in octal as \011, \012, \000... */
-      {
-         status = dumpfull(attr_nt, dumpsds_opts, attr_count, attr_buf, fp,
+
+	 fprintf(fp, "\t\t Value = ");
+
+	 /* if the user wishes to have clean output, i.e. option -c is 
+	    selected - Note that this option is only applicable to DFNT_CHAR 
+	    type, the option will be ignored for other types */
+	 if( dumpsds_opts->clean_output && attr_nt == DFNT_CHAR )
+	 {
+            status = dumpclean(attr_nt, dumpsds_opts, attr_count, attr_buf, fp);
+            if( status == FAIL )
+                ERROR_CONT_2( "in %s: dumpclean failed for %d'th attribute", 
+			"print_SDSattrs", (int)attr_index );
+	 }
+	 else  /* show tab, lf, null char... in octal as \011, \012, \000... */
+	 {
+            status = dumpfull(attr_nt, dumpsds_opts, attr_count, attr_buf, fp,
 				ATTR_INDENT, ATTR_CONT_INDENT );
-         if( status == FAIL )
-            ERROR_CONT_2( "in %s: dumpfull failed for %d'th attribute", 
+            if( status == FAIL )
+                ERROR_CONT_2( "in %s: dumpfull failed for %d'th attribute", 
 			"print_SDSattrs", (int)attr_index );
-      }
-
-      resetBuff( &attr_buf );  /* free buffer and reset it to NULL */
+	 }
+      }  /* end of if no local attributes */
    } /* for each attribute */
 
    return( ret_value );

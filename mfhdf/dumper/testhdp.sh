@@ -193,17 +193,36 @@ TestName="Test command $TestCmd"
 if [ "$except" != $TestCmd -a \( -z "$only" -o "$only" = $TestCmd \) ]
 then
 MESG 3 "$TestName"
+# Test 1 prints all datasets
 TEST dumpsds-1.out dumpsds swf32.hdf
+
+# Tests 2 and 3 print datasets given their indices
 TEST dumpsds-2.out dumpsds -i 2 swf32.hdf
 TEST dumpsds-3.out dumpsds -i 1,3 swf32.hdf
 
-# Next command should fail with error message: "SD with name Time: not found"
+# Test 4 should fail with error message: "SD with name Time: not found"
 TEST dumpsds-4.out dumpsds -n Time swf32.hdf
+
+# Test 5 prints datasets given their names 
 TEST dumpsds-5.out dumpsds -n fakeDim0,Data-Set-2 swf32.hdf
+
+# Test 6 prints datasets given their ref numbers
 TEST dumpsds-6.out dumpsds -r 3,2 swf32.hdf
+
+# Test 7 prints only data of the datasets selected by their ref numbers
 TEST dumpsds-7.out dumpsds -r 3,2 -d swf32.hdf
+
+# Test 8 prints only header information
 TEST dumpsds-8.out dumpsds -h swf32_fileattr.hdf
+
+# Test 9 prints data in clean format, no \digit's
 TEST dumpsds-9.out dumpsds -c swf32_fileattr.hdf
+
+# Test 10 prints contents of file without file attribute's data
+TEST dumpsds-10.out dumpsds -g swf32_fileattr.hdf
+
+# Test 11 prints contents of file without local attribute's data
+TEST dumpsds-11.out dumpsds -l swf32_fileattr.hdf
 else
 MESG 3 "$TestName <<<SKIPPED>>>"
 fi
@@ -311,6 +330,9 @@ TEST dumpgr-17.out dumpgr -r 6 -m 1 grtdfui82.hdf
 
 # Test 18: to test new option -c (printing attribute data in clean format)
 TEST dumpgr-18.out dumpgr -c grtdfi322.hdf
+
+# Test 19: to test new options -g and -l (suppress all attribute data)
+TEST dumpgr-19.out dumpgr -g -l grtdfi322.hdf
 
 else
 MESG 3 "$TestName <<<SKIPPED>>>"

@@ -37,11 +37,13 @@ dumpgr_usage(intn  argc,
     printf("\t-r <refs>\tDump the RIs with reference number <refs>\n");
     printf("\t-n <names>\tDump the RIs with name <names>\n");
     printf("\t-m <interlace>\tDump data in interlace mode <interlace= 0, 1, or 2>\n");
-    printf("\t-c\tPrint space characters as they are, not \\digit\n");
     printf("\t-d\tDump data only, no tag/ref, formatted to input to hp2hdf\n");
     printf("\t-h\tDump header only, no data - exclusive with -p and -pd\n");
     printf("\t-v\tDump everything including all annotations (default)\n");
-    printf("\t-s\tDump data as a stream, i.e. do not add carriage returns\n");
+    printf("\t-c\tPrint space characters as they are, not \\digit\n");
+    printf("\t-g\tDo not print data of file (global) attributes\n"); 
+    printf("\t-l\tDo not print data of local attributes\n"); 
+    printf("\t-s\tDo not add carriage return to a long line - dump it as a stream\n");
     printf("\t-p\tDump palette's information and data - exclusive with -h\n");
     printf("\t-pd\tDump palette's data only - exclusive with -h\n");
     printf("\t-o <filename>\tOutput to file <filename>\n");
@@ -146,6 +148,16 @@ parse_dumpgr_opts(dump_info_t *dumpgr_opts,
              dumpgr_opts->clean_output = TRUE;
              (*curr_arg)++;
              break; 
+
+         case 'g':      /* suppress file (global) attr data, print its header */
+                dumpgr_opts->no_gattr_data = TRUE;
+                (*curr_arg)++;
+                break;
+
+         case 'l':      /* suppress local attr data, only print its header */
+                dumpgr_opts->no_lattr_data = TRUE;
+                (*curr_arg)++;
+                break;
 
          case 'o':   /* specify output file */
              dumpgr_opts->dump_to_file = TRUE;
@@ -422,27 +434,6 @@ print_GRattrs(
          ERROR_CONT_2( "in %s: GRattrinfo failed for %d'th attribute", 
 			"print_GRattrs", (int)attr_index );
 
-      /* to be sure that attr_buf is free before reuse since sometimes we
-         have to break the current loop and continue to the next item */
-      resetBuff( &attr_buf );
-
-      /* calculate the buffer size of the attribute using the number of
-         values in the attribute and its value size */
-      attr_buf_size = DFKNTsize(attr_nt) * attr_count;
-
-      /* make sure we are not allocating 0 elements */
-      CHECK_POS( attr_buf_size, "attr_buf_size", "print_GRattrs" );
-
-      /* allocate space for the attribute's values */
-      attr_buf = (VOIDP) HDmalloc(attr_buf_size);
-      CHECK_ALLOC( attr_buf, "attr_buf", "print_GRattrs" );
-
-      /* read the values of the attribute into the buffer */
-      status = GRgetattr( gr_id, attr_index, attr_buf );
-      if (status == FAIL)
-         ERROR_CONT_2( "in %s: GRgetattr failed for %d'th attribute", 
-		"print_GRattr", (int)attr_index );
-
       /* get number type description of the attribute */
       attr_nt_desc = HDgetNTdesc(attr_nt);
       if (NULL == attr_nt_desc)
@@ -463,30 +454,54 @@ print_GRattrs(
 			attr_nt_desc, (int) attr_count);
       resetBuff(( VOIDP *) &attr_nt_desc ); 
 
-      /* display the attribute's values */
-      fprintf(fp, "\t\t Value = ");
-
-      /* if the user wishes to have clean output, i.e. option -c is selected */
-      /* Note that this option is only applicable to DFNT_CHAR type, the
-         option will be ignored for other types */
-      if( dumpgr_opts->clean_output && attr_nt == DFNT_CHAR )
+      /* display the attribute's values unless user chose to suppress them */
+      if( dumpgr_opts->no_gattr_data == FALSE )
       {
-         status = dumpclean(attr_nt, dumpgr_opts, attr_count, attr_buf, fp);
-         if( status == FAIL )
-            ERROR_CONT_2( "in %s: dumpclean failed for %d'th attribute",
-                "print_GRattr", (int)attr_index );
+         /* to be sure that attr_buf is free before reuse since sometimes we
+            have to break the current loop and continue to the next item */
+         resetBuff( &attr_buf );
 
-      }
-      else  /* show tab, lf, null char... in octal as \011, \012, \000... */
-      {
-         status = dumpfull(attr_nt, dumpgr_opts, attr_count, attr_buf, fp,
+         /* calculate the buffer size of the attribute using the number of
+            values in the attribute and its value size */
+         attr_buf_size = DFKNTsize(attr_nt) * attr_count;
+
+         /* make sure we are not allocating 0 elements */
+         CHECK_POS( attr_buf_size, "attr_buf_size", "print_GRattrs" );
+
+         /* allocate space for the attribute's values */
+         attr_buf = (VOIDP) HDmalloc(attr_buf_size);
+         CHECK_ALLOC( attr_buf, "attr_buf", "print_GRattrs" );
+
+         /* read the values of the attribute into the buffer */
+         status = GRgetattr( gr_id, attr_index, attr_buf );
+         if (status == FAIL)
+            ERROR_CONT_2( "in %s: GRgetattr failed for %d'th attribute", 
+		"print_GRattr", (int)attr_index );
+
+         /* display the attribute's values */
+         fprintf(fp, "\t\t Value = ");
+
+         /* if the user wishes to have clean output, i.e. option -c is
+            selected - Note that this option is only applicable to DFNT_CHAR
+            type, the option will be ignored for other types */
+         if( dumpgr_opts->clean_output && attr_nt == DFNT_CHAR )
+         {
+            status = dumpclean(attr_nt, dumpgr_opts, attr_count, attr_buf, fp);
+            if( status == FAIL )
+               ERROR_CONT_2( "in %s: dumpclean failed for %d'th attribute",
+                   "print_GRattr", (int)attr_index );
+
+         }
+         else  /* show tab, lf, null char... in octal as \011, \012, \000... */
+         {
+            status = dumpfull(attr_nt, dumpgr_opts, attr_count, attr_buf, fp,
 			ATTR_INDENT, ATTR_CONT_INDENT );
-         if( status == FAIL )
-            ERROR_CONT_2( "in %s: dumpfull failed for %d'th attribute",
-                "print_GRattr", (int)attr_index );
-      }
-      /* free buffer and reset it to NULL */
-      resetBuff( &attr_buf );
+            if( status == FAIL )
+               ERROR_CONT_2( "in %s: dumpfull failed for %d'th attribute",
+                   "print_GRattr", (int)attr_index );
+         }
+         /* free buffer and reset it to NULL */
+      }  /* end of if no file attributes */
    } /* for all attributes of GR */
 
    return ret_value;
@@ -519,27 +534,6 @@ print_RIattrs(
          ERROR_CONT_3( "in %s: GRattrinfo failed for %d'th attribute of %d'th RI", 
 			"print_RIattrs", (int)attr_index, (int)ri_index );
 
-      /* to be sure that attr_buf is free before reuse since sometimes we
-         have to break the current loop and continue to the next item */
-      resetBuff( &attr_buf );
-
-      /* calculate the buffer size of the attribute using the number of 
-         values in the attribute and its value size */
-      attr_buf_size = DFKNTsize(attr_nt) * attr_count;
-
-      /* make sure we are not allocating 0 elements */
-      CHECK_POS( attr_buf_size, "attr_buf_size", "print_RIattrs" );
-
-      /* allocate space for attribute's values */
-      attr_buf = (VOIDP) HDmalloc(attr_buf_size);
-      CHECK_ALLOC( attr_buf, "attr_buf", "print_RIattrs" );
-
-      /* read the values of the attribute into buffer attr_buf */
-      status = GRgetattr( ri_id, attr_index, attr_buf );
-      if (status == FAIL)  /* go to the next attribute */
-         ERROR_CONT_3( "in %s: GRgetattr failed for %d'th attribute of %d'th RI", 
-			"print_RIattrs", (int)attr_index, (int)ri_index );
-
       /* get number type description of the attribute */
       attr_nt_desc = HDgetNTdesc(attr_nt);
       if (NULL == attr_nt_desc)  /* go to the next attribute */
@@ -553,30 +547,52 @@ print_RIattrs(
       /* free buffer and reset it to NULL */
       resetBuff((VOIDP *) &attr_nt_desc );
 
-      /* display the attribute's values then free buffer */
-      fprintf(fp, "\t\t Value = ");
+      /* display the attribute's values unless user chose to suppress them */
+      if( dumpgr_opts->no_lattr_data == FALSE )
+      {
+         /* to be sure that attr_buf is free before reuse since sometimes we
+            have to break the current loop and continue to the next item */
+         resetBuff( &attr_buf );
 
-      /* if the user wishes to have clean output, i.e. option -c is selected */
-      /* Note that this option is only applicable to DFNT_CHAR type, the
-         option will be ignored for other types */
-      if( dumpgr_opts->clean_output && attr_nt == DFNT_CHAR )
-      {
-         status = dumpclean(attr_nt, dumpgr_opts, attr_count, attr_buf, fp);
-         if( status == FAIL )
-            ERROR_CONT_3( "in %s: dumpclean failed for %d'th attribute of %d'th RI", 
+         /* calculate the buffer size of the attribute using the number of 
+            values in the attribute and its value size */
+         attr_buf_size = DFKNTsize(attr_nt) * attr_count;
+
+         /* make sure we are not allocating 0 elements */
+         CHECK_POS( attr_buf_size, "attr_buf_size", "print_RIattrs" );
+
+         /* allocate space for attribute's values */
+         attr_buf = (VOIDP) HDmalloc(attr_buf_size);
+         CHECK_ALLOC( attr_buf, "attr_buf", "print_RIattrs" );
+
+         /* read the values of the attribute into buffer attr_buf */
+         status = GRgetattr( ri_id, attr_index, attr_buf );
+         if (status == FAIL)  /* go to the next attribute */
+            ERROR_CONT_3( "in %s: GRgetattr failed for %d'th attribute of %d'th RI", 
 			"print_RIattrs", (int)attr_index, (int)ri_index );
-      }
-      else  /* show tab, lf, null char... in octal as \011, \012, \000... */
-      {
-         status = dumpfull(attr_nt, dumpgr_opts, attr_count, attr_buf, fp,
+
+         /* display the attribute's values then free buffer */
+         fprintf(fp, "\t\t Value = ");
+
+         /* if the user wishes to have clean output, i.e. option -c is selected */
+         /* Note that this option is only applicable to DFNT_CHAR type, the
+            option will be ignored for other types */
+         if( dumpgr_opts->clean_output && attr_nt == DFNT_CHAR )
+         {
+            status = dumpclean(attr_nt, dumpgr_opts, attr_count, attr_buf, fp);
+            if( status == FAIL )
+               ERROR_CONT_3( "in %s: dumpclean failed for %d'th attribute of %d'th RI", 
+			"print_RIattrs", (int)attr_index, (int)ri_index );
+         }
+         else  /* show tab, lf, null char... in octal as \011, \012, \000... */
+         {
+            status = dumpfull(attr_nt, dumpgr_opts, attr_count, attr_buf, fp,
 			ATTR_INDENT, ATTR_CONT_INDENT );
-         if( status == FAIL )
-            ERROR_CONT_3( "in %s: dumpfull failed for %d'th attribute of %d'th RI", 
+            if( status == FAIL )
+               ERROR_CONT_3( "in %s: dumpfull failed for %d'th attribute of %d'th RI", 
 			"print_RIattrs", (int)attr_index, (int)ri_index );
-      }
-
-      /* free buffer and reset it to NULL */
-      resetBuff( &attr_buf );
+         }
+      }  /* end of if no local attributes */
    } /* for all attributes of an RI */
 
    return ret_value;
