@@ -5,12 +5,15 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.9  1992/12/21 23:33:37  mfolk
-Change "dump" routine so that it prints ascii dump 40 characters
-per line, with no spaces between characters.
-Also added /*EMPTY*/ before the semicolon in a couple of for
-looks in HEalias to make codecenter stop complaining.
+Revision 1.10  1993/01/07 20:40:41  georgev
+Small bug where a comment was inside another comment.
 
+ * Revision 1.9  1992/12/21  23:33:37  mfolk
+ * Change "dump" routine so that it prints ascii dump 40 characters
+ * per line, with no spaces between characters.
+ * Also added EMPTY before the semicolon in a couple of for
+ * looks in HEalias to make codecenter stop complaining.
+ *
  * Revision 1.8  1992/09/11  18:32:51  chouck
  * Assorted MAC mungings
  *
