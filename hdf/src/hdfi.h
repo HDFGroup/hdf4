@@ -104,9 +104,9 @@ Please check your Makefile.
 #define GOT_MACHINE
 
 #ifdef QAK
-#include <unistd.h>
 #include <ctype.h>
 #endif /* QAK */
+#include <unistd.h>                 /* for some file I/O stuff */
 #include <sys/time.h>
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #include <sys/stat.h>
