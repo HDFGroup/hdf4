@@ -34,7 +34,8 @@ int  copy_vs( int32 infile_id,
               int32 vgroup_id_out_par, /* output parent group ID */
               char*path_name,          /* absolute path for input group name */
               options_t *options,
-              table_t *table);
+              table_t *table,
+              int   is_lone);
 
 void copy_vg(char* infname,
              char* outfname,

@@ -1,4 +1,5 @@
 bin_PROGRAMS = ncgen
+man1_MANS = ncgen.1
 
 INCLUDES=-I${top_srcdir}/hdf/src        \
          -I${top_srcdir}/mfhdf/libsrc   \

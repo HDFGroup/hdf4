@@ -23,6 +23,8 @@ hziptst_CPPFLAGS = ${INCLUDES} ${DEFINES} @CPPFLAGS@
 hziptst_LDADD = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a @LIBS@
 hziptst_DEPENPENDENCIES = ${top_builddir}/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
+noinst_PROGRAMS = hzipck
+
 hzipck_SOURCES = hdfzipck.c
 hzipck_CPPFLAGS = ${INCLUDES} ${DEFINES} @CPPFLAGS@
 hzipck_LDADD = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a @LIBS@

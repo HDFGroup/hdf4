@@ -205,7 +205,7 @@ static uint8  u8_data[2][3][4] =
         { 100, 101, 102, 103},
         { 110, 111, 112, 113},
         { 120, 121, 122, 123}}};
-
+extern int test_szip_compression();
 static intn
 test_chunk()
 {
@@ -1597,9 +1597,21 @@ test_netcdf_reading()
     int32 status;
     intn i, j;
     int     num_err = 0;    /* number of errors so far */
+    const char *basename = "test1.nc";
+    char    testfile[512] = "";
+    char   *srcdir = getenv("srcdir");
+
+
+    /* Generate the correct name for the test file, by prepending the source path */
+    if (srcdir && ((strlen(srcdir) + strlen(basename) + 1) < sizeof(testfile))) {
+        strcpy(testfile, srcdir);
+        strcat(testfile, "/");
+    }
+    strcat(testfile, basename);
+
 
 	/* Open the file 'test1.nc' and initialize the SDxxx interface. */
-	sd_id = SDstart("test1.nc", DFACC_RDONLY);
+	sd_id = SDstart(testfile, DFACC_RDONLY);
     CHECK(sd_id, FAIL, "netCDF Read Test 1. SDstart failed on file test1.nc");
 
 	/* Determine the contents of the file. */
@@ -4066,6 +4078,11 @@ main(int argc, char *argv[])
     status = test_dimensions();
     CHECK(status, FAIL, "test_dimensions");
     num_err = num_err + status;
+
+    status = test_szip_compression();  /* defined in tszip.c */
+    CHECK(status, FAIL, "test_szip_compression");
+    num_err = num_err + status;
+
 
     printf("num_err == %d\n", num_err);
 

@@ -136,9 +136,9 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-INCLUDES = -I${top_srcdir}/hdf/src        \
-         -I${top_srcdir}/mfhdf/libsrc   \
-         -I${top_srcdir}/mfhdf/port
+INCLUDES = -I$(top_srcdir)/hdf/src        \
+         -I$(top_srcdir)/mfhdf/libsrc   \
+         -I$(top_srcdir)/mfhdf/port
 
 DEFINES = -DNDEBUG -DHDF
 
@@ -149,8 +149,18 @@ libmfhdf_a_SOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c         \
                      xdrstdio.c ../fortran/jackets.c ../fortran/mfsdf.c \
                      ../fortran/mfsdff.f
 
-libmfhdf_a_CPPFLAGS = ${INCLUDES} ${DEFINES} @CPPFLAGS@
+libmfhdf_a_CPPFLAGS = $(INCLUDES) $(DEFINES) @CPPFLAGS@
 include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h 
+
+check_PROGRAMS = cdftest hdftest
+
+cdftest_SOURCES = cdftest.c
+cdftest_CPPFLAGS = $(INCLUDES) $(DEFINES) @CPPFLAGS@
+cdftest_LDADD = libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
+
+hdftest_SOURCES = hdftest.c tszip.c
+hdftest_CPPFLAGS = $(INCLUDES) $(DEFINES) @CPPFLAGS@
+hdftest_LDADD = libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 subdir = mfhdf/libsrc
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
@@ -171,11 +181,23 @@ am_libmfhdf_a_OBJECTS = libmfhdf_a-array.$(OBJEXT) \
 	libmfhdf_a-xdrstdio.$(OBJEXT) libmfhdf_a-jackets.$(OBJEXT) \
 	libmfhdf_a-mfsdf.$(OBJEXT) mfsdff.$(OBJEXT)
 libmfhdf_a_OBJECTS = $(am_libmfhdf_a_OBJECTS)
+check_PROGRAMS = cdftest$(EXEEXT) hdftest$(EXEEXT)
+am_cdftest_OBJECTS = cdftest-cdftest.$(OBJEXT)
+cdftest_OBJECTS = $(am_cdftest_OBJECTS)
+cdftest_DEPENDENCIES = libmfhdf.a $(top_builddir)/hdf/src/libdf.a
+cdftest_LDFLAGS =
+am_hdftest_OBJECTS = hdftest-hdftest.$(OBJEXT) hdftest-tszip.$(OBJEXT)
+hdftest_OBJECTS = $(am_hdftest_OBJECTS)
+hdftest_DEPENDENCIES = libmfhdf.a $(top_builddir)/hdf/src/libdf.a
+hdftest_LDFLAGS =
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir)
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/libmfhdf_a-array.Po \
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/cdftest-cdftest.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hdftest-hdftest.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hdftest-tszip.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/libmfhdf_a-array.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/libmfhdf_a-attr.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/libmfhdf_a-cdf.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/libmfhdf_a-dim.Po \
@@ -202,11 +224,12 @@ LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 F77COMPILE = $(F77) $(AM_FFLAGS) $(FFLAGS)
 F77LD = $(F77)
 F77LINK = $(F77LD) $(AM_FFLAGS) $(FFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = $(libmfhdf_a_SOURCES)
+DIST_SOURCES = $(libmfhdf_a_SOURCES) $(cdftest_SOURCES) \
+	$(hdftest_SOURCES)
 HEADERS = $(include_HEADERS)
 
 DIST_COMMON = README $(include_HEADERS) Makefile.am Makefile.in
-SOURCES = $(libmfhdf_a_SOURCES)
+SOURCES = $(libmfhdf_a_SOURCES) $(cdftest_SOURCES) $(hdftest_SOURCES)
 
 all: all-am
 
@@ -252,12 +275,24 @@ libmfhdf.a: $(libmfhdf_a_OBJECTS) $(libmfhdf_a_DEPENDENCIES)
 	$(libmfhdf_a_AR) libmfhdf.a $(libmfhdf_a_OBJECTS) $(libmfhdf_a_LIBADD)
 	$(RANLIB) libmfhdf.a
 
+clean-checkPROGRAMS:
+	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+cdftest$(EXEEXT): $(cdftest_OBJECTS) $(cdftest_DEPENDENCIES) 
+	@rm -f cdftest$(EXEEXT)
+	$(LINK) $(cdftest_LDFLAGS) $(cdftest_OBJECTS) $(cdftest_LDADD) $(LIBS)
+hdftest$(EXEEXT): $(hdftest_OBJECTS) $(hdftest_DEPENDENCIES) 
+	@rm -f hdftest$(EXEEXT)
+	$(LINK) $(hdftest_LDFLAGS) $(hdftest_OBJECTS) $(hdftest_LDADD) $(LIBS)
+
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
 
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cdftest-cdftest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdftest-hdftest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdftest-tszip.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmfhdf_a-array.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmfhdf_a-attr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmfhdf_a-cdf.Po@am__quote@
@@ -744,6 +779,72 @@ libmfhdf_a-mfsdf.obj: ../fortran/mfsdf.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfhdf_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmfhdf_a-mfsdf.obj `if test -f '../fortran/mfsdf.c'; then $(CYGPATH_W) '../fortran/mfsdf.c'; else $(CYGPATH_W) '$(srcdir)/../fortran/mfsdf.c'; fi`
 
+cdftest-cdftest.o: cdftest.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cdftest_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cdftest-cdftest.o -MD -MP -MF "$(DEPDIR)/cdftest-cdftest.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o cdftest-cdftest.o `test -f 'cdftest.c' || echo '$(srcdir)/'`cdftest.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/cdftest-cdftest.Tpo" "$(DEPDIR)/cdftest-cdftest.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/cdftest-cdftest.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='cdftest.c' object='cdftest-cdftest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/cdftest-cdftest.Po' tmpdepfile='$(DEPDIR)/cdftest-cdftest.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cdftest_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cdftest-cdftest.o `test -f 'cdftest.c' || echo '$(srcdir)/'`cdftest.c
+
+cdftest-cdftest.obj: cdftest.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cdftest_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cdftest-cdftest.obj -MD -MP -MF "$(DEPDIR)/cdftest-cdftest.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o cdftest-cdftest.obj `if test -f 'cdftest.c'; then $(CYGPATH_W) 'cdftest.c'; else $(CYGPATH_W) '$(srcdir)/cdftest.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/cdftest-cdftest.Tpo" "$(DEPDIR)/cdftest-cdftest.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/cdftest-cdftest.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='cdftest.c' object='cdftest-cdftest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/cdftest-cdftest.Po' tmpdepfile='$(DEPDIR)/cdftest-cdftest.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cdftest_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cdftest-cdftest.obj `if test -f 'cdftest.c'; then $(CYGPATH_W) 'cdftest.c'; else $(CYGPATH_W) '$(srcdir)/cdftest.c'; fi`
+
+hdftest-hdftest.o: hdftest.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdftest_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdftest-hdftest.o -MD -MP -MF "$(DEPDIR)/hdftest-hdftest.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o hdftest-hdftest.o `test -f 'hdftest.c' || echo '$(srcdir)/'`hdftest.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdftest-hdftest.Tpo" "$(DEPDIR)/hdftest-hdftest.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdftest-hdftest.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdftest.c' object='hdftest-hdftest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdftest-hdftest.Po' tmpdepfile='$(DEPDIR)/hdftest-hdftest.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdftest_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdftest-hdftest.o `test -f 'hdftest.c' || echo '$(srcdir)/'`hdftest.c
+
+hdftest-hdftest.obj: hdftest.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdftest_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdftest-hdftest.obj -MD -MP -MF "$(DEPDIR)/hdftest-hdftest.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o hdftest-hdftest.obj `if test -f 'hdftest.c'; then $(CYGPATH_W) 'hdftest.c'; else $(CYGPATH_W) '$(srcdir)/hdftest.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdftest-hdftest.Tpo" "$(DEPDIR)/hdftest-hdftest.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdftest-hdftest.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdftest.c' object='hdftest-hdftest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdftest-hdftest.Po' tmpdepfile='$(DEPDIR)/hdftest-hdftest.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdftest_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdftest-hdftest.obj `if test -f 'hdftest.c'; then $(CYGPATH_W) 'hdftest.c'; else $(CYGPATH_W) '$(srcdir)/hdftest.c'; fi`
+
+hdftest-tszip.o: tszip.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdftest_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdftest-tszip.o -MD -MP -MF "$(DEPDIR)/hdftest-tszip.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o hdftest-tszip.o `test -f 'tszip.c' || echo '$(srcdir)/'`tszip.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdftest-tszip.Tpo" "$(DEPDIR)/hdftest-tszip.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdftest-tszip.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tszip.c' object='hdftest-tszip.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdftest-tszip.Po' tmpdepfile='$(DEPDIR)/hdftest-tszip.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdftest_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdftest-tszip.o `test -f 'tszip.c' || echo '$(srcdir)/'`tszip.c
+
+hdftest-tszip.obj: tszip.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdftest_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdftest-tszip.obj -MD -MP -MF "$(DEPDIR)/hdftest-tszip.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o hdftest-tszip.obj `if test -f 'tszip.c'; then $(CYGPATH_W) 'tszip.c'; else $(CYGPATH_W) '$(srcdir)/tszip.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdftest-tszip.Tpo" "$(DEPDIR)/hdftest-tszip.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdftest-tszip.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tszip.c' object='hdftest-tszip.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdftest-tszip.Po' tmpdepfile='$(DEPDIR)/hdftest-tszip.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdftest_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdftest-tszip.obj `if test -f 'tszip.c'; then $(CYGPATH_W) 'tszip.c'; else $(CYGPATH_W) '$(srcdir)/tszip.c'; fi`
+
 .f.o:
 	$(F77COMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
 
@@ -861,6 +962,7 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
 check: check-am
 all-am: Makefile $(LIBRARIES) $(HEADERS)
 
@@ -892,7 +994,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libLIBRARIES mostlyclean-am
+clean-am: clean-checkPROGRAMS clean-generic clean-libLIBRARIES \
+	mostlyclean-am
 
 distclean: distclean-am
 
@@ -936,19 +1039,47 @@ ps-am:
 uninstall-am: uninstall-includeHEADERS uninstall-info-am \
 	uninstall-libLIBRARIES
 
-.PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libLIBRARIES ctags distclean distclean-compile \
-	distclean-depend distclean-generic distclean-tags distdir dvi \
-	dvi-am info info-am install install-am install-data \
-	install-data-am install-exec install-exec-am \
-	install-includeHEADERS install-info install-info-am \
-	install-libLIBRARIES install-man install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
+.PHONY: CTAGS GTAGS all all-am check check-am clean clean-checkPROGRAMS \
+	clean-generic clean-libLIBRARIES ctags distclean \
+	distclean-compile distclean-depend distclean-generic \
+	distclean-tags distdir dvi dvi-am info info-am install \
+	install-am install-data install-data-am install-exec \
+	install-exec-am install-includeHEADERS install-info \
+	install-info-am install-libLIBRARIES install-man install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
 	uninstall-am uninstall-includeHEADERS uninstall-info-am \
 	uninstall-libLIBRARIES
 
+
+check:
+	@echo "============================"
+	@echo "HDF-SD C interfaces tests"
+	@echo "============================"
+	./hdftest > hdfout.new
+	@cmd="$(DIFF) hdfout.new $(srcdir)/hdfout.sav";                 \
+	  echo $$cmd;                                                   \
+	  if $$cmd; then                                                \
+	    echo "*** HDF passes formatted test ***";                   \
+	  else                                                          \
+	    echo "*** HDF fails formatted test ***";                    \
+	    echo "The above differences are OK if small";               \
+	    exit 0;                                                     \
+	  fi
+	@echo "========================="
+	@echo "netCDF formatted tests"
+	@echo "========================="
+	./cdftest > cdfout.new
+	@cmd="$(DIFF) cdfout.new $(srcdir)/testout.sav";                \
+	  echo $$cmd;                                                   \
+	  if $$cmd; then                                                \
+	    echo "*** netCDF passes formatted test ***";                \
+	  else                                                          \
+	    echo "*** netCDF fails formatted test ***";                 \
+	    echo "The above differences are OK if small";               \
+	    exit 0;                                                     \
+	  fi
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

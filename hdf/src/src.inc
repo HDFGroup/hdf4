@@ -33,7 +33,7 @@ HDRS=$(H_HDRS) $(DF_HDRS) $(DFAN_HDRS) $(DFRI_HDRS) $(DFSD_HDRS) $(V_HDRS) \
 H_HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h hcomp.h hconv.h hbitio.h \
        tbbt.h crle.h cnbit.h mstdio.h cnone.h cskphuff.h cdeflate.h \
        hlimits.h hntdefs.h htags.h hkit.h hcompi.h bitvect.h atom.h \
-       dynarray.h linklist.h hchunks.h vattr.h
+       dynarray.h linklist.h hchunks.h vattr.h cszip.h
 
 DF_HDRS=df.h dfi.h dfstubs.h dfufp2i.h
 DFAN_HDRS=dfan.h
@@ -47,7 +47,7 @@ CSRCS = $(HCSRCS) $(VCSRCS) $(DFCSRCS) $(MFCSRCS)
 HCSRCS=hfile.c herr.c hblocks.c hbuffer.c hcompri.c hextelt.c hkit.c hdfalloc.c \
     hcomp.c hbitio.c tbbt.c hdfalloc.c hcomp.c crle.c cnbit.c mstdio.c cnone.c \
     cskphuff.c cdeflate.c bitvect.c atom.c hfiledd.c dynarray.c linklist.c \
-    glist.c hchunks.c mcache.c 
+    glist.c hchunks.c mcache.c cszip.c
 
 VCSRCS=vg.c vrw.c vio.c vparse.c vconv.c vsfld.c vgp.c vhi.c vattr.c
 
@@ -67,7 +67,7 @@ COBJS = $(HCOBJS) $(VCOBJS) $(DFCOBJS) $(MFCOBJS)
 HCOBJS=hfile.o herr.o hblocks.o hbuffer.o hcompri.o hextelt.o hkit.o hdfalloc.o \
     hcomp.o hbitio.o tbbt.o crle.o cnbit.o mstdio.o cnone.o cskphuff.o \
     cdeflate.o bitvect.o atom.o hfiledd.o dynarray.o linklist.o glist.o \
-    hchunks.o mcache.o
+    hchunks.o mcache.o cszip.o
 
 VCOBJS=vg.o vrw.o vio.o vparse.o vconv.o vsfld.o vgp.o vhi.o vattr.o
 

@@ -163,6 +163,8 @@ hziptst_CPPFLAGS = ${INCLUDES} ${DEFINES} @CPPFLAGS@
 hziptst_LDADD = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a @LIBS@
 hziptst_DEPENPENDENCIES = ${top_builddir}/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
+noinst_PROGRAMS = hzipck
+
 hzipck_SOURCES = hdfzipck.c
 hzipck_CPPFLAGS = ${INCLUDES} ${DEFINES} @CPPFLAGS@
 hzipck_LDADD = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a @LIBS@
@@ -173,7 +175,8 @@ mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
 CONFIG_CLEAN_FILES =
 bin_PROGRAMS = hzip$(EXEEXT)
 check_PROGRAMS = hziptst$(EXEEXT)
-PROGRAMS = $(bin_PROGRAMS)
+noinst_PROGRAMS = hzipck$(EXEEXT)
+PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 
 am_hzip_OBJECTS = hzip-copy.$(OBJEXT) hzip-hdfzip.$(OBJEXT) \
 	hzip-hdfzip_main.$(OBJEXT) hzip-list.$(OBJEXT) \
@@ -181,6 +184,11 @@ am_hzip_OBJECTS = hzip-copy.$(OBJEXT) hzip-hdfzip.$(OBJEXT) \
 hzip_OBJECTS = $(am_hzip_OBJECTS)
 hzip_DEPENDENCIES = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a
 hzip_LDFLAGS =
+am_hzipck_OBJECTS = hzipck-hdfzipck.$(OBJEXT)
+hzipck_OBJECTS = $(am_hzipck_OBJECTS)
+hzipck_DEPENDENCIES = ../libsrc/libmfhdf.a \
+	${top_builddir}/hdf/src/libdf.a
+hzipck_LDFLAGS =
 am_hziptst_OBJECTS = hziptst-add.$(OBJEXT) hziptst-copy.$(OBJEXT) \
 	hziptst-hdfzip.$(OBJEXT) hziptst-hdfziptst_main.$(OBJEXT) \
 	hziptst-list.$(OBJEXT) hziptst-parse.$(OBJEXT) \
@@ -202,6 +210,7 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/hzip-hdfzip_main.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/hzip-list.Po ./$(DEPDIR)/hzip-parse.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/hzip-table.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hzipck-hdfzipck.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/hziptst-add.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/hziptst-copy.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/hziptst-dumplib.Po \
@@ -222,9 +231,9 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = $(hzip_SOURCES) $(hziptst_SOURCES)
+DIST_SOURCES = $(hzip_SOURCES) $(hzipck_SOURCES) $(hziptst_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(hzip_SOURCES) $(hziptst_SOURCES)
+SOURCES = $(hzip_SOURCES) $(hzipck_SOURCES) $(hziptst_SOURCES)
 
 all: all-am
 
@@ -262,9 +271,15 @@ clean-binPROGRAMS:
 
 clean-checkPROGRAMS:
 	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+
+clean-noinstPROGRAMS:
+	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
 hzip$(EXEEXT): $(hzip_OBJECTS) $(hzip_DEPENDENCIES) 
 	@rm -f hzip$(EXEEXT)
 	$(LINK) $(hzip_LDFLAGS) $(hzip_OBJECTS) $(hzip_LDADD) $(LIBS)
+hzipck$(EXEEXT): $(hzipck_OBJECTS) $(hzipck_DEPENDENCIES) 
+	@rm -f hzipck$(EXEEXT)
+	$(LINK) $(hzipck_LDFLAGS) $(hzipck_OBJECTS) $(hzipck_LDADD) $(LIBS)
 hziptst$(EXEEXT): $(hziptst_OBJECTS) $(hziptst_DEPENDENCIES) 
 	@rm -f hziptst$(EXEEXT)
 	$(LINK) $(hziptst_LDFLAGS) $(hziptst_OBJECTS) $(hziptst_LDADD) $(LIBS)
@@ -281,6 +296,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hzip-list.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hzip-parse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hzip-table.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hzipck-hdfzipck.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hziptst-add.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hziptst-copy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hziptst-dumplib.Po@am__quote@
@@ -454,6 +470,28 @@ hzip-table.obj: table.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hzip-table.Po' tmpdepfile='$(DEPDIR)/hzip-table.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hzip-table.obj `if test -f 'table.c'; then $(CYGPATH_W) 'table.c'; else $(CYGPATH_W) '$(srcdir)/table.c'; fi`
+
+hzipck-hdfzipck.o: hdfzipck.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzipck_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hzipck-hdfzipck.o -MD -MP -MF "$(DEPDIR)/hzipck-hdfzipck.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o hzipck-hdfzipck.o `test -f 'hdfzipck.c' || echo '$(srcdir)/'`hdfzipck.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hzipck-hdfzipck.Tpo" "$(DEPDIR)/hzipck-hdfzipck.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hzipck-hdfzipck.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdfzipck.c' object='hzipck-hdfzipck.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hzipck-hdfzipck.Po' tmpdepfile='$(DEPDIR)/hzipck-hdfzipck.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzipck_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hzipck-hdfzipck.o `test -f 'hdfzipck.c' || echo '$(srcdir)/'`hdfzipck.c
+
+hzipck-hdfzipck.obj: hdfzipck.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzipck_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hzipck-hdfzipck.obj -MD -MP -MF "$(DEPDIR)/hzipck-hdfzipck.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o hzipck-hdfzipck.obj `if test -f 'hdfzipck.c'; then $(CYGPATH_W) 'hdfzipck.c'; else $(CYGPATH_W) '$(srcdir)/hdfzipck.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hzipck-hdfzipck.Tpo" "$(DEPDIR)/hzipck-hdfzipck.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hzipck-hdfzipck.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdfzipck.c' object='hzipck-hdfzipck.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hzipck-hdfzipck.Po' tmpdepfile='$(DEPDIR)/hzipck-hdfzipck.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzipck_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hzipck-hdfzipck.obj `if test -f 'hdfzipck.c'; then $(CYGPATH_W) 'hdfzipck.c'; else $(CYGPATH_W) '$(srcdir)/hdfzipck.c'; fi`
 
 hziptst-add.o: add.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-add.o -MD -MP -MF "$(DEPDIR)/hziptst-add.Tpo" \
@@ -927,7 +965,7 @@ maintainer-clean-generic:
 clean: clean-am
 
 clean-am: clean-binPROGRAMS clean-checkPROGRAMS clean-generic \
-	mostlyclean-am
+	clean-noinstPROGRAMS mostlyclean-am
 
 distclean: distclean-am
 
@@ -971,8 +1009,8 @@ ps-am:
 uninstall-am: uninstall-binPROGRAMS uninstall-info-am
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
-	clean-checkPROGRAMS clean-generic ctags distclean \
-	distclean-compile distclean-depend distclean-generic \
+	clean-checkPROGRAMS clean-generic clean-noinstPROGRAMS ctags \
+	distclean distclean-compile distclean-depend distclean-generic \
 	distclean-tags distdir dvi dvi-am info info-am install \
 	install-am install-binPROGRAMS install-data install-data-am \
 	install-exec install-exec-am install-info install-info-am \

@@ -115,7 +115,7 @@ int list(char* infname, char* outfname, options_t *options)
  if ((status_n = Hclose (infile_id)) == FAIL )
   printf( "Failed to close file <%s>\n", infname);
  if ((status_n = Hclose (outfile_id)) == FAIL )
-  printf( "Failed to close file <%s>\n", infname);
+  printf( "Failed to close file <%s>\n", outfname);
 
 #if !defined (ONE_TABLE)
 
@@ -530,7 +530,7 @@ void vgroup_insert(char* infname,char* outfname,int32 infile_id,int32 outfile_id
   case DFTAG_VS:  /* Vdata Storage */
 
    /* copy VS */
-   copy_vs(infile_id,outfile_id,tag,ref,vgroup_id_out_par,path_name,options,table);
+   copy_vs(infile_id,outfile_id,tag,ref,vgroup_id_out_par,path_name,options,table,0);
   
    break;
    
@@ -737,7 +737,7 @@ void list_vs(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table
    }
 
    /* copy VS */
-   copy_vs(infile_id,outfile_id,DFTAG_VS,ref,0,NULL,options,table);
+   copy_vs(infile_id,outfile_id,DFTAG_VS,ref,0,NULL,options,table,1);
  
   } /* for */
 

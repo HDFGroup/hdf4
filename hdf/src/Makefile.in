@@ -138,8 +138,8 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 lib_LIBRARIES = libdf.a
 libdf_a_SOURCES = atom.c bitvect.c cdeflate.c cnbit.c cnone.c crle.c    \
-                  cskphuff.c df24.c df24f.c df24ff.f dfan.c dfanf.c     \
-                  dfanff.f dfcomp.c dfconv.c dff.c dfff.f dfgr.c        \
+                  cskphuff.c cszip.c df24.c df24f.c df24ff.f dfan.c     \
+                  dfanf.c dfanff.f dfcomp.c dfconv.c dff.c dfff.f dfgr.c\
                   dfgroup.c dfimcomp.c dfjpeg.c dfkconv.c dfkcray.c     \
                   dfkfuji.c dfknat.c dfkswap.c dfkvms.c dfp.c dfpf.c    \
                   dfpff.f dfr8.c dfr8f.c dfr8ff.f dfrle.c dfsd.c dfsdf.c\
@@ -159,7 +159,7 @@ include_HEADERS = hfile.h hdf.h hdfi.h herr.h hproto.h hcomp.h hconv.h  \
                   hkit.h hcompi.h bitvect.h atom.h dynarray.h linklist.h\
                   hchunks.h vattr.h df.h dfi.h dfstubs.h dfufp2i.h      \
                   dfan.h dfrig.h dfgr.h dfsd.h vg.h mfan.h mfgr.h       \
-                  dffunc.f90 hdf.f90 dffunc.inc hdf.inc
+                  cszip.h dffunc.f90 hdf.f90 dffunc.inc hdf.inc
 
 
 SUFFIXES = .inc .f90
@@ -173,8 +173,8 @@ libdf_a_AR = $(AR) cru
 libdf_a_LIBADD =
 am_libdf_a_OBJECTS = atom.$(OBJEXT) bitvect.$(OBJEXT) cdeflate.$(OBJEXT) \
 	cnbit.$(OBJEXT) cnone.$(OBJEXT) crle.$(OBJEXT) \
-	cskphuff.$(OBJEXT) df24.$(OBJEXT) df24f.$(OBJEXT) \
-	df24ff.$(OBJEXT) dfan.$(OBJEXT) dfanf.$(OBJEXT) \
+	cskphuff.$(OBJEXT) cszip.$(OBJEXT) df24.$(OBJEXT) \
+	df24f.$(OBJEXT) df24ff.$(OBJEXT) dfan.$(OBJEXT) dfanf.$(OBJEXT) \
 	dfanff.$(OBJEXT) dfcomp.$(OBJEXT) dfconv.$(OBJEXT) \
 	dff.$(OBJEXT) dfff.$(OBJEXT) dfgr.$(OBJEXT) dfgroup.$(OBJEXT) \
 	dfimcomp.$(OBJEXT) dfjpeg.$(OBJEXT) dfkconv.$(OBJEXT) \
@@ -204,39 +204,39 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/atom.Po ./$(DEPDIR)/bitvect.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/cdeflate.Po ./$(DEPDIR)/cnbit.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/cnone.Po ./$(DEPDIR)/crle.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/cskphuff.Po ./$(DEPDIR)/df24.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/df24f.Po ./$(DEPDIR)/dfan.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/dfanf.Po ./$(DEPDIR)/dfcomp.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/dfconv.Po ./$(DEPDIR)/dff.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/dfgr.Po ./$(DEPDIR)/dfgroup.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/dfimcomp.Po ./$(DEPDIR)/dfjpeg.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/dfkconv.Po ./$(DEPDIR)/dfkcray.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/dfkfuji.Po ./$(DEPDIR)/dfknat.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/dfkswap.Po ./$(DEPDIR)/dfkvms.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/dfp.Po ./$(DEPDIR)/dfpf.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/dfr8.Po ./$(DEPDIR)/dfr8f.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/dfrle.Po ./$(DEPDIR)/dfsd.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/dfsdf.Po ./$(DEPDIR)/dfstubs.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/dfufp2i.Po ./$(DEPDIR)/dfunjpeg.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/dfutil.Po ./$(DEPDIR)/dfutilf.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/dynarray.Po ./$(DEPDIR)/glist.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hbitio.Po ./$(DEPDIR)/hblocks.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hbuffer.Po ./$(DEPDIR)/hchunks.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hcomp.Po ./$(DEPDIR)/hcompri.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hdfalloc.Po ./$(DEPDIR)/herr.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/herrf.Po ./$(DEPDIR)/hextelt.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hfile.Po ./$(DEPDIR)/hfiledd.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hfilef.Po ./$(DEPDIR)/hkit.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/linklist.Po ./$(DEPDIR)/mcache.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/mfan.Po ./$(DEPDIR)/mfanf.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/mfgr.Po ./$(DEPDIR)/mfgrf.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/mstdio.Po ./$(DEPDIR)/tbbt.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/vattr.Po ./$(DEPDIR)/vattrf.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/vconv.Po ./$(DEPDIR)/vg.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/vgf.Po ./$(DEPDIR)/vgp.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/vhi.Po ./$(DEPDIR)/vio.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/vparse.Po ./$(DEPDIR)/vrw.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/vsfld.Po
+@AMDEP_TRUE@	./$(DEPDIR)/cskphuff.Po ./$(DEPDIR)/cszip.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/df24.Po ./$(DEPDIR)/df24f.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/dfan.Po ./$(DEPDIR)/dfanf.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/dfcomp.Po ./$(DEPDIR)/dfconv.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/dff.Po ./$(DEPDIR)/dfgr.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/dfgroup.Po ./$(DEPDIR)/dfimcomp.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/dfjpeg.Po ./$(DEPDIR)/dfkconv.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/dfkcray.Po ./$(DEPDIR)/dfkfuji.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/dfknat.Po ./$(DEPDIR)/dfkswap.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/dfkvms.Po ./$(DEPDIR)/dfp.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/dfpf.Po ./$(DEPDIR)/dfr8.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/dfr8f.Po ./$(DEPDIR)/dfrle.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/dfsd.Po ./$(DEPDIR)/dfsdf.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/dfstubs.Po ./$(DEPDIR)/dfufp2i.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/dfunjpeg.Po ./$(DEPDIR)/dfutil.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/dfutilf.Po ./$(DEPDIR)/dynarray.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/glist.Po ./$(DEPDIR)/hbitio.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hblocks.Po ./$(DEPDIR)/hbuffer.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hchunks.Po ./$(DEPDIR)/hcomp.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hcompri.Po ./$(DEPDIR)/hdfalloc.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/herr.Po ./$(DEPDIR)/herrf.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hextelt.Po ./$(DEPDIR)/hfile.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hfiledd.Po ./$(DEPDIR)/hfilef.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hkit.Po ./$(DEPDIR)/linklist.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/mcache.Po ./$(DEPDIR)/mfan.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/mfanf.Po ./$(DEPDIR)/mfgr.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/mfgrf.Po ./$(DEPDIR)/mstdio.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/tbbt.Po ./$(DEPDIR)/vattr.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/vattrf.Po ./$(DEPDIR)/vconv.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/vg.Po ./$(DEPDIR)/vgf.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/vgp.Po ./$(DEPDIR)/vhi.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/vio.Po ./$(DEPDIR)/vparse.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/vrw.Po ./$(DEPDIR)/vsfld.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -307,6 +307,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cnone.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/crle.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cskphuff.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cszip.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/df24.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/df24f.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dfan.Po@am__quote@

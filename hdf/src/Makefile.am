@@ -1,7 +1,7 @@
 lib_LIBRARIES = libdf.a
 libdf_a_SOURCES = atom.c bitvect.c cdeflate.c cnbit.c cnone.c crle.c    \
-                  cskphuff.c df24.c df24f.c df24ff.f dfan.c dfanf.c     \
-                  dfanff.f dfcomp.c dfconv.c dff.c dfff.f dfgr.c        \
+                  cskphuff.c cszip.c df24.c df24f.c df24ff.f dfan.c     \
+                  dfanf.c dfanff.f dfcomp.c dfconv.c dff.c dfff.f dfgr.c\
                   dfgroup.c dfimcomp.c dfjpeg.c dfkconv.c dfkcray.c     \
                   dfkfuji.c dfknat.c dfkswap.c dfkvms.c dfp.c dfpf.c    \
                   dfpff.f dfr8.c dfr8f.c dfr8ff.f dfrle.c dfsd.c dfsdf.c\
@@ -20,7 +20,7 @@ include_HEADERS = hfile.h hdf.h hdfi.h herr.h hproto.h hcomp.h hconv.h  \
                   hkit.h hcompi.h bitvect.h atom.h dynarray.h linklist.h\
                   hchunks.h vattr.h df.h dfi.h dfstubs.h dfufp2i.h      \
                   dfan.h dfrig.h dfgr.h dfsd.h vg.h mfan.h mfgr.h       \
-                  dffunc.f90 hdf.f90 dffunc.inc hdf.inc
+                  cszip.h dffunc.f90 hdf.f90 dffunc.inc hdf.inc
 
 SUFFIXES = .inc .f90
 .inc.f90:

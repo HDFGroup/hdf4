@@ -165,11 +165,43 @@ int main(void)
  comp_type   = COMP_CODE_NONE;
  add_sd(FILENAME,"dset_chunk_comp",0,chunk_flags,comp_type,NULL);
 
-/* add a non chunked, compressed sds */
+/*-------------------------------------------------------------------------
+ * GZIP
+ *-------------------------------------------------------------------------
+ */ 
+
+ /* add some non chunked, compressed sds */
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_DEFLATE;
- comp_info.deflate.level = 6;
- add_sd(FILENAME,"dset_comp",0,chunk_flags,comp_type,&comp_info);
+ add_sd(FILENAME,"dset_gzip",0,chunk_flags,comp_type,&comp_info);
+
+/*-------------------------------------------------------------------------
+ * RLE
+ *-------------------------------------------------------------------------
+ */ 
+
+ /* add some non chunked, compressed sds */
+ chunk_flags = HDF_NONE;
+ comp_type   = COMP_CODE_RLE;
+ add_sd(FILENAME,"dset_rle",0,chunk_flags,comp_type,&comp_info);
+
+/*-------------------------------------------------------------------------
+ * HUFF
+ *-------------------------------------------------------------------------
+ */ 
+
+ /* add some non chunked, compressed sds */
+ chunk_flags = HDF_NONE;
+ comp_type   = COMP_CODE_SKPHUFF;
+ add_sd(FILENAME,"dset_huff",0,chunk_flags,comp_type,&comp_info);
+
+/*-------------------------------------------------------------------------
+ * SZIP
+ *-------------------------------------------------------------------------
+ */ 
+ chunk_flags = HDF_NONE;
+ comp_type   = COMP_CODE_SZIP;
+ add_sd(FILENAME,"dset_szip",0,chunk_flags,comp_type,&comp_info);
 
  
 /*-------------------------------------------------------------------------
@@ -315,6 +347,24 @@ int main(void)
   goto out;
  PASSED();
 
+/*-------------------------------------------------------------------------
+ * test4:  
+ *-------------------------------------------------------------------------
+ */
+ TESTING("compressing SDS SELECTED with SZIP, chunking SELECTED");
+ hzip_init (&options,verbose);
+ hzip_addcomp("dset4:SZIP",&options);
+ hzip_addchunk("dset4:10x8",&options);
+ hzip(FILENAME,FILENAME_OUT,&options);
+ hzip_end (&options);
+ if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+  goto out;
+ if ( sds_verifiy_comp("dset4",COMP_CODE_SZIP, 0) == -1) 
+  goto out;
+ if ( sds_verifiy_chunk("dset4",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
+  goto out;
+ PASSED();
+
 
 /*-------------------------------------------------------------------------
  * test4:  
@@ -350,6 +400,7 @@ int main(void)
  hzip_addcomp("dset4:GZIP 9",&options);
  hzip_addcomp("dset5:RLE",&options);
  hzip_addcomp("dset6:HUFF 2",&options);
+ hzip_addcomp("dset7:SZIP",&options);
  hzip_addchunk("dset4:10x8",&options);
  hzip_addchunk("dset5:10x8",&options);
  hzip_addchunk("dset6:10x8",&options);
@@ -362,6 +413,8 @@ int main(void)
  if ( sds_verifiy_comp("dset5",COMP_CODE_RLE, 0) == -1) 
   goto out;
  if ( sds_verifiy_comp("dset6",COMP_CODE_SKPHUFF, 2) == -1) 
+  goto out;
+ if ( sds_verifiy_comp("dset7",COMP_CODE_SZIP, 0) == -1) 
   goto out;
  if ( sds_verifiy_chunk("dset4",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
   goto out;
@@ -380,6 +433,7 @@ int main(void)
  hzip_addcomp("dset4:GZIP 9",&options);
  hzip_addcomp("dset5:RLE",&options);
  hzip_addcomp("dset6:HUFF 2",&options);
+ hzip_addcomp("dset7:SZIP",&options);
  hzip(FILENAME,FILENAME_OUT,&options);
  hzip_end (&options);
  if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
@@ -389,6 +443,8 @@ int main(void)
  if ( sds_verifiy_comp("dset5",COMP_CODE_RLE, 0) == -1) 
   goto out;
  if ( sds_verifiy_comp("dset6",COMP_CODE_SKPHUFF, 2) == -1) 
+  goto out;
+ if ( sds_verifiy_comp("dset7",COMP_CODE_SZIP, 0) == -1) 
   goto out;
  PASSED();
 

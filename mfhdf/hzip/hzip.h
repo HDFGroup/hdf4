@@ -16,7 +16,13 @@
 
 #include "table.h"
 
-
+/* for SZIP */
+#if !defined (NN_OPTION_MASK)
+#define NN_OPTION_MASK				 32
+#endif
+#if !defined (RAW_OPTION_MASK)
+#define RAW_OPTION_MASK				128
+#endif
 
 #define TAG_GRP_IMAGE DFTAG_RIG
 #define TAG_GRP_DSET  DFTAG_NDG

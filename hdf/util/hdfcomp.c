@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
         printf("  appended to outfile, if it exists.\n\n");
         printf("Usage:\n");
         printf(" hdfcomp outfile {[-c],[-r],[-i],[-j<quality>]} imagefile ...\n");
-        printf("                 {[-c],[-r],[-i], [-j<quality>]} imagefile\n");
+        printf("                 {[-c],[-r],[-i],[-j<quality>]} imagefile\n");
         printf("         -r: Store without compression (default)\n");
         printf("         -c: Store using RLE compression\n");
         printf("         -i: Store using IMCOMP compression (requires a");
