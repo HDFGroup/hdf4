@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1992/06/01 19:41:48  dilg
-Added explicit test for dangling aids.
+Revision 1.6  1992/06/02 16:04:38  dilg
+Fixed error in expected return code from DFputelement().
 
+ * Revision 1.5  1992/06/01  19:41:48  dilg
+ * Added explicit test for dangling aids.
+ *
  * Revision 1.4  1992/05/07  16:37:55  dilg
  * Changed output file name frm "o1" to "tstubs.hdf"
  *
@@ -117,7 +120,7 @@ main()
 
     printf("\nTesting DFputelement...\n");
     ret = DFputelement(dfile, (uint16)255, (uint16)1, ar0, a0size);
-    if (ret != 0) {
+    if (ret != a0size) {
 	printf(">>>Write failed at line %d.\n", __LINE__ - 2);
 	printf("   DFerror = %d\n", DFerror);
 	nerrors++;
@@ -350,7 +353,7 @@ main()
 
     printf("\nTesting appending...\n");
     ret = DFputelement(dfile, (uint16)255, (uint16)7, ar2, a2size);
-    if (ret != 0) {
+    if (ret != a2size) {
 	printf(">>>Write failed at line %d.\n", __LINE__ - 2);
 	printf("   DFerror = %d\n", DFerror);
 	nerrors++;
