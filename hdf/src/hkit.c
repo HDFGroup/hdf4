@@ -874,6 +874,7 @@ void HDFend(void)
     DFGRPshutdown();
     ANdestroy();
     HPbitshutdown();
+    HXPshutdown();
     Hshutdown();
     HEshutdown();
 } /* end HDFend() */

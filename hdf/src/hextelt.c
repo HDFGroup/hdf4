@@ -1366,3 +1366,40 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 	HRETURN_ERROR(DFE_ARGS, NULL);
     }
 }	/* HXIbuildfilename */
+
+/*------------------------------------------------------------------------ 
+NAME
+   HXPshutdown -- free any memory buffers we've allocated
+USAGE
+   intn HXPshutdown()
+RETURNS
+   SUCCEED/FAIL
+DESCRIPTION
+    Free buffers we've allocated during the execution of the program.
+
+--------------------------------------------------------------------------*/
+intn
+HXPshutdown(void)
+{
+    if(extcreatedir!=NULL)
+      {
+          HDfree(extcreatedir);
+          extcreatedir=NULL;
+      } /* end if */
+    if(HDFEXTCREATEDIR!=NULL)
+      {
+          HDfree(HDFEXTCREATEDIR);
+          HDFEXTCREATEDIR=NULL;
+      } /* end if */
+    if(extdir!=NULL)
+      {
+          HDfree(extdir);
+          extdir=NULL;
+      } /* end if */
+    if(HDFEXTDIR!=NULL)
+      {
+          HDfree(HDFEXTDIR);
+          HDFEXTDIR=NULL;
+      } /* end if */
+    return(SUCCEED);
+} /* end HXPshutdown() */

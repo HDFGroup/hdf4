@@ -157,7 +157,7 @@ struct accrec_t *access_records = NULL;
 PRIVATE uint8 *ptbuf = NULL;
 
 /* The default state of the file DD caching */
-PRIVATE intn default_cache = FALSE;
+PRIVATE intn default_cache = TRUE;
 
 /* Whether we've installed the atexit function yet */
 PRIVATE intn atexit_installed = FALSE;
@@ -4271,6 +4271,23 @@ Hshutdown(void)
 	return (SUCCEED);
 }	/* end Hshutdown() */
 
+/* #define HFILE_SEEKINFO */
+#ifdef HFILE_SEEKINFO
+static uint32 seek_taken=0;
+static uint32 seek_avoided=0;
+static uint32 write_force_seek=0;
+static uint32 read_force_seek=0;
+
+void
+Hdumpseek(void)
+{
+    printf("Seeks taken=%lu\n",(unsigned long)seek_taken);
+    printf("Seeks avoided=%lu\n",(unsigned long)seek_avoided);
+    printf("# of times write forced a seek=%lu\n",(unsigned long)write_force_seek);
+    printf("# of times read forced a seek=%lu\n",(unsigned long)read_force_seek);
+} /* Hdumpseek() */
+#endif /* HFILE_SEEKINFO */
+
 /*--------------------------------------------------------------------------
  NAME
     HPread
@@ -4302,6 +4319,9 @@ printf("%s: a) f_cur_off=%ld, bytes=%ld, last_op=%d\n",FUNC,(long)file_rec->f_cu
     /* Check for switching file access operations */
     if(file_rec->last_op==OP_WRITE || file_rec->last_op==OP_UNKNOWN)
       {
+#ifdef HFILE_SEEKINFO
+        read_force_seek++;
+#endif /* HFILE_SEEKINFO */
         file_rec->last_op=OP_UNKNOWN;
         if(HPseek(file_rec,file_rec->f_cur_off)==FAIL)
             HRETURN_ERROR(DFE_INTERNAL,FAIL);
@@ -4346,11 +4366,18 @@ printf("%s: a) f_cur_off=%ld, offset=%ld, last_op=%d\n",FUNC,(long)file_rec->f_c
 #endif /* QAK */
     if(file_rec->f_cur_off!=offset || file_rec->last_op==OP_UNKNOWN)
       {
+#ifdef HFILE_SEEKINFO
+          seek_taken++;
+#endif /* HFILE_SEEKINFO */
           if (HI_SEEK(file_rec->file, offset) == FAIL)
               HRETURN_ERROR(DFE_SEEKERROR, FAIL);
           file_rec->f_cur_off=offset;
           file_rec->last_op=OP_SEEK;
       } /* end if */
+#ifdef HFILE_SEEKINFO
+    else
+        seek_avoided++;
+#endif /* HFILE_SEEKINFO */
 #ifdef QAK
 printf("%s: b) f_cur_off=%ld, offset=%ld, last_op=%d\n",FUNC,(long)file_rec->f_cur_off,(long)offset,(int)file_rec->last_op);
 #endif /* QAK */
@@ -4388,6 +4415,9 @@ printf("%s: a) f_cur_off=%ld, bytes=%ld, last_op=%d\n",FUNC,(long)file_rec->f_cu
     /* Check for switching file access operations */
     if(file_rec->last_op==OP_READ || file_rec->last_op==OP_UNKNOWN)
       {
+#ifdef HFILE_SEEKINFO
+        write_force_seek++;
+#endif /* HFILE_SEEKINFO */
         file_rec->last_op=OP_UNKNOWN;
         if(HPseek(file_rec,file_rec->f_cur_off)==FAIL)
             HRETURN_ERROR(DFE_INTERNAL,FAIL);
