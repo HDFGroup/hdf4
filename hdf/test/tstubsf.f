@@ -2,10 +2,13 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.5  1992/06/02 16:04:38  dilg
-C Added more thorough test of dffind() and fixed error in expected return code
-C from dfput().
+C Revision 1.6  1992/06/16 15:39:42  chouck
+C HP is really picky about things not extending into column 72
 C
+c Revision 1.5  1992/06/02  16:04:38  dilg
+c Added more thorough test of dffind() and fixed error in expected return code
+c from dfput().
+c
 c Revision 1.4  1992/05/07  16:37:55  dilg
 c Fixed problem with "Hit <return> to continue"
 c Changed output file name from "o2" to "tstubsF.hdf"
@@ -56,8 +59,8 @@ C
       data r7   /7/
 
       integer dfaccess, dfopen, dfclose, dfdesc, dfdup, dfdel, dfread,
-     +		dfwrite, dfupdate, dfget, dfput, dfsfind, dffind, dferrno,
-     +		dfishdf, dfnewref, dfnumber, dfstat
+     +		dfwrite, dfupdate, dfget, dfput, dfsfind, dffind, 
+     +          dferrno, dfishdf, dfnewref, dfnumber, dfstat
 
       a0size = len(ar0)
       a1size = len(ar1)
@@ -96,7 +99,7 @@ C
         print *, 'Success:  dfishdf failed with DFerror = ', dfenum
       else
 	print *, '>>>Failure:  Non-existent file looks like HDF file.'
-	print *, '   Maybe there was a pre-existing file named "tstubsF.hdf"'
+	print *, '   Maybe was a pre-existing file named "tstubsF.hdf"'
 	print *, '   DFerror = ', dfenum
 	nerrors = nerrors + 1
       endif
@@ -179,7 +182,7 @@ C
 	  print *, '   String read:     ', in
 	  nerrors = nerrors + 1
 	else
-	  print *, 'Success:  string read is the same as string written.'
+	  print *, 'Success:  string read is the same as written.'
         endif
       endif
 
@@ -204,7 +207,7 @@ C
       if (ret .eq. -1) then
 	print *, 'Success:  dfread failed with DFerror = ', dfenum
       else
-	print *, '>>>Failure:  Read allowed on element set up for write.'
+	print *, '>>>Failure:  Read allowed on write element.'
 	nerrors = nerrors + 1
       endif
       in(1:20) = '                    '
@@ -240,7 +243,7 @@ C
       if (ret .eq. -1) then
 	print *, 'Success:  dfwrite failed with DFerror = ', dfenum
       else
-	print *, '>>>Failure:  write allowed on element set up for read.'
+	print *, '>>>Failure:  write allowed on read element.'
 	nerrors = nerrors + 1
       endif
 
@@ -264,7 +267,7 @@ C
 	  print *, '   String read:     ', in
 	  nerrors = nerrors + 1
 	else
-	  print *, 'Success:  string read is the same as string written.'
+	  print *, 'Success:  string read is the same as written.'
         endif
       endif
       in(1:20) = '                    '
@@ -275,7 +278,7 @@ C
       dfenum = dferrno()
       if (nd .ne. 2) then
 	print *, '>>>Failure:'
-	print *, '   Reported ', nd, ' occurrances of tag 255 rather than 2.'
+	print *, '   Saw ', nd, ' occurrances of tag 255 not than 2.'
 	print *, '   DFerror = ', dfenum
 	nerrors = nerrors + 1
       else
@@ -326,7 +329,7 @@ C
       ret = dfnewref(dfile)
       dfenum = dferrno()
       if (ret .ne. 4) then
-	print *, '>>>Failure:  Returned ref. no. ', ret, ' instead of 4'
+	print *, '>>>Failure:  Returned ref. ', ret, ' instead of 4'
 	print *, '   DFerror = ', dfenum
 	nerrors = nerrors + 1
       else
@@ -365,7 +368,7 @@ C
 	ret = dfnumber(dfile, t127)
       dfenum = dferrno()
 	if (ret .ne. 0) then
-	  print *, '>>>Failure:  found ', ret, ' instances of deleted tag.'
+	  print *, '>>>Failure:  found ', ret, ' deleted tags.'
 	  print *, '   DFerror = ', dfenum
 	  nerrors = nerrors + 1
 	else
@@ -407,7 +410,8 @@ C
         print *, '   DFerror = ', dfenum
 	nerrors = nerrors + 1
       else
-	if ((tag .ne. 254) .or. (ref .ne. i) .or. (length .ne. a1size)) then
+	if ((tag .ne. 254) .or. (ref .ne. i) .or. 
+     +                                  (length .ne. a1size)) then
 	  print *, '>>>Failure:  tag/ref found is not correct.'
 	  print *, '   Looking for:'
 	  print *, '      tag:      254'
@@ -427,7 +431,7 @@ C
       ret = dfclose(dfile)
       dfenum = dferrno()
       if (ret .ne. 0) then
-	print *, '>>>Failure:  dfclose failed (probably due to open aids)'
+	print *, '>>>Failure:  dfclose failed (probably from open aid)'
         print *, '   DFerror = ', dfenum
 	nerrors = nerrors + 1
       endif
