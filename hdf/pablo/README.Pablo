@@ -1,22 +1,12 @@
 		     HDF Performance Data Capture
 			     README.Pablo
-			   October 4, 1995
+			   September 16, 1998
 
 
 This file briefly summarizes how to use the instrumented version of
 HDF and the Pablo performance data capture libraries to gather data
 about I/O behavior and procedure execution times.  More detailed
-documentation is provided in Pablo.ps, a PostScript file with the
-following contents:
-
-    1. Overview
-    2. Performance Data
-    3. Obtaining Pablo
-    4. Modifying Your Makefile
-    5. Instrumenting Your Source Code
-    6. Analyzing The Results
-    A. Sample Analysis Reports
-    B. SDDF Records in the Trace Output File
+documentation is provided in a PostScript Pablo.ps.
 
 				 ---
 
@@ -25,6 +15,7 @@ and analysis tools, are available via anonymous FTP on
 
 	www-pablo.cs.uiuc.edu (128.174.237.148)
 
+Version 5.1 or higher of the Pablo TraceLibrary is required.
 				 ---
 
 When linking your application, the instrumented HDF library must come
@@ -38,20 +29,18 @@ example:
 To gather performance data, your application must call HDFinitIOTrace
 to initialize tracing, and HDFendIOTrace to terminate tracing.
 
+C:	
+	void HDFinitTrace(char *traceFName, unsigned procMask, int traceType );
 
-VOID HDFinitIOTrace(char *traceFileName, intn detail, intn lifetime,
-	intn timeWindow, float64 timeWindowSize, intn regionTrace,
-	intn regionSize, uint16 procTraceMask)
 
-	traceFileName	IN:	name of the generated trace output file
-	detail		IN:	if non-zero, do detailed trace
-	lifetime	IN:	if non-zero, do file lifetime summaries
-	timeWindow	IN:	if non-zero, do time window summaries
-	timeWindowSize	IN:	size of time window in seconds
-	regionTrace	IN:	if non-zero, do file region summaries
-	regionSize	IN:	size of file region in bytes
-	procTraceMask	IN:	families of HDF procedures to trace
-
+	traceFName	IN:	name of the generated trace output file
+	procMask	IN:	families of HDF procedures to trace
+	traceType	IN:	an integer indicating the type of tracing
+ 				to be performed:
+			        traceType = 0, no trace file is produced
+				          = 1, perform Runtime Tracing
+					  = 2, perform Summary Tracing
+	(see the document Pablo.ps for further information)
 
 	Purpose		Initializes tracing.
 
@@ -60,66 +49,49 @@ VOID HDFinitIOTrace(char *traceFileName, intn detail, intn lifetime,
 	Description	This routine causes HDF to generate trace
 			events for I/O operations and procedure calls.
 
-			Detailed tracing results in one event record
-			for each I/O request.
+		        Runtime Tracing produces an SDDF file containing
+  		 	a packet of information produced for each entry and
+ 			each exit from HDF traced routines.
 
-			File lifetime summaries accumulate
-			information about I/O activity for a given
-			file between the time the file is opened and
-			closed.
-
-			Time window summaries divide execution time
-			into 'time windows' of a specified number of
-			seconds and accumulate information about I/O
-			activity for each open file until execution
-			moves to the next time window.
-
-			File region summaries divide each open file
-			into 'file regions' containing a specified
-			number of bytes and accumulates information
-			about I/O activity for each open file until
-			the file pointer moves from one file region to
-			another.
-
-			Data about the execution times of HDF
-			procedures can be gathered by enabling
-			procedure tracing for families of procedures.
-			This is done by specifying a logical-or of
-			values defined in ProcMasks.h (for C) or
-			PabloHDF.inc (for FORTRAN).
+	  		Summary Tracing produces an SDDF file containing one
+			packet of information for each traced routine 
+			summarizing all calls to that procedure.
+	
+			See Pablo.ps for further explanation.
 
 	Example		#include "ProcMasks.h"
 
-			HDFinitIOTrace("trace.bin", 0, 1, 0, 0.0, 0,
-				0, DFP_mask | DFR8_mask);
+			HDFinitTrace("trace.bin", DFP_mask + DFR8_mask, 1 )
 
-			Note that the timeWindowSize is a float64
-			argument; specifying an integer value can
-			cause unpredictable behavior.  For example,
-			specify 0.0 instead of 0.
-
-	FORTRAN		integer function hinitiotrace(tracefn, detail,
-			lifetime, timew, timews, regiont, regionts, proctmask)
-			    character*(*)  tracefn
-			    integer        detail, lifetime, timew,
-                            regiont, regionts, proctmask
-			    real           timews
-
-
-VOID HDFendIOTrace(VOID)
+	void HDFendTrace( void );
 
 	Purpose		Terminates tracing.
 
 	Return value	None.
 
-	Description	This routine generates final statistics for
-			any open files, and ensures that all trace
-			data is written to the trace output file.
+	Description	This routine causes Pablo to cleanup files and end
+                        tracing
+			
+FORTRAN:
+	subroutine HDFinitTrace(tracefn, procMask, traceType )
 
-	FORTRAN		integer function hendiotrace()
+	character*(*) tracefn	
+	integer procMask
+	integer traceType
 
+	see description under C above
+
+	Example 	include 'ProcMasks.inc'
+			
+			call HDFinitTrace( 'tracefn', dfp_mask + dfr8_mask, 22)
+
+	subroutine HDFendTrace( )
+
+	see description under C above
 
 				 ---
 
 The performance data can be manipulated by a variety of analysis tools
-in the Pablo software.
+in the Pablo software.  The Pablo HDFanalysis component contains tools  
+specifically for this analysis.
+
