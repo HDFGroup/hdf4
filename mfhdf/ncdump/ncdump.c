@@ -98,7 +98,37 @@ type_name(type)
     }
 }
 
-
+/*
+ * Remove trailing zeros (after decimal point) but not trailing decimal
+ * point from ss, a string representation of a floating-point number that
+ * might include an exponent part.
+ */
+static void
+tztrim(ss)
+     char *ss;			/* returned string representing dd */
+{
+    char *cp, *ep;
+    
+    cp = ss;
+    if (*cp == '-')
+        cp++;
+    while(isdigit((int)*cp) || *cp == '.')
+        cp++;
+    if (*--cp == '.')
+        return;
+    ep = cp+1;
+    while (*cp == '0')
+        cp--;
+    cp++;
+    if (cp == ep)
+        return;
+    while (*ep)
+        *cp++ = *ep++;
+    *cp = '\0';
+    return;
+}
+ 
+ 
 /*
  * Print list of attribute values.  Attribute values must be printed with
  * explicit type tags, because their types are not declared.
@@ -120,8 +150,8 @@ pr_att_vals(type, len, vals)
     char *sp;
     unsigned char uc;
     char gps[30];		/* for ascii of a float or double precision */
-    char *f_fmt = "%.8g";
-    char *d_fmt = "%.16g";
+    char *f_fmt = "%#.8g";
+    char *d_fmt = "%#.16g";
 
     switch (type) {
       case NC_BYTE:
@@ -189,13 +219,11 @@ pr_att_vals(type, len, vals)
 	for (iel = 0; iel < len; iel++) {
 	    int ll;
 	    (void) sprintf(gps, f_fmt, * gp.fp++);
-	    /* make sure we get a decimal point for float type attributes */
 	    /* append a trailing "f" for floating-point attributes */
 	    ll = strlen(gps);
-	    if (!strchr(gps, '.'))
-	      gps[ll++] = '.';
 	    gps[ll + 1] = '\0';
 	    gps[ll] = 'f';
+            tztrim(gps);	/* trim trailing 0's after '.' */
 	    Printf ("%s%s", gps, iel<len-1 ? ", " : "");
 	}
 	break;
@@ -203,12 +231,7 @@ pr_att_vals(type, len, vals)
 	gp.dp = (double *) vals;
 	for (iel = 0; iel < len; iel++) {
 	    (void) sprintf(gps, d_fmt, *gp.dp++);
-	    /* make sure we get a decimal point for float type attributes */
-	    if (!strchr(gps, '.')) {
-		int ll = strlen(gps);
-		gps[ll++] = '.';
-		gps[ll] = '\0';
-	    }
+	    tztrim(gps);	/* trim trailing 0's after '.' */
 	    Printf ("%s%s", gps, iel<len-1 ? ", " : "");
 	}
 	break;
@@ -240,6 +263,10 @@ do_ncdump(path, specp)
     int ncid = ncopen(path, NC_NOWRITE); /* netCDF id */
     vnode* vlist = newvlist();	/* list for vars specified with -v option */
 
+    if (ncid == -1) { 
+        error("ncopen failed on %s", path);
+        return;
+    }
     /*
      * If any vars were specified with -v option, get list of associated
      * variable ids
