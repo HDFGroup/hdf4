@@ -648,7 +648,7 @@ static intn dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[
                                  &(dimNT[j]), &(dimnattr[j]));
                          attr_nt_desc = HDgetNTdesc(dimNT[j]);
                          fprintf(fp, "\t Dim%i: Name=%s\n", (int)j, dim_nm);
-                         if (temp!=dimsizes[j])  {
+                         if (temp == 0)  {
 			  fprintf(fp, "\t\t Size = UNLIMITED ");
 			  fprintf(fp, "(currently %i)\n", (int)dimsizes[j]);
 			 }
@@ -700,7 +700,7 @@ static intn dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[
                        }
                        if (dumpsds_opts->contents!=DDATA)
                           fprintf(fp, "\t Data : \n");
-                       if (rank >0)    {
+                       if (rank >0 && dimsizes[0] != 0)    {
                            for (cn=0; cn<16; cn++)   
 			      fprintf(fp, " ");
                            ret = sdsdumpfull(sds_id,rank,dimsizes,nt,16,fp);
