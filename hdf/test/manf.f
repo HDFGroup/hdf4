@@ -24,10 +24,12 @@ C
 C  Input file:   none
 C  Output files: manf.hdf
 C
+      implicit none
+      include "fortest.inc"
+
       integer afstart, afend, afcreate, affcreate
       integer afwriteann, afendaccess, hopen, hclose
-      integer getverb
-      integer Verbosity, number_failed
+      integer number_failed
 
       integer dssdims, dsadata, dslref, dsgdims
       integer d8aimg, DFR8lastref, d8gimg
@@ -67,8 +69,6 @@ C
       character image(ROWS, COLS), newimage(ROWS, COLS)
       real      data(ROWS, COLS)
 
-C     Set verbosity level
-      Verbosity=getverb()     
 
       number_failed = 0
       numberfailed =  0
@@ -306,9 +306,13 @@ C
 C**************************************************************
       subroutine man_check_lab_desc(fname, tag, ref, label, desc, 
      *                          num_failed)
+      implicit none
+      include "fortest.inc"
+
       character*(*) fname, label, desc
       integer tag, ref, num_failed
 
+      integer MAXLENLAB, MAXLEN_DESC
       parameter ( MAXLENLAB =    30,
      *            MAXLEN_DESC =  500 )
 
@@ -316,9 +320,6 @@ C**************************************************************
 
       integer affileinfo, afnumann, afannlist, afannlen
       integer afreadann, afstart, afend, afendaccess, hopen, hclose
-
-      integer getverb
-      integer Verbosity
 
       integer fileh, anh
       integer nflabs, nfdescs, nolabs, nodescs
@@ -335,31 +336,28 @@ C**************************************************************
       AN_FILE_LABEL = 2
       AN_FILE_DESC  = 3
 
-C     Set verbosity level
-      Verbosity=getverb()     
-
 C *****start annotation access on file *****
       fileh = hopen(fname, DFACC_READ,0)
       ret = fileh
-      call VERIFY(ret, 'hopen', number_failed, Verbosity)
+      call VERIFY(ret, 'hopen', num_failed, Verbosity)
       anh = afstart(fileh)
       ret = anh
-      call VERIFY(ret, 'afstart', number_failed, Verbosity)
+      call VERIFY(ret, 'afstart', num_failed, Verbosity)
 
       ret = affileinfo(anh,nflabs,nfdescs,nolabs,nodescs)
-      call VERIFY(ret, 'affileinfo', number_failed, Verbosity)
+      call VERIFY(ret, 'affileinfo', num_failed, Verbosity)
 
       numdlabels = afnumann(anh, AN_DATA_LABEL, tag, ref)
-      call VERIFY(numdlabels, 'afnumann', number_failed, Verbosity)
+      call VERIFY(numdlabels, 'afnumann', num_failed, Verbosity)
 
       numddescs = afnumann(anh, AN_DATA_DESC, tag, ref)
-      call VERIFY(numddescs, 'afnumann', number_failed, Verbosity)
+      call VERIFY(numddescs, 'afnumann', num_failed, Verbosity)
 
       ret = afannlist(anh, AN_DATA_LABEL, tag, ref, dlabels)
-      call VERIFY(ret, 'afannlist', number_failed, Verbosity)
+      call VERIFY(ret, 'afannlist', num_failed, Verbosity)
 
       ret = afannlist(anh, AN_DATA_DESC, tag, ref, ddescs)
-      call VERIFY(ret, 'afannlist', number_failed, Verbosity)
+      call VERIFY(ret, 'afannlist', num_failed, Verbosity)
 
 C ***** Look for label in list ******
       found = 0
@@ -367,12 +365,12 @@ C ***** Look for label in list ******
       fannlabel = ' '
       do 300 j=1, numdlabels
          annlen = afannlen(dlabels(j))
-         call VERIFY(annlen, 'afannlen', number_failed, Verbosity)
+         call VERIFY(annlen, 'afannlen', num_failed, Verbosity)
 
          ret = afreadann(dlabels(j), inlabel, MAXLENLAB)
-         call VERIFY(ret, 'afreadann', number_failed, Verbosity)
+         call VERIFY(ret, 'afreadann', num_failed, Verbosity)
          ret = afendaccess(dlabels(j))
-         call VERIFY(ret, 'afendaccess', number_failed, Verbosity)
+         call VERIFY(ret, 'afendaccess', num_failed, Verbosity)
 
          if (inlabel .eq. label) then
             found = 1
@@ -403,12 +401,12 @@ C ***** look for description in list
       fanndesc = ' '
       do 400 j=1, numddescs
          annlen = afannlen(ddescs(j))
-         call VERIFY(annlen, 'afannlen', number_failed, Verbosity)
+         call VERIFY(annlen, 'afannlen', num_failed, Verbosity)
 
          ret = afreadann(ddescs(j), indesc, MAXLEN_DESC)
-         call VERIFY(ret, 'afreadann', number_failed, Verbosity)
+         call VERIFY(ret, 'afreadann', num_failed, Verbosity)
          ret = afendaccess(ddescs(j))
-         call VERIFY(ret, 'afendaccess', number_failed, Verbosity)
+         call VERIFY(ret, 'afendaccess', num_failed, Verbosity)
 
          if (indesc .eq. desc) then
             found = 1
@@ -434,9 +432,9 @@ C ***** look for description in list
 
 C ****** close file *******
       ret = afend(anh)
-      call VERIFY(ret, 'afend', number_failed, Verbosity)
+      call VERIFY(ret, 'afend', num_failed, Verbosity)
       ret = hclose(fileh)
-      call VERIFY(ret, 'hclose', number_failed, Verbosity)
+      call VERIFY(ret, 'hclose', num_failed, Verbosity)
 
 
       return
@@ -449,17 +447,18 @@ C     SUBROUTINE check_fan
 C
 C************************************************************
       subroutine check_fan(fname, index, label, desc, num_failed)
+      implicit none
+      include "fortest.inc"
+
       character*(*) fname, label, desc
       integer index, num_failed
 
+      integer MAXLENFLAB, MAXLEN_FDESC
       parameter ( MAXLENFLAB =    35,
      *            MAXLEN_FDESC =  100 )
 
       integer affileinfo, afselect, afannlen, afreadann
       integer afstart, afend, afendaccess, hopen, hclose
-
-      integer getverb
-      integer Verbosity
 
       integer ret
       integer fileh, annh, anh
@@ -475,31 +474,28 @@ C************************************************************
       AN_FILE_LABEL = 2
       AN_FILE_DESC  = 3
 
-C     Set verbosity level
-      Verbosity=getverb()     
-
 C **** We check both file label/description
       fileh = hopen(fname, DFACC_READ,0)
       ret = fileh
-      call VERIFY(ret, 'hopen', number_failed, Verbosity)
+      call VERIFY(ret, 'hopen', num_failed, Verbosity)
       anh = afstart(fileh)
       ret = anh
-      call VERIFY(ret, 'afstart', number_failed, Verbosity)
+      call VERIFY(ret, 'afstart', num_failed, Verbosity)
 
       ret = affileinfo(anh,nflabs,nfdescs,nolabs,nodescs)
-      call VERIFY(ret, 'affileinfo', number_failed, Verbosity)
+      call VERIFY(ret, 'affileinfo', num_failed, Verbosity)
 
 C ***** Read file label **********
       annh = afselect(anh, index, AN_FILE_LABEL)
-      call VERIFY(ret, 'afselect', number_failed, Verbosity)
+      call VERIFY(ret, 'afselect', num_failed, Verbosity)
 
       fannlen = afannlen(annh)
-      call VERIFY(fannlen, 'afannlen', number_failed, Verbosity)
+      call VERIFY(fannlen, 'afannlen', num_failed, Verbosity)
 
       ret = afreadann(annh, flabel, fannlen)
-      call VERIFY(ret, 'afreadann', number_failed, Verbosity)
+      call VERIFY(ret, 'afreadann', num_failed, Verbosity)
       ret = afendaccess(annh)
-      call VERIFY(ret, 'afendaccess', number_failed, Verbosity)
+      call VERIFY(ret, 'afendaccess', num_failed, Verbosity)
 
       if (fannlen .ne. len(label)) then
          print *,'   >>>BAD LABEL LENGTH.'
@@ -517,15 +513,15 @@ C ***** Read file label **********
 
 C **** Read file description *****
       annh = afselect(anh, index, AN_FILE_DESC)
-      call VERIFY(ret, 'afselect', number_failed, Verbosity)
+      call VERIFY(ret, 'afselect', num_failed, Verbosity)
 
       fannlen = afannlen(annh)
-      call VERIFY(fannlen, 'afannlen', number_failed, Verbosity)
+      call VERIFY(fannlen, 'afannlen', num_failed, Verbosity)
 
       ret = afreadann(annh, fdesc, fannlen)
-      call VERIFY(ret, 'afreadann', number_failed, Verbosity)
+      call VERIFY(ret, 'afreadann', num_failed, Verbosity)
       ret = afendaccess(annh)
-      call VERIFY(ret, 'afendaccess', number_failed, Verbosity)
+      call VERIFY(ret, 'afendaccess', num_failed, Verbosity)
 
       if (fannlen .ne. len(desc)) then
           print *,'   >>>BAD DESCRIPTION LENGTH.' 
@@ -543,9 +539,9 @@ C **** Read file description *****
 
 C ****** close file *******
       ret = afend(anh)
-      call VERIFY(ret, 'afend', number_failed, Verbosity)
+      call VERIFY(ret, 'afend', num_failed, Verbosity)
       ret = hclose(fileh)
-      call VERIFY(ret, 'hclose', number_failed, Verbosity)
+      call VERIFY(ret, 'hclose', num_failed, Verbosity)
 
       return
       end

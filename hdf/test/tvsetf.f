@@ -26,8 +26,10 @@ C   Tests the vdata and vgroup interface
 C Input file: none
 C Output file: tvsetf1.hdf
 
-      integer number_failed,vfstart,hopen,vfatch,vfgid,vfgnxt
-      integer Verbosity, getverb
+      implicit none
+      include "fortest.inc"
+
+      integer number_failed,vfstart,hopen,vfatch,vfgid,vfgnxt,vfinsrt
       integer vfgttrs,vfadtr, hclose, vsfatch
       integer vsffdef,vsffnd,vsfgid
       integer vsfinq,vsfsfld
@@ -49,6 +51,7 @@ C Output file: tvsetf1.hdf
       double precision gdata1(10)
       double precision igdata1(10)
       double precision geps
+      real   feps
 
       character*11 fn1
       character*64 vname
@@ -71,8 +74,8 @@ C Output file: tvsetf1.hdf
      +           FALSE = 0,
      +           HDF_VSPACK = 0,
      +           HDF_VSUNPACK = 1,
-     +           feps = 0.00001,
-     +           geps = 0.000000001
+     +           feps = 1.0E-5,
+     +           geps = 1.0D-9
      +          )
 
       DATA ddata1/10,11,12,13,14,15,16,17,18,19/
@@ -83,11 +86,10 @@ C Output file: tvsetf1.hdf
 
       cdata = 'abcdebcdefcdefg'
       fn1 = 'tvsetf1.hdf'
-      Verbosity = getverb()
 
 C Open the file
       fid1 = hopen(fn1, DFACC_CREATE, 0)
-      call VERIFY(file_id,'hopen',number_failed,Verbosity)
+      call VERIFY(fid1,'hopen',number_failed,Verbosity)
       call vfstart(fid1)
 C Create a vgroup
       call MESSAGE(5,'Creating a vgroup',Verbosity)

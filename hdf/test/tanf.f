@@ -29,11 +29,12 @@ C                 length that is one greater than MAXLEN_LAB. This
 C                 may be due to a bug in dfan.c in DFANIgetann().
 C
 
+      implicit none
+      include "fortest.inc"
+
       integer daplab, dapdesc  
       integer dssdims, dsadata, dslref, dsgdims
       integer d8aimg, DFR8lastref, d8gimg
-      integer getverb
-      integer Verbosity
 
       integer number_failed, ISFIRST, NOTFIRST, MAXLEN_LAB
       integer MAXLEN_DESC, ROWS, COLS, REPS
@@ -62,9 +63,6 @@ C
       character*1 CR
       character image(ROWS, COLS), newimage(ROWS, COLS)
       real      data(ROWS, COLS)
-
-C     Set verbosity level
-      Verbosity=getverb()     
 
       number_failed =  0
       CR = char(10)
@@ -163,22 +161,21 @@ C                   with expected ones
 C
 C**************************************************************
       subroutine an_check_lab_desc(filename, tag, ref, label, desc, 
-     *                                                   num_failed)
-      character*(*) filename, label, desc
-      integer tag, ref, num_failed
+     *                                                   number_failed)
+      implicit none
+      include "fortest.inc"
 
+      character*(*) filename, label, desc
+      integer tag, ref, number_failed
+
+      integer MAXLEN_LAB, MAXLEN_DESC
       parameter ( MAXLEN_LAB =    30,
      *            MAXLEN_DESC =  500 )
 
       integer daglab, dagllen, dagdlen, dagdesc
       integer  inlablen, indesclen, ret
-      integer getverb
-      integer Verbosity
       character*30   inlabel
       character*500 indesc
-
-C     Set verbosity level
-      Verbosity=getverb()     
 
       inlablen =  dagllen(filename, tag, ref)
       call VERIFY(inlablen, 'dagllen', number_failed, Verbosity)
@@ -187,7 +184,7 @@ C     Set verbosity level
           print *,'   >>>BAD LABEL LENGTH.'
           print *,'                        IS: ', inlablen
           print *,'                 SHOULD BE: ', len(label)
-          num_failed = num_failed + 1
+          number_failed = number_failed + 1
       endif
 
       ret = daglab(filename, tag, ref, inlabel, MAXLEN_LAB+1)
@@ -196,7 +193,7 @@ C     Set verbosity level
           print *,'   >>>BAD LABEL.'
           print *,'                        IS: ', inlabel
           print *,'                 SHOULD BE: ', label
-          num_failed = num_failed + 1
+          number_failed = number_failed + 1
       endif
 
       indesclen = dagdlen(filename, tag, ref)
@@ -205,7 +202,7 @@ C     Set verbosity level
           print *,'   >>>BAD DESCRIPTION LENGTH.' 
           print *,'                        IS: ', indesclen 
           print *,'                 SHOULD BE: ', len(desc) 
-          num_failed = num_failed + 1 
+          number_failed = number_failed + 1 
       else 
           ret = dagdesc(filename, tag, ref, indesc, MAXLEN_DESC)
           call VERIFY(ret, 'dagdesc', number_failed, Verbosity)
@@ -213,7 +210,7 @@ C     Set verbosity level
               print *,'   >>>BAD DESCRIPTION.' 
               print *,'                        IS: ', indesc 
               print *,'                 SHOULD BE: ', desc 
-              num_failed = num_failed + 1 
+              number_failed = number_failed + 1 
           endif
       endif
 

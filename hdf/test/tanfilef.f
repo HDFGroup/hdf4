@@ -12,7 +12,7 @@ C****************************************************************************
 C
 C $Id$
 C
-      subroutine tanfilef (num_err)
+      subroutine tanfilef (number_failed)
 C
 C
 C  Test program: 
@@ -27,22 +27,20 @@ C                 length that is one greater than MAXLEN_LAB. This
 C                 may be due to a bug in dfan.c in DFANIgetann().
 C
 
+      implicit none
+      include "fortest.inc"
+
       integer daafid, daafds,dagfidl,dagfid
       integer dagfdsl, dagfds, hopen, hclose
       integer ret, number_failed
       integer ISFIRST, NOFIRST, MAXLEN_LAB, MAXLEN_DESC
       integer fid, DFACC_CREATE, DFACC_READ
-      integer getverb
-      integer Verbosity
 
       character*35 lab1, lab2
       character*35 templab
       character*100 desc1, desc2, tempstr
       character*64 TESTFILE
       character*1 CR
-
-C     Set verbosity level
-      Verbosity=getverb()     
 
       ISFIRST = 1
       NOFIRST = 0

@@ -51,4 +51,10 @@ if(ret == FAIL) {printf("*** UNEXPECTED RETURN from %s is %ld at line %4d in %s\
 
 #define MESSAGE(v,a) {if (Verbosity>v) {a}}
 
+/* definitions for command strings */
+#define VERBOSITY_STR	"Verbosity"
+#define SKIP_STR	"Skip"
+#define TEST_STR	"Test"
+#define CLEAN_STR	"Cleanup"
+
 #endif /* _TUTILS_H */

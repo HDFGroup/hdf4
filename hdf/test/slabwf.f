@@ -18,8 +18,11 @@ C Program to write data set using the DFSDxxx interface
 C 
 C Output files: slabwf.hdf, slab1wf, slab4wf
 
+      implicit none
+      include "fortest.inc"
 
-      integer dssdims, dssdisc, dssdist
+
+      integer dssdims, dssdisc, dssdist, dssfill
       integer dssslab, dswslab, dseslab, dsrslab
       integer dsigdim, dswref, dsclear, dfsdrestart
       integer ret, np, nr,nc, di(3), st(3), sz(3), sr(3)
@@ -35,11 +38,8 @@ C Output files: slabwf.hdf, slab1wf, slab4wf
       integer fnlen
       integer num_err
       integer nref
-      integer getverb
-      integer Verbosity, number_failed
+      integer number_failed
 
-C     Set verbosity level
-      Verbosity=getverb()     
       number_failed = 0
 
       DFTAG_SDT = 709 

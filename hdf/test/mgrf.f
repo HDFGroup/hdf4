@@ -20,15 +20,16 @@ C Input file: none
 C Output file: tmgrf.hdf
 C
 C
+      implicit none
+      include "fortest.inc"
+
       integer num_err
-      integer getverb
-      integer Verbosity
 
       integer hopen, hclose
       integer mgstart, mgfinfo, mgend, mgcreat, mgselct 
       integer mgn2ndx, mggiinf, mgwrimg, mgrdimg, mgendac
       integer mgid2rf, mgr2idx, mgrltil, mgrimil, mggltid
-      integer mgglinf, mgwrlut, mgrdlut, mgsxfil, mgssctp
+      integer mgglinf, mgwrlut, mgrdlut
       integer mgsattr, mgatinf, mggattr, mgfndat
       integer mgscatt, mgsnatt, mggcatt, mggnatt
       integer mgwcimg, mgrcimg
@@ -98,7 +99,6 @@ C
       ATNAME_N = 'Numeric Attr. #1'
       ATNAME_C = 'Character Attr. #1'
       CR = char(10)
-      Verbosity=getverb()
       number_failed = 0
 
 C Initialize the arrays
@@ -231,7 +231,7 @@ C Select an image
 
 C Get info about the image
       call MESSAGE(5,'Getting image information',Verbosity)
-      ret = mggiinf(ri_id,IMAGE2,n_comp,nt,il,dims,n_attr)
+      ret = mggiinf(ri_id,IMAGE2,n_comp,nt,il,dims,n_attrs)
       call VERIFY(ret,'mggiinf',number_failed,Verbosity)
       ref = mgid2rf(ri_id)
       call VERIFY(ref,'mgid2rf',number_failed,Verbosity)
@@ -308,7 +308,7 @@ C Select a character image
 
 C Get info about the image
       call MESSAGE(5,'Getting image information',Verbosity)
-      ret = mggiinf(ri_id,IMAGEC_2,n_comp,nt,il,dims,n_attr)
+      ret = mggiinf(ri_id,IMAGEC_2,n_comp,nt,il,dims,n_attrs)
       call VERIFY(ret,'mggiinf',number_failed,Verbosity)
       ref = mgid2rf(ri_id)
       call VERIFY(ref,'mgid2rf',number_failed,Verbosity)

@@ -86,10 +86,12 @@ main(int argc, char *argv[])
     FILE	*cmdfile, *fopen();
     char	*cmdfilename="fortest.arg";
 
+#ifdef NO
     ret = Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
     printf("\nFORTEST V%s Built on: %s \n", VERSION, BUILDDATE);
     printf("HDF Library Version: %u.%ur%u, %s\n\n",
         (unsigned) lmajor, (unsigned) lminor, (unsigned) lrelease, lstring);
+#endif
 
     num_tests=InitTest("slab", "slabwf", "");
     num_tests=InitTest("r24", "t24f", "");
@@ -110,8 +112,13 @@ main(int argc, char *argv[])
 #else
     printf("   Skipping stubs\n");
 #endif
+    if ((cmdfile = fopen(cmdfilename, "w")) == NULL){
+	printf("***Can't write to cmdfile(%s)***\n", cmdfilename);
+	return(-1);
+    }
 
     Verbosity = 4;  /* Default Verbosity is Low */
+    fprintf(cmdfile, "%s %d\n", VERBOSITY_STR, Verbosity);
     for (CLLoop = 1; CLLoop < argc; CLLoop++)
       {
           if ((argc > CLLoop + 1) && ((HDstrcmp(argv[CLLoop], "-verbose") == 0) ||
@@ -125,6 +132,7 @@ main(int argc, char *argv[])
                     Verbosity = 10;
                 else
                     Verbosity = atoi(argv[CLLoop + 1]);
+		fprintf(cmdfile, "%s %d\n", VERBOSITY_STR, Verbosity);
             }
           if ((argc > CLLoop) && ((HDstrcmp(argv[CLLoop], "-summary") == 0) ||
                                   (HDstrcmp(argv[CLLoop], "-s") == 0)))
@@ -161,6 +169,7 @@ main(int argc, char *argv[])
                                   (HDstrcmp(argv[CLLoop], "-c") == 0)))
             {
                 CleanUp = 0;
+		fprintf(cmdfile, "%s %d\n", CLEAN_STR, CleanUp);
             }
           if ((argc > CLLoop + 1) && ((HDstrcmp(argv[CLLoop], "-exclude") == 0) ||
                                       (HDstrcmp(argv[CLLoop], "-x") == 0)))
@@ -221,37 +230,35 @@ main(int argc, char *argv[])
 #ifndef vms
     HDputenv(verb_env);
 #endif
-    if ((cmdfile = fopen(cmdfilename, "w")) == NULL){
-	printf("***Can't write to cmdfile(%s)***\n", cmdfilename);
-	return(-1);
-    }
 
     for (Loop = 0; Loop < num_tests; Loop++)
       {
           if (Test[Loop].SkipFlag)
             {
+		fprintf(cmdfile, "%s %s\n", SKIP_STR, Test[Loop].Name);
+#ifdef NO
                 MESSAGE(2, printf("Skipping -- %s (%s) \n",
                                   Test[Loop].Description, Test[Loop].Name);
                     );
-		fprintf(cmdfile, "Skip %s\n", Test[Loop].Name);
+#endif
             }
           else
             {
+		fprintf(cmdfile, "%s %s\n", TEST_STR, Test[Loop].Name);
+#ifdef NO
                 MESSAGE(2, printf("Testing  -- %s (%s) \n",
                                   Test[Loop].Description, Test[Loop].Name);
                     );
-		fprintf(cmdfile, "Test %s\n", Test[Loop].Name);
                 MESSAGE(5, printf("===============================================\n");
                     );
                 Test[Loop].NumErrors = num_errs;
-#ifdef NO
                 CallFortranTest(Test[Loop].Call);
-#endif
                 Test[Loop].NumErrors = num_errs - Test[Loop].NumErrors;
                 MESSAGE(5, printf("===============================================\n");
                     );
                 MESSAGE(5, printf("There were %d errors detected.\n\n", Test[Loop].NumErrors);
                     );
+#endif
             }
       }
 
@@ -260,8 +267,9 @@ main(int argc, char *argv[])
 	char fortrancmd[100];
 	HDstrcpy(fortrancmd, "./fortestF < ");
 	HDstrcat(fortrancmd, cmdfilename);
-	system(fortrancmd);
+	return(system(fortrancmd));
     }
+#ifdef NO
     MESSAGE(2, printf("\n\n");
         )
         if (num_errs)
@@ -307,4 +315,5 @@ main(int argc, char *argv[])
 #endif
       }
     return (0);
+#endif
 }

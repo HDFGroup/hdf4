@@ -76,7 +76,7 @@ C------------------------------------------------------------------------------
           print *, '    >>> ', routine, ' FAILED: ret = ',
      *           errval, '    <<<'
       else 
-          if (verbosity .gt. 9) then
+          if (verbosity .ge. 9) then
               print *, routine, ' SUCCESSFUL'
           endif
       endif
