@@ -3810,8 +3810,19 @@ int32 dimid;
         The dataset currently cannot be special already. 
         i.e. NBIT, COMPRESSION, or EXTERNAL.
 
-        COMPRESSION support will be added later when doubly 
-        special elements are handled more gracefully in the HDF core library.
+        COMPRESSION is set by using the 'SD_CHUNK_DEF' structure
+        to set the appropriate compression info. The info is
+        the same as that set in 'SDsetcompress()'.
+
+        The relevant fields of SD_CHUNK_DEF structure looks like:
+
+            int32     *chunk_lengths;  Chunk lengths along each dimension 
+            int32      comp_type;      Compression type 
+            comp_info  *cinfo;         Compression info struct 
+
+        See example in pseudo-C below for further usage.
+
+        The maximum number of Chunks in an HDF file is 65,535.
 
         e.g. 4x4 array with 2x2 chunks. The array shows the layout of
              chunks in the chunk array.
@@ -3827,17 +3838,42 @@ int32 dimid;
         |     ---------------------                                         
         |     0         2         4                                       
         ---------------> X                                                       
-                                                                                
+
+        --Without compression--:
         {                                                                    
         int32  chunk_lengths[2];                                               
                                                                             
         .......                                                                    
+        -- Set chunk lengths --                                                    
         chunk_lengths[0]= 2;                                                     
-        chunk_lengths[1]= 2;                                                     
+        chunk_lengths[1]= 2; 
+        -- Set Chunking -- 
         SDsetChunk(sdsid,chunk_lengths, SD_CHUNK_LENGTHS);                      
          ......                                                                  
         }                                                                           
-                                                
+
+        --With compression--:
+        {                                                                    
+        int32        chunk_lengths[2];                                               
+        comp_info    cinfo;
+        SD_CHUNK_DEF chunk_def;
+                                                                            
+        .......                
+        -- Set chunk lengths first --                                                    
+        chunk_lengths[0]= 2;                                                     
+        chunk_lengths[1]= 2;
+        chunk_def.chunk_lengths = chunk_lengths;
+
+        -- Set compression --
+        cinfo.deflate.level = 9;
+        chunk_def.comp_type = COMP_CODE_DEFLATE;
+        chunk_def.cinfo = &cinfo;
+
+        -- Set Chunking with Compression --
+        SDsetChunk(sdsid, &chunk_def, SD_CHUNK_COMP);                      
+         ......                                                                  
+        }                                                                           
+
         NOTE:
            This routine directly calls a Special Chunked Element fcn HMCxxx.
 
@@ -3864,8 +3900,11 @@ int32 flags;
     NC       * handle = NULL;        /* file handle */
     NC_var   * var    = NULL;        /* SDS variable */
     NC_attr ** fill_attr = NULL;     /* fill value attribute */
-    CHUNK_DEF  chunk[1];             /* handles up to 5 dimensions */
-    int32     *cdims     = NULL;     /* array of chunk lengths */
+    HCHUNK_DEF  chunk[1];            /* H-level chunk defintion */
+    SD_CHUNK_DEF *cdef   = NULL;     /* SD Chunk definition */
+    model_info minfo;                /* dummy model info struct */
+    comp_info  cinfo;                /* compression info - NBIT */
+    int32      *cdims    = NULL;     /* array of chunk lengths */
     int32      fill_val_len = 0;     /* fill value length */
     uint8      *fill_val    = NULL;  /* fill value */
     uint8      default_fill_val = 0; /* default fill value */
@@ -3882,8 +3921,10 @@ int32 flags;
 #ifdef CHK_DEBUG
     fprintf(stderr,"SDsetChunk: called  \n");
 #endif
-    /* Check args, flags currently can only be 'SD_CHUNK_LENGTHS' */
-    if (chunk_def == NULL || flags != SD_CHUNK_LENGTHS)
+    /* Check args, flags currently can only be 'SD_CHUNK_LENGTHS' 
+       SD_CHUNK_COMP and SD_CHUNK_NBIT */
+    if (chunk_def == NULL || (flags != SD_CHUNK_LENGTHS && flags != SD_CHUNK_COMP
+        && flags != SD_CHUNK_NBIT))
       {
         status = FAIL;
         goto done;
@@ -3906,9 +3947,48 @@ int32 flags;
         goto done;
       }
 
-    /* cast chunk_def to array of int32,
-       valid only if 'flags' == 1 */
-    cdims = (int32 *)chunk_def;
+    /* Decide type of defintion passed in  */
+    switch (flags)
+      {
+      case SD_CHUNK_LENGTHS:
+          /* cast chunk_def to array of int32,*/
+          cdims = (int32 *)chunk_def;
+          chunk[0].chunk_flag = 0;  /* nothing set for this now */
+          chunk[0].comp_type = 0; /* nothing set */
+          chunk[0].model_type = 0; /* nothing set */
+          chunk[0].cinfo = NULL; /* nothing set */
+          chunk[0].minfo = NULL; /* nothing set */
+          break;
+      case SD_CHUNK_COMP:
+          cdef  = (SD_CHUNK_DEF *)chunk_def;
+          cdims = cdef->chunk_lengths;
+          chunk[0].chunk_flag = SPECIAL_COMP;  /* Compression */
+          chunk[0].comp_type  = cdef->comp_type; 
+          chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
+          chunk[0].cinfo = cdef->cinfo; 
+          chunk[0].minfo = &minfo; /* dummy */
+          break;
+      case SD_CHUNK_NBIT:
+          cdef  = (SD_CHUNK_DEF *)chunk_def;
+          cdims = cdef->chunk_lengths;
+          chunk[0].chunk_flag = SPECIAL_COMP;  /* NBIT is a type of compression */
+          chunk[0].comp_type  = COMP_CODE_NBIT;
+          chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
+          /* set up n-bit parameters */
+          cinfo.nbit.nt        = var->HDFtype;
+          cinfo.nbit.sign_ext  = cdef->sign_ext;
+          cinfo.nbit.fill_one  = cdef->fill_one;
+          cinfo.nbit.start_bit = cdef->start_bit;
+          cinfo.nbit.bit_len   = cdef->bit_len;
+          chunk[0].cinfo = &cinfo; 
+          chunk[0].minfo = &minfo; /* dummy */
+          break;
+      default:
+          status = FAIL;
+          goto done;
+          break;
+      }
+
 #ifdef CHK_DEBUG
     fprintf(stderr,"SDsetChunk: does data ref exist?  \n");
 #endif
@@ -3945,9 +4025,7 @@ int32 flags;
 
     /* initialize datset/chunk sizes using CHUNK defintion structure */
     chunk[0].chunk_size = 1;
-
     chunk[0].num_dims = ndims;
-    chunk[0].chunk_flag = 0;  /* nothing set for this now */
     for (i = 0; i < ndims; i++)
       {   /* get dimension length from shape arrays */
           /* check if dimension in unlimited since we don't 
@@ -4054,7 +4132,7 @@ int32 flags;
                            nlevels,                /* nlevels */
                            fill_val_len,           /* fill value length */
                            (VOID *)tBuf,           /* fill value */
-                           (CHUNK_DEF *)chunk      /* chunk definition */);
+                           (HCHUNK_DEF *)chunk      /* chunk definition */);
       }
     else /* no need to convert fill value */
       {
@@ -4068,7 +4146,7 @@ int32 flags;
                              nlevels,                /* nlevels */
                              fill_val_len,           /* fill value length */
                              (VOID *)fill_val,       /* fill value */
-                             (CHUNK_DEF *)chunk      /* chunk definition */);
+                             (HCHUNK_DEF *)chunk      /* chunk definition */);
       }
 
 #ifdef CHK_DEBUG

@@ -172,9 +172,30 @@ extern intn SDisdimval_bwcomp
 
 /* flag used for SDsetChunk() and SDgetChunkInfo() */
 #define SD_CHUNK_LENGTHS 0x1
+#define SD_CHUNK_COMP    0x2
+#define SD_CHUNK_NBIT    0x3
 
 /* Cache flags */
 #define HDF_PAGEALL 0x1
+
+/* Chunk Defintion */
+typedef struct sd_chunk_def_struct 
+{
+    /* Chunk Lengths - Required */
+    int32     *chunk_lengths; /* chunk lengths along each dimension */
+
+    /* For Compression info - Optional */
+    int32      comp_type;     /* Compression type */
+    int32      model_type;    /* Compression model type */
+    comp_info  *cinfo;        /* Compression info struct */
+    model_info *minfo;        /* Compression model info struct */
+
+    /* For NBIT - Optional */
+    intn      start_bit;
+    intn      bit_len;
+    intn      sign_ext;
+    intn      fill_one;
+} SD_CHUNK_DEF;
 
 
 /******************************************************************************
@@ -195,8 +216,19 @@ extern intn SDisdimval_bwcomp
         The dataset currently cannot be special already. 
         i.e. NBIT, COMPRESSION, or EXTERNAL.
 
-        COMPRESSION support will be added later when doubly 
-        special elements are handled more gracefully in the HDF core library.
+        COMPRESSION is set by using the 'SD_CHUNK_DEF' structure
+        to set the appropriate compression info. The info is
+        the same as that set in 'SDsetcompress()'.
+
+        The relevant fields of SD_CHUNK_DEF structure looks like:
+
+            int32     *chunk_lengths;  Chunk lengths along each dimension 
+            int32      comp_type;      Compression type 
+            comp_info  *cinfo;         Compression info struct 
+
+        See example in pseudo-C below for further usage.
+
+        The maximum number of Chunks in an HDF file is 65,535.
 
         e.g. 4x4 array with 2x2 chunks. The array shows the layout of
              chunks in the chunk array.
@@ -213,13 +245,38 @@ extern intn SDisdimval_bwcomp
         |     0         2         4                                       
         ---------------> X                                                       
                                                                                 
+        --Without compression--:
         {                                                                    
         int32  chunk_lengths[2];                                               
                                                                             
         .......                                                                    
+        -- Set chunk lengths --                                                    
         chunk_lengths[0]= 2;                                                     
-        chunk_lengths[1]= 2;                                                     
+        chunk_lengths[1]= 2; 
+        -- Set Chunking -- 
         SDsetChunk(sdsid,chunk_lengths, SD_CHUNK_LENGTHS);                      
+         ......                                                                  
+        }                                                                           
+
+        --With compression--:
+        {                                                                    
+        int32        chunk_lengths[2];                                               
+        comp_info    cinfo;
+        SD_CHUNK_DEF chunk_def;
+                                                                            
+        .......                
+        -- Set chunk lengths first --                                                    
+        chunk_lengths[0]= 2;                                                     
+        chunk_lengths[1]= 2;
+        chunk_def.chunk_lengths = chunk_lengths;
+
+        -- Set compression --
+        cinfo.deflate.level = 9;
+        chunk_def.comp_type = COMP_CODE_DEFLATE;
+        chunk_def.cinfo = &cinfo;
+
+        -- Set Chunking with Compression --
+        SDsetChunk(sdsid, &chunk_def, SD_CHUNK_COMP);                      
          ......                                                                  
         }                                                                           
 
@@ -346,7 +403,7 @@ DESCRIPTION
      Set the maximum number of chunks to cache.
      By default when the SDS is promoted to a chunked element the 
      maximum number of chunks in the cache is set to the number of
-     chunks along the first dimension.
+     chunks along the last dimension.
 
      The values set here affects the current object's caching behaviour.
 
