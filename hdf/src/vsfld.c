@@ -199,7 +199,7 @@ char    *fields;
 
                     value = (int32)wlist->ivsize + (int32)(wlist->isize[wlist->n]);
                     if(value > TOO_BIG) HRETURN_ERROR(DFE_BADFIELDS,FAIL);
-                    wlist->ivsize += (int16) value;
+                    wlist->ivsize = (int16) value;
 
                     wlist->n++;
                     break;
