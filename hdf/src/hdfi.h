@@ -467,9 +467,11 @@ typedef long               hdf_pint_t;   /* an integer the same size as a pointe
 #else
 #define FILELIB UNIXBUFIO
 #endif
+/*
 #ifdef IRIX64
 #define BIG_LONGS
 #endif
+*/
 
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
