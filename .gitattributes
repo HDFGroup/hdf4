@@ -41,6 +41,7 @@ java-hdf/samples/liver_ca_3D.hdf -text
 java-hdf/samples/ntcheck.hdf -text
 java-hdf/samples/sac96274.hdf -text
 java-hdf/samples/sea-ice-vdata.hdf -text
+java-hdf/samples/tmgr.hdf -text
 mfhdf/dumper/Example6.hdf -text
 mfhdf/dumper/ctxtr2r.hdf -text
 mfhdf/dumper/grtdfi322.hdf -text

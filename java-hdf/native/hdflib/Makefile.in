@@ -54,4 +54,4 @@ libhdf: $(OBJECTS)
 	$(LD) $(LDOPT) $(OBJECTS) $(LIBS) -o $(LIBDIR)/libhdf.$(SLEXT)
 
 clean:
-	rm -f *.o  $(LIBDIR)/libhdf.$(SLEXT)
+	rm -f *.o so_locations $(LIBDIR)/libhdf.$(SLEXT)

@@ -365,7 +365,8 @@ int fid;
 		try {
 		    hdf.Hclose(fid);
 		} catch (Exception e) {
-			System.out.println("Exception closing file: "+fid);
+			infoText.setText("Exception closing file: "+fid);
+		//	System.out.println("Exception closing file: "+fid);
 		}
 	}
     } else {
@@ -514,7 +515,8 @@ int fid;
 	try {
 	    fid = hdf.Hopen(this.hdfFile);   
 	} catch (Exception e) {
-	    System.out.println("Exception opening file: "+this.hdfFile);
+		infoText.setText("Exception opening file: "+this.hdfFile);
+	    //System.out.println("Exception opening file: "+this.hdfFile);
 	}
     }
     }
@@ -868,10 +870,14 @@ int fid;
     // The system dependent file separator String.
     String separator = System.getProperty("file.separator");
 
+	if ((fd.getDirectory() != null) && (fd.getFile() != null)) {
     if (isMac())
        hdfFile = fd.getDirectory() + separator + fd.getFile();
     else
        hdfFile = fd.getDirectory() + fd.getFile();	
+	} else {
+		hdfFile = new String("");
+	}
 	
     hdfFileText.setText(hdfFile);
     infoText.setText("");
@@ -902,7 +908,9 @@ int fid;
 	try {
     if (this.fid != HDFConstants.FAIL)
       hdf.Hclose(this.fid);
-	} catch (HDFException e) {};
+	} catch (HDFException e) {
+		infoText.setText("Exception closing file: "+fid);
+	};
     
     super.destroy();
     

@@ -184,7 +184,7 @@ clean: clean-natives clean-classes clean-docs
 
 distclean: clean-natives clean-classes clean-docs
 	rm config.cache config.status config.log 
-	rm -rf ./lib/*
+	rm -rf ./lib
 	rm -f ./native/Makefile
 	rm -rf ./native/hdflib/Makefile
 	rm -rf ./native/jhv/Makefile
