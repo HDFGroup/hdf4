@@ -84,11 +84,18 @@ typedef struct hchunk_def_struct {
 /* Structure for each Data array dimension */
 typedef struct dim_rec_struct {
     /* fields stored in chunked header */
-    int32 distrib_type;        /* Data distribution along this dimension */
+    int32 flag;                /* distrib_type(low 8 bits 0-7)
+                                  - Data distribution along this dimension 
+                                  other(medium low 8 bits 8-15)
+                                  - regular/unlimited dimension? */
     int32 dim_length;          /* length of this dimension */
     int32 chunk_length;        /* chunk length along this dimension */
     
-    /* computed field */
+    /* info determined from 'flag' field */
+    int32 distrib_type;        /* Data distribution along this dimension */
+    int32 unlimited;           /* regular(0) or unlimited dimension(1) */
+
+    /* computed fields */
     int32 last_chunk_length;   /* last chunk length along this dimension */
     int32 num_chunks;          /* i.e. "dim_length / chunk_length" */
 } DIM_REC, * DIM_REC_PTR;

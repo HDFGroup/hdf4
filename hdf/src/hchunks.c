@@ -91,7 +91,7 @@ static char RcsId[] = "@(#)$Revision$";
 
    <- 4 bytes   -> <- 4 bytes -> <- 4 bytes -> (12 x ndims bytes)
    --------------------------------------------
-...| distrib_type | dim_length  | chunk_length |  ... x Number of dimensions
+...|    flag      | dim_length  | chunk_length |  ... x Number of dimensions
    --------------------------------------------
 
    <-      4 bytes    -> <- variable bytes -> 
@@ -139,11 +139,18 @@ static char RcsId[] = "@(#)$Revision$";
 
    Fields for each dimension: (12 x ndims bytes)
    --------------------------------------
-   distrib_type   - type of data distribution along this dimension (32 bit field)
-                    0->None, 1->Block
-                    Currently only block distribution is supported but
-                    this is not checked or verified for now.
-   dim_length     - length of this dimension. (4 bytes)
+   flag           - (32 bit field) 
+                    |High 8bits|Medium High 8bits|Medium Low 8bit|Low 8bits|
+                    o distrib_type (Low 8 bits, bits 0-7) - 
+                      type of data distribution along this dimension 
+                      0x00->None, 
+                      0x01->Block
+                      Currently only block distribution is supported but
+                      this is not checked or verified for now.
+                    o other (Medium Low 8 bits, bits 7-15)
+                      0x00->Regular dimension, 
+                      0x01->UNLIMITED dimension
+   dim_length     - current length of this dimension. (4 bytes)
    chunk_length   - length of the chunk along this dimension (4 bytes)
 
    Fields for each additional 'specialness' (Optional)
@@ -320,8 +327,12 @@ create_dim_recs(DIM_REC **dptr, /* OUT: dimension record pointers */
     for (i = 0; i < ndims; i++)
       {
           /* Initialize values for dimension record */
+          (*dptr)[i].flag = 0;
           (*dptr)[i].dim_length = 0;
           (*dptr)[i].chunk_length = 0;
+          (*dptr)[i].distrib_type = 0;
+          (*dptr)[i].unlimited = 0;
+          (*dptr)[i].last_chunk_length = 0;
           (*dptr)[i].num_chunks = 0;
 
           (*sbi)[i] = 0;
@@ -1132,10 +1143,16 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
                 {
                     int32 odd_size;
 
-                    INT32DECODE(p,(info->ddims[j].distrib_type));  /* 4 bytes */
+                    INT32DECODE(p,(info->ddims[j].flag));          /* 4 bytes */
                     INT32DECODE(p,(info->ddims[j].dim_length));    /* 4 bytes */
                     INT32DECODE(p,(info->ddims[j].chunk_length));  /* 4 bytes */
                                                                   /* = 12 bytes */  
+
+                    /* check 'flag' and decode settings */
+                    info->ddims[j].distrib_type = (int32)(0xff & info->ddims[j].flag);
+                    info->ddims[j].unlimited = (int32)
+                                    (0xff & ((uint32)(info->ddims[j].flag >> 8)));
+
                     info->ddims[j].num_chunks = info->ddims[j].dim_length /
                         info->ddims[j].chunk_length;
                     /* check to see if need to increase # of chunks along this dim*/
@@ -1709,10 +1726,24 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
           int32 odd_size;
 
           info->ddims[i].distrib_type = chk_array->pdims[i].distrib_type;
-          info->ddims[i].dim_length   = chk_array->pdims[i].dim_length;
+          if (chk_array->pdims[i].dim_length == 0) /* check unlimited dimension */
+            { /* yes, UNLIMITED */
+                info->ddims[i].unlimited = 1; /* set flag */
+                /* set dimension length to be at least the chunk length
+                   along this dimension */
+                info->ddims[i].dim_length = chk_array->pdims[i].chunk_length;
+            }
+          else /* not an unlimited dimension */
+              info->ddims[i].dim_length = chk_array->pdims[i].dim_length;
+
+          /* set dimension 'flag' */
+          info->ddims[i].flag = 
+          (int32)(0xffff & ((info->ddims[i].unlimited << 8)
+                             | (info->ddims[i].distrib_type)));
+
           info->ddims[i].chunk_length = chk_array->pdims[i].chunk_length;
           info->ddims[i].num_chunks = info->ddims[i].dim_length /
-              info->ddims[i].chunk_length;
+                                      info->ddims[i].chunk_length;
           /* check to see if need to increase # of chunks along this dim */
           if ((odd_size = (info->ddims[i].dim_length % info->ddims[i].chunk_length)))
             {
@@ -1820,7 +1851,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
                                             /* = 35 bytes*/
         for (j = 0; j < info->ndims; j++)
           {
-              INT32ENCODE(p,(info->ddims[j].distrib_type)); /* 4 bytes */
+              INT32ENCODE(p,(info->ddims[j].flag));         /* 4 bytes */
               INT32ENCODE(p,(info->ddims[j].dim_length));   /* 4 bytes */
               INT32ENCODE(p,(info->ddims[j].chunk_length)); /* 4 bytes */
           }                                               /* = 12 x ndims bytes */
