@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.21  1993/08/19 16:45:49  chouck
-Added code and tests for multi-order Vdatas
+Revision 1.22  1993/09/02 21:15:50  chouck
+Was losing AIDs in VSappendable()
 
+ * Revision 1.21  1993/08/19  16:45:49  chouck
+ * Added code and tests for multi-order Vdatas
+ *
  * Revision 1.20  1993/08/16  21:46:43  koziol
  * Wrapped in changes for final, working version on the PC.
  *
@@ -979,11 +982,11 @@ int32 blk;
 
     if(blk && blk > blksize) blksize = blk;
 
-    status = HLcreate(vs->f, VSDATATAG, vs->oref, blksize, VDEFAULTNBLKS);
-    if(status == FAIL)
-        return FAIL;
+    Hendaccess(vs->aid);
 
-    Hendaccess(status);
+    vs->aid = HLcreate(vs->f, VSDATATAG, vs->oref, blksize, VDEFAULTNBLKS);
+    if(vs->aid == FAIL)
+        return FAIL;
 
     return SUCCEED;
 
