@@ -73,21 +73,17 @@ nhestringc(error_code, error_message, len)
            intf  *len;
 #endif /* PROTOTYPE */
 {
-   char *cstring;
+   char *cstring = NULL;
    intn   status;
  
-   cstring = NULL;
    status = -1;
-   if (*len) cstring = (char *) HDmalloc((uint32)*len + 1);
    cstring = (char *)HEstring((hdf_err_code_t) *error_code);
-   if (cstring) status = 0;
+   if (cstring) {
+                status = 0;
+                HDpackFstring(cstring,  _fcdtocp(error_message),  *len);
+   }  
  
-   HDpackFstring(cstring,  _fcdtocp(error_message),  *len);
- 
-   if(cstring)  HDfree((VOIDP)cstring);
- 
- 
-   return((intf)status);
+   return status;
  
  
 }
