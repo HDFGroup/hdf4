@@ -60,7 +60,7 @@ SHELL=/bin/sh
 
 # Define your C compiler and flags
 CC= cc
-CFLAGS= -O
+CFLAGS= -O -Xa
 
 # Define your FORTRAN compiler
 FC= f77

@@ -20,11 +20,10 @@
 #
 # Type of C compiler (default is `cc'):
 # Try 'gcc -ansi' if your cc is not ANSI compatible.
-# CC='gcc -ansi'
-CC='cc -ansi'
+CC='gcc -ansi'
 #
 # C compiler flags (default is `-O'):
-# CFLAGS='-O'
+CFLAGS='-O'
 #
 # C preprocessor flags 
 # CPPFLAGS=-DNDEBUG
@@ -36,6 +35,9 @@ HDF_INC=-I${HDF_HOME}/hdf/include
 #
 # Location of HDF library file.  Must be an absolute path.
 HDF_LIB=${HDF_HOME}/hdf/lib/libdf.a
+#
+# Location of JPEG library file.  Must be an absolute path.
+JPEG_LIB=${HDF_HOME}/hdf/jpeg/libjpeg.a
 #
 # Installation prefix (default is `..'):
 # prefix=/usr/local/unidata

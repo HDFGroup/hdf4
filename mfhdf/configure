@@ -145,6 +145,9 @@ OS_irix
 #ifdef sun
 OS_sunos
 #endif
+#ifdef __FreeBSD__
+OS_freebsd
+#endif
 #ifdef ultrix
 OS_ultrix
 #endif
@@ -285,6 +288,8 @@ HDF_INC=${HDF_INC-"-I/hdf/home/chouck/hdf/33/include"}
 
 
 HDF_LIB=${HDF_LIB-"/hdf/home/chouck/hdf/33/lib/libdf.a"}
+
+JPEG_LIB=${JPEG_LIB-"/hdf/home/chouck/hdf/33/jpeg/libjpeg.a"}
 
 
 FFLAGS=${FFLAGS-""}
@@ -437,7 +442,7 @@ test -z "$FC" && FC=""
 test -n "$FC" && break
 done
 ;;
-  *)     for p in f77 cf77 fc
+  *)     for p in f77 cf77 #fc
 do
 if test -z "$FC"; then
   echo checking for $p
@@ -672,6 +677,14 @@ case "${OS}" in
 
                 LD_XDR=;;
   sunos*)         for arg in -DSUN; do
+    case "$HDF_INC" in
+      *$arg*) ;;
+      *)      HDF_INC="${HDF_INC-} $arg";;
+    esac
+  done
+
+                LD_XDR=-lnsl;;
+  freebsd*)         for arg in -DUNIX386; do
     case "$HDF_INC" in
       *$arg*) ;;
       *)      HDF_INC="${HDF_INC-} $arg";;
@@ -1062,6 +1075,7 @@ OLD_FILLVALUES='$OLD_FILLVALUES'
 TRANSFORMEES='$TRANSFORMEES'
 HDF_INC='$HDF_INC'
 HDF_LIB='$HDF_LIB'
+JPEG_LIB='$JPEG_LIB'
 FFLAGS='$FFLAGS'
 LEX='$LEX'
 YACC='$YACC'
@@ -1137,6 +1151,7 @@ s%@OLD_FILLVALUES@%$OLD_FILLVALUES%g
 s%@TRANSFORMEES@%$TRANSFORMEES%g
 s%@HDF_INC@%$HDF_INC%g
 s%@HDF_LIB@%$HDF_LIB%g
+s%@JPEG_LIB@%$JPEG_LIB%g
 s%@FFLAGS@%$FFLAGS%g
 s%@LEX@%$LEX%g
 s%@YACC@%$YACC%g
