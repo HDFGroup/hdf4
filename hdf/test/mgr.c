@@ -462,7 +462,7 @@ if(ret==FAIL)
     riid=(intn)GRcreate(grid,"Test Image #1",ncomp,nt,0,dimsizes);
     CHECK(riid,FAIL,"GRcreate");
 
-    img1_data=HDmalloc(dimsizes[0]*dimsizes[1]*DFKNTsize(nt)*ncomp);
+    img1_data=HDmalloc(dimsizes[0]*dimsizes[1]*DFKNTsize(nt | DFNT_NATIVE)*ncomp);
     CHECK(img1_data,NULL,"HDmalloc");
 
     {
@@ -519,7 +519,7 @@ if(ret==FAIL)
     riid=(intn)GRcreate(grid,"Test Image #2",ncomp,nt,0,dimsizes);
     CHECK(riid,FAIL,"GRcreate");
 
-    img1_data=HDmalloc(dimsizes[0]*dimsizes[1]*DFKNTsize(nt)*ncomp);
+    img1_data=HDmalloc(dimsizes[0]*dimsizes[1]*DFKNTsize(nt | DFNT_NATIVE)*ncomp);
     CHECK(img1_data,NULL,"HDmalloc");
 
     {
@@ -597,7 +597,7 @@ if(ret==FAIL)
 
 printf("%d: riid=%ld: ncomp=%ld, nt=%ld, il=%ld, dim[0]=%ld, dim[1]=%ld, n_attrs=%ld\n",i,(long)riid,(long)ncomp,(long)nt,(long)il,(long)dimsizes[0],(long)dimsizes[1],(long)n_attrs);
 
-                img1_data=HDmalloc(dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt));
+                img1_data=HDmalloc(dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt|DFNT_NATVIE));
                 CHECK(img1_data,NULL,"HDmalloc");
 
                 HDmemset(img1_data,0,dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt));
@@ -892,7 +892,7 @@ test_mgr_image()
               int32 start[2];
               int32 stride[2];
 
-                img_data=HDmalloc(dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt));
+                img_data=HDmalloc(dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt|DFNT_NATIVE));
                 CHECK(img_data,NULL,"HDmalloc");
 
                 HDmemset(img_data,0,dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt));
