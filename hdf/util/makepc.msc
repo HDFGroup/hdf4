@@ -1,0 +1,141 @@
+#
+# $Header$
+#
+# $Log$
+# Revision 1.1  1993/01/19 06:13:02  koziol
+# New JPEG utilities and a real makefile for the PC
+#
+# Revision 1.11  1992/12/03  09:40:58  koziol
+# Updated for v3.2r3 release
+#
+# Revision 1.10  1992/09/17  19:46:44  koziol
+# Made changes for Prototypes on the Convex
+#
+# Revision 1.9  1992/09/04  15:20:18  chouck
+# Fixed rules for MISPEL compiler
+#
+# Revision 1.8  1992/08/14  20:11:36  sxu
+# Added -lgl_s and -cckr (or -ansi) for SGI
+#
+# Revision 1.7  1992/08/12  15:58:11  sxu
+# Removed redundant -I for CONVEX
+#
+# Revision 1.6  1992/08/05  21:27:55  chouck
+# Added support for moving utils to HDFBIN
+#
+# Revision 1.5  1992/07/31  21:20:39  chouck
+# Fixed a couple CFLAGS problems
+#
+# Revision 1.3  1992/07/15  21:39:54  sxu
+# Added _STDC_ to make CONVEX happy.
+#
+# Revision 1.2  1992/07/15  19:36:00  chouck
+# Modified to conform to having a top level Makefile
+#
+# Revision 1.1  1992/07/14  20:08:47  dilg
+# Initial revision
+#
+#
+UTILS = hdf24to8.exe hdfcomp.exe hdfls.exe hdfpack.exe hdfrseq.exe hdftopal.exe \
+    hdftor8.exe paltohdf.exe r8tohdf.exe ristosds.exe vcompat.exe vmake.exe \
+    vshow.exe make24.exe hdf2jpeg.exe jpeg2hdf.exe
+
+HEOBJ = he_main.obj he_cntrl.obj he_disp.obj he_file.obj
+
+#
+# These values will typically be over ridden by values specified in
+#   top level HDF 
+#
+
+# ==> Uncomment the line with your system type on it.
+#MACHINE = SUN
+#MACHINE = UNICOS
+#MACHINE = IRIS4
+#MACHINE = APOLLO
+#MACHINE = IBM6000
+#MACHINE = CONVEX
+#MACHINE = VMS
+#MACHINE = MIPSEL
+#MACHINE = MAC
+MACHINE = PC
+#MACHINE = HP9000
+
+RM=del
+RMFLAGS=
+
+HDFLIB = ../lib
+HDFINC = ../include
+HDFBIN = ../bin
+
+IFLAGS=   /I../include /I.
+LIBS= ..\lib\df.lib
+
+CC=cl
+CFLAGS=  /c /D$(MACHINE) /AH /W4 /Od $(IFLAGS) /Zi /Zp1
+#CFLAGS=  /c /D$(MACHINE) /AH /W4 /Ox $(IFLAGS) /Zp1
+
+LN=link
+LNFLAGS=/COD /ST:6118
+
+# ==> For IRIS4, specify CFLAGS as follows:
+#CFLAGS=  -g -D$(MACHINE) -ansi
+
+.c.obj:
+    $(CC) $(CFLAGS) $<
+
+all: hdfed.exe utils
+    mkdir $(HDFBIN)
+    cp *.exe $(HDFBIN)
+
+nofortran: all
+
+hdfed.exe: he.h he_proto.h $(HEOBJ)
+    $(LN) $(LNFLAGS) $(HEOBJ),$*,nul,$(LIBS);
+
+hdf24to8.exe : hdf24to8.obj
+    $(LN) $(LNFLAGS) $*,$*,nul,$(LIBS);
+
+hdfcomp.exe : hdfcomp.obj
+    $(LN) $(LNFLAGS) $*,$*,nul,$(LIBS);
+
+hdfpack.exe : hdfpack.obj
+    $(LN) $(LNFLAGS) $*,$*,nul,$(LIBS);
+
+hdftopal.exe : hdftopal.obj
+    $(LN) $(LNFLAGS) $*,$*,nul,$(LIBS);
+
+hdftor8.exe : hdftor8.obj
+    $(LN) $(LNFLAGS) $*,$*,nul,$(LIBS);
+
+paltohdf.exe : paltohdf.obj
+    $(LN) $(LNFLAGS) $*,$*,nul,$(LIBS);
+
+r8tohdf.exe : r8tohdf.obj
+    $(LN) $(LNFLAGS) $*,$*,nul,$(LIBS);
+
+make24.exe : make24.obj
+    $(LN) $(LNFLAGS) $*,$*,nul,$(LIBS);
+
+hdf2jpeg.exe : hdf2jpeg.obj
+    $(LN) $(LNFLAGS) $*,$*,nul,$(LIBS);
+
+jpeg2hdf.exe : jpeg2hdf.obj
+    $(LN) $(LNFLAGS) $*,$*,nul,$(LIBS);
+
+ristosds.exe : ristosds.obj
+    $(LN) $(LNFLAGS) $*,$*,nul,$(LIBS);
+
+vcompat.exe : vcompat.obj
+    $(LN) $(LNFLAGS) $*,$*,nul,$(LIBS);
+
+vmake.exe : vmake.obj
+    $(LN) $(LNFLAGS) $*,$*,nul,$(LIBS);
+
+vshow.exe : vshow.obj
+    $(LN) $(LNFLAGS) $*,$*,nul,$(LIBS);
+
+utils: $(UTILS)
+
+clean:
+    -$(RM) $(RMFLAGS) *.obj $(UTILS) hdfed.exe
+
