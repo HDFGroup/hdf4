@@ -8,12 +8,15 @@
  DESIGN
 
  EXPORTED ROUTINES
+    None of these routines are designed to be called by other users except
+    for the modeling layer of the compression routines.
 
  AUTHOR
        Quincey Koziol
 
  MODIFICATION HISTORY
-    9/28/93     Starting writing specs & coding prototype
+    9/28/93     Starting writing specs & coding prototype.
+    10/09/93    Finished testing.  First version done.
 */
 
 #ifdef RCSID
@@ -23,9 +26,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2.2.1  1993/10/10 22:09:59  koziol
-Moved Tag descriptions into a header file.  Updated compression routines.
+Revision 1.2.2.2  1993/10/19 17:36:34  koziol
+Tons of changes and updates.  Fixed the 0 length problem in Hstartwrite(),
+made all the 'void' returning routines in the Vsets return a succeed or
+fail.  Added N-Bit files (which aren't working yet...)
 
+ * Revision 1.2.2.1  1993/10/10  22:09:59  koziol
+ * Moved Tag descriptions into a header file.  Updated compression routines.
+ *
  * Revision 1.2  1993/10/06  20:27:20  koziol
  * More compression fixed, and folded Doug's suggested change into VSappendable.
  *
@@ -103,7 +111,7 @@ PRIVATE int32 HCIcrle_init(access_rec)
     rle_info=&(info->cinfo.coder_info.rle_info);
 
     /* Initialize RLE state information */
-    rle_info->rle_state=INIT;       /* start in initial state */
+    rle_info->rle_state=RLE_INIT;       /* start in initial state */
     rle_info->buf_pos=0;            /* start at the beginning of the buffer */
     rle_info->last_byte=RLE_NIL;    /* start with no code in the last byte */
     rle_info->second_byte=RLE_NIL;  /* start with no code here too */
@@ -152,26 +160,20 @@ PRIVATE int32 HCIcrle_decode(info,length,buf)
 
     orig_length=length;     /* save this for later */
     while(length>0) {   /* decode until we have all the bytes we need */
-        if(rle_info->rle_state==INIT) { /* need to figure out RUN or MIX state */
+        if(rle_info->rle_state==RLE_INIT) { /* need to figure out RUN or MIX state */
             if((c=HDgetc(info->aid))==FAIL)
                 HRETURN_ERROR(DFE_READERROR,FAIL);
             if(c&RUN_MASK) {   /* run byte */
-                rle_info->rle_state=RUN;    /* set to run state */
+                rle_info->rle_state=RLE_RUN;    /* set to run state */
                 rle_info->buf_length=(c&COUNT_MASK)+RLE_MIN_RUN; /* run length */
                 if((rle_info->last_byte=HDgetc(info->aid))==FAIL)
                     HRETURN_ERROR(DFE_READERROR,FAIL);
-#ifdef TESTING
-printf("HCPcrle_decode(): INIT - found a run of %d bytes\n",rle_info->buf_length);
-#endif
               } /* end if */
             else {      /* mix byte */
-                rle_info->rle_state=MIX;    /* set to mix state */
+                rle_info->rle_state=RLE_MIX;    /* set to mix state */
                 rle_info->buf_length=(c&COUNT_MASK)+RLE_MIN_MIX; /* mix length */
                 if(Hread(info->aid,rle_info->buf_length,rle_info->buffer)==FAIL)
                     HRETURN_ERROR(DFE_READERROR,FAIL);
-#ifdef TESTING
-printf("HCPcrle_decode(): INIT - found a mix of %d bytes\n",rle_info->buf_length);
-#endif
                 rle_info->buf_pos=0;
               } /* end else */
           } /* end if */
@@ -181,23 +183,16 @@ printf("HCPcrle_decode(): INIT - found a mix of %d bytes\n",rle_info->buf_length
             else        /* only grab "length" bytes */
                 dec_len=length;
 
-            if(rle_info->rle_state==RUN) {
-#ifdef TESTING
-printf("HCPcrle_decode(): RUN - decoding a run of %d bytes\n",dec_len);
-#endif
+            if(rle_info->rle_state==RLE_RUN)
                 HDmemset(buf,rle_info->last_byte,dec_len);  /* copy the run */
-              } /* end if */
             else {
-#ifdef TESTING
-printf("HCPcrle_decode(): MIX - decoding a mix of %d bytes\n",dec_len);
-#endif
                 HDmemcpy(buf,&(rle_info->buffer[rle_info->buf_pos]),dec_len);
                 rle_info->buf_pos+=dec_len;
               } /* end else */
 
             rle_info->buf_length-=dec_len;
             if(rle_info->buf_length<=0) /* check for running out of bytes */
-                rle_info->rle_state=INIT;   /* get the next status byte */
+                rle_info->rle_state=RLE_INIT;   /* get the next status byte */
             length-=dec_len;    /* decrement the bytes to get */
             buf+=dec_len;       /* in case we need more bytes */
           } /* end else */
@@ -240,7 +235,6 @@ PRIVATE int32 HCIcrle_encode(info,length,buf)
     char *FUNC="HCIcrle_encode";        /* for HERROR */
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
     int32 orig_length;      /* original length to write */
-    intn dec_len;           /* length to decode */
     intn c;                 /* character to hold a byte read in */
 
     rle_info=&(info->cinfo.coder_info.rle_info);
@@ -248,11 +242,8 @@ PRIVATE int32 HCIcrle_encode(info,length,buf)
     orig_length=length;     /* save this for later */
     while(length>0) {   /* encode until we stored all the bytes */
         switch(rle_info->rle_state) {
-            case INIT:  /* initial encoding state */
-#ifdef TESTING
-printf("HCPcrle_encode(): INIT - shifting to MIX state, length=%d, buf=%p\n",length,buf);
-#endif
-                rle_info->rle_state=MIX;    /* shift to MIX state */
+            case RLE_INIT:  /* initial encoding state */
+                rle_info->rle_state=RLE_MIX;    /* shift to MIX state */
                 rle_info->last_byte=rle_info->buffer[0]=*buf;
                 rle_info->buf_length=1;
                 rle_info->buf_pos=1;
@@ -260,18 +251,15 @@ printf("HCPcrle_encode(): INIT - shifting to MIX state, length=%d, buf=%p\n",len
                 length--;
                 break;
 
-            case RUN:
+            case RLE_RUN:
                 /* check for end of run */
                 if(*buf!=rle_info->last_byte) {
-                    rle_info->rle_state=MIX;
+                    rle_info->rle_state=RLE_MIX;
                     c=RUN_MASK|(rle_info->buf_length-RLE_MIN_RUN);
                     if(HDputc((uint8)c,info->aid)==FAIL)
                         HRETURN_ERROR(DFE_WRITEERROR,FAIL);
                     if(HDputc((uint8)rle_info->last_byte,info->aid)==FAIL)
                         HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-#ifdef TESTING
-printf("HCPcrle_encode(): RUN - shifting to MIX state, wrote run of %d bytes\n",rle_info->buf_length);
-#endif
                     rle_info->last_byte=rle_info->buffer[0]=*buf;
                     rle_info->buf_length=1;
                     rle_info->buf_pos=1;
@@ -284,10 +272,7 @@ printf("HCPcrle_encode(): RUN - shifting to MIX state, wrote run of %d bytes\n",
                             HRETURN_ERROR(DFE_WRITEERROR,FAIL);
                         if(HDputc((uint8)rle_info->last_byte,info->aid)==FAIL)
                             HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-#ifdef TESTING
-printf("HCPcrle_encode(): RUN - shifting to INIT state, wrote run of %d bytes\n",rle_info->buf_length);
-#endif
-                        rle_info->rle_state=INIT;
+                        rle_info->rle_state=RLE_INIT;
                         rle_info->second_byte=rle_info->last_byte=RLE_NIL;
                       } /* end if */
                   } /* end else */
@@ -295,36 +280,19 @@ printf("HCPcrle_encode(): RUN - shifting to INIT state, wrote run of %d bytes\n"
                 length--;
                 break;
 
-            case MIX:   /* mixed bunch of bytes */
+            case RLE_MIX:   /* mixed bunch of bytes */
                 /* check for run */
-#ifdef TESTING2
-printf("HCPcrle_encode(): MIX - buf=%p, length=%d\n",buf,length);
-#endif
                 if(*buf==rle_info->last_byte && *buf==rle_info->second_byte) {
-#ifdef TESTING2
-printf("HCPcrle_encode(): MIX - shifting to RUN state, buf_length=%d buf_pos=%d\n",rle_info->buf_length,rle_info->buf_pos);
-#endif
-                    rle_info->rle_state=RUN;    /* shift to RUN state */
+                    rle_info->rle_state=RLE_RUN;    /* shift to RUN state */
                     if(rle_info->buf_length>(RLE_MIN_RUN-1)) {  /* check for mixed data to write */
                         if(HDputc((uint8)((rle_info->buf_length-RLE_MIN_MIX)-(RLE_MIN_RUN-1)),info->aid)==FAIL)
                             HRETURN_ERROR(DFE_WRITEERROR,FAIL);
                         if(Hwrite(info->aid,(rle_info->buf_length-(RLE_MIN_RUN-1)),rle_info->buffer)==FAIL)
                             HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-#ifdef TESTING
-printf("HCPcrle_encode(): MIX - shifting to RUN state, wrote mix of %d bytes\n",rle_info->buf_length-(RLE_MIN_RUN-1));
-#endif
                       } /* end if */
-                    else {
-#ifdef TESTING
-printf("HCPcrle_encode(): MIX - shifting to RUN state, have run of %d bytes\n",rle_info->buf_length);
-#endif
-                      } /* end else */
                     rle_info->buf_length=RLE_MIN_RUN;
                   } /* end if */
                 else {  /* continue MIX */
-#ifdef TESTING2
-printf("HCPcrle_encode(): MIX - continuing MIX state, buf_length=%d buf_pos=%d\n",rle_info->buf_length,rle_info->buf_pos);
-#endif
                     rle_info->second_byte=rle_info->last_byte;
                     rle_info->last_byte=rle_info->buffer[rle_info->buf_pos]=*buf;
                     rle_info->buf_length++;
@@ -334,10 +302,7 @@ printf("HCPcrle_encode(): MIX - continuing MIX state, buf_length=%d buf_pos=%d\n
                             HRETURN_ERROR(DFE_WRITEERROR,FAIL);
                         if(Hwrite(info->aid,rle_info->buf_length,rle_info->buffer)==FAIL)
                             HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-#ifdef TESTING
-printf("HCPcrle_encode(): MIX - shifting to INIT state, write mix of %d bytes\n",rle_info->buf_length);
-#endif
-                        rle_info->rle_state=INIT;
+                        rle_info->rle_state=RLE_INIT;
                         rle_info->second_byte=rle_info->last_byte=RLE_NIL;
                       } /* end if */
                   } /* end else */
@@ -382,37 +347,30 @@ PRIVATE int32 HCIcrle_term(info)
 {
     char *FUNC="HCIcrle_term";          /* for HERROR */
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
-    intn dec_len;           /* length to decode */
     intn c;                 /* character to hold a byte read in */
 
     rle_info=&(info->cinfo.coder_info.rle_info);
 
     switch(rle_info->rle_state) {
-        case RUN:
+        case RLE_RUN:
             c=RUN_MASK|(rle_info->buf_length-RLE_MIN_RUN);
             if(HDputc((uint8)c,info->aid)==FAIL)
                 HRETURN_ERROR(DFE_WRITEERROR,FAIL);
             if(HDputc((uint8)rle_info->last_byte,info->aid)==FAIL)
                 HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-#ifdef TESTING
-printf("HCPcrle_term(): RUN - wrote run of %d bytes\n",rle_info->buf_length);
-#endif
             break;
 
-        case MIX:   /* mixed bunch of bytes */
+        case RLE_MIX:   /* mixed bunch of bytes */
             if(HDputc((uint8)((rle_info->buf_length-RLE_MIN_MIX)),info->aid)==FAIL)
                 HRETURN_ERROR(DFE_WRITEERROR,FAIL);
             if(Hwrite(info->aid,rle_info->buf_length,rle_info->buffer)==FAIL)
                 HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-#ifdef TESTING
-printf("HCPcrle_term(): MIX - wrote mix of %d bytes\n",rle_info->buf_length);
-#endif
             break;
 
         default:
             HRETURN_ERROR(DFE_INTERNAL,FAIL);
       } /* end switch */
-    rle_info->rle_state=INIT;
+    rle_info->rle_state=RLE_INIT;
     rle_info->second_byte=rle_info->last_byte=RLE_NIL;
 
     return(SUCCEED);
@@ -451,7 +409,7 @@ PRIVATE int32 HCIcrle_staccess(access_rec, access)
 
     info=(compinfo_t *)access_rec->special_info;
 
-    if(access==DFACC_READ) 
+    if(access==DFACC_READ)
         info->aid=Hstartread(access_rec->file_id,DFTAG_COMPRESSED,
                 info->comp_ref);
     else 
@@ -573,7 +531,7 @@ int32 HCPcrle_seek(access_rec, offset, origin)
     rle_info=&(info->cinfo.coder_info.rle_info);
 
     if(offset<rle_info->offset) {    /* need to seek from the beginning */
-        if(access_rec->access==DFACC_WRITE && rle_info->rle_state!=INIT) 
+        if(access_rec->access==DFACC_WRITE && rle_info->rle_state!=RLE_INIT)
             if(HCIcrle_term(info)==FAIL)
                 HRETURN_ERROR(DFE_CTERM,FAIL);
         if(HCIcrle_init(access_rec)==FAIL)
@@ -773,14 +731,13 @@ int32 HCPcrle_endaccess(access_rec)
     rle_info=&(info->cinfo.coder_info.rle_info);
 
     /* flush out RLE buffer */
-    if(access_rec->access==DFACC_WRITE && rle_info->rle_state!=INIT) 
+    if(access_rec->access==DFACC_WRITE && rle_info->rle_state!=RLE_INIT)
         if(HCIcrle_term(info)==FAIL)
             HRETURN_ERROR(DFE_CTERM,FAIL);
 
     /* close the compressed data AID */
     if(Hendaccess(info->aid)==FAIL)
-	HRETURN_ERROR(DFE_CANTCLOSE,FAIL);
+	    HRETURN_ERROR(DFE_CANTCLOSE,FAIL);
 
     return(SUCCEED);
 }   /* HCPcrle_endaccess() */
-

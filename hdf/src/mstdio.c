@@ -16,12 +16,15 @@ static char RcsId[] = "@(#)$Revision$";
     Just pass the data to the encoding layer, reporting errors.
 
  EXPORTED ROUTINES
+    None of these routines are designed to be called by other users except
+    for the top layer of the compression routines.
 
  AUTHOR
        Quincey Koziol
 
  MODIFICATION HISTORY
     9/28/93     Starting writing specs & coding prototype
+    10/09/93    Finished testing.  First version done.
 */
 
 
@@ -346,4 +349,3 @@ int32 HCPmstdio_endaccess(access_rec)
         HRETURN_ERROR(DFE_CODER,FAIL);
     return(ret);
 }   /* HCPmstdio_endaccess() */
-
