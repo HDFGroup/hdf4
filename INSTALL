@@ -88,7 +88,7 @@ or
   CM5 (Sun Frontend)          GCC 2.6.3      f77 SC1.0        X         X
   CM5 (Parallel I/O, 4.1.3_U1)CSTAR 7.2      CMF 2.1          X         X
   IBM RS6000/AIX v4.1.4       GCC            g77              X         X
-  IBM SP2 (single node, v4.1) CC 3.01        f77              X         X 
+  IBM SP2 (single node, v4.1) XLC 3.1.3.5    f77 3.2.4.2      X         X 
   DEC Alpha/Digital Unix v3.2 CC             f77              X         X
   DEC Alpha/OpenVMS AXP v6.2  DECC 5.3       DEC FORTRAN      X         X
   Fujitsu UXP/M-1800(SYS_V-4.0) CC            -               X         X
