@@ -717,7 +717,6 @@ Please check your Makefile.
 #define GOT_MACHINE
 
 #include <string.h>
-#define isascii(c)  (isprint(c) || iscntrl(c))
 #ifndef __GNUC__
 #include <memory.h>
 #endif /* __GNUC__ */

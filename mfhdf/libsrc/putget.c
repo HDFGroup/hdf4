@@ -619,8 +619,8 @@ NC_var *vp;
     fprintf(stderr, "hdf_get_data I've been called\n");
 #endif
     
-    if(!handle) return NULL;
-    if(!vp) return NULL;
+    if(!handle) return 0;
+    if(!vp) return 0;
 
     /* 
      * if it is stored as NDGs we can't do any better than what was
@@ -633,7 +633,7 @@ NC_var *vp;
         vg = Vattach(handle->hdf_file, vp->vgid, "w");
         if(vg == FAIL) {
             HEprint(stderr, 0);
-            return NULL;
+            return 0;
         }
         
         /* loop through looking for a data storage object */
@@ -645,7 +645,7 @@ NC_var *vp;
     }
     
     if(handle->hdf_mode == DFACC_RDONLY)
-        return NULL;
+        return 0;
   
     /* 
      * create a new data storage object
@@ -689,7 +689,7 @@ NC_var *vp;
     vsid = Hnewref(handle->hdf_file);
     vp->aid = Hstartwrite(handle->hdf_file, DATA_TAG, vsid, byte_count);
 
-    if(vp->aid == FAIL) return NULL;
+    if(vp->aid == FAIL) return 0;
 
     /* make sure our tmp buffer is big enough to hold everything */
     if(tBuf_size < byte_count) {
@@ -710,7 +710,7 @@ NC_var *vp;
     done = 0;
     while(done != nvalues) {
         status = Hwrite(vp->aid, byte_count, (uint8 *) tBuf);
-        if(status != byte_count) return NULL;
+        if(status != byte_count) return 0;
         done += to_do;
         if(nvalues - done < to_do) {
             to_do = nvalues - done;
@@ -718,14 +718,14 @@ NC_var *vp;
         }
     }
 
-    if(Hendaccess(vp->aid) == FAIL) return NULL;
+    if(Hendaccess(vp->aid) == FAIL) return 0;
 
     /* if it is a record var might as well make it linked blocks now */
     if(IS_RECVAR(vp)) {
         vp->aid = HLcreate(handle->hdf_file, DATA_TAG, vsid, 
                            vp->len * BLOCK_SIZE, BLOCK_COUNT);
-        if(vp->aid == FAIL) return NULL;
-        if(Hendaccess(vp->aid) == FAIL) return NULL;
+        if(vp->aid == FAIL) return 0;
+        if(Hendaccess(vp->aid) == FAIL) return 0;
     }
 
     if(vp->vgid) {
@@ -770,7 +770,7 @@ NC_var    * vp;
     /*
      * Fail if there is no data
      */
-    if(vp->data_ref == NULL) return(FALSE);
+    if(vp->data_ref == 0) return(FALSE);
 
     if(handle->hdf_mode == DFACC_RDONLY)
         vp->aid = Hstartread(handle->hdf_file, vp->data_tag, vp->data_ref);
