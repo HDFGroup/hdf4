@@ -246,7 +246,7 @@ int32
 Hopen(const char *path, intn acc_mode, int16 ndds)
 {
   CONSTR(FUNC, "Hopen");	/* For HERROR */
-  filerec_t  *file_rec;		/* File record */
+  filerec_t  *file_rec=NULL;/* File record */
   int         vtag = 0;		/* write version tag? */
   int32       fid=FAIL;     /* File ID */
   int32       ret_value = SUCCEED;
@@ -971,8 +971,8 @@ Hstartaccess(int32 file_id, uint16 tag, uint16 ref, uint32 flags)
   CONSTR(FUNC, "Hstartaccess");	/* for HERROR */
   int         slot;			/* free access records array slot */
   intn        ddnew = FALSE;	/* is the dd a new one? */
-  filerec_t  *file_rec;		/* file record */
-  accrec_t   *access_rec;		/* access record */
+  filerec_t  *file_rec=NULL;		/* file record */
+  accrec_t   *access_rec=NULL;		/* access record */
   uint16 new_tag=0, new_ref=0;      /* new tag & ref to access */
   int32  new_off, new_len;      /* offset & length of new tag & ref */
   int32      ret_value = SUCCEED;
@@ -1076,7 +1076,8 @@ Hstartaccess(int32 file_id, uint16 tag, uint16 ref, uint32 flags)
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
-        HDfree(access_rec);
+        if(access_rec!=NULL)
+            HDfree(access_rec);
 
     } /* end if */
 
@@ -1741,7 +1742,7 @@ Hendaccess(int32 access_id)
 {
     CONSTR(FUNC, "Hendaccess");		/* for HERROR */
     filerec_t  *file_rec;		/* file record */
-    accrec_t   *access_rec;		/* access record */
+    accrec_t   *access_rec=NULL;/* access record */
     intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
