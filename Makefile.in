@@ -125,11 +125,11 @@ HDF:
 NETCDF:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="all" \
           SUBDIRS="$(NETCDFDIR)" subd
-		
+
 test:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(SUBDIRS)" subd
-		
+
 hdf-allnofortran: 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="allnofortran" \
           SUBDIRS="$(HDFDIR)" subd
@@ -259,28 +259,28 @@ ensure_manifest:	$(MANIFEST)
 
 # For the justification of the following Makefile rules, see node
 # `Automatic Remaking' in GNU Autoconf documentation.
+#
+#Makefile: $(TOP_SRCDIR)/config.status Makefile.in
+#	CONFIG_FILES=$@ CONFIG_HEADERS= $(TOP_SRCDIR)/config.status
 
-Makefile: $(TOP_SRCDIR)/config.status Makefile.in
-	CONFIG_FILES=$@ CONFIG_HEADERS= $(TOP_SRCDIR)/config.status
+#config.h: stamp-h
 
-config.h: stamp-h
+#stamp-h: $(TOP_SRCDIR)/config.status $(srcdir)/config.h.in
+#	CONFIG_FILES= CONFIG_HEADERS=config.h $(TOP_SRCDIR)/config.status
 
-stamp-h: $(TOP_SRCDIR)/config.status $(srcdir)/config.h.in
-	CONFIG_FILES= CONFIG_HEADERS=config.h $(TOP_SRCDIR)/config.status
+#config.status: configure
+#	$(TOP_SRCDIR)/config.status --recheck
 
-config.status: configure
-	$(TOP_SRCDIR)/config.status --recheck
+#configure: configure.in
+#	cd $(srcdir) && autoconf
 
-configure: configure.in
-	cd $(srcdir) && autoconf
+#config.h.in: stamp-h.in
 
-config.h.in: stamp-h.in
-
-stamp-h.in: configure.in
-	cd $(srcdir) && autoheader
+#stamp-h.in: configure.in
+#	cd $(srcdir) && autoheader
 # Use echo instead of date to avoid spurious conflicts for
 # people who use CVS, since stamp-h.in is distributed.
-	echo > $(srcdir)/$@
+#	echo > $(srcdir)/$@
 
 # Tell versions [3.59,3.63) of GNU make not to export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

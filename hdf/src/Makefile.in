@@ -245,8 +245,8 @@ dist: $(DISTFILES)
 	done
 
 # for auto remaking, see toplevel Makefile
-Makefile: $(TOP_SRCDIR)/config.status Makefile.in
-	CONFIG_FILES=$@ CONFIG_HEADERS= $(TOP_SRCDIR)/config.status
+#Makefile: $(TOP_SRCDIR)/config.status Makefile.in
+#	CONFIG_FILES=$@ CONFIG_HEADERS= $(TOP_SRCDIR)/config.status
 
 # Tell versions [3.59,3.63) of GNU make not to export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
