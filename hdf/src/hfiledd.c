@@ -1327,6 +1327,8 @@ DESCRIPTION
    preserving the original tag/ref of the element since other elements
    might refer to this element by tag/ref e.g. in a Vgroup.
 
+   NOTE: this routine is similiar to Hdeldd() but with a different name
+
 RETURNS
    returns SUCCEED (0) if successful, FAIL (-1) otherwise
 ************************************************************************/
@@ -1355,10 +1357,25 @@ HDreuse_tagref(int32 file_id, /* IN: id of file */
   if ((ddid = HTPselect(file_rec, tag, ref)) == FAIL)
     HGOTO_ERROR(DFE_NOMATCH, FAIL);
 
+  /* could reuse space in file by calling HPfreediskblock() routine 
+     but it does nothing for now. For later. */
+  /* if (HPfreediskblock(file_rec,dd_ptr->offset,dd_ptr->length) == FAIL)
+      HGOTO_ERROR(DFE_INTERNAL, FAIL); */
+
   /* reuse the dd by setting the offset and length to
      INVALID_OFFSET and INVALID_LENGTH*/
   if (HTPupdate(ddid,INVALID_OFFSET, INVALID_LENGTH) == FAIL)
     HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+ /* We leave the ref # as 'used' in the tag tree and
+    dont' delete from dynarray of refs. */
+
+  /* Remove DD from atom group since it should get re-created in Hstartaccess().
+     This could be handled better if Hstartaccess() was revamped
+     to not create new access records for existing tag/ref pairs
+     as well as revamping a few other routines. */
+  if(HAremove_atom(ddid)==NULL)
+      HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
   if(ret_value == FAIL)   

@@ -22,8 +22,6 @@
  *          Constant definitions:  AN_DATA_LABEL, AN_DATA_DESC
  *          (-moved to hdf.h)      AN_FILE_LABEL, AN_FILE_DESC
  *
- * Remarks: The code should be RE-DONE to use the new ATOM stuff to
- *          unify it more with the core library.
  *----------------------------------------------------------------------------*/
 
 #ifndef _MFAN_H  /* avoid re-inclusion */
@@ -46,8 +44,8 @@ typedef enum
 
 /* This sturcture is used to find which file the annotation belongs to
  * and use the subsequent file specific annotation 'key' to find the 
- * annotation. The ANnodelist keeps track of all anotations across 
- * all the open files. */
+ * annotation. The annotation atom group(ANIDGROUP) keeps track of 
+ * all anotations across the file. */
 typedef struct ANnode
 {
   int32   file_id;  /* which file this annotation belongs to */
@@ -58,7 +56,9 @@ typedef struct ANnode
 /*
  * This structure is an entry in the label/desc tree
  * for a label/desc in the file, it gives the ref of the label/desc,
- * and the tag/ref of the data item to which the label/desc relates */
+ * and the tag/ref of the data item to which the label/desc relates 
+ * The filerec_t->an_tree[] TBBT members will contain these entries
+ **/
 typedef struct ANentry
 {
   int32   ann_id;      /* annotation id */
@@ -67,28 +67,13 @@ typedef struct ANentry
   uint16  elmref;      /* ref of data */
 } ANentry;
 
-/* Structure for each file opened to insert in tree */
-typedef struct ANfile
-{
-  char    *filename;      /* File name */
-  int32   access_mode;    /* access mode this file was opened with */
-  intn    an_num[4];      /* Holds number of annotations found of each type */
-  TBBT_TREE *an_tree[4];  /* tbbt trees for each type of annotation in file 
-                           * i.e. file/data labels and descriptions 
-                           * NOTE: This could be re-done to use Atom
-                           *       stuff instead of tbbt trees */
-} ANfile;
-
 #ifdef MFAN_C
 /* WE ARE IN MAIN ANNOTATION SOURCE FILE "mfan.c" */
 
-/* PRIVATE variables and defintions 
- * NOTE: These could be removed in favor of using the atom stuff 
- *       in order to more unify the code with the library */
-EXPORT TBBT_TREE *ANfilelist = NULL; /* List of open files */
-EXPORT TBBT_TREE *ANnodelist = NULL; /* List of all anotations across files */
-PRIVATE intn    num_anns   = 0;    /* total number of annotations 
-                                      i.e. all files */
+/* PRIVATE variables and definitions */
+
+/* This is the size of the hash tables used for annotation IDs */
+#define ANATOM_HASH_SIZE    64
 
 /* Used to create unique 32bit keys from annotation type and reference number 
  *  This key is used to add nodes to ANnodelist. 

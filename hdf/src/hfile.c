@@ -3327,6 +3327,16 @@ HIget_filerec_node(const char *path)
 
         if((ret_value->path=(char *)HDstrdup(path))==NULL)
             HGOTO_ERROR(DFE_NOSPACE,NULL);
+
+        /* Initialize annotation stuff */
+        ret_value->an_tree[AN_DATA_LABEL] = NULL;
+        ret_value->an_tree[AN_DATA_DESC]  = NULL;
+        ret_value->an_tree[AN_FILE_LABEL] = NULL;
+        ret_value->an_tree[AN_FILE_DESC]  = NULL;
+        ret_value->an_num[AN_DATA_LABEL] = -1;   
+        ret_value->an_num[AN_DATA_DESC]  = -1;   
+        ret_value->an_num[AN_FILE_LABEL] = -1;   
+        ret_value->an_num[AN_FILE_DESC]  = -1;   
       } /* end if */
 
 done:

@@ -371,7 +371,15 @@ typedef struct filerec_t
       struct ddblock_t *ddnull; /* location of last ddblock with a DFTAG_NULL */
       int32       ddnull_idx;   /* offset of the last location with DFTAG_NULL */
 
+      /* tag tree for file */
       TBBT_TREE *tag_tree;      /* TBBT of the tags in the file */
+
+      /* annotation stuff for file */
+      intn       an_num[4];   /* Holds number of annotations found of each type */
+      TBBT_TREE *an_tree[4];  /* tbbt trees for each type of annotation in file 
+                               * i.e. file/data labels and descriptions.
+                               * This is done for faster searching of annotations
+                               * of a particular type. */
   }
 filerec_t;
 

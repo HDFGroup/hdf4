@@ -45,6 +45,7 @@ VSIDGROUP=4,                /* Group ID for Vdata ID objects */
 GRIDGROUP=5,                /* Group ID for GR ID objects */
 RIIDGROUP=6,                /* Group ID for RI ID objects */
 BITIDGROUP=7,               /* Group ID for Bitfile ID objects */
+ANIDGROUP=8,                /* Group ID for Annotation ID objects */
 MAXGROUP                    /* Highest group in group_t (Invalid as true group) */
 } group_t;
 

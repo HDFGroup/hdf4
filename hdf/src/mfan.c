@@ -25,14 +25,11 @@ static char RcsId[] = "@(#)$Revision$";
  * Comments:
  *           Currently the id returned by ANstart() is the same as the
  *           one returned by Hopen().
- *           Currenntly as least 6 TBBT trees are created to handle 
- *           annotations(1 for file_ids,1 for all ann_ids, 4 for file_ann, 
- *           file_desc, data_ann and data_desc) which is not pretty but it 
- *           does make search/find of annotations much easier.Currently the 
- *           implementation uses TBBT trees.
  *
- *           NOTE1: These could be removed in favor of using the atom stuff
- *                 in order to more unify the code with the library.
+ *           Currently as least 4 TBBT trees are created to handle 
+ *           annotations(4 for file_ann, file_desc, data_ann and data_desc) 
+ *           for each file which is not pretty but it does make search/find 
+ *           of annotations much easier.
  *
  *           NOTE2: Note that any mention of file ID's except in ANStart() 
  *                  should now refer to annotation interface ID.
@@ -95,6 +92,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "mfan.h"
 #include "atom.h"
+#include "hfile.h" /* needed for filerec_t */
 
 /* Whether we've installed the library termination function yet for this 
    interface */
@@ -103,9 +101,7 @@ PRIVATE intn library_terminate = FALSE;
 /* Function Prototypes */
 extern VOID ANfreedata(VOIDP data);
 extern VOID ANfreekey(VOIDP key);
-extern VOID dumpnodeKey(VOID *key, VOID *data);
 extern VOID dumpentryKey(VOID *key, VOID *data);
-extern VOID dumpfileKey(VOID *key, VOID *data);
 extern intn ANIfidcmp(VOIDP i, VOIDP j, intn value);
 extern intn ANIanncmp(VOIDP i, VOIDP j, intn value);
 PRIVATE intn ANIstart(void);
@@ -129,26 +125,9 @@ ANfreekey(VOIDP key)
     HDfree(key);
 } /* ANfreekey() */
 
-/* Following 3 routines are used for debugging purposes to dump 
+/* The following routine is used for debugging purposes to dump 
  * key/data pairs from the TBBT trees 
- * eg. tbbt_dump(tree, dumpnodeKey, 0)*/
-VOID
-dumpnodeKey(VOID *key, VOID *data)
-{
-    ANnode *node = NULL;
-
-    printf("key = %4.4d, data = ",*(int*)key);
-    if (data != NULL) 
-      {
-          node = (ANnode *) data;
-          printf("file_id=%ld, ann_key=%ld, new_ann=%d\n", (long)node->file_id,
-                 (long)node->ann_key, node->new_ann);
-      }
-    else 
-        printf("(NULL)\n");
-    return;
-}
-
+ * eg. tbbt_dump(tree, dumpentryKey, 0)*/
 VOID
 dumpentryKey(VOID *key, VOID *data)
 {
@@ -160,23 +139,6 @@ dumpentryKey(VOID *key, VOID *data)
           node = (ANentry *) data;
           printf("ann_id=%ld, annref=%d, elmtag=%d, elmref=%d\n", (long)node->ann_id,
                  node->annref, node->elmtag, node->elmref);
-      }
-    else 
-        printf("(NULL)\n");
-    return;
-}
-
-VOID
-dumpfileKey(VOID *key, VOID *data)
-{
-    ANfile *node = NULL;
-
-    printf("key = %4.4d, data = ",*(int*)key);
-    if (data != NULL) 
-      {
-          node = (ANfile *) data;
-          printf("filename=%s, accesmode=%ld \n", node->filename,
-                 (long)node->access_mode);
       }
     else 
         printf("(NULL)\n");
@@ -311,18 +273,13 @@ ANinit(void)
 
     /* Perform global, one-time initialization */
     if (library_terminate == FALSE)
+      {
         if(ANIstart()==FAIL)
             HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
-    /* Check to see if we need to create RB tree for file id's */
-    if (ANfilelist == NULL)
-        if ((ANfilelist = tbbtdmake(ANIfidcmp, sizeof(int32))) == NULL)
-            HE_REPORT_GOTO("failed to create TBBT tree for file_ids", FAIL);
-
-    /* Check to see if we need to create RB tree for annotations id's */
-    if (ANnodelist == NULL)
-        if ((ANnodelist = tbbtdmake(ANIanncmp, sizeof(int32))) == NULL)
-            HE_REPORT_GOTO("failed to create TBBT tree for ann_ids", FAIL);
+        /* Initialize the atom groups for annotations */
+        HAinit_group(ANIDGROUP,ANATOM_HASH_SIZE);
+      }
 
   done:
     if(ret_value == FAIL)   
@@ -360,18 +317,9 @@ ANdestroy(void)
     /* Clear error stack */
     HEclear();
 
-    /* Check to see if we need to destroy RB tree for file id's */
-    if (ANfilelist != NULL)
-        tbbtdfree(ANfilelist, ANfreedata, ANfreekey);
+    /* Destroy the atom groups for annotations */
+    HAdestroy_group(ANIDGROUP);
 
-    /* Check to see if we need to destroy RB tree for annotations id's */
-    if (ANnodelist != NULL)
-        tbbtdfree(ANnodelist, ANfreedata, ANfreekey);
-
-    /* reset pointers */
-    ANfilelist = NULL;
-    ANnodelist = NULL;
- 
     return ret_value;
 } /* ANdestroy () */
 
@@ -402,36 +350,31 @@ ANIaddentry(int32 an_id,    /* IN: annotation interface id */
             intn new_ann    /* IN: new annotation flag */)
 {
     CONSTR(FUNC, "ANIaddentry");
-    TBBT_NODE *entry = NULL;
-    uint16  ann_tag;
-    int32   *ann_id  = NULL;
-    int32   *ann_key = NULL;
-    ANfile  *file_entry = NULL;
-    ANentry *ann_entry  = NULL;
-    ANnode  *ann_node   = NULL;
-    int32    ret_value  = SUCCEED;
+    filerec_t   *file_rec = NULL;		/* file record pointer */
+    uint16       ann_tag  = DFTAG_NULL;
+    int32       *ann_key = NULL;
+    ANentry     *ann_entry  = NULL;
+    ANnode      *ann_node   = NULL;
+    int32        ret_value  = SUCCEED;
  
     /* Clear error stack */
     HEclear();
 
-    /* Valid file id */
-    if (HAatom_group(an_id)!=FIDGROUP)
+    /* convert an_id i.e. file_id to file rec and check for validity */
+    file_rec = HAatom_object(an_id);
+    if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* First find file node from file tree */
-    if ((entry = tbbtdfind(ANfilelist, &an_id, NULL)) == NULL)
-        HE_REPORT_GOTO("failed to find an_id", FAIL);
-
-    file_entry = (ANfile *) entry->data; /* get file entry from node */
-
     /* Check for empty annotation tree of 'type'? */   
-    if (file_entry->an_num[type] == -1)
+    if (file_rec->an_num[type] == -1)
       {
-          if ((file_entry->an_tree[type] = 
+          if ((file_rec->an_tree[type] = 
                (TBBT_TREE *) tbbtdmake(ANIanncmp,sizeof(int32))) == NULL)
+            {
               HE_REPORT_GOTO("failed to create annotation tree", FAIL);
+            }
 
-          file_entry->an_num[type] = 0;
+          file_rec->an_num[type] = 0;
       }
 
     /* Which type of annotation file/data label or desc? */
@@ -457,22 +400,29 @@ ANIaddentry(int32 an_id,    /* IN: annotation interface id */
     if ((ann_key = (int32 *)HDmalloc(sizeof(int32))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-    /* allocate space for ann_id */
-    if ((ann_id = (int32 *)HDmalloc(sizeof(int32))) == NULL)
-        HGOTO_ERROR(DFE_NOSPACE, FAIL);
-
     /* Create 32bit key from type/ref 
      *  ----------------------------
      *  | type(16bits)| ref(16bits) |
      *  -----------------------------*/
     *ann_key = AN_CREATE_KEY(type, ann_ref);
 
-    /* Initialize annotation entry */
+    /* Initialize annotation node for insertion in annotation atom group*/
+    if ((ann_node = HDmalloc(sizeof(ANnode))) == NULL)
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+    ann_node->file_id = an_id;
+    ann_node->ann_key = *ann_key;
+    ann_node->new_ann = new_ann;
+
+    /* Initialize annotation entry for insertion into corresponding TBBT */
     if ((ann_entry = HDmalloc(sizeof(ANentry))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     ann_entry->annref  = ann_ref;
-    ann_entry->ann_id  = *ann_id = num_anns++;
+    /* ann_entry->ann_id  = *ann_id = num_anns++; */
+    ann_entry->ann_id = HAregister_atom(ANIDGROUP,ann_node);
+    if (FAIL == ann_entry->ann_id)
+        HE_REPORT_GOTO("failed to insert annotation into ann_id Group", FAIL);
 
     if (type == AN_DATA_LABEL || type == AN_DATA_DESC)
       {
@@ -486,23 +436,11 @@ ANIaddentry(int32 an_id,    /* IN: annotation interface id */
       }
 
     /* Add annotation entry to 'type' tree */
-    if (tbbtdins(file_entry->an_tree[type], ann_entry, ann_key) == NULL)
+    if (tbbtdins(file_rec->an_tree[type], ann_entry, ann_key) == NULL)
         HE_REPORT_GOTO("failed to insert annotation into 'type' tree", FAIL);
 
     /* increment number of annotatiosn of 'type' */
-    file_entry->an_num[type] += 1;
-
-    /* Initialize annotation node */
-    if ((ann_node = HDmalloc(sizeof(ANnode))) == NULL)
-        HGOTO_ERROR(DFE_NOSPACE, FAIL);
-
-    ann_node->file_id = an_id;
-    ann_node->ann_key = *ann_key;
-    ann_node->new_ann = new_ann;
-
-    /* Add annotation node to ann_id RB tree */
-    if (tbbtdins(ANnodelist, ann_node, ann_id) == NULL)
-        HE_REPORT_GOTO("failed to insert annotation into ann_id tree", FAIL);
+    file_rec->an_num[type] += 1;
 
     /* return annotation id */
     ret_value = ann_entry->ann_id;
@@ -512,8 +450,6 @@ ANIaddentry(int32 an_id,    /* IN: annotation interface id */
       { /* Error condition cleanup */
           if (ann_key != NULL)
               HDfree(ann_key);
-          if (ann_id != NULL)
-              HDfree(ann_id);
           if (ann_entry != NULL)
               HDfree(ann_entry);
           if (ann_node != NULL)
@@ -541,53 +477,49 @@ ANIaddentry(int32 an_id,    /* IN: annotation interface id */
 
  -------------------------------------------------------------------------*/
 PRIVATE intn
-ANIcreate_ann_tree(int32 an_id,  /* IN: annotation interface id */
-                   ann_type type /* IN: AN_DATA_LABEL for data labels, 
-                                    AN_DATA_DESC for data descriptions,
-                                    AN_FILE_LABEL for file labels,
-                                    AN_FILE_DESC for file descritpions.*/)
+ANIcreate_ann_tree(int32    an_id,/* IN: annotation interface id */
+                   ann_type type  /* IN: AN_DATA_LABEL for data labels, 
+                                         AN_DATA_DESC for data descriptions,
+                                         AN_FILE_LABEL for file labels,
+                                         AN_FILE_DESC for file descritpions.*/)
 {
     CONSTR(FUNC, "ANIcreate_ann_tree");
-    TBBT_NODE *entry = NULL;
-    uint8   datadi[4];
-    int32   more_anns;
-    int32   aid;
-    int32   nanns, i;
-    int32   *ann_key = NULL; 
-    int32   *ann_id  = NULL; 
-    uint16  ann_tag;
-    uint16  ann_ref;
-    uint8   *dptr = NULL;
-    ANfile  *file_entry = NULL;
-    ANentry *ann_entry  = NULL;
-    ANnode  *ann_node   = NULL;
-    intn     ret_value = SUCCEED;
+    filerec_t  *file_rec = NULL;		/* file record pointer */
+    uint8       datadi[4];
+    int32       more_anns;
+    int32       aid;
+    int32       nanns;
+    int32       i;
+    int32      *ann_key = NULL; 
+    uint16      ann_tag;
+    uint16      ann_ref;
+    uint8      *dptr = NULL;
+    ANentry    *ann_entry  = NULL;
+    ANnode     *ann_node   = NULL;
+    intn        ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
 
-    /* Valid file id */
-    if (HAatom_group(an_id)!=FIDGROUP)
+    /* convert an_id i.e. file_id to file rec and check for validity */
+    file_rec = HAatom_object(an_id);
+    if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* First find file node from file tree */
-    if ((entry = tbbtdfind(ANfilelist, &an_id, NULL)) == NULL)
-        HE_REPORT_GOTO("failed to find an_id", FAIL);
-
-    file_entry = (ANfile *) entry->data; /* get file entry from node */
-
     /* Check for empty annotation tree of 'type'? */   
-    if (file_entry->an_num[type] == -1)
+    if (file_rec->an_num[type] == -1)
       {
-          if ((file_entry->an_tree[type] = 
+          if ((file_rec->an_tree[type] = 
                (TBBT_TREE *) tbbtdmake(ANIanncmp,sizeof(int32))) == NULL)
+            {
               HE_REPORT_GOTO("failed to create annotation tree", FAIL);
-          file_entry->an_num[type] = 0;
+            }
+          file_rec->an_num[type] = 0;
       }
     else
       {
-          ret_value = file_entry->an_num[type];  /* tree already created */
-          goto done;
+          ret_value = file_rec->an_num[type];  /* tree already created */
+          goto done; /* we are done */
       }
 
     /* Which type of annotation data/file label or desc? */
@@ -612,9 +544,9 @@ ANIcreate_ann_tree(int32 an_id,  /* IN: annotation interface id */
     /* Get number of annotations of 'type' in file */
     if ((nanns = Hnumber(an_id, ann_tag)) == 0)
       { /* ZERO annotations of 'type' in file */
-          file_entry->an_num[type] = 0;
-          ret_value =  file_entry->an_num[type];  
-          goto done;
+          file_rec->an_num[type] = 0;
+          ret_value =  file_rec->an_num[type];  
+          goto done; /* we are done */
       }
 
     /* start read on 'type' annotations  in file 
@@ -634,9 +566,9 @@ ANIcreate_ann_tree(int32 an_id,  /* IN: annotation interface id */
                                (int32 *) NULL, (int32 *) NULL, (int32 *) NULL,
                                (int16 *) NULL, (int16 *) NULL))
             {
-                file_entry->an_num[type] = nanns;
-                ret_value =  file_entry->an_num[type];  
-                goto done;
+                file_rec->an_num[type] = nanns;
+                ret_value =  file_rec->an_num[type];  
+                goto done; /* we are done */
             }
 
           /* if data annotation, read data annotation tag/ref */
@@ -644,9 +576,9 @@ ANIcreate_ann_tree(int32 an_id,  /* IN: annotation interface id */
             {
                 if ((int32) FAIL == Hread(aid, (int32) 4, datadi))
                   {
-                      file_entry->an_num[type] = nanns;
-                      ret_value =  file_entry->an_num[type];  
-                      goto done;
+                      file_rec->an_num[type] = nanns;
+                      ret_value =  file_rec->an_num[type];  
+                      goto done; /* we are done */
                   }
             }
 
@@ -654,17 +586,30 @@ ANIcreate_ann_tree(int32 an_id,  /* IN: annotation interface id */
           if ((ann_key = (int32 *)HDmalloc(sizeof(int32))) == NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-          /* allocate space for ann_id */
-          if ((ann_id = (int32 *)HDmalloc(sizeof(int32))) == NULL)
+          /* Create key from tag/ref pair 
+           *  ----------------------------
+           *  | tag(16bits) | ref(16bits) |
+           *  -----------------------------*/
+          *ann_key = AN_CREATE_KEY(type, ann_ref);
+
+          /* Initialize annotation node for insertion in annotation atom group*/
+          if ((ann_node = HDmalloc(sizeof(ANnode))) == NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-          /* Allocate & Initialize annotation entry 
-           *  decode data tag/ref */
+          ann_node->file_id = an_id;
+          ann_node->ann_key = *ann_key;
+          ann_node->new_ann = 0;       /* not a newly created annotation */
+
+          /* Initialize annotation entry for insertion into corresponding TBBT */
+          /* and  decode data tag/ref */
           if ((ann_entry = HDmalloc(sizeof(ANentry))) == NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
           ann_entry->annref  = ann_ref;
-          ann_entry->ann_id  = *ann_id = num_anns++;
+          /* ann_entry->ann_id  = *ann_id = num_anns++; */
+          ann_entry->ann_id = HAregister_atom(ANIDGROUP,ann_node);
+          if (FAIL == ann_entry->ann_id)
+              HE_REPORT_GOTO("failed to insert annotation into ann_id Group", FAIL);
 
           /* Check if data annotation to decode data tag/ref */
           if(type != AN_FILE_LABEL && type != AN_FILE_DESC)
@@ -679,28 +624,10 @@ ANIcreate_ann_tree(int32 an_id,  /* IN: annotation interface id */
                 ann_entry->elmref = ann_ref;
             }
 
-          /* Create key from tag/ref pair 
-           *  ----------------------------
-           *  | tag(16bits) | ref(16bits) |
-           *  -----------------------------*/
-          *ann_key = AN_CREATE_KEY(type, ann_ref);
-
           /* Add annotation entry to 'type' tree */
-          if (tbbtdins(file_entry->an_tree[type], ann_entry, ann_key) == NULL)
+          if (tbbtdins(file_rec->an_tree[type], ann_entry, ann_key) == NULL)
               HE_REPORT_GOTO("failed to insert annotation into 'type' tree", FAIL);
 
-          /* Initialize annotation node */
-          if ((ann_node = HDmalloc(sizeof(ANnode))) == NULL)
-              HGOTO_ERROR(DFE_NOSPACE, FAIL);
-
-          ann_node->file_id = an_id;
-          ann_node->ann_key = *ann_key;
-          ann_node->new_ann = 0;       /* not a newly created annotation */
-
-          /* Add annotation node to ann_id RB tree */
-          if (tbbtdins(ANnodelist, ann_node, ann_id) == NULL)
-              HE_REPORT_GOTO("failed to insert annotation into ann_id tree", FAIL);
-        
           /* set read on next annotation */
           more_anns = Hnextread(aid, ann_tag, DFREF_WILDCARD, DF_CURRENT);
       } /* end for "more_anns" */
@@ -708,16 +635,14 @@ ANIcreate_ann_tree(int32 an_id,  /* IN: annotation interface id */
     /* Finish access*/
     Hendaccess(aid);
 
-    file_entry->an_num[type] = nanns;
-    ret_value =  file_entry->an_num[type];  
+    file_rec->an_num[type] = nanns;
+    ret_value =  file_rec->an_num[type];  
 
   done:
     if(ret_value == FAIL)   
       { /* Error condition cleanup */
           if (ann_key != NULL)
               HDfree(ann_key);
-          if (ann_id != NULL)
-              HDfree(ann_id);
           if (ann_entry != NULL)
               HDfree(ann_entry);
           if (ann_node != NULL)
@@ -745,41 +670,38 @@ ANIcreate_ann_tree(int32 an_id,  /* IN: annotation interface id */
 
  -------------------------------------------------------------------------*/ 
 PRIVATE int32
-ANIfind(int32 an_id,   /* IN: annotation interface id */
-        ann_type type, /* IN: AN_DATA_LABEL for data labels, 
-                          AN_DATA_DESC for data descriptions,
-                          AN_FILE_LABEL for file labels,
-                          AN_FILE_DESC for file descritpions.*/ 
-        uint16 ann_ref /* IN: ref of annotation */)
+ANIfind(int32    an_id, /* IN: annotation interface id */
+        ann_type type,  /* IN: AN_DATA_LABEL for data labels, 
+                               AN_DATA_DESC for data descriptions,
+                               AN_FILE_LABEL for file labels,
+                               AN_FILE_DESC for file descritpions.*/ 
+        uint16   ann_ref /* IN: ref of annotation */)
 {
     CONSTR(FUNC, "ANIfind");
-    TBBT_NODE *entry = NULL;
-    ANfile  *file_entry = NULL;
-    ANentry *ann_entry  = NULL;
-    int32   ann_key;
-    int32   ret_value = SUCCEED;
+    filerec_t  *file_rec = NULL;		/* file record pointer */
+    TBBT_NODE  *entry = NULL;
+    ANentry    *ann_entry  = NULL;
+    int32       ann_key;
+    int32       ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
 
-    /* Valid file id */
-    if (HAatom_group(an_id)!=FIDGROUP)
+    /* convert an_id i.e. file_id to file rec and check for validity */
+    file_rec = HAatom_object(an_id);
+    if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* First find file node from file tree */
-    if ((entry = tbbtdfind(ANfilelist, &an_id, NULL)) == NULL)
-        HE_REPORT_GOTO("failed to find an_id", FAIL);
-
-    file_entry = (ANfile *) entry->data; /* get file entry from node */
-
     /* Check for empty annotation tree of 'type'? */   
-    if (file_entry->an_num[type] == -1)
+    if (file_rec->an_num[type] == -1)
       {
-          if ((file_entry->an_tree[type] = 
+          if ((file_rec->an_tree[type] = 
                (TBBT_TREE *) tbbtdmake(ANIanncmp,sizeof(int32))) == NULL)
+            {
               HE_REPORT_GOTO("failed to create annotation tree", FAIL);
+            }
 
-          file_entry->an_num[type] = 0; /* intialize after allocation */
+          file_rec->an_num[type] = 0; /* intialize after allocation */
       }
 
     /* Create key from type/ref pair 
@@ -789,7 +711,7 @@ ANIfind(int32 an_id,   /* IN: annotation interface id */
     ann_key = AN_CREATE_KEY(type, ann_ref);
 
     /* See if annotation of 'type' with ref exits */
-    if ((entry = tbbtdfind(file_entry->an_tree[type], &ann_key, NULL)) == NULL)
+    if ((entry = tbbtdfind(file_rec->an_tree[type], &ann_key, NULL)) == NULL)
         HE_REPORT_GOTO("failed to find annotation of 'type'", FAIL);
 
     /* get annotation entry from node */
@@ -827,43 +749,38 @@ ANIfind(int32 an_id,   /* IN: annotation interface id */
 
  -------------------------------------------------------------------------*/ 
 PRIVATE intn
-ANInumann(int32 an_id,     /* IN: annotation interface id */
-          ann_type type,   /* IN: AN_DATA_LABEL for data labels, 
-                              AN_DATA_DESC for data descriptions,
-                              AN_FILE_LABEL for file labels,
-                              AN_FILE_DESC for file descritpions.*/
-          uint16 elem_tag, /* IN: tag of item of which this is annotation */
-          uint16 elem_ref  /* IN: ref of item of which this is annotation */)
+ANInumann(int32    an_id,   /* IN: annotation interface id */
+          ann_type type,    /* IN: AN_DATA_LABEL for data labels, 
+                                   AN_DATA_DESC for data descriptions,
+                                   AN_FILE_LABEL for file labels,
+                                   AN_FILE_DESC for file descritpions.*/
+          uint16   elem_tag, /* IN: tag of item of which this is annotation */
+          uint16   elem_ref  /* IN: ref of item of which this is annotation */)
 {
     CONSTR(FUNC, "ANInumann");
-    TBBT_NODE *entry = NULL;
-    ANfile  *file_entry = NULL;
-    ANentry *ann_entry  = NULL;
-    intn    nanns = 0; 
-    intn    ret_value = SUCCEED;
+    filerec_t  *file_rec = NULL;		/* file record pointer */
+    TBBT_NODE  *entry = NULL;
+    ANentry    *ann_entry  = NULL;
+    intn        nanns = 0; 
+    intn        ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
 
-    /* Valid file id */
-    if (HAatom_group(an_id)!=FIDGROUP)
+    /* convert an_id i.e. file_id to file rec and check for validity */
+    file_rec = HAatom_object(an_id);
+    if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* First find file node from file tree */
-    if ((entry = tbbtdfind(ANfilelist, &an_id, NULL)) == NULL)
-        HE_REPORT_GOTO("failed to find an_id", FAIL);
-
-    file_entry = (ANfile *) entry->data; /* get file entry from node */
-
     /* Empty annotation tree */
-    if (file_entry->an_num[type] == -1)
+    if (file_rec->an_num[type] == -1)
       {
           if (ANIcreate_ann_tree(an_id, type) == FAIL)
               HGOTO_ERROR(DFE_BADCALL, FAIL);
       }
 
     /* Traverse the list looking for a match */
-    for(entry = tbbtfirst((TBBT_NODE *)*(file_entry->an_tree[type])); 
+    for(entry = tbbtfirst((TBBT_NODE *)*(file_rec->an_tree[type])); 
         entry != NULL; entry = tbbtnext(entry))
       {
           ann_entry = (ANentry *) entry->data; /* get annotation entry from node */
@@ -904,44 +821,39 @@ ANInumann(int32 an_id,     /* IN: annotation interface id */
 
  ------------------------------------------------------------------------*/ 
 PRIVATE intn
-ANIannlist(int32 an_id,     /* IN: annotation interface id */
-           ann_type type,   /* IN: AN_DATA_LABEL for data labels, 
-                               AN_DATA_DESC for data descriptions,
-                               AN_FILE_LABEL for file labels,
-                               AN_FILE_DESC for file descritpions.*/
-           uint16 elem_tag, /* IN: tag of item of which this is annotation*/
-           uint16 elem_ref, /* IN: ref of item of which this is annotation */
-           int32 ann_list[] /* OUT: array of ann_id's that match criteria. */)
+ANIannlist(int32    an_id,    /* IN: annotation interface id */
+           ann_type type,     /* IN: AN_DATA_LABEL for data labels, 
+                                     AN_DATA_DESC for data descriptions,
+                                     AN_FILE_LABEL for file labels,
+                                     AN_FILE_DESC for file descritpions.*/
+           uint16   elem_tag, /* IN: tag of item of which this is annotation*/
+           uint16   elem_ref, /* IN: ref of item of which this is annotation */
+           int32    ann_list[]/* OUT: array of ann_id's that match criteria. */)
 {
     CONSTR(FUNC, "ANIannlist");
-    TBBT_NODE *entry = NULL;
-    ANfile  *file_entry = NULL;
-    ANentry *ann_entry  = NULL;
-    intn    nanns = 0;
-    intn    ret_value = SUCCEED;
+    filerec_t  *file_rec = NULL;		/* file record pointer */
+    TBBT_NODE  *entry = NULL;
+    ANentry    *ann_entry  = NULL;
+    intn        nanns = 0;
+    intn        ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
 
-    /* Valid file id */
-    if (HAatom_group(an_id)!=FIDGROUP)
+    /* convert an_id i.e. file_id to file rec and check for validity */
+    file_rec = HAatom_object(an_id);
+    if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* First find file node from file tree */
-    if ((entry = tbbtdfind(ANfilelist, &an_id, NULL)) == NULL)
-        HE_REPORT_GOTO("failed to find an_id", FAIL);
-
-    file_entry = (ANfile *) entry->data; /* get file entry from node */
-
     /* Empty annotation tree */
-    if (file_entry->an_num[type] == -1)
+    if (file_rec->an_num[type] == -1)
       {
           if (ANIcreate_ann_tree(an_id, type) == FAIL)
               HGOTO_ERROR(DFE_BADCALL, FAIL);
       }
 
     /* Traverse the list looking for a match */
-    for(entry = tbbtfirst((TBBT_NODE *)*(file_entry->an_tree[type])); 
+    for(entry = tbbtfirst((TBBT_NODE *)*(file_rec->an_tree[type])); 
         entry != NULL; entry = tbbtnext(entry))
       {
           ann_entry = (ANentry *) entry->data; /* get annotation entry from node */
@@ -982,27 +894,23 @@ ANIannlist(int32 an_id,     /* IN: annotation interface id */
 PRIVATE int32
 ANIannlen(int32 ann_id /*  IN: annotation id */)
 {
-#ifdef LATER
     CONSTR(FUNC, "ANIannlen");
-#endif /* LATER */
-    TBBT_NODE *entry = NULL;
-    ANnode  *ann_node   = NULL;
-    int32  file_id;
-    int32  type;
-    int32  ann_key;
-    uint16 ann_tag;
-    uint16 ann_ref;
-    int32  ann_length=(-1);
-    int32  ret_value = SUCCEED;
+    ANnode    *ann_node   = NULL;
+    int32      file_id;
+    int32      type;
+    int32      ann_key;
+    uint16     ann_tag;
+    uint16     ann_ref;
+    int32      ann_length=(-1);
+    int32      ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
 
-    /* First find file node from annotation node tree */
-    if ((entry = tbbtdfind(ANnodelist, &ann_id, NULL)) == NULL)
-        HE_REPORT_GOTO("failed to find ann_id", FAIL);
-
-    ann_node = (ANnode *) entry->data; /* get ann node from node */
+    /* get annotation record */
+    ann_node = HAatom_object(ann_id);
+    if (NULL == ann_node)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* get file id and annotation key */
     file_id = ann_node->file_id;
@@ -1080,7 +988,6 @@ ANIreadann(int32 ann_id, /* IN: annotation id (handle) */
            int32 maxlen  /* IN: size of space to return annotation in */)
 {
     CONSTR(FUNC, "ANIreadann");
-    TBBT_NODE *entry = NULL;
     ANnode  *ann_node   = NULL;
     int32   file_id;
     int32   type;
@@ -1095,11 +1002,10 @@ ANIreadann(int32 ann_id, /* IN: annotation id (handle) */
     /* Clear error stack */
     HEclear();
 
-    /* First find file node from file tree */
-    if ((entry = tbbtdfind(ANnodelist, &ann_id, NULL)) == NULL)
-        HE_REPORT_GOTO("failed to find ann_id", FAIL);
-
-    ann_node = (ANnode *) entry->data; /* get ann node from node */
+    /* get annotation record */
+    ann_node = HAatom_object(ann_id);
+    if (NULL == ann_node)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* get file id and annotation key */
     file_id = ann_node->file_id;
@@ -1224,32 +1130,30 @@ ANIwriteann(int32 ann_id,    /* IN: annotation id */
             int32 ann_len    /* IN: length of annotation */)
 {
     CONSTR(FUNC, "ANIwriteann");
-    TBBT_NODE *fentry = NULL;
-    TBBT_NODE *entry  = NULL;
-    ANfile  *file_entry = NULL;
-    ANentry *ann_entry  = NULL;
-    ANnode  *ann_node   = NULL;
-    int32   file_id;
-    int32   type;
-    int32   ann_key;
-    int32   aid;
-    int     newflag = 0;
-    uint16  ann_tag;
-    uint16  ann_ref;
-    uint16  elem_tag;
-    uint16  elem_ref;
-    uint8   datadi[4] = {0,0,0,0};      /* to hold data tag/ref for writing */
-    uint8   *ptr = NULL;
-    intn    ret_value = SUCCEED;
+    filerec_t  *file_rec = NULL;		/* file record pointer */
+    TBBT_NODE  *entry  = NULL;
+    ANentry    *ann_entry  = NULL;
+    ANnode     *ann_node   = NULL;
+    int32       file_id = FAIL;
+    int32       type;
+    int32       ann_key;
+    int32       aid = FAIL;
+    int         newflag = 0;
+    uint16      ann_tag;
+    uint16      ann_ref;
+    uint16      elem_tag;
+    uint16      elem_ref;
+    uint8       datadi[4] = {0,0,0,0};      /* to hold data tag/ref for writing */
+    uint8      *ptr = NULL;
+    intn        ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
 
-    /* First find node from ann_id tree */
-    if ((entry = tbbtdfind(ANnodelist, &ann_id, NULL)) == NULL)
-        HE_REPORT_GOTO("failed to find ann_id", FAIL);
-
-    ann_node = (ANnode *) entry->data; /* get ann node from node */
+    /* get annotation record */
+    ann_node = HAatom_object(ann_id);
+    if (NULL == ann_node)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* get file id and annotation key */
     file_id = ann_node->file_id;
@@ -1257,9 +1161,10 @@ ANIwriteann(int32 ann_id,    /* IN: annotation id */
     type    = AN_KEY2TYPE(ann_key);
     ann_ref = AN_KEY2REF(ann_key);
 
-    /* Valid file id */
-    if (file_id == FAIL)
-        HGOTO_ERROR(DFE_BADCALL, FAIL);
+    /* convert file_id to file rec and check for validity */
+    file_rec = HAatom_object(file_id);
+    if (BADFREC(file_rec))
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* set type tag */
     switch((int32)type)
@@ -1280,16 +1185,10 @@ ANIwriteann(int32 ann_id,    /* IN: annotation id */
           HE_REPORT_GOTO("Bad annotation type for this call",FAIL);
       }
 
-    /* First find file node from file tree */
-    if ((fentry = tbbtdfind(ANfilelist, &file_id, NULL)) == NULL)
-        HE_REPORT_GOTO("failed to find file_id", FAIL);
-
-    file_entry = (ANfile *) fentry->data; /* get file entry from node */
-
     /* Get annotation entry so that we can extract tag/ref of element 
      * Note that for file labels and descriptions the tag/ref contain
      * DFTAG_XXX and annotation reference number */
-    if ((entry = tbbtdfind(file_entry->an_tree[type], &ann_key, NULL)) == NULL)
+    if ((entry = tbbtdfind(file_rec->an_tree[type], &ann_key, NULL)) == NULL)
         HE_REPORT_GOTO("failed to retrieve annotation of 'type' tree", FAIL);
 
     ann_entry = (ANentry *) entry->data;
@@ -1347,7 +1246,9 @@ ANIwriteann(int32 ann_id,    /* IN: annotation id */
                 HE_REPORT_GOTO("Failed to write annotation",FAIL);
             }
 
-          Hendaccess(aid); /* end access to annotation */
+          /* end access to annotation */
+          if (FAIL == Hendaccess(aid)) 
+              HE_REPORT_GOTO("Failed to end access to annotation",FAIL);
       }
     else
       { /* file label/description 
@@ -1386,16 +1287,16 @@ ANIwriteann(int32 ann_id,    /* IN: annotation id */
 
 --------------------------------------------------------------------------- */
 PRIVATE intn 
-ANIcreate(int32 file_id,   /* IN: file ID */
-          uint16 elem_tag, /* IN: tag of item to be assigned annotation */
-          uint16 elem_ref, /* IN: reference number of itme to be assigned ann */ 
-          ann_type type    /* IN: AN_DATA_LABEL for data labels, 
-                              AN_DATA_DESC for data descriptions,
-                              AN_FILE_LABEL for file labels,
-                              AN_FILE_DESC for file descritpions.*/)
+ANIcreate(int32    file_id,  /* IN: file ID */
+          uint16   elem_tag, /* IN: tag of item to be assigned annotation */
+          uint16   elem_ref, /* IN: reference number of itme to be assigned ann */ 
+          ann_type type      /* IN: AN_DATA_LABEL for data labels, 
+                                    AN_DATA_DESC for data descriptions,
+                                    AN_FILE_LABEL for file labels,
+                                    AN_FILE_DESC for file descritpions.*/)
 {
     CONSTR(FUNC, "ANIcreate");    /* for HERROR */
-    int32   ann_id;
+    int32   ann_id = FAIL;
     uint16  ann_tag;
     uint16  ann_ref;
     intn    ret_value = SUCCEED;
@@ -1480,9 +1381,8 @@ EXPORT int32
 ANstart(int32 file_id /* IN: file to start annotation access on*/)
 {
     CONSTR(FUNC, "ANstart");
-    int32  *an_id    = NULL;
-    ANfile *file_entry = NULL;
-    int32   ret_value = SUCCEED;
+    filerec_t  *file_rec = NULL;		/* file record pointer */
+    int32       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
     TRACE_ON(AN_mask, ID_ANstart);
@@ -1491,58 +1391,20 @@ ANstart(int32 file_id /* IN: file to start annotation access on*/)
     /* Clear error stack */
     HEclear();
 
-    /* check for valid file id */
-    if (HAatom_group(file_id)!=FIDGROUP)
+    /* convert file id to file rec and check for validity */
+    file_rec = HAatom_object(file_id);
+    if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* Check to see if we need to call ANInit, needs to moved to 
-     * overall initialization call */
-    if (ANfilelist == NULL || ANnodelist == NULL)
-        ANinit();
+    /* call ANinit, should just register termination fucntion once 
+       no matter how many times it is called. */
+    ANinit();
 
-    /* Check to see if this file_id is already in file tree */
-    if (tbbtdfind(ANfilelist, &an_id, NULL) == NULL)
-      { /* file is not in file tree so create a new entry */
-
-          /* allocate space for file handle */
-          if ((an_id = HDmalloc(sizeof(int32))) == NULL)
-              HGOTO_ERROR(DFE_NOSPACE, FAIL);
-
-          *an_id = file_id;
-
-          /* Intialize file entry */
-          if ((file_entry = HDmalloc(sizeof(ANfile))) == NULL)
-              HGOTO_ERROR(DFE_NOSPACE, FAIL);
-          file_entry->access_mode = 0;
-          file_entry->an_tree[AN_DATA_LABEL] = NULL;   /* data label ann tree */
-          file_entry->an_tree[AN_DATA_DESC]  = NULL;   /* data description ann tree */
-          file_entry->an_tree[AN_FILE_LABEL] = NULL;   /* file label ann tree */
-          file_entry->an_tree[AN_FILE_DESC]  = NULL;   /* file description ann tree */
-          file_entry->an_num[AN_DATA_LABEL] = -1;   
-          file_entry->an_num[AN_DATA_DESC]  = -1;   
-          file_entry->an_num[AN_FILE_LABEL] = -1;   
-          file_entry->an_num[AN_FILE_DESC]  = -1;   
-          file_entry->filename = NULL;
-
-          /* Add file entry to file tree */
-          if (tbbtdins(ANfilelist, file_entry, an_id) == NULL)
-              HE_REPORT_GOTO("Failed to insert file_id into TBBTtree", FAIL);
-
-          /* return file id */
-          ret_value = ((int32)*an_id);
-      }
-    else 
-      { /* file already added to file tree so return file_id*/
-          ret_value = file_id;
-      }
+    ret_value = file_id;
 
   done:
     if(ret_value == FAIL)   
       { /* Error condition cleanup */
-          if (an_id != NULL)
-              HDfree(an_id);
-          if(file_entry != NULL)
-              HDfree(file_entry);
       } /* end if */
 
     /* Normal function cleanup */
@@ -1570,16 +1432,15 @@ ANstart(int32 file_id /* IN: file to start annotation access on*/)
 
 --------------------------------------------------------------------------*/
 EXPORT intn 
-ANfileinfo(int32 an_id,         /* IN:  annotation interface id */
+ANfileinfo(int32  an_id,        /* IN:  annotation interface id */
            int32 *n_file_label, /* OUT: the # of file labels */
            int32 *n_file_desc,  /* OUT: the # of file descriptions */
            int32 *n_obj_label,  /* OUT: the # of object labels */
            int32 *n_obj_desc    /* OUT: the # of object descriptions */)
 {
     CONSTR(FUNC, "ANfileinfo");    /* for HERROR */
-    TBBT_NODE *entry = NULL;
-    ANfile  *file_entry = NULL;
-    intn    ret_value = SUCCEED;
+    filerec_t  *file_rec = NULL;  /* file record pointer */
+    intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
     TRACE_ON(AN_mask, ID_ANfileinfo);
@@ -1588,51 +1449,46 @@ ANfileinfo(int32 an_id,         /* IN:  annotation interface id */
     /* Clear error stack */
     HEclear();
 
-    /* Valid file id */
-    if (HAatom_group(an_id)!=FIDGROUP)
+    /* convert an_id i.e. file_id to file rec and check for validity */
+    file_rec = HAatom_object(an_id);
+    if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* First find file node from file tree */
-    if ((entry = tbbtdfind(ANfilelist, &an_id, NULL)) == NULL)
-        HE_REPORT_GOTO("failed to find an_id", FAIL);
-
-    file_entry = (ANfile *) entry->data; /* get file entry from node */
-
     /* Empty file label annotation tree? */
-    if (file_entry->an_num[AN_FILE_LABEL] == -1)
+    if (file_rec->an_num[AN_FILE_LABEL] == -1)
       {
           if ((*n_file_label = ANIcreate_ann_tree(an_id, AN_FILE_LABEL)) == FAIL)
               HE_REPORT_GOTO("failed to create file label annotation TBBTtree", FAIL);
       }
     else
-        *n_file_label = file_entry->an_num[AN_FILE_LABEL];
+        *n_file_label = file_rec->an_num[AN_FILE_LABEL];
 
     /* Empty file descritpiton annotation tree? */
-    if (file_entry->an_num[AN_FILE_DESC] == -1)
+    if (file_rec->an_num[AN_FILE_DESC] == -1)
       {
           if ((*n_file_desc = ANIcreate_ann_tree(an_id, AN_FILE_DESC)) == FAIL)
               HE_REPORT_GOTO("failed to create file desc annotation TBBTtree", FAIL);
       }
     else
-        *n_file_desc = file_entry->an_num[AN_FILE_DESC];
+        *n_file_desc = file_rec->an_num[AN_FILE_DESC];
 
     /* Empty label annotation tree? */
-    if (file_entry->an_num[AN_DATA_LABEL] == -1)
+    if (file_rec->an_num[AN_DATA_LABEL] == -1)
       {
           if ((*n_obj_label = ANIcreate_ann_tree(an_id, AN_DATA_LABEL)) == FAIL)
               HE_REPORT_GOTO("failed to create data label annotation TBBTtree", FAIL);
       }
     else
-        *n_obj_label = file_entry->an_num[AN_DATA_LABEL];
+        *n_obj_label = file_rec->an_num[AN_DATA_LABEL];
 
     /* Empty descritpiton annotation tree? */
-    if (file_entry->an_num[AN_DATA_DESC] == -1)
+    if (file_rec->an_num[AN_DATA_DESC] == -1)
       {
           if ((*n_obj_desc = ANIcreate_ann_tree(an_id, AN_DATA_DESC)) == FAIL)
               HE_REPORT_GOTO("failed to create data desc annotation TBBTtree", FAIL);
       }
     else
-        *n_obj_desc = file_entry->an_num[AN_DATA_DESC];
+        *n_obj_desc = file_rec->an_num[AN_DATA_DESC];
 
   done:
     if(ret_value == FAIL)   
@@ -1662,15 +1518,11 @@ EXPORT int32
 ANend(int32 an_id /* IN: Annotation ID of file to close */)
 {
     CONSTR(FUNC,"ANend");
-    TBBT_NODE *fentry = NULL;
+    filerec_t *file_rec = NULL;  /* file record pointer */
     TBBT_NODE *aentry = NULL;
-    TBBT_NODE *entry  = NULL;
-    ANfile  *file_entry = NULL;
-    ANentry *ann_entry  = NULL;
-    ANnode  *ann_node   = NULL;
-    VOID    *ann_key = NULL;
-    VOID    *kp = NULL;
-    int32   ret_value = SUCCEED;
+    ANentry   *ann_entry  = NULL;
+    ANnode    *ann_node   = NULL;
+    int32      ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
     TRACE_ON(AN_mask, ID_ANend);
@@ -1679,149 +1531,106 @@ ANend(int32 an_id /* IN: Annotation ID of file to close */)
     /* Clear error stack */
     HEclear();
 
-    /* Valid file id */
-    if (HAatom_group(an_id)!=FIDGROUP)
+    /* convert an_id i.e. file_id to file rec and check for validity */
+    file_rec = HAatom_object(an_id);
+    if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* First find file node from file tree */
-    if ((fentry = tbbtdfind(ANfilelist, &an_id, NULL)) == NULL)
-        HE_REPORT_GOTO("failed to find an_id", FAIL);
-
-    file_entry = (ANfile *) fentry->data; /* get file entry from node */
-
-    if (file_entry->filename != NULL)
-        HDfree(file_entry->filename);  /* free file name */
-  
     /* NEED to delete trees of annotations attached to node 
      * NOTE: This could be written shorter using a for loop....
      * or something....  */
 
     /* free file label annotation rb tree */
-    if (file_entry->an_tree[AN_FILE_LABEL] != NULL) 
-      { /* Traverse tree puling ann_id's to delete from ANnodelist */
-          for(aentry = tbbtfirst((TBBT_NODE *)*(file_entry->an_tree[AN_FILE_LABEL])); 
+    if (file_rec->an_tree[AN_FILE_LABEL] != NULL) 
+      { /* Traverse tree puling ann_id's to delete from annotation atom group */
+          for(aentry = tbbtfirst((TBBT_NODE *)*(file_rec->an_tree[AN_FILE_LABEL])); 
               aentry != NULL;
               aentry = tbbtnext(aentry))
             { /* get annotation entry from node */
                 ann_entry = (ANentry *) aentry->data; 
 
-                /* See if annotation exits */
-                if ((entry = tbbtdfind(ANnodelist, &(ann_entry->ann_id), NULL)) 
-                    == NULL)
-                    HE_REPORT_GOTO("Failed to find annotation with ann_id", FAIL);
-
-                /* delete node from ANndoelist */
-                if ((ann_node =(ANnode *) tbbtrem((TBBT_NODE **)ANnodelist, entry, 
-                                                  &ann_key))== NULL)
-                    HGOTO_ERROR(DFE_BADCALL, FAIL);      
+                /* delete annotation node from annotation group  */
+                if(NULL == (ann_node = HAremove_atom(ann_entry->ann_id)))
+                    HE_REPORT_GOTO("Failed to remove annotation with ann_id", FAIL);
 
                 if(ann_node != NULL)
                     HDfree(ann_node); /* free node */
-                if(ann_key != NULL)
-                    HDfree(ann_key);  /* free key */
-
             } /* end for 'entry */
           /* finally free tree */
-          tbbtdfree(file_entry->an_tree[AN_FILE_LABEL], ANfreedata, ANfreekey);  
+          tbbtdfree(file_rec->an_tree[AN_FILE_LABEL], ANfreedata, ANfreekey);  
       }
 
     /* free file desc annotation rb tree */
-    if (file_entry->an_tree[AN_FILE_DESC] != NULL) 
-      { /* Traverse tree puling ann_id's to delete from ANnodelist */
-          for(aentry = tbbtfirst((TBBT_NODE *)*(file_entry->an_tree[AN_FILE_DESC])); 
+    if (file_rec->an_tree[AN_FILE_DESC] != NULL) 
+      { /* Traverse tree puling ann_id's to delete from annotation atom group */
+          for(aentry = tbbtfirst((TBBT_NODE *)*(file_rec->an_tree[AN_FILE_DESC])); 
               aentry != NULL;
               aentry = tbbtnext(aentry))
             { /* get annotation entry from node */
                 ann_entry = (ANentry *) aentry->data; 
 
-                /* See if annotation exits */
-                if ((entry = tbbtdfind(ANnodelist, &(ann_entry->ann_id), NULL)) 
-                    == NULL)
-                    HE_REPORT_GOTO("Failed to find annotation with ann_id", FAIL);
+                /* delete annotation node from annotation group  */
+                if(NULL == (ann_node = HAremove_atom(ann_entry->ann_id)))
+                    HE_REPORT_GOTO("Failed to remove annotation with ann_id", FAIL);
 
-                /* delete node from ANndoelist */
-                if ((ann_node =(ANnode *) tbbtrem((TBBT_NODE **)ANnodelist, entry, 
-                                                  &ann_key))== NULL)
-                    HGOTO_ERROR(DFE_BADCALL, FAIL);      
-
-                if (ann_node != NULL)
-                    HDfree(ann_node);   /* free node */
-                if (ann_key != NULL)
-                    HDfree(ann_key);    /* free key */
+                if(ann_node != NULL)
+                    HDfree(ann_node); /* free node */
 
             } /* end for 'entry */
           /* finally free tree */
-          tbbtdfree(file_entry->an_tree[AN_FILE_DESC], ANfreedata, ANfreekey);  
+          tbbtdfree(file_rec->an_tree[AN_FILE_DESC], ANfreedata, ANfreekey);  
       }
 
     /* free label annotation rb tree */
-    if (file_entry->an_tree[AN_DATA_LABEL] != NULL) 
-      { /* Traverse tree puling ann_id's to delete from ANnodelist */
-          for(aentry = tbbtfirst((TBBT_NODE *)*(file_entry->an_tree[AN_DATA_LABEL])); 
+    if (file_rec->an_tree[AN_DATA_LABEL] != NULL) 
+      { /* Traverse tree puling ann_id's to delete from annotation atom group */
+          for(aentry = tbbtfirst((TBBT_NODE *)*(file_rec->an_tree[AN_DATA_LABEL])); 
               aentry != NULL;
               aentry = tbbtnext(aentry))
             { /* get annotation entry from node */
                 ann_entry = (ANentry *) aentry->data; 
 
-                /* See if annotation exits */
-                if ((entry = tbbtdfind(ANnodelist, &(ann_entry->ann_id), NULL)) 
-                    == NULL)
-                    HE_REPORT_GOTO("Failed to find annotation with ann_id", FAIL);
+                /* delete annotation node from annotation group  */
+                if(NULL == (ann_node = HAremove_atom(ann_entry->ann_id)))
+                    HE_REPORT_GOTO("Failed to remove annotation with ann_id", FAIL);
 
-                /* delete node from ANndoelist */
-                if ((ann_node =(ANnode *) tbbtrem((TBBT_NODE **)ANnodelist, entry, 
-                                                  &ann_key))== NULL)
-                    HGOTO_ERROR(DFE_BADCALL, FAIL);      
-
-                if (ann_node != NULL)
-                    HDfree(ann_node);   /* free node */
-                if (ann_key != NULL)
-                    HDfree(ann_key);    /* free key */
-
+                if(ann_node != NULL)
+                    HDfree(ann_node); /* free node */
             } /* end for 'entry */
           /* finally free tree */
-          tbbtdfree(file_entry->an_tree[AN_DATA_LABEL], ANfreedata, ANfreekey);  
+          tbbtdfree(file_rec->an_tree[AN_DATA_LABEL], ANfreedata, ANfreekey);  
       }
 
     /* free desc annotation rb tree */
-    if (file_entry->an_tree[AN_DATA_DESC] != NULL) 
-      { /* Traverse tree puling ann_id's to delete from ANnodelist */
-          for(aentry = tbbtfirst((TBBT_NODE *)*(file_entry->an_tree[AN_DATA_DESC])); 
+    if (file_rec->an_tree[AN_DATA_DESC] != NULL) 
+      { /* Traverse tree puling ann_id's to delete from annotation atom group */
+          for(aentry = tbbtfirst((TBBT_NODE *)*(file_rec->an_tree[AN_DATA_DESC])); 
               aentry != NULL;
               aentry = tbbtnext(aentry))
             { /* get annotation entry from node */
                 ann_entry = (ANentry *) aentry->data; 
 
-                /* See if annotation exits */
-                if ((entry = tbbtdfind(ANnodelist, &(ann_entry->ann_id), NULL)) 
-                    == NULL)
-                    HE_REPORT_GOTO("Failed to find annotation with ann_id", FAIL);
+                /* delete annotation node from annotation group  */
+                if(NULL == (ann_node = HAremove_atom(ann_entry->ann_id)))
+                    HE_REPORT_GOTO("Failed to remove annotation with ann_id", FAIL);
 
-                /* delete node from ANndoelist */
-                if ((ann_node =(ANnode *) tbbtrem((TBBT_NODE **)ANnodelist, entry, 
-                                                  &ann_key))== NULL)
-                    HGOTO_ERROR(DFE_BADCALL, FAIL);      
-
-                if (ann_node != NULL)
+                if(ann_node != NULL)
                     HDfree(ann_node); /* free node */
-                if (ann_key != NULL)
-                    HDfree(ann_key);       /* free key */
 
             } /* end for 'entry */
           /* finally free tree */
-          tbbtdfree(file_entry->an_tree[AN_DATA_DESC], ANfreedata, ANfreekey);  
+          tbbtdfree(file_rec->an_tree[AN_DATA_DESC], ANfreedata, ANfreekey);  
       }
 
-    /* Now we can delete the node itself */
-    if ((file_entry =(ANfile *) tbbtrem((TBBT_NODE **)ANfilelist, fentry, &kp))
-        == NULL)
-        HGOTO_ERROR(DFE_BADCALL, FAIL);      
-
-    /* free file data & key */
-    if (file_entry != NULL)
-        HDfree(file_entry);
-    if(kp != NULL)
-        HDfree(kp);
+    /* re-initalize everything in file record for annotations */
+    file_rec->an_tree[AN_DATA_LABEL] = NULL;
+    file_rec->an_tree[AN_DATA_DESC]  = NULL;
+    file_rec->an_tree[AN_FILE_LABEL] = NULL;
+    file_rec->an_tree[AN_FILE_DESC]  = NULL;
+    file_rec->an_num[AN_DATA_LABEL] = -1;   
+    file_rec->an_num[AN_DATA_DESC]  = -1;   
+    file_rec->an_num[AN_FILE_LABEL] = -1;   
+    file_rec->an_num[AN_FILE_DESC]  = -1;   
 
   done:
     if(ret_value == FAIL)   
@@ -1853,11 +1662,11 @@ ANend(int32 an_id /* IN: Annotation ID of file to close */)
 
 --------------------------------------------------------------------------- */
 EXPORT int32
-ANcreate(int32 an_id,     /* IN: annotation interface ID */
-         uint16 elem_tag, /* IN: tag of item to be assigned annotation */ 
-         uint16 elem_ref, /* IN: reference number of itme to be assigned ann */ 
-         ann_type type    /* IN: AN_DATA_LABEL for data labels, 
-                             AN_DATA_DESC for data descriptions*/)
+ANcreate(int32    an_id,    /* IN: annotation interface ID */
+         uint16   elem_tag, /* IN: tag of item to be assigned annotation */ 
+         uint16   elem_ref, /* IN: reference number of itme to be assigned ann */ 
+         ann_type type      /* IN: AN_DATA_LABEL for data labels, 
+                                  AN_DATA_DESC for data descriptions*/)
 {
 #ifdef LATER
     CONSTR(FUNC, "ANcreate");    /* for HERROR */
@@ -1893,9 +1702,9 @@ ANcreate(int32 an_id,     /* IN: annotation interface ID */
 
 --------------------------------------------------------------------------- */
 EXPORT int32
-ANcreatef(int32 an_id,  /* IN: annotation interface ID */
-          ann_type type /* IN:  AN_FILE_LABEL for file labels,
-                           AN_FILE_DESC for file descritpions.*/)
+ANcreatef(int32    an_id,/* IN: annotation interface ID */
+          ann_type type  /* IN:  AN_FILE_LABEL for file labels,
+                                 AN_FILE_DESC for file descritpions.*/)
 {
 #ifdef LATER
     CONSTR(FUNC, "ANcreatef");    /* for HERROR */
@@ -1954,19 +1763,18 @@ ANcreatef(int32 an_id,  /* IN: annotation interface ID */
 
 --------------------------------------------------------------------------- */
 EXPORT int32
-ANselect(int32 an_id,  /* IN: annotation interface ID */
-         int32 index,  /* IN: index of annottion to get ID for */
-         ann_type type /* IN: AN_DATA_LABEL for data labels, 
-                          AN_DATA_DESC for data descriptions,
-                          AN_FILE_LABEL for file labels,
-                          AN_FILE_DESC for file descritpions.*/)
+ANselect(int32    an_id, /* IN: annotation interface ID */
+         int32    index, /* IN: index of annottion to get ID for */
+         ann_type type   /* IN: AN_DATA_LABEL for data labels, 
+                                AN_DATA_DESC for data descriptions,
+                                AN_FILE_LABEL for file labels,
+                                AN_FILE_DESC for file descritpions.*/)
 {
     CONSTR(FUNC, "ANselect");    /* for HERROR */
-    TBBT_NODE *fentry = NULL;
+    filerec_t *file_rec = NULL;  /* file record pointer */
     TBBT_NODE *entry  = NULL;
-    ANfile  *file_entry = NULL;
-    ANentry *ann_entry  = NULL;
-    int32   ret_value = SUCCEED;
+    ANentry   *ann_entry  = NULL;
+    int32      ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
     TRACE_ON(AN_mask, ID_ANselect);
@@ -1975,31 +1783,26 @@ ANselect(int32 an_id,  /* IN: annotation interface ID */
     /* Clear error stack */
     HEclear();
 
-    /* Valid file id */
-    if (HAatom_group(an_id)!=FIDGROUP)
+    /* convert an_id i.e. file_id to file rec and check for validity */
+    file_rec = HAatom_object(an_id);
+    if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* First find file node from file tree */
-    if ((fentry = tbbtdfind(ANfilelist, &an_id, NULL)) == NULL)
-        HE_REPORT_GOTO("failed to find an_id", FAIL);
-
-    file_entry = (ANfile *) fentry->data; /* get file entry from node */
-
     /* Empty annotation tree */
-    if (file_entry->an_num[type] == -1)
+    if (file_rec->an_num[type] == -1)
       {
           if (ANIcreate_ann_tree(an_id, type) == FAIL)
               HGOTO_ERROR(DFE_BADCALL, FAIL);
       }
 
     /* check index and adjust to 1 based for tbbtindx()*/
-    if(index >= 0 && index <= file_entry->an_num[type])
+    if(index >= 0 && index <= file_rec->an_num[type])
         index++;
     else
         HE_REPORT_GOTO("bad index", FAIL);
 
     /* find 'index' entry */
-    if ((entry = tbbtindx((TBBT_NODE *)*(file_entry->an_tree[type]), index)) == NULL)
+    if ((entry = tbbtindx((TBBT_NODE *)*(file_rec->an_tree[type]), index)) == NULL)
         HE_REPORT_GOTO("failed to find 'index' entry", FAIL);
 
     ann_entry = (ANentry *) entry->data; 
@@ -2038,13 +1841,13 @@ ANselect(int32 an_id,  /* IN: annotation interface ID */
 
  ------------------------------------------------------------------------*/ 
 EXPORT intn
-ANnumann(int32 an_id,     /* IN: annotation interface id */
-         ann_type type,   /* IN: AN_DATA_LABEL for data labels, 
-                             AN_DATA_DESC for data descriptions,
-                             AN_FILE_LABEL for file labels,
-                             AN_FILE_DESC for file descritpions.*/
-         uint16 elem_tag, /* IN: tag of item of which this is annotation */
-         uint16 elem_ref  /* IN: ref of item of which this is annotation */ )
+ANnumann(int32    an_id,    /* IN: annotation interface id */
+         ann_type type,     /* IN: AN_DATA_LABEL for data labels, 
+                                   AN_DATA_DESC for data descriptions,
+                                   AN_FILE_LABEL for file labels,
+                                   AN_FILE_DESC for file descritpions.*/
+         uint16   elem_tag, /* IN: tag of item of which this is annotation */
+         uint16   elem_ref  /* IN: ref of item of which this is annotation */ )
 {
 #ifdef LATER
     CONSTR(FUNC, "ANnumann");
@@ -2081,14 +1884,14 @@ ANnumann(int32 an_id,     /* IN: annotation interface id */
 
  ------------------------------------------------------------------------*/ 
 EXPORT intn
-ANannlist(int32 an_id,       /* IN: annotation interface id */
-          ann_type type,     /* IN: AN_DATA_LABEL for data labels, 
-                                AN_DATA_DESC for data descriptions,
-                                AN_FILE_LABEL for file labels,
-                                AN_FILE_DESC for file descritpions.*/
-          uint16 elem_tag,   /* IN: tag of item of which this is annotation */
-          uint16 elem_ref,   /* IN: ref of item of which this is annotation */
-          int32 ann_list[]   /* OUT: array of ann_id's that match criteria. */)
+ANannlist(int32    an_id,      /* IN: annotation interface id */
+          ann_type type,       /* IN: AN_DATA_LABEL for data labels, 
+                                      AN_DATA_DESC for data descriptions,
+                                      AN_FILE_LABEL for file labels,
+                                      AN_FILE_DESC for file descritpions.*/
+          uint16   elem_tag,   /* IN: tag of item of which this is annotation */
+          uint16   elem_ref,   /* IN: ref of item of which this is annotation */
+          int32    ann_list[]  /* OUT: array of ann_id's that match criteria. */)
 {
 #ifdef LATER
     CONSTR(FUNC, "ANannlist");
@@ -2266,50 +2069,44 @@ ANendaccess(int32 ann_id /* IN: annotation id */)
 
 --------------------------------------------------------------------------- */
 EXPORT int32
-ANget_tagref(int32 an_id,   /* IN: annotation interface ID */
-             int32 index,   /* IN: index of annottion to get tag/ref for */
-             ann_type type, /* IN: AN_DATA_LABEL for data labels, 
-                               AN_DATA_DESC for data descriptions,
-                               AN_FILE_LABEL for file labels,
-                               AN_FILE_DESC for file descritpions.*/
-             uint16 *tag,   /* OUT: Tag for annotation */
-             uint16 *ref    /* OUT: ref for annotation */)
+ANget_tagref(int32    an_id, /* IN: annotation interface ID */
+             int32    index, /* IN: index of annottion to get tag/ref for */
+             ann_type type,  /* IN: AN_DATA_LABEL for data labels, 
+                                    AN_DATA_DESC for data descriptions,
+                                    AN_FILE_LABEL for file labels,
+                                    AN_FILE_DESC for file descritpions.*/
+             uint16  *tag,   /* OUT: Tag for annotation */
+             uint16  *ref    /* OUT: ref for annotation */)
 {
     CONSTR(FUNC, "ANget_tagref");    /* for HERROR */
-    TBBT_NODE *fentry = NULL;
+    filerec_t *file_rec = NULL;  /* file record pointer */
     TBBT_NODE *entry  = NULL;
-    ANfile  *file_entry = NULL;
-    ANentry *ann_entry  = NULL;
-    int32   ret_value = SUCCEED;
+    ANentry   *ann_entry  = NULL;
+    int32      ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
 
-    /* Valid file id */
-    if (HAatom_group(an_id)!=FIDGROUP)
+    /* convert an_id i.e. file_id to file rec and check for validity */
+    file_rec = HAatom_object(an_id);
+    if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* First find file node from file tree */
-    if ((fentry = tbbtdfind(ANfilelist, &an_id, NULL)) == NULL)
-        HE_REPORT_GOTO("failed to find an_id", FAIL);
-
-    file_entry = (ANfile *) fentry->data; /* get file entry from node */
-
     /* Empty annotation tree */
-    if (file_entry->an_num[type] == -1)
+    if (file_rec->an_num[type] == -1)
       {
           if (ANIcreate_ann_tree(an_id, type) == FAIL)
               HGOTO_ERROR(DFE_BADCALL, FAIL);
       }
 
     /* check index and adjust to 1 based for tbbtindx()*/
-    if(index >= 0 && index <= file_entry->an_num[type])
+    if(index >= 0 && index <= file_rec->an_num[type])
         index++;
     else
         HE_REPORT_GOTO("bad index", FAIL);
 
     /* find 'index' entry */
-    if ((entry = tbbtindx((TBBT_NODE *)*(file_entry->an_tree[type]), index)) == NULL)
+    if ((entry = tbbtindx((TBBT_NODE *)*(file_rec->an_tree[type]), index)) == NULL)
         HE_REPORT_GOTO("failed to find 'index' entry", FAIL);
 
     ann_entry = (ANentry *) entry->data; 
@@ -2359,30 +2156,26 @@ ANget_tagref(int32 an_id,   /* IN: annotation interface ID */
 
  ------------------------------------------------------------------------*/
 int32
-ANid2tagref(int32 ann_id,  /* IN: annotation id */
+ANid2tagref(int32   ann_id,/* IN: annotation id */
             uint16 *tag,   /* OUT: Tag for annotation */
             uint16 *ref    /* OUT: ref for annotation */)
 {
-#ifdef LATER
     CONSTR(FUNC, "ANid2tagref");
-#endif /* LATER */
-    TBBT_NODE *entry = NULL;
-    ANnode  *ann_node   = NULL;
-    int32  file_id;
-    int32  type;
-    int32  ann_key;
-    uint16 ann_ref;
-    int32  ret_value = SUCCEED;
+    ANnode    *ann_node   = NULL;
+    int32      file_id;
+    int32      type;
+    int32      ann_key;
+    uint16     ann_ref;
+    int32      ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
 
     /* Valid annotation id */
-    /* First find file node from file tree */
-    if ((entry = tbbtdfind(ANnodelist, &ann_id, NULL)) == NULL)
-        HE_REPORT_GOTO("failed to find ann_id", FAIL);
-
-    ann_node = (ANnode *) entry->data; /* get ann node from node */
+    /* get annotation record */
+    ann_node = HAatom_object(ann_id);
+    if (NULL == ann_node)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* get file id and annotation key */
     file_id = ann_node->file_id;
@@ -2441,30 +2234,25 @@ ANid2tagref(int32 ann_id,  /* IN: annotation id */
 
  ------------------------------------------------------------------------*/
 int32
-ANtagref2id(int32 an_id,    /* IN  Annotation interface id */
+ANtagref2id(int32  an_id,   /* IN  Annotation interface id */
             uint16 ann_tag, /* IN: Tag for annotation */
             uint16 ann_ref  /* IN: ref for annotation */)
 {
     CONSTR(FUNC, "ANtagref2id");
+    filerec_t *file_rec = NULL;		/* file record pointer */
     TBBT_NODE *entry = NULL;
-    ANfile   *file_entry = NULL;
-    ANentry  *ann_entry  = NULL;
-    int32    ann_key;
-    ann_type type;
-    int32    ret_value = SUCCEED;
+    ANentry   *ann_entry  = NULL;
+    int32      ann_key;
+    ann_type   type;
+    int32      ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
 
-    /* Valid file id */
-    if (HAatom_group(an_id)!=FIDGROUP)
+    /* convert an_id i.e. file_id to file rec and check for validity */
+    file_rec = HAatom_object(an_id);
+    if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    /* First find file node from file tree */
-    if ((entry = tbbtdfind(ANfilelist, &an_id, NULL)) == NULL)
-        HE_REPORT_GOTO("failed to find an_id", FAIL);
-
-    file_entry = (ANfile *) entry->data; /* get file entry from node */
 
     /* set type given annotation tag */
     switch((uint16)ann_tag)
@@ -2486,7 +2274,7 @@ ANtagref2id(int32 an_id,    /* IN  Annotation interface id */
       }
 
     /* Check for empty annotation tree of 'type'? */   
-    if (file_entry->an_num[type] == -1)
+    if (file_rec->an_num[type] == -1)
       {
           if (ANIcreate_ann_tree(an_id, type) == FAIL)
               HGOTO_ERROR(DFE_BADCALL, FAIL);
@@ -2499,7 +2287,7 @@ ANtagref2id(int32 an_id,    /* IN  Annotation interface id */
     ann_key = AN_CREATE_KEY(type, ann_ref);
 
     /* See if annotation of 'type' with ref exits */
-    if ((entry = tbbtdfind(file_entry->an_tree[type], &ann_key, NULL)) == NULL)
+    if ((entry = tbbtdfind(file_rec->an_tree[type], &ann_key, NULL)) == NULL)
         HE_REPORT_GOTO("failed to find annotation of 'type'", FAIL);
 
     /* get annotation entry from node */
