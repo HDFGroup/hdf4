@@ -16,8 +16,10 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
+#ifndef I860
 #include <stdlib.h>
 #include <string.h>
+#endif /* I860 */
 #include "hdf.h"
 
 /* Exception checking macro */
