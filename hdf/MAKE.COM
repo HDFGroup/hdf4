@@ -27,11 +27,11 @@ $ create/dir [-.bin]
 $ define/nolog hdf$src     mrlxp4$dka300:[folk.dev.hdf.src]   ! HDF src
 $ define/nolog hdf$util    mrlxp4$dka300:[folk.dev.hdf.util]  ! HDF utilities
 $ define/nolog hdf$test    mrlxp4$dka300:[folk.dev.hdf.test]  ! HDF test programs
-$ define/nolog jpeg$src    mrlxp4$dka300:[folk.dev.jpeg]  !
-$ define/nolog zlib$src    mrlxp4$dka300:[folk.dev.zlib]  !
+$ define/nolog jpeg$src    mrlxp4$dka300:[folk.dev.hdf.jpeg]  !
+$ define/nolog zlib$src    mrlxp4$dka300:[folk.dev.hdf.zlib]  !
 $ define/nolog hdf$lib     mrlxp4$dka300:[folk.dev.lib]df ! Location and name for lib
-$ define/nolog jpeg$lib     mrlxp4$dka300:[folk.dev.lib]df
-$ define/nolog zlib$lib     mrlxp4$dka300:[folk.dev.lib]df
+$ define/nolog jpeg$lib     mrlxp4$dka300:[folk.dev.lib]libjpeg.olb
+$ define/nolog zlib$lib     mrlxp4$dka300:[folk.dev.lib]libz.olb
 $ define/nolog hdf$include mrlxp4$dka300:[folk.dev.include] ! Where to put includes
 $ define/nolog hdf$bin     mrlxp4$dka300:[folk.dev.bin]   ! Where to put executables
 $ !
@@ -46,7 +46,7 @@ $ set def jpeg$src
 $ copy jconfig.vms jconfig.h
 $ copy makefile.vms make.com
 $ @make
-$ copy libjpeg.olb hdf$lib
+$ copy libjpeg.olb jpeg$lib
 $ copy jconfig.h hdf$include
 $ copy jerror.h hdf$include
 $ copy jmorecfg.h  hdf$include
@@ -60,7 +60,7 @@ $  type sys$input
 $ set def zlib$src
 $ copy make_vms.com make.com
 $ @make
-$ copy libz.olb hdf$lib
+$ copy libz.olb zlib$lib
 $ copy zconf.h hdf$include
 $ copy zlib.h  hdf$include
 $ delete *.obj;*
@@ -85,7 +85,6 @@ $ !
 $ copy df.olb hdf$lib
 $ copy *.h    hdf$include
 $ delete *.obj;*
-$ delete df.olb;*
 $ !
 $ ! Build the HDF utility programs
 $ !
@@ -95,7 +94,6 @@ $ !
 $ ! Move the HDF utilities to where they belong
 $ !
 $ copy *.exe hdf$bin
-$ delete *.exe;*
 $ delete *.obj;*
 $ !
 $ @setuputils
