@@ -64,7 +64,7 @@ static char RcsId[] = "@(#)$Revision$";
 ...  num_blk   | link_ref   |
    --------------------------
 
-   ext_tag_desc   - EXT_LINKED(32 bit constant), identifies this as
+   ext_tag_desc   - SPECIAL_LINKED(16 bit constant), identifies this as
                     a linked block description record
    elem_tot_len   - Length of the entire element(32 bit field)
    blk_first_len  - Length of the first data block(32 bit field)
@@ -133,44 +133,47 @@ LOCAL ROUTINES
 /* block_t - record of a linked block. contains the tag and ref of the
    data elt that forms the linked block */
 typedef struct block_t
-  {
-      uint16      ref;          /* ref of the linked block */
-  }
+{
+    uint16      ref;          /* ref of the linked block */
+}
 block_t;
 
 /* link_t - a linked list block table.
    Very similar to the dd block structure */
 typedef struct link_t
-  {
-      uint16      nextref;      /* ref of the next block table */
-      struct link_t *next;      /* ptr to the next block table */
-      struct block_t *block_list;   /* ptr to the block list for this table */
-  }
+{
+    uint16          nextref;   /* ref of the next block table */
+    struct link_t  *next;      /* ptr to the next block table */
+    struct block_t *block_list;/* ptr to the block list for this table */
+}
 link_t;
 
 /* information on this special linked block data elt */
 typedef struct linkinfo_t
-  {
-      int         attached;     /* how many access records refer to this elt */
-      int32       length;       /* the actual length of the data elt */
-      int32       first_length; /* length of first block */
-      int32       block_length; /* the length of the remaining blocks */
-      int32       number_blocks;    /* total number of blocks in each link/block table */
-      uint16      link_ref;     /* ref of the first block table structure */
-      link_t     *link;         /* pointer to the first block table */
-      link_t     *last_link;    /* pointer to the last block table */
-  }
+{
+    int      attached;     /* how many access records refer to this elt */
+    int32    length;       /* the actual length of the data elt */
+    int32    first_length; /* length of first block */
+    int32    block_length; /* the length of the remaining blocks */
+    int32    number_blocks;/* total number of blocks in each link/block table */
+    uint16   link_ref;     /* ref of the first block table structure */
+    link_t  *link;         /* pointer to the first block table */
+    link_t  *last_link;    /* pointer to the last block table */
+}
 linkinfo_t;
 
 /* private functions */
-PRIVATE int32 HLIstaccess
-            (accrec_t * access_rec, int16 acc_mode);
+PRIVATE int32 HLIstaccess(accrec_t *access_rec, 
+                          int16     acc_mode);
 
-PRIVATE link_t *HLInewlink
-            (int32 file_id, int32 number_blocks, uint16 link_ref, uint16 first_block_ref);
+PRIVATE link_t *HLInewlink(int32  file_id, 
+                           int32  number_blocks, 
+                           uint16 link_ref, 
+                           uint16 first_block_ref);
 
-PRIVATE link_t *HLIgetlink
-            (int32 file_id, uint16 ref, int32 number_blocks);
+PRIVATE link_t *HLIgetlink(int32  file_id, 
+                           uint16 ref, 
+                           int32  number_blocks);
 
 /* the accessing function table for linked blocks */
 funclist_t  linked_funcs =
@@ -216,8 +219,11 @@ DESCRIPTION
 
  --------------------------------------------------------------------------- */
 int32
-HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length,
-         int32 number_blocks)
+HLcreate(int32  file_id, 
+         uint16 tag, 
+         uint16 ref, 
+         int32  block_length,
+         int32  number_blocks)
 {
     CONSTR(FUNC, "HLcreate");   /* for HERROR */
     filerec_t  *file_rec;       /* file record */
@@ -244,20 +250,24 @@ printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_bloc
     /* clear error stack and validate file record id */
     HEclear();
     file_rec = HAatom_object(file_id);
+
+    /* check args and create special tag */
     if (BADFREC(file_rec) || block_length < 0 || number_blocks < 0
         || SPECIALTAG(tag)
         || (special_tag = MKSPECIALTAG(tag)) == DFTAG_NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
+    /* make sure write access to file */
     if (!(file_rec->access & DFACC_WRITE))
         HGOTO_ERROR(DFE_DENIED, FAIL);
 
+    /* get empty access record */
     access_rec = HIget_access_rec();
     if (access_rec == NULL)
         HGOTO_ERROR(DFE_TOOMANY, FAIL);
 
     /* search for identical dd */
-    if ((data_id=HTPselect(file_rec,tag,ref))!=FAIL)
+    if ((data_id = HTPselect(file_rec,tag,ref))!=FAIL)
       {
           /* Check if the element is already special */
           if (HTPis_special(data_id)==TRUE)
@@ -266,16 +276,17 @@ printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_bloc
                 HGOTO_ERROR(DFE_CANTMOD, FAIL);
             }   /* end if */
 
-    /* If the data already was in the file, convert it into the first linked block */
-          /* get the info for the dataset */
+          /* If the data already was in the file, 
+           * convert it into the first linked block 
+           * get the info for the dataset */
           if(HTPinquire(data_id,NULL,NULL,&data_off,&data_len)==FAIL)
             {
                 HTPendaccess(data_id);
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
             } /* end if */
 
-          if(data_off==INVALID_OFFSET || data_len==INVALID_LENGTH)
-            {   /* data object which has been created, but has no data */
+          if(data_off == INVALID_OFFSET || data_len==INVALID_LENGTH)
+            { /* data object which has been created, but has no data */
               /* Delete the old data ID */
               if(HTPdelete(data_id)==FAIL)
                   HGOTO_ERROR(DFE_CANTDELHASH, FAIL);
@@ -284,8 +295,9 @@ printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_bloc
             } /* end if */
           else
             {   /* existing data object with real data in it */
-              new_data_tag=DFTAG_LINKED;
-              new_data_ref=Htagnewref(file_id,new_data_tag);
+              new_data_tag = DFTAG_LINKED;
+              new_data_ref = Htagnewref(file_id,new_data_tag);
+              /* create new linked-block table DD to point to existing data */
               if(Hdupdd(file_id, new_data_tag, new_data_ref, tag, ref)==FAIL)
                 {
                     HTPendaccess(data_id);
@@ -297,23 +309,26 @@ printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_bloc
                   HGOTO_ERROR(DFE_CANTDELHASH, FAIL);
 
               /* Attach to the new data ID */
-              if ((data_id=HTPselect(file_rec,new_data_tag,new_data_ref))==FAIL)
+              if ((data_id = HTPselect(file_rec,new_data_tag,new_data_ref))==FAIL)
                   HGOTO_ERROR(DFE_INTERNAL, FAIL);
             } /* end else */
       } /* end if */
 
+    /* get ref for next linked-block? */
     link_ref = Htagnewref(file_id,DFTAG_LINKED);
 
+    /* allocate and fill special info struct */
     if (( info = (linkinfo_t *) HDmalloc((uint32) sizeof(linkinfo_t)))==NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-    info->attached = 1;
-    info->length = (data_id!=FAIL) ? data_len : 0;
+    info->attached     = 1;
+    info->length       = (data_id!=FAIL) ? data_len : 0;
     info->first_length = (data_id!=FAIL) ? data_len : block_length;
     info->block_length = block_length;
     info->number_blocks = number_blocks;
-    info->link_ref = link_ref;
+    info->link_ref      = link_ref;
 
+    /* encode special information for writing to file */
     {
         uint8      *p;
         p = local_ptbuf;
@@ -323,36 +338,41 @@ printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_bloc
         INT32ENCODE(p, number_blocks);
         UINT16ENCODE(p, link_ref);  /* link_ref */
     }
-    /* write the special info structure to fill */
-    if((dd_aid=Hstartaccess(file_id,special_tag,ref,DFACC_ALL))==FAIL)
+
+    /* write the special info structure */
+    if((dd_aid = Hstartaccess(file_id,special_tag,ref,DFACC_ALL))==FAIL)
         HGOTO_ERROR(DFE_CANTACCESS, FAIL);
     if (Hwrite(dd_aid, 16, local_ptbuf) == FAIL)
         HGOTO_ERROR(DFE_WRITEERROR, FAIL);
     if(Hendaccess(dd_aid)==FAIL)
         HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
-    /* allocate info structure and file it in */
+    /* write out linked block */
     info->link = HLInewlink(file_id, number_blocks, link_ref,
                             (uint16) ((data_id!=FAIL) ? new_data_ref : 0));
     if (!info->link)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* Detach from the data DD ID */
-    if(data_id!=FAIL)
+    if(data_id != FAIL)
+      {
         if(HTPendaccess(data_id)==FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
+      }
 
     /* update access record and file record */
     if((access_rec->ddid=HTPselect(file_rec,special_tag,ref))==FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
     access_rec->special_func = &linked_funcs;
-    access_rec->special_info=(VOIDP)info;
-    access_rec->special = SPECIAL_LINKED;
-    access_rec->posn = 0;
-    access_rec->access = DFACC_RDWR;
-    access_rec->file_id = file_id;
-    access_rec->appendable = FALSE;     /* start data as non-appendable */
-    file_rec->attach++;
+    access_rec->special_info = (VOIDP)info;
+    access_rec->special      = SPECIAL_LINKED;
+    access_rec->posn         = 0;
+    access_rec->access       = DFACC_RDWR;
+    access_rec->file_id      = file_id;
+    access_rec->appendable   = FALSE;     /* start data as non-appendable */
+
+    file_rec->attach++; /* increment number of elements attached to file */
 
     /* set return value */
     ret_value = HAregister_atom(AIDGROUP,access_rec);
@@ -372,7 +392,7 @@ done:
 #endif /* HAVE_PABLO */
 
   return ret_value;
-}
+} /* HLcreate() */
 
 /* ------------------------------------------------------------------------
 NAME
@@ -412,7 +432,9 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 intn
-HLconvert(int32 aid, int32 block_length, int32 number_blocks)
+HLconvert(int32 aid, 
+          int32 block_length, 
+          int32 number_blocks)
 {
     CONSTR(FUNC, "HLconvert");  /* for HERROR */
     filerec_t  *file_rec;       /* file record */
@@ -457,7 +479,8 @@ printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_bloc
     if (!(file_rec->access & DFACC_WRITE))
         HGOTO_ERROR(DFE_DENIED, FAIL);
 
-    /* get ptrs to DD info and verify that the object is not already special */
+    /* verify that the object is not already special. Can not convert
+       if already special.  */
     if (HTPis_special(access_rec->ddid))
         HGOTO_ERROR(DFE_CANTMOD, FAIL);
 
@@ -468,19 +491,28 @@ printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_bloc
     if(HTPinquire(access_rec->ddid,&data_tag,&data_ref,&data_off,&data_len)==FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
+    /* make data tag special i.e. will be linked-block element */
     if ((special_tag = MKSPECIALTAG(data_tag)) == DFTAG_NULL)
         HGOTO_ERROR(DFE_BADDDLIST, FAIL);
 
+    /* is data defined but does not exist in the file? */
     if(data_off==INVALID_OFFSET && data_len==INVALID_LENGTH)
       { /* catch the case where the data doesn't exist yet */
+
+          /* set length to zero */
         if(Hsetlength(aid,0)==FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+        /* get back new offset and length */
         if(HTPinquire(access_rec->ddid,&data_tag,&data_ref,&data_off,&data_len)==FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
       } /* end if */
       
-    new_data_tag=DFTAG_LINKED;
-    new_data_ref=Htagnewref(file_id,new_data_tag);
+    /* set up new tag/ref for linked block element */
+    new_data_tag = DFTAG_LINKED;
+    new_data_ref = Htagnewref(file_id,new_data_tag);
+
+    /* make new tag/ref point to existing data element */
     if(Hdupdd(file_id, new_data_tag, new_data_ref, data_tag, data_ref)==FAIL)
         HGOTO_ERROR(DFE_CANTUPDATE, FAIL);
 
@@ -492,24 +524,30 @@ printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_bloc
     if ((access_rec->ddid=HTPcreate(file_rec,special_tag,data_ref))==FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
+    /* get link ref for linked-block ? */
     link_ref = Htagnewref(file_id,DFTAG_LINKED);
 
+    /* allocates special info struct for linked blocks */
     access_rec->special_info = (VOIDP) HDmalloc((uint32) sizeof(linkinfo_t));
     if (!access_rec->special_info)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
+    /* fill in special info struct */
     info = (linkinfo_t *) access_rec->special_info;
-    info->attached = 1;
-    info->length = data_len;
+    info->attached     = 1;
+    info->length       = data_len;
     info->first_length = data_len;
     info->block_length = block_length;
     info->number_blocks = number_blocks;
     info->link_ref = link_ref;
 
-    /* write the special info structure to fill */
+    /* Get ready to fill and write the special info structure  */
+
+    /* start write access on special tag/ref */
     if((dd_aid=Hstartaccess(file_id,special_tag,data_ref,DFACC_ALL))==FAIL)
         HGOTO_ERROR(DFE_CANTACCESS, FAIL);
 
+    /* encode special information to write out */
     {
         uint8      *p;
 
@@ -521,12 +559,13 @@ printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_bloc
         UINT16ENCODE(p, link_ref);  /* link_ref */
     }
 
+    /* write out special information */
     if (Hwrite(dd_aid, 16, local_ptbuf) == FAIL)
         HGOTO_ERROR(DFE_WRITEERROR, FAIL);
     if(Hendaccess(dd_aid)==FAIL)
         HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
-    /* allocate info structure and file it in */
+    /* write out linked block */
     if ((info->link = HLInewlink(file_id, number_blocks, link_ref, (uint16)new_data_ref)) ==NULL)
         HGOTO_ERROR(DFE_CANTLINK, FAIL);
 
@@ -583,8 +622,11 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 int
-HDinqblockinfo(int32 aid, int32 *length, int32 *first_length,
-               int32 *block_length, int32 *number_blocks)
+HDinqblockinfo(int32 aid, 
+               int32 *length, 
+               int32 *first_length,
+               int32 *block_length, 
+               int32 *number_blocks)
 {
     accrec_t   *arec;
     int        ret_value = SUCCEED;
@@ -636,7 +678,8 @@ DESCRIPTION
 
 ----------------------------------------------------------------------------*/
 PRIVATE int32
-HLIstaccess(accrec_t * access_rec, int16 acc_mode)
+HLIstaccess(accrec_t *access_rec, 
+            int16     acc_mode)
 {
     CONSTR(FUNC, "HLIstaccess");    /* for HERROR */
     filerec_t  *file_rec;       /* file record */
@@ -690,8 +733,7 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* if the special information are already in some other acc elt,
-     * point to it 
-     */
+     * point to it */
     access_rec->special_info = HIgetspinfo(access_rec);
     if (access_rec->special_info)
       {
@@ -702,7 +744,7 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
       }
 
     /* read the special info structure from the file */
-    if((dd_aid=Hstartaccess(access_rec->file_id,data_tag,data_ref,DFACC_READ))==FAIL)
+    if((dd_aid = Hstartaccess(access_rec->file_id,data_tag,data_ref,DFACC_READ))==FAIL)
         HGOTO_ERROR(DFE_CANTACCESS, FAIL);
     if (Hseek(dd_aid, 2, DF_START) == FAIL)
         HGOTO_ERROR(DFE_SEEKERROR, FAIL);
@@ -711,11 +753,13 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
     if(Hendaccess(dd_aid)==FAIL)
         HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
+    /* allocate space for special information */
     access_rec->special_info = (VOIDP) HDmalloc((uint32) sizeof(linkinfo_t));
     info = (linkinfo_t *) access_rec->special_info;
     if (!info)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
+    /* decode special information retrieved from file into info struct */
     {
         uint8      *p = local_ptbuf;
         INT32DECODE(p, info->length);
@@ -729,6 +773,8 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
                             info->link_ref, info->number_blocks);
     if (!info->link)
         HGOTO_DONE(FAIL);
+
+    /* find and set the length of the first linked-block */
     if (info->link->block_list[0].ref)
       {
           info->first_length = Hlength(access_rec->file_id, DFTAG_LINKED,
@@ -742,6 +788,7 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
     else
         info->first_length = info->block_length;
 
+    /* process through all the linked-blocks in the file for this element */
     info->last_link = info->link;
     while (info->last_link->nextref != 0)
       {
@@ -762,9 +809,11 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
             }
           info->last_link = info->last_link->next;
       }
+
     /* update data */
     info->attached = 1;
-    file_rec->attach++;
+
+    file_rec->attach++; /* increment number of elements attached to file */
 
     ret_value = HAregister_atom(AIDGROUP,access_rec);
 
@@ -847,7 +896,9 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 PRIVATE link_t *
-HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
+HLIgetlink(int32  file_id, 
+           uint16 ref, 
+           int32  number_blocks)
 {
     CONSTR(FUNC, "HLIgetlink");     /* for HERROR */
     int32    access_id;      /* access record id */
@@ -856,7 +907,7 @@ HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
     link_t   *new_link  = NULL;
     link_t   *ret_value = NULL; /* FAIL */
 
-    /* allocate necessary memory for block table */
+    /* allocate necessary memory for in-memory block table */
     new_link = (link_t *) HDmalloc((uint32) sizeof(link_t));
 
     if (new_link == NULL)
@@ -869,16 +920,18 @@ HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
 
     new_link->next = (link_t *) NULL;
 
-    /* read block table into buffer */
+    /* create temp buffer to read block table in */
     buffer = (uint8 *) HDmalloc((uint32) (2 + 2 * number_blocks));
     if (buffer == NULL)
         HGOTO_ERROR(DFE_NOSPACE, NULL);
 
+    /* read block table into buffer */
     access_id = Hstartread(file_id, tag, ref);
     if (access_id == FAIL ||
         Hread(access_id, 2 + 2 * number_blocks, (VOIDP)buffer) == FAIL)
         HGOTO_ERROR(DFE_READERROR, NULL);
 
+    /* decode block table information read from file */
     {
         int32 i;
         uint8      *p = buffer;
@@ -888,7 +941,9 @@ HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
             UINT16DECODE(p, new_link->block_list[i].ref);
     }
 
+    /* end acces to this block table */
     Hendaccess(access_id);
+
     /* set return value */
     ret_value = new_link;
 
@@ -924,7 +979,9 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 int32
-HLPseek(accrec_t * access_rec, int32 offset, int origin)
+HLPseek(accrec_t *access_rec, 
+        int32     offset, 
+        int       origin)
 {
     CONSTR(FUNC, "HLPseek");    /* for HERROR */
     int32   ret_value = SUCCEED;
@@ -976,7 +1033,9 @@ DESCRIPTION
 
 --------------------------------------------------------------------------- */
 int32
-HLPread(accrec_t * access_rec, int32 length, VOIDP datap)
+HLPread(accrec_t *access_rec, 
+        int32     length, 
+        VOIDP     datap)
 {
     CONSTR(FUNC, "HLPread");    /* for HERROR */
     uint8      *data = (uint8 *) datap;
@@ -1011,14 +1070,14 @@ printf("%s: check 0\n",FUNC);
 #endif /* QAK */
     /* search for linked block to start reading from */
     if (relative_posn < info->first_length)
-      {
+      { /* first block */
 #ifdef QAK
 printf("%s: check 1\n",FUNC);
 #endif /* QAK */
           block_idx = 0;
           current_length = info->first_length;
       }
-    else
+    else /* not first block? */
       {
 #ifdef QAK
 printf("%s: check 2\n",FUNC);
@@ -1032,6 +1091,7 @@ printf("%s: check 2\n",FUNC);
 printf("%s: check 3\n",FUNC);
 #endif /* QAK */
 
+/* calculate which block to start from? */
     {
         int32 i;
 
@@ -1141,7 +1201,9 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 int32
-HLPwrite(accrec_t * access_rec, int32 length, const VOIDP datap)
+HLPwrite(accrec_t   *access_rec, 
+         int32       length, 
+         const VOIDP datap)
 {
     CONSTR(FUNC, "HLPwrite");   /* for HERROR */
     uint8      *data = (uint8 *) datap;
@@ -1422,8 +1484,10 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 PRIVATE link_t *
-HLInewlink(int32 file_id, int32 number_blocks,
-           uint16 link_ref, uint16 first_block_ref)
+HLInewlink(int32  file_id, 
+           int32  number_blocks,
+           uint16 link_ref, 
+           uint16 first_block_ref)
 {
     CONSTR(FUNC, "HLInewlink");     /* for HERROR */
     int32       link_id;        /* access record id of new link */
@@ -1445,11 +1509,12 @@ HLInewlink(int32 file_id, int32 number_blocks,
 
     t_link->next = NULL;
 
-    /* write the new link to file */
+    /* get ready to write the new link to file */
     link_id = Hstartwrite(file_id, DFTAG_LINKED, link_ref, 2 + 2 * number_blocks);
     if (link_id == FAIL)
         HGOTO_ERROR(DFE_WRITEERROR, NULL);
 
+    /* encode this block information for writing to the file */
     {   /* CC */
         int32 i;       /* temp int index */
         uint8      *p;          /* temp buffer ptr */
@@ -1475,6 +1540,7 @@ HLInewlink(int32 file_id, int32 number_blocks,
     if (Hwrite(link_id, 2 + 2 * number_blocks, (VOIDP)buf) == FAIL)
         HGOTO_ERROR(DFE_WRITEERROR, NULL);
 
+    /* close down acces to this block */
     Hendaccess(link_id);
 
     /* set return value */
@@ -1520,9 +1586,15 @@ DESCRIPTION
 
 --------------------------------------------------------------------------- */
 int32
-HLPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
-           uint16 *pref, int32 *plength, int32 *poffset, int32 *pposn,
-           int16 *paccess, int16 *pspecial)
+HLPinquire(accrec_t  *access_rec, 
+           int32     *pfile_id, 
+           uint16    *ptag,
+           uint16    *pref, 
+           int32     *plength, 
+           int32     *poffset, 
+           int32     *pposn,
+           int16     *paccess, 
+           int16     *pspecial)
 {
     CONSTR(FUNC, "HLPinquire");   /* for HERROR */
     uint16      data_tag, data_ref;  /* Tag/ref of the data in the file */
