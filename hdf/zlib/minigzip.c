@@ -37,6 +37,7 @@ extern int unlink OF((const char *));
 
 #ifdef VMS
 #  define GZ_SUFFIX "-gz"
+#  define unlink delete
 #else
 #  define GZ_SUFFIX ".gz"
 #endif
