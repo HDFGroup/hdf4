@@ -36,9 +36,13 @@ EXPORTED ROUTINES
  VFfieldesize -- Return the external (local machine) size of the given 
                   field in this Vdata.
  VFfieldorder -- Return the order of the given field in this Vdata.
+ VSfpack      -- pack into or unpack from a buf the values of fully
+                  interlaced fields (of the entire record).
+
 ************************************************************************/
 
 #include "vg.h"
+#include <stdarg.h>
 
 /*
    ** ==================================================================
@@ -759,4 +763,229 @@ done:
 
     return ret_value;
 } /* VSsetexternalfile */
+/*----------------------------------------------------------------- 
+NAME
+    VSfpack -- pack into or unpack from a buf the values of fully
+              interlaced fields.
+USAGE
+    intn VSfpack(int32 vsid, intn packtype, char *fields_in_buf,
+         VOIDP buf, int32 bufsz, intn n_records, char *fields, ...)
+    int32 vsid; IN: vdata id.
+    intn packtype; IN: 
+         _HDF_VSPACK(0) -- pack field values into vdata buf;
+         _HDF_VSUNPACK(1) -- unpack vdata value into filed bufs.
+    char *fields_in_buf; IN: 
+         fields in buf to write to or read from vdata. NULL 
+         stands for all fields in the vdata.
+    VOIDP buf; IN: buffer for vdata values.
+    int32 bufsz; IN: buf size in byte.
+    intn n_records; IN: number of records to pack or unpack.
+    char *fields; IN: 
+         names of the fields to be pack/unpack. It may be a 
+         subset of the fields_in_buf. NULL stands for all 
+         fields in buf. 
+    ... : variable length argument list; IN: buffers of fields data.
+RETURNS
+    SUCCEED(0) on success; FIAL(-1) otherwise.
+DESCRIPTION
+    1. This pack/unpack routine is convenient for users. It also 
+       serves for FORTRAN programs to pack/unpack numeric and 
+       non-numeric fields.
+    2. The caller should supply correct number of field buffers, 
+       which should agree with the number of fields to be 
+       packed/unpacked. 
+    3. For packtype = _HDF_VSPACK, the calling sequence should be:
+          VSsetfields,  VSwrite and VSfpack;
+       For packtype = _HDF_VSUNPACK, the calling sequence should be:
+          VSsetfields, VSread and VSfpack.
+*/
 
+/*---------------------------------------------------------*/
+
+intn VSfpack(int32 vsid, intn packtype, char *fields_in_buf,
+         VOIDP buf, int32 bufsz, intn n_records, char *fields, ...)
+{
+    CONSTR(FUNC, "VSfpack");
+
+    va_list ap;
+    int32 ac;
+    char **av, *s;
+    uint8 *bufp = (uint8 *)buf;
+    uint8 **fbufps=NULL;
+    int32 rec_msize, *fmsizes=NULL, *foffs=NULL; 
+    intn i, j, found, ret_value = SUCCEED;
+    vsinstance_t *wi;
+    VDATA *vs;
+    DYN_VWRITELIST *w;
+    struct blist_t  { /* contains info about fields in buf */
+       intn n;       /* number of fields in buf     */
+       int32 *idx;  /* index of buf fields in vdata */
+       int32 *offs; /* offset of buf fields in buf */
+    }  blist;
+
+#ifdef HAVE_PABLO
+  TRACE_ON(VS_mask, ID_VSfpack);
+#endif /* HAVE_PABLO */
+
+    if (HAatom_group(vsid)!=VSIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+    /* locate vs' index in vgtab */
+    if (NULL == (wi = (vsinstance_t *) HAatom_object(vsid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+    vs = wi->vs;
+    if (vs == NULL) 
+        HGOTO_ERROR(DFE_NOVS, FAIL); 
+    w = &vs->wlist;
+         /* build blist based on info in w */
+    if (fields_in_buf == NULL)   
+         ac = w->n;
+    else    {           /* build our own blist */
+       if (scanattrs(fields_in_buf, &ac, &av) == FAIL)
+           HGOTO_ERROR(DFE_BADFIELDS, FAIL);
+       if ((av == NULL) || (ac < 1))
+            HGOTO_ERROR(DFE_ARGS, FAIL);
+    } 
+    blist.n = ac;
+    blist.idx = (int32 *)HDmalloc(ac * sizeof(int32));
+    blist.offs = (int32 *)HDmalloc(ac * sizeof(int32));
+    if ((blist.idx == NULL) || (blist.offs == NULL))
+         HGOTO_ERROR(DFE_NOSPACE, FAIL);
+      /* fill arrays blist.msizes and blist.offs; calculate
+           buf record size */
+    rec_msize = 0;
+    if (fields_in_buf != NULL) 
+        /* a subset of vdata fields are contained in buf */
+        for (i=0; i<ac; i++) {
+           /* look for the field in vdata fields */
+           found = 0;
+           s = av[i];
+           for (j=0; j< w->n; j++)  {
+#ifdef VDATA_FIELDS_ALL_UPPER
+               if (matchnocase(s, w->name[j]))
+               {
+                    found = 1;
+                    break;
+                }
+#else
+                if (HDstrcmp(s, w->name[j]) == 0)
+                {
+                     found = 1;
+                     break;
+                 }
+#endif /* VDATA_FIELDS_ALL_UPPER */
+            }     /* for j */
+            if (!found)
+                HGOTO_ERROR(DFE_BADFIELDS, FAIL);
+               /* get field info */
+            blist.idx[i] = j;
+            blist.offs[i] =  
+               (i==0? 0 : blist.offs[i-1] + w->esize[blist.idx[i-1]]);
+            rec_msize += w->esize[j];
+        }  /* for i */
+    else  /* buf contains all vdata fields  */
+       for (i=0; i< ac; i++) {
+           blist.idx[i] = i;
+           blist.offs[i] = w->off[i];
+           rec_msize += w->esize[i];
+       }
+ 
+       /* check bufsz */
+    if (bufsz < rec_msize * n_records)
+        HGOTO_ERROR(DFE_NOTENOUGH, FAIL);
+    va_start(ap, fields);
+    if (fields != NULL) { /* convert field names into tokens. */
+        if (scanattrs(fields, &ac, &av) == FAIL )
+            HGOTO_ERROR(DFE_BADFIELDS, FAIL);
+        if ((av == NULL) || (ac < 1))
+            HGOTO_ERROR(DFE_ARGS, FAIL);
+    }
+    else 
+        ac = blist.n;
+       /* fill array of fmsizes, foffs, fbufps */
+    if ((fmsizes=(int32 *)HDmalloc(ac*sizeof(int32))) == NULL) 
+         HGOTO_ERROR(DFE_NOSPACE, FAIL);
+    if ((foffs = (int32 *)HDmalloc(ac*sizeof(int32))) == NULL) 
+         HGOTO_ERROR(DFE_NOSPACE, FAIL);
+    if ((fbufps=(uint8 **)HDmalloc(ac*sizeof(uint8 *))) == NULL) 
+         HGOTO_ERROR(DFE_NOSPACE, FAIL);
+    if (fields != NULL)  { /* a subset of buf fields */
+        for (i=0; i<ac; i++) {
+           /* find field info */
+           found = 0;
+           s = av[i];
+           for (j=0; j< blist.n; j++)  {
+#ifdef VDATA_FIELDS_ALL_UPPER
+               if (matchnocase(s, w->name[blist.idx[j]]))
+               {
+                    found = 1;
+                    break;
+                }
+#else
+                if (HDstrcmp(s, w->name[blist.idx[j]]) == 0)
+                {
+                     found = 1;
+                     break;
+                 }
+#endif /* VDATA_FIELDS_ALL_UPPER */
+            }     /* for */
+            if (!found)
+                HGOTO_ERROR(DFE_BADFIELDS, FAIL); 
+            fmsizes[i] = w->esize[blist.idx[j]];
+            foffs[i] = blist.offs[j];
+            fbufps[i] = va_arg(ap, VOIDP);
+            if (fbufps[i] == NULL)  
+                HGOTO_ERROR(DFE_BADPTR,FAIL);  
+        }
+    }
+    else
+    {     /* all buf fields */
+        for (i=0; i < ac; i++)   {
+            fmsizes[i] = w->esize[blist.idx[i]];
+            foffs[i] = blist.offs[i];
+            fbufps[i] = va_arg(ap, VOIDP);
+            if (fbufps[i] == NULL)  
+                HGOTO_ERROR(DFE_BADPTR,FAIL); 
+        }
+     }
+    va_end(ap);
+    if (packtype == _HDF_VSPACK ) {
+        /* memory copy fields data to vdata buf */    
+        for (i=0; i<n_records; i++)   {
+            for (j=0; j<ac; j++)       {
+                HDmemcpy(bufp + foffs[j], fbufps[j], fmsizes[j]);
+                fbufps[j] += fmsizes[j];
+            }
+            bufp += rec_msize;
+        }
+    }
+    else  { /* unpack from buf to fields */
+        for (i=0; i<n_records; i++)   {
+            for (j=0; j<ac; j++)       {
+                HDmemcpy(fbufps[j], bufp + foffs[j], fmsizes[j]);
+                fbufps[j] += fmsizes[j];
+            }
+            bufp += rec_msize;
+        }
+    }
+
+done:
+    if (ret_value == FAIL) {
+    }
+    if (blist.idx != NULL)
+       HDfree(blist.idx);
+    if (blist.offs != NULL)
+       HDfree(blist.offs);
+    if (fmsizes != NULL)
+       HDfree(fmsizes);
+    if (foffs != NULL)
+       HDfree(foffs);
+    if (fbufps != NULL)
+       HDfree(fbufps);
+
+#ifdef HAVE_PABLO
+  TRACE_OFF(VS_mask, ID_VSfpact)
+#endif /* HAVE_PABLO */
+
+  return ret_value;
+}       /* VSfpack */
+/*--------------------------------------------------------- */

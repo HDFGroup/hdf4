@@ -2699,7 +2699,11 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 
     extern intn VSsetexternalfile
 		(int32 vkey, char *filename, int32 offset);
-
+ 
+    extern intn VSfpack
+                (int32 vsid, intn packtype, char *fields_in_buf,
+                VOIDP buf, int32 bufsz, intn n_records, 
+                char *fields, ...);
 
 /*
    ** from vrw.c
