@@ -196,7 +196,7 @@ int match( const char *fname1, int nobjects1, dtable_t *list1,
  int   more_names_exist = (nobjects1>0 && nobjects2>0) ? 1 : 0;
  int   curr1=0;
  int   curr2=0;
- int   nfound=-1;
+ int   nfound=0;
  /*build a common list */
  match_table_t *mattbl=NULL;
  unsigned infile[2]; 

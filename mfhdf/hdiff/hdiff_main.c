@@ -95,6 +95,7 @@ main(int argc, char *argv[])
  };
  int   c;
  int   i;
+ int   errs;
  
  opterr = 1;
  progname = argv[0];
@@ -158,16 +159,18 @@ main(int argc, char *argv[])
  *-------------------------------------------------------------------------
  */
  
+ if ( opt.verbose == 1) {
  printf("$hdiff");
  for (i=1; i<argc ; i++) 
  {
   printf(" %s", argv[i] );
  }
  printf("\n");
+ }
  
  argv = argv + optind;
 
- hdiff(argv[0],argv[1],&opt);
+ errs = hdiff(argv[0],argv[1],&opt);
   
- return EXIT_SUCCESS;
+ return errs;
 }
