@@ -65,6 +65,7 @@ C Output file: tvattrf.hdf
       integer DFACC_CREATE, DFACC_RDWR, DFNT_CHAR
       integer DFNT_INT32, DFNT_FLOAT32 
       integer VSET_VERSION, VSET_NEW_VERSION
+      integer ENTIRE_VDATA
 
       parameter (DFACC_CREATE = 4,
      +           DFACC_RDWR = 3,
@@ -73,6 +74,7 @@ C Output file: tvattrf.hdf
      +           DFNT_FLOAT32 = 5,
      +           VSET_VERSION = 3,
      +           VSET_NEW_VERSION = 4,
+     +           ENTIRE_VDATA = -1,
      +           GATTR1 = -64.123450,
      +           RATTR1 = 32.0099,
      +           feps = 1.0E-5,
@@ -112,22 +114,22 @@ C Open the file
          call MESSAGE(1, 'Wrong number of total attrs for vsname1')
          number_failed = number_failed + 1
       endif
-      nattrs = vsffnat(vsid, -1)
+      nattrs = vsffnat(vsid, ENTIRE_VDATA)
       if (nattrs .ne. 2) then
          call MESSAGE(1, 'Wrong number of attrs for vsname1')
          number_failed = number_failed + 1
       endif
 C get the 0th attr 
-      ret = vsffdat(vsid, -1, 'attname3') 
+      ret = vsffdat(vsid, ENTIRE_VDATA, 'attname3') 
       call VERIFY(ret, 'vsffdat', number_failed)
-      ret = vsfainf(vsid, -1, 0, iattrnm, itype, icount,
+      ret = vsfainf(vsid, ENTIRE_VDATA, 0, iattrnm, itype, icount,
      +             imsize)
       call VERIFY(ret, 'vsfainf', number_failed)
       if ((itype .ne. DFNT_CHAR) .or. (icount .ne. 3)) then
          call MESSAGE(1, 'Wrong info of char attr for vsname1')
          number_failed = number_failed + 1
       endif
-      ret = vsfgcat(vsid, -1, 0, iattrc)
+      ret = vsfgcat(vsid, ENTIRE_VDATA, 0, iattrc)
       call VERIFY(ret, 'vsfgcat', number_failed)
       if ((iattrc(1) .ne. 'm') .or. (iattrc(2) .ne. 'N') 
      +    .or. (iattrc(3) .ne. 'p'))  then
@@ -223,7 +225,7 @@ C vdata attrs
       call VERIFY(ret, 'vhfsd', number_failed)
       vsid = vsfatch(fid1, vsref, 'w')
       call VERIFY(ret, 'vsfatch', number_failed)
-      ret = vsfscat(vsid, -1, 'vscattr0', DFNT_CHAR, 3,
+      ret = vsfscat(vsid, ENTIRE_VDATA, 'vscattr0', DFNT_CHAR, 3,
      +              'at2')
       call VERIFY(ret, 'vfsatt', number_failed)
       ret = vsfsat(vsid, 0, 'vsattr1', DFNT_FLOAT32, 1, 
@@ -266,7 +268,7 @@ C vdata attrs
       call VERIFY(ret, 'vsffnd', number_failed)
       vsid = vsfatch(fid1, vsref, 'w')
       call VERIFY(ret, 'vsfatch', number_failed)
-      ret = vsfgcat(vsid, -1, 0, iattrc)
+      ret = vsfgcat(vsid, ENTIRE_VDATA, 0, iattrc)
       call VERIFY(ret, 'vsfgcat', number_failed)
       if (iattrc(1) .ne. 'a' .or. iattrc(2) .ne. 't'
      +     .or. iattrc(3) .ne. '2') then

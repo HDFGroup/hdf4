@@ -43,6 +43,7 @@ static char RcsId[] = "@(#)$Revision$";
 #include "hdf.h"
 #include "tproto.h"
 #include "vg.h"
+#include <math.h>
 
 #define FILENAME   "tvattr.hdf"
 #define VGNAME0    "vgname0"
@@ -243,7 +244,7 @@ intn write_vattrs(void)
          num_errs++;
          printf(">>> Search for non-existing field, should fail.\n");
       }
-   if (FAIL == VSsetattr(vsid, -1, ATTNAME3, DFNT_CHAR8,3, attr3)) {
+   if (FAIL == VSsetattr(vsid, ENTIRE_VDATA, ATTNAME3, DFNT_CHAR8,3, attr3)) {
          num_errs++;
          printf(">>> VSsetattr3 failed\n");
       }
@@ -275,7 +276,7 @@ intn write_vattrs(void)
       }
 
    /* set same attr name to different fields */
-   if (FAIL == VSsetattr(vsid, -1, ATTNAME4, DFNT_FLOAT32,1, attr4)) {
+   if (FAIL == VSsetattr(vsid, ENTIRE_VDATA, ATTNAME4, DFNT_FLOAT32,1, attr4)) {
          num_errs++;
          printf(">>> VSsetattr6 failed\n");
       }
@@ -348,7 +349,7 @@ intn write_vattrs(void)
          printf(">>> VSsetattr6 failed\n");
       }
 
-   if (FAIL == VSsetattr(vsid, -1, ATTNAME7, DFNT_CHAR8,3, attr3)) {
+   if (FAIL == VSsetattr(vsid, ENTIRE_VDATA, ATTNAME7, DFNT_CHAR8,3, attr3)) {
          num_errs++;
          printf(">>> VSsetattr7 failed\n");
       }
@@ -615,13 +616,13 @@ intn read_vattrs(void)
          printf(">>> Wrong num of Vsname1 attrs, should be %d, ");
          printf("got %d.\n", 6, n_vsattrs);
    }
-   if (FAIL == (n_fldattrs = VSfnattrs(vsid, -1)) || n_fldattrs != 2) {
+   if (FAIL == (n_fldattrs = VSfnattrs(vsid, ENTIRE_VDATA)) || n_fldattrs != 2) {
         num_errs++;
         printf(">>> Wrong num of Vsname1 vdata attrs, ");
         printf("should be %d, got %d.\n ", 7, n_vsattrs);
    }
    /* look for non-existing attr, should fail */
-   if (FAIL != (iattrindex = VSfindattr(vsid, -1, ATTNAME9))) {
+   if (FAIL != (iattrindex = VSfindattr(vsid, ENTIRE_VDATA, ATTNAME9))) {
         num_errs++;
         printf(">>> attname9 is not an attr of vdata vsname1, ");
         printf(" should fail.\n");
@@ -655,13 +656,13 @@ intn read_vattrs(void)
    }
 
    /* get the 2nd attr  */
-   if ((FAIL == (iattrindex = VSfindattr(vsid, -1, ATTNAME4))) ||
+   if ((FAIL == (iattrindex = VSfindattr(vsid, ENTIRE_VDATA, ATTNAME4))) ||
              (iattrindex != 1))  {
         num_errs++;
         printf(">>> attname4 should be index 1 of vsname1, not %d.\n",
                      iattrindex);
    }
-   if ((FAIL == VSattrinfo(vsid, -1, iattrindex, iattrname, 
+   if ((FAIL == VSattrinfo(vsid, ENTIRE_VDATA, iattrindex, iattrname, 
                &i_type, &i_count, &i_size)) || 
                (HDstrcmp(iattrname, ATTNAME4) != 0) ||
                (i_type != DFNT_FLOAT32) || (i_count != 1) || 
@@ -670,8 +671,8 @@ intn read_vattrs(void)
         printf(">>> Wrong attrinfo for attname4 of vdata vsname1; ");
         printf(" got  %s %d %d.\n", iattrname, i_type,i_count);
    }
-   if (FAIL == VSgetattr(vsid, -1, 1, iattr4) ||
-       (fabs(iattr4[0] - attr4[0]) > fabs(attr4[0]*EPS32)))  {
+   if (FAIL == VSgetattr(vsid, ENTIRE_VDATA, 1, iattr4) ||
+       (fabs((double)(iattr4[0] - attr4[0])) > fabs((double)(attr4[0]*EPS32))))  {
          num_errs++;
          printf(">>> Wrong values for attname4  of vsname1; \
                      got %f, should be %f.\n",
@@ -698,7 +699,7 @@ intn read_vattrs(void)
         printf(" got  %s %d %d.\n", iattrname, i_type,i_count);
    }
    if (FAIL == VSgetattr(vsid, 0, 2, iattr5) ||
-       (fabs(iattr5[0] - attr5[0]) > fabs(attr5[0]*EPS64)) )  {
+       (fabs((double)(iattr5[0] - attr5[0])) > fabs((double)(attr5[0]*EPS64))) )  {
          num_errs++;
          printf(">>> Wrong values for attr VSNAME1  of fld 0 of vsname1; \
                      got %f, should be %f.\n",
