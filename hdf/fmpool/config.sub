@@ -139,7 +139,7 @@ case $basic_machine in
 	      | hppa1.0-* | hppa1.1-* | alpha-* | we32k-* | cydra-* | ns16k-* \
 	      | pn-* | np1-* | xps100-* | clipper-* | orion-* | sparclite-* \
 	      | pdp11-* | sh-* | powerpc-* | sparc64-* | mips64-* | mipsel-* \
-	      | mips64el-* | mips64orion-* | mips64orionel-* )
+	      | mips64el-* | mips64orion-* | mips64orionel-* | S370-* )
 		;;
 	# Recognize the various machine names and aliases which stand
 	# for a CPU type and a company and sometimes even an OS.
@@ -429,6 +429,10 @@ case $basic_machine in
 	rtpc | rtpc-*)
 		basic_machine=romp-ibm
 		;;
+        fujitsu | vp | S370)
+                basic_machine=vp-fujitsu
+                os=-sysv
+                ;;
 	sequent)
 		basic_machine=i386-sequent
 		;;

@@ -39,6 +39,8 @@ case "$OS" in
 	OS=unicos;;
     vms*)
 	OS=vms;;
+    S370*)
+	OS=fujivp;;
     "")	echo 1>&2 \
 	    "$0: Operating-system not defined: environmental-variable OS not" \
 	    "set or option \"-O<system>\" not specified."

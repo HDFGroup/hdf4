@@ -29,7 +29,7 @@
 /*      3 - Cray                                                            */
 /*      4 - Little Endian                                                   */
 /*      5 - Convex                                                          */
-/*      6 - Fijitsu VP                                                      */
+/*      6 - Fujitsu VP                                                      */
 /*--------------------------------------------------------------------------*/
 #define     DFMT_SUN            0x1111
 #define     DFMT_ALLIANT        0x1111
@@ -1004,6 +1004,7 @@ Please check your Makefile.
 #define GOT_MACHINE 1
 
 #include <string.h>
+#include <limits.h>
 #include <memory.h>
 #include <sys/types.h>
 #include <sys/stat.h>
