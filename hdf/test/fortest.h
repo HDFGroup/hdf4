@@ -14,6 +14,7 @@
 
 #ifndef __FORTEST_H
 #define __FORTEST_H
+#include "hdf.h"
 
 /* Verbosity Environment Variable */
 #define FOR_VERB    "HDF_FOR_VERBOSITY"

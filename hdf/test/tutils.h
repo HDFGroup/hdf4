@@ -61,8 +61,11 @@ if(ret == FAIL) {printf("*** UNEXPECTED RETURN from %s is %ld at line %4d in %s\
 #ifdef VMS
 #define CLEAN_CMD	"delete *.hdf;*"
 #else
+#   ifdef WIN32
+#   define CLEAN_CMD  "del *.hdf"   
+#   else
 /* default is Unix */
-#define CLEAN_CMD	"rm -f *.hdf"
-#endif
-
+#   define CLEAN_CMD	"rm -f *.hdf"
+#   endif  /* WIN32  */
+#endif /*VMS */
 #endif /* _TUTILS_H */

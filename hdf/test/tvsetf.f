@@ -49,12 +49,20 @@ C Output file: tvsetf1.hdf
       integer DFTAG_VH, HDF_VSPACK, HDF_VSUNPACK
       integer ret,ntrs,i,il,nelts
       integer*4 dbuf(320),idbuf(320),ddata4(10),iddata4(10)
+      integer buf(1), ibuf(1)
+      equivalence (buf(1), dbuf(1)), (ibuf(1), idbuf(1))
       integer*2 ddata1(10), iddata1(10)
       integer*2 ddata2(10),iddata2(10)
+      integer bufd2(10),ibufd2(10)
+      equivalence (bufd2(1), ddata2(1)), (ibufd2(1), iddata2(1))
       integer*4 tags(10), refs(10)
       real      fdata(10), ifdata(10)
+      integer buff(10),ibuff(10)
+      equivalence (buff(1), fdata(1)), (ibuff(1), ifdata(1))
       double precision gdata1(10)
       double precision igdata1(10)
+      integer bufg1(10),ibufg1(10)
+      equivalence (bufg1(1), gdata1(1)), (ibufg1(1), igdata1(1))
       double precision geps
       real   feps
 
@@ -177,19 +185,23 @@ C     pack the fields into data buf
      +             320*4,5,'int32',ddata4)
       call VERIFY(ret,'vsfnpak',number_failed)
       ret = vsfnpak(vsid2, HDF_VSPACK,
-     +             ' ', dbuf, 320*4, 5,'double',gdata1)
+     +             ' ', dbuf, 320*4, 5,'double',bufg1)
+c     +             ' ', dbuf, 320*4, 5,'double',gdata1)
       call VERIFY(ret,'vsfnpak',number_failed)
       ret = vsfnpak(vsid2, HDF_VSPACK,
-     +             ' ', dbuf, 320*4, 5,'float32',fdata)
+     +             ' ', dbuf, 320*4, 5,'float32',buff)
+c     +             ' ', dbuf, 320*4, 5,'float32',fdata)
       call VERIFY(ret,'vsfnpak',number_failed)
       ret = vsfnpak(vsid2, HDF_VSPACK,
-     +             ' ', dbuf, 320*4,5,'int16',ddata2)
+     +             ' ', dbuf, 320*4,5,'int16',bufd2)
+c     +             ' ', dbuf, 320*4,5,'int16',ddata2)
       call VERIFY(ret,'vsfnpak',number_failed)
       ret = vsfcpak(vsid2, HDF_VSPACK,
 C    +             'int32,double,float32,int16,char', dbuf,
      +             ' ', dbuf, 320*4, 5,'char',cdata)
       call VERIFY(ret,'vsfcpak',number_failed)
-      ret = vsfwrt(vsid2, dbuf, 5, FULL_INTERLACE)
+c      ret = vsfwrt(vsid2, dbuf, 5, FULL_INTERLACE)
+      ret = vsfwrt(vsid2, buf, 5, FULL_INTERLACE)
       call VERIFY(ret,'vsfwrt',number_failed)
       call vsfdtch(vsid2)
 
@@ -304,7 +316,9 @@ C     read the 'c1' vdata
       call VERIFY(vsid1, 'vsfatch', number_failed)
       ret = vsfsfld(vsid1, 'char1')
       call VERIFY(ret, 'vsfsfld', number_failed)
-      ret = vsfrd(vsid1, idbuf, 5,FULL_INTERLACE)
+c  Use equivalence for idbuf
+c      ret = vsfrd(vsid1, idbuf, 5,FULL_INTERLACE)
+      ret = vsfrd(vsid1, ibuf, 5,FULL_INTERLACE)
       call VERIFY(ret, 'vsfrd', number_failed)
       icdata = '               '
       ret = vsfcpak(vsid1,HDF_VSUNPACK,' ',idbuf,320*4,
@@ -322,7 +336,8 @@ C     read the 'c3' vdata
       call VERIFY(vsid1, 'vsfatch', number_failed)
       ret = vsfsfld(vsid1, 'char3') 
       call VERIFY(ret, 'vsfsfld', number_failed)
-      ret = vsfrd(vsid1, idbuf, 5,FULL_INTERLACE)
+c      ret = vsfrd(vsid1, idbuf, 5,FULL_INTERLACE)
+      ret = vsfrd(vsid1, ibuf, 5,FULL_INTERLACE)
       call VERIFY(ret, 'vsfrd', number_failed)
       icdata = '               '
       ret = vsfcpak(vsid1,HDF_VSUNPACK,' ',idbuf,320*4,
@@ -355,19 +370,23 @@ C     read the 'mixed type' vdata
       endif
       ret = vsfsfld(vsid2, 'int32,double,float32,int16,char')
       call VERIFY(ret, 'vsfsfld', number_failed)
-      ret = vsfrd(vsid2, idbuf, 3, FULL_INTERLACE)
+c      ret = vsfrd(vsid2, idbuf, 3, FULL_INTERLACE)
+      ret = vsfrd(vsid2, ibuf, 3, FULL_INTERLACE)
       call VERIFY(ret, 'vsfrd', number_failed)
       ret = vsfnpak(vsid2, HDF_VSUNPACK,
      +             ' ', idbuf, 320*4,3,'int32',iddata4)
       call VERIFY(ret, 'vsfnpak', number_failed)
       ret = vsfnpak(vsid2, HDF_VSUNPACK,
-     +             ' ', idbuf, 320*4,3,'double',igdata1)
+     +             ' ', idbuf, 320*4,3,'double',ibufg1)
+c     +             ' ', idbuf, 320*4,3,'double',igdata1)
       call VERIFY(ret, 'vsfnpak', number_failed)
       ret = vsfnpak(vsid2, HDF_VSUNPACK,
-     +             ' ', idbuf, 320*4,3,'float32',ifdata)
+     +             ' ', idbuf, 320*4,3,'float32',ibuff)
+c     +             ' ', idbuf, 320*4,3,'float32',ifdata)
       call VERIFY(ret, 'vsfnpak', number_failed)
       ret = vsfnpak(vsid2, HDF_VSUNPACK,
-     +             ' ', idbuf, 320*4,3,'int16',iddata2)
+     +             ' ', idbuf, 320*4,3,'int16',ibufd2)
+c     +             ' ', idbuf, 320*4,3,'int16',iddata2)
       call VERIFY(ret, 'vsfnpak', number_failed)
       icdata = '               '
       ret = vsfcpak(vsid2, HDF_VSUNPACK,
@@ -404,7 +423,8 @@ C     read the 'mixed type' vdata
 C     read field 'char' only, test pckfld ' '
       ret = vsfsfld(vsid2, 'char')
       call VERIFY(ret, 'vsfsfld', number_failed)
-      ret = vsfrd(vsid2, idbuf, 2, FULL_INTERLACE)
+c      ret = vsfrd(vsid2, idbuf, 2, FULL_INTERLACE)
+      ret = vsfrd(vsid2, ibuf, 2, FULL_INTERLACE)
       call VERIFY(ret, 'vsfrd', number_failed)
       icdata = '               '
       ret = vsfcpak(vsid2, HDF_VSUNPACK,

@@ -33,7 +33,8 @@ C
       integer mgid2rf, mgr2idx, mgrltil, mgrimil, mggltid
 c     integer mgwrlut, mgrdlut
       integer mgglinf, mgwclut, mgrclut
-      integer mgsattr, mgatinf, mggattr, mgfndat
+c      integer mgsattr
+	integer mgatinf, mggattr, mgfndat
       integer mgscatt, mgsnatt, mggcatt, mggnatt
       integer mgwcimg, mgrcimg
       integer MFGR_INTERLACE_PIXEL, MFGR_INTERLACE_LINE,
@@ -81,6 +82,10 @@ c     integer mgwrlut, mgrdlut
       character*1 CR
       character buf(3, 2, 2), buf1(2, 3, 2), buf2(2, 2, 3)
       character in(3,2,2), in1(2, 3, 2), in2(2, 2, 3)
+      integer   outbuf(4), outbuf1(4), outbuf2(4)
+      integer   inbuf(4), inbuf1(4), inbuf2(4)
+      equivalence (outbuf, buf), (outbuf1, buf1), (outbuf2,buf2)
+      equivalence (inbuf, in), (inbuf1, in1), (inbuf2,in2)
       character pal(3,256), in_pal(3,256), in_pal2(256,3)
       integer*4 file_id, gr_id, ri_id, pal_id, index, index2
       integer*4 n_datasets, n_attrs, ref
@@ -159,7 +164,7 @@ C Create an image
       stride(1)=1
       stride(2)=1
       call MESSAGE(5,'Writing image data')
-      ret = mgwrimg(ri_id,start,stride,dims,buf)
+      ret = mgwrimg(ri_id,start,stride,dims,outbuf)
       call VERIFY(ret,'mgwrimg',number_failed)
 
 C Store a palette with the image
@@ -170,9 +175,9 @@ C Store a palette with the image
       call VERIFY(ret,'mgwclut',number_failed)
 
 C Store an attribute with the image
-      call MESSAGE(5,'Writing attribute data')
-      ret = mgsattr(ri_id,ATNAME1,DFNT_INT32,5,attr)
-      call VERIFY(ret,'mgsattr',number_failed)
+      call MESSAGE(5,'Writing numeric attribute data')
+      ret = mgsnatt(ri_id,ATNAME1,DFNT_INT32,5,attr)
+      call VERIFY(ret,'mgsnatt',number_failed)
 
 C Store a numeric attribute with the image
       call MESSAGE(5,'Writing numeric attribute data')
@@ -247,15 +252,15 @@ C Check image reading
       stride(1)=1
       stride(2)=1
       call MESSAGE(5,'Reading image data')
-      ret = mgrdimg(ri_id,start,stride,dims,in)
+      ret = mgrdimg(ri_id,start,stride,dims,inbuf)
       call VERIFY(ret,'mgrdimg',number_failed)
       ret = mgrimil(ri_id,MFGR_INTERLACE_LINE)
       call VERIFY(ret,'mgrimil',number_failed)
-      ret = mgrdimg(ri_id,start,stride,dims,in1)
+      ret = mgrdimg(ri_id,start,stride,dims,inbuf1)
       call VERIFY(ret,'mgrdimg',number_failed)
       ret = mgrimil(ri_id,MFGR_INTERLACE_COMPONENT)
       call VERIFY(ret,'mgrimil',number_failed)
-      ret = mgrdimg(ri_id,start,stride,dims,in2)
+      ret = mgrdimg(ri_id,start,stride,dims,inbuf2)
       call VERIFY(ret,'mgrdimg',number_failed)
 
 C Check palette reading
