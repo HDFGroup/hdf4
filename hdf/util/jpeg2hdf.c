@@ -544,12 +544,18 @@ main(int argc, char *argv[])
                   }     /* end if */
             }   /* end if */
           Hendaccess(aid);  /* done with JPEG data, create RIG */
+          if (DFJPEGaddrig(file_id, wref, ctag) == FAIL)
+            {
+                printf("Error writing JPEG RIG information\n");
+                exit(1);
+            }   /* end if */
 #else /* OLD_WAY */
-          if (Hputelement(file_id, ctag, wref, file_buf, 0) == FAIL)
+          if ((aid=Hstartwrite(file_id, ctag, wref, 0)) == FAIL)
             {
                 printf("Error writing JPEG header to HDF file: %s\n", argv[2]);
                 exit(1);
             }   /* end if */
+          Hendaccess(aid);
           if ((aid = Hstartwrite(file_id, wtag, wref, file_len)) == FAIL)
             {
                 printf("Error from Hstartwrite() for JPEG image data\n");
@@ -573,7 +579,7 @@ main(int argc, char *argv[])
           if (file_len > 0)
             {
                 if (fread(file_buf, sizeof(uint8), (size_t) file_len, jfif_file)
-                    !=          (size_t) image_len)
+                    !=          (size_t) file_len)
                   {
                       printf("Error reading JFIF image data from %s\n", argv[1]);
                       exit(1);
@@ -585,12 +591,12 @@ main(int argc, char *argv[])
                   }     /* end if */
             }   /* end if */
           Hendaccess(aid);  /* done with JPEG data, create RIG */
-#endif /* OLD_WAY */
           if (DFJPEGaddrig(file_id, wref, ctag) == FAIL)
             {
                 printf("Error writing JPEG RIG information\n");
                 exit(1);
             }   /* end if */
+#endif /* OLD_WAY */
           Hclose(file_id);
       }     /* end if */
     else
