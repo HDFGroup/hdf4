@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.21  1993/08/28 00:49:42  georgev
-Changed slab long fortran names to short ones.
+Revision 1.22  1993/08/28 01:37:44  georgev
+Fixed a slab fortran name.
 
+ * Revision 1.21  1993/08/28  00:49:42  georgev
+ * Changed slab long fortran names to short ones.
+ *
  * Revision 1.20  1993/08/28  00:44:09  georgev
  * Changed long fortran slab name to short ones.
  *
@@ -123,10 +126,10 @@ Changed slab long fortran names to short ones.
  *  dfsdsetnt_:     Call DFSDsetNT to set number type
  *  dfsdgetnt_:	    Call DFSDgetNT to get number type
  *  dfsdlastref_:   Call DFSDlastref to get ref of last SDS accessed
- *  dfsdiwref:      Call DFSDwriteref to set up next ref to write
+ *  dsiwref:        Call DFSDwriteref to set up next ref to write
  *  dssfill:        Call DFSDsetfillvalue to set fill value for SDS
  *  dsgfill:        Call DFSDgetfillvalue to get fill value from SDS
- *  dfsdisslab:     Call DFSDstartslab to set up write to SDS
+ *  dsisslab:       Call DFSDstartslab to set up write to SDS
  *  dswslab:        Call DFSDwriteslab to write slab to file
  *  dseslab:        Call DFSDendslab to end slab writes, write NDG to file
  * Remarks: no C stubs needed for the put string routines, only Fortran stubs
@@ -1651,7 +1654,7 @@ ndsgcal(cal, cal_err, ioff, ioff_err, cal_type)
 } /* ndsgcal */
 
 /*-----------------------------------------------------------------------------
- * Name:    dfsdiwref
+ * Name:    dsiwref
  * Purpose: Call DFSDwriteref to set up next ref to write
  * Inputs:  filename: name of HDF file
  *          fnlen: length of filename
@@ -1663,9 +1666,9 @@ ndsgcal(cal, cal_err, ioff, ioff_err, cal_type)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfsdiwref(_fcd filename, intf *fnlen, intf *ref)
+ndsiwref(_fcd filename, intf *fnlen, intf *ref)
 #else
-ndfsdiwref(filename, fnlen, ref)
+ndsiwref(filename, fnlen, ref)
     _fcd filename;
     intf *fnlen;
     intf *ref;
@@ -1721,7 +1724,7 @@ ndsgfill(fill_value)
 }
 
 /*-----------------------------------------------------------------------------
- * Name:    dfsdisslab
+ * Name:    dsisslab
  * Purpose: Set up slab writes to SDS
  * Inputs:  filename: file to which this applies
  *          fnlen: file name length
@@ -1733,9 +1736,9 @@ ndsgfill(fill_value)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfsdisslab(_fcd filename, intf *fnlen )
+ndsisslab(_fcd filename, intf *fnlen )
 #else
-ndfsdisslab(filename, fnlen)
+ndsisslab(filename, fnlen)
     _fcd filename;
     intf *fnlen;
 #endif /* PROTOTYPE */

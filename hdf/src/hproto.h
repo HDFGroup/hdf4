@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.37  1993/08/28 00:49:46  georgev
-Changed slab long fortran names to short ones.
+Revision 1.38  1993/08/28 01:37:50  georgev
+Fixed a slab fortran name.
 
+ * Revision 1.37  1993/08/28  00:49:46  georgev
+ * Changed slab long fortran names to short ones.
+ *
  * Revision 1.36  1993/08/16  21:46:08  koziol
  * Wrapped in changes for final, working version on the PC.
  *
@@ -1245,10 +1248,10 @@ extern FRETVAL(intf) ndfr8sjpeg
 #   define ndfsdsetnt        FNAME(DFSDSETNT)
 #   define ndfsdgetnt        FNAME(DFSDGETNT)
 #   define ndfsdlastref      FNAME(DFSDLASTREF)
-#   define ndswref           FNAME(DSWREF)
+#   define ndsiwref          FNAME(DSIWREF)
 #   define ndssfill          FNAME(DSSFILL)
 #   define ndsgfill          FNAME(DSGFILL)
-#   define ndssslab          FNAME(DSSSLAB)
+#   define ndsisslab         FNAME(DSISSLAB)
 #   define ndswslab          FNAME(DSWSLAB)
 #   define ndseslab          FNAME(DSESLAB)
 #else
@@ -1299,10 +1302,10 @@ extern FRETVAL(intf) ndfr8sjpeg
 #   define ndfsdsetnt        FNAME(dfsdsetnt)
 #   define ndfsdgetnt        FNAME(dfsdgetnt)
 #   define ndfsdlastref      FNAME(dfsdlastref)
-#   define ndswref           FNAME(dswref)
+#   define ndsiwref          FNAME(dsiwref)
 #   define ndssfill          FNAME(dssfill)
 #   define ndsgfill          FNAME(dsgfill)
-#   define ndssslab          FNAME(dssslab)
+#   define ndsisslab         FNAME(dsisslab)
 #   define ndswslab          FNAME(dswslab)
 #   define ndseslab          FNAME(dseslab)
 #endif /* DF_CAPFNAMES */

@@ -2,9 +2,12 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.6  1993/08/28 00:40:22  georgev
-C Fixed some changes that got lost during the PC merge.
+C Revision 1.7  1993/08/28 01:37:47  georgev
+C Fixed a slab fortran name.
 C
+c Revision 1.6  1993/08/28  00:40:22  georgev
+c Fixed some changes that got lost during the PC merge.
+c
 c Revision 1.5  1993/08/16  21:45:35  koziol
 c Wrapped in changes for final, working version on the PC.
 c
@@ -576,14 +579,14 @@ C Inputs:   filename: file to write to.
 C           ref: reference number to set.
 C Returns:  -1 on failure with DFerror set
 C Users:    HDF Fortran programmers
-C Invokes:  dfsdiwref
+C Invokes:  dsiwref
 C------------------------------------------------------------------------------
 
       integer function dswref(filename, ref)
       character*(*) filename
-      integer ref, dfsdiwref
+      integer ref, dsiwref
 
-      dswref = dfsdiwref(filename, len(filename), ref)
+      dswref = dsiwref(filename, len(filename), ref)
  
       return
       end
@@ -594,14 +597,14 @@ C Purpose:  Set up slab writes to SDS
 C Inputs:   filename: file to write to.
 C Returns:  -1 on failure with DFerror set
 C Users:    HDF Fortran programmers
-C Invokes:  dfsdisslab
+C Invokes:  dsisslab
 C------------------------------------------------------------------------------
 
       integer function dssslab(filename)
       character*(*) filename
-      integer dfsdisslab
+      integer dsisslab
 
-      dssslab = dfsdisslab(filename, len(filename))
+      dssslab = dsisslab(filename, len(filename))
  
       return
       end
