@@ -3996,8 +3996,7 @@ int32 flags;
     comp_info  cinfo;                /* compression info - NBIT */
     int32      *cdims    = NULL;     /* array of chunk lengths */
     int32      fill_val_len = 0;     /* fill value length */
-    uint8      *fill_val    = NULL;  /* fill value */
-    uint8      default_fill_val = 0; /* default fill value */
+    void      *fill_val    = NULL;  /* fill value */
     int32      ndims    = 0;         /* # dimensions i.e. rank */
     uint8      nlevels  = 1;         /* default # levels is 1 */
     uint8      platntsubclass;       /* the machine type of the current platform */
@@ -4170,7 +4169,7 @@ int32 flags;
     /* allocate space for fill value whose number type is the same as
        the dataset */
     fill_val_len = var->HDFsize;
-    if ((fill_val = (uint8 *)HDmalloc(fill_val_len)) == NULL)
+    if ((fill_val = (void *)HDmalloc(fill_val_len)) == NULL)
       {
           status = FAIL;
           goto done;
@@ -4183,14 +4182,39 @@ int32 flags;
       {
           NC_copy_arrayvals((char *)fill_val, (*fill_attr)->data) ;    
       }
-    else /* copy some default fill value for now */
+    else /* copy standard default fill value for now */
       {
-        uint8 *p = fill_val;
+        void *p = fill_val;
 
-        for (i = 0; i < fill_val_len; i++,p++)
+        switch(var->HDFtype & 0xff) 
           {
-              HDmemcpy(p,&default_fill_val,1);
-          }
+          case DFNT_CHAR:
+          case DFNT_UCHAR:
+              *((uint8 *)p) = FILL_CHAR;
+              break;
+          case DFNT_INT8:
+          case DFNT_UINT8:
+              *((int8 *)p) = FILL_BYTE;
+              break;
+          case DFNT_INT16:
+          case DFNT_UINT16:
+              *((int16 *)p) = FILL_SHORT;
+              break;
+          case DFNT_INT32:
+          case DFNT_UINT32:
+              *((int32 *)p) = FILL_LONG;
+              break;
+          case DFNT_FLOAT32:
+              *((float32 *)p) = FILL_FLOAT;
+              break;
+          case DFNT_FLOAT64:
+              *((float64 *)p) = FILL_DOUBLE;
+              break;
+        default:
+            status = FAIL;
+            goto done;
+            break;
+        }
       }
 
     /* figure out if fill value has to be converted */
