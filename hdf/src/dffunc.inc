@@ -101,6 +101,7 @@ C
         integer 			d2lref
 	integer DF24scompress,          d2scomp
 	integer DF24sjpeg,              d2sjpeg
+	integer DF24nimages,		d2nimg
 
 	integer DFPaddpal,		dpapal
 	integer DFPgetpal,		dpgpal
