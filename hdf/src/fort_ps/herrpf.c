@@ -76,7 +76,6 @@ nheprntc(filename, print_levels, namelen)
     	if (!err_file) return(FAIL);
     HEprint(err_file, *print_levels);
     fclose(err_file);
-    HDfree(err_file);
     return(ret);
     
 }
