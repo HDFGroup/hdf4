@@ -1,15 +1,8 @@
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.1  1993/10/10 22:11:12  koziol
-Updated header files and added compression test.
-
- *
-*/
+/* $Id$ */
 
 #include "tproto.h"
 #define TESTFILE_NAME "tcomp.hdf"
