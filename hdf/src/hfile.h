@@ -48,8 +48,8 @@
 
 #define LIBVER_MAJOR    4
 #define LIBVER_MINOR    1 
-#define LIBVER_RELEASE  0
-#define LIBVER_STRING   "NCSA HDF Version 4.1 Beta 1, Dec 6, 1996"
+#define LIBVER_RELEASE  1
+#define LIBVER_STRING   "NCSA HDF Version 4.1 Release 1, February 21, 1997"
 #define LIBVSTR_LEN    80   /* length of version string  */
 #define LIBVER_LEN  92      /* 4+4+4+80 = 92 */
 /* end of version tags */
