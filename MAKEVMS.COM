@@ -1,4 +1,4 @@
-$! set def [.HDF4_1r2]
+$ set def [.HDF4r13]
 $ !
 $ write sys$output "Start building HDF"
 $ !
@@ -68,6 +68,7 @@ $ !
 $ write sys$output " Building ZLIB"
 $ zlib_library = hdftop_dir +".HDF.ZLIB]"
 $ set def 'zlib_library'
+$ copy make_vms.com make.com
 $ @make
 $ run example
 $ copy libz.olb 'lib_directory'
@@ -120,6 +121,7 @@ $ @make
 $ !
 $ delete *.obj;*
 $ write sys$output "Testing..."
+$ create/dir [.testdir]
 $ !
 $ ! Run testhdf
 $ !
