@@ -1168,6 +1168,16 @@ NC **handlep;
  fprintf(stderr, "hdf_write_xdr_cdf i've been called op = %d \n", xdrs->x_op);
 #endif
 
+/* Convert old scales into coordinate var values before writing
+   out any header info */
+
+#ifdef HDF
+
+  status = hdf_conv_scales(handlep);
+  if (status == FAIL) return FALSE;
+
+#endif
+
   /* count size of tag / ref arrays */
   sz = 0;
   if((*handlep)->dims)  sz += (*handlep)->dims->count;
@@ -1311,7 +1321,58 @@ NC **handlep;
 
 } /* hdf_write_xdr_cdf */
 
+/* --------------------------------------------------------------
+** hdf_conv_scales converts old scale values into coord var values.
+** Searchs through var list for DFTAG_SDS, reads in the scale data,
+** gets a new ref for it, writes the data out, changes its tag
+*/
+int 
+hdf_conv_scales(handlep)
+NC **handlep;
+{
+   NC_var **vars;
+   NC_array *tmp;
+   int i, status, scaleref, scaletag, scalelen;
+   uint8 *scalebuf, *datap;
 
+   if ((*handlep)->vars) {
+      tmp = (*handlep)->vars;
+      vars = (NC_var **)tmp->values;
+      for (i=0; i<tmp->count; i++)   {
+          if ( ((*vars)->data_tag == DFTAG_SDS) && 
+               ((*vars)->data_ref != (*vars)->ndg_ref)) {
+             /* read in scale values */
+             scaleref = (*vars)->data_ref;
+             scaletag = (*vars)->data_tag;
+             scalelen = Hlength((*handlep)->hdf_file, scaletag,
+                                 scaleref);
+             if (scalelen == FAIL) return FAIL;
+             scalebuf = (uint8 *)HDmalloc((uint32)scalelen);
+             if (scalebuf == NULL) return FAIL;
+             status = Hgetelement((*handlep)->hdf_file, scaletag, 
+                           scaleref, scalebuf); 
+             if (status == FAIL) {
+                HDfree(scalebuf);
+                return FAIL;
+             }
+             (*vars)->data_tag = DATA_TAG;
+             (*vars)->data_ref = (*vars)->ndg_ref;
+             datap = scalebuf + (*vars)->data_offset;
+             status = Hputelement((*handlep)->hdf_file, DATA_TAG,
+                      (*vars)->data_ref, datap, (*vars)->len);
+             HDfree(scalebuf);
+             if (status == FAIL) {
+                (*vars)->data_tag = scaletag;
+                (*vars)->data_ref = scaleref;
+                return FAIL;
+             }
+          }
+          vars ++;
+       }
+   }
+   return SUCCEED;
+}
+  
 /* ----------------------------------------------------------------
 ** Read in the dimensions out of a cdf structure
 ** Return FAIL if something goes wrong

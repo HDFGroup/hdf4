@@ -585,6 +585,9 @@ extern int32 hdf_write_var
 extern int hdf_write_xdr_cdf
     PROTO((XDR *,NC **));
 
+extern int hdf_conv_scales
+    PROTO((NC **));
+
 extern int hdf_read_dims
     PROTO((XDR *,NC *,int32 ));
 
