@@ -1,0 +1,177 @@
+#
+# $Header$
+#
+# $Log$
+# Revision 1.1  1992/03/01 23:39:01  mfolk
+# Initial revision
+#
+#
+
+# ##################################################################
+#
+#                   NCSA HDF Version 3.2 release Beta 1
+#                               March 1992
+#                  MAKEFILE for testing HDF Version 3.2
+#
+#                          ABOUT THIS MAKEFILE
+#
+# This makefile creates HDF test programs.  There are three categories
+# of test programs: 
+#
+#              application layer C test programs 
+#              application layer FORTRAN test programs 
+#              lower level C test programs 
+#
+# The application layer C test programs are:
+#
+#              tdfr8     (8-bit raster image sets)
+#              tdf24     (24-bit raster image sets)
+#              tdfp      (palettes)
+#              tdfsd_nt  (scientific data sets, data only)
+#              tdfsd_mms (scientific data sets, data, max/min and scales)
+#              tdfan     (annotations for HDF objects)
+#              tdfanfile (annotations for HDF files)
+#              tdfstubs  (emulation of old lower level i/o routines)
+#
+# The application layer FORTRAN test programs are:
+#
+#              tdfsd_ntF  (scientific data sets, data only)
+#              tdfsd_mmsF (scientific data sets, data, max/min and scales)
+#
+# The lower level C test programs are:
+#
+#              thfile     (basic i/o)
+#              terr       (error handling)
+#              thblocks   (linked blocks)
+#              thextelt   (i/o involving external files)
+#              tvers      (storing and retrieving version strings)
+#              thlinkage  (linkage of functions)
+#
+# ##################################################################
+#
+#                      HOW TO USE THIS MAKEFILE
+#
+# You need libdf.a to compile any of these test programs.  You will
+# also need selected header files as described below.
+#
+# To compile the application layer C test programs, enter "make ctests".  
+# If there are test programs that you do not want to compile, do this 
+# by removing them from the lines "COBJS=" and "CSRCS=" below.
+# You need access to the header files indicated in the "CHDRS=" line
+# below to compile these programs. 
+#
+# To compile the application layer FORTRAN test programs, enter 
+# "make ftests".  You need access to the header files indicated in 
+# the "FHDRS=" line below to compile these programs. 
+# If there are test programs that you do not want to compile, do this 
+# by removing them from the lines "FOBJS=" and "FSRCS=" below.
+#
+# To compile the lower level C test programs, enter "make htests". 
+# You need access to the header files indicated in the "HHDRS=" line
+# below to compile these programs.  If there are test programs that 
+# you do not want to compile, do this by removing them from the lines 
+# "HOBJS=" and "HSRCS=" below.
+#
+# To remove all object files created by this makefile, enter "make clean"
+#
+# To remove ALL files created by this makefile, enter "make cleanup"
+#
+# ##################################################################
+#
+#                       PORTING INSTRUCTIONS
+#
+# You must modify the lines containing the symbol "==>" to make
+# this makefile compatible with your platform.
+#
+# ##################################################################
+
+# ==> specify your machine
+MACHINE=SUN
+
+# ==> specify your fortran compiler
+FC=f77 -c
+FFLAGS=
+
+# ==> specify your C compiler
+CC=cc
+CFLAGS=  -g -D${MACHINE} $(IFLAGS)
+
+# ==> where are your hdf.h, hdfi.h and vg.h files located?
+IFLAGS=   -I/hdf/32/include -I.
+
+# ==> where is your HDF library (libdf.a) located?
+LIBS= /hdf/32/lib/libdf.a
+
+RM=/bin/rm
+RMFLAGS=-f
+
+CTESTS= tdfr8 tdf24 tdfsd_mms tdfsd_nt tdfan tdfanfile tdfp tdfstubs 
+CHDRS = df.h dfi.h dfsd.h vg.h df.h dfi.h dfstubs.h
+CTSRCS= tdfr8.c tdf24.c tdfsd_mms.c tdfsd_nt.c tdfan.c tdfanfile.c \
+        tdfp.c tdfstubs.c 
+CTOBJS= tdfr8.o tdf24.o tdfsd_mms.o tdfsd_nt.o tdfan.o tdfanfile.o \
+        tdfp.o tdfstubs.o 
+
+HTESTS= thfile thfile1 terr thblocks thextelt 
+HHDRS = hfile.h hdf.h hdfi.h herr.h hproto.h 
+HTSRCS= thfile.c thfile1.c terr.c thblocks.c thextelt.c 
+HTOBJS= thfile.o thfile1.o terr.o thblocks.o thextelt.o
+
+FTESTS= tdfsd_mmsF tdfsd_ntF
+FSRCS = tdfsd_mmsF.c tdfsd_ntF.c
+FOBJS = tdfsd_mmsF.o tdfsd_ntF.o
+
+all: ctests ftests htests
+
+ctests: $(CTESTS)
+
+ftests: $(FTESTS)
+
+htests: $(HTESTS)
+
+tdfr8:    hdf.h tdfr8.c libdf.a  
+	$(CC) $(CFLAGS) -D$(MACHINE) tdfr8.c libdf.a -o tdfr8
+
+tdf24:    hdf.h tdf24.c libdf.a  
+	$(CC) $(CFLAGS) -D$(MACHINE) tdf24.c libdf.a -o tdf24
+
+tdfp:    hdf.h tdfp.c libdf.a  
+	$(CC) $(CFLAGS) -D$(MACHINE) tdfp.c libdf.a -o tdfp
+
+tdfsd_nt:    hdf.h tdfsd_nt.c libdf.a  
+	$(CC) $(CFLAGS) -D$(MACHINE) tdfsd_nt.c libdf.a -o tdfsd_nt
+
+tdfsd_mms:    hdf.h tdfsd_mms.c libdf.a  
+	$(CC) $(CFLAGS) -D$(MACHINE) tdfsd_mms.c libdf.a -o tdfsd_mms
+
+tdfan:    hdf.h tdfan.c libdf.a  
+	$(CC) $(CFLAGS) -D$(MACHINE) tdfan.c libdf.a -o tdfan
+
+tdfanfile:    hdf.h tdfan.c libdf.a  
+	$(CC) $(CFLAGS) -D$(MACHINE) tdfanfile.c libdf.a -o tdfanfile
+
+tdfstubs:    hdf.h tdfstubs.c libdf.a  
+	$(CC) $(CFLAGS) -D$(MACHINE) tdfstubs.c libdf.a -o tdfstubs
+
+tdfsd_ntF:  hdf.h tdfsd_ntF.f libdf.a
+	$(FC) $(FFLAGS) tdfsd_ntF.f libdf.a -o tdfsd_ntF
+
+tdfsd_mmsF:  hdf.h tdfsd_mmsF.f libdf.a
+	$(FC) $(FFLAGS) tdfsd_mmsF.f libdf.a -o tdfsd_mmsF
+
+thfile:    hdf.h tdfstubs.c libdf.a  
+	$(CC) $(CFLAGS) -D$(MACHINE) tdfstubs.c libdf.a -o tdfstubs
+
+thfile1:    hdf.h tdfstubs.c libdf.a  
+	$(CC) $(CFLAGS) -D$(MACHINE) tdfstubs.c libdf.a -o tdfstubs
+
+terr:    hdf.h tdfstubs.c libdf.a  
+	$(CC) $(CFLAGS) -D$(MACHINE) tdfstubs.c libdf.a -o tdfstubs
+
+thblocks:    hdf.h tdfstubs.c libdf.a  
+	$(CC) $(CFLAGS) -D$(MACHINE) tdfstubs.c libdf.a -o tdfstubs
+
+thextelt:    hdf.h tdfstubs.c libdf.a  
+	$(CC) $(CFLAGS) -D$(MACHINE) tdfstubs.c libdf.a -o tdfstubs
+
+
