@@ -2,9 +2,12 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.1  1992/03/23 22:55:42  mfolk
-C Initial revision
+C Revision 1.2  1992/04/27 17:20:31  sxu
+C Changed output file name.
 C
+c Revision 1.1  1992/03/23  22:55:42  mfolk
+c Initial revision
+c
 C
 
 
@@ -18,7 +21,7 @@ C                   three SDSs.
 C                Writes labels and descriptions for all RISs.
 C
 C  Input file:  none
-C  Output files: antest.hdf
+C  Output files: tdfanF.hdf
 C
 C  Possible bug:  When reading in a label, we have to give it a 
 C                 length that is one greater than MAXLEN_LAB. This
