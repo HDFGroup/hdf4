@@ -4350,6 +4350,13 @@ int32 *flags;
         goto done;
       }
 
+    /* Check to see if data aid exists? i.e. may need to create a ref for SDS */
+    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FALSE) 
+      {
+        status = FAIL;
+        goto done;
+      }
+
     /* inquire about element */
     status = Hinquire(var->aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
     if (status != FAIL)
@@ -4476,6 +4483,13 @@ const VOID *datap;
     /* get variable from id */
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
+      {
+        status = FAIL;
+        goto done;
+      }
+
+    /* Check to see if data aid exists? i.e. may need to create a ref for SDS */
+    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FALSE) 
       {
         status = FAIL;
         goto done;
@@ -4641,6 +4655,13 @@ VOID *datap;
     /* get variable from id */
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
+      {
+        status = FAIL;
+        goto done;
+      }
+
+    /* Check to see if data aid exists? i.e. may need to create a ref for SDS */
+    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FALSE) 
       {
         status = FAIL;
         goto done;
@@ -4822,6 +4843,13 @@ int32 flags;
     /* get variable from id */
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
+      {
+        status = FAIL;
+        goto done;
+      }
+
+    /* Check to see if data aid exists? i.e. may need to create a ref for SDS */
+    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FALSE) 
       {
         status = FAIL;
         goto done;
