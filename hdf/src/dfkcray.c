@@ -1,5 +1,5 @@
 /****************************************************************************
- * NCSA HDF                                                                 *
+ NCSA HDF                                                                 *
  * Software Development Group                                               *
  * National Center for Supercomputing Applications                          *
  * University of Illinois at Urbana-Champaign                               *
@@ -98,12 +98,36 @@ static char RcsId[] = "@(#)$Revision$";
 #define NOINTCRAY2IEG
 /* #define NOFLOATCRAY2IEG */
 
+/* When on a Cray T90, if _CRAYIEEE is not defined, floating point numbers    */
+/* are in CRAY format.  Cray Research supplies the routines IEG2CRAY() and    */
+/* CRAY2IEG() to convert numbers from 32-bit IEEE format to CRAY format.      */
+/* These routines are used throughout the local conversion routines.          */
+
+/* If _CRAYIEEE is defined, Cray floating point numbers are in IEEE format.   */
+/* Cray Research no longer supplies the routines IEG2CRAY/CRAY2IEG.  Instead, */
+/* these function calls are replaced by the macro calls to IEG2CRAY/CRAY2IEG2 */
+/* defined below.  The macro call replaces the Cray format conversion routine */
+/* call with those supplied by Cray Research IEG2CRI/CRI2IEG for the T90-IEEE */
+/* format.                                                                    */
+
+/* On the Cray T90 there are man-pages availabe for IEG2CRAY/CRAY2IEG, and on */
+/* the Cray T90-IEEE there are man-pages available for IEG2CRI/CRI2IEG.       */
+
+/* Steven G. Johnson(stevenj@alum.mit.edu) of the Joannopoulous Group,        */
+/* Condensed Matter Theory, MIT Physics Department gets credit for the effort */
+/* spent and ideas enclosed within the #ifdef _CRAYIEEE block of code.        */
+/* A few comments were added to futher describe local situations.             */
+
 #ifdef _CRAYIEEE /* IEEE T90 */
 
 #undef DUFF_luo4i  /* there is a weird Heisenbug in this code */
 
 /* Currently, CRI2IEG has a bug when converting 64-bit ints into 16-bit ints. */
 #define BUGGY_CRI2IEG
+
+/* This function get_correct_cri_type() is used to translate from parameters  */
+/* used in CRAY2IEG/IEG2CRAY conversion routines to parameters used in new    */
+/* CRI2IEG/IEG2CRI conversion routines.                                       */
 
 static void get_correct_cri_type(int *type, int *newtype, int *forlen)
 {
@@ -131,6 +155,11 @@ static void get_correct_cri_type(int *type, int *newtype, int *forlen)
 	}
 }
 
+/* The macros have a zero value set after the last parenthesis enclosing the  */
+/* list of arguments.  Since the macros are taking the place of functions of  */
+/* the form ierr = IEG2CRAY(), it is my interpretation that this zero value   */
+/* is an initial value for ierr.  ierr is reset to a real value 3 lines later.*/
+
 #define IEG2CRAY(type_p, num_p, for_p, bitoff_p, nat_p) 0; \
 {	\
 	int cri2ieg_type, natlen = 8*8, forlen, stride = 1; \
@@ -148,6 +177,12 @@ static void get_correct_cri_type(int *type, int *newtype, int *forlen)
 }
 
 #else /* BUGGY_CRI2IEG */
+
+
+/* It was found by Steven G. Johnson that the CRI2IEG() routine has bugs in.  */
+/* In particular the part of the routine which converts from 64-bit Cray int  */
+/* into 16-bit integer.  So he wrote a routine which would do just that.  It  */
+/* is used if the BUGGY_CRI2IEG switch is defined.                            */
 
 static void my_convert_64_to_16(int n, int *source, char *dest)
 {
