@@ -7,10 +7,25 @@ C Interface to invoke tests for HDF Fortran interfaces.
 
 	integer nerror, retcode
 	character cmd*15, test*30
+	integer majorv, minorv, releaseno
+	character*80 relstr
+	integer hglibver
+	external hglibver
 
 	print *, '==========================================='
 	print *, 'HDF Library Fortran Interface Tests Started'
 	print *, '==========================================='
+	
+	retcode = hglibver(majorv, minorv, releaseno, relstr)
+	if (retcode .eq. -1) then
+	    nerror = nerror + 1
+	else
+	    print 101, majorv, minorv, releaseno, relstr
+	endif
+C
+C assume majorv, minorv, releaseno are single digit numbers
+101	format('Built with HDF Library Version: ',I1,'.',I1,'r',I1,/A80)
+
 
 C Default to cleanup *.hdf files and set verbosity to default value
 	CleanUp = .TRUE.

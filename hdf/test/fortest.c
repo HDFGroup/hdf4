@@ -26,8 +26,6 @@ static char RcsId[] = "@(#)$Revision$";
 #include <string.h>
 #endif
 #define NUMOFTESTS 20
-#define VERSION "4.1r2"
-#define BUILDDATE "Tue Nov 04 1997"
 
 static int InitTest(const char *TheName, const char *TheCall, const char *TheDescr);
 
