@@ -21,7 +21,8 @@ C      integer hestringc
 	    character*(*) error_message
         END FUNCTION hestringc
       END INTERFACE
-      hestringf = hestringc(error_code, error_message,len(error_message))
+      hestringf = hestringc(error_code, error_message,
+     +                      len(error_message))
       return
       end
 C-----------------------------------------------------------------------------
