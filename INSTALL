@@ -24,7 +24,7 @@
 
   2.5 Platform-specific Notes
   2.5.1 HPUX(9.03) on PA-RISC
-  2.5.2 Solaris(2.5) on Sparc
+  2.5.2 Solaris(2.6) on Sparc
   2.5.3 Solaris(2.5.1) on INTEL(x86)
   2.5.4 OpenVMS AXP and OpenVMS VAX
   2.5.5 Windows '95 or Windows NT, and Alpha NT
@@ -81,8 +81,7 @@
   Platform(OS)                    C-Compiler       Fortran-Compiler   
   ------------                    ----------       ---------------- 
   Sun4(SunOS 4.1.4)               GCC 2.6.3        f77 SC1.0            
-  Sun4(Solaris 2.5)               CC SC4.0         f77 SC4.0            
-  SGI-Indy(IRIX 5.3)              CC 3.19          f77
+  Sun4(Solaris 2.6)               CC               f77             
   SGI-Indy(IRIX v6.2)             CC               f77 6.2
   SGI-Origin(IRIX64 v6.4-n32)     CC 7.20          f77 7.20     
   SGI-Origin(IRIX64 v6.4-64)      CC 7.20          f77 7.20    
@@ -117,8 +116,6 @@
   though we have done no testing on it.  We will try our best to 
   answer any questions regarding it.
 
-  A release is scheduled for the VMS, Windows NT/95 and Macintosh 
-  platforms for HDF 4.1r2. 
  
 2.2  Third Party Software Requirements:
      ==================================
@@ -352,7 +349,7 @@
     ANSI-C compiler and Fortran compiler. The binary distribution 
     was compiled using the native compilers.
 
-    2.5.2 Solaris(2.5) on Sparc
+    2.5.2 Solaris(2.6) on Sparc
     ---------------------------
     The distribution has been compiled/tested with the native
     ANSI-C compiler and native fortran compiler. The binary 
@@ -385,7 +382,6 @@
 
     2.5.4 OpenVMS AXP on DEC Alpha and OpenVMS on VAX
     -------------------------------------------------
-    *** NOT AVAILABLE WITH THIS RELEASE ***
    
 
     2.5.5 Windows '95 or Windows NT, and Alpha NT.
@@ -455,7 +451,7 @@ it is assumed that you have done the following:
 
 
 Building from Source Code Release (HDF41r3s.zip)
-===============================================
+================================================
 
 STEP I:  Preconditions
 
@@ -921,8 +917,6 @@ dialog.
     During the testing of the library the test 'mfhdf/libsrc/hdftest' 
     will report "Unaligned access ..." messages which can be ignored.
 
-    2.5.12 Cray T90
-    ---------------
 
 2.6 Pablo Instrumentation
     =====================
