@@ -339,8 +339,8 @@ char *av[] ;
 	for(ii = 0, lp = got_al ;
 			ii < count ; ii++, lp++)
 	{
-		printf("%ld ", *lp) ;
-		assert( *lp == longs[ii] ) ;
+		printf("%ld ", got_al[ii]) ;
+		assert( got_al[ii] == longs[ii] ) ;
 	}
 	putchar('\n') ;
 

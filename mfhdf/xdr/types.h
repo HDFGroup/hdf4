@@ -23,7 +23,7 @@
 
 #if defined __STDC__ || defined PC || defined _WINDOWS || defined WIN32
 #define STDC_INCLUDES
-#if !(defined vms || defined UNIX386 || defined WINNT || defined WIN32 || defined __ultrix || (defined __sun__ && defined __i386__))
+#if !(defined vms || defined UNIX386 || defined WINNT || defined WIN32 || defined __ultrix || (defined __sun__ && defined __i386__) || defined _CRAYMPP)
 long ntohl(long);
 long htonl(long);
 #endif /* !unix */
