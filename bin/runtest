@@ -30,7 +30,6 @@ PROGNAME="bin/runtest $DEBUGMODE"
 
 # Setup
 HOSTNAME=`hostname | cut -f1 -d.`	# no domain part
-H4DIR=$HOME/HDF4/v_1_5/hdf4
 TODAY=`date +%y%m%d`
 WEEKDAY=`date +%a`
 H4VER=			# default to current CVS version
@@ -336,6 +335,18 @@ RUNSNAPTEST()
 	return $retcode
     fi
 
+    # Track down the zlib software
+    ans=`$SNAPYARD/current/bin/locate_sw zlib`
+    if [ $? = 0 ]; then
+	Z_INC=`echo $ans | cut -f1 -d,`
+	Z_LIB=`echo $ans | cut -f2 -d,`
+	SNAPCMD_OPT="$SNAPCMD_OPT zlib $Z_INC,$Z_LIB"
+    else
+	# cannot locate zlib software.
+	# continue the test, maybe configure can find it.
+	:
+    fi
+
     if [ -n "${SRCDIRNAME}" ]; then
 	SNAPCMD_OPT="$SNAPCMD_OPT srcdirname ${SRCDIRNAME}"
     fi
@@ -454,6 +465,8 @@ Usage: runtest [-h] [-debug] [-r<version>] [-all] [-nocvs] [-nodiff] [<host> ...
 	do not do cvs commands
     -nodiff
 	do not do diff commands
+    -setup
+        setup the directory structure for snapshot test
     -configname <name>
 	use <name> as hostname in the parsing of the snaptest configure file
     <host>
@@ -463,6 +476,21 @@ Usage: runtest [-h] [-debug] [-r<version>] [-all] [-nocvs] [-nodiff] [<host> ...
 the one to take effect.  If neither are given, do the test for the
 local host.
 EOF
+}
+
+
+# Verify if directory ($1) exists.  If not, create it.
+CHECK_DIR()
+{
+   dir=$1
+   if test ! -e $1; then
+      echo mkdir $1
+      mkdir $1
+      errcode=$?
+   elif test ! -d $1; then
+      echo $1 is not a directory
+      errcode=1
+   fi
 }
 
 
@@ -496,11 +524,8 @@ while [ $# -gt 0 ]; do
 	    PRINT "******** DEBUGMODE is $DEBUGMODE ************"
 	    ;;
 	-r*)
-	    # the version string has a leading _ but not for H4DIR name.
+	    # version string
 	    H4VER="$1"
-	    H4VERSTR=_`echo $H4VER | sed -e s/-r// -e s/\\\./_/g`
-	    H4DIR=$HOME/HDF4/v$H4VERSTR/hdf4
-	    PROGNAME="$PROGNAME $H4VER"
 	    ;;
 	-all)
 	    # Test all hosts.
@@ -519,6 +544,10 @@ while [ $# -gt 0 ]; do
 	    shift
 	    CONFIGNAME=$1
 	    ;;
+	-setup)
+	    # setup the directory structure for snapshot test.
+	    CMD=setup
+	    ;;
 	-*) # Unknow option
 	    PRINT "Unknown option ($1)"
 	    USAGE
@@ -532,11 +561,34 @@ while [ $# -gt 0 ]; do
     shift
 done
 
+# setup H4VER if not set yet
+if [ -z "$H4VER" -a -f bin/snapshot_version ]
+then
+    . bin/snapshot_version
+fi
+
+if [ -n "$H4VER" ]
+then
+    H4VERSION=hdf4_`echo $H4VER | sed -e s/-r// -e s/\\\./_/g`
+    PROGNAME="$PROGNAME $H4VER"
+else
+    H4VERSION=hdf4
+fi
+
 #################################
 # Setup snapshot test directories
 #################################
+BASEDIR=${HOME}/snapshots-${H4VERSION}
+# initial processing of setup option if requested
+if test x-$CMD = x-setup; then
+    CHECK_DIR $BASEDIR
+    test $errcode -ne 0 && exit 1
+elif [ ! -d ${BASEDIR} ]; then
+    echo "BASEDIR ($BASEDIR) does not exist"
+    exit 1
+fi
 # Show the real physical path rather than the symbolic path
-SNAPYARD=`cd $HOME/snapshots-hdf4${H4VERSTR} && /bin/pwd`
+SNAPYARD=`cd $BASEDIR && /bin/pwd`
 # Log file basename
 LOGDIR=${SNAPYARD}/log
 LOGBASENAME=${LOGDIR}/${HOSTNAME}
@@ -546,14 +598,35 @@ TIMELOG=${LOGDIR}/TIME_LOG_${TODAY}
 CVSLOG=${LOGDIR}/CVS_LOG_${TODAY}
 CVSLOG_LOCK=${LOGDIR}/CVS_LOG_LOCK_${TODAY}
 DIFFLOG=${LOGDIR}/DIFF_LOG_${TODAY}
-# Snap Test Configuration file
+# Snap Test hosts and Configuration files
+ALLHOSTSFILE=${SNAPYARD}/allhostfile
 SNAPTESTCFG=${SNAPYARD}/snaptest.cfg
 
+# more processing of setup option if requested
+if test x-$CMD = x-setup; then
+    CHECK_DIR $LOGDIR
+    test $errcode -ne 0 && exit 1
+    CHECK_DIR $LOGDIR/OLD
+    test $errcode -ne 0 && exit 1
+    CHECK_DIR $SNAPYARD/TestDir
+    test $errcode -ne 0 && exit 1
+    # create empty test hosts or configure files if non-existing
+    for f in $ALLHOSTSFILE $SNAPTESTCFG; do
+	if test ! -f $f; then
+	    echo Creating $f
+	    touch $f
+	fi
+    done
+    # create or update the current source.
+    echo update current source
+    $SNAPSHOT checkout 
+    # setup completed.  Exit.
+    exit 0
+fi
 
 #################################
 # Setup test host(s)
 #################################
-ALLHOSTSFILE=${SNAPYARD}/allhostfile
 if [ "$TESTHOST" = -all ]; then
     if [ -f $ALLHOSTSFILE ]; then
 	TESTHOST=`sed -e s/#.*// $ALLHOSTSFILE`
