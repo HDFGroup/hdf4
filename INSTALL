@@ -78,12 +78,13 @@
   Sun4(SunOS 4.1.3)           GCC 2.6.3      f77              X         X
   Sun4(Solaris 2.5)           CC SC3.0       f77              X         X
   SGI-Indy(IRIX5.3)           CC             f77              X         X
-  SGI-Indy(IRIX6.2_n32)       CC             f77              X         X
-  SGI-Indy(IRIX6.2_64)        CC             f77              X         X
+  SGI-Indy(IRIX6.2_n32)       CC 7.0         F77 7.0          X         X
+  SGI-Indy(IRIX6.2_64)        CC 7.0         F77 7.0          X         X
   HP9000/735(HPUX 9.03)       CC(A.09.77)    f77(09.16)       X         X
   Exemplar(HPUX 9.03)         -               -               -         -        
   Cray C90 (UNICOS 803.2)     -               -               -         - 
-  Cray YMP (UNICOS 803.2)     CC             cf77             X         X
+  Cray YMP (UNICOS 9.0.2asC  CC 4.0.4.0      cf77 6.0.5.0     X         X
+            cri.3)
   CM5 (Parallel I/O, 4.1.3_U1)-               -               -         -
   IBM RS6000/AIX v4.1         -               -               -         - 
   IBM SP2 (single node, v4.1) XLC 3.1.3.5    f77 3.2.4.2      X         X 
