@@ -2053,7 +2053,7 @@ intn GRend(int32 grid)
             temp_ref = VQueryref(GroupID);
             if(temp_ref == FAIL)
                 HGOTO_ERROR (DFE_NOVALS,FAIL);
-	    gr_ptr->gr_ref = (uint16)temp_ref;
+            gr_ptr->gr_ref = (uint16)temp_ref;
             if(Vsetname(GroupID,GR_NAME)==FAIL)
                 HGOTO_ERROR(DFE_BADVSNAME,FAIL);
             if(Vsetclass(GroupID,GR_NAME)==FAIL)
@@ -2101,6 +2101,12 @@ printf("%s: ri_ref=%u\n",FUNC,img_ptr->ri_ref);
                     /* check if the image meta-info has been modified */
                     if(img_ptr->meta_modified==TRUE)
                       {
+                          /* Test if the tag/ref pair has been assigned yet */
+                          if(img_ptr->img_tag==DFTAG_NULL || img_ptr->img_ref==DFREF_WILDCARD)
+                            {
+                              img_ptr->img_tag=DFTAG_RI;
+                            } /* end if */
+
                           /* write out the RI/RIG information again */
                           if(GRIupdateRIG(gr_ptr->hdf_file_id,img_ptr)==FAIL)
                               HGOTO_ERROR(DFE_INTERNAL, FAIL);
