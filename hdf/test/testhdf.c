@@ -20,7 +20,7 @@ struct TestStruct {
 
 void InitTest (TheName, TheCall, TheDescr)
 const char* TheName;
-const void* TheCall;
+const VOIDP TheCall;
 const char* TheDescr;
 {
   static int Index=0;
