@@ -258,7 +258,7 @@ typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 
 #endif /* IBM6000 */
 
-#if defined(HP9000) || defined(hpux) || defined(__hpux)
+#if defined(HP9000) || (!defined(__convexc__) && (defined(hpux) || defined(__hpux)))
 
 #ifndef HP9000
 #define HP9000
@@ -537,7 +537,7 @@ typedef int                intf;     /* size of INTEGERs in Fortran compiler */
 
 #endif /* VMS */
 
-#if defined(CONVEX) || defined(CONVEXNATIVE) || defined(__convex__)
+#if defined(CONVEX) || defined(CONVEXNATIVE) || defined(__convexc__)
 
 #ifndef CONVEX
 #define CONVEX
@@ -573,7 +573,6 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-#define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #ifdef  HAVE_FMPOOL
 #define FILELIB PAGEBUFIO  /* enable page buffering */

@@ -25,14 +25,14 @@ VERSION  = 4.0
 #
 #Using ANSI compilier
 CC=cc
-CFLAGS= -ext
+CFLAGS= -ext -nv -no
 
 # Fortran compilier
 FC = fc
-FFLAGS =
+FFLAGS = -sfc -72
 
 # Name of achive randomizer, usually ranlib (use 'true' if non-existant)
-RANLIB = ranlib
+RANLIB = true
 
 # Name of library archiver and flags to send, default 'AR=ar', 'ARFLAGS=r'
 AR = ar

@@ -4,7 +4,7 @@ divert(-1)
 define(`M4__SYSTEM', CONVEX)
 
 # transformation from fortran name to name of C module
-define(`NAMEF',`$1_')	# for Convex, need post underscore
+define(`NAMEF',`$1')	# for Convex, need post underscore
 
 # transformation from string name to corresponding argument name
 define(`STRINGF',`$1')
