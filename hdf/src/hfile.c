@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.14  1993/05/03 21:32:14  koziol
-First half of fixes to make Purify happy
+Revision 1.15  1993/07/01 20:08:03  chouck
+Made the hash table use fewer malloc() and free() pairs to improve
+efficiency and (hopefully) reduce PC memory fragmentation.
 
+ * Revision 1.14  1993/05/03  21:32:14  koziol
+ * First half of fixes to make Purify happy
+ *
  * Revision 1.13  1993/04/22  20:24:13  koziol
  * Added new Hfind() routine to hfile.c which duplicates older DFsetfind/DFfind
  * utility...
@@ -2470,13 +2474,8 @@ PRIVATE int HIinit_file_dds(file_rec, ndds, FUNC)
 
     file_rec->maxref = 0;
 
-#ifdef OLD_WAY
     /* blank out the hash table */
-    for(i = 0; i < HASH_MASK + 1; i++) 
-      file_rec->hash[i] = NULL;
-#else
-    HDmemset(file_rec->hash,0,sizeof(tag_ref_list_ptr)*(HASH_MASK+1));
-#endif
+    HDmemset(file_rec->hash, 0, sizeof(tag_ref_list_ptr) * (HASH_MASK+1));
 
     return SUCCEED;
 }
@@ -3301,13 +3300,9 @@ PRIVATE int HIfill_file_rec(file_rec, FUNC)
     return FAIL;
   }
   
-#ifdef OLD_WAY
   /* Blank out hash table */
-  for(i = 0; i < HASH_MASK + 1; i++)
-      file_rec->hash[i] = NULL;
-#else
-    HDmemset(file_rec->hash,0,sizeof(tag_ref_list_ptr)*(HASH_MASK+1));
-#endif
+  HDmemset(file_rec->hash, 0, sizeof(tag_ref_list_ptr) * (HASH_MASK+1));
+
 
   /* Read in the dd's one at a time and determine the max ref in the file
      at the same time. */

@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.15  1993/06/23 19:05:54  chouck
-Updated Version string and fixed a VSinquire macro
+Revision 1.16  1993/07/01 20:08:07  chouck
+Made the hash table use fewer malloc() and free() pairs to improve
+efficiency and (hopefully) reduce PC memory fragmentation.
 
+ * Revision 1.15  1993/06/23  19:05:54  chouck
+ * Updated Version string and fixed a VSinquire macro
+ *
  * Revision 1.14  1993/04/22  20:24:19  koziol
  * Added new Hfind() routine to hfile.c which duplicates older DFsetfind/DFfind
  * utility...
@@ -220,15 +224,21 @@ typedef struct ddblock_t {
 } ddblock_t;
 
 /* hashing information */
-#define HASH_MASK 0xff
-typedef struct tag_ref_list_str {
+#define HASH_MASK       0xff
+#define HASH_BLOCK_SIZE 100
+typedef struct tag_ref_str {
   intn        tag;              /* tag for this element */
   intn        ref;              /* ref for this element */
   ddblock_t   *pblock;          /* ddblock this object is in */
   int32       pidx;             /* this object's index into dd block */
-  struct tag_ref_list_str *next;  /* next one in the list */
-  VOIDP       my_data;          /* data other interfaces can add / query */
+} tag_ref, *tag_ref_ptr;
+
+typedef struct tag_ref_list_str {
+    int         count;                      /* number of objects */
+    tag_ref     objects[HASH_BLOCK_SIZE];   /* DDs */
+    struct tag_ref_list_str *next;  /* next one in the list */
 } tag_ref_list, *tag_ref_list_ptr;
+
 
 typedef struct filerec_t {
     char *path;                 /* name of file */

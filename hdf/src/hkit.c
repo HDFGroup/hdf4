@@ -5,10 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.11  1993/04/22 20:24:22  koziol
-Added new Hfind() routine to hfile.c which duplicates older DFsetfind/DFfind
-utility...
+Revision 1.12  1993/07/01 20:08:09  chouck
+Made the hash table use fewer malloc() and free() pairs to improve
+efficiency and (hopefully) reduce PC memory fragmentation.
 
+ * Revision 1.11  1993/04/22  20:24:22  koziol
+ * Added new Hfind() routine to hfile.c which duplicates older DFsetfind/DFfind
+ * utility...
+ *
  * Revision 1.9  1993/04/14  21:39:22  georgev
  * Had to add some VOIDP casts to some functions to make the compiler happy.
  *
@@ -697,7 +701,7 @@ int HIlookup_dd(file_rec, look_tag, look_ref, pblock, pidx)
 #endif
 { 
   char *FUNC="HIlookup_dd";       /* for HERROR */
-  register intn tag, ref, key;
+  register intn tag, ref, key, i;
   register tag_ref_list_ptr p;
 
   if(look_tag == DFTAG_WILDCARD || look_ref == DFREF_WILDCARD)
@@ -712,11 +716,13 @@ int HIlookup_dd(file_rec, look_tag, look_ref, pblock, pidx)
   key = tag + ref;
 
   for(p = file_rec->hash[key & HASH_MASK]; p; p = p->next) {
-    if(p->tag == tag && p->ref == ref) {
-      *pblock = p->pblock;
-      *pidx   = p->pidx;
-      return SUCCEED;
-    }
+      for(i = 0; i < p->count; i++) {
+          if(p->objects[i].tag == tag && p->objects[i].ref == ref) {
+              *pblock = p->objects[i].pblock;
+              *pidx   = p->objects[i].pidx;
+              return SUCCEED;
+          }
+      }
   }
 
   /*
@@ -726,11 +732,13 @@ int HIlookup_dd(file_rec, look_tag, look_ref, pblock, pidx)
   key = tag + ref;
 
   for(p = file_rec->hash[key & HASH_MASK]; p; p = p->next) {
-    if(p->tag == tag && p->ref == ref) {
-      *pblock = p->pblock;
-      *pidx   = p->pidx;
-      return SUCCEED;
-    }
+      for(i = 0; i < p->count; i++) {
+          if(p->objects[i].tag == tag && p->objects[i].ref == ref) {
+              *pblock = p->objects[i].pblock;
+              *pidx   = p->objects[i].pidx;
+              return SUCCEED;
+          }
+      }
   }
 
   return FAIL;
@@ -756,8 +764,8 @@ int HIadd_hash_dd(file_rec, look_tag, look_ref, pblock, pidx)
 #endif
 {
     char *FUNC="HIadd_hash_dd";       /* for HERROR */
-    register intn tag, ref, key;
-    register tag_ref_list_ptr p;
+    register intn tag, ref, key, i;
+    register tag_ref_list_ptr p, where;
 
     if(look_tag == DFTAG_NULL)
         return SUCCEED;
@@ -766,16 +774,33 @@ int HIadd_hash_dd(file_rec, look_tag, look_ref, pblock, pidx)
     ref = (intn) look_ref;
     key = tag + ref;
 
-    if((p = (tag_ref_list_ptr) HDgetspace((uint32)sizeof(tag_ref_list)))==NULL)
-        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+    where = file_rec->hash[key & HASH_MASK];
+
+    if(where && where->count < HASH_BLOCK_SIZE) {
+        
+        i = where->count++;
+
+        where->objects[i].pblock = pblock;
+        where->objects[i].pidx   = pidx;
+        where->objects[i].tag    = tag;
+        where->objects[i].ref    = ref;
+
+    } else {
+
+        if((p = (tag_ref_list_ptr) HDgetspace((uint32)sizeof(tag_ref_list)))==NULL)
+            HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        
+        p->objects[0].pblock = pblock;
+        p->objects[0].pidx   = pidx;
+        p->objects[0].tag    = tag;
+        p->objects[0].ref    = ref;
+
+        p->next   = where;
+        p->count  = 1;
+        file_rec->hash[key & HASH_MASK] = p;
   
-    p->pblock = pblock;
-    p->pidx   = pidx;
-    p->tag    = tag;
-    p->ref    = ref;
-    p->next   = file_rec->hash[key & HASH_MASK];
-    file_rec->hash[key & HASH_MASK] = p;
-  
+    }
+
     return SUCCEED;
 } /* HIadd_hash_dd */
 
@@ -796,8 +821,8 @@ int HIdel_hash_dd(file_rec, look_tag, look_ref)
 #endif
 {
   char *FUNC="HIdel_hash_dd";       /* for HERROR */
-  register intn tag, ref, key;
-  register tag_ref_list_ptr p, prev;
+  register intn tag, ref, key, i;
+  register tag_ref_list_ptr p;
 
   tag = (intn) look_tag;
   ref = (intn) look_ref;
@@ -807,22 +832,17 @@ int HIdel_hash_dd(file_rec, look_tag, look_ref)
 
   if(!p) return SUCCEED;
 
-  prev = NULL;
   for(p = file_rec->hash[key & HASH_MASK]; p; p = p->next) {
-    if(p->tag == tag && p->ref == ref) {
-      if(prev)
-        prev->next = p->next;
-      else
-        file_rec->hash[key & HASH_MASK] = p->next;
-
-      HDfreespace((VOIDP)p);
-      return SUCCEED;
-    }
-    prev = p;
+      for(i = 0; i < p->count; i++) {
+          if(p->objects[i].tag == tag && p->objects[i].ref == ref) {
+              p->objects[i].tag = DFTAG_NULL;
+              return SUCCEED;
+          }
+      }
   }
-
+  
   return SUCCEED;
-
+  
 } /* HIdel_hash_dd */
 
 
