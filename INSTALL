@@ -508,6 +508,9 @@ it is assumed that you have done the following:
 
 
 
+Note: The ws2_32.lib needs to linked with your executable if using the static 
+      mfhdf library.  The ws2_32.lib can be found in your Microsoft Visual C++
+      directory under the lib folder.
 
 
 Building from Source Code Release (HDF41r3s.zip)
@@ -670,7 +673,10 @@ Note that the instructions are the same for both Options I and II.
                HD413m.DLL - HDF DLL
                HM413m.DLL - MFHDF DLL
 
-                          
+
+Note: The ws2_32.lib needs to linked with your executable if using the static 
+      mfhdf library.  The ws2_32.lib can be found in your Microsoft Visual C++                 directory under the lib folder.
+
 		
 STEP IV:   TESTING THE BUILD
 
