@@ -21,6 +21,7 @@
 ./Win32.nofortran.zip
 ./Win32.zip
 
+./bin/chkmanifest
 ./bin/runtest
 ./bin/snapshot
 
