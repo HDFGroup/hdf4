@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/10/16 16:33:07  chouck
+Added entry for DFtransarrry()
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 #ifndef DFIVMS_H
 #define DFIVMS_H
@@ -135,6 +138,7 @@ Initial revision
 #define DFsetfind _DFsetfind
 #define DFstart _DFstart
 #define DFstat _DFstat
+#define DFtransarray _DFtransarry
 #define DFupdate _DFupdate
 #define DFwrite _DFwrite
 #define DFfindnextref _DFfindnextref
