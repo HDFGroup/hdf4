@@ -445,6 +445,25 @@ test -z "$FC" && FC=""
 test -n "$FC" && break
 done
 ;;
+  convex*) for p in f77 fc
+do
+if test -z "$FC"; then
+  echo checking for $p
+  saveifs="$IFS"; IFS="${IFS}:"
+  for dir in $PATH; do
+    test -z "$dir" && dir=.
+    if test -f $dir/$p; then
+      FC="$p"
+      break
+    fi
+  done
+  IFS="$saveifs"
+fi
+test -z "$FC" && FC=""
+
+test -n "$FC" && break
+done
+;;
   *)     for p in f77 cf77 #fc
 do
 if test -z "$FC"; then
@@ -954,10 +973,15 @@ fi
 rm -f conftest*
 fi
 
+# If you can get the Convex or Solaris stuff working, more power to you -QAK
+if test "$OS" = solaris || test "$OS" = convex; then   # for some reason this is not working on Convex and Solaris
+    :
+else
 if test `$WHICH "${FC-}" | wc -w` != 1; then
 echo checking for strerror
 cat > conftest.c <<EOF
 #include <stdio.h>
+#include <string.h>
 main() { exit(0); } 
 t() { 
 #ifdef __stub_strerror
@@ -996,6 +1020,7 @@ else
   fi
   rm -rf a.out conftest.f
 fi
+fi	# end Convex/Solaris hack
 
 
 FTPDIR=${FTPDIR-/home/ftp}/pub/sdm
