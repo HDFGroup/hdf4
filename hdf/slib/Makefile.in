@@ -1,68 +1,58 @@
+# Makefile for szip (copied and updated from ../zlib/Makefile.in)
 
-# For compiling with source and object files in different directories.
-srcdir = .
+CC=cc
+
+CFLAGS=-O
+#CFLAGS=-O -DMAX_WBITS=14 -DMAX_MEM_LEVEL=7
+#CFLAGS=-g -DDEBUG
+#CFLAGS=-O3 -Wall -Wwrite-strings -Wpointer-arith -Wconversion \
+#           -Wstrict-prototypes -Wmissing-prototypes
+
+LDFLAGS=-L. -lsz
+LDSHARED=$(CC)
+CPP=$(CC) -E
+
+VER=1.0
+LIBS=libsz.a
+SHAREDLIB=libsz.so
+
+AR=ar
+ARFLAGS = rc
+RANLIB=ranlib
+TAR=tar
+SHELL=/bin/sh
+
 TOP_SRCDIR = ../..
-
-# Where to install the programs and man pages.
+#prefix = /usr/local
 prefix = $(TOP_SRCDIR)/NewHDF
 exec_prefix = ${prefix}
-bindir = $(exec_prefix)/bin
-libdir = $(exec_prefix)/lib
-includedir = $(prefix)/include
-binprefix =
-manprefix =
-manext = 1
-mandir = $(prefix)/man/man$(manext)
-
-# The following default options are overriden in the makefile fragment
-# section below
-#
-# The name of your C compiler:
-CC= gcc
-
-# You may need to adjust these cc options:
-CFLAGS= -O -I$(srcdir)
-# Generally, we recommend defining any configuration symbols in jconfig.h,
-# NOT via -D switches here.
-# However, any special defines for ansi2knr.c may be included here:
-ANSI2KNRFLAGS= 
-
-# Link-time cc options:
-LDFLAGS= 
-
-# To link any special libraries, add the necessary -l commands here.
-LDLIBS= 
-
-# Put here the object file name for the correct system-dependent memory
-# manager file.  For Unix this is usually jmemnobs.o, but you may want
-# to use jmemansi.o or jmemname.o if you have limited swap space.
-SYSDEPMEM= 
-
-# miscellaneous OS-dependent stuff
-SHELL= /bin/sh
-# linker
-LN= $(CC)
-# file deletion command
-RM = /bin/rm 
-RMFLAGS = -f
-
-# file rename command
-MV= mv
-# library (.a) file creation command
-#AR= ar rc
-AR = ar
-ARFLAGS = rc
-
-# Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
-RANLIB = ranlib
-
-# second step in .a creation (use "touch" if not needed)
-AR2= $(RANLIB)
+libdir = ${exec_prefix}/lib
+includedir = ${prefix}/include
 
 # installation program
 INSTALL = ${TOP_SRCDIR}/install-sh -c
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL) -m 644
+
+# ==> specify directories where to find inludes and library
+#     HDF library, and HDF utilities
+HDFINC= $(srcdir)/../src
+HDFLIB= $(srcdir)/../src
+HDFBIN= $(srcdir)/../bin
+
+#### makefile fragment from 'config/' goes here ##############
+## ------------------------ end of makefile fragments--------------------
+HDF_FLAGS       = \
+        CC="$(CC)" \
+        CFLAGS="$(CFLAGS)" \
+        FC="$(FC)" \
+        FFLAGS="$(FFLAGS)" \
+        RANLIB="$(RANLIB)" \
+        AR="$(AR)" \
+        ARFLAGS="$(ARFLAGS)" \
+        RM="$(RM)" \
+        RMFLAGS="$(RMFLAGS)" \
+        MACHINE="$(MACHINE)" 
 
 LOCAL_MACROS  = CC="$(CC)" \
 	CFLAGS="$(CFLAGS)" \
@@ -72,57 +62,89 @@ LOCAL_MACROS  = CC="$(CC)" \
 	FC="$(FC)" \
 	prefix="$(prefix)"
 
-MANIFEST = $(DISTFILES)
-OTHERDIRS = config
-PACKAGE	 = HDF
-VERSION  = 4.0
 
-#----------------- End of configurable options.---------------------------
+OBJS = sz_api.o rice.o 
 
-# source files: SZIP library 
-LIBSOURCES= rice.c
-SOURCES= $(LIBSOURCES)
-# files included by source files
-INCLUDES= rice.h
 
-DISTFILES= $(SOURCES) 
-# library object files common to compression and decompression
-COMOBJECTS= rice.o
-# compression library object files
-CLIBOBJECTS= 
-# decompression library object files
-DLIBOBJECTS= 
-# These objectfiles are included in libsz.a
-LIBOBJECTS= $(CLIBOBJECTS) $(DLIBOBJECTS) $(COMOBJECTS)
-# object files for sample applications (excluding library files)
-COBJECTS= 
-DOBJECTS= 
-TROBJECTS= 
+EXAMPLE_OBJS = example.o  burst_szip.o mcgill.o
+TEST_OBJS = gentest.o mcgill.o 
 
-#### makefile fragment from 'config/' goes here - inclues ansi2knr section
-## ------------------------ end of makefile fragments--------------------
+#all: example burst_szip 
+all: gentest  example burst_szip
 
-.SUFFIXES: .c.o
-.c.o:
-	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c $<
+test: all
+	@LD_LIBRARY_PATH=.:$(LD_LIBRARY_PATH) ; export LD_LIBRARY_PATH; \
+        echo 'Running SZIP test.....'
+	./gentest >gentest.out
 
-libsz.a: $(LIBOBJECTS)
-	-$(RM) $(RMFLAGS) libsz.a
-	$(AR) $(ARFLAGS) libsz.a $(LIBOBJECTS)
-	$(RANLIB) libsz.a
+libsz.a: $(OBJS) 
+	$(AR) $(ARFLAGS) $@ $(OBJS) 
+	-@ ($(RANLIB) $@ || true) >/dev/null 2>&1
 
-install-lib: libsz.a install-headers
-	$(INSTALL_DATA) libsz.a $(libdir)/$(binprefix)libsz.a
-	$(RANLIB) $(libdir)/$(binprefix)libsz.a
 
-install-includes:: install-headers
+$(SHAREDLIB).$(VER): $(OBJS)
+	$(LDSHARED) -o $@ $(OBJS)
+	rm -f $(SHAREDLIB) $(SHAREDLIB).1
+	ln -s $@ $(SHAREDLIB)
+	ln -s $@ $(SHAREDLIB).1
 
-install-headers: rice.h
-	$(INSTALL_DATA) rice.h $(includedir)/rice.h
+mcgill.o:
+	$(CC) $(CFLAGS) -c mcgill.c
+
+#example: example.o $(LIBS)
+#	$(CC) $(CFLAGS) -o $@ example.o $(LDFLAGS)
+
+burst_szip: burst_szip.o $(LIBS) 
+	$(CC) $(CFLAGS) -o $@ burst_szip.o mcgill.o -lm
+
+gentest: gentest.o $(LIBS) 
+	$(CC) $(CFLAGS) -o $@ gentest.o mcgill.o $(LDFLAGS) -lm
+
+install-lib install: $(LIBS)
+	-@if [ ! -d $(includedir)  ]; then mkdir $(includedir); fi
+	-@if [ ! -d $(libdir) ]; then mkdir $(libdir); fi
+	cp szlib.h szip_adpt.h rice.h ricehdf.h $(includedir)
+	chmod 644 $(includedir)/szlib.h $(includedir)/szip_adpt.h $(includedir)/rice*.h
+	cp $(LIBS) $(libdir)
+	cd $(libdir); chmod 755 $(LIBS)
+	-@(cd $(libdir); $(RANLIB) libsz.a || true) >/dev/null 2>&1
+	cd $(libdir); if test -f $(SHAREDLIB).$(VER); then \
+	  rm -f $(SHAREDLIB) $(SHAREDLIB).1; \
+	  ln -s $(SHAREDLIB).$(VER) $(SHAREDLIB); \
+	  ln -s $(SHAREDLIB).$(VER) $(SHAREDLIB).1; \
+	  (ldconfig || true)  >/dev/null 2>&1; \
+	fi
+# The ranlib in install is needed on NeXTSTEP which checks file times
+# ldconfig is for Linux
+
+uninstall:
+	cd $(includedir); \
+	v=$(VER); \
+	if test -f szlib.h; then \
+	  v=`sed -n '/VERSION "/s/.*"\(.*\)".*/\1/p' < szlib.h`; \
+          rm -f szlib.h szip_adpt.h rice.h ricehdf.h; \
+	fi; \
+	cd $(libdir); rm -f libsz.a; \
+	if test -f $(SHAREDLIB).$$v; then \
+	  rm -f $(SHAREDLIB).$$v $(SHAREDLIB) $(SHAREDLIB).1; \
+	fi
 
 clean:
-	-$(RM) $(RMFLAGS) *.o libsz.a 
+	rm -f *.o *~ example burst_szip mcgill gentest image* libsz.a libsz.so* *.out
 
-distclean:
-	-$(RM) $(RMFLAGS) *.o libsz.a Makefile config.status
+distclean:	
+	rm -f Makefile *.o *~ example burst_szip mcgill gentest image* libsz.a libsz.so* 
 
+
+depend:
+	makedepend -- $(CFLAGS) -- *.[ch]
+
+# DO NOT DELETE THIS LINE -- make depend depends on it.
+
+#example.o: szlib.h 
+gentest.o: szlib.h 
+mcgill.o: mcgill.h
+rice.o: rice.h
+#sz_api.o: szlib.h
+burst_szip: mcgill.o
+gentest: mcgill.o 
