@@ -98,10 +98,10 @@ fi
 
 case $CC_BASENAME in
   gcc)
-    CFLAGS="$CFLAGS"
-    DEBUG_CFLAGS="-g -fverbose-asm"
+    CFLAGS="$CFLAGS -ansi"
+    DEBUG_CFLAGS="-g "
     DEBUG_CPPFLAGS=
-    PROD_CFLAGS="-O3 -fomit-frame-pointer"
+    PROD_CFLAGS="-O3 "
     PROD_CPPFLAGS=
     PROFILE_CFLAGS="-pg"
     PROFILE_CPPFLAGS=
