@@ -2803,7 +2803,7 @@ HMCPchunkwrite(VOID  *cookie,    /* IN: access record to mess with */
       }
 
     /* write data to chunk */
-    if (Hwrite(chk_id, write_len, bptr) == FAIL)
+    if (Hwrite(chk_id, write_len, (const VOIDP)bptr) == FAIL)
         HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
     bytes_written = write_len;
