@@ -85,7 +85,7 @@ main (argc, argv)
   InitTest("slabs",test_slab,"HYPERSLAB INTERFACE");
   InitTest("litend",test_litend,"LITTLE-ENDIAN INTERFACE");
   InitTest("vset",test_vsets,"VSET Interface Test");
-
+  InitTest("comp",test_comp,"COMPRESSED ELEMENTS");
 
   Verbocity = 4; /* Default Verbocity is Low */
   ret = Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
@@ -238,4 +238,3 @@ main (argc, argv)
 #endif
   return(0);
 }
-
