@@ -75,3 +75,6 @@ utils: $(UTILS)
 
 clean:
 	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed
+
+distclean:
+	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed

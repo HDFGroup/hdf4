@@ -356,7 +356,7 @@ install_it:
 clean:
 	-$(RM) $(RMFLAGS) *.o
 
-cleanup:
+distclean:
 	-$(RM) $(RMFLAGS) libdf.a 
 
 lint: $(SRCS) $(R8SRCS)
