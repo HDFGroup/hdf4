@@ -20,6 +20,14 @@
 #ifndef _NETCDF_
 #define _NETCDF_
 
+#ifdef __sparcv9
+/*
+ * This header must be included before the _LP64 macro is checked when
+ * compiling for 64-bit libraries. (At least on Solaris 2.8...)
+ */
+#include <stdio.h> 
+#endif  /* __sparcv9 */
+
 #ifdef __MWERKS__
 #ifndef HDF
 #define HDF
