@@ -190,6 +190,7 @@ DFclose(DF * dfile)
       }
     else
       {
+HEprint(stderr,0);
           DFerror = HEvalue(1);
       }
 
@@ -243,6 +244,7 @@ DFdescriptors(DF * dfile, DFdesc ptr[], int begin, int num)
           ret = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT);
           if (ret == FAIL)
             {
+                Hendaccess(aid);
                 DFerror = HEvalue(1);
                 return (-1);
             }
@@ -255,7 +257,10 @@ DFdescriptors(DF * dfile, DFdesc ptr[], int begin, int num)
       {
           ret = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT);
           if (ret == FAIL)
+            {
+              Hendaccess(aid);
               return (i);
+            }
           Hinquire(aid, NULL, &ptr[i].tag, &ptr[i].ref, &ptr[i].length,
                    &ptr[i].offset, NULL, NULL, NULL);
       }
@@ -284,8 +289,7 @@ DFdescriptors(DF * dfile, DFdesc ptr[], int begin, int num)
 int
 DFnumber(DF * dfile, uint16 tag)
 {
-    int32       aid;
-    int         num, ret;
+    int         num;
 
     if (DFIcheck(dfile) != 0)
       {
@@ -295,14 +299,7 @@ DFnumber(DF * dfile, uint16 tag)
     else
         DFerror = DFE_NONE;
 
-    aid = Hstartread(DFid, tag, DFREF_WILDCARD);
-    if (aid == FAIL)
-        return (0);
-
-    num = 0;
-    for (ret = 0; ret == 0; num++)
-        ret = Hnextread(aid, tag, DFREF_WILDCARD, DF_CURRENT);
-    Hendaccess(aid);
+    num = Hnumber(DFid, tag);
     return (num);
 }
 
@@ -609,6 +606,7 @@ DFread(DF * dfile, char *ptr, int32 len)
     ret = Hseek(DFaid, DFelseekpos, 0);
     if (ret == FAIL)
       {
+          Hendaccess(DFaid);
           DFerror = HEvalue(1);
           return (-1);
       }
@@ -740,6 +738,7 @@ DFwrite(DF * dfile, char *ptr, int32 len)
                   }
                 else
                   {
+                      Hendaccess(DFaid);
                       DFerror = DFE_NOTENOUGH;
                       return (-1);
                   }
