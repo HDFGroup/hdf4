@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.17  1993/09/08 18:29:33  koziol
-Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
+Revision 1.18  1993/09/14 20:17:23  chouck
+Added prototypes for erstwhile Vset macros
 
+ * Revision 1.17  1993/09/08  18:29:33  koziol
+ * Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
+ *
  * Revision 1.16  1993/07/23  20:49:14  sxu
  * Changed 'void' to 'VOID' VSdump, Vinitialize, Vsetzap, Remove_vfile and unpackvs.
  *
@@ -315,6 +318,24 @@ extern int32 VSsetfields
 
 extern int32 VSfdefine
   PROTO((int32 vkey, char _HUGE *field, int32 localtype, int32 order));
+
+extern int32 VFnfields 
+    PROTO((int32 vkey));
+
+extern char * VFfieldname
+    PROTO((int32 vkey, int32 index));
+
+extern int32 VFfieldtype
+    PROTO((int32 vkey, int32 index));
+
+extern int32 VFfieldisize
+    PROTO((int32 vkey, int32 index));
+
+extern int32 VFfieldesize
+    PROTO((int32 vkey, int32 index));
+
+extern int32 VFfieldorder
+    PROTO((int32 vkey, int32 index));
 
 /*
 ** from vrw.c
