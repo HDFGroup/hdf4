@@ -42,6 +42,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define MAX_TEST_SIZE 31   /* maximum number of elements to insert */
 #define NUM_TEST_RUNS 100  /* number of times to insert & remove each size */
 
+#define SEED(s)      (srand(s))
 #define RandInt(a,b) ((rand()%(((b)-(a))+1))+(a))
 
 extern int num_errs;
@@ -86,14 +87,15 @@ void test_tbbt()
 {
     intn test_size;
     intn i,j;
-    int32 *ins_arr;
-    int32 *rem_arr;
+    int32 ins_arr[MAX_TEST_SIZE];
+    int32 rem_arr[MAX_TEST_SIZE];
     intn t;
     TBBT_TREE *tree;
     VOIDP *r;
 
-    ins_arr=(int32 *)HDgetspace(sizeof(int32)*MAX_TEST_SIZE);
-    rem_arr=(int32 *)HDgetspace(sizeof(int32)*MAX_TEST_SIZE);
+    t=time(NULL);
+    SEED(t);
+
     for(test_size=3; test_size<=MAX_TEST_SIZE; test_size++) {
 	MESSAGE(7,printf("\nTesting trees with %d elements\n",test_size););
 	MESSAGE(8,printf("Testing tree #:"););
@@ -138,7 +140,5 @@ void test_tbbt()
     	      } /* end for */
 	  } /* end for */
       } /* end for */
-    HDfreespace(ins_arr);
-    HDfreespace(rem_arr);
 } /* end test_tbbt() */
 

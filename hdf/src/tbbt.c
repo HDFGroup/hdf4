@@ -352,7 +352,11 @@ printf("balance(): check 0, deeper=%d, ptr=%p, side=%d, odelta=%d, obal=%d\n",de
             else
                 ptr->rcnt --;       /* RightCnt(ptr)-- */
         if(  0 != deeper  ) {   /* One leg got longer or shorter: */
+#ifdef OLD_WAY
             if( deeper == odelta ) { /* Became too unbalanced: */
+#else
+            if( (deeper<0 && odelta<0) || (deeper>0 && odelta>0) ) { /* Became too unbalanced: */
+#endif
               TBBT_NODE *kid;
 
 #ifdef TESTING
