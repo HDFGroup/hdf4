@@ -231,13 +231,6 @@ extern int32 HXcreate
 	    int32 f_offset, int32 start_len));
 
 /*
-** from hcomp.c
-*/
-extern int32 HCcreate
-    PROTO((int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
-        comp_coder_t coder_type));
-
-/*
 ** from herr.c
 */
 extern char _HUGE *HEstring
