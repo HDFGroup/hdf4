@@ -115,6 +115,7 @@ DIFF_FLAGS = -w
 
 PROGRAM		= hzip
 TESTPROG	= hziptst
+CHECKPROG       = hzipck
 BINFILES	= $(PROGRAM)
 #HDF_LIB         = @HDF_LIB@
 #HDF_INC         = @HDF_INC@
@@ -125,7 +126,8 @@ BINFILES	= $(PROGRAM)
 #FFLAGS		= @FFLAGS@
 MANIFEST = $(DISTFILES)
 DISTFILES	= Makefile.in copy.c hdfzip.c hdfzip_main.c list.c parse.c table.c 
-TESTFILES	= add.c copy.c verify.c ../hdiff/dumplib.c hdfzip.c hdfziptst_main.c ../hdiff/hdiff.c ../hdiff/hdiff_gattr.c ../hdiff/hdiff_misc.c ../hdiff/hdiff_sdattr.c ../hdiff/hdiff_sddata.c ../hdiff/hdiff_vdata.c ../hdiff/hdiff_grdata.c list.c parse.c table.c 
+TESTFILES	= add.c copy.c verify.c ../hdiff/dumplib.c hdfzip.c hdfziptst_main.c ../hdiff/hdiff.c ../hdiff/hdiff_gattr.c ../hdiff/hdiff_misc.c ../hdiff/hdiff_sdattr.c ../hdiff/hdiff_sddata.c ../hdiff/hdiff_vdata.c ../hdiff/hdiff_grdata.c list.c parse.c table.c
+CHECKFILES      = hdfzipck.c
 MANUALS		= 
 LIBNAME		= mfhdf
 LD_NETCDF	= ../libsrc/libmfhdf.a
@@ -134,19 +136,23 @@ OBJS		= copy.o hdfzip.o hdfzip_main.o list.o parse.o table.o
 LD_NETCDF	= -L ../libsrc -lmfhdf
 LIBS		= -lm $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(LIBSX) $(JPEG_LIB) $(ZLIB_LIB) $(SLIB_LIB)
 prefix		= ../../..
-GARBAGE		= $(PROGRAM) $(TESTPROG) *.o
+GARBAGE		= $(PROGRAM) $(TESTPROG) $(CHECKPROG) *.o
 
 #all::		$(PROGRAM)
 all::         FORCE
 	@if test -z "$(FMPOOL_FLAGS)"; then \
-	  $(MAKE) $(MFLAGS) $(LOCAL_MACROS) $(PROGRAM) $(TESTPROG); \
+	  $(MAKE) $(MFLAGS) $(LOCAL_MACROS) $(PROGRAM) $(TESTPROG) $(CHECKPROG); \
 	else		 \
-	  $(MAKE) $(MFLAGS) $(LOCAL_MACROS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" $(PROGRAM) $(TESTPROG); \
+	  $(MAKE) $(MFLAGS) $(LOCAL_MACROS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" $(PROGRAM) $(TESTPROG) $(CHECKPROG); \
 	fi
 
 
 hziptst: 
 	$(CC) $(CFLAGS) -I$(HDF_INC) -I$(NETCDF_INC) -I$(HDIFF_INC) $(TESTFILES) $(LIBS) -o $(TESTPROG)
+
+hzipck:
+	$(CC) $(CFLAGS) -I$(HDF_INC) -I$(NETCDF_INC) -I$(HDIFF_INC) $(CHECKFILES) $(LIBS) -o $(CHECKPROG)
+
 
 debug:  $(PROGRAM)  ../libsrc/libmfhdf.a
 	purify $(CC) $(CFLAGS) $(CFLAGS_NETCDF) $(OBJS) $(LIBS) -o phzip

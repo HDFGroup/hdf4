@@ -101,8 +101,6 @@ int copy_sds(int32 sd_in,
  int              chunk_rank;     /* rank got from chunk table  */
  int32            chunk_lengths[MAX_VAR_DIMS]; /* chunk lengths along each dimension */
 #endif
-
-
  
  sds_index = SDreftoindex(sd_in,ref);
  sds_id    = SDselect(sd_in,sds_index);

@@ -309,10 +309,12 @@ obj_list_t* parse_chunk(char *str, int *n_objs, int32 *chunk_lengths, int *chunk
  }
 
  /* get chunk info */
- for ( i=end_obj+1, k=0, c_index=0; i<len; i++,k++)
+ k=0; 
+ for ( i=end_obj+1, c_index=0; i<len; i++)
  {
   c = str[i];
   sdim[k]=c;
+  k++; /*increment sdim index */
 
   if (!isdigit(c) && c!='x' && c!='N' && c!='O' && c!='N' && c!='E'){
    if (obj_list) free(obj_list);
@@ -323,7 +325,8 @@ obj_list_t* parse_chunk(char *str, int *n_objs, int32 *chunk_lengths, int *chunk
   if ( c=='x' || i==len-1) 
   {
    if ( c=='x') {  
-    sdim[k]='\0';     
+    sdim[k-1]='\0';  
+    k=0;
     chunk_lengths[c_index]=atoi(sdim);
     if (chunk_lengths[c_index]==0) {
       if (obj_list) free(obj_list);
@@ -333,7 +336,8 @@ obj_list_t* parse_chunk(char *str, int *n_objs, int32 *chunk_lengths, int *chunk
     c_index++;
    }
    else if (i==len-1) { /*no more parameters */
-    sdim[k+1]='\0';  
+    sdim[k]='\0';  
+    k=0;
     if (strcmp(sdim,"NONE")==0)
     {
      *chunk_rank=-2;
@@ -341,16 +345,15 @@ obj_list_t* parse_chunk(char *str, int *n_objs, int32 *chunk_lengths, int *chunk
     else
     {
      chunk_lengths[c_index]=atoi(sdim);
-     if (chunk_lengths[c_index]==0)
-     {
+     if (chunk_lengths[c_index]==0){
       if (obj_list) free(obj_list);
       printf("Input Error: Invalid chunking in <%s>\n",str);
       exit(1);
      }
      *chunk_rank=c_index+1;
     }
-   }
-  } /*if*/
+   } /*if */
+  } /*if c=='x' || i==len-1 */
  } /*i*/
 
  return obj_list;

@@ -264,17 +264,23 @@ void hzip_addchunk(char* str, options_t *options)
  */
 void print_options(options_t *options)
 {
- int   i, k, has_cp=0, has_ck=0;
+ int   i, k, j, has_cp=0, has_ck=0;
 
 /*-------------------------------------------------------------------------
  * objects to chunk
  *-------------------------------------------------------------------------
  */
- if (options->verbose) {
+ if (options->verbose) 
+ {
   printf("Objects to chunk are...\n");
-  if (options->all_chunk==1)
-   printf("\tChunk all\n");
- }
+  if (options->all_chunk==1)  {
+   printf("\tChunk all with dimension [");
+   for ( j = 0; j < options->chunk_g.rank; j++)  
+    printf("%d ", options->chunk_g.chunk_lengths[j]);
+   printf("]\n");
+  }
+ }/* verbose */
+
  for ( i = 0; i < options->op_tbl->nelems; i++) 
  {
   char* obj_name=options->op_tbl->objs[i].path;
@@ -308,11 +314,15 @@ void print_options(options_t *options)
  *-------------------------------------------------------------------------
  */
  
- if (options->verbose) {
+ if (options->verbose) 
+ {
   printf("Objects to compress are...\n");
-  if (options->all_comp==1)
-   printf("\tCompress all\n");
- }
+  if (options->all_comp==1) 
+    printf("\tCompress all with %s compression, parameter %d\n",
+     get_scomp(options->comp_g.type),
+     options->comp_g.info);
+ } /* verbose */
+
  for ( i = 0; i < options->op_tbl->nelems; i++) 
  {
   if (options->op_tbl->objs[i].comp.type>=0)
@@ -327,7 +337,6 @@ void print_options(options_t *options)
    has_cp=1;
   }
  }
- 
  
  if (options->all_comp==1 && has_cp){
   printf("Error: Invalid compression input: * is present with other objects\n");

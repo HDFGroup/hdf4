@@ -252,7 +252,7 @@ int sds_verifiy_chunk(char *sds_name, int32 in_chunk_flags, int rank,
  */
 
 int sds_verifiy_chunk_all(int32 in_chunk_flags, int rank, 
-                          int32 *in_chunk_lengths)
+                          int32 *in_chunk_lengths,char *sds_exclude)
 {
  intn          status_n;     /* returned status_n for functions returning an intn  */
  HDF_CHUNK_DEF chunk_def;    /* chunk defintion read */ 
@@ -291,6 +291,14 @@ int sds_verifiy_chunk_all(int32 in_chunk_flags, int rank,
 
   status_n = SDgetinfo(sds_id, name, &rrank, dim_sizes, &data_type, &n_attrs);
   status_n = SDgetchunkinfo (sds_id, &chunk_def, &chunk_flags);
+
+  /* do not compare this one */
+  if (strcmp(name,sds_exclude)==0)
+  {
+   status_n = SDendaccess(sds_id);
+   status_n = SDend (sd_id);
+   return 0;
+  }
   
  /*-------------------------------------------------------------------------
   * retrieve and verify the chunk info

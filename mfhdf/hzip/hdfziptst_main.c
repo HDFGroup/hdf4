@@ -144,6 +144,7 @@ int main(void)
  add_sd(FILENAME,"dset4",0,chunk_flags,comp_type,NULL);
  add_sd(FILENAME,"dset5",0,chunk_flags,comp_type,NULL);
  add_sd(FILENAME,"dset6",0,chunk_flags,comp_type,NULL);
+ add_sd3d(FILENAME,"dset7",0,chunk_flags,comp_type,NULL);
 
 
 /*-------------------------------------------------------------------------
@@ -254,7 +255,7 @@ int main(void)
  fspec.verbose  =1;
 #endif
 
- in_chunk_lengths[0]=in_chunk_lengths[1]=10;
+ in_chunk_lengths[0]=in_chunk_lengths[1]=in_chunk_lengths[2]=10;
 
 
 /*-------------------------------------------------------------------------
@@ -263,15 +264,15 @@ int main(void)
  */
  TESTING("compressing SDS SELECTED with HUFF, chunking SELECTED");
  hzip_init (&options,verbose);
- hzip_addcomp("dset4:HUFF 1",&options);
- hzip_addchunk("dset4:10x10",&options);
+ hzip_addcomp("dset7:HUFF 1",&options);
+ hzip_addchunk("dset7:10x10x10",&options);
  hzip(FILENAME,FILENAME_OUT,&options);
  hzip_end (&options);
  if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
   goto out;
- if ( sds_verifiy_comp("dset4",COMP_CODE_SKPHUFF, 1) == -1) 
+ if ( sds_verifiy_comp("dset7",COMP_CODE_SKPHUFF, 1) == -1) 
   goto out;
- if ( sds_verifiy_chunk("dset4",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
+ if ( sds_verifiy_chunk("dset7",HDF_CHUNK|HDF_COMP,3,in_chunk_lengths) == -1) 
   goto out;
  PASSED();
 
@@ -423,7 +424,7 @@ int main(void)
  hzip_end (&options);
  if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
   goto out;
- if ( sds_verifiy_chunk_all(HDF_CHUNK,2,in_chunk_lengths) == -1) 
+ if ( sds_verifiy_chunk_all(HDF_CHUNK,2,in_chunk_lengths,"dset7") == -1) 
   goto out;
  PASSED();
 
@@ -431,7 +432,6 @@ int main(void)
  * test9:  
  *-------------------------------------------------------------------------
  */
-
 
  verbose        =1;
  fspec.verbose  =1;
@@ -447,7 +447,7 @@ int main(void)
   goto out;
  if ( sds_verifiy_comp_all(COMP_CODE_DEFLATE, 1) == -1) 
   goto out;
- if ( sds_verifiy_chunk_all(HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
+ if ( sds_verifiy_chunk_all(HDF_CHUNK|HDF_COMP,2,in_chunk_lengths,"dset7") == -1) 
   goto out;
  PASSED();
  

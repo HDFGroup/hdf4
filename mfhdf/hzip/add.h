@@ -15,9 +15,9 @@
 #define HDF_ZIP_ADD__
 
 
-
+/* turn on for verbose output of hzip and hdiff */
 #if 0
-#define HZIPTST_DEBUG  /* turn on for verbose output of hzip and hdiff */
+#define HZIPTST_DEBUG  
 #endif
 
 #if defined (HZIPTST_DEBUG)
@@ -41,6 +41,13 @@ void add_r8 (char *fname,char* name_file,int32 vgroup_id);
 void add_r24(char *fname,char* name_file,int32 vgroup_id);
 void add_vs (char* vs_name,int32 file_id,int32 vgroup_id);
 void add_sd (char *fname,
+             char* sds_name,          /* sds name */
+             int32 vgroup_id,         /* group ID */
+             int32 chunk_flags,       /* chunk flags */
+             int32 comp_type,         /* compression flag */
+             comp_info *c_info        /* compression structure */ );
+
+void add_sd3d(char *fname,
              char* sds_name,          /* sds name */
              int32 vgroup_id,         /* group ID */
              int32 chunk_flags,       /* chunk flags */
