@@ -48,8 +48,10 @@ extern intn SDgetinfo
     PROTO((int32 sdsid, char *name, int32 *rank, int32 *dimsizes, 
            int32 *nt, int32 *nattr));
 
+#ifndef __CSTAR__
 extern intn SDreaddata
     PROTO((int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data));
+#endif
 
 extern uint16 SDgerefnumber
     PROTO((int32 sdsid));
@@ -84,8 +86,10 @@ extern intn SDattrinfo
 extern intn SDreadattr
     PROTO((int32 id, int32 index, VOIDP buf));
 
+#ifndef __CSTAR__
 extern intn SDwritedata
     PROTO((int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data));
+#endif
 
 extern intn SDsetdatastrs
     PROTO((int32 sdsid, char *l, char *u, char *f, char *c));
