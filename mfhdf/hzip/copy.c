@@ -777,6 +777,7 @@ int  copy_gr(int32 infile_id,
                
  int32         pal_id,        /* palette identifier */
                pal_out,       /* palette identifier */
+               pal_ref,
                r_num_entries, 
                r_data_type, 
                r_ncomp, 
@@ -1162,6 +1163,12 @@ int  copy_gr(int32 infile_id,
   if ((status_n = GRreadlut(pal_id, pal_data)) == FAIL) {
    printf( "Failed to get palette data for <%s>\n", path);
   }
+
+  if ((pal_ref=GRluttoref(pal_id))== FAIL) {
+   printf( "Failed to get palette ref for <%s>\n", path);
+  }
+  /* add palette to table; we want to later check for lone palettes */
+  table_add(table,DFTAG_IP8,pal_ref,"palette");
   
   if (status_n==SUCCEED)
   {

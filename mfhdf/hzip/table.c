@@ -33,9 +33,10 @@ int table_search(table_t *table, int tag, int ref )
 {
  int i;
  
- for (i = 0; i < table->nobjs; i++)
+ for (i = 0; i < table->nobjs; i++) {
   if (table->objs[i].tag == tag && table->objs[i].ref == ref)
    return i;
+ }
   
   return -1;
 }

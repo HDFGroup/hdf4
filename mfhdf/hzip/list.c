@@ -25,7 +25,9 @@ void list_gr (char* infname,char* outfname,int32 infile_id,int32 outfile_id,tabl
 void list_sds(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
 void list_vs (char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
 void list_glb(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
+void list_pal(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
 void list_an (char* infname,char* outfname,int32 infile_id,int32 outfile_id,options_t *options);
+
 
 void vgroup_insert(char* infname, char* outfname, 
                    int32 infile_id, int32 outfile_id,
@@ -108,6 +110,7 @@ int list(char* infname, char* outfname, options_t *options)
  list_sds(infname,outfname,infile_id,outfile_id,table,options);
  list_vs (infname,outfname,infile_id,outfile_id,table,options);
 	list_glb(infname,outfname,infile_id,outfile_id,table,options);
+ list_pal(infname,outfname,infile_id,outfile_id,table,options);
 	list_an (infname,outfname,infile_id,outfile_id,options);
 
  /* close the HDF files */
@@ -1204,5 +1207,55 @@ int copy_an(int32 infile_id,
  return 1;
 }
 
+
+/*-------------------------------------------------------------------------
+ * Function: list_pal
+ *
+ * Purpose: list/copy lone palettes
+ *
+ * Return: void
+ *
+ *-------------------------------------------------------------------------
+ */
+
+void list_pal(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options)
+{
+ uint8  palette_data[256*3];
+ intn   nPals, j;
+ uint16 ref;
+	
+	if ( options->trip==0 ) 
+	{
+		return;
+	}
+
+ DFPrestart();
+ 
+ if((nPals = DFPnpals (infname))==FAIL ) {
+  printf( "Failed to get palettes in <%s>\n", infname);
+  return;
+ }
+ 
+ for ( j = 0; j < nPals; j++) 
+ {
+  if (DFPgetpal(infname, (VOIDP)palette_data)==FAIL ) {
+   printf( "Failed to read palette <%d> in <%s>\n", j, infname);
+   continue;
+  }
+  
+  ref=DFPlastref();
+  
+  /* check if already inserted in image */
+  if ( table_search(table,DFTAG_IP8,ref)>=0 ){
+   continue;
+  }
+  
+  if (DFPaddpal(outfname,palette_data)==FAIL){
+   printf( "Failed to write palette in <%s>\n", outfname);
+  }
+  
+ }
+ 
+}
 
 
