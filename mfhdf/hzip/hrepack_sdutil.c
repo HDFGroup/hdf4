@@ -250,7 +250,7 @@ int  options_get_info(options_t      *options,     /* global options */
   *comp_type   = options->comp_g.type;
   *info        = options->comp_g.info;
   /* check if we have also CHUNK info  */
-  if (*chunk_flags==HDF_CHUNK)
+  if ( (*chunk_flags==HDF_CHUNK) || (*chunk_flags==(HDF_CHUNK|HDF_COMP)))
   {
    *chunk_flags              = HDF_CHUNK | HDF_COMP;
    chunk_def->comp.comp_type = *comp_type;

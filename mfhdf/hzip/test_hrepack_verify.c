@@ -172,7 +172,6 @@ int sds_verifiy_comp_all(int32 in_comp_type, int32 in_comp_info)
     break;
    };
    
-#if 0
    if ( info != in_comp_info )
    {
     printf("Error: compresion information does not match for <%s>",name);
@@ -180,7 +179,6 @@ int sds_verifiy_comp_all(int32 in_comp_type, int32 in_comp_info)
     status_n = SDend (sd_id);
     return -1;
    }
-#endif
   }
   
   /* terminate access to the current dataset */

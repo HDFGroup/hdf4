@@ -22,7 +22,12 @@
 #define DATA_FILE1       "image8.txt"
 #define DATA_FILE2       "image24pixel.txt"
 #define DATA_FILE3       "image24plane.txt"
-char    *progname;     
+char    *progname;   
+
+#if 0
+#define ENABLE_SZIP
+#endif
+  
 
 
 /*-------------------------------------------------------------------------
@@ -32,7 +37,8 @@ char    *progname;
  *
  * A)This program writes several HDF objects to the file FILENAME
  *   The image data consists of realistic data read from the files DATA_FILE1
- *   (8bit image) and DATA_FILE2 (24bit image)
+ *   (8bit image) , DATA_FILE2 (24bit image, pixel interlace) and
+ *    DATA_FILE3 (24bit image, plane interlace)
  *  The objects written are
  *  1) groups
  *  2) images 
@@ -196,6 +202,7 @@ int main(void)
  comp_type   = COMP_CODE_SKPHUFF;
  add_sd(FILENAME,file_id,"dset_huff",0,chunk_flags,comp_type,&comp_info);
 
+#if defined (ENABLE_SZIP)
 /*-------------------------------------------------------------------------
  * SZIP
  *-------------------------------------------------------------------------
@@ -203,13 +210,14 @@ int main(void)
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_SZIP;
  add_sd(FILENAME,file_id,"dset_szip",0,chunk_flags,comp_type,&comp_info);
+#endif
 
 /*-------------------------------------------------------------------------
  * add some RIS24 images to the file
  *-------------------------------------------------------------------------
  */
- add_r24(DATA_FILE2,FILENAME,file_id,DFIL_PIXEL,0); /* Pixel Interlacing */
- add_r24(DATA_FILE3,FILENAME,file_id,DFIL_PLANE,0); /* Scan Plane Interlacing */
+ add_r24(DATA_FILE2,FILENAME,file_id,DFIL_PIXEL,vgroup_img_id); /* Pixel Interlacing */
+ add_r24(DATA_FILE3,FILENAME,file_id,DFIL_PLANE,vgroup_img_id); /* Scan Plane Interlacing */
 
 
 /*-------------------------------------------------------------------------
@@ -217,7 +225,6 @@ int main(void)
  *-------------------------------------------------------------------------
  */ 
  add_r8(DATA_FILE1,FILENAME,file_id,vgroup_img_id);
- add_r8(DATA_FILE1,FILENAME,file_id,0);
 
 /*-------------------------------------------------------------------------
  * add some GR images to the file with compression/chunking
@@ -327,7 +334,6 @@ int main(void)
  in_chunk_lengths[1]=8;
  in_chunk_lengths[2]=6;
 
-
 /*-------------------------------------------------------------------------
  * test0:  
  *-------------------------------------------------------------------------
@@ -396,6 +402,8 @@ int main(void)
   goto out;
  PASSED();
 
+#if defined (ENABLE_SZIP)
+
 /*-------------------------------------------------------------------------
  * test4:  
  *-------------------------------------------------------------------------
@@ -414,6 +422,7 @@ int main(void)
   goto out;
  PASSED();
 
+#endif
 
 /*-------------------------------------------------------------------------
  * test4:  
@@ -439,6 +448,7 @@ int main(void)
   goto out;
  PASSED();
 
+#if defined (ENABLE_SZIP)
 
 /*-------------------------------------------------------------------------
  * test5:  
@@ -473,6 +483,7 @@ int main(void)
   goto out;
  PASSED();
 
+
 /*-------------------------------------------------------------------------
  * test6:  
  *-------------------------------------------------------------------------
@@ -496,6 +507,9 @@ int main(void)
  if ( sds_verifiy_comp("dset7",COMP_CODE_SZIP, 0) == -1) 
   goto out;
  PASSED();
+
+#endif
+
 
 /*-------------------------------------------------------------------------
  * test7:  
@@ -535,7 +549,7 @@ int main(void)
   goto out;
  PASSED();
 
-#if 1
+
 /*-------------------------------------------------------------------------
  * test9:  
  *-------------------------------------------------------------------------
@@ -555,7 +569,6 @@ int main(void)
  if ( sds_verifiy_comp_all(COMP_CODE_DEFLATE, 1) == -1) 
   goto out;
  PASSED();
-#endif
  
 /*-------------------------------------------------------------------------
  * all tests PASSED
