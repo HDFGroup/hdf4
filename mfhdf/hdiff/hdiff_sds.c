@@ -75,7 +75,6 @@ int diff_sds(const char  *fname1,
  *-------------------------------------------------------------------------
  */
   
- sd1_id     = SDstart(fname1, DFACC_RDONLY);
  sds1_index = SDreftoindex(sd1_id,ref1);
  sds1_id    = SDselect(sd1_id,sds1_index);
  
@@ -83,7 +82,6 @@ int diff_sds(const char  *fname1,
  if (SDgetinfo(sds1_id,sds1_name,&rank1,dimsizes1,&dtype1,&nattrs1)==FAIL) {
    printf( "Failed to get info for SDS ref <%d>\n",ref1);
    SDendaccess(sds1_id);
-   SDend(sd1_id);
    return FAIL;
   }
 
@@ -93,7 +91,6 @@ int diff_sds(const char  *fname1,
  *-------------------------------------------------------------------------
  */
 
- sd2_id     = SDstart(fname2, DFACC_RDONLY);
  sds2_index = SDreftoindex(sd2_id,ref2);
  sds2_id    = SDselect(sd2_id,sds2_index);
  
@@ -101,7 +98,6 @@ int diff_sds(const char  *fname1,
  if (SDgetinfo(sds2_id,sds2_name,&rank2,dimsizes2,&dtype2,&nattrs2)==FAIL) {
    printf( "Failed to get info for SDS ref <%d>\n",ref2);
    SDendaccess(sds2_id);
-   SDend(sd2_id);
    return FAIL;
   }
 
@@ -295,12 +291,8 @@ int diff_sds(const char  *fname1,
 out:
  if (SDendaccess(sds1_id)<0)
   fprintf(stderr,"SDendaccess FAIL\n");
- if (SDend(sd1_id)<0)
-  fprintf(stderr,"SDend FAIL\n");
  if (SDendaccess(sds2_id)<0)
   fprintf(stderr,"SDendaccess FAIL\n");
- if (SDend(sd2_id)<0)
-  fprintf(stderr,"SDend FAIL\n");
  if (buf1) free(buf1);
  if (buf2) free(buf2);
 

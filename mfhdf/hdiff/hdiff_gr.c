@@ -73,7 +73,6 @@ int diff_gr( int32 file1_id,
  *-------------------------------------------------------------------------
  */
  
- gr1_id    = GRstart(file1_id);
  ri1_index = GRreftoindex(gr1_id,(uint16)ref1);
  ri1_id    = GRselect(gr1_id,ri1_index);
    
@@ -81,7 +80,6 @@ int diff_gr( int32 file1_id,
  if (GRgetiminfo(ri1_id,gr1_name,&ncomps1,&dtype1,&interlace_mode1,dimsizes1,&nattrs1)==FAIL) {
    printf( "Failed to get info for SDS ref <%d>\n",ref1);
    GRendaccess(ri1_id);
-   GRend(gr1_id);
    return FAIL;
   }
 
@@ -91,7 +89,6 @@ int diff_gr( int32 file1_id,
  *-------------------------------------------------------------------------
  */
  
- gr2_id    = GRstart(file2_id);
  ri2_index = GRreftoindex(gr2_id,(uint16)ref2);
  ri2_id    = GRselect(gr2_id,ri2_index);
    
@@ -99,7 +96,6 @@ int diff_gr( int32 file1_id,
  if (GRgetiminfo(ri2_id,gr2_name,&ncomps2,&dtype2,&interlace_mode2,dimsizes2,&nattrs2)==FAIL) {
    printf( "Failed to get info for SDS ref <%d>\n",ref2);
    GRendaccess(ri2_id);
-   GRend(gr2_id);
    return FAIL;
   }
 
@@ -282,12 +278,8 @@ int diff_gr( int32 file1_id,
 out:
  if (GRendaccess(ri1_id)<0)
   printf("GRendaccess returned -1");
- if (GRend(gr1_id)<0)
-  printf("GRend returned -1");
  if (GRendaccess(ri2_id)<0)
   printf("GRendaccess returned -1");
- if (GRend(gr2_id)<0)
-  printf("GRend returned -1");
  if (buf1) free(buf1);
  if (buf2) free(buf2);
 
