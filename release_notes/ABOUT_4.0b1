@@ -152,11 +152,12 @@ CONTENTS
             ./bug_fixed.txt.
 
 3. HDF4.0 Beta 1 has been tested on the following systems:
-SunOS 4.1.3, SunOS 5.3 (Solaris 2.3), SGI/IRIX5.3, Linux,
+SunOS 4.1.3, SunOS 5.3 (Solaris 2.3), Linux, SGI/IRIX5.3, 
+SGI Power Challenge/IRIX6.0 (32-bit mode only), 
 HP/UX 9.01, IBM RS6000/AIX (C only), C3880/ConvexOS,11.0, 
 DEC alpha/OSF (C only), DecStation/MIPSEL (C only), CM5,
-Cray C90, Free BSD 2.0, Windows NT. See the INSTALL file 
-at the top level of HDF4.0b1 for more details.
+Cray C90, Free BSD 2.0, and Windows NT. See the INSTALL 
+file at the top level of HDF4.0b1 for more details.
 
 4. Installing HDF4.0 Beta 1 on Windows NT and Windows 95
 Since Windows NT, Windows '95 (Chicago) and Windows 3.1 
