@@ -328,7 +328,8 @@ C**************************************************************
 
       integer affileinfo, afnumann, afannlist, afannlen
       integer afreadann, afstart, afend, afendaccess, hopen, hclose
-      integer hishdf
+      integer hishdf, hestring
+      character*80 error_message
 
       integer fileh, anh
       integer nflabs, nfdescs, nolabs, nodescs
@@ -353,6 +354,12 @@ C
           num_failed = num_failed + 1
           write(*,*) "HISHDF function failed"
       endif
+      ret = hestring(0, error_message)
+       if (ret .ne. 0) then
+          num_failed = num_failed + 1
+          write(*,*) "HESTRING function failed"
+      endif
+
 C
 C     Call hishdf with  file not being an hdf file. Call should return
 C     0 
