@@ -729,4 +729,5 @@ distclean::	port/distclean  \
 		nctest/distclean \
 		libsrc/distclean \
 		xdr/distclean \
-		c++/distclean
+		c++/distclean \
+		pablo/distclean
