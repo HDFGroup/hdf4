@@ -283,9 +283,9 @@ char *argv[];
         uint8 *pal_ptr=pal_buf;     /* temporary pointer into the palette */
 
         for(i=0; i<256; i++) {
-            red_comp[i]=*pal_ptr++;
-            green_comp[i]=*pal_ptr++;
-            blue_comp[i]=*pal_ptr++;
+            red_comp[i]   = *pal_ptr++;
+            green_comp[i] = *pal_ptr++;
+            blue_comp[i]  = *pal_ptr++;
           } /* end for */
       } /* end if */
     else {      /* no palette, use a greyscale palette */
