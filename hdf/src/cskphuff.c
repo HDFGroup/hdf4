@@ -190,6 +190,9 @@ HCIcskphuff_init(accrec_t * access_rec)
 #endif /* TESTING */
     for (k = 0; k < skphuff_info->skip_size; k++)
       {
+#ifdef UNICOS
+#pragma novector
+#endif /* UNICOS */
           for (i = 0; i < TWICEMAX; i++)    /* initialize the up pointers to point to their parent in the tree */
               skphuff_info->up[k][i] = i >> 1;
 

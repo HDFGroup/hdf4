@@ -28,13 +28,7 @@
 #ifndef _DFSD_H   /* avoid re-inclusion */
 #define _DFSD_H
 
-#include "hlimits.h"
 #include "hdf.h"
-
-#if 0
-#define DFS_MAXLEN 255  /*  Max length of label/unit/format strings */
-#define DFSD_MAXFILL_LEN 16     /* Current max length for fill_value space */
-#endif
 
 /* include numbertype and aid for 3.2   S. Xu   */
 /* structure to hold SDG info */

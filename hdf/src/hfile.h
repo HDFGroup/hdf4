@@ -21,58 +21,6 @@
 
 #include "hlimits.h"
 
-#if 0
-/* ------------------------------ Constants ------------------------------- */
-/* Maximum number of files (number of slots for file records) */
-#ifndef MAX_FILE
-#if defined PC && !(defined PC386 || defined UNIX386)
-#   define MAX_FILE 8
-#else  /* !PC */
-#   define MAX_FILE 64
-#endif /* !PC */
-#endif /* MAX_FILE */
-
-/* Maximum length of external filename(s) (used in hextelt.c) */
-#ifndef MAX_PATH_LEN
-#if defined PC && !(defined PC386 || defined UNIX386)
-#define MAX_PATH_LEN 256
-#else  /* non-DOS systems */
-#define MAX_PATH_LEN 1024
-#endif /* PATH_LEN defines */
-#endif /* MAX_PATH_LEN */
-
-/* Maximum number of access elements */
-#ifndef MAX_ACC
-#   define MAX_ACC 256
-#endif /* MAX_ACC */
-
-/* ndds (number of dd's in a block) default,
-   so user need not specify */
-#ifndef DEF_NDDS
-#   define DEF_NDDS 16
-#endif /* DEF_NDDS */
-
-/* ndds minimum, to prevent excessive overhead of very small dd-blocks */
-#ifndef MIN_NDDS
-#   define MIN_NDDS 4
-#endif /* MIN_NDDS */
-
-/* largest number that will fit into 16-bit word ref variable */
-#define MAX_REF ((uint16)65535)
-
-/* length of block and number of blocks for converting 'appendable' data */
-/* elements into linked blocks (will eventually be replaced by the newer */
-/* variable-length blocks */
-#define HDF_APPENDABLE_BLOCK_LEN 4096
-#define HDF_APPENDABLE_BLOCK_NUM 16
-
-/* hashing information */
-#define HASH_MASK       0xff
-#define HASH_BLOCK_SIZE 100
-
-#endif /* if 0 */
-
-
 /* Magic cookie for HDF data files */
 #define MAGICLEN 4  /* length */
 #define HDFMAGIC "\016\003\023\001"     /* ^N^C^S^A */
@@ -99,7 +47,7 @@
 #define LIBVER_RELEASE  0
 #define LIBVER_STRING   "NCSA HDF Version 4.0 Release Beta 2, Nov. 2, 1995"
 #define LIBVSTR_LEN    80   /* length of version string  */
-#define LIBVER_LEN  92  /* 4+4+4+80 = 92 */
+#define LIBVER_LEN  92      /* 4+4+4+80 = 92 */
 /* end of version tags */
 
 /* -------------------------- File I/O Functions -------------------------- */
@@ -813,13 +761,7 @@ extern      "C"
 }
 #endif                          /* c_plusplus || __cplusplus */
 
-#ifndef QAK
-#define CHECKQAK(file_rec) {HI_FLUSH(file_rec->file); if(file_rec->f_cur_off!=HI_TELL(file_rec->file)) printf("Ack! file=%s, line=%d, cur_off=%ld, ftell=%ld\n",__FILE__,__LINE__,(long)file_rec->f_cur_off,(long)ftell(file_rec->file));}
-#else /* QAK */
-#define CHECKQAK(file_rec) {}
-#endif /* QAK */
-
-#define DISKBLOCK_DEBUG
+/* #define DISKBLOCK_DEBUG */
 #ifdef DISKBLOCK_DEBUG
 
 #ifndef HFILE_MASTER

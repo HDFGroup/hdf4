@@ -12,6 +12,27 @@
 
 /* $Id$ */
 
+/* Useful macros, which someday might become actuall functions */
+/*
+ * macros for VSinquire
+ * all these macros should be public for users
+ */
+#define VSQuerycount(vs, count) \
+        (VSinquire (vs, (int32 *) count, (int32*) NULL, (char*) NULL, (int32*) NULL, (char*) NULL))
+
+#define VSQueryinterlace(vs, intr) \
+        (VSinquire (vs, (int32 *) NULL, (int32*) intr, (char*) NULL, (int32*) NULL, (char*) NULL))
+
+#define VSQueryfields(vs, flds) \
+        (VSinquire (vs, (int32 *) NULL, (int32*) NULL, (char*) flds, (int32*) NULL, (char*) NULL))
+
+#define VSQueryvsize(vs, size) \
+        (VSinquire (vs, (int32 *) NULL, (int32*) NULL, (char*) NULL, (int32*) size, (char*) NULL))
+
+#define VSQueryname(vs, name) \
+        (VSinquire (vs, (int32 *) NULL, (int32*) NULL, (char*) NULL, (int32*) NULL, (char*) name))
+
+
 #if defined c_plusplus || defined __cplusplus
 extern      "C"
 {

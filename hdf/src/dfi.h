@@ -41,16 +41,11 @@
 /* modify this line if structures cannot be read/written as is */
 #undef  DF_STRUCTOK     /* leave it this way - hdfsh expects it */
 
-#ifdef PERM_OUT
-/* Current version number */
-#define DFVERSION   3.20
-#endif /* PERM_OUT */
-
 /*--------------------------------------------------------------------------*/
 /*                      Machine dependencies                                */
 /*--------------------------------------------------------------------------*/
 
-#ifdef IRIS4
+#ifdef IRIX
 #undef DF_STRUCTOK
 #include <sys/types.h>
 #include <sys/file.h>   /* for unbuffered i/o stuff */
@@ -69,9 +64,9 @@
 #endif /*DF_STRUCTOK */
 #define DF_CREAT(name, prot) creat(name, prot)
 #ifndef DF_MT
-#define DF_MT   DFMT_IRIS4
+#define DF_MT   DFMT_IRIX
 #endif /* DF_MT  */
-#endif /*IRIS4 */
+#endif /*IRIX */
 
 #ifdef IBM6000  /* NOTE: IBM6000 defines are same as for SUN */
 #if ! defined mc68010 && ! defined mc68020 && ! defined mc68030
@@ -256,53 +251,6 @@
 #define DF_TBUF
 #define DF_TBUFSZ   10000   /* buffer size */
 #endif /*DF_DYNAMIC */
-
-    /* if reading/writing structures not ok, need buffer for conversion */
-#ifdef PERM_OUT
-#ifndef DF_TBUF
-#ifndef DF_STRUCTOK
-#define DF_TBUF
-#define DF_TBUFSZ   512     /* buffer size can be smaller */
-#endif /*DF_STRUCTOK */
-#endif /*DF_TBUF */
-
-/*
-   MACRO FCALLKEYW for any special fortran-C stub keyword
-
-   MacIntosh MPW LS-fortran needs pascal since it can interface best with
-   pascal functions
- */
-#if defined(MAC)    /* with LS FORTRAN */
-#   define FCALLKEYW    pascal
-#else  /* !MAC */
-#   define FCALLKEYW    /*NONE */
-#endif
-
-#ifndef PC
-#ifndef MAC
-#ifndef IRIS4
-#ifndef IBM6000
-#ifndef CONVEX
-#ifndef UNICOS
-char       *strncpy();
-char       *strcpy();
-char       *memcpy();
-char       *malloc();
-#endif /* !UNICOS */
-#endif /* !CONVEX */
-#endif /* !IBM6000 */
-#endif /* !IRIS4 */
-#endif /* !MAC */
-#endif /* !PC */
-#endif /* PERM_OUT */
-
-/*--------------------------------------------------------------------------*/
-/*                          Size parameters                                 */
-#ifdef PERM_OUT
-#define DF_MAXDFS           32  /* How many DF's can be open at once */
-#define DF_DEFAULTDDS       16  /* How many DD's a file has by default */
-#define DF_MAXFNLEN         256     /* maximum length of filename parameters */
-#endif /* PERM_OUT */
 
 #ifndef FILE
 #include <stdio.h>

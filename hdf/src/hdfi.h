@@ -33,7 +33,7 @@
 /*--------------------------------------------------------------------------*/
 #define     DFMT_SUN            0x1111
 #define     DFMT_ALLIANT        0x1111
-#define     DFMT_IRIS4          0x1111
+#define     DFMT_IRIX           0x1111
 #define     DFMT_APOLLO         0x1111
 #define     DFMT_IBM6000        0x1111
 #define     DFMT_HP9000         0x1111
@@ -318,10 +318,10 @@ typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 #endif /* HP9000 */
 
 
-#if defined(IRIS4) || defined(sgi) || defined(__sgi__) || defined(__sgi)
+#if defined(IRIX) || defined(IRIS4) || defined(sgi) || defined(__sgi__) || defined(__sgi)
 
-#ifndef IRIS4
-#define IRIS4
+#ifndef IRIX
+#define IRIX
 #endif
 
 #ifdef GOT_MACHINE
@@ -337,7 +337,7 @@ Please check your Makefile.
 #include <memory.h>
 #endif /* __GNUC__ */
 #include <sys/file.h>               /* for unbuffered i/o stuff */
-#define DF_MT              DFMT_IRIS4
+#define DF_MT              DFMT_IRIX
 typedef void               VOID;
 typedef void               *VOIDP;
 typedef char               *_fcd;
@@ -373,7 +373,7 @@ typedef int                intf;     /* size of INTEGERs in Fortran compiler */
 #define HAVE_STDC
 #define INCLUDES_ARE_ANSI
 
-#endif /* IRIS4 */
+#endif /* IRIX */
 
 #if defined(UNICOS) || defined(_UNICOS)
 
@@ -1119,28 +1119,12 @@ extern int (*DFKnumout)(void _HUGE * source, void _HUGE * dest, uint32 num_elm,
             uint32 source_stride,uint32 dest_stride);
 #     endif /* DFKMASTER */
 
-#if 0
-/*****************************************************************
-*  Create DFtbuf: a temporary buffer used when a small amount of
-*  memory is needed, as when small conversions are done
-******************************************************************/
-#define DF_TBUFSZ       512     /* buffer size can be smaller */
-#if 0 /* replaced with dynamic memory calls */
-#ifdef  HMASTER
-    int    FAR int_DFtbuf[DF_TBUFSZ]; /* int declaration to force word boundary */
-    uint8  FAR *DFtbuf = (uint8 *) int_DFtbuf;
-#else /* !HMASTER */
-extern uint8 FAR *DFtbuf;
-#endif /*HMASTER*/
-#endif 
-#endif /* if 0 */
-
 /*----------------------------------------------------------------
 ** MACRO FCALLKEYW for any special fortran-C stub keyword
 **
 ** MacIntosh MPW LS-fortran needs pascal since it can interface
 **  best with pascal functions.
-** Microsoft C and Fortran need _fortran for Fortran callable C
+** Microsoft C and Fortran need __fortran for Fortran callable C
 **  routines.
 **
 ** MACRO FRETVAL for any return value from a fortran-C stub function

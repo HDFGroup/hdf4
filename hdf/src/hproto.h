@@ -15,6 +15,44 @@
 #ifndef _H_PROTO
 #define _H_PROTO
 
+/* Usefull macros, which someday might become actual functions */
+/* Wrappers for Hinquire. feb-2-92 */
+#define HQueryfileid(aid, fileid)     \
+  (Hinquire ((int32)   aid,  (int32*) fileid, (uint16*) NULL,\
+             (uint16*) NULL, (int32*) NULL,   (int32*)  NULL,\
+             (int32*)  NULL, (int16*) NULL,   (int16*)  NULL))
+
+#define HQuerytagref(aid, tag, ref) \
+  (Hinquire ((int32)   aid,  (int32*) NULL,   (uint16*) tag,\
+             (uint16*) ref,  (int32*) NULL,   (int32*)  NULL,\
+             (int32*)  NULL, (int16*) NULL,   (int16*)  NULL))
+
+#define HQuerylength(aid, length)     \
+  (Hinquire ((int32)    aid, (int32*) NULL, (uint16*) NULL,   \
+             (uint16*) NULL, (int32*) length,   (int32*)  NULL,   \
+             (int32*)  NULL, (int16*) NULL, (int16*)  NULL))
+
+#define HQueryoffset(aid, offset)     \
+  (Hinquire ((int32)    aid, (int32*) NULL, (uint16*) NULL,   \
+             (uint16*) NULL, (int32*) NULL,     (int32*)  offset, \
+             (int32*)  NULL, (int16*) NULL,     (int16*)  NULL))
+
+#define HQueryposition(aid, position) \
+  (Hinquire ((int32)    aid, (int32*) NULL, (uint16*) NULL,   \
+             (uint16*) NULL, (int32*) NULL, (int32*)  NULL,   \
+             (int32*) position, (int16*) NULL,  (int16*)  NULL))
+
+#define HQueryaccess(aid, access)     \
+  (Hinquire ((int32)    aid,    (int32*) NULL,   (uint16*) NULL,  \
+             (uint16*) NULL,    (int32*) NULL,   (int32*)  NULL,  \
+             (int32*)   NULL,   (int16*) access, (int16*)  NULL))
+
+#define HQueryspecial(aid, special) \
+  (Hinquire ((int32)    aid,    (int32*) NULL,  (uint16*) NULL,   \
+             (uint16*) NULL,    (int32*) NULL,  (int32*)  NULL,   \
+             (int32*)   NULL,   (int16*) NULL,  (int16*)  special))
+
+
 #if defined c_plusplus || defined __cplusplus
 extern      "C"
 {

@@ -36,13 +36,6 @@
 /* Include file for Threaded, Balanced Binary Tree implementation */
 #include "tbbt.h"
 
-#if 0
-/* maximum number of files (number of slots for file records) */
-#ifndef MAX_VFILE
-#   define MAX_VFILE MAX_FILE
-#endif
-#endif
-
 /*
    * definition of the 2 data elements of the vset.
  */
@@ -87,10 +80,6 @@ typedef struct dyn_write_struct
       intn        n;        /* S actual # fields in element */
       int16       ivsize;   /* S size of element as stored in vdata */
       char        **name;   /* S name of each field */
-
-#ifdef QAK
-      int16       *len;     /* S length of each fieldname */
-#endif /* QAK */
       int16       *type;    /* S field type */
       int16       *off;     /* S field offset in element in vdata */
       int16       *isize;   /* S internal (HDF) size [incl order] */
