@@ -20,6 +20,27 @@
 # Right now the JPEG has still needs a seperate makefile fragmenet
 # So we run configure here
 host_libs="hdf/jpeg"
+#echo "without options are $withoutoptions"
+# without options for packages e.g 'jpeg'
+for wooption in $withoutoptions ; do
+if [ "$wooption" = "--without-jpeg" ] ; then 
+   host_libs=""
+fi
+done
+
+host_libs="$host_libs hdf/fmpool"
+#echo "enabled options are $enableoptions"
+# enabled options 'fmpool', 'pablo'
+#for eoption in $enableoptions ; do
+#if [ "$eoption" = "--enable-pablo" ] ; then 
+#   host_libs="$host_libs hdf/pablo"
+#fi
+#if [ "$eoption" = "--enable-fmpool" ] ; then 
+#   host_libs="$host_libs hdf/fmpool"
+#fi
+#done
+
+#echo "host libs are $host_libs"
 
 ## We assign ${configdirs} this way to remove all embedded newlines.  This
 ## is important because configure will choke if they ever get through.
@@ -27,7 +48,7 @@ host_libs="hdf/jpeg"
 configdirs=`echo ${host_libs}`
 
 #Directories we want configure to generate Makefiles from Makefile.in
-subdirs="hdf man hdf/src hdf/test hdf/util mfhdf mfhdf/xdr mfhdf/port mfhdf/libsrc mfhdf/dumper mfhdf/nctest mfhdf/ncgen mfhdf/ncdump mfhdf/fortran mfhdf/doc"
+subdirs="hdf man hdf/src hdf/test hdf/util hdf/pablo mfhdf mfhdf/xdr mfhdf/port mfhdf/libsrc mfhdf/dumper mfhdf/nctest mfhdf/ncgen mfhdf/ncdump mfhdf/fortran mfhdf/doc"
 
 ################################################################################
 
