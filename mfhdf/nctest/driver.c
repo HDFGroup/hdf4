@@ -22,6 +22,9 @@
 FILE *dbg_file;
 #endif
 
+#ifdef macintosh
+    #include <LowMem.h>
+#endif
 #if defined __MWERKS__
 #include <console.h>
 #endif
@@ -36,6 +39,24 @@ char *argv[];
 {
     static char testfile[] = "test.nc";
 
+#ifdef macintosh
+	Ptr	currStackBase, newApplLimit, currApplLimit, currHeapEnd;
+
+
+	//	Expand the stack.  hdf_write_var( ) causes the stack to collide with
+	//	the 68K application heap when only the default stack size is used.
+	currStackBase = LMGetCurStackBase( );
+	newApplLimit = (Ptr) ( (long) currStackBase - 65536L );
+	currApplLimit = GetApplLimit( );
+	if ( newApplLimit > currApplLimit )		//	If we're about to shrink the stack, ...
+		 newApplLimit = currApplLimit;		//	... then don't.
+
+	currHeapEnd = LMGetHeapEnd( );
+	if ( newApplLimit < currHeapEnd )		//	If we're about overlap the stack and heap,
+		 newApplLimit = currHeapEnd;		//	... then don't.
+
+	SetApplLimit( newApplLimit );
+#endif
 #if defined __MWERKS__
     argc = ccommand(&argv);
 #endif
@@ -129,3 +150,4 @@ char *argv[];
 #endif
     return EXIT_SUCCESS;
 }
+
