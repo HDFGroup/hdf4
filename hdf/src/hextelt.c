@@ -134,21 +134,32 @@ USAGE
    int32  len;          IN: current len of element if already in
                             ext file (see desc below)
 RETURNS
-   returns AID to external element or FAIL
+   returns AID to external element if succeed, else FAIL
 DESCRIPTION
-   Create a data element in an external file.  If that 
-   file already exists, we will simply *modify* that file, 
-   not delete it and start over.  Offset and start_len 
-   are for encapsulating data that already exists in a 
-   seperate file so that it can be referenced from the HDF file.
+   Create a data element in an external file starting at the location
+   of _offset_.  If the external file does not exist, it is created.
+   If it already exists, we will simply open it, not delete it and
+   start over.
 
-   If the objext we are writing out already exists in an
-   HDF file and is "promoted" then the start_len is ignored
-   since we already know its current length.  However, offset
-   is still respected
+   If the data element does not exist, it is created in reference to
+   the external file starting at location _offset_.  Its data length is
+   set as _len_.  If the data element already exists, it is "promoted"
+   as an external element and its data is copied to the external file,
+   again, starting at location _offset_.  In this case, since the
+   length of the existing element is defined, it is set as the length
+   of the external element.  The given _len_ value is ignored.
 
-   Return an AID to the newly created external element, FAIL
-   on error.
+   Currently, all ordinary data element plus link-block and external
+   elements can be set as an external element.  (For the case of
+   setting an existing external element to a new external element has
+   the effect of copying the data of the element from an old external
+   file to a new one.)
+
+   All further reference (e.g., read, write, seek) to this external
+   element applies to the content of the external file.
+
+   The AID which refers to this new external element, is returned upon
+   successiful execution.  FAIL is returned if any error is encountered.
 
 --------------------------------------------------------------------------*/
 int32
@@ -193,11 +204,31 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
       {
 	  data_dd = &(data_block->ddlist[data_idx]);
 	  if (SPECIALTAG(data_dd->tag))
-	    {
-		/* abort since we cannot convert the data element to an external
-		   data element */
-		access_rec->used = FALSE;
-		HGOTO_ERROR(DFE_CANTMOD, FAIL);
+	   {
+		sp_info_block_t sp_info;
+		int32	aid, retcode;
+
+		aid = Hstartread(file_id, data_dd->tag, data_dd->ref);
+		retcode = HDget_special_info(aid, &sp_info);
+		Hendaccess(aid);
+		if ((retcode == FAIL) || (sp_info.key == FAIL)){
+		    HGOTO_ERROR(DFE_CANTMOD, FAIL);
+		}
+		
+		switch(sp_info.key)
+		{
+		    case SPECIAL_LINKED:
+		    case SPECIAL_EXT:
+			/* we can proceed with these types of special elements */
+			break;
+		    case SPECIAL_COMP:
+		    default:
+			/* abort since we cannot convert the data element to
+			   an external data element */
+			access_rec->used = FALSE;
+			HGOTO_ERROR(DFE_CANTMOD, FAIL);
+			break;
+		} /* switch */
 	    }
       }
     else
