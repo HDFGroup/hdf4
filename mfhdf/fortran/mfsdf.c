@@ -191,8 +191,8 @@ nscginfo(id, name, rank, dimsizes, nt, nattr, len)
 
     status = SDgetinfo((int32) *id, iname, &rank32, cdims, &nt32, &nattr32);
 
-    for(i = 0; i < *rank; i++)
-        dimsizes[i] = cdims[*rank - i - 1];
+    for(i = 0; i < rank32; i++)
+        dimsizes[i] = cdims[rank32 - i - 1];
 
     HDpackFstring(iname,  _fcdtocp(name),  *len);
 
