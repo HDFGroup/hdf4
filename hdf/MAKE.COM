@@ -2,7 +2,10 @@
 ! # $Header$
 ! #
 ! # $Log$
-! # Revision 1.5  1993/07/22 21:54:38  sxu
+! # Revision 1.6  1993/09/17 14:13:46  koziol
+! # Updated the makefiles a little
+! #
+! # Revision 1.5  1993/07/22  21:54:38  sxu
 ! # Set path name for 3.3b2
 ! #
 ! # Revision 1.4  1993/05/17  20:42:13  sxu

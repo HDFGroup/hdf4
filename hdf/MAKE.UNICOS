@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.6  1993/01/14 17:26:43  georgev
+# Revision 1.7  1993/09/17 14:13:50  koziol
+# Updated the makefiles a little
+#
+# Revision 1.6  1993/01/14  17:26:43  georgev
 # Upated headers in Makefiles to reflect HDF3.3.
 #
 # Revision 1.5  1992/08/26  16:25:18  sxu
@@ -155,6 +158,10 @@ utilities:
 tests:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
           SUBDIRS="test" _sub
+
+testnofortran:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
+          SUBDIRS="src test" _sub message 
 
 #install:      $(INSTALL_DIRS)
 #	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
