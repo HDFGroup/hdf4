@@ -47,11 +47,7 @@
  */
 
 #define FIELDNAMELENMAX    128  /* fieldname   : 16 chars max */
-#if defined macintosh || defined(MAC) || defined (__MWERKS__) || defined SYMANTEC_C
-#define VSFIELDMAX          64   /* max no of fields per vdata */
-#else  /* !macintosh */
 #define VSFIELDMAX         256  /* max no of fields per vdata */
-#endif /* !macintosh */
 #define VSNAMELENMAX        64  /* vdata name  : 64 chars max */
 #define VGNAMELENMAX        64  /* vgroup name : 64 chars max */
 
