@@ -196,30 +196,40 @@ tbbtdless(TBBT_TREE * tree, VOIDP key, TBBT_NODE ** pp)
 
 /* tbbtindx -- Look up the Nth node (in key order) */
 /* Returns a pointer to the `indx'th node (or NULL) */
-/* Added NULL check for 'ptr' in while loop to 
-   prevent endless loop condition */
+/* Bugs(fixed):
+   Added NULL check for 'ptr' in while loop to 
+     prevent endless loop condition. 
+   Fixed bug where we subtracted children count from the wrong side of the
+    tree. */
 TBBT_NODE  *
 tbbtindx(TBBT_NODE * root, int32 indx)
 {
-    TBBT_NODE  *ptr = root;
+  TBBT_NODE  *ptr = root;
 
-    if (NULL == ptr || indx < 0)
-        return (NULL);
-    while (ptr != NULL && indx != (int32) LeftCnt(ptr))
-      {
-          if (indx < (int32) LeftCnt(ptr))
-            {
+  indx += 1; /* index is Zero based */
+  if (NULL == ptr || indx < 1)
+    return (NULL);
+  /* Termination condition is if the index equals the number of children on
+     out left plus the current node */
+  while (ptr != NULL && indx != ((int32) LeftCnt(ptr)) + 1 )
+    {
+      if (indx <= (int32) LeftCnt(ptr))
+        {
 #if 0
-                indx -= LeftCnt(ptr);  /* ??....bug */
+          indx -= LeftCnt(ptr);  /* ??....bug */
 #endif
-                ptr = ptr->Lchild;
-            }
-          else if (HasChild(ptr, RIGHT))
-              ptr = ptr->Rchild;
-          else
-              return (NULL);    /* Only `indx' or fewer nodes in tree */
-      }
-    return (ptr);
+          ptr = ptr->Lchild;
+        }
+      else if (HasChild(ptr, RIGHT))
+        { /* subtract children count from leftchild plus current node when
+             we descend into a right branch */
+          indx -= LeftCnt(ptr) + 1 ;  
+          ptr = ptr->Rchild;
+        }
+      else
+        return (NULL);    /* Only `indx' or fewer nodes in tree */
+    }
+  return (ptr);
 }
 
 /* swapkid -- Often refered to as "rotating" nodes.  ptr and ptr's `side'
