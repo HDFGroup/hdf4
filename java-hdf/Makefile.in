@@ -133,8 +133,10 @@ install-info: install-javadocs
 install-doc: install-javadocs
 
 install-javadocs: javadocs
-	mkdir -p $(DOCDIR);
+	-mkdir -p $(DOCDIR);
 	$(JAVADOC) -sourcepath $(CLASSPATH) -d $(DOCDIR) $(JAVADOC_FLAGS) $(PACKAGES)
+	-mkdir -p $(DOCDIR)/images;
+	cp docs/images/*.gif $(DOCDIR)/images;
 
 javadocs:
 	$(JAVADOC) -sourcepath $(CLASSPATH) -d ./docs $(JAVADOC_FLAGS) $(PACKAGES)
