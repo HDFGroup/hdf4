@@ -4439,6 +4439,15 @@ const VOID *datap;
         goto done;
       }
 
+    /* Check to see if data exists? i.e. may need to create a ref for SDS 
+    *  This will only occure if an empty SDS is created and then opened
+    *  again for writing. */
+    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FALSE) 
+      {
+        status = FAIL;
+        goto done;
+      }
+
     /* inquire about element */
     status = Hinquire(var->aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
     if (status != FAIL)
