@@ -63,6 +63,10 @@ MACHINE=SUN
 CC= gcc
 CFLAGS= -ansi -D${MACHINE} -DCM5 -O
 
+# Define your C* compiler and flags
+CS= cs
+CSFLAGS= -D${MACHINE} -DCM5
+
 # Define your FORTRAN compiler
 FC= f77
 FFLAGS=
@@ -95,6 +99,8 @@ RMFLAGS= -f
 HDF_FLAGS       = \
         CC="$(CC)" \
         CFLAGS="$(CFLAGS)" \
+        CS="$(CS)" \
+        CSFLAGS="$(CSFLAGS)" \
         FC="$(FC)" \
         FFLAGS="$(FFLAGS)" \
         RANLIB="$(RANLIB)" \
