@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.19  1993/08/28 00:32:04  georgev
-Fixed some things that got blown away during the PC merge.
+Revision 1.20  1993/08/28 00:44:09  georgev
+Changed long fortran slab name to short ones.
 
+ * Revision 1.19  1993/08/28  00:32:04  georgev
+ * Fixed some things that got blown away during the PC merge.
+ *
  * Revision 1.18  1993/08/16  21:45:33  koziol
  * Wrapped in changes for final, working version on the PC.
  *
@@ -1685,9 +1688,9 @@ ndfsdiwref(filename, fnlen, ref)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfsdsfill(void *fill_value)
+ndssfill(void *fill_value)
 #else
-ndfsdsfill(fill_value)
+ndssfill(fill_value)
     void *fill_value;
 #endif /* PROTOTYPE */
 {
@@ -1695,7 +1698,7 @@ ndfsdsfill(fill_value)
 }
 
 /*-----------------------------------------------------------------------------
- * Name:    dfsdgfill
+ * Name:    dsgfill
  * Purpose: Call DFSDgetfillvalue to get fill value for SDS
  * Inputs:  fill_value: fill value of SDS
  * Returns: 0 on success, -1 on failure with DFerror set
@@ -1705,9 +1708,9 @@ ndfsdsfill(fill_value)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfsdgfill(void *fill_value)
+ndsgfill(void *fill_value)
 #else
-ndfsdgfill(fill_value)
+ndsgfill(fill_value)
     void *fill_value;
 #endif /* PROTOTYPE */
 {
@@ -1746,7 +1749,7 @@ ndfsdisslab(filename, fnlen)
 }
 
 /*-----------------------------------------------------------------------------
- * Name:    dfsdwslab
+ * Name:    dswslab
  * Purpose: Call DFSDwriteslab to write slab to file
  * Inputs:  start: array of size = rank of data, containing start of slab
  *          stride: array for subsampling
@@ -1759,10 +1762,10 @@ ndfsdisslab(filename, fnlen)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfsdwslab(intf start[], intf stride[],
+ndswslab(intf start[], intf stride[],
          intf count[], void *data)
 #else
-ndfsdwslab(start, stride, count, data)
+ndswslab(start, stride, count, data)
     intf start[];
     intf stride[];
     intf count[];
@@ -1806,7 +1809,7 @@ ndfsdwslab(start, stride, count, data)
 }
 
 /*-----------------------------------------------------------------------------
- * Name:    dfsdeslab
+ * Name:    dseslab
  * Purpose: End slab writes to SDS, Write out NDG
  * Inputs:  None
  * Returns: 0 on success, FAIL on failure
@@ -1817,9 +1820,9 @@ ndfsdwslab(start, stride, count, data)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfsdeslab()
+ndseslab()
 #else
-ndfsdeslab()
+ndseslab()
 #endif /* PROTOTYPE */
 {
     return DFSDendslab();
