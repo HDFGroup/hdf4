@@ -234,7 +234,7 @@ static TBBT_NODE *swapkid( root, ptr, side )
     deep[0]= Max(0,deep[2]) + 1 - Delta(ptr,side);
     kid->Parent= ptr->Parent;
     ptrflg= SetFlags( ptr, side, Cnt(ptr,side) - Cnt(kid,side) - 1,
-            deep[1]-deep[0], HasChild(ptr,Other(side)) && HasChild(kid,Other(side)) );
+            /*deep[1]-deep[0] */ deep[0]-deep[1], HasChild(ptr,Other(side)) && HasChild(kid,Other(side)) );
     if(  HasChild(kid,Other(side))  ) {
 #ifdef QAK
 printf("swapkid(): Real Child\n");
