@@ -33,7 +33,9 @@
 #include "tbbt.h"
 #endif /* use tbbt */
 
-/* enumerated types of the varous annotation types */
+#if 0
+/* enumerated types of the varous annotation types 
+* NOTE: moved to hdf.h */
 typedef enum 
 { 
     AN_DATA_LABEL = 0, /* Data label */
@@ -41,6 +43,7 @@ typedef enum
     AN_FILE_LABEL,     /* File label */
     AN_FILE_DESC       /* File description */
 } ann_type;
+#endif
 
 /* This sturcture is used to find which file the annotation belongs to
  * and use the subsequent file specific annotation 'key' to find the 
@@ -105,6 +108,37 @@ PRIVATE intn    num_anns   = 0;    /* total number of annotations
 
 #else /* !MFAN_C */
 /* We dont't EXPORT any global variables */
+
+#ifndef MFAN_FNAMES
+#   define  MFAN_FNAMES
+#ifdef DF_CAPFNAMES
+#  define nacstart      FNAME(ACSTART)
+#  define naffileinfo   FNAME(AFFILEINFO)
+#  define nafend        FNAME(AFEND)
+#  define nafcreate     FNAME(AFCREATE)
+#  define naffcreate    FNAME(AFFCREATE)
+#  define nafselect     FNAME(AFSELECT)
+#  define nafnumann     FNAME(AFNUMANN)
+#  define nafannlist    FNAME(AFANNLIST)
+#  define nafannlen     FNAME(AFANNLEN)
+#  define nafwriteann   FNAME(AFWRITEANN)
+#  define nafreadann    FNAME(AFREADANN)
+#  define nafendaccess  FNAME(AFENDACCESS)
+#else  /* !DF_CAPFNAMES */
+#  define nacstart      FNAME(acstart)
+#  define naffileinfo   FNAME(affileinfo)
+#  define nafend        FNAME(afend)
+#  define nafcreate     FNAME(afcreate)
+#  define naffcreate    FNAME(affcreate)
+#  define nafselect     FNAME(afselect)
+#  define nafnumann     FNAME(afnumann)
+#  define nafannlist    FNAME(afannlist)
+#  define nafannlen     FNAME(afannlen)
+#  define nafwriteann   FNAME(afwriteann)
+#  define nafreadann    FNAME(afreadann)
+#  define nafendaccess  FNAME(afendaccess)
+#endif /* DF_CAPFNAMES */
+#endif /* MFAN_FNAMES */
 
 #endif /* !MFAN_C */
 
