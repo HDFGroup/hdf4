@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/08/26 19:44:25  chouck
-Moved HDgettagname() into hkit.c and added calibration tag
+Revision 1.3  1992/09/11 16:43:24  chouck
+Minor Mac fix
 
+ * Revision 1.2  1992/08/26  19:44:25  chouck
+ * Moved HDgettagname() into hkit.c and added calibration tag
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -3212,13 +3215,13 @@ mopen(char *name, intn flags)
 {
     file_t volref,rn;
     OSErr result;
-    FInfo *fndrInfo;
+    FInfo fndrInfo;
 
     GetVol(NULL,&volref);
     
     if (flags & DFACC_CREATE)   { /* we need to create it */
         
-        result = getfinfo(name, volref, fndrInfo); 
+        result = getfinfo(name, volref, &fndrInfo); 
         if (result != fnfErr)
             if( noErr != (result = fsdelete(name, volref)))
                 return FAIL;
