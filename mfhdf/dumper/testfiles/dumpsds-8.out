@@ -5,13 +5,19 @@ File name: swf32_fileattr.hdf
 
 File attributes:
 	 Attr0: Name = File purpose
-		Type = 8-bit signed char 
-		Count= 37
-		Value = For testing dumpsds SD file attribute
+		 Type = 8-bit signed char 
+		 Count= 37
+		 Value = For testing dumpsds SD file attribute
 	 Attr1: Name = File contents
-		Type = 8-bit signed char 
-		Count= 14
-		Value = Some data sets
+		 Type = 8-bit signed char 
+		 Count= 14
+		 Value = Some data sets
+	 Attr2: Name = Test clean format
+		 Type = 8-bit signed char 
+		 Count= 65
+		 Value = A tab <\011>, a CR <\012>, several nulls 
+                         <\000\000\000\000\000\000>, and one more 
+                         tab <\011>
 
 Dimension Variable Name = fakeDim0
 	 Index = 0
