@@ -2795,7 +2795,7 @@ test_mgr_interlace(int flag)
 
 /****************************************************************
 **
-**  test_mgr_lut(): Multi-file Raster LUT/Palette Test Routine
+**  test_mgr_lut_a(): Multi-file Raster LUT/Palette Test Routine
 ** 
 **  V. Palette Functions
 **      A. GRgetlutid w/GRgetlutinfo
@@ -2806,7 +2806,7 @@ test_mgr_interlace(int flag)
 ** 
 ****************************************************************/
 static void
-test_mgr_lut(int flag)
+test_mgr_lut_a(int flag)
 {
     int32 fid;              /* hdf file id */
     int32 grid;             /* grid for the interface */
@@ -2840,7 +2840,7 @@ test_mgr_lut(int flag)
         int32 n_attr;             /* number of attributes with each image */
         uint8 *tmp_data;          /* temporary buffer pointer */
         VOIDP pal_data;           /* buffer for the palette data */
-	uint16 pal_ref;		  /* reference number of the palette */
+        uint16 pal_ref;		  /* reference number of the palette */
 
         /* Attach to the image */
         riid=GRselect(grid,0);
@@ -2852,7 +2852,7 @@ test_mgr_lut(int flag)
         CHECK(ret,FAIL,"GRgetiminfo");
 
         lutid=GRgetlutid(riid,0);
-	CHECK(lutid,FAIL,"GRgetlutid");
+        CHECK(lutid,FAIL,"GRgetlutid");
         
         /* Get the Palette information */
         ret=GRgetlutinfo(lutid,&pal_ncomp,&pal_nt,&pal_il,&pal_entries);
@@ -2935,11 +2935,11 @@ test_mgr_lut(int flag)
 
 	/* This lutid should yield a valid reference number, which is not 0 - BMR */ 
         pal_ref=GRluttoref(lutid);
-	CHECK(pal_ref,0,"GRluttoref");
+        CHECK(pal_ref,0,"GRluttoref");
 
 	/* Now, this bogus lutid should cause GRluttoref to return a 0 - BMR */
         pal_ref=GRluttoref(0);
-	VERIFY(pal_ref,0,"GRluttoref");
+        VERIFY(pal_ref,0,"GRluttoref");
         
         /* End access to the image */
         ret=GRendaccess(riid);
@@ -2953,6 +2953,134 @@ test_mgr_lut(int flag)
     /* close the file */
     ret=Hclose(fid);
     CHECK(ret,FAIL,"Hclose");
+}   /* end test_mgr_lut_a() */
+
+#define GR_LUTBFILE "gr2.hdf"
+#define GR_LUTB_X_LENGTH 15 
+#define GR_LUTB_Y_LENGTH 10 
+
+/****************************************************************
+**
+**  test_mgr_lut_b(): Multi-file Raster LUT/Palette Test Routine
+** 
+**  V. Palette Functions - Test for writing palette with no image data to
+**      file.
+** 
+****************************************************************/
+static void
+test_mgr_lut_b(int flag)
+{
+	int32 gr_id, ri_id, file_id, pal_id, status, num_entries, ri_idx=0;
+	int32 data_type, ncomp, num_comp, interlace_mode; 
+	uint8 palette_data[256*3];
+	uint8 r_palette_data[256*3];
+	intn i;
+    int32 dims[2]={GR_LUTB_X_LENGTH,GR_LUTB_Y_LENGTH};
+
+	/* Create and open the file. */
+	file_id = Hopen(GR_LUTBFILE, DFACC_CREATE, 0);
+    CHECK(file_id,FAIL,"Hopen");
+
+	/* Initiate the GR interface. */
+	gr_id = GRstart(file_id);
+    CHECK(gr_id,FAIL,"GRstart");
+
+    ncomp = 1;
+    dims[0] = 20;
+    dims[1] = 20;
+    interlace_mode = MFGR_INTERLACE_PIXEL;
+
+    ri_id = GRcreate (gr_id, "Image_1", ncomp, DFNT_UINT8, interlace_mode, dims);
+    CHECK(ri_id,FAIL,"GRcreate");
+ 
+	/* Initialize the palette to grayscale. */
+	for (i = 0; i < 256; i++) {
+	 	palette_data[i * 3] = i;
+	 	palette_data[i * 3 + 1] = i;
+	 	palette_data[i * 3 + 2] = i;
+	}
+
+	/* Set palette characteristics. */
+	data_type = DFNT_UINT8;
+	num_entries = 256;
+	num_comp = 3;
+
+	/* Get the id for the palette. */
+	pal_id = GRgetlutid(ri_id, ri_idx);
+    CHECK(pal_id,FAIL,"GRgetlutid");
+
+	/* Write the palette to file. */
+	status = GRwritelut(pal_id, num_comp, data_type, interlace_mode, num_entries, (VOIDP)palette_data);
+    CHECK(status,FAIL,"GRgetlutid");
+
+    status = GRendaccess(ri_id);
+    CHECK(status,FAIL,"GRendaccess");
+ 
+    status = GRend(gr_id);
+    CHECK(status,FAIL,"GRend");
+ 
+	status = Hclose(file_id);
+    CHECK(status,FAIL,"Hclose");
+
+	file_id = Hopen(GR_LUTBFILE, DFACC_READ, 0);
+    CHECK(file_id,FAIL,"Hopen");
+
+    gr_id = GRstart(file_id);
+    CHECK(gr_id,FAIL,"GRstart");
+ 
+    ri_idx = GRnametoindex(gr_id, "Image_1");
+    CHECK(ri_idx,FAIL,"GRnametoindex");
+ 
+    ri_id = GRselect (gr_id, ri_idx);
+    CHECK(ri_id,FAIL,"GRselect");
+ 
+    pal_id = GRgetlutid(ri_id, ri_idx);
+    CHECK(pal_id,FAIL,"GRgetlutid");
+
+	/* Read the palette data. */
+	status = GRreadlut(pal_id, (VOIDP)r_palette_data);
+    CHECK(status,FAIL,"GRreadlut");
+
+    /* Verify correct palette contents */
+    if(HDmemcmp(palette_data,r_palette_data,256*3)!=0) {
+        MESSAGE(3, printf("Error reading data for palette\n"););
+        num_errs++;
+    } /* end if */
+
+
+	/* Terminate access to the image. */
+	status = GRendaccess(ri_id);
+    CHECK(status,FAIL,"GRendaccess");
+
+	/* Terminate access to the GR interface. */
+	status = GRend(gr_id);
+    CHECK(status,FAIL,"GRend");
+
+	/* Close the file. */
+	status = Hclose(file_id);
+    CHECK(status,FAIL,"Hclose");
+}   /* end test_mgr_lut_b() */
+
+/****************************************************************
+**
+**  test_mgr_lut(): Multi-file Raster LUT/Palette Test Routine
+** 
+**  V. Palette Functions
+**      A. GRgetlutid w/GRgetlutinfo
+**      B. Read/Write Palettes
+**          1. GRwritelut
+**          2. GRreadlut
+**	C. GRluttoref
+** 
+****************************************************************/
+static void
+test_mgr_lut(int flag)
+{
+    /* Output message about test being performed */
+    MESSAGE(6, printf("Testing Multi-file Raster Palette routines\n"););
+
+    test_mgr_lut_a(flag);
+    test_mgr_lut_b(flag);
 }   /* end test_mgr_lut() */
 
 /****************************************************************
