@@ -62,7 +62,8 @@ MACHINE=CONVEX
 
 # Define your C compiler and flags
 CC= cc
-CFLAGS= -std -D${MACHINE} 
+#CFLAGS= -std -D${MACHINE} 
+CFLAGS= -D${MACHINE} 
 
 # Define your FORTRAN compiler
 FC= fc 
