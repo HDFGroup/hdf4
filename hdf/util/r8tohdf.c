@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/08/06 14:27:57  mlivin
-made it append all RIGs to file, not crush the given output file
+Revision 1.5  1992/12/31 16:20:11  georgev
+Fixed bug - wrong arguement in printf()
 
+ * Revision 1.4  1992/08/06  14:27:57  mlivin
+ * made it append all RIGs to file, not crush the given output file
+ *
  * Revision 1.3  1992/07/15  21:48:48  sxu
  *  Added changes for CONVEX
  *
@@ -238,7 +241,7 @@ uint16 compress;
     ret = DFR8addimage(outfile, space, xdim, ydim, compress);
 
     if (ret < 0) {
-        printf(" Error: %d, in writing image %s\n", HEvalue(1), imfile);
+        printf(" Error: %d, in writing image %s\n", HEvalue(1), outfile);
         exit(1);
     }
 
