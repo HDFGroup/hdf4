@@ -759,8 +759,8 @@ fi
 if test $JAVALIBPATH_FOUND = 0; then
 	JAVADIR=`dirname $JAVAPATH`
 	JAVALIB=$JAVADIR/lib
-	if test \( ! -d "$JAVALIB" \) ; then
-		JAVALIBPATH_FOUND=0
+	if test -d "$JAVALIB" ; then
+		JAVALIBPATH_FOUND=1
 	fi
 fi
 

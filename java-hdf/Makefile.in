@@ -132,7 +132,7 @@ install-doc: install-javadocs
 
 install-javadocs: javadocs
 	if test ! -d $(DOCDIR); then \
-		mkdir $(DOCDIR); \
+		mkdir -p $(DOCDIR); \
 	fi; \
 	$(JAVADOC) -sourcepath $(CLASSPATH) -d $(DOCDIR) $(JAVADOC_FLAGS) $(PACKAGES)
 
@@ -154,7 +154,7 @@ uninstall-classes:
 
 install-lib: ./lib/@JAVATARG@/libhdf.$(SLEXT) ./lib/@JAVATARG@/libjhv.$(SLEXT)
 	if test ! -d $(LIBDIR); then \
-	mkdir $(LIBDIR); \
+	mkdir -p $(LIBDIR); \
 	fi; \
 	cp ./lib/@JAVATARG@/libhdf.$(SLEXT) $(LIBDIR)
 	cp ./lib/@JAVATARG@/libjhv.$(SLEXT) $(LIBDIR)
@@ -165,14 +165,14 @@ uninstall-lib:
 
 install-bin: bin/jhv
 	if test ! -d $(BINDIR); then \
-		mkdir $(BINDIR); \
+		mkdir -p $(BINDIR); \
 	fi; \
 	cp bin/jhv $(BINDIR)/jhv;
 	chmod a+x $(BINDIR)/jhv;
 	if test ! -d $(JHVINSTALLDIR)/lib/hdficons; then \
-		mkdir $(JHVINSTALLDIR)/lib/hdficons; \
+		mkdir -p $(JHVINSTALLDIR)/lib/hdficons; \
 	fi; \
-	cp hdficons/* $(JHVINSTALLDIR)/lib/hdficons;
+	cp hdficons/*.gif $(JHVINSTALLDIR)/lib/hdficons;
 
 uninstall-bin:
 	rm -f $(BINDIR)/jhv
@@ -201,20 +201,17 @@ clean-docs:
 	$(FIND) ./docs \( -name '#*' -o -name '*~' -o -name '*.html' \) -exec rm -f {} \; 
 
 jhvdist:
-	if test ! -d $(VERSION); then \
-		mkdir $(VERSION); \
-	fi; \
+	@if test ! -d $(VERSION); then \
+		mkdir -p $(VERSION); \
+	fi;
 	tar cvf $(VERSION)/tmp.tar $(TOP) native ncsa
 	cd $(VERSION); tar xvf tmp.tar; rm tmp.tar
 	tar cvf $(VERSION).tar $(VERSION)
 	rm -rf $(VERSION)
 
 dist: 
-	@if test ! -d ../$(distdir); then \
-		mkdir ../$(distdir); \
-	fi;
 	@if test ! -d ../$(distdir)/java-hdf; then \
-		mkdir ../$(distdir)/java-hdf; \
+		mkdir -p ../$(distdir)/java-hdf; \
 	fi;
 	@echo "Copy java file to distribution"
 	tar cf ../$(distdir)/java-hdf/tmp.tar $(TOP) native ncsa java;
