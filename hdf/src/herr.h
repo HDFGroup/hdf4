@@ -1,54 +1,22 @@
-/*
-$Header$
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
 
-$Log$
-Revision 1.11  1993/10/06 20:27:40  koziol
-More compression fixed, and folded Doug's suggested change into VSappendable.
+/* $Id$ */
 
- * Revision 1.10  1993/10/04  20:02:49  koziol
- * Updated error reporting in H-Layer routines, and added more error codes and
- * compression stuff.
- *
- * Revision 1.9  1993/10/01  20:01:05  koziol
- * Put "extern C" block around function prototypes for C++ compatibility.
- *
- * Revision 1.8  1993/09/30  19:05:10  koziol
- * Added basic compressing functionality for special tags.
- *
- * Revision 1.7  1993/09/28  18:04:29  koziol
- * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
- * tag handling.  Added new compression special tag type.
- *
- * Revision 1.6  1993/07/13  20:45:02  chouck
- * Fixed a few memory leaks
- *
- * Revision 1.5  1993/04/06  17:23:37  chouck
- * Added Vset macros
- *
- * Revision 1.4  1993/03/29  16:47:57  koziol
- * Updated JPEG code to new JPEG 4 code.
- * Changed VSets to use Threaded-Balanced-Binary Tree for internal
- * 	(in memory) representation.
- * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
- * 	to use 32-bit integer keys instead of pointers.
- * Backed out speedups for Cray, until I get the time to fix them.
- * Fixed a bunch of bugs in the little-endian support in DFSD.
- *
- * Revision 1.3  1993/02/18  04:23:21  georgev
- * Added new HCLOSE_RETURN_ERROR macro.
- *
- * Revision 1.2  1993/01/19  05:55:44  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
+/* 
+** herr.h
+** -header file for using error routines to be included by all ".c" files
+>>>>>>> 1.11.2.4
 */
-/*+ herr.h
-***  header file for using error routines
-*** to be included by all ".c" files
-+*/
 
 #ifndef __HERR_H
 
@@ -80,13 +48,8 @@ More compression fixed, and folded Doug's suggested change into VSappendable.
    same assumptions as HRETURN_ERROR.  IN ADDITION, this macro causes
    the file specified by the id "fid" to be closed */
 
-#define HCLOSE_RETURN_ERROR(hfid, err, ret_val) {HERROR(err); Hclose(hfid); return(ret_val);} 
-
-#if 0
-/* Clear the error stack */
-extern int32 error_top;
-#define HEclear() { error_top = (int32)0; }
-#endif
+#define HCLOSE_RETURN_ERROR(hfid, err, ret_val) {HERROR(err); Hclose(hfid); \
+                                                return(ret_val);}
 
 /*
 ======================================================================
@@ -173,6 +136,11 @@ extern int32 error_top;
 #define DFE_CODER       -74 /* Error in encoding layer of compression */
 #define DFE_CINIT       -75 /* Error in encoding initialization */
 #define DFE_CDECODE     -76 /* Error in decoding compressed data */
+#define DFE_CENCODE     -77 /* Error in encoding compressed data */
+#define DFE_CTERM       -78 /* Error in encoding termination */
+#define DFE_MINIT       -79 /* Error in modeling initialization */
+#define DFE_COMPINFO    -80 /* Invalid compression header */
+#define DFE_BADRIG      -81 /* error processing a RIG */
 
 #ifdef _H_ERR_MASTER_
 
@@ -185,7 +153,7 @@ typedef struct error_messages_t {
     char *str;
 } error_messages_t;
 
-PRIVATE const error_messages_t error_messages[] =
+PRIVATE const struct error_messages_t error_messages[] =
 {
 { DFE_NONE,         "No error"},
 { DFE_FNF,          "File not found"},
@@ -262,8 +230,14 @@ PRIVATE const error_messages_t error_messages[] =
 { DFE_MODEL,        "Error in modeling layer of compression"},
 { DFE_CODER,        "Error in encoding layer of compression"},
 { DFE_CINIT,        "Error in encoding initialization"},
-{ DFE_CDECODE,      "Error in decoding compressed data"}
+{ DFE_CDECODE,      "Error in decoding compressed data"},
+{ DFE_CENCODE,      "Error in encoding compressed data"},
+{ DFE_CTERM,        "Error in encoding termination"},
+{ DFE_MINIT,        "Error in modeling initialization"},
+{ DFE_COMPINFO,     "Invalid compression header"},
+{ DFE_BADRIG,       "Error processing a RIG"}
 };
 #endif /* _H_ERR_MASTER_ */
 
 #endif /* __HERR_H */
+

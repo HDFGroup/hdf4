@@ -1,60 +1,20 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.4  1993/09/08 18:29:50  koziol
-Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
-
- * Revision 1.3  1993/09/03  14:10:25  koziol
- * Saved debugging info.
- *
- * Revision 1.2  1993/08/28  00:12:42  georgev
- * Added VOIDP casts to HDfreespace().
- *
- * Revision 1.1  1993/08/16  21:47:51  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.2  1993/04/19  23:03:43  koziol
- * General Code Cleanup to reduce/remove compilation warnings on PC
- *
- * Revision 1.1  1993/04/15  20:00:11  koziol
- * Re-named the new tests for MS-DOS compatibility
- *
- * Revision 1.3  1993/02/16  20:51:13  chouck
- * Went back to using -ansi so needed to fix a few casting problems
- *
- * Revision 1.2  1993/01/27  22:41:24  briand
- * Fixed problem with compiling on RS6000.
- *
- * Revision 1.1  1993/01/27  22:04:28  briand
- * Converted test files to work with master test program: testhdf
- *
- * Revision 1.7  1992/07/27  18:40:12  dilg
- * Changed DFACC_ALL to DFACC_RDWR in appropriate places to conform to new
- * handling of access modes by Hopen().
- *
- * Revision 1.6  1992/06/22  23:04:42  chouck
- * Removed calls to fork()
- *
- * Revision 1.5  1992/06/02  15:40:41  chouck
- * Cleaned up output
- *
- * Revision 1.4  1992/05/31  19:08:09  mfolk
- * Added uint8 * cast in line 91 for Convex.
- *
- * Revision 1.3  1992/05/29  22:30:15  mfolk
- * Added some casts to avoid warnings when compiling on Convex.
- *
- * Revision 1.2  1992/05/14  15:25:31  chouck
- * Fixed calls to Hinquire()
- *
- * Revision 1.1  1992/02/10  20:59:34  chouck
- * Initial revision
- *
-*/
+/* $Id$ */
 
 #include "tproto.h"
 #define TESTFILE_NAME "t.hdf"

@@ -1,42 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.7  1993/04/08 18:33:54  chouck
-Various Vset modifications (additions of Vdelete and VSdelete)
+/* $Id$ */
 
- * Revision 1.6  1993/03/29  16:50:32  koziol
- * Updated JPEG code to new JPEG 4 code.
- * Changed VSets to use Threaded-Balanced-Binary Tree for internal
- * 	(in memory) representation.
- * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
- * 	to use 32-bit integer keys instead of pointers.
- * Backed out speedups for Cray, until I get the time to fix them.
- * Fixed a bunch of bugs in the little-endian support in DFSD.
- *
- * Revision 1.5  1993/01/19  05:56:17  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.4  1992/11/30  22:00:01  chouck
- * Added fixes for changing to Vstart and Vend
- *
- * Revision 1.3  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.2  1992/09/11  14:15:04  koziol
- * Changed Fortran stubs' parameter passing to use a new typedef, intf,
- * which should be typed to the size of an INTEGER*4 in whatever Fortran
- * compiler the C functions need to be compatible with.  (This is mostly
- * for the PC and possibly for the Mac)
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*
 *
 * vgF.c
@@ -165,7 +144,7 @@ nvatchc(f, vgid, accesstype)
 **  related: Vdetach--vdtchc--VFDTCH
 */
 
-    FRETVAL(void)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 nvdtchc(intf *vkey)
 #else
@@ -173,7 +152,7 @@ nvdtchc(vkey)
 intf *vkey;
 #endif
 {
-    Vdetach(*vkey);
+    return(Vdetach(*vkey));
 }
 /* ------------------------------------------------------------------ */
 
@@ -182,7 +161,7 @@ intf *vkey;
 **  related: Vgetname--vgnamc--VFGNAM
 */
 
-    FRETVAL(void)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 nvgnamc(intf *vkey, _fcd vgname)
 #else
@@ -191,7 +170,7 @@ intf *vkey;
 _fcd    vgname;             /* output */
 #endif
 {
-    Vgetname (*vkey, vgname);
+    return(Vgetname (*vkey, vgname));
 }   /* VGNAMC */
 
 /* ------------------------------------------------------------------ */
@@ -200,7 +179,7 @@ _fcd    vgname;             /* output */
 **  related: Vgetclass--vgclsc--VFGCLS
 */
 
-    FRETVAL(void)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 nvgclsc(intf *vkey, _fcd vgclass)
 #else
@@ -209,7 +188,7 @@ intf *vkey;
 _fcd        vgclass;                /* output */
 #endif
 {
-     Vgetclass (*vkey, vgclass);
+     return(Vgetclass (*vkey, vgclass));
 }   /* VGCLSC */
 
 /* ------------------------------------------------------------------ */
@@ -274,7 +253,7 @@ intf    *id;
 **  related: Vsetname--vsnamc--VFSNAM
 */
 
-    FRETVAL(void)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 nvsnamc(intf *vkey, _fcd vgname, intf *vgnamelen)
 #else
@@ -285,11 +264,14 @@ intf    *vgnamelen;
 #endif
 {
 	char *name;
+    intf ret;
 
     name = HDf2cstring (vgname, (intn)*vgnamelen);
 	/* trimendblanks(name); */
-    Vsetname (*vkey, name);
+    ret=(intf)Vsetname (*vkey, name);
     HDfreespace (name);
+
+    return(ret);
 }
 
 /* ------------------------------------------------------------------ */
@@ -298,7 +280,7 @@ intf    *vgnamelen;
 **  related: Vsetclass--vsclsc--VFSCLS
 */
 
-    FRETVAL(void)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 nvsclsc(intf *vkey, _fcd vgclass, intf *vgclasslen)
 #else
@@ -309,11 +291,14 @@ intf    *vgclasslen;
 #endif
 {
 	char *class;
+    intf ret;
 
     class = HDf2cstring (vgclass, (intn)*vgclasslen);
 	/* trimendblanks(class); */
-    Vsetclass (*vkey, class);
+    ret=(intf)Vsetclass (*vkey, class);
     HDfreespace (class);
+
+    return(ret);
 }
 
 /* ------------------------------------------------------------------ */
@@ -357,7 +342,7 @@ intf    *id;
 **  wrapper for Vstart
 */
 
-    FRETVAL(void)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 nvfstart(HFILEID *f)
 #else
@@ -365,7 +350,7 @@ nvfstart(f)
 HFILEID *f;
 #endif
 {
-    Vstart(*f);
+    return(Vstart(*f));
 } /* nvfstart */
 
 /* ------------------------------------------------------------------ */
@@ -437,7 +422,7 @@ _fcd        accesstype;
 **  related: VSdetach--vsdtchc--VFDTCH
 */
 
-    FRETVAL(void)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 nvsdtchc(intf *vkey)
 #else
@@ -445,7 +430,7 @@ nvsdtchc(vkey)
 intf *vkey;
 #endif
 {
-    VSdetach (*vkey);
+    return(VSdetach (*vkey));
 }
 
 /* ------------------------------------------------------------------ */
@@ -472,7 +457,7 @@ intf *eltpos;
 **  related: VSgetname--vsgnamc--VSFGNAM
 */
 
-    FRETVAL(void)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 nvsgnamc(intf *vkey, _fcd vsname)
 #else
@@ -481,7 +466,7 @@ intf *vkey;
 _fcd    vsname;
 #endif
 {
-    VSgetname (*vkey, vsname);
+    return(VSgetname (*vkey, vsname));
 }	/* VSGNAMC */
 
 /* ------------------------------------------------------------------ */
@@ -490,7 +475,7 @@ _fcd    vsname;
 **  related: VSgetclass--vsgclsc--VSFGCLS
 */
 
-    FRETVAL(void)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 nvsgclsc(intf *vkey, _fcd vsclass)
 #else
@@ -499,7 +484,7 @@ intf *vkey;
 _fcd    vsclass;                    /* output */
 #endif
 {
-    VSgetclass(*vkey, vsclass);
+    return(VSgetclass(*vkey, vsclass));
 }	/* VSGCLSC */
 
 /* ------------------------------------------------------------------ */
@@ -525,7 +510,7 @@ _fcd    fields, vsname;                         /* outputs */
 
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
 **  tests if given fields exist in the vdata
 **  related: VSfexist--vsfexc--VSFEX
 */
@@ -547,6 +532,33 @@ intf    *fieldslen;
 	/* trimendblanks(flds); */
     stat =  (int32) VSfexist(*vkey, flds);
     HDfreespace (flds);
+
+	return (stat);
+}
+
+/* ------------------------------------------------------------------ */
+/*
+**  looks for a named Vdata in a file
+**  related: VSfind--vsfndc--VSFFND
+*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nvsfndc(HFILEID *f, _fcd name, intf *namelen)
+#else
+nvsfndc(f, name, namelen)
+HFILEID *f;
+_fcd    name;
+intf    *namelen;
+#endif
+{
+    intf    stat;
+	char	*cname;
+
+    cname = HDf2cstring (name, (intn)*namelen);
+	/* trimendblanks(flds); */
+    stat =  (intf) VSfind(*f, cname);
+    HDfreespace (cname);
 
 	return (stat);
 }
@@ -575,7 +587,7 @@ nvsgidc(f, vsid)
 **  related: VSsetname--vssnamc--VSFSNAM
 */
 
-    FRETVAL(void)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 nvssnamc(intf *vkey, _fcd vsname,intf *vsnamelen)
 #else
@@ -586,11 +598,14 @@ intf   *vsnamelen;
 #endif
 {
 	char   *name;
+    intf ret;
 
     name = HDf2cstring(vsname, (intn)*vsnamelen);
 	/* trimendblanks (name); */
-    VSsetname (*vkey, name);
+    ret=(intf)VSsetname (*vkey, name);
     HDfreespace (name);
+
+    return(ret);
 }
 
 /* ------------------------------------------------------------------ */
@@ -599,7 +614,7 @@ intf   *vsnamelen;
 **  related: VSsetclass--vssclsc--VSFSCLS
 */
 
-    FRETVAL(void)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 nvssclsc(intf *vkey, _fcd vsclass, intf *vsclasslen)
 #else
@@ -610,15 +625,18 @@ intf    *vsclasslen;
 #endif
 {
 	char 	*class;
+    intf    ret;
 
     class = HDf2cstring (vsclass, (intn)*vsclasslen);
 	/* trimendblanks(class); */
-    VSsetclass (*vkey, class);
+    ret=(intf)VSsetclass (*vkey, class);
     HDfreespace (class);
+
+    return(ret);
 }
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
 **  sets the fields in a vdata for reading or writing
 **  related: VSsetfields--vssfldc--VSFSFLD
 */

@@ -1,27 +1,17 @@
+C****************************************************************************
+C* NCSA HDF                                                                 *
+C* Software Development Group                                               *
+C* National Center for Supercomputing Applications                          *
+C* University of Illinois at Urbana-Champaign                               *
+C* 605 E. Springfield, Champaign IL 61820                                   *
+C*                                                                          *
+C* For conditions of distribution and use, see the accompanying             *
+C* hdf/COPYING file.                                                        *
+C*                                                                          *
+C****************************************************************************
 C
-C $Header$
+C $Id$
 C
-C $Log$
-C Revision 1.6  1993/01/19 05:59:13  koziol
-C Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-C port.  Lots of minor annoyances fixed.
-C
-c Revision 1.5  1992/06/30  20:34:24  chouck
-c Fortran character passing problems were making the int8 tests
-c fail.  Change int8 variables to 'byte' for VMS
-c
-c Revision 1.4  1992/06/26  20:44:33  chouck
-c Oops, filename change made lines too long
-c
-c Revision 1.2  1992/05/28  17:31:32  chouck
-c Changed output file names
-c
-c Revision 1.1  1992/04/27  17:28:04  sxu
-c Initial revision
-c
-c Revision 1.1  1992/02/29  19:32:51  mfolk
-c Initial revision
-c
 C
       program tdfsd_ntF
 C

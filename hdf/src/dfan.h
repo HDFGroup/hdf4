@@ -1,23 +1,17 @@
-/*
-$Header$
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
 
-$Log$
-Revision 1.4  1993/10/01 20:00:35  koziol
-Put "extern C" block around function prototypes for C++ compatibility.
+/*$Id$ */
 
- * Revision 1.3  1993/01/19  05:54:07  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.2  1992/12/18  15:45:00  mfolk
- * Added defines for default label blocksize and default description
- * blocksize, for when annotations get converted to linked block
- * storage.
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*------------------------------------------------------------------------------
  * File:    dfan.h
  * Purpose: header file for the Annotations set
@@ -39,34 +33,29 @@ Put "extern C" block around function prototypes for C++ compatibility.
 #define DFAN_LAB_BLKSIZE   64   /* default blksize to use for labels */
 #define DFAN_DESC_BLKSIZE 512   /* default blksize to use for descriptions */
 
-#define DFAN_DEFENTRIES 16          /* no of dir entries to add at a time */
+#define DFAN_DEFENTRIES 16      /* no of dir entries to add at a time */
 
-    /* This structure stores an entry in the label/desc directory */
-    /* for a label/desc in the file, it gives the ref of the label/desc,
-        and the tag/ref of the data item to which the label/desc relates */
-
+/*
+ * This structure stores an entry in the label/desc directory 
+ * for a label/desc in the file, it gives the ref of the label/desc,
+ * and the tag/ref of the data item to which the label/desc relates 
+ */
 typedef struct {
-        uint16 annref;                  /* ref of annotation */
-        uint16 datatag, dataref;        /* tag/ref of data */
-    } DFANdirentry;
+    uint16 annref;         /* ref of annotation */
+    uint16 datatag;        /* tag of data */
+    uint16 dataref;        /* ref of data */
+} DFANdirentry;
 
-    /* This structure is a head node for the directory, which is organized as
-        as a linked list of arrays.  DFANdirentry is the structure of an
-        array element, while DFANdirhead is the list element */
+/*
+ * This structure is a head node for the directory, which is organized as
+ * as a linked list of arrays.  DFANdirentry is the structure of an
+ * array element, while DFANdirhead is the list element 
+ */
 typedef struct DFANdirhead {
-        int32 nentries;
-        struct DFANdirhead *next;
-        DFANdirentry entries[1];        /* actually an arbitrary size array */
-    } DFANdirhead;
-
-/* testing...
-#ifndef VMS
-int32 DFANIgetannlen();
-#else
-int32 _DFANIgetannlen();
-#endif
-...tested */
-
+    struct DFANdirhead *next;   /* list element */
+    int32 nentries;             /* Numer of entries */
+    DFANdirentry entries[1];    /* actually an arbitrary size array */
+} DFANdirhead;
 
 #endif /* DFAN_H */
 

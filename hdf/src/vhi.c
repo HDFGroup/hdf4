@@ -1,37 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.6  1993/09/30 19:05:33  koziol
-Added basic compressing functionality for special tags.
+/* $Id$ */
 
- * Revision 1.5  1993/09/28  18:05:02  koziol
- * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
- * tag handling.  Added new compression special tag type.
- *
- * Revision 1.4  1993/04/06  17:23:45  chouck
- * Added Vset macros
- *
- * Revision 1.3  1993/03/29  16:50:41  koziol
- * Updated JPEG code to new JPEG 4 code.
- * Changed VSets to use Threaded-Balanced-Binary Tree for internal
- * 	(in memory) representation.
- * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
- * 	to use 32-bit integer keys instead of pointers.
- * Backed out speedups for Cray, until I get the time to fix them.
- * Fixed a bunch of bugs in the little-endian support in DFSD.
- *
- * Revision 1.2  1993/01/19  05:56:24  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /* 
 * ============================================
 * VHxxx  routines:

@@ -1,18 +1,17 @@
-/*
-$Header$
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
 
-$Log$
-Revision 1.4  1993/10/01 20:00:30  koziol
-Put "extern C" block around function prototypes for C++ compatibility.
+/* $Id$ */
 
- * Revision 1.3  1993/01/19  05:53:56  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*-----------------------------------------------------------------------------
  * File:    df.h
  * Purpose: header file for HDF routines
@@ -71,6 +70,10 @@ typedef struct DF {
     DFdle *last_dle;		/* last_dle and last_dd are used in searches */
 				/* to indicate element returned */
 				/* by previous call to DFfind */
+    DFdd *up_dd;		/* DD of element being read/updated, */
+				/* used by DFstart */
+    uint16 last_tag;		/* Last tag searched for by DFfind */
+    uint16 last_ref;		/* Last reference number searched for */
     intn type;  /* 0= not in use, 1= normal, -1 = multiple */
 				/* this is a hook for when */
 				/* multiple files are open */
@@ -78,18 +81,14 @@ typedef struct DF {
 				/* 0=none, 1=r, 2=w, 3=r/w */
     intn changed;   /* True if anything in DDs modified */
 				/* since last write */
-    uint16 last_tag;		/* Last tag searched for by DFfind */
-    uint16 last_ref;		/* Last reference number searched for */
     intn last_dd;   /* see last_dle */
     intn defdds;    /* default numer of DD's in each block */
     intn up_access; /* access permissions to element being */
 				/* read/updated. Used by DFstart */
-    DFdd *up_dd;		/* DD of element being read/updated, */
-				/* used by DFstart */
     /* File handle is a file pointer or file descriptor depending on whether */
     /* we use buffered or unbuffered I/O.  But, since this structure is a */
     /* fake, it doesn't matter whether I/O is buffered or not. */
-    int file;			/* file descriptor */
+    intn file;			/* file descriptor */
 } DF;
 
 

@@ -1,43 +1,17 @@
+C****************************************************************************
+C* NCSA HDF                                                                 *
+C* Software Development Group                                               *
+C* National Center for Supercomputing Applications                          *
+C* University of Illinois at Urbana-Champaign                               *
+C* 605 E. Springfield, Champaign IL 61820                                   *
+C*                                                                          *
+C* For conditions of distribution and use, see the accompanying             *
+C* hdf/COPYING file.                                                        *
+C*                                                                          *
+C****************************************************************************
 C
-C $Header$
+C $Id$
 C
-C $Log$
-C Revision 1.10  1993/05/19 20:06:14  chouck
-C Added a diagnositc to know which DFfindnextref() failed on
-C
-c Revision 1.9  1993/02/09  21:24:32  briand
-c I modified tstubsf.f so that it does not require the user to press
-c return before performing the test.
-c
-c Revision 1.8  1993/01/19  05:59:21  koziol
-c Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-c port.  Lots of minor annoyances fixed.
-c
-c Revision 1.7  1992/12/01  21:07:48  chouck
-c Fixed tab / space problem so Mac Fortran doesn't complain
-c
-c Revision 1.6  1992/06/16  15:39:42  chouck
-c HP is really picky about things not extending into column 72
-c
-c Revision 1.5  1992/06/02  16:04:38  dilg
-c Added more thorough test of dffind() and fixed error in expected return code
-c from dfput().
-c
-c Revision 1.4  1992/05/07  16:37:55  dilg
-c Fixed problem with "Hit <return> to continue"
-c Changed output file name from "o2" to "tstubsF.hdf"
-c
-c Revision 1.3  1992/04/29  17:00:06  dilg
-c Changed VAX FORTRAN initialization statements to standard FORTRAN 'data'
-c statements.
-c
-c Revision 1.2  1992/04/28  19:36:55  dilg
-c Some minor cosmetic changes.
-c
-c Revision 1.1  1992/03/26  21:51:22  dilg
-c Initial revision
-c
-C     
       program tstubsF
       
       character ar0*10

@@ -1,48 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.12  1993/01/19 06:24:20  koziol
-Updated for better portability and fixed minor compiler warnings
+/* $Id$ */
 
- * Revision 1.11  1993/01/16  04:14:00  georgev
- * Fixed bug in hdfed
- *
- * Revision 1.10  1992/12/21  23:31:17  mfolk
- * Fixed updateDesc call to DFdiget.  Previously it was missing
- * the first parameter, groupID.
- *
- * Revision 1.9  1992/09/17  21:19:36  chouck
- * Fixed backup file name so VMS would be happy.  No backups for PCs
- *
- * Revision 1.8  1992/09/15  19:34:24  chouck
- * Fixed minor typo
- *
- * Revision 1.7  1992/09/11  18:32:51  chouck
- * Assorted MAC mungings
- *
- * Revision 1.6  1992/08/25  20:49:45  chouck
- * Fixed backup name generation so its easier to open non-local files
- *
- * Revision 1.5  1992/08/24  22:00:44  sxu
- * Use vfork() and delete() for VMS
- *
- * Revision 1.4  1992/07/31  21:10:24  chouck
- * Use in-house print routines rather than fork() a call to od
- *
- * Revision 1.3  1992/07/15  21:48:48  sxu
- * No change.
- *
- * Revision 1.2  1992/07/14  17:50:30  mlivin
- * updated help with no pixrect, name of 'hdfed' not 'he'
- *
- * Revision 1.1  1992/07/06  22:54:16  mlivin
- * Initial revision
- *
-*/
 /******************************************************************************
  * he - HDF editor
  *

@@ -1,24 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.4  1993/04/19 23:04:26  koziol
-General Code Cleanup to reduce/remove compilation warnings on PC
+/* $Id$ */
 
- * Revision 1.3  1993/01/19  06:00:09  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.2  1992/07/15  21:48:48  sxu
- * Added changes for CONVEX
- *
- * Revision 1.1  1992/06/09  17:35:18  mfolk
- * Initial revision
- *
-*/
 /*****************************************************************************
 *
 *                         NCSA HDF version 3.2beta

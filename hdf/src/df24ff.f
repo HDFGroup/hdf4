@@ -1,31 +1,29 @@
+C****************************************************************************
+C* NCSA HDF                                                                 *
+C* Software Development Group                                               *
+C* National Center for Supercomputing Applications                          *
+C* University of Illinois at Urbana-Champaign                               *
+C* 605 E. Springfield, Champaign IL 61820                                   *
+C*                                                                          *
+C* For conditions of distribution and use, see the accompanying             *
+C* hdf/COPYING file.                                                      *
+C*                                                                          *
+C****************************************************************************
 C
-C $Header$
-C
-C $Log$
-C Revision 1.3  1993/01/19 05:54:02  koziol
-C Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-C port.  Lots of minor annoyances fixed.
-C
-c Revision 1.2  1992/11/06  20:25:17  chouck
-c Made names lower-case for Absoft Fortran on the Mac
-c
-c Revision 1.1  1992/08/25  21:40:44  koziol
-c Initial revision
-c
-C
+C $Id$
 C------------------------------------------------------------------------------
 C File:     df24Ff.f
 C Purpose:  read and write 24-bit raster images
 C Invokes:  df24F.c
 C Contents: 
-C   d2gdims: get dimensions of image
-C   d2gimg: read in image
-C   d2aimg: write out image
-C   d2rref: set reference number to be used for next get
-C   DF24getdims:  get dimensions of image
-C   DF24getimage: read in image
-C   DF24getimage: write out image
-C   DF24readref:  set reference number to be used for next get
+C   d2gdims:      - get dimensions of image
+C   d2gimg:       - read in image
+C   d2aimg:       - write out image
+C   d2rref:       - set reference number to be used for next get
+C   DF24getdims:  - get dimensions of image
+C   DF24getimage: - read in image
+C   DF24getimage: - write out image
+C   DF24readref:  - set reference number to be used for next get
 C
 C Remarks:  A RIG specifies attributes associated with an image - lookup table, 
 C           dimension, compression, color compensation etc.

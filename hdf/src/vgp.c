@@ -1,125 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.35  1993/09/30 19:05:30  koziol
-Added basic compressing functionality for special tags.
+/* $Id$ */
 
- * Revision 1.34  1993/09/28  19:10:15  koziol
- * Made Vinquire check parameter values for NULL before updating them.
- *
- * Revision 1.33  1993/09/28  18:44:36  koziol
- * Fixed various things the Sun's pre-processor didn't like.
- *
- * Revision 1.32  1993/09/28  18:04:59  koziol
- * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
- * tag handling.  Added new compression special tag type.
- *
- * Revision 1.31  1993/09/16  17:19:48  chouck
- * Allow duplicates in Vgroups unless NO_DUPLICATES is defined
- *
- * Revision 1.30  1993/09/11  18:08:10  koziol
- * Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
- * cleaned up some goofy string manipulations in various places.
- *
- * Revision 1.29  1993/08/18  15:58:03  chouck
- * Restored version 1.26 changes that had gotten blown away (grumble grumble)
- *
- * Revision 1.28  1993/08/17  16:33:58  chouck
- * Made Vaddtagref() a little smarter
- *
- * Revision 1.27  1993/08/16  21:46:39  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.26  1993/07/30  17:49:37  chouck
- * Fixed problem in Vinsert() would only accept Vgroups
- *
- * Revision 1.25  1993/07/23  20:49:18  sxu
- * Changed 'void' to 'VOID' VSdump, Vinitialize, Vsetzap, Remove_vfile and unpackvs.
- *
- * Revision 1.24  1993/07/15  19:38:46  chouck
- * More weird characters removed
- *
- * Revision 1.23  1993/07/15  19:00:39  chouck
- * Fixed weird RCS type noise in file
- *
- * Revision 1.22  1993/07/15  01:26:22  koziol
- * Final Whammy on the VSet memory Leak bug, mostly for maintenance purposes
- *
- * Revision 1.21  1993/07/14  20:52:55  chouck
- * Plugged memory leak on Vdelete() and VSdelete()
- *
- * Revision 1.20  1993/07/14  11:55:47  koziol
- * Fixed memory leaks in freeing trees
- *
- * Revision 1.19  1993/05/04  18:56:24  georgev
- * Fixed a minor cast problem on the Mac.
- *
- * Revision 1.18  1993/04/19  22:48:32  koziol
- * General Code Cleanup to reduce/remove errors on the PC
- *
- * Revision 1.17  1993/04/15  19:18:45  koziol
- * Fixed bug introduced into the tbbt routines with the last bugfix (sigh)
- *
- * Revision 1.16  1993/04/14  21:39:29  georgev
- * Had to add some VOIDP casts to some functions to make the compiler happy.
- *
- * Revision 1.15  1993/04/13  16:50:30  georgev
- * Casting problems on SGI's for two calls to the new balanced tree stuff.
- *
- * Revision 1.14  1993/04/10  00:02:19  koziol
- * Removed debugging statements.
- *
- * Revision 1.13  1993/04/08  18:33:56  chouck
- * Various Vset modifications (additions of Vdelete and VSdelete)
- *
- * Revision 1.12  1993/04/06  17:23:43  chouck
- * Added Vset macros
- *
- * Revision 1.11  1993/03/29  18:58:30  chouck
- * Made vinsertpair() public and added dummy decls to convert and JPeg
- * files to prevent 'empty symbol table' messages on the Sun
- *
- * Revision 1.10  1993/03/29  18:38:26  chouck
- * Cleaned up a bunch of casting problems
- *
- * Revision 1.9  1993/03/29  16:50:38  koziol
- * Updated JPEG code to new JPEG 4 code.
- * Changed VSets to use Threaded-Balanced-Binary Tree for internal
- * 	(in memory) representation.
- * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
- * 	to use 32-bit integer keys instead of pointers.
- * Backed out speedups for Cray, until I get the time to fix them.
- * Fixed a bunch of bugs in the little-endian support in DFSD.
- *
- * Revision 1.7  1993/02/09  17:59:20  chouck
- * Added a fix to Vinsert() to increase the size of a Vgroup dynamically.
- * Also fixed a problem in vunpackvg() when reading Vgroups with no
- * elements.  A couple minor speed improvements here and there too.
- *
- * Revision 1.6  1993/01/19  05:56:22  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.5  1992/11/30  22:00:01  chouck
- * Added fixes for changing to Vstart and Vend
- *
- * Revision 1.4  1992/11/24  17:43:26  chouck
- * Fixed memory over-write when VGroups have lots of members
- *
- * Revision 1.3  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.2  1992/08/27  19:54:56  likkai
- * Vclose now returns an (intn) status.
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*****************************************************************************
 * 
 * vgp.c
@@ -165,8 +61,10 @@ PUBLIC VOID vsdestroynode
 * -------------------------------------------------------------------- 
 */
 
-
+#if 0
 PUBLIC vfile_t  vfile [MAX_VFILE] = {0};
+#endif
+PUBLIC vfile_t  *vfile = NULL;
 
 
 /* -------------------------- Load_vfile ------------------------ */
@@ -193,6 +91,16 @@ HFILEID f;
     uint16			tag, ref;
     char * FUNC = "Load_vfile";
     
+    /* Check if vfile buffer has been allocated */
+    if (vfile == NULL)
+      {
+        vfile = (vfile_t *)HDgetspace(MAX_VFILE * sizeof(vfile_t));
+        if (vfile == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        /* zero the space */
+        vfile = memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+      }
+
     /* allocate a new vfile_t structure */
     vf = Get_vfile(f);
     if(!vf)
@@ -213,9 +121,8 @@ HFILEID f;
     while (stat != FAIL) {
         HQuerytagref (aid, &tag, &ref);
         if (NULL== (v = (vginstance_t*) HDgetspace (sizeof(vginstance_t)))) {
-            HERROR(DFE_NOSPACE);
             tbbtdfree(vf->vgtree, vdestroynode, NULL);
-            return(FAIL);
+            HRETURN_ERROR(DFE_NOSPACE,FAIL);
           }
           
         vf->vgtabn++;
@@ -241,10 +148,9 @@ HFILEID f;
     while (stat != FAIL) {
         HQuerytagref (aid, &tag, &ref);
         if (NULL == (w = (vsinstance_t*) HDgetspace (sizeof(vsinstance_t)))) {
-            HERROR(DFE_NOSPACE);
             tbbtdfree(vf->vgtree, vdestroynode, NULL);
             tbbtdfree(vf->vstree, vsdestroynode, NULL);
-            return(FAIL);
+            HRETURN_ERROR(DFE_NOSPACE,FAIL);
           }
           
         vf->vstabn++;
@@ -264,11 +170,9 @@ HFILEID f;
 #if 0
             nvfile--; 	/* delete the structure for that file */
 #endif
-            HERROR(DFE_BADOPEN);
-            HEreport("This file is incompatible with the current release");
             tbbtdfree(vf->vgtree, vdestroynode, NULL);
             tbbtdfree(vf->vstree, vsdestroynode, NULL);
-            return(FAIL);
+            HRETURN_ERROR(DFE_BADOPEN,FAIL);
           }
         
 	/* otherwise, success */
@@ -290,6 +194,16 @@ HFILEID f;
     vfile_t      *vf=NULL;
     char * FUNC = "Remove_vfile";
     
+    /* Check if vfile buffer has been allocated */
+    if (vfile == NULL)
+      {
+        vfile = (vfile_t *)HDgetspace(MAX_VFILE * sizeof(vfile_t));
+        if (vfile == NULL)
+          HERROR(DFE_NOSPACE);
+        /* zero the space */
+        vfile = memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+      }
+
     /* Figure out what file to work on */
     vf = Get_vfile(f);
     
@@ -386,9 +300,9 @@ VOIDP k;
 /* ---------------------------- Vinitialize ------------------------- */
 
 #ifdef PROTOTYPE
-PUBLIC VOID Vinitialize(HFILEID f)
+PUBLIC intn Vinitialize(HFILEID f)
 #else
-PUBLIC VOID Vinitialize(f)
+PUBLIC intn Vinitialize(f)
 HFILEID f;
 #endif
 {
@@ -433,7 +347,17 @@ uint16  vgid;
     vfile_t      * vf;
     int32 key;
     char *FUNC = "vginstance";
-  
+
+    /* Check if vfile buffer has been allocated */
+    if (vfile == NULL)
+      {
+        vfile = (vfile_t *)HDgetspace(MAX_VFILE * sizeof(vfile_t));
+        if (vfile == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, NULL);
+        /* zero the space */
+        vfile = memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+      }
+
     if (NULL== (vf = Get_vfile(f)))
         HRETURN_ERROR(DFE_FNF, NULL);
 
@@ -443,8 +367,7 @@ uint16  vgid;
     if(t!=NULL)
         return((vginstance_t *)*t);     /* return the actual vginstance_t ptr */
 
-    HERROR(DFE_NOMATCH);
-    return(NULL);
+    HRETURN_ERROR(DFE_NOMATCH,NULL);
 } /* vginstance */
 
 /* ------------------------ vexistvg --------------------------- */
@@ -647,14 +570,20 @@ char    *accesstype;    /* access mode */
 	vfile_t			* vf;
 	char * FUNC = "Vattach";
 
-    if (f == FAIL) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-    }
-    if (NULL==(vf = Get_vfile(f))) {
-        HERROR(DFE_FNF);
-        return(FAIL);
-    }
+    /* Check if vfile buffer has been allocated */
+    if (vfile == NULL)
+      {
+        vfile = (vfile_t *)HDgetspace(MAX_VFILE * sizeof(vfile_t));
+        if (vfile == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        /* zero the space */
+        vfile = memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+      }
+
+    if (f == FAIL)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
+    if (NULL==(vf = Get_vfile(f)))
+        HRETURN_ERROR(DFE_FNF,FAIL);
 
     if(tolower(accesstype[0])=='r')
         access = 'r';
@@ -664,36 +593,28 @@ char    *accesstype;    /* access mode */
         HRETURN_ERROR(DFE_BADACC, FAIL);
 
     if (vgid == -1) {           /******* create a NEW vg in vgdir ******/
-        if (access=='r') {
-            HERROR(DFE_ARGS);
-            return(FAIL);
-        }
+        if (access=='r')
+            HRETURN_ERROR(DFE_ARGS,FAIL);
 
       /* allocate space for vg, & zero it out */
-        if ( (vg = (VGROUP*) HDgetspace (sizeof(VGROUP)) ) == NULL) {
-            HERROR(DFE_NOSPACE);
-            return(FAIL);
-        }
+        if ( (vg = (VGROUP*) HDgetspace (sizeof(VGROUP)) ) == NULL)
+            HRETURN_ERROR(DFE_NOSPACE,FAIL);
 
       /* initialize new vg */
         vg->msize = MAXNVELT;
         vg->tag   = (uint16 *) HDgetspace(vg->msize * sizeof(uint16));
         vg->ref   = (uint16 *) HDgetspace(vg->msize * sizeof(uint16));
 
-        if((vg->tag == NULL) || (vg->ref == NULL)) {
-            HERROR(DFE_NOSPACE);
-            return(FAIL);
-        }
+        if((vg->tag == NULL) || (vg->ref == NULL))
+            HRETURN_ERROR(DFE_NOSPACE,FAIL);
 
         vg->nvelt   = 0;
         vg->vgname[0]   = '\0';
         vg->f           = f;
         vg->otag        = DFTAG_VG;
         vg->oref    = vnewref(f);  /* create a new unique ref for it */
-        if( vg->oref == 0 ) {
-            HERROR(DFE_NOREF);
-            return(FAIL);
-        }
+        if( vg->oref == 0 )
+            HRETURN_ERROR(DFE_NOREF,FAIL);
 
         vg->access    = access;
 
@@ -705,10 +626,8 @@ char    *accesstype;    /* access mode */
         vg->version       = VSET_VERSION;
 
       /* attach new vg to file's vgtab  */
-        if ( NULL == (v = (vginstance_t*) HDgetspace (sizeof(vginstance_t)))) {
-            HERROR(DFE_NOSPACE);
-            return(FAIL);
-        }
+        if ( NULL == (v = (vginstance_t*) HDgetspace (sizeof(vginstance_t))))
+            HRETURN_ERROR(DFE_NOSPACE,FAIL);
 
         vf->vgtabn++;
         v->key      = (int32) VGSLOT2ID(f,vg->oref); /* set the key for the node */
@@ -724,11 +643,8 @@ char    *accesstype;    /* access mode */
           /******* access an EXISTING vg *********/
         uint32 len;
           
-        if (NULL == (v= vginstance (f,(uint16)vgid))) {
-            HERROR(DFE_NOMATCH);
-            HEreport("Vgid (%d) is not in vgtab[]", vgid);
-            return(FAIL);
-        }
+        if (NULL == (v= vginstance (f,(uint16)vgid)))
+            HRETURN_ERROR(DFE_NOMATCH,FAIL);
           
           /*
            * vg already attached.  inc nattach and return existing ptr
@@ -750,17 +666,13 @@ char    *accesstype;    /* access mode */
             return(FAIL);
 
 
-        if (Hgetelement(f, DFTAG_VG, (uint16)vgid, vgpack) == (int32)FAIL) {
-            HERROR(DFE_NOMATCH);
-            return(FAIL);
-        }
+        if (Hgetelement(f, DFTAG_VG, (uint16)vgid, vgpack) == (int32)FAIL)
+            HRETURN_ERROR(DFE_NOMATCH,FAIL);
           
           /* allocate space for vg, & zero it out */
           
-        if (NULL == (vg =(VGROUP*) HDgetspace (sizeof(VGROUP))) ) {
-            HERROR(DFE_NOSPACE);
-            return(FAIL);
-        }
+        if (NULL == (vg =(VGROUP*) HDgetspace (sizeof(VGROUP))) )
+            HRETURN_ERROR(DFE_NOSPACE,FAIL);
           
         /* unpack vgpack into structure vg, and init  */
         vunpackvg(vg,vgpack);
@@ -797,9 +709,9 @@ char    *accesstype;    /* access mode */
 *
 */
 #ifdef PROTOTYPE
-PUBLIC void Vdetach (int32 vkey)
+PUBLIC int32 Vdetach (int32 vkey)
 #else
-PUBLIC void Vdetach (vkey)
+PUBLIC int32 Vdetach (vkey)
 int32 vkey;
 #endif
 {
@@ -808,52 +720,42 @@ int32 vkey;
     uint8         * vgpack;
     vginstance_t  * v;
     char * FUNC = "Vdetach";
-  
-    if (!VALIDVGID(vkey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return;
-    }
+
+    if (!VALIDVGID(vkey))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
   /* locate vg's index in vgtab */
-    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return;
-    }
+    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey))))
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vg=v->vg;
-    if ((vg == NULL) || (vg->otag != DFTAG_VG)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return;
-    }
+    if ((vg == NULL) || (vg->otag != DFTAG_VG))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
   /* update vgroup to file if it has write-access */
 
   /* if its marked flag is 1 */
   /* - OR - */
   /* if that vgroup is empty */
-  if (vg->access == 'w') {
-    if ((vg->nvelt==0) || (vg->marked == 1)) {
-      vgpack = (uint8 *) HDgetspace((int32) sizeof(VGROUP) + vg->nvelt * 4);
-      vpackvg(vg,vgpack,&vgpacksize);
+    if (vg->access == 'w') {
+        if ((vg->nvelt==0) || (vg->marked == 1)) {
+            vgpack = (uint8 *) HDgetspace((int32) sizeof(VGROUP) + vg->nvelt * 4);
+            vpackvg(vg,vgpack,&vgpacksize);
 
-      /*
-       *  For now attempt to blow away the old one.  This is a total HACK
-       *    but the H-level needs to stabilize first
-       */
-      Hdeldd(vg->f, DFTAG_VG, vg->oref);
+          /*
+           *  For now attempt to blow away the old one.  This is a total HACK
+           *    but the H-level needs to stabilize first
+           */
+            Hdeldd(vg->f, DFTAG_VG, vg->oref);
 
-      if(Hputelement(vg->f, DFTAG_VG, vg->oref, vgpack, vgpacksize) == FAIL) {
-        HERROR(DFE_WRITEERROR);
-        HEprint(stderr, 0);
+            if(Hputelement(vg->f, DFTAG_VG, vg->oref, vgpack, vgpacksize) == FAIL)
+                HERROR(DFE_WRITEERROR);
+            HDfreespace((VOIDP)vgpack);
+            vg->marked = 0;
+          }
       }
-      HDfreespace((VOIDP)vgpack);
-      vg->marked = 0;
-    }
-  }
-  v->nattach--;
+    v->nattach--;
+    return(SUCCEED);
 } /* Vdetach */
 
 
@@ -886,45 +788,29 @@ int32 insertkey;          /* (VGROUP*) or (VDATA*), doesn't matter */
     char * FUNC = "Vinsert";
     int32 newtag, newref, newfid;
     
-    if (!VALIDVGID(vkey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
+    if (!VALIDVGID(vkey))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
   
   /* locate vg's index in vgtab */
-    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
+    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) 
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vg=v->vg;
-    if (vg == NULL) {
-        HERROR(DFE_BADPTR);
-        return(FAIL);
-    }
-    
-    if (vg->otag != DFTAG_VG) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-    }
+    if (vg == NULL)
+        HRETURN_ERROR(DFE_BADPTR,FAIL);
+
+    if (vg->otag != DFTAG_VG)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
     
     newfid = FAIL;
     if (VALIDVSID(insertkey)) {
   
         /* locate vs's index in vstab */
-        if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(insertkey),(uint16)VSID2SLOT(insertkey)))) {
-            HERROR(DFE_NOVS);
-            HEprint(stderr, 0);
-            return(FAIL);
-        }
-        
-        if (w->vs == NULL) {
-            HERROR(DFE_ARGS);
-            HEprint(stderr,0);
-            return(FAIL);
-        }
+        if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(insertkey),(uint16)VSID2SLOT(insertkey))))
+            HRETURN_ERROR(DFE_NOVS,FAIL);
+
+        if (w->vs == NULL)
+            HRETURN_ERROR(DFE_ARGS,FAIL);
      
         newtag = (int32) DFTAG_VH;
         newref = (int32) w->vs->oref;
@@ -935,18 +821,12 @@ int32 insertkey;          /* (VGROUP*) or (VDATA*), doesn't matter */
         if(VALIDVGID(insertkey)) {
             
             /* locate vs's index in vgtab */
-            if(NULL==(x=(vginstance_t*)vginstance(VGID2VFILE(insertkey),(uint16)VGID2SLOT(insertkey)))) {
-                HERROR(DFE_NOVS);
-                HEprint(stderr, 0);
-                return(FAIL);
-            }
-        
-            if (x->vg == NULL) {
-                HERROR(DFE_ARGS);
-                HEprint(stderr,0);
-                return(FAIL);
-            }
-            
+            if(NULL==(x=(vginstance_t*)vginstance(VGID2VFILE(insertkey),(uint16)VGID2SLOT(insertkey))))
+                HRETURN_ERROR(DFE_NOVS,FAIL);
+
+            if (x->vg == NULL) 
+                HRETURN_ERROR(DFE_ARGS,FAIL);
+
             newtag = (int32) DFTAG_VG;
             newref = (int32) x->vg->oref;
             newfid = x->vg->f;
@@ -956,29 +836,21 @@ int32 insertkey;          /* (VGROUP*) or (VDATA*), doesn't matter */
     }
     
     /* make sure we found something */
-    if(newfid == FAIL) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-    }
+    if(newfid == FAIL)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
-    if (vg->f != newfid) {
-        HERROR(DFE_DIFFFILES);
-        return(FAIL);
-    }
+    if (vg->f != newfid)
+        HRETURN_ERROR(DFE_DIFFFILES,FAIL);
     
     /* check and prevent duplicate links */
     for(u = 0; u < vg->nvelt; u++)
-        if((vg->ref[u] == newref) && (vg->tag[u] == newtag)) {
-            HERROR(DFE_DUPDD);
-            HEreport("Vinsert: duplicate link <%d/%d>", newtag, newref);
-            return(FAIL);
-        }
-    
+        if((vg->ref[u] == newref) && (vg->tag[u] == newtag))
+            HRETURN_ERROR(DFE_DUPDD,FAIL);
+
     /* Finally, ok to insert */
     vinsertpair(vg, (uint16) newtag, (uint16) newref);
 
     return(vg->nvelt - 1);
-
 } /* Vinsert */
 
 /* ----------------------------- Vflocate -------------------------------- */
@@ -1003,24 +875,16 @@ char * field;
     int32 vskey;
     char * FUNC = "Vflocate";
     
-    if (!VALIDVGID(vkey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(FAIL);
-      } /* end if */
+    if (!VALIDVGID(vkey))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
   
   /* locate vg's index in vgtab */
-    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
+    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey))))
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vg=v->vg;
-    if (vg == NULL) {
-        HERROR(DFE_BADPTR);
-        return(FAIL);
-    }
+    if (vg == NULL)
+        HRETURN_ERROR(DFE_BADPTR,FAIL);
     
     for (u = 0; u < vg->nvelt; u++)  {
         if(vg->tag[u]!=VSDESCTAG)
@@ -1058,24 +922,16 @@ int32   tag, ref;
     VGROUP *vg;
     char * FUNC = "Vinqtagref";
 
-    if (!VALIDVGID(vkey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(FAIL);
-      } /* end if */
-  
+    if (!VALIDVGID(vkey))
+        HRETURN_ERROR(DFE_ARGS,FALSE);
+
   /* locate vg's index in vgtab */
-    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
+    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey))))
+        HRETURN_ERROR(DFE_NOVS,FALSE);
 
     vg=v->vg;
-    if (vg == NULL) {
-        HERROR(DFE_BADPTR);
-        return(FAIL);
-    }
+    if (vg == NULL)
+        HRETURN_ERROR(DFE_BADPTR,FALSE);
     ttag = (uint16) tag;
     rref = (uint16) ref;
 
@@ -1103,24 +959,16 @@ int32 vkey;
     VGROUP *vg;
     char * FUNC = "Vntagrefs";
     
-    if (!VALIDVGID(vkey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(FAIL);
-      } /* end if */
+    if (!VALIDVGID(vkey))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
   
   /* locate vg's index in vgtab */
-    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
+    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey))))
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vg=v->vg;
-    if (vg == NULL) {
-        HERROR(DFE_BADPTR);
-        return(FAIL);
-    }
+    if (vg == NULL)
+        HRETURN_ERROR(DFE_BADPTR,FAIL);
     return ( (vg->otag == DFTAG_VG) ? (int32) vg->nvelt : FAIL);
 } /* Vntagrefs */
 
@@ -1149,24 +997,16 @@ int32 tagarray[], refarray[];
     VGROUP *vg;
     char * FUNC = "Vgettagrefs";
     
-    if (!VALIDVGID(vkey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(FAIL);
-      } /* end if */
+    if (!VALIDVGID(vkey))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
   
   /* locate vg's index in vgtab */
-    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
+    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) 
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vg=v->vg;
-    if (vg == NULL) {
-        HERROR(DFE_BADPTR);
-        return(FAIL);
-    }
+    if (vg == NULL)
+        HRETURN_ERROR(DFE_BADPTR,FAIL);
 
     if (n > (int32)vg->nvelt)
         n = vg->nvelt;
@@ -1202,27 +1042,19 @@ int32   *tag, *ref; /* these are returned */
     VGROUP *vg;
     char * FUNC = "Vgettagref";
     
-    if (!VALIDVGID(vkey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(FAIL);
-      } /* end if */
+    if (!VALIDVGID(vkey))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
   
   /* locate vg's index in vgtab */
-    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
+    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) 
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vg=v->vg;
-    if (vg == NULL) {
-        HERROR(DFE_BADPTR);
-        return(FAIL);
-    }
-    
+    if (vg == NULL)
+        HRETURN_ERROR(DFE_BADPTR,FAIL);
+
     if (which < 0 || which > (int32)(vg->nvelt-1))
-        return (FAIL); /* range err */
+        HRETURN_ERROR(DFE_RANGE,FAIL); /* range err */
     
     *tag  = (int32) vg->tag[which];
     *ref  = (int32) vg->ref[which];
@@ -1246,25 +1078,18 @@ int32 vkey;
     VGROUP *vg;
     char * FUNC = "Vgettagref";
     
-    if (!VALIDVGID(vkey)) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-    } 
-  
+    if (!VALIDVGID(vkey))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
+
     /* locate vg's index in vgtab */
-    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        return(FAIL);
-    }
+    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey))))
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vg=v->vg;
-    if (vg == NULL) {
-        HERROR(DFE_BADPTR);
-        return(FAIL);
-    }
-    
-    return ((int32) vg->otag);
+    if (vg == NULL)
+        HRETURN_ERROR(DFE_BADPTR,FAIL);
 
+    return ((int32) vg->otag);
 } /* VQuerytag */
 
 
@@ -1284,25 +1109,18 @@ int32 vkey;
     VGROUP *vg;
     char * FUNC = "Vgettagref";
     
-    if (!VALIDVGID(vkey)) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-    } 
+    if (!VALIDVGID(vkey))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
   
     /* locate vg's index in vgtab */
-    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        return(FAIL);
-    }
+    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey))))
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vg=v->vg;
-    if (vg == NULL) {
-        HERROR(DFE_BADPTR);
-        return(FAIL);
-    }
-    
-    return ((int32) vg->oref);
+    if (vg == NULL)
+        HRETURN_ERROR(DFE_BADPTR,FAIL);
 
+    return ((int32) vg->oref);
 } /* VQueryref */
 
 
@@ -1329,24 +1147,16 @@ int32  tag, ref;
     uint16 ttag, rref;
     char * FUNC = "Vaddtagref";
     
-    if (!VALIDVGID(vkey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(FAIL);
-      } /* end if */
+    if (!VALIDVGID(vkey))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
   
   /* locate vg's index in vgtab */
-    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
+    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey))))
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vg=v->vg;
-    if (vg == NULL) {
-        HERROR(DFE_BADPTR);
-        return(FAIL);
-    }
+    if (vg == NULL)
+        HRETURN_ERROR(DFE_BADPTR,FAIL);
 
 #ifdef NO_DUPLICATES
     /* make sure doesn't already exist in the Vgroup */
@@ -1387,10 +1197,8 @@ uint16      tag, ref;   /* this MUST be uint16 -  private routine */
         vg->ref  = (uint16 *) 
             HDregetspace((VOIDP)vg->ref, vg->msize * sizeof(uint16));
         
-        if((vg->tag == NULL) || (vg->ref == NULL)) {
-            HERROR(DFE_NOSPACE);
-            return(FAIL);
-        }  
+        if((vg->tag == NULL) || (vg->ref == NULL))
+            HRETURN_ERROR(DFE_NOSPACE,FAIL);
     }
     vg->tag[vg->nvelt]   = tag;
     vg->ref[vg->nvelt]   = ref;
@@ -1423,23 +1231,19 @@ int32   vgid;
     int32   len;
     char * FUNC = "Ventries";
 
-	if (vgid < 1) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-      }
+	if (vgid < 1)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     len = Hlength(f, DFTAG_VG, (uint16) vgid);
     if(len == FAIL)
-        return FAIL;
+        HRETURN_ERROR(DFE_NOSUCHTAG,FAIL);
 
     vgpack = (uint8 *) HDgetspace(len);
     if(vgpack == NULL)
-        return FAIL;
+        HRETURN_ERROR(DFE_NOSPACE,FAIL);
 
-    if ( Hgetelement(f, DFTAG_VG, (uint16)vgid, vgpack) == FAIL) {
-        HERROR(DFE_NOVS);
-        return (FAIL);
-    }
+    if ( Hgetelement(f, DFTAG_VG, (uint16)vgid, vgpack) == FAIL)
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vunpackvg(&vg,vgpack);
 
@@ -1470,24 +1274,16 @@ char        *vgname;
     VGROUP *vg;
     char * FUNC = "Vsetname";
     
-    if (!VALIDVGID(vkey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(FAIL);
-      } /* end if */
+    if (!VALIDVGID(vkey))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
   
   /* locate vg's index in vgtab */
-    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
+    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) 
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vg=v->vg;
-    if (vg == NULL) {
-        HERROR(DFE_BADPTR);
-        return(FAIL);
-    }
+    if (vg == NULL)
+        HRETURN_ERROR(DFE_BADPTR,FAIL);
   
     HIstrncpy(vg->vgname, vgname, VGNAMELENMAX);
     vg->marked = TRUE;
@@ -1516,24 +1312,16 @@ char *vgclass;
     VGROUP *vg;
     char * FUNC = "Vsetclass";
     
-    if (!VALIDVGID(vkey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(FAIL);
-      } /* end if */
+    if (!VALIDVGID(vkey))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
   
   /* locate vg's index in vgtab */
-    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
+    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey))))
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vg=v->vg;
-    if (vg == NULL) {
-        HERROR(DFE_BADPTR);
-        return(FAIL);
-    }
+    if (vg == NULL)
+        HRETURN_ERROR(DFE_BADPTR,FAIL);
 
     HIstrncpy(vg->vgclass, vgclass,VGNAMELENMAX);
     vg->marked = TRUE;
@@ -1564,24 +1352,16 @@ int32   id;     /* valid id of the entry in question */
     VGROUP *vg;
     char * FUNC = "Visvg";
     
-    if (!VALIDVGID(vkey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(FALSE);
-      } /* end if */
+    if (!VALIDVGID(vkey))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
   
   /* locate vg's index in vgtab */
-    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(FALSE);
-    }
+    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) 
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vg=v->vg;
-    if (vg == NULL) {
-        HERROR(DFE_BADPTR);
-        return(FALSE);
-    }
+    if (vg == NULL)
+        HRETURN_ERROR(DFE_BADPTR,FAIL);
   
     ID = (uint16) id;
 
@@ -1614,31 +1394,23 @@ int32   id;
     VGROUP *vg;
     char * FUNC = "VSisvs";
     
-    if (!VALIDVGID(vkey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(FALSE);
-      } /* end if */
+    if (!VALIDVGID(vkey))
+        HRETURN_ERROR(DFE_ARGS,FALSE);
   
   /* locate vg's index in vgtab */
-    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(FALSE);
-    }
+    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey))))
+        HRETURN_ERROR(DFE_NOVS,FALSE);
 
     vg=v->vg;
-    if (vg == NULL) {
-        HERROR(DFE_BADPTR);
-        return(FALSE);
-    }
+    if (vg == NULL)
+        HRETURN_ERROR(DFE_BADPTR,FALSE);
 
     i = vg->nvelt;
     while(i)
         if (vg->ref[--i] == (uint16)id && vg->tag[i]==VSDESCTAG)
             return(TRUE);
-  
-  return(FALSE);
+
+    return(FALSE);
 } /* Visvs */
 
 /* ======================================================= */
@@ -1668,15 +1440,21 @@ int32   vgid;                   /* current vgid */
 	int32 key;
 	char * FUNC = "Vgetid";
 
-    if(vgid < -1 ) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-      } /* end if */
+    if(vgid < -1 )
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
-    if (NULL==(vf = Get_vfile(f))) {
-        HERROR(DFE_FNF);
-        return(FAIL);
-      } /* end if */
+    /* Check if vfile buffer has been allocated */
+    if (vfile == NULL)
+      {
+        vfile = (vfile_t *)HDgetspace(MAX_VFILE * sizeof(vfile_t));
+        if (vfile == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        /* zero the space */
+        vfile = memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+      }
+
+    if (NULL==(vf = Get_vfile(f)))
+        HRETURN_ERROR(DFE_FNF,FAIL);
 
     if (vgid == (-1)) { /* check for magic value to return the first group */
         if (NULL == (t=(VOIDP *)tbbtfirst((TBBT_NODE *)*(vf->vgtree))))
@@ -1735,34 +1513,26 @@ int32 id;     /* actual id of an entry in the vgroup vg */
     VGROUP *vg;
     char * FUNC = "Vgetnext";
     
-    if (!VALIDVGID(vkey) || id<(-1)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(FAIL);
-      } /* end if */
+    if (!VALIDVGID(vkey) || id<(-1))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
   
   /* locate vg's index in vgtab */
-    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
+    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey))))
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vg=v->vg;
   
-    if ((vg == NULL) || (vg->otag != DFTAG_VG)) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-      } /* end if */
-  
+    if ((vg == NULL) || (vg->otag != DFTAG_VG))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
+
     if (vg->nvelt == 0)
         return(FAIL);             /* nothing in vg */
-  
+
     if (id == -1) {
         if ((vg->tag[0] == DFTAG_VG) || (vg->tag[0]==VSDESCTAG))
             return(vg->ref[0]);       /* id of first entry */
       } /* end if */
-  
+
     /* look in vg for id */
     for(u=0; u<vg->nvelt; u++)
         if ((vg->tag[u]==DFTAG_VG) || (vg->tag[u]==VSDESCTAG)) {
@@ -1777,7 +1547,7 @@ int32 id;     /* actual id of an entry in the vgroup vg */
                   } /* end else */
               } /* end if */
           } /* end if */
-    
+
     return (FAIL);
 } /* Vgetnext  */
 
@@ -1791,9 +1561,9 @@ int32 id;     /* actual id of an entry in the vgroup vg */
 */
 
 #ifdef PROTOTYPE
-PUBLIC void Vgetname (int32 vkey, char *vgname)
+PUBLIC int32 Vgetname (int32 vkey, char *vgname)
 #else
-PUBLIC void Vgetname (vkey, vgname)
+PUBLIC int32 Vgetname (vkey, vgname)
 int32 vkey;
 char *vgname;            /* its name is returned in this var */
 #endif
@@ -1801,27 +1571,20 @@ char *vgname;            /* its name is returned in this var */
     vginstance_t  * v;
     VGROUP *vg;
     char * FUNC = "Vgetname";
-    
-    if (!VALIDVGID(vkey) || vgname==NULL) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return;
-      } /* end if */
-  
+
+    if (!VALIDVGID(vkey) || vgname==NULL)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
+
   /* locate vg's index in vgtab */
-    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return;
-      } /* end if */
+    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey))))
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vg=v->vg;
-    if (vg == NULL) {
-        HERROR(DFE_BADPTR);
-        return;
-      } /* end if */
+    if (vg == NULL)
+        HRETURN_ERROR(DFE_BADPTR,FAIL);
 
     HDstrcpy(vgname, vg->vgname);
+    return(SUCCEED);
 } /* Vgetname */
 
 /* ================================================================= */
@@ -1834,9 +1597,9 @@ char *vgname;            /* its name is returned in this var */
 */
 
 #ifdef PROTOTYPE
-PUBLIC void Vgetclass (int32 vkey, char *vgclass)
+PUBLIC int32 Vgetclass (int32 vkey, char *vgclass)
 #else
-PUBLIC void Vgetclass (vkey, vgclass)
+PUBLIC int32 Vgetclass (vkey, vgclass)
 int32 vkey;
 char    *vgclass;   /* its class name is returned in this var */
 #endif
@@ -1844,27 +1607,20 @@ char    *vgclass;   /* its class name is returned in this var */
     vginstance_t  * v;
     VGROUP *vg;
     char * FUNC = "Vgetclass";
-    
-    if (!VALIDVGID(vkey) || vgclass==NULL) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return;
-      } /* end if */
-  
+
+    if (!VALIDVGID(vkey) || vgclass==NULL)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
+
   /* locate vg's index in vgtab */
-    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return;
-      } /* end if */
+    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey))))
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vg=v->vg;
-    if (vg == NULL) {
-        HERROR(DFE_BADPTR);
-        return;
-      } /* end if */
-  
+    if (vg == NULL)
+        HRETURN_ERROR(DFE_BADPTR,FAIL);
+
     HDstrcpy(vgclass, vg->vgclass);
+    return(SUCCEED);
 } /* Vgetclass*/
 
 /* ================================================================= */
@@ -1895,35 +1651,25 @@ char        *vgname;
     VGROUP *vg;
     char * FUNC = "Vinquire";
     
-    if (!VALIDVGID(vkey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(FAIL);
-      } /* end if */
-  
+    if (!VALIDVGID(vkey))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
+
   /* locate vg's index in vgtab */
-    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(FAIL);
-      } /* end if */
+    if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey))))
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vg=v->vg;
-    if (vg == NULL) {
-        HERROR(DFE_BADPTR);
-        return(FAIL);
-      } /* end if */
-  
-    if(vg->otag != DFTAG_VG) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-      } /* end if */
+    if (vg == NULL)
+        HRETURN_ERROR(DFE_BADPTR,FAIL);
+
+    if(vg->otag != DFTAG_VG)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     if(vgname!=NULL)
         HDstrcpy(vgname, vg->vgname);
     if(nentries!=NULL)
         *nentries = vg->nvelt;
-  
+
     return(SUCCEED);
 } /* Vinquire */
 
@@ -1990,7 +1736,7 @@ int16       ndds;
 * See also Vopen().
 *
 * By: Jason Ng 10 Aug 92
-* 
+*
 */
 
 #ifdef PROTOTYPE
@@ -2026,36 +1772,41 @@ int32 f;
 int32 vgid;
 #endif
 {
-
     VOIDP	   v;
     vfile_t      * vf;
     VOIDP        * t;
     int32          key;
     char         * FUNC = "Vdelete";
 
-    if(vgid < 0) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-    } 
+    if(vgid < 0)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
-    if (NULL==(vf = Get_vfile(f))) {
-        HERROR(DFE_FNF);
-        return(FAIL);
-    } 
+    /* Check if vfile buffer has been allocated */
+    if (vfile == NULL)
+      {
+        vfile = (vfile_t *)HDgetspace(MAX_VFILE * sizeof(vfile_t));
+        if (vfile == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        /* zero the space */
+        vfile = memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+      }
+
+    if (NULL==(vf = Get_vfile(f)))
+        HRETURN_ERROR(DFE_FNF,FAIL);
 
     key=VGSLOT2ID(f,vgid);
 
     t = (VOIDP *)tbbtdfind(vf->vgtree,(VOIDP)&key,NULL);
 
     if(t == NULL)
-        return FAIL;
+        return(FAIL);
 
     v = tbbtrem((TBBT_NODE **)vf->vgtree, (TBBT_NODE *)t, NULL);
-    if(v) 
+    if(v)
         vdestroynode((VOIDP)v);
 
     Hdeldd(f, DFTAG_VG, (uint16) vgid);
 
     return SUCCEED;
-       
 } /* Vdelete */
+

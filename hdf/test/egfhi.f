@@ -1,34 +1,18 @@
+C****************************************************************************
+C* NCSA HDF                                                                 *
+C* Software Development Group                                               *
+C* National Center for Supercomputing Applications                          *
+C* University of Illinois at Urbana-Champaign                               *
+C* 605 E. Springfield, Champaign IL 61820                                   *
+C*                                                                          *
+C* For conditions of distribution and use, see the accompanying             *
+C* hdf/COPYING file.                                                        *
+C*                                                                          *
+C****************************************************************************
 C
-C $Header$
-C
-C $Log$
-C Revision 1.7  1993/01/19 05:58:20  koziol
-C Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-C port.  Lots of minor annoyances fixed.
-C
-c Revision 1.6  1992/12/01  21:07:48  chouck
-c Fixed tab / space problem so Mac Fortran doesn't complain
-c
-c Revision 1.5  1992/11/30  22:01:15  chouck
-c Added fix for Vstart() and Vend()
-c
-c Revision 1.4  1992/06/16  15:39:42  chouck
-c HP is really picky about things not extending into column 72
-c
-c Revision 1.3  1992/05/28  16:43:32  chouck
-c Fixed line continuation characters to make RS/6000 happy
-c
-c Revision 1.2  1992/05/18  22:11:07  sxu
-c modified constants for number types
-c
-c Revision 1.1  1992/03/01  22:29:07  dilg
-c Initial revision
-c     
-c     Revision 1.1  1992/02/29  21:24:40  likkai
-c     Initial revision
-c     
+C $Id$
 C     
-c	==========================================================   
+C==========================================================   
 c
 c     HDF VSET Sample Program
 c     Jason NG NCSA FEB-28-92

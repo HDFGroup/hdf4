@@ -1,148 +1,17 @@
-/*
-$Header$
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
 
-$Log$
-Revision 1.41  1993/10/06 20:27:38  koziol
-More compression fixed, and folded Doug's suggested change into VSappendable.
+/* $Id$ */
 
- * Revision 1.40  1993/10/01  20:01:02  koziol
- * Put "extern C" block around function prototypes for C++ compatibility.
- *
- * Revision 1.39  1993/09/30  19:05:08  koziol
- * Added basic compressing functionality for special tags.
- *
- * Revision 1.38  1993/09/28  18:04:26  koziol
- * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
- * tag handling.  Added new compression special tag type.
- *
- * Revision 1.37  1993/09/27  20:59:49  briand
- * Added MIPSEL to the list for strdup
- *
- * Revision 1.36  1993/09/21  16:19:04  georgev
- * Added an ansi cast to strlen().
- *
- * Revision 1.35  1993/09/15  19:41:16  georgev
- * Added #define for Mac for local HDstrdup().
- *
- * Revision 1.34  1993/09/11  21:00:25  koziol
- * Defined alternate HDstrdup routine for VMS and fixed a couple of HDstrdup
- * mistakes.
- *
- * Revision 1.33  1993/09/11  18:07:55  koziol
- * Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
- * cleaned up some goofy string manipulations in various places.
- *
- * Revision 1.32  1993/09/08  20:54:53  georgev
- * Fixed problem with #elif directive on HP9000.
- * Deleted NewPtr, DisposPtr references for Mac.
- *
- * Revision 1.31  1993/09/02  14:41:56  koziol
- * Patches for Watcom/386 Support
- *
- * Revision 1.30  1993/08/18  16:04:09  chouck
- * Restored changes blown away in version 1.28 (addition of HDstrdup())
- * (grumble grumble)
- *
- * Revision 1.29  1993/08/16  21:45:43  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.27  1993/06/15  18:22:00  chouck
- * Made a little smarter at guessing machine types
- *
- * Revision 1.26  1993/05/17  15:23:37  georgev
- * HP9000 did not like the 'signed char' for int8.
- *
- * Revision 1.25  1993/05/12  16:40:49  chouck
- * Made int8 a 'singed char' because on some platforms (e.g. SGI) char can
- * be unisgned by default
- *
- * Revision 1.24  1993/05/05  19:47:04  chouck
- * Define PROTOTYPE if using C++
- *
- * Revision 1.23  1993/04/30  20:28:51  koziol
- * Added correct #define's for JPEG on the Cray
- *
- * Revision 1.22  1993/04/27  21:05:04  chouck
- * Added JPeg defines for Convex
- *
- * Revision 1.21  1993/04/24  18:29:03  koziol
- * Added some preprocessor macros to the Cray section to get JPEG working.
- *
- * Revision 1.20  1993/04/22  23:00:18  koziol
- * Changed DFR8nimages, DFPnpals to report the correct number of images
- * and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
- *
- * Revision 1.19  1993/04/21  16:20:11  chouck
- * Changed ALPHA -> DEC_ALPHA to avoid conflict with GL libraries
- *
- * Revision 1.18  1993/04/19  22:47:58  koziol
- * General Code Cleanup to reduce/remove errors on the PC
- *
- * Revision 1.17  1993/04/13  17:44:23  koziol
- * Added patches for Fujitsu VP machines and fixed Cray fast conversion
- * routines.
- *
- * Revision 1.16  1993/04/05  22:35:37  koziol
- * Fixed goofups made in haste when patching code.
- *
- * Revision 1.15  1993/03/29  16:47:53  koziol
- * Updated JPEG code to new JPEG 4 code.
- * Changed VSets to use Threaded-Balanced-Binary Tree for internal
- * 	(in memory) representation.
- * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
- * 	to use 32-bit integer keys instead of pointers.
- * Backed out speedups for Cray, until I get the time to fix them.
- * Fixed a bunch of bugs in the little-endian support in DFSD.
- *
- * Revision 1.14  1993/02/16  18:45:02  koziol
- * Added prototyping to RS/6000 definition
- *
- * Revision 1.13  1993/01/26  19:42:45  koziol
- * Added support for reading and writing Little-Endian data on all
- * platforms.  This has been tested on: Cray, Sun, and PCs so far.
- *
- * Revision 1.12  1993/01/19  05:55:40  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.11  1992/11/06  21:52:30  chouck
- * Added HDmemset() function.
- *
- * Revision 1.10  1992/11/06  20:11:55  chouck
- * Added some changes for Absoft Fortran on the Mac
- *
- * Revision 1.9  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.8  1992/10/09  20:49:17  chouck
- * Added some patches to work with ThinkC I/O on the Mac
- *
- * Revision 1.7  1992/09/28  18:24:01  koziol
- * Removed '#define BSD' from NEXT section
- *
- * Revision 1.6  1992/09/25  15:42:46  koziol
- * Added 'const' fix for the HP9000 and added NeXT support in
- * (use -DNEXT on the compile line for the makefile)
- *
- * Revision 1.5  1992/09/18  21:54:35  koziol
- * Added the __STDC__ back to the Convex section
- *
- * Revision 1.4  1992/09/17  19:49:16  koziol
- * Made changes for ANSI compilation on the Convex
- *
- * Revision 1.3  1992/09/11  14:15:04  koziol
- * Changed Fortran stubs' parameter passing to use a new typedef, intf,
- * which should be typed to the size of an INTEGER*4 in whatever Fortran
- * compiler the C functions need to be compatible with.  (This is mostly
- * for the PC and possibly for the Mac)
- *
- * Revision 1.2  1992/09/04  22:05:02  georgev
- * Fixed "const" problem for MIPSEL.
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 #ifndef HDFI_H
 #define HDFI_H
 
@@ -728,6 +597,9 @@ Please check your Makefile.
 #include <limits.h>         /* for UINT_MAX used in various places */
 #include <stdlib.h>
 #include <ctype.h>          /* for character macros */
+#ifdef __WATCOMC__
+#include <stddef.h>         /* for the 'fortran' pragma */
+#endif
 #ifdef WIN3
 #ifndef GMEM_MOVEABLE       /* check if windows header is already included */
 #include <windows.h>        /* include the windows headers */
@@ -1039,6 +911,9 @@ correctly.
         *(p) = (uint8)(((i) >> 8) & 0xff); (p)++; \
         *(p) = (uint8)((i) & 0xff); (p)++; }
 
+#   define NBYTEENCODE(d, s, n) \
+{   HDmemcpy(d,s,n); p+=n }
+
 #   define INT16DECODE(p, i) \
 { (i) = (int16)((*(p) & 0xff) << 8); (p)++; \
         (i) |= (int16)((*(p) & 0xff)); (p)++; }
@@ -1058,6 +933,11 @@ correctly.
         (i) |= ((uint32)(*(p) & 0xff) << 16); (p)++; \
         (i) |= ((uint32)(*(p) & 0xff) << 8); (p)++; \
         (i) |= (*(p) & 0xff); (p)++; }
+
+/* Note! the NBYTEDECODE macro is backwards from the memcpy() routine, */
+/*      in the spirit of the other DECODE macros */
+#   define NBYTEDECODE(s, d, n) \
+{   HDmemcpy(d,s,n); p+=n }
 
 /**************************************************************************
 *                   Conversion Routine Pointers
@@ -1079,12 +959,14 @@ extern int (*DFKnumout)();
 *  memory is needed, as when small conversions are done
 ******************************************************************/
 #define DF_TBUFSZ       512     /* buffer size can be smaller */
+#if 0 /* replaced with dynamic memory calls */
 #ifdef  HMASTER
     int    FAR int_DFtbuf[DF_TBUFSZ]; /* int declaration to force word boundary */
     uint8  FAR *DFtbuf = (uint8 *) int_DFtbuf;
 #else /* !HMASTER */
 extern uint8 FAR *DFtbuf;
 #endif /*HMASTER*/
+#endif 
 
 /*----------------------------------------------------------------
 ** MACRO FCALLKEYW for any special fortran-C stub keyword

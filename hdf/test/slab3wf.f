@@ -1,30 +1,16 @@
-C---------------------------------------------------------------------------
-C $Header$
+C****************************************************************************
+C* NCSA HDF                                                                 *
+C* Software Development Group                                               *
+C* National Center for Supercomputing Applications                          *
+C* University of Illinois at Urbana-Champaign                               *
+C* 605 E. Springfield, Champaign IL 61820                                   *
+C*                                                                          *
+C* For conditions of distribution and use, see the accompanying             *
+C* hdf/COPYING file.                                                        *
+C*                                                                          *
+C****************************************************************************
 C
-C $Log$
-C Revision 1.7  1993/08/28 00:58:23  georgev
-C Fixed some changes lost during the PC merge.
-C Changed fortran long names in slabs to use the short ones.
-C
-c Revision 1.6  1993/08/16  21:58:30  koziol
-c Fixed access list for these files, and the actual changes I made to the
-c files are for PC compatibility.
-c
-c Revision 1.4  1993/04/27  21:02:04  georgev
-c Changed fortran stubs interface for hyperslabs, made them different
-c than the C names.
-c
-c Revision 1.3  1993/02/01  23:23:23  georgev
-c Changed hyperslab test files to reflect new interface
-c
-c Revision 1.2  1993/01/15  16:54:59  georgev
-c Cleaned out unused variables.
-c
-c Revision 1.1  1993/01/07  20:56:19  georgev
-c Added Hyperslab C and Fortran test programs.
-c
-C
-C---------------------------------------------------------------------------
+C $Id$
 C
       program slab3wf
 C

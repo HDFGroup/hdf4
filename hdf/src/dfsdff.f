@@ -1,29 +1,16 @@
+C****************************************************************************
+C* NCSA HDF                                                                 *
+C* Software Development Group                                               *
+C* National Center for Supercomputing Applications                          *
+C* University of Illinois at Urbana-Champaign                               *
+C* 605 E. Springfield, Champaign IL 61820                                   *
+C*                                                                          *
+C* For conditions of distribution and use, see the accompanying             *
+C* hdf/COPYING file.                                                      *
+C*                                                                          *
+C****************************************************************************
 C
-C $Header$
-C
-C $Log$
-C Revision 1.7  1993/08/28 01:37:47  georgev
-C Fixed a slab fortran name.
-C
-c Revision 1.6  1993/08/28  00:40:22  georgev
-c Fixed some changes that got lost during the PC merge.
-c
-c Revision 1.5  1993/08/16  21:45:35  koziol
-c Wrapped in changes for final, working version on the PC.
-c
-c Revision 1.4  1993/07/31  16:54:44  georgev
-c Fixed fortran stubs for slabs.
-c
-c Revision 1.3  1993/01/19  05:55:17  koziol
-c Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-c port.  Lots of minor annoyances fixed.
-c
-c Revision 1.2  1993/01/04  18:09:33  sxu
-c add dsp32sd (for dfsdpre32sdg)
-c
-c Revision 1.1  1992/08/25  21:40:44  koziol
-c Initial revision
-c
+C $Id$ 
 C
 C------------------------------------------------------------------------------
 C File:     dfsdFf.f

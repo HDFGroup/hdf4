@@ -1,51 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.11  1993/09/08 18:29:31  koziol
-Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
+/* $Id$ */
 
- * Revision 1.10  1993/08/28  22:58:47  georgev
- * Fixed cast problem for HDgetspace.
- *
- * Revision 1.9  1993/08/28  22:58:07  georgev
- * Fixed a few VOIDP casts.
- *
- * Revision 1.8  1993/08/20  22:38:37  koziol
- * Reduced the static memory of a couple of functions to make the PC happier...
- *
- * Revision 1.7  1993/08/19  16:45:45  chouck
- * Added code and tests for multi-order Vdatas
- *
- * Revision 1.6  1993/08/16  21:46:32  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.5  1993/04/19  22:48:23  koziol
- * General Code Cleanup to reduce/remove errors on the PC
- *
- * Revision 1.4  1993/03/29  16:50:25  koziol
- * Updated JPEG code to new JPEG 4 code.
- * Changed VSets to use Threaded-Balanced-Binary Tree for internal
- * 	(in memory) representation.
- * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
- * 	to use 32-bit integer keys instead of pointers.
- * Backed out speedups for Cray, until I get the time to fix them.
- * Fixed a bunch of bugs in the little-endian support in DFSD.
- *
- * Revision 1.3  1993/01/19  05:56:10  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.2  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /* obsolete code for HDF 3.2. 26/march/92 jason ng */
 /* except for the following routines: 
 *	vicheckcompat()
@@ -73,8 +43,8 @@ Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
 
 /* ------------------------------------------------------------------ */
 
-static void oldunpackvg PROTO((VGROUP *vg,uint8  buf[], int32 *size));
-static void oldunpackvs PROTO((VDATA *vs, uint8 buf[], int32 *size));
+PRIVATE void oldunpackvg PROTO((VGROUP *vg,uint8  buf[], int32 *size));
+PRIVATE void oldunpackvs PROTO((VDATA *vs, uint8 buf[], int32 *size));
 
 /*
 *  this routine checks that the given OPENED file is compatible with

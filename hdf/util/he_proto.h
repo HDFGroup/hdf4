@@ -1,24 +1,17 @@
-/*
-$Header$
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
 
-$Log$
-Revision 1.5  1993/01/19 06:00:28  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+/* $Id$ */
 
- * Revision 1.4  1992/09/11  18:32:51  chouck
- * Assorted MAC mungings
- *
- * Revision 1.3  1992/08/11  23:05:39  sxu
- * Added parameter 'int raw' in prototype dump()
- *
- * Revision 1.2  1992/07/15  21:48:48  sxu
- * No change.
- *
- * Revision 1.1  1992/07/14  16:38:12  mlivin
- * Initial revision
- *
-*/
 /* Prototypes for hdfed functions */
 int HEalias
   PROTO((HE_CMD *cmd));

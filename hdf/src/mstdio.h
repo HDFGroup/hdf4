@@ -1,3 +1,17 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
+/* $Id$ */
+
 /*-----------------------------------------------------------------------------
  * File:    mstdio.h
  * Purpose: Header file for stdio-like modeling information.
@@ -8,24 +22,6 @@
  * Structure definitions:
  * Constant definitions:
  *---------------------------------------------------------------------------*/
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-/*
-$Header$
-
-$Log$
-Revision 1.3  1993/10/06 20:27:55  koziol
-More compression fixed, and folded Doug's suggested change into VSappendable.
-
- * Revision 1.2  1993/10/01  20:01:23  koziol
- * Put "extern C" block around function prototypes for C++ compatibility.
- *
- * Revision 1.1  1993/09/30  19:05:23  koziol
- * Added basic compressing functionality for special tags.
- *
- *
- */
 
 /* avoid re-inclusion */
 #ifndef __MSTDIO_H
@@ -68,7 +64,7 @@ extern int32 HCPmstdio_endaccess
 
 /* model information about stdio model */
 typedef struct {
-    uint32 pos;
+    uint32 pos; /* postion ? */
  } comp_model_stdio_info_t;
 
 #ifndef MSTDIO_MASTER
@@ -86,3 +82,4 @@ funclist_t mstdio_funcs={    /* functions to perform run-length encoding */
 #endif
 
 #endif /* __MSTDIO_H */
+

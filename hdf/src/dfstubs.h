@@ -1,18 +1,17 @@
-/*
-$Header$
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
 
-$Log$
-Revision 1.3  1993/10/01 20:00:48  koziol
-Put "extern C" block around function prototypes for C++ compatibility.
+/* $Id$ */
 
- * Revision 1.2  1993/01/19  05:55:22  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*
 ** FILE
 **	dfstubs.h
@@ -42,20 +41,20 @@ Put "extern C" block around function prototypes for C++ compatibility.
 #define DFSRCH_OLD	0
 #define DFSRCH_NEW	1
 
-PRIVATE int32	DFid;
-PRIVATE int32	DFaid;
-PRIVATE int	DFaccmode;
-PRIVATE int	DFelaccmode;
-PRIVATE uint16	search_tag;
-PRIVATE uint16	search_ref;
-PRIVATE int	search_stat	= DFSRCH_NEW;
-PRIVATE int32	search_aid	= 0;
-PRIVATE int	DFelstat	= DFEL_ABSENT;
-PRIVATE int32	DFelsize	= 0;
-PRIVATE int32	DFelseekpos	= 0;
-PRIVATE uint16	acc_tag		= 0;
-PRIVATE uint16	acc_ref		= 0;
-PRIVATE char	*DFelement	= NULL;
+PRIVATE int32	DFid        = 0;
+PRIVATE int32	DFaid       = 0;
+PRIVATE int	DFaccmode   = 0;
+PRIVATE int	DFelaccmode = 0;
+PRIVATE uint16	search_tag  = 0;
+PRIVATE uint16	search_ref  = 0;
+PRIVATE int	search_stat = DFSRCH_NEW;
+PRIVATE int32	search_aid  = 0;
+PRIVATE int	DFelstat    = DFEL_ABSENT;
+PRIVATE int32	DFelsize    = 0;
+PRIVATE int32	DFelseekpos = 0;
+PRIVATE uint16	acc_tag	    = 0;
+PRIVATE uint16	acc_ref	    = 0;
+PRIVATE char	*DFelement  = NULL;
 
 extern DF *makedf();
 

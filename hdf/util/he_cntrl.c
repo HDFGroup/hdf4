@@ -1,56 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.15  1993/06/17 15:59:31  chouck
-Fixed typo in a printf()
+/* $Id$ */
 
- * Revision 1.14  1993/05/24  15:09:48  sxu
- * Wrapped changes in HDF3.2 into 3.3.
- *
- * Revision 1.13  1993/04/14  21:42:07  georgev
- * Had to add some VOIDP casts to some functions to make the compiler happy
- *
- * Revision 1.12  1993/01/19  06:24:13  koziol
- * Updated for better portability and fixed minor compiler warnings
- *
- * Revision 1.11  1993/01/16  04:13:59  georgev
- * Fixed bug in hdfed
- *
- * Revision 1.10  1993/01/07  20:40:41  georgev
- * Small bug where a comment was inside another comment.
- *
- * Revision 1.9  1992/12/21  23:33:37  mfolk
- * Change "dump" routine so that it prints ascii dump 40 characters
- * per line, with no spaces between characters.
- * Also added EMPTY before the semicolon in a couple of for
- * looks in HEalias to make codecenter stop complaining.
- *
- * Revision 1.8  1992/09/11  18:32:51  chouck
- * Assorted MAC mungings
- *
- * Revision 1.6  1992/08/24  21:59:44  sxu
- * *** empty log message ***
- *
- * Revision 1.5  1992/08/18  19:49:46  chouck
- * Added casts to string calls
- *
- * Revision 1.4  1992/07/31  21:10:24  chouck
- * Use in-house print routines rather than fork() a call to od
- *
- * Revision 1.3  1992/07/15  21:48:48  sxu
- * No change.
- *
- * Revision 1.2  1992/07/14  17:50:30  mlivin
- * updated prompt with correct name
- *
- * Revision 1.1  1992/07/06  22:54:16  mlivin
- * Initial revision
- *
-*/
 /* ------ he-cntrl.c ------  
    This file contains much of the contol mechanisms for HDFed
    - Many of the command line functions
@@ -952,20 +917,20 @@ struct {
 };
 
 #ifdef PROTOTYPE
-HE_FUNC findFunc(char *word)
+HE_FUNC findFunc(char *fword)
 #else
-HE_FUNC findFunc(word)
-    char *word;
+HE_FUNC findFunc(fword)
+    char *fword;
 #endif /* PROTOTYPE */
 {
     int len;
     int found = -1;
     register int i;
 
-    len = strlen((const char *) word);
+    len = strlen((const char *) fword);
 
     for (i = 0; he_funcTab[i].str; i++)
-	if (!strncmp(he_funcTab[i].str, (const char *) word, len))
+	if (!strncmp(he_funcTab[i].str, (const char *) fword, len))
 	{
 	    /* check for exact match */
 	    if (strlen(he_funcTab[i].str) == len)
@@ -975,7 +940,7 @@ HE_FUNC findFunc(word)
 		found = i;
 	    else
 	    {
-		fprintf(stderr,"Ambiguous command: %s.\n", word);
+		fprintf(stderr,"Ambiguous command: %s.\n", fword);
 		return NULL;
 	    }
 	}

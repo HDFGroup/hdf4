@@ -1,42 +1,33 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.5  1993/04/19 22:47:07  koziol
-General Code Cleanup to reduce/remove errors on the PC
+/* $Id$ */
 
- * Revision 1.4  1993/04/14  21:39:00  georgev
- * Had to add some VOIDP casts to some functions to make the compiler happy.
- *
- * Revision 1.3  1993/01/19  05:54:09  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.2  1992/09/11  14:15:04  koziol
- * Changed Fortran stubs' parameter passing to use a new typedef, intf,
- * which should be typed to the size of an INTEGER*4 in whatever Fortran
- * compiler the C functions need to be compatible with.  (This is mostly
- * for the PC and possibly for the Mac)
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*-----------------------------------------------------------------------------
  * File:    dfanF.c
  * Purpose: Fortran stubs for annotation routines
  * Invokes: dfan.c dfkit.c
  * Contents: 
  *
- *  daiganl_: get length of annotation of tag/ref
- *  daigann_: get annotation of tag/ref
- *  daipann_: put annotation of tag/ref
- *  dailist_: get list of refs and labels for a given tag
- *  dalref_ : return last ref written or read
- *  dfanlastref_: return last ref written or read
+ *  daiganl_     : get length of annotation of tag/ref
+ *  daigann_     : get annotation of tag/ref
+ *  daipann_     : put annotation of tag/ref
+ *  dailist_     : get list of refs and labels for a given tag
+ *  dalref_      : return last ref written or read
+ *  dfanlastref_ : return last ref written or read
  *
  *  dfanaddfds_    : add file description
  *  dfangetfidlen_ : get length of file id  

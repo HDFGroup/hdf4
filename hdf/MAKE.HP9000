@@ -1,7 +1,6 @@
 #
 # $Id$
 #
-#
 # ##################################################################
 #
 #                   NCSA HDF Version 3.3 release Beta 1
@@ -112,6 +111,10 @@ allnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
           SUBDIRS="src util test" _sub message 
 
+testnofortran:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
+          SUBDIRS="src test" _sub message 
+
 libnofortran:
 	@$(MAKE) $(MYFLAGS) $(HDF_FLAGS) TARG=nofortran \
 	  SUBDIRS="src" _sub message
@@ -126,15 +129,19 @@ libdf:
 
 utilities:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="util" _sub
+          SUBDIRS="src util" _sub
 
 tests:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="test" _sub
+          SUBDIRS="src test" _sub
 
 #install:      $(INSTALL_DIRS)
 #	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
 #          SUBDIRS="src util test" _sub
+
+saber:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=saber \
+          SUBDIRS="src test" _sub
 
 clean:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \

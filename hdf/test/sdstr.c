@@ -1,39 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.4  1993/08/16 21:58:21  koziol
-Fixed access list for these files, and the actual changes I made to the
-files are for PC compatibility.
+/* $Id$ */
 
- * Revision 1.3  1993/05/05  22:24:17  georgev
- * Fixed some cast problems on the Mac.
-  *
- * Revision 1.2  1993/04/19  23:04:03  koziol
- * General Code Cleanup to reduce/remove compilation warnings on PC
- *
- * Revision 1.1  1993/04/15  20:00:35  koziol
- * Re-named the new tests for MS-DOS compatibility
- *
- * Revision 1.2  1993/01/27  22:41:32  briand
- * Fixed problem with compiling on RS6000.
- *
- * Revision 1.1  1993/01/27  22:04:36  briand
- * Converted test files to work with master test program: testhdf
- *
- * Revision 1.3  1992/08/11  15:35:38  chouck
- * Changed adddata() to putdata()
- *
- * Revision 1.2  1992/07/13  20:18:13  mfolk
- * Added header to explain what it does.
- *
- * Revision 1.1  1992/07/08  22:07:42  sxu
- * Initial revision
- *
-*/
 /***************************************************************
 **
 ** This program tests correctness of writing and read datastrings

@@ -1,46 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.4  1993/08/16 21:58:19  koziol
-Fixed access list for these files, and the actual changes I made to the
-files are for PC compatibility.
+/* $Id$ */
 
- * Revision 1.3  1993/05/05  22:24:15  georgev
- * Fixed some cast problems on the Mac.
- *
- * Revision 1.2  1993/04/19  23:04:02  koziol
- * General Code Cleanup to reduce/remove compilation warnings on PC
- *
- * Revision 1.1  1993/04/15  20:00:33  koziol
- * Re-named the new tests for MS-DOS compatibility
- *
- * Revision 1.2  1993/01/27  22:41:31  briand
- * Fixed problem with compiling on RS6000.
- *
- * Revision 1.1  1993/01/27  22:04:35  briand
- * Converted test files to work with master test program: testhdf
- *
- * Revision 1.4  1992/07/08  22:05:20  sxu
- * Changed DFSDgetmaxmin() to DFSDgetrange().
- * Changed DFSDsetmaxmin() to DFSDsetrange().
- *
- * Revision 1.3  1992/05/31  15:27:30  mfolk
- * Changed rank and dims[2] to int32 to satisfy Convex.
- *
- * Revision 1.2  1992/04/28  18:26:38  dilg
- * Changed absolute path to relative path for include files.
- *
- * Revision 1.1  1992/04/27  17:31:08  sxu
- * Initial revision
- *
- * Revision 1.1  1992/02/26  20:08:43  mfolk
- * Initial revision
- *
-*/
 #include "tproto.h"
 
 extern int Verbocity;

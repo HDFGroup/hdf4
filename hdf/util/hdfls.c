@@ -1,137 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.29  1993/08/16 21:49:01  koziol
-Wrapped in changes for final, working version on the PC.
+/* $Id$ */
 
- * Revision 1.28  1993/05/17  22:54:41  sxu
- * Wrapped in changes made in 3.2 and upgrade *.COM files for 3.3.
- *
- * Revision 1.27  1993/04/19  23:04:30  koziol
- * General Code Cleanup to reduce/remove compilation warnings on PC
- *
- * Revision 1.26  1993/04/13  21:40:09  georgev
- * Fixed cast problem for qsort on SGI's.
- *
- * Revision 1.25  1993/04/08  20:44:27  koziol
- * Minor Cray tweaks.
- *
- * Revision 1.24  1993/04/06  17:24:39  chouck
- * Added some fixes for the Vset stuff
- *
- * Revision 1.23  1993/04/05  22:38:23  koziol
- * Fixed goofups made in haste when patching code.
- *
- * Revision 1.22  1993/03/29  16:52:48  koziol
- * Finished  DEC ALPHA port.
- * Updated JPEG code to new JPEG 4 code.
- * Changed VSets to use Threaded-Balanced-Binary Tree for internal
- * 	(in memory) representation.
- * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
- * 	to use 32-bit integer keys instead of pointers.
- * Backed out speedups for Cray, until I get the time to fix them.
- * Fixed a bunch of bugs in the little-endian support in DFSD.
- *
- * Revision 1.20  1993/01/19  06:00:14  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.19  1992/07/15  21:48:48  sxu
- * No change
- *
- * Revision 1.18  1992/07/09  01:18:57  koziol
- * More PC fixes
- *
- * Revision 1.17  1992/07/08  15:39:42  chouck
- * Removed return(0) at end of main().  Took out some debugging
- * info from the -t option
- *
- * Revision 1.16  1992/06/19  16:45:58  chouck
- * More descriptive error messages when Hopen() fails
- *
- * Revision 1.15  1992/06/08  22:25:22  chouck
- * Minor fix with program name
- *
- * Revision 1.14  1992/06/08  21:59:41  chouck
- * Added 'verbose' option for labels/descriptions (-v) and
- * option (-t #) to only list info about a given tag
- *
- * Revision 1.13  1992/05/31  19:16:26  mfolk
- * No change.  But Convex doesn't like match of arg types in call to
- * qsort on line 220.
- *
- * Revision 1.12  1992/05/26  21:00:08  koziol
- * Folded Jason's Mac port and Linted code into the main version
- *
- * Revision 1.11  1992/04/24  15:38:25  koziol
- * PC port
- *
- * Revision 1.10  1992/03/27  15:39:28  chouck
- * Can now handle multiple command line options
- *
- * Revision 1.9  1992/03/25  22:51:35  chouck
- * Fixed stupid bugs relating to unknown tags
- *
- * Revision 1.8  1992/03/23  17:21:52  likkai
- * Put in description of "-d" option in "usage" message.
- * and redo the format for the output of that option.
- *
- * Revision 1.7  1992/03/18  17:49:26  chouck
- * Added Hendaccess() call so that Hclose() will not FAIL
- * ,
- *
- * Revision 1.6  1992/03/11  20:53:33  chouck
- * Use HDgettagname() to look up tag names.  Change the tag/ref look
- * up routines to use Hiquire() and Hnextread instead of DFdescriptors()
- *
- * Revision 1.5  1992/02/29  18:58:36  sxu
- * add header
- *
- * Revision 1.4  1992/02/26  17:46:31  likkai
- * added descriptions for Vset elements.
- *
- * Revision 1.3  1992/02/21  21:06:29  mfolk
- * no change
- *
- * Revision 1.2  1992/02/11  17:16:24  chouck
- * Cosmetic changes.
- * Added new tag values
- *
- * Revision 3.3  1991/10/22  17:56:10  dilg
- * 5
- * HDF3.1r5
- *
- * New machine types added:
- *
- *         PC      - IBM PC (DOS)
- *         WIN     - IBM PC (Microsoft Windows 3.0)
- *         IBM6000 - IBM RS/6000 (AIX)
- *         CONVEX  - Convex C-2 (Unix)
- *
- * Bugs fixed in:
- *
- *         scup32.f
- *         cspck32.f
- *         dfpFf.f
- *         dfpF.c
- *         dfsd.c
- *
- * New utility added:
- *
- *         ristosds.c - convert raster images to sds.
- *
- * Also:
- *         All code for the library was modified to conform to the
- *         ANSI C standard.
- *
- * Revision 3.2  1990/07/02  10:11:46  clow
- * some cosmetic modifications
- *
-*/
 #include "hdf.h"
 #include "hfile.h"
 #include "herr.h"

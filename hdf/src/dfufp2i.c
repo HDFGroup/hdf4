@@ -1,24 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.4  1993/04/19 22:47:48  koziol
-General Code Cleanup to reduce/remove errors on the PC
+/* $Id$ */
 
- * Revision 1.3  1993/01/19  05:55:24  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.2  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*-----------------------------------------------------------------------------c
  *    dfufp2i.c
  *
@@ -186,8 +183,8 @@ int     ct_method,       /* color transform method: 1=EXPAND; 2=INTERP */
         compress;        /* flag: 0 = don't compress; 1=do compression */
 #endif /* PROTOTYPE */
 {
-    struct Input in;
-    struct Output out;
+    Input in;
+    Output out;
 
     in.hdim = hdim;
     in.vdim = vdim;
@@ -228,11 +225,11 @@ int     ct_method,       /* color transform method: 1=EXPAND; 2=INTERP */
  *----------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int process(struct Input *in, struct Output *out)
+int process(Input *in, Output *out)
 #else
 int process(in, out)
-struct Input *in;
-struct Output *out;
+Input *in;
+Output *out;
 #endif /* PROTOTYPE */
 {
     int ret;
@@ -336,10 +333,10 @@ float32 *scale;
 /*  This function is commented out of the code!! */
 #ifdef DEBUG_HDF
 #ifdef PROTOTYPE
-int printinput(struct Input *in)
+int printinput(Input *in)
 #else
 int printinput(in)
-struct Input *in;
+Input *in;
 #endif /* PROTOTYPE */
 {
     int i,j; 
@@ -391,10 +388,10 @@ struct Input *in;
 /*  This function is commented out of the code!! */
 #ifdef DEBUG_HDF
 #ifdef PROTOTYPE
-int printoutput(struct Output *out)
+int printoutput(Output *out)
 #else
 int printoutput(out)
-struct Output *out;
+Output *out;
 #endif /* PROTOTYPE */
 {
     int i,j;
@@ -433,11 +430,11 @@ struct Output *out;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int convert_interp(struct Input *in, struct Output *out)
+int convert_interp(Input *in, Output *out)
 #else
 int convert_interp(in, out)
-struct Input   *in;
-struct Output  *out;
+Input   *in;
+Output  *out;
 #endif /* PROTOTYPE */
 {
     register int j,theval;
@@ -594,11 +591,11 @@ struct Output  *out;
  *---------------------------------------------------------------------------*/
 
 #ifdef  PROTOTYPE
-int pixrep_scaled(struct Input *in, struct Output *out)
+int pixrep_scaled(Input *in, Output *out)
 #else
 int pixrep_scaled(in, out)
-struct Input   *in;
-struct Output  *out;
+Input   *in;
+Output  *out;
 #endif /* PROTOTYPE */
 {
     register int32 j;
@@ -724,11 +721,11 @@ int32 *offsets;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int pixrep_simple(struct Input *in, struct Output *out)
+int pixrep_simple(Input *in, Output *out)
 #else
 int pixrep_simple(in, out)
-struct Input   *in;
-struct Output  *out;
+Input   *in;
+Output  *out;
 #endif /* PROTOTYPE */
 {
     int32 i,j;

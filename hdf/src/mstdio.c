@@ -1,3 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
+/* $Id$ */
+
 /*
  FILE
        mstdio.c
@@ -10,29 +28,17 @@
     Just pass the data to the encoding layer, reporting errors.
 
  EXPORTED ROUTINES
+    None of these routines are designed to be called by other users except
+    for the top layer of the compression routines.
 
  AUTHOR
        Quincey Koziol
 
  MODIFICATION HISTORY
     9/28/93     Starting writing specs & coding prototype
+    10/09/93    Finished testing.  First version done.
 */
 
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-/*
-$Header$
-
-$Log$
-Revision 1.2  1993/10/06 20:27:53  koziol
-More compression fixed, and folded Doug's suggested change into VSappendable.
-
- * Revision 1.1  1993/09/30  19:05:21  koziol
- * Added basic compressing functionality for special tags.
- *
- *
- */
 
 /* General HDF includes */
 #include "hdf.h"
@@ -267,7 +273,7 @@ int32 HCPmstdio_write(access_rec, length, data)
     HCPmstdio_inquire -- Inquire information about the access record and data element.
 
  USAGE
-    int32 HCPinquire(access_rec,pfile_id,ptag,pref,plength,poffset,pposn,
+    int32 HCPmstdio_inquire(access_rec,pfile_id,ptag,pref,plength,poffset,pposn,
             paccess,pspecial)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 *pfile_id;        OUT: ptr to file id

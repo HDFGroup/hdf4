@@ -1,3 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
+/* $Id$ */
+
 #include "tproto.h"
 
 #define XSIZE 13
@@ -1120,8 +1138,8 @@ void test_r24()
     RESULT("DF24addimage");
     ref2 = DF24lastref();
 
-    if(DF24nimages(TESTFILE) != 3) {
-        fprintf(stderr,"  >>> DF24nimages() gives wrong number <<<\n");
+    if((ret=DF24nimages(TESTFILE)) != 3) {
+        fprintf(stderr,"  >>> DF24nimages() gives wrong number: %d <<<\n",ret);
         num_errs++;
     }
 
@@ -1135,6 +1153,8 @@ void test_r24()
     RESULT("DF24reqil");
     ret = DF24getdims(TESTFILE, &xd, &yd, &il);
     RESULT("DF24getdims");
+if(ret==FAIL)
+    HEprint(stderr,0);
 
     if((xd != XSIZE) || (yd != YSIZE) || il != 0) {
         fprintf(stderr, "Returned meta-data is wrong for image 0\n");

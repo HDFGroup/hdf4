@@ -1,18 +1,17 @@
-/*
-$Header$
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
 
-$Log$
-Revision 1.3  1993/10/01 20:00:42  koziol
-Put "extern C" block around function prototypes for C++ compatibility.
+/* $Id$ */
 
- * Revision 1.2  1993/01/19  05:54:33  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*-----------------------------------------------------------------------------
  * File:    dfi.h
  * Purpose: HDF internal header file
@@ -25,7 +24,6 @@ Put "extern C" block around function prototypes for C++ compatibility.
  * Remarks: To port to a new system, only dfi.h and Makefile need be modified.
  *          This file is included with user programs, but users do not see it.
  *---------------------------------------------------------------------------*/
-
 
 #ifndef DFI_H
 #define DFI_H

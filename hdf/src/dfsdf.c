@@ -1,90 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.24  1993/09/13 21:11:43  chouck
-Changed prototypes of (VOID) to (void) for Convex
+/* $Id$ */
 
- * Revision 1.23  1993/09/02  00:17:58  georgev
- * Fixed large number of casts.
- *
- * Revision 1.22  1993/08/28  01:37:44  georgev
- * Fixed a slab fortran name.
- *
- * Revision 1.21  1993/08/28  00:49:42  georgev
- * Changed slab long fortran names to short ones.
- *
- * Revision 1.20  1993/08/28  00:44:09  georgev
- * Changed long fortran slab name to short ones.
- *
- * Revision 1.19  1993/08/28  00:32:04  georgev
- * Fixed some things that got blown away during the PC merge.
- *
- * Revision 1.18  1993/08/16  21:45:33  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.17  1993/07/31  16:54:21  georgev
- * Fixed fortran stubs for slabs.
- *
- * Revision 1.16  1993/04/27  21:00:39  georgev
- * Changed fortran stubs interface for hyperslabs, made them different
- * than the C names.
- *
- * Revision 1.15  1993/04/26  00:10:41  koziol
- * Updated calls to DFSDnumber to DFSDndatasets
- *
- * Revision 1.14  1993/04/19  22:47:43  koziol
- * General Code Cleanup to reduce/remove errors on the PC
- *
- * Revision 1.13  1993/04/05  22:35:31  koziol
- * Fixed goofups made in haste when patching code.
- *
- * Revision 1.12  1993/03/29  18:38:22  chouck
- * Cleaned up a bunch of casting problems
- *
- * Revision 1.11  1993/02/02  00:11:51  georgev
- * Changed Hyperslab interface. Added DFSDstartslab(), DFSDendslab().
- * Removed DFSDwritefillvalue().
- *
- * Revision 1.10  1993/01/19  05:55:14  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.9  1993/01/15  16:51:37  georgev
- * dswfv() works now. i.e. DFSDwritefillvalue()
- *
- * Revision 1.8  1993/01/05  04:07:25  georgev
- * Added Fortran hyperslab C stubs
- *
- * Revision 1.7  1993/01/04  21:26:13  sxu
- * delete dspre32 and dfsdpre32
- *
- * Revision 1.6  1993/01/04  19:17:36  sxu
- * changed dfsdpre32 to dfsdpre32sdg
- *
- * Revision 1.5  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.4  1992/09/15  19:42:46  koziol
- * Folded in Shming's int changes and the change to fix non-square dimensions
- * on datasets
- *
- * Revision 1.3  1992/09/11  14:15:04  koziol
- * Changed Fortran stubs' parameter passing to use a new typedef, intf,
- * which should be typed to the size of an INTEGER*4 in whatever Fortran
- * compiler the C functions need to be compatible with.  (This is mostly
- * for the PC and possibly for the Mac)
- *
- * Revision 1.2  1992/08/31  16:14:52  chouck
- * Added Fortran support for calibration tags
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*-----------------------------------------------------------------------------
  * File:    dfsdF.c
  * Purpose: C stubs for Fortran SDS routines

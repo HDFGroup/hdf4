@@ -1,71 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.17  1993/10/04 20:02:52  koziol
-Updated error reporting in H-Layer routines, and added more error codes and
-compression stuff.
+/* $Id$ */
 
- * Revision 1.16  1993/09/30  19:05:12  koziol
- * Added basic compressing functionality for special tags.
- *
- * Revision 1.15  1993/09/28  18:44:15  koziol
- * Fixed various things the Sun's pre-processor didn't like.
- *
- * Revision 1.14  1993/09/28  18:04:31  koziol
- * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
- * tag handling.  Added new compression special tag type.
- *
- * Revision 1.13  1993/09/21  00:58:36  georgev
- * With the new HDstrdup() need casts on the Mac and Convex.
- *
- * Revision 1.12  1993/09/20  19:56:05  koziol
- * Updated the "special element" function pointer array to be a structure
- * of function pointers.  This way, function prototypes can be written for the
- * functions pointers and some type checking done.
- *
- * Revision 1.11  1993/09/11  18:07:57  koziol
- * Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
- * cleaned up some goofy string manipulations in various places.
- *
- * Revision 1.10  1993/06/16  17:17:59  chouck
- * Fixed comments and increased some buffer sizes
- *
- * Revision 1.9  1993/04/14  21:39:15  georgev
- * Had to add some VOIDP casts to some functions to make the compiler happy.
- *
- * Revision 1.8  1993/04/06  17:23:38  chouck
- * Added Vset macros
- *
- * Revision 1.7  1993/04/05  22:35:43  koziol
- * Fixed goofups made in haste when patching code.
- *
- * Revision 1.6  1993/03/29  16:48:00  koziol
- * Updated JPEG code to new JPEG 4 code.
- * Changed VSets to use Threaded-Balanced-Binary Tree for internal
- * 	(in memory) representation.
- * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
- * 	to use 32-bit integer keys instead of pointers.
- * Backed out speedups for Cray, until I get the time to fix them.
- * Fixed a bunch of bugs in the little-endian support in DFSD.
- *
- * Revision 1.4  1993/01/19  05:55:48  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.3  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.2  1992/10/08  19:09:36  chouck
- * Changed file_t to hdf_file_t to make strict ANSI compliant
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*LINTLIBRARY*/
 /*+ hextelt.c
  Routines for external elements, i.e., data elements that reside on
@@ -98,6 +48,9 @@ typedef struct {
 /* forward declaration of the functions provided in this module */
 PRIVATE int32 HXIstaccess
     PROTO((accrec_t *access_rec, int16 access));
+
+/* Private buffer */
+PRIVATE uint8 *ptbuf = NULL;
 
 /* ext_funcs -- table of the accessing functions of the external
    data element function modules.  The position of each function in
@@ -162,6 +115,14 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
 
     if (!(file_rec->access & DFACC_WRITE))
        HRETURN_ERROR(DFE_DENIED,FAIL);
+
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, NULL);
+      }
 
     /* get a slot in the access records table */
     slot = HIget_access_slot();
@@ -266,7 +227,7 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
 
     info->length_file_name = HDstrlen(extern_file_name);
     {
-       uint8 *p = tbuf;
+       uint8 *p = ptbuf;
        INT16ENCODE(p, SPECIAL_EXT);
        INT32ENCODE(p, info->length);
        INT32ENCODE(p, info->extern_offset);
@@ -282,7 +243,7 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
     dd->length = 14 + info->length_file_name;
     dd->tag = special_tag;
     dd->ref = ref;
-    if (HI_WRITE(file_rec->file, tbuf, dd->length) == FAIL) {
+    if (HI_WRITE(file_rec->file, ptbuf, dd->length) == FAIL) {
        HERROR(DFE_WRITEERROR);
        access_rec->used = FALSE;
        return FAIL;
@@ -352,6 +313,14 @@ PRIVATE int32 HXIstaccess(access_rec, access)
     if (!file_rec || file_rec->refcount == 0 || !(file_rec->access & access))
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, NULL);
+      }
+
     /* intialize the access record */
     access_rec->special = SPECIAL_EXT;
     access_rec->posn = 0;
@@ -378,7 +347,7 @@ PRIVATE int32 HXIstaccess(access_rec, access)
            access_rec->used = FALSE;
            HRETURN_ERROR(DFE_SEEKERROR,FAIL);
        }
-       if (HI_READ(file_rec->file, tbuf, 12) == FAIL) {
+       if (HI_READ(file_rec->file, ptbuf, 12) == FAIL) {
            access_rec->used = FALSE;
            HRETURN_ERROR(DFE_READERROR,FAIL);
        }
@@ -389,7 +358,7 @@ PRIVATE int32 HXIstaccess(access_rec, access)
            HRETURN_ERROR(DFE_NOSPACE,FAIL);
        }
        {
-           uint8 *p = tbuf;
+           uint8 *p = ptbuf;
            INT32DECODE(p, info->length);
            INT32DECODE(p, info->extern_offset);
            INT32DECODE(p, info->length_file_name);
@@ -532,6 +501,14 @@ int32 HXPwrite(access_rec, length, data)
     if (length < 0)
        HRETURN_ERROR(DFE_RANGE,FAIL);
 
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, NULL);
+      }
+
     /* write the data onto file */
     if (HI_SEEK(info->file_external,
 		access_rec->posn + info->extern_offset) == FAIL)
@@ -558,7 +535,7 @@ int32 HXPwrite(access_rec, length, data)
     access_rec->posn += length;
     if (access_rec->posn > info->length) {
        uint8 *p =      /* temp buffer ptr */
-           tbuf;
+           ptbuf;
        dd_t *info_dd =         /* dd of infromation element */
            &access_rec->block->ddlist[access_rec->idx];
        filerec_t *file_rec =   /* file record */
@@ -568,7 +545,7 @@ int32 HXPwrite(access_rec, length, data)
        INT32ENCODE(p, info->length);
        if (HI_SEEK(file_rec->file, info_dd->offset+2) == FAIL)
            HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-       if (HI_WRITE(file_rec->file, tbuf, 4) == FAIL)
+       if (HI_WRITE(file_rec->file, ptbuf, 4) == FAIL)
            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
     }
 

@@ -1,134 +1,52 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.27  1993/10/06 20:27:45  koziol
-More compression fixed, and folded Doug's suggested change into VSappendable.
+/* $Id$  */
 
- * Revision 1.26  1993/10/04  20:02:56  koziol
- * Updated error reporting in H-Layer routines, and added more error codes and
- * compression stuff.
- *
- * Revision 1.25  1993/09/28  18:44:19  koziol
- * Fixed various things the Sun's pre-processor didn't like.
- *
- * Revision 1.24  1993/09/28  18:04:36  koziol
- * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
- * tag handling.  Added new compression special tag type.
- *
- * Revision 1.23  1993/09/21  00:58:37  georgev
- * With the new HDstrdup() need casts on the Mac and Convex.
- *
- * Revision 1.22  1993/09/20  19:56:09  koziol
- * Updated the "special element" function pointer array to be a structure
- * of function pointers.  This way, function prototypes can be written for the
- * functions pointers and some type checking done.
- *
- * Revision 1.21  1993/09/11  18:08:01  koziol
- * Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
- * cleaned up some goofy string manipulations in various places.
- *
- * Revision 1.20  1993/09/08  20:55:37  georgev
- * Added #defines for THINK_C.
- *
- * Revision 1.19  1993/09/08  18:29:24  koziol
- * Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
- *
- * Revision 1.18  1993/09/03  14:10:13  koziol
- * Saved debugging info.
- *
- * Revision 1.17  1993/09/01  23:16:48  georgev
- * Fixed prototypes for MAC.
- *
- * Revision 1.16  1993/08/16  21:45:58  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.15  1993/07/01  20:08:03  chouck
- * Made the hash table use fewer malloc() and free() pairs to improve
- * efficiency and (hopefully) reduce PC memory fragmentation.
- *
- * Revision 1.14  1993/05/03  21:32:14  koziol
- * First half of fixes to make Purify happy
- *
- * Revision 1.13  1993/04/22  20:24:13  koziol
- * Added new Hfind() routine to hfile.c which duplicates older DFsetfind/DFfind
- * utility...
- *
- * Revision 1.11  1993/04/14  21:39:18  georgev
- * Had to add some VOIDP casts to some functions to make the compiler happy.
- *
- * Revision 1.10  1993/01/19  05:55:52  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.9  1993/01/14  19:09:07  chouck
- * Added routine Hfidinquire() to get info about an open file
- *
- * Revision 1.8  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.7  1992/10/09  20:49:17  chouck
- * Added some patches to work with ThinkC I/O on the Mac
- *
- * Revision 1.6  1992/10/08  19:09:36  chouck
- * Changed file_t to hdf_file_t to make strict ANSI compliant
- *
- * Revision 1.5  1992/10/01  20:46:10  chouck
- * Fixed a Mac opening problem resulting from access change
- *
- * Revision 1.4  1992/09/15  21:04:06  chouck
- * Removed DFACC_CREATE problems.  Restored some other changes that had
- * gotten over-written
- *
- * Revision 1.3  1992/09/11  16:43:24  chouck
- * Minor Mac fix
- *
- * Revision 1.2  1992/08/26  19:44:25  chouck
- * Moved HDgettagname() into hkit.c and added calibration tag
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*LINTLIBRARY*/
 /*+
  FILE
        hfile.c
        HDF low level file I/O routines
  EXPORTED ROUTINES
-       Hopen -- open or create a HDF file
-       Hclose -- close HDF file
-       Hstartread -- locate and position a read access elt on a tag/ref
-       Hnextread -- locate and position a read access elt on next tag/ref.
-       Hinquire -- inquire stats of an access elt
+       Hopen       -- open or create a HDF file
+       Hclose      -- close HDF file
+       Hstartread  -- locate and position a read access elt on a tag/ref
+       Hnextread   -- locate and position a read access elt on next tag/ref.
+       Hinquire    -- inquire stats of an access elt
        Hstartwrite -- set up a WRITE access elt for a write
        Happendable -- attempt make a dataset appendable
-       Hseek -- position an access element to an offset in data element
-       Hread -- read the next segment from data element
-       Hwrite -- write next data segment to data element
-       Hendaccess -- to dispose of an access element
+       Hseek       -- position an access element to an offset in data element
+       Hread       -- read the next segment from data element
+       Hwrite      -- write next data segment to data element
+       Hendaccess  -- to dispose of an access element
        Hgetelement -- read in a data element
-       Hlength -- returns length of a data element
-       Htrunc -- truncate a dataset to a length
-       Hoffset -- get offset of data element in the file
+       Hlength     -- returns length of a data element
+       Htrunc      -- truncate a dataset to a length
+       Hoffset     -- get offset of data element in the file
        Hputelement -- writes a data element
-       Hdupdd -- duplicate a data descriptor
-       Hdeldd -- delete a data descriptor
-       Hnewref -- returns a ref that is guaranteed to be unique in the file
-       Hishdf -- tells if a file is an HDF file
-       Hsync -- sync file with memory
-       Hnumber -- count number of occurrances of tag/ref in file
-       Hgetlibversion -- return version info on current HDF library
+       Hdupdd      -- duplicate a data descriptor
+       Hdeldd      -- delete a data descriptor
+       Hnewref     -- returns a ref that is guaranteed to be unique in the file
+       Hishdf      -- tells if a file is an HDF file
+       Hsync       -- sync file with memory
+       Hnumber     -- count number of occurrances of tag/ref in file
+       Hgetlibversion  -- return version info on current HDF library
        Hgetfileversion -- return version info on HDF file
- AUTHOR
-       Chin_Chau Low
- MODIFICATION HISTORY
-	12/12/91 Doug Ilg  Changed implementation of version tags.  Added
-			   Hgetlibversion() and Hgetfileversion() (public) and
-			   HIread_version() and HIupdate_version() (PRIVATE).
+
 +*/
 
 #define HMASTER
@@ -137,24 +55,12 @@ More compression fixed, and folded Doug's suggested change into VSappendable.
 #include "herr.h"
 #include "hfile.h"
 
-/*
-** Prototypes for local functions
-*/
-static int HIlock
-  PROTO((int32 file_id));
-
-static int HIunlock
-  PROTO((int32 file_id));
-
-static int HIchangedd
-  PROTO((dd_t *datadd, ddblock_t *block, int idx, int16 special,
-	 VOIDP special_info, funclist_t *special_func));
 
 /* Array of file records that contains all relevant
    information on an opened HDF file.
    See hfile.h for structure and members definition of filerec_t. */
 
-#if defined(macintosh) | defined(THINK_C)
+#if defined(macintosh) | defined(THINK_C) | defined(DMEM) /* Dynamic memory */
 struct filerec_t *file_records = NULL;
 #else /* !macintosh */
 struct filerec_t file_records[MAX_FILE];
@@ -171,10 +77,13 @@ struct accrec_t *access_records = NULL;
 /* Temporary memory space for doing some general stuff so we don't
    have to allocate and deallocate memory all the time.  This space should
    be "sufficiently" large, or at least 64 bytes long.  Routines using
-   tbuf should not assume that the buffer is longer than that. */
+   ptbuf should not assume that the buffer is longer than that. */
 
+#if 0 /* replaced with dynamic memory */
 int32 int_tbuf[TBUF_SZ];
 uint8 *tbuf = (uint8 *)int_tbuf;
+#endif
+PRIVATE uint8 *ptbuf = NULL;
 
 /* Function tables declarations.  These function tables contain pointers
    to functions that help access each type of special element. */
@@ -208,25 +117,35 @@ functab_t functab[] = {
 /*
 ** Declaration of private functions.
 */
-PRIVATE int HIget_file_slot
+PRIVATE intn HIlock
+  PROTO((int32 file_id));
+
+PRIVATE intn HIunlock
+  PROTO((int32 file_id));
+
+PRIVATE intn HIchangedd
+  PROTO((dd_t *datadd, ddblock_t *block, intn idx, int16 special,
+	 VOIDP special_info, funclist_t *special_func));
+
+PRIVATE intn HIget_file_slot
   PROTO((char *path, char *FUNC));
 
 PRIVATE bool HIvalid_magic
   PROTO((hdf_file_t file, char *FUNC));
 
-PRIVATE int HIfill_file_rec
+PRIVATE intn HIfill_file_rec
   PROTO((filerec_t *file_rec, char *FUNC));
 
-PRIVATE int HIinit_file_dds
+PRIVATE intn HIinit_file_dds
   PROTO((filerec_t *file_rec, int16 ndds, char *FUNC));
 
 PRIVATE funclist_t *HIget_function_table 
   PROTO((accrec_t *access_rec, char *FUNC));
 
-PRIVATE int HIupdate_version
+PRIVATE intn HIupdate_version
   PROTO((int32));
 
-PRIVATE int HIread_version
+PRIVATE intn HIread_version
   PROTO((int32));
 
 /*--------------------------------------------------------------------------
@@ -287,42 +206,39 @@ int32 Hopen(path, access, ndds)
     int vtag = 0;		/* write version tag? */
 
     /* Clear errors and check args and all the boring stuff. */
-
     HEclear();
-    if (!path || ((access & DFACC_ALL) != access))
+    if (!path || ((access & DFACC_ALL) != access)) 
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* Get a space to put the file information.
-       HIget_file_slot() also copies path into the record. */
-
+     * HIget_file_slot() also copies path into the record. */
     slot = HIget_file_slot(path, FUNC);
-    if (slot == FAIL)   /* The slots are full. */
-       HRETURN_ERROR(DFE_TOOMANY,FAIL);
+    if (slot == FAIL) 
+       HRETURN_ERROR(DFE_TOOMANY, FAIL); /* The slots are full. */
+
     file_rec = &(file_records[slot]);
-
     if (file_rec->refcount) {
-       /* File is already opened, check that permission is okay. */
+    /* File is already opened, check that permission is okay. */
 
-        /* If this request is to create a new file and file is still
-          in use, return error. */
-       if (access == DFACC_CREATE)
-           HRETURN_ERROR(DFE_ALROPEN,FAIL);
+    /* If this request is to create a new file and file is still
+     * in use, return error. */
+    if (access == DFACC_CREATE) 
+       HRETURN_ERROR(DFE_ALROPEN,FAIL);
 
-       if ((access & DFACC_WRITE) && !(file_rec->access & DFACC_WRITE)) {
-           /* If the request includes writing, and if original open does not
-              provide for write, then try to reopen file for writing.
-              This cannot be done on OS (such as the SXOS) where only one
-              open is allowed per file at any time. */
+    if ((access & DFACC_WRITE) && !(file_rec->access & DFACC_WRITE)) {
+       /* If the request includes writing, and if original open does not
+          provide for write, then try to reopen file for writing.
+          This cannot be done on OS (such as the SXOS) where only one
+          open is allowed per file at any time. */
 #ifndef NO_MULTI_OPEN
            hdf_file_t f;
 
            f = HI_OPEN(file_rec->path, access);
-           if (OPENERR(f))
+           if (OPENERR(f)) 
                HRETURN_ERROR(DFE_DENIED,FAIL);
 
            /* Replace file_rec->file with new file pointer and
               close old one. */
-
            if (HI_CLOSE(file_rec->file) == FAIL) {
                HI_CLOSE(f);
                HRETURN_ERROR(DFE_CANTCLOSE,FAIL);
@@ -330,16 +246,15 @@ int32 Hopen(path, access, ndds)
            file_rec->file = f;
 #else /* NO_MULTI_OPEN */
            HRETURN_ERROR(DFE_DENIED,FAIL);
+           return FAIL;
 #endif /* NO_MULTI_OPEN */
        }
 
        /* There is now one more open to this file. */
-
        file_rec->refcount++;
-
     } else {
 
-        /* Flag to see if file is new and needs to be set up. */
+       /* Flag to see if file is new and needs to be set up. */
        bool new_file=FALSE;
 
        /* Open the file, fill in the blanks and all the good stuff. */
@@ -351,36 +266,32 @@ int32 Hopen(path, access, ndds)
                if (access & DFACC_WRITE) {
                    /* Seems like the file is not there, try to create it. */
                    new_file = TRUE;
-               } else
+               } else 
                    HRETURN_ERROR(DFE_BADOPEN,FAIL);
+
            } else {
                /* Open existing file successfully. */
-
                file_rec->access = access | DFACC_READ;
 
                /* Check to see if file is a HDF file. */
-
                if (!HIvalid_magic(file_rec->file, FUNC)) {
                    HI_CLOSE(file_rec->file);
                    HRETURN_ERROR(DFE_NOTDFFILE,FAIL);
                }
 
                /* Read in all the relevant data descriptor records. */
-
                if (HIfill_file_rec(file_rec, FUNC) == FAIL) {
                    HI_CLOSE(file_rec->file);
                    HRETURN_ERROR(DFE_BADOPEN,FAIL);
                }
            }
        }
-
        /* do *not* use else here */
 
        if (access == DFACC_CREATE || new_file) {
-           /* create the file */
-
+        /* create the file */
         /* version tags */
-            vtag = 1;
+         vtag = 1;
         /* end version tags */
 
            file_rec->file = HI_CREATE(path);
@@ -389,13 +300,15 @@ int32 Hopen(path, access, ndds)
 
            /* set up the newly created (and empty) file with
               the magic cookie and initial data descriptor records */
+           if (HI_WRITE(file_rec->file, HDFMAGIC, MAGICLEN) == FAIL) 
+               HRETURN_ERROR(DFE_WRITEERROR,FAIL);
 
-           if (HI_WRITE(file_rec->file, HDFMAGIC, MAGICLEN) == FAIL)
+           if (HI_FLUSH(file_rec->file) == FAIL)  /* flush the cookie */
                HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-           if (HI_FLUSH(file_rec->file) == FAIL)   /* flush the cookie */
+
+           if (HIinit_file_dds(file_rec, ndds, FUNC) == FAIL) 
                HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-           if (HIinit_file_dds(file_rec, ndds, FUNC) == FAIL)
-               HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+
            file_rec->maxref = 0;
            file_rec->access = new_file ? access | DFACC_READ : DFACC_ALL;
        }
@@ -580,7 +493,7 @@ int32 Hstartread(file_id, tag, ref)
        and run the START READ function on this element */
     if (SPECIALTAG(access_rec->block->ddlist[access_rec->idx].tag)) {
        access_rec->special_func = HIget_function_table(access_rec, FUNC);
-       if (!access_rec->special_func) {
+       if(access_rec->special_func==NULL) {
            access_rec->used = FALSE;
            HRETURN_ERROR(DFE_INTERNAL,FAIL);
        }
@@ -951,6 +864,14 @@ int32 Hstartwrite(file_id, tag, ref, length)
     if (slot == FAIL)
        HRETURN_ERROR(DFE_TOOMANY,FAIL);
 
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
+
     /* convert tag to base form */
     tag = BASETAG(tag);
 
@@ -1006,31 +927,32 @@ int32 Hstartwrite(file_id, tag, ref, length)
     }
 
     if (ddnew) {    /* have to allocate new space in the file for the data */
-       int32 offset;           /* offset of this data element in file */
+        int32 offset;           /* offset of this data element in file */
 
        /* place the data element at the end of the file and record its offset */
-       if (HI_SEEKEND(file_rec->file) == FAIL) {
-           access_rec->used = FALSE;
-           HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-       }
+        if (HI_SEEKEND(file_rec->file) == FAIL) {
+            access_rec->used = FALSE;
+            HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+        }
         offset = access_rec->block->ddlist[access_rec->idx].offset
-            = HI_TELL(file_rec->file);
+                = HI_TELL(file_rec->file);
 
-       /* reserve the space by marking the end of the element */
-
-       if (HI_SEEK(file_rec->file, length-1+offset) == FAIL) {
-           access_rec->used = FALSE;
-           HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-       }
-       if (HI_WRITE(file_rec->file, tbuf, 1) == FAIL) {
-           access_rec->used = FALSE;
-           HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-       }
+        if(length>0) {  /* only mark data if there is a positive length */
+            /* reserve the space by marking the end of the element */
+            if (HI_SEEK(file_rec->file, length-1+offset) == FAIL) {
+                access_rec->used = FALSE;
+                HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+            }
+            if (HI_WRITE(file_rec->file, ptbuf, 1) == FAIL) {
+                access_rec->used = FALSE;
+                HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+            }
+          } /* end if */
 
        /* fill in dd record */
-       access_rec->block->ddlist[access_rec->idx].tag = tag;
-       access_rec->block->ddlist[access_rec->idx].ref = ref;
-       access_rec->appendable=TRUE;     /* mark data as appendable */
+        access_rec->block->ddlist[access_rec->idx].tag = tag;
+        access_rec->block->ddlist[access_rec->idx].ref = ref;
+        access_rec->appendable=TRUE;     /* mark data as appendable */
     }
 
     /* update dd in the file */
@@ -1420,6 +1342,77 @@ int32 Hwrite(access_id, length, data)
 /*--------------------------------------------------------------------------
 
  NAME
+       HDgetc -- read a byte from data element
+ USAGE
+       intn HDgetc(access_id)
+       int access_id;          IN: id of READ access element
+
+ RETURNS
+       returns byte read in from data if successful and FAIL
+       (-1) otherwise
+
+ DESCRIPTION
+        Calls Hread() to read a single byte and reports errors.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+intn HDgetc(int32 access_id)
+#else
+intn HDgetc(access_id)
+    int32 access_id;           /* access id */
+#endif
+{
+    char *FUNC="HDgetc";     /* for HERROR */
+    uint8 c;                /* character read in */
+
+    if(Hread(access_id,1,&c)==FAIL)
+        HRETURN_ERROR(DFE_READERROR,FAIL);
+    return((intn)c);
+}   /* HDgetc() */
+
+/*--------------------------------------------------------------------------
+
+ NAME
+       HDputc -- write a byte to data element
+ USAGE
+       intn HDputc(c,access_id)
+       uint8 c;                 IN: byte to write out
+       int32 access_id;         IN: id of WRITE access element
+
+ RETURNS
+       returns byte written out to data if successful and FAIL
+       (-1) otherwise
+
+ DESCRIPTION
+        Calls Hwrite() to write a single byte and reports errors.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+intn HDputc(uint8 c,int32 access_id)
+#else
+intn HDputc(c,access_id)
+    uint8 c;                /* byte to write out */
+    int32 access_id;        /* access id */
+#endif
+{
+    char *FUNC="HDputc";    /* for HERROR */
+
+    if(Hwrite(access_id,1,&c)==FAIL)
+        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+    return((intn)c);
+}   /* HDputc() */
+
+/*--------------------------------------------------------------------------
+
+ NAME
        Hendaccess -- to dispose of an access element
  USAGE
        int32 Hendaccess(access_id)
@@ -1501,16 +1494,19 @@ int32 Hendaccess(access_id)
 int32 Hgetelement(int32 file_id, uint16 tag, uint16 ref, uint8 *data)
 #else
 int32 Hgetelement(file_id, tag, ref, data)
-    int32 file_id;             /* id of file to read from */
-    uint16 tag;                        /* tag of elt to read */
-    uint16 ref;                        /* ref of elt to read */
-    uint8 *data;                       /* data buffer to read into */
+    int32 file_id;          /* id of file to read from */
+    uint16 tag;             /* tag of elt to read */
+    uint16 ref;             /* ref of elt to read */
+    uint8 *data;            /* data buffer to read into */
 #endif
 {
     char *FUNC="Hgetelement";  /* for HERROR */
     int32 access_id;           /* access record id */
     int32 length;              /* length of this elt */
+#ifdef OLD_WAY
     int32 ret;                 /* return code */
+#endif
+int32 offset;
 
     /* clear error stack */
     HEclear();
@@ -1522,12 +1518,20 @@ int32 Hgetelement(file_id, tag, ref, data)
     if (access_id == FAIL)
        HRETURN_ERROR(DFE_NOMATCH,FAIL);
 
+#ifdef OLD_WAY
     HQuerylength(access_id,&length);
     if ((ret = Hread(access_id, 0, data)) == FAIL)
        HERROR(DFE_READERROR);
     Hendaccess(access_id);
 
     return (ret == FAIL) ? ret : length;
+#else
+    if ((length=Hread(access_id, 0, data)) == FAIL)
+       HERROR(DFE_READERROR);
+    Hendaccess(access_id);
+
+    return(length);
+#endif
 }   /* Hgetelement() */
 
 /*--------------------------------------------------------------------------
@@ -1552,10 +1556,10 @@ int32 Hgetelement(file_id, tag, ref, data)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int Hputelement(int32 file_id, uint16 tag, uint16 ref, uint8 *data,
+int32 Hputelement(int32 file_id, uint16 tag, uint16 ref, uint8 *data,
                int32 length)
 #else
-int Hputelement(file_id, tag, ref, data, length)
+int32 Hputelement(file_id, tag, ref, data, length)
     int32 file_id;             /* file id to write to */
     uint16 tag;                /* tag of elt to write */
     uint16 ref;                /* ref of elt to write */
@@ -1565,7 +1569,8 @@ int Hputelement(file_id, tag, ref, data, length)
 {
     char *FUNC="Hputelement";  /* for HERROR */
     int32 access_id;           /* access record id */
-    int32 ret;                  /* return code */
+    int32 ret;                 /* return code */
+int32 offset;
 
     /* clear error stack */
     HEclear();
@@ -1576,10 +1581,14 @@ int Hputelement(file_id, tag, ref, data, length)
        HRETURN_ERROR(DFE_NOMATCH,FAIL);
 
     if ((ret = Hwrite(access_id, length, data)) == FAIL)
-       HERROR(DFE_WRITEERROR);
+        HERROR(DFE_WRITEERROR);
     Hendaccess(access_id);
 
+#ifdef OLD_WAY
     return (ret == length ? SUCCEED : FAIL);
+#else
+    return (ret);
+#endif
 }   /* end Hputelement() */
 
 /*--------------------------------------------------------------------------
@@ -1800,12 +1809,20 @@ int HIupdate_dd(file_rec, block, idx, FUNC)
     if (HI_SEEK(file_rec->file, offset) == FAIL)
        HRETURN_ERROR(DFE_SEEKERROR,FAIL);
 
-    p = tbuf;
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
+
+    p = ptbuf;
     UINT16ENCODE(p, block->ddlist[idx].tag);
     UINT16ENCODE(p, block->ddlist[idx].ref);
     INT32ENCODE(p, block->ddlist[idx].offset);
     INT32ENCODE(p, block->ddlist[idx].length);
-    if (HI_WRITE(file_rec->file, tbuf, DD_SZ) == FAIL)
+    if (HI_WRITE(file_rec->file, ptbuf, DD_SZ) == FAIL)
        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
 
     return SUCCEED;
@@ -2159,10 +2176,10 @@ int HDerr(file_id)
    made special.  It actually just fills in the appropriate info
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-static int HIchangedd(dd_t *datadd, ddblock_t *block, int idx, int16 special,
+PRIVATE int HIchangedd(dd_t *datadd, ddblock_t *block, int idx, int16 special,
               VOIDP special_info, funclist_t *special_func)
 #else
-static int HIchangedd(datadd, block, idx, special, special_info, special_func)
+PRIVATE int HIchangedd(datadd, block, idx, special, special_info, special_func)
     dd_t *datadd;               /* dd that had been converted to special */
     ddblock_t *block;           /* new dd block of converted dd */
     int idx;                    /* next dd list index of converted dd */
@@ -2232,11 +2249,19 @@ PRIVATE int HIinit_file_dds(file_rec, ndds, FUNC)
     block->next = (ddblock_t *) NULL;
     block->nextoffset = 0;
 
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
+
     /* write first dd block to file */
-    p = tbuf;
+    p = ptbuf;
     INT16ENCODE(p, block->ndds);
     INT32ENCODE(p, (int32) 0);
-    if (HI_WRITE(file_rec->file, tbuf, NDDS_SZ+OFFSET_SZ) == FAIL) {
+    if (HI_WRITE(file_rec->file, ptbuf, NDDS_SZ+OFFSET_SZ) == FAIL) {
        HERROR(DFE_WRITEERROR);
        return FAIL;
     }
@@ -2255,9 +2280,9 @@ PRIVATE int HIinit_file_dds(file_rec, ndds, FUNC)
 
     /* n is the maximum number of dd's in tbuf */
 
-    n = sizeof(int_tbuf) / DD_SZ;
+    n = TBUF_SZ / DD_SZ;
     if (n > ndds) n = ndds;
-    p = tbuf;
+    p = ptbuf;
 
     for (i = 0; i < n; i++) {
        UINT16ENCODE(p, (uint16)DFTAG_NULL);
@@ -2266,7 +2291,7 @@ PRIVATE int HIinit_file_dds(file_rec, ndds, FUNC)
        INT32ENCODE(p, (int32)0);
     }
     while (ndds > 0) {
-       if (HI_WRITE(file_rec->file, tbuf, n*DD_SZ) == FAIL)
+       if (HI_WRITE(file_rec->file, ptbuf, n*DD_SZ) == FAIL)
            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
        ndds -= n;
        if (n > ndds) n = ndds;
@@ -2303,13 +2328,21 @@ PRIVATE funclist_t *HIget_function_table(access_rec, FUNC)
     dd_t *dd;                  /* ptr to current dd */
     filerec_t *file_rec;       /* file record */
 
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, NULL);
+      }
+
     /* read in the special code in the special elt */
 
     dd = &access_rec->block->ddlist[access_rec->idx];
     file_rec = FID2REC(access_rec->file_id);
     if (HI_SEEK(file_rec->file, dd->offset) == FAIL)
        HRETURN_ERROR(DFE_SEEKERROR,NULL);
-    if (HI_READ(file_rec->file, tbuf, 2) == FAIL)
+    if (HI_READ(file_rec->file, ptbuf, 2) == FAIL)
        HRETURN_ERROR(DFE_READERROR,NULL);
 
     /* using special code, look up function table in associative table */
@@ -2317,7 +2350,7 @@ PRIVATE funclist_t *HIget_function_table(access_rec, FUNC)
        register int i;
        uint8 *p;
 
-       p = tbuf;
+       p = ptbuf;
        INT16DECODE(p, access_rec->special);
        for (i=0; functab[i].key != 0; i++) {
            if (access_rec->special == functab[i].key)
@@ -2367,9 +2400,9 @@ VOIDP HIgetspinfo(access_rec, tag, ref)
  losing files taht are still accessed
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-static int HIlock(int32 file_id)
+PRIVATE int HIlock(int32 file_id)
 #else
-static int HIlock(file_id)
+PRIVATE int HIlock(file_id)
     int32 file_id;             /* file record id to lock */
 #endif
 {
@@ -2392,9 +2425,9 @@ static int HIlock(file_id)
  unlock a previously locked file record
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-static int HIunlock(int32 file_id)
+PRIVATE int HIunlock(int32 file_id)
 #else
-static int HIunlock(file_id)
+PRIVATE int HIunlock(file_id)
     int32 file_id;             /* file record to unlock */
 #endif
 {
@@ -2467,7 +2500,7 @@ typedef struct special_table_t {
     uint16 special_tag;
 } special_table_t;
 
-static special_table_t special_table[] = {
+PRIVATE special_table_t special_table[] = {
 {0x8010, 0x4000 | 0x8010},             /* dummy */
 };
 
@@ -2628,7 +2661,7 @@ char string[];
         return(SUCCEED);
 }
 
-#ifdef PC
+#if defined PC && !defined PC386
 /*--------------------------------------------------------------------------
 **
 ** NAME
@@ -2674,7 +2707,7 @@ FILE *fp;
 
     if(size<=UINT_MAX)   /* if the size is small enough read it in all at once */
 #ifdef WIN3
-            bytes_read+=_lread(fp,b,UINT_MAX);
+        bytes_read=_lread(fp,buffer,size);
 #else
         bytes_read=fread(buffer,1,(uint16)size,fp);
 #endif
@@ -2683,7 +2716,7 @@ FILE *fp;
         b=buffer;
         while(size>UINT_MAX) {
 #ifdef WIN3
-        bytes_read=_lread(fp,buffer,(uint16)size);
+            bytes_read+=_lread(fp,b,(uint16)UINT_MAX);
 #else
             bytes_read+=fread(b,1,UINT_MAX,fp);
 #endif
@@ -2793,7 +2826,7 @@ PRIVATE int HIget_file_slot(path, FUNC)
     int i;
     int slot;
 
-#if defined(macintosh) | defined(THINK_C)
+#if defined(macintosh) | defined(THINK_C) | defined(DMEM) 
 
     if (!file_records) {
         /* The array has not been allocated.  Allocating file records
@@ -2823,7 +2856,7 @@ PRIVATE int HIget_file_slot(path, FUNC)
        return file_records[0].path ? 0 : FAIL;
     }
 
-#endif /* macintosh or THINK_C */
+#endif /* macintosh or THINK_C or Dynamic Memory */
 
     /* Search for a matching or free slot. */
 
@@ -2965,22 +2998,30 @@ int HInew_dd_block(file_rec, ndds, FUNC)
     block->next = (ddblock_t *) NULL;
     block->nextoffset = 0;
 
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
+
     /* put the new dd block at the end of the file */
 
     if (HI_SEEKEND(file_rec->file) == FAIL)
        HRETURN_ERROR(DFE_SEEKERROR,FAIL);
 
     nextoffset = HI_TELL(file_rec->file);
-    p = tbuf;
+    p = ptbuf;
     INT16ENCODE(p, block->ndds);
     INT32ENCODE(p, (int32)0);
-    if (HI_WRITE(file_rec->file, tbuf, NDDS_SZ+OFFSET_SZ) == FAIL)
+    if (HI_WRITE(file_rec->file, ptbuf, NDDS_SZ+OFFSET_SZ) == FAIL)
        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
 
     /* set up the dd list of this dd block and put it in the file
        after the dd block header */
 
-    p = tbuf;
+    p = ptbuf;
     list = block->ddlist = (dd_t *) HDgetspace((uint32) ndds * sizeof(dd_t));
     if (list == (dd_t *) NULL)
        HRETURN_ERROR(DFE_NOSPACE,FAIL);
@@ -2990,9 +3031,9 @@ int HInew_dd_block(file_rec, ndds, FUNC)
        list[i].length = list[i].offset = 0;
     }
 
-    /* n is the number of dds that could fit into tbuf at one time */
+    /* n is the number of dds that could fit into ptbuf at one time */
 
-    n = sizeof(int_tbuf) / DD_SZ;
+    n = TBUF_SZ / DD_SZ;
     if (n > ndds) n = ndds;
     for (i = 0; i < n; i++) {
        UINT16ENCODE(p, (uint16)DFTAG_NULL);
@@ -3001,7 +3042,7 @@ int HInew_dd_block(file_rec, ndds, FUNC)
        INT32ENCODE(p, (int32)0);
     }
     while (ndds > 0) {
-       if (HI_WRITE(file_rec->file, tbuf, n*DD_SZ) == FAIL)
+       if (HI_WRITE(file_rec->file, ptbuf, n*DD_SZ) == FAIL)
            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
        ndds -= n;
        if (n > ndds) n = ndds;
@@ -3016,11 +3057,11 @@ int HInew_dd_block(file_rec, ndds, FUNC)
        offset = MAGICLEN + NDDS_SZ;
     else
        offset = file_rec->ddlast->prev->nextoffset + NDDS_SZ;
-    p = tbuf;
+    p = ptbuf;
     INT32ENCODE(p, nextoffset);
     if (HI_SEEK(file_rec->file, offset) == FAIL)
        HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-    if (HI_WRITE(file_rec->file, tbuf, OFFSET_SZ) == FAIL)
+    if (HI_WRITE(file_rec->file, ptbuf, OFFSET_SZ) == FAIL)
        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
 
     /* update file record */
@@ -3046,6 +3087,14 @@ PRIVATE int HIfill_file_rec(file_rec, FUNC)
   uint8 *p;               /* Temporary pointer. */
   int32 n;
   register intn ndds, i, idx;     /* Temporary integers. */
+
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
 
   /* Alloc start of linked list of ddblocks. */
 
@@ -3078,12 +3127,12 @@ PRIVATE int HIfill_file_rec(file_rec, FUNC)
        Read data consists of ndds (number of dd's in this block) and
        offset (offset to the next ddblock). */
 
-    if (HI_READ(file_rec->file, tbuf, NDDS_SZ+OFFSET_SZ) == FAIL)
+    if (HI_READ(file_rec->file, ptbuf, NDDS_SZ+OFFSET_SZ) == FAIL)
       HRETURN_ERROR(DFE_READERROR,FAIL);
 
     /* Decode the numbers. */
 
-    p = tbuf;
+    p = ptbuf;
     INT16DECODE(p, FILE_NDDS(file_rec));
     if (FILE_NDDS(file_rec) <= 0)   /* validity check */
         HRETURN_ERROR(DFE_CORRUPT,FAIL);
@@ -3100,11 +3149,11 @@ PRIVATE int HIfill_file_rec(file_rec, FUNC)
     /* Read in dd's. */
     ndds = FILE_NDDS(file_rec);
 
-    /* Since the tbuf might not be large enough to read in all the dd's
+    /* Since the ptbuf might not be large enough to read in all the dd's
        at once, we try to read in chunks as large as possible. */
 
-    /* n is number of dd's that could fit into tbuf at one time */
-    n = sizeof(int_tbuf) / DD_SZ;
+    /* n is number of dd's that could fit into ptbuf at one time */
+    n = TBUF_SZ / DD_SZ;
     if (n > ndds)
       n = ndds;
 
@@ -3117,12 +3166,12 @@ PRIVATE int HIfill_file_rec(file_rec, FUNC)
 
       /* Read in a chunk of dd's from the file. */
 
-      if (HI_READ(file_rec->file, tbuf, n * DD_SZ) == FAIL)
+      if (HI_READ(file_rec->file, ptbuf, n * DD_SZ) == FAIL)
         HRETURN_ERROR(DFE_READERROR, FAIL);
 
       /* decode the dd's */
 
-      p = tbuf;
+      p = ptbuf;
       for (i = 0; i < n; i++, idx++) {
         UINT16DECODE(p, file_rec->ddlast->ddlist[idx].tag);
         UINT16DECODE(p, file_rec->ddlast->ddlist[idx].ref);
@@ -3349,8 +3398,8 @@ intn  *attach;
 #include "Strings.h"
 #endif
 
-static int32 hdfc = 1061109567L;    /* equal to '????' in ascii */
-static int32 hdft = 1600085855L;    /* equal to '_HDF' in ascii */
+PRIVATE int32 hdfc = 1061109567L;    /* equal to '????' in ascii */
+PRIVATE int32 hdft = 1600085855L;    /* equal to '_HDF' in ascii */
 
 #ifdef MPW
 hdf_file_t
@@ -3384,7 +3433,7 @@ mopen(char *name, intn flags)
 }
 #else
 
-static Str255 pname;
+PRIVATE Str255 pname;
 
 hdf_file_t
 mopen(char *name, intn flags)

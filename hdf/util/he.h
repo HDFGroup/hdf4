@@ -1,38 +1,17 @@
-/*
-$Header$
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
 
-$Log$
-Revision 1.11  1993/08/16 21:49:03  koziol
-Wrapped in changes for final, working version on the PC.
+/* $Id$ */
 
- * Revision 1.10  1993/05/24  15:09:47  sxu
- * Wrapped changes in HDF3.2 into 3.3.
- *
- * Revision 1.9  1993/01/19  06:24:11  koziol
- * Updated for better portability and fixed minor compiler warnings
- *
- * Revision 1.8  1993/01/16  04:13:57  georgev
- * Fixed bug in hdfed
- *
- * Revision 1.7  1992/09/11  18:32:51  chouck
- * Assorted MAC mungings
- *
- * Revision 1.5  1992/08/18  19:49:33  chouck
- * Include string.h
- *
- * Revision 1.4  1992/07/31  21:10:24  chouck
- * Use in-house print routines rather than fork() a call to od
- *
- * Revision 1.3  1992/07/15  21:48:48  sxu
- * No change.
- *
- * Revision 1.2  1992/07/14  16:29:20  mlivin
- * fixed include of he_proto.h (for name change to _ not -)
- *
- * Revision 1.1  1992/07/06  22:54:16  mlivin
- * Initial revision
- *
-*/
 /* he.h -- header file for HDFedit */
 #include "hdf.h"
 #include <ctype.h>

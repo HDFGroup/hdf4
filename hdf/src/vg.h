@@ -1,66 +1,17 @@
-/*
-$Header$
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
 
-$Log$
-Revision 1.16  1993/10/01 20:01:27  koziol
-Put "extern C" block around function prototypes for C++ compatibility.
+/* $Id$ */
 
- * Revision 1.15  1993/09/30  19:05:27  koziol
- * Added basic compressing functionality for special tags.
- *
- * Revision 1.14  1993/09/28  18:04:56  koziol
- * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
- * tag handling.  Added new compression special tag type.
- *
- * Revision 1.13  1993/08/16  21:46:36  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.12  1993/07/13  20:45:04  chouck
- * Fixed a few memory leaks
- *
- * Revision 1.11  1993/05/19  20:05:09  chouck
- * Moved general interest VSet info out of vg.h and into hdf.h
- * Removed OLD_WAY parts of vproto.h
- * Fixed a problem in DFfindnextref()
- *
- * Revision 1.10  1993/04/22  16:05:52  chouck
- * Minor Vset fixes
- *
- * Revision 1.9  1993/04/19  22:48:28  koziol
- * General Code Cleanup to reduce/remove errors on the PC
- *
- * Revision 1.8  1993/04/08  18:33:52  chouck
- * Various Vset modifications (additions of Vdelete and VSdelete)
- *
- * Revision 1.7  1993/04/06  17:23:41  chouck
- * Added Vset macros
- *
- * Revision 1.6  1993/03/29  16:50:30  koziol
- * Updated JPEG code to new JPEG 4 code.
- * Changed VSets to use Threaded-Balanced-Binary Tree for internal
- * 	(in memory) representation.
- * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
- * 	to use 32-bit integer keys instead of pointers.
- * Backed out speedups for Cray, until I get the time to fix them.
- * Fixed a bunch of bugs in the little-endian support in DFSD.
- *
- * Revision 1.5  1993/01/19  05:56:15  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.4  1992/11/30  22:00:01  chouck
- * Added fixes for changing to Vstart and Vend
- *
- * Revision 1.3  1992/11/24  17:43:26  chouck
- * Fixed memory over-write when VGroups have lots of members
- *
- * Revision 1.2  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*****************************************************************************
 * 
 * vg.h

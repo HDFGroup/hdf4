@@ -1,65 +1,26 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.16  1993/09/30 19:05:15  koziol
-Added basic compressing functionality for special tags.
+/* $Id$ */
 
- * Revision 1.15  1993/09/28  18:04:41  koziol
- * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
- * tag handling.  Added new compression special tag type.
- *
- * Revision 1.14  1993/09/21  20:21:05  georgev
- * Changed  DFTAG_SDD tag.
- *
- * Revision 1.13  1993/08/16  21:46:05  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.12  1993/07/01  20:08:09  chouck
- * Made the hash table use fewer malloc() and free() pairs to improve
- * efficiency and (hopefully) reduce PC memory fragmentation.
- *
- * Revision 1.11  1993/04/22  20:24:22  koziol
- * Added new Hfind() routine to hfile.c which duplicates older DFsetfind/DFfind
- * utility...
- *
- * Revision 1.9  1993/04/14  21:39:22  georgev
- * Had to add some VOIDP casts to some functions to make the compiler happy.
- *
- * Revision 1.8  1993/04/05  22:35:51  koziol
- * Fixed goofups made in haste when patching code.
- *
- * Revision 1.7  1993/03/29  17:21:03  chouck
- * Fixed a prototype problem
- *
- * Revision 1.6  1993/01/26  19:42:48  koziol
- * Added support for reading and writing Little-Endian data on all
- * platforms.  This has been tested on: Cray, Sun, and PCs so far.
- *
- * Revision 1.5  1993/01/19  05:56:03  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.4  1992/11/05  18:59:26  chouck
- * Added (unix) wrapper to realloc()
- *
- * Revision 1.3  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.2  1992/08/26  19:44:25  chouck
- * Moved HDgettagname() into hkit.c and added calibration tag
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 #include <ctype.h>
 #include "hdf.h"
 #include "herr.h"
 #include "hfile.h"
+#include "hkit.h"
 
 #if defined PROTOTYPE
 intn HDc2fstr(char *str, intn len)
@@ -437,9 +398,6 @@ intn len;
 /*--------------------------------------------------------------------------
  *  HDgettagname(tag) : map a tag to its corresponding name
  *                      return NULL if tag is unknown.
- *
- *  NOTE: Please keep tag names <= 30 characters - a 
- *        lot of pretty-printing code depends on it.
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
 char _HUGE *HDgettagname(uint16 tag)
@@ -448,135 +406,10 @@ char _HUGE *HDgettagname(tag)
      uint16 tag;
 #endif /* PROTOTYPE */
 {
+    intn i;
 
-  char *name;
-
-  switch(tag) {
-      
-      /* Utility Tags */
-  case DFTAG_NULL  :
-      name = "No Data"; break;
-  case DFTAG_VERSION :
-      name = "Version Descriptor"; break;
-  case DFTAG_LINKED :
-      name = "Linked Blocks Indicator"; break;
-  case DFTAG_FID   : 
-      name = "File Identifier"; break;
-  case DFTAG_FD    :   
-      name = "File Description"; break;
-  case DFTAG_TID   :
-      name = "Tag Identifier"; break;
-  case DFTAG_TD    : 
-      name = "Tag Description"; break;
-  case DFTAG_DIL   :
-      name = "Data Id Label"; break;
-  case DFTAG_DIA   :    
-      name = "Data Id Annotation"; break;
-  case DFTAG_NT    :    
-      name = "Number type"; break;
-  case DFTAG_MT    :   
-      name = "Machine type"; break;
-      
-      /* raster-8 Tags */
-  case DFTAG_ID8   :   
-      name = "Image Dimensions-8"; break;
-  case DFTAG_IP8   :   
-      name = "Image Palette-8"; break;
-  case DFTAG_RI8   :  
-      name = "Raster Image-8"; break;
-  case DFTAG_CI8   : 
-      name = "RLE Compressed Image-8"; break;
-  case DFTAG_II8   :  
-      name = "Imcomp Image-8"; break;
-      
-      /* Raster Image Tags */
-  case DFTAG_ID    :  
-      name = "Image Dimensions"; break;
-  case DFTAG_LUT   :  
-      name = "Image Palette"; break;
-  case DFTAG_RI    : 
-      name = "Raster Image Data"; break;
-  case DFTAG_CI    :  
-      name = "Compressed Image"; break;
-  case DFTAG_RIG   : 
-      name = "Raster Image Group"; break;
-  case DFTAG_LD    : 
-      name = "Palette Dimension"; break;
-  case DFTAG_MD    :
-      name = "Matte Dimension"; break;
-  case DFTAG_MA    :
-      name = "Matte Data"; break;
-  case DFTAG_CCN   :   
-      name = "Color Correction"; break;
-  case DFTAG_CFM   : 
-      name = "Color Format"; break;
-  case DFTAG_AR    :   
-      name = "Aspect Ratio"; break;
-  case DFTAG_DRAW  :
-      name = "Sequenced images"; break;
-  case DFTAG_RUN   :   
-      name = "Runable program / script"; break;
-  case DFTAG_XYP   : 
-      name = "X-Y position"; break;
-  case DFTAG_MTO   :  
-      name = "M/c-Type override"; break;
-      
-      /* Tektronix */
-  case DFTAG_T14   :   
-      name = "TEK 4014 Data"; break;
-  case DFTAG_T105  :
-      name = "TEK 4105 data"; break;
-      
-      /* Compression Schemes */
-  case DFTAG_RLE   : 
-      name = "Run Length Encoding"; break;
-  case DFTAG_IMCOMP : 
-      name = "IMCOMP Encoding"; break;
-  case DFTAG_JPEG :
-      name = "24-bit JPEG Encoding"; break;
-  case DFTAG_GREYJPEG :
-      name = "8-bit JPEG Encoding"; break;
-      
-      /* Scientific / Numeric Data Sets */
-  case DFTAG_SDG   : 
-      name = "Scientific Data Group"; break;
-  case DFTAG_NDG   : 
-      name = "Numeric Data Group"; break;
-  case DFTAG_SD    :
-      name = "Scientific Data"; break;
-  case DFTAG_SDD   : 
-    name = "SciData dimension record"; break;
-  case DFTAG_SDL   :   
-      name = "SciData labels"; break;
-  case DFTAG_SDU   : 
-      name = "SciData units"; break;
-  case DFTAG_SDF   :  
-      name = "SciData formats"; break;
-  case DFTAG_SDS   :  
-      name = "SciData scales"; break;
-  case DFTAG_SDM   :  
-      name = "SciData max/min"; break;
-  case DFTAG_SDC   :  
-      name = "SciData coordsys"; break;
-  case DFTAG_SDT   :  
-      name = "Transpose"; break;
-  case DFTAG_SDLNK :  
-      name = "Links related to the dataset"; break;
-  case DFTAG_CAL   :  
-      name = "Calibration information"; break;
-      
-      /* V Group Tags */
-  case DFTAG_VG   :  
-      name = "Vgroup"; break;
-  case DFTAG_VH   : 
-      name = "Vdata"; break;
-  case DFTAG_VS   : 
-      name = "Vdata Storage"; break;
-  default:
-      name = (char *) NULL;
-      break;
-  }
-  
-  return name;
-  
+    for(i=0; i<sizeof(tag_descriptions)/sizeof(tag_descript_t); i++)
+	if(tag_descriptions[i].tag==tag)
+	    return(tag_descriptions[i].desc);
+    return(NULL);
 }

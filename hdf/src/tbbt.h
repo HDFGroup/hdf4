@@ -1,5 +1,18 @@
-/* "tbbt.h" -- Data types/routines for threaded, balanced, binary trees. */
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 /* $Id$ */
+
+/* "tbbt.h" -- Data types/routines for threaded, balanced, binary trees. */
 /* Extended from Knuth 6.2.3, Algorithm A */
 
 #ifndef TBBT_H
@@ -11,6 +24,7 @@
 
 typedef   struct tbbt_node  TBBT_NODE;
 
+/* Threaded node structure */
 struct tbbt_node {
   VOIDP     data;      /* Pointer to user data to be associated with node */
   VOIDP     key;       /* Field to sort nodes on */
@@ -58,6 +72,7 @@ struct tbbt_node {
 /* SetFlags( ptr, LEFT, Cnt(RIGHT,kid), -2, YES ) */
 };
 typedef   struct tbbt_tree  TBBT_TREE;
+/* Threaded tree structure */
 struct tbbt_tree {
   TBBT_NODE *root;
   unsigned long count;  /* The number of nodes in the tree currently */
