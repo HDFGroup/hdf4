@@ -245,6 +245,11 @@ write_vset_stuff(void)
     status=VSfdefine(vs1, FIELD1, DFNT_FLOAT32, 1);
     CHECK(status,FAIL,"VSfdefine");
 
+    /* Verify that VSsetfields will return FAIL when passing in a NULL
+       for field name list (bug #554) - BMR 5/17/01 */
+    status = VSsetfields(vs1, NULL);
+    VERIFY(status, FAIL, "VSsetfields");
+
     status = VSsetfields(vs1, FIELD1);
     if (status == FAIL)
       {
@@ -1735,6 +1740,12 @@ test_emptyvdata(void)
 
     status=VFnfields(vs1);
     VERIFY(status,0,"VFnfields");
+
+    /* Verify that VSgetfields will return FAIL when passing in a NULL
+       for field name list (from bug #554), although this might never 
+       happen - BMR 5/17/01 */
+    status = VSgetfields(vs1, NULL);
+    VERIFY(status, FAIL, "VSgetfields");
 
     status=VSgetfields(vs1,fields);
     CHECK(status,FAIL,"VSgetfields");
