@@ -193,6 +193,9 @@ HDFLIBAPI intn SDsetdimval_comp
 HDFLIBAPI intn SDisdimval_bwcomp
     (int32 dimid);
 
+HDFLIBAPI int32 SDcheckempty
+    (int32 sdsid, intn *emptySDS);
+
 /*====================== Chunking Routines ================================*/
 
 /* For defintion of HDF_CHUNK_DEF union see hproto.h since 
