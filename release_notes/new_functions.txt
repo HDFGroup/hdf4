@@ -28,7 +28,7 @@ C                     FORTRAN                 Description
 
 (SDsetblocksize)      sfsblsz                 sets block size 
 
-(SDisrecord)          sdisrcrd                checks if an SDS is unlimited.
+(SDisrecord)          sfisrcrd                checks if an SDS is unlimited
 
 
 
