@@ -4573,6 +4573,14 @@ intn GRsetcompress(int32 riid,comp_coder_t comp_type,comp_info *cinfo)
     if (ri_ptr->use_buf_drvr)
         HGOTO_ERROR(DFE_CANTMOD, FAIL);
 
+    /*  EIP 09/12/03
+       Quit if SZIP Library is not available but SZIP compression was requested 
+    */ 
+#ifndef H4_HAVE_LIBSZ
+    if (comp_type==COMP_CODE_SZIP) 
+        HGOTO_ERROR(DFE_CANTMOD, FAIL);
+#endif
+
     /* Mark the image as being compressed and cache args */
     if(comp_type==COMP_CODE_JPEG)
       {
@@ -5715,13 +5723,42 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
           chunk[0].minfo = &minfo; /* dummy */
           break;
       case (HDF_CHUNK | HDF_COMP):
+      /*  EIP 9/12/03 
+       *  We have to take special care if SZIP library is not available;
+       *  Fow all other compression types do
+       */
           cdef  = (HDF_CHUNK_DEF *)&chunk_def;
+
+      if ((comp_coder_t)cdef->comp.comp_type != COMP_CODE_SZIP) {
           cdims = cdef->comp.chunk_lengths;
           chunk[0].chunk_flag = SPECIAL_COMP;  /* Compression */
           chunk[0].comp_type  = (comp_coder_t)cdef->comp.comp_type; 
           chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
           chunk[0].cinfo = &cdef->comp.cinfo; 
           chunk[0].minfo = &minfo; /* dummy */
+       }
+       else /* requested compression is SZIP */
+
+#ifdef H4_HAVE_LIBSZ          /* we have the library */
+          {
+          cdims = cdef->comp.chunk_lengths;
+          chunk[0].chunk_flag = SPECIAL_COMP;  /* Compression */
+          chunk[0].comp_type  = (comp_coder_t)cdef->comp.comp_type; 
+          chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
+          chunk[0].cinfo = &cdef->comp.cinfo; 
+          chunk[0].minfo = &minfo; /* dummy */
+          }
+#else                         /* we do not have the SZIP library */
+          {
+          cdims = cdef->comp.chunk_lengths;
+          chunk[0].chunk_flag = 0;
+          chunk[0].comp_type = COMP_CODE_NONE;
+          chunk[0].model_type = COMP_MODEL_STDIO;
+          chunk[0].cinfo = &cinfo;
+          chunk[0].minfo = &minfo;
+          }
+#endif /* H4_HAVE_LIBSZ */
+
           break;
       case (HDF_CHUNK | HDF_NBIT): /* don't support NBIT for GRs */
           ret_value = FAIL;

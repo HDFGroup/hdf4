@@ -107,7 +107,6 @@ c     test ncadel
       write(*, 100) 'ncadel'
       call tncadel(name2)
 
-
 c     test reading from NetCDF file
       write(*, 100) 'NetCDF read'
       call tread_netcdf()
@@ -1237,6 +1236,8 @@ C        using HDF4 ncgen. HDF4 ncgen generated HDF4 file!
 C        Variables declarations
 
          character*10 FILENAME
+         character*1024 new_filename
+         integer filename_len
          integer status, ncid, var_id
          integer time(12), date(12), start(3), count(3), int_attr(5)
          real a(3,2), float_attr(3)
@@ -1253,6 +1254,7 @@ C        Arrays to read data to.
          double precision c_val(3), double_attr_val(3)
          real epsilon
          double precision depsilon
+         integer external fixname
 
 C        Arrays initialization
          DATA time_val /1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12/
@@ -1279,11 +1281,15 @@ C        Arrays initialization
          DATA epsilon /1.E-6/
          DATA depsilon /1.E-12/
          
+
 C        Modify filename to accomodate SRCDIR configure option
 
          FILENAME = 'test_nc.nc'
+         filename_len = len(new_filename)
+         call fixname(FILENAME, new_filename, filename_len)
+
          dlen = 10
-         ncid = ncopn(FILENAME, NCNOWRIT, status)
+         ncid = ncopn(new_filename(1:filename_len), NCNOWRIT, status)
          if (status .ne.0) then
              write(*,*) 'ncopn failed'
              goto 1000

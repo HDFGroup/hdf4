@@ -4046,7 +4046,7 @@ SDsetcompress(int32 id,                /* IN: dataset ID */
 {
     NC        *handle;
     NC_var    *var;
-    NC_dim    *dim;	/* to check if the dimension is unlimited */
+    NC_dim    *dim;     /* to check if the dimension is unlimited */
     int32      dimindex;/* to obtain the NC_dim record */
     model_info m_info;  /* modeling information for the HCcreate() call */
     intn       status = FAIL;
@@ -4089,26 +4089,26 @@ SDsetcompress(int32 id,                /* IN: dataset ID */
     /* When the compression is SZIP, disallow the use of unlimited dimension */
     if (comp_type == COMP_CODE_SZIP)
     {
-	/* Get the index of the SDS' first dimension from the list of indices
-	 * branching out from NC_var.  This index indicates where this dim 
-	 * is in the "dims" list branching out from NC. */
+        /* Get the index of the SDS' first dimension from the list of indices
+         * branching out from NC_var.  This index indicates where this dim
+         * is in the "dims" list branching out from NC. */
         dimindex = var->assoc->values[0];
 
         /* Retrieve the NC_dim record to check for unlimited dimension */
         dim = SDIget_dim(handle, dimindex);
-	if(dim == NULL)
-	{
-	    ret_value = FAIL;
-	    goto done;
-	}
+        if(dim == NULL)
+        {
+            ret_value = FAIL;
+            goto done;
+        }
 
-	/* If this dimension is unlimited, then return FAIL; the subsequent 
-	 * writing of this SDS will write uncompressed data */
-	if (dim->size == SD_UNLIMITED)
-	{
-	    ret_value = FAIL;
-	    goto done;
-	}
+        /* If this dimension is unlimited, then return FAIL; the subsequent
+         * writing of this SDS will write uncompressed data */
+        if (dim->size == SD_UNLIMITED)
+        {
+            ret_value = FAIL;
+            goto done;
+        }
     }
 
 #ifdef SDDEBUG
@@ -5282,13 +5282,42 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
           chunk[0].minfo = &minfo; /* dummy */
           break;
       case (HDF_CHUNK | HDF_COMP):
+      /*  EIP 9/11/03 
+       *  We have to take special care if SZIP library is not available;
+       *  Fow all other compression types do
+       */
           cdef  = (HDF_CHUNK_DEF *)&chunk_def;
+
+      if ((comp_coder_t)cdef->comp.comp_type != COMP_CODE_SZIP) {
           cdims = cdef->comp.chunk_lengths;
           chunk[0].chunk_flag = SPECIAL_COMP;  /* Compression */
           chunk[0].comp_type  = (comp_coder_t)cdef->comp.comp_type; 
           chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
           chunk[0].cinfo = &cdef->comp.cinfo; 
           chunk[0].minfo = &minfo; /* dummy */
+       }
+       else /* requested compression is SZIP */
+
+#ifdef H4_HAVE_LIBSZ          /* we have the library */
+          {
+          cdims = cdef->comp.chunk_lengths;
+          chunk[0].chunk_flag = SPECIAL_COMP;  /* Compression */
+          chunk[0].comp_type  = (comp_coder_t)cdef->comp.comp_type; 
+          chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
+          chunk[0].cinfo = &cdef->comp.cinfo; 
+          chunk[0].minfo = &minfo; /* dummy */
+          }
+#else                         /* we do not have the SZIP library */
+          {
+          cdims = cdef->comp.chunk_lengths;
+          chunk[0].chunk_flag = 0;
+          chunk[0].comp_type = COMP_CODE_NONE;
+          chunk[0].model_type = COMP_MODEL_STDIO;
+          chunk[0].cinfo = &cinfo;
+          chunk[0].minfo = &minfo;
+          }
+#endif /* H4_HAVE_LIBSZ */
+
           break;
       case (HDF_CHUNK | HDF_NBIT):
           cdef  = (HDF_CHUNK_DEF *)&chunk_def;

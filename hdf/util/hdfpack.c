@@ -531,6 +531,7 @@ merge_blocks(mydd_t * dd, int32 infile, int32 outfile)
           HERROR(DFE_GENAPP);
           hdferror();
       }
+
     outaid = Hstartaccess(outfile,BASETAG(dd->tag),dd->ref,DFACC_WRITE);
     if (outaid == FAIL)
       {

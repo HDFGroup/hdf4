@@ -10,7 +10,7 @@
 #include "mfhdf.h"
 
 #include "hdiff.h"
-#include "dumplib.h"
+
 /* 
 * convert pathname of netcdf file into name for cdl unit, by taking 
 * last component of path and stripping off any extension.
@@ -18,7 +18,7 @@
 char *
 name_path(char *path)
 {
- char *cp, *new;
+ char *cp, *newc;
  
 #ifdef vms
 #define FILE_DELIMITER ']'
@@ -34,15 +34,15 @@ name_path(char *path)
   cp = path;
  else   /* skip delimeter */
   cp++;
- new = (char *) malloc((unsigned) (strlen(cp)+1));
- if (new == 0) {
-  error("out of memory!");
+ newc = (char *) malloc((unsigned) (strlen(cp)+1));
+ if (newc == 0) {
+  fprintf(stderr,"Out of memory!\n");
   exit(EXIT_FAILURE);
  }
- (void) strcpy(new, cp); /* copy last component of path */
- if ((cp = strrchr(new, '.')) != NULL)
+ (void) strcpy(newc, cp); /* copy last component of path */
+ if ((cp = strrchr(newc, '.')) != NULL)
   *cp = '\0';  /* strip off any extension */
- return new;
+ return newc;
 }
 
 
@@ -63,7 +63,7 @@ type_name(nc_type type)
  case DFNT_DOUBLE:
   return "double";
  default:
-  error("type_name: bad type %d", type);
+  fprintf(stderr,"type_name: bad type %d", type);
   return "bogus";
  }
 }
@@ -109,10 +109,10 @@ pr_att_vals(nc_type type, int len, void *vals)
  int iel;
  union {
   char *cp;
-  short *sp;
-  long *lp;
-  float *fp;
-  double *dp;
+  int16 *sp;
+  int32 *lp;
+  float32 *fp;
+  float64 *dp;
  } gp;
  char *sp;
  unsigned char uc;
@@ -172,17 +172,17 @@ pr_att_vals(nc_type type, int len, void *vals)
   Printf ("\"");
   break;
  case DFNT_INT16:
-  gp.sp = (short *) vals;
+  gp.sp = (int16 *) vals;
   for (iel = 0; iel < len; iel++)
    Printf ("%ds%s",*gp.sp++,iel<len-1 ? ", " : "");
   break;
  case DFNT_INT32:
-  gp.lp = (long *) vals;
+  gp.lp = (int32 *) vals;
   for (iel = 0; iel < len; iel++)
-   Printf ("%ld%s",*gp.lp++,iel<len-1 ? ", " : "");
+   Printf ("%d%s",*gp.lp++,iel<len-1 ? ", " : "");
   break;
  case DFNT_FLOAT:
-  gp.fp = (float *) vals;
+  gp.fp = (float32 *) vals;
   for (iel = 0; iel < len; iel++) {
    int ll;
    (void) sprintf(gps, f_fmt, * gp.fp++);
@@ -195,7 +195,7 @@ pr_att_vals(nc_type type, int len, void *vals)
   }
   break;
  case DFNT_DOUBLE:
-  gp.dp = (double *) vals;
+  gp.dp = (float64 *) vals;
   for (iel = 0; iel < len; iel++) {
    (void) sprintf(gps, d_fmt, *gp.dp++);
    tztrim(gps); /* trim trailing 0's after '.' */
@@ -203,14 +203,14 @@ pr_att_vals(nc_type type, int len, void *vals)
   }
   break;
  default:
-  error("pr_att_vals: bad type - %d", type);
+  fprintf(stderr,"pr_att_vals: bad type - %d", type);
  }
 }
 
 
 
 void
-make_vars(char *optarg, struct fspec* fspecp, int option)
+make_vars(char *optarg, diff_opt_t *opt, int option)
 {
  char *cp = optarg;
  int nvars = 1;
@@ -218,9 +218,9 @@ make_vars(char *optarg, struct fspec* fspecp, int option)
  
  /* compute number of variable names in comma-delimited list */
  if (option == 1)
-  fspecp->nlvars = 1;
+  opt->nlvars = 1;
  else
-  fspecp->nuvars = 1;
+  opt->nuvars = 1;
  
  while (*cp++)
   if (*cp == ',')
@@ -228,21 +228,21 @@ make_vars(char *optarg, struct fspec* fspecp, int option)
   
   if (option == 1)
   {
-   fspecp->lvars = (char **) malloc(nvars * sizeof(char*));
-   if (!fspecp->lvars) {
-    error("out of memory");
+   opt->lvars = (char **) malloc(nvars * sizeof(char*));
+   if (!opt->lvars) {
+    fprintf(stderr,"Out of memory!\n");
     exit(EXIT_FAILURE);
    }
-   cpp = fspecp->lvars;
+   cpp = opt->lvars;
   }
   else
   {
-   fspecp->uvars = (char **) malloc(nvars * sizeof(char*));
-   if (!fspecp->uvars) {
-    error("out of memory");
+   opt->uvars = (char **) malloc(nvars * sizeof(char*));
+   if (!opt->uvars) {
+    fprintf(stderr,"Out of memory!\n");
     exit(EXIT_FAILURE);
    }
-   cpp = fspecp->uvars;
+   cpp = opt->uvars;
   }
   
   /* copy variable names into list */
@@ -252,51 +252,15 @@ make_vars(char *optarg, struct fspec* fspecp, int option)
    
    *cpp = (char *) malloc(strlen(cp) + 1);
    if (!*cpp) {
-    error("out of memory");
+    fprintf(stderr,"Out of memory!\n");
     exit(EXIT_FAILURE);
    }
    strcpy(*cpp, cp);
    cpp++;
   }
   if (option == 1)
-   fspecp->nlvars = nvars;
+   opt->nlvars = nvars;
   else
-   fspecp->nuvars = nvars;
+   opt->nuvars = nvars;
 }
-
-
-/*
-* Extract the significant-digits specifiers from the -d argument on the
-* command-line and update the default data formats appropriately.
-*/
-void
-set_sigdigs(char *optarg)
-{
- char *ptr = optarg;
- char *ptr2 = 0;
- long flt_digits = 7; /* default floating-point digits */
- long dbl_digits = 15; /* default double-precision digits */
- char flt_fmt[6];
- char dbl_fmt[6];
- 
- if (optarg != 0 && strlen(optarg) > 0 && optarg[0] != ',')
-  flt_digits=strtol(optarg, &ptr, 10);
- 
- if (flt_digits < 1 || flt_digits > 10) {
-  error("unreasonable value for float significant digits: %d",
-   flt_digits);
-  exit(EXIT_FAILURE);
- }
- if (*ptr == ',')
-  dbl_digits = strtol(ptr+1, &ptr2, 10);
- if (ptr2 == ptr+1 || dbl_digits < 1 || dbl_digits > 20) {
-  error("unreasonable value for double significant digits: %d",
-   dbl_digits);
-  exit(EXIT_FAILURE);
- }
- (void) sprintf(flt_fmt, "%%.%dg", flt_digits);
- (void) sprintf(dbl_fmt, "%%.%dg", dbl_digits);
- set_formats(flt_fmt, dbl_fmt);
-}
-
 

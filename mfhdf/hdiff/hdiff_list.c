@@ -21,6 +21,12 @@ static
 int is_reserved(char*vgroup_class);
 static
 char *get_path(char*path_name, char*obj_name);
+static 
+int insert_an_data(int32 file_id,
+                   int32 ref_in, 
+                   int32 tag_in,
+                   ann_type type, 
+                   char *path);
 
 
 
@@ -60,13 +66,13 @@ char *get_path(char*path_name, char*obj_name);
  */
 
 
-int Hgetlist (char* fname, dtable_t *table)
+int Hgetlist (const char* fname, dtable_t *table)
 {
  int32    file_id;
  int      n_objs=0;
 
  /* open the file for read */
- if ((file_id  = Hopen (fname,DFACC_READ,0))==FAIL)
+ if ((file_id  = Hopen (fname,DFACC_READ,(int16)0))==FAIL)
  {
   printf("Cannot open file <%s>\n",fname);
   return FAIL;
@@ -103,12 +109,11 @@ int Hgetlist (char* fname, dtable_t *table)
  */
 
 
-int hdiff_list_vg(char* fname,
-            int32 file_id,
-            dtable_t *table)
+int hdiff_list_vg(const char* fname,
+                  int32 file_id,
+                  dtable_t *table)
 {
- int32 vgroup_ref=-1,  /* reference number of the group */
-       vgroup_id,      /* vgroup identifier */
+ int32 vgroup_id,      /* vgroup identifier */
        nlones = 0,     /* number of lone vgroups */
        ntagrefs,       /* number of tag/ref pairs in a vgroup */
        *ref_array=NULL,/* buffer to hold the ref numbers of lone vgroups   */
@@ -243,7 +248,7 @@ int hdiff_list_vg(char* fname,
  *-------------------------------------------------------------------------
  */
 
-int insert_vg(char* fname,
+int insert_vg(const char* fname,
               int32 file_id,
               char*path_name,          /* absolute path for input group name */          
               int32* in_tags,          /* tag list for parent group */
@@ -251,9 +256,7 @@ int insert_vg(char* fname,
               int npairs,              /* number tag/ref pairs for parent group */
               dtable_t *table)
 {
- intn  status_n;      /* returned status for functions returning an intn  */
- int32 status_32,     /* returned status for functions returning an int32 */
-       vgroup_id,             /* vgroup identifier */
+ int32 vgroup_id,             /* vgroup identifier */
        ntagrefs,              /* number of tag/ref pairs in a vgroup */
        sd_id,                 /* SD interface identifier */
        tag,                   /* temporary tag */
@@ -279,17 +282,17 @@ int insert_vg(char* fname,
   case DFTAG_VG: 
    
    vgroup_id = Vattach (file_id, ref, "r");
-   status_32 = Vgetname (vgroup_id, vgroup_name);
-   status_32 = Vgetclass (vgroup_id, vgroup_class);
+   Vgetname (vgroup_id, vgroup_name);
+   Vgetclass (vgroup_id, vgroup_class);
    
    /* ignore reserved HDF groups/vdatas */
    if( is_reserved(vgroup_class)){
-    status_32 = Vdetach (vgroup_id);
+    Vdetach (vgroup_id);
     break;
    }
    if(vgroup_name != NULL) 
     if(strcmp(vgroup_name,GR_NAME)==0) {
-     status_32 = Vdetach (vgroup_id);
+     Vdetach (vgroup_id);
      break;
     }
 
@@ -338,7 +341,7 @@ int insert_vg(char* fname,
 
    sd_id  = SDstart(fname, DFACC_RDONLY);
    insert_sds(file_id,sd_id,tag,ref,path_name,table);
-   status_n = SDend (sd_id);
+   SDend (sd_id);
 
    
    break;
@@ -358,7 +361,7 @@ int insert_vg(char* fname,
 
    gr_id  = GRstart(file_id);
    insert_gr(file_id,gr_id,tag,ref,path_name,table);
-   status_n = GRend (gr_id);
+   GRend (gr_id);
    
    break;
 
@@ -388,9 +391,10 @@ int insert_vg(char* fname,
  *-------------------------------------------------------------------------
  */
 
-int hdiff_list_gr(char* fname,int32 file_id,dtable_t *table)
+int hdiff_list_gr(const char* fname,
+                  int32 file_id,
+                  dtable_t *table)
 {
- intn  status;            /* status for functions returning an intn */
  int32 gr_id,             /* GR interface identifier */
        ri_id,             /* raster image identifier */
        n_rimages,         /* number of raster images in the file */
@@ -408,12 +412,17 @@ int hdiff_list_gr(char* fname,int32 file_id,dtable_t *table)
  gr_id  = GRstart (file_id);
  
  /* determine the contents of the file */
- status = GRfileinfo (gr_id, &n_rimages, &n_file_attrs);
+ if (GRfileinfo (gr_id, &n_rimages, &n_file_attrs)<0)
+ {
+  GRend (gr_id);
+  return -1;
+ }
+
   
  for (ri_index = 0; ri_index < n_rimages; ri_index++)
  {
   ri_id = GRselect (gr_id, ri_index);
-  status = GRgetiminfo (ri_id, name, &n_comps, &data_type, &interlace_mode, 
+  GRgetiminfo (ri_id, name, &n_comps, &data_type, &interlace_mode, 
    dim_sizes, &n_attrs);
 
   gr_ref = GRidtoref(ri_id);
@@ -426,7 +435,7 @@ int hdiff_list_gr(char* fname,int32 file_id,dtable_t *table)
        dtable_search(table,DFTAG_CI8,gr_ref)>=0 ||
        dtable_search(table,DFTAG_II8,gr_ref)>=0 )
   {
-   status = GRendaccess (ri_id);
+   GRendaccess (ri_id);
    continue;
   }
 
@@ -434,11 +443,11 @@ int hdiff_list_gr(char* fname,int32 file_id,dtable_t *table)
   insert_gr(file_id,gr_id,DFTAG_RI,gr_ref,0,table);
 
   /* terminate access to the current raster image */
-  status = GRendaccess (ri_id);
+  GRendaccess (ri_id);
  }
  
  /* terminate access to the GR interface */
- status = GRend (gr_id);
+ GRend (gr_id);
 
  return 0;
 }
@@ -454,11 +463,10 @@ int hdiff_list_gr(char* fname,int32 file_id,dtable_t *table)
  *-------------------------------------------------------------------------
  */
 
-int hdiff_list_sds(char* fname,
-              int32 file_id,
-              dtable_t *table)
+int hdiff_list_sds(const char* fname,
+                   int32 file_id,
+                   dtable_t *table)
 {
- intn  status;                 /* status for functions returning an intn */
  int32 sd_id,                  /* SD interface identifier */
        sds_id,                 /* dataset identifier */
        n_datasets,             /* number of datasets in the file */
@@ -475,12 +483,16 @@ int hdiff_list_sds(char* fname,
  sd_id  = SDstart (fname, DFACC_READ);
  
  /* determine the number of data sets in the file and the number of file attributes */
- status = SDfileinfo (sd_id, &n_datasets, &n_file_attrs);
+ if (SDfileinfo (sd_id, &n_datasets, &n_file_attrs)<0)
+ {
+  SDend (sd_id);
+  return -1;
+ }
 
  for (index = 0; index < n_datasets; index++)
  {
   sds_id  = SDselect (sd_id, index);
-  status  = SDgetinfo(sds_id, name, &rank, dim_sizes, &data_type, &n_attrs);
+  SDgetinfo(sds_id, name, &rank, dim_sizes, &data_type, &n_attrs);
   sds_ref = SDidtoref(sds_id);
 
   /* check if already inserted in Vgroup; search all SDS tags */
@@ -488,7 +500,7 @@ int hdiff_list_sds(char* fname,
        dtable_search(table,DFTAG_SDG,sds_ref)>=0 ||
        dtable_search(table,DFTAG_NDG,sds_ref)>=0 )
   {
-   status = SDendaccess (sds_id);
+   SDendaccess (sds_id);
    continue;
   }
 
@@ -496,11 +508,11 @@ int hdiff_list_sds(char* fname,
   insert_sds(file_id,sd_id,DFTAG_NDG,sds_ref,0,table);
      
   /* terminate access to the current dataset */
-  status = SDendaccess (sds_id);
+  SDendaccess (sds_id);
  }
  
  /* terminate access to the SD interface */
- status = SDend (sd_id);
+ SDend (sd_id);
  return 0;
 }
 
@@ -515,17 +527,17 @@ int hdiff_list_sds(char* fname,
  */
 
 
-int hdiff_list_vs(char* fname,int32 file_id,dtable_t *table)
+int hdiff_list_vs(const char* fname,
+                  int32 file_id,
+                  dtable_t *table)
 {
- intn  status_n;     /* returned status_n for functions returning an intn  */
- int32 vdata_ref=-1, /* reference number of the vdata */
-       nlones = 0,   /* number of lone vdatas */
+ int32 nlones = 0,   /* number of lone vdatas */
        *ref_array,   /* buffer to hold the ref numbers of lone vdatas   */
        ref;          /* temporary ref number  */
  int   i;
 
  /* initialize the VS interface */
- status_n = Vstart (file_id);
+ Vstart (file_id);
 /*
  * get and print the names and class names of all the lone vdatas.
  * first, call Vlone with nlones set to 0 to get the number of
@@ -575,7 +587,7 @@ int hdiff_list_vs(char* fname,int32 file_id,dtable_t *table)
  } /* if */
 
  /* terminate access to the VS interface */
- status_n = Vend (file_id);
+ Vend (file_id);
  return 0;
 }
 
@@ -624,9 +636,10 @@ int insert_vg_attrs(int32 vg_in,char *path)
  *-------------------------------------------------------------------------
  */
 
-int hdiff_list_glb(char* fname,int32 file_id,dtable_t *table)
+int hdiff_list_glb(const char* fname,
+                   int32 file_id,
+                   dtable_t *table)
 {
- intn  status;                 /* status for functions returning an intn */
  int32 sd_id,                  /* SD interface identifier */
        gr_id,                  /* GR interface identifier */
        n_datasets,             /* number of datasets in the file */
@@ -641,12 +654,12 @@ int hdiff_list_glb(char* fname,int32 file_id,dtable_t *table)
  sd_id  = SDstart (fname, DFACC_READ);
 
  /* determine the number of data sets in the file and the number of file attributes */
- status = SDfileinfo (sd_id, &n_datasets, &n_file_attrs);
+ SDfileinfo (sd_id, &n_datasets, &n_file_attrs);
  
  insert_sds_attrs(sd_id,n_file_attrs);
 
  /* terminate access to the SD interface */
- status = SDend (sd_id);
+ SDend (sd_id);
 
 /*-------------------------------------------------------------------------
  * insert GR global attributes
@@ -656,12 +669,12 @@ int hdiff_list_glb(char* fname,int32 file_id,dtable_t *table)
  gr_id  = GRstart(file_id);
 
  /* determine the number of data sets in the file and the number of file attributes */
- status = GRfileinfo (gr_id, &n_datasets, &n_file_attrs);
+ GRfileinfo (gr_id, &n_datasets, &n_file_attrs);
  
  insert_gr_attrs(gr_id,n_file_attrs);
 
  /* terminate access to the GR interface */
- status = GRend (gr_id);
+ GRend (gr_id);
  return 0;
 }
 
@@ -677,11 +690,11 @@ int hdiff_list_glb(char* fname,int32 file_id,dtable_t *table)
  */
 
 
-int hdiff_list_an(char* fname,int32 file_id,dtable_t *table)
+int hdiff_list_an(const char* fname,
+                  int32 file_id,
+                  dtable_t *table)
 {
- intn  status_n;      /* returned status for functions returning an intn  */
- int32 status_32,     /* returned status for functions returning an int32 */
-       an_id,         /* AN interface identifier */
+ int32 an_id,         /* AN interface identifier */
        ann_id,        /* an annotation identifier */
        i,             /* position of an annotation in all of the same type*/
        n_file_labels, n_file_descs, n_data_labels, n_data_descs;
@@ -693,8 +706,8 @@ int hdiff_list_an(char* fname,int32 file_id,dtable_t *table)
  * Get the annotation information, e.g., the numbers of file labels, file
  * descriptions, data labels, and data descriptions.
  */
- status_n = ANfileinfo (an_id, &n_file_labels, &n_file_descs, 
-  &n_data_labels, &n_data_descs);
+ ANfileinfo (an_id, &n_file_labels, &n_file_descs, &n_data_labels, 
+  &n_data_descs);
  
 
 /*-------------------------------------------------------------------------
@@ -709,7 +722,7 @@ int hdiff_list_an(char* fname,int32 file_id,dtable_t *table)
   ann_id = ANselect (an_id, i, AN_FILE_LABEL);
   
    /* Terminate access to the current data label */
-  status_n = ANendaccess (ann_id);
+  ANendaccess (ann_id);
  
  }
 
@@ -724,11 +737,11 @@ int hdiff_list_an(char* fname,int32 file_id,dtable_t *table)
   ann_id = ANselect (an_id, i, AN_FILE_DESC);
   
   /* Terminate access to the current data label */
-  status_n = ANendaccess (ann_id);
+  ANendaccess (ann_id);
  }
  
  /* Terminate access to the AN interface */
- status_32 = ANend (an_id);
+ ANend (an_id);
  
  return 0;
 }
@@ -744,7 +757,9 @@ int hdiff_list_an(char* fname,int32 file_id,dtable_t *table)
  *-------------------------------------------------------------------------
  */
 
-int insert_vg_an(int32 file_id,int32 vgroup_id,char *path) 
+int insert_vg_an(int32 file_id,
+                 int32 vgroup_id,
+                 char *path) 
 {
  int32 ref_in,
        tag_in;
@@ -805,20 +820,18 @@ int insert_vs_an(int32 file_id,
  *-------------------------------------------------------------------------
  */
 
+static
 int insert_an_data(int32 file_id,
                    int32 ref_in, 
                    int32 tag_in,
                    ann_type type, 
                    char *path) 
 {
- int32 status_32,
-       an_id,         /* AN interface identifier */
+ int32 an_id,         /* AN interface identifier */
        ann_id,        /* an annotation identifier */
        i,             /* position of an annotation */
        n_anno;
        
- int  is_label= (type==AN_DATA_LABEL)?1:0;
- 
  /* Initialize the AN interface  */
  an_id  = ANstart (file_id);
 
@@ -843,7 +856,7 @@ int insert_an_data(int32 file_id,
  }
 
   /* Terminate access to the AN interface */
- status_32 = ANend (an_id);
+ ANend (an_id);
  
  return 1;
 }
@@ -897,7 +910,6 @@ int  insert_sds(int32 file_id,
                 char *path_name,      /* absolute path for input group name */
                 dtable_t *table)
 {
- intn  status_n;              /* returned status_n for functions returning an intn  */
  int32 sds_id,                /* data set identifier */
        sds_index,             /* index number of the data set */
        dtype,                 /* SDS data type */
@@ -915,7 +927,7 @@ int  insert_sds(int32 file_id,
  sds_id    = SDselect(sd_id,sds_index);
  
  /*obtain name,rank,dimsizes,datatype and num of attributes of sds */
- status_n=SDgetinfo(sds_id,sds_name,&rank,dimsizes,&dtype,&nattrs);
+ SDgetinfo(sds_id,sds_name,&rank,dimsizes,&dtype,&nattrs);
 
  /* check if the given SDS is a dimension scale, return 0 for no table add */
  if ( SDiscoordvar(sds_id) ) {
@@ -978,7 +990,7 @@ int  insert_sds(int32 file_id,
  *-------------------------------------------------------------------------
  */ 
 
- status_n = SDendaccess(sds_id);
+ SDendaccess(sds_id);
    
  if (path)
   free(path);
@@ -1008,7 +1020,6 @@ int insert_sds_attrs(int32 id_in,int32 nattrs)
  int32 dtype,                 /* SDS data type */
        nelms;                 /* number of elements */
  char  attr_name[MAX_NC_NAME];
- VOIDP attr_buf=NULL;
  int   i;
 
  /* loop through attributes in input SDS */
@@ -1043,7 +1054,6 @@ int insert_gr_attrs(int32 ri_id,int32 nattrs)
  int32 dtype,                 /* SDS data type */
        nelms;                 /* number of elements */
  char  attr_name[MAX_NC_NAME];
- VOIDP attr_buf=NULL;
  int   i;
 
  /* loop through attributes in input GR */
@@ -1106,7 +1116,6 @@ int  insert_gr(int32 file_id,
                char*path_name,          /* absolute path for input group name */
                dtable_t *table)
 {
- intn          status_n;      /* returned status_n for functions returning an intn  */
  int32         ri_id,         /* raster image identifier */
                ri_index,      /* index of a image */
                dimsizes[2],   /* dimensions of an image */
@@ -1122,13 +1131,12 @@ int  insert_gr(int32 file_id,
                r_interlace_mode; 
  char          gr_name[MAX_GR_NAME]; 
  char          *path=NULL;
- int           rank=2;
  int           has_pal = 0;
 
  ri_index = GRreftoindex(gr_in,(uint16)ref);
  ri_id    = GRselect(gr_in,ri_index);
    
- status_n = GRgetiminfo(ri_id,gr_name,&n_comps,&dtype,&interlace_mode,dimsizes,&n_attrs);
+ GRgetiminfo(ri_id,gr_name,&n_comps,&dtype,&interlace_mode,dimsizes,&n_attrs);
  
  /* initialize path */
  path=get_path(path_name,gr_name);
@@ -1178,7 +1186,7 @@ int  insert_gr(int32 file_id,
  */ 
 
  /* terminate access to the GRs */
- status_n = GRendaccess(ri_id);
+ GRendaccess(ri_id);
     
  if (path)
   free(path);
@@ -1210,14 +1218,12 @@ int  insert_vs( int32 file_id,
                 dtable_t *table,
                 int is_lone)
 {
- int32 status_32,             /* returned status_n for functions returning an int32 */
-       vdata_id,              /* vdata identifier */
+ int32 vdata_id,              /* vdata identifier */
        tag_vs,
        ref_vs;
  int   n_fields, n_attrs;
  char  vdata_name [VSNAMELENMAX], vdata_class[VSNAMELENMAX];
  char  *path=NULL;
- uint8 *buf=NULL;
  int   i, j, ret=1;
 
 /*-------------------------------------------------------------------------
@@ -1229,11 +1235,11 @@ int  insert_vs( int32 file_id,
   printf( "Failed to attach vdata ref %d\n", ref);
   return-1;
  }
- if ((status_32 = VSgetname  (vdata_id, vdata_name)) == FAIL ){
+ if (VSgetname  (vdata_id, vdata_name) == FAIL ){
   printf( "Failed to name for vdata ref %d\n", ref);
   return-1;
  }
- if ((status_32 = VSgetclass (vdata_id, vdata_class)) == FAIL ){
+ if (VSgetclass (vdata_id, vdata_class) == FAIL ){
   printf( "Failed to name for vdata ref %d\n", ref);
   return-1;
  }
@@ -1241,7 +1247,7 @@ int  insert_vs( int32 file_id,
  /* ignore reserved HDF groups/vdatas; they are lone ones */
  if( is_lone==1 && vdata_class != NULL) {
   if( is_reserved(vdata_class)){
-   if ((status_32 = VSdetach (vdata_id)) == FAIL )
+   if (VSdetach (vdata_id) == FAIL )
     printf( "Failed to detach vdata <%s>\n", path_name);
    return 0;
   }
@@ -1326,7 +1332,7 @@ int  insert_vs( int32 file_id,
  */ 
  
 out:
- status_32 = VSdetach (vdata_id);
+ VSdetach (vdata_id);
  
  if (path)
   free(path);

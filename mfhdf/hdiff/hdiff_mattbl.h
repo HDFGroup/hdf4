@@ -24,10 +24,10 @@ extern "C" {
 
 /* match objects in 2 HDF files */ 
 typedef struct match_info_t {
- int   tag1;
- int   ref1;
- int   tag2;
- int   ref2;
+ int32   tag1;
+ int32   ref1;
+ int32   tag2;
+ int32   ref2;
  char  obj_name[MAX_NC_NAME];      /* same name for file1 and 2 */
  int   flags[2];                   /* object exists in file=1, no=0 */  
 } match_info_t;
@@ -46,10 +46,10 @@ void match_table_free(match_table_t *table);
 void match_table_add (match_table_t *table, 
                       unsigned *flags, 
                       char* path, 
-                      int tag1, 
-                      int ref1,
-                      int tag2, 
-                      int ref2 );
+                      int32 tag1, 
+                      int32 ref1,
+                      int32 tag2, 
+                      int32 ref2 );
 
 
 

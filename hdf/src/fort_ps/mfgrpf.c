@@ -1230,7 +1230,7 @@ return(ret);
  *                      COMP_CODE_RLE  = 1
  *                      COMP_CODE_SKPHUFF = 3
  *                      COMP_CODE_DEFLATE = 4
- *                      COMP_CODE_JPEG    = 6
+ *                      COMP_CODE_JPEG    = 7 
  *          comp_prm:   compression parameters array
  *          comp_prm[0]=skphuff_skp_size: size of individual elements for 
  *                            Adaptive Huffman compression algorithm
@@ -1286,7 +1286,7 @@ return(ret);
           break;
 
        case COMP_CODE_JPEG:      /* JPEG compression */  
-          *comp_type = 6;
+          *comp_type = 7;
           ret = 0;
           break;
 

@@ -1,1175 +1,131 @@
-***************************************************************************
-  CONTENTS
-  --------
-
-  1. Obtaining the latest version
-
-  2. Installing HDF
-  2.1 Supported Platforms
-  2.2 Third Party Software Requirements
-  2.3 System Requirements
-
-  2.4 General Configuration/Installation - Unix
-  2.4.1 Overview
-  2.4.2 Layout of configuration files
-
-  2.4.3 Changing default values(CC,CFLAGS,..) and Setting Options
-  2.4.3.1 Changing default values(CC,CFLAGS,..)
-  2.4.3.2 Using HDF/MFHDF libraries w/ original netCDF library
-  2.4.3.3 Setting other Options
-
-  2.4.4 Running configure
-  2.4.5 Dealing with Configure Problems
-  2.4.6 Compiling, Testing and Installing
 
-  2.5 Platform-specific Notes
-  2.5.1 Solaris on Sparc
-  2.5.1a Solaris on 64-bit Sparc
-  2.5.2 OpenVMS AXP on DEC Alpha
-  2.5.3 Windows 98/NT/2000
-  2.5.4 Macintosh OS - Power PC    ** Not Supported **
-  2.5.5 Exemplar  ** Not Supported **
-  2.5.6 SP2 Single node
-  2.5.7 T3E Single node
-  2.5.8a SGI IRIX 6.x
-  2.5.8b SGI IRIX64
-  2.5.9 DEC Alpha
-
-  2.6 Pablo Instrumentation
-  2.7 File Cache(Beta release)
-  2.8 Installation Location
-  2.9 Specifying the System Type
-  2.10 Configure Options 
-
-  3. Man pages
-
-  4. Release Notes
-
-  5. Documentation
-
-  6. FAQ
-
-  7. Java Products
-
-  8. HELP
-
-*****************************************************************************
-
-1. Obtaining the latest version
-   ============================
-
-    The most recent version of the distribution can be obtained from
-    the NCSA ftp archive site at:
-
-       ftp://ftp.ncsa.uiuc.edu/HDF/HDF/HDF_Current/
-
-    The HDF home page is at:   
-       http://hdf.ncsa.uiuc.edu/ 
-
-    The distribution can be downloaded from the HDF Home page at:
-       http://hdf.ncsa.uiuc.edu/obtain.html
-    
-
-2. Installing HDF	
-   ==============
-
-    For compiling and installing the HDF libraries, tests and
-    utilities on a system, please follow these instructions. 
-
-2.1 Supported Platforms
-    ===================
-
-    For PLATFORM specific NOTES see Section 2.5 called
-    'Platform-specific Notes'.
-
-
-  Platform(OS)                    C-Compiler       Fortran-Compiler   
-  ------------                    ----------       ---------------- 
-  Sun4(Solaris 2.8)               WorkShop         WorkShop
-                                  Compilers C 5.0  FORTRAN 77 5.0  
-  Sun4(Solaris 2.7)               WorkShop         WorkShop Compilers 5.0
-                                  Compilers C 5.0  FORTRAN 77 5.0         
-  SGI-Indy(IRIX v6.5)             CC 7.30          f77 7.30
-  SGI-Origin(IRIX64 v6.5-n32)     CC 7.3.1.2m      f77 7.3.1.2m 
-  SGI-Origin(IRIX64 v6.5-64)      CC 7.3.1.2m        f77 7.3.1.2m    
-  HP9000/755(HP-UX B.11.00)       CC A.11.01.20    f77 B.11.00.01
-  Cray SV1 10.0.0.8               Cray Standard C  Cray Fortran
-                                  Version 6.5.0.1  Version 3.5.0.2
-  IBM SP (single node, v4.3)      xlc 5.0.2.0      xlf 7.1.0.2
-  Compaq Tru64 UNIX V5.1          Compaq C         Compaq Fortran
-  (OSF1 V5.1)                     V6.3-028         V5.4-1283
-  DEC Alpha/OpenVMS AXP v7.2-1    DEC C v5.6-003   Digital Fortran 77 
-                                                   V7.3-1155-44A8I 
-  IBM PC - Intel Pentium
-       Linux      (2.2.18smp)     GCC 2.95.2       g77  0.5.25    
-       FreeBSD    (4.4)           GCC 2.95.3       GNU f77 V0.5.25
-  Windows NT/98/2000              MSVC++ 6.0       DEC Visual Fortran 6.0
-  T3E (sn6711 2.0.5.55)           Cray CC 6.5.0.1  Cray Fortran 3.5.0.2
-
-
-  NOTE:  Platforms listed with compiler information entered, are 
-  platforms that HDF was tested on and for which we provide 
-  pre-compiled binaries.  
-
- 
-2.2  Third Party Software Requirements:
-     ==================================
-
-     1. IJPEG distribution release 6b(libjpeg.a). The "official" site
-        for this is ftp://ftp.uu.net/graphics/jpeg/jpegsrc.v6b.tar.gz
-
-     2. ZLIB 1.1.3(libz.a) distribution.
-
-     Both of these distributions are included with this distribution
-     in 'hdf/jpeg' and 'hdf/zlib'. The HDF/mfhdf base distribution
-     is known to work with these versions only.
-
-2.3 System Requirements
-    ===================
-
-    To build HDF from source, you need:
-
-      * an ANSI C compiler. The native ANSI compilers on the above 
-        platforms are supported. On platforms where no ANSI compiler
-        was available the free GNU ANSI compiler GCC was used.
-
-      * a Fortran 77 compiler (F90 on Crays) if you want Fortran support. 
-        See above table for platforms where Fortran is supported. You 
-        can compile both libraries without Fortran support by setting 
-        the Fortran compiler variable 'FC = NONE' in the respective
-        makefile fragment(mh-<os>) found in the top-level 'config'
-        directory: 
-
-                $(toplevel)/config/mh-<os>.
-
-        See below for further details of configuration and installation.
-        
-
-2.4 General Configuration/Installation - Unix
-    =========================================
-
-    2.4.1 Overview
-    --------------        
-    In this distribution there are two types of 'configure'
-    scripts. One is the Cygnus 'configure' script and the other is the
-    'configure' script created by the GNU autoconf package. The Cygnus
-    'configure' script is used at the top level to configure the overall
-    distribution and the HDF/MFHDF/IJPEG/ZLIB libraries. The GNU 'configure' 
-    script is used by the netCDF/IJPEG distributions to configure themselves. 
-    However, these gnu configure scripts are not used in configuring this 
-    distribution.
- 
-    The Cygnus 'configure' script attempts to guess the correct
-    platform you are configuring the distribution for by calling the shell
-    script 'config.guess'. It outputs a unique string based on information
-    obtained from the UNIX command 'uname' consisting of CPU-VENDOR-OS
-    e.g. 'hppa1.1-hp-hpux9.03' for an  HP9000/735 running HPUX-9.03.
-
-    2.4.2 Layout of configuration files
-    -----------------------------------
-    The following shows the layout of the files used in the configuration
-    of the HDF distribution.
-
-    NOTE: The $(toplevel)/mfhdf/CUSTOMIZE and 
-          $(toplevel)/mfhdf/configure(autoconf) files are no longer used 
-          in the configuration of the distribution.
-  
-    $(toplevel)/Makefile.in
-                config.guess
-                config.sub
-                configure (cygnus)
-                configure.in (cygnus)
-                config/mh-hpux, mh-sun,.....(host makefile fragments)
-
-                man/Makefile.in
-
-                mfhdf/CUSTOMIZE(not used)
-                mfhdf/configure(autoconf - not used)
-                mfhdf/libsrc/config/netcdf-aix.h,...  -> copied to netcdf.h
-                mfhdf/fortran/config/ftest-aix.f,...  -> copied to ftest.f
-                mfhdf/fortran/config/jackets-aix.c,.. -> copied to jackets.c
-                mfhdf/fortran/config/netcdf-aix.inc,..-> copied to netcdf.inc
-
-                hdf/Makefile.in
-                hdf/src/Makefile.in
-                hdf/test/Makefile.in
-                hdf/util/Makefile.in
-                hdf/zlib/Makefile.in
-                hdf/pablo/Makefile.in
-
-                hdf/jpeg/configure.in (cygnus)
-                hdf/jpeg/Makefile.in
-                hdf/jpeg/configure.gnu(autoconf - not used)
-                hdf/jpeg/config/mh-hpux, mh-sun,... (host makefile fragments)
-                hdf/jpeg/config/jhpux.h, jsun.h,...   -> copied to jconfig.h
-
-                hdf/fmpool/configure, configure.in config.guess, config.sub,
-                           Makefile.in (all cygnus)
-                hdf/fmpool/config/mh-hpux, mh-sun,...(host makefile fragments)
-                hdf/fmpool/config/fmpsolaris.h,...    -> copied to fmpconf.h
-
-    2.4.3 Changing default values(CC,CFLAGS,..) and Setting Options
-    ---------------------------------------------------------------
-    To change any of the default values or set any of the options 
-    edit the makefile fragment: 
-
-             $(toplevel)/config/mh-<os>
-
-    for your particular operating system. After changing the values you must 
-    re-run the top-level 'configure' script. Make sure you start from
-    a clean distribution if you are rebuilding after a previous make
-    (i.e. 'make distclean') before re-running 'configure'.
-
-      2.4.3.1 Changing default values(CC,CFLAGS,..)
-      ********************************************
-      To change any of the default values for CC, FC, CFLAGS, FFLAGS,..etc
-      edit the top part of the makefile fragment: $(toplevel)/config/mh-<os>
-      It is also a good idea to look at the other system variables to make sure 
-      they are set correctly for your system.
-
-      2.4.3.2 Using HDF/MFHDF libraries w/ original netCDF library
-      ************************************************************
-      To use the HDF/MFHDF libraries(libdf.a, libmfhdf.a) with the
-      original netCDF library(libnetcdf.a) the HDF/MFHDF distribution
-      must be compiled with the option '-DHAVE_NETCDF'. This will
-      rename the HDF version of the C-interface(ncxxx) of the netCDF API
-      to sd_ncxxx to avoid clashing with the original netCDF API from
-      libnetcdf.a. Currently there is no support for renaming the 
-      netCDF Fortran interface stubs. As such the HDF/MFHDF distribution 
-      must be compiled without fortran support. HDF Users can still access
-      HDF/netCDF files through the SDxxx interface but not through the
-      ncxxx interface unless the renamed interface is used(sd_ncxxx).
-
-      2.4.3.3 Setting other Options
-      *****************************
-      The makefile fragment must also be modified to enable the features 
-      mentioned in sections 2.6) and 2.7) below.
-
-    2.4.4 Running configure
-    -----------------------
-    To build both of the libraries contained in this directory,
-    run the ``configure'' script in $(toplevel), e.g.:
-
-	./configure -v --prefix=/usr/local/hdf
-
-    If you're using `csh' on an old version of System V, you might need 
-    to type `sh ./configure -v --prefix=/usr/local/hdf' instead to prevent 
-    `csh' from trying to execute `configure' itself.
-
-    This will configure the distribution to install the libraries, utilities,
-    include and man files in '/usr/local/hdf/lib','/usr/local/hdf/bin',
-    '/usr/local/hdf/include' and '/usr/local/hdf/man' respectively. The
-    default 'prefix' is '/usr/local'. It is advisable to use something
-    like the above to avoid overwriting say another 'libjpeg.a' that might be
-    installed in '/usr/local/lib'. The '-v' option is for verbose output.
-
-    Note that both 'libz.a' and 'libjpeg.a' and their respective
-    include files are installed along with the base HDF(libdf.a) 
-    and netCDF(libmfhdf.a) libraries.
-
-    If the configure script can't determine your type of computer
-    then it probably is a platfrom that is no longer supported.
-    If you want to be adventurous see the section 'Dealing with
-    Configure Problems' below. Otherwise send an email to 
-    'hdfhelp@ncsa.uiuc.edu' for further help. 
-
-    2.4.5 Dealing with Configure Problems
-    *************************************
-    If you want to be adventurous you can try the following.
-
-    Configure basically calls either of the two shell scripts 'config.guess' 
-    or 'config.sub' depending upon whether a target platform was supplied 
-    on the command line to configure. If you don't provide a target on
-    the command line configure calls 'config.guess' to guess what platfrom
-    it is configuring for. The shell script 'config.guess' uses the unix
-    command 'uname' to figure out the CPU, vendor, and OS of the
-    platform. If you do provide a target on the command line, configure
-    calls the shell script 'config.sub' to build the triplet specifying
-    CPU, vendor, and OS from the full or partial target provided.
-
-    If the configure script can't determine your type of computer, give it
-    a general name that the computer is generally referred to as an argument, 
-    for instance './configure sun4'.  You can use the script 'config.sub' 
-    to test whether a general name is recognized; if it is, config.sub 
-    translates it to a triplet specifying CPU, vendor, and OS.
-    (e.g hppa1.1-hp-hpux9.03 for an HP900/735 running HPUX9.03).
-
-    If this still fails all is not lost. All the configure script really
-    needs is one of the supported targets mentioned above(except NT).
-    If you think your platform is close to one of the above platforms
-    mentioned in the 'Supported Platforms' sections you can pass configure
-    this target and it will configure the distribution for that target.
-
-    For possible mappings you will need to look inside the shell script
-    'config.sub' and look at the partial to full mappings and pick one
-    that satisfies the triplet mappings found in 'configure.in' below
-    the section "# per-host:'. Note that if you try a mapping and it
-    does not work this means that 'config.sub' needs to be edited to
-    provide the proper mapping from your target to a full mapping that
-    is supported. 
-
-    There are currently NO instructions for porting the distribution to a 
-    new platform.
-
-    2.4.6 Compiling, Testing and Installing
-    ---------------------------------------
-    To compile the library and utilities type:
-
-        make 
-
-    To find out the available make targets type:
-
-        make help
-
-    To test the libraries and utilities type:
-
-        make test 
-
-    It is a good idea to save the output of the tests and view it later 
-    for errors.
-    e.g. 
-
-        make test >& make.test.out
-
-    To install the libraries, utilities, includes and man pages type: e.g.
-
-        make install
-
-2.5 Platform-specific Notes
-    ========================
-
-
-    2.5.1 Solaris on Sparc
-    ----------------------
-    The distribution has been compiled/tested with the native
-    ANSI-C compiler and native fortran compiler. The binary 
-    distribution was compiled using the native compilers.
-
-    When compiling your programs on Solaris, you must include the 
-    the nsl library, to resolve calls to the xdr* routines.
-    For example,
-
-      cc -Xc -xO2 -o <your program> <your program>.c  \
-         -I<path for hdf include directory>\
-         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz \
-         -L/usr/lib -lnsl
-
-    2.5.1a Solaris on 64-bit Sparc
-    ------------------------------
-    The distribution was tested for the 64-bit Sparc architecture on
-    Solaris 2.7 and 2.8. The configure script will generate 32-bit binaries by
-    default.  To enable building 64-bit binaries, run configure as follows:
-        ./configure -v --host=sparc64-sun-solaris2
-
-    NOTE: DF Fortran interafces do not work on 64-bit architectures.
-
-    To change compiler flags, etc. the config/mh-solaris64 configuration
-    file must be modified, instead of the normal config/mh-solaris file.
-
-    2.5.2 OpenVMS AXP on DEC Alpha
-    ------------------------------
-   
-   To build the HDF Library on Alpha OpenVMS systems use
-    MAKEVMS.COM file in the top level directory of the VMS Library source.
-                                                       -------------------
-
-    To build the library in interactive mode run
-
-    @MAKEVMS.COM
-
-    To build the library in the background:
-
-    1. Check that the first command in MAKEVMS.COM sets default directory
-       to the top level directory in the HDF Library source tree (just
-       edit the first command line:  $  set def.... ).
-
-    2. Submit MAKEVMS.COM to the appropriate batch queue on your system
-       For example:
-
-    $ submit/log=buildhdf.log/noprint/notify/restart/que=batch$queue MAKEVMS.COM
-
-
-    MAKEVMS.COM file
-
-    1.  Creates three directories in the top level directory:
-        [...tophdf.include]
-        [...tophdf.bin]
-        [...tophdf.lib]
-
-    2.  Builds four libraries LIBJPEG.OLB, LIBZ.OLB, DF.OLB, and MFHDF.OLB,
-        and copies them into the [...tophdf.bin] directory.
-
-    3.  Builds the HDF utilities and copies them into the [...tophdf.bin]
-        directory.
-
-    4.  Copies the header files to the [...tophdf.include] directory.
-
-    5.  Runs the library tests after building each library and the tests for the
-
-        ncdump, ncgen and hdp utilities.
-
-    We recommend building the library in background and then checking log file
-    for test results. Output of the hdp test is written to the
-    [...tophdf.mfhdf.dumper]hdp.out file.
-
-    See MAKEVMS.COM for more information.
-
-    NOTE: If you are building from UNIX source perform the following steps
-          before you run MAKEVMS.COM:
-
-          1. Make sure that files in the directory [.mfhdf.fortran.vms] are
-             up to date.
-          2. In the directory [.hdf.test] change the files
-             forsupff.f
-             tsdmmsf.f
-             tsdnmmsf.f
-             tsdntf.f
-             tsdnnt.f
-             tvsetf.f
-             slabwf.f
-                      following the instructions given in the comments,
-             which start with 'For VMS', in these files.
-
-
-    2.5.3 Windows 98/NT/2000
-    ------------------------
-
-      Install HDF4.1 Release 5 on Windows NT, Windows 2000 and Windows 98
-
-The instructions which follow assume that you will be using one of 
-the 'zip' files that we provide, either the binary code release
-(HDF41r5.zip) or the source code release (HDF41r5s.zip).
-
-In building HDF from source code you may select between 
-two build environment options ( with Fortran or without Fortran support
-depending on your application and environment needs ).  
-
-The following sections discuss in details installation procedures. 
-
-
-Building from Binary Code Release (HDF41r5.zip)
-===============================================
-To install the HDFand MFHDF libraries and utilities, 
-it is assumed that you have done the following:
+    Installation instructions for HDF4.2r0 on UNIX and MacOSX platforms
+    ====================================================================
+                          December, 2003
+
+0. Third Party Software Requirements
+   =================================
+
+   x JPEG distribution release 6b(libjpeg.a). The "official" site
+     for this is ftp://ftp.uu.net/graphics/jpeg/jpegsrc.v6b.tar.gz
+
+   x ZLIB 1.1.4(libz.a) Source code and binaries may be downloaded from
+     http://www.gzip.org/ or from the NCSA ftp server  
+     ftp://hdf.ncsa.uiuc.edu/lib-external/gzip/
+
+
+1. Optional SZIP compression Library
+   ==================================
+
+   x HDF4.2r0 may be configured to use the SZIP compression Library.
+     For more information about the SZIP library, see
+
+               http://hdf.ncsa.uiuc.edu/doc_resource/SZIP/ 
+
+     The SZIP compression library is free for non-commercial use; 
+     see http://hdf.ncsa.uiuc.edu/doc_resource/SZIP/Commercial_szip.html
+     for information regarding commercial use.
+     
+2. HDF4 Source code and precompiled binaries
+   ==========================================
+     HDF provides "tar source ball" and precompiled binaries from 
+     the NCSA ftp server (ftp.ncsa.uiuc.edu) in the directories:
+
+         ftp://hdf.ncsa.uiuc.edu/HDF/HDF_Current/tar
+         ftp://hdf.ncsa.uiuc.edu/HDF/HDF_Current/bin 
+
+   IMPORTANT:
+   ==========
+   HDF4 prebuilt binaries come with the SZIP compression. In order to use
+   the binaries install SZIP Library on your system. You may download SZIP
+   precompiled binaries from 
+         http://hdf.ncsa.uiuc.edu/doc_resource/SZIP
+
+
+3. UNIX and MacOSX configuration and build
+   =======================================
+
+   0)  The HDF4.2r0 Library was tested on the following platforms
+
+       AIX 5.1 (32 and 64-bit versions)
+       SunOs 5.7 (32 and 64-bit versions) 
+       SunOS 5.8 (32 and 64-bit versions) 
+       HPUX 11.00
+       Linux 2.4 (Rh8,9, SuSE)
+       IRIX64-6.5 (32 and 64-bit versions)
+       MacOSX
+       Crays SV1 and T3E
+       True64 (OSF1 V5.1)
+       Windows 2000 and XP
+       FeeBSD
+       IA32 and IA64
+       Altrix
+
+       For more information, see the release_notes/RELEASE.txt file, "Platforms
+       tested" section.
       
-
-      1. Create a directory structure to unpack the library. For 
-      example: 
-
-	    c:\					(any drive)
-           MyHDFstuff\				(any folder name)
-
-      2. Copy the binary archive (HDF41r5.zip) 
-      to that directory 
-      and unpack it by running WinZip on HDF41r5.zip (the binary archive).
-      This should create a directory called 'HDF41r5' which 
-      contains the following files and directories.
-
-            c:\MyHDFstuff\HDF41r5\lib             ( Single-threaded static
-                                                    versions of HDF and MFHDF
-                                                    libraries  with Fortran
-                                                    or without Fortran support )
-            c:\MyHDFstuff\HDF41r5\dlllib          ( Multi-threaded DLL import
-                                                    HDF and MFHDF  libraries 
-                                                    and DLL files with Fortran
-                                                    or no Fortran support )
-            c:\MyHDFstuff\HDF41r5\include         ( include files )
-            c:\MyHDFstuff\HDF41r5\bin             ( utilities )
-            c:\MyHDFstuff\HDF41r5\release_notes   ( release notes )
-            c:\MyHDFstuff\HDF41r5\install_NT_98   ( this file)
-
-      
-      3. If you are building an application that uses the HDF libraries 
-         the following locations will need to be specified for locating
-         header files and linking in the HDF libraries:
+   Before you start:
  
-            C:\MyHDFstuff\HDF41r5\lib or C:\MyHDFstuff\HDF41r5\dlllib
-            C:\MyHDFstuff\HDF41r5\include
+   1)  Make sure that the ZLIB and JPEG Libraries are installed on your
+       system.
+   2)  Optional: install the SZIP Library. 
+   3)  Extract the source from the hdf4.2r0.tar file and change
+       directory to hdf4.2r0
 
+   To Configure:
 
+   4)  Use the configure command in the top level HDF4 directory hdf4.2r0
 
-Note: The ws2_32.lib needs to linked with your executable if using the static 
-      mfhdf library.  The ws2_32.lib can be found in your Microsoft Visual C++
-      directory under the lib folder.
+       ./configure --with-zlib=/path_to_ZLIB_install_directory 
+                   --with-jpeg=/path_to_JPEG_install_directory 
+                   <--with-szlib=/path_to_SZIP_install_directory>
+                   --prefix=/path_to_HDF4_install_directory
 
+       * Please note that when szlib option is not used, SZIP Library will not
+         be configured in and SZIP compression will not be enabled.
+       * If your system has ZLIB and/or JPEG libraries installed under a
+         system library directory (such as /usr/lib), configure will
+         automatically find the library. In this case, the corresponding
+         configure flag may be ommitted.
+       * Note that --prefix defines where the installation path is.
+         This version has the default set as /usr/local which is different
+	 from previous versions.
 
-Building from Source Code Release (HDF41r5s.zip)
-================================================
+    To Build and Test:
 
-STEP I:  Preconditions
+    5)  To build the library
 
-To build the HDF and MFHDF libraries ( single-threaded static or
-multi-threaded DLL import libraries) and utilities, 
-it is assumed that you have done the following:
-      
-      1. Installed MicroSoft Developer Studio, and Visual C++ 6.0.
-         Visual Fortran 6.0 is needed if you are going to build the
-         full HDF Library with Fortran support.
+        gmake >& gmake.out
 
-      2. Set up a directory structure to unpack the library. For 
-      example: 
+    6)  To build and run the tests
 
-	    c:\					(any drive)
-           MyHDFstuff\				(any folder name)
+        gmake check >& check.out
 
-      3. Copy the source distribution archive to that directory 
-      and unpack it using the appropriate archiver options to
-      create a directory  hierarchy.
-         
-      Run WinZip on HDF41r5s.zip (the entire source tree).
-      This should create a directory called 'HDF41r5' which 
-      contains several files and directories.
-      
-Note: If you are building from the UNIX source code, then you will
-      need to replace the jconfig.h and netcdf.h file as follows
-      ( this assumes that the HDF Library tree resides 
-      under HDF41r5 directory ):
+    To Install:
+
+    7)  To install the HDF4 library and tools
+
+        gmake install
+
+    8)  By default the current configuration uses vendor compilers; to use
+        another compiler run the following commands before running
+        configure: 
  
-      copy C:\MyHDFstuff\HDF41r5\hdf\jpeg\config\jwin32.h
-                                 C:\MyHDFstuff\HDF41r5\hdf\jpeg\jconfig.h
-      copy C:\MyHDFstuff\HDF41r5\mfhdf\libsrc\win32cdf.h
-                                 C:\MyHDFstuff\HDF41r5\mfhdf\libsrc\netcdf.h
-
-You do not need to do this if you are using the HDF41r5s.zip file! 
-
-STEP II: Select Installation type and Build.
-
-You may select one of 2 ways to build the HDF libraries and 
-utilities, depending on your environment and application needs.
-
-Option I, (select Win32.nofortran.zip)
-This is the "NOFORTRAN" configuration : It builds debug and release single-threaded
-and multi-threaded versions of the HDF libraries, tests, and utilities. 
-There is no Fortran support.
-
-
-Option II, (select Win32.zip)
-This is "WITH FORTRAN support" configuration : it is the same as above but with
-Fortran support. 
-
-
-
-STEP III: Building the Libraries, tests and utilities.
-Note that the instructions are the same for both Options I and II. 
-
-
-	1. Unpack Win32.nofortran.zip or Win32.zip in 
-           directory HDF41r5\. 
-         
-        2. Invoke Microsoft Visial C++ 6.0, go to "File" and select
-           the "Open Workspace" option. 
-           Then open the c:\myHDFstuff\HDF41r5\all.dsw workspace. 
-
-        3. Select "Build", then Select "Set Active Configuration".
-
-           On Windows platform select as the active configuration
-
-           "all -- Win32 Debug" to build debug versions of single-threaded
-                                static libraries, tests and utilities and
-                                multi-threaded libraries and tests.
-            or
+        setenv CC   "foo -flags"
+        setenv F77  "fffoo -flags"
  
-           "all -- Win32 Release" to build release versions of single-threaded
-                                static libraries, tests and utilities and
-                                multi-threaded libraries and tests.
+        See the configure help page (configure --help) for a list of
+        environment variables that have an affect on building the
+        library.
 
+    9)  You may build HDF4 in a directory other than hdf4.2r0 by
+        using the "srcdir" option. Simply create a build directory and
+        type:
 
-           Select "Build" and "Build all.exe" to
-           build the corresponding version of the HDF41r5 library.
-           If you are building from the Win32.zip archive, 
-           you will see that the Digital Visual Fortran compiler is invoked
-           by the Visual C++ Development environment in compiling the fortran code.
+        <path_to_hdf4.2r0>/configure ...
 
-           NOTE: "all" is a dummy target. You will get a link error when   
-           "all.exe." is built : 
-                 LINK: error LNK2001: unresolved external symbol _WinMainCRTStartup.....
-                 all.exe - 2 error(s), ....
-
-           Warning messages can be ignored. The "all.exe" is never created, 
-           so it is OK.
-
-           When the debug build is done the directories listed 
-           below will contain the following files:
-
-           c:\MyHDFstuff\HDF41r5\Windows\bin\debug - 
-
-             utilities, statically linked with the single-threaded libraries.
-
-           c:\MyHDFstuff\HDF41r5\Windows\lib\debug\singlethreaded -
-
-              HD415d.lib - HDF static library (inludes JPEG and GZIP libraries) 
-              HM415d.lib - MFHDF static library
-
-           c:\MyHDFstuff\HDF41r5\Windows\lib\debug\multithreaded -
-
-              HD415md.lib - HDF multi-threaded DLL import library 
-                            (inludes JPEG and GZIP libraries)
-              HM415md.lib - MFHDF multi-threaded DLL import library 
-
-           c:\MyHDFstuff\HDF41r5\Windows\DLL\debug
-
-               HD415md.DLL - HDF DLL
-               HM415md.DLL - MFHDF DLL
-
-           When the release build is done the directories listed
-           below will contain the following files:
+        where "..." are your configuration options.
  
-           c:\MyHDFstuff\HDF41r5\Windows\bin\release - 
- 
-             utilities, statically linked with the single-threaded libraries.
- 
-           c:\MyHDFstuff\HDF41r5\Windows\lib\release\singlethreaded - 
- 
-              HD415.lib - HDF static library (inludes JPEG and GZIP libraries)
-              HM415.lib - MFHDF static library
+    10) Report all problems to
 
-           c:\MyHDFstuff\HDF41r5\Windows\lib\release\multithreaded - 
- 
-              HD415m.lib - HDF multi-threaded DLL import library 
-                            (inludes JPEG and GZIP libraries)
-              HM415m.lib - MFHDF multi-threaded DLL import library
- 
-           c:\MyHDFstuff\HDF41r5\Windows\DLL\release 
-
-               HD415m.DLL - HDF DLL
-               HM415m.DLL - MFHDF DLL
-
-
-Note: The ws2_32.lib needs to linked with your executable if using the static 
-      mfhdf library.  The ws2_32.lib can be found in your Microsoft Visual C++
-      directory under the lib folder.
-
-		
-STEP IV:   TESTING THE BUILD
-
-       In a command prompt window run the test batch file which
-       resides in the HDF41r5 directory to make sure that the libraries
-       were built correctly.
-
-       Set the path to include the DLL files or copy the files to the system
-       directory.
-
-       Then run Win32debugtst.bat to test debug version or
-       Win32releasetst.bat to test release version.  
-        
-
-STEP V:  INSTALLATION
-
-       In the command prompt window run the install_debug.bat file to install
-       the debug version. This file will create four directories under 
-       the HDF41r5 directory and copy over corresponding files:
-
-           bindbg     - utilties 
-           libdbg     - static libraries
-           dlllibdbg  - multi-threaded libraries and DLLs
-           include    - include files 
-
-       In the command prompt window run install_release.bat file to install 
-       release version. This file will create four directories under HDF41r5 
-       directory and copy corresponding files: 
- 
-           bin     - utilties 
-           lib     - static libraries 
-           dlllib  - multi-threaded libraries and DLLs 
-           include - include files
- 
-Note:  There is an error in the debug version of the hdp tool.  It will show an
-       alert box with the error and 3 buttons.  This is a known problem.  The release
-       version is fine.
-
-STEP VI:  
-
-BUILDING AN APPLICATION USING THE HDF LIBRARY - SOME HELPFUL POINTERS
-=====================================================================
-
-If you are building an application that uses the HDF library 
-the following locations will need to be specified for locating
-header files and linking in the HDF libraries:
- 
-            <top-level HDF directory>\lib
-            <top-level HDF directory>\dlllib
-            <top-level HDF directory>\include
-
-where <top-level HDF directory> may be C:\myHDFstuff\dev or C:\MyHDFstuff\HDF41r5\
-
-
-Using Microsoft Visual C++ version 6.x:
-
-Under Tools->Options, select the folder, Directories:
-   Under "Show directories for", select "Include files".
-   Add the following directories:
-      C:<path to HDF includes>\include  
-
-Under "Show directories for", select "Library files":
-   Add the following directories:
-      C:<path to HDF libs>\lib        
-
-Under Project->Settings, select folder, Link:
-   Add the following libraries to the beginning of the list of
-   Object/Library Modules:
-         HD415.lib HM415.lib (single-threaded release version)
-         HD415d.lib HM415d.lib (single-threaded debug version)
-
-         HD415m.lib HM415m.lib (multi-threaded release version)
-         HD415md.lib HM415md.lib (multi-threaded debug version)
-
-
-MORE HELPFUL POINTERS
-=====================
-(as described in terms of installing the  nofortran configuration)
-
-Here are some notes that may be of help if you are not familiar
-with using the Visual C++ Development Environment.
-
-Project name and location issues: 
-         The files in Win32.zip  and Win32.nofortran.zip must end up 
-         in the HDF41r5\ directory installed by HDF41r5s.zip
-
-         If you must install all.dsw and all.dsp in 
-         another directory, relative to HDF41r5\ , you will be asked to
-	 locate the above 5 sub-project files, when you open the
-	 project all.dsw.
-	 
-	 If you want to rename all (the entire project),
-	 you will need to modify two files
-	 all.dsw and all.dsp as text
-	 (contrary to the explicit warnings in the files).
-
-	 You can also modify all.dsw and all.dsp
-	 as text, to allow these 2 files to be installed
-	 in another directory.
-
-
-
-  Settings... details:
-  If you create your own project, the necessary settings can be
-  read from the all.dsp file(as text), or from the
-  Project Settings in the Developer Studio project settings 
-dialog.
-
-    Project
-	  Settings
-	      C/C++
-		  Category
-		     PreProcessor
-			 Code Generation
-			    Use run-time Library
-				   These are all set to use 
-                                      Single-Threaded
-				   or Single-Threaded debug
-                                   or Multi-Threaded
-                                   or Multi-Threaded debug
-
-
-
-
-
-    2.5.4 Macintosh OS - Power PC - 
-    -------------------------------
-    **** NOT SUPPORTED WITH HDF 4.1r5 ****
-
-    The distribution was compiled/tested with MetroWerks Codewarrior(CW Pro1).
-    Only the base libraries {jpeg.PPC.lib, z.PPC.lib, hdflib.PPC.lib,
-    xdr.PPC.lib and mfhdf.PPC.lib} were compiled and tested on the
-    PowerPC without Fortran support.
-
-    *NO* Fortran support is included in this distribution.
-
-    Codewarrior Projects can be found with this distribution.
-    They have been run through the Macintosh BinHex utility program. 
-    You need to compile the libraries before you can compile the test 
-    programs 'testhdf', 'xdrtest', 'cdftest', 'hdftest' and  'nctest'.
-
-    2.5.4.1 Special Notes
-    *********************
-    1. The test programs are SIOUX applications.
-    
-    2. When testing 'testhdf' in the 'hdf/test' directory make sure
-       that a directory called 'testdir' exists in 'hdf/test'.
-       This directory is used in the external element test.
-
-    3. You need at least 8MB of memory to run most of the test programs.
- 
-    4. Distribution also contains projects files to build utilities,
-       but utilities were not tested.
-
-    2.5.4.2 Building the Distribution
-    *********************************
-    The distribution  and tests need to be built in the order specified below.
-    Codewarrior Projects with the targets for Power PC and 68K can be 
-    found in the following directories:
- 
-    $(toplevel)/
-                hdf/zlib/zlib.project.hqx
-
-                hdf/jpeg/jpeglib.project.hqx
-
-                hdf/src/hdflib.project.hqx
-
-                hdf/test/testhdf.project.hqx
-
-                hdf/test/testdir(need to create this if it does not exist)
-    
-                mfhdf/xdr/xdrlib.project.hqx
-                mfhdf/xdr/xdrtest.project.hqx
-
-                mfhdf/libsrc/mfhdflib.project.hqx
-                             cdftest.project.hqx
-                             hdftest.project.hqx
-
-                mfhdf/nctest/nctest.project.hqx
-
-    Note that only the PPC version of the libraries and tests are supported.
-
-    2.5.4.3 Testing the Distribution
-    ********************************
-    Run the tests in the following order:
-      
-       1. hdf/test/testhdf
-          Note:
-           When testing 'testhdf' in the 'hdf/test' directory make sure
-           that a directory called 'testdir' exists in the 'hdf/test'.
-           This directory is used in the external element test.
-
-       2. mfhdf/xdr/xdrtest
-           After running this test compare the output to that shown in
-           the file mfhdf/xdr/testout.sav
-
-       3. mfhdf/libsrc/hdftest
-           After running this test compare the output to that shown in
-           the file mfhdf/libsrc/hdfout.sav
-
-       4. mfhdf/libsrc/cdftest
-           After running this test compare the output to that shown in
-           the file mfhdf/libsrc/testout.sav
-
-       5. mfhdf/nctest/nctest
-
-    2.5.4.4 Building utilities  
-    ********************************
-
-    Codewarrior Projects for utilities can be found in the following
-    directories:
- 
-           
-    $(toplevel)/
-                mfhdf/dumper/hdp/hdp.project.hqx
-
-                hdf/util/fp2hdf/fp2hdf.project.hqx
-                         hdf24to8/hdf24to8.project.hqx
-                         hdfcomp/hdfcomp.project.hqx
-                         hdfed/hdfed.project.hqx
-                         hdfls/hdfls.project.hqx
-                         hdfls/hdfls.project.hqx
-                         hdfpack/hdfpack.project.hqx
-                         hdftoPal/hdftopal.project.hqx
-                         hdftoR8/hdftoR8.project.hqx
-                         vshow/vshow.project.hqx
-                         PalToHDF/PalToHDF.project.hqx
-                         R8ToHDF/R8ToHDF.project.hqx 
-                         RISToHDF/RISToHDF.project.hqx
-
-    2.5.5 Exemplar
-    --------------
-    **** NOT SUPPORTED WITH HDF 4.1r5 ****
-
-    HP Exemplar (Convex) machines running version 10.x of HP-UX are now only
-    able to be configured for HP-UX.  If you are running an Exemplar with an
-    earlier version of the software, you must configure the machine as
-    follows:
-
-        ./configure -v --host=c2-convex-bsd
-
-    Otherwise, the machine will be configured for HP-UX.
-        
-
-    2.5.6 SP2 Single node
-    ----------------------
-    HDF has been compiled and tested to run in a single node of the
-    SP2 system.  You can make the library the same way you would on an
-    AIX system.  To use it in the parallel processing environment, we
-    advise you to execute the HDF code in only one designated process
-    since HDF code does not support concurrent access to the same file.
-
-
-    2.5.7 T3E Single node
-    ---------------------
-    HDF has been compiled and tested to run in a single node of the
-    T3E system.  It is compiled with the '-X m' to produce malleable
-    code which can be executed with multiple processing elements (PEs).
-    The code has not been tested run with multiple PEs.  To use it in
-    the parallel processing environment, we advise you to execute the
-    HDF code in only one designated process since HDF code does not
-    support concurrent access to the same file.
-
-
-    NOTE: HDF is compiled with the f90 compiler starting release 4.1r2.
-    Cray has phased out the cf77 compiler.  The f90 compiler issues
-    numerous warnings during the compiling of the Fortran API test
-    programs.  They can be safely ignored.  One warning is about the
-    unsupported DOUBLE PRECISION being replaced by REAL.  That works fine
-    for the purpose of the test programs since T3E REAL is 8 bytes in
-    size which is the same size as DOUBLE PRECISION in other machines.
-    Another warning is by the loader complaining about many SYMBOLS
-    referenced but not defined.  Those SYMBOLS are actually HDF Fortran
-    function names declared in dffunc.inc file and they are not used in
-    the testing.
-
-
-    2.5.8a SGI IRIX 6.x
-    -------------------
-    IRIX is the traditional SGI 32-bit OS.  Starting in version 6.x,
-    it supports two classes of 32 bit compilers, the old 32 (-o32)
-    and the new 32-bits (-n32).  SGI is phasing out the -o32 compilers.
-    Continued maintenance is available on the -n32 class of compilers only.
-    The HDF library configures to use the -n32 class of C and F77 compilers.
-    If you want to use different compiler options, you need to edit
-    config/mh-irix32 and then run configure.  Consult the section
-    of "General Configuration/Installation" for more information.
-
-
-    2.5.8b SGI IRIX64
-    -----------------
-    IRIX64 supports multiple combinations of ABI (-64, -n32, -o32) and
-    instruction sets (-mips2, -mips3, -mips4).  Previous HDF
-    library releases had hard coded the MIPS settings by guessing what
-    might be the most reasonable combination.  This release no longer
-    sets the MIPS option but leaves it up to the local or user's
-    default.  The configure still generates -64 code by default on
-    an IRIX64 system.  If -n32 code is desired, one may override it
-    by specifying 'irix6_32' during the configure step.
-
-    Configure command	    Code produced
-    -----------------	    -------------
-    ./configure                 -64
-    ./configure irix6_32        -n32
-
-    If you want to use different compiler options, you need to edit
-    config/mh-irix6 (for just configure) or config/mh-irix32 (for
-    configure irix6_32) and then run configure.  Consult the section
-    of "General Configuration/Installation" for more information.
-
-
-    2.5.9 DEC Alpha
-    ----------------
-    The distribution has been compiled/tested with the native Digital 
-    Unix C and FORTRAN compilers.
-
-    During the testing of the library the test 'mfhdf/libsrc/hdftest' 
-    will report "Unaligned access ..." messages which can be ignored.
-
-
-2.6 Pablo Instrumentation
-    =====================
-
-    This version of the distribution has support to create an instrumented 
-    version of the HDF libraries(libdf-inst.a and libmfhdf-inst.a). This 
-    library along with the Pablo performance data capture libraries can be 
-    used to gather data about I/O behavior and procedure execution times.  
-    Version 5.1 or higher of the trace library is required.
-
-    More detailed documentation on how to use the instrumented version of
-    the HDF library with Pablo can be found in the Pablo directory: 
-
-       $(toplevel)/hdf/pablo 
-
-    See the provided '$(toplevel)/hdf/pablo/README.Pablo' and the PostScript 
-    file '$(toplevel)/hdf/pablo/Pablo.ps' or Microsoft Word Document file
-    '$(toplevel)/hdf/pablo/Pablo.doc' or the PDF document file
-    /$(toplevel)/hdf/pablo/Pablo.pdf'.  
-
-    In this version both an instrumented version of the core HDF library 
-    libdf.a and the library libmfhdf.a can be created.  Current interfaces 
-    supported are ANxx, GRxx, DFSDxx, DFANxx, DFPxx, DFR8xx, DF24xx, Hxx, 
-    SDxx, Vxx, and VSxx.
-
-    To enable the creation of an instrumented library the following section
-    in the makefile fragment($(toplevel)/config/mh-<os>) must be uncommented 
-    and set.
-
-    # ------------ Macros for Pablo Instrumentation  --------------------
-    # Uncomment the following lines to create a Pablo Instrumentation
-    # version of the HDF core library called 'libdf-inst.a'
-    # See the documentation in the directory 'hdf/pablo' for further 
-    # information about Pablo and what platforms it is supported on
-    # before enabling. 
-    # You need to set 'PABLO_INCDIR' to the Pablo distribution 
-    # include directory to get to files 'IOTrace.h', 'IOTrace_SD.h' and others.
-    #PABLO_FLAGS  = -DHAVE_PABLO
-    #PABLO_INCDIR = /usr/local/include/pablo-5.1
-    #PABLO_INCLUDE = -I$(PABLO_INCDIR)
-    After setting these values you must re-run the toplevel 'configure' script.
-    Make sure that you start from a clean re-build(i.e. 'make clean') after
-    re-running the toplevel 'configure' script and then run 'make'.
-    Details on running configure can be found above in the section
-    'General Configuration/Installation - Unix'.
-
-2.7 File Cache(Beta release)
-    =================================
-    This version of the distribution has preliminary support for file caching.
-
-*NOTE*: This version is NOT officially supported on all platforms
-        and has not been extensively tested. As such it is provided as is.
-        It will be supported officially in a later release.
-
-    The file cache allows the file to be mapped to user memory on 
-    a per page basis i.e a memory pool of the file. With regards to the 
-    file system, page sizes can be allocated based on the file system 
-    page-size or if the user wants in some multiple of the file system 
-    page-size. This allows for fewer pages to be managed along with 
-    accommodating the users file usage pattern.
-
-    The current version supports setting the page-size and number of pages
-    in the memory pool through user C-routines(Fortran will be added in a 
-    future release). The default is 8192 bytes for page-size and 1 for number 
-    of pages in the pool.
-
-    Routines:(The names may change in the future...)
-    -------------------------------------------------
-    Hmpset(int pagesize, int maxcache, int flags)
-    --------------------------------------------
-    o  Set the pagesize and maximum number of pages to cache on the next
-       open/create of a file. A pagesize that is a power of 2 is recommended.
-       'pagesize' must be greater than MIN_PAGESIZE(512) bytes and 
-       'maxcache' must be greater than or equal to 1. Valid values
-       for both arguments are required when using this call.
-
-       The values set here only affect the next open/creation of a file and
-       do not change a particular file's paging behavior after it has been
-       opened or created. This may change in a later release.
-
-       Use flags argument of 'MP_PAGEALL' if the whole file is to be cached
-       in memory otherwise pass in zero. In this case the value for 'maxcache'
-       is ignored. You must pass in a valid value for 'pagesize' when
-       using the flag 'MP_PAGEALL'. 
- 
-    Hmpget(int *pagesize, int *maxcache, int flags)
-    ----------------------------------------------
-    o   This gets the last pagesize and maximum number of pages cached for
-        the last open/create of a file. The 'flags' variable is not used.
-    
-    In this version a new file memory pool is created for every file that is
-    created/opened and can not be shared. Future versions will allow sharing 
-    of the file memory pool with other threads/processes.
-
-    To enable the creation of a library using page caching the following 
-    section in the makefile fragment($(toplevel)/config/mh-<os>) must be 
-    uncommented and set.
-
-    # ------------ Macros for Shared Memory File Buffer Pool(fmpool) ------
-    # Uncomment the following lines to enable shared memory file buffer pool
-    # version of the HDF core library libdf.a. Please read the
-    # documentation before enabling this feature.
-    #FMPOOL_FLAGS  = -DHAVE_FMPOOL
-
-    After setting these values you must re-run the toplevel 'configure' script.
-    Make sure that you start from a clean re-build(i.e. 'make clean') after
-    re-running the toplevel 'configure' script and then run 'make'.
-    Details on running configure can be found above in the section
-    'General Configuration/Installation - Unix'.
-
-    The file caching version of libdf.a is automatically tested
-    when the regular HDF and netCDF tests are run. The page caching
-    version has been tested only on a few UNIX platforms and is NOT
-    available for the Macintosh ,IBM-PC(Windows NT/95) or VMS.
-
-2.8 Installation Location
-    =====================
-
-    By default, `make install' will install the HDF/mfhdf files in
-    `$(toplevel)/NewHDF/bin', '$(toplevel)/NewHDF/lib', etc.  You may
-    then copy the files to the appropriate directories on your system.
-    If you prefer, you can specify the directory so that `make install'
-    will install the files directly in it.  This is done by giving
-    `configure' the option `--prefix=PATH'.
-
-    eg.  ./configure -v --prefix=/usr/local/hdf
-
-    This will configure the distribution to install the libraries,
-    utilities, include and man files in '/usr/local/hdf/lib',
-    '/usr/local/hdf/bin', '/usr/local/hdf/include' and
-    '/usr/local/hdf/man' respectively.
-
-2.9 Specifying the System Type
-    ==========================
-
-    There may be some features `configure' can not figure out
-    automatically, but needs to determine by the type of host HDF/mfhdf
-    will run on.  Usually `configure' can figure that out, but if it prints
-    a message saying it can not guess the host type, give it the
-    `--host=TYPE' option.  TYPE can either be a short name for the system
-    type, such as `sun4', or a canonical name with three fields:
-
-         CPU-COMPANY-SYSTEM
-
-    e.g. hppa1.1-hp-hpux9.03
-
-    See the file `config.sub' for the possible values of each field.
-
-
-2.10 Configure Options 
-    ==================
-
-    Usage: configure [OPTIONS] [HOST]
-
-    Where HOST and TARGET are something like "sparc-sunos", "mips-sgi-irix5",etc.
-
-    `configure' recognizes the following options to control how it
-    operates. 
-
-    NOTE: not all options are currently supported by this
-          distribution. The following are the only ones supported.
-
-    `--help'
-         Print a summary of the options to `configure', and exit.
-
-     `--prefix=MYDIR`          install into MYDIR [$(toplevel)/NewHDF]
-
-
-3. Man pages
-   =============
-
-    Man pages can be found in:
-
-         $(toplevel)/man
-
-4. Release notes
-   =============
-    The files in sub-directory $(toplevel)/release_notes are detailed 
-    descriptions for the new features and changes in this release.
-    They can be used as supplemental documentation. These files are also 
-    available on the NCSA ftp server (ftp.ncsa.uiuc.edu) in:
- 
-         /HDF/HDF/HDF_Current/release_notes/.
-
-5. Documentation
-   =============
-
-   The HDF documentation can be found on the NCSA ftp server
-   in the directory /HDF/HDF/Documentation/.  The
-   HDF home page is at:
-
-      http://hdf.ncsa.uiuc.edu/
-
-6. FAQ
-   ===
-   An FAQ is available on our ftp server, as well as at:
-      http://hdf.ncsa.uiuc.edu/HDF-FAQ.html 
-   
-
-7. HDF Java Products
-   =================
-   The HDF Java Interface and Java HDF Viewer are built 
-   separately after the library.  See:
-      http://hdf.ncsa.uiuc.edu/java-hdf-html/ 
-
-
-8. HELP
-   ====
-   If you have any questions or comments, or would like to be
-   added to or removed from our hdfnews email list, contact us
-   at:
-
-      hdfhelp@ncsa.uiuc.edu
-
-
+        hdfhelp@ncsa.uiuc.edu

@@ -24,21 +24,21 @@ extern "C" {
 
 
 /* get the list of HDF objects in the file */
-int Hgetlist (char* fname, dtable_t *list);
+int Hgetlist (const char* fname, dtable_t *list);
 
-int hdiff_list_vg (char* fname,int32 file_id,dtable_t *table);
-int hdiff_list_gr (char* fname,int32 file_id,dtable_t *table);
-int hdiff_list_sds(char* fname,int32 file_id,dtable_t *table);
-int hdiff_list_vs (char* fname,int32 file_id,dtable_t *table);
-int hdiff_list_glb(char* fname,int32 file_id,dtable_t *table);
-int hdiff_list_an (char* fname,int32 file_id,dtable_t *table);
+int hdiff_list_vg (const char* fname,int32 file_id,dtable_t *table);
+int hdiff_list_gr (const char* fname,int32 file_id,dtable_t *table);
+int hdiff_list_sds(const char* fname,int32 file_id,dtable_t *table);
+int hdiff_list_vs (const char* fname,int32 file_id,dtable_t *table);
+int hdiff_list_glb(const char* fname,int32 file_id,dtable_t *table);
+int hdiff_list_an (const char* fname,int32 file_id,dtable_t *table);
 
 
 int insert_vg_attrs(int32 vgroup_id,char *path);
 int insert_vg_an(int32 file_id,int32 vgroup_id,char *path);
 
 
-int insert_vg(char* fname, 
+int insert_vg(const char* fname, 
               int32 file_id, 
               char*path_name, 
               int32* tags, 

@@ -334,6 +334,6 @@ main(int argc, char *argv[])
 #endif  /* OLD_WAY */
 #endif  /* VMS */
       }     /* end if */
-    exit(0);
-    return (0);
+    exit(num_errs);
+    return num_errs;
 }   /* end main() */

@@ -1568,6 +1568,8 @@ test_chunk()
 static int16  netcdf_u16[2][3] = {{1, 2, 3}, 
                                    {4, 5, 6}};
 
+char    testfile[512] = "";
+
 /* Tests reading of netCDF file 'test1.nc' using the SDxxx inteface.
    Note not all features of reading SDS from netCDF files are tested here.
    Hopefully more tests will be added over time as needed/required. */
@@ -1590,9 +1592,18 @@ test_netcdf_reading()
     int32 status;
     intn i, j;
     int     num_errs = 0;    /* number of errors so far */
+    const char *basename = "test1.nc";
+    char   *srcdir = getenv("srcdir");
 
-	/* Open the file 'test1.nc' and initialize the SDxxx interface. */
-	sd_id = SDstart("test1.nc", DFACC_RDONLY);
+    /* Generate the correct name for the test file, by prepending the source path */
+    if (srcdir && ((strlen(srcdir) + strlen(basename) + 1) < sizeof(testfile))) {
+        strcpy(testfile, srcdir);
+        strcat(testfile, "/");
+    }
+    strcat(testfile, basename);
+
+    /* Open the file 'test1.nc' and initialize the SDxxx interface. */
+    sd_id = SDstart(testfile, DFACC_RDONLY);
     CHECK(sd_id, FAIL, "netCDF Read Test 1. SDstart failed on file test1.nc");
 
 	/* Determine the contents of the file. */
@@ -4059,13 +4070,17 @@ main(int argc, char *argv[])
     status = test_dimensions();
     num_errs = num_errs + status;
 
+#ifdef H4_HAVE_LIBSZ
     status = test_szip_compression();  /* defined in tszip.c */
     num_errs = num_errs + status;
+#else
+    printf("****** SD Szip test skipped *****\n");
+#endif /* H4_HAVE_LIBSZ */
 
     printf("num_err == %d\n", num_errs);
 
-    return 0;
-    /*exit(0); - replaced by return 0; compiler warning: no return for int*/
+    exit(num_errs);
+    return num_errs;
 }
 
 #endif /* HDF */

@@ -355,3 +355,29 @@ C		integer hisystem
       retcode = hisystem(cmd, len(cmd))
       return
       end
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+C
+C     SUBROUTINE fixname(name, name_out, name_out_len)
+C     Takes care of srcdir build
+C
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+      subroutine fixname(name, name_out, name_out_len)
+      implicit none
+
+      character*(*)  name
+      character*(*)  name_out
+      integer  retcode, name_out_len
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: fixname
+	!MS$endif
+      INTERFACE
+      INTEGER FUNCTION fixnamec(name, len_name, name_out, name_out_len)
+           !MS$ATTRIBUTES C,reference,alias:'_FIXNAMEC' :: fixnamec
+	     !DEC$ ATTRIBUTES reference :: name, name_out
+           integer len_name, name_out_len
+	     character*(*) name, name_out
+         END FUNCTION fixnamec
+       END INTERFACE
+      retcode = fixnamec(name, len(name), name_out, name_out_len)
+      return
+      end

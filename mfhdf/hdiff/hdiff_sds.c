@@ -14,7 +14,6 @@
 #include "hdiff.h"
 #include "hdiff_list.h"
 #include "hdiff_mattbl.h"
-#include "hdiff_sds.h"
 
 
 static
@@ -35,13 +34,12 @@ int diff_sds_attrs(int32 sds1_id,int32 nattrs1,int32 sds2_id,int32 nattrs2,char*
  *-------------------------------------------------------------------------
  */
 
-int diff_sds(char  *fname1, 
-             char  *fname2, 
+int diff_sds(const char  *fname1, 
+             const char  *fname2, 
              int32 ref1,
              int32 ref2,
-             struct fspec specp)
+             diff_opt_t * opt)
 {
- intn  status_n;               /* returned status_n for functions returning an intn  */
  int32 sd1_id,                 /* SD identifier */
        sds1_id,                /* data set identifier */
        sds1_index,             /* index number of the data set */
@@ -69,10 +67,8 @@ int diff_sds(char  *fname1,
  intn  empty2_sds;
  VOIDP buf1=NULL;
  VOIDP buf2=NULL;
- unsigned int max_err_cnt;
- int    i, k;
- vnode* vlist = newvlist();  /* list for vars specified with -v option */
- int32  varid1;
+ int32 max_err_cnt;
+ int   i;
 
 /*-------------------------------------------------------------------------
  * object 1
@@ -111,27 +107,30 @@ int diff_sds(char  *fname1,
 
 
  /* flag to compare SDSs */
- if (specp.sd == 1)
+ if (opt->sd == 1)
  {
 
 /*-------------------------------------------------------------------------
  * check for input SDs
  *-------------------------------------------------------------------------
  */
-
-/*
- * If any vars were specified with -v option, get list of associated
- * variable ids
- */
- for (k=0; k < specp.nlvars; k++) 
- {
-  varid1 = SDnametoindex(sd1_id, specp.lvars[k]);
-  varadd(vlist, varid1);
- }
  
- /* if var list specified, test for membership */
- if (specp.nlvars > 0 && ! varmember(vlist, sds1_index))
-  goto out;
+ if (opt->nlvars > 0)   /* if specified vdata is selected */
+ {
+  int imatch = 0, j;
+  for (j = 0; j < opt->nlvars; j++)
+  {
+   if (strcmp(sds1_name, opt->lvars[j]) == 0)
+   {
+    imatch = 1;
+    break;
+   }
+  }
+  if (imatch == 0)
+  {
+   goto out;
+  }
+ }  
 
 /*-------------------------------------------------------------------------
  * check for different type
@@ -258,21 +257,28 @@ int diff_sds(char  *fname1,
  *-------------------------------------------------------------------------
  */
 
- if (specp.verbose)
+ if (opt->verbose)
  printf("Comparing <%s>\n",sds1_name); 
 
  /* 
   If max_err_cnt is set (i.e. not its default -1), use it otherwise set it
   to tot_err_cnt so it doesn't trip  
  */
- max_err_cnt = (specp.max_err_cnt >= 0) ? specp.max_err_cnt : nelms;
- nfound=array_diff(buf1, buf2, nelms, dtype1, specp.err_limit, 
-   max_err_cnt, specp.statistics, 0, 0);
+ max_err_cnt = (opt->max_err_cnt >= 0) ? opt->max_err_cnt : nelms;
+ nfound=array_diff(buf1, 
+                   buf2, 
+                   nelms, 
+                   dtype1, 
+                   opt->err_limit, 
+                   max_err_cnt, 
+                   opt->statistics, 
+                   0, 
+                   0);
   
  } /* flag to compare SDSs */
  
  /* flag to compare SDSs local attributes */
- if (specp.sa == 1)
+ if (opt->sa == 1)
  {
   diff_sds_attrs(sds1_id,nattrs1,sds2_id,nattrs2,sds1_name);
  }
@@ -283,10 +289,14 @@ int diff_sds(char  *fname1,
  */
 
 out:
- status_n = SDendaccess(sds1_id);
- status_n = SDend(sd1_id);
- status_n = SDendaccess(sds2_id);
- status_n = SDend(sd2_id);
+ if (SDendaccess(sds1_id)<0)
+  fprintf(stderr,"SDendaccess FAIL\n");
+ if (SDend(sd1_id)<0)
+  fprintf(stderr,"SDend FAIL\n");
+ if (SDendaccess(sds2_id)<0)
+  fprintf(stderr,"SDendaccess FAIL\n");
+ if (SDend(sd2_id)<0)
+  fprintf(stderr,"SDend FAIL\n");
  if (buf1) free(buf1);
  if (buf2) free(buf2);
 
@@ -346,12 +356,12 @@ int diff_sds_attrs(int32 sds1_id,int32 nattrs1,int32 sds2_id,int32 nattrs2,char*
    continue;
   }
   
-  attr1_buf = (void *) malloc((unsigned)nelms1*DFKNTsize(dtype1));
+  attr1_buf = (void *) malloc((unsigned)nelms1*DFKNTsize(dtype1 | DFNT_NATIVE));
   if (!attr1_buf) {
    printf("Out of memory!");
    return -1;
   }
-  attr2_buf = (void *) malloc((unsigned)nelms2*DFKNTsize(dtype2));
+  attr2_buf = (void *) malloc((unsigned)nelms2*DFKNTsize(dtype2 | DFNT_NATIVE));
   if (!attr2_buf) {
    printf("Out of memory!");
    return -1;
@@ -359,27 +369,34 @@ int diff_sds_attrs(int32 sds1_id,int32 nattrs1,int32 sds2_id,int32 nattrs2,char*
  
   if (SDreadattr(sds1_id, i, attr1_buf)==FAIL ) {
    printf( "Could not read attribute number %d\n", i);
+   if (attr1_buf) free(attr1_buf);
+   if (attr2_buf) free(attr2_buf);
    continue;
   }
   if (SDreadattr(sds2_id, i, attr2_buf)==FAIL ) {
    printf( "Could not read attribute number %d\n", i);
+   if (attr1_buf) free(attr1_buf);
+   if (attr2_buf) free(attr2_buf);
    continue;
   }
 
 
-  cmp = HDmemcmp(attr1_buf,attr2_buf,nelms1*DFKNTsize(dtype1));
+  cmp = HDmemcmp(attr1_buf,attr2_buf,nelms1*DFKNTsize(dtype1 | DFNT_NATIVE));
   if (cmp!=0)
   {
    printf("\n---------------------------\n");
    printf ("%s:%s = \n",sds1_name,attr1_name);
    printf("<<<<\n");
-   pr_att_vals(dtype1, nelms1, attr1_buf);
+   pr_att_vals((nc_type)dtype1, nelms1, attr1_buf);
    printf (" ;\n");
    printf(">>>>\n");
-   pr_att_vals(dtype2, nelms2, attr2_buf);
+   pr_att_vals((nc_type)dtype2, nelms2, attr2_buf);
    printf (" ;\n");
 
   }
+
+  if (attr1_buf) free(attr1_buf);
+  if (attr2_buf) free(attr2_buf);
  
  }
 
