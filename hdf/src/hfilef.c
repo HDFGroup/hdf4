@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1993/01/19 05:55:58  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.5  1993/02/17 20:49:00  briand
+added FORTRAN stub for Hnumber.
 
+ * Revision 1.4  1993/01/19  05:55:58  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.3  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -97,4 +100,29 @@ nhclose(file_id)
 {
     return(Hclose(*file_id));
 }
+
+
+/*-----------------------------------------------------------------------------
+ * Name:    hnumber
+ * Purpose: Call DFclose to close HDF file
+ * Inputs:  file_id: handle to HDF file to close
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ * Invokes: Hnumber
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nhnumber(int32 file_id, uint16 tag)
+#else
+nhnumber(file_id, tag)
+    int32 file_id;
+    uint16 tag;
+#endif /* PROTOTYPE */
+{
+    return(Hnumber(*file_id,*tag));
+}
+
+
+
 
