@@ -1,0 +1,250 @@
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+/*
+$Header$
+
+$Log$
+Revision 1.1  1993/04/15 20:00:15  koziol
+Re-named the new tests for MS-DOS compatibility
+
+ * Revision 1.3  1993/02/16  20:51:15  chouck
+ * Went back to using -ansi so needed to fix a few casting problems
+ *
+ * Revision 1.2  1993/01/27  22:41:26  briand
+ * Fixed problem with compiling on RS6000.
+ *
+ * Revision 1.1  1993/01/27  22:04:31  briand
+ * Converted test files to work with master test program: testhdf
+ *
+ * Revision 1.7  1992/07/16  19:34:08  mlivin
+ * changed re-opening of file to NOT include DFACC_CREATE
+ *
+ * Revision 1.6  1992/06/26  20:23:20  mlivin
+ * added in tests for Hishdf - open HDF, closed HDF, non-HDF, non-existing
+ *
+ * Revision 1.5  1992/06/22  23:04:42  chouck
+ * Removed calls to fork()
+ *
+ * Revision 1.4  1992/06/01  19:23:47  chouck
+ * Cleaned up output
+ *
+ * Revision 1.3  1992/05/31  15:23:30  mfolk
+ * Added uint8 * and uint16 casts to make Convex stop complaining.
+ *
+ * Revision 1.2  1992/05/28  14:24:01  chouck
+ * Added casts for calls to Hinquire()
+ *
+ * Revision 1.1  1992/02/10  20:59:34  chouck
+ * Initial revision
+ *
+*/
+/*
+
+* Hopen
+** Create a file.
+** Open an existing file.
+*** Normally.
+*** Read-only file with DFACC_WRITE.
+** Open non-existent file.
+*** With DFACC_READ.
+*** With DFACC_WRITE.
+** Create an illegal file.
+** Open the same file twice.
+*** First with DFACC_WRITE then with DFACC_READ.
+*** First with DFACC_WRITE then with DFACC_WRITE.
+*** First with DFACC_READ and then with DFACC_WRITE.
+*** First with DFACC_<any> and then with DFACC_CREATE.
+** Open more files than there is slots.
+
+* Hclose
+** Close a proper file.
+** Close with an illegal file id.
+*** Random file id.
+*** Correct tag but bad slot.
+
+* Hstartread
+** Normal.
+** With illegal file id.
+** With illegal tag/ref.
+** With wildcard.
+** Open more access elements than there is space.
+
+*/
+
+#include "tproto.h"
+#define TESTFILE_NAME "t.hdf"
+uint8 outbuf[4096], inbuf[4096];
+
+extern int num_errs;
+extern int Verbocity;
+
+
+void test_hfile()
+{
+    int32 fid, fid1;
+    int32 aid1, aid2;
+    int32 fileid, length, offset, posn;
+    uint16 tag, ref;
+    int16 access, special;
+    int ret, i;
+    intn errors = 0;
+    bool ret_bool;
+
+    for (i=0; i<4096; i++) outbuf[i] = (char) (i % 256);
+
+    MESSAGE(5,printf("Creating a file %s\n", TESTFILE_NAME););
+    fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);
+    CHECK(fid, FAIL, "Hopen");
+
+    ret_bool = Hishdf(TESTFILE_NAME);
+    CHECK(ret_bool, FALSE, "Hishdf");
+
+    ret = Hnewref(fid);
+    CHECK(ret, FAIL, "Hnewref");
+
+    MESSAGE(5,printf("Reading / Writing to file\n"););
+    ret = Hputelement(fid, (uint16) 100, 1, 
+                      (uint8 *) "testing 100 1", strlen("testing 100 1")+1);
+    CHECK(ret, FAIL, "Hputelement");
+
+    ret = Hputelement(fid, (uint16) 100, (uint16) 4, outbuf, 2000);
+    CHECK(ret, FAIL, "Hputelement");
+
+    ret = Hnewref(fid);
+    CHECK(ret, FAIL, "Hnewref");
+
+    ret = Hputelement(fid, (uint16) 103, (uint16) 2, 
+                      (uint8 *) "element 103 2", strlen("element 103 2")+1);
+    CHECK(ret, FAIL, "Hputlement");
+
+    ret = Hgetelement(fid, (uint16) 100, (uint16) 4, inbuf);
+    if(ret != 2000) {
+      fprintf(stderr, "Hgetelement returned wrong count: %d\n", ret);
+      errors++;
+    }
+
+    for (i=0; i<ret; i++) {
+       if (inbuf[i] != outbuf[i])
+           printf("Wrong data at %d, out %d in %d\n", i, outbuf[i], inbuf[i]);
+       inbuf[i] = '\0';
+    }
+
+    ret = Hputelement(fid, 102, 2, outbuf, 4096);
+    CHECK(ret, FAIL, "Hputlement");
+
+    ret = Hclose(fid);
+    CHECK(ret, FAIL, "Hclose");
+
+    MESSAGE(5,printf("Closing and re-opening file %s\n", TESTFILE_NAME););
+    fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
+    CHECK(fid, FAIL, "Hopen");
+
+    ret = Hnewref(fid);
+    CHECK(ret, FAIL, "Hnewref");
+
+    aid1 = Hstartread(fid, 100, 1);
+    CHECK(aid1, FAIL, "Hstartread");
+
+    ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
+                  &access, &special);
+    CHECK(ret, FAIL, "Hinquire");
+
+    MESSAGE(5,printf("Verifying data\n\n"););
+    ret = Hread(aid1, length, inbuf);
+    if(ret != 14) {
+      fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", ret);
+      errors++;
+    }
+
+    if(HDstrcmp((const char *) inbuf, (const char *) "testing 100 1")) {
+      fprintf(stderr, "ERROR: Hread returned the wrong data\n");
+      fprintf(stderr, "\t       Is: %s\n", inbuf);
+      fprintf(stderr, "\tShould be: testing 100 1\n");
+      errors++;
+    }
+
+    ret = Hnewref(fid);
+    CHECK(ret, FAIL, "Hnewref");
+
+    MESSAGE(5,printf("Testing a number of searching schemes\n"););
+    ret = Hnextread(aid1, 100, DFREF_WILDCARD, DF_CURRENT);
+    CHECK(ret, FAIL, "Hnextread");
+
+    ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
+                  &access, &special);
+    CHECK(ret, FAIL, "Hinquire");
+
+    ret = Hnextread(aid1, 100, DFREF_WILDCARD, DF_CURRENT);
+    if(ret != FAIL) {
+      fprintf(stderr, "ERROR: Found a non-existant element at line %d\n", 
+              __LINE__);
+      errors++;
+    }
+
+    ret = Hnextread(aid1, DFTAG_WILDCARD, DFREF_WILDCARD, DF_START);
+    CHECK(ret, FAIL, "Hnextread");
+
+    ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
+                  &access, &special);
+    CHECK(ret, FAIL, "Hinquire");
+
+    ret = Hnextread(aid1, DFTAG_WILDCARD, 3, DF_CURRENT);
+    if(ret != FAIL) {
+      fprintf(stderr, "ERROR: Found a non-existant element at line %d\n", 
+              __LINE__);
+      errors++;
+    }
+
+    ret = Hnextread(aid1, DFTAG_WILDCARD, 2, DF_CURRENT);
+    CHECK(ret, FAIL, "Hnextread");
+
+    ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
+                  &access, &special);
+    CHECK(ret, FAIL, "Hinquire");
+
+    aid2 = Hstartwrite(fid, 100, 1, 4);
+    if(aid2 == FAIL) {
+      fprintf(stderr, "ERROR: was not allowed to startwrite on existing object\n");
+      errors++;
+    }
+
+    ret = Hwrite(aid1, 4, (uint8 *) "ABCD");
+    if(ret != FAIL) {
+      fprintf(stderr, "ERROR: was allowed to write to read access object\n");
+      errors++;
+    }
+
+    ret = Hendaccess(aid1);
+    CHECK(ret, FAIL, "Hendaccess");
+
+    ret = Hendaccess(aid2);
+    CHECK(ret, FAIL, "Hendaccess");
+    
+    MESSAGE(5,printf("Attempting to gain multiple access to file (is allowed)\n"););
+    fid1 = Hopen(TESTFILE_NAME, DFACC_READ, 0);
+    if(fid1 == FAIL) {
+      fprintf(stderr, "ERROR: Failed to have two concurrent access to file\n");
+      errors++;
+    }
+
+    ret = Hnewref(fid1);
+    CHECK(ret, FAIL, "Hnewref");
+
+    ret = Hclose(fid);
+    CHECK(ret, FAIL, "Hclose");
+
+    ret = Hclose(fid1);
+    CHECK(ret, FAIL, "Hclose");
+
+    ret_bool = Hishdf(TESTFILE_NAME);
+    CHECK(ret_bool, FALSE, "Hishdf");
+
+    ret_bool = Hishdf(__FILE__);
+    CHECK(ret_bool, TRUE, "Hishdf");
+
+    ret_bool = Hishdf("qqqqqqqq.qqq");  /* I sure hope it isn't there */
+    CHECK(ret, TRUE, "Hishdf");
+
+
+}
