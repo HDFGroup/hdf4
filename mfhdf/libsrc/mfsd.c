@@ -502,7 +502,10 @@ int32 *rank, *nt, *nattr, *dimsizes;
     }
 
     *rank  = var->assoc->count;
-    *nt    = hdf_map_type(var->type);
+    if(!var->HDFtype)
+        *nt    = hdf_map_type(var->type);
+    else
+        *nt    = var->HDFtype;
 
     *nattr = (var->attrs ? var->attrs->count : 0);
 
