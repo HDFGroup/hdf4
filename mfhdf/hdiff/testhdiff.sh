@@ -73,9 +73,9 @@ TOOLTEST() {
    fi
 
    # Clean up output file
-#     if test -z "$HDF5_NOCLEANUP"; then
-#     rm -f $actual $actual_err
-#     fi
+     if test -z "$HDF4_NOCLEANUP"; then
+     rm -f $actual $actual_err
+     fi
 }
 
 
