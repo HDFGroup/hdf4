@@ -810,12 +810,19 @@ VSappendable(int32 vkey, int32 blk)
     else
         blksize = VDEFAULTBLKSIZE;
 
+#ifdef OLD_WAY
     if(vs->aid!=0)
         Hendaccess(vs->aid);
 
     vs->aid = HLcreate(vs->f, VSDATATAG, vs->oref, blksize, VDEFAULTNBLKS);
     if (vs->aid == FAIL)
         ret_value = FAIL;
+#else /* OLD_WAY */
+    if(vs->aid==0)
+        ret_value=vs->aid = Hstartaccess(vs->f, VSDATATAG, vs->oref, DFACC_RDWR|DFACC_APPENDABLE);
+    else
+        ret_value = Happendable(vs->aid);
+#endif /* OLD_WAY */
 
 done:
   if(ret_value == FAIL)   
