@@ -1049,11 +1049,11 @@ C-------------------------------------------------------------------------
 	!MS$attributes dllexport :: mggcompress
 	!MS$endif
 
-         INTEGER riid, comp_type
+         INTEGER riid, comp_type, comp_prm(1)
       INTERFACE
         INTEGER FUNCTION mgcgcompress(riid, comp_type, comp_prm)
           !MS$ATTRIBUTES C,reference,alias:'_MGCGCOMPRESS'::mgcgcompress
-          integer riid, comp_type, comp_prm
+          integer riid, comp_type, comp_prm(1)
         END FUNCTION mgcgcompress
       END INTERFACE
 

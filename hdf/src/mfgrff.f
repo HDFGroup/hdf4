@@ -387,7 +387,7 @@ C-------------------------------------------------------------------------
 
          INTEGER function mggcompress(riid, comp_type, comp_prm)
 
-         INTEGER riid, comp_type
+         INTEGER riid, comp_type, comp_prm(1)
          INTEGER mgcgcompress 
 
          mggcompress = mgcgcompress(riid, comp_type,

@@ -1,4 +1,5 @@
-/****************************************************************************
+
+****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
  * National Center for Supercomputing Applications                          *
@@ -1245,13 +1246,13 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
  
        case COMP_CODE_SKPHUFF:      /* Skipping Huffman encoding */
           *comp_type = 3;
-          comp_prm[0] = c_info.skphuff.skp_size;
+          comp_prm[0] = (intf)c_info.skphuff.skp_size;
           ret = 0;
           break;
 
        case COMP_CODE_DEFLATE:      /* GZIP compression */  
           *comp_type = 4;
-          comp_prm[0] = c_info.deflate.level;
+          comp_prm[0] = (intf)c_info.deflate.level;
           ret = 0;
           break;
 
