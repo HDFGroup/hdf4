@@ -3,7 +3,7 @@ $Id$
 The default fill values for double and floating-point data were changed.
 The previous strategy of using numbers that mapped to IEEE NaN under XDR
 caused portability problems.  Now FILL_FLOAT and FILL_DOUBLE are large
-constatns within the floating-point range.  As before, we continue to
+constants within the floating-point range.  As before, we continue to
 recommend that users define their own variable-specific fill values rather
 than use the default ones provided.
 
