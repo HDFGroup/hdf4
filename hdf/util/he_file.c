@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/08/26 16:28:28  sxu
-Fixed a typo, eitor --> editor
+Revision 1.5  1992/09/11 18:32:51  chouck
+Assorted MAC mungings
 
+ * Revision 1.4  1992/08/26  16:28:28  sxu
+ * Fixed a typo, eitor --> editor
+ *
  * Revision 1.3  1992/08/24  22:00:44  sxu
  * Added TPU$EDIT as default editor for VMS
  *
@@ -83,6 +86,9 @@ int annotate(editor, ann)
     int ann;			/* HE_LABEL  or HE_DESCRIPTOR */
 #endif
 {
+
+#ifndef MAC
+
     int32 len;			/* length of annotation */
     char *buf;			/* annotation buffer */
     char *file;			/* tmp file name */
@@ -193,6 +199,13 @@ int annotate(editor, ann)
      */
     free(buf);
     return ret;
+
+#else
+
+	return 1;
+	
+#endif /* ndef MAC */	
+
 }
 
 extern int he_backup;

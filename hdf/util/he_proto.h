@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.3  1992/08/11 23:05:39  sxu
-Added parameter 'int raw' in prototype dump()
+Revision 1.4  1992/09/11 18:32:51  chouck
+Assorted MAC mungings
 
+ * Revision 1.3  1992/08/11  23:05:39  sxu
+ * Added parameter 'int raw' in prototype dump()
+ *
  * Revision 1.2  1992/07/15  21:48:48  sxu
  * No change.
  *
@@ -159,7 +162,7 @@ int getPix
   PROTO((void));
 
 int getR8
-  PROTO((int xdim, int ydim, char *image, char *pal, int comp));
+  PROTO((int xdim, int ydim, char *image, char *pal, int compress));
 
 int getSpace
   PROTO((void));

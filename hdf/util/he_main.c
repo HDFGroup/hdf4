@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1992/08/25 20:49:45  chouck
-Fixed backup name generation so its easier to open non-local files
+Revision 1.7  1992/09/11 18:32:51  chouck
+Assorted MAC mungings
 
+ * Revision 1.6  1992/08/25  20:49:45  chouck
+ * Fixed backup name generation so its easier to open non-local files
+ *
  * Revision 1.5  1992/08/24  22:00:44  sxu
  * Use vfork() and delete() for VMS
  *
@@ -495,9 +498,9 @@ int closeFile(keep)
 }
 
 #ifdef PROTOTYPE
-int getR8(int xdim, int ydim, char *image, char *pal, int comp)
+int getR8(int xdim, int ydim, char *image, char *pal, int compress)
 #else
-int getR8(xdim, ydim, image, pal, comp)
+int getR8(xdim, ydim, image, pal, compress)
     int xdim, ydim;
     char *image;
     char *pal;
@@ -533,7 +536,7 @@ int getR8(xdim, ydim, image, pal, comp)
     }
     fclose(fp);
 
-    if (DFR8addimage(he_file, buf, xdim, ydim, comp) < 0)
+    if (DFR8addimage(he_file, buf, xdim, ydim, compress) < 0)
     {
 	HEprint(stderr, 0);
 	return FAIL;

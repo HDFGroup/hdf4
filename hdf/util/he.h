@@ -2,8 +2,8 @@
 $Header$
 
 $Log$
-Revision 1.6  1992/09/11 18:31:21  chouck
-Assorted MAC munging
+Revision 1.7  1992/09/11 18:32:51  chouck
+Assorted MAC mungings
 
  * Revision 1.5  1992/08/18  19:49:33  chouck
  * Include string.h
