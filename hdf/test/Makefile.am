@@ -1,5 +1,5 @@
 TESTS = testhdf fortest
-check_PROGRAMS = testhdf fortest
+check_PROGRAMS = testhdf fortest fortestF
 
 testhdf_SOURCES = an.c anfile.c bitio.c blocks.c buffer.c chunks.c comp.c   \
                   conv.c extelt.c file.c file1.c litend.c macros.c man.c    \
@@ -15,15 +15,15 @@ fortest_SOURCES = forsupf.c forsupff.f fortest.c fortestF.f manf.f mgrf.f   \
                   tvsetf.f tvattrf.f
 fortest_CPPFLAGS = -I${top_srcdir}/hdf/src
 fortest_LDADD = ../src/libdf.a
-fortest_DEPENDENCIES = testdir ../src/libdf.a
+fortest_DEPENDENCIES = testdir fortestF ../src/libdf.a
 
-##fortestF_SOURCES = forsupf.c forsupff.f fortestF.f manf.f mgrf.f slabwf.f   \
-##                   t24f.f tanf.f tanfilef.f tpf.f tr8f.f tsdmmsf.f          \
-##                   tsdnmmsf.f tsdnntf.f tsdntf.f tsdstrf.f tstubsf.f        \
-##                   tvattrf.f tvsetf.f
-##fortestF_CPPFLAGS = -I${top_srcdir}/hdf/src
-##fortestF_LDADD = ../src/libdf.a
-##fortestF_DEPENDENCIES = testdir ../src/libdf.a
+fortestF_SOURCES = forsupf.c forsupff.f fortestF.f manf.f mgrf.f slabwf.f   \
+                   t24f.f tanf.f tanfilef.f tpf.f tr8f.f tsdmmsf.f          \
+                   tsdnmmsf.f tsdnntf.f tsdntf.f tsdstrf.f tstubsf.f        \
+                   tvattrf.f tvsetf.f
+fortestF_CPPFLAGS = -I${top_srcdir}/hdf/src
+fortestF_LDADD = ../src/libdf.a
+fortestF_DEPENDENCIES = testdir ../src/libdf.a
 
 testdir:
 	-mkdir testdir
