@@ -16,12 +16,8 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 #ifdef HAVE_PABLO
-#define HDF_mask SD_mask
+#define PABLO_mask ID_mfsd_c
 #include "ProcIDs.h"
-#define HDF_TRACE_ON( eventID ) \
-        if (procTrace & HDF_mask)  startHDFtraceEvent(eventID)
-#define HDF_TRACE_OFF(  eventID, p1, p2, p3 ) \
-        if (procTrace & HDF_mask)  endHDFtraceEvent(-eventID, p1, p2, p3 )
 #endif
 
 /******************************************************************************
@@ -302,7 +298,7 @@ SDstart(const char *name,   /* IN: file name to open */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON (ID_SDstart );
+    TRACE_ON (PABLO_mask,ID_SDstart );
 #endif
     /* turn off annoying crash on error stuff */
     ncopts = 0;
@@ -358,7 +354,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDstart, fid, name, HDF_File_ID );
+    TRACE_OFF (PABLO_mask, ID_SDstart );
 #endif
 
     return ret_value;
@@ -388,7 +384,7 @@ SDend(int32 id /* IN: file ID of file to close */)
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDend );
+    TRACE_ON(PABLO_mask, ID_SDend );
 #endif
 
     /* get id? */
@@ -452,7 +448,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDend, id, NULL, HDF_File_ID );
+    TRACE_OFF (PABLO_mask, ID_SDend );
 #endif
 
     return ret_value;
@@ -486,7 +482,7 @@ SDfileinfo(int32  fid,     /* IN:  file ID */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDfileinfo );
+    TRACE_ON(PABLO_mask, ID_SDfileinfo );
 #endif
 
     /* check that fid is valid and get file structure */
@@ -514,7 +510,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDfileinfo, fid, NULL, HDF_File_ID ) ;
+    TRACE_OFF (PABLO_mask, ID_SDfileinfo );
 #endif
 
     return ret_value;
@@ -560,7 +556,7 @@ SDselect(int32 fid,  /* IN: file ID */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDselect );
+    TRACE_ON(PABLO_mask, ID_SDselect );
 #endif
 
     /* check that fid is valid */
@@ -597,7 +593,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDselect, sdsid, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDselect );
 #endif
 
     return ret_value;
@@ -638,7 +634,7 @@ SDgetinfo(int32  sdsid,   /* IN:  dataset ID */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDgetinfo );
+    TRACE_ON(PABLO_mask, ID_SDgetinfo );
 #endif
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
@@ -701,7 +697,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDgetinfo, sdsid, name, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDgetinfo );
 #endif
 
     return ret_value;
@@ -746,7 +742,7 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDreaddata );
+    TRACE_ON(PABLO_mask, ID_SDreaddata );
 #endif
     
     if((start == NULL) || (end == NULL) || (data == NULL))
@@ -841,7 +837,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF (  ID_SDreaddata, sdsid, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask,  ID_SDreaddata );
 #endif
 
     return ret_value;
@@ -880,7 +876,7 @@ SDnametoindex(int32 fid,  /* IN: file ID */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDnametoindex );
+    TRACE_ON(PABLO_mask, ID_SDnametoindex );
 #endif
 
     /* check that fid is valid */
@@ -918,7 +914,7 @@ done:
       }
     /* Normal cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDnametoindex, fid, name, HDF_File_ID ) ;
+    TRACE_OFF (PABLO_mask, ID_SDnametoindex);
 #endif
 
     return ret_value;    
@@ -964,7 +960,7 @@ SDgetrange(int32 sdsid, /* IN:  dataset ID */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDgetrange );
+    TRACE_ON(PABLO_mask, ID_SDgetrange );
 #endif
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
@@ -1025,7 +1021,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDgetrange, sdsid, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDgetrange);
 #endif
 
     return ret_value;
@@ -1107,7 +1103,7 @@ SDcreate(int32  fid,      /* IN: file ID */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDcreate );
+    TRACE_ON(PABLO_mask, ID_SDcreate );
 #endif
 
     /* check that fid is valid */
@@ -1287,7 +1283,7 @@ done:
       }
     /* Normal cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDcreate, sdsid, name, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDcreate);
 #endif
 
     return ret_value;
@@ -1331,7 +1327,7 @@ SDgetdimid(int32 sdsid,  /* IN: dataset ID */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDgetdimid );
+    TRACE_ON(PABLO_mask, ID_SDgetdimid );
 #endif
 
     /* get the handle */
@@ -1372,7 +1368,7 @@ done:
       }
     /* Normal cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDgetdimid, sdsid, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDgetdimid);
 #endif
 
     return ret_value;
@@ -1413,7 +1409,7 @@ SDsetdimname(int32  id,   /* IN: dataset ID */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDsetdimname );
+    TRACE_ON(PABLO_mask, ID_SDsetdimname );
 #endif
 
     /* get the handle */
@@ -1483,7 +1479,7 @@ done:
       }
     /* Normal cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDsetdimname, id, name, HDF_Dim_ID ) ;
+    TRACE_OFF (PABLO_mask, ID_SDsetdimname);
 #endif
 
     return ret_value;
@@ -1516,7 +1512,7 @@ SDendaccess(int32 id /* IN: dataset ID */)
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDendaccess );
+    TRACE_ON(PABLO_mask, ID_SDendaccess );
 #endif
 
     /* get the handle */
@@ -1576,7 +1572,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDendaccess, id, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDendaccess);
 #endif
 
     return ret_value;    
@@ -1722,7 +1718,7 @@ SDsetrange(int32 sdsid, /* IN: dataset ID */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDsetrange );
+    TRACE_ON(PABLO_mask, ID_SDsetrange );
 #endif
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
@@ -1773,7 +1769,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDsetrange, sdsid, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDsetrange);
 #endif
 
     return ret_value;    
@@ -1904,7 +1900,7 @@ SDsetattr(int32 id,    /* IN: object ID */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDsetattr );
+    TRACE_ON(PABLO_mask, ID_SDsetattr );
 #endif
 
     /* sanity check args */
@@ -1969,7 +1965,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDsetattr, id, name, HDF_Attribute_ID ) ;
+    TRACE_OFF (PABLO_mask, ID_SDsetattr);
 #endif
 
     return ret_value;        
@@ -2008,7 +2004,7 @@ SDattrinfo(int32  id,    /* IN:  object ID */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDattrinfo );
+    TRACE_ON(PABLO_mask, ID_SDattrinfo );
 #endif
 
     /* sanity check args */
@@ -2064,7 +2060,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDattrinfo, id, NULL, HDF_Attribute_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDattrinfo);
 #endif
 
     return ret_value;    
@@ -2101,7 +2097,7 @@ SDreadattr(int32 id,    /* IN:  object ID */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDreadattr );
+    TRACE_ON(PABLO_mask, ID_SDreadattr );
 #endif
 
     /* sanity check args */
@@ -2147,7 +2143,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDreadattr, id, NULL, HDF_Attribute_ID ) ;
+    TRACE_OFF (PABLO_mask, ID_SDreadattr);
 #endif
 
     return ret_value;    
@@ -2195,7 +2191,7 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDwritedata );
+    TRACE_ON(PABLO_mask, ID_SDwritedata );
 #endif
 
     if((start == NULL) || (end == NULL) || (data == NULL))
@@ -2333,7 +2329,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDwritedata, sdsid, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDwritedata);
 #endif
 
     return ret_value;    
@@ -2370,7 +2366,7 @@ SDsetdatastrs(int32 sdsid, /* IN: dataset ID */
 #endif
     
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDsetdatastrs );
+    TRACE_ON(PABLO_mask, ID_SDsetdatastrs );
 #endif
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
@@ -2445,7 +2441,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDsetdatastrs, sdsid, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDsetdatastrs);
 #endif
 
     return ret_value;    
@@ -2480,7 +2476,7 @@ SDsetcal(int32   sdsid,/* IN: dataset ID */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDsetcal );
+    TRACE_ON(PABLO_mask, ID_SDsetcal );
 #endif
     
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
@@ -2549,7 +2545,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDsetcal, sdsid, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDsetcal);
 #endif
 
     return ret_value;    
@@ -2581,7 +2577,7 @@ SDsetfillvalue(int32 sdsid, /* IN: dataset ID */
 #endif
     
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDsetfillvalue );
+    TRACE_ON(PABLO_mask, ID_SDsetfillvalue );
 #endif
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
@@ -2622,7 +2618,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDsetfillvalue, sdsid, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDsetfillvalue);
 #endif
 
     return ret_value;    
@@ -2656,7 +2652,7 @@ SDgetfillvalue(int32 sdsid, /* IN:  dataset ID */
 #endif
     
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDgetfillvalue );
+    TRACE_ON(PABLO_mask, ID_SDgetfillvalue );
 #endif
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
@@ -2696,7 +2692,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDgetfillvalue, sdsid, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDgetfillvalue);
 #endif
 
     return ret_value;    
@@ -2735,7 +2731,7 @@ SDgetdatastrs(int32 sdsid, /* IN:  dataset ID */
 #endif
     
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDgetdatastrs );
+    TRACE_ON(PABLO_mask, ID_SDgetdatastrs );
 #endif
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
@@ -2836,7 +2832,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDgetdatastrs, sdsid, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDgetdatastrs);
 #endif
 
     return ret_value;    
@@ -2872,7 +2868,7 @@ SDgetcal(int32    sdsid, /* IN:  dataset ID */
 #endif
     
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDgetcal );
+    TRACE_ON(PABLO_mask, ID_SDgetcal );
 #endif
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
@@ -2943,7 +2939,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDgetcal, sdsid, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDgetcal);
 #endif
 
     return ret_value;    
@@ -3125,7 +3121,7 @@ SDsetdimstrs(int32 id, /* IN: dimension ID */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDsetdimstrs );
+    TRACE_ON(PABLO_mask, ID_SDsetdimstrs );
 #endif
 
     /* get the handle */
@@ -3202,7 +3198,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDsetdimstrs , id, NULL, HDF_Dim_ID );
+    TRACE_OFF (PABLO_mask, ID_SDsetdimstrs);
 #endif
 
     return ret_value;    
@@ -3298,7 +3294,7 @@ SDsetdimscale(int32 id,    /* IN: dimension ID */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDsetdimscale );
+    TRACE_ON(PABLO_mask, ID_SDsetdimscale );
 #endif
 
     /* get the handle */
@@ -3362,7 +3358,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDsetdimscale, id, NULL, HDF_Dim_ID ) ;
+    TRACE_OFF (PABLO_mask, ID_SDsetdimscale);
 #endif
 
     return ret_value;    
@@ -3400,7 +3396,7 @@ SDgetdimscale(int32 id,   /* IN:  dimension ID */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDgetdimscale );
+    TRACE_ON(PABLO_mask, ID_SDgetdimscale );
 #endif
 
     /* get the handle */
@@ -3473,7 +3469,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDgetdimscale, id, NULL, HDF_Dim_ID ) ;
+    TRACE_OFF (PABLO_mask, ID_SDgetdimscale);
 #endif
 
     return ret_value;    
@@ -3514,7 +3510,7 @@ SDdiminfo(int32  id,    /* IN:  dimension ID */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDdiminfo );
+    TRACE_ON(PABLO_mask, ID_SDdiminfo );
 #endif
 
     handle = SDIhandle_from_id(id, DIMTYPE);
@@ -3583,7 +3579,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDdiminfo, id, name, HDF_Dim_ID ) ;
+    TRACE_OFF (PABLO_mask, ID_SDdiminfo);
 #endif
 
     return ret_value;    
@@ -3625,7 +3621,7 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
 #endif
     
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDgetdimstrs );
+    TRACE_ON(PABLO_mask, ID_SDgetdimstrs );
 #endif
 
     handle = SDIhandle_from_id(id, DIMTYPE);
@@ -3724,7 +3720,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDgetdimstrs, id, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDgetdimstrs);
 #endif
 
     return ret_value;    
@@ -3776,7 +3772,7 @@ SDsetexternalfile(int32 id,       /* IN: dataset ID */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDsetexternalfile );
+    TRACE_ON(PABLO_mask, ID_SDsetexternalfile );
 #endif
 
     if(NULL == filename || offset < 0)
@@ -3865,7 +3861,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDsetexternalfile, id, filename, HDF_File_ID );
+    TRACE_OFF (PABLO_mask, ID_SDsetexternalfile);
 #endif
 
     return ret_value;    
@@ -3924,7 +3920,7 @@ SDsetnbitdataset(int32 id,       /* IN: dataset ID */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDsetnbitdataset );
+    TRACE_ON(PABLO_mask, ID_SDsetnbitdataset );
 #endif
 
     if(start_bit < 0 || bit_len <= 0)
@@ -4013,7 +4009,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDsetnbitdataset, id, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDsetnbitdataset);
 #endif
 
     return ret_value;    
@@ -4053,7 +4049,7 @@ SDsetcompress(int32      id,    /* IN: dataset ID */
 #endif /* SDDEBUG */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDsetcompress );
+    TRACE_ON(PABLO_mask, ID_SDsetcompress );
 #endif
 
     if (type < 0 || type >= COMP_CODE_INVALID)
@@ -4169,7 +4165,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDsetcompress, id, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDsetcompress);
 #endif
 
     return ret_value;    
@@ -4202,7 +4198,7 @@ SDfindattr(int32 id,       /* IN: object ID */
     int32      ret_value = FAIL;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDfindattr );
+    TRACE_ON(PABLO_mask, ID_SDfindattr );
 #endif
 
     /* determine what type of ID we've been given */
@@ -4245,7 +4241,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDfindattr, id, NULL, HDF_Attribute_ID ) ;
+    TRACE_OFF (PABLO_mask, ID_SDfindattr);
 #endif
 
     return ret_value;        
@@ -4276,7 +4272,7 @@ SDidtoref(int32 id /* IN: dataset ID */)
 #endif
     
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDidtoref );
+    TRACE_ON(PABLO_mask, ID_SDidtoref );
 #endif
 
     handle = SDIhandle_from_id(id, SDSTYPE);
@@ -4309,7 +4305,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDidtoref, id, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDidtoref);
 #endif
 
     return ret_value;    
@@ -4341,7 +4337,7 @@ SDreftoindex(int32 fid, /* IN: file ID */
 #endif
     
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDreftoindex );
+    TRACE_ON(PABLO_mask, ID_SDreftoindex );
 #endif
 
     handle = SDIhandle_from_id(fid, CDFTYPE);
@@ -4377,7 +4373,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDreftoindex, fid, NULL, HDF_File_ID ) ;
+    TRACE_OFF (PABLO_mask, ID_SDreftoindex);
 #endif
 
     return ret_value;    
@@ -4408,7 +4404,7 @@ SDisrecord(int32 id /* IN: dataset ID */)
 #endif
     
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDisrecord );
+    TRACE_ON(PABLO_mask, ID_SDisrecord );
 #endif
 
     handle = SDIhandle_from_id(id, SDSTYPE);
@@ -4444,7 +4440,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-   HDF_TRACE_OFF ( ID_SDisrecord, id, NULL, HDF_SDS_ID) ;
+   TRACE_OFF (PABLO_mask, ID_SDisrecord);
 #endif
 
     return ret_value;    
@@ -4476,7 +4472,7 @@ SDiscoordvar(int32 id /* IN: dataset ID */)
 #endif
     
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDiscoordvar );
+    TRACE_ON(PABLO_mask, ID_SDiscoordvar );
 #endif
 
     handle = SDIhandle_from_id(id, SDSTYPE);
@@ -4536,7 +4532,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDiscoordvar, id, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDiscoordvar);
 #endif
 
     return ret_value;    
@@ -4602,7 +4598,7 @@ SDsetrag(int32 sdsid,
 #endif
     
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDsetrag );
+    TRACE_ON(PABLO_mask, ID_SDsetrag );
 #endif
 
     /* get the variable */
@@ -4660,7 +4656,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDsetrag, sdsid, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDsetrag);
 #endif
 
     return ret_value;    
@@ -4696,7 +4692,7 @@ SDsetaccesstype(int32 id,         /* IN: dataset ID */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDsetaccesstype );
+    TRACE_ON(PABLO_mask, ID_SDsetaccesstype );
 #endif
 
     switch (accesstype)
@@ -4745,7 +4741,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDsetaccesstype, id, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDsetaccesstype);
 #endif
 
     return ret_value;    
@@ -4779,7 +4775,7 @@ SDsetblocksize(int32 sdsid,      /* IN: dataset ID */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDsetblocksize );
+    TRACE_ON(PABLO_mask, ID_SDsetblocksize );
 #endif
 
     /* get the handle */
@@ -4809,7 +4805,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF (  ID_SDsetblocksize, sdsid, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask,  ID_SDsetblocksize);
 #endif
 
     return ret_value;    
@@ -4841,7 +4837,7 @@ SDsetfillmode(int32 sd_id,  /* IN: HDF file ID, returned from SDstart */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDsetfillmode );
+    TRACE_ON(PABLO_mask, ID_SDsetfillmode );
 #endif
 
     /* get the handle */
@@ -4863,7 +4859,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDsetfillmode, sd_id, NULL, HDF_File_ID ) ;
+    TRACE_OFF (PABLO_mask, ID_SDsetfillmode);
 #endif
 
     return ret_value;    
@@ -4895,7 +4891,7 @@ SDsetdimval_comp(int32 dimid,    /* IN: dimension ID, returned from SDgetdimid *
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDsetdimval_comp );
+    TRACE_ON(PABLO_mask, ID_SDsetdimval_comp );
 #endif
 
     /* get the handle */
@@ -4933,7 +4929,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDsetdimval_comp, dimid, NULL, HDF_Dim_ID ) ;
+    TRACE_OFF (PABLO_mask, ID_SDsetdimval_comp);
 #endif
 
     return ret_value;    
@@ -4963,7 +4959,7 @@ SDisdimval_bwcomp(int32 dimid /* IN: dimension ID, returned from SDgetdimid */)
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDisdimval_bwcomp );
+    TRACE_ON(PABLO_mask, ID_SDisdimval_bwcomp );
 #endif
 
     /* get the handle */
@@ -4997,7 +4993,7 @@ done:
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDisdimval_bwcomp, dimid, NULL, HDF_Dim_ID ) ;
+    TRACE_OFF (PABLO_mask, ID_SDisdimval_bwcomp);
 #endif
 
     return ret_value;    
@@ -5145,7 +5141,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
 #endif
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDsetchunk );
+    TRACE_ON(PABLO_mask, ID_SDsetchunk );
 #endif
 
     /* Check some args */
@@ -5467,7 +5463,7 @@ done:
         HDfree(chunk[0].pdims);
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDsetchunk, sdsid, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDsetchunk);
 #endif
 
     return ret_value;
@@ -5516,7 +5512,7 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
     intn      ret_value = SUCCEED; /* return value */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDgetchunkinfo );
+    TRACE_ON(PABLO_mask, ID_SDgetchunkinfo );
 #endif
 
     /* Check args */
@@ -5599,7 +5595,7 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDgetchunkinfo,  sdsid, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDgetchunkinfo);
 #endif
 
     return ret_value;
@@ -5652,7 +5648,7 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
     intn       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDwritechunk );
+    TRACE_ON(PABLO_mask, ID_SDwritechunk );
 #endif
 
     info_block.cdims = NULL;
@@ -5800,7 +5796,7 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
         HDfree(info_block.cdims);
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDwritechunk, sdsid, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDwritechunk);
 #endif
 
     return ret_value;
@@ -5852,7 +5848,7 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
     intn       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON( ID_SDreadchunk );
+    TRACE_ON(PABLO_mask, ID_SDreadchunk );
 #endif
 
     info_block.cdims = NULL;
@@ -5999,7 +5995,7 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
         HDfree(info_block.cdims);
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDreadchunk, sdsid, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDreadchunk);
 #endif
 
     return ret_value;
@@ -6066,7 +6062,7 @@ SDsetchunkcache(int32 sdsid,     /* IN: access aid to mess with */
     intn      ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_ON(ID_SDsetchunkcache );
+    TRACE_ON(PABLO_mask,ID_SDsetchunkcache );
 #endif
 
     /* Check args */
@@ -6124,7 +6120,7 @@ SDsetchunkcache(int32 sdsid,     /* IN: access aid to mess with */
     /* Normal cleanup */
 
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDsetchunkcache, sdsid, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDsetchunkcache);
 #endif
 
     return ret_value;
@@ -6162,7 +6158,7 @@ SDcheckempty(int32 sdsid,  /* IN: dataset ID */
 #ifndef ID_SDcheckempty
 #define ID_SDcheckempty DUMMY_HDF
 #endif
-    HDF_TRACE_ON(ID_SDcheckempty );
+    TRACE_ON(PABLO_mask,ID_SDcheckempty );
 #endif
     /* get the handle */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
@@ -6197,7 +6193,7 @@ done:
       }
     /* Normal cleanup */
 #ifdef HAVE_PABLO
-    HDF_TRACE_OFF ( ID_SDcheckempty, sdsid, NULL, HDF_SDS_ID) ;
+    TRACE_OFF (PABLO_mask, ID_SDcheckempty);
 #endif
 
     return ret_value;
