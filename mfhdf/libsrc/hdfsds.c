@@ -198,7 +198,9 @@ intn hdf_read_sds_dims(handle)
             }
                 
             /* OK, now we need to get the relevant dimension structure */
+#ifdef DEBUG
             printf("Found NDG at %d %d\n", ndgTag, ndgRef);
+#endif
             
             /* read the group into memory */
             if ((GroupID = DFdiread(handle->hdf_file, ndgTag, ndgRef)) < 0) 

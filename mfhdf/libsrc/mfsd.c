@@ -443,6 +443,11 @@ Void  *data;
 
     NC     * handle;
     int32    varid, status;
+#ifdef DEC_ALPHA
+    long     Start[MAX_NC_DIMS], End[MAX_NC_DIMS], Stride[MAX_NC_DIMS];
+#else 
+    int32    *Start, *End, *Stride;
+#endif
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDreaddata: I've been called\n");
@@ -464,11 +469,38 @@ Void  *data;
     /* oops, how do we know this ? */
     varid = sdsid & 0xffff;
 
-    /* call the readg routines */
+    /*
+     * In general, (long) == int32 
+     * In cases where it doesn't we need to convert
+     */
+#ifdef DEC_ALPHA
+
+    {
+        int i;
+        NC_var * var = SDIget_var(handle, sdsid);
+        if(var == NULL)
+            return FAIL;
+        
+        for(i = 0; i < var->assoc->count; i++) {
+            Start[i]  = (long) start[i];
+            End[i]    = (long) end[i];
+            if(stride) Stride[i] = (long) stride[i];
+        }
+    }
+
+#else
+
+    Start  = start;
+    End    = end;
+    Stride = Stride;
+
+#endif
+
+    /* call the readg routines if a stride is given */
     if(stride == NULL)
-        status = NCvario(handle, varid, start, end, (Void *)data);
+        status = NCvario(handle, varid, Start, End, (Void *)data);
     else
-        status = NCgenio(handle, varid, start, end, stride, NULL, (VOID *)data);
+        status = NCgenio(handle, varid, Start, End, Stride, NULL, (VOID *)data);
 
     if(status == -1)
         return FAIL;
@@ -1345,6 +1377,11 @@ Void  *data;
 
     NC     * handle;
     int32    varid, status;
+#ifdef DEC_ALPHA
+    long     Start[MAX_NC_DIMS], End[MAX_NC_DIMS], Stride[MAX_NC_DIMS];
+#else 
+    int32    *Start, *End, *Stride;
+#endif
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDwritedata: I've been called\n");
@@ -1366,11 +1403,38 @@ Void  *data;
     /* oops, how do we know this ? */
     varid = sdsid & 0xffff;
 
-    /* call the writeg routines */
+    /*
+     * In general, (long) == int32 
+     * In cases where it doesn't we need to convert
+     */
+#ifdef DEC_ALPHA
+
+    {
+        int i;
+        NC_var * var = SDIget_var(handle, sdsid);
+        if(var == NULL)
+            return FAIL;
+        
+        for(i = 0; i < var->assoc->count; i++) {
+            Start[i]  = (long) start[i];
+            End[i]    = (long) end[i];
+            if(stride) Stride[i] = (long) stride[i];
+        }
+    }
+
+#else
+
+    Start  = start;
+    End    = end;
+    Stride = Stride;
+
+#endif
+
+    /* call the writeg routines if a stride is given */
     if(stride == NULL)
-        status = NCvario(handle, varid, start, end, (Void *)data);
+        status = NCvario(handle, varid, Start, End, (Void *)data);
     else
-        status = NCgenio(handle, varid, start, end, stride, NULL, (VOID *)data);
+        status = NCgenio(handle, varid, Start, End, Stride, NULL, (VOID *)data);
 
     if(status == -1)
         return FAIL;
@@ -1919,7 +1983,8 @@ Void  *data;
 
     NC        * handle;
     NC_dim    * dim;
-    int32       varid, start[1], end[1], status;
+    int32       varid, status;
+    long        start[1], end[1];
 	
 #ifdef SDDEBUG
     fprintf(stderr, "SDsetdimscales: I've been called\n");
@@ -1981,7 +2046,8 @@ Void  *data;
 
     NC        * handle;
     NC_dim    * dim;
-    int32       varid, start[1], end[1], status;
+    int32       varid, status;
+    long        start[1], end[1];
 	
 #ifdef SDDEBUG
     fprintf(stderr, "SDgetdimscale: I've been called\n");
@@ -2056,10 +2122,8 @@ int32 *nt, *nattr, *size;
     if(dim == NULL)
         return FAIL;
 
-    if(name != NULL){
-        HDstrncpy(name, dim->name->values, dim->name->count);
-        name[dim->name->count] = '\0';
-    }
+    HDstrncpy(name, dim->name->values, dim->name->count);
+    name[dim->name->count] = '\0';
 
     *size  = dim->size;
 
