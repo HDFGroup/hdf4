@@ -1,3 +1,7 @@
+/*
+* CM5 parallel IO extension example program
+* $Id$
+*/
 #include <hdf.h>
 #include <netcdf.h>
 #include <mfhdf.h>
@@ -40,6 +44,7 @@ char **av;
 	int	fid, sdsid, dimid, offset;
 	int	index;
 	char	sdname[MAX_NC_NAME];
+	int	readin, wroteout;
 
 	/* process any command option */
 	if (ac == 3){
@@ -50,7 +55,8 @@ char **av;
 	printf("Using these names:\nHDF file:%s\nDataset: %s\nDatafile: %s\n",
 		filename, datasetname, datafile);
 	unlink(datafile);
-
+	printf("dateset is INT32(%d, %d, %d)\n", xsize, ysize, zsize);
+	readin = wroteout = 0;
 
 	/* creating a new CM SDS */
 	/* Define a new data set */
@@ -80,6 +86,7 @@ char **av;
 
 	/* Store the data */
 	SDwritedata(sdsid, begin, NULL, edges, &para_cosmo_cube);
+	wroteout += edges[0]*edges[1]*edges[2];
 
 	/* All done.  Close the HDF file. */
 	SDendaccess(sdsid);
@@ -102,6 +109,7 @@ char **av;
 
 	/* Read in the data */
 	SDreaddata(sdsid, begin, NULL, edges, &para_cosmo_cube2);
+	readin += edges[0]*edges[1]*edges[2];
 
 	/* update the cube */
 	with (Datashape)
@@ -109,10 +117,15 @@ char **av;
 
 	/* Replace the old data with new */
 	SDwritedata(sdsid, begin, NULL, edges, &para_cosmo_cube2);
+	wroteout += edges[0]*edges[1]*edges[2];
 
 	/* All done.  Close the HDF file. */
 	SDendaccess(sdsid);
 	SDend(fid);
+
+	/* Print result */
+	printf("INT32 wrote: %d, read: %d, total: %d = %d bytes\n",
+	    wroteout, readin, wroteout + readin, (wroteout + readin)*4);
 }
 
 /* Encounter some error.  Ask user if to continue? */
