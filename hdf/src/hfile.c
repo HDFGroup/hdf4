@@ -2765,7 +2765,7 @@ PRIVATE int HIget_file_slot(const char *path, char *FUNC)
 
     if (file_records[slot].path)
         HDfreespace(file_records[slot].path);
-    file_records[slot].path = (char *) HDstrdup(path);
+    file_records[slot].path = (char *) HDstrdup((char *) path);
     return file_records[slot].path ? slot : FAIL;
 
 } /* HIget_file_slot */
