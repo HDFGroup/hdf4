@@ -169,10 +169,14 @@ main(int ac, char **av)
                   }
                 else
                   {
-                      name = HDgettagname((uint16) vstag);
+                      name = HDgettagsname((uint16) vstag);
                       if (!name)
-                          name = "Unknown Tag";
-                      printf("  --:%d <%d/%d> %s\n", (int) t, (int) vstag, (int) vsid, name);
+                          printf("  --:%d <%d/%d> %s\n", (int) t, (int) vstag, (int) vsid, "Unknown Tag");
+                      else
+                        {
+                            printf("  --:%d <%d/%d> %s\n", (int) t, (int) vstag, (int) vsid, name);
+                            HDfree(name);
+                        } /* end else */
                   }
             }   /* while */
 

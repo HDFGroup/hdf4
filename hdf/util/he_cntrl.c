@@ -746,13 +746,16 @@ void
 infoDesc(int desc, int longout, int label)
 {
     char       *s;
-    const char *name;
+    char *name;
 
-    name = HDgettagname(he_desc[desc].tag);
+    name = HDgettagsname(he_desc[desc].tag);
     if (!name)
-        name = "Unknown Tag";
-
-    printf("\t%-30s: (Tag %d)", name, he_desc[desc].tag);
+        printf("\t%-30s: (Tag %d)", "Unknown Tag", he_desc[desc].tag);
+    else
+      {
+          printf("\t%-30s: (Tag %d)", name, he_desc[desc].tag);
+          HDfree(name);
+      } /* end else */
 
     if (longout)
         printf("\n\tRef: %d, Offset: %ld, Length: %ld (bytes)\n",

@@ -166,11 +166,16 @@ print_item(int32 fid, dd_t *desc_list, intn n)
                   {
                       while (!DFdiget(GroupID, &elmt.tag, &elmt.ref))
                         {
-                            name = (char *) HDgettagname(elmt.tag);
+                            name = (char *) HDgettagsname(elmt.tag);
                             if (!name)
-                                name = "Unknown Tag";
-                            printf("\t\t%-30s: (tag=%6d) ref=%d\n", name,
-                                   elmt.tag, elmt.ref);
+                                printf("\t\t%-30s: (tag=%6d) ref=%d\n", "Unknown Tag",
+                                       elmt.tag, elmt.ref);
+                            else
+                              {
+                                  printf("\t\t%-30s: (tag=%6d) ref=%d\n", name,
+                                         elmt.tag, elmt.ref);
+                                  HDfree(name);
+                              } /* end else */
                         }   /* end while */
                   }     /* end if */
                 else
@@ -207,11 +212,16 @@ print_item(int32 fid, dd_t *desc_list, intn n)
                                     {
                                         for (i = 0; i < ntagrefs; i++)
                                           {
-                                              name = (char *) HDgettagname((uint16) tag_arr[i]);
+                                              name = (char *) HDgettagsname((uint16) tag_arr[i]);
                                               if (!name)
-                                                  name = "Unknown Tag";
-                                              printf("\t\t%-30s: (tag=%6d) ref=%d\n",
-                                                     name, (int) tag_arr[i], (int) ref_arr[i]);
+                                                  printf("\t\t%-30s: (tag=%6d) ref=%d\n",
+                                                         "Unknown Tag", (int) tag_arr[i], (int) ref_arr[i]);
+                                              else
+                                                {
+                                                    printf("\t\t%-30s: (tag=%6d) ref=%d\n",
+                                                           name, (int) tag_arr[i], (int) ref_arr[i]);
+                                                    HDfree(name);
+                                                } /* end else */
                                           }     /* end for */
                                     }   /* end if */
                                   HDfree(tag_arr);
@@ -253,10 +263,14 @@ lprint(int32 fid, dd_t *desc_tmp, int num)
           /*
            ** Find and print text description of this tag
            */
-          name = (char *) HDgettagname(desc_tmp[j].tag);
+          name = (char *) HDgettagsname(desc_tmp[j].tag);
           if (!name)
-              name = "Unknown Tag";
-          printf("\n%-30s: (tag %d)\n", name, desc_tmp[j].tag);
+              printf("\n%-30s: (tag %d)\n", "Unknown Tag", desc_tmp[j].tag);
+          else
+            {
+                printf("\n%-30s: (tag %d)\n", name, desc_tmp[j].tag);
+                HDfree(name);
+            } /* end else */
 
           /*
            ** Print out reference number information
