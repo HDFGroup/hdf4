@@ -22,7 +22,7 @@
 7.  In previous releases, the Vdata interface couldn't define more than 36 
     fields even though VSFIELDMAX was defined as 64 in hdf.h. 
     The bug is fixed. Now the maximum number of fields is decided by
-    VSFIELSMAX. 
+    VSFIELDMAX. 
 8.  The Fortran function sfgdinfo now returns nattr correctly.
 9.  hdfrseq is moved out from the HDF release. It is now available on the NCSA
     ftp server in directory: /HDF/contrib/NCSA/hdfrseq/.
