@@ -31,8 +31,7 @@ DFdi;
 /* enumerated types of the varous annotation types */
 typedef enum 
 { 
-    AN_UNDEF = 0,      /* Undefined */
-    AN_DATA_LABEL,     /* Data label */
+    AN_DATA_LABEL = 0, /* Data label */
     AN_DATA_DESC,      /* Data description */
     AN_FILE_LABEL,     /* File label */
     AN_FILE_DESC       /* File description */

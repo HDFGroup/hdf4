@@ -2557,7 +2557,7 @@ tag2atype(uint16 atag)
       case DFTAG_DIL: atype = AN_DATA_LABEL; break;
       case DFTAG_DIA: atype = AN_DATA_DESC;  break;
           /* This will cause warnings on some compiliers */
-      default: atype = AN_UNDEF;
+      default: atype = -1;
       } /* switch */
     return atype;
 } /* tag2atype */
