@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.16  1993/04/14 21:39:29  georgev
-Had to add some VOIDP casts to some functions to make the compiler happy.
+Revision 1.17  1993/04/15 19:18:45  koziol
+Fixed bug introduced into the tbbt routines with the last bugfix (sigh)
 
+ * Revision 1.16  1993/04/14  21:39:29  georgev
+ * Had to add some VOIDP casts to some functions to make the compiler happy.
+ *
  * Revision 1.15  1993/04/13  16:50:30  georgev
  * Casting problems on SGI's for two calls to the new balanced tree stuff.
  *
@@ -2106,7 +2109,7 @@ int32 vgid;
     int32     key;
     char    * FUNC = "Vdelete";
 
-    if(vgid < -1) {
+    if(vgid < 0) {
         HERROR(DFE_ARGS);
         return(FAIL);
     } 

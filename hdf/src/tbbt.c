@@ -583,7 +583,7 @@ VOIDP tbbtrem( root, node, kp )
     }
     Free( leaf );
     balance( root, par, side, -1 );
-	((TBBT_TREE *)*root)->count--;
+	((TBBT_TREE *)root)->count--;
     return( data );
 }
 

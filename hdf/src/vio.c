@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.11  1993/04/14 23:09:59  koziol
-Added counts to the tbbt trees and fixed a bug in VSdelete()
+Revision 1.12  1993/04/15 19:18:48  koziol
+Fixed bug introduced into the tbbt routines with the last bugfix (sigh)
 
+ * Revision 1.11  1993/04/14  23:09:59  koziol
+ * Added counts to the tbbt trees and fixed a bug in VSdelete()
+ *
  * Revision 1.10  1993/04/14  21:39:31  georgev
  * Had to add some VOIDP casts to some functions to make the compiler happy.
  *
@@ -1184,8 +1187,6 @@ int32 vsid;
     tmp = tbbtrem((TBBT_NODE **)vf->vstree, (TBBT_NODE *)t, NULL);
     if(tmp) 
         HDfreespace((VOIDP)tmp);
-
-printf("deleting Vdata %d\n", vsid);
 
     Hdeldd(f, DFTAG_VS, (uint16) vsid);
     Hdeldd(f, DFTAG_VH, (uint16) vsid);
