@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.27  1993/10/06 20:27:45  koziol
-More compression fixed, and folded Doug's suggested change into VSappendable.
+Revision 1.27.2.1  1993/10/10 22:10:22  koziol
+Moved Tag descriptions into a header file.  Updated compression routines.
 
+ * Revision 1.27  1993/10/06  20:27:45  koziol
+ * More compression fixed, and folded Doug's suggested change into VSappendable.
+ *
  * Revision 1.26  1993/10/04  20:02:56  koziol
  * Updated error reporting in H-Layer routines, and added more error codes and
  * compression stuff.
@@ -580,7 +583,7 @@ int32 Hstartread(file_id, tag, ref)
        and run the START READ function on this element */
     if (SPECIALTAG(access_rec->block->ddlist[access_rec->idx].tag)) {
        access_rec->special_func = HIget_function_table(access_rec, FUNC);
-       if (!access_rec->special_func) {
+       if(access_rec->special_func==NULL) {
            access_rec->used = FALSE;
            HRETURN_ERROR(DFE_INTERNAL,FAIL);
        }
@@ -1416,6 +1419,77 @@ int32 Hwrite(access_id, length, data)
 
     return length;
 }   /* end Hwrite() */
+
+/*--------------------------------------------------------------------------
+
+ NAME
+       HDgetc -- read a byte from data element
+ USAGE
+       intn HDgetc(access_id)
+       int access_id;          IN: id of READ access element
+
+ RETURNS
+       returns byte read in from data if successful and FAIL
+       (-1) otherwise
+
+ DESCRIPTION
+        Calls Hread() to read a single byte and reports errors.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+intn HDgetc(int32 access_id)
+#else
+intn HDgetc(access_id)
+    int32 access_id;           /* access id */
+#endif
+{
+    char *FUNC="HDgetc";     /* for HERROR */
+    uint8 c;                /* character read in */
+
+    if(Hread(access_id,1,&c)==FAIL)
+        HRETURN_ERROR(DFE_READERROR,FAIL);
+    return((intn)c);
+}   /* HDgetc() */
+
+/*--------------------------------------------------------------------------
+
+ NAME
+       HDputc -- write a byte to data element
+ USAGE
+       intn HDputc(c,access_id)
+       uint8 c;                 IN: byte to write out
+       int32 access_id;         IN: id of WRITE access element
+
+ RETURNS
+       returns byte written out to data if successful and FAIL
+       (-1) otherwise
+
+ DESCRIPTION
+        Calls Hwrite() to write a single byte and reports errors.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+intn HDputc(uint8 c,int32 access_id)
+#else
+intn HDputc(c,access_id)
+    uint8 c;                /* byte to write out */
+    int32 access_id;        /* access id */
+#endif
+{
+    char *FUNC="HDputc";    /* for HERROR */
+
+    if(Hwrite(access_id,1,&c)==FAIL)
+        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+    return((intn)c);
+}   /* HDputc() */
 
 /*--------------------------------------------------------------------------
 
@@ -3520,3 +3594,4 @@ mlseek(hdf_file_t rn, int32 n, intn m)
 }
 
 #endif /* MAC */
+
