@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/06/30 20:43:55  mlivin
-Initial revision
+Revision 1.2  1992/07/01 20:14:53  mlivin
+cleaned up some little things
 
+ * Revision 1.1  1992/06/30  20:43:55  mlivin
+ * Initial revision
+ *
  * Revision 3.6  1991/10/22  17:56:10  dilg
  * 5
  * HDF3.1r5
@@ -51,7 +54,7 @@ Initial revision
 
 #include "hdf.h"
 
-int32 xdim,ydim;
+int32 xdim, ydim;
 
 #ifdef PROTOTYPE
 int main(int argc, char *argv[]);
@@ -76,18 +79,19 @@ main(argc,argv)
     uint16 compress = (uint16) 0;
 
     if (argc < 5) { 
-        printf("%s,  version: 1.0   date: December 1, 1988\n",argv[0]);
+        printf("%s,  version: 1.1   date: July 1, 1992\n", argv[0]);
     printf("   This utility converts one or more raw raster-8 images to\n");
     printf("   HDF RIS8 format and writes them to an HDF file.\n\n");
-        printf("Usage:");
-        printf("  %s xdim ydim outfile [-p palfile] {[-r],[-c],[-i]} imagefile\n", argv[0]);
-        printf("\t\t\t\t ... [ -p palfile ]{[-r],[-c],[-i]} imagefile ..");
-        printf("  -r: Store without compression (default)");
-        printf("  -c: Store using RLE compression");
-        printf("  -i: Store using IMCOMP compression");
-        printf("      can take any number of images and palettes");
-        printf("      compression, palette, apply to all subsequent images\n");
-        printf("      all images are considered to be the same dimensions");
+        printf("Usage:\n");
+        printf("  %s xdim ydim outfile [-p palfile] ", argv[0]);
+        printf("{[-r],[-c],[-i]} imagefile\n");
+        printf("\t\t\t\t... [-p palfile] {[-r],[-c],[-i]} imagefile ...\n");
+        printf("  -r: Store without compression (default)\n");
+        printf("  -c: Store using RLE compression\n");
+        printf("  -i: Store using IMCOMP compression\n\n");
+        printf("* r8tohdf can take any number of images and palettes\n");
+        printf("* Compression, palette, apply to all subsequent images.\n");
+        printf("* All images are assumed to be the same dimensions.\n\n");
         exit(1);
     }
 
@@ -95,7 +99,7 @@ main(argc,argv)
     ydim = atoi(argv[2]);
 
     if (xdim < 1 || ydim < 1) {
-        printf("Must specify xdim and ydim");
+        printf("Must specify xdim and ydim\n");
         exit(1);
     }
 
@@ -205,23 +209,23 @@ uint16 compress;
 
 #ifdef PC
     if ((fp = fopen(imfile, "rb")) == NULL) {
-        printf("Error opening image file");
+        printf("Error opening image file\n");
         exit(1);
     }
 #else
     if ((fp = fopen(imfile, "r")) == NULL) {
-        printf("Error opening image file");
+        printf("Error opening image file\n");
         exit(1);
     }
 #endif
 
     if ((space = (char *)HDgetspace((uint32) xdim * ydim)) == NULL) {
-        printf("Not enough memory to convert image");
+        printf("Not enough memory to convert image\n");
         exit(1);
     }
 
     if (fread(space, (int) xdim, (int) ydim, fp) <= 0) {
-        printf("Cannot read image file");
+        printf("Cannot read image file\n");
         fclose(fp);
         exit(1);
     }

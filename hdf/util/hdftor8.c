@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/06/30 20:46:56  mlivin
-Initial revision
+Revision 1.2  1992/07/01 20:14:53  mlivin
+cleaned up some little things
 
+ * Revision 1.1  1992/06/30  20:46:56  mlivin
+ * Initial revision
+ *
  * Revision 3.2  1991/10/22  17:56:10  dilg
  * 5
  * HDF3.1r5
@@ -48,7 +51,6 @@ Initial revision
 #include "hdf.h"
 #include "herr.h"
 
-#define FILENAME_MAX	256	/* maximum file name length, too long? */
 #define PALETTE_SIZE	768	/* size of palette array */
 #define COLOR_SIZE	256	/* size of palette color array */
                                 /* COLOR_SIZE == PALETTE_SIZE / 3 */
@@ -69,13 +71,16 @@ int interactive;		/* interactive option */
 int verbose;			/* verbose option */
 
 #ifdef PROTOTYPE
-void main(int, char **);
-void putRaster(char *, int32, int32, int, char *);
-void putPalette(char *, int, char *);
-void convert(char *, int, int32, int32, char *);
-void fillStr(char **, char **, char *, char);
-char *newSpace(int32);
-char *getTemplate(char *, int);
+void main(int argc, char *argv[]);
+void putRaster(char *template, int32 xdim, int32 ydim, int imageNumber,
+               char *image);
+void putPalette(char *template, int imageNumber, char *palette);
+void convert(char *template, int imageNumber, int32 xdim, int32 ydim,
+	     char *stringOut);
+void fillStr(char **template, char **stringOut, char *string,
+             char specialChar);
+char *newSpace(int32 size);
+char *getTemplate(char *type, int imageNumber);
 #else
 void main();
 void putRaster();
@@ -100,22 +105,22 @@ void main(argc, argv)
     char *rasterTemplate = NULL, *paletteTemplate = NULL;
 
     if (argc < 2) {
-        printf("%s,  version: 1.0   date: December 1, 1988\n",argv[0]);
-    printf("\tThis utility extracts the raster-8 images and or palettes\n");
-    printf("\tfrom an HDF file and stores them in two sets of files that\n");
-    printf("\tcontain only images and palettes, respectively.\n\n");
-        puts("Usage:");
-        puts("hdftor8 hdf_file [-i] [-v] [-r image_file] [-p palette_file]");
-        puts("\t-i: interactive (specify filenames interactively)");
-        puts("\t-v: verbose (provide descriptive messages)");
-        puts("\tImages and palettes are placed in the specified files");
-        puts("\tThe names of these files may contain special characters which");
-        puts("\t\twill be replaced by numbers:");
-        puts("\t #\treplace with image or palette number");
-        puts("\t @\treplace with x dim of image");
-        puts("\t %\treplace with y dim of image");
-        puts("\tIf not specified, image filename defaults to img#-@.%");
-        puts("\tIf not specified, palette filename defaults to pal.#");
+        printf("%s,  version: 1.1   date: July 1, 1992\n", argv[0]);
+        printf("\tThis utility extracts all raster-8 images and/or\n");
+        printf("\tpalettes from an HDF file and stores them in two sets of\n");
+        printf("\tfiles containing only images and palettes, respectively.\n");
+        printf("Usage:\n");
+        printf("hdftor8 hdf_file [-i] [-v] [-r image_file] [-p pal_file]\n");
+        printf("\t-i: interactive (specify filenames interactively)\n");
+        printf("\t-v: verbose (provide descriptive messages)\n");
+        printf("\tImages and palettes are placed in the specified files\n");
+        printf("\tThe names of these files may contain special characters\n");
+        printf("\t\twhich will be replaced by numbers:\n");
+        printf("\t #    replace with image or palette number\n");
+        printf("\t @    replace with x dim of image\n");
+        printf("\t %%    replace with y dim of image\n");
+        printf("\tIf not specified, image filename defaults to img#-@.%%\n");
+        printf("\tIf not specified, palette filename defaults to pal.#\n\n");
         exit(1);
     }
 
@@ -169,7 +174,7 @@ void main(argc, argv)
 
     err_val = HEvalue(1);
     if ((err_val != DFE_NOMATCH) && (err_val != DFE_NONE)) {
-        HEprint(stderr, 0);
+        if (verbose) HEprint(stderr, 0);
         exit(1);
     }
 }
@@ -197,7 +202,7 @@ void putRaster(template, xdim, ydim, imageNumber, image)
 #endif /* PROTOTYPE */
 {
     FILE *fd;
-    char fileName[FILENAME_MAX];
+    char fileName[DF_MAXFNLEN];
 
 
     if (!template)                /* can assume interactive (see main) */
@@ -225,7 +230,7 @@ void putRaster(template, xdim, ydim, imageNumber, image)
     }
     if (fclose(fd)) {
         puts("Unable to close file. Exiting...");
-        exit(1);
+         exit(1);
     }
 }
 
@@ -249,7 +254,7 @@ void putPalette(template, imageNumber, palette)
 {
     int i;
     FILE *fd;
-    char fileName[FILENAME_MAX], reds[COLOR_SIZE];
+    char fileName[DF_MAXFNLEN], reds[COLOR_SIZE];
     char greens[COLOR_SIZE], blues[COLOR_SIZE];
 
     if (!template)		/* can assume interactive (see main) */
@@ -438,7 +443,7 @@ char *getTemplate(type, imageNumber)
     char *type;
 #endif /* PROTOTYPE */
 {
-    static char template[FILENAME_MAX];
+    static char template[DF_MAXFNLEN];
 
     printf("This is %s %d.\nWhat template would you like?\n",
            type, imageNumber);
