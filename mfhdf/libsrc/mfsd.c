@@ -215,10 +215,10 @@ int32 id;
 
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-int32 SDstart(char *name, int32 HDFmode)
+int32 SDstart(const char *name, int32 HDFmode)
 #else
 int32 SDstart(name, HDFmode)
-     char *name;
+     const char *name;
      int32 HDFmode;
 #endif 
 {

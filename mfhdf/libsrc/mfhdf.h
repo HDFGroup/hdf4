@@ -33,7 +33,7 @@ extern "C" {
 #endif
 
 extern int32 SDstart
-    PROTO((char *name, int32 access));
+    PROTO((const char *name, int32 access));
 
 extern intn SDend
     PROTO((int32 fid));
