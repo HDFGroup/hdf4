@@ -1,5 +1,6 @@
 * text=auto !eol
 /DevStu.zip -text
+/Win32nof.zip -text svneol=unset#application/octet-stream
 hdf/jpeg/jpeglib.project -text
 hdf/jpeg/testimg.gif -text
 hdf/jpeg/testimg.jpg -text
