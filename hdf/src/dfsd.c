@@ -2389,7 +2389,7 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
             p = buf;
 
             /* allocate data luf space */
-            sdg->dataluf[luf] = HDgetspace((uint32) HDstrlen((char*)p)+1);
+            sdg->dataluf[luf] = (char *)HDgetspace((uint32) HDstrlen((char*)p)+1);
 
             if (sdg->dataluf[luf] == NULL) {
                 HDfreespace((VOIDP)buf);
@@ -2411,7 +2411,7 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
             /* extract dimension lufs */
             for (i = 0; i < sdg->rank; i++)
               {
-                sdg->dimluf[luf][i] =
+                sdg->dimluf[luf][i] =(char *)
                     HDgetspace((uint32) HDstrlen((char*)p) + 1);
                 if (sdg->dimluf[luf][i] == NULL) {
                     HDfreespace((VOIDP)buf);
@@ -2517,7 +2517,7 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
             if (length == FAIL) 
               return FAIL;
             
-            sdg->coordsys = HDgetspace((uint32) length);
+            sdg->coordsys = (char *)HDgetspace((uint32) length);
             if (sdg->coordsys == NULL) 
               return FAIL;
             
@@ -3262,18 +3262,25 @@ int32 DFSDIopen(filename, acc_mode)
     if (Sfile_id!=DF_NOFILE)      /* in the middle of a partial write */
         HRETURN_ERROR(DFE_ALROPEN, FAIL); 
 
-    /* Check if filename buffer has been allocated */
+    /* if last filename buffer has not been allocated 
+     *    allocate buffer for "Lastfile" and open file
+     * else if same file as last time 
+     *    use reopen - more efficient
+     *  else
+     *    open file for first time 
+     */
     if (Lastfile == NULL)
       {
         Lastfile = (char *)HDgetspace((DF_MAXFNLEN +1) * sizeof(char));
         if (Lastfile == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        /* open file */
+        file_id = Hopen(filename, acc_mode, (int16) 0);
+        if (file_id == FAIL)
+            return FAIL;
       }
-
-    /* use reopen if same file as last time - more efficient */
-    if ((HDstrcmp(Lastfile,filename)) || (acc_mode == DFACC_CREATE)) 
-      {
-        /* open a new file, delete nsdg table and reset lastnsdg  */
+    else if ((HDstrcmp(Lastfile,filename)) || (acc_mode == DFACC_CREATE)) 
+      { /* open a new file, delete nsdg table and reset lastnsdg  */   
         if (nsdghdr != NULL) 	
           {
             if (nsdghdr->nsdg_t != NULL) 	
