@@ -19,14 +19,18 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+# This version has been modified from the original configure script
 # Please report any problems running this configure script to
-# configure@cygnus.com
-# Please do not send reports about other problems to this address.  See
-# gdb/README, gas/README, etc., for info on where and how to report
-# problems about particular tools.
+# hdfhelp@ncsa.uiuc.edu
+#
+# OLD: Please report any problems running this configure script to
+#      configure@cygnus.com
+#      Please do not send reports about other problems to this address.  See
+#      gdb/README, gas/README, etc., for info on where and how to report
+#      problems about particular tools.
 
-# This file was written by K. Richard Pixley.
-
+# The orginal file was written by K. Richard Pixley.
+# This file has been modified by HDF group
 #
 # Shell script to create proper links to machine-dependent files in
 # preparation for compilation.
@@ -720,7 +724,9 @@ for subdir in . ${subdirs} ; do
                 fi
 
                 if [ ! -r ${srcdir}/${file} ] ; then
-                        echo '***' "${progname}: cannot create a link \"${link}\"," 1>&2
+                  #                  echo '***' "${progname}: cannot create a link \"${link}\"," 1>&2
+                  # Changed to copy instead of linking. -GV(5/10/96)
+                        echo '***' "${progname}: cannot copy file \"${link}\"," 1>&2                  
                         echo '***' "since the file \"${srcdir}/${file}\" does not exist." 1>&2
                         exit 1
                 fi
@@ -741,11 +747,15 @@ for subdir in . ${subdirs} ; do
 			${hard_link} ${THISDIR}/${file} ${link}
 		fi
                 if [ ! -r ${link} ] ; then
-                        echo '***' "${progname}: unable to link \"${link}\" to \"${srcdir}/${file}\"." 1>&2
+                  #                  echo '***' "${progname}: unable to link \"${link}\" to \"${srcdir}/${file}\"." 1>&2
+                  # Changed to copy instead of linking. -GV(5/10/96)
+                  echo '***' "${progname}: unable to copy  \"${srcdir}/${file}\" to  \"${link}\"." 1>&2
                         exit 1
                 fi
 
-                echo "Linked \"${link}\" to \"${srcdir}/${file}\"."
+# Changed to copy instead of Linking -GV(5/10/96)
+                echo "Copied \"${srcdir}/${file}\" to \"${link}\" ."
+#                echo "Linked \"${link}\" to \"${srcdir}/${file}\"."                                
         done
 
         # Create a .gdbinit file which runs the one in srcdir

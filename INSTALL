@@ -177,10 +177,10 @@ or
 
                 mfhdf/CUSTOMIZE(not used)
                 mfhdf/configure(autoconf - not used)
-                mfhdf/libsrc/config/netcdf-aix.h,...  -> linked to netcdf.h
-                mfhdf/fortran/config/ftest-aix.f,...  -> linked to ftest.f
-                mfhdf/fortran/config/jackets-aix.c,.. -> linked to jackets.c
-                mfhdf/fortran/config/netcdf-aix.inc,..-> linked to netcdf.inc
+                mfhdf/libsrc/config/netcdf-aix.h,...  -> copied to netcdf.h
+                mfhdf/fortran/config/ftest-aix.f,...  -> copied to ftest.f
+                mfhdf/fortran/config/jackets-aix.c,.. -> copied to jackets.c
+                mfhdf/fortran/config/netcdf-aix.inc,..-> copied to netcdf.inc
 
                 hdf/Makefile.in
                 hdf/src/Makefile.in
@@ -193,12 +193,12 @@ or
                 hdf/jpeg/Makefile.in
                 hdf/jpeg/configure.gnu(autoconf - not used)
                 hdf/jpeg/config/mh-hpux, mh-sun,... (host makefile fragments)
-                hdf/jpeg/config/jhpux.h, jsun.h,...   -> linked to jconfig.h
+                hdf/jpeg/config/jhpux.h, jsun.h,...   -> copied to jconfig.h
 
                 hdf/fmpool/configure, configure.in config.guess, config.sub,
                            Makefile.in (all cygnus)
                 hdf/fmpool/config/mh-hpux, mh-sun,...(host makefile fragments)
-                hdf/fmpool/config/fmpsolaris.h,...    -> linked to fmpconf.h
+                hdf/fmpool/config/fmpsolaris.h,...    -> copied to fmpconf.h
 
     2.4.3 Changing default values(CC,CFLAGS,..) and Setting Options
     ---------------------------------------------------------------
