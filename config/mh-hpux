@@ -177,6 +177,6 @@ FORTC		=
 # string.h time.h signal.h unistd.h
 PORT_HEADERS	= 
 PORT_SUBDIRS    =
-LIBOBJS		= uddummy.o 
+LIBOBJS		= $(TOP_SRCDIR)/mfhdf/port/uddummy.o 
 
 
