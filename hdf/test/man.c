@@ -648,7 +648,7 @@ test_man()
           RESULT("DFSDadddata");
 
           /* write out annotations for 2 out of every 3 SDS */
-          if ((j % 3) != 0)
+          if ((j % 2) != 0)
             {   
                 refnum = DFSDlastref(); /* get ref of SDS */
 
@@ -723,7 +723,7 @@ test_man()
           refnum = DFSDlastref(); /* now get ref of SDS */
 
           /* Check data set labels/descriptions of SDS */
-          if ((j % 3) != 0)     /* read in annotations for 2 out of every 3 */
+          if ((j % 2) != 0)     /* read in annotations for 2 out of every 3 */
             {
                 if (check_lab_desc(TESTFILE, DFTAG_NDG, refnum, labsds, descsds) == FAIL)
                     return; /* end of test */
