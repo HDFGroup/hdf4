@@ -63,7 +63,7 @@
 /* CONSTANT DEFINITIONS                                                      */
 /*****************************************************************************/
 /* Generally Big-Endian machines */
-#if !defined(VMS) && !defined(INTEL86) && !defined(MIPSEL) && !defined(DEC_ALPHA) && !defined(I860) && !defined(SUN386) && !defined(IA64) && !defined(__x86_64__)
+#if !defined(VMS) && !defined(INTEL86) && !defined(MIPSEL) && !defined(DEC_ALPHA) && !defined(I860) && !defined(SUN386) && !defined(__ia64) && !defined(__x86_64__)
 #   if !defined(UNICOS)
 #       define UI8_IN     DFKnb1b   /* Unsigned Integer, 8 bits */
 #       define UI8_OUT    DFKnb1b

@@ -1324,16 +1324,17 @@ typedef long              hdf_pint_t;   /* an integer the same size as a pointer
 
 #endif /*Linux 64 */
 
-#ifndef GOT_MACHINE
+/*#ifndef GOT_MACHINE
 No machine type has been defined.  Your Makefile needs to have someing like
 -DSUN or -DUNICOS in order for the HDF internal structures to be defined
 correctly.
 #endif
+*/
 
 /*-----------------------------------------------------*/
 
 /* IA64 running Linux */
-#if defined IA64
+#if defined __ia64
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
