@@ -188,7 +188,7 @@ C
       integer vfents
       integer vffdatt
       integer vffloc
-      integer vfgattr
+      integer vfgnatt
       integer vfgcatt
       integer vfgcls
       integer vfgid
@@ -203,9 +203,9 @@ C
       integer vfisvg
       integer vfisvs
       integer vflone
-      integer vfnattrs
+      integer vfnatts
       integer vfntr
-      integer vfsatt
+      integer vfsnatt
       integer vfscatt
       integer vfscls
       integer vfsnam
@@ -231,9 +231,9 @@ C
       integer vsffdef
       integer vsffdat
       integer vsffidx
-      integer vsffnat
+      integer vsffnas
       integer vsffnd
-      integer vsfgat
+      integer vsfgnat
       integer vsfgcat
       integer vsfgcls
       integer vsfgfld
@@ -243,10 +243,10 @@ C
       integer vsfinq
       integer vsfisat
       integer vsflone
-      integer vsfnat
+      integer vsfnats
       integer vsfndc
       integer vsfread
-      integer vsfsat
+      integer vsfsnat
       integer vsfscat
       integer vsfscls
       integer vsfseek
