@@ -660,6 +660,10 @@ for subdir in . ${subdirs} ; do
         if [ -r ${subdir}/config.status ] ; then
                 mv -f ${subdir}/config.status ${subdir}/config.back
         fi
+#
+#  Added this variable to make symlinks easier when linking
+# to files not in the same directory -GV
+        THISDIR=${PWD=`pwd`}
         while [ -n "${files}" ] ; do
                 # set file to car of files, files to cdr of files
                 set ${files}; file=$1; shift; files=$*
@@ -673,13 +677,18 @@ for subdir in . ${subdirs} ; do
 
                 ${remove} -f ${link}
 		# Make a symlink if possible, otherwise try a hard link
-		if ${symbolic_link} ${srcdir}/${file} ${link} >/dev/null 2>&1 ; then
+#
+#  Used variable THISDIR to make symlinks easier when linking
+#  to files not in the same directory -GV
+#		if ${symbolic_link} ${srcdir}/${file} ${link} >/dev/null 2>&1 ; then
+		if ${symbolic_link} ${THISDIR}/${file} ${link} >/dev/null 2>&1 ; then
 			true
 		else
 			# We need to re-remove the file because Lynx leaves a 
 			# very strange directory there when it fails an NFS symlink.
 			${remove} -r -f ${link}
-			${hard_link} ${srcdir}/${file} ${link}
+#			${hard_link} ${srcdir}/${file} ${link}
+			${hard_link} ${THISDIR}/${file} ${link}
 		fi
                 if [ ! -r ${link} ] ; then
                         echo '***' "${progname}: unable to link \"${link}\" to \"${srcdir}/${file}\"." 1>&2
@@ -980,7 +989,7 @@ if [ -z "${norecursion}" -a -n "${configdirs}" ] ; then
 ##
 ## Changed the way this is handled the default case is to use
 ## the top level configure found originaly and not the one found in
-## parent directory
+## parent directory -GV
 ##                              *)      recprog=../${progname} ;;
                                 *)      recprog=${POPDIR}/${progname} ;;
                                 esac

@@ -118,25 +118,45 @@ HDF_FLAGS       = \
         HDFINC="$(HDFINC)" \
         HDFLIB="$(HDFLIB)" 
 
+
+NETCDF_FLAGS       = \
+        CC="$(CC) $(CFLAGS)" \
+        CFLAGS="$(CFLAGS) -I$(HDFINC)" \
+        ACDEFS="$(ACDEFS)" \
+        FC="$(FC)" \
+        FFLAGS="$(FFLAGS)" \
+        RANLIB="$(RANLIB)" \
+        AR="$(AR)" \
+        ARFLAGS="$(ARFLAGS)" \
+        RM="$(RM)" \
+        RMFLAGS="$(RMFLAGS)" \
+        MACHINE="$(MACHINE)" \
+        HDFINC="$(HDFINC)" \
+        HDFLIB="$(HDFLIB)" 
+
 #
 #General rules
 #
 
 all:	
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="$(SUBDIRS)" subd
+          SUBDIRS="$(HDFDIR)" subd
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(NETCDFDIR)" subdn
 
 HDF:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="all" \
           SUBDIRS="$(HDFDIR)" subd
 
 NETCDF:
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="all" \
-          SUBDIRS="$(NETCDFDIR)" subd
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG="all" \
+          SUBDIRS="$(NETCDFDIR)" subdn
 
 test:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="$(SUBDIRS)" subd
+          SUBDIRS="$(HDFDIR)" subd
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(NETCDFDIR)" subdn
 
 hdf-allnofortran: 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="allnofortran" \
@@ -179,7 +199,9 @@ netcdfclean:
 
 clean:		
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="$(SUBDIRS)" subd
+          SUBDIRS="$(HDFDIR)" subd
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(NETCDFDIR)" subdn
 
 hdfdistclean:		
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="distclean" \
@@ -191,14 +213,22 @@ netcdfdistclean:
 
 distclean:	
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="$(SUBDIRS)" subd
-	-rm -f config.status Makefile
+          SUBDIRS="$(HDFDIR)" subd
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(NETCDFDIR)" subdn
+	-rm -f config.status Makefile mfhdf/CUSTOMIZE
 
 # target for recursive directory make
 subd:
 	@for dir in $(SUBDIRS); do \
           (cd $$dir; echo Making \`$(TARG)\' in `pwd`; \
               $(MAKE) $(MFLAGS) $(HDF_FLAGS) $(TARG)); \
+	done
+
+subdn:
+	@for dir in $(SUBDIRS); do \
+          (cd $$dir; echo Making \`$(TARG)\' in `pwd`; \
+              $(MAKE) $(MFLAGS) $(NETCDF_FLAGS) $(TARG)); \
 	done
 
 # For making distribution

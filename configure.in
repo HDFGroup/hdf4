@@ -102,6 +102,34 @@ esac
 
 # per-target:
 
+# get proper CUSTOMIZE file for 'mfhdf' side
+files=
+links=mfhdf/CUSTOMIZE
+if [ -d ${srcdir}/config ]; then
+case "${host}" in
+  alpha-dec-osf*)         files=config/custom_alpha ;;
+  mips*-dec-ultrix*)      files=config/custom_dec ;;
+  mips*-sgi-irix6*)       files=config/custom_irix6 ;;
+  mips*-sgi-irix5*)       files=config/custom_irix5 ;;
+  mips*-sgi-irix4*)       files=config/custom_irix4 ;;
+  i[345]86-*-linux*)      files=config/custom_linux ;;
+  i[345]86-*-freebsd*)    files=config/custom_fbsd ;;
+  *-ibm-aix*)             files=config/custom_aix ;;
+  *-*-solaris2*)          files=config/custom_solaris ;;
+  *-sun-*)		  files=config/custom_sun ;;
+  *-hp-hpux*)             files=config/custom_hpux ;;
+  *-convex-bsd*)          files=config/custom_convex ;;
+  *-cray-unicos*)         files=config/custom_unicos ;;
+esac
+fi
+
+# make sure host specific custom_xxx is there
+if [ ! -f ${srcdir}/${files} ]; then
+    echo '***' "We are missing host specific customize file ${host_makefile_frag}" 1>&2
+    echo '***' "Please read the installation docs" 1>&2
+    exit 1
+fi
+
 
 # post-target:
 
