@@ -2168,6 +2168,7 @@ DESCRIPTION
 int32
 Hlength(int32 file_id, uint16 tag, uint16 ref)
 {
+#ifdef FASTER_BUT_DOESNT_WORK
 	CONSTR(FUNC, "Hlength");	/* for HERROR */
 	filerec_t  *file_rec;		/* file record */
 	ddblock_t  *block;			/* DDB containing DD of  element */
@@ -2186,6 +2187,27 @@ Hlength(int32 file_id, uint16 tag, uint16 ref)
 		HRETURN_ERROR(DFE_INTERNAL, FAIL);
 
 	return (block->ddlist[idx].length);
+#else /* FASTER_BUT_DOESNT_WORK */
+    CONSTR(FUNC, "Hlength");    /* for HERROR */
+    int32       access_id;      /* access record id */
+    int32       length;         /* length of elt inquired */
+    int         ret;            /* return code */
+
+    /* clear error stack */
+    HEclear();
+
+    /* get access record, inquire about lebngth and then dispose of
+       access record */
+    access_id = Hstartread(file_id, tag, ref);
+    if (access_id == FAIL)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if ((ret = HQuerylength(access_id, &length)) == FAIL)
+        HERROR(DFE_INTERNAL);
+    Hendaccess(access_id);
+
+    return length;
+#endif /* FASTER_BUT_DOESNT_WORK */
 }	/* end Hlength */
 
 /*--------------------------------------------------------------------------
