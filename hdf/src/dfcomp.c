@@ -211,7 +211,8 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
 
     /* put this call up here instead of in switch statement, to make the */
     /* code easier to follow */
-    if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5)
+    if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5
+            || scheme==DFTAG_JPEG || scheme==DFTAG_GREYJPEG)
         return (DFCIunjpeg(file_id, tag, ref, (VOIDP) image, xdim, ydim, (int16)scheme));
 
     /* Only do this stuff for non-JPEG compressed images */

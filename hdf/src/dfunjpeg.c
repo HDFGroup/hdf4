@@ -261,6 +261,7 @@ jpeg_HDF_src(struct jpeg_decompress_struct *cinfo_ptr, int32 file_id, uint16 tag
 #endif /* QAK */
 
     /* check for old-style HDF JPEG image */
+#ifdef OLD_WAY
     if(tag==DFTAG_JPEG || tag==DFTAG_GREYJPEG)
       {
         src->old_jpeg_image=TRUE;   /* indicate an old-style image */
@@ -268,6 +269,16 @@ jpeg_HDF_src(struct jpeg_decompress_struct *cinfo_ptr, int32 file_id, uint16 tag
       } /* end if */
     else
         src->old_jpeg_image=FALSE;   /* indicate an new-style image */
+#else /* OLD_WAY */
+    if(scheme==DFTAG_JPEG || scheme==DFTAG_GREYJPEG)
+      {
+        src->tag = scheme;      /* start reading from the JPEG header first */
+        src->old_jpeg_image=TRUE;   /* indicate an old-style image */
+        src->old_header_read=FALSE; /* start with the header */
+      } /* end if */
+    else
+        src->old_jpeg_image=FALSE;   /* indicate an new-style image */
+#endif /* OLD_WAY */
 
     /* force fill_input_buffer until buffer loaded */
     src->pub.bytes_in_buffer = 0;
