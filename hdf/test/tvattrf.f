@@ -101,8 +101,6 @@ C      number_failed = 0
 C Open the file 
       len_in = len(ifn_out)
       ret = fixname(ifn, ifn_out, len_in)
-      write(*,*) ifn_out(1:len_in)
-      pause
       fid1 = hopen(ifn_out(1:len_in), DFACC_RDWR, 0)
       call VRFY(fid1, 'hopen', number_failed)
       ret = vfstart(fid1)
