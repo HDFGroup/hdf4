@@ -25,8 +25,5 @@ fortestF_CPPFLAGS = -I${top_srcdir}/hdf/src
 fortestF_LDADD = ../src/libdf.a @LIBS@
 fortestF_DEPENDENCIES = testdir ../src/libdf.a
 
-check:
-	srcdir="$(srcdir)" $(MAKE) $(AM_MAKEFLAGS) check-am
-
 testdir:
 	-mkdir testdir
