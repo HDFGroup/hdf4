@@ -7,6 +7,8 @@ HDF4.1r3
    - The GR interface can now read compressed files created with the
      DFR8 and DF24 interfaces, except for those which were compressed
      with IMCOMP compression.
+   - The GR interface can read and write images compressed with RLE,
+     GZIP and Skipping Huffman compression methods.
    - Palettes can now be written and read properly with the GR interface.
    - 24-bit raster images can now be read by the GR interface.
 3. You can now create an SDS with a name up to 256 characters in length.
