@@ -36,22 +36,24 @@ static char RcsId[] = "@(#)$Revision$";
 #define FNAME1   "tvset1.hdf"
 #define FNAME2   "tvset2.hdf"
 #define EXTFNM	 "tvsetext.hdf"
+#define EMPTYNM  "tvsempty.hdf"
 
 #define FIELD1       "FIELD_name_HERE"
 #define FIELD1_UPPER "FIELD_NAME_HERE"
 #define FIELD2       "DIFFERENT_FIELD_NAME"
 
-
 #define ST "STATION_NAME"
 #define VL "VALUES"
 #define FL "FLOATS"
 #define MX "STATION_NAME,VALUES,FLOATS"
+#define EMPTY_VDATA "Empty"
 
 static int32 write_vset_stuff(void);
 static int32 read_vset_stuff(void);
 static void test_vsdelete(void);
 static void test_vdelete(void);
 static void test_vdeletetagref(void);
+static void test_emptyvdata(void);
 
 /* write some stuff to the file */
 static int32
@@ -578,6 +580,8 @@ read_vset_stuff(void)
       }
 
     status = Vstart(fid);
+if(status==FAIL)
+    HEprint(stderr,0);
     CHECK(status,FAIL,"Vstart:fid");
 
     /*
@@ -1662,6 +1666,167 @@ test_vdeletetagref(void)
 } /* test_vdeletetagref */
 
 
+static void
+test_emptyvdata(void)
+{
+    int32 status;       /* Status values from routines */
+    int32 fid;          /* File ID */
+    int32 vs1;          /* Vdata ID */
+    int32 ref;          /* Vdata ref */
+    char  name[VSNAMELENMAX], class[VSNAMELENMAX], fields[FIELDNAMELENMAX*VSFIELDMAX];
+
+    /* Open the HDF file. */
+    fid = Hopen(EMPTYNM, DFACC_RDWR, 0);
+    CHECK(fid,FAIL,"Hopen");
+
+    /* Initialize HDF for subsequent vgroup/vdata access. */
+    status = Vstart(fid);
+    CHECK(status,FAIL,"Vstart");
+
+    /* Create a new vdata. */
+    vs1 = VSattach(fid, -1, "w");
+    CHECK(vs1,FAIL,"VSattach");
+
+    status=VSsetname(vs1, EMPTY_VDATA);
+    CHECK(status,FAIL,"VSsetname");
+
+    status = VSdetach(vs1);
+    CHECK(status,FAIL,"Vdetach");
+    
+    status = Vend(fid);
+    CHECK(status,FAIL,"Vend");
+
+    status = Hclose(fid);
+    CHECK(status,FAIL,"Hclose");
+
+    MESSAGE(5, printf("created empty VDATA %s\n", EMPTY_VDATA););
+
+    /* Re-open the HDF file. */
+    fid = Hopen(EMPTYNM, DFACC_RDWR, 0);
+    CHECK(fid,FAIL,"Hopen");
+
+    /* Initialize HDF for subsequent vgroup/vdata access. */
+    status = Vstart(fid);
+    CHECK(status,FAIL,"Vstart");
+
+    /* Find the empty vdata. */
+    ref=VSfind(fid,EMPTY_VDATA);
+    CHECK(ref,FAIL,"VSfind");
+
+    vs1 = VSattach(fid, ref, "r");
+    CHECK(vs1,FAIL,"VSattach");
+
+    status=VSgetname(vs1, name);
+    CHECK(status,FAIL,"VSgetname");
+
+    if (HDstrcmp(name, EMPTY_VDATA))
+      {
+          num_errs++;
+          printf(">>> Got bogus Vdata name : %s\n", name);
+      }
+
+    status=VFnfields(vs1);
+    VERIFY(status,0,"VFnfields");
+
+    status=VSgetfields(vs1,fields);
+    CHECK(status,FAIL,"VSgetfields");
+
+    if (HDstrcmp(fields, ""))
+      {
+          num_errs++;
+          printf(">>> Got bogus field names : %s\n", fields);
+      }
+
+    status = VSdetach(vs1);
+    CHECK(status,FAIL,"Vdetach");
+    
+    status = Vend(fid);
+    CHECK(status,FAIL,"Vend");
+
+    status = Hclose(fid);
+    CHECK(status,FAIL,"Hclose");
+
+    MESSAGE(5, printf("read back in empty VDATA %s\n", EMPTY_VDATA););
+
+    /* Re-open the HDF file. */
+    fid = Hopen(EMPTYNM, DFACC_RDWR, 0);
+    CHECK(fid,FAIL,"Hopen");
+
+    /* Initialize HDF for subsequent vgroup/vdata access. */
+    status = Vstart(fid);
+    CHECK(status,FAIL,"Vstart");
+
+    /* Find the empty vdata. */
+    ref=VSfind(fid,EMPTY_VDATA);
+    CHECK(ref,FAIL,"VSfind");
+
+    vs1 = VSattach(fid, ref, "w");
+    CHECK(vs1,FAIL,"VSattach");
+
+    /* Write out simple vdata fields */
+    status=VSfdefine(vs1, FIELD1, DFNT_FLOAT32, 1);
+    CHECK(status,FAIL,"VSfdefine");
+
+    status = VSfdefine(vs1, FIELD2, DFNT_INT32, 2);
+    CHECK(status,FAIL,"VSfdefine");
+
+    status = VSsetfields(vs1, FIELD1","FIELD2);
+    if (status == FAIL)
+      {
+          num_errs++;
+          printf(">>> Vsetfields failed for %s\n", name);
+      }
+
+    status = VSdetach(vs1);
+    CHECK(status,FAIL,"Vdetach");
+    
+    status = Vend(fid);
+    CHECK(status,FAIL,"Vend");
+
+    status = Hclose(fid);
+    CHECK(status,FAIL,"Hclose");
+
+    MESSAGE(5, printf("changed empty VDATA %s to have two fields\n", EMPTY_VDATA););
+
+    /* Re-open the HDF file. */
+    fid = Hopen(EMPTYNM, DFACC_RDWR, 0);
+    CHECK(fid,FAIL,"Hopen");
+
+    /* Initialize HDF for subsequent vgroup/vdata access. */
+    status = Vstart(fid);
+    CHECK(status,FAIL,"Vstart");
+
+    /* Find the empty vdata. */
+    ref=VSfind(fid,EMPTY_VDATA);
+    CHECK(ref,FAIL,"VSfind");
+
+    vs1 = VSattach(fid, ref, "r");
+    CHECK(vs1,FAIL,"VSattach");
+
+    status=VFnfields(vs1);
+    VERIFY(status,2,"VFnfields");
+
+    status=VSgetfields(vs1,fields);
+    CHECK(status,FAIL,"VSgetfields");
+
+    if (HDstrcmp(fields, FIELD1","FIELD2))
+      {
+          num_errs++;
+          printf(">>> Got bogus field names : %s\n", fields);
+      }
+
+    status = VSdetach(vs1);
+    CHECK(status,FAIL,"Vdetach");
+    
+    status = Vend(fid);
+    CHECK(status,FAIL,"Vend");
+
+    status = Hclose(fid);
+    CHECK(status,FAIL,"Hclose");
+
+
+} /* test_emptyvdata() */
+
 /* main test driver */
 void
 test_vsets(void)
@@ -1684,5 +1849,8 @@ test_vsets(void)
    
     /* test Vdeletetagref() */
     test_vdeletetagref();
+
+    /* test Vdatas with no fields defined */
+    test_emptyvdata();
 
 }   /* test_vsets */
