@@ -87,6 +87,12 @@ extern      "C"
     extern int32 VSfind
                 (HFILEID f, const char _HUGE * vsname);
 
+    extern int32 Vfindclass
+                (HFILEID f, const char _HUGE * vgclass);
+
+    extern int32 VSfindclass
+                (HFILEID f, const char _HUGE * vsclass);
+
     extern VOID Vsetzap
                 (void);
 

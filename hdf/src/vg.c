@@ -861,6 +861,68 @@ VSfind(HFILEID f, const char *vsname)
     return (0);     /* not found */
 }   /* VSfind */
 
+/* ----------------------------------------------------------------- 
+NAME
+   Vfindclass -- looks in the file and returns the ref of 
+            the vgroup with class vgclass 
+USAGE
+   int32 Vfind(f, vgclass)
+   HFILEID  f;    IN: file id.
+   char *vgclass;  IN: class of the vgroup.
+RETURNS
+   Returns 0 if not found, or error. Otherwise, returns the 
+   vgroup's ref (a positive integer).
+-----------------------------------------------------------------------*/
+int32 
+Vfindclass(HFILEID f, const char *vgclass)
+{
+    int32       vgid = -1;
+    vginstance_t    * v;
+#ifdef LATER
+    CONSTR(FUNC, "Vfind");
+#endif
+
+    while (-1L != (vgid = Vgetid(f, vgid)))
+      {
+        if((v=vginstance(f,(uint16)vgid))==NULL)
+            return(0);          /* error */
+        if (!HDstrcmp(vgclass, v->vg->vgclass)) 
+            return((int32)(v->vg->oref));  /* found the vgroup */
+      }
+    return (0);		/* not found */
+}	/* Vfindclass */
+
+/*------------------------------------------------------------------
+NAME
+   VSfindclass -- looks in the file and returns the ref of the vdata 
+             with class vsclass 
+USAGE
+   int32 VSfine(f, vsclass)
+   HFILEID  f;      IN: file id.
+   char *vsclass;    IN: class of the vdata.
+RETURNS
+   Returns 0 if not found, or error. Otherwise, returns the vdata's 
+   ref (a positive integer).
+---------------------------------------------------------------------*/
+int32 
+VSfindclass(HFILEID f, const char *vsclass)
+{
+    int32       vsid = -1;
+    vsinstance_t    * v;
+#ifdef LATER
+    CONSTR(FUNC, "VSfind");
+#endif
+
+    while (-1L != (vsid = VSgetid(f, vsid)))
+      {
+        if((v=vsinstance(f,(uint16)vsid))==NULL)
+            return(0);          /* error */
+        if (!HDstrcmp(vsclass, v->vs->vsclass)) 
+            return((int32)(v->vs->oref));  /* found the vdata */
+      }
+    return (0);     /* not found */
+}   /* VSfindclass */
+
 /* ------------------------------- Vsetzap -------------------------------- */
 /*
  * Vsetzap: Useless now. Maintained for back compatibility.

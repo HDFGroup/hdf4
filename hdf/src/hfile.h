@@ -487,6 +487,8 @@ functab_t;
 #define VGIDTYPE  8     /* also defined in vg.h for Vgroups */
 #define VSIDTYPE  9     /* also defined in vg.h for Vsets */
 #define BITTYPE   10    /* For bit-accesses */
+#define GRIDTYPE  11    /* for GR access */
+#define RIIDTYPE  12    /* for RI access */
 #define FSLOT2ID(s) ((int32)((((uint32)FIDTYPE & 0xffff) << 16)|((s) & 0xffff)))
 #define VALIDFID(i) (((((uint32)(i) >> 16) & 0xffff) == FIDTYPE) && \
                      (((uint32)(i) & 0xffff) < MAX_FILE))

@@ -373,6 +373,7 @@ extern uint8 *tbuf;
 #define DFTAG_LUT   ((uint16)301)   /* Image Palette */
 #define DFTAG_RI    ((uint16)302)   /* Raster Image */
 #define DFTAG_CI    ((uint16)303)   /* Compressed Image */
+#define DFTAG_NRI   ((uint16)304)   /* New-format Raster Image */
 
 #define DFTAG_RIG   ((uint16)306)   /* Raster Image Group */
 #define DFTAG_LD    ((uint16)307)   /* Palette DimRec */

@@ -136,9 +136,8 @@ DF24getimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
     CONSTR(FUNC, "DF24getimage");
     intn        ret, il;
     int32       tx, ty;
-
-    int *compressed, *has_pal;
-    uint16 *compr_type;
+    int compressed, has_pal;
+    uint16 compr_type;
 
     HEclear();
 
@@ -158,7 +157,7 @@ DF24getimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
         HRETURN_ERROR(DFE_BADDIM, FAIL);
 
     ret = DFGRIgetimlut(filename, image, xdim, ydim, IMAGE, 0,
-			compressed, compr_type, has_pal);
+			&compressed, &compr_type, &has_pal);
 
     Newdata = 0;
     return (ret);

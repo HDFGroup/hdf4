@@ -206,11 +206,11 @@ DFGRreqlutil(int il)
 int
 DFGRgetlut(const char *filename, VOIDP lut, int32 xdim, int32 ydim)
 {
-    int *compressed, *has_pal;
-    uint16 *compr_type;
+    int compressed, has_pal;
+    uint16 compr_type;
     /* 0 == C */
     return (DFGRIgetimlut(filename, lut, xdim, ydim, LUT, 0,
-			  compressed, compr_type, has_pal));
+			  &compressed, &compr_type, &has_pal));
 }
 
 /*-----------------------------------------------------------------------------
@@ -265,11 +265,11 @@ DFGRreqimil(int il)
 int
 DFGRgetimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
 {
-    int *compressed, *has_pal;
-    uint16 *compr_type;
+    int compressed, has_pal;
+    uint16 compr_type;
     /* 0 == C */
     return (DFGRIgetimlut(filename, image, xdim, ydim, IMAGE, 0,
-			  compressed, compr_type, has_pal));
+			  &compressed, &compr_type, &has_pal));
 }
 
 /*-----------------------------------------------------------------------------
