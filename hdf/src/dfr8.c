@@ -792,6 +792,13 @@ int DFR8nimages(filename)
        return FAIL;
     nimages=nrig+nri8+nci8;
 
+    /* if there are no images just close the file and get out */
+    if(nimages == 0) {
+        if (Hclose(file_id) == FAIL)
+            return FAIL;
+        return(nimages);
+    }
+
     /* Get space to store the image offsets */
     if((img_off=(int32 *)HDgetspace(nimages*sizeof(int32)))==NULL) {
         HERROR(DFE_NOSPACE);
