@@ -311,10 +311,10 @@ print_file_desc(const char *fname, int32 an_id)
 {
     int32       sd_fid;
     int32       len; 
-    char       *desc = NULL;
+    char       *desc = NULL, *pdesc;
     file_type_t ft = DASCII;
 
-    int32 ann_id, i;
+    int32 ann_id, i,j;
     int32 n_file_label;
     int32 n_file_desc;
     int32 n_data_label;
@@ -333,6 +333,11 @@ print_file_desc(const char *fname, int32 an_id)
           printf("Failure to allocate space \n");
           return;
          }
+      pdesc = desc;
+      for (j=0; j<(len+1); j++)   {
+         *pdesc = '\0';
+         pdesc++;
+      } 
       if(ANreadann(ann_id, desc, len+1)!= FAIL)
         printf("File description #%ld: %s\n", (long)i, desc);
 
