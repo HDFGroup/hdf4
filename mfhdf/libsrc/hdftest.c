@@ -48,9 +48,9 @@ static char RcsId[] = "@(#)$Revision$";
 /*  commented out for now because of 'long' handling on 64-bit
     machines by this version of the netCDF library is broken. 
     The new version of the netCDF library(2.4.3?) has fixed 
-    this I think. To fix it here requires merging in those fixes.
- #define NETCDF_READ_TEST 
-*/
+    this I think. To fix it here requires merging in those fixes.*/
+
+#define NETCDF_READ_TEST 
 
 /* Macintosh console stuff */
 #if defined __MWERKS__
