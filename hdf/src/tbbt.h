@@ -66,6 +66,7 @@ struct tbbt_node {
 typedef   struct tbbt_tree  TBBT_TREE;
 struct tbbt_tree {
   TBBT_NODE *root;
+  unsigned long count;  /* The number of nodes in the tree currently */
   intn     (*compar) PROTO((VOIDP k1,VOIDP k2,intn cmparg));
   intn     cmparg;
 #endif /* TBBT_INTERNALS */

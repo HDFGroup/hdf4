@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.10  1993/04/14 21:39:31  georgev
-Had to add some VOIDP casts to some functions to make the compiler happy.
+Revision 1.11  1993/04/14 23:09:59  koziol
+Added counts to the tbbt trees and fixed a bug in VSdelete()
 
+ * Revision 1.10  1993/04/14  21:39:31  georgev
+ * Had to add some VOIDP casts to some functions to make the compiler happy.
+ *
  * Revision 1.9  1993/04/13  16:50:27  georgev
  * Casting problems on SGI's for two calls to the new balanced tree stuff.
  *
@@ -1171,7 +1174,7 @@ int32 vsid;
         return(FAIL);
     } 
 
-    key=VGSLOT2ID(f,vsid);
+    key=VSSLOT2ID(f,vsid);
 
     t = (VOIDP *)tbbtdfind(vf->vstree,(VOIDP)&key,NULL);
 

@@ -477,7 +477,12 @@ VOIDP     item;      /* Pointer to data item for new node */
 VOIDP     key;       /* Pointer to key value for new node (or NULL) */
 #endif
 {
-    return(  tbbtins( &(tree->root), item, key, tree->compar, tree->cmparg )  );
+    TBBT_NODE *ret_node; /* the node to return */
+
+    ret_node=tbbtins( &(tree->root), item, key, tree->compar, tree->cmparg );
+    if(ret_node!=NULL)
+	tree->count++;
+    return(ret_node);
 }
 
 /* tbbtrem -- Remove a node from a tree.  You pass in the address of the
@@ -578,6 +583,7 @@ VOIDP tbbtrem( root, node, kp )
     }
     Free( leaf );
     balance( root, par, side, -1 );
+	((TBBT_TREE *)*root)->count--;
     return( data );
 }
 
@@ -597,6 +603,7 @@ intn   arg;   /* Third argument for (*cmp)() */
     if(  NULL == tree  )
         return( NULL );
     tree->root= NULL;
+    tree->count=0;
     tree->compar= cmp;
     tree->cmparg= arg;
     return( tree );
@@ -693,7 +700,7 @@ TBBT_NODE *node;
 printf("*key=%d\n",*(int32 *)(node->key));
 #endif
 vprint(node->key);
-	printf("Rchild=%p, Lchild=%p, Parent=%p\n",node->Rchild,node->Lchild,node->Parent);
+	printf("Lchild=%p, Rchild=%p, Parent=%p\n",node->Lchild,node->Rchild,node->Parent);
 }	/* end tbbtprint() */
 
 #ifdef PROTOTYPE
@@ -743,6 +750,7 @@ TBBT_TREE *tree;
 intn method;
 #endif
 {
+    printf("Number of nodes in the tree: %ld\n",tree->count);
 	tbbt1dump(tree->root,method);
 }	/* end tbbtdump() */
 
