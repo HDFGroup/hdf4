@@ -228,14 +228,15 @@ typedef int charset[2]; const charset x;
 define(UL_VARIADIC_FUNCTIONS,[dnl
 AC_PROVIDE([$0])dnl
 AC_REQUIRE([UC_PROG_CPP])dnl
-AC_COMPILE_CHECK([variadic function support], [#include <stdarg.h>]
+AC_COMPILE_CHECK([variadic function support], , [}
+#include <stdarg.h>
 int foo(int bar, ...) {
     va_list     alist;
     va_start(alist, bar);
     bar = (int)va_arg(alist, int);
     va_end(alist);
     return bar;
-}, dnl
+], dnl
 , dnl
 [UC_ENSURE(CPPFLAGS, -DNO_STDARG)])])
 
