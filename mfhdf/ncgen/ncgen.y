@@ -688,11 +688,13 @@ yyerror(s)	/* called for yacc syntax error */
 	derror(s);
 }
 
+#ifndef yywrap
 int
 yywrap()			/* returns 1 on EOF if no more input */
 {
     return  1;
 }
+#endif /* yywrap() */
 
 
 /* Symbol table operations for ncgen tool */
