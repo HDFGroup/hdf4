@@ -105,16 +105,10 @@ HDFBIN=$(srcdir)/../bin
 JPEGLIB=$(srcdir)/../jpeg
 JPEGINC=$(srcdir)/../jpeg
 
-DISTFILES = $(MAN_NROFF_1) $(MAN_NROFF_3)
+DISTFILES = $(MAN_NROFF_1) 
 
 # Man pages
-MAN_NROFF_1 = hdf.1 hdfls.1 hdfpack.1 hdp.1 ristosds.1 hdfunpac.1
-MAN_NROFF_3 = sdisdimval_bwcomp.3 sdsetdimval_comp.3 mfan.3 \
-	      VSattrinfo.3 VSfindattr.3 \
-              VSfindex.3 VSfnattrs.3 VSgetattr.3 VSisattr.3 \
-              VSnattrs.3 VSsetattr.3 Vattrinfo.3 Vfindattr.3 \
-              Vgetattr.3 Vgetversion.3 Vnattrs.3 Vsetattr.3 \
-              vsfpack.3 grluttoref.3 sd_chunk.3 
+MAN_NROFF_1 = hdf.1 hdfunpac.1
 
 all: docs
 
