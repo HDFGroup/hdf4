@@ -15,7 +15,11 @@ AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 #############################################################################
 
 bin_PROGRAMS = ncgen
+
+if HDF_BUILD_FORTRAN
 noinst_PROGRAMS = ctest0 ftest0
+else noinst_PROGRAMS = ctest0
+endif
 
 ## Information for building the "ncgen" program
 ncgen_SOURCES = close.c escapes.c generate.c genlib.c getfill.c init.c      \

@@ -156,7 +156,8 @@ AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
 #############################################################################
 #############################################################################
 bin_PROGRAMS = ncgen
-noinst_PROGRAMS = ctest0 ftest0
+
+@HDF_BUILD_FORTRAN_TRUE@noinst_PROGRAMS = ctest0 ftest0
 
 ncgen_SOURCES = close.c escapes.c generate.c genlib.c getfill.c init.c      \
                 load.c main.c ncgentab.c
@@ -187,7 +188,9 @@ mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/hdf/src/h4config.h
 CONFIG_CLEAN_FILES =
 bin_PROGRAMS = ncgen$(EXEEXT)
-noinst_PROGRAMS = ctest0$(EXEEXT) ftest0$(EXEEXT)
+@HDF_BUILD_FORTRAN_TRUE@noinst_PROGRAMS = ctest0$(EXEEXT) \
+@HDF_BUILD_FORTRAN_TRUE@	ftest0$(EXEEXT)
+@HDF_BUILD_FORTRAN_FALSE@noinst_PROGRAMS =
 PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 
 ctest0_SOURCES = ctest0.c
@@ -537,6 +540,7 @@ uninstall-man: uninstall-man1
 	tags uninstall uninstall-am uninstall-binPROGRAMS \
 	uninstall-info-am uninstall-man uninstall-man1
 
+@HDF_BUILD_FORTRAN_TRUE@else noinst_PROGRAMS = ctest0
 
 ncgentab.c ncgentab.h: ncgen.h ncgen.y ncgenyy.c
 	$(YACC) -d $(srcdir)/ncgen.y
