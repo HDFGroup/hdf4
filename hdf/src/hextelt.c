@@ -181,6 +181,8 @@ int32 HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_na
 
     if (data_dd) {
        VOIDP buf;              /* temporary buffer */
+
+#ifdef OLD_WAY
        buf = (VOIDP)HDgetspace((uint32) data_dd->length);
        if (!buf) {
            access_rec->used = FALSE;
@@ -198,6 +200,19 @@ int32 HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_na
            HDfreespace((VOIDP)buf);
            HRETURN_ERROR(DFE_READERROR,FAIL);
        }
+#else /* OLD_WAY */
+       if(( buf = (VOIDP)HDgetspace((uint32) data_dd->length))==NULL) {
+           access_rec->used = FALSE;
+           HDfreespace((VOIDP)info);
+           HRETURN_ERROR(DFE_NOSPACE,FAIL);
+       }
+       if(Hgetelement(file_rec->file,data_dd->tag,data_dd->ref,buf)==FAIL) {
+           access_rec->used = FALSE;
+           HDfreespace((VOIDP)info);
+           HDfreespace((VOIDP)buf);
+           HRETURN_ERROR(DFE_READERROR,FAIL);
+       }
+#endif /* OLD_WAY */
        if (HI_SEEK(file_external, offset) == FAIL) {
            access_rec->used = FALSE;
            HDfreespace((VOIDP)info);
@@ -245,16 +260,15 @@ int32 HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_na
         HRETURN_ERROR(DFE_INTERNAL,FAIL);
       } /* end if */
     if (HI_WRITE(file_rec->file, local_ptbuf, dd->length) == FAIL) {
-       HERROR(DFE_WRITEERROR);
-       access_rec->used = FALSE;
-       return FAIL;
-    }
-
-    if (FAIL == HIupdate_dd(file_rec, access_rec->block,
-                           access_rec->idx, FUNC)) {
         access_rec->used = FALSE;
         HDfreespace((VOIDP)info);
-        return FAIL;
+        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+    }
+
+    if (FAIL == HIupdate_dd(file_rec, access_rec->block,access_rec->idx,FUNC)) {
+        access_rec->used = FALSE;
+        HDfreespace((VOIDP)info);
+        HRETURN_ERROR(DFE_CANTUPDATE,FAIL);
     }
 
     /* add new DD to hash table */
@@ -262,12 +276,20 @@ int32 HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_na
                            access_rec->idx)) {
         access_rec->used = FALSE;
         HDfreespace((VOIDP)info);
-        return FAIL;
+        HRETURN_ERROR(DFE_CANTHASH,FAIL);
     }
 
     if (data_dd) {
-       Hdeldd(file_id, data_dd->tag, data_dd->ref);
-       HIdel_hash_dd(file_rec, data_dd->tag, data_dd->ref);
+       if(Hdeldd(file_id, data_dd->tag, data_dd->ref)==FAIL) {
+            access_rec->used = FALSE;
+            HDfreespace((VOIDP)info);
+            HRETURN_ERROR(DFE_CANTDELDD,FAIL);
+	 } /* end if */
+       if(HIdel_hash_dd(file_rec, data_dd->tag, data_dd->ref)==FAIL) {
+            access_rec->used = FALSE;
+            HDfreespace((VOIDP)info);
+            HRETURN_ERROR(DFE_CANTDELHASH,FAIL);
+	 } /* end if */
     }
 
     /* update access record and file record */

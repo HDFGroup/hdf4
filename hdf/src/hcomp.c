@@ -635,12 +635,12 @@ printf("HCcreate(): check 6.6, coder_funcs.write=%p\n",info->cinfo.coder_funcs.w
     if(data_dd!=NULL) {
         VOIDP buf;              /* temporary buffer */
 
-        buf=(VOIDP)HDgetspace((uint32)data_dd->length);
-        if(buf==NULL) {
+        if(( buf=(VOIDP)HDgetspace((uint32)data_dd->length))==NULL) {
             access_rec->used=FALSE;
             HDfreespace((VOIDP)info);
             HRETURN_ERROR(DFE_NOSPACE,FAIL);
           } /* end if */
+#ifdef OLD_WAY
         if(HI_SEEK(file_rec->file, data_dd->offset)==FAIL) {
             access_rec->used=FALSE;
             HDfreespace((VOIDP)info);
@@ -653,28 +653,41 @@ printf("HCcreate(): check 6.6, coder_funcs.write=%p\n",info->cinfo.coder_funcs.w
             HDfreespace((VOIDP)buf);
             HRETURN_ERROR(DFE_READERROR,FAIL);
           } /* end if */
+#else /* OLD_WAY */
+        if(Hgetelement(file_rec->file,data_dd->tag,data_dd->ref,buf)==FAIL) {
+            access_rec->used=FALSE;
+            HDfreespace((VOIDP)info);
+            HDfreespace((VOIDP)buf);
+            HRETURN_ERROR(DFE_READERROR,FAIL);
+	  } /* end if */
+#endif /* OLD_WAY */
 
         /* write the data through to the compression layer */
         if(HCPwrite(access_rec,data_dd->length,buf)==FAIL) {
             access_rec->used=FALSE;
-            HRETURN_ERROR(DFE_MODEL,FAIL);
-          } /* end if */
-
-        /* seek back to the beginning of the data through to the compression layer */
-        if(HCPseek(access_rec,0,DF_START)==FAIL) {
-            access_rec->used=FALSE;
+            HDfreespace((VOIDP)info);
+            HDfreespace((VOIDP)buf);
             HRETURN_ERROR(DFE_MODEL,FAIL);
           } /* end if */
 
         HDfreespace((VOIDP)buf);
 
+        /* seek back to the beginning of the data through to the compression layer */
+        if(HCPseek(access_rec,0,DF_START)==FAIL) {
+            access_rec->used=FALSE;
+            HDfreespace((VOIDP)info);
+            HRETURN_ERROR(DFE_MODEL,FAIL);
+          } /* end if */
+
         /* Delete the old DD from the file and memory hash table */
         if(FAIL==Hdeldd(file_id, data_dd->tag, data_dd->ref)) {
             access_rec->used=FALSE;
+            HDfreespace((VOIDP)info);
             HRETURN_ERROR(DFE_CANTDELDD,FAIL);
           } /* end if */
         if(FAIL==HIdel_hash_dd(file_rec, data_dd->tag, data_dd->ref)) {
             access_rec->used=FALSE;
+            HDfreespace((VOIDP)info);
             HRETURN_ERROR(DFE_CANTDELHASH,FAIL);
           } /* end if */
       } /* end if */
