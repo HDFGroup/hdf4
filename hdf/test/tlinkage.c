@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/02/10 20:59:34  chouck
-Initial revision
+Revision 1.2  1992/05/29 19:23:00  chouck
+Modified to reflect current names
 
+ * Revision 1.1  1992/02/10  20:59:34  chouck
+ * Initial revision
+ *
 */
 main()
 {
@@ -16,7 +19,6 @@ main()
     exit(1);
 
     HEstring();
-    HEclear();
     HEpush();
     HEprint();
     HEvalue();
@@ -39,15 +41,13 @@ main()
     HIupdate_dd();
     Hdeldd();
     Hnewref();
-#if 0
     Hishdf();
-#endif
     Hsync();
     HIgetspinfo();
     HIlock();
     HIunlock();
-    HIvalidfid();
-    HIerr();
+    HDvalidfid();
+    HDerr();
     Hnumber();
 
     HLcreate();
