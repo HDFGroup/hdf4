@@ -1,7 +1,7 @@
 /*****************************************************************************
 * 
-*			  NCSA HDF version 3.10r5
-*			     October 24, 1991
+*			  NCSA HDF version 3.2beta
+*			     February 29, 1992
 *
 * NCSA HDF Version 3.10r5 source code and documentation are in the public
 * domain.  Specifically, we give to the public domain all rights for future
@@ -18,6 +18,7 @@
 * WARRANTY OF MERCHANTABILITY AND WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE
 * 
 *****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
@@ -25,9 +26,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/02/26 17:46:31  likkai
-added descriptions for Vset elements.
+Revision 1.5  1992/02/29 18:58:36  sxu
+add header
 
+ * Revision 1.4  1992/02/26  17:46:31  likkai
+ * added descriptions for Vset elements.
+ *
  * Revision 1.3  1992/02/21  21:06:29  mfolk
  * no change
  *
