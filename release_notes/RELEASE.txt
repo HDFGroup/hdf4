@@ -115,13 +115,22 @@ HDF 4.2 Release 1 has been tested on the following platforms:
     IRIX64 6.5 (64 & n32)         MIPSpro cc 7.3.1.3m
                                   F90 MIPSpro 7.3.1.3m 
 
-    Linux 2.4.20.28               gcc 2.96, GNU Fortran 0.5.25, Absoft Fortran 8.2
-                                  Intel(R) C++ and Fortran Compilers Version 8.1
+    Linux 2.4.20.28               gcc 2.96, GNU Fortran 0.5.25,
+                                  Absoft Fortran 8.2
+                                  Intel(R) C++ and Fortran Compilers 
+                                  Version 8.1
+    Linux 2.4.21-268-smp #1 SMP x86_64 (AMD)
+                                  gcc 3.3.1
+                                  GNU Fortran (GCC) 3.3.1
+                                  Intel(R) C++ and Fortran Compilers
+                                  Version 8.1
+                                  PGI C and Fortran Compilers Version 5.2-1
     Linux 2.4.21-27.0.1.ELsmp #1 SMP
                                   gcc 3.2.3
                                   PGI C and Fortran Compilers Version 5.2-1 
-    Linux 2.4.21-sgi302r24        Intel C++ and Intel Fortran Verison 8.1
-
+    Linux 2.4.21-sgi302r24 (Altix) 
+                                  Intel C++ and Intel Fortran Verison 8.1
+    
     Linux 2.4.20-31.9smp_perfctr_lustre (IA-64)
                                   Intel(R) C++ Version 8.0
                                   Intel(R) Fortran Compiler Version 8.0
