@@ -5161,6 +5161,1017 @@ intn GRPshutdown(void)
     return(SUCCEED);
 } /* end GRPshutdown() */
 
+
+
+/*====================== Chunking Routines ================================*/
+
+/* Debugging */
+#define CHK_DEBUG
+
+/******************************************************************************
+ NAME
+      GRsetchunk  -- make GR a chunked GR
+
+ DESCRIPTION
+      This routine makes the GR a chunked GR according to the chunk
+      definiton passed in.
+
+      The dataset currently cannot be special already.  i.e. NBIT,
+      COMPRESSED, or EXTERNAL. This is an Error.
+
+      The defintion of the HDF_CHUNK_DEF union with relvant fields is:
+
+      typedef union hdf_chunk_def_u
+      {
+         int32   chunk_lengths[2];  Chunk lengths along each dimension
+
+         struct 
+          {   
+            int32     chunk_lengths[2]; Chunk lengths along each dimension
+            int32     comp_type;                   Compression type 
+            comp_info cinfo;                       Compression info struct 
+          }comp;
+
+      } HDF_CHUNK_DEF
+
+      The variable agruement 'flags' is a bit-or'd value which can currently be
+      'HDF_CHUNK' or 'HDF_CHUNK | HDF_COMP'.
+
+      The simplist is the 'chunk_lengths' array specifiying chunk 
+      lengths for each dimension where the 'flags' argument set to 
+      'HDF_CHUNK';
+
+      COMPRESSION is set by using the 'HDF_CHUNK_DEF' union to set the
+      appropriate compression information along with the required chunk lengths
+      for each dimension. The compression information is the same as 
+      that set in 'GRsetcompress()'. The bit-or'd 'flags' argument' is set to 
+      'HDF_CHUNK | HDF_COMP'.
+
+      See the example in pseudo-C below for further usage.
+
+      The maximum number of Chunks in an HDF file is 65,535.
+
+      The dataset currently cannot have an UNLIMITED dimension.
+
+      The performance of the GRxxx interface with chunking is greatly
+      affected by the users access pattern over the dataset and by
+      the maximum number of chunks set in the chunk cache. The cache contains 
+      the Least Recently Used(LRU cache replacment policy) chunks. See the
+      routine GRsetchunkcache() for further info on the chunk cache and how 
+      to set the maximum number of chunks in the chunk cache. A default chunk 
+      cache is always created.
+
+      The following example shows the organization of chunks for a 2D array.
+      e.g. 4x4 array with 2x2 chunks. The array shows the layout of
+           chunks in the chunk array.
+
+            4 ---------------------                                           
+              |         |         |                                                 
+        Y     |  (0,1)  |  (1,1)  |                                       
+        ^     |         |         |                                      
+        |   2 ---------------------                                       
+        |     |         |         |                                               
+        |     |  (0,0)  |  (1,0)  |                                      
+        |     |         |         |                                           
+        |     ---------------------                                         
+        |     0         2         4                                       
+        ---------------> X                                                       
+
+        --Without compression--:
+        {                                                                    
+        HDF_CHUNK_DEF chunk_def;
+                                                                            
+        .......                                                                    
+        -- Set chunk lengths --                                                    
+        chunk_def.chunk_lengths[0]= 2;                                                     
+        chunk_def.chunk_lengths[1]= 2; 
+
+        -- Set Chunking -- 
+        GRsetchunk(riid, chunk_def, HDF_CHUNK);                      
+         ......                                                                  
+        }                                                                           
+
+        --With compression--:
+        {                                                                    
+        HDF_CHUNK_DEF chunk_def;
+                                                                            
+        .......                
+        -- Set chunk lengths first --                                                    
+        chunk_def.chunk_lengths[0]= 2;                                                     
+        chunk_def.chunk_lengths[1]= 2;
+
+        -- Set compression --
+        chunk_def.comp.cinfo.deflate.level = 9;
+        chunk_def.comp.comp_type = COMP_CODE_DEFLATE;
+
+        -- Set Chunking with Compression --
+        GRsetchunk(riid, chunk_def, HDF_CHUNK | HDF_COMP);                      
+         ......                                                                  
+        }                                                                           
+
+        NOTE:
+           This routine directly calls a Special Chunked Element fcn HMCxxx.
+
+ RETURNS
+        SUCCEED/FAIL
+
+ AUTHOR 
+        -GeorgeV
+******************************************************************************/
+intn 
+GRsetchunk(int32 riid,             /* IN: raster access id */
+           HDF_CHUNK_DEF chunk_def, /* IN: chunk definition */
+           int32 flags              /* IN: flags */)
+{
+    CONSTR(FUNC, "GRsetchunk");
+    ri_info_t *ri_ptr = NULL;          /* ptr to the image to work with */
+    HCHUNK_DEF  chunk[1];            /* H-level chunk defintion */
+    HDF_CHUNK_DEF *cdef   = NULL;    /* GR Chunk definition */
+    model_info minfo;                /* dummy model info struct */
+    comp_info  cinfo;                /* compression info - NBIT */
+    int32      *cdims    = NULL;     /* array of chunk lengths */
+    uintn      pixel_mem_size,       /* size of a pixel in memory */
+               pixel_disk_size;      /* size of a pixel on disk */
+    VOIDP      fill_pixel = NULL;    /* converted value for the filled pixel */
+    int32      at_index;             /* attribute index for the fill value */
+    int32      ndims    = 0;         /* # dimensions i.e. rank */
+    uint8      nlevels  = 1;         /* default # levels is 1 */
+    intn       i;                    /* loop variable */
+    int32 hdf_file_id;          /* HDF file ID */
+    gr_info_t *gr_ptr;          /* ptr to the file GR information for this image */
+    intn       ret_value = SUCCEED;     /* return value */
+
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRsetchunk);
+#endif /* HAVE_PABLO */
+
+#ifdef CHK_DEBUG
+    fprintf(stderr,"GRsetchunk: called  \n");
+#endif
+    /* clear error stack and check validity of args */
+    HEclear();
+
+    /* Check some args */
+
+    /* check the validity of the RI ID */
+    if (HAatom_group(riid)!=RIIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* locate RI's object in hash table */
+    if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+
+    /* initialize important values */
+    gr_ptr=ri_ptr->gr_ptr;
+    hdf_file_id=gr_ptr->hdf_file_id;
+
+    /* Test if the tag/ref pair has been assigned yet 
+       Note that HMCcreate() needs to do the Hstartaccess on
+       the special tag/ref pair that is created. If another
+       GRxx routine does it then the special element cannot be
+       created. Special elements require 'lazy' DD creation. */
+    if(ri_ptr->img_tag==DFTAG_NULL || ri_ptr->img_ref==DFREF_WILDCARD)
+      {
+        ri_ptr->img_tag=DFTAG_RI;
+        ri_ptr->img_ref=Htagnewref(hdf_file_id,ri_ptr->img_tag);
+      } /* end if */
+
+#ifdef CHK_DEBUG
+    fprintf(stderr,"GRsetchunk: ri_ptr->img_aid=%d  \n",ri_ptr->img_aid);
+#endif
+
+    /* Decide type of defintion passed in  */
+    switch (flags)
+      {
+      case HDF_CHUNK: /* case where chunk_def only has chunk lengths */
+          cdef  = (HDF_CHUNK_DEF *)&chunk_def;
+          cdims = cdef->chunk_lengths;
+          chunk[0].chunk_flag = 0;  /* nothing set for this now */
+          chunk[0].comp_type = COMP_CODE_NONE; /* nothing set */
+          chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
+          chunk[0].cinfo = &cinfo; /* dummy */
+          chunk[0].minfo = &minfo; /* dummy */
+          break;
+      case (HDF_CHUNK | HDF_COMP):
+          cdef  = (HDF_CHUNK_DEF *)&chunk_def;
+          cdims = cdef->comp.chunk_lengths;
+          chunk[0].chunk_flag = SPECIAL_COMP;  /* Compression */
+          chunk[0].comp_type  = (comp_coder_t)cdef->comp.comp_type; 
+          chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
+          chunk[0].cinfo = &cdef->comp.cinfo; 
+          chunk[0].minfo = &minfo; /* dummy */
+          break;
+      case (HDF_CHUNK | HDF_NBIT):
+          cdef  = (HDF_CHUNK_DEF *)&chunk_def;
+          cdims = cdef->nbit.chunk_lengths;
+          chunk[0].chunk_flag = SPECIAL_COMP;  /* NBIT is a type of compression */
+          chunk[0].comp_type  = COMP_CODE_NBIT;   /* Nbit compression? */
+          chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
+          /* set up n-bit parameters */
+          cinfo.nbit.nt        = ri_ptr->img_dim.nt;
+          cinfo.nbit.sign_ext  = cdef->nbit.sign_ext;
+          cinfo.nbit.fill_one  = cdef->nbit.fill_one;
+          cinfo.nbit.start_bit = cdef->nbit.start_bit;
+          cinfo.nbit.bit_len   = cdef->nbit.bit_len;
+          chunk[0].cinfo = &cinfo; 
+          chunk[0].minfo = &minfo; /* dummy */
+          break;
+      default:
+          ret_value = FAIL;
+          goto done;
+      }
+
+    /* Now start setting chunk info */
+    ndims = 2; /* set number of dims i.e. rank 
+                  for Rasters it is 2 */
+
+    /* allocate space for chunk dimensions */
+    if ((chunk[0].pdims = (DIM_DEF *)HDmalloc(ndims*sizeof(DIM_DEF))) == NULL)
+      {
+          ret_value = FAIL;
+          goto done;
+      }
+
+    /* initialize datset/chunk sizes using CHUNK defintion structure */
+    chunk[0].chunk_size = 1;
+    chunk[0].num_dims = ndims;
+    for (i = 0; i < ndims; i++)
+      {   /* get dimension length from shape arrays */
+          if ( i == 0) /* X */
+              chunk[0].pdims[i].dim_length = ri_ptr->img_dim.xdim;
+          else /* Y */
+              chunk[0].pdims[i].dim_length = ri_ptr->img_dim.ydim;
+
+#ifdef CHK_DEBUG
+    fprintf(stderr,"GRsetchunk: ri_ptr->img_dim.xdim=%d\n",ri_ptr->img_dim.xdim);
+    fprintf(stderr,"GRsetchunk: ri_ptr->img_dim.ydim=%d\n",ri_ptr->img_dim.ydim);
+    fflush(stderr);
+#endif
+          /* set chunk lengths */
+          if (cdims[i] >= 1)
+              chunk[0].pdims[i].chunk_length = cdims[i];
+          else
+            { /* chunk length is less than 1 */
+#ifdef CHK_DEBUG
+    fprintf(stderr,"GRsetchunk: chunk length less than 1, cdims[%d]=%d \n",i,cdims[i]);
+    fflush(stderr);
+#endif
+                ret_value = FAIL;
+                goto done;
+            }
+#ifdef CHK_DEBUG
+    fprintf(stderr,"GRsetchunk: cdims[%d]=%d \n",i,cdims[i]);
+    fflush(stderr);
+#endif          
+          /* Data distribution along dimensions 
+          *  Check dimension length agains chunk length */
+          if (i == 0) /* X */
+            {
+                if (cdims[i] == ri_ptr->img_dim.xdim)
+                    chunk[0].pdims[i].distrib_type = 0;     /* NONE */
+                else
+                    chunk[0].pdims[i].distrib_type = 1;     /* BLOCK */
+            }
+          else /* Y */
+            {
+                if (cdims[i] == ri_ptr->img_dim.ydim)
+                    chunk[0].pdims[i].distrib_type = 0;     /* NONE */
+                else
+                    chunk[0].pdims[i].distrib_type = 1;     /* BLOCK */
+            }
+
+          /* compute chunk size */
+          chunk[0].chunk_size *= cdims[i];
+      } /* end for ndims */
+
+    /* Get the size of the pixels in memory and on disk */
+    pixel_mem_size  = (uintn)(ri_ptr->img_dim.ncomps*DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
+    pixel_disk_size = (uintn)(ri_ptr->img_dim.ncomps*DFKNTsize(ri_ptr->img_dim.nt));
+
+    /* Set number type size i.e. size of data type 
+       number of components times the number type */
+    chunk[0].nt_size = ri_ptr->img_dim.ncomps*DFKNTsize(ri_ptr->img_dim.nt);
+
+#ifdef CHK_DEBUG
+    fprintf(stderr,"GRsetchunk: datatype size =%d\n",
+            ri_ptr->img_dim.ncomps*DFKNTsize(ri_ptr->img_dim.nt));
+    fflush(stderr);
+#endif
+
+    /* allocate space for fill pixel */
+    if((fill_pixel = (VOIDP)HDmalloc(pixel_disk_size)) == NULL)
+        HGOTO_ERROR(DFE_NOSPACE,FAIL);
+
+    /* create correct disk version of fill pixel */
+    if(ri_ptr->fill_value != NULL)
+      {
+          DFKconvert(ri_ptr->fill_value,fill_pixel,
+                     ri_ptr->img_dim.nt,ri_ptr->img_dim.ncomps,
+                     DFACC_WRITE,0,0);
+      } /* end if */
+    else  /* create default pixel fill value of all zero components */
+      {
+          /* Try to find a fill value attribute */
+          if((at_index = GRfindattr(riid,FILL_ATTR)) != FAIL)
+            { /* Found a fill value attribute */
+                if((ri_ptr->fill_value = (VOIDP)HDmalloc(pixel_mem_size)) == NULL)
+                    HGOTO_ERROR(DFE_NOSPACE,FAIL);
+                if(GRgetattr(riid,at_index,ri_ptr->fill_value) == FAIL)
+                    HGOTO_ERROR(DFE_BADATTR,FAIL);
+#ifdef QAK
+                printf("%s: check 6.6, found a fill value, nt=%d, ncomps=%d\n",FUNC,(int)ri_ptr->img_dim.nt,(int)ri_ptr->img_dim.ncomps);
+#endif /* QAK */
+                DFKconvert(ri_ptr->fill_value,fill_pixel,
+                           ri_ptr->img_dim.nt,ri_ptr->img_dim.ncomps,
+                           DFACC_WRITE,0,0);
+            } /* end if */
+          else
+              HDmemset(fill_pixel,0,pixel_disk_size);
+      } /* end else */
+
+#ifdef CHK_DEBUG
+    fprintf(stderr,"GRsetchunk: get ready to create\n");
+    fprintf(stderr,"GRsetchunk: img_tag=%d, img_ref=%d\n",
+            ri_ptr->img_tag, ri_ptr->img_ref);
+#endif
+
+    /* check to see already special.
+       Error if already special since doubly special elements are
+       not yet handled. HMCcreate should catch this....*/
+    /* Create GR as chunked element  */
+    ret_value = HMCcreate(hdf_file_id, /* HDF file handle */
+                       (uint16)ri_ptr->img_tag,/* Data tag */
+                       (uint16)ri_ptr->img_ref,/* Data ref */
+                       nlevels,                /* nlevels */
+                       pixel_disk_size,        /* fill value length */
+                       (VOID *)fill_pixel,     /* fill value */
+                       (HCHUNK_DEF *)chunk     /* chunk definition */);
+
+#ifdef CHK_DEBUG
+    fprintf(stderr,"GRsetchunk: ret_value =%d \n", ret_value);
+#endif
+
+    /* check return */
+    if(ret_value != FAIL) 
+      { /* close old aid and set new one
+         ..hmm......this is for the doubly specail hack */
+          if((ri_ptr->img_aid != 0) && (ri_ptr->img_aid != FAIL))
+              Hendaccess(ri_ptr->img_aid);
+
+          ri_ptr->img_aid = ret_value; /* set new access id */
+          ret_value = SUCCEED; /* re-set to successful */
+      } /* end if */
+
+#ifdef CHK_DEBUG
+    fprintf(stderr,"GRsetchunk: ri_ptr->img_aid =%d \n", ri_ptr->img_aid);
+#endif
+
+  done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+
+    /* free fill value */
+    if (fill_pixel != NULL)
+        HDfree(fill_pixel);
+
+    /* free chunk dims */
+    if (chunk[0].pdims != NULL)
+        HDfree(chunk[0].pdims);
+
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRsetchunk);
+#endif /* HAVE_PABLO */
+    return ret_value;
+} /* GRsetchunk */
+
+/******************************************************************************
+ NAME
+     GRgetchunkinfo -- get Info on GR
+
+ DESCRIPTION
+     This routine gets any special information on the GR. If its chunked,
+     chunked and compressed or just a regular GR. Currently it will only
+     fill the array of chunk lengths for each dimension as specified in
+     the 'HDF_CHUNK_DEF' union. You can pass in a NULL for 'chunk_def'
+     if don't want the chunk lengths for each dimension.
+     If successfull it will return a bit-or'd value in 'flags' indicating 
+     if the GR is  chunked(HDF_CHUNK), chunked and compressed(HDF_CHUNK | HDF_COMP) 
+     or non-chunked(HDF_NONE).
+ 
+     e.g. 4x4 array - Pseudo-C
+     {
+     HDF_CHUNK_DEF rchunk_def;
+     int32   cflags;
+     ...
+     GRgetchunkinfo(riid, &rchunk_def, &cflags);
+     ...
+     }
+
+ RETURNS
+        SUCCEED/FAIL
+
+ AUTHOR 
+        -GeorgeV
+******************************************************************************/
+intn 
+GRgetchunkinfo(int32 riid,               /* IN: sds access id */
+               HDF_CHUNK_DEF *chunk_def,  /* IN/OUT: chunk definition */
+               int32 *flags               /* IN/OUT: flags */)
+{
+    CONSTR(FUNC, "GRgetchunkinfo");
+    ri_info_t *ri_ptr = NULL;          /* ptr to the image to work with */
+    sp_info_block_t info_block;      /* special info block */
+    int16      special;              /* Special code */
+    intn       i;                    /* loop variable */
+    intn       ret_value = SUCCEED;     /* return value */
+
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRgetchunkinfo);
+#endif /* HAVE_PABLO */
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+    /* Check some args */
+
+    /* check the validity of the RI ID */
+    if (HAatom_group(riid)!=RIIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* locate RI's object in hash table */
+    if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+
+    /* check if access id exists already */
+    if(ri_ptr->img_aid == 0)
+      {
+          /* now get access id, use read access for now */
+          if(GRIgetaid(ri_ptr,DFACC_READ)==FAIL)
+              HGOTO_ERROR(DFE_INTERNAL,FAIL);
+      }
+    else if (ri_ptr->img_aid == FAIL)
+        HGOTO_ERROR(DFE_INTERNAL,FAIL);
+
+#ifdef CHK_DEBUG
+    fprintf(stderr,"%s: ri_ptr->img_aid =%d \n", FUNC, ri_ptr->img_aid);
+#endif
+
+    /* inquire about element */
+    ret_value = Hinquire(ri_ptr->img_aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
+    if (ret_value != FAIL)
+      {   /* make sure it is chunked element */
+          if (special == SPECIAL_CHUNKED)
+            { /* get info about chunked element */
+             if ((ret_value = HDget_special_info(ri_ptr->img_aid, &info_block)) != FAIL)
+               {   /* Does user want chunk lengths back? */
+                   if (chunk_def != NULL)
+                     {
+                         /* we assume user has allocat space for chunk lengths */
+                         /* copy chunk lengths over */
+                         for (i = 0; i < info_block.ndims; i++)
+                           {
+                               chunk_def->chunk_lengths[i] = info_block.cdims[i];
+                           }
+                     }
+                   /* dont forget to free up info is special info block 
+                      This space was allocated by the library */
+                   HDfree(info_block.cdims);
+
+                   /* Check to see if compressed */
+                   switch(info_block.comp_type)
+                     {
+                     case COMP_CODE_NONE:
+                         *flags = HDF_CHUNK;
+                         break;
+                     case COMP_CODE_NBIT:
+                         *flags = (HDF_CHUNK | HDF_NBIT);
+                         break;
+                     default:
+                         *flags = (HDF_CHUNK | HDF_COMP);
+                         break;
+                     }
+               }
+            }
+          else /* not special chunked element */
+            {
+              *flags = HDF_NONE; /* regular GR */
+            }
+      }
+
+  done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRgetchunkinfo);
+#endif /* HAVE_PABLO */
+    return ret_value;
+} /* GRgetchunkinfo() */
+
+
+/******************************************************************************
+ NAME
+     GRwritechunk   -- write the specified chunk to the GR
+
+ DESCRIPTION
+     This routine writes a whole chunk of data to the chunked GR 
+     specified by chunk 'origin' for the given GR and can be used
+     instead of GRwritedata() when this information is known. This
+     routine has less overhead and is much faster than using GRwritedata().
+
+     Origin specifies the co-ordinates of the chunk according to the chunk
+     position in the overall chunk array.
+
+     'datap' must point to a whole chunk of data.
+
+     See GRsetchunk() for a description of the organization of chunks in an GR.
+
+     NOTE:
+           This routine directly calls a Special Chunked Element fcn HMCxxx.
+
+ RETURNS
+        SUCCEED/FAIL
+
+ AUTHOR 
+       -GeorgeV
+******************************************************************************/
+intn 
+GRwritechunk(int32 riid,      /* IN: access aid to GR */
+             int32 *origin,    /* IN: origin of chunk to write */
+             const VOID *datap /* IN: buffer for data */)
+{
+    CONSTR(FUNC, "GRwritechunk");
+    ri_info_t *ri_ptr = NULL;          /* ptr to the image to work with */
+    uintn      pixel_mem_size,       /* size of a pixel in memory */
+               pixel_disk_size;      /* size of a pixel on disk */
+    VOID      *img_data = NULL; /* buffer used for conversion */
+    int16      special;         /* Special code */
+    int32      csize;           /* phsical chunk size */
+    sp_info_block_t info_block; /* special info block */
+    uint32     byte_count;      /* bytes to write */
+    uint8      platnumsubclass;  /* the machine type of the current platform */
+    uintn      convert;         /* whether to convert or not */
+    intn       i;
+    intn       switch_interlace = FALSE;/* whether the memory interlace needs to be switched around */
+    intn       ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRwritechunk);
+#endif /* HAVE_PABLO */
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+    info_block.cdims = NULL;
+
+    /* Check args */
+    if (origin == NULL || datap == NULL)
+      {
+        ret_value = FAIL;
+        goto done;
+      }
+
+    /* check the validity of the RI ID */
+    if (HAatom_group(riid)!=RIIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* locate RI's object in hash table */
+    if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+
+    /* check if access id exists already */
+    if(ri_ptr->img_aid == 0)
+      {
+          /* now get access id, use write access */
+          if(GRIgetaid(ri_ptr,DFACC_WRITE)==FAIL)
+              HGOTO_ERROR(DFE_INTERNAL,FAIL);
+      }
+    else if (ri_ptr->img_aid == FAIL)
+        HGOTO_ERROR(DFE_INTERNAL,FAIL);
+
+#ifdef CHK_DEBUG
+    fprintf(stderr,"%s: ri_ptr->img_aid =%d \n", FUNC, ri_ptr->img_aid);
+#endif
+
+    /* inquire about element */
+    ret_value = Hinquire(ri_ptr->img_aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
+    if (ret_value != FAIL)
+      {
+          if (special == SPECIAL_CHUNKED)
+            {  /* yes */
+
+                /* get info about chunked element */
+                if ((ret_value = HDget_special_info(ri_ptr->img_aid, &info_block)) != FAIL)
+                  {   
+                      /* calculate chunk size  */
+                      csize = 1;
+                      for (i = 0; i < info_block.ndims; i++)
+                          csize *= info_block.cdims[i];
+
+                      /* Get the size of the pixels in memory and on disk */
+                      pixel_mem_size  =(uintn)(ri_ptr->img_dim.ncomps*DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
+                      pixel_disk_size =(uintn)(ri_ptr->img_dim.ncomps*DFKNTsize(ri_ptr->img_dim.nt));
+
+                      /* adjust for data type size */
+                      /* csize *= pixel_mem_size; */
+                      byte_count = csize * pixel_mem_size;
+
+                      /* figure out if data needs to be converted */
+                      /* Get number-type and conversion information */
+                      platnumsubclass = (uint8)DFKgetPNSC(ri_ptr->img_dim.nt & (~DFNT_LITEND), DF_MT);
+#ifdef QAK
+printf("%s: file_nt_subclass=%x, platnumsubclass=%x\n",FUNC,(unsigned)ri_ptr->img_dim.file_nt_subclass,(unsigned)platnumsubclass);
+printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_size,(unsigned)pixel_disk_size);
+#endif /* QAK */
+                     convert = (ri_ptr->img_dim.file_nt_subclass != platnumsubclass) ||
+                            	(pixel_mem_size != pixel_disk_size);  /* is conversion necessary? */
+
+                      /* check interlace */
+                      if(ri_ptr->img_dim.il != MFGR_INTERLACE_PIXEL)
+                          switch_interlace=TRUE;
+
+                      /* convert if necessary */
+                      if(convert || switch_interlace == TRUE) 
+                        {
+                            /* Allocate space for the conversion buffer */
+                            if((img_data = HDmalloc(pixel_disk_size*csize)) == NULL)
+                                HGOTO_ERROR(DFE_NOSPACE,FAIL);
+
+                            if(switch_interlace == TRUE)
+                              {
+                                  VOIDP pixel_buf;  /* buffer for the pixel interlaced data */
+
+                                  /* Allocate space for the conversion buffer */
+                                  if((pixel_buf = HDmalloc(pixel_mem_size*csize)) == NULL)
+                                      HGOTO_ERROR(DFE_NOSPACE,FAIL);
+
+                                  GRIil_convert((VOID *)datap,ri_ptr->img_dim.il,pixel_buf,MFGR_INTERLACE_PIXEL,
+                                                info_block.cdims,ri_ptr->img_dim.ncomps,ri_ptr->img_dim.nt);
+                                  
+                                  /* convert the pixel data into the HDF disk format */
+                                  DFKconvert(pixel_buf,img_data,ri_ptr->img_dim.nt,
+                                             ri_ptr->img_dim.ncomps*csize,DFACC_WRITE,0,0);
+                                  
+                                  HDfree(pixel_buf);
+                              } /* end if */
+                            else /* convert the pixel data into the HDF disk format */
+                                DFKconvert((VOID *)datap,img_data,ri_ptr->img_dim.nt,
+                                           ri_ptr->img_dim.ncomps*csize,DFACC_WRITE,0,0);
+                        }
+                      else /* no conversion necessary, just use the user's buffer */
+                          img_data = (VOID *)datap;
+
+                      /* Write chunk out, */
+                      if ((ret_value = HMCwriteChunk(ri_ptr->img_aid, origin, img_data)) 
+                          != FAIL)
+                          ret_value = SUCCEED;
+                  } /* end if get special info block */
+            }
+          else /* not special CHUNKED */
+              ret_value = FAIL;
+      } /* end if Hinquire */
+
+  done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+    /* dont forget to free up info is special info block 
+       This space was allocated by the library */
+    if (info_block.cdims != NULL)
+        HDfree(info_block.cdims);
+
+    /* free conversion buffers if any */
+    if (img_data != NULL)
+        HDfree(img_data);
+
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRwritechunk);
+#endif /* HAVE_PABLO */
+    return ret_value;
+} /* GRwritechunk() */
+
+/******************************************************************************
+ NAME
+     GRreadchunk   -- read the specified chunk to the GR
+
+ DESCRIPTION
+     This routine reads a whole chunk of data from the chunked GR
+     specified by chunk 'origin' for the given GR and can be used
+     instead of GRreaddata() when this information is known. This
+     routine has less overhead and is much faster than using GRreaddata().
+
+     Origin specifies the co-ordinates of the chunk according to the chunk
+     position in the overall chunk array.
+
+     'datap' must point to a whole chunk of data.
+
+     See GRsetchunk() for a description of the organization of chunks in an GR.
+
+     NOTE:
+         This routine directly calls a Special Chunked Element fcn HMCxxx.
+
+ RETURNS
+        SUCCEED/FAIL
+
+ AUTHOR 
+       -GeorgeV
+******************************************************************************/
+intn 
+GRreadchunk(int32 riid,   /* IN: access aid to GR */
+            int32 *origin, /* IN: origin of chunk to write */
+            VOID *datap    /* IN/OUT: buffer for data */)
+{
+    CONSTR(FUNC, "GRreadchunk");
+    ri_info_t *ri_ptr = NULL;          /* ptr to the image to work with */
+    uintn      pixel_mem_size,       /* size of a pixel in memory */
+               pixel_disk_size;      /* size of a pixel on disk */
+    VOID      *img_data = NULL; /* buffer used for conversion */
+    int16      special;         /* Special code */
+    int32      csize;           /* phsical chunk size */
+    sp_info_block_t info_block; /* special info block */
+    uint32     byte_count;      /* bytes to read */
+    uint8      platnumsubclass;  /* the machine type of the current platform */
+    uintn      convert;         /* whether to convert or not */
+    intn       i;
+    intn       switch_interlace = FALSE;/* whether the memory interlace needs to be switched around */
+    intn       ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRreadchunk);
+#endif /* HAVE_PABLO */
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+    info_block.cdims = NULL;
+
+    /* Check args */
+    if (origin == NULL || datap == NULL)
+      {
+        ret_value = FAIL;
+        goto done;
+      }
+
+    /* check the validity of the RI ID */
+    if (HAatom_group(riid)!=RIIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* locate RI's object in hash table */
+    if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+
+    /* check if access id exists already */
+    if(ri_ptr->img_aid == 0)
+      {
+          /* now get access id, use write access */
+          if(GRIgetaid(ri_ptr,DFACC_WRITE)==FAIL)
+              HGOTO_ERROR(DFE_INTERNAL,FAIL);
+      }
+    else if (ri_ptr->img_aid == FAIL)
+        HGOTO_ERROR(DFE_INTERNAL,FAIL);
+
+#ifdef CHK_DEBUG
+    fprintf(stderr,"%s: ri_ptr->img_aid =%d \n", FUNC, ri_ptr->img_aid);
+#endif
+
+    /* inquire about element */
+    ret_value = Hinquire(ri_ptr->img_aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
+    if (ret_value != FAIL)
+      {
+          if (special == SPECIAL_CHUNKED)
+            {  /* yes */
+
+                /* get info about chunked element */
+                if ((ret_value = HDget_special_info(ri_ptr->img_aid, &info_block)) != FAIL)
+                  {   
+                      /* calcualte chunk size  */
+                      csize = 1;
+                      for (i = 0; i < info_block.ndims; i++)
+                          csize *= info_block.cdims[i];
+
+                      /* Get the size of the pixels in memory and on disk */
+                      pixel_mem_size  =(uintn)(ri_ptr->img_dim.ncomps*DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
+                      pixel_disk_size =(uintn)(ri_ptr->img_dim.ncomps*DFKNTsize(ri_ptr->img_dim.nt));
+
+                      /* adjust for number type size */
+                      /* csize *= pixel_mem_size; */
+                      byte_count = csize * pixel_mem_size;
+
+                      /* figure out if data needs to be converted */
+                      /* Get number-type and conversion information */
+                      platnumsubclass = (uint8)DFKgetPNSC(ri_ptr->img_dim.nt & (~DFNT_LITEND), DF_MT);
+#ifdef QAK
+printf("%s: file_nt_subclass=%x, platnumsubclass=%x\n",FUNC,(unsigned)ri_ptr->img_dim.file_nt_subclass,(unsigned)platnumsubclass);
+printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_size,(unsigned)pixel_disk_size);
+#endif /* QAK */
+                     convert = (ri_ptr->img_dim.file_nt_subclass != platnumsubclass) ||
+                            	(pixel_mem_size != pixel_disk_size);  /* is conversion necessary? */
+
+                      /* check interlace */
+                      if(ri_ptr->img_dim.il != MFGR_INTERLACE_PIXEL)
+                          switch_interlace=TRUE;
+
+                      /* read chunk in */
+                      if(convert) 
+                        {
+                            /* Allocate space for the conversion buffer */
+                            if((img_data = HDmalloc(pixel_disk_size*csize)) == NULL)
+                                HGOTO_ERROR(DFE_NOSPACE,FAIL);
+
+                            /* read it in */
+                            if ((ret_value = HMCreadChunk(ri_ptr->img_aid, origin, img_data)) 
+                                != FAIL)
+                                {
+                                    DFKconvert(img_data,datap,ri_ptr->img_dim.nt,
+                                               ri_ptr->img_dim.ncomps*csize,DFACC_READ,0,0);
+                                    ret_value = SUCCEED;
+                                }
+                        } /* end if */
+                      else 
+                        {
+                          if ((ret_value = HMCreadChunk(ri_ptr->img_aid, origin, datap))
+                              != FAIL)
+                              ret_value = SUCCEED;
+                        }
+
+                      /* Check whether we need to convert the buffer to the user's */
+                      /*    requested interlace scheme. */
+                      /* Note: This is implemented in a horribly ugly & slow manner, but I'm */
+                      /*        in a bit of a hurry right now - QAK */
+                      if(ri_ptr->im_il != MFGR_INTERLACE_PIXEL)
+                        {
+                            VOIDP pixel_buf;  /* buffer for the pixel interlaced data */
+
+                            /* Allocate space for the conversion buffer */
+                            if((pixel_buf = HDmalloc(pixel_mem_size*csize)) == NULL)
+                                HGOTO_ERROR(DFE_NOSPACE,FAIL);
+
+                            GRIil_convert(datap,MFGR_INTERLACE_PIXEL,pixel_buf,ri_ptr->im_il,
+                                          info_block.cdims,ri_ptr->img_dim.ncomps,ri_ptr->img_dim.nt);
+
+                            HDmemcpy(datap,pixel_buf,pixel_mem_size*csize);
+
+                            HDfree(pixel_buf);
+                        } /* end if */
+
+                  } /* end if get special info block */
+            }
+          else /* not special CHUNKED */
+              ret_value = FAIL;
+      } /* end if Hinquire */
+
+  done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+    /* dont forget to free up info is special info block 
+       This space was allocated by the library */
+    if (info_block.cdims != NULL)
+        HDfree(info_block.cdims);
+
+    /* free conversion buffers if any */
+    if (img_data != NULL)
+        HDfree(img_data);
+
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRreadchunk);
+#endif /* HAVE_PABLO */
+    return ret_value;
+} /* GRreadchunk() */
+
+/******************************************************************************
+NAME
+     GRsetchunkcache - maximum number of chunks to cache 
+
+DESCRIPTION
+     Set the maximum number of chunks to cache.
+
+     The cache contains the Least Recently Used(LRU cache replacment policy) 
+     chunks. This routine allows the setting of maximum number of chunks that 
+     can be cached, 'maxcache'.
+
+     The performance of the GRxxx interface with chunking is greatly
+     affected by the users access pattern over the dataset and by
+     the maximum number of chunks set in the chunk cache. The number chunks 
+     that can be set in the cache is process memory limited. It is a good 
+     idea to always set the maximum number of chunks in the cache as the 
+     default heuristic does not take into account the memory available for 
+     the application.
+
+     By default when the GR is promoted to a chunked element the 
+     maximum number of chunks in the cache 'maxcache' is set to the number of
+     chunks along the last dimension.
+
+     The values set here affects the current GR object's caching behaviour.
+
+     If the chunk cache is full and 'maxcache' is greater then the
+     current 'maxcache' value, then the chunk cache is reset to the new
+     'maxcache' value, else the chunk cache remains at the current
+     'maxcache' value.
+
+     If the chunk cache is not full, then the chunk cache is set to the
+     new 'maxcache' value only if the new 'maxcache' value is greater than the
+     current number of chunks in the cache.
+
+     Use flags argument of 'HDF_CACHEALL' if the whole object is to be cached 
+     in memory, otherwise pass in zero(0). Currently you can only
+     pass in zero.
+
+     See GRsetchunk() for a description of the organization of chunks in an GR.
+     
+     NOTE:
+          This routine directly calls a Special Chunked Element fcn HMCxxx.
+
+RETURNS
+     Returns the 'maxcache' value for the chunk cache if successful 
+     and FAIL otherwise
+
+AUTHOR 
+      -GeorgeV
+******************************************************************************/
+intn
+GRsetchunkcache(int32 riid,     /* IN: access aid to mess with */
+                int32 maxcache,  /* IN: max number of chunks to cache */
+                int32 flags      /* IN: flags = 0, HDF_CACHEALL */)
+{
+    CONSTR(FUNC, "GRsetchunkcache");
+    ri_info_t *ri_ptr = NULL;          /* ptr to the image to work with */
+    int16      special;              /* Special code */
+    intn      ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRsetchunkcache);
+#endif /* HAVE_PABLO */
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+    /* Check args */
+    if (maxcache < 1 )
+      {
+        ret_value = FAIL;
+        goto done;
+      }
+
+    if (flags != 0 && flags != HDF_CACHEALL)
+      {
+        ret_value = FAIL;
+        goto done;
+      }
+
+    /* check the validity of the RI ID */
+    if (HAatom_group(riid)!=RIIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* locate RI's object in hash table */
+    if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+
+    /* check if access id exists already */
+    if(ri_ptr->img_aid == 0)
+      {
+          /* now get access id, use write access */
+          if(GRIgetaid(ri_ptr,DFACC_WRITE)==FAIL)
+              HGOTO_ERROR(DFE_INTERNAL,FAIL);
+      }
+    else if (ri_ptr->img_aid == FAIL)
+        HGOTO_ERROR(DFE_INTERNAL,FAIL);
+
+#ifdef CHK_DEBUG
+    fprintf(stderr,"%s: ri_ptr->img_aid =%d \n", FUNC, ri_ptr->img_aid);
+#endif
+
+    /* inquire about element */
+    ret_value = Hinquire(ri_ptr->img_aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
+    if (ret_value != FAIL)
+      {
+          if (special == SPECIAL_CHUNKED)
+                ret_value = HMCsetMaxcache(ri_ptr->img_aid, maxcache, flags); /* set cache*/
+          else
+              ret_value = FAIL;
+      }
+
+  done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRsetchunkcache);
+#endif /* HAVE_PABLO */
+    return ret_value;
+} /* GRsetchunkcache() */
+
 /*
 
 API functions to finish:

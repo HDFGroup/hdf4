@@ -25,6 +25,7 @@ static char RcsId[] = "$Revision$";
 *************************************************************/
 
 #define TESTFILE "tmgr.hdf"
+#define TESTFILE2 "tmgrchk.hdf"
 #define DATAFILE "tmgr.dat"
 
 #include "tproto.h"
@@ -155,25 +156,25 @@ const float64 image4[19][17][2]={
 static void dump_image(void *data, int32 xdim, int32 ydim, int32 ncomp, int32 nt);
 #endif /* QAK */
 static void test_mgr_init(void);
-static void test_mgr_image_b1a(void);
-static void test_mgr_image_b1b(void);
-static void test_mgr_image_b2a1aa(void);
-static void test_mgr_image_b2a1bb1(void);
-static void test_mgr_image_b2a1bb2(void);
-static void test_mgr_image_b2a1cc1(void);
-static void test_mgr_image_b2a1cc2(void);
-static void test_mgr_image_b2a2aa(void);
-static void test_mgr_image_b2a2bb(void);
-static void test_mgr_image_b2a2cc(void);
-static void test_mgr_image_b2b1(void);
-static void test_mgr_image_b2b2(void);
-static void test_mgr_image_b2b3(void);
-static void test_mgr_image(void);
-static void test_mgr_index(void);
-static void test_mgr_interlace(void);
-static void test_mgr_lut(void);
-static void test_mgr_special(void);
-static void test_mgr_attr(void);
+static void test_mgr_image_b1a(int flag);
+static void test_mgr_image_b1b(int flag);
+static void test_mgr_image_b2a1aa(int flag);
+static void test_mgr_image_b2a1bb1(int flag);
+static void test_mgr_image_b2a1bb2(int flag);
+static void test_mgr_image_b2a1cc1(int flag);
+static void test_mgr_image_b2a1cc2(int flag);
+static void test_mgr_image_b2a2aa(int flag);
+static void test_mgr_image_b2a2bb(int flag);
+static void test_mgr_image_b2a2cc(int flag);
+static void test_mgr_image_b2b1(int flag);
+static void test_mgr_image_b2b2(int flag);
+static void test_mgr_image_b2b3(int flag);
+static void test_mgr_image(int flag);
+static void test_mgr_index(int flag);
+static void test_mgr_interlace(int flag);
+static void test_mgr_lut(int flag);
+static void test_mgr_special(int flag);
+static void test_mgr_attr(int flag);
 
 #ifdef QAK
 static void dump_image(void *data, int32 xdim, int32 ydim, int32 ncomp, int32 nt)
@@ -405,17 +406,26 @@ test_mgr_init(void)
 }   /* end test_mgr_init() */
 
 /* Sub-tests for test_mgr_image() */
-static void test_mgr_image_b1a(void)
+static void test_mgr_image_b1a(int flag)
 {
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
     int32 ret;              /* generic return value */
+    int32   cdims[2] = {1,1};    /* chunk dims */
+    int32   *rcdims;             /* for SDgetchunkinfo() */
+    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
+    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+    int32     cflags;            /* chunk flags */
+    comp_info cinfo;             /* compression info */
 
 /* B1a - Read/Write images - with no Data - Default Fill Value */
     MESSAGE(8, printf("Check out I/O on image with no data, using the default fill value\n"););
 
     /* Open up the existing datafile and get the image information from it */
-    fid=Hopen(TESTFILE,DFACC_RDWR,0);
+    if (flag)
+        fid=Hopen(TESTFILE2,DFACC_RDWR,0);
+    else
+        fid=Hopen(TESTFILE,DFACC_RDWR,0);
     CHECK(fid,FAIL,"Hopen");
 
     /* Initialize the GR interface */
@@ -435,6 +445,21 @@ static void test_mgr_image_b1a(void)
         /* Create empty image with default fill value */
         riid=GRcreate(grid,"Empty Image",3,DFNT_FLOAT32,MFGR_INTERLACE_PIXEL,dims);
         CHECK(riid,FAIL,"GRcreate");
+
+        /* Check if creating chunked GR */
+        if (flag)
+          {
+              /* Create chunked GR 
+                 chunk is 2x2 which will create 6 chunks */
+              cdims[0] = chunk_def.chunk_lengths[0] = 2;
+              cdims[1] = chunk_def.chunk_lengths[1] = 2;
+              ret = GRsetchunk(riid, chunk_def, HDF_CHUNK);
+              CHECK(ret,FAIL,"GRsetchunk");
+
+              /* Set Chunk cache to hold 3 chunks */
+              ret = GRsetchunkcache(riid, 3, 0);
+              CHECK(ret,FAIL,"GRsetchunkcache");
+          }
 
         /* Save the ref. # for later access */
         ref=GRidtoref(riid);
@@ -467,6 +492,26 @@ static void test_mgr_image_b1a(void)
               num_errs++;
           } /* end if */
 
+        /* check if we are doing chunked tests */
+        if (flag)
+          {
+              /* Get chunk lengths */
+              ret = GRgetchunkinfo(riid, &rchunk_def, &cflags);
+              CHECK(ret,FAIL,"GRgetchunkinfo");
+
+              rcdims = rchunk_def.chunk_lengths;
+
+              /* check chunk lengths and to see if GR is chunked */
+              if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
+                {
+                    fprintf(stderr, "Chunk Test. GRgetchunkinfo returned wrong values\n");
+                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",cdims[0],cdims[1]);
+                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",rcdims[0],rcdims[1]);
+                    fprintf(stderr, "cflags =%d \n", cflags );
+                }
+
+          }
+
         /* Close the empty image */
         ret=GRendaccess(riid);
         CHECK(ret,FAIL,"GRendaccess");
@@ -481,17 +526,26 @@ static void test_mgr_image_b1a(void)
     CHECK(ret,FAIL,"Hclose");
 } /* end test_mgr_image_b1a() */
 
-static void test_mgr_image_b1b(void)
+static void test_mgr_image_b1b(int flag)
 {
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
     int32 ret;              /* generic return value */
+    int32   cdims[2] = {1,1};    /* chunk dims */
+    int32   *rcdims;             /* for SDgetchunkinfo() */
+    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
+    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+    int32     cflags;            /* chunk flags */
+    comp_info cinfo;             /* compression info */
 
 /* B1b - Read/Write images - with no Data - User-defined Fill Value */
     MESSAGE(8, printf("Check out I/O on image with no data, using User Defined fill-value\n"););
 
     /* Open up the existing datafile and get the image information from it */
-    fid=Hopen(TESTFILE,DFACC_RDWR,0);
+    if (flag)
+        fid=Hopen(TESTFILE2,DFACC_RDWR,0);
+    else
+        fid=Hopen(TESTFILE,DFACC_RDWR,0);
     CHECK(fid,FAIL,"Hopen");
 
     /* Initialize the GR interface */
@@ -516,6 +570,17 @@ static void test_mgr_image_b1b(void)
         /* Set the fill-value */
         ret=GRsetattr(riid,FILL_ATTR,DFNT_FLOAT64,sizeof(fill_pixel)/sizeof(float64),fill_pixel);
         CHECK(ret,FAIL,"GRsetattr");
+
+        /* Check if creating chunked GR */
+        if (flag)
+          {
+              /* Create chunked GR 
+                 chunk is 2x2 which will create 6 chunks */
+              cdims[0] = chunk_def.chunk_lengths[0] = 2;
+              cdims[1] = chunk_def.chunk_lengths[1] = 2;
+              ret = GRsetchunk(riid, chunk_def, HDF_CHUNK);
+              CHECK(ret,FAIL,"GRsetchunk");
+          }
 
         /* Save the ref. # for later access */
         ref=GRidtoref(riid);
@@ -548,6 +613,26 @@ static void test_mgr_image_b1b(void)
               num_errs++;
           } /* end if */
 
+        /* check if we are doing chunked tests */
+        if (flag)
+          {
+              /* Get chunk lengths */
+              ret = GRgetchunkinfo(riid, &rchunk_def, &cflags);
+              CHECK(ret,FAIL,"GRgetchunkinfo");
+
+              rcdims = rchunk_def.chunk_lengths;
+
+              /* check chunk lengths and to see if GR is chunked */
+              if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
+                {
+                    fprintf(stderr, "Chunk Test. GRgetchunkinfo returned wrong values\n");
+                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",cdims[0],cdims[1]);
+                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",rcdims[0],rcdims[1]);
+                    fprintf(stderr, "cflags =%d \n", cflags );
+                }
+
+          }
+
         /* Close the empty image */
         ret=GRendaccess(riid);
         CHECK(ret,FAIL,"GRendaccess");
@@ -562,17 +647,27 @@ static void test_mgr_image_b1b(void)
     CHECK(ret,FAIL,"Hclose");
 } /* end test_mgr_image_b1b() */
 
-static void test_mgr_image_b2a1aa(void)
+static void test_mgr_image_b2a1aa(int flag)
 {
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
     int32 ret;              /* generic return value */
+    int32   cdims[2] = {1,1};    /* chunk dims */
+    int32   *rcdims;             /* for SDgetchunkinfo() */
+    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
+    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+    int32     cflags;            /* chunk flags */
+    comp_info cinfo;             /* compression info */
+
 
 /* B2a1aa - Read/Write images - with real Data - New Image - with Default Fill Value - Whole Image */
     MESSAGE(8, printf("Check out I/O on new image with real data, with Default fill-value, Whole Image\n"););
 
     /* Open up the existing datafile and get the image information from it */
-    fid=Hopen(TESTFILE,DFACC_RDWR,0);
+    if (flag)
+        fid=Hopen(TESTFILE2,DFACC_RDWR,0);
+    else
+        fid=Hopen(TESTFILE,DFACC_RDWR,0);
     CHECK(fid,FAIL,"Hopen");
 
     /* Initialize the GR interface */
@@ -630,6 +725,17 @@ static void test_mgr_image_b2a1aa(void)
         riid=GRcreate(grid,"Test Image B2a1aa",TEST_NCOMP,TEST_NT,MFGR_INTERLACE_PIXEL,dims);
         CHECK(riid,FAIL,"GRcreate");
 
+        /* Check if creating chunked GR */
+        if (flag)
+          {
+              /* Create chunked GR 
+                 chunk is 2x2 which will create 6 chunks */
+              cdims[0] = chunk_def.chunk_lengths[0] = 2;
+              cdims[1] = chunk_def.chunk_lengths[1] = 2;
+              ret = GRsetchunk(riid, chunk_def, HDF_CHUNK);
+              CHECK(ret,FAIL,"GRsetchunk");
+          }
+
         /* Save the ref. # for later access */
         ref=GRidtoref(riid);
         CHECK(ref,(uint16)FAIL,"GRidtoref");
@@ -662,6 +768,26 @@ static void test_mgr_image_b2a1aa(void)
               num_errs++;
           } /* end if */
 
+        /* check if we are doing chunked tests */
+        if (flag)
+          {
+              /* Get chunk lengths */
+              ret = GRgetchunkinfo(riid, &rchunk_def, &cflags);
+              CHECK(ret,FAIL,"GRgetchunkinfo");
+
+              rcdims = rchunk_def.chunk_lengths;
+
+              /* check chunk lengths and to see if GR is chunked */
+              if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
+                {
+                    fprintf(stderr, "Chunk Test. GRgetchunkinfo returned wrong values\n");
+                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",cdims[0],cdims[1]);
+                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",rcdims[0],rcdims[1]);
+                    fprintf(stderr, "cflags =%d \n", cflags );
+                }
+
+          }
+
         /* Close the empty image */
         ret=GRendaccess(riid);
         CHECK(ret,FAIL,"GRendaccess");
@@ -676,17 +802,26 @@ static void test_mgr_image_b2a1aa(void)
     CHECK(ret,FAIL,"Hclose");
 } /* end test_mgr_image_b2a1aa() */
 
-static void test_mgr_image_b2a1bb1(void)
+static void test_mgr_image_b2a1bb1(int flag)
 {
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
     int32 ret;              /* generic return value */
+    int32   cdims[2] = {1,1};    /* chunk dims */
+    int32   *rcdims;             /* for SDgetchunkinfo() */
+    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
+    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+    int32     cflags;            /* chunk flags */
+    comp_info cinfo;             /* compression info */
 
 /* B2a1bb - Read/Write images - with real Data - New Image - with Default Fill Value - Sub-setted Image */
     MESSAGE(8, printf("Check out I/O on new image with real data, with Default fill-value, Writing Sub-setted Image\n"););
 
     /* Open up the existing datafile and get the image information from it */
-    fid=Hopen(TESTFILE,DFACC_RDWR,0);
+    if (flag)
+        fid=Hopen(TESTFILE2,DFACC_RDWR,0);
+    else
+        fid=Hopen(TESTFILE,DFACC_RDWR,0);
     CHECK(fid,FAIL,"Hopen");
 
     /* Initialize the GR interface */
@@ -757,6 +892,17 @@ static void test_mgr_image_b2a1bb1(void)
         riid=GRcreate(grid,"Test Image B2a1bb",TEST_NCOMP,TEST_NT,MFGR_INTERLACE_PIXEL,dims);
         CHECK(riid,FAIL,"GRcreate");
 
+        /* Check if creating chunked GR */
+        if (flag)
+          {
+              /* Create chunked GR 
+                 chunk is 2x2 which will create 6 chunks */
+              cdims[0] = chunk_def.chunk_lengths[0] = 2;
+              cdims[1] = chunk_def.chunk_lengths[1] = 2;
+              ret = GRsetchunk(riid, chunk_def, HDF_CHUNK);
+              CHECK(ret,FAIL,"GRsetchunk");
+          }
+
         /* Save the ref. # for later access */
         ref=GRidtoref(riid);
         CHECK(ref,(uint16)FAIL,"GRidtoref");
@@ -800,6 +946,26 @@ static void test_mgr_image_b2a1bb1(void)
               num_errs++;
           } /* end if */
 
+        /* check if we are doing chunked tests */
+        if (flag)
+          {
+              /* Get chunk lengths */
+              ret = GRgetchunkinfo(riid, &rchunk_def, &cflags);
+              CHECK(ret,FAIL,"GRgetchunkinfo");
+
+              rcdims = rchunk_def.chunk_lengths;
+
+              /* check chunk lengths and to see if GR is chunked */
+              if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
+                {
+                    fprintf(stderr, "Chunk Test. GRgetchunkinfo returned wrong values\n");
+                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",cdims[0],cdims[1]);
+                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",rcdims[0],rcdims[1]);
+                    fprintf(stderr, "cflags =%d \n", cflags );
+                }
+
+          }
+
         /* Close the empty image */
         ret=GRendaccess(riid);
         CHECK(ret,FAIL,"GRendaccess");
@@ -815,15 +981,24 @@ static void test_mgr_image_b2a1bb1(void)
 
 } /* end test_mgr_image_b2a1bb1() */
 
-static void test_mgr_image_b2a1bb2(void)
+static void test_mgr_image_b2a1bb2(int flag)
 {
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
     int32 ret;              /* generic return value */
+    int32   cdims[2] = {1,1};    /* chunk dims */
+    int32   *rcdims;             /* for SDgetchunkinfo() */
+    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
+    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+    int32     cflags;            /* chunk flags */
+    comp_info cinfo;             /* compression info */
 
     MESSAGE(8, printf("Check out I/O on new image with real data, with Default fill-value, Reading Sub-setted Image\n"););
     /* Open up the existing datafile and get the image information from it */
-    fid=Hopen(TESTFILE,DFACC_RDWR,0);
+    if (flag)
+        fid=Hopen(TESTFILE2,DFACC_RDWR,0);
+    else
+        fid=Hopen(TESTFILE,DFACC_RDWR,0);
     CHECK(fid,FAIL,"Hopen");
 
     /* Initialize the GR interface */
@@ -894,6 +1069,21 @@ static void test_mgr_image_b2a1bb2(void)
         riid=GRcreate(grid,"Test Image B2a1bb2",TEST_NCOMP,TEST_NT,MFGR_INTERLACE_PIXEL,dims);
         CHECK(riid,FAIL,"GRcreate");
 
+        /* Check if creating chunked GR */
+        if (flag)
+          {
+              /* Create chunked GR 
+                 chunk is 2x2 which will create 6 chunks */
+              cdims[0] = chunk_def.chunk_lengths[0] = 2;
+              cdims[1] = chunk_def.chunk_lengths[1] = 2;
+              ret = GRsetchunk(riid, chunk_def, HDF_CHUNK);
+              CHECK(ret,FAIL,"GRsetchunk");
+
+              /* Set Chunk cache to hold 3 chunks */
+              ret = GRsetchunkcache(riid, 3, 0);
+              CHECK(ret,FAIL,"GRsetchunkcache");
+          }
+
         /* Save the ref. # for later access */
         ref=GRidtoref(riid);
         CHECK(ref,(uint16)FAIL,"GRidtoref");
@@ -931,6 +1121,26 @@ static void test_mgr_image_b2a1bb2(void)
               num_errs++;
           } /* end if */
 
+        /* check if we are doing chunked tests */
+        if (flag)
+          {
+              /* Get chunk lengths */
+              ret = GRgetchunkinfo(riid, &rchunk_def, &cflags);
+              CHECK(ret,FAIL,"GRgetchunkinfo");
+
+              rcdims = rchunk_def.chunk_lengths;
+
+              /* check chunk lengths and to see if GR is chunked */
+              if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
+                {
+                    fprintf(stderr, "Chunk Test. GRgetchunkinfo returned wrong values\n");
+                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",cdims[0],cdims[1]);
+                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",rcdims[0],rcdims[1]);
+                    fprintf(stderr, "cflags =%d \n", cflags );
+                }
+
+          }
+
         /* Close the empty image */
         ret=GRendaccess(riid);
         CHECK(ret,FAIL,"GRendaccess");
@@ -946,17 +1156,26 @@ static void test_mgr_image_b2a1bb2(void)
 
 } /* end test_mgr_image_b2a1bb2() */
 
-static void test_mgr_image_b2a1cc1(void)
+static void test_mgr_image_b2a1cc1(int flag)
 {
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
     int32 ret;              /* generic return value */
+    int32   cdims[2] = {1,1};    /* chunk dims */
+    int32   *rcdims;             /* for SDgetchunkinfo() */
+    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
+    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+    int32     cflags;            /* chunk flags */
+    comp_info cinfo;             /* compression info */
 
 /* B2a1cc - Read/Write images - with real Data - New Image - with Default Fill Value - Sub-sampled Image */
     MESSAGE(8, printf("Check out I/O on new image with real data, with Default fill-value, Writing Sub-sampled Image\n"););
 
     /* Open up the existing datafile and get the image information from it */
-    fid=Hopen(TESTFILE,DFACC_RDWR,0);
+    if (flag)
+        fid=Hopen(TESTFILE2,DFACC_RDWR,0);
+    else
+        fid=Hopen(TESTFILE,DFACC_RDWR,0);
     CHECK(fid,FAIL,"Hopen");
 
     /* Initialize the GR interface */
@@ -1026,6 +1245,17 @@ static void test_mgr_image_b2a1cc1(void)
         riid=GRcreate(grid,"Test Image B2a1cc",TEST_NCOMP,TEST_NT,MFGR_INTERLACE_PIXEL,dims);
         CHECK(riid,FAIL,"GRcreate");
 
+        /* Check if creating chunked GR */
+        if (flag)
+          {
+              /* Create chunked GR 
+                 chunk is 2x2 which will create 6 chunks */
+              cdims[0] = chunk_def.chunk_lengths[0] = 2;
+              cdims[1] = chunk_def.chunk_lengths[1] = 2;
+              ret = GRsetchunk(riid, chunk_def, HDF_CHUNK);
+              CHECK(ret,FAIL,"GRsetchunk");
+          }
+
         /* Save the ref. # for later access */
         ref=GRidtoref(riid);
         CHECK(ref,(uint16)FAIL,"GRidtoref");
@@ -1069,6 +1299,26 @@ static void test_mgr_image_b2a1cc1(void)
               num_errs++;
           } /* end if */
 
+        /* check if we are doing chunked tests */
+        if (flag)
+          {
+              /* Get chunk lengths */
+              ret = GRgetchunkinfo(riid, &rchunk_def, &cflags);
+              CHECK(ret,FAIL,"GRgetchunkinfo");
+
+              rcdims = rchunk_def.chunk_lengths;
+
+              /* check chunk lengths and to see if GR is chunked */
+              if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
+                {
+                    fprintf(stderr, "Chunk Test. GRgetchunkinfo returned wrong values\n");
+                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",cdims[0],cdims[1]);
+                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",rcdims[0],rcdims[1]);
+                    fprintf(stderr, "cflags =%d \n", cflags );
+                }
+
+          }
+
         /* Close the empty image */
         ret=GRendaccess(riid);
         CHECK(ret,FAIL,"GRendaccess");
@@ -1084,15 +1334,24 @@ static void test_mgr_image_b2a1cc1(void)
 
 }
 
-static void test_mgr_image_b2a1cc2(void)
+static void test_mgr_image_b2a1cc2(int flag)
 {
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
     int32 ret;              /* generic return value */
+    int32   cdims[2] = {1,1};    /* chunk dims */
+    int32   *rcdims;             /* for SDgetchunkinfo() */
+    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
+    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+    int32     cflags;            /* chunk flags */
+    comp_info cinfo;             /* compression info */
 
     MESSAGE(8, printf("Check out I/O on new image with real data, with Default fill-value, Reading Sub-sampled Image\n"););
     /* Open up the existing datafile and get the image information from it */
-    fid=Hopen(TESTFILE,DFACC_RDWR,0);
+    if (flag)
+        fid=Hopen(TESTFILE2,DFACC_RDWR,0);
+    else
+        fid=Hopen(TESTFILE,DFACC_RDWR,0);
     CHECK(fid,FAIL,"Hopen");
 
     /* Initialize the GR interface */
@@ -1162,6 +1421,17 @@ static void test_mgr_image_b2a1cc2(void)
         riid=GRcreate(grid,"Test Image B2a1cc2",TEST_NCOMP,TEST_NT,MFGR_INTERLACE_PIXEL,dims);
         CHECK(riid,FAIL,"GRcreate");
 
+        /* Check if creating chunked GR */
+        if (flag)
+          {
+              /* Create chunked GR 
+                 chunk is 2x2 which will create 6 chunks */
+              cdims[0] = chunk_def.chunk_lengths[0] = 2;
+              cdims[1] = chunk_def.chunk_lengths[1] = 2;
+              ret = GRsetchunk(riid, chunk_def, HDF_CHUNK);
+              CHECK(ret,FAIL,"GRsetchunk");
+          }
+
         /* Save the ref. # for later access */
         ref=GRidtoref(riid);
         CHECK(ref,(uint16)FAIL,"GRidtoref");
@@ -1199,6 +1469,26 @@ static void test_mgr_image_b2a1cc2(void)
               num_errs++;
           } /* end if */
 
+        /* check if we are doing chunked tests */
+        if (flag)
+          {
+              /* Get chunk lengths */
+              ret = GRgetchunkinfo(riid, &rchunk_def, &cflags);
+              CHECK(ret,FAIL,"GRgetchunkinfo");
+
+              rcdims = rchunk_def.chunk_lengths;
+
+              /* check chunk lengths and to see if GR is chunked */
+              if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
+                {
+                    fprintf(stderr, "Chunk Test. GRgetchunkinfo returned wrong values\n");
+                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",cdims[0],cdims[1]);
+                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",rcdims[0],rcdims[1]);
+                    fprintf(stderr, "cflags =%d \n", cflags );
+                }
+
+          }
+
         /* Close the empty image */
         ret=GRendaccess(riid);
         CHECK(ret,FAIL,"GRendaccess");
@@ -1214,7 +1504,7 @@ static void test_mgr_image_b2a1cc2(void)
 
 } /* end test_mgr_image_b2a1cc() */
 
-static void test_mgr_image_b2a2aa(void)
+static void test_mgr_image_b2a2aa(int flag)
 {
 #ifdef QAK
     int32 fid;              /* HDF file ID */
@@ -1332,17 +1622,26 @@ static void test_mgr_image_b2a2aa(void)
 
 } /* end test_mgr_image_b2a2aa() */
 
-static void test_mgr_image_b2a2bb(void)
+static void test_mgr_image_b2a2bb(int flag)
 {
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
     int32 ret;              /* generic return value */
+    int32   cdims[2] = {1,1};    /* chunk dims */
+    int32   *rcdims;             /* for SDgetchunkinfo() */
+    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
+    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+    int32     cflags;            /* chunk flags */
+    comp_info cinfo;             /* compression info */
 
 /* B2a2bb - Read/Write images - with real Data - New Image - with User-Defined Fill Value - Sub-setted Image */
     MESSAGE(8, printf("Check out I/O on new image with real data, with User-Defined fill-value, Writing Sub-setted Image\n"););
 
     /* Open up the existing datafile and get the image information from it */
-    fid=Hopen(TESTFILE,DFACC_RDWR,0);
+    if (flag)
+        fid=Hopen(TESTFILE2,DFACC_RDWR,0);
+    else
+        fid=Hopen(TESTFILE,DFACC_RDWR,0);
     CHECK(fid,FAIL,"Hopen");
 
     /* Initialize the GR interface */
@@ -1414,13 +1713,25 @@ static void test_mgr_image_b2a2bb(void)
         riid=GRcreate(grid,"Test Image B2a2bb",TEST_NCOMP,TEST_NT,MFGR_INTERLACE_PIXEL,dims);
         CHECK(riid,FAIL,"GRcreate");
 
+        /* Set the fill-value */
+        ret=GRsetattr(riid,FILL_ATTR,TEST_NT,TEST_NCOMP,fill_pixel);
+        CHECK(ret,FAIL,"GRsetattr");
+
+        /* Check if creating chunked GR */
+        if (flag)
+          {
+              /* Create chunked GR 
+                 chunk is 2x2 which will create 6 chunks */
+              cdims[0] = chunk_def.chunk_lengths[0] = 2;
+              cdims[1] = chunk_def.chunk_lengths[1] = 2;
+              ret = GRsetchunk(riid, chunk_def, HDF_CHUNK);
+              CHECK(ret,FAIL,"GRsetchunk");
+          }
+
         /* Save the ref. # for later access */
         ref=GRidtoref(riid);
         CHECK(ref,(uint16)FAIL,"GRidtoref");
 
-        /* Set the fill-value */
-        ret=GRsetattr(riid,FILL_ATTR,TEST_NT,TEST_NCOMP,fill_pixel);
-        CHECK(ret,FAIL,"GRsetattr");
 
         /* Create sub-setted window with only the filled pixels in it */
         start[XDIM]=(TEST_XDIM/4)+1;
@@ -1460,6 +1771,26 @@ static void test_mgr_image_b2a2bb(void)
                                   printf("Location: [%d][%d][%d] image=%f, image0=%f \n",i,j,k,(double)image[i][j][k],(double)image0[i][j][k]); );
               num_errs++;
           } /* end if */
+
+        /* check if we are doing chunked tests */
+        if (flag)
+          {
+              /* Get chunk lengths */
+              ret = GRgetchunkinfo(riid, &rchunk_def, &cflags);
+              CHECK(ret,FAIL,"GRgetchunkinfo");
+
+              rcdims = rchunk_def.chunk_lengths;
+
+              /* check chunk lengths and to see if GR is chunked */
+              if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
+                {
+                    fprintf(stderr, "Chunk Test. GRgetchunkinfo returned wrong values\n");
+                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",cdims[0],cdims[1]);
+                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",rcdims[0],rcdims[1]);
+                    fprintf(stderr, "cflags =%d \n", cflags );
+                }
+
+          }
 
         /* Close the empty image */
         ret=GRendaccess(riid);
@@ -1607,17 +1938,26 @@ static void test_mgr_image_b2a2bb(void)
 
 } /* end test_mgr_image_b2a2bb() */
 
-static void test_mgr_image_b2a2cc(void)
+static void test_mgr_image_b2a2cc(int flag)
 {
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
     int32 ret;              /* generic return value */
+    int32   cdims[2] = {1,1};    /* chunk dims */
+    int32   *rcdims;             /* for SDgetchunkinfo() */
+    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
+    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+    int32     cflags;            /* chunk flags */
+    comp_info cinfo;             /* compression info */
 
 /* B2a2cc - Read/Write images - with real Data - New Image - with User-Defined Fill Value - Sub-sampled Image */
     MESSAGE(8, printf("Check out I/O on new image with real data, with User-Defined fill-value, Writing Sub-sampled Image\n"););
 
     /* Open up the existing datafile and get the image information from it */
-    fid=Hopen(TESTFILE,DFACC_RDWR,0);
+    if (flag)
+        fid=Hopen(TESTFILE2,DFACC_RDWR,0);
+    else
+        fid=Hopen(TESTFILE,DFACC_RDWR,0);
     CHECK(fid,FAIL,"Hopen");
 
     /* Initialize the GR interface */
@@ -1688,13 +2028,24 @@ static void test_mgr_image_b2a2cc(void)
         riid=GRcreate(grid,"Test Image B2a2cc",TEST_NCOMP,TEST_NT,MFGR_INTERLACE_PIXEL,dims);
         CHECK(riid,FAIL,"GRcreate");
 
-        /* Save the ref. # for later access */
-        ref=GRidtoref(riid);
-        CHECK(ref,(uint16)FAIL,"GRidtoref");
-
         /* Set the fill-value */
         ret=GRsetattr(riid,FILL_ATTR,TEST_NT,TEST_NCOMP,fill_pixel);
         CHECK(ret,FAIL,"GRsetattr");
+
+        /* Check if creating chunked GR */
+        if (flag)
+          {
+              /* Create chunked GR 
+                 chunk is 2x2 which will create 6 chunks */
+              cdims[0] = chunk_def.chunk_lengths[0] = 2;
+              cdims[1] = chunk_def.chunk_lengths[1] = 2;
+              ret = GRsetchunk(riid, chunk_def, HDF_CHUNK);
+              CHECK(ret,FAIL,"GRsetchunk");
+          }
+
+        /* Save the ref. # for later access */
+        ref=GRidtoref(riid);
+        CHECK(ref,(uint16)FAIL,"GRidtoref");
 
         /* Create sub-sampled window with only the filled pixels in it */
         start[XDIM]=1;
@@ -1734,6 +2085,26 @@ static void test_mgr_image_b2a2cc(void)
                                   printf("Location: [%d][%d][%d] image=%d, image0=%d \n",(int)i,(int)j,(int)k,(int)image[i][j][k],(int)image0[i][j][k]); );
               num_errs++;
           } /* end if */
+
+        /* check if we are doing chunked tests */
+        if (flag)
+          {
+              /* Get chunk lengths */
+              ret = GRgetchunkinfo(riid, &rchunk_def, &cflags);
+              CHECK(ret,FAIL,"GRgetchunkinfo");
+
+              rcdims = rchunk_def.chunk_lengths;
+
+              /* check chunk lengths and to see if GR is chunked */
+              if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
+                {
+                    fprintf(stderr, "Chunk Test. GRgetchunkinfo returned wrong values\n");
+                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",cdims[0],cdims[1]);
+                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",rcdims[0],rcdims[1]);
+                    fprintf(stderr, "cflags =%d \n", cflags );
+                }
+
+          }
 
         /* Close the empty image */
         ret=GRendaccess(riid);
@@ -1875,7 +2246,7 @@ static void test_mgr_image_b2a2cc(void)
 
 } /* end test_mgr_image_b2a2cc() */
 
-static void test_mgr_image_b2b1(void)
+static void test_mgr_image_b2b1(int flag)
 {
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
@@ -1982,6 +2353,7 @@ static void test_mgr_image_b2b1(void)
                     start[0]=start[1]=0;
                     stride[0]=stride[1]=1;
                     ret=GRreadimage(riid,start,stride,dimsizes,img_data);
+                    CHECK(ret,FAIL,"GRreadimage");
 
                     switch(i)
                       {
@@ -2046,17 +2418,203 @@ static void test_mgr_image_b2b1(void)
 
 } /* end test_mgr_image_b2b1() */
 
-static void test_mgr_image_b2b2(void)
+static void test_mgr_image_b2b2(int flag)
 {
 /* B2b2 - Read/Write images - with real Data - Existing Image - Sub-setted Image */
     /* This test is unnecessary, I think this case has been adequately covered above -QAK */
 } /* end test_mgr_image_b2b2() */
 
-static void test_mgr_image_b2b3(void)
+static void test_mgr_image_b2b3(int flag)
 {
 /* B2b3 - Read/Write images - with real Data - Existing Image - Sub-sampled Image */
     /* This test is unnecessary, I think this case has been adequately covered above -QAK */
 } /* end test_mgr_image_b2b3() */
+
+static void test_mgr_image_chunk(int flag)
+{
+    int32   cdims[2] = {1,1};    /* chunk dims */
+    int32   *rcdims;             /* for SDgetchunkinfo() */
+    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
+    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+    int32     cflags;            /* chunk flags */
+    comp_info cinfo;             /* compression info */
+    int32 fid;              /* HDF file ID */
+    int32 grid;             /* GRID for the interface */
+    int32 ret;              /* generic return value */
+
+
+    /* Open up the existing datafile and get the image information from it */
+    fid=Hopen(TESTFILE2,DFACC_RDWR,0);
+    CHECK(fid,FAIL,"Hopen");
+
+    /* Initialize the GR interface */
+    grid=GRstart(fid);
+    CHECK(grid,FAIL,"GRstart");
+
+    {
+#ifdef TEST_XDIM
+#undef TEST_XDIM
+#endif /* TEST_XDIM */
+#define TEST_XDIM    3
+#ifdef TEST_YDIM
+#undef TEST_YDIM
+#endif /* TEST_YDIM */
+#define TEST_YDIM    8
+#ifdef TEST_NCOMP
+#undef TEST_NCOMP
+#endif /* TEST_NCOMP */
+#define TEST_NCOMP   2
+#ifdef TEST_VARTYPE
+#undef TEST_VARTYPE
+#endif /* TEST_VARTYPE */
+#define TEST_VARTYPE int32
+#ifdef TEST_NT
+#undef TEST_NT
+#endif /* TEST_NT */
+#define TEST_NT      DFNT_INT32
+        int32 riid;     /* RI ID for the new image */
+        int32 dims[2]={TEST_XDIM,TEST_YDIM};    /* dimensions for the empty image */
+        uint16 ref;     /* RI ref #. */
+        int32 index;    /* RI index # */
+        TEST_VARTYPE image[TEST_YDIM][TEST_XDIM][TEST_NCOMP]; /* space for the image data */
+        TEST_VARTYPE fill_pixel[TEST_NCOMP]={1,-2};   /* pixel with fill values */
+        TEST_VARTYPE fill_pixel2[TEST_NCOMP]={-2,1};   /* pixel with fill values */
+        TEST_VARTYPE image0[TEST_YDIM][TEST_XDIM][TEST_NCOMP]; /* space for the image data */
+        int32 start[2]; /* start of image data to grab */
+        int32 stride[2];/* stride of image data to grab */
+        intn i,j;       /* local counting variables */
+
+
+        /* fill the memory-only with the default pixel fill-value */
+        for(i=0; i<TEST_YDIM; i++)
+          {
+              for(j=0; j<TEST_XDIM; j++)
+                {
+                    if((j%2)==0)
+                        HDmemcpy(&image0[i][j][0],fill_pixel,sizeof(fill_pixel));
+                    else
+                        HDmemcpy(&image0[i][j][0],fill_pixel2,sizeof(fill_pixel2));
+                } /* end for */
+          } /* end for */
+        HDmemcpy(image,image0,sizeof(image0));
+
+        /* Create empty image with default fill value */
+        riid=GRcreate(grid,"Test Chunk Image B2a1aa",TEST_NCOMP,TEST_NT,MFGR_INTERLACE_PIXEL,dims);
+        CHECK(riid,FAIL,"GRcreate");
+
+        /* Create chunked GR 
+           chunk is 2x2 which will create 6 chunks */
+        cdims[0] = chunk_def.chunk_lengths[0] = 2;
+        cdims[1] = chunk_def.chunk_lengths[1] = 2;
+        ret = GRsetchunk(riid, chunk_def, HDF_CHUNK);
+        CHECK(ret,FAIL,"GRsetchunk");
+
+        /* Set Chunk cache to hold 2 chunks */
+        ret = GRsetchunkcache(riid, 2, 0);
+        CHECK(ret,FAIL,"GRsetchunkcache");
+
+        /* Save the ref. # for later access */
+        ref=GRidtoref(riid);
+        CHECK(ref,(uint16)FAIL,"GRidtoref");
+
+        start[0]=start[1]=0;
+        stride[0]=stride[1]=1;
+        ret=GRwriteimage(riid,start,stride,dims,image);
+        CHECK(ret,FAIL,"GRwriteimage");
+
+        /* Close the empty image */
+        ret=GRendaccess(riid);
+        CHECK(ret,FAIL,"GRendaccess");
+
+        /* Shut down the GR interface */
+        ret=GRend(grid);
+        CHECK(ret,FAIL,"GRend");
+
+        /* Initialize the GR interface again */
+        grid=GRstart(fid);
+        CHECK(grid,FAIL,"GRstart");
+
+#if 0
+        /* Create empty image with default fill value */
+        riid=GRcreate(grid,"Test Image B2a1aa",TEST_NCOMP,TEST_NT,MFGR_INTERLACE_PIXEL,dims);
+        CHECK(riid,FAIL,"GRcreate");
+
+#endif
+
+        /* Get the index of the newly created image */
+        index=GRreftoindex(grid,ref);
+        CHECK(index,FAIL,"GRreftoindex");
+
+        /* Select the newly created image */
+        riid=GRselect(grid,index);
+        CHECK(riid,FAIL,"GRselect");
+
+        start[0]=start[1]=0;
+        stride[0]=stride[1]=1;
+        ret=GRreadimage(riid,start,stride,dims,image);
+        CHECK(ret,FAIL,"GRreadimage");
+
+        if(0!=HDmemcmp(image,image0,sizeof(image0)))
+          {
+              MESSAGE(3, printf("%d:Error reading data for new image with default fill-value, whole image\n",__LINE__););
+              num_errs++;
+          } /* end if */
+
+        /* Get chunk lengths */
+        ret = GRgetchunkinfo(riid, &rchunk_def, &cflags);
+        CHECK(ret,FAIL,"GRgetchunkinfo");
+
+        rcdims = rchunk_def.chunk_lengths;
+
+        /* check chunk lengths and to see if GR is chunked */
+        if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
+          {
+              fprintf(stderr, "Chunk Test 1. GRgetchunkinfo returned wrong values\n");
+              fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",cdims[0],cdims[1]);
+              fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",rcdims[0],rcdims[1]);
+              fprintf(stderr, "cflags =%d \n", cflags );
+          }
+
+        /* Close the empty image */
+        ret=GRendaccess(riid);
+        CHECK(ret,FAIL,"GRendaccess");
+    }
+    
+    /* Shut down the GR interface */
+    ret=GRend(grid);
+    CHECK(ret,FAIL,"GRend");
+
+    /* Close the file */
+    ret=Hclose(fid);
+    CHECK(ret,FAIL,"Hclose");
+
+
+#if 0
+
+    /* Create chunked GR 
+       chunk is 3x2 which will create 6 chunks.
+       Use GZIP compression */
+    cdims[0] = chunk_def.comp.chunk_lengths[0] = 3;
+    cdims[1] = chunk_def.comp.chunk_lengths[1] = 2;
+#if 0
+    chunk_def.comp.comp_type = COMP_CODE_RLE;   /* RLE */
+
+    chunk_def.comp.comp_type = COMP_CODE_SKPHUFF; /* Skipping Huffman */
+    chunk_def.comp.cinfo.skphuff.skp_size = sizeof(uint16);
+#endif
+    chunk_def.comp.comp_type = COMP_CODE_DEFLATE; /* GZIP */
+    chunk_def.comp.cinfo.deflate.level = 6;
+
+    status = GRsetchunk(riid8, chunk_def, HDF_CHUNK | HDF_COMP);
+    if(status == FAIL) 
+      {
+        fprintf(stderr, "Chunk Test 7. Failed to create new chunked, GZIP Compressed data set\n");
+        num_err++;
+        goto test8;
+      }
+#endif
+
+} /* end test_mgr_image_chunk() */
 
 /****************************************************************
 **
@@ -2084,24 +2642,26 @@ static void test_mgr_image_b2b3(void)
 ** 
 ****************************************************************/
 static void
-test_mgr_image(void)
+test_mgr_image(int flag)
 {
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing Multi-file Raster Image I/O routines\n"););
-
-    test_mgr_image_b1a();
-    test_mgr_image_b1b();
-    test_mgr_image_b2a1aa();
-    test_mgr_image_b2a1bb1();
-    test_mgr_image_b2a1bb2();
-    test_mgr_image_b2a1cc1();
-    test_mgr_image_b2a1cc2();
-    test_mgr_image_b2a2aa();
-    test_mgr_image_b2a2bb();
-    test_mgr_image_b2a2cc();
-    test_mgr_image_b2b1();
-    test_mgr_image_b2b2();
-    test_mgr_image_b2b3();
+    test_mgr_image_b1a(flag);
+    test_mgr_image_b1b(flag);
+    test_mgr_image_b2a1aa(flag);
+    test_mgr_image_b2a1bb1(flag);
+    test_mgr_image_b2a1bb2(flag);
+    test_mgr_image_b2a1cc1(flag);
+    test_mgr_image_b2a1cc2(flag);
+    test_mgr_image_b2a2aa(flag);
+    test_mgr_image_b2a2bb(flag);
+    test_mgr_image_b2a2cc(flag);
+    test_mgr_image_b2b1(flag);
+    test_mgr_image_b2b2(flag);
+    test_mgr_image_b2b3(flag);
+#if 0
+    test_mgr_image_chunk(flag);
+#endif
 }   /* end test_mgr_image() */
 
 /****************************************************************
@@ -2114,7 +2674,7 @@ test_mgr_image(void)
 ** 
 ****************************************************************/
 static void
-test_mgr_index(void)
+test_mgr_index(int flag)
 {
     /* output message about test being performed */
     MESSAGE(6, printf("Testing Multi-File Raster id/ref/index routines\n"););
@@ -2132,7 +2692,7 @@ test_mgr_index(void)
 ** 
 ****************************************************************/
 static void
-test_mgr_interlace(void)
+test_mgr_interlace(int flag)
 {
     int32 fid;              /* hdf file id */
     int32 grid;             /* grid for the interface */
@@ -2140,12 +2700,21 @@ test_mgr_interlace(void)
     int32 n_attrs;          /* number of attributes */
     int32 ret;              /* generic return value */
     VOIDP image;            /* image to retrieve */
+    int32   cdims[2] = {1,1};    /* chunk dims */
+    int32   *rcdims;             /* for SDgetchunkinfo() */
+    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
+    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+    int32     cflags;            /* chunk flags */
+    comp_info cinfo;             /* compression info */
 
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing Multi-file Raster Interlace routines\n"););
 
     /* open up the existing datafile and get the image information from it */
-    fid=Hopen(TESTFILE,DFACC_RDWR,0);
+    if (flag)
+        fid=Hopen(TESTFILE2,DFACC_RDWR,0);
+    else
+        fid=Hopen(TESTFILE,DFACC_RDWR,0);
     CHECK(fid,FAIL,"Hopen");
 
     /* initialize the gr interface */
@@ -2206,6 +2775,7 @@ test_mgr_interlace(void)
                     start[0]=start[1]=0;
                     stride[0]=stride[1]=1;
                     ret=GRreadimage(riid,start,stride,dimsizes,img_data);
+                    CHECK(ret,FAIL,"GRreadimage");
 
                     GRIil_convert(image,MFGR_INTERLACE_PIXEL,pixel_buf,(gr_interlace_t)j,dimsizes,ncomp,nt);
                     if(0!=HDmemcmp(img_data,pixel_buf,
@@ -2247,7 +2817,7 @@ test_mgr_interlace(void)
 ** 
 ****************************************************************/
 static void
-test_mgr_lut(void)
+test_mgr_lut(int flag)
 {
     int32 fid;              /* hdf file id */
     int32 grid;             /* grid for the interface */
@@ -2398,7 +2968,7 @@ test_mgr_lut(void)
 ** 
 ****************************************************************/
 static void
-test_mgr_special(void)
+test_mgr_special(int flag)
 {
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing Multi-file Raster Special Element routines\n"););
@@ -2417,7 +2987,7 @@ test_mgr_special(void)
 ** 
 ****************************************************************/
 static void
-test_mgr_attr(void)
+test_mgr_attr(int flag)
 {
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing Multi-file Raster Attribute routines\n"););
@@ -2446,13 +3016,14 @@ test_mgr(void)
 
     /* Output message about test being performed */
     MESSAGE(5, printf("Testing Multi-file Raster routines\n"););
-
     test_mgr_init();
-    test_mgr_image();
-    test_mgr_index();
-    test_mgr_interlace();
-    test_mgr_lut();
-    test_mgr_special();
-    test_mgr_attr();
+    test_mgr_image(0); /* normal GR */
+    test_mgr_image(1); /* chunked GR */
+    test_mgr_index(0);
+    test_mgr_interlace(0); /* read from normal GR */
+    test_mgr_interlace(1); /* read from chunked GR */
+    test_mgr_lut(0);
+    test_mgr_special(0);
+    test_mgr_attr(0);
 }   /* test_mgr() */
 

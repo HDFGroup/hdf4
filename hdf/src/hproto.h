@@ -2421,6 +2421,286 @@ extern int32 GRfindattr(int32 id,const char *name);
 
 extern intn GRPshutdown(void);
 
+/*=== Chunking Routines, same as in mfhdf.h - need to move to common place  ====*/
+
+/* Bit - flags used for SDsetchunk() and SDgetChunkInfo() */
+#define HDF_NONE    0x0
+#define HDF_CHUNK   0x1
+#define HDF_COMP    0x3
+#define HDF_NBIT    0x5
+
+/* Cache flags */
+#define HDF_CACHEALL 0x1
+
+/* Chunk Defintion */
+typedef union hdf_chunk_def_u
+{
+    /* Chunk Lengths only */
+    int32   chunk_lengths[MAX_VAR_DIMS]; /* chunk lengths along each dimension */
+
+    struct 
+    {   /* For Compression info */
+        int32      chunk_lengths[MAX_VAR_DIMS]; /* chunk lengths along each dimension */
+        int32      comp_type;    /* Compression type */
+        int32      model_type;   /* Compression model type */
+        comp_info  cinfo;        /* Compression info struct */
+        model_info minfo;        /* Compression model info struct */
+    }comp;
+        
+    struct 
+    { /* For NBIT */
+        int32 chunk_lengths[MAX_VAR_DIMS]; /* chunk lengths along each dimension */
+        intn  start_bit;
+        intn  bit_len;
+        intn  sign_ext;
+        intn  fill_one;
+    } nbit;
+
+} HDF_CHUNK_DEF;
+
+
+/******************************************************************************
+ NAME
+      GRsetchunk   -- make GR a chunked GR
+
+ DESCRIPTION
+      This routine makes the GR a chunked GR according to the chunk
+      definition passed in.
+
+      The dataset currently cannot be special already.  i.e. NBIT,
+      COMPRESSED, or EXTERNAL. This is an Error.
+
+      The defintion of the HDF_CHUNK_DEF union with relvant fields is:
+
+      typedef union hdf_chunk_def_u
+      {
+         int32   chunk_lengths[2];  Chunk lengths along each dimension
+
+         struct 
+          {   
+            int32     chunk_lengths[2]; Chunk lengths along each dimension
+            int32     comp_type;                   Compression type 
+            comp_info cinfo;                       Compression info struct 
+          }comp;
+
+      } HDF_CHUNK_DEF
+
+      The simplist is the 'chunk_lengths' array specifiying chunk 
+      lengths for each dimension where the 'flags' argument set to 
+      'HDF_CHUNK';
+
+      COMPRESSION is set by using the 'HDF_CHUNK_DEF' structure to set the
+      appropriate compression information along with the required chunk lengths
+      for each dimension. The compression information is the same as 
+      that set in 'SDsetcompress()'. The bit-or'd'flags' argument' is set to 
+      'HDF_CHUNK | HDF_COMP'.
+
+      See the example in pseudo-C below for further usage.
+
+      The maximum number of Chunks in an HDF file is 65,535.
+
+      The dataset currently cannot have an UNLIMITED dimension.
+
+      The performance of the GRxxx interface with chunking is greatly
+      affected by the users access pattern over the dataset and by
+      the maximum number of chunks set in the chunk cache. The cache contains 
+      the Least Recently Used(LRU cache replacment policy) chunks. See the
+      routine GRsetchunkcache() for further info on the chunk cache and how 
+      to set the maximum number of chunks in the chunk cache. A default chunk 
+      cache is always created.
+
+      The following example shows the organization of chunks for a 2D iamge.
+      e.g. 4x4 image with 2x2 chunks. The array shows the layout of
+           chunks in the chunk array.
+
+            4 ---------------------                                           
+              |         |         |                                                 
+        Y     |  (0,1)  |  (1,1)  |                                       
+        ^     |         |         |                                      
+        |   2 ---------------------                                       
+        |     |         |         |                                               
+        |     |  (0,0)  |  (1,0)  |                                      
+        |     |         |         |                                           
+        |     ---------------------                                         
+        |     0         2         4                                       
+        ---------------> X                                                       
+                                                                                
+        --Without compression--:
+        {                                                                    
+        HDF_CHUNK_DEF chunk_def;
+                                                                            
+        .......                                                                    
+        -- Set chunk lengths --                                                    
+        chunk_def.chunk_lengths[0]= 2;                                                     
+        chunk_def.chunk_lengths[1]= 2; 
+
+        -- Set Chunking -- 
+        GRsetchunk(riid, chunk_def, HDF_CHUNK);                      
+         ......                                                                  
+        }                                                                           
+
+        --With compression--:
+        {                                                                    
+        HDF_CHUNK_DEF chunk_def;
+                                                                            
+        .......                
+        -- Set chunk lengths first --                                                    
+        chunk_def.chunk_lengths[0]= 2;                                                     
+        chunk_def.chunk_lengths[1]= 2;
+
+        -- Set compression --
+        chunk_def.comp.cinfo.deflate.level = 9;
+        chunk_def.comp.comp_type = COMP_CODE_DEFLATE;
+
+        -- Set Chunking with Compression --
+        GRsetchunk(riid, chunk_def, HDF_CHUNK | HDF_COMP);                      
+         ......                                                                  
+        }                                                                           
+
+ RETURNS
+        SUCCEED/FAIL
+******************************************************************************/
+extern intn GRsetchunk
+    (int32 riid,             /* IN: raster access id */
+     HDF_CHUNK_DEF chunk_def, /* IN: chunk definition */
+     int32 flags              /* IN: flags */);
+
+/******************************************************************************
+ NAME
+     GRgetchunkinfo -- get Info on GR
+
+ DESCRIPTION
+     This routine gets any special information on the GR. If its chunked,
+     chunked and compressed or just a regular GR. Currently it will only
+     fill the array of chunk lengths for each dimension as specified in
+     the 'HDF_CHUNK_DEF' union. You can pass in a NULL for 'chunk_def'
+     if don't want the chunk lengths for each dimension.
+     Additionaly if successfull it will return a bit-or'd value in 'flags' 
+     indicating if the GR is:
+
+     Chunked                  -> flags = HDF_CHUNK
+     Chunked and compressed   -> flags = HDF_CHUNK | HDF_COMP 
+     Non-chunked              -> flags = HDF_NONE
+  
+     e.g. 4x4 array - Pseudo-C
+     {
+     int32   rcdims[3];
+     HDF_CHUNK_DEF rchunk_def;
+     int32   cflags;
+     ...
+     rchunk_def.chunk_lengths = rcdims;
+     GRgetchunkinfo(riid, &rchunk_def, &cflags);
+     ...
+     }
+
+ RETURNS
+        SUCCEED/FAIL
+******************************************************************************/
+extern intn GRgetchunkinfo
+    (int32 riid,              /* IN: Raster access id */
+     HDF_CHUNK_DEF *chunk_def, /* IN/OUT: chunk definition */
+     int32 *flags              /* IN/OUT: flags */);
+
+/******************************************************************************
+ NAME
+     GRwritechunk  -- write the specified chunk to the GR
+
+ DESCRIPTION
+     This routine writes a whole chunk of data to the chunked GR 
+     specified by chunk 'origin' for the given GR and can be used
+     instead of GRwriteimage() when this information is known. This
+     routine has less overhead and is much faster than using GRwriteimage().
+
+     Origin specifies the co-ordinates of the chunk according to the chunk
+     position in the overall chunk array.
+
+     'datap' must point to a whole chunk of data.
+
+     See GRsetchunk() for a description of the organization of chunks in an GR.
+
+ RETURNS
+        SUCCEED/FAIL
+******************************************************************************/
+extern intn GRwritechunk
+    (int32 riid,      /* IN: raster access id */
+     int32 *origin,    /* IN: origin of chunk to write */
+     const VOID *datap /* IN: buffer for data */);
+
+/******************************************************************************
+ NAME
+     GRreadchunk   -- read the specified chunk to the GR
+
+ DESCRIPTION
+     This routine reads a whole chunk of data from the chunked GR
+     specified by chunk 'origin' for the given GR and can be used
+     instead of GRreadimage() when this information is known. This
+     routine has less overhead and is much faster than using GRreadimage().
+
+     Origin specifies the co-ordinates of the chunk according to the chunk
+     position in the overall chunk array.
+
+     'datap' must point to a whole chunk of data.
+
+     See GRsetchunk() for a description of the organization of chunks in an GR.
+
+ RETURNS
+        SUCCEED/FAIL
+******************************************************************************/
+extern intn GRreadchunk
+    (int32 riid,      /* IN: raster access id */
+     int32 *origin,    /* IN: origin of chunk to read */
+     VOID  *datap      /* IN/OUT: buffer for data */);
+
+/******************************************************************************
+NAME
+     GRsetchunkcache -- maximum number of chunks to cache 
+
+DESCRIPTION
+     Set the maximum number of chunks to cache.
+
+     The cache contains the Least Recently Used(LRU cache replacment policy) 
+     chunks. This routine allows the setting of maximum number of chunks that 
+     can be cached, 'maxcache'.
+
+     The performance of the GRxxx interface with chunking is greatly
+     affected by the users access pattern over the dataset and by
+     the maximum number of chunks set in the chunk cache. The number chunks 
+     that can be set in the cache is process memory limited. It is a good 
+     idea to always set the maximum number of chunks in the cache as the 
+     default heuristic does not take into account the memory available for 
+     the application.
+
+     By default when the GR is promoted to a chunked element the 
+     maximum number of chunks in the cache 'maxcache' is set to the number of
+     chunks along the last dimension.
+
+     The values set here affects the current object's caching behaviour.
+
+     If the chunk cache is full and 'maxcache' is greater then the
+     current 'maxcache' value, then the chunk cache is reset to the new
+     'maxcache' value, else the chunk cache remains at the current
+     'maxcache' value.
+
+     If the chunk cache is not full, then the chunk cache is set to the
+     new 'maxcache' value only if the new 'maxcache' value is greater than the
+     current number of chunks in the cache.
+
+     Use flags argument of 'HDF_CACHEALL' if the whole object is to be cached 
+     in memory, otherwise pass in zero(0). Currently you can only
+     pass in zero.
+
+    See GRsetchunk() for a description of the organization of chunks in an GR.
+
+RETURNS
+     Returns the 'maxcache' value for the chunk cache if successful 
+     and FAIL otherwise
+******************************************************************************/
+extern intn GRsetchunkcache
+    (int32 riid,     /* IN: raster access id */
+     int32 maxcache,  /* IN: max number of chunks to cache */
+     int32 flags      /* IN: flags = 0, HDF_CACHEALL */);
+
+
 /* For Pablo wrapper functions */
 
 #if defined HAVE_PABLO || defined PABLO
