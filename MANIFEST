@@ -1155,8 +1155,8 @@
 ./mfhdf/hzip/image24pixel.txt
 ./mfhdf/hzip/image8.txt
 ./mfhdf/hzip/info.txt
-./mfhdf/hzip/testhzip.sh
-./mfhdf/hzip/zip_all.sh
+./mfhdf/hzip/test_hrepack.sh
+./mfhdf/hzip/hrepack_all.sh
 ./mfhdf/hzip/pal_rgb.h
 ./mfhdf/hzip/hrepack_an.c
 ./mfhdf/hzip/hrepack_an.h
