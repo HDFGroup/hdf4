@@ -389,24 +389,25 @@
         check the correctness of the path of X library in descrip.mms
            and/or make.com under "minigzip.exe:" line. Minigzip is an
            example of the usage of zlib. 
-    In [.hdf.src], the MAKENOF.COM and MAKEFS.COM are for compiling the C and 
-           Fortran programs respectively.   
+    In [.hdf.src], the MAKENOF.COM and MAKEFS.COM are for compiling 
+           the C and Fortran programs respectively.   
     In [.hdf.util]:
        Run @makeutil to compile the utilities.
        Run @setuputils to define the utilities as commands. 
     In [.hdf.test]:
-       Create a subdirectory 'testdir' in [.hdf.test], if there is no such 
-           one existing. This directory is used for the external element test.
-       Run @make to compile the C test program testhdf and the Fortran test
-           programs fortest. 
+       Create a subdirectory 'testdir' in [.hdf.test], if there is no 
+           such one existing. This directory is used for the external 
+           element test.
+       Run @make to compile the C test program testhdf and the Fortran 
+           test programs fortest. 
        Run testhdf. Copy tvattr.hdf to tvattr.dat. Delete *.hdf.
-       Change forsupff.f, fortestF.f, tsdmmsf.f, tsdnmmsf.f, tsdntf.f and 
-           tsdnntf.f following the instructions given in the comments, which
-           start with 'For VMS', in these files. 
+       Change forsupff.f, tsdmmsf.f, tsdnmmsf.f, tsdntf.f and 
+           tsdnntf.f following the instructions given in the comments,
+           which start with 'For VMS', in these files. 
        Run fortest. 
-    Make directories [.lib], [.bin], [.include], use make.com in [.mfhdf.*]
-       to compile mfhdf.olb, test programs and utilities ncdump, ncgen and 
-       hdp. 
+    Make directories [.lib], [.bin], [.include], use make.com in 
+       [.mfhdf.*] to compile mfhdf.olb, test programs and utilities 
+       ncdump, ncgen and hdp. 
    
     2.5.5 Windows '95 or Windows NT
     -------------------------------
