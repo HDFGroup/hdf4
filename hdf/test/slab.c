@@ -336,7 +336,7 @@ static uint8 FAR ui8data[2][3][4] =
 /* Output files */
 static char FAR *swf32  = "swf32.hdf";
 static char FAR *swf64  = "swf64.hdf";
-#ifdef OLD_WAY
+#ifndef PC386
 static char FAR *swin = "swin.hdf";
 static char FAR *swuin = "swuin.hdf";
 #endif
