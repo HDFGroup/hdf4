@@ -386,8 +386,11 @@ updateDesc(void)
           if (isGrp(he_desc[i].tag))
             {
                 he_grp[he_numGrp].desc = i;
-                he_grp[he_numGrp].size = (int) (he_desc[i].length / sizeof(tag_ref));
+/*                he_grp[he_numGrp].size = (int) (he_desc[i].length / sizeof(tag_ref));
                 he_grp[he_numGrp].ddList = (tag_ref_ptr) HDmalloc(he_desc[i].length);
+*/
+                he_grp[he_numGrp].size = (int) (he_desc[i].length / 4);
+                he_grp[he_numGrp].ddList = (tag_ref_ptr) HDmalloc(he_grp[he_numGrp].size*sizeof(tag_ref));
 
                 if (!he_grp[he_numGrp].ddList)
                   {
