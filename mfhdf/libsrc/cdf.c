@@ -40,9 +40,12 @@ NC *handle ;
       if(handle == NULL)
               return ;
       NC_free_xcdf(handle) ;
-#if !(defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__))  /* We don't handle xdr files yet */
       xdr_destroy(handle->xdrs) ;
+#if 0
+#if !(defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__))  /* We don't handle xdr files yet */
+
 #endif /* !macintosh */
+#endif
       Free(handle->xdrs) ;
 
 #ifdef HDF
@@ -225,9 +228,12 @@ int mode ;
                 if((int) Hishdf((char *) name))
                   { /* Need to free allocated structures */
                     NC_free_xcdf(cdf) ;
-#if !(defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__))/* We don't handle xdr files yet */
                     xdr_destroy(cdf->xdrs) ;
+#if 0
+#if !(defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__))/* We don't handle xdr files yet */
+
 #endif /* !macintosh */
+#endif
                     Free(cdf->xdrs) ;
                     Free(cdf) ;
                     return(NULL);
@@ -252,10 +258,12 @@ int mode ;
 #endif
             break;
         case netCDF_FILE:
+#if 0
 #if defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__)
             /* for mac we don't handle XDR files */
             return (NULL);
 #endif /* macintosh */
+#endif
             break;
         case CDF_FILE:
 #ifdef DEBUG

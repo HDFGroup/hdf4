@@ -359,15 +359,17 @@ xdrposix_create(xdrs, fd, fmode, op)
     enum xdr_op op;
 {
 
-#if !(defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__))
     biobuf *biop = new_biobuf(fd, fmode) ;
+#if 0
+#if !(defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__))
+
 #endif /* !macintosh */
+#endif
 #ifdef XDRDEBUG
 fprintf(stderr,"xdrposix_create(): xdrs=%p, fd=%d, fmode=%d, op=%d\n",xdrs,fd,fmode,(int)op);
 fprintf(stderr,"xdrposix_create(): after new_biobuf(), biop=%p\n",biop);
 #endif
     xdrs->x_op = op;
-#if !(defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__)) 
     xdrs->x_ops = &xdrposix_ops;
     xdrs->x_private = (caddr_t) biop ;
     /* unused */
@@ -386,9 +388,13 @@ fprintf(stderr,"xdrposix_create(): before rdbuf()\n");
 #endif
     /* else, read the first bufferful */
     return( rdbuf(biop) ) ;
+#if 0
+#if !(defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__)) 
+
 #else /* macintosh */
     return 0; /* Just return since we don't handle XDR files */
 #endif /* macintosh */
+#endif
 }
 
 /*
@@ -656,8 +662,8 @@ fprintf(stderr,"NCxdrfile_create(): XDR=%p, path=%s, ncmode=%d\n",xdrs,path,ncmo
         _fmode = O_BINARY ;
 #endif
 #if defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__) 
-    /* fd = open(path, fmode); */
-    fd = 1; /* We fake a file descriptor for error purposes */
+    fd = open(path, fmode);
+    /* fd = 1;  We fake a file descriptor for error purposes */
 #else /* !macintosh  */
     fd = open(path, fmode, 0666) ;
 #endif /* !macintosh */
