@@ -174,7 +174,8 @@ C
       integer sfid2ref
       integer sfiscvar
       integer sfref2index
-
+      integer sfsdmvc
+      integer sfisdmvc
 
 C
 C	Declarations of return values for HDF Vgroup functions
