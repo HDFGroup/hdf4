@@ -52,3 +52,4 @@ mfhdf/dumper/tvattr.hdf -text
 mfhdf/dumper/tvset.hdf -text
 mfhdf/libsrc/test_cdf.sav -text
 mfhdf/xdr/test_xdr.sav svneol=native#unset
+/win32mak.zip -text
