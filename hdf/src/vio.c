@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/10/06 16:19:19  chouck
+In Vdatas version 2 LCOAL_INTS were stored as 16bits, not 32bits so
+map_from_old_types() was messing up.
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*****************************************************************************
 *
@@ -319,8 +323,8 @@ int16 map_from_old_types(type)
   case LOCAL_BYTETYPE:
     return DFNT_INT8;
   case LOCAL_SHORTTYPE:
-    return DFNT_INT16;
   case LOCAL_INTTYPE:
+    return DFNT_INT16;
   case LOCAL_LONGTYPE:
     return DFNT_INT32;
   case LOCAL_FLOATTYPE:
