@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.18  1993/04/19 22:47:58  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.19  1993/04/21 16:20:11  chouck
+Changed ALPHA -> DEC_ALPHA to avoid conflict with GL libraries
 
+ * Revision 1.18  1993/04/19  22:47:58  koziol
+ * General Code Cleanup to reduce/remove errors on the PC
+ *
  * Revision 1.17  1993/04/13  17:44:23  koziol
  * Added patches for Fujitsu VP machines and fixed Cray fast conversion
  * routines.
@@ -766,7 +769,7 @@ typedef double            float64;
 
 #endif /* MOTOROLA */
 
-#ifdef ALPHA
+#ifdef DEC_ALPHA
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
@@ -811,7 +814,7 @@ typedef double            float64;
 #define INCLUDES_ARE_ANSI
 #endif
 
-#endif /* ALPHA */
+#endif /* DEC_ALPHA */
 
 #ifdef VP
 
