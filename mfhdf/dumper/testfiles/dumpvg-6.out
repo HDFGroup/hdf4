@@ -2,7 +2,6 @@
 Expected output for './hdp dumpvg -i 1,3,5 tdata.hdf'
 #############################
 File name: tdata.hdf 
-	total number of attributes = 0.
 
 
 Vgroup:1
@@ -17,7 +16,6 @@ Entries:-
 	fields = [Values];
 	record size (in bytes) = 4;
 	name = bands; class = DimVal0.0;
-	total number of attributes = 0.
 	total number of attributes = 0.
 
 

@@ -2,8 +2,6 @@
 Expected output for './hdp dumpvg -r 32,39 tdata.hdf'
 #############################
 File name: tdata.hdf 
-	total number of attributes = 0.
-	total number of attributes = 0.
 
 
 Vgroup:2

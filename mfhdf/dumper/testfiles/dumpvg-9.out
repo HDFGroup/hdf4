@@ -2,9 +2,6 @@
 Expected output for './hdp dumpvg -c CDF0.0 tdata.hdf'
 #############################
 File name: tdata.hdf 
-	total number of attributes = 0.
-	total number of attributes = 0.
-	total number of attributes = 0.
 
 
 Vgroup:6
