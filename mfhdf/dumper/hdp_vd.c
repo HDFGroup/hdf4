@@ -30,7 +30,7 @@ int32       dumpvd(int32 vd_id, int data_only, FILE * fp, char sep[2],
 
 int32       VSref_index(int32 file_id, int32 vd_ref);
 
-int32       VSstr_index(int32 file_id, char filter_str[MAXNAMELEN],
+int32       VSstr_index(int32 file_id, char *filter_str,
 						int name, int32 *find_ref, int32 *index);
 
 void 
@@ -79,6 +79,7 @@ parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn argc,
 			{
 				case 'a':	/* dump all, default */
 					dumpvd_opts->filter = DALL;
+                    dumpvd_opts->num_chosen = -1;
 					(*curr_arg)++;
 					break;
 
@@ -95,7 +96,7 @@ parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn argc,
 					while ((tempPtr = HDstrchr(ptr, ',')) != NULL)
 					  {
 						  numItems++;
-						  ptr++;
+						  ptr=tempPtr+1;
 					  }		/* end while */
 					if (*ptr != '\0')	/* count the last item */
 						numItems++;
@@ -116,8 +117,7 @@ parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn argc,
 						  i++;
 					  }
 					dumpvd_opts->filter_num[i] = atoi(ptr);	/* get the last item */
-					i++;
-					dumpvd_opts->num_chosen = i;	/* save the number of items */
+					dumpvd_opts->num_chosen = numItems;	/* save the number of items */
 
 					(*curr_arg)++;
 					break;
@@ -135,7 +135,7 @@ parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn argc,
 					while ((tempPtr = HDstrchr(ptr, ',')) != NULL)
 					  {
 						  numItems++;
-						  ptr++;
+						  ptr=tempPtr+1;
 					  }		/* end while */
 					if (*ptr != '\0')	/* count the last item */
 						numItems++;
@@ -169,8 +169,7 @@ parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn argc,
 						  exit(-1);
 					  }
 					HDstrcpy(dumpvd_opts->filter_str[i], ptr);
-					i++;
-					dumpvd_opts->num_chosen = i;	/* save the number of items */
+					dumpvd_opts->num_chosen = numItems;	/* save the number of items */
 
 					(*curr_arg)++;
 					break;
@@ -192,7 +191,7 @@ parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn argc,
 									lastItem = 1;
 								else
 									*tempPtr = '\0';
-								flds_chosen[i] = (char *) HDmalloc(sizeof(char) * MAXNAMELEN);
+								flds_chosen[i] = (char *) HDmalloc(sizeof(char) * HDstrlen(ptr));
 								if (flds_chosen[i] == NULL)
 								  {
 									  printf("Not enough memory!\n");
@@ -288,7 +287,6 @@ choose_vd(dump_info_t * dumpvd_opts, int32 vd_chosen[MAXCHOICES],
 			  for (i = 0; i<dumpvd_opts->num_chosen; i++)
 				{
 					vd_chosen[i] = dumpvd_opts->filter_num[i];
-					vd_chosen[i]--;
                     k++;
 				}
 			  break;
@@ -318,8 +316,7 @@ choose_vd(dump_info_t * dumpvd_opts, int32 vd_chosen[MAXCHOICES],
 					index = VSstr_index(file_id, dumpvd_opts->filter_str[i], 1, &find_ref, &number);
 					if (index == -1)
 					  {
-						  printf("Vdata with name %s: not found\n",
-								 dumpvd_opts->filter_str[i]);
+						  printf("Vdata with name %s: not found\n", dumpvd_opts->filter_str[i]);
 						  *index_error = 1;
 					  }
 					else
@@ -370,7 +367,7 @@ static intn
 dvd(dump_info_t * dumpvd_opts, intn curr_arg,
 	intn argc, char *argv[], char *flds_chosen[MAXCHOICES], int dumpallfields)
 {
-	int32       file_id, vd_id, *vd_chosen, flds_indices[MAXCHOICES];
+	int32       file_id, vd_id, *vd_chosen=NULL, flds_indices[MAXCHOICES];
 	int32       num_vd_chosen;
 	int32       i, j, k, m, x;
 	int32       nvf, interlace, vsize, len, lastItem;
@@ -414,9 +411,13 @@ dvd(dump_info_t * dumpvd_opts, intn curr_arg,
 		  choose_vd(dumpvd_opts, vd_chosen, &num_vd_chosen, file_id, &index_error);
 
 		  /* In case of index error, skip the current file. */
-		  if (index_error)
+		  if (index_error && num_vd_chosen==0)
             {
-              HDfree(vd_chosen);
+              if(vd_chosen!=NULL)
+                {
+                  HDfree(vd_chosen);
+                  vd_chosen=NULL;
+                } /* end if */
               Vend(file_id);
               Hclose(file_id);
 			  continue;
@@ -441,7 +442,7 @@ dvd(dump_info_t * dumpvd_opts, intn curr_arg,
 				sort(vd_chosen,num_vd_chosen);
 
 		  /* Examine each VD. */
-		  for (i = 0; (vdata_ref = VSgetid(file_id, vdata_ref)) != -1; i++)
+		  for (i = 0; (vdata_ref = VSgetid(file_id, vdata_ref)) != -1 && (dumpall!=0 || x<dumpvd_opts->num_chosen); i++)
 			{
 				int         data_only, flds_match = 0;
 				char        sep[2];
@@ -594,6 +595,11 @@ dvd(dump_info_t * dumpvd_opts, intn curr_arg,
 				VSdetach(vd_id);
 			}	/* for */
 		  Vend(file_id);
+          if(vd_chosen!=NULL)
+            {
+              HDfree(vd_chosen);
+              vd_chosen=NULL;
+            } /* end if */
 		  if (dumpvd_opts->dump_to_file)
 			  fclose(fp);
 		  Hclose(file_id);
@@ -617,7 +623,7 @@ VSref_index(int32 file_id, int32 vd_ref)
 }	/* VSref_index */
 
 int32 
-VSstr_index(int32 file_id, char filter_str[MAXNAMELEN],
+VSstr_index(int32 file_id, char *filter_str,
 			int name, int32 *find_ref, int32 *index)
 {
 	int32       vdata_id;

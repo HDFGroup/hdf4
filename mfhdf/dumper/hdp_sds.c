@@ -87,7 +87,7 @@ parse_dumpsds_opts(dump_info_t * dumpsds_opts, intn *curr_arg, intn argc, char *
 					while ((tempPtr = HDstrchr(ptr, ',')) != NULL)
 					  {
 						  numItems++;
-						  ptr++;
+						  ptr=tempPtr+1;
 					  }		/* end while */
 					if (*ptr != '\0')	/* count the last item */
 						numItems++;
@@ -108,8 +108,7 @@ parse_dumpsds_opts(dump_info_t * dumpsds_opts, intn *curr_arg, intn argc, char *
 						  i++;
 					  }
 					dumpsds_opts->filter_num[i] = atoi(ptr);	/* get the last item */
-					i++;
-					dumpsds_opts->num_chosen = i;	/* save the number of items */
+					dumpsds_opts->num_chosen = numItems;	/* save the number of items */
 
 					(*curr_arg)++;
 					break;
@@ -123,7 +122,7 @@ parse_dumpsds_opts(dump_info_t * dumpsds_opts, intn *curr_arg, intn argc, char *
 					while ((tempPtr = HDstrchr(ptr, ',')) != NULL)
 					  {
 						  numItems++;
-						  ptr++;
+						  ptr=tempPtr+1;
 					  }		/* end while */
 					if (*ptr != '\0')	/* count the last item */
 						numItems++;
@@ -157,8 +156,7 @@ parse_dumpsds_opts(dump_info_t * dumpsds_opts, intn *curr_arg, intn argc, char *
 						  exit(-1);
 					  }
 					HDstrcpy(dumpsds_opts->filter_str[i], ptr);
-					i++;
-					dumpsds_opts->num_chosen = i;	/* save the number of items */
+					dumpsds_opts->num_chosen = numItems;	/* save the number of items */
 
 					(*curr_arg)++;
 					break;
@@ -349,7 +347,7 @@ static intn
 dsd(dump_info_t * dumpsds_opts, intn curr_arg, intn argc, char *argv[])
 {
 	intn        i, ret, isdimvar;
-	int32       sdf_id, sds_id, *sd_chosen;
+	int32       sdf_id, sds_id, *sd_chosen=NULL;
 	int32       num_sd_chosen;
 	int32       rank, nt, nattr, ndsets, nglb_attr;
 	int32       j, k, attr_nt, attr_count, attr_buf_size, attr_index;
@@ -360,7 +358,7 @@ dsd(dump_info_t * dumpsds_opts, intn curr_arg, intn argc, char *argv[])
 	int32 /* ref , */ index;
 	VOIDP       attr_buf;
 	char       *nt_desc, *attr_nt_desc;
-	int         index_error, x, dumpall = 0;
+	int         index_error=0, x, dumpall = 0;
 	int32       sd_ref;
 
 	while (curr_arg < argc)
@@ -395,7 +393,6 @@ dsd(dump_info_t * dumpsds_opts, intn curr_arg, intn argc, char *argv[])
 					for (i = 0; i < dumpsds_opts->num_chosen; i++)
 					  {
 						  sd_chosen[i] = dumpsds_opts->filter_num[i];
-						  sd_chosen[i]--;
                           k++;
 					  }
 					break;
@@ -423,7 +420,7 @@ dsd(dump_info_t * dumpsds_opts, intn curr_arg, intn argc, char *argv[])
 						  index = SDnametoindex(sdf_id, dumpsds_opts->filter_str[i]);
 						  if (index == -1)
 							{
-								printf("SD with nmae %s: not found\n", dumpsds_opts->filter_str[i]);
+								printf("SD with name %s: not found\n", dumpsds_opts->filter_str[i]);
 								index_error = 1;
 							}
 						  else
@@ -440,17 +437,20 @@ dsd(dump_info_t * dumpsds_opts, intn curr_arg, intn argc, char *argv[])
 
 				case DALL:
 					k = -1;
-                                        break;
+                    break;
 
 				default:
 					printf("Unknown filter option\n");
 					exit(1);
 			}
 
-		  if (index_error || k==0)
+		  if (index_error && k==0)
             {
-              if(num_sd_chosen>0)
+              if(sd_chosen!=NULL)
+                {
                   HDfree(sd_chosen);
+                  sd_chosen=NULL;
+                } /* end if */
               SDend(sdf_id);
 			  continue;
             } /* end if */
@@ -477,7 +477,7 @@ dsd(dump_info_t * dumpsds_opts, intn curr_arg, intn argc, char *argv[])
 		  else
 			  sort(sd_chosen, num_sd_chosen);
 
-		  for (i = 0; i < ndsets; i++)
+		  for (i = 0; i < ndsets && (dumpall!=0 || x<dumpsds_opts->num_chosen); i++)
 			{	/* Examine each SD. */
 				if ((!dumpall) && (i != sd_chosen[x]))
 					continue;
@@ -612,8 +612,11 @@ dsd(dump_info_t * dumpsds_opts, intn curr_arg, intn argc, char *argv[])
 				SDendaccess(sds_id);
 			}	/* for ndsets  */
 		  SDend(sdf_id);
-		  if (num_sd_chosen > 0)
+		  if (sd_chosen!=NULL)
+            {
 			  HDfree(sd_chosen);
+              sd_chosen=NULL;
+            } /* end if */
 		  if (dumpsds_opts->dump_to_file)
 			  fclose(fp);
 	  }		/* while argc  */

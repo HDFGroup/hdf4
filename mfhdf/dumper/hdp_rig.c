@@ -107,7 +107,7 @@ parse_dumprig_opts(dump_info_t * dumprig_opts, intn *curr_arg,
 					while ((tempPtr = HDstrchr(ptr, ',')) != NULL)
 					  {
 						  numItems++;
-						  ptr++;
+						  ptr=tempPtr+1;
 					  }		/* end while */
 					if (*ptr != '\0')	/* count the last item */
 						numItems++;
@@ -129,8 +129,7 @@ parse_dumprig_opts(dump_info_t * dumprig_opts, intn *curr_arg,
 						  i++;
 					  }
 					dumprig_opts->filter_num[i] = atoi(ptr);	/* get the last item */
-					i++;
-					dumprig_opts->num_chosen = i;	/* save the number of items */
+					dumprig_opts->num_chosen = numItems;	/* save the number of items */
 
 					(*curr_arg)++;
 					break;
@@ -201,7 +200,7 @@ static intn
 drig(dump_info_t * dumprig_opts, intn curr_arg, intn argc,
 	 char *argv[], int model)
 {
-	int32      *rig_chosen;
+	int32      *rig_chosen=NULL;
 	int32       num_rig_chosen;
 	int32       width, height, ndsets, temp;
 	int32       i, k, x;
@@ -233,11 +232,8 @@ drig(dump_info_t * dumprig_opts, intn curr_arg, intn argc,
 		  if (dumprig_opts->filter == DINDEX)
 			{
 				for (i = 0; i < dumprig_opts->num_chosen; i++)
-				  {
 					  rig_chosen[i] = dumprig_opts->filter_num[i];
-					  rig_chosen[i]--;
-				  }		/* end for */
-                                sort(rig_chosen, num_rig_chosen);  /* DREFNUM doesn't need this */ 
+                sort(rig_chosen, num_rig_chosen);  /* DREFNUM doesn't need this */ 
 			}	/* end if */
 
 		  /* Get the name of the output file. */
@@ -272,7 +268,8 @@ drig(dump_info_t * dumprig_opts, intn curr_arg, intn argc,
 			  dumpall = 1;
 
 		  x = 0;	/* Used as the index of the array of "rig_chosen[x]". */
-		  for (i = 0; i < ndsets; i++)
+printf("ndsets=%d, dumpall=%d, num_chosen=%d\n",(int)ndsets,(int)dumpall,(int)dumprig_opts->num_chosen);
+		  for (i = 0; i < ndsets && (dumpall!=0 || x<dumprig_opts->num_chosen); i++)
 			{	/* Examine all RIGs. */
 				int         indent = 5, compressed, has_pal;
 				int32       ret;
@@ -378,8 +375,11 @@ drig(dump_info_t * dumprig_opts, intn curr_arg, intn argc,
 						  break;
 				  }		/* switch  */
 			}	/* for ndsets  */
-		  if (num_rig_chosen > 0)
+		  if (rig_chosen!=NULL)
+            {
 			  HDfree(rig_chosen);
+              rig_chosen=NULL;
+            } /* end if */
 		  if (dumprig_opts->dump_to_file)
 			  fclose(fp);
 	  }		/* while argc  */

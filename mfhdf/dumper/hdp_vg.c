@@ -105,7 +105,7 @@ do_dumpvg(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts)
 static intn 
 dvg(dump_info_t * dumpvg_opts, intn curr_arg, intn argc, char *argv[])
 {
-	int32       file_id, vg_id, *vg_chosen;
+	int32       file_id, vg_id, *vg_chosen=NULL;
 	int32       num_vg_chosen;
 	int32       i, k, n, x, y;
 	int32       len, nvg, index, status;
@@ -152,7 +152,6 @@ dvg(dump_info_t * dumpvg_opts, intn curr_arg, intn argc, char *argv[])
 					for (i = 0; i<dumpvg_opts->num_chosen; i++)
 					  {
 						  vg_chosen[i] = dumpvg_opts->filter_num[i];
-						  vg_chosen[i]--;
                           k++;
 					  }
 					break;
@@ -225,8 +224,11 @@ dvg(dump_info_t * dumpvg_opts, intn curr_arg, intn argc, char *argv[])
 
 		  if (index_error && k==0)
             {
-              if(num_vg_chosen>0)
+              if(vg_chosen!=NULL)
+                {
                   HDfree(vg_chosen);
+                  vg_chosen=NULL;
+                } /* end if */
               file_id = Hclose(file_id);
               Vend(file_id);
 			  continue;
@@ -257,7 +259,7 @@ dvg(dump_info_t * dumpvg_opts, intn curr_arg, intn argc, char *argv[])
 			}
 
 		  num_vgs = 0;
-		  for (i = 0; (vg_ref = Vgetid(file_id, vg_ref)) != -1; i++)
+		  for (i = 0; (vg_ref = Vgetid(file_id, vg_ref)) != -1 && (dumpall!=0 || x<dumpvg_opts->num_chosen); i++)
 			{
 				int32       skip = FALSE;
 				content_t   save = dumpvg_opts->contents;
@@ -353,8 +355,13 @@ dvg(dump_info_t * dumpvg_opts, intn curr_arg, intn argc, char *argv[])
 					  printf("\n");
 				  }		/* for */
 			}
-		  if (num_vg_chosen > 0)
+		  if (vg_chosen!=NULL)
+            {
 			  HDfree(vg_chosen);
+              vg_chosen=NULL;
+            } /* end if */
+		  Vend(file_id);
+		  Hclose(file_id);
 		  if (dumpvg_opts->dump_to_file)
 			  fclose(fp);
 	  } /* while (curr_arg < argc)  */
@@ -375,13 +382,13 @@ vgdumpfull(int32 vg_id, int32 file_id, FILE * fp, struct node *aNode, int32 skip
 	char       *tempPtr, *ptr, string[MAXNAMELEN], tempflds[FIELDNAMELENMAX];
 
 	num_entries = Vntagrefs(vg_id);
-	aNode->children = (char **) HDmalloc(sizeof(char *) * num_entries);
+	aNode->children = (char **) HDmalloc(sizeof(char *) * (num_entries+1));
 	if (aNode->children == NULL)
 	  {
 		  printf("Not enough memory!\n");
 		  exit(-1);
 	  }
-	aNode->type = (char **) HDmalloc(sizeof(char *) * num_entries);
+	aNode->type = (char **) HDmalloc(sizeof(char *) * (num_entries+1));
 	if (aNode->type == NULL)
 	  {
 		  printf("Not enough memory!\n");
@@ -519,19 +526,6 @@ vgdumpfull(int32 vg_id, int32 file_id, FILE * fp, struct node *aNode, int32 skip
 					  exit(-1);
 				  }
 				HDstrcpy(aNode->children[t], "***");
-/*
-   tempPtr = (char*)HDgettagdesc((uint16) tag);
-   if (!tempPtr) {
-   aNode->type[t] = (char*)HDmalloc(sizeof(char)*15);
-   if (aNode->type[t]==NULL) {
-   printf("Not enough memory!\n");
-   exit(-1);
-   }
-   HDstrcpy(aNode->type[t], "Unknown Object"); 
-   }
-   else
-   aNode->type[t] = tempPtr;
- */
 
 				if (!strcmp(name, "Unknown Tag"))
 				  {

@@ -19,134 +19,6 @@ static char *RcsId[] = "@(#)$Revision$";
 #include "hdp.h"
 #include "vg.h"
 
-/* ------------------------------------------------ */
-/* Each of the following functions displays one element. */
-int32
-vfmtint8(unsigned char *x, int display, FILE * fp)
-{
-    return (display ? fmtint8(x,fp) : 0);
-}
-
-int32
-vfmtuint8(unsigned char *x, int display, FILE * fp)
-{
-    return (display ? fmtuint8(x,fp) : 0);
-}
-
-int32
-vfmtchar(char *x, int display, FILE * fp)
-{
-#ifdef OLD_WAY
-	if (display)
-	  {
-		  cn++;
-		  /* putchar(*x); */
-		  fprintf(fp, "%c ", *x);
-	  }
-	return (1);
-#else /* OLD_WAY */
-    return (display ? fmtchar(x,fp) : 0);
-#endif /* OLD_WAY */
-}
-
-int32
-vfmtint(VOIDP x, int display, FILE * fp)
-{
-#ifdef OLD_WAY
-	int         i = 0;
-	HDmemcpy(&i, x, sizeof(int32));
-	if (display)
-		cn += fprintf(fp, "%d", i);
-	return (1);
-#else /* OLD_WAY */
-    return (display ? fmtint(x,fp) : 0);
-#endif /* OLD_WAY */
-}
-
-int32
-vfmtfloat32(VOIDP x, int display, FILE * fp)
-{
-#ifdef OLD_WAY
-	float       f = 0;
-	HDmemcpy(&f, x, sizeof(float32));
-	if (display)
-		cn += fprintf(fp, "%f", f);
-	return (1);
-#else /* OLD_WAY */
-    return (display ? fmtfloat32(x,fp) : 0);
-#endif /* OLD_WAY */
-}
-
-int32
-vfmtint32(VOIDP x, int display, FILE * fp)
-{
-#ifdef OLD_WAY
-	long        l = 0;
-	HDmemcpy(&l, x, sizeof(int32));
-	if (display)
-		cn += fprintf(fp, "%ld", l);
-	return (1);
-#else /* OLD_WAY */
-    return (display ? fmtint32(x,fp) : 0);
-#endif /* OLD_WAY */
-}
-
-int32
-vfmtuint32(VOIDP x, int display, FILE * fp)
-{
-#ifdef OLD_WAY
-	long        l = 0;
-	HDmemcpy(&l, x, sizeof(int32));
-	if (display)
-		cn += fprintf(fp, "%ld", l);
-	return (1);
-#else /* OLD_WAY */
-    return (display ? fmtuint32(x,fp) : 0);
-#endif /* OLD_WAY */
-}
-
-int32
-vfmtint16(VOIDP x, int display, FILE * fp)
-{
-#ifdef OLD_WAY
-	short       s = 0;
-	HDmemcpy(&s, x, sizeof(int16));
-	if (display)
-		cn += fprintf(fp, "%ld", 1);
-	return (1);
-#else /* OLD_WAY */
-    return (display ? fmtint16(x,fp) : 0);
-#endif /* OLD_WAY */
-}
-
-int32
-vfmtuint16(VOIDP x, int display, FILE * fp)
-{
-#ifdef OLD_WAY
-	short       s = 0;
-	HDmemcpy(&s, x, sizeof(int16));
-	if (display)
-		cn += fprintf(fp, "%ld", 1);
-	return (1);
-#else /* OLD_WAY */
-    return (display ? fmtuint16(x,fp) : 0);
-#endif /* OLD_WAY */
-}
-
-int32
-vfmtfloat64(VOIDP x, int display, FILE * fp)
-{
-#ifdef OLD_WAY
-	double      d = 0;
-	HDmemcpy(&d, x, sizeof(float64));
-	if (display)
-		cn += fprintf(fp, "%f", d);
-	return (1);
-#else /* OLD_WAY */
-    return (display ? fmtfloat64(x,fp) : 0);
-#endif /* OLD_WAY */
-}
-
 #define BUFFER 1000000
 
 /* ------------------------------------------------ */
@@ -159,7 +31,7 @@ dumpvd(int32 vd, int data_only, FILE * fp, char separater[2],
 	int32       j, i, t, interlace, nv, vsize;
 	uint8      *bb, *b;
 	VWRITELIST *w;
-	int32       (*vfmtfn[60]) ();
+	int32       (*vfmtfn[60]) (VOIDP , FILE *);
 	int32       off[60];
 	int32       order[60];
 
@@ -228,39 +100,39 @@ dumpvd(int32 vd, int data_only, FILE * fp, char separater[2],
 		  switch (w->type[i])
 			{
 				case DFNT_CHAR:
-					vfmtfn[i] = vfmtchar;
+					vfmtfn[i] = fmtchar;
 					break;
 
 				case DFNT_UINT8:
-					vfmtfn[i] = vfmtuint8;
+					vfmtfn[i] = fmtuint8;
 					break;
 
 				case DFNT_INT8:
-					vfmtfn[i] = vfmtint8;
+					vfmtfn[i] = fmtint8;
 					break;
 
 				case DFNT_UINT16:
-					vfmtfn[i] = vfmtuint16;
+					vfmtfn[i] = fmtuint16;
 					break;
 
 				case DFNT_INT16:
-					vfmtfn[i] = vfmtint16;
+					vfmtfn[i] = fmtint16;
 					break;
 
 				case DFNT_UINT32:
-					vfmtfn[i] = vfmtuint32;
+					vfmtfn[i] = fmtuint32;
 					break;
 
 				case DFNT_INT32:
-					vfmtfn[i] = vfmtint32;
+					vfmtfn[i] = fmtint32;
 					break;
 
 				case DFNT_FLOAT32:
-					vfmtfn[i] = vfmtfloat32;
+					vfmtfn[i] = fmtfloat32;
 					break;
 
 				case DFNT_FLOAT64:
-					vfmtfn[i] = vfmtfloat64;
+					vfmtfn[i] = fmtfloat64;
 					break;
 
 				default:
@@ -347,7 +219,8 @@ dumpvd(int32 vd, int data_only, FILE * fp, char separater[2],
 
 					  for (t = 0; t < order[i]; t++)
 						{
-							cn+=(vfmtfn[i]) (b, display, fp);
+                            if(display)
+                                cn+=(vfmtfn[i]) (b, fp);
 							b += off[i];
 							if (display)
 							  {
@@ -372,19 +245,9 @@ dumpvd(int32 vd, int data_only, FILE * fp, char separater[2],
 					  fprintf(fp, "%s ", separater);
 				  }
 
-				/*
-				   if (separater[0] == ";") {
-				   fprintf(fp, " ");
-				   cn += 2; 
-				   }
-				   else 
-				   cn += 6; 
-				 */
-
 				if (!data_only)
 				  {
 					  if ((cnt1 * cnt2) > 30)
-						  /* if (cn > 50) */
 						{
 							cnt1 = 0;
 							cnt2 = 0;
@@ -422,9 +285,7 @@ dumpvd(int32 vd, int data_only, FILE * fp, char separater[2],
 						}
 				  }
 				else
-				  {
 					  fprintf(fp, "\n");
-				  }
 			}	/* for (j=0; j<count; j++) */
 	  }		/* while (done != nv) */
 
