@@ -46,7 +46,7 @@ int table_search(table_t *table, int tag, int ref )
  *
  * Purpose: add tag and ref entry to table
  *
-	* Return: void
+ * Return: void
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -71,10 +71,10 @@ void table_add(table_t *table, int tag, int ref, char* path, int print)
  i = table->nobjs++;
  table->objs[i].tag = tag;
  table->objs[i].ref = ref;
-	strcpy(table->objs[i].obj_name,path);
+ strcpy(table->objs[i].obj_name,path);
 #if 0
-	if (print)
-		printf(PFORMAT,"","",path);    
+ if (print)
+  printf(PFORMAT,"","",path);    
 #endif
 }
 
@@ -149,25 +149,25 @@ void table_free( table_t *table )
 char* table_check(table_t *table, char*obj_name)
 {
  int   i;
-	int32 tag;
+ int32 tag;
  
  for (i = 0; i < table->nobjs; i++)
-	{
+ {
   if (strcmp(table->objs[i].obj_name,obj_name)==0)
-		{
+  {
    /* found the name; check if it is an SDS or Image */
-			tag=table->objs[i].tag;
-			if (tag==DFTAG_SD  ||
-				   tag==DFTAG_SDG ||
-							tag==DFTAG_NDG ||
-							tag==DFTAG_RI  ||
-							tag==DFTAG_CI  ||
-							tag==DFTAG_RIG ||
-							tag==DFTAG_RI8 ||
-							tag==DFTAG_CI8 ||
-							tag==DFTAG_II8 ) return NULL; else return "not compressible/chunk object";
-		}
-	}
+   tag=table->objs[i].tag;
+   if (tag==DFTAG_SD  ||
+       tag==DFTAG_SDG ||
+       tag==DFTAG_NDG ||
+       tag==DFTAG_RI  ||
+       tag==DFTAG_CI  ||
+       tag==DFTAG_RIG ||
+       tag==DFTAG_RI8 ||
+       tag==DFTAG_CI8 ||
+       tag==DFTAG_II8 ) return NULL; else return "not compressible/chunk object";
+  }
+ }
   
   return "not found";
 }

@@ -25,7 +25,7 @@ extern "C" {
 
 /* compression */
 
-obj_list_t* parse_comp(char *str, int *n_objs, comp_t *comp);
+obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp);
 char*       get_scomp(int code);
 
 /* chunking */
@@ -46,7 +46,7 @@ obj_info_t* options_get_object(char *path,options_table_t *table);
 
 #else
 
-int         comp_list_add(obj_list_t *obj_list, int n_objs, comp_t comp, comp_table_t *table );
+int         comp_list_add(obj_list_t *obj_list, int n_objs, comp_info_t comp, comp_table_t *table );
 void        comp_list_init( comp_table_t **tbl );
 void        comp_list_free( comp_table_t *table );
 int         chunk_list_add(obj_list_t *obj_list,int n_objs,int32 *chunk_lengths,

@@ -28,50 +28,50 @@ Examples:
 
 int main(int argc, char **argv)
 {
-	char        *infile  = NULL;
+ char        *infile  = NULL;
  char        *outfile = NULL;
-	options_t   options;            /*the global options */
-	int         i, j, ii, jj, k;
+ options_t   options;            /*the global options */
+ int         i, j, ii, jj, k;
 
 
  /* initialize options, -t table and -c table  */
-	hzip_init (&options);
+ hzip_init (&options);
 
-	for ( i = 1; i < argc; i++) 
-	{
-		if (strcmp(argv[i], "-i") == 0) {
-			infile = argv[++i];
-		}
-		else if (strcmp(argv[i], "-o") == 0) {       
-			outfile = argv[++i]; 
-		}
-		else if (strcmp(argv[i], "-v") == 0) {       
-			options.verbose = 1;
-		}
-		else if (strcmp(argv[i], "-t") == 0) {  
-			
-			/* add the -t option */
-			hzip_addcomp(argv[i+1],&options);
+ for ( i = 1; i < argc; i++) 
+ {
+  if (strcmp(argv[i], "-i") == 0) {
+   infile = argv[++i];
+  }
+  else if (strcmp(argv[i], "-o") == 0) {       
+   outfile = argv[++i]; 
+  }
+  else if (strcmp(argv[i], "-v") == 0) {       
+   options.verbose = 1;
+  }
+  else if (strcmp(argv[i], "-t") == 0) {  
+   
+   /* add the -t option */
+   hzip_addcomp(argv[i+1],&options);
 
-			/* jump to next */
-			++i;
-		}
-		else if (strcmp(argv[i], "-c") == 0) {       
+   /* jump to next */
+   ++i;
+  }
+  else if (strcmp(argv[i], "-c") == 0) {       
 
-			/* parse the -c option */
-			hzip_addchunk(argv[i+1],&options);
+   /* parse the -c option */
+   hzip_addchunk(argv[i+1],&options);
 
-			/* jump to next */
-			++i;
-		}
-		else if (argv[i][0] == '-') {
-			usage();
-		}
-	}
+   /* jump to next */
+   ++i;
+  }
+  else if (argv[i][0] == '-') {
+   usage();
+  }
+ }
 
-	if (infile == NULL || outfile == NULL) 
-		usage();
-	
+ if (infile == NULL || outfile == NULL) 
+  usage();
+ 
 
 /*-------------------------------------------------------------------------
  * print objects to compress/uncompress
@@ -79,50 +79,50 @@ int main(int argc, char **argv)
  */
 
 #if 0
-	
-	if (options.verbose)
-	printf("Objects to compress are...\n");
-	for ( i = 0; i < options.cp_tbl->nelems; i++) 
-	{
-		for ( j = 0; j < options.cp_tbl->objs[i].n_objs; j++) 
-		{
-			char* obj_name=options.cp_tbl->objs[i].obj_list[j].obj;
-			if (options.verbose)
-			printf("\t%s     \t %s compression, parameter %d\n",
-				obj_name,
-				get_scomp(options.cp_tbl->objs[i].comp.type),
-				options.cp_tbl->objs[i].comp.info);
-			
-			/* check for duplicate names in input */
-			for ( ii = 0; ii < options.cp_tbl->nelems; ii++) 
-			{
-				if (ii==i) continue;
-				for ( jj = 0; jj < options.cp_tbl->objs[ii].n_objs; jj++) 
-				{
-					if (strcmp(obj_name,options.cp_tbl->objs[ii].obj_list[jj].obj)==0)
-					{
-						printf("\t%s     \t %s compression, parameter %d\n",
-							obj_name,
-							get_scomp(options.cp_tbl->objs[ii].comp.type),
-							options.cp_tbl->objs[ii].comp.info);
-						
-						printf("Error: %s is already present in input. Exiting...\n",obj_name);
-						comp_list_free(options.cp_tbl);
-						exit(1);
-					}
-				}
-				
-			}
-		}
-	}
-	
+ 
+ if (options.verbose)
+ printf("Objects to compress are...\n");
+ for ( i = 0; i < options.cp_tbl->nelems; i++) 
+ {
+  for ( j = 0; j < options.cp_tbl->objs[i].n_objs; j++) 
+  {
+   char* obj_name=options.cp_tbl->objs[i].obj_list[j].obj;
+   if (options.verbose)
+   printf("\t%s     \t %s compression, parameter %d\n",
+    obj_name,
+    get_scomp(options.cp_tbl->objs[i].comp.type),
+    options.cp_tbl->objs[i].comp.info);
+   
+   /* check for duplicate names in input */
+   for ( ii = 0; ii < options.cp_tbl->nelems; ii++) 
+   {
+    if (ii==i) continue;
+    for ( jj = 0; jj < options.cp_tbl->objs[ii].n_objs; jj++) 
+    {
+     if (strcmp(obj_name,options.cp_tbl->objs[ii].obj_list[jj].obj)==0)
+     {
+      printf("\t%s     \t %s compression, parameter %d\n",
+       obj_name,
+       get_scomp(options.cp_tbl->objs[ii].comp.type),
+       options.cp_tbl->objs[ii].comp.info);
+      
+      printf("Error: %s is already present in input. Exiting...\n",obj_name);
+      comp_list_free(options.cp_tbl);
+      exit(1);
+     }
+    }
+    
+   }
+  }
+ }
+ 
 
-	if (options.compress==ALL && options.cp_tbl->nelems>1) 
-	{
-		printf("Error: '*' wildcard is present with other objects. Exiting...\n");
-		comp_list_free(options.cp_tbl);
-		exit(1);
-	}
+ if (options.compress==ALL && options.cp_tbl->nelems>1) 
+ {
+  printf("Error: '*' wildcard is present with other objects. Exiting...\n");
+  comp_list_free(options.cp_tbl);
+  exit(1);
+ }
 
 
 /*-------------------------------------------------------------------------
@@ -130,55 +130,55 @@ int main(int argc, char **argv)
  *-------------------------------------------------------------------------
  */
 
-	if (options.verbose)
-	printf("Objects to chunk are...\n");
-	for ( i = 0; i < options.ck_tbl->nelems; i++) 
-	{
-		for ( j = 0; j < options.ck_tbl->objs[i].n_objs; j++) 
-		{
-			char* obj_name=options.ck_tbl->objs[i].obj_list[j].obj;
-			if (options.verbose) {
-				printf("\t%s ",obj_name); 
-				for ( k = 0; k < options.ck_tbl->objs[i].rank; k++) 
-					printf("%d ",options.ck_tbl->objs[i].chunk_lengths[k]);
-				printf("\n");
-			}
-			
-			/* check for duplicate names in input */
-			for ( ii = 0; ii < options.ck_tbl->nelems; ii++) 
-			{
-				if (ii==i) continue;
-				for ( jj = 0; jj < options.ck_tbl->objs[ii].n_objs; jj++) 
-				{
-					if (strcmp(obj_name,options.ck_tbl->objs[ii].obj_list[jj].obj)==0)
-					{
-						printf("\t%s     \n",obj_name); 
-						
-						printf("Error: %s is already present in input. Exiting...\n",obj_name);
-						chunk_list_free(options.ck_tbl);
-						exit(1);
-					}
-				}
-				
-			}
-		}
-	}
-	
+ if (options.verbose)
+ printf("Objects to chunk are...\n");
+ for ( i = 0; i < options.ck_tbl->nelems; i++) 
+ {
+  for ( j = 0; j < options.ck_tbl->objs[i].n_objs; j++) 
+  {
+   char* obj_name=options.ck_tbl->objs[i].obj_list[j].obj;
+   if (options.verbose) {
+    printf("\t%s ",obj_name); 
+    for ( k = 0; k < options.ck_tbl->objs[i].rank; k++) 
+     printf("%d ",options.ck_tbl->objs[i].chunk_lengths[k]);
+    printf("\n");
+   }
+   
+   /* check for duplicate names in input */
+   for ( ii = 0; ii < options.ck_tbl->nelems; ii++) 
+   {
+    if (ii==i) continue;
+    for ( jj = 0; jj < options.ck_tbl->objs[ii].n_objs; jj++) 
+    {
+     if (strcmp(obj_name,options.ck_tbl->objs[ii].obj_list[jj].obj)==0)
+     {
+      printf("\t%s     \n",obj_name); 
+      
+      printf("Error: %s is already present in input. Exiting...\n",obj_name);
+      chunk_list_free(options.ck_tbl);
+      exit(1);
+     }
+    }
+    
+   }
+  }
+ }
+ 
 
-	if (options.chunk==ALL && options.ck_tbl->nelems>1) 
-	{
-		printf("Error: '*' wildcard is present with other objects. Exiting...\n");
-		chunk_list_free(options.ck_tbl);
-		exit(1);
-	}
+ if (options.chunk==ALL && options.ck_tbl->nelems>1) 
+ {
+  printf("Error: '*' wildcard is present with other objects. Exiting...\n");
+  chunk_list_free(options.ck_tbl);
+  exit(1);
+ }
 
 
 #endif
 
-	/* zip it */
-	hzip(infile,outfile,&options);
-	
-	/* free tables */
+ /* zip it */
+ hzip(infile,outfile,&options);
+ 
+ /* free tables */
  hzip_end(&options);
  return 0;
 }
@@ -240,7 +240,7 @@ hzip -i input -o output [-h] [-v] [-t "comp_info"] [-c "chunk_info"]
                          NONE, for no chunking
   -f comp_file      File with compression info in it (instead of the two above options)
 
-		$hzip -i file1.hdf -o file2.hdf -t "*:RLE"
+  $hzip -i file1.hdf -o file2.hdf -t "*:RLE"
 compresses all objects in the file file1.hdf, using RLE compression
 
 $hzip -i file1.hdf -o file2.hdf 

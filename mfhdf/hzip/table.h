@@ -33,15 +33,15 @@ extern "C" {
 /*struct to store the tag and ref of an object */
 typedef struct obj_t {
  int tag;
-	int ref;
-	char obj_name[MAX_NC_NAME];
+ int ref;
+ char obj_name[MAX_NC_NAME];
 } obj_t;
 
 /*struct that stores all objects */
 typedef struct table_t {
-	int size;
-	int nobjs;
-	obj_t *objs;
+ int size;
+ int nobjs;
+ obj_t *objs;
 } table_t;
 
 

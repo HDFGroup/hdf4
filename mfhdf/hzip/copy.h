@@ -26,38 +26,38 @@ extern "C" {
 
 int  is_reserved(char*vgroup_class);
 int  copy_sds(int32 sd_in,int32 sd_out,int32 tag,int32 ref,int32 vgroup_id_out_par,
-														char*group_name,options_t *options,table_t *table);
+              char*group_name,options_t *options,table_t *table);
 int  copy_gr (int32 gr_in,int32 gr_out,int32 tag,int32 ref,int32 vgroup_id_out_par,
-														char*group_name,options_t *options,table_t *table);
+              char*group_name,options_t *options,table_t *table);
 int  copy_vs( int32 infile_id,
-												 	int32 outfile_id,
-														int32 tag,
-												 	int32 ref,               /* ref of input VS */
-												 	int32 vgroup_id_out_par, /* output parent group ID */
-												 	char*path_name,          /* absolute path for input group name */
-												 	options_t *options,
-														table_t *table);
+              int32 outfile_id,
+              int32 tag,
+              int32 ref,               /* ref of input VS */
+              int32 vgroup_id_out_par, /* output parent group ID */
+              char*path_name,          /* absolute path for input group name */
+              options_t *options,
+              table_t *table);
 
 void copy_vg(char* infname,
-													char* outfname,
-													int32 infile_id,
-													int32 outfile_id,
-													int32 tag,               /* tag of input VS */
-													int32 ref,               /* ref of input VS */
-													int32 vgroup_id_out_par, /* output parent group ID */
-													char*path_name,          /* absolute path for input group name */
-													options_t *options,
-													table_t *table);
+             char* outfname,
+             int32 infile_id,
+             int32 outfile_id,
+             int32 tag,               /* tag of input VS */
+             int32 ref,               /* ref of input VS */
+             int32 vgroup_id_out_par, /* output parent group ID */
+             char*path_name,          /* absolute path for input group name */
+             options_t *options,
+             table_t *table);
 
 
 void vgroup_insert(char* infname,char* outfname,int32 infile_id,int32 outfile_id,
-																			int32 vgroup_id_out_par, /* output parent group ID */
-																			char*path_name,          /* absolute path for input group name */          
-																			int32* in_tags,          /* tag list for parent group */
-																			int32* in_refs,          /* ref list for parent group */
-																			int npairs,              /* number tag/ref pairs for parent group */
-																			table_t *table,
-																			options_t *options);
+                   int32 vgroup_id_out_par, /* output parent group ID */
+                   char*path_name,          /* absolute path for input group name */          
+                   int32* in_tags,          /* tag list for parent group */
+                   int32* in_refs,          /* ref list for parent group */
+                   int npairs,              /* number tag/ref pairs for parent group */
+                   table_t *table,
+                   options_t *options);
 
 
 char *get_path(char*path_name, char*obj_name);
