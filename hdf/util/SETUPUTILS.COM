@@ -16,8 +16,7 @@ $!
 $! set up utilities
 $! change below to the hdf bin directory
 $! 
-$! define/nolog hdf$bin    mrlxp1$dka200:[folk.dev.hdf.util]
-$ define/nolog hdf$bin    [-.util]
+$! define/nolog hdf$bin    [-.util]
 $!
 $ hdfls     :== $ hdf$bin:hdfls
 $! hdfrseq   :== $ hdf$bin:hdfrseq
@@ -27,7 +26,9 @@ $ hdftor8   :== $ hdf$bin:hdftor8
 $ hdftopal  :== $ hdf$bin:hdftopal
 $ paltohdf  :== $ hdf$bin:paltohdf
 $ hdf24to8  :== $ hdf$bin:hdf24to8
+$ hdf8to24  :== $ hdf$bin:hdf8to24
 $ hdfpack   :== $ hdf$bin:hdfpack
+$ hdfunpac  :== $ hdf$bin:hdfunpac
 $ ristosds  :== $ hdf$bin:ristosds
 $ vshow     :== $ hdf$bin:vshow
 $ vmake     :== $ hdf$bin:vmake
@@ -35,4 +36,4 @@ $ hdfed     :== $ hdf$bin:hdfed
 $ hdf2jpeg  :== $ hdf$bin:hdf2jpeg
 $ jpeg2hdf  :== $ hdf$bin:jpeg2hdf
 $ fp2hdf    :== $ hdf$bin:fp2hdf
-
+$ exit
