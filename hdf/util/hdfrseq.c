@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/07/15 21:48:48  sxu
-No change.
+Revision 1.3  1992/08/24 15:02:30  dilg
+Ripped out all Sunview code.  Sunview is no longer supported.
 
+ * Revision 1.2  1992/07/15  21:48:48  sxu
+ * No change.
+ *
  * Revision 1.1  1992/06/09  16:29:42  dilg
  * Initial revision
  *
@@ -40,15 +43,6 @@ No change.
 *
 */
 #include "hdf.h"             /* HDF includes */
-#ifdef SUN
-#include <pixrect/pixrect_hs.h>
-#include <memory.h>
-#define  DEVICE  "/dev/fb"
-#define NEEDPAD			/* Needs padding to byte bioundary */
-#define BYTEBOUND 4		/* byte boundary of a word on Suns */
-				/* should be multiple of  2 on Sun3 */
-				/* and 4 on Sun4 */
-#endif /* defined SUN */
 
 #ifdef IRIS4
 #include <gl.h>
@@ -91,11 +85,6 @@ int32 xdim=0,ydim=0;          /* size of image on disk */
 
 #ifdef NEEDPAD
 int xpad;
-#endif
-
-#ifdef SUN
-struct pixrect *screen,*img=NULL;
-struct mpr_data *stuff;
 #endif
 
 #ifdef IRIS4
@@ -160,18 +149,6 @@ int main(argc,argv)
     i = strlen(argv[0]);
     if (strncmp("hdfseq",argv[0]+i-6,6))
         remote=1;
-
-#ifndef SUN /* this is old-style, unsupported Sunview code */
-#ifdef SUN
-/*
-*  Check to see if we have the display console and open it.
-*/
-    if (!remote)
-        screen = pr_open(DEVICE);
-#endif
-#endif
- 
-
 
 /*
 *  Are there enough parameters?  Give user information on calling.
@@ -250,10 +227,6 @@ int main(argc,argv)
         showpic(argv[filearg]);
 
 
-#ifdef SUN
-    if (!remote)
-        pr_close(screen);
-#endif
 #ifdef IRIS4
     if ((!remote) && (img)) /* make sure we have an image */
         while(1) {
@@ -301,49 +274,6 @@ getspace()
     return(0);
 }
 
-
-#ifdef SUN
-/*
-*  Allocate the space for the pixrect if displaying locally
-*/
-#ifdef PROTOTYPE
-getpix(void)
-#else
-getpix()
-#endif /* PROTOTYPE  */
-    {
-/*
-*  If local expansion is desired, allocate the space for it in the
-*  pixrect.  Allocation will take place because xsize and ysize will
-*  be set before calling this routine.
-*
-*  only re-allocate if the image changes size.
-*/
-    if (!remote && (oldxs != xsize || oldys != ysize)) {
-#ifndef SUN /* this is old-style, unsupported Sunview code */
-        oldxs = xsize ; oldys = ysize;
-        if (img)
-            pr_destroy(img);
-
-        img = mem_create(xsize,ysize,8);        /* to size of image */
-#ifndef NEEDPAD
-        if (xfact > 1 || yfact > 1) {
-#endif
-#ifdef NEEDPAD
-	if (xfact > 1 || yfact > 1 || xpad) {
-#endif
-            stuff = mpr_d(img);
-            wherebig = (char *)stuff->md_image;     /* pointer inside pixrect */
-        }
-        else {
-            stuff = mpr_d(img);
-            wheresmall = (char *)stuff->md_image;
-        }
-#endif /* !SUN */
-    }
-    return(0);
-}
-#endif
 
 
 #ifdef IRIS4
@@ -456,13 +386,6 @@ showpic(filename)
 #ifdef DEBUG
 	printf("xdim %d ydim %d\n",xdim,ydim);
 #endif /*DEBUG*/
-#ifdef SUN
-        if (!remote) {
-            if (largeset())         /* set expansion needs */
-                getspace();         /* get local space for pre-expansion */
-            getpix();               /* allocate pixrect */
-        }
-#endif
 #ifdef IRIS4
         if (!remote) {
             largeset();         /* set expansion needs */
@@ -481,10 +404,6 @@ showpic(filename)
         if (!DFR8getimage(filename, (uint8 *)wheresmall, xdim, ydim, (uint8 *)rgb)) {
             if (remote) 
                 rimage(ispal);      /* display remote image with [palette] */
-#ifdef SUN
-            else
-                piximage(ispal);    /* display image on Sun with [palette] */
-#endif
 #ifdef IRIS4
             else
                 piximage(ispal);    /* display image on Iris with [palette] */
@@ -632,82 +551,6 @@ int usepal;
 
 
 
-#ifdef SUN
-/***********************************************************************/
-/*  piximage
-*  On the Sun console, display the image as the parameters specify.
-*  Handles centering (center)
-*  Uses xwhere and ywhere, xsize and ysize.
-*  Performs expansion if xfact or yfact > 1
-*  Takes the palette from the rgb[] if asked to.
-*  Will pause if step=1.
-*/
-#ifdef PROTOTYPE
-piximage(int usepal)
-#else
-piximage(usepal)
-    int usepal;
-#endif /* PROTOTYPE  */
-    {
-    char r[256],g[256],b[256],*pp;
-    int j;
-
-/*
-*  compute centering values, based on new size
-*/
-    if (center) {
-        xwhere = (SCRX-xsize)/2;
-        ywhere = (SCRY-ysize)/2;
-        if (xwhere < 0) 
-            xwhere = 0;
-        if (ywhere < 0)
-            ywhere = 0;
-    }
-
-
-/*
-*  Do the image expansion, if called for.
-*  The creative pointering makes sure that wherebig and wheresmall are
-*  always set to the correct pointers.  img is always the target pixrect.
-*/
-#ifndef NEEDPAD
-    if (xfact > 1 || yfact > 1)
-        bigimg(wherebig,wheresmall);
-#endif
-#ifdef NEEDPAD
-    if (xfact > 1 || yfact > 1 || xpad)	/* also do the padding */
-	bigimg((uint8 *)wherebig, (uint8 *)wheresmall);
-#endif
-
-/*
-*  Set the display palette to the new palette.
-*/
-    if (usepal) {
-        pp = rgb;                   /* array of rgbrgbrgbrgb */
-        for (j=0; j<256; j++) {
-                r[j] = *pp++;
-                g[j] = *pp++;
-                b[j] = *pp++;
-        }
-
-        pr_putcolormap(screen, 2, 254, &r[2], &g[2], &b[2]);
-    }
-
-/*
-*  Display the image using pixrects
-*/
-    pr_rop(screen,xwhere,ywhere,xsize,ysize,PIX_SRC,img,0,0);
-
-    if (step) {
-        printf("Press return to continue, 'q' return to quit");
-        if ('q' == getchar())
-            exit(0);
-    }
-
-
-}
-
-#endif
 
 /*****************************************************************************/
 /*  rimage
@@ -803,49 +646,6 @@ rimage(usepal)
     free(space);
     return(0);
 }
-
-
-#ifdef SUN
-/*****************************************************************************/
-/* expandimg
-* copy an image memory to memory, expanding byte by byte to get a larger image.
-*  no aliasing, just byte replication
-*/
-#ifdef PROTOTYPE
-bigimg(unsigned char *targ, unsigned char *src)
-#else
-bigimg(targ,src)
-    unsigned char *targ,*src;
-#endif /* PROTOTYPE  */
-    {
-    register i,j,line;
-    register unsigned char *p,*q,*oldq;
-
-    p = src;
-    q = targ;
-    for (line = 0; line < ydim; line++) {
-/*        p = src+line*xdim;*/
-/*        oldq = q = targ+line*xsize*yfact;*/
-	oldq = q;
-
-        for (i=0; i<xdim; i++,p++)
-            for (j=0; j<xfact; j++)
-                *q++ = *p;
-
-#ifdef NEEDPAD
-	for (i = 0; i < xpad; i++)
-	    *q++ = 0;		/* pad the line */
-#endif /*NEEDPAD*/
-
-        for (i=1; i<yfact ; i++) {
-            DFmovmem(oldq,q,xsize);             /* make one copy of the line */
-            q += xsize;
-        }
-
-    }
-    return(0);
-}
-#endif
 
 
 
