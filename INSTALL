@@ -445,7 +445,7 @@
 
     2.5.6.3 Testing the Distribution
     ********************************
-    Run the tests in the following order
+    Run the tests in the following order:
       
        1. hdf/test/testhdf
           Note:
