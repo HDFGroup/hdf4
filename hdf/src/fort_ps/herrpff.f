@@ -6,9 +6,9 @@ C Outputs: error_message - string associated with the error code
 C Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
 C-----------------------------------------------------------------------------*/
 
-      integer function hestring(error_code, error_message)
+      integer function hestringf(error_code, error_message)
 	!MS$if defined(BUILD_HDF_DLL)
-	!MS$attributes dllexport :: hestring
+	!MS$attributes dllexport :: hestringf
 	!MS$endif
       integer error_code 
       character*(*) error_message 
@@ -21,7 +21,7 @@ C      integer hestringc
 	    character*(*) error_message
         END FUNCTION hestringc
       END INTERFACE
-      hestring = hestringc(error_code, error_message,len(error_message))
+      hestringf = hestringc(error_code, error_message,len(error_message))
       return
       end
 C-----------------------------------------------------------------------------
