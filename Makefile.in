@@ -170,12 +170,20 @@ testnofortran:
 	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=test \
           SUBDIRS="$(NETCDFDIR)" subdn
 
+test-hdf:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(HDFDIR)" subd
+
+test-netcdf:
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=test \
+          SUBDIRS="$(NETCDFDIR)" subd
+
 hdf-test:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(HDFDIR)" subd
 
 netcdf-test:
-	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=test \
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=$@ \
           SUBDIRS="$(NETCDFDIR)" subd
 
 hdf-allnofortran: 
@@ -186,7 +194,7 @@ hdf-libnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="libnofortran" \
           SUBDIRS="$(HDFDIR)" subd
 
-hdf-testnofortran: 
+test-hdfnofortran: 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="testnofortran" \
           SUBDIRS="$(HDFDIR)" subd
 
@@ -215,6 +223,10 @@ libs:
           SUBDIRS="$(HDFDIR)" subd
 	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG="all" \
           SUBDIRS="$(NETCDFDIR)" subdn
+
+hdf-libs: 
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="libs" \
+          SUBDIRS="$(HDFDIR)" subd
 
 libdf: 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
@@ -280,16 +292,18 @@ help:
 	@echo "make hdf-libnofortran - makes HDF library excluding fortran support"
 	@echo "make hdf-testnofortran - makes HDF library and tests"
 	@echo "                         excluding fortran support"
+	@echo "make hdf-test          - makes HDF library and tests" 
 	@echo "make hdf-utilities     - makes HDF library and utilities"
-	@echo "make libs             - makes HDF, IJG JPEG and netCDF libraries only"
+	@echo "make libs              - makes HDF, IJG JPEG and netCDF libraries only"
+	@echo "make hdf-libs          - makes HDF and IJG JPEG libraries only"
 	@echo "make libdf             - makes HDF library"
 	@echo "make libjpeg           - makes IJG JPEG library"
 	@echo "make test              - run both HDF and NETCDF tests"
 	@echo "make testnofortran     - run HDF tests except the fortran test" 
 	@echo "                         and NETCDF tests"
-	@echo "make netcdf-test       - run NETCDF tests" 
-	@echo "make hdf-test          - run HDF tests" 
-	@echo "make hdf-testnofortran - run HDF tests except the fortran test" 
+	@echo "make test-netcdf       - run NETCDF tests" 
+	@echo "make test-hdf          - run HDF tests" 
+	@echo "make test-hdfnofortran - run HDF tests except the fortran test" 
 	@echo "make install           - install HDF,netCDF libraries,"
 	@echo "                         utilites, and includes" 
 	@echo "make install-hdf       - install HDF library, utilities and includes"

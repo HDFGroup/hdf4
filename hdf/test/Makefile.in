@@ -271,14 +271,14 @@ $(JPEGLIB)/libjpeg.a:
 
 $(CTESTS) $(TESTF) $(FTESTS): $(FRC)
 
-hdf-test: testhdf fortest
+test-hdf: testhdf fortest
 	./testhdf
 	./fortest
 
-hdf-testnofortran: testhdf
+test-hdfnofortran: testhdf
 	./testhdf
 
-hdf-testfortran: fortest fortest.sav
+test-hdffortran: fortest fortest.sav
 	./fortest > fortest.out
 	@cmp fortest.out fortest.sav && echo "*** Fortran tests passed ***";
 
@@ -325,8 +325,9 @@ help:
 	@echo "make nofortran - makes HDF tests excluding fortran tests"
 	@echo "make testhdf   - makes HDF C test program "
 	@echo "make fortest   - makes HDF Fortran test program "
-	@echo "make hdf-test          - run HDF tests " 
-	@echo "make hdf-testnofortran - run HDF tests except the fortran test " 
+	@echo "make test-hdf          - run HDF tests " 
+	@echo "make test-hdfnofortran - run HDF tests except the fortran test " 
+	@echo "make test-hdffortran   - run HDF fortran tests only " 
 	@echo "make clean     - cleans up tests (both C and Fortran)"
 	@echo "make distclean - cleans up HDF tests including"
 	@echo "                 configuration(Makefiles,config.status,..)"
