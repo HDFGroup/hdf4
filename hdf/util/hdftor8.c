@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1993/04/19 23:04:35  koziol
-General Code Cleanup to reduce/remove compilation warnings on PC
+Revision 1.7  1993/09/09 20:16:24  koziol
+Changed files created to use 3-digit numbers for the number and dimensions.
 
+ * Revision 1.6  1993/04/19  23:04:35  koziol
+ * General Code Cleanup to reduce/remove compilation warnings on PC
+ *
  * Revision 1.5  1993/01/19  06:00:24  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -339,9 +342,9 @@ void convert(template, imageNumber, xdim, ydim, stringOut)
 {
     char numStr[20], xStr[20], yStr[20];
 
-    sprintf(numStr, "%1d", imageNumber);
-    sprintf(xStr, "%1ld", xdim);
-    sprintf(yStr, "%1ld", ydim);
+    sprintf(numStr, "%3d", imageNumber);
+    sprintf(xStr, "%3ld", xdim);
+    sprintf(yStr, "%3ld", ydim);
 
     for(;(*template);) {
         switch (*template) {
