@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.17  1993/10/04 20:02:52  koziol
-Updated error reporting in H-Layer routines, and added more error codes and
-compression stuff.
+Revision 1.17.2.1  1993/10/10 22:10:19  koziol
+Moved Tag descriptions into a header file.  Updated compression routines.
 
+ * Revision 1.17  1993/10/04  20:02:52  koziol
+ * Updated error reporting in H-Layer routines, and added more error codes and
+ * compression stuff.
+ *
  * Revision 1.16  1993/09/30  19:05:12  koziol
  * Added basic compressing functionality for special tags.
  *
@@ -694,3 +697,4 @@ accrec_t *access_rec;
 
     return SUCCEED;
 } /* HXPcloseAID */
+

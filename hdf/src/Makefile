@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.17  1993/09/30 19:04:39  koziol
+# Revision 1.17.2.1  1993/10/10 22:09:57  koziol
+# Moved Tag descriptions into a header file.  Updated compression routines.
+#
+# Revision 1.17  1993/09/30  19:04:39  koziol
 # Added basic compressing functionality for special tags.
 #
 # Revision 1.16  1993/09/28  18:04:02  koziol
@@ -121,7 +124,7 @@ FC=f77
 FFLAGS= -g
 
 # ==> specify your C compiler
-CC=cc
+CC= cc
 CFLAGS=  -g -D${MACHINE}
 
 # ==> For the ALPHA, uncomment the following line
