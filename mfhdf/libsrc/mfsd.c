@@ -2884,9 +2884,10 @@ intn SDsetexternalfile(int32 id, char *filename, int32 offset)
         if((var->aid != 0) && (var->aid != FAIL))
             Hendaccess(var->aid);
         var->aid = status;
+	return(SUCCEED);
     }
-
-    return(status);
+    else
+	return(FAIL);
 
 } /* SDsetexternalfile */
 
