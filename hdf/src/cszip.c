@@ -133,6 +133,8 @@ HCIcszip_decode(compinfo_t * info, int32 length, uint8 *buf)
     int32 aid;
     int32 status;
     size_t size_out;
+    uint8 *cp;
+    int32 good_bytes;
 #ifdef H4_HAVE_LIBSZ
     SZ_com_t sz_param;
 #endif
@@ -153,11 +155,10 @@ HCIcszip_decode(compinfo_t * info, int32 length, uint8 *buf)
 	    /* this is linked list -- get the length of the data */
             aid = Hstartread(access_rec->file_id, tag, ref);
             if (HDinqblockinfo(aid, &len1, NULL, NULL, NULL) == FAIL) {
+	       Hendaccess(aid);
 	       HRETURN_ERROR(DFE_INTERNAL, FAIL);
             }
-
             in_length = len1; 
-
 	    Hendaccess(aid);
         }
 
@@ -176,19 +177,45 @@ HCIcszip_decode(compinfo_t * info, int32 length, uint8 *buf)
 
 	/* Read the unompressed data */
 	if ((rbytes = Hread(info->aid, in_length, in_buffer)) == FAIL)
+        {
+		HDfree(out_buffer);
+		HDfree(in_buffer);
 		HRETURN_ERROR(DFE_READERROR, FAIL);
-
+        }
+	if (rbytes == 0 || rbytes != in_length) {
+		/* is this possible? */
+		HDfree(out_buffer);
+		HDfree(in_buffer);
+		HRETURN_ERROR(DFE_READERROR, FAIL);
+	}
+        cp = in_buffer;
+        cp++;
+        INT32DECODE(cp, good_bytes);
 	if (in_buffer[0] == 1) {
            /* This byte means the data was not compressed -- just copy out */
-		if ((rbytes - 1) > length) {
-			/* This can't happen?? */
-			/* !! panic??? */
-			HDmemcpy(buf, in_buffer+1, length);
-		} else {
-			HDmemcpy(buf, in_buffer+1, rbytes-1);
-		}
-		HDfree(in_buffer);
-		return (SUCCEED);
+	    szip_info->szip_state = SZIP_RUN;
+	    HDmemcpy(out_buffer, in_buffer+5, good_bytes);
+	    szip_info->buffer = out_buffer;
+	    szip_info->buffer_pos = 0;
+	    szip_info->buffer_size = good_bytes;
+	    szip_info->offset = 0;
+	    if (good_bytes > length) {
+		/* partial read */
+		HDmemcpy(buf, in_buffer+5, length);
+	        szip_info->buffer_pos += length;
+	        szip_info->buffer_size -= length;
+	    } else {
+		/* read the whole data block to the user buffer */
+		HDmemcpy(buf, in_buffer+5, good_bytes);
+	        szip_info->buffer_pos += good_bytes;
+	        szip_info->buffer_size -= good_bytes;
+	    }
+	    szip_info->offset = szip_info->buffer_pos;
+	    HDfree(in_buffer);
+	    if (szip_info->buffer_size == 0) {
+		HDfree(szip_info->buffer);
+	    }
+	    return (SUCCEED);
         }
 
 	/* Decompress the data */
@@ -199,9 +226,12 @@ HCIcszip_decode(compinfo_t * info, int32 length, uint8 *buf)
 	sz_param.pixels_per_block = szip_info->pixels_per_block;
 	sz_param.pixels_per_scanline = szip_info->pixels_per_scanline;
 	size_out = out_length;
-
-	if(SZ_OK!= (status = SZ_BufftoBuffDecompress(out_buffer, &size_out, (in_buffer+1), (rbytes -1), &sz_param)))
+	if(SZ_OK!= (status = SZ_BufftoBuffDecompress(out_buffer, &size_out, (in_buffer+5), good_bytes, &sz_param)))
+         {
+		HDfree(out_buffer);
+		HDfree(in_buffer);
 		HRETURN_ERROR(DFE_CDECODE, FAIL);
+        }
 
 	if (size_out != out_length) {
 	   /* This should never happen?? */
@@ -215,24 +245,24 @@ HCIcszip_decode(compinfo_t * info, int32 length, uint8 *buf)
 	 szip_info->buffer_pos = 0;
 	 szip_info->buffer_size = out_length;
 	 szip_info->offset = 0;
-	}
+    }
 
-	/* copy the data into the return buffer */
-	if (length > szip_info->buffer_size)
-	{	
-	   /*  can't happen?? panic?? */
-	    HDfree(szip_info->buffer);
-	    return (FAIL);
-	}
+   /* copy the data into the return buffer */
+    if (length > szip_info->buffer_size)
+    {	
+        /*  can't happen?? panic?? */
+        HDfree(szip_info->buffer);
+        return (FAIL);
+    }
 
-	HDmemcpy(buf, szip_info->buffer + szip_info->buffer_pos, length);
-	szip_info->buffer_pos += length;
-	szip_info->buffer_size -= length;
-	szip_info->offset = szip_info->buffer_pos;
+    HDmemcpy(buf, szip_info->buffer + szip_info->buffer_pos, length);
+    szip_info->buffer_pos += length;
+    szip_info->buffer_size -= length;
+    szip_info->offset = szip_info->buffer_pos;
 
-	if (szip_info->buffer_size == 0) {
-		HDfree(szip_info->buffer);
-	}
+    if (szip_info->buffer_size == 0) {
+	HDfree(szip_info->buffer);
+    }
 
     return (SUCCEED);
 
@@ -335,13 +365,20 @@ HCIcszip_term(compinfo_t * info)
     CONSTR(FUNC, "HCIcszip_term");
     comp_coder_szip_info_t *szip_info;    /* ptr to SZIP info */
     uint8 *out_buffer;
+    uint8 *ob;
     int32 out_buffer_size;
     int bytes_per_pixel;
+    int32 current_size;
+    accrec_t *access_rec;
+    uint16 tag,ref;
+    int32 len1;
+    int32 aid;
 #ifdef H4_HAVE_LIBSZ
     SZ_com_t sz_param;
 #endif
     size_t size_out;
     int32 status;
+    uint8 *cp;
 
 #ifdef H4_HAVE_LIBSZ
 
@@ -349,12 +386,29 @@ HCIcszip_term(compinfo_t * info)
     if (szip_info->szip_state != SZIP_RUN)
 	return (SUCCEED); /* nothing to do */
 
-    if (szip_info->szip_dirty != SZIP_DIRTY)
-    {
-	/* Should never happen?? */
+    if (szip_info->szip_dirty != SZIP_DIRTY) /* Should never happen?? */
 	return (SUCCEED);
-    }
+
     szip_info->szip_state = SZIP_TERM;
+
+    current_size = 0;
+    if ((access_rec = HAatom_object(info->aid)) == NULL)    /* get the access_rec pointer */
+		HRETURN_ERROR(DFE_INTERNAL, FAIL);
+
+    /* Discover how much data must be read */
+    if(HTPinquire(access_rec->ddid,&tag,&ref,NULL, &current_size)==FAIL)
+	HRETURN_ERROR(DFE_INTERNAL, FAIL);
+    if (tag & 0x4000) {
+    /* this is linked list -- get the length of the data */
+        aid = Hstartread(access_rec->file_id, tag, ref);
+        if (HDinqblockinfo(aid, &len1, NULL, NULL, NULL) == FAIL) 
+        {
+            Hendaccess(aid);
+	    HRETURN_ERROR(DFE_INTERNAL, FAIL);
+        }
+        current_size = len1; 
+	Hendaccess(aid);
+    }
 
    /* Compute how much memory is needed to hold compressed data */
     bytes_per_pixel = (szip_info->bits_per_pixel + 7) >> 3;
@@ -362,11 +416,15 @@ HCIcszip_term(compinfo_t * info)
 	bytes_per_pixel = 4;
 
     /* temporary buffer for compression -- leave extra space in case of
-          overflow in the SZIP algorithm.  Sigh. */
+          overflow in the SZIP algorithm. (This number corresponds to
+          the current internal buffer of szip lib.)  Sigh. */
     /* allocate one byte to indicate when data is written uncompressed */
-    out_buffer_size = (szip_info->pixels * 1.25 * bytes_per_pixel) + 1;
+    /* allocate 4 bytes to store the amount of data written:  
+        after compression may be less than the previous size  */
+    out_buffer_size = (szip_info->pixels * 2 * bytes_per_pixel) + 5;
 
-    /* heuristic for tiny data -- really shouldn't compress stuff this small*/
+    /* heuristic for tiny data -- really shouldn't compress stuff this small,
+       but there isn't any way to prevent it from getting here */
     if (out_buffer_size < 1024) out_buffer_size = 1024;
     if ((out_buffer = HDmalloc(out_buffer_size)) == NULL)
 		HRETURN_ERROR(DFE_NOSPACE, FAIL);
@@ -376,10 +434,10 @@ HCIcszip_term(compinfo_t * info)
     sz_param.bits_per_pixel = szip_info->bits_per_pixel;
     sz_param.pixels_per_block = szip_info->pixels_per_block;
     sz_param.pixels_per_scanline = szip_info->pixels_per_scanline;
-    size_out = out_buffer_size;
+    size_out = out_buffer_size - 5;
 
     *out_buffer=0;
-    if(SZ_OK!= (status =SZ_BufftoBuffCompress((out_buffer+1), &size_out, szip_info->buffer, szip_info->buffer_pos, &sz_param)))
+    if(SZ_OK!= (status =SZ_BufftoBuffCompress((out_buffer+5), &size_out, szip_info->buffer, szip_info->buffer_pos, &sz_param)))
     {
        /* Compression Failed.  Analyse several cases, and clean up the mess */
 	if (size_out > out_buffer_size) {
@@ -389,19 +447,26 @@ HCIcszip_term(compinfo_t * info)
 	if (status == 2/*SZ_OUTBUF_FULL*/) {
             /* SZIP internal overflow: data not successfully compressed */
             /* Write out the uncompressed data */
-	    *out_buffer=1;
-	    HDmemcpy((out_buffer+1), szip_info->buffer, szip_info->buffer_pos);
-	    status = Hwrite(info->aid, (szip_info->buffer_pos+1), out_buffer);
-
+	    *out_buffer=1;  /* 1 = don't decompress */
+            cp = out_buffer;
+            cp++;
+            INT32ENCODE(cp, szip_info->buffer_pos);
+	    HDmemcpy((out_buffer+5), szip_info->buffer, szip_info->buffer_pos);
 	    HDfree(out_buffer);
 	    szip_info->szip_dirty=SZIP_CLEAN;
 			
+	    if (szip_info->buffer_size == 0) {
+		HDfree(szip_info->buffer);
+            }
 	    return (SUCCEED);
 	 } 
 
 	  /* compress failed, return error */
           szip_info->szip_dirty=SZIP_CLEAN;
           HDfree(out_buffer);
+	  if (szip_info->buffer_size == 0) {
+		HDfree(szip_info->buffer);
+          }
 	  HRETURN_ERROR(DFE_CENCODE, FAIL);
 	}
 
@@ -411,20 +476,55 @@ HCIcszip_term(compinfo_t * info)
 		printf("PANIC: overwrote memory but returned OK?\n");fflush(stdout);
 	if (size_out > (szip_info->pixels * bytes_per_pixel)) {
             /* The compression succeeded, but is larger than the original data! */
-	    /*  Write the original.  */
-	    *out_buffer=1;
-	    HDmemcpy((out_buffer+1), szip_info->buffer, szip_info->buffer_pos);
-	    status = Hwrite(info->aid, (szip_info->buffer_pos+1), out_buffer);
+	    /*  Write the original data, discard the output  */
+	    *out_buffer=1;  /* 1 = don't decompress */
+            cp = out_buffer;
+            cp++;
+            INT32ENCODE(cp, szip_info->buffer_pos);
+	    HDmemcpy((out_buffer+5), szip_info->buffer, szip_info->buffer_pos);
+	    Hwrite(info->aid, (szip_info->buffer_pos+5), out_buffer);
 	    szip_info->szip_dirty=SZIP_CLEAN;
 	    HDfree(out_buffer);
+	    if (szip_info->buffer_size == 0) {
+		HDfree(szip_info->buffer);
+            }
 	    return (SUCCEED);
 	}
 
-        /* Finally!  Write the compressed data. Byte 0 is '0' */ 
-	status = Hwrite(info->aid, size_out+1, out_buffer);
+      if ((current_size > 0) && ((size_out+5) < current_size)) {
+            /* SZIP freaks out if there is junk at the end of the good data */
+            /* need to have enough data to overwrite the existing data */
+            /* allocate a buffer, fill in the good data. The rest must be
+                zeroes */
+            if ((ob = HDmalloc(current_size)) == NULL)
+		HRETURN_ERROR(DFE_NOSPACE, FAIL);
+	    *ob=0;  /* data needs to be decompressed */
+            cp = ob;
+            cp++;
+            INT32ENCODE(cp, size_out); /* how much to decompress  (< total size)*/
+	    HDmemcpy((ob+5), out_buffer+5, size_out);
+	    Hwrite(info->aid, current_size, ob);  /* write out at least 'current_size' bytes */
+	    szip_info->szip_dirty=SZIP_CLEAN;
+	    HDfree(out_buffer);
+	    HDfree(ob);
+	    if (szip_info->buffer_size == 0) {
+		HDfree(szip_info->buffer);
+            }
+	    return (SUCCEED);
+     } 
 
-	szip_info->szip_dirty=SZIP_CLEAN;
-	HDfree(out_buffer);
+      /* Finally!  Write the compressed data. Byte 0 is '0' */ 
+    *out_buffer=0;   /* data needs to be decompressed */
+    cp = out_buffer;
+    cp++;
+    INT32ENCODE(cp, size_out);   /* whole bufer needs to be decompressed */
+    status = Hwrite(info->aid, size_out+5, out_buffer);
+
+    szip_info->szip_dirty=SZIP_CLEAN;
+    if (szip_info->buffer_size == 0) {
+	HDfree(szip_info->buffer);
+    }
+    HDfree(out_buffer);
 
     return (SUCCEED);
 
@@ -572,10 +672,6 @@ HCPcszip_stwrite(accrec_t * access_rec)
     because of this.
 
     COMMENT:
-    I'm not sure this would actually work for any data > TMP_BUF_SIZE.
-    It was probably copied from another compression method, but it
-    makes not sense to me.
-      -REMcG  12/8/04
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
@@ -611,21 +707,21 @@ HCPcszip_seek(accrec_t * access_rec, int32 offset, int origin)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     while (szip_info->offset + TMP_BUF_SIZE < offset)    /* grab chunks */
-{
+    {
         if (HCIcszip_decode(info, TMP_BUF_SIZE, tmp_buf) == FAIL)
           {
               HDfree(tmp_buf);
               HRETURN_ERROR(DFE_CDECODE, FAIL)
           }     /* end if */
-}
+    }
     if (szip_info->offset < offset)  /* grab the last chunk */
-{
+    {
         if (HCIcszip_decode(info, offset - szip_info->offset, tmp_buf) == FAIL)
           {
               HDfree(tmp_buf);
               HRETURN_ERROR(DFE_CDECODE, FAIL)
           }     /* end if */
-}
+    }
 
     HDfree(tmp_buf);
     return (SUCCEED);
@@ -706,7 +802,7 @@ HCPcszip_write(accrec_t * access_rec, int32 length, const void * data)
     /*  1 - append onto the end */
     /*  2 - start at the beginning and rewrite (at least) the whole dataset */
     if ((info->length != szip_info->offset)
-        && (szip_info->offset != 0 && length <= (info->length-szip_info->offset)))
+        && (szip_info->offset != 0 || length < info->length))
         HRETURN_ERROR(DFE_UNSUPPORTED, FAIL);
 
     if (HCIcszip_encode(info, length, data) == FAIL)
@@ -852,18 +948,6 @@ HCPsetup_szip_parms( comp_info *c_info, int32 nt, int32 ncomp, int32 ndims, int3
           goto done;
     }
 
-#ifdef notdef
-   /* check this before calling */
-    if (cdims == NULL) {
-	/* Contiguous unlimited: compression doesn't work! */
-	if (dims[0] == SD_UNLIMITED)
-	{
-	    ret_value = FAIL;
-	    goto done;
-	}
-    }
-#endif
- 
     /* compute the number of elements in the compressed unit:
         if chunked, compress each chunk. If not, compress whole 
         object
