@@ -409,7 +409,10 @@ int set_szip(int32 rank,
   pixels_per_block must be an even number, and <= pixels_per_scanline 
   and <= MAX_PIXELS_PER_BLOCK
   */
- c_info->szip.pixels_per_block=2;
+ if (c_info->szip.pixels_per_scanline>16 )
+  c_info->szip.pixels_per_block=16;
+ else
+  c_info->szip.pixels_per_block=2;
 
  if (c_info->szip.pixels_per_block > c_info->szip.pixels_per_scanline)
  {
