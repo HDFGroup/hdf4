@@ -1,4 +1,4 @@
-This directory contains the HDF/netCDF part of HDF4.0r1
+This directory contains the HDF/netCDF part of HDF4.0r2
 and Unidata netCDF v2.3.2. The hdf-related programs are
 in libsrc/ and fortran/. The library is named as
 libmfhdf.a.
