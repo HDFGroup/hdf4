@@ -197,6 +197,10 @@ test-hdf:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(HDFDIR)" subd
 
+test-hdf-utils:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=test-utils \
+          SUBDIRS="$(HDFDIR)" subd
+
 test-mfhdf:
 	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=test \
           SUBDIRS="$(NETCDFDIR)" subd
@@ -383,6 +387,7 @@ help:
 	@echo "                         and NETCDF tests"
 	@echo "make test-mfhdf        - run NETCDF tests" 
 	@echo "make test-hdf          - run HDF tests" 
+	@echo "make test-hdf-utils    - run HDF utilities test" 
 	@echo "make test-hdfnofortran - run HDF tests except the fortran test" 
 	@echo "make install           - install HDF,netCDF libraries,"
 	@echo "                         utilites, and includes" 
