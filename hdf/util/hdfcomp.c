@@ -20,6 +20,9 @@ static char RcsId[] = "$Revision$";
 *  hdfcomp.c
 *  Re-compress Raster-8 HDF file
 */
+#if defined __MWERKS__
+#include <console.h>
+#endif
 
 #include "hdf.h"
 
@@ -43,6 +46,10 @@ int main(int argc, char *argv[])
         copy_idesc;         /* flag to indicate to copy image descriptions */
     char *annbuf=NULL;      /* buffer to store annotations in */
     uint32 annbuflen=0;     /* length of the annotation buffer */
+
+#if defined __MWERKS__
+    argc = ccommand(&argv);
+#endif
 
     if (argc < 3) { 
         printf("%s,  version: 1.3   date: October 15, 1994\n", argv[0]);

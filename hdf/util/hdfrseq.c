@@ -43,6 +43,10 @@ static char RcsId[] = "@(#)$Revision$";
    *  This program is in the public domain
    *
  */
+#if defined __MWERKS__
+#include <console.h>
+#endif
+
 #include "hdf.h"    /* HDF includes */
 
 #ifdef IRIS4
@@ -120,6 +124,10 @@ int
 main(int argc, char *argv[])
 {
     int         i, filearg;
+
+#if defined __MWERKS__
+    argc = ccommand(&argv);
+#endif
 
 /*
    *  Check to see if we are displaying on a local console or on a

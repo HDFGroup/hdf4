@@ -16,6 +16,9 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 /* $Id$ */
+#if defined __MWERKS__
+#include <console.h>
+#endif
 
 #include "hdf.h"
 #include "hfile.h"
@@ -54,6 +57,9 @@ main(int argc, char *argv[])
     char        scratch[128];   /* name of the JPEG file to create */
     char       *jfif_char;      /* location of the '#' char */
 
+#if defined __MWERKS__
+    argc = ccommand(&argv);
+#endif
     /*
      * If a file name has not been supplied print the usage message
      */

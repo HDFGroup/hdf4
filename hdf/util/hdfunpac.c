@@ -29,6 +29,10 @@ static char RcsId[] = "@(#)$Revision$";
    **              Default is "DataFile".
  */
 
+#if defined __MWERKS__
+#include <console.h>
+#endif
+
 #include "hdf.h"
 #include <stdio.h>
 #include <string.h>
@@ -62,6 +66,10 @@ main(int argc, char *argv[])
     int32       offset, fileoffset;
     int32       length;
     int16       special;
+
+#if defined __MWERKS__
+    argc = ccommand(&argv);
+#endif
 
     /* Get invocation name of program */
     progname = *argv++;

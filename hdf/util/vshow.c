@@ -31,6 +31,9 @@ static char *RcsId[] = "@(#)$Revision$";
 *
 *
 ******************************************************************************/
+#if defined __MWERKS__
+#include <console.h>
+#endif
 
 #include "vg.h"
 
@@ -61,6 +64,10 @@ main(int ac, char **av)
     char        vgclass[VGNAMELENMAX], vsclass[VSNAMELENMAX];
     const char *name;
     int32       fulldump = 0, start = 1;
+
+#if defined __MWERKS__
+    ac = ccommand(&av);
+#endif
 
     if (ac == 3)
         if (av[2][0] == '-' || av[2][0] == '+')

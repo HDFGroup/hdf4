@@ -15,16 +15,21 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 /* $Id$ */
+#if defined __MWERKS__
+#include <console.h>
+#endif
 
 #include "hdf.h"
 #include "hfile.h"
 
+#if 0
 #ifdef MAC
 /* this isn't worth putting in hdfi.h */
 /* otherwise, need to include stdlib.h, which */
 /* in turn requires other includes - very messy, trust me */
 void        qsort(void *base, size_t nmemb, size_t size,
                   int         (*compar) (const void *, const void *));
+#endif
 #endif
 
 #define MAXBUFF 8192
@@ -304,6 +309,10 @@ main(int argc, char *argv[])
 {
     int32       fid, aid;
     int         i = 1, j, n, status;
+
+#if defined __MWERKS__
+    argc = ccommand(&argv);
+#endif
 
     while ((i < argc) && (argv[i][0] == '-'))
       {

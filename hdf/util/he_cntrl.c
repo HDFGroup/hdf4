@@ -1035,8 +1035,6 @@ void
 prompt(void)
 {
 
-#ifndef MAC
-
     if (!he_nestLevel)
         printf("hdfed%s ", he_prompt);
     else
@@ -1048,8 +1046,6 @@ prompt(void)
               putchar(he_nestChar);
           putchar(' ');
       }
-
-#endif /* MAC */
 
 }
 

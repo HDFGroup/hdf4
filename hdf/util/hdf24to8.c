@@ -53,9 +53,9 @@ typedef unsigned int UINT;
 #ifdef UNIX
 #include <sys/file.h>
 #endif
-#ifdef MAC
-#include <FCntl.h>
-#include <StdLib.h>
+
+#if defined __MWERKS__
+#include <console.h>
 #endif
 
 #include "hdf.h"
@@ -75,6 +75,10 @@ main(int argc, char *argv[])
     int         interlace;
     uint8      *r24, *r8, *pal;
     uint8       hdfpal[PALSIZE], *p;
+
+#if defined __MWERKS__
+    argc = ccommand(&argv);
+#endif
 
     if (argc != 3)
       {

@@ -24,6 +24,9 @@ static char RcsId[] = "@(#)$Revision$";
 /* The intrepretation of arguments has changed a little.  A -p introduces a
    palette which will be used for subsequent images, till another -p.
    -i and -c introduce a series of images/compressed images */
+#if defined __MWERKS__
+#include <console.h>
+#endif
 
 #include "hdf.h"
 
@@ -39,6 +42,10 @@ main(int argc, char *argv[])
     int         i, is_pal = 0, image = 1;
     char       *outfile;
     uint16      compress = (uint16) 0;
+
+#if defined __MWERKS__
+    argc = ccommand(&argv);
+#endif
 
     if (argc < 5)
       {
