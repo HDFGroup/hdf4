@@ -3,8 +3,6 @@
 # for discussion of the various options.
 #
 
-CC= gcc
-CFLAGS= -O -I$(srcdir)
 ANSI2KNRFLAGS= 
 LDFLAGS= 
 LDLIBS= 
