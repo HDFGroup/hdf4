@@ -1,5 +1,28 @@
+HDF4.1r1
+========
+1. A bug was fixed where you would receive an error if you changed the 
+   name of a Vdata to a name that was longer than the original name.
+2. The FORTRAN equivalents have been added for several ANxx utility routines 
+   (ANget_tagref, ANid2tagref ...).
+3. A bug was fixed where old data (DFSD) in native and little endian format 
+   could not be read by the SD interface correctly.
+4. The variable _HDF_ENTIRE_VDATA has been changed to _HDF_VDATA and HDF_VDATA, 
+   to avoid confusion.  This variable had been added to HDF 4.1b1.  For those
+   users who are already using it, a macro called  _HDF_ENTIRE_VDATA has been
+   added, which is defined as _HDF_VDATA.
+5. SD_FILL and SD_NOFILL were added as file fillmodes.   
+6. In HDF 4.0r2, you could create an empty compressed SDS.  With 4.1b1 you
+   could not.  This was fixed in the 4.1 release. 
+7. There was a bug in hdp where 'hdp list -a' did not list the file attributes. 
+   This was fixed.
+8. In 4.1b1, the SD chunking routine names contained upper case characters
+   after the initial two "SD" characters (for eg. SDwriteChunk).  With 4.1r1
+   the SD chunking routine names were changed to lower case after the
+   initial "SD" characters, to be consistent with the SD interface 
+   naming scheme (for eg. SDwritechunk). 
+
 HDF4.1b1
-=======
+========
 1. If you opened a file in read only mode with the SD interface,
    it would create the file if the file did not exist. This has been fixed.
 2. There was a problem with GRstart, which caused GRend to
