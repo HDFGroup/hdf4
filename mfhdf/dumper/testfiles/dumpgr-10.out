@@ -11,6 +11,7 @@ File name: grtdfui84.hdf
 	 ncomps = 4
 	 Interlace mode= PIXEL
 	 No palette
+	 Compression method = NONE
 	 Number of attributes = 0
 	 Data : 
                 0 0 0 0 1 1 1 1 2 2 2 2 3 3 3 3 4 4 4 4 5 5 5 5 6 
@@ -33,6 +34,7 @@ File name: grtdfui84.hdf
 	 ncomps = 3
 	 Interlace mode= PIXEL
 	 No palette
+	 Compression method = NONE
 	 Number of attributes = 0
 	 Data : 
                 0 0 0 1 1 1 2 2 2 3 3 3 4 4 4 5 5 5 6 6 6 7 7 7 8 
@@ -76,6 +78,7 @@ File name: grtdfui84.hdf
 	 ncomps = 3
 	 Interlace mode= LINE
 	 No palette
+	 Compression method = NONE
 	 Number of attributes = 0
 	 Data : 
                 0 1 2 3 4 5 6 7 8 9 10 11 12 0 1 2 3 4 5 6 7 8 9 10 
@@ -117,6 +120,7 @@ File name: grtdfui84.hdf
 	 ncomps = 3
 	 Interlace mode= COMPONENT
 	 No palette
+	 Compression method = NONE
 	 Number of attributes = 0
 	 Data : 
                 0 1 2 3 4 5 6 7 8 9 10 11 12 1 0 3 2 5 4 7 6 9 8 11 

@@ -11,6 +11,7 @@ File name: Image_with_Palette.hdf
 	 ncomps = 2
 	 Interlace mode= PIXEL
 	 Palette: 3 components; 256 entries
+	 Compression method = NONE
 	 Number of attributes = 0
 
 	 Image  Name = Second Image w/pal
@@ -21,6 +22,7 @@ File name: Image_with_Palette.hdf
 	 ncomps = 2
 	 Interlace mode= PIXEL
 	 Palette: 3 components; 256 entries
+	 Compression method = NONE
 	 Number of attributes = 0
 
 	 Image  Name = Last Image: no pal
@@ -31,4 +33,5 @@ File name: Image_with_Palette.hdf
 	 ncomps = 2
 	 Interlace mode= PIXEL
 	 No palette
+	 Compression method = NONE
 	 Number of attributes = 0

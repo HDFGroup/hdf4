@@ -17,6 +17,7 @@ File name: grtdfi322.hdf
 	 ncomps = 1
 	 Interlace mode= PIXEL
 	 No palette
+	 Compression method = NONE
 	 Number of attributes = 1
 	 Attr0: Name = Value range
 		 Type = 32-bit signed integer 
@@ -34,6 +35,7 @@ File name: grtdfi322.hdf
 	 ncomps = 2
 	 Interlace mode= PIXEL
 	 No palette
+	 Compression method = NONE
 	 Number of attributes = 0
 	 Data : 
                 0 5 0 5 1 6 1 6 2 7 2 7 3 8 3 8 4 9 4 9 10 15 10 15 
@@ -51,6 +53,7 @@ File name: grtdfi322.hdf
 	 ncomps = 3
 	 Interlace mode= PIXEL
 	 No palette
+	 Compression method = NONE
 	 Number of attributes = 0
 	 Data : 
                 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 
@@ -68,6 +71,7 @@ File name: grtdfi322.hdf
 	 ncomps = 3
 	 Interlace mode= LINE
 	 No palette
+	 Compression method = NONE
 	 Number of attributes = 0
 	 Data : 
                 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 
@@ -85,6 +89,7 @@ File name: grtdfi322.hdf
 	 ncomps = 3
 	 Interlace mode= COMPONENT
 	 No palette
+	 Compression method = NONE
 	 Number of attributes = 0
 	 Data : 
                 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 

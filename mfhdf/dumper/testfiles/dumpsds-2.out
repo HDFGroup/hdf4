@@ -7,6 +7,7 @@ Dimension Variable Name = fakeDim2
 	 Index = 2
 	 Scale Type= 32-bit floating point
 	 Ref. = 5
+	 Compression method = NONE
 	 Rank = 1
 	 Number of attributes = 3
 	 Dim0: Name=fakeDim2
