@@ -43,6 +43,11 @@ HDF4.1r5
      arguments: file name and level. If file name string has 0 length
      error messages will be printed to the standart output. 
 
+11.  Fix the linking bug of unresolved symbol(error_top) DLL when HEclear 
+     was called by users. Users who want to use hdf DLL should define HDFAPDLL i
+     in their applations. Simply go to project setting and add HDFAPDLL as the 
+     predefined constant should work.
+
 HDF4.1r4
 ========
 1. Fixed GR JPEG compression problem.
