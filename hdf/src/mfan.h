@@ -32,7 +32,7 @@
 
 #if 0
 /* enumerated types of the varous annotation types 
- * NOTE: moved to hdf.h */
+ * NOTE: moved to hdf.h since they are used by end users. */
 typedef enum 
 { 
   AN_DATA_LABEL = 0, /* Data label */
@@ -49,7 +49,8 @@ typedef enum
 typedef struct ANnode
 {
   int32   file_id;  /* which file this annotation belongs to */
-  int32   ann_key;  /* type/ref -used to find annotation in file's type tree*/
+  int32   ann_key;  /* type/ref: used to find annotation in corresponding
+                       TBBT in filerec_t->tree[]. */
   intn    new_ann;  /* flag */
 } ANnode;
 
@@ -57,7 +58,7 @@ typedef struct ANnode
  * This structure is an entry in the label/desc tree
  * for a label/desc in the file, it gives the ref of the label/desc,
  * and the tag/ref of the data item to which the label/desc relates 
- * The filerec_t->an_tree[] TBBT members will contain these entries
+ * The filerec_t->an_tree[] TBBT members will contain these entries.
  **/
 typedef struct ANentry
 {
@@ -76,7 +77,8 @@ typedef struct ANentry
 #define ANATOM_HASH_SIZE    64
 
 /* Used to create unique 32bit keys from annotation type and reference number 
- *  This key is used to add nodes to ANnodelist. 
+ *  This key is used to add nodes to a corresponding TBBT in 
+ *  filrerec_t->an_tree[]. 
  *  ----------------------------
  *  | t(16bits) | r(16bits) |
  *  -----------------------------*/
