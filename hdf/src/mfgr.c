@@ -4077,17 +4077,9 @@ intn GRgetlutinfo(int32 lutid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(lutid)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
-    if(ri_ptr->lut_ref==DFREF_WILDCARD) /* check for no palette defined currently */
-      {
-          if(ncomp!=NULL)
-              *ncomp=0;
-          if(nt!=NULL)
-              *nt=DFNT_NONE;
-          if(il!=NULL)
-              *il=-1;
-          if(nentries!=NULL)
-              *nentries=0;
-      } /* end if */
+    if(ri_ptr->lut_ref==DFREF_WILDCARD) { /* check for no palette defined currently */
+        HGOTO_ERROR(DFE_LUTNOTFOUND, FAIL);
+    } /* end if */
     else        /* we've got a valid palette currently */
       {
           if(ncomp!=NULL)
@@ -4108,9 +4100,9 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-        TRACE_OFF(PABLO_mask, ID_GRgetlutinfo);
+    TRACE_OFF(PABLO_mask, ID_GRgetlutinfo);
 #endif /* HAVE_PABLO */
-  return ret_value;
+    return ret_value;
 } /* end GRgetlutinfo() */
 
 /*--------------------------------------------------------------------------
