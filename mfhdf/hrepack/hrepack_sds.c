@@ -576,6 +576,8 @@ int copy_sds(int32 sd_in,
   /* copy scale information over */
   if (dtype != 0) 
   {
+   intn okdim;
+
    /* compute the number of the bytes for each value. */
    numtype = dtype & DFNT_MASK;
    eltsz = DFKNTsize(numtype | DFNT_NATIVE);
@@ -585,12 +587,14 @@ int copy_sds(int32 sd_in,
     ret=-1;
     goto out;
    }
-   if (SDgetdimscale(dim_id, dim_buf) == FAIL) {
-    printf( "Failed to get scale information for %s\n", dim_name);
-    ret=-1;
-    goto out;
+   if ((okdim=SDgetdimscale(dim_id, dim_buf)) == FAIL) {
+    printf( "Warning: Failed to get scale information for %s\n", dim_name);
+    /* SDgetdimscale incorrectly returns FAIL when
+       the associated SDS has the same name as the dimension.
+       we avoid returning FAIL, allowing for the rest of the file
+       to be processed */
    }
-   if (SDsetdimscale(dim_out, dim_size, dtype, dim_buf) == FAIL) {
+   if (okdim!=FAIL && SDsetdimscale(dim_out, dim_size, dtype, dim_buf) == FAIL) {
     printf( "Failed to set scale information for %s\n", dim_name);
     ret=-1;
     goto out;
