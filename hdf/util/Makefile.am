@@ -9,9 +9,17 @@ AM_CPPFLAGS=-I$(top_srcdir)/hdf/src
 ##                          Programs to build                              ##
 #############################################################################
 
-bin_PROGRAMS = gif2hdf hdf2gif hdf2jpeg hdf24to8 hdf8to24 hdfcomp hdfed     \
-               hdfls hdfpack hdftopal hdftor8 hdfunpac jpeg2hdf paltohdf    \
-               r8tohdf ristosds vmake vshow 
+PROGS = gif2hdf h4cc hdf2gif hdf2jpeg hdf24to8 hdf8to24 hdfcomp hdfed hdfls \
+        hdfpack hdftopal hdftor8 hdfunpac jpeg2hdf paltohdf r8tohdf         \
+        ristosds vmake vshow 
+
+if HDF_BUILD_FORTRAN
+H4SCRIPTS = h4cc h4fc
+else
+H4SCRIPTS = h4cc
+endif
+
+bin_PROGRAMS = $(PROGS) $(H4SCRIPTS)
 
 gif2hdf_SOURCES = gif2hdf.c gif2mem.c gifread.c decompress.c writehdf.c
 gif2hdf_LDADD = ../src/libdf.a
@@ -84,6 +92,22 @@ vmake_DEPENDENCIES = ../src/libdf.a
 vshow_SOURCES = vshow.c
 vshow_LDADD = ../src/libdf.a
 vshow_DEPENDENCIES = ../src/libdf.a
+
+h4cc_SOURCES =
+h4cc_LDADD =
+h4cc_DEPENDENCIES =
+
+h4cc:
+	@true
+
+if HDF_BUILD_FORTRAN
+h4fc_SOURCES =
+h4fc_LDADD =
+h4fc_DEPENDENCIES =
+
+h4fc:
+	@true
+endif
 
 #############################################################################
 ##                   Testing -- Here there be dragons.                     ##

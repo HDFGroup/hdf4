@@ -161,7 +161,7 @@ case "$enableval" in
     ;;
 esac
 
-AM_CONDITIONAL([HDF_BUILD_FORTRAN], [test "$BUILD_FORTRAN" = "yes"])
+AM_CONDITIONAL([HDF_BUILD_FORTRAN], [test "X$BUILD_FORTRAN" = "Xyes"])
 
 AC_PROG_INSTALL
 AM_PROG_LEX
@@ -440,7 +440,7 @@ dnl ======================================================================
 AC_PROG_CC_C_O
 AC_PROG_CXXCPP
 
-if test "$BUILD_FORTRAN" = "yes"; then
+if test "X$BUILD_FORTRAN" = "Xyes"; then
   AC_PROG_F77_C_O
 fi
 
@@ -603,6 +603,8 @@ AC_CONFIG_FILES([Makefile
                  hdf/src/Makefile
                  hdf/test/Makefile
                  hdf/util/Makefile
+                 hdf/util/h4cc
+                 hdf/util/h4fc
                  hdf/util/testutil.sh
                  man/Makefile
                  mfhdf/Makefile
@@ -626,3 +628,9 @@ if test "X$build_xdr" = "Xyes"; then
 fi
 
 AC_OUTPUT
+
+chmod 755 hdf/util/h5cc
+
+if test "X$BUILD_FORTRAN" = "Xyes"; then
+  chmod 755 hdf/util/h5fc
+fi

@@ -3858,7 +3858,7 @@ esac
 
 
 
-if test "$BUILD_FORTRAN" = "yes"; then
+if test "X$BUILD_FORTRAN" = "Xyes"; then
   HDF_BUILD_FORTRAN_TRUE=
   HDF_BUILD_FORTRAN_FALSE='#'
 else
@@ -6767,7 +6767,7 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
-if test "$BUILD_FORTRAN" = "yes"; then
+if test "X$BUILD_FORTRAN" = "Xyes"; then
   echo "$as_me:$LINENO: checking whether $F77 understand -c and -o together" >&5
 echo $ECHO_N "checking whether $F77 understand -c and -o together... $ECHO_C" >&6
 if test "${ac_cv_prog_f77_c_o+set}" = set; then
@@ -7561,7 +7561,7 @@ for config_file in $src_files; do
   fi
 done
 
-                                                                                                                                                                                                                  ac_config_files="$ac_config_files Makefile hdf/Makefile hdf/src/Makefile hdf/test/Makefile hdf/util/Makefile hdf/util/testutil.sh man/Makefile mfhdf/Makefile mfhdf/dumper/Makefile mfhdf/dumper/testhdp.sh mfhdf/fortran/Makefile mfhdf/hdfimport/Makefile mfhdf/hdfimport/testutil.sh mfhdf/hdiff/Makefile mfhdf/hrepack/Makefile mfhdf/libsrc/Makefile mfhdf/ncdump/Makefile mfhdf/ncgen/Makefile mfhdf/nctest/Makefile mfhdf/pablo/Makefile mfhdf/port/Makefile"
+                                                                                                                                                                                                                                      ac_config_files="$ac_config_files Makefile hdf/Makefile hdf/src/Makefile hdf/test/Makefile hdf/util/Makefile hdf/util/h4cc hdf/util/h4fc hdf/util/testutil.sh man/Makefile mfhdf/Makefile mfhdf/dumper/Makefile mfhdf/dumper/testhdp.sh mfhdf/fortran/Makefile mfhdf/hdfimport/Makefile mfhdf/hdfimport/testutil.sh mfhdf/hdiff/Makefile mfhdf/hrepack/Makefile mfhdf/libsrc/Makefile mfhdf/ncdump/Makefile mfhdf/ncgen/Makefile mfhdf/nctest/Makefile mfhdf/pablo/Makefile mfhdf/port/Makefile"
 
 
 if test "X$build_xdr" = "Xyes"; then
@@ -8151,6 +8151,8 @@ do
   "hdf/src/Makefile" ) CONFIG_FILES="$CONFIG_FILES hdf/src/Makefile" ;;
   "hdf/test/Makefile" ) CONFIG_FILES="$CONFIG_FILES hdf/test/Makefile" ;;
   "hdf/util/Makefile" ) CONFIG_FILES="$CONFIG_FILES hdf/util/Makefile" ;;
+  "hdf/util/h4cc" ) CONFIG_FILES="$CONFIG_FILES hdf/util/h4cc" ;;
+  "hdf/util/h4fc" ) CONFIG_FILES="$CONFIG_FILES hdf/util/h4fc" ;;
   "hdf/util/testutil.sh" ) CONFIG_FILES="$CONFIG_FILES hdf/util/testutil.sh" ;;
   "man/Makefile" ) CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
   "mfhdf/Makefile" ) CONFIG_FILES="$CONFIG_FILES mfhdf/Makefile" ;;
@@ -8973,3 +8975,9 @@ if test "$no_create" != yes; then
   $ac_cs_success || { (exit 1); exit 1; }
 fi
 
+
+chmod 755 hdf/util/h5cc
+
+if test "X$BUILD_FORTRAN" = "Xyes"; then
+  chmod 755 hdf/util/h5fc
+fi
