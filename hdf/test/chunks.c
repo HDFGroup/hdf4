@@ -87,7 +87,7 @@ static char RcsId[] = "@(#)$Revision$";
  *       6 bytes x 4 chunks = 24 bytes.
  *       The element will be compressed with RLE scheme.
  *
- *   12. Now create 3-D chunked, Compressed element with no partial chunks.
+ *    12. Now create 3-D chunked, Compressed element with no partial chunks.
  *       Write using HMCwriteChunk(). Read data back in first
  *       using Hread() and verify. Then read data back in using
  *       HMCreadChunk() and verify.
@@ -263,7 +263,7 @@ test_chunks()
     chunk[0].pdims[1].chunk_length = 2;
     chunk[0].pdims[1].distrib_type = 1;
 
-    MESSAGE(5, printf("Create a new element as a 2-D, uint8 chunked element\n"););
+    MESSAGE(5, printf("Test 1. Create a new element as a 2-D, uint8 chunked element\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
                       0,chunk[0].pdims[0].dim_length, 
                       0,chunk[0].pdims[0].chunk_length););
@@ -456,7 +456,7 @@ test_chunks()
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
     CHECK(fid, FAIL, "Hopen");
 
-    MESSAGE(5, printf("Create another new element as a 2-D, uint8 chunked element\n"););
+    MESSAGE(5, printf("Test 2. Create another new element as a 2-D, uint8 chunked element\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
                       0,chunk[0].pdims[0].dim_length, 
                       0,chunk[0].pdims[0].chunk_length););
@@ -585,7 +585,7 @@ test_chunks()
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
     CHECK(fid, FAIL, "Hopen");
 
-    MESSAGE(5, printf("Create another new element as a 2-D, uint8 chunked element\n"););
+    MESSAGE(5, printf("Test 3. Create another new element as a 2-D, uint8 chunked element\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
                       0,chunk[0].pdims[0].dim_length, 
                       0,chunk[0].pdims[0].chunk_length););
@@ -712,7 +712,7 @@ test_chunks()
     /* Open file for writing last odd size chunks now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
     CHECK(fid, FAIL, "Hopen");
-    MESSAGE(5, printf("Create another new element as a 3-D, uint8 chunked element(192 bytes)\n"););
+    MESSAGE(5, printf("Test 4. Create another new element as a 3-D, uint8 chunked element(192 bytes)\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
                       0,chunk[0].pdims[0].dim_length, 
                       0,chunk[0].pdims[0].chunk_length););
@@ -884,7 +884,7 @@ test_chunks()
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
     CHECK(fid, FAIL, "Hopen");
 
-    MESSAGE(5, printf("Create another new element as a 3-D, uint8 chunked element(192bytes)\n"););
+    MESSAGE(5, printf("Test 5. Create another new element as a 3-D, uint8 chunked element(192bytes)\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
                       0,chunk[0].pdims[0].dim_length, 
                       0,chunk[0].pdims[0].chunk_length););
@@ -1055,7 +1055,7 @@ test_chunks()
     /* Open file for writing last odd size chunks now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
     CHECK(fid, FAIL, "Hopen");
-    MESSAGE(5, printf("Create another new element as a 3-D, uint8 chunked element(192 bytes)\n"););
+    MESSAGE(5, printf("Test 6. Create another new element as a 3-D, uint8 chunked element(192 bytes)\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
                       0,chunk[0].pdims[0].dim_length, 
                       0,chunk[0].pdims[0].chunk_length););
@@ -1430,7 +1430,7 @@ test_chunks()
     /* Open file for writing last odd size chunks now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
     CHECK(fid, FAIL, "Hopen");
-    MESSAGE(5, printf("Create another new element as a 3-D, uint16 chunked element(48 bytes)\n"););
+    MESSAGE(5, printf("Test 7. Create another new element as a 3-D, uint16 chunked element(48 bytes)\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
                       0,chunk[0].pdims[0].dim_length, 
                       0,chunk[0].pdims[0].chunk_length););
@@ -1556,7 +1556,7 @@ test_chunks()
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
     CHECK(fid, FAIL, "Hopen");
 
-    MESSAGE(5, printf("Create another new element as a 3-D, float32 chunked element(96 bytes)\n"););
+    MESSAGE(5, printf("Test 8. Create another new element as a 3-D, float32 chunked element(96 bytes)\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
                       0,chunk[0].pdims[0].dim_length, 
                       0,chunk[0].pdims[0].chunk_length););
@@ -1697,7 +1697,7 @@ test_chunks()
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
     CHECK(fid, FAIL, "Hopen");
 
-    MESSAGE(5, printf("Create another new element as a 4-D, uint8 chunked element\n"););
+    MESSAGE(5, printf("Test 9. Create another new element as a 4-D, uint8 chunked element\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
                       0,chunk[0].pdims[0].dim_length, 
                       0,chunk[0].pdims[0].chunk_length););
@@ -2010,7 +2010,16 @@ test_chunks()
     chunk[0].chunk_size = 6; /* 3x2 = 6 bytes */
     chunk[0].nt_size    = 1; /* number type size */
     chunk[0].chunk_flag = SPECIAL_COMP; /* compression */
+#if 0
+    chunk[0].comp_type = COMP_CODE_SKPHUFF; /* Skipping Huffman */
+    cinfo.skphuff.skp_size = sizeof(uint8);
+
+    chunk[0].comp_type = COMP_CODE_DEFLATE; /* GZIP */
+    cinfo.deflate.level = 6;
+
+#endif
     chunk[0].comp_type  = COMP_CODE_RLE; /* RLE */
+
     chunk[0].model_type = COMP_MODEL_STDIO; /* STDIO */
     chunk[0].cinfo = &cinfo; /* nothing set */
     chunk[0].minfo = &minfo; /* nothing set */
@@ -2027,7 +2036,7 @@ test_chunks()
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
     CHECK(fid, FAIL, "Hopen");
 
-    MESSAGE(5, printf("Create another new element as a 2-D, uint8 chunked, RLE Compressed element\n"););
+    MESSAGE(5, printf("Test 11. Create another new element as a 2-D, uint8 chunked, RLE Compressed element\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
                       0,chunk[0].pdims[0].dim_length, 
                       0,chunk[0].pdims[0].chunk_length););
@@ -2136,7 +2145,16 @@ test_chunks()
     chunk[0].chunk_size = 4; /* 1x1x4 bytes */
     chunk[0].nt_size    = 1; /* number type size */
     chunk[0].chunk_flag = SPECIAL_COMP; /* compression */
+#if 0
+
     chunk[0].comp_type  = COMP_CODE_RLE; /* RLE */
+
+    chunk[0].comp_type = COMP_CODE_SKPHUFF; /* Skipping Huffman */
+    cinfo.skphuff.skp_size = sizeof(uint8);
+#endif
+    chunk[0].comp_type = COMP_CODE_DEFLATE; /* GZIP */
+    cinfo.deflate.level = 6;
+
     chunk[0].model_type = COMP_MODEL_STDIO; /* STDIO */
     chunk[0].cinfo = &cinfo; /* nothing set */
     chunk[0].minfo = &minfo; /* nothing set */
@@ -2160,7 +2178,7 @@ test_chunks()
     /* Open file for writing last odd size chunks now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
     CHECK(fid, FAIL, "Hopen");
-    MESSAGE(5, printf("Create another new element as a 3-D, uint8 chunked, REL Compressed element(192 bytes)\n"););
+    MESSAGE(5, printf("Test 12. Create another new element as a 3-D, uint8 chunked, GZIP Compressed element(192 bytes)\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
                       0,chunk[0].pdims[0].dim_length, 
                       0,chunk[0].pdims[0].chunk_length););
@@ -2189,7 +2207,7 @@ test_chunks()
       }
 
     /* write data out as chunks */
-    MESSAGE(5, printf("Writing to 3-D, uint8 chunked, RLE Compressed element using HMCwriteChunk\n"); );
+    MESSAGE(5, printf("Writing to 3-D, uint8 chunked, GZIP Compressed element using HMCwriteChunk\n"); );
 
     /* Write data use SDwriteChunk */
     dims[0] = 0;
@@ -2240,7 +2258,7 @@ test_chunks()
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
 
-    MESSAGE(5, printf("Open 3-D, uint8 chunked, RLE Compressed element again for reading\n"); );
+    MESSAGE(5, printf("Open 3-D, uint8 chunked, GZIP Compressed element again for reading\n"); );
     /* Open file for reading now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
     CHECK(fid, FAIL, "Hopen");
@@ -2343,7 +2361,7 @@ test_chunks()
     if (errors)
         goto done;
 
-    MESSAGE(5, printf("Verifying 24 bytes from uint8 chunked, RLE Compressed element using HMCreadChunk\n"); );
+    MESSAGE(5, printf("Verifying 24 bytes from uint8 chunked, GZIP Compressed element using HMCreadChunk\n"); );
     /* read data back as chunks */
     dims[0] = 0;
     dims[1] = 0;
