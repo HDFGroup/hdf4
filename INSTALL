@@ -73,15 +73,16 @@
 2.1 Supported Platforms
     ===================
 
-  For PLATFORM specific NOTES see the section below called
-  'Platform-specific Notes'.
+    For PLATFORM specific NOTES see Section 2.5 called
+    'Platform-specific Notes'.
 
 
   Platform(OS)                    C-Compiler       Fortran-Compiler   
   ------------                    ----------       ---------------- 
   Sun4(SunOS 4.1.4)               GCC 2.6.3        f77 SC1.0            
   Sun4(Solaris 2.5)               CC SC4.0         f77 SC4.0            
-  SGI-Indy(IRIX5.3)               CC 3.19          f77, g77 0.5.19
+  SGI-Indy(IRIX 5.3)              CC 3.19          f77
+  SGI-Indy(IRIX v6.2)             CC               f77 6.2
   SGI-Origin(IRIX64 v6.4-n32)     CC 7.20          f77 7.20     
   SGI-Origin(IRIX64 v6.4-64)      CC 7.20          f77 7.20    
   HP9000/735(HP-UX 9.03)          CC A.09.84       f77 09.16  
@@ -98,8 +99,7 @@
   VAX OpenVMS v6.2                  -                - 
   IBM PC - Intel Pentium
        Solarisx86 (2.5.1)         GCC 2.7.2.1        -                
-       Linux(a.out) (1.2.4)       GCC              FORTRAN compiler 2.6.2     
-                                                   (FORTRAN to C converter)
+       Linux (elf) (2.0.30)       GCC 2.7.2.1      fort77 (f2c) 2.7.2.1     
        FreeBSD (2.2.1)            GCC 2.7.2        f77 2.7.2.1
   PowerPC(Mac-OS-7.6)               -                -              
   68k-far/4i/8d(Mac-OS-7.6)         -                -           
@@ -107,6 +107,16 @@
   T3E (unicosmk 2.0.2.16)         CC 6.0.2.0.5     f90 3.0.2.0
 
 
+  NOTE:  Platforms listed with compiler information entered, are 
+  platforms that HDF was tested on and for which we provide 
+  pre-compiled binaries.  If a platform is listed, but there is a '-' 
+  in the C and Fortran fields, then we 'support' this platform, even 
+  though we have done no testing on it.  We will try our best to 
+  answer any questions regarding it.
+
+  A release is scheduled for the VMS, Windows NT/95 and Macintosh 
+  platforms for HDF 4.1r2. 
+ 
 2.2  Third Party Software Requirements:
      ==================================
 
@@ -116,7 +126,7 @@
      2. ZLIB 1.0.4(libz.a) distribution.
 
      Both of these distributions are included with this distribution
-     in 'hdf/jpeg' and 'hdf/zlib'. The HDF/netCDF base distribution
+     in 'hdf/jpeg' and 'hdf/zlib'. The HDF/mfhdf base distribution
      in known to work with these versions only.
 
 2.3 System Requirements
@@ -128,9 +138,9 @@
         platforms are supported. On platforms where no ANSI compiler
         was available the free GNU ANSI compiler GCC was used.
 
-      * a Fortran 77 compiler if you want Fortran support. See above
-        table for platforms where Fortran is supported. You can
-        compile both libraries without Fortran support by setting 
+      * a Fortran 77 compiler (F90 on Crays) if you want Fortran support. 
+        See above table for platforms where Fortran is supported. You 
+        can compile both libraries without Fortran support by setting 
         the Fortran compiler variable 'FC = NONE' in the respective
         makefile fragment(mh-<os>) found in the top-level 'config'
         directory: 
@@ -372,56 +382,15 @@
 
     2.5.4 OpenVMS AXP on DEC Alpha and OpenVMS on VAX
     -------------------------------------------------
-    A set of Make.com files works for both DEC ALPHA and VAX. 
-    The package should be compiled in the following order: [.hdf.jpeg], 
-    [.hdf.zlib], [.hdf.src], [.hdf.util], [.hdf.test], [.mfhdf.xdr], 
-    [.mfhdf.libsrc], [.mfhdf.nctest], [.mfhdf.fortran.vms], 
-    [.mfhdf.ncdump], [.mfhdf.ncgen], and [.mfhdf.dumper].  
-
-    In [.hdf.jpeg]:
-        copy [.config]jwin32.h to jconfig.h;
-        copy makefile.vms to make.com;
-        run @make.
-    In [.hdf.zlib]:
-        copy make_vms.com to make.com;
-        check the correctness of the path of X library in descrip.mms
-           and/or make.com under "minigzip.exe:" line. Minigzip is an
-           example of the usage of zlib. 
-    In [.hdf.src], the MAKENOF.COM and MAKEFS.COM are for compiling 
-           the C and Fortran programs respectively.   
-    In [.hdf.util]:
-       Run @makeutil to compile the utilities.
-       Run @setuputils to define the utilities as commands. 
-    In [.hdf.test]:
-       Create a subdirectory 'testdir' in [.hdf.test], if there is no 
-           such one existing. This directory is used for the external 
-           element test.
-       Run @make to compile the C test program testhdf and the Fortran 
-           test programs fortest. 
-       Run testhdf. Copy tvattr.hdf to tvattr.dat. Delete *.hdf.
-       Change forsupff.f, tsdmmsf.f, tsdnmmsf.f, tsdntf.f and 
-           tsdnntf.f following the instructions given in the comments,
-           which start with 'For VMS', in these files. 
-       Run fortest. 
-    Make directories [.lib], [.bin], [.include], use make.com in 
-       [.mfhdf.*] to compile mfhdf.olb, test programs and utilities 
-       ncdump, ncgen and hdp. 
+    *** NOT AVAILABLE WITH THIS RELEASE ***
    
     2.5.5 Windows '95 or Windows NT
     -------------------------------
-    To install on a Windows '95 or Windows NT machine, read the separate
-    installation instructions for Windows NT:
-      
-        $(toplevel)/release_notes/install_winNT.txt.
+    *** NOT AVAILABLE WITH THIS RELEASE ***
 
-    To compile your program with HDF libraries, you need to define the
-    architecture as INTEL86 via a /DINTEL86 preprocessor macro. 
- 
     2.5.6 PowerPC/68k(far/4i/8d)- Macintosh OS
     ------------------------------------------
-    ***********************************************************
-    *** NOTE Only the PowerPC is supported for this Release ***
-    ***********************************************************
+    *** NOT AVAILALE WITH THIS RELEASE ***
 
     The distribution was compiled/tested with MetroWerks Codewarrior(CW8).
     Only the base libraries{libdf.a,zlib.a,libjpeg.a,libmfhdf.a,libxdr.a}
@@ -567,7 +536,7 @@
     process since HDF does not support concurrent access to the same
     HDF file.
 
-    Prior to installing on the T3D, the following changes will have
+    Prior to installing on the T3E, the following changes will have
     to be made to ./hdf/test/tsdmmsf.f and ./hdf/test/tsdnmmsf.f:
 
     Search on '-128'. You will find two instances of this in
@@ -587,20 +556,20 @@
     programs.  They can be safely ignored.  One warning is about the
     unsupported DOUBLE PRECISION being replaced by REAL.  That works
     fine for the purpose of the test programs since T3E REAL is 8
-    bytes big which is the same size as DOUBLE PRECISION in other machines.
-    Another warning is by the loader complaining about many SYMBOLS
-    referenced but not defined.  Those SYMBOLS are actually HDF Fortran
-    function names declared in dffunc.inc file and they are not used
-    in the testing.
+    bytes in size which is the same size as DOUBLE PRECISION in other 
+    machines.  Another warning is by the loader complaining about many 
+    SYMBOLS referenced but not defined.  Those SYMBOLS are actually HDF 
+    Fortran function names declared in dffunc.inc file and they are not 
+    used in the testing.
 
 
     2.5.10a SGI IRIX 6.x
     --------------------------
     IRIX is the traditional SGI 32-bit OS.  Starting in version 6.x,
-    it supports two classes of 32 bits compilers, the old 32 (-o32)
-    or the new 32-bits (-n32).  SGI is phasing out the -o32 compilers.
-    Continues maintenance is done on the -n32 class of compilers only.
-    HDF library configures to use the -n32 class of C and F77 compilers.
+    it supports two classes of 32 bit compilers, the old 32 (-o32)
+    and the new 32-bits (-n32).  SGI is phasing out the -o32 compilers.
+    Continued maintenance is available on the -n32 class of compilers only.
+    The HDF library configures to use the -n32 class of C and F77 compilers.
     If you want to use different compiler options, you need to edit
     config/mh-irix32 and then run configure.  Consult the section
     of "General Configuration/Installation" for more information.
@@ -612,14 +581,14 @@
     instruction sets (-mips2, -mips3, -mips4).  Previous HDF
     library releases had hard coded the MIPS settings by guessing what
     might be the most reasonable combination.  This release no longer
-    sets the MIPS option but leaves it up to the local or users
-    default.  The configure still generates -64 code by default in
+    sets the MIPS option but leaves it up to the local or user's
+    default.  The configure still generates -64 code by default on
     an IRIX64 system.  If -n32 code is desired, one may override it
     by specifying 'irix6_32' during the configure step.
 
     Configure command	    Code produced
     -----------------	    -------------
-    ./configure		        -64
+    ./configure                 -64
     ./configure irix6_32        -n32
 
     If you want to use different compiler options, you need to edit
@@ -630,8 +599,8 @@
 
     2.5.11 DEC Alpha(Digital Unix v4.0)
     ------------------------------------
-    The distribution has been compiled/tested with native Digital Unix 
-    C and FORTRAN compiliers.
+    The distribution has been compiled/tested with the native Digital 
+    Unix C and FORTRAN compilers.
 
     During the testing of the library the test 'mfhdf/libsrc/hdftest' 
     will report "Unaligned access ..." messages which can be ignored.
@@ -781,17 +750,11 @@
     '/usr/local/hdf/bin', '/usr/local/hdf/include' and
     '/usr/local/hdf/man' respectively.
 
-    NB: configure uses ${PWD} to determine the $(toplevel) but ${PWD}
-    is not defined on some systems (e.g. T3D, OSF).  For those systems,
-    you must specify the "--prefix=..." option when running the configure
-    command.  (This problem will be removed in the next release.)
-
-
 2.9 Specifying the System Type
     ==========================
 
     There may be some features `configure' can not figure out
-    automatically, but needs to determine by the type of host HDF/netCDF
+    automatically, but needs to determine by the type of host HDF/mfhdf
     will run on.  Usually `configure' can figure that out, but if it prints
     a message saying it can not guess the host type, give it the
     `--host=TYPE' option.  TYPE can either be a short name for the system
@@ -831,17 +794,16 @@
 3. Man pages
    =============
 
-    Manual pages for the library are not yet completed but some early
-    drafts are available in:
+    Man pages can be found in:
 
-         $(toplevel)/man.
+         $(toplevel)/man
 
 4. Release notes
    =============
     The files in sub-directory $(toplevel)/release_notes are detailed 
-    descriptions for the new features. They can be used as supplemental 
-    documentation for HDF4.1. These files are also available on the NCSA 
-    ftp server(ftp.ncsa.uiuc.edu) in:
+    descriptions for the new features and changes in this release.
+    They can be used as supplemental documentation. These files are also 
+    available on the NCSA ftp server (ftp.ncsa.uiuc.edu) in:
  
          /HDF/HDF_Current/release_notes/.
 
@@ -859,7 +821,7 @@
    An FAQ is available on our ftp server, as well as under
    "Information about HDF" on the home page.
 
-7. HDF Java products
+7. HDF Java Products
    =================
    The HDF Java Interface and Java HDF Viewer are included as an
    optional part of the HDF source.  These products are built
