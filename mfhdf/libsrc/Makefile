@@ -5,8 +5,8 @@
 
 PROGRAM		= cdftest
 CPP_OLD_FILLVALUES	= 
-CPPFLAGS	= $(CPP_OLD_FILLVALUES) -DNDEBUG -DHDF -DNO_STRERROR
-CFLAGS		= -g -I/hdf/home/chouck/hdf/33/include -DIRIS4 -cckr
+CPPFLAGS	= $(CPP_OLD_FILLVALUES) -DNDEBUG -DHDF -DNO_HAVE_PROTOTYPES -Dconst= -DNO_STDARG -DNO_STRERROR
+CFLAGS		= -g -I/hdf/home/chouck/hdf/33/include -DSUN
 GARBAGE		= $(PROGRAM) test.cdf cdfout.new test*.hdf \
                   hdftest hdfout.new
 HEADERS		= netcdf.h
@@ -29,7 +29,7 @@ LIBRARY		= netcdf
 DEBUGLIBRARY	= netcdf_g
 PROFILEDLIBRARY	= netcdf_pg
 OBJS		= $(PROGRAM).o
-LD_XDR		= -lsun
+LD_XDR		= 
 LD_NETCDF	= -L. -lnetcdf
 LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB)
 prefix		= /hdf/home/chouck/hdf
@@ -109,14 +109,14 @@ AR		= ar
 CC		= cc
 CPP		= cc -E
 INCDIR		= $(prefix)/include
-INSTALL		= cp
-INSTALL_DATA	= $(INSTALL)
+INSTALL		= /bin/install -c
+INSTALL_DATA	= $(INSTALL) -m 664
 INSTALL_PROGRAM	= $(INSTALL)
 FC		= f77
 NCDUMP		= @NCDUMP@
 NCGEN		= @NCGEN@
 NEQN		= neqn
-OS		= irix
+OS		= sunos
 SHELL		= /bin/sh
 TBL		= tbl
 

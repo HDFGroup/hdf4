@@ -436,14 +436,22 @@ intn hdf_read_sds_dims(handle)
             if(lRef) {
                 int len;
                 
+                /*
+                 *  Add three NULLS to the end to account for a bug in HDF 3.2r1-3
+                 */
+
                 len = Hlength(handle->hdf_file, DFTAG_SDL, lRef);
                 if(len == FAIL) return FALSE;
                 
-                namebuf = (uint8 *) HDgetspace((uint32) len);
+                namebuf = (uint8 *) HDgetspace((uint32) len + 3);
                 if(!namebuf) HRETURN_ERROR(DFE_NOSPACE, FALSE);
                 
                 if(Hgetelement(handle->hdf_file, DFTAG_SDL, lRef, namebuf) == FAIL)
                     return FALSE;
+                
+                namebuf[len + 2] = '\0';
+                namebuf[len + 1] = '\0';
+                namebuf[len + 0] = '\0';
                 
             } else {
                 namebuf = NULL;
