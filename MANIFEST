@@ -295,26 +295,8 @@
 ./hdf/jpeg/wrrle.c
 ./hdf/jpeg/wrtarga.c
 
-./hdf/MAKE.ALPHA
-./hdf/MAKE.COM
-./hdf/MAKE.CONVEX
 ./hdf/Makefile.in
 ./hdf/Makefile.Template
-./hdf/MAKE.FREEBSD
-./hdf/MAKE.HP9000
-./hdf/MAKE.I860
-./hdf/MAKE.IBM6000
-./hdf/MAKE.IRIS4
-./hdf/MAKE.IRIX
-./hdf/MAKE.LINUX
-./hdf/MAKE.MIPSEL
-./hdf/MAKE.MOTO
-./hdf/MAKE.NEXT
-./hdf/MAKE.SOLARIS
-./hdf/MAKE.SUN
-./hdf/MAKE.SUN.ANSI
-./hdf/MAKE.UNICOS
-./hdf/MAKE.VP
 ./hdf/README
 ./hdf/README.33r4
 
