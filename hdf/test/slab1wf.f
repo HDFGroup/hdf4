@@ -2,9 +2,12 @@ C---------------------------------------------------------------------------
 C $Header$
 C
 C $Log$
-C Revision 1.1  1993/01/07 20:56:14  georgev
-C Added Hyperslab C and Fortran test programs.
+C Revision 1.2  1993/01/15 16:54:56  georgev
+C Cleaned out unused variables.
 C
+c Revision 1.1  1993/01/07  20:56:14  georgev
+c Added Hyperslab C and Fortran test programs.
+c
 C
 C---------------------------------------------------------------------------
 C
@@ -16,14 +19,14 @@ C
 C Output file: slab1wf.hdf
 
 
-      integer dsadata, dssdims, dssdisc, dssdist
-      integer dswslab
+      integer dssdims, dssdisc, dssdist
+      integer dswslab, dswfv
       integer ret, np, nr,nc, di(3), st(3), sz(3), sr(3)
       integer rank, DFTAG_SDT, DFO_FORTRAN
       real    scpln(2), scrow(3), sccol(4), da(4,3,2)
       real    slab1(3,1,1), slab2(3,1,2), slab3(3,2,1)
       real    slab4(3,1,1), slab5(1,3,2)
-      real    sa(4,3,2)
+      real    fill_value
       integer i, j, k
       character*10 lcol,ucol,fcol,lrow,urow,frow,lpln,upln,fpln
       character*30 fn, sn
@@ -61,6 +64,7 @@ C Output file: slab1wf.hdf
       fpln = 'Int32'
       fn = 'slabf.hdf'
       sn = 'slab1wf.hdf'
+      fill_value = 1.0
       fnlen = 30
       slab1(1,1,1) = 110.0
       slab1(2,1,1) = 111.0
@@ -115,10 +119,11 @@ C    		print *, da(k,j,i)
       num_err = num_err + ret
       ret = dssdisc(3, di(3), scpln)
       num_err = num_err + ret
-C     ret = dsadata(fn, rank, di, da)
 C 
 C Write it slab by slab   
 C 
+      ret = dswfv(sn, fnlen, fill_value)
+      num_err = num_err + ret
       sr(1) = 0
       sr(2) = 0
       sr(3) = 0

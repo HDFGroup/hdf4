@@ -2,9 +2,12 @@ C---------------------------------------------------------------------------
 C $Header$
 C
 C $Log$
-C Revision 1.1  1993/01/07 20:56:16  georgev
-C Added Hyperslab C and Fortran test programs.
+C Revision 1.2  1993/01/15 16:54:58  georgev
+C Cleaned out unused variables.
 C
+c Revision 1.1  1993/01/07  20:56:16  georgev
+c Added Hyperslab C and Fortran test programs.
+c
 C
 C---------------------------------------------------------------------------
 C
@@ -25,9 +28,9 @@ C Output file: slab1wf.hdf
       real    sa(4,3,2)
       integer i,j,k
       character*10 lcol,ucol,fcol,lrow,urow,frow,lpln,upln,fpln
-      character*30 fn, sn
+      character*30 sn
       integer fnlen
-      integer num_err
+      integer num_err, nref
 
       print *,'\n   Writing the last 2 of 5 slabs to slab1wf.hdf'
      
@@ -40,6 +43,7 @@ C Output file: slab1wf.hdf
       nr = 3
       nc = 4
       rank = 3
+      nref = 2
       scpln(1) =   0.0
       scpln(2) = 100.0
       scrow(1) =   0.0
@@ -102,10 +106,11 @@ C           print *, da(k,j,i)
 C 
 C Write it slab by slab   
 C 
+      ret = 0
       num_err = 0
-      ret = dsigdim(sn, rank, sz, 3, fnlen)
+      ret = dsigdim(sn, rank, sz, rank, fnlen)
       num_err = num_err + ret
-      ret = dswref(sn, fnlen, 2)
+      ret = dswref(sn, fnlen, nref)
       num_err = num_err + ret
       st(1) = 1
       st(2) = 3
@@ -136,6 +141,7 @@ C
       sr(1) = 4
       sr(2) = 3
       sr(3) = 2
+      num_err = 0
       ret = dsigslc(sn, st, sz, sa, sr, fnlen)
       num_err = num_err + ret
 

@@ -2,9 +2,12 @@ C---------------------------------------------------------------------------
 C $Header$
 C
 C $Log$
-C Revision 1.1  1993/01/07 20:56:25  georgev
-C Added Hyperslab C and Fortran test programs.
+C Revision 1.2  1993/01/15 16:55:00  georgev
+C Cleaned out unused variables.
 C
+c Revision 1.1  1993/01/07  20:56:25  georgev
+c Added Hyperslab C and Fortran test programs.
+c
 C
 C---------------------------------------------------------------------------
 C
@@ -15,10 +18,9 @@ C
 C Output file: slabwf.hdf
 
 
-      integer dsadata, dssdims, dspslc, dssdisc, dssdist
+      integer dssdims, dssdisc, dssdist
       integer dswslab, dsigslc
-      integer dseslc, dssslc, dsstype
-      integer ret, np, nr,nc, di(3), wdi(3), st(3), sz(3), sr(3)
+      integer ret, np, nr,nc, di(3), st(3), sz(3), sr(3)
       integer rank, DFTAG_SDT, DFO_FORTRAN
       real    scpln(2), scrow(3), sccol(4), da(4,3,2)
       real    slab1(3,1,1), slab2(3,1,2), slab3(3,2,1)
