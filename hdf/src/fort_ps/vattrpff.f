@@ -40,6 +40,7 @@ C       integer vsfcfdx
        INTERFACE
          INTEGER FUNCTION vsfcfdx(vsid,fldnm,findex,fldnmlen)
            !MS$ATTRIBUTES C,reference,alias:'_VSFCFDX' :: vsfcfdx
+	     !DEC$ ATTRIBUTES reference :: fldnm
            integer vsid, findex, fldnmlen
            character*(*) fldnm
          END FUNCTION vsfcfdx
@@ -63,6 +64,7 @@ C       integer vsfcsat
          INTEGER FUNCTION vsfcsat(vsid,findex,attrnm,dtype,count,
      +                            values, attnmlen)
            !MS$ATTRIBUTES C,reference,alias:'_VSFCSAT' :: vsfcsat
+	     !DEC$ ATTRIBUTES reference :: attrnm
            integer vsid, findex, dtype,count,values, attnmlen
            character*(*) attrnm
          END FUNCTION vsfcsat
@@ -86,6 +88,7 @@ C       integer vsfcsca
          INTEGER FUNCTION vsfcsca(vsid, findex, attrnm,dtype,
      +                            count, values, attnmlen)
          !MS$ATTRIBUTES C,reference,alias:'_VSFCSCA' :: vsfcsca
+	   !DEC$ ATTRIBUTES reference :: attrnm, values
          integer vsid, findex, dtype,count,attnmlen
          character*(*) attrnm, values
          END FUNCTION vsfcsca
@@ -140,6 +143,7 @@ C       integer vsfcfda
        INTERFACE
          INTEGER FUNCTION vsfcfda(vsid, findex, attrnm, nmlen)
            !MS$ATTRIBUTES C,reference,alias:'_VSFCFDA' :: vsfcfda
+	     !DEC$ ATTRIBUTES reference :: attrnm
            integer vsid, findex, nmlen
            character*(*) attrnm
          END FUNCTION vsfcfda
@@ -162,6 +166,7 @@ C       integer vsfcainf
          INTEGER FUNCTION vsfcainf(vsid, findex, aindex, attrnm,
      +                   dtype, count, size, nmlen)
            !MS$ATTRIBUTES C,reference,alias:'_VSFCAINF' :: vsfcainf
+	     !DEC$ ATTRIBUTES reference :: attrnm
            integer vsid, findex, aindex, dtype, count, size, nmlen
            character*(*) attrnm
          END FUNCTION vsfcainf
@@ -199,6 +204,7 @@ C       integer vsfcgca
        INTERFACE
          INTEGER FUNCTION vsfcgca(vsid, findex, aindex, values)
            !MS$ATTRIBUTES C,reference,alias:'_VSFCGCA' :: vsfcgca
+	     !DEC$ ATTRIBUTES reference :: values
            integer vsid, findex, aindex
            character*(*) values
          END FUNCTION vsfcgca
@@ -237,6 +243,7 @@ C       integer vfcsatt
          INTEGER FUNCTION vfcsatt(vgid, attrnm, dtype, count,
      +                       values, nmlen)
            !MS$ATTRIBUTES C,reference,alias:'_VFCSATT' :: vfcsatt
+	     !DEC$ ATTRIBUTES reference :: attrnm
            integer vgid, dtype, count, values, nmlen
            character*(*)  attrnm
          END FUNCTION vfcsatt
@@ -258,6 +265,7 @@ c       integer vfcscat
          INTEGER FUNCTION vfcscat(vgid, attrnm, dtype, count,
      +                       values, nmlen)
            !MS$ATTRIBUTES C,reference,alias:'_VFCSCAT' :: vfcscat
+	     !DEC$ ATTRIBUTES reference :: attrnm, values
            integer vgid, dtype, count, nmlen
            character*(*)  attrnm, values
          END FUNCTION vfcscat
@@ -295,6 +303,7 @@ C       integer vfcfdat
        INTERFACE
          INTEGER FUNCTION vfcfdat(vg, attrnm, nmlen)
            !MS$ATTRIBUTES C,reference,alias:'_VFCFDAT' :: vfcfdat
+	     !DEC$ ATTRIBUTES reference :: attrnm
            integer vg, nmlen
            character*(*) attrnm
          END FUNCTION vfcfdat
@@ -315,6 +324,7 @@ C       integer vfcainf
          INTEGER FUNCTION vfcainf(vgid, aindex, attrnm,
      +                   dtype, count, size, nmlen)
            !MS$ATTRIBUTES C,reference,alias:'_VFCAINF' :: vfcainf
+	     !DEC$ ATTRIBUTES reference :: attrnm
            integer vgid, aindex, dtype, count, size, nmlen
            character*(*) attrnm
          END FUNCTION vfcainf
@@ -352,6 +362,7 @@ C       integer vfcgcat
        INTERFACE
          INTEGER FUNCTION vfcgcat(vgid, aindex, values)
            !MS$ATTRIBUTES C,reference,alias:'_VFCGCAT' :: vfcgcat
+	     !DEC$ ATTRIBUTES reference :: values
            integer vgid, aindex
            character*(*) values
          END FUNCTION vfcgcat
