@@ -15,16 +15,17 @@ INSTROOT	= LDMROOT:
 OS		= vms_5_4
 
 !Compilation options:
-COPTS		= /opt/nodebug
+COPTS		= /opt/nodebug/define=HDF
 
 !==============================================================================
 INCDIR		= $(INSTROOT)[include]
 LIBDIR		= $(INSTROOT)[lib]
-LIBRARY		= [-]netcdf.olb
+LIBRARY		= [---.lib]netcdf.olb
+HDFLIB          = [--.hdf.lib]df.olb
 LINKFLAGS	= /nodebug/exec=$(mms$target_name).exe
 !LINKFLAGS	= /debug/exec=$(mms$target_name).exe
-SRCINCDIR	= [-.src]
-INCLUDES	= /include=([-.xdr],$(SRCINCDIR))
+SRCINCDIR	= [-.libsrc]
+INCLUDES	= /include=([-.xdr],$(SRCINCDIR),[--.hdf.include])
 CFLAGS		= $(COPTS)$(INCLUDES)/obj=$(mms$target_name).obj
 LIBOBJS 	= array=array.obj, attr=attr.obj, cdf=cdf.obj, dim=dim.obj,-
 		    file=file.obj, iarray=iarray.obj, error=error.obj,-
@@ -32,7 +33,7 @@ LIBOBJS 	= array=array.obj, attr=attr.obj, cdf=cdf.obj, dim=dim.obj,-
 		    var=var.obj,-
 		    htons.obj, ntohs.obj
 CLIB 		=  sys$library:vaxcrtl/lib
-LINKLIBS 	=  $(LIBRARY)/lib, $(CLIB)
+LINKLIBS 	=  $(LIBRARY)/lib, $(HDFLIB)/lib, $(CLIB)
 
 all :		netcdf.inc, library, test
 	@ continue
@@ -45,9 +46,20 @@ library :	$(LIBRARY)(jackets.obj)
 
 jackets.obj :	[.vms]jackets.c
 
-test :		ftest.exe
+mfsdf.obj :	[.vms]mfsdf.c
+
+mfsdff.obj :     [.vms]mfsdff.for
+
+test :		ftest.exe  hdftest.exe
+	run hdftest
 	run ftest
 	@ if $severity .eq. 0 then exit 1
+
+hdftest.exe :	hdftest.obj, jackets.obj, mfsdf.obj, mfsdff.obj 
+	$(LINK)$(LINKFLAGS) hdftest.obj, mfsdf.obj, mfsdff.obj, -
+               jackets.obj, $(LINKLIBS)
+
+hdftest.obj :	netcdf.inc, [.vms]hdftest.for
 
 ftest.exe :	ftest.obj, jackets.obj
 	$(LINK)$(LINKFLAGS) ftest.obj,jackets.obj,$(LINKLIBS)
@@ -58,6 +70,5 @@ install :	netcdf.inc
 clean :
 	purge
 	- delete netcdf.inc.*,*.obj.*,*.lis.*,*.map.*,*.exe.*
-
 ftest.obj :	netcdf.inc, [.vms]ftest.for
 jackets.obj :	$(SRCINCDIR)netcdf.h
