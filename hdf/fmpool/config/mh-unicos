@@ -27,8 +27,8 @@ CFLAGS=
 LDFLAGS= 
 LDLIBS= 
 
-# Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
-RANLIB = touch
+# Name of achive randomizer, usually ranlib (use 'true' if non-existant)
+RANLIB = true
 
 # Name of library archiver and flags to send, default 'AR=ar', 'ARFLAGS=r'
 AR = ar
