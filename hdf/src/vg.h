@@ -115,20 +115,21 @@ struct vgroup_desc
 *  ----------------------------------------------- 
 */
 
-#define USYMMAX 36			/* max user-defined symbols allowed */
+/* #define USYMMAX 36*/			/* max user-defined symbols allowed */
 
 struct vdata_desc { 
   uint16	otag, oref; 		/* tag,ref of this vdata */
   HFILEID   f;                  /* HDF file id */
   intn      access;             /* 'r' or 'w' */
   char      vsname[VSNAMELENMAX+1]; /* S name of this vdata */
-  char		vsclass[VSNAMELENMAX+1];/* S class name of this vdata */
+  char      vsclass[VSNAMELENMAX+1];/* S class name of this vdata */
   int16     interlace;          /* S  interlace as in file */
   int32     nvertices;          /* S  #vertices in this vdata */
   VWRITELIST	wlist;
   VREADLIST	rlist;
   int16  	nusym;
-  SYMDEF 	usym[USYMMAX];
+  SYMDEF 	usym[VSFIELDMAX];
+/*  SYMDEF 	usym[USYMMAX];   */
   intn 	        marked;			/* =1 if new info has been added to vdata */
   intn          islinked; 		/* =1 if vdata is a linked-block in file */
   

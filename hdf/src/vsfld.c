@@ -168,6 +168,10 @@ char    *fields;
     if((scanattrs(fields, &ac, &av) == FAIL) || (ac == 0))
         HRETURN_ERROR(DFE_BADFIELDS,FAIL);
 
+    /* check number of fields limit  */
+    if (ac > VSFIELDMAX)   
+          HRETURN_ERROR(DFE_SYMSIZE,FAIL);
+
     /*
      * write to an empty vdata : set the write list but do not set the
      *   read list cuz there is nothing there to read yet...
@@ -355,7 +359,7 @@ int32   localtype, order;
     vs->usym[usymid].order = (int16)order;
   
   /* prevent user-symbol table overflow */
-    if (vs->nusym >= USYMMAX)
+    if (vs->nusym >= VSFIELDMAX )
         HRETURN_ERROR(DFE_SYMSIZE,FAIL);
   
   /* increment vs->nusym only if no user field has been redefined */
