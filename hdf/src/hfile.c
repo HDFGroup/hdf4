@@ -108,14 +108,11 @@ mwrite --
 mlsekk --
 
 LOCAL ROUTINES
-HIchangedd      -- update the internal contents of an AID(obsolete ?)
 HIinit_file_dds -- Initialize DD blocks for a new file
 HIflush_dds     -- flush changed DD blocks to file
 HIextend_file   -- extend file to current length
 HIget_function_table -- create special function table
 HIgetspinfo          -- return special info
-HIlock               -- lock a file record(obsolete?)  
-HIunlock             -- unlock a previously locked file record(obsolete ?)
 HIget_file_slot      -- find a slot for the file
 HIvalid_magic        -- verify the magic number in a file
 HIget_access_slot    -- find a new access record slot
@@ -202,19 +199,9 @@ extern int32 HDset_special_info(int32 access_id, sp_info_block_t * info_block);
 /*
 ** Declaration of private functions.
 */
-#ifdef DELETE_FOR_40_RELEASE_IF_NOT_USED
-PRIVATE intn HIlock
-		(int32 file_id);
-#endif
 
 PRIVATE intn HIunlock
 		(int32 file_id);
-
-#ifdef DELETE_FOR_40_RELEASE_IF_NOT_USED
-PRIVATE intn HIchangedd
-		(dd_t *datadd, ddblock_t * block, intn idx, int16 special,
-		 VOIDP special_info, funclist_t * special_func);
-#endif
 
 PRIVATE intn HIget_file_slot
 		(const char *path, const char *FUNC);
@@ -2827,56 +2814,6 @@ Internal Routines
 
 ==========================================================================*/
 
-#ifdef DELETE_FOR_40_RELEASE_IF_NOT_USED
-/*--------------------------------------------------------------------------
-NAME
-   HIchangedd -- update the internal contents of an AID
-USAGE
-   int HIchangedd(datadd, block, idx, special, special_info, funcs)
-   dd_t       * datadd;         IN: pointer to dd record for this object
-   ddblock_t  * block;          IN: block this object resides in
-   int          idx;            IN: index into above block
-   int16        special;        IN: type of special element
-   VOIDP        special_info;   IN: special element specific information
-   funclist_t * special_func;   IN: list of functions for special element
-									handling
-RETURNS
-   Not sure really.
-DESCRIPTION
-   This routine is mainly used to promote a dd into a special
-   element dd.  It updates the internal tables and specialness
-   for the given object.
-
---------------------------------------------------------------------------*/
-PRIVATE int
-HIchangedd(dd_t *datadd, ddblock_t * block, int idx, int16 special,
-	   VOIDP special_info, funclist_t * special_func)
-{
-int         i;              /* temp index */
-int         attached = 0;   /* number of accesses attached to this dd */
-
-/* go through access records to look for converted dd,
-   and then update the matching records */
-for (i = 0; i < MAX_FILE; i++)
-	if (access_records[i].used)
-	  {
-		  dd_t       *tdd = /* ptr to dd of current access record */
-		  &access_records[i].block->ddlist[access_records[i].idx];
-		  if (tdd == datadd)
-			{
-				access_records[i].block = block;
-				access_records[i].idx = idx;
-				access_records[i].special = special;
-				access_records[i].special_func = special_func;
-				access_records[i].special_info = special_info;
-				attached++;
-			}
-	  }
-
-return attached;
-}
-#endif
-
 /*--------------------------------------------------------------------------
 NAME
    HIinit_file_dds -- Initialize DD blocks for a new file
@@ -3161,28 +3098,6 @@ for (i = 0; i < MAX_ACC; i++)
 return NULL;
 
 }   /* HIgetspinfo */
-
-#ifdef DELETE_FOR_40_RELEASE_IF_NOT_USED
-/*--------------------------------------------------------------------------
-HIlock -- lock a file record.  This is used by special functions to prevent
-	   losing files that are still accessed
---------------------------------------------------------------------------*/
-PRIVATE int
-HIlock(int32 file_id)
-{
-CONSTR(FUNC, "HIlock");     /* for HERROR */
-
-/* get file record and check validity */
-filerec_t  *file_rec = FID2REC(file_id);
-if (BADFREC(file_rec))
-	HRETURN_ERROR(DFE_ARGS, FAIL);
-
-/* lock the file record */
-file_rec->attach++;
-
-return SUCCEED;
-}
-#endif
 
 /*--------------------------------------------------------------------------
 HIunlock -- unlock a previously locked file record
