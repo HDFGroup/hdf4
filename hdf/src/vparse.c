@@ -75,18 +75,18 @@ scanattrs(const char *attrs, int32 *attrc, char ***attrv)
     /* Lets allocate space for ptrs to tokens and tokens */
     if (symptr == NULL)
       {
-          symptr = (char **) HDmalloc(50 * sizeof(char *));
+          symptr = (char **) HDmalloc(VSFIELDMAX * sizeof(char *));
           if (symptr == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
 
     if (sym == NULL)
       {
-          sym = (char **) HDmalloc(50 * sizeof(char *));
+          sym = (char **) HDmalloc(VSFIELDMAX * sizeof(char *));
           if (sym == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-          for (i = 0; i < 50; i++)
+          for (i = 0; i < VSFIELDMAX; i++)
             {
                 sym[i] = (char *) HDmalloc(sizeof(char) * (FIELDNAMELENMAX + 1));
                 if (sym[i] == NULL)
