@@ -363,6 +363,7 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 #include <file.h>               /* for unbuffered i/o stuff */
+#include <limits.h>
 
 #define DF_MT              DFMT_VAX
 typedef int                VOID;
