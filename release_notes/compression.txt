@@ -1,4 +1,3 @@
-
 New Compression Algorithms and interface
     A new low-level compression interface has been added to the HDF-netCDF
 library which allows any data-object to be compressed using a variety of
@@ -52,7 +51,8 @@ compressed data when it is written to.  In either case, Hendaccess must be
 called to release the AID allocated by HCcreate.  In the first two examples
 below the datasets already exist, in the final example the dataset is created
 by the HCcreate call.  There is currently no FORTRAN equivalent for this
-function.
+function.  More details about this function can be found in the HDF reference
+manual.
 
 The following example shows how to compress a scientific dataset data-object
 (which is composed of multi-dimensional 32-bit integer data) using the

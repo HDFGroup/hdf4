@@ -75,7 +75,6 @@ Misc. stuff left to do:
     Deal with special elements for images.
     GRrename for images.
     GRsetflags to suppress writing fill data and to suppress fillvalue attr.
-    Read/Write Interlaced data (of line & plane types, pixel is working).
 
 Features not supported:
     Full support for multiple palettes with each RI.
@@ -375,6 +374,8 @@ Prototypes for these functions can be found in the file hproto.h
 
 Routines that can be called from C are all of the form GRxxx
 
+More details about all the routines below can be found in the HDF reference
+manual.
 
 
 File level interface:
