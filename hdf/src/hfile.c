@@ -127,10 +127,6 @@ struct accrec_t *access_records = NULL;
    have to allocate and deallocate memory all the time.  This space should
    be "sufficiently" large, or at least 64 bytes long.  Routines using
    ptbuf should not assume that the buffer is longer than that. */
-#ifdef OLD_WAY  /* replaced with dynamic memory */
-int32       int_tbuf[TBUF_SZ];
-uint8      *tbuf = (uint8 *) int_tbuf;
-#endif
 PRIVATE uint8 *ptbuf = NULL;
 
 /* The default state of the file DD caching */
@@ -950,13 +946,6 @@ Hstartwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
     if (slot == FAIL)
         HRETURN_ERROR(DFE_TOOMANY, FAIL);
 
-#ifdef OLD_WAY
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-        if ((ptbuf = (uint8 *) HDgetspace(TBUF_SZ * sizeof(uint8))) == NULL)
-                        HRETURN_ERROR(DFE_NOSPACE, FAIL);
-#endif
-
     /* convert tag to base form */
     tag = BASETAG(tag);
 
@@ -1104,7 +1093,7 @@ Hstartwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
     return ASLOT2ID(slot);
 }   /* end Hstartwrite */
 
-#else /* OLD_WAY */
+#else /* !OLD_WAY */
 
 /*--------------------------------------------------------------------------
 
@@ -1638,6 +1627,13 @@ Hseek(int32 access_id, int32 offset, intn origin)
     CONSTR(FUNC, "Hseek");  /* for HERROR */
     accrec_t   *access_rec;     /* access record */
     intn old_offset=offset;     /* save for later potential use */
+    filerec_t  *file_rec; /* file record */
+#ifdef OLD_WAY
+    int32       file_off; /* offset in the file we are at currently */
+    int32       file_end; /* length of the file */
+#endif /* OLD_WAY */
+    int32       data_len; /* length of the data we are checking */
+    int32       data_off; /* offset of the data we are checking */
 
     /* clear error stack and check validity of this access id */
     HEclear();
@@ -1669,14 +1665,6 @@ Hseek(int32 access_id, int32 offset, intn origin)
     if (access_rec->appendable &&
         offset >= access_rec->block->ddlist[access_rec->idx].length)
       {
-          filerec_t  *file_rec; /* file record */
-#ifdef OLD_WAY
-          int32       file_off; /* offset in the file we are at currently */
-          int32       file_end; /* length of the file */
-#endif /* OLD_WAY */
-          int32       data_len; /* length of the data we are checking */
-          int32       data_off; /* offset of the data we are checking */
-
           /* get the offset and length of the dataset */
           data_len = access_rec->block->ddlist[access_rec->idx].length;
           data_off = access_rec->block->ddlist[access_rec->idx].offset;
@@ -1688,11 +1676,13 @@ Hseek(int32 access_id, int32 offset, intn origin)
           file_end = HI_TELL(file_rec->file);
           HI_SEEK(file_rec->file, file_off);    /* restore the previous position */
 #else /* !OLD_WAY */
+
 #ifdef TESTING
     printf("Hseek: file_rec->f_end_off=%d\n",file_rec->f_end_off);
 #endif
           if (data_len + data_off != file_rec->f_end_off)
 #endif /* !OLD_WAY */
+
 #ifdef OLD_WAY
           if (data_len + data_off != file_end)
 #endif
@@ -1892,6 +1882,7 @@ Hwrite(int32 access_id, int32 length, const VOIDP data)
           printf("Hwrite(): appending to a dataset, ok to append\n");
 #endif
       }     /* end if */
+
     /* seek and write data */
     if (HI_SEEK(file_rec->file, access_rec->posn + dd->offset) == FAIL)
         HRETURN_ERROR(DFE_SEEKERROR, FAIL);
@@ -2326,13 +2317,6 @@ HIupdate_dd(filerec_t * file_rec, ddblock_t * block, int32 idx, char *FUNC)
           if (HI_SEEK(file_rec->file, offset) == FAIL)
               HRETURN_ERROR(DFE_SEEKERROR, FAIL);
 
-#ifdef OLD_WAY
-          /* Check if temproray buffer has been allocated */
-          if (ptbuf == NULL)
-              if ((ptbuf = (uint8 *) HDgetspace(TBUF_SZ * sizeof(uint8))) == NULL)
-                              HRETURN_ERROR(DFE_NOSPACE, FAIL);
-#endif
-
           p = ptbuf;
           UINT16ENCODE(p, block->ddlist[idx].tag);
           UINT16ENCODE(p, block->ddlist[idx].ref);
@@ -2381,7 +2365,6 @@ Hdeldd(int32 file_id, uint16 tag, uint16 ref)
     int32       idx;            /* dd list index of deleted dd */
 
     /* clear error stack and check validity of file record id */
-
     HEclear();
     file_rec = FID2REC(file_id);
     if (BADFREC(file_rec) || tag == DFTAG_WILDCARD || ref == DFREF_WILDCARD)
@@ -2432,7 +2415,6 @@ Hnewref(int32 file_id)
     uint16      ref;            /* the new ref */
 
     /* clear error stack and check validity of file record id */
-
     HEclear();
     file_rec = FID2REC(file_id);
     if (BADFREC(file_rec))
@@ -2444,7 +2426,6 @@ Hnewref(int32 file_id)
         return ++(file_rec->maxref);
 
     /* otherwise, search for an empty ref */
-
     /* incredibly slow but unlikely situation */
     for (ref = 1; ref < MAX_REF; ref++)
       {
@@ -2530,7 +2511,6 @@ Htrunc(int32 aid, int32 trunc_len)
     accrec_t   *access_rec;     /* access record */
 
     /* clear error stack and check validity of access id */
-
     HEclear();
     access_rec = AID2REC(aid);
     if (access_rec == (accrec_t *) NULL || !access_rec->used
@@ -2634,7 +2614,6 @@ Hcache(int32 file_id, intn cache_on)
       } /* end if */
     else
       {
-
         /* check whether to flush the file info */
         if (cache_on == FALSE && (file_rec->cache && file_rec->dirty))
           {
@@ -2781,7 +2760,6 @@ HIchangedd(dd_t *datadd, ddblock_t * block, int idx, int16 special,
 
     /* go through access records to look for converted dd,
        and then update the matching records */
-
     for (i = 0; i < MAX_FILE; i++)
         if (access_records[i].used)
           {
@@ -3022,16 +3000,6 @@ HIget_function_table(accrec_t * access_rec, char *FUNC)
     filerec_t    *file_rec;       /* file record */
     uint8        *p;              /* tmp buf */
     register int i;               /* loop index */
-
-#ifdef OLD_WAY
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
-          ptbuf = (uint8 *) HDgetspace(TBUF_SZ * sizeof(uint8));
-          if (ptbuf == NULL)
-              HRETURN_ERROR(DFE_NOSPACE, NULL);
-      }
-#endif
 
     /* read in the special code in the special elt */
     dd = &access_rec->block->ddlist[access_rec->idx];
@@ -3730,16 +3698,6 @@ HInew_dd_block(filerec_t * file_rec, int16 ndds, char *FUNC)
     block->next = (ddblock_t *) NULL;
     block->nextoffset = 0;
 
-#ifdef OLD_WAY
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
-          ptbuf = (uint8 *) HDgetspace(TBUF_SZ * sizeof(uint8));
-          if (ptbuf == NULL)
-              HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
-#endif
-
     /* get room for the new DD block in the file */
     if ((nextoffset = HPgetdiskblock(file_rec, NDDS_SZ + OFFSET_SZ + (ndds * DD_SZ), TRUE))
         == FAIL)
@@ -3850,16 +3808,6 @@ HIfill_file_rec(filerec_t * file_rec, char *FUNC)
     register intn ndds, i, idx; /* Temporary integers. */
     uint32      end_off = 0;    /* offset of the end of the file */
 
-#ifdef OLD_WAY
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
-          ptbuf = (uint8 *) HDgetspace(TBUF_SZ * sizeof(uint8));
-          if (ptbuf == NULL)
-              HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
-#endif
-
     /* Alloc start of linked list of ddblocks. */
     file_rec->ddhead = (ddblock_t *) HDgetspace(sizeof(ddblock_t));
     if (file_rec->ddhead == (ddblock_t *) NULL)
@@ -3884,7 +3832,6 @@ HIfill_file_rec(filerec_t * file_rec, char *FUNC)
     file_rec->maxref = 0;
     for (;;)
       {
-
           /* Read in the start of this dd block.
              Read data consists of ndds (number of dd's in this block) and
              offset (offset to the next ddblock). */
@@ -3923,20 +3870,18 @@ HIfill_file_rec(filerec_t * file_rec, char *FUNC)
               n = ndds;
 
           /* Index of current dd in ddlist of this ddblock is 0. */
-
           idx = 0;
           while (ndds > 0)
             {
                 /* ndds is the remaining number of dd's
-                   to be read in this block. */
+                 *  to be read in this block. 
+                 */
 
                 /* Read in a chunk of dd's from the file. */
-
                 if (HI_READ(file_rec->file, ptbuf, n * DD_SZ) == FAIL)
                     HRETURN_ERROR(DFE_READERROR, FAIL);
 
                 /* decode the dd's */
-
                 p = ptbuf;
                 for (i = 0; i < n; i++, idx++)
                   {
