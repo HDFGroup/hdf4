@@ -10,7 +10,7 @@
  *                                                                          *
  ****************************************************************************/
 
-#include "hdf.h"
+#include <hdf.h>
 #include "tutils.h"
 
 #define  FILE_NAME8     "RI_8_sziped.hdf"
@@ -800,17 +800,232 @@ test_szip_RIfl64bit()
 
 }  /* end of test_szip_RIfl64bit */
 
+/*
+* This function tests GR chunking write/read operations for the
+* szip compressions
+*/                    
+#define  CHKSZIPFILE	"RIchunkedsziped.hdf"
+#define  WIDTH_CH	10    /* number of columns in the image */
+#define  LENGTH_CH	 6    /* number of rows in the image */
+
+static void 
+test_szip_chunk()
+{
+
+    /************************* Variable declaration **************************/
+
+    intn  status;         /* status for functions returning an intn */
+    int32 file_id,        /* HDF file identifier */
+          gr_id,          /* GR interface identifier */
+          ri_id,       /* raster image identifier */
+          origin[2],      /* start position to write for each dimension */
+          dim_sizes[2],   /* dimension sizes of the image array */
+          interlace_mode, /* interlace mode of the image */
+          data_type,      /* data type of the image data */
+          comp_flag,      /* compression flag */
+          index,
+	  pixels_per_scanline;
+    int32 start[2],
+          stride[2],
+          edge[2];
+    comp_info cinfo_out;    /* Compression parameters - union */
+    comp_coder_t comp_type;
+    int8 data_out[N_COMPS*LENGTH_CH*WIDTH_CH];
+    char *image_name = "Image_chunked_sziped";
+    HDF_CHUNK_DEF chunk_def;
+    int8 chunk_buf[18];
+
+    /* 
+     * Initialize data for RI
+     */
+    int8 chunk00[] = {10, 11, 12, 13, 14, 15,
+                      20, 21, 22, 23, 24, 25,
+                      30, 31, 32, 33, 34, 35 };
+ 
+ 
+    int8 chunk01[] = {40, 41, 42, 43, 44, 45,
+                      50, 51, 52, 53, 54, 55,
+                      60, 61, 62, 63, 64, 65};
+ 
+    int8 chunk14[] = {70, 71, 72, 73, 74, 75,
+                      80, 81, 82, 83, 84, 85,
+                      90, 91, 92, 93, 94, 95};
+
+    int8 data[]    = {
+		10, 11, 12, 13, 14, 15, 40, 41, 42, 43, 44, 45,  0,
+                 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
+		 0,  0,  0,  0, 20, 21, 22, 23, 24, 25, 50, 51, 52, 
+		53, 54, 55,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  
+		 0,  0,  0,  0,  0,  0,  0,  0, 30, 31, 32, 33, 34, 
+		35, 60, 61, 62, 63, 64, 65,  0,  0,  0,  0,  0,  0,  
+		 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  
+		 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  
+		 0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 70, 71, 72, 
+		73, 74, 75,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  
+		 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  
+		 0, 80, 81, 82, 83, 84, 85,  0,  0,  0,  0,  0,  0,  
+		 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  
+		 0,  0,  0,  0,  0, 90, 91, 92, 93, 94, 95};
+
+
+    /********************** End of variable declaration **********************/
+
+    /* Create and open the file for chunked and sziped data. */
+    file_id = Hopen (CHKSZIPFILE, DFACC_CREATE, 0);
+    CHECK(file_id, FAIL, "Hopen");
+
+    /* Initialize the GR interface. */
+    gr_id = GRstart (file_id);
+    CHECK(gr_id, FAIL, "GRstart");
+
+    /* Set the data type, interlace mode, and dimensions of the image. */
+    data_type = DFNT_INT8;
+    interlace_mode = MFGR_INTERLACE_PIXEL;
+    dim_sizes[0] = LENGTH_CH;
+    dim_sizes[1] = WIDTH_CH;
+ 
+    /* Create the raster image array. */
+    ri_id = GRcreate (gr_id, image_name, N_COMPS, data_type, 
+                      interlace_mode, dim_sizes);
+    CHECK(ri_id, FAIL, "GRcreate");
+ 
+    /* Create chunked image array. */
+    comp_flag = HDF_CHUNK | HDF_COMP;
+    chunk_def.comp.chunk_lengths[0] = 3;
+    chunk_def.comp.chunk_lengths[1] = 2;
+    chunk_def.comp.comp_type = COMP_CODE_SZIP;
+    pixels_per_scanline = 2*N_COMPS;
+    chunk_def.comp.cinfo.szip.pixels = 3*2*N_COMPS;
+    chunk_def.comp.cinfo.szip.pixels_per_block = 2;
+    if(pixels_per_scanline >=2048)
+         chunk_def.comp.cinfo.szip.pixels_per_scanline = 512;
+    else
+         chunk_def.comp.cinfo.szip.pixels_per_scanline = pixels_per_scanline;
+
+    chunk_def.comp.cinfo.szip.options_mask = NN_OPTION_MASK;
+    chunk_def.comp.cinfo.szip.options_mask |= MSB_OPTION_MASK;
+    chunk_def.comp.cinfo.szip.options_mask |= RAW_OPTION_MASK;
+    chunk_def.comp.cinfo.szip.bits_per_pixel = 8;
+ 
+    status = GRsetchunk(ri_id, chunk_def, comp_flag);
+    CHECK(status, FAIL, "GRsetchunk");
+
+    /* Write first data chunk ( 0, 0 ). */
+    origin[0] = origin[1] = 0;
+    status = GRwritechunk(ri_id, origin, (VOIDP)chunk00);
+    CHECK(status, FAIL, "GRwritechunk");
+ 
+    /* Write second data chunk ( 0, 1 ). */
+    origin[0] = 0; origin[1] = 1;
+    status = GRwritechunk(ri_id, origin, (VOIDP)chunk01);
+    CHECK(status, FAIL, "GRwritechunk");
+
+    /* Write third data chunk ( 1, 4 ). */
+    origin[0] = 1; origin[1] = 4;
+    status = GRwritechunk(ri_id, origin, (VOIDP)chunk14);
+    CHECK(status, FAIL, "GRwritechunk");
+
+    /* Terminate accesses and close the HDF file. */
+    status = GRendaccess (ri_id);
+    CHECK(status, FAIL, "GRendaccess");
+    status = GRend (gr_id);
+    CHECK(status, FAIL, "GRend");
+    status = Hclose (file_id);
+    CHECK(status, FAIL, "Hclose");
+
+    /*
+     * Verify the compressed data
+     */
+
+    /* Reopen the file.  */
+    file_id = Hopen (CHKSZIPFILE, DFACC_WRITE, 0); 
+    CHECK(file_id, FAIL, "Hopen");
+
+    /* Initialize the GR interface. */
+    gr_id = GRstart (file_id);
+    CHECK(gr_id, FAIL, "GRstart");
+ 
+    /* Find the index of the specified image. */
+    index = GRnametoindex(gr_id, image_name);
+    CHECK(index, FAIL, "GRnametoindex");
+   
+    /* Select the image. */
+    ri_id = GRselect(gr_id, index);
+    CHECK(ri_id, FAIL, "GRselect");
+
+    /* Get and verify the image's compression information. */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
+    HDmemset(&cinfo_out,  0, sizeof(cinfo_out)) ;
+
+    status = GRgetcompress(ri_id, &comp_type, &cinfo_out);
+    CHECK(status, FAIL, "GRsetcompress");
+    VERIFY(comp_type, COMP_CODE_SZIP, "GRgetcompress");
+
+    /* Read first chunk back and compare with input chunk. */
+    origin[0] = 0; origin[1] = 0;
+    status = GRreadchunk(ri_id, origin, (VOIDP)chunk_buf);
+    CHECK(status, FAIL, "GRreadchunk");
+    if (0 != HDmemcmp(chunk_buf, chunk00 , sizeof(chunk00)))
+    {
+	printf("Error in reading chunk 00\n" );
+        num_errs++;
+    }
+
+    /* Read second chunk back and compare with input chunk. */
+    origin[0] = 0; origin[1] = 1;
+    status = GRreadchunk(ri_id, origin, (VOIDP)chunk_buf);
+    CHECK(status, FAIL, "GRreadchunk");
+    if (0 != HDmemcmp(chunk_buf, chunk01 , sizeof(chunk01)))
+    {
+        printf("Error in reading chunk 01\n" );
+        num_errs++;
+    }
+
+    /* Read third chunk back and compare with input chunk. */
+    origin[0] = 1; origin[1] = 4;
+    status = GRreadchunk(ri_id, origin, (VOIDP)chunk_buf);
+    CHECK(status, FAIL, "GRreadchunk");
+    if (0 != HDmemcmp(chunk_buf, chunk14 , sizeof(chunk14)))
+    {
+        printf("Error in reading chunk 14\n" );
+        num_errs++;
+    }
+
+    /* Read the whole image. */
+    start[0] = start[1] = 0;
+    stride[0] = stride[1] = 1;
+    edge[0] = LENGTH_CH;
+    edge[1] = WIDTH_CH;
+    status = GRreadimage(ri_id, start, stride, edge, (VOIDP)data_out);
+    CHECK(status, FAIL, "GRreadimage");
+    if (0!= HDmemcmp(data_out, data, sizeof(data)))
+    {
+        printf("Error in reading the whole image \n" );
+        num_errs++;
+    }
+
+    /* Terminate accesses and close the HDF file. */
+    status = GRendaccess (ri_id);
+    CHECK(status, FAIL, "GRendaccess");
+    status = GRend (gr_id);
+    CHECK(status, FAIL, "GRend");
+    status = Hclose (file_id);
+    CHECK(status, FAIL, "Hclose");
+}  /* end of test_szip_chunk */
+
 /****************************************************************
- * **
- * **  test_mgr_szip(): SZIP Compression tests
- * **
- * **  IX. Compressed image tests
- * **      A. Read/Write szip compressed image with 8-bit integer data type
- * **      B. Read/Write szip compressed image with 16-bit integer data type
- * **      C. Read/Write szip compressed image with 32-bit integer data type
- * **      D. Read/Write szip compressed image with 32-bit floating point data type
- * **      E. Read/Write szip compressed image with 64-bit floating point data type
- * **
+ * 
+ *   test_mgr_szip(): SZIP Compression tests
+ * 
+ *   XIV. GR write/read szip compression tests with different data types
+ *        and with chunked data
+ *       A. Write/Read szip compressed image with 8-bit integer data type
+ *       B. Write/Read szip compressed image with 16-bit integer data type
+ *       C. Write/Read szip compressed image with 32-bit integer data type
+ *       D. Write/Read szip compressed image with 32-bit floating point data type
+ *       E. Write/Read szip compressed image with 64-bit floating point data type
+ *       F. Write/Read image with chunked and sziped data
+ * 
  * ****************************************************************/
 extern void
 test_mgr_szip()
@@ -823,5 +1038,5 @@ test_mgr_szip()
     test_szip_RI32bit();
     test_szip_RIfl32bit();
     test_szip_RIfl64bit();
+    test_szip_chunk();
 } 
-

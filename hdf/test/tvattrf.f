@@ -39,7 +39,6 @@ C Output file: tvattrf.hdf
 
       integer number_failed
 
-      character*20 myname, ofn
       integer len_in
       character*1024 ifn_out
       character*20 myname, ifn, ofn

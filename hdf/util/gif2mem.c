@@ -24,7 +24,7 @@
 #include "gif.h"
 #include <hdf.h>
 
-#define GIF_VERSION                     "1.00"
+#define VERSION                     "1.00"
 extern int EndianOrder;
 
 GIFTOMEM
