@@ -193,11 +193,19 @@ nvsfcgca(intf *vsid,intf *findex,intf *aindex,_fcd values,intf *lvalues)
 {
     intf ret;
     int32 cfindex;
+    int32 count, i;
+    char * buf;
 
+    buf = _fcdtocp(values);
     cfindex = (*findex == -1)? (int32)_HDF_ENTIRE_VDATA : *findex;
-    ret = (intf )VSgetattr((int32) *vsid, (int32) cfindex, (int32) *aindex,
-                    (VOIDP) _fcdtocp(values));
-    ret = HDc2fstr((char *)_fcdtocp(values), *lvalues);
+    ret = (intf )VSgetattr((int32) *vsid, cfindex, (int32) *aindex,
+                    (VOIDP) buf);
+    if (ret == FAIL) return(FAIL);
+    /* get the number of chars attribute has */
+    if (VSattrinfo((int32) *vsid, cfindex, (int32) *aindex, 
+        NULL, NULL, &count, NULL) == FAIL) return (FAIL); 
+    for (i = count; i < *lvalues; i++)
+        buf[i] = ' ';
     return(ret);
 }
 
