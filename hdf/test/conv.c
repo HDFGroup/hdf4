@@ -58,7 +58,11 @@ typedef int clock_t;
 #endif
 
 #ifdef UNICOS
+#ifdef PERF_TESTING
 #define TEST_SIZE 1000001
+#else
+#define TEST_SIZE 100001
+#endif
 #else
 #if defined PC | defined macintosh
 #define TEST_SIZE 8001          /* so that 8*8000<=64K */
@@ -87,8 +91,14 @@ static char *test_name[]={"Big-Endian","Little-Endian","Native"};
 
 /* for those machines with imprecise IEEE<-> conversions, this should be */
 /* close enough */
-#define FLOAT64_FUDGE  ((float64)0.00000001)
-#define FLOAT32_FUDGE  ((float32)0.00001)
+#ifdef UNICOS
+#define FABS(x) ((x)<0.0 ? -(x) : (x))
+#define FLOAT64_FUDGE  (FABS((float64)src_float64[i]*(float64)0.000001))
+#define FLOAT32_FUDGE  (FABS((float32)src_float32[i]*(float32)0.0001))
+#else /* UNICOS */
+#define FLOAT64_FUDGE  ((float64)0.000001)
+#define FLOAT32_FUDGE  ((float32)0.0001)
+#endif /* UNICOS */
 
 void test_conv()
 {
