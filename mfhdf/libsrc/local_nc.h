@@ -20,7 +20,13 @@
 #ifdef VMS
 #    define  STDC_INCLUDES
 #endif   /* VMS */
+#ifdef __ultrix
+#define GCC_FIX
+#endif /* __ultrix */
 #include	<rpc/types.h>
+#ifdef __ultrix
+#undef GCC_FIX
+#endif /* __ultrix */
 #include	<rpc/xdr.h>
 #else
 #if defined(macintosh) | defined (THINK_C)
