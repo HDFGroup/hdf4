@@ -2,11 +2,14 @@
 $Header$
 
 $Log$
-Revision 1.14  1993/05/19 20:05:12  chouck
-Moved general interest VSet info out of vg.h and into hdf.h
-Removed OLD_WAY parts of vproto.h
-Fixed a problem in DFfindnextref()
+Revision 1.15  1993/07/14 11:55:53  koziol
+Fixed memory leaks in freeing trees
 
+ * Revision 1.14  1993/05/19  20:05:12  chouck
+ * Moved general interest VSet info out of vg.h and into hdf.h
+ * Removed OLD_WAY parts of vproto.h
+ * Fixed a problem in DFfindnextref()
+ *
  * Revision 1.13  1993/04/26  17:16:22  chouck
  * Fixed minor problem with C++ statements
  *
@@ -145,7 +148,7 @@ extern intn vcompare
 extern intn vcompareref
     PROTO((VOIDP k1,VOIDP k2,intn cmparg));
 
-extern VOID vtfreenode
+extern VOID vdestroynode
     PROTO((VOIDP n));
 
 extern VOID vtfreekey
@@ -262,6 +265,9 @@ extern int32 VHmakegroup
 
 extern int32 vexistvs
     PROTO((HFILEID f, uint16 vsid));
+
+extern VOID vsdestroynode
+    PROTO((VOIDP n));
 
 extern int32 VSattach
     PROTO((HFILEID f, int32 vsid, char _HUGE *accesstype));

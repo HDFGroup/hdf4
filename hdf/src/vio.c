@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.15  1993/04/22 16:46:58  koziol
-Fixed a type in VSappendable
+Revision 1.16  1993/07/14 11:55:51  koziol
+Fixed memory leaks in freeing trees
 
+ * Revision 1.15  1993/04/22  16:46:58  koziol
+ * Fixed a type in VSappendable
+ *
  * Revision 1.14  1993/04/22  16:05:54  chouck
  * Minor Vset fixes
  *
@@ -457,6 +460,27 @@ int32   *size;  /* UNUSED, but retained for compatibility with vpackvs */
         
 } /* vunpackvs */
 
+/* ---------------------------- vsdestroynode ------------------------- */
+/*
+  Frees B-Tree nodes
+
+  *** Only called by B-tree routines, should _not_ be called externally ***
+*/
+#ifdef PROTOTYPE
+PUBLIC VOID vsdestroynode(VOIDP n)
+#else
+PUBLIC VOID vsdestroynode(n)
+VOIDP n;
+#endif
+{
+    VDATA       *vs;
+
+    vs=((vsinstance_t *)n)->vs;
+    if(vs!=NULL) 
+        HDfreespace((VOIDP)vs);
+    HDfreespace((VOIDP)n);
+}  /* vsdestroynode */
+
 /* ------------------------------------------------------------------ */
 
 
@@ -857,7 +881,7 @@ int32 vkey;
 #endif
 
         Hendaccess (vs->aid);
-#if 0
+#ifdef OLD_WAY
         w->vs = NULL; /* detach vs from vsdir */
         HDfreespace ((VOIDP)vs);
 #endif

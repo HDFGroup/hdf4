@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.19  1993/05/04 18:56:24  georgev
-Fixed a minor cast problem on the Mac.
+Revision 1.20  1993/07/14 11:55:47  koziol
+Fixed memory leaks in freeing trees
 
+ * Revision 1.19  1993/05/04  18:56:24  georgev
+ * Fixed a minor cast problem on the Mac.
+ *
  * Revision 1.18  1993/04/19  22:48:32  koziol
  * General Code Cleanup to reduce/remove errors on the PC
  *
@@ -168,7 +171,7 @@ HFILEID f;
         HQuerytagref (aid, &tag, &ref);
         if (NULL== (v = (vginstance_t*) HDgetspace (sizeof(vginstance_t)))) {
             HERROR(DFE_NOSPACE);
-            tbbtdfree(vf->vgtree, vtfreenode, NULL);
+            tbbtdfree(vf->vgtree, vdestroynode, NULL);
             return(FAIL);
           }
           
@@ -203,7 +206,7 @@ HFILEID f;
     vf->vstabn = 0;
     vf->vstree = tbbtdmake(vcompare, sizeof(int32));
     if(vf->vstree==NULL) {
-        tbbtdfree(vf->vgtree, vtfreenode, NULL);
+        tbbtdfree(vf->vgtree, vdestroynode, NULL);
         return(FAIL);
       } /* end if */
 #endif
@@ -213,8 +216,8 @@ HFILEID f;
         HQuerytagref (aid, &tag, &ref);
         if (NULL == (w = (vsinstance_t*) HDgetspace (sizeof(vsinstance_t)))) {
             HERROR(DFE_NOSPACE);
-            tbbtdfree(vf->vgtree, vtfreenode, NULL);
-            tbbtdfree(vf->vstree, vtfreenode, NULL);
+            tbbtdfree(vf->vgtree, vdestroynode, NULL);
+            tbbtdfree(vf->vstree, vsdestroynode, NULL);
             return(FAIL);
           }
           
@@ -243,8 +246,8 @@ HFILEID f;
 #endif
             HERROR(DFE_BADOPEN);
             HEreport("This file is incompatible with the current release");
-            tbbtdfree(vf->vgtree, vtfreenode, NULL);
-            tbbtdfree(vf->vstree, vtfreenode, NULL);
+            tbbtdfree(vf->vgtree, vdestroynode, NULL);
+            tbbtdfree(vf->vstree, vsdestroynode, NULL);
             return(FAIL);
           }
         
@@ -308,8 +311,8 @@ HFILEID f;
     vf->vgtab.next = NULL;
     vf->vstab.next = NULL;
 #else
-    tbbtdfree(vf->vgtree, vtfreenode, NULL);
-    tbbtdfree(vf->vstree, vtfreenode, NULL);
+    tbbtdfree(vf->vgtree, vdestroynode, NULL);
+    tbbtdfree(vf->vstree, vsdestroynode, NULL);
 #endif
 }  /* Remove_vfile */
 
@@ -351,21 +354,29 @@ VOIDP k1;
     printf("Ptr=%p, key=%d, ref=%d\n",k1,((vginstance_t *)k1)->key,((vginstance_t *)k1)->ref);
 }  /* vprint */
 
-/* ---------------------------- vtfreenode ------------------------- */
+/* ---------------------------- vdestroynode ------------------------- */
 /*
   Frees B-Tree nodes
 
   *** Only called by B-tree routines, should _not_ be called externally ***
 */
 #ifdef PROTOTYPE
-PUBLIC VOID vtfreenode(VOIDP n)
+PUBLIC VOID vdestroynode(VOIDP n)
 #else
-PUBLIC VOID vtfreenode(n)
+PUBLIC VOID vdestroynode(n)
 VOIDP n;
 #endif
 {
+    VGROUP       *vg;
+
+    vg=((vginstance_t *)n)->vg;
+    if(vg!=NULL) {
+        HDfreespace((VOIDP)vg->tag);
+        HDfreespace((VOIDP)vg->ref);
+        HDfreespace((VOIDP)vg);
+      } /* end if */
     HDfreespace((VOIDP)n);
-}  /* vtfreenode */
+}  /* vdestroynode */
 
 #ifdef NOTNEEDED
 /* ---------------------------- vtfreekey ------------------------- */
@@ -899,11 +910,13 @@ int32 vkey;
     return;    /* ok */
   
   
+#ifdef OLD_WAY
   v->vg = NULL;             /* detach vg from vgdir */
   
   HDfreespace((VOIDP)vg->tag);
   HDfreespace((VOIDP)vg->ref);
   HDfreespace((VOIDP)vg);
+#endif
   
   return; /* ok */
 } /* Vdetach */
