@@ -65,7 +65,7 @@ test_tsdstr(void)
       {
           for (j = 0; j < 10; j++)
             {
-                f32[i][j] = (i * 10) + j;   /* range: 0 ~ 4-billion */
+                f32[i][j] = (float32)((i * 10) + j);   /* range: 0 ~ 4-billion */
             }
       }
 

@@ -96,7 +96,6 @@ extern VOID dumpentryKey(VOID *key, VOID *data);
 extern VOID dumpfileKey(VOID *key, VOID *data);
 extern intn ANIfidcmp(VOIDP i, VOIDP j, intn value);
 extern intn ANIanncmp(VOIDP i, VOIDP j, intn value);
-extern int32 ANdestroy(void);
 
 /*-----------------------------------------------------------------------------
  *                          Internal Routines

@@ -96,8 +96,6 @@ extinfo_t;
 /* forward declaration of the functions provided in this module */
 PRIVATE int32 HXIstaccess
             (accrec_t * access_rec, int16 access);
-PRIVATE char *HXPbuildfilename
-	(const char *ext_fname, const intn acc_mode);
 
 /* ext_funcs -- table of the accessing functions of the external
    data element function modules.  The position of each function in
@@ -161,7 +159,6 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     uint16      special_tag;    /* special version of tag */
     uint8       local_ptbuf[14 + MAX_PATH_LEN];     /* temp working buffer */
     int32       file_off;       /* offset in the file we are at currently */
-    char	*fname;		/* filename built from external filename */
 
     /* clear error stack and validate args */
     HEclear();
@@ -217,23 +214,17 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
       }
     dd = &access_rec->block->ddlist[access_rec->idx];
 
-    /* build the customized external file name. */
-    if (!(fname = HXPbuildfilename(extern_file_name, DFACC_CREATE)))
-        HRETURN_ERROR(DFE_BADOPEN, FAIL);
-
     /* create the external file */
-    file_external = HI_OPEN(fname, DFACC_WRITE);
+    file_external = HI_OPEN(extern_file_name, DFACC_WRITE);
     if (OPENERR(file_external))
-    {
-        file_external = HI_CREATE(fname);
-        if (OPENERR(file_external))
-	{
-	    access_rec->used = FALSE;
-	    HDfree(fname);
-	    HRETURN_ERROR(DFE_BADOPEN, FAIL);
-	}
-    }
-    HDfree(fname);
+      {
+          file_external = HI_CREATE(extern_file_name);
+          if (OPENERR(file_external))
+            {
+                access_rec->used = FALSE;
+                HRETURN_ERROR(DFE_BADOPEN, FAIL);
+            }
+      }
 
     /* set up the special element information and write it to file */
     access_rec->special_info = (VOIDP) HDmalloc((uint32) sizeof(extinfo_t));
@@ -422,7 +413,6 @@ HXPsetaccesstype(accrec_t * access_rec)
     int32       para_extfile_id;    /* parallel external file id */
 #endif /* CM5 */
     extinfo_t  *info;           /* special element information */
-    char	*fname;
 
     /* clear error stack and validate args */
     HEclear();
@@ -431,6 +421,7 @@ HXPsetaccesstype(accrec_t * access_rec)
     if (!access_rec)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
+    /* set up the special element information and write it to file */
     info = (extinfo_t *) access_rec->special_info;
     if (!info)
       {
@@ -438,48 +429,40 @@ HXPsetaccesstype(accrec_t * access_rec)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
 
-    /* build the customized external file name. */
-    if (!(fname = HXPbuildfilename(info->extern_file_name, DFACC_OLD)))
-        HRETURN_ERROR(DFE_BADOPEN, FAIL);
-
+    /* Not sure what to do here */
     /* Open the external file for the correct access type */
     switch (access_rec->access_type)
       {
           case DFACC_SERIAL:
-              file_external = HI_OPEN(fname, DFACC_WRITE);
+              file_external = HI_OPEN(info->extern_file_name, DFACC_WRITE);
               if (OPENERR(file_external))
                 {
-                    file_external = HI_CREATE(fname);
+                    file_external = HI_CREATE(info->extern_file_name);
                     if (OPENERR(file_external))
                       {
                           access_rec->used = FALSE;
-			  HDfree(fname);
                           HRETURN_ERROR(DFE_BADOPEN, FAIL);
                       }
                 }
-	      HDfree(fname);
               info->file_external = file_external;
               break;
 #ifdef CM5
           case DFACC_PARALLEL:
-              para_extfile_id = CM_OPEN(fname, DFACC_WRITE);
+              para_extfile_id = CM_OPEN(info->extern_file_name, DFACC_WRITE);
               if (para_extfile_id == FAIL)
                 {
-                    para_extfile_id = CM_CREATE(fname);
+                    para_extfile_id = CM_CREATE(info->extern_file_name);
                     if (para_extfile_id == FAIL)
                       {
                           access_rec->used = FALSE;
-			  HDfree(fname);
                           HRETURN_ERROR(DFE_BADOPEN, FAIL);
                       }
                 }
-	      HDfree(fname);
               info->para_extfile_id = para_extfile_id;
               break;
 
 #endif /* CM5 */
           default:
-	      HDfree(fname);
               HRETURN_ERROR(DFE_BADOPEN, FAIL);
       }
 
@@ -707,24 +690,17 @@ HXPread(accrec_t * access_rec, int32 length, VOIDP data)
 
     /* see if the file is open, if not open it */
     if (!info->file_open)
-    {
-	char	*fname;
-
-	/* build the customized external file name. */
-	if (!(fname = HXPbuildfilename(info->extern_file_name, DFACC_OLD)))
-	    HRETURN_ERROR(DFE_BADOPEN, FAIL);
-
-	info->file_external = HI_OPEN(fname, access_rec->access);
-	HDfree(fname);
-	if (OPENERR(info->file_external))
-	{
-	    access_rec->used = FALSE;
-	    HERROR(DFE_BADOPEN);
-	    HEreport("Could not find external file %s\n", info->extern_file_name);
-	    return (FAIL);
-	}
-	info->file_open = TRUE;
-    }
+      {
+          info->file_external = HI_OPEN(info->extern_file_name, access_rec->access);
+          if (OPENERR(info->file_external))
+            {
+                access_rec->used = FALSE;
+                HERROR(DFE_BADOPEN);
+                HEreport("Could not find external file %s\n", info->extern_file_name);
+                return (FAIL);
+            }
+          info->file_open = TRUE;
+      }
 
     /* read it in from the file */
 #ifdef CM5
@@ -792,24 +768,17 @@ HXPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
 
     /* see if the file is open, if not open it */
     if (!info->file_open)
-    {
-	char *fname;
-
-	/* build the customized external file name. */
-	if (!(fname = HXPbuildfilename(info->extern_file_name, DFACC_OLD)))
-	    HRETURN_ERROR(DFE_BADOPEN, FAIL);
-
-	info->file_external = HI_OPEN(fname, access_rec->access);
-	HDfree(fname);
-        if (OPENERR(info->file_external))
+      {
+          info->file_external = HI_OPEN(info->extern_file_name, access_rec->access);
+          if (OPENERR(info->file_external))
             {
                 access_rec->used = FALSE;
                 HERROR(DFE_BADOPEN);
                 HEreport("Could not find external file %s\n", info->extern_file_name);
                 return (FAIL);
             }
-        info->file_open = TRUE;
-    }
+          info->file_open = TRUE;
+      }
 
     /* write the data onto file */
 #ifdef CM5
@@ -921,7 +890,7 @@ HXPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
     if (pposn)
         *pposn = access_rec->posn;
     if (paccess)
-        *paccess = access_rec->access;
+        *paccess = (int16)access_rec->access;
     if (pspecial)
         *pspecial = access_rec->special;
 
@@ -1147,7 +1116,6 @@ RETURNS
 DESCRIPTION
    Set up the directory variable for creating external file.
    The directory content is copied into HXsetcreatedir area.
-   If dir is NULL, the directory variable is unset.
    If error encountered during setup, previous value of createdir
    is not changed.
 
@@ -1158,13 +1126,11 @@ HXsetcreatedir(char *dir)
     char       *FUNC = "HXsetcreatedir";  /* for HERROR */
     char	*pt;
 
-    if (dir)
-    {
-	if (!(pt = HDstrdup(dir)))
-	    HRETURN_ERROR(DFE_NOSPACE, FAIL);
-    }
-    else
-	pt = dir;		/* will reset extcreatedir to NULL */
+    if (!dir)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if (!(pt = HDstrdup(dir)))
+	HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     if (extcreatedir)
 	HDfree(extcreatedir);
@@ -1184,7 +1150,6 @@ RETURNS
 DESCRIPTION
    Set up the directory variable for creating external file.
    The directory content is copied into HXsetdir area.
-   If dir is NULL, the directory variable is unset.
    If error encountered during setup, previous value of extdir
    is not changed.
 
@@ -1195,13 +1160,11 @@ HXsetdir(char *dir)
     char       *FUNC = "HXsetdir";  /* for HERROR */
     char	*pt;
 
-    if (dir)
-    {
-	if (!(pt = HDstrdup(dir)))
-	    HRETURN_ERROR(DFE_NOSPACE, FAIL);
-    }
-    else
-	pt = dir;		/* will reset extdir to NULL */
+    if (!dir)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if (!(pt = HDstrdup(dir)))
+	HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     if (extdir)
 	HDfree(extdir);
@@ -1231,9 +1194,9 @@ DESCRIPTION
 #define HDstrcpy3(s1, s2, s3, s4)	(HDstrcat(HDstrcat(HDstrcpy(s1, s2),s3),s4))
 #include <sys/stat.h>
 
-PRIVATE
+/* PRIVATE */
 char *
-HXPbuildfilename(const char *ext_fname, const intn acc_mode)
+HXPbuildfilename(char *ext_fname, const intn acc_mode)
 {
     char       *FUNC = "HXPbuildfilename";  /* for HERROR */
     int	        fname_len;		/* string length of the ext_fname */
@@ -1253,7 +1216,7 @@ HXPbuildfilename(const char *ext_fname, const intn acc_mode)
 
     if (!ext_fname)
         HRETURN_ERROR(DFE_ARGS, NULL);
-    fname = (char *) ext_fname;
+    fname = ext_fname;
 
     /* get the space for the final pathname */
     if (!(finalpath=HDmalloc(MAX_PATH_LEN)))

@@ -16,7 +16,7 @@ static char rcsid[] = "$Id$" ;
 #else /* not macintosh */
 #       ifndef VMS
 #   	include <sys/types.h>	/* for <netinet/in.h> on some systems */
-#   	ifndef MSDOS 
+#   	if !defined MSDOS & !defined WIN32
 #          include <netinet/in.h>	/* for htonl() */
 #   	endif
 #	endif

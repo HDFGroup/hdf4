@@ -748,7 +748,7 @@ if (poffset != NULL)
 if (pposn != NULL)
 	*pposn = access_rec->posn;
 if (paccess != NULL)
-	*paccess = access_rec->access;
+	*paccess = (int16)access_rec->access;
 if (pspecial != NULL)
 	*pspecial = 0;
 
@@ -1680,7 +1680,7 @@ data_off = access_rec->block->ddlist[access_rec->idx].offset;
 #ifdef TESTING
 printf("%s: file_rec->f_end_off=%d\n",FUNC,file_rec->f_end_off);
 #endif
-if (data_len + data_off == file_rec->f_end_off)  /* dataset at end? */
+if ((uint32)data_len + (uint32)data_off == file_rec->f_end_off)  /* dataset at end? */
 	return(SUCCEED);
 else 
 	return(FAIL);
@@ -1766,7 +1766,7 @@ if (access_rec->appendable &&
 #ifdef TESTING
 printf("Hseek: file_rec->f_end_off=%d\n",file_rec->f_end_off);
 #endif
-	  if (data_len + data_off != file_rec->f_end_off)
+	  if ((uint32)data_len + (uint32)data_off != file_rec->f_end_off)
 #endif /* !OLD_WAY */
 
 #ifdef OLD_WAY
@@ -1946,7 +1946,7 @@ if (access_rec->appendable && length + access_rec->posn > dd->length)
 #ifdef TESTING
 printf("Hwritee: file_rec->f_end_off=%d\n",file_rec->f_end_off);
 #endif
-	  if (data_len + data_off != file_rec->f_end_off)
+	  if ((uint32)data_len + (uint32)data_off != file_rec->f_end_off)
 		{   /* dataset at end? */
 	if(HLconvert(access_id,HDF_APPENDABLE_BLOCK_LEN, HDF_APPENDABLE_BLOCK_NUM)==FAIL)
 	  {
@@ -1994,7 +1994,7 @@ file_off = HI_TELL(file_rec->file);
 printf("Hwrite: file_rec->f_end_off=%d\n",file_rec->f_end_off);
 printf("Hwrite: file_off=%d\n",file_off);
 #endif
-if (file_off > file_rec->f_end_off)
+if ((uint32)file_off > file_rec->f_end_off)
   file_rec->f_end_off = file_off;
 
 /* update position of access in elt */
@@ -2430,7 +2430,7 @@ else
 /* sorry later... -QAK */
 if ((block->ddlist[idx].offset!=INVALID_OFFSET && 
 	block->ddlist[idx].length!=INVALID_LENGTH) &&
-	(block->ddlist[idx].offset + block->ddlist[idx].length)
+	((uint32)block->ddlist[idx].offset + (uint32)block->ddlist[idx].length)
 		> file_rec->f_end_off)
 	file_rec->f_end_off = block->ddlist[idx].offset + block->ddlist[idx].length;
 
@@ -2933,7 +2933,7 @@ if (HI_WRITE(file_rec->file, ptbuf, NDDS_SZ + OFFSET_SZ) == FAIL)
 	HRETURN_ERROR(DFE_WRITEERROR, FAIL);
 
 /* allocate and initialize dd list */
-list = block->ddlist = (dd_t *) HDmalloc((uint32) ndds * sizeof(dd_t));
+list = block->ddlist = (dd_t *) HDmalloc((uint32) ndds * DD_SZ);
 if (list == (dd_t *) NULL)
 	HRETURN_ERROR(DFE_NOSPACE, FAIL);
 for (i = 0; i < ndds; i++)
@@ -3818,7 +3818,7 @@ HInew_dd_block(filerec_t * file_rec, int16 ndds, const char *FUNC)
 
     /* set up the dd list of this dd block and put it in the file
        after the dd block header */
-    list = block->ddlist = (dd_t *) HDmalloc((uint32) ndds * sizeof(dd_t));
+    list = block->ddlist = (dd_t *) HDmalloc((uint32) ndds * DD_SZ);
     if (list == (dd_t *) NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
     for (i = 0; i < ndds; i++)
@@ -3949,7 +3949,7 @@ HIfill_file_rec(filerec_t * file_rec, const char *FUNC)
           /* Now that we know how many dd's are in this block,
              alloc memory for the records. */
           file_rec->ddlast->ddlist =
-              (dd_t *) HDmalloc((uint32) FILE_NDDS(file_rec) * sizeof(dd_t));
+              (dd_t *) HDmalloc((uint32) FILE_NDDS(file_rec) * DD_SZ);
           if (!file_rec->ddlast->ddlist)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
 

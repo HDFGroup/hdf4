@@ -63,10 +63,10 @@ extern      "C"
 #endif                          /* c_plusplus || __cplusplus */
 
 /* The maximum source character code: */
-#define MAXCHAR     255
+#define MAX_CHAR     255
 
 /* One greater than the maximum source character code: */
-#define SUCCMAX     (MAXCHAR+1)
+#define SUCCMAX     (MAX_CHAR+1)
 
 /* Twice the maximum source character code: */
 #define TWICEMAX    (2*SUCCMAX+1)

@@ -261,7 +261,7 @@ printf("bitcount=%d\n",++bitcount);
                 else    /* bit==-1, i.e. an error */
                     HRETURN_ERROR(DFE_CDECODE, FAIL);
             }
-          while (a <= MAXCHAR);
+          while (a <= MAX_CHAR);
 
           plain = a - SUCCMAX;
           HCIcskphuff_splay(skphuff_info, plain);
@@ -302,7 +302,7 @@ HCIcskphuff_encode(compinfo_t * info, int32 length, uint8 *buf)
     comp_coder_skphuff_info_t *skphuff_info;    /* ptr to skipping Huffman info */
     int32       orig_length;    /* original length to write */
     uint8       stack_ptr = 0;  /* pointer to the position on the stack */
-    intn        stack[MAXCHAR]; /* stack to store the bits generated */
+    intn        stack[MAX_CHAR]; /* stack to store the bits generated */
     uintn       a;              /* variable to record the position in the tree */
 
     skphuff_info = &(info->cinfo.coder_info.skphuff_info);

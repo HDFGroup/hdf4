@@ -315,7 +315,7 @@ Hbitwrite(int32 bitid, intn count, uint32 data)
 
     /* if the new bits will not fill up a byte, then just */
     /* merge the new bits into the current bits buffer */
-    if ((uintn) count < bitfile_rec->count)
+    if (count < bitfile_rec->count)
       {
           bitfile_rec->bits |= data << (bitfile_rec->count -= count);
           return (orig_count);
@@ -467,7 +467,7 @@ Hbitread(int32 bitid, intn count, uint32 *data)
 #endif
     /* if the request can be satisfied with just the */
     /* buffered bits then do the shift and return */
-    if ((uintn) count <= bitfile_rec->count)
+    if (count <= bitfile_rec->count)
       {
           *data = (bitfile_rec->bits >> (bitfile_rec->count -= count) & (uint32) maskc[count]);
           return (count);
@@ -602,12 +602,12 @@ Hbitseek(int32 bitid, int32 byte_offset, intn bit_offset)
 #endif
     if (byte_offset < 0 || bit_offset < 0 || bit_offset > (BITNUM - 1)
         || (bitfile_rec = BITID2REC(bitid)) == NULL
-        || (uint32) byte_offset > bitfile_rec->max_offset)
+        || byte_offset > bitfile_rec->max_offset)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     /* determine whether we need to seek to another block in the file */
-    new_block = ((uint32) byte_offset < bitfile_rec->block_offset
-         || (uint32) byte_offset >= bitfile_rec->block_offset + BITBUF_SIZE)
+    new_block = (byte_offset < bitfile_rec->block_offset
+         || byte_offset >= bitfile_rec->block_offset + BITBUF_SIZE)
         ? TRUE : FALSE;
 #ifdef TESTING
     printf("Hbitseek(): new_block=%s, block_offset=%d\n", (new_block ? "TRUE" : "FALSE"), bitfile_rec->block_offset);

@@ -1,93 +1,161 @@
-# Microsoft Visual C++ generated build script - Do not modify
+# Microsoft Visual C++ Generated NMAKE File, Format Version 2.00
+# ** DO NOT EDIT **
 
-PROJ = HDF24TO8
-DEBUG = 1
-PROGTYPE = 2
-CALLER = 
-ARGS = 
-DLLS = 
-ORIGIN = MSVCNT
-ORIGIN_VER = 1.00
-PROJPATH = D:\USERS\KOZIOL\HDF\UTIL\ 
-USEMFC = 0
-CC = cl
-CPP = cl
-CXX = cl
-CCREATEPCHFLAG = 
-CPPCREATEPCHFLAG = 
-CUSEPCHFLAG = 
-CPPUSEPCHFLAG = 
-FIRSTC = HDF24TO8.C
-FIRSTCPP = 
-RC = rc
-CFLAGS_D_DEXE32 = /nologo /W3 /Zi /YX /D "_DEBUG" /D "_X86_" /D "_CONSOLE" /D "WINNT" /FR /ML /Fd"HDF24TO8.PDB"   /Fp"HDF24TO8.PCH"
-CFLAGS_R_DEXE32 = /nologo /W3 /YX /O2 /D "NDEBUG" /D "_X86_" /D "_CONSOLE" /D "WINNT" /FR /ML /Fp"HDF24TO8.PCH"
-LFLAGS_D_DEXE32 = /NOLOGO /DEBUG /DEBUGTYPE:cv /SUBSYSTEM:console netapi32.lib
-LFLAGS_R_DEXE32 = /NOLOGO /SUBSYSTEM:console netapi32.lib
-LFLAGS_D_LIB32 = /NOLOGO
-LFLAGS_R_LIB32 = /NOLOGO
-LIBS_D_DEXE32 = 
-LIBS_R_DEXE32 = 
-RCFLAGS32 = 
-D_RCDEFINES32 = -d_DEBUG
-R_RCDEFINES32 = -dNDEBUG
-OBJS_EXT = 
-LIBS_EXT = ..\SRC\HDF33SRC.LIB 
-!if "$(DEBUG)" == "1"
-CFLAGS = $(CFLAGS_D_DEXE32)
-LFLAGS = $(LFLAGS_D_DEXE32)
-LIBS = $(LIBS_D_DEXE32)
-LFLAGS_LIB=$(LFLAGS_D_LIB32)
-MAPFILE_OPTION = 
-RCDEFINES = $(D_RCDEFINES32)
-!else
-CFLAGS = $(CFLAGS_R_DEXE32)
-LFLAGS = $(LFLAGS_R_DEXE32)
-LIBS = $(LIBS_R_DEXE32)
-MAPFILE_OPTION = 
-LFLAGS_LIB=$(LFLAGS_R_LIB32)
-RCDEFINES = $(R_RCDEFINES32)
-!endif
-SBRS = HDF24TO8.SBR
+# TARGTYPE "Win32 (x86) Console Application" 0x0103
 
+!IF "$(CFG)" == ""
+CFG=Win32 Debug
+!MESSAGE No configuration specified.  Defaulting to Win32 Debug.
+!ENDIF 
 
-HDF24TO8_DEP =  \
-	d:\msvcnt\include\sys\file.h \
-	d:\users\koziol\hdf\src\hdf.h \
-	d:\users\koziol\hdf\src\hdfi.h \
-	d:\users\koziol\hdf\src\dfivms.h \
-	d:\users\koziol\hdf\src\maldebug.h \
-	d:\users\koziol\hdf\src\hcomp.h \
-	d:\users\koziol\hdf\src\herr.h \
-	d:\users\koziol\hdf\src\hproto.h \
-	d:\users\koziol\hdf\src\vproto.h
+!IF "$(CFG)" != "Win32 Release" && "$(CFG)" != "Win32 Debug"
+!MESSAGE Invalid configuration "$(CFG)" specified.
+!MESSAGE You can specify a configuration when running NMAKE on this makefile
+!MESSAGE by defining the macro CFG on the command line.  For example:
+!MESSAGE 
+!MESSAGE NMAKE /f "hdf24to8.mak" CFG="Win32 Debug"
+!MESSAGE 
+!MESSAGE Possible choices for configuration are:
+!MESSAGE 
+!MESSAGE "Win32 Release" (based on "Win32 (x86) Console Application")
+!MESSAGE "Win32 Debug" (based on "Win32 (x86) Console Application")
+!MESSAGE 
+!ERROR An invalid configuration is specified.
+!ENDIF 
 
+################################################################################
+# Begin Project
+# PROP Target_Last_Scanned "Win32 Debug"
+CPP=cl.exe
+RSC=rc.exe
 
-HDF33SRC_DEP = 
+!IF  "$(CFG)" == "Win32 Release"
 
-all:	$(PROJ).EXE $(PROJ).BSC
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "WinRel"
+# PROP BASE Intermediate_Dir "WinRel"
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir ""
+# PROP Intermediate_Dir ""
+OUTDIR=.
+INTDIR=.
 
-HDF24TO8.OBJ:	HDF24TO8.C $(HDF24TO8_DEP)
-	$(CC) $(CFLAGS) $(CCREATEPCHFLAG) /c HDF24TO8.C
+ALL : $(OUTDIR)/hdf24to8.exe $(OUTDIR)/hdf24to8.bsc
 
-$(PROJ).EXE:	HDF24TO8.OBJ $(OBJS_EXT) $(LIBS_EXT)
-	echo >NUL @<<$(PROJ).CRF
-HDF24TO8.OBJ 
-$(OBJS_EXT)
--OUT:$(PROJ).EXE
-$(MAPFILE_OPTION)
-..\SRC\HDF33SRC.LIB
-$(LIBS)
-$(LIBS_EXT)
-$(DEFFILE_OPTION) -implib:$(PROJ).lib
+# ADD BASE CPP /nologo /W3 /GX /YX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /FR /c
+# ADD CPP /nologo /W3 /GX /YX /O2 /I "..\src" /I "..\jpeg" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /FR /c
+CPP_PROJ=/nologo /W3 /GX /YX /O2 /I "..\src" /I "..\jpeg" /D "WIN32" /D\
+ "NDEBUG" /D "_CONSOLE" /FR$(INTDIR)/ /Fp$(OUTDIR)/"hdf24to8.pch" /Fo$(INTDIR)/\
+ /c 
+CPP_OBJS=
+# ADD BASE RSC /l 0x409 /d "NDEBUG"
+# ADD RSC /l 0x409 /d "NDEBUG"
+BSC32=bscmake.exe
+BSC32_SBRS= \
+	$(INTDIR)/hdf24to8.sbr
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+BSC32_FLAGS=/nologo /o$(OUTDIR)/"hdf24to8.bsc" 
+
+$(OUTDIR)/hdf24to8.bsc : $(OUTDIR)  $(BSC32_SBRS)
+    $(BSC32) @<<
+  $(BSC32_FLAGS) $(BSC32_SBRS)
 <<
-	link $(LFLAGS) @$(PROJ).CRF
 
-run: $(PROJ).EXE
-	$(PROJ) $(RUNFLAGS)
+LINK32=link.exe
+DEF_FILE=
+LINK32_OBJS= \
+	$(INTDIR)/hdf24to8.obj
+# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NOLOGO /SUBSYSTEM:console /MACHINE:I386
+# ADD LINK32 advai32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ..\src\win32hdf.lib ..\jpeg\win32jpg.lib /NOLOGO /SUBSYSTEM:console /MACHINE:I386
+LINK32_FLAGS=advai32.lib kernel32.lib user32.lib gdi32.lib winspool.lib\
+ comdlg32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib\
+ odbccp32.lib ..\src\win32hdf.lib ..\jpeg\win32jpg.lib /NOLOGO\
+ /SUBSYSTEM:console /INCREMENTAL:no /PDB:$(OUTDIR)/"hdf24to8.pdb" /MACHINE:I386\
+ /OUT:$(OUTDIR)/"hdf24to8.exe" 
 
-
-$(PROJ).BSC: $(SBRS)
-	bscmake @<<
-/o$@ $(SBRS)
+$(OUTDIR)/hdf24to8.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
+    $(LINK32) @<<
+  $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
+
+!ELSEIF  "$(CFG)" == "Win32 Debug"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 1
+# PROP BASE Output_Dir "WinDebug"
+# PROP BASE Intermediate_Dir "WinDebug"
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 1
+# PROP Output_Dir ""
+# PROP Intermediate_Dir ""
+OUTDIR=.
+INTDIR=.
+
+ALL : $(OUTDIR)/hdf24to8.exe $(OUTDIR)/hdf24to8.bsc
+
+# ADD BASE CPP /nologo /W3 /GX /Zi /YX /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /FR /c
+# ADD CPP /nologo /W3 /GX /Zi /Od /I "..\src" /I "..\jpeg" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /FR /c
+# SUBTRACT CPP /YX
+CPP_PROJ=/nologo /W3 /GX /Zi /Od /I "..\src" /I "..\jpeg" /D "WIN32" /D\
+ "_DEBUG" /D "_CONSOLE" /FR$(INTDIR)/ /Fo$(INTDIR)/ /Fd$(OUTDIR)/"hdf24to8.pdb"\
+ /c 
+CPP_OBJS=
+# ADD BASE RSC /l 0x409 /d "_DEBUG"
+# ADD RSC /l 0x409 /d "_DEBUG"
+BSC32=bscmake.exe
+BSC32_SBRS= \
+	$(INTDIR)/hdf24to8.sbr
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+BSC32_FLAGS=/nologo /o$(OUTDIR)/"hdf24to8.bsc" 
+
+$(OUTDIR)/hdf24to8.bsc : $(OUTDIR)  $(BSC32_SBRS)
+    $(BSC32) @<<
+  $(BSC32_FLAGS) $(BSC32_SBRS)
+<<
+
+LINK32=link.exe
+DEF_FILE=
+LINK32_OBJS= \
+	$(INTDIR)/hdf24to8.obj
+# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NOLOGO /SUBSYSTEM:console /DEBUG /MACHINE:I386
+# ADD LINK32 advapi32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ..\src\win32hdf.lib ..\jpeg\win32jpg.lib /NOLOGO /SUBSYSTEM:console /DEBUG /MACHINE:I386
+LINK32_FLAGS=advapi32.lib kernel32.lib user32.lib gdi32.lib winspool.lib\
+ comdlg32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib\
+ odbccp32.lib ..\src\win32hdf.lib ..\jpeg\win32jpg.lib /NOLOGO\
+ /SUBSYSTEM:console /INCREMENTAL:yes /PDB:$(OUTDIR)/"hdf24to8.pdb" /DEBUG\
+ /MACHINE:I386 /OUT:$(OUTDIR)/"hdf24to8.exe" 
+
+$(OUTDIR)/hdf24to8.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
+    $(LINK32) @<<
+  $(LINK32_FLAGS) $(LINK32_OBJS)
+<<
+
+!ENDIF 
+
+.c{$(CPP_OBJS)}.obj:
+   $(CPP) $(CPP_PROJ) $<  
+
+.cpp{$(CPP_OBJS)}.obj:
+   $(CPP) $(CPP_PROJ) $<  
+
+.cxx{$(CPP_OBJS)}.obj:
+   $(CPP) $(CPP_PROJ) $<  
+
+################################################################################
+# Begin Group "Source Files"
+
+################################################################################
+# Begin Source File
+
+SOURCE=.\hdf24to8.c
+
+$(INTDIR)/hdf24to8.obj :  $(SOURCE)  $(INTDIR)
+
+# End Source File
+# End Group
+# End Project
+################################################################################

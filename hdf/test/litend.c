@@ -29,12 +29,6 @@ static char RcsId[] = "@(#)$Revision$";
 /* close enough */
 #define FLOAT64_FUDGE  ((float64)0.00000001)
 
-#ifdef TEST_PC
-#define FAR far
-#else
-#define FAR /* */
-#endif
-
 static int8 FAR cdata_i8[CDIM_Y][CDIM_X];
 static uint8 FAR cdata_u8[CDIM_Y][CDIM_X];
 static int16 FAR cdata_i16[CDIM_Y][CDIM_X];

@@ -1,176 +1,255 @@
-# Microsoft Visual C++ generated build script - Do not modify
+# Microsoft Visual C++ Generated NMAKE File, Format Version 2.00
+# ** DO NOT EDIT **
 
-PROJ = NCGEN
-DEBUG = 1
-PROGTYPE = 2
-CALLER = 
-ARGS = 
-DLLS = 
-ORIGIN = MSVCNT
-ORIGIN_VER = 1.00
-PROJPATH = E:\KOZIOL\MFHDF\NCGEN\ 
-USEMFC = 0
-CC = cl
-CPP = cl
-CXX = cl
-CCREATEPCHFLAG = 
-CPPCREATEPCHFLAG = 
-CUSEPCHFLAG = 
-CPPUSEPCHFLAG = 
-FIRSTC = MAIN.C
-FIRSTCPP = 
-RC = rc
-CFLAGS_D_DEXE32 = /nologo /W3 /Zi /YX /D "_DEBUG" /D "_X86_" /D "_CONSOLE" /D "HDF" /D "WINNT" /D "STDC_INCLUDES" /D "NO_SYS_XDR_INC" /D "i386" /I "e:\koziol\mfhdf\libsrc" /I "e:\koziol\mfhdf\xdr" /FR /ML /Fd"NCGEN.PDB"  /Fp"NCGEN.PCH"
-CFLAGS_R_DEXE32 = /nologo /W3 /YX /O2 /D "NDEBUG" /D "_X86_" /D "_CONSOLE" /D "HDF" /D "WINNT" /D "STDC_INCLUDES" /D "NO_SYS_XDR_INC" /D "i386" /I "e:\koziol\mfhdf\libsrc" /I "e:\koziol\mfhdf\xdr" /FR /ML /Fp"NCGEN.PCH"
-LFLAGS_D_DEXE32 = /NOLOGO /DEBUG /DEBUGTYPE:cv /SUBSYSTEM:console wsock32.lib netapi32.lib wsock32.lib
-LFLAGS_R_DEXE32 = /NOLOGO /SUBSYSTEM:console netapi32.lib wsock32.lib
-LFLAGS_D_LIB32 = /NOLOGO
-LFLAGS_R_LIB32 = /NOLOGO
-LIBS_D_DEXE32 = 
-LIBS_R_DEXE32 = 
-RCFLAGS32 = 
-D_RCDEFINES32 = -d_DEBUG
-R_RCDEFINES32 = -dNDEBUG
-OBJS_EXT = 
-LIBS_EXT = ..\MFHDF.LIB ..\..\HDF\SRC\HDF33SRC.LIB 
-!if "$(DEBUG)" == "1"
-CFLAGS = $(CFLAGS_D_DEXE32)
-LFLAGS = $(LFLAGS_D_DEXE32)
-LIBS = $(LIBS_D_DEXE32)
-LFLAGS_LIB=$(LFLAGS_D_LIB32)
-MAPFILE_OPTION = 
-RCDEFINES = $(D_RCDEFINES32)
-!else
-CFLAGS = $(CFLAGS_R_DEXE32)
-LFLAGS = $(LFLAGS_R_DEXE32)
-LIBS = $(LIBS_R_DEXE32)
-MAPFILE_OPTION = 
-LFLAGS_LIB=$(LFLAGS_R_LIB32)
-RCDEFINES = $(R_RCDEFINES32)
-!endif
-SBRS = MAIN.SBR \
-		GENERATE.SBR \
-		LOAD.SBR \
-		ESCAPES.SBR \
-		GETFILL.SBR \
-		INIT.SBR \
-		CLOSE.SBR \
-		GENLIB.SBR \
-		NCGENTAB.SBR
+# TARGTYPE "Win32 (x86) Console Application" 0x0103
 
+!IF "$(CFG)" == ""
+CFG=Win32 Debug
+!MESSAGE No configuration specified.  Defaulting to Win32 Debug.
+!ENDIF 
 
-MFHDF_DEP = 
+!IF "$(CFG)" != "Win32 Release" && "$(CFG)" != "Win32 Debug"
+!MESSAGE Invalid configuration "$(CFG)" specified.
+!MESSAGE You can specify a configuration when running NMAKE on this makefile
+!MESSAGE by defining the macro CFG on the command line.  For example:
+!MESSAGE 
+!MESSAGE NMAKE /f "ncgen.mak" CFG="Win32 Debug"
+!MESSAGE 
+!MESSAGE Possible choices for configuration are:
+!MESSAGE 
+!MESSAGE "Win32 Release" (based on "Win32 (x86) Console Application")
+!MESSAGE "Win32 Debug" (based on "Win32 (x86) Console Application")
+!MESSAGE 
+!ERROR An invalid configuration is specified.
+!ENDIF 
 
-HDF33SRC_DEP = 
+################################################################################
+# Begin Project
+CPP=cl.exe
+RSC=rc.exe
 
-MAIN_DEP =  \
-	e:\koziol\mfhdf\ncgen\genlib.h
+!IF  "$(CFG)" == "Win32 Release"
 
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "WinRel"
+# PROP BASE Intermediate_Dir "WinRel"
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir ""
+# PROP Intermediate_Dir ""
+OUTDIR=.
+INTDIR=.
 
-GENERATE_DEP =  \
-	e:\koziol\mfhdf\ncgen\ncgen.h \
-	e:\koziol\mfhdf\libsrc\netcdf.h \
-	e:\koziol\mfhdf\ncgen\generic.h \
-	e:\koziol\mfhdf\ncgen\genlib.h
+ALL : $(OUTDIR)/ncgen.exe $(OUTDIR)/ncgen.bsc
 
+# ADD BASE CPP /nologo /ML /W3 /GX /YX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /FR /c
+# ADD CPP /nologo /ML /W3 /GX /O2 /I "..\xdr" /I "..\libsrc" /I "..\..\hdf\src" /I "..\..\hdf\jpeg" /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "HDF" /D "NO_SYS_XDR_INC" /c
+# SUBTRACT CPP /YX /Fr
+CPP_PROJ=/nologo /ML /W3 /GX /O2 /I "..\xdr" /I "..\libsrc" /I "..\..\hdf\src"\
+ /I "..\..\hdf\jpeg" /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "HDF" /D\
+ "NO_SYS_XDR_INC" /Fo$(INTDIR)/ /c 
+CPP_OBJS=
+# ADD BASE RSC /l 0x409 /d "NDEBUG"
+# ADD RSC /l 0x409 /d "NDEBUG"
+BSC32=bscmake.exe
+BSC32_SBRS= \
+	
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+BSC32_FLAGS=/nologo /o$(OUTDIR)/"ncgen.bsc" 
 
-LOAD_DEP =  \
-	e:\koziol\mfhdf\ncgen\ncgen.h \
-	e:\koziol\mfhdf\libsrc\netcdf.h \
-	e:\koziol\mfhdf\ncgen\generic.h \
-	e:\koziol\mfhdf\ncgen\genlib.h
+$(OUTDIR)/ncgen.bsc : $(OUTDIR)  $(BSC32_SBRS)
+LINK32=link.exe
+DEF_FILE=
+LINK32_OBJS= \
+	$(INTDIR)/init.obj \
+	$(INTDIR)/generate.obj \
+	$(INTDIR)/main.obj \
+	$(INTDIR)/escapes.obj \
+	$(INTDIR)/load.obj \
+	$(INTDIR)/close.obj \
+	$(INTDIR)/genlib.obj \
+	$(INTDIR)/getfill.obj \
+	$(INTDIR)/msofttab.obj
+# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NOLOGO /SUBSYSTEM:console /MACHINE:I386
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ..\xdr\win32xdr.lib ..\libsrc\win32cdf.lib ..\util\win32utl.lib ..\..\hdf\src\win32hdf.lib ..\..\hdf\jpeg\win32jpg.lib /NOLOGO /SUBSYSTEM:console /MACHINE:I386
+LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
+ advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib\
+ odbccp32.lib ..\xdr\win32xdr.lib ..\libsrc\win32cdf.lib ..\util\win32utl.lib\
+ ..\..\hdf\src\win32hdf.lib ..\..\hdf\jpeg\win32jpg.lib /NOLOGO\
+ /SUBSYSTEM:console /INCREMENTAL:no /PDB:$(OUTDIR)/"ncgen.pdb" /MACHINE:I386\
+ /OUT:$(OUTDIR)/"ncgen.exe" 
 
-
-ESCAPES_DEP = 
-
-GETFILL_DEP =  \
-	e:\koziol\mfhdf\libsrc\netcdf.h \
-	e:\koziol\mfhdf\ncgen\generic.h \
-	e:\koziol\mfhdf\ncgen\genlib.h
-
-
-INIT_DEP =  \
-	e:\koziol\mfhdf\ncgen\ncgen.h \
-	e:\koziol\mfhdf\libsrc\netcdf.h \
-	e:\koziol\mfhdf\ncgen\generic.h
-
-
-CLOSE_DEP =  \
-	e:\koziol\mfhdf\ncgen\ncgen.h \
-	e:\koziol\mfhdf\libsrc\netcdf.h \
-	e:\koziol\mfhdf\ncgen\generic.h \
-	e:\koziol\mfhdf\ncgen\genlib.h
-
-
-GENLIB_DEP =  \
-	e:\koziol\mfhdf\ncgen\genlib.h
-
-
-NCGENTAB_DEP =  \
-	e:\koziol\mfhdf\ncgen\ncgen.h \
-	e:\koziol\mfhdf\libsrc\netcdf.h \
-	e:\koziol\mfhdf\ncgen\generic.h \
-	e:\koziol\mfhdf\ncgen\ncgenyy.c \
-	e:\koziol\mfhdf\ncgen\ncgentab.h
-
-
-all:	$(PROJ).EXE $(PROJ).BSC
-
-MAIN.OBJ:	MAIN.C $(MAIN_DEP)
-	$(CC) $(CFLAGS) $(CCREATEPCHFLAG) /c MAIN.C
-
-GENERATE.OBJ:	GENERATE.C $(GENERATE_DEP)
-	$(CC) $(CFLAGS) $(CUSEPCHFLAG) /c GENERATE.C
-
-LOAD.OBJ:	LOAD.C $(LOAD_DEP)
-	$(CC) $(CFLAGS) $(CUSEPCHFLAG) /c LOAD.C
-
-ESCAPES.OBJ:	ESCAPES.C $(ESCAPES_DEP)
-	$(CC) $(CFLAGS) $(CUSEPCHFLAG) /c ESCAPES.C
-
-GETFILL.OBJ:	GETFILL.C $(GETFILL_DEP)
-	$(CC) $(CFLAGS) $(CUSEPCHFLAG) /c GETFILL.C
-
-INIT.OBJ:	INIT.C $(INIT_DEP)
-	$(CC) $(CFLAGS) $(CUSEPCHFLAG) /c INIT.C
-
-CLOSE.OBJ:	CLOSE.C $(CLOSE_DEP)
-	$(CC) $(CFLAGS) $(CUSEPCHFLAG) /c CLOSE.C
-
-GENLIB.OBJ:	GENLIB.C $(GENLIB_DEP)
-	$(CC) $(CFLAGS) $(CUSEPCHFLAG) /c GENLIB.C
-
-NCGENTAB.OBJ:	NCGENTAB.C $(NCGENTAB_DEP)
-	$(CC) $(CFLAGS) $(CUSEPCHFLAG) /c NCGENTAB.C
-
-$(PROJ).EXE:	MAIN.OBJ GENERATE.OBJ LOAD.OBJ ESCAPES.OBJ GETFILL.OBJ INIT.OBJ CLOSE.OBJ \
-	GENLIB.OBJ NCGENTAB.OBJ $(OBJS_EXT) $(LIBS_EXT)
-	echo >NUL @<<$(PROJ).CRF
-MAIN.OBJ 
-GENERATE.OBJ 
-LOAD.OBJ 
-ESCAPES.OBJ 
-GETFILL.OBJ 
-INIT.OBJ 
-CLOSE.OBJ 
-GENLIB.OBJ 
-NCGENTAB.OBJ 
-$(OBJS_EXT)
--OUT:$(PROJ).EXE
-$(MAPFILE_OPTION)
-..\MFHDF.LIB
-..\..\HDF\SRC\HDF33SRC.LIB
-$(LIBS)
-$(LIBS_EXT)
-$(DEFFILE_OPTION) -implib:$(PROJ).lib
+$(OUTDIR)/ncgen.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
+    $(LINK32) @<<
+  $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
-	link $(LFLAGS) @$(PROJ).CRF
 
-run: $(PROJ).EXE
-	$(PROJ) $(RUNFLAGS)
+!ELSEIF  "$(CFG)" == "Win32 Debug"
 
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 1
+# PROP BASE Output_Dir "WinDebug"
+# PROP BASE Intermediate_Dir "WinDebug"
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 1
+# PROP Output_Dir ""
+# PROP Intermediate_Dir ""
+OUTDIR=.
+INTDIR=.
 
-$(PROJ).BSC: $(SBRS)
-	bscmake @<<
-/o$@ $(SBRS)
+ALL : $(OUTDIR)/ncgen.exe $(OUTDIR)/ncgen.bsc
+
+# ADD BASE CPP /nologo /ML /W3 /GX /Zi /YX /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /FR /c
+# ADD CPP /nologo /ML /W3 /GX /Zi /Od /I "..\xdr" /I "..\libsrc" /I "..\..\hdf\src" /I "..\..\hdf\jpeg" /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "HDF" /D "NO_SYS_XDR_INC" /c
+# SUBTRACT CPP /YX /Fr
+CPP_PROJ=/nologo /ML /W3 /GX /Zi /Od /I "..\xdr" /I "..\libsrc" /I\
+ "..\..\hdf\src" /I "..\..\hdf\jpeg" /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D\
+ "HDF" /D "NO_SYS_XDR_INC" /Fo$(INTDIR)/ /Fd$(OUTDIR)/"ncgen.pdb" /c 
+CPP_OBJS=
+# ADD BASE RSC /l 0x409 /d "_DEBUG"
+# ADD RSC /l 0x409 /d "_DEBUG"
+BSC32=bscmake.exe
+BSC32_SBRS= \
+	
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+BSC32_FLAGS=/nologo /o$(OUTDIR)/"ncgen.bsc" 
+
+$(OUTDIR)/ncgen.bsc : $(OUTDIR)  $(BSC32_SBRS)
+LINK32=link.exe
+DEF_FILE=
+LINK32_OBJS= \
+	$(INTDIR)/init.obj \
+	$(INTDIR)/generate.obj \
+	$(INTDIR)/main.obj \
+	$(INTDIR)/escapes.obj \
+	$(INTDIR)/load.obj \
+	$(INTDIR)/close.obj \
+	$(INTDIR)/genlib.obj \
+	$(INTDIR)/getfill.obj \
+	$(INTDIR)/msofttab.obj
+# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NOLOGO /SUBSYSTEM:console /DEBUG /MACHINE:I386
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ..\xdr\win32xdr.lib ..\libsrc\win32cdf.lib ..\util\win32utl.lib ..\..\hdf\src\win32hdf.lib ..\..\hdf\jpeg\win32jpg.lib /NOLOGO /SUBSYSTEM:console /DEBUG /MACHINE:I386
+LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
+ advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib\
+ odbccp32.lib ..\xdr\win32xdr.lib ..\libsrc\win32cdf.lib ..\util\win32utl.lib\
+ ..\..\hdf\src\win32hdf.lib ..\..\hdf\jpeg\win32jpg.lib /NOLOGO\
+ /SUBSYSTEM:console /INCREMENTAL:yes /PDB:$(OUTDIR)/"ncgen.pdb" /DEBUG\
+ /MACHINE:I386 /OUT:$(OUTDIR)/"ncgen.exe" 
+
+$(OUTDIR)/ncgen.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
+    $(LINK32) @<<
+  $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
+
+!ENDIF 
+
+.c{$(CPP_OBJS)}.obj:
+   $(CPP) $(CPP_PROJ) $<  
+
+.cpp{$(CPP_OBJS)}.obj:
+   $(CPP) $(CPP_PROJ) $<  
+
+.cxx{$(CPP_OBJS)}.obj:
+   $(CPP) $(CPP_PROJ) $<  
+
+################################################################################
+# Begin Group "Source Files"
+
+################################################################################
+# Begin Source File
+
+SOURCE=.\ncgen.h
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\init.c
+
+$(INTDIR)/init.obj :  $(SOURCE)  $(INTDIR)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\generate.c
+
+$(INTDIR)/generate.obj :  $(SOURCE)  $(INTDIR)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\main.c
+
+$(INTDIR)/main.obj :  $(SOURCE)  $(INTDIR)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\escapes.c
+
+$(INTDIR)/escapes.obj :  $(SOURCE)  $(INTDIR)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\generic.h
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\load.c
+
+$(INTDIR)/load.obj :  $(SOURCE)  $(INTDIR)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\close.c
+
+$(INTDIR)/close.obj :  $(SOURCE)  $(INTDIR)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\genlib.c
+
+$(INTDIR)/genlib.obj :  $(SOURCE)  $(INTDIR)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\genlib.h
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\getfill.c
+
+$(INTDIR)/getfill.obj :  $(SOURCE)  $(INTDIR)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\msofttab.c
+
+$(INTDIR)/msofttab.obj :  $(SOURCE)  $(INTDIR)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\msofttab.h
+# End Source File
+# End Group
+# End Project
+################################################################################

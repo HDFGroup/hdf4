@@ -659,8 +659,8 @@ void exit(int status);
 
 #endif /*MAC*/
 
-#if defined WIN3 || defined __WINDOWS__ || defined _WINDOWS || defined WINNT
-#ifdef WINNT
+#if defined WIN3 || defined __WINDOWS__ || defined _WINDOWS || defined WINNT || defined WIN32
+#if defined WIN32 || defined WINNT
 #define PC386
 #else /* WINNT */
 #ifndef WIN3
@@ -712,11 +712,15 @@ Please check your Makefile.
 #ifdef __WATCOMC__
 #include <stddef.h>         /* for the 'fortran' pragma */
 #endif
-#if defined WIN3 || defined WINNT
+#if defined WIN3 || defined WINNT || defined WIN32
 #ifndef GMEM_MOVEABLE       /* check if windows header is already included */
 #include <windows.h>        /* include the windows headers */
+#if defined WINNT || defined WIN32
+#include <winnt.h>
+#define HAVE_BOOLEAN
+#endif /* WINNT | WIN32 */
 #endif
-#endif /* WIN3 || WINNT */
+#endif /* WIN3 || WINNT || WIN32*/
 
 #define DF_MT             DFMT_PC
 
@@ -762,7 +766,7 @@ typedef long              intf;     /* size of INTEGERs in Fortran compiler */
 #endif
 #define _fcdtocp(desc) (desc)
 
-#ifdef WINNT
+#if defined WINNT || defined WIN32
 #define FILELIB WINNTIO
 #else
 #ifdef WIN3

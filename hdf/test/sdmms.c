@@ -77,7 +77,7 @@ test_sdmms(void)
       {
           for (j = 0; j < 10; j++)
             {
-                f32[i][j] = (i * 40) + j;   /* range: 0 ~ 4-billion */
+                f32[i][j] = (float32)((i * 40) + j);   /* range: 0 ~ 4-billion */
 
                 i8[i][j] = (int8) ((i * 20) - 100 + j);     /* range: 0 ~ 100 */
                 ui8[i][j] = (uint8) ((i * 20) + j);     /* range: 0 ~ 200 */

@@ -268,19 +268,19 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
        case and then run through them all to eliminate matched pairs */
     nri = Hnumber(file_id, DFTAG_RI);     /* count the number of RI and CIs */
     if (nri == FAIL)
-        HRETURN_ERROR(DFE_INTERNAL, NULL);
+        HRETURN_ERROR(DFE_INTERNAL, FAIL);
     nci = Hnumber(file_id, DFTAG_CI);     /* count the number of RI and CIs */
     if (nci == FAIL)
-        HRETURN_ERROR(DFE_INTERNAL, NULL);
+        HRETURN_ERROR(DFE_INTERNAL, FAIL);
     nri8 = Hnumber(file_id, DFTAG_RI8);     /* add the number of RI8 and CI8s */
     if (nri8 == FAIL)
-        HRETURN_ERROR(DFE_INTERNAL, NULL);
+        HRETURN_ERROR(DFE_INTERNAL, FAIL);
     nci8 = Hnumber(file_id, DFTAG_CI8);
     if (nci8 == FAIL)
-        HRETURN_ERROR(DFE_INTERNAL, NULL);
+        HRETURN_ERROR(DFE_INTERNAL, FAIL);
     nvg = Hnumber(file_id, RI_TAG);
     if (nvg == FAIL)
-        HRETURN_ERROR(DFE_INTERNAL, NULL);
+        HRETURN_ERROR(DFE_INTERNAL, FAIL);
     nimages = (intn) (nri + nci + nri8 + nci8 + nvg);
 
 #ifdef QAK
@@ -343,11 +343,11 @@ printf("%s: found an image\n",FUNC);
 #ifdef QAK
 printf("%s: found DFTAG_RI\n",FUNC);
 #endif /* QAK */
-                                                        img_info[curr_image].grp_tag=grp_tag;
-                                                        img_info[curr_image].grp_ref=grp_ref;
-                                                        img_info[curr_image].img_tag=img_tag;
-                                                        img_info[curr_image].img_ref=img_ref;
-                                                        img_info[curr_image].offset = Hoffset(file_id, img_tag, img_ref);     /* store offset */
+                                                        img_info[curr_image].grp_tag=(uint16)grp_tag;
+                                                        img_info[curr_image].grp_ref=(uint16)grp_ref;
+                                                        img_info[curr_image].img_tag=(uint16)img_tag;
+                                                        img_info[curr_image].img_ref=(uint16)img_ref;
+                                                        img_info[curr_image].offset = Hoffset(file_id, (uint16)img_tag, (uint16)img_ref);     /* store offset */
                                                         curr_image++;
                                                         break;
                                                     } /* end if */
@@ -368,7 +368,7 @@ printf("%s: found DFTAG_RI\n",FUNC);
 #ifdef QAK
 printf("%s: found global attribute, new_attr=%p\n",FUNC,new_attr);
 #endif /* QAK */
-                                      new_attr->ref=grp_ref;
+                                      new_attr->ref=(uint16)grp_ref;
                                       new_attr->index=gr_ptr->gattr_count;
                                       new_attr->data_modified=FALSE;
                                       new_attr->new=FALSE;
@@ -593,17 +593,17 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
                                       switch(img_tag) {
                                           case DFTAG_RI:
                                           case DFTAG_CI:    /* Regular or compressed image data */
-                                              new_image->img_tag=img_tag;
-                                              new_image->img_ref=img_ref;
+                                              new_image->img_tag=(uint16)img_tag;
+                                              new_image->img_ref=(uint16)img_ref;
                                               break;
 
                                           case DFTAG_LUT:   /* Palette */
-                                              new_image->lut_tag=img_tag;
-                                              new_image->lut_ref=img_ref;
+                                              new_image->lut_tag=(uint16)img_tag;
+                                              new_image->lut_ref=(uint16)img_ref;
                                               break;
 
                                           case DFTAG_LD:    /* Palette dimensions */
-                                              if (Hgetelement(file_id, img_tag, img_ref, GRtbuf) != FAIL)
+                                              if (Hgetelement(file_id, (uint16)img_tag, (uint16)img_ref, GRtbuf) != FAIL)
                                                 {
                                                     uint8      *p;
 
@@ -629,7 +629,7 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
                                                   break;
                                               
                                               /* set NT info */
-                                              new_image->lut_dim.dim_ref = img_ref;
+                                              new_image->lut_dim.dim_ref = (uint16)img_ref;
                                               new_image->lut_dim.nt = (int32)ntstring[1];
                                               new_image->lut_dim.file_nt_subclass = (int32)ntstring[3];
                                               if ((new_image->lut_dim.file_nt_subclass != DFNTF_HDFDEFAULT)
@@ -646,7 +646,7 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
                                               break;
 
                                           case DFTAG_ID:    /* Image description info */
-                                              if (Hgetelement(file_id, img_tag, img_ref, GRtbuf) != FAIL)
+                                              if (Hgetelement(file_id, (uint16)img_tag, (uint16)img_ref, GRtbuf) != FAIL)
                                                 {
                                                     uint8      *p;
 
@@ -672,7 +672,7 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
                                                   break;
                                               
                                               /* set NT info */
-                                              new_image->img_dim.dim_ref=img_ref;
+                                              new_image->img_dim.dim_ref=(uint16)img_ref;
                                               new_image->img_dim.nt = (int32)ntstring[1];
                                               new_image->img_dim.file_nt_subclass = (int32)ntstring[3];
                                               if ((new_image->img_dim.file_nt_subclass != DFNTF_HDFDEFAULT)
@@ -695,7 +695,7 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
 
                                                   if((new_attr=(at_info_t *)HDmalloc(sizeof(at_info_t)))==NULL)
                                                       HRETURN_ERROR(DFE_NOSPACE,FAIL);
-                                                  new_attr->ref=img_ref;
+                                                  new_attr->ref=(uint16)img_ref;
                                                   new_attr->index=new_image->lattr_count;
                                                   new_attr->data_modified=FALSE;
                                                   new_attr->new=FALSE;
@@ -1161,7 +1161,7 @@ intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
     
     /* Write out the raster image's number-type record */
     ntstring[0] = DFNT_VERSION;     /* version */
-    ntstring[1] = img_ptr->img_dim.nt;       /* type */
+    ntstring[1] = (uint8)img_ptr->img_dim.nt;       /* type */
     ntstring[2] = DFKNTsize(img_ptr->img_dim.nt)*8; /* width: RIG data is 8-bit chars */
     ntstring[3] = DFNTC_BYTE;       /* class: data are numeric values */
     if (Hputelement(hdf_file_id, img_ptr->img_dim.nt_tag,
@@ -1341,7 +1341,7 @@ printf("%s: check 2.0, GroupID=%ld\n",FUNC,(long)GroupID);
 #endif /* QAK */
     /* grab the ref. # of the new Vgroup */
     if(img_ptr->ri_ref==DFTAG_NULL)
-        img_ptr->ri_ref=VQueryref(GroupID);
+        img_ptr->ri_ref=(uint16)VQueryref(GroupID);
 
     /* Set the name of the RI */
     if(img_ptr->name!=NULL)
@@ -1418,7 +1418,7 @@ printf("%s: attr_ptr->ref=%u\n",FUNC,attr_ptr->ref);
     /* Write out the attribute data */
     if (attr_ptr->ref==DFTAG_NULL)  /* create a new attribute */
       {
-        if((attr_ptr->ref=VHstoredata(hdf_file_id,attr_ptr->name,attr_ptr->data,
+        if((attr_ptr->ref=(uint16)VHstoredata(hdf_file_id,attr_ptr->name,attr_ptr->data,
                 attr_ptr->len,attr_ptr->nt,RIGATTRNAME,RIGATTRCLASS))==(uint16)FAIL)
             HRETURN_ERROR(DFE_VSCANTCREATE,FAIL);
         attr_ptr->new=TRUE;
@@ -1489,7 +1489,7 @@ intn GRend(int32 grid)
           {
             if((GroupID=Vattach(gr_ptr->hdf_file_id,-1,"w"))==FAIL)
                 HRETURN_ERROR(DFE_CANTATTACH,FAIL);
-            if((gr_ptr->gr_ref=VQueryref(GroupID))==(uint16)FAIL)
+            if((gr_ptr->gr_ref=(uint16)VQueryref(GroupID))==(uint16)FAIL)
                 HRETURN_ERROR(DFE_NOVALS,FAIL);
             if(Vsetname(GroupID,GR_NAME)==FAIL)
                 HRETURN_ERROR(DFE_BADVSNAME,FAIL);
@@ -2782,7 +2782,7 @@ uint16 GRidtoref(int32 riid)
 
     /* check the validity of the RI ID */
     if(!VALIDRIID(riid))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HRETURN_ERROR(DFE_ARGS, (uint16)FAIL);
     
     /* Get the array index for the grid */
     gr_idx=RIID2GRID(riid);
@@ -2791,10 +2791,10 @@ uint16 GRidtoref(int32 riid)
     /* check the index range validity */
     index=RIID2SLOT(riid);
     if(!VALIDRIINDEX(index,gr_ptr))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HRETURN_ERROR(DFE_ARGS, (uint16)FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
-        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+        HRETURN_ERROR(DFE_RINOTFOUND,(uint16)FAIL);
     ri_ptr=(ri_info_t *)*t;
 
     return(ri_ptr->ri_ref!=DFTAG_NULL ? ri_ptr->ri_ref : ri_ptr->rig_ref);
@@ -3664,7 +3664,7 @@ printf("%s:1: gr_ptr->gattr_count=%ld\n",FUNC,(long)gr_ptr->gattr_count);
           } /* end if */
         else
           { /* non-cacheable */
-              if((at_ptr->ref=VHstoredata(hdf_file_id,at_ptr->name,data,
+              if((at_ptr->ref=(uint16)VHstoredata(hdf_file_id,at_ptr->name,data,
                       at_ptr->len,at_ptr->nt,RIGATTRNAME,RIGATTRCLASS))==(uint16)FAIL)
                   HRETURN_ERROR(DFE_VSCANTCREATE,FAIL);
               at_ptr->data=NULL;

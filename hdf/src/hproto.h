@@ -309,6 +309,8 @@ extern      "C"
     extern VOID HEclear
                 (void);
 
+ 	extern intn HEshutdown(void);
+
 /*
    ** from hbitio.c
  */
@@ -1995,6 +1997,8 @@ extern int32 ANget_tagref(int32 file_id, int32 index, ann_type type,
 extern uint16 atype2tag(ann_type atype);
 
 extern ann_type tag2atype(uint16 atag);
+
+extern int32 ANdestroy(void);
 
 /* Multi-file Raster C-routines found in mfgr.c */
 extern int32 GRstart(int32 hdf_file_id);

@@ -13,7 +13,7 @@ CFG=Win32 Debug
 !MESSAGE You can specify a configuration when running NMAKE on this makefile
 !MESSAGE by defining the macro CFG on the command line.  For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "vmake.mak" CFG="Win32 Debug"
+!MESSAGE NMAKE /f "hdfunpac.mak" CFG="Win32 Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
@@ -25,6 +25,7 @@ CFG=Win32 Debug
 
 ################################################################################
 # Begin Project
+# PROP Target_Last_Scanned "Win32 Debug"
 CPP=cl.exe
 RSC=rc.exe
 
@@ -41,37 +42,41 @@ RSC=rc.exe
 OUTDIR=.
 INTDIR=.
 
-ALL : $(OUTDIR)/vmake.exe $(OUTDIR)/vmake.bsc
+ALL : $(OUTDIR)/hdfunpac.exe $(OUTDIR)/hdfunpac.bsc
 
-# ADD BASE CPP /nologo /ML /W3 /GX /YX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /FR /c
-# ADD CPP /nologo /ML /W3 /GX /O2 /I "..\src" /I "..\jpeg" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /c
-# SUBTRACT CPP /YX /Fr
-CPP_PROJ=/nologo /ML /W3 /GX /O2 /I "..\src" /I "..\jpeg" /D "WIN32" /D\
- "NDEBUG" /D "_CONSOLE" /Fo$(INTDIR)/ /c 
+# ADD BASE CPP /nologo /W3 /GX /YX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /FR /c
+# ADD CPP /nologo /W3 /GX /O2 /I "..\src" /I "..\jpeg" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /FR /c
+# SUBTRACT CPP /YX
+CPP_PROJ=/nologo /W3 /GX /O2 /I "..\src" /I "..\jpeg" /D "WIN32" /D "NDEBUG" /D\
+ "_CONSOLE" /FR$(INTDIR)/ /Fo$(INTDIR)/ /c 
 CPP_OBJS=
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
 BSC32_SBRS= \
-	
+	$(INTDIR)/hdfunpac.sbr
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
-BSC32_FLAGS=/nologo /o$(OUTDIR)/"vmake.bsc" 
+BSC32_FLAGS=/nologo /o$(OUTDIR)/"hdfunpac.bsc" 
 
-$(OUTDIR)/vmake.bsc : $(OUTDIR)  $(BSC32_SBRS)
+$(OUTDIR)/hdfunpac.bsc : $(OUTDIR)  $(BSC32_SBRS)
+    $(BSC32) @<<
+  $(BSC32_FLAGS) $(BSC32_SBRS)
+<<
+
 LINK32=link.exe
 DEF_FILE=
 LINK32_OBJS= \
-	$(INTDIR)/vmake.obj
+	$(INTDIR)/hdfunpac.obj
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NOLOGO /SUBSYSTEM:console /MACHINE:I386
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ..\src\win32hdf.lib ..\jpeg\win32jpg.lib /NOLOGO /SUBSYSTEM:console /MACHINE:I386
 LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
  advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib\
  odbccp32.lib ..\src\win32hdf.lib ..\jpeg\win32jpg.lib /NOLOGO\
- /SUBSYSTEM:console /INCREMENTAL:no /PDB:$(OUTDIR)/"vmake.pdb" /MACHINE:I386\
- /OUT:$(OUTDIR)/"vmake.exe" 
+ /SUBSYSTEM:console /INCREMENTAL:no /PDB:$(OUTDIR)/"hdfunpac.pdb" /MACHINE:I386\
+ /OUT:$(OUTDIR)/"hdfunpac.exe" 
 
-$(OUTDIR)/vmake.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
+$(OUTDIR)/hdfunpac.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
   $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
@@ -89,37 +94,42 @@ $(OUTDIR)/vmake.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
 OUTDIR=.
 INTDIR=.
 
-ALL : $(OUTDIR)/vmake.exe $(OUTDIR)/vmake.bsc
+ALL : $(OUTDIR)/hdfunpac.exe $(OUTDIR)/hdfunpac.bsc
 
-# ADD BASE CPP /nologo /ML /W3 /GX /Zi /YX /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /FR /c
-# ADD CPP /nologo /ML /W3 /GX /Zi /Od /I "..\src" /I "..\jpeg" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /c
-# SUBTRACT CPP /YX /Fr
-CPP_PROJ=/nologo /ML /W3 /GX /Zi /Od /I "..\src" /I "..\jpeg" /D "WIN32" /D\
- "_DEBUG" /D "_CONSOLE" /Fo$(INTDIR)/ /Fd$(OUTDIR)/"vmake.pdb" /c 
+# ADD BASE CPP /nologo /W3 /GX /Zi /YX /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /FR /c
+# ADD CPP /nologo /W3 /GX /Zi /Od /I "..\src" /I "..\jpeg" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /FR /c
+# SUBTRACT CPP /YX
+CPP_PROJ=/nologo /W3 /GX /Zi /Od /I "..\src" /I "..\jpeg" /D "WIN32" /D\
+ "_DEBUG" /D "_CONSOLE" /FR$(INTDIR)/ /Fo$(INTDIR)/ /Fd$(OUTDIR)/"hdfunpac.pdb"\
+ /c 
 CPP_OBJS=
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
 BSC32_SBRS= \
-	
+	$(INTDIR)/hdfunpac.sbr
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
-BSC32_FLAGS=/nologo /o$(OUTDIR)/"vmake.bsc" 
+BSC32_FLAGS=/nologo /o$(OUTDIR)/"hdfunpac.bsc" 
 
-$(OUTDIR)/vmake.bsc : $(OUTDIR)  $(BSC32_SBRS)
+$(OUTDIR)/hdfunpac.bsc : $(OUTDIR)  $(BSC32_SBRS)
+    $(BSC32) @<<
+  $(BSC32_FLAGS) $(BSC32_SBRS)
+<<
+
 LINK32=link.exe
 DEF_FILE=
 LINK32_OBJS= \
-	$(INTDIR)/vmake.obj
+	$(INTDIR)/hdfunpac.obj
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NOLOGO /SUBSYSTEM:console /DEBUG /MACHINE:I386
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ..\src\win32hdf.lib ..\jpeg\win32jpg.lib /NOLOGO /SUBSYSTEM:console /DEBUG /MACHINE:I386
 LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
  advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib\
  odbccp32.lib ..\src\win32hdf.lib ..\jpeg\win32jpg.lib /NOLOGO\
- /SUBSYSTEM:console /INCREMENTAL:yes /PDB:$(OUTDIR)/"vmake.pdb" /DEBUG\
- /MACHINE:I386 /OUT:$(OUTDIR)/"vmake.exe" 
+ /SUBSYSTEM:console /INCREMENTAL:yes /PDB:$(OUTDIR)/"hdfunpac.pdb" /DEBUG\
+ /MACHINE:I386 /OUT:$(OUTDIR)/"hdfunpac.exe" 
 
-$(OUTDIR)/vmake.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
+$(OUTDIR)/hdfunpac.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
   $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
@@ -141,9 +151,9 @@ $(OUTDIR)/vmake.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
 ################################################################################
 # Begin Source File
 
-SOURCE=.\vmake.c
+SOURCE=.\hdfunpac.c
 
-$(INTDIR)/vmake.obj :  $(SOURCE)  $(INTDIR)
+$(INTDIR)/hdfunpac.obj :  $(SOURCE)  $(INTDIR)
 
 # End Source File
 # End Group

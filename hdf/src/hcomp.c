@@ -304,7 +304,8 @@ HCIwrite_header(filerec_t * file_rec, accrec_t * access_rec,
       {
           case COMP_CODE_NBIT:      /* N-bit coding needs info */
 #ifdef TESTING
-              printf("HCIwrite_header(): nt=%d, sign_ext=%d, fill_one=%d, start_bit=%d, bit_len=%d\n", info->cinfo.coder_info.nbit_info.nt, info->cinfo.coder_info.nbit_info.sign_ext, info->cinfo.coder_info.nbit_info.fill_one, info->cinfo.coder_info.nbit_info.mask_off, info->cinfo.coder_info.nbit_info.mask_len);
+              printf("HCIwrite_header(): nt=%d, sign_ext=%d, fill_one=%d, start_bit=%d, bit_len=%d\n", info->cinfo.coder_info.nbit_info.nt, info->cinfo.coder_info.nbit_info.sign_ext, info->cinfo.coder_info.nbit_info.fill_one, info->cinfo.coder_info.nb
+it_info.mask_off, info->cinfo.coder_info.nbit_info.mask_len);
 #endif
               /* specify number-type of N-bit data */
               INT32ENCODE(p, info->cinfo.coder_info.nbit_info.nt);
@@ -1079,7 +1080,7 @@ HCPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
     if (pposn != NULL)
         *pposn = access_rec->posn;
     if (paccess != NULL)
-        *paccess = access_rec->access;
+        *paccess = (int16)access_rec->access;
     if (pspecial != NULL)
         *pspecial = access_rec->special;
 

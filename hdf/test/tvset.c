@@ -532,7 +532,7 @@ read_vset_stuff(void)
     /* read it */
     VSsetfields(vs1, fields);
     for (i = 0; i < count; i++)
-        fbuf[i] = 0;
+        fbuf[i] = (float32)0.0;
     VSread(vs1, (unsigned char *) fbuf, count, FULL_INTERLACE);
 
     /* verify */

@@ -52,6 +52,7 @@
 
 #include "hdf.h"
 #include "vg.h"
+#include "hfile.h"
 
 #define ATTR_TAG  DFTAG_VH
 #define DIM_TAG   DFTAG_VG
@@ -153,7 +154,7 @@ typedef struct {
         int file_type;
         int32 vgid;
         int hdf_mode; /* mode we are attached for */
-        FILE * cdf_fp; /* file pointer used for CDF files */
+        hdf_file_t cdf_fp; /* file pointer used for CDF files */
 #endif
 } NC ;
 

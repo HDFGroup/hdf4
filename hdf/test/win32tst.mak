@@ -13,7 +13,7 @@ CFG=Win32 Debug
 !MESSAGE You can specify a configuration when running NMAKE on this makefile
 !MESSAGE by defining the macro CFG on the command line.  For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "nctest.mak" CFG="Win32 Debug"
+!MESSAGE NMAKE /f "win32tst.mak" CFG="Win32 Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
@@ -25,6 +25,7 @@ CFG=Win32 Debug
 
 ################################################################################
 # Begin Project
+# PROP Target_Last_Scanned "Win32 Debug"
 CPP=cl.exe
 RSC=rc.exe
 
@@ -41,14 +42,13 @@ RSC=rc.exe
 OUTDIR=.
 INTDIR=.
 
-ALL : $(OUTDIR)/nctest.exe $(OUTDIR)/nctest.bsc
+ALL : $(OUTDIR)/win32tst.exe $(OUTDIR)/win32tst.bsc
 
-# ADD BASE CPP /nologo /ML /W3 /GX /YX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /FR /c
-# ADD CPP /nologo /ML /W3 /GX /O2 /I "..\xdr" /I "..\libsrc" /I "..\..\hdf\src" /I "..\..\hdf\jpeg" /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "NO_SYS_XDR_INC" /D "HDF" /c
+# ADD BASE CPP /nologo /W3 /GX /YX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /FR /c
+# ADD CPP /nologo /W3 /GX /O2 /I "..\src" /I "..\jpeg" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /c
 # SUBTRACT CPP /YX /Fr
-CPP_PROJ=/nologo /ML /W3 /GX /O2 /I "..\xdr" /I "..\libsrc" /I "..\..\hdf\src"\
- /I "..\..\hdf\jpeg" /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "NO_SYS_XDR_INC" /D\
- "HDF" /Fo$(INTDIR)/ /c 
+CPP_PROJ=/nologo /W3 /GX /O2 /I "..\src" /I "..\jpeg" /D "WIN32" /D "NDEBUG" /D\
+ "_CONSOLE" /Fo$(INTDIR)/ /c 
 CPP_OBJS=
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
@@ -57,41 +57,44 @@ BSC32_SBRS= \
 	
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
-BSC32_FLAGS=/nologo /o$(OUTDIR)/"nctest.bsc" 
+BSC32_FLAGS=/nologo /o$(OUTDIR)/"win32tst.bsc" 
 
-$(OUTDIR)/nctest.bsc : $(OUTDIR)  $(BSC32_SBRS)
+$(OUTDIR)/win32tst.bsc : $(OUTDIR)  $(BSC32_SBRS)
 LINK32=link.exe
-DEF_FILE=$(INTDIR)/nctest.def
+DEF_FILE=
 LINK32_OBJS= \
-	$(INTDIR)/varput.obj \
-	$(INTDIR)/emalloc.obj \
-	$(INTDIR)/vargetg.obj \
-	$(INTDIR)/vartests.obj \
-	$(INTDIR)/vardef.obj \
-	$(INTDIR)/vputget.obj \
-	$(INTDIR)/misctest.obj \
-	$(INTDIR)/slabs.obj \
-	$(INTDIR)/varget.obj \
-	$(INTDIR)/vputgetg.obj \
-	$(INTDIR)/driver.obj \
-	$(INTDIR)/add.obj \
-	$(INTDIR)/rec.obj \
-	$(INTDIR)/dimtests.obj \
-	$(INTDIR)/cdftests.obj \
-	$(INTDIR)/val.obj \
-	$(INTDIR)/error.obj \
-	$(INTDIR)/varputg.obj \
-	$(INTDIR)/atttests.obj
+	$(INTDIR)/tvset.obj \
+	$(INTDIR)/man.obj \
+	$(INTDIR)/vers.obj \
+	$(INTDIR)/blocks.obj \
+	$(INTDIR)/tree.obj \
+	$(INTDIR)/testhdf.obj \
+	$(INTDIR)/rig.obj \
+	$(INTDIR)/sdmms.obj \
+	$(INTDIR)/an.obj \
+	$(INTDIR)/bitio.obj \
+	$(INTDIR)/vblocks.obj \
+	$(INTDIR)/sdstr.obj \
+	$(INTDIR)/conv.obj \
+	$(INTDIR)/litend.obj \
+	$(INTDIR)/file1.obj \
+	$(INTDIR)/sdnmms.obj \
+	$(INTDIR)/extelt.obj \
+	$(INTDIR)/nbit.obj \
+	$(INTDIR)/comp.obj \
+	$(INTDIR)/anfile.obj \
+	$(INTDIR)/file.obj \
+	$(INTDIR)/mgr.obj \
+	$(INTDIR)/slab.obj
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NOLOGO /SUBSYSTEM:console /MACHINE:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ..\xdr\win32xdr.lib ..\libsrc\win32cdf.lib ..\..\hdf\src\win32hdf.lib ..\..\hdf\jpeg\win32jpg.lib /NOLOGO /SUBSYSTEM:console /MACHINE:I386
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ..\src\win32hdf.lib ..\jpeg\win32jpg.lib /NOLOGO /SUBSYSTEM:console /MACHINE:I386
 LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
  advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib\
- odbccp32.lib ..\xdr\win32xdr.lib ..\libsrc\win32cdf.lib\
- ..\..\hdf\src\win32hdf.lib ..\..\hdf\jpeg\win32jpg.lib /NOLOGO\
- /SUBSYSTEM:console /INCREMENTAL:no /PDB:$(OUTDIR)/"nctest.pdb" /MACHINE:I386\
- /DEF:".\nctest.def" /OUT:$(OUTDIR)/"nctest.exe" 
+ odbccp32.lib ..\src\win32hdf.lib ..\jpeg\win32jpg.lib /NOLOGO\
+ /SUBSYSTEM:console /INCREMENTAL:no /PDB:$(OUTDIR)/"win32tst.pdb" /MACHINE:I386\
+ /OUT:$(OUTDIR)/"win32tst.exe" 
 
-$(OUTDIR)/nctest.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
+$(OUTDIR)/win32tst.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
   $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
@@ -109,14 +112,13 @@ $(OUTDIR)/nctest.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
 OUTDIR=.
 INTDIR=.
 
-ALL : $(OUTDIR)/nctest.exe $(OUTDIR)/nctest.bsc
+ALL : $(OUTDIR)/win32tst.exe $(OUTDIR)/win32tst.bsc
 
-# ADD BASE CPP /nologo /ML /W3 /GX /Zi /YX /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /FR /c
-# ADD CPP /nologo /ML /W3 /GX /Zi /Od /I "..\xdr" /I "..\libsrc" /I "..\..\hdf\src" /I "..\..\hdf\jpeg" /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "NO_SYS_XDR_INC" /D "HDF" /c
+# ADD BASE CPP /nologo /W3 /GX /Zi /YX /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /FR /c
+# ADD CPP /nologo /W3 /GX /Z7 /Od /I "..\src" /I "..\jpeg" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /c
 # SUBTRACT CPP /YX /Fr
-CPP_PROJ=/nologo /ML /W3 /GX /Zi /Od /I "..\xdr" /I "..\libsrc" /I\
- "..\..\hdf\src" /I "..\..\hdf\jpeg" /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D\
- "NO_SYS_XDR_INC" /D "HDF" /Fo$(INTDIR)/ /Fd$(OUTDIR)/"nctest.pdb" /c 
+CPP_PROJ=/nologo /W3 /GX /Z7 /Od /I "..\src" /I "..\jpeg" /D "WIN32" /D\
+ "_DEBUG" /D "_CONSOLE" /Fo$(INTDIR)/ /c 
 CPP_OBJS=
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
@@ -125,41 +127,44 @@ BSC32_SBRS= \
 	
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
-BSC32_FLAGS=/nologo /o$(OUTDIR)/"nctest.bsc" 
+BSC32_FLAGS=/nologo /o$(OUTDIR)/"win32tst.bsc" 
 
-$(OUTDIR)/nctest.bsc : $(OUTDIR)  $(BSC32_SBRS)
+$(OUTDIR)/win32tst.bsc : $(OUTDIR)  $(BSC32_SBRS)
 LINK32=link.exe
-DEF_FILE=$(INTDIR)/nctest.def
+DEF_FILE=
 LINK32_OBJS= \
-	$(INTDIR)/varput.obj \
-	$(INTDIR)/emalloc.obj \
-	$(INTDIR)/vargetg.obj \
-	$(INTDIR)/vartests.obj \
-	$(INTDIR)/vardef.obj \
-	$(INTDIR)/vputget.obj \
-	$(INTDIR)/misctest.obj \
-	$(INTDIR)/slabs.obj \
-	$(INTDIR)/varget.obj \
-	$(INTDIR)/vputgetg.obj \
-	$(INTDIR)/driver.obj \
-	$(INTDIR)/add.obj \
-	$(INTDIR)/rec.obj \
-	$(INTDIR)/dimtests.obj \
-	$(INTDIR)/cdftests.obj \
-	$(INTDIR)/val.obj \
-	$(INTDIR)/error.obj \
-	$(INTDIR)/varputg.obj \
-	$(INTDIR)/atttests.obj
+	$(INTDIR)/tvset.obj \
+	$(INTDIR)/man.obj \
+	$(INTDIR)/vers.obj \
+	$(INTDIR)/blocks.obj \
+	$(INTDIR)/tree.obj \
+	$(INTDIR)/testhdf.obj \
+	$(INTDIR)/rig.obj \
+	$(INTDIR)/sdmms.obj \
+	$(INTDIR)/an.obj \
+	$(INTDIR)/bitio.obj \
+	$(INTDIR)/vblocks.obj \
+	$(INTDIR)/sdstr.obj \
+	$(INTDIR)/conv.obj \
+	$(INTDIR)/litend.obj \
+	$(INTDIR)/file1.obj \
+	$(INTDIR)/sdnmms.obj \
+	$(INTDIR)/extelt.obj \
+	$(INTDIR)/nbit.obj \
+	$(INTDIR)/comp.obj \
+	$(INTDIR)/anfile.obj \
+	$(INTDIR)/file.obj \
+	$(INTDIR)/mgr.obj \
+	$(INTDIR)/slab.obj
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NOLOGO /SUBSYSTEM:console /DEBUG /MACHINE:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ..\xdr\win32xdr.lib ..\libsrc\win32cdf.lib ..\..\hdf\src\win32hdf.lib ..\..\hdf\jpeg\win32jpg.lib /NOLOGO /SUBSYSTEM:console /DEBUG /MACHINE:I386
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ..\src\win32hdf.lib ..\jpeg\win32jpg.lib /NOLOGO /SUBSYSTEM:console /DEBUG /MACHINE:I386
 LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
  advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib\
- odbccp32.lib ..\xdr\win32xdr.lib ..\libsrc\win32cdf.lib\
- ..\..\hdf\src\win32hdf.lib ..\..\hdf\jpeg\win32jpg.lib /NOLOGO\
- /SUBSYSTEM:console /INCREMENTAL:yes /PDB:$(OUTDIR)/"nctest.pdb" /DEBUG\
- /MACHINE:I386 /DEF:".\nctest.def" /OUT:$(OUTDIR)/"nctest.exe" 
+ odbccp32.lib ..\src\win32hdf.lib ..\jpeg\win32jpg.lib /NOLOGO\
+ /SUBSYSTEM:console /INCREMENTAL:yes /PDB:$(OUTDIR)/"win32tst.pdb" /DEBUG\
+ /MACHINE:I386 /OUT:$(OUTDIR)/"win32tst.exe" 
 
-$(OUTDIR)/nctest.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
+$(OUTDIR)/win32tst.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
   $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
@@ -181,188 +186,195 @@ $(OUTDIR)/nctest.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
 ################################################################################
 # Begin Source File
 
-SOURCE=.\varput.c
+SOURCE=.\tvset.c
 
-$(INTDIR)/varput.obj :  $(SOURCE)  $(INTDIR)
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=.\nctest.def
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=.\tests.h
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=.\emalloc.c
-
-$(INTDIR)/emalloc.obj :  $(SOURCE)  $(INTDIR)
+$(INTDIR)/tvset.obj :  $(SOURCE)  $(INTDIR)
 
 # End Source File
 ################################################################################
 # Begin Source File
 
-SOURCE=.\vargetg.c
+SOURCE=.\man.c
 
-$(INTDIR)/vargetg.obj :  $(SOURCE)  $(INTDIR)
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=.\emalloc.h
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=.\vartests.c
-
-$(INTDIR)/vartests.obj :  $(SOURCE)  $(INTDIR)
+$(INTDIR)/man.obj :  $(SOURCE)  $(INTDIR)
 
 # End Source File
 ################################################################################
 # Begin Source File
 
-SOURCE=.\vardef.c
+SOURCE=.\vers.c
 
-$(INTDIR)/vardef.obj :  $(SOURCE)  $(INTDIR)
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=.\vputget.c
-
-$(INTDIR)/vputget.obj :  $(SOURCE)  $(INTDIR)
+$(INTDIR)/vers.obj :  $(SOURCE)  $(INTDIR)
 
 # End Source File
 ################################################################################
 # Begin Source File
 
-SOURCE=.\misctest.c
+SOURCE=.\blocks.c
 
-$(INTDIR)/misctest.obj :  $(SOURCE)  $(INTDIR)
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=.\slabs.c
-
-$(INTDIR)/slabs.obj :  $(SOURCE)  $(INTDIR)
+$(INTDIR)/blocks.obj :  $(SOURCE)  $(INTDIR)
 
 # End Source File
 ################################################################################
 # Begin Source File
 
-SOURCE=.\varget.c
+SOURCE=.\tree.c
 
-$(INTDIR)/varget.obj :  $(SOURCE)  $(INTDIR)
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=.\testcdf.h
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=.\vputgetg.c
-
-$(INTDIR)/vputgetg.obj :  $(SOURCE)  $(INTDIR)
+$(INTDIR)/tree.obj :  $(SOURCE)  $(INTDIR)
 
 # End Source File
 ################################################################################
 # Begin Source File
 
-SOURCE=.\driver.c
+SOURCE=.\testhdf.c
 
-$(INTDIR)/driver.obj :  $(SOURCE)  $(INTDIR)
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=.\add.c
-
-$(INTDIR)/add.obj :  $(SOURCE)  $(INTDIR)
+$(INTDIR)/testhdf.obj :  $(SOURCE)  $(INTDIR)
 
 # End Source File
 ################################################################################
 # Begin Source File
 
-SOURCE=.\add.h
-# End Source File
-################################################################################
-# Begin Source File
+SOURCE=.\rig.c
 
-SOURCE=.\rec.c
-
-$(INTDIR)/rec.obj :  $(SOURCE)  $(INTDIR)
+$(INTDIR)/rig.obj :  $(SOURCE)  $(INTDIR)
 
 # End Source File
 ################################################################################
 # Begin Source File
 
-SOURCE=.\dimtests.c
+SOURCE=.\sdmms.c
 
-$(INTDIR)/dimtests.obj :  $(SOURCE)  $(INTDIR)
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=.\cdftests.c
-
-$(INTDIR)/cdftests.obj :  $(SOURCE)  $(INTDIR)
+$(INTDIR)/sdmms.obj :  $(SOURCE)  $(INTDIR)
 
 # End Source File
 ################################################################################
 # Begin Source File
 
-SOURCE=.\val.c
+SOURCE=.\tutils.h
+# End Source File
+################################################################################
+# Begin Source File
 
-$(INTDIR)/val.obj :  $(SOURCE)  $(INTDIR)
+SOURCE=.\an.c
+
+$(INTDIR)/an.obj :  $(SOURCE)  $(INTDIR)
 
 # End Source File
 ################################################################################
 # Begin Source File
 
-SOURCE=.\val.h
-# End Source File
-################################################################################
-# Begin Source File
+SOURCE=.\bitio.c
 
-SOURCE=.\error.c
-
-$(INTDIR)/error.obj :  $(SOURCE)  $(INTDIR)
+$(INTDIR)/bitio.obj :  $(SOURCE)  $(INTDIR)
 
 # End Source File
 ################################################################################
 # Begin Source File
 
-SOURCE=.\error.h
-# End Source File
-################################################################################
-# Begin Source File
+SOURCE=.\vblocks.c
 
-SOURCE=.\varputg.c
-
-$(INTDIR)/varputg.obj :  $(SOURCE)  $(INTDIR)
+$(INTDIR)/vblocks.obj :  $(SOURCE)  $(INTDIR)
 
 # End Source File
 ################################################################################
 # Begin Source File
 
-SOURCE=.\atttests.c
+SOURCE=.\sdstr.c
 
-$(INTDIR)/atttests.obj :  $(SOURCE)  $(INTDIR)
+$(INTDIR)/sdstr.obj :  $(SOURCE)  $(INTDIR)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\conv.c
+
+$(INTDIR)/conv.obj :  $(SOURCE)  $(INTDIR)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\litend.c
+
+$(INTDIR)/litend.obj :  $(SOURCE)  $(INTDIR)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\file1.c
+
+$(INTDIR)/file1.obj :  $(SOURCE)  $(INTDIR)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\sdnmms.c
+
+$(INTDIR)/sdnmms.obj :  $(SOURCE)  $(INTDIR)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\extelt.c
+
+$(INTDIR)/extelt.obj :  $(SOURCE)  $(INTDIR)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\nbit.c
+
+$(INTDIR)/nbit.obj :  $(SOURCE)  $(INTDIR)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\comp.c
+
+$(INTDIR)/comp.obj :  $(SOURCE)  $(INTDIR)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\anfile.c
+
+$(INTDIR)/anfile.obj :  $(SOURCE)  $(INTDIR)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\file.c
+
+$(INTDIR)/file.obj :  $(SOURCE)  $(INTDIR)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\mgr.c
+
+$(INTDIR)/mgr.obj :  $(SOURCE)  $(INTDIR)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\tproto.h
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\slab.c
+
+$(INTDIR)/slab.obj :  $(SOURCE)  $(INTDIR)
 
 # End Source File
 # End Group

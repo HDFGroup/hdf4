@@ -72,7 +72,7 @@ void expand_escapes();
 #include <string.h>
 #include <ctype.h>
 #include <limits.h>
-#include "ncgentab.h"
+#include "msofttab.h"
 # define YYNEWLINE 10
 yylex(){
 int nstr; extern int yyprevious;

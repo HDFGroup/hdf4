@@ -32,6 +32,9 @@
  * undefine the corresponding HAVE_xxx symbol.
  */
 
+#include <windows.h>
+#include <winnt.h>
+
 #define HAVE_STDDEF_H		/* replace 'define' by 'undef' if error here */
 #ifdef HAVE_STDDEF_H		/* next line will be skipped if you undef... */
 #include <stddef.h>

@@ -21,9 +21,9 @@
 #   define NULL 0
 #endif
 
-#if defined __STDC__ || defined PC
+#if defined __STDC__ || defined PC || defined _WINDOWS || defined WIN32
 #define STDC_INCLUDES
-#if !(defined UNIX386 || defined WINNT || defined __ultrix)
+#if !(defined UNIX386 || defined WINNT || defined WIN32 || defined __ultrix)
 long ntohl(long);
 long htonl(long);
 #endif /* !unix */

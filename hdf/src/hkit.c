@@ -521,7 +521,7 @@ HDflush(int32 file_id)
     if (BADFREC(file_rec))
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
-    fflush(file_rec->file);
+    HI_FLUSH(file_rec->file);
 #endif /* MAC */
 
     return SUCCEED;
