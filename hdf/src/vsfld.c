@@ -364,8 +364,16 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
 
           usymid = vs->nusym;
           /* use temporary pointer in case we run out of memory, so we don't loose original list */
-          if((tmp_sym=(SYMDEF *)HDrealloc(tmp_sym,sizeof(SYMDEF)*(usymid+1)))==NULL)
+          if (tmp_sym == NULL)
+           {
+             if((tmp_sym=(SYMDEF *) HDmalloc(sizeof(SYMDEF)*(usymid+1)))==NULL)
               HGOTO_ERROR(DFE_NOSPACE,FAIL);
+            }
+          else
+            {
+          if((tmp_sym=(SYMDEF *) HDrealloc((VOIDP)tmp_sym,sizeof(SYMDEF)*(usymid+1)))==NULL)
+              HGOTO_ERROR(DFE_NOSPACE,FAIL);
+            }
           vs->usym=tmp_sym;
       } /* end else */
 
