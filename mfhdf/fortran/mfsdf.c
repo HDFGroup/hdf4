@@ -191,11 +191,11 @@ nsfdimid(id, index)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-nscginfo(intf *id, char *name, intf *rank, intf *dimsizes, intf *nt, intf *nattr, intf *len)
+nscginfo(intf *id, _fcd name, intf *rank, intf *dimsizes, intf *nt, intf *nattr, intf *len)
 #else
 nscginfo(id, name, rank, dimsizes, nt, nattr, len)
      intf *id;
-     char *name;
+     _fcd name;
      intf *rank, *dimsizes, *nt, *nattr, *len;
 #endif /* PROTOTYPE */
 {
@@ -843,11 +843,11 @@ nscgdatstrs(id, label, unit, format, coord, llabel, lunit, lformat, lcoord, len)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-nscgainfo(intf *id, intf *number, char *name, intf *nt, intf *count, intf *len)
+nscgainfo(intf *id, intf *number, _fcd name, intf *nt, intf *count, intf *len)
 #else
 nscgainfo(id, number, name, nt, count, len)
      intf *id, *number;
-     char *name;
+     _fcd name;
      intf *count, *len, *nt;
 #endif /* PROTOTYPE */
 {
@@ -885,11 +885,11 @@ nscgainfo(id, number, name, nt, count, len)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-nscgdinfo(intf *id, char *name, intf *sz, intf *nt, intf *nattr, intf *len)
+nscgdinfo(intf *id, _fcd name, intf *sz, intf *nt, intf *nattr, intf *len)
 #else
 nscgdinfo(id, name, sz, nt, nattr, len)
      intf *id;
-     char *name;
+     _fcd name;
      intf *sz, *nattr, *len, *nt;
 #endif /* PROTOTYPE */
 {
