@@ -14,7 +14,8 @@
 #include "hdiff.h"
 #include "hdiff_list.h"
 #include "hdiff_mattbl.h"
-#include "hdiff_gr.h"
+
+/*#include "hdiff_gr.h"*/
 
 /*-------------------------------------------------------------------------
  * Function: diff_gr

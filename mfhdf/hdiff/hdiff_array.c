@@ -144,7 +144,7 @@ int array_diff(void *buf1,
   i1ptr2 = (int8 *) buf2;
   for (i=0; i<tot_cnt; i++)
   {
-   c_diff = abs(*i1ptr1 - *i1ptr2);
+   c_diff = (int8)abs(*i1ptr1 - *i1ptr2);
    is_fill1 = fill1 && (*i1ptr1 == *((int8 *)fill1));
    is_fill2 = fill2 && (*i1ptr2 == *((int8 *)fill2));
    if (!is_fill1 && !is_fill2) {
@@ -189,7 +189,7 @@ int array_diff(void *buf1,
   i2ptr2 = (int16 *) buf2;
   for (i=0; i<tot_cnt; i++)
   {
-   i2_diff = abs(*i2ptr1 - *i2ptr2);
+   i2_diff = (int16)abs(*i2ptr1 - *i2ptr2);
    is_fill1 = fill1 && (*i2ptr1 == *((int16 *)fill1));
    is_fill2 = fill2 && (*i2ptr2 == *((int16 *)fill2));
    if (debug) {

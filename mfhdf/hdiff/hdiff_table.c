@@ -29,7 +29,7 @@
  *-------------------------------------------------------------------------
  */
 
-int dtable_search(dtable_t *table, int tag, int ref )
+int dtable_search(dtable_t *table, int32 tag, int32 ref )
 {
  int i;
  
@@ -55,7 +55,7 @@ int dtable_search(dtable_t *table, int tag, int ref )
  *-------------------------------------------------------------------------
  */
 
-void dtable_add(dtable_t *table, int tag, int ref, char* path)
+void dtable_add(dtable_t *table, int32 tag, int32 ref, char* path)
 {
  int i;
  

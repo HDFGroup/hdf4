@@ -92,20 +92,47 @@ typedef struct {			/* selection for comparison  */
 
 
 
+/*-------------------------------------------------------------------------
+ * public functions
+ *-------------------------------------------------------------------------
+ */
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 int  hdiff(char *fname1, char *fname2, diff_opt_t *fspec);
+
+#ifdef __cplusplus
+}
+#endif
+
+
+
+
+/*-------------------------------------------------------------------------
+ * private functions
+ *-------------------------------------------------------------------------
+ */
+
 int  gattr_diff(int32 sdid1, int32 sdid2, diff_opt_t *specp);
 int  sdattr_diff(int32 sdid1, int32 sdid2, diff_opt_t *specp);
 void pr_att_vals(nc_type type, int len, void *vals);
 int  vdata_cmp(int32 vs1, int32 vs2, char *gname, char*cname, int32 max_err_cnt);
 void fmt_print(uint8 *x, int32 type);
 void make_vars(char *optarg, diff_opt_t *fspec, int option);
-int  array_diff(void *buf1, void *buf2, int32 tot_cnt, int32 type, float32 err_limit, 
-														 	int32 max_err_cnt, int32 statistics,
-														 	void *fill1, void *fill2);
+
+
+int array_diff(void *buf1, 
+               void *buf2, 
+               int32 tot_cnt, 
+               int32 type, 
+               float32 err_limit, 
+															int32 max_err_cnt, 
+               int32 statistics,
+															void *fill1, 
+               void *fill2);
 
 
 int match( char *fname1, int nobjects1, dtable_t *list1,
@@ -128,11 +155,26 @@ int diff( char *fname1,
 void print_dims( int r, int32 *d );
 
 
+int diff_vs( int32 file1_id,
+             int32 file2_id,
+             int32 ref1,              
+             int32 ref2,
+             diff_opt_t * fspec);
 
 
-#ifdef __cplusplus
-}
-#endif
+int diff_gr( int32 file1_id,
+             int32 file2_id,
+             int32 ref1,              
+             int32 ref2,
+             diff_opt_t * specp);
+
+
+int diff_sds(char  *fname1, 
+             char  *fname2, 
+             int32 ref1,
+             int32 ref2,
+             diff_opt_t *fspec);
+
 
 
 #endif

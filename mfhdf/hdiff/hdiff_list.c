@@ -107,8 +107,7 @@ int hdiff_list_vg(char* fname,
             int32 file_id,
             dtable_t *table)
 {
- int32 vgroup_ref=-1,  /* reference number of the group */
-       vgroup_id,      /* vgroup identifier */
+ int32 vgroup_id,      /* vgroup identifier */
        nlones = 0,     /* number of lone vgroups */
        ntagrefs,       /* number of tag/ref pairs in a vgroup */
        *ref_array=NULL,/* buffer to hold the ref numbers of lone vgroups   */
@@ -518,8 +517,7 @@ int hdiff_list_sds(char* fname,
 int hdiff_list_vs(char* fname,int32 file_id,dtable_t *table)
 {
  intn  status_n;     /* returned status_n for functions returning an intn  */
- int32 vdata_ref=-1, /* reference number of the vdata */
-       nlones = 0,   /* number of lone vdatas */
+ int32 nlones = 0,   /* number of lone vdatas */
        *ref_array,   /* buffer to hold the ref numbers of lone vdatas   */
        ref;          /* temporary ref number  */
  int   i;
@@ -817,8 +815,6 @@ int insert_an_data(int32 file_id,
        i,             /* position of an annotation */
        n_anno;
        
- int  is_label= (type==AN_DATA_LABEL)?1:0;
- 
  /* Initialize the AN interface  */
  an_id  = ANstart (file_id);
 
@@ -1008,7 +1004,6 @@ int insert_sds_attrs(int32 id_in,int32 nattrs)
  int32 dtype,                 /* SDS data type */
        nelms;                 /* number of elements */
  char  attr_name[MAX_NC_NAME];
- VOIDP attr_buf=NULL;
  int   i;
 
  /* loop through attributes in input SDS */
@@ -1043,7 +1038,6 @@ int insert_gr_attrs(int32 ri_id,int32 nattrs)
  int32 dtype,                 /* SDS data type */
        nelms;                 /* number of elements */
  char  attr_name[MAX_NC_NAME];
- VOIDP attr_buf=NULL;
  int   i;
 
  /* loop through attributes in input GR */
@@ -1122,7 +1116,6 @@ int  insert_gr(int32 file_id,
                r_interlace_mode; 
  char          gr_name[MAX_GR_NAME]; 
  char          *path=NULL;
- int           rank=2;
  int           has_pal = 0;
 
  ri_index = GRreftoindex(gr_in,(uint16)ref);
@@ -1217,7 +1210,6 @@ int  insert_vs( int32 file_id,
  int   n_fields, n_attrs;
  char  vdata_name [VSNAMELENMAX], vdata_class[VSNAMELENMAX];
  char  *path=NULL;
- uint8 *buf=NULL;
  int   i, j, ret=1;
 
 /*-------------------------------------------------------------------------

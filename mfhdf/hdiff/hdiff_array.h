@@ -8,15 +8,17 @@
 extern "C" {
 #endif
 
+ /*
 int array_diff(void *buf1, 
                void *buf2, 
                int32 tot_cnt, 
                int32 type, 
-               float err_limit, 
+               float32 err_limit, 
 															int32 max_err_cnt, 
                int32 statistics,
 															void *fill1, 
                void *fill2);
+               */
 
 
 #ifdef __cplusplus

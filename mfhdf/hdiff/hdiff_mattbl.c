@@ -38,10 +38,10 @@
 void match_table_add (match_table_t *table, 
                       unsigned *flags, 
                       char* path, 
-                      int tag1, 
-                      int ref1,
-                      int tag2, 
-                      int ref2 )
+                      int32 tag1, 
+                      int32 ref1,
+                      int32 tag2, 
+                      int32 ref2 )
 {
  int i;
  
