@@ -2335,7 +2335,7 @@ ANatype2tag(ann_type atype /* IN: Annotation type */)
       case AN_FILE_DESC:  ann_tag = DFTAG_FD;  break;
       case AN_DATA_LABEL: ann_tag = DFTAG_DIL; break;
       case AN_DATA_DESC:  ann_tag = DFTAG_DIA; break;
-      default: ann_tag = 5;
+      default: ann_tag = DFTAG_NULL;  /*changed from 5 to DFTAG_NULL -BMR*/
       } /* switch */
     return ann_tag;
 } /* ANatype2tag */
