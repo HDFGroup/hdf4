@@ -26,6 +26,9 @@ If you have any questions or comments, please send them to:
 CONTENTS
 
 - New Features and Changes
+  -- Configuration
+  -- Library
+  -- Utilities
 - Support for new platforms
 - Bugs fixed since HDF4.1r5
 - Documentation
@@ -34,7 +37,17 @@ CONTENTS
 
 New Features and Changes:
 ========================
+    Configuration
+    ============= 
+     
+     * By default HDF4 libraies and utilities are installed under <source_dir>/NewHDF
+                                                                       12/01/2004 EIP
 
+    Library
+    ========= 
+   
+    Utilities
+    ========= 
 
 Support for new platforms 
 =========================
