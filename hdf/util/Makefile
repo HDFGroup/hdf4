@@ -43,6 +43,8 @@ RMFLAGS=-f
 HDFLIB = ../lib
 HDFINC = ../include
 HDFBIN = ../bin
+JPEGLIB = ../jpeg
+JPEGINC = ../jpeg
 #For IRIS4, include libgl_s.a
 #GLLIB = -lgl_s
 #For the HP9000 include libm.a
@@ -56,7 +58,7 @@ CFLAGS = -D$(MACHINE)
 # ==> For IRIS4, specify CFLAGS as follows:
 #CFLAGS=  -g -D$(MACHINE) -ansi
 
-.c.o: he.h he_proto.h $(HDFLIB)/libdf.a
+.c.o: he.h he_proto.h $(HDFLIB)/libdf.a $(FRC)
 	$(CC) -c $(CFLAGS) -I$(HDFINC) $<
 #	$(CC) -c $(CFLAGS) -I$(HDFINC) $(GLLIB)  $<
 
@@ -66,16 +68,29 @@ all: hdfed utils fp2hdf fptest
 
 nofortran: hdfed utils fp2hdf fptest
 
-hdfed: he.h he_proto.h $(HEOBJ) $(HDFLIB)/libdf.a
-	$(CC) $(CFLAGS) -I$(HDFINC) $(HEOBJ) $(HDFLIB)/libdf.a -o hdfed
+rebuild:
+	@$(MAKE) all $(HDF_FLAGS) FRC=force_rebuild
+
+rebuildnofortran:
+	@$(MAKE) nofortran $(MFLAGS) $(HDF_FLAGS) FRC=force_rebuild
+
+# Leave this target blank with no actions, the rebuild macros above depend on it
+force_rebuild:
+
+hdfed: he.h he_proto.h $(HEOBJ) $(HDFLIB)/libdf.a $(FRC)
+	$(CC) $(CFLAGS) -I$(HDFINC) $(HEOBJ) $(HDFLIB)/libdf.a -o hdfed $(JPEGLIB)/libjpeg.a
 
 .c: $(HDFLIB)/libdf.a
-	$(CC) $(CFLAGS) -I$(HDFINC) $< -o $@ $(HDFLIB)/libdf.a $(GLLIB)
+	$(CC) $(CFLAGS) -I$(HDFINC) $< -o $@ $(HDFLIB)/libdf.a $(GLLIB) $(JPEGLIB)/libjpeg.a
 
-.f: $(HDFLIB)/libdf.a
-	$(FC) $(FFLAGS) $< $(HDFLIB)/libdf.a -o $@
+.f: $(HDFLIB)/libdf.a 
+	$(FC) $(FFLAGS) $< $(HDFLIB)/libdf.a -o $@ $(JPEGLIB)/libjpeg.a
 
 utils: $(UTILS) $(HDFLIB)/libdf.a
+
+$(HEOBJ): $(FRC)
+
+$(UTILS): $(FRC)
 
 clean:
 	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed fptest
