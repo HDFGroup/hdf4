@@ -45,7 +45,8 @@
 #define DFAN_mask	0x1
 /* DFANaddfds, DFANaddfid, DFANgetdesc, DFANgetdesclen, DFANgetfds,
    DFANgetfdslen, DFANgetfid, DFANgetfidlen, DFANgetlabel,
-   DFANgetlablen, DFANlablist, DFANlastref, DFANputdesc, DFANputlabel */
+   DFANgetlablen, DFANlablist, DFANlastref, DFANputdesc, DFANputlabel 
+   DFANclear */
 
 #define DFP_mask	0x2
 /* DFPaddpal, DFPgetpal, DFPlastref, DFPnpals, DFPputpal, DFPreadref,
@@ -77,7 +78,9 @@
    Hgetelement, Hgetfileversion, Hgetlibversion, Hinquire, Hishdf,
    HLcreate, Hlength, Hnewref, Hnextread, Hnumber, Hoffset, Hopen,
    Hputelement, Hread, Hseek, Hstartread, Hstartwrite, Hsync, Htrunc,
-   Hwrite, HXcreate */
+   Hwrite, HXcreate, HXsetcreatedir, HXsetdir, HLconvert, Hstartaccess,
+   Hisappendable, Htell, Htagnewref, Hcache, Hsetaccesstype, Hexist,
+   Hsetlength */
 
 #define HE_mask		0x40
 /* HEclear, HEprint, HEpush, HEreport, HEstring */
@@ -98,7 +101,7 @@
 #define V_mask		0x200
 /* Vaddtagref, Vattach, Vdetach, Vgetclass, Vgetid, Vgetname,
    Vgettagref, Vgettagrefs, Vinqtagref, Vinquire, Vinsert, Vlone,
-   Vntagrefs, Vsetclass, Vsetname */
+   Vntagrefs, Vsetclass, Vsetname, Vinitialize, Vfinish, Vfind, Vfindclass */
 
 #define VH_mask		0x400
 /* VHmakegroup, VHstoredata, VHstoredatam */
@@ -107,6 +110,19 @@
 /* VSattach, VSdetach, VSelts, VSfdefine, VSfexist, VSfind,
    VSgetclass, VSgetfields, VSgetid, VSgetinterlace, VSgetname,
    VSinquire, VSlone, VSread, VSseek, VSsetclass, VSsetfields,
-   VSsetinterlace, VSsetname, VSsizeof, VSwrite */
+   VSsetinterlace, VSsetname, VSsizeof, VSwrite, VSappendable, VSdelete
+   VSfindclass */
+
+#define AN_mask         0x900
+/* ANstart, ANfileinfo, ANend, ANcreate, ANcreatef, ANselect, ANnumann,
+   ANannlist, ANannlen, ANreadann, ANwriteann, ANendacess */
+
+#define GR_mask         0x1000
+/* GRstart, GRfileinfo, GRend, GRcreate, GRselect, GRnametoindex,
+   GRgetiminfo, GRwriteimage, GRreadimage, GRendaccess, GRgetdimid,
+   GRsetdimname, GRdiminfo, GRidtoref, GRreftoindex, GRreqlutil,
+   GRreqimageil, GRgetlutid, GRgetlutinfo, GRwritelut, GRreadlut,
+   GRsetexternalfile, GRsetaccestype, GRsetcompress, GRsetattr, 
+   GRattrinfo, GRgetattr, GRfindattr */
 
 #endif /* PROCMASK_H */

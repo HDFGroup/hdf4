@@ -21,26 +21,31 @@
  * Project Manager and Principal Investigator:
  *	Daniel A. Reed (reed@cs.uiuc.edu)
  *
- * Funded by: National Science Foundation grants NSF CCR86-57696,
- * NSF CCR87-06653 and NSF CDA87-22836 (Tapestry), NASA ICLASS Contract
- * No. NAG-1-613, DARPA Contract No. DABT63-91-K-0004, by a grant
- * from the Digital Equipment Corporation External Research Program,
- * and by a collaborative research agreement with the Intel Supercomputer
- * Systems Division.
+ * Funded by: National Aeronautics and Space Administration under NASA
+ * Contracts NAG-1-613 and USRA 5555-22 and by the Advanced Research
+ * Projects Agency under ARPA contracts DAVT63-91-C-0029 and
+ * DABT63-93-C-0040.
  *
  */
 
 /*--------------------------------------------------------------------------
  * File:  ProcIDs.h
- * Purpose: define IDs for identifying procedures
+ * Purpose: define IDs for identifying procedures in traces
  *-------------------------------------------------------------------------*/
 
 #ifndef PROCIDS_H		/* avoid re-inclusion */
 #define PROCIDS_H
 
-#ifdef PABLO
+#if defined HAVE_PABLO || defined PABLO
 
+#include "ProcMasks.h"
 extern uint16 procTrace;
+
+/* TRACE_ON and TRACE_OFF are invoked by the wrapper functions before
+   and after calling the actual function.  There is no relationship
+   between the mask and the event ID.  The only important thing is
+   that the IDs defined below are unique positive numbers, and that
+   each mask is a single bit. */
 
 #define TRACE_ON(mask, eventID) \
 	if (procTrace & mask) traceEvent(eventID, NULL, 0)
@@ -48,7 +53,8 @@ extern uint16 procTrace;
 #define TRACE_OFF(mask, eventID) \
 	if (procTrace & mask) traceEvent(-eventID, NULL, 0)
 
-#define DFAN_mask	0x1
+
+/* DFAN */
 #define ID_DFANaddfds		101
 #define ID_DFANaddfid		102
 #define ID_DFANgetdesc		103
@@ -63,8 +69,9 @@ extern uint16 procTrace;
 #define ID_DFANlastref		112
 #define ID_DFANputdesc		113
 #define ID_DFANputlabel		114
+#define ID_DFANclear		115
 
-#define DFP_mask	0x2
+/* DFP */
 #define ID_DFPaddpal		201
 #define ID_DFPgetpal		202
 #define ID_DFPlastref		203
@@ -74,7 +81,7 @@ extern uint16 procTrace;
 #define ID_DFPrestart		207
 #define ID_DFPwriteref		208
 
-#define DFR8_mask	0x4
+/* DFR8 */
 #define ID_DFR8addimage		301
 #define ID_DFR8getdims		302
 #define ID_DFR8getimage		303
@@ -87,7 +94,7 @@ extern uint16 procTrace;
 #define ID_DFR8setpalette	310
 #define ID_DFR8writeref		311
 
-#define DFSD_mask	0x8
+/* DFSD */
 #define ID_DFSDadddata		401
 #define ID_DFSDclear		402
 #define ID_DFSDendslab		403
@@ -126,7 +133,7 @@ extern uint16 procTrace;
 #define ID_DFSDwriteref		436
 #define ID_DFSDwriteslab	437
 
-#define DF24_mask	0x10
+/* DF24 */
 #define ID_DF24addimage		501
 #define ID_DF24getdims		502
 #define ID_DF24getimage		503
@@ -141,7 +148,7 @@ extern uint16 procTrace;
 #define ID_DF24setil		512
 /* DF24writeref does not exist! */
 
-#define H_mask		0x20
+/* H */
 #define ID_Happendable		601
 #define ID_Hclose		602
 #define ID_Hdeldd		603
@@ -170,18 +177,29 @@ extern uint16 procTrace;
 #define ID_Htrunc		625
 #define ID_Hwrite		626
 #define ID_HXcreate		627
+#define ID_HXsetcreatedir	628
+#define ID_HXsetdir	        629
+#define ID_HLconvert		630
+#define ID_Hstartaccess	        631
+#define ID_Hisappendable        632
+#define ID_Htell                633
+#define ID_Htagnewref           634
+#define ID_Hcache               635
+#define ID_Hsetaccesstype       636
+#define ID_Hexist               637
+#define ID_Hsetlength           638
 
 /* HDFclose and HDFopen are implemented as macros. */
 
-#define HE_mask		0x40
+/* HE */
 #define ID_HEclear		701
 #define ID_HEprint		702
 #define ID_HEpush		703
 #define ID_HEreport		704
 #define ID_HEstring		705
 
+/* SD */
 /* SD functions are defined in mfhdf/libsrc/mfsd.c. */
-#define SD_mask		0x80
 #define ID_SDattrinfo		801
 #define ID_SDcreate		802
 #define ID_SDdiminfo		803
@@ -216,7 +234,7 @@ extern uint16 procTrace;
 #define ID_SDstart		832
 #define ID_SDwritedata		833
 
-#define VF_mask		0x100
+/* VF */
 #define ID_VFfieldesize		901
 #define ID_VFfieldisize		902
 #define ID_VFfieldname		903
@@ -224,7 +242,7 @@ extern uint16 procTrace;
 #define ID_VFfieldtype		905
 #define ID_VFnfields		906
 
-#define V_mask		0x200
+/* V */
 #define ID_Vaddtagref		1001
 #define ID_Vattach		1002
 #define ID_Vdetach		1003
@@ -241,14 +259,18 @@ extern uint16 procTrace;
 #define ID_Vntagrefs		1013
 #define ID_Vsetclass		1014
 #define ID_Vsetname		1015
+#define ID_Vinitialize		1016
+#define ID_Vfinish		1017
+#define ID_Vfind		1018
+#define ID_Vfindclass		1019
 /* Vstart is implemented as a macro. */
 
-#define VH_mask		0x400
+/* VH */
 #define ID_VHmakegroup		1101
 #define ID_VHstoredata		1102
 #define ID_VHstoredatam		1103
 
-#define VS_mask		0x800
+/* VS */
 #define ID_VSattach		1201
 #define ID_VSdetach		1202
 #define ID_VSelts		1203
@@ -270,7 +292,54 @@ extern uint16 procTrace;
 #define ID_VSsetname		1219
 #define ID_VSsizeof		1220
 #define ID_VSwrite		1221
+#define ID_VSappendable		1222
+#define ID_VSdelete		1223
+#define ID_VSfindclass		1224
 
-#endif /* PABLO */
+/* AN */
+#define ID_ANstart              1300
+#define ID_ANfileinfo           1301
+#define ID_ANend                1302
+#define ID_ANcreate             1303
+#define ID_ANcreatef            1304
+#define ID_ANselect             1305
+#define ID_ANnumann             1306
+#define ID_ANannlist            1307
+#define ID_ANannlen             1308
+#define ID_ANreadann            1309
+#define ID_ANwriteann           1310
+#define ID_ANendaccess          1311
+
+/* GR */
+#define ID_GRstart              1400
+#define ID_GRfileinfo           1401
+#define ID_GRend                1402
+#define ID_GRcreate             1403
+#define ID_GRselect             1404
+#define ID_GRnametoindex        1405
+#define ID_GRgetiminfo          1406
+#define ID_GRwriteimage         1407
+#define ID_GRreadimage          1408
+#define ID_GRendaccess          1409
+#define ID_GRgetdimid           1410
+#define ID_GRsetdimname         1411
+#define ID_GRdiminfo            1412
+#define ID_GRidtoref            1413
+#define ID_GRreftoindex         1414
+#define ID_GRreqlutil           1415
+#define ID_GRreqimageil         1416
+#define ID_GRgetlutid           1417
+#define ID_GRgetlutinfo         1418
+#define ID_GRwritelut           1419
+#define ID_GRreadlut            1420
+#define ID_GRsetexternalfile    1421
+#define ID_GRsetaccesstype      1422
+#define ID_GRsetcompress        1423
+#define ID_GRsetattr            1424
+#define ID_GRattrinfo           1425
+#define ID_GRgetattr            1426
+#define ID_GRfindattr           1427
+
+#endif /* HAVE_PABLO || PABLO */
 
 #endif /* PROCIDS_H */

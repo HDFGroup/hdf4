@@ -22,12 +22,10 @@
  * Project Manager and Principal Investigator:
  *	Daniel A. Reed (reed@cs.uiuc.edu)
  *
- * Funded by: National Science Foundation grants NSF CCR86-57696,
- * NSF CCR87-06653 and NSF CDA87-22836 (Tapestry), NASA ICLASS Contract
- * No. NAG-1-613, DARPA Contract No. DABT63-91-K-0004, by a grant
- * from the Digital Equipment Corporation External Research Program,
- * and by a collaborative research agreement with the Intel Supercomputer
- * Systems Division.
+ * Funded by: National Aeronautics and Space Administration under NASA
+ * Contracts NAG-1-613 and USRA 5555-22 and by the Advanced Research
+ * Projects Agency under ARPA contracts DAVT63-91-C-0029 and
+ * DABT63-93-C-0040.
  *
  */
 
@@ -45,8 +43,15 @@
 #include "ProcIDs.h"
 
 
-uint16 procTrace;
+/* This global variable is used to specify which families of
+   procedures should be traced. */
+uint16 procTrace = 0;
 
+/* The procEntries and procExits arrays specify the event IDs of
+   procedure entry and exit events, respectively.  In order to work
+   with the TRACE_ON and TRACE_OFF macros defined in ProcIDs.h, the
+   values in procExits must be the negated values of each entry in
+   procEntries. */
 int procEntries[] = {
 	ID_DFANaddfds,
 	ID_DFANaddfid,
@@ -445,23 +450,26 @@ USAGE
        VOID HDFinitIOTrace(traceFileName, detail, lifetime, timeWindow,
 			   timeWindowSize, regionTrace, regionSize,
 			   procTraceMask)
-       char *traceFileName;	IN: trace file name
-       intn detail;		IN: if non-zero, do detailed trace
-       intn lifetime;		IN: if non-zero, do lifetime summaries
-       intn timeWindow;		IN: if non-zero, do time window summaries
-       intn timeWindowSize;	IN: size of time window
-       intn regionTrace;	IN: if non-zero, do file region summaries
-       intn regionSize;		IN: size of region
-       uint16 procTraceMask;	IN: families of procedures to trace
+       char    *traceFileName;	IN: name of the generated trace output file
+       intn    detail;		IN: if non-zero, do detailed trace
+       intn    lifetime;	IN: if non-zero, do lifetime summaries
+       intn    timeWindow;	IN: if non-zero, do time window summaries
+       float64 timeWindowSize;	IN: size of time window in seconds
+       intn    regionTrace;	IN: if non-zero, do file region summaries
+       intn    regionSize;	IN: size of file region in bytes
+       uint16  procTraceMask;	IN: families of procedures to trace
 RETURNS
        None.
 --------------------------------------------------------------------- */
-PUBLIC VOID HDFinitIOTrace(char *traceFileName, intn detail, intn lifetime,
+PUBLIC int HDFinitIOTrace(char *traceFileName, intn detail, intn lifetime,
 			   intn timeWindow, float64 timeWindowSize,
 			   intn regionTrace, intn regionSize,
 			   uint16 procTraceMask )
 {
+  int ret_value = 0;
+
     setTraceFileName(traceFileName);
+
     preInitProcTrace();
     initProcTrace(sizeof(procEntries)/sizeof(int), procEntries, procExits);
 
@@ -484,7 +492,6 @@ PUBLIC VOID HDFinitIOTrace(char *traceFileName, intn detail, intn lifetime,
     } else
       disableTimeWindowSummaries();
 
-
     if (regionTrace) {
       if ( regionSize <= 0 )
 	regionSize = 1000;
@@ -493,6 +500,8 @@ PUBLIC VOID HDFinitIOTrace(char *traceFileName, intn detail, intn lifetime,
       disableFileRegionSummaries();
 
     procTrace = procTraceMask;
+
+  return ret_value;
 }
 
 
@@ -504,10 +513,14 @@ USAGE
 RETURNS
        None.
 --------------------------------------------------------------------- */
-PUBLIC VOID HDFendIOTrace(VOID)
+PUBLIC int HDFendIOTrace(VOID)
 {
+  int ret_value = 0;
+
     endIOTrace();
     endTracing();
+
+  return ret_value;
 }
 
-#endif /* PABLO */
+#endif /* HAVE_PABLO */

@@ -89,7 +89,7 @@ includedir = $(prefix)/include
 infodir = $(prefix)/info
 
 # Pablo Instrumentation Library support files
-PCHDRS=ProcIDs.h
+PCHDRS=ProcIDs.h ProcMasks.h
 PCSRCS=PabloHDF.c
 PCOBJS=PabloHDF.o
 PFINCS=PabloHDF.inc
@@ -98,7 +98,9 @@ PFOBJS=PabloHDFf.o PabloHDFff.o
 POBJS=PabloHDF.o PabloHDFf.o PabloHDFff.o
 PSRCS= $(PCHDRS) $(PCSRCS) $(PFINCS) $(PFSRCS)
 
-REMOTE_LIBRARY = pablohdf.a
+TARGETLIB = libdf-inst.a
+
+PABLO_INCLUDE= -I.
 
 #### ----- host and target specific makefile fragments come in here.-------
 ### ------------------- end of makefile fragments -------------------------
@@ -117,12 +119,13 @@ LOCAL_MACROS  = CC="$(CC)" \
 HDFINC= $(srcdir)/../src
 HDFLIB= $(srcdir)/../src
 HDFBIN= $(srcdir)/../bin
+HDFSRC= $(srcdir)/../src
 
 # ==> specify where to find the JPEG include files and library
 JPEGINC=$(srcdir)/../jpeg
 JPEGLIB=$(srcdir)/../jpeg
 
-ALL_CFLAGS = $(CFLAGS) $(PABLO_FLAGS) -I. -I$(HDFINC) -I$(JPEGINC) 
+ALL_CFLAGS= $(CFLAGS) $(PABLO_FLAGS) -I. $(PABLO_INCLUDE) -I$(HDFINC) -I$(JPEGINC)
 
 LINTFLAGS=
 SHAR=shar
@@ -136,6 +139,11 @@ HOBJS=`ar xv $(HDFLIB)/libdf.a | sed 's/x -//'`
 
 PINCS = $(PCHDRS) $(PFINCS)
 
+#
+#include the HDF source file definitions
+#
+include $(HDFSRC)/src.inc
+
 .SUFFIXES: .c.o .f.o 
 
 # This rule causes ansi2knr to be invoked.
@@ -148,14 +156,15 @@ PINCS = $(PCHDRS) $(PFINCS)
 #ansi2knr: ansi2knr.c
 #	$(CC) $(CFLAGS) $(ANSI2KNRFLAGS) -o ansi2knr ansi2knr.c
 
-.c.o:
-	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c $<
+.c.o: 
+	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c $(HDFSRC)/$*.c
 
 .f.o:
-	$(FC) $(FFLAGS) -c $<
+	$(FC) $(FFLAGS) -c $(HDFSRC)/$*.f
 
 .PHONY : all nofortran clean distclean debug saber lint
 
+#all::
 
 all::         FORCE
 	@if test -z "$(PABLO_FLAGS)"; then \
@@ -172,17 +181,18 @@ pablohdf::		FORCE
 	    $(MAKE) $(MFLAGS) $(HDF_FLAGS) libdf-inst.a;; \
 	esac
 
-libdf-inst.a: $(HDFLIB)/libdf.a $(PCOBJS) $(PFOBJS)
+libdf-inst.a: $(COBJS) $(FOBJS) $(PCOBJS) $(PFOBJS)
 	-$(RM) $(RMFLAGS) libdf-inst.a
-	$(AR) rcuv libdf-inst.a $(HOBJS) $(PCOBJS) $(PFOBJS)
+	$(AR) $(ARFLAGS) libdf-inst.a $(COBJS) $(FOBJS) $(PCOBJS) $(PFOBJS)
 	$(RANLIB) libdf-inst.a
 
-pablonofortran: $(HDFLIB)/libdf.a $(PCOBJS) 
+pablonofortran: $(COBJS) $(PCOBJS) 
 	-$(RM) $(RMFLAGS) libdf-inst.a
-	$(AR) rcuv libdf-inst.a $(HOBJS) $(PCOBJS)
+	$(AR) $(ARFLAGS) libdf-inst.a $(COBJS) $(PCOBJS)
 	$(RANLIB) libdf-inst.a
 
-nofortran: all 
+
+nofortran: all
 
 rebuild:
 	@$(MAKE) all $(HDF_FLAGS) FRC=force_rebuild
@@ -193,14 +203,28 @@ rebuildnofortran:
 # Leave this target blank with no actions, the rebuild macros above depend on it
 force_rebuild:
 
+$(FOBJS): $(FRC)
+
 debug: libdf-inst.a
 
 saber:
 	#load -D$(MACHINE) $(CSRCS) $(TSRCS) -lc
 
-install: install-headers
+install::  FORCE
+	@if test -z "$(PABLO_FLAGS)"; then \
+	  : true; \
+	else		 \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) pinstall-lib; \
+	fi
 
-install-headers:
+install-lib:: install
+
+pinstall-lib: pinstall-headers
+	$(INSTALL_DATA) $(TARGETLIB) $(libdir)/$(TARGETLIB).n
+	( cd $(libdir) ; $(RANLIB) $(libdir)/$(TARGETLIB).n )
+	mv -f $(libdir)/$(TARGETLIB).n $(libdir)/$(TARGETLIB)
+
+pinstall-headers:
 	for p in $(PINCS); do \
 	    $(INSTALL_DATA) \
 		`pwd`/$$p $(includedir)/$$p; \
@@ -210,10 +234,10 @@ depend:
 	makedepend -fMakefile -- $(CSRCS)
 
 clean:
-	-$(RM) $(RMFLAGS) *.o ./__SYM* libdf-inst.a
+	-$(RM) $(RMFLAGS) *.o  libdf-inst.a
 
 distclean:
-	-$(RM) $(RMFLAGS) *.o ./__SYM* libdf-inst.a config.status Makefile
+	-$(RM) $(RMFLAGS) *.o  libdf-inst.a config.status Makefile
 
 lint: $(CSRCS) 
 	$(LINT) $(LINTFLAGS) $(CSRCS)
@@ -265,7 +289,13 @@ help:
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 
 PabloHDF.o: ProcIDs.h
+	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c $<
 PabloHDFf.o: ProcIDs.h PabloHDF.inc
+	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c $<
 PabloHDFff.o: ProcIDs.h PabloHDF.inc
+	$(FC) $(FFLAGS) -c $<
 
+#get all the source dependecies.....
+# the dependencies don't work well
+include depend
 

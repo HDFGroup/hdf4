@@ -1,6 +1,6 @@
 		     HDF Performance Data Capture
 			     README.Pablo
-			   October 3, 1995
+			   October 4, 1995
 
 
 This file briefly summarizes how to use the instrumented version of
@@ -8,23 +8,32 @@ HDF and the Pablo performance data capture libraries to gather data
 about I/O behavior and procedure execution times.  More detailed
 documentation is provided in Pablo.ps, a PostScript file with the
 following contents:
-	Overview
-	Performance Data
-	Obtaining Pablo
-	Modifying Your Makefile
-	Instrumenting Your Source Code
-	Analyzing The Results
+
+    1. Overview
+    2. Performance Data
+    3. Obtaining Pablo
+    4. Modifying Your Makefile
+    5. Instrumenting Your Source Code
+    6. Analyzing The Results
+    A. Sample Analysis Reports
+    B. SDDF Records in the Trace Output File
+
+				 ---
 
 The Pablo software, including the performance data capture libraries
 and analysis tools, are available via anonymous FTP on
 
 	www-pablo.cs.uiuc.edu (128.174.237.148)
 
+				 ---
+
 When linking your application, the instrumented HDF library must come
 first, followed by PabloTraceExt, and finally PabloTrace.  For
 example:
 
 	-ldf-inst -lPabloTraceExt -lPabloTrace
+
+				 ---
 
 To gather performance data, your application must call HDFinitIOTrace
 to initialize tracing, and HDFendIOTrace to terminate tracing.
@@ -109,6 +118,8 @@ VOID HDFendIOTrace(VOID)
 
 	FORTRAN		integer function hendiotrace()
 
+
+				 ---
 
 The performance data can be manipulated by a variety of analysis tools
 in the Pablo software.

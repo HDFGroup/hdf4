@@ -21,12 +21,10 @@
  * Project Manager and Principal Investigator:
  *	Daniel A. Reed (reed@cs.uiuc.edu)
  *
- * Funded by: National Science Foundation grants NSF CCR86-57696,
- * NSF CCR87-06653 and NSF CDA87-22836 (Tapestry), NASA ICLASS Contract
- * No. NAG-1-613, DARPA Contract No. DABT63-91-K-0004, by a grant
- * from the Digital Equipment Corporation External Research Program,
- * and by a collaborative research agreement with the Intel Supercomputer
- * Systems Division.
+ * Funded by: National Aeronautics and Space Administration under NASA
+ * Contracts NAG-1-613 and USRA 5555-22 and by the Advanced Research
+ * Projects Agency under ARPA contracts DAVT63-91-C-0029 and
+ * DABT63-93-C-0040.
  *
  */
 
@@ -43,22 +41,6 @@
 #include "hdf.h"
 #include "ProcIDs.h"
 
-extern int HDFinitIOTrace(char *traceFileName, intn detail, intn lifetime,
-                          intn timeWindow, float64 timeWindowSize,
-                          intn regionTrace, intn regionSize,
-                          uint16 procTraceMask );
-extern int HDFendIOTrace(VOID);
-
-#ifndef PABLO_FNAMES
-#   define PABLO_FNAMES
-#ifdef DF_CAPFNAMES
-#   define nihinitiotrace FNAME(IHINITIOTRACE)
-#   define nhendiotrace   FNAME(HENDIOTRACE)
-#else  /* !DF_CAPFNAMES */
-#   define nihinitiotrace FNAME(ihinitiotrace)
-#   define nhendiotrace   FNAME(hendiotrace)
-#endif /* DF_CAPFNAMES */
-#endif /* PABLO_FNAMES */
 
 FRETVAL(intf)
 nihinitiotrace(_fcd traceFileName, intf * detail, intf * lifetime, 
@@ -82,4 +64,4 @@ nhendiotrace(VOID)
     return (HDFendIOTrace());
 } /* nhendiotrace() */
 
-#endif
+#endif /* HAVE_PABLO */

@@ -21,12 +21,10 @@ C *
 C * Project Manager and Principal Investigator:
 C *	Daniel A. Reed (reed@cs.uiuc.edu)
 C *
-C * Funded by: National Science Foundation grants NSF CCR86-57696,
-C * NSF CCR87-06653 and NSF CDA87-22836 (Tapestry), NASA ICLASS Contract
-C * No. NAG-1-613, DARPA Contract No. DABT63-91-K-0004, by a grant
-C * from the Digital Equipment Corporation External Research Program,
-C * and by a collaborative research agreement with the Intel Supercomputer
-C * Systems Division.
+C * Funded by: National Aeronautics and Space Administration under NASA
+C * Contracts NAG-1-613 and USRA 5555-22 and by the Advanced Research
+C * Projects Agency under ARPA contracts DAVT63-91-C-0029 and
+C * DABT63-93-C-0040.
 C *
 
 C *---------------------------------------------------------------------------
