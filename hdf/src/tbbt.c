@@ -335,8 +335,13 @@ printf("balance(): double rotate coming up!\n");
 printf("balance(): single rotate coming up!\n");
 printf("balance(): root=%p, ptr=%p, side=%d\n",root,ptr,side);
 #endif
+#ifdef OLD_WAY
                     if(  Heavy(kid,side)  ) /* In this case, sub-tree gets */
                         deeper= 0;  /* re-lengthened after a node removed. */
+#else
+                    if(  HasChild(kid,side)  ) /* In this case, sub-tree gets */
+                        deeper= 0;  /* re-lengthened after a node removed. */
+#endif
                     ptr= swapkid( root, ptr, side );
                 }
             } else if(  UnBal(ptr)  ) {     /* Just became balanced: */
