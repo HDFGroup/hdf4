@@ -1,16 +1,17 @@
 .\" $Id$
-.TH HDF 1 "July 1995" "NCSA HDF 4.0"
+.TH HDF 1 "July 1996" "NCSA HDF 4.1"
 .SH NAME
 hdf \- Hierarchical Data Format library
 .SH SYNOPSIS
 .ft B
--ldf
+-lmfhdf -ldf -ljpeg -lz
 .sp 0
-{LIBDIR}/libdf.a
+{HDFLIBDIR}/libmfhdf.a {HDFLIBDIR}/libdf.a {HDFLIBDIR}/libjpeg.a {HDFLIBDIR}/libz.a
+
 .SH DESCRIPTION
 HDF is a multi-object file format that facilitates the transfer of various 
 types of scientific data between machines and operating systems.  Machines currently 
-supported include the Cray, Convex, HP, Vax, Sun, IBM RS/6000, Silicon Graphics,
+supported include the Cray, HP, Vax, Sun, IBM RS/6000, Silicon Graphics,
 Macintosh, and IBM PC computers.  HDF allows self-definitions of data content
 and easy extensibility for future enhancements or compatibility with other
 standard formats. HDF includes Fortran and C calling interfaces,and utilities to 
@@ -24,7 +25,7 @@ also included that allows arbitray grouping of other HDF objects.
 HDF supports the storing of both 8-bit and 24-bit raster images.  As well as
 storing information about the dimensions and palette of a raster image, HDF
 supports raster image compression.  In previous versions of HDF, Run-length
-encoding and Imcomp compression were both supported.  With HDF 3.3 JPEG
+encoding and Imcomp compression were both supported.  With HDF> 3.3 JPEG
 compression is also available. 
 
 .SS "HDF Scientific Data Sets"
@@ -33,9 +34,9 @@ The actual data in the dataset can be of any of the "standard" number types:
 8, 16 and 32bit signed and unsigned integers and 32 and 64bit floating point 
 values.  In addition, a certain amount of meta-data can be stored with an 
 SDS including: 
- 
-  o The coordinate system to use when interpreting or displaying the 
-    data.
+.nf 
+
+  o The coordinate system to use when interpreting or displaying the data.
   o Scales to be used for each dimension.
   o Labels for each dimension and the dataset as a whole.
   o Units for each dimension and the data.
@@ -43,14 +44,15 @@ SDS including:
   o Calibration information for the data.
   o Fill or missing value information. 
   o Ability of have more than one file open at a time.
-  o A more general framework for meta-data within the SDS 
-    data-model(allowing 'name = value' styel meta-data).
+  o A more general framework for meta-data within the SDS data-model
+    (allowing 'name = value' styel meta-data).
   o Support for an "unlimited dimension" in the SDS data-model, making
     it possible to append planes to an array along one dimension.
-
+.fi
 .SS "HDF Annotations"
 Any object in an HDF file can have annotations associated with it.  There are a
 number of types of annotations: 
+.nf
 
   o Labels are assumed to be short strings giving the "name" of a 
     data object. 
@@ -58,7 +60,7 @@ number of types of annotations:
     more indepth information about a data object 
   o File annotations are assumed to apply to all of the objects in a 
     single file.
-
+.fi
 .SS "HDF Vset Interfaces"
 The Vset module provides
 interfaces to two basic HDF building blocks.  Vgroups are generic grouping
@@ -73,63 +75,52 @@ By combining Vdatas in Vgroups it is possible to represent higher level data
 constructs: mesh data, multi-variate datasets, sparse matrices, finite-element
 data, spreadsheets, splines, non-Cartesian coordinate data, etc.
 
-.SS "HDF 3.3 and netCDF"
-HDF 3.3 merges in the netCDF library produced by Unidata.  The full
+.SS "HDF > 3.3 and netCDF"
+HDF > 3.3 merges in the netCDF library produced by Unidata.  The full
 netCDF library is supported as is a new "multi-file" SDS interface.  Both of
 these interfaces can read old netCDF files and HDF files transparently.
 
 
 .SS "EXAMPLES"
-All HDF routines require the header "hdf.h" to be included.
+All HDF routines require the header "hdf.h" to be included in the C
+source file. If using the SDS routines the header "mfhdf.h" should be 
+included instead in in the C source file. Fortran programs should 
+use "dffunc.inc" and "hdf.inc".
 
-To compile a program that makes HDF calls:
+To compile a program that makes HDF calls on most Unix platforms.
+.nf
 
-   LIBDIR = /usr/local/lib
-   INC    = /usr/local/include
-   MACHINE = SUN, HP9000, UNICOS, MOTOROLA, MIPSEL, IRIS4, DEC_ALPHA
+   HDFLIBDIR = /usr/local/lib/hdf
+   HDFINC    = /usr/local/include/hdf
 
    (FORTRAN):
 .na 
-   f77 myprog.f \-D{MACHINE} \-I{INC} \-o myprog {LIBDIR}/libdf.a  
+   f77 myprog.f \-I{HDFINC} \-o myprog {HDFLIBDIR}/libmfhdf.a \\
+   {HDFLIBDIR}/libdf.a  {HDFLIBDIR}/libjpeg.a {HDFLIBDIR}/libz.a
 
    (C):
 .na 
-   cc myprog.c \-D{MACHINE} \-I{INC} \-o myprog {LIBDIR}/libdf.a  
+   cc myprog.c \-I{HDFINC} \-o myprog {HDFLIBDIR}/libmfhdf.a \\
+   {HDFLIBDIR}/libdf.a  {HDFLIBDIR}/libjpeg.a {HDFLIBDIR}/libz.a  
 
+.fi
 
 .SH DOCUMENTATION
 
-\fIGetting Started with NCSA HDF\fP
-.sp 0
-\fINCSA HDF 3.2 Calling Interfaces and Utilities\fP
-.sp 0
-\fINCSA HDF Specifications and Developers Manual\fP
+The HDF WWW page is located at http://hdf.ncsa.uiuc.edu/
 
+For the vast majority of users, the "Users Guide" documents and the "Reference"
+manuals should be sufficient. 
 
-For the vast majority of users, the "Calling Interfaces" document is 
-sufficient. Hardcopy versions of the documentation can be purchased 
-from NCSA. To obtain a catalog, contact:
+You may download the documentation via ftp on NCSA's anonymous 
+ftp server. (ftp.ncsa.uiuc.edu:/HDF). On anonymous ftp there the documentation 
+is available in Postscript, PDF and MIF.
 
-NCSA Documentation Orders
-.sp 0
-152 Computing Applications Building
-.sp 0
-605 E. Springfield Ave.
-.sp 0
-Champaign, IL 61820
-.sp 0
-(217) 244-0072
-
-You may also download the documentation via ftp. On anonymous ftp
-there are two forms of the documentation, one ascii, and one in 
-Macintosh Microsoft Word format.  The ascii version was created by 
-saving the MS Word version as text, so it is quite crude and has no formatting or illustrations.  See the README.FIRST file in the 
-directory HDF on NCSA's anonymous ftp server. (ftp.ncsa.uiuc.edu)
 
 .SH VENDOR
-NCSA Software Development Group
+NCSA Software Development Division
 .sp 0
-HDF
+Hierarchical Data Format Group
 .sp 0
 152 Computing Applications Bldg.
 .sp 0
@@ -138,29 +129,69 @@ HDF
 Champaign, IL 61820
 
 .SH VERSION
-3.3
-.SH LICENSE
+4.1
+.SH LICENSE & SOURCE AVAILABILITY
+UNIVERSITY OF ILLINOIS (UI), NATIONAL CENTER FOR SUPERCOMPUTING
+APPLICATIONS (NCSA), Software Distribution Policy for Public Domain
+Software
 
+NCSA HDF Version 4.1 source code and documentation are in the public
+domain, available without fee for education, research, non-commercial and
+commercial purposes.  Users may distribute the binary or source code to
+third parties provided that this statement appears on all copies and that
+no charge is made for such copies.  
 
-.SH SOURCE AVAILABILITY
-This program is in the public domain, and was developed and made
-available by the National Center for Supercomputing Applications, 
-University of Illinois, Urbana-Champaign.
+UI MAKES NO REPRESENTATIONS ABOUT THE SUITABILITY OF THE SOFTWARE FOR ANY
+PURPOSE.  IT IS PROVIDED "AS IS" WITHOUT EXPRESS OR IMPLIED WARRANTY.  THE
+UI SHALL NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY THE USER OF THIS
+SOFTWARE.  The software may have been developed under agreements between
+the UI and the Federal Government which entitle the Government to certain
+rights.
 
-.SH CONTACT
-NCSA Software Deveopment Group
+We ask, but do not require that the following message be include in all
+derived works:
+
+  Portions developed at the National Center for Supercomputing 
+  Applications at the University of Illinois at Urbana-Champaign.
+
+By copying this program, you, the user, agree to abide by the conditions
+and understandings with respect to any software which is marked with a
+public domain notice.
+
+Acknowledgements:
+----------------
+
+Portions of this software were developed by the Unidata Program at the 
+University Corporation for Atmospheric Research, specifically the 
+NETCDF distribution used.
+
+This product also includes software developed by the Independent JPEG
+Group, specifically the IJPEG library libjpeg.a.
+
+This product also includes software developed by Jean-loup Gailly 
+and Mark Adler , specifically the ZLIB library libz.a.
+
+This product includes software developed by the University of
+California, Berkeley and its contributors.
+
+.SH CONTACT & HELP
+NCSA Software Deveopment Division
+.sp 0
+Hierarchical Data Format Group
+.sp 0
+email: hdfhelp@ncsa.uiuc.edu
 
 .SH FILES
 .PD 0
 .TP 30
-.B /usr/local/lib/libdf.a
-hdf library
+.B /usr/local/lib/hdf/{libmfhdf.a,libdf.a,libjpeg.a,libz.a}
+hdf libraries
 .TP 30
 .B /usr/local/bin
 Location of most hdf utilities
 .TP 30
-.B /usr/local/include
-Location of include files hdf.h 
+.B /usr/local/include/hdf
+Location of include file hdf.h and others
 .PD
 
 .SH SEE ALSO
