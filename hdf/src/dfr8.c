@@ -551,10 +551,10 @@ DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
   if (compress || CompressSet)
     {
       /* if a compression type has been set, check if it's the same */
-      if (CompressSet == FALSE || (compress > 1 && (int32) compress != CompType &&
-                                   !(compress == COMP_JPEG && CompType == DFTAG_GREYJPEG5)))
+      if (CompressSet == FALSE || (compress > (uint16)1 && (int32)compress != CompType &&
+                                   !(compress == (uint16)COMP_JPEG && CompType == (int32)DFTAG_GREYJPEG5)))
         {
-          if (compress > COMP_MAX_COMP || compress_map[compress] == 0)
+          if ((int32)compress > COMP_MAX_COMP || compress_map[compress] == 0)
             HGOTO_ERROR(DFE_BADSCHEME, FAIL);
           /* map JPEG compression into correct type of JPEG compression */
           if (compress == COMP_JPEG)
@@ -1126,7 +1126,7 @@ DFR8nimages(const char *filename)
         }   /* end while */
       if (found_8bit)
         {   /* check for finding an 8-bit RIG */
-          if (rig_tag > 0 && rig_ref > 0)
+          if ((uintn)rig_tag > (uintn)0 && (uintn)rig_ref > (uintn)0)
             {     /* make certain we found an image */
               img_off[curr_image] = Hoffset(file_id, rig_tag, rig_ref);     /* store offset */
               curr_image++;

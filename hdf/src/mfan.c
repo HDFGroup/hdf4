@@ -1336,7 +1336,7 @@ ANIwriteann(int32 ann_id,    /* IN: annotation id */
           printf("ANIwriteann: ann_len=%d, ann=%s\n", ann_len,ann);
 #endif
           /* then write the annotation itself */
-          if ((int32) FAIL == Hwrite(aid, ann_len, (const VOIDP)ann))
+          if ((int32) FAIL == Hwrite(aid, ann_len, (VOIDP)ann))
             {     
                 Hendaccess(aid);
                 HE_REPORT_GOTO("Failed to write annotation",FAIL);

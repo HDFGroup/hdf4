@@ -548,7 +548,7 @@ printf("%s: nri=%ld, nci=%ld, nri8=%ld, nci8=%ld, nvg=%ld\n",FUNC,(long)nri,(lon
             {   /* get next tag/ref */
                 if (elt_tag == DFTAG_CI || elt_tag == DFTAG_RI)
                   {   
-                      if (elt_tag > 0 && elt_ref > 0) /* make certain we found an image */
+                      if (elt_tag != DFTAG_NULL && elt_ref != DFTAG_NULL) /* make certain we found an image */
                         {     /* store the information about the image */
                             img_info[curr_image].grp_tag=DFTAG_RIG;
                             img_info[curr_image].grp_ref=find_ref;
@@ -1585,7 +1585,7 @@ PRIVATE intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
     /* Weird test below to allow for tag/ref values of zero.  (I'll spare */
     /*  everyone my rant about why DFTAG_NULL should have been made zero */
     /*  instead of one... QAK) */
-    if(img_ptr->img_dim.nt_tag<=DFTAG_NULL)
+    if(img_ptr->img_dim.nt_tag<=(uint16)DFTAG_NULL)
         img_ptr->img_dim.nt_tag=DFTAG_NT;
     if(img_ptr->img_dim.nt_ref==DFREF_WILDCARD)
         img_ptr->img_dim.nt_ref=Htagnewref(hdf_file_id,img_ptr->img_dim.nt_tag);
@@ -1600,10 +1600,10 @@ PRIVATE intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
         HGOTO_ERROR(DFE_PUTELEM, FAIL);
     
     /* Check for a palette with this image */
-    if(img_ptr->lut_ref>DFREF_WILDCARD)
+    if(img_ptr->lut_ref!=DFREF_WILDCARD)
       {
           /* Write out the palette number-type */
-          if(img_ptr->lut_dim.nt_tag<=DFTAG_NULL)
+          if(img_ptr->lut_dim.nt_tag<=(uint16)DFTAG_NULL)
               img_ptr->lut_dim.nt_tag=DFTAG_NT;
           if(img_ptr->lut_dim.nt_ref==DFREF_WILDCARD)
               img_ptr->lut_dim.nt_ref=Htagnewref(hdf_file_id,img_ptr->lut_dim.nt_tag);
@@ -1733,7 +1733,7 @@ printf("%s: writing RIG\n",FUNC);
         HGOTO_ERROR(DFE_PUTGROUP, FAIL);
 
     /* Check if we should write palette information */
-    if(img_ptr->lut_ref>DFREF_WILDCARD)
+    if(img_ptr->lut_ref!=DFREF_WILDCARD)
       {
           /* add palette dimension tag/ref to RIG */
           if (DFdiput(GroupID, DFTAG_LD, (uint16) img_ptr->lut_dim.dim_ref) == FAIL)
@@ -1800,7 +1800,7 @@ printf("%s: check 1.0\n",FUNC);
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* Write out the RI Vgroup itself */
-    if ((GroupID = Vattach(hdf_file_id,(img_ptr->ri_ref>DFREF_WILDCARD ?
+    if ((GroupID = Vattach(hdf_file_id,(img_ptr->ri_ref!=DFREF_WILDCARD ?
             img_ptr->ri_ref : -1),"w")) == FAIL)
         HGOTO_ERROR(DFE_CANTATTACH, FAIL);
 
@@ -1833,7 +1833,7 @@ printf("%s: check 2.0, GroupID=%ld\n",FUNC,(long)GroupID);
         HGOTO_ERROR(DFE_CANTADDELEM, FAIL);
 
     /* Check if we should write palette information */
-    if(img_ptr->lut_ref>DFREF_WILDCARD)
+    if(img_ptr->lut_ref!=DFREF_WILDCARD)
       {
           /* add palette dimension tag/ref to RIG */
           if (Vaddtagref(GroupID, DFTAG_LD, (int32)img_ptr->lut_dim.dim_ref) == FAIL)
@@ -4014,7 +4014,7 @@ intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP 
     if(ncomps==3 && nt==DFNT_UINT8 && il==MFGR_INTERLACE_PIXEL && nentries==256)
       {
           /* Check if LUT exists already */
-          if(ri_ptr->lut_tag!=DFTAG_NULL && ri_ptr->lut_ref>DFREF_WILDCARD)
+          if(ri_ptr->lut_tag!=DFTAG_NULL && ri_ptr->lut_ref!=DFREF_WILDCARD)
             {   /* LUT already exists */
                 if(Hputelement(hdf_file_id,ri_ptr->lut_tag,ri_ptr->lut_ref,
                         data,ncomps*nentries*DFKNTsize(nt))==FAIL)

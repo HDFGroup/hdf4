@@ -1066,11 +1066,11 @@ correctly.
 /*-----------------------------------------------------*/
 
 #   define INT16ENCODE(p, i) \
-{ *(p) = (uint8)(((uint16)(i) >> 8) & 0xff); (p)++; \
-        *(p) = (uint8)((uint16)(i) & 0xff); (p)++; }
+{ *(p) = (uint8)(((uintn)(i) >> 8) & 0xff); (p)++; \
+        *(p) = (uint8)((uintn)(i) & 0xff); (p)++; }
 
 #   define UINT16ENCODE(p, i) \
-{ *(p) = (uint8)(((uint16)(i) >> 8) & 0xff); (p)++; *(p) = (uint8)((i) & 0xff); (p)++; }
+{ *(p) = (uint8)(((uintn)(i) >> 8) & 0xff); (p)++; *(p) = (uint8)((i) & 0xff); (p)++; }
 
 #   define INT32ENCODE(p, i) \
 { *(p) = (uint8)(((uint32)(i) >> 24) & 0xff); (p)++; \

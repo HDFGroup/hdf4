@@ -471,7 +471,7 @@ Hbitread(int32 bitid, intn count, uint32 *data)
     /* buffered bits then do the shift and return */
     if (count <= bitfile_rec->count)
       {
-          *data = (uint32)(bitfile_rec->bits >> (bitfile_rec->count -= count)) & (uint32) maskc[count];
+          *data = (uint32)((uintn)bitfile_rec->bits >> (bitfile_rec->count -= count)) & (uint32) maskc[count];
           return (count);
       }     /* end if */
 

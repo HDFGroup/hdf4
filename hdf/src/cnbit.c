@@ -63,7 +63,7 @@ static const uint32 mask_arr32[33] =
     0x0001FFFF, 0x0003FFFF, 0x0007FFFF, 0x000FFFFF,
     0x001FFFFF, 0x003FFFFF, 0x007FFFFF, 0x00FFFFFF,
     0x01FFFFFF, 0x03FFFFFF, 0x07FFFFFF, 0x0FFFFFFF,
-    0x1FFFFFFF, 0x3FFFFFFF, 0x7FFFFFFF, 0xFFFFFFFF
+    0x1FFFFFFF, 0x3FFFFFFF, 0x7FFFFFFF, 0xFFFFFFFFUL
 };
 
 /* declaration of the functions provided in this module */
@@ -288,7 +288,7 @@ HCIcnbit_decode(compinfo_t * info, int32 length, uint8 *buf)
                 rbuf = (uint8 *) nbit_info->buffer;     /* get a ptr to the buffer */
 
                 /* get initial copy of the mask */
-                HDmemfill(rbuf, (const VOIDP)nbit_info->mask_buf, (uint32)nbit_info->nt_size, (uint32)buf_items);
+                HDmemfill(rbuf, (VOIDP)nbit_info->mask_buf, (uint32)nbit_info->nt_size, (uint32)buf_items);
 
                 for (i = 0; i < buf_items; i++)
                   {

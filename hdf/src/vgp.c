@@ -705,7 +705,7 @@ vunpackvg(VGROUP * vg, uint8 buf[], intn len)
       {     /* current Vset version number */
           UINT16DECODE(bb, vg->nvelt);
 
-          vg->msize = (vg->nvelt > MAXNVELT ? vg->nvelt : MAXNVELT);
+          vg->msize = ((uintn)vg->nvelt > (uintn)MAXNVELT ? vg->nvelt : MAXNVELT);
           vg->tag = (uint16 *) HDmalloc(vg->msize * sizeof(uint16));
           vg->ref = (uint16 *) HDmalloc(vg->msize * sizeof(uint16));
     
@@ -1642,7 +1642,7 @@ vinsertpair(VGROUP * vg, uint16 tag, uint16 ref)
     int32    ret_value = SUCCEED;
 
     HEclear();
-    if (vg->nvelt >= vg->msize)
+    if ((intn)vg->nvelt >= vg->msize)
       {
           vg->msize *= 2;
           vg->tag = (uint16 *)

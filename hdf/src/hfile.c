@@ -390,7 +390,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
 #endif /* STDIO_BUF */
 	/* set up the newly created (and empty) file with
 	   the magic cookie and initial data descriptor records */
-          if (HP_write(file_rec, (const VOIDP)HDFMAGIC, MAGICLEN) == FAIL)
+          if (HP_write(file_rec, (VOIDP)HDFMAGIC, MAGICLEN) == FAIL)
             HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
           if (HI_FLUSH(file_rec->file) == FAIL)	/* flush the cookie */
@@ -2155,7 +2155,7 @@ done:
 #endif /* HAVE_PABLO */
 
   /* Search for a matching slot in the already open files. */
-  if(HAsearch_atom(FIDGROUP,HPcompare_filerec_path,(const VOIDP)filename)!=NULL)
+  if(HAsearch_atom(FIDGROUP,HPcompare_filerec_path,(VOIDP)filename)!=NULL)
       HGOTO_DONE(TRUE);
 
   fp = HI_OPEN(filename, DFACC_READ);
@@ -2894,7 +2894,7 @@ HIgetspinfo(accrec_t * access_rec)
 #endif /* LATER */
     VOIDP    ret_value = NULL; /* FAIL */
   
-    if((ret_value=HAsearch_atom(AIDGROUP,HPcompare_accrec_tagref,(const VOIDP)access_rec))!=NULL)
+    if((ret_value=HAsearch_atom(AIDGROUP,HPcompare_accrec_tagref,(VOIDP)access_rec))!=NULL)
         HGOTO_DONE(((accrec_t *)ret_value)->special_info);
 
 done:
@@ -3260,7 +3260,7 @@ HIget_filerec_node(const char *path)
     CONSTR(FUNC, "HIget_filerec_node");
     filerec_t  *ret_value=NULL;
 
-    if((ret_value=HAsearch_atom(FIDGROUP,HPcompare_filerec_path,(const VOIDP)path))==NULL)
+    if((ret_value=HAsearch_atom(FIDGROUP,HPcompare_filerec_path,(VOIDP)path))==NULL)
       {
         if((ret_value=(filerec_t *)HDcalloc(1,sizeof(filerec_t)))==NULL)
             HGOTO_ERROR(DFE_NOSPACE,NULL);

@@ -3895,7 +3895,7 @@ DFSDIsdginfo(int32 file_id)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
       if ((ptr.tag != DFTAG_NDG) && (ptr.tag != DFTAG_SDG))
         HGOTO_ERROR(DFE_BADTAG, FAIL);
-      if (ptr.ref <= 0)
+      if (ptr.ref == DFREF_WILDCARD)
         HGOTO_ERROR(DFE_BADREF, FAIL);
       Readref = ptr.ref;
     }
