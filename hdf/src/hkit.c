@@ -564,9 +564,9 @@ HDpackFstring(char *src, char *dest, intn len)
 /* ----------------------------- HDgettagdesc ----------------------------- */
 /*
 NAME
-   HDgettagname -- return a text description of a tag
+   HDgettagdesc -- return a text description of a tag
 USAGE
-   char * HDgettagname(tag)
+   char * HDgettagdesc(tag)
    uint16   tag;          IN: tag of element to find
 RETURNS
    Descriptive text or NULL
@@ -575,7 +575,7 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 const char _HUGE *
-HDgettagname(uint16 tag)
+HDgettagdesc(uint16 tag)
 {
     intn        i;
 
@@ -583,7 +583,7 @@ HDgettagname(uint16 tag)
         if (tag_descriptions[i].tag == tag)
             return (tag_descriptions[i].desc);
     return (NULL);
-} /* HDgettagname */
+} /* HDgettagdesc */
 
 /* ----------------------------- HDgettagsname ----------------------------- */
 /*
