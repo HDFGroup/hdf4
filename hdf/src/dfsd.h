@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.2  1992/08/27 22:18:42  chouck
-Added support for calibration tag reading and writing
+Revision 1.3  1992/08/31 16:14:52  chouck
+Added Fortran support for calibration tags
 
+ * Revision 1.2  1992/08/27  22:18:42  chouck
+ * Added support for calibration tag reading and writing
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -160,5 +163,12 @@ extern int DFSDIgetrrank
     PROTO((intn *rank));
 extern int DFSDIgetwrank
     PROTO((intn *rank));
+
+extern int DFSDsetcal
+    PROTO((float64 cal, float64 cal_err, float64 ioff, 
+           float64 ioff_err, int32 cal_nt));
+extern int DFSDgetcal
+    PROTO((float64 *pcal, float64 *pcal_err, float64 *pioff, 
+               float64 *pioff_err, int32 *cal_nt));
 
 #endif /*DFSDG*/

@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.2  1992/08/27 19:55:26  likkai
-change declaration of Vclose: now it returns intn instead of void.
-change declaration of DFvsetclose: returns intn instead of int.
+Revision 1.3  1992/08/31 16:14:52  chouck
+Added Fortran support for calibration tags
 
+ * Revision 1.2  1992/08/27  19:55:26  likkai
+ * change declaration of Vclose: now it returns intn instead of void.
+ * change declaration of DFvsetclose: returns intn instead of int.
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -693,6 +696,8 @@ extern  FRETVAL(int) ndfr8restart
 #   define ndsirref  FNAME(DSIRREF)
 #   define ndslref   FNAME(DSLREF)
 #   define ndsinum   FNAME(DSINUM)
+#   define ndsscal   FNAME(DSSCAL)
+#   define ndsgcal   FNAME(DSGCAL)
 #   define ndfsdgetdatastrs  FNAME(DFSDGETDATASTRS)
 #   define ndfsdgetdimscale  FNAME(DFSDGETDIMSCALE)
 #   define ndfsdgetrange     FNAME(DFSDGETRANGE)
@@ -738,6 +743,8 @@ extern  FRETVAL(int) ndfr8restart
 #   define ndsirref  FNAME(dsirref)
 #   define ndslref   FNAME(dslref)
 #   define ndsinum   FNAME(dsinum)
+#   define ndsscal   FNAME(dsscal)
+#   define ndsgcal   FNAME(dsgcal)
 #   define ndfsdgetdatastrs  FNAME(dfsdgetdatastrs)
 #   define ndfsdgetdimscale  FNAME(dfsdgetdimscale)
 #   define ndfsdgetrange     FNAME(dfsdgetrange)
@@ -834,6 +841,14 @@ extern FRETVAL(int) ndslref
 
 extern FRETVAL(int) ndsinum
     PROTO((_fcd filename, int32 *len));
+
+extern FRETVAL(int) ndsscal
+    PROTO((float64 *cal, float64 *cal_err, float64 *ioff, 
+           float64 *ioff_err, int32 * cal_type));
+
+extern FRETVAL(int) ndsgcal
+         PROTO((float64 *cal, float64 *cal_err, float64 *ioff, 
+                float64 *ioff_err, int32 * cal_type));
 
 extern FRETVAL(int) ndfsdgetdatastrs
     PROTO((_fcd label, _fcd unit, _fcd format, _fcd coordsys));

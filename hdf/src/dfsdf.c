@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/08/31 16:14:52  chouck
+Added Fortran support for calibration tags
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*-----------------------------------------------------------------------------
  * File:    dfsdF.c
@@ -1485,3 +1488,55 @@ ndsigdas(label, unit, format, coordsys, llabel, lunit, lformat, lcoord)
     return status;
 
 }
+
+/*-----------------------------------------------------------------------------
+ * Name:    dsscal
+ * Purpose: Call DFSDsetcal to set calibration data
+ * Inputs:  cal, cal_err   : calibration and error
+ *          ioff, ioff_err : offset and error
+ *          cal_type       : after calibration NT
+ * Returns: 0 on success, -1 on failure
+ * Users:   HDF Fortran programmers
+ * Invokes: DFSDgetdatastrs
+ *---------------------------------------------------------------------------*/
+    FRETVAL(int)
+#ifdef PROTOTYPE
+ndsscal(float64 *cal, float64 *cal_err, float64 *ioff, float64 *ioff_err,
+         int32 * cal_type)
+#else
+ndsscal(cal, cal_err, ioff, ioff_err, cal_type)
+     float64 *cal, *cal_err, *ioff, *ioff_err;
+     int32   *cal_type;
+#endif /* PROTOTYPE */
+{
+
+    return DFSDsetcal(*cal, *cal_err, *ioff, *ioff_err, *cal_type);
+
+
+} /* ndsscal */
+
+/*-----------------------------------------------------------------------------
+ * Name:    dsgcal
+ * Purpose: Call DFSDgetcal to get calibration data
+ * Inputs:  cal, cal_err   : calibration and error
+ *          ioff, ioff_err : offset and error
+ *          cal_type       : after calibration NT
+ * Returns: 0 on success, -1 on failure
+ * Users:   HDF Fortran programmers
+ * Invokes: DFSDgetdatastrs
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(int)
+#ifdef PROTOTYPE
+ndsgcal(float64 *cal, float64 *cal_err, float64 *ioff, float64 *ioff_err,
+         int32 * cal_type)
+#else
+ndsgcal(cal, cal_err, ioff, ioff_err, cal_type)
+     float64 *cal, *cal_err, *ioff, *ioff_err;
+     int32   *cal_type;
+#endif /* PROTOTYPE */
+{
+
+    return DFSDgetcal(cal, cal_err, ioff, ioff_err, cal_type);
+
+} /* ndsscal */
