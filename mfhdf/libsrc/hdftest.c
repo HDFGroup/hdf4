@@ -621,11 +621,11 @@ char *argv[];
        num_err++;
     }
     dimid=SDgetdimid(sdid, 0);
-    status = SDsetdimval_incomp(dimid);
-    CHECK(status, "SDsetdimval_incomp");
+    status = SDsetdimval_comp(dimid, SD_DIMVAL_BW_INCOMP);
+    CHECK(status, "SDsetdimval_comp");
     dimid1=SDgetdimid(sdid, 1);
-    status = SDsetdimval_incomp(dimid1);
-    CHECK(status, "SDsetdimval_incomp");
+    status = SDsetdimval_comp(dimid1, SD_DIMVAL_BW_INCOMP);
+    CHECK(status, "SDsetdimval_comp");
     for (i=0; i<6; i++)
         scale[i]=i*5;
     status = SDsetdimscale(dimid1, 6, DFNT_INT32, scale);
@@ -684,12 +684,12 @@ char *argv[];
            num_err++;
         }
     }
-    status = SDisdimvalcomp(dimid1);
+    status = SDisdimval_bwcomp(dimid1);
     if (status != 0)  {
           fprintf(stderr, "Failed on SDisdimvalcomp call\n");
           num_err++;
     }
-    status = SDsetdimval_comp(dimid1);
+    status = SDsetdimval_comp(dimid1, SD_DIMVAL_BW_COMP);
     status = SDendaccess(sdid);
     CHECK(status, "SDendaccess");
     status = SDend(f1);
@@ -721,7 +721,7 @@ char *argv[];
           fprintf(stderr, "Failed on SDgetinfo call\n");
           num_err++;
     }
-    status = SDisdimvalcomp(dimid1);
+    status = SDisdimval_bwcomp(dimid1);
     if (status != 1)  {
           fprintf(stderr, "Failed on SDisdimvalcomp call\n");
           num_err++;

@@ -46,7 +46,7 @@ status = SDgetrange(sdsid, ...);
 
 status = SDend(fid);
 
-status = SDisdimvalcomp(dimid);
+status = SDisdimval_bwcomp(dimid);
 */
 
 #include "mfhdf.h"
@@ -823,12 +823,9 @@ status  = SDendaccess(sdsid);
         --- set fill mode for a file open for write
 cur_mode = SDsetfillmode(fid, fillmode);
 
-        --- set dimval incompatible  for write
-status  = SDsetdimval_incomp(dimid);
-
-        --- set dimval compatible  for write
-status  = SDsetdimval_comp(dimid);
-
+        --- set dimval backward compatible  for write
+status  = SDsetdimval_comp(dimid, compt_mode);
+ 
 */
 
 /* ------------------------------- SDcreate ------------------------------- */
@@ -2887,10 +2884,9 @@ intn SDsetexternalfile(int32 id, char *filename, int32 offset)
         if((var->aid != 0) && (var->aid != FAIL))
             Hendaccess(var->aid);
         var->aid = status;
-	return(SUCCEED);
     }
-    else
-	return(FAIL);
+
+    return(status);
 
 } /* SDsetexternalfile */
 
@@ -3618,85 +3614,37 @@ intn  fillmode;
         return FAIL;
 
     cdfid = (intn)sd_id & 0xffff;
-    ret = ncsetfill(cdfid, fillmode);
-    return(ret);
-} /* SDsetfillmode */
-
-/* --------------------- SDsetdimval_incomp ----------------------------- */
-/*
-
- NAME
-        SDsetdimval_incomp -- set dim not compatible with dimval
- USAGE
-        intn SDsetdimval_incomp(dimid);
-        int32 dimid;      IN: dimension ID, returned from SDgetdimid
- RETURNS
-        SUCCESS/FAIL
- DESCRIPTION
-        No effect on unlimited dimension
---------------------------------------------------------------------------- */
-intn
-#ifdef PROTOTYPE
-SDsetdimval_incomp(int32 dimid)
-#else
-SDsetdimval_incomp(dimid)
-int32 dimid;
-#endif
-{
-    NC     *handle;
-    NC_dim *dim, **dp;
-    intn    ret;
-
-#ifdef SDDEBUG
-    fprintf(stderr, "SDsetdimval_incomp: I've been called\n");
-#endif
-
-    /* get the handle */
-    handle = SDIhandle_from_id(dimid, DIMTYPE);
-    if(handle == NULL)
-        return FAIL;
-
-    /* get the dimension structure */
-    dim = SDIget_dim(handle, dimid);
-    if(dim == NULL)
-        return FAIL;
-
-    if (dim->size != SD_UNLIMITED)  {
-        dim->dim00_compat = 0;
-    
-        /* make sure it gets reflected in the file */
-  
-        handle->flags |= NC_HDIRTY;
-    }
-    return SUCCEED;
-
-} /* SDsetdimval_incomp */
+    return(ncsetfill(cdfid, fillmode));
+}
 
 /* --------------------- SDsetdimval_comp ----------------------------- */
 /*
 
  NAME
-        SDsetdimval_comp -- set dimval compatible 
+        SDsetdimval_comp -- set dimval backward compatibility
  USAGE
-        intn SDsetdimval_comp(dimid);
+        intn SDsetdimval_comp(dimid, comp_mode);
         int32 dimid;      IN: dimension ID, returned from SDgetdimid
+        intn comp_mode;   IN: backward compatibility:
+                              SD_DIMVAL_BW_COMP -- compatible
+                              SD_DIMVAL_BW_INCOMP -- incompatible.
+                                 (defined in mfhdf.h )
  RETURNS
         SUCCESS/FAIL
  DESCRIPTION
-        No effect on unlimited dimension
 
 --------------------------------------------------------------------------- */
 intn
 #ifdef PROTOTYPE
-SDsetdimval_comp(int32 dimid)
+SDsetdimval_comp(int32 dimid, intn comp_mode)
 #else
-SDsetdimval_comp(dimid)
+SDsetdimval_comp(dimid, comp_mode)
 int32 dimid;
+intn  comp_mode;
 #endif
 {
     NC     *handle;
     NC_dim *dim, **dp;
-    intn    ret;
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDsetdimval_comp: I've been called\n");
@@ -3706,38 +3654,41 @@ int32 dimid;
     handle = SDIhandle_from_id(dimid, DIMTYPE);
     if(handle == NULL)
         return FAIL;
-
     /* get the dimension structure */
     dim = SDIget_dim(handle, dimid);
     if(dim == NULL)
         return FAIL;
-    if (dim->size != SD_UNLIMITED)   {
-        dim->dim00_compat = 1;
+    if (dim->size != SD_UNLIMITED  &&
+        dim->dim00_compat != comp_mode )  {
+        dim->dim00_compat = comp_mode;
+
         /* make sure it gets reflected in the file */
         handle->flags |= NC_HDIRTY;
     }
-    return SUCCEED;
+
+        return SUCCEED;
 
 } /* SDsetdimval_comp */
 
-/* --------------------- SDisdimvalcomp ----------------- */
+
+/* ---------------------  SDisdimval_bwcomp -------------------- */
 /*
 
  NAME
-        SDisdimvalcomp -- get dimval compatibility 
+        SDisdimval_bwcomp -- get dimval backward compatibility
  USAGE
-        intn SDisdimvalcomp(dimid);
+        intn SDisdimval_bwcomp(dimid);
         int32 dimid;      IN: dimension ID, returned from SDgetdimid
  RETURNS
-       1 if dimval compatible; 0 not compatible.  
+        1 if dimval is backward compatible; 0 for not compatible.
  DESCRIPTION
 
 --------------------------------------------------------------------------- */
 intn
 #ifdef PROTOTYPE
-SDisdimvalcomp(int32 dimid)
+SDisdimval_bwcomp(int32 dimid)
 #else
-SDisdimvalcomp(dimid)
+SDisdimval_bwcomp(dimid)
 int32 dimid;
 #endif
 {
@@ -3746,20 +3697,24 @@ int32 dimid;
     intn    ret;
 
 #ifdef SDDEBUG
-    fprintf(stderr, "SDisdimvalcomp: I've been called\n");
+    fprintf(stderr, "SDisdimval_bwcomp: I've been called\n");
 #endif
 
     /* get the handle */
     handle = SDIhandle_from_id(dimid, DIMTYPE);
     if(handle == NULL)
         return FAIL;
-
     /* get the dimension structure */
     dim = SDIget_dim(handle, dimid);
     if(dim == NULL)
         return FAIL;
+    if (dim->size == SD_UNLIMITED) 
+       ret = SD_DIMVAL_BW_COMP;
+    else 
+        ret = dim->dim00_compat; 
 
-    return (dim->dim00_compat);
+    return(ret);
 
-} /* SDisdimvalcomp */
+} /* SDisdimval_bwcomp */
+
 

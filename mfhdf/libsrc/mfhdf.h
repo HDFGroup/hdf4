@@ -29,7 +29,10 @@
 
 /* use this as marker for unlimited dimension */
 #define SD_UNLIMITED NC_UNLIMITED
-
+#define SD_NOFILL    NC_NOFILL
+#define SD_FILL      NC_FILL
+#define SD_DIMVAL_BW_COMP   1
+#define SD_DIMVAL_BW_INCOMP  0
 /* marker for ragged dimension */
 #define SD_RAGGED    -1
 

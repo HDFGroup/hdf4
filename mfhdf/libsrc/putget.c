@@ -136,78 +136,76 @@ const long *coords ;
             if(handle->xdrs->x_op != XDR_ENCODE)
                 goto bad ;
             /* else */
-
-            /* make sure we can write to this sucker */
-            if(vp->aid == FAIL && hdf_get_vp_aid(handle, vp) == FALSE) return(FALSE);
+            if ((handle->flags & NC_NOFILL) == 0) {
+                /* make sure we can write to this sucker */
+                if(vp->aid == FAIL && hdf_get_vp_aid(handle, vp) == FALSE) return(FALSE);
             
-            /*
-             * Set up the array strg to hold the fill values
-             */
-	    len = (vp->len / vp->HDFsize) * vp->szof;
-            strg = (Void *) HDmalloc(len);
-            strg1 = (Void *) HDmalloc(len);
-            attr = NC_findattr(&vp->attrs, _FillValue);
+                /*
+                 * Set up the array strg to hold the fill values
+                 */
+      	        len = (vp->len / vp->HDFsize) * vp->szof;
+                strg = (Void *) HDmalloc(len);
+                strg1 = (Void *) HDmalloc(len);
+                attr = NC_findattr(&vp->attrs, _FillValue);
 
-            if(attr != NULL)
+                if(attr != NULL)
 #ifdef OLD_WAY
-                hdf_fill_array(strg, len, (*attr)->data->values, vp->type);
+                    hdf_fill_array(strg, len, (*attr)->data->values, vp->type);
 #else /* OLD_WAY */
-                HDmemfill(strg,(*attr)->data->values,vp->szof,(vp->len/vp->HDFsize));
+                    HDmemfill(strg,(*attr)->data->values,vp->szof,(vp->len/vp->HDFsize));
 #endif /* OLD_WAY */
-            else 
-                NC_arrayfill(strg, len, vp->type);
+                else 
+                    NC_arrayfill(strg, len, vp->type);
 
 #ifdef DEBUG
-            fprintf(stderr, "Going to fill in record %d for variable %s\n", *ip,
-                    vp->name->values);
+                fprintf(stderr, "Going to fill in record %d for variable %s\n", *ip,
+                        vp->name->values);
 #endif
 
 #ifdef OLD_WAY
-            count = vp->dsizes[0] / NC_typelen(vp->type);
+                count = vp->dsizes[0] / NC_typelen(vp->type);
 #endif
 
-            /*
-             * Seek to correct location
-             */
-            byte_count = vp->len;
-	    count = byte_count / vp->HDFsize;
+                /*
+                 * Seek to correct location
+                 */
+                byte_count = vp->len;
+	        count = byte_count / vp->HDFsize;
 
-/* 12/27       Hseek(vp->aid, (vp->numrecs + 1) * byte_count, DF_START); */
-            Hseek(vp->aid, (vp->numrecs) * byte_count, DF_START);
+/* 12/27        Hseek(vp->aid, (vp->numrecs + 1) * byte_count, DF_START); */
+                Hseek(vp->aid, (vp->numrecs) * byte_count, DF_START);
 
 #ifdef DEBUG
 /* 12/27         printf("Filling %d bytes starting at %d\n", 
                    byte_count * unfilled, (vp->numrecs + 1) * byte_count); */
-            printf("Filling %d bytes starting at %d\n", 
-                   byte_count * unfilled, (vp->numrecs) * byte_count);
+                printf("Filling %d bytes starting at %d\n", 
+                      byte_count * unfilled, (vp->numrecs) * byte_count);
 #endif  
 
-            /*
-             * Write out the values
-             */
+                /*
+                 * Write out the values
+                 */
 
-            DFKsetNT(vp->HDFtype);
-            DFKnumout(strg, strg1, count, 0, 0);
+                DFKsetNT(vp->HDFtype);
+                DFKnumout(strg, strg1, count, 0, 0);
 
 /* 12/27            for(; unfilled; unfilled--)
                 Hwrite(vp->aid, byte_count, (uint8 *) strg1);  */
-            for(; unfilled>=0; unfilled--, vp->numrecs++)
-                Hwrite(vp->aid, byte_count, (uint8 *) strg1);
+                for(; unfilled>=0; unfilled--, vp->numrecs++)
+                    Hwrite(vp->aid, byte_count, (uint8 *) strg1);
 
 #ifdef DEBUG
-            fprintf(stderr, "WROTE %d values at location %d (numrecs = %d)\n",
-                    count,
-                    *ip * count,
-                    vp->numrecs);
+                fprintf(stderr, "WROTE %d values at location %d (numrecs = %d)\n",
+                        count, *ip * count, vp->numrecs);
 #endif
-
-/* 12/27            vp->numrecs = MAX(vp->numrecs, *ip);    */
+                HDfree((VOIDP)strg);
+                HDfree((VOIDP)strg1);
+        } /* !SD_NOFILL  */
+            vp->numrecs = MAX(vp->numrecs, (*ip + 1));    /* if NOFILL  */
             if((*ip + 1) > handle->numrecs) {
                 handle->numrecs = *ip + 1;
                 handle->flags |= NC_NDIRTY;
             }
-            HDfree((VOIDP)strg);
-            HDfree((VOIDP)strg1);
 
             return (TRUE);
         }
