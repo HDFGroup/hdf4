@@ -60,7 +60,7 @@ SHELL = /bin/sh
 srcdir = .
 TOP_SRCDIR = ../..
 
-prefix = /usr/local
+prefix = $(TOP_SRCDIR)/NewHDF
 
 exec_prefix = $(prefix)
 tooldir = $(exec_prefix)/$(target)

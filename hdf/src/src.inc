@@ -23,11 +23,27 @@
 #
 #
 
-HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h dfan.h dfrig.h dfgr.h dfsd.h \
-     vg.h df.h dfi.h dfstubs.h dfufp2i.h hcomp.h hconv.h hbitio.h \
-     tbbt.h crle.h cnbit.h mstdio.h cnone.h cskphuff.h cdeflate.h mfgr.h \
-     mfan.h hlimits.h hntdefs.h htags.h hkit.h hcompi.h bitvect.h atom.h \
-     dynarray.h linklist.h glist.h
+#HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h dfan.h dfrig.h dfgr.h dfsd.h \
+#     vg.h df.h dfi.h dfstubs.h dfufp2i.h hcomp.h hconv.h hbitio.h \
+#     tbbt.h crle.h cnbit.h mstdio.h cnone.h cskphuff.h cdeflate.h mfgr.h \
+#     mfan.h hlimits.h hntdefs.h htags.h hkit.h hcompi.h bitvect.h atom.h \
+#     dynarray.h linklist.h glist.h
+
+HDRS=$(H_HDRS) $(DF_HDRS) $(DFAN_HDRS) $(DFRI_HDRS) $(DFSD_HDRS) $(V_HDRS) \
+     $(MFAN_HDRS) $(MFGR_HDRS)
+
+H_HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h hcomp.h hconv.h hbitio.h \
+       tbbt.h crle.h cnbit.h mstdio.h cnone.h cskphuff.h cdeflate.h \
+       hlimits.h hntdefs.h htags.h hkit.h hcompi.h bitvect.h atom.h \
+       dynarray.h linklist.h glist.h
+
+DF_HDRS=df.h dfi.h dfstubs.h dfufp2i.h
+DFAN_HDRS=dfan.h
+DFRI_HDRS=dfrig.h dfgr.h
+DFSD_HDRS=dfsd.h
+V_HDRS=vg.h
+MFAN_HDRS=mfan.h
+MFGR_HDRS=mfgr.h
 
 CSRCS = $(HCSRCS) $(VCSRCS) $(DFCSRCS) $(MFCSRCS)
 HCSRCS=hfile.c herr.c hblocks.c hextelt.c hkit.c hdfalloc.c hcomp.c \
@@ -37,11 +53,22 @@ HCSRCS=hfile.c herr.c hblocks.c hextelt.c hkit.c hdfalloc.c hcomp.c \
 
 VCSRCS=vg.c vrw.c vio.c vparse.c vconv.c vsfld.c vgp.c vhi.c 
 
-DFCSRCS=dfan.c dfr8.c dfcomp.c dfrle.c dfimcomp.c dfjpeg.c dfunjpeg.c dfp.c \
-    dfgr.c df24.c dfsd.c dfgroup.c dfconv.c dfufp2i.c dfutil.c dfstubs.c \
-    dfknat.c dfkswap.c dfkcray.c dfkvms.c dfkconv.c dfkfuji.c 
+#DFCSRCS=dfan.c dfr8.c dfcomp.c dfrle.c dfimcomp.c dfjpeg.c dfunjpeg.c dfp.c \
+#        dfgr.c df24.c dfsd.c dfgroup.c dfconv.c dfufp2i.c \
+#        dfutil.c dfstubs.c dfknat.c dfkswap.c dfkcray.c dfkvms.c \
+#        dfkconv.c dfkfuji.c 
 
-MFCSRCS= mfan.c mfgr.c
+DFCSRCS=$(DFG_CSRCS) $(DFAN_CSRCS) $(DFSD_CSRCS) $(DFRI_CSRCS)
+DFG_CSRCS=dfgroup.c dfconv.c dfufp2i.c dfutil.c dfstubs.c dfknat.c dfkswap.c \
+          dfkcray.c dfkvms.c dfkconv.c dfkfuji.c 
+DFAN_CSRCS=dfan.c
+DFSD_CSRCS=dfsd.c
+DFRI_CSRCS=dfr8.c dfcomp.c dfrle.c dfimcomp.c dfjpeg.c dfunjpeg.c dfp.c \
+           dfgr.c df24.c
+
+MFCSRCS= $(MFAN_CSRCS) $(MFGR_CSRCS)
+MFAN_CSRCS=mfan.c
+MFGR_CSRCS=mfgr.c
 
 COBJS = $(HCOBJS) $(VCOBJS) $(DFCOBJS) $(MFCOBJS)
 HCOBJS=hfile.o herr.o hblocks.o hextelt.o hkit.o hdfalloc.o hcomp.o \
@@ -50,65 +77,78 @@ HCOBJS=hfile.o herr.o hblocks.o hextelt.o hkit.o hdfalloc.o hcomp.o \
 
 VCOBJS=vg.o vrw.o vio.o vparse.o vconv.o vsfld.o vgp.o vhi.o 
 
-DFCOBJS=dfan.o dfr8.o dfcomp.o dfrle.o dfimcomp.o dfjpeg.o dfunjpeg.o dfp.o \
-    dfgr.o df24.o dfsd.o dfgroup.o dfconv.o dfufp2i.o dfutil.o dfstubs.o \
-    dfknat.o dfkswap.o dfkcray.o dfkvms.o dfkconv.o dfkfuji.o 
+#DFCOBJS=dfan.o dfr8.o dfcomp.o dfrle.o dfimcomp.o dfjpeg.o dfunjpeg.o dfp.o \
+#        dfgr.o df24.o dfsd.o dfgroup.o dfconv.o dfufp2i.o \
+#        dfutil.o dfstubs.o dfknat.o dfkswap.o dfkcray.o dfkvms.o \
+#        dfkconv.o dfkfuji.o 
 
-MFCOBJS= mfan.o mfgr.o
+DFCOBJS=$(DFG_COBJS) $(DFAN_COBJS) $(DFSD_COBJS) $(DFRI_COBJS)
+DFG_COBJS=dfgroup.o dfconv.o dfufp2i.o dfutil.o dfstubs.o dfknat.o dfkswap.o \
+          dfkcray.o dfkvms.o dfkconv.o dfkfuji.o 
+DFAN_COBJS=dfan.o
+DFSD_COBJS=dfsd.o
+DFRI_COBJS=dfr8.o dfcomp.o dfrle.o dfimcomp.o dfjpeg.o dfunjpeg.o dfp.o \
+           dfgr.o df24.o
+
+MFCOBJS= $(MFAN_COBJS) $(MFGR_COBJS)
+MFAN_COBJS=mfan.o
+MFGR_COBJS=mfgr.o
 
 FSRCS = $(FCSRCS) $(FFSRCS)
-FCSRCS=hfilef.c herrf.c dfanf.c dfr8f.c dfpf.c df24f.c dfsdf.c vgf.c dff.c \
-    dfutilf.c mfanf.c mfgrf.c 
+#FCSRCS=hfilef.c herrf.c dfanf.c dfr8f.c dfpf.c df24f.c dfsdf.c vgf.c dff.c \
+#    dfutilf.c mfanf.c mfgrf.c hkitf.c
+FCSRCS=$(H_FCSRCS) $(V_FCSRCS) $(DF_FCSRCS) $(DFAN_FCSRCS) $(DFSD_FCSRCS) \
+       $(DFRI_FCSRCS) $(MFAN_FCSRCS) $(MFGR_FCSRCS)
+H_FCSRCS=hfilef.c herrf.c
+V_FCSRCS=vgf.c
+DF_FCSRCS=dff.c dfutilf.c
+DFAN_FCSRCS=dfanf.c
+DFSD_FCSRCS=dfsdf.c
+DFRI_FCSRCS=dfr8f.c dfpf.c df24f.c
+MFAN_FCSRCS=mfanf.c
+MFGR_FCSRCS=mfgrf.c
 
-FFSRCS=hfileff.f dfanff.f df24ff.f dfpff.f dfr8ff.f dfsdff.f vgff.f dfff.f \
-    dfufp2if.f mfgrff.f 
+#FFSRCS=hfileff.f dfanff.f df24ff.f dfpff.f dfr8ff.f dfsdff.f vgff.f dfff.f \
+#    dfufp2if.f mfgrff.f hkitff.f
+FFSRCS=$(H_FFSRCS) $(V_FFSRCS) $(DF_FFSRCS) $(DFAN_FFSRCS) $(DFSD_FFSRCS) \
+       $(DFRI_FFSRCS) $(MFAN_FFSRCS) $(MFGR_FFSRCS)
+H_FFSRCS=hfileff.f 
+V_FFSRCS=vgff.f
+DF_FFSRCS=dfff.f dfufp2if.f
+DFAN_FFSRCS=dfanff.f
+DFSD_FFSRCS=dfsdff.f
+DFRI_FFSRCS=df24ff.f dfpff.f dfr8ff.f
+MFAN_FFSRCS=
+MFGR_FFSRCS=mfgrff.f
 
 FOBJS = $(FCOBJS) $(FFOBJS)
-FCOBJS=hfilef.o herrf.o dfanf.o dfr8f.o dfpf.o df24f.o dfsdf.o vgf.o dff.o \
-    dfutilf.o mfanf.o mfgrf.o 
+#FCOBJS=hfilef.o herrf.o dfanf.o dfr8f.o dfpf.o df24f.o dfsdf.o vgf.o dff.o \
+#    dfutilf.o mfanf.o mfgrf.o 
 
-FFOBJS=hfileff.o dfanff.o df24ff.o dfpff.o dfr8ff.o dfsdff.o vgff.o dfff.o \
-    dfufp2if.o mfgrff.o 
+FCOBJS=$(H_FCOBJS) $(V_FCOBJS) $(DF_FCOBJS) $(DFAN_FCOBJS) $(DFSD_FCOBJS) \
+       $(DFRI_FCOBJS) $(MFAN_FCOBJS) $(MFGR_FCOBJS)
+H_FCOBJS=hfilef.o herrf.o 
+V_FCOBJS=vgf.o
+DF_FCOBJS=dff.o dfutilf.o
+DFAN_FCOBJS=dfanf.o
+DFSD_FCOBJS=dfsdf.o
+DFRI_FCOBJS=dfr8f.o dfpf.o df24f.o
+MFAN_FCOBJS=mfanf.o
+MFGR_FCOBJS=mfgrf.o
+
+#FFOBJS=hfileff.o dfanff.o df24ff.o dfpff.o dfr8ff.o dfsdff.o vgff.o dfff.o \
+#    dfufp2if.o mfgrff.o hkitff.o
+FFOBJS=$(H_FFOBJS) $(V_FFOBJS) $(DF_FFOBJS) $(DFAN_FFOBJS) $(DFSD_FFOBJS) \
+       $(DFRI_FFOBJS) $(MFAN_FFOBJS) $(MFGR_FFOBJS)
+H_FFOBJS=hfileff.o 
+V_FFOBJS=vgff.o
+DF_FFOBJS=dfff.o dfufp2if.o
+DFAN_FFOBJS=dfanff.o
+DFSD_FFOBJS=dfsdff.o
+DFRI_FFOBJS=df24ff.o dfpff.o dfr8ff.o
+MFAN_FFOBJS=
+MFGR_FFOBJS=mfgrff.o
 
 FINCS=dffunc.inc hdf.inc
 
 
-# Pablo Instrumentation Library support files
-#PCHDRS=$(PABLO_SRC)/ProcIDs.h
-#PCSRCS=$(PABLO_SRC)/PabloHDF.c
-#PCOBJS=PabloHDF.o
-#PFINCS=$(PABLO_SRC)/PabloHDF.inc
-#PFSRCS=$(PABLO_SRC)/PabloHDFf.c $(PABLO_SRC)/PabloHDFff.f
-#PFOBJS=PabloHDFf.o PabloHDFff.o
-#POBJS=PabloHDF.o PabloHDFf.o PabloHDFff.o
-#PSRCS= $(PCHDRS) $(PCSRCS) $(PFINCS) $(PFSRCS)
-
-#JFSRCS= jdmain.c jcmain.c jrdjfif.c jrdgif.c jrdppm.c jrdrle.c jrdtarga.c \
-#        jwrjfif.c jwrgif.c jwrppm.c jwrrle.c jwrtarga.c
-#
-#JCSRCS= jbsmooth.c jcarith.c jccolor.c jcdeflts.c jcexpand.c jchuff.c \
-#        jcmaster.c jcmcu.c jcpipe.c jcsample.c jdarith.c jdcolor.c \
-#        jddeflts.c jdhuff.c jdmaster.c jdmcu.c jdpipe.c jdsample.c \
-#        jerror.c jquant1.c jquant2.c jfwddct.c jrevdct.c jutils.c jmemmgr.c \
-#        jmemsys.c
-#
-#JINCS= jinclude.h jconfig.h jpegdata.h jversion.h jmemsys.h 
-#
-# objectfiles common to both JPEG compression and decompression
-#COMOBJECTS= jutils.o jerror.o jmemmgr.o jmemsys.o 
-# compression objectfiles
-#CLIBOBJECTS= jcmaster.o jcdeflts.o jcarith.o jccolor.o jcexpand.o \
-#        jchuff.o jcmcu.o jcpipe.o jcsample.o jfwddct.o
-#        
-#CFILEOBJECTS=jwrjfif.o jrdgif.o jrdppm.o jrdrle.o jrdtarga.o
-#
-# decompression objectfiles
-#DLIBOBJECTS= jdmaster.o jddeflts.o jbsmooth.o jdarith.o jdcolor.o \
-#        jdhuff.o jdmcu.o jdpipe.o jdsample.o jquant1.o \
-#        jquant2.o jrevdct.o
-#
-#DFILEOBJECTS=jrdjfif.o jwrgif.o jwrppm.o jwrrle.o jwrtarga.o
-#
-# These objectfiles are included in libjpeg.lib
-#JOBJS= $(CLIBOBJECTS) $(DLIBOBJECTS) $(COMOBJECTS)
-#
