@@ -812,7 +812,7 @@ intn VSfpack(int32 vsid, intn packtype, char *fields_in_buf,
     char **av, *s;
     uint8 *bufp = (uint8 *)buf;
     uint8 **fbufps=NULL;
-    int32 rec_msize, *fmsizes=NULL, *foffs=NULL; 
+    int32 b_rec_size, *fmsizes=NULL, *foffs=NULL; 
     intn i, j, found, ret_value = SUCCEED;
     vsinstance_t *wi;
     VDATA *vs;
@@ -852,7 +852,7 @@ intn VSfpack(int32 vsid, intn packtype, char *fields_in_buf,
          HGOTO_ERROR(DFE_NOSPACE, FAIL);
       /* fill arrays blist.msizes and blist.offs; calculate
            buf record size */
-    rec_msize = 0;
+    b_rec_size = 0;
     if (fields_in_buf != NULL) 
         /* a subset of vdata fields are contained in buf */
         for (i=0; i<ac; i++) {
@@ -878,19 +878,20 @@ intn VSfpack(int32 vsid, intn packtype, char *fields_in_buf,
                 HGOTO_ERROR(DFE_BADFIELDS, FAIL);
                /* get field info */
             blist.idx[i] = j;
-            blist.offs[i] =  
+            blist.offs[i] =
                (i==0? 0 : blist.offs[i-1] + w->esize[blist.idx[i-1]]);
-            rec_msize += w->esize[j];
+            b_rec_size += w->esize[j];
         }  /* for i */
     else  /* buf contains all vdata fields  */
        for (i=0; i< ac; i++) {
            blist.idx[i] = i;
-           blist.offs[i] = w->off[i];
-           rec_msize += w->esize[i];
+           blist.offs[i] =
+                (i==0? 0 : blist.offs[i-1] + w->esize[i-1]);
+           b_rec_size += w->esize[i];
        }
  
        /* check bufsz */
-    if (bufsz < rec_msize * n_records)
+    if (bufsz < b_rec_size * n_records)
         HGOTO_ERROR(DFE_NOTENOUGH, FAIL);
     va_start(ap, fields);
     if (fields != NULL) { /* convert field names into tokens. */
@@ -955,7 +956,7 @@ intn VSfpack(int32 vsid, intn packtype, char *fields_in_buf,
                 HDmemcpy(bufp + foffs[j], fbufps[j], fmsizes[j]);
                 fbufps[j] += fmsizes[j];
             }
-            bufp += rec_msize;
+            bufp += b_rec_size;
         }
     }
     else  { /* unpack from buf to fields */
@@ -964,7 +965,7 @@ intn VSfpack(int32 vsid, intn packtype, char *fields_in_buf,
                 HDmemcpy(fbufps[j], bufp + foffs[j], fmsizes[j]);
                 fbufps[j] += fmsizes[j];
             }
-            bufp += rec_msize;
+            bufp += b_rec_size;
         }
     }
 
