@@ -76,7 +76,7 @@ int32 write_vset_stuff() {
         printf(">>> Failed creating initial Vgroup\n");
     }
 
-    Vsetname (vg1, "Simple Vgroup");
+    status = Vsetname (vg1, "Simple Vgroup");
     Vsetclass(vg1, "Test object");
     MESSAGE(5,printf("created Vgroup %s (empty)\n", "Simple Vgroup"););
 
