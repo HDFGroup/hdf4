@@ -14,11 +14,9 @@
 
 
 int 
-vdata_diff(fid1, fid2, specp, cmp_flag, f_flag)
-int32 fid1, fid2;
-struct fspec specp;
-int32 cmp_flag;     /* to control any data comparison */
-int32 f_flag;       /* to control the print out message */
+vdata_diff(int32 fid1, int32 fid2, struct fspec specp, 
+											int32 cmp_flag,  /* to control any data comparison */
+											int32 f_flag)    /* to control the print out message */
 {
  int32 vsid1, vsid2;
  int32 vgid1, vgid2;
@@ -309,10 +307,10 @@ int32 f_flag;       /* to control the print out message */
 
 
 int
-vdata_cmp(vs1, vs2, gname, cname, max_err_cnt)
-int32  vs1, vs2;
-char   *gname, *cname;
-int32  max_err_cnt;
+vdata_cmp(int32  vs1, int32  vs2, 
+										char   *gname, 
+										char   *cname, 
+										int32  max_err_cnt)
 {
  int32   i, j, k, iflag, err_cnt;
  int32   nv1, interlace1, vsize1;

@@ -35,9 +35,7 @@ i4_min_val1, i4_max_val1, i4_min_val2, i4_max_val2); }
 
 
 int
-sddata_diff(sdid1, sdid2, specp)
-int sdid1, sdid2;
-struct fspec specp;
+sddata_diff(int32 sdid1, int32 sdid2, struct fspec specp)
 {
  int32    nvars1;              /* number of variables */
  int32    ngatts1;             /* number of global attributes */

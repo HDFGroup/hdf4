@@ -14,8 +14,7 @@
 * last component of path and stripping off any extension.
 */
 char *
-name_path(path)
-char *path;
+name_path(char *path)
 {
  char *cp, *new;
  
@@ -74,8 +73,8 @@ nc_type type;
 * might include an exponent part.
 */
 void
-tztrim(ss)
-char *ss;   /* returned string representing dd */
+tztrim(char *ss)
+  /* returned string representing dd */
 {
  char *cp, *ep;
  
@@ -104,10 +103,7 @@ char *ss;   /* returned string representing dd */
 * explicit type tags, because their types are not declared.
 */
 void
-pr_att_vals(type, len, vals)
-nc_type type;
-int len;
-void *vals;
+pr_att_vals(nc_type type, int len, void *vals)
 {
  int iel;
  union {
@@ -213,10 +209,7 @@ void *vals;
 
 
 void
-make_vars(optarg, fspecp, option)
-char *optarg;
-struct fspec* fspecp;
-int  option;
+make_vars(char *optarg, struct fspec* fspecp, int option)
 {
  char *cp = optarg;
  int nvars = 1;
@@ -276,8 +269,7 @@ int  option;
 * command-line and update the default data formats appropriately.
 */
 void
-set_sigdigs(optarg)
-char *optarg;
+set_sigdigs(char *optarg)
 {
  char *ptr = optarg;
  char *ptr2 = 0;
