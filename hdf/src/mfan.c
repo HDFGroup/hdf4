@@ -30,7 +30,10 @@ static char RcsId[] = "@(#)$Revision$";
  *           does make search/find of annotations much easier.Currently the 
  *           implementation uses TBBT trees.
  *
- *           NOTES: Note that any mention of file ID's except in ANStart() 
+ *           NOTE1: These could be removed in favor of using the atom stuff
+ *                 in order to more unify the code with the library.
+ *
+ *           NOTE2: Note that any mention of file ID's except in ANStart() 
  *                  should now refer to annotation interface ID.
  *
  * Contents: 
@@ -44,8 +47,8 @@ static char RcsId[] = "@(#)$Revision$";
  *  ANinit      - Intialize the annotation interface
  *  ANdestroy   - Un-intialize the annotation interface
  *
- *  ANIfidcmp     - compare two annotation interface id's (used in file TBBTtree)
- *  ANIanncmp     - compare two annotation handles(ann_id's) 
+ *  ANIfidcmp    - compare two annotation interface id's (used in file TBBTtree)
+ *  ANIanncmp    - compare two annotation handles(ann_id's) 
  *                  (used in annotation TBBTtree)
  *  ANIaddentry:  - add entry to corresponding annotation TBBTtree
  *  ANIcreate_ann_tree - create annotation TBBTtree 
@@ -91,7 +94,8 @@ static char RcsId[] = "@(#)$Revision$";
 #include "mfan.h"
 #include "atom.h"
 
-/* Whether we've installed the library termination function yet for this interface */
+/* Whether we've installed the library termination function yet for this 
+   interface */
 PRIVATE intn library_terminate = FALSE;
 
 /* Function Prototypes */

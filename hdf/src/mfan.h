@@ -71,13 +71,17 @@ typedef struct ANfile
   int32   access_mode;    /* access mode this file was opened with */
   intn    an_num[4];      /* Holds number of annotations found of each type */
   TBBT_TREE *an_tree[4];  /* tbbt trees for each type of annotation in file 
-                           * i.e. file/data labels and descriptions */
+                           * i.e. file/data labels and descriptions 
+                           * NOTE: This could be re-done to use Atom
+                           *       stuff instead of tbbt trees */
 } ANfile;
 
 #ifdef MFAN_C
 /* WE ARE IN MAIN ANNOTATION SOURCE FILE "mfan.c" */
 
-/* PRIVATE variables and defintions */
+/* PRIVATE variables and defintions 
+ * NOTE: These could be removed in favor of using the atom stuff 
+ *       in order to more unify the code with the library */
 EXPORT TBBT_TREE *ANfilelist = NULL; /* List of open files */
 EXPORT TBBT_TREE *ANnodelist = NULL; /* List of all anotations across files */
 PRIVATE intn    num_anns   = 0;    /* total number of annotations 
