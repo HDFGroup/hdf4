@@ -471,14 +471,12 @@ PRIVATE int DFGRgetrig(file_id, ref, rig)
     uint8 GRtbuf[64];       /* local buffer for reading RIG info */
 
     HEclear();
-    if (!HDvalidfid(file_id) || !ref) {
-       HERROR(DFE_ARGS);
-        return FAIL;
-    }
-    
+    if (!HDvalidfid(file_id) || !ref)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
+
     /* read RIG into memory */
-    if ((GroupID = DFdiread(file_id, DFTAG_RIG, ref)) == FAIL) 
-        return FAIL;
+    if ((GroupID = DFdiread(file_id, DFTAG_RIG, ref)) == FAIL)
+        HRETURN_ERROR(DFE_READERROR,FAIL);
 
     *rig = Grzrig;             /* fill rig with zeroes */
     while (!DFdiget(GroupID, &elt_tag, &elt_ref)) {  /* get next tag/ref */
@@ -490,11 +488,13 @@ PRIVATE int DFGRgetrig(file_id, ref, rig)
                 rig->data[type].tag = elt_tag;
                 rig->data[type].ref = elt_ref;
                 break;
+
             case DFTAG_ID:          /* read description info */
             case DFTAG_LD:
                 type = (elt_tag==DFTAG_LD) ? LUT : IMAGE;
-               if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL) {
+                if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL) {
                     uint8 *p;
+
                     p = GRtbuf;
                     INT32DECODE(p, rig->datadesc[type].xdim);
                     INT32DECODE(p, rig->datadesc[type].ydim);
@@ -505,7 +505,7 @@ PRIVATE int DFGRgetrig(file_id, ref, rig)
                     UINT16DECODE(p, rig->datadesc[type].compr.tag);
                     UINT16DECODE(p, rig->datadesc[type].compr.ref);
                 } else
-                   return FAIL;
+                   HRETURN_ERROR(DFE_READERROR,FAIL);
 
                 if (rig->datadesc[type].nt.tag==0)
                    break; /* old RIGs */
@@ -513,11 +513,9 @@ PRIVATE int DFGRgetrig(file_id, ref, rig)
                /* read NT */
                 if (Hgetelement(file_id, rig->datadesc[type].nt.tag,
                                rig->datadesc[type].nt.ref, ntstring) == FAIL)
-                    return FAIL;
-                if ((ntstring[2]!=8) || (ntstring[1]!=DFNT_UCHAR)) {
-                    HERROR(DFE_BADCALL);
-                    return FAIL;
-                }
+                    HRETURN_ERROR(DFE_READERROR,FAIL);
+                if ((ntstring[2]!=8) || (ntstring[1]!=DFNT_UCHAR))
+                    HRETURN_ERROR(DFE_BADCALL,FAIL);
                 break;
             default:           /* ignore unknown tags */
                 break;
@@ -552,6 +550,7 @@ PRIVATE int DFGRaddrig(file_id, ref, rig)
     int32 lutsize;
     int32 GroupID;
     uint8 GRtbuf[64];       /* local buffer for reading RIG info */
+intn i;
 
     HEclear();
 
@@ -576,6 +575,7 @@ PRIVATE int DFGRaddrig(file_id, ref, rig)
 
     if (Ref.dims[IMAGE]==0) {
         uint8 *p;
+
         p = GRtbuf;
         INT32ENCODE(p, rig->datadesc[IMAGE].xdim);
         INT32ENCODE(p, rig->datadesc[IMAGE].ydim);
@@ -585,6 +585,7 @@ PRIVATE int DFGRaddrig(file_id, ref, rig)
         INT16ENCODE(p, rig->datadesc[IMAGE].interlace);
         UINT16ENCODE(p, rig->datadesc[IMAGE].compr.tag);
         UINT16ENCODE(p, rig->datadesc[IMAGE].compr.ref);
+
         if (Hputelement(file_id, DFTAG_ID, ref,
                        GRtbuf, (int32)(p-GRtbuf)) == FAIL)
             return FAIL;
@@ -592,10 +593,8 @@ PRIVATE int DFGRaddrig(file_id, ref, rig)
         Ref.dims[IMAGE] = ref;
     }
     if (!Ref.lut) {            /* associated lut not written to this file */
-        if (Grlutdata==NULL) { /* no lut associated */
-            HERROR(DFE_ARGS);
-            return FAIL;
-        }
+        if (Grlutdata==NULL)   /* no lut associated */
+            HRETURN_ERROR(DFE_ARGS,FAIL);
         lutsize = Grwrite.datadesc[LUT].xdim * Grwrite.datadesc[LUT].ydim *
            Grwrite.datadesc[LUT].ncomponents;
         if (Hputelement(file_id, DFTAG_LUT, ref,
@@ -671,25 +670,28 @@ int32 DFGRIopen(filename, access)
     int access;
 #endif
 {
+    char *FUNC="DFGRIopen";
     int32 file_id;
 
     file_id = Hopen(filename, access, 0);
-    if (file_id == FAIL) return FAIL;
+    if (file_id == FAIL)
+        HRETURN_ERROR(DFE_BADOPEN,FAIL);
 
     /* use reopen if same file as last time - more efficient */
     if (HDstrncmp(Grlastfile,filename,DF_MAXFNLEN) || (access==DFACC_CREATE)) {
        /* treat create as different file */
         Grrefset = 0;          /* no ref to get set for this file */
         Grnewdata = 0;
-        if (Ref.lut>0) Ref.lut = 0;
+        if (Ref.lut>0)
+            Ref.lut = 0;
         if (Grlutdata==NULL)
-           Ref.lut = (-1);     /* no LUT if not a "set" call */
+            Ref.lut = (-1);     /* no LUT if not a "set" call */
         if (Ref.dims[IMAGE]>0)
-           Ref.dims[IMAGE] = 0;
+            Ref.dims[IMAGE] = 0;
         if (Ref.dims[LUT]>0)
-           Ref.dims[LUT] = 0;
+            Ref.dims[LUT] = 0;
         if (Ref.nt>0)
-           Ref.nt = 0;
+            Ref.nt = 0;
         Grread = Grzrig;        /* no rigs read yet */
     }
 
@@ -729,34 +731,31 @@ int32 file_id;
     Grrefset = 0;              /* no longer need to remember specified ref */
     gettag = DFTAG_RIG;
     for (i=0; i<4; i++) {      /* repeat for RIG, RI8, CI8, II8 */
-       if (isfirst) {
+        if (isfirst) {
            aid = Hstartread(file_id, gettag, getref);
-       } else {
-           aid = Hstartread(file_id, gettag, Grread.data[IMAGE].ref);
-           if ((aid != FAIL) &&
-               Hnextread(aid, gettag, getref, DF_CURRENT) == FAIL) {
-               Hendaccess(aid);
-               aid = FAIL;
-           }
-       }
-       if (aid == FAIL) {
-           /* not found */
+        } else {
+            aid = Hstartread(file_id, gettag, Grread.data[IMAGE].ref);
+            if ((aid != FAIL) &&
+                    Hnextread(aid, gettag, getref, DF_CURRENT) == FAIL) {
+                Hendaccess(aid);
+                aid = FAIL;
+            }
+        }
+        if (aid == FAIL) {  /* not found */
             if (gettag==DFTAG_RIG) { /* were looking for RIGs */
                 if ((Grread.data[IMAGE].tag==DFTAG_RI) /* file has Rigs */
-                    || (Grread.data[IMAGE].tag==DFTAG_CI)) {
+                        || (Grread.data[IMAGE].tag==DFTAG_CI))
                     return FAIL;       /* no more to return */
-                }
                 gettag = DFTAG_RI8; /* if no RIGs in file, look for RI8s */
             }
-            else if ((gettag==DFTAG_II8) && (!newref)) { /* no RI8/CI8/II8 */
+            else if ((gettag==DFTAG_II8) && (!newref))  /* no RI8/CI8/II8 */
                 return FAIL;
-            }
             continue;          /* continue checking */
         }
-       /* found */
-       HQuerytagref(aid, &dummy, &ref);
-       Hendaccess(aid);
-        if (!newref || (ref < newref)) { /* is it next one? */
+        /* found */
+        HQuerytagref(aid, &dummy, &ref);
+        Hendaccess(aid);
+        if (!newref || (ref < newref)) {    /* is it next one? */
             newref = ref;      /* remember tag, ref */
             newtag = gettag;
         }
@@ -839,18 +838,18 @@ int DFGRIgetdims(filename, pxdim, pydim, pncomps, pil, type)
 
     file_id = DFGRIopen(filename, DFACC_READ);
     if (file_id == FAIL)
-       return FAIL;
+        HRETURN_ERROR(DFE_BADOPEN,FAIL);
 
     if (type==IMAGE) {         /* getimdims sequences, getlutdims does not */
-        if (DFGRIriginfo(file_id)
-           == FAIL)            /* reads next RIG or RI8 from file */
+        /* reads next RIG or RI8 from file */
+        if (DFGRIriginfo(file_id) == FAIL)
             return(HDerr(file_id)); /* on error, close file and return -1 */
         Grnewdata = 1;
     }
 
     if (type==LUT && Grread.data[LUT].ref==0) {
-            HERROR(DFE_NOMATCH);
-            return HDerr(file_id);             /* no LUT */
+        HERROR(DFE_NOMATCH);
+        return HDerr(file_id);             /* no LUT */
     }
     if (pxdim)
        *pxdim = Grread.datadesc[type].xdim;
