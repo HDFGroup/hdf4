@@ -64,6 +64,9 @@ void add_gr(char* gr_name,           /* gr name */
             int32 comp_type,         /* compression flag */
             comp_info *comp_info     /* compression structure */ );
 
+void add_pal(char* fname);
+
+
 /* read image data */
 int  read_data(char* file_name);
 

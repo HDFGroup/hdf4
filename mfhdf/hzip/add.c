@@ -1095,6 +1095,35 @@ void add_an(int32 file_id, int32 tag, int32 ref)
 
 
 
+/*-------------------------------------------------------------------------
+ * Function: add_pal
+ *
+ * Purpose: utility function to write a palette
+ *
+ * Return: void
+ *
+ * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
+ *
+ * Date: August 19, 2003
+ *
+ *-------------------------------------------------------------------------
+ */
+
+
+void add_pal(char* fname)
+{
+ uint8  palette_data[256*3];
+ 
+ if (DFPaddpal(fname,palette_data)==FAIL){
+  printf( "Failed to write palette in <%s>\n", fname);
+ }
+ 
+}
+
+
+
+
+
 
 
 
