@@ -31,7 +31,7 @@ $ cobj="df24,dfan,dfcomp, dfgr, dfgroup, dfimcomp, dfp, dfr8, dfsd, "+-
 "dfufp2i,dfknat,dfkswap,dfkcray, dfkvms, dfkconv, dfkfuji,hbitio, "+-
 "tbbt,hdfalloc,mfgr,cdeflate,cnbit,cnone,crle,cskphuff,hcomp,mfan," +-
 "mstdio,atom, bitvect, dynarray, hfiledd, glist,hchunks,mcache, " +- 
-"vattr"
+"vattr, hbuffer, hcompri"
 $!
 $ ccc 'cobj 
 $ library/create []df  'cobj
