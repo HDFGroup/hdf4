@@ -61,7 +61,7 @@ MACHINE=IBM6000
 
 # Define your C compiler and flags
 CC= cc
-CFLAGS= -D${MACHINE}  -O -qlanglvl=ansi
+CFLAGS= -D${MACHINE}  -O
 
 
 # Define your FORTRAN compiler
