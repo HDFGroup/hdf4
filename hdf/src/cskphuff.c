@@ -314,11 +314,16 @@ HCIcskphuff_encode(compinfo_t * info, int32 length, uint8 *buf)
     CONSTR(FUNC, "HCIcskphuff_encode");
     comp_coder_skphuff_info_t *skphuff_info;    /* ptr to skipping Huffman info */
     int32       orig_length;    /* original length to write */
-    uintn       stack_ptr = 0;  /* pointer to the position on the stack */
+    intn        stack_ptr;      /* pointer to the position on the stack */
+#ifdef OLD_WAY
     intn        stack[SKPHUFF_MAX_CHAR]; /* stack to store the bits generated */
     uintn       a;              /* variable to record the position in the tree */
-    uint32      output_bits;    /* bits to write out */
-    uintn       old_stack_ptr;  /* old size of the stack */
+#else /* OLD_WAY */
+    uintn       a, last_node;   /* variables to record the current & last position in the tree */
+    uint32      output_bits[(SKPHUFF_MAX_CHAR/4)+1],    /* bits to write out */
+                bit_count[(SKPHUFF_MAX_CHAR/4)+1],      /* # of bits stored in each stack location */
+                bit_mask;       /* bit-mask for accumulating bits to output */
+#endif /* OLD_WAY */
 
     skphuff_info = &(info->cinfo.coder_info.skphuff_info);
 
@@ -326,6 +331,7 @@ HCIcskphuff_encode(compinfo_t * info, int32 length, uint8 *buf)
     while (length > 0)
       {     /* encode until we stored all the bytes */
           a = *buf + SUCCMAX;   /* find position in the up array */
+#ifdef OLD_WAY
           do
             {   /* walk up the tree, pushing bits */
                 stack[stack_ptr] = (skphuff_info->right[skphuff_info->skip_pos][skphuff_info->up[skphuff_info->skip_pos][a]] == a);     /* push a 1 is this is the right node */
@@ -334,7 +340,6 @@ HCIcskphuff_encode(compinfo_t * info, int32 length, uint8 *buf)
             }
           while (a != ROOT);
 
-#ifdef OLD_WAY
           do
             {   /* output the bits we have */
                 stack_ptr--;
@@ -344,18 +349,36 @@ HCIcskphuff_encode(compinfo_t * info, int32 length, uint8 *buf)
           while (stack_ptr != 0);
 #else /* OLD_WAY */
 /* This way is _much_ faster... */
-          output_bits=0;
-          old_stack_ptr=stack_ptr;
+          stack_ptr=0;
+          bit_mask=1;   /* initialize to the lowest bit */
+          output_bits[0]=0;
+          bit_count[0]=0;
           do
-            {   /* output the bits we have */
-                output_bits<<=1;    /* shift the bits over */
-                stack_ptr--;
-                output_bits|=stack[stack_ptr];
+            {   /* walk up the tree, pushing bits */
+                last_node=a; /* keep track of the current node */
+                a = skphuff_info->up[skphuff_info->skip_pos][a]; /* move the current node up one */
+                if(skphuff_info->right[skphuff_info->skip_pos][a] == last_node)
+                    output_bits[stack_ptr]|=bit_mask; /* push a 1 if this is the right node */
+                bit_mask<<=1;   /* rotate bit mask over */
+                bit_count[stack_ptr]++;    /* increment # of bits stored */
+                if(bit_count[stack_ptr]>=32)
+                  {
+                    stack_ptr++;    /* increment stack position */
+                    bit_mask=1;     /* reset bit mask to lowest bit position */
+                    output_bits[stack_ptr]=0;   /* initialize stack location */
+                    bit_count[stack_ptr]=0;
+                  } /* end if */
             }
-          while (stack_ptr != 0);
+          while (a != ROOT);
 
-          if (Hbitwrite(info->aid, old_stack_ptr,output_bits) != old_stack_ptr)
-              HRETURN_ERROR(DFE_CENCODE, FAIL);
+          do {   /* output the bits we have */
+                if(bit_count[stack_ptr]>0)
+                  {
+                    if(Hbitwrite(info->aid,bit_count[stack_ptr],output_bits[stack_ptr]) !=bit_count[stack_ptr])
+                        HRETURN_ERROR(DFE_CENCODE, FAIL);
+                  } /* end if */
+                stack_ptr--;
+            } while (stack_ptr >= 0);
 #endif /* OLD_WAY */
           HCIcskphuff_splay(skphuff_info, *buf);    /* semi-splay the tree around this node */
           skphuff_info->skip_pos = (skphuff_info->skip_pos + 1) % skphuff_info->skip_size;
