@@ -77,7 +77,7 @@ vfmtshort(char *x, int display, FILE *fp)
      short s=0;
      HDmemcpy(&s, x, sizeof(int16));
      if (display)
-        cn += fprintf(fp, "%ld",1);
+        cn += fprintf(fp, "%d",s);
      return(1);
 }
 
