@@ -79,7 +79,8 @@ static char RcsId[] = "@(#)$Revision$";
  *
  *  Miscellaneous Routines
  *  ----------------------
- *  ANget_tagref - get tag/ref pair to annotation ID
+ *  ANget_tagref - get tag/ref pair to annotation type and index
+ *  ANid2tagref  - get tag/ref pair to annotation ID
  *  atype2tag - annotation type to corresponding annotation TAG
  *  tag2atype - annotation TAG to corresponding annotation type
  *
@@ -2455,7 +2456,7 @@ ANendaccess(int32 ann_id)
  NAME
 	ANget_tagref - get tag/ref pair to annotation ID
  USAGE
-	int32 ANget_tagref(an_id, index)
+	int32 ANget_tagref(an_id, index, type, tag, ref)
         int32 an_id;   IN: annotation interface ID
         int32 index;     IN: index of annottion to get tag/ref for
         ann_type  type:  IN: AN_DATA_LABEL for data labels, 
@@ -2565,6 +2566,100 @@ ANget_tagref(int32 an_id, int32 index, ann_type type, uint16 *tag, uint16 *ref)
 
   return SUCCEED;
 } /* ANget_tagref() */
+
+/*--------------------------------------------------------------------------
+ NAME
+       ANid2tagref -- get tag/ref given annotation id
+ USAGE
+       int32 ANid2tagref(ann_id, tag, ref)
+       int32 ann_id;   IN: annotation id
+       uint16 tag;     OUT: Tag for annotation
+       uint16 ref;     OUT: ref for annotation
+ RETURNS
+       SUCCEED if successful and FAIL (-1) otherwise. 
+ DESCRIPTION
+       Uses the annotation id to find ann_node entry which contains ann_ref
+ GLOBAL VARIABLES
+
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+ *------------------------------------------------------------------------*/
+int32
+ANid2tagref(int32 ann_id, uint16 *tag, uint16 *ref)
+{
+#ifdef LATER
+    CONSTR(FUNC, "ANid2tagref");
+#endif /* LATER */
+#ifdef HAVE_RBTREE
+    Rb_node entry;
+#else
+    TBBT_NODE *entry = NULL;
+#endif
+    ANnode  *ann_node   = NULL;
+    int32  file_id;
+    int32  type;
+    int32  ann_key;
+    uint16 ann_tag;
+    uint16 ann_ref;
+
+    /* Clear error stack */
+    HEclear();
+
+    /* Valid annotation id */
+
+#ifdef HAVE_RBTREE
+    /* See if annotation of 'type' with ref exits */
+    if ((entry = rb_find_gkey(ANnodelist, &ann_id, ANIanncmp)) == NULL)
+      HE_REPORT_RETURN("Failed to find annotation with ann_id", FAIL);
+
+    /* if not found return FAIL 
+     * else get annotation node from node */
+    if (entry == ANnodelist)
+      HE_REPORT_RETURN("Failed to find annotation with an_id", FAIL);
+    else
+      ann_node = (ANnode *) rb_val(entry);
+
+#else  /* use tbbt */
+    /* First find file node from file tree */
+    if ((entry = tbbtdfind(ANnodelist, &ann_id, NULL)) == NULL)
+      HE_REPORT_RETURN("failed to find ann_id", FAIL);
+
+    ann_node = (ANnode *) entry->data; /* get ann node from node */
+#endif /* use tbbt */
+
+    /* get file id and annotation key */
+    file_id = ann_node->file_id;
+    ann_key = ann_node->ann_key;
+    type    = AN_KEY2TYPE(ann_key);
+    ann_ref = AN_KEY2REF(ann_key);
+
+    /* Valid file id */
+    if (file_id == FAIL)
+      HE_REPORT_RETURN("bad file_id", FAIL);
+
+   *ref = ann_ref;
+   /* set type annotation tag */
+    switch((int32)type)
+      {
+      case AN_DATA_LABEL:
+        *tag = DFTAG_DIL;
+        break;
+      case AN_DATA_DESC:
+        *tag = DFTAG_DIA;
+        break;
+      case AN_FILE_LABEL:
+        *tag = DFTAG_FID;
+        break;
+      case AN_FILE_DESC:
+        *tag = DFTAG_FD;
+        break;
+      default:
+        HE_REPORT_RETURN("Bad annotation type for this call",FAIL);
+      }
+
+    return SUCCEED;
+} /* ANid2tagref */
 
 /*-------------------------------------------------------------------- 
  NAME
