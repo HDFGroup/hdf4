@@ -278,7 +278,7 @@ EOF
 	echo t90-cray-unicos
         exit 0 ;;
     CRAY*T3*:*:*:*)
-	echo t3d-cray-craympp
+	echo t3e-cray-craympp
         exit 0 ;;
     hp3[0-9][05]:NetBSD:*:*)
 	echo m68k-hp-netbsd${UNAME_RELEASE}

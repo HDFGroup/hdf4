@@ -89,7 +89,7 @@ case "${host}" in
   *-hp-hpux*)             host_makefile_frag=config/mh-hpux ;;
   *-convex-bsd*)          host_makefile_frag=config/mh-convex ;;
   *-cray-unicos*)         host_makefile_frag=config/mh-unicos ;;
-  t3d-cray-craympp)       host_makefile_frag=config/mh-t3d ;;
+  t3*-cray-craympp)       host_makefile_frag=config/mh-t3e ;;
   S370-fujitsu-sysv*)     host_makefile_frag=config/mh-fujivp ;;
   *-mac-*)                host_makefile_frag=config/mh-mac ;;
 esac
@@ -162,7 +162,7 @@ case "${host}" in
   *-hp-hpux*)             files="mfhdf/libsrc/config/netcdf-hpux.h mfhdf/fortran/config/jackets-hpux.c mfhdf/fortran/config/netcdf-hpux.inc mfhdf/fortran/config/ftest-hpux.f";;
   *-convex-bsd*)          files="mfhdf/libsrc/config/netcdf-convex.h mfhdf/fortran/config/jackets-convex.c mfhdf/fortran/config/netcdf-convex.inc mfhdf/fortran/config/ftest-convex.f" ;;
   *-cray-unicos*)         files="mfhdf/libsrc/config/netcdf-unicos.h mfhdf/fortran/config/jackets-unicos.c mfhdf/fortran/config/netcdf-unicos.inc mfhdf/fortran/config/ftest-unicos.f" ;;
-  t3d-cray-craympp)       files="mfhdf/libsrc/config/netcdf-t3d.h mfhdf/fortran/config/jackets-t3d.c mfhdf/fortran/config/netcdf-t3d.inc mfhdf/fortran/config/ftest-t3d.f" ;;
+  t3*-cray-craympp)       files="mfhdf/libsrc/config/netcdf-t3e.h mfhdf/fortran/config/jackets-t3e.c mfhdf/fortran/config/netcdf-t3e.inc mfhdf/fortran/config/ftest-t3e.f" ;;
   S370-fujitsu-sysv*)     files="mfhdf/libsrc/config/netcdf-fujivp.h mfhdf/fortran/config/jackets-fujivp.c mfhdf/fortran/config/netcdf-fujivp.inc mfhdf/fortran/config/ftest-fujivp.f" ;;
   *-mac-*)		          files="mfhdf/libsrc/config/netcdf-mac.h mfhdf/fortran/config/jackets-mac.c mfhdf/fortran/config/netcdf-mac.inc mfhdf/fortran/config/ftest-mac.f" ;;
 esac
