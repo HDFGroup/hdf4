@@ -31,12 +31,14 @@ Use VSnattrs to get total number of attributes for all
 fields and the vdata ifself.
 .SH "RETURNS"
 Returns the number of attributes assigned to
-the specified field (use _HDF_ENTIRE_VDATA for the vdata itself)
+the specified field (_HDF_ENTIRE_VDATA for the vdata itself)
 when successful, FAIL otherwise.
 .SH "FORTRAN"
 Integer function vsffnat(vsid, findex)
 .br
 integer vsid, findex.
+.br
+Use -1 (for findex) to get number of attributes of the vdata.
 .SH "SEE ALSO"
 VSfindex(3),
 VSsetattr(3),

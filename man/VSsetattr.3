@@ -64,21 +64,25 @@ Integer function vsfsat(vsid,findex,attrnm,dtype,count,values) --
 .br
        set a numeric attribute
 .br
-integer vsid, findex, dtype, count
+  integer vsid, findex, dtype, count
 .br
-character*(*) attrnm
+  character*(*) attrnm
 .br
-integer  values(*)
+  integer  values(*)
+.br
+ Use -1 (for findex) for vdata itself. 
 .br
 integer function vsfscat(vsid,findex,attrnm,dtype,count,values) --
 .br
        set a character type attribute
 .br
-integer vsid, findex, dtype, count
+  integer vsid, findex, dtype, count
 .br
-character*(*) attrnm
+  character*(*) attrnm
 .br
-character*(*) values.
+  character*(*) values.
+.br 
+ Use -1 (for findex) for vdata itself. 
 .SH "SEE ALSO"
 VSfindex(3),
 VSnattrs(3),
