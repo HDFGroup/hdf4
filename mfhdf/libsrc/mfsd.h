@@ -113,7 +113,7 @@ extern int32 SDgetdimstrs
 #ifndef MFSD_FNAMES
 #   define  MFSD_FNAMES
 #ifdef DF_CAPFNAMES
-#   define nscstart    FNAME(SCTART)
+#   define nscstart    FNAME(SCSTART)
 #   define nsfend      FNAME(SFEND)
 #   define nsfendacc   FNAME(SFENDACC)
 #   define nsffinfo    FNAME(SFFINFO)
@@ -140,7 +140,7 @@ extern int32 SDgetdimstrs
 #   define nsfwdata    FNAME(SFWDATA)
 #   define nscgdatstrs FNAME(SCGDATSTRS)
 #   define nscgdimstrs FNAME(SCGDIMSTRS)
-#   define nssattr     FNAME(SCSATTR)
+#   define nscsattr     FNAME(SCSATTR)
 #else   /* DF_CAPFNAMES */
 #   define nscstart    FNAME(scstart)
 #   define nsfend      FNAME(sfend)
