@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.20  1993/09/08 18:29:29  koziol
-Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
+Revision 1.21  1993/09/08 20:57:13  georgev
+Fixed flags for UNIXUNBUFIO.
 
+ * Revision 1.20  1993/09/08  18:29:29  koziol
+ * Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
+ *
  * Revision 1.19  1993/09/02  14:41:59  koziol
  * Patches for Watcom/386 Support
  *
@@ -116,13 +119,8 @@ typedef FILE *hdf_file_t;
 #   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
                  fopen((p), "r+", "mbc=64") : fopen((p), "r", "mbc=64"))
 #else  /*  !VMS  */
-#ifdef PC386
-#   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
-                        fopen((p), "rb+") : fopen((p), "rb"))
-#else /* PC386 */
 #   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
                         fopen((p), "r+") : fopen((p), "r"))
-#endif /* PC386 */
 #endif
 #ifdef PC386
 #   define HI_CREATE(p)        (fopen((p), "wb+"))
@@ -149,11 +147,11 @@ typedef int hdf_file_t;
 #   define HI_CREATE(p)        (open((p), O_RDWR | O_CREAT | O_TRUNC))
 #   define HI_CLOSE(f) (close(f))
 #   define HI_FLUSH(f) (SUCCEED)
-#   define HI_READ(f, b, n)    (read((f), (b), (n)))
-#   define HI_WRITE(f, b, n)   (write((f), (b), (n)))
-#   define HI_SEEK(f, o)       (lseek((f), (off_t)(o), L_SET))
-#   define HI_SEEKEND(f) (lseek((f), (off_t)0, L_XTND))
-#   define HI_TELL(f)  (lseek((f), (off_t)0, L_INCR))
+#   define HI_READ(f, b, n)    (read((f), (char *)(b), (n)))
+#   define HI_WRITE(f, b, n)   (write((f), (char *)(b), (n)))
+#   define HI_SEEK(f, o)       (lseek((f), (off_t)(o), SEEK_SET))
+#   define HI_SEEKEND(f) (lseek((f), (off_t)0, SEEK_END))
+#   define HI_TELL(f)  (lseek((f), (off_t)0, SEEK_CUR))
 #   define OPENERR(f)  (f < 0)
 #endif /* FILELIB == UNIXUNBUFIO */
 
@@ -395,7 +393,11 @@ extern accrec_t *access_records;
 
 /* file records array.  defined in hfile.c */
 
+#if defined(macintosh) | defined(THINK_C)
+extern filerec_t *file_records;
+#else /* !macintosh */
 extern filerec_t file_records[];
+#endif /* !macintosh */
 
 /* */
 #define FILE_NDDS(file_rec) ((file_rec)->ddlast->ndds)
