@@ -1858,6 +1858,8 @@ DFKlui2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
       {
 #ifdef DOESNT_WORK
           tmp_dst = (uint8 *) HDmalloc(2 * num_elm);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           DFKswap(source, tmp_dst, 2, num_elm);
           ierr = IEG2CRAY(&type, &num_elm, tmp_dst, &bitoff, dest);
           HDfree(tmp_dst);
@@ -2219,6 +2221,8 @@ DFKlui2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
             }   /* end for */
 #else
           tmp_dst = (uint8 *) HDmalloc(2);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           for (i = 0; i < num_elm; i++)
             {
                 DFKswap(source, tmp_dst, 2, 1);
@@ -2287,6 +2291,8 @@ DFKlui2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     if (fast_processing)
       {
           tmp_dst = (uint8 *) HDmalloc(2 * num_elm);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           DFKswap(source, tmp_dst, 2, num_elm);
           ierr = IEG2CRAY(&type, &num_elm, tmp_dst, &bitoff, dest);
           HDfree(tmp_dst);
@@ -2323,6 +2329,8 @@ DFKlui2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
             }   /* end for */
 #else
           tmp_dst = (uint8 *) HDmalloc(2);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           for (i = 0; i < num_elm; i++)
             {
                 DFKswap(source, tmp_dst, 2, 1);
@@ -2379,6 +2387,8 @@ DFKluo2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
       {
 #ifdef DOESNT_WORK
           tmp_dst = (uint8 *) HDmalloc(2 * num_elm);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           ierr = CRAY2IEG(&type, &num_elm, tmp_dst, &bitoff, source);
           if (ierr != 0)
             {
@@ -2667,6 +2677,8 @@ DFKluo2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
             }   /* end for */
 #else
           tmp_dst = (uint8 *) HDmalloc(2);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           for (i = 0; i < num_elm; i++)
             {
                 ierr = CRAY2IEG(&type, &n_elem, tmp_dst, &bitoff, source);
@@ -2722,6 +2734,8 @@ DFKluo2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     if (fast_processing)
       {
           tmp_dst = (uint8 *) HDmalloc(2 * num_elm);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           ierr = CRAY2IEG(&type, &num_elm, tmp_dst, &bitoff, source);
           if (ierr != 0)
             {
@@ -2743,6 +2757,8 @@ DFKluo2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
             }   /* end for */
 #else
           tmp_dst = (uint8 *) HDmalloc(2);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           for (i = 0; i < num_elm; i++)
             {
                 ierr = CRAY2IEG(&type, &n_elem, tmp_dst, &bitoff, source);
@@ -2805,6 +2821,8 @@ DFKlui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
       {
 #ifdef DOESNT_WORK
           tmp_dst = (uint8 *) HDmalloc(4 * num_elm);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           DFKswap(source, tmp_dst, 4, num_elm);
           ierr = IEG2CRAY(&type, &num_elm, tmp_dst, &bitoff, dest);
           HDfree(tmp_dst);
@@ -3105,6 +3123,8 @@ DFKlui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
             }   /* end for */
 #else
           tmp_dst = (uint8 *) HDmalloc(4);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           for (i = 0; i < num_elm; i++)
             {
                 DFKswap(source, tmp_dst, 4, 1);
@@ -3168,6 +3188,8 @@ DFKlui4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     if (fast_processing)
       {
           tmp_dst = (uint8 *) HDmalloc(4 * num_elm);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           DFKswap(source, tmp_dst, 4, num_elm);
           ierr = IEG2CRAY(&type, &num_elm, tmp_dst, &bitoff, dest);
           HDfree(tmp_dst);
@@ -3202,6 +3224,8 @@ DFKlui4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
             }   /* end for */
 #else
           tmp_dst = (uint8 *) HDmalloc(4);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           for (i = 0; i < num_elm; i++)
             {
                 DFKswap(source, tmp_dst, 4, 1);
@@ -3258,6 +3282,8 @@ DFKluo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
       {
 #ifdef DOESNT_WORK
           tmp_dst = (uint8 *) HDmalloc(4 * num_elm);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           ierr = CRAY2IEG(&type, &num_elm, tmp_dst, &bitoff, source);
           if (ierr != 0)
             {
@@ -3492,6 +3518,8 @@ DFKluo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
             }   /* end for */
 #else
           tmp_dst = (uint8 *) HDmalloc(4);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           for (i = 0; i < num_elm; i++)
             {
                 ierr = CRAY2IEG(&type, &n_elem, tmp_dst, &bitoff, source);
@@ -3548,6 +3576,8 @@ DFKluo4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     if (fast_processing)
       {
           tmp_dst = (uint8 *) HDmalloc(4 * num_elm);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           ierr = CRAY2IEG(&type, &num_elm, tmp_dst, &bitoff, source);
           if (ierr != 0)
             {
@@ -3571,6 +3601,8 @@ DFKluo4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
             }   /* end for */
 #else
           tmp_dst = (uint8 *) HDmalloc(4);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           for (i = 0; i < num_elm; i++)
             {
                 ierr = CRAY2IEG(&type, &n_elem, tmp_dst, &bitoff, source);
@@ -3659,6 +3691,8 @@ DFKlui4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     if (fast_processing)
       {
           tmp_dst = (uint8 *) HDmalloc(4 * num_elm);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           DFKswap(source, tmp_dst, 4, num_elm);
           ierr = IEG2CRAY(&type, &num_elm, tmp_dst, &bitoff, dest);
           HDfree(tmp_dst);
@@ -3704,6 +3738,8 @@ DFKlui4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           float32     tmp_dst2;
 
           tmp_dst = (uint8 *) HDmalloc(4);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           for (i = 0; i < num_elm; i++)
             {
                 DFKswap(source, tmp_dst, 4, 1);
@@ -3784,6 +3820,8 @@ DFKluo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     if (fast_processing)
       {
           tmp_dst = (uint8 *) HDmalloc(4 * num_elm);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           ierr = CRAY2IEG(&type, &num_elm, tmp_dst, &bitoff, source);
           if (ierr != 0)
             {
@@ -3827,6 +3865,8 @@ DFKluo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           float32     tmp_src;
 
           tmp_dst = (uint8 *) HDmalloc(4);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           for (i = 0; i < num_elm; i++)
             {
                 HDmemcpy(&tmp_src, source, sizeof(float32));
@@ -3902,6 +3942,8 @@ DFKlui8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     if (fast_processing)
       {
           tmp_dst = (uint8 *) HDmalloc(8 * num_elm);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           DFKswap(source, tmp_dst, 8, num_elm);
           ierr = IEG2CRAY(&type, &num_elm, tmp_dst, &bitoff, dest);
           HDfree(tmp_dst);
@@ -3948,6 +3990,8 @@ DFKlui8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
             }   /* end for */
 #else
           tmp_dst = (uint8 *) HDmalloc(8);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           for (i = 0; i < num_elm; i++)
             {
                 DFKswap(source, tmp_dst, 8, 1);
@@ -4013,6 +4057,8 @@ DFKluo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     if (fast_processing)
       {
           tmp_dst = (uint8 *) HDmalloc(8 * num_elm);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           ierr = CRAY2IEG(&type, &num_elm, tmp_dst, &bitoff, source);
           if (ierr != 0)
             {
@@ -4059,6 +4105,8 @@ DFKluo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
             }   /* end for */
 #else
           tmp_dst = (uint8 *) HDmalloc(8);
+	  if (!tmp_dst)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           for (i = 0; i < num_elm; i++)
             {
                 ierr = CRAY2IEG(&type, &n_elem, tmp_dst, &bitoff, source);

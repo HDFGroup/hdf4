@@ -763,9 +763,9 @@ DFANIopen(const char *filename, intn acc_mode)
   if (Lastfile == NULL)
     {
       Lastfile = (char *) HDmalloc((DF_MAXFNLEN + 1) * sizeof(char));
-      *Lastfile = '\0';     /* initialize with 0-length string */
       if (Lastfile == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
+      *Lastfile = '\0';     /* initialize with 0-length string */
     }
 
   /* use reopen if same file as last time - more efficient */
@@ -874,6 +874,8 @@ DFANIlocate(int32 file_id, int type, uint16 tag, uint16 ref)
       DFANdir[type] = (DFANdirhead *)
         HDmalloc(((uint32) sizeof(DFANdirhead) +
                   (nanns - 1) * sizeof(DFANdirentry)));
+      if (DFANdir[type] == NULL)
+	HGOTO_ERROR(DFE_NOSPACE, 0);
       DFANdir[type]->next = NULL;
       DFANdir[type]->nentries = nanns;
 

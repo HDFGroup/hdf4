@@ -158,7 +158,6 @@ PRIVATE intn hdf_read_ndgs(handle)
     NC_attr **attrs;  /* hold attribute list as we create it     */
     NC_attr *dimattrs[10];  /* for LUF and anno_label, anno_desc, 10 is enough */
     uint8  *labelbuf; /* label should not be used as var name due to non-uniqueness  */
-    /* uint8  *namebuf;  */ /* buffer to store label info   */
     uint8  *scalebuf; /* buffer to store scale info */
     uint8  *unitbuf;  /* buffer to store unit info */
     uint8  *formatbuf; /* buffer to store format info */
@@ -351,7 +350,7 @@ PRIVATE intn hdf_read_ndgs(handle)
 
                           len = Hlength(handle->hdf_file, DFTAG_SDC, tmpRef);
                           if (len == FAIL) return FALSE;
-                          coordbuf = (uint8 *) HDgetspace((uint32) len + 1);
+                          coordbuf = (uint8 *) HDmalloc((uint32) len + 1);
                           if (!coordbuf) HRETURN_ERROR(DFE_NOSPACE, FALSE);
                           if (Hgetelement(handle->hdf_file, DFTAG_SDC, tmpRef, coordbuf) == FAIL)
                               return FALSE;
@@ -542,7 +541,6 @@ PRIVATE intn hdf_read_ndgs(handle)
                 len = Hlength(handle->hdf_file, DFTAG_SDL, lRef);
                 if(len == FAIL) return FALSE;
                 
-/*                namebuf = (uint8 *) HDgetspace((uint32) len + 3);    */
                 labelbuf = (uint8 *) HDmalloc((uint32) len + 3);
                 if(!labelbuf) HRETURN_ERROR(DFE_NOSPACE, FALSE);
                 
@@ -554,7 +552,6 @@ PRIVATE intn hdf_read_ndgs(handle)
                 labelbuf[len + 0] = '\0';
                 
             } else {
-                /* namebuf = NULL;    */
                 labelbuf = NULL;
             }
             
@@ -585,7 +582,7 @@ PRIVATE intn hdf_read_ndgs(handle)
                 len = Hlength(handle->hdf_file, DFTAG_SDF, fRef);
                 if(len == FAIL) return FALSE;
 
-                formatbuf = (uint8 *) HDgetspace((uint32) len+3);
+                formatbuf = (uint8 *) HDmalloc((uint32) len+3);
                 if(!formatbuf) HRETURN_ERROR(DFE_NOSPACE, FALSE);
 
                 if(Hgetelement(handle->hdf_file, DFTAG_SDF, fRef, formatbuf) == FAIL)
@@ -933,7 +930,6 @@ PRIVATE intn hdf_read_ndgs(handle)
             /*
              * De-allocate temporary storage
              */
-            /* if(namebuf)  HDfreespace((VOIDP)namebuf);  */
             if(labelbuf)  HDfree((VOIDP)labelbuf);
             if(scalebuf) HDfree((VOIDP)scalebuf);
             if(unitbuf)  HDfree((VOIDP)unitbuf);

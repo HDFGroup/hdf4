@@ -355,16 +355,14 @@ nafwriteann(intf *ann_id,_fcd ann, intf *annlen)
  * Inputs:  ann_id:  annotation handle
  *          ann:    annotation read
  *          maxlen: maximum space allocted for "ann"
- * Returns: see ANreadann()
+ * Returns: see ANreadann() (SUCCEED (0) if successful, else FAIL (-1))
  * Users:   Fortran Users
  * Invokes: ANreadann()
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 nafreadann(intf *ann_id,_fcd ann, intf *maxlen)
 {
-#ifdef LATER
   CONSTR(FUNC, "afreadann");
-#endif /* LATER */
 
 #ifdef OLD_WAY
   return (intf)ANreadann((int32)*an_id,(char *) _fcdtocp(ann), (int32) *maxlen);
@@ -374,6 +372,9 @@ nafreadann(intf *ann_id,_fcd ann, intf *maxlen)
 
     if (*maxlen)
         iann = (char *) HDmalloc((uint32) *maxlen + 1);
+
+    if (!iann)
+	HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     status = ANreadann((int32)*ann_id, iann, (int32)*maxlen);
 

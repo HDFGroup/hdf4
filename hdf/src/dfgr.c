@@ -678,9 +678,9 @@ DFGRIopen(const char *filename, int acc_mode)
     if (Grlastfile == NULL)
       {
           Grlastfile = (char *) HDmalloc((DF_MAXFNLEN + 1) * sizeof(char));
-          *Grlastfile = '\0';   /* initialize to a 0-length string */
           if (Grlastfile == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          *Grlastfile = '\0';   /* initialize to a 0-length string */
       }
 
     /* use reopen if same file as last time - more efficient */
@@ -1195,9 +1195,9 @@ DFGRIaddimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
     if (Grlastfile == NULL)
       {
           Grlastfile = (char *) HDmalloc((DF_MAXFNLEN + 1) * sizeof(char));
-          *Grlastfile = '\0';   /* initialize to a 0-length string */
           if (Grlastfile == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          *Grlastfile = '\0';   /* initialize to a 0-length string */
       }
 
     if (0 != HDstrcmp(Grlastfile, filename))
@@ -1263,6 +1263,8 @@ DFGRIaddimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
                 if (Grlutdata == NULL)
                     HRETURN_ERROR(DFE_BADCALL, HDerr(file_id));
                 newlut = (uint8 *) HDmalloc((uint32) lutsize);
+		if (!newlut)
+		    HRETURN_ERROR(DFE_NOSPACE, FAIL);
             }
           if (DFputcomp(file_id, wtag, wref, (uint8 *) imlut, xdim, ydim,
            (uint8 *) Grlutdata, (uint8 *) newlut, (int16) Grcompr, &Grcinfo)

@@ -149,8 +149,11 @@ ndfdesc(intf * dfile, intf ptr[][4], intf * begin, intf * num)
     int         i;
     intf        num_desc;
 
+    CONSTR(FUNC, "dfdesc");
     /* allocate temporary space */
-    ptr1 = (DFdesc *) HDmalloc((uint32) *num * sizeof(DFdesc));
+    if ((ptr1 = (DFdesc *) HDmalloc((uint32) *num * sizeof(DFdesc))) == NULL)
+      HRETURN_ERROR(DFE_NOSPACE, -1);
+	      ;
     num_desc = DFdescriptors((DF *) * dfile, ptr1, (intn) *begin, (intn) *num);
 
     /* copy ptr1 array  ptr; note row/column inversion */
@@ -378,7 +381,10 @@ ndffind(intf * dfile, intf * itag, intf * iref, intf * len)
     DFdesc     *ptr1;
     intf        ret;
 
+    CONSTR(FUNC, "dffind");
     ptr1 = (DFdesc *) HDmalloc((uint32) sizeof(DFdesc));
+    if (ptr1 == NULL)
+	HRETURN_ERROR(DFE_NOSPACE, -1);
     ret = DFfind((DF *) * dfile, ptr1);
 
     *itag = (int32) (ptr1->tag);

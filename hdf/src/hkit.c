@@ -24,7 +24,7 @@ LOCAL ROUTINES
   None
 EXPORTED ROUTINES
   HDc2fstr      -- convert a C string into a Fortran string IN PLACE
-  HDf2sstring   -- convert a Fortran string to a C string
+  HDf2cstring   -- convert a Fortran string to a C string
   HIlookup_dd   -- find the dd record for an element
   HIadd_hash_dd -- add a dd to the hash table
   HIdel_hash_dd -- remove a dd from the hash table
@@ -71,16 +71,16 @@ HDc2fstr(char *str, intn len)
     return SUCCEED;
 }   /* HDc2fstr */
 
-/* ----------------------------- HDf2sstring ------------------------------ */
+/* ----------------------------- HDf2cstring ------------------------------ */
 /*
 NAME
-   HDf2sstring -- convert a Fortran string to a C string
+   HDf2cstring -- convert a Fortran string to a C string
 USAGE
    char * HDf2cstring(fdesc, len)
    _fcd  fdesc;     IN: Fortran string descriptor
    intn  len;       IN: length of Fortran string
 RETURNS
-   SUCCEED
+   Pointer to the C string if success, else NULL
 DESCRIPTION
    Chop off trailing blanks off of a Fortran string and
    move it into a newly allocated C string.  It is up
@@ -93,6 +93,7 @@ HDf2cstring(_fcd fdesc, intn len)
     char       *cstr, *str;
     int         i;
 
+    CONSTR(FUNC, "HDf2cstring");  /* for HERROR */
     str = _fcdtocp(fdesc);
 #ifdef OLD_WAY
     for (i = len - 1; i >= 0 && ((str[i] & 0x80) || !isgraph(str[i])); i--)
@@ -103,6 +104,8 @@ HDf2cstring(_fcd fdesc, intn len)
         /*EMPTY*/;
 #endif /* OLD_WAY */
     cstr = (char *) HDmalloc((uint32) (i + 2));
+    if (!cstr)
+	HRETURN_ERROR(DFE_NOSPACE, NULL);
     cstr[i + 1] = '\0';
 #ifdef OLD_WAY
     for (; i >= 0; i--)

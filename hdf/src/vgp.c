@@ -901,6 +901,8 @@ Vdetach(int32 vkey)
       if (vg->marked == 1)
         {
             vgpack = (uint8 *) HDmalloc((uint32) sizeof(VGROUP) + vg->nvelt * 4 + 1);
+	    if (!vgpack)
+		HGOTO_ERROR(DFE_NOSPACE, FAIL);
             vpackvg(vg, vgpack, &vgpacksize);
 
             /*

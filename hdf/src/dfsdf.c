@@ -338,8 +338,10 @@ ndspslc(intf windims[], VOIDP data, intf dims[])
         return FAIL;
     cwindims = wp;
     p = (int32 *) HDmalloc((uint32) (rank * sizeof(int32)));
-    if (p == NULL)
+    if (p == NULL){
+	HDfree((VOIDP) cwindims);
         return FAIL;
+    }
     cdims = p;
     for (i = 1; i <= rank; i++)
       {     /* reverse dims & windims */
