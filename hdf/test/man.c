@@ -36,23 +36,25 @@ static char RcsId[] = "@(#)$Revision$";
 #define MAXLEN_DESC  1000
 #define ROWS           10
 #define COLS           10
-#define REPS            2   /* number of data sets to write to file */
+#define REPS            3   /* number of data sets to write to file */
 
-static char *file_lab[2] = {"File label #1: aaa", "File label #2: bbbbbb"};
-static char *file_desc[2]= {"File Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 13"
+static uint8 *file_lab[2] = {"File label #1: aaa", "File label #2: bbbbbb"};
+static uint8 *file_desc[2]= {"File Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 13"
                            "\n        14 15 16 17 18 19 20 **END FILE DESCR**\n",
                            "File Descr #2: A B C D E F G H I J K L \n"
                            "               M N O  **END FILE DESCR**\n"};
 
-static char *labsds[2] = {"Object label #1: sds", "Object label #1.1:sds"};
-static char *labris[2] = {"Object label #2: image", "Object label #2.1:image"};
-static char *descsds[2]={"Object Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 "
+static uint8 *labsds[2] = {"Object label #1:  sds", 
+                          "Object label #1.1:sds"};
+static uint8 *labris[2] = {"Object label #2:  image", 
+                          "Object label #2.1:image"};
+static uint8 *descsds[2]={"Object Descr #1:   1  2  3  4  5  6  7  8  9 10 11 12 "
                          "\n       13 14 15 16 17 18 19 20 **END SDS DESCR**\n",
                          "Object Descr #1.1: 1  2  3  4  5  6  7  8  9 10 11 12 "
                          "\n       13 14 15 16 17 18 19 20 **END SDS DESCR**\n"};
-static char *descris[2] = {"Object Descr #2: A B C D E F G H I J K L \n"
+static uint8 *descris[2] = {"Object Descr #2:   A B C D E F G H I J K L \n"
                            "                 M N O **END IMAGE DESCR **\n",
-                          "Object Descr #2.1: A B C D E F G H I J K L \n"
+                           "Object Descr #2.1: A B C D E F G H I J K L \n"
                            "                 M N O **END IMAGE DESCR **\n"};
 
 static VOID 
@@ -81,8 +83,8 @@ check_fann(char *fname)
   intn  num_dlabels, num_ddescs;
   intn  *dlabels, *ddescs;
   int32 ann_len;
-  char  *ann_label = NULL;
-  char  *ann_desc = NULL;
+  uint8  *ann_label = NULL;
+  uint8  *ann_desc = NULL;
   int i;
 
   /* open file again */
@@ -118,7 +120,7 @@ check_fann(char *fname)
       /* allocate space for label */
       if (ann_label == NULL)
         {
-          if ((ann_label = (char *)HDgetspace((ann_len+1)*sizeof(char))) 
+          if ((ann_label = (uint8 *)HDgetspace((ann_len+1)*sizeof(uint8))) 
               == NULL)
             {
               printf("Error: failed to allocate space to hold data label \n");
@@ -166,7 +168,7 @@ check_fann(char *fname)
       /* allocate space for desc */
       if (ann_desc == NULL)
         {
-          if ((ann_desc = (char *)HDgetspace((ann_len+1)*sizeof(char))) 
+          if ((ann_desc = (uint8 *)HDgetspace((ann_len+1)*sizeof(uint8))) 
               == NULL)
             {
               printf("Error: failed to allocate space to hold data label \n");
@@ -598,9 +600,10 @@ test_man()
   MESSAGE(5, printf("*** Reading file label and descriptions ***\n"););
   check_fann(TESTFILE);
 
+#if 0
   /* Destroy Annotation interface */
   ANdestroy();
-
+#endif
   /* free up space */
   HDfreespace((VOIDP) data);
   HDfreespace((VOIDP) image);
