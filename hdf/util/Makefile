@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.15  1993/09/16 15:31:53  koziol
+# Revision 1.15.2.1  1993/10/10 22:11:39  koziol
+# Updated makefile to be a little more friendly
+#
+# Revision 1.15  1993/09/16  15:31:53  koziol
 # Changes for updating the Fujitsu VP
 #
 # Revision 1.14  1993/04/23  21:58:58  koziol
@@ -89,23 +92,23 @@ CFLAGS = -D$(MACHINE)
 # ==> For IRIS4, specify CFLAGS as follows:
 #CFLAGS=  -g -D$(MACHINE) -ansi
 
-.c.o: he.h he_proto.h
+.c.o: he.h he_proto.h $(HDFLIB)/libdf.a
 	$(CC) -c $(CFLAGS) -I$(HDFINC) $(HDFLIB)/libdf.a $(GLLAB)  $<
 #	$(CC) -c $(CFLAGS) -I$(HDFINC) $(GLLIB)  $<
 
-all: hdfed utils
+all: hdfed utils 
 	-if( test \! -d $(HDFBIN)) then (mkdir $(HDFBIN)) fi
 	-cp $(UTILS) hdfed $(HDFBIN)
 
 nofortran: all
 
-hdfed: he.h he_proto.h $(HEOBJ)
+hdfed: he.h he_proto.h $(HEOBJ) $(HDFLIB)/libdf.a
 	$(CC) $(CFLAGS) -I$(HDFINC) $(HEOBJ) $(HDFLIB)/libdf.a -o hdfed
 
 .c: $(HDFLIB)/libdf.a
 	$(CC) $(CFLAGS) -I$(HDFINC) $< -o $@ $(HDFLIB)/libdf.a $(GLLIB)
 
-utils: $(UTILS)
+utils: $(UTILS) $(HDFLIB)/libdf.a
 
 clean:
 	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed
