@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.27  1993/08/16 21:46:39  koziol
-Wrapped in changes for final, working version on the PC.
+Revision 1.28  1993/08/17 16:33:58  chouck
+Made Vaddtagref() a little smarter
 
+ * Revision 1.27  1993/08/16  21:46:39  koziol
+ * Wrapped in changes for final, working version on the PC.
+ *
  * Revision 1.25  1993/07/23  20:49:18  sxu
  * Changed 'void' to 'VOID' VSdump, Vinitialize, Vsetzap, Remove_vfile and unpackvs.
  *
@@ -637,7 +640,8 @@ uint8  buf[];  /* must contain a DFTAG_VG data object from file */
     /* retrieve vgname (and its len)  */
     UINT16DECODE(bb,uint16var);
     
-    HIstrncpy(vg->vgname, (char*) bb, (int32) uint16var + 1);
+    HDstrncpy(vg->vgname, (char*) bb, (int32) uint16var);
+    vg->vgname[uint16var] = '\0';
     bb += uint16var;
     
     /* retrieve vgclass (and its len)  */
@@ -1420,7 +1424,8 @@ int32 vkey;
 int32  tag, ref;
 #endif
 {
-    int32  n;
+    int32  n, i;
+    register uint16 ttag, rref;
     vginstance_t  * v;
     VGROUP *vg;
     char * FUNC = "Vaddtagref";
@@ -1443,12 +1448,25 @@ int32  tag, ref;
         HERROR(DFE_BADPTR);
         return(FAIL);
     }
+<<<<<<< vgp.c
+
+    /* make sure doesn't already exist in the Vgroup */
+    ttag = (uint16) tag;
+    rref = (uint16) ref;
+    for (i = 0; i < vg->nvelt; i++)
+        if ((ttag == vg->tag[i]) && (rref == vg->ref[i]))
+            return(FAIL); /* exists */
+
+    n = vinsertpair(vg, (uint16) tag, (uint16) ref);
+
+=======
     
     if (Vinqtagref (vkey, tag, ref) == 1) {  /* error, already exists */
         HERROR(DFE_DUPDD);
         return (FAIL);
     }
     n = vinsertpair (vg, (uint16) tag, (uint16) ref);
+>>>>>>> 1.27
     return (n);
 } /* Vaddtagref */
 
