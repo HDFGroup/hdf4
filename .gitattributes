@@ -20,8 +20,8 @@ hdf/util/testfiles/fp2hdf/h60x75n -text
 hdf/util/testfiles/fp2hdf/h60x75v -text
 hdf/util/testfiles/fp2hdf/pal.hdf -text
 hdf/util/testfiles/fp2hdf/t100x100 -text svneol=unset#application/octet-stream
-hdf/util/testfiles/head.r24.Z -text
-hdf/util/testfiles/head.r8.Z -text
+hdf/util/testfiles/head.r24.gz -text
+hdf/util/testfiles/head.r8.gz -text
 hdf/util/testfiles/jet2.hdf -text
 hdf/util/testfiles/jpeg_img.jpg -text
 hdf/util/testfiles/ntcheck.hdf -text
