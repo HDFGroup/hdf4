@@ -762,6 +762,9 @@ int32 nt, rank, *dimsizes;
     if(dims == NULL)
         return FAIL;
 
+    if(rank > MAX_NC_DIMS)
+        return FAIL;
+
     for(i = 0; i < rank; i++) {
 
         num = (handle->dims ? handle->dims->count : 0);
@@ -774,7 +777,7 @@ int32 nt, rank, *dimsizes;
             handle->dims = NC_new_array(NC_DIMENSION,(unsigned)1, (Void *)&newdim);
             if(handle->dims == NULL)
                 return FAIL;
-	} else if(handle->dims->count >= MAX_VAR_DIMS) {
+	} else if(handle->dims->count >= MAX_NC_DIMS) {
             return FAIL;
 	} else {
             if( NC_incr_array(handle->dims, (Void *)&newdim) == NULL)
@@ -985,6 +988,7 @@ int32   id;
 {
 
     NC        * handle;
+    int32       status;
 	
 #ifdef SDDEBUG
     fprintf(stderr, "SDendaccess: I've been called\n");
@@ -1018,8 +1022,15 @@ int32   id;
 	}
     }
 
+#else 
+
+    /* free the AID */
+    status = SDIfreevarAID(handle, id & 0xffff);
+    if(status == FAIL)
+        return FAIL;
+     
 #endif /* SYNC_ON_EACC */
-        
+  
     return SUCCEED;
     
 } /* SDendaccess */
@@ -1973,6 +1984,44 @@ char  *l, *u, *f;
 
 } /* SDsetdimstrs */
 
+
+/* ---------------------------- SDIfreevarAID ----------------------------- */
+/*
+
+  Free the AID of the variable with index index
+
+*/
+#ifdef PROTOTYPE
+int32 SDIfreevarAID(NC * handle, int32 index)
+#else
+int32 SDIfreevarAID(handle, index)
+NC * handle;
+int32 index;
+#endif
+{
+
+    NC_array **ap ;
+    NC_var * var;
+
+    if(handle == NULL || !handle->vars)
+        return FAIL;
+
+    if(index < 0 || index > handle->vars->count)
+        return FAIL;
+
+    ap = (NC_array **)handle->vars->values;
+    ap += index;
+
+    var = (NC_var *) *ap;
+
+    if(var->aid != NULL && var->aid != FAIL)
+        Hendaccess(var->aid);
+
+    return SUCCEED;
+
+} /* SDIfreevarAID */
+ 
+
 /* ---------------------------- SDsetdimscale ----------------------------- */
 /*
 
@@ -2024,6 +2073,11 @@ VOIDP data;
     start[0] = 0;
     end[0]   = count;
     status = NCvario(handle, varid, start, end, (Void *)data);
+    if(status == FAIL)
+        return FAIL;
+
+    /* free the AID */
+    status = SDIfreevarAID(handle, varid);
     if(status == FAIL)
         return FAIL;
 
@@ -2084,6 +2138,11 @@ VOIDP data;
     start[0] = 0;
     end[0]   = dim->size;
     status   = NCvario(handle, varid, start, end, (Void *)data);
+    if(status == FAIL)
+        return FAIL;
+
+    /* free the AID */
+    status = SDIfreevarAID(handle, varid);
     if(status == FAIL)
         return FAIL;
 
