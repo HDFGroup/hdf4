@@ -26,8 +26,8 @@ release_notes -- descriptions on new features and bug fixes in this
                  are also available on the NCSA ftp server, 
                  in /HDF/Documentation/HDF4.0/release_notes/.
 
-Configuring/Testing/Installing(Short version)
----------------------------------------------
+Configuring/Testing/Installing for UNIX systems(Short version)
+-------------------------------------------------------------
 It is now possible to automatically configure and build both the
 HDF and netCDF distributions with one command. The following is a
 quick intro to configuring, testing and installing this distribution.
@@ -82,7 +82,7 @@ To install the libraries, utilities, includes and man pages type: e.g.
         make install
 
 See the INSTALL file for detail instructions on configuring and 
-installation.
+installation and for non-UNIX systems.
 
 
 DOCUMENTATION/FAQ/HELP
