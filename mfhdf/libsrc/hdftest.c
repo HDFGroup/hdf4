@@ -227,7 +227,7 @@ test_chunk()
     int32   idata[100];
     int32   rdata[100];
     float32 max;
-    int     num_err = 0;    /* number of errors so far */
+    int     num_errs = 0;    /* number of errors so far */
 
     /* Create file 'chktst.hdf' */
     fchk = SDstart(CHKFILE, DFACC_CREATE);
@@ -243,7 +243,7 @@ test_chunk()
     if(newsds8 == FAIL) 
       {
         fprintf(stderr, "Chunk Test 1. Failed to create a new data set \n");
-        num_err++;
+        num_errs++;
         goto test2;
       }
 
@@ -260,7 +260,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 1. Failed to create new chunked data set\n");
-        num_err++;
+        num_errs++;
         goto test2;
       }
 
@@ -269,7 +269,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 1. SDsetchunkcache failed\n");
-        num_err++;
+        num_errs++;
         goto test2;
       }
 
@@ -283,7 +283,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 1. Failed to write u16_2data to new chunked data set\n");
-        num_err++;
+        num_errs++;
         goto test2;
       }
 
@@ -305,7 +305,7 @@ test_chunk()
                     fprintf(stderr,"u16_cdata[%d][%d]=%d,",
                             i,j,u16_2data[i][j]);
                     fprintf(stderr,"\n");
-                    num_err++;
+                    num_errs++;
                 }
           }
       }
@@ -314,7 +314,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 1. SDgetchunkinfo failed \n");
-        num_err++;
+        num_errs++;
         goto test2;
       }
 
@@ -324,7 +324,7 @@ test_chunk()
     if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
       {
         fprintf(stderr, "Chunk Test 1. SDgetchunkinfo returned wrong values\n");
-        num_err++;
+        num_errs++;
         goto test2;
       }
 
@@ -346,7 +346,7 @@ test_chunk()
     if(newsds7 == FAIL) 
       {
         fprintf(stderr, "Chunk Test 2. Failed to create a new data set \n");
-        num_err++;
+        num_errs++;
         goto test3;
       }
 
@@ -363,7 +363,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 2. Failed to create new chunked data set\n");
-        num_err++;
+        num_errs++;
         goto test3;
       }
 
@@ -372,7 +372,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 2.SDsetchunkcache failed\n");
-        num_err++;
+        num_errs++;
         goto test3;
       }
 
@@ -385,7 +385,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 2.SDwritechunk failed to write chunk 1\n");
-        num_err++;
+        num_errs++;
         goto test3;
       }
 
@@ -396,7 +396,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 2.SDwritechunk failed to write chunk 4\n");
-        num_err++;
+        num_errs++;
         goto test3;
       }
 
@@ -407,7 +407,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 2.SDwritechunk failed to write chunk 2\n");
-        num_err++;
+        num_errs++;
         goto test3;
       }
 
@@ -418,7 +418,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 2.SDwritechunk failed to write chunk 5\n");
-        num_err++;
+        num_errs++;
         goto test3;
       }
 
@@ -429,7 +429,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 2.SDwritechunk failed to write chunk 3\n");
-        num_err++;
+        num_errs++;
         goto test3;
       }
 
@@ -440,7 +440,7 @@ test_chunk()
      if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 2.SDwritechunk failed to write chunk 6\n");
-        num_err++;
+        num_errs++;
         goto test3;
       }
 
@@ -467,7 +467,7 @@ test_chunk()
                     fprintf(stderr,"u16_2cdata[%d][%d]=%d,",
                             i,j,u16_2cdata[i][j]);
                     fprintf(stderr,"\n");
-                    num_err++;
+                    num_errs++;
                 }
           }
       }
@@ -476,7 +476,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 2.SDgetchunkinfo failed \n");
-        num_err++;
+        num_errs++;
         goto test3;
       }
 
@@ -486,7 +486,7 @@ test_chunk()
     if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
       {
         fprintf(stderr, "Chunk Test 2.SDgetchunkinfo returned wrong values\n");
-        num_err++;
+        num_errs++;
         goto test3;
       }
 
@@ -508,7 +508,7 @@ test_chunk()
     if(newsds4 == FAIL) 
       {
         fprintf(stderr, "Chunk Test 3. Failed to create a new 3D float32 data set \n");
-        num_err++;
+        num_errs++;
         goto test4;
       }
 
@@ -524,7 +524,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 3. Failed to create new chunked data set\n");
-        num_err++;
+        num_errs++;
         goto test4;
       }
 
@@ -539,7 +539,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 3. Failed to write f32_data to new chunked data set\n");
-        num_err++;
+        num_errs++;
         goto test4;
       }
 
@@ -566,7 +566,7 @@ test_chunk()
                         fprintf(stderr,"f32_data[%d][%d][%d]=%f,",
                                 i,j,k,f32_data[i][j][k]);
                         fprintf(stderr,"\n");
-                        num_err++;
+                        num_errs++;
                     }
               }
           }
@@ -589,7 +589,7 @@ test_chunk()
     if(newsds5 == FAIL) 
       {
         fprintf(stderr, "Chunk Test 4. Failed to set a new uint16 3D data set chunked\n");
-        num_err++;
+        num_errs++;
         goto test5;
       }
 
@@ -606,7 +606,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 4. Failed to create new chunked data set\n");
-        num_err++;
+        num_errs++;
         goto test5;
       }
 
@@ -615,7 +615,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 4. SDsetchunkcache failed\n");
-        num_err++;
+        num_errs++;
         goto test5;
       }
 
@@ -630,7 +630,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 4. Failed to write u16_data to new chunked data set\n");
-        num_err++;
+        num_errs++;
         goto test5;
       }
 
@@ -656,7 +656,7 @@ test_chunk()
                         fprintf(stderr,"u16_data[%d][%d][%d]=%d,",
                                 i,j,k,u16_data[i][j][k]);
                         fprintf(stderr,"\n");
-                        num_err++;
+                        num_errs++;
                     }
               }
           }
@@ -666,7 +666,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 4. SDgetchunkinfo failed \n");
-        num_err++;
+        num_errs++;
         goto test5;
       }
 
@@ -676,7 +676,7 @@ test_chunk()
         || cflags != HDF_CHUNK)
       {
         fprintf(stderr, "Chunk Test 4. SDgetchunkinfo returned wrong values\n");
-        num_err++;
+        num_errs++;
         goto test5;
       }
 
@@ -697,7 +697,7 @@ test_chunk()
     if(newsds6 == FAIL) 
       {
         fprintf(stderr, "Chunk Test 5. Failed to set a new uint8 3D data set chunked\n");
-        num_err++;
+        num_errs++;
         goto test6;
       }
 
@@ -709,7 +709,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 5. Failed to create new chunked data set\n");
-        num_err++;
+        num_errs++;
         goto test6;
       }
 
@@ -725,7 +725,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 5. Failed to write wu8_data to new chunked data set\n");
-        num_err++;
+        num_errs++;
         goto test6;
       }
 #endif
@@ -738,7 +738,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 5. SDwritechunk failed to write chunk 1\n");
-        num_err++;
+        num_errs++;
         goto test6;
       }
 
@@ -749,7 +749,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 5. SDwritechunk failed to write chunk 4\n");
-        num_err++;
+        num_errs++;
         goto test6;
       }
 
@@ -760,7 +760,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 5. SDwritechunk failed to write chunk 2\n");
-        num_err++;
+        num_errs++;
         goto test6;
       }
 
@@ -771,7 +771,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 5. SDwritechunk failed to write chunk 5\n");
-        num_err++;
+        num_errs++;
         goto test6;
       }
 
@@ -782,7 +782,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 5. SDwritechunk failed to write chunk 3\n");
-        num_err++;
+        num_errs++;
         goto test6;
       }
 
@@ -793,7 +793,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 5. SDwritechunk failed to write chunk 6\n");
-        num_err++;
+        num_errs++;
         goto test6;
       }
 
@@ -819,7 +819,7 @@ test_chunk()
                         fprintf(stderr,"u8_data[%d][%d][%d]=%d,",
                                 i,j,k,u8_data[i][j][k]);
                         fprintf(stderr,"\n");
-                        num_err++;
+                        num_errs++;
                     }
               }
           }
@@ -832,7 +832,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 5. SDreadchunk failed to read chunk 1\n");
-        num_err++;
+        num_errs++;
         goto test6;
       }
 
@@ -843,7 +843,7 @@ test_chunk()
             {
                 printf("Chunk Test 5. chunk1_u8: Wrong data at %d, out %d in %d\n", 
                  i, chunk1_u8[i], ru8_data[i]);
-                num_err++;
+                num_errs++;
             }
        }
 
@@ -854,7 +854,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 5. SDreadchunk failed to read chunk 2\n");
-        num_err++;
+        num_errs++;
         goto test6;
       }
 
@@ -865,7 +865,7 @@ test_chunk()
             {
                 printf("Chunk Test 5. chunk2_u8: Wrong data at %d, out %d in %d\n", 
                  i, chunk2_u8[i], ru8_data[i]);
-                num_err++;
+                num_errs++;
             }
        }
     start_dims[0] = 0;
@@ -875,7 +875,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 5. SDreadchunk failed to read chunk 3\n");
-        num_err++;
+        num_errs++;
         goto test6;
       }
 
@@ -886,7 +886,7 @@ test_chunk()
             {
                 printf("Chunk Test 5. chunk3_u8: Wrong data at %d, out %d in %d\n", 
                  i, chunk3_u8[i], ru8_data[i]);
-                num_err++;
+                num_errs++;
             }
        }
 
@@ -897,7 +897,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 5. SDreadchunk failed to read chunk 4\n");
-        num_err++;
+        num_errs++;
         goto test6;
       }
 
@@ -908,7 +908,7 @@ test_chunk()
             {
                 printf("Chunk Test 5. chunk4_u8: Wrong data at %d, out %d in %d\n", 
                  i, chunk4_u8[i], ru8_data[i]);
-                num_err++;
+                num_errs++;
             }
        }
 
@@ -919,7 +919,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 5. SDreadchunk failed to read chunk 5\n");
-        num_err++;
+        num_errs++;
         goto test6;
       }
 
@@ -930,7 +930,7 @@ test_chunk()
             {
                 printf("Chunk Test 5. chunk5_u8: Wrong data at %d, out %d in %d\n", 
                  i, chunk5_u8[i], ru8_data[i]);
-                num_err++;
+                num_errs++;
             }
        }
 
@@ -941,7 +941,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 5. SDreadchunk failed to read chunk 6\n");
-        num_err++;
+        num_errs++;
         goto test6;
       }
 
@@ -952,7 +952,7 @@ test_chunk()
             {
                 printf("Chunk Test 5. chunk6_u8: Wrong data at %d, out %d in %d\n", 
                  i, chunk6_u8[i], ru8_data[i]);
-                num_err++;
+                num_errs++;
             }
        }
 
@@ -984,7 +984,7 @@ test_chunk()
     if(newsds6 == FAIL) 
       {
         fprintf(stderr, "Chunk Test 6. Failed to set a new uint8 3D data set chunked\n");
-        num_err++;
+        num_errs++;
         goto test7;
       }
 
@@ -1005,7 +1005,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 6. Failed to create new chunked, Skipping Huffman compressed data set\n");
-        num_err++;
+        num_errs++;
         goto test7;
       }
 
@@ -1019,14 +1019,14 @@ test_chunk()
     if ((index = SDnametoindex(fchk,"DataSetChunked_3D_SKIP_HUF_2")) == FAIL)
       {
           fprintf(stderr, "Chunk Test 6. SDnametoindex  Failed for  Skipping Huffman compressed data set\n");
-          num_err++;
+          num_errs++;
           goto test7;
       }
 
     if ((newsds6 = SDselect(fchk,index)) == FAIL)
       {
           fprintf(stderr, "Chunk Test 6. SDselect Failed to re-select new chunked, Skipping Huffman compressed data set\n");
-          num_err++;
+          num_errs++;
           goto test7;
       }
 
@@ -1049,7 +1049,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 6. SDwritechunk failed to write chunk 1\n");
-        num_err++;
+        num_errs++;
         goto test7;
       }
 
@@ -1060,7 +1060,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 6. SDwritechunk failed to write chunk 4\n");
-        num_err++;
+        num_errs++;
         goto test7;
       }
 
@@ -1071,7 +1071,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 6. SDwritechunk failed to write chunk 2\n");
-        num_err++;
+        num_errs++;
         goto test7;
       }
 
@@ -1082,7 +1082,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 6. SDwritechunk failed to write chunk 5\n");
-        num_err++;
+        num_errs++;
         goto test7;
       }
 
@@ -1093,7 +1093,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 6. SDwritechunk failed to write chunk 3\n");
-        num_err++;
+        num_errs++;
         goto test7;
       }
 
@@ -1104,7 +1104,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 6. SDwritechunk failed to write chunk 6\n");
-        num_err++;
+        num_errs++;
         goto test7;
       }
 
@@ -1130,7 +1130,7 @@ test_chunk()
                         fprintf(stderr,"u8_data[%d][%d][%d]=%d,",
                                 i,j,k,u8_data[i][j][k]);
                         fprintf(stderr,"\n");
-                        num_err++;
+                        num_errs++;
                     }
               }
           }
@@ -1143,7 +1143,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 6. SDreadchunk failed to read chunk 1\n");
-        num_err++;
+        num_errs++;
         goto test7;
       }
 
@@ -1154,7 +1154,7 @@ test_chunk()
             {
                 printf("Chunk Test 6. chunk1_u8: Wrong data at %d, out %d in %d\n", 
                  i, chunk1_u8[i], ru8_data[i]);
-                num_err++;
+                num_errs++;
             }
        }
 
@@ -1165,7 +1165,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 6. SDreadchunk failed to read chunk 2\n");
-        num_err++;
+        num_errs++;
         goto test7;
       }
 
@@ -1176,7 +1176,7 @@ test_chunk()
             {
                 printf("Chunk Test 6. chunk2_u8: Wrong data at %d, out %d in %d\n", 
                  i, chunk2_u8[i], ru8_data[i]);
-                num_err++;
+                num_errs++;
             }
        }
     start_dims[0] = 0;
@@ -1186,7 +1186,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 6. SDreadchunk failed to read chunk 3\n");
-        num_err++;
+        num_errs++;
         goto test7;
       }
 
@@ -1197,7 +1197,7 @@ test_chunk()
             {
                 printf("Chunk Test 6. chunk3_u8: Wrong data at %d, out %d in %d\n", 
                  i, chunk3_u8[i], ru8_data[i]);
-                num_err++;
+                num_errs++;
             }
        }
 
@@ -1208,7 +1208,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "SDreadchunk failed to read chunk 4\n");
-        num_err++;
+        num_errs++;
         goto test7;
       }
 
@@ -1219,7 +1219,7 @@ test_chunk()
             {
                 printf("Chunk Test 6. chunk4_u8: Wrong data at %d, out %d in %d\n", 
                  i, chunk4_u8[i], ru8_data[i]);
-                num_err++;
+                num_errs++;
             }
        }
 
@@ -1230,7 +1230,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 6. SDreadchunk failed to read chunk 5\n");
-        num_err++;
+        num_errs++;
         goto test7;
       }
 
@@ -1241,7 +1241,7 @@ test_chunk()
             {
                 printf("Chunk Test 6. chunk5_u8: Wrong data at %d, out %d in %d\n", 
                  i, chunk5_u8[i], ru8_data[i]);
-                num_err++;
+                num_errs++;
             }
        }
 
@@ -1252,7 +1252,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 6. SDreadchunk failed to read chunk 6\n");
-        num_err++;
+        num_errs++;
         goto test7;
       }
 
@@ -1263,7 +1263,7 @@ test_chunk()
             {
                 printf("Chunk Test 6. chunk6_u8: Wrong data at %d, out %d in %d\n", 
                  i, chunk6_u8[i], ru8_data[i]);
-                num_err++;
+                num_errs++;
             }
        }
 
@@ -1284,7 +1284,7 @@ test_chunk()
     if(newsds7 == FAIL) 
       {
         fprintf(stderr, "Chunk Test 7. Failed to create a new 2D uint16 data set \n");
-        num_err++;
+        num_errs++;
         goto test8;
       }
 
@@ -1314,7 +1314,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 7. Failed to create new chunked, GZIP Compressed data set\n");
-        num_err++;
+        num_errs++;
         goto test8;
       }
 
@@ -1323,7 +1323,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 7. SDsetchunkcache failed\n");
-        num_err++;
+        num_errs++;
         goto test8;
       }
 
@@ -1337,7 +1337,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 7. Failed to write u16_2data to new chunked data set\n");
-        num_err++;
+        num_errs++;
         goto test8;
       }
 
@@ -1359,7 +1359,7 @@ test_chunk()
                     fprintf(stderr,"u16_cdata[%d][%d]=%d,",
                             i,j,u16_2data[i][j]);
                     fprintf(stderr,"\n");
-                    num_err++;
+                    num_errs++;
                 }
           }
       }
@@ -1368,7 +1368,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 7. SDgetchunkinfo failed \n");
-        num_err++;
+        num_errs++;
         goto test8;
       }
 
@@ -1379,7 +1379,7 @@ test_chunk()
         || cflags != (HDF_CHUNK | HDF_COMP))
       {
         fprintf(stderr, "Chunk Test 7. SDgetchunkinfo returned wrong values\n");
-        num_err++;
+        num_errs++;
         goto test8;
       }
 
@@ -1395,14 +1395,14 @@ test_chunk()
     if ((index = SDnametoindex(fchk,"DataSetChunked_2D_GZIP_1")) == FAIL)
       {
           fprintf(stderr, "Chunk Test 7. SDnametoindex  Failed for GZIP compressed data set\n");
-          num_err++;
+          num_errs++;
           goto test8;
       }
 
     if ((newsds7 = SDselect(fchk,index)) == FAIL)
       {
           fprintf(stderr, "Chunk Test 7. SDselect Failed to re-select new chunked, GZIP compressed data set\n");
-          num_err++;
+          num_errs++;
           goto test8;
       }
 
@@ -1442,7 +1442,7 @@ test_chunk()
     if(newsds == FAIL) 
       {
         fprintf(stderr, "Chunk Test 8. SDcreate Failed to create a new chunked, nbit data set \n");
-        num_err++;
+        num_errs++;
         goto done;
       }
 
@@ -1460,7 +1460,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 8. SDsetchunk Failed to create new chunked, NBIT data set\n");
-        num_err++;
+        num_errs++;
         goto done;
       }
 
@@ -1487,7 +1487,7 @@ test_chunk()
     if(newsds2 == FAIL) 
       {
         fprintf(stderr, "Chunk Test 8. Failed to select a data set for n-bit access\n");
-        num_err++;
+        num_errs++;
         goto done;
       }
 
@@ -1504,7 +1504,7 @@ test_chunk()
           {
             fprintf(stderr,"Chunk Test 8. Bogus val in loc %d in n-bit dset want %ld got %ld\n",
 		    i, (long)idata[i], (long)rdata[i]);
-            num_err++;
+            num_errs++;
           }
       }
 
@@ -1513,7 +1513,7 @@ test_chunk()
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 8. SDgetchunkinfo failed \n");
-        num_err++;
+        num_errs++;
         goto done;
       }
 
@@ -1529,7 +1529,7 @@ test_chunk()
         fprintf(stderr, "Chunk Test 8. cdims[%d] =%d \n", 1, (int)cdims[1]);
         fprintf(stderr, "Chunk Test 8. rcdims[%d] =%d \n", 0, (int)rcdims[0]);
         fprintf(stderr, "Chunk Test 8. rcdims[%d] =%d \n", 1, (int)cdims[1]);
-        num_err++;
+        num_errs++;
         goto done;
       }
     /*
@@ -1560,7 +1560,7 @@ test_chunk()
 
   done:
 
-    return num_err;
+    return num_errs;
 } /* test_chunk() */
 #endif /* CHUNK_TEST */
 
@@ -1589,7 +1589,7 @@ test_netcdf_reading()
 	char name[MAX_NC_NAME];
     int32 status;
     intn i, j;
-    int     num_err = 0;    /* number of errors so far */
+    int     num_errs = 0;    /* number of errors so far */
 
 	/* Open the file 'test1.nc' and initialize the SDxxx interface. */
 	sd_id = SDstart("test1.nc", DFACC_RDONLY);
@@ -1603,13 +1603,13 @@ test_netcdf_reading()
     if (n_datasets != 8 )
       {
           fprintf(stderr,"netCDF Read Test 1: SDfileinfo returned wrong number of datasets in file test1.nc \n");
-          num_err++;
+          num_errs++;
       }
 
     if (n_file_attrs != 1 )
       {
           fprintf(stderr,"netCDF Read Test 1: SDfileinfo returned wrong number of file attributes in file test1.nc \n");
-          num_err++;
+          num_errs++;
       }
 
 	/* Access and find the 2-dim dataset of data-type shorts(DFNT_INT16). 
@@ -1655,7 +1655,7 @@ test_netcdf_reading()
 	status = SDend(sd_id);
     CHECK(status, FAIL, "netCDF Read Test 1. SDend failed for file test1.nc");
 
-    return num_err;
+    return num_errs;
 } /* test_netcdf_reading() */
 #endif /* NETCDF_READ_TEST */
 
@@ -1723,7 +1723,7 @@ test_dimensions()
     int16  scale1 [] = {0,1,2,3,4,5,6,7,8,9};
     char8  scale2 [] = {'d','i','m','2'}, scale2_out[4];
     int32  size, dim_data_type, dim_num_attrs;
-    int    num_err = 0;    /* number of errors so far */
+    int    num_errs = 0;    /* number of errors so far */
 
     /* Create the file defined by FILE_DIM and initiate the SD interface. */
     fid = SDstart(FILE_DIM, DFACC_CREATE);
@@ -1947,7 +1947,7 @@ test_dimensions()
     CHECK(status, FAIL, "SDend");
 
     /* Return the number of errors that's been kept track of so far */
-    return num_err;
+    return num_errs;
 } /* test_dimensions */
 
 static intn
@@ -1963,7 +1963,7 @@ test_compression()
     int32   rdata[100];
     int32   fillval;
     intn  i;
-    int   num_err = 0;    /* number of errors in compression test so far */
+    int   num_errs = 0;    /* number of errors in compression test so far */
     intn  status;      /* status flag */
     int32   start[10], end[10]; /* start and end arrays */
 
@@ -1979,7 +1979,7 @@ printf("writing 1st compressed dataset, basic skipping huffman\n");
     newsds = SDcreate(fcomp, "CompDataSet1", nt, 2, dimsize);
     if(newsds == FAIL) {
         fprintf(stderr, "Failed to create a new data set for compression testing\n");
-        num_err++;
+        num_errs++;
     }
 
     for(i = 0; i < 25; i++)
@@ -2020,7 +2020,7 @@ printf("reading compressed dataset\n");
     newsds2 = SDselect(fcomp, 0);
     if(newsds == FAIL) {
         fprintf(stderr, "Failed to select a data set for compressed access\n");
-        num_err++;
+        num_errs++;
     }
 
     /*
@@ -2044,7 +2044,7 @@ printf("before SDreaddata\n");
     for(i = 0; i < 25; i++)
         if(idata[i] != rdata[i]) {
             fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
-            num_err++;
+            num_errs++;
         }
 
 #ifdef QAK
@@ -2068,7 +2068,7 @@ printf("writing 2nd compressed dataset, partially filled & skipping huffman\n");
     newsds = SDcreate(fcomp, "CompDataSet2", nt, 2, dimsize);
     if(newsds == FAIL) {
         fprintf(stderr, "Failed to create a new data set for compression testing\n");
-        num_err++;
+        num_errs++;
     }
 
     fillval=43;
@@ -2124,7 +2124,7 @@ printf("reading compressed dataset\n");
     newsds2 = SDselect(fcomp, 0);
     if(newsds == FAIL) {
         fprintf(stderr, "Failed to select a data set for compressed access\n");
-        num_err++;
+        num_errs++;
     }
 
     start[0] = start[1] = 0;
@@ -2138,7 +2138,7 @@ printf("before SDreaddata\n");
     for(i = 0; i < 25; i++)
         if(idata[i] != rdata[i]) {
             fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
-            num_err++;
+            num_errs++;
         }
 
 #ifdef QAK
@@ -2162,7 +2162,7 @@ printf("creating 3rd compressed dataset, compressed template & skipping huffman\
     newsds = SDcreate(fcomp, "CompDataSet3", nt, 2, dimsize);
     if(newsds == FAIL) {
         fprintf(stderr, "Failed to create a new data set for compression testing\n");
-        num_err++;
+        num_errs++;
     }
 
     fillval=56;
@@ -2199,7 +2199,7 @@ printf("reading compressed dataset\n");
     newsds2 = SDselect(fcomp, 0);
     if(newsds == FAIL) {
         fprintf(stderr, "Failed to select a data set for compressed access\n");
-        num_err++;
+        num_errs++;
     }
 
     start[0] = start[1] = 0;
@@ -2213,7 +2213,7 @@ printf("before SDreaddata\n");
     for(i = 0; i < 25; i++)
         if(fillval != rdata[i]) {
             fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
-            num_err++;
+            num_errs++;
         }
 
 #ifdef QAK
@@ -2237,7 +2237,7 @@ printf("creating 4th compressed dataset, compressed template read, then partial 
     newsds = SDcreate(fcomp, "CompDataSet4", nt, 2, dimsize);
     if(newsds == FAIL) {
         fprintf(stderr, "Failed to create a new data set for compression testing\n");
-        num_err++;
+        num_errs++;
     }
 
     fillval=67;
@@ -2274,7 +2274,7 @@ printf("reading compressed dataset\n");
     newsds2 = SDselect(fcomp, 0);
     if(newsds == FAIL) {
         fprintf(stderr, "Failed to select a data set for compressed access\n");
-        num_err++;
+        num_errs++;
     }
 
     start[0] = start[1] = 0;
@@ -2288,7 +2288,7 @@ printf("before SDreaddata\n");
     for(i = 0; i < 25; i++)
         if(fillval != rdata[i]) {
             fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
-            num_err++;
+            num_errs++;
         }
 
 #ifdef QAK
@@ -2309,7 +2309,7 @@ printf("writing compressed dataset\n");
     newsds2 = SDselect(fcomp, 0);
     if(newsds == FAIL) {
         fprintf(stderr, "Failed to select a data set for compressed access\n");
-        num_err++;
+        num_errs++;
     }
     /* fill the array with the standard info */
     for(i = 0; i < 25; i++)
@@ -2347,7 +2347,7 @@ printf("before SDendaccess\n");
     newsds2 = SDselect(fcomp, 0);
     if(newsds == FAIL) {
         fprintf(stderr, "Failed to select a data set for compressed access\n");
-        num_err++;
+        num_errs++;
     }
 
     start[0] = start[1] = 0;
@@ -2361,7 +2361,7 @@ printf("before SDreaddata\n");
     for(i = 0; i < 25; i++)
         if(idata[i] != rdata[i]) {
             fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
-            num_err++;
+            num_errs++;
         }
 
 #ifdef QAK
@@ -2385,7 +2385,7 @@ printf("writing 5th compressed dataset, basic RLE\n");
     newsds = SDcreate(fcomp, "CompDataSet5", nt, 2, dimsize);
     if(newsds == FAIL) {
         fprintf(stderr, "Failed to create a new data set for compression testing\n");
-        num_err++;
+        num_errs++;
     }
 
     for(i = 0; i < 25; i++)
@@ -2425,7 +2425,7 @@ printf("reading compressed dataset\n");
     newsds2 = SDselect(fcomp, 0);
     if(newsds == FAIL) {
         fprintf(stderr, "Failed to select a data set for compressed access\n");
-        num_err++;
+        num_errs++;
     }
 
     /*
@@ -2448,7 +2448,7 @@ printf("before SDreaddata\n");
     for(i = 0; i < 25; i++)
         if(idata[i] != rdata[i]) {
             fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
-            num_err++;
+            num_errs++;
         }
 
 #ifdef QAK
@@ -2472,7 +2472,7 @@ printf("writing 6th compressed dataset, no encoding\n");
     newsds = SDcreate(fcomp, "CompDataSet6", nt, 2, dimsize);
     if(newsds == FAIL) {
         fprintf(stderr, "Failed to create a new data set for compression testing\n");
-        num_err++;
+        num_errs++;
     }
 
     for(i = 0; i < 25; i++)
@@ -2512,7 +2512,7 @@ printf("reading compressed dataset\n");
     newsds2 = SDselect(fcomp, 0);
     if(newsds == FAIL) {
         fprintf(stderr, "Failed to select a data set for compressed access\n");
-        num_err++;
+        num_errs++;
     }
 
     /*
@@ -2535,7 +2535,7 @@ printf("before SDreaddata\n");
     for(i = 0; i < 25; i++)
         if(idata[i] != rdata[i]) {
             fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
-            num_err++;
+            num_errs++;
         }
 
 #ifdef QAK
@@ -2559,7 +2559,7 @@ printf("writing 7th compressed dataset, deflate encoding\n");
     newsds = SDcreate(fcomp, "CompDataSet7", nt, 2, dimsize);
     if(newsds == FAIL) {
         fprintf(stderr, "Failed to create a new data set for compression testing\n");
-        num_err++;
+        num_errs++;
     }
 
     for(i = 0; i < 25; i++)
@@ -2600,7 +2600,7 @@ printf("reading compressed dataset\n");
     newsds2 = SDselect(fcomp, 0);
     if(newsds == FAIL) {
         fprintf(stderr, "Failed to select a data set for compressed access\n");
-        num_err++;
+        num_errs++;
     }
 
     /*
@@ -2624,7 +2624,7 @@ printf("before SDreaddata\n");
     for(i = 0; i < 25; i++)
         if(idata[i] != rdata[i]) {
             fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
-            num_err++;
+            num_errs++;
         }
 
 #ifdef QAK
@@ -2640,7 +2640,7 @@ printf("before SDend\n");
     CHECK(status, FAIL, "SDend");
 
     /* Return the number of errors that's been kept track of so far */
-    return num_err;
+    return num_errs;
 
 }   /* end test_compression */
 
@@ -2678,7 +2678,7 @@ main(int argc, char *argv[])
     float32 data[1000], max, min, imax, imin;
     float64 cal, cale, ioff, ioffe;
     intn emptySDS = FALSE;
-    int     num_err = 0;    /* number of errors so far */
+    int     num_errs = 0;    /* number of errors so far */
 
 
 #ifdef macintosh
@@ -2713,7 +2713,7 @@ main(int argc, char *argv[])
     if (f1 != FAIL)
       {
           fprintf(stderr, "SDstart(..., RDONLY) should fail\n");
-          num_err++;
+          num_errs++;
           SDend(f1);
       }
 
@@ -2721,7 +2721,7 @@ main(int argc, char *argv[])
     if (f1 != FAIL)
       {
           fprintf(stderr, "SDstart(..., RDWR) should fail\n");
-          num_err++;
+          num_errs++;
           SDend(f1);
       }
 
@@ -2741,7 +2741,7 @@ main(int argc, char *argv[])
     if(num_gattr != 0) 
       {
           fprintf(stderr, "File %s still has stuff in it\n", FILE1);
-          num_err++;
+          num_errs++;
       }
 
     /* create a 4 by 8 dataset called DataSetAlpha in file test1.hdf */
@@ -2765,7 +2765,7 @@ main(int argc, char *argv[])
     if(num_sds != 2) 
       {
         fprintf(stderr, "Wrong number of datasets in file 1\n");
-        num_err++;
+        num_errs++;
       }
 
     /* get dimension handle for first dimension? of DataSetGamma */
@@ -2786,7 +2786,7 @@ main(int argc, char *argv[])
       {
         fprintf(stderr, "SDfindattr: Bad index for finding 'DimensionAttribute' %d\n",
                 status);
-        num_err++;
+        num_errs++;
       }
 
     /* Find out info about first atribute for dimension  */
@@ -2801,7 +2801,7 @@ main(int argc, char *argv[])
     if(HDstrncmp(text, "TRUE", count)) 
       {
         fprintf(stderr, "SDreadattr: Invalid dimension attribute read <%s>\n", text);
-        num_err++;
+        num_errs++;
       }
 
     /* get First dimension of dataset 'DataSetAlpha' */
@@ -2838,7 +2838,7 @@ main(int argc, char *argv[])
           {
               fprintf(stderr, "SDreaddata() returned %ld not %ld in location %d\n", 
                       (long)idata[i], (long)scale[i], i);
-              num_err++;
+              num_errs++;
           }
       }
 
@@ -2854,19 +2854,19 @@ main(int argc, char *argv[])
     if(nt != DFNT_FLOAT32) 
       {
         fprintf(stderr, "Wrong number type for SDattrinfo(dim)\n");
-        num_err++;
+        num_errs++;
       }
 
     if(count != 1) 
       {
         fprintf(stderr, "Wrong count for SDattrinfo(dim)\n");
-        num_err++;
+        num_errs++;
       }
 
     if(strcmp(name, "DimAttr")) 
       {
         fprintf(stderr, "Wrong name for SDattrinfo(dim)\n");
-        num_err++;
+        num_errs++;
       }
 
     /* get second dimension of data set 'DataSetAlpha' */
@@ -2886,19 +2886,19 @@ main(int argc, char *argv[])
     if(nt != DFNT_INT32) 
       {
         fprintf(stderr, "Wrong number type for SDattrinfo(dim)\n");
-        num_err++;
+        num_errs++;
       }
 
     if(count != 1) 
       {
         fprintf(stderr, "Wrong count for SDattrinfo(dim)\n");
-        num_err++;
+        num_errs++;
       }
 
     if(strcmp(name, "Integer")) 
       {
         fprintf(stderr, "Wrong name for SDattrinfo(dim)\n");
-        num_err++;
+        num_errs++;
       }
 
     /* read dimension attribute back in */
@@ -2909,7 +2909,7 @@ main(int argc, char *argv[])
     if(ival != -256) 
       {
         fprintf(stderr, "Wrong value for SDreadattr(dim)\n");
-        num_err++;
+        num_errs++;
       }
 
     /* add an unsigned integer as an dimension attribute */
@@ -2924,19 +2924,19 @@ main(int argc, char *argv[])
     if(nt != DFNT_UINT8) 
       {
         fprintf(stderr, "Wrong number type for SDattrinfo(dim)\n");
-        num_err++;
+        num_errs++;
       }
 
     if(count != 1) 
       {
         fprintf(stderr, "Wrong count for SDattrinfo(dim)\n");
-        num_err++;
+        num_errs++;
       }
 
     if(strcmp(name, "UnsignedInteger")) 
       {
         fprintf(stderr, "Wrong name for SDattrinfo(dim)\n");
-        num_err++;
+        num_errs++;
       }
 
     /* read second dimension attribute back in */
@@ -2947,7 +2947,7 @@ main(int argc, char *argv[])
     if(iuval != 253) 
       {
         fprintf(stderr, "Wrong value for SDreadattr(dim)\n");
-        num_err++;
+        num_errs++;
       }
 
     /* Find index of data set 'DataSetAlpha' in file test1.hdf */
@@ -2955,7 +2955,7 @@ main(int argc, char *argv[])
     if(status != 0) 
       {
         fprintf(stderr, "Couldn't find data set in file 1\n");
-        num_err++;
+        num_errs++;
       }
 
     /* Try finding data set in test2.hdf, should fail? */
@@ -2963,7 +2963,7 @@ main(int argc, char *argv[])
     if(status != FAIL) 
       {
         fprintf(stderr, "Found data set in wrong file 2\n");
-        num_err++;
+        num_errs++;
       }
 
     /* Try finding non-existent dataset in file, should fail */
@@ -2971,7 +2971,7 @@ main(int argc, char *argv[])
     if(status != FAIL) 
       {
         fprintf(stderr, "Found bogus data set in file 1\n");
-        num_err++;
+        num_errs++;
       }
 
     /* Set fill value for data set 'DataSetAlpha' assume we still have valid
@@ -3015,22 +3015,22 @@ main(int argc, char *argv[])
     if(HDstrcmp(l, "TheLabel")) 
       {
         fprintf(stderr, "Bogus label returned (%s)\n", l);
-        num_err++;
+        num_errs++;
       }
     if(HDstrcmp(u, "TheUnits")) 
       {
         fprintf(stderr, "Bogus units returned (%s)\n", u);
-        num_err++;
+        num_errs++;
       }
     if(HDstrcmp(fmt, "")) 
       {
         fprintf(stderr, "Bogus format returned\n");
-        num_err++;
+        num_errs++;
       }
     if(HDstrcmp(c, "TheCordsys")) 
       {
         fprintf(stderr, "Bogus cordsys returned\n");
-        num_err++;
+        num_errs++;
       }
 
     /* retrieve CHAR attribute for 'DataSetAlpha' */
@@ -3038,7 +3038,7 @@ main(int argc, char *argv[])
     if(status != 2) 
       {
         fprintf(stderr, "Bad index for SDfindattr\n");
-        num_err++;
+        num_errs++;
       }
 
     /* retrieve non-existent CHAR attribute for 'DataSetAlpha'. 
@@ -3047,7 +3047,7 @@ main(int argc, char *argv[])
     if(status != FAIL) 
       {
         fprintf(stderr, "SDfindattr found non-existant attribute\n");
-        num_err++;
+        num_errs++;
       }
 
     /* hmm....set global attributes for File 'test1.hdf' */
@@ -3065,7 +3065,7 @@ main(int argc, char *argv[])
     if(HDstrncmp(text, "globulator", count)) 
       {
         fprintf(stderr, "Invalid global attribute read <%s>\n", text);
-        num_err++;
+        num_errs++;
       }
 
     /* Get number of SDS and global attributes in file 'test2.hdf'.
@@ -3074,7 +3074,7 @@ main(int argc, char *argv[])
     if(num_sds != 0) 
       {
         fprintf(stderr, "File2 still has stuff in it\n");
-        num_err++;
+        num_errs++;
       }
 
     /* Set calibration info for dataset 'DataSetGamma' in file 'test1.hdf' */
@@ -3098,7 +3098,7 @@ main(int argc, char *argv[])
     if(num_sds != 1) 
       {
         fprintf(stderr, "Wrong number of datasets in file 2\n");
-        num_err++;
+        num_errs++;
       }
 
     for(i = 0; i < 50; i++)
@@ -3122,27 +3122,27 @@ main(int argc, char *argv[])
     if(data[0] != -17.5) 
       {
         fprintf(stderr, "Wrong value returned loc 0: %f\n",(float)data[0]);
-        num_err++;
+        num_errs++;
       }
     if(data[3] != -17.5) 
       {
         fprintf(stderr, "Wrong value returned loc 3: %f\n",(float)data[3]);
-        num_err++;
+        num_errs++;
       }
     if(data[5] != 1.0) 
       {
         fprintf(stderr, "Wrong value returned loc 5: %f\n",(float)data[5]);
-        num_err++;
+        num_errs++;
       }
     if(data[6] != -17.5) 
       {
         fprintf(stderr, "Wrong value returned loc 6: %f\n",(float)data[6]);
-        num_err++;
+        num_errs++;
       }
     if(data[8] != 4.0) 
       {
         fprintf(stderr, "Wrong value returned loc 8: %f\n",(float)data[8]);
-        num_err++;
+        num_errs++;
       }
 
     for(i = 0; i < 50; i++)
@@ -3175,31 +3175,31 @@ main(int argc, char *argv[])
     if(cal != 1.0) 
       {
         fprintf(stderr, "Wrong calibration info\n");
-        num_err++;
+        num_errs++;
       }
 
     if(cale != 5.0) 
       {
         fprintf(stderr, "Wrong calibration info\n");
-        num_err++;
+        num_errs++;
       }
 
     if(ioff != 3.0) 
       {
         fprintf(stderr, "Wrong calibration info\n");
-        num_err++;
+        num_errs++;
       }
 
     if(ioffe != 2.5) 
       {
         fprintf(stderr, "Wrong calibration info\n");
-        num_err++;
+        num_errs++;
       }
 
     if(nt != DFNT_INT8) 
       {
         fprintf(stderr, "Wrong calibration info\n");
-        num_err++;
+        num_errs++;
       }
 
     /* end access to data set 'DataSetAlpha' */
@@ -3416,7 +3416,7 @@ main(int argc, char *argv[])
           {
            fprintf(stderr, "line %d, wrong value: should be %d, got %d %d\n",
                            __LINE__,100 + i-12, (int)idata[i], (int)idata[i+12]);
-           num_err++;
+           num_errs++;
           }
       }
     
@@ -3426,7 +3426,7 @@ main(int argc, char *argv[])
           {
            fprintf(stderr, "line %d, wrong value: should not be %d, got %d\n",
                            __LINE__,(int)fillval, (int)idata[i]);
-           num_err++;
+           num_errs++;
           }
       }
 
@@ -3459,7 +3459,7 @@ main(int argc, char *argv[])
           {
            fprintf(stderr, "line %d, wrong value: should be %d, got %d \n",
                            __LINE__, 100 + i-12, (int)idata[i]);
-           num_err++;
+           num_errs++;
           }
       }
 
@@ -3469,7 +3469,7 @@ main(int argc, char *argv[])
           {
            fprintf(stderr, "line %d, wrong value: should be %d, got %d\n",
                            __LINE__, (int)fillval, (int)idata[i]);
-           num_err++;
+           num_errs++;
           }
       }
 
@@ -3587,7 +3587,7 @@ main(int argc, char *argv[])
           {
            fprintf(stderr, "line %d, wrong value for %d: should be %d, got %d\n",
                            __LINE__, i-12, (int)idata[i], (int)idata[i+12]);
-           num_err++;
+           num_errs++;
           }
       }
 
@@ -3597,7 +3597,7 @@ main(int argc, char *argv[])
           {
            fprintf(stderr, "line %d, wrong value: should be %d, got %d\n",
                            __LINE__, (int)fillval, (int)idata[i]);
-           num_err++;
+           num_errs++;
           }
       }
 
@@ -3685,7 +3685,7 @@ main(int argc, char *argv[])
     if (rank!=2 || dimsize[0]!=4 || dimsize[1]!=6 || nt!=DFNT_INT32) 
       {
         fprintf(stderr, "SDgetinfo returned wrong values\n");
-          num_err++;
+          num_errs++;
       }
 
     /* get handle for first dimension of data set 'dimval_1_compat' */
@@ -3700,14 +3700,14 @@ main(int argc, char *argv[])
     if (dimsize[0]!=SD_UNLIMITED || nt!= 0 )  
       {
           fprintf(stderr, "SDdiminfo returned wrong values\n");
-          num_err++;
+          num_errs++;
       }
     /* is it backward non-compatible? */
     status = SDisdimval_bwcomp(dimid);
     if (status != SD_DIMVAL_BW_INCOMP)
        { 
            fprintf(stderr, "SDisdimvalcomp returned wrong value for dimension.\n");
-            num_err++;
+            num_errs++;
        }
     /* re-set first dimension as backward compatible */
     status = SDsetdimval_comp(dimid, SD_DIMVAL_BW_COMP);
@@ -3725,7 +3725,7 @@ main(int argc, char *argv[])
     if (dimsize[1]!=6 || nt!= DFNT_INT32 )  
       {
           fprintf(stderr, "Failed on SDgetinfo call\n");
-          num_err++;
+          num_errs++;
       }
 
     /* read data back from data set 'dimval_1_compat' */
@@ -3739,7 +3739,7 @@ main(int argc, char *argv[])
           {
            fprintf(stderr, "line %d, wrong value: should be %d, got %d\n",
                            __LINE__, i, (int)idata[i]);
-           num_err++;
+           num_errs++;
           }
       }
 
@@ -3749,7 +3749,7 @@ main(int argc, char *argv[])
     if (status != SD_DIMVAL_BW_COMP)  
       {
           fprintf(stderr, "SDisdimvalcomp returned wrong value for dimension\n");
-          num_err++;
+          num_errs++;
       }
 
     /* re-set second dimension as backward non-compatible */
@@ -3787,7 +3787,7 @@ main(int argc, char *argv[])
     if (rank!=2 || dimsize[0]!=4 || dimsize[1]!=6 || nt!=DFNT_INT32) 
       {
         fprintf(stderr, "SDgetinfo returned wrong values\n");
-          num_err++;
+          num_errs++;
       }
 
     /* get handle for second dimension of data set 'dimval_1_compat' */
@@ -3802,7 +3802,7 @@ main(int argc, char *argv[])
     if (dimsize[1]!=6 || nt!= DFNT_INT32 )  
       {
           fprintf(stderr, "Failed on SDgetinfo call\n");
-          num_err++;
+          num_errs++;
       }
 
     /* see if second dimensionis backward compatible. 
@@ -3811,7 +3811,7 @@ main(int argc, char *argv[])
     if (status != SD_DIMVAL_BW_INCOMP)  
       {
           fprintf(stderr, "SDisdimvalcomp returned wrong value\n");
-          num_err++;
+          num_errs++;
       }
     /* re-set second dimension as backward compatible */
     status = SDsetdimval_comp(dimid1, SD_DIMVAL_BW_COMP);
@@ -3836,7 +3836,7 @@ main(int argc, char *argv[])
     if(ndg_saved_ref != SDidtoref(sdsid)) 
       {
         fprintf(stderr, "Saved NDG ref != to SDindextoref of same\n");
-        num_err++;
+        num_errs++;
       }
 
     /* end access to data set 'DataSetAlpha' in file 'test1.hdf' */    
@@ -3930,7 +3930,7 @@ main(int argc, char *argv[])
           {
             fprintf(stderr, "Bogus val in loc %d in wrapper dset want %d  got %ld\n", 
 		    i, (i + 2) * 10, (long)idata[i]);
-            num_err++;
+            num_errs++;
           }
       }
 
@@ -3938,7 +3938,7 @@ main(int argc, char *argv[])
       {
         fprintf(stderr, "Bogus val in last loc in wrapper dset want 10  got %ld\n",
 		(long)idata[8]);
-        num_err++;
+        num_errs++;
       }
 
     /* End access to data set "WrapperDataSet" */
@@ -4013,7 +4013,7 @@ main(int argc, char *argv[])
           {
             fprintf(stderr,"Bogus val in loc %d in n-bit dset want %ld got %ld\n",
 		    i, (long)idata[i], (long)rdata[i]);
-            num_err++;
+            num_errs++;
           }
       }
 
@@ -4033,20 +4033,20 @@ main(int argc, char *argv[])
      */
     status = test_compression();
     CHECK(status, FAIL, "test_chunk");
-    num_err = num_err + status;
+    num_errs = num_errs + status;
 
 #endif /* COMP_TEST */
 
 #ifdef CHUNK_TEST
     status = test_chunk();
     CHECK(status, FAIL, "test_chunk");
-    num_err = num_err + status;
+    num_errs = num_errs + status;
 #endif /* CHUNK_TEST */
 
 #ifdef NETCDF_READ_TEST
     status = test_netcdf_reading();
     CHECK(status, FAIL, "test_netcdf_reading");
-    num_err = num_err + status;
+    num_errs = num_errs + status;
 #endif /* NETCDF_READ_TEST */
 
     /* BMR: Added a test routine dedicated for testing dimensions.  A
@@ -4057,15 +4057,12 @@ main(int argc, char *argv[])
        day, the main program can be shortened and some of its dimension-related
        tests can be moved into this test routine - 04/18/01 */
     status = test_dimensions();
-    CHECK(status, FAIL, "test_dimensions");
-    num_err = num_err + status;
+    num_errs = num_errs + status;
 
     status = test_szip_compression();  /* defined in tszip.c */
-    CHECK(status, FAIL, "test_szip_compression");
-    num_err = num_err + status;
+    num_errs = num_errs + status;
 
-
-    printf("num_err == %d\n", num_err);
+    printf("num_err == %d\n", num_errs);
 
     return 0;
     /*exit(0); - replaced by return 0; compiler warning: no return for int*/
