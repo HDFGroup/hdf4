@@ -302,6 +302,10 @@ HCPquery_encode_header(comp_model_t model_type, model_info * m_info,
               coder_len+=8;
               break;
 
+          case COMP_CODE_DEFLATE:   /* Deflation coding stores deflation level */
+              coder_len+=2;
+              break;
+
           default:      /* no additional information needed */
               break;
       }     /* end switch */
@@ -384,6 +388,11 @@ HCPencode_header(uint8 *p, comp_model_t model_type, model_info * m_info,
               UINT32ENCODE(p, (uint32) c_info->skphuff.skp_size);
               break;
 
+          case COMP_CODE_DEFLATE:   /* Deflation coding stores deflation level */
+              /* specify deflation level */
+              UINT16ENCODE(p, (uint16) c_info->deflate.level);
+              break;
+
           default:      /* no additional information needed */
               break;
       }     /* end switch */
@@ -402,7 +411,7 @@ done:
  NAME
     HCPdecode_header -- Decode the compression header info from a memory buffer
  USAGE
-    intn HCPencode_header(model_type, model_info, coder_type, coder_info)
+    intn HCPdecode_header(model_type, model_info, coder_type, coder_info)
     VOIDP buf;                  IN: encoded compression info header
     comp_model_t *model_type;   OUT: the type of modeling to use
     model_info *m_info;         OUT: Information needed for the modeling type chosen
@@ -477,6 +486,16 @@ HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info * m_info,
                   /* specify # of bytes of skipping data to compress */
                   UINT32DECODE(p, comp_size);   /* ignored for now */
                   c_info->skphuff.skp_size = (intn) skp_size;
+              }     /* end case */
+              break;
+
+          case COMP_CODE_DEFLATE:   /* Deflation coding stores deflation level */
+              {
+                  uint16      level;    /* deflation level */
+
+                  /* specify deflation level */
+                  UINT16DECODE(p, level);
+                  c_info->deflate.level = (intn) level;
               }     /* end case */
               break;
 
