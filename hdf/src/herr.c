@@ -77,8 +77,7 @@ int32 error_top = 0;
 #define ERRMESG_SZ (sizeof(error_messages) / sizeof(error_messages[0]))
 
 
-/* ------------------------------- HEstring ------------------------------- */
-/*
+/* ------------------------------------------------------------------------
 
  NAME
 	HEstring -- return error description
@@ -119,8 +118,7 @@ char _HUGE *HEstring(error_code)
 }
 
 
-/* ------------------------------- HEclear -------------------------------- */
-/*
+/* --------------------------------------------------------------------------
 
  NAME
 	HEclear -- clear the error stack
@@ -153,8 +151,7 @@ VOID HEclear()
 }
 
 
-/* -------------------------------- HEpush -------------------------------- */
-/*
+/* -------------------------------------------------------------------------
 
  NAME
 	HEpush -- push an error onto the stack
@@ -216,8 +213,7 @@ VOID HEpush(error_code, function_name, file_name, line)
 } /* HEpush */
 
 
-/* ------------------------------- HEreport ------------------------------- */
-/*
+/* -------------------------------------------------------------------------
 
  NAME
 	HEreport -- give a more detailed error description
@@ -303,8 +299,7 @@ va_dcl
 #endif /* PROTOTYPE */
 
 
-/* ------------------------------- HEprint -------------------------------- */
-/*
+/* -------------------------------------------------------------------------
 
  NAME
 	HEprint -- print values from the error stack
