@@ -303,7 +303,11 @@ static long *    xdrposix_inline();
 #if (defined __sun && defined _LP64)
 static rpc_inline_t *    xdrposix_inline();
 #else
-static netlong *    xdrposix_inline();
+#if (defined __alpha )
+static int *    xdrposix_inline();
+#else
+static netlong *    xdrposix_inline(); 
+#endif
 #endif
 #endif
 #endif
@@ -454,17 +458,21 @@ xdrposix_destroy(xdrs)
 static bool_t
 xdrposix_getlong(xdrs, lp)
     XDR *xdrs;
+#if (defined __alpha) 
+    int *lp;
+#else
     long *lp;
+#endif
 {
     unsigned char *up = (unsigned char *)lp ;
-#if (defined CRAY || defined AIX5L64)
+#if (defined CRAY || defined AIX5L64 )  
     *lp = 0 ;
     up += (sizeof(long) - 4) ;
 #endif
     if(bioread((biobuf *)xdrs->x_private, up, 4) < 4)
         return (FALSE);
 #ifdef SWAP
-    *lp = ntohl(*lp);
+    *lp =  ntohl(*lp);
 #endif
     return (TRUE);
 }
@@ -472,7 +480,11 @@ xdrposix_getlong(xdrs, lp)
 static bool_t
 xdrposix_putlong(xdrs, lp)
     XDR *xdrs;
+#if (defined __alpha) 
+    int *lp;
+#else
     long *lp;
+#endif
 {
 
     unsigned char *up = (unsigned char *)lp ;
@@ -480,7 +492,7 @@ xdrposix_putlong(xdrs, lp)
     netlong mycopy = htonl(*lp);
     up = (unsigned char *)&mycopy;
 #endif
-#if (defined CRAY || defined AIX5L64)
+#if (defined CRAY || defined AIX5L64 )
     up += (sizeof(long) - 4) ;
 #endif
 
@@ -493,7 +505,11 @@ static bool_t
 xdrposix_getbytes(xdrs, addr, len)
     XDR *xdrs;
     caddr_t addr;
+#if (defined __alpha)
+    int len;
+#else
     u_int len;
+#endif
 {
 
     if ((len != 0)
@@ -506,7 +522,11 @@ static bool_t
 xdrposix_putbytes(xdrs, addr, len)
     XDR *xdrs;
     caddr_t addr;
+#if (defined __alpha)
+    int len;
+#else
     u_int len;
+#endif
 {
 
     if ((len != 0)
@@ -563,16 +583,26 @@ static inline_t *
 #if (_MIPS_SZLONG == 64)
 static long *
 #else
-#if (defined __sun && defined _LP64)
+#if (defined __sun && _LP64)
 static rpc_inline_t *
 #else
-static netlong *
+#if (defined  __alpha)
+static int* 
+#else
+static netlong * 
+#endif
 #endif
 #endif
 #endif
 xdrposix_inline(xdrs, len)
     XDR *xdrs;
-    u_int len;
+#if (defined  __alpha)
+int 
+#else
+    u_int
+#endif
+          len;
+
 {
 
     /*
@@ -584,7 +614,7 @@ xdrposix_inline(xdrs, len)
     return (NULL);
 }
 
-#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64
+#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 
 
 static bool_t
 xdrposix_getint(xdrs, lp)
