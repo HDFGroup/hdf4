@@ -119,9 +119,9 @@ echo "** jpeg2hdf, hdf2jpeg or hdfls  not available ***"
 fi
 
 # fp2hdf
-if [ -f fp2hdf -a -f hdfls ]; then
+if [ -f fp2hdf -a -f hdfls -a -f hdfed ]; then
 echo "** Testing fp2hdf  ***"
-/bin/rm -f ctxtr* cb* *.hdf hdfls.tmp5
+/bin/rm -f ctxtr* cb* *.hdf hdfls.tmp5 hdfed.tmp5
 ./fptest
 ./fp2hdf ctxtr2 -o ctxtr2.hdf
 ./fp2hdf ctxtr3 -o ctxtr3.hdf
@@ -140,7 +140,9 @@ echo "** Testing fp2hdf  ***"
 ./hdfls -l ctxtr2_ris.hdf >> hdfls.tmp5 2>&1
 ./hdfls -l cb64r2_ris.hdf >> hdfls.tmp5 2>&1
 diff hdfls.tmp5 fp2hdf.out1
-/bin/rm -f ctxtr* cb* *.hdf hdfls.tmp5
+./hdfed < fp2hdf.input1 > hdfed.tmp6 2>&1
+diff hdfed.tmp6 fp2hdf.out2
+/bin/rm -f ctxtr* cb* *.hdf hdfls.tmp5 hdfed.tmp6
 else
-echo "** fp2hdf or hdfls not available ***"
+echo "** fp2hdf, hdfed or hdfls not available ***"
 fi
