@@ -61,7 +61,7 @@ MODIFICATION HISTORY
 #define ATOM_MASTER
 #include "hdf.h"
 #include "atom.h"
-
+#include <assert.h>
 
 /* Private function prototypes */
 static atom_info_t *HAIfind_atom(atom_t atm);
@@ -99,6 +99,11 @@ intn HAinit_group(group_t grp,      /* IN: Group to initialize */
     HEclear();
     if((grp<=BADGROUP || grp>=MAXGROUP) && hash_size>0)
         HGOTO_ERROR(DFE_ARGS, FAIL);
+
+#ifdef ATOMS_CACHE_INLINE
+/* Assertion necessary for faster pointer swapping */
+assert(sizeof(hdf_pint_t)==sizeof(void *));
+#endif /* ATOMS_CACHE_INLINE */
 
 #ifdef HASH_SIZE_POWER_2
     /* If anyone knows a faster test for a power of two, please change this silly code -QAK */
@@ -311,13 +316,20 @@ done:
     Returns object ptr if successful and NULL otherwise
 
 *******************************************************************************/
+#ifdef ATOMS_CACHE_INLINE
+VOIDP HAPatom_object(atom_t atm   /* IN: Atom to retrieve object for */
+)
+#else /* ATOMS_CACHE_INLINE */
 VOIDP HAatom_object(atom_t atm   /* IN: Atom to retrieve object for */
 )
+#endif /* ATOMS_CACHE_INLINE */
 {
     CONSTR(FUNC, "HAatom_object");	/* for HERROR */
+#ifndef ATOMS_CACHE_INLINE
 #ifdef ATOMS_ARE_CACHED
     uintn i;                        /* local counter */
 #endif /* ATOMS_ARE_CACHED */
+#endif /* ATOMS_CACHE_INLINE */
     atom_info_t *atm_ptr=NULL;      /* ptr to the new atom */
     VOIDP ret_value=NULL;
 
@@ -327,6 +339,7 @@ VOIDP HAatom_object(atom_t atm   /* IN: Atom to retrieve object for */
 
     HEclear();
 
+#ifndef ATOMS_CACHE_INLINE
 #ifdef ATOMS_ARE_CACHED
     /* Look for the atom in the cache first */
     for(i=0; i<ATOM_CACHE_SIZE; i++)
@@ -346,6 +359,7 @@ VOIDP HAatom_object(atom_t atm   /* IN: Atom to retrieve object for */
             HGOTO_DONE(ret_value);
           } /* end if */
 #endif /* ATOMS_ARE_CACHED */
+#endif /* ATOMS_CACHE_INLINE */
 
     /* General lookup of the atom */
     if((atm_ptr=HAIfind_atom(atm))==NULL)

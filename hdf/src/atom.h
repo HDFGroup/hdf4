@@ -33,6 +33,30 @@
 /* Define the following macro for atom caching over all the atoms */
 #define ATOMS_ARE_CACHED
 
+/* Define the following macro for "inline" atom lookups from the cache */
+#ifdef ATOMS_ARE_CACHED     /* required for this to work */
+#define ATOMS_CACHE_INLINE
+#endif /* ATOMS_ARE_CACHED */
+
+#ifdef ATOMS_CACHE_INLINE
+/* Do swap using XOR operator. Ugly but fast... -QAK */
+#define HAIswap_cache(i,j) \
+                atom_id_cache[i]^=atom_id_cache[j], \
+                atom_obj_cache[i]=(void *)((hdf_pint_t)atom_obj_cache[j]^(hdf_pint_t)atom_obj_cache[i]), \
+                atom_id_cache[j]^=atom_id_cache[i], \
+                atom_obj_cache[j]=(void *)((hdf_pint_t)atom_obj_cache[i]^(hdf_pint_t)atom_obj_cache[j]), \
+                atom_id_cache[i]^=atom_id_cache[j], \
+                atom_obj_cache[i]=(void *)((hdf_pint_t)atom_obj_cache[i]^(hdf_pint_t)atom_obj_cache[j])
+
+/* Note! This is hardwired to the atom cache value being 4 */
+#define HAatom_object(atm) \
+    (atom_id_cache[0]==atm ? atom_obj_cache[0] : \
+      atom_id_cache[1]==atm ? (HAIswap_cache(0,1),atom_obj_cache[0]) : \
+       atom_id_cache[2]==atm ? (HAIswap_cache(1,2),atom_obj_cache[1]) : \
+        atom_id_cache[3]==atm ? (HAIswap_cache(2,3),atom_obj_cache[2]) : \
+         HAPatom_object(atm))
+#endif /* ATOMS_CACHE_INLINE */
+
 #include "hdf.h"
 
 /* Group values allowed */
@@ -66,7 +90,7 @@ typedef intn (*HAsearch_func_t)(const void * obj, const void * key);
 #define ATOM_MASK   0x0FFFFFFF
 
 #ifdef ATOMS_ARE_CACHED
-/* # of previous atoms cached */
+/* # of previous atoms cached, change inline caching macros (HAatom_object & HAIswap_cache) if this changes */
 #define ATOM_CACHE_SIZE 4
 #endif /* ATOMS_ARE_CACHED */
 
@@ -111,15 +135,24 @@ static atom_info_t *atom_free_list=NULL;
 
 #ifdef ATOMS_ARE_CACHED
 /* Array of pointers to atomic groups */
+#ifdef OLD_WAY
 static atom_t atom_id_cache[ATOM_CACHE_SIZE]={-1,-1,-1,-1};
 static VOIDP atom_obj_cache[ATOM_CACHE_SIZE]={NULL};
+#else /* OLD_WAY */
+atom_t atom_id_cache[ATOM_CACHE_SIZE]={-1,-1,-1,-1};
+VOIDP atom_obj_cache[ATOM_CACHE_SIZE]={NULL};
+#endif /* OLD_WAY */
 #endif /* ATOMS_ARE_CACHED */
-
 #endif /* ATOM_MASTER */
 
 /* Useful routines for generally private use */
 
 #endif /* ATOM_MASTER | ATOM_TESTER */
+
+#ifndef ATOM_MASTER
+extern atom_t atom_id_cache[];
+extern VOIDP atom_obj_cache[];
+#endif /* ATOM_MASTER */
 
 #if defined c_plusplus || defined __cplusplus
 extern      "C"
@@ -191,8 +224,13 @@ atom_t HAregister_atom(group_t grp,     /* IN: Group to register the object in *
     Returns object ptr if successful and NULL otherwise
 
 *******************************************************************************/
+#ifdef ATOMS_CACHE_INLINE
+VOIDP HAPatom_object(atom_t atm   /* IN: Atom to retrieve object for */
+);
+#else /* ATOMS_CACHE_INLINE */
 VOIDP HAatom_object(atom_t atm   /* IN: Atom to retrieve object for */
 );
+#endif /* ATOMS_CACHE_INLINE */
 
 /******************************************************************************
  NAME
