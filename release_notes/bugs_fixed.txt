@@ -21,6 +21,10 @@ HDF4.1r6
    to do with palette files. This problem is now fixed. (bug #800). However
    the utility hdfimport should be used in the future instead of fp2hdf.
 
+7. hdf2gif failed when a user tried it on JPEG compressed images. (Bug #601).
+   The problem is now fixed. An error message is displayed if the image is not
+   8-bit. If the image is 24-bit, the message suggests using hdf2jpeg.
+
 HDF4.1r5
 ========
 1. The following VS routines are added as requested (bug #267):
