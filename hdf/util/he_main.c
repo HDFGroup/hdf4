@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.9  1992/09/17 21:19:36  chouck
-Fixed backup file name so VMS would be happy.  No backups for PCs
+Revision 1.10  1992/12/21 23:31:17  mfolk
+Fixed updateDesc call to DFdiget.  Previously it was missing
+the first parameter, groupID.
 
+ * Revision 1.9  1992/09/17  21:19:36  chouck
+ * Fixed backup file name so VMS would be happy.  No backups for PCs
+ *
  * Revision 1.8  1992/09/15  19:34:24  chouck
  * Fixed minor typo
  *
@@ -402,7 +406,7 @@ int updateDesc(void)
 int updateDesc()
 #endif
 {
-  uint32 fid;
+  uint32 fid, groupID;
   int32 aid, status;
   register int i, j;
   
@@ -439,17 +443,19 @@ int updateDesc()
         closeFile(1);	/* keep the backup */
         return FAIL;
       }
-      if (DFdiread(fid, he_desc[i].tag, he_desc[i].ref) < 0) {
+      groupID = DFdiread(fid, he_desc[i].tag, he_desc[i].ref);
+      if (groupID < 0) {
         HEprint(stderr, 0);
         return FAIL;
       }
       for (j = 0; j < he_grp[he_numGrp].size; j++)
-        DFdiget(&he_grp[he_numGrp].ddList[j].tag, 
-                &he_grp[he_numGrp].ddList[j].ref);
-      
+        DFdiget(groupID, &he_grp[he_numGrp].ddList[j].tag,
+                         &he_grp[he_numGrp].ddList[j].ref);
+
       he_numGrp++;
     }
   }
+  Hendaccess(aid);
   Hclose(fid);
   return SUCCEED;
 }
