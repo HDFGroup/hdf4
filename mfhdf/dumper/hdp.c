@@ -65,9 +65,6 @@ main(int argc, char *argv[])
     */
     while (curr_arg < argc && (argv[curr_arg][0] == '-'))
       {
-          printf("\n");
-          printf("Here executed!!\n");
-          printf("\n");
               /*  while(curr_arg<argc && (argv[curr_arg][0]=='-' || argv[curr_arg][0]=='/')) {  */
           switch (argv[curr_arg][1])
             {
