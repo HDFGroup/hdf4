@@ -24,9 +24,9 @@
 #include	<rpc/xdr.h>
 #else
 #if defined(macintosh) | defined (THINK_C)
-     /* For the mac renamed "types.h" to "rtypes.h" 
+     /* For the mac reference types.h specifically
         because we don't want it to pick up the system one */
-#include      "rtypes.h" /* "../xdr/rtypes.h" */
+#include      "::xdr:types.h"
 #include      "xdr.h"    /* "../xdr/xdr.h" */
 #else /* !macintosh */
 #include      <types.h>  /* "../xdr/types.h" */
