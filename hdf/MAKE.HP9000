@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.6  1993/01/14 17:26:33  georgev
+# Revision 1.7  1993/05/13 18:44:38  chouck
+# Made -O the default in CFLAGS
+#
+# Revision 1.6  1993/01/14  17:26:33  georgev
 # Upated headers in Makefiles to reflect HDF3.3.
 #
 # Revision 1.5  1992/08/26  16:25:18  sxu
@@ -78,7 +81,7 @@ MACHINE=HP9000
 
 # Define your C compiler and flags
 CC= cc
-CFLAGS= -D${MACHINE} 
+CFLAGS= -D${MACHINE}  -O
 
 # Define your FORTRAN compiler
 FC= f77
