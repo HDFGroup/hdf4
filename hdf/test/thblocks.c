@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1992/06/22 23:04:42  chouck
-Removed calls to fork()
+Revision 1.7  1992/07/27 18:40:12  dilg
+Changed DFACC_ALL to DFACC_RDWR in appropriate places to conform to new
+handling of access modes by Hopen().
 
+ * Revision 1.6  1992/06/22  23:04:42  chouck
+ * Removed calls to fork()
+ *
  * Revision 1.5  1992/06/02  15:40:41  chouck
  * Cleaned up output
  *
@@ -136,7 +140,7 @@ int main(argc, argv)
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
 
-    fid = Hopen(TESTFILE_NAME, DFACC_ALL, 0);
+    fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
     CHECK(fid, FAIL, "Hopen");
 
     ret = Hnewref(fid);
