@@ -230,6 +230,7 @@ int32 SDstart(name, HDFmode)
     int32  fid;
     intn   NCmode;
     NC   * handle;
+    struct stat tmp_stat;
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDstart: I've been called\n");
@@ -237,6 +238,10 @@ int32 SDstart(name, HDFmode)
 
     /* turn off annoying crash on error stuff */
     ncopts = 0;
+
+    /* if file doesn't exist, make it an HDF file and create it */
+    if(HDstat(name, &tmp_stat)==(-1)) 
+        HDFmode|=DFACC_CREATE;
 
     if(HDFmode & DFACC_WRITE)
         NCmode = NC_RDWR;
