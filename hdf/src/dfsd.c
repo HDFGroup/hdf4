@@ -2952,6 +2952,7 @@ intn DFSDIputndg(file_id, ref, sdg)
         Hendaccess(aid);
       }
     HDfreespace((VOIDP)Isscales);
+    Isscales = NULL;
     if (Ref.scales > 0)
         if (DFdiput(GroupID, DFTAG_SDS, (uint16) Ref.scales) < 0)
             return FAIL;
@@ -3569,7 +3570,7 @@ intn DFSDIclear(sdg)
         HDfreenclear(sdg->dimluf[luf]);
 
 	/* free data string */
-        HDfreespace(sdg->dataluf[luf]);
+        HDfreenclear(sdg->dataluf[luf]);
       }
 
     /* free scale pointers */
