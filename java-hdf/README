@@ -67,12 +67,6 @@ HDF 4.1r1 library, and the Java HDF Viewer application.
        JHV uses the Java Interface for HDF.  Thd JHV is a standalone
        application, it cannot be used as a network loadable applet.
 
-       The JHV consists of three parts (plus the Java HDF interface):
-           1.  Java classes for the appliation (windows, controls,
-               and so on.)
-           2.  A java package for 'palette' (look up table) manipulation.
-           3.  A small amount of C-code to support data conversion
-
   For more information, see the on-line documentation at:
 
      http://hdf.ncsa.uiuc.edu/java-hdf-html/
@@ -129,7 +123,7 @@ HDF 4.1r1 library, and the Java HDF Viewer application.
   not work with JDK 1.02.
 
   To obtain the latest version of Java, see the web pages at:
-
+       http://java.sun.com/products/jdk/1.1/ or
        http://java.sun.com/products/jdk/jdk-ports.html
 
 
@@ -164,17 +158,14 @@ HDF 4.1r1 library, and the Java HDF Viewer application.
 
 
      bin    -- the jhv invocation script
-     hdficons -- icons used for the jhv browser
-     lib    -- the directory for the compiled classes and native libraries
+     lib    -- the directory for the compiled classes, native libraries
+               and icons used for the jhv browser
      docs   -- the directory for the javadoc documentation pages
      samples -- some sample hdf files
-  
-     java   -- source for the java classes in java package 'java.*'
-               This includes several support classes for the jhv.
-     ncsa   -- source for the java classes in java package 'ncsa.hdf.*'
-               This includes the Java HDF interface (ncsa.hdf.hdflib),
-               palette manipulation classes (ncsa.hdf.palette), and
-               the Java HDF Viewer (JHV) (ncsa.hdf.jhv).
+     ncsa   -- source codes for the java class packages including ncsa.hdf.awt,
+               ncsa.hdf.hdflib, ncsa.hdf.io, ncsa.hdf.jhv, ncsa.hdf.message,
+               ncsa.hdf.server and ncsa.hdf.util. The details of these packages
+               are in the documentation pages.
      native -- source for the native (C) support for the java classes.
                This includes the Java HDF API (hdflib) and support
                for the jhv (jhvlib).

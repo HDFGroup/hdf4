@@ -65,8 +65,6 @@ CC=@CC@
 
 SLEXT=@SLEXT@
 COPT=@COPT@
-#SLEXT=so
-#COPT=-G
 
 HDFINC = @HDFINC@
 HDFLIB = @HDFLIB@
@@ -85,17 +83,23 @@ CLASSDIR=$(JHVINSTALLDIR)/lib/classes
 BINDIR=$(JHVINSTALLDIR)/bin
 DOCDIR= $(JHVINSTALLDIR)/docs
 
+
 PACKAGES = \
-	ncsa.hdf.layer \
-	ncsa.hdf.java.awt.image \
-	ncsa.hdf.java.util \
-	ncsa.hdf.palette \
-	ncsa.hdf.animation \
-	ncsa.hdf.plots \
-	ncsa.hdf.jhv \
 	ncsa.hdf.hdflib \
-	ncsa.hdf.java.awt \
-	ncsa.hdf.java.awt.event
+	ncsa.hdf.awt.image \
+	ncsa.hdf.util \
+	ncsa.hdf.util.decoder \
+	ncsa.hdf.message \
+	ncsa.hdf.server \
+	ncsa.hdf.awt.layer \
+	ncsa.hdf.jhv \
+	ncsa.hdf.io \
+	ncsa.hdf.awt.palette \
+	ncsa.hdf.awt.animation \
+	ncsa.hdf.util.encoder \
+	ncsa.hdf.awt \
+	ncsa.hdf.awt.event \
+	ncsa.hdf.awt.plots
 
 .SUFFIXES: .java .class
 
@@ -169,7 +173,6 @@ install-bin: bin/jhv
 	mkdir -p $(BINDIR);
 	cp bin/jhv $(BINDIR)/jhv;
 	chmod a+x $(BINDIR)/jhv;
-	cp bin/jhv.in $(BINDIR)/jhv.in;
 	mkdir -p $(JHVINSTALLDIR)/lib/hdficons;
 	cp lib/hdficons/*.gif $(JHVINSTALLDIR)/lib/hdficons;
 
@@ -208,14 +211,74 @@ jhvdist:
 dist: 
 	-mkdir -p ../$(distdir)/java-hdf;
 	@echo "Copy java file to distribution"
-	tar cf ../$(distdir)/java-hdf/tmp.tar $(TOP) native ncsa java;
+	tar cf ../$(distdir)/java-hdf/tmp.tar $(TOP) native ncsa;
 	cd ../$(distdir)/java-hdf; tar xf tmp.tar; rm tmp.tar;
 
 # --------
 # Packages
 # --------
 
+
+ncsa.hdf.awt: \
+	ncsa/hdf/awt/EasyConstrainsPanel.class \
+	ncsa/hdf/awt/Editor.class \
+	ncsa/hdf/awt/HostEditor.class \
+	ncsa/hdf/awt/HostList.class \
+	ncsa/hdf/awt/InfoDialog.class \
+	ncsa/hdf/awt/MultiLineLabel.class \
+	ncsa/hdf/awt/OutlinePanel.class \
+	ncsa/hdf/awt/ScrollingPanel.class \
+	ncsa/hdf/awt/Slider.class \
+	ncsa/hdf/awt/SliderEventMulticaster.class 
+
+ncsa.hdf.awt.animation: \
+	ncsa/hdf/awt/animation/AnimatedImageInfo.class \
+	ncsa/hdf/awt/animation/AnimatedImagePane.class \
+	ncsa/hdf/awt/animation/ImageAnimation.class 
+
+ncsa.hdf.awt.event: \
+	ncsa/hdf/awt/event/SliderEvent.class \
+	ncsa/hdf/awt/event/SliderListener.class 
+
+ncsa.hdf.awt.image: \
+	ncsa/hdf/awt/image/AlphaFilter.class \
+	ncsa/hdf/awt/image/BlurFilter.class \
+	ncsa/hdf/awt/image/BrightColorFilter.class \
+	ncsa/hdf/awt/image/ColorMaskFilter.class \
+	ncsa/hdf/awt/image/ColorModelFilter.class \
+	ncsa/hdf/awt/image/CompensateFilter.class \
+	ncsa/hdf/awt/image/ContourFilter.class \
+	ncsa/hdf/awt/image/ContrastColorFilter.class \
+	ncsa/hdf/awt/image/EdgeFilter.class \
+	ncsa/hdf/awt/image/EmbossFilter.class \
+	ncsa/hdf/awt/image/FlipFilter.class \
+	ncsa/hdf/awt/image/ImageColorModel.class \
+	ncsa/hdf/awt/image/NegativeFilter.class \
+	ncsa/hdf/awt/image/NoiseFilter.class \
+	ncsa/hdf/awt/image/PolarFilter.class \
+	ncsa/hdf/awt/image/RGBColorFilter.class \
+	ncsa/hdf/awt/image/RotateFilter.class \
+	ncsa/hdf/awt/image/SharpFilter.class 
+
+ncsa.hdf.awt.layer: \
+	ncsa/hdf/awt/layer/LayeredImage.class \
+	ncsa/hdf/awt/layer/LayeredImageInfo.class \
+	ncsa/hdf/awt/layer/LayeredImagePane.class 
+
+ncsa.hdf.awt.palette: \
+	ncsa/hdf/awt/palette/PaletteEditor.class \
+	ncsa/hdf/awt/palette/PaletteEditorAdapter.class \
+	ncsa/hdf/awt/palette/PalettePanel.class \
+	ncsa/hdf/awt/palette/RGBValues.class \
+	ncsa/hdf/awt/palette/SingleColorCanvas.class \
+	ncsa/hdf/awt/palette/PaletteCanvas.class
+
+ncsa.hdf.awt.plots: \
+	ncsa/hdf/awt/plots/XYPlot.class \
+	ncsa/hdf/awt/plots/XYPlotPane.class 
+
 ncsa.hdf.hdflib: \
+	ncsa/hdf/hdflib/HDFLibrary.class \
 	ncsa/hdf/hdflib/HDFArray.class \
 	ncsa/hdf/hdflib/HDFChunkInfo.class \
 	ncsa/hdf/hdflib/HDFCompChunkInfo.class \
@@ -228,10 +291,10 @@ ncsa.hdf.hdflib: \
 	ncsa/hdf/hdflib/HDFIMCOMPCompInfo.class \
 	ncsa/hdf/hdflib/HDFJPEGCompInfo.class \
 	ncsa/hdf/hdflib/HDFJavaException.class \
-	ncsa/hdf/hdflib/HDFLibrary.class \
 	ncsa/hdf/hdflib/HDFLibraryException.class \
 	ncsa/hdf/hdflib/HDFNBITChunkInfo.class \
 	ncsa/hdf/hdflib/HDFNBITCompInfo.class \
+	ncsa/hdf/hdflib/HDFTable.class \
 	ncsa/hdf/hdflib/HDFNativeData.class \
 	ncsa/hdf/hdflib/HDFNewCompInfo.class \
 	ncsa/hdf/hdflib/HDFNotImplementedException.class \
@@ -239,21 +302,24 @@ ncsa.hdf.hdflib: \
 	ncsa/hdf/hdflib/HDFOldRLECompInfo.class \
 	ncsa/hdf/hdflib/HDFOnlyChunkInfo.class \
 	ncsa/hdf/hdflib/HDFRLECompInfo.class \
-	ncsa/hdf/hdflib/HDFSKPHUFFCompInfo.class \
-	ncsa/hdf/hdflib/HDFTable.class 
+	ncsa/hdf/hdflib/HDFSKPHUFFCompInfo.class 
+
+ncsa.hdf.io: \
+	ncsa/hdf/io/ASCIIWriter.class \
+	ncsa/hdf/io/HDFWriter.class \
+	ncsa/hdf/io/TestVdata.class 
 
 ncsa.hdf.jhv: \
-	ncsa/hdf/jhv/HDFAnalyse.class \
-	ncsa/hdf/jhv/HDFObjectNode.class \
 	ncsa/hdf/jhv/HDFTree.class \
+	ncsa/hdf/jhv/ImageDataConverter.class \
 	ncsa/hdf/jhv/ImageFrame.class \
 	ncsa/hdf/jhv/JHV.class \
 	ncsa/hdf/jhv/JHVCanvas.class \
-	ncsa/hdf/jhv/JHVDataFrame.class \
+	ncsa/hdf/jhv/JHVImageAnimation.class \
 	ncsa/hdf/jhv/JHVImageBCControl.class \
-	ncsa/hdf/jhv/JHVImageCanvas.class \
 	ncsa/hdf/jhv/JHVImageFrame.class \
 	ncsa/hdf/jhv/JHVImageRGBControl.class \
+	ncsa/hdf/jhv/JHVLayeredImage.class \
 	ncsa/hdf/jhv/JHVSDSImageControl.class \
 	ncsa/hdf/jhv/JHVVdataCanvas.class \
 	ncsa/hdf/jhv/JHVVdataFrame.class \
@@ -261,71 +327,102 @@ ncsa.hdf.jhv: \
 	ncsa/hdf/jhv/JHVVdataPlotFrame.class \
 	ncsa/hdf/jhv/JHVVdataRangeCanvas.class \
 	ncsa/hdf/jhv/JHVWindowAdapter.class \
+	ncsa/hdf/jhv/RemoteFileDialog.class \
+	ncsa/hdf/jhv/SDSDimInfo.class \
+	ncsa/hdf/jhv/SliceSelection.class \
 	ncsa/hdf/jhv/TreeNode.class \
 	ncsa/hdf/jhv/WindowClosedProcess.class \
-	ncsa/hdf/jhv/JHVLayeredImage.class \
-	ncsa/hdf/jhv/JHVImageAnimation.class \
-	ncsa/hdf/jhv/ImageDataConverter.class 
+	ncsa/hdf/jhv/JHVDataFrame.class \
+	ncsa/hdf/jhv/JHVImageCanvas.class
 
-ncsa.hdf.palette: \
-	ncsa/hdf/palette/PaletteCanvas.class \
-	ncsa/hdf/palette/PaletteEditor.class \
-	ncsa/hdf/palette/PaletteEditorAdapter.class \
-	ncsa/hdf/palette/PalettePanel.class \
-	ncsa/hdf/palette/RGBValues.class \
-	ncsa/hdf/palette/SingleColorCanvas.class 
+ncsa.hdf.message: \
+	ncsa/hdf/message/HDFAnalyse.class \
+	ncsa/hdf/message/HDFAnnotation.class \
+	ncsa/hdf/message/HDFFileList.class \
+	ncsa/hdf/message/HDFGR.class \
+	ncsa/hdf/message/HDFHierarchy.class \
+	ncsa/hdf/message/HDFMessage.class \
+	ncsa/hdf/message/HDFObject.class \
+	ncsa/hdf/message/HDFObjectNode.class \
+	ncsa/hdf/message/HDFRIS24.class \
+	ncsa/hdf/message/HDFRIS8.class \
+	ncsa/hdf/message/HDFSDS.class \
+	ncsa/hdf/message/HDFVdata.class \
+	ncsa/hdf/message/HDFVgroup.class \
+	ncsa/hdf/message/Messageable.class 
 
-ncsa.hdf.layer: \
-	ncsa/hdf/layer/LayeredImage.class \
-	ncsa/hdf/layer/LayeredImageInfo.class \
-	ncsa/hdf/layer/LayeredImagePane.class 
 
-ncsa.hdf.animation: \
-	ncsa/hdf/animation/ImageAnimation.class \
-	ncsa/hdf/animation/AnimatedImageInfo.class \
-	ncsa/hdf/animation/AnimatedImagePane.class 
+ncsa.hdf.server: \
+	@SERVERCLASSES@ \
+	ncsa/hdf/server/HDFServerConnection.class \
+	ncsa/hdf/server/HDFServer_njsdk.class 
 
-ncsa.hdf.java.awt: \
-	ncsa/hdf/java/awt/ScrollingPanel.class \
-	ncsa/hdf/java/awt/Slider.class \
-	ncsa/hdf/java/awt/SliderEventMulticaster.class 
+# ncsa/hdf/server/FileServlet.class \
+#	ncsa/hdf/server/HDFServer.class \
 
-ncsa.hdf.java.awt.event: \
-	ncsa/hdf/java/awt/event/SliderEvent.class \
-	ncsa/hdf/java/awt/event/SliderListener.class 
+ncsa.hdf.util: \
+	ncsa/hdf/util/IntHashtable.class \
+	ncsa/hdf/util/Queue.class \
+	ncsa/hdf/util/Tools.class 
 
-ncsa.hdf.java.awt.image: \
-	ncsa/hdf/java/awt/image/AlphaFilter.class \
-	ncsa/hdf/java/awt/image/BlurFilter.class \
-	ncsa/hdf/java/awt/image/BrightColorFilter.class \
-	ncsa/hdf/java/awt/image/ColorMaskFilter.class \
-	ncsa/hdf/java/awt/image/ColorModelFilter.class \
-	ncsa/hdf/java/awt/image/CompensateFilter.class \
-	ncsa/hdf/java/awt/image/ContourFilter.class \
-	ncsa/hdf/java/awt/image/ContrastColorFilter.class \
-	ncsa/hdf/java/awt/image/EdgeFilter.class \
-	ncsa/hdf/java/awt/image/EmbossFilter.class \
-	ncsa/hdf/java/awt/image/FlipFilter.class \
-	ncsa/hdf/java/awt/image/ImageColorModel.class \
-	ncsa/hdf/java/awt/image/NegativeFilter.class \
-	ncsa/hdf/java/awt/image/NoiseFilter.class \
-	ncsa/hdf/java/awt/image/PolarFilter.class \
-	ncsa/hdf/java/awt/image/RGBColorFilter.class \
-	ncsa/hdf/java/awt/image/RotateFilter.class \
-	ncsa/hdf/java/awt/image/SharpFilter.class 
+ncsa.hdf.util.decoder: \
+	ncsa/hdf/util/decoder/Base64Decoder.class \
+	ncsa/hdf/util/decoder/ImageDecoder.class 
 
-ncsa.hdf.java.util: \
-	ncsa/hdf/java/util/Queue.class 
-
-ncsa.hdf.plots: \
-	ncsa/hdf/plots/XYPlot.class \
-	ncsa/hdf/plots/XYPlotPane.class 
+ncsa.hdf.util.encoder: \
+	ncsa/hdf/util/encoder/Base64Encoder.class \
+	ncsa/hdf/util/encoder/GifEncoder.class \
+	ncsa/hdf/util/encoder/ImageEncoder.class
 
 
 # --------------
 # Single targets
 # --------------
 
+EasyConstrainsPanel:	ncsa/hdf/awt/EasyConstrainsPanel.class
+Editor:	ncsa/hdf/awt/Editor.class
+HostEditor:	ncsa/hdf/awt/HostEditor.class
+HostList:	ncsa/hdf/awt/HostList.class
+InfoDialog:	ncsa/hdf/awt/InfoDialog.class
+MultiLineLabel:	ncsa/hdf/awt/MultiLineLabel.class
+OutlinePanel:	ncsa/hdf/awt/OutlinePanel.class
+ScrollingPanel:	ncsa/hdf/awt/ScrollingPanel.class
+Slider:	ncsa/hdf/awt/Slider.class
+SliderEventMulticaster:	ncsa/hdf/awt/SliderEventMulticaster.class
+AnimatedImageInfo:	ncsa/hdf/awt/animation/AnimatedImageInfo.class
+AnimatedImagePane:	ncsa/hdf/awt/animation/AnimatedImagePane.class
+ImageAnimation:	ncsa/hdf/awt/animation/ImageAnimation.class
+SliderEvent:	ncsa/hdf/awt/event/SliderEvent.class
+SliderListener:	ncsa/hdf/awt/event/SliderListener.class
+AlphaFilter:	ncsa/hdf/awt/image/AlphaFilter.class
+BlurFilter:	ncsa/hdf/awt/image/BlurFilter.class
+BrightColorFilter:	ncsa/hdf/awt/image/BrightColorFilter.class
+ColorMaskFilter:	ncsa/hdf/awt/image/ColorMaskFilter.class
+ColorModelFilter:	ncsa/hdf/awt/image/ColorModelFilter.class
+CompensateFilter:	ncsa/hdf/awt/image/CompensateFilter.class
+ContourFilter:	ncsa/hdf/awt/image/ContourFilter.class
+ContrastColorFilter:	ncsa/hdf/awt/image/ContrastColorFilter.class
+EdgeFilter:	ncsa/hdf/awt/image/EdgeFilter.class
+EmbossFilter:	ncsa/hdf/awt/image/EmbossFilter.class
+FlipFilter:	ncsa/hdf/awt/image/FlipFilter.class
+ImageColorModel:	ncsa/hdf/awt/image/ImageColorModel.class
+NegativeFilter:	ncsa/hdf/awt/image/NegativeFilter.class
+NoiseFilter:	ncsa/hdf/awt/image/NoiseFilter.class
+PolarFilter:	ncsa/hdf/awt/image/PolarFilter.class
+RGBColorFilter:	ncsa/hdf/awt/image/RGBColorFilter.class
+RotateFilter:	ncsa/hdf/awt/image/RotateFilter.class
+SharpFilter:	ncsa/hdf/awt/image/SharpFilter.class
+LayeredImage:	ncsa/hdf/awt/layer/LayeredImage.class
+LayeredImageInfo:	ncsa/hdf/awt/layer/LayeredImageInfo.class
+LayeredImagePane:	ncsa/hdf/awt/layer/LayeredImagePane.class
+PaletteEditor:	ncsa/hdf/awt/palette/PaletteEditor.class
+PaletteEditorAdapter:	ncsa/hdf/awt/palette/PaletteEditorAdapter.class
+PalettePanel:	ncsa/hdf/awt/palette/PalettePanel.class
+RGBValues:	ncsa/hdf/awt/palette/RGBValues.class
+PaletteCanvas:  ncsa/hdf/awt/palette/PaletteCanvas.class
+SingleColorCanvas:	ncsa/hdf/awt/palette/SingleColorCanvas.class
+XYPlot:	ncsa/hdf/awt/plots/XYPlot.class
+XYPlotPane:	ncsa/hdf/awt/plots/XYPlotPane.class
 HDFArray:	ncsa/hdf/hdflib/HDFArray.class
 HDFChunkInfo:	ncsa/hdf/hdflib/HDFChunkInfo.class
 HDFCompChunkInfo:	ncsa/hdf/hdflib/HDFCompChunkInfo.class
@@ -338,10 +435,11 @@ HDFException:	ncsa/hdf/hdflib/HDFException.class
 HDFIMCOMPCompInfo:	ncsa/hdf/hdflib/HDFIMCOMPCompInfo.class
 HDFJPEGCompInfo:	ncsa/hdf/hdflib/HDFJPEGCompInfo.class
 HDFJavaException:	ncsa/hdf/hdflib/HDFJavaException.class
-HDFLibrary:	ncsa/hdf/hdflib/HDFLibrary.class
 HDFLibraryException:	ncsa/hdf/hdflib/HDFLibraryException.class
+HDFLibrary:	ncsa/hdf/hdflib/HDFLibrary.class
 HDFNBITChunkInfo:	ncsa/hdf/hdflib/HDFNBITChunkInfo.class
 HDFNBITCompInfo:	ncsa/hdf/hdflib/HDFNBITCompInfo.class
+HDFTable:	ncsa/hdf/hdflib/HDFTable.class
 HDFNativeData:	ncsa/hdf/hdflib/HDFNativeData.class
 HDFNewCompInfo:	ncsa/hdf/hdflib/HDFNewCompInfo.class
 HDFNotImplementedException:	ncsa/hdf/hdflib/HDFNotImplementedException.class
@@ -350,18 +448,20 @@ HDFOldRLECompInfo:	ncsa/hdf/hdflib/HDFOldRLECompInfo.class
 HDFOnlyChunkInfo:	ncsa/hdf/hdflib/HDFOnlyChunkInfo.class
 HDFRLECompInfo:	ncsa/hdf/hdflib/HDFRLECompInfo.class
 HDFSKPHUFFCompInfo:	ncsa/hdf/hdflib/HDFSKPHUFFCompInfo.class
-HDFTable:	ncsa/hdf/hdflib/HDFTable.class
-HDFAnalyse:	ncsa/hdf/jhv/HDFAnalyse.class
-HDFObjectNode:	ncsa/hdf/jhv/HDFObjectNode.class
+ASCIIWriter:	ncsa/hdf/io/ASCIIWriter.class
+HDFWriter:	ncsa/hdf/io/HDFWriter.class
+TestVdata:	ncsa/hdf/io/TestVdata.class
 HDFTree:	ncsa/hdf/jhv/HDFTree.class
+HDFTreeNode:	ncsa/hdf/jhv/HDFTreeNode.class
+ImageDataConverter:	ncsa/hdf/jhv/ImageDataConverter.class
 ImageFrame:	ncsa/hdf/jhv/ImageFrame.class
 JHV:	ncsa/hdf/jhv/JHV.class
 JHVCanvas:	ncsa/hdf/jhv/JHVCanvas.class
-JHVDataFrame:	ncsa/hdf/jhv/JHVDataFrame.class
+JHVImageAnimation:	ncsa/hdf/jhv/JHVImageAnimation.class
 JHVImageBCControl:	ncsa/hdf/jhv/JHVImageBCControl.class
-JHVImageCanvas:	ncsa/hdf/jhv/JHVImageCanvas.class
 JHVImageFrame:	ncsa/hdf/jhv/JHVImageFrame.class
 JHVImageRGBControl:	ncsa/hdf/jhv/JHVImageRGBControl.class
+JHVLayeredImage:	ncsa/hdf/jhv/JHVLayeredImage.class
 JHVSDSImageControl:	ncsa/hdf/jhv/JHVSDSImageControl.class
 JHVVdataCanvas:	ncsa/hdf/jhv/JHVVdataCanvas.class
 JHVVdataFrame:	ncsa/hdf/jhv/JHVVdataFrame.class
@@ -369,49 +469,38 @@ JHVVdataPlot:	ncsa/hdf/jhv/JHVVdataPlot.class
 JHVVdataPlotFrame:	ncsa/hdf/jhv/JHVVdataPlotFrame.class
 JHVVdataRangeCanvas:	ncsa/hdf/jhv/JHVVdataRangeCanvas.class
 JHVWindowAdapter:	ncsa/hdf/jhv/JHVWindowAdapter.class
-TreeNode:	ncsa/hdf/jhv/TreeNode.class
+JHVDataFrame:	ncsa/hdf/jhv/JHVDataFrame.class
+JHVImageCanvas:	ncsa/hdf/jhv/JHVImageCanvas.class
+RemoteFileDialog:	ncsa/hdf/jhv/RemoteFileDialog.class
+SDSDimInfo:	ncsa/hdf/jhv/SDSDimInfo.class
+SliceSelection:	ncsa/hdf/jhv/SliceSelection.class
 WindowClosedProcess:	ncsa/hdf/jhv/WindowClosedProcess.class
-JHVLayeredImage:	ncsa/hdf/jhv/JHVLayeredImage.class
-JHVImageAnimation:	ncsa/hdf/jhv/JHVImageAnimation.class
-ImageDataConverter:	ncsa/hdf/jhv/ImageDataConverter.class
-PaletteCanvas:	ncsa/hdf/palette/PaletteCanvas.class
-PaletteEditor:	ncsa/hdf/palette/PaletteEditor.class
-PaletteEditorAdapter:	ncsa/hdf/palette/PaletteEditorAdapter.class
-PalettePanel:	ncsa/hdf/palette/PalettePanel.class
-RGBValues:	ncsa/hdf/palette/RGBValues.class
-SingleColorCanvas:	ncsa/hdf/palette/SingleColorCanvas.class
-LayeredImage:	ncsa/hdf/layer/LayeredImage.class
-LayeredImageInfo:	ncsa/hdf/layer/LayeredImageInfo.class
-LayeredImagePane:	ncsa/hdf/layer/LayeredImagePane.class
-ImageAnimation:	ncsa/hdf/animation/ImageAnimation.class
-AnimatedImageInfo:	ncsa/hdf/animation/AnimatedImageInfo.class
-AnimatedImagePane:	ncsa/hdf/animation/AnimatedImagePane.class
-ScrollingPanel:	ncsa/hdf/java/awt/ScrollingPanel.class
-Slider:	ncsa/hdf/java/awt/Slider.class
-SliderEventMulticaster:	ncsa/hdf/java/awt/SliderEventMulticaster.class
-SliderEvent:	ncsa/hdf/java/awt/event/SliderEvent.class
-SliderListener:	ncsa/hdf/java/awt/event/SliderListener.class
-AlphaFilter:	ncsa/hdf/java/awt/image/AlphaFilter.class
-BlurFilter:	ncsa/hdf/java/awt/image/BlurFilter.class
-BrightColorFilter:	ncsa/hdf/java/awt/image/BrightColorFilter.class
-ColorMaskFilter:	ncsa/hdf/java/awt/image/ColorMaskFilter.class
-ColorModelFilter:	ncsa/hdf/java/awt/image/ColorModelFilter.class
-CompensateFilter:	ncsa/hdf/java/awt/image/CompensateFilter.class
-ContourFilter:	ncsa/hdf/java/awt/image/ContourFilter.class
-ContrastColorFilter:	ncsa/hdf/java/awt/image/ContrastColorFilter.class
-EdgeFilter:	ncsa/hdf/java/awt/image/EdgeFilter.class
-EmbossFilter:	ncsa/hdf/java/awt/image/EmbossFilter.class
-FlipFilter:	ncsa/hdf/java/awt/image/FlipFilter.class
-ImageColorModel:	ncsa/hdf/java/awt/image/ImageColorModel.class
-NegativeFilter:	ncsa/hdf/java/awt/image/NegativeFilter.class
-NoiseFilter:	ncsa/hdf/java/awt/image/NoiseFilter.class
-PolarFilter:	ncsa/hdf/java/awt/image/PolarFilter.class
-RGBColorFilter:	ncsa/hdf/java/awt/image/RGBColorFilter.class
-RotateFilter:	ncsa/hdf/java/awt/image/RotateFilter.class
-SharpFilter:	ncsa/hdf/java/awt/image/SharpFilter.class
-Queue:		ncsa/hdf/java/util/Queue.class
-XYPlot:		ncsa/hdf/plots/XYPlot.class
-XYPlotPane:	ncsa/hdf/plots/XYPlotPane.class
+HDFAnalyse:	ncsa/hdf/message/HDFAnalyse.class
+HDFAnnotation:	ncsa/hdf/message/HDFAnnotation.class
+HDFFileList:	ncsa/hdf/message/HDFFileList.class
+HDFGR:	ncsa/hdf/message/HDFGR.class
+HDFHierarchy:	ncsa/hdf/message/HDFHierarchy.class
+HDFMessage:	ncsa/hdf/message/HDFMessage.class
+HDFObject:	ncsa/hdf/message/HDFObject.class
+HDFObjectNode:	ncsa/hdf/message/HDFObjectNode.class
+HDFRIS24:	ncsa/hdf/message/HDFRIS24.class
+HDFRIS8:	ncsa/hdf/message/HDFRIS8.class
+HDFSDS:	ncsa/hdf/message/HDFSDS.class
+HDFVdata:	ncsa/hdf/message/HDFVdata.class
+HDFVgroup:	ncsa/hdf/message/HDFVgroup.class
+Messageable:	ncsa/hdf/message/Messageable.class
+#FileServlet:	ncsa/hdf/server/FileServlet.class
+#HDFServer:	ncsa/hdf/server/HDFServer.class
+HDFServerConnection:	ncsa/hdf/server/HDFServerConnection.class
+HDFServer_njsdk:	ncsa/hdf/server/HDFServer_njsdk.class
+IntHashtable:	ncsa/hdf/util/IntHashtable.class
+Queue:	ncsa/hdf/util/Queue.class
+Tools:	ncsa/hdf/util/Tools.class
+Base64Decoder:	ncsa/hdf/util/decoder/Base64Decoder.class
+ImageDecoder:	ncsa/hdf/util/decoder/ImageDecoder.class
+Base64Encoder:	ncsa/hdf/util/encoder/Base64Encoder.class
+GifEncoder:	ncsa/hdf/util/encoder/GifEncoder.class
+ImageEncoder:	ncsa/hdf/util/encoder/ImageEncoder.class
 
 TOP= ./COPYING ./bin ./lib ./docs ./hdficons ./Makefile.in ./configure.in ./Config ./configure
 
@@ -440,46 +529,68 @@ SRCFILES= \
 ./native/hdflib/hdfvhImp.c \
 ./native/hdflib/hdfvqImp.c \
 ./native/hdflib/hdfvsqImp.c \
-./native/hdflib/hdfstructsutil.c \
-./native/hdflib/hdfexceptionImp.c \
-./ncsa/hdf/jhv/HDFTree.java \
-./ncsa/hdf/jhv/ImageFrame.java \
-./ncsa/hdf/jhv/JHVImageBCControl.java \
-./ncsa/hdf/jhv/JHVImageRGBControl.java \
-./ncsa/hdf/jhv/JHVSDSImageControl.java \
-./ncsa/hdf/jhv/ImageDataConverter.java  \
-./ncsa/hdf/jhv/TreeNode.java \
-./ncsa/hdf/jhv/HDFObjectNode.java \
-./ncsa/hdf/jhv/HDFAnalyse.java \
-./ncsa/hdf/jhv/JHVImageAnimation.java	\
-./ncsa/hdf/jhv/JHVLayeredImage.java	\
-./ncsa/hdf/jhv/JHV.java \
-./ncsa/hdf/jhv/JHVDataFrame.java \
-./ncsa/hdf/jhv/JHVImageCanvas.java \
-./ncsa/hdf/jhv/JHVImageFrame.java \
-./ncsa/hdf/jhv/JHVVdataFrame.java \
-./ncsa/hdf/jhv/JHVVdataPlot.java \
-./ncsa/hdf/jhv/JHVVdataPlotFrame.java \
-./ncsa/hdf/jhv/JHVVdataRangeCanvas.java \
-./ncsa/hdf/jhv/JHVVdataCanvas.java \
-./ncsa/hdf/jhv/JHVCanvas.java \
-./ncsa/hdf/jhv/JHVWindowAdapter.java \
-./ncsa/hdf/jhv/WindowClosedProcess.java \
-./ncsa/hdf/hdflib/HDFLibrary.java \
+./ncsa/hdf/awt/EasyConstrainsPanel.java \
+./ncsa/hdf/awt/Editor.java \
+./ncsa/hdf/awt/HostEditor.java \
+./ncsa/hdf/awt/HostList.java \
+./ncsa/hdf/awt/InfoDialog.java \
+./ncsa/hdf/awt/MultiLineLabel.java \
+./ncsa/hdf/awt/OutlinePanel.java \
+./ncsa/hdf/awt/ScrollingPanel.java \
+./ncsa/hdf/awt/Slider.java \
+./ncsa/hdf/awt/SliderEventMulticaster.java  \
+./ncsa/hdf/awt/animation/AnimatedImageInfo.java \
+./ncsa/hdf/awt/animation/AnimatedImagePane.java \
+./ncsa/hdf/awt/animation/ImageAnimation.java \
+./ncsa/hdf/awt/event/SliderEvent.java \
+./ncsa/hdf/awt/event/SliderListener.java \
+./ncsa/hdf/awt/image/AlphaFilter.java \
+./ncsa/hdf/awt/image/BlurFilter.java \
+./ncsa/hdf/awt/image/BrightColorFilter.java \
+./ncsa/hdf/awt/image/ColorMaskFilter.java \
+./ncsa/hdf/awt/image/ColorModelFilter.java \
+./ncsa/hdf/awt/image/CompensateFilter.java \
+./ncsa/hdf/awt/image/ContourFilter.java \
+./ncsa/hdf/awt/image/ContrastColorFilter.java \
+./ncsa/hdf/awt/image/EdgeFilter.java \
+./ncsa/hdf/awt/image/EmbossFilter.java \
+./ncsa/hdf/awt/image/FlipFilter.java \
+./ncsa/hdf/awt/image/ImageColorModel.java \
+./ncsa/hdf/awt/image/NegativeFilter.java \
+./ncsa/hdf/awt/image/NoiseFilter.java \
+./ncsa/hdf/awt/image/PolarFilter.java \
+./ncsa/hdf/awt/image/RGBColorFilter.java \
+./ncsa/hdf/awt/image/RotateFilter.java \
+./ncsa/hdf/awt/image/SharpFilter.java \
+./ncsa/hdf/awt/layer/LayeredImage.java \
+./ncsa/hdf/awt/layer/LayeredImageInfo.java \
+./ncsa/hdf/awt/layer/LayeredImagePane.java \
+./ncsa/hdf/awt/palette/PaletteEditor.java \
+./ncsa/hdf/awt/palette/PaletteEditorAdapter.java \
+./ncsa/hdf/awt/palette/PalettePanel.java \
+./ncsa/hdf/awt/palette/RGBValues.java \
+./ncsa/hdf/awt/palette/SingleColorCanvas.java \
+./ncsa/hdf/awt/palette/PaletteCanvas.java \
+./ncsa/hdf/awt/plots/XYPlot.java \
+./ncsa/hdf/awt/plots/XYPlotPane.java \
 ./ncsa/hdf/hdflib/HDFArray.java \
 ./ncsa/hdf/hdflib/HDFChunkInfo.java \
-./ncsa/hdf/hdflib/HDFConstants.java \
 ./ncsa/hdf/hdflib/HDFCompChunkInfo.java \
 ./ncsa/hdf/hdflib/HDFCompInfo.java \
 ./ncsa/hdf/hdflib/HDFCompModel.java \
+./ncsa/hdf/hdflib/HDFConstants.java \
 ./ncsa/hdf/hdflib/HDFDeflateCompInfo.java \
+./ncsa/hdf/hdflib/HDFDeprecated.java \
 ./ncsa/hdf/hdflib/HDFException.java \
 ./ncsa/hdf/hdflib/HDFIMCOMPCompInfo.java \
 ./ncsa/hdf/hdflib/HDFJPEGCompInfo.java \
 ./ncsa/hdf/hdflib/HDFJavaException.java \
+./ncsa/hdf/hdflib/HDFLibrary.java \
 ./ncsa/hdf/hdflib/HDFLibraryException.java \
 ./ncsa/hdf/hdflib/HDFNBITChunkInfo.java \
 ./ncsa/hdf/hdflib/HDFNBITCompInfo.java \
+./ncsa/hdf/hdflib/HDFTable.java \
+./ncsa/hdf/hdflib/HDFNativeData.java \
 ./ncsa/hdf/hdflib/HDFNewCompInfo.java \
 ./ncsa/hdf/hdflib/HDFNotImplementedException.java \
 ./ncsa/hdf/hdflib/HDFOldCompInfo.java \
@@ -487,47 +598,59 @@ SRCFILES= \
 ./ncsa/hdf/hdflib/HDFOnlyChunkInfo.java \
 ./ncsa/hdf/hdflib/HDFRLECompInfo.java \
 ./ncsa/hdf/hdflib/HDFSKPHUFFCompInfo.java \
-./ncsa/hdf/hdflib/HDFTable.java \
-./ncsa/hdf/hdflib/HDFDeprecated.java \
-./ncsa/hdf/hdflib/HDFNativeData.java \
-./ncsa/hdf/palette/PaletteCanvas.java \
-./ncsa/hdf/palette/SingleColorCanvas.java \
-./ncsa/hdf/palette/RGBValues.java \
-./ncsa/hdf/palette/PalettePanel.java	\
-./ncsa/hdf/palette/PaletteEditor.java \
-./ncsa/hdf/palette/PaletteEditorAdapter.java \
-./ncsa/hdf/layer/LayeredImage.java \
-./ncsa/hdf/layer/LayeredImageInfo.java \
-./ncsa/hdf/layer/LayeredImagePane.java \
-./ncsa/hdf/plots/XYPlot.java \
-./ncsa/hdf/plots/XYPlotPane.java	\
-./ncsa/hdf/java/awt/ScrollingPanel.java \
-./ncsa/hdf/java/awt/Slider.java \
-./ncsa/hdf/java/awt/SliderEventMulticaster.java	\
-./ncsa/hdf/java/awt/event/SliderListener.java	\
-./ncsa/hdf/java/awt/event/SliderEvent.java	\
-./ncsa/hdf/java/awt/image/AlphaFilter.java	\
-./ncsa/hdf/java/awt/image/BlurFilter.java \
-./ncsa/hdf/java/awt/image/BorderFilter.java \
-./ncsa/hdf/java/awt/image/BrightColorFilter.java \
-./ncsa/hdf/java/awt/image/ColorMaskFilter.java \
-./ncsa/hdf/java/awt/image/ColorModelFilter.java \
-./ncsa/hdf/java/awt/image/ContourFilter.java \
-./ncsa/hdf/java/awt/image/ContrastColorFilter.java \
-./ncsa/hdf/java/awt/image/EdgeFilter.java \
-./ncsa/hdf/java/awt/image/EmbossFilter.java \
-./ncsa/hdf/java/awt/image/FlipFilter.java \
-./ncsa/hdf/java/awt/image/ImageColorModel.java \
-./ncsa/hdf/java/awt/image/NegativeFilter.java \
-./ncsa/hdf/java/awt/image/NoiseFilter.java \
-./ncsa/hdf/java/awt/image/PolarFilter.java \
-./ncsa/hdf/java/awt/image/RGBColorFilter.java \
-./ncsa/hdf/java/awt/image/RotateFilter.java \
-./ncsa/hdf/java/awt/image/SharpFilter.java  \
-./ncsa/hdf/java/util/Queue.java \
-./ncsa/hdf/animation/AnimatedImagePane.java \
-./ncsa/hdf/animation/ImageAnimation.java \
-./ncsa/hdf/animation/AnimatedImageInfo.java \
+./ncsa/hdf/io/ASCIIWriter.java \
+./ncsa/hdf/io/HDFWriter.java \
+./ncsa/hdf/io/TestVdata.java \
+./ncsa/hdf/jhv/HDFTree.java \
+./ncsa/hdf/jhv/ImageDataConverter.java \
+./ncsa/hdf/jhv/ImageFrame.java \
+./ncsa/hdf/jhv/JHV.java \
+./ncsa/hdf/jhv/JHVCanvas.java \
+./ncsa/hdf/jhv/JHVImageAnimation.java \
+./ncsa/hdf/jhv/JHVImageBCControl.java \
+./ncsa/hdf/jhv/JHVImageFrame.java \
+./ncsa/hdf/jhv/JHVImageRGBControl.java \
+./ncsa/hdf/jhv/JHVLayeredImage.java \
+./ncsa/hdf/jhv/JHVSDSImageControl.java \
+./ncsa/hdf/jhv/JHVVdataCanvas.java \
+./ncsa/hdf/jhv/JHVVdataFrame.java \
+./ncsa/hdf/jhv/JHVVdataPlot.java \
+./ncsa/hdf/jhv/JHVVdataPlotFrame.java \
+./ncsa/hdf/jhv/JHVVdataRangeCanvas.java \
+./ncsa/hdf/jhv/JHVWindowAdapter.java \
+./ncsa/hdf/jhv/RemoteFileDialog.java \
+./ncsa/hdf/jhv/SDSDimInfo.java \
+./ncsa/hdf/jhv/SliceSelection.java \
+./ncsa/hdf/jhv/TreeNode.java \
+./ncsa/hdf/jhv/WindowClosedProcess.java \
+./ncsa/hdf/jhv/JHVDataFrame.java \
+./ncsa/hdf/jhv/JHVImageCanvas.java \
+./ncsa/hdf/message/HDFAnalyse.java \
+./ncsa/hdf/message/HDFAnnotation.java \
+./ncsa/hdf/message/HDFFileList.java \
+./ncsa/hdf/message/HDFGR.java \
+./ncsa/hdf/message/HDFHierarchy.java \
+./ncsa/hdf/message/HDFMessage.java \
+./ncsa/hdf/message/HDFObject.java \
+./ncsa/hdf/message/HDFObjectNode.java \
+./ncsa/hdf/message/HDFRIS24.java \
+./ncsa/hdf/message/HDFRIS8.java \
+./ncsa/hdf/message/HDFSDS.java \
+./ncsa/hdf/message/HDFVdata.java \
+./ncsa/hdf/message/HDFVgroup.java \
+./ncsa/hdf/message/Messageable.java \
+./ncsa/hdf/server/FileServlet.java \
+./ncsa/hdf/server/HDFServer.java \
+./ncsa/hdf/server/HDFServerConnection.java \
+./ncsa/hdf/server/HDFServer_njsdk.java \
+./ncsa/hdf/util/IntHashtable.java \
+./ncsa/hdf/util/Queue.java \
+./ncsa/hdf/util/Tools.java \
+./ncsa/hdf/util/decoder/Base64Decoder.java \
+./ncsa/hdf/util/decoder/ImageDecoder.java \
+./ncsa/hdf/util/encoder/Base64Encoder.java \
+./ncsa/hdf/util/encoder/GifEncoder.java \
+./ncsa/hdf/util/encoder/ImageEncoder.java \
 ./native/Makefile.in \
 ./native/hdflib/Makefile.in \
 ./Makefile.in \
@@ -537,102 +660,155 @@ SRCFILES= \
 ./Config/config.sub \
 ./configure
 
+#
+#  All classes that are built, including private classes
+#
 
-CLASSES= ./ncsa/hdf/jhv/HDFTree.class \
-./ncsa/hdf/jhv/ImageDataConverter.class  \
-./ncsa/hdf/jhv/TreeNode.class \
-./ncsa/hdf/jhv/ImageCanvas.class \
-./ncsa/hdf/jhv/ImageFrame.class \
-./ncsa/hdf/jhv/JHVDataFrame.class \
-./ncsa/hdf/jhv/JHVDataCanvas.class \
-./ncsa/hdf/jhv/JHVDataRangeCanvas.class \
-./ncsa/hdf/jhv/JHVImageFrame.class \
-./ncsa/hdf/jhv/JHVImageCanvas.class \
-./ncsa/hdf/jhv/WindowClosedProcess.class \
-./ncsa/hdf/jhv/JHV\$$1.class \
-./ncsa/hdf/jhv/JHV.class \
-./ncsa/hdf/jhv/HDFTreeNode.class \
-./ncsa/hdf/jhv/HDFObjectNode.class \
-./ncsa/hdf/jhv/JHVCanvas.class \
-./ncsa/hdf/jhv/JHVSDSImageControl.class \
-./ncsa/hdf/jhv/JHVImageRGBControl.class \
-./ncsa/hdf/jhv/JHVImageBCControl.class \
-./ncsa/hdf/jhv/JHVVdataFrame.class \
-./ncsa/hdf/jhv/HDFAnalyse.class \
-./ncsa/hdf/jhv/JHVVdataCanvas.class \
-./ncsa/hdf/jhv/JHVVdataRangeCanvas.class \
-./ncsa/hdf/jhv/JHVWindowAdapter.class \
-./ncsa/hdf/jhv/JHVVdataPlot.class \
-./ncsa/hdf/jhv/JHVVdataPlotFrame.class \
-./ncsa/hdf/jhv/JHVVdataPlotCanvas.class \
-./ncsa/hdf/hdflib/HDFException.class \
-./ncsa/hdf/hdflib/HDFNativeData.class \
+CLASSES= ./ncsa/hdf/awt/animation/ImageAnimation.class \
+./ncsa/hdf/awt/animation/ImageAnimation\$$AnimatedWindowClosedProcess.class \
+./ncsa/hdf/awt/animation/AnimatedImagePane.class \
+./ncsa/hdf/awt/animation/AnimatedImageInfo.class \
+./ncsa/hdf/awt/event/SliderListener.class \
+./ncsa/hdf/awt/event/SliderEvent.class \
+./ncsa/hdf/awt/image/AlphaFilter.class \
+./ncsa/hdf/awt/image/BlurFilter.class \
+./ncsa/hdf/awt/image/BrightColorFilter.class \
+./ncsa/hdf/awt/image/ColorMaskFilter.class \
+./ncsa/hdf/awt/image/ColorModelFilter.class \
+./ncsa/hdf/awt/image/CompensateFilter.class \
+./ncsa/hdf/awt/image/ContourFilter.class \
+./ncsa/hdf/awt/image/ContrastColorFilter.class \
+./ncsa/hdf/awt/image/EdgeFilter.class \
+./ncsa/hdf/awt/image/EmbossFilter.class \
+./ncsa/hdf/awt/image/FlipFilter.class \
+./ncsa/hdf/awt/image/ImageColorModel.class \
+./ncsa/hdf/awt/image/NegativeFilter.class \
+./ncsa/hdf/awt/image/NoiseFilter.class \
+./ncsa/hdf/awt/image/PolarFilter.class \
+./ncsa/hdf/awt/image/RGBColorFilter.class \
+./ncsa/hdf/awt/image/RotateFilter.class \
+./ncsa/hdf/awt/image/SharpFilter.class \
+./ncsa/hdf/awt/layer/LayeredImage.class \
+./ncsa/hdf/awt/layer/LayeredImage\$$1.class \
+./ncsa/hdf/awt/layer/LayeredImagePane.class \
+./ncsa/hdf/awt/layer/LayeredImageInfo.class \
+./ncsa/hdf/awt/palette/PaletteEditorAdapter.class \
+./ncsa/hdf/awt/palette/PaletteEditor.class \
+./ncsa/hdf/awt/palette/PaletteEditor\$$PaletteEditorWindowClosedProcess.class \
+./ncsa/hdf/awt/palette/PalettePanel.class \
+./ncsa/hdf/awt/palette/PaletteCanvas.class \
+./ncsa/hdf/awt/palette/SingleColorCanvas.class \
+./ncsa/hdf/awt/palette/ColorPoint.class \
+./ncsa/hdf/awt/palette/RGBValues.class \
+./ncsa/hdf/awt/plots/XYPlot.class \
+./ncsa/hdf/awt/plots/XYPlot\$$XYPlotWindowClosedProcess.class \
+./ncsa/hdf/awt/plots/XYPlotPane.class \
+./ncsa/hdf/awt/Slider.class \
+./ncsa/hdf/awt/SliderEventMulticaster.class \
+./ncsa/hdf/awt/ScrollingPanel.class \
+./ncsa/hdf/awt/ScrollerImageCanvas.class \
+./ncsa/hdf/awt/HostEditor.class \
+./ncsa/hdf/awt/HostEditor\$$1.class \
+./ncsa/hdf/awt/Editor.class \
+./ncsa/hdf/awt/InfoDialog.class \
+./ncsa/hdf/awt/InfoDialog\$$1.class \
+./ncsa/hdf/awt/HostList.class \
+./ncsa/hdf/awt/OutlinePanel.class \
+./ncsa/hdf/awt/EasyConstrainsPanel.class \
+./ncsa/hdf/awt/MultiLineLabel.class \
 ./ncsa/hdf/hdflib/HDFLibrary.class \
+./ncsa/hdf/hdflib/HDFException.class \
 ./ncsa/hdf/hdflib/HDFConstants.class \
-./ncsa/hdf/hdflib/HDFDeprecated.class \
-./ncsa/hdf/hdflib/HDFJavaException.class \
 ./ncsa/hdf/hdflib/HDFArray.class \
 ./ncsa/hdf/hdflib/ArrayDescriptor.class \
 ./ncsa/hdf/hdflib/HDFCompInfo.class \
-./ncsa/hdf/hdflib/HDFCompModel.class \
+./ncsa/hdf/hdflib/HDFNativeData.class \
 ./ncsa/hdf/hdflib/HDFChunkInfo.class \
+./ncsa/hdf/hdflib/HDFJavaException.class \
 ./ncsa/hdf/hdflib/HDFCompChunkInfo.class \
+./ncsa/hdf/hdflib/HDFCompModel.class \
 ./ncsa/hdf/hdflib/HDFDeflateCompInfo.class \
 ./ncsa/hdf/hdflib/HDFNewCompInfo.class \
+./ncsa/hdf/hdflib/HDFDeprecated.class \
 ./ncsa/hdf/hdflib/HDFIMCOMPCompInfo.class \
 ./ncsa/hdf/hdflib/HDFOldCompInfo.class \
 ./ncsa/hdf/hdflib/HDFJPEGCompInfo.class \
 ./ncsa/hdf/hdflib/HDFLibraryException.class \
 ./ncsa/hdf/hdflib/HDFNBITChunkInfo.class \
 ./ncsa/hdf/hdflib/HDFNBITCompInfo.class \
+./ncsa/hdf/hdflib/HDFTable.class \
+./ncsa/hdf/hdflib/TabDescriptor.class \
 ./ncsa/hdf/hdflib/HDFNotImplementedException.class \
 ./ncsa/hdf/hdflib/HDFOldRLECompInfo.class \
 ./ncsa/hdf/hdflib/HDFOnlyChunkInfo.class \
 ./ncsa/hdf/hdflib/HDFRLECompInfo.class \
 ./ncsa/hdf/hdflib/HDFSKPHUFFCompInfo.class \
-./ncsa/hdf/hdflib/HDFTable.class \
-./ncsa/hdf/hdflib/TabDescriptor.class \
-./ncsa/hdf/palette/RGBValues.class \
-./ncsa/hdf/palette/PaletteCanvas.class \
-./ncsa/hdf/palette/ColorPoint.class \
-./ncsa/hdf/palette/SingleColorCanvas.class \
-./ncsa/hdf/palette/PalettePanel.class \
-./ncsa/hdf/palette/PaletteEditor\$$PaletteEditorWindowClosedProcess.class \
-./ncsa/hdf/palette/PaletteEditor.class \
-./ncsa/hdf/palette/PaletteEditorAdapter.class \
-./ncsa/hdf/layer/LayeredImageInfo.class \
-./ncsa/hdf/layer/LayeredImagePane.class \
-./ncsa/hdf/layer/LayeredImage\$$LayerWindowClosedProcess.class \
-./ncsa/hdf/layer/LayeredImage.class \
-./ncsa/hdf/plots/XYPlot.class 	\
-./ncsa/hdf/plots/XYPlot\$$XYPlotWindowClosedProcess.class	\
-./ncsa/hdf/plots/XYPlotPane.class	\
-./ncsa/hdf/java/awt/ScrollingPanel.class \
-./ncsa/hdf/java/awt/ScrollerImageCanvas.class \
-./ncsa/hdf/java/awt/Slider.class 		\
-./ncsa/hdf/java/awt/SliderEventMulticaster.class \
-./ncsa/hdf/java/awt/event/SliderListener.class	\
-./ncsa/hdf/java/awt/event/SliderEvent.class	\
-./ncsa/hdf/java/awt/image/AlphaFilter.class	\
-./ncsa/hdf/java/awt/image/ImageColorModel.class \
-./ncsa/hdf/java/awt/image/NegativeFilter.class \
-./ncsa/hdf/java/awt/image/EmbossFilter.class \
-./ncsa/hdf/java/awt/image/BlurFilter.class \
-./ncsa/hdf/java/awt/image/SharpFilter.class \
-./ncsa/hdf/java/awt/image/RotateFilter.class \
-./ncsa/hdf/java/awt/image/NoiseFilter.class \
-./ncsa/hdf/java/awt/image/EdgeFilter.class \
-./ncsa/hdf/java/awt/image/FlipFilter.class \
-./ncsa/hdf/java/awt/image/PolarFilter.class \
-./ncsa/hdf/java/awt/image/ContourFilter.class \
-./ncsa/hdf/java/awt/image/ColorModelFilter.class \
-./ncsa/hdf/java/awt/image/BrightColorFilter.class \
-./ncsa/hdf/java/awt/image/RGBColorFilter.class \
-./ncsa/hdf/java/awt/image/ContrastColorFilter.class \
-./ncsa/hdf/java/awt/image/ColorMaskFilter.class \
-./ncsa/hdf/java/util/EmptyQueueException.class \
-./ncsa/hdf/java/util/Queue.class	\
-./ncsa/hdf/animation/ImageAnimation.class \
-./ncsa/hdf/animation/ImageAnimation\$$AnimatedWindowClosedProcess.class \
-./ncsa/hdf/animation/AnimatedImageInfo.class \
-./ncsa/hdf/animation/AnimatedImagePane.class 
+./ncsa/hdf/io/ASCIIWriter.class \
+./ncsa/hdf/io/HDFWriter.class \
+./ncsa/hdf/io/TestVdata.class \
+./ncsa/hdf/jhv/HDFTree.class \
+./ncsa/hdf/jhv/TreeNode.class \
+./ncsa/hdf/jhv/ImageDataConverter.class \
+./ncsa/hdf/jhv/ImageCanvas.class \
+./ncsa/hdf/jhv/ImageFrame.class \
+./ncsa/hdf/jhv/JHVDataFrame.class \
+./ncsa/hdf/jhv/JHVDataCanvas.class \
+./ncsa/hdf/jhv/JHVDataRangeCanvas.class \
+./ncsa/hdf/jhv/JHVImageFrame.class \
+./ncsa/hdf/jhv/JHVImageFrame\$$JHVImageFrameClosedProcess.class \
+./ncsa/hdf/jhv/JHVImageCanvas.class \
+./ncsa/hdf/jhv/WindowClosedProcess.class \
+./ncsa/hdf/jhv/JHV.class \
+./ncsa/hdf/jhv/JHV\$$1.class \
+./ncsa/hdf/jhv/JHVCanvas.class \
+./ncsa/hdf/jhv/JHVSDSImageControl.class \
+./ncsa/hdf/jhv/JHVImageRGBControl.class \
+./ncsa/hdf/jhv/JHVImageBCControl.class \
+./ncsa/hdf/jhv/JHVImageAnimation.class \
+./ncsa/hdf/jhv/SDSDimInfo.class \
+./ncsa/hdf/jhv/JHVVdataFrame.class \
+./ncsa/hdf/jhv/JHVLayeredImage.class \
+./ncsa/hdf/jhv/HDFTreeNode.class \
+./ncsa/hdf/jhv/RemoteFileDialog.class \
+./ncsa/hdf/jhv/RemoteFileDialog\$$1.class \
+./ncsa/hdf/jhv/FileTreeNode.class \
+./ncsa/hdf/jhv/SliceSelection.class \
+./ncsa/hdf/jhv/SliceSelection\$$SliceSelectionClosedProcess.class \
+./ncsa/hdf/jhv/JHVVdataCanvas.class \
+./ncsa/hdf/jhv/JHVVdataRangeCanvas.class \
+./ncsa/hdf/jhv/JHVWindowAdapter.class \
+./ncsa/hdf/jhv/JHVVdataPlot.class \
+./ncsa/hdf/jhv/JHVVdataPlotFrame.class \
+./ncsa/hdf/jhv/JHVVdataPlotCanvas.class \
+./ncsa/hdf/jhv/JHVVdataPlotFrame\$$VdataPlotFrameClosedProcess.class \
+./ncsa/hdf/message/HDFAnalyse.class \
+./ncsa/hdf/message/HDFObjectNode.class \
+./ncsa/hdf/message/HDFAnnotation.class \
+./ncsa/hdf/message/HDFObject.class \
+./ncsa/hdf/message/HDFGR.class \
+./ncsa/hdf/message/Messageable.class \
+./ncsa/hdf/message/HDFMessage.class \
+./ncsa/hdf/message/HDFFileList.class \
+./ncsa/hdf/message/HDFHierarchy.class \
+./ncsa/hdf/message/HDFRIS8.class \
+./ncsa/hdf/message/HDFRIS24.class \
+./ncsa/hdf/message/HDFSDS.class \
+./ncsa/hdf/message/HDFVdata.class \
+./ncsa/hdf/message/HDFVgroup.class \
+./ncsa/hdf/server/HDFServerConnection.class \
+./ncsa/hdf/server/HDFServer_njsdk.class \
+./ncsa/hdf/server/FileServlet.class \
+./ncsa/hdf/server/HDFServer.class \
+./ncsa/hdf/util/decoder/Base64Decoder.class \
+./ncsa/hdf/util/decoder/ImageDecoder.class \
+./ncsa/hdf/util/decoder/ImageDecoderRead.class \
+./ncsa/hdf/util/encoder/Base64Encoder.class \
+./ncsa/hdf/util/encoder/GifEncoder.class \
+./ncsa/hdf/util/encoder/GifEncoderHashitem.class \
+./ncsa/hdf/util/encoder/ImageEncoder.class \
+./ncsa/hdf/util/IntHashtable.class \
+./ncsa/hdf/util/IntHashtableEntry.class \
+./ncsa/hdf/util/IntHashtableEnumerator.class \
+./ncsa/hdf/util/Queue.class \
+./ncsa/hdf/util/EmptyQueueException.class \
+./ncsa/hdf/util/Tools.class

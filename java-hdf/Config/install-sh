@@ -169,7 +169,7 @@ IFS="${IFS-${defaultIFS}}"
 oIFS="${IFS}"
 # Some sh's can't handle IFS=/ for some reason.
 IFS='%'
-set - `echo ${dstdir} | sed -e 's@/@%@g' -e 's@^%@/@'`
+set - `echo ${dstdir} | sed -e 's@@/@@%@@g' -e 's@@^%@@/@@'`
 IFS="${oIFS}"
 
 pathcomp=''

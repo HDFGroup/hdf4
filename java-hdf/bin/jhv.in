@@ -6,7 +6,7 @@ set JHVHOME=@JHVINST@   # where the HDF Java viewer is installed
 set JAVAPATH=@JAVA@     # where Java is installed
 
 set JHVICONPATH=$JHVHOME/lib/hdficons
-set CPATH=$JHVHOME/lib/classes.zip
+set CPATH=$JHVHOME/lib/classes.zip:@JAVASERVERPATH@
 
 if (${?CLASSPATH} == 0) then
 	setenv CLASSPATH ""
@@ -64,4 +64,4 @@ switch ( $machtype )
         breaksw
 endsw
 
-java $JOPTS ncsa.hdf.jhv.JHV -jhviconspath $JHVICONPATH $JHVPATH;
+@JAVA@ $JOPTS ncsa.hdf.jhv.JHV -jhviconspath $JHVICONPATH $JHVPATH;
