@@ -25,9 +25,12 @@ RMFLAGS = -f
 # version of the HDF core library called 'libdf-inst.a'
 # See the documentation in the directory 'hdf/pablo' for further 
 # information about Pablo and what platforms it is supported on
-# before enabling.
+# before enabling. 
+# You need to set 'PABLO_INCLUDE' to the Pablo distribution 
+# include directory to get the files 'IOTrace.h' and 'IOTrace_SD.h'.
 
 #PABLO_FLAGS  = -DHAVE_PABLO
+#PABLO_INCLUDE = -I/usr/local/include/pablo-4.0
 
 # ------------ Macros for Shared Memory File Buffer Pool(fmpool) ------
 # Uncomment the following lines to enable shared memory file buffer pool
