@@ -179,6 +179,8 @@ PRIVATE intn GRIup_attr_data(int32 hdf_file_id,at_info_t *attr_ptr);
 
 PRIVATE intn GRIstart(void);
 
+PRIVATE intn GRIgetaid(ri_info_t *img_ptr, intn acc_perm);
+
 /*--------------------------------------------------------------------------
  NAME
     rigcompare
@@ -2351,6 +2353,8 @@ int32 GRcreate(int32 grid,const char *name,int32 ncomp,int32 nt,int32 il,int32 d
     ri_ptr->img_dim.nt_tag=ri_ptr->img_dim.nt_ref=DFREF_WILDCARD;
     ri_ptr->img_dim.comp_tag=ri_ptr->img_dim.comp_ref=DFREF_WILDCARD;
     ri_ptr->img_tag=ri_ptr->img_ref=DFREF_WILDCARD;
+    ri_ptr->img_aid=0;
+    ri_ptr->acc_perm=0;
     ri_ptr->lut_tag=ri_ptr->lut_ref=DFREF_WILDCARD;
     ri_ptr->im_il=MFGR_INTERLACE_PIXEL;
     ri_ptr->lut_il=MFGR_INTERLACE_PIXEL;
@@ -2738,17 +2742,24 @@ printf("%s: new_image=%d\n",FUNC,(int)new_image);
 #ifdef QAK
 fprintf(stderr,"%s: check 5, new_image=%d, whole_image=%d, solid_block=%d\n",FUNC,new_image,whole_image,solid_block);
 #endif /* QAK */
+#ifdef OLD_WAY
           if(new_image==TRUE)
             { /* Create the tag/ref for the new image */
                 ri_ptr->img_tag=DFTAG_RI;
                 ri_ptr->img_ref=Htagnewref(hdf_file_id,ri_ptr->img_tag);
             } /* end if */
+#endif /* OLD_WAY */
 
 #ifdef QAK
 fprintf(stderr,"%s: check 5.5, img_tag=%d, img_ref=%d\n",FUNC,(int)ri_ptr->img_tag,(int)ri_ptr->img_ref);
 #endif /* QAK */
           if(whole_image==TRUE)
             { /* write the whole image out */
+              if(new_image==TRUE)
+                { /* Create the tag/ref for the new image */
+                    ri_ptr->img_tag=DFTAG_RI;
+                    ri_ptr->img_ref=Htagnewref(hdf_file_id,ri_ptr->img_tag);
+                } /* end if */
                 if(Hputelement(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
                         (uint8 *)img_data,(int32)pixel_disk_size*count[XDIM]*count[YDIM])==FAIL)
                     HGOTO_ERROR(DFE_PUTELEM,FAIL);
@@ -2757,7 +2768,9 @@ fprintf(stderr,"%s: check 5.5, img_tag=%d, img_ref=%d\n",FUNC,(int)ri_ptr->img_t
             { /* write only part of the image out */
                 int32 img_offset; /* current offset in the image data */
                 VOIDP tmp_data;   /* temp. pointer to the image data to write */
+#ifdef OLD_WAY
                 int32 aid;
+#endif /* OLD_WAY */
                 intn fill_image=FALSE;  /* whether to create fill values, etc. */
                 VOIDP fill_line=NULL;   /* array containing the fill pixels for an entire line of the image */
                 int32 fill_lo_size=0,   /* number of bytes in the "low" block */
@@ -2767,9 +2780,14 @@ fprintf(stderr,"%s: check 5.5, img_tag=%d, img_ref=%d\n",FUNC,(int)ri_ptr->img_t
 #ifdef QAK
 printf("%s: check 6, ri_ptr->fill_img=%d, tag=%u, ref=%u\n",FUNC,(int)ri_ptr->fill_img,(unsigned)ri_ptr->img_tag,(unsigned)ri_ptr->img_ref);
 #endif /* QAK */
+#ifdef OLD_WAY
                 if((aid=Hstartaccess(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
                         DFACC_WRITE))==FAIL)
                     HGOTO_ERROR(DFE_BADAID,FAIL);
+#else
+                if(GRIgetaid(ri_ptr,DFACC_WRITE)==FAIL)
+                    HGOTO_ERROR(DFE_INTERNAL,FAIL);
+#endif /* OLD_WAY */
                   
                 img_offset=((ri_ptr->img_dim.xdim*start[YDIM])+start[XDIM])*(int32)pixel_disk_size;
 
@@ -2859,7 +2877,7 @@ printf("%s: check 7, fill_image=%d\n",FUNC,fill_image);
 printf("%s: check 8\n",FUNC);
 #endif /* QAK */
 #ifdef QAK
-                            if(Hseek(aid,0,DF_START)==FAIL)
+                            if(Hseek(ri_ptr->img_aid,0,DF_START)==FAIL)
                                 HGOTO_ERROR(DFE_SEEKERROR,FAIL);
 #endif /* QAK */
 
@@ -2870,7 +2888,7 @@ printf("%s: check 8.5\n",FUNC);
                             if(start[YDIM]>0)
                               { /* fill in the lines leading up the block */
                                 for(i=0; i<start[YDIM]; i++)
-                                    if(Hwrite(aid,fill_line_size,fill_line)==FAIL)
+                                    if(Hwrite(ri_ptr->img_aid,fill_line_size,fill_line)==FAIL)
                                         HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                               } /* end if */
 
@@ -2879,7 +2897,7 @@ printf("%s: check 9\n",FUNC);
 #endif /* QAK */
                             /* write prelude of low pixels */
                             if(fill_lo_size>0)
-                                if(Hwrite(aid,fill_lo_size,fill_line)==FAIL)
+                                if(Hwrite(ri_ptr->img_aid,fill_lo_size,fill_line)==FAIL)
                                     HGOTO_ERROR(DFE_WRITEERROR,FAIL);
 
 #ifdef QAK
@@ -2889,7 +2907,7 @@ printf("%s: *tmp_data=%u\n",FUNC,(unsigned)*(uint8 *)tmp_data);
                             /* write out the block */
                             for(i=0; i<count[YDIM]; i++)
                               {
-                                  if(Hwrite(aid,pix_len,tmp_data)==FAIL)
+                                  if(Hwrite(ri_ptr->img_aid,pix_len,tmp_data)==FAIL)
                                       HGOTO_ERROR(DFE_WRITEERROR,FAIL);
 
                                   /* This next write wraps around the high side */
@@ -2897,7 +2915,7 @@ printf("%s: *tmp_data=%u\n",FUNC,(unsigned)*(uint8 *)tmp_data);
                                   /* at the same time. */
                                   if((fill_hi_size+fill_lo_size)>0
                                           && i<(count[YDIM]-1))
-                                      if(Hwrite(aid,(fill_hi_size+fill_lo_size),fill_line)==FAIL)
+                                      if(Hwrite(ri_ptr->img_aid,(fill_hi_size+fill_lo_size),fill_line)==FAIL)
                                           HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                                   tmp_data=(VOIDP)((char *)tmp_data+pix_len);
                               } /* end for */
@@ -2907,7 +2925,7 @@ printf("%s: check 11\n",FUNC);
 #endif /* QAK */
                             /* Finish the last chunk of high side fill values */
                             if(fill_hi_size>0)
-                                if(Hwrite(aid,fill_hi_size,fill_line)==FAIL)
+                                if(Hwrite(ri_ptr->img_aid,fill_hi_size,fill_line)==FAIL)
                                     HGOTO_ERROR(DFE_WRITEERROR,FAIL);
 
 #ifdef QAK
@@ -2919,7 +2937,7 @@ printf("%s: check 12\n",FUNC);
                               {
                                 for(i=start[YDIM]+((count[YDIM]-1)*stride[YDIM])+1;
                                         i<ri_ptr->img_dim.ydim; i++)
-                                    if(Hwrite(aid,fill_line_size,fill_line)==FAIL)
+                                    if(Hwrite(ri_ptr->img_aid,fill_line_size,fill_line)==FAIL)
                                         HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                               } /* end if */
 #ifdef QAK
@@ -2935,9 +2953,9 @@ printf("%s: check 12.5\n",FUNC);
 #endif /* QAK */
                             for(i=0; i<count[YDIM]; i++)
                               {
-                                  if(Hseek(aid,img_offset,DF_START)==FAIL)
+                                  if(Hseek(ri_ptr->img_aid,img_offset,DF_START)==FAIL)
                                       HGOTO_ERROR(DFE_SEEKERROR,FAIL);
-                                  if(Hwrite(aid,pix_len,tmp_data)==FAIL)
+                                  if(Hwrite(ri_ptr->img_aid,pix_len,tmp_data)==FAIL)
                                       HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                                   img_offset+=(int32)pixel_disk_size*ri_ptr->img_dim.xdim;
                                   tmp_data=(VOIDP)((char *)tmp_data+pix_len);
@@ -2971,7 +2989,7 @@ printf("%s: check 14\n",FUNC);
 
                             /* write fills and sub-sampled data */
 #ifdef QAK
-                            if(Hseek(aid,0,DF_START)==FAIL)
+                            if(Hseek(ri_ptr->img_aid,0,DF_START)==FAIL)
                                 HGOTO_ERROR(DFE_SEEKERROR,FAIL);
 #endif /* QAK */
 
@@ -2986,7 +3004,7 @@ printf("%s: check 14.1 start[YDIM]=%d, writing %ld bytes\n",FUNC,(int)start[YDIM
 #ifdef QAK
 printf("%s: check 14.15 i=%d\n",FUNC,i);
 #endif /* QAK */
-                                    if(Hwrite(aid,fill_line_size,fill_line)==FAIL)
+                                    if(Hwrite(ri_ptr->img_aid,fill_line_size,fill_line)==FAIL)
                                         HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                                   } /* end for */
                               } /* end if */
@@ -2997,7 +3015,7 @@ printf("%s: check 14.15 i=%d\n",FUNC,i);
 #ifdef QAK
 printf("%s: check 14.2 writing prelude of %d bytes\n",FUNC,(int)fill_lo_size);
 #endif /* QAK */
-                                if(Hwrite(aid,fill_lo_size,fill_line)==FAIL)
+                                if(Hwrite(ri_ptr->img_aid,fill_lo_size,fill_line)==FAIL)
                                     HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                               } /* end if */
 
@@ -3011,14 +3029,14 @@ printf("%s: check 14.61, count[YDIM]=%ld, count[XDIM]=%ld\n",FUNC,(long)count[YD
                               {
                                   for(j=0; j<count[XDIM]; j++)
                                     {
-                                      if(Hwrite(aid,(int32)pixel_disk_size,tmp_data)==FAIL)
+                                      if(Hwrite(ri_ptr->img_aid,(int32)pixel_disk_size,tmp_data)==FAIL)
                                           HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                                       if(fill_xdim==TRUE && j<(count[XDIM]-1))
                                         {
 #ifdef QAK
 printf("%s: check 14.63, writing fill_stride_size=%ld bytes\n",FUNC,(long)fill_stride_size);
 #endif /* QAK */
-                                          if(Hwrite(aid,fill_stride_size,fill_line)==FAIL)
+                                          if(Hwrite(ri_ptr->img_aid,fill_stride_size,fill_line)==FAIL)
                                               HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                                         } /* end if */
                                       tmp_data=(VOIDP)((char *)tmp_data+pixel_disk_size);
@@ -3031,7 +3049,7 @@ printf("%s: check 14.63, writing fill_stride_size=%ld bytes\n",FUNC,(long)fill_s
 #ifdef QAK
 printf("%s: check 14.65, k=%d\n",FUNC,(int)k);
 #endif /* QAK */
-                                          if(Hwrite(aid,fill_line_size,fill_line)==FAIL)
+                                          if(Hwrite(ri_ptr->img_aid,fill_line_size,fill_line)==FAIL)
                                               HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                                         } /* end for */
 
@@ -3044,7 +3062,7 @@ printf("%s: check 14.65, k=%d\n",FUNC,(int)k);
 #ifdef QAK
 printf("%s: check 14.7, i=%d\n",FUNC,(int)i);
 #endif /* QAK */
-                                      if(Hwrite(aid,(fill_hi_size+fill_lo_size),fill_line)==FAIL)
+                                      if(Hwrite(ri_ptr->img_aid,(fill_hi_size+fill_lo_size),fill_line)==FAIL)
                                           HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                                     } /* end if */
                               } /* end for */
@@ -3055,7 +3073,7 @@ printf("%s: check 14.7, i=%d\n",FUNC,(int)i);
 #ifdef QAK
 printf("%s: check 14.75, fill_hi_size=%d\n",FUNC,(int)fill_hi_size);
 #endif /* QAK */
-                                if(Hwrite(aid,fill_hi_size,fill_line)==FAIL)
+                                if(Hwrite(ri_ptr->img_aid,fill_hi_size,fill_line)==FAIL)
                                     HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                               } /* end if */
 
@@ -3069,7 +3087,7 @@ printf("%s: check 14.8, ri_ptr->img_dim.xdim=%d, ri_ptr->img_dim.ydim=%d\n",FUNC
                                         i<ri_ptr->img_dim.ydim; i++)
                                   {
 printf("%s: check 14.81, i=%d\n",FUNC,i);
-                                    if(Hwrite(aid,fill_line_size,fill_line)==FAIL)
+                                    if(Hwrite(ri_ptr->img_aid,fill_line_size,fill_line)==FAIL)
                                         HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                                   } /* end for */
                               } /* end if */
@@ -3095,9 +3113,9 @@ printf("%s: check 15.5, local_offset=%ld\n",FUNC,(long)local_offset);
 #endif /* QAK */
                                   for(j=0; j<count[XDIM]; j++)
                                     {
-                                      if(Hseek(aid,local_offset,DF_START)==FAIL)
+                                      if(Hseek(ri_ptr->img_aid,local_offset,DF_START)==FAIL)
                                           HGOTO_ERROR(DFE_SEEKERROR,FAIL);
-                                      if(Hwrite(aid,(int32)pixel_disk_size,tmp_data)==FAIL)
+                                      if(Hwrite(ri_ptr->img_aid,(int32)pixel_disk_size,tmp_data)==FAIL)
                                           HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                                       local_offset+=stride_add;
                                       tmp_data=(VOIDP)((char *)tmp_data+pixel_disk_size);
@@ -3111,8 +3129,10 @@ printf("%s: check 15.5, local_offset=%ld\n",FUNC,(long)local_offset);
                 if(fill_line!=NULL)     /* free the fill-value pixels if we used 'em */
                     HDfree(fill_line);
 
+#ifdef OLD_WAY
                 if(Hendaccess(aid)==FAIL)
                     HGOTO_ERROR(DFE_CANTENDACCESS,FAIL);
+#endif /* OLD_WAY */
             } /* end else */
           ri_ptr->data_modified=TRUE;
       } /* end else */
@@ -3317,14 +3337,24 @@ fprintf(stderr,"%s: check 1.3, tag=%u, ref=%u\n",FUNC,(unsigned)ri_ptr->img_tag,
             { /* read only part of the image in */
                 int32 img_offset; /* current offset in the image data */
                 VOIDP tmp_data;   /* temp. pointer to the image data read in */
+#ifdef OLD_WAY
                 int32 aid;
+#endif /* OLD_WAY */
 
 #ifdef QAK
 fprintf(stderr,"%s: check 1.5\n",FUNC);
 #endif /* QAK */
+#ifdef OLD_WAY
                 if((aid=Hstartaccess(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
                         DFACC_READ))==FAIL)
                     HGOTO_ERROR(DFE_BADAID,FAIL);
+#else /* OLD_WAY */
+                if(GRIgetaid(ri_ptr, DFACC_READ)==FAIL)
+                    HGOTO_ERROR(DFE_INTERNAL,FAIL);
+#endif /* OLD_WAY */
+#ifdef QAK
+fprintf(stderr,"%s: check 1.7\n",FUNC);
+#endif /* QAK */
                   
                 img_offset=((ri_ptr->img_dim.xdim*start[YDIM])+start[XDIM])*(int32)pixel_disk_size;
 
@@ -3342,9 +3372,9 @@ printf("%s: check 2\n",FUNC);
                       /* read in the block */
                       for(i=0; i<count[YDIM]; i++)
                         {
-                            if(Hseek(aid,img_offset,DF_START)==FAIL)
+                            if(Hseek(ri_ptr->img_aid,img_offset,DF_START)==FAIL)
                                 HGOTO_ERROR(DFE_SEEKERROR,FAIL);
-                            if(Hread(aid,pix_len,tmp_data)==FAIL)
+                            if(Hread(ri_ptr->img_aid,pix_len,tmp_data)==FAIL)
                                 HGOTO_ERROR(DFE_READERROR,FAIL);
                             img_offset+=(int32)pixel_disk_size*ri_ptr->img_dim.xdim;
                             tmp_data=(VOIDP)((char *)tmp_data+pix_len);
@@ -3367,9 +3397,9 @@ printf("%s: check 3\n",FUNC);
                             local_offset=img_offset;
                             for(j=0; j<count[XDIM]; j++)
                               {
-                                if(Hseek(aid,local_offset,DF_START)==FAIL)
+                                if(Hseek(ri_ptr->img_aid,local_offset,DF_START)==FAIL)
                                     HGOTO_ERROR(DFE_SEEKERROR,FAIL);
-                                if(Hread(aid,(int32)pixel_disk_size,tmp_data)==FAIL)
+                                if(Hread(ri_ptr->img_aid,(int32)pixel_disk_size,tmp_data)==FAIL)
                                     HGOTO_ERROR(DFE_READERROR,FAIL);
                                 local_offset+=stride_add;
                                 tmp_data=(VOIDP)((char *)tmp_data+pixel_disk_size);
@@ -3378,8 +3408,10 @@ printf("%s: check 3\n",FUNC);
                             img_offset+=ri_ptr->img_dim.xdim*stride[YDIM]*(int32)pixel_disk_size;
                         } /* end for */
                   } /* end else */
+#ifdef OLD_WAY
                 if(Hendaccess(aid)==FAIL)
                     HGOTO_ERROR(DFE_CANTENDACCESS,FAIL);
+#endif /* OLD_WAY */
             } /* end else */
                   
 #ifdef QAK
@@ -3485,6 +3517,13 @@ intn GRendaccess(int32 riid)
 
     /* Reduce the number of accesses to the RI */
     ri_ptr->access--;
+
+    /* Check if we should shut down the AID we've been holding open */
+    if(!(ri_ptr->access>0) && ri_ptr->img_aid!=0)
+      {
+        Hendaccess(ri_ptr->img_aid);
+        ri_ptr->img_aid=0;
+      } /* end if */
 
     /* Delete the atom for the RI ID */
     if(NULL==HAremove_atom(riid))
@@ -4209,6 +4248,13 @@ intn GRsetexternalfile(int32 riid,const char *filename,int32 offset)
         ri_ptr->img_tag=DFTAG_RI;
         ri_ptr->img_ref=Htagnewref(ri_ptr->gr_ptr->hdf_file_id,ri_ptr->img_tag);
         ri_ptr->meta_modified=TRUE;
+      } /* end if */
+
+    /* close any existing AID, to convert to external element AID */
+    if(ri_ptr->img_aid!=0)
+      {
+        Hendaccess(ri_ptr->img_aid);
+        ri_ptr->img_aid=0;
       } /* end if */
 
     /* Convert the image into an external element */
@@ -4996,6 +5042,91 @@ done:
 
     return(ret_value);
 } /* end GRIstart() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRIgetaid
+ PURPOSE
+    Internal routine to make certain an image has an AID attached to it.
+ USAGE
+    intn GRIgetaid(img_ptr, acc_perm)
+        ri_info_t *img_ptr;         IN: pointer to the image info for the
+                                        image to access.
+        intn acc_perm;              IN: method of access desired.
+ RETURNS
+    SUCCEED/FAIL
+
+ DESCRIPTION
+    Attach an AID to the image's in-memory structures, in order to better
+    manage I/O.  If the prior method of access for the image's AID was read
+    and write permission, then the previous AID is closed and reopened for
+    both read & write permission.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+PRIVATE intn GRIgetaid(ri_info_t *ri_ptr, intn acc_perm)
+{
+    CONSTR(FUNC, "GRIgetaid");  /* for HERROR */
+    int32 hdf_file_id;          /* HDF file ID */
+    gr_info_t *gr_ptr;          /* ptr to the file GR information for this image */
+    intn  ret_value = SUCCEED;
+
+    HEclear();
+    if (ri_ptr==NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* initialize important values */
+    gr_ptr=ri_ptr->gr_ptr;
+    hdf_file_id=gr_ptr->hdf_file_id;
+
+    /* everybody gets read permission */
+    acc_perm|=DFACC_READ;
+
+    /* Test if the tag/ref pair has been assigned yet */
+    if(ri_ptr->img_tag==DFTAG_NULL || ri_ptr->img_ref==DFREF_WILDCARD)
+      {
+        ri_ptr->img_tag=DFTAG_RI;
+        ri_ptr->img_ref=Htagnewref(hdf_file_id,ri_ptr->img_tag);
+      } /* end if */
+
+    /* Check if we are the first to open the AID */
+    if(ri_ptr->img_aid==0)
+      {
+        /* Go get the AID */
+        if((ri_ptr->img_aid=Hstartaccess(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
+                acc_perm))==FAIL)
+            HGOTO_ERROR(DFE_BADAID,FAIL);
+        ri_ptr->acc_perm=acc_perm;
+      } /* end if */
+    else    /* someone else opened things up first */
+      {
+        /* Check if we need to increase the access permissions asked for */
+        if((acc_perm&DFACC_WRITE)!=0 && (ri_ptr->acc_perm&DFACC_WRITE)==0)
+          {
+            /* Close the old AID (which only had read permission) */
+            Hendaccess(ri_ptr->img_aid);
+
+            /* Go get a new AID with write permission */
+            if((ri_ptr->img_aid=Hstartaccess(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
+                    acc_perm))==FAIL)
+                HGOTO_ERROR(DFE_BADAID,FAIL);
+            ri_ptr->acc_perm=acc_perm;
+          } /* end if */
+      } /* end else */
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+        ri_ptr->img_aid=0;
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
+} /* end GRIupdatemeta() */
 
 /*--------------------------------------------------------------------------
  NAME

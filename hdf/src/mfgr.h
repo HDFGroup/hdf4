@@ -139,6 +139,8 @@ typedef struct ri_info {
     dim_info_t img_dim;         /* image dimension information */
     dim_info_t lut_dim;         /* palette dimension information */
     uint16  img_tag,img_ref;    /* tag & ref of the image data */
+    int32   img_aid;            /* AID for the image data */
+    intn    acc_perm;           /* Access permission (read/write) for image AID */
     uint16  lut_tag,lut_ref;    /* tag & ref of the palette data */
     gr_interlace_t im_il;       /* interlace of image when next read (default PIXEL) */
     gr_interlace_t lut_il;      /* interlace of LUT when next read */
