@@ -311,98 +311,98 @@ help:
 
 hfile.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 hfile.o: vproto.h hfile.h $(FRC)
-herr.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-herr.o: vproto.h  $(FRC)
-hblocks.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+herr.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+herr.o: vproto.h $(FRC)
+hblocks.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 hblocks.o: vproto.h hfile.h $(FRC)
-hextelt.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+hextelt.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 hextelt.o: vproto.h hfile.h $(FRC)
-cmextelt.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+cmextelt.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 cmextelt.o: vproto.h hfile.h $(FRC)
-hkit.o: hdf.h hdfi.h hbitio.h
+hkit.o: hdf.h hlimits.h hdfi.h hbitio.h
 hkit.o: hcomp.h herr.h hproto.h vproto.h hfile.h hkit.h $(FRC)
-dfan.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+dfan.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfan.o: vproto.h hfile.h dfan.h $(FRC)
-dfr8.o: hdf.h hdfi.h  hbitio.h hcomp.h herr.h hproto.h
+dfr8.o: hdf.h hlimits.h hdfi.h  hbitio.h hcomp.h herr.h hproto.h
 dfr8.o: vproto.h dfrig.h $(FRC)
-dfcomp.o: hdf.h hdfi.h  hbitio.h hcomp.h herr.h hproto.h
+dfcomp.o: hdf.h hlimits.h hdfi.h  hbitio.h hcomp.h herr.h hproto.h
 dfcomp.o: vproto.h $(FRC)
-dfrle.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+dfrle.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfrle.o: vproto.h $(FRC)
-dfimcomp.o: hdf.h hdfi.h  hbitio.h hcomp.h herr.h
+dfimcomp.o: hdf.h hlimits.h hdfi.h  hbitio.h hcomp.h herr.h
 dfimcomp.o: hproto.h vproto.h $(FRC)
-dfjpeg.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+dfjpeg.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfjpeg.o: vproto.h  $(FRC)
-dfunjpeg.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h
+dfunjpeg.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h
 dfunjpeg.o: hproto.h vproto.h  $(FRC)
-dfp.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+dfp.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfp.o: vproto.h hfile.h $(FRC)
-dfgr.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+dfgr.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfgr.o: vproto.h dfgr.h $(FRC)
-df24.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+df24.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 df24.o: vproto.h dfgr.h $(FRC)
-dfsd.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+dfsd.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfsd.o: vproto.h dfsd.h hfile.h $(FRC)
-dfgroup.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+dfgroup.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfgroup.o: vproto.h hfile.h $(FRC)
-dfconv.o: hdf.h hdfi.h hbitio.h
+dfconv.o: hdf.h hlimits.h hdfi.h hbitio.h
 dfconv.o: hcomp.h herr.h hproto.h vproto.h hconv.h $(FRC)
-dfufp2i.o: hdf.h hdfi.h hbitio.h
+dfufp2i.o: hdf.h hlimits.h hdfi.h hbitio.h
 dfufp2i.o: hcomp.h herr.h hproto.h vproto.h dfufp2i.h dfsd.h $(FRC)
-vg.o: vg.h hdf.h hdfi.h  hbitio.h hcomp.h herr.h hproto.h
+vg.o: vg.h hdf.h hlimits.h hdfi.h  hbitio.h hcomp.h herr.h hproto.h
 vg.o: vproto.h tbbt.h $(FRC)
-vrw.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+vrw.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 vrw.o: vproto.h vg.h tbbt.h hfile.h $(FRC)
-vio.o: vg.h hdf.h hdfi.h  hbitio.h hcomp.h herr.h
+vio.o: vg.h hdf.h hlimits.h hdfi.h  hbitio.h hcomp.h herr.h
 vio.o: hproto.h vproto.h tbbt.h hfile.h $(FRC)
-vparse.o: vg.h hdf.h hdfi.h hbitio.h hcomp.h herr.h
+vparse.o: vg.h hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h
 vparse.o: hproto.h vproto.h tbbt.h $(FRC)
-vconv.o: vg.h hdf.h hdfi.h hbitio.h hcomp.h herr.h
+vconv.o: vg.h hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h
 vconv.o: hproto.h vproto.h tbbt.h $(FRC)
-vsfld.o: vg.h hdf.h hdfi.h hbitio.h hcomp.h herr.h
+vsfld.o: vg.h hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h
 vsfld.o: hproto.h vproto.h tbbt.h $(FRC)
-vgp.o: vg.h hdf.h hdfi.h hbitio.h hcomp.h herr.h
+vgp.o: vg.h hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h
 vgp.o: hproto.h vproto.h tbbt.h hfile.h $(FRC)
-vhi.o: vg.h hdf.h hdfi.h hbitio.h hcomp.h herr.h
+vhi.o: vg.h hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h
 vhi.o: hproto.h vproto.h tbbt.h $(FRC)
-dfutil.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+dfutil.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfutil.o: vproto.h $(FRC)
-dfstubs.o: dfstubs.h df.h hdf.h hdfi.h hbitio.h hcomp.h
+dfstubs.o: dfstubs.h df.h hdf.h hlimits.h hdfi.h hbitio.h hcomp.h
 dfstubs.o: herr.h hproto.h vproto.h  $(FRC)
-dfknat.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+dfknat.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfknat.o: vproto.h hconv.h $(FRC)
-dfkswap.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+dfkswap.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfkswap.o: vproto.h hconv.h $(FRC)
-dfkcray.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+dfkcray.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfkcray.o: vproto.h hconv.h $(FRC)
-dfkvms.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+dfkvms.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfkvms.o: vproto.h hconv.h $(FRC)
-dfkconv.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+dfkconv.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfkconv.o: vproto.h hconv.h $(FRC)
-dfkfuji.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+dfkfuji.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 dfkfuji.o: vproto.h hconv.h $(FRC)
-hbitio.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+hbitio.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 hbitio.o: vproto.h hfile.h $(FRC)
-tbbt.o:  hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+tbbt.o:  hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 tbbt.o: vproto.h tbbt.h $(FRC)
-hdfalloc.o: hdf.h hdfi.h  hbitio.h
+hdfalloc.o: hdf.h hlimits.h hdfi.h  hbitio.h
 hdfalloc.o: hcomp.h herr.h hproto.h vproto.h hfile.h $(FRC)
-hcomp.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+hcomp.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 hcomp.o: vproto.h hfile.h hcompi.h mstdio.h cnone.h crle.h cnbit.h cskphuff.h $(FRC)
-crle.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+crle.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 crle.o: vproto.h hfile.h hcompi.h mstdio.h crle.h  $(FRC)
-cnbit.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+cnbit.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 cnbit.o: vproto.h hfile.h hcompi.h mstdio.h cnbit.h $(FRC)
-mstdio.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+mstdio.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 mstdio.o: vproto.h hfile.h hcompi.h mstdio.h $(FRC)
-cnone.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+cnone.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 cnone.o: vproto.h hfile.h hcompi.h mstdio.h cnone.h $(FRC)
-cskphuff.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+cskphuff.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 cskphuff.o: vproto.h hfile.h hcompi.h mstdio.h cskphuff.h $(FRC)
-hblocks.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+hblocks.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 hblocks.o: vproto.h hfile.h $(FRC)
-mfan.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+mfan.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 mfan.o: vproto.h hfile.h mfan.h $(FRC)
-mfanf.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+mfanf.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 mfanf.o: vproto.h hfile.h mfan.h $(FRC)
-mfgr.o: hdf.h hdfi.h herr.h hproto.h vproto.h hfile.h mfgr.h $(FRC)
+mfgr.o: hdf.h hlimits.h hdfi.h herr.h hproto.h vproto.h hfile.h mfgr.h $(FRC)
