@@ -90,17 +90,18 @@ infodir = $(prefix)/info
 
 # Pablo Instrumentation Library support files
 PCHDRS=ProcIDs.h ProcMasks.h
-PCSRCS=PabloHDF.c
-PCOBJS=PabloHDF.o
-PFINCS=PabloHDF.inc
-PFSRCS=PabloHDFf.c PabloHDFff.f
-PFOBJS=PabloHDFf.o PabloHDFff.o
-POBJS=PabloHDF.o PabloHDFf.o PabloHDFff.o
+PCSRCS=PabloHDF.c PabloHDF_RT.c PabloHDF_SDDF.c
+PCOBJS=PabloHDF.o PabloHDF_RT.o PabloHDF_SDDF.o
+PFINCS=PabloHDF.inc ProcMasks.inc
+PFSRCS=PabloHDFff.f
+PFOBJS=PabloHDFff.o
+POBJS=PabloHDF.o PabloHDF_RT.o PabloHDF_SDDF.o PabloHDFff.o
 PSRCS= $(PCHDRS) $(PCSRCS) $(PFINCS) $(PFSRCS)
 
 TARGETLIB = libdf-inst.a
 
-PABLO_INCLUDE= -I.
+PABLO_INCDIR = .
+PABLO_INCLUDE= -I$(PABLO_INCDIR)
 
 #### ----- host and target specific makefile fragments come in here.-------
 ### ------------------- end of makefile fragments -------------------------
@@ -254,6 +255,7 @@ pinstall-lib: pinstall-headers
 
 pinstall-headers:
 	for p in $(PINCS); do \
+	    cp $(PABLO_INCDIR)/$$p .;\
 	    $(INSTALL_DATA) \
 		`pwd`/$$p $(includedir)/$$p; \
 	done
@@ -315,14 +317,23 @@ help:
 
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
-
-PabloHDF.o: ProcIDs.h
+ProcIDs.h:
+	cp $(PABLO_INCDIR)/ProcIDs.h .
+ProcMasks.h:
+	cp $(PABLO_INCDIR)/ProcMasks.h .
+ProcMasks.inc:
+	cp $(PABLO_INCDIR)/ProcMasks.inc .
+HDFTrace.h:
+	cp $(PABLO_INCDIR)/HDFTrace.h .
+PabloHDF.o: PabloHDF.c ProcIDs.h ProcMasks.h HDFTrace.h ProcMasks.inc
 	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c PabloHDF.c
-PabloHDFf.o: ProcIDs.h PabloHDF.inc
-	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c PabloHDFf.c
-PabloHDFff.o: ProcIDs.h PabloHDF.inc
+PabloHDF_RT.o: PabloHDF_RT.c ProcIDs.h ProcMasks.h HDFTrace.h ProcMasks.inc
+	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c PabloHDF_RT.c
+PabloHDF_SDDF.o: PabloHDF_SDDF.c ProcIDs.h ProcMasks.h HDFTrace.h ProcMasks.inc
+	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c PabloHDF_SDDF.c
+PabloHDFff.o: ProcIDs.h
 	$(FC) $(FFLAGS) -c PabloHDFff.f
-
+ 
 #get all the source dependecies.....
 # the dependencies don't work well
 include depend

@@ -14,6 +14,10 @@
 static char RcsId[] = "@(#)$Revision$";
 #endif
 
+#ifdef HAVE_PABLO
+#define HDF_mask H_mask
+#endif
+
 /* $Id$ */
 
 /*LINTLIBRARY */
@@ -242,7 +246,7 @@ HLcreate(int32  file_id,
     int32       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_HLcreate);
+  HDF_TRACE_ON(ID_HLcreate);
 #endif /* HAVE_PABLO */
 
 #ifdef QAK
@@ -389,7 +393,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_HLcreate);
+  HDF_TRACE_OFF(ID_HLcreate, file_id, NULL, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -455,7 +459,7 @@ HLconvert(int32 aid,
     intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_HLconvert);
+  HDF_TRACE_ON(ID_HLconvert);
 #endif /* HAVE_PABLO */
 
 #ifdef QAK
@@ -593,7 +597,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_HLconvert);
+  HDF_TRACE_OFF(ID_HLconvert, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;

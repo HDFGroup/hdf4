@@ -93,7 +93,7 @@
 /* PABLO support files */
 #ifdef HAVE_PABLO
 #define IOTRACE
-#include "IOTrace.h"
+#include "HDFIOTrace.h"
 #endif  /* HAVE_PABLO */
 
 /* RWR Modification Start 07/14/98 */

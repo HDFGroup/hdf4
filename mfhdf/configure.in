@@ -59,4 +59,5 @@ UC_FINISH( \
     dumper/Makefile \
     nctest/Makefile \
     doc/Makefile \
+    pablo/Makefile \
     )

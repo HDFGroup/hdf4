@@ -153,6 +153,7 @@ typedef intn (*hdf_termfunc_t)(void);   /* termination function typedef */
 /* For Pablo Instrumentation */
 #ifdef HAVE_PABLO
 #include "ProcIDs.h"
+#include "trace.h"
 #endif /* PABLO */
 
 /* these may eventaully evolve into real-life functions but not yet */

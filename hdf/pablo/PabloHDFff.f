@@ -37,29 +37,20 @@ C Remarks: none
 C-----------------------------------------------------------------------------
 
 C-----------------------------------------------------------------------------
-C Name: hinitiotrace
-C Purpose:  call ihinitiotrace to initialize tracing
+C Name: hdfinittrace
+C Purpose:  call hdfinittracex to initialize tracing
 C Inputs:   tracefn: Trace file name
-C           detail: 
-C           lifetime:
-C           timew:
-C           timews:
-C           regiont:
-C           regionts:
 C           proctmask:
 C Returns: 0 on success, FAIL on failure 
 C Users:   
 C Invokes: ihinitiotrace
 C-----------------------------------------------------------------------------
 
-      integer function hinitiotrace(tracefn,detail,lifetime,timew,timews,
-     +                              regiont,regionts,proctmask)
+      integer function hdfinittrace(tracefn,proctmask,out_sw)
 
       character*(*) tracefn
-      integer       detail,lifetime,timew,regiont,regionts,proctmask
-      real          timews
+      integer       proctmask, out_sw
 
-      hinitiotrace = ihinitiotrace(tracefn,detail,lifetime,timew,timews,
-     +                        regiont,regionts,proctmask, len(tracefn))
+      call  hinittracex( tracefn, len(tracefn), proctmask, out_sw )
       return
       end

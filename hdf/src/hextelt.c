@@ -15,6 +15,9 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 /* $Id$ */
+#ifdef HAVE_PABLO
+#define HDF_mask H_mask
+#endif
 
 /*LINTLIBRARY */
 /* ------------------------------ hextelt.c -------------------------------
@@ -210,7 +213,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     int32       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(H_mask, ID_HXcreate);
+    HDF_TRACE_ON(ID_HXcreate);
 #endif /* HAVE_PABLO */
     /* clear error stack and validate args */
     HEclear();
@@ -270,10 +273,10 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
         HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
     /* create the external file */
-    file_external = HI_OPEN(fname, DFACC_WRITE);
+    file_external = (hdf_file_t)HI_OPEN(fname, DFACC_WRITE);
     if (OPENERR(file_external))
     {
-        file_external = HI_CREATE(fname);
+        file_external = (hdf_file_t)HI_CREATE(fname);
         if (OPENERR(file_external))
             HGOTO_ERROR(DFE_BADOPEN, FAIL);
     }
@@ -362,7 +365,7 @@ done:
       HDfree(buf);
 
 #ifdef HAVE_PABLO
-    TRACE_OFF(H_mask, ID_HXcreate);
+        HDF_TRACE_OFF( ID_HXcreate, file_id, extern_file_name, HDF_File_ID );
 #endif /* HAVE_PABLO */
   return ret_value; 
 } /* HXcreate */
@@ -406,10 +409,10 @@ HXPsetaccesstype(accrec_t * access_rec)
     switch (access_rec->access_type)
       {
           case DFACC_SERIAL:
-              file_external = HI_OPEN(fname, DFACC_WRITE);
+              file_external = (hdf_file_t)HI_OPEN(fname, DFACC_WRITE);
               if (OPENERR(file_external))
                 {
-                    file_external = HI_CREATE(fname);
+                    file_external = (hdf_file_t)HI_CREATE(fname);
                     if (OPENERR(file_external))
                         HGOTO_ERROR(DFE_BADOPEN, FAIL);
                 }
@@ -674,7 +677,7 @@ HXPread(accrec_t * access_rec, int32 length, void * data)
         if ((fname = HXIbuildfilename(info->extern_file_name, DFACC_OLD))==NULL)
             HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
-        info->file_external = HI_OPEN(fname, access_rec->access);
+        info->file_external = (hdf_file_t)HI_OPEN(fname, access_rec->access);
         HDfree(fname);
         if (OPENERR(info->file_external))
           {
@@ -752,7 +755,7 @@ HXPwrite(accrec_t * access_rec, int32 length, const void * data)
         if ((fname = HXIbuildfilename(info->extern_file_name, DFACC_OLD))==NULL)
             HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
-        info->file_external = HI_OPEN(fname, access_rec->access);
+        info->file_external = (hdf_file_t)HI_OPEN(fname, access_rec->access);
         HDfree(fname);
         if (OPENERR(info->file_external))
           {
@@ -771,7 +774,7 @@ HXPwrite(accrec_t * access_rec, int32 length, const void * data)
             {
             /* this external file might not be opened with write permission,
                reopen the file and try again */
-                hdf_file_t  f = HI_OPEN(info->extern_file_name, DFACC_WRITE);
+                hdf_file_t  f = (hdf_file_t)HI_OPEN(info->extern_file_name, DFACC_WRITE);
                 
                 if (OPENERR(f) ||
                     HI_SEEK(f, access_rec->posn + info->extern_offset) == FAIL ||
@@ -1157,7 +1160,7 @@ HXsetcreatedir(const char *dir)
   intn       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(H_mask, ID_HXsetcreatedir);
+    HDF_TRACE_ON(ID_HXsetcreatedir);
 #endif /* HAVE_PABLO */
 
   if (dir)
@@ -1181,7 +1184,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(H_mask, ID_HXsetcreatedir);
+        HDF_TRACE_OFF( ID_HXsetcreatedir, NoDSid, dir, HDF_Directory_ID );
 #endif /* HAVE_PABLO */
   return ret_value; 
 }	/* HXsetcreatedir */
@@ -1214,7 +1217,7 @@ HXsetdir(const char *dir)
   intn   ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(H_mask, ID_HXsetdir);
+    HDF_TRACE_ON(ID_HXsetdir);
 #endif /* HAVE_PABLO */
   if (dir)
     {
@@ -1237,7 +1240,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(H_mask, ID_HXsetdir);
+        HDF_TRACE_OFF( ID_HXsetdir, NoDSid, dir, HDF_Directory_ID );
 #endif /* HAVE_PABLO */
   return ret_value; 
 }	/* HXsetdir */

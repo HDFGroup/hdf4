@@ -15,6 +15,14 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 /* $Id$ */
+#ifdef HAVE_PABLO
+#define HDF_mask SD_mask
+#include "ProcIDs.h"
+#define HDF_TRACE_ON( eventID ) \
+        if (procTrace & HDF_mask)  startHDFtraceEvent(eventID)
+#define HDF_TRACE_OFF(  eventID, p1, p2, p3 ) \
+        if (procTrace & HDF_mask)  endHDFtraceEvent(-eventID, p1, p2, p3 )
+#endif
 
 /******************************************************************************
 file - mfsd.c
@@ -291,6 +299,9 @@ SDstart(const char *name,   /* IN: file name to open */
     fprintf(stderr, "SDstart: I've been called\n");
 #endif
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON (ID_SDstart );
+#endif
     /* turn off annoying crash on error stuff */
     ncopts = 0;
 
@@ -344,6 +355,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDstart, fid, name, HDF_File_ID );
+#endif
+
     return ret_value;
 } /* SDstart */
 
@@ -368,6 +383,10 @@ SDend(int32 id /* IN: file ID of file to close */)
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDend: I've been called\n");
+#endif
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDend );
 #endif
 
     /* get id? */
@@ -430,6 +449,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDend, id, NULL, HDF_File_ID );
+#endif
+
     return ret_value;
 } /* SDend */
 
@@ -460,6 +483,10 @@ SDfileinfo(int32  fid,     /* IN:  file ID */
     fprintf(stderr, "SDnumber: I've been called\n");
 #endif
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDfileinfo );
+#endif
+
     /* check that fid is valid and get file structure */
     handle = SDIhandle_from_id(fid, CDFTYPE);
     if(handle == NULL)
@@ -483,6 +510,10 @@ done:
 
       }
     /* Normal cleanup */
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDfileinfo, fid, NULL, HDF_File_ID ) ;
+#endif
 
     return ret_value;
 } /* SDfileinfo */
@@ -526,6 +557,10 @@ SDselect(int32 fid,  /* IN: file ID */
     fprintf(stderr, "SDselect: I've been called (index: %d) \n", index);
 #endif
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDselect );
+#endif
+
     /* check that fid is valid */
     handle = SDIhandle_from_id(fid, CDFTYPE);
     if(handle == NULL)
@@ -558,6 +593,10 @@ done:
 
       }
     /* Normal cleanup */
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDselect, sdsid, NULL, HDF_SDS_ID) ;
+#endif
 
     return ret_value;
 } /* SDselect */
@@ -594,6 +633,10 @@ SDgetinfo(int32  sdsid,   /* IN:  dataset ID */
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDgetinfo: I've been called\n");
+#endif
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDgetinfo );
 #endif
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
@@ -655,6 +698,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDgetinfo, sdsid, name, HDF_SDS_ID) ;
+#endif
+
     return ret_value;
 } /* SDgetinfo */
 
@@ -694,6 +741,10 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDreaddata: I've been called\n");
+#endif
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDreaddata );
 #endif
     
     if((start == NULL) || (end == NULL) || (data == NULL))
@@ -787,6 +838,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF (  ID_SDreaddata, sdsid, NULL, HDF_SDS_ID) ;
+#endif
+
     return ret_value;
 } /* SDreaddata */
 
@@ -820,6 +875,10 @@ SDnametoindex(int32 fid,  /* IN: file ID */
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDnametoindex: I've been called\n");
+#endif
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDnametoindex );
 #endif
 
     /* check that fid is valid */
@@ -856,6 +915,9 @@ done:
 
       }
     /* Normal cleanup */
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDnametoindex, fid, name, HDF_File_ID ) ;
+#endif
 
     return ret_value;    
 } /* SDnametoindex */
@@ -897,6 +959,10 @@ SDgetrange(int32 sdsid, /* IN:  dataset ID */
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDgetrange: I've been called\n");
+#endif
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDgetrange );
 #endif
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
@@ -955,6 +1021,10 @@ done:
 
       }
     /* Normal cleanup */
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDgetrange, sdsid, NULL, HDF_SDS_ID) ;
+#endif
 
     return ret_value;
 } /* SDgetrange */
@@ -1032,6 +1102,10 @@ SDcreate(int32  fid,      /* IN: file ID */
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDcreate: I've been called\n");
+#endif
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDcreate );
 #endif
 
     /* check that fid is valid */
@@ -1206,6 +1280,9 @@ done:
 
       }
     /* Normal cleanup */
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDcreate, sdsid, name, HDF_SDS_ID) ;
+#endif
 
     return ret_value;
 } /* SDcreate */
@@ -1247,6 +1324,10 @@ SDgetdimid(int32 sdsid,  /* IN: dataset ID */
     fprintf(stderr, "SDgetdimid: I've been called\n");
 #endif
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDgetdimid );
+#endif
+
     /* get the handle */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
@@ -1284,6 +1365,9 @@ done:
 
       }
     /* Normal cleanup */
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDgetdimid, sdsid, NULL, HDF_SDS_ID) ;
+#endif
 
     return ret_value;
 } /* SDgetdimid */
@@ -1320,6 +1404,10 @@ SDsetdimname(int32  id,   /* IN: dataset ID */
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDsetdimname: I've been called\n");
+#endif
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDsetdimname );
 #endif
 
     /* get the handle */
@@ -1388,6 +1476,9 @@ done:
 
       }
     /* Normal cleanup */
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDsetdimname, id, name, HDF_Dim_ID ) ;
+#endif
 
     return ret_value;
 } /* SDsetdimname */
@@ -1416,6 +1507,10 @@ SDendaccess(int32 id /* IN: dataset ID */)
 	
 #ifdef SDDEBUG
     fprintf(stderr, "SDendaccess: I've been called\n");
+#endif
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDendaccess );
 #endif
 
     /* get the handle */
@@ -1474,9 +1569,12 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDendaccess, id, NULL, HDF_SDS_ID) ;
+#endif
+
     return ret_value;    
 } /* SDendaccess */
-
 
 /******************************************************************************
  NAME
@@ -1617,6 +1715,10 @@ SDsetrange(int32 sdsid, /* IN: dataset ID */
     fprintf(stderr, "SDsetrange: I've been called\n");
 #endif
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDsetrange );
+#endif
+
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
       {
@@ -1663,6 +1765,10 @@ done:
 
       }
     /* Normal cleanup */
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDsetrange, sdsid, NULL, HDF_SDS_ID) ;
+#endif
 
     return ret_value;    
 } /* SDsetrange */
@@ -1791,6 +1897,10 @@ SDsetattr(int32 id,    /* IN: object ID */
     fprintf(stderr, "SDsetattr: I've been called\n");
 #endif
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDsetattr );
+#endif
+
     /* sanity check args */
     if(name == NULL) 
       {
@@ -1852,6 +1962,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDsetattr, id, name, HDF_Attribute_ID ) ;
+#endif
+
     return ret_value;        
 } /* SDsetattr */
 
@@ -1885,6 +1999,10 @@ SDattrinfo(int32  id,    /* IN:  object ID */
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDattrinfo: I've been called\n");
+#endif
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDattrinfo );
 #endif
 
     /* sanity check args */
@@ -1939,6 +2057,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDattrinfo, id, NULL, HDF_Attribute_ID) ;
+#endif
+
     return ret_value;    
 } /* SDattrinfo */
 
@@ -1970,6 +2092,10 @@ SDreadattr(int32 id,    /* IN:  object ID */
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDreadattr: I've been called\n");
+#endif
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDreadattr );
 #endif
 
     /* sanity check args */
@@ -2014,6 +2140,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDreadattr, id, NULL, HDF_Attribute_ID ) ;
+#endif
+
     return ret_value;    
 } /* SDreadattr */
 
@@ -2056,6 +2186,10 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDwritedata: I've been called\n");
+#endif
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDwritedata );
 #endif
 
     if((start == NULL) || (end == NULL) || (data == NULL))
@@ -2173,6 +2307,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDwritedata, sdsid, NULL, HDF_SDS_ID) ;
+#endif
+
     return ret_value;    
 } /* SDwritedata */
 
@@ -2206,6 +2344,10 @@ SDsetdatastrs(int32 sdsid, /* IN: dataset ID */
     fprintf(stderr, "SDsetdatastrs: I've been called\n");
 #endif
     
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDsetdatastrs );
+#endif
+
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
       {
@@ -2277,6 +2419,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDsetdatastrs, sdsid, NULL, HDF_SDS_ID) ;
+#endif
+
     return ret_value;    
 } /* SDsetdatastrs */
 
@@ -2306,6 +2452,10 @@ SDsetcal(int32   sdsid,/* IN: dataset ID */
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDsetcal: I've been called\n");
+#endif
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDsetcal );
 #endif
     
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
@@ -2373,6 +2523,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDsetcal, sdsid, NULL, HDF_SDS_ID) ;
+#endif
+
     return ret_value;    
 } /* SDsetcal */
 
@@ -2401,6 +2555,10 @@ SDsetfillvalue(int32 sdsid, /* IN: dataset ID */
     fprintf(stderr, "SDsetfillvalue: I've been called\n");
 #endif
     
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDsetfillvalue );
+#endif
+
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
       {
@@ -2438,6 +2596,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDsetfillvalue, sdsid, NULL, HDF_SDS_ID) ;
+#endif
+
     return ret_value;    
 } /* SDsetfillvalue */
 
@@ -2468,6 +2630,10 @@ SDgetfillvalue(int32 sdsid, /* IN:  dataset ID */
     fprintf(stderr, "SDgetfillvalue: I've been called\n");
 #endif
     
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDgetfillvalue );
+#endif
+
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
       {
@@ -2504,6 +2670,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDgetfillvalue, sdsid, NULL, HDF_SDS_ID) ;
+#endif
+
     return ret_value;    
 } /* SDgetfillvalue */
 
@@ -2539,6 +2709,10 @@ SDgetdatastrs(int32 sdsid, /* IN:  dataset ID */
     fprintf(stderr, "SDgetdatastrs: I've been called\n");
 #endif
     
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDgetdatastrs );
+#endif
+
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
       {
@@ -2636,6 +2810,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDgetdatastrs, sdsid, NULL, HDF_SDS_ID) ;
+#endif
+
     return ret_value;    
 } /* SDgetdatastrs */
 
@@ -2668,6 +2846,10 @@ SDgetcal(int32    sdsid, /* IN:  dataset ID */
     fprintf(stderr, "SDgetcal: I've been called\n");
 #endif
     
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDgetcal );
+#endif
+
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
       {
@@ -2734,6 +2916,10 @@ done:
 
       }
     /* Normal cleanup */
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDgetcal, sdsid, NULL, HDF_SDS_ID) ;
+#endif
 
     return ret_value;    
 } /* SDgetcal */
@@ -2913,6 +3099,10 @@ SDsetdimstrs(int32 id, /* IN: dimension ID */
     fprintf(stderr, "SDsetdimstrs: I've been called\n");
 #endif
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDsetdimstrs );
+#endif
+
     /* get the handle */
     handle = SDIhandle_from_id(id, DIMTYPE);
     if(handle == NULL)
@@ -2985,6 +3175,10 @@ done:
 
       }
     /* Normal cleanup */
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDsetdimstrs , id, NULL, HDF_Dim_ID );
+#endif
 
     return ret_value;    
 } /* SDsetdimstrs */
@@ -3078,6 +3272,10 @@ SDsetdimscale(int32 id,    /* IN: dimension ID */
     fprintf(stderr, "SDsetdimscales: I've been called\n");
 #endif
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDsetdimscale );
+#endif
+
     /* get the handle */
     handle = SDIhandle_from_id(id, DIMTYPE);
     if(handle == NULL)
@@ -3138,6 +3336,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDsetdimscale, id, NULL, HDF_Dim_ID ) ;
+#endif
+
     return ret_value;    
 } /* SDsetdimsacle */
 
@@ -3170,6 +3372,10 @@ SDgetdimscale(int32 id,   /* IN:  dimension ID */
 	
 #ifdef SDDEBUG
     fprintf(stderr, "SDgetdimscale: I've been called\n");
+#endif
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDgetdimscale );
 #endif
 
     /* get the handle */
@@ -3241,6 +3447,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDgetdimscale, id, NULL, HDF_Dim_ID ) ;
+#endif
+
     return ret_value;    
 } /* SDsetdimsacle */
 
@@ -3276,6 +3486,10 @@ SDdiminfo(int32  id,    /* IN:  dimension ID */
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDdiminfo: I've been called\n");
+#endif
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDdiminfo );
 #endif
 
     handle = SDIhandle_from_id(id, DIMTYPE);
@@ -3343,6 +3557,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDdiminfo, id, name, HDF_Dim_ID ) ;
+#endif
+
     return ret_value;    
 } /* SDdiminfo */
 
@@ -3381,6 +3599,10 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
     fprintf(stderr, "SDgetdimstrs: I've been called\n");
 #endif
     
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDgetdimstrs );
+#endif
+
     handle = SDIhandle_from_id(id, DIMTYPE);
     if(handle == NULL) 
       {
@@ -3476,6 +3698,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDgetdimstrs, id, NULL, HDF_SDS_ID) ;
+#endif
+
     return ret_value;    
 } /* SDgetdimstrs */
 
@@ -3522,6 +3748,10 @@ SDsetexternalfile(int32 id,       /* IN: dataset ID */
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDsetexternalfile: I've been called\n");
+#endif
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDsetexternalfile );
 #endif
 
     if(NULL == filename || offset < 0)
@@ -3609,6 +3839,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDsetexternalfile, id, filename, HDF_File_ID );
+#endif
+
     return ret_value;    
 } /* SDsetexternalfile */
 
@@ -3662,6 +3896,10 @@ SDsetnbitdataset(int32 id,       /* IN: dataset ID */
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDsetnbitdataset: I've been called\n");
+#endif
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDsetnbitdataset );
 #endif
 
     if(start_bit < 0 || bit_len <= 0)
@@ -3749,6 +3987,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDsetnbitdataset, id, NULL, HDF_SDS_ID) ;
+#endif
+
     return ret_value;    
 } /* SDsetnbitdataset */
 
@@ -3784,6 +4026,10 @@ SDsetcompress(int32      id,    /* IN: dataset ID */
 #ifdef SDDEBUG
     fprintf(stderr, "SDsetcompress: I've been called\n");
 #endif /* SDDEBUG */
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDsetcompress );
+#endif
 
     if (type < 0 || type >= COMP_CODE_INVALID)
       {
@@ -3897,6 +4143,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDsetcompress, id, NULL, HDF_SDS_ID) ;
+#endif
+
     return ret_value;    
 } /* SDsetcompress */
 
@@ -3925,6 +4175,10 @@ SDfindattr(int32 id,       /* IN: object ID */
     int32      attrid;
     int32      len;
     int32      ret_value = FAIL;
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDfindattr );
+#endif
 
     /* determine what type of ID we've been given */
     if(SDIapfromid(id, &handle, &app) == FAIL)
@@ -3965,6 +4219,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDfindattr, id, NULL, HDF_Attribute_ID ) ;
+#endif
+
     return ret_value;        
 } /* SDfindattr */
 
@@ -3992,6 +4250,10 @@ SDidtoref(int32 id /* IN: dataset ID */)
     fprintf(stderr, "SDidtoref: I've been called\n");
 #endif
     
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDidtoref );
+#endif
+
     handle = SDIhandle_from_id(id, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE) 
       {
@@ -4021,6 +4283,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDidtoref, id, NULL, HDF_SDS_ID) ;
+#endif
+
     return ret_value;    
 } /* SDidtoref */
 
@@ -4049,6 +4315,10 @@ SDreftoindex(int32 fid, /* IN: file ID */
     fprintf(stderr, "SDreftoindex: I've been called\n");
 #endif
     
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDreftoindex );
+#endif
+
     handle = SDIhandle_from_id(fid, CDFTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE) 
       {
@@ -4081,6 +4351,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDreftoindex, fid, NULL, HDF_File_ID ) ;
+#endif
+
     return ret_value;    
 } /* SDreftoindex */
 
@@ -4108,6 +4382,10 @@ SDisrecord(int32 id /* IN: dataset ID */)
     fprintf(stderr, "SDisrecord: I've been called\n");
 #endif
     
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDisrecord );
+#endif
+
     handle = SDIhandle_from_id(id, SDSTYPE);
     if(handle == NULL)
       {
@@ -4140,6 +4418,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+   HDF_TRACE_OFF ( ID_SDisrecord, id, NULL, HDF_SDS_ID) ;
+#endif
+
     return ret_value;    
 } /* SDisrecord */
 
@@ -4168,6 +4450,10 @@ SDiscoordvar(int32 id /* IN: dataset ID */)
     fprintf(stderr, "SDiscoordvar: I've been called\n");
 #endif
     
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDiscoordvar );
+#endif
+
     handle = SDIhandle_from_id(id, SDSTYPE);
     if(handle == NULL)
       {
@@ -4223,6 +4509,10 @@ done:
 
       }
     /* Normal cleanup */
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDiscoordvar, id, NULL, HDF_SDS_ID) ;
+#endif
 
     return ret_value;    
 } /* SDiscoordvar */
@@ -4286,6 +4576,10 @@ SDsetrag(int32 sdsid,
     fprintf(stderr, "SDsetrag: I've been called\n");
 #endif
     
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDsetrag );
+#endif
+
     /* get the variable */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE) 
@@ -4340,6 +4634,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDsetrag, sdsid, NULL, HDF_SDS_ID) ;
+#endif
+
     return ret_value;    
 } /* SDsetrag */
 
@@ -4370,6 +4668,10 @@ SDsetaccesstype(int32 id,         /* IN: dataset ID */
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDsetaccesstype: I've been called\n");
+#endif
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDsetaccesstype );
 #endif
 
     switch (accesstype)
@@ -4417,6 +4719,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDsetaccesstype, id, NULL, HDF_SDS_ID) ;
+#endif
+
     return ret_value;    
 } /* SDsetaccesstype */
 
@@ -4447,6 +4753,10 @@ SDsetblocksize(int32 sdsid,      /* IN: dataset ID */
     fprintf(stderr, "SDsetblocksize: I've been called\n");
 #endif
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDsetblocksize );
+#endif
+
     /* get the handle */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
@@ -4472,6 +4782,10 @@ done:
 
       }
     /* Normal cleanup */
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF (  ID_SDsetblocksize, sdsid, NULL, HDF_SDS_ID) ;
+#endif
 
     return ret_value;    
 } /* SDsetblocksize */
@@ -4501,6 +4815,10 @@ SDsetfillmode(int32 sd_id,  /* IN: HDF file ID, returned from SDstart */
     fprintf(stderr, "SDsetfillmode: I've been called\n");
 #endif
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDsetfillmode );
+#endif
+
     /* get the handle */
     handle = SDIhandle_from_id(sd_id, CDFTYPE);
     if(handle == NULL)
@@ -4518,6 +4836,10 @@ done:
 
       }
     /* Normal cleanup */
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDsetfillmode, sd_id, NULL, HDF_File_ID ) ;
+#endif
 
     return ret_value;    
 } /* SDsetfillmode() */
@@ -4545,6 +4867,10 @@ SDsetdimval_comp(int32 dimid,    /* IN: dimension ID, returned from SDgetdimid *
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDsetdimval_comp: I've been called\n");
+#endif
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDsetdimval_comp );
 #endif
 
     /* get the handle */
@@ -4581,6 +4907,10 @@ done:
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDsetdimval_comp, dimid, NULL, HDF_Dim_ID ) ;
+#endif
+
     return ret_value;    
 } /* SDsetdimval_comp */
 
@@ -4605,6 +4935,10 @@ SDisdimval_bwcomp(int32 dimid /* IN: dimension ID, returned from SDgetdimid */)
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDisdimval_bwcomp: I've been called\n");
+#endif
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDisdimval_bwcomp );
 #endif
 
     /* get the handle */
@@ -4636,6 +4970,10 @@ done:
 
       }
     /* Normal cleanup */
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDisdimval_bwcomp, dimid, NULL, HDF_Dim_ID ) ;
+#endif
 
     return ret_value;    
 } /* SDisdimval_bwcomp */
@@ -4780,6 +5118,11 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
 #ifdef CHK_DEBUG
     fprintf(stderr,"SDsetchunk: called  \n");
 #endif
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDsetchunk );
+#endif
+
     /* Check some args */
 
     /* get file handle and verify it is an HDF file 
@@ -5105,6 +5448,10 @@ done:
     if (chunk[0].pdims != NULL)
         HDfree(chunk[0].pdims);
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDsetchunk, sdsid, NULL, HDF_SDS_ID) ;
+#endif
+
     return ret_value;
 } /* SDsetchunk */
 
@@ -5149,6 +5496,10 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
     int16     special;             /* Special code */
     intn      i;                   /* loop variable */
     intn      ret_value = SUCCEED; /* return value */
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDgetchunkinfo );
+#endif
 
     /* Check args */
 
@@ -5229,6 +5580,10 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
       }
     /* Normal cleanup */
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDgetchunkinfo,  sdsid, NULL, HDF_SDS_ID) ;
+#endif
+
     return ret_value;
 } /* SDgetchunkinfo() */
 
@@ -5277,6 +5632,10 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
     static uint32 tBuf_size = 0; /* statc conversion buffer size */
     static void  *tBuf = NULL;   /* static buffer used for conversion */
     intn       ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDwritechunk );
+#endif
 
     info_block.cdims = NULL;
 
@@ -5429,6 +5788,10 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
     if (info_block.cdims != NULL)
         HDfree(info_block.cdims);
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDwritechunk, sdsid, NULL, HDF_SDS_ID) ;
+#endif
+
     return ret_value;
 } /* SDwritechunk() */
 
@@ -5476,6 +5839,10 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
     static uint32 tBuf_size = 0; /* statc conversion buffer size */
     static void  *tBuf = NULL; /* static buffer used for conversion */
     intn       ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON( ID_SDreadchunk );
+#endif
 
     info_block.cdims = NULL;
 
@@ -5627,6 +5994,10 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
     if (info_block.cdims != NULL)
         HDfree(info_block.cdims);
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDreadchunk, sdsid, NULL, HDF_SDS_ID) ;
+#endif
+
     return ret_value;
 } /* SDreadchunk() */
 
@@ -5690,6 +6061,10 @@ SDsetchunkcache(int32 sdsid,     /* IN: access aid to mess with */
     int16     special;              /* Special code */
     intn      ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    HDF_TRACE_ON(ID_SDsetchunkcache );
+#endif
+
     /* Check args */
     if (maxcache < 1 )
       {
@@ -5743,6 +6118,10 @@ SDsetchunkcache(int32 sdsid,     /* IN: access aid to mess with */
 
       }
     /* Normal cleanup */
+
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDsetchunkcache, sdsid, NULL, HDF_SDS_ID) ;
+#endif
 
     return ret_value;
 } /* SDsetchunkcache() */

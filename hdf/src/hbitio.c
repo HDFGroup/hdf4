@@ -16,6 +16,10 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
+#ifdef HAVE_PABLO
+#define HDF_mask H_mask
+#endif
+ 
 /*
 FILE
    hbitio.c
@@ -768,7 +772,7 @@ PRIVATE intn HIbitstart(void)
     intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_HIbitstart);
+  HDF_TRACE_ON(ID_HIbitstart);
 #endif /* HAVE_PABLO */
 
     /* Don't call this routine again... */
@@ -786,7 +790,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_HIbitstart);
+  HDF_TRACE_OFF(ID_HIbitstart, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
     return(ret_value);

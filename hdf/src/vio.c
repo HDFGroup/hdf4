@@ -416,7 +416,7 @@ vpackvs(VDATA * vs,  /* IN/OUT: */
     intn  ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(V_mask, ID_vpackvs);
+         HDF_MASK_TRACE_ON(V_mask, ID_vpackvs);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -524,7 +524,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(V_mask, ID_vpackvs);
+        HDF_MASK_TRACE_OFF(V_mask, ID_vpackvs, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -555,7 +555,7 @@ vunpackvs(VDATA * vs, /* IN/OUT: */
     CONSTR(FUNC, "vunpackvs");
 
 #ifdef HAVE_PABLO
-    TRACE_ON(V_mask, ID_vunpackvs);
+      HDF_MASK_TRACE_ON(V_mask, ID_vunpackvs);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -711,7 +711,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(V_mask, ID_vunpackvs);
+        HDF_MASK_TRACE_OFF(V_mask, ID_vunpackvs, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -906,7 +906,7 @@ VSattach(HFILEID f,             /* IN: file handle */
     CONSTR(FUNC, "VSattach");
 
 #ifdef HAVE_PABLO
-    TRACE_ON(VS_mask, ID_VSattach);
+        HDF_MASK_TRACE_ON(VS_mask, ID_VSattach);
 #endif /* HAVE_PABLO */
     /* clear error stack */
     HEclear();
@@ -1053,7 +1053,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(VS_mask, ID_VSattach);
+        HDF_MASK_TRACE_OFF(VS_mask, ID_VSattach, vsid, NULL , HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1095,7 +1095,7 @@ VSdetach(int32 vkey /* IN: vdata key? */)
     CONSTR(FUNC, "VSdetach");
 
 #ifdef HAVE_PABLO
-    TRACE_ON(VS_mask, ID_VSdetach);
+        HDF_MASK_TRACE_ON(VS_mask, ID_VSdetach);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -1216,7 +1216,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(VS_mask, ID_VSdetach);
+        HDF_MASK_TRACE_OFF(VS_mask, ID_VSdetach, vkey, NULL , HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1242,7 +1242,7 @@ VSappendable(int32 vkey, /* IN: vdata key */
     CONSTR(FUNC, "VSappendable");
 
 #ifdef HAVE_PABLO
-    TRACE_ON(VS_mask, ID_VSappendable);
+        HDF_MASK_TRACE_ON(VS_mask, ID_VSappendable);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -1277,7 +1277,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(VS_mask, ID_VSappendable);
+    HDF_MASK_TRACE_OFF(VS_mask, ID_VSappendable, vkey, NULL , HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1308,7 +1308,7 @@ VSgetid(HFILEID f,  /* IN: file handle */
     CONSTR(FUNC, "VSgetid");
 
 #ifdef HAVE_PABLO
-    TRACE_ON(VS_mask, ID_VSgetid);
+        HDF_MASK_TRACE_ON(VS_mask, ID_VSgetid);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -1360,7 +1360,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(VS_mask, ID_VSgetid);
+        HDF_MASK_TRACE_OFF(VS_mask, ID_VSgetid, vsid, NULL , HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1591,7 +1591,7 @@ VSdelete(int32 f,    /* IN: file handle */
     CONSTR(FUNC, "VSdelete");
 
 #ifdef HAVE_PABLO
-    TRACE_ON(VS_mask, ID_VSdelete);
+        HDF_MASK_TRACE_ON(VS_mask, ID_VSdelete);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -1632,7 +1632,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(VS_mask, ID_VSdelete);
+        HDF_MASK_TRACE_OFF(VS_mask, ID_VSdelete, vsid, NULL , HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;

@@ -113,7 +113,8 @@ MANIFEST = $(DISTFILES)
 DISTFILES	= CHANGES COPYRIGHT CUSTOMIZE FAQ INSTALL  \
 		  Makefile.in ORIGIN README THANKS VERSION configure \
 		  configure.in aclocal.m4 msoft.mk
-SUBDIRS		= port doc fortran ncdump ncgen nctest libsrc xdr c++ dumper
+SUBDIRS		= port doc fortran ncdump ncgen nctest libsrc xdr c++ dumper \
+		  pablo
 SUBDIR_TARGETS	= \
     port/all	                             port/clean   port/distclean \
     doc/all                  doc/install     doc/clean     doc/distclean \
@@ -124,24 +125,26 @@ SUBDIR_TARGETS	= \
     libsrc/all  libsrc/test  libsrc/install  libsrc/clean  libsrc/distclean \
     xdr/all     xdr/test     xdr/install     xdr/clean     xdr/distclean \
     c++/all                                  c++/clean    c++/distclean \
+    pablo/all                pablo/install   pablo/clean  pablo/distclean \
     dumper/all  dumper/test  dumper/install  dumper/clean dumper/distclean \
     ncdump/install-utils  ncgen/install-utils dumper/install-utils \
     ncdump/install-man    ncgen/install-man   \
     xdr/install-includes fortran/install-includes libsrc/install-includes
 
 all::		port/all xdr/all libsrc/all fortran/all ncdump/all \
-		ncgen/all nctest/all doc/all dumper/all
-libmfhdf::	port/all xdr/all libsrc/all fortran/all
+		ncgen/all nctest/all doc/all dumper/all pablo/all
+libmfhdf::	port/all xdr/all libsrc/all fortran/all 
+libmfhdf-inst::	port/all xdr/all libsrc/all fortran/all pablo/all
 test::		xdr/test libsrc/test nctest/test fortran/test ncdump/test \
 		ncgen/test dumper/test
 install::	xdr/install fortran/install libsrc/install ncdump/install \
-		ncgen/install doc/install dumper/install
-install-libs::	xdr/install fortran/install libsrc/install 
+		ncgen/install doc/install dumper/install pablo/install
+install-libs::	xdr/install fortran/install libsrc/install  pablo/install
 install-includes::	xdr/install-includes fortran/install-includes libsrc/install-includes 
 install-utils:: ncdump/install-utils ncgen/install-utils dumper/install-utils
 install-man::   doc/install ncdump/install-man ncgen/install-man
 clean::		port/clean xdr/clean libsrc/clean fortran/clean ncdump/clean \
-		ncgen/clean nctest/clean doc/clean dumper/clean
+		ncgen/clean nctest/clean doc/clean dumper/clean pablo/clean
 	rm -f netcdf*.tar.Z
 
 # This is the master.mk.in makefile.  It contains general rules.

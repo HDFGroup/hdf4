@@ -943,7 +943,7 @@ dialog.
     # information about Pablo and what platforms it is supported on
     # before enabling. 
     # You need to set 'PABLO_INCLUDE' to the Pablo distribution 
-    # include directory to get the files 'IOTrace.h' and 'IOTrace_SD.h'.
+    # include directory to get to files 'IOTrace.h', 'IOTrace_SD.h' and others.
     #PABLO_FLAGS  = -DHAVE_PABLO
     #PABLO_INCLUDE = -I/hdf2/Pablo/Instrument.HP/include
 

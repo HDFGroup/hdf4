@@ -16,6 +16,10 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
+#ifdef HAVE_PABLO
+#define HDF_mask H_mask
+#endif
+ 
 /*LINTLIBRARY */
 /*+
    FILE
@@ -260,7 +264,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
   int32       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(H_mask, ID_Hopen);
+    HDF_TRACE_ON(ID_Hopen);
 #endif /* HAVE_PABLO */
 
   /* Clear errors and check args and all the boring stuff. */
@@ -298,7 +302,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
           if(HIsync(file_rec)==FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-          f = HI_OPEN(file_rec->path, acc_mode);
+          f =  (hdf_file_t)HI_OPEN(file_rec->path, acc_mode);
           if (OPENERR(f))
             HGOTO_ERROR(DFE_DENIED, FAIL);
 
@@ -328,7 +332,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
       /* Open the file, fill in the blanks and all the good stuff. */
       if (acc_mode != DFACC_CREATE)
         {	/* try to open existing file */
-          file_rec->file = HI_OPEN(file_rec->path, acc_mode);
+          file_rec->file =  (hdf_file_t)HI_OPEN(file_rec->path, acc_mode);
           if (OPENERR(file_rec->file))
             {
               if (acc_mode & DFACC_WRITE)
@@ -372,7 +376,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
 	/* make user we get a version tag */
           vtag = 1;
 
-          file_rec->file = HI_CREATE(file_rec->path);
+          file_rec->file =  (hdf_file_t)HI_CREATE(file_rec->path);
           if (OPENERR(file_rec->file))
             HGOTO_ERROR(DFE_BADOPEN, FAIL);
           file_rec->f_cur_off=0;
@@ -435,7 +439,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(H_mask, ID_Hopen);
+        HDF_TRACE_OFF( ID_Hopen, fid, path, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -463,7 +467,7 @@ Hclose(int32 file_id)
   intn  ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hclose);
+  HDF_TRACE_ON(ID_Hclose);
 #endif /* HAVE_PABLO */
 
   /* Clear errors and check args and all the boring stuff. */
@@ -516,7 +520,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(H_mask, ID_Hclose);
+        HDF_TRACE_OFF( ID_Hclose, file_id, NULL, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -555,13 +559,13 @@ Hexist(int32 file_id, uint16 search_tag, uint16 search_ref)
   intn        ret_value;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(H_mask, ID_Hexist);
+    HDF_TRACE_ON(ID_Hexist);
 #endif /* HAVE_PABLO */
 
   ret_value = (Hfind(file_id, search_tag, search_ref, &find_tag, &find_ref,
                 &find_offset, &find_length, DF_FORWARD));
 #ifdef HAVE_PABLO
-    TRACE_OFF(H_mask, ID_Hexist);
+        HDF_TRACE_OFF( ID_Hexist, file_id, NULL, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -603,7 +607,7 @@ Hinquire(int32 access_id, int32 *pfile_id, uint16 *ptag, uint16 *pref,
   intn   ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hinquire);
+  HDF_TRACE_ON(ID_Hinquire);
 #endif /* HAVE_PABLO */
 
   /* clear error stack and check validity of access id */
@@ -639,7 +643,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(H_mask, ID_Hinquire);
+        HDF_TRACE_OFF( ID_Hinquire, pfile_id, NULL, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -669,7 +673,7 @@ Hfidinquire(int32 file_id, char **fname, intn *faccess, intn *attach)
     intn      ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(H_mask, ID_Hfidinquire);
+    HDF_TRACE_ON(ID_Hfidinquire);
 #endif /* HAVE_PABLO */
 
     HEclear();
@@ -690,7 +694,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(H_mask, ID_Hfidinquire);
+        HDF_TRACE_OFF( ID_Hfidinquire, file_id, *fname, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -724,7 +728,7 @@ Hstartread(int32 file_id, uint16 tag, uint16 ref)
   int32  ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hstartread);
+  HDF_TRACE_ON(ID_Hstartread);
 #endif /* HAVE_PABLO */
 
   /* clear error stack */
@@ -744,7 +748,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Hstartread);
+    HDF_TRACE_OFF( ID_Hstartread, file_id, NULL, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -784,7 +788,7 @@ Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
   intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hnextread);
+  HDF_TRACE_ON(ID_Hnextread);
 #endif /* HAVE_PABLO */
 
     /* clear error stack and check validity of the access id */
@@ -894,7 +898,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Hnextread);
+    HDF_TRACE_OFF( ID_Hnextread, access_id, NULL, HDF_Access_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -927,7 +931,7 @@ Hstartwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
   int32       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hstartwrite);
+  HDF_TRACE_ON(ID_Hstartwrite);
 #endif /* HAVE_PABLO */
 
   /* clear error stack */
@@ -957,7 +961,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Hstartwrite);
+    HDF_TRACE_OFF( ID_Hstartwrite, file_id, NULL, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -993,7 +997,7 @@ Hstartaccess(int32 file_id, uint16 tag, uint16 ref, uint32 flags)
   int32      ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hstartaccess);
+  HDF_TRACE_ON(ID_Hstartaccess);
 #endif /* HAVE_PABLO */
 
   /* clear error stack and check validity of file id */
@@ -1110,7 +1114,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Hstartaccess);
+    HDF_TRACE_OFF( ID_Hstartaccess, file_id, NULL, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1141,7 +1145,7 @@ Hsetlength(int32 aid, int32 length)
   intn       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hsetlength);
+  HDF_TRACE_ON(ID_Hsetlength);
 #endif /* HAVE_PABLO */
 
   /* clear error stack and check validity of file id */
@@ -1177,7 +1181,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Hsetlength);
+    HDF_TRACE_OFF( ID_Hsetlength, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1206,7 +1210,7 @@ Happendable(int32 aid)
   intn   ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Happendable);
+  HDF_TRACE_ON(ID_Happendable);
 #endif /* HAVE_PABLO */
 
   /* clear error stack and check validity of file id */
@@ -1226,7 +1230,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Happendable);
+    HDF_TRACE_OFF( ID_Happendable, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1258,7 +1262,7 @@ HPisappendable(int32 aid)
   intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hisappendable);
+  HDF_TRACE_ON(ID_Hisappendable);
 #endif /* HAVE_PABLO */
 
   /* clear error stack and check validity of file id */
@@ -1288,7 +1292,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Hisappendable);
+    HDF_TRACE_OFF( ID_Hisappendable, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1327,7 +1331,7 @@ Hseek(int32 access_id, int32 offset, intn origin)
   intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hseek);
+  HDF_TRACE_ON(ID_Hseek);
 #endif /* HAVE_PABLO */
 
   /* clear error stack and check validity of this access id */
@@ -1415,7 +1419,7 @@ printf("%s: exiting\n",FUNC);
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Hseek);
+    HDF_TRACE_OFF( ID_Hseek, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1443,7 +1447,7 @@ Htell(int32 access_id)
   int32     ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Htell);
+  HDF_TRACE_ON(ID_Htell);
 #endif /* HAVE_PABLO */
 
   /* clear error stack and check validity of this access id */
@@ -1464,7 +1468,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Htell);
+    HDF_TRACE_OFF( ID_Htell, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1498,7 +1502,7 @@ Hread(int32 access_id, int32 length, void * data)
   int32      ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hread);
+  HDF_TRACE_ON(ID_Hread);
 #endif /* HAVE_PABLO */
 
   /* clear error stack and check validity of access id */
@@ -1557,7 +1561,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Hread);
+    HDF_TRACE_OFF( ID_Hread, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1594,7 +1598,7 @@ Hwrite(int32 access_id, int32 length, const void * data)
   int32       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hwrite);
+  HDF_TRACE_ON(ID_Hwrite);
 #endif /* HAVE_PABLO */
 
   /* clear error stack and check validity of access id */
@@ -1705,7 +1709,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Hwrite);
+    HDF_TRACE_OFF( ID_Hwrite, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1816,7 +1820,7 @@ Hendaccess(int32 access_id)
     intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(H_mask, ID_Hendaccess);
+    HDF_TRACE_ON(ID_Hendaccess);
 #endif /* HAVE_PABLO */
 
     /* clear error stack and check validity of access id */
@@ -1856,7 +1860,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Hendaccess);
+    HDF_TRACE_OFF( ID_Hendaccess, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1889,7 +1893,7 @@ Hgetelement(int32 file_id, uint16 tag, uint16 ref, uint8 *data)
   int32       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hgetelement);
+  HDF_TRACE_ON(ID_Hgetelement);
 #endif /* HAVE_PABLO */
 
   /* clear error stack */
@@ -1917,7 +1921,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Hgetelement);
+    HDF_TRACE_OFF( ID_Hgetelement, file_id, NULL, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1950,7 +1954,7 @@ Hputelement(int32 file_id, uint16 tag, uint16 ref, const uint8 *data,
   int32       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hputelement);
+  HDF_TRACE_ON(ID_Hputelement);
 #endif /* HAVE_PABLO */
 
   /* clear error stack */
@@ -1975,7 +1979,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Hputelement);
+    HDF_TRACE_OFF( ID_Hputelement, file_id, NULL, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -2011,7 +2015,7 @@ Hlength(int32 file_id, uint16 tag, uint16 ref)
   int32       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hlength);
+  HDF_TRACE_ON(ID_Hlength);
 #endif /* HAVE_PABLO */
 
   /* clear error stack */
@@ -2036,7 +2040,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Hlength);
+    HDF_TRACE_OFF( ID_Hlength, file_id, NULL, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -2047,7 +2051,7 @@ done:
   int32       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hlength);
+  HDF_TRACE_ON(ID_Hlength);
 #endif /* HAVE_PABLO */
 
   /* clear error stack */
@@ -2075,7 +2079,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Hlength);
+    HDF_TRACE_OFF( ID_Hlength, file_id, NULL, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -2113,7 +2117,7 @@ Hoffset(int32 file_id, uint16 tag, uint16 ref)
   int32       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hoffset);
+  HDF_TRACE_ON(ID_Hoffset);
 #endif /* HAVE_PABLO */
 
   /* clear error stack */
@@ -2140,7 +2144,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Hoffset);
+    HDF_TRACE_OFF( ID_Hoffset, file_id, NULL, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -2173,7 +2177,7 @@ Hishdf(const char *filename)
   intn   ret_value = TRUE;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hishdf);
+  HDF_TRACE_ON(ID_Hishdf);
 #endif /* HAVE_PABLO */
 
   fid = Hopen(filename, DFACC_READ, 0);
@@ -2193,7 +2197,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Hishdf);
+    HDF_TRACE_OFF( ID_Hishdf, fid, filename, HDF_File_ID);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -2203,14 +2207,14 @@ done:
   intn   ret_value = TRUE;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hishdf);
+  HDF_TRACE_ON(ID_Hishdf);
 #endif /* HAVE_PABLO */
 
   /* Search for a matching slot in the already open files. */
   if(HAsearch_atom(FIDGROUP,HPcompare_filerec_path,filename)!=NULL)
       HGOTO_DONE(TRUE);
 
-  fp = HI_OPEN(filename, DFACC_READ);
+  fp =  (hdf_file_t)HI_OPEN(filename, DFACC_READ);
   if (OPENERR(fp))
     {
       ret_value = FALSE;
@@ -2230,7 +2234,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Hishdf);
+    HDF_TRACE_OFF( ID_Hishdf, NoDSid, filename, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -2261,7 +2265,7 @@ Htrunc(int32 aid, int32 trunc_len)
   int32      ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Htrunc);
+  HDF_TRACE_ON(ID_Htrunc);
 #endif /* HAVE_PABLO */
 
   /* clear error stack and check validity of access id */
@@ -2307,7 +2311,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Htrunc);
+    HDF_TRACE_OFF( ID_Htrunc, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -2383,7 +2387,7 @@ Hsync(int32 file_id)
   intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hsync);
+  HDF_TRACE_ON(ID_Hsync);
 #endif /* HAVE_PABLO */
 
   /* check validity of file record and get dd ptr */
@@ -2403,7 +2407,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Hsync);
+    HDF_TRACE_OFF( ID_Hsync, file_id, NULL, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -2431,7 +2435,7 @@ Hcache(int32 file_id, intn cache_on)
   intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hcache);
+  HDF_TRACE_ON(ID_Hcache);
 #endif /* HAVE_PABLO */
 
   if (file_id == CACHE_ALL_FILES)/* check whether to modify the default cache */
@@ -2462,7 +2466,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Hcache);
+    HDF_TRACE_OFF( ID_Hcache, file_id, NULL, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -2526,7 +2530,7 @@ Hsetaccesstype(int32 access_id, uintn accesstype)
   intn       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hsetaccesstype);
+  HDF_TRACE_ON(ID_Hsetaccesstype);
 #endif /* HAVE_PABLO */
 
   /* clear error stack and check validity of this access id */
@@ -2560,7 +2564,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Hsetaccesstype);
+    HDF_TRACE_OFF( ID_Hsetaccesstype, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -2600,7 +2604,7 @@ intn HDdont_atexit(void)
     intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_HDdont_atexit);
+  HDF_TRACE_ON(ID_HDdont_atexit);
 #endif /* HAVE_PABLO */
 
     if(install_atexit == TRUE)
@@ -2616,7 +2620,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_HPregister_term_func);
+    HDF_TRACE_OFF( ID_HPregister_term_func, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
     return(ret_value);
@@ -2650,7 +2654,7 @@ PRIVATE intn HIstart(void)
     intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_HIstart);
+  HDF_TRACE_ON(ID_HIstart);
 #endif /* HAVE_PABLO */
 
     /* Don't call this routine again... */
@@ -2691,7 +2695,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_HIstart);
+    HDF_TRACE_OFF( ID_HIstart, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
     return(ret_value);
@@ -2722,7 +2726,7 @@ intn HPregister_term_func(hdf_termfunc_t term_func)
     CONSTR(FUNC, "HPregister_term_func");    /* for HERROR */
     intn        ret_value = SUCCEED;
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_HPregister_term_func);
+  HDF_TRACE_ON(ID_HPregister_term_func);
 #endif /* HAVE_PABLO */
 
     if(library_terminate == FALSE)
@@ -2745,7 +2749,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_HPregister_term_func);
+    HDF_TRACE_OFF( ID_HPregister_term_func, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
     return(ret_value);
@@ -3140,7 +3144,7 @@ Hgetlibversion(uint32 *majorv, uint32 *minorv, uint32 *releasev, char *string)
   CONSTR(FUNC, "Hgetlibversion");
 #endif
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hgetlibversion);
+  HDF_TRACE_ON(ID_Hgetlibversion);
 #endif /* HAVE_PABLO */
 
   HEclear();
@@ -3151,7 +3155,7 @@ Hgetlibversion(uint32 *majorv, uint32 *minorv, uint32 *releasev, char *string)
   HIstrncpy(string, LIBVER_STRING, LIBVSTR_LEN + 1);
 
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Hgetlibversion);
+    HDF_TRACE_OFF( ID_Hgetlibversion, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return (SUCCEED);
@@ -3185,7 +3189,7 @@ Hgetfileversion(int32 file_id, uint32 *majorv, uint32 *minorv,
   intn      ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hgetfileversion);
+  HDF_TRACE_ON(ID_Hgetfileversion);
 #endif /* HAVE_PABLO */
 
   HEclear();
@@ -3211,7 +3215,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(H_mask, ID_Hgetfileversion);
+    HDF_TRACE_OFF( ID_Hgetfileversion, file_id, NULL, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;

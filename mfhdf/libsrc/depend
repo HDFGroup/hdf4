@@ -158,6 +158,7 @@ mfsd.o: mfsd.c
 mfsd.o: mfhdf.h
 mfsd.o: local_nc.h
 mfsd.o: netcdf.h
+mfsd.o: ../../hdf/src/trace.h
 mfsd.o: ../../hdf/src//hlimits.h
 mfsd.o: ../../hdf/src//hdf.h
 mfsd.o: ../../hdf/src//hdfi.h

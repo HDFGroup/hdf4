@@ -16,6 +16,10 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
+#ifdef HAVE_PABLO
+#define HDF_mask VS_mask
+#endif
+
 /*****************************************************************************
 * vsetf.c
 * Part of the HDF VSet interface.
@@ -92,7 +96,7 @@ VSsetfields(int32 vkey, const char *fields)
     CONSTR(FUNC, "VSsetfields");
 
 #ifdef HAVE_PABLO
-    TRACE_ON(VS_mask, ID_VSsetfields);
+    HDF_TRACE_ON(ID_VSsetfields);
 #endif /* HAVE_PABLO */
 
     if (HAatom_group(vkey)!=VSIDGROUP)
@@ -268,7 +272,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(VS_mask, ID_VSsetfields);
+        HDF_MASK_TRACE_OFF(VS_mask, ID_VSsetfields, vkey, NULL , HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -294,7 +298,7 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
     CONSTR(FUNC, "VSfdefine");
 
 #ifdef HAVE_PABLO
-    TRACE_ON(VS_mask, ID_VSfdefine);
+    HDF_TRACE_ON(ID_VSfdefine);
 #endif /* HAVE_PABLO */
 
     if (HAatom_group(vkey)!=VSIDGROUP)
@@ -383,7 +387,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(VS_mask, ID_VSfdefine);
+        HDF_MASK_TRACE_OFF(VS_mask, ID_VSfdefine, vkey, NULL, HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -403,7 +407,7 @@ VFnfields(int32 vkey)
     CONSTR(FUNC, "VFnfields");
 
 #ifdef HAVE_PABLO
-    TRACE_ON(VF_mask, ID_VFnfields);
+    HDF_TRACE_ON(ID_VFnfields);
 #endif /* HAVE_PABLO */
 
     if (HAatom_group(vkey)!=VSIDGROUP)
@@ -427,7 +431,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(VF_mask, ID_VFnfields);
+        HDF_MASK_TRACE_OFF(VF_mask, ID_VFnfields, vkey, NULL , HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -450,7 +454,7 @@ VFfieldname(int32 vkey, int32 index)
     CONSTR(FUNC, "VFfieldname");
 
 #ifdef HAVE_PABLO
-    TRACE_ON(VF_mask, ID_VFfieldname);
+    HDF_TRACE_ON(ID_VFfieldname);
 #endif /* HAVE_PABLO */
 
     if (HAatom_group(vkey)!=VSIDGROUP)
@@ -477,7 +481,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_ON(VF_mask, ID_VFfieldname);
+  HDF_MASK_TRACE_OFF(VF_mask, ID_VFfieldname, vkey, ret_value , HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -498,7 +502,7 @@ VFfieldtype(int32 vkey, int32 index)
     CONSTR(FUNC, "VFfeildtype");
 
 #ifdef HAVE_PABLO
-    TRACE_ON(VF_mask, ID_VFfieldtype);
+    HDF_TRACE_ON(ID_VFfieldtype);
 #endif /* HAVE_PABLO */
 
     if (HAatom_group(vkey)!=VSIDGROUP)
@@ -525,7 +529,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(VF_mask, ID_VFfieldtype);
+      HDF_MASK_TRACE_OFF(VF_mask, ID_VFfieldtype, vkey, NULL , HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -547,7 +551,7 @@ VFfieldisize(int32 vkey, int32 index)
     CONSTR(FUNC, "VFfieldisize");
 
 #ifdef HAVE_PABLO
-    TRACE_ON(VF_mask, ID_VFfieldisize);
+    HDF_TRACE_ON(ID_VFfieldisize);
 #endif /* HAVE_PABLO */
 
     if (HAatom_group(vkey)!=VSIDGROUP)
@@ -574,7 +578,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(VF_mask, ID_VFfieldisize);
+     HDF_MASK_TRACE_OFF(VF_mask, ID_VFfieldisize, vkey, NULL , HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -596,7 +600,7 @@ VFfieldesize(int32 vkey, int32 index)
     CONSTR(FUNC, "VFfieldesize");
 
 #ifdef HAVE_PABLO
-    TRACE_ON(VF_mask, ID_VFfieldesize);
+    HDF_TRACE_ON(ID_VFfieldesize);
 #endif /* HAVE_PABLO */
 
     if (HAatom_group(vkey)!=VSIDGROUP)
@@ -623,7 +627,8 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(VF_mask, ID_VFfieldesize);
+  HDF_MASK_TRACE_OFF(VF_mask, ID_VFfieldesize, vkey, NULL , HDF_Vdata_ID );
+
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -644,7 +649,7 @@ VFfieldorder(int32 vkey, int32 index)
     CONSTR(FUNC, "VFfieldorder");
 
 #ifdef HAVE_PABLO
-    TRACE_ON(VF_mask, ID_VFfieldorder);
+    HDF_TRACE_ON(ID_VFfieldorder);
 #endif /* HAVE_PABLO */
 
     if (HAatom_group(vkey)!=VSIDGROUP)
@@ -671,7 +676,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(VF_mask, ID_VFfieldorder);
+    HDF_MASK_TRACE_OFF(VF_mask, ID_VFfieldorder, vkey, NULL , HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -818,7 +823,7 @@ intn VSfpack(int32 vsid, intn packtype, const char *fields_in_buf,
     }  blist;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(VS_mask, ID_VSfpack);
+  HDF_TRACE_ON(ID_VSfpack);
 #endif /* HAVE_PABLO */
 
     if (HAatom_group(vsid)!=VSIDGROUP)
@@ -976,7 +981,7 @@ done:
        HDfree(fbufps);
 
 #ifdef HAVE_PABLO
-  TRACE_OFF(VS_mask, ID_VSfpack);
+    HDF_MASK_TRACE_OFF(VS_mask, ID_VSfpack, vsid, NULL, HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;

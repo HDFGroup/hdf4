@@ -16,6 +16,10 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
+#ifdef HAVE_PABLO
+#define HDF_mask AN_mask
+#endif
+
 /*-----------------------------------------------------------------------------
  * File:     mfan.c
  * Author:   GeorgeV
@@ -1353,7 +1357,7 @@ ANstart(int32 file_id /* IN: file to start annotation access on*/)
     int32       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(AN_mask, ID_ANstart);
+    HDF_TRACE_ON(ID_ANstart);
 #endif /* HAVE_PABLO */
 
     /* Clear error stack */
@@ -1377,7 +1381,7 @@ ANstart(int32 file_id /* IN: file to start annotation access on*/)
 
     /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(AN_mask, ID_ANstart);
+        HDF_TRACE_OFF( ID_ANstart, file_id, NULL , HDF_File_ID );
 #endif /* HAVE_PABLO */
 
     return ret_value;
@@ -1412,7 +1416,7 @@ ANfileinfo(int32  an_id,        /* IN:  annotation interface id */
     intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(AN_mask, ID_ANfileinfo);
+    HDF_TRACE_ON(ID_ANfileinfo);
 #endif /* HAVE_PABLO */
 
     /* Clear error stack */
@@ -1467,7 +1471,7 @@ ANfileinfo(int32  an_id,        /* IN:  annotation interface id */
 
     /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(AN_mask, ID_ANfileinfo);
+        HDF_TRACE_OFF( ID_ANfileinfo, an_id, NULL, HDF_Annotation_ID);
 #endif /* HAVE_PABLO */
 
     return ret_value;
@@ -1494,7 +1498,7 @@ ANend(int32 an_id /* IN: Annotation ID of file to close */)
     int32      ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(AN_mask, ID_ANend);
+    HDF_TRACE_ON(ID_ANend);
 #endif /* HAVE_PABLO */
   
     /* Clear error stack */
@@ -1610,7 +1614,7 @@ ANend(int32 an_id /* IN: Annotation ID of file to close */)
 
     /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(AN_mask, ID_ANend);
+        HDF_TRACE_OFF( ID_ANend, an_id, NULL, HDF_Annotation_ID );
 #endif /* HAVE_PABLO */
 
     return ret_value;
@@ -1644,13 +1648,13 @@ ANcreate(int32    an_id,    /* IN: annotation interface ID */
     int32    ret_value;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(AN_mask, ID_ANcreate);
+    HDF_TRACE_ON(ID_ANcreate);
 #endif /* HAVE_PABLO */
 
     ret_value = (ANIcreate(an_id, elem_tag, elem_ref, type));
 
 #ifdef HAVE_PABLO
-    TRACE_OFF(AN_mask, ID_ANcreate);
+        HDF_TRACE_OFF( ID_ANcreate, an_id, NULL, HDF_Annotation_ID );
 #endif /* HAVE_PABLO */
 
     return ret_value;
@@ -1684,7 +1688,7 @@ ANcreatef(int32    an_id,/* IN: annotation interface ID */
     int32  ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(AN_mask, ID_ANcreatef);
+    HDF_TRACE_ON(ID_ANcreatef);
 #endif /* HAVE_PABLO */
 
     /* deal with type */
@@ -1714,7 +1718,7 @@ ANcreatef(int32    an_id,/* IN: annotation interface ID */
 
     /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(AN_mask, ID_ANcreatef);
+        HDF_TRACE_OFF( ID_ANcreatef, an_id, NULL, HDF_Annotation_ID);
 #endif /* HAVE_PABLO */
 
     return ret_value;
@@ -1749,7 +1753,7 @@ ANselect(int32    an_id, /* IN: annotation interface ID */
     int32      ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(AN_mask, ID_ANselect);
+    HDF_TRACE_ON(ID_ANselect);
 #endif /* HAVE_PABLO */
 
     /* Clear error stack */
@@ -1790,7 +1794,7 @@ ANselect(int32    an_id, /* IN: annotation interface ID */
 
     /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(AN_mask, ID_ANselect);
+        HDF_TRACE_OFF( ID_ANselect, an_id, NULL, HDF_Annotation_ID );
 #endif /* HAVE_PABLO */
 
     return ret_value;
@@ -1826,7 +1830,7 @@ ANnumann(int32    an_id,    /* IN: annotation interface id */
     intn   ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(AN_mask, ID_ANnumann);
+    HDF_TRACE_ON(ID_ANnumann);
 #endif /* HAVE_PABLO */
 
     /* deal with invalid types */
@@ -1844,7 +1848,7 @@ ANnumann(int32    an_id,    /* IN: annotation interface id */
     /* Normal function cleanup */
 
 #ifdef HAVE_PABLO
-    TRACE_OFF(AN_mask, ID_ANnumann);
+        HDF_TRACE_OFF( ID_ANnumann, an_id, NULL, HDF_Annotation_ID );
 #endif /* HAVE_PABLO */
 
     return ret_value;
@@ -1881,7 +1885,7 @@ ANannlist(int32    an_id,      /* IN: annotation interface id */
     intn  ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(AN_mask, ID_ANannlist);
+    HDF_TRACE_ON(ID_ANannlist);
 #endif /* HAVE_PABLO */
 
     /* deal with invalid types */
@@ -1899,7 +1903,7 @@ ANannlist(int32    an_id,      /* IN: annotation interface id */
     /* Normal function cleanup */
 
 #ifdef HAVE_PABLO
-    TRACE_OFF(AN_mask, ID_ANannlist);
+        HDF_TRACE_OFF( ID_ANannlist, an_id, NULL, HDF_Annotation_ID );
 #endif /* HAVE_PABLO */
 
     return ret_value;
@@ -1928,12 +1932,12 @@ ANannlen(int32 ann_id /* IN: annotation id */)
     int32  ret_value;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(AN_mask, ID_ANannlen);
+    HDF_TRACE_ON(ID_ANannlen);
 #endif /* HAVE_PABLO */
 
     ret_value =  ANIannlen(ann_id);
 #ifdef HAVE_PABLO
-    TRACE_OFF(AN_mask, ID_ANannlen);
+        HDF_TRACE_OFF( ID_ANannlen, ann_id, NULL, HDF_Annotation_ID );
 #endif /* HAVE_PABLO */
 
     return ret_value;
@@ -1965,12 +1969,12 @@ ANwriteann(int32 ann_id,     /* IN: annotation id */
     int32  ret_value;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(AN_mask, ID_ANwriteann);
+    HDF_TRACE_ON(ID_ANwriteann);
 #endif /* HAVE_PABLO */
 
     ret_value = ANIwriteann(ann_id, ann, annlen);
 #ifdef HAVE_PABLO
-    TRACE_OFF(AN_mask, ID_ANwriteann);
+        HDF_TRACE_OFF( ID_ANwriteann, ann_id, NULL, HDF_Annotation_ID );
 #endif /* HAVE_PABLO */
 
     return ret_value;
@@ -2002,12 +2006,12 @@ ANreadann(int32 ann_id,  /* IN: annotation id (handle) */
     int32   ret_value;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(AN_mask, ID_ANreadann);
+    HDF_TRACE_ON(ID_ANreadann);
 #endif /* HAVE_PABLO */
 
     ret_value = ANIreadann(ann_id, ann, maxlen);
 #ifdef HAVE_PABLO
-    TRACE_OFF(AN_mask, ID_ANreadann);
+        HDF_TRACE_OFF( ID_ANreadann, ann_id, NULL, HDF_Annotation_ID );
 #endif /* HAVE_PABLO */
 
     return ret_value;
@@ -2035,14 +2039,14 @@ ANendaccess(int32 ann_id /* IN: annotation id */)
 #endif /* LATER */
     intn  ret_value = SUCCEED;
 #ifdef HAVE_PABLO
-    TRACE_ON(AN_mask, ID_ANendaccess);
+    HDF_TRACE_ON(ID_ANendaccess);
 #endif /* HAVE_PABLO */
 
     /* shut compiler up */
     ann_id=ann_id;
 
 #ifdef HAVE_PABLO
-    TRACE_OFF(AN_mask, ID_ANendaccess);
+        HDF_TRACE_OFF( ID_ANendaccess, ann_id, NULL, HDF_Annotation_ID );
 #endif /* HAVE_PABLO */
 
 

@@ -51,6 +51,10 @@ static int32 last_ydim = 0;     /* .....gheesh......... */
 #define LUT     0
 #define IMAGE   1
 
+#ifdef HAVE_PABLO
+#define HDF_mask DF24_mask
+#endif
+
 /*--------------------------------------------------------------------------
  NAME
     DF24getdims -- get dimensions of next image RIG
@@ -77,7 +81,7 @@ DF24getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pil)
   intn       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(DF24_mask, ID_DF24getdims);
+  HDF_TRACE_ON(ID_DF24getdims);
 #endif /* HAVE_PABLO */
 
   do
@@ -99,7 +103,7 @@ done:
   /* Normal function cleanup */
 
 #ifdef HAVE_PABLO
-  TRACE_OFF(DF24_mask, ID_DF24getdims);
+    HDF_TRACE_OFF( ID_DF24getdims, NoDSid, filename, HDF_File_ID);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -126,13 +130,13 @@ DF24reqil(intn il)
   intn ret_value;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(DF24_mask, ID_DF24reqil);
+  HDF_TRACE_ON(ID_DF24reqil);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFGRIreqil(il, IMAGE));
 
 #ifdef HAVE_PABLO
-  TRACE_OFF(DF24_mask, ID_DF24reqil);
+    HDF_TRACE_OFF( ID_DF24reqil, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -170,7 +174,7 @@ DF24getimage(const char *filename, void * image, int32 xdim, int32 ydim)
   intn         ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(DF24_mask, ID_DF24getimage);
+    HDF_TRACE_ON(ID_DF24getimage);
 #endif /* HAVE_PABLO */
 
   HEclear();
@@ -203,7 +207,7 @@ done:
   /* Normal function cleanup */
 
 #ifdef HAVE_PABLO
-  TRACE_OFF(DF24_mask, ID_DF24getimage);
+    HDF_TRACE_OFF(ID_DF24getimage, NoDSid, filename, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -231,14 +235,14 @@ DF24setdims(int32 xdim, int32 ydim)
   intn ret_value;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(DF24_mask, ID_DF24setdims);
+    HDF_TRACE_ON( ID_DF24setdims);
 #endif /* HAVE_PABLO */
 
   dimsset = 1;
   ret_value = (DFGRIsetdims(xdim, ydim, 3, IMAGE));
 
 #ifdef HAVE_PABLO
-  TRACE_OFF(DF24_mask, ID_DF24setdims);
+    HDF_TRACE_OFF(ID_DF24setdims, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -265,13 +269,13 @@ DF24setil(intn il)
   intn ret_value;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(DF24_mask, ID_DF24setil);
+  HDF_TRACE_ON(ID_DF24setil);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFGRIsetil(il, IMAGE));
 
 #ifdef HAVE_PABLO
-  TRACE_OFF(DF24_mask, ID_DF24setil);
+    HDF_TRACE_OFF(ID_DF24setil, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -303,13 +307,13 @@ DF24setcompress(int32 type, comp_info * cinfo)
   intn ret_value;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(DF24_mask, ID_DF24setcompress);
+    HDF_TRACE_ON( ID_DF24setcompress);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFGRsetcompress(type, cinfo));
 
 #ifdef HAVE_PABLO
-  TRACE_OFF(DF24_mask, ID_DF24setcompress);
+    HDF_TRACE_OFF( ID_DF24setcompress, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -375,7 +379,7 @@ DF24addimage(const char *filename, const void * image, int32 xdim, int32 ydim)
   intn ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(DF24_mask, ID_DF24addimage);
+  HDF_TRACE_ON(ID_DF24addimage);
 #endif /* HAVE_PABLO */
 
   /* 0 == C */
@@ -393,7 +397,7 @@ done:
   /* Normal function cleanup */
 
 #ifdef HAVE_PABLO
-  TRACE_OFF(DF24_mask, ID_DF24addimage);
+  HDF_TRACE_OFF( ID_DF24addimage, NoDSid, filename, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -426,7 +430,7 @@ DF24putimage(const char *filename, const void * image, int32 xdim, int32 ydim)
   intn ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(DF24_mask, ID_DF24putimage);
+    HDF_TRACE_ON( ID_DF24putimage);
 #endif /* HAVE_PABLO */
 
   /* 0 == C */
@@ -444,7 +448,7 @@ done:
   /* Normal function cleanup */
 
 #ifdef HAVE_PABLO
-  TRACE_OFF(DF24_mask, ID_DF24putimage);
+    HDF_TRACE_OFF( ID_DF24putimage, NoDSid, filename, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -479,7 +483,7 @@ DF24nimages(const char *filename)
   intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(DF24_mask, ID_DF24nimages);
+    HDF_TRACE_ON( ID_DF24nimages);
 #endif /* HAVE_PABLO */
 
   HEclear();
@@ -538,7 +542,7 @@ done:
     /* Normal function cleanup */
 
 #ifdef HAVE_PABLO
-  TRACE_OFF(DF24_mask, ID_DF24nimages);
+    HDF_TRACE_OFF( ID_DF24nimages, NoDSid, filename, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -566,13 +570,13 @@ DF24readref(const char *filename, uint16 ref)
   intn ret_value;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(DF24_mask, ID_DF24readref);
+    HDF_TRACE_ON( ID_DF24readref);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFGRreadref(filename, ref));
 
 #ifdef HAVE_PABLO
-  TRACE_OFF(DF24_mask, ID_DF24readref);
+    HDF_TRACE_OFF( ID_DF24readref, NoDSid, filename, HDF_File_ID );
 #endif /* HAVE_PABLO */
   
   return ret_value;
@@ -598,13 +602,13 @@ DF24lastref(void)
   uint16 ret_value;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(DF24_mask, ID_DF24lastref);
+    HDF_TRACE_ON( ID_DF24lastref );
 #endif /* HAVE_PABLO */
  
   ret_value = (DFGRIlastref());
 
 #ifdef HAVE_PABLO
-  TRACE_OFF(DF24_mask, ID_DF24lastref);
+    HDF_TRACE_OFF( ID_DF24lastref, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;

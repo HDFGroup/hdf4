@@ -159,7 +159,7 @@ const char * filename;
     int32      magic_num;
     intn       ret_value = TRUE;
   
-    fp = HI_OPEN(filename, DFACC_READ);
+    fp = (hdf_file_t)HI_OPEN(filename, DFACC_READ);
     if (OPENERR(fp)) 
       {
           ret_value = FALSE;
@@ -223,7 +223,7 @@ const char * filename;
     int32      magic_num;
     intn       ret_value = TRUE;
   
-    fp = HI_OPEN(filename, DFACC_READ);
+    fp = (hdf_file_t)HI_OPEN(filename, DFACC_READ);
     if (OPENERR(fp)) 
       {
         ret_value = FALSE;

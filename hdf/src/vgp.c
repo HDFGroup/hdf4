@@ -15,6 +15,9 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 /* $Id$ */
+#ifdef HAVE_PABLO
+#define HDF_mask V_mask
+#endif
 
 /*****************************************************************************
 
@@ -703,7 +706,7 @@ Vinitialize(HFILEID f /* IN: file handle */)
     CONSTR(FUNC, "Vinitialize");
 
 #ifdef HAVE_PABLO
-    TRACE_ON(V_mask, ID_Vinitialize);
+    HDF_TRACE_ON(ID_Vinitialize);
 #endif /* HAVE_PABLO */
   
     /* clear error stack */
@@ -728,7 +731,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(V_mask, ID_Vinitialize);
+    HDF_TRACE_OFF(ID_Vinitialize, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -753,7 +756,7 @@ Vfinish(HFILEID f /* IN: file handle */)
   CONSTR(FUNC, "Vfinish");
 
 #ifdef HAVE_PABLO
-  TRACE_ON(V_mask, ID_Vfinish);
+  HDF_TRACE_ON(ID_Vfinish);
 #endif /* HAVE_PABLO */
 
   /* clear error stack */
@@ -771,7 +774,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(V_mask, ID_Vfinish);
+    HDF_TRACE_OFF(ID_Vfinish, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -904,7 +907,7 @@ vpackvg(VGROUP * vg, /* IN: */
     int32 ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(V_mask, ID_vpackvg);
+    HDF_TRACE_ON(ID_vpackvg);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -982,7 +985,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(V_mask, ID_vpackvg);
+        HDF_TRACE_OFF(ID_vpackvg, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
  
   return ret_value;
@@ -1015,7 +1018,7 @@ vunpackvg(VGROUP * vg, /* IN/OUT: */
     CONSTR(FUNC, "vunpackvg");
 
 #ifdef HAVE_PABLO
-    TRACE_ON(V_mask, ID_vunpackvg);
+    HDF_TRACE_ON(ID_vunpackvg);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -1097,7 +1100,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(V_mask, ID_vunpackvg);
+        HDF_TRACE_OFF(ID_vunpackvg, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1211,7 +1214,7 @@ Vattach(HFILEID f,             /* IN: file handle */
     CONSTR(FUNC, "Vattach");
 
 #ifdef HAVE_PABLO
-    TRACE_ON(V_mask, ID_Vattach);
+    HDF_TRACE_ON(ID_Vattach);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -1315,7 +1318,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(V_mask, ID_Vattach);
+    HDF_TRACE_OFF(ID_Vattach, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1351,7 +1354,7 @@ Vdetach(int32 vkey /* IN: vgroup key */)
     CONSTR(FUNC, "Vdetach");
 
 #ifdef HAVE_PABLO
-    TRACE_ON(V_mask, ID_Vdetach);
+    HDF_TRACE_ON(ID_Vdetach);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -1433,7 +1436,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(V_mask, ID_Vdetach);
+    HDF_TRACE_OFF(ID_Vdetach,vkey,NULL, HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1469,7 +1472,7 @@ Vinsert(int32 vkey,      /* IN: vgroup key */
     CONSTR(FUNC, "Vinsert");
 
 #ifdef HAVE_PABLO
-    TRACE_ON(V_mask, ID_Vinsert);
+    HDF_TRACE_ON(ID_Vinsert);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -1553,7 +1556,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(V_mask, ID_Vinsert);
+    HDF_TRACE_OFF(ID_Vinsert,vkey,NULL, HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1660,7 +1663,7 @@ Vinqtagref(int32 vkey, /* IN: vgroup key */
     CONSTR(FUNC, "Vinqtagref");
 
 #ifdef HAVE_PABLO
-    TRACE_ON(V_mask, ID_Vinqtagref);
+    HDF_TRACE_ON(ID_Vinqtagref);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -1696,7 +1699,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(V_mask, ID_Vinqtagref);
+    HDF_TRACE_OFF(ID_Vinqtagref,vkey,NULL, HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1738,7 +1741,7 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
     to see if there are more occurences and then delete them. */
 
 #ifdef HAVE_PABLO
-    TRACE_ON(V_mask, ID_Vdeletetagref);
+    HDF_TRACE_ON(ID_Vdeletetagref);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -1819,7 +1822,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(V_mask, ID_Vdeletetagref);
+  HDF_TRACE_OFF(ID_Vdeletetagref, vkey,NULL, HDF_Vdata_ID);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1846,7 +1849,7 @@ Vntagrefs(int32 vkey /* IN: vgroup key */)
     CONSTR(FUNC, "Vntagrefs");
 
 #ifdef HAVE_PABLO
-    TRACE_ON(V_mask, ID_Vntagrefs);
+    HDF_TRACE_ON(ID_Vntagrefs);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -1875,7 +1878,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(V_mask, ID_Vntagrefs);
+    HDF_TRACE_OFF(ID_Vntagrefs,vkey,NULL, HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1966,7 +1969,7 @@ Vgettagrefs(int32 vkey,       /* IN: vgroup key */
     CONSTR(FUNC, "Vgettagrefs");
 
 #ifdef HAVE_PABLO
-  TRACE_ON(V_mask, ID_Vgettagrefs);
+  HDF_TRACE_ON(ID_Vgettagrefs);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -2004,7 +2007,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(V_mask, ID_Vgettagrefs);
+    HDF_TRACE_OFF(ID_Vgettagrefs,vkey,NULL, HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -2038,7 +2041,7 @@ Vgettagref(int32 vkey,   /* IN: vgroup key */
     CONSTR(FUNC, "Vgettagref");
 
 #ifdef HAVE_PABLO
-  TRACE_ON(V_mask, ID_Vgettagref);
+  HDF_TRACE_ON(ID_Vgettagref);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -2071,7 +2074,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(V_mask, ID_Vgettagref);
+    HDF_TRACE_OFF(ID_Vgettagref,vkey,NULL, HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -2204,7 +2207,7 @@ Vaddtagref(int32 vkey, /* IN: vgroup key */
     CONSTR(FUNC, "Vaddtagref");
 
 #ifdef HAVE_PABLO
-  TRACE_ON(V_mask, ID_Vaddtagref);
+  HDF_TRACE_ON(ID_Vaddtagref);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -2242,7 +2245,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(V_mask, ID_Vaddtagref);
+    HDF_TRACE_OFF(ID_Vaddtagref,vkey,NULL, HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -2370,7 +2373,7 @@ Vsetname(int32 vkey,         /* IN: vgroup key */
     CONSTR(FUNC, "Vsetname");
 
 #ifdef HAVE_PABLO
-    TRACE_ON(V_mask, ID_Vsetname);
+    HDF_TRACE_ON(ID_Vsetname);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -2402,7 +2405,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(V_mask, ID_Vsetname);
+    HDF_TRACE_OFF(ID_Vsetname, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -2430,7 +2433,7 @@ Vsetclass(int32 vkey,          /* IN: vgroup key */
     CONSTR(FUNC, "Vsetclass");
 
 #ifdef HAVE_PABLO
-  TRACE_ON(V_mask, ID_Vsetclass);
+  HDF_TRACE_ON(ID_Vsetclass);
 #endif /* HAVE_PABLO */
     /* clear error stack */
     HEclear();
@@ -2465,7 +2468,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(V_mask, ID_Vsetclass);
+    HDF_TRACE_OFF(ID_Vsetclass, vkey, vgclass , HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -2615,7 +2618,7 @@ Vgetid(HFILEID f,  /* IN: file handle */
     CONSTR(FUNC, "Vgetid");
 
 #ifdef HAVE_PABLO
-  TRACE_ON(V_mask, ID_Vgetid);
+  HDF_TRACE_ON(ID_Vgetid);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -2669,7 +2672,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(V_mask, ID_Vgetid);
+    HDF_TRACE_OFF(ID_Vgetid, vgid, NULL , HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -2793,7 +2796,7 @@ Vgetname(int32 vkey,   /* IN: vgroup key */
     CONSTR(FUNC, "Vgetname");
 
 #ifdef HAVE_PABLO
-  TRACE_ON(V_mask, ID_Vgetname);
+  HDF_TRACE_ON(ID_Vgetname);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -2823,7 +2826,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(V_mask, ID_Vgetname);
+    HDF_TRACE_OFF(ID_Vgetname, vkey, vgname , HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -2852,7 +2855,7 @@ Vgetclass(int32 vkey,    /* IN: vgroup key */
     CONSTR(FUNC, "Vgetclass");
 
 #ifdef HAVE_PABLO
-  TRACE_ON(V_mask, ID_Vgetclass);
+  HDF_TRACE_ON(ID_Vgetclass);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -2882,7 +2885,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(V_mask, ID_Vgetclass);
+    HDF_TRACE_OFF(ID_Vgetclass, vkey, vgclass , HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -2914,7 +2917,7 @@ Vinquire(int32 vkey,        /* IN: vgroup key */
     CONSTR(FUNC, "Vinquire");
 
 #ifdef HAVE_PABLO
-  TRACE_ON(V_mask, ID_Vinquire);
+  HDF_TRACE_ON(ID_Vinquire);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -2953,7 +2956,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(V_mask, ID_Vinquire);
+    HDF_TRACE_OFF(ID_Vinquire, vkey, vgname , HDF_Vdata_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;

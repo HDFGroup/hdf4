@@ -33,6 +33,12 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
+/*****************************************************************************/
+/* Define Pablo Hooks                                                        */
+/*****************************************************************************/
+#ifdef HAVE_PABLO
+#define HDF_mask DFP_mask
+#endif
 
 /* remember that '0' is invalid ref number */
 PRIVATE uint16 Readref = 0;
@@ -72,7 +78,7 @@ DFPgetpal(const char *filename, void * palette)
   intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(DFP_mask, ID_DFPgetpal);
+  HDF_TRACE_ON(ID_DFPgetpal);
 #endif /* HAVE_PABLO */
 
   HEclear();
@@ -149,7 +155,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(DFP_mask, ID_DFPgetpal);
+    HDF_TRACE_OFF( ID_DFPgetpal, NoDSid, filename, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -185,7 +191,7 @@ DFPputpal(const char *filename, const void * palette, intn overwrite, const char
   intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(DFP_mask, ID_DFPputpal);
+  HDF_TRACE_ON(ID_DFPputpal);
 #endif /* HAVE_PABLO */
 
   HEclear();
@@ -231,7 +237,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(DFP_mask, ID_DFPputpal);
+    HDF_TRACE_OFF( ID_DFPputpal, NoDSid, filename, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -259,13 +265,13 @@ DFPaddpal(const char *filename, const void * palette)
   intn ret_value;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(DFP_mask, ID_DFPaddpal);
+  HDF_TRACE_ON(ID_DFPaddpal);
 #endif /* HAVE_PABLO */
 
   ret_value = (DFPputpal(filename, palette, 0, "a"));
 
 #ifdef HAVE_PABLO
-  TRACE_OFF(DFP_mask, ID_DFPaddpal);
+    HDF_TRACE_OFF( ID_DFPaddpal, NoDSid, filename, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -301,7 +307,7 @@ DFPnpals(const char *filename)
   intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(DFP_mask, ID_DFPnpals);
+  HDF_TRACE_ON(ID_DFPnpals);
 #endif /* HAVE_PABLO */
 
   HEclear();
@@ -388,7 +394,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(DFP_mask, ID_DFPnpals);
+    HDF_TRACE_OFF( ID_DFPnpals, NoDSid, filename, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -420,7 +426,7 @@ DFPreadref(const char *filename, uint16 ref)
   intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(DFP_mask, ID_DFPreadref);
+  HDF_TRACE_ON(ID_DFPreadref);
 #endif /* HAVE_PABLO */
 
   HEclear();
@@ -452,7 +458,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(DFP_mask, ID_DFPreadref);
+    HDF_TRACE_OFF( ID_DFPreadref, NoDSid, filename, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -481,7 +487,7 @@ DFPwriteref(const char *filename, uint16 ref)
   intn ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(DFP_mask, ID_DFPwriteref);
+  HDF_TRACE_ON(ID_DFPwriteref);
 #endif /* HAVE_PABLO */
 
   /* shut compiler up */
@@ -489,7 +495,7 @@ DFPwriteref(const char *filename, uint16 ref)
   Writeref = ref;
 
 #ifdef HAVE_PABLO
-  TRACE_OFF(DFP_mask, ID_DFPwriteref);
+    HDF_TRACE_OFF( ID_DFPwriteref, NoDSid, filename, HDF_File_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -516,13 +522,13 @@ DFPrestart(void)
   intn ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(DFP_mask, ID_DFPrestart);
+  HDF_TRACE_ON(ID_DFPrestart);
 #endif /* HAVE_PABLO */
 
   Lastfile[0] = '\0';
 
 #ifdef HAVE_PABLO
-  TRACE_OFF(DFP_mask, ID_DFPrestart);
+    HDF_TRACE_OFF( ID_DFPrestart, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -549,13 +555,13 @@ DFPlastref(void)
   uint16 ret_value;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(DFP_mask, ID_DFPlastref);
+  HDF_TRACE_ON(ID_DFPlastref);
 #endif /* HAVE_PABLO */
 
   ret_value = Lastref;
 
 #ifdef HAVE_PABLO
-  TRACE_OFF(DFP_mask, ID_DFPlastref);
+    HDF_TRACE_OFF( ID_DFPlastref, NoDSid, NULL, HDF_NULL_ID );
 #endif /* HAVE_PABLO */
 
   return ret_value;
