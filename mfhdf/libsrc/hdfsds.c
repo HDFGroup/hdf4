@@ -196,7 +196,7 @@ PRIVATE intn hdf_read_ndgs(handle)
       {
         ptbuf = (uint8 *)HDmalloc(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          HRETURN_ERROR(DFE_NOSPACE, FALSE);
       }
 
     /* no dimensions or variables yet */
