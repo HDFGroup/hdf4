@@ -161,6 +161,11 @@ extern      "C"
          int32 *origin,    /* IN: origin of chunk to write */
          const VOID *datap /* IN: buffer for data */);
 
+    extern int32 HMCreadChunk
+        (int32 access_id,  /* IN: access aid to mess with */
+         int32 *origin,    /* IN: origin of chunk to read */
+         const VOID *datap /* IN: buffer for data */);
+
     extern int32 HMCPcloseAID
         (accrec_t *access_rec /* IN:  access record of file to close */);
 
