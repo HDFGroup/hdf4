@@ -16,8 +16,6 @@
 
 #include "hrepack_an.h"
 
-
-
 /*-------------------------------------------------------------------------
  * Function: copy_vg_an
  *
@@ -28,8 +26,12 @@
  *-------------------------------------------------------------------------
  */
 
-int copy_vg_an(int32 infile_id,int32 outfile_id,int32 vgroup_id,int32 vgroup_id_out, 
-               char *path,options_t *options) 
+int copy_vg_an(int32 infile_id,
+               int32 outfile_id,
+               int32 vgroup_id,
+               int32 vgroup_id_out, 
+               char *path,
+               options_t *options) 
 {
  int32 ref_in,
        tag_in,
@@ -76,8 +78,12 @@ int copy_vg_an(int32 infile_id,int32 outfile_id,int32 vgroup_id,int32 vgroup_id_
  *-------------------------------------------------------------------------
  */
 
-int copy_vs_an(int32 infile_id,int32 outfile_id,int32 vdata_id,int32 vdata_id_out, 
-               char *path,options_t *options) 
+int copy_vs_an(int32 infile_id,
+               int32 outfile_id,
+               int32 vdata_id,
+               int32 vdata_id_out, 
+               char *path,
+               options_t *options) 
 {
  int32 ref_in,
        tag_in,
@@ -213,7 +219,7 @@ int copy_an_data(int32 infile_id,
   /* Write the annotation  */
   if (ANwriteann (ann_out,buf,ann_length)==FAIL){
    printf( "Failed to write AN %d of <%s>\n", i, path);
-		}
+  }
   if(ANendaccess(ann_out)==FAIL){
    printf( "Failed to end AN %d of <%s>\n", i, path);
    if (buf) free(buf);

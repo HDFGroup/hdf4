@@ -27,7 +27,8 @@
 /*-------------------------------------------------------------------------
  * Function: copy_gr
  *
- * Purpose: copy a GR from input file to output file and compress it using options
+ * Purpose: copy a GR from input file to output file and compress it 
+ *  using options
  *
  * Return: 0 ok, -1 not ok
  *
@@ -57,9 +58,8 @@ int  copy_gr(int32 infile_id,
                interlace_mode,/* interlace mode of an image */ 
                dtype,         /* number type of an image */
                n_attrs,       /* number of attributes belong to an image */
-               gr_ref;        /* reference number of the output data set */
-               
- int32         pal_id,        /* palette identifier */
+               gr_ref,        /* reference number of the output data set */
+               pal_id,        /* palette identifier */
                pal_out,       /* palette identifier */
                pal_ref,
                r_num_entries, 

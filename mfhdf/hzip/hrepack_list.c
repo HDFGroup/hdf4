@@ -105,9 +105,9 @@ int list(char* infname, char* outfname, options_t *options)
  list_gr (infname,outfname,infile_id,outfile_id,table,options);
  list_sds(infname,outfname,infile_id,outfile_id,table,options);
  list_vs (infname,outfname,infile_id,outfile_id,table,options);
-	list_glb(infname,outfname,infile_id,outfile_id,table,options);
+ list_glb(infname,outfname,infile_id,outfile_id,table,options);
  list_pal(infname,outfname,infile_id,outfile_id,table,options);
-	list_an (infname,outfname,infile_id,outfile_id,options);
+ list_an (infname,outfname,infile_id,outfile_id,options);
 
  /* close the HDF files */
  if (Hclose (infile_id)==FAIL)
@@ -163,8 +163,12 @@ int list(char* infname, char* outfname, options_t *options)
  */
 
 
-void list_vg(char* infname,char* outfname,int32 infile_id,int32 outfile_id,
-             table_t *table,options_t *options)
+void list_vg(char* infname,
+             char* outfname,
+             int32 infile_id,
+             int32 outfile_id,
+             table_t *table,
+             options_t *options)
 {
  int32 vgroup_id,      /* vgroup identifier */
        nlones = 0,     /* number of lone vgroups */
@@ -512,14 +516,19 @@ void vgroup_insert(char* infname,
 /*-------------------------------------------------------------------------
  * Function: list_gr
  *
- * Purpose: get top level GR images
+ * Purpose: get top level GR image list
  *
  * Return: void
  *
  *-------------------------------------------------------------------------
  */
 
-void list_gr(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options)
+void list_gr(char* infname,
+             char* outfname,
+             int32 infile_id,
+             int32 outfile_id,
+             table_t *table,
+             options_t *options)
 {
  int32 gr_id,             /* GR interface identifier */
        gr_out,            /* GR interface identifier */
@@ -684,7 +693,12 @@ void list_sds(char* infname,
  */
 
 
-void list_vs(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options)
+void list_vs(char* infname,
+             char* outfname,
+             int32 infile_id,
+             int32 outfile_id,
+             table_t *table,
+             options_t *options)
 {
  int32 nlones = 0,   /* number of lone vdatas */
        *ref_array,   /* buffer to hold the ref numbers of lone vdatas   */
@@ -765,7 +779,12 @@ void list_vs(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table
  *-------------------------------------------------------------------------
  */
 
-void list_glb(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options)
+void list_glb(char* infname,
+              char* outfname,
+              int32 infile_id,
+              int32 outfile_id,
+              table_t *table,
+              options_t *options)
 {
  int32 sd_id,                  /* SD interface identifier */
        sd_out,                 /* SD interface identifier */
@@ -773,11 +792,11 @@ void list_glb(char* infname,char* outfname,int32 infile_id,int32 outfile_id,tabl
        gr_out,                 /* GR interface identifier */
        n_datasets,             /* number of datasets in the file */
        n_file_attrs;           /* number of file attributes */
-	
-	if ( options->trip==0 ) 
-	{
-		return;
-	}
+ 
+ if ( options->trip==0 ) 
+ {
+  return;
+ }
      
 /*-------------------------------------------------------------------------
  * copy SDS global attributes
@@ -840,7 +859,11 @@ void list_glb(char* infname,char* outfname,int32 infile_id,int32 outfile_id,tabl
  *-------------------------------------------------------------------------
  */
 
-void list_an(char* infname,char* outfname,int32 infile_id,int32 outfile_id,options_t *options)
+void list_an(char* infname,
+             char* outfname,
+             int32 infile_id,
+             int32 outfile_id,
+             options_t *options)
 {
  int32 an_id,         /* AN interface identifier */
        ann_id,        /* an annotation identifier */
@@ -907,7 +930,7 @@ void list_an(char* infname,char* outfname,int32 infile_id,int32 outfile_id,optio
   /* Write the annotations  */
   if (ANwriteann (file_label_id, ann_buf, ann_length)==FAIL) {
    printf("Failed to write file label %d\n", i);
-		}
+  }
   
   /* Terminate access to the current data label */
   if (ANendaccess (ann_id)==FAIL||
@@ -946,7 +969,7 @@ void list_an(char* infname,char* outfname,int32 infile_id,int32 outfile_id,optio
   /* Write the annotations  */
   if (ANwriteann (file_desc_id, ann_buf, ann_length)==FAIL){
    printf("Failed to write file description %d\n", i);
-		}
+  }
   
   /* Terminate access to the current data label */
   if (ANendaccess (ann_id)==FAIL||
@@ -981,16 +1004,21 @@ out:
  *-------------------------------------------------------------------------
  */
 
-void list_pal(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options)
+void list_pal(char* infname,
+              char* outfname,
+              int32 infile_id,
+              int32 outfile_id,
+              table_t *table,
+              options_t *options)
 {
  uint8  palette_data[256*3];
  intn   nPals, j;
  uint16 ref;
-	
-	if ( options->trip==0 ) 
-	{
-		return;
-	}
+ 
+ if ( options->trip==0 ) 
+ {
+  return;
+ }
 
  DFPrestart();
  

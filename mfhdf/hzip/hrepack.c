@@ -77,9 +77,9 @@ void hrepack(char* infile, char* outfile, options_t *options)
 void hrepack_addcomp(char* str, options_t *options)
 {
  
- obj_list_t      *obj_list=NULL;     /*one object list for the -t and -c option entry */
- comp_info_t     comp;               /*compression info for the current -t option entry */
- int             n_objs;             /*number of objects in the current -t or -c option entry */
+ obj_list_t      *obj_list=NULL; /*one object list for the -t and -c option entry */
+ comp_info_t     comp;           /*compression info for the current -t option entry */
+ int             n_objs;         /*number of objects in the current -t or -c option entry */
  int             i;
 
  if (options->all_comp==1){
@@ -134,11 +134,11 @@ void hrepack_addcomp(char* str, options_t *options)
 void hrepack_addchunk(char* str, options_t *options)
 {
  
- obj_list_t      *obj_list=NULL;     /*one object list for the -t and -c option entry */
- int             n_objs;             /*number of objects in the current -t or -c option entry */
- int32           chunk_lengths[MAX_VAR_DIMS]; /* chunk lengths along each dimension */
- int             chunk_rank;         /*global rank for chunks */
- int             i, j;
+ obj_list_t  *obj_list=NULL;     /*one object list for the -t and -c option entry */
+ int         n_objs;             /*number of objects in the current -t or -c option entry */
+ int32       chunk_lengths[MAX_VAR_DIMS]; /* chunk lengths along each dimension */
+ int         chunk_rank;         /*global rank for chunks */
+ int         i, j;
 
  if (options->all_chunk==1){
   printf("Error: Invalid chunking input: '*' is present with other objects <%s>\n",str);
@@ -265,8 +265,7 @@ void print_options(options_t *options)
   exit(1);
  }
  
- 
- /*-------------------------------------------------------------------------
+/*-------------------------------------------------------------------------
  * objects to compress/uncompress
  *-------------------------------------------------------------------------
  */
