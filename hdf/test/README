@@ -6,3 +6,19 @@ interface. At the end of execution, each program reports how many
 errors happened. Please contact us at hdfhelp@ncsa.uiuc.edu 
 if the test fails on your machine.
 
+Special notes for fortest:
+"fortest" is just a C-code front to parse command line arguments.
+It produces a file, fortest.arg which contains lines of instruction
+to invoke the real fortran test which is called fortestF.  Each line
+in fortest.arg contains a command and a parameter.
+
+	Command		Parameter	Description
+	-------		---------	-----------
+
+	Test		Name		Test <Name>
+	Skip		Name		Skip test <Name>
+	Cleanup		Integer		Do not cleanup *.hdf files
+	Verbosity	Integer		Verbosity = <Integer>
+
+
+"fortest" then invokes "fortestF" with "fortest.arg" as input.
