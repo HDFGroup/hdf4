@@ -4266,6 +4266,7 @@ int32 flags;
               Hendaccess(var->aid);
 
           var->aid = status;
+          status = SUCCEED; /* re-set to successful */
       } /* end if */
 
   done:
@@ -4563,10 +4564,14 @@ const VOID *datap;
                             /* convert it */
                             DFKnumout((VOID *)datap, tBuf, byte_count, 0, 0);
                             /* write it out now */
-                            status = HMCwriteChunk(var->aid, origin, tBuf);
+                            if ((status = HMCwriteChunk(var->aid, origin, tBuf)) 
+                                != FAIL)
+	                           status = SUCCEED;
                         } /* end if */
                       else 
-                          status = HMCwriteChunk(var->aid, origin, datap);
+                          if ((status = HMCwriteChunk(var->aid, origin, datap)) 
+                              != FAIL)
+                            status = SUCCEED;
                   } /* end if get special info block */
             }
           else /* not special CHUNKED */
@@ -4730,14 +4735,22 @@ VOID *datap;
                 var->HDFsize, var->HDFtype);
 #endif
                             /* read it in */
-                            status = HMCreadChunk(var->aid, origin, tBuf);
-                            /* set number type */
-                            DFKsetNT(var->HDFtype);
-                            /* convert chunk */
-                            DFKnumin(tBuf, datap, byte_count, 0, 0);
+                            if ((status = HMCreadChunk(var->aid, origin, tBuf)) 
+                                != FAIL)
+                                {
+                                    /* set number type */
+                                    DFKsetNT(var->HDFtype);
+                                    /* convert chunk */
+                                    DFKnumin(tBuf, datap, byte_count, 0, 0);
+                                    status = SUCCEED;
+                                }
                         } /* end if */
                       else 
-                          status = HMCreadChunk(var->aid, origin, datap);
+                        {
+                          if ((status = HMCreadChunk(var->aid, origin, datap))
+                              != FAIL)
+                              status = SUCCEED;
+                        }
                   } /* end if get special info block */
             }
           else /* not special CHUNKED */
