@@ -13,6 +13,7 @@ C
 C $Id$
 C
       subroutine tpf (number_failed)
+C      program tpff 
       implicit none
       include 'fortest.inc'
 C
@@ -39,7 +40,7 @@ C
       character*64 TESTFILE
       character*1 CR
       character pal1(768), pal2(768), ipal(768)
-      integer ret 
+      integer ret, ref 
       integer*2  ref1, ref2, newref1, newref2
       integer i
 
@@ -48,7 +49,7 @@ C
       TESTFILE = 'tpalf.hdf'
       CR = char(10)
       number_failed = 0
-
+      ref = 0
 C
 C Initialize pal1 as {1, 2, 3, 4, 5, ...}
 C Initialize pal2 as {1, 1, 1, 2, 2, 2, ...}
@@ -70,7 +71,8 @@ C Keep their ref number in ref1 and ref2.
 
       call MESSAGE(VERBO_HI, 'Getting ref1')
       ref1 = dplref()
-      call VERIFY(ref1*1, 'dplref', number_failed)
+      ref = ref1*1
+      call VERIFY(ref, 'dplref', number_failed)
 C VERIFY expects an integer, but ref1 is only integer*2.  The
 C expression promotes it to an integer expression.
 
@@ -80,7 +82,8 @@ C expression promotes it to an integer expression.
 
       call MESSAGE(VERBO_HI, 'Getting ref2')
       ref2 = dplref()
-      call VERIFY(ref2*1, 'dplref', number_failed)
+      ref = ref2*1
+      call VERIFY(ref, 'dplref', number_failed)
      
 C
 C Reset the palettes for reading
