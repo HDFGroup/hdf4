@@ -645,6 +645,13 @@ intn hdf_read_ndgs(handle)
             vars[current_var]->data_tag = DATA_TAG;
             vars[current_var]->data_ref = sdRef;
             vars[current_var]->HDFtype  = HDFtype;
+
+            /*
+             * NOTE:  If the user changes the file and saves setting this
+             *   to ndgRef will blow away the old ndgs (but they will get
+             *   rewritten).  Otherwise calls to SDidtoref() will return
+             *   bogus values
+             */
             vars[current_var]->ndg_ref  = Hnewref(handle->hdf_file);
 
             /*
