@@ -80,16 +80,16 @@ MPopen(const char * path, int flags)
 
   /* create private memory pool for file 
   * currently we are sharing the pool*/
-  if ((mpfs->mp = mpool_open(NULL,mpfs->fd,0,0)) == NULL)
+  if ((mpfs->mp = fmpool_open(NULL,mpfs->fd,0,0)) == NULL)
     {
       ret = FAIL;
       goto done;
     }
 
 #ifdef MP_DEBUG
-  fprintf(stderr,"MPopen: mp->npages =%d\n",mpool_get_npages(mpfs->mp));
-  fprintf(stderr,"MPopen: mp->pagesize =%d\n",mpool_get_pagesize(mpfs->mp));
-  fprintf(stderr,"MPopen: mp->lastpagesize=%d\n",mpool_get_lastpagesize(mpfs->mp));
+  fprintf(stderr,"MPopen: mp->npages =%d\n",fmpool_get_npages(mpfs->mp));
+  fprintf(stderr,"MPopen: mp->pagesize =%d\n",fmpool_get_pagesize(mpfs->mp));
+  fprintf(stderr,"MPopen: mp->lastpagesize=%d\n",fmpool_get_lastpagesize(mpfs->mp));
 #endif
 
   done:
@@ -128,20 +128,20 @@ MPclose(MPFILE *mpfs)
 
 #ifdef MP_DEBUG
   fprintf(stderr,"MPclose: sync the file\n");
-  fprintf(stderr,"MPclose: mp->npages =%d\n",mpool_get_npages(mpfs->mp));
-  fprintf(stderr,"MPclose: mp->lastpagesize =%d\n",mpool_get_lastpagesize(mpfs->mp));
+  fprintf(stderr,"MPclose: mp->npages =%d\n",fmpool_get_npages(mpfs->mp));
+  fprintf(stderr,"MPclose: mp->lastpagesize =%d\n",fmpool_get_lastpagesize(mpfs->mp));
 #endif
   /* sync pages and then close mpool*/
-  if (mpool_sync(mpfs->mp) == RET_ERROR)
+  if (fmpool_sync(mpfs->mp) == RET_ERROR)
     {
       ret = FAIL;
       goto done;
     }
 
 #ifdef STATISTICS
-  mpool_stat(mpfs->mp);
+  fmpool_stat(mpfs->mp);
 #endif 
-  if (mpool_close(mpfs->mp) == RET_ERROR)
+  if (fmpool_close(mpfs->mp) == RET_ERROR)
     {
       ret = FAIL;
       goto done;
@@ -186,11 +186,11 @@ MPflush(MPFILE *mpfs)
 
 #ifdef MP_DEBUG
   fprintf(stderr,"MPflush: sync the file\n");
-  fprintf(stderr,"MPflush: mp->npages =%d\n",mpool_get_npages(mpfs->mp));
-  fprintf(stderr,"MPflush: mp->lastpagesize =%d\n",mpool_get_lastpagesize(mpfs->mp));
+  fprintf(stderr,"MPflush: mp->npages =%d\n",fmpool_get_npages(mpfs->mp));
+  fprintf(stderr,"MPflush: mp->lastpagesize =%d\n",fmpool_get_lastpagesize(mpfs->mp));
 #endif
   /* sync pages */
-  if (mpool_sync(mpfs->mp) == RET_ERROR)
+  if (fmpool_sync(mpfs->mp) == RET_ERROR)
     {
       ret = FAIL;
       goto done;
@@ -239,9 +239,9 @@ MPseek(MPFILE *mpfs, off_t offset, int whence )
   fprintf(stderr,"ENTER->MPseek: mpfs->foff =%d\n",mpfs->foff);
   fprintf(stderr,"ENTER->MPseek: mpfs->poff =%d\n",mpfs->poff);
 #endif
-  pagesize = mpool_get_pagesize(mpfs->mp);
-  npages   = mpool_get_npages(mpfs->mp);
-  lastpagesize = mpool_get_lastpagesize(mpfs->mp);
+  pagesize = fmpool_get_pagesize(mpfs->mp);
+  npages   = fmpool_get_npages(mpfs->mp);
+  lastpagesize = fmpool_get_lastpagesize(mpfs->mp);
 
   /* Adjust offset deepending on seek flag */
   switch( whence )
@@ -288,13 +288,13 @@ MPseek(MPFILE *mpfs, off_t offset, int whence )
     }
 
   /* Check to see if page exists */
-  if ((mypage = mpool_get(mpfs->mp, new_pgno, 0)) == NULL)
+  if ((mypage = fmpool_get(mpfs->mp, new_pgno, 0)) == NULL)
     { /* need to extend file and set lastpagesize*/
 #ifdef MP_DEBUG
       fprintf(stderr,"MPseek: page =%u does not exist\n",new_pgno);
       fprintf(stderr,"MPseek: oddpagesize=%u \n",oddpagesize);
 #endif
-      if ((mypage = mpool_new(mpfs->mp, &new_pgno, oddpagesize, MPOOL_EXTEND)) 
+      if ((mypage = fmpool_new(mpfs->mp, &new_pgno, oddpagesize, MPOOL_EXTEND)) 
           == NULL)
         {
           ret = FAIL;
@@ -310,7 +310,7 @@ MPseek(MPFILE *mpfs, off_t offset, int whence )
 #endif
 
   /* put page back */
-  if (mpool_put(mpfs->mp, mypage, flags) == RET_ERROR)
+  if (fmpool_put(mpfs->mp, mypage, flags) == RET_ERROR)
     {
       ret = FAIL;
       goto done;
@@ -322,18 +322,18 @@ MPseek(MPFILE *mpfs, off_t offset, int whence )
   mpfs->foff = cur_off;     /* file offset */
 
   /* Is is this the last page? */
-  if (new_pgno == mpool_get_npages(mpfs->mp))
+  if (new_pgno == fmpool_get_npages(mpfs->mp))
     { /* set last page size */
-      if (mpfs->poff && (mpfs->poff > mpool_get_lastpagesize(mpfs->mp)))
+      if (mpfs->poff && (mpfs->poff > fmpool_get_lastpagesize(mpfs->mp)))
         {
-          if (mpool_set_lastpagesize(mpfs->mp,oddpagesize) == RET_ERROR)
+          if (fmpool_set_lastpagesize(mpfs->mp,oddpagesize) == RET_ERROR)
             {
               ret = FAIL;
               goto done;
             }
 #ifdef MP_DEBUG
           fprintf(stderr,"MPseek last page now,  mpfs->mp->lastpagesize =%u\n",
-                  mpool_get_lastpagesize(mpfs->mp));
+                  fmpool_get_lastpagesize(mpfs->mp));
 #endif
         }
     }
@@ -388,8 +388,8 @@ MPread(MPFILE *mpfs, void *buf, size_t nbytes )
       goto done;
     }
 
-  pagesize = mpool_get_pagesize(mpfs->mp);
-  npages   = mpool_get_npages(mpfs->mp);
+  pagesize = fmpool_get_pagesize(mpfs->mp);
+  npages   = fmpool_get_npages(mpfs->mp);
 
   /* calculate bytes left, number of pages*/
   nbl = nbytes;
@@ -419,7 +419,7 @@ MPread(MPFILE *mpfs, void *buf, size_t nbytes )
     }
 
   /* copy First page */
-  if ((mypage = mpool_get(mpfs->mp, mpfs->curp, 0)) == NULL)
+  if ((mypage = fmpool_get(mpfs->mp, mpfs->curp, 0)) == NULL)
     {
       ret = FAIL;
       goto done;
@@ -444,7 +444,7 @@ skip_rget:
   /* return page */
   if (!skip_first_put)
     {
-      if (mpool_put(mpfs->mp, mypage, 0) == RET_ERROR)
+      if (fmpool_put(mpfs->mp, mypage, 0) == RET_ERROR)
         {
           ret = FAIL;
           goto done;
@@ -461,7 +461,7 @@ skip_rget:
   while (npageno && (npageno - mpfs->curp))
     {
       mpfs->curp++; /* next page */
-      if ((mypage = mpool_get(mpfs->mp, mpfs->curp, 0)) == NULL)
+      if ((mypage = fmpool_get(mpfs->mp, mpfs->curp, 0)) == NULL)
         {
           ret = FAIL;
           goto done;
@@ -473,7 +473,7 @@ skip_rget:
       memcpy(bptr,mypage,nbr); /* copy first page */
       mpfs->poff = nbr;
       /* return page */
-      if (mpool_put(mpfs->mp, mypage, 0) == RET_ERROR)
+      if (fmpool_put(mpfs->mp, mypage, 0) == RET_ERROR)
         {
           ret = FAIL;
           goto done;
@@ -544,8 +544,8 @@ MPwrite(MPFILE *mpfs, void *buf, size_t nbytes )
       goto done;
     }
 
-  pagesize = mpool_get_pagesize(mpfs->mp);
-  npages   = mpool_get_npages(mpfs->mp);
+  pagesize = fmpool_get_pagesize(mpfs->mp);
+  npages   = fmpool_get_npages(mpfs->mp);
 
   /* calculate bytes left, number of pages*/
   nbl = nbytes;
@@ -579,16 +579,16 @@ MPwrite(MPFILE *mpfs, void *buf, size_t nbytes )
     mpfs->poff = 0; /* reset page offset since not current page */
 
   /* get First page */
-  if ((mypage = mpool_get(mpfs->mp, pageno, 0)) == NULL)
+  if ((mypage = fmpool_get(mpfs->mp, pageno, 0)) == NULL)
     {
-      if ((mypage = mpool_new(mpfs->mp, &new_pgno, pagesize, 0)) == NULL)
+      if ((mypage = fmpool_new(mpfs->mp, &new_pgno, pagesize, 0)) == NULL)
         {
           ret = FAIL;
           goto done;
         }
       mpfs->curp = new_pgno;
       mpfs->poff = 0;
-      if (mpool_set_lastpagesize(mpfs->mp,0) == RET_ERROR)
+      if (fmpool_set_lastpagesize(mpfs->mp,0) == RET_ERROR)
         {
           ret = FAIL;
           goto done;
@@ -624,7 +624,7 @@ MPwrite(MPFILE *mpfs, void *buf, size_t nbytes )
   fprintf(stderr,"MPwrite: after write mpfs->poff =%d\n",mpfs->poff);
 #endif
   /* Mark page as dirty */
-  if (mpool_put(mpfs->mp, mypage, MPOOL_DIRTY) == RET_ERROR)
+  if (fmpool_put(mpfs->mp, mypage, MPOOL_DIRTY) == RET_ERROR)
     {
       ret = FAIL;
       goto done;
@@ -635,18 +635,18 @@ MPwrite(MPFILE *mpfs, void *buf, size_t nbytes )
   nw += nbw;
 
   /* Is is this the last page? */
-  if (mpfs->curp == mpool_get_npages(mpfs->mp))
+  if (mpfs->curp == fmpool_get_npages(mpfs->mp))
     { /* set last page size */
-      if (mpfs->poff && (mpfs->poff > mpool_get_lastpagesize(mpfs->mp)))
+      if (mpfs->poff && (mpfs->poff > fmpool_get_lastpagesize(mpfs->mp)))
         {
-          if (mpool_set_lastpagesize(mpfs->mp,mpfs->poff) == RET_ERROR)
+          if (fmpool_set_lastpagesize(mpfs->mp,mpfs->poff) == RET_ERROR)
             {
               ret = FAIL;
               goto done;
             }
 #ifdef MP_DEBUG
           fprintf(stderr,"MPwrite: now lastpagesize=%u \n",
-                  mpool_get_lastpagesize(mpfs->mp));
+                  fmpool_get_lastpagesize(mpfs->mp));
 #endif
         }
     }
@@ -661,9 +661,9 @@ MPwrite(MPFILE *mpfs, void *buf, size_t nbytes )
 #ifdef MP_DEBUG
       fprintf(stderr,"MPwrite: processing page %u \n",mpfs->curp);
 #endif
-      if ((mypage = mpool_get(mpfs->mp, mpfs->curp, 0)) == NULL)
+      if ((mypage = fmpool_get(mpfs->mp, mpfs->curp, 0)) == NULL)
         { /* Is the page we requested still less than total number of pages */
-          if (mpfs->curp <= mpool_get_npages(mpfs->mp))
+          if (mpfs->curp <= fmpool_get_npages(mpfs->mp))
             {
 #ifdef MP_DEBUG
               fprintf(stderr,"EXIT_ERROR->MPwrite: wrote %d bytes\n",nw);
@@ -676,7 +676,7 @@ MPwrite(MPFILE *mpfs, void *buf, size_t nbytes )
             }
           else
             {
-              if ((mypage = mpool_new(mpfs->mp, &new_pgno, pagesize, 0)) 
+              if ((mypage = fmpool_new(mpfs->mp, &new_pgno, pagesize, 0)) 
                   == NULL)
                 {
                   ret = FAIL;
@@ -689,7 +689,7 @@ MPwrite(MPFILE *mpfs, void *buf, size_t nbytes )
 #endif
               mpfs->curp = new_pgno;
               mpfs->poff = 0;
-              if (mpool_set_lastpagesize(mpfs->mp,0) == RET_ERROR)
+              if (fmpool_set_lastpagesize(mpfs->mp,0) == RET_ERROR)
                 {
                   ret = FAIL;
                   goto done;
@@ -708,7 +708,7 @@ MPwrite(MPFILE *mpfs, void *buf, size_t nbytes )
       fprintf(stderr,"MPwrite: mark dirty page=%u\n",mpfs->curp);
 #endif
       /* Mark page as dirty */
-      if (mpool_put(mpfs->mp, mypage, MPOOL_DIRTY) == RET_ERROR)
+      if (fmpool_put(mpfs->mp, mypage, MPOOL_DIRTY) == RET_ERROR)
         {
           ret = FAIL;
           goto done;
@@ -718,18 +718,18 @@ MPwrite(MPFILE *mpfs, void *buf, size_t nbytes )
       nbl -= nbw;  /* decrement bytes left to write */
       nw += nbw;
       /* Is is this the last page? */
-      if (mpfs->curp == mpool_get_npages(mpfs->mp))
+      if (mpfs->curp == fmpool_get_npages(mpfs->mp))
         { /* set last page size */
-          if (mpfs->poff && (mpfs->poff > mpool_get_lastpagesize(mpfs->mp)))
+          if (mpfs->poff && (mpfs->poff > fmpool_get_lastpagesize(mpfs->mp)))
             {
-              if (mpool_set_lastpagesize(mpfs->mp,mpfs->poff) == RET_ERROR)
+              if (fmpool_set_lastpagesize(mpfs->mp,mpfs->poff) == RET_ERROR)
                 {
                   ret = FAIL;
                   goto done;
                 }
 #ifdef MP_DEBUG
               fprintf(stderr,"MPwrite: now lastpagesize=%u \n",
-                      mpool_get_lastpagesize(mpfs->mp));
+                      fmpool_get_lastpagesize(mpfs->mp));
 #endif
             }
         }
@@ -752,7 +752,7 @@ MPwrite(MPFILE *mpfs, void *buf, size_t nbytes )
   fprintf(stderr," MPwrite: mpfs->foff =%d\n",mpfs->foff);
   fprintf(stderr," MPwrite: mpfs->poff =%d\n",mpfs->poff);
   fprintf(stderr," MPwrite: now lastpagesize=%u \n\n",
-          mpool_get_lastpagesize(mpfs->mp));
+          fmpool_get_lastpagesize(mpfs->mp));
 #endif
   return nw;
 } /* MPwrite() */

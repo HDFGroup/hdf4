@@ -57,9 +57,9 @@ static char RcsId[] = "@(#)$Revision$";
 
 
 /* Private routines */
-static BKT *mpool_bkt   __P((MPOOL *));
-static BKT *mpool_look  __P((MPOOL *, pageno_t));
-static int  mpool_write __P((MPOOL *, BKT *));
+static BKT *fmpool_bkt   __P((MPOOL *));
+static BKT *fmpool_look  __P((MPOOL *, pageno_t));
+static int  fmpool_write __P((MPOOL *, BKT *));
 
 /*-----------------------------------------------------------------------------
 NAME
@@ -70,14 +70,14 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------- */
 pageno_t
-mpool_get_npages(mp)
+fmpool_get_npages(mp)
   MPOOL *mp; /* MPOOL cookie */
 {
   if(mp != NULL)
     return mp->npages;
   else
     return 0;
-} /* mpool_get_npages */
+} /* fmpool_get_npages */
 
 /*-----------------------------------------------------------------------------
 NAME
@@ -88,14 +88,14 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------- */
 pageno_t
-mpool_get_pagesize(mp)
+fmpool_get_pagesize(mp)
   MPOOL *mp; /* MPOOL cookie */
 {
   if (mp != NULL)
     return mp->pagesize;
   else
     return 0;
-} /* mpool_get_pagesize */
+} /* fmpool_get_pagesize */
 
 /*-----------------------------------------------------------------------------
 NAME
@@ -106,14 +106,14 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------- */
 pageno_t
-mpool_get_lastpagesize(mp)
+fmpool_get_lastpagesize(mp)
   MPOOL *mp; /* MPOOL cookie */
 {
   if (mp != NULL)
     return mp->lastpagesize;
   else
     return 0;
-} /* mpool_get_lastpagesize */
+} /* fmpool_get_lastpagesize */
 
 /*-----------------------------------------------------------------------------
 NAME
@@ -124,7 +124,7 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------- */
 int
-mpool_set_lastpagesize(mp, lastpagesize)
+fmpool_set_lastpagesize(mp, lastpagesize)
   MPOOL *mp; /* MPOOL cookie */
   pageno_t lastpagesize;
 {
@@ -135,13 +135,13 @@ mpool_set_lastpagesize(mp, lastpagesize)
     mp->lastpagesize = lastpagesize;
 
   return RET_SUCCESS;
-} /* mpool_set_lastpagesize */
+} /* fmpool_set_lastpagesize */
 
 /*-----------------------------------------------------------------------------
 NAME
-   mpool_open -- Open a memory pool on the given file
+   fmpool_open -- Open a memory pool on the given file
 USAGE
-  MPOOL *mpool_open(key, fd, pagesize, maxcache)
+  MPOOL *fmpool_open(key, fd, pagesize, maxcache)
   void   *key;       IN: byte string used as handle to share buffers 
   int    fd;         IN: seekable file descriptor 
   pageno_t pagesize;   IN: size in bytes of the pages to break the file up into 
@@ -165,7 +165,7 @@ DESCRIPTION
  COMMENT: the key string byte for sharing buffers is not implemented
 ---------------------------------------------------------------------------- */
 MPOOL *
-mpool_open(key, fd, pagesize, maxcache)
+fmpool_open(key, fd, pagesize, maxcache)
   void       *key;     /* byte string used as handle to share buffers */
   fmp_file_t fd;       /* seekable file handle */
   pageno_t     pagesize; /* size in bytes of the pages to break the file up into */
@@ -206,7 +206,7 @@ mpool_open(key, fd, pagesize, maxcache)
   if (maxcache == 0)
     maxcache = (pageno_t)DEF_MAXCACHE;
 #ifdef STAT_DEBUG
-    (void)fprintf(stderr,"mpool_open: sb.st_blksize=%d\n",sb.st_blksize);
+    (void)fprintf(stderr,"fmpool_open: sb.st_blksize=%d\n",sb.st_blksize);
 #endif
 #else  /* !_POSIX_SOURCE */
   /* Find the length of the file the really cheesy way! */
@@ -227,7 +227,7 @@ mpool_open(key, fd, pagesize, maxcache)
   if (maxcache == 0)
       maxcache = (pageno_t)DEF_MAXCACHE;
 #ifdef STAT_DEBUG
-    (void)fprintf(stderr,"mpool_open: no fstat(),pagesize=%u\n",pagesize);
+    (void)fprintf(stderr,"fmpool_open: no fstat(),pagesize=%u\n",pagesize);
 #endif
 #endif /* !_POSIX_SOURCE */
 
@@ -314,29 +314,29 @@ done:
             }
         } /* end for entry */
 #ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_open: ERROR \n");
+    (void)fprintf(stderr,"fmpool_open: ERROR \n");
 #endif      
       mp = NULL; /* return value */
     } /* end error cleanup */
   /* Normal cleanup */
 #ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_open: mp->pagesize=%lu\n",mp->pagesize);
-    (void)fprintf(stderr,"mpool_open: mp->lastpagesize=%lu\n",mp->lastpagesize);
-    (void)fprintf(stderr,"mpool_open: mp->maxcache=%u\n",mp->maxcache);
-    (void)fprintf(stderr,"mpool_open: mp->npages=%u\n",mp->npages);
+    (void)fprintf(stderr,"fmpool_open: mp->pagesize=%lu\n",mp->pagesize);
+    (void)fprintf(stderr,"fmpool_open: mp->lastpagesize=%lu\n",mp->lastpagesize);
+    (void)fprintf(stderr,"fmpool_open: mp->maxcache=%u\n",mp->maxcache);
+    (void)fprintf(stderr,"fmpool_open: mp->npages=%u\n",mp->npages);
 #ifdef STATISTICS
-    (void)fprintf(stderr,"mpool_open: mp->listalloc=%lu\n",mp->listalloc);
+    (void)fprintf(stderr,"fmpool_open: mp->listalloc=%lu\n",mp->listalloc);
 #endif
 #endif
 
   return (mp);
-} /* mpool_open () */
+} /* fmpool_open () */
 
 /*-----------------------------------------------------------------------------
 NAME
-   mpool_filter -- Initialize input/output filters.
+   fmpool_filter -- Initialize input/output filters.
 USAGE
-  void mpool_filter(mp, pgin, pgout, pgcookie)
+  void fmpool_filter(mp, pgin, pgout, pgcookie)
   MPOOL *mp;                                    IN: MPOOL cookie
   void (*pgin) __P((void *, pageno_t, void *));   IN: page in filter 
   void (*pgout) __P((void *, pageno_t, void *));  IN: page out filter 
@@ -353,7 +353,7 @@ DESCRIPTION
    COMMENT: We don't use these yet.
 ---------------------------------------------------------------------------- */
 void
-mpool_filter(mp, pgin, pgout, pgcookie)
+fmpool_filter(mp, pgin, pgout, pgcookie)
   MPOOL *mp;                                   /* MPOOL cookie */
   void (*pgin) __P((void *, pageno_t, void *));  /* page in filter */
   void (*pgout) __P((void *, pageno_t, void *)); /* page out filter */
@@ -362,13 +362,13 @@ mpool_filter(mp, pgin, pgout, pgcookie)
   mp->pgin     = pgin;
   mp->pgout    = pgout;
   mp->pgcookie = pgcookie;
-} /* mpool_filter() */
+} /* fmpool_filter() */
 
 /*-----------------------------------------------------------------------------
 NAME
-   mpool_new -- get a new page of memory
+   fmpool_new -- get a new page of memory
 USAGE
-   void *mpool_new(mp, pgnoaddr, pagesize, flags)
+   void *fmpool_new(mp, pgnoaddr, pagesize, flags)
    MPOOL *mp;         IN: MPOOL cookie 
    pageno_t *pgnoaddr;  IN/OUT:address of newly created page 
    pageno_t pagesize;   IN:page size for last page
@@ -390,7 +390,7 @@ DESCRIPTION
     All returned pages are pinned.
 ---------------------------------------------------------------------------- */	
 void *
-mpool_new(mp, pgnoaddr, pagesize, flags)
+fmpool_new(mp, pgnoaddr, pagesize, flags)
   MPOOL     *mp;       /* MPOOL cookie */
   pageno_t    *pgnoaddr; /* address of newly create page */
   pageno_t    pagesize;  /* page size for last page*/
@@ -412,7 +412,7 @@ mpool_new(mp, pgnoaddr, pagesize, flags)
   /* page overflow? */
   if (mp->npages == MAX_PAGE_NUMBER) 
     {
-      fprintf(stderr, "mpool_new: page allocation overflow.\n");
+      fprintf(stderr, "fmpool_new: page allocation overflow.\n");
       abort();
     }
 #ifdef STATISTICS
@@ -425,7 +425,7 @@ mpool_new(mp, pgnoaddr, pagesize, flags)
    * attach it to the head of the hash chain, the tail of the lru chain,
    * and return.
    */
-  if ((bp = mpool_bkt(mp)) == NULL)
+  if ((bp = fmpool_bkt(mp)) == NULL)
     {
       ret = RET_ERROR;
       goto done;
@@ -440,7 +440,7 @@ mpool_new(mp, pgnoaddr, pagesize, flags)
     { /* we extend to *pgnoaddr pages */
       if (*pgnoaddr > MAX_PAGE_NUMBER) 
         {
-          (void)fprintf(stderr, "mpool_new: page allocation overflow.\n");
+          (void)fprintf(stderr, "fmpool_new: page allocation overflow.\n");
           abort();
         }
       /* If pagesize is odd size then it is size for last page */
@@ -450,7 +450,7 @@ mpool_new(mp, pgnoaddr, pagesize, flags)
       mp->npages= *pgnoaddr; /* number of pages */
     }
 #ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_new: increasing #of pages to=%d\n",mp->npages);
+    (void)fprintf(stderr,"fmpool_new: increasing #of pages to=%d\n",mp->npages);
 #endif  
 
   /* Pin the page and insert into head of hash chain 
@@ -489,7 +489,7 @@ mpool_new(mp, pgnoaddr, pagesize, flags)
 
 #ifdef MPOOL_DEBUG
 #ifdef STATISTICS
-    (void)fprintf(stderr,"mpool_newn: mp->listalloc=%d\n",mp->listalloc);
+    (void)fprintf(stderr,"fmpool_newn: mp->listalloc=%d\n",mp->listalloc);
 #endif
 #endif
 done:
@@ -503,13 +503,13 @@ done:
   /* Normal cleanup */
 
   return (bp->page);
-} /* mpool_new() */
+} /* fmpool_new() */
 
 /*-----------------------------------------------------------------------------
 NAME
-   mpool_get - get a specified page by page number.
+   fmpool_get - get a specified page by page number.
 USAGE
-   void *mpool_get(mp, pgno, flags)
+   void *fmpool_get(mp, pgno, flags)
    MPOOL *mp;      IN: MPOOL cookie 
    pageno_t pgno;    IN: page number 
    u_int32_t flags;	   IN: not used? 
@@ -519,13 +519,9 @@ DESCRIPTION
     Get a page specified by 'pgno'. If the page is not cached then
     we need to create a new page. All returned pages are pinned.
 
- COMMENT: Note that since we allow mpool_new() to extend a file, sometimes
-          we when we create a new page we read a page from the file
-          that was never written previously by the page buffer pool.
-          This results in reading garbage into the page.
 ---------------------------------------------------------------------------- */
 void *
-mpool_get(mp, pgno, flags)
+fmpool_get(mp, pgno, flags)
   MPOOL     *mp;    /* MPOOL cookie */
   pageno_t    pgno;   /* page number */
   u_int32_t flags;  /* XXX not used? */
@@ -541,7 +537,7 @@ mpool_get(mp, pgno, flags)
   int          list_hit;    /* hit flag */
 
 #ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_get: entering \n");
+    (void)fprintf(stderr,"fmpool_get: entering \n");
 #endif
   /* check inputs */
   if (mp == NULL)
@@ -564,13 +560,13 @@ mpool_get(mp, pgno, flags)
 #endif
 
   /* Check for a page that is cached. */
-  if ((bp = mpool_look(mp, pgno)) != NULL) 
+  if ((bp = fmpool_look(mp, pgno)) != NULL) 
     {
 #ifdef MPOOL_DEBUG
       if (bp->flags & MPOOL_PINNED) 
         {
           (void)fprintf(stderr,
-                        "mpool_get: page %d already pinned\n", bp->pgno);
+                        "fmpool_get: page %d already pinned\n", bp->pgno);
           abort();
         }
 #endif
@@ -587,7 +583,7 @@ mpool_get(mp, pgno, flags)
       bp->flags |= MPOOL_PINNED;
 
 #ifdef MPOOL_DEBUG
-      (void)fprintf(stderr,"mpool_get: getting cached bp->pgno=%d,npages=%d\n",
+      (void)fprintf(stderr,"fmpool_get: getting cached bp->pgno=%d,npages=%d\n",
                     bp->pgno,mp->npages);
 #endif   
       /* update this page reference */
@@ -607,11 +603,11 @@ mpool_get(mp, pgno, flags)
     } /* end if bp */
 
 #ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_get: NOT cached page\n");
+    (void)fprintf(stderr,"fmpool_get: NOT cached page\n");
 #endif
   /* Page not cached so
    * Get a page from the cache to use or create one. */
-  if ((bp = mpool_bkt(mp)) == NULL)
+  if ((bp = fmpool_bkt(mp)) == NULL)
     {
       ret = RET_ERROR;
       goto done;
@@ -648,7 +644,7 @@ mpool_get(mp, pgno, flags)
 #endif
       CIRCLEQ_INSERT_HEAD(lhead, lp, hl); /* add to list */
 #ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_get: skiping reading in page=%u\n",pgno);
+    (void)fprintf(stderr,"fmpool_get: skiping reading in page=%u\n",pgno);
 #endif
       goto skip_read;  /* no need to read this page from disk */
     }
@@ -665,14 +661,14 @@ mpool_get(mp, pgno, flags)
     { /* regular page */
       rpagesize = mp->pagesize;
 #ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_get: reading in page=%d\n",pgno);
+    (void)fprintf(stderr,"fmpool_get: reading in page=%d\n",pgno);
 #endif   
     }
   else 
     { /* reading in last page */
       rpagesize = mp->lastpagesize;
 #ifdef MPOOL_DEBUG
-      (void)fprintf(stderr,"mpool_get: reading in last page=%d\n",pgno);
+      (void)fprintf(stderr,"fmpool_get: reading in last page=%d\n",pgno);
 #endif  
     }
 
@@ -688,7 +684,7 @@ mpool_get(mp, pgno, flags)
   if (FMPI_TELL(mp->fd) != off)
     {
 #ifdef MPOOL_DEBUG
-      (void)fprintf(stderr,"mpool_get: lseek error=%d\n",off);
+      (void)fprintf(stderr,"fmpool_get: lseek error=%d\n",off);
 #endif
       ret = RET_ERROR;
       goto done;
@@ -724,7 +720,7 @@ done:
   if(ret == RET_ERROR)
     { /* error cleanup */
 #ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_get: Error exiting \n");
+    (void)fprintf(stderr,"fmpool_get: Error exiting \n");
 #endif
       if (lp!=NULL)
         free(lp);
@@ -732,16 +728,16 @@ done:
     }
   /* Normal cleanup */
 #ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_get: Exiting \n");
+    (void)fprintf(stderr,"fmpool_get: Exiting \n");
 #endif
   return (bp->page);
-} /* mpool_get() */
+} /* fmpool_get() */
 
 /*-----------------------------------------------------------------------------
 NAME
-   mpool_put -- put a page back into the memory buffer pool
+   fmpool_put -- put a page back into the memory buffer pool
 USAGE
-   int mpool_put(mp, page, flags)
+   int fmpool_put(mp, page, flags)
    MPOOL *mp;     IN: MPOOL cookie 
    void *page;    IN: page to put 
    u_int32_t flags;   IN: flags = 0, MPOOL_DIRTY 
@@ -752,7 +748,7 @@ DESCRIPTION
     appropriately i.e. MPOOL_DIRTY
 ---------------------------------------------------------------------------- */
 int
-mpool_put(mp, page, flags)
+fmpool_put(mp, page, flags)
   MPOOL     *mp;    /* MPOOL cookie */
   void      *page;   /* page to put */
   u_int32_t flags;  /* flags = 0, MPOOL_DIRTY */
@@ -774,11 +770,11 @@ mpool_put(mp, page, flags)
   /* get pointer to bucket element */
   bp = (BKT *)((char *)page - sizeof(BKT));
 #ifdef MPOOL_DEBUG
-  (void)fprintf(stderr,"mpool_put: putting page=%d\n",bp->pgno);
+  (void)fprintf(stderr,"fmpool_put: putting page=%d\n",bp->pgno);
   if (!(bp->flags & MPOOL_PINNED)) 
     {
       (void)fprintf(stderr,
-                    "mpool_put: page %d not pinned\n", bp->pgno);
+                    "fmpool_put: page %d not pinned\n", bp->pgno);
       abort();
     }
 #endif
@@ -787,8 +783,7 @@ mpool_put(mp, page, flags)
   bp->flags |= flags & MPOOL_DIRTY;
 
   if (bp->flags & MPOOL_DIRTY)
-    {
-      /* update this page reference */
+    { /* update this page reference */
       lhead = &mp->lhqh[HASHKEY(bp->pgno)];
       for (lp = lhead->cqh_first; lp != (void *)lhead; lp = lp->hl.cqe_next)
         if (lp->pgno == bp->pgno)
@@ -810,13 +805,13 @@ done:
   /* Normal cleanup */
 
   return (RET_SUCCESS);
-} /* mpool_put () */
+} /* fmpool_put () */
 
 /*-----------------------------------------------------------------------------
 NAME
-   mpool_close - close the memory buffer pool
+   fmpool_close - close the memory buffer pool
 USAGE
-   int mpool_close(mp)
+   int fmpool_close(mp)
    MPOOL *mp;  IN: MPOOL cookie 
 RETURNS
    RET_SUCCESS if succesful and RET_ERROR otherwise   
@@ -825,7 +820,7 @@ DESCRIPTION
    Does not sync the buffer pool.
 ---------------------------------------------------------------------------- */
 int
-mpool_close(mp)
+fmpool_close(mp)
   MPOOL *mp; /* MPOOL cookie */
 {
   L_ELEM  *lp = NULL;
@@ -835,7 +830,7 @@ mpool_close(mp)
   int     entry;      /* index into hash table */
 
 #ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_close: entered \n");
+    (void)fprintf(stderr,"fmpool_close: entered \n");
 #endif
   /* check inputs */
   if (mp == NULL)
@@ -873,16 +868,16 @@ done:
   free(mp);
 
 #ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_close: freed %d list elements\n\n",nelem);
+    (void)fprintf(stderr,"fmpool_close: freed %d list elements\n\n",nelem);
 #endif
   return (RET_SUCCESS);
-} /* mpool_close() */
+} /* fmpool_close() */
 
 /*-----------------------------------------------------------------------------
 NAME
-   mpool_sync -- sync the memory buffer pool
+   fmpool_sync -- sync the memory buffer pool
 USAGE
-   int mpool_sync(mp)
+   int fmpool_sync(mp)
    MPOOL *mp; IN: MPOOL cookie 
 RETURNS
    RET_SUCCESS if succesful and RET_ERROR otherwise   
@@ -890,7 +885,7 @@ DESCRIPTION
    Sync the pool to disk. Does NOT Free the buffer pool.
 ---------------------------------------------------------------------------- */
 int
-mpool_sync(mp)
+fmpool_sync(mp)
   MPOOL *mp; /* MPOOL cookie */
 {
   BKT *bp = NULL; /* bucket element */
@@ -910,7 +905,7 @@ mpool_sync(mp)
   for (bp = mp->lqh.cqh_first; bp != (void *)&mp->lqh; bp = bp->q.cqe_next)
     {
       if (bp->flags & MPOOL_DIRTY 
-          && mpool_write(mp, bp) == RET_ERROR)
+          && fmpool_write(mp, bp) == RET_ERROR)
         {
           ret = RET_ERROR;
           goto done;
@@ -925,17 +920,19 @@ done:
   /* Normal cleanup */
 
 #ifdef MPOOL_DEBUG
-      (void)fprintf(stderr,"mpool_sync: exiting \n");
+      (void)fprintf(stderr,"fmpool_sync: exiting \n");
 #endif
-  /* Sync the file descriptor. This is an expensive operation */
+  /* Sync the file descriptor. This is an expensive operation 
+  *  if using FCNTL routines */
   return (FMPI_FLUSH(mp->fd) ? RET_ERROR : RET_SUCCESS);
-} /* mpool_sync() */
+} /* fmpool_sync() */
 
+#if 0
 /*-----------------------------------------------------------------------------
 NAME
-   mpool_page_sync -- write the specified page to disk given its page number
+   fmpool_page_sync -- write the specified page to disk given its page number
 USAGE
-   int mpool_page_sync(mp, pgno, flags)
+   int fmpool_page_sync(mp, pgno, flags)
    MPOOL *mp;     IN: MPOOL cookie 
    pageno_t pgno;   IN: page number 
    u_int32_t flags;	  IN: not used? 
@@ -945,14 +942,15 @@ DESCRIPTION
    Write a cached page to disk given it's page number
    If the page is not cached return an error.
   
-  COMMENT: This is mainly used in the case where we extend the file.
+  COMMENT: No longer used.
+           This was mainly used in the case where we extend the file.
            We need to mark the current file size by writing out
            the last page(or part of it) otherwise mpool_get() on
            an intermediate page between the current end of the file
            and the new end of file will fail.
 ---------------------------------------------------------------------------- */
 int
-mpool_page_sync(mp, pgno, flags)
+fmpool_page_sync(mp, pgno, flags)
   MPOOL     *mp;     /* MPOOL cookie */
   pageno_t    pgno;    /* page number */
   u_int32_t flags;	  /* XXX not used? */
@@ -966,7 +964,7 @@ mpool_page_sync(mp, pgno, flags)
 
 
 #ifdef MPOOL_DEBUG
-          (void)fprintf(stderr,"mpool_page_sync: entering\n");
+          (void)fprintf(stderr,"fmpool_page_sync: entering\n");
 #endif  
   /* check inputs */
   if (mp == NULL)
@@ -985,13 +983,13 @@ mpool_page_sync(mp, pgno, flags)
     } 
 
   /* Check for a page that is cached. */
-  if ((bp = mpool_look(mp, pgno)) != NULL) 
+  if ((bp = fmpool_look(mp, pgno)) != NULL) 
     {
 #ifdef MPOOL_DEBUG
       if (bp->flags & MPOOL_PINNED) 
         {
           (void)fprintf(stderr,
-                        "mpool_page_sync: page %u already pinned\n", bp->pgno);
+                        "fmpool_page_sync: page %u already pinned\n", bp->pgno);
           abort();
         }
 #endif
@@ -1025,7 +1023,7 @@ mpool_page_sync(mp, pgno, flags)
         (mp->pgout)(mp->pgcookie, bp->pgno, bp->page);
 
 #ifdef MPOOL_DEBUG
-      (void)fprintf(stderr,"mpool_page_sync: npages=%u\n",mp->npages);
+      (void)fprintf(stderr,"fmpool_page_sync: npages=%u\n",mp->npages);
 #endif
 
       /* Check to see if we are writing last page */
@@ -1033,15 +1031,15 @@ mpool_page_sync(mp, pgno, flags)
         {
           wpagesize = mp->pagesize;
 #ifdef MPOOL_DEBUG
-          (void)fprintf(stderr,"mpool_page_sync: writing page=%u\n",bp->pgno);
+          (void)fprintf(stderr,"fmpool_page_sync: writing page=%u\n",bp->pgno);
 #endif  
         }
       else 
         { /* writing last page */
           wpagesize = mp->lastpagesize;
 #ifdef MPOOL_DEBUG
-          (void)fprintf(stderr,"mpool_page_sync: writing last page=%u\n",bp->pgno);
-          (void)fprintf(stderr,"mpool_page_sync: lastpagesize=%u\n",mp->lastpagesize);
+          (void)fprintf(stderr,"fmpool_page_sync: writing last page=%u\n",bp->pgno);
+          (void)fprintf(stderr,"fmpool_page_sync: lastpagesize=%u\n",mp->lastpagesize);
 #endif  
 
         }
@@ -1051,7 +1049,7 @@ mpool_page_sync(mp, pgno, flags)
       if (FMPI_SEEK(mp->fd, off) == FAIL)
         {
 #ifdef MPOOL_DEBUG
-          (void)fprintf(stderr,"mpool_page_sync: lseek error=%d\n",off);
+          (void)fprintf(stderr,"fmpool_page_sync: lseek error=%d\n",off);
 #endif
           ret = RET_ERROR;
           goto done;
@@ -1061,7 +1059,7 @@ mpool_page_sync(mp, pgno, flags)
       if (FMPI_TELL(mp->fd) != off)
         {
 #ifdef MPOOL_DEBUG
-          (void)fprintf(stderr,"mpool_page_sync: lseek error=%d\n",off);
+          (void)fprintf(stderr,"fmpool_page_sync: lseek error=%d\n",off);
 #endif
           ret = RET_ERROR;
           goto done;
@@ -1071,10 +1069,10 @@ mpool_page_sync(mp, pgno, flags)
       if (FMPI_WRITE(mp->fd, bp->page, wpagesize) != wpagesize)
         {
 #ifdef MPOOL_DEBUG
-          perror("mpool_page_sync");
-          (void)fprintf(stderr,"mpool_page_sync: fd=%d,lseek =%d, wpagesize=%u\n",
+          perror("fmpool_page_sync");
+          (void)fprintf(stderr,"fmpool_page_sync: fd=%d,lseek =%d, wpagesize=%u\n",
                         mp->fd,off,wpagesize);
-          (void)fprintf(stderr,"mpool_page_sync: write error for page=%u\n",bp->pgno);
+          (void)fprintf(stderr,"fmpool_page_sync: write error for page=%u\n",bp->pgno);
 #endif
           ret = RET_ERROR;
           goto done;
@@ -1095,16 +1093,17 @@ done:
   /* Normal cleanup */
 
 #ifdef MPOOL_DEBUG
-          (void)fprintf(stderr,"mpool_page_sync: exiting\n");
+          (void)fprintf(stderr,"fmpool_page_sync: exiting\n");
 #endif  
   return (RET_SUCCESS);
-} /* mpool_page_sync() */
+} /* fmpool_page_sync() */
+#endif
 
 /*-----------------------------------------------------------------------------
 NAME
-   mpool_bkt - Get a page from the cache (or create one).
+   fmpool_bkt - Get a page from the cache (or create one).
 USAGE
-   static BKT * mpool_bkt(mp)
+   static BKT * fmpool_bkt(mp)
    MPOOL *mp;  IN: MPOOL cookie 
 RETURNS
    A page if successful and NULL otherwise.
@@ -1118,7 +1117,7 @@ DESCRIPTION
            information by writing out of the page size bounds.
 ---------------------------------------------------------------------------- */
 static BKT *
-mpool_bkt(mp)
+fmpool_bkt(mp)
   MPOOL *mp;  /* MPOOL cookie */
 {
   struct _hqh *head = NULL;  /* head of hash chain */
@@ -1145,7 +1144,7 @@ mpool_bkt(mp)
   for (bp = mp->lqh.cqh_first; bp != (void *)&mp->lqh; bp = bp->q.cqe_next)
     if (!(bp->flags & MPOOL_PINNED)) 
       { /* Flush if dirty. */
-        if (bp->flags & MPOOL_DIRTY  && mpool_write(mp, bp) == RET_ERROR)
+        if (bp->flags & MPOOL_DIRTY  && fmpool_write(mp, bp) == RET_ERROR)
           {
             ret = RET_ERROR;
             goto done;
@@ -1198,13 +1197,13 @@ done:
   /* Normal cleanup */
 
   return (bp); /* return only the pagesize fragement */
-} /* mpool_bkt() */
+} /* fmpool_bkt() */
 
 /*-----------------------------------------------------------------------------
 NAME
-   mpool_write - write a page to disk given it's bucket handle.
+   fmpool_write - write a page to disk given it's bucket handle.
 USAGE
-   static int mpool_write(mp, bp)
+   static int fmpool_write(mp, bp)
    MPOOL *mp;     IN: MPOOL cookie 
    BKT *bp;       IN: bucket element 
 RETURNS
@@ -1213,7 +1212,7 @@ DESCRIPTION
    Private routine. Write a page to disk given it's bucket handle.
 ---------------------------------------------------------------------------- */
 static int
-mpool_write(mp, bp)
+fmpool_write(mp, bp)
   MPOOL *mp;     /* MPOOL cookie */
   BKT *bp;       /* bucket element */
 {
@@ -1225,7 +1224,7 @@ mpool_write(mp, bp)
 
 
 #ifdef MPOOL_DEBUG
-      (void)fprintf(stderr,"mpool_write: entering \n");
+      (void)fprintf(stderr,"fmpool_write: entering \n");
 #endif
   /* check inputs */
   if (mp == NULL || bp == NULL)
@@ -1256,7 +1255,7 @@ mpool_write(mp, bp)
     (mp->pgout)(mp->pgcookie, bp->pgno, bp->page);
 
 #ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_write: npages=%u\n",mp->npages);
+    (void)fprintf(stderr,"fmpool_write: npages=%u\n",mp->npages);
 #endif
 
   /* Check to see if we are writing last page */
@@ -1264,15 +1263,15 @@ mpool_write(mp, bp)
     {
       wpagesize = mp->pagesize;
 #ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_write: writing page=%u\n",bp->pgno);
+    (void)fprintf(stderr,"fmpool_write: writing page=%u\n",bp->pgno);
 #endif  
     }
   else 
     { /* writing last page */
       wpagesize = mp->lastpagesize;
 #ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_write: writing last page=%u\n",bp->pgno);
-    (void)fprintf(stderr,"mpool_write: lastpagesize=%u\n",mp->lastpagesize);
+    (void)fprintf(stderr,"fmpool_write: writing last page=%u\n",bp->pgno);
+    (void)fprintf(stderr,"fmpool_write: lastpagesize=%u\n",mp->lastpagesize);
 #endif  
 
     }
@@ -1282,7 +1281,7 @@ mpool_write(mp, bp)
   if (FMPI_SEEK(mp->fd, off) == FAIL)
     {
 #ifdef MPOOL_DEBUG
-      (void)fprintf(stderr,"mpool_write: lseek error=%d\n",off);
+      (void)fprintf(stderr,"fmpool_write: lseek error=%d\n",off);
 #endif
       ret = RET_ERROR;
       goto done;
@@ -1292,7 +1291,7 @@ mpool_write(mp, bp)
   if (FMPI_TELL(mp->fd) != off)
     {
 #ifdef MPOOL_DEBUG
-      (void)fprintf(stderr,"mpool_page_sync: lseek error=%d\n",off);
+      (void)fprintf(stderr,"fmpool_page_sync: lseek error=%d\n",off);
 #endif
       ret = RET_ERROR;
       goto done;
@@ -1302,8 +1301,8 @@ mpool_write(mp, bp)
   if (FMPI_WRITE(mp->fd, bp->page, wpagesize) != wpagesize)
     {
 #ifdef MPOOL_DEBUG
-      perror("mpool_write");
-      (void)fprintf(stderr,"mpool_write: write error\n");
+      perror("fmpool_write");
+      (void)fprintf(stderr,"fmpool_write: write error\n");
 #endif
       ret = RET_ERROR;
       goto done;
@@ -1316,23 +1315,23 @@ done:
   if(ret == RET_ERROR)
     { /* error cleanup */
 #ifdef MPOOL_DEBUG
-      (void)fprintf(stderr,"mpool_write: error exiting\n");
+      (void)fprintf(stderr,"fmpool_write: error exiting\n");
 #endif
       return RET_SUCCESS;
     }
   /* Normal cleanup */
 
 #ifdef MPOOL_DEBUG
-      (void)fprintf(stderr,"mpool_write: exiting\n");
+      (void)fprintf(stderr,"fmpool_write: exiting\n");
 #endif
   return (RET_SUCCESS);
-} /* mpool_write() */
+} /* fmpool_write() */
 
 /*-----------------------------------------------------------------------------
 NAME
-   mpool_look - lookup a page in the cache.
+   fmpool_look - lookup a page in the cache.
 USAGE
-   static BKT *mpool_look(mp, pgno)
+   static BKT *fmpool_look(mp, pgno)
    MPOOL *mp;    IN: MPOOL cookie 
    pageno_t pgno;  IN: page to look up in cache 
 RETURNS
@@ -1341,7 +1340,7 @@ DESCRIPTION
    Private routine. Lookup a page in the cache and return pointer to it.
 ---------------------------------------------------------------------------- */
 static BKT *
-mpool_look(mp, pgno)
+fmpool_look(mp, pgno)
   MPOOL *mp;    /* MPOOL cookie */
   pageno_t pgno;  /* page to look up in cache */
 {
@@ -1391,7 +1390,7 @@ done:
   /* Normal cleanup */
 
   return (bp);
-} /* mpool_look() */
+} /* fmpool_look() */
 
 #ifdef STATISTICS
 #ifdef HAVE_GETRUSAGE
@@ -1427,9 +1426,9 @@ myrusage()
 
 /*-----------------------------------------------------------------------------
 NAME
-   mpool_stat - print out cache statistics
+   fmpool_stat - print out cache statistics
 USAGE
-   void mpool_stat(mp)
+   void fmpool_stat(mp)
    MPOOL *mp; IN: MPOOL cookie 
 RETURNS
    Nothing
@@ -1437,7 +1436,7 @@ DESCRIPTION
    Print out cache statistics to STDERR.
 ---------------------------------------------------------------------------- */
 void
-mpool_stat(mp)
+fmpool_stat(mp)
   MPOOL *mp; /* MPOOL cookie */
 {
   struct _lhqh *lhead = NULL; /* head of an entry in list hash chain */

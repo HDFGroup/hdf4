@@ -61,9 +61,6 @@
 /* Current Hash table size. Page numbers start with 0 
 * Going try start with 1 (i.e 0 will denote invalid page number) */
 #define	HASHSIZE	128
-#if 0
-#define	HASHKEY(pgno)	(pgno % HASHSIZE)
-#endif
 #define	HASHKEY(pgno)	((pgno -1) % HASHSIZE)
 
 /* Default pagesize and max # of pages to cache */
@@ -106,7 +103,7 @@ typedef struct MPOOL
   CIRCLEQ_HEAD(_lqh, _bkt)    lqh;	      /* lru queue head */
   CIRCLEQ_HEAD(_hqh, _bkt)    hqh[HASHSIZE];  /* hash queue array */
   CIRCLEQ_HEAD(_lhqh, _lelem) lhqh[HASHSIZE]; /* hash of all elements */
-  pageno_t	curcache;		      /* current number of cached pages */
+  pageno_t	curcache;		      /* current num of cached pages */
   pageno_t	maxcache;		      /* max number of cached pages */
   pageno_t	npages;			      /* number of pages in the file */
   u_int32_t	lastpagesize;	              /* page size of last page */
@@ -114,7 +111,7 @@ typedef struct MPOOL
   fmp_file_t    fd;			      /* file handle */
   void (*pgin) __P((void *, pageno_t, void *)); /* page in conversion routine */
   void (*pgout) __P((void *, pageno_t, void *));/* page out conversion routine */
-  void	*pgcookie;                            /* cookie for page in/out routines */
+  void	*pgcookie;                          /* cookie for page in/out routines */
 #ifdef STATISTICS
   u_int32_t	listhit;                /* # of list hits */
   u_int32_t	listalloc;              /* # of list elems allocated */
@@ -131,22 +128,24 @@ typedef struct MPOOL
 } MPOOL;
 
 __BEGIN_DECLS
-MPOOL	*mpool_open __P((void *, fmp_file_t, pageno_t, pageno_t));
-void	 mpool_filter __P((MPOOL *, void (*)(void *, pageno_t, void *),
+MPOOL	*fmpool_open __P((void *, fmp_file_t, pageno_t, pageno_t));
+void	 fmpool_filter __P((MPOOL *, void (*)(void *, pageno_t, void *),
                            void (*)(void *, pageno_t, void *), void *));
-void	*mpool_new __P((MPOOL *, pageno_t *, pageno_t, u_int32_t));
-void	*mpool_get __P((MPOOL *, pageno_t, u_int32_t));
-int	 mpool_put __P((MPOOL *, void *, u_int32_t));
-int	 mpool_sync __P((MPOOL *));
-int	 mpool_page_sync __P((MPOOL *, pageno_t, u_int32_t));
-int	 mpool_close __P((MPOOL *));
-int	 mpool_set_lastpagesize __P((MPOOL *,pageno_t));
-pageno_t  mpool_get_lastpagesize __P((MPOOL *));
-pageno_t  mpool_get_pagesize __P((MPOOL *));
-pageno_t  mpool_get_npages __P((MPOOL *));
+void	*fmpool_new __P((MPOOL *, pageno_t *, pageno_t, u_int32_t));
+void	*fmpool_get __P((MPOOL *, pageno_t, u_int32_t));
+int	 fmpool_put __P((MPOOL *, void *, u_int32_t));
+int	 fmpool_sync __P((MPOOL *));
+int	 fmpool_close __P((MPOOL *));
+int	 fmpool_set_lastpagesize __P((MPOOL *,pageno_t));
+pageno_t  fmpool_get_lastpagesize __P((MPOOL *));
+pageno_t  fmpool_get_pagesize __P((MPOOL *));
+pageno_t  fmpool_get_npages __P((MPOOL *));
 #ifdef STATISTICS
-void	 mpool_stat __P((MPOOL *));
+void	 fmpool_stat __P((MPOOL *));
 #endif /* STATISTICS */
+#if 0
+int	 fmpool_page_sync __P((MPOOL *, pageno_t, u_int32_t));
+#endif
 __END_DECLS
 
 #endif /* _FMPOOL_H */
