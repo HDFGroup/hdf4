@@ -1089,7 +1089,12 @@ SDcreate(int32  fid,      /* IN: file ID */
 
     /* NC_new_var strips off "nativeness" add it back in if appropriate */
     var->HDFtype = nt;
-    var->HDFsize = DFKNTsize(nt);
+    if (FAIL == (var->HDFsize = DFKNTsize(nt)))
+      {
+          ret_value    = FAIL;
+          goto done;
+      } 
+
     var->cdf     = handle; /* set cdf before calling NC_var_shape */
     /* get a new NDG ref for this sucker */
 #ifdef NOT_YET
@@ -1592,7 +1597,12 @@ SDsetrange(int32 sdsid, /* IN: dataset ID */
       }
 
     /* move data values over */
-    sz = DFKNTsize(var->HDFtype | DFNT_NATIVE);
+    if (FAIL == (sz = DFKNTsize(var->HDFtype | DFNT_NATIVE)))
+      {
+          ret_value    = FAIL;
+          goto done;
+      } 
+
     HDmemcpy(data, pmin, sz);
     HDmemcpy(data + sz, pmax, sz);
 
@@ -1734,6 +1744,7 @@ SDsetattr(int32 id,    /* IN: object ID */
 {
     NC_array **ap = NULL;
     NC        *handle = NULL;
+    intn       sz;
     intn       ret_value = SUCCEED;
 
 #ifdef SDDEBUG
@@ -1756,8 +1767,14 @@ SDsetattr(int32 id,    /* IN: object ID */
 
     /* Make sure that count is less than MAX_ORDER(Vdata)
            and total size is less than MAX_FIELD_SIZE(Vdata) */
+    if (FAIL == (sz = DFKNTsize(nt)))
+      {
+          ret_value = FAIL;
+          goto done;
+      }
+
     if ((count > MAX_ORDER) ||
-        ((count * DFKNTsize(nt)) > MAX_FIELD_SIZE))
+        ((count * sz) > MAX_FIELD_SIZE))
       {
           ret_value = FAIL;
           goto done;
@@ -2744,7 +2761,11 @@ SDIgetcoordvar(NC     *handle, /* IN: file handle */
                       (*dp)->cdf = handle;
                       /* don't forget to reset the sizes  */
                       (*dp)->szof = NC_typelen((*dp)->type);
-                      (*dp)->HDFsize = DFKNTsize(nt);
+                      if (FAIL == ((*dp)->HDFsize = DFKNTsize(nt)))
+                        {
+                            ret_value = FAIL;
+                            goto done;
+                        }
                 
                       /* recompute all of the shape information */
                       /* BUG: this may be a memory leak ??? */
@@ -4712,8 +4733,8 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     void      *fill_val    = NULL; /* fill value */
     int32      ndims    = 0;       /* # dimensions i.e. rank */
     uint8      nlevels  = 1;       /* default # levels is 1 */
-    uint8      platntsubclass;     /* the machine type of the current platform */
-    uint8      outntsubclass;      /* the data's machine type */
+    int8       platntsubclass;     /* the machine type of the current platform */
+    int8       outntsubclass;      /* the data's machine type */
     uintn      convert;            /* whether to convert or not */
     static     int32 tBuf_size = 0;/* statc conversion buffer size */
     static     VOID  *tBuf = NULL; /* static buffer used for conversion */
@@ -4930,13 +4951,26 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
       }
 
     /* figure out if fill value has to be converted */
-    platntsubclass = DFKgetPNSC(var->HDFtype, DF_MT); 
-    outntsubclass = DFKisnativeNT(var->HDFtype) 
-        ? DFKgetPNSC(var->HDFtype, DF_MT)
-        : (DFKislitendNT(var->HDFtype) 
-           ? DFNTF_PC : DFNTF_HDFDEFAULT);
-
-    convert= (uintn)(platntsubclass!=outntsubclass);
+    if (FAIL == (platntsubclass = DFKgetPNSC(var->HDFtype, DF_MT)))
+      {
+          ret_value = FAIL;
+          goto done;
+      }
+ 
+    if (DFKisnativeNT(var->HDFtype))
+      {
+        if (FAIL == (outntsubclass = DFKgetPNSC(var->HDFtype, DF_MT)))
+          {
+              ret_value = FAIL;
+              goto done;
+          }
+       }
+    else
+      {
+          outntsubclass = DFKislitendNT(var->HDFtype) ? DFNTF_PC : DFNTF_HDFDEFAULT;
+      }
+            
+    convert = (uintn)(platntsubclass != outntsubclass);
 
     /* make sure our tmp buffer is big enough to hold fill value */
     if(convert && tBuf_size < fill_val_len) 
@@ -4959,8 +4993,18 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     if (convert)
       { /* convert fill value */
           /* set number type */
-          DFKsetNT(var->HDFtype);
-          DFKnumout((VOID *)fill_val, tBuf, (uint32) (fill_val_len/var->HDFsize), 0, 0);        
+          if (FAIL == DFKsetNT(var->HDFtype))
+            {
+                ret_value    = FAIL;
+                goto done;
+            } 
+
+          if (FAIL == DFKnumout((VOID *)fill_val, tBuf, 
+                                (uint32) (fill_val_len/var->HDFsize), 0, 0))
+            {
+                ret_value    = FAIL;
+                goto done;
+            } 
 
         /* check to see already special.
            Error if already special since doubly special elements are
@@ -5189,8 +5233,8 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
     int16      special;         /* Special code */
     int32      csize;           /* phsical chunk size */
     uint32     byte_count;      /* bytes to write */
-    uint8      platntsubclass;  /* the machine type of the current platform */
-    uint8      outntsubclass;   /* the data's machine type */
+    int8       platntsubclass;  /* the machine type of the current platform */
+    int8       outntsubclass;   /* the data's machine type */
     uintn      convert;         /* whether to convert or not */
     intn       i;
     sp_info_block_t info_block; /* special info block */
@@ -5255,13 +5299,26 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
                       /* figure out if data needs to be converted */
                       byte_count = csize;
 
-                      platntsubclass = DFKgetPNSC(var->HDFtype, DF_MT); 
-                      outntsubclass = DFKisnativeNT(var->HDFtype) 
-                          ? DFKgetPNSC(var->HDFtype, DF_MT)
-                          : (DFKislitendNT(var->HDFtype) 
-                             ? DFNTF_PC : DFNTF_HDFDEFAULT);
+                      if (FAIL == (platntsubclass = DFKgetPNSC(var->HDFtype, DF_MT)))
+                        {
+                            ret_value = FAIL;
+                            goto done;
+                        }
 
-                      convert= (uintn)(platntsubclass!=outntsubclass);
+                      if (DFKisnativeNT(var->HDFtype))
+                        {
+                            if (FAIL == (outntsubclass = DFKgetPNSC(var->HDFtype, DF_MT)))
+                              {
+                                  ret_value = FAIL;
+                                  goto done;
+                              }
+                        }
+                      else
+                        {
+                            outntsubclass = DFKislitendNT(var->HDFtype) ? DFNTF_PC : DFNTF_HDFDEFAULT;
+                        }
+
+                      convert = (uintn)(platntsubclass != outntsubclass);
 
                       /* make sure our tmp buffer is big enough to hold everything */
                       if(convert && tBuf_size < byte_count) 
@@ -5286,9 +5343,20 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
                 var->HDFsize, var->HDFtype);
 #endif
                             /* set number type */
-                            DFKsetNT(var->HDFtype);
+                            if (FAIL == DFKsetNT(var->HDFtype))
+                              {
+                                  ret_value    = FAIL;
+                                  goto done;
+                              } 
+
                             /* convert it */
-                            DFKnumout((VOID *)datap, tBuf, (byte_count/var->HDFsize), 0, 0);
+                            if (FAIL == DFKnumout((VOID *)datap, tBuf, 
+                                                  (byte_count/var->HDFsize), 0, 0))
+                              {
+                                  ret_value    = FAIL;
+                                  goto done;
+                              } 
+
                             /* write it out now */
                             if ((ret_value = HMCwriteChunk(var->aid, origin, tBuf)) 
                                 != FAIL)
@@ -5364,8 +5432,8 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
     int16      special;         /* Special code */
     int32      csize;           /* phsical chunk size */
     uint32     byte_count;      /* bytes to read */
-    uint8      platntsubclass;  /* the machine type of the current platform */
-    uint8      outntsubclass;   /* the data's machine type */
+    int8       platntsubclass;  /* the machine type of the current platform */
+    int8       outntsubclass;   /* the data's machine type */
     uintn      convert;         /* whether to convert or not */
     intn       i;
     sp_info_block_t info_block; /* special info block */
@@ -5429,13 +5497,26 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
                       /* figure out if data needs to be converted */
                       byte_count = csize;
 
-                      platntsubclass = DFKgetPNSC(var->HDFtype, DF_MT); 
-                      outntsubclass = DFKisnativeNT(var->HDFtype) 
-                          ? DFKgetPNSC(var->HDFtype, DF_MT)
-                          : (DFKislitendNT(var->HDFtype) 
-                             ? DFNTF_PC : DFNTF_HDFDEFAULT);
+                      if (FAIL == (platntsubclass = DFKgetPNSC(var->HDFtype, DF_MT)))
+                        {
+                            ret_value = FAIL;
+                            goto done;
+                        }
 
-                      convert= (uintn)(platntsubclass!=outntsubclass);
+                      if (DFKisnativeNT(var->HDFtype))
+                        {
+                            if (FAIL == (outntsubclass = DFKgetPNSC(var->HDFtype, DF_MT)))
+                              {
+                                  ret_value = FAIL;
+                                  goto done;
+                              }
+                        }
+                      else
+                        {
+                            outntsubclass = DFKislitendNT(var->HDFtype) ? DFNTF_PC : DFNTF_HDFDEFAULT;
+                        }
+
+                      convert = (uintn)(platntsubclass != outntsubclass);
 
                       /* make sure our tmp buffer is big enough to hold everything */
                       if(convert && tBuf_size < byte_count) 
@@ -5464,9 +5545,20 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
                                 != FAIL)
                                 {
                                     /* set number type */
-                                    DFKsetNT(var->HDFtype);
+                                    if (FAIL == DFKsetNT(var->HDFtype))
+                                      {
+                                          ret_value = FAIL;
+                                          goto done;
+                                      }
+
                                     /* convert chunk */
-                                    DFKnumin(tBuf, datap, (byte_count/var->HDFsize), 0, 0);
+                                    if (FAIL == DFKnumin(tBuf, datap, 
+                                                         (byte_count/var->HDFsize), 0, 0))
+                                      {
+                                          ret_value = FAIL;
+                                          goto done;
+                                      }
+
                                     ret_value = SUCCEED;
                                 }
 
