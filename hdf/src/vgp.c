@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.13  1993/04/08 18:33:56  chouck
-Various Vset modifications (additions of Vdelete and VSdelete)
+Revision 1.14  1993/04/10 00:02:19  koziol
+Removed debugging statements.
 
+ * Revision 1.13  1993/04/08  18:33:56  chouck
+ * Various Vset modifications (additions of Vdelete and VSdelete)
+ *
  * Revision 1.12  1993/04/06  17:23:43  chouck
  * Added Vset macros
  *
@@ -2113,8 +2116,6 @@ int32 vgid;
     tmp = tbbtrem(vf->vgtree, (VOIDP)t, NULL);
     if(tmp) 
         HDfreespace(tmp);
-
-printf("deleting Vgroup %d\n", vgid);
 
     Hdeldd(f, DFTAG_VG, (uint16) vgid);
 
