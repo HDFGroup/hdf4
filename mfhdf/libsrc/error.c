@@ -12,6 +12,10 @@
 
 /*LINTLIBRARY*/
 
+#ifdef NO_STDARG  /* The 4.0 release should be ANSI compliant */
+#undef NO_STDARG
+#endif
+
 #include	"local_nc.h"
 #include	<stdio.h>
 #ifndef NO_STDARG

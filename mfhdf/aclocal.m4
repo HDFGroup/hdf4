@@ -82,8 +82,7 @@ case "${OS}" in
   sunos*)       UC_ENSURE(HDF_INC, -DSUN)
                 LD_XDR=;;
   hpux*)        UC_ENSURE(HDF_INC, -DHP9000)
-#                UC_ENSURE(CPPFLAGS, -D_HPUX_SOURCE)
-                UC_ENSURE(CPPFLAGS, -Aa)
+                UC_ENSURE(CPPFLAGS, -Aa) # should only do if cc NOT gcc
                 LD_XDR=;;
   osf*)         UC_ENSURE(HDF_INC, -DDEC_ALPHA)
 		UC_ENSURE(CPPFLAGS, -DBIG_LONGS)
@@ -94,6 +93,7 @@ case "${OS}" in
   *)		LD_XDR=;;
 esac
 UC_ENSURE(DEFS, ${CPP_XDR-})dnl
+UC_ENSURE(DEFS, ${CPPFLAGS-})dnl
 UC_ENSURE(LIBS, ${LD_XDR-})dnl
 AC_TEST_PROGRAM(dnl
 [
@@ -228,7 +228,7 @@ typedef int charset[2]; const charset x;
 define(UL_VARIADIC_FUNCTIONS,[dnl
 AC_PROVIDE([$0])dnl
 AC_REQUIRE([UC_PROG_CPP])dnl
-AC_COMPILE_CHECK([variadic function support], , [}
+AC_COMPILE_CHECK([variadic function support], , [} 
 #include <stdarg.h>
 int foo(int bar, ...) {
     va_list     alist;

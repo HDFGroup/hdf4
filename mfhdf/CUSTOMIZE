@@ -19,16 +19,16 @@
 #############################################################################
 #
 # Type of C compiler (default is `cc'):
-# CC='gcc -ansi'
+#CC=gcc
 #
 # C compiler flags (default is `-O'):
-CFLAGS="-O"
+CFLAGS=-g
 #
 # C preprocessor flags 
 # CPPFLAGS=-DNDEBUG
 #
 # Location of the HDF home.  Must be an absolute path.
-HDF_HOME=${PWD}/..
+HDF_HOME=`pwd`/..
 # Location of HDF include files.  Must be an absolute path.
 HDF_INC=-I${HDF_HOME}/hdf/include
 #

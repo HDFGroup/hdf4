@@ -28,10 +28,12 @@ extern "C" {
 #endif
 
 /* Print error message to stderr, don't exit */
+#ifndef MIPSEL /* punt */
 #ifndef NO_STRARG
 extern void error(char *fmt, ...);
 #else
 extern void error();
+#endif
 #endif
 
 /*

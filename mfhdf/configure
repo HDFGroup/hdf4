@@ -689,7 +689,7 @@ case "${OS}" in
       *)      CPPFLAGS="${CPPFLAGS-} $arg";;
     esac
   done
-
+ # should only do if cc NOT gcc
                 LD_XDR=;;
   osf*)           for arg in -DDEC_ALPHA; do
     case "$HDF_INC" in
@@ -724,6 +724,12 @@ case "${OS}" in
   *)		LD_XDR=;;
 esac
   for arg in ${CPP_XDR-}; do
+    case "$DEFS" in
+      *$arg*) ;;
+      *)      DEFS="${DEFS-} $arg";;
+    esac
+  done
+  for arg in ${CPPFLAGS-}; do
     case "$DEFS" in
       *$arg*) ;;
       *)      DEFS="${DEFS-} $arg";;
@@ -881,7 +887,7 @@ echo checking for variadic function support
 cat > conftest.c <<EOF
 
 main() { exit(0); } 
-t() { }
+t() { } 
 #include <stdarg.h>
 int foo(int bar, ...) {
     va_list     alist;
