@@ -11,7 +11,7 @@
 
 #define DEBUG 1
 #include "local_nc.h"
-#include "hfile.h"A
+#include "hfile.h"
 
 /* constants/macros pulled out of the CDF library source */
 #define V2_CDR_OFFSET     8
@@ -111,7 +111,7 @@ nssdc_read_cdf(xdrs, handlep)
     FILE   * fp;
     intn     i, j;
     int32    rank, current_var, nctype, current_dim, hdftype;
-    int32    dims[MAX_VAR_DIMS];
+    intn     dims[MAX_VAR_DIMS];
     int32    dim_sz[MAX_VAR_DIMS];
     NC_dim * dim_rec[MAX_VAR_DIMS];
     NC_var * vars[MAX_NC_VARS];
@@ -308,7 +308,10 @@ nssdc_read_cdf(xdrs, handlep)
             if(numElem > 1)
                 dim_rec[current_dim] = NC_new_dim(dimname, numElem);
             else
-                dim_rec[current_dim] = NC_new_dim(dimname, NC_UNLIMITED);
+                if(maxRec > 0)
+                    dim_rec[current_dim] = NC_new_dim(dimname, maxRec);
+                else
+                    dim_rec[current_dim] = NC_new_dim(dimname, NC_UNLIMITED);
 
             dims[rank++] = current_dim++;
         }
@@ -589,7 +592,7 @@ nssdc_read_cdf(xdrs, handlep)
     /*
      * Set up the dimension list
      */
-    if(numDims)
+    if(current_dim)
         handle->dims = NC_new_array(NC_DIMENSION, current_dim, (Void *) dim_rec);
     else
         handle->dims = NULL;
