@@ -1,5 +1,5 @@
 #############################
-Expected output for './hdp dumpgr -r 6 -l 1 grtdfui82.hdf'
+Expected output for './hdp dumpgr -r 6 -m 1 grtdfui82.hdf'
 #############################
 File name: grtdfui82.hdf 
 
