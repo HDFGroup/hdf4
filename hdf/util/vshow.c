@@ -121,6 +121,7 @@ char**av;
 				    t, vs->otag, vs->oref, nv, interlace, 
 					fields, vsize, vsname, vsclass);
 				PMSG;
+
 				if(fulldump && vsno==0) vsdumpfull(vs);
 				else if(fulldump && vsno==vs->oref) vsdumpfull(vs);
 
@@ -191,6 +192,7 @@ char**av;
 /* ------------------------------------------------ */
 /* printing functions used by vsdumpfull(). */
 static int32 cn = 0;
+int32 fmtbyte(x) unsigned char*x;  { cn += printf("%02x ",*x); return(1);  }
 int32 fmtchar(x) char*x;   	{ cn++; putchar(*x); return(1); }
 int32 fmtint(x) int*x;   		{ cn += printf("%d ",*x); return(1);  }
 int32 fmtfloat(x) float*x; 	{ cn += printf("%f ",*x); return(1);  }
@@ -240,6 +242,12 @@ int32 vsdumpfull(vs) VDATA * vs;
 				fmtfn[i] = fmtint;
 				break;
 
+			case LOCAL_BYTETYPE:
+				order[i] = w->order[i];
+				off[i]   = sizeof(unsigned char);
+				fmtfn[i] = fmtbyte;
+				break;
+
 			case LOCAL_CHARTYPE:
 				order[i] = w->order[i];
 				off[i]   = sizeof(char);
@@ -257,14 +265,13 @@ int32 vsdumpfull(vs) VDATA * vs;
 	b= bb;
 	cn=0;
 
-	for(j=0;j<nv;j++) 
+	for(j=0;j<nv;j++) {
 		for(i=0;i<nf;i++) {
 			for(t=0;t<order[i];t++) { (fmtfn[i]) (b); b+=off[i]; }
-			if (condensed)
-			{ if( cn > 70) { putchar('\n'); cn=0; } }
-			else 
-				putchar('\n');
 		}
+		if (condensed) { if( cn > 70) { putchar('\n'); cn=0; } } 
+		else putchar('\n');
+	}
 
 	/* ============================================ */
 
