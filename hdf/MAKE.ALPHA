@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.1  1993/04/22 16:05:17  chouck
+# Revision 1.2  1993/05/07 16:17:38  chouck
+# Made the ARFLAGS a little more intelligent
+#
+# Revision 1.1  1993/04/22  16:05:17  chouck
 # Makefile for DEC Alpha
 #
 # Revision 1.6  1993/01/14  17:26:41  georgev
@@ -98,7 +101,7 @@ HDFBIN= `pwd`/bin
 
 # Name of library archiver and flags to send
 AR= ar
-ARFLAGS= r
+ARFLAGS= ru
 
 # Name of achive randomizer (use 'touch' if non-existant)
 RANLIB= ranlib
