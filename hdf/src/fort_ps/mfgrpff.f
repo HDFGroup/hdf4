@@ -288,6 +288,66 @@ C         INTEGER mgcgichnk
 
            
 C-------------------------------------------------------------------------
+C        Name:      mgrcchnk
+C        Purpose:   read the specified chunk of CHARACTER data to the GR 
+C        Inputs:    riid      - access ID to GR
+C                   start     - chunk coordinates 
+C                   char_data - buffer the data will be read into  
+C        Returns:   0 on success, -1 on failure
+C        Calls:     mgcrcchnk (C stub for GRreadchunk function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function mgrcchnk(riid, start, char_data)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgrcchnk
+	!MS$endif
+         INTEGER riid, start(*)
+         CHARACTER*(*) char_data(*)
+C         INTEGER mgcrcchnk 
+      INTERFACE
+        INTEGER FUNCTION mgcrcchnk(riid, start, char_data)
+          !MS$ATTRIBUTES C,reference,alias:'_MGCRCCHNK' :: mgcrcchnk
+          integer riid, start(*)
+	    CHARACTER*(*) char_data(*)
+        END FUNCTION mgcrcchnk
+      END INTERFACE
+         mgrcchnk = mgcrcchnk(riid, start, char_data) 
+
+         return 
+         end
+
+           
+C-------------------------------------------------------------------------
+C        Name:      mgrchnk
+C        Purpose:   read the specified chunk of NUMERIC data to the GR 
+C        Inputs:    riid     - access ID to GR
+C                   start    - chunk coordinates 
+C                   num_data - buffer the  numeric data will be read into  
+C        Returns:   0 on success, -1 on failure
+C        Calls:     mgcrchnk (C stub for GRreadchunk function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function mgrchnk(riid, start, num_data)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgrchnk
+	!MS$endif
+         INTEGER riid, start(*), num_data(*)
+C         INTEGER mgcrchnk 
+      INTERFACE
+        INTEGER FUNCTION mgcrchnk(riid, start, num_data)
+          !MS$ATTRIBUTES C,reference,alias:'_MGCRCHNK' :: mgcrchnk
+          integer riid, start(*), num_data(*)
+        END FUNCTION mgcrchnk
+      END INTERFACE
+         mgrchnk = mgcrchnk(riid, start, num_data) 
+
+         return 
+         end
+
+           
+C-------------------------------------------------------------------------
 C        Name:      mgscchnk
 C        Purpose:   set the maximum number of chunks to cache
 C        Inputs:    riid     - access ID to GR
@@ -867,6 +927,65 @@ C      integer mgigatt
       end
 
 
+C-------------------------------------------------------------------------
+C        Name:      mgwcchnk
+C        Purpose:   write the specified chunk of CHARACTER data to the GR 
+C        Inputs:    riid      - access ID to GR
+C                   start     - chunk coordinates 
+C                   char_data - buffer containing  data to be written  
+C        Returns:   0 on success, -1 on failure
+C        Calls:     mgcwcchnk (C stub for GRwritechunk function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function mgwcchnk(riid, start, char_data)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgwcchnk
+	!MS$endif
+         INTEGER riid, start(*) 
+         CHARACTER*(*) char_data(*)
+C         INTEGER mgcwcchnk 
+      INTERFACE
+        INTEGER FUNCTION mgcwcchnk(riid,start,char_data)
+          !MS$ATTRIBUTES C,reference,alias:'_MGCWCCHNK' :: mgcwcchnk
+          INTEGER riid, start(*)
+	    CHARACTER*(*) char_data(*)
+        END FUNCTION mgcwcchnk
+      END INTERFACE
+         mgwcchnk = mgcwcchnk(riid, start, char_data) 
+
+         return 
+         end
+
+C-------------------------------------------------------------------------
+C        Name:      mgwchnk
+C        Purpose:   write the specified chunk of NUMERIC data to the GR 
+C        Inputs:    riid     - access ID to GR
+C                   start    - chunk coordinates 
+C                   num_data - buffer containing data to be written  
+C        Returns:   0 on success, -1 on failure
+C        Calls:     mgcwchnk (C stub for GRwritechunk function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function mgwchnk(riid, start, num_data)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mgwchnk
+	!MS$endif
+         INTEGER riid, start(*), num_data(*)
+C         INTEGER mymgcwchnk 
+	INTERFACE
+        INTEGER FUNCTION mgcwchnk(riid,start,num_data)
+          !MS$ATTRIBUTES C,reference,alias:'_MGCWCHNK' :: mgcwchnk
+          INTEGER riid, start(*), num_data(*)
+        END FUNCTION mgcwchnk
+      END INTERFACE
+         mgwchnk = mgcwchnk(riid, start, num_data) 
+
+         return 
+         end
+
+           
 C-------------------------------------------------------------------------
 C        Name:      mgscompress
 C        Purpose:   compress GR 
