@@ -28,6 +28,29 @@ static char RcsId[] = "$Revision$";
 #define DATAFILE "tmgr.dat"
 
 #include "tproto.h"
+#include "mfgr.h"
+
+/* Local pre-processor macros */
+#define XDIM    0
+#define YDIM    1
+#define MAX_IMG_NAME    64  /* Maximum length of image names for this test */
+
+/* Local Data to verify image information in datafile */
+const struct {
+    char *name;
+    int32 ncomp;
+    int32 nt;
+    int32 il;
+    int32 dimsizes[2];
+    int32 n_attr;
+} datafile_info[]=
+  {
+    {"Raster Image #0", 3, DFNT_UCHAR8, MFGR_INTERLACE_PIXEL, {13,15}, 2},
+    {"Raster Image #1", 3, DFNT_UCHAR8, MFGR_INTERLACE_LINE, {13,15}, 2},
+    {"Raster Image #2", 3, DFNT_UCHAR8, MFGR_INTERLACE_COMPONENT, {13,15}, 2},
+    {"Test Image #1", 4, DFNT_UINT16, MFGR_INTERLACE_PIXEL, {21,23}, 3},
+    {"Test Image #2", 2, DFNT_FLOAT64, MFGR_INTERLACE_PIXEL, {17,19}, 3}
+  };
 
 #ifdef QAK
 #define MAXLEN_LAB    50
@@ -1170,7 +1193,7 @@ test_mgr_init()
 
     MESSAGE(8, printf("Try creating a new file and checking it out\n"););
 
-    /* Ok, now create some new images in the file */
+    /* Ok, now create a new file */
     fid=Hopen(TESTFILE,DFACC_RDWR,0);
     CHECK(fid,FAIL,"Hopen");
 
@@ -1190,8 +1213,6 @@ test_mgr_init()
     /* Shut down the GR interface */
     ret=GRend(grid);
     CHECK(ret,FAIL,"GRend");
-if(ret==FAIL)
-    HEprint(stderr,0);
 
     /* Close the file */
     ret=Hclose(fid);
@@ -1200,7 +1221,7 @@ if(ret==FAIL)
 
     MESSAGE(8, printf("Try checking out an existing file\n"););
 
-    /* Ok, now create some new images in the file */
+    /* Ok, now check an existing file */
     fid=Hopen(DATAFILE,DFACC_READ,0);
     CHECK(fid,FAIL,"Hopen");
 
@@ -1220,8 +1241,6 @@ if(ret==FAIL)
     /* Shut down the GR interface */
     ret=GRend(grid);
     CHECK(ret,FAIL,"GRend");
-if(ret==FAIL)
-    HEprint(stderr,0);
 
     /* Close the file */
     ret=Hclose(fid);
@@ -1232,12 +1251,133 @@ if(ret==FAIL)
 **
 **  test_mgr_image(): Multi-file Raster Image I/O Test Routine
 ** 
+        A. GRcreate/GRselect/GRendaccess w/GRgetiminfo
+        B. Write/Read images
+            1. With no Data
+                a. Default fill value
+                b. user defined fill value
+            2. With real Data
+                a. New Image
+                    1. With default fill value
+                        aa. Whole image
+                        bb. Sub-setted image
+                        cc. Sub-sampled image
+                    2. With user defined vill value
+                        aa. Whole image
+                        bb. Sub-setted image
+                        cc. Sub-sampled image
+                b. Existing Image
+                    1. Whole image
+                    2. Sub-setted image
+                    3. Sub-sampled image
 ****************************************************************/
 void
 test_mgr_image()
 {
+    int32 fid;              /* HDF file ID */
+    int32 grid;             /* GRID for the interface */
+    int32 n_datasets;       /* number of datasets */
+    int32 n_attrs;          /* number of attributes */
+    int32 ret;              /* generic return value */
+    intn i,j,k;             /* local counting variables */
+
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing Multi-file Raster Image I/O routines\n"););
+
+    MESSAGE(8, printf("Try checking out the images in an existing file\n"););
+
+    /* Open up the existing datafile and get the image information from it */
+    fid=Hopen(DATAFILE,DFACC_READ,0);
+    CHECK(fid,FAIL,"Hopen");
+
+    /* Try initializing the GR interface */
+    grid=GRstart(fid);
+    CHECK(grid,FAIL,"GRstart");
+
+    ret=(intn)GRfileinfo(grid,&n_datasets,&n_attrs);
+    CHECK(ret,FAIL,"GRfileinfo");
+
+    /* Walk through each existing dataset and verify it's contents */
+    for(i=0; i<n_datasets; i++)
+      {
+          int32 riid;               /* RI ID for an image */
+          char name[MAX_IMG_NAME];  /* storage for the image's name */
+          int32 ncomp;              /* number of components */
+          int32 nt;                 /* NT of the components */
+          int32 il;                 /* interlace of the image data */
+          int32 dimsizes[2];        /* dimension sizes of the image */
+          int32 n_attr;             /* number of attributes with each image */
+
+          /* Attach to the image */
+          riid=GRselect(grid,i);
+          CHECK(riid,FAIL,"GRselect");
+
+          /* Get the Image information */
+          *name='\0';
+          ret=GRgetiminfo(riid,name,&ncomp,&nt,&il,dimsizes,&n_attr);
+          CHECK(ret,FAIL,"GRgetiminfo");
+
+          /* Check the name for correctness */
+          if(HDstrcmp(name,datafile_info[i].name))
+            {
+                MESSAGE(3, printf("Name for image %d is: %s, should be %s\n",i,name,datafile_info[i].name););
+                num_errs++;
+            } /* end if */
+
+          /* Check the # of components */
+          if(ncomp!=datafile_info[i].ncomp)
+            {
+                MESSAGE(3, printf("Number of components for image %d is: %ld, should be %ld\n",i,(long)ncomp,(long)datafile_info[i].ncomp););
+                num_errs++;
+            } /* end if */
+
+          /* Check the NT of components */
+          if(nt!=datafile_info[i].nt)
+            {
+                MESSAGE(3, printf("NT of components for image %d is: %ld, should be %ld\n",i,(long)nt,(long)datafile_info[i].nt););
+                num_errs++;
+            } /* end if */
+
+          /* Check the interlace of components */
+          if(il!=datafile_info[i].il)
+            {
+                MESSAGE(3, printf("Interlace of components for image %d is: %ld, should be %ld\n",i,(long)il,(long)datafile_info[i].il););
+                num_errs++;
+            } /* end if */
+
+          /* Check the x-dimension of the image */
+          if(dimsizes[XDIM]!=datafile_info[i].dimsizes[XDIM])
+            {
+                MESSAGE(3, printf("X-dim of image %d is: %ld, should be %ld\n",i,(long)dimsizes[XDIM],(long)datafile_info[i].dimsizes[XDIM]););
+                num_errs++;
+            } /* end if */
+
+          /* Check the y-dimension of the image */
+          if(dimsizes[YDIM]!=datafile_info[i].dimsizes[YDIM])
+            {
+                MESSAGE(3, printf("Y-dim of image %d is: %ld, should be %ld\n",i,(long)dimsizes[YDIM],(long)datafile_info[i].dimsizes[YDIM]););
+                num_errs++;
+            } /* end if */
+
+          /* Check the # of attributes of the image */
+          if(n_attr!=datafile_info[i].n_attr)
+            {
+                MESSAGE(3, printf("# of attributes for image %d is: %ld, should be %ld\n",i,(long)n_attr,(long)datafile_info[i].n_attr););
+                num_errs++;
+            } /* end if */
+
+          /* End access to the image */
+          ret=GRendaccess(riid);
+          CHECK(ret,FAIL,"GRendaccess");
+      } /* end for */
+
+    /* Shut down the GR interface */
+    ret=GRend(grid);
+    CHECK(ret,FAIL,"GRend");
+
+    /* Close the file */
+    ret=Hclose(fid);
+    CHECK(ret,FAIL,"Hclose");
 }   /* end test_mgr_image() */
 
 /****************************************************************
