@@ -11,7 +11,7 @@ CFLAGS=
 
 # Fortran compilier
 FC = xlf
-FCFLAGS =
+FFLAGS =
 
 # Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
 RANLIB = ranlib

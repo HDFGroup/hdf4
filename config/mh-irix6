@@ -11,7 +11,7 @@ CFLAGS=-ansi -32
 
 # Fortran compilier for32-bit mode
 FC = f77
-FCFLAGS = -32
+FFLAGS = -32
 
 # Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
 RANLIB = ranlib

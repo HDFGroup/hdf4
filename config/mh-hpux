@@ -11,7 +11,7 @@ CFLAGS=-ansi -pedantic -Wall -D_HPUX_SOURCE
 
 # Fortran compilier
 FC = f77
-FCFLAGS =
+FFLAGS =
 
 # Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
 RANLIB = ranlib
