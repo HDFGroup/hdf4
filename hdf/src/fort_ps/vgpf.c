@@ -1435,3 +1435,86 @@ nvdtrc(intf * vkey, intf * tag, intf * ref)
        HDfree(class_name);
        return(ret);
 } 
+/*------------------------------------------------------------------------
+ *       Name:      vscsetblsz
+ *       Purpose:   calls VSsetblocksize
+ *       Inputs:    id    -  vdata identifier
+ *                  block_size - size of the block
+ *       Returns:   0 if succeeds, -1 if fails
+ *       Users:     HDF Fortran programmers
+ ---------------------------------------------------------------------*/
+     FRETVAL (intf)
+#ifdef PROTOTYPE
+       nvscsetblsz( intf *id , intf *block_size)
+#else
+       nvscsetblsz (id, block_size)
+               intf   *id;
+               intf   *block_size;
+#endif /* PROTOTYPE */
+
+{
+       intf  ret = -1;
+       intn c_ret;	
+
+       c_ret = VSsetblocksize( *id, *block_size);
+       if(c_ret == 0) ret = 0;
+       return(ret);
+} 
+/*------------------------------------------------------------------------
+ *       Name:      vscsetnmbl
+ *       Purpose:   calls VSsetnumblocks
+ *       Inputs:    id    -  vdata identifier
+ *                  num_blocks - number of blocks
+ *       Returns:   0 if succeeds, -1 if fails
+ *       Users:     HDF Fortran programmers
+ ---------------------------------------------------------------------*/
+     FRETVAL (intf)
+#ifdef PROTOTYPE
+       nvscsetnmbl( intf *id , intf *num_blocks)
+#else
+       nvscsetnmbl (id, num_blocks)
+               intf   *id;
+               intf   *num_blocks;
+#endif /* PROTOTYPE */
+
+{
+       intf  ret;
+       intn  c_ret;
+
+       c_ret = VSsetnumblocks( *id, *num_blocks);
+       if(c_ret == 0) ret = 0;
+       return(ret);
+} 
+/*------------------------------------------------------------------------
+ *       Name:      vscgetblinfo
+ *       Purpose:   calls VSgetblockinfo
+ *       Inputs:    id    -  vdata identifier
+ *                  block_size - size of the block
+ *                  num_blocks - number of blocks
+ *       Returns:   0 if succeeds, -1 if fails
+ *       Users:     HDF Fortran programmers
+ ---------------------------------------------------------------------*/
+     FRETVAL (intf)
+#ifdef PROTOTYPE
+       nvscgetblinfo( intf *id , intf *block_size, intf *num_blocks)
+#else
+       nvscgetblinfo (id, block_size, num_blocks)
+               intf   *id;
+               intf   *block_size; 
+               intf   *num_blocks;
+#endif /* PROTOTYPE */
+
+{
+       intf  ret = -1;
+        intn c_ret;
+	int32 c_block_size;
+        int32 c_num_blocks;
+
+       c_ret = VSgetblockinfo( *id, &c_block_size, &c_num_blocks);
+       if (c_ret == 0) {
+       		*block_size = c_block_size;
+       	        *num_blocks = c_num_blocks;
+       	      	ret = 0;
+       }
+       return(ret);
+} 
