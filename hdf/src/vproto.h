@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.4  1992/11/24 17:43:26  chouck
-Fixed memory over-write when VGroups have lots of members
+Revision 1.5  1992/11/30 22:00:01  chouck
+Added fixes for changing to Vstart and Vend
 
+ * Revision 1.4  1992/11/24  17:43:26  chouck
+ * Fixed memory over-write when VGroups have lots of members
+ *
  * Revision 1.3  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -112,16 +115,11 @@ extern void setjj
 extern void setnojj
   PROTO((void));
 
-extern void Vinitialize
+extern void Vstart
   PROTO((HFILEID f));
 
-extern void Vfinish
+extern intn Vend
   PROTO((HFILEID f));
-
-#if 0 /* was turned into a macro */
-extern vfile_t *Get_vfile
-  PROTO((HFILEID f));
-#endif
 
 /*private */
 extern vginstance_t HUGE *vginstance
@@ -333,6 +331,8 @@ extern int32 VSwrite
 #   define  nvgttrsc FNAME(VGTTRSC)
 #   define  nvgttrc  FNAME(VGTTRC)
 #   define  nvadtrc  FNAME(VADTRC)
+#   define  nvfstart FNAME(VFSTART)
+#   define  nvfend   FNAME(VFEND)
 #else   /* !DF_CAPFNAMES */
 #	define  ndfivopn FNAME(dfivopn)
 #	define  ndfvclos FNAME(dfvclos)
@@ -381,6 +381,8 @@ extern int32 VSwrite
 #   define  nvgttrsc FNAME(vgttrsc)
 #   define  nvgttrc  FNAME(vgttrc)
 #   define  nvadtrc  FNAME(vadtrc)
+#   define  nvfstart FNAME(vfstart)
+#   define  nvfend   FNAME(vfend)
 #endif  /* DF_CAPFNAMES */
 #endif  /* VG_FNAMES */
 

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.3  1992/11/30 22:00:01  chouck
+Added fixes for changing to Vstart and Vend
 
+ * Revision 1.2  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -20,6 +23,7 @@ Updates from 3.2r2 -> 3.3
 ************************************************************************/
 
 #include "vg.h"
+#include "hfile.h"
 
 PRIVATE void Knumin
     PROTO((BYTE *src,BYTE * dst,uint32 n,uint32 sdel,uint32 ddel));
@@ -134,14 +138,11 @@ PUBLIC int32 VSread (vs, buf, nelt, interlace)
 	int32 			i,j, nv, offset, type;
 	VWRITELIST 		*w;
 	VREADLIST  		*r;
-/*
-	register BYTE	*tbuf;
-*/
 	int32 			uvsize; /* size of "element" as NEEDED by user */
-	int32			stat;
 	char * 	FUNC = "VSread";
 
 	if(vs == NULL)		{ HERROR(DFE_ARGS); return(FAIL); }
+	if(vs->aid == NO_ID)    { HERROR(DFE_ARGS); return(FAIL); }
 /* Allow people to read when they have write access 
 	if(vs->access != 'r')	{ HERROR(DFE_BADACC); return(FAIL); }
 */
@@ -169,7 +170,6 @@ PUBLIC int32 VSread (vs, buf, nelt, interlace)
 	/* ================ start reading ============================== */
 	/* ================ start reading ============================== */
 
-	QQQuerylength(vs->aid, &stat);
 	nv = QQread (vs->aid, nelt * hsize, (uint8*) Vtbuf);
 
 	if ( nv != nelt*hsize ) {

@@ -25,9 +25,12 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.3  1992/11/06 20:10:32  chouck
-C Changed tabs to spaces so Absoft Fortran on the Mac will be happy
+C Revision 1.4  1992/11/30 22:00:01  chouck
+C Added fixes for changing to Vstart and Vend
 C
+c Revision 1.3  1992/11/06  20:10:32  chouck
+c Changed tabs to spaces so Absoft Fortran on the Mac will be happy
+c
 c Revision 1.2  1992/10/23  19:13:12  koziol
 c Created fortran stubs dfvopen and dfvclos for DFvsetopen() and DFvsetclose
 c
@@ -56,16 +59,15 @@ C Returns: 0 on success, FAIL on failure with error set
 C Users:    Fortran stub routine
 C Invokes: hiopen
 C----------------------------------------------------------------------------*/
-
-      integer function dfvopen(filename, access, defdds)
-
-      character*(*) filename
-      integer       access, defdds, dfivopn
-
-      dfvopen = dfivopn(filename, access, defdds, len(filename))
-      return
-      end
-
+C
+C      integer function dfvopen(filename, access, defdds)
+C
+C      character*(*) filename
+C      integer       access, defdds, dfivopn
+C
+C      dfvopen = dfivopn(filename, access, defdds, len(filename))
+C      return
+C      end
 
 c     ============================================================
 c      VGROUP ROUTINES

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/11/24 17:43:26  chouck
-Fixed memory over-write when VGroups have lots of members
+Revision 1.5  1992/11/30 22:00:01  chouck
+Added fixes for changing to Vstart and Vend
 
+ * Revision 1.4  1992/11/24  17:43:26  chouck
+ * Fixed memory over-write when VGroups have lots of members
+ *
  * Revision 1.3  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -276,35 +279,28 @@ PRIVATE void Remove_vfile (f)
 
 }  /* Remove_vfile */
 
-/* ---------------------------- Vinitialize ------------------------- */
-/* should be replaced by HDFopen() or such */
-/* is called by DFvsetopen() only */
+/* ---------------------------- Vstart ------------------------- */
 
 #ifdef PROTOTYPE
-PUBLIC void Vinitialize (HFILEID f)
+PUBLIC void Vstart(HFILEID f)
 #else
-
-PUBLIC void Vinitialize (f)
+PUBLIC void Vstart(f)
 	HFILEID f;
-
 #endif
-
 {
     char * FUNC = "Vinitialize";
     
     Load_vfile (f);
-    if (vjv) { sprintf(sjs,"@Vinitialize: f=%ld\n", f); zj; }
+    if (vjv) { sprintf(sjs,"@Vstart: f=%ld\n", f); zj; }
 }
 
-/* ---------------------------- Vfinish ------------------------- */
-/* should be replaced by HDFclose() or such */
-/* is called by DFvsetclose() only */
+/* ---------------------------- Vend ------------------------- */
 
 #ifdef PROTOTYPE
-PUBLIC void Vfinish (HFILEID f)
+PUBLIC intn Vend (HFILEID f)
 #else
 
-PUBLIC void Vfinish (f)
+PUBLIC intn Vend (f)
 	HFILEID f;
 
 #endif
@@ -313,7 +309,7 @@ PUBLIC void Vfinish (f)
     char * FUNC = "Vfinish";
     
     Remove_vfile (f);
-    if (vjv) { sprintf(sjs,"@Vfinish: f=%ld\n", f); zj; }
+    if (vjv) { sprintf(sjs,"@Vend: f=%ld\n", f); zj; }
 }
 
 

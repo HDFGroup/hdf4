@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.4  1992/11/30 22:00:01  chouck
+Added fixes for changing to Vstart and Vend
 
+ * Revision 1.3  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.2  1992/09/11  14:15:04  koziol
  * Changed Fortran stubs' parameter passing to use a new typedef, intf,
  * which should be typed to the size of an INTEGER*4 in whatever Fortran
@@ -29,107 +32,6 @@ Updates from 3.2r2 -> 3.3
 ************************************************************************/
 
 #include "vg.h"
-
-#ifndef VG_FNAMES
-#   define VG_FNAMES
-#ifdef DF_CAPFNAMES
-#   define  ndfivopn FNAME(DFIVOPN)
-#	define  ndfvclos FNAME(DFVCLOS)
-#   define  nvatchc  FNAME(VATCHC)
-#   define  nvdtchc  FNAME(VDTCHC)
-#   define  nvgnamc  FNAME(VGNAMC)
-#   define  nvgclsc  FNAME(VGCLSC)
-#   define  nvinqc   FNAME(VINQC)
-#   define  nvgidc   FNAME(VGIDC)
-#   define  nvgnxtc  FNAME(VGNXTC)
-#   define  nvsnamc  FNAME(VSNAMC)
-#   define  nvsclsc  FNAME(VSCLSC)
-#   define  nvinsrtc FNAME(VINSRTC)
-#   define  nvisvgc  FNAME(VISVGC)
-#   define  nvisvsc  FNAME(VISVSC)
-#   define  nvsatchc FNAME(VSATCHC)
-#   define  nvsdtchc FNAME(VSDTCHC)
-#   define  nvsseekc FNAME(VSSEEKC)
-#   define  nvsgnamc FNAME(VSGNAMC)
-#   define  nvsgclsc FNAME(VSGCLSC)
-#   define  nvsinqc  FNAME(VSINQC)
-#   define  nvsfexc  FNAME(VSFEXC)
-#   define  nvsgidc  FNAME(VSGIDC)
-#   define  nvssnamc FNAME(VSSNAMC)
-#   define  nvssclsc FNAME(VSSCLSC)
-#   define  nvssfldc FNAME(VSSFLDC)
-#   define  nvssintc FNAME(VSSINTC)
-#   define  nvsfdefc FNAME(VSFDEFC)
-#   define  nvsreadc FNAME(VSREADC)
-#   define  nvswritc FNAME(VSWRITC)
-#   define  nvsgintc FNAME(VSGINTC)
-#   define  nvseltsc FNAME(VSELTSC)
-#   define  nvsgfldc FNAME(VSGFLDC)
-#   define  nvssizc  FNAME(VSSIZC)
-#   define  nventsc  FNAME(VENTSC)
-#   define  nsetjjc  FNAME(SETJJC)
-#   define  nsetnojjc    FNAME(SETNOJJC)
-#   define  nvlonec  FNAME(VLONEC)
-#   define  nvslonec FNAME(VSLONEC)
-#   define  nvhsdc   FNAME(VHSDC)
-#   define  nvhsdmc  FNAME(VHSDMC)
-#   define  nvhmkgpc FNAME(VHMKGPC)
-#   define  nvflocc  FNAME(VFLOCC)
-#   define  nvinqtrc FNAME(VINQTRC)
-#   define  nvntrc   FNAME(VNTRC)
-#   define  nvgttrsc FNAME(VGTTRSC)
-#   define  nvgttrc  FNAME(VGTTRC)
-#   define  nvadtrc  FNAME(VADTRC)
-#else   /* !DF_CAPFNAMES */
-#   define  ndfivopn FNAME(dfivopn)
-#	define  ndfvclos FNAME(dfvclos)
-#   define  nvatchc  FNAME(vatchc)
-#   define  nvdtchc  FNAME(vdtchc)
-#   define  nvgnamc  FNAME(vgnamc)
-#   define  nvgclsc  FNAME(vgclsc)
-#   define  nvinqc   FNAME(vinqc)
-#   define  nvgidc   FNAME(vgidc)
-#   define  nvgnxtc  FNAME(vgnxtc)
-#   define  nvsnamc  FNAME(vsnamc)
-#   define  nvsclsc  FNAME(vsclsc)
-#   define  nvinsrtc FNAME(vinsrtc)
-#   define  nvisvgc  FNAME(visvgc)
-#   define  nvisvsc  FNAME(visvsc)
-#   define  nvsatchc FNAME(vsatchc)
-#   define  nvsdtchc FNAME(vsdtchc)
-#   define  nvsseekc FNAME(vsseekc)
-#   define  nvsgnamc FNAME(vsgnamc)
-#   define  nvsgclsc FNAME(vsgclsc)
-#   define  nvsinqc  FNAME(vsinqc)
-#   define  nvsfexc  FNAME(vsfexc)
-#   define  nvsgidc  FNAME(vsgidc)
-#   define  nvssnamc FNAME(vssnamc)
-#   define  nvssclsc FNAME(vssclsc)
-#   define  nvssfldc FNAME(vssfldc)
-#   define  nvssintc FNAME(vssintc)
-#   define  nvsfdefc FNAME(vsfdefc)
-#   define  nvsreadc FNAME(vsreadc)
-#   define  nvswritc FNAME(vswritc)
-#   define  nvsgintc FNAME(vsgintc)
-#   define  nvseltsc FNAME(vseltsc)
-#   define  nvsgfldc FNAME(vsgfldc)
-#   define  nvssizc  FNAME(vssizc)
-#   define  nventsc  FNAME(ventsc)
-#   define  nsetjjc  FNAME(setjjc)
-#   define  nsetnojjc    FNAME(setnojjc)
-#   define  nvlonec  FNAME(vlonec)
-#   define  nvslonec FNAME(vslonec)
-#   define  nvhsdc   FNAME(vhsdc)
-#   define  nvhsdmc  FNAME(vhsdmc)
-#   define  nvhmkgpc FNAME(vhmkgpc)
-#   define  nvflocc  FNAME(vflocc)
-#   define  nvinqtrc FNAME(vinqtrc)
-#   define  nvntrc   FNAME(vntrc)
-#   define  nvgttrsc FNAME(vgttrsc)
-#   define  nvgttrc  FNAME(vgttrc)
-#   define  nvadtrc  FNAME(vadtrc)
-#endif  /* DF_CAPFNAMES */
-#endif  /* VG_FNAMES */
 
 /* 
 **  remove trailing blanks from a string. input argument is a  string
@@ -286,17 +188,17 @@ nvgnamc(vg, vgname)
 **  related: Vgetclass--vgclsc--VFGCLS
 */
 
-    FRETVAL(void)
+FRETVAL(void)
 #ifdef PROTOTYPE
-nvgclsc(VGROUP ** vg, _fcd vgclass)
+     nvgclsc(VGROUP ** vg, _fcd vgclass)
 #else
-nvgclsc(vg, vgclass)
-    VGROUP  **vg;
-	_fcd 		vgclass;				/* output */
+     nvgclsc(vg, vgclass)
+     VGROUP  **vg;
+     _fcd    vgclass;	/* output */
 #endif
-
+     
 {
-	 Vgetclass (*vg, vgclass);
+    Vgetclass (*vg, vgclass);
 }   /* VGCLSC */
 
 /* ------------------------------------------------------------------ */
@@ -372,11 +274,11 @@ nvsnamc(vg, vgname, vgnamelen)
     intf    *vgnamelen;
 #endif
 {
-	char *name;
-
+    char *name;
+    
     name = HDf2cstring (vgname, (intn)*vgnamelen);
-	/* trimendblanks(name); */
-	Vsetname (*vg, name);
+    /* trimendblanks(name); */
+    Vsetname (*vg, name);
     HDfreespace (name);
 }
 
@@ -391,16 +293,16 @@ nvsnamc(vg, vgname, vgnamelen)
 nvsclsc(VGROUP **vg, _fcd vgclass, intf *vgclasslen)
 #else
 nvsclsc(vg, vgclass, vgclasslen)
-    VGROUP  **vg;
-	_fcd	vgclass;
-    intf    *vgclasslen;
+     VGROUP  **vg;
+     _fcd	vgclass;
+     intf    *vgclasslen;
 #endif
 {
-	char *class;
-
+    char *class;
+    
     class = HDf2cstring (vgclass, (intn)*vgclasslen);
-	/* trimendblanks(class); */
-	Vsetclass (*vg, class);
+    /* trimendblanks(class); */
+    Vsetclass (*vg, class);
     HDfreespace (class);
 }
 
@@ -440,6 +342,39 @@ nvisvgc(vg, id)
 {
     return( (intf) Visvg(*vg, *id) );
 }
+
+
+/* ------------------------------------------------------------------ */
+/* 
+**  wrapper for Vstart
+*/
+
+    FRETVAL(void)
+#ifdef PROTOTYPE
+nvfstart(HFILEID *f)
+#else
+nvfstart(f)
+    HFILEID *f;
+#endif
+{
+    Vstart(*f);
+} /* nvfstart */
+
+/* ------------------------------------------------------------------ */
+/* 
+**  wrapper for Vend
+*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nvfend(HFILEID *f)
+#else
+nvfend(f)
+    HFILEID *f;
+#endif
+{
+    return( (intf) Vend(*f));
+} /* nvfend */
 
 /* ------------------------------------------------------------------ */
 /* 

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.4  1992/11/30 22:00:01  chouck
+Added fixes for changing to Vstart and Vend
 
+ * Revision 1.3  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.2  1992/10/06  16:19:19  chouck
  * In Vdatas version 2 LCOAL_INTS were stored as 16bits, not 32bits so
  * map_from_old_types() was messing up.
@@ -28,6 +31,7 @@ Updates from 3.2r2 -> 3.3
 *************************************************************************/
 
 #include "vg.h"
+#include "hfile.h"
 extern vfile_t vfile[];
 
 /* ---------------------- DFvsetopen --------------------------------------- */
@@ -178,7 +182,7 @@ a VDATA structure into a compact form suitable for storing in the HDF file.
 */
 
 /****
-CONTENTS of VS stored in HDF file with tag VSDESCTAG:
+CONTENTS of VS stored in HDF file with tag DFTAG_VH:
 	int16		interlace
 	int32		nvertices
 	int16		vsize
@@ -574,7 +578,7 @@ PUBLIC VDATA * VSattach (f, vsid, accesstype)
           vs->oref		= vnewref(f);
           if (vs->oref == 0) {HERROR(DFE_NOREF); HDfreespace (vs); return(NULL);}
           
-          vs->otag		= VSDESCTAG;
+          vs->otag		= DFTAG_VH;
           vs->vsname[0] 	= '\0';
           vs->interlace		= FULL_INTERLACE; /* DEFAULT */
           vs->access		= 'w';
@@ -636,14 +640,14 @@ PUBLIC VDATA * VSattach (f, vsid, accesstype)
         }
 
           /* need to fetch from file */
-        if (Hgetelement(f,VSDESCTAG,(uint16)vsid,vspack) == FAIL)
+        if (Hgetelement(f, DFTAG_VH,(uint16)vsid,vspack) == FAIL)
             HRETURN_ERROR(DFE_NOVS, NULL);
           
         vs->wlist.n = vs->rlist.n = 0;
 
         /* unpack the vs, then init all other fields in it */
         vunpackvs (vs,vspack,&vspacksize);
-        vs->otag    = VSDESCTAG;
+        vs->otag    = DFTAG_VH;
         vs->oref    = (uint16)vsid;
         vs->access  = 'r';
         vs->f   = f;
@@ -686,20 +690,15 @@ PUBLIC VDATA * VSattach (f, vsid, accesstype)
           }
           
           /* need to fetch from file */
-          if (Hgetelement(f, VSDESCTAG, (uint16)vsid, vspack) == FAIL)
+          if (Hgetelement(f, DFTAG_VH, (uint16)vsid, vspack) == FAIL)
             HRETURN_ERROR(DFE_NOMATCH, NULL);
           
-          
-          /*
-            zerofill((BYTE*) vs, (int16) sizeof(VDATA));
-            */
-
           vs->wlist.n = vs->rlist.n = 0;
           vs->nusym = 0;
           
           /* unpack the vs, then init all other fields in it */
           vunpackvs (vs,vspack,&vspacksize);
-          vs->otag	= VSDESCTAG;
+          vs->otag	= DFTAG_VH;
           vs->oref    = (uint16)vsid;
           vs->access	= 'w';
           vs->f		= f;
@@ -784,6 +783,7 @@ PUBLIC void VSdetach (vs)
 #endif
           }
           Hendaccess (vs->aid);
+          vs->aid = NO_ID;
           return;
 	}
 
