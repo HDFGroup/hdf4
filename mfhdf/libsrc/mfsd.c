@@ -6156,6 +6156,12 @@ SDcheckempty(int32 sdsid,  /* IN: dataset ID */
     fprintf(stderr, "SDcheckempty: I've been called\n");
 #endif
 
+#ifdef HAVE_PABLO
+#ifndef ID_SDcheckempty
+#define ID_SDcheckempty DUMMY_HDF
+#endif
+    HDF_TRACE_ON(ID_SDcheckempty );
+#endif
     /* get the handle */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
@@ -6188,6 +6194,9 @@ done:
 
       }
     /* Normal cleanup */
+#ifdef HAVE_PABLO
+    HDF_TRACE_OFF ( ID_SDcheckempty, sdsid, NULL, HDF_SDS_ID) ;
+#endif
 
     return ret_value;
 } /* SDcheckempty */
