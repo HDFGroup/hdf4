@@ -179,7 +179,7 @@ check_PROGRAMS = cdftest hdftest
 cdftest_SOURCES = cdftest.c
 cdftest_LDADD = libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 
-hdftest_SOURCES = hdftest.c tszip.c
+hdftest_SOURCES = hdftest.c tszip.c temptySDSs.c
 hdftest_LDADD = libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 
 
@@ -227,7 +227,7 @@ am_cdftest_OBJECTS = cdftest.$(OBJEXT)
 cdftest_OBJECTS = $(am_cdftest_OBJECTS)
 cdftest_DEPENDENCIES = libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 cdftest_LDFLAGS =
-am_hdftest_OBJECTS = hdftest.$(OBJEXT) tszip.$(OBJEXT)
+am_hdftest_OBJECTS = hdftest.$(OBJEXT) tszip.$(OBJEXT) temptySDSs.$(OBJEXT)
 hdftest_OBJECTS = $(am_hdftest_OBJECTS)
 hdftest_DEPENDENCIES = libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 hdftest_LDFLAGS =
@@ -245,6 +245,7 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/nssdc.Po ./$(DEPDIR)/putget.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/putgetg.Po ./$(DEPDIR)/sharray.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/string.Po ./$(DEPDIR)/tszip.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/temptySDSs.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/var.Po ./$(DEPDIR)/xdr.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/xdrarray.Po ./$(DEPDIR)/xdrfloat.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/xdrposix.Po ./$(DEPDIR)/xdrstdio.Po
@@ -342,6 +343,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sharray.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/string.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tszip.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/temptySDSs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/var.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdrarray.Po@am__quote@
