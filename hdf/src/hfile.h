@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.5  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.6  1992/11/30 21:59:11  chouck
+Added NO_ID for testing if an ID variable has an invalid content
 
+ * Revision 1.5  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.4  1992/10/22  22:53:32  chouck
  * Added group handle to group interface
  *
@@ -305,6 +308,8 @@ typedef struct functab_t {
                     (access_records))
 #define AID2SLOT(i) (VALIDAID(i) ? (uint32)(i) & 0xffff : -1)
 #define AID2REC(i) ((VALIDAID(i) ? &(access_records[(uint32)(i) & 0xffff]) : NULL))
+
+#define NO_ID     (uint32) 0
 
 /* a tag is special if its tag belongs to a special set.  This test can be
    just ((t)==SPECIAL1 || (t)==SPECIAL2), or a full blown function.
