@@ -1000,7 +1000,7 @@ NCVPT(cdfid, varid, start, count, value, rcode)
     *rcode = 0;
 #ifdef FORTRAN_HAS_NO_BYTE
     if ((nc_type) datatype == NC_BYTE) {	/* pack ints into bytes */
-	char *bytes = itob (value, ncount, ndims);
+	char *bytes = itob ((int *)value, ncount, ndims);
 	if (bytes == NULL) {
 	    *rcode = NC_SYSERR;
 	    return;
@@ -1015,7 +1015,7 @@ NCVPT(cdfid, varid, start, count, value, rcode)
 #endif				/* FORTRAN_HAS_NO_BYTE */
 #ifdef FORTRAN_HAS_NO_SHORT
     if ((nc_type) datatype == NC_SHORT) { /* pack ints into shorts */
-	short *shorts = itos (value, ncount, ndims);
+	short *shorts = itos ((int *)value, ncount, ndims);
 	if (shorts == NULL) {
 	    *rcode = NC_SYSERR;
 	    return;
@@ -1165,7 +1165,7 @@ NCVPTG(cdfid, varid, start, count, stride, basis, value, rcode)
 	 * Release 2.3.1 had a bug in the following line: it used count
 	 * rather than ncount.
 	 */
-	char *bytes = itobg (value, ncount, nbasis, ndims);
+	char *bytes = itobg ((int *)value, ncount, nbasis, ndims);
 	if (bytes == NULL) {
 	    *rcode = NC_SYSERR;
 	    return;
@@ -1184,7 +1184,7 @@ NCVPTG(cdfid, varid, start, count, stride, basis, value, rcode)
 	 * Release 2.3.1 had a bug in the following line: it used count
 	 * rather than ncount.
 	 */
-	short *shorts = itosg (value, ncount, nbasis, ndims);
+	short *shorts = itosg ((int *)value, ncount, nbasis, ndims);
 	if (shorts == NULL) {
 	    *rcode = NC_SYSERR;
 	    return;
@@ -1821,7 +1821,7 @@ NCAPT(cdfid, varid, attnamed, datatype, attlen, value, rcode)
     *rcode = 0;
 #ifdef FORTRAN_HAS_NO_BYTE
     if ((nc_type) *datatype == NC_BYTE) {	/* pack ints into bytes */
-	char *bytes = itob (value, attlen, 1);
+	char *bytes = itob ((int *)value, attlen, 1);
 
 	if (bytes == NULL) {
 	    *rcode = NC_SYSERR;
@@ -1837,7 +1837,7 @@ NCAPT(cdfid, varid, attnamed, datatype, attlen, value, rcode)
 #endif				/* FORTRAN_HAS_NO_BYTE */
 #ifdef FORTRAN_HAS_NO_SHORT
     if ((nc_type) *datatype == NC_SHORT) {	/* pack ints into shorts */
-	short *shorts = itos (value, attlen, 1);
+	short *shorts = itos ((int *)value, attlen, 1);
 
 	if (shorts == NULL) {
 	    *rcode = NC_SYSERR;
