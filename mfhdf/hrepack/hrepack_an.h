@@ -42,6 +42,16 @@ int copy_vs_an(int32 infile_id,
                char *path,
                options_t *options);
 
+int copy_an_data(int32 infile_id,
+                 int32 outfile_id,
+                 int32 ref_in, 
+                 int32 tag_in,
+                 int32 ref_out, 
+                 int32 tag_out,
+                 ann_type type, 
+                 char *path, 
+                 options_t *options);
+
 
 
 #ifdef __cplusplus

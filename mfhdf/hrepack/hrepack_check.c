@@ -18,7 +18,7 @@ static void usage();
 static int sds_get_compck(char *fname, char *sds_name);
 static int sds_get_all(char *fname);
 static char* get_schunk(int32 flags);
-static char* get_scomp(int code);
+static const char* get_scomp(comp_coder_t code);
 
 
 int main(int argc, char **argv)
@@ -229,7 +229,7 @@ int sds_get_all(char *fname)
  */
 
 static
-char* get_scomp(int code)
+const char* get_scomp(comp_coder_t code)
 {
  if (code==COMP_CODE_RLE)
   return "RLE";

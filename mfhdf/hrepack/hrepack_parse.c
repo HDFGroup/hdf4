@@ -13,6 +13,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <ctype.h> /*isdigit*/
 
 #include "hrepack_parse.h"
 
@@ -37,7 +38,9 @@
  */
 
 
-obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
+obj_list_t* parse_comp(const char *str, 
+                       int *n_objs, 
+                       comp_info_t *comp)
 {
  unsigned    i, u;
  char        c;
@@ -184,6 +187,8 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
  /* check valid parameters */
  switch (comp->type)
   {
+  default:
+   break;
   case COMP_CODE_RLE:
    break;
   case COMP_CODE_SKPHUFF:
@@ -225,7 +230,7 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
  *-------------------------------------------------------------------------
  */
 
-char* get_scomp(int code)
+const char* get_scomp(comp_coder_t code)
 {
  if (code==COMP_CODE_RLE)
   return "RLE";
@@ -272,7 +277,10 @@ char* get_scomp(int code)
  */
 
 
-obj_list_t* parse_chunk(char *str, int *n_objs, int32 *chunk_lengths, int *chunk_rank)
+obj_list_t* parse_chunk(const char *str, 
+                        int *n_objs, 
+                        int32 *chunk_lengths, 
+                        int *chunk_rank)
 {
  obj_list_t* obj_list=NULL;
  unsigned    i;

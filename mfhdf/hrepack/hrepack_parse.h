@@ -28,12 +28,12 @@ int parse_number(char *str);
 
 /* compression */
 
-obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp);
-char*       get_scomp(int code);
+obj_list_t* parse_comp(const char *str, int *n_objs, comp_info_t *comp);
+const char*       get_scomp(comp_coder_t code);
 
 /* chunking */
 
-obj_list_t* parse_chunk(char *str, int *n_objs, int32 *chunk_lengths, int *chunk_rank);
+obj_list_t* parse_chunk(const char *str, int *n_objs, int32 *chunk_lengths, int *chunk_rank);
 
 
 #ifdef __cplusplus

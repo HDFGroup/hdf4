@@ -97,14 +97,14 @@ typedef struct {
 extern "C" {
 #endif
 
-void hrepack         (char* infname, char* outfname, options_t *options);
-void hrepack_addcomp (char* str, options_t *options);
-void hrepack_addchunk(char* str, options_t *options);
+void hrepack         (const char* infname, const char* outfname, options_t *options);
+void hrepack_addcomp (const char* str, options_t *options);
+void hrepack_addchunk(const char* str, options_t *options);
 void hrepack_init    (options_t *options, int verbose);
 void hrepack_end     (options_t *options);
 
-int  list(char* infname,char* outfname,options_t *options);
-void read_info(char *filename,options_t *options); 
+int  list(const char* infname,const char* outfname,options_t *options);
+void read_info(const char *filename,options_t *options); 
 
 #ifdef __cplusplus
 }

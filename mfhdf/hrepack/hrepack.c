@@ -38,7 +38,9 @@ void print_options(options_t *options);
  *
  *-------------------------------------------------------------------------
  */
-void hrepack(char* infile, char* outfile, options_t *options)
+void hrepack(const char* infile, 
+             const char* outfile, 
+             options_t *options)
 {
  options->trip=0;
 
@@ -74,7 +76,7 @@ void hrepack(char* infile, char* outfile, options_t *options)
  *-------------------------------------------------------------------------
  */
 
-void hrepack_addcomp(char* str, options_t *options)
+void hrepack_addcomp(const char* str, options_t *options)
 {
  
  obj_list_t      *obj_list=NULL; /*one object list for the -t and -c option entry */
@@ -131,7 +133,7 @@ void hrepack_addcomp(char* str, options_t *options)
  */
 
 
-void hrepack_addchunk(char* str, options_t *options)
+void hrepack_addchunk(const char* str, options_t *options)
 {
  
  obj_list_t  *obj_list=NULL;     /*one object list for the -t and -c option entry */
@@ -277,17 +279,19 @@ void print_options(options_t *options)
   {
    switch (options->comp_g.type)
    {
+   default:
+    break;
    case COMP_CODE_RLE:
    case COMP_CODE_SZIP:
      printf("\tCompress all with %s compression\n",
-     get_scomp(options->comp_g.type));
+      get_scomp(options->comp_g.type));
     break;
    case COMP_CODE_SKPHUFF:
    case COMP_CODE_DEFLATE:
    case COMP_CODE_JPEG:
      printf("\tCompress all with %s compression, parameter %d\n",
-     get_scomp(options->comp_g.type),
-     options->comp_g.info);
+      get_scomp(options->comp_g.type),
+      options->comp_g.info);
     break;
    };
   }
@@ -329,7 +333,7 @@ void print_options(options_t *options)
  *-------------------------------------------------------------------------
  */
 
-void read_info(char *filename,options_t *options) 
+void read_info(const char *filename,options_t *options) 
 {
  char stype[10];
  char comp_info[1024];

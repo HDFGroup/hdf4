@@ -51,8 +51,8 @@ static void set_chunk_def( int32 comp_type,
  *-------------------------------------------------------------------------
  */
 
-void add_gr_ffile(char* name_file,
-                  char* gr_name,
+void add_gr_ffile(const char* name_file,
+                  const char* gr_name,
                   int32 interlace_mode,
                   int32 file_id,
                   int32 vgroup_id)
@@ -179,7 +179,7 @@ void add_gr_ffile(char* name_file,
 #define X_DIM_GR     6
 #define Y_DIM_GR     4
 
-void add_gr(char* gr_name,           /* gr name */
+void add_gr(const char* gr_name,     /* gr name */
             int32 file_id,           /* file ID */
             int32 vgroup_id,         /* group ID */
             int32 chunk_flags,       /* chunk flags */
@@ -214,6 +214,8 @@ void add_gr(char* gr_name,           /* gr name */
  /*define some compression specific parameters */
  switch(comp_type)
  {
+ default:
+  break;
  case COMP_CODE_RLE:
   break;
 
@@ -264,6 +266,8 @@ void add_gr(char* gr_name,           /* gr name */
   /*define some compression specific parameters */
   switch(comp_type)
   {
+  default:
+   break;
   case COMP_CODE_RLE:
    chunk_def.comp.comp_type = COMP_CODE_RLE;
    break;
@@ -365,7 +369,7 @@ void add_gr(char* gr_name,           /* gr name */
  *-------------------------------------------------------------------------
  */
 
-void add_glb_attrs(char *fname,
+void add_glb_attrs(const char *fname,
                    int32 file_id)
 {
  int32 sd_id,                  /* SD interface identifier */
@@ -422,7 +426,10 @@ void add_glb_attrs(char *fname,
  *-------------------------------------------------------------------------
  */
 
-void add_r8(char* image_file,char *fname,int32 file_id,int32 vgroup_id)
+void add_r8(const char* image_file,
+            const char *fname,
+            int32 file_id,
+            int32 vgroup_id)
 {
  int32  ri_ref;         /* reference number of the GR image */
  char   *srcdir = getenv("srcdir"); /* the source directory */
@@ -489,7 +496,11 @@ void add_r8(char* image_file,char *fname,int32 file_id,int32 vgroup_id)
  *-------------------------------------------------------------------------
  */
 
-void add_r24(char* image_file,char *fname,int32 file_id,intn il,int32 vgroup_id)
+void add_r24(const char* image_file,
+             const char *fname,
+             int32 file_id,
+             intn il,
+             int32 vgroup_id)
 {
  int32  ri_ref;         /* reference number of the GR image */
  char   *srcdir = getenv("srcdir"); /* the source directory */
@@ -566,9 +577,9 @@ void add_r24(char* image_file,char *fname,int32 file_id,intn il,int32 vgroup_id)
 #define Z_DIM      2
 
 
-void add_sd(char *fname,             /* file name */
+void add_sd(const char *fname,       /* file name */
             int32 file_id,           /* file ID */
-            char* sds_name,          /* sds name */
+            const char* sds_name,    /* sds name */
             int32 vgroup_id,         /* group ID */
             int32 chunk_flags,       /* chunk flags */
             comp_coder_t comp_type,  /* compression flag */
@@ -601,6 +612,8 @@ void add_sd(char *fname,             /* file name */
  /*define some compression specific parameters */
  switch(comp_type)
  {
+ default:
+  break;
  case COMP_CODE_RLE:
   break;
 
@@ -793,9 +806,9 @@ fail:
  *-------------------------------------------------------------------------
  */
 
-void add_sd3d(char *fname,             /* file name */
+void add_sd3d(const char *fname,       /* file name */
               int32 file_id,           /* file ID */
-              char* sds_name,          /* sds name */
+              const char* sds_name,    /* sds name */
               int32 vgroup_id,         /* group ID */
               int32 chunk_flags,       /* chunk flags */
               comp_coder_t comp_type,  /* compression flag */
@@ -947,7 +960,9 @@ fail:
 #define  FIELDNAME_LIST   "Position,Mass,Temperature" /* No spaces b/w names */
 #define  N_VALS_PER_REC   (ORDER_1 + ORDER_2 + ORDER_3)  /* number of values per record */
 
-void add_vs(char* vs_name,int32 file_id,int32 vgroup_id)
+void add_vs(const char* vs_name,
+            int32 file_id,
+            int32 vgroup_id)
 {
  int32   vdata_ref,      /* reference number of the vdata */
          vdata_tag,      /* tag number of the vdata */
@@ -1231,7 +1246,7 @@ void add_an(int32 file_id, int32 tag, int32 ref)
  */
 
 
-void add_pal(char* fname)
+void add_pal(const char* fname)
 {
  uint8  palette_data[256*3];
  
@@ -1259,7 +1274,7 @@ void add_pal(char* fname)
  *-------------------------------------------------------------------------
  */
 
-int read_data(char* file_name)
+int read_data(const char* file_name)
 {
  int    i, n;
  int    color_planes;
@@ -1324,9 +1339,9 @@ int read_data(char* file_name)
  *-------------------------------------------------------------------------
  */
 
-void add_sd_szip(char *fname,             /* file name */
+void add_sd_szip(const char *fname,       /* file name */
                  int32 file_id,           /* file ID */
-                 char* sds_name,          /* sds name */
+                 const char* sds_name,    /* sds name */
                  int32 vgroup_id,         /* group ID */
                  int32 chunk_flags,       /* chunk flags */
                  int32 nt,                /* number type */
@@ -1447,7 +1462,7 @@ fail:
 #define XD1     6
 #define YD1     4
 
-void add_sd_szip_all(char *fname,             /* file name */
+void add_sd_szip_all(const char *fname,       /* file name */
                      int32 file_id,           /* file ID */
                      int32 vgroup_id          /* group ID */
                      )
@@ -1498,6 +1513,8 @@ chunk_def->comp.chunk_lengths[1] = dim[1]/2;
  /*define some compression specific parameters */
  switch(comp_type)
  {
+ default:
+  break;
  case COMP_CODE_RLE:
  chunk_def->comp.comp_type = COMP_CODE_RLE;
   break;

@@ -53,7 +53,7 @@ void  table_init(table_t **table);
 void  table_free(table_t *table);
 int   table_search(table_t *table, int tag, int ref );
 void  table_add(table_t *table, int tag, int ref, char* obj_name);
-char* table_check(table_t *table, char*obj_name);
+const char* table_check(table_t *table, char*obj_name);
 void  table_print(table_t *table);
 
 

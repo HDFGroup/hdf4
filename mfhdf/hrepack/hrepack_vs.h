@@ -41,8 +41,8 @@ int copy_vgroup_attrs(int32 vg_in,
                       char *path,
                       options_t *options);
 
-void vgroup_insert(char* infname,
-                   char* outfname,
+void vgroup_insert(const char* infname,
+                   const char* outfname,
                    int32 infile_id,
                    int32 outfile_id,
                    int32 vgroup_id_out_par, /* output parent group ID */

@@ -25,13 +25,13 @@
 
 
 
-void list_vg (char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
-void list_gr (char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
-void list_sds(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
-void list_vs (char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
-void list_glb(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
-void list_pal(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
-void list_an (char* infname,char* outfname,int32 infile_id,int32 outfile_id,options_t *options);
+void list_vg (const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
+void list_gr (const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
+void list_sds(const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
+void list_vs (const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
+void list_glb(const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
+void list_pal(const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
+void list_an (const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,options_t *options);
 
 
 /*-------------------------------------------------------------------------
@@ -69,13 +69,15 @@ void list_an (char* infname,char* outfname,int32 infile_id,int32 outfile_id,opti
  */
 
 
-int list(char* infname, char* outfname, options_t *options)
+int list(const char* infname,
+         const char* outfname, 
+         options_t *options)
 {
  table_t  *table=NULL;
  int32    infile_id;
  int32    outfile_id;
  int      i;
- char*    err;
+ const char*    err;
 
  /* init table */
  table_init(&table);
@@ -163,8 +165,8 @@ int list(char* infname, char* outfname, options_t *options)
  */
 
 
-void list_vg(char* infname,
-             char* outfname,
+void list_vg(const char* infname,
+             const char* outfname,
              int32 infile_id,
              int32 outfile_id,
              table_t *table,
@@ -320,8 +322,8 @@ void list_vg(char* infname,
  *-------------------------------------------------------------------------
  */
 
-void vgroup_insert(char* infname,
-                   char* outfname,
+void vgroup_insert(const char* infname,
+                   const char* outfname,
                    int32 infile_id,
                    int32 outfile_id,
                    int32 vgroup_id_out_par, /* output parent group ID */
@@ -523,8 +525,8 @@ void vgroup_insert(char* infname,
  *-------------------------------------------------------------------------
  */
 
-void list_gr(char* infname,
-             char* outfname,
+void list_gr(const char* infname,
+             const char* outfname,
              int32 infile_id,
              int32 outfile_id,
              table_t *table,
@@ -616,8 +618,8 @@ void list_gr(char* infname,
  *-------------------------------------------------------------------------
  */
 
-void list_sds(char* infname,
-              char* outfname,
+void list_sds(const char* infname,
+              const char* outfname,
               int32 infile_id,
               int32 outfile_id,
               table_t *table,
@@ -693,8 +695,8 @@ void list_sds(char* infname,
  */
 
 
-void list_vs(char* infname,
-             char* outfname,
+void list_vs(const char* infname,
+             const char* outfname,
              int32 infile_id,
              int32 outfile_id,
              table_t *table,
@@ -779,8 +781,8 @@ void list_vs(char* infname,
  *-------------------------------------------------------------------------
  */
 
-void list_glb(char* infname,
-              char* outfname,
+void list_glb(const char* infname,
+              const char* outfname,
               int32 infile_id,
               int32 outfile_id,
               table_t *table,
@@ -859,8 +861,8 @@ void list_glb(char* infname,
  *-------------------------------------------------------------------------
  */
 
-void list_an(char* infname,
-             char* outfname,
+void list_an(const char* infname,
+             const char* outfname,
              int32 infile_id,
              int32 outfile_id,
              options_t *options)
@@ -1004,8 +1006,8 @@ out:
  *-------------------------------------------------------------------------
  */
 
-void list_pal(char* infname,
-              char* outfname,
+void list_pal(const char* infname,
+              const char* outfname,
               int32 infile_id,
               int32 outfile_id,
               table_t *table,

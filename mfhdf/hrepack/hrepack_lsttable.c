@@ -145,7 +145,7 @@ void table_free( table_t *table )
  *-------------------------------------------------------------------------
  */
 
-char* table_check(table_t *table, char*obj_name)
+const char* table_check(table_t *table, char*obj_name)
 {
  int   i;
  int32 tag;

@@ -170,6 +170,8 @@ int  copy_gr(int32 infile_id,
  comp_type   = comp_type_in;
  switch (comp_type_in)
   {
+ default:
+  break;
   case COMP_CODE_SZIP:
    break;
   case COMP_CODE_RLE:
