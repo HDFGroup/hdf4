@@ -1,4 +1,10 @@
 #!/bin/sh
+#===========================
+# DO NOT USE THIS COMMAND SCRIPT.
+# This command script is under construction and is not supported.
+# Not all features are working.  Some features may change in the future.
+# Some may even give wrong results.
+#===========================
 # snapshot: Snap shot testing command script for HDF4.
 # This script should be run nightly from cron.  It checks out hdf4
 # from the CVS source tree and compares it against the previous
