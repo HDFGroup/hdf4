@@ -38,7 +38,7 @@ C Output file: tvsetf1.hdf
       parameter (myname = 'vsetf')
 
       integer fid1, vgid1, vgid2, vsid1, vsid2
-      integer vgref1, vsref1, vsref2, vref
+      integer vgref1, vsref1, vsref2, vref, vsref22
       integer vsize, found
       integer ret,ntrs,i,il,nelts
       integer*4 dbuf(320),idbuf(320),ddata4(10),iddata4(10)
@@ -340,6 +340,8 @@ C     read the 'c3' vdata
 C     read the 'mixed type' vdata
       vsref2 = vsffnd(fid1, 'mixed type')
       call VRFY(vsref2, 'vsffnd', number_failed)
+      vsref22 = vsffcls(fid1, 'test NT')
+      call VRFY(vsref22, 'vsffcls', number_failed)
       vsid2 = vsfatch(fid1, vsref2, 'w')
       call VRFY(vsid2, 'vsfatch', number_failed)
       ret = vsfinq(vsid2, nelts,il, fields3,vsize,vname)
