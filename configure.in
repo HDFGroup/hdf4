@@ -17,9 +17,9 @@
 
 ##############################################################################
 
-# Right now the JPEG library an netCDF come with their own configure
-# generated from autoconf
-host_libs="hdf/jpeg mfhdf"
+# Right now the JPEG has still needs a seperate makefile fragmenet
+# So we run configure here
+host_libs="hdf/jpeg"
 
 ## We assign ${configdirs} this way to remove all embedded newlines.  This
 ## is important because configure will choke if they ever get through.
@@ -27,7 +27,7 @@ host_libs="hdf/jpeg mfhdf"
 configdirs=`echo ${host_libs}`
 
 #Directories we want configure to generate Makefiles from Makefile.in
-subdirs="hdf man hdf/src hdf/test hdf/util"
+subdirs="hdf man hdf/src hdf/test hdf/util mfhdf mfhdf/xdr mfhdf/port mfhdf/libsrc mfhdf/dumper mfhdf/nctest mfhdf/ncgen mfhdf/ncdump mfhdf/fortran mfhdf/doc"
 
 ################################################################################
 
@@ -54,11 +54,11 @@ case "${host}" in
   *-ibm-aix*)             host_makefile_frag=config/mh-aix ;;
   i386-*-solaris2*)       host_makefile_frag=config/mh-solarisx86 ;;
   *-*-solaris2*)          host_makefile_frag=config/mh-solaris ;;
-  *-sun-*)		  host_makefile_frag=config/mh-sun ;;
+  *-sun-*)                host_makefile_frag=config/mh-sun ;;
   *-hp-hpux*)             host_makefile_frag=config/mh-hpux ;;
   *-convex-bsd*)          host_makefile_frag=config/mh-convex ;;
   *-cray-unicos*)         host_makefile_frag=config/mh-unicos ;;
-  *-cm5-*)		  host_makefile_frag=config/mh-cm5 ;;
+  *-cm5-*)                host_makefile_frag=config/mh-cm5 ;;
 esac
 fi
 
@@ -107,35 +107,43 @@ esac
 
 # get proper CUSTOMIZE file for 'mfhdf' side
 files=
-links=mfhdf/CUSTOMIZE
+links="mfhdf/libsrc/netcdf.h mfhdf/fortran/jackets.c mfhdf/fortran/netcdf.inc mfhdf/fortran/ftest.f"
 if [ -d ${srcdir}/config ]; then
 case "${host}" in
-  alpha-dec-osf*)         files=config/custom_alpha ;;
-  mips*-dec-ultrix*)      files=config/custom_dec ;;
-  mips*-sgi-irix6.*)      files=config/custom_irix6 ;;
-  mips*-sgi-irix6_32*)    files=config/custom_irix32 ;;
-  mips*-sgi-irix5*)       files=config/custom_irix5 ;;
-  mips*-sgi-irix4*)       files=config/custom_irix4 ;;
-  i[345]86-*-linux*)      files=config/custom_linux ;;
-  i[345]86-*-freebsd*)    files=config/custom_fbsd ;;
-  *-ibm-aix*)             files=config/custom_aix ;;
-  i386-*-solaris2*)       files=config/custom_solarisx86 ;;
-  *-*-solaris2*)          files=config/custom_solaris ;;
-  *-sun-*)		  files=config/custom_sun ;;
-  *-hp-hpux*)             files=config/custom_hpux ;;
-  *-convex-bsd*)          files=config/custom_convex ;;
-  *-cray-unicos*)         files=config/custom_unicos ;;
-  *-cm5-*)		  files=config/custom_cm5 ;;
+  alpha-dec-osf*)         files="mfhdf/libsrc/config/netcdf-alpha.h mfhdf/fortran/config/jackets-alpha.c mfhdf/fortran/config/netcdf-alpha.inc mfhdf/fortran/config/ftest-alpha.f" ;;
+  mips*-dec-ultrix*)      files="mfhdf/libsrc/config/netcdf-dec.h mfhdf/fortran/config/jackets-dec.c mfhdf/fortran/config/netcdf-dec.inc mfhdf/fortran/config/ftest-dec.f" ;;
+  mips*-sgi-irix6.*)      files="mfhdf/libsrc/config/netcdf-irix6.h mfhdf/fortran/config/jackets-irix6.c mfhdf/fortran/config/netcdf-irix6.inc mfhdf/fortran/config/ftest-irix6.f" ;;
+  mips*-sgi-irix6_32*)    files="mfhdf/libsrc/config/netcdf-irix32.h mfhdf/fortran/config/jackets-irix32.c mfhdf/fortran/config/netcdf-irix32.inc mfhdf/fortran/config/ftest-irix32.f" ;;
+  mips*-sgi-irix5*)       files="mfhdf/libsrc/config/netcdf-irix5.h mfhdf/fortran/config/jackets-irix5.c mfhdf/fortran/config/netcdf-irix5.inc mfhdf/fortran/config/ftest-irix5.f" ;;
+  mips*-sgi-irix4*)       files="mfhdf/libsrc/config/netcdf-irix4.h mfhdf/fortran/config/jackets-irix4.c mfhdf/fortran/config/netcdf-irix4.inc mfhdf/fortran/config/ftest-irix4.f" ;;
+  i[345]86-*-linux*)      files="mfhdf/libsrc/config/netcdf-linux.h mfhdf/fortran/config/jackets-linux.c mfhdf/fortran/config/netcdf-linux.inc mfhdf/fortran/config/ftest-linux.f" ;;
+  i[345]86-*-freebsd*)    files="mfhdf/libsrc/config/netcdf-fbsd.h mfhdf/fortran/config/jackets-fbsd.c mfhdf/fortran/config/netcdf-fbsd.inc mfhdf/fortran/config/ftest-fbsd.f" ;;
+  *-ibm-aix*)             files="mfhdf/libsrc/config/netcdf-aix.h mfhdf/fortran/config/jackets-aix.c mfhdf/fortran/config/netcdf-aix.inc mfhdf/fortran/config/ftest-aix.f" ;;
+  i386-*-solaris2*)       files="mfhdf/libsrc/config/netcdf-solarisx86.h mfhdf/fortran/config/jackets-solarisx86.c mfhdf/fortran/config/netcdf-solarisx86.inc mfhdf/fortran/config/ftest-solarisx86.f" ;;
+  *-*-solaris2*)          files= "mfhdf/libsrc/config/netcdf-solaris.h mfhdf/fortran/config/jackets-solaris.c mfhdf/fortran/config/netcdf-solaris.inc mfhdf/fortran/config/ftest-solaris.f";;
+  *-sun-*)		  files= "mfhdf/libsrc/config/netcdf-sun.h mfhdf/fortran/config/jackets-sun.c mfhdf/fortran/config/netcdf-sun.inc mfhdf/fortran/config/ftest-sun.f";;
+  *-hp-hpux*)             files="mfhdf/libsrc/config/netcdf-hpux.h mfhdf/fortran/config/jackets-hpux.c mfhdf/fortran/config/netcdf-hpux.inc mfhdf/fortran/config/ftest-hpux.f";;
+  *-convex-bsd*)          files="mfhdf/libsrc/config/netcdf-convex.h mfhdf/fortran/config/jackets-convex.c mfhdf/fortran/config/netcdf-convex.inc mfhdf/fortran/config/ftest-convex.f" ;;
+  *-cray-unicos*)         files="mfhdf/libsrc/config/netcdf-unicos.h mfhdf/fortran/config/jackets-unicos.c mfhdf/fortran/config/netcdf-unicos.inc mfhdf/fortran/config/ftest-unicos.f" ;;
+  *-cm5-*)		  files="mfhdf/libsrc/config/netcdf-cm5.h mfhdf/fortran/config/jackets-cm5.c mfhdf/fortran/config/netcdf-cm5.inc mfhdf/fortran/config/ftest-cm5.f" ;;
 esac
 fi
 
-# make sure host specific custom_xxx is there
-if [ ! -f ${srcdir}/${files} ]; then
-    echo '***' "We are missing host specific customize file ${files}" 1>&2
-    echo '***' "Please read the installation docs" 1>&2
-    exit 1
-fi
+# make sure host specific files are there
+#if [ ! -f ${srcdir}/${files} ]; then
+#    echo '***' "We are missing host specific customize file ${files}" 1>&2
+#    echo '***' "Please read the installation docs" 1>&2
+#    exit 1
+#fi
 
+# Now for Mac and PC configurations we want to copy and not use symbolic
+# links
+if [ -d ${srcdir}/config ]; then
+case "${host}" in
+  *-mac-*)             symbolic_link="cp -p" ;;
+  *-win-*)             symbolic_link="cp -p" ;;
+esac
+fi
 
 # post-target:
 

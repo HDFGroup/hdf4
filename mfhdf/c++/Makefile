@@ -2,7 +2,11 @@
 #
 #	Development Makefile for netcdf c++ interface
 #
-
+srcdir = .
+TOP_SRCDIR = ../..
+# Version of the library
+PACKAGE	 = HDF
+VERSION  = 4.0
 INCDIR = ../libsrc
 LIBDIR = ../libsrc
 
@@ -10,7 +14,8 @@ CCC = CC
 INCLUDES = -I$(INCDIR)
 
 CCFLAGS=-g
-MANIFEST	= Makefile README example.c example.cc example.cdl \
+MANIFEST = $(DISTFILES)
+DISTFILES	= Makefile README example.c example.cc example.cdl \
 		  nctst.cc ncvalues.cc ncvalues.hh netcdf.cc netcdf.hh \
 		  expected nc.txn nc.info
 DEFINES =
@@ -83,3 +88,13 @@ nc.info: nc.txn
 
 MANIFEST.echo:
 	@echo $(MANIFEST) | fmt -1
+
+# for distribution creation
+distdir = $(TOP_SRCDIR)/$(PACKAGE)-$(VERSION)/$(curdir)
+curdir = mfhdf/c++
+dist: $(DISTFILES)
+	@for file in $(DISTFILES); do \
+	  ln $(srcdir)/$$file $(distdir) 2> /dev/null \
+	    || { echo copying $$file instead; \
+	    cp -p $(srcdir)/$$file $(distdir);}; \
+	done

@@ -105,6 +105,8 @@ HDFBIN=$(srcdir)/../bin
 JPEGLIB=$(srcdir)/../jpeg
 JPEGINC=$(srcdir)/../jpeg
 
+DISTFILES = $(MAN_NROFF_1) $(MAN_NROFF_3)
+
 # Man pages
 MAN_NROFF_1 = hdf.1 hdfls.1 hdfpack.1 hdp.1 ristosds.1
 MAN_NROFF_3 = hxsetcreatedir.3 hxsetdir.3 sdsetaccesstype.3
@@ -150,6 +152,16 @@ depend:
 
 saber:	
 	true
+
+# for distribution creation
+distdir = $(TOP_SRCDIR)/$(PACKAGE)-$(VERSION)/$(curdir)
+curdir = man
+dist: $(DISTFILES)
+	@for file in $(DISTFILES); do \
+	  ln $(srcdir)/$$file $(distdir)/$$file 2> /dev/null \
+	    || { echo copying $$file instead; \
+	    cp -p $(srcdir)/$$file $(distdir)/$$file;}; \
+	done
 
 help:
 	@echo ""

@@ -23,3 +23,90 @@ ARFLAGS = rs
 # Name of remove utility, default 'RM=/bin/rm', 'RMFLAGS=-f'
 RM = /bin/rm
 RMFLAGS = -f
+
+# ------------ General Macros for NETCDF --------------------
+# Operating system, Used in fortran directory to generate fortran
+# wrappers. Possible values are osf, aix, hpux, irix, sunos, ultrix
+# unicos, convex, Linux, freebsd
+OS	= irix
+
+CPP	      = $(CC) -E
+
+# for endianess, for little endian byte order need -DSWAP
+# for FreeBSD and Linux(anny x86 UNIX)
+#SWAP          = -DSWAP
+SWAP          = 
+
+# for 32bit 'network long' integer, possible value -DNETLONG=int
+NETLONG       = 
+
+# additional CFLAGS
+CFLAGS_NETCDF = 
+
+# Additional flags for preproccesor. Some no longer used because
+#   library now requires ANSI compilier.
+#
+# for no function prototypes add -DNO_HAVE_PROTOTYPES
+# for no strerror() add -DNO_STRERROR
+# for no variadic function support add -DNO_STDARG
+# for Unicos 
+# CPPFLAGS_HDF  = -DNDEBUG -DHDF -DBIG_SHORTS -DBIG_LONGS
+# for OSF(dec alpha) 
+# CPPFLAGS_HDF  = -DNDEBUG -DHDF -DBIG_LONGS -std1
+# for IRIX6(64-bit) 
+CPPFLAGS_HDF  = -DNDEBUG -DHDF -DBIG_LONGS
+# for AIX
+# CPPFLAGS_HDF  = -DNDEBUG -DHDF -D_ALL_SOURCE
+# for Sunos and Linux
+# CPPFLAGS_HDF  = -DNDEBUG -DHDF -DNO_STRERROR
+# normal
+#CPPFLAGS_HDF  = -DNDEBUG -DHDF
+
+# neqn(1)
+NEQN	= neqn
+# tbl(1)
+TBL	= tbl
+# which(1)
+WHICH	= which
+# lex(1)
+LEX	= lex    # GNU flex?
+# yacc(1)
+YACC	= yacc   # GNU bison?
+
+#diff(1)
+DIFF    = diff   # GNU diff?
+DIFF_FLAGS = -w
+
+NCDUMP	= 
+NCGEN	= 
+FTPDIR	= 
+VERSION_NETCDF	= 2.3.2
+
+# ------------ XDR Macros for NETCDF --------------------
+# Location of <xdr.h>
+CPP_XDR		= -I/usr/include/rpc
+
+# If XDR library not present then you need
+#XDR_LIBOBJS    = xdr.o xdrfloat.o xdrstdio.o xdrarray.o
+XDR_LIBOBJS     =
+
+# location of library, sometimes the sunos requires -lsun
+LD_XDR		= 
+XDR_INSTALL_DEPS =
+
+# ------------ Port Macros for NETCDF --------------------
+# Major and Minor numbe of NETCDF library version
+MAJOR_NO	= 2
+MINOR_NO	= 3
+PORT_CFORTRAN	= 
+NEED_FORTC	= 
+FORTC		= 
+# possible values are limits.h, float.h, stddef.h, stdlib.h,
+# string.h time.h signal.h unistd.h
+PORT_HEADERS	= 
+PORT_SUBDIRS    =
+LIBOBJS		= uddummy.o 
+
+# ------------ libsrc Macros for NETCDF --------------------
+# possible values are xdrposix and xdrstdio
+XDRFILE		= xdrposix

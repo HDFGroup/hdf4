@@ -82,13 +82,20 @@ infodir = $(prefix)/info
 
 PACKAGE	 = HDF
 VERSION  = 4.0
+MANIFEST = $(DISTFILES)
+DISTFILES = INSTALL README \
+	Makefile.in configure configure.in config.guess config.sub \
+	install-sh mkinstalldirs move-if-change \
+	config/mh-aix config/mh-alpha config/mh-cm5 config/mh-convex \
+	config/mh-decstation config/mh-fbsd config/mh-hpux config/mh-irix32 \
+	config/mh-irix4 config/mh-irix5 config/mh-irix6 config/mh-linux \
+	config/mh-solaris config/mh-solarisx86 config/mh-sun config/mh-unicos
 
-MANIFEST = CUSTOMIZE MANIFEST \
-	  Makefile.in configure \
-	  configure.in 
 HDFDIR    = hdf
 NETCDFDIR = mfhdf
-SUBDIRS= $(HDFDIR) $(NETCDFDIR)
+MANDIR = man
+SUBDIRS= $(HDFDIR) $(NETCDFDIR) $(MANDIR)
+OTHERDIRS= config
 
 # Location where the HDF include files are located
 HDFINC= `pwd`/hdf/src
@@ -120,8 +127,8 @@ HDF_FLAGS       = \
 
 
 NETCDF_FLAGS       = \
-        CC="$(CC) $(CFLAGS)" \
-        CFLAGS="$(CFLAGS) -I$(HDFINC)" \
+        CC="$(CC)" \
+        CFLAGS="$(CFLAGS)" \
         ACDEFS="$(ACDEFS)" \
         FC="$(FC)" \
         FFLAGS="$(FFLAGS)" \
@@ -133,6 +140,14 @@ NETCDF_FLAGS       = \
         MACHINE="$(MACHINE)" \
         HDFINC="$(HDFINC)" \
         HDFLIB="$(HDFLIB)" 
+
+LOCAL_MACROS  = CC="$(CC)" \
+	CFLAGS="$(CFLAGS)" \
+	CPP="$(CPP)" \
+	CPPFLAGS="$(CPPFLAGS)" \
+	exec_prefix="$(exec_prefix)" \
+	FC="$(FC)" \
+	prefix="$(prefix)"
 
 #
 #General rules
@@ -337,8 +352,11 @@ dist: $(DISTFILES)
 	rm -rf $(distdir)
 	mkdir $(distdir)
 	chmod 777 $(distdir)
+	for subdir in $(OTHERDIRS); do \
+	  mkdir $(distdir)/$$subdir || exit 1; \
+	done
 	@for file in $(DISTFILES); do \
-	  ln $(srcdir)/$$file $(distdir) 2> /dev/null \
+	  ln $(srcdir)/$$file $(distdir)/$$file 2> /dev/null \
 	    || { echo copying $$file instead; \
 	    cp -p $(srcdir)/$$file $(distdir);}; \
 	done
@@ -348,7 +366,8 @@ dist: $(DISTFILES)
 	  (cd $$subdir && $(MAKE) $@) || exit 1; \
 	done
 	chmod -R a+r $(distdir)
-	tar chozf $(distdir).tar.gz $(distdir)
+	tar chof $(distdir).tar $(distdir)
+	compress $(distdir).tar
 	rm -rf $(distdir)
 
 ftp:	$(FTPDIR)/$(PACKAGE)-$(VERSION).tar.Z
