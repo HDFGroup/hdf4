@@ -480,7 +480,7 @@ map_from_old_types(intn type)
               return DFNT_FLOAT32;
 
           case LOCAL_DOUBLETYPE:
-              return DFNT_FLOAT32;
+              return DFNT_FLOAT64;
 
           default:
               return (int16) type;
