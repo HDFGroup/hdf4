@@ -103,7 +103,7 @@ C-------------------------------------------------------------
       integer function mgscatt(riid, name, nt, count, data)
       character*(*) name
       character*(*) data
-      integer riid, mgisattr, nt, count
+      integer riid, mgiscatt, nt, count
 
       mgscatt = mgiscatt(riid, name, nt, count, data, len(name))
       return
