@@ -61,7 +61,7 @@ extern "C" {
 #endif
 
 HDFLIBAPI int32 SDstart
-    (const char *name, int32 access);
+    (const char *name, int32 accs);
 
 HDFLIBAPI intn SDend
     (int32 fid);
@@ -70,7 +70,7 @@ HDFLIBAPI intn SDfileinfo
     (int32 fid, int32 *datasets, int32 *attrs);
 
 HDFLIBAPI int32 SDselect
-    (int32 fid, int32 index);
+    (int32 fid, int32 idx);
 
 HDFLIBAPI intn SDgetinfo
     (int32 sdsid, char *name, int32 *rank, int32 *dimsizes, 
@@ -109,10 +109,10 @@ HDFLIBAPI intn SDsetattr
     (int32 id, const char *name, int32 nt, int32 count, const void * data);
 
 HDFLIBAPI intn SDattrinfo
-    (int32 id, int32 index, char *name, int32 *nt, int32 *count);
+    (int32 id, int32 idx, char *name, int32 *nt, int32 *count);
 
 HDFLIBAPI intn SDreadattr
-    (int32 id, int32 index, void * buf);
+    (int32 id, int32 idx, void * buf);
 
 #ifndef __CSTAR__
 HDFLIBAPI intn SDwritedata
