@@ -26,9 +26,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.15  1992/06/08 22:25:22  chouck
-Minor fix with program name
+Revision 1.16  1992/06/19 16:45:58  chouck
+More descriptive error messages when Hopen() fails
 
+ * Revision 1.15  1992/06/08  22:25:22  chouck
+ * Minor fix with program name
+ *
  * Revision 1.14  1992/06/08  21:59:41  chouck
  * Added 'verbose' option for labels/descriptions (-v) and
  * option (-t #) to only list info about a given tag
@@ -107,6 +110,7 @@ Minor fix with program name
 */
 #include "hdf.h"
 #include "hfile.h"
+#include "herr.h"
 
 #ifdef MAC
 /* this isn't worth putting in hdfi.h */
@@ -215,10 +219,16 @@ char *argv[];
         file_name = argv[i];
         fid = Hopen(file_name, DFACC_READ, -1);
         printf( "%s:  ", argv[i]);
-        if (fid == FAIL) {
-            printf("\n\tNot an HDF file.\n");
-            i++;
-            continue;
+        if(fid == FAIL) {
+            if(HEvalue(1) == DFE_NOTDFFILE) {
+                printf("\n\tNot an HDF file.\n");
+                i++;
+                continue;
+            } else {
+                printf("\n");
+                fflush(stdout);
+                HEprint(stderr, 0);
+            }
 	}
         
 	aid = Hstartread(fid, DFTAG_WILDCARD, DFREF_WILDCARD);
