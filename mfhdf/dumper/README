@@ -1,0 +1,10 @@
+Hdp is a new hdf utility currently under development. 
+
+This directory contains the draft design (commandline.draft1) and source code for hdp. 
+File report.Apr reports the current status of hdp and presents some samples of its usage. 
+There is also a Makefile.in for ../configure to produce the Makefile.
+
+Please send your bug reports, comments and suggestions to hdfhelp@ncsa.uiuc.edu.
+
+
+
