@@ -1087,7 +1087,7 @@ void test_r24()
     uint16 ref0, ref1, ref2;
     uint8 *jpeg_24bit_temp;
 
-    jpeg_24bit_temp=HDgetspace(JPEGX*JPEGY*3);
+    jpeg_24bit_temp = (uint8 *) HDgetspace(JPEGX*JPEGY*3);
 	if(!jpeg_24bit_temp) {
 		fprintf(stderr, "Out of memory!\n");
 		exit(1);
