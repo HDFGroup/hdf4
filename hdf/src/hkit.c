@@ -25,6 +25,7 @@ LOCAL ROUTINES
 EXPORTED ROUTINES
   HDc2fstr      -- convert a C string into a Fortran string IN PLACE
   HDf2cstring   -- convert a Fortran string to a C string
+  HDstr2int     -- convert (copy) characters into uint8 array
   HDpackFstring -- convert a C string into a Fortran string
   HDflush       -- flush the HDF file
   HDgettagdesc  -- return a text description of a tag
@@ -95,7 +96,26 @@ HDf2cstring(_fcd fdesc, intn len)
     HDmemcpy(cstr,str,i+1);
     return cstr;
 }   /* HDf2cstring */
+/* -------------------  HDstr2int ---------------------------------
+ * Name:    HDstr2int 
+ * Purpose: Convert a string to uint8
+ * Inputs:  str: the character string to be converted
+ *          dest: array to hold the uint8 values 
+ *          len: number of characters to copy
+ * Returns: SUCCEED/FAIL
+ * Invokes: HDmemcpy 
+ *
+ * ----------------------------------------------------------------*/
+intn
+HDstr2int(char *str, VOIDP dest, intn len)
+{
+    CONSTR(FUNC, "HDstr2int");  /* for HERROR  */
 
+    HDmemcpy((uint8 *)dest, (uint8 *)str, len); /* no '\0' */
+  
+    return SUCCEED;
+}  /* HDstr2int  */ 
+ 
 /* ---------------------------- HDpackFstring ----------------------------- */
 /*
 NAME

@@ -24,7 +24,7 @@
 #
 
 HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h dfan.h dfrig.h dfgr.h dfsd.h \
-     vg.h df.h dfi.h dfstubs.h dfufp2i.h vproto.h hcomp.h hconv.h hbitio.h \
+     vg.h df.h dfi.h dfstubs.h dfufp2i.h hcomp.h hconv.h hbitio.h \
      tbbt.h crle.h cnbit.h mstdio.h cnone.h cskphuff.h cdeflate.h mfgr.h \
      mfan.h hlimits.h hntdefs.h htags.h hkit.h hcompi.h bitvect.h atom.h \
      dynarray.h
@@ -32,7 +32,7 @@ HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h dfan.h dfrig.h dfgr.h dfsd.h \
 CSRCS = $(HCSRCS) $(VCSRCS) $(DFCSRCS) $(MFCSRCS)
 HCSRCS=hfile.c herr.c hblocks.c hextelt.c hkit.c hdfalloc.c hcomp.c \
     hbitio.c tbbt.c hdfalloc.c hcomp.c crle.c cnbit.c mstdio.c cnone.c \
-    cskphuff.c cdeflate.c bitvect.c atom.c hfiledd.c dynarray.c
+    cskphuff.c cdeflate.c bitvect.c atom.c hfiledd.c dynarray.c 
 
 VCSRCS=vg.c vrw.c vio.c vparse.c vconv.c vsfld.c vgp.c vhi.c 
 
@@ -57,17 +57,17 @@ MFCOBJS= mfan.o mfgr.o
 
 FSRCS = $(FCSRCS) $(FFSRCS)
 FCSRCS=hfilef.c herrf.c dfanf.c dfr8f.c dfpf.c df24f.c dfsdf.c vgf.c dff.c \
-    dfutilf.c mfanf.c mfgrf.c
+    dfutilf.c mfanf.c mfgrf.c hkitf.c
 
 FFSRCS=hfileff.f dfanff.f df24ff.f dfpff.f dfr8ff.f dfsdff.f vgff.f dfff.f \
-    dfufp2if.f mfgrff.f
+    dfufp2if.f mfgrff.f hkitff.f
 
 FOBJS = $(FCOBJS) $(FFOBJS)
 FCOBJS=hfilef.o herrf.o dfanf.o dfr8f.o dfpf.o df24f.o dfsdf.o vgf.o dff.o \
-    dfutilf.o mfanf.o mfgrf.o
+    dfutilf.o mfanf.o mfgrf.o hkitf.o
 
 FFOBJS=hfileff.o dfanff.o df24ff.o dfpff.o dfr8ff.o dfsdff.o vgff.o dfff.o \
-    dfufp2if.o mfgrff.o
+    dfufp2if.o mfgrff.o hkitff.o
 
 FINCS=dffunc.inc hdf.inc
 
