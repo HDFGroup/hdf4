@@ -9,7 +9,6 @@
 ./COPYING
 ./INSTALL
 ./INSTALL_WINDOWS.txt
-./INSTALL_old
 ./Makefile.am
 ./Makefile.in
 ./MAKEVMS.COM
