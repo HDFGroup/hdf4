@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.3  1992/07/15 21:48:48  sxu
-No change.
+Revision 1.4  1992/07/31 21:10:24  chouck
+Use in-house print routines rather than fork() a call to od
 
+ * Revision 1.3  1992/07/15  21:48:48  sxu
+ * No change.
+ *
  * Revision 1.2  1992/07/14  16:29:20  mlivin
  * fixed include of he_proto.h (for name change to _ not -)
  *
@@ -82,6 +85,11 @@ No change.
 #define HE_LABEL 30
 #define HE_DESCRIPTOR 31
 #define HE_EDITOR 32
+
+#define HE_BYTE    33
+#define HE_SHORT   34
+#define HE_DOUBLE  35
+#define HE_RAW     36
 
 /* label bits for predicate keys */
 #define HE_PREDICATE 0x8000

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/07/15 21:48:48  sxu
-No change.
+Revision 1.4  1992/07/31 21:10:24  chouck
+Use in-house print routines rather than fork() a call to od
 
+ * Revision 1.3  1992/07/15  21:48:48  sxu
+ * No change.
+ *
  * Revision 1.2  1992/07/14  17:50:30  mlivin
  * updated help with no pixrect, name of 'hdfed' not 'he'
  *
@@ -1051,6 +1054,10 @@ struct {
 {"label", HE_LABEL},
 {"descriptor", HE_DESCRIPTOR},
 {"editor", HE_EDITOR},
+{"byte",   HE_BYTE},
+{"short",  HE_SHORT},
+{"double", HE_DOUBLE},
+{"raw",    HE_RAW},
 {NULL, 0},
 };
 

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/07/15 21:48:48  sxu
-No change.
+Revision 1.4  1992/07/31 21:10:24  chouck
+Use in-house print routines rather than fork() a call to od
 
+ * Revision 1.3  1992/07/15  21:48:48  sxu
+ * No change.
+ *
  * Revision 1.2  1992/07/14  17:50:30  mlivin
  * updated prompt with correct name
  *
@@ -239,7 +242,7 @@ int HEdump(cmd)
 #endif
 {
     register int i;
-    int offset = 0;
+    int offset = 0, raw = 0;
     char *format = "-o";
     int32 length = 0;		/* zero is special, means all */
 
@@ -248,16 +251,19 @@ int HEdump(cmd)
 	    switch (findOpt(cmd->argv[i] + 1))
 	    {
 	    case HE_HELP:
-		puts("dump [-offset <offset>] [-length <len>]"); 
-		puts("\t[-decimal|-octal|-hexidecimal|-float|-ascii]");
-		puts("\tOd the present element");
-		puts("\t-offset\t\tStart offset");
-		puts("\t-length\t\tLength to look at");
-		puts("\t-decimal\tDecimal format");
-		puts("\t-octal\t\tOctal format");
-		puts("\t-hexidecimal\tHexidecimal format");
-		puts("\t-float\t\tFloat format");
-		puts("\t-ascii\t\tAscii format");
+		printf("dump [-offset <offset>] [-length <len>]\n"); 
+		printf("\t[-decimal|-octal|-hexidecimal|-float|-ascii]\n");
+		printf("\tDisplay the contents of the current element\n");
+		printf("\t-offset\t\tStart offset\n");
+		printf("\t-length\t\tLength to look at\n");
+		printf("\t-decimal\tDecimal format [32 bit integers]\n");
+		printf("\t-short\tDecimal format   [16 bit integers]\n");
+		printf("\t-byte\tDecimal format    [8 bit integers]\n");
+		printf("\t-octal\t\tOctal format [Default]\n");
+		printf("\t-hexidecimal\tHexidecimal format\n");
+		printf("\t-float\t\tFloat format   [32 bit floats]\n");
+		printf("\t-double\t\tFloat format  [64 bit floats]\n");
+		printf("\t-ascii\t\tAscii format\n");
 		return HE_OK;
 	    case HE_OFFSET:
 		offset = atoi(cmd->argv[++i]);
@@ -274,6 +280,12 @@ int HEdump(cmd)
 	    case HE_DECIMAL:
 		format = "-d";
 		break;
+	    case HE_SHORT:
+		format = "-s";
+		break;
+	    case HE_BYTE:
+		format = "-b";
+		break;
 	    case HE_OCTAL:
 		format = "-o";
 		break;
@@ -283,9 +295,15 @@ int HEdump(cmd)
 	    case HE_FLOAT:
 		format = "-f";
 		break;
+	    case HE_DOUBLE:
+		format = "-e";
+		break;
 	    case HE_ASCII:
 		format = "-a";
 		break;
+            case HE_RAW:
+                raw = DFNT_NATIVE;
+                break;
 	    case HE_NOTFOUND:
 		unkOpt(cmd->argv[i]);
 		return HE_FAIL;
@@ -301,34 +319,39 @@ int HEdump(cmd)
 	    unkArg(cmd->argv[i]);
 	    return HE_FAIL;
 	}
-    return dump(length, offset, format);
+    return dump(length, offset, format, raw);
 }
+
+
+#define MAX_LINE 60
 
 /*
  * Run 'od' on a segment of the current data element
  */
 #ifdef PROTOTYPE
-int dump(int32 length, int offset, char *format)
+int dump(int32 length, int offset, char *format, int raw_flag)
 #else
-int dump(length, offset, format)
+int dump(length, offset, format, raw_flag)
     int32 length;			/* length of segment to look at */
     int offset;			/* offset from start of data element */
     char *format;		/* od arg, e.g. -x for hexidecimal */
+    int raw_flag;
 #endif
 {
-    int eltLength;
+    int32 eltLength;
+    register int32 i;
+    register int len = 0;
+    register char *posn;
     char *data;
     char *tmpFile;
 
-    if (!fileOpen())
-    {
+    if (!fileOpen()) {
 	noFile();
 	return HE_FAIL;
     }
 
     eltLength = getElement(he_currDesc, &data);
-    if (eltLength <= 0)
-    {
+    if (eltLength <= 0) {
 	fprintf(stderr, "Unable to get element.\n");
 	return HE_FAIL;
     }
@@ -336,20 +359,20 @@ int dump(length, offset, format)
     /* adjust the offset, negative offset implies starting from end. then
        check to see if offset is in range */
     if (offset < 0)
-	offset = eltLength + offset;
-    if (offset < 0 || offset > eltLength)
-    {
+	offset += eltLength;
+    if (offset < 0 || offset > eltLength) {
 	fprintf(stderr,"Illegal offset. Setting offset to 0.\n");
 	offset = 0;
     }
-    /* adjust the length if it falls outside */
+
+    /* adjust the length if it falls beyond the end of the element */
     if (length == 0 || length > (eltLength - offset))
 	length = eltLength - offset;
 
+#ifdef USE_OD
     /* get a temp file name to put the data for od to dump */
     getTmpName(&tmpFile);
-    if (writeToFile(tmpFile, data + offset, length) < 0)
-    {
+    if (writeToFile(tmpFile, data + offset, length) < 0) {
 	fprintf(stderr, "Unable to complete dump.\n");
 	return HE_FAIL;
     }
@@ -359,8 +382,166 @@ int dump(length, offset, format)
 
     /* clean up */
     removeFile(tmpFile);
-    free(data);
     free(tmpFile);
+
+#else
+
+    /*
+     * Dump the data to the console
+     */
+
+    switch(format[1]) {
+
+    case 'd':
+        {
+            register int32 *idata;
+            idata = (int32 *) HDgetspace(length);
+
+            DFKsetNT(DFNT_INT32 | raw_flag);
+            DFKnumout(data + offset, idata, length / 4, 0, 0);
+
+            printf("%8d: ", offset); 
+            for(i = 0; i < length/4; i++) {
+                printf("%11d ", idata[i]);
+                if(++len > 4) {len = 0; printf("\n%8d: ", (offset + (i + 1) * 4));} 
+            }  
+            printf("\n");
+            HDfreespace(idata);
+        }
+        break;
+
+    case 's':
+        {
+            register int16 *sdata;
+            sdata = (int16 *) HDgetspace(length);
+
+            DFKsetNT(DFNT_INT16 | raw_flag);
+            DFKnumout(data + offset, sdata, length/2, 0, 0);
+
+            printf("%8d: ", offset); 
+            for(i = 0; i < length/2; i++) {
+                printf("%10d ", sdata[i]);
+                if(++len > 5) {len = 0; printf("\n%8d: ", (offset + (i + 1) * 2));} 
+            } 
+            printf("\n");
+            HDfreespace(sdata);
+        }
+        break;
+
+    case 'b':
+        {
+            register int8 *bdata;
+            bdata = (int8 *) HDgetspace(length);
+          
+            DFKsetNT(DFNT_INT8 | raw_flag);
+            DFKnumout(data + offset, bdata, length, 0, 0); 
+
+            printf("%8d: ", offset); 
+            for(i = 0; i < length; i++) {
+                printf("%6d ", bdata[i]);
+                if(++len > 7) {len = 0; printf("\n%8d: ", (offset + (i + 1)));} 
+            }
+            printf("\n");
+            HDfreespace(bdata);
+        }
+        break;
+        
+    case 'x':
+        {
+            register int32 *idata;
+            idata = (int32 *) HDgetspace(length);
+
+            DFKsetNT(DFNT_INT32 | raw_flag);
+            DFKnumout(data + offset, idata, length / 4, 0, 0); 
+
+            printf("%8d: ", offset); 
+            for(i = 0; i < length / 4; i++) {
+                printf("%10x ", idata[i]);
+                if(++len > 5) {len = 0; printf("\n%8d: ", (offset + (i + 1) * 4));} 
+            }
+            printf("\n"); 
+            HDfreespace(idata);
+        }
+        break;
+
+    case 'o':
+        {
+            register int32 *idata;
+            idata = (int32 *) HDgetspace(length);
+            
+            DFKsetNT(DFNT_INT32 | raw_flag);
+            DFKnumout(data + offset, idata, length / 4, 0, 0); 
+            
+            printf("%8d: ", offset);
+            for(i = 0; i < length / 4; i++) {
+                printf("%10o ", idata[i]);
+                if(++len > 4) {len = 0; printf("\n%8d: ", (offset + (i + 1) * 4));} 
+            }
+            printf("\n");
+            HDfreespace(idata);
+        }
+        break;
+
+    case 'a':
+        {
+            register char *cdata;
+            cdata = (char *) (data + offset); 
+            printf("%8d: ", offset);
+            for(i = 0; i < length; i++) {
+                printf("%5c ", cdata[i]);
+                if(++len > 9) {len = 0; printf("\n%8d: ", (offset + (i + 1)));}    
+            }
+            printf("\n");
+        }
+        break;
+
+    case 'f':
+        {
+            register float32 *fdata;
+            fdata = (float32 *) HDgetspace(length);
+  
+            DFKsetNT(DFNT_FLOAT32 | raw_flag);
+            DFKnumout(data + offset, fdata, length / 4, 0, 0); 
+
+            printf("%8d: ", offset);
+            for(i = 0; i < length / 4; i++) {
+                printf("%15e", fdata[i]);
+                if(++len > 3) {len = 0; printf("\n%8d: ", (offset + (i + 1) * 4));}
+            }
+            printf("\n");
+            HDfreespace(fdata);
+        }
+        break;
+
+    case 'e':
+        {
+            register float64 *fdata;
+            fdata = (float64 *) HDgetspace(length);
+  
+            DFKsetNT(DFNT_FLOAT32 | raw_flag);
+            DFKnumout(data + offset, fdata, length / 8, 0, 0); 
+
+            printf("%8d:\t", offset);
+            for(i = 0; i < length / 8; i++) {
+                printf("%30e", fdata[i]);
+                if(++len > 1) {len = 0; printf("\n%8d: ", (offset + (i + 1) * 8));}
+            }
+            printf("\n"); 
+            HDfreespace(fdata);
+        }
+        break;
+
+    default:
+        printf("Doing the default thang\n");
+        break;
+
+    }
+
+
+
+#endif
+
+    free(data);
 
     return HE_OK;
 }
