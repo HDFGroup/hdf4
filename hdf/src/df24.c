@@ -137,6 +137,9 @@ DF24getimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
     intn        ret, il;
     int32       tx, ty;
 
+    int *compressed, *has_pal;
+    uint16 *compr_type;
+
     HEclear();
 
     if (!filename || !*filename || !image || (xdim <= 0) || (ydim <= 0))
@@ -154,7 +157,8 @@ DF24getimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
     if ((tx > xdim) || (ty > ydim))
         HRETURN_ERROR(DFE_BADDIM, FAIL);
 
-    ret = DFGRIgetimlut(filename, image, xdim, ydim, IMAGE, 0);
+    ret = DFGRIgetimlut(filename, image, xdim, ydim, IMAGE, 0,
+			compressed, compr_type, has_pal);
 
     Newdata = 0;
     return (ret);

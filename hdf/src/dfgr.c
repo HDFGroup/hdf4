@@ -206,8 +206,11 @@ DFGRreqlutil(int il)
 int
 DFGRgetlut(const char *filename, VOIDP lut, int32 xdim, int32 ydim)
 {
+    int *compressed, *has_pal;
+    uint16 *compr_type;
     /* 0 == C */
-    return (DFGRIgetimlut(filename, lut, xdim, ydim, LUT, 0));
+    return (DFGRIgetimlut(filename, lut, xdim, ydim, LUT, 0,
+			  compressed, compr_type, has_pal));
 }
 
 /*-----------------------------------------------------------------------------
@@ -262,8 +265,11 @@ DFGRreqimil(int il)
 int
 DFGRgetimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
 {
+    int *compressed, *has_pal;
+    uint16 *compr_type;
     /* 0 == C */
-    return (DFGRIgetimlut(filename, image, xdim, ydim, IMAGE, 0));
+    return (DFGRIgetimlut(filename, image, xdim, ydim, IMAGE, 0,
+			  compressed, compr_type, has_pal));
 }
 
 /*-----------------------------------------------------------------------------
@@ -909,7 +915,8 @@ DFGRIreqil(intn il, intn type)
 /* ARGSUSED */
 int
 DFGRIgetimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
-              int type, int isfortran)
+              int type, int isfortran, int *compressed, uint16 *compr_type, 
+	      int *has_pal)
 {
     CONSTR(FUNC, "DFGRIgetimlut");
     int32       file_id;
@@ -942,7 +949,9 @@ DFGRIgetimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
     /* read image/lut */
     if (Grread.datadesc[type].compr.tag)
       {     /* compressed image/lut */
-          if ((Grreqil[type] >= 0)
+          *compressed = 1;
+	  *compr_type = Grread.datadesc[type].compr.tag;
+	  if ((Grreqil[type] >= 0)
               && (Grreqil[type] != Grread.datadesc[type].interlace))
               HRETURN_ERROR(DFE_UNSUPPORTED, FAIL);
           if (DFgetcomp(file_id, Grread.data[type].tag, Grread.data[type].ref,
@@ -953,6 +962,7 @@ DFGRIgetimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
       }
     else
       {     /* non-compressed raster image/lut */
+	  *compressed = 0;
           if (Grreqil[type] >= 0)
             {
                 if (Grreqil[type] >= Grread.datadesc[type].ncomponents)
@@ -1055,8 +1065,12 @@ DFGRIgetimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
                   }
             }
           if (Hgetelement(file_id, Grread.data[type].tag, Grread.data[type].ref,
-                          (uint8 *) imlut) == FAIL)
+                          (uint8 *) imlut) == FAIL) {
+              *has_pal = 0;
               return (HDerr(file_id));
+          }
+	  else
+	      *has_pal = 1;
       }
 
     return (Hclose(file_id));

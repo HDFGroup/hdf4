@@ -532,7 +532,7 @@ extern      "C"
 
     extern intn DFGRIgetimlut
                 (const char _HUGE * filename, VOIDP imlut, int32 xdim, int32 ydim, intn type,
-                 intn isfortran);
+                 intn isfortran, int *compressed, uint16 *compr_type, int *has_pal);
 
     extern intn DFGRIsetdims
                 (int32 xdim, int32 ydim, intn ncomps, intn type);
