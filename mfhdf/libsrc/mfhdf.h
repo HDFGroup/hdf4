@@ -134,9 +134,6 @@ extern intn SDgetdimstrs
 extern intn SDsetexternalfile
     (int32 id, char *filename, int32 offset);
 
-extern intn SDsetbigexternalfile
-    (int32 id, char *filename, int32 offset);
-
 extern intn SDsetnbitdataset
     (int32 id, intn start_bit, intn bit_len, intn sign_ext, intn fill_one);
 
