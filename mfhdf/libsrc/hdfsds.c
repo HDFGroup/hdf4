@@ -137,11 +137,12 @@ intn hdf_read_ndgs(handle)
     char   tmpname[80];
     uint8  ntstring[4];
     intn   dimcount;
-
+    intn   dimattrcnt;
+ 
     /* info about NDG structure */
     int32  GroupID, aid, aid1;
     uint16 ndgTag, ndgRef;
-    uint16 lRef, uRef, fRef, sRef, sdRef;
+    uint16 sddRef, lRef, uRef, fRef, sRef, sdRef;
     uint16 tmpTag, tmpRef;
     int16  rank, type;
     int32  *dimsizes, *scaletypes, HDFtype;
@@ -152,10 +153,13 @@ intn hdf_read_ndgs(handle)
     NC_dim  **dims;   /* hold list of dimensions as we create it */
     NC_var  **vars;   /* hold variable list as we create it      */
     NC_attr **attrs;  /* hold attribute list as we create it     */
-    uint8  *namebuf;  /* buffer to store label info   */
+    NC_attr *dimattrs[10];  /* for LUF and anno_label, anno_desc, 10 is enough */
+    uint8  *labelbuf; /* label should not be used as var name due to non-uniqueness  */
+    /* uint8  *namebuf;  */ /* buffer to store label info   */
     uint8  *scalebuf; /* buffer to store scale info */
     uint8  *unitbuf;  /* buffer to store unit info */
-
+    uint8  *formatbuf; /* buffer to store format info */
+    uint8  *coordbuf; /* buffer to store coord system info */
     intn   new_dim;   /* == new dim so create coord variable     */
 
     /* random book-keeping */
@@ -234,7 +238,7 @@ intn hdf_read_ndgs(handle)
             if ((GroupID = DFdiread(handle->hdf_file, ndgTag, ndgRef)) < 0) 
                 return FALSE;
             
-            lRef = uRef = fRef = sRef = sdRef = 0;
+            sddRef = lRef = uRef = fRef = sRef = sdRef = 0;
             
             /* default number type is Float32 */
             type    = NC_FLOAT; 
@@ -244,7 +248,7 @@ intn hdf_read_ndgs(handle)
             current_attr = 0;
             
             /* no meta-data seen yet */
-            unitbuf = scalebuf = namebuf = NULL;
+            labelbuf = unitbuf = scalebuf = formatbuf = NULL;
             
             /*
              * Loop through the members of the group looking for stuff
@@ -310,6 +314,7 @@ intn hdf_read_ndgs(handle)
                         scaletypes[i] = ntstring[1];
                     }
                     
+                    sddRef = tmpRef;    /* prepare for a new dim var */
                     Hendaccess(aid1);
                     
                     break;
@@ -325,7 +330,30 @@ intn hdf_read_ndgs(handle)
                 case DFTAG_SDF:       /* format */
                     fRef = tmpRef;
                     break;
-                    
+
+                case DFTAG_SDC:       /* coord  */
+                     /*
+                      * DFTAG_SDC => 'cordsys'
+                      */
+                     { 
+                          int len;
+
+                          len = Hlength(handle->hdf_file, DFTAG_SDC, tmpRef);
+                          if (len == FAIL) return FALSE;
+                          coordbuf = (uint8 *) HDgetspace((uint32) len + 1);
+                          if (!coordbuf) HRETURN_ERROR(DFE_NOSPACE, FALSE);
+                          if (Hgetelement(handle->hdf_file, DFTAG_SDC, tmpRef, coordbuf) == FAIL)
+                              return FALSE;
+                          coordbuf[len] = '\0';
+                          if (coordbuf[0] != '\0')  {
+                              attrs[current_attr++] =
+                                  (NC_attr *) NC_new_attr("cordsys",
+                                      NC_CHAR, HDstrlen(coordbuf), coordbuf);
+                          }
+                          HDfreespace((VOIDP)coordbuf);
+                     }
+                     break;
+
                 case DFTAG_SDS:       /* scales */
                     sRef = tmpRef;
                     break;
@@ -471,18 +499,20 @@ intn hdf_read_ndgs(handle)
                 len = Hlength(handle->hdf_file, DFTAG_SDL, lRef);
                 if(len == FAIL) return FALSE;
                 
-                namebuf = (uint8 *) HDgetspace((uint32) len + 3);
-                if(!namebuf) HRETURN_ERROR(DFE_NOSPACE, FALSE);
+/*                namebuf = (uint8 *) HDgetspace((uint32) len + 3);    */
+                labelbuf = (uint8 *) HDgetspace((uint32) len + 3);
+                if(!labelbuf) HRETURN_ERROR(DFE_NOSPACE, FALSE);
                 
-                if(Hgetelement(handle->hdf_file, DFTAG_SDL, lRef, namebuf) == FAIL)
+                if(Hgetelement(handle->hdf_file, DFTAG_SDL, lRef, labelbuf) == FAIL)
                     return FALSE;
                 
-                namebuf[len + 2] = '\0';
-                namebuf[len + 1] = '\0';
-                namebuf[len + 0] = '\0';
+                labelbuf[len + 2] = '\0';
+                labelbuf[len + 1] = '\0';
+                labelbuf[len + 0] = '\0';
                 
             } else {
-                namebuf = NULL;
+                /* namebuf = NULL;    */
+                labelbuf = NULL;
             }
             
             if(uRef) {
@@ -491,16 +521,43 @@ intn hdf_read_ndgs(handle)
                 len = Hlength(handle->hdf_file, DFTAG_SDU, uRef);
                 if(len == FAIL) return FALSE;
                 
-                unitbuf = (uint8 *) HDgetspace((uint32) len);
+                unitbuf = (uint8 *) HDgetspace((uint32) len+3);
                 if(!unitbuf) HRETURN_ERROR(DFE_NOSPACE, FALSE);
                 
                 if(Hgetelement(handle->hdf_file, DFTAG_SDU, uRef, unitbuf) == FAIL)
                     return FALSE;
+
+                unitbuf[len + 2] = '\0';
+                unitbuf[len + 1] = '\0';
+                unitbuf[len + 0] = '\0';
+
                 
             } else {
                 unitbuf = NULL;
             }
-            
+           
+            if(fRef) {
+                int len;
+
+                len = Hlength(handle->hdf_file, DFTAG_SDF, fRef);
+                if(len == FAIL) return FALSE;
+
+                formatbuf = (uint8 *) HDgetspace((uint32) len+3);
+                if(!formatbuf) HRETURN_ERROR(DFE_NOSPACE, FALSE);
+
+                if(Hgetelement(handle->hdf_file, DFTAG_SDF, fRef, formatbuf) == FAIL)
+                    return FALSE;
+
+                formatbuf[len + 2] = '\0';
+                formatbuf[len + 1] = '\0';
+                formatbuf[len + 0] = '\0';
+
+
+            } else {
+                formatbuf = NULL;
+            }
+
+ 
             if(sRef) {
                 int len;
                 
@@ -523,7 +580,8 @@ intn hdf_read_ndgs(handle)
             for (dim = 0; dim < rank; dim++) {
                 intn this_dim     = FAIL;
                 char *unitname    = NULL;
-                
+                char *labelvalue  = NULL, *unitvalue = NULL, *formatvalue = NULL;
+
                 /* now loop though each dimension
                    - get the size from dimsize[i]
                    - lref will give the ref of the label descriptor to see if 
@@ -535,19 +593,27 @@ intn hdf_read_ndgs(handle)
                 tmpname[0] = '\0';
                 
                 if(lRef) {
-                    q = (char *) namebuf;
-                    for(i = 0; i < dim + 1; i++) q += HDstrlen(q) + 1;
-                    sprintf(tmpname, "%s", q);
+                    labelvalue = (char *) labelbuf;
+                    for(i = 0; i < dim + 1; i++) labelvalue += HDstrlen(labelvalue) + 1;
+/*                    sprintf(tmpname, "%s", q);    */
                 }
                 
                 if(uRef) {
-                    unitname = (char *) unitbuf;
-                    for(i = 0; i < dim + 1; i++) unitname += HDstrlen(unitname) + 1;
+                    unitvalue = (char *) unitbuf;
+                    for(i = 0; i < dim + 1; i++) unitvalue += HDstrlen(unitvalue) + 1;
                 }
-                
-                if(tmpname[0] == '\0')
+
+                if(fRef) {
+                    formatvalue = (char *) formatbuf;
+                    for(i = 0; i < dim + 1; i++) formatvalue += HDstrlen(formatvalue) + 1;
+                }
+
+/*                if(tmpname[0] == '\0')
                     sprintf(tmpname, "Dimension-%d", dimcount++);
-                
+*/
+                sprintf(tmpname, "Dim-%d_%d_%d_%d_%d_%d", dim, 
+                                 sddRef, lRef, uRef, fRef, sRef);
+                dimcount++;
                 /*
                  *  We should check to make sure that we have unique 
                  *    dimension names
@@ -597,7 +663,7 @@ intn hdf_read_ndgs(handle)
                  * Look at the scale NTs since the scales may have different number 
                  *   types
                  * Promote the dimension to a variable, but only if it has meta-data
-                 *   stored with it.
+                 *   stored with it.  
                  */
                 if(new_dim && scalebuf && scalebuf[dim]) {
                     vars[current_var] = NC_new_var(tmpname, 
@@ -619,8 +685,49 @@ intn hdf_read_ndgs(handle)
                     } else {
                         vars[current_var]->data_offset = -1;  /* no values */
                     }
-                    
-                    current_var++;
+                    /*
+                     * Convert dimstrs into attributes  
+                     * label -- "long_name" (cuz SDsetdimstrs() assigns "long_name" to label)
+                     * unit  -- "units"
+                     * format -- "format"
+                     */
+
+                    /* label => "long_name"  */
+                    dimattrcnt = 0;
+                    if (labelvalue && HDstrlen((char *)labelvalue)>0) {
+                        dimattrs[dimattrcnt++] =
+                           (NC_attr *) NC_new_attr("long_name", NC_CHAR,
+                                                    HDstrlen((char *)labelvalue),
+                                                      (Void *) labelvalue);
+                    }
+
+                    /* Units => 'units' */
+                    if(unitvalue && HDstrlen((char *)unitvalue)>0) {
+                         dimattrs[dimattrcnt++] =
+                             (NC_attr *) NC_new_attr("units", NC_CHAR,
+                                           HDstrlen((char *)unitvalue),
+                                           (Void *) unitvalue);
+                    }
+
+                    /* Fomrat => 'format' */
+                    if(formatvalue && HDstrlen((char *)formatvalue)>0) {
+                         dimattrs[dimattrcnt++] =
+                             (NC_attr *) NC_new_attr("format", NC_CHAR,
+                                           HDstrlen((char *)formatvalue),
+                                           (Void *) formatvalue);
+                    }
+
+                    /*
+                     * Add the attributes to the variable
+                     */
+                    if(dimattrcnt)
+                        vars[current_var]->attrs = NC_new_array(NC_ATTRIBUTE,
+                                                      dimattrcnt,
+                                                      (Void *) dimattrs);
+                    else
+                        vars[current_var]->attrs = NULL;
+
+                    current_var++;  
                     if(current_var == max_thangs) {
                         /* need to allocate more space */    
                         max_thangs *= 2;
@@ -630,32 +737,38 @@ intn hdf_read_ndgs(handle)
                         
                         vars = (NC_var **) HDregetspace((VOIDP)vars, sizeof(NC_var *) * max_thangs);
                         if(!vars) HRETURN_ERROR(DFE_NOSPACE, FALSE);
-                        
                     }
-
                 }
-                
             }
             
             /*
-             * If there is a data label use that as the variable name
-             *    else use the reference number of the NDG as part of
-             *    a made up name
+             * Should the data var has a dummy name to avoid more than one data vars
+             *   having the same name (originally the same label)? 8/18/94
+             * Should the LUF-label be mapped as attr of "longname", to be consistent
+             *   with the dim vars? 8/18/94
+             * Should the annotation-label mapped to attr "anno-label", if "longname"
+             *   has been taken by LUF-label?  8/18/94.
+             *   
+             * (If there is a data label use that as the variable name else) 
+             * Use the reference number of the NDG as part of
+             *    a made up name (Label is mapped as attr "longname" 9/2/94).
              *
              * Convert spaces in the name to underscores (yuck) otherwise
-             *    ncgen will barf on ncdumped files
+             *    ncgen will barf on ncdumped files)
              */
-            if(namebuf && (namebuf[0] != '\0')) {
+            /* if(labelbuf && (labelbuf[0] != '\0')) {
                 char *c;
-                for(c = (char *)namebuf; *c; c++)
+                for(c = (char *)labelbuf; *c; c++)
                     if((*c) == ' ') (*c) = '_';
 
-                vars[current_var] = NC_new_var((char *) namebuf, type, (int) rank, vardims);
+                vars[current_var] = NC_new_var((char *) labelbuf, type, (int) rank, vardims);
             } else {
+            */
                 sprintf(tmpname, "Data-Set-%d", ndgRef); 
                 vars[current_var] = NC_new_var(tmpname, type, (int) rank, vardims);
-            }
-            
+            /*  }
+             */
+ 
             /*
              * Fill in extra information so it will be easier to backtrack
              *    when the user wants to lift data out
@@ -708,7 +821,7 @@ intn hdf_read_ndgs(handle)
             }
             
             /*
-             * If there is a label put in 'long_name'
+             * If there is a label put in attr 'anno_label' (note: NOT 'long_name' 9/2/94)
              */
             {
                 char label[256];
@@ -717,7 +830,7 @@ intn hdf_read_ndgs(handle)
                 if((status != FAIL) && (label[0] != '\0')){
                     
                     attrs[current_attr++] = 
-                        (NC_attr *) NC_new_attr("long_name", 
+                        (NC_attr *) NC_new_attr("anno_label", 
                                                 NC_CHAR, 
                                                 HDstrlen(label), 
                                                 label);
@@ -725,10 +838,22 @@ intn hdf_read_ndgs(handle)
                 }
             }
             
+            /* 
+             * Label => 'long_name'
+             */
+            if(labelbuf && (labelbuf[0] != '\0')) {
+                attrs[current_attr++] =
+                    (NC_attr *) NC_new_attr("long_name",
+                                            NC_CHAR,
+                                            HDstrlen((char *)labelbuf),
+                                            (Void *) labelbuf);
+
+            }
+ 
             /*
              * Units => 'units'
              */
-            if(unitbuf) {
+            if(unitbuf && (unitbuf[0] != '\0')) {
                 attrs[current_attr++] = 
                     (NC_attr *) NC_new_attr("units", 
                                             NC_CHAR, 
@@ -738,9 +863,20 @@ intn hdf_read_ndgs(handle)
             }
             
             /*
-             * Don't do format cuz HDF doesn't distinguish between C and Fortran
-             * Actually, it seems HDF Format == netCDF Fortran Format
+             * (Don't do format cuz HDF doesn't distinguish between C and Fortran
+             * Actually, it seems HDF Format == netCDF Fortran Format)
+             * Don't use 'C_format' or 'FORTRAN_format'
+             * Format => 'format'
              */
+            if(formatbuf && (formatbuf[0] != '\0')) {
+                attrs[current_attr++] =
+                    (NC_attr *) NC_new_attr("format",
+                                            NC_CHAR,
+                                            HDstrlen((char *)formatbuf),
+                                            (Void *) formatbuf);
+
+            }
+
             
             /*
              * Add the attributes to the variable
@@ -769,9 +905,11 @@ intn hdf_read_ndgs(handle)
             /*
              * De-allocate temporary storage
              */
-            if(namebuf)  HDfreespace((VOIDP)namebuf);
+            /* if(namebuf)  HDfreespace((VOIDP)namebuf);  */
+            if(labelbuf)  HDfreespace((VOIDP)labelbuf);
             if(scalebuf) HDfreespace((VOIDP)scalebuf);
             if(unitbuf)  HDfreespace((VOIDP)unitbuf);
+            if(formatbuf)  HDfreespace((VOIDP)formatbuf);
             HDfreespace((VOIDP)dimsizes);
             HDfreespace((VOIDP)vardims);
             HDfreespace((VOIDP)scaletypes);
