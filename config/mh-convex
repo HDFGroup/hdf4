@@ -7,7 +7,7 @@
 #
 #Using ANSI compilier
 CC=cc
-CFLAGS=
+CFLAGS= -std
 
 # Fortran compilier
 FC = fc
@@ -18,7 +18,7 @@ RANLIB = touch
 
 # Name of library archiver and flags to send, default 'AR=ar', 'ARFLAGS=r'
 AR = ar
-ARFLAGS = r
+ARFLAGS = rc
 
 # Name of remove utility, default 'RM=/bin/rm', 'RMFLAGS=-f'
 RM = /bin/rm
