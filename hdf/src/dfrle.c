@@ -1,3 +1,9 @@
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
+/* $Id$ */
+
 /*-----------------------------------------------------------------------------
  * File:    dfrle.c
  * Purpose: RLE image compression algorithm

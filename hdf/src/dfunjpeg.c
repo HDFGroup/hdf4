@@ -1,3 +1,9 @@
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
+/* $Id$ */
+
 /*-----------------------------------------------------------------------------
  * File:    dfunjpeg.c
  * Purpose: JPEG image decompression algorithm

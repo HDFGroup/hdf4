@@ -1,20 +1,5 @@
 C
-C $Header$
-C
-C $Log$
-C Revision 1.2  1993/01/19 05:58:31  koziol
-C Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-C port.  Lots of minor annoyances fixed.
-C
-c Revision 1.1  1992/11/05  19:34:01  chouck
-c Initial revision
-c
-c Revision 1.2  1992/07/06  19:33:10  mlivin
-c removed declaration of variable that wasn't used
-c
-c Revision 1.1  1992/04/27  17:07:49  sxu
-c Initial revision
-c
+C $Id$
 C
       program tdf24F
 

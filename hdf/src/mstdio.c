@@ -1,3 +1,9 @@
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
+/* $Id$ */
+
 /*
  FILE
        mstdio.c
@@ -18,24 +24,6 @@
     9/28/93     Starting writing specs & coding prototype
 */
 
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-/*
-$Header$
-
-$Log$
-Revision 1.2.2.1  1993/10/10 22:10:36  koziol
-Moved Tag descriptions into a header file.  Updated compression routines.
-
- * Revision 1.2  1993/10/06  20:27:53  koziol
- * More compression fixed, and folded Doug's suggested change into VSappendable.
- *
- * Revision 1.1  1993/09/30  19:05:21  koziol
- * Added basic compressing functionality for special tags.
- *
- *
- */
 
 /* General HDF includes */
 #include "hdf.h"

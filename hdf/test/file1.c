@@ -1,39 +1,9 @@
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.2  1993/08/28 00:12:47  georgev
-Added VOIDP casts to HDfreespace().
+/* $Id$ */
 
- * Revision 1.1  1993/08/16  21:47:59  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.2  1993/04/19  23:03:48  koziol
- * General Code Cleanup to reduce/remove compilation warnings on PC
- *
- * Revision 1.1  1993/04/15  20:00:17  koziol
- * Re-named the new tests for MS-DOS compatibility
- *
- * Revision 1.2  1993/01/27  22:41:28  briand
- * Fixed problem with compiling on RS6000.
- *
- * Revision 1.1  1993/01/27  22:04:32  briand
- * Converted test files to work with master test program: testhdf
- *
- * Revision 1.3  1992/07/27  18:40:12  dilg
- * Changed DFACC_ALL to DFACC_RDWR in appropriate places to conform to new
- * handling of access modes by Hopen().
- *
- * Revision 1.2  1992/06/25  19:41:58  chouck
- * Changed output file names
- *
- * Revision 1.1  1992/02/10  20:59:34  chouck
- * Initial revision
- *
-*/
 /*
   test opening files and access elements until limits are reached
 */
