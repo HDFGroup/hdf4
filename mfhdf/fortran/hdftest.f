@@ -1,6 +1,8 @@
 C
 C     Testing the Fortran interface for the multiple SD routines
 C
+C $Id$
+C
       program hdftest
 
       implicit none
