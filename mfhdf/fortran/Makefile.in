@@ -233,6 +233,7 @@ SUBDIR_MACROS = CC="$(CC)" \
 	CPP="$(CPP)" \
 	exec_prefix="$(exec_prefix)" \
 	FC="$(FC)" \
+	FFLAGS="$(FFLAGS)" \
 	prefix="$(prefix)"
 
 LOCAL_MACROS  = CC="$(CC)" \
@@ -241,6 +242,7 @@ LOCAL_MACROS  = CC="$(CC)" \
 	CPPFLAGS="$(CPPFLAGS)" \
 	exec_prefix="$(exec_prefix)" \
 	FC="$(FC)" \
+	FFLAGS="$(FFLAGS)" \
 	prefix="$(prefix)"
 
 # ###########################################################################
@@ -794,15 +796,19 @@ dist: $(DISTFILES)
 FORCE:
 
 
-jackets.c:	fortc1.sed fortc2.sed common.m4 jackets.src $(OS).m4
-	./fortc -L . -O $(OS) jackets.src > $@
-
-netcdf.inc:	common.inc fortc1.sed fortc2.sed common.m4 $(OS).m4
-	./fortc -L . -O $(OS) common.inc > $@
-
-$(PROGRAM).f:	fortc1.sed fortc2.sed common.m4 $(PROGRAM).src $(OS).m4
-	./fortc -L . -O $(OS) $(PROGRAM).src > $@
-
+# Disable the following since the three files are created by hand
+# and copied in during configuration.  The following, if ever activiated,
+# would blow away those good files.
+#
+#jackets.c:	fortc1.sed fortc2.sed common.m4 jackets.src $(OS).m4
+#	./fortc -L . -O $(OS) jackets.src > $@
+#
+#netcdf.inc:	common.inc fortc1.sed fortc2.sed common.m4 $(OS).m4
+#	./fortc -L . -O $(OS) common.inc > $@
+#
+#$(PROGRAM).f:	fortc1.sed fortc2.sed common.m4 $(PROGRAM).src $(OS).m4
+#	./fortc -L . -O $(OS) $(PROGRAM).src > $@
+#
 hdftest:        FORCE
 	$(FC) $(FFLAGS) hdftest.f $(LIBS) -o $@
 	test -d $(TESTDIR) || mkdir $(TESTDIR)
