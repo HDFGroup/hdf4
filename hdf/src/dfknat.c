@@ -73,45 +73,46 @@ VOIDP s, d;
 uint32 num_elm, source_stride, dest_stride;
 #endif /* PROTOTYPE */
 {
-  int fast_processing = 0;
-  int in_place = 0;
-  register uint32 i;
-  uint8 * source = (uint8*)s;
-  uint8 * dest = (uint8*)d;
-  char *FUNC="DFKnb1b";
+    int fast_processing = 0;
+    int in_place = 0;
+    register uint32 i;
+    uint8 * source = (uint8*)s;
+    uint8 * dest = (uint8*)d;
+    char *FUNC="DFKnb1b";
 
-  HEclear();
-
-  if(num_elm == 0){
-    HERROR(DFE_BADCONV);
-    return FAIL;
-  }
-
-  /* Determine if faster array processing is appropriate */
-  if((source_stride == 0 && dest_stride == 0) ||
-     (source_stride == 1 && dest_stride == 1))
-    fast_processing = 1;
-
-  /* Determine if the conversion should be inplace */
-  if(source == dest)
-    in_place = 1;
-
-  if(fast_processing) {
-    if(!in_place) {
-      HDmemcpy(dest, source, num_elm);
-      return 0;
+    HEclear();
+    
+    if(num_elm == 0){
+        HERROR(DFE_BADCONV);
+        return FAIL;
     }
-    else
-      return 0;                         /* Nothing to do */
-  } 
-  else
-    for(i = 0; i < num_elm; i++) {
-      dest[0] = source[0];
-      dest += dest_stride;
-      source += source_stride;
+    
+    /* Determine if faster array processing is appropriate */
+    if((source_stride == 0 && dest_stride == 0) ||
+       (source_stride == 1 && dest_stride == 1))
+        fast_processing = 1;
+    
+    /* Determine if the conversion should be inplace */
+    if(source == dest)
+        in_place = 1;
+    
+    if(fast_processing) {
+        if(!in_place) {
+            HDmemcpy(dest, source, num_elm);
+            return 0;
+        }
+        else
+            return 0;                         /* Nothing to do */
+    } else {
+        *dest = *source;
+        for(i = 1; i < num_elm; i++) {
+            dest += dest_stride;
+            source += source_stride;
+            *dest = *source;
+        }
     }
-  
-  return 0;
+    
+    return 0;
 }
 
 #if !defined(UNICOS)  /* UNICOS does not need these routines */
