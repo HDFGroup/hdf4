@@ -2226,13 +2226,17 @@ int32 *nt, *nattr, *size;
     if(dim == NULL)
         return FAIL;
 
-    HDstrncpy(name, dim->name->values, dim->name->len);
-    name[dim->name->len] = '\0';
+    if(name != NULL) {
+        HDstrncpy(name, dim->name->values, dim->name->len);
+        name[dim->name->len] = '\0';
+    } else {
+        name = dim->name->values;
+    }
 
     *size  = dim->size;
 
     if(handle->vars) {
-        len = HDstrlen(name);
+        len = dim->name->len;
         dp = (NC_var**)handle->vars->values;
         for(ii = 0 ; ii < handle->vars->count ; ii++, dp++) {
             if( len == (*dp)->name->len &&
