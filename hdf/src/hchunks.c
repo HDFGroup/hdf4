@@ -2000,7 +2000,7 @@ HMCsetMaxcache(int32 access_id, /* IN: access aid to mess with */
     CONSTR(FUNC, "HMCsetMaxcache");   /* for HERROR */
     accrec_t    *access_rec = NULL;   /* access record */
     chunkinfo_t *info       = NULL;   /* chunked element information record */
-    int32 ret_value = SUCCEED;
+    int32       ret_value = SUCCEED;
 
     /* Check args */
     access_rec = HAatom_object(access_id);
@@ -2032,7 +2032,7 @@ done:
   return ret_value;
 } /* HMCsetMaxcache() */
 
-/* ------------------------------- HMCPwrite -------------------------------
+/* ------------------------------- HMCwriteChunk ---------------------------
 NAME
    HMCwriteChunk -- write out a whole chunk
 
@@ -2049,7 +2049,7 @@ HMCwriteChunk(int32 access_id,  /* IN: access aid to mess with */
               int32 *origin,    /* IN: origin of chunk to write */
               const VOID *datap /* IN: buffer for data */)
 {
-    CONSTR(FUNC, "HMCwritechunk");  /* for HERROR */
+    CONSTR(FUNC, "HMCwriteChunk");  /* for HERROR */
     accrec_t    *access_rec = NULL; /* access record */
     uint8       *data       = NULL; /* data buffer */
     filerec_t   *file_rec   = NULL; /* file record */
@@ -2070,7 +2070,7 @@ HMCwriteChunk(int32 access_id,  /* IN: access aid to mess with */
 
 
 #ifdef HAVE_PABLO
-    TRACE_ON(H_mask, ID_HMCPwrite);
+    TRACE_ON(H_mask, ID_HMCwriteChunk);
 #endif /* HAVE_PABLO */
 
     /* Check args */
@@ -2207,7 +2207,7 @@ HMCwriteChunk(int32 access_id,  /* IN: access aid to mess with */
     /* Normal function cleanup */
 
 #ifdef HAVE_PABLO
-    TRACE_OFF(H_mask, ID_HMCPwrite);
+    TRACE_OFF(H_mask, ID_HMCwriteChunk);
 #endif /* HAVE_PABLO */
 
     return ret_value;
@@ -2620,6 +2620,7 @@ HMCPinfo(accrec_t * access_rec,       /* IN: access record of access elemement *
     CONSTR(FUNC, "HMCPinfo");       /* for HERROR */
     chunkinfo_t *info     = NULL;   /* special information record */
     int32       ret_value = SUCCEED;
+    intn        i;                  /* loop variable */
 
 #ifdef HAVE_PABLO
     TRACE_ON(H_mask, ID_HMCPinfo);
@@ -2636,12 +2637,24 @@ HMCPinfo(accrec_t * access_rec,       /* IN: access record of access elemement *
     /* fill in the info_chunk */
     info =  (chunkinfo_t *) access_rec->special_info;
     info_block->key = SPECIAL_CHUNKED;
-    info_block->chunk_size = info->chunk_size;
+    info_block->chunk_size = info->chunk_size; 
+    info_block->ndims      = info->ndims; 
+
+    /* allocate space for chunk lengths */
+    if (( info_block->cdims = (int32 *) HDmalloc(info->ndims*sizeof(int32)))==NULL)
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+    /* copy info over */
+    for (i = 0; i < info->ndims; i++)
+      {
+          info_block->cdims[i] = info->ddims[i].chunk_length; 
+      }
 
   done:
     if(ret_value == FAIL)   
       { /* Error condition cleanup */
-
+          if (info_block->cdims != NULL)
+              HDfree(info_block->cdims);
       } /* end if */
 
     /* Normal function cleanup */
