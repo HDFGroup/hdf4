@@ -64,7 +64,7 @@
 
 /* Default pagesize and max # of pages to cache */
 #define DEF_PAGESIZE   8192
-#define DEF_MAXCACHE   1
+#define DEF_MAXCACHE   600
 
 /* The BKT structures are the elements of the queues. */
 typedef struct _bkt 
@@ -72,7 +72,7 @@ typedef struct _bkt
   CIRCLEQ_ENTRY(_bkt) hq;	/* hash queue */
   CIRCLEQ_ENTRY(_bkt) q;	/* lru queue */
   void    *page;		/* page */
-  pgno_t   pgno;		/* page number */
+  pageno_t   pgno;		/* page number */
 
 #define	MPOOL_DIRTY	0x01	/* page needs to be written */
 #define	MPOOL_PINNED	0x02	/* page is pinned into memory */
@@ -83,7 +83,7 @@ typedef struct _bkt
 typedef struct _lelem
 {
   CIRCLEQ_ENTRY(_lelem) hl;	/* hash list */
-  pgno_t        pgno;           /* page number */
+  pageno_t        pgno;           /* page number */
 #ifdef STATISTICS
   u_int32_t	elemhit;        /* # of hits on page */
 #endif
@@ -102,14 +102,14 @@ typedef struct MPOOL
   CIRCLEQ_HEAD(_lqh, _bkt)    lqh;	      /* lru queue head */
   CIRCLEQ_HEAD(_hqh, _bkt)    hqh[HASHSIZE];  /* hash queue array */
   CIRCLEQ_HEAD(_lhqh, _lelem) lhqh[HASHSIZE]; /* hash of all elements */
-  pgno_t	curcache;		      /* current number of cached pages */
-  pgno_t	maxcache;		      /* max number of cached pages */
-  pgno_t	npages;			      /* number of pages in the file */
+  pageno_t	curcache;		      /* current number of cached pages */
+  pageno_t	maxcache;		      /* max number of cached pages */
+  pageno_t	npages;			      /* number of pages in the file */
   u_int32_t	lastpagesize;	              /* page size of last page */
   u_int32_t	pagesize;		      /* file page size */
   fmp_file_t    fd;			      /* file handle */
-  void (*pgin) __P((void *, pgno_t, void *)); /* page in conversion routine */
-  void (*pgout) __P((void *, pgno_t, void *));/* page out conversion routine */
+  void (*pgin) __P((void *, pageno_t, void *)); /* page in conversion routine */
+  void (*pgout) __P((void *, pageno_t, void *));/* page out conversion routine */
   void	*pgcookie;                            /* cookie for page in/out routines */
 #ifdef STATISTICS
   u_int32_t	listhit;                /* # of list hits */
@@ -303,17 +303,17 @@ get_done: \
 #endif /* USE_INLINE */
 
 __BEGIN_DECLS
-MPOOL	*mpool_open __P((void *, fmp_file_t, pgno_t, pgno_t));
-void	 mpool_filter __P((MPOOL *, void (*)(void *, pgno_t, void *),
-                           void (*)(void *, pgno_t, void *), void *));
-void	*mpool_new __P((MPOOL *, pgno_t *, pgno_t, u_int32_t));
-void	*mpool_get __P((MPOOL *, pgno_t, u_int32_t));
+MPOOL	*mpool_open __P((void *, fmp_file_t, pageno_t, pageno_t));
+void	 mpool_filter __P((MPOOL *, void (*)(void *, pageno_t, void *),
+                           void (*)(void *, pageno_t, void *), void *));
+void	*mpool_new __P((MPOOL *, pageno_t *, pageno_t, u_int32_t));
+void	*mpool_get __P((MPOOL *, pageno_t, u_int32_t));
 int	 mpool_put __P((MPOOL *, void *, u_int32_t));
 int	 mpool_sync __P((MPOOL *));
-int	 mpool_page_sync __P((MPOOL *, pgno_t, u_int32_t));
+int	 mpool_page_sync __P((MPOOL *, pageno_t, u_int32_t));
 int	 mpool_close __P((MPOOL *));
 #ifdef USE_INLINE
-BKT	*mpool_look __P((MPOOL *, pgno_t));
+BKT	*mpool_look __P((MPOOL *, pageno_t));
 BKT	*mpool_bkt __P((MPOOL *));
 #endif
 #ifdef STATISTICS

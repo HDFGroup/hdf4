@@ -208,8 +208,8 @@ DESCRIPTION
 int 
 MPseek(MPFILE *mpfs, off_t offset, int whence )
 {
-  pgno_t     new_pgno = 0;
-  pgno_t     oddpagesize = 0;
+  pageno_t     new_pgno = 0;
+  pageno_t     oddpagesize = 0;
   off_t      cur_off = 0;
   u_int32_t  flags = 0;
   void       *mypage = NULL;
@@ -369,7 +369,7 @@ MPread(MPFILE *mpfs, void *buf, size_t nbytes )
   size_t nr = 0;
   size_t nbr = 0;
   size_t nbl = 0;
-  pgno_t pageno = 0;
+  pageno_t pageno = 0;
   void *mypage = NULL;
   char *cptr = NULL;
   char *bptr = buf;
@@ -540,9 +540,9 @@ MPwrite(MPFILE *mpfs, void *buf, size_t nbytes )
   size_t nw = 0;
   size_t nbw = 0;
   size_t nbl = 0;
-  pgno_t npagno = 0;
-  pgno_t pageno = 0;
-  pgno_t new_pgno = 0;
+  pageno_t npagno = 0;
+  pageno_t pageno = 0;
+  pageno_t new_pgno = 0;
   void *mypage = NULL;
   char *cptr = NULL;
   char *bptr = buf;

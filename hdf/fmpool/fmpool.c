@@ -59,7 +59,7 @@ static char RcsId[] = "@(#)$Revision$";
 /* Private routines */
 #ifndef USE_INLINE
 static BKT *mpool_bkt   __P((MPOOL *));
-static BKT *mpool_look  __P((MPOOL *, pgno_t));
+static BKT *mpool_look  __P((MPOOL *, pageno_t));
 #endif
 static int  mpool_write __P((MPOOL *, BKT *));
 
@@ -70,8 +70,8 @@ USAGE
   MPOOL *mpool_open(key, fd, pagesize, maxcache)
   void   *key;       IN: byte string used as handle to share buffers 
   int    fd;         IN: seekable file descriptor 
-  pgno_t pagesize;   IN: size in bytes of the pages to break the file up into 
-  pgno_t maxcache;   IN: maximum number of pages to cache at any time 
+  pageno_t pagesize;   IN: size in bytes of the pages to break the file up into 
+  pageno_t maxcache;   IN: maximum number of pages to cache at any time 
 
 RETURNS
    A memory pool cookie if successful else NULL
@@ -94,8 +94,8 @@ MPOOL *
 mpool_open(key, fd, pagesize, maxcache)
   void       *key;     /* byte string used as handle to share buffers */
   fmp_file_t fd;       /* seekable file handle */
-  pgno_t     pagesize; /* size in bytes of the pages to break the file up into */
-  pgno_t     maxcache; /* maximum number of pages to cache at any time */
+  pageno_t     pagesize; /* size in bytes of the pages to break the file up into */
+  pageno_t     maxcache; /* maximum number of pages to cache at any time */
 {
 #ifdef _POSIX_SOURCE
   struct stat sb; /* file status info */
@@ -106,7 +106,7 @@ mpool_open(key, fd, pagesize, maxcache)
   int          len    = 0;    /* file length */
   int          ret    = RET_SUCCESS;
   int          entry;         /* index into hash table */
-  pgno_t       pageno;
+  pageno_t       pageno;
 
 
   /*
@@ -127,9 +127,9 @@ mpool_open(key, fd, pagesize, maxcache)
   /* Set the size of the file, pagesize and max # of pages to cache */
   len = sb.st_size;
   if(pagesize == 0)
-    pagesize = (pgno_t)sb.st_blksize;
+    pagesize = (pageno_t)sb.st_blksize;
   if (maxcache == 0)
-    maxcache = (pgno_t)DEF_MAXCACHE;
+    maxcache = (pageno_t)DEF_MAXCACHE;
 #ifdef STAT_DEBUG
     (void)fprintf(stderr,"mpool_open: sb.st_blksize=%d\n",sb.st_blksize);
 #endif
@@ -148,9 +148,9 @@ mpool_open(key, fd, pagesize, maxcache)
 
   /* Set the pagesize and max # of pages to cache */
   if(pagesize == 0)
-    pagesize = (pgno_t)DEF_PAGESIZE;
+    pagesize = (pageno_t)DEF_PAGESIZE;
   if (maxcache == 0)
-      maxcache = (pgno_t)DEF_MAXCACHE;
+      maxcache = (pageno_t)DEF_MAXCACHE;
 #ifdef STAT_DEBUG
     (void)fprintf(stderr,"mpool_open: no fstat(),pagesize=%u\n",pagesize);
 #endif
@@ -170,7 +170,7 @@ mpool_open(key, fd, pagesize, maxcache)
     }
 
   /* Initialize max # of pages to cache and number of pages in file */
-  mp->maxcache = (pgno_t)maxcache;
+  mp->maxcache = (pageno_t)maxcache;
   mp->npages   = len / pagesize;
 
   /* Adjust for when file is not multiple of whole page sizes */
@@ -195,7 +195,7 @@ mpool_open(key, fd, pagesize, maxcache)
           ret = RET_ERROR;
           goto done;
         }
-      lp->pgno   = (pgno_t)pageno;     /* set page number */
+      lp->pgno   = (pageno_t)pageno;     /* set page number */
       lp->eflags = (u_int8_t)ELEM_SYNC; /* valid page exists on disk */
 #ifdef STATISTICS
       lp->elemhit = (u_int32_t)0;
@@ -263,8 +263,8 @@ NAME
 USAGE
   void mpool_filter(mp, pgin, pgout, pgcookie)
   MPOOL *mp;                                    IN: MPOOL cookie
-  void (*pgin) __P((void *, pgno_t, void *));   IN: page in filter 
-  void (*pgout) __P((void *, pgno_t, void *));  IN: page out filter 
+  void (*pgin) __P((void *, pageno_t, void *));   IN: page in filter 
+  void (*pgout) __P((void *, pageno_t, void *));  IN: page out filter 
   void *pgcookie;                               IN: filter cookie 
 RETURNS
    Nothing
@@ -280,8 +280,8 @@ DESCRIPTION
 void
 mpool_filter(mp, pgin, pgout, pgcookie)
   MPOOL *mp;                                   /* MPOOL cookie */
-  void (*pgin) __P((void *, pgno_t, void *));  /* page in filter */
-  void (*pgout) __P((void *, pgno_t, void *)); /* page out filter */
+  void (*pgin) __P((void *, pageno_t, void *));  /* page in filter */
+  void (*pgout) __P((void *, pageno_t, void *)); /* page out filter */
   void *pgcookie;                              /* filter cookie */
 {
   mp->pgin     = pgin;
@@ -295,8 +295,8 @@ NAME
 USAGE
    void *mpool_new(mp, pgnoaddr, pagesize, flags)
    MPOOL *mp;         IN: MPOOL cookie 
-   pgno_t *pgnoaddr;  IN/OUT:address of newly created page 
-   pgno_t pagesize;   IN:page size for last page
+   pageno_t *pgnoaddr;  IN/OUT:address of newly created page 
+   pageno_t pagesize;   IN:page size for last page
    u_int32_t flags;       IN:MPOOL_EXTEND or 0 
 RETURNS
    Returns the new page if succesfula and NULL otherwise
@@ -317,8 +317,8 @@ DESCRIPTION
 void *
 mpool_new(mp, pgnoaddr, pagesize, flags)
   MPOOL     *mp;       /* MPOOL cookie */
-  pgno_t    *pgnoaddr; /* address of newly create page */
-  pgno_t    pagesize;  /* page size for last page*/
+  pageno_t    *pgnoaddr; /* address of newly create page */
+  pageno_t    pagesize;  /* page size for last page*/
   u_int32_t flags;     /* MPOOL_EXTEND or 0 */
 {
   struct _hqh  *head  = NULL; /* head of an entry in hash chain */
@@ -337,7 +337,7 @@ mpool_new(mp, pgnoaddr, pagesize, flags)
   /* page overflow? */
   if (mp->npages == MAX_PAGE_NUMBER) 
     {
-      (void)fprintf(stderr, "mpool_new: page allocation overflow.\n");
+      fprintf(stderr, "mpool_new: page allocation overflow.\n");
       abort();
     }
 #ifdef STATISTICS
@@ -436,7 +436,7 @@ NAME
 USAGE
    void *mpool_get(mp, pgno, flags)
    MPOOL *mp;      IN: MPOOL cookie 
-   pgno_t pgno;    IN: page number 
+   pageno_t pgno;    IN: page number 
    u_int32_t flags;	   IN: not used? 
 RETURNS
    The specifed page if successful and NULL otherwise
@@ -452,7 +452,7 @@ DESCRIPTION
 void *
 mpool_get(mp, pgno, flags)
   MPOOL     *mp;    /* MPOOL cookie */
-  pgno_t    pgno;   /* page number */
+  pageno_t    pgno;   /* page number */
   u_int32_t flags;  /* XXX not used? */
 {
   struct _hqh  *head  = NULL; /* head of lru queue */
@@ -461,8 +461,8 @@ mpool_get(mp, pgno, flags)
   L_ELEM       *lp   = NULL;
   int          ret   = RET_SUCCESS;
   off_t        off;         /* file offset? */
-  pgno_t       nr;          /* number of bytes read for page */
-  pgno_t       rpagesize;   /* pagesize to read */
+  pageno_t       nr;          /* number of bytes read for page */
+  pageno_t       rpagesize;   /* pagesize to read */
   int          list_hit;    /* hit flag */
 
 #ifdef MPOOL_DEBUG
@@ -862,7 +862,7 @@ NAME
 USAGE
    int mpool_page_sync(mp, pgno, flags)
    MPOOL *mp;     IN: MPOOL cookie 
-   pgno_t pgno;   IN: page number 
+   pageno_t pgno;   IN: page number 
    u_int32_t flags;	  IN: not used? 
 RETURNS
    RET_SUCCESS if succesful and RET_ERROR otherwise   
@@ -879,7 +879,7 @@ DESCRIPTION
 int
 mpool_page_sync(mp, pgno, flags)
   MPOOL     *mp;     /* MPOOL cookie */
-  pgno_t    pgno;    /* page number */
+  pageno_t    pgno;    /* page number */
   u_int32_t flags;	  /* XXX not used? */
 {
   struct _lhqh *lhead = NULL; /* head of an entry in list hash chain */
@@ -887,7 +887,7 @@ mpool_page_sync(mp, pgno, flags)
   BKT          *bp    = NULL; /* bucket element */
   int          ret = RET_SUCCESS;
   off_t        off;               /* offset into the file */
-  pgno_t       wpagesize;         /* page size to write */
+  pageno_t       wpagesize;         /* page size to write */
 
 
 #ifdef MPOOL_DEBUG
@@ -1062,7 +1062,7 @@ mpool_bkt(mp)
     }
 
   /* If under the max cached, always create a new page. */
-  if ((pgno_t)mp->curcache < (pgno_t)mp->maxcache)
+  if ((pageno_t)mp->curcache < (pageno_t)mp->maxcache)
     goto new;
 
   /*
@@ -1150,7 +1150,7 @@ mpool_write(mp, bp)
   L_ELEM       *lp   = NULL;
   int          ret = RET_SUCCESS;
   off_t        off;      /* offset into the file */
-  pgno_t       wpagesize;  /* page size to write */
+  pageno_t       wpagesize;  /* page size to write */
 
 
 #ifdef MPOOL_DEBUG
@@ -1263,7 +1263,7 @@ NAME
 USAGE
    static BKT *mpool_look(mp, pgno)
    MPOOL *mp;    IN: MPOOL cookie 
-   pgno_t pgno;  IN: page to look up in cache 
+   pageno_t pgno;  IN: page to look up in cache 
 RETURNS
    Page if successfull and NULL othewise.
 DESCRIPTION
@@ -1276,7 +1276,7 @@ BKT *
 #endif
 mpool_look(mp, pgno)
   MPOOL *mp;    /* MPOOL cookie */
-  pgno_t pgno;  /* page to look up in cache */
+  pageno_t pgno;  /* page to look up in cache */
 {
   struct _hqh *head = NULL; /* head of hash chain */
   BKT         *bp   = NULL; /* bucket element */

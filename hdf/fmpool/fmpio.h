@@ -29,7 +29,7 @@
 typedef struct mpfile_st 
 {
   fmp_file_t  fd;  /* file handle */
-  pgno_t    curp;  /* current page */
+  pageno_t    curp;  /* current page */
   off_t     poff;  /* offset into current page */
   off_t     foff;  /* current offset into file */
   MPOOL     *mp;   /* memory pool for this file */
