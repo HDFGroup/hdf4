@@ -28,22 +28,23 @@ echo "=============================="
 # gif2hdf and hdf2gif 
 if [ -f gif2hdf -a -f hdf2gif ]; then
 echo "** Testing gif2hdf and hdf2gif  ***"
-/bin/rm -f skull.gif SunWheel.hdf bttrfly.hdf 
-./hdf2gif < testfiles/skull.hdf > skull.gif
-./gif2hdf <testfiles/SunWheel.gif > SunWheel.hdf
-./gif2hdf <testfiles/bttrfly.gif > bttrfly.hdf
+/bin/rm -r gif_hdf_temp
+/bin/mkdir gif_hdf_temp
+./hdf2gif testfiles/skull.hdf  gif_hdf_temp/skull.gif
+./gif2hdf testfiles/SunWheel.gif  gif_hdf_temp/SunWheel.hdf
+./gif2hdf testfiles/bttrfly.gif  gif_hdf_temp/bttrfly.hdf
 else
 echo "** hdf2gif or gif2hdf is not available ***"
 fi
 
-  echo " *********************** NOTE ***************************"
+  echo " *********************** NOTE ****************************"
   echo " Use WEB Browser and JHV to compare "
   echo " testfiles/SunWheel.gif and testfiles/bttrfly.gif "
-  echo " with SunWheel.hdf and bttrfly.hdf in util/test directory"
+  echo " with gif_hdf_temp/SunWheel.hdf and gif_hdf_temp/bttrfly.hdf"
   echo " "
   echo " Use JHV  and WEB Browser to compare "
-  echo " testfiles/skull.hdf and skull.gif in util/test directory"
-  echo " ********************* END NOTE *************************"
+  echo " testfiles/skull.hdf and gif_hdf_temp/skull.gif"
+  echo " ********************* END NOTE **************************"
   echo ""
   errors=0
 
