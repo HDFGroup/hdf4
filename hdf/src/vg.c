@@ -17,18 +17,35 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /*
-*
-* vg.c
-* Part of the HDF VSet interface
-* This file contains routine to handle VDATAs.
-*
-* Most routines return -1 (FAIL) on error.  Some must return 0 on error.
-* VSattach returns NULL on error.
-*
-* PRIVATE functions manipulate vsdir and are used only within this file.
-* PRIVATE data structures in here pertain to vdata in vsdir only.
-*
-**************************************************************************/
+FILE  
+     vg.c
+     HDF vdata routines and some vgroup routines
+EXPORTED ROUTINES
+     vnewref -- returns a unique reference number
+     VSelts  -- number of elements in a vdata
+     VSgetinterlace -- returns the interlace type of the vdata
+     VSsetinterlace -- sets the vdata's interlace to full or none
+     VSgetfields -- returns the fieldnames in a vdata
+     VSfexist -- tests for existence of one or more fields in a vdata
+     VSsizeof -- computes the byte size of the field(s) if a vdata
+     VSdump   -- prints contents of a vdata (for debugging)
+     VSsetname -- associate a name with a vdata
+     VSsetclass -- assigns a class name to a vdata
+     VSgetname -- gets the vdata's name
+     VSgetclass -- gets the vdata's class name
+     VSinquire -- gets information about a vdata
+     VSlone -- returns an array of refs of all lone vdatas in the file
+     Vlone -- returns an array of refs of all lone vgroups in the file
+     Vfind -- looks in the file for a vgroup with a given name 
+     VSfind -- looks in the file for a vdata with a given name
+     Vsetzap -- maintaind for back compatibility
+     VSgetclass -- gets the vdata's class name
+PRIVATE FUNCTIONS
+     matchnocase -- compares to strings, ignoring case
+PRIVATE functions manipulate vsdir and are used only within this file.
+PRIVATE data structures in here pertain to vdata in vsdir only.
+*/
+
 
 #include "vg.h"
 
@@ -37,15 +54,17 @@ PRIVATE int32 matchnocase
   PROTO((char *strx, char *stry));
 
 /* ------------------------------------------------------------------
-*	Vnewref
-*	utility routine. returns a unique reference number.
-*
-*	RETURNS a unique ref (+ve unsigned 16-bit integer) ,
-*	RETURNS 0 if error
-*
-*  undocumented
-*
-*/
+NAME 
+ 	Vnewref --  utility routine. returns a unique reference number.
+USAGE
+        uint16 vnewref(f)
+        HFILEID f;      IN: file id
+RETURNS
+	On success returns a unique ref (+ve unsigned 16-bit integer) ,
+	returns 0 if error
+DESCRIPTION
+        Utility routine. Undocumented
+----------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 uint16 vnewref (HFILEID f)		
 #else
@@ -63,11 +82,17 @@ HFILEID f;
 	return (r);
 } /* vnewref */
 
-/* ================================================================== */
-
-/* matchnocase -  (PRIVATE) compares 2 strings, ignoring case 
-*	               returns TRUE if match, else FALSE
-*/
+/* -----------------------------------------------------------------
+NAME
+       matchnocase -  (PRIVATE) compares 2 strings, ignoring case 
+USAGE
+       int32 matchnocase(strx, stry)
+       char *strx, *stry;   IN: strings to be compared.
+RETURNS
+       TRUE if match, else FALSE
+DESCRIPTION
+       Private routine. 
+-------------------------------------------------------------------- */
 
 #ifdef PROTOTYPE
 PRIVATE int32 matchnocase (char *strx, char *stry)
@@ -92,14 +117,16 @@ char *strx,*stry;
 
 
 /* ------------------------------------------------------------------
-* VSelts
-* returns the number of elements in the VDATA vs 
-* returns FAIL  on error.
-*
-* undocumented
-* 28-MAR-91 Jason NG NCSA
-*
-*/
+NAME
+       VSelts -- get number of elements in a vdata
+USAGE
+       int32 VSelts(vkey)
+       int32 vkey;      IN: vdata key
+RETURNS
+       On success returns the number of elements in the VDATA vkey; 
+       returns FAIL  on error.
+DESCRIPTION
+--------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 PUBLIC int32 VSelts (int32 vkey)
 #else
@@ -127,13 +154,16 @@ int32 vkey;
 
 
 /* ------------------------------------------------------------------
-*	VSgetinterlace 
-*  returns the interlace (in the file) of the vdata vs.
-*  returns FAIL on error.
-*
-*  undocumented
-*
-*/
+NAME
+   	VSgetinterlace -- gets interlace of the vdata vkey.
+USAGE
+        int32 VSgetinterlace(vkey)
+        int32 vkey;     IN: vdata key
+RETURNS
+        On success returns the interlace (in the file) of the vdata vkey.
+        returns FAIL on error.
+DESCRIPTION
+----------------------------------------------------------------------- */
 
 #ifdef PROTOTYPE
 PUBLIC int32 VSgetinterlace (int32 vkey)
@@ -161,10 +191,17 @@ int32 vkey;
 } /* VSgetinterlace */
 
 /* ------------------------------------------------------------------
-*	VSsetinterlace 
-* 	sets the vdata's interlace to full or none.
-*	returns FAIL on error.
-*/
+NAME
+     	VSsetinterlace --  sets the vdata's interlace to full or none.
+USAGE
+        int32 VSsetinterlace(vkey, interlace)
+        int32 vkey;       IN: vdata key
+        int32 interlace;  IN: interlace for storing data in an HDF file.
+RETURNS
+        On success returns SUCCESS, returns FAIL on error.
+DESCRIPTION
+        The interlace may be one of FULL_INTERLACE or NO_INTERLACE.
+-------------------------------------------------------------------- */
 
 #ifdef PROTOTYPE
 PUBLIC int32 VSsetinterlace(int32 vkey, int32 interlace)
@@ -205,13 +242,17 @@ int32 interlace;
 
 
 /* ------------------------------------------------------------------
-*	VSgetfields 
-*  returns the fieldnames in a vdata.
-*  RETURNS  -1 on error, else the no of fields in the vdata.
-*
-*	undocumented
-*
-*/
+NAME
+     	VSgetfields -- returns the name (if any) of all the fields in the vdata
+USAGE 
+        int32 VSgetfields(vkey, fields)
+        int32 vkey;      IN: vdata key
+        char *fields;    OUT: storage for field names
+RETURNS
+        Returns -1 on error, else the no of fields in the vdata.
+DESCRIPTION
+        The fields are returned as a comma-separated string (e.g., "PX,PY").
+---------------------------------------------------------------------- */
 
 #ifdef PROTOTYPE
 PUBLIC int32 VSgetfields (int32 vkey, char *fields)
@@ -248,12 +289,18 @@ char  * fields;         /* fieldnames are returned in this var */
 } /* VSgetfields */
 
 /* ------------------------------------------------------------------
-*	VSfexist
-* 	tests for existence of 1 or more fields in a vdata.
-*
-*	RETURNS -1 if false, or error
-*	RETURNS 1 if true
-*/
+NAME
+	VSfexist -- tests for existence of 1 or more fields in a vdata.
+USAGE
+        int32 VSfexist(vkey, fields)
+        int32 vkey;    IN: vdata key
+        char *fields;  IN: Names of the fields to check for
+RETURNS 
+	RETURNS 1 if all fields exist; otherwise -1 is returned.
+DESCRIPTION
+        The argument 'fields' is a string of comma-separated fieldnames 
+        (e.g. "PX,PY,PZ").
+-------------------------------------------------------------------- */
 
 #ifdef PROTOTYPE
 PUBLIC int32 VSfexist (int32 vkey, char *fields)
@@ -303,13 +350,20 @@ char *fields;
 } /* VSfexist */
 
 
-/* ================================================================== */
-/*
-*	VSsizeof - computes the byte size of the field(s) of a vdata.
-*	         - Note that the size is the actual size for the local machine.
-*
-*		 - RETURNS FAIL on error, else the field(s) size (+ve integer).
-*/
+/* -----------------------------------------------------------------
+NAME
+	VSsizeof - computes the byte size of the field(s) of a vdata.
+USAGE
+        int32 VSsizeof(vkey, fields)
+        int32 vkey;   IN: vdata key.
+        char *fields; IN: Name(s) of the fields to check.
+RETURNS
+        The byte size of the field(s), positive integer, on success; 
+        otherwise, returns FAIL.
+DESCRIPTION
+        The size is the actual size for the local machine.
+
+-------------------------------------------------------------------- */
 
 #ifdef PROTOTYPE
 PUBLIC int32 VSsizeof (int32 vkey, char *fields)
@@ -351,12 +405,15 @@ char  *fields;
     return(totalsize);
 } /* VSsizeof */
 
-/* ================================================================== */
-
-/*
-*	VSdump - prints contents of a vdata (for debugging) 
-*				no return codes.
-*/
+/* ----------------------------------------------------------------- 
+NAME
+	VSdump - prints contents of a vdata (for debugging) 
+USAGE
+        VOID VSdump(vkey)
+        int32 vkey;   IN: vdata key.
+RETURNS
+        No return codes.
+------------------------------------------------------------------- */
 
 #ifdef PROTOTYPE
 VOID VSdump (int32 vkey)
@@ -376,7 +433,7 @@ int32 vkey;
         }
 
 	sprintf(sjs,"@tag=%d ref=%d i=%d ",vs->otag, vs->oref,vs->interlace); zj;
-    sprintf(sjs,"@nv=%ld\n ",vs->nvertices); zj;
+        sprintf(sjs,"@nv=%ld\n ",vs->nvertices); zj;
 
 	w = (VWRITELIST*) &vs->wlist;
 	sprintf(sjs,"@vsize(hdf)=%d fields=%d [%s]\n",w->ivsize,w->n,vs->vsname); zj;
@@ -394,13 +451,18 @@ int32 vkey;
 } /* VSdump */
 
 
-/* ======================================================= */
-/*
-*	VSsetname - give a name to a vdata.
-*	          - NO RETURN VALUES
-*	          - truncates name to max length of VSNAMELENMAX
-*
-*/
+/* -------------------------------------------------------
+NAME
+	VSsetname - give a name to a vdata.
+USAGE
+        int32 VSsetname(vkey, vsname)
+        int32 vkey;    IN: vdata key.
+        char *vsname;  IN: name for the vdata.
+RETURNS
+        No Return values.
+DESCRIPTION
+        Truncates name to max length of VSNAMELENMAX
+---------------------------------------------------------- */
 
 #ifdef PROTOTYPE
 PUBLIC int32 VSsetname (int32 vkey, char *vsname)
@@ -435,13 +497,18 @@ char    *vsname;
     return(SUCCEED);
 } /* VSsetname */
 
-/* ======================================================= */
-/*
-*	VSsetclass- assigns a class name to a vdata.
-*	          - NO RETURN VALUES
-*	          - truncates to max length of VSNAMELENMAX
-*
-*/
+/* ------------------------------------------------------
+NAME
+        VSsetclass - give a class name to a vdata.
+USAGE
+        int32 VSsetclass(vkey, vsclass)
+        int32 vkey;    IN: vdata key.
+        char *vsclass;  IN: class name for the vdata.
+RETURNS
+        No Return values.
+DESCRIPTION
+        Truncates class name to max length of VSNAMELENMAX
+---------------------------------------------------------- */
 
 #ifdef PROTOTYPE
 PUBLIC int32 VSsetclass (int32 vkey, char *vsclass)
@@ -476,12 +543,17 @@ char    *vsclass;
     return(SUCCEED);
 } /* VSsetclass*/
 
-/* ======================================================= */
-
-/*
-*	VSgetname - gets the vdata's name.
-*				 - NO RETURN VALUES
-*/
+/* ------------------------------------------------------ 
+NAME
+        VSgetname - gets the vdata's name. 
+USAGE
+        int32 VSsetname(vkey, vsname)
+        int32 vkey;    IN: vdata key.
+        char *vsname;  OUT: storage for vdata name. 
+RETURNS
+        No Return values.
+DESCRIPTION
+---------------------------------------------------------- */
 
 #ifdef PROTOTYPE
 PUBLIC int32 VSgetname (int32 vkey, char *vsname)
@@ -510,12 +582,17 @@ char    *vsname;
     return(SUCCEED);
 } /* VSgetname */
 
-/* ======================================================= */
-
-/*
-*	VSgetclass - gets the vdata's class name.
-*				 - NO RETURN VALUES
-*/
+/* ------------------------------------------------------ 
+NAME
+        VSgetclass - gets the vdata's class name.
+USAGE
+        int32 VSgetclass(vkey, vsclass)
+        int32 vkey;      IN: vdata key.
+        char *vsclass;  OUT: class name for the vdata.
+RETURNS
+        No Return values.
+DESCRIPTION
+---------------------------------------------------------- */
 
 #ifdef PROTOTYPE
 PUBLIC int32 VSgetclass (int32 vkey, char *vsclass)
@@ -544,21 +621,29 @@ char    *vsclass;
     return(SUCCEED);
 } /* VSgetclass */
 
-/* ================================================================== */
-/*
-*	VSinquire - gets info about a vdata vs:
-*
-*		  nvertices: 	no of vertices in it.
-*		  interlace: 	its interlcae
-*		  fields : 	a comma separated string listing the field(s). 
-*                                                 (eg "PX,PY")
-*		  eltsize: 	size of elmt (all field(s)) on local machine.
-*		  vsname: 	vdata's name, if any.
-*
-*	RETURNS FAIL if error
-*	RETURNS 1 if ok
-*
-*/
+/* ------------------------------------------------------------------ 
+NAME
+ 	VSinquire - gets info about a vdata vkey:
+
+		  nvertices: 	number of vertices in it.
+		  interlace: 	its interlcae
+		  fields : 	a comma separated string listing the field(s). 
+                                                 (eg "PX,PY")
+		  eltsize: 	size of elmt (all field(s)) on local machine.
+		  vsname: 	vdata's name, if any.
+USAGE
+        int32 VSinquire(vkey, nelt, interlace, fields,eltsize, vsname)
+        int32 vkey;         IN: vdata key.
+        int32 *nelt;       OUT: number of vertices in the vdata.
+        int32 *interlace;  OUT: interlace of the vdata.
+        char *fields;      OUT: field(s) name.
+        int32 *eltsize;    OUT: byte size of elements (all fields) on local
+                                machine. 
+        char *vsname;      OUT: vdata's name.
+RETURNS
+         
+	Returns FAIL if error;	Returns 1 if ok.
+------------------------------------------------------------------------ */
 #ifdef PROTOTYPE
 PUBLIC int32 VSinquire (int32 vkey, int32 *nelt, int32 *interlace,
         char *fields, int32 *eltsize, char *vsname)
@@ -585,20 +670,22 @@ int32   *nelt, *interlace, *eltsize;
 	return (SUCCEED); /* ok */
 } /* VSinquire */
 
-/* ================================================================== */
-/*
-* VSlone - returns an array of refs of all lone vdatas in the file.
-*      - returns -1 if error
-*      - otherwise returns the total number of lone vdatas in the file
-*
-*		If idarray is too small, routine will only fill idarray with up
-*		 to asize worth of refs.
-*
-*		INPUT idarray: user supplies  an int array.
-*	   INPUT asize: integer specifying how many ints in idarray[];
-*		INPUT f: HDF file pointer.
-*
-*/
+/* -----------------------------------------------------------------
+NAME
+        VSlone - returns an array of refs of all lone vdatas in the file.
+USAGE
+        int32 VSlone(f, idarray, asize)
+        HFILEID f;        IN: file id.
+        int32 idarray[];  IN: array to contain the refs.
+        int32 asize;      IN: size of idarray.
+RETURNS
+
+        Returns -1 if error; otherwise returns the total number of lone 
+                vdatas in the file
+DESCRIPTION
+	If idarray is too small, routine will only fill idarray with up
+		 to asize worth of refs.
+--------------------------------------------------------------------- */
 
 #ifdef PROTOTYPE
 PUBLIC int32 VSlone(HFILEID f, int32 idarray[], int32 asize) 
@@ -652,20 +739,22 @@ int32   asize;            /* input: size of idarray */
     return (nlone); /* return the TOTAL # of lone vdatas */
 } /* VSlone */
 
-/* ================================================================== */
-/*
-* Vlone  - returns an array of refs of all lone vgroups in the file.
-* 	      - returns -1 if error
-*	      - otherwise returns the total number of lone vgroups in the file 
-*
-*			If idarray is too small, routine will only fill idarray with up
-*			 to asize worth of refs.
-*
-*			INPUT idarray: user supplies  an int array.
-*		   INPUT asize: integer specifying how many ints in idarray[];
-*			INPUT f: HDF file pointer.
-*
-*/
+/* ----------------------------------------------------------------- 
+NAME
+       Vlone  - returns an array of refs of all lone vgroups in the file.
+USAGE
+        int32 Vlone(f, idarray, asize)
+        HFILEID f;        IN: file id.
+        int32 idarray[];  IN: array to contain the refs.
+        int32 asize;      IN: size of idarray.
+RETURNS
+
+        Returns -1 if error; otherwise returns the total number of lone
+                vgroups in the file
+DESCRIPTION
+        If idarray is too small, routine will only fill idarray with up
+                 to asize worth of refs.
+--------------------------------------------------------------------- */
 
 #ifdef PROTOTYPE
 PUBLIC int32 Vlone (HFILEID f, int32 idarray[], int32 asize)
@@ -723,13 +812,18 @@ int32   asize;            /* input: size of idarray */
 } /* Vlone */
 
 
-/* ================================================================== */
-/* new jan 3 1991 */
-/* looks in the file and returns the ref of the vgroup with name vgname */
-/*
-* returns 0 if not found, or error.
-* otherwise, returns the vgroup's ref (a +ve integer).
-*/
+/* ----------------------------------------------------------------- 
+NAME
+        Vfind -- looks in the file and returns the ref of 
+                 the vgroup with name vgname 
+USAGE
+        int32 Vfind(f, vgname)
+        HFILEID  f;    IN: file id.
+        char *vgname;  IN: name of the vgroup.
+RETURNS
+        Returns 0 if not found, or error. Otherwise, returns the 
+           vgroup's ref (a positive integer).
+----------------------------------------------------------------------- */
 
 #ifdef PROTOTYPE
 int32 Vfind (HFILEID f, char *vgname)
@@ -760,13 +854,18 @@ char    * vgname;
     
 } /* Vfind */
 
-/* ================================================================== */
-/* new jan 3 1991 */
-/* looks in the file and returns the ref of the vdata with name vsname */
-/* 
-* returns 0 if not found, or error.
-* otherwise, returns the vdata's ref (a +ve integer).
-*/
+/* ------------------------------------------------------------------
+NAME
+        VSfind -- looks in the file and returns the ref of the vdata 
+                   with name vsname 
+USAGE
+        int32 VSfine(f, vsname)
+        HFILEID  f;      IN: file id.
+        char *vsname;    IN: name of the vdata.
+RETURNS
+        Returns 0 if not found, or error. Otherwise, returns the vdata's 
+             ref (a positive integer).
+--------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 VSfind (HFILEID f, char *vsname)
 #else
@@ -797,11 +896,9 @@ char * vsname;
 
 } /* VSfind */
 
-/* ================================================================== */
-
-/*
+/* -----------------------------------------------------------------
 * Vsetzap: Useless now. Maintained for back compatibility.
-*/
+--------------------------------------------------------------------- */
 
 #ifdef PROTOTYPE
 #ifdef CONVEX
@@ -814,4 +911,3 @@ PUBLIC VOID Vsetzap()
 #endif
 {
 }
-/* ================================================================== */
