@@ -19,15 +19,9 @@ C
       character ar2*30
       character ar3*8
 
-      data ar0 /'Testing...'/
-      data ar1 /'...one...'/
-      data ar2 /'...two...'/
-      data ar3 /'...three'/
-
       character in*20
 
       integer nerrors
-      data nerrors /0/
       integer dfile
       integer dfinfo(16)
       integer dlist(128)
@@ -40,16 +34,23 @@ C
       integer r3
       integer r7
 
+      integer dfaccess, dfopen, dfclose, dfdesc, dfdup, dfdel, dfread,
+     +     dfwrite, dfupdate, dfget, dfput, dfsfind, dffind, 
+     +     dferrno, dfishdf, dfnewref, dfnumber, dfstat
+      
       data t255 /255/
       data t127 /127/
       data r1   /1/
       data r3   /3/
       data r7   /7/
 
-      integer dfaccess, dfopen, dfclose, dfdesc, dfdup, dfdel, dfread,
-     +     dfwrite, dfupdate, dfget, dfput, dfsfind, dffind, 
-     +     dferrno, dfishdf, dfnewref, dfnumber, dfstat
-      
+      data ar0 /'Testing...'/
+      data ar1 /'...one...'/
+      data ar2 /'...two...'/
+      data ar3 /'...three'/
+
+      data nerrors /0/
+
       a0size = len(ar0)
       a1size = len(ar1)
       a2size = len(ar2)

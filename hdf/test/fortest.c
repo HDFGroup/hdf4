@@ -70,23 +70,23 @@ int main (int argc, char *argv[])
   uint32 lmajor, lminor, lrelease;
   char lstring[81];
 
-  InitTest("slab1","slab1wf","");
-  InitTest("slab2","slab2wf","");
-  InitTest("slab3","slab3wf","");
-  InitTest("slab4","slab4wf","");
-  InitTest("slab","slabwf","");
-  InitTest("r24","t24f","");
-  InitTest("an","tanf","");
-  InitTest("anfile","tanfilef","");
-  InitTest("p","tpf","");
-  InitTest("r8","tr8f","");
-  InitTest("sdmms","tsdmmsf","");
-  InitTest("sdnmms","tsdnmmsf","");
-  InitTest("sdnnt","tsdnntf","");
-  InitTest("sdnt","tsdntf","");
-  InitTest("sdstr","tsdstrf","");
+  InitTest("slab1","./slab1wf","");
+  InitTest("slab2","./slab2wf","");
+  InitTest("slab3","./slab3wf","");
+  InitTest("slab4","./slab4wf","");
+  InitTest("slab","./slabwf","");
+  InitTest("r24","./t24f","");
+  InitTest("an","./tanf","");
+  InitTest("anfile","./tanfilef","");
+  InitTest("p","./tpf","");
+  InitTest("r8","./tr8f","");
+  InitTest("sdmms","./tsdmmsf","");
+  InitTest("sdnmms","./tsdnmmsf","");
+  InitTest("sdnnt","./tsdnntf","");
+  InitTest("sdnt","./tsdntf","");
+  InitTest("sdstr","./tsdstrf","");
 #ifndef DEC_ALPHA
-  InitTest("stubs","tstubsf","");
+  InitTest("stubs","./tstubsf","");
 #endif
 
   Verbosity = 4; /* Default Verbosity is Low */
