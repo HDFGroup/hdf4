@@ -830,19 +830,19 @@ void test_r24()
 
     MESSAGE(5,printf("Writing 24bit images with differing interlacing\n"););
 
-    ret = DF24setil(0);
+    ret = DF24setil(DFIL_PIXEL);
     RESULT("DF24setil");
     ret = DF24putimage(TESTFILE, &(buf[0][0][0]), XSIZE, YSIZE);
     RESULT("DF24putimage");
     ref0 = DF24lastref();
 
-    ret = DF24setil(1);
+    ret = DF24setil(DFIL_LINE);
     RESULT("DF24setil");
     ret = DF24addimage(TESTFILE, &(buf1[0][0][0]), XSIZE, YSIZE);
     RESULT("DF24addimage");
     ref1 = DF24lastref();
 
-    ret = DF24setil(2);
+    ret = DF24setil(DFIL_PLANE);
     RESULT("DF24setil");
     ret = DF24addimage(TESTFILE, &(buf2[0][0][0]), XSIZE, YSIZE);
     RESULT("DF24addimage");
@@ -854,7 +854,7 @@ void test_r24()
   
     ret = DF24restart();
     RESULT("DF24restart");
-    ret = DF24reqil(0);
+    ret = DF24reqil(DFIL_PIXEL);
     RESULT("DF24reqil");
     ret = DF24getdims(TESTFILE, &xd, &yd, &il);
     RESULT("DF24getdims");
@@ -955,7 +955,7 @@ void test_r24()
 
     /* read image 3 */
 
-    ret = DF24reqil(1);
+    ret = DF24reqil(DFIL_LINE);
     RESULT("DF24reqil");
     ret = DF24getdims(TESTFILE, &xd, &yd, &il);    
     RESULT("DF24getdims");
@@ -1039,7 +1039,7 @@ void test_r24()
     ret = DF24restart();
     RESULT("DF24restart");
 
-    ret = DF24reqil(2);
+    ret = DF24reqil(DFIL_PLANE);
     RESULT("DF24reqil");
 
     ret = DF24getdims(TESTFILE, &xd, &yd, &il);
