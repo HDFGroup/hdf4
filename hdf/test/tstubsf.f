@@ -2,9 +2,13 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.2  1992/04/28 19:36:55  dilg
-C Some minor cosmetic changes.
+C Revision 1.3  1992/04/29 17:00:06  dilg
+C Changed VAX FORTRAN initialization statements to standard FORTRAN 'data'
+C statements.
 C
+c Revision 1.2  1992/04/28  19:36:55  dilg
+c Some minor cosmetic changes.
+c
 c Revision 1.1  1992/03/26  21:51:22  dilg
 c Initial revision
 c
@@ -23,18 +27,25 @@ C
 
       character in*20
 
-      integer nerrors /0/
+      integer nerrors
+      data nerrors /0/
       integer dfile
       integer dfinfo(16)
       integer dlist(128)
       integer a0size, a1size, a2size, a3size
       integer ret, err, i, nd, dfenum, tag, ref, length
 
-      integer t255 /255/
-      integer t127 /127/
-      integer r1   /1/
-      integer r3   /3/
-      integer r7   /7/
+      integer t255
+      integer t127
+      integer r1
+      integer r3
+      integer r7
+
+      data t255 /255/
+      data t127 /127/
+      data r1   /1/
+      data r3   /3/
+      data r7   /7/
 
       integer dfaccess, dfopen, dfclose, dfdesc, dfdup, dfdel, dfread,
      +		dfwrite, dfupdate, dfget, dfput, dfsfind, dffind, dferrno,
