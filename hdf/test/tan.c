@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/05/27 21:46:34  chouck
-Added a cast
+Revision 1.5  1992/05/29 19:19:08  mfolk
+Changed pal declaration from char to uint8 for Convex.
 
+ * Revision 1.4  1992/05/27  21:46:34  chouck
+ * Added a cast
+ *
  * Revision 1.3  1992/03/23  16:38:33  mfolk
  * fixed minor bug in reporting success/failure of a DFR8 routine.
  *
@@ -50,7 +53,7 @@ main()
 {
     char labsds[MAXLEN_LAB], labris[MAXLEN_LAB],
          descsds[MAXLEN_DESC], descris[MAXLEN_DESC];
-    char pal[768];
+    uint8 pal[768];
     uint8 *image, *newimage;
     uint16 refnum;
     int32 ret, rank;
