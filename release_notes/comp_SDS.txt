@@ -1,6 +1,6 @@
 Limitations of compressed SDS datasets
     Due to certain limitations in the way compressed datasets are stored, data
-which has been compressed is not completely writeable in ways that uncompressed
+which has been compressed is not completely writable in ways that uncompressed
 datasets are.  The "rules" for writing to a compressed dataset are as follows:
 
     (1) Write an entire dataset that is to be compressed.  I.e. build the
@@ -56,7 +56,7 @@ N-bit SDS using SDsetnbitdataset:
         information about start_bit & bit_len parameters) and the bit in
         position 25 is a 1, then when the data is read back in from the disk,
         bits 26-31 will be set to a 1, otherwise bit 25 will be a zero and bits
-        26-31 will be set to 0. This bit-filling takes higher precendence (i.e.
+        26-31 will be set to 0. This bit-filling takes higher precedence (i.e.
         is performed after) the fill_one (see below) bit-filling. 
 
     intn fill_one - Whether to fill the "background" bits with 1's or 0's.
