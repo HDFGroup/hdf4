@@ -297,8 +297,11 @@ check_fann_rewrite(const char *fname)
     ann_label = NULL;
 
     /* end access to annotations */
-    ANend(an_handle);
-    Hclose(file_handle);   /* close file */
+    ret = ANend(an_handle);
+    RESULT("ANend");
+
+    ret = Hclose(file_handle);   /* close file */
+    RESULT("Hclose");
 
     return SUCCEED;
 } /* check_fann_rewrite() */
