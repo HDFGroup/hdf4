@@ -144,7 +144,8 @@ AC_PROG_CXX
 
 AC_ARG_ENABLE([fortran],
               [AC_HELP_STRING([--with-fortran],
-                              [Build Fortran into library [default=yes]])])
+                              [Build Fortran into library [default=yes]])],,
+              enableval="yes")
 
 case "$enableval" in
   yes)

@@ -3625,6 +3625,8 @@ fi
 if test "${enable_fortran+set}" = set; then
   enableval="$enable_fortran"
 
+else
+  enableval="yes"
 fi;
 
 case "$enableval" in
@@ -3722,7 +3724,7 @@ fi
 
 
 # Provide some information about the compiler.
-echo "$as_me:3725:" \
+echo "$as_me:3727:" \
      "checking for Fortran 77 compiler version" >&5
 ac_compiler=`set X $ac_compile; echo $2`
 { (eval echo "$as_me:$LINENO: \"$ac_compiler --version </dev/null >&5\"") >&5
