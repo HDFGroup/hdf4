@@ -113,16 +113,24 @@
    VSsetinterlace, VSsetname, VSsizeof, VSwrite, VSappendable, VSdelete
    VSfindclass */
 
-#define AN_mask         0x900
+#define AN_mask         0x1000
 /* ANstart, ANfileinfo, ANend, ANcreate, ANcreatef, ANselect, ANnumann,
    ANannlist, ANannlen, ANreadann, ANwriteann, ANendacess */
 
-#define GR_mask         0x1000
+#define GR_mask         0x2000
 /* GRstart, GRfileinfo, GRend, GRcreate, GRselect, GRnametoindex,
    GRgetiminfo, GRwriteimage, GRreadimage, GRendaccess, GRgetdimid,
    GRsetdimname, GRdiminfo, GRidtoref, GRreftoindex, GRreqlutil,
    GRreqimageil, GRgetlutid, GRgetlutinfo, GRwritelut, GRreadlut,
    GRsetexternalfile, GRsetaccestype, GRsetcompress, GRsetattr, 
    GRattrinfo, GRgetattr, GRfindattr */
+
+#define HA_mask         0x4000
+/* HAinit_group, HAdestroy_group, HAregister_atom, HAatom_object,
+   HAatom_group, HAremove_atom */
+   
+#define DA_mask         0x8000
+/* DAcreate_array, DAdestroy_array, DAsize_array, DAget_elem,
+   DAset_elem, DAdel_elem */
 
 #endif /* PROCMASK_H */

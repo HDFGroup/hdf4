@@ -251,6 +251,11 @@ mfgr.c: $(HDFSRC)/mfgr.c
 mfgr.o: $(HDFSRC)/hdf.h $(HDFSRC)/hlimits.h $(HDFSRC)/hdfi.h 
 mfgr.o: $(HDFSRC)/herr.h $(HDFSRC)/hproto.h $(HDFSRC)/vproto.h 
 mfgr.o: $(HDFSRC)/hfile.h $(HDFSRC)/mfgr.h $(FRC)
+mfgrf.c: $(HDFSRC)/mfgrf.c 
+mfgrf.o: $(HDFSRC)/hdf.h $(HDFSRC)/hlimits.h $(HDFSRC)/hdfi.h 
+mfgrf.o: $(HDFSRC)/herr.h $(HDFSRC)/hproto.h $(HDFSRC)/vproto.h 
+mfgrf.o: $(HDFSRC)/hfile.h $(HDFSRC)/mfgr.h $(FRC)
+mfgrff.f: $(HDFSRC)/mfgrff.f 
 cgzip.c: $(HDFSRC)/cgzip.c 
 cgzip.o: $(HDFSRC)/hdf.h $(HDFSRC)/hlimits.h $(HDFSRC)/hdfi.h 
 cgzip.o: $(HDFSRC)/herr.h $(HDFSRC)/hproto.h $(HDFSRC)/vproto.h 
@@ -261,3 +266,19 @@ cdeflate.c: $(HDFSRC)/cdeflate.c $(HDFSRC)/cdeflate.h
 cdeflate.o: $(HDFSRC)/hdf.h $(HDFSRC)/hlimits.h $(HDFSRC)/hdfi.h 
 cdeflate.o: $(HDFSRC)/herr.h $(HDFSRC)/hproto.h $(HDFSRC)/vproto.h 
 cdeflate.o: $(HDFSRC)/hfile.h $(HDFSRC)/hcompi.h $(FRC)
+bitvect.c: $(HDFSRC)/bitvect.c $(HDFSRC)/bitvect.h
+bitvect.o: $(HDFSRC)/hdf.h $(HDFSRC)/hlimits.h $(HDFSRC)/hdfi.h 
+bitvect.o: $(HDFSRC)/herr.h $(HDFSRC)/hproto.h $(HDFSRC)/vproto.h 
+bitvect.o: $(HDFSRC)/hfile.h $(FRC)
+atom.c: $(HDFSRC)/atom.c $(HDFSRC)/atom.h
+atom.o: $(HDFSRC)/hdf.h $(HDFSRC)/hlimits.h $(HDFSRC)/hdfi.h 
+atom.o: $(HDFSRC)/herr.h $(HDFSRC)/hproto.h $(HDFSRC)/vproto.h 
+atom.o: $(HDFSRC)/hfile.h $(FRC)
+dynarray.c: $(HDFSRC)/dynarray.c $(HDFSRC)/dynarray.h
+dynarray.o: $(HDFSRC)/hdf.h $(HDFSRC)/hlimits.h $(HDFSRC)/hdfi.h 
+dynarray.o: $(HDFSRC)/herr.h $(HDFSRC)/hproto.h $(HDFSRC)/vproto.h 
+dynarray.o: $(HDFSRC)/hfile.h $(FRC)
+hfiledd.c: $(HDFSRC)/hfiledd.c
+hfiledd.o: $(HDFSRC)/hdf.h $(HDFSRC)/hlimits.h $(HDFSRC)/hdfi.h 
+hfiledd.o: $(HDFSRC)/herr.h $(HDFSRC)/hproto.h $(HDFSRC)/vproto.h 
+hfiledd.o: $(HDFSRC)/hfile.h $(FRC)

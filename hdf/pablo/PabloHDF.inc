@@ -117,6 +117,12 @@ C IDs for annotation procedures
       integer ID_GRsetexternalfile, ID_GRsetaccesstype, ID_GRsetcompress
       integer ID_GRsetattr, ID_GRattrinfo, ID_GRgetattr, ID_GRfindattr
 
+      integer ID_HAinit_group, ID_HAdestroy_group, ID_HAregister_atom,
+      integer ID_HAatom_object, ID_HAatom_group, ID_HAremove_atom 
+
+      integer ID_DAcreate_array, ID_DAdestroy_array, ID_DAsize_array, 
+      integer ID_DAget_elem, ID_DAset_elem, ID_DAdel_elem 
+
       parameter(ID_DFANaddfds           = 101,
      *          ID_DFANaddfid           = 102,
      *          ID_DFANgetdesc          = 103,
@@ -382,3 +388,17 @@ C IDs for annotation procedures
      *          ID_GRattrinfo           = 1425,
      *          ID_GRgetattr            = 1426,
      *          ID_GRfindattr           = 1427)
+
+      parameter(ID_HAinit_group         = 1501,
+     *          ID_HAdestroy_group      = 1502,
+     *          ID_HAregister_atom      = 1503,
+     *          ID_HAatom_object        = 1504,
+     *          ID_HAatom_group         = 1505,
+     *          ID_HAremove_atom        = 1506)
+
+      parameter(ID_DAcreate_array       = 1601,
+     *          ID_DAdestroy_array      = 1602,
+     *          ID_DAsize_array         = 1603,
+     *          ID_DAget_elem           = 1604,
+     *          ID_DAset_elem           = 1605,
+     *          ID_DAdel_elem           = 1606)

@@ -340,6 +340,22 @@ extern uint16 procTrace;
 #define ID_GRgetattr            1426
 #define ID_GRfindattr           1427
 
+/* HA */
+#define ID_HAinit_group         1501
+#define ID_HAdestroy_group      1502
+#define ID_HAregister_atom      1503
+#define ID_HAatom_object        1504
+#define ID_HAatom_group         1505
+#define ID_HAremove_atom        1506
+
+/* DA */
+#define ID_DAcreate_array       1601
+#define ID_DAdestroy_array      1602
+#define ID_DAsize_array         1603
+#define ID_DAget_elem           1604
+#define ID_DAset_elem           1605
+#define ID_DAdel_elem           1606
+
 #endif /* HAVE_PABLO || PABLO */
 
 #endif /* PROCIDS_H */
