@@ -265,6 +265,9 @@ int32 id;
             if(handle->flags & NC_NDIRTY) {
                 if(!xdr_numrecs(handle->xdrs, handle) )
                     return FAIL;
+#ifdef HDF
+                if (!(handle->is_hdf))
+#endif
                 handle->flags &= ~(NC_NDIRTY);
             }
 	}
