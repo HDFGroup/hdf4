@@ -177,17 +177,21 @@ struct vdata_desc
 
 /* --------------  H D F    V S E T   tags  ---------------------------- */
 
+/* In what versions were these valid? */
 #define OLD_VGDESCTAG   61820   /* tag for a vgroup d */
 #define OLD_VSDESCTAG   61821   /* tag for a vdata descriptor */
 #define OLD_VSDATATAG   61822   /* tag for actual raw data of a vdata */
 
-#define NEW_VGDESCTAG    1965
-#define NEW_VSDESCTAG    1962
-#define NEW_VSDATATAG    1963
+/* re-define what new ones are. Don't know why there are two sets but
+   made them conform to what was in 'htags.h' */
+#define NEW_VGDESCTAG    DFTAG_VG
+#define NEW_VSDESCTAG    DFTAG_VH
+#define NEW_VSDATATAG    DFTAG_VS
 
 #define VGDESCTAG       NEW_VGDESCTAG
 #define VSDESCTAG       NEW_VSDESCTAG
 #define VSDATATAG       NEW_VSDATATAG
+
 #define _HDF_VSPACK 0
 #define _HDF_VSUNPACK 1
 #define VG_ATTR_SET 0x00000001  /* this vgroup has attribute(s) */
