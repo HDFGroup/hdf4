@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1992/09/15 19:34:24  chouck
-Fixed minor typo
+Revision 1.9  1992/09/17 21:19:36  chouck
+Fixed backup file name so VMS would be happy.  No backups for PCs
 
+ * Revision 1.8  1992/09/15  19:34:24  chouck
+ * Fixed minor typo
+ *
  * Revision 1.7  1992/09/11  18:32:51  chouck
  * Assorted MAC mungings
  *
@@ -149,6 +152,11 @@ int main(argc, argv)
     }
 
     /* if there is a file name given in the command line, open it */
+
+#ifdef PC
+	backup = FALSE;
+#endif /* PC */
+
     if (fileName) he_status = openFile(fileName, backup);
 
     /* read, execute loop */
@@ -338,7 +346,7 @@ char *backupName(file)
     char *file;
 #endif
 {
-    return catStr(file, "~hdfed~");
+    return catStr(file, "$hdfed$");
 }
 
 #ifdef PROTOTYPE
