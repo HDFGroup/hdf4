@@ -23,19 +23,17 @@
   2.4.6 Compiling, Testing and Installing
 
   2.5 Platform-specific Notes
-  2.5.1 Linux v2.2.6 
-  2.5.2 Solaris(2.6) on Sparc
-  2.5.3 Solaris(2.5.1) on INTEL(x86)
-  2.5.4 OpenVMS AXP and OpenVMS VAX
-  2.5.5 Windows '95 or Windows NT, and Alpha NT
-  2.5.6 Macintosh OS - Power PC
-  2.5.7 Exemplar (HP-UX 9.03)
-  2.5.8 SP2 Single node
-  2.5.9 T3E Single node
-  2.5.10a SGI IRIX 6.x
-  2.5.10b SGI IRIX64
-  2.5.11 DEC Alpha(Digital Unix v4.0)
-  2.5.12 SunOS 4.1.4
+  2.5.1 Solaris on Sparc
+  2.5.2 Solaris on INTEL(x86)
+  2.5.3 OpenVMS AXP on DEC Alpha
+  2.5.4 Windows 98/NT/2000
+  2.5.5 Macintosh OS - Power PC    ** Not Supported **
+  2.5.6 Exemplar 
+  2.5.7 SP2 Single node
+  2.5.8 T3E Single node
+  2.5.9a SGI IRIX 6.x
+  2.5.9b SGI IRIX64
+  2.5.10 DEC Alpha
 
   2.6 Pablo Instrumentation
   2.7 File Cache(Beta release)
@@ -97,24 +95,20 @@
   HP9000/755(HP-UX B.11.00)       CC A.11.00.13    f77 B.11.00.01
   Exemplar(HP-UX B.10.01)         CC V2.0          f77 V1.2.6
   Cray J90 (bob.1 10.0.0.7)       CC 6.3.0.2       Cray Fortran 3.4.0.1.0 
-  IBM SP (single node, v4.2)      XLC 5.0.1.0      f77 07.01.0000.0002 
+  IBM SP (single node, v4.3)      XLC 5.0.1.0      f77 07.01.0000.0002 
   DEC Alpha/Digital Unix v4.0     DEC C v5.2-040   Digital Fortran v4.1-92 
   DEC Alpha/OpenVMS AXP v7.1      DEC C v5.6-003   Digital Fortran 77 X7.1-156  
   IBM PC - Intel Pentium
        Solarisx86 (2.5.1)         GCC 2.7.2          -                
        Linux      (2.2.16)        GCC 2.95.2       g77  0.5.25    
        FreeBSD    (4.1.1)         GCC 2.95.2       GNU f77 V0.5.25
-  PowerMac 7600/120 (MacOS 8.5.1) -                -
   Windows NT/98/2000              MSVC++ 6.0       DEC Visual Fortran 6.0
   T3E (sn6711 2.0.539b)           Cray CC 6.3.0.2  Cray Fortran 3.4.0.1.0
 
 
   NOTE:  Platforms listed with compiler information entered, are 
   platforms that HDF was tested on and for which we provide 
-  pre-compiled binaries.  If a platform is listed, but there is a '-' 
-  in the C and Fortran fields, then we 'support' this platform, even 
-  though we have done no testing on it.  We will try our best to 
-  answer any questions regarding it.
+  pre-compiled binaries.  
 
  
 2.2  Third Party Software Requirements:
@@ -343,63 +337,9 @@
 2.5 Platform-specific Notes
     ========================
 
-    2.5.1 Linux v2.2.6 
-    ------------------
-    Linux has two incompatible libraries, 'glibc' and 'libc5'.  The
-    HDF library was compiled on Red Hat 2.2.6, with 'glibc'
-    (/lib/libc.so.7).  If you want to use HDF on Linux with 'libc'
-    you may encounter runtime errors (SEGMENTATION VIOLATIONS).
-    If so, you will need to compile the HDF library from source.
 
-    To determine the versions of libc for x86 based Linux, type:
-
-       ls -l /lib/libc.so.*
-
-    What you are looking for are lines of the form
-
-       /lib/libc.so.<num>
-
-    If all you see are lines where <num> is 5, then you have libc5, and
-    may have problems.  If you have a line where <num> is 6, then you have
-    glibc, and you should be OK.  An additional check is to look in /lib
-    for libdl.so.<num>.  If at least one <num> here is 2, then you definitely
-    have a glibc system and you should have no problem.
-
-    In addition, the Fortran tests fail in hdf/test/manf.f.
-
-    Comment out the code in hdf/test/manf.f as shown below to 
-    workaround this problem:
-
-....
-C**************************************************************
-C
-C  man_check_lab_desc:  read and compare label and description
-C                   with expected ones
-C
-C**************************************************************
-      subroutine man_check_lab_desc(fname, tag, ref, label, desc,
-     *                          num_failed)
-
-....
-C ***** Test if the file fname is an HDF file
-C
-C
-      ret = hishdff(fname)
-      if (ret .ne. 1) then
-          num_failed = num_failed + 1
-          write(*,*) 'HISHDFF function failed'
-      endif
-C
-C  The 'hdfstring' call crashes for some reason--commented out
-C
-C      ret = hestringf(0, error_message)
-C       if (ret .ne. 0) then
-C          num_failed = num_failed + 1
-C          write(*,*) 'HESTRINGF function failed'
-C      endif
-
-    2.5.2 Solaris(2.6) on Sparc
-    ---------------------------
+    2.5.1 Solaris on Sparc
+    ----------------------
     The distribution has been compiled/tested with the native
     ANSI-C compiler and native fortran compiler. The binary 
     distribution was compiled using the native compilers.
@@ -414,8 +354,8 @@ C      endif
          -L/usr/lib -lnsl
 
 
-    2.5.3 Solaris(2.5.1) on INTEL(x86)
-    --------------------------------
+    2.5.2 Solaris on INTEL(x86)
+    ---------------------------
 
     The distribution has been compiled/tested with GCC 2.7.2 with
     *NO* FORTRAN support.
@@ -429,10 +369,10 @@ C      endif
            -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz  \
            -L/usr/lib -lnsl
 
-    2.5.4 OpenVMS AXP on DEC Alpha and OpenVMS on VAX
-    -------------------------------------------------
+    2.5.3 OpenVMS AXP on DEC Alpha
+    ------------------------------
    
-   To build the HDF Library on VAX OpenVMS and Alpha OpenVMS systems use
+   To build the HDF Library on Alpha OpenVMS systems use
     MAKEVMS.COM file in the top level directory of the VMS Library source.
                                                        -------------------
 
@@ -494,9 +434,8 @@ C      endif
              which start with 'For VMS', in these files.
 
 
-    2.5.5 Windows '98 and  Windows NT
-    ---------------------------------------------
-
+    2.5.4 Windows 98/NT/2000
+    ------------------------
 
       Install HDF4.1 Release 4 on Windows NT, Windows 2000 and Windows 98
 
@@ -828,8 +767,9 @@ dialog.
 
 
 
-    2.5.6 Macintosh OS - Power PC
-    ------------------------------------------
+    2.5.5 Macintosh OS - Power PC - 
+    -------------------------------
+    **** NOT SUPPORTED WITH HDF 4.1r4 ****
 
     The distribution was compiled/tested with MetroWerks Codewarrior(CW Pro1).
     Only the base libraries {jpeg.PPC.lib, z.PPC.lib, hdflib.PPC.lib,
@@ -843,7 +783,7 @@ dialog.
     You need to compile the libraries before you can compile the test 
     programs 'testhdf', 'xdrtest', 'cdftest', 'hdftest' and  'nctest'.
 
-    2.5.6.1 Special Notes
+    2.5.5.1 Special Notes
     *********************
     1. The test programs are SIOUX applications.
     
@@ -856,7 +796,7 @@ dialog.
     4. Distribution also contains projects files to build utilities,
        but utilities were not tested.
 
-    2.5.6.2 Building the Distribution
+    2.5.5.2 Building the Distribution
     *********************************
     The distribution  and tests need to be built in the order specified below.
     Codewarrior Projects with the targets for Power PC and 68K can be 
@@ -884,7 +824,7 @@ dialog.
 
     Note that only the PPC version of the libraries and tests are supported.
 
-    2.5.6.3 Testing the Distribution
+    2.5.5.3 Testing the Distribution
     ********************************
     Run the tests in the following order:
       
@@ -908,7 +848,7 @@ dialog.
 
        5. mfhdf/nctest/nctest
 
-    2.5.6.4 Building utilities  
+    2.5.5.4 Building utilities  
     ********************************
 
     Codewarrior Projects for utilities can be found in the following
@@ -932,7 +872,7 @@ dialog.
                          R8ToHDF/R8ToHDF.project.hqx 
                          RISToHDF/RISToHDF.project.hqx
 
-    2.5.7 Exemplar
+    2.5.6 Exemplar
     --------------
     HP Exemplar (Convex) machines running version 10.x of HP-UX are now only
     able to be configured for HP-UX.  If you are running an Exemplar with an
@@ -944,7 +884,7 @@ dialog.
     Otherwise, the machine will be configured for HP-UX.
         
 
-    2.5.8 SP2 Single node
+    2.5.7 SP2 Single node
     ----------------------
     HDF has been compiled and tested to run in a single node of the
     SP2 system.  You can make the library the same way you would on an
@@ -953,8 +893,8 @@ dialog.
     since HDF code does not support concurrent access to the same file.
 
 
-    2.5.9 T3E Single node
-    -------------------------
+    2.5.8 T3E Single node
+    ---------------------
     HDF has been compiled and tested to run in a single node of the
     T3E system.  It is compiled with the '-X m' to produce malleable
     code which can be executed with multiple processing elements (PEs).
@@ -977,8 +917,8 @@ dialog.
     the testing.
 
 
-    2.5.10a SGI IRIX 6.x
-    --------------------------
+    2.5.9a SGI IRIX 6.x
+    -------------------
     IRIX is the traditional SGI 32-bit OS.  Starting in version 6.x,
     it supports two classes of 32 bit compilers, the old 32 (-o32)
     and the new 32-bits (-n32).  SGI is phasing out the -o32 compilers.
@@ -989,8 +929,8 @@ dialog.
     of "General Configuration/Installation" for more information.
 
 
-    2.5.10b SGI IRIX64
-    --------------------------
+    2.5.9b SGI IRIX64
+    -----------------
     IRIX64 supports multiple combinations of ABI (-64, -n32, -o32) and
     instruction sets (-mips2, -mips3, -mips4).  Previous HDF
     library releases had hard coded the MIPS settings by guessing what
@@ -1011,19 +951,14 @@ dialog.
     of "General Configuration/Installation" for more information.
 
 
-    2.5.11 DEC Alpha(Digital Unix v4.0)
-    ------------------------------------
+    2.5.10 DEC Alpha
+    ----------------
     The distribution has been compiled/tested with the native Digital 
     Unix C and FORTRAN compilers.
 
     During the testing of the library the test 'mfhdf/libsrc/hdftest' 
     will report "Unaligned access ..." messages which can be ignored.
 
-    2.5.12 SunOS 4.1.4
-    ------------------
-    When building the HDF libraries on SunOS, you will need to replace 
-    the hdf/test/mgrf.f file with the file mgrf_sunOS.f in order for the 
-    tests to compile properly.
 
 2.6 Pablo Instrumentation
     =====================
