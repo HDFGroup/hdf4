@@ -1,0 +1,684 @@
+#! /bin/sh
+# run the hdf4/bin/snapshot
+# Usage:
+#	runtest		run the test for the local host
+#	runtest <hostname>	run the test for <hostname>
+#	runtest -all		run the test for all predefined hosts
+#
+# Assumptions in knowing where to find the right scripts to execute.
+# 1. assume we are at the top level of the hdf4 source.  So, bin/* are
+#    where the script files are.
+# 2. after the cvs update is completed, we can go to the snapshot area
+#    hdf4 source tree and use the bin/* there.
+# 3. Cannot use the snapshot area scripts from the beginning because
+#    for one, the current directory is renamed as previous right after
+#    a snapshot release; and for another, some scripts may be changed
+#    by the cvs update while it is being used.
+
+# local setup
+DEBUGMODE=""
+test -n "$DEBUGMODE" && echo "******** DEBUGMODE is $DEBUGMODE ************"
+WHEREAMI='pwd'
+
+# the name of this program
+PROGNAME="bin/runtest $DEBUGMODE"
+
+# Setup
+HOSTNAME=`hostname | cut -f1 -d.`	# no domain part
+H4DIR=$HOME/HDF4/v_1_5/hdf4
+TODAY=`date +%y%m%d`
+WEEKDAY=`date +%a`
+H4VER=			# default to current CVS version
+H4VERSTR=		# default to current CVS version
+
+# Default to do checkout (only once) and test, no release.
+# If srcdir is not used, don't launched multiple tests
+SNAPSHOT="${DEBUGMODE:+echo }bin/snapshot"
+SRCDIR=""
+# Default standard Snaptest commands
+SNAPCMD="$SRCDIR test clean"
+# Default Standard snaptest command options
+STANDARD_OPT=""
+ENABLE_PARALLEL="--enable-parallel"
+
+#***************
+# Various hosts
+#***************
+# DEC
+# Gondolin: DEC
+#DECHOST="skydive"	# skydive is dead.
+			# gondolin rsh/ssh don't work. run as alone-host.
+# HP
+# sangamon: HPUX 10
+# kelgia: HPUX 11
+HPHOST="kelgia sangamon"	# HPUX 10 & 11 
+
+# Linux
+# Dangermouse, eirene: Linux
+# Dangermouse used to die if gmake -j is used.
+LINUXHOST=eirene
+
+# SGI O2K
+# modi4:	R10K,  IRIX64 6.5, default to -64,-mips4
+#		Testing {parallel,serial}x{-64,-n32}x
+O2KHOST=modi4
+# regular, unleaded, premium:
+#		R10K,  IRIX64 6.5, default to -n32,-mips4
+# impact7:	R4400, IRIX 6.5,   default to -n32,-mips3
+# o2-N:		R10K,  IRIX 6.5,   default to -n32,-mips4
+# paz:		R4400, IRIX 6.5,   default to -n32,-mips3
+SGIHOST="regular impact7 o2-3"	
+
+# Sun
+SUNHOST="arabica baldric"	# solaris 2.6 and 2.7
+
+# FreeBSD
+# AFS does not work well in hawkwind.  Use NFS/local space for its
+# test directory.  ssh does not work for it either.
+FREEBSDHOST="hawkwind"
+
+# set up default all hosts to test
+ALLHOSTS="$O2KHOST $SUNHOST $SGIHOST $HPHOST $LINUXHOST $DECHOST $FREEBSDHOST"
+
+# test hosts
+TESTHOST=""
+
+#################################
+# Function definitions
+#################################
+
+# Print messages to stdout
+# Use this to show output heading to stdout
+PRINT()
+{
+    echo "$*"
+}
+
+# Show seconds since midnight.
+# This is used to calculate seconds elapsed
+SecOfDay()
+{
+    set `date '+%H %M %S'`
+    t_sec=`expr $1 \* 3600 + $2 \* 60 + $3`
+    echo $t_sec
+}
+
+# Calculated the elapsed time (in seconds) between the first
+# and second time.  If second time is smaller than the first,
+# we assume the clock has passed midnight and calculate appropriately.
+ElapsedTime()
+{
+    if [ $2 -lt $1 ]; then
+	t_sec=`expr 3600 \* 24 - $1 + $2`
+    else
+	t_sec=`expr $2 - $1`
+    fi
+    echo `expr $t_sec / 60`m `expr $t_sec % 60`s
+}
+
+# Report errors
+# $1--an error message to be printed
+REPORT_ERR()
+{
+    ERRMSG=$1
+    # print it with a banner shifted right a bit
+    PRINT "	*************************************"
+    PRINT "	`date`"
+    PRINT "	$ERRMSG"
+    PRINT "	*************************************"
+    # report it in the FAILED-LOG file too
+    PRINT "$ERRMSG" >> $FAILEDLOG
+}
+
+#
+# Report results of the last test done
+REPORT_RESULT()
+{
+    if [ $retcode -eq 0 ]; then
+	PRINT "PASSED ${HOSTNAME}: $TEST_TYPE" | tee -a $PASSEDLOG
+    else
+	# test failed.
+	REPORT_ERR "****FAILED ${HOSTNAME}: $TEST_TYPE****"
+    fi
+}
+
+# Print a blank line
+PRINT_BLANK()
+{
+    PRINT
+}
+
+# Print test trailer
+PRINT_TEST_TRAILER()
+{
+    PRINT "*** finished $TEST_TYPE tests for $HOSTNAME ***"
+    date; EndTime=`SecOfDay`
+    PRINT Total time = `ElapsedTime $StartTime $EndTime`
+    PRINT_BLANK
+}
+
+# Print trailer summary
+PRINT_TRAILER()
+{
+    PRINT "*** finished tests in $HOSTNAME ***"
+    date; TotalEndTime=`SecOfDay`
+    PRINT Grand total tests time = `ElapsedTime $TotalStartTime $TotalEndTime`
+    PRINT_BLANK
+}
+
+# Figure out which remote command to use to reach a host.
+# Try rsh first, then ssh.
+# $1--hostname to reach.
+CHECK_RSH()
+{
+    # Figure out how to use ping command in this host.
+    # Some hosts use "ping host count", some use "ping -c count host"
+    # Test "ping -c ..." style first because some '-c' machines treat
+    # the command 'ping localhost 3' means to ping host '3'.
+    if [ -z "$PING" ]; then
+	if ping -c 3 localhost >/dev/null 2>&1; then
+	    PING='ping -c 3'
+	    PINGCOUNT=
+	elif ping localhost 3 >/dev/null 2>&1; then
+	    PING=ping
+	    PINGCOUNT=3
+	else	# don't know how to use ping.
+	    PING=no_ping
+	    PINGCOUNT=
+	fi
+    fi
+    #
+    host=$1
+    # Try remote command with host if it responds to ping.
+    # Still try it if we don't know how to do ping.
+    if [ no_ping = "$PING" ] || $PING $host $PINGCOUNT >/dev/null 2>&1; then
+	if rsh $host -n hostname >/dev/null 2>&1; then
+	    RSH=rsh
+	elif ssh $host -n hostname >/dev/null 2>&1; then
+	    RSH=ssh
+	else
+	    PRINT cannot remote command with $host
+	    RSH="NoRemoteCommand"
+	fi
+    else
+	RSH="NotReachable"
+    fi
+}
+
+
+# Wait for a file for at most number of minutes
+# $1--the file
+# $2--number of minutes
+# WAIT_STATUS set to:
+#	-1 if errors encountered
+#	0  if file found within time limit
+#	1  if file not found within time limit
+WAITFOR()
+{
+    wait_file=$1
+    nminutes=$2
+    if [ -z "$wait_file" -o ! "$nminutes" -ge 0 ]
+    then
+	PRINT "errors in argument of WAITFOR(): wait_file($1) or nminutes($2)"
+	WAIT_STATUS=-1
+	return
+    fi
+    while [ ! -f $wait_file ]; do
+	if [ $nminutes -gt 0 ]; then
+	    PRINT "Wait For $wait_file to appear"
+	    sleep 60			#sleep 1 minute
+	else
+	    WAIT_STATUS=1
+	    return
+	fi
+	nminutes=`expr $nminutes - 1`
+    done
+    WAIT_STATUS=0
+    return
+}
+
+
+# Wait till a file disappears for at most number of minutes.
+# Useful to wait till a lock is removed by another process.
+# $1--the file
+# $2--number of minutes
+# WAIT_STATUS set to:
+#	-1 if errors encountered
+#	0  if file disappears within time limit
+#	1  if file has not disappeared within time limit
+WAITTILL()
+{
+    wait_file=$1
+    nminutes=$2
+    if [ -z "$wait_file" -o ! "$nminutes" -ge 0 ]
+    then
+	PRINT "errors in argument of WAITTILL(): wait_file($1) or nminutes($2)"
+	WAIT_STATUS=-1
+	return
+    fi
+    while [ -f $wait_file ]; do
+	if [ $nminutes -gt 0 ]; then
+	    PRINT "Wait till $wait_file has disappeared"
+	    sleep 60			#sleep 1 minute
+	else
+	    WAIT_STATUS=1
+	    return
+	fi
+	nminutes=`expr $nminutes - 1`
+    done
+    WAIT_STATUS=0
+    return
+}
+
+
+# Run one snapshot test
+# $*--Types of test being run
+RUNSNAPTEST()
+{
+    SNAPCMD_OPT="$STANDARD_OPT"		# snapshot test option
+    SRCDIRNAME=""
+    CC_SAVED="$CC"
+    PATH_SAVED=$PATH
+    export PATH			# DEC OSF1 needs to export PATH explicitly
+    TEST_TYPE=$*
+    retcode=0
+    date
+    PRINT "*** starting $TEST_TYPE tests in $HOSTNAME ***"
+    PRINT "Uname -a: `uname -a`"
+
+    # Parse the test type and set options accordingly.
+    # See comments of SNAPTEST_CONFIG_PARSE().
+    while [ $# -gt 0 ]; do
+	case $1 in
+	    -n32) # want -n32 option
+		SRCDIRNAME=${SRCDIRNAME}-n32
+		CC="cc -n32"
+		export CC
+		;;
+	    parallel) # want parallel test
+		SNAPCMD_OPT="$SNAPCMD_OPT $ENABLE_PARALLEL"
+		SRCDIRNAME=${SRCDIRNAME}-pp
+		;;
+	    standard) # standard test
+		;;
+	    --*)
+		# option for configure
+		SNAPCMD_OPT="$SNAPCMD_OPT $1"
+		;;
+	    op-configure)
+		# option for configure
+		SNAPCMD_OPT="$SNAPCMD_OPT $1 $2"
+		shift
+		;;
+	    setenv)
+		# set environment variable
+		shift
+		eval $1="$2"
+		export $1
+		shift
+		;;
+	    *) # unknown test
+		PRINT "$0: unknown type of test ($1)"
+		retcode=1
+		;;
+	esac
+	shift
+    done
+    [ $retcode -ne 0 ] && errcode=$retcode && return $retcode
+
+    if [ -n "${SRCDIRNAME}" ]; then
+	SNAPCMD_OPT="$SNAPCMD_OPT srcdirname ${SRCDIRNAME}"
+    fi
+
+    # Setup log file name to save test output
+    LOGFILE=${LOGBASENAME}${SRCDIRNAME}_${TODAY}
+    PRINT "Running snapshot with output saved in"
+    PRINT "   $LOGFILE"
+    (date; PRINT Hostname=$HOSTNAME) >> $LOGFILE
+
+    (
+    cd $SNAPYARD/current
+    $SNAPSHOT $SNAPCMD $SNAPCMD_OPT
+    ) >> $LOGFILE 2>&1
+    retcode=$?
+    [ $retcode -ne 0 ] && errcode=$retcode
+
+    date >> $LOGFILE
+
+    # restore CC, PATH
+    CC="$CC_SAVED"
+    PATH=$PATH_SAVED
+}
+
+
+# configuration parsing.
+# Taking configuration from input.
+# This should be invoke with configure file as stdin.
+# Syntax of the configure file:
+#    All lines started with the # are comment lines and are ignored.
+#    Blank lines are ignored too.
+#    Each config line starts with a "Scope" followed by test types.
+#
+# Scope can be:
+#    standard ...          # what the standard test types are.
+#    <host>: <test>        Do <test> for <host> 
+#    all: <test>           Do <test> for all hosts. 
+#    <weekday>/...         Use this scope if the <weekday> matches.
+#                          <weekday> can be {Mon,Tue,Wed,Thu,Fri,Sat,Sun}
+#    If no <host>: input for a <host>, the standard test is used.
+#
+# Test types:
+#    standard		tests defined in standard scope.
+#    -n32		-n32 mode.  Apply to 64/32 bit OS such as IRIX64.
+#    parallel		parallel mode.
+#    op-configure <option>	configure option
+#    --*		configure option
+#    setenv <name> <value>	set environment variable <name> to <value>
+SNAPTEST_CONFIG_PARSE()
+{
+    while read x y ; do
+	# Scan for entry for this weekday.
+	xd=`echo $x | cut -f1 -d/`
+	if [ "$xd" = ${WEEKDAY} ]; then
+	    # strip away the weekday/ part.
+	    x=`echo $x | cut -f2 -d/`
+	fi
+	case "$x" in
+	    '' | '#'*)
+		# blank or comment lines.  Continue.
+	    	;;
+	    ???/*)
+		# Ignore any entry not of this weekday.
+		;;
+	    standard)
+		#standard configuration
+		STANDARD_OPT="$y"
+		;;
+	    all: | ${HOSTNAME}:)
+		# types of test for all hosts or this host
+		if [ -n "$TEST_TYPES" ]; then
+		    TEST_TYPES="$TEST_TYPES ; $y"
+		else
+		    TEST_TYPES="$y"
+		fi
+		;;
+	    *:)	# ignore types of test for other hosts
+		;;
+	    *)	# unknown configuration option
+		PRINT $x $y
+		PRINT "***Unknown configuration option. Ignored.***"
+		;;
+	esac
+    done
+}
+
+# Snap Test configuration parsing.
+# If TEST_TYPES is not set, set it to do the "standard" test.
+SNAPTEST_CONFIG()
+{
+    TEST_TYPES=
+    STANDARD_OPT=
+    if [ -f $SNAPTESTCFG ]; then
+	SNAPTEST_CONFIG_PARSE < $SNAPTESTCFG
+    fi
+    TEST_TYPES=${TEST_TYPES:-'standard'}
+}
+
+
+# Flush the AFS files if applicable.
+# Hopefully the flushing is done when the tests of this
+# host are done rather than when the launching site try
+# to pull them in at the same time.  This way, the afs
+# server updates are spread out.
+FLUSH_FILES()
+{
+    /usr/afsws/bin/fs flush $SNAPYARD
+}
+
+
+# Show usage page
+USAGE()
+{
+cat <<EOF
+Usage: runtest [-h] [-debug] [-r<version>] [-all] [-nocvs] [<host> ...]
+    -h
+	print this help page
+    -debug
+	turn on debug mode
+    -r<version>
+	do runtest for <version>
+    -all
+	launch tests for all pre-defined testing hosts
+    -nocvs
+	do not do cvs commands
+    <host>
+	launch tests for <host>
+    
+-all and <host> are contradictory and whichever is specified last, is
+the one to take effect.  If neither are given, do the test for the
+local host.
+EOF
+}
+
+
+#################################
+# Main
+#################################
+#################################
+# Set up global variables
+#################################
+retcode=0			# error code of individula task
+errcode=0			# error code of the whole test
+
+
+#################################
+# Parse options
+#################################
+while [ $# -gt 0 ]; do
+    case "$1" in
+	-h) # help--show usage
+	    USAGE
+	    exit 0
+	    ;;
+	-debug*)
+	    # set debug mode
+	    DEBUGMODE="$1"
+	    SNAPSHOT="echo bin/snapshot"
+	    PROGNAME="$PROGNAME $DEBUGMODE"
+	    PRINT "******** DEBUGMODE is $DEBUGMODE ************"
+	    ;;
+	-r*)
+	    # the version string has a leading _ but not for H4DIR name
+	    H4VER="$1"
+	    H4VERSTR=_`echo $H4VER | sed -e s/-r// -e s/\\\./_/g`
+	    H4DIR=$HOME/HDF4/v$H4VERSTR/hdf4
+	    PROGNAME="$PROGNAME $H4VER"
+	    ;;
+	-all)
+	    # cannot assign ALLHOSTS yet.
+	    TESTHOST=-all
+	    ;;
+	-nocvs)
+	    # do not do cvs commands
+	    NOCVS=nocvs
+	    ;;
+	-*) # Unknow option
+	    PRINT "Unknown option ($1)"
+	    USAGE
+	    exit 1
+	    ;;
+	*)
+	    TESTHOST=$*
+	    break
+	    ;;
+    esac
+    shift
+done
+
+#################################
+# Setup snapshot test directories
+#################################
+# Show the real physical path rather than the symbolic path
+SNAPYARD=`cd $HOME/snapshots-hdf4${H4VERSTR} && /bin/pwd`
+# Log file basename
+LOGBASENAME=${SNAPYARD}/log/${HOSTNAME}
+PASSEDLOG=${SNAPYARD}/log/PASSED_LOG_${TODAY}
+FAILEDLOG=${SNAPYARD}/log/FAILED_LOG_${TODAY}
+CVSLOG=${SNAPYARD}/log/CVS_LOG_${TODAY}
+CVSLOG_LOCK=${SNAPYARD}/log/CVS_LOG_LOCK_${TODAY}
+# Snap Test Configuration file
+SNAPTESTCFG=${SNAPYARD}/snaptest.cfg
+
+
+#################################
+# Setup test host(s)
+#################################
+ALLHOSTSFILE=${SNAPYARD}/allhostfile
+if [ -f $ALLHOSTSFILE ]; then
+    ALLHOSTS=`grep -v '#' $ALLHOSTSFILE`
+fi
+if [ "$TESTHOST" = -all ]; then
+    TESTHOST=$ALLHOSTS
+fi
+
+
+#################################
+# Setup to print a trailer summary when exiting not via
+# the normal end of the script.
+#################################
+trap PRINT_TRAILER 0
+
+#
+TotalStartTime=`SecOfDay`
+
+# Process the configuration
+SNAPTEST_CONFIG
+PRINT STANDARD_OPT=$STANDARD_OPT
+PRINT TEST_TYPES=$TEST_TYPES
+PRINT_BLANK
+
+# Do a checkout if one has not been done today
+# Also check MANIFEST file
+if [ -z "$NOCVS" -a ! -f $CVSLOG ]; then
+    PRINT "Running CVS checkout with output saved in"
+    PRINT "   $CVSLOG"
+    # Set CVS lock first
+    touch $CVSLOG_LOCK
+    ($SNAPSHOT checkout ) >> $CVSLOG 2>&1
+    # Save error code and remove the lock
+    errcode=$?
+    rm -f $CVSLOG_LOCK
+    if [ $errcode -ne 0 ]; then
+	# test failed.
+	REPORT_ERR "****FAILED ${HOSTNAME}: CVS checkout****"
+	exit $errcode
+    fi
+    PRINT Checking MAINFEST file ...
+    echo '*** NO bin/chkmanifest yet ***'
+    #(cd $SNAPYARD/current; bin/chkmanifest)
+    errcode=$?
+    if [ $errcode -ne 0 ]; then
+	# test failed.
+	REPORT_ERR "****FAILED ${HOSTNAME}: MANIFEST check****"
+    fi
+    PRINT_BLANK
+else
+    # make sure the cvs update, if done by another host, has completed.
+    # First wait for the presence of $CVSLOG which signals some host
+    # has started the cvs update.  Then wait for the absense of $CVSLOG_LOCK
+    # which signals the host has completed the cvs update.
+    WAITFOR $CVSLOG 90
+    if [ $WAIT_STATUS -ne 0 ]; then
+	errcode=$WAIT_STATUS
+	REPORT_ERR "****FAILED ${HOSTNAME}: Time expired waiting CVS update to start****"
+	exit $errcode
+    fi
+    WAITTILL $CVSLOG_LOCK 10
+    if [ $WAIT_STATUS -ne 0 ]; then
+	errcode=$WAIT_STATUS
+	REPORT_ERR "****FAILED ${HOSTNAME}: Time expired waiting CVS update to finish****"
+	exit $errcode
+    fi
+fi
+
+# we can use the version of script in SNAPYARD/current now
+PROGNAME="$SNAPYARD/current/$PROGNAME"
+
+# Decide to do test for the local host or for remote hosts
+if [ -n "$TESTHOST" -a $HOSTNAME != "$TESTHOST" ]; then
+    date
+    PRINT "*** launching tests from $HOSTNAME ***"
+    PRINT_BLANK
+    TEST_TYPE="launching"
+    cd ${SNAPYARD}/log
+    for h in $TESTHOST; do
+	TMP_OUTPUT="#$h.out"
+	(PRINT "=============="
+	 PRINT "Testing $h"
+	 PRINT "==============") > $TMP_OUTPUT
+	CHECK_RSH $h
+	# run the remote shell command with output to $TMP_OUTPUT
+	case "$RSH" in
+	    rsh|ssh)
+		PRINT $RSH $h -n $PROGNAME
+		# launch concurrent tests only if srcdir is used
+		if [ -n "$SRCDIR" ]; then
+		    $RSH $h -n $PROGNAME &
+		else
+		    $RSH $h -n $PROGNAME
+		fi
+		;;
+	    NoRemoteCommand)
+		PRINT $h does not accept Remote Command
+		;;
+	    NotReachable)
+		PRINT $h is not reachable 
+		;;
+	    *)
+		PRINT "CHECK_RSH for $h returned unknow result ($RSH)"
+		;;
+	esac >> $TMP_OUTPUT 2>&1
+    done
+    # wait for all launched tests to finish, then cat them back out.
+    wait
+    for h in $TESTHOST; do
+	TMP_OUTPUT="#$h.out"
+	cat $TMP_OUTPUT
+	# Verify test script did complete by checking the last lines
+	(tail -2 $TMP_OUTPUT | grep -s '^Grand total' > /dev/null 2>&1) ||
+	    (REPORT_ERR "****FAILED ${h}: snaptest did not complete****" &&
+		PRINT_BLANK)
+	rm $TMP_OUTPUT
+    done
+    exit 0
+fi
+
+# run the test(s)
+# Note that first field is cut without -s but all subsequent cut
+# must use -s.  If -s is not used at all, a $TEST_TYPES that has
+# no ';' (only 1 test), will pass through intact in all cut. That
+# results in infinite looping.
+# If -s is used with the first field, it will suppress completely
+# a $TYPE_TYPES that has no ';' (only 1 tst ).  That results in no
+# test at all.
+# 
+n_test=1
+TEST="`echo $TEST_TYPES | cut -f1 -d';'`"
+while [ -n "$TEST" ]; do
+    StartTime=`SecOfDay`
+    RUNSNAPTEST $TEST
+    REPORT_RESULT
+    PRINT_TEST_TRAILER
+
+    n_test=`expr $n_test + 1`
+    TEST="`echo $TEST_TYPES | cut -f$n_test -s -d';'`"
+done
+
+FLUSH_FILES
+
+PRINT_TRAILER
+
+# disable trailer summary printing since all trailers have been
+# printed and we are exiting normally.
+trap 0
+exit $errcode
