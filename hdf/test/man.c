@@ -85,6 +85,8 @@ check_fann(char *fname)
   int32 ann_handle;
   int32 nflabs, nfdescs, nolabs, nodescs;
   int32 ann_len;
+  uint16 atag;
+  uint16 aref;
   char *ann_label = NULL;
   char *ann_desc = NULL;
   intn  i;
@@ -114,7 +116,11 @@ check_fann(char *fname)
       /* get file label length */
       ann_len = ret = ANannlen(ann_handle);
       RESULT("ANannlen");
-        
+
+      /* see if this routine works */
+      ret = ANget_tagref(an_handle,indx,AN_FILE_LABEL,&atag,&aref);
+      RESULT("ANget_tagref");
+
       /* check ann length */
       if (ann_len != (int32) HDstrlen(file_lab[i]))
         {
@@ -458,7 +464,7 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label[], char *desc[])
 
   /* close file */
   ANend(an_handle);
-  ANend(file_handle);
+  Hclose(file_handle);
 } /* check_lab_desc() */
 
 /****************************************************************
