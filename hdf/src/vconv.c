@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1993/08/20 22:38:37  koziol
-Reduced the static memory of a couple of functions to make the PC happier...
+Revision 1.9  1993/08/28 22:58:07  georgev
+Fixed a few VOIDP casts.
 
+ * Revision 1.8  1993/08/20  22:38:37  koziol
+ * Reduced the static memory of a couple of functions to make the PC happier...
+ *
  * Revision 1.7  1993/08/19  16:45:45  chouck
  * Added code and tests for multi-order Vdatas
  *
@@ -159,14 +162,14 @@ HFILEID f;
         HQuerylength (aid, &bsize);
         if(buf==NULL || bsize>old_bsize) {
             if(buf!=NULL)
-                HDfreespace(buf);
+                HDfreespace((VOIDP)buf);
             if ( (buf= (uint8 *) HDgetspace (bsize)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
             old_bsize=bsize;
           } /* end if */
        stat = Hgetelement (f, (uint16)OLD_VGDESCTAG, ref, (uint8*)buf);
         if (stat == FAIL) {
-            HDfreespace(buf);
+            HDfreespace((VOIDP)buf);
             HRETURN_ERROR(DFE_READERROR,0);
           } /* end if */
 
@@ -188,14 +191,14 @@ HFILEID f;
 		vpackvg (vg, buf, &bsize);
 
         stat = Hputelement (f, VGDESCTAG, ref, (uint8*)buf, bsize);
-        HDfreespace(buf);
+        HDfreespace((VOIDP)buf);
         if (stat == FAIL)
             HRETURN_ERROR(DFE_WRITEERROR,0);
 
         stat = Hnextread (aid, (uint16)OLD_VGDESCTAG, DFREF_WILDCARD, DF_CURRENT);
 	  } /* while */
     Hendaccess (aid);
-    HDfreespace(vg);
+    HDfreespace((VOIDP)vg);
 
 	/* =============================================  */
 	/* --- read all vdata descs  and convert each --- */
@@ -211,14 +214,14 @@ HFILEID f;
         HQuerylength (aid, &bsize);
         if(buf==NULL || bsize>old_bsize) {
             if(buf!=NULL)
-                HDfreespace(buf);
+                HDfreespace((VOIDP)buf);
             if ( (buf= (uint8 *) HDgetspace (bsize)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
             old_bsize=bsize;
           } /* end if */
         stat = Hgetelement (f, tag, ref, (uint8*)buf);
         if (stat == FAIL) {
-            HDfreespace(buf);
+            HDfreespace((VOIDP)buf);
             HRETURN_ERROR(DFE_READERROR,0);
           } /* end if */
 
@@ -234,20 +237,20 @@ HFILEID f;
 
         stat = Hputelement (f, VSDESCTAG, ref, (uint8*)buf, bsize);
         if (stat == FAIL) {
-            HDfreespace(buf);
+            HDfreespace((VOIDP)buf);
             HRETURN_ERROR(DFE_WRITEERROR,0);
           } /* end if */
 
 		/* duplicate a tag to point to vdata data */
         stat = Hdupdd (f, NEW_VSDATATAG, ref, (uint16)OLD_VSDATATAG, ref);
-        HDfreespace(buf);
+        HDfreespace((VOIDP)buf);
          if (stat == FAIL)
             HRETURN_ERROR(DFE_DUPDD,0);
         stat = Hnextread (aid, (uint16)OLD_VSDESCTAG, DFREF_WILDCARD, DF_CURRENT);
 	  } /* while */
 
     Hendaccess (aid);
-    HDfreespace(vg);
+    HDfreespace((VOIDP)vg);
 
 	return(1);
 
