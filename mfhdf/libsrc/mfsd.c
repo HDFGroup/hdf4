@@ -1,8 +1,31 @@
-/*
- * This file contains the HDF/netCDF based multi-file interface for SDSs
- */
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
 
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
+/* $Id$ */
+
+/* -------------------------------- mfsd.c -------------------------------- */
 /*
+
+  This file contains the HDF/netCDF based multi-file interface for SDSs
+
+  All of the routines that make up this interface have names beginning
+  with SD.  Routines beginning with SDI are internal routines and
+  should not be used outside of this module.
+
+  Defining SDDEBUG will print status messages to stderr
 
 Reading interface:
 ------------------
@@ -22,9 +45,6 @@ status = SDreaddata(sdsid, ...);
 status = SDgetrange(sdsid, ...);
 
 status = SDend(fid);
-
-Questions, should the index parameter to SDselect() be zero based or one
-based?  Right now, it is zero based.
 
 */
 
@@ -49,12 +69,22 @@ PRIVATE int32 SDIfreevarAID
 PRIVATE intn SDIapfromid
     PROTO((int32 id, NC ** handlep, NC_array *** app));
 
+
 /* ---------------------------- SDIhandle_from_id ---------------------------- */
 /*
 
-  Map an ID of type typ to a handle.  Return NULL on error
+ NAME
+	SDIhandle_from_id -- get the handle from this object
+ USAGE
+	NC * SDIhandle_from_id(id, type)
+        in32 id;                IN: an object (file, dim, dataset) ID
+        intn type;              IN: the type of ID this is
+ RETURNS
+        NULL or the handle
+ DESCRIPTION
+        Map an ID to the handle for this file
 
-*/
+--------------------------------------------------------------------------- */
 PRIVATE
 #ifdef PROTOTYPE
 NC * SDIhandle_from_id(int32 id, intn typ)
@@ -81,11 +111,22 @@ intn typ;
 
 } /* SDIhandle_from_id */
 
-/* ------------------------------ SDIget_var ------------------------------ *//*
 
-  Given a valid handle and an sdsid find the NC_var record for this variable
+/* ------------------------------ SDIget_var ------------------------------ */
+/*
 
-*/
+ NAME
+	SDIget_var -- get the variable record
+ USAGE
+	NC_var * SDIget_var(handle, id)
+        NC   * handle;            IN: the handle for this file
+        in32   id;                IN: a dataset ID
+ RETURNS
+        NULL or the variable object
+ DESCRIPTION
+        Map an ID and a handle to the NC_var object for this dataset
+
+--------------------------------------------------------------------------- */
 PRIVATE
 #ifdef PROTOTYPE
 NC_var * SDIget_var(NC *handle, int32 sdsid)
@@ -106,19 +147,29 @@ int32 sdsid;
         ap = (NC_array **)handle->vars->values;
         ap += varid;
     } else {
-        return(NULL);
+        return (NULL);
     }
     
-    return((NC_var *)*ap);
+    return ((NC_var *)*ap);
     
 } /* SDIget_var */
 
 
-/* ------------------------------ SDIget_dim ------------------------------ *//*
+/* ------------------------------ SDIget_dim ------------------------------ */
+/*
 
-  Given a valid handle and an dimid find the NC_dim record for this dimension
+ NAME
+	SDIget_dim -- get the dimension record
+ USAGE
+	NC_var * SDIget_dim(handle, id)
+        NC   * handle;            IN: the handle for this file
+        in32   id;                IN: a dimension ID
+ RETURNS
+        NULL or the variable object
+ DESCRIPTION
+        Map an ID and a handle to the NC_dim object for this dimension
 
-*/
+--------------------------------------------------------------------------- */
 PRIVATE
 #ifdef PROTOTYPE
 NC_dim * SDIget_dim(NC *handle, int32 id)
@@ -150,11 +201,19 @@ int32 id;
 /* ------------------------------- SDstart -------------------------------- */
 /*
 
-  Do what is required to initialize the SDS interface
+ NAME
+	SDstart -- open a file
+ USAGE
+	int32 SDstart(path, HDFmode)
+        char * path;           IN: file name to open
+        int32  HDFmode;        IN: access mode to open file with
+ RETURNS
+        A file ID or FAIL
+ DESCRIPTION
+        Open a file by calling ncopen() or nccreate() and return a
+        file ID to the file.
 
-  Return FAIL on failure file ID otherwise.
-
-*/
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 SDstart(char *name, int32 HDFmode)
 #else
@@ -203,11 +262,18 @@ int32 SDstart(name, HDFmode)
 
 /* -------------------------------- SDend --------------------------------- */
 /*
-  Close the file
-  
-  Return FAIL on failure, SUCCEED otherwise
 
-*/
+ NAME
+	SDend -- close a file
+ USAGE
+	int32 SDend(id)
+        int32 id;               IN: file ID of file to close
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Close the file
+
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 SDend(int32 id)
 #else
@@ -260,13 +326,25 @@ int32 id;
 } /* SDend */
 
 
-/* ------------------------------- SDnumber ------------------------------- */
+/* ------------------------------ SDfileinfo ------------------------------ */
 /*
-  Return the number of SDS-type objects and global attributes in the file
 
-  Return FAIL on error 
+ NAME
+	SDfileinfo -- get info about an open file
+ USAGE
+	int32 SDfileinfo(fid, datasets, attrs)
+        int32   id;               IN:  file ID
+        int32 * datasets;         OUT: number of datasets in the file
+        int32 * attrs;            OUT: number of global attributes
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Return the number of datasets and global attributes in the file.
+        NOTE:  the number of datasets includes coordinate variable
+        datasets.  The routine SDiscoordvar() should be used if the
+        distinction is important.
 
-*/
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 SDfileinfo(int32 fid, int32 *datasets, int32 *attrs)
 #else
@@ -299,37 +377,37 @@ int32 * attrs;
 
 } /* SDfileinfo */
 
+
 /* ------------------------------- SDselect ------------------------------- */
 /*
-  
-  Return an id for the index-th data set in the file
 
-  How are we going to construct SDS ids?  We've got 32bits, the current
-     plan is
+ NAME
+	SDselect -- get a dataset ID
+ USAGE
+	int32 SDend(fid, index)
+        int32 id;               IN: file ID
+        int32 index;            IN: index of dataset to get ID for
+ RETURNS
+        An ID to a dataset else FAIL
+ DESCRIPTION
+        Return an id for the index-th data set in the file
 
-     sdsID:
+        We've got 32bits, the current ID looks like:
 
-     32       24       16               0
-     ------------------------------------
-     |  fid   | id-type| position index |
-     ------------------------------------
+        sdsID:
+        
+        32       24       16               0
+        ------------------------------------
+        |  fid   | id-type| position index |
+        ------------------------------------
+        
+        fid is the netCDF based file ID (i.e. from ncopen).  ID type
+        is SDSTYPE defined in mfhdf.h and position index is the 
+        position in the file of this dataset.
 
-     Since an fid is 32bits and we need to shove it down to 8bits we
-  need to hack it.  In hfile.h it is defined that there can be at most
-  MAX_FILE objects open at a time.  Rip that part of the fid out and
-  store it in the sdsID when we need an fid we'll have to rebuild it
-  from the info we have stored.  UGLY.
-
-  The other option would be to have a table of pointers to vars and then
-  the sdsID would just be an index into that table (and we'd have to
-  make sure all of the necessary info was available from the table
-  entry).
-
-  Maybe it would be better to store the netCDF file id rather than the 
-  HDF one -- it would then be easier to map to the handle where all
-  of the action is anyway.
-
-*/
+        The position index is zero based
+        
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 SDselect(int32 fid, intn index)
 #else
@@ -366,12 +444,28 @@ intn  index;
 /* ------------------------------ SDgetinfo ------------------------------- */
 /*
 
-  Return basic information about a dataset (name, rank, dimsizes, number
-    of attributes, number type, etc...)
+ NAME
+	SDgetinfo -- get info about a dataset
+ USAGE
+	int32 SDgetinfo(sdsid, name, rank, dimsizes, nt, atttr)
+        int32   sdsid;               IN:  dataset ID
+        char  * name;                OUT: name of the dataset
+        int32 * rank;                OUT: rank of the dataset
+        int32 * dimsize;             OUT: array of dimension siszes
+        int32 * nt;                  OUT: number type of data
+        int32 * attr;                OUT: the number of local attributes
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        The user is repsonsible for allocating space to hold
+        the dataset name.  It can be at most MAX_NC_NAME 
+        characters in length.  NULL can be passed for the name
+        if it is not required.
 
-  Return FAIL on error else SUCCEED
-
-*/
+        dimsizes should be an array to hold the dimension sizes
+        a dataset can have at most MAX_VAR_DIMS dimensions.
+ 
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 SDgetinfo(int32 sdsid, char *name, int32 *rank, int32 *dimsizes, 
                 int32 *nt, int32 *nattr)
@@ -416,7 +510,7 @@ int32 *rank, *nt, *nattr, *dimsizes;
         dimsizes[i] = (int32) var->shape[i];
 
     if(dimsizes[0] == NC_UNLIMITED) {
-        if(handle->is_hdf)
+        if(handle->file_type == HDF_FILE)
             dimsizes[0] = var->numrecs;
         else
             dimsizes[0] = handle->numrecs;
@@ -430,14 +524,25 @@ int32 *rank, *nt, *nattr, *dimsizes;
 
 } /* SDgetinfo */
 
+
 /* ------------------------------ SDreaddata ------------------------------- */
 /*
 
-  Read some data out of the given sdsID
-
-  Return SUCCEED else FAIL
-
-*/
+ NAME
+	SDreaddata -- read a hyperslab of data
+ USAGE
+	int32 SDreaddata(sdsid, start, stride, edge, data)
+        int32   sdsid;               IN:  dataset ID
+        int32 * start;               IN:  coords of starting point
+        int32 * stride;              IN:  stride along each dimension
+        int32 * edge;                IN:  number of values to read per dimension
+        VOIDP   data;                OUT: data buffer
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Read a hyperslab of data from the given variable.
+ 
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 SDreaddata(int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data)
 #else
@@ -480,9 +585,9 @@ VOIDP data;
     handle->xdrs->x_op = XDR_DECODE ;
    
     /* 
-     * figure out the index of the variable to write to
+     * figure out the index of the variable to read from
      * the user might have passed us a dimension, in which
-     * case we want to write to its coordinate variable
+     * case we want to reade from its coordinate variable
      */
     if(dim) {
 
@@ -536,54 +641,28 @@ VOIDP data;
 } /* SDreaddata */
 
 
-#if 0
-/* ---------------------------- SDgetrefnumber ---------------------------- */
-/*
-
-  Given an sdsID return its reference number.  Return 0 on error.
-
-*/
-uint16
-#ifdef PROTOTYPE
-SDgerefnumber(int32 sdsid)
-#else
-SDgetrefnumber(sdsid)
-int32 sdsid;
-#endif
-{
-
-    NC     * handle;
-    NC_var * var;
-
-#ifdef SDDEBUG
-    fprintf(stderr, "SDgetrefnumber: I've been called\n");
-#endif
-
-    handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL) 
-        return 0;
-
-    var = SDIget_var(handle, sdsid);
-    if(var == NULL)
-        return 0;
-
-    return ((uint16) var->data_ref);
-
-} /* SDgetrefnumber */
-
-#endif /* 0 */
-
 /* ---------------------------- SDnametoindex ----------------------------- */
 /*
 
-  Given a data set name return the index (not ID) of the first data set
-  whose name matches.
+ NAME
+	SDnametoindex -- map a dataset name to an index
+ USAGE
+	int32 SDnametoindex(fid, name)
+        int32   fid;               IN: file ID
+        char  * name;              IN: name of dataset to search for
+ RETURNS
+        Index of a dataset or FAIL
+ DESCRIPTION
+        Given a data set name return the index (not ID) of the 
+        first data set whose name matches.
 
-  As of this writing, there could be multiple data sets with the same name
+        There can be multiple data sets with the same name.  In 
+        such a case we only ever return the index of the first
+        such dataset.
 
-  Return FAIL on error
+        Wildcards are not supported
 
-*/
+--------------------------------------------------------------------------- */
 int32
 #ifdef PROTOTYPE
 SDnametoindex(int32 fid, char *name)
@@ -626,28 +705,30 @@ char  *name;
 
 
 /* ------------------------------ SDgetrange ------------------------------ */
-
 /*
 
-  Simulate a call to DFSDgetrange()
+ NAME
+	SDgetrange -- simulate a call to DFSDgetrange
+ USAGE
+	int32 SDgetrange(id, max, min)
+        int32 id;               IN:  dataset ID
+        VOIDP max;              OUT: valid max
+        VOIDP min;              OUT: valid min
+ RETURNS
+        On error or missing attributes return FAIL else SUCCEED.
+ DESCRIPTION
+        If a "valid_range" attribute is provided return its 
+        values in pmax and pmin.  Else if both a "valid max" 
+        AND a "vaild min" exist return their values in pmax and pmin.
 
-  If a "valid_range" attribute is provided return its values in pmax and 
-  pmin.  Else if both a "valid max" AND a "vaild min" exist return their 
-  values in pmax and pmin.
+        Arrgghh, in HDF it was assumed that the max and min values 
+        were of the same data type as the rest of the data.  So 
+        the user would know the amount of storage to send to get 
+        back the max and min values.  This is not the case with 
+        netCDF.  This routine will only work if they are already 
+        the same number types.
 
-  Arrgghh, in HDF it was assumed that the max and min values were of the 
-  same data type as the rest of the data.  So the user would know the
-  amount of storage to send to get back the max and min values.  This is 
-  not the case with netCDF.  I think for the "range" calls we will cast the
-  values over to the type of the data set.  If people want the full 
-  resolution, they should use the getattr() interface.
-
-  Actually, that gets really gross.  For now, things will only work if
-  they are already the same number types.
-
-  On error or missing attributes return FAIL else SUCCEED.
-
-*/
+--------------------------------------------------------------------------- */
 intn
 #ifdef PROTOTYPE
 SDgetrange(int32 sdsid, VOIDP pmax, VOIDP pmin)
@@ -739,18 +820,34 @@ status  = SDendaccess(sdsid);
 /* ------------------------------- SDcreate ------------------------------- */
 /*
 
-  Simulate a call to ncvardef without having to be in define mode
+ NAME
+	SDcreate -- create a new dataset
+ USAGE
+	int32 SDcreate(fid, name, nt, rank, dimsizes)
+        int32   fid;              IN: file ID
+        char  * name;             IN: dataset name
+        int32   nt;               IN: dataset number type
+        int32   rank;             IN: rank of dataset
+        int32 * dimsizes;         IN: array of dimension sizes
+ RETURNS
+        An ID to the new dataset else FAIL
+ DESCRIPTION
+        Simulate a call to ncvardef without having to be in 
+        define mode.  name can be at most MAX_NC_NAME
+        characters.  Rank can be at most MAX_VAR_DIMS
 
-  It looks like for the call to NC_new_var() we need to have dimension
-  IDs already.  So I guess we should just create the fake dimensions
-  now and when optional information comes in (i.e.  name, tying
-  to other dimensions) we'll go in and modify the structure in place.
+        It looks like for the call to NC_new_var() we need to 
+        have dimension IDs already.  So I guess we should just 
+        create the fake dimensions now and when optional 
+        information comes in (i.e.  name, tying to other 
+        dimensions) we'll go in and modify the structure in place.
 
-  This is gonna be heinous.  Please do not attempt this at home
+        This is gonna be heinous.  Please do not attempt this at home
 
-  Return FAIL if things don't work
+        See SDselect() for a discussion on how SDS IDs are set
+        up.
 
-*/
+--------------------------------------------------------------------------- */
 int32
 #ifdef PROTOTYPE
 SDcreate(int32 fid, char *name, int32 nt, int32 rank, int32 *dimsizes)
@@ -769,6 +866,7 @@ int32 nt, rank, *dimsizes;
     char      dimname[MAX_NC_NAME];
     intn      i, num;
     intn    * dims;
+    intn      is_ragged;
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDcreate: I've been called\n");
@@ -782,6 +880,15 @@ int32 nt, rank, *dimsizes;
     /* fudge the name since its optional */
     if(name == NULL)
         name = "DataSet";
+
+    /* check if its a ragged array */
+    if((rank > 1) && dimsizes[rank - 1] == SD_RAGGED) {
+        printf("YOW!  We have a ragged array kids: %s\n", name);
+        rank--;
+        is_ragged = TRUE;
+    } else {
+        is_ragged = FALSE;        
+    }
 
     /* make fake dimensions which may or may not be over-ridden later */
     dims = (intn *) HDgetspace(rank * sizeof(intn));
@@ -827,6 +934,15 @@ int32 nt, rank, *dimsizes;
     /* get a new NDG ref for this sucker */
     var->ndg_ref = Hnewref(handle->hdf_file);
 
+    /* set ragged status */
+    var->is_ragged = is_ragged;
+    
+    /* no ragged array info stored yet */
+    if(var->is_ragged) {
+        var->rag_list = NULL;
+        var->rag_fill = 0;
+    }
+
     /* add it to the handle */
     if(handle->vars == NULL) { /* first time */
         handle->vars = NC_new_array(NC_VARIABLE,(unsigned)1, (Void *)&var);
@@ -853,7 +969,7 @@ int32 nt, rank, *dimsizes;
     handle->flags |= NC_HDIRTY;
 
     /* free dims */
-   HDfreespace((VOIDP)dims);
+    HDfreespace((VOIDP)dims);
 
     return sdsid;
 
@@ -863,22 +979,29 @@ int32 nt, rank, *dimsizes;
 /* ------------------------------ SDgetdimid ------------------------------ */
 /*
 
-  Given an sdsid and a dimension number return a dimid.  For consistancy
-  dimension numbering begins at 1 and not 0
+ NAME
+	SDgetdimid -- get a dimension ID
+ USAGE
+	int32 SDgetdimid(sdsid, index)
+        int32 sdsid;             IN: dataset ID
+        int32 index;             IN: index of dimension
+ RETURNS
+        An ID to the dimension else FAIL
+ DESCRIPTION
+        Given an sdsid and a dimension number return a 
+        dimid.  Index is a ZERO based quantity
 
-  The dimID looks similar to the sdsID except DIMTYPE is substituted for 
-  SDSTYPE as the id-type:
+        The dimID looks similar to the sdsID except DIMTYPE 
+        is substituted for SDSTYPE as the id-type:
 
-    dimID:
-
-     32       24       16               0
-     ------------------------------------
-     |  fid   | id-type| position index |
-     ------------------------------------
-
-  Return FAIL if there is a problem
-
-*/
+        dimID:
+        
+        32       24       16               0
+        ------------------------------------
+        |  fid   | id-type| position index |
+        ------------------------------------
+        
+--------------------------------------------------------------------------- */
 int32
 #ifdef PROTOTYPE
 SDgetdimid(int32 sdsid, intn number)
@@ -907,9 +1030,6 @@ intn  number;
     if(var == NULL)
         return FAIL;
 
-    /* For the sake of fortran the user selects dims starting at 1 */
-/*    number--; */
-
     /* check if enough / too many dims */
     if((var->assoc == NULL) || (var->assoc->count < number))
         return FAIL;
@@ -924,18 +1044,26 @@ intn  number;
 
 } /* SDgetdimid */
 
+
 /* ----------------------------- SDsetdimname ----------------------------- */
 /*
 
-  Set the name and (later) connectivity of a dimension.  If this name is
-  already in use we should point to the existing dimension with that
-  name.  If the sizes are different return an error.
+ NAME
+	SDsetdimname -- give a name to a dimension
+ USAGE
+	int32 SDsetdmname(dimid, name)
+        int32   sdsid;           IN: dataset ID
+        char  * name;            IN: dimension name
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Set the name of a dimension -- at most MAX_NC_NAME characters.  
+        If this name is already in use we should point to the 
+        existing dimension with that name.  If the sizes are 
+        different return an error.  If this dimension already has
+        a name throw it out and use the new one.
 
-  IGNORE connections for now
-  
-  Return SUCCEED or FAIL
-
-*/
+--------------------------------------------------------------------------- */
 int32
 #ifdef PROTOTYPE
 SDsetdimname(int32 id, char *name)
@@ -1002,17 +1130,25 @@ char  * name;
 
 } /* SDsetdimname */
 
+
 /* ----------------------------- SDendaccess ------------------------------ */
 /*
 
-  Close down this access ID to a data object
+ NAME
+	SDendaccess -- close a sds ID
+ USAGE
+	int32 SDendaccess(sdsid)
+        int32   sdsid;           IN: dataset ID
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Close down this access ID to a data object
 
-  Usually, this will do nothing.  However, if the meta-data has changed 
-  flush it all out to disk.
-
-  Return FAIL on error else SUCCEED
-
-*/
+        Usually, this will do nothing.  However, if the meta-data 
+        has changed and SYNC_ON_EACC is defiend flush it all out 
+        to disk.
+          
+--------------------------------------------------------------------------- */
 int32
 #ifdef PROTOTYPE
 SDendaccess(int32 id)
@@ -1070,14 +1206,26 @@ int32   id;
     
 } /* SDendaccess */
 
+
 /* ------------------------------ SDIputattr ------------------------------ */
 /*
 
-  Common code for adding an attribute to an attribute list
+ NAME
+	SDIputattr -- put an attribute in an attribute list
+ USAGE
+	int32 SDIputattr(ap, name, nt, count, data)
+        NC_array ** ap;          IN/OUT: attribute list
+        char     *  name;        IN:     attribute name
+        int32       nt;          IN:     attribute number type
+        int32       count;       IN:     number of attribute values
+        VOIDP       data;        IN:     attribute values
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Common code for adding an attribute to an attribute list.
+        The list gets created if it had previously been empty
 
-  return FAIL on error else SUCCEED
-
-*/
+--------------------------------------------------------------------------- */
 PRIVATE intn
 #ifdef PROTOTYPE
 SDIputattr(NC_array **ap, char *name, int32 nt, intn count, VOIDP data)
@@ -1137,14 +1285,25 @@ VOIDP    data;
 /* ------------------------------ SDsetrange ------------------------------ */
 /*
 
-  Store range info for this variable in the valid_range attribute.  If that
-  attribute already exists overwrite the current values.  It is assumed
-  that the values are the same type as the data set.
+ NAME
+	SDsetrange -- simulate a call to DFSDsetrange
+ USAGE
+	int32 SDsetrange(id, max, min)
+        int32 id;               IN: dataset ID
+        VOIDP max;              IN: valid max
+        VOIDP min;              IN: valid min
+ RETURNS
+        On error FAIL else SUCCEED.
+ DESCRIPTION
+        Store range info for this variable in the valid_range 
+        attribute.  If that attribute already exists overwrite 
+        the current values.  It is assumed that the values are 
+        the same type as the data set.
 
-  Return FAIL on error else SUCCEED
+        It is up to the user to decide what is meant by the
+        "valid" max and min.
 
-*/
-
+--------------------------------------------------------------------------- */
 intn
 #ifdef PROTOTYPE
 SDsetrange(int32 sdsid, VOIDP pmax, VOIDP pmin)
@@ -1195,12 +1354,20 @@ VOIDP pmax, pmin;
 /* ----------------------------- SDIapfromid ------------------------------ */
 /*
 
-  Given a ID figure out what the handle and attribute list pointer are for
-  that object
+ NAME
+	SDIapfromid -- get the attribute list
+ USAGE
+	int32 SDapfromid(id, handle, app)
+        int32        id;               IN:  object ID
+        NC       **  handlep;          IN:  handle for this file
+        NC_array *** app;  / yuk! /    OUT: attribute list
+ RETURNS
+        On error FAIL else SUCCEED.
+ DESCRIPTION
+        Given a ID figure out what the handle and attribute 
+        list pointer are for that object.
 
-  Return FAIL on error else SUCCEDD
-
-*/
+--------------------------------------------------------------------------- */
 PRIVATE
 intn
 #ifdef PROTOTYPE
@@ -1272,13 +1439,23 @@ NC_array *** app;
 /* ------------------------------ SDsetattr ------------------------------- */
 /*
 
-  Given an ID and an attribute defintion attach the atrribute to the thing
-  represented by the ID.  For starters, the valid IDs could either be 
-  variable or file IDs
+ NAME
+	SDsetattr -- user level function to create and set an attribute
+ USAGE
+	int32 SDsetattr(id, name, nt, count, data)
+        int32   id;          IN: object ID
+        char  * name;        IN: attribute name
+        int32   nt;          IN: attribute number type
+        int32   count;       IN: number of attribute values
+        VOIDP   data;        IN: attribute values
+ RETURNS
+        On error FAIL else SUCCEED.
+ DESCRIPTION
+        Given an ID and an attribute defintion attach the atrribute 
+        to the thing represented by the ID.  For starters, the valid 
+        IDs could be variable, file or dimesnion IDs
 
-  Return FAIL on error else SUCCEED
-
-*/
+--------------------------------------------------------------------------- */
 intn
 #ifdef PROTOTYPE
 SDsetattr(int32 id, char *name, int32 nt, intn count, VOIDP data)
@@ -1326,15 +1503,25 @@ VOIDP data;
 /* ------------------------------ SDattrinfo ------------------------------- */
 /*
 
-  Inquire about an attribute.
+ NAME
+	SDattrinfo -- get info about an attribute
+ USAGE
+	int32 SDattrinfo(id, index, name, nt, count)
+        int32   id;          IN:  object ID
+        int32   index;       IN:  attribute index
+        char  * name;        OUT: attribute name
+        int32 * nt;          OUT: attribute number type
+        int32 * count;       OUT: number of attribute values
+ RETURNS
+        On error FAIL else SUCCEED.
+ DESCRIPTION
+        Inquire about an attribute.  Attribute indexes are zero based.
 
-  Given the ID of the attribute's parent and the attribute's index return
-  the number type, name and count of the attribute so the user knows 
-  how much space to provide to read it
+        Given the ID of the attribute's parent and the attribute's 
+        index return the number type, name and count of the attribute 
+        so the user knows how much space to provide to read it
 
-  Returns FAIL on error else SUCCEED
-
-*/
+--------------------------------------------------------------------------- */
 intn
 #ifdef PROTOTYPE
 SDattrinfo(int32 id, int32 index, char *name, int32 *nt, intn *count)
@@ -1394,14 +1581,23 @@ intn  *count;
 
 /* ------------------------------ SDreadattr ------------------------------ */
 /*
-  read the actual contents of the given attribute
 
-  assume that the user has called SDinqattr() and so has allocated
-  sufficient space
+ NAME
+	SDreadattr -- read an attribute's values
+ USAGE
+	int32 SDattrinfo(id, index, data)
+        int32 id;          IN:  object ID
+        int32 index;       IN:  attribute index
+        VOIDP data;        OUT: data buffer 
+ RETURNS
+        On error FAIL else SUCCEED.
+ DESCRIPTION
+        Read the actual contents of the given attribute
 
-  return FAIL on error else SUCCEED
-*/
+        Assume that the user has called SDinqattr() and so 
+        has allocated sufficient space
 
+--------------------------------------------------------------------------- */
 intn
 #ifdef PROTOTYPE
 SDreadattr(int32 id, int32 index, VOIDP buf)
@@ -1455,13 +1651,23 @@ VOIDP buf;
 /* ----------------------------- SDwritedata ------------------------------ */
 /*
 
-  Write out a chunk o data.  Except for the line setting the XDR op-code
-  this is exactly the same as SDreaddata().  The two routines should
-  really be combined at some point
-
-  Return FAIL on error else SUCCEED
-
-*/
+ NAME
+	SDwritedata -- write a hyperslab of data
+ USAGE
+	int32 SDreaddata(sdsid, start, stride, edge, data)
+        int32   sdsid;               IN: dataset ID
+        int32 * start;               IN: coords of starting point
+        int32 * stride;              IN: stride along each dimension
+        int32 * edge;                IN: number of values to read per dimension
+        VOIDP   data;                IN: data buffer
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Write out a chunk o data.  Except for the line setting the 
+        XDR op-code this is exactly the same as SDreaddata().  The 
+        two routines should really be combined at some point
+ 
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 SDwritedata(int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data)
 #else
@@ -1560,16 +1766,28 @@ VOIDP data;
             
 } /* SDwritedata */
 
+
 /* ---------------------------- SDsetdatastrs ----------------------------- */
 /*
 
-  Store information about the 'label', 'units', 'format' and 'cordsys' 
-  attributes of a dataset.  All three of the values are optional.  If
-  no string is desired NULL should be passed in its place.
-
-  Return FAIL on error else SUCCEED
-
-*/
+ NAME
+	SDsetdatastrs -- set "data strings"
+ USAGE
+	int32 SDsetdatastrs(sdsid, l, u, f, c)
+        int32   sdsid;          IN: dataset ID
+        int32 * l;              IN: label string ("long_name")
+        int32 * u;              IN: units string ("units")
+        int32 * f;              IN: format string ("format")
+        int32 * c;              IN: coordsys string ("coordsys")
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Store information about the 'label', 'units', 'format' and 
+        'cordsys' attributes of a dataset.  All of the values 
+        are optional.  If no string is desired NULL should be passed 
+        in its place.  
+ 
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 SDsetdatastrs(int32 sdsid, char *l, char *u, char *f, char *c)
 #else
@@ -1625,14 +1843,26 @@ char  *l, *u, *f, *c;
 
 } /* SDsetdatastrs */
 
+
 /* ------------------------------- SDsetcal ------------------------------- */
 /*
 
-  Store calibration information
+ NAME
+	SDsetcal -- set calibration information
+ USAGE
+	int32 SDsetcal(sdsid, cal, cale, ioff, ioffe, nt)
+        int32   sdsid;          IN: dataset ID
+        float64 cal;            IN: multiplicative factor
+        float64 cale;           IN: multiplicative factor error
+        float64 ioff;           IN: integer offset 
+        float64 ioffe;          IN: integer offset error
+        int32   nt;             IN: number type of uncalibrated data
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Store calibration information.  What is the formula?
 
-  Return FAIL on error else SUCCEED
-
-*/
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 SDsetcal(int32 sdsid, float64 cal, float64 cale, float64 ioff, float64 ioffe, int32 nt)
 #else
@@ -1688,12 +1918,19 @@ int32 nt;
 /* --------------------------- SDsetfillvalue ----------------------------- */
 /*
 
-  Set the fill value information.  It is assumed that the fillvalue is
-  of the same data type as the variable
-
-  Return FAIL on error else SUCCEED
-
-*/
+ NAME
+	SDsetfillvalue -- set the fill value
+ USAGE
+	int32 SDsetfillvalue(id, val)
+        int32 id;               IN: dataset ID
+        VOIDP val;              IN: fillvalue
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Set the fill value for this data set.  The fill value 
+        is assumed to have the same number type as the dataset
+ 
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 SDsetfillvalue(int32 sdsid, VOIDP val)
 #else
@@ -1733,16 +1970,23 @@ VOIDP val;
 } /* SDsetfillvalue */
 
 
-
 /* --------------------------- SDgetfillvalue ----------------------------- */
 /*
 
-  Get the fill value information.  It is assumed that the fillvalue is
-  of the same data type as the variable
-
-  Return FAIL on error else SUCCEED
-
-*/
+ NAME
+	SDgetfillvalue -- get the fill value
+ USAGE
+	int32 SDgetfillvalue(id, val)
+        int32 id;               IN:  dataset ID
+        VOIDP val;              OUT: fillvalue
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Retreive the fill value for this data set if one has been
+        stored.  The fill value has the same number type as the
+        dataset
+ 
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 SDgetfillvalue(int32 sdsid, VOIDP val)
 #else
@@ -1781,15 +2025,29 @@ VOIDP val;
 
 } /* SDgetfillvalue */
 
+
 /* ---------------------------- SDgetdatastrs ----------------------------- */
 /*
 
-   Read as many of the data strings as possible.  Assume that if a pointer is
-   not NULL that we have len bytes that we can use to return the values
-
-   Return FAIL on error else SUCCEED
-
-*/
+ NAME
+	SDgetdatastrs -- get "data strings"
+ USAGE
+	int32 SDgetdatasts(sdsid, l, u, f, c, len)
+        int32   sdsid;          IN:  dataset ID
+        char  * l;              OUT: label string ("long_name")
+        char  * u;              OUT: units string ("units")
+        char  * f;              OUT: format string ("format")
+        char  * c;              OUT: coordsys string ("coordsys")
+        int32   len;            IN:  buffer length
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Read information about the 'label', 'units', 'format' and 
+        'cordsys' attributes of a dataset.  All of the values 
+        are optional.  If no string is desired NULL should be passed 
+        in its place.  Assume all buffers are len bytes long.
+ 
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 SDgetdatastrs(int32 sdsid, char *l, char *u, char *f, char *c, intn len)
 #else
@@ -1864,14 +2122,26 @@ intn len;
 
 } /* SDgetdatastrs */
 
+
 /* ------------------------------- SDgetcal ------------------------------- */
 /*
 
-  Read in the calibration information 
+ NAME
+	SDgetcal -- get calibration information
+ USAGE
+	int32 SDgetcal(sdsid, cal, cale, ioff, ioffe, nt)
+        int32     sdsid;          IN:  dataset ID
+        float64 * cal;            OUT: multiplicative factor
+        float64 * cale;           OUT: multiplicative factor error
+        float64 * ioff;           OUT: integer offset 
+        float64 * ioffe;          OUT: integer offset error
+        int32   * nt;             OUT: number type of uncalibrated data
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Retreive calibration information.  What is the formula?
 
-  Return FAIL on error else SUCCEED
-
-*/
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 SDgetcal(int32 sdsid, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, int32 *nt)
 #else
@@ -1930,21 +2200,31 @@ int32    *nt;
 
 } /* SDgetcal */
 
+
 /* ---------------------------- SDIgetcoordvar ---------------------------- */
 /*
-  
-  Given a dimension return the index to the coordinate variable for it ---
-  creating one if needed.  If we need to create a variable and an nt
-  is not supplied (i.e. is equal to zero) use 32bit floats.
 
-  If the variable already exists and the existing nt is different
-  from the supplied one (and the supplied one is not zero) replace
-  the nt by the new one.  ID is needed so that we can set the 
-  dimension of the variable correctly if we need to.  Yuck.
-
-  Return FAIL on error
-
-*/
+ NAME
+	SDgetcoordvar -- get index of coordinate variable
+ USAGE
+	int32 SDgetcoordvar(handle, dim, id, nt)
+        NC     * handle;         IN: file handle
+        NC_dim * dim;            IN: dimension to find coord var of
+        int32    id;             IN: dimension ID
+        int32    nt;             IN: number type to use if new variable
+ RETURNS
+        A variable index or FAIL on error
+ DESCRIPTION
+        Given a dimension return the index of its coordinate variable
+        creating one if needed.  If we need to create a variable and an nt
+        is not supplied (i.e. is equal to zero) use 32bit floats.
+        
+        If the variable already exists and the existing nt is different
+        from the supplied one (and the supplied one is not zero) replace
+        the nt by the new one.  ID is needed so that we can set the 
+        dimension of the variable correctly if we need to.  Yuck.
+        
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 PRIVATE int32 SDIgetcoordvar(NC *handle, NC_dim *dim, int32 id, int32 nt)
 #else
@@ -2014,16 +2294,26 @@ int32    id, nt;
 
 } /* SDIgetcoordvar */
 
+
 /* ----------------------------- SDsetdimstrs ----------------------------- */
 /*
 
-  Store information about the 'label', 'units' and 'format' attributes of a 
-  dimension.  All three of the values are optional.  If no string is desired 
-  NULL should be passed in its place.
-
-  Return FAIL on error else SUCCEED
-
-*/
+ NAME
+	SDsetdimstrs -- set "dimension strings"
+ USAGE
+	int32 SDsetdatastrs(sdsid, l, u, f, c)
+        int32   sdsid;          IN: dimension ID
+        int32 * l;              IN: label string ("long_name")
+        int32 * u;              IN: units string ("units")
+        int32 * f;              IN: format string ("format")
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Store information about the 'label', 'units' and 'format' 
+        attributes of a dimension.  All three of the values are optional.  
+        If no string is desired NULL should be passed in its place.
+ 
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 SDsetdimstrs(int32 id, char *l, char *u, char *f)
 #else
@@ -2089,9 +2379,18 @@ char  *l, *u, *f;
 /* ---------------------------- SDIfreevarAID ----------------------------- */
 /*
 
-  Free the AID of the variable with index index
-
-*/
+ NAME
+	SDIfreevarAID -- free a variables AID
+ USAGE
+	int32 SDgetdimscale(handle, index)
+        NC    * handle;           IN: file handle
+        int32   index;            IN: variable index
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Free the AID of the variable with the given index
+ 
+--------------------------------------------------------------------------- */
 PRIVATE
 #ifdef PROTOTYPE
 int32 SDIfreevarAID(NC * handle, int32 index)
@@ -2129,11 +2428,21 @@ int32 index;
 /* ---------------------------- SDsetdimscale ----------------------------- */
 /*
 
-  Store information about the 'scales' of a dimension
-
-  Return FAIL on error else SUCCEED
-
-*/
+ NAME
+	SDsetdimscale -- store scale information for the dimension
+ USAGE
+	int32 SDsetdimsacle(id, count, nt, data)
+        int32 id;               IN: dimension ID
+        int32 count;            IN: number of values
+        int32 nt;               IN: number type of data
+        VOIDP data;             IN: scale values
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Store information about the 'scales' of a dimension.  Dimensions
+        do not have to have the same number type as the dataset.
+ 
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 SDsetdimscale(int32 id, int32 count, int32 nt, VOIDP data)
 #else
@@ -2197,13 +2506,20 @@ VOIDP data;
 /* ---------------------------- SDgetdimscale ---------------------------- */
 /*
 
-  Retreive the scale information stored with a dimension.  It is assumed that
-  the user has called SDdiminfo() and that the data array is long enough to
-  hold the values.
-
-  Return FAIL on error else SUCCEED
-
-*/
+ NAME
+	SDgetdimscale -- get scale information for the dimension
+ USAGE
+	int32 SDgetdimscale(id, data)
+        int32 id;               IN:  dimension ID
+        VOIDP data;             OUT: scale values
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Retreive the scale information stored with a dimension.  It is 
+        assumed that the user has called SDdiminfo() and that the data 
+        array is long enough to hold the values.
+ 
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 SDgetdimscale(int32 id, VOIDP data)
 #else
@@ -2260,15 +2576,27 @@ VOIDP data;
 /* ------------------------------ SDdiminfo ------------------------------- */
 /*
 
-  Return basic information about a dimension (name, sizes, number
-    of attributes, number type, etc...)
+ NAME
+	SDdiminfo -- get info about a dimension
+ USAGE
+	int32 SDdiminfo(sdsid, name, size, nt, atttr)
+        int32   dimid;               IN:  dimension ID
+        char  * name;                OUT: name of the dimension
+        int32 * size;                OUT: size of the dimension
+        int32 * nt;                  OUT: number type of scales
+        int32 * attr;                OUT: the number of local attributes
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Return basic information about a dimension (name, sizes, number
+        of attributes, number type, etc...) The user is repsonsible for 
+        allocating space to hold the dataset name.  It can be at most 
+        MAX_NC_NAME characters in length.  NULL can be passed for the 
+        name if it is not required.
 
-  Return FAIL on error else SUCCEED
-
-*/
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-int32 SDdiminfo(int32 id, char *name, int32 *size, int32 *nt,
-                int32 *nattr)
+int32 SDdiminfo(int32 id, char *name, int32 *size, int32 *nt, int32 *nattr)
 #else
 int32 SDdiminfo(id, name, size, nt, nattr)
 int32 id;
@@ -2297,13 +2625,17 @@ int32 *nt, *nattr, *size;
     if(dim == NULL)
         return FAIL;
 
-    HDstrncpy(name, dim->name->values, dim->name->len);
-    name[dim->name->len] = '\0';
+    if(name != NULL) {
+        HDstrncpy(name, dim->name->values, dim->name->len);
+        name[dim->name->len] = '\0';
+    } else {
+        name = dim->name->values;
+    }
 
     *size  = dim->size;
 
     if(handle->vars) {
-        len = HDstrlen(name);
+        len = dim->name->len;
         dp = (NC_var**)handle->vars->values;
         for(ii = 0 ; ii < handle->vars->count ; ii++, dp++) {
             if( len == (*dp)->name->len &&
@@ -2328,13 +2660,23 @@ int32 *nt, *nattr, *size;
 /* ----------------------------- SDgetdimstrs ----------------------------- */
 /*
 
-   Read as many of the dimension strings as possible.  Assume that if a 
-   pointer is not NULL that we have len bytes that we can use to return 
-   the values
-
-   Return FAIL on error else SUCCEED
-
-*/
+ NAME
+	SDgetdimstrs -- get "data strings"
+ USAGE
+	int32 SDgetddimsts(sdsid, l, u, f, len)
+        int32   sdsid;          IN:  dataset ID
+        char  * l;              OUT: label string ("long_name")
+        char  * u;              OUT: units string ("units")
+        char  * f;              OUT: format string ("format")
+        int32   len;            IN:  buffer length
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Read as many of the dimension strings as possible.  Assume that 
+        if a pointer is not NULL that we have len bytes that we can use 
+        to return the values
+ 
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 SDgetdimstrs(int32 id, char *l, char *u, char *f, intn len)
 #else
@@ -2353,7 +2695,7 @@ intn  len;
     char     * name;
 
 #ifdef SDDEBUG
-    fprintf(stderr, "SDgetdatastrs: I've been called\n");
+    fprintf(stderr, "SDgetdimstrs: I've been called\n");
 #endif
     
     handle = SDIhandle_from_id(id, DIMTYPE);
@@ -2424,23 +2766,33 @@ intn  len;
 /* -------------------------- SDsetexternalfile --------------------------- */
 /*
 
-  Specify that the actual data for this dataset be stored in a separate
-  file (and "external file" in HDF terms).
+ NAME
+	SDsetexternalfile -- store info in a separate file
+ USAGE
+	int32 SDsetexternalfile(id, filename, offset)
+        int32   id;                  IN: dataset ID
+        char  * filename;            IN: name of external file
+        int32   offset;              IN: offset in external file
+ RETURNS
+        Return SUCCEED or FAIL
 
-  Only the data (as in SDwritedata()) will be stored externally.  Attributes
-  and such will still be in the main file
+ DESCRIPTION
+        Specify that the actual data for this dataset be stored in a 
+        separate file (and "external file" in HDF terms).
 
-  IMPORTANT:  It is the user's responsibility to see that the separate
-  files are transported when the main file is moved.
+        Only the data (as in SDwritedata()) will be stored externally.  
+        Attributes and such will still be in the main file
 
-  IMPORTANT:  This can only be called *once* for a given dataset.  The
-  HDF utility 'hdfpack' may be able to undo it.
+        IMPORTANT:  It is the user's responsibility to see that the 
+        separate files are transported when the main file is moved.
 
-  IMPORTANT:  This will only work on datasets stored in HDF files.
+        IMPORTANT:  This can only be called *once* for a given dataset.  
+        The HDF utility 'hdfpack' may be able to undo it.
 
-  Return SUCCEED or FAIL
+        IMPORTANT:  This will only work on datasets stored in HDF files.
 
-*/
+
+--------------------------------------------------------------------------- */
 int32
 #ifdef PROTOTYPE
 SDsetexternalfile(int32 id, char *filename, int32 offset)
@@ -2464,7 +2816,7 @@ int32   offset;
         return FAIL;
 
     handle = SDIhandle_from_id(id, SDSTYPE);
-    if(handle == NULL || !handle->is_hdf)
+    if(handle == NULL || handle->file_type != HDF_FILE)
         return FAIL;
 
     if(handle->vars == NULL)
@@ -2508,15 +2860,24 @@ int32   offset;
 
 } /* SDsetexternalfile */
 
+
 /* ------------------------------ SDfindattr ------------------------------ */
 /*
 
-  Given an ID to an object and an attribute name return the index of the
-  attribute with that name.
-
-  On error or attribute not found return FAIL
-
-*/
+ NAME
+	SDfindattr -- find an attribute's index by name
+ USAGE
+	int32 SDfindattr(id, name)
+        int32   id;             IN: object ID
+        char  * name;           IN: attribute name
+ RETURNS
+        An attribute index or FAIL
+ DESCRIPTION
+        Given an ID to an object and an attribute name return the index 
+        of the attribute with that name.  This does not support any
+        form of wildcards / regular expressions
+ 
+--------------------------------------------------------------------------- */
 int32
 #ifdef PROTOTYPE
 SDfindattr(int32 id, char *attrname)
@@ -2573,13 +2934,22 @@ char  * attrname;
     
 } /* SDfindattr */
 
+
 /* ----------------------------- SDidtoref ----------------------------- */
 /*
 
-  Given an index return the ref of the associated NDG for inclusion in 
-  Vgroups and annotations
+ NAME
+	SDidtoref -- get a unique reference number for this dataset
+ USAGE
+	int32 SDidtoref(id)
+        int32 id;             IN: dataset ID
+ RETURNS
+        A reference number or FAIL
+ DESCRIPTION
+        Given an index return the ref of the associated NDG for 
+        inclusion in Vgroups and annotations
 
-*/
+--------------------------------------------------------------------------- */
 int32
 #ifdef PROTOTYPE
 SDidtoref(int32 id)
@@ -2597,7 +2967,7 @@ int32   id;
 #endif
     
     handle = SDIhandle_from_id(id, SDSTYPE);
-    if(handle == NULL || !handle->is_hdf) 
+    if(handle == NULL || handle->file_type != HDF_FILE) 
         return FAIL;
 
     if(handle->vars == NULL)
@@ -2615,9 +2985,18 @@ int32   id;
 /* ----------------------------- SDreftoindex ----------------------------- */
 /*
 
-  Given a ref number return the index of the cooresponding dataset
+ NAME
+	SDreftoindex -- map a reference number to a dataset index
+ USAGE
+	int32 SDreftoindex(fid, ref)
+        int32 fid;             IN: file ID
+        int32 ref;             IN: reference number
+ RETURNS
+        A dataset index or FAIL
+ DESCRIPTION
+        Given a ref number return the index of the cooresponding dataset
 
-*/
+--------------------------------------------------------------------------- */
 int32
 #ifdef PROTOTYPE
 SDreftoindex(int32 fid, int32 ref)
@@ -2637,7 +3016,7 @@ int32   ref;
 #endif
     
     handle = SDIhandle_from_id(fid, CDFTYPE);
-    if(handle == NULL || !handle->is_hdf) 
+    if(handle == NULL || handle->file_type != HDF_FILE) 
         return FAIL;
 
     if(handle->vars == NULL)
@@ -2656,9 +3035,18 @@ int32   ref;
 /* ----------------------------- SDisrecord ----------------------------- */
 /*
 
-  Return TRUE if this is a record dataset FALSE otherwise
+ NAME
+	SDisrecord -- check is var is a record variable
+ USAGE
+	int32 SDisrecord(id)
+        int32 id;             IN: dataset ID
+ RETURNS
+        TRUE/FALSE
+ DESCRIPTION
+        Return TRUE if the dataset in question is a record variable
+        else FALSE
 
-*/
+--------------------------------------------------------------------------- */
 int32
 #ifdef PROTOTYPE
 SDisrecord(int32 id)
@@ -2676,7 +3064,7 @@ int32   id;
 #endif
     
     handle = SDIhandle_from_id(id, SDSTYPE);
-    if(handle == NULL || !handle->is_hdf) 
+    if(handle == NULL)
         return FALSE;
 
     if(handle->vars == NULL)
@@ -2692,3 +3080,176 @@ int32   id;
         return FALSE;
 
 } /* SDisrecord */
+
+
+/* ----------------------------- SDiscoordvar ----------------------------- */
+/*
+
+ NAME
+	SDiscoordvar -- check is var is a coord var
+ USAGE
+	int32 SDiscoordvar(id)
+        int32 id;             IN: dataset ID
+ RETURNS
+        TRUE/FALSE
+ DESCRIPTION
+        Return TRUE if the dataset in question is a coordinate variable
+
+--------------------------------------------------------------------------- */
+int32
+#ifdef PROTOTYPE
+SDiscoordvar(int32 id)
+#else
+SDiscoordvar(id)
+int32   id;
+#endif
+{
+
+    NC       * handle;
+    NC_var   * var;
+    NC_dim   * dim;
+    int32      dimindex;
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDiscoordvar: I've been called\n");
+#endif
+    
+    handle = SDIhandle_from_id(id, SDSTYPE);
+    if(handle == NULL)
+        return FALSE;
+
+    if(handle->vars == NULL)
+        return FALSE;
+
+    var = SDIget_var(handle, id);
+    if(var == NULL)
+        return FALSE;
+
+    if(var->assoc->count != 1)
+        return FALSE;
+
+    dimindex = var->assoc->values[0];
+
+    dim = SDIget_dim(handle, dimindex);
+    if(dim == NULL)
+        return FALSE;
+
+    if(var->name->len != dim->name->len)
+        return FALSE;
+
+    if(HDstrcmp(var->name->values, dim->name->values))
+        return FALSE;
+
+    return TRUE;
+
+} /* SDiscoordvar */
+
+
+#if 0
+/* ---------------------------- RAGGED ARRAYS ----------------------------- */
+/*
+
+  Ragged arrays are a cross between datasets and index structures.  The
+  basic idea is that all but one of the dimensions is constant.  The
+  other dimension can vary over the course of the dataset.  This is
+  useful for storing equalarea grids and for making alogrithms much
+  more complex.  
+
+  Ragged arrays can be multi-dimensional and, eventually, record variables
+  too.  A 2-dimensional ragged array would look like:
+
+  **********
+  ********
+  *********    <---------- This is a line
+  *****
+  ***
+  *********
+  *******
+
+  The above ragged array has 7 "lines" the "line length" of the fifth line is 
+  three.  It is not necessary to set all of the line lengths at the same time
+  nor retreive them all at the same time.   However, to specify the line
+  length for line X, the length must be specified for all Y < X (is this
+  really necessary?)
+
+  Internally, the above ragged array would be stored as a one-dimensional
+  dataset.  In addition, there will be a rag_fill array that contains the
+  line lengths.  This rag_fill array will get written to a separate
+  structure in the file (tag DFTAG_SDRAG).
+
+*/
+/* ------------------------------------------------------------------------ */
+
+
+/* ------------------------------- SDsetrag ------------------------------- */
+/*
+
+  Set the lengths of the lines of a ragged array.
+
+  Currently, these lines must be specified in increasing order (i.e. can't
+  use hyperslab type locations to set them).  This should probably be made
+  nicer once everything else works.
+
+*/
+int32
+#ifdef PROTOTYPE
+SDsetrag(int32 sdsid, int32 low, int32 count, int32 *sizes)
+#else
+SDsetrag(sdsid, low, count, sizes)
+int32 sdsid;
+int32 low;
+int32 count;
+int32 *sizes;
+#endif
+{
+
+    NC       * handle;
+    NC_var   * var;
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDsetrag: I've been called\n");
+#endif
+    
+    /* get the variable */
+    handle = SDIhandle_from_id(sdsid, SDSTYPE);
+    if(handle == NULL || handle->file_type != HDF_FILE) 
+        return FAIL;
+
+    if(handle->vars == NULL)
+        return FAIL;
+
+    var = SDIget_var(handle, sdsid);
+    if((var == NULL) || (var->is_ragged == FALSE))
+        return FAIL;
+
+    /* verify writing to a valid area */
+    if(var->rag_fill != low) {
+        printf("var->rag_fill %d    low %d\n", var->rag_fill, low); 
+        return FAIL;
+    }
+
+    /* allocate some space for the ragged dimension if needed */
+    /* BUG: will need to be changed for ragged records */
+    if(var->rag_list == NULL) {
+        var->rag_list = (int32 *) HDgetspace(sizeof(int32) * var->dsizes[0]);
+        if(var->rag_list == NULL) return FAIL;
+    }
+
+    /* copy over the new values */
+    HDmemcpy(&(var->rag_list[low]), sizes, sizeof(int32) * count);
+    
+    /* update count */
+    var->rag_fill += count;
+
+    return SUCCEED;
+
+} /* SDsetrag */
+
+
+/* ------------------------------- SDgetrag ------------------------------- */
+/* 
+
+  Get the line size for a chunk of a ragged array
+
+*/
+#endif /* 0 */
