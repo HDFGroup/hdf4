@@ -148,6 +148,10 @@ testnofortran:
 #	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
 #          SUBDIRS="src util test" _sub
 
+debug:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=debug \
+          SUBDIRS="src test" _sub message 
+
 saber:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=saber \
           SUBDIRS="src test" _sub
