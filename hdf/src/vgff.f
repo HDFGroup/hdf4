@@ -750,3 +750,22 @@ C
          return 
          end
 
+C-------------------------------------------------------------------------
+C        Name:      vffname 
+C        Purpose:   returns the name of a vdata field 
+C        Inputs:    vdata_id - vdata identofoer
+C                   field_index - field index    
+C        Output:    field_name           
+C        Returns:   returns 0 on if successful and -1 otherwise  
+C        Calls:     vffnamec (C stub for VDfieldname function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function vffname(vdata_id, field_index, field_name)
+         INTEGER vdata_id, field_index
+         CHARACTER*(*) field_name
+         INTEGER vffnamec 
+         vffname = vffnamec(vdata_id, field_index, field_name,
+     .                      len(field_name)) 
+         return 
+         end

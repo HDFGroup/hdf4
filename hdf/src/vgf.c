@@ -706,22 +706,24 @@ nvfnflds(intf * vkey)
 /* ------------------------------------------------------------------ */
 /*
    **  get the name of a given field in a vdata
-   **  related: VFfieldname--vffname--
+   **  related: VFfieldname--vffname--vffnamec
  */
 
 FRETVAL(intf)
-nvffname(intf * vkey, intf * index, _fcd fname)
+nvffnamec(intf * vkey, intf * index, _fcd fname, intf *len)
 {
-    char *fieldname;
-
+    char *fieldname = NULL;
+    
     if((fieldname=VFfieldname((int32)*vkey,(int32)*index))!=NULL)
       {
-        HDstrcpy(_fcdtocp(fname),fieldname);
+       /* HDstrcpy(_fcdtocp(fname),fieldname);*/
+        HDpackFstring(fieldname, _fcdtocp(fname), (intn) *len);
+        HDfree(fieldname);
         return(SUCCEED);
       } /* end if */
     else
         return(FAIL);
-}   /* vffname */
+}   /* vffnamec */
 
 /* ------------------------------------------------------------------ */
 /*

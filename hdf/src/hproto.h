@@ -3472,7 +3472,7 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 #   define  nvsfdefc FNAME(VSFDEFC)
 #   define  nvssextfc FNAME(VSSEXTFC)
 #   define  nvfnflds FNAME(VFNFLDS)
-#   define  nvffname FNAME(VFFNAME)
+#   define  nvffnamec FNAME(VFFNAMEC)
 #   define  nvfftype FNAME(VFFTYPE)
 #   define  nvffisiz FNAME(VFFISIZ)
 #   define  nvffesiz FNAME(VFFESIZ)
@@ -3638,7 +3638,7 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 #   define  nvsfdefc FNAME(vsfdefc)
 #   define  nvssextfc FNAME(vssextfc)
 #   define  nvfnflds FNAME(vfnflds)
-#   define  nvffname FNAME(vffname)
+#   define  nvffnamec FNAME(vffnamec)
 #   define  nvfftype FNAME(vfftype)
 #   define  nvffisiz FNAME(vffisiz)
 #   define  nvffesiz FNAME(vffesiz)
@@ -3889,8 +3889,8 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
     HDFLIBAPI      FRETVAL(intf) nvfnflds
                 (intf  * vkey);
 
-    HDFLIBAPI      FRETVAL(intf) nvffname
-                (intf  * vkey, intf  *index, _fcd fname);
+    HDFLIBAPI      FRETVAL(intf) nvffnamec
+                (intf  * vkey, intf  *index, _fcd fname, intf *len);
 
     HDFLIBAPI      FRETVAL(intf) nvfftype
                 (intf  * vkey, intf  *index);
