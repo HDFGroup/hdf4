@@ -129,7 +129,7 @@ static char RcsId[] = "@(#)$Revision$";
 /* Array of file records that contains all relevant
    information on an opened HDF file.
    See hfile.h for structure and members definition of filerec_t. */
-#if defined(macintosh) | defined(MAC)| defined(SYMANTEC_C) | defined(DMEM)	/* Dynamic memory */
+#if defined(macintosh) || defined(MAC) || defined(__MWERKS__) || defined(SYMANTEC_C) || defined(DMEM)	/* Dynamic memory */
 struct filerec_t *file_records = NULL;
 #else  /* !macintosh */
 struct filerec_t file_records[MAX_FILE];
@@ -2119,7 +2119,7 @@ Hishdf(const char *filename)
   CONSTR(FUNC, "Hishdf");
 #endif /* LATER */
 
-#if defined(VMS) || defined(MAC) || (defined(PC) & !defined(UNIX386))
+#if defined(VMS) || defined(MAC) || defined(macintosh) || defined (__MWERKS__) || defined(SYMANTEC_C) || (defined(PC) & !defined(UNIX386))
   int32       fid;
   intn   ret_value = TRUE;
 
@@ -3200,7 +3200,7 @@ HIget_file_slot(const char *path)
   int         slot;
   int         ret_value = SUCCEED;
 
-#if defined(macintosh) | defined(MAC) | defined(SYMANTEC_C) | defined(DMEM)
+#if defined(macintosh) || defined(MAC) || defined(__MWERKS__) || defined(SYMANTEC_C) || defined(DMEM)
   if (!file_records)
     {
       /* The array has not been allocated.  Allocating file records
@@ -3215,7 +3215,7 @@ HIget_file_slot(const char *path)
           file_records[i].path = (char *) NULL;
           file_records[i].ddhead = (ddblock_t *) NULL;
           file_records[i].ddlast = (ddblock_t *) NULL;
-          file_records[i].null_block = (ddblock_t *) NULL;
+          file_records[i].ddnull = (ddblock_t *) NULL;
           file_records[i].refcount = 0;
           file_records[i].maxref = 0;
         }
@@ -4023,7 +4023,7 @@ done:
 #endif /* HAVE_FMPOOL */
 
 /* -------------------------- MAC Specific Stuff -------------------------- */
-#if defined(MAC) & !defined(SYMANTEC_C)
+#if defined(MAC) || defined (__MWERKS__) || defined(macintosh) || defined(SYMANTEC_C)
 /*
    *  Macintosh file stubs for HDF
    *
@@ -4031,13 +4031,15 @@ done:
    *  Mac toolbox.
  */
 
-#include "Errors.h"
+#include <Errors.h>
 #ifdef SYMANTEC_C
-#include "IntEnv.h"
-#include "MacRuntime.h"
+#include <IntEnv.h>
+#include <MacRuntime.h>
 #endif
-#include "Files.h"
-#include "Strings.h"
+#include <Files.h>
+#include <Strings.h>
+#include <stdarg.h> 
+#include "dirent_mac.h" /* Directory scanning stuff by George Talbot */
 
 PRIVATE int32 hdfc = 1061109567L; /* equal to 4 '?' in a row in ascii */
                                   /* yes, I am deliberately avoiding the trigraph :-) */
@@ -4045,6 +4047,137 @@ PRIVATE int32 hdft = 1600085855L; /* equal to '_HDF' in ascii */
 
 #ifndef MAC_OLD_WAY
 /* The routines have been updated for HFS */
+
+/* NOTE:
+ * The following routines are utility routines that done not
+ * have to reside here but since the Mac routines are the
+ * only ones that use them, they reside here..
+ */
+
+/*
+ * This returns a compound string created
+ * from strings given. We assume each string is NULL terminated.
+ */
+char *mk_compound_str(int nstr, ...)
+{
+  va_list  pargs;
+  register unsigned str_len = 0;
+  register unsigned i;
+  register char *sptr = NULL;
+  register char *cptr = NULL;
+  char *compound_string = NULL;
+
+  /* make sure number of strings is greater than 0 */
+  if (nstr == 0)
+    return(NULL);
+
+  /* Process arguement strings to find total length */
+  va_start(pargs, nstr) ;
+  for (i = 0; i < nstr; i++)
+    {
+      if ((sptr = va_arg(pargs, char *)) == NULL)
+        continue;
+      str_len += HDstrlen(sptr);
+    }
+  va_end(pargs) ;
+
+  /* Allocate space for compound string */
+  if ((compound_string = (char *)HDmalloc((str_len+1)*sizeof(char))) == NULL)
+    return(NULL);
+
+  /* Copy each string into new string */
+  cptr = compound_string;
+  va_start(pargs, nstr);
+  for (i = 0; i < nstr; i++)
+    {
+      if ((sptr = va_arg(pargs, char *)) == NULL)
+        continue;
+      while (*cptr++ = *sptr++);  /* copy string */
+      cptr--;
+    }
+  va_end(pargs);
+  return(compound_string);
+} /* mk_compound_string */
+
+/*
+ * Return the base name in a path given the seperator.
+ * Note that we don't handle empty input strings.
+ */
+char *base_name(char *path_name, char seperator)
+{
+  char *sptr = NULL; /* pointer to last seperator */
+
+  if ((sptr = (char *)HDstrrchr(path_name, seperator)) == NULL)
+     return(path_name);
+  else
+     return(sptr + 1);
+} /* base_name */
+
+/*
+ * Return the path in path name excluding the base
+ * If the path only contains a "seperator" we return the seperator.
+ * If their is no directory path we return "."
+ * to distinguish between a failure(i.e. NULL return)
+ * NOTE that this routine always returns malloced memeory.
+ *      This not a good routine to use nested 
+ *      e.g.
+ *         base_name(path_name(target,':'),'/');
+ *      since the memory will be leaked. It would work
+ *      better if there was a nice garbage collector:-)...
+ */
+char *
+path_name(char *path_name, char seperator)
+{
+  int  path_len ;    /* path name length */
+  char *sptr = NULL; /* pointer to last seperator */
+  char *dptr = NULL; /* pointer to path */ 
+
+  /* If no path return "." to distinguish between failure */
+  if ((sptr = (char *)HDstrrchr(path_name, (int)seperator)) == NULL)
+    return(mk_compound_str(1,"."));
+
+  /* If only seperator in path, return that */
+  if ((path_len = sptr - path_name) == 0)
+    return(mk_compound_str(1,seperator));
+
+  /* Allocate space for directory path and copy path over */
+  if ((dptr = (char *)HDmalloc((path_len+1)*sizeof(char))) == NULL)
+    return(NULL);
+  else
+    {
+      HDstrncpy(dptr, path_name, path_len);
+      dptr[path_len] = '\0';
+      return(dptr) ;
+    }
+} /* path_name */
+
+/*
+ * Return the path in path name excluding the base
+ * If the path only contains a "seperator" we return the seperator.
+ * NOTE that this routine destroys the original pathname.
+ *      It insertsa '\0' character where the last seperator was.
+ *      reminds me of "strtok()".....
+ */
+char *
+path_name_destr(char *path_name, char seperator)
+{
+  int  path_len ;    /* path name length */
+  char *sptr = NULL; /* pointer to last seperator */
+
+  /* If no path return NULL, not good since can't distinguish failure
+   * oh well.....*/
+  if ((sptr = (char *)HDstrrchr(path_name, (int)seperator)) == NULL)
+    return(NULL);
+
+  /* If only seperator in path, return that */
+  if ((path_len = sptr - path_name) == 0)
+    return(path_name);
+
+  /* Replace last seperator with NULL */
+  sptr = '\0';
+  return(sptr) ;
+
+} /* path_name_destr */
 
 PRIVATE Str255 pname; /* Pacal pointer to file name */
 
@@ -4059,35 +4192,82 @@ mopen(char *name, intn flags)
   long        fBytes;
   FInfo       fndrInfo;
   char        perm;
+  char        *target_dir = NULL;
+  char        *target_file = NULL;
+  DIR         *cur_dirp = NULL; /* current directory */
 
-  HDstrcpy((char *) pname, (char *) name);
-  c2pstr((char *)pname); /* Convert C string to Pascal string */
+  /* get target file */
+  target_file = base_name(name,':');
 
-  /* get the info on the default volume */
-#if 0 
-  if ((result = GetVInfo(0, volName, &volRefNum, &fBytes)) != noErr)
-#endif
-  if ((result = GetVol(NULL, &volRefNum)) != noErr)
+  /* get target directory if one is specified 
+     this routine mallocs space so free it at the end */
+  if ((target_dir = path_name(name,':')) == NULL)
    {
      ret_value = FAIL;
      goto done;
    }
+  /* check if we have a directory in path name */
+  if (target_dir == ".")
+    { /* default to current directory */
+        /* open current working directory */
+        if ((cur_dirp = opendir(NULL)) == NULL)
+          {
+              ret_value = FAIL;
+              goto done;
+          }
+    }
+  else
+    { /* open specified directory */
+        if ((cur_dirp = opendir(target_dir)) == NULL)
+          {
+              ret_value = FAIL;
+              goto done;
+          }
+    }
+#ifdef MAC_DEBUG
+  printf("mopen: target_dir %s\n",target_dir);
+  printf("mopen: target_file %s\n",target_file);
+#endif
+  /* get ready to convert target file C string to Pascal string */
+  HDstrcpy((char *) pname, (char *) target_file);
+  c2pstr((char *)pname); /* Convert C string to Pascal string */
+
 
   /* Create FSSpec record for file */
-  result = FSMakeFSSpec((short)volRefNum,(long)0,pname,(FSSpecPtr)&sfFile);
+  result = FSMakeFSSpec((short)(cur_dirp->dd_volume),
+                        (long)(cur_dirp->dd_fd),pname,(FSSpecPtr)&sfFile);
+
+#ifdef MAC_DEBUG
+  printf("mopen: makeing FSspec for %s\n",name);
+#endif
 
   /* Do we need to create file */
   if (flags == DFACC_CREATE)
     { /* yes, we need to create it */
+		
       /* Does file exist */
-      if (result != fnfErr)
-       { /* file exists, so delte it first */
-         if (noErr != (result = FSpDelete(&sfFile)))
-           {
-             ret_value = FAIL;
-             goto done;
-           }
-       }
+      switch(result)
+        {
+        case noErr: /* file exists, so delete */
+            if (noErr != (result = FSpDelete(&sfFile)))
+              {
+                  ret_value = FAIL;
+                  goto done;
+              }
+            break;
+        case nsvErr:
+#ifdef MAC_DEBUG
+            printf("mopen: Error volume not found(nsvErr)\n");
+#endif
+            ret_value = FAIL;
+            goto done;
+            break;
+        case fnfErr:
+        default:
+            /* okay we can create it */
+            break;
+        }
+
       /* Create new file 
       * Note: '-1' argument -> 'sySystemScript' - Script.h */
       if (noErr != (result = FSpCreate(&sfFile,hdfc,hdft,-1)))
@@ -4141,6 +4321,12 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+  /* close directory */
+  if (cur_dirp != NULL)
+      closedir(cur_dirp);
+  if (target_dir != NULL)
+      HDfree(target_dir);
+
 #ifdef MAC_DEBUG
   fprintf(stdout,"mopen: opened/created file %s\n",name);
 #endif
@@ -4267,22 +4453,49 @@ mstat(char *path)
   Str255      volName;
   long        fBytes;
   intn        ret_value;
+  char        *target_dir = NULL;
+  char        *target_file = NULL;
+  DIR         *cur_dirp; /* current directory */
 
-  HDstrcpy((char *) pname, (char *) path);
-  c2pstr((char *)pname); /* Convert C string to Pascal string */
+  /* get target file */
+  target_file = base_name(path,':');
 
-  /* get the info on the default volume */
-#if 0
-  if ((result = GetVInfo(0, volName, &volRefNum, &fBytes)) != noErr)
-#endif
-  if ((result = GetVol(NULL, &volRefNum)) != noErr)
+  /* get target directory if one is specified 
+     this routine mallocs space so free it at the end */
+  if ((target_dir = path_name(path,':')) == NULL)
    {
      ret_value = FAIL;
      goto done;
    }
+  /* check if we have a directory in path name */
+  if (target_dir == ".")
+    { /* default to current directory */
+        /* open current working directory */
+        if ((cur_dirp = opendir(NULL)) == NULL)
+          {
+              ret_value = FAIL;
+              goto done;
+          }
+    }
+  else
+    { /* open specified directory */
+        if ((cur_dirp = opendir(target_dir)) == NULL)
+          {
+              ret_value = FAIL;
+              goto done;
+          }
+    }
+#ifdef MAC_DEBUG
+  printf("mstat: target_dir %s\n",target_dir);
+  printf("mstat: target_file %s\n",target_file);
+#endif
+  /* get ready to convert target file C string to Pascal string */
+  HDstrcpy((char *) pname, (char *)target_file);
+  c2pstr((char *)pname); /* Convert C string to Pascal string */
 
-  /* Create FSSpec record for file */
-  result = FSMakeFSSpec(volRefNum,0,pname, &sfFile);
+  result = FSMakeFSSpec((short)(cur_dirp->dd_volume),
+                        (long)(cur_dirp->dd_fd),pname,(FSSpecPtr)&sfFile);
+
 
  /* Does file exist */
  if (result != fnfErr)
@@ -4302,6 +4515,12 @@ done:
 #ifdef MAC_DEBUG
   fprintf(stdout,"mstat: opened file %s\n",path);
 #endif
+ /* close directory */
+  if (cur_dirp != NULL)
+      closedir(cur_dirp);
+  if (target_dir != NULL)
+      HDfree(target_dir);
+
   return (ret_value);
 } /* mstat() */
 

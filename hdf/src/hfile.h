@@ -528,7 +528,7 @@ functab_t;
 extern accrec_t *access_records;
 
 /* file records array.  defined in hfile.c */
-#if defined(macintosh) | defined(MAC) | defined(SYMANTEC_C) | defined(DMEM)  /* Dynamic memory */
+#if defined(macintosh) || defined(MAC) || defined (__MWERKS__) ||defined(SYMANTEC_C) || defined(DMEM)  /* Dynamic memory */
 extern filerec_t *file_records;
 #else  /* !macintosh */
 extern filerec_t file_records[];
@@ -710,7 +710,7 @@ extern      "C"
     extern int32 HVPinfo
                 (accrec_t * access_rec, sp_info_block_t * info_block);
 
-#ifdef MAC
+#if defined (MAC) || defined (macintosh) || defined(__MWERKS__) || defined (SYMANTEC_C)
     extern hdf_file_t mopen
                 (char *filename, intn access);
 
@@ -725,8 +725,10 @@ extern      "C"
 
     extern int32 mwrite
                 (hdf_file_t rn, char *buf, int32 n);
+    extern intn mstat
+                (char *path);
 
-#endif                          /* MAC */
+#endif  /* macintosh */
 
 /*
    ** from hfiledd.c

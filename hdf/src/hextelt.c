@@ -1291,6 +1291,14 @@ DESCRIPTION
 /* are calculated already.  For now, it works. */
 #define HDstrcpy3(s1, s2, s3, s4)	(HDstrcat(HDstrcat(HDstrcpy(s1, s2),s3),s4))
 
+#if defined (MAC) || defined (macintosh) || defined(__MWERKS__) || defined (SYMANTEC_C) 
+#define DIR_SEPC  58  /* Integer value */
+#define DIR_SEPS  ":"
+#else
+#define DIR_SEPC  92  /* Integer value of '\' */
+#define DIR_SEPS  "\\"
+#endif
+
 PRIVATE
 char *
 HXIbuildfilename(const char *ext_fname, const intn acc_mode)
@@ -1302,7 +1310,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 
     char	*finalpath;	/* Final pathname to return */
     char	*fname;
-#ifndef MAC
+#if !(defined (MAC) || defined (macintosh) || defined(__MWERKS__) || defined (SYMANTEC_C))
     struct	stat filestat;	/* for checking pathname existence */
 #endif
     char        *ret_value = NULL; /* FAIL */
@@ -1326,7 +1334,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
     
     switch (acc_mode){
     case DFACC_CREATE: {			/* Creating a new external element */
-	if ( *fname == '/' ) {	/* Absolute Pathname */
+	if ( *fname == DIR_SEPC ) {	/* Absolute Pathname */
 		ret_value = (HDstrcpy(finalpath, fname));
                 goto done;
 	}
@@ -1340,7 +1348,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 		    HDfree(finalpath);
 		    HGOTO_ERROR(DFE_NOSPACE, NULL);
 		}
-		ret_value = (HDstrcpy3(finalpath, extcreatedir, "/", fname));
+		ret_value = (HDstrcpy3(finalpath, extcreatedir, DIR_SEPS, fname));
                 goto done;
 	    }
 
@@ -1352,7 +1360,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 		    HDfree(finalpath);
 		    HGOTO_ERROR(DFE_NOSPACE, NULL);
 		}
-		ret_value = (HDstrcpy3(finalpath, HDFEXTCREATEDIR, "/", fname));
+		ret_value = (HDstrcpy3(finalpath, HDFEXTCREATEDIR, DIR_SEPS, fname));
                 goto done;
 	    }
 
@@ -1366,7 +1374,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 	/* break; */
     } /*DFACC_CREATE */
     case DFACC_OLD:{			/* Locating an old external element */
-	if ( *fname == '/' ) {	/* Absolute Pathname */
+	if ( *fname == DIR_SEPC ) {	/* Absolute Pathname */
 	    if (HDstat(fname, &filestat) == 0){
 		ret_value = (HDstrcpy(finalpath, fname));
                 goto done;
@@ -1376,7 +1384,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 		HGOTO_ERROR(DFE_FNF, NULL);
 	    }
 	    /* stripe the pathname component */
-	    fname = HDstrrchr(fname, '/') + 1;
+	    fname = HDstrrchr(fname, DIR_SEPC) + 1;
 	    fname_len = HDstrlen(fname);
 
 	    /* continue to Relative Pathname */
@@ -1403,7 +1411,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 			path_len++;
 		    }
 		    if (*dir_pt == ':') dir_pt++;
-		    *path_pt++ = '/';
+		    *path_pt++ = DIR_SEPC;
 		    path_len++;
 
 		    if (fname_len + path_len + 1 > MAX_PATH_LEN ){
@@ -1434,7 +1442,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 			path_len++;
 		    }
 		    if (*dir_pt == ':') dir_pt++;
-		    *path_pt++ = '/';
+		    *path_pt++ = DIR_SEPC;
 		    path_len++;
 
 		    if (fname_len + path_len + 1 > MAX_PATH_LEN ){

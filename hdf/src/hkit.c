@@ -154,7 +154,7 @@ HDflush(int32 file_id)
 {
     CONSTR(FUNC, "HDflush");    /* for HERROR */
 
-#ifndef MAC
+#if !(defined (MAC) || defined (macintosh) || defined(__MWERKS__) || defined (SYMANTEC_C))
     filerec_t  *file_rec;
 
     file_rec = FID2REC(file_id);

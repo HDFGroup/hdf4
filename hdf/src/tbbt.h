@@ -51,7 +51,7 @@ struct tbbt_node
       TBBT_LEAF   rcnt;         /* count of right children */
 # define  LeftCnt(node) ( (node)->lcnt )    /* Left descendants */
 # define  RightCnt(node) ( (node)->rcnt )   /* Left descendants */
-#if defined macintosh | defined MAC | defined SYMANTEC_C     /* Macro substitution limit */
+#if defined macintosh || defined MAC || defined __MWERKS__ || defined SYMANTEC_C     /* Macro substitution limit */
 # define  Cnt(node,s)   ( 1==(s) ? LeftCnt(node) : RightCnt(node) )
 #else                           /* !macintosh */
 # define  Cnt(node,s)   ( LEFT==(s) ? LeftCnt(node) : RightCnt(node) )
@@ -74,7 +74,7 @@ struct tbbt_node
 #ifdef QAK
 # define  Delta(n,s)    (  ( Heavy(n,s) ? 1 : -1 )                          \
                             *  ( Double(n) ? 2 : UnBal(n) ? 1 : 0 )  )
-#if defined macintosh | defined MAC | defined SYMANTEC_C     /* There is a limit to recursive
+#if defined macintosh || defined MAC || defined __MWERKS__ || defined SYMANTEC_C     /* There is a limit to recursive
                                                macro substitution */
 # define  SetFlags(n,s,c,b,i)   (  ( -2<(b) && (b)<2 ? 0 : TBBT_DOUBLE )   \
     |  ( 0>(b) ? TBBT_HEAVY(s) : (b)>0 ? TBBT_HEAVY( 1 + 2 - (s)) : 0 )    \

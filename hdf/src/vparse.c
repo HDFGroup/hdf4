@@ -49,7 +49,7 @@ static char RcsId[] = "@(#)$Revision$";
    ** to scanattrs.
    **
  */
-#if defined(macintosh) | defined(MAC) | defined(SYMANTEC_C) | defined(DMEM)   /* Dynamic memory */
+#if defined(macintosh) || defined(MAC) || defined(__MWERKS__) || defined(SYMANTEC_C) || defined(DMEM)   /* Dynamic memory */
 PRIVATE char **symptr = NULL;   /* array of ptrs to tokens  ? */
 PRIVATE char **sym = NULL;      /* array of tokens ? */
 #else  /* !macintosh */
@@ -64,12 +64,12 @@ scanattrs(const char *attrs, int32 *attrc, char ***attrv)
 {
     char *s, *s0, *ss;
     intn slen, len;
-#if defined(macintosh) | defined(MAC) | defined(SYMANTEC_C) | defined(DMEM)   /* Dynamic memory */
+#if defined(macintosh) || defined(MAC) || defined(__MWERKS__) || defined(SYMANTEC_C) || defined(DMEM)   /* Dynamic memory */
     CONSTR(FUNC, "scanattrs");
 #endif
     char       *saved_string = (char *) HDstrdup(attrs);
 
-#if defined(macintosh) | defined(MAC) | defined(SYMANTEC_C) | defined(DMEM)   /* Dynamic memory */
+#if defined(macintosh) || defined(MAC) || defined(__MWERKS__) || defined(SYMANTEC_C) || defined(DMEM)   /* Dynamic memory */
     intn i;
 
     /* Lets allocate space for ptrs to tokens and tokens */

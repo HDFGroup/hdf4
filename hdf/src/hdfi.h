@@ -618,7 +618,7 @@ typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 
 #endif /* MIPSEL */
 
-#if defined(MAC) || defined(macintosh)
+#if defined(MAC) || defined(macintosh) || defined(__MWERKS__) || defined (SYMANTEC_C)
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
@@ -631,6 +631,11 @@ Please check your Makefile.
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>             /* for INT_MIN, etc. in hbitio.c */
+#ifdef __MWERKS__  /* Metrowerks */
+#include <stdio.h>
+#include <sioux.h>
+#include <console.h>
+#endif
 #ifdef SYMANTEC_C                  /* for SYMANTEC C */
 #include <unix.h>
 #define isascii(c)  (isprint(c) || iscntrl(c))
@@ -674,6 +679,8 @@ void exit(int status);
 
 #endif /*MAC*/
 
+/* Metrowerks compilier defines some PC stuff so need to exclude this on the MAC */
+#if !(defined(__MWERKS__) || defined(MAC))
 #if defined WIN3 || defined __WINDOWS__ || defined _WINDOWS || defined WINNT || defined WIN32
 #if defined WIN32 || defined WINNT
 #define PC386
@@ -818,6 +825,7 @@ extern FILE *dbg_file;
 #endif  /* TEST_WIN */
 
 #endif /* PC */
+#endif /* !(defined(__MWERKS__) || defined(MAC)) */
 
 #if defined(NEXT) || defined(NeXT)
 
@@ -1268,7 +1276,7 @@ extern int (*DFKnumout)(void _HUGE * source, void _HUGE * dest, uint32 num_elm,
 #  define HDstrrchr(s,c)        (strrchr((s),(c)))
 #  define HDstrtol(s,e,b)       (strtol((s),(e),(b)))
 /* Can't use on PCs. strdup() uses malloc() and HDmalloc uses halloc() */
-#if !(defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MAC | defined MIPSEL | defined NEXT | defined CONVEX | defined IBM6000)
+#if !(defined VMS || (defined PC && !defined PC386) || defined macintosh || defined MAC || defined __MWERKS__ || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000)
 #  define HDstrdup(s)      ((char *)strdup((const char *)(s)))
 #endif /* !(VMS | PC) */
 #endif /* WIN3 */
@@ -1298,11 +1306,11 @@ extern int (*DFKnumout)(void _HUGE * source, void _HUGE * dest, uint32 num_elm,
 /**************************************************************************
 *  Misc. functions
 **************************************************************************/
-#ifdef MAC
+#if defined (MAC) || defined (macintosh) || defined(__MWERKS__) || defined (SYMANTEC_C)
 #define HDstat(path, result)	(mstat(path))
-#else /* !MAC */
+#else /* !macintosh */
 #define HDstat(path, result)	(stat(path, result))
-#endif /* !MAC */
+#endif /* !macintosh */
 #define HDgetenv(s1)            (getenv(s1))
 #define HDputenv(s1)            (putenv(s1))
 #define HDltoa(v)               (ltoa(v))
