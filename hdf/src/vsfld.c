@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.3  1992/11/24 16:49:49  chouck
+Fixed a return value in VSsetfields()
 
+ * Revision 1.2  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -215,7 +218,7 @@ PUBLIC int32 VSsetfields (vs,fields)
     /* copy from wlist (temp) into vdata */
     HDmemcpy((VOIDP) &(vs->wlist), (VOIDP) &(wlist), sizeof(wlist));
     
-    return(1); /* ok */
+    return(SUCCEED); 
     
   } /* writing to empty vdata */
 
