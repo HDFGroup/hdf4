@@ -57,11 +57,11 @@
 SHELL=/bin/sh
 
 # Define your machine type
-MACHINE="SUN -DCM5"
+MACHINE=SUN
 
 # Define your C compiler and flags
 CC= gcc
-CFLAGS= -ansi -D${MACHINE}  -O
+CFLAGS= -ansi -D${MACHINE} -DCM5 -O
 
 # Define your FORTRAN compiler
 FC= f77
