@@ -550,12 +550,9 @@ installed_etcfiles:
 installed_etcfile:	$(ETCDIR)/$(ETCFILE)
 
 $(ETCDIR)/$(ETCFILE):	$(ETCDIR) $(ETCFILE)
+	-mkdir -p $(ETCDIR)
+	-chmod u+rwx,g+rws,o=rx $(ETCDIR)
 	$(INSTALL_DATA) $(ETCFILE) $@
-
-dummy_etcdir $(ETCDIR):
-	mkdir -p $@
-	chmod u+rwx,g+rws,o=rx $@
-
 
 # ###########################################################################
 # Manual Pages:
@@ -617,11 +614,9 @@ installed_infos:      FORCE
 installed_info:       $(INFODIR)/$(INFO)
 
 $(INFODIR)/$(INFO):   $(INFODIR) $(INFO)
+	-mkdir -p $(INFODIR)
+	-chmod u+rwx,g+rws,o=rx $(INFODIR)
 	$(INSTALL_DATA) $(INFO) $@
-
-dummy_infodir $(INFODIR):
-	mkdir -p $@
-	chmod u+rwx,g+rws,o=rx $@
 
 # Rules for generating info pages:
 #
