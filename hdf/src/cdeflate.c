@@ -327,6 +327,7 @@ HCIcdeflate_staccess(accrec_t * access_rec, int16 acc_mode)
 
     /* need to check for not writing, as opposed to read access */
     /* because of the way the access works */
+#ifdef OLD_WAY
     if (!(acc_mode&DFACC_WRITE))
         info->aid = Hstartread(access_rec->file_id, DFTAG_COMPRESSED,
                                   info->comp_ref);
@@ -335,6 +336,16 @@ HCIcdeflate_staccess(accrec_t * access_rec, int16 acc_mode)
                                    info->comp_ref, info->length);
     if (info->aid == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
+#else /* OLD_WAY */
+    if (!(acc_mode&DFACC_WRITE))
+        info->aid = Hstartread(access_rec->file_id, DFTAG_COMPRESSED,
+                                  info->comp_ref);
+    else
+        info->aid = Hstartaccess(access_rec->file_id, DFTAG_COMPRESSED,
+                                   info->comp_ref, DFACC_RDWR|DFACC_APPENDABLE);
+    if (info->aid == FAIL)
+        HRETURN_ERROR(DFE_DENIED, FAIL);
+#endif /* OLD_WAY */
 
     /* Make certain we can append to the data when writing */
     if ((acc_mode&DFACC_WRITE) && Happendable(info->aid) == FAIL)
