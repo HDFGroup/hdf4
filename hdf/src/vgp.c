@@ -2499,11 +2499,11 @@ Visvg(int32 vkey, /* IN: vgroup key */
 
     /* check if vgroup is valid */
     if (HAatom_group(vkey) != VGIDGROUP)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FALSE);
 
     /* get instance of vgroup */
     if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, FALSE);
 
     /* get vgroup itself and check */
     vg = v->vg;
