@@ -803,3 +803,81 @@ nvadtrc(intf *vkey, intf *tag, intf *ref)
     return ( (intf) Vaddtagref ( *vkey, *tag, *ref) );
 }
 /* ------------------------------------------------------------------ */
+
+/* 
+**  checks the number of elements in a vgroup
+**  related: VSQuerycount--vsqfnelt
+*/
+
+    FRETVAL(intf)
+nvsqfnelt(intf *vkey, intf *nelt)
+{
+    int32 ret_nelt;
+    intn stat;
+
+    stat=VSQuerycount ( (int32)*vkey, &ret_nelt);
+
+    *nelt=(intf)ret_nelt;
+    return ( (intf) stat);
+}
+/* ------------------------------------------------------------------ */
+
+/* 
+**  checks the interlace of a vgroup
+**  related: VSQueryinterlace--vsqfintr
+*/
+
+    FRETVAL(intf)
+nvsqfintr(intf *vkey, intf *interlace)
+{
+    int32 ret_inter;
+    intn stat;
+
+    stat=VSQueryinterlace ( (int32)*vkey, &ret_inter);
+
+    *interlace=(intf)ret_inter;
+    return ( (intf) stat);
+}
+/* ------------------------------------------------------------------ */
+
+/* 
+**  gets the names of the fields of a vgroup
+**  related: VSQueryfields--vsqfflds
+*/
+
+    FRETVAL(intf)
+nvsqfldsc(intf *vkey, _fcd fields)
+{
+    return((intf)VSQueryfields ( (int32)*vkey, fields));
+}
+/* ------------------------------------------------------------------ */
+
+/* 
+**  checks the size of an element of a vgroup
+**  related: VSQueryvsize--vsqfvsiz
+*/
+
+    FRETVAL(intf)
+nvsqfvsiz(intf *vkey, intf *size)
+{
+    int32 ret_size;
+    intn stat;
+
+    stat=VSQueryvsize ( (int32)*vkey, &ret_size);
+
+    *size=(intf)ret_size;
+    return((intf)stat);
+}
+/* ------------------------------------------------------------------ */
+
+/* 
+**  gets the names of a vgroup
+**  related: VSQueryname--vsqfname
+*/
+
+    FRETVAL(intf)
+nvsqnamec(intf *vkey, _fcd name)
+{
+    return((intf)VSQueryname ( (int32)*vkey, name));
+}
+/* ------------------------------------------------------------------ */

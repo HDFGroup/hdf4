@@ -582,6 +582,30 @@ c     related: Vaddtagref--vadtrc--vfadtr
 
       vfadtr = vadtrc  ( vg, tag, ref)
       end
-c     ============================================================
 
+c     ------------------------------------------------------------
+c     specific inquiry on a vdata, gets fields
+c     related: VSQueryfields--vsqfldsc--vsqfflds
+
+      integer function vsqfflds (vs,fields) 
+      integer			vs
+      character*(*)	fields
+      integer			vsqfldsc
+
+      vsqfflds = vsqfldsc (vs,fields)
+      end
+
+c     ------------------------------------------------------------
+c     specific inquiry on a vdata, gets vdata name
+c     related: VSQueryname--vsqnamec--vsqfname
+
+      integer function vsqfname (vs,name) 
+      integer			vs
+      character*(*)	name
+      integer			vsqnamec
+
+      vsqfname = vsqnamec (vs,name)
+      end
+
+c     ============================================================
 

@@ -296,8 +296,8 @@ extern int32 VSwrite
 #ifndef VG_FNAMES
 #   define VG_FNAMES
 #ifdef DF_CAPFNAMES
-#	define  ndfivopn FNAME(DFIVOPN)
-#	define  ndfvclos FNAME(DFVCLOS)
+#   define  ndfivopn FNAME(DFIVOPN)
+#   define  ndfvclos FNAME(DFVCLOS)
 #   define  nvatchc  FNAME(VATCHC)
 #   define  nvdtchc  FNAME(VDTCHC)
 #   define  nvgnamc  FNAME(VGNAMC)
@@ -345,9 +345,14 @@ extern int32 VSwrite
 #   define  nvadtrc  FNAME(VADTRC)
 #   define  nvfstart FNAME(VFSTART)
 #   define  nvfend   FNAME(VFEND)
+#   define  nvsqfnelt   FNAME(VSQFNELT)
+#   define  nvsqfintr   FNAME(VSQFINTR)
+#   define  nvsqfldsc   FNAME(VSQFLDSC)
+#   define  nvsqfvsiz   FNAME(VSQFVSIZ)
+#   define  nvsqnamec   FNAME(VSQNAMEC)
 #else   /* !DF_CAPFNAMES */
-#	define  ndfivopn FNAME(dfivopn)
-#	define  ndfvclos FNAME(dfvclos)
+#   define  ndfivopn FNAME(dfivopn)
+#   define  ndfvclos FNAME(dfvclos)
 #   define  nvatchc  FNAME(vatchc)
 #   define  nvdtchc  FNAME(vdtchc)
 #   define  nvgnamc  FNAME(vgnamc)
@@ -395,6 +400,11 @@ extern int32 VSwrite
 #   define  nvadtrc  FNAME(vadtrc)
 #   define  nvfstart FNAME(vfstart)
 #   define  nvfend   FNAME(vfend)
+#   define  nvsqfnelt   FNAME(vsqfnelt)
+#   define  nvsqfintr   FNAME(vsqfintr)
+#   define  nvsqfldsc   FNAME(vsqfldsc)
+#   define  nvsqfvsiz   FNAME(vsqfvsiz)
+#   define  nvsqnamec   FNAME(vsqnamec)
 #endif  /* DF_CAPFNAMES */
 #endif  /* VG_FNAMES */
 

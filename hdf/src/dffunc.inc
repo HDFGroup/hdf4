@@ -235,6 +235,15 @@ C
       integer vsfwrit
 
 C
+C	Declarations of return values for HDF Vdata Query functions
+C
+      integer vsqfnelt
+      integer vsqfintr
+      integer vsqfflds
+      integer vsqfvsiz
+      integer vsqfname
+
+C
 C	Declarations of return values for HDF low level H functions
 C
       integer hclose
