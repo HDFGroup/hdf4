@@ -58,6 +58,7 @@ it is assumed that you have done the following:
 
 
 
+
 Building from Source Code Release (hdf41r2s.zip)
 ===============================================
 
@@ -144,12 +145,17 @@ INSTRUCTIONS FOR OPTION I, MINIMAL INSTALLATION
                        Studio as a workspace suitable for developing a project that 
                        uses the HDF libraries as static libraries)
  
-	      3. Select mfhdf -- Win32Debug as default configuration and
-               build the Debug version of the dev tree.
-	      The 5 sub projects are all built as static libraries.
+	      3. Select "Build", then Select "Set Active Configuration".
+                 Select "mfhdf -- Win32Debug" as active configuration.
+                 Select "Build" and "Build mfhdf.lib" to
+                 build the Debug version of the mfhdf static library.
+	         The 5 sub projects are all built as static libraries.
   
-              4. Select mfhdf -- Win32Release as default configuration and
-               build the Release version of the dev tree.
+              4. Select "Build", then Select "Set Active Configuration".
+               Select "mfhdf -- Win32Release" as active configuration.
+               Select "Build" and "Build mfhdf.lib" to
+               build the Release version of the mfhdf static library.
+               The 5 sub projects are all built as static libraries.
 	
               5. Add your own projects and source files to the Developers Studio
 	      project, to use the static libraries just built.
@@ -171,11 +177,15 @@ INSTRUCTIONS FOR OPTION II, TEST AND UTILITY INSTALLATION, NO FORTRAN
 
          2. Open  c:\myHDFstuff\dev\dev.dsw to begin building the Developer Studio project.
 
-	 3. Select dev -- Win32Debug as default configuration and
-         build the Debug version of the dev tree.
+	 3. Select "Build", then Select "Set Active Configuration".
+            Select "dev -- Win32Debug" as active configuration.
+            Select "Build" and "Build dev.exe" to
+            build the Debug version of the dev tree.
 
-	 4. Select dev -- Win32Release as default configuration and
-       build the Release version of the dev tree.
+	 4. Select "Build", then Select "Set Active Configuration".
+            Select "dev -- Win32Release" as active configuration.
+            Select "Build" and "Build dev.exe" to
+            build the Release version of the dev tree.
 	
          5. In command prompt window run the test batch commands
        win32noftst.bat in directory dev\.
@@ -199,13 +209,17 @@ INSTRUCTIONS FOR OPTION III, FULL INSTALLATION WITH FORTRAN
 
 	1. Unpack dev\Win32full.zip in directory dev\. 
 
-        2. Select dev -- Win32Debug as default configuration and
-       build the Debug version of the dev tree.
-       You will see that Digital Visual Fortran compiler is invoked
-       by Visual C++ Development environment in compiling the fortran code.
+        2. Select "Build", then Select "Set Active Configuration".
+           Select "dev -- Win32Debug" as active configuration.
+           Select "Build" and "Build dev.exe" to
+           build the Debug version of the dev tree.
+           You will see that Digital Visual Fortran compiler is invoked
+           by Visual C++ Development environment in compiling the fortran code.
 
-        3. Select dev -- Win32Release as default configuration and
-       build the Release version of the dev tree.
+        3. Select "Build", then Select "Set Active Configuration".
+           Select "dev -- Win32Release" as active configuration.
+           Select "Build" and "Build dev.exe" to
+           build the Release version of the dev tree.
 		
         4. In command prompt window run the test batch commands
        win32noftst.bat in directory dev\.
@@ -220,28 +234,17 @@ STEP IV:
 BUILDING AN APPLICATION USING THE HDF LIBRARY - SOME HELPFUL POINTERS
 =====================================================================
 
+If you are building an application that uses the HDF library 
+the following locations will need to be specified for locating
+header files and linking in the HDF libraries:
+ 
+            <top-level HDF directory>\lib
+            <top-level HDF directory>\include
 
-To use the HDF/JPEG/netCDF library the following locations may need to be
-specified for locating header files:
-    1) hdf\src
-    2) hdf\jpeg
-    3) hdf\zlib
-    4) mfhdf\xdr
-    5) mfhdf\libsrc
+where <top-level HDF directory> may be C:\myHDFstuff\dev or C:\MyHDFstuff\HDF41r2\
 
-Remember that the netCDF part of the library needs the HDF library to perform
-some I/O functions and the HDF library may need to be linked into 
-an executable.
-
-The JPEG & zlib libraries are called by some HDF functions also, and thus may
-need to be linked to an executable also.  The libraries which may need to be
-linked in are:
-    1) hdf\src\src.lib
-    2) hdf\jpeg\jpeg.lib
-    3) hdf\zlib\zlib.lib
-    4) mfhdf\libsrc\libsrc.lib
-    5) mfhdf\xdr\xdr.lib
-    6) mfhdf\util\getopt.lib
+Please refer to the <top-level HDF directory>\release_notes\compile.txt file
+for more information on compiling an application with the HDF libraries.
 
 
 MORE HELPFUL POINTERS
