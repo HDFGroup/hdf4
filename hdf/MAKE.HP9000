@@ -62,7 +62,7 @@ MACHINE=HP9000
 
 # Define your C compiler and flags
 CC= cc
-CFLAGS= -D${MACHINE}  -O
+CFLAGS= -Aa -D_HPUX_SOURCE -D${MACHINE}  -O
 
 # Define your FORTRAN compiler
 FC= f77
