@@ -130,4 +130,3 @@ mfhdf/dumper/tvset.hdf -text
 mfhdf/libsrc/test1.nc -text
 mfhdf/libsrc/test_cdf.sav -text
 mfhdf/xdr/test_xdr.sav svneol=native#unset
-mfhdf/xdr/xdrlib.project -text
