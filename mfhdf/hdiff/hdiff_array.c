@@ -82,6 +82,7 @@ int array_diff(void *buf1,
  
  switch(type) {
  case DFNT_INT8:
+ case DFNT_CHAR8:
   i4_max_val1 = SCHAR_MIN;
   i4_min_val1 = SCHAR_MAX;
   i4_max_val2 = SCHAR_MIN;
@@ -138,6 +139,7 @@ int array_diff(void *buf1,
  case DFNT_INT8:
  case DFNT_UINT8:
  case DFNT_UCHAR8:
+ case DFNT_CHAR8:
   i1ptr1 = (char *) buf1;
   i1ptr2 = (char *) buf2;
   for (i=0; i<tot_cnt; i++)
