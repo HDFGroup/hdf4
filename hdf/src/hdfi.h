@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.9  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.10  1992/11/06 20:11:55  chouck
+Added some changes for Absoft Fortran on the Mac
 
+ * Revision 1.9  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.8  1992/10/09  20:49:17  chouck
  * Added some patches to work with ThinkC I/O on the Mac
  *
@@ -436,7 +439,9 @@ Please check your Makefile.
 #else /*THINK_C                   MPW, possibly others */
 #include <Files.h>              /* for unbuffered i/o stuff */
 #endif /*THINK_C*/
+#ifndef ABSOFT
 #define	DF_CAPFNAMES            /* fortran names are in all caps */
+#endif /* ABSOFT */
 #define DF_DYNAMIC				/* use dynamic allocation */
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #define malloc(x)   NewPtr((Size)   (x))    /* don't use malloc on the Mac */
@@ -713,8 +718,10 @@ extern uint8 *DFtbuf;
 #endif
 
 #if defined(MAC)                /* with LS FORTRAN */
+#ifndef ABSOFT
 #   define FCALLKEYW    pascal
 #   define FRETVAL(x)   pascal x
+#endif /* ABSOFT */
 #endif
 
 #if defined(PC)   /* with MS Fortran */
