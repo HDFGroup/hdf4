@@ -46,6 +46,7 @@ $ cc 'ccopt   file1
 $ cc 'ccopt   blocks
 $ cc 'ccopt   extelt
 $ cc 'ccopt   vers
+$ cc 'ccopt   buffer
 $ type sys$input
   **  Making C interface test programs **
 $!
@@ -71,7 +72,7 @@ $ cc 'ccopt   tvsfpack
 $ cc 'ccopt   tvattr
 $ cc 'ccopt   chunks
 $ cc 'ccopt   macros
-$ link/nodebug testhdf,rig,sdmms,sdnmms,an,anfile,sdstr, -
+$ link/nodebug testhdf,rig,sdmms,sdnmms,an,anfile,sdstr, buffer, -
   slab,litend, file,file1,blocks,extelt,vers,tvset,conv,tree, -
   bitio,comp,man,mgr.obj,nbit,tbv,tvsfpack,tvattr,chunks, macros, -
   'hdflib, sys$clib/lib

@@ -328,7 +328,7 @@ C**************************************************************
 
       integer affileinfo, afnumann, afannlist, afannlen
       integer afreadann, afstart, afend, afendaccess, hopen, hclose
-      integer hishdf, hestring
+      integer hishdff, hestringf
       character*80 error_message
 
       integer fileh, anh
@@ -349,28 +349,28 @@ C**************************************************************
 C ***** Test if the file fname is an HDF file
 C
 C
-      ret = hishdf(fname)
+      ret = hishdff(fname)
       if (ret .ne. 1) then
           num_failed = num_failed + 1
-          write(*,*) "HISHDF function failed"
+          write(*,*) 'HISHDFF function failed'
       endif
-      ret = hestring(0, error_message)
+      ret = hestringf(0, error_message)
        if (ret .ne. 0) then
           num_failed = num_failed + 1
-          write(*,*) "HESTRING function failed"
+          write(*,*) 'HESTRINGF function failed'
       endif
 
 C
-C     Call hishdf with  file not being an hdf file. Call should return
+C     Call hishdff with  file not being an hdf file. Call should return
 C     0 
 C
-      ret = hishdf("manf.f")
+      ret = hishdff('manf.f')
       if (ret .ne. 0) then
           num_failed = num_failed + 1
-          write(*,*) "HISHDF function failed"
+          write(*,*) 'HISHDFF function failed'
       endif
 C
-C *****  end of hishdf test
+C *****  end of hishdff test
 C
 C *****start annotation access on file *****
 
