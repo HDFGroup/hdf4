@@ -13,7 +13,7 @@ $ ccopt = ""
 $ define/nolog sys$clib sys$library:vaxcrtl
 $ endif
 $ ccc := cc 'ccopt  -
-       /opt/nodebug/include=([--.include],[--.hdf.src], -
+       /opt/nodebug/include=([--.include],[--.hdf.src], [--.mfhdf.libsrc], -
      [--.hdf.jpeg],[--.hdf.zlib], sys$library)/nolist    -
      /define=(HDF,VMS,NO_SYS_XDR_INC)
 $
