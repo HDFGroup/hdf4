@@ -82,42 +82,42 @@ HCIcskphuff_splay(comp_coder_skphuff_info_t * skphuff_info, uint8 plain)
     uintn       a, b;           /* children of nodes to semi-rotate */
     uint8       c, d;           /* pair of nodes to semi-rotate */
     uintn       skip_num;       /* the tree we are splaying */
-    uintn       **lleft,        /* local copy of the left pointer */
-                **lright;       /* local copy of the right pointer */
-    uint8       **lup;          /* local copy of the up pointer */
+    uintn       *lleft,        /* local copy of the left pointer */
+                *lright;       /* local copy of the right pointer */
+    uint8       *lup;          /* local copy of the up pointer */
 
     skip_num = skphuff_info->skip_pos;  /* get the tree number to splay */
 
     /* Get the tree pointers */
-    lleft=skphuff_info->left;
-    lright=skphuff_info->right;
-    lup=skphuff_info->up;
+    lleft=skphuff_info->left[skip_num];
+    lright=skphuff_info->right[skip_num];
+    lup=skphuff_info->up[skip_num];
 
     a = plain + SUCCMAX;    /* get the index for this source code in the up array */
     do
       {     /* walk up the tree, semi-rotating pairs */
-          c = lup[skip_num][a];    /* find the parent of the node to semi-rotate around */
+          c = lup[a];    /* find the parent of the node to semi-rotate around */
           if (c != ROOT)
             {   /* a pair remain above this node */
-                d = lup[skip_num][c];  /* get the grand-parent of the node to semi-rotate around */
-                b = lleft[skip_num][d];
+                d = lup[c];  /* get the grand-parent of the node to semi-rotate around */
+                b = lleft[d];
 
 /* Exchange the children of the pair */
                 if (c == b)
                   {
-                      b = lright[skip_num][d];
-                      lright[skip_num][d] = a;
+                      b = lright[d];
+                      lright[d] = a;
                   }     /* end if */
                 else
-                    lleft[skip_num][d] = a;
+                    lleft[d] = a;
 
-                if (a == lleft[skip_num][c])
-                    lleft[skip_num][c] = b;
+                if (a == lleft[c])
+                    lleft[c] = b;
                 else
-                    lright[skip_num][c] = b;
+                    lright[c] = b;
 
-                lup[skip_num][a] = d;
-                lup[skip_num][b] = c;
+                lup[a] = d;
+                lup[b] = c;
                 a = d;
             }   /* end if */
           else
