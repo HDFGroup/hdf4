@@ -224,8 +224,8 @@
 #    define SIZE_NCHAR       1
 #    define SIZE_NCHAR       1  /* For backward compat char8 == char */
 #    define SIZE_NUCHAR8     1
-#    define SIZE_NUCHAR      8  /* For backward compat uchar8 == uchar */
-#    define SIZE_NCHAR16     8  /* No current plans for support */
+#    define SIZE_NUCHAR      1  /* For backward compat uchar8 == uchar */
+#    define SIZE_NCHAR16     2  /* No current plans for support */
 #    define SIZE_NUCHAR16    2  /* No current plans for support */
 #endif /* UNICOS */
 
