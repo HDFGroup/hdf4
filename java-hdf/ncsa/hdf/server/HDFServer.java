@@ -1,3 +1,13 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * National Comptational Science Alliance                                   *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
 package ncsa.hdf.server;
 
 import java.net.Socket;

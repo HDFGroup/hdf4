@@ -1,3 +1,15 @@
+
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * National Comptational Science Alliance                                   *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
 /**
  *  The Editor class displays a dialog window
  *  from which the user can edit a list (delete, replace, or add). 

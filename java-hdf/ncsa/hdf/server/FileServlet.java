@@ -1,3 +1,13 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * National Comptational Science Alliance                                   *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
 
 package ncsa.hdf.server;
 
@@ -86,7 +96,7 @@ public class FileServlet extends HttpServlet
      *  @param headOnly  ask only the HEAD
      *  @param path      the string of the file path
      *  @param pathname  the string of the path name
-     *  @exception       an IOException.
+     *  @exception       IOException
      */
     protected void dispatchPathname( HttpServletRequest req, HttpServletResponse res, 
         boolean headOnly, String path, String pathname ) throws IOException
