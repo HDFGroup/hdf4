@@ -1387,7 +1387,7 @@ int32  vg;
           var = Vattach(handle->hdf_file, id, "r");
           if(var == FAIL) continue;
           
-          Vgetclass(var, class);
+         Vgetclass(var, class);
           if(!HDstrcmp(class, VARIABLE)) {
               
               /*
@@ -1572,6 +1572,256 @@ bad_number_type:
 } /* hdf_read_vars */
 
 
+#ifdef MFGR
+/* ----------------------------------------------------------------
+** Read in the raster images out of a cdf structure
+** Return FAIL if something goes wrong
+**
+** Important:  We must already assume that handle->dims is set
+**   so that we can do a call to NC_var_shape() so that we can
+**   set the numrecs fields of variables (so we can fill record
+**   variables intelligently)
+*/
+int hdf_read_rigs(XDR *xdrs, NC *handle, int32 vg)
+{
+#ifdef QAK
+
+  char vgname[100], subname[100], class[128];
+  NC_var **variables, *vp;
+  int    ndims, *dims;
+  uint8 ntstring[4];
+  int   data_ref, is_rec_var, vg_size, count;
+  int32 data_count, HDFtype, tag, id;
+  int32 n, sub_id, entries, ndg_ref, rag_ref;
+
+  register int     type, t, i;
+  register int32   var, sub;
+
+  count = 0;
+  id = -1;
+
+#if DEBUG
+  fprintf(stderr, "hdf_read_vars I've been called, handle->hdf_file = %d\n", handle->hdf_file);
+#endif
+
+  /*
+   * Allocate enough space in case everything is a variable
+   */
+  count = 0;
+  variables = (NC_var **) HDgetspace(sizeof(NC_var *) * Vntagrefs(vg) + 1);
+  if(!variables) {
+    fprintf(stderr, "Out of memory line %d file %s\n", __LINE__, __FILE__);
+    return FAIL;
+  }
+
+  /*
+   * Allocate enough space in case lots of dimensions
+   */
+  dims = (int *) HDgetspace(sizeof(int) * Vntagrefs(vg) + 1);
+  if(!dims) {
+    fprintf(stderr, "Out of memory line %d file %s\n", __LINE__, __FILE__);
+    return FAIL;
+  }
+
+  /*
+   * Look through for a Vgroup of class VARIABLE
+   */
+  vg_size = Vntagrefs(vg);
+  for(i = 0; i < vg_size; i++) {
+      Vgettagref(vg, i, &tag, &id);
+      if(tag == DFTAG_VG) {
+          var = Vattach(handle->hdf_file, id, "r");
+          if(var == FAIL) continue;
+          
+         Vgetclass(var, class);
+          if(!HDstrcmp(class, VARIABLE)) {
+              
+              /*
+               * We have found a VGroup representing a Variable
+               */
+              ndims = 0;
+              type = 0;
+              data_ref = 0;
+              data_count = 0;
+              rag_ref = 0;
+              is_rec_var = FALSE;
+              Vinquire(var, &n, vgname);      
+          
+              /*
+               * Loop through contents looking for dimensions
+               */
+              for (t = 0; t < n; t++) {
+                  Vgettagref(var, t, &tag, &sub_id);
+                  
+                  switch(tag) {
+                  case DFTAG_VG :   /* ------ V G R O U P ---------- */
+                      sub = Vattach(handle->hdf_file, sub_id, "r");
+
+                      Vgetclass(sub, class);
+                      if(!HDstrcmp(class, DIMENSION) || 
+                         !HDstrcmp(class, UDIMENSION)) {
+                          
+                          if(!HDstrcmp(class, UDIMENSION))
+                              is_rec_var = TRUE;
+                          
+                          Vinquire(sub, &entries, subname);      
+                          dims[ndims] = (int) NC_dimid( handle, subname);
+                          ndims++;
+                      }
+                      Vdetach(sub);
+                      break;
+                  case DFTAG_VH :   /* ----- V D A T A ----- */
+                      break;
+                  case DFTAG_NDG :  /* ----- NDG Tag for HDF 3.2 ----- */
+                      ndg_ref = sub_id;
+                      break;
+                  case DFTAG_SD :   /* ------- Data Storage ------ */
+                      data_ref = sub_id;
+                      data_count = Hlength(handle->hdf_file, DATA_TAG, sub_id);
+                      break;
+                  case DFTAG_SDRAG : /* ----- Ragged Array index ----- */
+                      rag_ref = sub_id;
+                      printf("Lookout!  Found a ragged array element\n");
+                      break;
+                  case DFTAG_NT :   /* ------- Number type ------- */
+                      if(Hgetelement(handle->hdf_file, tag, sub_id, ntstring) == FAIL)
+                          return FAIL;
+                      HDFtype = ntstring[1];
+                      type = hdf_unmap_type(HDFtype);
+
+                      /*
+                       * Check if data was stored in native format
+                       * And make sure the numbertype version numbers are the same
+                       */
+                      if((ntstring[0] != DFNT_VERSION) ||
+                         ((ntstring[3] != DFNTF_NONE) &&
+                          (ntstring[3] != DFNTF_IEEE))) {
+                          
+                          /* check if in native mode for a different type of machine */
+                          if(ntstring[3] != DFKgetPNSC(HDFtype, DF_MT)) {
+                              /* 
+                               * OK, we have a problem here --- is in native mode
+                               * for a different machine.  PUNT
+                               */
+                              
+                              goto bad_number_type;
+
+                          } else {
+                              /*
+                               * Is in native mode but its OK --- same machine type
+                               */
+                              
+                              HDFtype |= DFNT_NATIVE;
+
+                          }
+
+                      }
+                      
+                      break;
+                  default:
+                      /* Do nothing */
+                      break;
+                  }
+              }
+          
+              variables[count] = NC_new_var(vgname, type, ndims, dims);
+              vp = variables[count];
+              if(!vp) {
+                  fprintf(stderr, "Can't read new variable %s\n", vgname);
+                  return FAIL;
+              }
+              
+#if DEBUG
+              printf("Created a variable called %s   (id %d) \n", vgname, id);
+#endif
+              /* Read in the attributes */
+              vp->attrs = hdf_read_attrs(xdrs, handle, var);
+              
+              /* set up for easy access later */
+              vp->vgid     = id;
+              vp->data_ref = data_ref;
+              vp->data_tag = DATA_TAG;
+              vp->HDFtype  = HDFtype;
+              vp->ndg_ref  = (uint16) ndg_ref;
+
+              /* need to process the ragged array info here */
+              /* QUESTION:  Load the whole rag_fill list in now??????? */
+              if(rag_ref) {
+                  vp->is_ragged = TRUE;
+              }
+              
+              if(vp->data_ref) {
+                  /*
+                   * We have already seen data for this variable so now
+                   *  we need to worry about its numrecs field
+                   */
+                  
+                  if(is_rec_var) {
+                      /*
+                       * Call NC_var_shape() so we can figure out how many
+                       *  records have been written.  This is horribly 
+                       *  inefficient, but the separation-of-powers gets
+                       *  really mucked up if we wait till later...
+                       */
+                      
+                      if(NC_var_shape(vp, handle->dims) == -1)
+                          return FAIL;
+                      
+                      /*
+                       * Now figure out how many recs have been written
+                       * For a while there was a -1 at the end of this
+                       *   equation.  I don't remember why its there
+                       *   (4-Nov-93)
+                       */
+                      vp->numrecs = data_count / vp->dsizes[0];
+                      
+#ifdef DEBUG
+                      fprintf(stderr, "I have set numrecs to %d\n", vp->numrecs);
+#endif                  
+                      /*
+                       * Deallocate the shape info as it will be recomputed
+                       *  at a higher level later
+                       */
+                      HDfreespace((VOIDP)vp->shape);
+                      HDfreespace((VOIDP)vp->dsizes);
+                      
+                  } else {
+                      /* Not a rec var, don't worry about it */
+                      vp->numrecs = 1;
+                  }
+              } 
+              
+              count++;
+              
+          }
+
+bad_number_type:
+          
+          Vdetach(var);
+      }
+  }
+  
+  if(count)
+      handle->vars = NC_new_array(NC_VARIABLE, count, (Void *) variables);
+  else
+      handle->vars = NULL;
+
+  HDfreespace((VOIDP)variables);
+  HDfreespace((VOIDP)dims);
+  
+#if DEBUG
+  fprintf(stderr, "Created variable array %d \n", handle->vars);
+#endif
+  
+  return SUCCEED;
+#else
+  return FAIL;	/* for now, so we can just read in "old" rigs */
+#endif /* QAK */
+
+} /* hdf_read_rigs */
+#endif /* MFGR */
+
+
 /* ----------------------------------------------------------------
 ** Read in a cdf structure
 */
@@ -1584,6 +1834,7 @@ NC **handlep;
   register int32  cdf_vg;
   register int    vgid, found, status;
   int32           entries;
+  CONSTR(FUNC,"hdf_read_xdr_cdf");
 
 #if DEBUG
  fprintf(stderr, "hdf_read_xdr_cdf i've been called %d\n", (*handlep)->hdf_file);
@@ -1594,16 +1845,13 @@ NC **handlep;
   found = FALSE;
   while(!found && ((vgid = Vgetid((*handlep)->hdf_file, vgid)) != FAIL)) {
     cdf_vg = Vattach((*handlep)->hdf_file, vgid, "r");
-    if(cdf_vg == FAIL) {
-        fprintf(stderr, "Oops\n");
-        return FALSE;
-    }
+    if(cdf_vg == FAIL) 
+        HRETURN_ERROR(DFE_CANTATTACH,FALSE);
     Vgetclass(cdf_vg, class);
-    if(!HDstrcmp(class, CDF)) {
+    if(!HDstrcmp(class, CDF)) 
         found = TRUE;
-    } else {
+    else 
         Vdetach(cdf_vg);
-    }
   }
 
   if(!found)
@@ -1630,6 +1878,14 @@ NC **handlep;
   /* read in attributes */
   (*handlep)->attrs = hdf_read_attrs(xdrs, (*handlep), cdf_vg);
 
+#ifdef MFGR
+  /* read in rasters */
+  status = hdf_read_rigs(xdrs, (*handlep), cdf_vg);
+  if(status == FAIL)
+    return FALSE;
+
+#endif /* MFGR */
+
   Vdetach(cdf_vg);
 
   return TRUE;
@@ -1649,6 +1905,7 @@ bool_t
 XDR *xdrs;
 NC **handlep;
 {
+  CONSTR(FUNC,"hdf_xdr_cdf"); /* for HERROR */
 
   int status;
 
@@ -1662,8 +1919,14 @@ NC **handlep;
       status = hdf_write_xdr_cdf(xdrs, handlep);
       break;
   case XDR_DECODE :
-      if((status = hdf_read_xdr_cdf(xdrs, handlep)) == FALSE)
+      if((status = hdf_read_xdr_cdf(xdrs, handlep)) == FALSE) {
           status = hdf_read_sds_cdf(xdrs, handlep);
+	  if(status==FALSE)
+	      HRETURN_ERROR(DFE_BADNDG,FALSE);
+#ifdef MFGR
+	  status = hdf_read_rig_cdf(xdrs, handlep);
+#endif
+	} /* end if */
       break;
   case XDR_FREE   :
       NC_free_cdf((*handlep));

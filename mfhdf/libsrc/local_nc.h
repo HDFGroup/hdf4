@@ -157,6 +157,23 @@ typedef struct {
 #endif
 } NC_var ;
 
+#if defined HDF && defined MFGR
+/* NC raster: description and data */
+typedef struct {
+	NC_string *name;
+	NC_iarray *assoc; /* user definition */
+	NC_array *attrs;  /* dataset attributes */
+        int32 num_comp;   /* number of components this image has */
+        intn *comp_arr;   /* array of component sizes (in bits) */
+
+	int32 vgid;       /* id of the variable's Vgroup */
+        uint16 data_ref;  /* ref of the variable's data storage (if exists) */
+        uint16 data_tag;  /* tag of the variable's data storage (if exists) */
+        uint16 rig_ref;   /* ref of rig for this dataset */
+        int32 aid;        /* aid for DFTAG_RI data */
+} NC_ras ;
+#endif /* HDF & MFGR */
+
 #define IS_RECVAR(vp) \
 	((vp)->shape != NULL ? (*(vp)->shape == NC_UNLIMITED) : 0 )
 
@@ -177,6 +194,9 @@ typedef struct {
 	NC_array *attrs ;
 	NC_array *vars ;
 #ifdef HDF
+#ifdef MFGR
+	NC_array *rigs ; /* array of RIGs in the file (for MFGR interface) */
+#endif
 	int32 hdf_file;
         int file_type;
         int32 vgid;

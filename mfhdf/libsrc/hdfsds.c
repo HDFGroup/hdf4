@@ -55,14 +55,17 @@ static char RcsId[] = "@(#)$Revision$";
 
 PRIVATE intn       sdgCurrent;
 PRIVATE intn       sdgMax;
-PRIVATE uint16     *sdgTable;
+PRIVATE uint16     *sdgTable=NULL;
 PRIVATE uint8      *ptbuf = NULL;
 
-intn hdf_query_seen_sdg
+PRIVATE intn hdf_query_seen_sdg
     PROTO((uint16 ndgRef));
 
-VOID hdf_register_seen_sdg
+PRIVATE VOID hdf_register_seen_sdg
     PROTO((uint16 ndgRef));
+
+PRIVATE intn hdf_read_ndgs
+    PROTO((NC *handle));
 
 /* --------------------------- hdf_query_seen_sdg --------------------------- */
 /*
@@ -73,9 +76,9 @@ VOID hdf_register_seen_sdg
  *    possible
  */
 #ifdef PROTOTYPE
-intn hdf_query_seen_sdg(uint16 ndgRef)
+PRIVATE intn hdf_query_seen_sdg(uint16 ndgRef)
 #else
-intn hdf_query_seen_sdg(ndgRef)
+PRIVATE intn hdf_query_seen_sdg(ndgRef)
      uint16 ndgRef;
 #endif
 {
@@ -97,9 +100,9 @@ intn hdf_query_seen_sdg(ndgRef)
  *    so we don't read it twice
  */
 #ifdef PROTOTYPE
-VOID hdf_register_seen_sdg(uint16 sdgRef)
+PRIVATE VOID hdf_register_seen_sdg(uint16 sdgRef)
 #else
-VOID hdf_register_seen_sdg(sdgRef)
+PRIVATE VOID hdf_register_seen_sdg(sdgRef)
      uint16 sdgRef;
 #endif
 {
@@ -127,9 +130,9 @@ VOID hdf_register_seen_sdg(sdgRef)
  *
  */
 #ifdef PROTOTYPE
-intn hdf_read_ndgs(NC *handle)
+PRIVATE intn hdf_read_ndgs(NC *handle)
 #else
-intn hdf_read_ndgs(handle)
+PRIVATE intn hdf_read_ndgs(handle)
      NC *handle;
 #endif
 {
@@ -840,7 +843,7 @@ NC **handlep;
      */
     
     /* we haven't seen any SDG-NDG combos yet */
-    sdgTable = NULL;
+    HDfreenclear(sdgTable);
 
     handle = (*handlep);
     if(!handle) return FALSE;

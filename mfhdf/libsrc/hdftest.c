@@ -22,9 +22,11 @@ static char RcsId[] = "@(#)$Revision$";
 
 #define FILE1   "test1.hdf"
 #define FILE2   "test2.hdf"
+#define FILE3   "test3.hdf"
 #define EXTFILE "exttest.hdf"
 
 #define EXTERNAL_TEST
+#define NBIT_TEST
 
 #ifdef PROTOTYPE
 main(int argc, char *argv[])
@@ -32,9 +34,9 @@ main(int argc, char *argv[])
 main(argc, argv)
 int argc;
 char *argv[];
-#endif 
+#endif
 {
-    int32 f1, f2, sdsid, nt, dimsize[10], nattr, rank;
+    int32 f1, f2, f3, sdsid, nt, dimsize[10], nattr, rank;
     int32 newsds, newsds2, newsds3, dimid, dimid2, number, offset;
     int32 index, ival;
     intn status, i;
@@ -43,7 +45,7 @@ char *argv[];
     char    l[80], u[80], fmt[80], c[80];
     int32   count;
     int     num_err = 0;
-    int32   idata[100];
+    int32   idata[100], rdata[100];
     int16   sdata[100];
     int32  ndg_saved_ref;
 
@@ -432,8 +434,8 @@ char *argv[];
 
 #ifdef EXTERNAL_TEST
 
-    /* 
-     * Test the External File storage stuff 
+    /*
+     * Test the External File storage stuff
      */
 
     nt = DFNT_INT32 | DFNT_NATIVE;
@@ -504,12 +506,87 @@ char *argv[];
 		idata[8]);
         num_err++;
     }
-    
+
     status = SDendaccess(newsds2);
     CHECK(status, "SDendaccess");
 
 #endif /* EXTERNAL_TEST */
-    
+
+#ifdef NBIT_TEST
+
+    /*
+     * Test the N-Bit storage stuff
+     */
+
+    f3 = SDstart(FILE3, DFACC_CREATE);
+    CHECK(f1, "SDstart");
+
+    nt = DFNT_INT32;
+    dimsize[0] = 5;
+    dimsize[1] = 5;
+    newsds = SDcreate(f3, "NBitDataSet", nt, 2, dimsize);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to create a new data set for external promotion\n");
+        num_err++;
+    }
+
+    for(i = 0; i < 25; i++)
+        idata[i] = i;
+    for(i = 0; i < 10; i++)
+        idata[i] = i * 10;
+
+    status = SDsetnbitdataset(newsds,6,7,FALSE,FALSE);
+    CHECK(status, "SDsetnbitdataset");
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
+    CHECK(status, "SDwritedata");
+
+#ifdef QAK
+    status = SDsetnbitdataset(newsds,0,7,FALSE,FALSE);
+    CHECK(status, "SDsetnbitdataset");
+
+#endif
+    status = SDendaccess(newsds);
+    CHECK(status, "SDendaccess");
+
+    /* need to close to flush n-bit info to file */
+    status = SDend(f3);
+    CHECK(status, "SDend");
+
+    /* read the n-bit data back in */
+    f3 = SDstart(FILE3, DFACC_RDWR);
+    CHECK(f1, "SDstart (again)");
+
+    newsds2 = SDselect(f3, 0);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to select a data set for n-bit access\n");
+        num_err++;
+    }
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
+    CHECK(status, "SDreaddata");
+HEprint(stdout,0);
+
+    for(i = 0; i < 25; i++)
+        if(idata[i] != rdata[i]) {
+            fprintf(stderr,"Bogus val in loc %d in n-bit dset want %d got %d\n",
+		    i, idata[i], rdata[i]);
+            num_err++;
+        }
+
+
+    status = SDendaccess(newsds2);
+    CHECK(status, "SDendaccess");
+
+    status = SDend(f3);
+    CHECK(status, "SDend");
+
+#endif /* NBIT_TEST */
+
     status = SDend(f1);
     CHECK(status, "SDend");
 

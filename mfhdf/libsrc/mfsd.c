@@ -58,7 +58,7 @@ PRIVATE NC_dim * SDIget_dim
 /* Local function prototypes */
 PRIVATE NC * SDIhandle_from_id 
     PROTO((int32 id, intn typ));
-PRIVATE NC_var * SDIget_var 
+PRIVATE NC_var *SDIget_var
     PROTO((NC *handle, int32 sdsid));
 PRIVATE intn SDIputattr 
     PROTO((NC_array **ap, char *name, int32 nt, intn count, VOIDP data));
@@ -2947,6 +2947,111 @@ int32   offset;
     return(status);
 
 } /* SDsetbigexternalfile */
+
+
+/* -------------------------- SDsetnbitdataset ---------------------------- */
+/*
+
+ NAME
+	SDsetnbitdataset -- Create/convert a dataset to n-bit representation
+ USAGE
+	intn SDsetnbitdataset(id, start_bit, bit_len, sign_ext, fill_one)
+        int32   id;                  IN: dataset ID
+        intn start_bit;              IN: starting bit offset (lowest=0)
+        intn bit_len;                IN: # of bits to write
+        intn sign_ext;               IN: Whether to sign extend
+        intn fill_one;               IN: Whether to fill background w/1's
+ RETURNS
+        Return SUCCEED or FAIL
+
+ DESCRIPTION
+        Specify that the actual data for this dataset be represented as a
+        n-bit dataset internally in the HDF file.
+
+        The start_bit parameter determines the lowest bit to write out,
+        the bit_len parameter determines how many bits to write out.  The
+        bits in the data include the lowest bit (start_bit) and count up
+        bit_len-1 bits to write out.  For example, starting at bit 2
+        and writing 4 bits from the following bit data, "01111011", would
+        write out the bit data, "1110", to the dataset on disk.
+
+        The sign_ext parameter determines whether the top bit (highest bit #)
+        is used to sign extend the bits whether data is read back from the
+        disk.  The fill_one parameter is used to determine whether to
+        fill the "background bits" (the bits not in the data written to the
+        file) with 1's or 0's when the data is read back from the file.
+
+        Only the data (as in SDwritedata()) will be stored in n-bit
+        representation.  Attributes and such will still be stored normally.
+
+        IMPORTANT:  This will only work on datasets stored in HDF files.
+
+        NOTE: n-bit "compression" is described more fully in the cnbit.c file.
+
+--------------------------------------------------------------------------- */
+
+intn SDsetnbitdataset(int32 id, intn start_bit, intn bit_len, intn sign_ext,
+    intn fill_one)
+{
+
+    NC       * handle;
+    NC_var   * var;
+    intn       status;
+    model_info m_info;  /* modeling information for the HCcreate() call */
+    comp_info c_info;   /* "compression" information for the HCcreate() call */
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDsetnbitdataset: I've been called\n");
+#endif
+
+    if(start_bit<0 || bit_len<=0)
+        return FAIL;
+
+    handle = SDIhandle_from_id(id, SDSTYPE);
+    if(handle == NULL || handle->file_type != HDF_FILE)
+        return FAIL;
+
+    if(handle->vars == NULL)
+        return FAIL;
+
+    var=SDIget_var(handle, id);
+    if(var==NULL)
+        return FAIL;
+
+    /* set up n-bit parameters */
+    c_info.nbit.nt=var->HDFtype;
+    c_info.nbit.sign_ext=sign_ext;
+    c_info.nbit.fill_one=fill_one;
+    c_info.nbit.start_bit=start_bit;
+    c_info.nbit.bit_len=bit_len;
+
+#ifdef SDDEBUG
+printf("SDsetnbitdata(): nt=%d, sign_ext=%d, fill_one=%d, start_bit=%d, bit_len=%d\n",(intn)c_info.nbit.nt,(intn)c_info.nbit.sign_ext,(intn)c_info.nbit.fill_one,(intn)c_info.nbit.start_bit,(intn)c_info.nbit.bit_len);
+#endif
+    if(!var->data_ref) {   /* doesn't exist */
+#ifdef SDDEBUG
+printf("SDsetnbitdata(): dataset doesn't exist\n");
+#endif
+
+        /* element doesn't exist so we need a reference number */
+        var->data_ref=Hnewref(handle->hdf_file);
+        if(var->data_ref == 0)
+            return FAIL;
+      } /* end if */
+    status=(intn)HCcreate(handle->hdf_file,(uint16)DATA_TAG,
+            (uint16) var->data_ref,COMP_MODEL_STDIO,&m_info,COMP_CODE_NBIT,
+             &c_info);
+
+#ifdef SDDEBUG
+printf("SDsetnbitdata(): HCcreate() status=%d\n",(intn)status);
+#endif
+    if(status != FAIL) {
+        if((var->aid != 0) && (var->aid != FAIL))
+            Hendaccess(var->aid);
+        var->aid = status;
+      } /* end if */
+    return(status);
+} /* SDsetnbitdataset */
 
 
 /* ------------------------------ SDfindattr ------------------------------ */

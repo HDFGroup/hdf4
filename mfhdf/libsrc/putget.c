@@ -814,7 +814,7 @@ NC_var    * vp;
     /*
      * Fail if there is no data
      */
-    if(vp->data_ref == NULL) return(FALSE);
+    if(vp->data_ref == DFTAG_NULL) return(FALSE);
 
     if(handle->hdf_mode == DFACC_RDONLY)
         vp->aid = Hstartread(handle->hdf_file, vp->data_tag, vp->data_ref);
