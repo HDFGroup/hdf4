@@ -572,6 +572,7 @@ uint16 ref;
     vunpackvg(vg,vgpack);
     vg->f             = f;
     vg->new           = 0; /* not a new Vgroup */
+    vg->marked        = 0; 
     vg->oref          = ref;
     vg->otag          = DFTAG_VG;
       
@@ -757,7 +758,7 @@ char    *accesstype;    /* access mode */
         HDfreespace((VOIDP)vgpack);
 #else
         vg=v->vg;
-#endif /* OLD_WAY
+#endif /* OLD_WAY */
 
         vg->access        = access;
         vg->marked        = 0;
@@ -848,6 +849,7 @@ int32 vkey;
     /* Since this can only happen for Vgroups with write access, there is no */
     /* need to check for write access.... (I hope) -QAK */
     if (vg->marked == 1) {
+
       vgpack = (uint8 *) HDgetspace((int32) sizeof(VGROUP) + vg->nvelt * 4);
       vpackvg(vg,vgpack,&vgpacksize);
 
