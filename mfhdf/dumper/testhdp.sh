@@ -2,6 +2,7 @@
 # The following commands can be used for testing dumper hdp
 
 CMD='./hdp'
+RM='rm -f'
 
 # Test command list
 $CMD list tdata.hdf
@@ -67,7 +68,9 @@ $CMD dumpgr -n Image_array_5 grtdfui82.hdf
 $CMD dumpgr -r 6,2,3 grtdfui82.hdf
 $CMD dumpgr -r 6 -d  grtdfui82.hdf
 $CMD dumpgr -o my.dat grtdfui82.hdf
+$RM my.dat
 $CMD dumpgr -o mybin.dat  -b grtdfui82.hdf
+$RM mybin.dat
 $CMD dumpgr grtdfui83.hdf
 $CMD dumpgr grtdfui84.hdf
 $CMD dumpgr grtdfui162.hdf
