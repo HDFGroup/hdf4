@@ -38,8 +38,8 @@ case "${host}" in
   mips*-sgi-irix6_32*)    host_makefile_frag=config/mh-irix32 ;;
   mips*-sgi-irix5*)       host_makefile_frag=config/mh-irix5 ;;
   mips*-sgi-irix4*)       host_makefile_frag=config/mh-irix4 ;;
-  i[345]86-*-linux*)      host_makefile_frag=config/mh-linux ;;
-  i[345]86-*-freebsd*)    host_makefile_frag=config/mh-fbsd ;;
+  i[3456]86-*-linux*)     host_makefile_frag=config/mh-linux ;;
+  i[3456]86-*-freebsd*)   host_makefile_frag=config/mh-fbsd ;;
   *-ibm-aix*)             host_makefile_frag=config/mh-aix ;;
   *-*-solaris2*)          host_makefile_frag=config/mh-solaris ;;
   *-sun-*)		          host_makefile_frag=config/mh-sun ;;
@@ -109,8 +109,8 @@ case "${host}" in
   mips*-sgi-irix6_32*)    files=config/jirix32.h ;;
   mips*-sgi-irix5*)       files=config/jirix5.h ;;
   mips*-sgi-irix4*)       files=config/jirix4.h ;;
-  i[345]86-*-linux*)      files=config/jlinux.h ;;
-  i[345]86-*-freebsd*)    files=config/jfbsd.h ;;
+  i[3456]86-*-linux*)     files=config/jlinux.h ;;
+  i[3456]86-*-freebsd*)   files=config/jfbsd.h ;;
   *-ibm-aix*)             files=config/jaix.h ;;
   *-*-solaris2*)          files=config/jsolaris.h ;;
   *-sun-*)	              files=config/jsun.h ;;
