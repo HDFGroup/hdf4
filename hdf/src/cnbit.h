@@ -103,4 +103,3 @@ funclist_t cnbit_funcs={    /* functions to perform N-bit encoding */
 #endif
 
 #endif /* __CNBIT_H */
-
