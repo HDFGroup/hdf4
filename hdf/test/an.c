@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/05/03 21:32:36  koziol
-First half of fixes to make Purify happy
+Revision 1.4  1993/07/31 16:58:43  georgev
+Fixed VOIDP casts for HDfreespace().
 
+ * Revision 1.3  1993/05/03  21:32:36  koziol
+ * First half of fixes to make Purify happy
+ *
  * Revision 1.2  1993/04/19  23:03:38  koziol
  * General Code Cleanup to reduce/remove compilation warnings on PC
  *
@@ -161,9 +164,9 @@ void test_an()
         check_lab_desc(DFTAG_RIG, refnum, labris, descris);
     }
 
-    HDfreespace(data);
-    HDfreespace(image);
-    HDfreespace(newimage);
+    HDfreespace((VOIDP)data);
+    HDfreespace((VOIDP)image);
+    HDfreespace((VOIDP)newimage);
 }
 
 
@@ -275,6 +278,6 @@ uint16 tag, ref;
             printf("\n\tSHOULD BE: %s<<<\n", desc);
             num_errs++;
         }
-	HDfreespace(indesc);
+	HDfreespace((VOIDP)indesc);
     }
 }
