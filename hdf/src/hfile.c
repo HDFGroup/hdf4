@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.19  1993/09/08 18:29:24  koziol
-Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
+Revision 1.20  1993/09/08 20:55:37  georgev
+Added #defines for THINK_C.
 
+ * Revision 1.19  1993/09/08  18:29:24  koziol
+ * Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
+ *
  * Revision 1.18  1993/09/03  14:10:13  koziol
  * Saved debugging info.
  *
@@ -197,7 +200,11 @@ static int HIchangedd
    information on an opened HDF file.
    See hfile.h for structure and members definition of filerec_t. */
 
+#if defined(macintosh) | defined(THINK_C)
+struct filerec_t *file_records = NULL;
+#else /* !macintosh */
 struct filerec_t file_records[MAX_FILE];
+#endif /* !macintosh */
 
 /* Array of records of information on each access elements.
    These will contain information like how to access the data element,
@@ -3017,7 +3024,7 @@ PRIVATE int HIget_file_slot(path, FUNC)
     int i;
     int slot;
 
-#ifdef OLD_WAY
+#if defined(macintosh) | defined(THINK_C)
 
     if (!file_records) {
         /* The array has not been allocated.  Allocating file records
@@ -3042,11 +3049,11 @@ PRIVATE int HIget_file_slot(path, FUNC)
        file_records[0].version_set = FALSE;
 
        file_records[0].path = HDgetspace(HDstrlen(path)+1);
-       HIstrncpy(file_records[0].path, path, DFIstrlen(path)+1);
+       HIstrncpy(file_records[0].path, path, HDstrlen(path)+1);
        return file_records[0].path ? 0 : FAIL;
     }
 
-#endif /* OLD_WAY */
+#endif /* macintosh or THINK_C */
 
     /* Search for a matching or free slot. */
 
@@ -3612,7 +3619,7 @@ intn  *attach;
 
 } /* Hfidinquire */
 
-#ifdef MAC
+#if defined(MAC) & !defined(THINK_C)
 /*
 *  Macintosh file stubs for HDF
 *
