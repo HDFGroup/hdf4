@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.22  1993/07/15 01:26:22  koziol
-Final Whammy on the VSet memory Leak bug, mostly for maintenance purposes
+Revision 1.23  1993/07/15 19:00:39  chouck
+Fixed weird RCS type noise in file
 
+ * Revision 1.22  1993/07/15  01:26:22  koziol
+ * Final Whammy on the VSet memory Leak bug, mostly for maintenance purposes
+ *
  * Revision 1.21  1993/07/14  20:52:55  chouck
  * Plugged memory leak on Vdelete() and VSdelete()
  *
@@ -383,11 +386,7 @@ VOIDP n;
     }
 
     HDfreespace((VOIDP)n);
-<<<<<<< vgp.c
-    tree_size--;
-=======
 
->>>>>>> 1.21
 }  /* vdestroynode */
 
 #ifdef NOTNEEDED
