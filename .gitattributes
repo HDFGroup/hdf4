@@ -1,13 +1,6 @@
 * text=auto !eol
 /Win32.nofortran.zip -text
 /Win32.zip -text
-hdf/jpeg/testimg.bmp -text
-hdf/jpeg/testimg.gif -text
-hdf/jpeg/testimg.jpg -text
-hdf/jpeg/testimg.ppm -text svneol=unset#application/octet-stream
-hdf/jpeg/testimgp.jpg -text
-hdf/jpeg/testorig.jpg -text
-hdf/jpeg/testprog.jpg -text
 hdf/test/8bit.dat -text
 hdf/test/bitio.dat -text
 hdf/test/gr_r24.dat -text
