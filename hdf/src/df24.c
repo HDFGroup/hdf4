@@ -147,7 +147,7 @@ intn
 DF24getimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
 {
   CONSTR(FUNC, "DF24getimage");
-  intn        ret, il;
+  intn        il;
   int32       tx, ty;
   int compressed, has_pal;
   uint16 compr_type;
