@@ -251,6 +251,18 @@ check_fann_rewrite(const char *fname)
           num_errs++;
       }
 
+    /* see if this routine works. Just a type, not specific. -BMR */
+    ann_tag = ANatype2tag (AN_DATA_DESC);
+    ret = (ann_tag != DFTAG_DIA) ? FAIL : 0;  /*these two statements may not */
+    RESULT("ANatype2tag");	/* be necessary but that seems like a pattern */
+				/* in the test so I put them here too. -BMR */
+
+    if (ann_tag != DFTAG_DIA)
+      {
+          printf(">>> ANatype2tag failed to return valid tag from a type \n");
+          num_errs++;
+      }
+
     /* check ann length against 3rd label */
     if (ann_len != (int32) HDstrlen(file_lab[2]))
       {
