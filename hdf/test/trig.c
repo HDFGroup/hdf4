@@ -5,8 +5,8 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/10/16 21:42:21  chouck
-Fixed output messages
+Revision 1.4  1992/10/16 22:59:18  chouck
+Dynamically allocated arrays to make Mac testing more robust
 
  * Revision 1.1  1992/10/12  18:48:12  koziol
  * Initial revision
@@ -355,27 +355,50 @@ test_r24()
 
 #define XD1 10
 #define YD1 10
-#define XD2 32
+#define XD2 7
 #define YD2 11
 
 test_r8()
 {
-    uint8 im1[XD1][YD1], im2[XD2][YD2], ii1[XD1][YD1], ii2[XD2][YD2];
-    uint8 pal1[768], pal2[768], ipal[768];
-
+    uint8 *im2, *ii2;
+	uint8 *im1, *ii1;
+    char *pal1, *pal2, *ipal;
+	
     int x,y;
     int ret, num_images=0;
     uint16 ref1, ref2, ref3;
     int32 xd, yd;
     int ispal;
     int error;
+	
+	im1 = (uint8 *) malloc(XD1 * YD1 * sizeof(uint8));
+	ii1 = (uint8 *) malloc(XD1 * YD1 * sizeof(uint8));
+	if(!im1 || !ii1) {
+		fprintf(stderr, "Out of memory!\n");
+		exit(1);
+	}
+	
+	im2 = (uint8 *) HDgetspace(XD2 * YD2 * sizeof(uint8));
+	ii2 = (uint8 *) HDgetspace(XD2 * YD2 * sizeof(uint8));
+	if(!im2 || !ii2) {
+		fprintf(stderr, "Out of memory!\n");
+		exit(1);
+	}
+	
+  	pal1 = (char *) malloc(768 * sizeof(char));
+	pal2 = (char *) malloc(768 * sizeof(char));
+	ipal = (char *) malloc(768 * sizeof(char));
+	if(!ipal || !pal1 || !pal2) {
+		fprintf(stderr, "Out of memory!\n");
+		exit(1);	
+	}
 
     for(x=0;x<XD1;x++)
        for (y=0;y<YD1;y++)
-           im1[x][y] = x+y;
+           im1[x * XD1 + y] = x+y;
     for(x=0;x<XD2;x++)
        for(y=0;y<YD2;y++)
-           im2[x][y] = (2*x+y)-256*((2*x+y)/256);
+           im2[x * XD2 + y] = (2*x+y)-256*((2*x+y)/256);
     for (x=0;x<256;x++) {
        pal1[3*x] = x;
        pal1[3*x + 1] = x;
@@ -473,7 +496,7 @@ test_r8()
 
 }
 
-int check_im_pal(oldx, oldy, newx, newy, oldim, newim, oldpal, newpal)
+check_im_pal(oldx, oldy, newx, newy, oldim, newim, oldpal, newpal)
     int oldx, oldy, newx, newy;
     uint8 **oldim, **newim, *oldpal, *newpal;    
 {
@@ -522,9 +545,15 @@ test_pal()
     int ret;
     uint16 ref1, ref2;
 
-    char pal1[768], pal2[768];
-    char ipal[768];
+    char *pal1, *pal2, *ipal;
    
+   	pal1 = (char *) malloc(768 * sizeof(char));
+	pal2 = (char *) malloc(768 * sizeof(char));
+	ipal = (char *) malloc(768 * sizeof(char));
+	if(!ipal || !pal1 || !pal2) {
+		fprintf(stderr, "Out of memory!\n");
+		exit(1);	
+	}
 
     for (i=0;i<256;i++) {
        pal1[3*i] = i;
@@ -633,7 +662,7 @@ main() {
 
     printf("\n************ TESTING 24BIT RASTER IMAGE INTERFACE *************\n");
     test_r24();
-
+	
     printf("\n************ TESTING  8BIT RASTER IMAGE INTERFACE *************\n");
     test_r8(); 
 
