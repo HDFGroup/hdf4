@@ -1469,7 +1469,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
           uint8 nlevels,       /* IN: number of levels of chunks */
           int32 fill_val_len,  /* IN: fill value length in bytes */
           VOID *fill_val,      /* IN: fill value */
-          CHUNK_DEF *chk_array /* IN: structure describing chunk distribution
+          HCHUNK_DEF *chk_array /* IN: structure describing chunk distribution
                                   can be an array? but we only handle 1 level */ )
 {
     CONSTR(FUNC, "HMCcreate");     /* for HERROR */

@@ -18,7 +18,7 @@
  * Dependencies: tbbt.c mcache.c
  * Invokes:      none
  * Contents:     Structures & definitions for chunked elements
- * Structure definitions: DIM_DEF, CHUNK_DEF
+ * Structure definitions: DIM_DEF, HCHUNK_DEF
  * Constant definitions:
  * Author: -GeorgeV -  9/3/96
  *---------------------------------------------------------------------------*/
@@ -63,7 +63,7 @@ typedef struct dim_def_struct {
 } DIM_DEF, * DIM_DEF_PTR;
 
 /* Structure for each Chunk Definition*/
-typedef struct chunk_def_struct {
+typedef struct hchunk_def_struct {
     int32    chunk_size;     /* size of this chunk*/
     int32    nt_size;        /* number type size i.e. size of data type */
     int32    num_dims;       /* number of actual dimensions */
@@ -75,7 +75,7 @@ typedef struct chunk_def_struct {
     int32      model_type;    /* Compression model type */
     comp_info  *cinfo;        /* Compression info struct */
     model_info *minfo;        /* Compression model info struct */
-}CHUNK_DEF, * CHUNK_DEF_PTR;
+}HCHUNK_DEF, * HCHUNK_DEF_PTR;
 
 /* Private structues */
 #ifdef _HCHUNKS_MAIN_
@@ -165,7 +165,7 @@ extern      "C"
          uint8 nlevels,       /* IN: number of levels of chunks */
          int32 fill_val_len,  /* IN: fill value length in bytes */
          VOID  *fill_val,     /* IN: fill value */
-         CHUNK_DEF *chk_array /* IN: structure describing chunk distribution
+         HCHUNK_DEF *chk_array /* IN: structure describing chunk distribution
                                  can be an array? but we only handle 1 level */);
 
     extern int32 HMCsetMaxcache
