@@ -26,9 +26,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.16  1992/06/19 16:45:58  chouck
-More descriptive error messages when Hopen() fails
+Revision 1.17  1992/07/08 15:39:42  chouck
+Removed return(0) at end of main().  Took out some debugging
+info from the -t option
 
+ * Revision 1.16  1992/06/19  16:45:58  chouck
+ * More descriptive error messages when Hopen() fails
+ *
  * Revision 1.15  1992/06/08  22:25:22  chouck
  * Minor fix with program name
  *
@@ -186,7 +190,6 @@ char *argv[];
                 only_tag = atoi(&(argv[i][2]));
             else 
                 only_tag = atoi(&(argv[++i][0]));
-            printf("Looking for tag %d\n", only_tag);
             break;
         default:    
             printf("Unknown option : -%c\n", argv[1][1]);
@@ -210,8 +213,9 @@ char *argv[];
         printf("    -v: Verbose format - display text of annotations and labels.\n");
         printf("        (Verbose format automatically puts you in Long format).\n");
         printf("    -t #: List only information about a specific type of tag.\n");
-        printf("          For example '%s -t 700 foo.hdf' will list information only\n", argv[0]);
-        printf("          about Scientific Data Groups.\n");
+        printf("          For example '%s -t 700 foo.hdf' \n", argv[0]);
+        printf("          will list information only about Scientific Data\n");
+        printf("          Groups.\n");
         exit (1);
     }
     
@@ -273,7 +277,6 @@ char *argv[];
         i++;
         printf("\n");
     }
-    return(0);              /* success */
 }
 
 #ifdef PROTOTYPE
