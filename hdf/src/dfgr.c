@@ -605,6 +605,7 @@ int32 DFGRIopen(const char *filename, int acc_mode)
     /* Check if filename buffer has been allocated */
     if (Grlastfile == NULL) {
         Grlastfile = (char *)HDgetspace((DF_MAXFNLEN +1) * sizeof(char));
+	*Grlastfile='\0';	/* initialize to a 0-length string */
         if (Grlastfile == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
@@ -1011,7 +1012,8 @@ int DFGRIsetil(int il, int type)
  *---------------------------------------------------------------------------*/
 int DFGRIrestart(void)
 {
-    Grlastfile = NULL;
+    if(Grlastfile!=NULL)
+        *Grlastfile = '\0';  /* zero out string instead of NULL'ing pointer */
     Grrefset = 0;
     return SUCCEED;
 }
@@ -1058,6 +1060,7 @@ int DFGRIaddimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
     /* Check if filename buffer has been allocated */
     if (Grlastfile == NULL) {
         Grlastfile = (char *)HDgetspace((DF_MAXFNLEN +1) * sizeof(char));
+	*Grlastfile='\0';	/* initialize to a 0-length string */
         if (Grlastfile == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }

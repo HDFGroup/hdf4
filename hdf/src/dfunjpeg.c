@@ -379,6 +379,11 @@ LOCAL VOID get_sof (decompress_info_ptr cinfo, int code)
         compptr->v_samp_factor = (short)((c     ) & 15);
         compptr->quant_tbl_no  = (short)JGETC(cinfo);
       
+#ifdef JPEG40A
+	/* define all components to be needed, just in case... */
+        compptr->component_needed  = (boolean)TRUE;
+#endif
+
         TRACEMS4(cinfo->emethods, 1, "    Component %d: %dhx%dv q=%d",
             compptr->component_id, compptr->h_samp_factor,
             compptr->v_samp_factor, compptr->quant_tbl_no);

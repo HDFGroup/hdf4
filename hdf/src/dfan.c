@@ -539,6 +539,7 @@ PRIVATE int32 DFANIopen(const char *filename, intn acc_mode)
     if (Lastfile == NULL)
       {
         Lastfile = (char *)HDgetspace((DF_MAXFNLEN +1) * sizeof(char));
+	*Lastfile='\0';		/* initialize with 0-length string */
         if (Lastfile == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }

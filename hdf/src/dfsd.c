@@ -1089,7 +1089,8 @@ intn DFSDadddata(const char *filename, intn rank, int32 dimsizes[], VOIDP data)
 -----------------------------------------------------------------------------*/
 intn DFSDrestart(void)
 {
-    Lastfile = NULL;
+    if(Lastfile!=NULL)
+        *Lastfile = '\0';    /* set to 0-length string instead of NULLing ptr */
     Readref  = 0;
     return(SUCCEED);
 }
