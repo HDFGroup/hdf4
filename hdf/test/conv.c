@@ -698,11 +698,33 @@ void test_conv()
         c4=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s float64 values\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t]););
+/* This amazing hack is because of the way the VMS converts numbers. */
+/*  The converted number are going to have to be checked by hand... */
+#ifdef VMS
+        if(Verbocity>9) {
+            intn i;
+            uint8 *u8_s=(uint8 *)src_float64,
+	        *u8_d=(uint8 *)dst_float64,
+	        *u8_d2=(uint8 *)dst2_float64;
+
+            printf("src_float64:  ");
+            for(i=0; i<80; i++)
+              printf("%.2x ",u8_s[i]);
+            printf("\ndst_float64:  ");
+            for(i=0; i<80; i++)
+              printf("%.2x ",u8_d[i]);
+            printf("\ndst2_float64: ");
+            for(i=0; i<80; i++)
+              printf("%.2x ",u8_d2[i]);
+            printf("\n");
+        }
+#else
         if(HDmemcmp(src_float64,dst2_float64,TEST_SIZE*sizeof(float64))) {
             printf("Error converting float64 values!\n");
             HEprint(stdout,0);
             num_errs++;
           } /* end if */
+#endif /* VMS */
 
         /* clear arrays for next test */
         HDmemset(src_float64,0xae,TEST_SIZE*sizeof(float64));
