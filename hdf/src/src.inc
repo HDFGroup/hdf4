@@ -94,6 +94,17 @@ FFOBJS=hfileff.o dfanff.o df24ff.o dfpff.o dfr8ff.o dfsdff.o vgff.o dfff.o \
 
 FINCS=dffunc.inc hdf.inc
 
+
+# Pablo Instrumentation Library support files
+PCHDRS=$(PABLO_SRC)/ProcIDs.h
+PCSRCS=$(PABLO_SRC)/PabloHDF.c
+PCOBJS=PabloHDF.o
+PFINCS=$(PABLO_SRC)/PabloHDF.inc
+PFSRCS=$(PABLO_SRC)/PabloHDFf.c $(PABLO_SRC)/PabloHDFff.f
+PFOBJS=PabloHDFf.o PabloHDFff.o
+POBJS=PabloHDF.o PabloHDFf.o PabloHDFff.o
+PSRCS= $(PCHDRS) $(PCSRCS) $(PFINCS) $(PFSRCS)
+
 #JFSRCS= jdmain.c jcmain.c jrdjfif.c jrdgif.c jrdppm.c jrdrle.c jrdtarga.c \
 #        jwrjfif.c jwrgif.c jwrppm.c jwrrle.c jwrtarga.c
 #

@@ -604,6 +604,11 @@ typedef int32 HFILEID;
 #include "hproto.h"
 #include "vproto.h"
 
+/* For Pablo Instrumentation */
+#ifdef HAVE_PABLO
+#include "ProcIDs.h"
+#endif /* PABLO */
+
 /* these may eventaully evolve into real-life functions but not yet */
 #define HDFopen(f,a,d)      Hopen((f), (a), (d))
 #define HDFclose(f,a,d)     Hclose((f), (a), (d))

@@ -108,6 +108,10 @@ VSseek(int32 vkey, int32 eltpos)
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VSseek");
 
+#ifdef HAVE_PABLO
+    TRACE_ON(VS_mask, ID_VSseek);
+#endif /* HAVE_PABLO */
+
     if (!VALIDVSID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -134,6 +138,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(VS_mask, ID_VSseek);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }	/* VSseek */
@@ -163,6 +170,10 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
     VDATA      *vs;
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VSread");
+
+#ifdef HAVE_PABLO
+    TRACE_ON(VS_mask, ID_VSread);
+#endif /* HAVE_PABLO */
 
     if (!VALIDVSID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -361,6 +372,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(VS_mask, ID_VSread);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* VSread */
@@ -400,6 +414,10 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
     int32       chunk, done;    /* number of records to do / done */
     int32       ret_value = SUCCEED;
     CONSTR(FUNC, "VSwrite");
+
+#ifdef HAVE_PABLO
+    TRACE_ON(VS_mask, ID_VSwrite);
+#endif /* HAVE_PABLO */
 
     if (!VALIDVSID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -698,6 +716,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(VS_mask, ID_VSwrite);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }	/* VSwrite */

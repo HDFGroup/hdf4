@@ -176,6 +176,10 @@ DFR8setcompress(int32 type, comp_info * cinfo)
   CONSTR(FUNC, "DFR8setcompress");
   intn   ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(DFR8_mask, ID_DFR8setcompress);
+#endif /* HAVE_PABLO */
+
   if (type == COMP_NONE)
     {     /* quick check for no compression */
       CompType = 0;
@@ -206,6 +210,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(DFR8_mask, ID_DFR8setcompress);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DFR8setcompress() */
@@ -239,6 +246,10 @@ DFR8getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pispal)
   int32       file_id;
   intn        ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(DFR8_mask, ID_DFR8getdims);
+#endif /* HAVE_PABLO */
+
   HEclear();
 
   if (!filename || !*filename || !pxdim || !pydim)
@@ -268,6 +279,10 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+
+#ifdef HAVE_PABLO
+  TRACE_OFF(DFR8_mask, ID_DFR8getdims);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DFR8getdims() */
@@ -306,6 +321,10 @@ DFR8getimage(const char *filename, uint8 *image, int32 xdim, int32 ydim, uint8 *
   CONSTR(FUNC, "DFR8getimage");
   int32       file_id;
   intn        ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+  TRACE_ON(DFR8_mask, ID_DFR8getimage);
+#endif /* HAVE_PABLO */
 
   HEclear();
 
@@ -383,6 +402,10 @@ done:
 
   /* Normal function cleanup */
 
+#ifdef HAVE_PABLO
+  TRACE_OFF(DFR8_mask, ID_DFR8getimage);
+#endif /* HAVE_PABLO */
+
   return ret_value;
 }   /* end DFR8getimage() */
 
@@ -411,6 +434,10 @@ DFR8setpalette(uint8 *pal)
 {
   CONSTR(FUNC, "DFR8setpalette");
   intn     ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+  TRACE_ON(DFR8_mask, ID_DFR8setpalette);
+#endif /* HAVE_PABLO */
 
   /* Check if Palette buffer has been allocated */
   if (Palette == NULL)
@@ -441,6 +468,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(DFR8_mask, ID_DFR8setpalette);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DFR8setpalette() */
@@ -652,7 +682,15 @@ DFR8putimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
 {
   intn ret_value;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(DFR8_mask, ID_DFR8putimage);
+#endif /* HAVE_PABLO */
+
   ret_value = (DFR8Iputimage(filename, image, xdim, ydim, compress, 0));
+
+#ifdef HAVE_PABLO
+  TRACE_OFF(DFR8_mask, ID_DFR8putimage);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DFR8putimage() */
@@ -686,7 +724,15 @@ DFR8addimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
 {
   intn ret_value;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(DFR8_mask, ID_DFR8addimage);
+#endif /* HAVE_PABLO */
+
   ret_value = (DFR8Iputimage(filename, image, xdim, ydim, compress, 1));
+
+#ifdef HAVE_PABLO
+  TRACE_OFF(DFR8_mask, ID_DFR8addimage);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DFR8addimage() */
@@ -943,6 +989,10 @@ DFR8nimages(const char *filename)
   intn        i, j;           /* local counting variable */
   intn        ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(DFR8_mask, ID_DFR8nimages);
+#endif /* HAVE_PABLO */
+
   HEclear();
 
   /* should use reopen if same file as last time - more efficient */
@@ -1067,6 +1117,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(DFR8_mask, ID_DFR8nimages);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DFR8nimages() */
@@ -1097,6 +1150,10 @@ DFR8readref(const char *filename, uint16 ref)
   int32       aid;
   intn        ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(DFR8_mask, ID_DFR8readref);
+#endif /* HAVE_PABLO */
+
   HEclear();
 
   if ((file_id = DFR8Iopen(filename, DFACC_READ)) == FAIL)
@@ -1119,6 +1176,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(DFR8_mask, ID_DFR8readref);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DFR8readref() */
@@ -1144,11 +1204,20 @@ intn
 DFR8writeref(const char *filename, uint16 ref)
 {
   intn  ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+  TRACE_ON(DFR8_mask, ID_DFR8writeref);
+#endif /* HAVE_PABLO */
+
   HEclear();
 
   /* shut compiler up */
   filename = filename;
   Writeref = ref;
+
+#ifdef HAVE_PABLO
+  TRACE_OFF(DFR8_mask, ID_DFR8writeref);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DFR8writeref() */
@@ -1173,7 +1242,15 @@ DFR8restart(void)
 {
   intn ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(DFR8_mask, ID_DFR8restart);
+#endif /* HAVE_PABLO */
+
   Lastfile[0] = '\0';
+
+#ifdef HAVE_PABLO
+  TRACE_OFF(DFR8_mask, ID_DFR8restart);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DFR8restart() */
@@ -1198,7 +1275,15 @@ DFR8lastref(void)
 {
   uint16 ret_value;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(DFR8_mask, ID_DFR8lastref);
+#endif /* HAVE_PABLO */
+
   ret_value = Lastref;
+
+#ifdef HAVE_PABLO
+  TRACE_OFF(DFR8_mask, ID_DFR8lastref);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DFR8lastref() */

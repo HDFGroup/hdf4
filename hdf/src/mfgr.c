@@ -1299,6 +1299,9 @@ int32 GRstart(int32 hdf_file_id)
     gr_info_t *gr_ptr;          /* ptr to the new GR information for a file */
     int32  ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRstart);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of file id */
     HEclear();
 
@@ -1357,7 +1360,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRstart);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRstart() */
 
@@ -1388,6 +1393,9 @@ intn GRfileinfo(int32 grid,int32 *n_datasets,int32 *n_attrs)
     int32 gr_idx;   /* index into the gr_tab array */
     intn  ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRfileinfo);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of file id */
     HEclear();
 
@@ -1411,7 +1419,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRfileinfo);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRfileinfo() */
 
@@ -1812,6 +1822,9 @@ intn GRend(int32 grid)
     filerec_t *file_rec;        /* File record */
     intn   ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRend);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of file id */
     HEclear();
 
@@ -2024,7 +2037,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRend);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRend() */
 
@@ -2059,6 +2074,9 @@ int32 GRselect(int32 grid,int32 index)
     VOIDP *t;                   /* temp. ptr to the image found */
     int32  ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRselect);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of file id */
     HEclear();
 
@@ -2089,7 +2107,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRselect);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRselect() */
 
@@ -2130,6 +2150,9 @@ int32 GRcreate(int32 grid,char *name,int32 ncomp,int32 nt,int32 il,int32 dimsize
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     int32    ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRcreate);
+#endif /* HAVE_PABLO */
     /* clear error stack */
     HEclear();
 
@@ -2201,7 +2224,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRcreate);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRcreate() */
 
@@ -2235,6 +2260,9 @@ int32 GRnametoindex(int32 grid,char *name)
     VOIDP *t;                   /* temp. ptr to the image found */
     int32   ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRnametoindex);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of file id */
     HEclear();
 
@@ -2266,7 +2294,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRnametoindex);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRnametoindex() */
 
@@ -2311,6 +2341,9 @@ intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
     int32 index;                /* index of the RI in the GR */
     intn  ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRgetiminfo);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -2359,7 +2392,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRgetiminfo);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRgetiminfo() */
 
@@ -2420,6 +2455,9 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
     intn switch_interlace=FALSE;/* whether the memory interlace needs to be switched around */
     intn ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRwriteimage);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -2955,7 +2993,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRwriteimage);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRwriteimage() */
 
@@ -3013,6 +3053,9 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOI
     uint8 platnumsubclass;      /* class of this NT for this platform */
     intn  ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRreadimage);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -3246,7 +3289,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRreadimage);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRreadimage() */
 
@@ -3283,6 +3328,9 @@ intn GRendaccess(int32 riid)
     int32 index;                /* index of the RI in the GR */
     intn  ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRendaccess);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -3324,7 +3372,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRendaccess);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRendaccess() */
 
@@ -3360,6 +3410,9 @@ uint16 GRidtoref(int32 riid)
     int32 index;                /* index of the RI in the GR */
     uint16  ret_value = 0; /* FAIL? */
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRidtoref);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -3389,7 +3442,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRidtoref);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRidtoref() */
 
@@ -3425,6 +3480,9 @@ int32 GRreftoindex(int32 grid,uint16 ref)
     VOIDP *t;                   /* temp. ptr to the image found */
     int32   ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRreftoindex);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -3456,7 +3514,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRreftoindex);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRreftoindex() */
 
@@ -3497,6 +3557,9 @@ intn GRreqlutil(int32 riid,intn il)
     int32 index;                /* index of the RI in the GR */
     intn  ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRreqlutil);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -3528,7 +3591,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRreqlutil);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRreqlutil() */
 
@@ -3569,6 +3634,9 @@ intn GRreqimageil(int32 riid,intn il)
     int32 index;                /* index of the RI in the GR */
     intn  ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRreqimageil);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -3600,7 +3668,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRreqimageil);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRreqimageil() */
 
@@ -3634,6 +3704,9 @@ int32 GRgetlutid(int32 riid,int32 lut_index)
     CONSTR(FUNC, "GRgetlutid");   /* for HERROR */
     int32  ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRgetlutid);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -3650,7 +3723,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRgetlutid);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRgetlutid() */
 
@@ -3691,6 +3766,9 @@ intn GRgetlutinfo(int32 lutid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
     int32 index;                /* index of the RI in the GR */
     intn  ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRgetlutinfo);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -3727,7 +3805,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRgetlutinfo);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRgetlutinfo() */
 
@@ -3770,6 +3850,9 @@ intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP 
     int32 index;                /* index of the RI in the GR */
     intn  ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRwritelut);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -3836,7 +3919,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRwritelut);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRwritelut() */
 
@@ -3874,6 +3959,9 @@ intn GRreadlut(int32 lutid,VOIDP data)
     int32 index;                /* index of the RI in the GR */
     intn  ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRreadlut);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -3908,7 +3996,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRreadlut);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRreadlut() */
 
@@ -3946,6 +4036,9 @@ intn GRsetexternalfile(int32 riid,char *filename,int32 offset)
     int32 index;                /* index of the RI in the GR */
     intn  ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRsetexternalfile);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -3981,7 +4074,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRsetexternalfile);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRsetexternalfile() */
 
@@ -4021,6 +4116,9 @@ intn GRsetaccesstype(int32 riid,uintn accesstype)
     int32 index;                /* index of the RI in the GR */
     intn  ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRsetaccesstype);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -4053,7 +4151,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRsetaccesstype);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRsetaccesstype() */
 
@@ -4092,6 +4192,9 @@ intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo)
     int32 index;                /* index of the RI in the GR */
     intn  ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRsetcompress);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -4124,7 +4227,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRsetcompress);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRsetcompress() */
 
@@ -4174,6 +4279,9 @@ intn GRsetattr(int32 id,char *name,int32 attr_nt,int32 count,VOIDP data)
     intn is_riid=FALSE;         /* whether we had a RIID */
     intn ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRsetattr);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -4394,7 +4502,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRsetattr);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRsetattr() */
 
@@ -4436,6 +4546,9 @@ intn GRattrinfo(int32 id,int32 index,char *name,int32 *attr_nt,int32 *count)
     at_info_t *at_ptr;          /* ptr to the attribute to work with */
     intn   ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRattrinfo);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -4500,7 +4613,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRattrinfo);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRattrinfo() */
 
@@ -4542,6 +4657,9 @@ intn GRgetattr(int32 id,int32 index,VOIDP data)
     int32 at_size;              /* size in bytes of the attribute data */
     intn  ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRgetattr);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -4625,7 +4743,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRgetattr);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRgetattr() */
 
@@ -4664,6 +4784,9 @@ int32 GRfindattr(int32 id,char *name)
     int32 index;                /* index of the RI in the GR */
     int32 ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(GR_mask, ID_GRfindattr);
+#endif /* HAVE_PABLO */
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -4718,7 +4841,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(GR_mask, ID_GRfindattr);
+#endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRfindattr() */
 

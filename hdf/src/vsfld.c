@@ -85,6 +85,10 @@ VSsetfields(int32 vkey, const char *fields)
     intn       ret_value = SUCCEED;
     CONSTR(FUNC, "VSsetfields");
 
+#ifdef HAVE_PABLO
+    TRACE_ON(VS_mask, ID_VSsetfields);
+#endif /* HAVE_PABLO */
+
     if (!VALIDVSID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -283,6 +287,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(VS_mask, ID_VSsetfields);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* VSsetfields */
@@ -304,6 +311,10 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
     VDATA      *vs;
     intn       ret_value = SUCCEED;
     CONSTR(FUNC, "VSfdefine");
+
+#ifdef HAVE_PABLO
+    TRACE_ON(VS_mask, ID_VSfdefine);
+#endif /* HAVE_PABLO */
 
     if (!VALIDVSID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -385,6 +396,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(VS_mask, ID_VSfdefine);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }	/* VSfdefine */
@@ -414,6 +428,10 @@ VFnfields(int32 vkey)
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VFnfeilds");
 
+#ifdef HAVE_PABLO
+    TRACE_ON(VF_mask, ID_VFnfields);
+#endif /* HAVE_PABLO */
+
     if (!VALIDVSID(vkey))
       {
           HERROR(DFE_ARGS);
@@ -437,6 +455,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(VF_mask, ID_VFnfields);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }	/* VFnfields */
@@ -456,6 +477,10 @@ VFfieldname(int32 vkey, int32 index)
     VDATA      *vs;
     char       *ret_value = NULL; /* FAIL */
     CONSTR(FUNC, "VFfieldname");
+
+#ifdef HAVE_PABLO
+    TRACE_ON(VF_mask, ID_VFfieldname);
+#endif /* HAVE_PABLO */
 
     if (!VALIDVSID(vkey))
       HGOTO_ERROR(DFE_ARGS,NULL);
@@ -477,6 +502,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_ON(VF_mask, ID_VFfieldname);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* VFfieldname */
@@ -494,6 +522,10 @@ VFfieldtype(int32 vkey, int32 index)
     VDATA      *vs;
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VFfeildtype");
+
+#ifdef HAVE_PABLO
+    TRACE_ON(VF_mask, ID_VFfieldtype);
+#endif /* HAVE_PABLO */
 
     if (!VALIDVSID(vkey))
       HGOTO_ERROR(DFE_ARGS,FAIL);
@@ -515,6 +547,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(VF_mask, ID_VFfieldtype);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* VFfieldtype */
@@ -532,6 +567,10 @@ VFfieldisize(int32 vkey, int32 index)
     VDATA      *vs;
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VFfieldisize");
+
+#ifdef HAVE_PABLO
+    TRACE_ON(VF_mask, ID_VFfieldisize);
+#endif /* HAVE_PABLO */
 
     if (!VALIDVSID(vkey))
       HGOTO_ERROR(DFE_ARGS,FAIL);
@@ -553,6 +592,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(VF_mask, ID_VFfieldisize);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* VFfieldisize */
@@ -570,6 +612,10 @@ VFfieldesize(int32 vkey, int32 index)
     VDATA      *vs;
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VFfieldisize");
+
+#ifdef HAVE_PABLO
+    TRACE_ON(VF_mask, ID_VFfieldesize);
+#endif /* HAVE_PABLO */
 
     if (!VALIDVSID(vkey))
       HGOTO_ERROR(DFE_ARGS,FAIL);
@@ -591,6 +637,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(VF_mask, ID_VFfieldesize);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* VFfieldesize */
@@ -608,6 +657,10 @@ VFfieldorder(int32 vkey, int32 index)
     VDATA      *vs;
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VFfieldorder");
+
+#ifdef HAVE_PABLO
+    TRACE_ON(VF_mask, ID_VFfieldorder);
+#endif /* HAVE_PABLO */
 
     if (!VALIDVSID(vkey))
       HGOTO_ERROR(DFE_ARGS,FAIL);
@@ -629,6 +682,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(VF_mask, ID_VFfieldorder);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }	/* VFfieldorder */

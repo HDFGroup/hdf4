@@ -76,6 +76,10 @@ DF24getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pil)
   intn        ncomps;
   intn       ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(DF24_mask, ID_DF24getdims);
+#endif /* HAVE_PABLO */
+
   do
     {
       if (DFGRIgetdims(filename, pxdim, pydim, &ncomps, pil, IMAGE) < 0)
@@ -93,6 +97,10 @@ done:
 
     } /* end if */
   /* Normal function cleanup */
+
+#ifdef HAVE_PABLO
+  TRACE_OFF(DF24_mask, ID_DF24getdims);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DF24getdims() */
@@ -117,7 +125,15 @@ DF24reqil(intn il)
 {
   intn ret_value;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(DF24_mask, ID_DF24reqil);
+#endif /* HAVE_PABLO */
+
   ret_value = (DFGRIreqil(il, IMAGE));
+
+#ifdef HAVE_PABLO
+  TRACE_OFF(DF24_mask, ID_DF24reqil);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DF24reqil() */
@@ -153,6 +169,10 @@ DF24getimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
   uint16 compr_type;
   intn         ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(DF24_mask, ID_DF24getimage);
+#endif /* HAVE_PABLO */
+
   HEclear();
 
   if (!filename || !*filename || !image || (xdim <= 0) || (ydim <= 0))
@@ -182,6 +202,10 @@ done:
     } /* end if */
   /* Normal function cleanup */
 
+#ifdef HAVE_PABLO
+  TRACE_OFF(DF24_mask, ID_DF24getimage);
+#endif /* HAVE_PABLO */
+
   return ret_value;
 }   /* end DF24getimage() */
 
@@ -206,8 +230,16 @@ DF24setdims(int32 xdim, int32 ydim)
 {
   intn ret_value;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(DF24_mask, ID_DF24setdims);
+#endif /* HAVE_PABLO */
+
   dimsset = 1;
   ret_value = (DFGRIsetdims(xdim, ydim, 3, IMAGE));
+
+#ifdef HAVE_PABLO
+  TRACE_OFF(DF24_mask, ID_DF24setdims);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DF24setdims() */
@@ -232,7 +264,15 @@ DF24setil(intn il)
 {
   intn ret_value;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(DF24_mask, ID_DF24setil);
+#endif /* HAVE_PABLO */
+
   ret_value = (DFGRIsetil(il, IMAGE));
+
+#ifdef HAVE_PABLO
+  TRACE_OFF(DF24_mask, ID_DF24setil);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DF24setil() */
@@ -262,7 +302,15 @@ DF24setcompress(int32 type, comp_info * cinfo)
 {
   intn ret_value;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(DF24_mask, ID_DF24setcompress);
+#endif /* HAVE_PABLO */
+
   ret_value = (DFGRsetcompress(type, cinfo));
+
+#ifdef HAVE_PABLO
+  TRACE_OFF(DF24_mask, ID_DF24setcompress);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DF24setcompress() */
@@ -287,7 +335,15 @@ DF24restart(void)
 {
   intn ret_value;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(DF24_mask, ID_DF24restart);
+#endif /* HAVE_PABLO */
+
   ret_value = (DFGRIrestart());
+
+#ifdef HAVE_PABLO
+  TRACE_OFF(DF24_mask, ID_DF24restart);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DF24restart() */
@@ -318,6 +374,10 @@ DF24addimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
   CONSTR(FUNC, "DF24addimage");
   intn ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(DF24_mask, ID_DF24addimage);
+#endif /* HAVE_PABLO */
+
   /* 0 == C */
   if (!dimsset && DFGRIsetdims(xdim, ydim, 3, IMAGE) == FAIL)
     HGOTO_ERROR(DFE_BADDIM, FAIL);
@@ -331,6 +391,10 @@ done:
 
     } /* end if */
   /* Normal function cleanup */
+
+#ifdef HAVE_PABLO
+  TRACE_OFF(DF24_mask, ID_DF24addimage);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DF24addimage() */
@@ -361,6 +425,10 @@ DF24putimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
   CONSTR(FUNC, "DF24putimage");
   intn ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(DF24_mask, ID_DF24putimage);
+#endif /* HAVE_PABLO */
+
   /* 0 == C */
   if (!dimsset && DFGRIsetdims(xdim, ydim, 3, IMAGE) == FAIL)
     HGOTO_ERROR(DFE_BADDIM, FAIL);
@@ -374,6 +442,10 @@ done:
 
     } /* end if */
   /* Normal function cleanup */
+
+#ifdef HAVE_PABLO
+  TRACE_OFF(DF24_mask, ID_DF24putimage);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DF24putimage() */
@@ -405,6 +477,10 @@ DF24nimages(const char *filename)
   int32       find_off, find_len;     /* storage for offset/lengths of tag/refs found */
   uint8       GRtbuf[64];     /* local buffer to read the ID element into */
   intn        ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+  TRACE_ON(DF24_mask, ID_DF24nimages);
+#endif /* HAVE_PABLO */
 
   HEclear();
 
@@ -448,14 +524,19 @@ DF24nimages(const char *filename)
   if (Hclose(file_id) == FAIL)
     HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
 
+  ret_value = nimages;
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else
-    ret_value = nimages;
+
     /* Normal function cleanup */
+
+#ifdef HAVE_PABLO
+  TRACE_OFF(DF24_mask, ID_DF24nimages);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DF24nimages() */
@@ -481,7 +562,15 @@ DF24readref(const char *filename, uint16 ref)
 {
   intn ret_value;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(DF24_mask, ID_DF24readref);
+#endif /* HAVE_PABLO */
+
   ret_value = (DFGRreadref(filename, ref));
+
+#ifdef HAVE_PABLO
+  TRACE_OFF(DF24_mask, ID_DF24readref);
+#endif /* HAVE_PABLO */
   
   return ret_value;
 }   /* end DF24readref() */
@@ -504,8 +593,16 @@ uint16
 DF24lastref(void)
 {
   uint16 ret_value;
+
+#ifdef HAVE_PABLO
+  TRACE_ON(DF24_mask, ID_DF24lastref);
+#endif /* HAVE_PABLO */
  
   ret_value = (DFGRIlastref());
+
+#ifdef HAVE_PABLO
+  TRACE_OFF(DF24_mask, ID_DF24lastref);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end DF24lastref() */

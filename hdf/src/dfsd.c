@@ -233,6 +233,10 @@ DFSDgetdims(const char *filename, intn *prank, int32 sizes[], intn maxrank)
   CONSTR(FUNC, "DFSDgetdims");
   intn       ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDgetdims);
+#endif /* HAVE_PABLO */
+
   HEclear();  /* Clear error stack */
 
   if (!prank)     /* check if ptr is valid */
@@ -269,6 +273,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDgetdims);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -299,6 +306,10 @@ DFSDgetdatastrs(char *label, char *unit, char *format, char *coordsys)
   char       *lufp;
   CONSTR(FUNC, "DFSDgetdatastrs");
   intn        ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDgetdatastrs);
+#endif /* HAVE_PABLO */
 
   HEclear();  /* Clear error stack */
 
@@ -337,6 +348,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDgetdatastrs);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -369,6 +383,10 @@ DFSDgetdimstrs(int dim, char *label, char *unit, char *format)
   char       *lufp;
   CONSTR(FUNC, "DFSDgetdimstrs");
   intn        ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDgetdimstrs);
+#endif /* HAVE_PABLO */
 
   HEclear();  /* Clear error stack */
 
@@ -408,6 +426,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDgetdimstrs);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -437,6 +458,10 @@ DFSDgetdatalen(intn *llabel, intn *lunit, intn *lformat, intn *lcoordsys)
   CONSTR(FUNC, "DFSDgetdatalen");
   intn      ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDgetdatalen);
+#endif /* HAVE_PABLO */
+
   HEclear();  /* Clear error stack */
 
   if (Newdata < 0)
@@ -458,6 +483,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDgetdatalen);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -485,6 +513,10 @@ DFSDgetdimlen(intn dim, intn *llabel, intn *lunit, intn *lformat)
   CONSTR(FUNC, "DFSDgetdimlen");
   intn ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDgetdimlen);
+#endif /* HAVE_PABLO */
+
   HEclear();  /* Clear error stack */
 
   if (Newdata < 0)
@@ -507,6 +539,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDgetdimlen);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -538,6 +573,10 @@ DFSDgetdimscale(intn dim, int32 maxsize, VOIDP scale)
   uint8      *p1, *p2;
   CONSTR(FUNC, "DFSDgetdimscale");
   intn       ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDgetdimscale);
+#endif /* HAVE_PABLO */
 
   HEclear();  /* Clear error stack */
 
@@ -576,6 +615,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDgetdimscale);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -614,6 +656,10 @@ DFSDgetrange(VOIDP pmax, VOIDP pmin)
   CONSTR(FUNC, "DFSDgetrange");
   int         ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDgetrange);
+#endif /* HAVE_PABLO */
+
   HEclear();  /* Clear error stack */
 
   if (Newdata < 0)
@@ -646,6 +692,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDgetrange);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -686,7 +735,15 @@ DFSDgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data)
 {
   intn ret_value;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDgetdata);
+#endif /* HAVE_PABLO */
+
   ret_value = (DFSDIgetdata(filename, rank, maxsizes, data, 0));   /* 0 == C */
+
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDgetdata);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -716,6 +773,10 @@ DFSDsetlengths(intn maxlen_label, intn maxlen_unit, intn maxlen_format,
 {
   intn ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDsetlengths);
+#endif /* HAVE_PABLO */
+
   if (maxlen_label > 0)
     Maxstrlen[LABEL] = maxlen_label;
   if (maxlen_unit > 0)
@@ -724,6 +785,9 @@ DFSDsetlengths(intn maxlen_label, intn maxlen_unit, intn maxlen_format,
     Maxstrlen[FORMAT] = maxlen_format;
   if (maxlen_coordsys > 0)
     Maxstrlen[COORDSYS] = maxlen_coordsys;
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDsetlengths);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -752,6 +816,10 @@ DFSDsetdims(intn rank, int32 dimsizes[])
   intn        i;
   CONSTR(FUNC, "DFSDsetdims");
   intn     ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDsetdims);
+#endif /* HAVE_PABLO */
 
   HEclear();
 
@@ -812,6 +880,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDsetdims);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -836,7 +907,15 @@ DFSDsetdatastrs(const char *label, const char *unit, const char *format, const c
 {
   intn ret_value;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDsetdatastrs);
+#endif /* HAVE_PABLO */
+
   ret_value = (DFSDIsetdatastrs(label, unit, format, coordsys));
+
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDsetdatastrs);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -943,7 +1022,15 @@ DFSDsetdimstrs(intn dim, const char *label, const char *unit, const char *format
 {
   intn ret_value;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDsetdimstrs);
+#endif /* HAVE_PABLO */
+
   ret_value = (DFSDIsetdimstrs(dim, label, unit, format));
+
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDsetdimstrs);
+#endif /* HAVE_PABLO */
   
   return ret_value;
 }   /* DFSDsetdimstrs */
@@ -1066,6 +1153,10 @@ DFSDsetdimscale(intn dim, int32 dimsize, VOIDP scale)
     intn        ret_value = SUCCEED;
     CONSTR(FUNC, "DFSDsetdimscale");
 
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDsetdimscale);
+#endif /* HAVE_PABLO */
+
     HEclear();
     rdim = dim - 1;     /* translate from 1 to 0 origin */
 
@@ -1152,6 +1243,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDsetdimscale);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -1190,6 +1284,10 @@ DFSDsetrange(VOIDP maxi, VOIDP mini)
     uint8      *p1, *p2;
     intn        ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDsetrange);
+#endif /* HAVE_PABLO */
+
     HEclear();
 
     p1 = &(Writesdg.max_min[0]);
@@ -1217,6 +1315,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDsetrange);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -1246,8 +1347,16 @@ DFSDputdata(const char *filename, intn rank, int32 dimsizes[], VOIDP data)
 {
   intn ret_value;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDputdata);
+#endif /* HAVE_PABLO */
+
   /* 0, 0 specify create mode, C style array (row major) */
   ret_value = (DFSDIputdata(filename, rank, dimsizes, data, 0, 0));
+
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDputdata);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -1281,8 +1390,16 @@ DFSDadddata(const char *filename, intn rank, int32 dimsizes[], VOIDP data)
 {
   intn  ret_value;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDadddata);
+#endif /* HAVE_PABLO */
+
   /* 1, 0 specifies append mode, C style array (row major) */
   ret_value = (DFSDIputdata(filename, rank, dimsizes, data, 1, 0));
+
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDadddata);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -1303,9 +1420,17 @@ DFSDrestart(void)
 {
   intn ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDrestart);
+#endif /* HAVE_PABLO */
+
   if (Lastfile != NULL)
     *Lastfile = '\0';   /* set to 0-length string instead of NULLing ptr */
   Readref = 0;
+
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDrestart);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -1333,6 +1458,10 @@ DFSDndatasets(char *filename)
   int32       ret_value = SUCCEED;
   CONSTR(FUNC, "DFSDndatasets");
 
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDndatasets);
+#endif /* HAVE_PABLO */
+
   HEclear();
 
   /* should use reopen if same file as last time - more efficient */
@@ -1356,6 +1485,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDndatasets);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -1377,6 +1509,10 @@ DFSDclear(void)
 {
   intn   ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDclear);
+#endif /* HAVE_PABLO */
+
   lastnsdg.tag = DFTAG_NULL;
   lastnsdg.ref = 0;
   if (DFSDIclearNT(&Writesdg) < 0)
@@ -1394,6 +1530,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDclear);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -1415,7 +1554,15 @@ DFSDlastref(void)
 {
   uint16  ret_value;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDlastref);
+#endif /* HAVE_PABLO */
+
   ret_value = ((uint16) Lastref);
+
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDlastref);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -1448,6 +1595,10 @@ DFSDreadref(char *filename, uint16 ref)
   intn        ret_value = SUCCEED;
   CONSTR(FUNC, "DFSDreadref");
 
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDreadref);
+#endif /* HAVE_PABLO */
+
   HEclear();
 
   file_id = DFSDIopen(filename, DFACC_READ);
@@ -1476,6 +1627,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDreadref);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -1522,7 +1676,15 @@ DFSDgetslice(const char *filename, int32 winst[], int32 windims[], VOIDP data,
 {
   intn ret_value;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDgetslice);
+#endif /* HAVE_PABLO */
+
   ret_value = (DFSDIgetslice(filename, winst, windims, data, dims, 0));
+
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDgetslice);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -1554,6 +1716,10 @@ DFSDstartslice(const char *filename)
   int32       size;
   intn        ret_value = SUCCEED;
   CONSTR(FUNC, "DFSDstartslice");
+
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDstartslice);
+#endif /* HAVE_PABLO */
 
   HEclear();
 
@@ -1613,6 +1779,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDstartslice);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -1652,7 +1821,15 @@ DFSDputslice(int32 winend[], VOIDP data, int32 dims[])
 {
   intn ret_value;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDputslice);
+#endif /* HAVE_PABLO */
+
   ret_value = (DFSDIputslice(winend, data, dims, 0));
+
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDputslice);
+#endif /* HAVE_PABLO */
   
   return ret_value;
 }
@@ -1681,7 +1858,15 @@ DFSDendslice(void)
 {
   intn ret_value;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDendslice);
+#endif /* HAVE_PABLO */
+
   ret_value = (DFSDIendslice(0));
+
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDendslice);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -1721,6 +1906,10 @@ DFSDsetNT(int32 numbertype)
   CONSTR(FUNC, "DFSDsetNT");
 #endif
 
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDsetNT);
+#endif /* HAVE_PABLO */
+
   HEclear();
 
   outNT = (int8) (DFKisnativeNT(numbertype) ? DFKgetPNSC(numbertype, DF_MT) :
@@ -1753,6 +1942,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDsetNT);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -1838,6 +2030,10 @@ DFSDgetNT(int32 *pnumbertype)
   intn    ret_value = SUCCEED;
   CONSTR(FUNC, "DFSDgetNT");
 
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDgetNT);
+#endif /* HAVE_PABLO */
+
   HEclear();
 
   *(pnumbertype) = Readsdg.numbertype;
@@ -1851,6 +2047,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDgetNT);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -1885,6 +2084,10 @@ DFSDpre32sdg(char *filename, uint16 ref, intn *ispre32)
     DFnsdgle   *ptr;
     intn       ret_value = SUCCEED;
     CONSTR(FUNC, "DFSDpre32sdg");
+
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDpre32sdg);
+#endif /* HAVE_PABLO */
 
     file_id = DFSDIopen(filename, DFACC_READ);
     if (file_id == FAIL)
@@ -1932,6 +2135,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDpre32sdg);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end of DFSDpre32sdg   */
@@ -4811,6 +5017,10 @@ int32      *cal_nt;
   intn      ret_value = SUCCEED;
   CONSTR(FUNC, "DFSDgetcal");
 
+#ifdef HAVE_PABLO
+  TRACE_ON(DFSD_mask, ID_DFSDgetcal);
+#endif /* HAVE_PABLO */
+
   HEclear();
 
   if (Newdata < 0)
@@ -4835,6 +5045,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDgetcal);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* DFSDgetcal */
@@ -4893,6 +5106,10 @@ int32       cal_nt;
 {
   intn    ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDsetcal);
+#endif /* HAVE_PABLO */
+
   HEclear();
 
   Writesdg.cal = (float64) cal;
@@ -4902,6 +5119,10 @@ int32       cal_nt;
   Writesdg.cal_type = (int32) cal_nt;
 
   Ref.cal = 0;
+
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDsetcal);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -4928,6 +5149,10 @@ DFSDwriteref(const char *filename, uint16 ref)
   int32       aid;
   intn        ret_value = SUCCEED;
   CONSTR(FUNC, "DFSDwriteref");
+
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDwriteref);
+#endif /* HAVE_PABLO */
 
   /* Clear error stack */
   HEclear();
@@ -4977,6 +5202,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(DFSD_mask, ID_DFSDwriteref);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -5010,6 +5238,9 @@ DFSDsetfillvalue(VOIDP fill_value)
 #ifdef LATER
   CONSTR(FUNC, "DFSDsetfillvalue");
 #endif
+#ifdef HAVE_PABLO
+    TRACE_ON(DFSD_mask, ID_DFSDsetfillvalue);
+#endif /* HAVE_PABLO */
 
   /* Clear error stack  */
   HEclear();
@@ -5041,6 +5272,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(DFSD_mask, ID_DFSDsetfillvalue);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -5069,6 +5303,10 @@ DFSDgetfillvalue(VOIDP fill_value)
   intn        ret_value = SUCCEED;
   CONSTR(FUNC, "DFSDgetfillvalue");
 
+#ifdef HAVE_PABLO
+  TRACE_ON(DFSD_mask, ID_DFSDgetfillvalue);
+#endif /* HAVE_PABLO */
+
   /* Clear error stack  */
   HEclear();
 
@@ -5093,6 +5331,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(DFSD_mask, ID_DFSDgetfillvalue);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -5138,7 +5379,15 @@ DFSDreadslab(const char *filename, int32 start[], int32 slab_size[],
   /* shut compiler up */
   stride = stride;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(DFSD_mask, ID_DFSDreadslab);
+#endif /* HAVE_PABLO */
+
   ret_value = (DFSDgetslice(filename, start, slab_size, buffer, buffer_size));
+
+#ifdef HAVE_PABLO
+  TRACE_OFF(DFSD_mask, ID_DFSDreadslab);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -5172,18 +5421,22 @@ DFSDstartslab(const char *filename)
   intn       ret_value = SUCCEED;
   CONSTR(FUNC, "DFSDstartslab");
 
-    /* Clear errors */
+#ifdef HAVE_PABLO
+  TRACE_ON(DFSD_mask, ID_DFSDstartslab);
+#endif /* HAVE_PABLO */
+
+  /* Clear errors */
   HEclear();
 
   /* Check rank set i.e. DFSDsetdims()  */
   if (!Writesdg.rank)
     HGOTO_ERROR(DFE_BADDIM, FAIL);
 
-    /* If NT not set(i.e. DFSDsetNT() not called), default to float32  */
+  /* If NT not set(i.e. DFSDsetNT() not called), default to float32  */
   if (Writesdg.numbertype == DFNT_NONE)
     DFSDsetNT(DFNT_FLOAT32);
 
-    /* Open file */
+  /* Open file */
   Sfile_id = DFSDIopen(filename, DFACC_WRITE);
   if (Sfile_id == DF_NOFILE)
     {
@@ -5192,11 +5445,11 @@ DFSDstartslab(const char *filename)
     }
 
   /*
-    ** Check for Writeref set i.e. DFSDwriteref() called?
-    ** If not Writeref then we create a new Writeref i.e new SDG
-    ** Else use existing one.
-     */
-    /* Set tag, ref of SDG to write */
+  ** Check for Writeref set i.e. DFSDwriteref() called?
+  ** If not Writeref then we create a new Writeref i.e new SDG
+  ** Else use existing one.
+  */
+  /* Set tag, ref of SDG to write */
   Writesdg.data.tag = DFTAG_SD;
   if (!Writeref)
     Writeref = Htagnewref(Sfile_id,Writesdg.data.tag);
@@ -5207,16 +5460,16 @@ DFSDstartslab(const char *filename)
     }
   Writesdg.data.ref = Writeref;
 
-    /* Intialize a few local variables */
+  /* Intialize a few local variables */
   localNTsize = DFKNTsize((Writesdg.numbertype | DFNT_NATIVE) & (~DFNT_LITEND));
   fileNTsize = DFKNTsize(Writesdg.numbertype);
 
-    /* Calculate size of of dataset */
+  /* Calculate size of of dataset */
   sdg_size = fileNTsize;
   for (i = 0; i < Writesdg.rank; i++)
     sdg_size *= Writesdg.dimsizes[i];
 
-    /* set up to write data */
+  /* set up to write data */
   Writesdg.aid = Hstartwrite(Sfile_id, DFTAG_SD, Writeref, sdg_size);
   if (Writesdg.aid == FAIL)
     {
@@ -5226,8 +5479,8 @@ DFSDstartslab(const char *filename)
     }
 
   /*
-       ** Check if fill value is set
-     */
+   ** Check if fill value is set
+  */
   if (!Ref.fill_value)
     {
       /* make the fill buffer smaller if possible */
@@ -5283,6 +5536,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(DFSD_mask, ID_DFSDstartslab);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -5353,6 +5609,10 @@ DFSDwriteslab(int32 start[], int32 stride[],
                                 /*   of current block */
   intn       ret_value = SUCCEED;
   CONSTR(FUNC, "DFSDwriteslab");
+
+#ifdef HAVE_PABLO
+  TRACE_ON(DFSD_mask, ID_DFSDwriteslab);
+#endif /* HAVE_PABLO */
 
   /* shut compiler up */
   stride = stride;
@@ -5607,6 +5867,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(DFSD_mask, ID_DFSDwriteslab);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -5631,14 +5894,18 @@ DFSDendslab(void)
   intn        ret_value = SUCCEED;
   CONSTR(FUNC, "DFSDendslab");
 
-    /* Clear error stack */
+#ifdef HAVE_PABLO
+  TRACE_ON(DFSD_mask, ID_DFSDendslab);
+#endif /* HAVE_PABLO */
+
+  /* Clear error stack */
   HEclear();
 
   /* Valid file id */
   if (Sfile_id == DF_NOFILE)
     HGOTO_ERROR(DFE_BADCALL, FAIL);
 
-    /* Check to see if we have written out the SDG info */
+  /* Check to see if we have written out the SDG info */
   if (!Ref.new_ndg)
     {
       if (DFSDIputndg(Sfile_id, Writeref, &Writesdg) < 0)
@@ -5690,6 +5957,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(DFSD_mask, ID_DFSDendslab);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }

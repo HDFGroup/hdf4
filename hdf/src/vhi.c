@@ -63,9 +63,14 @@ VHstoredata(HFILEID f, char *field, uint8 buf[], int32 n, int32 datatype,
 #ifdef LATER
     CONSTR(FUNC, "VHstoredata");
 #endif
-
+#ifdef HAVE_PABLO
+    TRACE_ON(VH_mask, ID_VHstoredata);
+#endif /* HAVE_PABLO */
     ret_value = ((int32)VHstoredatam(f, field, buf, n, datatype, vsname, vsclass, order));
 
+#ifdef HAVE_PABLO
+    TRACE_OFF(VH_mask, ID_VHstoredata);
+#endif /* HAVE_PABLO */
     return ret_value;
 } /* end VHstoredata */
 
@@ -102,6 +107,10 @@ VHstoredatam(HFILEID f, char *field, uint8 buf[], int32 n, int32 datatype, char 
     int32       ret_value = SUCCEED;
     CONSTR(FUNC, "VHstoredatam");
 
+#ifdef HAVE_PABLO
+    TRACE_ON(VH_mask, ID_VHstoredatam);
+#endif /* HAVE_PABLO */
+
     if ((vs = VSattach(f, -1, "w")) == FAIL)
         HGOTO_ERROR(DFE_CANTATTACH,FAIL);
 
@@ -133,7 +142,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(VH_mask, ID_VHstoredatam);
+#endif /* HAVE_PABLO */
   return ret_value;
 }   /* VHstoredatam */
 
@@ -172,6 +183,10 @@ VHmakegroup(HFILEID f, int32 tagarray[], int32 refarray[], int32 n, char *vgname
     int32       ret_value = SUCCEED;
     CONSTR(FUNC, "VHmakegroup");
 
+#ifdef HAVE_PABLO
+    TRACE_ON(VH_mask, ID_VHmakegroup);
+#endif /* HAVE_PABLO */
+
     if (( vg = Vattach(f, -1, "w"))== FAIL)
         HGOTO_ERROR(DFE_CANTATTACH,FAIL);
 
@@ -200,6 +215,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(VH_mask, ID_VHmakegroup);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* VHmakegroup */

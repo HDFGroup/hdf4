@@ -169,6 +169,9 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     char	*fname;		/* filename built from external filename */
     int32       ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(H_mask, ID_HXcreate);
+#endif /* HAVE_PABLO */
     /* clear error stack and validate args */
     HEclear();
     file_rec = FID2REC(file_id);
@@ -383,7 +386,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(H_mask, ID_HXcreate);
+#endif /* HAVE_PABLO */
   return ret_value; 
 } /* HXcreate */
 
@@ -1227,6 +1232,10 @@ HXsetcreatedir(const char *dir)
   char	*pt;
   intn       ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(H_mask, ID_HXsetcreatedir);
+#endif /* HAVE_PABLO */
+
   if (dir)
     {
       if (!(pt = HDstrdup(dir)))
@@ -1247,7 +1256,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(H_mask, ID_HXsetcreatedir);
+#endif /* HAVE_PABLO */
   return ret_value; 
 }	/* HXsetcreatedir */
 
@@ -1275,6 +1286,9 @@ HXsetdir(const char *dir)
   char	*pt;
   intn   ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+    TRACE_ON(H_mask, ID_HXsetdir);
+#endif /* HAVE_PABLO */
   if (dir)
     {
       if (!(pt = HDstrdup(dir)))
@@ -1295,7 +1309,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
+#ifdef HAVE_PABLO
+    TRACE_OFF(H_mask, ID_HXsetdir);
+#endif /* HAVE_PABLO */
   return ret_value; 
 }	/* HXsetdir */
 

@@ -2088,6 +2088,28 @@ extern intn GRgetattr(int32 id,int32 index,VOIDP data);
 
 extern int32 GRfindattr(int32 id,char *name);
 
+/* For Pablo wrapper functions */
+
+#if defined HAVE_PABLO || defined PABLO
+extern int HDFinitIOTrace(char *traceFileName, intn detail, intn lifetime,
+                          intn timeWindow, float64 timeWindowSize,
+                          intn regionTrace, intn regionSize,
+                          uint16 procTraceMask );
+extern int HDFendIOTrace(VOID);
+
+#ifndef PABLO_FNAMES
+#   define PABLO_FNAMES
+#ifdef DF_CAPFNAMES
+#   define nihinitiotrace FNAME(IHINITIOTRACE)
+#   define nhendiotrace   FNAME(HENDIOTRACE)
+#else  /* !DF_CAPFNAMES */
+#   define nihinitiotrace FNAME(ihinitiotrace)
+#   define nhendiotrace   FNAME(hendiotrace)
+#endif /* DF_CAPFNAMES */
+#endif /* PABLO_FNAMES */
+
+#endif /* HAVE_PABLO || PABLO*/
+
 #if defined c_plusplus || defined __cplusplus
 }
 #endif                          /* c_plusplus || __cplusplus */

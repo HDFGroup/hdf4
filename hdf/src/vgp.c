@@ -355,6 +355,10 @@ Vinitialize(HFILEID f)
   intn   ret_value = SUCCEED;
   CONSTR(FUNC, "Vinitialize");
 
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_Vinitialize);
+#endif /* HAVE_PABLO */
+
     if (!VALIDFID(f))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -368,6 +372,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(V_mask, ID_Vinitialize);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -379,6 +386,10 @@ Vfinish(HFILEID f)
 {
   intn    ret_value = SUCCEED;
   CONSTR(FUNC, "Vfinish");
+
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_Vfinish);
+#endif /* HAVE_PABLO */
 
     if (!VALIDFID(f))
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -393,6 +404,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(V_mask, ID_Vfinish);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -714,6 +728,10 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
     int32       ret_value = SUCCEED;
     CONSTR(FUNC, "Vattach");
 
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_Vattach);
+#endif /* HAVE_PABLO */
+
     /* Check if vfile buffer has been allocated */
     if (vfile == NULL)
       {
@@ -743,7 +761,7 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
 
     if (vgid == -1)
       {
-/******* create a NEW vg in vgdir ******/
+          /******* create a NEW vg in vgdir ******/
           if (acc_mode == 'r')
               HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -794,7 +812,7 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
       }
     else
       {
-/******* access an EXISTING vg *********/
+          /******* access an EXISTING vg *********/
           if (NULL == (v = vginstance(f, (uint16) vgid)))
               HGOTO_ERROR(DFE_NOMATCH, FAIL);
 
@@ -829,6 +847,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(V_mask, ID_Vattach);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* Vattach */
@@ -858,6 +879,10 @@ Vdetach(int32 vkey)
     vginstance_t *v;
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "Vdetach");
+
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_Vdetach);
+#endif /* HAVE_PABLO */
 
     if (!VALIDVGID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -900,6 +925,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(V_mask, ID_Vdetach);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* Vdetach */
@@ -928,6 +956,10 @@ Vinsert(int32 vkey, int32 insertkey)
     uint16      newtag = 0, newref = 0;
     int32       newfid;
     int32       ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_Vinsert);
+#endif /* HAVE_PABLO */
 
     if (!VALIDVGID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -999,6 +1031,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(V_mask, ID_Vinsert);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* Vinsert */
@@ -1081,6 +1116,10 @@ Vinqtagref(int32 vkey, int32 tag, int32 ref)
     intn       ret_value = TRUE;
     CONSTR(FUNC, "Vinqtagref");
 
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_Vinqtagref);
+#endif /* HAVE_PABLO */
+
     if (!VALIDVGID(vkey))
         HGOTO_ERROR(DFE_ARGS, FALSE);
 
@@ -1110,6 +1149,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(V_mask, ID_Vinqtagref);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* Vinqtagref */
@@ -1127,6 +1169,10 @@ Vntagrefs(int32 vkey)
     VGROUP     *vg;
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "Vntagrefs");
+
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_Vntagrefs);
+#endif /* HAVE_PABLO */
 
     if (!VALIDVGID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -1148,6 +1194,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(V_mask, ID_Vntagrefs);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* Vntagrefs */
@@ -1217,6 +1266,10 @@ Vgettagrefs(int32 vkey, int32 tagarray[], int32 refarray[], int32 n)
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "Vgettagrefs");
 
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_Vgettagrefs);
+#endif /* HAVE_PABLO */
+
     if (!VALIDVGID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -1246,6 +1299,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(V_mask, ID_Vgettagrefs);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* Vgettagrefs */
@@ -1268,6 +1324,10 @@ Vgettagref(int32 vkey, int32 which, int32 *tag, int32 *ref)
     VGROUP     *vg;
     intn       ret_value = SUCCEED;
     CONSTR(FUNC, "Vgettagref");
+
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_Vgettagref);
+#endif /* HAVE_PABLO */
 
     if (!VALIDVGID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -1293,6 +1353,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(V_mask, ID_Vgettagref);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* Vgettagref */
@@ -1393,6 +1456,10 @@ Vaddtagref(int32 vkey, int32 tag, int32 ref)
 #endif
     CONSTR(FUNC, "Vaddtagref");
 
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_Vaddtagref);
+#endif /* HAVE_PABLO */
+
     if (!VALIDVGID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -1427,6 +1494,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(V_mask, ID_Vaddtagref);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* Vaddtagref */
@@ -1526,6 +1596,10 @@ Vsetname(int32 vkey, const char *vgname)
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "Vsetname");
 
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_Vsetname);
+#endif /* HAVE_PABLO */
+
     if (!VALIDVGID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -1548,6 +1622,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(V_mask, ID_Vsetname);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* Vsetname */
@@ -1570,6 +1647,10 @@ Vsetclass(int32 vkey, const char *vgclass)
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "Vsetclass");
 
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_Vsetclass);
+#endif /* HAVE_PABLO */
+
     if (!VALIDVGID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -1591,6 +1672,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(V_mask, ID_Vsetclass);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* Vsetclass */
@@ -1718,6 +1802,10 @@ Vgetid(HFILEID f, int32 vgid)
     int32       ret_value = SUCCEED;
     CONSTR(FUNC, "Vgetid");
 
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_Vgetid);
+#endif /* HAVE_PABLO */
+
     if (vgid < -1)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -1771,6 +1859,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(V_mask, ID_Vgetid);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* Vgetid */
@@ -1886,6 +1977,10 @@ Vgetname(int32 vkey, char *vgname)
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "Vgetname");
 
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_Vgetname);
+#endif /* HAVE_PABLO */
+
     if (!VALIDVGID(vkey) || vgname == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -1906,6 +2001,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(V_mask, ID_Vgetname);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* Vgetname */
@@ -1927,6 +2025,10 @@ Vgetclass(int32 vkey, char *vgclass)
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "Vgetclass");
 
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_Vgetclass);
+#endif /* HAVE_PABLO */
+
     if (!VALIDVGID(vkey) || vgclass == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -1947,6 +2049,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(V_mask, ID_Vgetclass);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* Vgetclass */
@@ -1974,6 +2079,10 @@ Vinquire(int32 vkey, int32 *nentries, char *vgname)
     intn    ret_value = SUCCEED;
     CONSTR(FUNC, "Vinquire");
 
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_Vinquire);
+#endif /* HAVE_PABLO */
+
     if (!VALIDVGID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -2000,6 +2109,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(V_mask, ID_Vinquire);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* Vinquire */

@@ -102,6 +102,10 @@ VSelts(int32 vkey)
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VSelts");
 
+#ifdef HAVE_PABLO
+  TRACE_ON(VS_mask, ID_VSelts);
+#endif /* HAVE_PABLO */
+
     if (!VALIDVSID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -122,6 +126,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(VS_mask, ID_VSelts);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* VSelts */
@@ -145,6 +152,10 @@ VSgetinterlace(int32 vkey)
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VSgetinterlace");
 
+#ifdef HAVE_PABLO
+  TRACE_ON(VS_mask, ID_VSgetinterlace);
+#endif /* HAVE_PABLO */
+
     if (!VALIDVSID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -165,6 +176,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(VS_mask, ID_VSgetinterlace);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* VSgetinterlace */
@@ -188,6 +202,10 @@ VSsetinterlace(int32 vkey, int32 interlace)
     VDATA      *vs;
     intn       ret_value = SUCCEED;
     CONSTR(FUNC, "VSsetinterlace");
+
+#ifdef HAVE_PABLO
+  TRACE_ON(VS_mask, ID_VSsetinterlace);
+#endif /* HAVE_PABLO */
 
     if (!VALIDVSID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -221,6 +239,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(VS_mask, ID_VSsetinterlace);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* VSsetinterlace */
@@ -245,6 +266,10 @@ VSgetfields(int32 vkey, char *fields)
     VDATA      *vs;
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VSgetfields");
+
+#ifdef HAVE_PABLO
+  TRACE_ON(VS_mask, ID_VSgetfields);
+#endif /* HAVE_PABLO */
 
     if (!VALIDVSID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -274,6 +299,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(VS_mask, ID_VSgetfields);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* VSgetfields */
@@ -301,6 +329,10 @@ VSfexist(int32 vkey, char *fields)
     VDATA      *vs;
     intn       ret_value = SUCCEED;
     CONSTR(FUNC, "VSfexist");
+
+#ifdef HAVE_PABLO
+  TRACE_ON(VS_mask, ID_VSfexist);
+#endif /* HAVE_PABLO */
 
     if (!VALIDVSID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -356,6 +388,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(VS_mask, ID_VSfexist);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }	/* VSfexist */
@@ -383,6 +418,10 @@ VSsizeof(int32 vkey, char *fields)
     VDATA      *vs;
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VSsizeof");
+
+#ifdef HAVE_PABLO
+  TRACE_ON(VS_mask, ID_VSsizeof);
+#endif /* HAVE_PABLO */
 
     if (!VALIDVSID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -428,6 +467,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(VS_mask, ID_VSsizeof);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* VSsizeof */
@@ -500,6 +542,10 @@ VSsetname(int32 vkey, const char *vsname)
     int         slen;
     int32       ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(VS_mask, ID_VSsetname);
+#endif /* HAVE_PABLO */
+
     if (!VALIDVSID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -527,6 +573,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(VS_mask, ID_VSsetname);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* VSsetname */
@@ -551,6 +600,10 @@ VSsetclass(int32 vkey, const char *vsclass)
     CONSTR(FUNC, "VSsetclass");
     int         slen;
     int32       ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+  TRACE_ON(VS_mask, ID_VSsetclass);
+#endif /* HAVE_PABLO */
 
     if (!VALIDVSID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -579,6 +632,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(VS_mask, ID_VSsetclass);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* VSsetclass */
@@ -602,6 +658,10 @@ VSgetname(int32 vkey, char *vsname)
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VSgetname");
 
+#ifdef HAVE_PABLO
+  TRACE_ON(VS_mask, ID_VSgetname);
+#endif /* HAVE_PABLO */
+
     if (!VALIDVSID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -622,6 +682,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(VS_mask, ID_VSgetname);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* VSgetname */
@@ -645,6 +708,10 @@ VSgetclass(int32 vkey, char *vsclass)
     int32     ret_value = SUCCEED;
     CONSTR(FUNC, "VSgetclass");
 
+#ifdef HAVE_PABLO
+  TRACE_ON(VS_mask, ID_VSgetclass);
+#endif /* HAVE_PABLO */
+
     if (!VALIDVSID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -665,6 +732,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(VS_mask, ID_VSgetclass);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* VSgetclass */
@@ -694,6 +764,10 @@ VSinquire(int32 vkey, int32 *nelt, int32 *interlace,
     CONSTR(FUNC, "VSinquire");
 #endif
 
+#ifdef HAVE_PABLO
+  TRACE_ON(VS_mask, ID_VSinquire);
+#endif /* HAVE_PABLO */
+
     if (fields)
         VSgetfields(vkey, fields);
     if (nelt)
@@ -704,6 +778,10 @@ VSinquire(int32 vkey, int32 *nelt, int32 *interlace,
         *eltsize = VSsizeof(vkey, fields);
     if (vsname)
         VSgetname(vkey, vsname);
+
+#ifdef HAVE_PABLO
+  TRACE_OFF(VS_mask, ID_VSinquire);
+#endif /* HAVE_PABLO */
 
     return ret_value;   /* ok */
 }   /* VSinquire */
@@ -732,6 +810,10 @@ VSlone(HFILEID f, int32 *idarray, int32 asize)
     int32       nlone;          /* total number of lone vdatas */
     int32       ret_value = SUCCEED;
     CONSTR(FUNC, "VSlone");
+
+#ifdef HAVE_PABLO
+  TRACE_ON(VS_mask, ID_VSlone);
+#endif /* HAVE_PABLO */
 
     /* -- allocate space for vdata refs, init to zeroes -- */
     if (NULL == (lonevdata = (uint8 *) HDmalloc(65000L * sizeof(uint8))))
@@ -780,6 +862,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(VS_mask, ID_VSlone);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* VSlone */
@@ -809,6 +894,10 @@ Vlone(HFILEID f, int32 *idarray, int32 asize)
     int32       nlone;          /* total number of lone vgroups */
     int32       ret_value = SUCCEED;
     CONSTR(FUNC, "Vlone");
+
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_Vlone);
+#endif /* HAVE_PABLO */
 
     /* -- allocate space for vgroup refs, init to zeroes -- */
     if (NULL == (lonevg = (uint8 *) HDmalloc(65000L * sizeof(uint8))))
@@ -858,6 +947,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(V_mask, ID_Vlone);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* Vlone */
@@ -884,6 +976,10 @@ Vfind(HFILEID f, const char *vgname)
     CONSTR(FUNC, "Vfind");
 #endif
 
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_Vfind);
+#endif /* HAVE_PABLO */
+
     while (-1L != (vgid = Vgetid(f, vgid)))
       {
         if((v=vginstance(f,(uint16)vgid))==NULL)
@@ -907,6 +1003,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(V_mask, ID_Vfind);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }	/* Vfind */
@@ -933,6 +1032,10 @@ VSfind(HFILEID f, const char *vsname)
     CONSTR(FUNC, "VSfind");
 #endif
 
+#ifdef HAVE_PABLO
+  TRACE_ON(VS_mask, ID_VSfind);
+#endif /* HAVE_PABLO */
+
     while (-1L != (vsid = VSgetid(f, vsid)))
       {
         if((v=vsinstance(f,(uint16)vsid))==NULL)
@@ -956,6 +1059,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(VS_mask, ID_VSfind);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* VSfind */
@@ -982,6 +1088,10 @@ Vfindclass(HFILEID f, const char *vgclass)
     CONSTR(FUNC, "Vfind");
 #endif
 
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_Vfindclass);
+#endif /* HAVE_PABLO */
+
     while (-1L != (vgid = Vgetid(f, vgid)))
       {
         if((v=vginstance(f,(uint16)vgid))==NULL)
@@ -1005,6 +1115,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_Vfindclass);
+#endif /* HAVE_PABLO */
 
   return ret_value;    
 }	/* Vfindclass */
@@ -1030,6 +1143,9 @@ VSfindclass(HFILEID f, const char *vsclass)
 #ifdef LATER
     CONSTR(FUNC, "VSfind");
 #endif
+#ifdef HAVE_PABLO
+  TRACE_ON(VS_mask, ID_VSfindclass);
+#endif /* HAVE_PABLO */
 
     while (-1L != (vsid = VSgetid(f, vsid)))
       {
@@ -1054,6 +1170,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_ON(VS_mask, ID_VSfindclass);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* VSfindclass */

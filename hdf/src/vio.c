@@ -507,6 +507,10 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VSattach");
 
+#ifdef HAVE_PABLO
+    TRACE_ON(VS_mask, ID_VSattach);
+#endif /* HAVE_PABLO */
+
     /* Check if vfile buffer has been allocated */
     if (vfile == NULL)
       {
@@ -657,6 +661,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(VS_mask, ID_VSattach);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }	/* VSattach */
@@ -689,6 +696,10 @@ VSdetach(int32 vkey)
     VDATA      *vs;
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VSdetach");
+
+#ifdef HAVE_PABLO
+    TRACE_ON(VS_mask, ID_VSdetach);
+#endif /* HAVE_PABLO */
 
     if (!VALIDVSID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -756,6 +767,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(VS_mask, ID_VSdetach);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }	/* VSdetach */
@@ -777,6 +791,10 @@ VSappendable(int32 vkey, int32 blk)
     VDATA      *vs;
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VSappendable");
+
+#ifdef HAVE_PABLO
+    TRACE_ON(VS_mask, ID_VSappendable);
+#endif /* HAVE_PABLO */
 
     if (!VALIDVSID(vkey))
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -811,6 +829,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(VS_mask, ID_VSappendable);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* VSappendable */
@@ -832,6 +853,10 @@ VSgetid(HFILEID f, int32 vsid)
     int32       key;
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VSgetid");
+
+#ifdef HAVE_PABLO
+    TRACE_ON(VS_mask, ID_VSgetid);
+#endif /* HAVE_PABLO */
 
     /* Check if vfile buffer has been allocated */
     if (vfile == NULL)
@@ -881,6 +906,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(VS_mask, ID_VSgetid);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* VSgetid */
@@ -1046,6 +1074,10 @@ VSdelete(int32 f, int32 vsid)
     int32       ret_value = SUCCEED;
     CONSTR(FUNC, "VSdelete");
 
+#ifdef HAVE_PABLO
+    TRACE_ON(VS_mask, ID_VSdelete);
+#endif /* HAVE_PABLO */
+
     if (vsid < -1)
       HGOTO_ERROR(DFE_ARGS,FAIL);
 
@@ -1084,6 +1116,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(VS_mask, ID_VSdelete);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }	/* VSdelete */

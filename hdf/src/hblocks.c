@@ -234,6 +234,10 @@ HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length,
     uint8       local_ptbuf[16];
     int32       ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(H_mask, ID_HLcreate);
+#endif /* HAVE_PABLO */
+
     /* clear error stack and validate file record id */
     HEclear();
     file_rec = FID2REC(file_id);
@@ -401,6 +405,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(H_mask, ID_HLcreate);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }
@@ -460,6 +467,10 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
     uint8       local_ptbuf[16];
     int32       old_posn;       /* position in the access element */
     intn        ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+  TRACE_ON(H_mask, ID_HLconvert);
+#endif /* HAVE_PABLO */
 
     /* clear error stack */
     HEclear();
@@ -622,6 +633,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(H_mask, ID_HLconvert);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 }   /* end HLconvert() */

@@ -1720,6 +1720,10 @@ ANstart(int32 file_id)
   ANfile *file_entry = NULL;
   int32   ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(AN_mask, ID_ANstart);
+#endif /* HAVE_PABLO */
+
   /* Clear error stack */
   HEclear();
 
@@ -1792,6 +1796,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(AN_mask, ID_ANstart);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 } /* ANstart() */
@@ -1832,6 +1839,10 @@ ANfileinfo(int32 an_id, int32 *n_file_label, int32 *n_file_desc,
 #endif
   ANfile  *file_entry = NULL;
   intn    ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+  TRACE_ON(AN_mask, ID_ANfileinfo);
+#endif /* HAVE_PABLO */
 
   /* Clear error stack */
   HEclear();
@@ -1900,6 +1911,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(AN_mask, ID_ANfileinfo);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 } /* ANfileinfo() */
@@ -1934,6 +1948,10 @@ ANend(int32 an_id)
   VOID    *ann_key = NULL;
   VOID    *kp = NULL;
   int32   ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+  TRACE_ON(AN_mask, ID_ANend);
+#endif /* HAVE_PABLO */
   
   /* Clear error stack */
   HEclear();
@@ -2259,6 +2277,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(AN_mask, ID_ANend);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 } /* ANend() */
@@ -2287,7 +2308,15 @@ ANcreate(int32 an_id, uint16 elem_tag, uint16 elem_ref, ann_type type)
 #endif /* LATER */
   int32    ret_value;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(AN_mask, ID_ANcreate);
+#endif /* HAVE_PABLO */
+
   ret_value = (ANIcreate(an_id, elem_tag, elem_ref, type));
+
+#ifdef HAVE_PABLO
+  TRACE_OFF(AN_mask, ID_ANcreate);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 } /* ANcreate() */
@@ -2317,6 +2346,10 @@ ANcreatef(int32 an_id, ann_type type)
   uint16 ann_ref;
   int32  ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(AN_mask, ID_ANcreatef);
+#endif /* HAVE_PABLO */
+
   /* deal with type */
   switch((ann_type)type)
     {
@@ -2341,6 +2374,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(AN_mask, ID_ANcreatef);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 } /* ANcreateann() */
@@ -2378,6 +2414,10 @@ ANselect(int32 an_id, int32 index, ann_type type)
   intn    i;
 #endif /* HAVE_RBTREE */
   int32   ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+  TRACE_ON(AN_mask, ID_ANselect);
+#endif /* HAVE_PABLO */
 
   /* Clear error stack */
   HEclear();
@@ -2446,6 +2486,9 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(AN_mask, ID_ANselect);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 } /* ANselect() */
@@ -2481,7 +2524,15 @@ ANnumann(int32 an_id, ann_type type, uint16 elem_tag, uint16 elem_ref)
 #endif /* LATER */
   intn   ret_value;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(AN_mask, ID_ANnumann);
+#endif /* HAVE_PABLO */
+
   ret_value = ANInumann(an_id, type, elem_tag, elem_ref);
+
+#ifdef HAVE_PABLO
+  TRACE_OFF(AN_mask, ID_ANnumann);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 } /* ANnumann() */
@@ -2519,7 +2570,15 @@ ANannlist(int32 an_id, ann_type type, uint16 elem_tag, uint16 elem_ref,
 #endif /* LATER */
   intn  ret_value;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(AN_mask, ID_ANannlist);
+#endif /* HAVE_PABLO */
+
   ret_value = ANIannlist(an_id, type, elem_tag, elem_ref, ann_list);
+
+#ifdef HAVE_PABLO
+  TRACE_OFF(AN_mask, ID_ANannlist);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 } /* ANannlist() */
@@ -2548,7 +2607,14 @@ ANannlen(int32 ann_id)
 #endif /* LATER */
   int32  ret_value;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(AN_mask, ID_ANannlen);
+#endif /* HAVE_PABLO */
+
   ret_value =  ANIannlen(ann_id);
+#ifdef HAVE_PABLO
+  TRACE_OFF(AN_mask, ID_ANannlen);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 } /* ANannlen() */
@@ -2581,7 +2647,14 @@ ANwriteann(int32 ann_id, char *ann, int32 annlen)
 #endif /* LATER */
   int32  ret_value;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(AN_mask, ID_ANwriteann);
+#endif /* HAVE_PABLO */
+
   ret_value = ANIwriteann(ann_id, ann, annlen);
+#ifdef HAVE_PABLO
+  TRACE_OFF(AN_mask, ID_ANwriteann);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 } /* ANwriteann() */
@@ -2613,7 +2686,14 @@ ANreadann(int32 ann_id, char *ann, int32 maxlen)
 #endif /* LATER */
   int32   ret_value;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(AN_mask, ID_ANreadann);
+#endif /* HAVE_PABLO */
+
   ret_value = ANIreadann(ann_id, ann, maxlen);
+#ifdef HAVE_PABLO
+  TRACE_OFF(AN_mask, ID_ANreadann);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 } /* ANreadann() */
@@ -2636,6 +2716,12 @@ ANendaccess(int32 ann_id)
   CONSTR(FUNC, "ANendaccess");    /* for HERROR */
 #endif /* LATER */
   intn  ret_value = SUCCEED;
+#ifdef HAVE_PABLO
+  TRACE_ON(AN_mask, ID_ANendaccess);
+#endif /* HAVE_PABLO */
+#ifdef HAVE_PABLO
+  TRACE_OFF(AN_mask, ID_ANendaccess);
+#endif /* HAVE_PABLO */
 
   return ret_value;
 } /* ANendaccess() */

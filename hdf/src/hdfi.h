@@ -64,6 +64,12 @@
 #define _POSIX_SOURCE
 #endif /* RS6000 hack */
 
+/* Pablo include files */
+#ifdef HAVE_PABLO
+#define IOTRACE
+#include "IOTrace.h"
+#endif  /* HAVE_PABLO */
+
 #include <stdio.h>
 
 #ifdef __STDC__
