@@ -1,0 +1,148 @@
+Following are instructions for compiling an application program
+on the platforms supported by HDF.
+
+NOTE: the order of the libraries is important: libmfhdf.a first,
+followed by libdf.a, then libjpeg.a and libz.a.  
+
+Digital Unix, Fujitsu, IRIX 5.3, IRIX 6.2_64, T3D, C90, YMP:
+-----------------------------------------------------------
+     cc -o <your program> <your program>.c -I<path for hdf include directory>\
+        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
+
+   or
+
+     cc -o <your program> <your program>.c -I<path for hdf include directory> \
+         <path for libmfhdf.a>  <path for libdf.a> \
+         <path for libjpeg.a> <path for libz.a>
+
+SunOS, FreeBSD, Linux A.OUT, Linux ELF:
+--------------------------------------
+    gcc -o <your program> <your program>.c -I<path for hdf include directory> \
+          -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
+  or
+    gcc -o <your program> <your program>.c -I<path for hdf include directory> \
+         <path for libmfhdf.a>  <path for libdf.a> \
+         <path for libjpeg.a> <path for libz.a>
+
+HP-UX:
+-----
+    cc -Aa -D_HPUX_SOURCE -o <your program> <your program>.c \
+       -I<path for hdf include directory> \
+       -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
+  or
+    cc -Aa -D_HPUX_SOURCE -o <your program> <your program>.c \
+       -I<path for hdf include directory> \
+        <path for libmfhdf.a>  <path for libdf.a> \
+        <path for libjpeg.a> <path for libz.a>
+
+IRIX_6.2_n32:
+------------
+     cc -n32 -o <your program> <your program>.c \
+     -I<path for hdf include directory> \
+     -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
+   or
+     cc -n32 -o <your program> <your program>.c \
+     -I<path for hdf include directory> \
+     <path for libmfhdf.a>  <path for libdf.a> \
+     <path for libjpeg.a> <path for libz.a>
+
+AIX:
+---
+     xlc -o <your program> <your program>.c \
+     -I<path for hdf include directory> \
+     -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
+   or
+     xlc -o <your program> <your program>.c \
+     -I<path for hdf include directory> \
+      <path for libmfhdf.a>  <path for libdf.a> \
+      <path for libjpeg.a> <path for libz.a>
+
+OpenVMS:
+-------
+   To compile your programs, prog.c and prog1.for with the HDF library, 
+   mfhdf.olb, df.olb, libjpeg.olb and libz.olb are required whether 
+   your program uses jpeg/gzip or not.
+
+   cc/opt/nodebug/define=(HDF,VMS)/nolist/include=<dir for include> prog.c
+   fort prog1.for
+   link/nodebug/notraceback/exec=prog.exe  prog.obj, prog1.obj, -
+         <dir for lib>mfhdf/lib -
+         <dir for lib>df/lib, <dir for lib>libjpeg/lib,  -
+         <dir for lib>libz/lib, sys$library:vaxcrtl/lib
+
+   NOTE: The order of the libraries is important: mfhdf.olb first,
+   followed by df.olb then libjpeg.olb and libz.olb.
+
+Exemplar:
+--------
+   It is important to find where the C compiler for HP-UX is 
+   installed on your system and use that.  On our system, 
+   for example, it is in bin/cc: 
+
+     bin/cc -Aa -D_HPUX_SOURCE -o <your program> <your program>.c \
+            -I<path for hdf include directory> \
+            -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
+   or
+     bin/cc -Aa -D_HPUX_SOURCE -o <your program> <your program>.c \
+            -I<path for hdf include directory> \
+            <path for libmfhdf.a>  <path for libdf.a> \
+            <path for libjpeg.a> <path for libz.a>
+
+Solaris:
+-------
+   The -lnsl is necessary in order to include the xdr library.
+
+     cc -o <your program> <your program>.c -I<path for hdf include directory>\
+        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz \
+        -L/usr/lib -lnsl
+   or
+     cc -o <your program> <your program>.c -I<path for hdf include directory> \
+         <path for libmfhdf.a>  <path for libdf.a> \
+         <path for libjpeg.a> <path for libz.a> /usr/lib/libnsl.a
+
+Solaris_x86:
+-----------
+     The -lnsl i necessary in order to include the xdr library.
+
+        gcc -o <your program> <your program>.c \
+        -I<path for hdf include directory> \
+        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz  \
+        -L/usr/lib -lnsl
+     or
+        gcc -o <your program> <your program>.c \
+        -I<path for hdf include directory> \
+        <path for libmfhdf.a>  <path for libdf.a> \
+        <path for libjpeg.a> <path for libz.a> /usr/lib/libnsl.a
+
+Windows NT/95:
+-------------
+Using Microsoft Visual C++ version 4.x:
+
+Under Tools->Options, select the folder, Directories:
+   Under "Show directories for", select "Include files".
+   Add the following directories:
+      C:\MSDEV\INCLUDE                   
+      C:\MSDEV\MFC\INCLUDE          
+      C:<path to HDF includes>\INCLUDE  
+
+Under "Show directories for", select "Library files":
+   Add the following directories:
+      C:\MSDEV\LIB                  
+      C:\MSDEV\MFC\LIB               
+      C:<path to HDF libs>\LIB        
+
+Under Build->Settings, select folder, Link:
+   Add the following libraries to the beginning of the list of
+   Object/Library Modules:
+       mfhdf.lib hdf.lib jpeg.lib zlib.lib xdr.lib getopt.lib
+
+   The following libraries may (or may not) need to be included: 
+       kernel32.lib user32.lib gdi32.lib winspool.lib comdig32.lib
+       advapi32lib shell32.lib ole32.lib oleaut32.lib uuid.lib
+       odbc32.lib odbccp32.lib
+
+Under Build->Settings, select folder C/C++:
+   For the Preprocessor Definitions add:  INTEL86
+   The following were already there:   WIN32,_CONSOLE
+
+
