@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.25  1993/07/23 20:49:18  sxu
-Changed 'void' to 'VOID' VSdump, Vinitialize, Vsetzap, Remove_vfile and unpackvs.
+Revision 1.26  1993/07/30 17:49:37  chouck
+Fixed problem in Vinsert() would only accept Vgroups
 
+ * Revision 1.25  1993/07/23  20:49:18  sxu
+ * Changed 'void' to 'VOID' VSdump, Vinitialize, Vsetzap, Remove_vfile and unpackvs.
+ *
  * Revision 1.24  1993/07/15  19:38:46  chouck
  * More weird characters removed
  *
@@ -954,19 +957,21 @@ int32 vkey;
 */
 
 #ifdef PROTOTYPE
-PUBLIC int32 Vinsert (int32 vkey, int32 vskey)
+PUBLIC int32 Vinsert (int32 vkey, int32 insertkey)
 #else
-PUBLIC int32 Vinsert (vkey, vskey)
+PUBLIC int32 Vinsert (vkey, insertkey)
 int32 vkey;
-int32 vskey;          /* (VGROUP*) or (VDATA*), doesn't matter */
+int32 insertkey;          /* (VGROUP*) or (VDATA*), doesn't matter */
 #endif
 {
     VGROUP *vg;
     vginstance_t  * v;
     VDATA *velt;
     vsinstance_t  * w;
+    vginstance_t  * x;
     register uintn u;
     char * FUNC = "Vinsert";
+    int32 newtag, newref, newfid;
     
     if (!VALIDVGID(vkey)) {
         HERROR(DFE_ARGS);
@@ -992,75 +997,75 @@ int32 vskey;          /* (VGROUP*) or (VDATA*), doesn't matter */
         return(FAIL);
     }
     
-    if (!VALIDVSID(vskey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
+    newfid = FAIL;
+    if (VALIDVSID(insertkey)) {
   
-  /* locate vs's index in vstab */
-    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vskey),(uint16)VSID2SLOT(vskey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
-
-    velt=w->vs;
-    if (velt == NULL) {
-          HERROR(DFE_ARGS);
-          HEprint(stderr,0);
-          return(FAIL);
-    }
-
-    if(vg->nvelt >= (uintn)vg->msize) {
-        vg->msize *= 2;
-        vg->tag= (uint16 *) 
-                  HDregetspace((VOIDP)vg->tag, vg->msize * sizeof(uint16));
-        vg->ref= (uint16 *) 
-                  HDregetspace((VOIDP)vg->ref, vg->msize * sizeof(uint16));
-        
-        if((vg->tag == NULL) || (vg->ref == NULL)) {
-            HERROR(DFE_NOSPACE);
+        /* locate vs's index in vstab */
+        if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(insertkey),(uint16)VSID2SLOT(insertkey)))) {
+            HERROR(DFE_NOVS);
+            HEprint(stderr, 0);
             return(FAIL);
-        }  
+        }
+        
+        if (w->vs == NULL) {
+            HERROR(DFE_ARGS);
+            HEprint(stderr,0);
+            return(FAIL);
+        }
+     
+        newtag = (int32) DFTAG_VH;
+        newref = (int32) w->vs->oref;
+        newfid = w->vs->f;
+
+    } else {
+        
+        if(VALIDVGID(insertkey)) {
+            
+            /* locate vs's index in vgtab */
+            if(NULL==(x=(vginstance_t*)vginstance(VGID2VFILE(insertkey),(uint16)VGID2SLOT(insertkey)))) {
+                HERROR(DFE_NOVS);
+                HEprint(stderr, 0);
+                return(FAIL);
+            }
+        
+            if (x->vg == NULL) {
+                HERROR(DFE_ARGS);
+                HEprint(stderr,0);
+                return(FAIL);
+            }
+            
+            newtag = (int32) DFTAG_VG;
+            newref = (int32) x->vg->oref;
+            newfid = x->vg->f;
+            
+        }
+
     }
     
-    if ( Get_vfile(vg->f) != Get_vfile(velt->f) ) {
+    /* make sure we found something */
+    if(newfid == FAIL) {
+        HERROR(DFE_ARGS);
+        return(FAIL);
+    }
+
+    if (vg->f != newfid) {
         HERROR(DFE_DIFFFILES);
         return(FAIL);
     }
     
-    /* check in vstab  or vgtab that velt actually exist in file */
-    
-    switch (velt->otag) {
-        case VSDESCTAG:
-            if (vexistvs (vg->f,velt->oref) == FAIL)
-                {HERROR(DFE_NOVS); return(FAIL);}
-            break;
-
-        case DFTAG_VG:
-            if (vexistvg (vg->f,velt->oref) == FAIL)
-                {HERROR(DFE_NOVS); return(FAIL);}
-            break;
-
-        default:
-            HERROR(DFE_ARGS);
-            return(FAIL);
-    } /* switch */
-
     /* check and prevent duplicate links */
     for(u = 0; u < vg->nvelt; u++)
-        if ( (vg->tag[u] == velt->otag) && (vg->ref[u] == velt->oref) ) {
+        if((vg->ref[u] == newref) && (vg->tag[u] == newtag)) {
             HERROR(DFE_DUPDD);
-            HEreport("Vinsert: duplicate link <%d/%d>", velt->otag,velt->oref);
+            HEreport("Vinsert: duplicate link <%d/%d>", newtag, newref);
             return(FAIL);
         }
     
     /* Finally, ok to insert */
-    vinsertpair (vg, velt->otag, velt->oref);
-    
-    vg->marked = TRUE;
+    vinsertpair(vg, (uint16) newtag, (uint16) newref);
+
     return(vg->nvelt - 1);
+
 } /* Vinsert */
 
 /* ----------------------------- Vflocate -------------------------------- */
@@ -1445,8 +1450,11 @@ int32  tag, ref;
         HERROR(DFE_DUPDD);
         return (FAIL);
     }
-    n = vinsertpair (vg, (uint16) tag, (uint16) ref);
+
+    n = vinsertpair(vg, (uint16) tag, (uint16) ref);
+
     return (n);
+
 } /* Vaddtagref */
 
 /* ------------------------ vinsertpair --------------------------------- */
@@ -1464,26 +1472,26 @@ VGROUP      * vg;
 uint16      tag, ref;   /* this MUST be uint16 -  private routine */
 #endif
 {
-	char * FUNC = "vinsertpair";
-
+    char * FUNC = "vinsertpair";
+    
     if(vg->nvelt >= (uintn)vg->msize) {
         vg->msize *= 2;
         vg->tag  = (uint16 *) 
-                    HDregetspace((VOIDP)vg->tag, vg->msize * sizeof(uint16));
+            HDregetspace((VOIDP)vg->tag, vg->msize * sizeof(uint16));
         vg->ref  = (uint16 *) 
-                    HDregetspace((VOIDP)vg->ref, vg->msize * sizeof(uint16));
-
+            HDregetspace((VOIDP)vg->ref, vg->msize * sizeof(uint16));
+        
         if((vg->tag == NULL) || (vg->ref == NULL)) {
             HERROR(DFE_NOSPACE);
             return(FAIL);
         }  
     }
     vg->tag[vg->nvelt]   = tag;
-	vg->ref[vg->nvelt]   = ref;
-	vg->nvelt ++;
-
-	vg->marked = TRUE;
-	return ((int32) vg->nvelt);
+    vg->ref[vg->nvelt]   = ref;
+    vg->nvelt ++;
+    
+    vg->marked = TRUE;
+    return ((int32) vg->nvelt);
 }
 
 /* ==================================================================== */
