@@ -1,0 +1,46 @@
+HDF4.0b1 and previous releases use a vgroup to represent a dimension.
+The vgroup has a single field vdata with class "DimVal0.0".
+The vdata has <dimension size> number of records, each record has a 
+fake value from 0, 1, 2 ... , (<dimension size> - 1 ). The fake values 
+are not really required and take a lot of space. For applications that 
+create large one dimensional array datasets the disk space taken by 
+these fake values almost double the size of the HDF file. In order to 
+omit the fake values, a new version of dimension vdata is proposed.
+
+The new version uses the same structure as the old version. The only
+differences are that the vdata has only 1 record with value 
+<dimension size> and that the vdata's class is "DimVal0.1" to 
+distinguish it from the old version.
+
+However, existing tools and utilities which were compiled with the old
+version can't recognize the new dimesions of hdf files created using
+HDF4.0b2 or later version. This could cause problems for HDF users.
+To solve this problem, we are going to implement a transitional policy.
+
+1. Starting from HDF4.0b2 both versions of the dimension will be
+   created by default. The old tools recognize the "DimVal0.0" 
+   dimension.
+2. A new function SDsetdimval_comp is added which can be called
+   for a specific dimension to suppress the creation of the 
+   "DimVal0.0" vdata for that dimension. Users who store big 1D 
+   arrays should use this function to create "DimVal0.1" only.
+   See the man page for sdsetdimval_comp.3. 
+3. A new function SDisdimval_bwcomp is added which can be called
+   to get the current compatibility mode of a dimension. 
+   See the man page for sdisdimval_bwcomp.3. 
+4. HDF4.0b2 and later version of HDF libraries can recognize both
+   old and new versions of dimensions. This means old HDF files can 
+   always be read by new HDF libraries.
+5. HDF4.1 will create only "DimVal0.1" by default and function 
+   SDsetdimval_comp should be called if "DimVal0.0" is also desired.  
+   The transition time period is ended.
+6. Existing tools and utilities should be re-compiled with HDF4.0b2
+   or later releases during that transition time period.
+7. A new utility will be written to remove redundant "DimVal0.0" from 
+   the files created during the transition time period.
+8. A new utility will be written to convert "DimVal0.1" to "DimVal0.0"
+   for special cases.
+
+Please send bug reports, comments and suggestions to hdfhelp@ncsa.uiuc.edu.
+
+
