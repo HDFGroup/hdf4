@@ -210,6 +210,12 @@ hdf-debug:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="debug" \
           SUBDIRS="$(HDFDIR)" subd
 
+libs: 
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(HDFDIR)" subd
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG="all" \
+          SUBDIRS="$(NETCDFDIR)" subdn
+
 libdf: 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(HDFDIR)" subd
@@ -275,6 +281,7 @@ help:
 	@echo "make hdf-testnofortran - makes HDF library and tests"
 	@echo "                         excluding fortran support"
 	@echo "make hdf-utilities     - makes HDF library and utilities"
+	@echo "make libs             - makes HDF, IJG JPEG and netCDF libraries only"
 	@echo "make libdf             - makes HDF library"
 	@echo "make libjpeg           - makes IJG JPEG library"
 	@echo "make test              - run both HDF and NETCDF tests"
