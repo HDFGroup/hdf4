@@ -42,7 +42,7 @@ RMFLAGS = -f
 
 # Extra libraries to be include like '-lm' for fabs()
 # e.g with naitve HP-ANSI compilier
-#LIBSX = -lm
+LIBSX = -lm
 
 # ------------ Macros for Pablo Instrumentation  --------------------
 # Uncomment the following lines to create a Pablo Instrumentation
