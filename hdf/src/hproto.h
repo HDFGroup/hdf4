@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.18  1993/02/16 18:55:18  koziol
-Fixed incorrect prototype for DFKconvert
+Revision 1.19  1993/02/17 20:45:10  briand
+Added the FORTRAN stub for Hnumber.
 
+ * Revision 1.18  1993/02/16  18:55:18  koziol
+ * Fixed incorrect prototype for DFKconvert
+ *
  * Revision 1.17  1993/02/02  00:10:13  georgev
  * Changed prototypes for Hyperslab routines to reflect new interface
  *
@@ -1429,9 +1432,11 @@ extern FRETVAL(VOID) nheprnt
 #ifdef DF_CAPFNAMES
 #   define nhiopen   FNAME(HIOPEN)
 #   define nhclose   FNAME(HCLOSE)
+#   define nhnumber  FNAME(HNUMBR)
 #else
 #   define nhiopen   FNAME(hiopen)
 #   define nhclose  FNAME(hclose)
+#   define nhnumber FNAME(hnumbr)
 #endif /* DF_CAPFNAMES */
 #endif /* HFILE_FNAMES */
 
