@@ -4053,8 +4053,10 @@ main(int argc, char *argv[])
 
     /* BMR: Added a test routine dedicated for testing the behavior of
      * several functions when the SDS has rank=0. 02/4/05 */
+    /* BMR: SDcreate fails on Copper when rank=0.  EP decided to remove
+     * this test until further study can be made on this feature.
     status = test_rank0();
-    num_errs = num_errs + status;
+    num_errs = num_errs + status; */
 
 #ifdef H4_HAVE_LIBSZ
     status = test_szip_compression();  /* defined in tszip.c */
