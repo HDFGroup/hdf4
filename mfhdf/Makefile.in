@@ -135,8 +135,7 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-@HDF_BUILD_XDR_FALSE@SUBDIRS = port fortran libsrc ncdump ncgen dumper hdfimport hdiff hzip pablo nctest
-@HDF_BUILD_XDR_TRUE@SUBDIRS = port fortran libsrc xdr ncdump ncgen dumper hdfimport hdiff hzip pablo nctest
+SUBDIRS = port fortran libsrc ncdump ncgen dumper hdfimport hdiff hzip pablo nctest
 subdir = mfhdf
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
@@ -149,8 +148,7 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive pdf-recursive \
 	installdirs-recursive install-recursive uninstall-recursive \
 	check-recursive installcheck-recursive
 DIST_COMMON = README INSTALL Makefile.am Makefile.in THANKS
-DIST_SUBDIRS = port fortran libsrc ncdump ncgen dumper hdfimport hdiff \
-	hzip pablo nctest xdr
+DIST_SUBDIRS = $(SUBDIRS)
 all: all-recursive
 
 .SUFFIXES:
@@ -316,7 +314,7 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
-	list='$(DIST_SUBDIRS)'; for subdir in $$list; do \
+	list='$(SUBDIRS)'; for subdir in $$list; do \
 	  if test "$$subdir" = .; then :; else \
 	    test -d $(distdir)/$$subdir \
 	    || mkdir $(distdir)/$$subdir \
