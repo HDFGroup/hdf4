@@ -48,6 +48,8 @@ gr_interlace_t;
 #define RIGATTRNAME  "RIATTR0.0N"  /* name of a Vdata containing an attribute */
 #define RIGATTRCLASS "RIATTR0.0C"  /* class of a Vdata containing an attribute */
 
+#define FILL_ATTR    "FillValue"   /* name of an attribute containing the fill value */
+
 /* The tag of the attribute data */
 #define ATTR_TAG    DFTAG_VH    /* Current GR attributes are stored in VDatas */
 
@@ -78,6 +80,7 @@ gr_interlace_t;
 #define RISLOT2ID(g,s) ( (((uint32)g & 0xff) << 16) | \
                     (((uint32)RIIDTYPE & 0xff) << 24) | ((s) & 0xffff) )
 #define VALIDRIID(i) ((((uint32)(i) >> 24) & 0xff) == RIIDTYPE)
+#define VALIDRIINDEX(i,gp) ((i)>0 && (i)<(gp)->gr_count)
 #define RIID2SLOT(i) (VALIDRIID(i) ? (uint32)(i) & 0xffff : -1)
 #define RIID2GRID(i) (VALIDRIID(i) ? ((uint32)(i) >> 16) & 0xff : -1)
 
@@ -154,6 +157,9 @@ typedef struct ri_info {
     int32 ext_offset;           /* offset in the external file */
     uintn acc_img;              /* whether to make image data a different access type */
     uintn acc_type;             /* type of access-mode to get image data with */
+    uintn fill_img;             /* whether to fill image, or just store fill value */
+    VOIDP fill_value;           /* pointer to the fill value (NULL means use default fill value of 0) */
+    uintn store_fill;           /* whether to add fill value attribute or not */
 } ri_info_t;
 
 #endif /* MFGR_MASTER */

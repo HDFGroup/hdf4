@@ -58,6 +58,8 @@ BUGS/LIMITATIONS
         sized number type in order to hold them.
 
 EXPORTED ROUTINES
+
+File/Interface Functions:
 int32 GRstart(int32 hdf_file_id)
     - Initializes the GR interface for a particular file. Returns a 'grid' to
         specify the GR group to operate on.
@@ -67,6 +69,7 @@ intn GRfileinfo(int32 grid, int32 *n_datasets, int32 *n_attrs)
 intn GRend(int32 grid)
     - Terminates multi-file GR access for a file.
 
+Image I/O Functions:
 int32 GRcreate(int32 grid,char *name,int32 ncomp,int32 nt,int32 il,int32 dimsizes[2])
     - Defines a raster image in a file.  Returns a 'riid' to work with the new
         raster image.
@@ -85,6 +88,7 @@ intn GRreadimage(int32 riid,int32 start[2],int32 stride[2],int32 count[2],VOIDP 
 intn GRendaccess(int32 riid)
     - End access to an RI.
 
+Dimension Functions:
 int32 GRgetdimid(int32 riid,int32 index)
     - Get a dimension id ('dimid') for an RI to assign atrributes to. [Later]
 intn GRsetdimname(int32 dimid,char *name)
@@ -92,17 +96,20 @@ intn GRsetdimname(int32 dimid,char *name)
 int32 GRdiminfo(int32 dimid,char *name,int32 *size,int32 *n_attr)
     - Get information about the dimensions attributes and size. [Later]
 
+ID/Ref/Index Functions:
 uint16 GRidtoref(int32 riid)
     - Maps an riid to a reference # for annotating or including in a Vgroup.
 int32 GRreftoindex(int32 hdf_file_id,uint16 ref)
     - Maps the reference # of an RI into an index which can be used with
         GRselect.
 
+Interlace Request Functions:
 intn GRreqlutil(int32 riid,intn il)
     - Request that the next LUT read from an RI have a particular interlace.
 intn GRreqimageil(int32 riid,intn il)
     - Request that the image read from an RI have a particular interlace.
 
+LUT/Palette I/O Functions:
 int32 GRgetlutid(int32 riid,int32 index)
     - Get a palette id ('palid') for an RI.
 intn GRgetlutinfo(int32 riid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
@@ -112,6 +119,7 @@ intn GRwritelut(int32 riid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP d
 intn GRreadlut(int32 palid,VOIDP data)
     - Reads a palette from an RI.
 
+Special Element Functions:
 int32 GRsetexternalfile(int32 riid,char *filename,int32 offset)
     - Makes the image data of an RI into an external element special element.
 intn GRsetaccesstype(int32 riid,uintn accesstype)
@@ -119,6 +127,7 @@ intn GRsetaccesstype(int32 riid,uintn accesstype)
 intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo)
     - Makes the image data of an RI into a compressed special element.
 
+Attribute Functions:
 intn GRsetattr(int32 dimid|riid|grid,char *name,int32 attr_nt,int32 count,VOIDP data)
     - Write an attribute for an object.
 int32 GRattrinfo(int32 dimid|riid|grid,int32 index,char *name,int32 *attr_nt,int32 *count)
@@ -141,6 +150,10 @@ MODIFICATION HISTORY
 #include "hdf.h"
 #include "hfile.h"
 #include "mfgr.h"       /* Multi-file raster information */
+
+/* Local pre-processor macros */
+#define XDIM    0
+#define YDIM    1
 
 /*--------------------------------------------------------------------------
  NAME
@@ -359,7 +372,7 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                                             if((new_attr->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
                                                 HRETURN_ERROR(DFE_NOSPACE,FAIL);
                                             HDstrcpy(new_attr->name,textbuf);
-                                            tbbtdins(gr_ptr->gattree, (VOIDP) new_attr, NULL);    /* insert the vg instance in B-tree */ 
+                                            tbbtdins(gr_ptr->gattree, (VOIDP) new_attr, NULL);    /* insert the attr instance in B-tree */ 
 
                                             VSdetach(at_key);
                                         } /* end if */
@@ -525,7 +538,7 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                                 HDstrcpy(new_image->name,textbuf);
 
                                 /* Initialize the local attribute tree */
-                                new_image->lattr_count = 0;
+                                new_image->lattr_count = 1;
                                 new_image->lattree = tbbtdmake(rigcompare, sizeof(int32));
                                 if (new_image->lattree == NULL)
                                     HRETURN_ERROR(DFE_NOSPACE, FAIL);
@@ -665,13 +678,13 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                                                         if(new_attr->len==1)
                                                             new_attr->len=VSelts(at_key);
 
-                                                        /* Get the name of the image */
+                                                        /* Get the name of the attribute */
                                                         if(Vgetname(at_key,textbuf)==FAIL)
                                                             sprintf(textbuf,"Attribute #%d",(int)new_attr->index);
                                                         if((new_attr->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
                                                             HRETURN_ERROR(DFE_NOSPACE,FAIL);
                                                         HDstrcpy(new_attr->name,textbuf);
-                                                        tbbtdins(new_image->lattree, (VOIDP) new_attr, NULL);    /* insert the vg instance in B-tree */ 
+                                                        tbbtdins(new_image->lattree, (VOIDP) new_attr, NULL);    /* insert the attr instance in B-tree */ 
 
                                                         VSdetach(at_key);
                                                     } /* end if */
@@ -981,13 +994,13 @@ int32 GRstart(int32 hdf_file_id)
     /* Initialize the starting information for the interface */
     gr_ptr->hdf_file_id=hdf_file_id;
     gr_ptr->gr_ref=DFTAG_NULL;
-    gr_ptr->gr_count=0;
+    gr_ptr->gr_count=1;
     gr_ptr->grtree = tbbtdmake(rigcompare, sizeof(int32));
     if (gr_ptr->grtree == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
     gr_ptr->gr_modified=0;
 
-    gr_ptr->gattr_count=0;
+    gr_ptr->gattr_count=1;
     gr_ptr->gattree = tbbtdmake(rigcompare, sizeof(int32));
     if (gr_ptr->gattree == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
@@ -1043,9 +1056,9 @@ intn GRfileinfo(int32 grid,int32 *n_datasets,int32 *n_attrs)
 
 /* Get the number of datasets & global attributes from the memory structures */
     if(n_datasets!=NULL)
-        *n_datasets=(int32)gr_tab[gr_idx]->gr_count;
+        *n_datasets=gr_tab[gr_idx]->gr_count-1;
     if(n_attrs!=NULL)
-        *n_attrs=(int32)gr_tab[gr_idx]->gattr_count;
+        *n_attrs=gr_tab[gr_idx]->gattr_count-1;
         
     return(SUCCEED);
 } /* end GRfileinfo() */
@@ -1386,7 +1399,7 @@ intn GRend(int32 grid)
       } /* end if */
 
     /* Write out the information for RIs which have been changed */
-    if(gr_ptr->gr_modified==TRUE && gr_ptr->gr_count>0)
+    if(gr_ptr->gr_modified==TRUE && gr_ptr->gr_count>1)
       {
           VOIDP      *t;
           ri_info_t *img_ptr;   /* ptr to the image */
@@ -1420,7 +1433,7 @@ intn GRend(int32 grid)
                   } /* end if */
 
                 /* check if the local attributes has been modified */
-                if(img_ptr->attr_modified==TRUE && img_ptr->lattr_count>0)
+                if(img_ptr->attr_modified==TRUE && img_ptr->lattr_count>1)
                   {
                       VOIDP      *t;
                       at_info_t *attr_ptr;   /* ptr to the attribute */
@@ -1471,7 +1484,7 @@ intn GRend(int32 grid)
       } /* end if */
 
     /* Write out the information for the global attributes which have been changed */
-    if(gr_ptr->gattr_modified==TRUE && gr_ptr->gattr_count>0)
+    if(gr_ptr->gattr_modified==TRUE && gr_ptr->gattr_count>1)
       {
           VOIDP      *t;
           at_info_t *attr_ptr;   /* ptr to the attribute */
@@ -1515,7 +1528,7 @@ intn GRend(int32 grid)
         gr_ptr->gattr_modified=FALSE;
       } /* end if */
 
-/* Close down the entry for this file in the GR table */
+/* Close down the entry for this file in the GR table -QAK */
     return(SUCCEED);
 } /* end GRend() */
 
@@ -1561,7 +1574,7 @@ int32 GRselect(int32 grid,int32 index)
     gr_ptr=gr_tab[gr_idx];
 
     /* check the index range validity */
-    if(index<0 || index>=gr_ptr->gr_count)
+    if(!VALIDRIINDEX(index,gr_ptr))
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
@@ -1572,6 +1585,104 @@ int32 GRselect(int32 grid,int32 index)
 
     return(RISLOT2ID(gr_idx,index));
 } /* end GRselect() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRcreate
+
+ PURPOSE
+    Create a new raster image.
+
+ USAGE
+    int32 GRcreate(grid, name, ncomp, nt, il, dimsizes)
+        int32 grid;         IN: GR ID from GRstart
+        char *name;         IN: Name of raster image to create
+        int32 ncomp;        IN: Number of components in image
+        int32 nt;           IN: Number type of each component
+        int32 il;           IN: Interlace of the components in the image
+        int32 dimsizes[2];  IN: Dimensions of the new image
+
+ RETURNS
+    A valid riid (Raster-Image ID) on success, or FAIL.
+
+ DESCRIPTION
+    Creates a new raster image in a file.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    All components must be the same number-type.
+
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+int32 GRcreate(int32 grid,char *name,int32 ncomp,int32 nt,int32 il,int32 dimsizes[2])
+{
+    CONSTR(FUNC, "GRcreate");   /* for HERROR */
+    int32 gr_idx;               /* index into the gr_tab array */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+
+    /* clear error stack */
+    HEclear();
+
+    /* check the validity of the args */
+    if(!VALIDGRID(grid) || name==NULL || ncomp<1 || (il!=MFGR_INTERLACE_PIXEL
+            && il!=MFGR_INTERLACE_LINE && il!=MFGR_INTERLACE_COMPONENT)
+            || dimsizes==NULL || dimsizes[0]<=0 || dimsizes[1]<=0)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    
+    /* Get the array index for the grid */
+    gr_idx=GRID2SLOT(grid);
+    gr_ptr=gr_tab[gr_idx];
+
+    /* Allocate space for the new image information */
+    if((ri_ptr=(ri_info_t *)HDmalloc(sizeof(ri_info_t)))==NULL)
+        HRETURN_ERROR(DFE_NOSPACE,FAIL);
+    HDmemset(ri_ptr,0,sizeof(ri_info_t));
+    
+    /* Allocate space for the name and copy it */
+    if((ri_ptr->name=(char *)HDmalloc(HDstrlen(name)+1))==NULL)
+        HRETURN_ERROR(DFE_NOSPACE,FAIL);
+    HDstrcpy(ri_ptr->name,name);
+
+    /* Assign image information */
+    ri_ptr->index=gr_ptr->gr_count;
+    ri_ptr->ri_ref=DFTAG_NULL;
+    ri_ptr->rig_ref=DFTAG_NULL;
+    ri_ptr->img_dim.dim_ref=DFTAG_NULL;
+    ri_ptr->img_dim.xdim=dimsizes[XDIM];
+    ri_ptr->img_dim.ydim=dimsizes[YDIM];
+    ri_ptr->img_dim.ncomps=ncomp;
+    ri_ptr->img_dim.nt=nt;
+    ri_ptr->img_dim.file_nt_subclass=DFNTF_HDFDEFAULT;
+    ri_ptr->img_dim.il=il;
+    ri_ptr->img_dim.nt_tag=ri_ptr->img_dim.nt_ref=DFTAG_NULL;
+    ri_ptr->img_dim.comp_tag=ri_ptr->img_dim.comp_ref=DFTAG_NULL;
+    ri_ptr->img_tag=ri_ptr->img_ref=DFTAG_NULL;
+    ri_ptr->lut_tag=ri_ptr->lut_ref=DFTAG_NULL;
+    ri_ptr->im_il=MFGR_INTERLACE_PIXEL;
+    ri_ptr->lut_il=MFGR_INTERLACE_PIXEL;
+    ri_ptr->data_modified=FALSE;
+    ri_ptr->meta_modified=FALSE;
+    ri_ptr->attr_modified=FALSE;
+    ri_ptr->lattr_count=1;
+    ri_ptr->lattree = tbbtdmake(rigcompare, sizeof(int32));
+    if(ri_ptr->lattree==NULL)
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+    ri_ptr->comp_img=FALSE;
+    ri_ptr->ext_img=FALSE;
+    ri_ptr->acc_img=FALSE;
+    ri_ptr->fill_img=TRUE;
+    ri_ptr->fill_value=NULL;
+    ri_ptr->store_fill=FALSE;
+    ri_ptr->access++;
+
+    /* insert the new image in the global image tree */
+    tbbtdins(gr_ptr->grtree, (VOIDP) ri_ptr, NULL);    /* insert the new image into B-tree */ 
+    gr_ptr->gr_count++;
+
+    return(RISLOT2ID(gr_idx,ri_ptr->index));
+} /* end GRcreate() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -1677,7 +1788,7 @@ intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
 
     /* check the index range validity */
     index=RIID2SLOT(riid);
-    if(index<0 || index>=gr_ptr->gr_count)
+    if(!VALIDRIINDEX(index,gr_ptr))
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
@@ -1703,7 +1814,7 @@ intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
       } /* end if */
 
     if(n_attr!=NULL)
-        *n_attr=ri_ptr->lattr_count;
+        *n_attr=ri_ptr->lattr_count-1;
 
     return(SUCCEED);
 } /* end GRgetiminfo() */
@@ -1744,36 +1855,364 @@ intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn GRwriteimage(int32 riid,int32 start[2],int32 stride[2],int32 count[2],VOIDP data)
+intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOIDP data)
 {
     CONSTR(FUNC, "GRwriteimage");   /* for HERROR */
+    int32 hdf_file_id;          /* HDF file ID */
     int32 gr_idx;               /* index into the gr_tab array */
+    int32 stride[2];            /* pointer to the stride array */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
     int32 index;                /* index of the RI in the GR */
+    intn solid_block=FALSE;     /* whether the image data is a solid block of data */
+    intn whole_image=FALSE;     /* whether we are writing out the whole image */
+    VOIDP *img_data;            /* pointer to the converted image data to write */
+    uintn pixel_mem_size,       /* size of a pixel in memory */
+        pixel_disk_size;        /* size of a pixel on disk */
+    intn convert;               /* true if machine NT != NT to be written */
+    uint8 platnumsubclass;      /* class of this NT for this platform */
+    intn new_image=FALSE;       /* whether we are writing a new image out */
 
     /* clear error stack and check validity of args */
     HEclear();
 
-    /* check the validity of the RI ID */
-    if(!VALIDRIID(riid))
+    /* check the basic validity of the args (stride is OK to be NULL) */
+    if(!VALIDRIID(riid) || start==NULL /* || in_stride==NULL */ || count==NULL
+            || data==NULL)
         HRETURN_ERROR(DFE_ARGS, FAIL);
     
+    /* Get the correct parameters into the stride array */
+    if(in_stride==NULL)
+          stride[XDIM]=stride[YDIM]=1;
+    else
+      {
+          stride[XDIM]=in_stride[XDIM];
+          stride[YDIM]=in_stride[YDIM];
+      } /* end else */
+
+    /* Sanity check the start, stride, and count args */
+    if((start[XDIM]<0 || start[YDIM]<0) || (stride[XDIM]<1 || stride[YDIM]<1)
+            || (count[XDIM]<1 || count[YDIM]<1))
+        HRETURN_ERROR(DFE_BADDIM, FAIL);
+
     /* Get the array index for the grid */
     gr_idx=RIID2GRID(riid);
     gr_ptr=gr_tab[gr_idx];
+    hdf_file_id=gr_ptr->hdf_file_id;
 
     /* check the index range validity */
     index=RIID2SLOT(riid);
-    if(index<0 || index>=gr_ptr->gr_count)
+    if(!VALIDRIINDEX(index,gr_ptr))
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
         HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
+    if(stride[XDIM]==1 && stride[YDIM]==1)
+      { /* solid block of data */
+          solid_block=TRUE;
+          if((start[XDIM]==0 && start[YDIM]==0) && (count[XDIM]==ri_ptr->img_dim.xdim
+                && count[YDIM]==ri_ptr->img_dim.ydim))
+              whole_image=TRUE;
+          else
+              whole_image=FALSE;
+      } /* end if */
+    else /* block of data spread out with strides */
+          solid_block=FALSE;
+
+    /* Get the size of the pixels in memory and on disk */
+    pixel_mem_size=ri_ptr->img_dim.ncomps*DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND));
+    pixel_disk_size=ri_ptr->img_dim.ncomps*DFKNTsize(ri_ptr->img_dim.nt);
+
+    /* Get number-type and conversion information */
+    platnumsubclass = DFKgetPNSC(ri_ptr->img_dim.nt & (~DFNT_LITEND), DF_MT);
+    convert = (ri_ptr->img_dim.file_nt_subclass != platnumsubclass);  /* is conversion necessary? */
+
+    if(convert)
+      {   /* convert image data to HDF disk format */
+          /* Allocate space for the conversion buffer */
+          if((img_data=HDmalloc(pixel_disk_size*count[XDIM]*count[YDIM]))==NULL)
+              HRETURN_ERROR(DFE_NOSPACE,FAIL);
+
+          /* convert the pixel data into the HDF disk format */
+          DFKconvert(data,img_data,ri_ptr->img_dim.nt,
+              ri_ptr->img_dim.ncomps*count[XDIM]*count[YDIM],DFACC_WRITE,0,0);
+      } /* end if */
+    else /* no conversion necessary, just use the user's buffer */
+        img_data=data;
+
+    if(ri_ptr->img_tag==DFTAG_NULL || ri_ptr->img_ref==DFTAG_NULL)
+        new_image=TRUE;
+    else
+        new_image=FALSE;
+
 /* QAK */
+    if(ri_ptr->comp_img==TRUE)
+      {   /* create a compressed image */
+          if(ri_ptr->ext_img==TRUE)
+            { /* compressed, external image data */
+            } /* end if */
+          else
+            { /* regular compressed image data */
+            } /* end else */
+      } /* end if */
+    else 
+      {   /* create an uncompressed image */
+          if(new_image==TRUE)
+            { /* Create the tag/ref for the new image */
+                ri_ptr->img_tag=DFTAG_RI;
+                ri_ptr->img_ref=Hnewref(hdf_file_id);
+            } /* end if */
+
+          if(whole_image==TRUE)
+            { /* write the whole image out */
+                if(Hputelement(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
+                        (uint8 *)img_data,count[XDIM]*count[YDIM])==FAIL)
+                    HRETURN_ERROR(DFE_PUTELEM,FAIL);
+            } /* end if */
+          else
+            { /* write only part of the image out */
+                int32 img_offset; /* current offset in the image data */
+                VOIDP tmp_data;   /* temp. pointer to the image data to write */
+                int32 aid;
+                intn fill_image=FALSE;  /* whether to create fill values, etc. */
+                VOIDP fill_line=NULL;   /* array containing the fill pixels for an entire line of the image */
+                int32 fill_lo_size=0,   /* number of bytes in the "low" block */
+                    fill_hi_size=0,     /* number of bytes in the "high" block */
+                    fill_line_size=0;   /* number of bytes in the "line" block */
+
+                if((aid=Hstartaccess(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
+                        DFACC_WRITE))==FAIL)
+                    HRETURN_ERROR(DFE_BADAID,FAIL);
+                  
+                img_offset=((ri_ptr->img_dim.xdim*start[YDIM])+start[XDIM])*pixel_disk_size;
+
+                /* check if this is a new image, and if we need to write fill pixels */
+                if(new_image==TRUE && ri_ptr->fill_img==TRUE)
+                  { /* create fill value arrays for various blocks */
+                      VOIDP fill_pixel; /* converted value for the filled pixel */
+
+                      if((fill_pixel=(VOIDP)HDmalloc(pixel_disk_size))==NULL)
+                          HRETURN_ERROR(DFE_NOSPACE,FAIL);
+
+                      /* create correct disk version of fill pixel */
+                      if(ri_ptr->fill_value!=NULL)
+                          DFKconvert(ri_ptr->fill_value,fill_pixel,
+                                  ri_ptr->img_dim.nt,ri_ptr->img_dim.ncomps,
+                                  DFACC_WRITE,0,0);
+                      else  /* create default pixel fill value of all zero components */
+                          HDmemset(fill_pixel,0,pixel_disk_size);
+
+                      /* check for "low" pixel runs */
+                      if(start[XDIM]>0)
+                          fill_lo_size=pixel_disk_size*start[XDIM];
+
+                      /* check for "high" pixel runs */
+                      if((start[XDIM]+((count[XDIM]-1)*stride[XDIM])+1)<ri_ptr->img_dim.xdim)
+                          fill_hi_size=pixel_disk_size*(ri_ptr->img_dim.xdim-
+                              (start[XDIM]+((count[XDIM]-1)*stride[XDIM])+1));
+
+                      /* create the "line" pixel block */
+                      /* allocate space for the "line" block */
+                      fill_line_size=pixel_disk_size*ri_ptr->img_dim.xdim;
+                      if((fill_line=(VOIDP)HDmalloc(fill_line_size))==NULL)
+                            HRETURN_ERROR(DFE_NOSPACE,FAIL);
+                      HDmemfill(fill_line,fill_pixel,pixel_disk_size,ri_ptr->img_dim.xdim);
+
+                      fill_image=TRUE;  /* set flag to write out fill pixels */
+                      ri_ptr->store_fill=TRUE;  /* set flag to store fill value attribute */
+
+                      /* Get rid of the fill pixel */
+                      HDfree(fill_pixel);
+                  } /* end if */
+
+                tmp_data=img_data;
+                if(solid_block==TRUE)
+                  {   /* write out runs of data in the image */
+                      int32 pix_len;    /* length of current row's pixel run */
+                      intn i;           /* temporary loop variable */
+
+                      pix_len=pixel_disk_size*count[XDIM];
+                        
+                      if(fill_image==TRUE)
+                        {   /* surround the block to write with fill values */
+                            if(Hseek(aid,0,DF_START)==FAIL)
+                                HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+
+                            /* write out lines "below" the block */
+                            if(start[YDIM]>0)
+                              { /* fill in the lines leading up the block */
+                                for(i=0; i<start[YDIM]; i++)
+                                    if(Hwrite(aid,fill_line_size,fill_line)==FAIL)
+                                        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                              } /* end if */
+
+                            /* write prelude of low pixels */
+                            if(fill_lo_size>0)
+                                if(Hwrite(aid,fill_lo_size,fill_line)==FAIL)
+                                    HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+
+                            /* write out the block */
+                            for(i=0; i<count[YDIM]; i++)
+                              {
+                                  if(Hwrite(aid,pix_len,tmp_data)==FAIL)
+                                      HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+
+                                  /* This next write wraps around the high side */
+                                  /* of the block and writes the next low side */
+                                  /* at the same time. */
+                                  if((fill_hi_size+fill_lo_size)>0
+                                          && i<(count[YDIM]-1))
+                                      if(Hwrite(aid,(fill_hi_size+fill_lo_size),fill_line)==FAIL)
+                                          HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                  tmp_data=(VOIDP)((char *)tmp_data+pix_len);
+                              } /* end for */
+                            
+                            /* Finish the last chunk of high side fill values */
+                            if(fill_hi_size>0)
+                                if(Hwrite(aid,fill_hi_size,fill_line)==FAIL)
+                                    HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+
+                            /* write out lines "above" the block */
+                            if((start[YDIM]+((count[YDIM]-1)*stride[YDIM])+1)
+                                <ri_ptr->img_dim.ydim)
+                              {
+                                for(i=start[YDIM]+((count[YDIM]-1)*stride[YDIM])+1;
+                                        i<ri_ptr->img_dim.ydim; i++)
+                                    if(Hwrite(aid,fill_line_size,fill_line)==FAIL)
+                                        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                              } /* end if */
+                        } /* end if */
+                      else
+                        {   /* don't worry about fill values */
+                            for(i=0; i<count[YDIM]; i++)
+                              {
+                                  if(Hseek(aid,img_offset,DF_START)==FAIL)
+                                      HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+                                  if(Hwrite(aid,pix_len,tmp_data)==FAIL)
+                                      HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                  img_offset+=ri_ptr->img_dim.ydim;
+                                  tmp_data=(VOIDP)((char *)tmp_data+pix_len);
+                              } /* end for */
+                        } /* end else */
+                  } /* end if */
+                else
+                  {   /* sub-sampling, seek to each data element and write it out */
+                      intn i,j,k;       /* temporary loop variables */
+                      int32 stride_add; /* amount to add for stride amount */
+                      int32 fill_stride_size=0; /* # of pixels in the stride block */
+                      intn fill_xdim=FALSE, /* whether to fill in the X dimension */
+                          fill_ydim=FALSE;  /* whether to fill in the Y dimension */
+
+                      stride_add=pixel_disk_size*stride[XDIM];
+
+                      /* check if we need to insert fill pixels between strides */
+                      if(fill_image==TRUE)
+                        {   /* create the "stride" pixel block */
+                            if(stride[XDIM]>1)
+                              {
+                                /* allocate space for the "stride" block */
+                                fill_stride_size=pixel_disk_size*(stride[XDIM]-1);
+                                fill_xdim=TRUE;
+                              } /* end if */
+                            if(stride[YDIM]>1)
+                                fill_ydim=TRUE;
+
+                            /* write fills and sub-sampled data */
+                            if(Hseek(aid,0,DF_START)==FAIL)
+                                HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+
+                            /* write out lines "below" the block */
+                            if(start[YDIM]>0)
+                              { /* fill in the lines leading up the block */
+                                for(i=0; i<start[YDIM]; i++)
+                                    if(Hwrite(aid,fill_line_size,fill_line)==FAIL)
+                                        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                              } /* end if */
+
+                            /* write prelude of low pixels */
+                            if(fill_lo_size>0)
+                                if(Hwrite(aid,fill_lo_size,fill_line)==FAIL)
+                                    HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+
+                            for(i=0; i<count[YDIM]; i++)
+                              {
+                                  for(j=0; j<count[XDIM]; j++)
+                                    {
+                                      if(Hwrite(aid,pixel_disk_size,tmp_data)==FAIL)
+                                          HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                      if(fill_xdim==TRUE)
+                                          if(Hwrite(aid,fill_stride_size,fill_line)==FAIL)
+                                              HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                      tmp_data=(VOIDP)((char *)tmp_data+pixel_disk_size);
+                                    } /* end for */
+  
+                                  /* Fill in the y-dim stride lines */
+                                  if(fill_ydim==TRUE)
+                                      for(k=1; k<stride[YDIM]; k++)
+                                        {
+                                          if(Hwrite(aid,fill_line_size,fill_line)==FAIL)
+                                              HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                        } /* end for */
+
+                                  /* This next write wraps around the high side */
+                                  /* of the block and writes the next low side */
+                                  /* at the same time. */
+                                  if((fill_hi_size+fill_lo_size)>0
+                                          && i<(count[YDIM]-1))
+                                      if(Hwrite(aid,(fill_hi_size+fill_lo_size),fill_line)==FAIL)
+                                          HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                              } /* end for */
+
+                            /* Finish the last chunk of high side fill values */
+                            if(fill_hi_size>0)
+                                if(Hwrite(aid,fill_hi_size,fill_line)==FAIL)
+                                    HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+
+                            /* write out lines "above" the block */
+                            if((start[YDIM]+((count[YDIM]-1)*stride[YDIM])+1)
+                                <ri_ptr->img_dim.ydim)
+                              {
+                                for(i=start[YDIM]+((count[YDIM]-1)*stride[YDIM])+1;
+                                        i<ri_ptr->img_dim.ydim; i++)
+                                    if(Hwrite(aid,fill_line_size,fill_line)==FAIL)
+                                        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                              } /* end if */
+
+                        } /* end if */
+                      else
+                        {   /* don't worry about fill values */
+                            for(i=0; i<count[YDIM]; i++)
+                              {
+                                  int32 local_offset;
+  
+                                  local_offset=img_offset;
+                                  for(j=0; j<count[XDIM]; j++)
+                                    {
+                                      if(Hseek(aid,local_offset,DF_START)==FAIL)
+                                          HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+                                      if(Hwrite(aid,pixel_disk_size,tmp_data)==FAIL)
+                                          HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                      local_offset+=stride_add;
+                                      tmp_data=(VOIDP)((char *)tmp_data+pixel_disk_size);
+                                    } /* end for */
+  
+                                  img_offset+=ri_ptr->img_dim.xdim*stride[YDIM];
+                              } /* end for */
+                        } /* end else */
+                  } /* end else */
+                  
+                if(Hendaccess(aid)==FAIL)
+                    HRETURN_ERROR(DFE_CANTENDACCESS,FAIL);
+            } /* end else */
+          ri_ptr->data_modified=TRUE;
+      } /* end else */
+
+    /* mark the image as being modified */
+    ri_ptr->data_modified=TRUE;
+    gr_ptr->gr_modified=TRUE;
 
     return(SUCCEED);
 } /* end GRwriteimage() */
@@ -1813,37 +2252,185 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 stride[2],int32 count[2],VOIDP
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn GRreadimage(int32 riid,int32 start[2],int32 stride[2],int32 count[2],VOIDP data)
+intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOIDP data)
 {
     CONSTR(FUNC, "GRreadimage");   /* for HERROR */
+    int32 hdf_file_id;          /* HDF file ID */
     int32 gr_idx;               /* index into the gr_tab array */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
     int32 index;                /* index of the RI in the GR */
+    int32 stride[2];            /* pointer to the stride array */
+    intn solid_block=FALSE;     /* whether the image data is a solid block of data */
+    intn whole_image=FALSE;     /* whether we are writing out the whole image */
+    VOIDP *img_data;            /* pointer to the converted image data to write */
+    uintn pixel_mem_size,       /* size of a pixel in memory */
+        pixel_disk_size;        /* size of a pixel on disk */
+    intn convert;               /* true if machine NT != NT to be written */
+    uint8 platnumsubclass;      /* class of this NT for this platform */
 
     /* clear error stack and check validity of args */
     HEclear();
 
-    /* check the validity of the RI ID */
-    if(!VALIDRIID(riid))
+    /* check the basic validity of the args (stride is OK to be NULL) */
+    if(!VALIDRIID(riid) || start==NULL /* || in_stride==NULL */ || count==NULL
+            || data==NULL)
         HRETURN_ERROR(DFE_ARGS, FAIL);
     
+    /* Get the correct parameters into the stride array */
+    if(in_stride==NULL)
+          stride[XDIM]=stride[YDIM]=1;
+    else
+      {
+          stride[XDIM]=in_stride[XDIM];
+          stride[YDIM]=in_stride[YDIM];
+      } /* end else */
+
+    /* Sanity check the start, stride, and count args */
+    if((start[XDIM]<0 || start[YDIM]<0) || (stride[XDIM]<1 || stride[YDIM]<1)
+            || (count[XDIM]<1 || count[YDIM]<1))
+        HRETURN_ERROR(DFE_BADDIM, FAIL);
+
     /* Get the array index for the grid */
     gr_idx=RIID2GRID(riid);
     gr_ptr=gr_tab[gr_idx];
+    hdf_file_id=gr_ptr->hdf_file_id;
 
     /* check the index range validity */
     index=RIID2SLOT(riid);
-    if(index<0 || index>=gr_ptr->gr_count)
+    if(!VALIDRIINDEX(index,gr_ptr))
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
         HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
-/* QAK */
+    if(stride[XDIM]==1 && stride[YDIM]==1)
+      { /* solid block of data */
+          solid_block=TRUE;
+          if((start[XDIM]==0 && start[YDIM]==0) && (count[XDIM]==ri_ptr->img_dim.xdim
+                && count[YDIM]==ri_ptr->img_dim.ydim))
+              whole_image=TRUE;
+          else
+              whole_image=FALSE;
+      } /* end if */
+    else /* block of data spread out with strides */
+        solid_block=FALSE;
 
+    /* Get the size of the pixels in memory and on disk */
+    pixel_mem_size=ri_ptr->img_dim.ncomps*DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND));
+    pixel_disk_size=ri_ptr->img_dim.ncomps*DFKNTsize(ri_ptr->img_dim.nt);
+
+    /* Get number-type and conversion information */
+    platnumsubclass = DFKgetPNSC(ri_ptr->img_dim.nt & (~DFNT_LITEND), DF_MT);
+    convert = (ri_ptr->img_dim.file_nt_subclass != platnumsubclass);  /* is conversion necessary? */
+
+    if(ri_ptr->img_tag==DFTAG_NULL || ri_ptr->img_ref==DFTAG_NULL)
+      { /* Fake an image for the user by using the pixel fill value */
+          VOIDP fill_pixel; /* converted value for the filled pixel */
+          int32 at_index;
+
+          if((fill_pixel=(VOIDP)HDmalloc(pixel_mem_size))==NULL)
+              HRETURN_ERROR(DFE_NOSPACE,FAIL);
+
+          /* Try to find a fill value attribute */
+          if((at_index=GRfindattr(riid,FILL_ATTR))!=FAIL)
+            { /* Found a fill value attribute */
+                if(GRgetattr(riid,at_index,fill_pixel)==FAIL)
+                    HRETURN_ERROR(DFE_BADATTR,FAIL);
+            } /* end if */
+          else /* no fill value attribute */
+              HDmemset(fill_pixel,0,pixel_mem_size);
+
+          /* Fill the user's buffer with the fill value */
+          HDmemfill(data,fill_pixel,pixel_mem_size,count[XDIM]*count[YDIM]);
+          HDfree(fill_pixel);
+      } /* end if */
+    else
+      { /* an image exists in the file */
+          if(convert)
+            {   /* convert image data to HDF disk format */
+                /* Allocate space for the conversion buffer */
+                if((img_data=HDmalloc(pixel_disk_size*count[XDIM]*count[YDIM]))==NULL)
+                    HRETURN_ERROR(DFE_NOSPACE,FAIL);
+            } /* end if */
+          else /* no conversion necessary, just use the user's buffer */
+              img_data=data;
+
+          if(whole_image==TRUE)
+            { /* read the whole image in */
+                if(Hgetelement(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
+                        (uint8 *)img_data)==FAIL)
+                    HRETURN_ERROR(DFE_GETELEM,FAIL);
+            } /* end if */
+          else
+            { /* read only part of the image in */
+                int32 img_offset; /* current offset in the image data */
+                VOIDP tmp_data;   /* temp. pointer to the image data read in */
+                int32 aid;
+
+                if((aid=Hstartaccess(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
+                        DFACC_READ))==FAIL)
+                    HRETURN_ERROR(DFE_BADAID,FAIL);
+                  
+                img_offset=((ri_ptr->img_dim.xdim*start[YDIM])+start[XDIM])*pixel_disk_size;
+
+                tmp_data=img_data;
+                if(solid_block==TRUE)
+                  {   /* read in runs of data in the image */
+                      int32 pix_len;    /* length of current row's pixel run */
+                      intn i;           /* temporary loop variable */
+
+                      pix_len=pixel_disk_size*count[XDIM];
+                        
+                      /* read in the block */
+                      for(i=0; i<count[YDIM]; i++)
+                        {
+                            if(Hseek(aid,img_offset,DF_START)==FAIL)
+                                HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+                            if(Hread(aid,pix_len,tmp_data)==FAIL)
+                                HRETURN_ERROR(DFE_READERROR,FAIL);
+                            img_offset+=pixel_disk_size*ri_ptr->img_dim.xdim;
+                            tmp_data=(VOIDP)((char *)tmp_data+pix_len);
+                        } /* end for */
+                  } /* end if */
+                else
+                  {   /* sub-sampling, seek to each data element and read it in */
+                      intn i,j;         /* temporary loop variables */
+                      int32 stride_add; /* amount to add for stride amount */
+
+                      stride_add=pixel_disk_size*stride[XDIM];
+
+                      for(i=0; i<count[YDIM]; i++)
+                        {
+                            int32 local_offset;
+
+                            local_offset=img_offset;
+                            for(j=0; j<count[XDIM]; j++)
+                              {
+                                if(Hseek(aid,local_offset,DF_START)==FAIL)
+                                    HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+                                if(Hread(aid,pixel_disk_size,tmp_data)==FAIL)
+                                    HRETURN_ERROR(DFE_READERROR,FAIL);
+                                local_offset+=stride_add;
+                                tmp_data=(VOIDP)((char *)tmp_data+pixel_disk_size);
+                              } /* end for */
+
+                            img_offset+=ri_ptr->img_dim.xdim*stride[YDIM];
+                        } /* end for */
+                  } /* end else */
+                if(Hendaccess(aid)==FAIL)
+                    HRETURN_ERROR(DFE_CANTENDACCESS,FAIL);
+            } /* end else */
+                  
+          if(convert)
+            { /* convert the pixel data into the HDF disk format */
+                DFKconvert(img_data,data,ri_ptr->img_dim.nt,
+                    ri_ptr->img_dim.ncomps*count[XDIM]*count[YDIM],DFACC_READ,0,0);
+                HDfree(img_data);
+            } /* end if */
+      } /* end else */
     return(SUCCEED);
 } /* end GRreadimage() */
 
@@ -1892,14 +2479,26 @@ intn GRendaccess(int32 riid)
 
     /* check the index range validity */
     index=RIID2SLOT(riid);
-    if(index<0 || index>=gr_ptr->gr_count)
+    if(!VALIDRIINDEX(index,gr_ptr))
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
         HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
-/* QAK */
+    if(!(ri_ptr->access>0))
+        HRETURN_ERROR(DFE_CANTENDACCESS,FAIL);
+
+    /* Check for writing a fill value attribute out */
+    if(ri_ptr->store_fill==TRUE)
+      { /* store the fill value attribute before letting go of the image */
+          if(GRsetattr(riid,FILL_ATTR,ri_ptr->img_dim.nt,ri_ptr->img_dim.ncomps,ri_ptr->fill_value)==FAIL)
+              HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+          ri_ptr->store_fill=FALSE;
+      } /* end if */
+
+    /* Reduce the number of accesses to the RI */
+    ri_ptr->access--;
 
     return(SUCCEED);
 } /* end GRendaccess() */
@@ -1948,7 +2547,7 @@ uint16 GRidtoref(int32 riid)
 
     /* check the index range validity */
     index=RIID2SLOT(riid);
-    if(index<0 || index>=gr_ptr->gr_count)
+    if(!VALIDRIINDEX(index,gr_ptr))
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
@@ -2061,7 +2660,7 @@ intn GRreqlutil(int32 riid,intn il)
 
     /* check the index range validity */
     index=RIID2SLOT(riid);
-    if(index<0 || index>=gr_ptr->gr_count)
+    if(!VALIDRIINDEX(index,gr_ptr))
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
@@ -2124,7 +2723,7 @@ intn GRreqimageil(int32 riid,intn il)
 
     /* check the index range validity */
     index=RIID2SLOT(riid);
-    if(index<0 || index>=gr_ptr->gr_count)
+    if(!VALIDRIINDEX(index,gr_ptr))
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
@@ -2225,7 +2824,7 @@ intn GRgetlutinfo(int32 lutid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
 
     /* check the index range validity */
     index=RIID2SLOT(lutid);
-    if(index<0 || index>=gr_ptr->gr_count)
+    if(!VALIDRIINDEX(index,gr_ptr))
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
@@ -2297,7 +2896,7 @@ intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP 
 
     /* check the index range validity */
     index=RIID2SLOT(lutid);
-    if(index<0 || index>=gr_ptr->gr_count)
+    if(!VALIDRIINDEX(index,gr_ptr))
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
@@ -2391,7 +2990,7 @@ intn GRreadlut(int32 lutid,VOIDP data)
 
     /* check the index range validity */
     index=RIID2SLOT(lutid);
-    if(index<0 || index>=gr_ptr->gr_count)
+    if(!VALIDRIINDEX(index,gr_ptr))
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
@@ -2453,7 +3052,7 @@ intn GRsetexternalfile(int32 riid,char *filename,int32 offset)
 
     /* check the index range validity */
     index=RIID2SLOT(riid);
-    if(index<0 || index>=gr_ptr->gr_count)
+    if(!VALIDRIINDEX(index,gr_ptr))
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
@@ -2520,13 +3119,14 @@ intn GRsetaccesstype(int32 riid,uintn accesstype)
 
     /* check the index range validity */
     index=RIID2SLOT(riid);
-    if(index<0 || index>=gr_ptr->gr_count)
+    if(!VALIDRIINDEX(index,gr_ptr))
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
         HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
+    /* Mark the image as having an access-mode and cache args */
     ri_ptr->acc_img=TRUE;
     ri_ptr->acc_type=accesstype;
 
@@ -2580,13 +3180,14 @@ intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo)
 
     /* check the index range validity */
     index=RIID2SLOT(riid);
-    if(index<0 || index>=gr_ptr->gr_count)
+    if(!VALIDRIINDEX(index,gr_ptr))
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
         HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
+    /* Mark the image as being compressed and cache args */
     ri_ptr->comp_img=TRUE;
     ri_ptr->comp_type=comp_type;
     HDmemcpy(&(ri_ptr->cinfo),cinfo,sizeof(comp_info));
@@ -2665,7 +3266,7 @@ intn GRsetattr(int32 id,char *name,int32 attr_nt,int32 count,VOIDP data)
 
           /* check the index range validity */
           ri_index=RIID2SLOT(id);
-          if(ri_index<0 || ri_index>=gr_ptr->gr_count)
+          if(!VALIDRIINDEX(ri_index,gr_ptr))
               HRETURN_ERROR(DFE_ARGS, FAIL);
 
           if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &ri_index, NULL))==NULL)
@@ -2840,7 +3441,7 @@ intn GRattrinfo(int32 id,int32 index,char *name,int32 *attr_nt,int32 *count)
           gr_idx=GRID2SLOT(id);
           gr_ptr=gr_tab[gr_idx];
 
-          if(index<0 || index>=gr_ptr->gattr_count)
+          if(index<1 || index>=(gr_ptr->gattr_count-1))
               HRETURN_ERROR(DFE_ARGS, FAIL);
 
           search_tree=gr_ptr->gattree;
@@ -2853,14 +3454,14 @@ intn GRattrinfo(int32 id,int32 index,char *name,int32 *attr_nt,int32 *count)
 
           /* check the index range validity */
           ri_index=RIID2SLOT(id);
-          if(ri_index<0 || ri_index>=gr_ptr->gr_count)
+          if(!VALIDRIINDEX(ri_index,gr_ptr))
               HRETURN_ERROR(DFE_ARGS, FAIL);
 
           if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &ri_index, NULL))==NULL)
               HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
           ri_ptr=(ri_info_t *)*t;
 
-          if(index<0 || index>=ri_ptr->lattr_count)
+          if(index<1 || index>=(ri_ptr->lattr_count-1))
               HRETURN_ERROR(DFE_ARGS, FAIL);
 
           search_tree=ri_ptr->lattree;
@@ -2932,7 +3533,7 @@ intn GRgetattr(int32 id,int32 index,VOIDP data)
           gr_idx=GRID2SLOT(id);
           gr_ptr=gr_tab[gr_idx];
 
-          if(index<0 || index>=gr_ptr->gattr_count)
+          if(index<1 || index>=(gr_ptr->gattr_count-1))
               HRETURN_ERROR(DFE_ARGS, FAIL);
 
           hdf_file_id=gr_ptr->hdf_file_id;
@@ -2946,14 +3547,14 @@ intn GRgetattr(int32 id,int32 index,VOIDP data)
 
           /* check the index range validity */
           ri_index=RIID2SLOT(id);
-          if(ri_index<0 || ri_index>=gr_ptr->gr_count)
+          if(!VALIDRIINDEX(ri_index,gr_ptr))
               HRETURN_ERROR(DFE_ARGS, FAIL);
 
           if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &ri_index, NULL))==NULL)
               HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
           ri_ptr=(ri_info_t *)*t;
 
-          if(index<0 || index>=ri_ptr->lattr_count)
+          if(index<1 || index>=(ri_ptr->lattr_count-1))
               HRETURN_ERROR(DFE_ARGS, FAIL);
 
           hdf_file_id=gr_ptr->hdf_file_id;
@@ -3055,7 +3656,7 @@ int32 GRfindattr(int32 id,char *name)
 
           /* check the index range validity */
           index=RIID2SLOT(id);
-          if(index<0 || index>=gr_ptr->gr_count)
+          if(!VALIDRIINDEX(index,gr_ptr))
               HRETURN_ERROR(DFE_ARGS, FAIL);
 
           if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
@@ -3080,9 +3681,6 @@ int32 GRfindattr(int32 id,char *name)
 /*
 
 API functions to finish:
-    GRwriteimage
-    GRreadimage
-    GRendaccess
 
 Misc. stuff left to do:
     Deal with special elements for images
@@ -3091,5 +3689,7 @@ Features not supported:
     Add in full support for multiple palettes with each RI.
     Add in support for named palettes with each RI.
     Add in support for palettes with non-standard formats.
+    Deletion of attributes or images (would require changing the way index
+        numbers are handled)
 
 */
