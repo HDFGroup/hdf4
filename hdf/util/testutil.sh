@@ -21,9 +21,9 @@ HDFEDCMD="$HDFED -batch"		# use -batch mode for no prompt
 SED="sed -e /library/,/String/d"  # filter out the library version
 
 echo ""
-echo "======================="
-echo "Utilities tests started"
-echo "======================="
+echo "=============================="
+echo "HDF Utilities tests started"
+echo "=============================="
 
 # hdf24to8
 if [ -f hdf24to8 -a -f hdftor8 ]; then
@@ -389,13 +389,13 @@ fi
 #
 # Check errors result
 if [ $haserr -eq 0 ]; then
-    echo "======================="
-    echo "Utilities tests passed."
-    echo "======================="
+    echo "=============================="
+    echo "HDF Utilities tests passed."
+    echo "=============================="
 else
-    echo "**********************************"
-    echo "Utilities tests encountered errors"
-    echo "**********************************"
+    echo "**************************************"
+    echo "HDF Utilities tests encountered errors"
+    echo "**************************************"
 fi
 echo ""
 exit 0

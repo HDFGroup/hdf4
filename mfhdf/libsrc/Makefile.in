@@ -168,6 +168,9 @@ all::         FORCE
 # identical with `test_cdf.sav', modulo small rounding errors.
 #
 test:		$(PROGRAM) nhdftest
+	@ echo "========================="
+	@ echo "netCDF formatted tests"
+	@ echo "========================="
 	./$(PROGRAM) > cdfout.new
 	@cmd="$(DIFF) $(DIFF_FLAGS) cdfout.new testout.sav"; \
 	    echo $$cmd; \
@@ -202,6 +205,9 @@ nhdftest::         FORCE
 
 hdftest:	hdftest.o library        
 	$(CC) $(CFLAGS) $(CFLAGS_NETCDF) hdftest.o $(LIBS) -o $@
+	@ echo "============================"
+	@ echo "HDF-SD C interfaces tests"
+	@ echo "============================"
 	./hdftest > hdfout.new
 	@cmd="$(DIFF) $(DIFF_FLAGS) hdfout.new hdfout.sav"; \
 	    echo $$cmd; \

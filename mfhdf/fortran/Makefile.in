@@ -192,6 +192,9 @@ test:		FORCE
 	    echo 1>&2 "\`$@' not made because no FORTRAN compiler";; \
 	*) \
 	    $(MAKE) $(MFLAGS) $(LOCAL_MACROS) $(PROGRAM); \
+	    echo "=================================";\
+	    echo "netCDF Fortran interface tests";\
+	    echo "=================================";\
 	    ./$(PROGRAM); \
 	    $(MAKE) $(MFLAGS) $(LOCAL_MACROS) hdftest;; \
 	esac
@@ -811,14 +814,17 @@ FORCE:
 #
 hdftest:        FORCE
 	$(FC) $(FFLAGS) hdftest.f $(LIBS) -o $@
+	@ echo "=======================================";
+	@ echo "HDF-SD Fortran interface tests start";
+	@ echo "=======================================";
 	test -d $(TESTDIR) || mkdir $(TESTDIR)
 	./hdftest > hdfout.new
 	@cmd="$(DIFF) $(DIFF_FLAGS) hdfout.new hdftst.sav"; \
 	    echo $$cmd; \
 	    if $$cmd; then \
-		echo "*** HDF passes FORTRAN test ***"; \
+		echo "*** HDF-SD Fortran interface tests passed ***"; \
 	    else \
-		echo "*** HDF fails FORTRAN test ***"; \
+		echo "*** HDF-SD Fortran interface tests failed ***"; \
 		echo "The above differences are OK if small"; \
 		exit 0; \
 	    fi

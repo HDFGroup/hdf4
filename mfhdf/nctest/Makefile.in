@@ -137,6 +137,9 @@ GARBAGE		= $(PROGRAM) lint.out *.nc *.cdf *.log
 all::		program
 
 test:		$(PROGRAM)
+	@ echo "==========================="
+	@ echo "netCDF C interface tests"
+	@ echo "==========================="
 	./$(PROGRAM)
 
 $(PROGRAM):   ../libsrc/libmfhdf.a

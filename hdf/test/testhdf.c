@@ -172,7 +172,10 @@ main(int argc, char *argv[])
     Verbosity = 4;  /* Default Verbosity is Low */
     Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
 
-    printf("\nFor help use: testhdf -help\n");
+    printf("===============================\n");
+    printf("HDF Library C Interface Tests\n");
+    printf("===============================\n");
+    printf("For help use: testhdf -help\n");
     printf("Built with HDF Library Version: %u.%ur%u, %s\n\n", (unsigned) lmajor,
            (unsigned) lminor, (unsigned) lrelease, lstring);
     for (CLLoop = 1; CLLoop < argc; CLLoop++)

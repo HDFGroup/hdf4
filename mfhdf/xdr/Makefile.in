@@ -150,6 +150,9 @@ all::         FORCE
 # identical with `test_xdr.sav'.
 #
 test:		$(PROGRAM)
+	@ echo "========================="
+	@ echo "netCDF XDR tests start"
+	@ echo "========================="
 	./$(PROGRAM) > $(PROGRAM)_out.new
 	@cmd="$(DIFF) $(DIFF_FLAGS) $(PROGRAM)_out.new testout.sav"; \
 	echo $$cmd; \
