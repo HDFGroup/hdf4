@@ -81,7 +81,7 @@ hdftest:	hdftest.o library
 debug:
 #	rm -f $(COBJS)
 	$(MAKE) $(MFLAGS) "CFLAGS=-g" "LIBRARY=$(LIBRARY)_g" library
-  
+
 profiled:
 #	rm -f $(COBJS)
 	$(MAKE) $(MFLAGS) "CFLAGS=-pg" "LIBRARY=$(LIBRARY)_pg" library
