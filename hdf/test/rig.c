@@ -1069,7 +1069,7 @@ intn fuzz_factor;
 	const uint8 *t1=(const uint8 *)s1;
 	const uint8 *t2=(const uint8 *)s2;
 
-	while(ABS(*t2-*t1)<=fuzz_factor && len>0) {
+	while((int)ABS(*t2-*t1)<=fuzz_factor && len>0) {
 		t1++;
 		t2++;
 		len--;
