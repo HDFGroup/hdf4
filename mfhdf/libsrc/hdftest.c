@@ -24,14 +24,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #ifdef HDF
 
-
-/* Macro to check status value and print error message */
-#define CHECK(status, fail_value, name) {if(status == fail_value) { \
-    printf("*** Routine %s FAILED at line %d ***\n", name, __LINE__); num_err++;}}
-/* BMR - 2/21/99: added macro VERIFY to use in testing SDcheckempty 
-   initially, but it should be used wherever appropriate */
-#define VERIFY(item, value, test_name) {if(item != value) { \
-    printf("*** UNEXPECTED VALUE from %s is %ld at line %4d in %s\n", test_name, (long)item,(int)__LINE__,__FILE__); num_err++;}}
+#include "hdftest.h"
 
 #define UFOFILE   "file.UFO"	/* non-existing file */
 #define FILE1     "test1.hdf"
