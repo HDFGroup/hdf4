@@ -141,210 +141,208 @@ C Initialize the attribute
 
 C Open the file
       file_id=hopen(TESTFILE, DFACC_ALL, 0)
-      call VERIFY(file_id,'hopen',number_failed,Verbosity)
+      call VERIFY(file_id,'hopen',number_failed)
       gr_id=mgstart(file_id)
-      call VERIFY(gr_id,'mgstart',number_failed,Verbosity)
+      call VERIFY(gr_id,'mgstart',number_failed)
 
 C Create an image
-      call MESSAGE(5,'Creating an image',Verbosity)
+      call MESSAGE(5,'Creating an image')
       dims(1)=2
       dims(2)=2
       ri_id = mgcreat(gr_id,IMAGE1,3,DFNT_UINT8,MFGR_INTERLACE_PIXEL,
      *          dims)
-      call VERIFY(ri_id,'mgcreat',number_failed,Verbosity)
+      call VERIFY(ri_id,'mgcreat',number_failed)
 
       start(1)=0
       start(2)=0
       stride(1)=1
       stride(2)=1
-      call MESSAGE(5,'Writing image data',Verbosity)
+      call MESSAGE(5,'Writing image data')
       ret = mgwrimg(ri_id,start,stride,dims,buf)
-      call VERIFY(ret,'mgwrimg',number_failed,Verbosity)
+      call VERIFY(ret,'mgwrimg',number_failed)
 
 C Store a palette with the image
-      call MESSAGE(5,'Writing palette data',Verbosity)
+      call MESSAGE(5,'Writing palette data')
       pal_id = mggltid(ri_id, 0)
-      call VERIFY(pal_id,'mggltid',number_failed,Verbosity)
+      call VERIFY(pal_id,'mggltid',number_failed)
       ret = mgwrlut(pal_id,3,DFNT_UINT8,MFGR_INTERLACE_PIXEL,256,pal)
-      call VERIFY(ret,'mgwrlut',number_failed,Verbosity)
+      call VERIFY(ret,'mgwrlut',number_failed)
 
 C Store an attribute with the image
-      call MESSAGE(5,'Writing attribute data',Verbosity)
+      call MESSAGE(5,'Writing attribute data')
       ret = mgsattr(ri_id,ATNAME1,DFNT_INT32,5,attr)
-      call VERIFY(ret,'mgsattr',number_failed,Verbosity)
+      call VERIFY(ret,'mgsattr',number_failed)
 
 C Store a numeric attribute with the image
-      call MESSAGE(5,'Writing numeric attribute data',
-     +             Verbosity)
+      call MESSAGE(5,'Writing numeric attribute data')
       ret = mgsnatt(ri_id,ATNAME_N,DFNT_INT32,5,attr)
-      call VERIFY(ret,'mgsnatt',number_failed,Verbosity)
+      call VERIFY(ret,'mgsnatt',number_failed)
 
 C Store a character attribute with the image
-      call MESSAGE(5,'Writing numeric attribute data',
-     +             Verbosity)
+      call MESSAGE(5,'Writing numeric attribute data')
       ret = mgscatt(ri_id,ATNAME_C,DFNT_CHAR8,6,attr_c)
-      call VERIFY(ret,'mgscatt',number_failed,Verbosity)
+      call VERIFY(ret,'mgscatt',number_failed)
 
 C End access to the image
       ret = mgendac(ri_id)
-      call VERIFY(ret,'mgendac',number_failed,Verbosity)
+      call VERIFY(ret,'mgendac',number_failed)
 
 C Create a character type image
-      call MESSAGE(5,'Creating a character type image',Verbosity)
+      call MESSAGE(5,'Creating a character type image')
       dims(1)=2
       dims(2)=2
       ri_id = mgcreat(gr_id,IMAGEC,3,DFNT_CHAR8,MFGR_INTERLACE_PIXEL,
      *          dims)
-      call VERIFY(ri_id,'mgcreat',number_failed,Verbosity)
+      call VERIFY(ri_id,'mgcreat',number_failed)
 
       start(1)=0
       start(2)=0
       stride(1)=1
       stride(2)=1
-      call MESSAGE(5,'Writing character image data',Verbosity)
+      call MESSAGE(5,'Writing character image data')
       ret = mgwcimg(ri_id,start,stride,dims,cbuf)
-      call VERIFY(ret,'mgwcimg',number_failed,Verbosity)
+      call VERIFY(ret,'mgwcimg',number_failed)
       ret = mgendac(ri_id)
-      call VERIFY(ret,'mgendac',number_failed,Verbosity)
+      call VERIFY(ret,'mgendac',number_failed)
 
 C End access to the GR interface
       ret = mgend(gr_id)
-      call VERIFY(ret,'mgend',number_failed,Verbosity)
+      call VERIFY(ret,'mgend',number_failed)
 
 C Close the file
       ret = hclose(file_id)
-      call VERIFY(ret,'hclose',number_failed,Verbosity)
+      call VERIFY(ret,'hclose',number_failed)
 
 C Re-open the file
       file_id=hopen(TESTFILE, DFACC_ALL, 0)
-      call VERIFY(file_id,'hopen',number_failed,Verbosity)
+      call VERIFY(file_id,'hopen',number_failed)
       gr_id=mgstart(file_id)
-      call VERIFY(gr_id,'mgstart',number_failed,Verbosity)
+      call VERIFY(gr_id,'mgstart',number_failed)
 
 C Get info about the file
-      call MESSAGE(5,'Getting GR file information',Verbosity)
+      call MESSAGE(5,'Getting GR file information')
       ret = mgfinfo(gr_id,n_datasets,n_attrs)
-      call VERIFY(ret,'mgfinfo',number_failed,Verbosity)
+      call VERIFY(ret,'mgfinfo',number_failed)
 
 C Select an image
-      call MESSAGE(5,'Selecting an image',Verbosity)
+      call MESSAGE(5,'Selecting an image')
       index = mgn2ndx(gr_id, IMAGE1)
-      call VERIFY(index,'mgn2ndx',number_failed,Verbosity)
+      call VERIFY(index,'mgn2ndx',number_failed)
       ri_id = mgselct(gr_id,index)
-      call VERIFY(ri_id,'mgselct',number_failed,Verbosity)
+      call VERIFY(ri_id,'mgselct',number_failed)
 
 C Get info about the image
-      call MESSAGE(5,'Getting image information',Verbosity)
+      call MESSAGE(5,'Getting image information')
       ret = mggiinf(ri_id,IMAGE2,n_comp,nt,il,dims,n_attrs)
-      call VERIFY(ret,'mggiinf',number_failed,Verbosity)
+      call VERIFY(ret,'mggiinf',number_failed)
       ref = mgid2rf(ri_id)
-      call VERIFY(ref,'mgid2rf',number_failed,Verbosity)
+      call VERIFY(ref,'mgid2rf',number_failed)
       index2 = mgr2idx(gr_id,ref)
-      call VERIFY(index2,'mgr2idx',number_failed,Verbosity)
+      call VERIFY(index2,'mgr2idx',number_failed)
 
 C Check image reading
       start(1)=0
       start(2)=0
       stride(1)=1
       stride(2)=1
-      call MESSAGE(5,'Reading image data',Verbosity)
+      call MESSAGE(5,'Reading image data')
       ret = mgrdimg(ri_id,start,stride,dims,in)
-      call VERIFY(ret,'mgrdimg',number_failed,Verbosity)
+      call VERIFY(ret,'mgrdimg',number_failed)
       ret = mgrimil(ri_id,MFGR_INTERLACE_LINE)
-      call VERIFY(ret,'mgrimil',number_failed,Verbosity)
+      call VERIFY(ret,'mgrimil',number_failed)
       ret = mgrdimg(ri_id,start,stride,dims,in1)
-      call VERIFY(ret,'mgrdimg',number_failed,Verbosity)
+      call VERIFY(ret,'mgrdimg',number_failed)
       ret = mgrimil(ri_id,MFGR_INTERLACE_COMPONENT)
-      call VERIFY(ret,'mgrimil',number_failed,Verbosity)
+      call VERIFY(ret,'mgrimil',number_failed)
       ret = mgrdimg(ri_id,start,stride,dims,in2)
-      call VERIFY(ret,'mgrdimg',number_failed,Verbosity)
+      call VERIFY(ret,'mgrdimg',number_failed)
 
 C Check palette reading
       pal_id = mggltid(ri_id, 0)
-      call VERIFY(pal_id,'mggltid',number_failed,Verbosity)
-      call MESSAGE(5,'Reading palette data',Verbosity)
+      call VERIFY(pal_id,'mggltid',number_failed)
+      call MESSAGE(5,'Reading palette data')
       ret = mgglinf(pal_id,n_comp,nt,il,i)
-      call VERIFY(ret,'mgglinf',number_failed,Verbosity)
+      call VERIFY(ret,'mgglinf',number_failed)
       ret = mgrdlut(pal_id,in_pal)
-      call VERIFY(ret,'mgrdlut',number_failed,Verbosity)
+      call VERIFY(ret,'mgrdlut',number_failed)
       ret = mgrltil(pal_id,MFGR_INTERLACE_COMPONENT)
-      call VERIFY(ret,'mgrltil',number_failed,Verbosity)
+      call VERIFY(ret,'mgrltil',number_failed)
       ret = mgrdlut(pal_id,in_pal2)
-      call VERIFY(ret,'mgrdlut',number_failed,Verbosity)
+      call VERIFY(ret,'mgrdlut',number_failed)
 
 C Check attribute reading
       index = mgfndat(ri_id,ATNAME1)
-      call VERIFY(index,'mgfndat',number_failed,Verbosity)
-      call MESSAGE(5,'Reading attribute data',Verbosity)
+      call VERIFY(index,'mgfndat',number_failed)
+      call MESSAGE(5,'Reading attribute data')
       ret = mgatinf(ri_id,index,ATNAME2,nt,i)
-      call VERIFY(ret,'mgatinf',number_failed,Verbosity)
+      call VERIFY(ret,'mgatinf',number_failed)
       ret = mggattr(ri_id,index,attr2)
-      call VERIFY(ret,'mggattr',number_failed,Verbosity)
+      call VERIFY(ret,'mggattr',number_failed)
 
 C Check numeric attr
       index = mgfndat(ri_id, ATNAME_N)
-      call VERIFY(index,'mgfndat',number_failed,Verbosity)
-      call MESSAGE(5,'Reading attribute data',Verbosity)
+      call VERIFY(index,'mgfndat',number_failed)
+      call MESSAGE(5,'Reading attribute data')
       ret = mgatinf(ri_id,index,ATNAME2_N,nt,i)
-      call VERIFY(ret,'mgatinf',number_failed,Verbosity)
+      call VERIFY(ret,'mgatinf',number_failed)
       ret = mggnatt(ri_id,index,attr2_n)
-      call VERIFY(ret,'mggnatt',number_failed,Verbosity)
+      call VERIFY(ret,'mggnatt',number_failed)
 
 C Check character attr
       index = mgfndat(ri_id, ATNAME_C)
-      call VERIFY(index,'mgfndat',number_failed,Verbosity)
-      call MESSAGE(5,'Reading attribute data',Verbosity)
+      call VERIFY(index,'mgfndat',number_failed)
+      call MESSAGE(5,'Reading attribute data')
       ret = mgatinf(ri_id,index,ATNAME2_C,nt,i)
-      call VERIFY(ret,'mgatinf',number_failed,Verbosity)
+      call VERIFY(ret,'mgatinf',number_failed)
       ret = mggcatt(ri_id,index,attr2_c)
-      call VERIFY(ret,'mggcatt',number_failed,Verbosity)
+      call VERIFY(ret,'mggcatt',number_failed)
 
 C End access to the image
       ret = mgendac(ri_id)
-      call VERIFY(ret,'mgendac',number_failed,Verbosity)
+      call VERIFY(ret,'mgendac',number_failed)
 
 C Select a character image
-      call MESSAGE(5,'Selecting a char type image',Verbosity)
+      call MESSAGE(5,'Selecting a char type image')
       index = mgn2ndx(gr_id, IMAGEC)
-      call VERIFY(index,'mgn2ndx',number_failed,Verbosity)
+      call VERIFY(index,'mgn2ndx',number_failed)
       ri_id = mgselct(gr_id,index)
-      call VERIFY(ri_id,'mgselct',number_failed,Verbosity)
+      call VERIFY(ri_id,'mgselct',number_failed)
 
 C Get info about the image
-      call MESSAGE(5,'Getting image information',Verbosity)
+      call MESSAGE(5,'Getting image information')
       ret = mggiinf(ri_id,IMAGEC_2,n_comp,nt,il,dims,n_attrs)
-      call VERIFY(ret,'mggiinf',number_failed,Verbosity)
+      call VERIFY(ret,'mggiinf',number_failed)
       ref = mgid2rf(ri_id)
-      call VERIFY(ref,'mgid2rf',number_failed,Verbosity)
+      call VERIFY(ref,'mgid2rf',number_failed)
       index2 = mgr2idx(gr_id,ref)
-      call VERIFY(index2,'mgr2idx',number_failed,Verbosity)
+      call VERIFY(index2,'mgr2idx',number_failed)
 
 C Check image reading
       start(1)=0
       start(2)=0
       stride(1)=1
       stride(2)=1
-      call MESSAGE(5,'Reading image data',Verbosity)
+      call MESSAGE(5,'Reading image data')
 
-      call VERIFY(ret,'mgrdimg',number_failed,Verbosity)
+      call VERIFY(ret,'mgrdimg',number_failed)
       ret = mgrimil(ri_id,MFGR_INTERLACE_LINE)
-      call VERIFY(ret,'mgrimil',number_failed,Verbosity)
+      call VERIFY(ret,'mgrimil',number_failed)
       ret = mgrcimg(ri_id,start,stride,dims,icbuf)
-      call VERIFY(ret,'mgrcimg',number_failed,Verbosity)
+      call VERIFY(ret,'mgrcimg',number_failed)
       ret = mgrimil(ri_id,MFGR_INTERLACE_COMPONENT)
-      call VERIFY(ret,'mgrimil',number_failed,Verbosity)
+      call VERIFY(ret,'mgrimil',number_failed)
 
 C End access to the image
       ret = mgendac(ri_id)
-      call VERIFY(ret,'mgendac',number_failed,Verbosity)
+      call VERIFY(ret,'mgendac',number_failed)
 
 C End access to the GR interface
       ret = mgend(gr_id)
-      call VERIFY(ret,'mgend',number_failed,Verbosity)
+      call VERIFY(ret,'mgend',number_failed)
 
 C Close the file
       ret = hclose(file_id)
-      call VERIFY(ret,'hclose',number_failed,Verbosity)
+      call VERIFY(ret,'hclose',number_failed)
 
       if (number_failed .eq. 0) then 
 	  if (Verbosity .gt. 6) then

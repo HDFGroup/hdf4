@@ -58,31 +58,31 @@ C
           pal2(i + 512 + 1) = char(i) 
 100   continue
 
-      call MESSAGE(VERBO_HI, 'Putting pal1 in new file.', Verbosity)
+      call MESSAGE(VERBO_HI, 'Putting pal1 in new file.')
       ret = dpppal(TESTFILE, pal1, 0, 'w')
-      call VERIFY(ret, 'dpppal', number_failed, Verbosity)
+      call VERIFY(ret, 'dpppal', number_failed)
 
-      call MESSAGE(VERBO_HI, 'Getting ref1', Verbosity)
+      call MESSAGE(VERBO_HI, 'Getting ref1')
       ref1 = dplref()
-C     call VERIFY(ref1, 'dplref', number_failed, Verbosity)
+C     call VERIFY(ref1, 'dplref', number_failed)
       print *, 'ref1 is ', ref1
 
-      call MESSAGE(VERBO_HI, 'Putting pal2 in file', Verbosity)
+      call MESSAGE(VERBO_HI, 'Putting pal2 in file')
       ret = dpapal(TESTFILE, pal2)
-      call VERIFY(ret, 'dpapal', number_failed, Verbosity)
+      call VERIFY(ret, 'dpapal', number_failed)
 
-      call MESSAGE(VERBO_HI, 'Getting ref2', Verbosity)
+      call MESSAGE(VERBO_HI, 'Getting ref2')
       ref2 = dplref()
-C      call VERIFY(ref2, 'dplref', number_failed, Verbosity)
+C      call VERIFY(ref2, 'dplref', number_failed)
       print *, 'ref2 is ', ref2
      
-      call MESSAGE(VERBO_HI, 'Restarting palette interface', Verbosity)
+      call MESSAGE(VERBO_HI, 'Restarting palette interface')
       ret = dprest()
-      call VERIFY(ret, 'dprest', number_failed, Verbosity)
+      call VERIFY(ret, 'dprest', number_failed)
 
-      call MESSAGE(VERBO_HI, 'Reading pal1', Verbosity)
+      call MESSAGE(VERBO_HI, 'Reading pal1')
       ret = dpgpal(TESTFILE, ipal)
-      call VERIFY(ret, 'dpgpal', number_failed, Verbosity)
+      call VERIFY(ret, 'dpgpal', number_failed)
       do 200 i=1, 768
           if (ipal(i) .ne. pal1(i))  then
               print *, 'Error at ', i, ', ipal:', ipal(i), 
@@ -90,14 +90,14 @@ C      call VERIFY(ref2, 'dplref', number_failed, Verbosity)
           endif
 200   continue
       
-      call MESSAGE(VERBO_HI, 'Getting ref1', Verbosity)
+      call MESSAGE(VERBO_HI, 'Getting ref1')
       ref1 =  dplref()
-C      call VERIFY(ref1, 'dplref', number_failed, Verbosity)
+C      call VERIFY(ref1, 'dplref', number_failed)
       print *, 'Last ref is ', ref1
 
-      call MESSAGE(VERBO_HI, 'Reading pal2.', Verbosity)
+      call MESSAGE(VERBO_HI, 'Reading pal2.')
       ret = dpgpal(TESTFILE, ipal)
-      call VERIFY(ret, 'dpgpal', number_failed, Verbosity)
+      call VERIFY(ret, 'dpgpal', number_failed)
       do 300 i=1, 768
           if (ipal(i) .ne. pal2(i)) then
               print *, 'Error at ', i, ', ipal:', ipal(i),
@@ -105,23 +105,23 @@ C      call VERIFY(ref1, 'dplref', number_failed, Verbosity)
           endif
 300   continue
 
-      call MESSAGE(VERBO_HI, 'Getting ref2', Verbosity)
+      call MESSAGE(VERBO_HI, 'Getting ref2')
       ref2 = dplref()
-C      call VERIFY(ref2, 'dplref', number_failed, Verbosity)
+C      call VERIFY(ref2, 'dplref', number_failed)
       print *, 'Last ref is ', ref2
 
-      call MESSAGE(VERBO_HI, 'Getting number of palettes', Verbosity)
+      call MESSAGE(VERBO_HI, 'Getting number of palettes')
       ret = dpnpals(TESTFILE)
-      call VERIFY(ret, 'dpnpals', number_failed, Verbosity)
+      call VERIFY(ret, 'dpnpals', number_failed)
       print *, 'Number of palettes is:', ret
 
-      call MESSAGE(VERBO_HI, 'Setting read ref to ref2.', Verbosity)
+      call MESSAGE(VERBO_HI, 'Setting read ref to ref2.')
       ret = dprref(TESTFILE, ref2)
-      call VERIFY(ret, 'dprref', number_failed, Verbosity)
+      call VERIFY(ret, 'dprref', number_failed)
       
-      call MESSAGE(VERBO_HI, 'Reading pal2', Verbosity)
+      call MESSAGE(VERBO_HI, 'Reading pal2')
       ret = dpgpal(TESTFILE, ipal)
-      call VERIFY(ret, 'dpgpal', number_failed, Verbosity)
+      call VERIFY(ret, 'dpgpal', number_failed)
       do 400 i=1, 768
           if (ipal(i) .ne. pal2(i)) then
               print *,  'Error at ', i, ', ipal:', ipal(i),
@@ -129,14 +129,14 @@ C      call VERIFY(ref2, 'dplref', number_failed, Verbosity)
           endif
 400   continue
 
-      call MESSAGE(VERBO_HI, 'Setting read ref to ref1.', Verbosity)
+      call MESSAGE(VERBO_HI, 'Setting read ref to ref1.')
       ret = dprref(TESTFILE, ref1)
 
-      call VERIFY(ret, 'dprref', number_failed, Verbosity)
+      call VERIFY(ret, 'dprref', number_failed)
       
-      call MESSAGE(VERBO_HI, 'Reading pal1', Verbosity)
+      call MESSAGE(VERBO_HI, 'Reading pal1')
       ret = dpgpal(TESTFILE, ipal)
-      call VERIFY(ret, 'dpgpal', number_failed, Verbosity)
+      call VERIFY(ret, 'dpgpal', number_failed)
 
       do 500 i=1, 768
           if (ipal(i) .ne. pal1(i)) then
@@ -145,25 +145,25 @@ C      call VERIFY(ref2, 'dplref', number_failed, Verbosity)
           endif
 500   continue
 
-      call MESSAGE(VERBO_HI, 'Modifying pal1', Verbosity)
+      call MESSAGE(VERBO_HI, 'Modifying pal1')
       do 600 i=1,256
           pal1(i+256) = char(256-i)
 600   continue
 
-      call MESSAGE(VERBO_HI, 'Setting write ref to ref1', Verbosity)
+      call MESSAGE(VERBO_HI, 'Setting write ref to ref1')
       ret = dpwref(TESTFILE, ref1)
-      call VERIFY(ret, 'dpwref', number_failed, Verbosity)
-      call MESSAGE(VERBO_HI, 'Writing pal1', Verbosity)
+      call VERIFY(ret, 'dpwref', number_failed)
+      call MESSAGE(VERBO_HI, 'Writing pal1')
       ret = dpppal(TESTFILE, pal1, 1, 'a')
-      call VERIFY(ret, 'dpppal', number_failed, Verbosity)
+      call VERIFY(ret, 'dpppal', number_failed)
       ret=dplref()
       print *,'last ref is: ', ret
-      call MESSAGE(VERBO_HI, 'setting read ref to ref1', Verbosity)
+      call MESSAGE(VERBO_HI, 'setting read ref to ref1')
       ret = dprref(TESTFILE, ref1)
-      call VERIFY(ret, 'dprref', number_failed, Verbosity)
-      call MESSAGE(VERBO_HI, 'Reading pal1', Verbosity)
+      call VERIFY(ret, 'dprref', number_failed)
+      call MESSAGE(VERBO_HI, 'Reading pal1')
       ret = dpgpal(TESTFILE, ipal)
-      call VERIFY(ret, 'dpgpal', number_failed, Verbosity)
+      call VERIFY(ret, 'dpgpal', number_failed)
       do 700 i=1, 768
           if (ipal(i) .ne. pal1(i)) then
               print *,  'Error at ', i, ', ipal:', ipal(i),
@@ -173,7 +173,7 @@ C      call VERIFY(ref2, 'dplref', number_failed, Verbosity)
 
       if (number_failed .eq. 0) then 
           call MESSAGE(VERBO_DEF + 1,
-     +		'****** ALL TESTS SUCCESSFUL ******', Verbosity)
+     +		'****** ALL TESTS SUCCESSFUL ******')
       else
           print *, '****** ', number_failed, ' TESTS FAILES  ******'
       endif

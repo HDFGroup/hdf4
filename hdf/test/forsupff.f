@@ -58,15 +58,17 @@ C Inputs:
 C       errval: value to check for error
 C       routine: name of routine tested
 C       num_failed: running sum of the number of failures
-C       verbosity: current verbosity of program
 C Returns: none
 C Users:    HDF Fortran programmers
 C Invokes: none
 C------------------------------------------------------------------------------
-      subroutine VERIFY(errval, routine, num_failed, verbosity)
+      subroutine VERIFY(errval, routine, num_failed)
+      implicit none
+      include "fortest.inc"
+
       integer errval
       character*(*)  routine
-      integer num_failed, verbosity
+      integer num_failed
 
       integer FAIL
 
@@ -90,17 +92,18 @@ C Purpose:  Print something, depending on the verbosity level
 C Inputs:   
 C       priority: priority of message (lower values have higher priority)
 C       out_str: string to output
-C       verb_lvl: global verbosity level
 C Returns: none
 C Users:    HDF Fortran programmers
 C Invokes: none
 C------------------------------------------------------------------------------
-      subroutine MESSAGE(priority, out_str, verb_lvl)
+      subroutine MESSAGE(priority, out_str)
+      implicit none
+      include "fortest.inc"
+
       integer priority
       character*(*)  out_str
-      integer verb_lvl
 
-      if (priority .le. verb_lvl) then
+      if (priority .le. Verbosity) then
           print *, out_str
       endif
 

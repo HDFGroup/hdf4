@@ -74,101 +74,93 @@ C
 
 C Start here
 
-      call MESSAGE(VERBO_HI, 'Setting palette 1', Verbosity)
+      call MESSAGE(VERBO_HI, 'Setting palette 1')
       ret = d8spal(pal1)
-      call VERIFY(ret, 'd8spal',number_failed, Verbosity)
+      call VERIFY(ret, 'd8spal',number_failed)
       call MESSAGE(VERBO_HI,
-     +		'Putting image 1 with pal 1, no compression',
-     +		Verbosity)
+     +		'Putting image 1 with pal 1, no compression')
       ret=d8pimg(TESTFILE, im1, 100, 100, 0)
-      call VERIFY(ret, 'd8pimg',number_failed, Verbosity)
+      call VERIFY(ret, 'd8pimg',number_failed)
       num_images = num_images + 1
-      call MESSAGE(VERBO_HI, 'Getting ref1', Verbosity)
+      call MESSAGE(VERBO_HI, 'Getting ref1')
       ref1 = d8lref()
       
       call MESSAGE(VERBO_HI,
-     +		'Putting image 2 with pal 1, REL compression',
-     +		Verbosity)
+     +		'Putting image 2 with pal 1, REL compression')
       ret=d8aimg(TESTFILE, im2, 321, 111, DFTAG_RLE)
-      call VERIFY(ret, 'd8aimg',number_failed, Verbosity)
+      call VERIFY(ret, 'd8aimg',number_failed)
       num_images = num_images + 1
-      call MESSAGE(VERBO_HI, 'Getting ref2', Verbosity)
+      call MESSAGE(VERBO_HI, 'Getting ref2')
       ref2 = d8lref()
       
-      call MESSAGE(VERBO_HI, 'Setting palette 2', Verbosity)
+      call MESSAGE(VERBO_HI, 'Setting palette 2')
       ret = d8spal(pal2)
-      call VERIFY(ret, 'd8spal',number_failed, Verbosity)
+      call VERIFY(ret, 'd8spal',number_failed)
       call MESSAGE(VERBO_HI,
-     +		'Putting image 2 with pal 2, IMCOMP  compression',
-     +		Verbosity)
+     +		'Putting image 2 with pal 2, IMCOMP  compression')
       ret=d8aimg(TESTFILE, im2, 321, 111, DFTAG_IMCOMP)
-      call VERIFY(ret, 'd8aimg',number_failed, Verbosity)
+      call VERIFY(ret, 'd8aimg',number_failed)
       num_images = num_images + 1
-      call MESSAGE(VERBO_HI, 'Getting ref3', Verbosity)
+      call MESSAGE(VERBO_HI, 'Getting ref3')
       ref3 = d8lref()
       
-      call MESSAGE(VERBO_HI, 'Getting number of images', Verbosity)
+      call MESSAGE(VERBO_HI, 'Getting number of images')
       ret = d8nims(TESTFILE)
       if (ret .ne. num_images) then 
           print *, '    >>>> WRONG NUMBER OF IMAGES  <<<   '
       else 
 	  print *, ret, ' images in the file'
       endif
-      call MESSAGE(VERBO_HI, 'Restarting file', Verbosity)
+      call MESSAGE(VERBO_HI, 'Restarting file')
       ret = d8first()
-      call VERIFY(ret, 'd8first',number_failed, Verbosity)
-      call MESSAGE(VERBO_HI, 'Getting dimensions of first image',
-     +		Verbosity)
+      call VERIFY(ret, 'd8first',number_failed)
+      call MESSAGE(VERBO_HI, 'Getting dimensions of first image')
       ret=d8gdims(TESTFILE, d1, d2, ispal)
-      call VERIFY(ret, 'd8gdims',number_failed, Verbosity)
-      call MESSAGE(VERBO_HI, 'Getting image 1', Verbosity)
+      call VERIFY(ret, 'd8gdims',number_failed)
+      call MESSAGE(VERBO_HI, 'Getting image 1')
       ret=d8gimg(TESTFILE, ii1, 100, 100, ipal)
-      call VERIFY(ret, 'd8gimg',number_failed, Verbosity)
+      call VERIFY(ret, 'd8gimg',number_failed)
       call check_im1_pal(100, 100, d1, d2, im1, ii1, pal1, ipal)
-      call MESSAGE(VERBO_HI, 'Getting dimensions of image2', Verbosity)
+      call MESSAGE(VERBO_HI, 'Getting dimensions of image2')
       ret=d8gdims(TESTFILE, d1, d2, ispal)
-      call VERIFY(ret, 'd8gdims',number_failed, Verbosity)
-      call MESSAGE(VERBO_HI, 'Getting dimensions of image 3',
-     +		Verbosity)
+      call VERIFY(ret, 'd8gdims',number_failed)
+      call MESSAGE(VERBO_HI, 'Getting dimensions of image 3')
       ret=d8gdims(TESTFILE, d1, d2, ispal)
-      call VERIFY(ret, ' d8gdims',number_failed, Verbosity)
-      call MESSAGE(VERBO_HI, 'Getting image 3', Verbosity)
+      call VERIFY(ret, ' d8gdims',number_failed)
+      call MESSAGE(VERBO_HI, 'Getting image 3')
       ret = d8gimg(TESTFILE, ii2, 321, 111, ipal)
-      call VERIFY(ret, 'd8gimg',number_failed, Verbosity)
+      call VERIFY(ret, 'd8gimg',number_failed)
 
-      call MESSAGE(VERBO_HI, 'setting read ref2', Verbosity)
+      call MESSAGE(VERBO_HI, 'setting read ref2')
       ret = d8rref(TESTFILE, ref2)
-      call VERIFY(ret, 'd8rref',number_failed, Verbosity)
+      call VERIFY(ret, 'd8rref',number_failed)
 
-      call MESSAGE(VERBO_HI, 'Getting image 2', Verbosity)
+      call MESSAGE(VERBO_HI, 'Getting image 2')
       ret = d8gimg(TESTFILE, ii2, 321, 111,ipal)
-      call VERIFY(ret, 'd8gimg',number_failed, Verbosity)
+      call VERIFY(ret, 'd8gimg',number_failed)
       call check_im2_pal(321,111,321, 111, im2, ii2, pal1, ipal)
-      call MESSAGE(VERBO_HI,'Setting write ref1', Verbosity)
+      call MESSAGE(VERBO_HI,'Setting write ref1')
       ret = d8wref(TESTFILE, ref1)
-      call VERIFY(ret, 'd8wref',number_failed, Verbosity)
-      call MESSAGE(VERBO_HI, 'Setting palette 2', Verbosity)
+      call VERIFY(ret, 'd8wref',number_failed)
+      call MESSAGE(VERBO_HI, 'Setting palette 2')
       ret = d8spal(pal2)
-      call VERIFY(ret, 'd8spal',number_failed, Verbosity)
-      call MESSAGE(VERBO_HI,'Putting image 1 with pal 2, RLE',
-     +		Verbosity)
+      call VERIFY(ret, 'd8spal',number_failed)
+      call MESSAGE(VERBO_HI,'Putting image 1 with pal 2, RLE')
       ret = d8aimg(TESTFILE, im1, 100, 100, DFTAG_RLE)
-      call VERIFY(ret, 'd8aimg',number_failed, Verbosity)
-      call MESSAGE(VERBO_HI, 'Setting read ref1', Verbosity)
+      call VERIFY(ret, 'd8aimg',number_failed)
+      call MESSAGE(VERBO_HI, 'Setting read ref1')
       ret = d8rref(TESTFILE, ref1)
-      call VERIFY(ret, 'd8rref',number_failed, Verbosity)
-      call MESSAGE(VERBO_HI, 'Getting dimensions of first image',
-     +		Verbosity)
+      call VERIFY(ret, 'd8rref',number_failed)
+      call MESSAGE(VERBO_HI, 'Getting dimensions of first image')
       ret = d8gdims(TESTFILE, d1, d2, ispal)
-      call VERIFY(ret, 'd8gdims',number_failed, Verbosity)
-      call MESSAGE(VERBO_HI, 'Getting image 1', Verbosity)
+      call VERIFY(ret, 'd8gdims',number_failed)
+      call MESSAGE(VERBO_HI, 'Getting image 1')
       ret = d8gimg(TESTFILE, ii1, d1, d2, ipal)
-      call VERIFY(ret, 'd8gimg',number_failed, Verbosity)
+      call VERIFY(ret, 'd8gimg',number_failed)
       call check_im1_pal(100, 100, d1, d2, im1, ii1, pal2, ipal)
 
       if (number_failed .eq. 0) then
-          call MESSAGE(VERBO_HI, '****** ALL TESTS SUCCESSFUL *******',
-     +		Verbosity)
+          call MESSAGE(VERBO_HI, '****** ALL TESTS SUCCESSFUL *******')
       else 
           print *, '****' , number_failed, ' TESTS FAILED ****'
       endif
@@ -194,8 +186,7 @@ C********************************************************
       integer prob, i, j
       
       prob = 0 
-      call MESSAGE(VERBO_HI, 'Checking image and palette',
-     +		Verbosity)
+      call MESSAGE(VERBO_HI, 'Checking image and palette')
 
       if (od1 .ne. nd1 .OR. od2 .ne. nd2) then
           print *, '    >>> DIMENSIONS WRONG <<<    '
@@ -212,7 +203,7 @@ C********************************************************
 520   continue
        
       if (prob .eq. 0) then
-          call MESSAGE(VERBO_HI, 'Image is correct', Verbosity)
+          call MESSAGE(VERBO_HI, 'Image is correct')
       endif
 
       prob = 0
@@ -224,7 +215,7 @@ C********************************************************
       endif
 550   continue
       if (prob .eq. 0) then
-          call MESSAGE(VERBO_HI, 'Palette is correct', Verbosity)
+          call MESSAGE(VERBO_HI, 'Palette is correct')
       endif
       return
       end
@@ -248,8 +239,7 @@ C********************************************************
       integer prob, i, j
       
       prob = 0
-      call MESSAGE(VERBO_HI, 'Checking image and palette',
-     +		Verbosity)
+      call MESSAGE(VERBO_HI, 'Checking image and palette')
 
       if (od1 .ne. nd1 .OR. od2 .ne. nd2) then
           print *, '    >>> DIMENSIONS WRONG <<<    '
@@ -266,7 +256,7 @@ C********************************************************
 520   continue
        
       if (prob .eq. 0) then
-          call MESSAGE(VERBO_HI, 'Image is correct', Verbosity)
+          call MESSAGE(VERBO_HI, 'Image is correct')
       endif
 
       prob = 0
@@ -278,7 +268,7 @@ C********************************************************
       endif
 550   continue
       if (prob .eq. 0) then
-          call MESSAGE(VERBO_HI, 'Palette is correct', Verbosity)
+          call MESSAGE(VERBO_HI, 'Palette is correct')
       endif
       return
       end

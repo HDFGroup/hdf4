@@ -64,68 +64,68 @@ C
 
       print *, '****** Write file labels *******'
       fid = hopen(TESTFILE, DFACC_CREATE, 0)
-      call VERIFY(fid, 'hopen', number_failed, Verbosity)
+      call VERIFY(fid, 'hopen', number_failed)
       ret = daafid(fid, lab1)
-      call VERIFY(ret, 'daafid', number_failed, Verbosity)
+      call VERIFY(ret, 'daafid', number_failed)
 
       ret = daafid(fid, lab2)
-      call VERIFY(ret, 'daafid', number_failed, Verbosity)
+      call VERIFY(ret, 'daafid', number_failed)
 
       print *, '****** Write file descriptions *******'
       ret = daafds(fid, desc1, len(desc1))
-      call VERIFY(ret, 'daafds', number_failed, Verbosity)
+      call VERIFY(ret, 'daafds', number_failed)
 
       ret = daafds(fid, desc2, len(desc2))
-      call VERIFY(ret, 'daafds', number_failed, Verbosity)
+      call VERIFY(ret, 'daafds', number_failed)
 
       ret = hclose(fid)
-      call VERIFY(ret, 'hclose', number_failed, Verbosity)
+      call VERIFY(ret, 'hclose', number_failed)
 
       print *, '****** Read length of the first file label ****'
       fid = hopen(TESTFILE, DFACC_READ, 0)
-      call VERIFY(fid, 'hopen-read', number_failed, Verbosity)
+      call VERIFY(fid, 'hopen-read', number_failed)
       ret = dagfidl(fid, ISFIRST)
-      call VERIFY(ret, 'dagfidl', number_failed, Verbosity)
+      call VERIFY(ret, 'dagfidl', number_failed)
       call checklen(ret, lab1,  'label'  )
 
       print *, '******...followed by the label *****'
       ret = dagfid(fid, templab, MAXLEN_LAB, ISFIRST)
 
-      call VERIFY(ret, 'dagfid', number_failed, Verbosity)
+      call VERIFY(ret, 'dagfid', number_failed)
       call checklab(lab1, templab, ret, 'label')
 
       print *, '****** Read length of the second file label ****'
       ret = dagfidl(fid, NOFIRST)
-      call VERIFY(ret, 'dagfidl', number_failed, Verbosity)
+      call VERIFY(ret, 'dagfidl', number_failed)
       call checklen(ret, lab2, 'label')
 
       print *, '******...followed by the label *****'
       ret = dagfid(fid, templab, MAXLEN_LAB, NOFIRST)
-      call VERIFY(ret, 'dagfid', number_failed, Verbosity)
+      call VERIFY(ret, 'dagfid', number_failed)
       call checklab(lab2, templab, ret, 'label')
 
       print *, '****** Read length of the first file description ****'
       ret = dagfdsl(fid, ISFIRST)
-      call VERIFY(ret, 'dagfdsl', number_failed, Verbosity)
+      call VERIFY(ret, 'dagfdsl', number_failed)
       call checklen(ret, desc1, 'description' )
 
       print *, '******...followed by the description *****'
       ret = dagfds(fid, tempstr, MAXLEN_DESC, ISFIRST)
-      call VERIFY(ret, 'dagfds', number_failed, Verbosity)
+      call VERIFY(ret, 'dagfds', number_failed)
       call checkann(desc1, tempstr, ret, 'description')
 
       print *, '****** Read length of the second file description ****'
       ret = dagfdsl(fid, NOFIRST)
-      call VERIFY(ret, 'dagfdsl', number_failed, Verbosity)
+      call VERIFY(ret, 'dagfdsl', number_failed)
       call checklen(ret, desc2, 'description' )
 
       print *, '******...followed by the description *****'
       ret = dagfds(fid, tempstr, MAXLEN_DESC, NOFIRST)
-      call VERIFY(ret, 'dagfds', number_failed, Verbosity)
+      call VERIFY(ret, 'dagfds', number_failed)
       call checkann(desc2, tempstr, ret, 'description')
      
       ret = hclose(fid)
-      call VERIFY(ret, 'hclose', number_failed, Verbosity)
+      call VERIFY(ret, 'hclose', number_failed)
  
       if (number_failed .eq. 0) then
          print *, '***** ALL DFANFILE TESTS SUCCESSFUL ******'

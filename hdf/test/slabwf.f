@@ -114,48 +114,48 @@ C           print *, da(k,j,i)
 180   continue
 200   continue
 
-      call MESSAGE(5,'Writing data as 5 slabs to slabwf.hdf',Verbosity)
+      call MESSAGE(5,'Writing data as 5 slabs to slabwf.hdf')
 C      print *,'\n   Writing data as 5 slabs to slabwf.hdf'
 
       num_err = 0
 
 C Set dimension stuff etc
       ret = dssdims(rank, di)
-      call VERIFY(ret,'dssdim',number_failed,Verbosity)
+      call VERIFY(ret,'dssdim',number_failed)
 
       ret = dssdist(1, lcol, ucol, fcol)
-      call VERIFY(ret,'dssdist',number_failed,Verbosity)
+      call VERIFY(ret,'dssdist',number_failed)
 
       ret = dssdist(2, lrow, urow, frow)
-      call VERIFY(ret,'dssdist',number_failed,Verbosity)
+      call VERIFY(ret,'dssdist',number_failed)
 
       ret = dssdist(3, lpln, upln, fpln)
-      call VERIFY(ret,'dssdist',number_failed,Verbosity)
+      call VERIFY(ret,'dssdist',number_failed)
 
       ret = dssdisc(1, di(1),  sccol)
-      call VERIFY(ret,'dssdisc',number_failed,Verbosity)
+      call VERIFY(ret,'dssdisc',number_failed)
 
       ret = dssdisc(2, di(2), scrow)
-      call VERIFY(ret,'dssdisc',number_failed,Verbosity)
+      call VERIFY(ret,'dssdisc',number_failed)
 
       ret = dssdisc(3, di(3), scpln)
-      call VERIFY(ret,'dssdisc',number_failed,Verbosity)
+      call VERIFY(ret,'dssdisc',number_failed)
 C 
 C Write it slab by slab   
 C 
 
 C     set the Fill value
       ret = dssfill(fillvalue)
-      call VERIFY(ret,'dssfile',number_failed,Verbosity)
+      call VERIFY(ret,'dssfile',number_failed)
 
       sr(1) = 0
       sr(2) = 0
       sr(3) = 0
       ret = dssdims(rank, di)
-      call VERIFY(ret,'dssdim',number_failed,Verbosity)
+      call VERIFY(ret,'dssdim',number_failed)
 
       ret = dssslab(sn)
-      call VERIFY(ret,'dssslab',number_failed,Verbosity)
+      call VERIFY(ret,'dssslab',number_failed)
       st(1) = 1
       st(2) = 2
       st(3) = 2
@@ -163,7 +163,7 @@ C     set the Fill value
       sz(2) = 1
       sz(3) = 1
       ret = dswslab(st, sr, sz,slab1)
-      call VERIFY(ret,'dswslab',number_failed,Verbosity)
+      call VERIFY(ret,'dswslab',number_failed)
       st(1) = 1
       st(2) = 3
       st(3) = 1
@@ -171,7 +171,7 @@ C     set the Fill value
       sz(2) = 1
       sz(3) = 2
       ret = dswslab(st, sr, sz, slab2)
-      call VERIFY(ret,'dswslab',number_failed,Verbosity)
+      call VERIFY(ret,'dswslab',number_failed)
       st(1) = 1
       st(2) = 1
       st(3) = 1
@@ -179,7 +179,7 @@ C     set the Fill value
       sz(2) = 2
       sz(3) = 1
       ret = dswslab(st, sr, sz, slab3)
-      call VERIFY(ret,'dswslab',number_failed,Verbosity)
+      call VERIFY(ret,'dswslab',number_failed)
       st(1) = 1
       st(2) = 1
       st(3) = 2
@@ -187,7 +187,7 @@ C     set the Fill value
       sz(2) = 1
       sz(3) = 1
       ret = dswslab(st, sr, sz, slab4)
-      call VERIFY(ret,'dswslab',number_failed,Verbosity)
+      call VERIFY(ret,'dswslab',number_failed)
       st(1) = 4
       st(2) = 1
       st(3) = 1
@@ -195,10 +195,10 @@ C     set the Fill value
       sz(2) = 3
       sz(3) = 2
       ret = dswslab(st, sr, sz, slab5)
-      call VERIFY(ret,'dswslab',number_failed,Verbosity)
+      call VERIFY(ret,'dswslab',number_failed)
 
       ret = dseslab()
-      call VERIFY(ret,'dseslab',number_failed,Verbosity)
+      call VERIFY(ret,'dseslab',number_failed)
 C
 C Retrieve slab for verification
 C
@@ -212,7 +212,7 @@ C
       sr(2) = 3
       sr(3) = 2
       ret = dsrslab(sn, st, sz, st, sa, sr)
-      call VERIFY(ret,'dsrslab',number_failed,Verbosity)
+      call VERIFY(ret,'dsrslab',number_failed)
 
       num_err = number_failed
 
@@ -220,7 +220,7 @@ C
          print *,'number of failures =',num_err
       endif
      
-      call MESSAGE(5,'   Verifying data ', Verbosity)
+      call MESSAGE(5,'   Verifying data ')
 
       num_err = 0
       do 500 i=1, np
@@ -244,36 +244,36 @@ C            print *, 'sa() ',sa(k,j,i)
 C
 C   slab1wf test
 C
-C      call MESSAGE(5,'Writing the first 3 of 5 slabs to slab1wf.hdf',Verbosity)
+C      call MESSAGE(5,'Writing the first 3 of 5 slabs to slab1wf.hdf')
 C      print *,'\n  Writing the first 3 of 5 slabs to slab1wf.hdf'
       sn1 = 'slab1wf.hdf'
 
 C Clear old info fist
       ret = dsclear()
-      call VERIFY(ret,'dsclear',number_failed,Verbosity)
+      call VERIFY(ret,'dsclear',number_failed)
 
 C Set dimension stuff etc
-      call MESSAGE(5,'Calling dssdim to set info on SDS',Verbosity)
+      call MESSAGE(5,'Calling dssdim to set info on SDS')
       ret = dssdims(rank, di)
-      call VERIFY(ret,'dssgdim',number_failed,Verbosity)
+      call VERIFY(ret,'dssgdim',number_failed)
 
       ret = dssdist(1, lcol, ucol, fcol)
-      call VERIFY(ret,'dssdist',number_failed,Verbosity)
+      call VERIFY(ret,'dssdist',number_failed)
 
       ret = dssdist(2, lrow, urow, frow)
-      call VERIFY(ret,'dssdist',number_failed,Verbosity)
+      call VERIFY(ret,'dssdist',number_failed)
 
       ret = dssdist(3, lpln, upln, fpln)
-      call VERIFY(ret,'dssdist',number_failed,Verbosity)
+      call VERIFY(ret,'dssdist',number_failed)
 
       ret = dssdisc(1, di(1),  sccol)
-      call VERIFY(ret,'dssdisc',number_failed,Verbosity)
+      call VERIFY(ret,'dssdisc',number_failed)
 
       ret = dssdisc(2, di(2), scrow)
-      call VERIFY(ret,'dssdisc',number_failed,Verbosity)
+      call VERIFY(ret,'dssdisc',number_failed)
 
       ret = dssdisc(3, di(3), scpln)
-      call VERIFY(ret,'dssdisc',number_failed,Verbosity)
+      call VERIFY(ret,'dssdisc',number_failed)
 C 
 C Write it slab by slab   
 C 
@@ -281,10 +281,10 @@ C
       sr(2) = 0
       sr(3) = 0
       ret = dssdims(rank, di)
-      call VERIFY(ret,'dssdims',number_failed,Verbosity)
+      call VERIFY(ret,'dssdims',number_failed)
 
       ret = dssslab(sn1)
-      call VERIFY(ret,'dssslab',number_failed,Verbosity)
+      call VERIFY(ret,'dssslab',number_failed)
       st(1) = 1
       st(2) = 2
       st(3) = 2
@@ -292,7 +292,7 @@ C
       sz(2) = 1
       sz(3) = 1
       ret = dswslab(st, sr, sz,slab1)
-      call VERIFY(ret,'dswslab',number_failed,Verbosity)
+      call VERIFY(ret,'dswslab',number_failed)
       st(1) = 1
       st(2) = 1
       st(3) = 1
@@ -300,7 +300,7 @@ C
       sz(2) = 2
       sz(3) = 1
       ret = dswslab(st, sr, sz, slab3)
-      call VERIFY(ret,'dswslab',number_failed,Verbosity)
+      call VERIFY(ret,'dswslab',number_failed)
       st(1) = 4
       st(2) = 1
       st(3) = 1
@@ -308,10 +308,10 @@ C
       sz(2) = 3
       sz(3) = 2
       ret = dswslab(st, sr, sz, slab5)
-      call VERIFY(ret,'dswslab',number_failed,Verbosity)
+      call VERIFY(ret,'dswslab',number_failed)
 
       ret = dseslab()
-      call VERIFY(ret,'dseslab',number_failed,Verbosity)
+      call VERIFY(ret,'dseslab',number_failed)
 
 
       num_err = number_failed 
@@ -325,7 +325,7 @@ C
 C
 C  slab2wf test
 C
-C      call MESSAGE(5,'Writing the last 2 of 5 slabs to slab1wf.hdf',Verbosity)
+C      call MESSAGE(5,'Writing the last 2 of 5 slabs to slab1wf.hdf')
 C      print *,'\n   Writing the last 2 of 5 slabs to slab1wf.hdf'
       sn2 = 'slab1wf.hdf'
 C set ref of SDS to write to
@@ -335,47 +335,47 @@ C
 C Fisrt clear all previous info and restarot to beginning of file
 C 
       ret = dsclear()
-      call VERIFY(ret,'dsclear',number_failed,Verbosity)
+      call VERIFY(ret,'dsclear',number_failed)
 
       ret = dfsdrestart()
-      call VERIFY(ret,'dfsdrestart',number_failed,Verbosity)
+      call VERIFY(ret,'dfsdrestart',number_failed)
 
 C Get relavant info on SDS
 
-      call MESSAGE(5,'Calling dsigdim to get info on SDS',Verbosity)
+      call MESSAGE(5,'Calling dsigdim to get info on SDS')
       ret = dsigdim(sn2, rank, sz, rank, fnlen)
-      call VERIFY(ret,'dsigdim',number_failed,Verbosity)
+      call VERIFY(ret,'dsigdim',number_failed)
 
-C      call MESSAGE(5,'Calling dswref to ref o SDS to write to',Verbosity)
+C      call MESSAGE(5,'Calling dswref to ref o SDS to write to')
 C     set SDS to write to
       ret = dswref(sn2, nref)
-      call VERIFY(ret,'dswref',number_failed,Verbosity)
+      call VERIFY(ret,'dswref',number_failed)
 
-      call MESSAGE(5,'Calling dssslab to start access on SDS',Verbosity)
+      call MESSAGE(5,'Calling dssslab to start access on SDS')
       ret = dssslab(sn2)
-      call VERIFY(ret,'dssslab',number_failed,Verbosity)
+      call VERIFY(ret,'dssslab',number_failed)
       st(1) = 1
       st(2) = 3
       st(3) = 1
       sz(1) = 3
       sz(2) = 1
       sz(3) = 2
-C      call MESSAGE(5,'Calling dswslab to write 4of5 slabs to SDS',Verbosity)
+C      call MESSAGE(5,'Calling dswslab to write 4of5 slabs to SDS')
       ret = dswslab(st, sr, sz, slab2)
-      call VERIFY(ret,'dswslab',number_failed,Verbosity)
+      call VERIFY(ret,'dswslab',number_failed)
       st(1) = 1
       st(2) = 1
       st(3) = 2
       sz(1) = 3
       sz(2) = 1
       sz(3) = 1
-C      call MESSAGE(5,'Calling dswslab to write 5of5 slabs to SDS',Verbosity)
+C      call MESSAGE(5,'Calling dswslab to write 5of5 slabs to SDS')
       ret = dswslab(st, sr, sz, slab4)
-      call VERIFY(ret,'dswslab',number_failed,Verbosity)
+      call VERIFY(ret,'dswslab',number_failed)
 
-      call MESSAGE(5,'Calling dseslab to end access to SDS',Verbosity)
+      call MESSAGE(5,'Calling dseslab to end access to SDS')
       ret = dseslab()
-      call VERIFY(ret,'dseslab',number_failed,Verbosity)
+      call VERIFY(ret,'dseslab',number_failed)
 
       if ( num_err .ne. 0) then
          print *,'number of failures =',num_err
@@ -394,9 +394,9 @@ C
       sr(2) = 3
       sr(3) = 2
       num_err = 0
-C      call MESSAGE(5,'Calling dsrslab to start read access to SDS',Verbosity)
+C      call MESSAGE(5,'Calling dsrslab to start read access to SDS')
       ret = dsrslab(sn2, st, sz, st, sa, sr)
-      call VERIFY(ret,'dsrslab',number_failed,Verbosity)
+      call VERIFY(ret,'dsrslab',number_failed)
 
       num_err = number_failed
 
@@ -404,7 +404,7 @@ C      call MESSAGE(5,'Calling dsrslab to start read access to SDS',Verbosity)
          print *,'number of failures =',num_err
       endif
 
-      call MESSAGE(5,'   Verifying data ', Verbosity)
+      call MESSAGE(5,'   Verifying data ')
 
       num_err = 0
       do 800 i=1, np
@@ -428,43 +428,43 @@ C            print *, 'sa() ',sa(k,j,i)
 C
 C  slab4wf test
 C
-      call MESSAGE(5,'Writing data as 1 slab to slab4wf.hdf',Verbosity)
+      call MESSAGE(5,'Writing data as 1 slab to slab4wf.hdf')
 C      print *,'Writing data as 1 slab to slab4wf.hdf'
       sn4 = 'slab4wf.hdf'
 C
 C Clear previous info
 
       ret = dsclear()
-      call VERIFY(ret,'dsclear',number_failed,Verbosity)
+      call VERIFY(ret,'dsclear',number_failed)
 
 C Set relevant info
 
       ret = dssdims(rank, di)
-      call VERIFY(ret,'dssgdim',number_failed,Verbosity)
+      call VERIFY(ret,'dssgdim',number_failed)
 
       ret = dssdist(1, lcol, ucol, fcol)
-      call VERIFY(ret,'dssdist',number_failed,Verbosity)
+      call VERIFY(ret,'dssdist',number_failed)
 
       ret = dssdist(2, lrow, urow, frow)
-      call VERIFY(ret,'dssdist',number_failed,Verbosity)
+      call VERIFY(ret,'dssdist',number_failed)
 
       ret = dssdist(3, lpln, upln, fpln)
-      call VERIFY(ret,'dssdist',number_failed,Verbosity)
+      call VERIFY(ret,'dssdist',number_failed)
 
       ret = dssdisc(1, di(1),  sccol)
-      call VERIFY(ret,'dssdisc',number_failed,Verbosity)
+      call VERIFY(ret,'dssdisc',number_failed)
 
       ret = dssdisc(2, di(2), scrow)
-      call VERIFY(ret,'dssdisc',number_failed,Verbosity)
+      call VERIFY(ret,'dssdisc',number_failed)
 
       ret = dssdisc(3, di(3), scpln)
-      call VERIFY(ret,'dssdisc',number_failed,Verbosity)
+      call VERIFY(ret,'dssdisc',number_failed)
 C 
 C Write it as one slab    
 C 
 
       ret = dssslab(sn4)
-      call VERIFY(ret,'dssslab',number_failed,Verbosity)
+      call VERIFY(ret,'dssslab',number_failed)
       st(1) = 1
       st(2) = 1
       st(3) = 1
@@ -472,10 +472,10 @@ C
       sz(2) = 3
       sz(3) = 2
       ret = dswslab(st, sr, sz, da)
-      call VERIFY(ret,'dswslab',number_failed,Verbosity)
+      call VERIFY(ret,'dswslab',number_failed)
 
       ret = dseslab()
-      call VERIFY(ret,'dseslab',number_failed,Verbosity)
+      call VERIFY(ret,'dseslab',number_failed)
 C
 C Retrieve slab for verification
 C
@@ -489,7 +489,7 @@ C
       sr(2) = 3
       sr(3) = 2
       ret = dsrslab(sn4, st, sz, st, sa, sr)
-      call VERIFY(ret,'dsrslab',number_failed,Verbosity)
+      call VERIFY(ret,'dsrslab',number_failed)
 
       num_err = number_failed
 
@@ -497,7 +497,7 @@ C
          print *,'number of failures =',num_err
       endif
 
-      call MESSAGE(5,'   Verifying data ', Verbosity)
+      call MESSAGE(5,'   Verifying data ')
 
       num_err = 0
       do 902 i=1, np
