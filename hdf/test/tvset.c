@@ -14,11 +14,7 @@
 static char RcsId[] = "@(#)$Revision$";
 #endif
 
-<<<<<<< tvset.c
 /* $Id$ */
-=======
-/* $Id$ */
->>>>>>> 1.9
 
 /*
 
@@ -274,7 +270,6 @@ int32 write_vset_stuff() {
     /* store it */
     VSwrite(vs1, (unsigned char *) gbuf, count, FULL_INTERLACE);
     VSdetach(vs1);
-<<<<<<< tvset.c
     MESSAGE(5,printf("created VDATA %s with %d elements\n", name, count););
 
 
@@ -304,10 +299,6 @@ int32 write_vset_stuff() {
         VSwrite(vs1, (unsigned char *) name, 1, FULL_INTERLACE);
         VSdetach(vs1);
     }
-=======
-    MESSAGE(5,printf("created VDATA %s with %d elements\n", name, (int)count););
->>>>>>> 1.9
-
 
 
     Vend(fid);
