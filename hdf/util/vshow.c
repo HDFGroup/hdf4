@@ -85,11 +85,26 @@ main(int ac, char **av)
     int32      *lonevs;         /* array to store refs of all lone vdatas */
     int32       nlone;          /* total number of lone vdatas */
 
-    char        fields[VSFIELDMAX*FIELDNAMELENMAX], vgname[VGNAMELENMAX];
+#if defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
+    char        *fields = NULL;
+#else
+    char        fields[VSFIELDMAX*FIELDNAMELENMAX];
+#endif
+    char        vgname[VGNAMELENMAX];
     char        vsname[VSNAMELENMAX];
     char        vgclass[VGNAMELENMAX], vsclass[VSNAMELENMAX];
     char *name;
     int32       fulldump = 0, full;
+
+#if defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
+	fields = HDmalloc(VSFIELDMAX*FIELDNAMELENMAX);
+	if (fields == NULL)
+	{
+          printf("Error: Out of memory. Cannot allocate %d bytes space. Quit.\n", VSFIELDMAX*FIELDNAMELENMAX);
+          exit(0);
+      }
+#endif
+
 
 #if defined __MWERKS__
     ac = ccommand(&av);
@@ -125,7 +140,10 @@ main(int ac, char **av)
       }
 
     if ((f = Hopen(av[1], DFACC_READ, 0)) == FAIL)
+    {
+        printf("\nFile (%s) failed to open.\n", av[1]);
         exit(0);
+    }
 
     Vstart(f);
     printf("\nFILE: %s\n", av[1]);
@@ -269,6 +287,11 @@ main(int ac, char **av)
     Vend(f);
     Hclose(f);
 
+#if defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
+	if (fields)
+		HDfree(fields);
+#endif
+
     return (0);
 
 }   /* main */
@@ -346,7 +369,12 @@ fmtdouble(char *x)
 static int32
 vsdumpfull(int32 vs)
 {
-    char        vsname[100], fields[VSFIELDMAX*FIELDNAMELENMAX];
+#if defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
+    char        *fields = NULL; 
+#else
+    char        fields[VSFIELDMAX*FIELDNAMELENMAX]; 
+#endif
+    char        vsname[100];
     int32       j, i, t, interlace, nv, vsize;
     uint8      *bb, *b;
     DYN_VWRITELIST *w;
@@ -360,6 +388,15 @@ vsdumpfull(int32 vs)
     int32       count;          /* number of rows to do this time through the loop */
 
     int32       nf;             /* number of fields in this Vdata */
+
+#if defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
+	fields = HDmalloc(VSFIELDMAX*FIELDNAMELENMAX);
+	if (fields == NULL)
+	{
+          printf("Error: Out of memory. Cannot allocate %d bytes space. Quit.\n", VSFIELDMAX*FIELDNAMELENMAX);
+          return(0);
+      }
+#endif
 
     VSinquire(vs, &nv, &interlace, fields, &vsize, vsname);
 
@@ -379,6 +416,9 @@ vsdumpfull(int32 vs)
     if (bb == NULL)
       {
           printf("vsdumpfull malloc error\n");
+#if defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
+	    if (fields)			HDfree(fields);
+#endif
           return (0);
       }
 
@@ -490,6 +530,11 @@ vsdumpfull(int32 vs)
     HDfree(bb);
     printf("\n");
 
+#if defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
+	if (fields)
+		HDfree(fields);
+#endif
+
     return (1);
 
 }   /* vsdumpfull */
@@ -505,24 +550,39 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
    vs_attr_t *vs_alist;
    vg_attr_t *v_alist;
    int32 i_type, i_count, i_size, off;
-   uint8 attrbuf[BUFFER], *buf=NULL, *ptr;
+   uint8 *buf=NULL, *ptr;
    int32 (*fmtfn)(char *) =NULL;
    char name[FIELDNAMELENMAX+1];
+   intn ret_val = SUCCEED;
+#if defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
+   long bufsize = BUFFER;
+   uint8 *attrbuf = HDmalloc(bufsize);
+   if (attrbuf == NULL)
+   {
+	printf(">>>dumpattr: Out of memory. Cannot allocate %d byte attribute buffer.\n", bufsize);
+	return FAIL;
+   }
+#else
+   uint8 attrbuf[BUFFER];
+#endif
 
    if (isvs)  {
       vs_inst = (vsinstance_t *)HAatom_object(vid);
       if (vs_inst == NULL)  {
          printf(">>>dumpattr:failed in getting vdata instance.\n");
-         return FAIL;
+         ret_val = FAIL;
+         goto done;
       } 
       vs = vs_inst->vs;
       if (vs == NULL)  {
          printf(">>>dumpattr:Failed in getting vs. \n");
-         return FAIL;
+         ret_val = FAIL;
+         goto done;
       }
       if (0 == (nattrs = VSnattrs(vid))) {
           printf(" 0 attributes.\n");
-          return SUCCEED;
+          ret_val = SUCCEED;
+          goto done;
       }
       vs_alist = vs->alist;
       if (!full) {
@@ -537,7 +597,8 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
                  i, vs_alist->atag, vs_alist->aref, "VDATA");
              vs_alist++;
          }
-         return SUCCEED;
+         ret_val = SUCCEED;
+         goto done;
       }
       printf("%d attributes:\n", nattrs);
       for (j=-1; j<vs->wlist.n; j++)  
@@ -633,16 +694,19 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
       v = (vginstance_t *)HAatom_object(vid);
       if (v== NULL)  {
          printf(">>>dumpattr:failed in getting vgroup instance.\n");
-         return FAIL;
+         ret_val = FAIL;
+         goto done;
       } 
       vg = v->vg;
       if (vg == NULL)  {
          printf(">>>dumpattr:Failed in getting vg. \n");
-         return FAIL;
+         ret_val = FAIL;
+         goto done;
       }
       if (0 == (nattrs = Vnattrs(vid)))  {
           printf("  0 attributes.\n");
-          return SUCCEED;
+          ret_val = SUCCEED;
+          goto done;
       }
       v_alist = vg->alist;
       if (!full) {
@@ -652,7 +716,8 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
                  i, v_alist->atag, v_alist->aref);
              v_alist++;
          }
-         return SUCCEED;
+          ret_val = SUCCEED;
+          goto done;
       }
       printf("%d attributes:\n", nattrs);
       for (i = 0; i<nattrs; i++)  {   /* dump the attrs */
@@ -732,6 +797,14 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
           }
       }  /*  attr */
    }  /* vgroup */
-   return SUCCEED;
+   
+   ret_val = SUCCEED;
+
+done:
+#if defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
+   if (attrbuf)			HDfree(attrbuf);
+#endif
+
+   return ret_val;
 }                   
 /* ------------------------------------- */
