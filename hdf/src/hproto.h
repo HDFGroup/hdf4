@@ -25,9 +25,12 @@
 $Header$
 
 $Log$
-Revision 1.11  1993/01/04 18:17:58  sxu
-change dspre32 to dsip32s (for dfsdpre32sdg)
+Revision 1.12  1993/01/05 04:06:38  georgev
+Added Fortran hyperslab C stubs
 
+ * Revision 1.11  1993/01/04  18:17:58  sxu
+ * change dspre32 to dsip32s (for dfsdpre32sdg)
+ *
  * Revision 1.10  1992/11/05  18:59:26  chouck
  * Added (unix) wrapper to realloc()
  *
@@ -794,6 +797,11 @@ extern  FRETVAL(intf) ndfr8restart
 #   define ndfsdsetnt        FNAME(DFSDSETNT)
 #   define ndfsdgetnt        FNAME(DFSDGETNT)
 #   define ndfsdlastref      FNAME(DFSDLASTREF)
+#   define ndswref           FNAME(DSWREF)
+#   define ndssfv            FNAME(DSSFV)
+#   define ndsgfv            FNAME(DSGFV)
+#   define ndswf             FNAME(DSWF)
+#   define ndswslab          FNAME(DSWSLAB)
 #else
 #   define ndsgdast  FNAME(dsgdast)
 #   define ndsgdisc  FNAME(dsgdisc)
@@ -842,6 +850,11 @@ extern  FRETVAL(intf) ndfr8restart
 #   define ndfsdsetnt        FNAME(dfsdsetnt)
 #   define ndfsdgetnt        FNAME(dfsdgetnt)
 #   define ndfsdlastref      FNAME(dfsdlastref)
+#   define ndswref          FNAME(dswref)
+#   define ndssfv            FNAME(dssfv)
+#   define ndsgfv            FNAME(dsgfv)
+#   define ndswf             FNAME(dswf)
+#   define ndswslab          FNAME(dswslab)
 #endif /* DF_CAPFNAMES */
 #endif  /* DFSD_FNAMES */
 
@@ -1006,6 +1019,22 @@ extern FRETVAL(intf) ndsscal
 extern FRETVAL(intf) ndsgcal
     PROTO((float64 HUGE *cal, float64 HUGE *cal_err, float64 HUGE *ioff,
         float64 HUGE *ioff_err, intf HUGE *cal_type));
+
+extern FRETVAL(intf) ndswref
+     PROTO((_fcd filename, intf *fnlen, intf *ref));
+
+extern FRETVAL(intf) ndssfv
+     PROTO((void *fill_value));
+
+extern FRETVAL(intf) ndsgfv
+     PROTO((void *fill_value));
+
+extern FRETVAL(intf) ndswfv
+     PROTO((_fcd filename, intf *fnlen, void *fill_value));
+
+extern FRETVAL(intf) ndswslab
+     PROTO((_fcd filename, intf *fnlen, intf start[], intf stride[],
+            intf cont[], void *data));
 
 /*
 ** from dfpF.c

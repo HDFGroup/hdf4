@@ -28,9 +28,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.7  1993/01/04 21:26:13  sxu
-delete dspre32 and dfsdpre32
+Revision 1.8  1993/01/05 04:07:25  georgev
+Added Fortran hyperslab C stubs
 
+ * Revision 1.7  1993/01/04  21:26:13  sxu
+ * delete dspre32 and dfsdpre32
+ *
  * Revision 1.6  1993/01/04  19:17:36  sxu
  * changed dfsdpre32 to dfsdpre32sdg
  *
@@ -101,6 +104,11 @@ delete dspre32 and dfsdpre32
  *  dfsdsetnt_:     Call DFSDsetNT to set number type
  *  dfsdgetnt_:	    Call DFSDgetNT to get number type
  *  dfsdlastref_:   Call DFSDlastref to get ref of last SDS accessed
+ *  dswref:        Call DFSDwriteref to set up next ref to write
+ *  dssfv:          Call DFSDsetfillvalue to set fill value for SDS
+ *  dsgfv:          Call DFSDgetfillvalue to get fill value from SDS
+ *  dswf:           Call DFSDwritefillvalue to write fill value to SDS
+ *  dswslab:        Call DFSDwriteslab to write slab to file
  * Remarks: no C stubs needed for the put string routines, only Fortran stubs
  *---------------------------------------------------------------------------*/
 
@@ -1602,3 +1610,181 @@ ndsgcal(cal, cal_err, ioff, ioff_err, cal_type)
 {
     return DFSDgetcal(cal, cal_err, ioff, ioff_err, (int32 *)cal_type);
 } /* ndsgcal */
+
+/*-----------------------------------------------------------------------------
+ * Name:    dswref
+ * Purpose: Call DFSDwriteref to set up next ref to write
+ * Inputs:  filename: name of HDF file
+ *          fnlen: length of filename
+ *          ref: next ref to read
+ * Returns: 0 on success, -1 on failure with DFerror set
+ * Users:   HDF Fortran programmers
+ * Invokes:
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+ndswref(_fcd filename, intf *fnlen, intf *ref)
+#else
+ndswref(filename, fnlen, ref)
+    _fcd filename;
+    intf *fnlen;
+    intf *ref;
+#endif /* PROTOTYPE */
+{
+    char *fn;
+    intf ret;
+
+    fn = HDf2cstring(filename, *fnlen);
+    ret = DFSDwriteref(fn, (uint16) *ref);
+    HDfreespace(fn);
+    return(ret);
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    dssfv
+ * Purpose: Call DFSDsetfillvalue to set fill value for SDS
+ * Inputs:  fill_value: fill value for SDS
+ * Returns: 0 on success, -1 on failure with DFerror set
+ * Users:   HDF Fortran programmers
+ * Invokes: DFSDsetfillvalue
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+ndssfv(void *fill_value)
+#else
+ndssfv(fill_value)
+    void *fill_value;
+#endif /* PROTOTYPE */
+{
+    return(DFSDsetfillvalue(fill_value));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    dsgfv
+ * Purpose: Call DFSDgetfillvalue to get fill value for SDS
+ * Inputs:  fill_value: fill value of SDS
+ * Returns: 0 on success, -1 on failure with DFerror set
+ * Users:   HDF Fortran programmers
+ * Invokes: DFSDgetfillvalue
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+ndsgfv(void *fill_value)
+#else
+ndsgfv(fill_value)
+    void *fill_value;
+#endif /* PROTOTYPE */
+{
+    return(DFSDgetfillvalue(fill_value));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    dswfv
+ * Purpose: Write fill value to SDS
+ * Inputs:  filename: file to which this applies
+ *          fnlen: file name length
+ *          fill_value: fill value
+ * Returns: 0 on success, FAIL on failure
+ * Users:   HDF programmers, other routines and utilities
+ * Invokes: DFSDwritefillvalue
+ * Remarks:
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+ndswfv(_fcd filename, intf *fnlen, void *fill_value)
+#else
+ndswfv(filename, fnlen, fill_value)
+    _fcd filename;
+    intf *fnlen;
+    void *fill_value;
+#endif /* PROTOTYPE */
+{
+    char *fn;
+    intf ret;
+
+    fn = HDf2cstring(filename, *fnlen);
+    if (fn = NULL)
+      return FAIL;
+    ret = DFSDwritefillvalue(fn, fill_value);
+    HDfreespace(fn);
+    return(ret);
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    dswslab
+ * Purpose: Call DFSDwriteslab to write slab to file
+ * Inputs:  filename: name of HDF file to use
+ *          fnlen: file name length
+ *          start: array of size = rank of data, containing start of slab
+ *          stride: array for subsampling
+ *          count: array of size rank, containing size of slab
+ *          data: array of data to be written
+ * Returns: 0 on success, -1 on failure with error set
+ * Users:   HDF Fortran programmers
+ * Invokes: DFSDIgetwrank, HDgetspace, HDfreespace, HDf2cstring, DFSDwriteslab
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+ndswslab(_fcd filename, intf *fnlen, intf start[], intf stride[],
+         intf count[], void *data)
+#else
+ndswslab(filename, fnlen, start, stride, count, data)
+    _fcd filename;
+    intf *fnlen;
+    intf start[];
+    intf stride[];
+    intf count[];
+    void  *data;
+#endif /* PROTOTYPE */
+{
+    char *fn;
+    int32 *lstart, *lstride, *lcount, *aptr, *bptr, *cptr;
+    intn i, rank;
+    intf ret;
+
+    fn = HDf2cstring(filename, *fnlen);
+    if (fn == NULL)
+      return FAIL;
+
+    /*
+    ** Lets reverse the order for the arrays since we
+    ** are going from fortran to C
+    */
+    ret = DFSDIgetwrank(&rank);
+    if (ret == FAIL)
+      return FAIL;
+
+    aptr = (int32 *)HDgetspace((uint32)(3*rank*sizeof(int32)));
+    if (aptr == NULL)
+      return FAIL;
+
+    lstart  = aptr;
+    lstride = bptr = aptr + rank;
+    lcount  = cptr = bptr + rank;
+
+    for (i = 1; i <=  rank ; i++)
+      {  /* reverse start, stride & count */
+        *aptr = start[rank - i];
+        aptr++;
+        *bptr = stride[rank - i];
+        bptr++;
+        *cptr = count[rank - i];
+        cptr++;
+      }
+
+    ret = DFSDwriteslab(fn, lstart, lstride, lcount, data);
+
+    /* Free up space */
+    lstart = HDfreespace((int32 *)lstart);
+    if (lstart != NULL)
+      return FAIL;
+
+    HDfreespace(fn);
+    return(ret);
+}
+
