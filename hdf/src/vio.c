@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.14  1993/04/22 16:05:54  chouck
-Minor Vset fixes
+Revision 1.15  1993/04/22 16:46:58  koziol
+Fixed a type in VSappendable
 
+ * Revision 1.14  1993/04/22  16:05:54  chouck
+ * Minor Vset fixes
+ *
  * Revision 1.13  1993/04/19  22:48:36  koziol
  * General Code Cleanup to reduce/remove errors on the PC
  *
@@ -875,7 +878,7 @@ int32 vkey;
 #ifdef PROTOTYPE
 PUBLIC int32 VSappendable (int32 vkey, int32 blk)
 #else
-PUBLIC int32 VSappendable (vkey, int32 blk)
+PUBLIC int32 VSappendable (vkey, blk)
 int32 vkey;
 int32 blk;
 #endif
