@@ -92,8 +92,8 @@ long size ;
 		dp = (NC_dim**)handle->dims->values ;
 		for(ii = 0 ; ii < handle->dims->count ; ii++, dp++)
 		{
-			if( len == (*dp)->name->count &&
-				strncmp(name, (*dp)->name->values, (*dp)->name->count) == 0)
+			if( len == (*dp)->name->len &&
+				strncmp(name, (*dp)->name->values, len) == 0)
 			{
 				NCadvise(NC_ENAMEINUSE, "dimension \"%s\" in use with index %d",
 					(*dp)->name->values, ii) ;
@@ -128,9 +128,8 @@ char *name;
   dp = (NC_dim**)handle->dims->values ;
   for(ii = 0 ; ii < handle->dims->count ; ii++, dp++)
     {
-      if( len == (*dp)->name->count &&
-         strncmp(name, (*dp)->name->values,
-                 (*dp)->name->count) == 0)
+      if( len == (*dp)->name->len &&
+         strncmp(name, (*dp)->name->values, len) == 0)
         return(ii) ;
     }
   NCadvise(NC_EBADDIM, "dim \"%s\" not found", name) ;
@@ -157,10 +156,9 @@ const char *name ;
 	dp = (NC_dim**)handle->dims->values ;
 	for(ii = 0 ; ii < handle->dims->count ; ii++, dp++)
 	{
-		if( len == (*dp)->name->count &&
-			strncmp(name, (*dp)->name->values, 
-				(size_t)(*dp)->name->count) == 0)
-			return(ii) ;
+            if( len == (*dp)->name->len &&
+               strncmp(name, (*dp)->name->values, len) == 0)
+                return(ii) ;
 	}
 	NCadvise(NC_EBADDIM, "dim \"%s\" not found", name) ;
 	return(-1) ;
@@ -192,8 +190,8 @@ long *sizep ;
 	if(name != NULL)
 	{
 		(void)strncpy( name, (*dp)->name->values, 
-			(size_t)(*dp)->name->count) ;
-		name[(*dp)->name->count] = 0 ;
+			(size_t)(*dp)->name->len) ;
+		name[(*dp)->name->len] = 0 ;
 	}
 	if(sizep != 0)
 	{
@@ -234,7 +232,7 @@ const char *newname ;
 	dp = (NC_dim**)handle->dims->values ;
 	for(ii = 0 ; ii < handle->dims->count ; ii++, dp++)
 	{
-		if( len == strlen((*dp)->name->values)  &&
+		if( len == (*dp)->name->len  &&
 			strncmp(newname, (*dp)->name->values, len) == 0)
 		{
 			NCadvise(NC_ENAMEINUSE, "dimension \"%s\" in use with index %d",

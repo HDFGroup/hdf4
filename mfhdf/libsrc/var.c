@@ -252,8 +252,8 @@ const int dims[] ;
 		dp = (NC_var**)handle->vars->values ;
 		for(ii = 0 ; ii < handle->vars->count ; ii++, dp++)
 		{
-			if( len == (*dp)->name->count &&
-				strncmp(name, (*dp)->name->values, (*dp)->name->count) == 0)
+			if( len == (*dp)->name->len &&
+				strncmp(name, (*dp)->name->values, len) == 0)
 			{
 				NCadvise(NC_ENAMEINUSE, "variable \"%s\" in use with index %d",
 					(*dp)->name->values, ii) ;
@@ -340,8 +340,8 @@ const char *name ;
 	dp = (NC_var**)handle->vars->values ;
 	for(ii = 0 ; ii < handle->vars->count ; ii++, dp++)
 	{
-		if( len == (*dp)->name->count &&
-			strncmp(name, (*dp)->name->values, (*dp)->name->count) == 0)
+		if( len == (*dp)->name->len &&
+			strncmp(name, (*dp)->name->values, len) == 0)
 		{
 			return(ii) ;
 		}
@@ -416,8 +416,8 @@ int *nattrsp ;
 
 	if(name != NULL)
 	{
-		(void)strncpy( name, vp->name->values, vp->name->count) ;
-		name[vp->name->count] = 0 ;
+		(void)strncpy( name, vp->name->values, vp->name->len) ;
+		name[vp->name->len] = 0 ;
 	}
 
 	if(typep != 0)
@@ -472,8 +472,8 @@ const char *newname ;
 	vpp = (NC_var**)handle->vars->values ;
 	for(ii = 0 ; ii < handle->vars->count ; ii++, vpp++)
 	{
-		if( len == (*vpp)->name->count &&
-			strncmp(newname, (*vpp)->name->values, (*vpp)->name->count) == 0)
+		if( len == (*vpp)->name->len &&
+			strncmp(newname, (*vpp)->name->values, len) == 0)
 		{
 			NCadvise(NC_ENAMEINUSE, "variable name \"%s\" in use with index %d",
 				(*vpp)->name->values, ii) ;
@@ -536,8 +536,8 @@ int namelen ;
 	dp = (NC_var**)handle->vars->values ;
 	for(ii = 0 ; ii < handle->vars->count ; ii++, dp++)
 	{
-		if( namelen == (*dp)->name->count &&
-				strncmp(name, (*dp)->name->values, (*dp)->name->count) == 0)
+		if( namelen == (*dp)->name->len &&
+				strncmp(name, (*dp)->name->values, namelen) == 0)
 		{
 			return(*dp) ; /* normal exit */
 		}
@@ -605,7 +605,7 @@ int             outcdf;
 	}
 
 	/* find the variable in the output cdf */
-	outvp = NC_hvarid(outhandle, invp->name->values, invp->name->count) ;
+	outvp = NC_hvarid(outhandle, invp->name->values, invp->name->len) ;
 	if(outvp == NULL)
 	{
 		NCadvise(NC_ENOTVAR, "%s: variable %s not found",

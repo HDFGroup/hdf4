@@ -6,16 +6,14 @@
 #define HDF 1
 #endif
 
-#include "local_nc.h"
+#include "hdf.h"
+#include "netcdf.h"
 
 #define SD_UNLIMITED NC_UNLIMITED
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-extern NC_dim * SDIget_dim
-    PROTO((NC *handle, int32 id));
 
 extern int32 SDstart
     PROTO((char *name, int32 access));

@@ -30,6 +30,7 @@ const char *str ;
 	if( ret == NULL )
 		goto alloc_err ;
 	ret->count = count ;
+        ret->len   = count ;
 	if(count != 0 ) /* allocate */
 	{
 		memlen = count + 1 ;
@@ -83,6 +84,10 @@ const char *str ;
 	}
 	(void)memcpy(old->values, str, count) ;
 	(void)memset(old->values + count, 0, (int)old->count - (int)count +1) ;
+        
+        /* make sure len is always == to the string length */
+        old->len = count ;
+
 	return(old) ;
 }
 
@@ -92,6 +97,7 @@ xdr_NC_string(xdrs, spp)
 	NC_string **spp;
 {
 	u_long count ;
+        int status ;
 
 	switch (xdrs->x_op) {
 	case XDR_FREE:
@@ -112,7 +118,11 @@ xdr_NC_string(xdrs, spp)
 			return(FALSE) ;
 		(*spp)->values[count] = 0 ;
 		/* then deal with the characters */
-		return (xdr_opaque(xdrs, (*spp)->values, (*spp)->count));
+		status = xdr_opaque(xdrs, (*spp)->values, (*spp)->count);
+
+                /* might be padded */
+                (*spp)->len = strlen((*spp)->values);
+                return(status);
 	case XDR_ENCODE:
 		/* first deal with the length */
 		if(*spp == NULL)

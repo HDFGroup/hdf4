@@ -151,6 +151,18 @@ char *argv[];
         num_err++;
     }
 
+    status = SDfindattr(newsds, "spam");
+    if(status != 2) {
+        fprintf(stderr, "Bad index for SDfindattr\n");
+        num_err++;
+    }
+
+    status = SDfindattr(newsds, "blarf");
+    if(status != -1) {
+        fprintf(stderr, "SDfindattr found non-existant attribute\n");
+        num_err++;
+    }
+
     status = SDsetattr(f1, "F-attr", DFNT_CHAR8, 10, "globulator");
     CHECK(status, "SDsetattr");
 

@@ -31,9 +31,14 @@ based?  Right now, it is zero based.
 */
 
 #include "mfsd.h"
+#include "local_nc.h"
 #include "hfile.h"
 
 extern NC *NC_check_id() ;
+
+NC_dim * SDIget_dim
+    PROTO((NC *handle, int32 id));
+
 
 /*
  * We will assume that the way hfile.c handles fids is fixed and so
@@ -396,8 +401,8 @@ int32 *rank, *nt, *nattr, *dimsizes;
         return FAIL;
 
     if(name != NULL) {
-        HDstrncpy(name, var->name->values, var->name->count);
-        name[var->name->count] = '\0';
+        HDstrncpy(name, var->name->values, var->name->len);
+        name[var->name->len] = '\0';
     }
 
     *rank  = var->assoc->count;
@@ -583,8 +588,8 @@ char  *name;
     len = HDstrlen(name) ;
     dp = (NC_var**)handle->vars->values ;
     for(ii = 0 ; ii < handle->vars->count ; ii++, dp++) {
-        if( len == (*dp)->name->count &&
-           HDstrncmp(name, (*dp)->name->values, (*dp)->name->count) == 0) {
+        if( len == (*dp)->name->len &&
+           HDstrncmp(name, (*dp)->name->values, len) == 0) {
             return(ii) ;
         }
     }
@@ -927,8 +932,8 @@ char  * name;
     len = HDstrlen(name) ;
     dp = (NC_dim**)handle->dims->values ;
     for(ii = 0 ; ii < handle->dims->count ; ii++, dp++) {
-        if( len == (*dp)->name->count &&
-           HDstrncmp(name, (*dp)->name->values, (*dp)->name->count) == 0) {
+        if( len == (*dp)->name->len &&
+           HDstrncmp(name, (*dp)->name->values, len) == 0) {
             if(dim != (*dp)) {
                 /* a dimension with this name already exists */
                 /* so change to point to it */
@@ -1273,8 +1278,8 @@ intn  *count;
 
     /* move the information over */
     if(name != NULL) {
-        HDstrncpy(name, (*atp)->name->values, (*atp)->name->count);
-        name[(*atp)->name->count] = '\0';
+        HDstrncpy(name, (*atp)->name->values, (*atp)->name->len);
+        name[(*atp)->name->len] = '\0';
     }
 
     *count = (*atp)->data->count;
@@ -1340,7 +1345,7 @@ Void *buf;
 
     /* 
      * ap is the proper attribute list now look up something with this
-     *  name
+     *  index
      */
     atp = (NC_attr **) ((char *)ap->values + index * ap->szof);
 
@@ -1846,12 +1851,11 @@ int32    id, nt;
 
     /* look for a variable with the same name */
     name = dim->name;
-    len = dim->name->count;
+    len = dim->name->len;
     dp = (NC_var**)handle->vars->values ;
     for(ii = 0 ; ii < handle->vars->count ; ii++, dp++) {
-        if( len == (*dp)->name->count &&
-           HDstrncmp(name->values, (*dp)->name->values, 
-                     (*dp)->name->count) == 0) {
+        if( len == (*dp)->name->len &&
+           HDstrncmp(name->values, (*dp)->name->values, len) == 0) {
 
             /* see if we need to change the number type */
             
@@ -2125,8 +2129,8 @@ int32 *nt, *nattr, *size;
     if(dim == NULL)
         return FAIL;
 
-    HDstrncpy(name, dim->name->values, dim->name->count);
-    name[dim->name->count] = '\0';
+    HDstrncpy(name, dim->name->values, dim->name->len);
+    name[dim->name->len] = '\0';
 
     *size  = dim->size;
 
@@ -2134,8 +2138,8 @@ int32 *nt, *nattr, *size;
         len = HDstrlen(name);
         dp = (NC_var**)handle->vars->values;
         for(ii = 0 ; ii < handle->vars->count ; ii++, dp++) {
-            if( len == (*dp)->name->count &&
-               HDstrncmp(name, (*dp)->name->values, (*dp)->name->count) == 0)
+            if( len == (*dp)->name->len &&
+               HDstrncmp(name, (*dp)->name->values, (*dp)->name->len) == 0)
                 {
                     *nt = (*dp)->HDFtype;
                     *nattr = ((*dp)->attrs ? (*dp)->attrs->count : 0);
@@ -2202,8 +2206,8 @@ intn  len;
         namelen = HDstrlen(name);
         dp = (NC_var**)handle->vars->values;
         for(ii = 0 ; ii < handle->vars->count ; ii++, dp++) {
-            if( namelen == (*dp)->name->count &&
-               HDstrncmp(name, (*dp)->name->values, (*dp)->name->count) == 0)
+            if( namelen == (*dp)->name->len &&
+               HDstrncmp(name, (*dp)->name->values, namelen) == 0)
                 {
                     var = (*dp);
                 }
@@ -2329,3 +2333,68 @@ int32   offset;
     return(status);
 
 } /* SDsetexternalfile */
+
+/* ------------------------------ SDfindattr ------------------------------ */
+/*
+
+  Given an ID to an object and an attribute name return the index of the
+  attribute with that name.
+
+  On error or attribute not found return FAIL
+
+*/
+int32
+#ifdef PROTOTYPE
+SDfindattr(int32 id, char *attrname)
+#else
+SDfindattr(id, attrname)
+int32   id;
+char  * attrname;
+#endif
+{
+
+    NC_array *  ap;
+    NC_attr  ** attr;
+    NC_var   *  var;
+    NC       *  handle;
+    int32       attrid, len;
+
+    /* determine what type of ID we've been given */
+    handle = NULL;
+    handle = SDIhandle_from_id(id, SDSTYPE);
+    if(handle != NULL) { /* was a variable ID */
+        var = SDIget_var(handle, id);
+        if(var == NULL)
+            return FAIL;
+        ap = var->attrs;
+    } else {
+        /* see if its a fidle ID */
+        handle = SDIhandle_from_id(id, CDFTYPE);
+        if(handle == NULL)
+            return FAIL;
+        ap = handle->attrs;
+    }
+
+    if(ap == NULL)
+        return FAIL;
+
+    /* 
+     * ap is the proper attribute list now look up something with this
+     *  name
+     */
+
+    attr = (NC_attr **) ap->values;
+    len = HDstrlen(attrname);
+    
+    for(attrid = 0 ; attrid < ap->count ; attrid++, attr++)
+	{
+            if( len == (*attr)->name->len &&
+               HDstrncmp(attrname, (*attr)->name->values, len) == 0)
+		{
+                    return(attrid) ; /* found it */
+		}
+	}
+
+    return FAIL;
+    
+} /* SDfindattr */

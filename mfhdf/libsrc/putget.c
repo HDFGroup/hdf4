@@ -751,8 +751,18 @@ uint32    count;
          */
         if(vp->data_ref == NULL) 
             if(handle->hdf_mode == DFACC_RDONLY) {
-                if(vp->data_tag == DATA_TAG)
-                    HDmemset(values, (char) 0, count * vp->szof);
+                if(vp->data_tag == DATA_TAG) {
+                    NC_attr ** attr;
+                    int len;
+
+                    attr = NC_findattr(&vp->attrs, _FillValue);
+                    len = (vp->len / vp->HDFsize) * vp->szof;       
+                    if(attr != NULL)
+                        hdf_fill_array(values, len, (*attr)->data->values, vp->type);
+                    else 
+                        NC_arrayfill(values, len, vp->type);
+
+                }
                 return TRUE;
             } else {
                 return FALSE;

@@ -68,8 +68,17 @@ typedef struct {
 } NC_array ;
 
 /* Counted string for names and such */
+/* 
+
+  count is the actual size of the buffer for the string
+  len is the length of the string in the buffer
+  
+  count != len when a string is resized to something smaller
+
+*/
 typedef struct {
 	unsigned count ;
+        unsigned len ; 
 	char *values ;
 } NC_string ;
 

@@ -115,26 +115,26 @@ NC_findattr(ap, name)
 NC_array **ap ;
 const char *name ;
 {
-	NC_attr **attr ;
-	int attrid ;
-	size_t len ;
-
-	if(*ap == NULL)
-		return(NULL) ;
-
-	attr = (NC_attr **) (*ap)->values ;
-
-	len = strlen(name) ;
-
-	for(attrid = 0 ; attrid < (*ap)->count ; attrid++, attr++)
+    NC_attr **attr ;
+    int attrid ;
+    size_t len ;
+    
+    if(*ap == NULL)
+        return(NULL) ;
+    
+    attr = (NC_attr **) (*ap)->values ;
+    
+    len = strlen(name) ;
+    
+    for(attrid = 0 ; attrid < (*ap)->count ; attrid++, attr++)
 	{
-		if( len == strlen((*attr)->name->values) &&
-			strncmp(name, (*attr)->name->values, len) == 0)
-		{
-			return(attr) ; /* Normal return */
-		}
-	}
-	return(NULL) ;
+            if( len == (*attr)->name->len && 
+               strncmp(name, (*attr)->name->values, len) == 0)
+                {
+                    return(attr) ; /* Normal return */
+                }
+        }
+    return(NULL) ;
 }
 
 
@@ -305,8 +305,8 @@ char *name ;
 	attr = (NC_attr **) (*ap)->values ;
 	attr += attnum ;
 
-	(void)strncpy( name, (*attr)->name->values, (*attr)->name->count) ;
-	name[(*attr)->name->count] = 0 ;
+	(void)strncpy( name, (*attr)->name->values, (*attr)->name->len) ;
+	name[(*attr)->name->len] = 0 ;
 
 	return(attnum) ;
 }
@@ -439,8 +439,8 @@ const char *name ;
 	len = strlen(name) ;
 	for(attrid = 0 ; attrid < (*ap)->count ; attrid++, attr++)
 	{
-		if( len == (*attr)->name->count &&
-			strncmp(name, (*attr)->name->values, (*attr)->name->count) == 0)
+		if( len == (*attr)->name->len &&
+			strncmp(name, (*attr)->name->values, len) == 0)
 		{
 			old = *attr ;
 			break ;
