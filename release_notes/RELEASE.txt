@@ -183,25 +183,21 @@ HDF 4.2 Release 0 has been tested on the following platforms:
 Known problems
 ==============
 
-1. SZIP Library is not available for Crays SV1 and T3E
+o  SZIP Library is not available for Crays SV1 and T3E
    Fortran APIs do not support SZIP compression.
 
-2. NetCDF tests nctest (C) and ftest (Fortran) fail to read from NetCDF 3.5 files
+o  NetCDF tests nctest (C) and ftest (Fortran) fail to read from NetCDF 3.5 files
 
-3. On Linux RH8 64-bit SZIP tests fail if library is compiled in production
+o  On Linux RH8 64-bit SZIP tests fail if library is compiled in production
    mode. All tests pass in the debug mode.
 
-4. This release doesn't support VMS system.
+o  This release doesn't support VMS system.
 
-5. On Linux with gcc compilers Fortran NetCDF APIs cannot read attributes, variables,
+o  On Linux with gcc compilers Fortran NetCDF APIs cannot read attributes, variables,
    and dimensions when name contain spaces.
 
-6. HDF4 Library cannot be built with PGI compilers.
+o  HDF4 Library cannot be built with PGI compilers.
 
-7. N-Bit compression is not supported with Fortran APIs.
+o  N-Bit compression is not supported with Fortran APIs.
 
-8. On IA64 systems with Intel compilers make check (N-Bit test) fails in 
-   the hdf/test directory. It is a known Intel compiler optimization problem.
-   Test passes when -O0 flag is used with ecc.
-
-9. Using both fill-value and compression on SD datasets doesn't work.
+o  Using both fill-value and compression on SD datasets doesn't work.
