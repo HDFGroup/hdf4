@@ -1,0 +1,28 @@
+# Makefile for netCDF User's Guide and man(1)ual pages.
+#
+# $Id$
+
+MANUALS		= netcdf.3 netcdf.3f
+MANIFEST	= README Makefile.in \
+		  $(MANUALS) texindex.c udunits.dat guide.ps guide.txn \
+		  texinfo.tex 
+prefix		= ../../..
+GARBAGE		= *.log *~ *.gs *.aux *.cp *.fn *.ky *.pg *.toc *.tp *.vr
+PRINTER		= hpnp
+
+all::
+
+install::	installed_manuals
+
+guide.hc:	guide.ps
+	lpr -P$(PRINTER) guide.ps
+
+guide.dvi:	guide.txn texinfo.tex texindex
+	tex guide.txn
+	texindex guide.fn guide.cp
+	tex guide.txn
+
+guide.ps:	guide.dvi
+	dvips -o guide.ps -r0 guide.dvi
+
+include ../port/master.mk

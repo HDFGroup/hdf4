@@ -1,0 +1,16 @@
+This directory contains the TeX source for the netCDF User's Guide and
+a PostScript file for direct printing of the netCDF User's Guide on a
+PostScript printer.  It also contains reference documentation in the form
+of troff source for UNIX man pages, using the -man macros.
+
+Makefile	installs man pages, prints User's Guide hard copy
+README		this file
+guide.txn	source for netCDF User's Guide, uses texinfo macros
+ncdump.1	troff source for ncdump utility
+ncgen.1		troff source for ncgen utility
+netcdf.3	troff source for C interface reference
+netcdf.3f	troff source for Fortran interface reference
+texindex.c	GNU program for generating TeX index
+udunits.dat	example of units file, used by Unidata udunits library
+ug.ps		PostScript file of User's Guide
+utexinfo.tex	TeX macros needed by guide.txn, modified from GNU texinfo.tex

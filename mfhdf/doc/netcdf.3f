@@ -1,0 +1,645 @@
+.TH NETCDF 3F "26 December 1990" "Printed: \n(yr.\n(mo.\n(dy" "UNIDATA LIBRARY FUNCTIONS"
+.SH NAME
+netcdf \- Unidata Network Common Data Form (netCDF) Fortran library
+.SH SYNOPSIS
+.ft B
+.na
+.nh
+.HP
+INCLUDE 'netcdf.inc'
+.HP 4
+INTEGER FUNCTION NCCRE(PATHNAME, CMODE, RCODE)
+.HP
+INTEGER FUNCTION NCOPN(PATHNAME, RWMODE, RCODE)
+.HP
+SUBROUTINE NCCREDF(NCID, RCODE)
+.HP
+SUBROUTINE NCENDF(NCID, RCODE)
+.HP
+SUBROUTINE NCCLOS(NCID, RCODE)
+.HP
+SUBROUTINE NCINQ(NCID, NDIMS, NVARS, NATTS, RECDIM, RCODE)
+.HP
+SUBROUTINE NCSNC(NCID, RCODE)
+.HP
+SUBROUTINE NCABOR(NCID, RCODE)
+.HP
+SUBROUTINE NCDDEF(NCID, NAME, SIZE, RCODE)
+.HP
+INTEGER FUNCTION NCDID(NCID, NAME, RCODE)
+.HP
+SUBROUTINE NCDINQ(NCID, DIMID, NAME, SIZE, RCODE)
+.HP
+SUBROUTINE NCDREN(NCID, DIMID, NAME, RCODE)
+.HP
+INTEGER FUNCTION NCVDEF(NCID, NAME, DATATYPE, NDIMS, VDIMS, RCODE)
+.HP
+INTEGER FUNCTION NCVID(NCID, NAME, RCODE)
+.HP
+SUBROUTINE NCVINQ(NCID, VARID, NAME, DATATYPE, NDIMS, VDIMS, NATTS, RCODE)
+.HP
+SUBROUTINE NCVPT1(NCID, VARID, INDICES, VALUE, RCODE)
+.HP
+SUBROUTINE NCVP1C(NCID, VARID, INDICES, CHVAL, RCODE)
+.HP
+SUBROUTINE NCVGT1(NCID, VARID, INDICES, VALUE, RCODE)
+.HP
+SUBROUTINE NCVG1C(NCID, VARID, INDICES, CHVAL, RCODE)
+.HP
+SUBROUTINE NCVPT(NCID, VARID, START, COUNTS, VALUE, RCODE)
+.HP
+SUBROUTINE NCVPTC(NCID, VARID, START, COUNTS, STRING, LENSTR, RCODE)
+.HP
+SUBROUTINE NCVGT(NCID, VARID, START, COUNTS, VALUE, RCODE)
+.HP
+SUBROUTINE NCVGTC(NCID, VARID, START, COUNTS, STRING, LENSTR, RCODE)
+.HP
+SUBROUTINE NCVPTG(NCID, VARID, START, COUNTS, STRIDE, IMAP, VALUE, RCODE)
+.HP
+SUBROUTINE NCVPGC(NCID, VARID, START, COUNTS, STRIDE, IMAP, STRING, RCODE)
+.HP
+SUBROUTINE NCVGTG(NCID, VARID, START, COUNTS, STRIDE, IMAP, VALUE, RCODE)
+.HP
+SUBROUTINE NCVGGC(NCID, VARID, START, COUNTS, STRIDE, IMAP, STRING, RCODE)
+.HP
+SUBROUTINE NCVREN(NCID, VARID, NAME, RCODE)
+.HP
+SUBROUTINE NCAPT(NCID, VARID, NAME, DATATYPE, ATTLEN, VALUE, RCODE)
+.HP
+SUBROUTINE NCAPTC(NCID, VARID, NAME, DATATYPE, LENSTR, STRING, RCODE)
+.HP
+SUBROUTINE NCAINQ(NCID, VARID, NAME, DATATYPE, ATTLEN, RCODE)
+.HP
+SUBROUTINE NCAGT(NCID, VARID, NAME, VALUE, RCODE)
+.HP
+SUBROUTINE NCAGTC(NCID, VARID, NAME, STRING, LENSTR, RCODE)
+.HP
+SUBROUTINE NCACPY(INNCID, INVARID, NAME, OUTNCID, OUTVARID, RCODE)
+.HP
+SUBROUTINE NCANAM(NCID, VARID, ATTNUM, NAME, RCODE)
+.HP
+SUBROUTINE NCAREN(NCID, VARID, NAME, NEWNAME, RCODE)
+.HP
+SUBROUTINE NCADEL(NCID, VARID, NAME, RCODE)
+.HP
+INTEGER FUNCTION NCTLEN(DATATYPE, RCODE)
+.HP
+SUBROUTINE NCPOPT(NCOPTS)
+.HP
+SUBROUTINE NCGOPT(NCOPTS)
+.hy
+.LP
+.ta \w'CHARACTER*(*) PATHNAME  'u
+.nf
+CHARACTER*(*) PATHNAME	! absolute or relative name of netCDF dataset
+INTEGER CMODE	! either NCCLOB or NCNOCLOB
+INTEGER RWMODE	! either NCWRITE or NCNOWRIT
+INTEGER RCODE	! returned error code, 0 if no errors
+INTEGER NCID	! netCDF ID, returned by NCCRE or NCOPN
+INTEGER NDIMS	! number of dimensions in netCDF dataset or variable
+INTEGER NVARS	! number of variables in netCDF dataset
+INTEGER NATTS	! number of (global or variable) attributes
+INTEGER RECDIM	! dimension ID of unlimited dimension
+CHARACTER*(*) NAME	! name for dimension, attribute, or variable
+INTEGER SIZE	! size of dimension
+INTEGER DIMID	! dimension ID from NCDDEF or NCDID
+INTEGER DATATYPE	! data type code, one of NCBYTE, ..., NCDOUBLE
+INTEGER VARID	! variable ID from NCVDEF or NCVID, or NCGLOBAL
+INTEGER INDICES(NDIMS)	! coordinates of a single element of a variable
+CHARACTER CHVAL	! character value of variable or attribute
+CHARACTER*(*) STRING	! character array value of variable or attribute
+INTEGER LENSTR	! length of character array value
+DOUBLE VALUE	! double precision value of variable or attribute
+REAL VALUE	! real value of variable or attribute
+INTEGER VALUE	! integer value of variable or attribute
+INTEGER START(NDIMS)	! corner of hyperslab of values of a variable
+INTEGER COUNTS(NDIMS)	! edge lengths of hyperslab of values
+INTEGER STRIDE(NDIMS)	! netCDF variable subsampling intervals
+INTEGER IMAP(NDIMS)	! hyperslab-to-memory index mapping vector
+INTEGER ATTLEN	! number of elements in an attribute vector
+INTEGER INNCID	! input netCDF ID
+INTEGER INVARID	! input variable ID
+INTEGER OUTNCID	! output netCDF ID
+INTEGER OUTVARID	! output variable ID
+INTEGER ATTNUM	! attribute number
+CHARACTER*(*) NEWNAME	! new attribute name
+INTEGER NCOPTS	! sum of NCVERBOS and/or NCFATAL
+.fi
+.ad
+.SH "FUNCTION DESCRIPTIONS"
+.LP
+These routines implement the Unidata netCDF data-access interface for
+the FORTRAN programming language.
+Only those arguments which are unique to the function being described are 
+documented in this section.  See the section "COMMON ARGUMENT DESCRIPTIONS"
+for decriptions of the other arguments.
+.HP 4
+\fBINTEGER NCCRE(\fIPATHNAME\fB, \fICMODE\fB, \fIRCODE\fB)\fR
+.br
+creates a new netCDF file, returning a netCDF ID that 
+can subsequently be used to refer to the netCDF file.
+The new netCDF file is placed in define mode.
+The mode parameter, \fICMODE\fP,
+should be either \fBNCCLOB\fP or \fBNCNOCLOB\fP.
+\fBNCCLOB\fP means that even if the file already exists, you want to
+create a new file with the same name, erasing the old file's contents.
+\fBNCNOCLOB\fP means you want to create a new netCDF file only if the
+given file name does not refer to a file that already exists.
+.HP
+\fBINTEGER NCOPN(\fIPATHNAME\fB, \fIRWMODE\fB, \fIRCODE\fB)\fR
+.br
+opens an existing netCDF file for access.
+The mode parameter, \fIRWMODE\fP, should be either
+\fBNCWRITE\fP, to open the file for writing, or \fBNCNOWRIT\fP, to
+open the file read-only.  "Writing" means any kind of change to the
+file, including appending or changing data, adding or renaming dimensions,
+variables, or attributes, or deleting attributes.
+.HP
+\fBSUBROUTINE NCCREDF(\fINCID\fB, \fIRCODE\fB)\fR
+.br
+puts an open netCDF file into define mode, 
+so dimensions, variables, and attributes can be added or renamed and 
+attributes can be deleted.
+.HP
+\fBSUBROUTINE NCENDF(\fINCID\fB, \fIRCODE\fB)\fR
+.br
+takes an open netCDF file out of define mode.
+The changes made to the netCDF file
+while it was in define mode are checked and committed to disk if no
+problems occurred.  The netCDF file is then placed in data mode, so
+variable data can be read or written.
+.HP
+\fBSUBROUTINE NCCLOS(\fINCID\fB, \fIRCODE\fB)\fR
+.br
+closes an open netCDF file.
+If the file is in define mode, \fBNCENDF(\|)\fP
+will be called before closing.
+(In this case, if
+\fBNCENDF(\|)\fP returns an error, \fBNCABOR(\|)\fP
+will automatically be called to restore the file to the
+consistent state before define mode was last entered.)  
+After an open netCDF file is closed, its netCDF ID will be reassigned to 
+the next netCDF file that is opened or created.
+.HP
+\fBSUBROUTINE NCINQ(\fINCID\fB, \fINDIMS\fB, \fINVARS\fB, \fINATTS\fB, \fIRECDIM\fB, \fIRCODE\fB)\fR
+.br
+returns information about an open netCDF file.
+Upon successful return,
+\fINVARS\fP will contain the
+number of variables defined for this netCDF file,
+\fIRECDIM\fP will contain the
+ID of the unlimited dimension, if there is one for this netCDF
+file (if no unlimited size dimension has been defined, -1 is returned
+for the value of \fIRECDIM\fP).
+.HP
+\fBSUBROUTINE NCSNC(\fINCID\fB, \fIRCODE\fB)\fR
+.br
+updates a writable netCDF file.
+The netCDF file must be in data mode.
+A netCDF file in define mode is synchronized
+to disk only when \fBNCENDF(\|)\fP is called.
+It can be expensive in computer resources to always synchronize to disk after
+every write of variable data or change of an attribute value.  There are two
+reasons you might want to synchronize after writes: 1) to minimize data 
+loss in case of abnormal termination; and 2) to make data available to other
+processes for reading immediately after it is written.
+Data is automatically synchronized to disk when a netCDF file is closed,
+or whenever you leave define mode.
+.HP
+\fBSUBROUTINE NCABOR(\fINCID\fB, \fIRCODE\fB)\fR
+.br
+closes or deletes a netCDF file.
+If the netCDF file isn't in define mode, then the file is closed.
+If the file is being created and is still in define mode, the file is deleted.
+If define mode was entered by a call to \fBNCCREDF(\|)\fP,
+the netCDF file is restored to its state before definition mode was entered 
+and the file is closed.
+The main reason for calling \fBNCABOR(\|)\fP
+is to restore the netCDF to a known consistent state in
+case anything goes wrong during the definition of new dimensions,
+variables, or attributes.
+This function is called automatically if \fBNCCLOS(\|)\fP
+is called from define mode and the call to leave define
+mode before closing fails.
+.HP
+\fBSUBROUTINE NCDDEF(\fINCID\fB, \fINAME\fB, \fISIZE\fB, \fIRCODE\fB)\fR
+.br
+adds a new dimension to an open netCDF file, which must be 
+in define mode.
+.HP
+\fBINTEGER NCDID(\fINCID\fB, \fINAME\fB, \fIRCODE\fB)\fR
+.br
+returns the ID of a netCDF dimension, given the name of the dimension.
+.HP
+\fBSUBROUTINE NCDINQ(\fINCID\fB, \fIDIMID\fB, \fINAME\fB, \fISIZE\fB, \fIRCODE\fB)\fR
+.br
+returns the name and size of a dimension, given its ID.
+.HP
+\fBSUBROUTINE NCDREN(\fINCID\fB, \fIDIMID\fB, \fINAME\fB, \fIRCODE\fB)\fR
+.br
+renames an existing dimension in an open netCDF file.
+If the new name is longer than the old name, the netCDF must be in 
+define mode.
+You cannot rename a dimension to have the same name as another dimension.
+.HP
+\fBINTEGER NCVDEF(\fINCID\fB, \fINAME\fB, \fIDATATYPE\fB, \fINDIMS\fB, \fIVDIMS\fB, \fIRCODE\fB)\fR
+.br
+adds a new variable to an open netCDF file in define mode.
+It returns a variable ID.
+.HP
+\fBINTEGER NCVID(\fINCID\fB, \fINAME\fB, \fIRCODE\fB)\fR
+.br
+returns the ID of a netCDF variable, given its name.
+.HP
+\fBSUBROUTINE NCVINQ(\fINCID\fB, \fIVARID\fB, \fINAME\fB, \fIDATATYPE\fB, \fINDIMS\fB, \fIVDIMS\fB, \fINATTS\fB, \fIRCODE\fB)\fR
+.br
+returns information about a netCDF variable, given its ID.
+.HP
+\fBSUBROUTINE NCVPT1(\fINCID\fB, \fIVARID\fB, \fIINDICES\fB, \fIVALUE\fB, \fIRCODE\fB)\fR
+.br
+puts a single, numeric data value into a numeric variable of an open netCDF 
+file that is in data mode.
+.HP
+\fBSUBROUTINE NCVP1C(\fINCID\fB, \fIVARID\fB, \fIINDICES\fB, \fICHVAL\fB, \fIRCODE\fB)\fR
+.br
+puts a single, character value into a character variable of an open netCDF 
+file that is in data mode.
+.HP
+\fBSUBROUTINE NCVGT1(\fINCID\fB, \fIVARID\fB, \fIINDICES\fB, \fIVALUE\fB, \fIRCODE\fB)\fR
+.br
+gets a single, numeric data value from a numeric variable of an open netCDF 
+file that is in data mode.
+.HP
+\fBSUBROUTINE NCVG1C(\fINCID\fB, \fIVARID\fB, \fIINDICES\fB, \fICHVAL\fB, \fIRCODE\fB)\fR
+.br
+gets a single, character value from a character variable of an open netCDF 
+file that is in data mode.
+.HP
+\fBSUBROUTINE NCVPT(\fINCID\fB, \fIVARID\fB, \fISTART\fB, \fICOUNT\fB, \fIVALUE\fB, \fIRCODE\fB)\fR
+.br
+writes a hyperslab of numeric values into a numeric netCDF variable of an open
+netCDF file, which must be in data mode.
+.HP
+\fBSUBROUTINE NCVPTC(\fINCID\fB, \fIVARID\fB, \fISTART\fB, \fICOUNT\fB, \fISTRING\fB, \fILENSTR\fB, \fIRCODE\fB)\fR
+.br
+writes a hyperslab of character values into a character netCDF variable of 
+an open netCDF file, which must be in data mode.
+.HP
+\fBSUBROUTINE NCVGT(\fINCID\fB, \fIVARID\fB, \fISTART\fB, \fICOUNT\fB, \fIVALUE\fB, \fIRCODE\fB)\fR
+.br
+reads a hyperslab of numeric values from a numeric netCDF variable of an open
+netCDF file, which must be in data mode.
+.HP
+\fBSUBROUTINE NCVGTC(\fINCID\fB, \fIVARID\fB, \fISTART\fB, \fICOUNT\fB, \fISTRING\fB, \fILENSTR\fB, \fIRCODE\fB)\fR
+.br
+reads a hyperslab of character values from a character netCDF variable of 
+an open netCDF file, which must be in data mode.
+.HP
+\fBSUBROUTINE NCVPTG(\fINCID\fB, \fIVARID\fB, \fISTART\fB, \fICOUNT\fB, \fISTRIDE\fB, \fIIMAP\fB, \fIVALUE\fB, \fIRCODE\fB)\fR
+.br
+writes a generalized hyperslab of numeric values into a numeric netCDF 
+variable of an open netCDF file, which must be in data mode.
+.HP
+\fBSUBROUTINE NCVPGC(\fINCID\fB, \fIVARID\fB, \fISTART\fB, \fICOUNT\fB, \fISTRIDE\fB, \fIIMAP\fB, \fISTRING\fB, \fIRCODE\fB)\fR
+.br
+writes a generalized hyperslab of character values into a character netCDF 
+variable of an open netCDF file, which must be in data mode.
+.HP
+\fBSUBROUTINE NCVGTG(\fINCID\fB, \fIVARID\fB, \fISTART\fB, \fICOUNT\fB, \fISTRIDE\fB, \fIIMAP\fB, \fIVALUE\fB, \fIRCODE\fB)\fR
+.br
+reads a generalized hyperslab of numeric values from a numeric netCDF 
+variable of an open netCDF file, which must be in data mode.
+.HP
+\fBSUBROUTINE NCVGGC(\fINCID\fB, \fIVARID\fB, \fISTART\fB, \fICOUNT\fB, \fISTRIDE\fB, \fIIMAP\fB, \fISTRING\fB, \fIRCODE\fB)\fR
+.br
+reads a generalized hyperslab of character values from a character netCDF 
+variable of an open netCDF file, which must be in data mode.
+.HP
+\fBSUBROUTINE NCVREN(\fINCID\fB, \fIVARID\fB, \fINAME\fB, \fIRCODE\fB)\fR
+.br
+changes the name of a netCDF variable in an open netCDF.
+If the new name is longer than the old name, the netCDF must be in define mode.
+You cannot rename a variable to have the name of any existing variable.
+.HP
+\fBSUBROUTINE NCAPT(\fINCID\fB, \fIVARID\fB, \fINAME\fB, \fIDATATYPE\fB, \fIATTLEN\fB, \fIVALUE\fB, \fIRCODE\fB)\fR
+.br
+adds or changes a numeric variable attribute or global numeric attribute of an
+open netCDF file.  If this attribute is new, or if the space required to
+store the attribute is greater than before, the netCDF file must be in
+define mode.
+.HP
+\fBSUBROUTINE NCAPTC(\fINCID\fB, \fIVARID\fB, \fINAME\fB, \fIDATATYPE\fB, \fILENSTR\fB, \fISTRING\fB, \fIRCODE\fB)\fR
+.br
+adds or changes a character variable attribute or global 
+character attribute of an
+open netCDF file.  If this attribute is new, or if the space required to
+store the attribute is greater than before, the netCDF file must be in
+define mode.
+.HP
+\fBSUBROUTINE NCAINQ(\fINCID\fB, \fIVARID\fB, \fINAME\fB, \fIDATATYPE\fB, \fIATTLEN\fB, \fIRCODE\fB)\fR
+.br
+returns
+information about a netCDF attribute, given its variable ID and name.
+The information returned is the type and length of the attribute.
+.HP
+\fBSUBROUTINE NCAGT(\fINCID\fB, \fIVARID\fB, \fINAME\fB, \fIVALUE\fB, \fIRCODE\fB)\fR
+.br
+gets the value(s) of a numeric netCDF attribute, given its
+variable ID and name.
+.HP
+\fBSUBROUTINE NCAGTC(\fINCID\fB, \fIVARID\fB, \fINAME\fB, \fISTRING\fB, \fILENSTR\fB, \fIRCODE\fB)\fR
+.br
+gets the value of a character netCDF attribute, given its
+variable ID and name.
+.HP
+\fBSUBROUTINE NCACPY(\fIINNCID\fB, \fIINVARID\fB, \fINAME\fB, \fIOUTNCID\fB, \fIOUTVARID\fB, \fIRCODE\fB)\fR
+.br
+copies an
+attribute from one open netCDF file to another.  It can also be used to
+copy an attribute from one variable to another within the same netCDF.
+\fIINNCID\fP is the netCDF ID of an input netCDF file from which the
+attribute will be copied, returned from a previous, successful call to
+\fBNCOPN(\|)\fP or \fBNCCRE(\|)\fP.
+\fIINVARID\fP
+is the ID of the variable in the input netCDF file from which the
+attribute will be copied, or \fBNCGLOBAL\fP for a global attribute.
+\fINAME\fP
+is the name of the attribute in the input netCDF file to be copied.
+\fIOUTNCID\fP
+is the netCDF ID of the output netCDF file to which the attribute will be 
+copied,
+returned from a previous call to \fBNCOPN(\|)\fP or \fBNCCRE(\|)\fP.  It
+is permissible for the input and output netCDF IDs to be the same.  The
+output netCDF file should be in define mode if the attribute to be
+copied does not already exist for the target variable, or if it would
+cause an existing target attribute to grow.
+\fIOUTVARID\fP
+is the ID of the variable in the output netCDF file to which the attribute will
+be copied, or \fBNCGLOBAL\fP to copy to a global attribute.
+.HP
+\fBSUBROUTINE NCANAM(\fINCID\fB, \fIVARID\fB, \fIATTNUM\fB, \fINAME\fB, \fIRCODE\fB)\fR
+.br
+gets the
+name of an attribute, given its variable ID and number as an attribute
+of that variable.  This function is useful in generic applications that
+need to get the names of all the attributes associated with a variable,
+since attributes are accessed by name rather than number in all other
+attribute functions.  The number of an attribute is more volatile than
+the name, since it can change when other attributes of the same variable
+are deleted.  This is why an attribute number is not called an attribute
+ID.
+global attribute.
+\fIATTNUM\fP
+is the number of the attribute.  The attributes for each variable are numbered
+from 1 (the first attribute) to \fINATTS\fP, where \fINATTS\fP is
+the number of attributes for the variable, as returned from a call to
+\fBNCVINQ(\|)\fP.
+.HP
+\fBSUBROUTINE NCAREN(\fINCID\fB, \fIVARID\fB, \fINAME\fB, \fINEWNAME\fB, \fIRCODE\fB)\fR
+.br
+changes the
+name of an attribute.  If the new name is longer than the original name,
+the netCDF must be in define mode.  You cannot rename an attribute to
+have the same name as another attribute of the same variable.
+\fINAME\fP
+is the original attribute name.
+\fINEWNAME\fP
+is the new name to be assigned to the specified attribute.  If the new name
+is longer than the old name, the netCDF file must be in define mode.
+.HP
+\fBSUBROUTINE NCADEL(\fINCID\fB, \fIVARID\fB, \fINAME\fB, \fIRCODE\fB)\fR
+.br
+deletes a
+netCDF attribute from an open netCDF file.  The netCDF file must be in
+define mode.
+.HP
+\fBINTEGER NCTLEN(\fIDATATYPE\fB, \fIRCODE\fB)\fR
+.br
+returns the number of bytes in a netCDF data type.
+.HP
+\fBSUBROUTINE NCPOPT(\fINCOPTS\fB)\fR
+.br
+sets the error-options for the netCDF library.
+.HP
+\fBSUBROUTINE NCGOPT(\fINCOPTS\fB)\fR
+.br
+returns the current error-options of the netCDF library.
+.SH "COMMON ARGUMENT DESCRIPTIONS"
+.TP 4
+.BI "INTEGER " ATTLEN
+is the number of values associated with an attribute.
+If the attribute is of type \fBNCCHAR\fP, then this is the character variable 
+length.
+.TP
+.BI "INTEGER " NCID
+is the netCDF ID returned from a previous, successful call to
+\fBncopn(\|)\fP or \fBnccre(\|)\fP.
+.TP
+.BI "CHARACTER*1 " CHVAL
+is the character value to be written into or read from and must be of 
+type \fBNCCHAR\fP.
+*Warning*: neither the compiler nor the netCDF  software  can
+detect if the wrong type of data is used.
+.TP
+.BI "INTEGER " COUNTS(NDIMS)
+specifies the number of data values to be accessed in terms of the 
+lengths of the sides of the hyperslab.
+Thus, to access a single value, for example, specify \fIcounts\fP as
+\fB(1, 1, ..., 1)\fP.
+The size of the vector shall be at least the rank of the associated
+netCDF variable and its elements shall correspond, in order, to the
+variable's dimensions.
+Consequently, if the variable is a record variable, then the last
+element of \fIcounts\fP is the number of records to access.
+.TP
+.BI "INTEGER " DATATYPE
+specifies the data type of a netCDF variable and is one of the predefined 
+parameters \fBNCBYTE\fP, \fBNCCHAR\fP, \fBNCSHORT\fP, \fBNCLONG\fP, 
+\fBNCFLOAT\fP, or \fBNCDOUBLE\fP.
+.TP
+.BI "INTEGER " DIMID
+is the ID of a netCDF dimension.
+netCDF dimension ID's are allocated sequentially from the positive
+integers beginning with 1.
+.TP
+.BI "INTEGER " IMAP(NDIMS)
+is the index mapping vector that specifies how data values associated with a 
+netCDF variable are arranged in memory.
+The offset, in bytes, from the memory location pointed to by the \fIVALUE\fP
+or \fISTRING\fP
+argument to a particular datum is given by the
+inner (dot) product of the index mapping vector with the coordinates of 
+the datum specified as offsets from the hyperslab corner.
+For example,
+on a machine where the size of a `\fBREAL\fP' is four bytes,
+the index mapping vector for the array `\fBREAL U(5,3)\fP' is 
+`\fBINTEGER IMAP(2) /4, 20/\fP'.
+Note that the index mapping vector can be
+used to access memory-resident data values in a manner that differs 
+radically from the nominal structure of the associated netCDF variable.
+For example, the following definitions
+.sp
+.RS +8
+.nf
+REAL VEL(2,NY,NX)
+INTEGER IMAP(2)
+IMAP(2) = 2*4
+IMAP(1) = IMAP(2)*NY
+.fi
+.RE
+.sp
+.TP
+\&
+can be used to access the memory-resident values of the netCDF variable,
+`\fBU(NX,NY)\fP' (in FORTRAN array notation)  even
+though the dimensions are transposed and the data is contained in a 3-D array
+rather than a 2-D array.
+The index mapping vector may contain negative values if the
+\fIVALUE\fP or \fISTRING\fP argument is appropriately set.
+A scalar `\fB0\fP' as the index mapping vector argument obtains the 
+default behavior in
+which the memory-resident values are assumed to have the same structure as the 
+associated netCDF variable.
+.TP
+.BI "INTEGER " INDICES(NDIMS)
+specifies the indicial coordinates of the single netCDF data value to be 
+accessed.
+The indices are relative to 1; thus, for example, the first data value of a
+two-dimensional variable is \fB(1,1)\fP.
+The size of the vector shall be at least the rank of the associated
+netCDF variable and its elements shall correspond, in order, to the
+variable's dimensions.
+Consequently, if the variable is a record variable, then the last
+index is the record number.
+.TP
+.BI "INTEGER " LENSTR
+specifies the total size, in characters, of the \fISTRING\fP argument.
+.TP
+.BI "CHARACTER*(*) " NAME
+is the name of a dimension, variable, or attribute.
+It shall begin with an alphabetic character, followed by
+zero or more alphanumeric characters including the underscore
+(`_').  Case is significant.
+As an output argument, it 
+shall be capacious enough to hold the requested string (the maximum supported
+length is given by the predefined parameter MAXNCNAME).
+Attribute names that begin with an underscore (`\fB_\fP') are reserved for use
+by the netCDF interface.
+.TP
+.BI "INTEGER " NATTS
+is the number of global attributes in a netCDF dataset for the
+\fBNCINQ(\|)\fP subroutine or the number
+of attributes associated with a netCDF variable for the \fBNCVINQ(\|)\fP
+subroutine.
+.TP
+.BI "INTEGER " NCOPTS
+specifies the handling of errors by the netCDF library.
+It is  zero  or  the  sum  of one or more of the error
+parameters defined in the FORTRAN include file.
+Valid  values
+are  `\fBNCVERBOS\fP',  to  enable  error-messaging, and `\fBNCFATAL\fP', to
+cause a program abort when an  error  occurs.
+The  default condition is equivalent to `\fBNCVERBOS+NCFATAL\fP'.
+.TP
+.BI "INTEGER " NDIMS
+is either the total number of dimensions in a netCDF dataset or the rank
+(i.e. the number of dimensions) of a netCDF variable.
+The value shall not be negative or greater than the parameter
+`\fBMAXVDIMS\fP'.
+.TP
+.BI "CHARACTER*(*) " PATHNAME
+is the pathname of a netCDF file.  It may be absolute or relative.
+.TP
+.BI "INTEGER " RCODE
+is the returned error code; it is set to 0 if and only if no error occurred.
+.TP
+.BI "INTEGER " SIZE
+is the size of a netCDF dimension.
+As an input argument, it shall be a positive integer or the parameter
+`\fBNCUNLIM\fP'.
+At most one such unlimited size dimension, called the record dimension,
+shall be defined in a netCDF dataset.
+As an output argument, it shall be a positive integer.
+.TP
+.BI "INTEGER " START(NDIMS)
+specifies the starting point
+for accessing a netCDF variable's data values
+in terms of the indicial coordinates of 
+the corner of the hyperslab.
+The indices are relative to 1; thus, the first data
+value of a variable is \fB(1, 1, ..., 1)\fP.
+The size of the vector shall be at least the rank of the associated
+netCDF variable and its elements shall correspond, in order, to the
+variable's dimensions.
+Consequently, if the variable is a record variable, then the last index 
+is the starting record number for accessing the netCDF variable's data values.
+.TP
+.BI "INTEGER " STRIDE(NDIMS)
+specifies, for each dimension,
+the interval between the accessed values of a netCDF variable.
+The size of the vector shall be at least the rank of the associated
+netCDF variable and its elements shall correspond, in order, to the
+variable's dimensions.
+A value of 1 accesses adjacent values of the netCDF variable 
+in the corresponding dimension;
+a value of 2 accesses every other value of the netCDF variable in the
+corresponding dimension; and so on.
+Attempting to access a data value that lies outside the defined data space
+of a variable is an error.
+A scalar `\fB0\fP' as the stride argument obtains the default behavior in which
+adjacent values are accessed along each dimension.
+.TP
+.BI "CHARACTER*(*) " STRING
+is the block of character values to be accessed for a netCDF 
+variable or attribute.
+.TP
+.BI "INTEGER, REAL, or DOUBLE " VALUE
+is the start of the memory-resident data values to be accessed.
+The data should be of the appropriate type for the netCDF variable.
+\fB*Warning*: neither the compiler nor the netCDF software
+can detect if the wrong type of data is used.\fP
+.TP
+.BI "INTEGER " VARID
+is the ID of a netCDF variable or (for the attribute-access functions) 
+the parameter \fBNCGLOBAL\fP,
+which is used to reference global attributes.
+netCDF variable ID's are allocated sequentially from the positive
+integers beginning with 1.
+.TP
+.BI "INTEGER " VDIMS(NDIMS)
+is a vector of dimension ID's and defines the shape of a netCDF variable.
+The size of the vector shall be greater than or equal to the
+rank (i.e. the number of dimensions) of the variable (\fINDIMS\fP).
+The vector shall be ordered by the speed with which a dimension varies:
+\fIVDIMS\fP(1) shall be the dimension ID of the most rapidly
+varying dimension and
+\fIVDIMS\fP(\fINDIMS\fP) shall be the dimension ID of the most slowly
+varying dimension.
+Consequently, if a variable is a record variable, then 
+\fIVDIMS\fP(\fINDIMS\fP) 
+shall be the dimension ID of the record dimension.
+The maximum possible number of
+dimensions for a variable is given by the parameter
+`\fBMAXVDIMS\fP'.
+.SH "MAILING-LIST"
+.LP
+Both a mailing list and a digest are 
+available for
+discussion of the netCDF interface and announcements about netCDF bugs,
+fixes, and enhancements.
+To subscribe, send a request to one of the following:
+.sp
+.RS +4
+.ta \w'mailing list:   'u
+.nf
+mailing\ list:	netcdfgroup-request@unidata.ucar.edu
+digest:	netcdfdigest-request@unidata.ucar.edu
+.RE
+.SH "SEE ALSO"
+.BR ncdump (1),
+.BR ncgen (1),
+.BR netcdf (3).
+.LP
+\fInetCDF User's Guide\fP, published
+by the Unidata Program Center, University Corporation for Atmospheric
+Research, located in Boulder, Colorado.
