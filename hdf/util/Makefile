@@ -13,7 +13,7 @@
 # $Id$
 #
 UTILS = hdf24to8 hdfcomp hdfls hdfpack hdfrseq hdftopal hdftor8 paltohdf \
-        r8tohdf ristosds vcompat vmake vshow make24 hdf2jpeg jpeg2hdf fp2hdf
+        r8tohdf ristosds vcompat vmake vshow hdf8to24 hdf2jpeg jpeg2hdf fp2hdf
 
 HEOBJ = he_main.o he_cntrl.o he_disp.o he_file.o
 

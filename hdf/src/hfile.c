@@ -982,6 +982,17 @@ int32 Hstartwrite(file_id, tag, ref, length)
         access_rec->block->ddlist[access_rec->idx].offset = offset;
 #endif
 
+       /* reserve the space by marking the end of the element */
+
+       if (HI_SEEK(file_rec->file, length-1+offset) == FAIL) {
+           access_rec->used = FALSE;
+           HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+       }
+       if (HI_WRITE(file_rec->file, tbuf, 1) == FAIL) {
+           access_rec->used = FALSE;
+           HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+       }
+
        /* fill in dd record */
         access_rec->block->ddlist[access_rec->idx].tag = tag;
         access_rec->block->ddlist[access_rec->idx].ref = ref;
@@ -2029,7 +2040,7 @@ Hishdf(filename)
     } else {
         ret = HIvalid_magic(fp, FUNC);
         HI_CLOSE(fp);
-        return(ret);
+        return((int)ret);
     }
 #endif
 } /* Hishdf */
