@@ -380,10 +380,10 @@ int diff_sds_attrs(int32 sds1_id,int32 nattrs1,int32 sds2_id,int32 nattrs2,char*
    printf("\n---------------------------\n");
    printf ("%s:%s = \n",sds1_name,attr1_name);
    printf("<<<<\n");
-   pr_att_vals(dtype1, nelms1, attr1_buf);
+   pr_att_vals((nc_type)dtype1, nelms1, attr1_buf);
    printf (" ;\n");
    printf(">>>>\n");
-   pr_att_vals(dtype2, nelms2, attr2_buf);
+   pr_att_vals((nc_type)dtype2, nelms2, attr2_buf);
    printf (" ;\n");
 
   }

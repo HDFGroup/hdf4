@@ -94,7 +94,7 @@ main(int argc, char *argv[])
   0     /* if -S specified print statistics */
  };
  int   c;
- int   i, ret;
+ int   i;
  
  opterr = 1;
  progname = argv[0];
@@ -167,7 +167,7 @@ main(int argc, char *argv[])
  
  argv = argv + optind;
 
- ret=hdiff(argv[0],argv[1],&opt);
+ hdiff(argv[0],argv[1],&opt);
   
  return EXIT_SUCCESS;
 }

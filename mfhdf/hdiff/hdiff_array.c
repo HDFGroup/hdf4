@@ -26,9 +26,9 @@ d_min_val1, d_max_val1, d_min_val2, d_max_val2); }
 #define PRINT_ISTATS(T) {\
  printf("Type: %s  Npts: %d  Ndiff: %d (%lf%%)\n", \
  T, tot_cnt,n_diff, 100.*(float64)n_diff/(float64)tot_cnt); \
- printf("Avg Diff: %le   Max. Diff: %ld\n",  \
+ printf("Avg Diff: %le   Max. Diff: %d\n",  \
  (d_avg_diff / tot_cnt), i4_max_diff); \
- printf("Range File1: %ld/%ld  File2: %ld/%ld\n", \
+ printf("Range File1: %d/%d  File2: %d/%d\n", \
 i4_min_val1, i4_max_val1, i4_min_val2, i4_max_val2); }
 
 /*-------------------------------------------------------------------------
@@ -105,16 +105,16 @@ int array_diff(void *buf1,
   i4_min_val2 = USHRT_MAX;
   break;
  case DFNT_INT32:
-  i4_max_val1 = LONG_MIN;
-  i4_min_val1 = LONG_MAX;
-  i4_max_val2 = LONG_MIN;
-  i4_min_val2 = LONG_MAX;
+  i4_max_val1 = (int32)LONG_MIN;
+  i4_min_val1 = (int32)LONG_MAX;
+  i4_max_val2 = (int32)LONG_MIN;
+  i4_min_val2 = (int32)LONG_MAX;
   break;
  case DFNT_UINT32:
   i4_max_val1 = 0;
-  i4_min_val1 = ULONG_MAX;
+  i4_min_val1 = (int32)ULONG_MAX;
   i4_max_val2 = 0;
-  i4_min_val2 = ULONG_MAX;
+  i4_min_val2 = (int32)ULONG_MAX;
   break;
  case DFNT_FLOAT:
   d_max_val1 = -FLT_MAX;
@@ -260,7 +260,7 @@ int array_diff(void *buf1,
    {
     n_diff++;
     if (n_diff <= max_err_cnt) {
-     printf("Index: %d,   File1: %ld,   File2: %ld\n",
+     printf("Index: %d,   File1: %d,   File2: %d\n",
       i, *i4ptr1, *i4ptr2);
     }
    }                                               
@@ -424,7 +424,7 @@ fmt_print(uint8 *x, int32 type)
  case DFNT_UINT32:
  case DFNT_INT32:
   HDmemcpy(&l, x, sizeof(int32));
-  printf("%ld", l);
+  printf("%d", l);
   break;
   
  case DFNT_FLOAT32:
@@ -453,11 +453,11 @@ vdata_cmp(int32  vs1, int32  vs2,
 {
  int32   i, j, k, iflag, err_cnt;
  int32   nv1, interlace1, vsize1;
- int32   vsotag1, vsoref1;
+ int32   vsotag1;
  char    fields1[VSFIELDMAX*FIELDNAMELENMAX];
  char    vsclass1[VSNAMELENMAX], vsname1[VSNAMELENMAX];
  int32   nv2, interlace2, vsize2;
- int32   vsotag2, vsoref2;
+ int32   vsotag2;
  char    fields2[VSFIELDMAX*FIELDNAMELENMAX];
  char    vsclass2[VSNAMELENMAX], vsname2[VSNAMELENMAX];
  uint8   *buf1, *buf2, *b1, *b2;
@@ -469,11 +469,9 @@ vdata_cmp(int32  vs1, int32  vs2,
  VSinquire(vs2, &nv2, &interlace2, fields2, &vsize2, vsname2);
  
  vsotag1 = VSQuerytag(vs1);
- vsoref1 = VSQueryref(vs1);
  VSgetclass(vs1,vsclass1);
  
  vsotag2 = VSQuerytag(vs2);
- vsoref2 = VSQueryref(vs2);
  VSgetclass(vs2,vsclass2);
  
  if (vsotag1 != vsotag2 || nv1 != nv2 || interlace1 != interlace2 ||

@@ -22,15 +22,15 @@ gattr_diff(int32 sdid1,
  int32   ngatts1, ngatts2;    /* number of global attributes */
  struct  ncatt att1, att2;    /* attribute */
  int     ia, ib;              /* attribute number */
- int     iret1, iret2, ret=0;
+ int     iret2, ret=0;
 
- iret1 =  SDfileinfo(sdid1, &nvars1, &ngatts1);
+ SDfileinfo(sdid1, &nvars1, &ngatts1);
  
  /* get global attributes */
  
  for (ia = 0; ia < ngatts1; ia++) 
  {
-  iret1 = SDattrinfo(sdid1, ia, att1.name, &att1.type, &att1.len);
+  SDattrinfo(sdid1, ia, att1.name, &att1.type, &att1.len);
   ib = SDfindattr(sdid2, att1.name);
   if (ib == -1)     /* attribute doesn't exist in file2 */
   {
@@ -57,7 +57,7 @@ gattr_diff(int32 sdid1,
    SDend(sdid2);
    exit(0);
   }
-  iret1 = SDreadattr(sdid1, ia, att1.val);
+  SDreadattr(sdid1, ia, att1.val);
   iret2 = SDreadattr(sdid2, ib, att2.val);
   
   iret2 = 0;
@@ -72,9 +72,9 @@ gattr_diff(int32 sdid1,
    printf("\n---------------------------\n");
    printf("Attr Name: %s\n", att1.name);
    printf("< ");
-   pr_att_vals(att1.type, att1.len, att1.val);
+   pr_att_vals((nc_type)att1.type, att1.len, att1.val);
    printf("\n> ");
-   pr_att_vals(att2.type, att2.len, att2.val);
+   pr_att_vals((nc_type)att2.type, att2.len, att2.val);
    printf("\n");
    ret=1;
   }

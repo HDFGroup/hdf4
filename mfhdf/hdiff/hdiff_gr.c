@@ -36,7 +36,6 @@ int diff_gr( int32 file1_id,
              int32 ref2,
              diff_opt_t *opt)  
 {
- intn  status_n;               /* returned status_n for functions returning an intn  */
  int32 gr1_id,                 /* GR identifier */
        ri1_id,                 /* data set identifier */
        ri1_index,              /* index number of the data set */
@@ -269,10 +268,14 @@ int diff_gr( int32 file1_id,
  */
 
 out:
- status_n = GRendaccess(ri1_id);
- status_n = GRend(gr1_id);
- status_n = GRendaccess(ri2_id);
- status_n = GRend(gr2_id);
+ if (GRendaccess(ri1_id)<0)
+  printf("GRendaccess returned -1");
+ if (GRend(gr1_id)<0)
+  printf("GRend returned -1");
+ if (GRendaccess(ri2_id)<0)
+  printf("GRendaccess returned -1");
+ if (GRend(gr2_id)<0)
+  printf("GRend returned -1");
  if (buf1) free(buf1);
  if (buf2) free(buf2);
 

@@ -37,12 +37,10 @@ int diff_vs( int32 file1_id,
 {
  int32 vdata1_id,             /* vdata identifier */
        n_records1,            /* number of records */
-       n_fields1,             /* number of fields */
        vdata1_size, 
        interlace1_mode,
        vdata2_id,             /* vdata identifier */
        n_records2,            /* number of records */
-       n_fields2,             /* number of fields */
        vdata2_size, 
        interlace2_mode;
  char  vdata1_name [VSNAMELENMAX];
@@ -87,7 +85,7 @@ int diff_vs( int32 file1_id,
   goto out;
  }
  
- if ((n_fields1 = VFnfields(vdata1_id)) == FAIL ){
+ if (VFnfields(vdata1_id)== FAIL ){
   printf( "Failed getting fields forVS ref %d\n", ref1);
   ret=-1;
   goto out;
@@ -127,7 +125,7 @@ int diff_vs( int32 file1_id,
   goto out;
  }
  
- if ((n_fields2 = VFnfields(vdata2_id)) == FAIL ){
+ if (VFnfields(vdata2_id)== FAIL ){
   printf( "Failed getting fields forVS ref %d\n", ref2);
   ret=-2;
   goto out;

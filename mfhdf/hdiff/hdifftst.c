@@ -32,92 +32,91 @@
 int
 main( ) 
 {
-	int32 sd1_id, sd2_id;       /* SD interface identifier */
-	int32 sds1_id, sds2_id;     /* data set identifiers */
-	int32 dim_sizes[2];         /* sizes of the SDS dimensions */
-	int32 start[2], edges[2];
-	intn  status;
-	int32 status_32;
-	int32 num_of_records;  
-	int32 n_values;
-	int32 buf1a[Y_LENGTH][X_LENGTH] = {{1,1},{1,1},{5,6}};
+ int32 sd1_id, sd2_id;       /* SD interface identifier */
+ int32 sds1_id, sds2_id;     /* data set identifiers */
+ int32 dim_sizes[2];         /* sizes of the SDS dimensions */
+ int32 start[2], edges[2];
+ intn  status;
+ int32 status_32;
+ int32 n_values;
+ int32 buf1a[Y_LENGTH][X_LENGTH] = {{1,1},{1,1},{5,6}};
  int32 buf1b[Y_LENGTH][X_LENGTH] = {{1,2},{3,4},{5,6}};
-	char8 bufga1[] = "Storm_track_data1"; 
-	char8 bufga2[] = "Storm_track_data2"; 
-	float32 bufa1[2] = {1., 1.};
-	float32 bufa2[2] = {1., 2.};
+ char8 bufga1[] = "Storm_track_data1"; 
+ char8 bufga2[] = "Storm_track_data2"; 
+ float32 bufa1[2] = {1., 1.};
+ float32 bufa2[2] = {1., 2.};
                                                                      
 
-	/*vdata*/
-	int32 file1_id, vdata1_ref1, vdata2_ref1; 
-	int32 file2_id, vdata1_ref2, vdata2_ref2; 
-	int32 vdata1_id, vdata2_id;
-	char8 vdata1_buf1 [N_RECORDS_1] = {'V', 'D', 'A', 'T', 'A'};
-	char8 vdata1_buf2 [N_RECORDS_1] = {'X', 'D', 'A', 'T', 'A'};
+ /*vdata*/
+ int32 file1_id; 
+ int32 file2_id; 
+ int32 vdata1_id, vdata2_id;
+ char8 vdata1_buf1 [N_RECORDS_1] = {'V', 'D', 'A', 'T', 'A'};
+ char8 vdata1_buf2 [N_RECORDS_1] = {'X', 'D', 'A', 'T', 'A'};
  int32 vdata2_buf1  [N_RECORDS_2][ORDER_2] = {{1, 2, 3, 4}, {5, 6, 7, 8}};
-	int32 vdata2_buf2  [N_RECORDS_2][ORDER_2] = {{1, 1, 1, 1}, {5, 6, 7, 8}};
-	float32 vdata3_buf1[N_RECORDS_2][N_VALS_PER_REC]={{1,2,3,4,5,6},{7,8,9,10,11,12}}; 
-	float32 vdata3_buf2[N_RECORDS_2][N_VALS_PER_REC]={{1,1,1,1,1,1},{7,8,9,10,11,12}}; 
+ int32 vdata2_buf2  [N_RECORDS_2][ORDER_2] = {{1, 1, 1, 1}, {5, 6, 7, 8}};
+ float32 vdata3_buf1[N_RECORDS_2][N_VALS_PER_REC]={{1,2,3,4,5,6},{7,8,9,10,11,12}}; 
+ float32 vdata3_buf2[N_RECORDS_2][N_VALS_PER_REC]={{1,1,1,1,1,1},{7,8,9,10,11,12}}; 
  
 /* Define the location and size of the data to be written to the data set*/
-	start[0] = 0;
-	start[1] = 0;
-	edges[0] = Y_LENGTH;
-	edges[1] = X_LENGTH;
+ start[0] = 0;
+ start[1] = 0;
+ edges[0] = Y_LENGTH;
+ edges[1] = X_LENGTH;
 
 /* Define the dimensions of the array to be created */
-	dim_sizes[0] = Y_LENGTH;
-	dim_sizes[1] = X_LENGTH;
+ dim_sizes[0] = Y_LENGTH;
+ dim_sizes[1] = X_LENGTH;
 
 /*-------------------------------------------------------------------------
  * SD data
  *-------------------------------------------------------------------------
  */
-	
+ 
 /* Create the files and initialize the SD interface */
-	sd1_id = SDstart ("hdifftst1.hdf", DFACC_CREATE);
-	sd2_id = SDstart ("hdifftst2.hdf", DFACC_CREATE);
+ sd1_id = SDstart ("hdifftst1.hdf", DFACC_CREATE);
+ sd2_id = SDstart ("hdifftst2.hdf", DFACC_CREATE);
 
 /* Set a global attribute */
-	n_values  = sizeof(bufga1);
+ n_values  = sizeof(bufga1);
  status = SDsetattr (sd1_id, FILE_ATTR_NAME, DFNT_CHAR8, n_values, (VOIDP)bufga1);
-	status = SDsetattr (sd2_id, FILE_ATTR_NAME, DFNT_CHAR8, n_values, (VOIDP)bufga2);
-		
+ status = SDsetattr (sd2_id, FILE_ATTR_NAME, DFNT_CHAR8, n_values, (VOIDP)bufga2);
+  
 /* Create the data set */ 
-	sds1_id = SDcreate (sd1_id, "dset1", DFNT_INT32, RANK, dim_sizes);
-	sds2_id = SDcreate (sd2_id, "dset1", DFNT_INT32, RANK, dim_sizes);
+ sds1_id = SDcreate (sd1_id, "dset1", DFNT_INT32, RANK, dim_sizes);
+ sds2_id = SDcreate (sd2_id, "dset1", DFNT_INT32, RANK, dim_sizes);
 
 /* Assign attribute */
  n_values  = 2;
  status = SDsetattr (sds1_id, SDS_ATTR_NAME, DFNT_FLOAT32, n_values, (VOIDP)bufa1);
-	status = SDsetattr (sds2_id, SDS_ATTR_NAME, DFNT_FLOAT32, n_values, (VOIDP)bufa2);
+ status = SDsetattr (sds2_id, SDS_ATTR_NAME, DFNT_FLOAT32, n_values, (VOIDP)bufa2);
 
-	
+ 
 /* Write the stored data to the data set */
-	status = SDwritedata (sds1_id, start, NULL, edges, (VOIDP)buf1a);
-	status = SDwritedata (sds2_id, start, NULL, edges, (VOIDP)buf1b);
-	
+ status = SDwritedata (sds1_id, start, NULL, edges, (VOIDP)buf1a);
+ status = SDwritedata (sds2_id, start, NULL, edges, (VOIDP)buf1b);
+ 
 /* Terminate access to the data set */
-	status = SDendaccess (sds1_id);
-	status = SDendaccess (sds2_id);
+ status = SDendaccess (sds1_id);
+ status = SDendaccess (sds2_id);
 
-	/* Create another data set */ 
-	sds1_id = SDcreate (sd1_id, "dset2", DFNT_INT32, RANK, dim_sizes);
-	sds2_id = SDcreate (sd2_id, "dset2", DFNT_INT32, RANK, dim_sizes);
-	status = SDwritedata (sds1_id, start, NULL, edges, (VOIDP)buf1a);
-	status = SDwritedata (sds2_id, start, NULL, edges, (VOIDP)buf1b);
-	status = SDendaccess (sds1_id);
-	status = SDendaccess (sds2_id);
+ /* Create another data set */ 
+ sds1_id = SDcreate (sd1_id, "dset2", DFNT_INT32, RANK, dim_sizes);
+ sds2_id = SDcreate (sd2_id, "dset2", DFNT_INT32, RANK, dim_sizes);
+ status = SDwritedata (sds1_id, start, NULL, edges, (VOIDP)buf1a);
+ status = SDwritedata (sds2_id, start, NULL, edges, (VOIDP)buf1b);
+ status = SDendaccess (sds1_id);
+ status = SDendaccess (sds2_id);
 
 
 /*-------------------------------------------------------------------------
  * end SD 
  *-------------------------------------------------------------------------
  */
-	
+ 
 /* Terminate access to the SD interface and close the file */
-	status = SDend (sd1_id);
-	status = SDend (sd2_id);
+ status = SDend (sd1_id);
+ status = SDend (sd2_id);
 
 
 
@@ -127,34 +126,34 @@ main( )
  */
 
 /* Open the HDF file for writing */
-	file1_id = Hopen ("hdifftst1.hdf", DFACC_WRITE, 0);
-	file2_id = Hopen ("hdifftst2.hdf", DFACC_WRITE, 0);
-	
+ file1_id = Hopen ("hdifftst1.hdf", DFACC_WRITE, 0);
+ file2_id = Hopen ("hdifftst2.hdf", DFACC_WRITE, 0);
+ 
 /* Initialize the VS interface */
-	status = Vstart (file1_id);
-	status = Vstart (file2_id);
+ status = Vstart (file1_id);
+ status = Vstart (file2_id);
 
 /*-------------------------------------------------------------------------
  * VD data one field
  *-------------------------------------------------------------------------
  */
-	
+ 
 /* Create the first vdata and populate it with data from vdata1_buf */
-	vdata1_ref1 = VHstoredata (file1_id, FIELD1_NAME, (uint8 *)vdata1_buf1, 
-		N_RECORDS_1, DFNT_CHAR8, VDATA1_NAME, CLASS1_NAME); 
-	vdata1_ref2 = VHstoredata (file2_id, FIELD1_NAME, (uint8 *)vdata1_buf2, 
-		N_RECORDS_1, DFNT_CHAR8, VDATA1_NAME, CLASS1_NAME); 
+ VHstoredata (file1_id, FIELD1_NAME, (uint8 *)vdata1_buf1, 
+  N_RECORDS_1, DFNT_CHAR8, VDATA1_NAME, CLASS1_NAME); 
+ VHstoredata (file2_id, FIELD1_NAME, (uint8 *)vdata1_buf2, 
+  N_RECORDS_1, DFNT_CHAR8, VDATA1_NAME, CLASS1_NAME); 
 
 /*-------------------------------------------------------------------------
  * VD data one field, order 4
  *-------------------------------------------------------------------------
  */
-	
+ 
 /* Create the second vdata and populate it with data from vdata2_buf */
-	vdata2_ref1 = VHstoredatam (file1_id, FIELD2_NAME, (uint8 *)vdata2_buf1, 
-		N_RECORDS_2, DFNT_INT32, VDATA2_NAME, CLASS2_NAME, ORDER_2); 
-	vdata2_ref2 = VHstoredatam (file2_id, FIELD2_NAME, (uint8 *)vdata2_buf2, 
-		N_RECORDS_2, DFNT_INT32, VDATA2_NAME, CLASS2_NAME, ORDER_2); 
+ VHstoredatam (file1_id, FIELD2_NAME, (uint8 *)vdata2_buf1, 
+  N_RECORDS_2, DFNT_INT32, VDATA2_NAME, CLASS2_NAME, ORDER_2); 
+ VHstoredatam (file2_id, FIELD2_NAME, (uint8 *)vdata2_buf2, 
+  N_RECORDS_2, DFNT_INT32, VDATA2_NAME, CLASS2_NAME, ORDER_2); 
 
 /*-------------------------------------------------------------------------
  * VD data several fields
@@ -163,45 +162,48 @@ main( )
 
 /* Create a new vdata */
  vdata1_id = VSattach (file1_id, -1, "w");
-	vdata2_id = VSattach (file2_id, -1, "w");
+ vdata2_id = VSattach (file2_id, -1, "w");
 
 /* Set name and class name of the vdata */
  status_32 = VSsetname (vdata1_id, VDATA3_NAME);
  status_32 = VSsetclass (vdata1_id, CLASS3_NAME);
-	status_32 = VSsetname (vdata2_id, VDATA3_NAME);
+ status_32 = VSsetname (vdata2_id, VDATA3_NAME);
  status_32 = VSsetclass (vdata2_id, CLASS3_NAME);
 
 /* Define fields */
-	status = VSfdefine (vdata1_id, FIELD3_NAME1, DFNT_FLOAT32, ORDER3_1 );
-	status = VSfdefine (vdata1_id, FIELD3_NAME2, DFNT_FLOAT32, ORDER3_2 );
-	status = VSfdefine (vdata1_id, FIELD3_NAME3, DFNT_FLOAT32, ORDER3_3 );
-	status = VSsetfields (vdata1_id, FIELDNAME3_LIST);
-	status = VSfdefine (vdata2_id, FIELD3_NAME1, DFNT_FLOAT32, ORDER3_1 );
-	status = VSfdefine (vdata2_id, FIELD3_NAME2, DFNT_FLOAT32, ORDER3_2 );
-	status = VSfdefine (vdata2_id, FIELD3_NAME3, DFNT_FLOAT32, ORDER3_3 );
-	status = VSsetfields (vdata2_id, FIELDNAME3_LIST);
-
+ status = VSfdefine (vdata1_id, FIELD3_NAME1, DFNT_FLOAT32, ORDER3_1 );
+ status = VSfdefine (vdata1_id, FIELD3_NAME2, DFNT_FLOAT32, ORDER3_2 );
+ status = VSfdefine (vdata1_id, FIELD3_NAME3, DFNT_FLOAT32, ORDER3_3 );
+ status = VSsetfields (vdata1_id, FIELDNAME3_LIST);
+ status = VSfdefine (vdata2_id, FIELD3_NAME1, DFNT_FLOAT32, ORDER3_1 );
+ status = VSfdefine (vdata2_id, FIELD3_NAME2, DFNT_FLOAT32, ORDER3_2 );
+ status = VSfdefine (vdata2_id, FIELD3_NAME3, DFNT_FLOAT32, ORDER3_3 );
+ status = VSsetfields (vdata2_id, FIELDNAME3_LIST);
 
 /* Write the data with full interlacing mode */
- num_of_records = VSwrite (vdata1_id, (uint8 *)vdata3_buf1, N_RECORDS_2, FULL_INTERLACE);
-	num_of_records = VSwrite (vdata2_id, (uint8 *)vdata3_buf2, N_RECORDS_2, FULL_INTERLACE);
+ VSwrite (vdata1_id, (uint8 *)vdata3_buf1, N_RECORDS_2, FULL_INTERLACE);
+ VSwrite (vdata2_id, (uint8 *)vdata3_buf2, N_RECORDS_2, FULL_INTERLACE);
 
-
-
-	status_32 = VSdetach (vdata1_id);
-	status_32 = VSdetach (vdata2_id);
+ status_32 = VSdetach (vdata1_id);
+ status_32 = VSdetach (vdata2_id);
 
 /*-------------------------------------------------------------------------
  * end VD data 
  *-------------------------------------------------------------------------
  */
-	
+ 
 /* Terminate access to the VS interface and close the HDF file */
-	status = Vend (file1_id);
-	status = Vend (file2_id);
-	status_32 = Hclose (file1_id);
-	status_32 = Hclose (file2_id);
+ status = Vend (file1_id);
+ status = Vend (file2_id);
+ status_32 = Hclose (file1_id);
+ status_32 = Hclose (file2_id);
 
-	return 0;
+ /* shut compiler */
+ status=status;
+ status_32=status_32;
+
+ return 0;
 
 }
+
+
