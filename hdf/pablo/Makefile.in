@@ -317,14 +317,6 @@ help:
 
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
-ProcIDs.h:
-	cp $(PABLO_INCDIR)/ProcIDs.h .
-ProcMasks.h:
-	cp $(PABLO_INCDIR)/ProcMasks.h .
-ProcMasks.inc:
-	cp $(PABLO_INCDIR)/ProcMasks.inc .
-HDFTrace.h:
-	cp $(PABLO_INCDIR)/HDFTrace.h .
 PabloHDF.o: PabloHDF.c ProcIDs.h ProcMasks.h HDFTrace.h ProcMasks.inc
 	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c PabloHDF.c
 PabloHDF_RT.o: PabloHDF_RT.c ProcIDs.h ProcMasks.h HDFTrace.h ProcMasks.inc
