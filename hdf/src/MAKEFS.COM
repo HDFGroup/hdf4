@@ -1,15 +1,14 @@
-$!
-$! Add the Fortran stubs to the HDF library
-$!
-$!
+
+! $! Add the Fortran stubs to the HDF library
+! $!
 $ type sys$input
 	Compiling Fortran stubs
-$ ffiles="df24Ff.f, dfFf.f, dfpFf.f, dfr8Ff.f, dfanFf.f, dfsdFf.f, "+-
-"hfileFf.f, vgFf.f, dfufp2if.f"
-$ fobj="dfFf, dfsdFf, dfr8Ff, df24Ff, dfanFf, dfpFf, vgFf, hfileFf, "+-
+$ ffiles="df24ff.f, dfff.f, dfpff.f, dfr8ff.f, dfanff.f, dfsdff.f, "+-
+"hfileff.f, vgff.f, dfufp2if.f"
+$ fobj="dfff, dfsdff, dfr8ff, df24ff, dfanff, dfpff, vgff, hfileff, "+-
        "dfufp2if"
-$ cobj="dfF,  dfsdF,  dfr8F,  df24F,  dfanF,  dfpF,  vgF,  hfileF, "+-
-       "dfutilF, herrf"
+$ cobj="dff,  dfsdf,  dfr8f,  df24f,  dfanf,  dfpf,  vgf,  hfilef, "+-
+       "dfutilf, herrf"
 $ fortran 'ffiles
 $ cc/define=VMS 'cobj
 $ library/insert df 'cobj
