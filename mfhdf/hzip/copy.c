@@ -1210,7 +1210,8 @@ int copy_vs( int32 infile_id,
              int32 vgroup_id_out_par, /* output parent group ID */
              char*path_name,          /* absolute path for input group name */
              options_t *options,
-             table_t *table)
+             table_t *table,
+             int   is_lone)
 {
  intn  status_n;              /* returned status_n for functions returning an intn  */
  int32 status_32,             /* returned status_n for functions returning an int32 */
@@ -1230,7 +1231,6 @@ int copy_vs( int32 infile_id,
  uint8 *buf=NULL;
  int   i, j, ret=1;
 
-
 /*-------------------------------------------------------------------------
  * attach the vdata, gets its name and class
  *-------------------------------------------------------------------------
@@ -1249,8 +1249,8 @@ int copy_vs( int32 infile_id,
   return-1;
  }
  
- /* ignore reserved HDF groups/vdatas */
- if(vdata_class != NULL) {
+ /* ignore reserved HDF groups/vdatas; they are lone ones */
+ if( is_lone==1 && vdata_class != NULL) {
   if( is_reserved(vdata_class)){
    if ((status_32 = VSdetach (vdata_id)) == FAIL )
     printf( "Failed to detach vdata <%s>\n", path_name);
