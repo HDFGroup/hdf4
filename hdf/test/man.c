@@ -554,7 +554,7 @@ test_man()
           /* create and write data label */
           for (i = 1; i >=0; i--)
             {
-              ret = ann_handle = ANcreate(an_handle, DFTAG_SDG, refnum, 
+              ret = ann_handle = ANcreate(an_handle, DFTAG_NDG, refnum, 
                                           AN_DATA_LABEL);
               RESULT("ANcreate");
               ret = ANwriteann(ann_handle, labsds[i], HDstrlen(labsds[i]));
@@ -566,7 +566,7 @@ test_man()
           /* create and write data description */
           for (i = 1; i >=0; i--)
             {
-              ret = ann_handle = ANcreate(an_handle, DFTAG_SDG, refnum, 
+              ret = ann_handle = ANcreate(an_handle, DFTAG_NDG, refnum, 
                                           AN_DATA_DESC);
               RESULT("ANcreate");
               ret = ANwriteann(ann_handle, descsds[i], HDstrlen(descsds[i]));
@@ -621,7 +621,7 @@ test_man()
 
       /* Check data set labels/descriptions */
       if ((j % 3) != 0)     /* read in annotations for 2 out of every 3 */
-        check_lab_desc(TESTFILE, DFTAG_SDG, refnum, labsds, descsds);
+        check_lab_desc(TESTFILE, DFTAG_NDG, refnum, labsds, descsds);
 
       ret = DFR8getimage(TESTFILE, newimage, (int32) COLS, (int32) ROWS, pal);
       RESULT("DFR8getimage");
