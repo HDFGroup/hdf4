@@ -26,7 +26,9 @@ static char RcsId[] = "@(#)$Revision$";
 #   include <descrip.h>
 #   include <processes.h>
 #   include <unixlib.h>
+/*
 #   include <tpudef.h>
+*/
 #   include <tpu$routines>
 #endif
 
