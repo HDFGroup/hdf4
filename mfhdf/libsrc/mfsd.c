@@ -2341,7 +2341,7 @@ intn  len;
     char     * name;
 
 #ifdef SDDEBUG
-    fprintf(stderr, "SDgetdatastrs: I've been called\n");
+    fprintf(stderr, "SDgetdimstrs: I've been called\n");
 #endif
     
     handle = SDIhandle_from_id(id, DIMTYPE);
