@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.13  1993/08/16 21:46:05  koziol
-Wrapped in changes for final, working version on the PC.
+Revision 1.14  1993/09/21 20:21:05  georgev
+Changed  DFTAG_SDD tag.
 
+ * Revision 1.13  1993/08/16  21:46:05  koziol
+ * Wrapped in changes for final, working version on the PC.
+ *
  * Revision 1.12  1993/07/01  20:08:09  chouck
  * Made the hash table use fewer malloc() and free() pairs to improve
  * efficiency and (hopefully) reduce PC memory fragmentation.
@@ -542,7 +545,7 @@ char _HUGE *HDgettagname(tag)
   case DFTAG_SD    :
       name = "Scientific Data"; break;
   case DFTAG_SDD   : 
-    name = "SciData description"; break;
+    name = "SciData dimension record"; break;
   case DFTAG_SDL   :   
       name = "SciData labels"; break;
   case DFTAG_SDU   : 
