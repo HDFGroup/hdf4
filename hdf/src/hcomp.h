@@ -95,6 +95,10 @@ typedef union tag_comp_info {  /* Union to contain compression information */
         intn start_bit; /* offset of the start bit in the data */
         intn bit_len;   /* number of bits to store */
       } nbit;
+    struct {            /* struct to contain info about how to compress */
+                        /* or decompress a "skipping" huffman encoded dataset */
+        intn skp_size;  /* size of the individual elements when skipping */
+      } skphuff;
   } comp_info;
 
 #endif /* __HCOMP_H */

@@ -308,6 +308,12 @@ extern intn Hbitread
 extern intn Hbitseek
     (int32 bitid, int32 byte_offset, intn bit_offset);
 
+extern intn Hgetbit
+    (int32 bitid);
+
+extern intn Hputbit
+    (int32 bitid, intn bit);
+
 extern int32 Hendbitaccess
     (int32 bitfile_id,intn flushbit);
 

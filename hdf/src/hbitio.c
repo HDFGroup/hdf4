@@ -648,6 +648,60 @@ printf("Hbitseek(): offset=%d, count=%d\n",(bitfile_rec->bytep-bitfile_rec->byte
 /*--------------------------------------------------------------------------
 
  NAME
+       Hgetbit -- read 1 bit from a bit-element
+ USAGE
+       intn Hgetbit(bitid)
+       int32 bitid;         IN: id of bit-element to read from
+ RETURNS
+       the bit read in (0/1) on success, FAIL(-1) to indicate failure
+ DESCRIPTION
+       Read one bit from a bit-element.  This function is mostly a wrapper
+       around Hbitread.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn Hgetbit(int32 bitid)
+{
+    CONSTR(FUNC,"Hgetbit"); /* for HERROR */
+    uint32 data;
+
+    if(Hbitread(bitid,1,&data)==FAIL)
+        HRETURN_ERROR(DFE_BITREAD,FAIL)
+    return((intn)data);
+}   /* end Hgetbit() */
+
+/*--------------------------------------------------------------------------
+
+ NAME
+       Hputbit -- write 1 bit to a bit-element
+ USAGE
+       intn Hputbit(bitid,bit)
+       int32 bitid;         IN: id of bit-element to read from
+       intn bit;            IN: bit to write
+ RETURNS
+       SUCCEED on success, FAIL(-1) to indicate failure
+ DESCRIPTION
+       Write one bit to a bit-element.  This function is mostly a wrapper
+       around Hbitwrite.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn Hputbit(int32 bitid,intn bit)
+{
+    CONSTR(FUNC,"Hputbit"); /* for HERROR */
+
+    if(Hbitwrite(bitid,1,(uint32)bit)==FAIL)
+        HRETURN_ERROR(DFE_BITWRITE,FAIL)
+    return(SUCCEED);
+}   /* end Hputbit() */
+
+/*--------------------------------------------------------------------------
+
+ NAME
        Hendbitaccess -- to dispose of a bitfile element
  USAGE
        int32 Hendbitaccess(bitfile_id,flushbit)

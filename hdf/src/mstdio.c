@@ -49,6 +49,8 @@ static char RcsId[] = "@(#)$Revision$";
 /* HDF compression includes */
 #include "hcompi.h"         /* Internal definitions for compression */
 
+/* #define TESTING */
+
 /*--------------------------------------------------------------------------
  NAME
     HCPmstdio_stread -- start read access for compressed file

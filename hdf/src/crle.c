@@ -386,10 +386,10 @@ PRIVATE int32 HCIcrle_staccess(accrec_t *access_rec, int16 acc_mode)
 
 /*--------------------------------------------------------------------------
  NAME
-    HCPclre_stread -- start read access for compressed file
+    HCPcrle_stread -- start read access for compressed file
 
  USAGE
-    int32 HCPmstdio_stread(access_rec)
+    int32 HCPcrle_stread(access_rec)
     accrec_t *access_rec;   IN: the access record of the data element
 
  RETURNS
@@ -415,10 +415,10 @@ int32 HCPcrle_stread(accrec_t *access_rec)
 
 /*--------------------------------------------------------------------------
  NAME
-    HCPclre_stwrite -- start write access for compressed file
+    HCPcrle_stwrite -- start write access for compressed file
 
  USAGE
-    int32 HCPmstdio_stwrite(access_rec)
+    int32 HCPcrle_stwrite(access_rec)
     accrec_t *access_rec;   IN: the access record of the data element
 
  RETURNS
@@ -444,7 +444,7 @@ int32 HCPcrle_stwrite(accrec_t *access_rec)
 
 /*--------------------------------------------------------------------------
  NAME
-    HCPclre_seek -- Seek to offset within the data element
+    HCPcrle_seek -- Seek to offset within the data element
 
  USAGE
     int32 HCPcrle_seek(access_rec,offset,origin)
@@ -502,12 +502,12 @@ int32 HCPcrle_seek(accrec_t *access_rec, int32 offset, int origin)
           } /* end if */
 
     HDfreespace(tmp_buf);
-    return SUCCEED;
+    return(SUCCEED);
 }   /* HCPcrle_seek() */
 
 /*--------------------------------------------------------------------------
  NAME
-    HCPclre_read -- Read in a portion of data from a compressed data element.
+    HCPcrle_read -- Read in a portion of data from a compressed data element.
 
  USAGE
     int32 HCPcrle_read(access_rec,length,data)
@@ -536,15 +536,15 @@ int32 HCPcrle_read(accrec_t *access_rec, int32 length, VOIDP data)
     if(HCIcrle_decode(info,length,data)==FAIL)
         HRETURN_ERROR(DFE_CDECODE,FAIL);
 
-    return length;
+    return(length);
 }   /* HCPcrle_read() */
 
 /*--------------------------------------------------------------------------
  NAME
-    HCPclre_write -- Write out a portion of data from a compressed data element.
+    HCPcrle_write -- Write out a portion of data from a compressed data element.
 
  USAGE
-    int32 HCPwrite(access_rec,length,data)
+    int32 HCPcrle_write(access_rec,length,data)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 length;           IN: the number of bytes to write
     VOIDP data;             IN: the buffer to retrieve the bytes written
@@ -584,7 +584,7 @@ int32 HCPcrle_write(accrec_t *access_rec, int32 length, const VOIDP data)
 
 /*--------------------------------------------------------------------------
  NAME
-    HCPclre_inquire -- Inquire information about the access record and data element.
+    HCPcrle_inquire -- Inquire information about the access record and data element.
 
  USAGE
     int32 HCPcrle_inquire(access_rec,pfile_id,ptag,pref,plength,poffset,pposn,
@@ -624,17 +624,17 @@ int32 HCPcrle_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
 
 /*--------------------------------------------------------------------------
  NAME
-    HCPclre_endaccess -- Close the compressed data element
+    HCPcrle_endaccess -- Close the compressed data element
 
  USAGE
-    int32 HCPendaccess(access_rec)
+    int32 HCPcrle_endaccess(access_rec)
     accrec_t *access_rec;   IN: the access record of the data element
 
  RETURNS
     Returns SUCCEED or FAIL
 
  DESCRIPTION
-    Close the compressed data element and free modelling info.
+    Close the compressed data element and free encoding info.
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS

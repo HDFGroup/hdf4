@@ -127,6 +127,8 @@ funclist_t comp_funcs={
     HCPinfo,
 };
 
+/* #define TESTING */
+
 /*--------------------------------------------------------------------------
  NAME
     HCIinit_coder -- Set the coder function pointers
@@ -169,7 +171,7 @@ PRIVATE int32 HCIinit_coder(comp_coder_info_t *cinfo,comp_coder_t coder_type,
             cinfo->coder_type=COMP_CODE_NBIT;   /* set the coding type */
             cinfo->coder_funcs=cnbit_funcs;     /* set the N-bit func. ptrs */
 
-            /* copy coding info */
+            /* copy encoding info */
             cinfo->coder_info.nbit_info.nt=c_info->nbit.nt;
             cinfo->coder_info.nbit_info.sign_ext=c_info->nbit.sign_ext;
             cinfo->coder_info.nbit_info.fill_one=c_info->nbit.fill_one;
@@ -182,6 +184,14 @@ printf("HCIinit_coder(): coder_funcs.write=%p\n",cinfo->coder_funcs.write);
             if((cinfo->coder_info.nbit_info.nt_size
                     =DFKNTsize(cinfo->coder_info.nbit_info.nt))==FAIL)
                 HRETURN_ERROR(DFE_BADNUMTYPE,FAIL);
+            break;
+
+        case COMP_CODE_SKPHUFF:        /* Skipping Huffman encoding */
+            cinfo->coder_type=COMP_CODE_SKPHUFF;   /* set the coding type */
+            cinfo->coder_funcs=cskphuff_funcs;     /* set the skipping huffman func. ptrs */
+
+            /* copy encoding info */
+            cinfo->coder_info.skphuff_info.skip_size=c_info->skphuff.skp_size;
             break;
 
         default:
@@ -299,6 +309,13 @@ printf("HCIwrite_header(): nt=%d, sign_ext=%d, fill_one=%d, start_bit=%d, bit_le
             /* the number of bits extracted */
             INT32ENCODE(p, (int32)info->cinfo.coder_info.nbit_info.mask_len);
             break;
+
+        case COMP_CODE_SKPHUFF:    /* Skipping Huffman coding needs info */
+            /* specify skipping unit size */
+            UINT32ENCODE(p,(uint32)info->cinfo.coder_info.skphuff_info.skip_size);
+            /* specify # of bytes compressed (not used currently) */
+            UINT32ENCODE(p,(uint32)info->cinfo.coder_info.skphuff_info.skip_size);
+	    break;
 
         default:    /* no additional information needed */
             break;
@@ -430,6 +447,21 @@ PRIVATE int32 HCIread_header(filerec_t *file_rec,accrec_t *access_rec,
 #ifdef TESTING
 printf("HCIread_header(): nt=%d, sign_ext=%d, fill_one=%d, start_bit=%d, bit_len=%d\n",c_info->nbit.nt,c_info->nbit.sign_ext,c_info->nbit.fill_one,c_info->nbit.start_bit,c_info->nbit.bit_len);
 #endif
+              } /* end case */
+            break;
+
+        case COMP_CODE_SKPHUFF:    /* Skipping Huffman  coding needs info */
+	      {
+		uint32 skp_size,	/* size of skipping unit */
+			comp_size;	/* # of bytes to compress */
+
+                if(HI_READ(file_rec->file, p, 8)==FAIL)
+                    HRETURN_ERROR(DFE_READERROR,FAIL);
+                /* specify skipping unit size */
+                UINT32DECODE(p, skp_size);
+                /* specify # of bytes of skipping data to compress */
+                UINT32DECODE(p, comp_size); /* ignored for now */
+                c_info->skphuff.skp_size=(intn)skp_size;
               } /* end case */
             break;
 

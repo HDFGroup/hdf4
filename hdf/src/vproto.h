@@ -214,13 +214,13 @@ extern int32 VHmakegroup
 */
 
 extern int32 vexistvs
-    (HFILEID f, uint16 vsid);
+    (HFILEID f, uint16 vsref);
 
 extern VOID vsdestroynode
     (VOIDP n);
 
 extern int32 VSattach
-    (HFILEID f, int32 vsid, const char _HUGE *accesstype);
+    (HFILEID f, int32 vsref, const char _HUGE *accesstype);
 
 extern int32 VSdetach
     (int32 vkey);
@@ -232,7 +232,7 @@ extern int32 VSQueryref
   (int32 vkey);
 
 extern int32 VSgetid
-    (HFILEID f, int32 vsid);
+    (HFILEID f, int32 vsref);
 
 extern int32 VSgetversion
     (int32 vkey);
@@ -451,7 +451,7 @@ extern FRETVAL(intf) nvisvsc
     (intf _HUGE *vkey, intf _HUGE *id);
 
 extern FRETVAL(intf) nvsatchc
-    (HFILEID _HUGE *f, intf _HUGE *vsid, _fcd accesstype);
+    (HFILEID _HUGE *f, intf _HUGE *vsref, _fcd accesstype);
 
 extern FRETVAL(intf) nvsdtchc
     (intf _HUGE *vkey);
@@ -476,10 +476,10 @@ extern FRETVAL(intf) nvsfndc
     (HFILEID _HUGE *f, _fcd name, intf _HUGE *namelen);
 
 extern FRETVAL(intf) nvsgidc
-    (HFILEID _HUGE *f, intf _HUGE *vsid);
+    (HFILEID _HUGE *f, intf _HUGE *vsref);
 
 extern FRETVAL(intf) nvsdltc
-    (HFILEID _HUGE *f, intf _HUGE *vsid);
+    (HFILEID _HUGE *f, intf _HUGE *vsref);
 
 extern FRETVAL(intf) nvssnamc
     (intf _HUGE *vkey, _fcd vsname,intf _HUGE *vsnamelen);

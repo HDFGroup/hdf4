@@ -154,7 +154,10 @@ typedef enum {
     DFE_CANTDECOMP,     /* Can't de-compress an object */
     DFE_UNINIT,         /* Interface was not initialized correctly */
     DFE_CANTINIT,       /* Can't initialize an interface we depend on */
-    DFE_CANTSHUTDOWN    /* Can't shut down an interface we depend on */
+    DFE_CANTSHUTDOWN,   /* Can't shut down an interface we depend on */
+    DFE_BITREAD,        /* There was a bit-read error */
+    DFE_BITWRITE,       /* There was a bit-write error */
+    DFE_BITSEEK         /* There was a bit-seek error */
 } hdf_err_code_t;
 
 #ifdef _H_ERR_MASTER_
@@ -262,7 +265,10 @@ PRIVATE const struct error_messages_t error_messages[] =
 { DFE_CANTDECOMP,   "Can't de-compress an object"},
 { DFE_UNINIT,       "Interface was not initialized correctly"},
 { DFE_CANTINIT,     "Can't initialize an interface we depend on"},
-{ DFE_CANTSHUTDOWN, "Can't shut down an interface we depend on"}
+{ DFE_CANTSHUTDOWN, "Can't shut down an interface we depend on"},
+{ DFE_BITREAD,      "There was a bit-read error"},
+{ DFE_BITWRITE,     "There was a bit-write error"},
+{ DFE_BITSEEK,      "There was a bit-seek error"}
 };
 #endif /* _H_ERR_MASTER_ */
 
