@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.13  1993/06/23 19:05:52  chouck
-Updated Version string and fixed a VSinquire macro
+Revision 1.14  1993/08/28 00:06:06  georgev
+Changed VSFIELDMAX to 64 for the MAC.
 
+ * Revision 1.13  1993/06/23  19:05:52  chouck
+ * Updated Version string and fixed a VSinquire macro
+ *
  * Revision 1.12  1993/06/16  17:17:56  chouck
  * Fixed comments and increased some buffer sizes
  *
@@ -495,8 +498,11 @@ extern uint8 *tbuf;
 */
 
 #define FIELDNAMELENMAX        128  /* fieldname   : 16 chars max */
-
+#ifdef macintosh
+#define VSFIELDMAX             64  /* max no of fields per vdata */
+#else /* !macintosh */
 #define VSFIELDMAX             256  /* max no of fields per vdata */
+#endif /* !macintosh */
 #define VSNAMELENMAX		64  /* vdata name  : 64 chars max */    
 #define VGNAMELENMAX		64  /* vgroup name : 64 chars max */ 
 
