@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.15  1993/09/01 23:31:58  georgev
-Added defines for THINK_C
+Revision 1.16  1993/09/08 20:53:10  georgev
+Changed TBUF_SZ size for Mac only.
 
+ * Revision 1.15  1993/09/01  23:31:58  georgev
+ * Added defines for THINK_C
+ *
  * Revision 1.14  1993/08/28  00:06:06  georgev
  * Changed VSFIELDMAX to 64 for the MAC.
  *
@@ -356,7 +359,11 @@ typedef struct {
    used.  tbuf lives in the hfile.c */
 
 #ifndef TBUF_SZ
+#if defined(macintosh) | defined(THINK_C)
+#   define TBUF_SZ 256
+#else /* !macintosh */
 #   define TBUF_SZ 1024
+#endif /* !macintosh */
 #endif
 
 extern uint8 *tbuf;
