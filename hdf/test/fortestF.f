@@ -31,6 +31,8 @@ C Default to cleanup *.hdf files and set verbosity to default value
 	endif
 	print *, '====================================='
 
+C   For VMS un-comment next line
+C       if (CleanUp) call system('delete *.hdf;*')
 	if (CleanUp) call system('rm -f *.hdf')
 
 	stop
@@ -50,6 +52,9 @@ C
 
 	retcode = 0
 
+C For VMS, un-comment the next line if the asterisk
+C        doesn't work
+C        read(5,11,END=100,err=100) inline
 	read(*,11,END=100,err=100) inline
 C	print *, 'inline=', inline
 	linelen = len(inline)

@@ -165,7 +165,7 @@ funpack(void)
      /* Initialize the Vset interface. */
      Vstart(file_id);
      vdata_ref = VSfind(file_id, "myvdata"); 
-     if (vdata_ref == FAIL)  {
+     if (vdata_ref == 0)  {
          num_errs++;
          printf(">>> VSfind failed in finding myvdata.\n");
      }

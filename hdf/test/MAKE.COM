@@ -23,7 +23,9 @@ $ hdflib= "[-.src]df/lib,[-.jpeg]libjpeg/lib,[-.zlib]libz/lib"
 $! define/nolog hdf$include ([-.src],[-.jpeg],[-.zlib])
 $ define/nolog sys$clib sys$library:vaxcrtl
 $ ccopt= "/include=([-.src],[-.jpeg],[-.zlib])/opt/nodebug/define=VMS"
-
+$! ccopt= "/debug/noopt/include=([-.src],[-.jpeg],[-.zlib])/define=VMS"
+$! foropt= "/debug/noopt"
+$ foropt= "/opt/nodebug"
 $!
 $ type sys$input
   **    Making testhdf **
@@ -57,57 +59,63 @@ $ cc 'ccopt   mgr.c
 $ cc 'ccopt   nbit
 $ cc 'ccopt   tbv
 $ cc 'ccopt   gentest
-
+$ cc 'ccopt   tvsfpack
 $ link/nodebug testhdf,rig,sdmms,sdnmms,an,anfile,sdstr,slab,litend, -
   file,file1,blocks,extelt,vers,tvset,conv,tree,bitio,comp,man,mgr.obj, -
-  nbit, tbv, 'hdflib
-$ link/nodebug gentest, 'hdflib, sys$library:vaxcrtl/lib
+  nbit, tbv, tvsfpack 'hdflib
+$ link gentest, 'hdflib, sys$library:vaxcrtl/lib
 $ type sys$input 
   **  Making Fortran interface test programs **
 $!
 $ cc 'ccopt   fortest.c
 $ cc 'ccopt   forsupf.c
-$ fortran tr8F.f
-$ fortran t24F.f
-$ fortran tpF.f
-$ fortran tsdmmsF.f
-$ fortran tsdnmmsF.f
-$ fortran tsdntF.f
-$ fortran tsdnntF.f
-$ fortran tanF.f
-$ fortran tanfileF.f
-$ fortran tstubsF.f
-$ fortran tsdstrF.f
-$ fortran slabwf.f
-$ fortran slab1wf.f
-$ fortran slab2wf.f
-$ fortran slab3wf.f
-$ fortran slab4wf.f
+$ fortran 'foropt fortestF.f
+$ fortran 'foropt tr8F.f
+$ fortran 'foropt t24F.f
+$ fortran 'foropt tpF.f
+$ fortran 'foropt tsdmmsF.f
+$ fortran 'foropt tsdnmmsF.f
+$ fortran 'foropt tsdntF.f
+$ fortran 'foropt tsdnntF.f
+$ fortran 'foropt tanF.f
+$ fortran 'foropt tanfileF.f
+$ fortran 'foropt tstubsF.f
+$ fortran 'foropt tsdstrF.f
+$ fortran 'foropt slabwf.f
+$! fortran slab1wf.f
+$! fortran slab2wf.f
+$! fortran slab3wf.f
+$! fortran slab4wf.f
 $ fortran egfhi.f
-$ fortran forsupff.f
-$ fortran manf.f
-$ fortran mgrf.f
-$ link fortest, forsupff, forsupf, 'hdflib, sys$clib/lib
-$ link tr8f, forsupff, forsupf, 'hdflib, sys$clib/lib
-$ link t24f,forsupff, forsupf, 'hdflib, sys$clib/lib
-$ link tpf, forsupff, forsupf, 'hdflib, sys$clib/lib
-$ link tsdmmsf,forsupff, forsupf, 'hdflib, sys$clib/lib
-$ link tsdnmmsf,forsupff, forsupf, 'hdflib, sys$clib/lib
-$ link tsdntf,forsupff, forsupf, 'hdflib, sys$clib/lib
-$ link tsdnntf,forsupff, forsupf, 'hdflib, sys$clib/lib
-$ link tanf,forsupff, forsupf, 'hdflib, sys$clib/lib
-$ link tanfilef,forsupff, forsupf, 'hdflib, sys$clib/lib
-$ link tstubsf,forsupff, forsupf, 'hdflib, sys$clib/lib
-$ link tsdstrf,forsupff, forsupf, 'hdflib, sys$clib/lib
-$ link slabwf,forsupff, forsupf, 'hdflib, sys$clib/lib
-$ link slab1wf,forsupff, forsupf, 'hdflib, sys$clib/lib
-$ link slab2wf,forsupff, forsupf, 'hdflib, sys$clib/lib
-$ link slab3wf,forsupff, forsupf, 'hdflib, sys$clib/lib
-$ link slab4wf,forsupff, forsupf, 'hdflib, sys$clib/lib
-$ link manf,forsupff, forsupf, 'hdflib, sys$clib/lib
-$ link mgrf,forsupff, forsupf, 'hdflib, sys$clib/lib
-$ link egfhi,forsupff, forsupf, 'hdflib, sys$clib/lib
+$ fortran 'foropt forsupff.f
+$ fortran 'foropt manf.f
+$ fortran 'foropt mgrf.f
+$ fortran 'foropt tvsetf.f
+$!
+$ link/nodebug fortest, 'hdflib, sys$clib/lib
+$ link tr8f, forsupff, 'hdflib, sys$clib/lib
+$ link t24f,forsupff,  'hdflib, sys$clib/lib
+$ link tpf, forsupff, 'hdflib, sys$clib/lib
+$ link tsdmmsf,forsupff, 'hdflib, sys$clib/lib
+$ link tsdnmmsf,forsupff, 'hdflib, sys$clib/lib
+$ link tsdntf,forsupff, 'hdflib, sys$clib/lib
+$ link tsdnntf,forsupff, 'hdflib, sys$clib/lib
+$ link tanf,forsupff, 'hdflib, sys$clib/lib
+$ link tanfilef,forsupff, 'hdflib, sys$clib/lib
+$ link tstubsf,forsupff, 'hdflib, sys$clib/lib
+$ link tsdstrf,forsupff, 'hdflib, sys$clib/lib
+$ link slabwf,forsupff, 'hdflib, sys$clib/lib
+$! link slab1wf,forsupff, 'hdflib, sys$clib/lib
+$! link slab2wf,forsupff, 'hdflib, sys$clib/lib
+$! link slab3wf,forsupff, 'hdflib, sys$clib/lib
+$! link slab4wf,forsupff, 'hdflib, sys$clib/lib
+$ link manf,forsupff, 'hdflib, sys$clib/lib
+$ link mgrf,forsupff, 'hdflib, sys$clib/lib
+$ link egfhi,forsupff, 'hdflib, sys$clib/lib
+$ link tvsetf,forsupff, 'hdflib, sys$clib/lib
+$ link fortestF, forsupff,tr8f,t24f,tpf,tsdmmsf, -
+  tsdnmmsf,tsdntf,tsdnntf,tanf,tanfilef,tstubsf,tsdstrf, -
+  slabwf,manf,mgrf,tvsetf,-
+  'hdflib, sys$clib/lib
 $! delete *.obj;*
 $!
-
-

@@ -221,7 +221,7 @@ main(int argc, char *argv[])
       }
 
     /*  printf("The Verbosity is %d \n",Verbosity); */
-
+/*
     HDstrcpy(verb_env,FOR_VERB);
     HDstrcat(verb_env,"=");
     sprintf(verb_tmp,"%d",Verbosity);
@@ -229,7 +229,7 @@ main(int argc, char *argv[])
 #ifndef vms
     HDputenv(verb_env);
 #endif
-
+*/
     for (Loop = 0; Loop < num_tests; Loop++)
       {
           if (Test[Loop].SkipFlag)
@@ -262,12 +262,28 @@ main(int argc, char *argv[])
       }
 
     fclose(cmdfile);
+#ifdef VMS
     {
+        char *comprocfile="fortest.com";
+
+        if ((cmdfile = fopen(comprocfile, "w")) == NULL){
+           printf("***Can't write to cmdfile(%s)***\n", comprocfile);
+           return(-1);
+        }
+        fprintf(cmdfile, "%s %s\n",
+            "DEFINE/USER_MODE SYS$INPUT", cmdfilename);
+        fprintf(cmdfile, "%s\n", "run []fortestF.exe");
+        fclose(cmdfile);
+        return(system("@fortest.com"));
+    }
+#else
+        {
 	char fortrancmd[100];
 	HDstrcpy(fortrancmd, "./fortestF < ");
 	HDstrcat(fortrancmd, cmdfilename);
 	return(system(fortrancmd));
     }
+#endif
 #ifdef NO
     MESSAGE(2, printf("\n\n");
         )
