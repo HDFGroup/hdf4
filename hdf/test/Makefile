@@ -182,7 +182,7 @@ FOBJS = tr8f.o t24f.o tpf.o tanf.o tanfilef.o tsdstrf.o tsdntf.o \
         tsdnntf.o tsdmmsf.o tsdnmmsf.o tstubsf.o fortest.o \
         slabwf.o slab1wf.o slab2wf.o slab3wf.o slab4wf.o manf.o 
 
-$(FTESTS): $(FSRCS)
+$(FTESTS): $(FSRCS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
 	$(FC) $(FFLAGS) $@.f -o $@ $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
 
 $(FTESTS): $(FRC)
