@@ -93,6 +93,13 @@ infodir = $(prefix)/info
 ### ------------------- end of makefile fragments -------------------------
 
 # ############# End of system configuration section. ###############
+LOCAL_MACROS  = CC="$(CC)" \
+	CFLAGS="$(CFLAGS)" \
+	CPP="$(CPP)" \
+	CPPFLAGS="$(CPPFLAGS)" \
+	exec_prefix="$(exec_prefix)" \
+	FC="$(FC)" \
+	prefix="$(prefix)"
 
 # ==> where is your HDF library (libdf.a) located?
 # ==> where are your hdf.h, hdfi.h and vg.h files located?
@@ -108,7 +115,28 @@ JPEGINC=$(srcdir)/../jpeg
 #Where are the utility includes
 UTILINC=$(srcdir)
 
+OTHERDIRS = fixatr testfiles
+
+MANIFEST = $(DISTFILES)
+DISTFILES = Makefile.in README.TST $(UTILSRCS) $(UTILHDRS) $(FIXATRS) $(TESTFILES)
+
 # Utilities
+UTILSRCS = hdf24to8.c hdfcomp.c hdfls.c hdfpack.c hdftopal.c hdftor8.c paltohdf.c \
+        r8tohdf.c ristosds.c vcompat.c vmake.c vshow.c hdf8to24.c hdf2jpeg.c jpeg2hdf.c fp2hdf.c \
+	hdfunpac.c he_main.c he_cntrl.c he_disp.c he_file.c fptest.c
+
+UTILHDRS = he.h he_proto.h
+
+FIXATRS = fixatr/README fixatr/command.for fixatr/common.for fixatr/fixatr.cld \
+	fixatr/fixatr.hlp fixatr/makefix.com fixatr/parse.mar fixatr/rformat.for
+
+
+TESTFILES = testfiles/README testfiles/head.r24.Z testfiles/jpeg_img.jpg \
+	testfiles/ntcheck.hdf testfiles/palette.raw testfiles/storm110.hdf \
+	testfiles/storm110.raw testfiles/storm120.hdf testfiles/storm120.raw \
+	testfiles/storm130.hdf testfiles/storm130.raw testfiles/storm140.raw \
+	testfiles/test.cdf testfiles/test.hdf
+
 UTILS = hdf24to8 hdfcomp hdfls hdfpack hdftopal hdftor8 paltohdf \
         r8tohdf ristosds vcompat vmake vshow hdf8to24 hdf2jpeg jpeg2hdf fp2hdf \
 	hdfunpac
@@ -180,6 +208,19 @@ depend:
 
 saber:	$(SRCS)
 	 #load -I$(HDFINC) -I$(UTILINC) -D$(MACHINE) $(SRCS) 
+
+# for distribution creation
+distdir = $(TOP_SRCDIR)/$(PACKAGE)-$(VERSION)/$(curdir)
+curdir = hdf/util
+dist: $(DISTFILES)
+	for subdir in $(OTHERDIRS); do \
+	  mkdir $(distdir)/$$subdir || exit 1; \
+	done
+	@for file in $(DISTFILES); do \
+	  ln $(srcdir)/$$file $(distdir)/$$file 2> /dev/null \
+	    || { echo copying $$file instead; \
+	    cp -p $(srcdir)/$$file $(distdir)/$$file;}; \
+	done
 
 help:
 	@echo ""

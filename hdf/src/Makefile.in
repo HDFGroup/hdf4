@@ -134,6 +134,13 @@ TARGETLIB = libdf.a
 ### ------------------- end of makefile fragments -------------------------
 
 # ############# End of system configuration section. ###############
+LOCAL_MACROS  = CC="$(CC)" \
+	CFLAGS="$(CFLAGS)" \
+	CPP="$(CPP)" \
+	CPPFLAGS="$(CPPFLAGS)" \
+	exec_prefix="$(exec_prefix)" \
+	FC="$(FC)" \
+	prefix="$(prefix)"
 
 # ==> specify directories where to find inludes and library
 #     HDF library, and HDF utilities
@@ -149,6 +156,11 @@ ALL_CFLAGS = -I. $(CFLAGS) -I$(JPEGINC)
 LINTFLAGS=
 SHAR=shar
 ARCHIVE=hdf.shar
+
+MANIFEST = $(DISTFILES)
+DISTFILES = Makefile.in src.inc $(HDRS) $(CSRCS) $(FSRCS) $(FINCS) \
+	win32hdf.mak cmextelt.cs hdfnof.bld hdfnofw3.lbc hdfnofwc.lbc \
+	hdfw386.lbc hdfwcc.lbc makepc.msc makepc.386 makepc.wcc makewin.msc
 
 #
 #include the source file definitions
@@ -186,13 +198,13 @@ cmextelt.o: cmextelt.cs
 all: libdf.a 
 
 libdf.a: $(COBJS) $(FOBJS) $(CMOBJS) #$(JOBJS)
-	-$(RM) libdf.a
+	-$(RM) $(RMFLAGS) libdf.a
 #	$(AR) $(ARFLAGS) libdf.a `lorder '$(COBJS) $(FOBJS)' | tsort `
 	$(AR) $(ARFLAGS) libdf.a $(COBJS) $(FOBJS) $(CMOBJS)
 	$(RANLIB) libdf.a
 
 libnofortran: $(COBJS) $(CMOBJS) #$(JOBJS) 
-	-$(RM) libdf.a
+	-$(RM) $(RMFLAGS) libdf.a
 #	$(AR) $(ARFLAGS) libdf.a `lorder $(COBJS) | tsort `
 	$(AR) $(ARFLAGS) libdf.a $(COBJS) $(CMOBJS)
 	$(RANLIB) libdf.a
@@ -266,9 +278,9 @@ distdir = $(TOP_SRCDIR)/$(PACKAGE)-$(VERSION)/$(curdir)
 curdir = hdf/src
 dist: $(DISTFILES)
 	@for file in $(DISTFILES); do \
-	  ln $(srcdir)/$$file $(distdir) 2> /dev/null \
+	  ln $(srcdir)/$$file $(distdir)/$$file 2> /dev/null \
 	    || { echo copying $$file instead; \
-	    cp -p $(srcdir)/$$file $(distdir);}; \
+	    cp -p $(srcdir)/$$file $(distdir)/$$file;}; \
 	done
 
 # for auto remaking, see toplevel Makefile

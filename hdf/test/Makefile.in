@@ -124,6 +124,7 @@ SHELL = /bin/sh
 
 # 'srcdir' Gets set to directory this Makefile is found in
 srcdir = .
+TOP_SRCDIR = ../..
 
 prefix = /usr/local
 
@@ -202,6 +203,14 @@ HDF_FLAGS       = \
         RMFLAGS="$(RMFLAGS)" \
         MACHINE="$(MACHINE)" 
 
+LOCAL_MACROS  = CC="$(CC)" \
+	CFLAGS="$(CFLAGS)" \
+	CPP="$(CPP)" \
+	CPPFLAGS="$(CPPFLAGS)" \
+	exec_prefix="$(exec_prefix)" \
+	FC="$(FC)" \
+	prefix="$(prefix)"
+
 # ==> where is your HDF library (libdf.a) located?
 # ==> where are your hdf.h, hdfi.h and vg.h files located?
 HDFINC= $(srcdir)/../src
@@ -213,9 +222,16 @@ HDFBIN=$(srcdir)/../bin
 JPEGLIB=$(srcdir)/../jpeg
 JPEGINC=$(srcdir)/../jpeg
 
+MANIFEST = $(DISTFILES)
+
+DISTFILES = Makefile.in bitio.dat litend.dat nbit.dat win32tst.mak \
+	$(SRCS) $(FSRCS) $(HDRS)
+
+HDRS= tproto.h tutils.h
+
 SRCS= 	rig.c sdstr.c blocks.c an.c anfile.c extelt.c file.c file1.c vers.c \
 	sdmms.c sdnmms.c slab.c litend.c tvset.c comp.c bitio.c tree.c conv.c \
-	nbit.c vblocks.c man.c mgr.c testhdf.c
+	nbit.c vblocks.c man.c mgr.c testhdf.c gentest.c
 
 CTESTS= rig.o sdstr.o blocks.o an.o anfile.o extelt.o file.o file1.o vers.o \
 	sdmms.o sdnmms.o slab.o litend.o tvset.o comp.o bitio.o tree.o conv.o \
@@ -223,7 +239,7 @@ CTESTS= rig.o sdstr.o blocks.o an.o anfile.o extelt.o file.o file1.o vers.o \
 
 FSRCS= tr8f.f t24f.f tpf.f tanf.f tanfilef.f tsdstrf.f tsdntf.f tsdnntf.f \
         tsdmmsf.f tsdnmmsf.f tstubsf.f \
-        slabwf.f slab1wf.f slab2wf.f slab3wf.f slab4wf.f manf.f
+        slabwf.f slab1wf.f slab2wf.f slab3wf.f slab4wf.f manf.f fortest.c
 FTESTS= tr8f t24f tpf tanf tanfilef tsdstrf tsdntf tsdnntf \
         tsdmmsf tsdnmmsf tstubsf \
         slabwf slab1wf slab2wf slab3wf slab4wf manf
@@ -316,6 +332,16 @@ depend:
 
 saber:	$(SRCS)
 	 #load -I$(HDFINC) -D$(MACHINE) $(SRCS) 
+
+# for distribution creation
+distdir = $(TOP_SRCDIR)/$(PACKAGE)-$(VERSION)/$(curdir)
+curdir = hdf/test
+dist: $(DISTFILES)
+	@for file in $(DISTFILES); do \
+	  ln $(srcdir)/$$file $(distdir)/$$file 2> /dev/null \
+	    || { echo copying $$file instead; \
+	    cp -p $(srcdir)/$$file $(distdir)/$$file;}; \
+	done
 
 help:
 	@echo ""

@@ -118,23 +118,25 @@ LOCAL_MACROS  = CC="$(CC)" \
 # General rules
 #
 all:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
+          SUBDIRS="jpeg" subd  
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="src jpeg util test" subd message 
+          SUBDIRS="src util test" subd message 
 
 allnofortran:
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd  
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
           SUBDIRS="src util test" subd message 
 
 rebuild rebuildnofortran:
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="src util test" subd message 
 
 libnofortran:
-	@$(MAKE) $(MYFLAGS) $(HDF_FLAGS) TARG=all \
+	@$(MAKE) $(MYFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
 	  SUBDIRS="jpeg" subd 
 	@$(MAKE) $(MYFLAGS) $(HDF_FLAGS) TARG=nofortran \
 	  SUBDIRS="src" subd message
@@ -236,11 +238,12 @@ distdir = $(TOP_SRCDIR)/$(PACKAGE)-$(VERSION)/$(curdir)
 curdir = hdf
 dist: $(DISTFILES)
 	@for file in $(DISTFILES); do \
-	  ln $(srcdir)/$$file $(distdir) 2> /dev/null \
+	  ln $(srcdir)/$$file $(distdir)/$$file 2> /dev/null \
 	    || { echo copying $$file instead; \
-	    cp -p $(srcdir)/$$file $(distdir);}; \
+	    cp -p $(srcdir)/$$file $(distdir)/$$file;}; \
 	done
 	for subdir in $(SUBDIRS); do \
+	  echo making $@ in $$subdir; \
 	  mkdir $(distdir)/$$subdir || exit 1; \
 	  (cd $$subdir && $(MAKE) $@) || exit 1; \
 	done

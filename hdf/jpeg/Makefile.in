@@ -8,6 +8,7 @@
 
 # For compiling with source and object files in different directories.
 srcdir = .
+TOP_SRCDIR = ../..
 
 # Where to install the programs and man pages.
 prefix = /usr/local
@@ -70,6 +71,19 @@ INSTALL= cp
 INSTALL_PROGRAM= $(INSTALL)
 INSTALL_DATA= $(INSTALL)
 
+LOCAL_MACROS  = CC="$(CC)" \
+	CFLAGS="$(CFLAGS)" \
+	CPP="$(CPP)" \
+	CPPFLAGS="$(CPPFLAGS)" \
+	exec_prefix="$(exec_prefix)" \
+	FC="$(FC)" \
+	prefix="$(prefix)"
+
+MANIFEST = $(DISTFILES)
+OTHERDIRS = config
+PACKAGE	 = HDF
+VERSION  = 4.0
+
 #----------------- End of configurable options.---------------------------
 
 # source files: JPEG library proper
@@ -94,12 +108,21 @@ INCLUDES= jchuff.h jdhuff.h jdct.h jerror.h jinclude.h jmemsys.h jmorecfg.h \
 DOCS= README install.doc usage.doc cjpeg.1 djpeg.1 jpegtran.1 rdjpgcom.1 \
         wrjpgcom.1 wizard.doc example.c libjpeg.doc structure.doc \
         coderules.doc filelist.doc change.log
-MKFILES= configure makefile.cfg makefile.ansi makefile.unix makefile.bcc \
+MKFILES= configure.gnu makefile.cfg makefile.ansi makefile.unix makefile.bcc \
         makefile.mc6 makefile.dj makefile.wat makcjpeg.st makdjpeg.st \
         makljpeg.st maktjpeg.st makefile.manx makefile.sas makefile.mms \
-        makefile.vms makvms.opt
+        makefile.vms makvms.opt Makefile.in configure.in
 CONFIGFILES= jconfig.cfg jconfig.manx jconfig.sas jconfig.st jconfig.bcc \
-        jconfig.mc6 jconfig.dj jconfig.wat jconfig.vms
+        jconfig.mc6 jconfig.dj jconfig.wat jconfig.vms \
+        config/jaix.h config/jalpha.h config/jcm5.h config/jconvex.h config/jdec.h \
+        config/jfbsd.h config/jhpux.h config/jirix32.h config/jirix4.h \
+        config/jirix5.h config/jirix6.h config/jlinux.h config/jsolaris.h \
+        config/jsun.h config/junicos.h config/jwin32.h \
+        config/mh-aix config/mh-alpha config/mh-cm5 config/mh-convex config/mh-decstation \
+        config/mh-fbsd config/mh-hpux config/mh-irix32 config/mh-irix4 \
+        config/mh-irix5 config/mh-irix6 config/mh-linux config/mh-solaris \
+        config/mh-sun config/mh-unicos config/win32jpg.mak 
+
 OTHERFILES= jconfig.doc ckconfig.c ansi2knr.c ansi2knr.1 jmemdosa.asm
 TESTFILES= testorig.jpg testimg.ppm testimg.gif testimg.jpg testprog.jpg \
         testimgp.jpg
@@ -182,6 +205,19 @@ distribute:
 	$(RM) $(RMFLAGS) jpegsrc.tar*
 	tar cvf jpegsrc.tar $(DISTFILES)
 	compress -v jpegsrc.tar
+
+# for distribution creation
+distdir = $(TOP_SRCDIR)/$(PACKAGE)-$(VERSION)/$(curdir)
+curdir = hdf/jpeg
+dist: $(DISTFILES)
+	for subdir in $(OTHERDIRS); do \
+	  mkdir $(distdir)/$$subdir || exit 1; \
+	done
+	@for file in $(DISTFILES); do \
+	  ln $(srcdir)/$$file $(distdir)/$$file 2> /dev/null \
+	    || { echo copying $$file instead; \
+	    cp -p $(srcdir)/$$file $(distdir)/$$file;}; \
+	done
 
 test: cjpeg djpeg jpegtran
 	$(RM) $(RMFLAGS) testout*
