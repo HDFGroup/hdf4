@@ -112,6 +112,9 @@ HDFBIN=$(srcdir)/../bin
 JPEGLIB=$(srcdir)/../jpeg
 JPEGINC=$(srcdir)/../jpeg
 
+# ==> where is your PABLO include files
+PABLO_HINC= $(srcdir)/../pablo
+
 #Where are the utility includes
 UTILINC=$(srcdir)
 

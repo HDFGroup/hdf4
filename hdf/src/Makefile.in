@@ -152,6 +152,10 @@ HDFBIN= $(srcdir)/../bin
 JPEGINC=$(srcdir)/../jpeg
 JPEGLIB=$(srcdir)/../jpeg
 
+# ==> specify where to find the Pablo include and source files 
+PABLO_HINC=$(srcdir)/../pablo
+PABLO_SRC=$(srcdir)/../pablo
+
 ALL_CFLAGS = -I. $(CFLAGS) -I$(JPEGINC)
 LINTFLAGS=
 SHAR=shar
@@ -195,19 +199,47 @@ cmextelt.o: cmextelt.cs
 .PHONY : all nofortran libnostub clean distclean debug saber lint
 
 #all: libdf.a .installed
-all: libdf.a 
+#all: libdf.a 
 
-libdf.a: $(COBJS) $(FOBJS) $(CMOBJS) #$(JOBJS)
+all::         FORCE
+	@if test -z "$(PABLO_FLAGS)"; then \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) libdf.a; \
+	else		 \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) libdf.a; \
+	fi
+
+libnofortran::         FORCE
+	@if test -z "$(PABLO_FLAGS)"; then \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) nofort-libdf.a; \
+	else		 \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) nofort-libdf.a; \
+	fi
+
+
+libdf.a: $(COBJS) $(FOBJS) $(CMOBJS)
 	-$(RM) $(RMFLAGS) libdf.a
 #	$(AR) $(ARFLAGS) libdf.a `lorder '$(COBJS) $(FOBJS)' | tsort `
 	$(AR) $(ARFLAGS) libdf.a $(COBJS) $(FOBJS) $(CMOBJS)
 	$(RANLIB) libdf.a
 
-libnofortran: $(COBJS) $(CMOBJS) #$(JOBJS) 
+libdf-inst.a:   $(COBJS) $(FOBJS) $(CMOBJS) $(PCOBJS) $(PFOBJS)
+	-$(RM) $(RMFLAGS) libdf-inst.a libdf.a
+	$(AR) $(ARFLAGS) libdf-inst.a  $(COBJS) $(FOBJS) $(CMOBJS) $(PCOBJS) $(PFOBJS)
+	$(RANLIB) libdf-inst.a
+	ln -s libdf-inst.a libdf.a
+
+nofort-libdf.a: $(COBJS) $(CMOBJS)
 	-$(RM) $(RMFLAGS) libdf.a
 #	$(AR) $(ARFLAGS) libdf.a `lorder $(COBJS) | tsort `
 	$(AR) $(ARFLAGS) libdf.a $(COBJS) $(CMOBJS)
 	$(RANLIB) libdf.a
+
+nofort-libdf-inst.a:   $(COBJS) $(CMOBJS) $(PCOBJS)
+	-$(RM) $(RMFLAGS) libdf-inst.a libdf.a
+	$(AR) $(ARFLAGS) libdf-inst.a  $(COBJS) $(CMOBJS) $(PCOBJS)
+	$(RANLIB) libdf-inst.a
+	ln -s libdf-inst.a libdf.a
+
 
 #libnostub nofortran: libnofortran .finstalled
 libnostub nofortran: libnofortran 
@@ -291,6 +323,10 @@ dist: $(DISTFILES)
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
 
+# The following dummy target is useful as a dependency to ensure that a
+# rule is always executed.
+#
+FORCE:
 
 help:
 	@echo ""

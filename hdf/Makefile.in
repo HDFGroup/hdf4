@@ -84,6 +84,7 @@ SUBDIRS= src jpeg fmpool pablo test util
 HDFINC= $(srcdir)/src
 HDFLIB= $(srcdir)/src
 HDFBIN= $(srcdir)/bin
+PABLO_HINC= $(srcdir)/pablo
 
 #
 #
@@ -102,6 +103,7 @@ HDF_FLAGS       = \
         RMFLAGS="$(RMFLAGS)" \
         FMPOOL_FLAGS="$(FMPOOL_FLAGS)" \
         PABLO_FLAGS="$(PABLO_FLAGS)" \
+        PABLO_INCLUDE="$(PABLO_INCLUDE)" \
         MACHINE="$(MACHINE)" 
 #        HDFLIB="$(HDFLIB)" 
 #        HDFINC="$(HDFINC)" 

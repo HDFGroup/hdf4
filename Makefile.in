@@ -103,6 +103,9 @@ HDFINC= `pwd`/hdf/src
 # Location where the HDF library is located
 HDFLIB= `pwd`/hdf/src
 
+# ==> where is your PABLO include files
+PABLO_HINC= `pwd`/hdf/pablo
+
 #SUBDIRS = "this is set via configure, don't edit this"
 #OTHERS = 
 
@@ -123,6 +126,7 @@ HDF_FLAGS       = \
         RMFLAGS="$(RMFLAGS)" \
         FMPOOL_FLAGS="$(FMPOOL_FLAGS)" \
         PABLO_FLAGS="$(PABLO_FLAGS)" \
+        PABLO_INCLUDE="$(PABLO_INCLUDE)" \
         MACHINE="$(MACHINE)" \
         HDFINC="$(HDFINC)" \
         HDFLIB="$(HDFLIB)" 
