@@ -51,6 +51,7 @@
 ./config/mh-sun
 ./config/mh-t3e
 ./config/mh-unicos
+./config/solaris2.x
 
 ./hdf/COPYING
 ./hdf/COPYRIGHT
