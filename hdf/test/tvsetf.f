@@ -61,7 +61,12 @@ C Output file: tvsetf1.hdf
      +           feps = 1.0E-5,
      +           geps = 1.0D-9
      +          )
-
+C-------------------------------------------------------------------------
+C    These definitions are added to test hglibver and hgfilver functions
+C
+      integer major_v, minor_v, release
+      character*80 hdfstring
+C-------------------------------------------------------------------------     
       DATA ddata1/10,11,12,13,14,15,16,17,18,19/
       DATA ddata2/20,21,22,23,24,25,26,27,28,29/
       DATA ddata4/40,41,42,43,44,45,46,47,48,49/
@@ -436,6 +441,14 @@ C
 C Open the file for writing
       fid1 = hopen(fn1, DFACC_RDWR, 0)
       call VRFY(fid1,'hopen',number_failed)
+C
+C-----Test hglibver and hgfilver functions.
+C
+      ret = hglibver(major_v, minor_v, release, hdfstring)
+      call VRFY(ret, 'hglibver', number_failed)
+      ret = hgfilver(fid1, major_v, minor_v, release, hdfstring)
+      call VRFY(ret, 'hgfilver', number_failed)
+
       ret = vfstart(fid1)
       call VRFY(ret,'vfstart',number_failed)
 
