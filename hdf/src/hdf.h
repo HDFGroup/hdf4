@@ -529,6 +529,7 @@ typedef int32           HFILEID;
    functions that are used by application programs.  */
 
 #include "hcomp.h"
+#include "herr.h"
 #include "hproto.h"
 #include "vproto.h"
 
