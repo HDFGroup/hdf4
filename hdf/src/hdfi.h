@@ -690,8 +690,8 @@ Please check your Makefile.
 #include <sys\stat.h>
 #include <io.h>
 #include <conio.h>          /* for debugging getch() calls */
-#endif /* UNIX386 */
 #include <malloc.h>
+#endif /* UNIX386 */
 #include <string.h>         /* for vaious string functions */
 #include <limits.h>         /* for UINT_MAX used in various places */
 #include <stdlib.h>
@@ -801,6 +801,7 @@ Please check your Makefile.
 #define GOT_MACHINE
 
 #include <string.h>
+#include <limits.h>
 #define isascii(c)  (isprint(c) || iscntrl(c))
 #ifndef __GNUC__
 #include <memory.h>
