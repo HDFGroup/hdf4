@@ -26,7 +26,7 @@ char *tagnum_to_name(intn num)
 
     ret=HDgettagsname(num);
     if(ret==NULL)
-        ret=HDstrdup(unknown_tag);
+        ret=HDstrdup((char *)unknown_tag);
     return(ret);
 }   /* end tagnum_to_name() */
 

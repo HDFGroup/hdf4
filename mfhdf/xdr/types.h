@@ -23,7 +23,7 @@
 
 #if defined __STDC__ || defined PC
 #define STDC_INCLUDES
-#if !defined unix && !defined WINNT
+#if !defined UNIX386 && !defined WINNT
 long ntohl(long);
 long htonl(long);
 #endif /* !unix */
@@ -38,7 +38,7 @@ extern char *malloc();
 #define mem_alloc(bsize)    malloc(bsize)
 #define mem_free(ptr, bsize)    free(ptr)
 
-#ifdef unix
+#if defined unix | defined __unix
 #ifndef makedev /* ie, we haven't already included it */
 #include <sys/types.h>
 #endif

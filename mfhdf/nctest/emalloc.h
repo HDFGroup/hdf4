@@ -4,6 +4,8 @@
  *   $Header $
  *********************************************************************/
 
+#ifndef __FreeBSD__
+
 #undef PROTO
 #ifndef NO_HAVE_PROTOTYPES 
 #   define	PROTO(x)	x
@@ -27,3 +29,5 @@ extern void	*erealloc	PROTO((
 #ifdef __cplusplus
 }
 #endif
+#endif /* __FreeBSD__ */
+

@@ -13,6 +13,8 @@
 #include "hdf.h"
 #endif
 
+#ifndef __FreeBSD__
+
 void *
 emalloc (size)			/* check return from malloc */
 int size;
@@ -60,3 +62,5 @@ erealloc (ptr,size)		/* check return from realloc */
     }
     return p;
 }
+#endif /* __FreeBSD__ */
+
