@@ -800,7 +800,6 @@ switch (cflags)
     *flags = -1;
      ret = 0;
      return(ret);
-     break;
 
   case HDF_CHUNK:    /* Chunked, noncompressed GR */
 
@@ -809,7 +808,6 @@ switch (cflags)
           dim_length[rank-i-1] = chunk_def.chunk_lengths[i];
      ret = 0;
      return(ret);
-     break;
 
   case (HDF_CHUNK | HDF_COMP):     /* Chunked and compressed GR */
  
@@ -818,12 +816,10 @@ switch (cflags)
           dim_length[rank-i-1] =  chunk_def.comp.chunk_lengths[i];
      ret = 0;
      return(ret);
-     break;
 
   default:
 
     return FAIL;
-    break;
             
   }
 
@@ -1037,7 +1033,6 @@ switch (CASE)  {
        default:
 
           return FAIL;
-          break;
                     
                      }
 
@@ -1189,7 +1184,6 @@ switch (CASE)  {
        default:
 
           return FAIL;
-          break;
                     
                      }
 
