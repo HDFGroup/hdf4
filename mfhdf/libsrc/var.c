@@ -21,7 +21,7 @@ const int *dims ;
 {
 	NC_var *ret ;
 
-	ret = (NC_var *)HDmalloc(sizeof(NC_var)) ;
+	ret = (NC_var *)HDcalloc(1,sizeof(NC_var)) ;
 	if( ret == NULL )
 		goto alloc_err ;
 
@@ -825,7 +825,7 @@ xdr_NC_var(xdrs, vpp)
 
 	if( xdrs->x_op == XDR_DECODE )
 	{
-		*vpp = (NC_var *)HDmalloc(sizeof(NC_var)) ;
+		*vpp = (NC_var *)HDcalloc(1,sizeof(NC_var)) ;
 		if( *vpp == NULL )
 		{
 			nc_serror("xdr_NC_var") ;
