@@ -2,7 +2,7 @@
 # Generated automatically by configure.
 # Run this file to recreate the current configuration.
 # This directory was configured as follows,
-# on host xongmao:
+# on host void:
 #
 # configure 
 
@@ -21,7 +21,7 @@ CFLAGS='-g'
 OS='sunos'
 LIBOBJS=''
 PORT_HEADERS=''
-PORT_MANIFEST=''
+PORT_MANIFEST=' which'
 PORT_SUBDIRS=''
 CC='cc'
 AR='ar'
@@ -34,8 +34,8 @@ FFLAGS=''
 LEX='lex'
 YACC='yacc'
 XDRFILE='xdrposix'
-prefix='/hdf/home/chouck/hdf'
-exec_prefix='/hdf/home/chouck/hdf/bin'
+MACHINE='sun4m'
+WHICH='which'
 CPP='cc -E'
 FC='f77'
 NEQN='neqn'
@@ -44,8 +44,10 @@ INSTALL='/bin/install -c'
 INSTALL_PROGRAM='$(INSTALL)'
 INSTALL_DATA='$(INSTALL) -m 664'
 MAKEINFO=''
+SWAP=''
+NETLONG=''
 CPP_XDR='-I/usr/include/rpc'
-DEFS=' -DOLD_FILLVALUES=0 -I/usr/include/rpc'
+DEFS=' -I/usr/include/rpc'
 LIBS=''
 XDR_LIBOBJS=''
 XDR_INSTALL_DEPS=''
@@ -53,13 +55,13 @@ LD_XDR=''
 FTPDIR='/home/ftp/pub/sdm'
 VERSION='2.3'
 MAJOR_NO='2'
-MINOR_NO=''
+MINOR_NO='3'
 srcdir='.'
-DEFS=' -DOLD_FILLVALUES=0 -I/usr/include/rpc'
-prefix='/hdf/home/chouck/hdf'
-exec_prefix='/hdf/home/chouck/hdf/bin'
-prsub='s%^prefix\([ 	]*\)=\([ 	]*\).*$%prefix\1=\2/hdf/home/chouck/hdf%
-s%^exec_prefix\([ 	]*\)=\([ 	]*\).*$%exec_prefix\1=\2/hdf/home/chouck/hdf/bin%'
+DEFS=' -I/usr/include/rpc'
+prefix='/nfs/hdf/home/chouck/hdf'
+exec_prefix='/nfs/hdf/home/chouck/hdf/bin'
+prsub='s%^prefix\([ 	]*\)=\([ 	]*\).*$%prefix\1=\2/nfs/hdf/home/chouck/hdf%
+s%^exec_prefix\([ 	]*\)=\([ 	]*\).*$%exec_prefix\1=\2/nfs/hdf/home/chouck/hdf/bin%'
 
 top_srcdir=$srcdir
 for file in .. \
@@ -105,8 +107,8 @@ s%@FFLAGS@%$FFLAGS%g
 s%@LEX@%$LEX%g
 s%@YACC@%$YACC%g
 s%@XDRFILE@%$XDRFILE%g
-s%@prefix@%$prefix%g
-s%@exec_prefix@%$exec_prefix%g
+s%@MACHINE@%$MACHINE%g
+s%@WHICH@%$WHICH%g
 s%@CPP@%$CPP%g
 s%@FC@%$FC%g
 s%@NEQN@%$NEQN%g
@@ -115,6 +117,8 @@ s%@INSTALL@%$INSTALL%g
 s%@INSTALL_PROGRAM@%$INSTALL_PROGRAM%g
 s%@INSTALL_DATA@%$INSTALL_DATA%g
 s%@MAKEINFO@%$MAKEINFO%g
+s%@SWAP@%$SWAP%g
+s%@NETLONG@%$NETLONG%g
 s%@CPP_XDR@%$CPP_XDR%g
 s%@DEFS@%$DEFS%g
 s%@LIBS@%$LIBS%g
@@ -149,8 +153,8 @@ readsub(inpath)
     }
     buf[sizeof(buf)-1]	= 0;
     while (fgets(buf, sizeof(buf), fp) != NULL) {
-	if (sscanf(buf, "include%*[] \t[]%s", path) == 1) {
-	    if (!readsub(path))
+      if (sscanf(buf, "include%*[] \t[]%s", path) == 1) {
+          if (!readsub(path))
 		return 0;
 	} else {
 	    (void) fputs(buf, stdout);

@@ -7,11 +7,43 @@ divert(-1)
 define(UL_FILLVALUES, [dnl
 echo checking for fill value usage
 if test "${OLD_FILLVALUES-}" = yes; then
-    UC_REPLACE(OLD_FILLVALUES, 1)dnl
+    OLD_FILLVALUES=1
+    AC_DEFINE(OLD_FILLVALUES)
 else
-    UC_REPLACE(OLD_FILLVALUES, 0)dnl
+    OLD_FILLVALUES=0
 fi
+AC_SUBST(OLD_FILLVALUES)dnl
 UC_CREATE(libsrc/netcdf.h)dnl
+])
+
+
+# Check endianness.
+#
+define(UL_SWAP, [dnl
+echo checking endianess
+SWAP=
+AC_TEST_PROGRAM([main() {
+    long i = 0;
+    char *ip = (char*)&i;
+    *ip       = 'a';
+    exit(i != 'a'); /* false if little endian or sizeof(long) == sizeof(char) */
+}], [SWAP=-DSWAP])dnl
+AC_SUBST(SWAP)dnl
+])
+
+
+# Check type of 32-bit `network long' integer.
+#
+define([UL_NETLONG], [dnl
+AC_REQUIRE([UC_OS])dnl
+if test "$OS" = unicos; then
+NETLONG=
+else
+echo checking type of netlong
+AC_TEST_PROGRAM([main() {exit(sizeof(long) == 4);}],
+[NETLONG='-DNETLONG=int'], [NETLONG=])
+fi
+AC_SUBST(NETLONG)dnl
 ])
 
 
@@ -41,7 +73,6 @@ case "${OS}" in
                 UC_ENSURE(HDF_INC, -DIRIS4)
                 UC_ENSURE(HDF_INC, -cckr);;
   ultrix*)	LD_XDR=
-		UC_ENSURE(CPPFLAGS, -DSWAP)
                 UC_ENSURE(HDF_INC, -DMIPSEL);;
   unicos*)	LD_XDR=
 		UC_ENSURE(CPPFLAGS, -DBIG_SHORTS -DBIG_LONGS)
@@ -211,7 +242,7 @@ int foo(int bar, ...) {
 #
 define(UL_STRERROR, [dnl
 AC_REQUIRE([UC_PROG_FC])dnl
-if test `which "${FC-}" | wc -w` != 1; then
+if test `$WHICH "${FC-}" | wc -w` != 1; then
 AC_FUNC_CHECK(strerror, , [[UC_ENSURE(CPPFLAGS, -DNO_STRERROR)]])dnl
 else
   echo checking for strerror

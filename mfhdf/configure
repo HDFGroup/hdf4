@@ -136,6 +136,9 @@ OS_dgux
 #ifdef hpux
 OS_hpux
 #endif
+#ifdef NeXT
+OS_nextos
+#endif
 #ifdef sgi
 OS_irix
 #endif
@@ -153,9 +156,6 @@ OS_convex
 #endif
 #ifdef masscomp
 OS_rtu
-#endif
-#ifdef __uxpm__
-OS_uxpm
 #endif
 CAT_EOF
 OS=`cc -E conftest.c | sed -n '/^OS_/ {
@@ -256,10 +256,9 @@ test -z "$RANLIB" && RANLIB="@:"
 echo checking for fill value usage
 if test "${OLD_FILLVALUES-}" = yes; then
     OLD_FILLVALUES=1
-DEFS="$DEFS -DOLD_FILLVALUES=1"
+    DEFS="$DEFS -DOLD_FILLVALUES=1"
 else
     OLD_FILLVALUES=0
-DEFS="$DEFS -DOLD_FILLVALUES=0"
 fi
   for arg in libsrc/netcdf.h; do
     case "$TRANSFORMEES" in
@@ -316,21 +315,53 @@ esac
 test -z "$exec_prefix" && exec_prefix=$prefix/bin
 
 
-if test -z "$RANLIB"; then
-  echo checking for ranlib
+
+
+if test -z "$MACHINE"; then
+echo checking for type of machine
+MACHINE=`uname -m | tr A-Z a-z`
+if test -z "$MACHINE"; then
+  echo "MACHINE:machine hardware type:sun4c" >> conf.missing
+fi
+fi
+
+
+  for arg in which; do
+    case "$PORT_MANIFEST" in
+      *$arg*) ;;
+      *)      PORT_MANIFEST="${PORT_MANIFEST-} $arg";;
+    esac
+  done
+if test -z "$WHICH"; then
+  echo checking for which
   saveifs="$IFS"; IFS="${IFS}:"
   for dir in $PATH; do
     test -z "$dir" && dir=.
-    if test -f $dir/ranlib; then
-      RANLIB="ranlib"
+    if test -f $dir/which; then
+      WHICH="which"
       break
     fi
   done
   IFS="$saveifs"
 fi
-test -z "$RANLIB" && RANLIB="@:"
+test -z "$WHICH" && WHICH="`case "port" in 
+  /*) echo port; exit;;
+   *) path=\`pwd\`/port
+        tail=
+        while test -n "$path"; do
+          (cd $path && echo \`pwd\`$rest) 2> /dev/null && exit
+          base=/\`basename "$path"\`
+          tail=/$base$tail
+          path=\`echo "$path" | sed "s/\/$base//"\`
+        done;;
+esac
+`/which"
 
-
+if test "$OS" = ultrix && test "$MACHINE" = vax \
+    && test `$WHICH "$CC"` = /bin/cc; then
+  echo "changing C compiler to \`vcc' because \`cc' floating-point is broken"
+  CC=vcc
+fi
 
 echo checking how to run the C preprocessor
 if test -z "$CPP"; then
@@ -355,7 +386,7 @@ if test `$CPP conftest.c 2> /dev/null | wc -l` = 0; then
   else
     echo 1>&2 "$0: C preprocessor, \`$CPP', doesn't work; setting to \`cpp'"
     CPP=cpp
-    if test `which ${CPP} 2>&1 | wc -w` != 1; then
+    if test `$(WHICH) ${CPP} 2>&1 | wc -w` != 1; then
       echo 1>&2 "$0: C preprocessor, \`$CPP', doesn't exist"
       echo "CPP:C preprocessor:/lib/cpp" >> conf.missing
     fi
@@ -402,7 +433,7 @@ test -z "$FC" && FC=""
 test -n "$FC" && break
 done
 ;;
-  *)     for p in f77 cf77 fc frt
+  *)     for p in f77 cf77 fc
 do
 if test -z "$FC"; then
   echo checking for $p
@@ -423,7 +454,14 @@ done
 ;;
 esac
 if test -z "$FC"; then
-  echo "FC:FORTRAN compiler:/bin/f77" >> conf.missing
+    for arg in NONE; do
+    case "$FC" in
+      *$arg*) ;;
+      *)      FC="${FC-} $arg";;
+    esac
+  done
+
+  echo "Was unable to find a Fortran compiler on this machine."
 fi
 
 if test -z "$NEQN"; then
@@ -456,7 +494,7 @@ if test -z "$TBL"; then
 fi
 test -z "$TBL" && TBL="cat"
 test "$TBL" = cat && 
-  echo 1>&2 "$0: Can't find \`tbl'; setting to \`cat'"
+  echo 1>&2 "$0: Can't find program \`tbl'; setting to \`cat'"
 
 # Make sure to not get the incompatible SysV /etc/install and
 # /usr/sbin/install, which might be in PATH before a BSD-like install,
@@ -522,6 +560,37 @@ fi
 test -z "$MAKEINFO" && MAKEINFO=""
 
 
+echo checking endianess
+SWAP=
+cat > conftest.c <<EOF
+main() {
+    long i = 0;
+    char *ip = (char*)&i;
+    *ip       = 'a';
+    exit(i != 'a'); /* false if little endian or sizeof(long) == sizeof(char) */
+}
+EOF
+eval $compile
+if test -s conftest && (./conftest; exit) 2>/dev/null; then
+  SWAP=-DSWAP
+fi
+rm -f conftest*
+if test "$OS" = unicos; then
+NETLONG=
+else
+echo checking type of netlong
+cat > conftest.c <<EOF
+main() {exit(sizeof(long) == 4);}
+EOF
+eval $compile
+if test -s conftest && (./conftest; exit) 2>/dev/null; then
+  NETLONG='-DNETLONG=int'
+else
+  NETLONG=
+fi
+rm -f conftest*
+fi
+
 echo checking for XDR header-file
   if test -z "$CPP_XDR"; then
     for dir in /usr/include/rpc /usr/local/include/rpc \
@@ -568,13 +637,6 @@ case "${OS}" in
   done
 ;;
   ultrix*)	LD_XDR=
-		  for arg in -DSWAP; do
-    case "$CPPFLAGS" in
-      *$arg*) ;;
-      *)      CPPFLAGS="${CPPFLAGS-} $arg";;
-    esac
-  done
-
                   for arg in -DMIPSEL; do
     case "$HDF_INC" in
       *$arg*) ;;
@@ -628,16 +690,15 @@ case "${OS}" in
     esac
   done
 
-                LD_XDR=;;
-  convex*)        for arg in -DCONVEX; do
-    case "$HDF_INC" in
+		  for arg in -DBIG_LONGS; do
+    case "$CPPFLAGS" in
       *$arg*) ;;
-      *)      HDF_INC="${HDF_INC-} $arg";;
+      *)      CPPFLAGS="${CPPFLAGS-} $arg";;
     esac
   done
 
                 LD_XDR=;;
-  uxpm*)           for arg in -DVP; do
+  convex*)        for arg in -DCONVEX; do
     case "$HDF_INC" in
       *$arg*) ;;
       *)      HDF_INC="${HDF_INC-} $arg";;
@@ -827,7 +888,7 @@ else
 fi
 rm -f conftest*
 
-if test `which "${FC-}" | wc -w` != 1; then
+if test `$WHICH "${FC-}" | wc -w` != 1; then
 echo checking for strerror
 cat > conftest.c <<EOF
 #include <stdio.h>
@@ -871,7 +932,6 @@ else
 fi
 
 
-
 FTPDIR=${FTPDIR-/home/ftp}/pub/sdm
 
 echo checking for package version
@@ -892,7 +952,7 @@ if test -z "$MAJOR_NO"; then
 fi
 if test -z "$MINOR_NO"; then
   if test -n "$VERSION"; then \
-    MINOR_NO=`echo $VERSON |
+    MINOR_NO=`echo $VERSION |
       sed -n '/^[0-9][0-9]*\.\([0-9][0-9]*\).*/s//\1/p;q'`
   else
     MINOR_NO=
@@ -978,8 +1038,8 @@ FFLAGS='$FFLAGS'
 LEX='$LEX'
 YACC='$YACC'
 XDRFILE='$XDRFILE'
-prefix='$prefix'
-exec_prefix='$exec_prefix'
+MACHINE='$MACHINE'
+WHICH='$WHICH'
 CPP='$CPP'
 FC='$FC'
 NEQN='$NEQN'
@@ -988,6 +1048,8 @@ INSTALL='$INSTALL'
 INSTALL_PROGRAM='$INSTALL_PROGRAM'
 INSTALL_DATA='$INSTALL_DATA'
 MAKEINFO='$MAKEINFO'
+SWAP='$SWAP'
+NETLONG='$NETLONG'
 CPP_XDR='$CPP_XDR'
 DEFS='$DEFS'
 LIBS='$LIBS'
@@ -1050,8 +1112,8 @@ s%@FFLAGS@%$FFLAGS%g
 s%@LEX@%$LEX%g
 s%@YACC@%$YACC%g
 s%@XDRFILE@%$XDRFILE%g
-s%@prefix@%$prefix%g
-s%@exec_prefix@%$exec_prefix%g
+s%@MACHINE@%$MACHINE%g
+s%@WHICH@%$WHICH%g
 s%@CPP@%$CPP%g
 s%@FC@%$FC%g
 s%@NEQN@%$NEQN%g
@@ -1060,6 +1122,8 @@ s%@INSTALL@%$INSTALL%g
 s%@INSTALL_PROGRAM@%$INSTALL_PROGRAM%g
 s%@INSTALL_DATA@%$INSTALL_DATA%g
 s%@MAKEINFO@%$MAKEINFO%g
+s%@SWAP@%$SWAP%g
+s%@NETLONG@%$NETLONG%g
 s%@CPP_XDR@%$CPP_XDR%g
 s%@DEFS@%$DEFS%g
 s%@LIBS@%$LIBS%g

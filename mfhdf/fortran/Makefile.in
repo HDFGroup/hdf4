@@ -16,7 +16,8 @@ HEADERS		= netcdf.inc
 MANIFEST	= $(PROGRAM).src Makefile.in README aix.m4 common.inc \
 		  common.m4 depend descrip.mms fortc fortc1.sed \
 		  fortc2.sed hpux.m4 irix.m4 jackets.src msoft.m4 msoft.mk \
-		  next.m4 osf.m4 sunos.m4 ultrix.m4 unicos.m4 vms.m4 \
+		  next.m4 osf.m4 sunos.m4 ultrix.m4 unicos.m4 vax-ultrix.m4 \
+		  vms.m4 \
 		  msoft/NOTES msoft/fslen.asm msoft/ftest.for \
 		  msoft/jackets.c msoft/msoft.int \
 		  msoft/netcdf.inc \
@@ -37,27 +38,30 @@ LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB)
 prefix		= ../../..
 
 all::		FORCE
-	@if [ `which "$(FC)" | wc -w` = 1 ]; then \
-	    $(MAKE) netcdf.inc $(REMOTE_LIBRARY); \
-	else \
-	    echo 1>&2 "\`$@' not made because no FORTRAN compiler"; \
-	fi
+	@case "$(FC)" in \
+	NONE*|none*) \
+	    echo 1>&2 "\`$@' not made because no FORTRAN compiler";; \
+	*) \
+	    $(MAKE) netcdf.inc $(REMOTE_LIBRARY);; \
+	esac
 
 test:		FORCE
-	@if [ `which "$(FC)" | wc -w` = 1 ]; then \
+	@case "$(FC)" in \
+	NONE*|none*) \
+	    echo 1>&2 "\`$@' not made because no FORTRAN compiler";; \
+	*) \
 	    $(MAKE) $(MFLAGS) $(PROGRAM); \
 	    $(MAKE) $(MFLAGS) hdftest; \
-	    ./$(PROGRAM); \
-	else \
-	    echo 1>&2 "\`$@' not made because no FORTRAN compiler"; \
-	fi
+	    ./$(PROGRAM);; \
+	esac
 
 install::	FORCE
-	@if [ `which "$(FC)" | wc -w` = 1 ]; then \
-	    $(MAKE) installed_headers; \
-	else \
-	    echo 1>&2 "\`$@' not made because no FORTRAN compiler"; \
-	fi
+	@case "$(FC)" in \
+	NONE*|none*) \
+	    echo 1>&2 "\`$@' not made because no FORTRAN compiler";; \
+	*) \
+	    $(MAKE) installed_headers;; \
+	esac
 
 $(PROGRAM):	$(REMOTE_LIBRARY)
 

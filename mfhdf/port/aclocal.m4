@@ -81,11 +81,6 @@ UC_ENSURE(TRANSFORMEES, $1)dnl
 ])
 
 
-# Handle a prerequsite m4(1) macro.
-#
-define([UC_REQUIRE], [ifdef([AC_PROVIDE_$1],,$1)])
-
-
 # Check for functioning `const' keyword
 #
 define([UC_CONST], [dnl
@@ -221,7 +216,7 @@ ifdef([AC_PROVIDE_$0], , [
 echo "checking for cfortran.h"
 UC_ENSURE(PORT_MANIFEST, cfortran_h)dnl
 UC_ENSURE(PORT_HEADERS, cfortran.h)dnl
-UC_REQUIRE([UC_GLUE])dnl
+AC_REQUIRE([UC_GLUE])dnl
 case "$DEFS" in
   *UD_NO_TOKEN_PASTING*) PORT_CFORTRAN=reiser;;
   *) PORT_CFORTRAN=stdc;;
@@ -473,6 +468,16 @@ AC_PROVIDE([$0])dnl
 ])])
 
 
+# Check for which(1)
+#
+define([UC_PROG_WHICH], [dnl
+ifdef([AC_PROVIDE_$0], , [dnl
+UC_ENSURE(PORT_MANIFEST, which)dnl
+AC_PROGRAM_CHECK(WHICH, which, which, [UC_ABSPATH(port)]/which)dnl
+AC_PROVIDE([$0])dnl
+])])
+
+
 # Check for cpp(1).  This macro replaces the AC_PROG_CPP macro because:
 #	1. That macro, for some reason, sets the value of the shell 
 #	   variable `CPP' to `${CC-cc} -E' rather than to the cpp(1)
@@ -485,8 +490,9 @@ AC_PROVIDE([$0])dnl
 #	   defined as `acc -E' under older versions of SunOS).
 #
 define([UC_PROG_CPP], [dnl
-ifdef([AC_PROVIDE_$0], , [
-UC_REQUIRE([UC_PROG_CC])dnl
+ifdef([AC_PROVIDE_$0], , [dnl
+AC_REQUIRE([UC_PROG_WHICH])dnl
+AC_REQUIRE([UC_PROG_CC])dnl
 AC_PROG_CPP[]dnl
 CPP=`eval echo $CPP`
 echo "#include <stdlib.h>" > conftest.c
@@ -497,7 +503,7 @@ if test `$CPP conftest.c 2> /dev/null | wc -l` = 0; then
   else
     echo 1>&2 "$[]0: C preprocessor, \`$CPP', doesn't work; setting to \`cpp'"
     CPP=cpp
-    if test `which ${CPP} 2>&1 | wc -w` != 1; then
+    if test `$(WHICH) ${CPP} 2>&1 | wc -w` != 1; then
       echo 1>&2 "$[]0: C preprocessor, \`$CPP', doesn't exist"
       UC_NEED_VALUE(CPP, [C preprocessor], /lib/cpp)dnl
     fi
@@ -512,14 +518,15 @@ AC_PROVIDE([$0])dnl
 #
 define([UC_PROG_FC], [dnl
 ifdef([AC_PROVIDE_$0], , [ dnl
-UC_REQUIRE([UC_OS])dnl
+AC_REQUIRE([UC_OS])dnl
 case "$OS" in
   hpux*) AC_PROGRAMS_CHECK(FC, fort77 fortc f77);;
   dgux*) AC_PROGRAMS_CHECK(FC, ghf77 f77);;
   *)     AC_PROGRAMS_CHECK(FC, f77 cf77 fc);;
 esac
 if test -z "$FC"; then
-  UC_NEED_VALUE(FC, [FORTRAN compiler], /bin/f77)dnl
+  UC_ENSURE(FC, NONE)
+  echo "configure: Was unable to find a Fortran compiler on this machine."
 fi
 AC_PROVIDE([$0])dnl
 ])])
@@ -530,8 +537,9 @@ AC_PROVIDE([$0])dnl
 define([UC_LIB_F77], [dnl
 ifdef([AC_PROVIDE_$0], , [ dnl
 AC_REQUIRE([UC_PROG_FC])dnl
+AC_REQUIRE([UC_PROG_WHICH])dnl
 echo checking for FORTRAN library
-case `which "$FC"` in
+case `$(WHICH) "$FC"` in
   *lang*) LD_F77='-lF77 -lM77';;
   *)	  LD_F77='-lF77';;
 esac
@@ -594,7 +602,7 @@ test "$NEQN" = cat &&
 define([UC_PROG_TBL], [dnl
 AC_PROGRAM_CHECK(TBL, tbl, tbl, cat)dnl
 test "$TBL" = cat && 
-  echo 1>&2 "$[]0: Can't find \`tbl'; setting to \`cat'"
+  echo 1>&2 "$[]0: Can't find program \`tbl'; setting to \`cat'"
 ])
 
 
@@ -623,6 +631,9 @@ OS_dgux
 #endif
 #ifdef hpux
 OS_hpux
+#endif
+#ifdef NeXT
+OS_nextos
 #endif
 #ifdef sgi
 OS_irix
@@ -657,11 +668,28 @@ AC_PROVIDE([$0])dnl
 ])])
 
 
+# Determine the machine type.
+#
+define([UC_MACHINE], [dnl
+ifdef([AC_PROVIDE_$0], , [
+if test -z "$MACHINE"; then
+echo checking for type of machine
+MACHINE=`uname -m | tr A-Z a-z`
+if test -z "$MACHINE"; then
+  UC_NEED_VALUE(MACHINE, [machine hardware type], sun4c)dnl
+fi
+fi
+AC_SUBST(MACHINE)dnl
+AC_PROVIDE([$0])dnl
+])])
+
+
 # Check for ncdump(1)
 #
 define([UC_PROG_NCDUMP], [dnl
+AC_REQUIRE([UC_PROG_WHICH])dnl
 AC_PROGRAM_CHECK(NCDUMP, ncdump, ncdump, UC_ABSPATH($exec_prefix)/ncdump)dnl
-if test `which "$NCDUMP" | wc -w` != 1; then
+if test `$(WHICH) "$NCDUMP" | wc -w` != 1; then
   UC_NEED_VALUE(NCDUMP, [netCDF lister], /usr/local/unidata/bin/ncdump)dnl
 fi
 ])
@@ -757,9 +785,7 @@ AC_BEFORE([$0],[UC_LIB_NCOPERS])AC_BEFORE([$0],[UC_CPP_NCOPERS])dnl
 AC_BEFORE([$0],[UC_LIB_UDPORT])dnl
 echo setting the installation prefix
 prefix=UC_ABSPATH(${prefix-$1})
-AC_SUBST([prefix])dnl
 test -z "$exec_prefix" && exec_prefix=$prefix/bin
-AC_SUBST([exec_prefix])dnl
 AC_PROVIDE([$0])dnl
 ])
 
@@ -1067,7 +1093,7 @@ fi
 AC_SUBST(MAJOR_NO)dnl
 if test -z "$MINOR_NO"; then
   if test -n "$VERSION"; then \
-    MINOR_NO=`echo $VERSON |
+    MINOR_NO=`echo $VERSION |
       sed -n '/^[[0-9]][[0-9]]*\.\([[0-9]][[0-9]]*\).*/s//\1/p;q'`
   else
     MINOR_NO=

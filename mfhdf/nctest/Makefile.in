@@ -13,7 +13,7 @@ MANIFEST	= Makefile.in README add.c add.h atttests.c cdftests.c \
 		  tests.h val.c val.h vardef.c varget.c vargetg.c varput.c \
 		  varputg.c vartests.c vputget.c vputgetg.c make.com
 LIBNAME		= netcdf
-LD_NETCDF	= -L../libsrc -l$(LIBNAME)
+LD_NETCDF	= ../libsrc/libnetcdf.a
 SRCS		= varget.c vargetg.c varput.c varputg.c vardef.c vartests.c \
 		  vputget.c vputgetg.c driver.c cdftests.c dimtests.c rec.c \
 		  atttests.c misctest.c add.c error.c emalloc.c val.c slabs.c

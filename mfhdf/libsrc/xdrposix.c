@@ -17,6 +17,22 @@ static char rcsid[] = "$Id$";
  * -glenn
  */
 
+/*
+ * 32-bit integer on the host architecture (on the CRAY, this is actually 64
+ * bits; however, a pointer to this type is still passed to the XDR functions
+ * x_getlong() and x_putlong(), so, on that platform, it doesn't matter if
+ * the following isn't 32-bits):
+ */
+#ifdef CRAY
+#   undef  NETLONG
+#   define NETLONG	long
+#endif
+#ifndef	NETLONG
+#   define NETLONG	long
+#endif
+typedef	NETLONG		netlong;
+#undef	NETLONG
+
 #ifdef vms
 #   include <unixio.h>
 #   include <file.h>
@@ -251,11 +267,7 @@ static bool_t	xdrposix_setpos();
 #ifdef CRAY
 static inline_t *	xdrposix_inline();
 #else
-#ifdef __alpha
-static int *	xdrposix_inline();
-#else
-static long *	xdrposix_inline();
-#endif
+static netlong *	xdrposix_inline();
 #endif
 static void	xdrposix_destroy();
 
@@ -263,8 +275,8 @@ static void	xdrposix_destroy();
  * Ops vector for posix type XDR
  */
 static struct xdr_ops	xdrposix_ops = {
-	xdrposix_getlong,	/* deserialize a long int */
-	xdrposix_putlong,	/* serialize a long int */
+	xdrposix_getlong,	/* deserialize a 32-bit int */
+	xdrposix_putlong,	/* serialize a 32-bit int */
 	xdrposix_getbytes,	/* deserialize counted bytes */
 	xdrposix_putbytes,	/* serialize counted bytes */
 	xdrposix_getpos,	/* get offset in the stream */
@@ -351,7 +363,7 @@ xdrposix_destroy(xdrs)
 static bool_t
 xdrposix_getlong(xdrs, lp)
 	XDR *xdrs;
-	long *lp;
+	netlong *lp;
 {
 	unsigned char *up = (unsigned char *)lp ;
 #ifdef CRAY
@@ -369,12 +381,12 @@ xdrposix_getlong(xdrs, lp)
 static bool_t
 xdrposix_putlong(xdrs, lp)
 	XDR *xdrs;
-	long *lp;
+	netlong *lp;
 {
 
 	unsigned char *up = (unsigned char *)lp ;
 #ifdef SWAP
-	long mycopy = htonl(*lp);
+	netlong mycopy = htonl(*lp);
 	up = (unsigned char *)&mycopy;
 #endif
 #ifdef CRAY
@@ -457,11 +469,7 @@ xdrposix_setpos(xdrs, pos)
 #ifdef CRAY
 static inline_t *
 #else
-#ifdef __alpha
-static int *
-#else
-static long *
-#endif
+static netlong *
 #endif
 xdrposix_inline(xdrs, len)
 	XDR *xdrs;
@@ -472,7 +480,7 @@ xdrposix_inline(xdrs, len)
 	 * Must do some work to implement this: must insure
 	 * enough data in the underlying posix buffer,
 	 * that the buffer is aligned so that we can indirect through a
-	 * long *, and stuff this pointer in xdrs->x_buf.
+	 * netlong *, and stuff this pointer in xdrs->x_buf.
 	 */
 	return (NULL);
 }

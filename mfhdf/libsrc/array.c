@@ -190,7 +190,7 @@ nc_type type ;
 	case NC_LONG :
 		while(lo < hi ){
 			*((long *)lo) = FILL_LONG ;
-			lo += sizeof(long) ;
+			lo += sizeof(long);
 		}
 		break ;
 	case NC_FLOAT :

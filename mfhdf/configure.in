@@ -17,8 +17,16 @@ UC_DEFAULT(YACC, yacc)
 UC_DEFAULT(XDRFILE, xdrposix)
 UC_PREFIX(..)
 
-AC_PROG_RANLIB
+UC_OS
+UC_MACHINE
 UC_PROG_CC
+UC_PROG_WHICH
+if test "$OS" = ultrix && test "$MACHINE" = vax \
+    && test `$WHICH "$CC"` = /bin/cc; then
+  echo "changing C compiler to \`vcc' because \`cc' floating-point is broken"
+  CC=vcc
+fi
+
 UC_PROG_CPP
 UC_PROG_FC
 UC_PROG_NEQN
@@ -27,13 +35,14 @@ UC_PROG_INSTALL
 UC_PROG_AR
 UC_PROG_MAKEINFO
 
+UL_SWAP
+UL_NETLONG
 UL_XDR
 UL_PROTOTYPES
 UL_CONST
 UL_VARIADIC_FUNCTIONS
 UL_STRERROR
 
-UC_OS
 UC_FTPDIR(pub/sdm)
 UC_VERSION
 

@@ -15,7 +15,7 @@ MANIFEST	= Makefile.in ncdump.c ncdump.h  depend msoft.mk \
                   make.com msofttab.c
 MANUALS		= ncdump.1
 LIBNAME		= netcdf
-LD_NETCDF	= -L../libsrc -l$(LIBNAME)
+LD_NETCDF	= ../libsrc/libnetcdf.a
 OBJS		=  ncdump.o vardata.o dumplib.o
 LD_XDR		= @LD_XDR@
 LD_NETCDF	= -L../libsrc -lnetcdf

@@ -1,6 +1,22 @@
 VERSION		COMMENTS
 
-1.5	?
+ 1.5.1 ?
+               Added support for NeXTOS to autoconf macro UC_OS.
+
+               Added script `which' and autoconf macro `UC_PROG_WHICH' to
+               support platforms with no which(1) (e.g. UNICOS).
+
+               Added recursive macros to master makefile to support, for
+               example, command-line redefinition of CFLAGS.
+
+               Fixed bug in UC_VERSION in setting minor version number.
+
+               Fixed benign bug in UC_PREFIX that caused two identical
+               definitions for `prefix' and `exec-prefix' in `config.status'.
+
+               Added UC_MACHINE to determine machine hardware type.
+
+1.5	1993-5-3
 		Added support for Concurrent's (Masscomp's?) Real Time Unix
 		(RTU) operating system.
 

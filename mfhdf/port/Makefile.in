@@ -88,11 +88,14 @@ cfortran.h:	cfortran_h
 # compilation flags (see config.c).
 #
 # If the following program won't compile, then contact
-# support@unidata.ucar.edu.
+# support@unidata.ucar.edu (ask for Steve).
 #
-config:		config.c
-	$(CC) config.c -o config 2> /dev/null || \
-	    $(CC) -DNO_SC config.c -o config
+config:               config.c
+	if $(CC) config.c -o config 2> /dev/null; then \
+		: true; \
+	else \
+		$(CC) -DNO_SC config.c -o config; \
+	fi
 
 include master.mk
 

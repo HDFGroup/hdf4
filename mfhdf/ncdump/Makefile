@@ -16,12 +16,12 @@ MANIFEST	= Makefile.in ncdump.c ncdump.h  depend msoft.mk \
                   make.com msofttab.c
 MANUALS		= ncdump.1
 LIBNAME		= netcdf
-LD_NETCDF	= -L../libsrc -l$(LIBNAME)
+LD_NETCDF	= ../libsrc/libnetcdf.a
 OBJS		=  ncdump.o vardata.o dumplib.o
 LD_XDR		= 
 LD_NETCDF	= -L../libsrc -lnetcdf
 LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) -lm
-prefix		= /hdf/home/chouck/hdf
+prefix		= /nfs/hdf/home/chouck/hdf
 GARBAGE		= $(PROGRAM) test0.nc test1.nc test1.cdl test2.cdl
 
 all::		$(PROGRAM)
@@ -50,8 +50,8 @@ install::	installed_program installed_manuals
 ############################################################################
 # General Macros:
 ############################################################################
-prefix		= /hdf/home/chouck/hdf
-exec_prefix	= /hdf/home/chouck/hdf/bin
+prefix		= /nfs/hdf/home/chouck/hdf
+exec_prefix	= /nfs/hdf/home/chouck/hdf/bin
 AR		= ar
 CC		= cc
 CPP		= cc -E
@@ -67,7 +67,24 @@ NEQN		= neqn
 OS		= sunos
 SHELL		= /bin/sh
 TBL		= tbl
+WHICH		= which
 
+############################################################################
+# Recursive Macros (command-line changes to others aren't supported):
+############################################################################
+SUBDIR_MACROS = CC="$(CC)" \
+	CPP="$(CPP)" \
+	exec_prefix="$(exec_prefix)" \
+	FC="$(FC)" \
+	prefix="$(prefix)"
+
+LOCAL_MACROS  = CC="$(CC)" \
+	CFLAGS="$(CFLAGS)" \
+	CPP="$(CPP)" \
+	CPPFLAGS="$(CPPFLAGS)" \
+	exec_prefix="$(exec_prefix)" \
+	FC="$(FC)" \
+	prefix="$(prefix)"
 
 ############################################################################
 # Recursive make(1)s in Subdirectories:
@@ -80,7 +97,8 @@ subdir_dummy_target $(SUBDIR_TARGETS):
 	    cd $$dir && \
 	    echo "making \`$$target' in directory `pwd`" && \
 	    echo "" && \
-	    $(MAKE) $(MFLAGS) prefix=$(prefix) exec_prefix=$(exec_prefix) \
+	    $(MAKE) $(MFLAGS) $(SUBDIR_MACROS) \
+		prefix=$(prefix) exec_prefix=$(exec_prefix) \
 		$$target || exit 1
 	@echo ""
 	@echo "returning to directory `pwd`"
@@ -171,7 +189,8 @@ installed_libfiles:	FORCE
 	@if [ -n "$(LIBFILES)" ]; then \
 	    libfiles="$(LIBFILES)"; \
 	    for libfile in $$libfiles; do \
-		$(MAKE) $(MFLAGS) LIBDIR=$(LIBDIR) LIBFILE=$$libfile \
+		$(MAKE) $(MFLAGS) $(LOCAL_MACROS) \
+		    LIBDIR=$(LIBDIR) LIBFILE=$$libfile \
 		    installed_libfile || exit 1; \
 	    done; \
 	else \
@@ -179,7 +198,8 @@ installed_libfiles:	FORCE
 	fi
 
 installed_library::	FORCE
-	@$(MAKE) $(MFLAGS) LIBDIR=$(LIBDIR) LIBFILE=$(LIB_A) \
+	@$(MAKE) $(MFLAGS) $(LOCAL_MACROS) \
+	    LIBDIR=$(LIBDIR) LIBFILE=$(LIB_A) \
 	    installed_libfile
 
 # The following target decouples the previous targets from the actual rule;
@@ -253,9 +273,9 @@ program:
 	    if [ -z "$(LIBRARY)" ]; then \
 		: true; \
 	    else \
-		$(MAKE) $(MFLAGS) library; \
+		$(MAKE) $(MFLAGS) $(LOCAL_MACROS) library; \
 	    fi; \
-	    $(MAKE) $(MFLAGS) $(PROGRAM); \
+	    $(MAKE) $(MFLAGS) $(LOCAL_MACROS) $(PROGRAM); \
 	fi
 
 dummy_prog $(PROGRAM):	$(OBJS)
@@ -270,14 +290,15 @@ dummy_prog $(PROGRAM):	$(OBJS)
 	    || (rm -f $@; exit 1)
 
 installed_programs:	FORCE
-	@$(MAKE) $(MFLAGS) installed_binfiles \
+	@$(MAKE) $(MFLAGS) $(LOCAL_MACROS) installed_binfiles \
 	    BINDIR=$(BINDIR) BINFILES="$(PROGRAMS)"
 
 installed_binfiles:	FORCE
 	@if [ -n "$(BINFILES)" ]; then \
 	    binfiles="$(BINFILES)"; \
 	    for binfile in $$binfiles; do \
-		$(MAKE) $(MFLAGS) BINDIR=$(BINDIR) BINFILE=$$binfile \
+		$(MAKE) $(MFLAGS) $(LOCAL_MACROS) \
+		    BINDIR=$(BINDIR) BINFILE=$$binfile \
 		    installed_binfile || exit 1; \
 	    done; \
 	else \
@@ -285,7 +306,7 @@ installed_binfiles:	FORCE
 	fi
 
 installed_program:	FORCE
-	@$(MAKE) $(MFLAGS) BINDIR=$(BINDIR) BINFILE=$(PROGRAM) \
+	@$(MAKE) $(MFLAGS) $(LOCAL_MACROS) BINDIR=$(BINDIR) BINFILE=$(PROGRAM) \
 	    installed_binfile
 
 # The following target decouples the previous targets from the actual rule;
@@ -308,7 +329,7 @@ installed_headers:	FORCE
 	@if [ -n "$(HEADERS)" ]; then \
 	    headers="$(HEADERS)"; \
 	    for header in $$headers; do \
-		$(MAKE) $(MFLAGS) INCDIR=$(INCDIR) HEADER=$$header \
+		$(MAKE) $(MFLAGS) $(LOCAL_MACROS) INCDIR=$(INCDIR) HEADER=$$header \
 		    installed_header || exit 1; \
 	    done; \
 	else \
@@ -337,7 +358,7 @@ installed_etcfiles:
 	@if [ -n "$(ETCFILES)" ]; then \
 	    etcfiles="$(ETCFILES)"; \
 	    for etcfile in $$etcfiles; do \
-		$(MAKE) $(MFLAGS) ETCDIR=$(ETCDIR) ETCFILE=$$etcfile \
+		$(MAKE) $(MFLAGS) $(LOCAL_MACROS) ETCDIR=$(ETCDIR) ETCFILE=$$etcfile \
 		    installed_etcfile || exit 1; \
 	    done; \
 	else \
@@ -367,7 +388,7 @@ installed_manuals:	FORCE
 	    manuals="$(MANUALS)"; \
 	    for manual in $$manuals; do \
 		mandir=$(MANDIR)/man`echo $$manual | sed 's/.*\.\(.\).*/\1/'`; \
-		$(MAKE) $(MFLAGS) MANDIR=$$mandir MANUAL=$$manual \
+		$(MAKE) $(MFLAGS) $(LOCAL_MACROS) MANDIR=$$mandir MANUAL=$$manual \
 		    installed_manual || exit 1; \
 	    done; \
 	else \
@@ -404,7 +425,7 @@ installed_infos:      FORCE
 	  if [ -n "$(INFOS)" ]; then \
 	      infos="$(INFOS)"; \
 	      for info in $$infos; do \
-		$(MAKE) $(MFLAGS) INFODIR=$(INFODIR) INFO=$$info \
+		$(MAKE) $(MFLAGS) $(LOCAL_MACROS) INFODIR=$(INFODIR) INFO=$$info \
 		installed_info || exit 1; \
 	      done; \
 	   else \
@@ -561,10 +582,10 @@ $(PACKAGE)-$(VERSION).tar.Z:	MANIFEST
 
 MANIFEST:	FORCE
 	@echo 1>&2 Creating MANIFEST
-	@$(MAKE) -s $(MFLAGS) MANIFEST.echo > $@
+	@$(MAKE) -s $(MFLAGS) $(LOCAL_MACROS) MANIFEST.echo > $@
 
 MANIFEST.echo:	FORCE
-	@$(MAKE) -s $(MFLAGS) \
+	@$(MAKE) -s $(MFLAGS) $(LOCAL_MACROS) \
 	    MANIFEST=`echo $(MANIFEST) | sed 's/MANIFEST//'` \
 	    ensure_manifest > /dev/null
 	@echo $(MANIFEST) | fmt -1
@@ -572,8 +593,8 @@ MANIFEST.echo:	FORCE
 	    subdirs="$(SUBDIRS)"; \
 	    for subdir in $$subdirs; do \
 		(cd $$subdir && \
-                echo 1>&2 Creating $@ in `pwd` && \
-		$(MAKE) $(MFLAGS) MANIFEST.echo | \
+	        echo 1>&2 Creating $@ in `pwd` && \
+		$(MAKE) $(MFLAGS) $(LOCAL_MACROS) MANIFEST.echo | \
 		    sed "s|^|$$subdir/|") || exit 1; \
 	    done; \
 	else \

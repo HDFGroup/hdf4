@@ -23,14 +23,14 @@ MANIFEST	= Makefile.in depend README \
 		  test.com test0.cdl \
 		  $(vms_stuff)
 LIBNAME		= netcdf
-LD_NETCDF	= -L../libsrc -l$(LIBNAME) /hdf/home/chouck/hdf/33/lib/libdf.a
+LD_NETCDF	= ../libsrc/libnetcdf.a /hdf/home/chouck/hdf/33/lib/libdf.a
 OBJS		= main.o generate.o load.o ncgentab.o escapes.o \
 		  getfill.o init.o close.o genlib.o
 LD_XDR		= 
 LIBS		= $(LD_NETCDF) $(LD_XDR)
 LEX		= lex
 YACC		= yacc
-prefix		= /hdf/home/chouck/hdf
+prefix		= /nfs/hdf/home/chouck/hdf
 
 all::		$(PROGRAM)
 
@@ -83,28 +83,30 @@ ctest0:		ncgen test0.cdl
 # test "-f" option of ncgen
 #
 ftest:		test1.cdl
-	@if [ `which "$(FC)" | wc -w` = 1 ]; then \
+	@case "$(FC)" in \
+	NONE*) \
+	    echo 1>&2 "\`$@' not made because no FORTRAN compiler";; \
+	*) \
 	    $(MAKE) $(MFLAGS) ftest0; \
-	    ./ftest0		# tests `-f' option, creates ftest0.nc; \
+	    ./ftest0 ; \
 	    $(NCDUMP) -n test1 ftest0.nc > ftest1.cdl; \
 	    if diff test1.cdl ftest1.cdl; then \
 		echo "*** ncgen -f test successful ***"; \
 	    else \
 		echo "*** ncgen -f test failed " \
 		    "(but roundoff differences are OK) ***"; \
-	    fi; \
-	else \
-	    echo 1>&2 "\`$@' not made because no FORTRAN compiler"; \
-	fi
+	    fi;; \
+	esac
 
 ftest0:		$(PROGRAM) test0.cdl
-	@if [ `which "$(FC)" | wc -w` = 1 ]; then \
+	@case "$(FC)" in \
+	NONE*) \
+	    echo 1>&2 "\`$@' not made because no FORTRAN compiler";; \
+	*) \
 	    $(MAKE) $(MFLAGS) netcdf.inc; \
 	    ./$(PROGRAM) -f -o ftest0.nc test0.cdl > test0.f; \
-	    $(FC) $(FFLAGS) -o $@ test0.f $(LIBS); \
-	else \
-	    echo 1>&2 "\`$@' not made because no FORTRAN compiler"; \
-	fi
+	    $(FC) $(FFLAGS) -o $@ test0.f $(LIBS);; \
+	esac
 
 test1.cdl:	test0.nc
 	$(NCDUMP) -n test1 test0.nc > $@
@@ -113,11 +115,12 @@ test0.nc:	$(PROGRAM) test0.cdl
 	./$(PROGRAM) -b -o test0.nc test0.cdl
 
 netcdf.inc:
-	@if [ `which "$(FC)" | wc -w` = 1 ]; then \
-	    ln -s ../fortran/$@ .; \
-	else \
-	    echo 1>&2 "\`$@' not made because no FORTRAN compiler"; \
-	fi
+	@case "$(FC)" in \
+	NONE*) \
+	    echo 1>&2 "\`$@' not made because no FORTRAN compiler";; \
+	*) \
+	    ln -s ../fortran/$@ .;; \
+	esac
 
 # Generated automatically from master.mk.in by configure.
 # This is the master makefile.  It contains general rules.
@@ -131,8 +134,8 @@ netcdf.inc:
 ############################################################################
 # General Macros:
 ############################################################################
-prefix		= /hdf/home/chouck/hdf
-exec_prefix	= /hdf/home/chouck/hdf/bin
+prefix		= /nfs/hdf/home/chouck/hdf
+exec_prefix	= /nfs/hdf/home/chouck/hdf/bin
 AR		= ar
 CC		= cc
 CPP		= cc -E
@@ -148,7 +151,24 @@ NEQN		= neqn
 OS		= sunos
 SHELL		= /bin/sh
 TBL		= tbl
+WHICH		= which
 
+############################################################################
+# Recursive Macros (command-line changes to others aren't supported):
+############################################################################
+SUBDIR_MACROS = CC="$(CC)" \
+	CPP="$(CPP)" \
+	exec_prefix="$(exec_prefix)" \
+	FC="$(FC)" \
+	prefix="$(prefix)"
+
+LOCAL_MACROS  = CC="$(CC)" \
+	CFLAGS="$(CFLAGS)" \
+	CPP="$(CPP)" \
+	CPPFLAGS="$(CPPFLAGS)" \
+	exec_prefix="$(exec_prefix)" \
+	FC="$(FC)" \
+	prefix="$(prefix)"
 
 ############################################################################
 # Recursive make(1)s in Subdirectories:
@@ -161,7 +181,8 @@ subdir_dummy_target $(SUBDIR_TARGETS):
 	    cd $$dir && \
 	    echo "making \`$$target' in directory `pwd`" && \
 	    echo "" && \
-	    $(MAKE) $(MFLAGS) prefix=$(prefix) exec_prefix=$(exec_prefix) \
+	    $(MAKE) $(MFLAGS) $(SUBDIR_MACROS) \
+		prefix=$(prefix) exec_prefix=$(exec_prefix) \
 		$$target || exit 1
 	@echo ""
 	@echo "returning to directory `pwd`"
@@ -252,7 +273,8 @@ installed_libfiles:	FORCE
 	@if [ -n "$(LIBFILES)" ]; then \
 	    libfiles="$(LIBFILES)"; \
 	    for libfile in $$libfiles; do \
-		$(MAKE) $(MFLAGS) LIBDIR=$(LIBDIR) LIBFILE=$$libfile \
+		$(MAKE) $(MFLAGS) $(LOCAL_MACROS) \
+		    LIBDIR=$(LIBDIR) LIBFILE=$$libfile \
 		    installed_libfile || exit 1; \
 	    done; \
 	else \
@@ -260,7 +282,8 @@ installed_libfiles:	FORCE
 	fi
 
 installed_library::	FORCE
-	@$(MAKE) $(MFLAGS) LIBDIR=$(LIBDIR) LIBFILE=$(LIB_A) \
+	@$(MAKE) $(MFLAGS) $(LOCAL_MACROS) \
+	    LIBDIR=$(LIBDIR) LIBFILE=$(LIB_A) \
 	    installed_libfile
 
 # The following target decouples the previous targets from the actual rule;
@@ -334,9 +357,9 @@ program:
 	    if [ -z "$(LIBRARY)" ]; then \
 		: true; \
 	    else \
-		$(MAKE) $(MFLAGS) library; \
+		$(MAKE) $(MFLAGS) $(LOCAL_MACROS) library; \
 	    fi; \
-	    $(MAKE) $(MFLAGS) $(PROGRAM); \
+	    $(MAKE) $(MFLAGS) $(LOCAL_MACROS) $(PROGRAM); \
 	fi
 
 dummy_prog $(PROGRAM):	$(OBJS)
@@ -351,14 +374,15 @@ dummy_prog $(PROGRAM):	$(OBJS)
 	    || (rm -f $@; exit 1)
 
 installed_programs:	FORCE
-	@$(MAKE) $(MFLAGS) installed_binfiles \
+	@$(MAKE) $(MFLAGS) $(LOCAL_MACROS) installed_binfiles \
 	    BINDIR=$(BINDIR) BINFILES="$(PROGRAMS)"
 
 installed_binfiles:	FORCE
 	@if [ -n "$(BINFILES)" ]; then \
 	    binfiles="$(BINFILES)"; \
 	    for binfile in $$binfiles; do \
-		$(MAKE) $(MFLAGS) BINDIR=$(BINDIR) BINFILE=$$binfile \
+		$(MAKE) $(MFLAGS) $(LOCAL_MACROS) \
+		    BINDIR=$(BINDIR) BINFILE=$$binfile \
 		    installed_binfile || exit 1; \
 	    done; \
 	else \
@@ -366,7 +390,7 @@ installed_binfiles:	FORCE
 	fi
 
 installed_program:	FORCE
-	@$(MAKE) $(MFLAGS) BINDIR=$(BINDIR) BINFILE=$(PROGRAM) \
+	@$(MAKE) $(MFLAGS) $(LOCAL_MACROS) BINDIR=$(BINDIR) BINFILE=$(PROGRAM) \
 	    installed_binfile
 
 # The following target decouples the previous targets from the actual rule;
@@ -389,7 +413,7 @@ installed_headers:	FORCE
 	@if [ -n "$(HEADERS)" ]; then \
 	    headers="$(HEADERS)"; \
 	    for header in $$headers; do \
-		$(MAKE) $(MFLAGS) INCDIR=$(INCDIR) HEADER=$$header \
+		$(MAKE) $(MFLAGS) $(LOCAL_MACROS) INCDIR=$(INCDIR) HEADER=$$header \
 		    installed_header || exit 1; \
 	    done; \
 	else \
@@ -418,7 +442,7 @@ installed_etcfiles:
 	@if [ -n "$(ETCFILES)" ]; then \
 	    etcfiles="$(ETCFILES)"; \
 	    for etcfile in $$etcfiles; do \
-		$(MAKE) $(MFLAGS) ETCDIR=$(ETCDIR) ETCFILE=$$etcfile \
+		$(MAKE) $(MFLAGS) $(LOCAL_MACROS) ETCDIR=$(ETCDIR) ETCFILE=$$etcfile \
 		    installed_etcfile || exit 1; \
 	    done; \
 	else \
@@ -448,7 +472,7 @@ installed_manuals:	FORCE
 	    manuals="$(MANUALS)"; \
 	    for manual in $$manuals; do \
 		mandir=$(MANDIR)/man`echo $$manual | sed 's/.*\.\(.\).*/\1/'`; \
-		$(MAKE) $(MFLAGS) MANDIR=$$mandir MANUAL=$$manual \
+		$(MAKE) $(MFLAGS) $(LOCAL_MACROS) MANDIR=$$mandir MANUAL=$$manual \
 		    installed_manual || exit 1; \
 	    done; \
 	else \
@@ -485,7 +509,7 @@ installed_infos:      FORCE
 	  if [ -n "$(INFOS)" ]; then \
 	      infos="$(INFOS)"; \
 	      for info in $$infos; do \
-		$(MAKE) $(MFLAGS) INFODIR=$(INFODIR) INFO=$$info \
+		$(MAKE) $(MFLAGS) $(LOCAL_MACROS) INFODIR=$(INFODIR) INFO=$$info \
 		installed_info || exit 1; \
 	      done; \
 	   else \
@@ -642,10 +666,10 @@ $(PACKAGE)-$(VERSION).tar.Z:	MANIFEST
 
 MANIFEST:	FORCE
 	@echo 1>&2 Creating MANIFEST
-	@$(MAKE) -s $(MFLAGS) MANIFEST.echo > $@
+	@$(MAKE) -s $(MFLAGS) $(LOCAL_MACROS) MANIFEST.echo > $@
 
 MANIFEST.echo:	FORCE
-	@$(MAKE) -s $(MFLAGS) \
+	@$(MAKE) -s $(MFLAGS) $(LOCAL_MACROS) \
 	    MANIFEST=`echo $(MANIFEST) | sed 's/MANIFEST//'` \
 	    ensure_manifest > /dev/null
 	@echo $(MANIFEST) | fmt -1
@@ -653,8 +677,8 @@ MANIFEST.echo:	FORCE
 	    subdirs="$(SUBDIRS)"; \
 	    for subdir in $$subdirs; do \
 		(cd $$subdir && \
-                echo 1>&2 Creating $@ in `pwd` && \
-		$(MAKE) $(MFLAGS) MANIFEST.echo | \
+	        echo 1>&2 Creating $@ in `pwd` && \
+		$(MAKE) $(MFLAGS) $(LOCAL_MACROS) MANIFEST.echo | \
 		    sed "s|^|$$subdir/|") || exit 1; \
 	    done; \
 	else \

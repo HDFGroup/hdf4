@@ -3,7 +3,9 @@
 # $Id$
 
 PROGRAM		= cdftest
-CPPFLAGS	= @CPPFLAGS@
+SWAP    	= @SWAP@
+NETLONG    	= @NETLONG@
+CPPFLAGS	= $(SWAP) $(NETLONG) @CPPFLAGS@
 CFLAGS		= @CFLAGS@ @HDF_INC@
 GARBAGE		= $(PROGRAM) test.cdf cdfout.new test*.hdf \
                   hdftest hdfout.new
@@ -27,7 +29,7 @@ DEBUGLIBRARY	= netcdf_g
 PROFILEDLIBRARY	= netcdf_pg
 OBJS		= $(PROGRAM).o
 LD_XDR		= @LD_XDR@
-LD_NETCDF	= -L. -lnetcdf
+LD_NETCDF	= libnetcdf.a
 LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB)
 prefix		= ../../..
 

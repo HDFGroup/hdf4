@@ -20,15 +20,19 @@ LIBNAME		= netcdf
 REMOTE_LIBRARY	= ../libsrc/lib$(LIBNAME).a
 OBJS		= $(PROGRAM).o $(LIBOBJS)
 LD_XDR		= @LD_XDR@
-LD_NETCDF	= -L../libsrc -lnetcdf
+LD_NETCDF	= ../libsrc/libnetcdf.a
 LIBS		= $(LD_XDR)
 INSTALL_DEPS	= @XDR_INSTALL_DEPS@
 prefix		= ../../..
 GARBAGE		= test.xdr $(PROGRAM)_out.new
 
 
-all::		FORCE
-	@test -z "$(LIBOBJS)" || $(MAKE) $(MFLAGS) $(REMOTE_LIBRARY)
+all::         FORCE
+	@if test -z "$(LIBOBJS)"; then \
+	  : true; \
+	else		 \
+	  $(MAKE) $(MFLAGS) $(REMOTE_LIBRARY); \
+	fi
 
 # The formatted file `$(PROGRAM)_out.new' might differ from the touchstone
 # file `testout.sav', but this should be due to SMALL rounding errors.
