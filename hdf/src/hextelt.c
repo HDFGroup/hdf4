@@ -922,7 +922,7 @@ HXPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
     if (pposn)
         *pposn = access_rec->posn;
     if (paccess)
-        *paccess = access_rec->access;
+        *paccess = (int16)access_rec->access;
     if (pspecial)
         *pspecial = access_rec->special;
 
