@@ -1061,9 +1061,6 @@
 ./mfhdf/nctest/vputget.c
 ./mfhdf/nctest/vputgetg.c
 
-./mfhdf/pablo/Makefile.am
-./mfhdf/pablo/Makefile.in
-
 ./mfhdf/port/COPYRIGHT
 ./mfhdf/port/CUSTOMIZE
 ./mfhdf/port/HISTORY
