@@ -412,7 +412,7 @@ oldunpackvs(VDATA * vs, uint8 buf[], int32 *size)
 
     INT32DECODE(bb, vs->nvertices);
 
-    INT16DECODE(bb, vs->wlist.ivsize);
+    UINT16DECODE(bb, vs->wlist.ivsize);
 
     INT16DECODE(bb, vs->wlist.n);
 
@@ -420,13 +420,13 @@ oldunpackvs(VDATA * vs, uint8 buf[], int32 *size)
         INT16DECODE(bb, vs->wlist.type[i]);
 
     for (i = 0; i < vs->wlist.n; i++)   /* retrieve the isize */
-        INT16DECODE(bb, vs->wlist.isize[i]);
+        UINT16DECODE(bb, vs->wlist.isize[i]);
 
     for (i = 0; i < vs->wlist.n; i++)   /* retrieve the off */
-        INT16DECODE(bb, vs->wlist.off[i]);
+        UINT16DECODE(bb, vs->wlist.off[i]);
 
     for (i = 0; i < vs->wlist.n; i++)   /* retrieve the order */
-        INT16DECODE(bb, vs->wlist.order[i]);
+        UINT16DECODE(bb, vs->wlist.order[i]);
 
     for (i = 0; i < vs->wlist.n; i++)
       {
@@ -439,7 +439,7 @@ oldunpackvs(VDATA * vs, uint8 buf[], int32 *size)
 
     /* **EXTRA**  fill in the machine-dependent size fields */
     for (i = 0; i < vs->wlist.n; i++)
-        vs->wlist.esize[i] = (int16) (vs->wlist.order[i] * VSIZEOF((int16) vs->wlist.type[i]));
+        vs->wlist.esize[i] = (uint16) (vs->wlist.order[i] * VSIZEOF((int16) vs->wlist.type[i]));
 
 }   /* oldunpackvs */
 

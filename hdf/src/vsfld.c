@@ -31,9 +31,9 @@ EXPORTED ROUTINES
  VFnfields    -- Return the number of fields in this Vdata.
  VFfieldname  -- Return the name of the given field in this Vdata. 
  VFfieldtype  -- Return the type of the given field in this Vdata.
- VFfieldisize -- Return the internal (i.e. in memory) size of the given 
+ VFfieldisize -- Return the internal (HDF) size of the given 
                   field in this Vdata. 
- VFfieldesize -- Return the external (i.e. on disk) size of the given 
+ VFfieldesize -- Return the external (local machine) size of the given 
                   field in this Vdata.
  VFfieldorder -- Return the order of the given field in this Vdata.
 ************************************************************************/
@@ -76,7 +76,8 @@ VSsetfields(int32 vkey, const char *fields)
     char      **av;
     int32       ac, found;
     intn j, i;
-    int16       order;
+    uint16       uj;
+    uint16       order;
     int32       value;
     DYN_VREADLIST  *rlist;
     DYN_VWRITELIST *wlist;
@@ -120,18 +121,18 @@ VSsetfields(int32 vkey, const char *fields)
           /* allocate space for the internal WRITELIST structures */
           if((wlist->type=HDmalloc(sizeof(int16)*ac))==NULL)
               HGOTO_ERROR(DFE_NOSPACE,FAIL);
-          if((wlist->isize=HDmalloc(sizeof(int16)*ac))==NULL)
+          if((wlist->isize=HDmalloc(sizeof(uint16)*ac))==NULL)
             {
               HDfree(wlist->type);
               HGOTO_ERROR(DFE_NOSPACE,FAIL);
             } /* end if */
-          if((wlist->off=HDmalloc(sizeof(int16)*ac))==NULL)
+          if((wlist->off=HDmalloc(sizeof(uint16)*ac))==NULL)
             {
               HDfree(wlist->isize);
               HDfree(wlist->type);
               HGOTO_ERROR(DFE_NOSPACE,FAIL);
             } /* end if */
-          if((wlist->order=HDmalloc(sizeof(int16)*ac))==NULL)
+          if((wlist->order=HDmalloc(sizeof(uint16)*ac))==NULL)
             {
               HDfree(wlist->off);
               HDfree(wlist->isize);
@@ -146,7 +147,7 @@ VSsetfields(int32 vkey, const char *fields)
               HDfree(wlist->type);
               HGOTO_ERROR(DFE_NOSPACE,FAIL);
             } /* end if */
-          if((wlist->esize=HDmalloc(sizeof(int16)*ac))==NULL)
+          if((wlist->esize=HDmalloc(sizeof(uint16)*ac))==NULL)
             {
               HDfree(wlist->name);
               HDfree(wlist->order);
@@ -181,19 +182,21 @@ VSsetfields(int32 vkey, const char *fields)
                           wlist->order[wlist->n] = order;
 
                           value = order * DFKNTsize(vs->usym[j].type | DFNT_NATIVE);
+/* should be ok if field size in memory > MAX_FIELD_SIZE. ( 65535 after 40r1p1)  
                           if (value > MAX_FIELD_SIZE)
                               HGOTO_ERROR(DFE_BADFIELDS, FAIL);
-                          wlist->esize[wlist->n] = (int16) value;
+*/
+                          wlist->esize[wlist->n] = (uint16) value;
 
                           value = order * vs->usym[j].isize;
                           if (value > MAX_FIELD_SIZE)
                               HGOTO_ERROR(DFE_BADFIELDS, FAIL);
-                          wlist->isize[wlist->n] = (int16) value;
+                          wlist->isize[wlist->n] = (uint16) value;
 
                           value = (int32) wlist->ivsize + (int32) (wlist->isize[wlist->n]);
                           if (value > MAX_FIELD_SIZE)
                               HGOTO_ERROR(DFE_BADFIELDS, FAIL);
-                          wlist->ivsize = (int16) value;
+                          wlist->ivsize = (uint16) value;
 
                           wlist->n++;
                           break;
@@ -220,9 +223,9 @@ VSsetfields(int32 vkey, const char *fields)
                                 order = rstab[j].order;
                                 wlist->type[wlist->n] = rstab[j].type;
                                 wlist->order[wlist->n] = order;
-                                wlist->esize[wlist->n] = (int16) (order * DFKNTsize((int32) rstab[j].type | DFNT_NATIVE));
-                                wlist->isize[wlist->n] = (int16) (order * rstab[j].isize);
-                                wlist->ivsize += (int16) (wlist->isize[wlist->n]);
+                                wlist->esize[wlist->n] = (uint16) (order * DFKNTsize((int32) rstab[j].type | DFNT_NATIVE));
+                                wlist->isize[wlist->n] = (uint16) (order * rstab[j].isize);
+                                wlist->ivsize += (uint16) (wlist->isize[wlist->n]);
                                 wlist->n++;
                                 break;
                             }
@@ -233,10 +236,10 @@ VSsetfields(int32 vkey, const char *fields)
 
           /* *********************************************************** */
           /* compute and save the fields' offsets */
-          for (j = 0, i = 0; i < wlist->n; i++)
+          for (uj = 0, i = 0; i < wlist->n; i++)
             {
-                wlist->off[i] = (int16) j;
-                j += wlist->isize[i];
+                wlist->off[i] = (uint16) uj;
+                uj += wlist->isize[i];
             }
 
           HGOTO_DONE(SUCCEED); /* OK */
@@ -325,6 +328,9 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
     /* The order of a variable is stored in a 16-bit number, so have to keep this limit -QAK */
     if (order < 1 || order > MAX_ORDER)
         HGOTO_ERROR(DFE_BADORDER, FAIL);
+    /* don't forget to check for field size limit */
+    if ( (DFKNTsize(localtype) * order) > MAX_FIELD_SIZE )
+        HGOTO_ERROR(DFE_BADFIELDS, FAIL);
 
     /*
      ** check for any duplicates
@@ -372,14 +378,14 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
           vs->usym=tmp_sym;
       } /* end else */
 
-    if ((vs->usym[usymid].isize = (int16) DFKNTsize((int32) localtype)) == FAIL)
+    if ((vs->usym[usymid].isize = (uint16) DFKNTsize((int32) localtype)) == FAIL)
         HGOTO_ERROR(DFE_BADTYPE, FAIL);
 
     /* Copy the symbol [field] information */
     if ((vs->usym[usymid].name = (char *) HDstrdup(av[0]) ) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     vs->usym[usymid].type = (int16) localtype;
-    vs->usym[usymid].order = (int16) order;
+    vs->usym[usymid].order = (uint16) order;
 
     /* increment vs->nusym only if no user field has been redefined */
     if (!replacesym)
@@ -537,7 +543,8 @@ done:
 
 /* ----------------------------- VFfieldisize ------------------------------ */
 /*
-   Return the internal (i.e. in memory) size of the given field in this Vdata.
+   Return the internal size of the given field in this Vdata.
+   (internal to HDF file, see VWRITELIST in vg.h. 4/3/96) 
 
    Return FAIL on failure
  */
@@ -582,7 +589,8 @@ done:
 
 /* ----------------------------- VFfieldesize ------------------------------ */
 /*
-   Return the external (i.e. on disk) size of the given field in this Vdata.
+   Return the external size of the given field in this Vdata.
+   (external to HDF file, see VWRITELIST in vg.h. 4/3/96) 
 
    Return FAIL on failure
  */

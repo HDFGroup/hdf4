@@ -54,36 +54,37 @@ typedef struct symdef_struct
   {
       char       *name;         /* symbol name */
       int16       type;         /* whether int, char, float etc */
-      int16       isize;        /* field size as stored in vdata */
-      int16       order;        /* order of field */
+      uint16      isize;        /* field size as stored in vdata */
+      uint16      order;        /* order of field */
   }
 SYMDEF;
 
 typedef struct write_struct
   {
       intn        n;            /* S actual # fields in element */
-      int16       ivsize;       /* S size of element as stored in vdata */
+      uint16      ivsize;       /* S size of element as stored in vdata */
+
       char        name[VSFIELDMAX][FIELDNAMELENMAX + 1];    /* S name of each field */
 
       int16       len[VSFIELDMAX];  /* S length of each fieldname */
       int16       type[VSFIELDMAX];     /* S field type */
-      int16       off[VSFIELDMAX];  /* S field offset in element in vdata */
-      int16       isize[VSFIELDMAX];    /* S internal (HDF) size [incl order] */
-      int16       order[VSFIELDMAX];    /* S order of field */
-      int16       esize[VSFIELDMAX];    /*  external (local machine) size [incl order] */
+      uint16      off[VSFIELDMAX];  /* S field offset in element in vdata */
+      uint16      isize[VSFIELDMAX];    /* S internal (HDF) size [incl order] */
+      uint16      order[VSFIELDMAX];    /* S order of field */
+      uint16      esize[VSFIELDMAX];    /*  external (local machine) size [incl order] */
   }
 VWRITELIST;
 
 typedef struct dyn_write_struct
   {
       intn        n;        /* S actual # fields in element */
-      int16       ivsize;   /* S size of element as stored in vdata */
+      uint16      ivsize;   /* S size of element as stored in vdata */
       char        **name;   /* S name of each field */
       int16       *type;    /* S field type */
-      int16       *off;     /* S field offset in element in vdata */
-      int16       *isize;   /* S internal (HDF) size [incl order] */
-      int16       *order;   /* S order of field */
-      int16       *esize;   /*  external (local machine) size [incl order] */
+      uint16      *off;     /* S field offset in element in vdata */
+      uint16      *isize;   /* S internal (HDF) size [incl order] */
+      uint16      *order;   /* S order of field */
+      uint16      *esize;   /*  external (local machine) size [incl order] */
   }
 DYN_VWRITELIST;
 

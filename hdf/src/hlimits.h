@@ -68,8 +68,8 @@
 #define VDEFAULTNBLKS        32
 
 /* Max order of a field in a Vdata */
-#define MAX_ORDER          32000
-#define MAX_FIELD_SIZE     32000
+#define MAX_ORDER          65535
+#define MAX_FIELD_SIZE     65535
 
 
 /* ------------------------- Constants for hfile.c --------------------- */

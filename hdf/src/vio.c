@@ -119,11 +119,11 @@ vexistvs(HFILEID f, uint16 vsid)
 CONTENTS of VS stored in HDF file with tag VSDESCTAG:
     int16       interlace
     int32       nvertices
-    int16       vsize
+    uint16       vsize
     int16       nfields
 
-    int16       isize[1..nfields] (internal size of each field)
-    int16       off[1..nfields] (internal offset of each field)
+    uint16       isize[1..nfields] (internal size of each field)
+    uint16       off[1..nfields] (internal offset of each field)
     char        fname[1..nfields][FIELDNAMELENMAX]
     char        vsname[VSNAMELENMAX]
 ****/
@@ -138,14 +138,14 @@ CONTENTS of VS stored in HDF file with tag VSDESCTAG:
 CONTENTS of VS stored in HDF file with tag DFTAG_VH:
     int16       interlace
     int32       nvertices
-    int16       vsize
+    uint16      vsize
     int16       nfields
 
-    int16       isize[1..nfields] (internal size of each field)
-    int16       off[1..nfields] (internal offset of each field)
+    uint16      isize[1..nfields] (internal size of each field)
+    uint16      off[1..nfields] (internal offset of each field)
     char        fname[1..nfields][FIELDNAMELENMAX]
     char        vsname[VSNAMELENMAX]
-    char     vsclass[VSNAMELENMAX]
+    char        vsclass[VSNAMELENMAX]
 
 ****/
 
@@ -168,7 +168,7 @@ vpackvs(VDATA * vs, uint8 buf[], int32 *size)
     INT32ENCODE(bb, vs->nvertices);
 
     /* save ivsize */
-    INT16ENCODE(bb, vs->wlist.ivsize);
+    UINT16ENCODE(bb, vs->wlist.ivsize);
 
     /* save nfields */
     INT16ENCODE(bb, vs->wlist.n);
@@ -178,13 +178,13 @@ vpackvs(VDATA * vs, uint8 buf[], int32 *size)
 
     /* save the isize */
     for (i = 0; i < vs->wlist.n; i++)
-        INT16ENCODE(bb, vs->wlist.isize[i]);
+        UINT16ENCODE(bb, vs->wlist.isize[i]);
 
     for (i = 0; i < vs->wlist.n; i++)   /* save the offset */
-        INT16ENCODE(bb, vs->wlist.off[i]);
+        UINT16ENCODE(bb, vs->wlist.off[i]);
 
     for (i = 0; i < vs->wlist.n; i++)   /* save the order */
-        INT16ENCODE(bb, vs->wlist.order[i]);
+        UINT16ENCODE(bb, vs->wlist.order[i]);
 
     /* save each field length and name - omit the null */
     for (i = 0; i < vs->wlist.n; i++)
@@ -244,7 +244,7 @@ vunpackvs(VDATA * vs, uint8 buf[])
     INT32DECODE(bb, vs->nvertices);
 
     /* retrieve tore ivsize */
-    INT16DECODE(bb, vs->wlist.ivsize);
+    UINT16DECODE(bb, vs->wlist.ivsize);
 
     /* retrieve nfields */
     INT16DECODE(bb, vs->wlist.n);
@@ -254,17 +254,17 @@ vunpackvs(VDATA * vs, uint8 buf[])
     for (i = 0; i < vs->wlist.n; i++)   /* retrieve the type */
         INT16DECODE(bb, vs->wlist.type[i]);
 
-    vs->wlist.isize=HDmalloc(sizeof(int16)*vs->wlist.n);
+    vs->wlist.isize=HDmalloc(sizeof(uint16)*vs->wlist.n);
     for (i = 0; i < vs->wlist.n; i++)   /* retrieve the isize */
-        INT16DECODE(bb, vs->wlist.isize[i]);
+        UINT16DECODE(bb, vs->wlist.isize[i]);
 
-    vs->wlist.off=HDmalloc(sizeof(int16)*vs->wlist.n);
+    vs->wlist.off=HDmalloc(sizeof(uint16)*vs->wlist.n);
     for (i = 0; i < vs->wlist.n; i++)   /* retrieve the offset */
-        INT16DECODE(bb, vs->wlist.off[i]);
+        UINT16DECODE(bb, vs->wlist.off[i]);
 
-    vs->wlist.order=HDmalloc(sizeof(int16)*vs->wlist.n);
+    vs->wlist.order=HDmalloc(sizeof(uint16)*vs->wlist.n);
     for (i = 0; i < vs->wlist.n; i++)   /* retrieve the order */
-        INT16DECODE(bb, vs->wlist.order[i]);
+        UINT16DECODE(bb, vs->wlist.order[i]);
 
     /* retrieve the field names (and each field name's length)  */
     vs->wlist.name=HDmalloc(sizeof(char *)*vs->wlist.n);
@@ -304,9 +304,9 @@ vunpackvs(VDATA * vs, uint8 buf[])
             vs->wlist.type[i] = map_from_old_types(vs->wlist.type[i]);
 
     /* --- EXTRA --- fill in the machine-dependent size fields */
-    vs->wlist.esize=HDmalloc(sizeof(int16)*vs->wlist.n);
+    vs->wlist.esize=HDmalloc(sizeof(uint16)*vs->wlist.n);
     for (i = 0; i < vs->wlist.n; i++)
-        vs->wlist.esize[i] = (int16) (vs->wlist.order[i] * DFKNTsize((int32) vs->wlist.type[i] | (int32) DFNT_NATIVE));
+        vs->wlist.esize[i] = (uint16) (vs->wlist.order[i] * DFKNTsize((int32) vs->wlist.type[i] | (int32) DFNT_NATIVE));
 
 }   /* vunpackvs */
 

@@ -159,10 +159,10 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
     intn isize = 0;
     intn order = 0;
     intn index = 0;
-    int16 esize = 0;
-    int16 hsize = 0;
+    uint16 esize = 0;
+    uint16 hsize = 0;
     uint8 *b1, *b2;
-    int32       i, j, nv, offset, type;
+    int32  i, j, nv, offset, type;
     DYN_VWRITELIST *w;
     DYN_VREADLIST  *r;
     int32       uvsize;         /* size of "element" as NEEDED by user */
@@ -395,7 +395,7 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
     intn isize = 0;
     intn order = 0;
     intn index = 0;
-    int16 esize = 0;
+    uint16 esize = 0;
     uint8 *src, *dest, *Src;
 
     int32       j, type, offset;
