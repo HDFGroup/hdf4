@@ -1204,6 +1204,7 @@
 ./mfhdf/libsrc/hdfout.sav
 ./mfhdf/libsrc/hdfsds.c
 ./mfhdf/libsrc/hdftest.c
+./mfhdf/libsrc/hdftest.h
 ./mfhdf/libsrc/hdftest.mak
 ./mfhdf/libsrc/hdftest.project.hqx
 ./mfhdf/libsrc/htons.mar
