@@ -206,7 +206,7 @@ char *argv[];
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 3;
     status = SDreaddata(newsds, start, NULL, end, (VOIDP) data);
-    CHECK(status, "SDwritedata");
+    CHECK(status, "SDreaddata");
 
     if(data[0] != -17.5) {
         fprintf(stderr, "Wrong value returned\n");
@@ -238,7 +238,7 @@ char *argv[];
     stride[0] = 2;
     stride[1] = 2;
     status = SDreaddata(newsds2, start, stride, end, (VOIDP) sdata);
-    CHECK(status, "SDwritedata");
+    CHECK(status, "SDreaddata");
 
     for(i = 0; i < 10; i++)
         printf("%d := %d\n", i, sdata[i]);
