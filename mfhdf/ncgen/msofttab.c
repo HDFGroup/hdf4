@@ -1,7 +1,7 @@
 
 # line 10 "ncgen.y"
 #ifndef lint
-static char SccsId[] = "$Header$";
+static char SccsId[] = "$Id$";
 #endif
 #include        <string.h>
 #include	<stdlib.h>

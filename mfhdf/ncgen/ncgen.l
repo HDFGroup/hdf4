@@ -2,7 +2,7 @@
 /*********************************************************************
  *   Copyright 1993, UCAR/Unidata
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
- *   $Header$
+ *   $Id$
  *********************************************************************/
 
 #define	STREQ(a, b)	(*(a) == *(b) && strcmp((a), (b)) == 0)

@@ -1,14 +1,14 @@
 /*********************************************************************
  *   Copyright 1993, UCAR/Unidata
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
- *   $Header$
+ *   $Id$
  *********************************************************************/
 
 /* yacc source for "ncgen", a netCDL parser and netCDF generator */
 
 %{
 #ifndef lint
-static char SccsId[] = "$Header$";
+static char SccsId[] = "$Id$";
 #endif
 #include        <string.h>
 #include	<stdlib.h>
