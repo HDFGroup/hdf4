@@ -134,7 +134,7 @@ intn HTPstart(filerec_t *file_rec       /* IN:  File record to store info in */
   CONSTR(FUNC, "HTPstart");	/* for HERROR */
   uint8      *tbuf=NULL;  /* temporary buffer */
   uintn       tbuf_size=0;    /* temporary buffer size */
-  uint32      end_off = 0;	/* offset of the end of the file */
+  int32       end_off = 0;	/* offset of the end of the file */
   intn        ret_value = SUCCEED;
 
   HEclear();
