@@ -125,7 +125,15 @@ int mode ;
             case NC_NOCLOBBER :
                 /* see if the file exists */
                 if((int) Hishdf((char *) name))
+                  { /* Need to free allocated structures */
+                    NC_free_xcdf(cdf) ;
+#ifndef macintosh /* We don't handle xdr files yet */
+                    xdr_destroy(cdf->xdrs) ;
+#endif /* !macintosh */
+                    Free(cdf->xdrs) ;
+                    Free(cdf) ;
                     return(NULL);
+                  }
                 hdf_mode = DFACC_RDWR;    break;
             case NC_WRITE     :
 		hdf_mode = DFACC_RDWR;    break;
