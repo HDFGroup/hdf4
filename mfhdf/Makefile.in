@@ -9,15 +9,16 @@ MANIFEST	= CHANGES COPYRIGHT CUSTOMIZE FAQ INSTALL MANIFEST \
 		  configure.in aclocal.m4 msoft.mk
 SUBDIRS		= port doc fortran ncdump ncgen nctest libsrc xdr c++ dumper
 SUBDIR_TARGETS	= \
-    port/all	port/clean   port/distclean \
+    port/all	                             port/clean   port/distclean \
     doc/all                  doc/install     doc/clean     doc/distclean \
     fortran/all fortran/test fortran/install fortran/clean fortran/distclean \
     ncdump/all  ncdump/test  ncdump/install  ncdump/clean  ncdump/distclean \
     ncgen/all   ncgen/test   ncgen/install   ncgen/clean   ncgen/distclean \
     nctest/all  nctest/test                  nctest/clean  nctest/distclean \
-    libsrc/all     libsrc/test     libsrc/install     libsrc/clean     libsrc/distclean \
+    libsrc/all  libsrc/test  libsrc/install  libsrc/clean  libsrc/distclean \
     xdr/all     xdr/test     xdr/install     xdr/clean     xdr/distclean \
-    c++/all     c++/clean    c++/distclean dumper/all	dumper/clean
+    c++/all                                  c++/clean    c++/distclean \
+    dumper/all	                             dumper/clean dumper/distclean
 
 all::		port/all xdr/all libsrc/all fortran/all ncdump/all \
 		ncgen/all nctest/all doc/all dumper/all
@@ -38,6 +39,7 @@ distclean::	port/distclean  \
 		doc/distclean \
 		fortran/distclean \
 		ncdump/distclean \
+		dumper/distclean \
 		ncgen/distclean \
 		nctest/distclean \
 		libsrc/distclean \
