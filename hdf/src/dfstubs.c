@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1993/04/19 22:47:46  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.5  1993/04/22 15:06:35  chouck
+A plane call to free() had snuck through
 
+ * Revision 1.4  1993/04/19  22:47:46  koziol
+ * General Code Cleanup to reduce/remove errors on the PC
+ *
  * Revision 1.3  1993/01/19  05:55:19  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -177,7 +180,7 @@ DFclose(dfile)
 
     if (DFelstat == DFEL_RESIDENT) {
         Hputelement(DFid, acc_tag, acc_ref, (unsigned char *)DFelement, DFelsize);
-        free(DFelement);
+        HDfreespace(DFelement);
     }
     else
         Hendaccess(DFaid);
