@@ -1,0 +1,12 @@
+hdp.o: hdp.c
+hdp.o: ./hdp.h
+hdp.o: ../libsrc/mfhdf.h
+hdp_list.o: hdp_list.c
+hdp_list.o: ./hdp.h
+hdp_list.o: ../libsrc/mfhdf.h
+hdp_sds.o: hdp_list.c
+hdp_sds.o: ./hdp.h
+hdp_sds.o: ../libsrc/mfhdf.h
+hdp_util.o: hdp_list.c
+hdp_util.o: ./hdp.h
+hdp_util.o: ../libsrc/mfhdf.h

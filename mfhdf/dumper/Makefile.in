@@ -1,0 +1,39 @@
+# Makefile for HDF dumper(1).
+#
+# $Id$
+
+PROGRAM		= dumper
+BINFILES	= $(PROGRAM)
+HDF_LIB         = @HDF_LIB@
+HDF_INC         = @HDF_INC@
+CPP_NETCDF	= -I../libsrc -I../port $(HDF_INC)
+CPPFLAGS	= $(CPP_NETCDF) @CPPFLAGS@
+CFLAGS		= @CFLAGS@
+FFLAGS		= @FFLAGS@
+MANIFEST	= Makefile.in depend hdp.h hdp.c hdp_list.c hdp_sds.c hdp_util.c 
+MANUALS		= dumper.1
+LIBNAME		= netcdf
+LD_NETCDF	= ../libsrc/libnetcdf.a
+OBJS		=  hdp.o hdp_list.o hdp_sds.o hdp_util.o
+LD_XDR		= @LD_XDR@
+LD_NETCDF	= -L../libsrc -lnetcdf
+LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) -lm
+prefix		= ../../..
+GARBAGE		= $(PROGRAM) *.o
+
+all::		$(PROGRAM)
+
+
+test:	echo "*** there is no testing for $(PROGRAM) ***" ; 
+
+install::	installed_program installed_manuals
+
+include ../port/master.mk
+
+# Override the default definition for ncgen(1) in the master makefile.
+#
+NCGEN		= ../ncgen/ncgen
+
+### Everything after the following line might be overwritten ###
+### DO NOT DELETE THIS LINE.  make depend DEPENDS ON IT ###
+include depend

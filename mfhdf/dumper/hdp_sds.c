@@ -1,0 +1,560 @@
+#include <stdio.h>
+#include "hdf.h"
+#include "hfile.h"
+#include "mfhdf.h"
+#include "dfsd.h"
+#include "hdp.h"
+#include <math.h>
+
+static intn dsd(dumpsds_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[]);
+
+void dumpsds_usage(intn argc,char *argv[])
+{
+	printf("Usage:\n");
+	printf("%s dumpsds [-a|-i <index>|-n <name>|-r <ref>] [-dhv] [-o <filename> [-bx]] <filelist>\n",argv[0]);
+	printf("\t-a\tDump all SDSs in the file (default)\n");
+	printf("\t-i <index>\tDump the <index>th SDS in the file \n");
+	printf("\t-n <name>\tDump the SDS with name <name>\n");
+	printf("\t-r <ref>\tDump the SDS with reference number <ref>\n");
+	printf("\t-d\tDump data only, no tag/ref, formatted to input to hp2hdf\n");
+	printf("\t-h\tDump header only, no annotation for elements nor data\n");
+	printf("\t-v\tDump everything including all annotations (default)\n");
+	printf("\t-o <filename>\tOutput to file <filename>\n");
+	printf("\t-b\tBinary format of output\n");
+	printf("\t-x\tAscii text format of output (default)\n");
+}	/* end list_usage() */
+
+void init_dumpsds_opts(dumpsds_info_t *dumpsds_opts)
+{
+	dumpsds_opts->filter=DALL;		/* default dump all SDSs */
+	dumpsds_opts->filter_num=FALSE;       	/* not by reference nor by index */
+	HDstrcpy(dumpsds_opts->filter_str, "\0");      /* not by name */
+	dumpsds_opts->contents=DVERBOSE;	/* default dump all information */
+	dumpsds_opts->dump_to_file=FALSE;	/* don't dump to output file*/
+	dumpsds_opts->file_type=DASCII;		/* default output is ASCII file */
+	HDstrcpy(dumpsds_opts->file_name, "\0");
+}	/* end init_list_opts() */
+
+intn parse_dumpsds_opts(dumpsds_info_t *dumpsds_opts,intn *curr_arg,intn argc,char *argv[])
+{
+        if (*curr_arg >= argc) return(FAIL); 
+	while((*curr_arg < argc) && 
+              (argv[*curr_arg][0]=='-' || argv[*curr_arg][0]=='/'))   {
+	    switch(argv[*curr_arg][1]) {
+		case 'a':	/* dump all, default */
+                    dumpsds_opts->filter = DALL;
+                    (*curr_arg)++;
+	 	    break;
+
+		case 'i':	/* dump by index */
+		    dumpsds_opts->filter=DINDEX;	
+                    *curr_arg = *curr_arg +1;
+		    dumpsds_opts->filter_num=atoi(argv[*curr_arg]);
+                               	/* get index */
+                    (*curr_arg)++;
+		    break;
+                case 'r':       /* dump by reference */
+                    dumpsds_opts->filter=DREFNUM;
+                    dumpsds_opts->filter_num=atoi(argv[++(*curr_arg)]);
+                                /* get ref */
+                    (*curr_arg)++;
+                    break;
+
+		case 'n':	/* dump by names */
+		    dumpsds_opts->filter=DNAME;	/* dump by name */
+		    HDstrcpy(dumpsds_opts->filter_str, argv[++(*curr_arg)]); 
+                    (*curr_arg)++;
+		    break;
+
+		case 'd':	/* dump data only */
+                    dumpsds_opts->contents = DDATA;
+                    (*curr_arg)++;
+		    break;
+
+		case 'h':	/* no annotations nor data */
+                    dumpsds_opts->contents = DHEADER;
+                    (*curr_arg)++;
+		    break;
+
+		case 'v':	/* dump all info */
+                    dumpsds_opts->contents = DVERBOSE;
+                    (*curr_arg)++;
+                    break;
+
+		case 'o':	/* specify output file */
+                    dumpsds_opts->dump_to_file = TRUE; /* get filename */
+                    HDstrcpy(dumpsds_opts->file_name, argv[++(*curr_arg)]);
+                    if (++(*curr_arg)<argc)  { /* binary or ascii */
+                        if (argv[*curr_arg][0] == '-') 
+                            dumpsds_opts->file_type = (argv[*curr_arg][1] == 'b')?
+                                     DBINARY : DASCII;
+                        else (*curr_arg)--; 
+                    }
+                    (*curr_arg)++;
+	            break;
+
+		default:	/* invalid dumpsds option */
+		    printf("Warning: Invalid dumpsds option %s\n", 
+                             argv[*curr_arg]);
+                    return(FAIL);
+	  }	/* end switch */
+      }	/* end while */
+      return(SUCCEED);
+}	/* end parse_dumpsds_opts */
+
+void do_dumpsds(intn curr_arg,intn argc,char *argv[],dump_opt_t *glob_opts)
+{
+    dumpsds_info_t dumpsds_opts;	/* dumpsds options */
+    intn ret;
+
+    if(glob_opts->help==TRUE) {
+	dumpsds_usage(argc,argv);
+	return;
+    }	/* end if */
+    init_dumpsds_opts(&dumpsds_opts);
+    if(parse_dumpsds_opts(&dumpsds_opts,&curr_arg,argc,argv)==FAIL) {
+	dumpsds_usage(argc,argv);
+	return;
+    }	/* end if */
+    switch (dumpsds_opts.filter)  {
+        case DINDEX : 
+            ret = dsd(&dumpsds_opts, curr_arg, argc, argv);
+            if (ret == FAIL) {
+                printf("Failure in dump %ith SDS \n", dumpsds_opts.filter_num);
+                exit(1);
+            }
+            break;
+        case DREFNUM :
+            ret = dsd(&dumpsds_opts, curr_arg, argc, argv);
+            if (ret == FAIL) {
+                printf("Failure in dump ref=%i SDS \n", dumpsds_opts.filter_num);
+                exit(1);
+            }
+            break;
+        case DNAME :
+            ret = dsd(&dumpsds_opts, curr_arg, argc, argv);
+            if (ret == FAIL) {
+                printf("Failure in dump name=%s SDS \n", dumpsds_opts.filter_str);
+                exit(1);
+            }
+            break;
+        default:
+            ret = dsd(&dumpsds_opts, curr_arg, argc, argv);
+            if (ret == FAIL) {
+                printf("Failure in dump all SDSs \n");
+                exit(1);
+            }
+            break;
+        }  /* switch of filter  */
+    return; 
+}	/* end do_dumpsds() */
+
+
+/* --------------------------------------------------------- 
+* printing functions copied from vshow.c and used by sdsdumpfull(). 
+*/
+static int32 cn = 0;
+
+int32 fmtbyte(unsigned char *x, FILE *ofp)
+{
+    cn += fprintf(ofp,"%02x ",*x);
+    return(1);
+}
+int32 fmtint8(VOIDP x, FILE *ofp)
+{
+    cn += fprintf(ofp, "%d", *((signed char *)x));
+    return(1);
+}
+
+int32 fmtuint8(VOIDP x, FILE *ofp)
+{
+    cn += fprintf(ofp, "%u", *((unsigned char *)x));
+    return(1);
+}
+
+int32 fmtint16(VOIDP x, FILE *ofp)
+{
+  short s = 0;
+  HDmemcpy(&s, x, sizeof(int16));
+  cn += fprintf(ofp, "%d", s);
+  return(1);
+}
+
+int32 fmtuint16(VOIDP x, FILE *ofp)
+{
+  unsigned short s = 0;
+  HDmemcpy(&s, x, sizeof(int16));
+  cn += fprintf(ofp, "%u", s);
+  return(1);
+}
+
+
+int32 fmtchar(VOIDP x, FILE *ofp)
+{
+    if (isprint(*(unsigned char *)x))   {
+        putc(*((char *)x), ofp);
+        cn++;
+    }
+    else   {
+        putc('\\', ofp);
+        cn++;
+        cn += fprintf(ofp, "%03o", *((uchar8 *)x));
+    }
+
+    return(1);
+}
+
+int32 fmtuchar8(VOIDP x, FILE *ofp)
+{
+    cn++;
+    putc('\\', ofp);
+    cn++;
+    fprintf(ofp, "%o", *((uchar8 *)x));
+/*
+    putc(*((uchar8 *)x), ofp);
+*/
+    return(1);
+}
+
+int32 fmtint(VOIDP x, FILE *ofp)
+{
+  int i = 0;
+  HDmemcpy(&i, x, sizeof(int32));
+  cn += fprintf(ofp, "%d", i);
+  return(1);
+}
+
+int32 fmtfloat32(VOIDP x, FILE *ofp)
+{
+  float32 f = 0, epsi = 1.0e-20;
+  HDmemcpy(&f, x, sizeof(float32));
+  if (fabs(f - FILL_FLOAT) <= epsi)
+      cn += fprintf(ofp, "FloatInf ");
+  else cn += fprintf(ofp, "%f", f);
+  return(1);
+}
+
+int32 fmtint32(VOIDP x, FILE *ofp)
+{
+  long l = 0;
+  HDmemcpy(&l, x, sizeof(int32));
+  cn += fprintf(ofp, "%ld", l);
+  return(1);
+}
+
+int32 fmtuint32(VOIDP x, FILE *ofp)
+{
+  uint32 l = 0;
+  HDmemcpy(&l, x, sizeof(int32));
+  cn += fprintf(ofp, "%lu", l);
+  return(1);
+}
+
+int32 fmtshort(VOIDP x, FILE *ofp)
+{
+  short s = 0;
+  HDmemcpy(&s, x, sizeof(int16));
+  cn += fprintf(ofp, "%d", s);
+  return(1);
+}
+
+int32 fmtfloat64(char *x, FILE *ofp)
+{
+  double d = 0, epsi = 1.0e-20;
+
+  HDmemcpy(&d, x, sizeof(float64));
+  if (fabs(d - FILL_DOUBLE) <= epsi)
+      cn += fprintf(ofp, "DoubleInf ");
+  else cn += fprintf(ofp, "%f", d);
+  return(1);
+}
+
+#define BUFFER 1000000
+
+int32 dumpfull(int32 nt,int32 cnt,VOIDP databuf,intn indent,FILE *ofp)
+{
+    intn i; 
+    VOIDP b; 
+    int32 (*fmtfunct)()=NULL;
+    int32 off;
+    
+    switch (nt)  {
+       case DFNT_CHAR:
+            fmtfunct = fmtchar;
+            break;
+       case DFNT_UCHAR:
+            fmtfunct = fmtuchar8;
+            break;
+
+       case DFNT_UINT8:
+            fmtfunct = fmtuint8;
+       case DFNT_INT8:
+            fmtfunct = fmtint8;
+            break;
+       case DFNT_UINT16:
+            fmtfunct = fmtuint16;
+       case DFNT_INT16:
+            fmtfunct = fmtint16;
+            break;
+       case DFNT_UINT32:
+            fmtfunct = fmtuint32;
+       case DFNT_INT32:
+            fmtfunct = fmtint32;
+            break;
+       case DFNT_FLOAT32:
+            fmtfunct = fmtfloat32;
+            break;
+       case DFNT_FLOAT64:
+            fmtfunct = fmtfloat64;
+            break;
+       default:
+            fprintf(ofp, "HDP does not support type [%i] \n", (int)nt);
+            break;
+    }
+    
+/*    cn = 0;
+*/
+    b = databuf;
+    off = DFKNTsize(nt | DFNT_NATIVE);
+
+    for (i=0; i<cnt; i++)   {
+        fmtfunct(b, ofp);
+        b = (char *)b+ off;     
+        if (nt != DFNT_CHAR)   {
+            putc(' ', ofp);
+            cn++;
+        }
+        if (cn > 65)   {
+            putc('\n', ofp);
+            for (cn=0; cn<indent; cn++) putc(' ', ofp);
+        }
+    }
+    return(0);
+}	    
+
+
+int32 sdsdumpfull(int32 sds_id, int32 rank, int32 dimsizes[], int32 nt, 
+                  intn indent, FILE *fp)
+{
+
+    int32 j,i, ret;
+    VOIDP buf; 
+    int32 eltsz, read_nelts;
+
+    int32 done;    /* number of rows we have done */
+
+    int32 *left, *start, *edge;
+
+    if (indent>65)  {
+         printf("Bad indentation %i\n", indent);
+         exit(1);
+    } 
+   
+    eltsz = DFKNTsize(nt | DFNT_NATIVE);
+    read_nelts = dimsizes[rank-1];
+    buf=(VOIDP)HDgetspace(read_nelts*eltsz);
+    left = (int32 *)HDgetspace(rank * sizeof(int32));
+    start = (int32 *)HDgetspace(rank * sizeof(int32));
+    edge = (int32 *)HDgetspace(rank*sizeof(int32));
+    for (i=0; i<rank; i++)   {
+        start[i] = 0;
+        left[i] = dimsizes[i];
+        edge[i] = 1;
+    }
+    edge[rank-1] = dimsizes[rank-1];
+    done = 0;
+    if (rank==1) {   /* dump the data and done  */
+        ret = SDreaddata(sds_id, start, NULL, edge, buf);
+        ret = dumpfull(nt, read_nelts, buf, indent, fp);
+        fprintf(fp,"\n"); 
+        cn=0;
+        done = 1;
+    }
+    while (!done && (rank-2)>=0)  {  /* dump a row each time and 
+                                        modify the left[] accordingly  */
+        ret = SDreaddata(sds_id, start, NULL, edge, buf);
+        ret = dumpfull(nt, read_nelts, buf, indent, fp);
+        fprintf(fp,"\n");
+        for (cn=0; cn<indent; cn++) fprintf(fp, " ");
+        for (j=rank-2; j>=0; j--)  {
+             if (--left[j] > 0) {    /* stay in the same dimension  */
+                  start[j]++;
+                  break;
+             }
+             else     {              /* borrow one from j-1 dimension  */
+                  left[j] = dimsizes[j];
+                  start[j] = 0;
+                  if (j==0) done=1;
+                  if (j==rank-2)  {
+                      fprintf(fp, "\n");
+                      for (cn=0; cn<indent; cn++) putc(' ', fp);
+                  }
+            }
+       }    /* for j */
+    }  /* while   */
+    HDfreespace((VOIDP)start);
+    HDfreespace((VOIDP)left);
+    HDfreespace((VOIDP)buf);
+    HDfreespace((VOIDP)edge);
+    fprintf(fp, "\n");
+    return(0);
+} /* sdsdumpfull */
+/* ------------------------------------- */
+
+
+    
+
+static intn dsd(dumpsds_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[])  
+{
+    intn  i, ret, isdimvar;
+    int32 sdf_id, sds_id, chosen = -1;
+    int32 rank, nt, nattr, ndsets, nglb_attr;
+    int32 j, k, attr_nt, attr_count, attr_buf_size, attr_index;
+    char file_name[MAXFNLEN], name[MAXNAMELEN]; 
+    char attr_name[MAXNAMELEN], dim_nm[MAXNAMELEN];
+    int32 dimsizes[MAXRANK], dim_id, dimNT[MAXRANK], dimnattr[MAXRANK];
+    FILE  *fp, *fopen();
+    int32 /* ref ,*/ index;
+    VOIDP attr_buf;
+    char *nt_desc, *attr_nt_desc;
+    
+    while (curr_arg < argc)   {
+        HDstrcpy(file_name, argv[curr_arg]);
+        curr_arg++;
+        sdf_id = SDstart(file_name, DFACC_RDONLY);
+        if (sdf_id == FAIL) {
+           printf("Failure in open %s\n", file_name);
+           exit(1);
+        }
+
+        switch (dumpsds_opts->filter) {  /* which SDS has been chosen  */
+             case DINDEX:
+                  chosen = dumpsds_opts->filter_num;
+                  break;
+             case DREFNUM:
+                  index = SDreftoindex(sdf_id, dumpsds_opts->filter_num);
+                  chosen = index;
+                  break;
+             case DNAME:
+                  index = SDnametoindex(sdf_id, dumpsds_opts->filter_str);
+                  chosen = index;
+                  break;
+             case DALL:
+                  chosen = -1;
+                  break;
+             default:
+                  printf("Unknown filter option\n");
+                  exit(1);
+        }
+ 
+                    /* get output file name  */
+        if (dumpsds_opts->dump_to_file) fp = fopen(dumpsds_opts->file_name, "w");
+        else fp = stdout;
+        fprintf(fp, "File name: %s \n", file_name);
+        ret=SDfileinfo( sdf_id, &ndsets, &nglb_attr);
+        if (ret == FAIL) {
+            printf("Failure in SDfileinfo %s\n", file_name);
+            exit(1);
+        }
+        for (i=0; i<ndsets; i++)   {  /* loop through all SDS's  */
+             if (chosen>=0 && i!=chosen) continue;
+             /* reset var's  */
+             for (k=0; k<MAXRANK; k++) {
+                  dimsizes[k]=0;
+                  dimNT[k]=0;
+                  dimnattr[k]=0;
+             }
+             sds_id = SDselect(sdf_id, i);  /* if DALL or is chosen  */
+             if (sds_id == FAIL) {
+                 printf("Failure in select %s\n", file_name);
+                 exit(1);
+             }
+             isdimvar=(SDiscoordvar(sds_id))? 1 : 0;
+             ret = SDgetinfo(sds_id, name, &rank, dimsizes, &nt, &nattr);
+             nt_desc = HDgetNTdesc(nt);
+             if (ret == FAIL) {
+                 printf("Failure in SDfileinfo %s\n", file_name);
+                 exit(1);
+             }
+
+             switch (dumpsds_opts->contents)   {
+                 case DVERBOSE:
+/*                     ref = SDidtoref(sds_id);
+                     if (ref == FAIL) {
+                          printf("Failure in SDidtoref %s\n", file_name);
+                          exit(1);
+                     }
+*/                     
+                 case DHEADER:
+                     if (isdimvar) 
+                         fprintf(fp,"\nDimension Variable Name = %s\n\t Index = %i\n\t Type= %s\n",
+                                  name, i, nt_desc);
+                     else
+                         fprintf(fp,"\nVariable Name = %s\n\t Index = %i\n\t Type= %s\n",
+                                  name, i, nt_desc);
+                     HDfreespace(nt_desc);
+                     fprintf(fp,"\t Rank = %i\n\t Number of attributes = %i\n",
+                                   (int)rank, (int)nattr);
+                     for (j=0; j<rank; j++)   {
+                         dim_id = SDgetdimid(sds_id, j);
+                         ret = SDdiminfo(dim_id, dim_nm, &(dimsizes[j]),
+                                 &(dimNT[j]), &(dimnattr[j]));
+                         attr_nt_desc = HDgetNTdesc(dimNT[j]);
+                         fprintf(fp, "\t Dim%i: Name=%s\n", (int)j, dim_nm);
+                         fprintf(fp, "\t\t Size = %i\n\t\t Type = %s\n", 
+                                 (int)dimsizes[j], attr_nt_desc);
+                         HDfreespace(attr_nt_desc);
+                         fprintf(fp, "\t\t Number of attributes = %i\n", (int)dimnattr[j]);
+                     }
+                     for (j=0; j<nattr; j++)   {
+                         ret=SDattrinfo(sds_id, j,  attr_name, &attr_nt, &attr_count);
+                         attr_nt_desc = HDgetNTdesc(attr_nt);
+                         if (ret == FAIL) {
+                              printf("Failure in SDattrinfo %s\n", file_name);
+                              exit(1);
+                         }
+                         attr_index=SDfindattr(sds_id, attr_name);
+                         if (ret == FAIL) {
+                             printf("Failure in SDfindattr %s\n", file_name);
+                             exit(1);
+                         }
+                         attr_buf_size = DFKNTsize(attr_nt)*attr_count;
+                         attr_buf =(VOIDP) malloc(attr_buf_size);
+                         ret=SDreadattr(sds_id, attr_index, attr_buf);
+                         if (ret == FAIL) {
+                             printf("Failure in SDfindattr %s\n", file_name);
+                             exit(1);
+                         }
+                         fprintf(fp, "\t Attr%i: Name = %s\n", (int)attr_index, attr_name);
+                         fprintf(fp, "\t\t Type = %s \n\t\t Count= %i\n", 
+                                        attr_nt_desc, (int)attr_count);
+                         HDfreespace(attr_nt_desc);
+                         fprintf(fp, "\t\t Value = ");
+                         ret = dumpfull(attr_nt, attr_count, attr_buf, 20, fp);
+                         cn=0;
+                         fprintf(fp, "\n");
+                         HDfreespace((VOIDP)attr_buf);
+                     }
+                      
+                     if (dumpsds_opts->contents == DHEADER) break;
+                     
+                  case DDATA:
+                       if (dumpsds_opts->contents == DDATA)   {
+                           /* print rank, dimsizes, nt, maxmin, cal info */
+                       }
+                       fprintf(fp, "\t Data : \n");
+                       if (rank >0)    {
+                           for (cn=0; cn<16; cn++)   fprintf(fp, " ");
+                           ret = sdsdumpfull(sds_id, rank, dimsizes,nt,16,fp);
+                       }
+                       break;
+              }  /* switch  */                     
+              SDendaccess(sds_id);
+              if (dumpsds_opts->filter != DALL) break;  
+                                        /* no need to continue looping */
+          }  /* for ndsets  */
+          SDend(sdf_id);
+      }      /* while argc  */
+      return(0);
+}     /* dsd */
+
