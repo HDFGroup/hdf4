@@ -379,7 +379,7 @@ nssdc_read_cdf(xdrs, handlep)
         while(vxrNext != 0) {
             vix_t * vix;
 
-            vix = HDgetspace(sizeof(vix_t));
+            vix = (vix_t *)HDgetspace(sizeof(vix_t));
             if(vix == NULL) 
                 HRETURN_ERROR(DFE_NOSPACE,FALSE);
             
@@ -550,7 +550,7 @@ nssdc_read_cdf(xdrs, handlep)
         while(vxrNext != 0) {
             vix_t * vix;
 
-            vix = HDgetspace(sizeof(vix_t));
+            vix = (vix_t *)HDgetspace(sizeof(vix_t));
             if(vix == NULL) 
                 HRETURN_ERROR(DFE_NOSPACE,FALSE);
             
@@ -691,7 +691,7 @@ nssdc_read_cdf(xdrs, handlep)
             hdftype = hdf_map_type(nctype);
 
             bsize = nctypelen(nctype) * count;
-            tBuf = HDgetspace((uint32) bsize);
+            tBuf = (char *)HDgetspace((uint32) bsize);
 
             /* convert attrbute values and create attr object */
             DFKconvert((VOIDP) b, (VOIDP) tBuf, hdftype, count, DFACC_READ, 0, 0);
@@ -773,7 +773,7 @@ nssdc_read_cdf(xdrs, handlep)
             hdftype = hdf_map_type(nctype);
 
             bsize = nctypelen(nctype) * count;
-            tBuf = HDgetspace((uint32) bsize);
+            tBuf = (char *)HDgetspace((uint32) bsize);
 
             /* convert attrbute values and create attr object */
             DFKconvert((VOIDP) b, (VOIDP) tBuf, hdftype, count, DFACC_READ, 0, 0);

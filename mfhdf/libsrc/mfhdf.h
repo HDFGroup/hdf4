@@ -33,119 +33,119 @@ extern "C" {
 #endif
 
 extern int32 SDstart
-    PROTO((const char *name, int32 access));
+    (const char *name, int32 access);
 
 extern intn SDend
-    PROTO((int32 fid));
+    (int32 fid);
 
 extern intn SDfileinfo
-    PROTO((int32 fid, int32 *datasets, int32 *attrs));
+    (int32 fid, int32 *datasets, int32 *attrs);
 
 extern int32 SDselect
-    PROTO((int32 fid, int32 index));
+    (int32 fid, int32 index);
 
 extern intn SDgetinfo
-    PROTO((int32 sdsid, char *name, int32 *rank, int32 *dimsizes, 
-           int32 *nt, int32 *nattr));
+    (int32 sdsid, char *name, int32 *rank, int32 *dimsizes, 
+           int32 *nt, int32 *nattr);
 
 #ifndef __CSTAR__
 extern intn SDreaddata
-    PROTO((int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data));
+    (int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data);
 #endif
 
 extern uint16 SDgerefnumber
-    PROTO((int32 sdsid));
+    (int32 sdsid);
 
 extern int32 SDnametoindex
-    PROTO((int32 fid, char *name));
+    (int32 fid, char *name);
 
 extern intn SDgetrange
-    PROTO((int32 sdsid, VOIDP pmax, VOIDP pmin));
+    (int32 sdsid, VOIDP pmax, VOIDP pmin);
 
 extern int32 SDcreate
-    PROTO((int32 fid, char *name, int32 nt, int32 rank, int32 *dimsizes));
+    (int32 fid, char *name, int32 nt, int32 rank, int32 *dimsizes);
 
 extern int32 SDgetdimid
-    PROTO((int32 sdsid, intn number));
+    (int32 sdsid, intn number);
 
 extern intn SDsetdimname
-    PROTO((int32 id, char *name));
+    (int32 id, char *name);
 
 extern intn SDendaccess
-    PROTO((int32 id));
+    (int32 id);
 
 extern intn SDsetrange
-    PROTO((int32 sdsid, VOIDP pmax, VOIDP pmin));
+    (int32 sdsid, VOIDP pmax, VOIDP pmin);
 
 extern intn SDsetattr
-    PROTO((int32 id, char *name, int32 nt, int32 count, VOIDP data));
+    (int32 id, char *name, int32 nt, int32 count, VOIDP data);
 
 extern intn SDattrinfo
-    PROTO((int32 id, int32 index, char *name, int32 *nt, int32 *count));
+    (int32 id, int32 index, char *name, int32 *nt, int32 *count);
 
 extern intn SDreadattr
-    PROTO((int32 id, int32 index, VOIDP buf));
+    (int32 id, int32 index, VOIDP buf);
 
 #ifndef __CSTAR__
 extern intn SDwritedata
-    PROTO((int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data));
+    (int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data);
 #endif
 
 extern intn SDsetdatastrs
-    PROTO((int32 sdsid, char *l, char *u, char *f, char *c));
+    (int32 sdsid, char *l, char *u, char *f, char *c);
 
 extern intn SDsetcal
-    PROTO((int32 sdsid, float64 cal, float64 cale, float64 ioff,
-               float64 ioffe, int32 nt));
+    (int32 sdsid, float64 cal, float64 cale, float64 ioff,
+               float64 ioffe, int32 nt);
 
 extern intn SDsetfillvalue
-    PROTO((int32 sdsid, VOIDP val));
+    (int32 sdsid, VOIDP val);
 
 extern intn SDgetfillvalue
-    PROTO((int32 sdsid, VOIDP val));
+    (int32 sdsid, VOIDP val);
 
 extern intn SDgetdatastrs
-    PROTO((int32 sdsid, char *l, char *u, char *f, char *c, intn len));
+    (int32 sdsid, char *l, char *u, char *f, char *c, intn len);
 
 extern intn SDgetcal
-    PROTO((int32 sdsid, float64 *cal, float64 *cale, float64 *ioff, 
-               float64 *ioffe, int32 *nt));
+    (int32 sdsid, float64 *cal, float64 *cale, float64 *ioff, 
+               float64 *ioffe, int32 *nt);
 
 extern intn SDsetdimstrs
-    PROTO((int32 id, char *l, char *u, char *f));
+    (int32 id, char *l, char *u, char *f);
 
 extern intn SDsetdimscale
-    PROTO((int32 id, int32 count, int32 nt, VOIDP data));
+    (int32 id, int32 count, int32 nt, VOIDP data);
 
 extern intn SDgetdimscale
-    PROTO((int32 id, VOIDP data));
+    (int32 id, VOIDP data);
 
 extern intn SDdiminfo
-    PROTO((int32 id, char *name, int32 *size, int32 *nt, int32 *nattr));
+    (int32 id, char *name, int32 *size, int32 *nt, int32 *nattr);
 
 extern intn SDgetdimstrs
-    PROTO((int32 id, char *l, char *u, char *f, intn len));
+    (int32 id, char *l, char *u, char *f, intn len);
 
 extern intn SDsetexternalfile
-    PROTO((int32 id, char *filename, int32 offset));
+    (int32 id, char *filename, int32 offset);
 
 extern intn SDsetbigexternalfile
-    PROTO((int32 id, char *filename, int32 offset));
+    (int32 id, char *filename, int32 offset);
 
 extern int32 SDfindattr
-    PROTO((int32 id, char *attrname));
+    (int32 id, char *attrname);
 
 extern int32 SDidtoref
-    PROTO((int32 id));
+    (int32 id);
 
 extern int32 SDreftoindex
-    PROTO((int32 fid, int32 ref));
+    (int32 fid, int32 ref);
 
 extern int32 SDisrecord
-    PROTO((int32 id));
+    (int32 id);
 
 extern intn SDiscoordvar
-    PROTO((int32 id));
+    (int32 id);
 
 /* Define the FORTRAN names */
 
