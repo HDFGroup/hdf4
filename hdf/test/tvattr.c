@@ -165,6 +165,7 @@ intn write_vset_stuff(void)
       }
    return SUCCEED;
 } /* write_vset_stuff */
+
 /* test attribute routines */
 intn write_vattrs(void)
 {
@@ -447,7 +448,9 @@ intn write_vattrs(void)
          num_errs++;
          return FAIL;
       }
+   return SUCCEED;
 }  /* write_vattr */
+
 /*  Test reading routines */
 intn read_vattrs(void)
 {
