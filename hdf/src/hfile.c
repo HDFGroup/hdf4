@@ -4446,7 +4446,7 @@ mopen(char *name, intn flags)
    }
 
   /* check if we have a directory in path name */
-  if (target_dir == ".")
+  if (strcmp(target_dir, ".") == 0)
     { /* default to current directory */
         /* open current working directory */
         if ((cur_dirp = opendir(NULL)) == NULL)
@@ -4508,7 +4508,8 @@ mopen(char *name, intn flags)
 
       /* Create new file 
       * Note: '-1' argument -> 'sySystemScript' - Script.h */
-      if (noErr != (result = FSpCreate(&sfFile,hdfc,hdft,-1)))
+      result = FSpCreate(&sfFile,hdfc,hdft,-1);
+      if (noErr != result)
         {
           ret_value =  FAIL;
           goto done;
@@ -4536,7 +4537,8 @@ mopen(char *name, intn flags)
     } /* end switch 'flags' */
 
   /* Now open file */
-  if (noErr != (result = FSpOpenDF(&sfFile, perm, &ret_value)))
+  result = FSpOpenDF(&sfFile, perm, &ret_value);
+  if (noErr != result)
     {
       ret_value = FAIL;    
       goto done;
