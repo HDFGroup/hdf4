@@ -232,6 +232,9 @@ FOBJS = tr8f.o t24f.o tpf.o tanf.o tanfilef.o tsdstrf.o tsdntf.o \
         tsdnntf.o tsdmmsf.o tsdnmmsf.o tstubsf.o fortest.o \
         slabwf.o slab1wf.o slab2wf.o slab3wf.o slab4wf.o manf.o
 
+# directory used by extelt test.
+TESTDIR = testdir
+
 $(FTESTS): $(FSRCS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
 	$(FC) $(FFLAGS) $@.f -o $@ $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
 
@@ -290,6 +293,8 @@ testhdf.tc: $(CTESTS) $(HDFLIB)/libdf.a
 
 testhdf: $(CTESTS) $(HDFLIB)/libdf.a
 	$(CC) $(CFLAGS) -o testhdf $(CTESTS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
+	-mkdir $(TESTDIR)
+
 
 fortest: $(FTESTS) $(HDFLIB)/libdf.a fortest.o
 	$(CC) $(CFLAGS) -o fortest $(TESTF) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
@@ -301,7 +306,7 @@ ftests: $(FTESTS)
 
 clean: 
 	 -$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) fortest core \
-	ptesthdf qtesthdf gentest *.o
+	ptesthdf qtesthdf gentest *.o $(TESTDIR)/*
 
 distclean: 
 	 -$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) *.o fortest core \
