@@ -160,7 +160,9 @@ typedef enum
       DFE_BITWRITE,             /* There was a bit-write error */
       DFE_BITSEEK,              /* There was a bit-seek error */
       DFE_CANTLINK,             /* Can't initialize link information */
-      DFE_CANTSYNC              /*Cannot syncronize memory with file */
+      DFE_CANTSYNC,             /* Cannot syncronize memory with file */
+      DFE_CANTACCESS,           /* Cannot access specified tag/ref */
+      DFE_CANTENDACCESS         /* Cannot end access to data element */
   }
 hdf_err_code_t;
 
@@ -276,7 +278,9 @@ PRIVATE const struct error_messages_t error_messages[] =
     {DFE_BITWRITE, "There was a bit-write error"},
     {DFE_BITSEEK, "There was a bit-seek error"},
     {DFE_CANTLINK, "Can't initialize link information"},
-    {DFE_CANTSYNC, "Cannot syncronize memory with file"}
+    {DFE_CANTSYNC, "Cannot syncronize memory with file"},
+    {DFE_CANTACCESS, "Cannot access specified tag/ref"},
+    {DFE_CANTENDACCESS, "Cannot end access to data element"}
 };
 #endif /* _H_ERR_MASTER_ */
 
