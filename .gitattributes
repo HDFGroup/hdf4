@@ -6,6 +6,7 @@ hdf/jpeg/testimg.ppm -text svneol=unset#application/octet-stream
 hdf/jpeg/testimgp.jpg -text
 hdf/jpeg/testorig.jpg -text
 hdf/jpeg/testprog.jpg -text
+hdf/src/hdflib.project -text
 hdf/test/bitio.dat -text
 hdf/test/litend.dat -text
 hdf/test/nbit.dat -text
@@ -34,6 +35,7 @@ hdf/util/testfiles/storm140.raw -text svneol=unset#application/octet-stream
 hdf/util/testfiles/test.cdf -text
 hdf/util/testfiles/test.hdf -text
 hdf/util/testfiles/tvattr.hdf -text
+hdf/zlib/zlib.project -text
 java-hdf/lib/hdficons/ann.gif -text
 java-hdf/lib/hdficons/annotation.gif -text
 java-hdf/lib/hdficons/archive.gif -text
@@ -72,7 +74,9 @@ mfhdf/dumper/tdfr8f.hdf -text
 mfhdf/dumper/test.hdf -text
 mfhdf/dumper/tvattr.hdf -text
 mfhdf/dumper/tvset.hdf -text
+mfhdf/libsrc/mfhdflib.project -text
 mfhdf/libsrc/test1.nc -text
 mfhdf/libsrc/test_cdf.sav -text
 mfhdf/xdr/test_xdr.sav svneol=native#unset
+mfhdf/xdr/xdrlib.project -text
 /win32mak.zip -text
