@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.2  1993/01/19 05:55:44  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.3  1993/02/18 04:23:21  georgev
+Added new HCLOSE_RETURN_ERROR macro.
 
+ * Revision 1.2  1993/01/19  05:55:44  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -41,6 +44,11 @@ port.  Lots of minor annoyances fixed.
 
 #define HRETURN_ERROR(err, ret_val) {HERROR(err); return(ret_val);}
 
+/* HCLOSE_RETURN_ERROR macro, used to facilitate error reporting.  Makes
+   same assumptions as HRETURN_ERROR.  IN ADDITION, this macro causes
+   the file specified by the id "fid" to be closed */
+
+#define HCLOSE_RETURN_ERROR(hfid, err, ret_val) {HERROR(err); Hclose(hfid); return(ret_val);}
 
 /* Clear the error stack */
 extern int32 error_top;
