@@ -172,8 +172,12 @@ printf("%s: check 2.0, data_off=%d, data_len=%d\n",FUNC,(int)data_off,(int)data_
     info->length       = data_len;  /* initial buffer size */
 
     /* Get space for buffer */
-    if((info->buf = HDmalloc((uint32) data_len))==NULL)
-        HGOTO_ERROR(DFE_NOSPACE, FAIL);
+    if(data_len>0) {
+        if((info->buf = HDmalloc((uint32) data_len))==NULL)
+            HGOTO_ERROR(DFE_NOSPACE, FAIL);
+      } /* end if */
+    else
+        info->buf=NULL;
 
     /* Read in existing data into buffer */
     if(data_len>0) {
