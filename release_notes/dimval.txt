@@ -8,7 +8,7 @@ fake value from 0, 1, 2 ... , (<dimension size> - 1 ). The fake values
 are not really required and take a lot of space. For applications that 
 create large one dimensional array datasets the disk space taken by 
 these fake values almost double the size of the HDF file. In order to 
-omit the fake values, a new version of dimension vdata is proposed.
+omit the fake values, a new version of dimension vdata has been proposed.
 
 The new version uses the same structure as the old version. The only
 differences are that the vdata has only 1 record with value 
@@ -16,7 +16,7 @@ differences are that the vdata has only 1 record with value
 distinguish it from the old version.
 
 However, existing tools and utilities which were compiled with the old
-version can't recognize the new dimesions of hdf files created using
+version can't recognize the new dimensions of hdf files created using
 HDF4.0b2 or later version. This could cause problems for HDF users.
 To solve this problem, we are planning to implement a transitional 
 policy:
