@@ -111,7 +111,7 @@ main (argc, argv)
   ret = Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
 
   printf("\nFor help use: testhdf -help\n");
-  printf("Built with HDF Library Version: %d.%dr%d\n\n",
+  printf("Built with HDF Library Version: %d.%dr%d %s\n\n",
          lmajor, lminor, lrelease, lstring);
   for (CLLoop = 1; CLLoop < argc; CLLoop++) {
     if ((argc > CLLoop+1) && (HDstrcmp(argv[CLLoop],"-verbose")==0) ||

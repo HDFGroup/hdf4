@@ -102,7 +102,7 @@ main (argc, argv)
   ret = Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
 
   printf("\nFORTEST V%s Built on: %s \n", VERSION, BUILDDATE );
-  printf("HDF Library Version: %d.%dr%d\n\n",
+  printf("HDF Library Version: %d.%dr%d %s\n\n",
          lmajor, lminor, lrelease, lstring);
   for (CLLoop = 1; CLLoop < argc; CLLoop++) {
     if ((argc > CLLoop+1) && (HDstrcmp(argv[CLLoop],"-verbose")==0) ||
