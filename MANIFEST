@@ -938,6 +938,7 @@
 ./mfhdf/libsrc/test1.nc
 ./mfhdf/libsrc/test_cdf.sav
 ./mfhdf/libsrc/testout.sav
+./mfhdf/libsrc/trank0.c
 ./mfhdf/libsrc/tszip.c
 ./mfhdf/libsrc/tsd.c
 ./mfhdf/libsrc/var.c
