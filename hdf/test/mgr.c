@@ -1372,10 +1372,10 @@ test_mgr_image()
                     if((i%2)!=0 && (j%2)!=0)
                       {
                           if((j%3)==0)
-                              HDmemcpy(&image0[i][j][k],fill_pixel,sizeof(TEST_VARTYPE)*TEST_NCOMP);
+                              HDmemcpy(&image0[i][j][0],fill_pixel,sizeof(TEST_VARTYPE)*TEST_NCOMP);
                           else
-                              HDmemcpy(&image0[i][j][k],fill_pixel2,sizeof(TEST_VARTYPE)*TEST_NCOMP);
-                          HDmemcpy(sub_ptr,&image0[i][j][k],TEST_NCOMP*sizeof(TEST_VARTYPE));
+                              HDmemcpy(&image0[i][j][0],fill_pixel2,sizeof(TEST_VARTYPE)*TEST_NCOMP);
+                          HDmemcpy(sub_ptr,&image0[i][j][0],TEST_NCOMP*sizeof(TEST_VARTYPE));
                           sub_ptr+=TEST_NCOMP;
                       } /* end if */
                 } /* end for */
@@ -1434,9 +1434,6 @@ test_mgr_image()
         /* Close the empty image */
         ret=GRendaccess(riid);
         CHECK(ret,FAIL,"GRendaccess");
-
-        HDfree(image0);
-        HDfree(image);
     }
     
     /* Shut down the GR interface */
